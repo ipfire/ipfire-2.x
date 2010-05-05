@@ -1,7 +1,6 @@
 lib/firmware/aica_firmware.bin
 #lib/firmware/asihpi
 lib/firmware/asihpi/dsp2400.bin
-lib/firmware/asihpi/dsp4300.bin
 lib/firmware/asihpi/dsp5000.bin
 lib/firmware/asihpi/dsp6200.bin
 lib/firmware/asihpi/dsp6205.bin

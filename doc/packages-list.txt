@@ -36,8 +36,8 @@
 * URI-1.35
 * Unix-Syslog-0.100
 * XML-Parser-2.34
-* alsa-lib-1.0.22
-* alsa-lib-1.0.22-kmod-2.6.32.12-ipfire
+* alsa-lib-1.0.23
+* alsa-lib-1.0.23-kmod-2.6.32.12-ipfire
 * amavisd-new-2.5.2
 * apcupsd-3.14.4
 * applejuice-0.31
@@ -215,7 +215,7 @@
 * mdadm-3.1.1
 * mechanize-0.1.8
 * mediatomb-svn2020
-* memtest86+-4.00
+* memtest86+-4.10
 * miau-0.6.5
 * misc-progs
 * mkinitcpio-0.5.9
