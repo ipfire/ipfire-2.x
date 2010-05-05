@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.00
+VER        = 4.10
 
 THISAPP    = memtest86+-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 898cfc5ff7920a8c396ebe898ac2eaa5
+$(DL_FILE)_MD5 = 2144f21d4489a04149b1891b8d97e8fc
 
 install : $(TARGET)
 
@@ -70,6 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && sed -i -e "s| -fno-stack-protector||g" Makefile
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	-mkdir -p /usr/lib/memtest86+
 	cd $(DIR_APP) && cp -f memtest.bin /usr/lib/memtest86+
