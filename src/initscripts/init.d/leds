@@ -34,7 +34,7 @@ reset_trigger() {
 }
 
 start_alix2() {
-	modprobe -q leds-alix2
+	modprobe -q leds-alix2 &>/dev/null
 
 	local i
 	for i in 1 2 3; do
@@ -58,6 +58,7 @@ case "${1}" in
 		for i in alix2; do
 		  ${1}_${i}
 		done
+		exit 0
 		;;
 
 	*)
