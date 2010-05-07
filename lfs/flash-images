@@ -159,6 +159,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i -e "s|#terminal|terminal|g" $(MNThdd)/boot/grub/grub.conf
 	sed -i -e "s| panic=10 | console=ttyS0,38400n8 panic=10 |g" $(MNThdd)/boot/grub/grub.conf
 
+	sed -i -e "s|1:2345:respawn:|#1:2345:respawn:|g" $(MNThdd)/etc/inittab
+	sed -i -e "s|2:2345:respawn:|#2:2345:respawn:|g" $(MNThdd)/etc/inittab
+	sed -i -e "s|3:2345:respawn:|#3:2345:respawn:|g" $(MNThdd)/etc/inittab
+	sed -i -e "s|4:2345:respawn:|#4:2345:respawn:|g" $(MNThdd)/etc/inittab
+	sed -i -e "s|5:2345:respawn:|#5:2345:respawn:|g" $(MNThdd)/etc/inittab
+	sed -i -e "s|6:2345:respawn:|#6:2345:respawn:|g" $(MNThdd)/etc/inittab
 	sed -i -e "s|#7:2345:respawn:|7:2345:respawn:|g" $(MNThdd)/etc/inittab
 
 	umount $(MNThdd)/boot
@@ -188,3 +194,4 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	gzip -f9 $(IMGinsts)
 
 	rm -rf $(MNThdd) $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar)
+
