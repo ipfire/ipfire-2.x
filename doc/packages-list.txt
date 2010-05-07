@@ -132,7 +132,7 @@
 * gzip-1.3.5
 * hddtemp-0.3-beta14
 * hdparm-8.9
-* hostapd-0.7.1
+* hostapd-0.7.2
 * hplip-2.7.10
 * htop-0.8.1
 * httpd-2.2.15
@@ -254,7 +254,7 @@
 * openmailadmin-1.0.0
 * openssh-5.4p1
 * openssl-0.9.8n
-* openvpn-2.1_rc20
+* openvpn-2.1.1
 * p7zip_4.65
 * pam_mysql-0.7RC1
 * patch-2.5.4
