@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.7.1
+VER        = 0.7.2
 
 THISAPP    = hostapd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = hostapd
-PAK_VER    = 17
+PAK_VER    = 18
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3c4f71a889803935c7eb40fac6539d7c
+$(DL_FILE)_MD5 = f47689c62ee8c1c59989b402d4f130c3
 
 install : $(TARGET)
 
