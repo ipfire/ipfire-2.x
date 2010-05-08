@@ -292,7 +292,7 @@
 * setuptools-0.6c8
 * shadow-4.0.15
 * slang-1.4.9
-* smartmontools-5.39
+* smartmontools-5.39.1
 * snort-2.8.5.3
 * sox-12.18.1
 * spandsp-0.0.6pre12
