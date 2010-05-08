@@ -1,2 +1,5 @@
-etc/usb_modeswitch.conf.example
+#lib/udev/usb_modeswitch
+#etc/usb_modeswitch.conf
+etc/usb_modeswitch.setup.example
+#usr/share/man/man1/usb_modeswitch.1
 usr/sbin/usb_modeswitch
