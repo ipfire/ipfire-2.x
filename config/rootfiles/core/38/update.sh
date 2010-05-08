@@ -157,6 +157,10 @@ POSTCLEAN=`du -sh /var/log/rrd/collectd`
 #
 echo Cleaned up collectd directory from $PRECLEAN to $POSTCLEAN size.
 #
+# USB Modeswitch conf now called setup, rename ...
+#
+mv -f /etc/usb_modeswitch.conf /etc/usb_modeswitch.setup
+#
 #
 # Todo: rebuild qosscript if enabled...
 #
