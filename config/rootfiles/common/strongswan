@@ -10,6 +10,16 @@ etc/ipsec.d/private
 etc/ipsec.d/reqs
 etc/ipsec.secrets
 etc/strongswan.conf
+#usr/lib/libcharon.a
+#usr/lib/libcharon.la
+usr/lib/libcharon.so
+usr/lib/libcharon.so.0
+usr/lib/libcharon.so.0.0.0
+#usr/lib/libhydra.a
+#usr/lib/libhydra.la
+usr/lib/libhydra.so
+usr/lib/libhydra.so.0
+usr/lib/libhydra.so.0.0.0
 #usr/lib/libstrongswan.a
 #usr/lib/libstrongswan.la
 usr/lib/libstrongswan.so
@@ -75,6 +85,9 @@ usr/libexec/ipsec/plugins/libstrongswan-sha1.so
 #usr/libexec/ipsec/plugins/libstrongswan-sha2.a
 #usr/libexec/ipsec/plugins/libstrongswan-sha2.la
 usr/libexec/ipsec/plugins/libstrongswan-sha2.so
+#usr/libexec/ipsec/plugins/libstrongswan-socket-raw.a
+#usr/libexec/ipsec/plugins/libstrongswan-socket-raw.la
+usr/libexec/ipsec/plugins/libstrongswan-socket-raw.so
 #usr/libexec/ipsec/plugins/libstrongswan-stroke.a
 #usr/libexec/ipsec/plugins/libstrongswan-stroke.la
 usr/libexec/ipsec/plugins/libstrongswan-stroke.so

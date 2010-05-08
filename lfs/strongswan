@@ -24,13 +24,7 @@
 
 include Config
 
-ifeq "$(XEN)" "1"
-	VERSUFIX=ipfire-xen
-else
-	VERSUFIX=ipfire
-endif
-
-VER        = 4.3.6
+VER        = 4.4.0
 
 THISAPP    = strongswan-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e071f46b6c463ce76900758734e6143e
+$(DL_FILE)_MD5 = bfb0f1c8ef1344e1ae8157bdde060fed
 
 install : $(TARGET)
 
