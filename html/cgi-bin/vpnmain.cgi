@@ -248,9 +248,9 @@ sub writeipsecfiles {
     foreach my $key (keys %lconfighash) {
 	next if ($lconfighash{$key}[0] ne 'on');
         $interfaces .= "%defaultroute " 		    if ($interfaces !~ /defaultroute/ && $lconfighash{$key}[26] eq 'RED');
-	#$interfaces .= "ipsec1=$netsettings{'GREEN_DEV'} "  if ($interfaces !~ /ipsec1/	      && $lconfighash{$key}[26] eq 'GREEN');
-	#$interfaces .= "ipsec2=$netsettings{'BLUE_DEV'} "   if ($interfaces !~ /ipsec2/	      && $lconfighash{$key}[26] eq 'BLUE');
-	#$interfaces .= "ipsec3=$netsettings{'ORANGE_DEV'} " if ($interfaces !~ /ipsec3/	      && $lconfighash{$key}[26] eq 'ORANGE');
+	$interfaces .= "$netsettings{'GREEN_DEV'} "  if ($interfaces !~ /ipsec1/	      && $lconfighash{$key}[26] eq 'GREEN');
+	$interfaces .= "$netsettings{'BLUE_DEV'} "   if ($interfaces !~ /ipsec2/	      && $lconfighash{$key}[26] eq 'BLUE');
+	$interfaces .= "$netsettings{'ORANGE_DEV'} " if ($interfaces !~ /ipsec3/	      && $lconfighash{$key}[26] eq 'ORANGE');
     }
     print CONF $interfaces . "\"\n";
 
@@ -581,7 +581,8 @@ END
     $cahash{$key}[0] = $cgiparams{'CA_NAME'};
     $cahash{$key}[1] = &Header::cleanhtml(getsubjectfromcert ("${General::swroot}/ca/$cgiparams{'CA_NAME'}cert.pem"));
     &General::writehasharray("${General::swroot}/vpn/caconfig", \%cahash);
-    system('/usr/local/bin/ipsecctrl', 'R');
+
+    my $temp = `/usr/local/bin/ipsecctrl R`;
     sleep $sleepDelay;
 
     UPLOADCA_ERROR:
