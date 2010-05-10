@@ -582,7 +582,7 @@ END
     $cahash{$key}[1] = &Header::cleanhtml(getsubjectfromcert ("${General::swroot}/ca/$cgiparams{'CA_NAME'}cert.pem"));
     &General::writehasharray("${General::swroot}/vpn/caconfig", \%cahash);
 
-    my $temp = `/usr/local/bin/ipsecctrl R`;
+    system('/usr/local/bin/ipsecctrl', 'R');
     sleep $sleepDelay;
 
     UPLOADCA_ERROR:

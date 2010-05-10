@@ -198,7 +198,7 @@ int main(int argc, char *argv[]) {
                 }
 
                 if (strcmp(argv[1], "R") == 0) {
-                        safe_system("/usr/sbin/ipsec whack --rereadall");
+                        safe_system("/usr/sbin/ipsec whack --rereadall >/dev/null");
                         exit(0);
                 }
 
