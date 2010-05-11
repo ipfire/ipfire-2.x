@@ -46,8 +46,8 @@ echo update archive. This may take a while ...
 echo lib/modules >> /opt/pakfire/tmp/ROOTFILES
 echo boot >> /opt/pakfire/tmp/ROOTFILES
 echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
-echo usr/lib/ipsec
-echo usr/libexec/ipsec
+echo usr/lib/ipsec >> /opt/pakfire/tmp/ROOTFILES
+echo usr/libexec/ipsec >> /opt/pakfire/tmp/ROOTFILES
 tar cjvf /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
     -C / -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' > /dev/null 2>&1
 echo
@@ -161,10 +161,18 @@ echo Cleaned up collectd directory from $PRECLEAN to $POSTCLEAN size.
 #
 # USB Modeswitch conf now called setup, rename ...
 #
+if [ -e /etc/usb_modeswitch.conf ]; then
 mv -f /etc/usb_modeswitch.conf /etc/usb_modeswitch.setup
+fi
 #
-#
-# Todo: rebuild qosscript if enabled...
+# rebuild qosscript if enabled...
+if [ -e /var/ipfire/qos/enable ]; then
+	/usr/local/bin/qosctrl stop
+fi
+/usr/local/bin/qosctrl generate
+if [ -e /var/ipfire/qos/enable ]; then
+	/usr/local/bin/qosctrl start
+fi
 #
 #
 # Todo convert ipsec.conf from open to strongswan...
