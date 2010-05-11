@@ -46,9 +46,8 @@ echo update archive. This may take a while ...
 echo lib/modules >> /opt/pakfire/tmp/ROOTFILES
 echo boot >> /opt/pakfire/tmp/ROOTFILES
 echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
-#
-# Todo: add openswan libs for backup ...
-#
+echo usr/lib/ipsec
+echo usr/libexec/ipsec
 tar cjvf /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
     -C / -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' > /dev/null 2>&1
 echo
@@ -61,9 +60,12 @@ rm -rf /boot/ipfirerd-*
 rm -rf /boot/vmlinuz-*
 # Don't remove old xen modules. Kernel may stored outside.
 rm -rf /lib/modules/*-ipfire
+
 #
-# Todo: remove openswan libs ...
+# remove openswan libs ...
 #
+rm -rf /usr/lib/ipsec
+rm -rf /usr/libexec/ipsec
 
 #
 # Stop Sevices
