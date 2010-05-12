@@ -176,8 +176,8 @@ case "$1" in
 	/sbin/iptables -A FORWARD -j IPSECFORWARD
 	/sbin/iptables -A FORWARD -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL FORWARD"
 	/sbin/iptables -A OUTPUT -j IPSECOUTPUT
-	#/sbin/iptables -t nat -N IPSECNAT
-	#/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
+	/sbin/iptables -t nat -N IPSECNAT
+	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
 
 	# Outgoing Firewall
 	/sbin/iptables -A FORWARD -j OUTGOINGFW
