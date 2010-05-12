@@ -43,8 +43,6 @@ my %checked=();
 my %selected=();
 my %netsettings=();
 our $errormessage = '';
-our $md5 = '0';# not '' to avoid displaying the wrong message when INSTALLMD5 not set
-our $realmd5 = '';
 our $results = '';
 our $tempdir = '';
 our $url='';
@@ -69,7 +67,6 @@ $snortsettings{'ACTION2'} = '';
 $snortsettings{'RULES'} = '';
 $snortsettings{'OINKCODE'} = '';
 $snortsettings{'INSTALLDATE'} = '';
-$snortsettings{'INSTALLMD5'} = '';
 
 &Header::getcgihash(\%snortsettings, {'wantfile' => 1, 'filevar' => 'FH'});
 
@@ -263,8 +260,8 @@ if (-e "/etc/snort/snort.conf") {
 #######################  End added for snort rules control  #################################
 
 if ($snortsettings{'RULES'} eq 'subscripted') {
-	$url="http://dl.snort.org/sub-rules/snortrules-snapshot-2.8_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
-	#$url="http://dl.snort.org/sub-rules/snortrules-snapshot-2853_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
+	#$url="http://dl.snort.org/sub-rules/snortrules-snapshot-2.8_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
+	$url="http://dl.snort.org/sub-rules/snortrules-snapshot-2853_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
 	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8_s.tar.gz";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
 	$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2.8.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
@@ -342,25 +339,30 @@ END
 	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
 
 if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
-	$md5 = &getmd5;
-	if (($snortsettings{'INSTALLMD5'} ne $md5) && defined $md5 ) {
-		chomp($md5);
-		my $filename = &downloadrulesfile();
-		if (defined $filename) {
-			# Check MD5sum
-			$realmd5 = `/usr/bin/md5sum $filename`;
-			chomp ($realmd5);
-			$realmd5 =~ s/^(\w+)\s.*$/$1/;
-			if ( $md5 ne $realmd5 ) {
-				$errormessage = "$Lang::tr{'invalid md5sum'} - $md5 - $realmd5";
+
+	my @df = `/bin/df -B M /var`;
+	foreach my $line (@df) {
+		next if $line =~ m/^Filesystem/;
+
+		if ($line =~ m/dev/ ) {
+		$line =~ m/^.* (\d+)M.*$/;
+		my @temp = split(/ +/,$line);
+			if ($1<600) {
+				$errormessage = "$Lang::tr{'not enough disk space'} < 600MB, /var $1MB";
 			} else {
-				$results = "<b>$Lang::tr{'installed updates'}</b>\n<pre>";
-				$results .=`/usr/local/bin/oinkmaster.pl -s -u file://$filename -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules 2>&1`;
-				$results .= "</pre>";
+				my $filename = &downloadrulesfile();
+				if (defined $filename) {
+						$results = "<b>$Lang::tr{'installed updates'}</b>\n<pre>";
+						$results .=`/usr/local/bin/oinkmaster.pl -s -u file://$filename -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules 2>&1`;
+						$results .= "</pre>";
+					}
+					unlink ($filename);
 			}
-			unlink ($filename);
+			
 		}
 	}
+
+
 }
 
 $checked{'ENABLE_SNORT'}{'off'} = '';
@@ -469,16 +471,12 @@ print <<END
 END
 ;
 
-if ($snortsettings{'INSTALLMD5'} eq $md5) {
-	print "&nbsp;$Lang::tr{'rules already up to date'}</td>";
-} else {
-	if ( $snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'} && $md5 eq $realmd5 ) {
-		$snortsettings{'INSTALLMD5'} = $realmd5;
-		$snortsettings{'INSTALLDATE'} = `/bin/date +'%Y-%m-%d'`;
-		&General::writehash("${General::swroot}/snort/settings", \%snortsettings);
-	}
-	print "&nbsp;$Lang::tr{'updates installed'}: $snortsettings{'INSTALLDATE'}</td>";
+if ( $snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'} ) {
+	$snortsettings{'INSTALLDATE'} = `/bin/date +'%Y-%m-%d'`;
+	&General::writehash("${General::swroot}/snort/settings", \%snortsettings);
 }
+print "&nbsp;$Lang::tr{'updates installed'}: $snortsettings{'INSTALLDATE'}</td>";
+
 print <<END
 </tr>
 </table>
@@ -678,31 +676,6 @@ END
 &Header::closebigbox();
 &Header::closepage();
 
-sub getmd5 {
-	# Retrieve MD5 sum from $url.md5 file
-
-	my $md5buf;
-	if ($snortsettings{'RULES'} eq 'subscripted') {
-		$md5buf = &geturl("http://dl.snort.org/reg-rules/snortrules-snapshot-2.8_s.tar.gz.md5?oink_code=$snortsettings{'OINKCODE'}");
-	} elsif ($snortsettings{'RULES'} eq 'registered') {
-		$md5buf = &geturl("http://dl.snort.org/reg-rules/snortrules-snapshot-2.8.tar.gz.md5?oink_code=$snortsettings{'OINKCODE'}");
-	} else {
-		$md5buf = &geturl("http://www.snort.org/pub-bin/downloads.cgi/Download/comm_rules/Community-Rules-CURRENT.tar.gz.md5");
-	}
-
-	return undef unless $md5buf;
-
-	if (0) { # 1 to debug
-		my $filename='';
-		my $fh='';
-		($fh, $filename) = tempfile('/var/tmp/XXXXXXXX',SUFFIX => '.md5' );
-		binmode ($fh);
-		syswrite ($fh, $md5buf->content);
-		close($fh);
-	}
-
-	return $md5buf->content;
-}
 sub downloadrulesfile {
 	my $return = &geturl($url);
 	return undef unless $return;
