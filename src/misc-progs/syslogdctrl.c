@@ -31,13 +31,14 @@
 int main(void)
 {
    char buffer[STRING_SIZE], command[STRING_SIZE], hostname[STRING_SIZE];
-   char varmessages[STRING_SIZE], enable_asynclog[STRING_SIZE];
+   char varmessages[STRING_SIZE], asynclog[STRING_SIZE];
    int config_fd,rc,fd,pid;
    struct stat st;
    struct keyvalue *kv = NULL;
    memset(buffer, 0, STRING_SIZE);
    memset(hostname, 0, STRING_SIZE);
    memset(varmessages, 0, STRING_SIZE);
+   memset(asynclog, 0, STRING_SIZE);
 
    if (!(initsetuid()))
       exit(1);
@@ -64,7 +65,7 @@ int main(void)
       exit(ERR_SETTINGS);
    }
 
-   if (!findkey(kv, "ENABLE_ASYNCLOG", enable_asynclog))
+   if (!findkey(kv, "ENABLE_ASYNCLOG", asynclog))
    {
       fprintf(stderr, "Cannot read ENABLE_ASYNCLOG\n");
       exit(ERR_SETTINGS);
@@ -133,10 +134,10 @@ int main(void)
    /* Replace the logging option*/
      safe_system("grep -v '/var/log/messages' < /etc/syslog.conf.new > /etc/syslog.conf.tmp && mv /etc/syslog.conf.tmp /etc/syslog.conf.new");
    
-   if (strcmp(enable_asynclog,"on"))
-     snprintf(command, STRING_SIZE-1, "printf '%s     -/var/log/messages' >> /etc/syslog.conf.new", varmessages );
+   if (!strcmp(asynclog,"on"))
+     snprintf(command, STRING_SIZE - 1, "printf '%s     -/var/log/messages' >> /etc/syslog.conf.new", varmessages );
    else
-     snprintf(command, STRING_SIZE-1, "printf '%s     /var/log/messages' >> /etc/syslog.conf.new", varmessages );
+     snprintf(command, STRING_SIZE - 1, "printf '%s     /var/log/messages' >> /etc/syslog.conf.new", varmessages );
 
      safe_system(command);
 
