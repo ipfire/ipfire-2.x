@@ -3,9 +3,11 @@ var/ipfire/backup/bin/backup.pl
 var/ipfire/header.pl
 var/ipfire/menu.d/50-firewall.menu
 var/ipfire/outgoing/bin/outgoingfw.pl
+var/ipfire/graphs.pl
 etc/modprobe.d/cfg80211
 var/ipfire/qos/bin/makeqosscripts.pl
 srv/web/ipfire/cgi-bin/connections.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/iptables.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/config.dat
