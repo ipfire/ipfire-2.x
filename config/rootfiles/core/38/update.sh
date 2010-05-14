@@ -175,7 +175,18 @@ if [ -e /var/ipfire/qos/enable ]; then
 fi
 #
 #
-# Todo convert ipsec.conf from open to strongswan...
+# convert ipsec.conf from openswan to strongswan...
+mv /var/ipfire/vpn/ipsec.conf /var/ipfire/vpn/ipsec.conf.org
+cat /var/ipfire/vpn/ipsec.conf.org | \
+grep -v "disablearrivalcheck=" | \
+grep -v "leftfirewall=" | \
+grep -v "charonstart=" | \
+grep -v "aggrmode=" > /var/ipfire/vpn/ipsec.conf
+sed -i "s|ipsec[0-9]=||g" /var/ipfire/vpn/ipsec.conf
+sed -i "s|^conn [A-Za-z].*$|&\n\tleftfirewall=yes|g" /var/ipfire/vpn/ipsec.conf
+sed -i "s|^config setup$|&\n\tcharonstart=no|g" /var/ipfire/vpn/ipsec.conf
+chown nobody:nobody /var/ipfire/vpn/ipsec.conf
+chmod 644 /var/ipfire/vpn/ipsec.conf
 #
 #
 # Start Sevices
