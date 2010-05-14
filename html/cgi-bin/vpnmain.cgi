@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2010  IPFire Team  info@ipfire.org                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -380,9 +380,6 @@ sub writeipsecfiles {
 	# Lifetimes
 	print CONF "\tikelifetime=$lconfighash{$key}[16]h\n" if ($lconfighash{$key}[16]);
 	print CONF "\tkeylife=$lconfighash{$key}[17]h\n" if ($lconfighash{$key}[17]);
-
-	# Aggresive mode
-	print CONF "\taggrmode=yes\n" if ($lconfighash{$key}[12] eq 'on');
 
 	# Compression
 	print CONF "\tcompress=yes\n" if ($lconfighash{$key}[13] eq 'on');
@@ -1278,7 +1275,6 @@ END
 	$cgiparams{'ESP_INTEGRITY'}  	= $confighash{$cgiparams{'KEY'}}[22];
 	$cgiparams{'ESP_GROUPTYPE'}  	= $confighash{$cgiparams{'KEY'}}[23];
 	$cgiparams{'ESP_KEYLIFE'}    	= $confighash{$cgiparams{'KEY'}}[17];
-	$cgiparams{'AGGRMODE'}	 	= $confighash{$cgiparams{'KEY'}}[12];
 	$cgiparams{'COMPRESSION'}    	= $confighash{$cgiparams{'KEY'}}[13];
 	$cgiparams{'ONLY_PROPOSED'}  	= $confighash{$cgiparams{'KEY'}}[24];
 	$cgiparams{'PFS'}		= $confighash{$cgiparams{'KEY'}}[28];
@@ -1783,7 +1779,7 @@ END
 	$confighash{$key}[22] = $cgiparams{'ESP_INTEGRITY'};
 	$confighash{$key}[23] = $cgiparams{'ESP_GROUPTYPE'};
 	$confighash{$key}[17] = $cgiparams{'ESP_KEYLIFE'};
-	$confighash{$key}[12] = $cgiparams{'AGGRMODE'};
+	$confighash{$key}[12] = 'off'; # $cgiparams{'AGGRMODE'};
 	$confighash{$key}[13] = $cgiparams{'COMPRESSION'};
 	$confighash{$key}[24] = $cgiparams{'ONLY_PROPOSED'};
 	$confighash{$key}[28] = $cgiparams{'PFS'};
@@ -1844,7 +1840,6 @@ END
 	$cgiparams{'ESP_INTEGRITY'}  = 'sha1|md5';	#[22];
 	$cgiparams{'ESP_GROUPTYPE'}  = '';		#[23];
 	$cgiparams{'ESP_KEYLIFE'}    = '8';		#[17];
-	$cgiparams{'AGGRMODE'}	     = 'off';		#[12];
 	$cgiparams{'COMPRESSION'}    = 'off';		#[13];
 	$cgiparams{'ONLY_PROPOSED'}  = 'off';		#[24];
 	$cgiparams{'PFS'}	     = 'on';		#[28];
@@ -1907,7 +1902,6 @@ END
 	<input type='hidden' name='ESP_INTEGRITY' value='$cgiparams{'ESP_INTEGRITY'}' />
 	<input type='hidden' name='ESP_GROUPTYPE' value='$cgiparams{'ESP_GROUPTYPE'}' />
 	<input type='hidden' name='ESP_KEYLIFE' value='$cgiparams{'ESP_KEYLIFE'}' />
-	<input type='hidden' name='AGGRMODE' value='$cgiparams{'AGGRMODE'}' />
 	<input type='hidden' name='COMPRESSION' value='$cgiparams{'COMPRESSION'}' />
 	<input type='hidden' name='ONLY_PROPOSED' value='$cgiparams{'ONLY_PROPOSED'}' />
 	<input type='hidden' name='PFS' value='$cgiparams{'PFS'}' />
@@ -2174,7 +2168,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	}
 
 	if (
-	    ($cgiparams{'AGGRMODE'} !~ /^(|on|off)$/) ||
 	    ($cgiparams{'COMPRESSION'} !~ /^(|on|off)$/) ||
 	    ($cgiparams{'ONLY_PROPOSED'} !~ /^(|on|off)$/) ||
 	    ($cgiparams{'PFS'} !~ /^(|on|off)$/) ||
@@ -2192,7 +2185,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$confighash{$cgiparams{'KEY'}}[22] = $cgiparams{'ESP_INTEGRITY'};
 	$confighash{$cgiparams{'KEY'}}[23] = $cgiparams{'ESP_GROUPTYPE'};
 	$confighash{$cgiparams{'KEY'}}[17] = $cgiparams{'ESP_KEYLIFE'};
-	$confighash{$cgiparams{'KEY'}}[12] = $cgiparams{'AGGRMODE'};
+	$confighash{$cgiparams{'KEY'}}[12] = 'off'; #$cgiparams{'AGGRMODE'};
 	$confighash{$cgiparams{'KEY'}}[13] = $cgiparams{'COMPRESSION'};
 	$confighash{$cgiparams{'KEY'}}[24] = $cgiparams{'ONLY_PROPOSED'};
 	$confighash{$cgiparams{'KEY'}}[28] = $cgiparams{'PFS'};
@@ -2213,7 +2206,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$cgiparams{'ESP_INTEGRITY'}  = $confighash{$cgiparams{'KEY'}}[22];
 	$cgiparams{'ESP_GROUPTYPE'}  = $confighash{$cgiparams{'KEY'}}[23];
 	$cgiparams{'ESP_KEYLIFE'}    = $confighash{$cgiparams{'KEY'}}[17];
-	$cgiparams{'AGGRMODE'}       = $confighash{$cgiparams{'KEY'}}[12];
 	$cgiparams{'COMPRESSION'}    = $confighash{$cgiparams{'KEY'}}[13];
 	$cgiparams{'ONLY_PROPOSED'}  = $confighash{$cgiparams{'KEY'}}[24];
 	$cgiparams{'PFS'}  	     = $confighash{$cgiparams{'KEY'}}[28];
@@ -2259,7 +2251,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     foreach my $key (@temp) {$checked{'ESP_INTEGRITY'}{$key} = "selected='selected'"; }
     $checked{'ESP_GROUPTYPE'}{$cgiparams{'ESP_GROUPTYPE'}} = "selected='selected'";
 
-    $checked{'AGGRMODE'} = $cgiparams{'AGGRMODE'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'COMPRESSION'} = $cgiparams{'COMPRESSION'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'ONLY_PROPOSED'} = $cgiparams{'ONLY_PROPOSED'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'PFS'} = $cgiparams{'PFS'} eq 'on' ? "checked='checked'" : '' ;
@@ -2343,9 +2334,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	</tr><tr>
 	    <td colspan='5'><input type='checkbox' name='ONLY_PROPOSED' $checked{'ONLY_PROPOSED'} />
 		IKE+ESP: $Lang::tr{'use only proposed settings'}</td>
-	</tr><tr>
-	    <td colspan='5'><input type='checkbox' name='AGGRMODE' $checked{'AGGRMODE'} />
-		$Lang::tr{'vpn aggrmode'}</td>
 	</tr><tr>
 	    <td colspan='5'><input type='checkbox' name='PFS' $checked{'PFS'} />
 		$Lang::tr{'pfs yes no'}</td>
