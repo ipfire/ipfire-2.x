@@ -50,6 +50,14 @@ echo usr/lib/ipsec >> /opt/pakfire/tmp/ROOTFILES
 echo usr/libexec/ipsec >> /opt/pakfire/tmp/ROOTFILES
 tar cjvf /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
     -C / -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' > /dev/null 2>&1
+
+#
+# Stop Sevices
+#
+/etc/init.d/collectd stop
+/etc/init.d/squid stop
+/etc/init.d/ipsec stop
+
 echo
 echo Update Kernel to $KVER ...
 # Remove old kernel, configs, initrd, modules ...
@@ -66,12 +74,6 @@ rm -rf /lib/modules/*-ipfire
 #
 rm -rf /usr/lib/ipsec
 rm -rf /usr/libexec/ipsec
-
-#
-# Stop Sevices
-#
-/etc/init.d/collectd stop
-/etc/init.d/squid stop
 
 #
 # Backup grub.conf
