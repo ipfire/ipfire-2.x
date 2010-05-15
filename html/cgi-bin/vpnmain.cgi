@@ -257,9 +257,9 @@ sub writeipsecfiles {
     my $plutodebug = '';			# build debug list
     map ($plutodebug .= $lvpnsettings{$_} eq 'on' ? lc (substr($_,4)).' ' : '',
 	('DBG_CRYPT','DBG_PARSING','DBG_EMITTING','DBG_CONTROL',
-	 'DBG_KLIPS','DBG_DNS','DBG_NAT_T'));
+	 'DBG_DNS'));
     $plutodebug = 'none' if $plutodebug eq '';  # if nothing selected, use 'none'.
-    print CONF "\tklipsdebug=\"none\"\n";
+    #print CONF "\tklipsdebug=\"none\"\n";
     print CONF "\tplutodebug=\"$plutodebug\"\n";
     # deprecated in ipsec.conf version 2
     #print CONF "\tplutoload=%search\n";
@@ -452,7 +452,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 
     map ($vpnsettings{$_} = $cgiparams{$_},
 	('ENABLED','DBG_CRYPT','DBG_PARSING','DBG_EMITTING','DBG_CONTROL',
-	 'DBG_KLIPS','DBG_DNS','DBG_NAT_T'));
+	 'DBG_DNS'));
 
     $vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
     $vpnsettings{'VPN_DELAYED_START'} = $cgiparams{'VPN_DELAYED_START'};
@@ -2117,7 +2117,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(768|1024|1536|2048|3072|4096|6144|8192)$/) {
+	    if ($val !~ /^(1024|1536|2048|3072|4096|6144|8192)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2153,7 +2153,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    }
 	}
 	if ($cgiparams{'ESP_GROUPTYPE'} ne '' &&
-	    $cgiparams{'ESP_GROUPTYPE'} !~  /^modp(768|1024|1536|2048|3072|4096)$/) {
+	    $cgiparams{'ESP_GROUPTYPE'} !~  /^modp(1024|1536|2048|3072|4096)$/) {
 	    $errormessage = $Lang::tr{'invalid input'};
 	    goto ADVANCED_ERROR;
 	}
@@ -2238,6 +2238,11 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'IKE_GROUPTYPE'}{'8192'} = '';
     @temp = split('\|', $cgiparams{'IKE_GROUPTYPE'});
     foreach my $key (@temp) {$checked{'IKE_GROUPTYPE'}{$key} = "selected='selected'"; }
+
+    # 768 is not supported by strongswan
+    $checked{'IKE_GROUPTYPE'}{'768'} = '';
+
+
     $checked{'ESP_ENCRYPTION'}{'aes256'} = '';
     $checked{'ESP_ENCRYPTION'}{'aes128'} = '';
     $checked{'ESP_ENCRYPTION'}{'3des'} = '';
@@ -2303,7 +2308,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		<option value='2048' $checked{'IKE_GROUPTYPE'}{'2048'}>MODP-2048</option>
 		<option value='1536' $checked{'IKE_GROUPTYPE'}{'1536'}>MODP-1536</option>
 		<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024</option>
-		<option value='768'  $checked{'IKE_GROUPTYPE'}{'768'}>MODP-768</option>
 		</select></td>
 	</tr><tr>
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike lifetime'}</td><td class='boldbase' valign='top'>
@@ -2396,7 +2400,7 @@ EOF
     $checked{'VPN_WATCH'} = $cgiparams{'VPN_WATCH'} eq 'on' ? "checked='checked'" : '' ;
     map ($checked{$_} = $cgiparams{$_} eq 'on' ? "checked='checked'" : '',
 	('ENABLED','DBG_CRYPT','DBG_PARSING','DBG_EMITTING','DBG_CONTROL',
-	 'DBG_KLIPS','DBG_DNS','DBG_NAT_T'));
+	 'DBG_DNS'));
 
 
     &Header::showhttpheaders();
@@ -2440,10 +2444,7 @@ crypt:<input type='checkbox' name='DBG_CRYPT' $checked{'DBG_CRYPT'} />,&nbsp;
 parsing:<input type='checkbox' name='DBG_PARSING' $checked{'DBG_PARSING'} />,&nbsp;
 emitting:<input type='checkbox' name='DBG_EMITTING' $checked{'DBG_EMITTING'} />,&nbsp;
 control:<input type='checkbox' name='DBG_CONTROL' $checked{'DBG_CONTROL'} />,&nbsp;
-klips:<input type='checkbox' name='DBG_KLIPS' $checked{'DBG_KLIPS'} />,&nbsp;
-dns:<input type='checkbox' name='DBG_DNS' $checked{'DBG_DNS'} />,&nbsp;
-nat_t:<input type='checkbox' name='DBG_NAT_T' $checked{'DBG_NAT_T'} /></p>
-
+dns:<input type='checkbox' name='DBG_DNS' $checked{'DBG_DNS'} />&nbsp;
 <hr />
 <table width='100%'>
 <tr>
