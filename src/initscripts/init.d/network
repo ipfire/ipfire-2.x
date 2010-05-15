@@ -27,7 +27,12 @@ init_networking() {
 	done
 	(exit ${failed})
 	evaluate_retval
-                        
+
+	if [ -e /var/ipfire/main/disable_nf_sip ]; then
+		rmmod nf_nat_sip
+		rmmod nf_conntrack_sip
+	fi
+
 	boot_mesg "Setting up firewall"
 	/etc/rc.d/init.d/firewall start; evaluate_retval
 

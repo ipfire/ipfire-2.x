@@ -18,6 +18,7 @@ var/ipfire/langs/en.pl
 var/ipfire/langs/fr.pl
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/ipsec
+etc/rc.d/init.d/network
 etc/rc.d/init.d/ntp
 etc/rc.d/init.d/modules
 usr/local/bin/ipsecctrl
