@@ -170,9 +170,7 @@ fi
 # rebuild qosscript if enabled...
 if [ -e /var/ipfire/qos/enable ]; then
 	/usr/local/bin/qosctrl stop
-fi
-/usr/local/bin/qosctrl generate
-if [ -e /var/ipfire/qos/enable ]; then
+	/usr/local/bin/qosctrl generate
 	/usr/local/bin/qosctrl start
 fi
 #
