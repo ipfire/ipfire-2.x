@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
 PAK_VER    = 10
 
-DEPS       = "alsa ffmpeg-libs glib lame libshout libogg libid3tag libvorbis"
+DEPS       = "alsa faad2 ffmpeg-libs glib lame libshout libogg libid3tag libvorbis"
 
 ###############################################################################
 # Top-level Rules
