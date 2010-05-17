@@ -25,4 +25,5 @@ etc/rc.d/init.d/modules
 usr/local/bin/ipsecctrl
 usr/local/bin/syslogdctrl
 usr/local/bin/wirelessctrl
+usr/sbin/openvpn
 opt/pakfire/lib/functions.sh
