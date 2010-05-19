@@ -345,14 +345,9 @@ buildipfire() {
   ipfiremake linux-firmware
   ipfiremake linux			XEN=1
   ipfiremake kqemu			XEN=1
-  #ipfiremake kvm-kmod			XEN=1
   ipfiremake v4l-dvb			XEN=1
   ipfiremake madwifi			XEN=1
-  #ipfiremake alsa			XEN=1 KMOD=1
   ipfiremake dahdi			XEN=1 KMOD=1
-  #ipfiremake openswan			XEN=1 KMOD=1
-  #ipfiremake mISDN			XEN=1
-  #ipfiremake compat-wireless		XEN=1
   ipfiremake cryptodev			XEN=1
   ipfiremake linux
   ipfiremake kqemu
@@ -361,9 +356,6 @@ buildipfire() {
   ipfiremake madwifi
   ipfiremake alsa			KMOD=1
   ipfiremake dahdi			KMOD=1
-#  ipfiremake openswan			KMOD=1
-  #ipfiremake mISDN
-  #ipfiremake compat-wireless
   ipfiremake cryptodev
   ipfiremake pkg-config
   ipfiremake linux-atm
@@ -548,7 +540,6 @@ buildipfire() {
   ipfiremake tripwire
   ipfiremake sysstat
   ipfiremake vsftpd
-#  ipfiremake openswan
   ipfiremake strongswan
   ipfiremake lsof
   ipfiremake centerim
@@ -558,7 +549,6 @@ buildipfire() {
   ipfiremake liboping
   ipfiremake collectd
   ipfiremake lcd4linux
-  ipfiremake tcptrack
   ipfiremake teamspeak
   ipfiremake elinks
   ipfiremake igmpproxy
@@ -589,7 +579,6 @@ buildipfire() {
   ipfiremake git
   ipfiremake squidclamav
   ipfiremake bc
-  ipfiremake esniper
   ipfiremake vnstat
   ipfiremake vnstati
   ipfiremake iw
@@ -607,7 +596,6 @@ buildipfire() {
   ipfiremake netcat
   ipfiremake 7zip
   ipfiremake lynis
-  #ipfiremake cryptsetup
   ipfiremake splix
   ipfiremake streamripper
   ipfiremake sshfs
@@ -617,8 +605,6 @@ buildipfire() {
   ipfiremake sslh
   ipfiremake perl-gettext
   ipfiremake vdradmin
-#  ipfiremake x11libs
-#  ipfiremake xen
   ipfiremake miau
   ipfiremake netsnmpd
   ipfiremake perl-DBI
