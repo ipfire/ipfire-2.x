@@ -316,6 +316,7 @@ sub writeipsecfiles {
 	print CONF "\tleftnexthop=%defaultroute\n" if ($lconfighash{$key}[26] eq 'RED' && $lvpnsettings{'VPN_IP'} ne '%defaultroute');
 	print CONF "\tleftsubnet=$lconfighash{$key}[8]\n";
 	print CONF "\tleftfirewall=yes\n";
+	print CONF "\tlefthostaccess=yes\n";
 
 	print CONF "\tright=$lconfighash{$key}[10]\n";
 	if ($lconfighash{$key}[3] eq 'net') {
