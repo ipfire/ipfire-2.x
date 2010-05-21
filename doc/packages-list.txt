@@ -92,7 +92,6 @@
 * ed-0.2
 * eject-2.1.5
 * elinks-0.11.7
-* esniper-2-19-0
 * espgs-8.15.1
 * etherwake-1.09
 * ethtool-3
@@ -293,7 +292,7 @@
 * shadow-4.0.15
 * slang-1.4.9
 * smartmontools-5.39.1
-* snort-2.8.5.3
+* snort-2.8.6
 * sox-12.18.1
 * spandsp-0.0.6pre12
 * splix-2.0.0-rc2
@@ -316,7 +315,6 @@
 * tar-1.22
 * tcp_wrappers_7.6
 * tcpdump-4.0.0
-* tcptrack-1.3.0
 * teamspeak-2.0.24.1
 * texinfo-4.8
 * tftp-hpa-0.48
