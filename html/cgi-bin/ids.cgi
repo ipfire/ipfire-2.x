@@ -26,8 +26,8 @@ use File::Temp qw/ tempfile tempdir /;
 use strict;
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -318,8 +318,14 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} e
 	system('/usr/local/bin/snortctrl restart >/dev/null');
 
 } elsif ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} eq "guardian" ){
+			foreach my $key (keys %snortsettings){
+				if ( $key !~ /^GUARDIAN/ ){
+					delete $snortsettings{$key};
+				}
+			}
+			&General::writehashpart("${General::swroot}/snort/settings", \%snortsettings);
 			open(IGNOREFILE, ">$snortsettings{'GUARDIAN_IGNOREFILE'}") or die "Unable to write guardian ignore file $snortsettings{'GUARDIAN_IGNOREFILE'}";
-				print IGNOREFILE $snortsettings{'IGNOREFILE_CONTENT'};
+				print IGNOREFILE $snortsettings{'GUARDIAN_IGNOREFILE_CONTENT'};
 			close(IGNOREFILE);
 			open(GUARDIAN, ">/var/ipfire/guardian/guardian.conf") or die "Unable to write guardian conf /var/ipfire/guardian/guardian.conf";
 				print GUARDIAN <<END
@@ -416,6 +422,19 @@ END
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
+###############
+# DEBUG DEBUG
+# &Header::openbox('100%', 'left', 'DEBUG');
+# my $debugCount = 0;
+# foreach my $line (sort keys %snortsettings) {
+# print "$line = $snortsettings{$line}<br />\n";
+# $debugCount++;
+# }
+# print "&nbsp;Count: $debugCount\n";
+# &Header::closebox();
+# DEBUG DEBUG
+###############
+
 if ($errormessage) {
 	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
 	print "<class name='base'>$errormessage\n";
@@ -501,11 +520,11 @@ if ( -e "/var/ipfire/guardian/guardian.conf" ) {
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'guardian configuration'});
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'><table width='100%'>
-<tr><td align='left' width='40%'>$Lang::tr{'guardian interface'}</td><td align='left'><input type='text' name='INTERFACE' value='$snortsettings{'GUARDIAN_INTERFACE'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'guardian timelimit'}</td><td align='left'><input type='text' name='TIMELIMIT' value='$snortsettings{'GUARDIAN_TIMELIMIT'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'guardian logfile'}</td><td align='left'><input type='text' name='LOGFILE' value='$snortsettings{'GUARDIAN_LOGFILE'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'guardian alertfile'}</td><td align='left'><input type='text' name='ALERTFILE' value='$snortsettings{'GUARDIAN_ALERTFILE'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'guardian ignorefile'}</td><td align='left'><textarea name='IGNOREFILE_CONTENT' cols='32' rows='6' wrap='off'>
+<tr><td align='left' width='40%'>$Lang::tr{'guardian interface'}</td><td align='left'><input type='text' name='GUARDIAN_INTERFACE' value='$snortsettings{'GUARDIAN_INTERFACE'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'guardian timelimit'}</td><td align='left'><input type='text' name='GUARDIAN_TIMELIMIT' value='$snortsettings{'GUARDIAN_TIMELIMIT'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'guardian logfile'}</td><td align='left'><input type='text' name='GUARDIAN_LOGFILE' value='$snortsettings{'GUARDIAN_LOGFILE'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'guardian alertfile'}</td><td align='left'><input type='text' name='GUARDIAN_ALERTFILE' value='$snortsettings{'GUARDIAN_ALERTFILE'}' size="30" /></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'guardian ignorefile'}</td><td align='left'><textarea name='GUARDIAN_IGNOREFILE_CONTENT' cols='32' rows='6' wrap='off'>
 END
 ;
 	print `cat /var/ipfire/guardian/guardian.ignore`;

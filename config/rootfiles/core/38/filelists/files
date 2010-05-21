@@ -4,6 +4,7 @@ var/ipfire/header.pl
 var/ipfire/menu.d/50-firewall.menu
 var/ipfire/outgoing/bin/outgoingfw.pl
 var/ipfire/graphs.pl
+var/ipfire/general-functions.pl
 etc/modprobe.d/cfg80211
 etc/modprobe.d/pcspeaker
 var/ipfire/qos/bin/makeqosscripts.pl
