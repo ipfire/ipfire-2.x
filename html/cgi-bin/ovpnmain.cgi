@@ -337,7 +337,7 @@ sub writeserverconf {
     if ($sovpnsettings{MSSFIX} eq 'on') {
 	print CONF "mssfix\n";
     }
-    if ($sovpnsettings{FRAGMENT} ne '') {
+    if ($sovpnsettings{FRAGMENT} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') {
 	print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";
     }
     if ($sovpnsettings{KEEPALIVE_1} > 0 && $sovpnsettings{KEEPALIVE_2} > 0) {	
@@ -1406,7 +1406,7 @@ END
     if ($vpnsettings{MSSFIX} eq 'on') {
 	print CLIENTCONF "mssfix\r\n";
     }
-    if ($vpnsettings{FRAGMENT} ne '') {
+    if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
 	print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
     }
     close(CLIENTCONF);
