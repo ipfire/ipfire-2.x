@@ -68,6 +68,7 @@
 * clamav-0.96
 * cmake-2.4.8
 * collectd-4.9.1
+* compat-wireless-2.6.34-kmod-2.6.32.12-ipfire
 * coreutils-5.96
 * cpio-2.6
 * cpufrequtils-007
@@ -329,8 +330,8 @@
 * usb-modeswitch-1.1.2
 * usbutils-0.72
 * util-linux-2.12r
-* v4l-dvb-ee9826bc7106-kmod-2.6.32.12-ipfire
-* v4l-dvb-ee9826bc7106-kmod-2.6.32.12-ipfire-xen
+* v4l-dvb-b576509ea6d2-kmod-2.6.32.12-ipfire
+* v4l-dvb-b576509ea6d2-kmod-2.6.32.12-ipfire-xen
 * vdr-1.6.0
 * vdradmin-am-3.6.5
 * vim-7.0

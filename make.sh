@@ -357,6 +357,7 @@ buildipfire() {
   ipfiremake alsa			KMOD=1
   ipfiremake dahdi			KMOD=1
   ipfiremake cryptodev
+  ipfiremake compat-wireless
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
