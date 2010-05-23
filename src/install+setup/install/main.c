@@ -11,7 +11,7 @@
 #include "install.h"
 #define _GNU_SOURCE
  
-#define INST_FILECOUNT 6200
+#define INST_FILECOUNT 8400
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 
 #define EXT2 0
