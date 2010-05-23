@@ -29,3 +29,6 @@ usr/local/bin/syslogdctrl
 usr/local/bin/wirelessctrl
 usr/sbin/openvpn
 opt/pakfire/lib/functions.sh
+usr/local/share/GeoIP/GeoIP.dat
+usr/share/hwdata/pci.ids
+usr/share/hwdata/usb.ids
