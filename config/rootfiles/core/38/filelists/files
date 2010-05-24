@@ -32,3 +32,7 @@ opt/pakfire/lib/functions.sh
 usr/local/share/GeoIP/GeoIP.dat
 usr/share/hwdata/pci.ids
 usr/share/hwdata/usb.ids
+usr/bin/squidGuard
+usr/sbin/redirect_wrapper
+var/lib/squidguard
+var/urlrepo
