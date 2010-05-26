@@ -80,6 +80,9 @@ rm -rf /usr/libexec/ipsec
 #
 cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
 #
+# Stop sysklogd
+/etc/init.d/sysklogd stop
+#
 # Unpack the updated files
 #
 echo
@@ -87,6 +90,10 @@ echo Unpack the updated files ...
 #
 tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
 	--no-overwrite-dir
+#
+# Start Sevices
+/etc/init.d/sysklogd start
+/etc/init.d/squid start
 #
 # Modify grub.conf
 #
@@ -137,10 +144,6 @@ grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
 #
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
-# Delete old lm-sensor modullist...
-#
-rm -rf /etc/sysconfig/lm_sensors
-#
 # Cleanup Collectd statistics...
 #
 PRECLEAN=`du -sh /var/log/rrd/collectd`
@@ -160,6 +163,13 @@ rm -rf /var/log/rrd*/collectd/localhost/disk-*/disk_time*
 POSTCLEAN=`du -sh /var/log/rrd/collectd`
 #
 echo Cleaned up collectd directory from $PRECLEAN to $POSTCLEAN size.
+#
+# Start collectd
+/etc/init.d/collectd start
+#
+# Delete old lm-sensor modullist to force search at next boot
+#
+rm -rf /etc/sysconfig/lm_sensors
 #
 # USB Modeswitch conf now called setup, rename ...
 #
@@ -192,10 +202,18 @@ sed -i "s|^config setup$|&\n\tcharonstart=no|g" /var/ipfire/vpn/ipsec.conf
 chown nobody:nobody /var/ipfire/vpn/ipsec.conf
 chmod 644 /var/ipfire/vpn/ipsec.conf
 #
-#
-# Start Sevices
-#
-/etc/init.d/squid start
+# Add cryptodev to /etc/sysconfig/modules
+mv /etc/sysconfig/modules /etc/sysconfig/modules.org
+cat /etc/sysconfig/modules.org | \
+grep -v "cryptodev" | \
+grep -v "# End /etc/sysconfig/modules" > /etc/sysconfig/modules
+echo "" >> /etc/sysconfig/modules
+echo "### cryptodev" >> /etc/sysconfig/modules
+echo "#" >> /etc/sysconfig/modules
+echo "cryptodev" >> /etc/sysconfig/modules
+echo "" >> /etc/sysconfig/modules
+echo "# End /etc/sysconfig/modules" >> /etc/sysconfig/modules
+chmod 644 /etc/sysconfig/modules
 #
 # This core-update need a reboot
 /usr/bin/logger -p syslog.emerg -t core-upgrade-38 "Upgrade finished. If you use a customized grub.cfg"
