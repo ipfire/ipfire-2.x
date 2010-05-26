@@ -91,10 +91,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.34-usbnet_compile.patch
 
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) \
-		KMODPATH_ARG='INSTALL_MOD_PATH=/lib/modules/2.6.32.12-ipfire' KMODDIR=kernel install-modules
+		KMODPATH_ARG='INSTALL_MOD_PATH=/lib/modules/$(KVER)-$(VERSUFIX)' KMODDIR=kernel install-modules
 
 	#cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) \
-	#	KMODPATH_ARG='INSTALL_MOD_PATH=/lib/modules/2.6.32.12-ipfire' KMODDIR=kernel btinstall
+	#	KMODPATH_ARG='INSTALL_MOD_PATH=/lib/modules/$(KVER)-$(VERSUFIX)' KMODDIR=kernel btinstall
+	#todo check wy maniac has commented this. My system has build it and
+	#we need the ne bt-modules.
 
 	# Install firmware udev files...
 	cd $(DIR_APP)/udev && install -m 644 50-compat_firmware.rules /etc/udev/rules.d/
