@@ -265,7 +265,7 @@ if ($snortsettings{'RULES'} eq 'subscripted') {
 	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8_s.tar.gz";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
 	#$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2.8.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
-	$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2860_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
+	$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2860.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
 	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8.tar.gz";
 } else {
 	$url="http://www.snort.org/pub-bin/downloads.cgi/Download/comm_rules/Community-Rules-CURRENT.tar.gz";
@@ -353,8 +353,8 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
 		if ($line =~ m/dev/ ) {
 		$line =~ m/^.* (\d+)M.*$/;
 		my @temp = split(/ +/,$line);
-			if ($1<600) {
-				$errormessage = "$Lang::tr{'not enough disk space'} < 600MB, /var $1MB";
+			if ($1<300) {
+				$errormessage = "$Lang::tr{'not enough disk space'} < 300MB, /var $1MB";
 			} else {
 				my $filename = &downloadrulesfile();
 				if (defined $filename) {
