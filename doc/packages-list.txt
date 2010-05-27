@@ -27,7 +27,6 @@
 * MailTools-1.74
 * Net-DNS-0.47
 * Net-IPv4Addr-0.10
-* Net-SSLeay-1.35
 * Net-SSLeay-1.36
 * Net-Server-0.97
 * Pound-2.5
@@ -66,7 +65,7 @@
 * ccache-3.0pre0
 * cdrtools-2.01.01
 * centerim-4.22.1
-* clamav-0.96
+* clamav-0.96.1
 * cmake-2.4.8
 * collectd-4.9.1
 * compat-wireless-2.6.34-kmod-2.6.32.12-ipfire
@@ -284,7 +283,7 @@
 * rssdler-0.4.0a
 * rsync-3.0.7
 * rtorrent-0.8.6
-* samba-3.5.2
+* samba-3.5.3
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01
