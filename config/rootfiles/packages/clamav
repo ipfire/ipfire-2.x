@@ -28,6 +28,7 @@ usr/share/clamav
 #usr/share/man/man1/clamscan.1
 #usr/share/man/man1/freshclam.1
 #usr/share/man/man1/sigtool.1
+#usr/share/man/man5/clamav-milter.conf.5
 #usr/share/man/man5/clamd.conf.5
 #usr/share/man/man5/freshclam.conf.5
 #usr/share/man/man8/clamav-milter.8
