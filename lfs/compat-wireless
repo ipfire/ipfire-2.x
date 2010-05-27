@@ -77,6 +77,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
 
+ifeq "$(XEN)" "1"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.34-xen.patch
+endif
+
 	# Enable some USB ID's in rt2800usb driver
 	echo "CONFIG_RT2800USB_RT30XX=y"  >> $(DIR_APP)/config.mk
 	echo "CONFIG_RT2800USB_RT35XX=y"  >> $(DIR_APP)/config.mk
@@ -91,12 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.34-usbnet_compile.patch
 
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) \
-		KMODPATH_ARG='INSTALL_MOD_PATH=/lib/modules/$(KVER)-$(VERSUFIX)' KMODDIR=kernel install-modules
-
-	#cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) \
-	#	KMODPATH_ARG='INSTALL_MOD_PATH=/lib/modules/$(KVER)-$(VERSUFIX)' KMODDIR=kernel btinstall
-	#todo check wy maniac has commented this. My system has build it and
-	#we need the ne bt-modules.
+		KMODPATH_ARG='INSTALL_MOD_PATH=' KMODDIR=kernel install-modules
 
 	# Install firmware udev files...
 	cd $(DIR_APP)/udev && install -m 644 50-compat_firmware.rules /etc/udev/rules.d/

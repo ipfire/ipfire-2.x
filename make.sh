@@ -349,6 +349,7 @@ buildipfire() {
   ipfiremake madwifi			XEN=1
   ipfiremake dahdi			XEN=1 KMOD=1
   ipfiremake cryptodev			XEN=1
+  ipfiremake compat-wireless		XEN=1
   ipfiremake linux
   ipfiremake kqemu
   ipfiremake kvm-kmod
