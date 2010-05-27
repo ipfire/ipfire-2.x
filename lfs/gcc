@@ -94,7 +94,8 @@ ifeq "$(PASS)" "1"
 		--disable-nls \
 		--enable-shared \
 		--enable-languages=c
-  EXTRA_MAKE = bootstrap BOOT_LDFLAGS="-static"
+  EXTRA_MAKE = 
+  #bootstrap BOOT_LDFLAGS="-static"
   EXTRA_INSTALL = 
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
