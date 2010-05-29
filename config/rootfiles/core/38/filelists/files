@@ -133,3 +133,4 @@ var/ipfire/updatexlrator/bin/lscache
 var/ipfire/updatexlrator/updxlrator-lib.pl
 var/log/cache
 var/log/updatexlrator
+usr/local/bin/vpn-watch

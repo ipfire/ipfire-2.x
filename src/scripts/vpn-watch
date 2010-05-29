@@ -1,6 +1,6 @@
 #!/usr/bin/perl 
 ##################################################
-#####     VPN-Watch.pl     Version 0.4       #####
+#####     VPN-Watch.pl     Version 0.4a      #####
 ##################################################
 #                                                #
 #   VPN-Watch is part of the IPFire Firewall     #
@@ -55,7 +55,7 @@ foreach (@vpnsettings){
   if ( $established  eq '' || $connected eq '' ){
     logger("Remote IP for host $remotehostname has changed or no connection is established, restarting connection to $remoteip.");
     system("/usr/local/bin/ipsecctrl S $settings[0]");
-    next;
+    last; #all connections will reloaded
   }
  if ($debug){logger("All connections may be fine nothing was done.");}
  }
