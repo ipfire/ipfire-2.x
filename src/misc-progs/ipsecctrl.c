@@ -172,6 +172,17 @@ int main(int argc, char *argv[]) {
                 
  FILE *file = NULL;
                 
+
+        if (strcmp(argv[1], "I") == 0) {
+                safe_system("/usr/sbin/ipsec whack --status");
+                exit(0);
+        }
+
+        if (strcmp(argv[1], "R") == 0) {
+                safe_system("/usr/sbin/ipsec whack --rereadall >/dev/null");
+                exit(0);
+        }
+
  /* Get vpnwatch pid */
 
  if ( (argc == 2) && (file = fopen("/var/run/vpn-watch.pid", "r"))) {
@@ -194,16 +205,6 @@ int main(int argc, char *argv[]) {
                                 safe_system("/etc/rc.d/init.d/ipsec stop 2> /dev/null >/dev/null");
                                 close(file);
                         }
-                        exit(0);
-                }
-
-                if (strcmp(argv[1], "R") == 0) {
-                        safe_system("/usr/sbin/ipsec whack --rereadall >/dev/null");
-                        exit(0);
-                }
-
-                if (strcmp(argv[1], "I") == 0) {
-                        safe_system("/usr/sbin/ipsec whack --status");
                         exit(0);
                 }
 
