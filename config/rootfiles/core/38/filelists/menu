@@ -1,0 +1,8 @@
+var/ipfire/menu.d/00-menu.main
+var/ipfire/menu.d/10-system.menu
+var/ipfire/menu.d/20-status.menu
+var/ipfire/menu.d/30-network.menu
+var/ipfire/menu.d/40-services.menu
+var/ipfire/menu.d/50-firewall.menu
+var/ipfire/menu.d/60-ipfire.menu
+var/ipfire/menu.d/70-log.menu
