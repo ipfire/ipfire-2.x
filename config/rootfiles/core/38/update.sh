@@ -160,6 +160,10 @@ rm -rf /var/log/rrd*/collectd/localhost/interface/if_packets*
 rm -rf /var/log/rrd*/collectd/localhost/disk-*/disk_merged*
 rm -rf /var/log/rrd*/collectd/localhost/disk-*/disk_ops*
 rm -rf /var/log/rrd*/collectd/localhost/disk-*/disk_time*
+#
+rm -rf /var/log/rrd*/collectd/localhost/iptables-filter-INPUT/*-DROP_Wirelessinput*
+rm -rf /var/log/rrd*/collectd/localhost/iptables-filter-FORWARD/*-DROP_Wirelessforward*
+rm -rf /var/log/rrd*/collectd/localhost/iptables-filter-OUTGOINGFW
 POSTCLEAN=`du -sh /var/log/rrd/collectd`
 #
 echo Cleaned up collectd directory from $PRECLEAN to $POSTCLEAN size.
