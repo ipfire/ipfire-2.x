@@ -2072,7 +2072,7 @@
 'wlanap notifications' => 'Hinweise',
 'wlanap warnings' => 'Warnungen',
 'wlanap wlan status' => 'WLan Status',
-'wlanap link wireless' => 'Wireless Lan Clients freischaten',
+'wlanap link wireless' => 'Wireless Lan Clients freischalten',
 'wlanap link dhcp' => 'Wireless Lan DHCP Einstellungen',
 'wlanap invalid wpa' => 'Ungültige Länge in WPA-Passphrase. Muss zwischen 8 und 63 Zeichen lang sein.',
 'wlanap interface' => 'Interface übernehmen',
