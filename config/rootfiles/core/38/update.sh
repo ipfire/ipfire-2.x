@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 #
-KVER="2.6.32.12"
+KVER="2.6.32.15"
 ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
@@ -66,9 +66,11 @@ rm -rf /boot/System.map-*
 rm -rf /boot/config-*
 rm -rf /boot/ipfirerd-*
 rm -rf /boot/vmlinuz-*
-# Don't remove old xen modules. Kernel may stored outside.
 rm -rf /lib/modules/*-ipfire
-
+# Don't remove all old xen modules. Kernel may stored outside.
+# only from 2.6.27.25 and 31
+rm -rf /lib/modules/2.6.27.25-ipfire-xen
+rm -rf /lib/modules/2.6.27.31-ipfire-xen
 #
 # remove openswan libs ...
 #

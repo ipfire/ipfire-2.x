@@ -3,12 +3,13 @@ boot/System.map-ipfire-xen
 boot/config-KVER-ipfire-xen
 boot/vmlinuz-KVER-ipfire-xen
 boot/vmlinuz-ipfire-xen
-#lib/firmware/bnx2/bnx2-mips-06-5.0.0.j6.fw
-#lib/firmware/bnx2/bnx2-mips-09-5.0.0.j9.fw
-#lib/firmware/bnx2/bnx2-rv2p-09-5.0.0.j10.fw
-#lib/firmware/bnx2/bnx2-rv2p-09ax-5.0.0.j10.fw
-#lib/firmware/bnx2x-e1-5.2.13.0.fw
-#lib/firmware/bnx2x-e1h-5.2.13.0.fw
+#lib/firmware/bnx2x-e1-5.0.21.0.fw
+#lib/firmware/bnx2x-e1h-5.0.21.0.fw
+#lib/firmware/keyspan/usa18x.fw
+#lib/firmware/keyspan/usa19.fw
+#lib/firmware/mts_cdma.fw
+#lib/firmware/radeon/RV610_me.bin
+#lib/firmware/ti_5052.fw
 #lib/modules
 lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/build
@@ -586,15 +587,12 @@ lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-crypt.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-delay.ko
-#lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-least-pending.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-log-userspace.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-log.ko
-#lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-memcache.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-mirror.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-mod.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-multipath.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-queue-length.ko
-#lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-raid45.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-region-hash.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-round-robin.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/md/dm-service-time.ko
@@ -1010,7 +1008,6 @@ lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/hp-wmi.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/intel_menlow.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/msi-laptop.ko
-#lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/msi-wmi.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/panasonic-laptop.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/sony-laptop.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/platform/x86/tc1100-wmi.ko
@@ -1102,7 +1099,6 @@ lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/fnic
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/fnic/fnic.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/gdth.ko
-#lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/hpsa.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/hptiop.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/imm.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/scsi/initio.ko
@@ -1413,7 +1409,7 @@ lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/kernel/drivers/watchdog/wm8350_wdt.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/xen
 #lib/modules/KVER-ipfire-xen/kernel/drivers/xen/blktap2
-#lib/modules/KVER-ipfire-xen/kernel/drivers/xen/blktap2/blktap2.ko
+#lib/modules/KVER-ipfire-xen/kernel/drivers/xen/blktap2/blktap.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/xen/scsiback
 #lib/modules/KVER-ipfire-xen/kernel/drivers/xen/scsiback/xen-scsibk.ko
 #lib/modules/KVER-ipfire-xen/kernel/drivers/xen/scsifront
@@ -1569,7 +1565,6 @@ lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/kernel/net/ipv4/netfilter/ipt_ah.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/ipv4/netfilter/ipt_ecn.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/ipv4/netfilter/ipt_ipp2p.ko
-#lib/modules/KVER-ipfire-xen/kernel/net/ipv4/netfilter/ipt_ipv4options.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/ipv4/netfilter/iptable_filter.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/ipv4/netfilter/iptable_mangle.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/ipv4/netfilter/iptable_nat.ko
@@ -1634,7 +1629,6 @@ lib/modules/KVER-ipfire-xen
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/nf_conntrack_proto_udplite.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/nf_conntrack_sane.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/nf_conntrack_sip.ko
-#lib/modules/KVER-ipfire-xen/kernel/net/netfilter/nf_conntrack_slp.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/nf_conntrack_tftp.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/nf_tproxy_core.ko
 #lib/modules/KVER-ipfire-xen/kernel/net/netfilter/nfnetlink.ko
