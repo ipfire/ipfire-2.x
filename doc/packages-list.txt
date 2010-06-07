@@ -89,6 +89,10 @@
 * diffutils-2.8.1
 * dnsmasq-2.45
 * dosfstools-3.0.9
+* e1000-8.0.19-kmod-2.6.32.15-ipfire
+* e1000-8.0.19-kmod-2.6.32.15-ipfire-xen
+* e1000e-1.1.19-kmod-2.6.32.15-ipfire
+* e1000e-1.1.19-kmod-2.6.32.15-ipfire-xen
 * e2fsprogs-1.41.11
 * ebtables-v2.0.8-2
 * ed-0.2
@@ -276,6 +280,12 @@
 * psmisc-22.2
 * qemu-0.11.1-kqemu
 * qemu-0.12.3
+* r8101-1.016.00-kmod-2.6.32.15-ipfire
+* r8101-1.016.00-kmod-2.6.32.15-ipfire-xen
+* r8168-8.018.00-kmod-2.6.32.15-ipfire
+* r8168-8.018.00-kmod-2.6.32.15-ipfire-xen
+* r8169-6.013.00-kmod-2.6.32.15-ipfire
+* r8169-6.013.00-kmod-2.6.32.15-ipfire-xen
 * readline-5.1
 * reiser4progs-1.0.6
 * reiserfsprogs-3.6.21
