@@ -35,7 +35,7 @@ CFLAGS     =
 CXXFLAGS   =
 
 PROG	   = linux-xen
-PAK_VER    = 9
+PAK_VER    = 10
 DEPS	   = ""
 
 # Normal build or XEN build.

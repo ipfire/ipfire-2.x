@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2010 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -54,6 +54,8 @@ if [ ${?} = 0 ]; then
 	#Xen Kernel is active
 	#Set grub default entry to this kernel
 	sed -i -e "s|^default saved|default $ENTRY|g" /boot/grub/grub.conf
+	#Remove ramdisk of normal kernel (not enough space)
+	rm -f /boot/ipfirerd-$KVER.img
 else
 	#Normal Kernel
 	#pygrub crash with "default saved"
