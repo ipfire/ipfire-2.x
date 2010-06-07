@@ -24,6 +24,19 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 #
+OLDVERSION=`grep "version = " /opt/pakfire/etc/pakfire.conf | cut -d'"' -f2`
+#
+# Test if we running on xen
+#
+uname -r | grep "ipfire-xen";
+if [ ${?} = 0 ]; then
+	#Xen Kernel is active
+	NEWVERSION="2.7-xen"
+else
+	#Normal Kernel
+	NEWVERSION="2.7"
+fi
+#
 KVER="2.6.32.15"
 ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
@@ -220,6 +233,9 @@ echo "cryptodev" >> /etc/sysconfig/modules
 echo "" >> /etc/sysconfig/modules
 echo "# End /etc/sysconfig/modules" >> /etc/sysconfig/modules
 chmod 644 /etc/sysconfig/modules
+# Change version of Pakfire.conf
+#
+sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 #
 # This core-update need a reboot
 /usr/bin/logger -p syslog.emerg -t core-upgrade-38 "Upgrade finished. If you use a customized grub.cfg"

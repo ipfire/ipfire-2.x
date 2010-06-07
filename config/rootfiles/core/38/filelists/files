@@ -1,4 +1,5 @@
 etc/system-release
+etc/issue
 etc/e2fsck.conf
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
 etc/rc.d/init.d/leds
