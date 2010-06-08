@@ -237,7 +237,26 @@ chmod 644 /etc/sysconfig/modules
 #
 sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
 #
-# This core-update need a reboot
-/usr/bin/logger -p syslog.emerg -t core-upgrade-38 "Upgrade finished. If you use a customized grub.cfg"
-/usr/bin/logger -p syslog.emerg -t core-upgrade-38 "Check it before reboot !!!"
-/usr/bin/logger -p syslog.emerg -t core-upgrade-38 " *** Please reboot... *** "
+# After pakfire has ended run it again and update the lists and do upgrade
+#
+echo '#!/bin/bash'                                        >  /tmp/pakfire_update
+echo 'while [ "$(ps -A | grep " update.sh")" != "" ]; do' >> /tmp/pakfire_update
+echo '    sleep 1'                                        >> /tmp/pakfire_update
+echo 'done'                                               >> /tmp/pakfire_update
+echo 'while [ "$(ps -A | grep " pakfire")" != "" ]; do'   >> /tmp/pakfire_update
+echo '    sleep 1'                                        >> /tmp/pakfire_update
+echo 'done'                                               >> /tmp/pakfire_update
+echo '/opt/pakfire/pakfire update -y --force'             >> /tmp/pakfire_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pakfire_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pakfire_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pakfire_update
+echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-38 "Upgrade finished. If you use a customized grub.cfg"' >> /tmp/pakfire_update
+echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-38 "Check it before reboot !!!"' >> /tmp/pakfire_update
+echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-38 " *** Please reboot... *** "' >> /tmp/pakfire_update
+#
+chmod +x /tmp/pakfire_update
+/tmp/pakfire_update &
+#
+echo
+echo Please wait until pakfire has ended...
+echo
