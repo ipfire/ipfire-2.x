@@ -44,6 +44,7 @@ etc/rc.d/init.d/modules
 usr/local/bin/ipsecctrl
 usr/local/bin/syslogdctrl
 usr/local/bin/wirelessctrl
+usr/local/sbin/setup
 usr/sbin/openvpn
 opt/pakfire/lib/functions.sh
 usr/local/share/GeoIP/GeoIP.dat
