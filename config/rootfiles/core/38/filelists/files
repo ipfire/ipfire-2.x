@@ -152,3 +152,4 @@ var/ipfire/updatexlrator/updxlrator-lib.pl
 var/log/cache
 var/log/updatexlrator
 usr/local/bin/vpn-watch
+srv/web/ipfire/html/images/go-down.png
