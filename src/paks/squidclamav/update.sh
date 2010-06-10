@@ -24,6 +24,15 @@
 . /opt/pakfire/lib/functions.sh
 ./uninstall.sh
 extract_files
-# Restoring the backup  has to be excluded because config file changed
-# restore_backup ${NAME}
+
+VERSION=$(cat /opt/pakfire/db/installed/meta-squidclamav | grep Release | cut -d" " -f2)
+
+if [ "$VERSION" -gt "10" ]; then
+ restore_backup ${NAME}
+fi
+
+if [ "$VERSION" -lt "11" ]; then
+ sed -e "s|logfile.*|logfile /var/log/squid/squidclamav.log|g" /etc/squidclamav.conf
+fi
+
 /etc/init.d/squid restart
