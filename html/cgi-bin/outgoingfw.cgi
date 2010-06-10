@@ -465,14 +465,14 @@ END
 						unless ($outfwsettings{'SIP'}) { $outfwsettings{'DISPLAY_SIP'} = 'ALL'; } else { $outfwsettings{'DISPLAY_SIP'} = $outfwsettings{'SIP'}; }
 						unless ($outfwsettings{'SMAC'}) { $outfwsettings{'DISPLAY_SMAC'} = 'ALL'; } else { $outfwsettings{'DISPLAY_SMAC'} = $outfwsettings{'SMAC'}; }
 						print <<END
-						<tr><td width='14%' align='right'>$Lang::tr{'source ip'}:
+						<tr><td width='14%' align='right'>$Lang::tr{'source ip or net'}:
 						    <td width='14%' align='left'>$outfwsettings{'DISPLAY_SIP'}
 						    <td width='44%' colspan='2' align='center'>
 END
 ;
 					}
 						print <<END
-						<tr><td width='14%' align='right'>$Lang::tr{'time'} - </td>
+						<tr><td width='14%' align='right'>$Lang::tr{'time'} -  </td>
 						    <td width='14%' align='left'>
 END
 ;
@@ -656,10 +656,10 @@ END
 					<optgroup label='---'>
 						<option value='all' $selected{'SNET'}{'ALL'}>$Lang::tr{'all'}</option>
 					<optgroup label='$Lang::tr{'ip address'}'>
-						<option value='ip' $selected{'SNET'}{'ip'}>$Lang::tr{'source ip'}</option>
+						<option value='ip' $selected{'SNET'}{'ip'}>$Lang::tr{'source ip or net'}</option>
 						<option value='red' $selected{'SNET'}{'red'}>$Lang::tr{'red'} IP</option>
 					</optgroup>
-					<optgroup label='$Lang::tr{'alt vpns'}'>
+					<optgroup label='$Lang::tr{'alt vpn'}'>
 						<option value='ipsec' $selected{'SNET'}{'ipsec'}>IPSEC $Lang::tr{'interface'}</option>
 						<option value='ovpn' $selected{'SNET'}{'ovpn'}>OpenVPN $Lang::tr{'interface'}</option>
 					</optgroup>
@@ -686,8 +686,8 @@ END
 					</optgroup>
 				</select>
 			</td>
-			<td width='20%' align='right' colspan='2'>$Lang::tr{'source ip'}: <img src='/blob.gif' /></td>
-			<td width='30%' align='left' colspan='2'><input type='text' name='SIP' maxlength='15' value='$outfwsettings{'SIP'}' /></td>
+			<td width='20%' align='right' colspan='2'>$Lang::tr{'source ip or net'}<img src='/blob.gif' /></td>
+			<td width='30%' align='left' colspan='2'><input type='text' name='SIP' value='$outfwsettings{'SIP'}' /></td>
 		</tr>
 		<tr>
 			<td width='20%' align='right'>$Lang::tr{'logging'}:</td>
@@ -700,10 +700,10 @@ END
 			<td width='20%' align='right' colspan='2' />
 			<td width='30%' align='left' colspan='2' />
 		<tr>
-			<td width='20%' align='right'>$Lang::tr{'destination ip'}: <img src='/blob.gif' /></td>
-			<td width='30%' align='left'><input type='text' name='DIP' maxlength='15' value='$outfwsettings{'DIP'}' /></td>
-			<td width='20%' align='right' colspan='2'>$Lang::tr{'destination port'}: <img src='/blob.gif' /></td>
-			<td width='30%' align='left' colspan='2'><input type='text' name='DPORT' maxlength='11' value='$outfwsettings{'DPORT'}' /></td>
+			<td width='20%' align='right'>$Lang::tr{'destination ip or net'}: <img src='/blob.gif' /></td>
+			<td width='30%' align='left'><input type='text' name='DIP'  value='$outfwsettings{'DIP'}' /></td>
+			<td width='20%' align='right' colspan='2'>$Lang::tr{'destination port'}(s) <img src='/blob.gif' /></td>
+			<td width='30%' align='left' colspan='2'><input type='text' name='DPORT' value='$outfwsettings{'DPORT'}' /></td>
 		</tr>
 		<tr>
 			<td width='20%' align='right'>$Lang::tr{'time'}:</td>
