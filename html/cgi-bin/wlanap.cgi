@@ -307,13 +307,12 @@ if ( $wlan_card_status ne '' ){
 print "<br />";
 print "<table width='95%' cellspacing='0' border='0'>";
 print "<tr align='center'>";
-print "<td colspan='4'><hr size='1'></td>";
 print "</tr>";
 print "<tr align='center'>";
 print "<td width='40%'>&nbsp;</td>";
-print "<td width='20%'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='submit' name='ACTION' value='$Lang::tr{'start'}' /></form></td>";
-print "<td width='20%'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='submit' name='ACTION' value='$Lang::tr{'stop'}' /></form></td>";
-print "<td width='20%'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='submit' name='ACTION' value='$Lang::tr{'restart'}' /></form></td>";
+print "<td width='20%'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'start'}' /><input type='image' alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' /></form></td>";
+print "<td width='20%'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'stop'}' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' /></form></td>";
+print "<td width='20%'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'restart'}' /><input type='image' alt='$Lang::tr{'restart'}' title='$Lang::tr{'restart'}' src='/images/view-refresh.png' /></form></td>";
 print "</tr>";
 print "</table>";
 }else{
@@ -424,9 +423,10 @@ END
 print <<END
 <br />
 <table width='95%' cellspacing='0'>
-<tr><td align='center'><hr size='1'>
+<tr><td align='center'>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	<input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></form></td>
+       <input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
+       <input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td>
 </tr>
 </table>
 END
