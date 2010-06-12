@@ -2668,7 +2668,8 @@ END
 	<td class='boldbase' nowrap='nowrap' colspan='2'>$Lang::tr{'ovpn subnet'}<br /><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn device'}</td>
         <td><select name='DDEVICE' ><option value='tun' $selected{'DDEVICE'}{'tun'}>TUN</option>
-               			    <option value='tap' $selected{'DDEVICE'}{'tap'}>TAP</option></select></td>				    
+               			<!-- this is still not working
+               			    <option value='tap' $selected{'DDEVICE'}{'tap'}>TAP</option></select>--> </td>				    
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td>
         <td><select name='DPROTOCOL'><option value='udp' $selected{'DPROTOCOL'}{'udp'}>UDP</option>
                			    <option value='tcp' $selected{'DPROTOCOL'}{'tcp'}>TCP</option></select></td>				    
