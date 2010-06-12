@@ -111,9 +111,9 @@ ifeq "$(XEN)" "1"
 	mkdir -p $(DIR_SRC)/xen-patches
 	cd $(DIR_SRC)/xen-patches && tar jxf $(DIR_DL)/xen-patches-2.6.32-2.tar.bz2
 
-	for x in `find $(DIR_SRC)/xen-patches/ -type f`; do \
+	for x in `ls -1 $(DIR_SRC)/xen-patches/*.patch1`; do \
 		echo "*********** [Patch: $$x]"; \
-		patch -d $(DIR_APP) -p1 < $$x || break; \
+		cd $(DIR_APP) && pwd && patch -Np1 < $$x || exit 1; \
 	done
 	rm -rf $(DIR_SRC)/xen-patches
 
