@@ -85,7 +85,7 @@ int getpassword(char *password, char *text)
 		done = 1;
 		sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
 		rc = newtWinEntries(title, text,
-			70, 5, 5, 50, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);
+			65, 5, 5, 50, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);
 
 		if (rc != 2)
 		{
