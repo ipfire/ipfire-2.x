@@ -35,7 +35,9 @@ srv/web/ipfire/cgi-bin/urlfilter.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
+var/ipfire/langs/es.pl
 var/ipfire/langs/fr.pl
+var/ipfire/langs/list
 var/ipfire/main/disable_nf_sip
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/ipsec
