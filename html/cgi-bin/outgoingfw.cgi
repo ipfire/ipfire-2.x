@@ -559,13 +559,13 @@ END
 		if ($p2pline[2] eq 'on') {
 			print <<END
 				<input type='hidden' name='ACTION' value='disable' />
-				<input type='image' name='submit' src='/images/stock_ok.png' alt='' />
+				<input type='image' name='submit' src='/images/stock_ok.png' alt='$Lang::tr{'outgoingfw p2p allow'}' title='$Lang::tr{'outgoingfw p2p allow'}'/>
 END
 ;
 		} else {
 			print <<END
 				<input type='hidden' name='ACTION' value='enable' />
-				<input type='image' name='submit' src='/images/stock_stop.png' alt='' />
+				<input type='image' name='submit' src='/images/stock_stop.png' alt='$Lang::tr{'outgoingfw p2p deny'}' title='$Lang::tr{'outgoingfw p2p deny'}' />
 END
 ;
 		}
@@ -576,7 +576,7 @@ END
 	}
 	print <<END
 	</table>
-  <br />$Lang::tr{'outgoingfw p2p description'}
+  <br />$Lang::tr{'outgoingfw p2p description 1'} <img src='/images/stock_ok.png' align='absmiddle' alt='$Lang::tr{'outgoingfw p2p deny'}'> $Lang::tr{'outgoingfw p2p description 2'} <img src='/images/stock_stop.png' align='absmiddle' alt='$Lang::tr{'outgoingfw p2p deny'}'> $Lang::tr{'outgoingfw p2p description 3'}
 END
 ;
 	&Header::closebox();
