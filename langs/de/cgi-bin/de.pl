@@ -1277,7 +1277,7 @@
 'outgoingfw mode0' => 'In diesem Modus ist es allen Rechnern im Netzwerk uneingeschränkt möglich Verbindungen ins Internet aufzubauen.',
 'outgoingfw mode1' => 'In diesem Modus werden nur Verbindungen nach den oben definierten Regeln zugelassen.',
 'outgoingfw mode2' => 'In diesem Modus werden sämtliche Verbindungen erlaubt, bis auf die oben definierten Block-Regeln.',
-'outgoingfw p2p description 1' => 'Das Symbole',
+'outgoingfw p2p description 1' => 'Das Symbol',
 'outgoingfw p2p description 2' => 'bedeutet das, dass P2P-Protokoll erlaubt wird oder',
 'outgoingfw p2p description 3' => 'das, dass P2P-Protokoll gesperrt wird.',
 'outgoingfw p2p deny' => 'P2P-Protokoll ist gesperrt!',
