@@ -71,7 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/snort* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls \
-	    --sysconfdir=/etc/snort \
+	    --sysconfdir=/etc/snort --target=i586 \
 	    --enable-linux-smp-stats --enable-smb-alerts
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install

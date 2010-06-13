@@ -89,6 +89,10 @@ rm -rf /lib/modules/2.6.27.31-ipfire-xen
 #
 rm -rf /usr/lib/ipsec
 rm -rf /usr/libexec/ipsec
+#
+# old snort libs ...
+#
+rm -rf /usr/lib/snort_*
 
 #
 # Backup grub.conf
