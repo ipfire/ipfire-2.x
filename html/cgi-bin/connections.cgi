@@ -57,7 +57,7 @@ if (open(IP, "${General::swroot}/red/local-ipaddress")) {
         push(@colour, ${Header::colourfw} );
 }
 
-my @vpn = `grep "rightsubnet=" /etc/ipsec.conf | cut -f2 -d"=" | sed "s|/| |g"`;
+my @vpn = `/usr/local/bin/ipsecctrl I|grep erouted|cut -d"]" -f3|cut -d"=" -f4|cut -d";" -f1| sed "s|/| |g"`;
   foreach my $route (@vpn) {
                 chomp($route);
                 my @temp = split(/[\t ]+/, $route);
