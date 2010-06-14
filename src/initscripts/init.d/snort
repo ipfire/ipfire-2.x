@@ -62,6 +62,14 @@ fi
 
 case "$1" in
         start)
+		# Disable incompatible rules
+		for file in $(ls /etc/snort/rules/*.rules); do
+			sed -i 's|^alert.*!\[\$DNS_SERVERS|#&|g' $file
+			sed -i 's|^alert.*!\$SSH_PORTS|#&|g' $file
+			sed -i 's|^alert.*!\$HOME_NET|#&|g' $file
+			sed -i 's|^alert.*!\$SQL_SERVERS|#&|g' $file
+		done
+
                 for DEVICE in $DEVICES; do
                         boot_mesg "Starting Intrusion Detection System on $DEVICE..."
                         /usr/sbin/snort -c /etc/snort/snort.conf -i $DEVICE -D -l /var/log/snort --create-pidfile --nolock-pidfile --pid-path /var/run/

@@ -507,7 +507,7 @@
 'clock last synchronized at' => 'Clock was last synchronized at',
 'comment' => 'Description:',
 'common name' => 'Common name',
-'community rules' => 'Snort GPL Community Rules',
+'community rules' => 'Emergingthreats.net Community Rules',
 'comp-lzo' => 'LZO-Compression:',
 'compression' => 'Compression:',
 'computer to modem rate' => 'Computer to modem rate:',

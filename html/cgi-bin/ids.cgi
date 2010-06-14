@@ -268,7 +268,7 @@ if ($snortsettings{'RULES'} eq 'subscripted') {
 	$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2860.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
 	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8.tar.gz";
 } else {
-	$url="http://www.snort.org/pub-bin/downloads.cgi/Download/comm_rules/Community-Rules-CURRENT.tar.gz";
+	$url="http://www.emergingthreats.net/rules/emerging.rules.tar.gz";
 }
 
 if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} eq "snort" )
@@ -558,6 +558,11 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 		# Loop over each rule file
 		foreach my $rulefile (sort keys(%snortrules)) {
 			my $rulechecked = '';
+
+			# Hide inkompatible Block rules
+			if ($rulefile =~'-BLOCK.rules') {
+				next;
+			}
 
 			# Check if reached half-way through rule file rules to start new column
  		if ($ruledisplaycnt > $rulecnt) {
