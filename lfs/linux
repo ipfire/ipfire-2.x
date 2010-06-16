@@ -189,10 +189,15 @@ endif
 #	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
 
 ifneq "$(XEN)" "1"
-	# Blacklist all framebuffer modules
+	# Blacklist old framebuffer modules
 	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/video -name *fb.ko); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer ; \
 	done
+	# Blacklist new drm framebuffer modules
+	for f in $$(ls -1 /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/gpu/drm/*/*.ko); do \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer ; \
+	done
+
 endif
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
