@@ -63,12 +63,14 @@ fi
 case "$1" in
         start)
 		# Disable incompatible rules
-		for file in $(ls /etc/snort/rules/*.rules); do
+                boot_mesg "Check/Fix Intrusion Detection rules..."
+		for file in $(ls /etc/snort/rules/*.rules 2>/dev/null); do
 			sed -i 's|^alert.*!\[\$DNS_SERVERS|#&|g' $file
 			sed -i 's|^alert.*!\$SSH_PORTS|#&|g' $file
 			sed -i 's|^alert.*!\$HOME_NET|#&|g' $file
 			sed -i 's|^alert.*!\$SQL_SERVERS|#&|g' $file
 		done
+		echo_ok
 
                 for DEVICE in $DEVICES; do
                         boot_mesg "Starting Intrusion Detection System on $DEVICE..."
