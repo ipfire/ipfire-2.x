@@ -1,5 +1,5 @@
 #!/bin/bash
 
-/usr/local/bin/openvpnctrl -s
+/usr/local/bin/openvpnctrl -s > /dev/null
 
 exit 0
