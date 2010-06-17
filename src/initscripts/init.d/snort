@@ -20,57 +20,57 @@ PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin; export PATH
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/snort/settings)
 
-if [ "$ENABLE_SNORT_ORANGE" == "on" ]; then
-        HOME_NET+="$ORANGE_ADDRESS,"
-        DEVICES+="$ORANGE_DEV "
-fi
-
-if [ "$ENABLE_SNORT_GREEN" == "on" ]; then
-        HOME_NET+="$GREEN_ADDRESS,"
-        DEVICES+="$GREEN_DEV "
-fi
-
-if [ "$ENABLE_SNORT_BLUE" == "on" ]; then
-        HOME_NET+="$BLUE_ADDRESS,"
-        DEVICES+="$BLUE_DEV "
-fi
-
-if [ "$ENABLE_SNORT" == "on" ]; then
-        LOCAL_IP=`cat /var/ipfire/red/local-ipaddress`
-        if [ "$LOCAL_IP" ]; then
-                HOME_NET+="$LOCAL_IP,"
-        else
-                exit 1 ## Add error handling here
-        fi
-        DEVICES+=`cat /var/ipfire/red/iface 2>/dev/null`
-fi
-
-COUNT=`echo $HOME_NET | wc -m`
-HOME_NET=`echo $HOME_NET | cut -c $[$COUNT - 2]`
- 
-echo "var HOME_NET [$HOME_NET]" >       /etc/snort/vars
-echo "var EXTERNAL_NET ANY" >>          /etc/snort/vars
-
-DNS1=`cat /var/ipfire/red/dns1 2>/dev/null`
-DNS2=`cat /var/ipfire/red/dns2 2>/dev/null`
-
-if [ "$DNS2" ]; then
-        echo "var DNS_SERVERS [$DNS1,$DNS2]" >> /etc/snort/vars
-else
-        echo "var DNS_SERVERS $DNS1" >> /etc/snort/vars
-fi 
-
 case "$1" in
         start)
-		# Disable incompatible rules
-                boot_mesg "Check/Fix Intrusion Detection rules..."
-		for file in $(ls /etc/snort/rules/*.rules 2>/dev/null); do
-			sed -i 's|^alert.*!\[\$DNS_SERVERS|#&|g' $file
-			sed -i 's|^alert.*!\$SSH_PORTS|#&|g' $file
-			sed -i 's|^alert.*!\$HOME_NET|#&|g' $file
-			sed -i 's|^alert.*!\$SQL_SERVERS|#&|g' $file
-		done
-		echo_ok
+		if [ "$BLUE_NETADDRESS" ]; then
+			BLUE_NET="$BLUE_NETADDRESS/$BLUE_NETMASK,"
+			BLUE_IP="$BLUE_ADDRESS,"
+		fi
+
+		if [ "$ORANGE_NETADDRESS" ]; then
+			ORANGE_NET="$ORANGE_NETADDRESS/$ORANGE_NETMASK,"
+			ORANGE_IP="$ORANGE_ADDRESS,"
+		fi
+
+		if [ "$ENABLE_SNORT_ORANGE" == "on" ]; then
+			DEVICES+="$ORANGE_DEV "
+			HOMENET+="$ORANGE_IP"
+		else
+			HOMENET+="$ORANGE_NET"
+		fi
+
+		if [ "$ENABLE_SNORT_BLUE" == "on" ]; then
+			DEVICES+="$BLUE_DEV "
+			HOMENET+="$BLUE_IP"
+		else
+			HOMENET+="$BLUE_NET"
+		fi
+
+		if [ "$ENABLE_SNORT_GREEN" == "on" ]; then
+			DEVICES+="$GREEN_DEV "
+			HOMENET+="$GREEN_ADDRESS,"
+		else
+			HOMENET+="$GREEN_NETADDRESS/$GREEN_NETMASK,"
+		fi
+
+		if [ "$ENABLE_SNORT" == "on" ]; then
+			DEVICES+=`cat /var/ipfire/red/iface 2>/dev/null`
+			LOCAL_IP=`cat /var/ipfire/red/local-ipaddress 2>/dev/null`
+			if [ "$LOCAL_IP" ]; then
+				HOMENET+="$LOCAL_IP,"
+			fi
+		fi
+		HOMENET+="127.0.0.1"
+		echo "var HOME_NET [$HOMENET]" > /etc/snort/vars
+
+		DNS1=`cat /var/ipfire/red/dns1 2>/dev/null`
+		DNS2=`cat /var/ipfire/red/dns2 2>/dev/null`
+
+		if [ "$DNS2" ]; then
+			echo "var DNS_SERVERS [$DNS1,$DNS2]" >> /etc/snort/vars
+		else
+			echo "var DNS_SERVERS $DNS1" >> /etc/snort/vars
+		fi
 
                 for DEVICE in $DEVICES; do
                         boot_mesg "Starting Intrusion Detection System on $DEVICE..."

@@ -70,6 +70,7 @@ tar cjvf /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
 /etc/init.d/collectd stop
 /etc/init.d/squid stop
 /etc/init.d/ipsec stop
+/etc/init.d/snort stop
 
 echo
 echo Update Kernel to $KVER ...
@@ -90,9 +91,10 @@ rm -rf /lib/modules/2.6.27.31-ipfire-xen
 rm -rf /usr/lib/ipsec
 rm -rf /usr/libexec/ipsec
 #
-# old snort libs ...
+# old snort libs and rules ...
 #
 rm -rf /usr/lib/snort_*
+rm -rf /etc/snort
 
 #
 # Backup grub.conf

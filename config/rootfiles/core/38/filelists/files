@@ -6,8 +6,10 @@ etc/rc.d/init.d/leds
 etc/rc.d/init.d/rc
 etc/rc.d/init.d/snort
 etc/rc.d/init.d/networking/red.up/50-ovpn
+etc/rc.d/rc0.d/K78snort
 etc/rc.d/rc0.d/K79leds
 etc/rc.d/rc3.d/S21leds
+etc/rc.d/rc6.d/K78snort
 etc/rc.d/rc6.d/K79leds
 etc/udev/rules.d/52-nut-usbups.rules
 etc/udev/rules.d/xpp.rules

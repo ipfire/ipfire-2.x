@@ -119,6 +119,8 @@ $(TARGET) :
 	ln -sf ../init.d/fcron       /etc/rc.d/rc0.d/K08fcron
 	ln -sf ../init.d/fcron       /etc/rc.d/rc3.d/S40fcron
 	ln -sf ../init.d/fcron       /etc/rc.d/rc6.d/K08fcron
+	ln -sf ../init.d/snort       /etc/rc.d/rc0.d/K78snort
+	ln -sf ../init.d/snort       /etc/rc.d/rc6.d/K78snort
 	ln -sf ../init.d/network     /etc/rc.d/rc0.d/K80network
 	ln -sf ../init.d/network     /etc/rc.d/rc3.d/S20network
 	ln -sf ../init.d/network     /etc/rc.d/rc6.d/K80network

@@ -118,6 +118,7 @@ etc/rc.d/rc0.d/K08fcron
 etc/rc.d/rc0.d/K28apache
 etc/rc.d/rc0.d/K30sshd
 etc/rc.d/rc0.d/K45random
+etc/rc.d/rc0.d/K78snort
 etc/rc.d/rc0.d/K79leds
 etc/rc.d/rc0.d/K80network
 #etc/rc.d/rc0.d/K84bluetooth
@@ -152,6 +153,7 @@ etc/rc.d/rc6.d/K08fcron
 etc/rc.d/rc6.d/K28apache
 etc/rc.d/rc6.d/K30sshd
 etc/rc.d/rc6.d/K45random
+etc/rc.d/rc6.d/K78snort
 etc/rc.d/rc6.d/K79leds
 etc/rc.d/rc6.d/K80network
 #etc/rc.d/rc6.d/K84bluetooth
