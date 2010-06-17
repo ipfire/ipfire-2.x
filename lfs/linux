@@ -197,7 +197,7 @@ ifneq "$(XEN)" "1"
 	for f in $$(ls -1 /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/gpu/drm/*/*.ko); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer ; \
 	done
-
+	sed -i -e "s|.ko||g" /etc/modprobe.d/framebuffer
 endif
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
