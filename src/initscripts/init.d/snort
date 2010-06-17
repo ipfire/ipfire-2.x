@@ -122,6 +122,9 @@ case "$1" in
 		          boot_mesg "Stopping Guardian..."
 		          killproc /usr/local/bin/guardian.pl
 		          fi
+
+		# Don't report returncode of rm if snort was not started
+		exit 0
         ;;
                 
         status)
