@@ -363,8 +363,8 @@ if ($settings{'SPEED'} ne 'off') {
 print <<END                        
                         <br />
                                 <b>$Lang::tr{'bandwidth usage'}:</b>
-				$Lang::tr{'incoming'}: <span id="rx_kbs"></span>
-                                $Lang::tr{'outgoing'}: <span id="tx_kbs"></span>
+				$Lang::tr{'incoming'}: <span id="rx_kbs"></span>&nbsp;$Lang::tr{'outgoing'}: <span id="tx_kbs"></span>
+
 END
 ;
 }
