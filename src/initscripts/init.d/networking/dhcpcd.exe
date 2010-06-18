@@ -49,7 +49,7 @@ dhcpcd_up()
 		fi
 
 		#Get IP Address
-		echo "$new_ip_address"  > /var/ipfire/red/local-ipaddress
+		echo -n "$new_ip_address"  > /var/ipfire/red/local-ipaddress
 
 		#Get default gateway
 		grep -v " gateway$" /etc/hosts > /tmp/hosts
@@ -59,7 +59,7 @@ dhcpcd_up()
 	fi
 	if [ $update ]; then
 		[ -e "/var/ipfire/red/active" ] || touch /var/ipfire/red/active
-		echo "$new_routers" > /var/ipfire/red/remote-ipaddress
+		echo -n "$new_routers" > /var/ipfire/red/remote-ipaddress
 		logger -p local0.info -t dhcpcd.exe[$$] "$interface has been (re)configured with IP=$new_ip_address"
 		run_subdir ${rc_base}/init.d/networking/red.up/
 		touch /var/ipfire/red/active
