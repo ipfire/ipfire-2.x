@@ -42,6 +42,7 @@ var/ipfire/langs/es.pl
 var/ipfire/langs/fr.pl
 var/ipfire/langs/list
 var/ipfire/main/disable_nf_sip
+var/ipfire/outgoing/groups
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/ipsec
 etc/rc.d/init.d/network
