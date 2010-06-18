@@ -107,7 +107,6 @@ $ipgroupcontent =~ s/\n/<br \/>/g;
 &Header::openbox('100%', 'center', $Lang::tr{'outgoing firewall ip groups'});
 
 print <<END
-<a name="outgoing showipgroup"</a>
 <br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}#outgoing showipgroup'>
 <table width='95%' cellspacing='0'>
