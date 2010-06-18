@@ -37,6 +37,7 @@ srv/web/ipfire/cgi-bin/time.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+srv/web/ipfire/html/themes/ipfire/include/functions.pl
 var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
 var/ipfire/langs/es.pl
