@@ -189,6 +189,8 @@ endif
 #	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
 
 ifneq "$(XEN)" "1"
+	# Blacklist matroxfb_base
+	echo "blacklist matroxfb_base >> /etc/modprobe.d/framebuffer
 	# Blacklist old framebuffer modules
 	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/video -name *fb.ko); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer ; \
