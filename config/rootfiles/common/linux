@@ -4,6 +4,7 @@ boot/config-KVER-ipfire
 boot/vmlinuz-KVER-ipfire
 boot/vmlinuz-ipfire
 etc/modprobe.d/framebuffer
+etc/modprobe.d/isdn
 #lib/firmware/keyspan/usa19qi.fw
 lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/build
