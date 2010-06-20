@@ -34,11 +34,12 @@ if ($hostipaddr !~ /\d+\.\d+\.\d+\.\d+/) {
 
 $networkaddr = $hostipaddr;
 $networkaddr =~ s/\d+$/0/;
-$gatewayaddr = $hostipaddr;
-$gatewayaddr =~ s/\d+$/$hostgatewaybyte/;
+$gatewayaddr = `cat /var/ipfire/red/remote-ipaddress 2>/dev/null`;
 $broadcastaddr = $hostipaddr;
 $broadcastaddr =~ s/\d+$/255/;
 &build_ignore_hash;
+
+print "My gatewayaddess is: $gatewayaddr\n";
 
 # This is the target hash. If a packet was destened to any of these, then the
 # sender of that packet will get denied, unless it is on the ignore list..
