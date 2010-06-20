@@ -95,7 +95,11 @@ rm -rf /usr/libexec/ipsec
 #
 rm -rf /usr/lib/snort_*
 rm -rf /etc/snort
-
+#
+# mISDN Files that was moved to sbin
+#
+rm -rf /usr/bin/misdn_rename
+rm -rf /usr/bin/misdn_cleanl2
 #
 # Backup grub.conf
 #

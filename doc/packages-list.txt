@@ -1,4 +1,4 @@
-== List of softwares used to build IPFire Version: 2.6 ==
+== List of softwares used to build IPFire Version: 2.7 ==
 * Archive-Tar-1.29
 * Archive-Zip-1.16
 * BerkeleyDB-0.27
@@ -169,7 +169,7 @@
 * l7-protocols-2009-05-10
 * lame-3.97
 * lcd4linux-0.10.1-RC2
-* lcr_20090906
+* lcr-20100601
 * less-394
 * libaal-1.0.5
 * libart_lgpl-2.3.17
@@ -209,7 +209,9 @@
 * lynis-1.2.9
 * lzo-2.02
 * m4-1.4.4
-* mISDNuser_20090906
+* mISDN-20100525-kmod-2.6.32.15-ipfire
+* mISDN-20100525-kmod-2.6.32.15-ipfire-xen
+* mISDNuser-20100525
 * madwifi-hal-0.10.5.6-r4119-20100201-kmod-2.6.32.15-ipfire
 * madwifi-hal-0.10.5.6-r4119-20100201-kmod-2.6.32.15-ipfire-xen
 * make-3.81

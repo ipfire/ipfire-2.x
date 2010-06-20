@@ -347,6 +347,7 @@ buildipfire() {
   ipfiremake kqemu			XEN=1
   ipfiremake v4l-dvb			XEN=1
   ipfiremake madwifi			XEN=1
+  ipfiremake mISDN			XEN=1
   ipfiremake dahdi			XEN=1 KMOD=1
   ipfiremake cryptodev			XEN=1
   ipfiremake compat-wireless		XEN=1
@@ -361,6 +362,7 @@ buildipfire() {
   ipfiremake v4l-dvb
   ipfiremake madwifi
   ipfiremake alsa			KMOD=1
+  ipfiremake mISDN
   ipfiremake dahdi			KMOD=1
   ipfiremake cryptodev
   ipfiremake compat-wireless

@@ -26,6 +26,7 @@ case "${1}" in
 		done
 
 		modprobe mISDN_dsp
+		modprobe mISDN_dsp_oslec
 		if [ ${?} = 0 ]; then
 		    echo_ok;
 		else
@@ -39,7 +40,7 @@ case "${1}" in
 		boot_mesg "Stopping mISDNv2 ... "
 
 		# unload mISDN hardware modules
-		for module in mISDN_dsp hfcpci hfcsusb hfcmulti avmfritz speedfax mISDNinfineon xhfc mISDNipac mISDNisar; do
+		for module in mISDN_dsp_oslec mISDN_dsp hfcpci hfcsusb hfcmulti avmfritz speedfax mISDNinfineon xhfc mISDNipac mISDNisar; do
 		    rmmod $module > /dev/null 2>&1;
 		done
 

@@ -141,10 +141,6 @@ endif
 	# Squashfs LZMA support
 	cd $(DIR_APP) && bzcat $(DIR_DL)/squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2 | patch -Np1
 
-	# mISDN hfcusb fixes
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb-reportl1down.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb_bchannels.patch
-
 	# Add some more LED triggers
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.11-netdev-1.patch
 
@@ -184,9 +180,9 @@ endif
 	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-gd_mod.ko \
 	   /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-disk.ko
 
-#	# Remove mISDN modules
-#	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
-#	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
+	# Remove mISDN modules
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
 
 ifneq "$(XEN)" "1"
 	# Blacklist matroxfb_base
@@ -205,6 +201,7 @@ ifneq "$(XEN)" "1"
 	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn -name *.ko); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/isdn ; \
 	done
+	sed -i -e "s|.ko||g" /etc/modprobe.d/isdn
 endif
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*

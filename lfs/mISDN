@@ -24,13 +24,19 @@
 
 include Config
 
+ifeq "$(XEN)" "1"
+	VERSUFIX=ipfire-xen
+else
+	VERSUFIX=ipfire
+endif
+
 VER        = 20100525
 
-THISAPP    = mISDNuser-$(VER)
+THISAPP    = mISDN-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8e9b507c3f576cefb857329f72e62318
+$(DL_FILE)_MD5 = 0f91aa47ee95833d74c8a81ffc6f6fd3
 
 install : $(TARGET)
 
@@ -69,8 +75,23 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_SRC)/mISDNuser && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC)/mISDNuser && ./configure --prefix=/usr --with-AF_ISDN=34
-	cd $(DIR_SRC)/mISDNuser && make MISDNDIR=/usr/src/linux
-	cd $(DIR_SRC)/mISDNuser && make install MISDNDIR=/usr/src/linux
+	@rm -rf $(DIR_SRC)/mISDN* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_SRC)/mISDN && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb-reportl1down.patch
+	cd $(DIR_SRC)/mISDN && ./configure --with-kerneldir=/usr/src/linux
+	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) modules
+	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) \
+			INSTALL_PREFIX=$(DIR_SRC)/mISDN/dest/ \
+			modules-install
+	mv $(DIR_SRC)/mISDN/dest/lib/modules/*/extra \
+		/lib/modules/$(KVER)-$(VERSUFIX)/mISDN
+
+ifneq "$(XEN)" "1"
+	# Blacklist misdn modules
+	for f in $$(find /lib/modules/$(KVER)-$(VERSUFIX)/mISDN -name *.ko); do \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/mISDN ; \
+	done
+	sed -i -e "s|.ko||g" /etc/modprobe.d/mISDN
+endif
+
+	@rm -rf $(DIR_SRC)/mISDN*
 	@$(POSTBUILD)
