@@ -44,12 +44,8 @@ case "${1}" in
 		    rmmod $module > /dev/null 2>&1;
 		done
 
-		rmmod mISDN_core
-		if [ ${?} = 0 ]; then
-		    echo_ok;
-		else
-		    echo_failure;
-		fi
+		rmmod mISDN_core > /dev/null 2>&1
+		echo_ok;
 		exit 0;
 		;;
 
