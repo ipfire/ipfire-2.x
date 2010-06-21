@@ -57,8 +57,8 @@ foreach (@vpnsettings){
     system("/usr/local/bin/ipsecctrl S $settings[0]");
     last; #all connections will reloaded
   }
- if ($debug){logger("All connections may be fine nothing was done.");}
  }
+ if ($debug){logger("All connections may be fine nothing was done.");}
 }
 
 sub logger {
