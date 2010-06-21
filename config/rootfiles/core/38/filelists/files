@@ -2,6 +2,7 @@ etc/system-release
 etc/issue
 etc/e2fsck.conf
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
+etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/rc.d/init.d/leds
 etc/rc.d/init.d/rc
 etc/rc.d/init.d/snort
