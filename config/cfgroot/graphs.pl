@@ -1042,7 +1042,7 @@ sub updatecpufreqgraph {
 # Generate the Thermal Zone Temp CPU Graph
 
 sub updatethermaltempgraph {
-	my $thermalcount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone* | wc -l`;
+	my $thermalcount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone* | wc -l 2>/dev/null`;
 	my $period    = $_[0];
 	my @command = (
 		"-",
