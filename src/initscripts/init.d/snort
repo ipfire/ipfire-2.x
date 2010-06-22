@@ -118,7 +118,7 @@ case "$1" in
               
               rm /var/run/snort_* >/dev/null 2>/dev/null
                 
-              if ([ -r /var/ipfire/guardian/enable ] || [ -n $(pidofproc /usr/local/bin/guardian.pl) ]); then
+              if ([ -r /var/ipfire/guardian/enable ] || [ ! -z $(pidofproc /usr/local/bin/guardian.pl) ]); then
 		          boot_mesg "Stopping Guardian..."
 		          killproc /usr/local/bin/guardian.pl
 		          fi
