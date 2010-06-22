@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with IPFire; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- *  
+ *
  */
  
 #include "libsmooth.h"
@@ -62,7 +62,7 @@ char *es_tr[] = {
 /* TR_ADDRESS_SETTINGS */
 "Configuración de direcciones",
 /* TR_ADMIN_PASSWORD */
-"'admin' password",
+"Contraseña 'admin'",
 /* TR_AGAIN_PROMPT */
 "Nuevamente:",
 /* TR_ALL_CARDS_SUCCESSFULLY_ALLOCATED */
@@ -96,7 +96,7 @@ char *es_tr[] = {
 /* TR_CONGRATULATIONS */
 "¡Felicidades!",
 /* TR_CONGRATULATIONS_LONG */
-"%s fué instalado exitosamente. Por favor retire cualquier CDROM de las unidades. La instalación se ejecutará ahora y usted podrá configurar las parámetros de ISDN, Tarjetas de red, y los passwords del sistema. Una vez que la instalación se halla completado usted podrá dirigir su navegador de internet a https://%s:444 (o a cualquiera que sea el nombre de su %s), y configurar la red por dialup (si fuese necesario) y el acceso remoto.",
+"%s fué instalado exitosamente. Por favor retire cualquier CDROM de las unidades. La instalación se ejecutará ahora y usted podrá configurar las parámetros de ISDN, Tarjetas de red, y las contraseñas del sistema. Una vez que la instalación se halla completado usted podrá dirigir su navegador de internet a https://%s:444 (o a cualquiera que sea el nombre de su %s), y configurar la red por dialup (si fuese necesario) y el acceso remoto.",
 /* TR_CONTINUE_NO_SWAP */
 "Su disco duro es muy pequeño, pero podrá continuar un swap muy reducido (Use con precaución).",
 /* TR_CURRENT_CONFIG */
@@ -156,7 +156,7 @@ char *es_tr[] = {
 /* TR_END_ADDRESS_CR */
 "Dirección final\n",
 /* TR_ENTER_ADDITIONAL_MODULE_PARAMS */
-"Algunas tarjetas ISDN (especialmente las ISA) pueden requerir parámetros adicionales de módulo para configuracioenes como IRQ la dirección de dirección IO. Si usted tiene una tarjeta de este tipo, introduzca los parámetros adicionales aquí. Por ejemplo: \"io=0x280 irq=9\". Serán utilizados durante la detección de la tarjeta.",
+""Algunas tarjetas ISDN (especialmente las ISA) pueden requerir parámetros adicionales de módulo para configuracioenes como IRQ la dirección de dirección IO. Si usted tiene una tarjeta de este tipo, introduzca los parámetros adicionales aquí. Por ejemplo:\""io=0x280 irq=9\"". Serán utilizados durante la detección de la tarjeta."",
 /* TR_ENTER_ADMIN_PASSWORD */
 "Introduzca la contraseña del usuario %s'admin'. Este es el usuario que accederá a la página de administración %sweb",
 /* TR_ENTER_DOMAINNAME */
@@ -186,7 +186,7 @@ char *es_tr[] = {
 /* TR_EURO_EDSS1 */
 "Euro (EDSS1)",
 /* TR_EXTRACTING_MODULES */
-"Extrayendo modulos…",
+"Extrayendo modulos...",
 /* TR_FAILED_TO_FIND */
 "Fallo al encontrar el archivo URL",
 /* TR_FOUND_NIC */
@@ -204,7 +204,7 @@ char *es_tr[] = {
 /* TR_HOSTNAME_NOT_VALID_CHARS */
 "El nombre de host solo puede contener letra, números y guiones",
 /* TR_INITIALISING_ISDN */
-"Inicializando ISDN…",
+"Inicializando ISDN...",
 /* TR_INSERT_CDROM */
 "Por favor inserte el CD %s en la unidad de CD/DVD",
 /* TR_INSERT_FLOPPY */
@@ -212,11 +212,11 @@ char *es_tr[] = {
 /* TR_INSTALLATION_CANCELED */
 "Instalación cancelada",
 /* TR_INSTALLING_FILES */
-"Instalando archivos…",
+"Instalando archivos...",
 /* TR_INSTALLING_GRUB */
-"Instalando GRUB…",
+"Instalando GRUB...",
 /* TR_INSTALLING_LANG_CACHE */
-"Instalando archivos de idioma…",
+"Instalando archivos de idioma...",
 /* TR_INTERFACE */
 "Interfaz - %s",
 /* TR_INTERFACE_FAILED_TO_COME_UP */
@@ -256,19 +256,19 @@ char *es_tr[] = {
 /* TR_LEASED_LINE */
 "Concesión de línea",
 /* TR_LOADING_MODULE */
-"Cargando módulo…",
+"Cargando módulo...",
 /* TR_LOADING_PCMCIA */
-"Cargando módulos PCMCIA…",
+"Cargando módulos PCMCIA...",
 /* TR_LOOKING_FOR_NIC */
 "Buscando: %s",
 /* TR_MAKING_BOOT_FILESYSTEM */
-"Generando el sistema de arranque…",
+"Generando el sistema de arranque...",
 /* TR_MAKING_LOG_FILESYSTEM */
-"Generando el sistema de log…",
+"Generando el sistema de log...",
 /* TR_MAKING_ROOT_FILESYSTEM */
-"Generando el sistema de archivos root",
+"Generando el sistema de archivos root...",
 /* TR_MAKING_SWAPSPACE */
-"Generando el espacio swap….",
+"Generando el espacio swap....",
 /* TR_MANUAL */
 "* MANUAL *",
 /* TR_MAX_LEASE */
@@ -286,13 +286,13 @@ char *es_tr[] = {
 /* TR_MODULE_PARAMETERS */
 "Introduzca el nombre del módulo y los parámetros que requiera para sus drivers.",
 /* TR_MOUNTING_BOOT_FILESYSTEM */
-"Montando sistema de archivos de arranque…",
+"Montando sistema de archivos de arranque...",
 /* TR_MOUNTING_LOG_FILESYSTEM */
-"Montando sistema archvos log…",
+"Montando sistema archvos log...",
 /* TR_MOUNTING_ROOT_FILESYSTEM */
-"Montando sistema de archivos root….",
+"Montando sistema de archivos root....",
 /* TR_MOUNTING_SWAP_PARTITION */
-"Montando partición swap…",
+"Montando partición swap...",
 /* TR_MSN_CONFIGURATION */
 "Número telefónico local (MSN/EAZ)",
 /* TR_NETMASK_PROMPT */
@@ -336,7 +336,7 @@ char *es_tr[] = {
 /* TR_OK */
 "Ok",
 /* TR_PARTITIONING_DISK */
-"Particionando Disco…",
+"Particionando Disco...",
 /* TR_PASSWORDS_DO_NOT_MATCH */
 "Las contraseñas no concuerdan.",
 /* TR_PASSWORD_CANNOT_BE_BLANK */
@@ -360,9 +360,9 @@ char *es_tr[] = {
 /* TR_PROBE_FAILED */
 "Falló la auto detección",
 /* TR_PROBING_HARDWARE */
-"Detectando Hardware…",
+"Detectando Hardware...",
 /* TR_PROBING_FOR_NICS */
-"Detectando NICs….",
+"Detectando NICs....",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
 "Problema estableciendo la contraseña del usuario %s 'admin'",
 /* TR_PROBLEM_SETTING_ROOT_PASSWORD */
@@ -372,11 +372,11 @@ char *es_tr[] = {
 /* TR_PROTOCOL_COUNTRY */
 "Protocolo/País",
 /* TR_PULLING_NETWORK_UP */
-"Encendiendo la red…",
+"Encendiendo la red...",
 /* TR_PUSHING_NETWORK_DOWN */
-"Apagando la red….",
+"Apagando la red....",
 /* TR_PUSHING_NON_LOCAL_NETWORK_DOWN */
-"Apagando red no local…",
+"Apagando red no local...",
 /* TR_QUIT */
 "Salir",
 /* TR_RED_IN_USE */
@@ -416,9 +416,9 @@ char *es_tr[] = {
 /* TR_SELECT_THE_ITEM */
 "Seleccione el elemento que desea configurar",
 /* TR_SETTING_ADMIN_PASSWORD */
-"Estableciendo la contraseña del usuario %s 'admin'",
+"Estableciendo la contraseña del usuario %s 'admin'...",
 /* TR_SETTING_ROOT_PASSWORD */
-"Estableciendo la contraseña del usuario 'root'",
+"Estableciendo la contraseña del usuario 'root'...",
 /* TR_SETTING_SETUP_PASSWORD */
 "A REMOVER",
 /* TR_SETUP_FINISHED */
@@ -542,7 +542,7 @@ char *es_tr[] = {
 /* TR_WARNING_LONG */
 "Si usted cambia esta dirección IP mientras se encuentra conectado de manera remota, su conexión a esta máquina %s será terminada, i tendrá que reconectarse con la nueva dirección IP. Esta es una operación riesgosa y solamente debería ser intentada si usted tiene acceso físico a la máquina en caso de que algo salga mal.",
 /* TR_WELCOME */
-"Bienvenido al programa de instalaciónde %s. Si selecciona cancelar en cualquiera de las pantallas siguientes su computadora será reiniciada.",
+"Bienvenido al programa de instalación de %s. Si selecciona cancelar en cualquiera de las pantallas siguientes su computadora será reiniciada.",
 /* TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER */
 "Su sistema está configurado a interfaz GREEN única, la cual ya ha sido asignada.",
 /* TR_YES */
