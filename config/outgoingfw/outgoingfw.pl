@@ -207,9 +207,9 @@ foreach $configentry (sort @configs)
 
 				if ($configline[9] eq "aktiv") {
 					if ($DEBUG) {
-						print "$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW'\n";
+						print "$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW '\n";
 					} else {
-						system("$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW'");
+						system("$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW '");
 					}
 				}
 
@@ -255,7 +255,7 @@ if ($P2PSTRING) {
 
 if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
 	 if ( $outfwsettings{'MODE1LOG'} eq 'on' ) {
-		 	$CMD = "/sbin/iptables -A OUTGOINGFW -o $netsettings{'RED_DEV'} -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW'";
+		 	$CMD = "/sbin/iptables -A OUTGOINGFW -o $netsettings{'RED_DEV'} -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW '";
 		if ($DEBUG) {
 			print "$CMD\n";
 		} else {
