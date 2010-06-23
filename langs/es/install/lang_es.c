@@ -156,7 +156,7 @@ char *es_tr[] = {
 /* TR_END_ADDRESS_CR */
 "Dirección final\n",
 /* TR_ENTER_ADDITIONAL_MODULE_PARAMS */
-""Algunas tarjetas ISDN (especialmente las ISA) pueden requerir parámetros adicionales de módulo para configuracioenes como IRQ la dirección de dirección IO. Si usted tiene una tarjeta de este tipo, introduzca los parámetros adicionales aquí. Por ejemplo:\""io=0x280 irq=9\"". Serán utilizados durante la detección de la tarjeta."",
+"Algunas tarjetas ISDN (especialmente las ISA) pueden requerir parámetros adicionales de módulo para configuracioenes como IRQ la dirección de dirección IO. Si usted tiene una tarjeta de este tipo, introduzca los parámetros adicionales aquí. Por ejemplo: 'io=0x280 irq=9'. Serán utilizados durante la detección de la tarjeta.",
 /* TR_ENTER_ADMIN_PASSWORD */
 "Introduzca la contraseña del usuario %s'admin'. Este es el usuario que accederá a la página de administración %sweb",
 /* TR_ENTER_DOMAINNAME */
