@@ -116,9 +116,8 @@ echo Unpack the updated files ...
 tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
 	--no-overwrite-dir
 #
-# Start Sevices
+# Start sysklogd
 /etc/init.d/sysklogd start
-/etc/init.d/squid start
 #
 # Modify grub.conf
 #
@@ -266,6 +265,9 @@ echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-38 " *** Please reboot... 
 #
 chmod +x /tmp/pak_update
 /tmp/pak_update &
+#
+# Start squid
+/etc/init.d/squid start
 #
 echo
 echo Please wait until pakfire has ended...
