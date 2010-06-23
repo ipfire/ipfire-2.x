@@ -804,7 +804,7 @@
 'external access rule removed' => ' External access rule removed; restarting access controller',
 'external aliases configuration' => 'External aliases configuration',
 'extrahd' => 'ExtraHD',
-'extrahd founded drives'  => 'founded drives',
+'extrahd detected drives'  => 'detected drives',
 'false classnumber' => 'The Class-Number does not match the interface.',
 'false max bandwith' => 'Maximum bandwith is false.',
 'false min bandwith' => 'Minimum bandwith is false.',

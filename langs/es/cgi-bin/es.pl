@@ -802,7 +802,7 @@
 'external access rule removed' => '"Reglas de acceso externo eliminadas; reiniciando controlador de acceso"',
 'external aliases configuration' => 'Configuración de Alias externo',
 'extrahd' => 'Disco duro Adicional',
-'extrahd founded drives' => 'Unidades encontradas',
+'extrahd detected drives' => 'Unidades encontradas',
 'false classnumber' => 'El número de clase no coincide con la interfaz',
 'false max bandwith' => 'El ancho de banda máximo es falso',
 'false min bandwith' => 'El ancho de banda mínimo es falso',

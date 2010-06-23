@@ -164,7 +164,7 @@ END
 
 &Header::closebox();
 
-&Header::openbox('100%', 'center', $Lang::tr{'extrahd founded drives'});
+&Header::openbox('100%', 'center', $Lang::tr{'extrahd detected drives'});
 	print <<END
 		<table border='0' width='600' cellspacing="0">
 END
