@@ -211,7 +211,8 @@ sub build_ignore_hash {
 	if ($ignorefile ne "") {
 		open (IGNORE, $ignorefile);
 		while (<IGNORE>) {
-			chop;
+			$_=~ s/\s+$//;
+			chomp;
 			next if (/\#/);  #skip comments
 			next if (/^\s*$/); # and blank lines
 			$ignore{$_}=1;
