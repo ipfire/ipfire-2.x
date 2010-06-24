@@ -109,6 +109,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-bz429187-cciss.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-dmraid-recheck-bad.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-mdadm-path.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97_grub-install_virtio.patch
 
 	# XXX Does not work anymore
 	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97_grub-install_virtio.patch
