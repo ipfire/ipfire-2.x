@@ -92,7 +92,7 @@ if ($cgiparams{'ACTION'} eq 'add')
 	{
 		$cgiparams{'SOURCE_IP'} = 'NONE';
 	} else {
-		unless(&General::validip($cgiparams{'SOURCE_IP'})) 
+		unless(&General::validipormask($cgiparams{'SOURCE_IP'})) 
 		{
 			$errormessage = $Lang::tr{'invalid fixed ip address'}; 
 			goto ADDERROR;

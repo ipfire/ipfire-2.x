@@ -151,7 +151,7 @@ int main(void)
 
 							/* both specified, added security */
 							if ((strlen(macaddress) == 17) &&
-									(VALID_IP(ipaddress))) {
+									(VALID_IP_AND_MASK(ipaddress))) {
 									snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -m mac --mac-source %s -s %s -i %s -j ACCEPT", macaddress, ipaddress, blue_dev);
 									safe_system(command);
 									snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -s %s -i %s ! -o %s -j ACCEPT", macaddress, ipaddress, blue_dev, green_dev);
@@ -170,7 +170,7 @@ int main(void)
 													safe_system(command);
 									}
 
-									if (VALID_IP(ipaddress)) {
+									if (VALID_IP_AND_MASK(ipaddress)) {
 													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -s %s -i %s -j ACCEPT", ipaddress, blue_dev);
 													safe_system(command);
 													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -s %s -i %s ! -o %s -j ACCEPT", ipaddress, blue_dev, green_dev);
