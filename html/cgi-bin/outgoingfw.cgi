@@ -660,7 +660,6 @@ END
 						<option value='red' $selected{'SNET'}{'red'}>$Lang::tr{'red'} IP</option>
 					</optgroup>
 					<optgroup label='$Lang::tr{'alt vpn'}'>
-						<option value='ipsec' $selected{'SNET'}{'ipsec'}>IPSEC $Lang::tr{'interface'}</option>
 						<option value='ovpn' $selected{'SNET'}{'ovpn'}>OpenVPN $Lang::tr{'interface'}</option>
 					</optgroup>
 					<optgroup label='$Lang::tr{'network'}'>
