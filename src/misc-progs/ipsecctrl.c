@@ -141,7 +141,7 @@ void turn_connection_on (char *name, char *type) {
         safe_system("/usr/sbin/ipsec reload >/dev/null");
         memset(command, 0, STRING_SIZE);
         /* give ipsec time to be ready */
-        safe_system("/bin/sleep 2");
+        safe_system("/bin/sleep 5");
         snprintf(command, STRING_SIZE - 1, 
                 "/usr/sbin/ipsec up %s >/dev/null", name);
         safe_system(command);
