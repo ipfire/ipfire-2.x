@@ -142,14 +142,13 @@ int decode_line (char *s,
 */
 void turn_connection_on (char *name, char *type) {
         char command[STRING_SIZE];
-
-        safe_system("/usr/sbin/ipsec reload >/dev/null");
-        memset(command, 0, STRING_SIZE);
-        /* give ipsec time to be ready */
-        safe_system("/bin/sleep 5");
-        snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec up %s >/dev/null", name);
-        safe_system(command);
+	if (file = fopen("/var/run/vpn-watch.pid", "r")) {
+	    safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
+	    safe_system("unlink /var/run/vpn-watch.pid");
+	    close(file);
+	}
+        safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
+        safe_system("/usr/local/bin/vpn-watch &");
 }
 /*
     issue ipsec commmands to turn off connection 'name'
@@ -192,11 +191,6 @@ int main(int argc, char *argv[]) {
 
  /* Get vpnwatch pid */
 
- if ( (argc == 2) && (file = fopen("/var/run/vpn-watch.pid", "r"))) {
- safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
- safe_system("unlink /var/run/vpn-watch.pid");
- close(file);
- }
  
         /* FIXME: workaround for pclose() issue - still no real idea why
          * this is happening */
@@ -342,8 +336,6 @@ int main(int argc, char *argv[]) {
 
         // start the system
         if ((argc == 2) && strcmp(argv[1], "S") == 0) {
-                safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
-                safe_system("/usr/local/bin/vpn-watch &");
                 exit(0);
         }
 
