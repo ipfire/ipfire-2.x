@@ -58,12 +58,17 @@ void open_physical (char *interface, int nat_traversal_port) {
 //        sprintf(str, "/sbin/iptables -A " phystable " -p 51  -i %s -j ACCEPT", interface);
 //        safe_system(str);
         // IKE
+
+        sprintf(str, "/sbin/iptables -D IPSECINPUT -p udp -i %s --sport 500 --dport 500 -j ACCEPT >/dev/null 2>&1", interface);
+        safe_system(str);
         sprintf(str, "/sbin/iptables -A IPSECINPUT -p udp -i %s --sport 500 --dport 500 -j ACCEPT", interface);
         safe_system(str);
 
         if (! nat_traversal_port) 
             return;
 
+        sprintf(str, "/sbin/iptables -D IPSECINPUT -p udp -i %s --dport %i -j ACCEPT >/dev/null 2>&1", interface, nat_traversal_port);
+        safe_system(str);
         sprintf(str, "/sbin/iptables -A IPSECINPUT -p udp -i %s --dport %i -j ACCEPT", interface, nat_traversal_port);
         safe_system(str);
 }
@@ -200,20 +205,17 @@ int main(int argc, char *argv[]) {
         /* handle operations that doesn't need start the ipsec system */
         if (argc == 2) {
                 if (strcmp(argv[1], "D") == 0) {
-                        ipsec_norules();
                         /* Only shutdown pluto if it really is running */
                         /* Get pluto pid */
                         if (file = fopen("/var/run/pluto.pid", "r")) {
                                 safe_system("/etc/rc.d/init.d/ipsec stop 2> /dev/null >/dev/null");
                                 close(file);
                         }
+                        ipsec_norules();
                         exit(0);
                 }
 
         }
-
-        /* clear iptables vpn rules */
-        ipsec_norules();
 
         /* read vpn config */
         kv=initkeyvalues();
@@ -348,7 +350,6 @@ int main(int argc, char *argv[]) {
         // it is a selective start or stop
         // second param is only a number 'key'
         if ((argc == 2) || strspn(argv[2], NUMBERS) != strlen(argv[2])) {
-                ipsec_norules();
                 fprintf(stderr, "Bad arg\n");
                 usage();
                 exit(1);
@@ -356,7 +357,6 @@ int main(int argc, char *argv[]) {
 
         // search the vpn pointed by 'key'
         if (!(file = fopen(CONFIG_ROOT "/vpn/config", "r"))) {
-                ipsec_norules();
                 fprintf(stderr, "Couldn't open vpn settings file");
                 exit(1);
         }
@@ -386,7 +386,6 @@ int main(int argc, char *argv[]) {
                 if (strcmp(argv[1], "D") == 0)
                         turn_connection_off (name);
                 else {
-                        ipsec_norules();
                         fprintf(stderr, "Bad command\n");
                         exit(1);
                 }
