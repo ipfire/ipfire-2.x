@@ -142,6 +142,8 @@ int decode_line (char *s,
 */
 void turn_connection_on (char *name, char *type) {
         char command[STRING_SIZE];
+	FILE *file = NULL;
+
 	if (file = fopen("/var/run/vpn-watch.pid", "r")) {
 	    safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
 	    safe_system("unlink /var/run/vpn-watch.pid");
