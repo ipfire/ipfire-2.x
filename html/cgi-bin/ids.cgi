@@ -143,7 +143,7 @@ if (-e "/etc/snort/snort.conf") {
 					# If see more than one dashed line, (start to) create rule file description
 					if ($dashlinecnt > 1) {
 						# Check for a line starting with a #
-						if ($ruleline =~ /^\#/) {
+						if ($ruleline =~ /^\#/ and $ruleline !~ /^\#alert/) {
 							# Create tempruleline
 							my $tempruleline = $ruleline;
 
