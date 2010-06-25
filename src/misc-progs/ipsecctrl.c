@@ -141,16 +141,11 @@ int decode_line (char *s,
     issue ipsec commmands to turn on connection 'name'
 */
 void turn_connection_on (char *name, char *type) {
-        char command[STRING_SIZE];
-	FILE *file = NULL;
-
-	if (file = fopen("/var/run/vpn-watch.pid", "r")) {
-	    safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
-	    safe_system("unlink /var/run/vpn-watch.pid");
-	    close(file);
-	}
+/*
+    if you find a way to start a single connection without changing all add it
+    here. Change also vpn-watch.
+*/
         safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
-        safe_system("/usr/local/bin/vpn-watch &");
 }
 /*
     issue ipsec commmands to turn off connection 'name'
@@ -193,6 +188,12 @@ int main(int argc, char *argv[]) {
 
  /* Get vpnwatch pid */
 
+
+	if ((argc == 2) && (file = fopen("/var/run/vpn-watch.pid", "r"))) {
+	    safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
+	    safe_system("unlink /var/run/vpn-watch.pid");
+	    close(file);
+	}
  
         /* FIXME: workaround for pclose() issue - still no real idea why
          * this is happening */
@@ -338,6 +339,8 @@ int main(int argc, char *argv[]) {
 
         // start the system
         if ((argc == 2) && strcmp(argv[1], "S") == 0) {
+		safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
+		safe_system("/usr/local/bin/vpn-watch &");
                 exit(0);
         }
 
