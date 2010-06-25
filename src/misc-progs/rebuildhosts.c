@@ -23,6 +23,7 @@
 
 FILE *fd = NULL;
 FILE *hosts = NULL;
+FILE *gw = NULL;
 struct keyvalue *kv = NULL;
 
 void exithandler(void)
@@ -33,6 +34,8 @@ void exithandler(void)
 		fclose(fd);
 	if (hosts)
 		fclose(hosts);
+	if (gw)
+		fclose(gw);
 }
 
 int main(int argc, char *argv[])
@@ -40,6 +43,7 @@ int main(int argc, char *argv[])
 	int fdpid; 
 	char hostname[STRING_SIZE];
 	char domainname[STRING_SIZE] = "";
+	char gateway[STRING_SIZE] = "";
 	char buffer[STRING_SIZE];
 	char address[STRING_SIZE];
 	char *active, *ip, *host, *domain;
@@ -73,11 +77,26 @@ int main(int argc, char *argv[])
 	freekeyvalues(kv);
 	kv = NULL;
 
+	if (!(gw = fopen(CONFIG_ROOT "/red/remote-ipaddress", "r")))
+	{
+		fprintf(stderr, "Couldn't open remote-ipaddress file\n");
+		fclose(gw);
+		gw = NULL;
+		exit(1);
+	}
+
+	if (fgets(gateway, STRING_SIZE, gw) == NULL)
+	{
+		fprintf(stderr, "Couldn't read remote-ipaddress\n");
+		exit(1);
+	}
+
 	if (!(fd = fopen(CONFIG_ROOT "/main/hosts", "r")))
 	{
 		fprintf(stderr, "Couldn't open main hosts file\n");
 		exit(1);
 	}
+
 	if (!(hosts = fopen("/etc/hosts", "w")))
 	{
 		fprintf(stderr, "Couldn't open /etc/hosts file\n");
@@ -90,6 +109,9 @@ int main(int argc, char *argv[])
 		fprintf(hosts, "%s\t%s.%s\t%s\n",address,hostname,domainname,hostname);
 	else
 		fprintf(hosts, "%s\t%s\n",address,hostname);
+
+	fprintf(hosts, "%s\tgateway\n",gateway);
+
 	while (fgets(buffer, STRING_SIZE, fd))
 	{
 		buffer[strlen(buffer) - 1] = 0;
