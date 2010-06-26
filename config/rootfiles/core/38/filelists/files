@@ -55,6 +55,7 @@ etc/rc.d/init.d/network
 etc/rc.d/init.d/ntp
 etc/rc.d/init.d/modules
 usr/local/bin/ipsecctrl
+usr/local/bin/rebuildhosts
 usr/local/bin/syslogdctrl
 usr/local/bin/wirelessctrl
 usr/local/sbin/setup
