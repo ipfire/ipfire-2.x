@@ -61,6 +61,9 @@ echo boot >> /opt/pakfire/tmp/ROOTFILES
 echo etc/sysconfig/lm_sensors >> /opt/pakfire/tmp/ROOTFILES
 echo usr/lib/ipsec >> /opt/pakfire/tmp/ROOTFILES
 echo usr/libexec/ipsec >> /opt/pakfire/tmp/ROOTFILES
+# exclude squid cache from backup
+sed -i -e "s|^var/log/cache|#var/log/cache|g" /opt/pakfire/tmp/ROOTFILES
+# Backup the files
 tar cjvf /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
     -C / -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' > /dev/null 2>&1
 
