@@ -337,7 +337,6 @@ buildipfire() {
   ipfiremake libusb
   ipfiremake libpcap
   ipfiremake ppp
-  ipfiremake rp-pppoe
   ipfiremake pptp
   ipfiremake unzip
   ipfiremake which
