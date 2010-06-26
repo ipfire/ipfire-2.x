@@ -1,4 +1,5 @@
 etc/ipsec.conf
+etc/ipsec.user.conf
 #etc/ipsec.d
 etc/ipsec.d/aacerts
 etc/ipsec.d/acerts
@@ -9,6 +10,7 @@ etc/ipsec.d/ocspcerts
 etc/ipsec.d/private
 etc/ipsec.d/reqs
 etc/ipsec.secrets
+etc/ipsec.user.secrets
 etc/strongswan.conf
 #usr/lib/libcharon.a
 #usr/lib/libcharon.la
