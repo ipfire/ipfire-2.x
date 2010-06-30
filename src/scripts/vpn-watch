@@ -1,6 +1,6 @@
 #!/usr/bin/perl 
 ##################################################
-#####     VPN-Watch.pl     Version 0.4c      #####
+#####     VPN-Watch.pl     Version 0.5       #####
 ##################################################
 #                                                #
 #   VPN-Watch is part of the IPFire Firewall     #
@@ -24,13 +24,17 @@ if ( -e $file ){
   }
 
 system("echo $$ > $file");
-    
+my $round=0;
 while ( $i == 0){
   if ($debug){logger("We will wait 60 seconds before next action.");}
     sleep(60);
-  
-  if (open(FILE, "<${General::swroot}/vpn/config")) {
-    @vpnsettings = <FILE>;
+
+  $round++;
+
+   # Reset roundcounter after 10 min. To do established check.
+  if ($round > 9) { $round=0 }
+
+  if (open(FILE, "<${General::swroot}/vpn/config")) {    @vpnsettings = <FILE>;
     close(FILE);
     unless(@vpnsettings) {exit 1;}
   }
@@ -50,12 +54,21 @@ foreach (@vpnsettings){
   
   my $remoteip = `/usr/bin/ping -c 1 $remotehostname 2>/dev/null | head -n1 | awk '{print \$3}' | tr -d '()' | tr -d ':'`;chomp($remoteip);
   if ($remoteip eq ""){next;if ($debug){logger("Unable to resolve $remotehostname.");}}
-  my $ipmatch= `echo "$status" | grep $remoteip | grep $settings[2]`;
+  my $ipmatch= `echo "$status" | grep '$remoteip' | grep '$settings[2]'`;
+  my $established= `echo "$status" | grep '$settings[2]' | grep 'erouted;'`; 
   
   if ( $ipmatch eq '' ){
-    logger("Remote IP for host $remotehostname-$remoteip has changed, restarting ipsec.");
-    system("/usr/local/bin/ipsecctrl S");
+    logger("Remote IP for host $remotehostname($remoteip) has changed, restarting ipsec.");
+    system("/usr/local/bin/ipsecctrl S $settings[0]");
     last; #all connections will reloaded
+          #remove this if ipsecctrl can restart single con again
+  }
+  if ( ($round = 0) && ($established eq '')) {
+    logger("Connection to $remotehostname($remoteip) not erouted, restarting ipsec.");
+    system("/usr/local/bin/ipsecctrl S $settings[0]");
+    last; #all connections will reloaded
+          #remove this if ipsecctrl can restart single con again
+
   }
  }
  if ($debug){logger("All connections may be fine nothing was done.");}
@@ -65,4 +78,3 @@ sub logger {
         my $log = shift;
         system("logger -t vpnwatch \"$log\"");
 }
-

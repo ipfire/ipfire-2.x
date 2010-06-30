@@ -289,6 +289,12 @@ sub writeipsecfiles {
     #print CONF "\tdisablearrivalcheck=no\n";
     print CONF "\n";
 
+    # Add user includes to config file
+    print CONF "include /etc/ipsec.user.conf\n";
+    print CONF "\n";
+
+    print SECRETS "include /etc/ipsec.user/secrets\n";
+
     if (-f "${General::swroot}/certs/hostkey.pem") {
         print SECRETS ": RSA ${General::swroot}/certs/hostkey.pem\n"
     }
