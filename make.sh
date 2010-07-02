@@ -625,7 +625,7 @@ buildipfire() {
   ipfiremake perl-DBD-mysql
   ipfiremake cacti
   ipfiremake icecc
-  ipfiremake open-vm-tools
+  ipfiremake openvmtools
   ipfiremake nagiosql
   ipfiremake iftop
   ipfiremake motion
