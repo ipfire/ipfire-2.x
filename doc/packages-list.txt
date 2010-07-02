@@ -256,7 +256,7 @@
 * nut-2.4.3
 * ocaml-3.09.2
 * oinkmaster-2.0
-* open-vm-tools-2009.05.22-167859
+* open-vm-tools-8.4.2-261024
 * openldap-2.3.20
 * openmailadmin-1.0.0
 * openssh-5.4p1
