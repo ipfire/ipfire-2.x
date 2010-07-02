@@ -1,0 +1,64 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/
+#
+# Description : init-script for open-vm-tools
+#
+# Authors     : earl
+#
+# Version     : 00.01
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+	if ps ax | grep -v grep | grep /usr/bin/vmtoolsd > /dev/null
+   		then
+		boot_mesg "vmtoolsd is running..."
+		echo_warning
+	else
+		if /usr/bin/vmware-checkvm > /dev/null 2>&1; then
+			boot_mesg "Starting..."
+			/usr/bin/vmtoolsd &
+			echo_ok
+		else
+			boot_mesg "IPFire is not running in a virtual machine." 
+			echo_failure
+		fi
+	fi
+	;;
+	
+	stop)
+	if ps ax | grep -v grep | grep /usr/bin/vmtoolsd > /dev/null
+   		then
+		boot_mesg "Stopping..."
+		killall  /usr/bin/vmtoolsd > /dev/null
+		echo_ok
+	else
+		boot_mesg "vmtoolsd is not running..."	
+		echo_warning
+	fi
+	;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/vmtoolsd
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/
