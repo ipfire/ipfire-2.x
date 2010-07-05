@@ -394,7 +394,6 @@ $selected{'ENCAP'}{$pppsettings{'ENCAP'}} = "selected='selected'";
 
 $checked{'METHOD'}{'STATIC'} = '';
 $checked{'METHOD'}{'PPPOE'} = '';
-$checked{'METHOD'}{'PPPOE_PLUGIN'} = '';
 $checked{'METHOD'}{'DHCP'} = '';
 $checked{'METHOD'}{$pppsettings{'METHOD'}} = "checked='checked'";
 
@@ -765,13 +764,13 @@ print <<END
         <td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'pppoe settings'}</b></td>
 </tr>
 <tr>
-        <td width='25%'><input type='radio' name='METHOD' value='PPPOE_PLUGIN' $checked{'METHOD'}{'PPPOE_PLUGIN'} />PPPoE plugin</td>
-        <td colspan='2' width='50%'>$Lang::tr{'service name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'>$Lang::tr{'service name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td colspan='2' width='50%'></td>
         <td width='25%'><input type='text' name='SERVICENAME' value='$pppsettings{'SERVICENAME'}' /></td>
 </tr>
 <tr>
-        <td width='25%'><input type='radio' name='METHOD' value='PPPOE' $checked{'METHOD'}{'PPPOE'} />$Lang::tr{'pppoe'}</td>
-        <td colspan='2' width='50%'>$Lang::tr{'concentrator name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'>$Lang::tr{'concentrator name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td colspan='2' width='50%'></td>
         <td width='25%'><input type='text' name='CONCENTRATORNAME' value='$pppsettings{'CONCENTRATORNAME'}' /></td>
 </tr>
 <tr>
@@ -897,14 +896,8 @@ sub initprofile
         $pppsettings{'PPTP_PEER'} = '10.0.0.138';
 	$pppsettings{'PPTP_NICCFG'} = '10.0.0.140/24 broadcast 10.0.0.255';
         $pppsettings{'PROTOCOL'} = 'RFC2364';
-        $pppsettings{'METHOD'} = 'PPPOE_PLUGIN';
-        if ( $pppsettings{'METHOD'} eq 'PPPOE_PLUGIN' ) {
-                $pppsettings{'MTU'} = '1492';
-                $pppsettings{'MRU'} = '1492';
-        } else {
-                $pppsettings{'MTU'} = '1452';
-                $pppsettings{'MRU'} = '1452';
-        }
+        $pppsettings{'MTU'} = '1492';
+        $pppsettings{'MRU'} = '1492';
         $pppsettings{'DIALMODE'} = 'T';
         $pppsettings{'MAXRETRIES'} = 5;
         $pppsettings{'HOLDOFF'} = 30;

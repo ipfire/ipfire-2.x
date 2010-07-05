@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4.4
+VER        = 2.4.5
 
 THISAPP    = ppp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 183800762e266132218b204dfb428d29
+$(DL_FILE)_MD5 = 4621bc56167b6953ec4071043fe0ec57
 
 install : $(TARGET)
 
