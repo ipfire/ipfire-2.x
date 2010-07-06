@@ -1,1 +1,3 @@
 etc/system-release
+etc/init.d/networking/red
+srv/web/ipfire/cgi-bin/pppsetup.cgi
