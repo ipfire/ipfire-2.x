@@ -28,11 +28,15 @@ case "${1}" in
 		echo > /var/ipfire/red/resolv.conf # Clear it
 		if [ -e "/var/ipfire/red/dns1" ]; then
 		    DNS1=$(cat /var/ipfire/red/dns1 2>/dev/null)
-		    echo "nameserver ${DNS1}" >> /var/ipfire/red/resolv.conf
+		    if [ ! -z ${DNS1} ]; then
+			echo "nameserver ${DNS1}" >> /var/ipfire/red/resolv.conf
+		    fi
 		fi
 		if [ -e "/var/ipfire/red/dns2" ]; then
 		    DNS2=$(cat /var/ipfire/red/dns2 2>/dev/null)
-		    echo "nameserver ${DNS2}" >> /var/ipfire/red/resolv.conf
+		    if [ ! -z ${DNS2} ]; then
+			echo "nameserver ${DNS2}" >> /var/ipfire/red/resolv.conf
+		    fi
 		fi
 		[ -e "/var/ipfire/red/active" ] && ARGS="$ARGS -r /var/ipfire/red/resolv.conf"
 		
