@@ -184,7 +184,6 @@
 * libogg-1.1.4
 * liboping-1.3.4
 * libpcap-1.0.0
-* libpng-1.2.12
 * libpng-1.2.44
 * libpri-1.4.10.2
 * libsafe_2.0-16
@@ -225,6 +224,7 @@
 * mediatomb-svn2020
 * memtest86+-4.10
 * miau-0.6.5
+* minicom-2.4
 * misc-progs
 * mkinitcpio-0.5.9
 * mktemp-1.5
@@ -277,7 +277,7 @@
 * popt-1.10.4
 * portmap_6.0
 * postfix-2.6.5
-* ppp-2.4.4
+* ppp-2.4.5
 * pptp-1.7.2
 * procps-3.2.6
 * psmisc-22.2
@@ -292,7 +292,6 @@
 * readline-5.1
 * reiser4progs-1.0.6
 * reiserfsprogs-3.6.21
-* rp-pppoe-3.8
 * rrdtool-1.2.30
 * rssdler-0.4.0a
 * rsync-3.0.7
@@ -333,7 +332,6 @@
 * teamspeak-2.0.24.1
 * texinfo-4.8
 * tftp-hpa-0.48
-* tiff-3.8.2
 * tiff-3.9.4
 * traceroute-2.0.12
 * tripwire-2.4.1.2
