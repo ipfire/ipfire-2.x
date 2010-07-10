@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 1.1.1
+VER        = 1.2.2
 
 THISAPP    = nfs-utils-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -36,15 +36,20 @@ PAK_VER    = 3
 
 DEPS       = "portmap"
 
+LIBNFSIDMAP = 0.23
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	libnfsidmap-$(LIBNFSIDMAP).tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+libnfsidmap-$(LIBNFSIDMAP).tar.gz = $(DL_FROM)/libnfsidmap-$(LIBNFSIDMAP).tar.gz
 
-$(DL_FILE)_MD5 = 407785488241f9db67b1874e3f36370e
+$(DL_FILE)_MD5 = dad92f64db3266c7757f71bb53ee8f35
+libnfsidmap-$(LIBNFSIDMAP).tar.gz_MD5 = 28f3ece648c1dc5d25e8d623d55f8bd6
 
 install : $(TARGET)
 
@@ -76,9 +81,20 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc  \
-                                    --disable-nfsv4 --disable-gss
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && tar zxf $(DIR_DL)/libnfsidmap-$(LIBNFSIDMAP).tar.gz
+	cd $(DIR_APP)/libnfsidmap* && ./configure --prefix=/usr
+	cd $(DIR_APP)/libnfsidmap* && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP)/libnfsidmap* && make install
+
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc  \
+		--disable-gss \
+		--disable-tirpc \
+		--without-tcp-wrappers
+
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
