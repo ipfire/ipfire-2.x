@@ -3,3 +3,4 @@ etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/networking/red
 etc/rc.d/helper/getdnsfromdhcpc.pl
 srv/web/ipfire/cgi-bin/pppsetup.cgi
+usr/local/bin/backupiso
