@@ -1,8 +1,10 @@
 etc/watchdog.conf
 usr/sbin/watchdog
+usr/sbin/wd_identify
 usr/sbin/wd_keepalive
 #usr/share/man/man5/watchdog.conf.5
 #usr/share/man/man8/watchdog.8
+#usr/share/man/man8/wd_identify.8
 #usr/share/man/man8/wd_keepalive.8
 var/ipfire/backup/addons/includes/watchdog
 etc/rc.d/init.d/watchdog

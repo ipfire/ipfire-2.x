@@ -355,7 +355,7 @@
 * vnstati-beta3
 * vsftpd-2.1.2
 * w_scan-20080105
-* watchdog-5.6
+* watchdog-5.9
 * wget-1.10.2
 * whatmask-1.2
 * which-2.16
