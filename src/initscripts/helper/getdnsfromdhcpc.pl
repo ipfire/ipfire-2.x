@@ -42,6 +42,6 @@ if (open(FILE, "${General::swroot}/red/iface")) {
 
 $dns = $dhcpc{'domain_name_servers'};
 
-@alldns = split(',', $dns);
+@alldns = split(' ', $dns);
 
 print "$alldns[$count - 1]\n";

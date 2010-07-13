@@ -220,7 +220,7 @@ case "${1}" in
 			fi
 		
 		elif [ "$TYPE" == "PPPOE" ]; then
-			
+
 			if ( ps ax | grep -q [p]ppd ); then 
 			    boot_mesg "pppd is still running." ${FAILURE}
 			    echo_failure
@@ -230,7 +230,10 @@ case "${1}" in
 			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 			
 			[ -c "/dev/ppp" ] || mknod /dev/ppp c 108 0
-			
+
+			# We force the plugin method, anyway.
+			METHOD="PPPOE_PLUGIN"
+
 			PPP_NIC=${DEVICE}
 
 			if [ "$TYPE" == "vdsl" ]; then
@@ -370,7 +373,7 @@ case "${1}" in
 			#			
 			if [ "$TYPE" == "pppoe" ]; then
 				[ "${METHOD}" == "PPPOE_PLUGIN" ] && \
-					PLUGOPTS="plugin /usr/lib/pppd/2.4.4/rp-pppoe.so"
+					PLUGOPTS="plugin rp-pppoe.so"
 			fi
 
 			### Synchronous Mode

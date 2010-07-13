@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -620,7 +620,7 @@ if ($sambasettings{'SECURITY'} eq 'user')
 		&Header::openbox('100%', 'center', $Lang::tr{'accounting user pdc'});
 		}
 	print <<END
-	<a name="$Lang::tr{'accounting'}"</a>
+	<a name="$Lang::tr{'accounting'}"></a>
 	<br />
 	<table width='95%' cellspacing='0'>
 	<tr><td colspan='6' align='left'></td></tr>
@@ -866,7 +866,7 @@ my %shares =  config("${General::swroot}/samba/shares");
 
 
 print <<END
-<a name="$Lang::tr{'manage shares'}"</a>
+<a name="$Lang::tr{'manage shares'}"></a>
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage shares'}</b>
@@ -1014,7 +1014,7 @@ if ( -e "/var/ipfire/cups/enable")
 
 my @Printers = keys(%printer);
 print <<END
-<a name="$Lang::tr{'manage printers'}"</a>
+<a name="$Lang::tr{'manage printers'}"></a>
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage printers'}</b>
@@ -1154,7 +1154,7 @@ $Log=~s/\n/<br \/>/g;
 &Header::openbox('100%', 'center', $Lang::tr{'log'});
 
 print <<END
-<a name="$Lang::tr{'log view'}"</a>
+<a name="$Lang::tr{'log view'}"></a>
 <br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'log view'}'>
 <table width='95%' cellspacing='0'>
