@@ -220,7 +220,7 @@ sub fetchfile {
 					$allok = 1;
 					return 0;
 				} else {
-					logger("DOWNLOAD ERROR: Could not open $Conf::cachedir/$bfile for writing.");
+					logger("DOWNLOAD ERROR: Could not open $Conf::tmpdir/$bfile for writing.");
 				}
 			} else {
 				return 0;
