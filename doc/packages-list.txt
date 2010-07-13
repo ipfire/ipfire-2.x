@@ -176,6 +176,7 @@
 * libart_lgpl-2.3.17
 * libcap-1.10
 * libdvbpsi5-0.1.6
+* libevent-1.4.14b-stable
 * libid3tag-0.15.1b
 * libidn-0.6.14
 * libmad-0.15.1b
@@ -219,7 +220,7 @@
 * man-db-2.4.3
 * man-pages-2.34
 * mbr-1.1.8
-* mc-4.7.0
+* mc-4.7.3
 * mdadm-3.1.1
 * mechanize-0.1.8
 * mediatomb-svn2020
@@ -250,7 +251,7 @@
 * netcat-0.7.1
 * netpbm-10.26.46
 * newt-0.51.6
-* nfs-utils-1.1.1
+* nfs-utils-1.2.2
 * nmap-5.20
 * noip_updater_v1.6
 * ntfs-3g-2009.4.4
