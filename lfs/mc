@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 4.7.0
+VER        = 4.7.3
 
 THISAPP    = mc-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.lzma
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mc
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = "glib"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3be875c7603ab45e784026a5d13d4bb0
+$(DL_FILE)_MD5 = 15b017b370668683aa8cbf6730667510
 
 install : $(TARGET)
 
@@ -76,15 +76,12 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	# Create a symlink because mc search for automake-1.10
-	ln -s automake-1.9 /usr/share/automake-1.10
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xf $(DIR_DL)/$(DL_FILE) --lzma
 	cd $(DIR_APP) && ./configure --prefix=/usr \
 				--without-x --disable-nls \
 				--with-samba \
 				--with-screen=ncurses
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	rm /usr/share/automake-1.10
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
