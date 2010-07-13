@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 3.6.5
+VER        = 3.6.7
 
 THISAPP    = vdradmin-am-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdradmin
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = "perl-gettext vdr"
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 34ac04af6d1b0495f10cd06e85abb990
+$(DL_FILE)_MD5 = 8b1b2f8bbff26cbb47e79d5b55dbd3c1
 
 install : $(TARGET)
 
@@ -83,5 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./install-ipfire.sh
 	install -v -m 644 $(DIR_SRC)/config/vdradmin/vdradmind.conf \
 		 /etc/vdradmin/vdradmind.conf
+	mkdir /var/log/vdradmin
+	mkdir /var/run/vdradmin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
