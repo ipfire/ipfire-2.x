@@ -4,3 +4,7 @@ etc/rc.d/init.d/networking/red
 etc/rc.d/helper/getdnsfromdhcpc.pl
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 usr/local/bin/backupiso
+usr/local/bin/updxlratorctrl
+usr/local/bin/urlfilterctrl
+srv/web/ipfire/cgi-bin/updatexlrator.cgi
+srv/web/ipfire/cgi-bin/urlfilter.cgi

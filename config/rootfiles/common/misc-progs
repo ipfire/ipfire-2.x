@@ -1,6 +1,5 @@
-usr/local/bin/setaliases
-#usr/local/bin/applejuicectrl
 usr/local/bin/addonctrl
+#usr/local/bin/applejuicectrl
 usr/local/bin/backupctrl
 #usr/local/bin/clamavctrl
 usr/local/bin/dhcpctrl
@@ -20,6 +19,7 @@ usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
 usr/local/bin/redctrl
 #usr/local/bin/sambactrl
+usr/local/bin/setaliases
 usr/local/bin/setdmzholes
 usr/local/bin/setportfw
 usr/local/bin/setxtaccess
@@ -30,7 +30,9 @@ usr/local/bin/sshctrl
 usr/local/bin/syslogdctrl
 usr/local/bin/timectrl
 #usr/local/bin/tripwirectrl
+usr/local/bin/updxlratorctrl
 usr/local/bin/updxsetperms
 usr/local/bin/upnpctrl
+usr/local/bin/urlfilterctrl
 usr/local/bin/wirelessctrl
 #usr/local/bin/wlanapctrl
