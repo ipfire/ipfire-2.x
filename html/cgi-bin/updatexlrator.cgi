@@ -94,10 +94,6 @@ my @downloadfiles=();
 
 my @metadata=();
 
-my $chk_cron_dly = "${General::swroot}/updatexlrator/autocheck/cron.daily";
-my $chk_cron_wly = "${General::swroot}/updatexlrator/autocheck/cron.weekly";
-my $chk_cron_mly = "${General::swroot}/updatexlrator/autocheck/cron.monthly";
-
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
@@ -1495,27 +1491,18 @@ END
 
 sub savesettings
 {
-	if (-e $chk_cron_dly) { unlink($chk_cron_dly); }
-	if (-e $chk_cron_wly) { unlink($chk_cron_wly); }
-	if (-e $chk_cron_mly) { unlink($chk_cron_mly); }
 
 	if (($xlratorsettings{'ENABLE_AUTOCHECK'} eq 'on') && ($xlratorsettings{'AUTOCHECK_SCHEDULE'} eq 'daily'))
 	{
-		symlink("../bin/checkup",$chk_cron_dly)
-	} else {
-		symlink("/bin/false",$chk_cron_dly)
+		system('/usr/local/bin/updxlratorctrl cron daily >/dev/null 2>&1');
 	}
-		if (($xlratorsettings{'ENABLE_AUTOCHECK'} eq 'on') && ($xlratorsettings{'AUTOCHECK_SCHEDULE'} eq 'weekly'))
+	if (($xlratorsettings{'ENABLE_AUTOCHECK'} eq 'on') && ($xlratorsettings{'AUTOCHECK_SCHEDULE'} eq 'weekly'))
 	{
-		symlink("../bin/checkup",$chk_cron_wly)
-	} else {
-		symlink("/bin/false",$chk_cron_wly)
+		system('/usr/local/bin/updxlratorctrl cron weekly >/dev/null 2>&1');
 	}
-		if (($xlratorsettings{'ENABLE_AUTOCHECK'} eq 'on') && ($xlratorsettings{'AUTOCHECK_SCHEDULE'} eq 'monthly'))
+	if (($xlratorsettings{'ENABLE_AUTOCHECK'} eq 'on') && ($xlratorsettings{'AUTOCHECK_SCHEDULE'} eq 'monthly'))
 	{
-		symlink("../bin/checkup",$chk_cron_mly)
-	} else {
-		symlink("/bin/false",$chk_cron_mly)
+		system('/usr/local/bin/updxlratorctrl cron monthly >/dev/null 2>&1');
 	}
 
 	# don't save those variable to the settings file,

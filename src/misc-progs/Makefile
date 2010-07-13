@@ -32,7 +32,7 @@ SUID_PROGS = setdmzholes setportfw setxtaccess \
 	wirelessctrl getipstat getiptstate qosctrl launch-ether-wake \
 	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
-	setaliases
+	setaliases urlfilterctrl updxlratorctrl
 SUID_UPDX = updxsetperms
 
 install : all
