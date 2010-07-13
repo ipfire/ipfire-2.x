@@ -23,6 +23,12 @@
 #
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
+
+# Cleanup crontab
+cat /var/spool/cron/root.orig | grep -v updatexlrator | grep -v urlfilter > /var/spool/cron/root.orig.temp
+mv -f /var/spool/cron/root.orig.temp /var/spool/cron/root.orig
+fcrontab -z
+
 #
 #Stop services
 
