@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -65,9 +65,6 @@ my $hintcolour = '#FFFFCC';
 my $sourceurlfile = "${General::swroot}/urlfilter/autoupdate/autoupdate.urls";
 my $updconffile = "${General::swroot}/urlfilter/autoupdate/autoupdate.conf";
 my $updflagfile = "${General::swroot}/urlfilter/blacklists/.autoupdate.last";
-my $upd_cron_dly = "${General::swroot}/urlfilter/autoupdate/cron.daily";
-my $upd_cron_wly = "${General::swroot}/urlfilter/autoupdate/cron.weekly";
-my $upd_cron_mly = "${General::swroot}/urlfilter/autoupdate/cron.monthly";
 
 my $errormessage='';
 my $updatemessage='';
@@ -965,29 +962,20 @@ if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter save schedule'})
 		print FILE "CUSTOM_UPDATE_URL=$filtersettings{'CUSTOM_UPDATE_URL'}\n";
 		close FILE;
 
-		if (-e $upd_cron_dly) { unlink($upd_cron_dly); }
-		if (-e $upd_cron_wly) { unlink($upd_cron_wly); }
-		if (-e $upd_cron_mly) { unlink($upd_cron_mly); }
 
 		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') && ($filtersettings{'UPDATE_SCHEDULE'} eq 'daily'))
 		{
-			symlink("../bin/autoupdate.pl",$upd_cron_dly)
-		} else {
-			symlink("/bin/false",$upd_cron_dly)
+			system('/usr/local/bin/urlfilterctrl cron daily >/dev/null 2>&1');
 		}
 
 		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') && ($filtersettings{'UPDATE_SCHEDULE'} eq 'weekly'))
 		{
-			symlink("../bin/autoupdate.pl",$upd_cron_wly)
-		} else {
-			symlink("/bin/false",$upd_cron_wly)
+			system('/usr/local/bin/urlfilterctrl cron weekly >/dev/null 2>&1');
 		}
 
 		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') && ($filtersettings{'UPDATE_SCHEDULE'} eq 'monthly'))
 		{
-			symlink("../bin/autoupdate.pl",$upd_cron_mly)
-		} else {
-			symlink("/bin/false",$upd_cron_mly)
+			system('/usr/local/bin/urlfilterctrl cron monthly >/dev/null 2>&1');
 		}
 	}
 }
