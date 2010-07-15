@@ -73,7 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-4.4.0_ipfire.patch
 
-	cd $(DIR_APP) && ./configure --prefix="/usr" --sysconfdir="/etc"
+	cd $(DIR_APP) && ./configure --prefix="/usr" --sysconfdir="/etc" --enable-cisco-quirks
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
