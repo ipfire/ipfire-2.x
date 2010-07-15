@@ -716,6 +716,7 @@
 'download certificate' => 'Download certificate',
 'download host certificate' => 'Download host certificate',
 'download new ruleset' => 'Download new ruleset',
+'upload new ruleset' => 'Upload new ruleset',
 'download pkcs12 file' => 'Download PKCS12 file',
 'download root certificate' => 'Download root certificate',
 'dpd action' => 'Dead Peer Detection action',

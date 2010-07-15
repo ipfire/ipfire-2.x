@@ -688,6 +688,7 @@
 'download certificate' => 'Zertifikate herunterladen',
 'download host certificate' => 'Host Zertifikat herunterladen',
 'download new ruleset' => 'Neuen Regelsatz herunterladen',
+'upload new ruleset' => 'Neuen Regelsatz hochladen',
 'download pkcs12 file' => 'PKCS12 Datei herunterladen',
 'download root certificate' => 'Root Zertifikat herunterladen',
 'dpd action' => 'Aktion für Dead Peer Detection',

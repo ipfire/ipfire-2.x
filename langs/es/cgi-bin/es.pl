@@ -714,6 +714,7 @@
 'download certificate' => 'Descargar certificado',
 'download host certificate' => 'Descargar certificado de host',
 'download new ruleset' => 'Descargar nuevo grupo de reglas',
+'upload new ruleset' => 'Subir nuevo grupo de reglas',
 'download pkcs12 file' => 'Descargar archivo PKCS12',
 'download root certificate' => 'Descargar certificado root',
 'dpd action' => 'Acción al detectar Dead Peer',
