@@ -1336,6 +1336,7 @@
 'pakfire update daily' => 'Täglich nach Updates suchen:',
 'pakfire updates' => 'Zur Verfügung stehende Updates:',
 'pakfire working' => 'Pakfire führt gerade eine Aufgabe aus... Bitte warten sie, bis diese erfolgreich beendet wurde.',
+'snort working' => 'Snort führt gerade eine Aufgabe aus... Bitte warten sie, bis diese erfolgreich beendet wurde.',
 'pap or chap' => 'PAP oder CHAP',
 'parentclass' => 'Parentklasse',
 'password' => 'Passwort:',

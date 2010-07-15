@@ -1365,6 +1365,7 @@
 'pakfire update daily' => 'Search for updates daily:',
 'pakfire updates' => 'Available Update:',
 'pakfire working' => 'Pakfire is working ... Please wait until all operations have completed successfully.',
+'snort working' => 'Snort is working ... Please wait until all operations have completed successfully.',
 'pap or chap' => 'PAP or CHAP',
 'parentclass' => 'Parentclass',
 'password' => 'Password:',
