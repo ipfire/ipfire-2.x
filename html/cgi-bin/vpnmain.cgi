@@ -293,7 +293,7 @@ sub writeipsecfiles {
     print CONF "include /etc/ipsec.user.conf\n";
     print CONF "\n";
 
-    print SECRETS "include /etc/ipsec.user/secrets\n";
+    print SECRETS "include /etc/ipsec.user.secrets\n";
 
     if (-f "${General::swroot}/certs/hostkey.pem") {
         print SECRETS ": RSA ${General::swroot}/certs/hostkey.pem\n"
