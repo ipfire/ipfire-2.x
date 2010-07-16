@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,19 +19,20 @@
 #                                                                             #
 ###############################################################################
 
-
-use LWP::UserAgent;
-use File::Copy;
-use File::Temp qw/ tempfile tempdir /;
 use strict;
 
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
+use File::Copy;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+
+sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
+
+$a = new CGI;
 
 my %color = ();
 my %mainsettings = ();
@@ -67,6 +68,8 @@ $snortsettings{'ACTION2'} = '';
 $snortsettings{'RULES'} = '';
 $snortsettings{'OINKCODE'} = '';
 $snortsettings{'INSTALLDATE'} = '';
+$snortsettings{'FILE'} = '';
+$snortsettings{'UPLOAD'} = '';
 
 &Header::getcgihash(\%snortsettings, {'wantfile' => 1, 'filevar' => 'FH'});
 
@@ -261,11 +264,11 @@ if (-e "/etc/snort/snort.conf") {
 
 if ($snortsettings{'RULES'} eq 'subscripted') {
 	#$url="http://dl.snort.org/sub-rules/snortrules-snapshot-2.8_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
-	$url="http://dl.snort.org/sub-rules/snortrules-snapshot-2860_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
+	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2860_s.tar.gz/$snortsettings{'OINKCODE'}";
 	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8_s.tar.gz";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
 	#$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2.8.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
-	$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2860.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
+	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2860.tar.gz/$snortsettings{'OINKCODE'}";
 	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8.tar.gz";
 } else {
 	$url="http://www.emergingthreats.net/rules/emerging.rules.tar.gz";
@@ -344,11 +347,12 @@ END
 	 # INSTALLMD5 is not in the form, so not retrieved by getcgihash
 	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
 
-if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
+if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'} || $snortsettings{'ACTION'} eq $Lang::tr{'upload new ruleset'}) {
 
 	my @df = `/bin/df -B M /var`;
 	foreach my $line (@df) {
 		next if $line =~ m/^Filesystem/;
+		my $return;
 
 		if ($line =~ m/dev/ ) {
 		$line =~ m/^.* (\d+)M.*$/;
@@ -356,19 +360,32 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
 			if ($1<300) {
 				$errormessage = "$Lang::tr{'not enough disk space'} < 300MB, /var $1MB";
 			} else {
-				my $filename = &downloadrulesfile();
-				if (defined $filename) {
-						$results = "<b>$Lang::tr{'installed updates'}</b>\n<pre>";
-						$results .=`/usr/local/bin/oinkmaster.pl -s -u file://$filename -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules 2>&1`;
-						$results .= "</pre>";
+
+				if ( $snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'} ){
+
+					&downloadrulesfile();
+					sleep(3);
+					$return = `cat /var/tmp/log 2>/dev/null`;
+
+				} elsif ( $snortsettings{'ACTION'} eq $Lang::tr{'upload new ruleset'} ) {
+					my $upload = $a->param("UPLOAD");
+					open UPLOADFILE, ">/var/tmp/snortrules.tar.gz";
+					binmode $upload;
+					while ( <$upload> ) {
+					print UPLOADFILE;
 					}
-					unlink ($filename);
+					close UPLOADFILE;
+				}
+
+					if ($return =~ "ERROR"){
+						$errormessage = "<br /><pre>".$return."</pre>";
+					} else {
+						system("/usr/local/bin/oinkmaster.pl -v -s -u file:///var/tmp/snortrules.tar.gz -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules >>/var/tmp/log 2>&1 &");
+						sleep(2);
+					}
 			}
-			
 		}
 	}
-
-
 }
 
 $checked{'ENABLE_SNORT'}{'off'} = '';
@@ -440,6 +457,37 @@ if ($errormessage) {
 	print "<class name='base'>$errormessage\n";
 	print "&nbsp;</class>\n";
 	&Header::closebox();
+}
+
+my $return = `pidof oinkmaster.pl -x`;
+chomp($return);
+if ($return) {
+	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='10;'>" );
+	print <<END;
+	<table>
+		<tr><td>
+				<img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' />&nbsp;
+			<td>
+				$Lang::tr{'snort working'}
+		<tr><td colspan='2' align='center'>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<input type='image' alt='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
+			</form>
+		<tr><td colspan='2' align='left'><pre>
+END
+	my @output = `tail -20 /var/tmp/log`;
+	foreach (@output) {
+		print "$_";
+	}
+	print <<END;
+			</pre>
+		</table>
+END
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit;
+	refreshpage();
 }
 
 &Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system2'});
@@ -701,56 +749,26 @@ END
 &Header::closepage();
 
 sub downloadrulesfile {
-	my $return = &geturl($url);
-	return undef unless $return;
+	my $peer;
+	my $peerport;
 
-	if (index($return->content, "\037\213") == -1 ) { # \037\213 is .gz beginning
-		$errormessage = $Lang::tr{'invalid loaded file'};
-		return undef;
-	}
-
-	my $filename='';
-	my $fh='';
-	($fh, $filename) = tempfile('/var/tmp/XXXXXXXX',SUFFIX => '.tar.gz' );#oinkmaster work only with this extension
-	binmode ($fh);
-	syswrite ($fh, $return->content);
-	close($fh);
-	return $filename;
-}
-
-sub geturl ($) {
-	my $url=$_[0];
+	unlink("/var/tmp/log");
 
 	unless (-e "${General::swroot}/red/active") {
 		$errormessage = $Lang::tr{'could not download latest updates'};
 		return undef;
 	}
 
-	my $downloader = LWP::UserAgent->new;
-	$downloader->timeout(5);
-
 	my %proxysettings=();
 	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
 
 	if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
-		my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
-		if ($proxysettings{'UPSTREAM_USER'}) {
-			$downloader->proxy("http","http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$peer:$peerport/");
-		} else {
-			$downloader->proxy("http","http://$peer:$peerport/");
-		}
+		($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
 	}
 
-	my $return = $downloader->get($url,'Cache-Control','no-cache');
-
-	if ($return->code == 403) {
-		$errormessage = $Lang::tr{'access refused with this oinkcode'};
-		return undef;
-	} elsif (!$return->is_success()) {
-		$errormessage = $Lang::tr{'could not download latest updates'};
-		return undef;
+	if ($peer) {
+		system("wget -r --proxy=on --proxy-user=$proxysettings{'UPSTREAM_USER'} --proxy-passwd=$proxysettings{'UPSTREAM_PASSWORD'} -e http_proxy=http://$peer:$peerport/ -o /var/tmp/log --no-check-certificate --output-document=/var/tmp/snortrules.tar.gz $url");
+	} else {
+		system("wget -r --no-check-certificate -o /var/tmp/log --output-document=/var/tmp/snortrules.tar.gz $url");
 	}
-
-	return $return;
-
 }

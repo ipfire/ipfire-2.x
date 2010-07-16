@@ -8,4 +8,9 @@ usr/local/bin/updxlratorctrl
 usr/local/bin/urlfilterctrl
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
 /opt/pakfire/lib/functions.pl
+var/ipfire/langs/de.pl
+var/ipfire/langs/en.pl
+var/ipfire/langs/es.pl
+var/ipfire/langs/fr.pl
