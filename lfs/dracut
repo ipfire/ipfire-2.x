@@ -75,7 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && make $(MAKETUNING) WITH_SWITCH_ROOT=1
 	cd $(DIR_APP) && make install WITH_SWITCH_ROOT=1 \
-		sysconfdir=/etc
+		sbindir=/sbin sysconfdir=/etc
 
 	rm -rf /usr/share/dracut/modules.d/*{dash,fips,redhat-i18n,rpmversion,network,ifcfg,plymouth,btrfs,crypt,dm,dmraid,dmsquash-live,lvm,mdraid,multipath,dasd,fcoe,iscsi,nbd,nfs,resume,uswsusp,zfcp,znet,selinux}
 
