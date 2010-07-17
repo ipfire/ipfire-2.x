@@ -512,31 +512,9 @@ int main(int argc, char *argv[])
 
 	replace("/harddisk/boot/grub/grub.conf", "KVER", KERNEL_VERSION);
 
-	/* Build the emergency ramdisk with all drivers */
-	mysystem("cp -f /harddisk/etc/mkinitcpio.conf /harddisk/etc/mkinitcpio.conf.org");
-
-	replace("/harddisk/etc/mkinitcpio.conf", " autodetect ", " ");
-	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s-emergency.img -k %s-ipfire", KERNEL_VERSION, KERNEL_VERSION);
-	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-
-	mysystem("cp -f /harddisk/etc/mkinitcpio.conf.org /harddisk/etc/mkinitcpio.conf");
-
-	/* mkinitcpio has a problem if ide and pata are included */
-	if ( scsi_disk==1 ) {
-	    /* Remove the ide hook if we install sda */
-	    replace("/harddisk/etc/mkinitcpio.conf", " ide ", " ");
-	} else {
-	    /* Remove the pata & sata hook if we install hda */
-	    replace("/harddisk/etc/mkinitcpio.conf", " pata ", " ");
-	    replace("/harddisk/etc/mkinitcpio.conf", " sata ", " ");
-	}
 	/* Going to make our initrd... */
-	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s.img -k %s-ipfire", KERNEL_VERSION, KERNEL_VERSION);
+	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /usr/local/bin/rebuild-initrd");
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-/*	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /sbin/mkinitcpio -g /boot/ipfirerd-%s-smp.img -k %s-ipfire-smp", KERNEL_VERSION, KERNEL_VERSION );
-	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-*/
-
 
 	sprintf(string, "root=%s3", hdparams.devnode_part_run);
 	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
