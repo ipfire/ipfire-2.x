@@ -23,21 +23,5 @@
 #
 #
 KVER=`uname -r | cut -d"-" -f1`
-ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
-echo
-echo Rebuild the Initramdisk ...
-cp -f /etc/mkinitcpio.conf.org /etc/mkinitcpio.conf
-#
-# Made initramdisk
-#
-if [ "${ROOT:0:7}" == "/dev/sd" ]; then
-    # Remove ide hook if root is on sda 
-    sed -i "s| ide | |g" /etc/mkinitcpio.conf
-else
-if [ "${ROOT:0:7}" == "/dev/hd" ]; then
-    # Remove pata & sata hook if root is on hda 
-    sed -i "s| pata | |g" /etc/mkinitcpio.conf
-    sed -i "s| sata | |g" /etc/mkinitcpio.conf
-fi
-fi
-mkinitcpio -k $KVER-ipfire -g /boot/ipfirerd-$KVER.img
+
+dracut --force --verbose /boot/ipfirerd-$KVER.img $KVER-ipfire
