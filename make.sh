@@ -376,6 +376,7 @@ buildipfire() {
   ipfiremake klibc
   ipfiremake mkinitcpio
   ipfiremake udev			KLIBC=1
+  ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake gmp
