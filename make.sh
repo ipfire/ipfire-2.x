@@ -373,9 +373,6 @@ buildipfire() {
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
-  ipfiremake klibc
-  ipfiremake mkinitcpio
-  ipfiremake udev			KLIBC=1
   ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm

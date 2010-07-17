@@ -33,11 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(LFS_PASS)" "install"
 	TARGET     = $(DIR_INFO)/$(THISAPP)-install
 else
-ifeq "$(KLIBC)" "1"
-	TARGET     = $(DIR_INFO)/$(THISAPP)-klibc
-else
 	TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
 endif
 
 ###############################################################################
@@ -107,28 +103,6 @@ ifeq "$(LFS_PASS)" "install"
 	cp -f /etc/udev/rules.d/55-scsi-cdrom.rules /install/initrd/etc/udev/rules.d/55-scsi-cdrom.rules
 
 else
-ifeq "$(KLIBC)" "1"
-	cd $(DIR_APP) && sed -i "s|USE_LOG = .*|USE_LOG = false|g" Makefile
-	cd $(DIR_APP) && sed -i "s|USE_KLIBC = .*|USE_KLIBC = true|g" Makefile
-
-	cd $(DIR_APP) && make PROGRAMS="udevd udevsettle udevtrigger" EXTRAS="extras/firmware extras/cdrom_id"
-
-	-mkdir -p /lib/initcpio/udev
-	-mkdir -p /lib/initcpio/install
-	-mkdir -p /lib/initcpio/hooks
-	cd $(DIR_APP) && install -m755 udevd /lib/initcpio/udev
-	cd $(DIR_APP) && install -m755 udevtrigger  /lib/initcpio/udev
-	cd $(DIR_APP) && install -m755 udevsettle  /lib/initcpio/udev
-	cd $(DIR_APP) && install -m755 extras/firmware/firmware.sh  /lib/initcpio/udev
-	cd $(DIR_APP) && install -m755 extras/cdrom_id/cdrom_id  /lib/initcpio/udev
-	
-	install -m755 $(DIR_SRC)/config/mkinitcpio/start_udev /lib/initcpio/udev
-	install -m644 $(DIR_SRC)/config/mkinitcpio/udev.rules  /lib/initcpio/udev
-	install -m755 $(DIR_SRC)/config/mkinitcpio/load-modules.sh /lib/initcpio/udev
-	install -m644 $(DIR_SRC)/config/mkinitcpio/udev_install /lib/initcpio/install/udev
-	install -m644 $(DIR_SRC)/config/mkinitcpio/udev_hook /lib/initcpio/hooks/udev
-
-else
 	rm -rf /lib/udev/devices
 	cd $(DIR_APP) && tar jxf $(DIR_DL)/udev-config-6.2.tar.bz2
 	install -dv /lib/{firmware,udev/devices/{pts,shm}}
@@ -154,7 +128,6 @@ else
 	chmod 755 /etc/udev/dvb.sh
 	touch /etc/udev/rules.d/30-persistent-network.rules
 	cp -vf $(DIR_SRC)/config/udev/blacklist /etc/modprobe.d/blacklist
-endif
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
