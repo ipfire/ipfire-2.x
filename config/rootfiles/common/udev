@@ -1,8 +1,10 @@
-etc/scsi_id.config
 etc/modprobe.d/blacklist
+etc/scsi_id.config
 etc/udev
+etc/udev/dvb.sh
 #etc/udev/rules.d
 #etc/udev/rules.d/05-udev-early.rules
+etc/udev/rules.d/10-dvb.rules
 #etc/udev/rules.d/25-lfs.rules
 #etc/udev/rules.d/26-modprobe.rules
 #etc/udev/rules.d/27-firmware.rules
@@ -46,8 +48,6 @@ usr/bin/udevtest
 usr/lib/libvolume_id.so
 #usr/lib/pkgconfig/libvolume_id.pc
 usr/sbin/udevmonitor
-#usr/share/doc/udev-096
-#usr/share/doc/udev-096/index.html
 #usr/share/man/man7/udev.7
 #usr/share/man/man8/ata_id.8
 #usr/share/man/man8/cdrom_id.8
@@ -61,16 +61,3 @@ usr/sbin/udevmonitor
 #usr/share/man/man8/udevtest.8
 #usr/share/man/man8/udevtrigger.8
 #usr/share/man/man8/vol_id.8
-lib/initcpio/hooks/udev
-lib/initcpio/install/udev
-#lib/initcpio/udev
-lib/initcpio/udev/cdrom_id
-lib/initcpio/udev/firmware.sh
-lib/initcpio/udev/load-modules.sh
-lib/initcpio/udev/start_udev
-lib/initcpio/udev/udev.rules
-lib/initcpio/udev/udevd
-lib/initcpio/udev/udevsettle
-lib/initcpio/udev/udevtrigger
-etc/udev/dvb.sh
-etc/udev/rules.d/10-dvb.rules
