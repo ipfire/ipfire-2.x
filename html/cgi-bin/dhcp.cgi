@@ -1199,7 +1199,7 @@ sub buildconf {
 	    $key++;
 	}
     }
-    print FILE "include ${General::swroot}/dhcp/dhcpd.conf.local\n";
+    print FILE "include \"${General::swroot}/dhcp/dhcpd.conf.local\";\n";
     close FILE;
     if ( $dhcpsettings{"ENABLE_GREEN"} eq 'on' || $dhcpsettings{"ENABLE_BLUE"} eq 'on' ) {system '/usr/local/bin/dhcpctrl enable >/dev/null 2>&1';}
     else {system '/usr/local/bin/dhcpctrl disable >/dev/null 2>&1';}
