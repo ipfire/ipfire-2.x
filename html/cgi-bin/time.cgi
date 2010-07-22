@@ -237,6 +237,10 @@ print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
 print <<END
 <table width='100%'>
 <tr>
+	<td colspan='2'><strong>$Lang::tr{'ntp common settings'}</strong></td>
+</tr>
+
+<tr>
 	<td><input type='checkbox' name='ENABLENTP' $checked{'ENABLENTP'}{'on'} /></td>
 	<td width='100%' colspan='4' class='base'>$Lang::tr{'network time from'}</td>
 </tr>
@@ -272,22 +276,19 @@ print <<END
 	<td>&nbsp;</td>
 	<td class='base' colspan='4'><input type='checkbox' name='ENABLECLNTP' $checked{'ENABLECLNTP'}{'on'} /> $Lang::tr{'clenabled'}</td>
 </tr>
+<tr>
+	<td>&nbsp;</td>
+	<td class='base' colspan='4'><input type='checkbox' name='ENABLESETONBOOT' $checked{'ENABLESETONBOOT'}{'on'} /> $Lang::tr{'Set time on boot'}</td>
+</tr>
 </table>
 <table width='100%'>
 <tr>
-	<td colspan='4'><hr /><b>$Lang::tr{'update time'}</b></td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td class='base' colspan='3'>$Lang::tr{'set time now help'}</td>
-</tr>
-<tr>
-	<td class='base' colspan='4'><input type='checkbox' name='ENABLESETONBOOT' $checked{'ENABLESETONBOOT'}{'on'} /> $Lang::tr{'Set time on boot'}</td>
+	<td colspan='4'><hr /><strong>$Lang::tr{'ntp sync'}</strong></td>
 </tr>
 <tr>
 	<td class='base'><input type='radio' name='UPDATE_METHOD' value='periodically' $checked{'UPDATE_METHOD'}{'periodically'} /></td>
-	<td width='15%'>$Lang::tr{'every'}: </td>
-	<td width='35%'><input type='text' name='UPDATE_VALUE' size='3' maxlength='3' value='$timesettings{'UPDATE_VALUE'}' />
+	<td width='10%'>$Lang::tr{'every'}</td>
+	<td width='45%'><input type='text' name='UPDATE_VALUE' size='3' maxlength='3' value='$timesettings{'UPDATE_VALUE'}' />
 	<select name='UPDATE_PERIOD'>
 		<option value='hourly' $selected{'UPDATE_PERIOD'}{'hourly'}>$Lang::tr{'hours'}</option>
 		<option value='daily' $selected{'UPDATE_PERIOD'}{'daily'}>$Lang::tr{'days'}</option>
@@ -299,6 +300,13 @@ print <<END
 <tr>
 	<td class='base'><input type='radio' name='UPDATE_METHOD' value='manually' $checked{'UPDATE_METHOD'}{'manually'} /></td>
 	<td colspan='2'>$Lang::tr{'manually'}</td>
+</tr>
+<tr>
+	<td colspan='4'><hr /><strong>$Lang::tr{'update time'}</strong></td>
+</tr>
+<tr>
+	<td>&nbsp;</td>
+	<td class='base' colspan='3'>$Lang::tr{'set time now help'}</td>
 </tr>
 END
 ;
