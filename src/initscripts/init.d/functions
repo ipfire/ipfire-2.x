@@ -438,7 +438,7 @@ loadproc()
 {
 	local pidfile=""
 	local forcestart=""
-	local nicelevel="10"
+	local nicelevel=""
 
 # This will ensure compatibility with previous LFS Bootscripts
 	if [ -n "${PIDFILE}" ];	then
@@ -500,7 +500,13 @@ loadproc()
 		esac
 	fi
 
-	nice -n "${nicelevel}" "${@}"
+	local cmd="${@}"
+
+	if [ -n "${nicelevel}" ]; then
+		cmd="nice -n "${nicelevel}" ${cmd}"
+	fi
+
+	${cmd}
 	evaluate_retval # This is "Probably" not LSB compliant, but required to be compatible with older bootscripts
 	return 0
 }

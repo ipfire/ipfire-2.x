@@ -1738,7 +1738,7 @@
 'unknown' => 'UNKNOWN',
 'unnamed' => 'Unnamed',
 'update' => 'Update',
-'update accelerator' => 'Update Booster',
+'update accelerator' => 'Update Accelerator',
 'update time' => 'Update the time:',
 'update transcript' => 'Update transcript',
 'updatedatabase' => 'Update Database with last report',

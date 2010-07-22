@@ -1705,7 +1705,7 @@
 'unknown' => 'Unbekannt',
 'unnamed' => 'Unbenannt',
 'update' => 'Aktualisieren',
-'update accelerator' => 'Update-Booster',
+'update accelerator' => 'Update-Accelerator',
 'update time' => 'Aktualisiere die Uhrzeit:',
 'update transcript' => 'Aktualisieren',
 'updatedatabase' => 'Datenbank auf Stand der letzten Reports setzen',

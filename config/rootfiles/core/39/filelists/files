@@ -9,6 +9,7 @@ usr/local/bin/urlfilterctrl
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 /opt/pakfire/lib/functions.pl
 var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl

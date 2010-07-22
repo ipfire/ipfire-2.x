@@ -22,6 +22,7 @@ var/ipfire/ddns
 var/ipfire/dhcp
 #var/ipfire/dhcp/advoptions
 #var/ipfire/dhcp/advoptions-list
+#var/ipfire/dhcp/dhcpd.conf.local
 #var/ipfire/dhcp/fixleases
 #var/ipfire/dhcp/settings
 var/ipfire/dhcpc
