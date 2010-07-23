@@ -542,7 +542,7 @@ int main(int argc, char *argv[])
 	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
 
-	system("sed -e 's#harddisk\\/##g' < /proc/mounts > /harddisk/etc/mtab");
+	system("sed -e 's#/harddisk#/#g' -e 's#//#/#g'  < /proc/mounts > /harddisk/etc/mtab");
 
 	snprintf(commandstring, STRING_SIZE, 
 		 "/sbin/chroot /harddisk /usr/sbin/grub-install --no-floppy %s", hdparams.devnode_disk);
