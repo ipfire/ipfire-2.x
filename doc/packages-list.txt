@@ -71,6 +71,7 @@
 * compat-wireless-2.6.34.1-kmod-2.6.32.15-ipfire
 * compat-wireless-2.6.34.1-kmod-2.6.32.15-ipfire-xen
 * coreutils-5.96
+* cpio-2.11
 * cpio-2.6
 * cpufrequtils-007
 * cryptodev-20091126-kmod-2.6.32.15-ipfire
@@ -90,6 +91,8 @@
 * diffutils-2.8.1
 * dnsmasq-2.45
 * dosfstools-3.0.9
+* dracut-006
+* dracut-006.save
 * e1000-8.0.19-kmod-2.6.32.15-ipfire
 * e1000-8.0.19-kmod-2.6.32.15-ipfire-xen
 * e1000e-1.1.19-kmod-2.6.32.15-ipfire
@@ -150,6 +153,7 @@
 * iftop-0.17
 * igmpproxy-0.1
 * inetutils-1.4.2
+* initrd_off
 * ipaddr-1.2
 * iperf-2.0.4
 * ipfireseeder-1.00
@@ -165,6 +169,7 @@
 * klibc-1.5.14
 * kqemu-1.4.0pre1-kmod-2.6.32.15-ipfire
 * kqemu-1.4.0pre1-kmod-2.6.32.15-ipfire-xen
+* kqemu-1.4.0pre1-kmod-2.6.32.16-ipfire
 * kudzu-1.2.64
 * kvm-kmod-2.6.33.1-kmod-2.6.32.15-ipfire
 * l7-protocols-2009-05-10
@@ -186,6 +191,7 @@
 * libogg-1.1.4
 * liboping-1.3.4
 * libpcap-1.0.0
+* libpng-1.2.12
 * libpng-1.2.44
 * libpri-1.4.10.2
 * libsafe_2.0-16
@@ -220,6 +226,7 @@
 * man-db-2.4.3
 * man-pages-2.34
 * mbr-1.1.8
+* mc-4.7.0
 * mc-4.7.3
 * mdadm-3.1.1
 * mechanize-0.1.8
@@ -251,6 +258,7 @@
 * netcat-0.7.1
 * netpbm-10.26.46
 * newt-0.51.6
+* nfs-utils-1.1.1
 * nfs-utils-1.2.2
 * nmap-5.20
 * noip_updater_v1.6
@@ -259,6 +267,7 @@
 * nut-2.4.3
 * ocaml-3.09.2
 * oinkmaster-2.0
+* open-vm-tools-2009.05.22-167859
 * open-vm-tools-8.4.2-261024
 * openldap-2.3.20
 * openmailadmin-1.0.0
@@ -279,6 +288,7 @@
 * popt-1.10.4
 * portmap_6.0
 * postfix-2.6.5
+* ppp-2.4.4
 * ppp-2.4.5
 * pptp-1.7.2
 * procps-3.2.6
@@ -294,6 +304,7 @@
 * readline-5.1
 * reiser4progs-1.0.6
 * reiserfsprogs-3.6.21
+* rp-pppoe-3.8
 * rrdtool-1.2.30
 * rssdler-0.4.0a
 * rsync-3.0.7
@@ -334,6 +345,7 @@
 * teamspeak-2.0.24.1
 * texinfo-4.8
 * tftp-hpa-0.48
+* tiff-3.8.2
 * tiff-3.9.4
 * traceroute-2.0.12
 * tripwire-2.4.1.2
@@ -348,6 +360,7 @@
 * v4l-dvb-b576509ea6d2-kmod-2.6.32.15-ipfire
 * v4l-dvb-b576509ea6d2-kmod-2.6.32.15-ipfire-xen
 * vdr-1.6.0
+* vdradmin-am-3.6.5
 * vdradmin-am-3.6.7
 * vim-7.0
 * vlan.1.9
@@ -356,6 +369,7 @@
 * vnstati-beta3
 * vsftpd-2.1.2
 * w_scan-20080105
+* watchdog-5.6
 * watchdog-5.9
 * wget-1.10.2
 * whatmask-1.2
