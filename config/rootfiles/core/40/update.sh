@@ -35,7 +35,7 @@ extract_files
 
 #
 #Update Language cache
-#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #
 #Finish

@@ -1,1 +1,8 @@
 etc/system-release
+var/ipfire/langs/en.pl
+var/ipfire/langs/de.pl
+var/ipfire/langs/es.pl
+var/ipfire/langs/fr.pl
+var/ipfire/dhcp/dhcpd.conf.local
+etc/rc.d/init.d/functions
+srv/web/ipfire/cgi-bin/time.cgi
