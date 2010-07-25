@@ -164,6 +164,9 @@ usr/lib/alsa-lib/smixer/smixer-ac97.so
 #usr/lib/alsa-lib/smixer/smixer-hda.a
 #usr/lib/alsa-lib/smixer/smixer-hda.la
 usr/lib/alsa-lib/smixer/smixer-hda.so
+#usr/lib/alsa-lib/smixer/smixer-python.a
+#usr/lib/alsa-lib/smixer/smixer-python.la
+usr/lib/alsa-lib/smixer/smixer-python.so
 #usr/lib/alsa-lib/smixer/smixer-sbase.a
 #usr/lib/alsa-lib/smixer/smixer-sbase.la
 usr/lib/alsa-lib/smixer/smixer-sbase.so
