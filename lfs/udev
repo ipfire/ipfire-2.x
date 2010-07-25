@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 096
+VER        = 125
 
 THISAPP    = udev-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(LFS_PASS)" "install"
@@ -45,7 +45,7 @@ objects = $(DL_FILE) udev-config-6.2.tar.bz2
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 udev-config-6.2.tar.bz2 = $(DL_FROM)/udev-config-6.2.tar.bz2
 
-$(DL_FILE)_MD5 = f4effef7807ce1dc91ab581686ef197b
+$(DL_FILE)_MD5 = be98e04cefdd9ca76b8fe7e92735ce29
 udev-config-6.2.tar.bz2_MD5 = 9ff2667ab0f7bfe8182966ef690078a0
 
 install : $(TARGET)
@@ -75,13 +75,13 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-096-netif_rename.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-125-netif_rename.patch
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && make DESTDIR=/install/initrd sbindir=/sbin udevdir=/dev
 	cd $(DIR_APP) && make DESTDIR=/install/initrd sbindir=/sbin udevdir=/dev install
 	rm -f /install/initrd/sbin/udev* /install/initrd/usr/sbin/udev* /install/initrd/usr/bin/udev*
-	cd $(DIR_APP) && install udevstart udevinfo udevd udevsettle udevtrigger /install/initrd/sbin
+	cd $(DIR_APP) && install udevadm udevd /install/initrd/sbin
 	cd $(DIR_APP) && make $(MAKETUNING) EXTRAS="extras/ata_id extras/cdrom_id extras/edd_id \
 					extras/firmware extras/floppy extras/path_id \
 					extras/scsi_id extras/usb_id extras/volume_id"
@@ -89,6 +89,7 @@ ifeq "$(LFS_PASS)" "install"
 					extras/firmware extras/floppy extras/path_id \
 					extras/scsi_id extras/usb_id extras/volume_id" install
 	cd /install/initrd/usr/share && rm -rf man
+	-mkdir -pv /install/initrd/dev
 	cd /install/initrd/dev && rm -f console
 	cd /install/initrd/dev && mknod -m 0600 console c 5 1
 	cd /install/initrd/dev && rm -f null
