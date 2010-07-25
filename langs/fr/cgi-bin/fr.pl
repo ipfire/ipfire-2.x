@@ -1256,6 +1256,8 @@
 'not set' => 'not set',
 'notes' => 'Notes',
 'november' => 'November',
+'ntp common settings' => 'Common settings',
+'ntp sync' => 'Synchronization',
 'ntp configuration' => 'NTP configuration',
 'ntp must be enabled to have clients' => 'NTP must be enabled to have clients.',
 'ntp server' => 'NTP Server',
