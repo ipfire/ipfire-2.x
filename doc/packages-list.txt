@@ -68,10 +68,10 @@
 * clamav-0.96.1
 * cmake-2.4.8
 * collectd-4.9.1
-* compat-wireless-2.6.34-kmod-2.6.32.15-ipfire
-* compat-wireless-2.6.34-kmod-2.6.32.15-ipfire-xen
+* compat-wireless-2.6.34.1-kmod-2.6.32.15-ipfire
+* compat-wireless-2.6.34.1-kmod-2.6.32.15-ipfire-xen
 * coreutils-5.96
-* cpio-2.6
+* cpio-2.11
 * cpufrequtils-007
 * cryptodev-20091126-kmod-2.6.32.15-ipfire
 * cryptodev-20091126-kmod-2.6.32.15-ipfire-xen

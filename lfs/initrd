@@ -89,8 +89,13 @@ $(TARGET) :
 
 	# Remove binary depmod files
 	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/modules.*.bin
-	    
-	mksquashfs /install/initrd /install/images/initrd
+
+	cd /install/initrd && strip --strip-all {,usr/}{,s}bin/* || true
+	cd /install/initrd && strip --strip-debug {,usr/}lib/* || true
+
+	cd /install/initrd && ln -svf sbin/init init
+
+	cd /install/initrd && find . | cpio -o -H newc | lzma > /install/images/initrd
 	cd /install/initrd && find ./ -ls > $(DIR_INFO)/_build.initrd.log
 
 	@$(POSTBUILD)
