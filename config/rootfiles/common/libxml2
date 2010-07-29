@@ -56,11 +56,11 @@ usr/lib/libxml2.so
 usr/lib/libxml2.so.2
 usr/lib/libxml2.so.2.6.26
 #usr/lib/pkgconfig/libxml-2.0.pc
-usr/lib/python2.4/site-packages/drv_libxml2.py
-usr/lib/python2.4/site-packages/libxml2.py
-#usr/lib/python2.4/site-packages/libxml2mod.a
-#usr/lib/python2.4/site-packages/libxml2mod.la
-usr/lib/python2.4/site-packages/libxml2mod.so
+usr/lib/python2.7/site-packages/drv_libxml2.py
+usr/lib/python2.7/site-packages/libxml2.py
+#usr/lib/python2.7/site-packages/libxml2mod.a
+#usr/lib/python2.7/site-packages/libxml2mod.la
+usr/lib/python2.7/site-packages/libxml2mod.so
 #usr/lib/xml2Conf.sh
 #usr/man/man1/xml2-config.1
 #usr/man/man1/xmlcatalog.1

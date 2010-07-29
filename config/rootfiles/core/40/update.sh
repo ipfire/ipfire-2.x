@@ -31,6 +31,10 @@
 #Extract files
 extract_files
 #
+#Remove old python files...
+rm -rf /usr/lib/python2.4
+
+#
 #Start services
 
 #

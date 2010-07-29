@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/rssdler040
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python-rssdler
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "python-feedparser python-mechanize"
 
