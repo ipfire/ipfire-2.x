@@ -38,13 +38,13 @@ modprobe libata
 
 echo "Starting udev daemon"
 /sbin/udevd --daemon
-/sbin/udevtrigger
-/sbin/udevsettle
+/sbin/udevadm trigger
+/sbin/udevadm settle
 
 sleep 3
 for file in /dev/.udev/failed/*/uevent ; do
 	echo "add" >"${file}"
 done 2>/dev/null
-/sbin/udevsettle
+/sbin/udevadm settle
 
 echo "Loading Installer..."
