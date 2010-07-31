@@ -18,6 +18,7 @@
 case "${1}" in
 	start)
 		boot_mesg "Checking fstab bootdevice ..."
+		read CMDLINE < /proc/cmdline
 		ROOTPOS=`expr index "$CMDLINE" root=`
 		NEWROOT=`echo ${CMDLINE:$ROOTPOS} | cut -d"=" -f2 | cut -d" " -f1`;
 		OLDBOOT=`cat /etc/fstab | grep -m1 "/boot" | cut -d" " -f1 | cut -f1`;
