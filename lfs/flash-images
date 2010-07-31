@@ -99,11 +99,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i -e "s|DEVICE2|#DEVICE2|g" $(MNThdd)/etc/fstab
 	sed -i -e "s|DEVICE|/dev/sda|g" $(MNThdd)/etc/fstab
 	sed -i -e "s|FSTYPE|ext2|g" $(MNThdd)/etc/fstab
-	cp -f $(MNThdd)/etc/mkinitcpio.conf $(MNThdd)/etc/mkinitcpio.conf.org
-	sed -i -e "s| autodetect | |g" $(MNThdd)/etc/mkinitcpio.conf
-	chroot $(MNThdd) /sbin/mkinitcpio -g /boot/ipfirerd-$(KVER)-emergency.img -k $(KVER)-ipfire 
-	cp -f $(MNThdd)/etc/mkinitcpio.conf.org $(MNThdd)/etc/mkinitcpio.conf
-	ln -s ipfirerd-$(KVER)-emergency.img $(MNThdd)/boot/ipfirerd-$(KVER).img
+	chroot $(MNThdd) /usr/local/bin/rebuild-initrd
 
 	# Copy grub files manually
 	cp -f $(MNThdd)/usr/share/grub/i386-pc/* $(MNThdd)/boot/grub/
