@@ -90,6 +90,7 @@
 * diffutils-2.8.1
 * dnsmasq-2.45
 * dosfstools-3.0.9
+* dracut-006
 * e1000-8.0.19-kmod-2.6.32.15-ipfire
 * e1000-8.0.19-kmod-2.6.32.15-ipfire-xen
 * e1000e-1.1.19-kmod-2.6.32.15-ipfire
@@ -162,7 +163,6 @@
 * joe-3.7
 * jpegsrc.v6b
 * kbd-1.12
-* klibc-1.5.14
 * kqemu-1.4.0pre1-kmod-2.6.32.15-ipfire
 * kqemu-1.4.0pre1-kmod-2.6.32.15-ipfire-xen
 * kudzu-1.2.64
@@ -228,7 +228,6 @@
 * miau-0.6.5
 * minicom-2.4
 * misc-progs
-* mkinitcpio-0.5.9
 * mktemp-1.5
 * mldonkey-3.0.0
 * module-init-tools-3.5
@@ -324,7 +323,7 @@
 * sudo-1.6.8p12
 * sysfsutils-1.3.0
 * sysklogd-1.5
-* syslinux-3.62
+* syslinux-3.86
 * sysstat-6.0.2
 * sysvinit-2.86
 * taglib-1.5
@@ -338,8 +337,7 @@
 * traceroute-2.0.12
 * tripwire-2.4.1.2
 * tunctl
-* udev-096
-* udev-096-klibc
+* udev-125
 * unzip552
 * urlgrabber-3.1.0
 * usb-modeswitch-1.1.2
