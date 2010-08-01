@@ -127,11 +127,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i -e "s|DEVICE4|/dev/xvda4|g" $(MNThdd)/etc/fstab
 
 	sed -i -e "s|FSTYPE|ext3|g" $(MNThdd)/etc/fstab
-	cp -f $(MNThdd)/etc/mkinitcpio.conf $(MNThdd)/etc/mkinitcpio.conf.org
-	sed -i -e "s| autodetect | |g" $(MNThdd)/etc/mkinitcpio.conf
 
-	chroot $(MNThdd) /sbin/mkinitcpio -g /boot/ipfirerd-$(KVER)-xen.img -k $(KVER)-ipfire-xen
-	cp -f $(MNThdd)/etc/mkinitcpio.conf.org $(MNThdd)/etc/mkinitcpio.conf
+	chroot $(MNThdd) /sbin/dracut --force --verbose /boot/ipfirerd-$(KVER)-xen.img $(KVER)-ipfire-xen
 
 
 	# Create a script for rebuild-initrd and setup
