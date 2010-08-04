@@ -27,7 +27,7 @@ include Config
 VER        = 1.00
 
 THISAPP    = ipfireseeder-$(VER)
-DL_FILE    = ipfire-2.7.i586-full-core38.iso.torrent
+DL_FILE    = ipfire-2.7.i586-full-core39.iso.torrent
 
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)

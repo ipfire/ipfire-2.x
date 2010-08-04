@@ -147,6 +147,9 @@ endif
 	# Huawei (Vodafone) K3765 & K4505 Usbids
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.11-option_add_vodafone_usbids.patch
 
+	# Huawei Android Phones (Vodafone V845, T-Mobile Pulse/mini ...)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.15-option_add_huawei_android.patch
+
 	# Cleanup kernel source
 
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config

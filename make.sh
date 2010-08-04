@@ -680,8 +680,6 @@ buildinstaller() {
   installmake popt
   installmake sysvinit
   installmake misc-progs
-  installmake libaal
-  installmake reiser4progs
   installmake reiserfsprogs
   installmake sysfsutils
   installmake util-linux
