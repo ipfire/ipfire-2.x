@@ -16,3 +16,5 @@ usr/lib/python2.7/site-packages/libxml2.pyc
 usr/lib/python2.7/site-packages/libxsltmod.so
 lib/modules/2.6.32.15-ipfire/kernel/drivers/usb/serial/option.ko
 lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/usb/serial/option.ko
+lib/modules/2.6.32.15-ipfire/kernel/drivers/usb/serial/usbserial.ko
+lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/usb/serial/usbserial.ko
