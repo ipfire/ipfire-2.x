@@ -88,6 +88,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Blacklist ath5k or madwifi for switching between the drivers
 	echo 'blacklist ath_pci' >> /etc/modprobe.d/madwifi
 	echo '#blacklist ath5k' >> /etc/modprobe.d/madwifi
+	echo '#blacklist ath9k' >> /etc/modprobe.d/madwifi
 
 	# create madwifi symlink for hostapd build
 	cd $(DIR_SRC) && ln -sf $(THISAPP) madwifi
