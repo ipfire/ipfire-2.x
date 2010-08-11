@@ -99,21 +99,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i -e "s|DEVICE2|#DEVICE2|g" $(MNThdd)/etc/fstab
 	sed -i -e "s|DEVICE|/dev/sda|g" $(MNThdd)/etc/fstab
 	sed -i -e "s|FSTYPE|ext2|g" $(MNThdd)/etc/fstab
-#	chroot $(MNThdd) /sbin/dracut --force --verbose /boot/ipfirerd-$(KVER) $(KVER)-ipfire
 
 	# Copy grub files manually
 	cp -f $(MNThdd)/usr/share/grub/i386-pc/* $(MNThdd)/boot/grub/
-	#chroot $(MNThdd) /usr/sbin/grub-set-default 0
-
-	# Create a script for rebuild-initrd and setup
-	echo "#!/bin/bash"                                   > $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "/bin/rm -f /boot/ipfirerd-$(KVER).img"        >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "/usr/local/bin/rebuild-initrd"                >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "/usr/local/sbin/setup /dev/null INSTALL"      >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "rm -f /etc/rc.d/rcsysinit.d/S75firstsetup \\" >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "&& /sbin/reboot"                              >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-
-	chmod +x $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
 
 	# Unmount
 	umount $(MNThdd)/proc
