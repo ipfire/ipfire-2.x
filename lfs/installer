@@ -48,6 +48,7 @@ md5 :
 
 $(TARGET) :
 	@$(PREBUILD)
+	-mkdir -p /install/initrd/bin
 	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/install+setup/* $(DIR_APP)
 	for i in $(DIR_SRC)/langs/*/install/lang_*.c ; do \
 	    cp $$i $(DIR_APP)/libsmooth; \

@@ -1,3 +1,4 @@
+boot/ipfirerd-KVER.img
 etc/dracut.conf
 etc/dracut.conf.d
 sbin/dracut

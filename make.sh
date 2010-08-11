@@ -342,22 +342,22 @@ buildipfire() {
   ipfiremake which
   ipfiremake xz
   ipfiremake linux-firmware
-  ipfiremake linux			XEN=1
-  ipfiremake kqemu			XEN=1
-  ipfiremake v4l-dvb			XEN=1
-  ipfiremake madwifi			XEN=1
-  ipfiremake mISDN			XEN=1
-  ipfiremake dahdi			XEN=1 KMOD=1
-  ipfiremake cryptodev			XEN=1
-  ipfiremake compat-wireless		XEN=1
-  ipfiremake r8169			XEN=1
-  ipfiremake r8168			XEN=1
-  ipfiremake r8101			XEN=1
-  ipfiremake e1000			XEN=1
-  ipfiremake e1000e			XEN=1
+#  ipfiremake linux			XEN=1
+#  ipfiremake kqemu			XEN=1
+#  ipfiremake v4l-dvb			XEN=1
+#  ipfiremake madwifi			XEN=1
+#  ipfiremake mISDN			XEN=1
+#  ipfiremake dahdi			XEN=1 KMOD=1
+#  ipfiremake cryptodev			XEN=1
+#  ipfiremake compat-wireless		XEN=1
+#  ipfiremake r8169			XEN=1
+#  ipfiremake r8168			XEN=1
+#  ipfiremake r8101			XEN=1
+#  ipfiremake e1000			XEN=1
+#  ipfiremake e1000e			XEN=1
   ipfiremake linux
   ipfiremake kqemu
-  ipfiremake kvm-kmod
+#  ipfiremake kvm-kmod
   ipfiremake v4l-dvb
   ipfiremake madwifi
   ipfiremake alsa			KMOD=1
@@ -373,6 +373,9 @@ buildipfire() {
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
+
+  installmake strip
+
   ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
@@ -664,34 +667,35 @@ buildinstaller() {
   ipfiremake as86
   ipfiremake mbr
   ipfiremake memtest
-  installmake linux-libc-header
-  installmake binutils
-  ipfiremake uClibc			PASS=1
-  ipfiremake gcc			INST=1
-  installmake uClibc			PASS=2
-  installmake gcc			INST=2
-  installmake uClibc			PASS=3
-  installmake busybox
-  installmake udev
-  installmake slang
-  installmake newt
-  installmake gettext
-  installmake kbd
-  installmake popt
-  installmake sysvinit
-  installmake misc-progs
-  installmake reiserfsprogs
-  installmake sysfsutils
-  installmake util-linux
-  installmake pciutils
-  installmake zlib
-  installmake mtd
-  installmake wget
-  installmake hwdata
-  installmake kudzu
-  installmake pcmciautils
-  installmake installer
-  installmake initrd
+#  installmake linux-libc-header
+#  installmake binutils
+#  ipfiremake uClibc			PASS=1
+#  ipfiremake gcc			INST=1
+#  installmake uClibc			PASS=2
+#  installmake gcc			INST=2
+#  installmake uClibc			PASS=3
+#  ipfiremake busybox
+#  installmake udev
+#  installmake slang
+#  installmake newt
+#  installmake gettext
+#  installmake kbd
+#  installmake popt
+#  installmake sysvinit
+#  installmake misc-progs
+#  installmake reiserfsprogs
+#  installmake sysfsutils
+#  installmake util-linux
+#  installmake pciutils
+#  installmake zlib
+#  installmake mtd
+#  installmake wget
+#  installmake hwdata
+#  installmake kudzu
+#  installmake pcmciautils
+  ipfiremake installer
+  installmake strip
+  ipfiremake initrd
 }
 
 buildpackages() {
@@ -699,7 +703,6 @@ buildpackages() {
   export LOGFILE
   echo "... see detailed log in _build.*.log files" >> $LOGFILE
 
-  installmake strip
   
   # Generating list of packages used
   echo -n "Generating packages list from logs" | tee -a $LOGFILE

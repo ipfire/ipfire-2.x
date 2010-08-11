@@ -109,24 +109,24 @@ int main(int argc, char *argv[])
 	}
 
 	// Load ata-piix prior kudzu because kudzu use ata-generic for ich7
-	mysystem("/sbin/modprobe ata_piix");
+//	mysystem("/sbin/modprobe ata_piix");
 
 	// Starting hardware detection
-	runcommandwithstatus("/bin/probehw.sh", "Probing Hardware ...");
+//	runcommandwithstatus("/bin/probehw.sh", "Probing Hardware ...");
 
 	// Load common modules
-	mysystem("/sbin/modprobe ide-generic");
-	mysystem("/sbin/modprobe ide-cd");
-	mysystem("/sbin/modprobe ide-disk");
-	mysystem("/sbin/modprobe ehci-hcd");
-	mysystem("/sbin/modprobe uhci-hcd");
-	mysystem("/sbin/modprobe ohci-hcd");
-	mysystem("/sbin/modprobe ohci1394");
-	mysystem("/sbin/modprobe sd_mod");
-	mysystem("/sbin/modprobe sr_mod");
-	mysystem("/sbin/modprobe usb-storage");
-	mysystem("/sbin/modprobe usbhid");
-	mysystem("/sbin/modprobe ahci");
+//	mysystem("/sbin/modprobe ide-generic");
+//	mysystem("/sbin/modprobe ide-cd");
+//	mysystem("/sbin/modprobe ide-disk");
+//	mysystem("/sbin/modprobe ehci-hcd");
+//	mysystem("/sbin/modprobe uhci-hcd");
+//	mysystem("/sbin/modprobe ohci-hcd");
+//	mysystem("/sbin/modprobe ohci1394");
+//	mysystem("/sbin/modprobe sd_mod");
+//	mysystem("/sbin/modprobe sr_mod");
+//	mysystem("/sbin/modprobe usb-storage");
+//	mysystem("/sbin/modprobe usbhid");
+//	mysystem("/sbin/modprobe ahci");
 
 	mysystem("/sbin/modprobe iso9660"); // CDROM
 	mysystem("/sbin/modprobe ext2"); // Boot patition
@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
 	 * the disk. 
 	 */
 	/* Don't use mysystem here so we can redirect output */
-	sprintf(commandstring, "/bin/sfdisk -s /dev/%s > /tmp/disksize 2> /dev/null", harddrive);
+	sprintf(commandstring, "/sbin/sfdisk -s /dev/%s > /tmp/disksize 2> /dev/null", harddrive);
 	system(commandstring);
 
 	/* Calculate amount of disk space */
@@ -360,7 +360,7 @@ int main(int argc, char *argv[])
 
 	fclose(handle);
 
-	snprintf(commandstring, STRING_SIZE, "/bin/sfdisk -L -uM %s < /tmp/partitiontable", hdparams.devnode_disk);
+	snprintf(commandstring, STRING_SIZE, "/sbin/sfdisk -L -uM %s < /tmp/partitiontable", hdparams.devnode_disk);
 	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_PARTITION]);
@@ -369,16 +369,16 @@ int main(int argc, char *argv[])
 	
 	if (fstype == EXT2) {
 		mysystem("/sbin/modprobe ext2");
-		sprintf(mkfscommand, "/sbin/mke2fs -T ext2 -c");
+		sprintf(mkfscommand, "/sbin/mke2fs -T ext2");
 	} else if (fstype == REISERFS) {
 		mysystem("/sbin/modprobe reiserfs");
 		sprintf(mkfscommand, "/sbin/mkreiserfs -f");
 	} else if (fstype == EXT3) {
 		mysystem("/sbin/modprobe ext3");
-		sprintf(mkfscommand, "/sbin/mke2fs -T ext3 -c");
+		sprintf(mkfscommand, "/sbin/mke2fs -T ext3");
 	}
 
-	snprintf(commandstring, STRING_SIZE, "/sbin/mke2fs -T ext2 -c %s1", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "/sbin/mke2fs -T ext2 -I 128 %s1", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_BOOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_BOOT_FILESYSTEM]);
@@ -453,11 +453,11 @@ int main(int argc, char *argv[])
 	/* Save language und local settings */
 	write_lang_configs(shortlangname);
 
-	/* touch the modules.dep files */
-	snprintf(commandstring, STRING_SIZE, 
-		"/bin/touch /harddisk/lib/modules/%s-ipfire/modules.dep",
-		KERNEL_VERSION);
-	mysystem(commandstring);
+//	/* touch the modules.dep files */
+//	snprintf(commandstring, STRING_SIZE, 
+//		"/bin/touch /harddisk/lib/modules/%s-ipfire/modules.dep",
+//		KERNEL_VERSION);
+//	mysystem(commandstring);
 /*	snprintf(commandstring, STRING_SIZE, 
 		"/bin/touch /harddisk/lib/modules/%s-ipfire-smp/modules.dep",
 		KERNEL_VERSION);
@@ -474,7 +474,7 @@ int main(int argc, char *argv[])
 	mysystem("/bin/mount --bind /sys  /harddisk/sys");
 
 	/* Build cache lang file */
-	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
+	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
 	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_LANG_CACHE]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_LANG_CACHE]);
@@ -491,20 +491,20 @@ int main(int argc, char *argv[])
 		replace("/harddisk/etc/fstab", "FSTYPE", "reiserfs");
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	} else if (fstype == EXT3) {
-		snprintf(commandstring, STRING_SIZE, "tune2fs -j %s3", hdparams.devnode_part);
-		if (runcommandwithstatus(commandstring, ctr[TR_JOURNAL_EXT3]))
-		{
-			errorbox(ctr[TR_JOURNAL_ERROR]);
-			replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
-			goto NOJOURNAL;
-		}
-		snprintf(commandstring, STRING_SIZE, "tune2fs -j %s4", hdparams.devnode_part);
-		if (runcommandwithstatus(commandstring, ctr[TR_JOURNAL_EXT3]))
-		{
-			errorbox(ctr[TR_JOURNAL_ERROR]);
-			replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
-			goto NOJOURNAL;
-		}
+		//snprintf(commandstring, STRING_SIZE, "tune2fs -j %s3", hdparams.devnode_part);
+		//if (runcommandwithstatus(commandstring, ctr[TR_JOURNAL_EXT3]))
+		//{
+		//	errorbox(ctr[TR_JOURNAL_ERROR]);
+		//	replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
+		//	goto NOJOURNAL;
+		//}
+		//snprintf(commandstring, STRING_SIZE, "tune2fs -j %s4", hdparams.devnode_part);
+		//if (runcommandwithstatus(commandstring, ctr[TR_JOURNAL_EXT3]))
+		//{
+		//	errorbox(ctr[TR_JOURNAL_ERROR]);
+		//	replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
+		//	goto NOJOURNAL;
+		//}
 		replace("/harddisk/etc/fstab", "FSTYPE", "ext3");
 		NOJOURNAL:
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
@@ -513,9 +513,9 @@ int main(int argc, char *argv[])
 	replace("/harddisk/boot/grub/grub.conf", "KVER", KERNEL_VERSION);
 
 	/* Going to make our initrd... */
-	snprintf(commandstring, STRING_SIZE, "/sbin/chroot /harddisk /usr/local/bin/rebuild-initrd");
+/*	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/local/bin/rebuild-initrd");
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-
+*/
 	sprintf(string, "root=%s3", hdparams.devnode_part_run);
 	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
 	system("sed -e 's#/harddisk#/#g' -e 's#//#/#g'  < /proc/mounts > /harddisk/etc/mtab");
 
 	snprintf(commandstring, STRING_SIZE, 
-		 "/sbin/chroot /harddisk /usr/sbin/grub-install --no-floppy %s", hdparams.devnode_disk);
+		 "/usr/sbin/chroot /harddisk /usr/sbin/grub-install --no-floppy %s", hdparams.devnode_disk);
 	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_GRUB])) {
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;
@@ -574,10 +574,10 @@ EXIT:
 		fclose(flog);
 		newtFinished();
 
-		if (!unattended) {
-			if (system("/sbin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
-				printf("Unable to run setup.\n");
-		}
+//		if (!unattended) {
+//			if (system("/usr/sbin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
+//				printf("Unable to run setup.\n");
+//		}
 
 		if (system("/bin/umount /harddisk/proc"))
 			printf("Unable to umount /harddisk/proc.\n"); 
@@ -602,8 +602,9 @@ EXIT:
 	system("/bin/umount /harddisk/var");
 	system("/bin/umount /harddisk/boot");
 	system("/bin/umount /harddisk");
-	  
-	system("/etc/halt");
+
+	if (!(allok))
+		system("/etc/halt");
 
 	return 0;
 }

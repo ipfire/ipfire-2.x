@@ -1,2 +1,0 @@
-# Set group ownership for raw USB devices
-SUBSYSTEM=="usb_device", GROUP="usb"

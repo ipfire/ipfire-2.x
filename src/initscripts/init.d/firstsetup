@@ -1,0 +1,22 @@
+#!/bin/bash
+/usr/local/sbin/setup /dev/tty2 INSTALL
+/usr/bin/clear
+echo "Reboot ..."
+echo "Sending all processes the TERM signal..."
+/sbin/killall5 -15
+sleep 3
+echo "Sending all processes the KILL signal..."
+/sbin/killall5 -15
+sleep 3
+echo "Unmounting Filesystems..."
+/bin/umount /sys
+/bin/umount /dev/pts
+/bin/umount /proc
+/bin/umount /boot
+/bin/umount /var/log/rrd
+/bin/umount /var/lock
+/bin/umount /var/run
+/bin/umount /var
+rm -f /etc/rc.d/rcsysinit.d/S75firstsetup \
+&& /bin/mount -n -o remount,ro / \
+&& /sbin/reboot -f

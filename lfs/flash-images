@@ -99,7 +99,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i -e "s|DEVICE2|#DEVICE2|g" $(MNThdd)/etc/fstab
 	sed -i -e "s|DEVICE|/dev/sda|g" $(MNThdd)/etc/fstab
 	sed -i -e "s|FSTYPE|ext2|g" $(MNThdd)/etc/fstab
-	chroot $(MNThdd) /usr/local/bin/rebuild-initrd
+#	chroot $(MNThdd) /sbin/dracut --force --verbose /boot/ipfirerd-$(KVER) $(KVER)-ipfire
 
 	# Copy grub files manually
 	cp -f $(MNThdd)/usr/share/grub/i386-pc/* $(MNThdd)/boot/grub/
