@@ -68,6 +68,7 @@
 * cmake-2.4.8
 * collectd-4.9.1
 * compat-wireless-2.6.34.1-kmod-2.6.32.17-ipfire
+* compat-wireless-2.6.35-1-kmod-2.6.32.17-ipfire
 * coreutils-5.96
 * cpio-2.11
 * cpufrequtils-007
