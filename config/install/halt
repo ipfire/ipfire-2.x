@@ -8,13 +8,9 @@ sleep 3
 echo "Sending all processes the KILL signal..."
 /sbin/killall5 -9
 sleep 3
-echo "Unmounting filesystems"
-/bin/umount /tmp
-/bin/umount /sys
-/bin/umount /dev/pts
-/bin/umount /dev
-/bin/umount /root
-/bin/umount /proc
-echo "Unmounting root"
+echo "Unmounting filesystems..."
+/bin/umount -a > /dev/null 2>&1
+echo "Unmounting root..."
 /bin/mount -n -o remount,ro /
+echo "Rebooting..."
 /sbin/reboot -f
