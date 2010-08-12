@@ -441,7 +441,7 @@ int main(int argc, char *argv[])
 	}
 
 	snprintf(commandstring, STRING_SIZE,
-		"/bin/tar -C /harddisk  -xvf /cdrom/" SNAME "-" VERSION ".tlz --lzma");
+		"/bin/tar -C /harddisk  -xvf /cdrom/" SNAME "-" VERSION ".tlz --lzma 2>/dev/null");
 	
 	if (runcommandwithprogress(60, 4, title, commandstring, INST_FILECOUNT,
 		ctr[TR_INSTALLING_FILES]))
@@ -538,7 +538,7 @@ int main(int argc, char *argv[])
 	}
 	
 	mysystem("umount /cdrom");
-	snprintf(commandstring, STRING_SIZE, "eject /dev/%s", sourcedrive);
+	snprintf(commandstring, STRING_SIZE, "/usr/bin/eject /dev/%s", sourcedrive);
 	mysystem(commandstring);
 
 	if (!unattended) {
