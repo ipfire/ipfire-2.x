@@ -1,4 +1,5 @@
 #!/bin/bash
+export LANG=en_US.utf8
 /usr/local/sbin/setup /dev/tty2 INSTALL
 echo Restarting udev...
 killall udevd
