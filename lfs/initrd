@@ -55,7 +55,7 @@ $(TARGET) :
 	cd /install/initrd && lzma -d -c /boot/ipfirerd-$(KVER).img | cpio -i
 
 	# Copy Files packages for installer
-	find $(DIR_SRC)/config/rootfiles/installer/* -maxdepth 1 | xargs cat > /tmp/ROOTFILES
+	find $(DIR_SRC)/config/rootfiles/installer/* -maxdepth 1 | xargs cat | grep -v "^#" > /tmp/ROOTFILES
 	-cd / && cpio -d -p /install/initrd < /tmp/ROOTFILES
 
 	cd /install/initrd/etc && rm -f fstab
