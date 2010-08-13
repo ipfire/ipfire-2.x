@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.32.15
-# Thu Jul 22 17:12:33 2010
+# Linux kernel version: 2.6.32.18
+# Thu Aug 12 21:04:01 2010
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -934,6 +934,7 @@ CONFIG_LIB80211_CRYPT_CCMP=m
 CONFIG_LIB80211_CRYPT_TKIP=m
 # CONFIG_LIB80211_DEBUG is not set
 CONFIG_MAC80211=m
+CONFIG_MAC80211_HAS_RC=y
 CONFIG_MAC80211_RC_MINSTREL=y
 # CONFIG_MAC80211_RC_DEFAULT_PID is not set
 CONFIG_MAC80211_RC_DEFAULT_MINSTREL=y
