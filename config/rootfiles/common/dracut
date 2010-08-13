@@ -1,6 +1,7 @@
 boot/ipfirerd-KVER.img
 etc/dracut.conf
 etc/dracut.conf.d
+#etc/dracut.conf.d/dracut.conf
 sbin/dracut
 sbin/dracut-catimages
 sbin/dracut-gencmdline
