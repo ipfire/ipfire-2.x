@@ -177,12 +177,6 @@ ifeq "$(XEN)" ""
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 endif
 
-	# Rename ide-cd module to match with old kernel
-	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-cd_mod.ko \
-	   /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-cd.ko
-	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-gd_mod.ko \
-	   /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-disk.ko
-
 	# Remove mISDN modules
 	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
 	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
