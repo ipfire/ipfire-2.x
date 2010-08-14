@@ -76,7 +76,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-125-netif_rename.patch
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && make DESTDIR=/install/initrd sbindir=/sbin udevdir=/dev
 	cd $(DIR_APP) && make DESTDIR=/install/initrd sbindir=/sbin udevdir=/dev install
@@ -106,6 +105,7 @@ ifeq "$(LFS_PASS)" "install"
 else
 	rm -rf /lib/udev/devices
 	cd $(DIR_APP) && tar jxf $(DIR_DL)/udev-config-6.2.tar.bz2
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/udev-config-6.2_persistent-storage-fix.patch
 	install -dv /lib/{firmware,udev/devices/{pts,shm}}
 	echo "Put device firmwares here ..." > /lib/firmware/dirinfo
 	mknod -m0666 /lib/udev/devices/null c 1 3
