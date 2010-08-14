@@ -73,6 +73,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && make all $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
-	cp -f $(DIR_APP)/usb_modeswitch.setup /etc/usb_modeswitch.setup.example
+	cp -f $(DIR_APP)/device_reference.txt /etc/usb_modeswitch.setup.example
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

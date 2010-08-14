@@ -24,18 +24,13 @@
 
 include Config
 
-VER        = 8.4.13
+VER        = 20100707
 
-THISAPP    = tcl$(VER)
-DL_FILE    = $(THISAPP)-src.tar.gz
+THISAPP    = usb-modeswitch-data-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-
-ifeq "$(LFS_PASS)" "toolchain"
-TARGET     = $(DIR_INFO)/$(THISAPP)-tools
-else
 TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
 
 ###############################################################################
 # Top-level Rules
@@ -45,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c6b655ad5db095ee73227113220c0523
+$(DL_FILE)_MD5 = d1fcc283c64a0877cdcac9cd682052f9
 
 install : $(TARGET)
 
@@ -74,19 +69,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(LFS_PASS)" "toolchain"
-	cd $(DIR_APP)/unix && ./configure --prefix=/tools --disable-nls
-else
-	cd $(DIR_APP)/unix && ./configure --prefix=/usr --disable-nls
-endif
-	cd $(DIR_APP)/unix && make $(MAKETUNING)
-	cd $(DIR_APP)/unix && make install
-ifeq "$(LFS_PASS)" "toolchain"
-	cd $(DIR_APP)/unix && make install-private-headers
-	ln -sf tclsh8.4 /tools/bin/tclsh
-else
-	ln -sf tclsh8.4 /usr/bin/tclsh
-endif
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && make clean
+	cd $(DIR_APP) && make all $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

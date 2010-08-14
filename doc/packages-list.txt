@@ -326,6 +326,7 @@
 * sysvinit-2.86
 * taglib-1.5
 * tar-1.22
+* tcl8.4.13
 * tcp_wrappers_7.6
 * tcpdump-4.0.0
 * teamspeak-2.0.24.1
@@ -338,7 +339,8 @@
 * udev-125
 * unzip552
 * urlgrabber-3.1.0
-* usb-modeswitch-1.1.2
+* usb-modeswitch-1.1.3
+* usb-modeswitch-data-20100707
 * usbutils-0.72
 * util-linux-2.12r
 * v4l-dvb-b576509ea6d2-kmod-2.6.32.18-ipfire
