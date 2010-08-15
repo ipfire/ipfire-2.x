@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .18
-VER        = 2.6.32.18
+PATCHLEVEL = .19
+VER        = 2.6.32.19
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -57,21 +57,21 @@ objects =$(DL_FILE) \
 	patch-2.6.16-nath323-1.3.bz2 \
 	reiser4-for-2.6.32.patch.bz2 \
 	squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2 \
-	xen-patches-2.6.32-2b.tar.bz2
+	xen-patches-2.6.32-2c.tar.bz2
 
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 netfilter-layer7-v2.22.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 reiser4-for-2.6.32.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.32.patch.bz2
 squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2 = $(URL_IPFIRE)/squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2
-xen-patches-2.6.32-2b.tar.bz2		= $(URL_IPFIRE)/xen-patches-2.6.32-2a.tar.bz2
+xen-patches-2.6.32-2c.tar.bz2		= $(URL_IPFIRE)/xen-patches-2.6.32-2a.tar.bz2
 
-$(DL_FILE)_MD5				= 8c8b82d4bf607ddb233deaf7f1c44f0f
+$(DL_FILE)_MD5				= 7f32112095a164e1330c07be72966ccb
 netfilter-layer7-v2.22.tar.gz_MD5	= 98dff8a3d5a31885b73341633f69501f
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 reiser4-for-2.6.32.patch.bz2_MD5	= 3246397973d9271eb8e6d7c97c5d2d91
 squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2_MD5 = d2a84311081023c7ffd28cdca67c45d4
-xen-patches-2.6.32-2b.tar.bz2_MD5	= a1798dc2de1ce4329c9580730f6c0096
+xen-patches-2.6.32-2c.tar.bz2_MD5	= 62a75ddcba43894b20f754a94b299ce6
 
 install : $(TARGET)
 
@@ -109,7 +109,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(XEN)" "1"
 	# Apply gentoo Xen patches
 	mkdir -p $(DIR_SRC)/xen-patches
-	cd $(DIR_SRC)/xen-patches && tar jxf $(DIR_DL)/xen-patches-2.6.32-2b.tar.bz2
+	cd $(DIR_SRC)/xen-patches && tar jxf $(DIR_DL)/xen-patches-2.6.32-2c.tar.bz2
 
 	for x in `ls -1 $(DIR_SRC)/xen-patches/*.patch1`; do \
 		echo "*********** [Patch: $$x]"; \
@@ -143,9 +143,6 @@ endif
 
 	# Add some more LED triggers
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.11-netdev-1.patch
-
-	# Huawei (Vodafone) K3765 & K4505 Usbids
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.11-option_add_vodafone_usbids.patch
 
 	# Huawei Android Phones (Vodafone V845, T-Mobile Pulse/mini ...)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.15-option_add_huawei_android.patch
