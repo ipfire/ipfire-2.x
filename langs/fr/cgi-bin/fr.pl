@@ -1471,6 +1471,7 @@
 'remove x509' => 'enlever x509',
 'reportfile' => 'Fichier de rapport',
 'reportlevel' => 'Niveau de rapport',
+'request' => 'Interrogation',
 'requested data' => '1. Paramètres de connexion :',
 'reserved dst port' => 'Le port de destination est réservé pour l\'usage d\'IPFire :',
 'reserved src port' => 'Le port source est réservé pour l\'usage d\'IPFire :',

@@ -1475,6 +1475,7 @@
 'remove x509' => 'Remove x509',
 'reportfile' => 'Reportfile',
 'reportlevel' => 'Reportlevel',
+'request' => 'Request',
 'requested data' => '1. Connection Settings:',
 'reserved dst port' => 'Destination port is reserved for IPFire use only:',
 'reserved src port' => 'Source port is reserved for IPFire use only:',

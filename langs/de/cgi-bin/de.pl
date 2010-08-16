@@ -1445,6 +1445,7 @@
 'remove x509' => 'Lösche x509',
 'reportfile' => 'Reportfile',
 'reportlevel' => 'Report Level',
+'request' => 'Abfrage',
 'requested data' => '1. Verbindungs Einstellungen',
 'reserved dst port' => 'Dieser Zielport ist für die ausschließliche Benutzung durch IPFire reserviert:',
 'reserved src port' => 'Dieser Quellport ist für die ausschließliche Benutzung durch IPFire reserviert:',
