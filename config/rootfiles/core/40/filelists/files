@@ -4,5 +4,17 @@ var/ipfire/langs/de.pl
 var/ipfire/langs/es.pl
 var/ipfire/langs/fr.pl
 var/ipfire/dhcp/dhcpd.conf.local
+etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/functions
+srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/time.cgi
+usr/lib/python2.7/ipaddr.pyc
+usr/lib/python2.7/site-packages/drv_libxml2.py
+usr/lib/python2.7/site-packages/libxml2.py
+usr/lib/python2.7/site-packages/libxml2mod.so
+usr/lib/python2.7/site-packages/libxml2.pyc
+usr/lib/python2.7/site-packages/libxsltmod.so
+lib/modules/2.6.32.15-ipfire/kernel/drivers/usb/serial/option.ko
+lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/usb/serial/option.ko
+lib/modules/2.6.32.15-ipfire/kernel/drivers/usb/serial/usbserial.ko
+lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/usb/serial/usbserial.ko

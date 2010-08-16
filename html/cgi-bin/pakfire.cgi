@@ -64,7 +64,7 @@ if ($pakfiresettings{'ACTION'} eq 'install'){
 		system("$command");
 		system("/bin/sleep 1");
 	} else {
-		&Header::openbox("100%", "center", "Abfrage");
+		&Header::openbox("100%", "center", $Lang::tr{'request'});
   	my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'INSPAKS'}`;
 		print <<END;
 		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'}.$pakfiresettings{'INSPAKS'}.$Lang::tr{'pakfire possible dependency'}
@@ -104,7 +104,7 @@ END
 		system("$command");
 		system("/bin/sleep 1");
 	} else {
-		&Header::openbox("100%", "center", "Abfrage");
+		&Header::openbox("100%", "center", $Lang::tr{'request'});
   	my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'DELPAKS'}`;
 		print <<END;
 		<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'}.$pakfiresettings{'DELPAKS'}.$Lang::tr{'pakfire possible dependency'}

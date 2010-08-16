@@ -15,6 +15,11 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+# Pull custom configuration file
+if [ -e "/etc/sysconfig/dnsmasq" ]; then
+	. /etc/sysconfig/dnsmasq
+fi
+
 SHOW_SRV=1
 
 case "${1}" in
@@ -41,7 +46,8 @@ case "${1}" in
 		[ -e "/var/ipfire/red/active" ] && ARGS="$ARGS -r /var/ipfire/red/resolv.conf"
 		
 		ARGS="$ARGS --domain=`cat /var/ipfire/main/settings |grep DOMAIN |cut -d = -f 2`"
-		
+		ARGS="$ARGS $CUSTOM_ARGS"
+
 		loadproc /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $ARGS
 		
 		if [ "${SHOW_SRV}" -eq 1 ] && [ "${DNS1}" != "" -o "${DNS2}" != "" ]; then
