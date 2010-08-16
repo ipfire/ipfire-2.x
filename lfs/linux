@@ -64,7 +64,7 @@ netfilter-layer7-v2.22.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 reiser4-for-2.6.32.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.32.patch.bz2
 squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2 = $(URL_IPFIRE)/squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2
-xen-patches-2.6.32-2c.tar.bz2		= $(URL_IPFIRE)/xen-patches-2.6.32-2a.tar.bz2
+xen-patches-2.6.32-2c.tar.bz2		= $(URL_IPFIRE)/xen-patches-2.6.32-2c.tar.bz2
 
 $(DL_FILE)_MD5				= 7f32112095a164e1330c07be72966ccb
 netfilter-layer7-v2.22.tar.gz_MD5	= 98dff8a3d5a31885b73341633f69501f
