@@ -1,0 +1,3 @@
+etc/system-release
+etc/rc.d/init.d/checkfstab
+usr/local/bin/rebuild-initrd
