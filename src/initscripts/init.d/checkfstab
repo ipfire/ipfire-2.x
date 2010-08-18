@@ -17,6 +17,10 @@
 
 case "${1}" in
 	start)
+		#Skip if root is set by UUID
+		if (grep "root=UUID=" /proc/cmdline); then
+			exit 0;
+		fi
 		boot_mesg "Checking fstab bootdevice ..."
 		read CMDLINE < /proc/cmdline
 		ROOTPOS=`expr index "$CMDLINE" root=`
