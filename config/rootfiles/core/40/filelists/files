@@ -8,6 +8,7 @@ etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/functions
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/time.cgi
+srv/web/ipfire/cgi-bin/qos.cgi
 usr/lib/python2.7/ipaddr.pyc
 usr/lib/python2.7/site-packages/drv_libxml2.py
 usr/lib/python2.7/site-packages/libxml2.py
