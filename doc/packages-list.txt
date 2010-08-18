@@ -64,7 +64,7 @@
 * ccache-3.0pre0
 * cdrtools-2.01.01
 * centerim-4.22.1
-* clamav-0.96.1
+* clamav-0.96.2
 * cmake-2.4.8
 * collectd-4.9.1
 * compat-wireless-2.6.35-1-kmod-2.6.32.19-ipfire
