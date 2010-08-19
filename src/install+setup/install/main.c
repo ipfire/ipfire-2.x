@@ -231,11 +231,6 @@ int main(int argc, char *argv[])
 	sprintf(hdparams.devnode_part, "/dev/%s%s", harddrive,raid_disk ? "p" : "");
 	/* Now the names after the machine is booted. Only scsi is affected
 	   and we only install on the first scsi disk. */
-	{	char tmp[30];
-		strcpy(tmp, scsi_disk ? "sda" : harddrive);
-		sprintf(hdparams.devnode_disk_run, "/dev/%s", tmp);
-		sprintf(hdparams.devnode_part_run, "/dev/%s%s", tmp, raid_disk ? "p" : "");
-	}
 
 	fprintf(flog, "Destination drive: %s\n", hdparams.devnode_disk);
 	
@@ -482,8 +477,15 @@ int main(int argc, char *argv[])
 	}
 
 	/* Update /etc/fstab */
-	replace("/harddisk/etc/fstab", "DEVICE", hdparams.devnode_part_run);
-	
+	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE1#UUID=$(/sbin/blkid %s1 -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", hdparams.devnode_part);
+	system(commandstring);
+	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE2#UUID=$(/sbin/blkid %s2 -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", hdparams.devnode_part);
+	system(commandstring);
+	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE3#UUID=$(/sbin/blkid %s3 -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", hdparams.devnode_part);
+	system(commandstring);
+	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE4#UUID=$(/sbin/blkid %s4 -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", hdparams.devnode_part);
+	system(commandstring);
+
 	if (fstype == EXT2) {
 		replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
@@ -516,11 +518,12 @@ int main(int argc, char *argv[])
 /*	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/local/bin/rebuild-initrd");
 	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
 */
-	sprintf(string, "root=%s3", hdparams.devnode_part_run);
-	replace( "/harddisk/boot/grub/grub.conf", "root=ROOT", string);
+	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#root=ROOT#root=UUID=$(/sbin/blkid %s3 -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/boot/grub/grub.conf", hdparams.devnode_part);
+	system(commandstring);
+
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
 
-	system("sed -e 's#/harddisk#/#g' -e 's#//#/#g'  < /proc/mounts > /harddisk/etc/mtab");
+	system("/bin/sed -e 's#/harddisk#/#g' -e 's#//#/#g'  < /proc/mounts > /harddisk/etc/mtab");
 
 	snprintf(commandstring, STRING_SIZE, 
 		 "/usr/sbin/chroot /harddisk /usr/sbin/grub-install --no-floppy %s", hdparams.devnode_disk);
