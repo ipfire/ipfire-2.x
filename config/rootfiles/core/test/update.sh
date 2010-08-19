@@ -25,7 +25,6 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 #
 KVER="2.6.32.19"
-ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
@@ -33,6 +32,8 @@ MOUNT=$_
 if [ ! $MOUNT == "rw" ]; then
 	MOUNT="ro"
 fi
+
+
 #
 # check if we the backup file already exist
 if [ -e /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 ]; then
@@ -80,12 +81,66 @@ echo Unpack the updated files ...
 #
 tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
 	--no-overwrite-dir
+
+# Convert /etc/fstab entries to UUID ...
+#
+echo Convert fstab entries to UUID ...
+ROOT=`mount | grep " / " | cut -d" " -f1`
+BOOT=`mount | grep " /boot " | cut -d" " -f1`
+VAR=`mount | grep " /var " | cut -d" " -f1`
+SWAP=`grep "/dev/" /proc/swaps | cut -d" " -f1`
+#
+
+if [ ! -z $ROOT ]; then
+	ROOTUUID=`blkid -sUUID $ROOT | cut -d'"' -f2`
+	if [ ! -z $ROOTUUID ]; then
+		sed -i "s|^$ROOT|UUID=$ROOTUUID|g" /etc/fstab
+	#else
+		#to do add uuid to rootfs
+	fi
+	else
+	echo "ERROR! / not found!!!"
+fi
+
+if [ ! -z $BOOT ]; then
+	BOOTUUID=`blkid -sUUID $BOOT | cut -d'"' -f2`
+	if [ ! -z $BOOTUUID ]; then
+		sed -i "s|^$BOOT|UUID=$BOOTUUID|g" /etc/fstab
+	#else
+		#to do add uuid to bootfs
+	fi
+	else
+	echo "WARNING! /boot not found!!!"
+fi
+
+if [ ! -z $VAR ]; then
+	VARUUID=`blkid -sUUID $VAR | cut -d'"' -f2`
+	if [ ! -z $VARUUID ]; then
+		sed -i "s|^$VAR|UUID=$VARUUID|g" /etc/fstab
+	#else
+		#to do add uuid to varfs
+	fi
+	else
+	echo "WARNING! /var not found!!!"
+fi
+
+if [ ! -z $SWAP ]; then
+	SWAPUUID=`blkid -sUUID $SWAP | cut -d'"' -f2`
+	if [ ! -z $SWAPUUID ]; then
+		sed -i "s|^$SWAP|UUID=$SWAPUUID|g" /etc/fstab
+	#else
+		#to do add uuid to swap
+	fi
+	else
+	echo "WARNING! swap not found!!!"
+fi
+
 #
 # Modify grub.conf
 #
 echo
 echo Update grub configuration ...
-sed -i "s|ROOT|$ROOT|g" /boot/grub/grub.conf
+sed -i "s|ROOT|UUID=$ROOTUUID|g" /boot/grub/grub.conf
 sed -i "s|KVER|$KVER|g" /boot/grub/grub.conf
 sed -i "s|MOUNT|$MOUNT|g" /boot/grub/grub.conf
 
