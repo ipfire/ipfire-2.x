@@ -261,7 +261,7 @@
 * openmailadmin-1.0.0
 * openssh-5.4p1
 * openssl-0.9.8o
-* openvpn-2.1.1
+* openvpn-2.1.2
 * p7zip_4.65
 * pam_mysql-0.7RC1
 * patch-2.5.4
