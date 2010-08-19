@@ -108,31 +108,10 @@ int main(int argc, char *argv[])
 		}		
 	}
 
-	// Load ata-piix prior kudzu because kudzu use ata-generic for ich7
-//	mysystem("/sbin/modprobe ata_piix");
-
-	// Starting hardware detection
-//	runcommandwithstatus("/bin/probehw.sh", "Probing Hardware ...");
-
 	// Load common modules
-//	mysystem("/sbin/modprobe ide-generic");
-//	mysystem("/sbin/modprobe ide-cd");
-//	mysystem("/sbin/modprobe ide-disk");
-//	mysystem("/sbin/modprobe ehci-hcd");
-//	mysystem("/sbin/modprobe uhci-hcd");
-//	mysystem("/sbin/modprobe ohci-hcd");
-//	mysystem("/sbin/modprobe ohci1394");
-//	mysystem("/sbin/modprobe sd_mod");
-//	mysystem("/sbin/modprobe sr_mod");
-//	mysystem("/sbin/modprobe usb-storage");
-//	mysystem("/sbin/modprobe usbhid");
-//	mysystem("/sbin/modprobe ahci");
-
 	mysystem("/sbin/modprobe iso9660"); // CDROM
 	mysystem("/sbin/modprobe ext2"); // Boot patition
 	mysystem("/sbin/modprobe vfat"); // USB key
-
-	runcommandwithstatus("/bin/sleep 10", "Waiting for USB Hardware ...");
 	
 	/* German is the default */
 	for (choice = 0; langnames[choice]; choice++)
@@ -448,17 +427,6 @@ int main(int argc, char *argv[])
 	/* Save language und local settings */
 	write_lang_configs(shortlangname);
 
-//	/* touch the modules.dep files */
-//	snprintf(commandstring, STRING_SIZE, 
-//		"/bin/touch /harddisk/lib/modules/%s-ipfire/modules.dep",
-//		KERNEL_VERSION);
-//	mysystem(commandstring);
-/*	snprintf(commandstring, STRING_SIZE, 
-		"/bin/touch /harddisk/lib/modules/%s-ipfire-smp/modules.dep",
-		KERNEL_VERSION);
-	mysystem(commandstring);
-*/
-
 	/* Rename uname */
 	rename ("/harddisk/bin/uname.bak", "/harddisk/bin/uname");
 
@@ -493,20 +461,6 @@ int main(int argc, char *argv[])
 		replace("/harddisk/etc/fstab", "FSTYPE", "reiserfs");
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	} else if (fstype == EXT3) {
-		//snprintf(commandstring, STRING_SIZE, "tune2fs -j %s3", hdparams.devnode_part);
-		//if (runcommandwithstatus(commandstring, ctr[TR_JOURNAL_EXT3]))
-		//{
-		//	errorbox(ctr[TR_JOURNAL_ERROR]);
-		//	replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
-		//	goto NOJOURNAL;
-		//}
-		//snprintf(commandstring, STRING_SIZE, "tune2fs -j %s4", hdparams.devnode_part);
-		//if (runcommandwithstatus(commandstring, ctr[TR_JOURNAL_EXT3]))
-		//{
-		//	errorbox(ctr[TR_JOURNAL_ERROR]);
-		//	replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
-		//	goto NOJOURNAL;
-		//}
 		replace("/harddisk/etc/fstab", "FSTYPE", "ext3");
 		NOJOURNAL:
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
@@ -514,10 +468,6 @@ int main(int argc, char *argv[])
 
 	replace("/harddisk/boot/grub/grub.conf", "KVER", KERNEL_VERSION);
 
-	/* Going to make our initrd... */
-/*	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/local/bin/rebuild-initrd");
-	runcommandwithstatus(commandstring, ctr[TR_BUILDING_INITRD]);
-*/
 	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#root=ROOT#root=UUID=$(/sbin/blkid %s3 -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/boot/grub/grub.conf", hdparams.devnode_part);
 	system(commandstring);
 
