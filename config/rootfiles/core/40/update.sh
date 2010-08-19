@@ -26,7 +26,7 @@
 
 #
 #Stop services
-
+/usr/local/bin/openvpnctrl -k
 #
 #Extract files
 extract_files
@@ -36,6 +36,7 @@ rm -rf /usr/lib/python2.4
 
 #
 #Start services
+/usr/local/bin/openvpnctrl -s
 
 #
 #Update Language cache
