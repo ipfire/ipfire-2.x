@@ -316,7 +316,7 @@
 * squashfs-lzma-cvs20100214
 * squid-2.7.STABLE9
 * squidGuard-1.4.1
-* squidclamav-5.3
+* squidclamav-5.4
 * sshfs-fuse-2.2
 * sslh-1.7a
 * streamripper-1.63.5
