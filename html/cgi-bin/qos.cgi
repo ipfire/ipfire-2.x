@@ -1117,10 +1117,10 @@ END
 	print <<END
 		    </select><td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'source port'}:
-		    <td width='33%' align='left'><input type='text' name='QPORT' maxlength='5' value='$qossettings{'QPORT'}' />
+		    <td width='33%' align='left'><input type='text' name='QPORT' maxlength='11' value='$qossettings{'QPORT'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'destination port'}:
-		    <td width='33%' align='left'><input type='text' name='DPORT' maxlength='5' value='$qossettings{'DPORT'}' />
+		    <td width='33%' align='left'><input type='text' name='DPORT' maxlength='11' value='$qossettings{'DPORT'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'source ip'}:
 		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value='$qossettings{'QIP'}' />
