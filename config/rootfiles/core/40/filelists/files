@@ -1,4 +1,5 @@
 etc/system-release
+etc/ppp/ip-up
 var/ipfire/langs/en.pl
 var/ipfire/langs/de.pl
 var/ipfire/langs/es.pl
