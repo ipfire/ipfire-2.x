@@ -23,4 +23,7 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
+ln -s ../../ipfireseeder /etc/rc.d/init.d/networking/red.up/90-S-ipfireseeder
+ln -s ../../ipfireseeder /etc/rc.d/init.d/networking/red.down/01-K-ipfireseeder
+
 start_service --delay 90 --background ${NAME}
