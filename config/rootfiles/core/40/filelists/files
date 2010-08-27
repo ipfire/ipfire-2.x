@@ -7,6 +7,7 @@ var/ipfire/langs/fr.pl
 var/ipfire/dhcp/dhcpd.conf.local
 etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/functions
+srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/time.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
