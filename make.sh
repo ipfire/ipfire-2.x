@@ -1018,11 +1018,12 @@ uploadsrc)
 		beautify message FAIL
 		exit 1
 	fi
+
 	URL_SOURCE=$(grep URL_SOURCE lfs/Config | awk '{ print $3 }')
-	REMOTE_FILES=$(echo "ls -1" | sftp -C ${IPFIRE_USER}@${URL_SOURCE})
+	REMOTE_FILES=$(echo "ls -1 --ignore=toolchains" | sftp -C ${IPFIRE_USER}@${URL_SOURCE})
 
 	cd $BASEDIR/cache/
-	for file in $(ls -1); do
+	for file in $(ls -1 --ignore=toolchains); do
 		grep -q "$file" <<<$REMOTE_FILES && continue
 		NEW_FILES="$NEW_FILES $file"
 	done
