@@ -415,7 +415,6 @@ buildipfire() {
   ipfiremake cdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools
-  ipfiremake squashfstools
   ipfiremake reiserfsprogs
   ipfiremake xfsprogs
   ipfiremake sysfsutils
