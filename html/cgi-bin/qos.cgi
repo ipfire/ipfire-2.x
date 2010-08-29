@@ -76,7 +76,7 @@ $qossettings{'ACK'} = '';
 $qossettings{'MTU'} = '1492';
 $qossettings{'SFQ_PERTUB'} = '10';
 $qossettings{'QLENGTH'} = '30';
-$qossettings{'RED_DEV'} = `cat /var/ipfire/red/iface`;
+$qossettings{'RED_DEV'} = 'ppp0';
 $qossettings{'IMQ_DEV'} = 'imq0';
 $qossettings{'VALID'} = 'yes';
 ### Values that have to be initialized
@@ -112,6 +112,8 @@ $qossettings{'TOS'} = '';
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
 &Header::getcgihash(\%qossettings);
+
+$qossettings{'RED_DEV'} = `cat /var/ipfire/red/iface`;
 
 my %color = ();
 my %mainsettings = ();

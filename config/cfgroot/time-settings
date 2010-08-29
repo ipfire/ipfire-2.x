@@ -1,7 +1,7 @@
-NTP_ADDR_2=pool.ntp.org
+NTP_ADDR_2=1.ipfire.pool.ntp.org
 UPDATE_PERIOD=daily
 UPDATE_VALUE=1
 UPDATE_METHOD=manually
 ENABLENTP=off
-NTP_ADDR_1=de.pool.ntp.org
+NTP_ADDR_1=0.ipfire.pool.ntp.org
 VALID=yes

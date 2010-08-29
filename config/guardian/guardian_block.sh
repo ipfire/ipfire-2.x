@@ -8,4 +8,4 @@
 # done inside guardian itself.
 source=$1
 
-/sbin/iptables -I INPUT -s $source -j DROP
+/sbin/iptables -I GUARDIANINPUT -s $source -j DROP

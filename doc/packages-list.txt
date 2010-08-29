@@ -149,6 +149,7 @@
 * icegenerator-0.5.5-pre2
 * iftop-0.17
 * igmpproxy-0.1
+* imspector-0.9
 * inetutils-1.4.2
 * ipaddr-1.2
 * iperf-2.0.4
@@ -313,7 +314,7 @@
 * squashfs-lzma-cvs20100214
 * squid-2.7.STABLE9
 * squidGuard-1.4.1
-* squidclamav-5.3
+* squidclamav-5.4
 * sshfs-fuse-2.2
 * sslh-1.7a
 * streamripper-1.63.5

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPTifre Team                                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -69,6 +69,7 @@ $wlanapsettings{'PWD'} = 'IPFire-2.x';
 $wlanapsettings{'SYSLOGLEVEL'} = '0';
 $wlanapsettings{'DEBUG'} = '4';
 $wlanapsettings{'DRIVER'} = 'MADWIFI';
+$wlanapsettings{'HTCAPS'} = '';
 
 &General::readhash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 &Header::getcgihash(\%wlanapsettings);
@@ -379,6 +380,7 @@ foreach $txpower (@txpower){
 print <<END
 	</select></td></tr>
 <tr><td width='25%' class='base'>Passphrase:&nbsp;</td><td class='base' colspan='3'><input type='text' name='PWD' size='63' value='$wlanapsettings{'PWD'}' /></td></tr>
+<tr><td width='25%' class='base'>HT Caps:&nbsp;</td><td class='base' colspan='3'><input type='text' name='HTCAPS' size='63' value='$wlanapsettings{'HTCAPS'}' /></td></tr>
 <tr><td width='25%' class='base'>Loglevel (hostapd):&nbsp;</td><td class='base' width='25%'>
 	<select name='SYSLOGLEVEL'>
 		<option value='0' $selected{'SYSLOGLEVEL'}{'0'}>0 ($Lang::tr{'wlanap verbose'})</option>
@@ -474,6 +476,8 @@ END
 	print CONFIGFILE <<END
 hw_mode=g
 ieee80211n=1
+wmm_enabled=1
+ht_capab=$wlanapsettings{'HTCAPS'}
 END
 ;
 

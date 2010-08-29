@@ -30,6 +30,7 @@ case "${1}" in
 		evaluate_retval
 		if ! grep -q "35700:35700" /var/ipfire/xtaccess/config ; then
 			echo "tcp,0.0.0.0/0,35700:35700,on,0.0.0.0,IPFireSeeder" >> /var/ipfire/xtaccess/config
+			echo "udp,0.0.0.0/0,35700:35700,on,0.0.0.0,IPFireSeeder" >> /var/ipfire/xtaccess/config
 			/usr/local/bin/setxtaccess
 		fi
 		;;

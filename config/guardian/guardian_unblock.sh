@@ -6,4 +6,4 @@
 # and the script will issue a command to remove the block that was created with # block.sh address. 
 source=$1
 
-/sbin/iptables -D INPUT -s $source -j DROP
+/sbin/iptables -D GUARDIANINPUT -s $source -j DROP
