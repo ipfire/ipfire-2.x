@@ -727,7 +727,7 @@ END
 ;
 }
 
-        if ($pppsettings{'TYPE'} eq 'vdsl') {
+        if ($pppsettings{'TYPE'} =~ /^(pppoe|vdsl|pppoeatm)$/) {
 print <<END
 <tr>
         <td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>IPTV:</b></td>

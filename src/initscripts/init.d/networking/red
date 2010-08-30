@@ -236,6 +236,21 @@ case "${1}" in
 
 			PPP_NIC=${DEVICE}
 
+
+			if [ "$TYPE" == "pppoeatm" ] || [ "$TYPE" == "pptpatm" ]; then
+				PPP_NIC=nas0		
+				DEVICE=nas0
+				boot_mesg "Createing ATM-Bridge as $PPP_NIC ..."
+				br2684ctl -c0 -e${ENCAP} -a0.${VPI}.${VCI} >/dev/null 2>&1 &
+				sleep 1
+				if [ "$TYPE" == "pppoeatm" ]; then
+					TYPE="pppoe"
+				fi
+				if [ "$TYPE" == "pptpatm" ]; then
+					TYPE="pptp"
+				fi
+			fi
+
 			if [ "$TYPE" == "vdsl" ]; then
 				boot_mesg "Createing VLAN Interface ${DEVICE}.${RED_VDSL_INET_VLAN} ..."
 				modprobe 8021q
@@ -249,65 +264,53 @@ case "${1}" in
 				sleep 0.2
 				ip link set ${PPP_NIC} up
 				TYPE="pppoe"
-				if [ "${RED_VDSL_IPTV_DISABLE}" == "0" ]; then
-					PIDFILE="/var/run/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.pid"
-					LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.info"
-					# Test to see if there is a stale pid file
-					if [ -f "$PIDFILE" ]; then
-						ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
-						if [ $? != 0 ]; then
-							rm -f /var/run/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.pid > /dev/null
-						fi
-					fi
-
-					if [ ! -f "$PIDFILE" ]; then
-						boot_mesg "Createing VLAN Interface ${DEVICE}.${RED_VDSL_IPTV_VLAN} ..."
-						vconfig add ${DEVICE} ${RED_VDSL_IPTV_VLAN}
-						if [ -n "$MAC2" ]; then
-							boot_mesg "Setting mac address on ${DEVICE}.${RED_VDSL_IPTV_VLAN} to ${MAC2}"	
-							ip link set dev ${DEVICE}.${RED_VDSL_IPTV_VLAN} address ${MAC2}
-							evaluate_retval
-						fi
-						boot_mesg -n "Starting dhcpcd on the ${DEVICE}.${RED_VDSL_IPTV_VLAN} interface..."
-						/sbin/dhcpcd ${DEVICE}.${RED_VDSL_IPTV_VLAN} ${DHCP_START} >/dev/null 2>&1
-						RET="$?"
-
-						if [ "$RET" = "0" ]; then
-							. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.info
-							echo ""
-							echo_ok
-							boot_mesg "           DHCP Assigned Settings for ${DEVICE}.${RED_VDSL_IPTV_VLAN}:"
-							boot_mesg_flush
-							boot_mesg "           IP Address:      $ip_address"
-							boot_mesg_flush
-							boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
-							boot_mesg_flush
-							boot_mesg "           Subnet Mask:     $subnet_mask"
-							boot_mesg_flush
-							boot_mesg "           Default Gateway: $routers"
-							boot_mesg_flush
-							boot_mesg "           DNS Server:      $domain_name_servers"
-							boot_mesg_flush
-
-						else
-							echo ""
-							$(exit "$RET")
-							evaluate_retval
-						fi
-					fi
-				fi
 			fi
-
-			if [ "$TYPE" == "pppoeatm" ] || [ "$TYPE" == "pptpatm" ]; then
-				PPP_NIC=nas0		
-				boot_mesg "Createing ATM-Bridge as $PPP_NIC ..."
-				br2684ctl -c0 -e${ENCAP} -a0.${VPI}.${VCI} >/dev/null 2>&1 &
-				sleep 1
-				if [ "$TYPE" == "pppoeatm" ]; then
-					TYPE="pppoe"
+			if [ "${IPTV}" == "enable" ]; then
+				PIDFILE="/var/run/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.pid"
+				LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.info"
+				# Test to see if there is a stale pid file
+				if [ -f "$PIDFILE" ]; then
+					ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
+					if [ $? != 0 ]; then
+						rm -f /var/run/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.pid > /dev/null
+					fi
 				fi
-				if [ "$TYPE" == "pptpatm" ]; then
-					TYPE="pptp"
+
+				if [ ! -f "$PIDFILE" ]; then
+					boot_mesg "Createing VLAN Interface ${DEVICE}.${RED_VDSL_IPTV_VLAN} ..."
+					modprobe 8021q
+					vconfig add ${DEVICE} ${RED_VDSL_IPTV_VLAN}
+					if [ -n "$MAC2" ]; then
+						boot_mesg "Setting mac address on ${DEVICE}.${RED_VDSL_IPTV_VLAN} to ${MAC2}"	
+						ip link set dev ${DEVICE}.${RED_VDSL_IPTV_VLAN} address ${MAC2}
+						evaluate_retval
+					fi
+					boot_mesg -n "Starting dhcpcd on the ${DEVICE}.${RED_VDSL_IPTV_VLAN} interface..."
+					/sbin/dhcpcd ${DEVICE}.${RED_VDSL_IPTV_VLAN} ${DHCP_START} >/dev/null 2>&1
+					RET="$?"
+
+					if [ "$RET" = "0" ]; then
+						. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.info
+						echo ""
+						echo_ok
+						boot_mesg "           DHCP Assigned Settings for ${DEVICE}.${RED_VDSL_IPTV_VLAN}:"
+						boot_mesg_flush
+						boot_mesg "           IP Address:      $ip_address"
+						boot_mesg_flush
+						boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
+						boot_mesg_flush
+						boot_mesg "           Subnet Mask:     $subnet_mask"
+						boot_mesg_flush
+						boot_mesg "           Default Gateway: $routers"
+						boot_mesg_flush
+						boot_mesg "           DNS Server:      $domain_name_servers"
+						boot_mesg_flush
+
+					else
+						echo ""
+						$(exit "$RET")
+						evaluate_retval
+					fi
 				fi
 			fi
 			if [ "$TYPE" == "pppoe" ] || [ "$TYPE" == "pptp" ]; then
