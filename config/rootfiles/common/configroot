@@ -102,7 +102,7 @@ var/ipfire/outgoing
 var/ipfire/outgoing/defaultservices
 #var/ipfire/outgoing/groups
 #var/ipfire/outgoing/groups/ipgroups
-#var/ipfire/outgoing/ipgroups
+#var/ipfire/outgoing/groups/macgroups
 #var/ipfire/outgoing/p2protocols
 #var/ipfire/outgoing/rules
 #var/ipfire/outgoing/settings

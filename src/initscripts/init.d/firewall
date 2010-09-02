@@ -147,6 +147,7 @@ case "$1" in
 	/sbin/iptables -N CUSTOMOUTPUT
 	/sbin/iptables -A OUTPUT -j CUSTOMOUTPUT
 	/sbin/iptables -N OUTGOINGFW
+	/sbin/iptables -N OUTGOINGFWMAC
 	/sbin/iptables -A OUTPUT -j OUTGOINGFW
 	/sbin/iptables -t nat -N CUSTOMPREROUTING
 	/sbin/iptables -t nat -A PREROUTING -j CUSTOMPREROUTING
@@ -183,6 +184,8 @@ case "$1" in
 
 	# Outgoing Firewall
 	/sbin/iptables -A FORWARD -j OUTGOINGFW
+	/sbin/iptables -A FORWARD -j OUTGOINGFWMAC
+	/sbin/iptables -A INPUT -j OUTGOINGFWMAC
 
 	# localhost and ethernet.
 	/sbin/iptables -A INPUT   -i lo          -m state --state NEW -j ACCEPT
