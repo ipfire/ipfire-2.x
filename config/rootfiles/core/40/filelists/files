@@ -8,9 +8,11 @@ var/ipfire/dhcp/dhcpd.conf.local
 etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/functions
+etc/rc.d/init.d/networking/red
 srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/time.cgi
+srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
 usr/lib/python2.7/ipaddr.pyc
 usr/lib/python2.7/site-packages/drv_libxml2.py
