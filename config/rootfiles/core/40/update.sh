@@ -51,6 +51,11 @@ echo non        /var/lock        tmpfs   defaults,size=8M      0       0 >> /etc
 #Rebuild module dep's
 depmod 2.6.32.15-ipfire
 depmod 2.6.32.15-ipfire-xen
+
+#Create the misssing mac group
+mkdir /var/ipfire/outgoing/macgroups
+chown nobody.nobody /var/ipfire/outgoing/macgroups
+
 #
 #Finish
 #Don't report the exitcode last command

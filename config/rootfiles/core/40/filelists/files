@@ -5,6 +5,7 @@ var/ipfire/langs/de.pl
 var/ipfire/langs/es.pl
 var/ipfire/langs/fr.pl
 var/ipfire/dhcp/dhcpd.conf.local
+var/ipfire/outgoing/bin/outgoingfw.pl
 etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/functions
@@ -13,6 +14,8 @@ srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/time.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
+srv/web/ipfire/cgi-bin/outgoinggrp.cgi
+srv/web/ipfire/cgi-bin/outgoingfw.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
 usr/lib/python2.7/ipaddr.pyc
 usr/lib/python2.7/site-packages/drv_libxml2.py
