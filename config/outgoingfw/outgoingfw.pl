@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2010  IPTifre Team                                       #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -164,6 +164,7 @@ foreach $configentry (sort @configs)
 				@SOURCE = `cat /var/ipfire/outgoing/groups/ipgroups/$configline[2]`;
 			} elsif ( -e "/var/ipfire/outgoing/groups/macgroups/$configline[2]" ) {
 				@SOURCE = `cat /var/ipfire/outgoing/groups/macgroups/$configline[2]`;
+				$configline[2] = "mac";
 			}
 			$DEV = "";
 		}
@@ -188,7 +189,7 @@ foreach $configentry (sort @configs)
 
 				if ( $SOURCE eq "" ){next;}
 
-				if ( $configline[6] ne "" ){
+				if ( $configline[6] ne "" || $configline[2] eq 'mac' ){
 					$SOURCE =~ s/[^a-zA-Z0-9]/:/gi;
 					$CMD = "/sbin/iptables -A OUTGOINGFWMAC -m mac --mac-source $SOURCE -d $DESTINATION -p $PROTO";
 				} else {
