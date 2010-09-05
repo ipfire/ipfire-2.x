@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.8test"						# Version number
-CORE="40"							# Core Level (Filename)
+CORE="41"							# Core Level (Filename)
 PAKFIRE_CORE="40"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -355,6 +355,7 @@ buildipfire() {
   ipfiremake r8101			XEN=1
   ipfiremake e1000			XEN=1
   ipfiremake e1000e			XEN=1
+  ipfiremake igb			XEN=1
   ipfiremake linux
   ipfiremake kqemu
 #  ipfiremake kvm-kmod
@@ -370,6 +371,7 @@ buildipfire() {
   ipfiremake r8101
   ipfiremake e1000
   ipfiremake e1000e
+  ipfiremake igb
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio

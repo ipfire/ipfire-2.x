@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2010  IPTifre Team                                       #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -94,13 +94,17 @@ if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
 } elsif ( $outfwsettings{'POLICY'} eq 'MODE2' ) {
 	$outfwsettings{'STATE'} = "DENY";
 	$POLICY = "ACCEPT";
-	$DO = "DROP -m comment --comment 'DROP_OUTGOINGFW'";
+	$DO = "DROP -m comment --comment 'DROP_OUTGOINGFW '";
 }
 
 ### Initialize IPTables
 system("/sbin/iptables --flush OUTGOINGFW >/dev/null 2>&1");
 system("/sbin/iptables --delete-chain OUTGOINGFW >/dev/null 2>&1");
 system("/sbin/iptables -N OUTGOINGFW >/dev/null 2>&1");
+
+system("/sbin/iptables --flush OUTGOINGFWMAC >/dev/null 2>&1");
+system("/sbin/iptables --delete-chain OUTGOINGFWMAC >/dev/null 2>&1");
+system("/sbin/iptables -N OUTGOINGFWMAC >/dev/null 2>&1");
 
 if ( $outfwsettings{'POLICY'} eq 'MODE0' ) {
 	exit 0
@@ -109,7 +113,11 @@ if ( $outfwsettings{'POLICY'} eq 'MODE0' ) {
 if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
 	$CMD = "/sbin/iptables -A OUTGOINGFW -m state --state ESTABLISHED,RELATED -j ACCEPT";
 	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
+	$CMD = "/sbin/iptables -A OUTGOINGFWMAC -m state --state ESTABLISHED,RELATED -j ACCEPT";
+	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
 		$CMD = "/sbin/iptables -A OUTGOINGFW -p icmp -j ACCEPT";
+	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
+		$CMD = "/sbin/iptables -A OUTGOINGFWMAC -p icmp -j ACCEPT";
 	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
 }
 
@@ -148,16 +156,21 @@ foreach $configentry (sort @configs)
 		} elsif ($configline[2] eq 'all') {
 			@SOURCE = ("0/0");
 			$DEV = "";
+		} elsif ($configline[2] eq 'mac') {
+			@SOURCE = ("$configline[6]");
+			$DEV = "";
 		} else {
-			if ( -e "/var/ipfire/outgoing/groups/ipgroups/$configline[2]" )
-			{
+			if ( -e "/var/ipfire/outgoing/groups/ipgroups/$configline[2]" ) {
 				@SOURCE = `cat /var/ipfire/outgoing/groups/ipgroups/$configline[2]`;
+			} elsif ( -e "/var/ipfire/outgoing/groups/macgroups/$configline[2]" ) {
+				@SOURCE = `cat /var/ipfire/outgoing/groups/macgroups/$configline[2]`;
+				$configline[2] = "mac";
 			}
 			$DEV = "";
 		}
 
 		if ($configline[7]) { $DESTINATION = "$configline[7]"; } else { $DESTINATION = "0/0"; }
-		
+
 		if ($configline[3] eq 'tcp') {
 			@PROTO = ("tcp");
 		} elsif ($configline[3] eq 'udp') {
@@ -174,9 +187,14 @@ foreach $configentry (sort @configs)
 			foreach $SOURCE (@SOURCE) {
 				$SOURCE =~ s/\s//gi;
 
-				 if ( $SOURCE eq "" ){next;}
+				if ( $SOURCE eq "" ){next;}
 
-				$CMD = "/sbin/iptables -A OUTGOINGFW -s $SOURCE -d $DESTINATION -p $PROTO";
+				if ( $configline[6] ne "" || $configline[2] eq 'mac' ){
+					$SOURCE =~ s/[^a-zA-Z0-9]/:/gi;
+					$CMD = "/sbin/iptables -A OUTGOINGFWMAC -m mac --mac-source $SOURCE -d $DESTINATION -p $PROTO";
+				} else {
+					$CMD = "/sbin/iptables -A OUTGOINGFW -s $SOURCE -d $DESTINATION -p $PROTO";
+				}
 
 				 if ($configline[8] && ( $configline[3] ne 'esp' || $configline[3] ne 'gre') ) {
 					$DPORT = "$configline[8]";
@@ -185,11 +203,6 @@ foreach $configentry (sort @configs)
 
 				 if ($DEV) {
 					$CMD = "$CMD -i $DEV";
-				}
-
-				if ($configline[6]) {
-					$MAC = "$configline[6]";
-					$CMD = "$CMD -m mac --mac-source $MAC";
 				}
 
 				if ($configline[17] && $configline[18]) {
@@ -263,7 +276,7 @@ if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
 		}
 	 }
 
-	$CMD = "/sbin/iptables -A OUTGOINGFW -o $netsettings{'RED_DEV'} -j DROP -m comment --comment 'DROP_OUTGOINGFW'";
+	$CMD = "/sbin/iptables -A OUTGOINGFW -o $netsettings{'RED_DEV'} -j DROP -m comment --comment 'DROP_OUTGOINGFW '";
 	if ($DEBUG) {
 		print "$CMD\n";
 	} else {

@@ -264,11 +264,11 @@ if (-e "/etc/snort/snort.conf") {
 
 if ($snortsettings{'RULES'} eq 'subscripted') {
 	#$url="http://dl.snort.org/sub-rules/snortrules-snapshot-2.8_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
-	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2860_s.tar.gz/$snortsettings{'OINKCODE'}";
+	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2861_s.tar.gz/$snortsettings{'OINKCODE'}";
 	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8_s.tar.gz";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
 	#$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2.8.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
-	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2860.tar.gz/$snortsettings{'OINKCODE'}";
+	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2861.tar.gz/$snortsettings{'OINKCODE'}";
 	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8.tar.gz";
 } else {
 	$url="http://www.emergingthreats.net/rules/emerging.rules.tar.gz";

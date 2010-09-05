@@ -52,7 +52,6 @@ usr/lib/snort_dynamicpreprocessor
 #usr/lib/snort_dynamicpreprocessor/libsf_ssl_preproc.so
 #usr/lib/snort_dynamicpreprocessor/libsf_ssl_preproc.so.0
 #usr/lib/snort_dynamicpreprocessor/libsf_ssl_preproc.so.0.0.0
-#usr/man/man8/snort.8
 usr/sbin/snort
 #usr/share/doc/snort
 #usr/share/doc/snort/AUTHORS
@@ -106,4 +105,5 @@ usr/sbin/snort
 #usr/share/doc/snort/USAGE
 #usr/share/doc/snort/WISHLIST
 #usr/share/doc/snort/generators
+#usr/share/man/man8/snort.8
 var/log/snort

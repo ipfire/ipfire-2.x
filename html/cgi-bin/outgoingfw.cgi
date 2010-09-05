@@ -321,7 +321,7 @@ END
 		$outfwsettings{'ACTION'} = 'Add rule';
 	}
 }
-if ($outfwsettings{'ACTION'} eq 'Add rule')
+if ($outfwsettings{'ACTION'} eq $Lang::tr{'Add Rule'})
 {
 	&addrule();
 	exit
@@ -343,7 +343,7 @@ if ($outfwsettings{'POLICY'} ne 'MODE0'){
 	&Header::openbox('100%', 'center', 'Rules');
 		print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<input type='submit' name='ACTION' value='Add rule' />
+		<input type='submit' name='ACTION' value='$Lang::tr{'Add Rule'}' />
 	</form>
 END
 ;
@@ -462,14 +462,22 @@ END
 END
 ;
 					if (($outfwsettings{'SIP'}) || ($outfwsettings{'SMAC'})) {
-						unless ($outfwsettings{'SIP'}) { $outfwsettings{'DISPLAY_SIP'} = 'ALL'; } else { $outfwsettings{'DISPLAY_SIP'} = $outfwsettings{'SIP'}; }
-						unless ($outfwsettings{'SMAC'}) { $outfwsettings{'DISPLAY_SMAC'} = 'ALL'; } else { $outfwsettings{'DISPLAY_SMAC'} = $outfwsettings{'SMAC'}; }
-						print <<END
-						<tr><td width='14%' align='right'>$Lang::tr{'source ip or net'}:
-						    <td width='14%' align='left'>$outfwsettings{'DISPLAY_SIP'}
-						    <td width='44%' colspan='2' align='center'>
-END
-;
+
+						unless ($outfwsettings{'SIP'}) {
+							$outfwsettings{'DISPLAY_SIP'} = 'ALL';
+						} else {
+							$outfwsettings{'DISPLAY_SIP'} = $outfwsettings{'SIP'};
+						}
+
+						unless ($outfwsettings{'SMAC'}) {
+							$outfwsettings{'DISPLAY_SMAC'} = 'ALL';
+							print "<tr><td /><td align='left'>$Lang::tr{'source ip or net'}: </td>";
+							print "<td align='left' colspan='2'>$outfwsettings{'DISPLAY_SIP'}</td>";
+						} else {
+							$outfwsettings{'DISPLAY_SMAC'} = $outfwsettings{'SMAC'};
+							print "<tr><td /><td align='left'>$Lang::tr{'source'} $Lang::tr{'mac address'}: </td>";
+							print "<td align='left' colspan='2'>$outfwsettings{'DISPLAY_SMAC'}</td>";
+						}
 					}
 						print <<END
 						<tr><td width='14%' align='right'>$Lang::tr{'time'} -  </td>
@@ -559,13 +567,13 @@ END
 		if ($p2pline[2] eq 'on') {
 			print <<END
 				<input type='hidden' name='ACTION' value='disable' />
-				<input type='image' name='submit' src='/images/stock_ok.png' alt='$Lang::tr{'outgoingfw p2p allow'}' title='$Lang::tr{'outgoingfw p2p allow'}'/>
+				<input type='image' name='submit' src='/images/stock_ok.png' alt='$Lang::tr{'outgoing firewall p2p allow'}' title='$Lang::tr{'outgoing firewall p2p allow'}'/>
 END
 ;
 		} else {
 			print <<END
 				<input type='hidden' name='ACTION' value='enable' />
-				<input type='image' name='submit' src='/images/stock_stop.png' alt='$Lang::tr{'outgoingfw p2p deny'}' title='$Lang::tr{'outgoingfw p2p deny'}' />
+				<input type='image' name='submit' src='/images/stock_stop.png' alt='$Lang::tr{'outgoing firewall p2p deny'}' title='$Lang::tr{'outgoing firewall p2p deny'}' />
 END
 ;
 		}
@@ -576,7 +584,7 @@ END
 	}
 	print <<END
 	</table>
-  <br />$Lang::tr{'outgoingfw p2p description 1'} <img src='/images/stock_ok.png' align='absmiddle' alt='$Lang::tr{'outgoingfw p2p deny'}'> $Lang::tr{'outgoingfw p2p description 2'} <img src='/images/stock_stop.png' align='absmiddle' alt='$Lang::tr{'outgoingfw p2p deny'}'> $Lang::tr{'outgoingfw p2p description 3'}
+  <br />$Lang::tr{'outgoing firewall p2p description 1'} <img src='/images/stock_ok.png' align='absmiddle' alt='$Lang::tr{'outgoing firewall p2p deny'}'> $Lang::tr{'outgoing firewall p2p description 2'} <img src='/images/stock_stop.png' align='absmiddle' alt='$Lang::tr{'outgoing firewall p2p deny'}'> $Lang::tr{'outgoing firewall p2p description 3'}
 END
 ;
 	&Header::closebox();
@@ -586,9 +594,9 @@ END
 print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%'>
-		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 0:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoingfw mode0'}</td></tr>
-		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 1:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoingfw mode1'}</td></tr>
-		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 2:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoingfw mode2'}</td></tr>
+		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 0:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoing firewall mode0'}</td></tr>
+		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 1:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoing firewall mode1'}</td></tr>
+		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 2:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoing firewall mode2'}</td></tr>
 		<tr><td colspan='3'><hr /></td></tr>
 		<tr><td width='10%' align='left'>	<select name='POLICY' style="width: 85px"><option value='MODE0' $selected{'POLICY'}{'MODE0'}>$Lang::tr{'mode'} 0</option><option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'mode'} 1</option><option value='MODE2' $selected{'POLICY'}{'MODE2'}>$Lang::tr{'mode'} 2</option></select>
 		    <td width='45%' align='left'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
@@ -597,7 +605,7 @@ END
 ;
 	if ($outfwsettings{'POLICY'} ne 'MODE0') {
 		print <<END
-		    $Lang::tr{'outgoingfw reset'}: <input type='submit' name='ACTION' value=$Lang::tr{'reset'} />
+		    $Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value=$Lang::tr{'reset'} />
 END
 ;
 	}
@@ -627,7 +635,7 @@ print <<END
 			<td width='30%' align='left' colspan='2'><input type='checkbox' name='ENABLED' $selected{'ENABLED'} /></td>
 		</tr>
 		<tr>
-			<td width='20%' align='right'>$Lang::tr{'protocol'}:</td>
+			<td width='20%' align='right'>$Lang::tr{'protocol'}</td>
 			<td width='30%' align='left'>
 				<select name='PROT'>
 					<option value='all' $selected{'PROT'}{'all'}>All</option>
@@ -655,6 +663,9 @@ END
 				<select name='SNET'>
 					<optgroup label='---'>
 						<option value='all' $selected{'SNET'}{'ALL'}>$Lang::tr{'all'}</option>
+					<optgroup label='$Lang::tr{'mac address'}'>
+						<option value='mac' $selected{'SNET'}{'mac'}>$Lang::tr{'source'} $Lang::tr{'mac address'}</option>
+					</optgroup>
 					<optgroup label='$Lang::tr{'ip address'}'>
 						<option value='ip' $selected{'SNET'}{'ip'}>$Lang::tr{'source ip or net'}</option>
 						<option value='red' $selected{'SNET'}{'red'}>$Lang::tr{'red'} IP</option>
@@ -674,7 +685,7 @@ END
 	}
 	print <<END
 					</optgroup>
-					<optgroup label='$Lang::tr{'advproxy NCSA group'}'>
+					<optgroup label='IP $Lang::tr{'advproxy NCSA group'}'>
 END
 ;
 	my @ipgroups = qx(ls $configpath/ipgroups/);
@@ -683,10 +694,26 @@ END
 	}
 	print <<END
 					</optgroup>
+					<optgroup label='MAC $Lang::tr{'advproxy NCSA group'}'>
+END
+;
+	my @macgroups = qx(ls $configpath/macgroups/);
+	foreach (sort @macgroups){
+		print "\t\t\t\t\t<option value='$_' $selected{'SNET'}{'$_'}>$_</option>\n";
+	}
+	print <<END
+					</optgroup>
 				</select>
 			</td>
-			<td width='20%' align='right' colspan='2'>$Lang::tr{'source ip or net'}<img src='/blob.gif' /></td>
-			<td width='30%' align='left' colspan='2'><input type='text' name='SIP' value='$outfwsettings{'SIP'}' /></td>
+			<td align='right' colspan='4'><font color='red'>$Lang::tr{'outgoing firewall warning'}</font></td>
+		</tr>
+		<tr>
+			<td align='right' colspan='4' >$Lang::tr{'source ip or net'}<img src='/blob.gif' /></td>
+			<td align='left' colspan='4' ><input type='text' name='SIP' value='$outfwsettings{'SIP'}' /></td>
+		</tr>
+		<tr>
+			<td align='right' colspan='4' >$Lang::tr{'source'} $Lang::tr{'mac address'}: <img src='/blob.gif' />
+			<td align='left' colspan='4' ><input type='text' name='SMAC' maxlength='23' value='$outfwsettings{'SMAC'}' />
 		</tr>
 		<tr>
 			<td width='20%' align='right'>$Lang::tr{'logging'}:</td>

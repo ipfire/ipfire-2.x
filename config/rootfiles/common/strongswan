@@ -1,5 +1,4 @@
 etc/ipsec.conf
-etc/ipsec.user.conf
 #etc/ipsec.d
 etc/ipsec.d/aacerts
 etc/ipsec.d/acerts
@@ -10,7 +9,6 @@ etc/ipsec.d/ocspcerts
 etc/ipsec.d/private
 etc/ipsec.d/reqs
 etc/ipsec.secrets
-etc/ipsec.user.secrets
 etc/strongswan.conf
 #usr/lib/libcharon.a
 #usr/lib/libcharon.la
@@ -81,6 +79,9 @@ usr/libexec/ipsec/plugins/libstrongswan-random.so
 #usr/libexec/ipsec/plugins/libstrongswan-resolve.a
 #usr/libexec/ipsec/plugins/libstrongswan-resolve.la
 usr/libexec/ipsec/plugins/libstrongswan-resolve.so
+#usr/libexec/ipsec/plugins/libstrongswan-revocation.a
+#usr/libexec/ipsec/plugins/libstrongswan-revocation.la
+usr/libexec/ipsec/plugins/libstrongswan-revocation.so
 #usr/libexec/ipsec/plugins/libstrongswan-sha1.a
 #usr/libexec/ipsec/plugins/libstrongswan-sha1.la
 usr/libexec/ipsec/plugins/libstrongswan-sha1.so
@@ -99,6 +100,9 @@ usr/libexec/ipsec/plugins/libstrongswan-updown.so
 #usr/libexec/ipsec/plugins/libstrongswan-x509.a
 #usr/libexec/ipsec/plugins/libstrongswan-x509.la
 usr/libexec/ipsec/plugins/libstrongswan-x509.so
+#usr/libexec/ipsec/plugins/libstrongswan-xauth.a
+#usr/libexec/ipsec/plugins/libstrongswan-xauth.la
+usr/libexec/ipsec/plugins/libstrongswan-xauth.so
 #usr/libexec/ipsec/plugins/libstrongswan-xcbc.a
 #usr/libexec/ipsec/plugins/libstrongswan-xcbc.la
 usr/libexec/ipsec/plugins/libstrongswan-xcbc.so
@@ -136,3 +140,5 @@ usr/sbin/ipsec
 #usr/share/man/man8/pluto.8
 #usr/share/man/man8/scepclient.8
 #usr/share/man/man8/starter.8
+etc/ipsec.user.conf
+etc/ipsec.user.secrets
