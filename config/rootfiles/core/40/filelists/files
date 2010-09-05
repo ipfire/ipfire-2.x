@@ -28,4 +28,8 @@ lib/modules/2.6.32.15-ipfire/kernel/drivers/usb/serial/option.ko
 lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/usb/serial/option.ko
 lib/modules/2.6.32.15-ipfire/kernel/drivers/usb/serial/usbserial.ko
 lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/usb/serial/usbserial.ko
+lib/modules/2.6.32.15-ipfire/kernel/drivers/net/igb/igb.ko
+lib/modules/2.6.32.15-ipfire/kernel/drivers/net/igb/igb.ko.org
+lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/net/igb/igb.ko
+lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/net/igb/igb.ko.org
 usr/sbin/openvpn
