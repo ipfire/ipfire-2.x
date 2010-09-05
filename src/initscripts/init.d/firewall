@@ -183,9 +183,8 @@ case "$1" in
 	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
 
 	# Outgoing Firewall
-	/sbin/iptables -A FORWARD -j OUTGOINGFW
 	/sbin/iptables -A FORWARD -j OUTGOINGFWMAC
-	/sbin/iptables -A INPUT -j OUTGOINGFWMAC
+	/sbin/iptables -A FORWARD -j OUTGOINGFW
 
 	# localhost and ethernet.
 	/sbin/iptables -A INPUT   -i lo          -m state --state NEW -j ACCEPT
