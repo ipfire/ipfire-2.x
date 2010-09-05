@@ -153,11 +153,11 @@ foreach $configentry (sort @configs)
 		} elsif ($configline[2] eq 'ip') {
 			@SOURCE = ("$configline[5]");
 			$DEV = "";
-		} elsif ($configline[2] eq 'all') {
-			@SOURCE = ("0/0");
-			$DEV = "";
 		} elsif ($configline[2] eq 'mac') {
 			@SOURCE = ("$configline[6]");
+			$DEV = "";
+		} elsif ($configline[2] eq 'all') {
+			@SOURCE = ("0/0");
 			$DEV = "";
 		} else {
 			if ( -e "/var/ipfire/outgoing/groups/ipgroups/$configline[2]" ) {
@@ -189,7 +189,7 @@ foreach $configentry (sort @configs)
 
 				if ( $SOURCE eq "" ){next;}
 
-				if ( $configline[6] ne "" || $configline[2] eq 'mac' ){
+				if ( ( $configline[6] ne "" || $configline[2] eq 'mac' ) && $configline[2] ne 'all'){
 					$SOURCE =~ s/[^a-zA-Z0-9]/:/gi;
 					$CMD = "/sbin/iptables -A OUTGOINGFWMAC -m mac --mac-source $SOURCE -d $DESTINATION -p $PROTO";
 				} else {
