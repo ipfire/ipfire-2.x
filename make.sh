@@ -355,6 +355,7 @@ buildipfire() {
   ipfiremake r8101			XEN=1
   ipfiremake e1000			XEN=1
   ipfiremake e1000e			XEN=1
+  ipfiremake igb			XEN=1
   ipfiremake linux
   ipfiremake kqemu
   ipfiremake kvm-kmod
@@ -370,6 +371,7 @@ buildipfire() {
   ipfiremake r8101
   ipfiremake e1000
   ipfiremake e1000e
+  ipfiremake igb
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
