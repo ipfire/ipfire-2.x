@@ -140,7 +140,11 @@ fi
 #
 echo
 echo Update grub configuration ...
-sed -i "s|ROOT|UUID=$ROOTUUID|g" /boot/grub/grub.conf
+if [ ! -z $ROOTUUID ]; then
+	sed -i "s|ROOT|UUID=$ROOTUUID|g" /boot/grub/grub.conf
+else
+	sed -i "s|ROOT|$ROOT|g" /boot/grub/grub.conf
+fi
 sed -i "s|KVER|$KVER|g" /boot/grub/grub.conf
 sed -i "s|MOUNT|$MOUNT|g" /boot/grub/grub.conf
 
