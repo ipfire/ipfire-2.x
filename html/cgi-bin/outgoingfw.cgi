@@ -310,6 +310,11 @@ if ($outfwsettings{'ACTION'} eq $Lang::tr{'delete'})
 if ($outfwsettings{'ACTION'} eq $Lang::tr{'add'})
 {
 	if ( $outfwsettings{'VALID'} eq 'yes' ) {
+
+		if ( $outfwsettings{'SNET'} eq "all" ) {
+			$outfwsettings{'SIP'} ="";
+			$outfwsettings{'SMAC'}="";
+		}
 		open( FILE, ">> $configfile" ) or die "Unable to write $configfile";
 		print FILE <<END
 $outfwsettings{'STATE'};$outfwsettings{'ENABLED'};$outfwsettings{'SNET'};$outfwsettings{'PROT'};$outfwsettings{'NAME'};$outfwsettings{'SIP'};$outfwsettings{'SMAC'};$outfwsettings{'DIP'};$outfwsettings{'DPORT'};$outfwsettings{'LOG'};$outfwsettings{'TIME_MON'};$outfwsettings{'TIME_TUE'};$outfwsettings{'TIME_WED'};$outfwsettings{'TIME_THU'};$outfwsettings{'TIME_FRI'};$outfwsettings{'TIME_SAT'};$outfwsettings{'TIME_SUN'};$outfwsettings{'TIME_FROM'};$outfwsettings{'TIME_TO'};
