@@ -9,7 +9,7 @@ eval $(/usr/local/bin/readhash /var/ipfire/time/settings)
 case "$1" in
 	start)
 		if [ "$ENABLESETONBOOT" == "on" ]; then
-			boot_mesg "Setting time on booot..."
+			boot_mesg "Setting time on boot..."
 			loadproc /usr/local/bin/settime $(cat /var/ipfire/time/settime.conf)
 		fi  
 
