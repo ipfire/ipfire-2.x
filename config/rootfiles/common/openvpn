@@ -1,3 +1,4 @@
+lib/openvpn-auth-pam.so
 usr/sbin/openvpn
 #usr/share/doc/openvpn
 #usr/share/man/man8/openvpn.8
