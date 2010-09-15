@@ -82,6 +82,12 @@ echo Unpack the updated files ...
 tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
 	--no-overwrite-dir
 
+#
+# Stop services to save memory
+#
+/etc/init.d/snort stop
+/etc/init.d/squid stop
+
 # Convert /etc/fstab entries to UUID ...
 #
 echo Convert fstab entries to UUID ...
@@ -128,12 +134,25 @@ if [ ! -z $SWAP ]; then
 	SWAPUUID=`blkid -sUUID $SWAP | cut -d'"' -f2`
 	if [ ! -z $SWAPUUID ]; then
 		sed -i "s|^$SWAP|UUID=$SWAPUUID|g" /etc/fstab
-	#else
-		#to do add uuid to swap
+	else
+		# Reformat swap to add a UUID
+		swapoff -a
+		mkswap $SWAP
+		swapon -a
+		SWAPUUID=`blkid -sUUID $SWAP | cut -d'"' -f2`
+		if [ ! -z $SWAPUUID ]; then
+			sed -i "s|^$SWAP|UUID=$SWAPUUID|g" /etc/fstab
+		fi
 	fi
 	else
 	echo "WARNING! swap not found!!!"
 fi
+
+#
+# Start services
+#
+/etc/init.d/squid start
+/etc/init.d/snort start
 
 #
 # Modify grub.conf
@@ -158,13 +177,20 @@ else
 	sed -i -e "s| panic=10 | console=ttyS0,38400n8 panic=10 |g" /boot/grub/grub.conf
 fi
 #
+# Change /dev/hd? to /dev/sda
+#
+if [ "${ROOT:0:7}" == "/dev/hd" ];then
+	sed -i -e "s|${ROOT:0:8}|/dev/sda|g" /boot/grub/grub.conf
+	sed -i -e "s|${ROOT:0:8}|/dev/sda|g" /etc/fstab
+fi
+#
 # ReInstall grub
 #
 grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
 #
 # Rebuild Language
 #
-#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
 # Delete old lm-sensor modullist to force search at next boot
 #

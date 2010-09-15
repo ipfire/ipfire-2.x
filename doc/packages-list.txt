@@ -345,8 +345,8 @@
 * usb-modeswitch-data-20100707
 * usbutils-0.72
 * util-linux-2.12r
-* v4l-dvb-b576509ea6d2-kmod-2.6.32.21-ipfire
-* v4l-dvb-b576509ea6d2-kmod-2.6.32.21-ipfire-xen
+* v4l-dvb-990bbeaeb761-kmod-2.6.32.21-ipfire
+* v4l-dvb-990bbeaeb761-kmod-2.6.32.21-ipfire-xen
 * vdr-1.6.0
 * vdradmin-am-3.6.7
 * vim-7.0
