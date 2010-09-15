@@ -51,6 +51,7 @@ echo etc/mkinitcpio.conf.org >> /opt/pakfire/tmp/ROOTFILES
 echo etc/mkinitcpio.d >> /opt/pakfire/tmp/ROOTFILES
 echo lib/initcpio >> /opt/pakfire/tmp/ROOTFILES
 echo sbin/mkinitcpio >> /opt/pakfire/tmp/ROOTFILES
+echo usr/bin/iw >> /opt/pakfire/tmp/ROOTFILES
 
 # Backup the files
 tar cjvf /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
@@ -69,6 +70,8 @@ rm -rf /lib/modules/*-ipfire
 rm -rf /etc/mkinitcpio.*
 rm -rf /lib/initcpio
 rm -rf /sbin/mkinitcpio
+# Remove old iw (new is in usr/sbin)
+rm -rf /usr/bin/iw
 #
 # Backup grub.conf
 #
