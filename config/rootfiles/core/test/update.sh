@@ -142,6 +142,7 @@ if [ ! -z $SWAP ]; then
 		swapoff -a
 		mkswap $SWAP
 		swapon -a
+		sync
 		SWAPUUID=`blkid -sUUID $SWAP | cut -d'"' -f2`
 		if [ ! -z $SWAPUUID ]; then
 			sed -i "s|^$SWAP|UUID=$SWAPUUID|g" /etc/fstab
