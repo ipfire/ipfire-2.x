@@ -102,6 +102,7 @@ $sambasettings{'DISPLAYCHARSET'} = 'CP850';
 $sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE';
 $sambasettings{'WIDELINKS'} = 'on';
 $sambasettings{'UNIXEXTENSION'} = 'off';
+$sambasettings{'SMB2'} = 'off';
 ### Values that have to be initialized
 $sambasettings{'ACTION'} = '';
 ### Samba CUPS Variablen
@@ -183,6 +184,9 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'DOMAINMASTER'} = 'off';
 	$sambasettings{'PREFERREDMASTER'} = 'off';
 	$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE';
+	$sambasettings{'WIDELINKS'} = 'on';
+	$sambasettings{'UNIXEXTENSION'} = 'off';
+	$sambasettings{'SMB2'} = 'off';
 	$PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
 	system("/usr/local/bin/sambactrl smbreload");
 	refreshpage();
@@ -276,7 +280,14 @@ passdb backend = smbpasswd
 
 wide links = $sambasettings{'WIDELINKS'}
 unix extensions = $sambasettings{'UNIXEXTENSION'}
+END
+;
 
+if ($sambasettings{'SMB2'} eq 'on'){
+	print FILE "max protocol = smb2\n";
+}
+
+print FILE <<END
 keep alive = 30
 os level = $sambasettings{'OSLEVEL'}
 fstype = NTFS
@@ -400,6 +411,9 @@ $checked{'WIDELINKS'}{$sambasettings{'WIDELINKS'}} = "checked='checked'";
 $checked{'UNIXEXTENSION'}{'off'} = '';
 $checked{'UNIXEXTENSION'}{'on'} = '';
 $checked{'UNIXEXTENSION'}{$sambasettings{'UNIXEXTENSION'}} = "checked='checked'";
+$checked{'SMB2'}{'off'} = '';
+$checked{'SMB2'}{'on'} = '';
+$checked{'SMB2'}{$sambasettings{'SMB2'}} = "checked='checked'";
 $checked{'GREEN'}{'off'} = '';
 $checked{'GREEN'}{'on'} = '';
 $checked{'GREEN'}{$sambasettings{'GREEN'}} = "checked='checked'";
@@ -504,6 +518,8 @@ print <<END
 																							<input type='radio' name='WIDELINKS' value='off' $checked{'WIDELINKS'}{'off'} /> off</td></tr>
 <tr><td align='left' width='40%'>Unix extension</td><td align='left'>on <input type='radio' name='UNIXEXTENSION' value='on' $checked{'UNIXEXTENSION'}{'on'} />/
 																							<input type='radio' name='UNIXEXTENSION' value='off' $checked{'UNIXEXTENSION'}{'off'} /> off</td></tr>
+<tr><td align='left' width='40%'>SMB2 $Lang::tr{'protocol'}</td><td align='left'>on <input type='radio' name='SMB2' value='on' $checked{'SMB2'}{'on'} />/
+																							<input type='radio' name='SMB2' value='off' $checked{'SMB2'}{'off'} /> off</td></tr>
 <tr><td align='left'><br /></td><td></td></tr>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'security options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'security'}</td><td align='left'><select name='SECURITY' style="width: 165px">
