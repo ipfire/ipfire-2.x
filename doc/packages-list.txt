@@ -75,7 +75,7 @@
 * cpufrequtils-007
 * cryptodev-20091126-kmod-2.6.32.15-ipfire
 * cryptodev-20091126-kmod-2.6.32.15-ipfire-xen
-* cups-1.4.2
+* cups-1.4.4
 * curl-7.19.5
 * cyrus-imapd-2.2.12
 * cyrus-sasl-2.1.21
@@ -140,7 +140,7 @@
 * hdparm-8.9
 * hostapd-0.7.2
 * hplip-2.7.10
-* htop-0.8.1
+* htop-0.8.3
 * httpd-2.2.15
 * hwdata
 * iana-etc-2.10
@@ -301,7 +301,7 @@
 * rssdler-0.4.0a
 * rsync-3.0.7
 * rtorrent-0.8.6
-* samba-3.5.4
+* samba-3.5.5
 * sane-1.0.19
 * screen-4.0.3
 * sdparm-1.01
