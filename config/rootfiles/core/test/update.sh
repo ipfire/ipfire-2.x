@@ -101,7 +101,7 @@ SWAP=`grep "/dev/" /proc/swaps | cut -d" " -f1`
 #
 
 if [ ! -z $ROOT ]; then
-	ROOTUUID=`blkid -sUUID $ROOT | cut -d'"' -f2`
+	ROOTUUID=`blkid -c /dev/null -sUUID $ROOT | cut -d'"' -f2`
 	if [ ! -z $ROOTUUID ]; then
 		sed -i "s|^$ROOT|UUID=$ROOTUUID|g" /etc/fstab
 	#else
@@ -112,7 +112,7 @@ if [ ! -z $ROOT ]; then
 fi
 
 if [ ! -z $BOOT ]; then
-	BOOTUUID=`blkid -sUUID $BOOT | cut -d'"' -f2`
+	BOOTUUID=`blkid -c /dev/null -sUUID $BOOT | cut -d'"' -f2`
 	if [ ! -z $BOOTUUID ]; then
 		sed -i "s|^$BOOT|UUID=$BOOTUUID|g" /etc/fstab
 	#else
@@ -123,7 +123,7 @@ if [ ! -z $BOOT ]; then
 fi
 
 if [ ! -z $VAR ]; then
-	VARUUID=`blkid -sUUID $VAR | cut -d'"' -f2`
+	VARUUID=`blkid -c /dev/null -sUUID $VAR | cut -d'"' -f2`
 	if [ ! -z $VARUUID ]; then
 		sed -i "s|^$VAR|UUID=$VARUUID|g" /etc/fstab
 	#else
@@ -134,7 +134,7 @@ if [ ! -z $VAR ]; then
 fi
 
 if [ ! -z $SWAP ]; then
-	SWAPUUID=`blkid -sUUID $SWAP | cut -d'"' -f2`
+	SWAPUUID=`blkid -c /dev/null -sUUID $SWAP | cut -d'"' -f2`
 	if [ ! -z $SWAPUUID ]; then
 		sed -i "s|^$SWAP|UUID=$SWAPUUID|g" /etc/fstab
 	else
@@ -142,8 +142,7 @@ if [ ! -z $SWAP ]; then
 		swapoff -a
 		mkswap $SWAP
 		swapon -a
-		sync
-		SWAPUUID=`blkid -sUUID $SWAP | cut -d'"' -f2`
+		SWAPUUID=`blkid -c /dev/null -sUUID $SWAP | cut -d'"' -f2`
 		if [ ! -z $SWAPUUID ]; then
 			sed -i "s|^$SWAP|UUID=$SWAPUUID|g" /etc/fstab
 		fi
