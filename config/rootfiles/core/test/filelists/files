@@ -1,3 +1,4 @@
 etc/system-release
 etc/rc.d/init.d/checkfstab
 usr/local/bin/rebuild-initrd
+srv/web/ipfire/cgi-bin/speed.cgi
