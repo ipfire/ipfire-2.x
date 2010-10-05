@@ -73,6 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i -e 's|/usr/local|/usr|g' Makefile
 	cd $(DIR_APP)/src && sed -i \
 		-e 's|^\/\* #define HAVE_ISC_READER .*$$|#define HAVE_ISC_READER\n#define NO_IPV6|' \
+		-e 's|^#define HAVE_TFTP *$$|//#define HAVE_TFTP|' \
 		-e 's/^#define CHUSER .*$$/#define CHUSER "dnsmasq"/' config.h
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
