@@ -94,7 +94,7 @@ for (;;) {
 		while (<ALERT2>) {
 			chop;
 			if ($_=~/.*sshd.*Failed password for root from.*/) {
-				my @array=split(/ /,$_);&checkssh ($array[10], "possible SSH-Bruteforce Attack");}
+				my @array=split(/ /,$_);&checkssh ($array[11], "possible SSH-Bruteforce Attack");}
 			}
 	}
 
