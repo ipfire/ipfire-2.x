@@ -151,7 +151,7 @@
 * igb-2.3.4-kmod-2.6.32.15-ipfire
 * igb-2.3.4-kmod-2.6.32.15-ipfire-xen
 * igmpproxy-0.1
-* imspector-0.9
+* imspector-20101008
 * inetutils-1.4.2
 * ipaddr-1.2
 * iperf-2.0.4
@@ -237,7 +237,7 @@
 * module-init-tools-3.5
 * motion-3.2.11
 * mpc-0.19
-* mpd-0.15.8
+* mpd-0.15.12
 * mpeg2dec-0.4.0b
 * mpfire-ipfire
 * mtd-CVS-20070507
