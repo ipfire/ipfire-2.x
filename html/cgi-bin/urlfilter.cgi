@@ -1214,6 +1214,10 @@ print <<END
 	<td colspan='2'>$Lang::tr{'urlfilter blocked urls'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 </tr>
 <tr>
+	<td colspan='2'>$Lang::tr{'urlfilter example'}</td>
+	<td colspan='2'>$Lang::tr{'urlfilter example ads'}</td>
+</tr>
+<tr>
 	<td colspan='2' width='50%'><textarea name='CUSTOM_BLACK_DOMAINS' cols='32' rows='6' wrap='off'>
 END
 ;
