@@ -1916,6 +1916,8 @@
 'urlfilter enable log' => 'Activer log',
 'urlfilter enable rewrite rules' => 'Activer fichier local de redirection',
 'urlfilter enabled' => 'Activé:',
+'urlfilter example' => 'Exemple: www.domain.com',
+'urlfilter example ads' => 'Exemple: www.domain.com/ads/',
 'urlfilter export blacklist' => 'Exporter Blackliste',
 'urlfilter export error' => 'Impossible de créer fichier d\'exportation',
 'urlfilter expressions' => 'Expressions (une par ligne)',
