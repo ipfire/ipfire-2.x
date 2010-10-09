@@ -73,6 +73,7 @@ else
 	$tx_kbs = int($tx_kbs);
 }
 
+print "pragma: no-cache\n";
 print "Content-type: text/xml\n\n";
 print "<?xml version=\"1.0\"?>\n";
 print <<END

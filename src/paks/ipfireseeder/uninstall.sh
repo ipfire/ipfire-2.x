@@ -31,4 +31,12 @@ cat /opt/pakfire/db/rootfiles/ipfireseeder | \
 mv /opt/pakfire/db/rootfiles/ipfireseeder.tmp \
     /opt/pakfire/db/rootfiles/ipfireseeder
 
+grep -v "IPFireSeeder" /var/ipfire/xtaccess/config > /var/ipfire/xtaccess/config.tmp
+mv /var/ipfire/xtaccess/config.tmp /var/ipfire/xtaccess/config
+chown nobody:nobody /var/ipfire/xtaccess/config
+chmod 644 /var/ipfire/xtaccess/config
+
+rm -f /etc/rc.d/rc?.d/???ipfireseeder
+rm -f /etc/rc.d/init.d/networking/red.*/??-?-ipfireseeder
+
 remove_files

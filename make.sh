@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.7"							# Version number
-CORE="40"							# Core Level (Filename)
-PAKFIRE_CORE="39"						# Core Level (PAKFIRE)
+CORE="41"							# Core Level (Filename)
+PAKFIRE_CORE="40"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -355,6 +355,7 @@ buildipfire() {
   ipfiremake r8101			XEN=1
   ipfiremake e1000			XEN=1
   ipfiremake e1000e			XEN=1
+  ipfiremake igb			XEN=1
   ipfiremake linux
   ipfiremake kqemu
   ipfiremake kvm-kmod
@@ -370,6 +371,7 @@ buildipfire() {
   ipfiremake r8101
   ipfiremake e1000
   ipfiremake e1000e
+  ipfiremake igb
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
@@ -643,6 +645,7 @@ buildipfire() {
   ipfiremake pound
   ipfiremake minicom
   ipfiremake ddrescue
+  ipfiremake imspector
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
@@ -1017,11 +1020,12 @@ uploadsrc)
 		beautify message FAIL
 		exit 1
 	fi
+
 	URL_SOURCE=$(grep URL_SOURCE lfs/Config | awk '{ print $3 }')
-	REMOTE_FILES=$(echo "ls -1" | sftp -C ${IPFIRE_USER}@${URL_SOURCE})
+	REMOTE_FILES=$(echo "ls -1 --ignore=toolchains" | sftp -C ${IPFIRE_USER}@${URL_SOURCE})
 
 	cd $BASEDIR/cache/
-	for file in $(ls -1); do
+	for file in $(ls -1 --ignore=toolchains); do
 		grep -q "$file" <<<$REMOTE_FILES && continue
 		NEW_FILES="$NEW_FILES $file"
 	done

@@ -45,12 +45,17 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 # Change var lock size to 8MB
 grep -v "/var/lock" /etc/fstab > /tmp/fstab.tmp
 mv /tmp/fstab.tmp /etc/fstab
-echo non        /var/lock        tmpfs   defaults,size=8M      0       0 >> /etc/fstab
+echo none	/var/lock	tmpfs	defaults,size=8M	0	0 >> /etc/fstab
 
 
 #Rebuild module dep's
 depmod 2.6.32.15-ipfire
 depmod 2.6.32.15-ipfire-xen
+
+#Create the misssing mac group
+mkdir /var/ipfire/outgoing/macgroups
+chown nobody.nobody /var/ipfire/outgoing/macgroups
+
 #
 #Finish
 #Don't report the exitcode last command

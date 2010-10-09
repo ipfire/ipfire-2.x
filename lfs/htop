@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.8.1
+VER        = 0.8.3
 
 THISAPP    = htop-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = htop
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f0b259ca29175656de48bf0fa0a2e619
+$(DL_FILE)_MD5 = 5c9f093f9eaddf6e77aa6d54c2116d0c
 
 install : $(TARGET)
 
