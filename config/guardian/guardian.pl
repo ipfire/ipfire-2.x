@@ -50,6 +50,8 @@ print "My gatewayaddess is: $gatewayaddr\n";
 			# destination was found.
 	"$hostipaddr" => 1);
 
+&get_aliases;
+
 %sshhash = ();
 
 if ( -e $targetfile ) {
@@ -186,8 +188,8 @@ sub ipchain {
 	my ($source, $dest, $type) = @_;
 	&write_log ("$source\t$type\n");
 	if ($hash{$source} eq "") {
-		&write_log ("Running '$blockpath $source'\n");
-		system ("$blockpath $source");
+		&write_log ("Running '$blockpath $source $interface'\n");
+		system ("$blockpath $source $interface");
 		$hash{$source} = time() + $TimeLimit;
 	} else {
 # We have already blocked this one, but snort detected another attack. So
@@ -244,6 +246,9 @@ sub load_conf {
 		}
 		if (/Interface\s+(.*)/) {
 			$interface = $1;
+			if ( $interface eq "" ) {
+				$interface = `cat /var/ipfire/ethernet/settings | grep RED_DEV | cut -d"=" -f2`;
+			}
 		}
 		if (/AlertFile\s+(.*)/) {
 			$alert_file = $1;
@@ -265,16 +270,13 @@ sub load_conf {
 		}
 	}
 
-	if ($interface eq "") {
-		die "Fatal! Interface is undefined.. Please define it in $opt_o with keyword Interface\n";
-	}
 	if ($alert_file eq "") {
 		print "Warning! AlertFile is undefined.. Assuming /var/log/snort.alert\n";
 		$alert_file="/var/log/snort.alert";
 	}
 	if ($hostipaddr eq "") {
 		print "Warning! HostIpAddr is undefined! Attempting to guess..\n";
-		$hostipaddr = &get_ip($interface);
+		$hostipaddr = `cat /var/ipfire/red/local-ipaddress`;
 		print "Got it.. your HostIpAddr is $hostipaddr\n";
 	}
 	if ($ignorefile eq "") {
@@ -345,30 +347,9 @@ sub daemonize {
 	}
 }
 
-sub get_ip {
-	my ($interface) = $_[0];
-	my $ip;
-	open (IFCONFIG, "/bin/netstat -iee |grep $interface -A7 |");
-	while (<IFCONFIG>) {
-		if ($OS eq "FreeBSD") {
-			if (/inet (\d+\.\d+\.\d+\.\d+)/) {
-				$ip = $1;
-			}
-		}
-		if ($OS eq "Linux") {
-			if (/inet addr:(\d+\.\d+\.\d+\.\d+)/) {
-				$ip = $1;
-			}
-		}
-	}
-	close (IFCONFIG);
-
-	if ($ip eq "") { die "Couldn't figure out the ip address\n"; }
-		$ip;
-	}
-
 sub sig_handler_setup {
-	$SIG{TERM} = \&clean_up_and_exit; # kill
+	$SIG{INT} = \&clean_up_and_exit; # kill -2
+	$SIG{TERM} = \&clean_up_and_exit; # kill -9
 	$SIG{QUIT} = \&clean_up_and_exit; # kill -3
 #  $SIG{HUP} = \&flush_and_reload; # kill -1
 }
@@ -387,7 +368,7 @@ sub remove_blocks {
 sub call_unblock {
 	my ($source, $message) = @_;
 	&write_log ("$message");
-	system ("$unblockpath $source");
+	system ("$unblockpath $source $interface");
 }
 
 sub clean_up_and_exit {
@@ -411,4 +392,23 @@ sub load_targetfile {
 	}
 	close (TARG);
 	print "Loaded $count addresses from $targetfile\n";
+}
+
+sub get_aliases {
+	my $ip;
+	print "Scanning for aliases on $interface and add them to the target hash...";
+
+	open (IFCONFIG, "/sbin/ip addr show $interface |");
+	my @lines = <IFCONFIG>;
+	close(IFCONFIG);
+
+	foreach $line (@lines) {
+		if ( $line =~ /inet (\d+\.\d+\.\d+\.\d+)/) {
+			$ip = $1;
+			print " got $ip on $interface ... ";
+			$targethash{'$ip'} = "1";
+		}
+	}
+
+	print "done \n";
 }
