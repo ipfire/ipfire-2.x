@@ -1886,6 +1886,8 @@
 'urlfilter enable log' => 'Aktiviere Protokoll',
 'urlfilter enable rewrite rules' => 'Aktiviere lokale Dateiumleitung',
 'urlfilter enabled' => 'Aktiviert:',
+'urlfilter example' => 'Beispiel: www.domain.com',
+'urlfilter example ads' => 'Beispiel: www.domain.com/ads/',
 'urlfilter export blacklist' => 'Blacklist exportieren',
 'urlfilter export error' => 'Kann Exportdatei nicht erstellen',
 'urlfilter expressions' => 'Ausdrücke (einen pro Zeile)',

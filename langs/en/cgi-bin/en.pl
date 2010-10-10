@@ -1920,6 +1920,8 @@
 'urlfilter enable log' => 'Enable log',
 'urlfilter enable rewrite rules' => 'Enable local file redirection',
 'urlfilter enabled' => 'Enabled:',
+'urlfilter example' => 'Example: www.domain.com',
+'urlfilter example ads' => 'Example: www.domain.com/ads/',
 'urlfilter export blacklist' => 'Export blacklist',
 'urlfilter export error' => 'Unable to create export file',
 'urlfilter expressions' => 'Expressions (one per line)',

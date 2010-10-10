@@ -1988,7 +1988,7 @@ END
 	print <<END
 	<table width='100%' cellpadding='0' cellspacing='5' border='0'>
 	<tr><td class='base' width='50%'>$Lang::tr{'use a pre-shared key'}</td>
-	    <td class='base' width='50%'><input type='text' name='PSK' size='30' value='$cgiparams{'PSK'}' /></td>
+	    <td class='base' width='50%'><input type='password' name='PSK' size='30' value='$cgiparams{'PSK'}' /></td>
 	</tr>
 	</table>
 END
@@ -2006,7 +2006,7 @@ END
 	<table width='100%' cellpadding='0' cellspacing='5' border='0'>
 	<tr><td width='5%'><input type='radio' name='AUTH' value='psk' $checked{'AUTH'}{'psk'} $pskdisabled/></td>
 	    <td class='base' width='55%'>$Lang::tr{'use a pre-shared key'}</td>
-	    <td class='base' width='40%'><input type='text' name='PSK' size='30' value='$cgiparams{'PSK'}' $pskdisabled/></td></tr>
+	    <td class='base' width='40%'><input type='password' name='PSK' size='30' value='$cgiparams{'PSK'}' $pskdisabled/></td></tr>
 	<tr><td colspan='3' bgcolor='#000000'></td></tr>
 	<tr><td><input type='radio' name='AUTH' value='certreq' $checked{'AUTH'}{'certreq'} $cakeydisabled /></td>
 	    <td class='base'><hr />$Lang::tr{'upload a certificate request'}</td>

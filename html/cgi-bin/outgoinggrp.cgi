@@ -137,7 +137,7 @@ $ipgroupcontent =~ s/\n/<br \/>/g;
 &Header::openbox('100%', 'center', $Lang::tr{'outgoing firewall ip groups'});
 
 print <<END
-<a name="outgoing showipgroup"</a>
+<a name="outgoing showipgroup"></a>
 <br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}#outgoing showipgroup'>
 <table width='95%' cellspacing='0'>
@@ -214,7 +214,7 @@ $macgroupcontent =~ s/\n/<br \/>/g;
 &Header::openbox('100%', 'center', $Lang::tr{'outgoing firewall mac groups'});
 
 print <<END
-<a name="outgoing showmacgroup"</a>
+<a name="outgoing showmacgroup"></a>
 <br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}#outgoing showmacgroup'>
 <table width='95%' cellspacing='0'>
