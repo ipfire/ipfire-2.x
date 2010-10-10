@@ -140,8 +140,9 @@ case "$1" in
 	# CUSTOM chains, can be used by the users themselves
 	/sbin/iptables -N CUSTOMINPUT
 	/sbin/iptables -A INPUT -j CUSTOMINPUT
-	/sbin/iptables -N GUARDIANINPUT
-	/sbin/iptables -A INPUT -j GUARDIANINPUT
+	/sbin/iptables -N GUARDIAN
+	/sbin/iptables -A INPUT -j GUARDIAN
+	/sbin/iptables -A FORWARD -j GUARDIAN
 	/sbin/iptables -N CUSTOMFORWARD
 	/sbin/iptables -A FORWARD -j CUSTOMFORWARD
 	/sbin/iptables -N CUSTOMOUTPUT
