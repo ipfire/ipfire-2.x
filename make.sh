@@ -399,6 +399,7 @@ buildipfire() {
   ipfiremake pcre
   ipfiremake slang
   ipfiremake newt
+  ipfiremake attr
   ipfiremake libcap
   ipfiremake pciutils
   ipfiremake usbutils
