@@ -408,8 +408,12 @@ END
 				if ($outfwsettings{'STATE'} eq 'DENY'){ $outfwsettings{'DISPLAY_STATE'} = "<img src='/images/stock_stop.png' alt='DENY' />"; }
 				if ($outfwsettings{'STATE'} eq 'ALLOW'){ $outfwsettings{'DISPLAY_STATE'} = "<img src='/images/stock_ok.png' alt='ALLOW' />"; }
 				if ((($outfwsettings{'POLICY'} eq 'MODE1') && ($outfwsettings{'STATE'} eq 'ALLOW')) || (($outfwsettings{'POLICY'} eq 'MODE2') && ($outfwsettings{'STATE'} eq 'DENY'))){
-			  		print <<END
-					<tr bgcolor='$color{'color20'}'>
+				if ( $outfwsettings{'ENABLED'} eq "on" ){
+					print "<tr bgcolor='$color{'color20'}'>";
+				} else {
+					print "<tr bgcolor='$color{'color18'}'>";
+				}
+					print <<END
 					    <td align='center'>$outfwsettings{'PROT'}
 					    <td align='center'>$outfwsettings{'SNET'}
 					    <td align='center'>$outfwsettings{'DISPLAY_DIP'}:$outfwsettings{'DISPLAY_DPORT'}

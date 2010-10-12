@@ -187,7 +187,7 @@ foreach $configentry (sort @configs)
 			foreach $SOURCE (@SOURCE) {
 				$SOURCE =~ s/\s//gi;
 
-				if ( $SOURCE eq "" ){next;}
+				if ( $SOURCE eq "" || $configline[1] eq "" ){next;}
 
 				if ( ( $configline[6] ne "" || $configline[2] eq 'mac' ) && $configline[2] ne 'all'){
 					$SOURCE =~ s/[^a-zA-Z0-9]/:/gi;

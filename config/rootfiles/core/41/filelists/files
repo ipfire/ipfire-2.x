@@ -1,8 +1,10 @@
 etc/system-release
 srv/web/ipfire/cgi-bin/outgoinggrp.cgi
+srv/web/ipfire/cgi-bin/outgoingfw.cgi
+srv/web/ipfire/cgi-bin/urlfilter.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/langs/en.pl
 var/ipfire/langs/de.pl
 var/ipfire/langs/es.pl
 var/ipfire/langs/fr.pl
-srv/web/ipfire/cgi-bin/urlfilter.cgi
-srv/web/ipfire/cgi-bin/vpnmain.cgi
+var/ipfire/outgoingfw/bin/outgoingfw.pl
