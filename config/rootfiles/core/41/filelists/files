@@ -1,4 +1,5 @@
 etc/system-release
+etc/rc.d/init.d/firewall
 srv/web/ipfire/cgi-bin/outgoinggrp.cgi
 srv/web/ipfire/cgi-bin/outgoingfw.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
