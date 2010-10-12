@@ -64,9 +64,7 @@ fi
 #
 # Made initramdisk
 #
-cp -f /etc/mkinitcpio.conf.org /etc/mkinitcpio.conf
-sed -i -e "s| autodetect | |g" /etc/mkinitcpio.conf
-mkinitcpio -k $KVER-ipfire-xen -g /boot/ipfirerd-$KVER-xen.img
+/sbin/dracut --force --verbose /boot/ipfirerd-$KVER-xen.img $KVER-ipfire-xen
 #
 # Create new module depency
 #
