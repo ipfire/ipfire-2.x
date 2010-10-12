@@ -25,11 +25,20 @@
 extract_files
 #
 KVER=2.6.32.24
-ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
+ROOT=`mount | grep " / " | cut -d" " -f1`
+ROOTUUID=`blkid -c /dev/null -sUUID $ROOT | cut -d'"' -f2`
+if [ ! -z $ROOTUUID ]; then
+	ROOT="UUID=$ROOTUUID"
+fi
+
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
 MOUNT=$_
+if [ ! $MOUNT == "rw" ]; then
+	MOUNT="ro"
+fi
+
 ENTRY=`grep "savedefault" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $ENTRY > /dev/null
