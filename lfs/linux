@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team <info@ipfire.org>                           #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -41,10 +41,14 @@ DEPS	   = ""
 # Normal build or XEN build.
 #
 
+ifeq "$(PAE)" "1"
+	VERSUFIX=ipfire-pae
+else
 ifeq "$(XEN)" "1"
 	VERSUFIX=ipfire-xen
 else
 	VERSUFIX=ipfire
+endif
 endif
 
 TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
@@ -163,16 +167,11 @@ endif
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
 
-ifeq "$(XEN)" ""
-	# Only do this once on the non-XEN pass
-	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
-endif
-
-	# Remove mISDN modules
-	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
-	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
-
+ifneq "$(PAE)" "1"
 ifneq "$(XEN)" "1"
+	# Only do this once on the standard kernel pass
+	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
+
 	# Blacklist matroxfb_base
 	echo "blacklist matroxfb_base" >> /etc/modprobe.d/framebuffer
 	# Blacklist old framebuffer modules
@@ -191,6 +190,11 @@ ifneq "$(XEN)" "1"
 	done
 	sed -i -e "s|.ko||g" /etc/modprobe.d/isdn
 endif
+endif
+
+	# Remove mISDN modules
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)

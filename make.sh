@@ -356,6 +356,22 @@ buildipfire() {
   ipfiremake e1000			XEN=1
   ipfiremake e1000e			XEN=1
   ipfiremake igb			XEN=1
+  ipfiremake linux			PAE=1
+  ipfiremake kqemu			PAE=1
+  ipfiremake kvm-kmod			PAE=1
+  ipfiremake v4l-dvb			PAE=1
+  ipfiremake madwifi			PAE=1
+  ipfiremake alsa			PAE=1 KMOD=1
+  ipfiremake mISDN			PAE=1
+  ipfiremake dahdi			PAE=1 KMOD=1
+  ipfiremake cryptodev			PAE=1
+  ipfiremake compat-wireless		PAE=1
+  ipfiremake r8169			PAE=1
+  ipfiremake r8168			PAE=1
+  ipfiremake r8101			PAE=1
+  ipfiremake e1000			PAE=1
+  ipfiremake e1000e			PAE=1
+  ipfiremake igb			PAE=1
   ipfiremake linux
   ipfiremake kqemu
   ipfiremake kvm-kmod
