@@ -75,7 +75,7 @@ KGCC = gcc
 define FIND_FILES
 	cd $(ROOT)/ && find -mount \
 	-not -path './tools*' -not -path './tmp*' -not -path './usr/src*' \
-	-not -path './dev*' -not -path './proc*' -not -path './install*'
+	-not -path './dev*' -not -path './proc*' -not -path './install*' | sort
 endef
 
 # This is common starting logic for builds.
@@ -112,7 +112,7 @@ ifeq "$(ROOT)" ""
 define POSTBUILD
 	@echo "Install done; saving file list to $(TARGET) ..."
 	@$(FIND_FILES) > $(DIR_SRC)/lsalrnew
-	@diff $(DIR_SRC)/lsalr $(DIR_SRC)/lsalrnew | grep '^> ' | sed 's/^> //' | sort > $(TARGET)_diff
+	@diff $(DIR_SRC)/lsalr $(DIR_SRC)/lsalrnew | grep '^> ' | sed 's/^> //' > $(TARGET)_diff
 	@cp -f $(DIR_SRC)/lsalrnew $(DIR_SRC)/lsalr
 	@rm -f $(DIR_SRC)/lsalrnew
 	sed -i -e 's+.\/++' $(TARGET)_diff
