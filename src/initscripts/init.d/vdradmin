@@ -8,7 +8,8 @@
 #
 # Version     : 01.00
 #
-# Notes       :
+# Notes       : Changes in 01.01
+#             : v.2.6.7 needs /var/run/vdradmin dir (earl@ipfire.org)
 #
 ########################################################################
 
@@ -18,6 +19,7 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting VDR Webadministration Tool..."
+		mkdir /var/run/vdradmin -p
 		loadproc /usr/bin/vdradmind > /dev/null
 		evaluate_retval
 		;;

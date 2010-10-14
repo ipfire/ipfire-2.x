@@ -1907,6 +1907,8 @@
 'urlfilter enable log' => 'Activar registro',
 'urlfilter enable rewrite rules' => 'Activar redirección de archivos locales',
 'urlfilter enabled' => 'Activado:',
+'urlfilter example' => 'Ejemplo: www.domain.com',
+'urlfilter example ads' => 'Ejemplo: www.domain.com/ads/',
 'urlfilter export blacklist' => 'Exportar lista negra',
 'urlfilter export error' => 'Imposible crear archivo de exportación',
 'urlfilter expressions' => 'Frases (una por línea)',
