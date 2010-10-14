@@ -40,6 +40,9 @@ usr/libexec/ipsec/plugins/libstrongswan-aes.so
 #usr/libexec/ipsec/plugins/libstrongswan-attr.a
 #usr/libexec/ipsec/plugins/libstrongswan-attr.la
 usr/libexec/ipsec/plugins/libstrongswan-attr.so
+#usr/libexec/ipsec/plugins/libstrongswan-curl.a
+#usr/libexec/ipsec/plugins/libstrongswan-curl.la
+usr/libexec/ipsec/plugins/libstrongswan-curl.so
 #usr/libexec/ipsec/plugins/libstrongswan-des.a
 #usr/libexec/ipsec/plugins/libstrongswan-des.la
 usr/libexec/ipsec/plugins/libstrongswan-des.so
