@@ -23,6 +23,9 @@
 ###############################################################################
 
 include Config
+
+VER	   = kernel
+
 include linux
 
 PROG	   = linux-pae
