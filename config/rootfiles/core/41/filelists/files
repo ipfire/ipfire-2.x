@@ -8,4 +8,4 @@ var/ipfire/langs/en.pl
 var/ipfire/langs/de.pl
 var/ipfire/langs/es.pl
 var/ipfire/langs/fr.pl
-var/ipfire/outgoingfw/bin/outgoingfw.pl
+var/ipfire/outgoing/bin/outgoingfw.pl
