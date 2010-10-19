@@ -26,6 +26,7 @@
 
 #
 #Stop services
+/etc/init.d/ipsec stop
 
 #
 #Extract files
@@ -33,6 +34,7 @@ extract_files
 
 #
 #Start services
+/etc/init.d/ipsec start
 
 #
 #Update Language cache
