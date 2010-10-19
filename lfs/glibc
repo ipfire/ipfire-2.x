@@ -95,6 +95,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/glibc-build
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-dont_use_origin_on_privil_exec.patch
+
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-linux_types-1.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-inotify-1.patch
