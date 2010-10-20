@@ -1,9 +1,11 @@
 #sbin/extlinux
 #usr/bin/gethostip
 #usr/bin/isohybrid
+#usr/bin/isohybrid.pl
 #usr/bin/keytab-lilo
 #usr/bin/lss16toppm
 #usr/bin/md5pass
+#usr/bin/memdiskfind
 #usr/bin/mkdiskimage
 #usr/bin/ppmtolss16
 #usr/bin/pxelinux-options
@@ -20,6 +22,7 @@
 #usr/share/syslinux/altmbr.bin
 #usr/share/syslinux/altmbr_c.bin
 #usr/share/syslinux/altmbr_f.bin
+#usr/share/syslinux/cat.c32
 #usr/share/syslinux/chain.c32
 #usr/share/syslinux/cmd.c32
 #usr/share/syslinux/com32
@@ -45,6 +48,7 @@
 #usr/share/syslinux/com32/include/endian.h
 #usr/share/syslinux/com32/include/errno.h
 #usr/share/syslinux/com32/include/fcntl.h
+#usr/share/syslinux/com32/include/getopt.h
 #usr/share/syslinux/com32/include/gplinclude
 #usr/share/syslinux/com32/include/gplinclude/README
 #usr/share/syslinux/com32/include/gplinclude/cpuid.h
@@ -75,6 +79,7 @@
 #usr/share/syslinux/com32/include/gplinclude/memory.h
 #usr/share/syslinux/com32/include/gplinclude/vpd
 #usr/share/syslinux/com32/include/gplinclude/vpd/vpd.h
+#usr/share/syslinux/com32/include/ilog2.h
 #usr/share/syslinux/com32/include/inttypes.h
 #usr/share/syslinux/com32/include/klibc
 #usr/share/syslinux/com32/include/klibc/archsetjmp.h
@@ -101,6 +106,7 @@
 #usr/share/syslinux/com32/include/string.h
 #usr/share/syslinux/com32/include/sys
 #usr/share/syslinux/com32/include/sys/cpu.h
+#usr/share/syslinux/com32/include/sys/dirent.h
 #usr/share/syslinux/com32/include/sys/elf32.h
 #usr/share/syslinux/com32/include/sys/elf64.h
 #usr/share/syslinux/com32/include/sys/elfcommon.h
@@ -128,7 +134,9 @@
 #usr/share/syslinux/com32/include/syslinux/loadfile.h
 #usr/share/syslinux/com32/include/syslinux/memscan.h
 #usr/share/syslinux/com32/include/syslinux/movebits.h
+#usr/share/syslinux/com32/include/syslinux/pmapi.h
 #usr/share/syslinux/com32/include/syslinux/pxe.h
+#usr/share/syslinux/com32/include/syslinux/pxe_api.h
 #usr/share/syslinux/com32/include/syslinux/reboot.h
 #usr/share/syslinux/com32/include/syslinux/resolve.h
 #usr/share/syslinux/com32/include/syslinux/vesacon.h
@@ -155,15 +163,16 @@
 #usr/share/syslinux/elf.c32
 #usr/share/syslinux/ethersel.c32
 #usr/share/syslinux/gfxboot.c32
-#usr/share/syslinux/gfxboot.com
 #usr/share/syslinux/gptmbr.bin
 #usr/share/syslinux/gptmbr_c.bin
 #usr/share/syslinux/gptmbr_f.bin
 #usr/share/syslinux/gpxecmd.c32
 #usr/share/syslinux/gpxelinux.0
 #usr/share/syslinux/hdt.c32
+#usr/share/syslinux/host.c32
 #usr/share/syslinux/ifcpu.c32
 #usr/share/syslinux/ifcpu64.c32
+#usr/share/syslinux/ifplop.c32
 #usr/share/syslinux/int18.com
 #usr/share/syslinux/isohdpfx.bin
 #usr/share/syslinux/isohdpfx_c.bin
@@ -175,6 +184,8 @@
 #usr/share/syslinux/isolinux.bin
 #usr/share/syslinux/kbdmap.c32
 #usr/share/syslinux/linux.c32
+#usr/share/syslinux/ls.c32
+#usr/share/syslinux/lua.c32
 #usr/share/syslinux/mboot.c32
 #usr/share/syslinux/mbr.bin
 #usr/share/syslinux/mbr_c.bin
@@ -186,6 +197,7 @@
 #usr/share/syslinux/pcitest.c32
 #usr/share/syslinux/pmload.c32
 #usr/share/syslinux/poweroff.com
+#usr/share/syslinux/pwd.c32
 #usr/share/syslinux/pxechain.com
 #usr/share/syslinux/pxelinux.0
 #usr/share/syslinux/reboot.c32
@@ -195,6 +207,8 @@
 #usr/share/syslinux/sysdump.c32
 #usr/share/syslinux/syslinux.com
 #usr/share/syslinux/syslinux.exe
+#usr/share/syslinux/syslinux64.exe
 #usr/share/syslinux/vesainfo.c32
 #usr/share/syslinux/vesamenu.c32
 #usr/share/syslinux/vpdtest.c32
+#usr/share/syslinux/whichsys.c32
