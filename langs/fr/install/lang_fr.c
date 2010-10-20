@@ -424,7 +424,7 @@ char *fr_tr[] = {
 /* TR_SETTING_SETUP_PASSWORD */
 "A ENLEVER",
 /* TR_SETUP_FINISHED */
-"Installation terminée.  Appuyer sur Ok pour redémarrer.",
+"Installation terminée.",
 /* TR_SETUP_NOT_COMPLETE */
 "L'installation initiale n'est pas complètement finie.  Vous devez vous assurer que l'installation s'est finie correctement en relançant l'installation depuis le shell.",
 /* TR_SETUP_PASSWORD */

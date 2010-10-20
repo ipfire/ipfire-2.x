@@ -424,7 +424,7 @@ char *es_tr[] = {
 /* TR_SETTING_SETUP_PASSWORD */
 "A REMOVER",
 /* TR_SETUP_FINISHED */
-"La configuración se ha completado. Presione Ok para reiniciar",
+"La configuración se ha completado. Presione Ok.",
 /* TR_SETUP_NOT_COMPLETE */
 "La configuración inicial no se completó totalmente. Asegúrese de configurar todo correctamente ejecutando setup de nuevo desde la línea de comandos.",
 /* TR_SETUP_PASSWORD */

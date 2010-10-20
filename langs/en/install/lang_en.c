@@ -428,7 +428,7 @@ char *en_tr[] = {
 /* TR_SETTING_SETUP_PASSWORD */
 "TO BE REMOVED",
 /* TR_SETUP_FINISHED */
-"Setup is complete.  Press Ok to reboot.",
+"Setup is complete.  Press Ok.",
 /* TR_SETUP_NOT_COMPLETE */
 "Initial setup was not entirely complete.  You must ensure that Setup is properly finished by running setup again at the shell.",
 /* TR_SETUP_PASSWORD */

@@ -432,7 +432,7 @@ char *de_tr[] = {
 /* TR_SETTING_SETUP_PASSWORD */
 "Setze 'setup'-Passwort...",
 /* TR_SETUP_FINISHED */
-"Das Setup ist vollständig beendet. Drücken Sie Ok für den Neustart.",
+"Das Setup ist vollständig beendet. Drücken Sie Ok.",
 /* TR_SETUP_NOT_COMPLETE */
 "Das erste Setup wurde nicht vollständig durchgeführt. Sie müssen Setup vollständig beenden; dies können Sie durch Ausführen von Setup in der Shell nachholen.",
 /* TR_SETUP_PASSWORD */
