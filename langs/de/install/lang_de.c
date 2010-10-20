@@ -572,9 +572,9 @@ char *de_tr[] = {
 /* TR_DHCP_STOPSERVER */
 "Stoppe den DHCP-Server ...",
 /* TR_LICENSE_ACCEPT */
-"Ich akzeptiere diese Lizens.",
+"Ich akzeptiere diese Lizenz.",
 /* TR_LICENSE_NOT_ACCEPTED */
-"Die Lizens wurde nicht akzeptiert. Abbruch!",
+"Die Lizenz wurde nicht akzeptiert. Abbruch!",
 
 }; 
   
