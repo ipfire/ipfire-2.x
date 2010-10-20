@@ -35,6 +35,9 @@ extern char *fr_tr[];
 
 int main(int argc, char *argv[])
 {
+
+	char discl_msg[40000] =	"Disclaimer\n";
+
 	char *langnames[] = { "Deutsch", "English", "Français", "Español", NULL };
 	char *shortlangnames[] = { "de", "en", "fr", "es", NULL };
 	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, NULL };
@@ -57,7 +60,7 @@ int main(int argc, char *argv[])
 	int allok_fastexit=0;
 	int raid_disk = 0;
 	struct keyvalue *ethernetkv = initkeyvalues();
-	FILE *handle, *cmdfile;
+	FILE *handle, *cmdfile, *copying;
 	char line[STRING_SIZE];
 	char string[STRING_SIZE];
 	long memory = 0, disk = 0, free;
@@ -108,6 +111,16 @@ int main(int argc, char *argv[])
 		}		
 	}
 
+	// Read gpl ...
+	if (! (copying = fopen("/COPYING", "r")))
+	{
+		fprintf(flog,      "Couldn't open gpl (/COPYING)\n");
+		sprintf(discl_msg, "Couldn't open gpl (/COPYING)\n");
+	} else {
+		fread(discl_msg, 1, 40000, copying);
+		fclose(copying);
+	}
+
 	// Load common modules
 	mysystem("/sbin/modprobe iso9660"); // CDROM
 	mysystem("/sbin/modprobe ext2"); // Boot patition
@@ -134,6 +147,13 @@ int main(int argc, char *argv[])
 
 	sprintf(message, ctr[TR_WELCOME], NAME);
 	newtWinMessage(title, ctr[TR_OK], message);
+
+	if (!unattended) {
+		if (disclaimerbox(discl_msg)==0) {
+			errorbox(ctr[TR_LICENSE_NOT_ACCEPTED]);
+			goto EXIT;
+		}
+	}
 
 	switch (mysystem("/bin/mountsource.sh")) {
 	    case 0:

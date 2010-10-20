@@ -1,7 +1,7 @@
 /*
  * Spanish (es) Data File
  *
- * This file is part of the IPFire Firewall.
+ * This file is part of the IPFire.
  * 
  * IPFire is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with IPFire; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ *
+ * (c) IPFire Team  <info@ipfire.org>
  *
  */
  
@@ -561,6 +563,10 @@ char *es_tr[] = {
 "Iniciando Servidor DHCP ...",
 /* TR_DHCP_STOPSERVER */
 "Deteniendo Servidor DHCP ...",
+/* TR_LICENSE_ACCEPT */
+"I accept this license.",
+/* TR_LICENSE_NOT_ACCEPTED */
+"License not accepted. Exit!",
 
 }; 
   

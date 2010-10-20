@@ -1,7 +1,7 @@
 /*
  * German (de) Data File
  *
- * This file is part of the IPCop Firewall.
+ * This file is part of the IPFire.
  * 
  * IPCop is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,10 @@
  * along with IPCop; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
+ * (c) IPFire Team  <info@ipfire.org>
+ *
+ * based on work of SmoothWall and IPCop
+ *
  * (c) The SmoothWall Team
  * 
  * IPCop translation
@@ -567,5 +571,10 @@ char *de_tr[] = {
 "Starte den DHCP-Server ...",
 /* TR_DHCP_STOPSERVER */
 "Stoppe den DHCP-Server ...",
+/* TR_LICENSE_ACCEPT */
+"Ich akzeptiere diese Lizens.",
+/* TR_LICENSE_NOT_ACCEPTED */
+"Die Lizens wurde nicht akzeptiert. Abbruch!",
+
 }; 
   
