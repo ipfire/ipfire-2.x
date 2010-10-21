@@ -9,3 +9,4 @@ var/ipfire/langs/de.pl
 var/ipfire/langs/es.pl
 var/ipfire/langs/fr.pl
 var/ipfire/outgoing/bin/outgoingfw.pl
+usr/local/sbin/setup
