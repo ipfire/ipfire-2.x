@@ -28,6 +28,13 @@
 #Stop services
 /etc/init.d/ipsec stop
 
+#Remove old bzip2 files
+rm -f /usr/local/bin/bunzip2
+rm -f /usr/local/bin/bzcat
+rm -f /usr/local/bin/bzip2
+rm -f /usr/local/include/bzlib.h
+rm -f /usr/local/lib/libbz2.a
+
 #
 #Extract files
 extract_files
