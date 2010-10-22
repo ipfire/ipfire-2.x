@@ -37,7 +37,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=2
+TOOLCHAINVER=1
 IPFVER="full"				# Which versions should be compiled? (full|devel)
 
 # Debian specific settings
@@ -231,7 +231,7 @@ buildtoolchain() {
     ORG_PATH=$PATH
     NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
     export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
-    lfsmake1 ccache
+    lfsmake1 ccache	PASS=1
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
     export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
@@ -243,6 +243,7 @@ buildtoolchain() {
     lfsmake1 dejagnu
     lfsmake1 gcc		PASS=2
     lfsmake1 binutils	PASS=2
+    lfsmake1 ccache	PASS=2
     lfsmake1 ncurses
     lfsmake1 bash
     lfsmake1 bzip2
