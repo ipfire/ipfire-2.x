@@ -48,8 +48,8 @@ extract_files
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #Rebuild module dep's
-#depmod 2.6.32.15-ipfire
-#depmod 2.6.32.15-ipfire-xen
+depmod 2.6.32.15-ipfire
+depmod 2.6.32.15-ipfire-xen
 
 #
 #Finish
