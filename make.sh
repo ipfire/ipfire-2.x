@@ -219,7 +219,7 @@ prepareenv() {
 
     # Run LFS static binary creation scripts one by one
     export CCACHE_DIR=$BASEDIR/ccache
-    export CCACHE_COMPRESSION=1
+    export CCACHE_COMPRESS=1
     export CCACHE_HASHDIR=1
 
     # Remove pre-install list of installed files in case user erase some files before rebuild
