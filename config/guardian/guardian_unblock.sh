@@ -2,8 +2,9 @@
 
 # this is a sample unblock script for guardian. This should work with ipchains. 
 # This command gets called by guardian as such:
-#  unblock.sh <source_ip>
+#  unblock.sh <source_ip> <interface>
 # and the script will issue a command to remove the block that was created with # block.sh address. 
 source=$1
+interface=$2
 
-/sbin/iptables -D GUARDIANINPUT -s $source -j DROP
+/sbin/iptables -D GUARDIAN -s $source -i $interface -j DROP

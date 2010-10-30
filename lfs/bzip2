@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.5
+VER        = 1.0.6
 
 THISAPP    = bzip2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3c15a0c8d1d3ee1c46a1634d00617b1a
+$(DL_FILE)_MD5 = 00b516f4704d4a7cb50a1d97e6e8e15b
 
 install : $(TARGET)
 
@@ -82,7 +82,7 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && make -f Makefile-libbz2_so
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && make install PREFIX=/usr
 	cd $(DIR_APP) && cp -v bzip2-shared /bin/bzip2
 	cd $(DIR_APP) && cp -av libbz2.so* /lib
 	ln -sfv ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so

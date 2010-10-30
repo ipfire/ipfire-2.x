@@ -11,6 +11,8 @@
 #usr/local/doc/cmake-2.4/cmake.txt
 #usr/local/doc/cmake-2.4/ctest.html
 #usr/local/doc/cmake-2.4/ctest.txt
+#usr/local/man
+#usr/local/man/man1
 #usr/local/man/man1/ccmake.1
 #usr/local/man/man1/cmake.1
 #usr/local/man/man1/ctest.1
