@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .24
-VER        = 2.6.32.24
+PATCHLEVEL = .25
+VER        = 2.6.32.25
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -60,19 +60,19 @@ objects =$(DL_FILE) \
 	netfilter-layer7-v2.22.tar.gz \
 	patch-2.6.16-nath323-1.3.bz2 \
 	reiser4-for-2.6.32.patch.bz2 \
-	xen-patches-2.6.32-2c.tar.bz2
+	xen-patches-2.6.32-2d.tar.bz2
 
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 netfilter-layer7-v2.22.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 reiser4-for-2.6.32.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.32.patch.bz2
-xen-patches-2.6.32-2c.tar.bz2		= $(URL_IPFIRE)/xen-patches-2.6.32-2c.tar.bz2
+xen-patches-2.6.32-2d.tar.bz2		= $(URL_IPFIRE)/xen-patches-2.6.32-2d.tar.bz2
 
-$(DL_FILE)_MD5				= bcd2f2b3d6974a9232b9becee8196634
+$(DL_FILE)_MD5				= 0d6ad4e7e387f56c5b5831beb97c0c1f
 netfilter-layer7-v2.22.tar.gz_MD5	= 98dff8a3d5a31885b73341633f69501f
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 reiser4-for-2.6.32.patch.bz2_MD5	= 3246397973d9271eb8e6d7c97c5d2d91
-xen-patches-2.6.32-2c.tar.bz2_MD5	= 62a75ddcba43894b20f754a94b299ce6
+xen-patches-2.6.32-2d.tar.bz2_MD5	= d1690d2b8b0c9124897981aea505f8f7
 
 install : $(TARGET)
 
@@ -110,7 +110,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(XEN)" "1"
 	# Apply gentoo Xen patches
 	mkdir -p $(DIR_SRC)/xen-patches
-	cd $(DIR_SRC)/xen-patches && tar jxf $(DIR_DL)/xen-patches-2.6.32-2c.tar.bz2
+	cd $(DIR_SRC)/xen-patches && tar jxf $(DIR_DL)/xen-patches-2.6.32-2d.tar.bz2
 
 	for x in `ls -1 $(DIR_SRC)/xen-patches/*.patch1`; do \
 		echo "*********** [Patch: $$x]"; \
@@ -130,9 +130,6 @@ endif
 
 	# Reiser4 (don't check if fail (some patches are already in xen patchset)
 	-cd $(DIR_APP) && bzcat $(DIR_DL)/reiser4-for-2.6.32.patch.bz2 | patch -Np1
-
-	# Fix lag's at cache access (eg. quit of mc)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6-vmscan_remove_wait_on_page_writeback.patch
 
 	# ipp2p 0.8.2-pomng
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.8-ipp2p-0.8.2-pomng.patch
