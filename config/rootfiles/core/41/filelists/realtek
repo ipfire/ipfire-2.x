@@ -1,6 +1,8 @@
 lib/modules/2.6.32.15-ipfire/kernel/drivers/net/r8101.ko
 lib/modules/2.6.32.15-ipfire/kernel/drivers/net/r8168.ko
 lib/modules/2.6.32.15-ipfire/kernel/drivers/net/r8169.ko
+lib/modules/2.6.32.15-ipfire/kernel/drivers/net/r8169.ko.org
 lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/net/r8101.ko
 lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/net/r8168.ko
 lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/net/r8169.ko
+lib/modules/2.6.32.15-ipfire-xen/kernel/drivers/net/r8169.ko.org
