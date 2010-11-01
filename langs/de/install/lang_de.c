@@ -575,6 +575,13 @@ char *de_tr[] = {
 "Ich akzeptiere diese Lizenz.",
 /* TR_LICENSE_NOT_ACCEPTED */
 "Die Lizenz wurde nicht akzeptiert. Abbruch!",
-
+/* TR_EXT2FS_DESCR */
+"Ext2 - Dateisystem ohne Journal (empfohlen für Flash)",
+/* TR_EXT3FS_DESCR */
+"Ext3 - Dateisystem mit Journal",
+/* TR_EXT4FS_DESCR */
+"Ext4 - Dateisystem mit Journal",
+/* TR_REISERFS_DESCR */
+"ReiserFS - Dateisystem mit Journal",
 }; 
   

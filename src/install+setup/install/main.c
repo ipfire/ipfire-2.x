@@ -15,8 +15,9 @@
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 
 #define EXT2 0
-#define REISERFS 2
 #define EXT3 1
+#define EXT4 2
+#define REISERFS 3
 
 FILE *flog = NULL;
 char *mylog;
@@ -47,8 +48,8 @@ int main(int argc, char *argv[])
 	int rc = 0;
 	char commandstring[STRING_SIZE];
 	char mkfscommand[STRING_SIZE];
-	char *fstypes[] = { "ext2", "ext3", "ReiserFS", NULL };
-	int fstype = REISERFS;
+	char *fstypes[] = { "ext2", "ext3", "ext4", "ReiserFS", NULL };
+	int fstype = EXT3;
 	int choice;
 	int i;
 	int found = 0;
@@ -253,6 +254,12 @@ int main(int argc, char *argv[])
 	if (rc == 2)
 		goto EXIT;
 
+	fstypes[0]=ctr[TR_EXT2FS_DESCR];
+	fstypes[1]=ctr[TR_EXT3FS_DESCR];
+	fstypes[2]=ctr[TR_EXT4FS_DESCR];
+	fstypes[3]=ctr[TR_REISERFS_DESCR];
+	fstypes[4]=NULL;
+
 	if (!unattended) {		
 		sprintf(message, ctr[TR_CHOOSE_FILESYSTEM]);
 		rc = newtWinMenu( ctr[TR_CHOOSE_FILESYSTEM], message,
@@ -260,7 +267,7 @@ int main(int argc, char *argv[])
 			ctr[TR_CANCEL], NULL);
 	} else {
 	    rc = 1;
-	    fstype = REISERFS;
+	    fstype = EXT3;
 	}
 	if (rc == 2)
 		goto EXIT;
@@ -370,6 +377,9 @@ int main(int argc, char *argv[])
 	} else if (fstype == EXT3) {
 		mysystem("/sbin/modprobe ext3");
 		sprintf(mkfscommand, "/sbin/mke2fs -T ext3");
+	} else if (fstype == EXT4) {
+		mysystem("/sbin/modprobe ext4");
+		sprintf(mkfscommand, "/sbin/mke2fs -T ext4");
 	}
 
 	snprintf(commandstring, STRING_SIZE, "/sbin/mke2fs -T ext2 -I 128 %s1", hdparams.devnode_part);
@@ -482,7 +492,9 @@ int main(int argc, char *argv[])
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	} else if (fstype == EXT3) {
 		replace("/harddisk/etc/fstab", "FSTYPE", "ext3");
-		NOJOURNAL:
+		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
+	} else if (fstype == EXT4) {
+		replace("/harddisk/etc/fstab", "FSTYPE", "ext4");
 		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 	}
 

@@ -571,6 +571,13 @@ char *en_tr[] = {
 "I accept this license.",
 /* TR_LICENSE_NOT_ACCEPTED */
 "License not accepted. Exit!",
-
+/* TR_EXT2FS_DESCR */
+"Ext2 - Filesystem without Journal (suggested for flashdrives)",
+/* TR_EXT3FS_DESCR */
+"Ext3 - Filesystem with Journal",
+/* TR_EXT4FS_DESCR */
+"Ext4 - Filesystem with Journal",
+/* TR_REISERFS_DESCR */
+"ReiserFS - Filesystem with Journal",
 }; 
   
