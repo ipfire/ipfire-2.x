@@ -3319,7 +3319,7 @@ END
 	}
 
 	print FILE <<END
-acl all src 0.0.0.0/0.0.0.0
+acl all src all
 acl localhost src 127.0.0.1/255.255.255.255
 END
 ;
@@ -3811,19 +3811,23 @@ END
 
 		if ($proxysettings{'FORWARD_IPADDRESS'} eq 'off')
 		{
-			print FILE "header_access X-Forwarded-For deny all\n";
+			print FILE "request_header_access X-Forwarded-For deny all\n";
+			print FILE "reply_header_access X-Forwarded-For deny all\n";
 		}
 		if ($proxysettings{'FORWARD_VIA'} eq 'off')
 		{
-			print FILE "header_access Via deny all\n";
+			print FILE "request_header_access Via deny all\n";
+			print FILE "reply_header_access Via deny all\n";
 		}
 		if (!($proxysettings{'FAKE_USERAGENT'} eq ''))
 		{
-			print FILE "header_access User-Agent deny all\n";
+			print FILE "request_header_access User-Agent deny all\n";
+			print FILE "reply_header_access User-Agent deny all\n";
 		}
 		if (!($proxysettings{'FAKE_REFERER'} eq ''))
 		{
-			print FILE "header_access Referer deny all\n";
+			print FILE "request_header_access Referer deny all\n";
+			print FILE "reply_header_access Referer deny all\n";
 		}
 
 		print FILE "\n";
@@ -3878,7 +3882,7 @@ END
 			if (!-z $extgrp) { print FILE "reply_body_max_size 0 deny for_extended_users\n"; }
 		}
 	}
-	print FILE "reply_body_max_size $replybodymaxsize deny all\n\n";
+#FIX ME	print FILE "reply_body_max_size $replybodymaxsize deny all\n\n";
 
 	print FILE "visible_hostname";
 	if ($proxysettings{'VISIBLE_HOSTNAME'} eq '')
