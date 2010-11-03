@@ -89,7 +89,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 ifeq "$(ROOT)" ""
 	mv -v /usr/bin/find /bin
-	sed -i -e 's/find:=${BINDIR}/find:=\/bin/' /usr/bin/updatedb
+	sed -i -e 's|BINDIR=/usr/bin|BINDIR=/bin|' /usr/bin/updatedb
+	-mkdir -p /var/lib/locate
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
