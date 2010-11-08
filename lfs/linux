@@ -189,6 +189,10 @@ ifneq "$(XEN)" "1"
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/isdn ; \
 	done
 	sed -i -e "s|.ko||g" /etc/modprobe.d/isdn
+
+	# Disable ipv6 at runtime
+	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6
+
 endif
 endif
 
