@@ -371,14 +371,20 @@ foreach $channel (@channellist){
 
 print <<END
 </select></td></tr>
-<tr><td width='25%' class='base'>Tx Power:&nbsp;</td><td class='base' colspan='3'><select name='TXPOWER'>
+<tr><td width='25%' class='base'>Tx Power:&nbsp;</td><td class='base' colspan='3'>
 END
 ;
-foreach $txpower (@txpower){
-	print "<option $selected{'TXPOWER'}{$txpower}>$txpower</option>&nbsp;dBm";
+
+if ( $wlanapsettings{'DRIVER'} eq 'MADWIFI' ){
+	print "<select name='TXPOWER'>";
+	foreach $txpower (@txpower){
+		print "<option $selected{'TXPOWER'}{$txpower}>$txpower</option>&nbsp;dBm";
+	}
+	print "	</select></td></tr>";
+} else {
+	print "<input type='text' name='TXPOWER' size='10' value='$wlanapsettings{'TXPOWER'}' /></td></tr>"
 }
 print <<END
-	</select></td></tr>
 <tr><td width='25%' class='base'>Passphrase:&nbsp;</td><td class='base' colspan='3'><input type='text' name='PWD' size='63' value='$wlanapsettings{'PWD'}' /></td></tr>
 <tr><td width='25%' class='base'>HT Caps:&nbsp;</td><td class='base' colspan='3'><input type='text' name='HTCAPS' size='63' value='$wlanapsettings{'HTCAPS'}' /></td></tr>
 <tr><td width='25%' class='base'>Loglevel (hostapd):&nbsp;</td><td class='base' width='25%'>

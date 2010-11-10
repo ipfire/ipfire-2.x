@@ -14,7 +14,7 @@ usr/bin/bzip2
 usr/bin/bzip2recover
 usr/bin/bzless
 usr/bin/bzmore
-usr/include/bzlib.h
+#usr/include/bzlib.h
 #usr/lib/libbz2.a
 #usr/lib/libbz2.so
 #usr/man/man1/bzcmp.1
