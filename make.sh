@@ -40,6 +40,13 @@ GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 TOOLCHAINVER=3
 IPFVER="full"				# Which versions should be compiled? (full|devel)
 
+BUILDMACHINE=$MACHINE
+    if [ "$MACHINE" = "x86_64" ]; then
+        BUILDMACHINE="i686";
+        linux32="linux32";
+    fi
+
+
 # Debian specific settings
 if [ ! -e /etc/debian_version ]; then
 	FULLPATH=`which $0`
@@ -227,6 +234,10 @@ prepareenv() {
 }
 
 buildtoolchain() {
+    if [ "$MACHINE" = "x86_64" ]; then
+        exiterror "Cannot build toolchain on x86_64. Please use the download."
+    fi
+
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
     export LOGFILE
     ORG_PATH=$PATH
@@ -789,7 +800,6 @@ ipfirepackages() {
 case "$1" in 
 build)
 	clear
-	BUILDMACHINE=`uname -m`
 	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
 	if [ ! -f log/cleanup-toolchain-2-tools ]; then
@@ -917,7 +927,6 @@ toolchain)
 	prepareenv
 	beautify build_stage "Toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
 	buildtoolchain
-	BUILDMACHINE=`uname -m`
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz \
@@ -929,7 +938,6 @@ toolchain)
 	stdumount
 	;;
 gettoolchain)
-	BUILDMACHINE=`uname -m`
 	# arbitrary name to be updated in case of new toolchain package upload
 	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE
 	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.gz ]; then
