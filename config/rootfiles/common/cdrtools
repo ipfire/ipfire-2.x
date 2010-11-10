@@ -73,6 +73,10 @@ usr/bin/mkisofs
 #usr/include/schily/i586-linux-cc/align.h
 #usr/include/schily/i586-linux-cc/avoffset.h
 #usr/include/schily/i586-linux-cc/xconfig.h
+#usr/include/schily/pentium3-linux-cc
+#usr/include/schily/pentium3-linux-cc/align.h
+#usr/include/schily/pentium3-linux-cc/avoffset.h
+#usr/include/schily/pentium3-linux-cc/xconfig.h
 #usr/include/schily/iconv.h
 #usr/include/schily/idcache.h
 #usr/include/schily/intcvt.h
