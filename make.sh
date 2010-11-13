@@ -234,8 +234,11 @@ prepareenv() {
 }
 
 buildtoolchain() {
-    if [ "$MACHINE" = "x86_64" ]; then
+    if [ "$(uname -m)" = "x86_64" ]; then
         exiterror "Cannot build toolchain on x86_64. Please use the download."
+    fi
+    if [ "$(uname -r | grep ipfire)" ]; then
+        exiterror "Cannot build toolchain on ipfire. Please use the download."
     fi
 
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
