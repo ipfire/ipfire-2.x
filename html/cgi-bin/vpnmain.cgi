@@ -384,6 +384,9 @@ sub writeipsecfiles {
 	    print CONF "\tpfsgroup=$lconfighash{$key}[23]\n";
 	}
 
+	# IKE V1
+	print CONF "\tkeyexchange=ikev1\n";
+
 	# Lifetimes
 	print CONF "\tikelifetime=$lconfighash{$key}[16]h\n" if ($lconfighash{$key}[16]);
 	print CONF "\tkeylife=$lconfighash{$key}[17]h\n" if ($lconfighash{$key}[17]);

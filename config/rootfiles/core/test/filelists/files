@@ -3,5 +3,7 @@ etc/rc.d/init.d/checkfstab
 etc/rc.d/init.d/squid
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
+srv/web/ipfire/html/images/urlfilter/copy.gif
 usr/local/bin/rebuild-initrd
 usr/bin/ldd
