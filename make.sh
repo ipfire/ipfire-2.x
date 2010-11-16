@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.8test"						# Version number
-CORE="42"							# Core Level (Filename)
+CORE="43"							# Core Level (Filename)
 PAKFIRE_CORE="42"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -690,7 +690,7 @@ buildipfire() {
   echo >> $BASEDIR/build/var/ipfire/firebuild
   cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
   echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
-  if [ "$GIT_BRANCH" = "master" ]; then
+  if [ "$GIT_BRANCH" = "next" ]; then
 	echo "$NAME $VERSION - (Development Build: $GIT_LASTCOMMIT)" > $BASEDIR/build/etc/system-release
   else
 	echo "$NAME $VERSION - $GIT_BRANCH" > $BASEDIR/build/etc/system-release
