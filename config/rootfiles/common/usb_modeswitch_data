@@ -4,10 +4,12 @@ etc/usb_modeswitch.d/0421:0610
 etc/usb_modeswitch.d/0471:1210
 etc/usb_modeswitch.d/0471:1237
 etc/usb_modeswitch.d/0482:024d
+etc/usb_modeswitch.d/04e8:689a
 etc/usb_modeswitch.d/04e8:f000
 etc/usb_modeswitch.d/057c:84ff
 etc/usb_modeswitch.d/05c6:1000:sVe=Option
 etc/usb_modeswitch.d/05c6:1000:uMa=AnyDATA
+etc/usb_modeswitch.d/05c6:1000:uMa=Option
 etc/usb_modeswitch.d/05c6:1000:uMa=SAMSUNG
 etc/usb_modeswitch.d/05c6:1000:uMa=Vertex
 etc/usb_modeswitch.d/05c6:2001
@@ -64,6 +66,7 @@ etc/usb_modeswitch.d/0af0:d255
 etc/usb_modeswitch.d/0af0:d257
 etc/usb_modeswitch.d/0af0:d357
 etc/usb_modeswitch.d/0b3c:c700
+etc/usb_modeswitch.d/0b3c:f000
 etc/usb_modeswitch.d/0cf3:20ff
 etc/usb_modeswitch.d/0fce:d0cf
 etc/usb_modeswitch.d/0fce:d0e1
@@ -84,6 +87,7 @@ etc/usb_modeswitch.d/12d1:101e
 etc/usb_modeswitch.d/12d1:1031
 etc/usb_modeswitch.d/12d1:1414
 etc/usb_modeswitch.d/12d1:1446
+etc/usb_modeswitch.d/12d1:14ad
 etc/usb_modeswitch.d/12d1:14c1
 etc/usb_modeswitch.d/12d1:1520
 etc/usb_modeswitch.d/12d1:1521
@@ -111,6 +115,7 @@ etc/usb_modeswitch.d/19d2:0115
 etc/usb_modeswitch.d/19d2:1001
 etc/usb_modeswitch.d/19d2:1007
 etc/usb_modeswitch.d/19d2:1009
+etc/usb_modeswitch.d/19d2:1013
 etc/usb_modeswitch.d/19d2:2000
 etc/usb_modeswitch.d/19d2:fff5
 etc/usb_modeswitch.d/19d2:fff6
@@ -121,9 +126,11 @@ etc/usb_modeswitch.d/1b7d:0700
 etc/usb_modeswitch.d/1bbb:f000
 etc/usb_modeswitch.d/1c9e:1001
 etc/usb_modeswitch.d/1c9e:9200
+etc/usb_modeswitch.d/1c9e:9e00
 etc/usb_modeswitch.d/1c9e:f000
 etc/usb_modeswitch.d/1dd6:1000
 etc/usb_modeswitch.d/1e0e:f000
+etc/usb_modeswitch.d/1ee8:0009
 etc/usb_modeswitch.d/1ee8:0013
 etc/usb_modeswitch.d/1f28:0021
 etc/usb_modeswitch.d/1fac:0130
