@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.9.8o
+VER        = 0.9.8p
 
 THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
