@@ -1,4 +1,6 @@
 etc/init.d/miniupnpd
+etc/init.d/networking/red.down/10-miniupnpd
+etc/init.d/networking/red.up/10-miniupnpd
 etc/miniupnpd
 etc/miniupnpd/miniupnpd.conf
 usr/sbin/miniupnpd

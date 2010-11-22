@@ -1,4 +1,2 @@
 etc/init.d/firewall
-etc/init.d/networking/red.down/10-miniupnpd
-etc/init.d/networking/red.up/10-miniupnpd
 etc/system-release
