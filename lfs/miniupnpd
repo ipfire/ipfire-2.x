@@ -75,5 +75,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		CFLAGS="$(CFLAGS) -DIPTABLES_143 -I/usr/src/linux/include"
 
 	cd $(DIR_APP) && install -m 755 miniupnpd /usr/sbin
+	-mkdir -pv /etc/miniupnpd
+	cp -vf $(DIR_SRC)/config/miniupnpd/miniupnpd.conf /etc/miniupnpd/miniupnpd.conf
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
