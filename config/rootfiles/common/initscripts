@@ -44,6 +44,7 @@ etc/rc.d/init.d/mISDN
 #etc/rc.d/init.d/mediatomb
 #etc/rc.d/init.d/messagebus
 #etc/rc.d/init.d/miau
+#etc/rc.d/init.d/miniupnpd
 #etc/rc.d/init.d/mldonkey
 etc/rc.d/init.d/modules
 #etc/rc.d/init.d/motion
@@ -63,11 +64,13 @@ etc/rc.d/init.d/networking/red
 #etc/rc.d/init.d/networking/red.down
 etc/rc.d/init.d/networking/red.down/05-RS-dnsmasq
 etc/rc.d/init.d/networking/red.down/10-ipsec
+etc/rc.d/init.d/networking/red.down/10-miniupnpd
 etc/rc.d/init.d/networking/red.down/10-ovpn
 etc/rc.d/init.d/networking/red.down/20-RL-firewall
 etc/rc.d/init.d/networking/red.down/99-D-dialctrl.pl
 #etc/rc.d/init.d/networking/red.up
 etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq
+etc/rc.d/init.d/networking/red.up/10-miniupnpd
 etc/rc.d/init.d/networking/red.up/10-multicast
 etc/rc.d/init.d/networking/red.up/20-RL-firewall
 etc/rc.d/init.d/networking/red.up/22-outgoingfwctrl
@@ -207,4 +210,4 @@ etc/sysconfig/firewall.local
 etc/sysconfig/modules
 etc/sysconfig/rc
 etc/sysconfig/rc.local
-etc/init.d
+-etc/init.d
