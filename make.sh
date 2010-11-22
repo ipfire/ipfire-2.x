@@ -648,6 +648,7 @@ buildipfire() {
   ipfiremake minicom
   ipfiremake ddrescue
   ipfiremake imspector
+  ipfiremake miniupnpd
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
