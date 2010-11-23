@@ -210,4 +210,3 @@ etc/sysconfig/firewall.local
 etc/sysconfig/modules
 etc/sysconfig/rc
 etc/sysconfig/rc.local
--etc/init.d
