@@ -327,7 +327,6 @@ buildbase() {
     lfsmake2 man
     lfsmake2 mktemp
     lfsmake2 module-init-tools
-    lfsmake2 mtd
     lfsmake2 net-tools
     lfsmake2 patch
     lfsmake2 psmisc
