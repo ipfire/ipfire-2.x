@@ -25,7 +25,7 @@ case "${1}" in
 		read CMDLINE < /proc/cmdline
 		ROOTPOS=`expr index "$CMDLINE" root=`
 		NEWROOT=`echo ${CMDLINE:$ROOTPOS} | cut -d"=" -f2 | cut -d" " -f1`;
-		OLDBOOT=`cat /etc/fstab | grep -m1 "/boot" | cut -d" " -f1 | cut -f1`;
+		OLDBOOT=`cat /etc/fstab | grep -m1 "	/	" | cut -d" " -f1 | cut -f1`;
 		OLDDRV=${OLDBOOT::`expr length $OLDBOOT`-1}
 		NEWDRV=${NEWROOT::`expr length $NEWROOT`-1}
 		if [ "$OLDDRV" == "$NEWDRV" ]; then
@@ -38,6 +38,15 @@ case "${1}" in
 		boot_mesg "Bootdrive:   $NEWDRV"
 		boot_mesg "fstab-entry: $OLDDRV"
 		boot_mesg
+		if [ "${OLDDRV:0:4}" == "UUID" ]; then
+			#Short sleep because the kernel has not finished hardware detections
+			#and made many messages here and the password question is not readable
+			sleep 3
+			boot_mesg "${FAILURE}Error OLD Bootdrive is already a UUID. Can't fix."
+			boot_mesg "${NORMAL}"
+			sulogin
+			reboot -f
+		fi
 		boot_mesg "Attempt to repair it ..."
 		mount -o remount,rw /
 		sed -i -e "s|$OLDDRV|$NEWDRV|g" /etc/fstab

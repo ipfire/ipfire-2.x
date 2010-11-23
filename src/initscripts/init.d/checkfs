@@ -98,19 +98,17 @@ case "${1}" in
 
 		if [ "${error_value}" -gt 3 -a "${error_value}" -lt 16 ]; then
 			echo_failure
+			sleep 2
 			boot_mesg -n "FAILURE:\n\nFile system errors" ${FAILURE}
 			boot_mesg -n " were encountered that could not be"
 			boot_mesg -n " fixed automatically.  This system"
 			boot_mesg -n " cannot continue to boot and will"
 			boot_mesg -n " therefore be halted until those"
 			boot_mesg -n " errors are fixed manually by a"
-			boot_mesg -n " System Administrator.\n\nAfter you"
-			boot_mesg -n " press Enter, this system will be"
-			boot_mesg -n " halted and powered off."
-			boot_mesg -n "\n\nPress Enter to continue or wait a minute..." ${INFO}
+			boot_mesg -n " System Administrator.\n\n"
 			boot_mesg "" ${NORMAL}
-			read -t 60 ENTER
-		  ${rc_base}/init.d/halt stop
+			sulogin
+			reboot -f
 		fi
 
 		if [ "${error_value}" -ge 16 ]; then
