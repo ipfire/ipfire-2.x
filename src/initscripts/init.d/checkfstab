@@ -18,12 +18,13 @@
 case "${1}" in
 	start)
 		#Skip if root is set by UUID
-		if (grep "root=UUID=" /proc/cmdline); then
+		if (grep "root=UUID=" /proc/cmdline > /dev/null); then
 			exit 0;
 		fi
 		boot_mesg "Checking fstab bootdevice ..."
 		read CMDLINE < /proc/cmdline
-		ROOTPOS=`expr index "$CMDLINE" root=`
+		ROOTPOS=${CMDLINE%%root=*}
+		ROOTPOS=${#ROOTPOS}
 		NEWROOT=`echo ${CMDLINE:$ROOTPOS} | cut -d"=" -f2 | cut -d" " -f1`;
 		OLDBOOT=`cat /etc/fstab | grep -m1 "	/	" | cut -d" " -f1 | cut -f1`;
 		OLDDRV=${OLDBOOT::`expr length $OLDBOOT`-1}
