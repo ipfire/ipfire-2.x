@@ -583,5 +583,10 @@ char *de_tr[] = {
 "Ext4 - Dateisystem mit Journal",
 /* TR_REISERFS_DESCR */
 "ReiserFS - Dateisystem mit Journal",
-}; 
-  
+/* TR_NO_LOCAL_SOURCE */
+"Kein lokales Quellmedium gefunden. Starte Download.",
+/* TR_DOWNLOADING_ISO */
+"Lade Installations-Abbild ...",
+/* TR_DOWNLOAD_ERROR */
+"Beim Herunterladen ist ein Fehler aufgetreten!",
+};

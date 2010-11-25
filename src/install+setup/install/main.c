@@ -156,19 +156,17 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	switch (mysystem("/bin/mountsource.sh")) {
-	    case 0:
-				break;
-	    case 10:
-      	errorbox(ctr[TR_NO_CDROM]);
-		goto EXIT;
+	mysystem("/bin/mountsource.sh");
+
+	if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
+		newtWinMessage(title, ctr[TR_OK], ctr[TR_NO_LOCAL_SOURCE]);
+		runcommandwithstatus("/bin/downloadsource.sh",ctr[TR_DOWNLOADING_ISO]);
+		if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
+			errorbox(ctr[TR_DOWNLOAD_ERROR]);
+			goto EXIT;
+		}
 	}
 
-	/* read source drive letter */
-	if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
-		errorbox(ctr[TR_ERROR_PROBING_CDROM]);
-		goto EXIT;
-	}
 	fgets(sourcedrive, 5, handle);
 	fprintf(flog, "Source drive: %s\n", sourcedrive);
 	fclose(handle);

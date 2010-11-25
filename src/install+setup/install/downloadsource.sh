@@ -1,0 +1,52 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+# Path for testing. Need to be changed for release!
+IPFireISO=people.ipfire.org/~arne_f/testing/next/ipfire.iso
+#IPFireISO=download.ipfire.org/iso/ipfire.iso
+
+#Get user defined download from boot cmdline
+grep "netinstall=" /proc/cmdline > /dev/null && CMDLINE=1
+if ( [ "$CMDLINE" == "1" ]); then
+	read CMDLINE < /proc/cmdline
+	POS=${CMDLINE%%netinstall*}
+	POS=${#POS}
+	IPFireISO=`echo ${CMDLINE:POS} | cut -d"=" -f2 | cut -d" " -f1`
+fi
+
+echo
+echo "Configure Network with DHCP..."
+dhcpcd
+echo
+echo "Download with wget..."
+wget $IPFireISO -O /tmp/download.iso -t3 -U IPFire_NetInstall/2.x
+echo
+echo "Checking download..."
+mount /tmp/download.iso -o loop /cdrom 2> /dev/null
+if [ -n "$(ls /cdrom/ipfire-*.tlz 2>/dev/null)" ]; then
+	echo -n "null" > /tmp/source_device
+	echo "Found tarball in /tmp/download.iso"
+	exit 0
+else
+	echo "Found no tarballs in /tmp/download.iso - SKIP"
+fi
+umount /cdrom 2> /dev/null
+exit 10

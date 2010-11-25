@@ -575,5 +575,10 @@ char *fr_tr[] = {
 "Ext4 - Filesystem with Journal",
 /* TR_REISERFS_DESCR */
 "ReiserFS - Filesystem with Journal",
-}; 
-  
+/* TR_NO_LOCAL_SOURCE */
+"No local source media found. Starting download.",
+/* TR_DOWNLOADING_ISO */
+"Downloading Installation-Image ...",
+/* TR_DOWNLOAD_ERROR */
+"Error while downloading!",
+};
