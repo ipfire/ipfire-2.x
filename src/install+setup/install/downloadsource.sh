@@ -36,6 +36,9 @@ echo
 echo "Configure Network with DHCP..."
 dhcpcd
 echo
+echo "Sleep 15s..."
+sleep 15
+echo
 echo "Download with wget..."
 wget $IPFireISO -O /tmp/download.iso -t3 -U IPFire_NetInstall/2.x
 echo
