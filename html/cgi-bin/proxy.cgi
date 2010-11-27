@@ -180,6 +180,12 @@ close(FILE);
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 
+my $green_cidr = &General::ipcidr("$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}");
+my $blue_cidr = "# Blue not defined";
+if ($netsettings{'BLUE_DEV'}) {
+	$blue_cidr = &General::ipcidr("$netsettings{'BLUE_NETADDRESS'}\/$netsettings{'BLUE_NETMASK'}");
+}
+
 &Header::showhttpheaders();
 
 $proxysettings{'ACTION'} = '';
@@ -1193,10 +1199,10 @@ END
 
 if (!$proxysettings{'SRC_SUBNETS'})
 {
-	print "$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}\n";
+	print "$green_cidr\n";
 	if ($netsettings{'BLUE_DEV'})
 	{
-		print "$netsettings{'BLUE_NETADDRESS'}\/$netsettings{'BLUE_NETMASK'}\n";
+		print "$blue_cidr\n";
 	}
 } else { print $proxysettings{'SRC_SUBNETS'}; }
 
@@ -1785,9 +1791,9 @@ print <<END
 END
 ;
 if (!$proxysettings{'IDENT_HOSTS'}) {
-	print "$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}\n";
+	print "$green_cidr\n";
 	if ($netsettings{'BLUE_DEV'}) {
-		print "$netsettings{'BLUE_NETADDRESS'}\/$netsettings{'BLUE_NETMASK'}\n";
+		print "$blue_cidr\n";
 	}
 } else {
 	print $proxysettings{'IDENT_HOSTS'};
@@ -2692,10 +2698,10 @@ sub write_acls
 	flock(FILE, 2);
 	if (!$proxysettings{'SRC_SUBNETS'})
 	{
-		print FILE "$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}\n";
+		print FILE "$green_cidr\n";
 		if ($netsettings{'BLUE_DEV'})
 		{
-			print FILE "$netsettings{'BLUE_NETADDRESS'}\/$netsettings{'BLUE_NETMASK'}\n";
+			print FILE "$blue_cidr\n";
 		}
 	} else { print FILE $proxysettings{'SRC_SUBNETS'}; }
 	close(FILE);
@@ -3319,8 +3325,8 @@ END
 	}
 
 	print FILE <<END
-acl all src 0.0.0.0/0.0.0.0
-acl localhost src 127.0.0.1/255.255.255.255
+#acl all src all
+acl localhost src 127.0.0.1/32
 END
 ;
 open (PORTS,"$acl_ports_ssl");
@@ -3344,12 +3350,12 @@ acl IPFire_https port $https_port
 acl IPFire_ips              dst $netsettings{'GREEN_ADDRESS'}
 acl IPFire_networks         src "$acl_src_subnets"
 acl IPFire_servers          dst "$acl_src_subnets"
-acl IPFire_green_network    src $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
-acl IPFire_green_servers    dst $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
+acl IPFire_green_network    src $green_cidr
+acl IPFire_green_servers    dst $green_cidr
 END
 	;
-	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_network     src $netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}\n"; }
-	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_servers     dst $netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}\n"; }
+	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_network     src $blue_cidr\n"; }
+	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_servers     dst $blue_cidr\n"; }
 	if (!-z $acl_src_banned_ip) { print FILE "acl IPFire_banned_ips       src \"$acl_src_banned_ip\"\n"; }
 	if (!-z $acl_src_banned_mac) { print FILE "acl IPFire_banned_mac       arp \"$acl_src_banned_mac\"\n"; }
 	if (!-z $acl_src_unrestricted_ip) { print FILE "acl IPFire_unrestricted_ips src \"$acl_src_unrestricted_ip\"\n"; }
@@ -3397,7 +3403,7 @@ END
 	my $blue_net = ''; #BLUE empty by default
 	my $blue_ip = '';
 	if ($netsettings{'BLUE_DEV'} && $proxysettings{'ENABLE_BLUE'} eq 'on') {
-		$blue_net = "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
+		$blue_net = "$blue_cidr";
 		$blue_ip  = "$netsettings{'BLUE_ADDRESS'}";
 	}
 	if (!-z $acl_include)
@@ -3406,7 +3412,7 @@ END
 		print FILE "\n#Start of custom includes\n\n";
 		while (<ACL>) {
 			$_ =~ s/__GREEN_IP__/$netsettings{'GREEN_ADDRESS'}/;
-			$_ =~ s/__GREEN_NET__/$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}/;
+			$_ =~ s/__GREEN_NET__/$green_cidr/;
 			$_ =~ s/__BLUE_IP__/$blue_ip/;
 			$_ =~ s/__BLUE_NET__/$blue_net/;
 			$_ =~ s/__PROXY_PORT__/$proxysettings{'PROXY_PORT'}/;
@@ -3811,19 +3817,23 @@ END
 
 		if ($proxysettings{'FORWARD_IPADDRESS'} eq 'off')
 		{
-			print FILE "header_access X-Forwarded-For deny all\n";
+			print FILE "request_header_access X-Forwarded-For deny all\n";
+			print FILE "reply_header_access X-Forwarded-For deny all\n";
 		}
 		if ($proxysettings{'FORWARD_VIA'} eq 'off')
 		{
-			print FILE "header_access Via deny all\n";
+			print FILE "request_header_access Via deny all\n";
+			print FILE "reply_header_access Via deny all\n";
 		}
 		if (!($proxysettings{'FAKE_USERAGENT'} eq ''))
 		{
-			print FILE "header_access User-Agent deny all\n";
+			print FILE "request_header_access User-Agent deny all\n";
+			print FILE "reply_header_access User-Agent deny all\n";
 		}
 		if (!($proxysettings{'FAKE_REFERER'} eq ''))
 		{
-			print FILE "header_access Referer deny all\n";
+			print FILE "request_header_access Referer deny all\n";
+			print FILE "reply_header_access Referer deny all\n";
 		}
 
 		print FILE "\n";
@@ -3878,7 +3888,7 @@ END
 			if (!-z $extgrp) { print FILE "reply_body_max_size 0 deny for_extended_users\n"; }
 		}
 	}
-	print FILE "reply_body_max_size $replybodymaxsize deny all\n\n";
+#FIX ME	print FILE "reply_body_max_size $replybodymaxsize deny all\n\n";
 
 	print FILE "visible_hostname";
 	if ($proxysettings{'VISIBLE_HOSTNAME'} eq '')

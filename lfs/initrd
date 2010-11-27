@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -51,49 +51,38 @@ $(TARGET) :
 	rm -f /install/images/initrd
 
 	# Finish up initrd directory
-	-mkdir -p /install/initrd/{dev,etc,mnt,root,lib/modules/$(KVER)-ipfire/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run,sys} && \
+	-mkdir -p /install/initrd/{dev,etc,mnt,root,lib/modules/$(KVER)-ipfire/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run,sys}
+	cd /install/initrd && lzma -d -c /boot/ipfirerd-$(KVER).img | cpio -i
+
+	# Copy Files packages for installer
+	find $(DIR_SRC)/config/rootfiles/installer/* -maxdepth 1 | xargs cat | grep -v "^#" > /tmp/ROOTFILES
+
+	# Patch Kernel Version to rootfiles
+	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
+
+	-cd / && cpio -d -p /install/initrd < /tmp/ROOTFILES
+
 	cd /install/initrd/etc && rm -f fstab
 	cp -aRf $(DIR_SRC)/config/install/* /install/initrd/etc/
 	rm -rf /install/initrd/usr/share/man
-	chmod 755 /install/initrd/etc/halt /install/initrd/etc/rc
-	cp -f /usr/share/terminfo/l/linux /install/initrd/usr/share/terminfo/l
+	chmod 755 /install/initrd/etc/halt /install/initrd/etc/rc_installer
+
+	cd /install/initrd/ && patch -Np0 < $(DIR_SRC)/src/patches/dracut-init_start_ipfireinstaller.patch
 
 	# make new dependencies 
 	depmod -a -F /boot/System.map-$(KVER)-ipfire $(KVER)-ipfire
-	#depmod -a -F /boot/System.map-$(KVER)-ipfire-smp $(KVER)-ipfire-smp
-	
-	cp -a /lib/modules/$(KVER)-ipfire/ /install/initrd/lib/modules/
-	
-	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/{build,mISDN,source,misc/*,kernel/{sound,drivers/{acpi,bluetooth,cpufreq,hwmon,gpu,rtc,isdn,media,video,watchdog}}} \
-		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/message/fusion/mptlan* \
-		/install/initrd/lib/modules/$(KVER)-ipfire/net/{bridge,netfilter,ipsec} \
-		/install/initrd/lib/modules/$(KVER)-ipfire/dahdi
-
-	# ... acpi/dock.ko is needed for libata
-#	-mkdir -p /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/acpi
-#	cp -a /lib/modules/$(KVER)-ipfire/kernel/drivers/acpi/dock.ko \
-#		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/acpi/dock.ko
-
-	cp /opt/$(MACHINE)-uClibc/lib/libgcc_s.so.1 /install/initrd/lib/
-
-	cd /install/initrd/lib/ && ln -sf libgcc_s.so.1 libgcc_s.so
 
 	-mkdir -p /install/{images,mnt}
 	rm -rf /install/mnt/*
 
-	cp -aR /install/initrd/* /install/mnt
-
-	# make new dependencies for installer
-	depmod -a -F /boot/System.map-$(KVER)-ipfire \
-	    -b /install/initrd $(KVER)-ipfire
-
+	#Build Module deps for installer.
+	depmod -a -b /install/initrd/ -F /boot/System.map-$(KVER)-ipfire $(KVER)-ipfire
 	# Remove binary depmod files
 	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/modules.*.bin
 
-	cd /install/initrd && strip --strip-all {,usr/}{,s}bin/* || true
-	cd /install/initrd && strip --strip-debug {,usr/}lib/* || true
-
-	cd /install/initrd && ln -svf sbin/init init
+	#Name service from dhcpcd
+	cp -f /etc/nsswitch.conf /install/initrd/etc/
+	cp -f $(DIR_SRC)/config/initrd/dhcpc/* /install/initrd/var/ipfire/dhcpc/dhcpcd-hooks/
 
 	cd /install/initrd && find . | cpio -o -H newc | lzma > /install/images/initrd
 	cd /install/initrd && find ./ -ls > $(DIR_INFO)/_build.initrd.log

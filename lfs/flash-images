@@ -94,30 +94,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chroot $(MNThdd) /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 	sed -i -e "s|MOUNT|ro|g" $(MNThdd)/boot/grub/grub.conf
 	sed -i -e "s|KVER|$(KVER)|g" $(MNThdd)/boot/grub/grub.conf
-	sed -i -e "s|ROOT|/dev/sda3|g" $(MNThdd)/boot/grub/grub.conf
+	sed -i -e "s|ROOT|UUID=$$(blkid -sUUID $(IMGroot) | cut -d'"' -f2)|g" $(MNThdd)/boot/grub/grub.conf
 	ln -s grub.conf $(MNThdd)/boot/grub/menu.lst
+	sed -i -e "s|DEVICE1|UUID=$$(blkid -sUUID $(IMGboot) | cut -d'"' -f2)|g" $(MNThdd)/etc/fstab
 	sed -i -e "s|DEVICE2|#DEVICE2|g" $(MNThdd)/etc/fstab
-	sed -i -e "s|DEVICE|/dev/sda|g" $(MNThdd)/etc/fstab
+	sed -i -e "s|DEVICE3|UUID=$$(blkid -sUUID $(IMGroot) | cut -d'"' -f2)|g" $(MNThdd)/etc/fstab
+	sed -i -e "s|DEVICE4|UUID=$$(blkid -sUUID $(IMGvar) | cut -d'"' -f2)|g" $(MNThdd)/etc/fstab
 	sed -i -e "s|FSTYPE|ext2|g" $(MNThdd)/etc/fstab
-	cp -f $(MNThdd)/etc/mkinitcpio.conf $(MNThdd)/etc/mkinitcpio.conf.org
-	sed -i -e "s| autodetect | |g" $(MNThdd)/etc/mkinitcpio.conf
-	chroot $(MNThdd) /sbin/mkinitcpio -g /boot/ipfirerd-$(KVER)-emergency.img -k $(KVER)-ipfire 
-	cp -f $(MNThdd)/etc/mkinitcpio.conf.org $(MNThdd)/etc/mkinitcpio.conf
-	ln -s ipfirerd-$(KVER)-emergency.img $(MNThdd)/boot/ipfirerd-$(KVER).img
 
 	# Copy grub files manually
 	cp -f $(MNThdd)/usr/share/grub/i386-pc/* $(MNThdd)/boot/grub/
-	#chroot $(MNThdd) /usr/sbin/grub-set-default 0
-
-	# Create a script for rebuild-initrd and setup
-	echo "#!/bin/bash"                                   > $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "/bin/rm -f /boot/ipfirerd-$(KVER).img"        >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "/usr/local/bin/rebuild-initrd"                >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "/usr/local/sbin/setup /dev/null INSTALL"      >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "rm -f /etc/rc.d/rcsysinit.d/S75firstsetup \\" >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "&& /sbin/reboot"                              >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-
-	chmod +x $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
 
 	# Unmount
 	umount $(MNThdd)/proc

@@ -60,10 +60,10 @@ case "${1}" in
 
 		# Now traverse /sys in order to "coldplug" devices that have
 		# already been discovered
-		/sbin/udevtrigger
+		/sbin/udevadm trigger
 
 		# Now wait for udevd to process the uevents we triggered
-		/sbin/udevsettle
+		/sbin/udevadm settle
 		evaluate_retval
 
 		;;

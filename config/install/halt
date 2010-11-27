@@ -1,21 +1,16 @@
 #!/bin/sh
 # Clear screen
-/bin/clear
-
+/usr/bin/clear
 echo "Shutting down..."
 echo "Sending all processes the TERM signal..."
-/bin/killall5 -15
+/sbin/killall5 -15
 sleep 3
 echo "Sending all processes the KILL signal..."
-/bin/killall5 -9
+/sbin/killall5 -9
 sleep 3
-echo "Unmounting filesystems"
-/bin/umount /tmp
-/bin/umount /sys
-/bin/umount /dev/pts
-/bin/umount /dev
-/bin/umount /root
-/bin/umount /proc
-echo "Unmounting root"
+echo "Unmounting filesystems..."
+/bin/umount -a > /dev/null 2>&1
+echo "Unmounting root..."
 /bin/mount -n -o remount,ro /
-/bin/reboot
+echo "Rebooting..."
+/sbin/reboot -f
