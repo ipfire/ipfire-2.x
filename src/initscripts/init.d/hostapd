@@ -74,7 +74,7 @@ case "${1}" in
 			fi
 		fi
 
-		/usr/sbin/iwconfig $INTERFACE channel $CHANNEL
+		/usr/sbin/iwconfig $INTERFACE channel $CHANNEL 2>/dev/null
 		/usr/sbin/iwconfig $INTERFACE txpower $TXPOWER
 
 		/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf >/dev/null 2>&1 &

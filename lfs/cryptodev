@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team <info@ipfire.org>                           #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,10 +24,14 @@
 
 include Config
 
+ifeq "$(PAE)" "1"
+	VERSUFIX=ipfire-pae
+else
 ifeq "$(XEN)" "1"
 	VERSUFIX=ipfire-xen
 else
 	VERSUFIX=ipfire
+endif
 endif
 
 VER        = 20091126

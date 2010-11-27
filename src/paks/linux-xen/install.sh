@@ -24,12 +24,21 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 #
-KVER=2.6.32.15
-ROOT=`grep "root=" /boot/grub/grub.conf | cut -d"=" -f2 | cut -d" " -f1 | tail -n 1`
+KVER=2.6.32.26
+ROOT=`mount | grep " / " | cut -d" " -f1`
+ROOTUUID=`blkid -c /dev/null -sUUID $ROOT | cut -d'"' -f2`
+if [ ! -z $ROOTUUID ]; then
+	ROOT="UUID=$ROOTUUID"
+fi
+
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
 MOUNT=$_
+if [ ! $MOUNT == "rw" ]; then
+	MOUNT="ro"
+fi
+
 ENTRY=`grep "savedefault" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $ENTRY > /dev/null
@@ -64,9 +73,7 @@ fi
 #
 # Made initramdisk
 #
-cp -f /etc/mkinitcpio.conf.org /etc/mkinitcpio.conf
-sed -i -e "s| autodetect | |g" /etc/mkinitcpio.conf
-mkinitcpio -k $KVER-ipfire-xen -g /boot/ipfirerd-$KVER-xen.img
+/sbin/dracut --force --verbose /boot/ipfirerd-$KVER-xen.img $KVER-ipfire-xen
 #
 # Create new module depency
 #

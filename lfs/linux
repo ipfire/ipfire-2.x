@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team <info@ipfire.org>                           #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .15
-VER        = 2.6.32.15
+PATCHLEVEL = .26
+VER        = 2.6.32.26
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -35,16 +35,20 @@ CFLAGS     =
 CXXFLAGS   =
 
 PROG	   = linux-xen
-PAK_VER    = 10
+PAK_VER    = 12
 DEPS	   = ""
 
 # Normal build or XEN build.
 #
 
+ifeq "$(PAE)" "1"
+	VERSUFIX=ipfire-pae
+else
 ifeq "$(XEN)" "1"
 	VERSUFIX=ipfire-xen
 else
 	VERSUFIX=ipfire
+endif
 endif
 
 TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
@@ -56,22 +60,19 @@ objects =$(DL_FILE) \
 	netfilter-layer7-v2.22.tar.gz \
 	patch-2.6.16-nath323-1.3.bz2 \
 	reiser4-for-2.6.32.patch.bz2 \
-	squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2 \
-	xen-patches-2.6.32-2.tar.bz2
+	xen-patches-2.6.32-2d.tar.bz2
 
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 netfilter-layer7-v2.22.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
 patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 reiser4-for-2.6.32.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.32.patch.bz2
-squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2 = $(URL_IPFIRE)/squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2
-xen-patches-2.6.32-2.tar.bz2		= $(URL_IPFIRE)/xen-patches-2.6.32-2.tar.bz2
+xen-patches-2.6.32-2d.tar.bz2		= $(URL_IPFIRE)/xen-patches-2.6.32-2d.tar.bz2
 
-$(DL_FILE)_MD5				= 1cbbf16e93bbe03368172872690600c0
+$(DL_FILE)_MD5				= bdb37b8e48aaf33d9bd6e2af3ae2f1ea
 netfilter-layer7-v2.22.tar.gz_MD5	= 98dff8a3d5a31885b73341633f69501f
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 reiser4-for-2.6.32.patch.bz2_MD5	= 3246397973d9271eb8e6d7c97c5d2d91
-squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2_MD5 = d2a84311081023c7ffd28cdca67c45d4
-xen-patches-2.6.32-2.tar.bz2_MD5	= d1d78d2e9b9b62dd869a490f4415de04
+xen-patches-2.6.32-2d.tar.bz2_MD5	= d1690d2b8b0c9124897981aea505f8f7
 
 install : $(TARGET)
 
@@ -109,7 +110,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(XEN)" "1"
 	# Apply gentoo Xen patches
 	mkdir -p $(DIR_SRC)/xen-patches
-	cd $(DIR_SRC)/xen-patches && tar jxf $(DIR_DL)/xen-patches-2.6.32-2.tar.bz2
+	cd $(DIR_SRC)/xen-patches && tar jxf $(DIR_DL)/xen-patches-2.6.32-2d.tar.bz2
 
 	for x in `ls -1 $(DIR_SRC)/xen-patches/*.patch1`; do \
 		echo "*********** [Patch: $$x]"; \
@@ -138,14 +139,8 @@ endif
 	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.22.tar.gz
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.22/kernel-2.6.25-2.6.28-layer7-2.22.patch
 
-	# Squashfs LZMA support
-	cd $(DIR_APP) && bzcat $(DIR_DL)/squashfs-lzma-linux-2.6.32-kernel-patches.tar.bz2 | patch -Np1
-
 	# Add some more LED triggers
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.11-netdev-1.patch
-
-	# Huawei (Vodafone) K3765 & K4505 Usbids
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.11-option_add_vodafone_usbids.patch
 
 	# Huawei Android Phones (Vodafone V845, T-Mobile Pulse/mini ...)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.15-option_add_huawei_android.patch
@@ -172,22 +167,11 @@ endif
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
 
-ifeq "$(XEN)" ""
-	# Only do this once on the non-XEN pass
-	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
-endif
-
-	# Rename ide-cd module to match with old kernel
-	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-cd_mod.ko \
-	   /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-cd.ko
-	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-gd_mod.ko \
-	   /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/ide/ide-disk.ko
-
-	# Remove mISDN modules
-	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
-	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
-
+ifneq "$(PAE)" "1"
 ifneq "$(XEN)" "1"
+	# Only do this once on the standard kernel pass
+	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
+
 	# Blacklist matroxfb_base
 	echo "blacklist matroxfb_base" >> /etc/modprobe.d/framebuffer
 	# Blacklist old framebuffer modules
@@ -205,7 +189,16 @@ ifneq "$(XEN)" "1"
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/isdn ; \
 	done
 	sed -i -e "s|.ko||g" /etc/modprobe.d/isdn
+
+	# Disable ipv6 at runtime
+	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6
+
 endif
+endif
+
+	# Remove mISDN modules
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)

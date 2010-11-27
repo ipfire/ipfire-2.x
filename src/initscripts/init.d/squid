@@ -57,8 +57,8 @@ case "$1" in
 		fi
 		if [ -e /var/ipfire/proxy/enable -o -e /var/ipfire/proxy/enable_blue ]; then
 			boot_mesg "Starting Squid Proxy Server..."
-			loadproc /usr/sbin/squid -D -z >/dev/null 2>&1
-			loadproc /usr/sbin/squid -D
+			loadproc /usr/sbin/squid -z >/dev/null 2>&1
+			loadproc /usr/sbin/squid
 		fi
 
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)

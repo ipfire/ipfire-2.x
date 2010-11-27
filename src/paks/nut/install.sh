@@ -26,8 +26,6 @@
 extract_files 
 restore_backup ${NAME}
 
-groupadd nut
-
 ln -svf  ../init.d/nut /etc/rc.d/rc0.d/K20nut
 ln -svf  ../init.d/nut /etc/rc.d/rc3.d/S20nut
 ln -svf  ../init.d/nut /etc/rc.d/rc6.d/K20nut

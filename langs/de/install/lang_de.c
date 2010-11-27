@@ -1,7 +1,7 @@
 /*
  * German (de) Data File
  *
- * This file is part of the IPCop Firewall.
+ * This file is part of the IPFire.
  * 
  * IPCop is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,10 @@
  * along with IPCop; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
+ * (c) IPFire Team  <info@ipfire.org>
+ *
+ * based on work of SmoothWall and IPCop
+ *
  * (c) The SmoothWall Team
  * 
  * IPCop translation
@@ -428,7 +432,7 @@ char *de_tr[] = {
 /* TR_SETTING_SETUP_PASSWORD */
 "Setze 'setup'-Passwort...",
 /* TR_SETUP_FINISHED */
-"Das Setup ist vollständig beendet. Drücken Sie Ok für den Neustart.",
+"Das Setup ist vollständig beendet. Drücken Sie Ok.",
 /* TR_SETUP_NOT_COMPLETE */
 "Das erste Setup wurde nicht vollständig durchgeführt. Sie müssen Setup vollständig beenden; dies können Sie durch Ausführen von Setup in der Shell nachholen.",
 /* TR_SETUP_PASSWORD */
@@ -567,5 +571,22 @@ char *de_tr[] = {
 "Starte den DHCP-Server ...",
 /* TR_DHCP_STOPSERVER */
 "Stoppe den DHCP-Server ...",
-}; 
-  
+/* TR_LICENSE_ACCEPT */
+"Ich akzeptiere diese Lizenz.",
+/* TR_LICENSE_NOT_ACCEPTED */
+"Die Lizenz wurde nicht akzeptiert. Abbruch!",
+/* TR_EXT2FS_DESCR */
+"Ext2 - Dateisystem ohne Journal (empfohlen für Flash)",
+/* TR_EXT3FS_DESCR */
+"Ext3 - Dateisystem mit Journal",
+/* TR_EXT4FS_DESCR */
+"Ext4 - Dateisystem mit Journal",
+/* TR_REISERFS_DESCR */
+"ReiserFS - Dateisystem mit Journal",
+/* TR_NO_LOCAL_SOURCE */
+"Kein lokales Quellmedium gefunden. Starte Download.",
+/* TR_DOWNLOADING_ISO */
+"Lade Installations-Abbild ...",
+/* TR_DOWNLOAD_ERROR */
+"Beim Herunterladen ist ein Fehler aufgetreten!",
+};
