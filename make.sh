@@ -417,6 +417,7 @@ buildipfire() {
   ipfiremake openssl
   ipfiremake curl
   ipfiremake python
+  ipfiremake fireinfo
   ipfiremake libnet
   ipfiremake libnl
   ipfiremake libidn
