@@ -1267,7 +1267,7 @@ usr/lib/libapr-1.so.0.4.2
 #usr/lib/libaprutil-1.la
 usr/lib/libaprutil-1.so
 usr/lib/libaprutil-1.so.0
-usr/lib/libaprutil-1.so.0.3.9
+usr/lib/libaprutil-1.so.0.3.10
 #usr/lib/pkgconfig/apr-1.pc
 #usr/lib/pkgconfig/apr-util-1.pc
 #usr/sbin/ab

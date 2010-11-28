@@ -48,6 +48,7 @@ md5 :
 
 $(TARGET) :
 	@$(PREBUILD)
+	-mkdir -p /install/initrd/bin
 	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/install+setup/* $(DIR_APP)
 	for i in $(DIR_SRC)/langs/*/install/lang_*.c ; do \
 	    cp $$i $(DIR_APP)/libsmooth; \
@@ -60,6 +61,9 @@ $(TARGET) :
 	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
 	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DKERNEL_VERSION='\"$(KVER)\"'"
 	cd $(DIR_APP)/install && install -v -m 0755 install probenic.sh \
-		probehw.sh mountsource.sh mountdest.sh /install/initrd/bin
+		probehw.sh downloadsource.sh mountsource.sh mountdest.sh /install/initrd/bin
+	#Patch ISO Name for download ...
+	sed -i -e "s|ipfire.iso|$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso|g" \
+				/install/initrd/bin/downloadsource.sh
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

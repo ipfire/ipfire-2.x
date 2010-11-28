@@ -79,6 +79,8 @@ void reboot(void);
 void stripnl(char *s);
 int mysystem(char *command);
 void errorbox(char *message);
+int statuswindowscroll(int width, int height, char *title, char *text, ...);
+int disclaimerbox(char *message);
 void statuswindow(int width, int height, char *title, char *text, ...);
 int runcommandwithprogress(int width, int height, char *title, char *command,
 	int lines, char *text, ...);

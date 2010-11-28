@@ -18,6 +18,7 @@ use strict;
 use Socket;
 use IO::Socket;
 use Net::SSLeay;
+use Net::IPv4Addr;
 
 $|=1; # line buffering
 
@@ -405,6 +406,12 @@ sub NextIP
     return &Socket::inet_ntoa( pack("N", 1 +  unpack('N', &Socket::inet_aton(shift))
 				   )
 			     );
+}
+
+sub ipcidr
+{
+	my ($ip,$cidr) = &Net::IPv4Addr::ipv4_parse(shift);
+	return "$ip\/$cidr";
 }
 
 sub validemail {

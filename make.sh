@@ -24,7 +24,7 @@
 
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
-VERSION="2.7"							# Version number
+VERSION="2.8test"						# Version number
 CORE="43"							# Core Level (Filename)
 PAKFIRE_CORE="42"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
@@ -37,8 +37,15 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=3
+TOOLCHAINVER=1
 IPFVER="full"				# Which versions should be compiled? (full|devel)
+
+BUILDMACHINE=$MACHINE
+    if [ "$MACHINE" = "x86_64" ]; then
+        BUILDMACHINE="i686";
+        linux32="linux32";
+    fi
+
 
 # Debian specific settings
 if [ ! -e /etc/debian_version ]; then
@@ -227,6 +234,13 @@ prepareenv() {
 }
 
 buildtoolchain() {
+    if [ "$(uname -m)" = "x86_64" ]; then
+        exiterror "Cannot build toolchain on x86_64. Please use the download."
+    fi
+    if [ "$(uname -r | grep ipfire)" ]; then
+        exiterror "Cannot build toolchain on ipfire. Please use the download."
+    fi
+
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
     export LOGFILE
     ORG_PATH=$PATH
@@ -313,7 +327,6 @@ buildbase() {
     lfsmake2 man
     lfsmake2 mktemp
     lfsmake2 module-init-tools
-    lfsmake2 mtd
     lfsmake2 net-tools
     lfsmake2 patch
     lfsmake2 psmisc
@@ -352,12 +365,28 @@ buildipfire() {
   ipfiremake dahdi			XEN=1 KMOD=1
   ipfiremake cryptodev			XEN=1
   ipfiremake compat-wireless		XEN=1
-  ipfiremake r8169			XEN=1
-  ipfiremake r8168			XEN=1
-  ipfiremake r8101			XEN=1
+#  ipfiremake r8169			XEN=1
+#  ipfiremake r8168			XEN=1
+#  ipfiremake r8101			XEN=1
   ipfiremake e1000			XEN=1
   ipfiremake e1000e			XEN=1
   ipfiremake igb			XEN=1
+  ipfiremake linux			PAE=1
+  ipfiremake kqemu			PAE=1
+  ipfiremake kvm-kmod			PAE=1
+  ipfiremake v4l-dvb			PAE=1
+  ipfiremake madwifi			PAE=1
+  ipfiremake alsa			PAE=1 KMOD=1
+  ipfiremake mISDN			PAE=1
+  ipfiremake dahdi			PAE=1 KMOD=1
+  ipfiremake cryptodev			PAE=1
+  ipfiremake compat-wireless		PAE=1
+#  ipfiremake r8169			PAE=1
+#  ipfiremake r8168			PAE=1
+#  ipfiremake r8101			PAE=1
+  ipfiremake e1000			PAE=1
+  ipfiremake e1000e			PAE=1
+  ipfiremake igb			PAE=1
   ipfiremake linux
   ipfiremake kqemu
   ipfiremake kvm-kmod
@@ -368,18 +397,19 @@ buildipfire() {
   ipfiremake dahdi			KMOD=1
   ipfiremake cryptodev
   ipfiremake compat-wireless
-  ipfiremake r8169
-  ipfiremake r8168
-  ipfiremake r8101
+#  ipfiremake r8169
+#  ipfiremake r8168
+#  ipfiremake r8101
   ipfiremake e1000
   ipfiremake e1000e
   ipfiremake igb
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
-  ipfiremake klibc
-  ipfiremake mkinitcpio
-  ipfiremake udev			KLIBC=1
+
+  installmake strip
+
+  ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake gmp
@@ -387,6 +417,7 @@ buildipfire() {
   ipfiremake openssl
   ipfiremake curl
   ipfiremake python
+  ipfiremake fireinfo
   ipfiremake libnet
   ipfiremake libnl
   ipfiremake libidn
@@ -400,6 +431,7 @@ buildipfire() {
   ipfiremake pcre
   ipfiremake slang
   ipfiremake newt
+  ipfiremake attr
   ipfiremake libcap
   ipfiremake pciutils
   ipfiremake usbutils
@@ -418,7 +450,6 @@ buildipfire() {
   ipfiremake cdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools
-  ipfiremake squashfstools
   ipfiremake reiserfsprogs
   ipfiremake xfsprogs
   ipfiremake sysfsutils
@@ -641,13 +672,17 @@ buildipfire() {
   ipfiremake asterisk
   ipfiremake lcr
   ipfiremake usb_modeswitch
+  ipfiremake usb_modeswitch_data
   ipfiremake zerofree
   ipfiremake mdadm
   ipfiremake eject
   ipfiremake pound
   ipfiremake minicom
   ipfiremake ddrescue
+  ipfiremake tcl
   ipfiremake imspector
+  ipfiremake miniupnpd
+  ipfiremake client175
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
@@ -671,34 +706,10 @@ buildinstaller() {
   ipfiremake as86
   ipfiremake mbr
   ipfiremake memtest
-  installmake linux-libc-header
-  installmake binutils
-  ipfiremake uClibc			PASS=1
-  ipfiremake gcc			INST=1
-  installmake uClibc			PASS=2
-  installmake gcc			INST=2
-  installmake uClibc			PASS=3
-  installmake busybox
-  installmake udev
-  installmake slang
-  installmake newt
-  installmake gettext
-  installmake kbd
-  installmake popt
-  installmake sysvinit
-  installmake misc-progs
-  installmake reiserfsprogs
-  installmake sysfsutils
-  installmake util-linux
-  installmake pciutils
-  installmake zlib
-  installmake mtd
-  installmake wget
-  installmake hwdata
-  installmake kudzu
-  installmake pcmciautils
-  installmake installer
-  installmake initrd
+  ipfiremake installer
+  cp -f $BASEDIR/doc/COPYING $BASEDIR/build/install/initrd/
+  installmake strip
+  ipfiremake initrd
 }
 
 buildpackages() {
@@ -706,7 +717,6 @@ buildpackages() {
   export LOGFILE
   echo "... see detailed log in _build.*.log files" >> $LOGFILE
 
-  installmake strip
   
   # Generating list of packages used
   echo -n "Generating packages list from logs" | tee -a $LOGFILE
@@ -789,7 +799,6 @@ ipfirepackages() {
 case "$1" in 
 build)
 	clear
-	BUILDMACHINE=`uname -m`
 	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
 	if [ ! -f log/cleanup-toolchain-2-tools ]; then
@@ -917,7 +926,6 @@ toolchain)
 	prepareenv
 	beautify build_stage "Toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
 	buildtoolchain
-	BUILDMACHINE=`uname -m`
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz \
@@ -929,7 +937,6 @@ toolchain)
 	stdumount
 	;;
 gettoolchain)
-	BUILDMACHINE=`uname -m`
 	# arbitrary name to be updated in case of new toolchain package upload
 	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE
 	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.gz ]; then

@@ -127,19 +127,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i -e "s|DEVICE4|/dev/xvda4|g" $(MNThdd)/etc/fstab
 
 	sed -i -e "s|FSTYPE|ext3|g" $(MNThdd)/etc/fstab
-	cp -f $(MNThdd)/etc/mkinitcpio.conf $(MNThdd)/etc/mkinitcpio.conf.org
-	sed -i -e "s| autodetect | |g" $(MNThdd)/etc/mkinitcpio.conf
 
-	chroot $(MNThdd) /sbin/mkinitcpio -g /boot/ipfirerd-$(KVER)-xen.img -k $(KVER)-ipfire-xen
-	cp -f $(MNThdd)/etc/mkinitcpio.conf.org $(MNThdd)/etc/mkinitcpio.conf
-
-
-	# Create a script for rebuild-initrd and setup
-	echo "#!/bin/bash"                                   > $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "/usr/local/sbin/setup /dev/null INSTALL"      >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "rm -f /etc/rc.d/rcsysinit.d/S75firstsetup \\" >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	echo "&& /sbin/reboot"                              >> $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
-	chmod +x $(MNThdd)/etc/rc.d/rcsysinit.d/S75firstsetup
+	chroot $(MNThdd) /sbin/dracut --force --verbose /boot/ipfirerd-$(KVER)-xen.img $(KVER)-ipfire-xen
 
 	#Remove root / fstab check
 	rm -rf $(MNThdd)/etc/rc.d/rcsysinit.d/S19checkfstab

@@ -1,7 +1,7 @@
 /*
  * Spanish (es) Data File
  *
- * This file is part of the IPFire Firewall.
+ * This file is part of the IPFire.
  * 
  * IPFire is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with IPFire; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ *
+ * (c) IPFire Team  <info@ipfire.org>
  *
  */
  
@@ -422,7 +424,7 @@ char *es_tr[] = {
 /* TR_SETTING_SETUP_PASSWORD */
 "A REMOVER",
 /* TR_SETUP_FINISHED */
-"La configuración se ha completado. Presione Ok para reiniciar",
+"La configuración se ha completado. Presione Ok.",
 /* TR_SETUP_NOT_COMPLETE */
 "La configuración inicial no se completó totalmente. Asegúrese de configurar todo correctamente ejecutando setup de nuevo desde la línea de comandos.",
 /* TR_SETUP_PASSWORD */
@@ -561,6 +563,22 @@ char *es_tr[] = {
 "Iniciando Servidor DHCP ...",
 /* TR_DHCP_STOPSERVER */
 "Deteniendo Servidor DHCP ...",
-
-}; 
-  
+/* TR_LICENSE_ACCEPT */
+"I accept this license.",
+/* TR_LICENSE_NOT_ACCEPTED */
+"License not accepted. Exit!",
+/* TR_EXT2FS_DESCR */
+"Ext2 - Filesystem without Journal (suggested for flashdrives)",
+/* TR_EXT3FS_DESCR */
+"Ext3 - Filesystem with Journal",
+/* TR_EXT4FS_DESCR */
+"Ext4 - Filesystem with Journal",
+/* TR_REISERFS_DESCR */
+"ReiserFS - Filesystem with Journal",
+/* TR_NO_LOCAL_SOURCE */
+"No local source media found. Starting download.",
+/* TR_DOWNLOADING_ISO */
+"Downloading Installation-Image ...",
+/* TR_DOWNLOAD_ERROR */
+"Error while downloading!",
+};

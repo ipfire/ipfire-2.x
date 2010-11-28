@@ -58,6 +58,17 @@ my %mainsettings = ();
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+
+my $green_cidr = &General::ipcidr("$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}");
+my $blue_cidr = "# Blue not defined";
+if ($netsettings{'BLUE_DEV'}) {
+	$blue_cidr = &General::ipcidr("$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}");
+}
+my $orange_cidr = "# Orange not defined";
+if ($netsettings{'ORANGE_DEV'}) {
+	$orange_cidr = &General::ipcidr("$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}");
+}
+
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'EDIT_ADVANCED'} = 'off';
 $cgiparams{'ACTION'} = '';
@@ -270,12 +281,12 @@ sub writeipsecfiles {
     print CONF "\tnat_traversal=yes\n";
     print CONF "\toverridemtu=$lvpnsettings{'VPN_OVERRIDE_MTU'}\n" if ($lvpnsettings{'VPN_OVERRIDE_MTU'} ne '');
     print CONF "\tvirtual_private=%v4:10.0.0.0/8,%v4:172.16.0.0/12,%v4:192.168.0.0/16";
-    print CONF ",%v4:!$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
+    print CONF ",%v4:!$green_cidr";
     if (length($netsettings{'ORANGE_DEV'}) > 2) {
-	print CONF ",%v4:!$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}";
+	print CONF ",%v4:!$orange_cidr";
     }
     if (length($netsettings{'BLUE_DEV'}) > 2) {
-	print CONF ",%v4:!$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
+	print CONF ",%v4:!$blue_cidr";
     }
     foreach my $key (keys %lconfighash) {
 	if ($lconfighash{$key}[3] eq 'net') {
@@ -320,13 +331,15 @@ sub writeipsecfiles {
 	print CONF "conn $lconfighash{$key}[1]\n";
 	print CONF "\tleft=$localside\n";
 	print CONF "\tleftnexthop=%defaultroute\n" if ($lconfighash{$key}[26] eq 'RED' && $lvpnsettings{'VPN_IP'} ne '%defaultroute');
-	print CONF "\tleftsubnet=$lconfighash{$key}[8]\n";
+	my $cidr_net=&General::ipcidr($lconfighash{$key}[8]);
+	print CONF "\tleftsubnet=$cidr_net\n";
 	print CONF "\tleftfirewall=yes\n";
 	print CONF "\tlefthostaccess=yes\n";
 
 	print CONF "\tright=$lconfighash{$key}[10]\n";
 	if ($lconfighash{$key}[3] eq 'net') {
-	    print CONF "\trightsubnet=$lconfighash{$key}[11]\n";
+	    my $cidr_net=&General::ipcidr($lconfighash{$key}[11]);
+	    print CONF "\trightsubnet=$cidr_net\n";
 	    print CONF "\trightnexthop=%defaultroute\n";
 	} elsif ($lconfighash{$key}[10] eq '%any' && $lconfighash{$key}[14] eq 'on') { #vhost allowed for roadwarriors?
 	    print CONF "\trightsubnet=vhost:%no,%priv\n";
@@ -383,6 +396,9 @@ sub writeipsecfiles {
 	if ($lconfighash{$key}[23]) {
 	    print CONF "\tpfsgroup=$lconfighash{$key}[23]\n";
 	}
+
+	# IKE V1
+	print CONF "\tkeyexchange=ikev1\n";
 
 	# Lifetimes
 	print CONF "\tikelifetime=$lconfighash{$key}[16]h\n" if ($lconfighash{$key}[16]);

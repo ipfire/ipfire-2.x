@@ -39,4 +39,9 @@ clamav:x:109:
 amavis:x:110:
 mldonkey:x:111:
 audio:x:112:
+video:x:113:
+asterisk:x:114:
+nut:x:115:
+cdrom:x:116:
+usb:x:117:
 samba:x:1000:

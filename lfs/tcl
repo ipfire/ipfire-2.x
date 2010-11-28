@@ -30,7 +30,12 @@ THISAPP    = tcl$(VER)
 DL_FILE    = $(THISAPP)-src.tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
+
+ifneq "$(ROOT)" ""
 TARGET     = $(DIR_INFO)/$(THISAPP)-tools
+else
+TARGET     = $(DIR_INFO)/$(THISAPP)
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -70,10 +75,18 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+ifneq "$(ROOT)" ""
 	cd $(DIR_APP)/unix && ./configure --prefix=/tools --disable-nls
+else
+	cd $(DIR_APP)/unix && ./configure --prefix=/usr --disable-nls
+endif
 	cd $(DIR_APP)/unix && make $(MAKETUNING)
 	cd $(DIR_APP)/unix && make install
+ifneq "$(ROOT)" ""
 	cd $(DIR_APP)/unix && make install-private-headers
 	ln -sf tclsh8.4 /tools/bin/tclsh
+else
+	ln -sf tclsh8.4 /usr/bin/tclsh
+endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
