@@ -3,10 +3,13 @@ etc/rc.d/init.d/checkfs
 etc/rc.d/init.d/checkfstab
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/squid
+srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/images/urlfilter/copy.gif
 var/ipfire/general-functions.pl
+var/ipfire/extrahd/bin/extrahd.pl
 usr/local/bin/rebuild-initrd
+usr/local/bin/scanhd
 usr/bin/ldd
