@@ -57,10 +57,10 @@ if ( "$ARGV[0]" eq "mount" ) {
 	{
 		@deviceline = split( /\;/, $deviceentry );
 		if ( "$ARGV[1]" eq "$deviceline[2]" ) {
-			print "Insert /dev/$deviceline[0] ($deviceline[1]) --> $deviceline[2] into /etc/fstab!\n";
+			print "Insert $deviceline[0] ($deviceline[1]) --> $deviceline[2] into /etc/fstab!\n";
 			unless ( -d $deviceline[2] ) { system("/bin/mkdir -p $deviceline[2] && chmod 0777 $deviceline[2]"); }
 			open(FILE, ">>$fstab");
-			print FILE "/dev/$deviceline[0]\t$deviceline[2]\t$deviceline[1]\tdefaults\t0\t0\n";
+			print FILE "$deviceline[0]\t$deviceline[2]\t$deviceline[1]\tdefaults\t0\t0\n";
 			close(FILE);
 		}
 	}

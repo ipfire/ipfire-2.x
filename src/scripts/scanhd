@@ -5,7 +5,11 @@ case "$1" in
 		/sbin/kudzu -qps -c HD | egrep "desc|device:" | awk -F': ' '{print $2}' | sed -e '/"$/a\\' -e "s/$/\;/g" | tr "\n" "XX" | sed -e "s/XX/\n/g" -e "s/\;X/\;/g" > /var/ipfire/extrahd/scan
 		;;
 	partitions)
-		cat /proc/partitions | awk '{print $4 ";"  $3 ";"}' | grep -v name | grep -v "^;;$" > /var/ipfire/extrahd/partitions
+		cat /proc/partitions | awk '{print $4 " " $3 }' | grep -v name | grep -v "^[:space:]*$" | \
+			while read device size; do
+				[ -z "${device}" ] && continue
+				echo "${device};${size};$(blkid -s UUID -o value /dev/${device});"
+			done > /var/ipfire/extrahd/partitions
 		;;
 	*)
 		echo "Usage: $0 (ide|partitions)"

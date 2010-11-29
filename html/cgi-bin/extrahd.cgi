@@ -58,6 +58,7 @@ $extrahdsettings{'PATH'} = '';
 $extrahdsettings{'FS'} = '';
 $extrahdsettings{'DEVICE'} = '';
 $extrahdsettings{'ACTION'} = '';
+$extrahdsettings{'UUID'} = '';
 
 &General::readhash("${General::swroot}/extrahd/settings", \%extrahdsettings);
 &Header::getcgihash(\%extrahdsettings);
@@ -89,7 +90,7 @@ if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'})
 	if ( "$ok" eq "true" ) {
 		open(FILE, ">> $devicefile" ) or die "Unable to write $devicefile";
 		print FILE <<END
-$extrahdsettings{'DEVICE'};$extrahdsettings{'FS'};$extrahdsettings{'PATH'};
+UUID=$extrahdsettings{'UUID'};$extrahdsettings{'FS'};$extrahdsettings{'PATH'};
 END
 ;
 	system("/usr/local/bin/extrahdctrl mount $extrahdsettings{'PATH'}");
@@ -138,12 +139,12 @@ END
 	{
 		@deviceline = split( /\;/, $deviceentry );
 		my $color="$Header::colourred";
-		if ( `/bin/mount | /bin/fgrep $deviceline[2] | /bin/fgrep /dev/$deviceline[0]` ) {
+		if ( `/bin/mountpoint $deviceline[2]` ) {
 			$color=$Header::colourgreen;
 		}
 		print <<END
 			<tr><td colspan="5">&nbsp;
-			<tr><td align='center'><font color=$color><b>/dev/$deviceline[0]</b></font>
+			<tr><td align='center'><font color=$color><b>$deviceline[0]</b></font>
 				<td align='center'>$deviceline[1]
 				<td align='center'>$deviceline[2]
 				<td align='center'>
@@ -217,6 +218,7 @@ END
 				<td align="center"><input type='text' name='PATH' value=/mnt/harddisk />
 				<td align="center">
 					<input type='hidden' name='DEVICE' value='$partitionline[0]' />
+					<input type='hidden' name='UUID' value='$partitionline[2]' />
 					<input type='hidden' name='ACTION' value=$Lang::tr{'add'} />
 					<input type='image' alt=$Lang::tr{'add'} src='/images/add.gif' />
 				</form>
