@@ -365,9 +365,9 @@ buildipfire() {
   ipfiremake dahdi			XEN=1 KMOD=1
   ipfiremake cryptodev			XEN=1
   ipfiremake compat-wireless		XEN=1
-  ipfiremake r8169			XEN=1
-  ipfiremake r8168			XEN=1
-  ipfiremake r8101			XEN=1
+#  ipfiremake r8169			XEN=1
+#  ipfiremake r8168			XEN=1
+#  ipfiremake r8101			XEN=1
   ipfiremake e1000			XEN=1
   ipfiremake e1000e			XEN=1
   ipfiremake igb			XEN=1
@@ -381,9 +381,9 @@ buildipfire() {
   ipfiremake dahdi			PAE=1 KMOD=1
   ipfiremake cryptodev			PAE=1
   ipfiremake compat-wireless		PAE=1
-  ipfiremake r8169			PAE=1
-  ipfiremake r8168			PAE=1
-  ipfiremake r8101			PAE=1
+#  ipfiremake r8169			PAE=1
+#  ipfiremake r8168			PAE=1
+#  ipfiremake r8101			PAE=1
   ipfiremake e1000			PAE=1
   ipfiremake e1000e			PAE=1
   ipfiremake igb			PAE=1
@@ -397,9 +397,9 @@ buildipfire() {
   ipfiremake dahdi			KMOD=1
   ipfiremake cryptodev
   ipfiremake compat-wireless
-  ipfiremake r8169
-  ipfiremake r8168
-  ipfiremake r8101
+#  ipfiremake r8169
+#  ipfiremake r8168
+#  ipfiremake r8101
   ipfiremake e1000
   ipfiremake e1000e
   ipfiremake igb
