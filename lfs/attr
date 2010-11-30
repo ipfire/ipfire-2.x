@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -73,11 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	# Install libattr
-	cp $(DIR_APP)/libattr/.libs/libattr.so* /usr/lib
-	cp $(DIR_APP)/libattr/libattr.la /usr/lib
-	# Install includes
-#	-mkdir /usr/include/attr
-#	cp -f $(DIR_APP)/include/*.h /usr/include/attr
+	cd $(DIR_APP) && make install-lib
+	cd $(DIR_APP) && make install-dev
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
