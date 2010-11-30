@@ -31,6 +31,7 @@ newtComponent statictyperadio;
 newtComponent dhcptyperadio;
 newtComponent pppoetyperadio;
 newtComponent dhcphostnameentry;
+newtComponent dhcpforcemtuentry;
 
 /* acceptable character filter for IP and netmaks entry boxes */
 static int ip_input_filter(newtComponent entry, void * data, int ch, int cursor)
@@ -49,11 +50,13 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	char *addressresult;
 	char *netmaskresult;
 	char *dhcphostnameresult;
+	char *dhcpforcemturesult;
 	struct newtExitStruct es;
 	newtComponent header;
 	newtComponent addresslabel;
 	newtComponent netmasklabel;
 	newtComponent dhcphostnamelabel;
+	newtComponent dhcpforcemtulabel;
 	newtComponent ok, cancel;	
 	char message[1000];
 	char temp[STRING_SIZE];
@@ -61,6 +64,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	char netmaskfield[STRING_SIZE];
 	char typefield[STRING_SIZE];
 	char dhcphostnamefield[STRING_SIZE];
+	char dhcpforcemtufield[STRING_SIZE];
 	int error;
 	int result = 0;
 	char type[STRING_SIZE];
@@ -73,6 +77,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	sprintf(netmaskfield, "%s_NETMASK", colour);
 	sprintf(typefield, "%s_TYPE", colour);
 	sprintf(dhcphostnamefield, "%s_DHCP_HOSTNAME", colour);
+	sprintf(dhcpforcemtufield, "%s_DHCP_FORCE_MTU", colour);
 		
 	sprintf(message, ctr[TR_INTERFACE], colour);
 	newtCenteredWindow(44, (typeflag ? 18 : 12), message);
@@ -99,15 +104,25 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 		newtComponentAddCallback(statictyperadio, networkdialogcallbacktype, NULL);
 		newtComponentAddCallback(dhcptyperadio, networkdialogcallbacktype, NULL);
 		newtComponentAddCallback(pppoetyperadio, networkdialogcallbacktype, NULL);
-		dhcphostnamelabel = newtTextbox(2, 9, 18, 1, 0);
+		dhcphostnamelabel = newtTextbox(2, 8, 18, 1, 0);
 		newtTextboxSetText(dhcphostnamelabel, ctr[TR_DHCP_HOSTNAME]);
+		dhcpforcemtulabel = newtTextbox(2, 9, 18, 1, 0);
+		newtTextboxSetText(dhcpforcemtulabel, ctr[TR_DHCP_FORCE_MTU]);
 		strcpy(temp, defaultdhcphostname);
 		findkey(kv, dhcphostnamefield, temp);
-		dhcphostnameentry = newtEntry(20, 9, temp, 20, &dhcphostnameresult, 0);
-		newtFormAddComponent(networkform, dhcphostnamelabel);		
-		newtFormAddComponent(networkform, dhcphostnameentry);	
+		dhcphostnameentry = newtEntry(20, 8, temp, 20, &dhcphostnameresult, 0);
+		strcpy(temp, "");
+		findkey(kv, dhcpforcemtufield, temp);
+		dhcpforcemtuentry = newtEntry(20, 9, temp, 20, &dhcpforcemturesult, 0);
+		newtFormAddComponent(networkform, dhcphostnamelabel);
+		newtFormAddComponent(networkform, dhcphostnameentry);
+		newtFormAddComponent(networkform, dhcpforcemtulabel);
+		newtFormAddComponent(networkform, dhcpforcemtuentry);
 		if (startdhcptype == 0)
-			newtEntrySetFlags(dhcphostnameentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
+			{
+				newtEntrySetFlags(dhcphostnameentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
+				newtEntrySetFlags(dhcpforcemtuentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
+			}
 	}
 	/* Address */
 	addresslabel = newtTextbox(2, (typeflag ? 11 : 4) + 0, 18, 1, 0);
@@ -184,6 +199,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 				if (typeflag)
 				{
 					replacekeyvalue(kv, dhcphostnamefield, dhcphostnameresult);
+					replacekeyvalue(kv, dhcpforcemtufield, dhcpforcemturesult);
 					if (strcmp(type, "STATIC") != 0)
 					{
 						replacekeyvalue(kv, addressfield, "0.0.0.0");
@@ -296,10 +312,15 @@ void networkdialogcallbacktype(newtComponent cm, void *data)
 		newtEntrySetFlags(netmaskentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
 	}
 	if (strcmp(type, "DHCP") == 0)
+	{
 		newtEntrySetFlags(dhcphostnameentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
+		newtEntrySetFlags(dhcpforcemtuentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
+	}
 	else
+	{
 		newtEntrySetFlags(dhcphostnameentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);		
-		
+		newtEntrySetFlags(dhcpforcemtuentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);		
+	}
 	newtRefresh();
 	newtDrawForm(networkform);	
 }

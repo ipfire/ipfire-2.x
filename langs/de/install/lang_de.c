@@ -589,4 +589,6 @@ char *de_tr[] = {
 "Lade Installations-Abbild ...",
 /* TR_DOWNLOAD_ERROR */
 "Beim Herunterladen ist ein Fehler aufgetreten!",
+/* TR_DHCP_FORCE_MTU */
+"DHCP MTU setzen:",
 };

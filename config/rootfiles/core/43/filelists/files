@@ -13,4 +13,5 @@ var/ipfire/general-functions.pl
 var/ipfire/extrahd/bin/extrahd.pl
 usr/local/bin/rebuild-initrd
 usr/local/bin/scanhd
+usr/local/sbin/setup
 usr/bin/ldd

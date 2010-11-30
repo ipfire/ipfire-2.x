@@ -581,4 +581,6 @@ char *fr_tr[] = {
 "Downloading Installation-Image ...",
 /* TR_DOWNLOAD_ERROR */
 "Error while downloading!",
+/* TR_DHCP_FORCE_MTU */
+"Force DHCP mtu:",
 };
