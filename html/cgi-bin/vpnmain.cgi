@@ -275,8 +275,6 @@ sub writeipsecfiles {
     # deprecated in ipsec.conf version 2
     #print CONF "\tplutoload=%search\n";
     #print CONF "\tplutostart=%search\n";
-    #Disable IKEv2 deamon
-    print CONF "\tcharonstart=no\n";
     print CONF "\tuniqueids=yes\n";
     print CONF "\tnat_traversal=yes\n";
     print CONF "\toverridemtu=$lvpnsettings{'VPN_OVERRIDE_MTU'}\n" if ($lvpnsettings{'VPN_OVERRIDE_MTU'} ne '');
