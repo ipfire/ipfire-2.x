@@ -23,8 +23,20 @@ dhcpcd_up()
 	set | grep "^new_" | sed "s|^new_||g" | \
 	sort > /var/ipfire/dhcpc/dhcpcd-$interface.info
 
+	#Check if this was the Red device...
+	if [ ! "$interface" == "$RED_DEV" ]; then
+		exit 0;
+	fi
+
 	# Only if RED_TYPE=DHCP update /var/ipfire/red
 	if [ "$RED_TYPE" == "DHCP" ]; then
+
+		#Force MTU option for KabelDeutschland because this ISP
+		#set the MTU to 576 instead of the supportet 1500
+		if [ $RED_DHCP_FORCE_MTU -ge 576 ]; then
+			logger -p local0.info -t dhcpcd.exe[$$] "Force mtu to $RED_DHCP_FORCE_MTU"
+			ip link set $interface mtu $RED_DHCP_FORCE_MTU
+		fi
 
 		#Check if we have to restart the services at update
 		[ ! -e "/var/ipfire/red/active" ] update=1;

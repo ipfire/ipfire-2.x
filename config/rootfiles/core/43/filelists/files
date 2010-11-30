@@ -3,6 +3,7 @@ etc/rc.d/init.d/checkfs
 etc/rc.d/init.d/checkfstab
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/squid
+etc/rc.d/init.d/networking/dhcpcd.exe
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
