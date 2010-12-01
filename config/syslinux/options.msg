@@ -9,22 +9,4 @@
 
  -  To install in unattended mode, type: 04unattended <ENTER>07.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 0f[F1-Main] [F2-Options]07
