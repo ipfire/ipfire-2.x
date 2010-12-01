@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -728,8 +728,12 @@ update_langs() {
 		chmod 755 $BASEDIR/tools/{check_strings.pl,sort_strings.pl,check_langs.sh}
 		$BASEDIR/tools/sort_strings.pl en
 		$BASEDIR/tools/sort_strings.pl de
+		$BASEDIR/tools/sort_strings.pl fr
+		$BASEDIR/tools/sort_strings.pl es
 		$BASEDIR/tools/check_strings.pl en > $BASEDIR/doc/language_issues.en
 		$BASEDIR/tools/check_strings.pl de > $BASEDIR/doc/language_issues.de
+		$BASEDIR/tools/check_strings.pl fr > $BASEDIR/doc/language_issues.fr
+		$BASEDIR/tools/check_strings.pl es > $BASEDIR/doc/language_issues.es
 		$BASEDIR/tools/check_langs.sh > $BASEDIR/doc/language_missings
 		beautify message DONE
 }

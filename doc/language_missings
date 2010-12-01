@@ -4,3 +4,57 @@
 ############################################################################
 # Checking cgi-bin translations for language: en                           #
 ############################################################################
+############################################################################
+# Checking install/setup translations for language: fr                     #
+############################################################################
+############################################################################
+# Checking cgi-bin translations for language: fr                           #
+############################################################################
+< dns address deleted txt
+< extrahd detected drives
+< ntp common settings
+< ntp sync
+< snort working
+< upload new ruleset
+< urlfilter file ext block
+< urlfilter mode block
+< wlanap access point
+< wlanap channel
+< wlanap debugging
+< wlanap del interface
+< wlanap encryption
+< wlanap informations
+< wlanap interface
+< wlanap invalid wpa
+< wlanap link dhcp
+< wlanap link wireless
+< wlanap no interface
+< wlanap none
+< wlanap notifications
+< wlanap select interface
+< wlanap verbose
+< wlanap warnings
+< wlanap wlan card
+< wlanap wlan services
+< wlanap wlan settings
+< wlanap wlan status
+############################################################################
+# Checking install/setup translations for language: es                     #
+############################################################################
+############################################################################
+# Checking cgi-bin translations for language: es                           #
+############################################################################
+< Async logging enabled
+< outgoing firewall add ip group
+< outgoing firewall add mac group
+< outgoing firewall group error
+< outgoing firewall groups
+< outgoing firewall ip groups
+< outgoing firewall mac groups
+< outgoing firewall p2p allow
+< outgoing firewall p2p deny
+< outgoing firewall p2p description 1
+< outgoing firewall p2p description 2
+< outgoing firewall p2p description 3
+< outgoing firewall view group
+< Set time on boot
