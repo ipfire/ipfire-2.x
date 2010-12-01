@@ -66,8 +66,8 @@ define COPY_TO_IMG
 	losetup $$LOOPDEV $$IMAGE && \
 	mount -t vfat $$LOOPDEV /install/mnt && \
 	cp -fR /install/cdrom/* /install/mnt && \
-	mv /install/mnt/boot/isolinux/{instroot,vmlinuz,unattended.conf,splash.lss,*\.msg,memtest} /install/mnt && \
-	rm -rf /install/mnt/boot && \
+	mv /install/mnt/boot/isolinux/{instroot,vmlinuz,splash.lss,*\.msg,memtest} /install/mnt && \
+	rm -rf /install/mnt/boot/isolinux && \
 	cp $(DIR_SRC)/config/syslinux/syslinux.cfg /install/mnt/syslinux.cfg && \
 	umount /install/mnt && \
 	losetup -d $$LOOPDEV && \

@@ -557,10 +557,11 @@ EXIT:
 		fclose(flog);
 		newtFinished();
 
-//		if (!unattended) {
-//			if (system("/usr/sbin/chroot /harddisk /usr/local/sbin/setup /dev/tty2 INSTALL"))
-//				printf("Unable to run setup.\n");
-//		}
+		if (unattended) {
+			// Remove Setup autorun after boot
+			if (system("rm -f /harddisk/etc/rc.d/rcsysinit.d/S75firstsetup"))
+				printf("Unable to disable setup autorun.\n");
+		}
 
 		if (system("/bin/umount /harddisk/proc"))
 			printf("Unable to umount /harddisk/proc.\n"); 

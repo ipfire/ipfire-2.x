@@ -131,7 +131,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     /* set root password */
     fprintf(flog, "unattended: setting root password\n");
     snprintf(commandstring, STRING_SIZE,
-	    "/sbin/chroot /harddisk /bin/sh -c \"echo 'root:%s' | /usr/sbin/chpasswd\"", root_password);
+	    "/usr/sbin/chroot /harddisk /bin/sh -c \"echo 'root:%s' | /usr/sbin/chpasswd\"", root_password);
     if (mysystem(commandstring)) {
 	errorbox("unattended: ERROR setting root password");
 	return 0;
@@ -140,7 +140,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     /* set admin password */
     fprintf(flog, "unattended: setting admin password\n");
     snprintf(commandstring, STRING_SIZE,
-	    "/sbin/chroot /harddisk /usr/sbin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", admin_password);
+	    "/usr/sbin/chroot /harddisk /usr/sbin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", admin_password);
     if (mysystem(commandstring)) {
 	errorbox("unattended: ERROR setting admin password");
 	return 0;
