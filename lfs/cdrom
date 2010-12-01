@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -84,7 +84,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz; \
 	cp $(DIR_SRC)/config/syslinux/syslinux.cfg  /install/cdrom/boot/isolinux/isolinux.cfg; \
 	cp $(DIR_SRC)/config/syslinux/boot.msg      /install/cdrom/boot/isolinux/boot.msg; \
-	cp $(DIR_SRC)/config/syslinux/options.msg   /install/cdrom/boot/isolinux/options.msg; \
 	cp $(DIR_SRC)/config/syslinux/splash.lss    /install/cdrom/boot/isolinux/splash.lss; \
 	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest; \
 	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin; \
