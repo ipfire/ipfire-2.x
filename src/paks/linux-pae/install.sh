@@ -52,7 +52,7 @@ cp /boot/grub/grub.conf /boot/grub/grub-backup-$KVER-pae.conf
 #
 echo "" >> /boot/grub/grub.conf
 echo "title IPFire (PAE-Kernel)" >> /boot/grub/grub.conf
-echo "  kernel /vmlinuz-$KVER-ipfire-pae root=$ROOT rootdelay=10 panic=10 $MOUNT" >> /boot/grub/grub.conf
+echo "  kernel /vmlinuz-$KVER-ipfire-pae root=$ROOT panic=10 $MOUNT" >> /boot/grub/grub.conf
 echo "  initrd /ipfirerd-$KVER-pae.img" >> /boot/grub/grub.conf
 echo "  savedefault $ENTRY" >> /boot/grub/grub.conf
 #
