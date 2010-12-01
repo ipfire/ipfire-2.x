@@ -34,7 +34,7 @@ else
 endif
 endif
 
-VER        = 990bbeaeb761
+VER        = abd3aac6644e
 
 THISAPP    = v4l-dvb-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -51,7 +51,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 5510e0bf0525f0e964c05357cdb95936
+$(DL_FILE)_MD5 = fca89ad531c5d04dadbbc65997c92aac
 
 install : $(TARGET)
 
