@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 		safe_system("/etc/rc.d/init.d/ntp start");
 	} else if (strcmp(argv[1], "disable") == 0) {
 		safe_system("/etc/rc.d/init.d/ntpd stop");
-		safe_system("rm -f /etc/rc.d/rc*.d/*ntp >/dev/null 2>&1");
+		safe_system("rm -f /etc/rc.d/rc*.d/*ntpd >/dev/null 2>&1");
 	} else {
 		fprintf(stderr, "\nBad argument given.\n\ntimectrl (start|stop|restart)\n\n");
 		exit(1);

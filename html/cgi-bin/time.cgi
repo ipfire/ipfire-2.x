@@ -174,8 +174,8 @@ if ($timesettings{'VALID'} eq '')
 	$timesettings{'UPDATE_METHOD'} = 'manually';
 	$timesettings{'UPDATE_VALUE'} = '1';
 	$timesettings{'UPDATE_PERIOD'} = 'daily';
-	$timesettings{'NTP_ADDR_1'} = 'de.pool.ntp.org';
-	$timesettings{'NTP_ADDR_2'} = 'pool.ntp.org';
+	$timesettings{'NTP_ADDR_1'} = '0.ipfire.pool.ntp.org';
+	$timesettings{'NTP_ADDR_2'} = '1.ipfire.pool.ntp.org';
 	$timesettings{'ENABLESETONBOOT'} = 'off';
 }
 
