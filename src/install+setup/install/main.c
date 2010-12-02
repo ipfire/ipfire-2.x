@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
 	char *yesnoharddisk[3];	//	char *yesnoharddisk = { "NO", "YES", NULL };
 		
 	int unattended = 0;
+	int serialconsole = 0;
 	struct keyvalue *unattendedkv = initkeyvalues();
 	int hardyn = 0;
 	char restore_file[STRING_SIZE] = "";
@@ -110,6 +111,10 @@ int main(int argc, char *argv[])
 		    unattended = 1;
 		    runcommandwithstatus("/bin/sleep 10", "WARNING: Unattended installation will start in 10 seconds...");
 		}		
+		// check if we have to patch for serial console
+		if (strstr (line, "console=ttyS0") != NULL) {
+		    serialconsole = 1;
+		}
 	}
 
 	// Read gpl ...
@@ -511,7 +516,25 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;
 	}
-	
+
+	/* Serial console ? */
+	if (serialconsole) {
+		/* grub */
+		replace("/harddisk/boot/grub/grub.conf", "splashimage", "#splashimage");
+		replace("/harddisk/boot/grub/grub.conf", "#serial", "serial");
+		replace("/harddisk/boot/grub/grub.conf", "#terminal", "terminal");
+		replace("/harddisk/boot/grub/grub.conf", " panic=10 ", " console=ttyS0,38400 panic=10 ");
+
+		/*inittab*/
+		replace("/harddisk/etc/inittab", "1:2345:respawn:", "#1:2345:respawn:");
+		replace("/harddisk/etc/inittab", "2:2345:respawn:", "#2:2345:respawn:");
+		replace("/harddisk/etc/inittab", "3:2345:respawn:", "#3:2345:respawn:");
+		replace("/harddisk/etc/inittab", "4:2345:respawn:", "#4:2345:respawn:");
+		replace("/harddisk/etc/inittab", "5:2345:respawn:", "#5:2345:respawn:");
+		replace("/harddisk/etc/inittab", "6:2345:respawn:", "#6:2345:respawn:");
+		replace("/harddisk/etc/inittab", "#7:2345:respawn:", "7:2345:respawn:");
+	}
+
 	/* Copy restore file from cdrom */
 	if (unattended && (strlen(restore_file) > 0)) {
 		fprintf(flog, "unattended: Copy restore file\n");
