@@ -11,6 +11,7 @@ srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/images/urlfilter/copy.gif
 var/ipfire/general-functions.pl
 var/ipfire/extrahd/bin/extrahd.pl
+usr/local/bin/timectrl
 usr/local/bin/rebuild-initrd
 usr/local/bin/scanhd
 usr/local/sbin/setup

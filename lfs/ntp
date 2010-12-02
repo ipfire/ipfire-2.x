@@ -81,5 +81,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo "server  127.127.1.0"			>> /etc/ntp.conf
 	echo "fudge   127.127.1.0 stratum 10"	>> /etc/ntp.conf
 	echo "driftfile /etc/ntp/drift"		>> /etc/ntp.conf
+
+	#Enable it by default...
+	cp -vf $(DIR_SRC)/config/time/* /var/ipfire/time/
+	chmod 644 /var/ipfire/time/*
+	chown nobody:nobody /var/ipfire/time/*
+	ln -s ../init.d/ntp /etc/rc.d/rc0.d/K46ntpd
+	ln -s ../init.d/ntp /etc/rc.d/rc6.d/K46ntpd
+	ln -s ../init.d/ntp /etc/rc.d/rc3.d/S26ntpd
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -16,3 +16,10 @@ usr/sbin/ntpq
 usr/sbin/ntptime
 usr/sbin/ntptrace
 usr/sbin/tickadj
+etc/rc.d/rc0.d/K46ntpd
+etc/rc.d/rc6.d/K46ntpd
+etc/rc.d/rc3.d/S26ntpd
+var/ipfire/time/counter.conf
+var/ipfire/time/enable
+var/ipfire/time/settime.conf
+var/ipfire/time/settings
