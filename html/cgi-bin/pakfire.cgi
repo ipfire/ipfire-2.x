@@ -57,6 +57,12 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 &Header::openpage($Lang::tr{'pakfire configuration'}, 1);
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
+# check if reboot is necessary
+my $reboot = 0;
+if (`find /var/run/need_reboot 2>/dev/null`) {
+	$reboot = 1;	
+}
+
 if ($pakfiresettings{'ACTION'} eq 'install'){
 	$pakfiresettings{'INSPAKS'} =~ s/\|/\ /g;
 	if ("$pakfiresettings{'FORCE'}" eq "on") {
@@ -229,6 +235,12 @@ my $packages_update_age = &General::age("/opt/pakfire/db/lists/packages_list.db"
 
 print <<END;
 	<table width='95%' cellpadding='5' >
+END
+if ($reboot == 1) {
+	print "<tr><td align='center' colspan='2'><font color='red'>$Lang::tr{'needreboot'}!</font></td></tr>";
+	print "<tr><td colspan='2'>&nbsp;</font></td></tr>"
+}
+print <<END;
 		<tr><td width="50%" bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire system state'}:</b>
 				<td width="50%">
 		<tr><td align="center">$Lang::tr{'pakfire core update level'}: $core_release<hr />

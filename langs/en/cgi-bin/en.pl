@@ -1197,6 +1197,7 @@
 'name must only contain characters' => 'Name must only contain characters.',
 'name too long' => 'User\'s full name or system hostname is too long',
 'nat-traversal' => 'Nat Traversal:',
+'needreboot' => 'An update requires a restart',
 'net' => 'Net',
 'net address' => 'net address',
 'net config' => 'Network configuration',

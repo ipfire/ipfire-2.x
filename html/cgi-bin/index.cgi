@@ -39,6 +39,7 @@ my $warnmessage = '';
 my $refresh = "";
 my $ipaddr='';
 
+
 &Header::showhttpheaders();
 
 $cgiparams{'ACTION'} = '';
@@ -56,6 +57,12 @@ my %mainsettings = ();
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 my $connstate = &Header::connectionstatus();
+
+# check if reboot is necessary
+my $reboot = 0;
+if (`find /var/run/need_reboot 2>/dev/null`) {
+	$reboot = 1;	
+}
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'} || $cgiparams{'ACTION'} eq $Lang::tr{'reboot'}) {
 	$refresh = "<meta http-equiv='refresh' content='300;'>";
@@ -428,6 +435,7 @@ foreach my $file (@files) {
 	}
 }
 
+
 if ($warnmessage) {
 	print "<tr><td align='center' bgcolor=$Header::colourred colspan='3'><font color='white'>$warnmessage</font></table>";
 }
@@ -437,8 +445,10 @@ END
 ;
 &Pakfire::dblist("upgrade", "notice");
 print <<END;
-
 END
+if ($reboot == 0) {
+	print "<br /><font color='red'>$Lang::tr{'needreboot'}!</font>";
+}
 } else {
 	my $message='';
 	if ($death) {

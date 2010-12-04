@@ -1195,6 +1195,7 @@
 'name must only contain characters' => 'El nombre solo puede contener caracteres',
 'name too long' => 'Nombre de usuario o de host es demasiado largo',
 'nat-traversal' => 'NAT Transversal:',
+'needreboot' => 'An update requires a restart',
 'net' => 'Red',
 'net address' => 'dirección de red',
 'net config' => 'Configuración de red',
