@@ -41,15 +41,19 @@ sleep 15
 echo
 echo "Download with wget..."
 wget $IPFireISO -O /tmp/download.iso -t3 -U IPFire_NetInstall/2.x
+wget $IPFireISO.md5 -O /tmp/download.iso.md5 -t3 -U IPFire_NetInstall/2.x
 echo
 echo "Checking download..."
-mount /tmp/download.iso -o loop /cdrom 2> /dev/null
-if [ -n "$(ls /cdrom/ipfire-*.tlz 2>/dev/null)" ]; then
-	echo -n "null" > /tmp/source_device
-	echo "Found tarball in /tmp/download.iso"
-	exit 0
-else
-	echo "Found no tarballs in /tmp/download.iso - SKIP"
+md5_file=`md5sum /tmp/download.iso | cut -d" " -f1`
+md5_down=`cat /tmp/download.iso.md5 | cut -d" " -f1`
+if [ "$md5_file" == "$md5_down" ]; then
+	mount /tmp/download.iso -o loop /cdrom 2> /dev/null
+	if [ -n "$(ls /cdrom/ipfire-*.tlz 2>/dev/null)" ]; then
+		echo -n "null" > /tmp/source_device
+		echo "Found tarball in /tmp/download.iso"
+		exit 0
+	fi
+	umount /cdrom 2> /dev/null
 fi
-umount /cdrom 2> /dev/null
+echo "Error - SKIP"
 exit 10

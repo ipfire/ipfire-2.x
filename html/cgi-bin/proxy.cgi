@@ -3888,7 +3888,11 @@ END
 			if (!-z $extgrp) { print FILE "reply_body_max_size 0 deny for_extended_users\n"; }
 		}
 	}
-#FIX ME	print FILE "reply_body_max_size $replybodymaxsize deny all\n\n";
+	
+	if ( $replybodymaxsize != '0' )
+	{
+		print FILE "reply_body_max_size $replybodymaxsize deny all\n\n";
+	}
 
 	print FILE "visible_hostname";
 	if ($proxysettings{'VISIBLE_HOSTNAME'} eq '')
