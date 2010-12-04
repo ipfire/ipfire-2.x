@@ -244,10 +244,10 @@ print <<END;
 		<tr><td width="50%" bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire system state'}:</b>
 				<td width="50%">
 		<tr><td align="center">$Lang::tr{'pakfire core update level'}: $core_release<hr />
-					$Lang::tr{'pakfire last update'} $core_update_age ago<br />
-					$Lang::tr{'pakfire last serverlist update'} $server_update_age ago<br />
-					$Lang::tr{'pakfire last core list update'} $corelist_update_age ago<br />
-					$Lang::tr{'pakfire last package update'} $packages_update_age ago
+					$Lang::tr{'pakfire last update'} $core_update_age $Lang::tr{'pakfire ago'}<br />
+					$Lang::tr{'pakfire last serverlist update'} $server_update_age $Lang::tr{'pakfire ago'}<br />
+					$Lang::tr{'pakfire last core list update'} $corelist_update_age $Lang::tr{'pakfire ago'}<br />
+					$Lang::tr{'pakfire last package update'} $packages_update_age $Lang::tr{'pakfire ago'}
 					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='ACTION' value='update' />
 						<input type='submit' value='$Lang::tr{'calamaris refresh list'}' /><br />

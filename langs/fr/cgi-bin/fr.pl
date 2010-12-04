@@ -1346,6 +1346,7 @@
 'package failed to install' => 'L\'installation du paquet a échoué.',
 'pagerefresh' => 'La page est entrain d\'être rafraichie, veuillez attendre.',
 'pakfire accept all' => 'Voulez-vous installer tout les paquets?',
+'pakfire ago' => '',
 'pakfire available addons' => 'Addons disponibles :',
 'pakfire configuration' => 'Configuration Pakfire',
 'pakfire core update auto' => 'Installer les mises à jours du noyau et des addons automatiquement :',

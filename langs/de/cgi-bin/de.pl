@@ -1321,6 +1321,7 @@
 'package failed to install' => 'Programmpaket konnte nicht installiert werden.',
 'pagerefresh' => 'Seite wird aktualisiert. Bitte warten.',
 'pakfire accept all' => 'Möchten Sie der Installation aller Pakete zustimmen?',
+'pakfire ago' => 'her.',
 'pakfire available addons' => 'Verfügbare Addons:',
 'pakfire configuration' => 'Pakfire Konfiguration',
 'pakfire core update auto' => 'Core und Addon Updates automatisch installieren:',

@@ -1349,6 +1349,7 @@
 'package failed to install' => 'Package failed to install.',
 'pagerefresh' => 'Page is beeing refreshed, please wait.',
 'pakfire accept all' => 'Do you want to install all packages?',
+'pakfire ago' => 'ago.',
 'pakfire available addons' => 'Available Addons:',
 'pakfire configuration' => 'Pakfire Configuration',
 'pakfire core update auto' => 'Install core and addon updates automatically:',
