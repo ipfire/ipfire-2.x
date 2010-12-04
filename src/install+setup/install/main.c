@@ -535,6 +535,9 @@ int main(int argc, char *argv[])
 		replace("/harddisk/etc/inittab", "#7:2345:respawn:", "7:2345:respawn:");
 	}
 
+	/* Set marker that the user has already accepted the gpl */
+	mysystem("/usr/bin/touch /harddisk/var/ipfire/main/gpl_accepted");
+
 	/* Copy restore file from cdrom */
 	if (unattended && (strlen(restore_file) > 0)) {
 		fprintf(flog, "unattended: Copy restore file\n");
