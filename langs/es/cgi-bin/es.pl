@@ -1336,6 +1336,7 @@
 'package failed to install' => 'Falló la instalación del paquete',
 'pagerefresh' => 'La página se está actualiszando, por favor espere.',
 'pakfire accept all' => '¿Desea instalar todos los paquetes?',
+'pakfire ago' => '',
 'pakfire available addons' => 'Addons disponibles:',
 'pakfire configuration' => 'Configuración de Pakfire',
 'pakfire core update auto' => 'Instalar actualizaciones de Core y de addons automáticamente',
