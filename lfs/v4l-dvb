@@ -84,7 +84,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make release VER=$(KVER)-$(VERSUFIX)
+	# Remove backported warning...
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/v4l-dvb_remove_backport_warning.patch
+		cd $(DIR_APP) && make release VER=$(KVER)-$(VERSUFIX)
 	cd $(DIR_APP) && make $(MAKETUNING) all
 	cd $(DIR_APP) && make install
 	ln -sf $(DIR_APP)/ /usr/src/v4l-dvb
