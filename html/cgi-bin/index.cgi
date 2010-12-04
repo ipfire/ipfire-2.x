@@ -446,7 +446,7 @@ END
 &Pakfire::dblist("upgrade", "notice");
 print <<END;
 END
-if ($reboot == 0) {
+if ($reboot == 1) {
 	print "<br /><font color='red'>$Lang::tr{'needreboot'}!</font>";
 }
 } else {
