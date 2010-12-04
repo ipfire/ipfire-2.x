@@ -201,3 +201,4 @@ rm -rf /etc/sysconfig/lm_sensors
 /usr/bin/logger -p syslog.emerg -t kernel "Upgrade finished. If you use a customized grub.cfg"
 /usr/bin/logger -p syslog.emerg -t kernel "Check it before reboot !!!"
 /usr/bin/logger -p syslog.emerg -t kernel " *** Please reboot... *** "
+touch /var/run/need_reboot
