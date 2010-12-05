@@ -491,10 +491,10 @@ END
 if (`find /usr/share/doc/licenses/GPLv3 2>/dev/null`) {
 	print '<textarea rows=\'25\' cols=\'75\' readonly=\'true\'>';
 	print `cat /usr/share/doc/licenses/GPLv3`;
-	print '</textarea>'
+	print '</textarea>';
 }
 else {
-	print '<br /><a href=\'http://www.gnu.org/licenses/gpl-3.0.txt\' target=\'_blank\'>GNU GENERAL PUBLIC LICENSE</a><br />'
+	print '<br /><a href=\'http://www.gnu.org/licenses/gpl-3.0.txt\' target=\'_blank\'>GNU GENERAL PUBLIC LICENSE</a><br />';
 }
 print <<END;
 	<p>
