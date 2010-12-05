@@ -4,8 +4,6 @@ bin/grep
 bin/pwd
 bin/stty
 #boot
-dev/null
-dev/console
 etc/bashrc
 etc/certparams
 etc/e2fsck.conf
@@ -54,8 +52,6 @@ mnt
 root/ipfire
 #sbin
 #srv
-#sys
-tmp
 #usr/bin/perl
 #usr/include
 #usr/lib
@@ -69,9 +65,10 @@ usr/local/bin/httpscert
 usr/local/bin/makegraphs
 usr/local/bin/qosd
 usr/local/bin/readhash
-usr/local/bin/run-parts
-usr/local/bin/scanhd
 usr/local/bin/rebuild-initrd
+usr/local/bin/run-parts
+#usr/local/bin/sanedloop
+usr/local/bin/scanhd
 usr/local/bin/setddns.pl
 usr/local/bin/settime
 usr/local/bin/timecheck
@@ -79,12 +76,9 @@ usr/local/bin/vpn-watch
 #usr/local/include
 #usr/local/lib
 #usr/local/sbin
-#usr/local/share
 #usr/local/share/doc
 #usr/local/share/info
 #usr/local/share/locale
-#usr/local/share/man
-#usr/local/share/man/man1
 #usr/local/share/man/man2
 #usr/local/share/man/man3
 #usr/local/share/man/man4
@@ -99,6 +93,8 @@ usr/local/bin/vpn-watch
 #usr/sbin
 #usr/share
 #usr/share/doc
+#usr/share/doc/licenses
+usr/share/doc/licenses/GPLv3
 #usr/share/info
 #usr/share/locale
 #usr/share/man
@@ -126,6 +122,7 @@ var/log/btmp
 var/log/calamaris
 var/log/counter
 var/log/lastlog
+#var/log/net-traffic.log
 var/log/wtmp
 var/mail
 #var/opt
@@ -133,6 +130,6 @@ var/run
 var/run/utmp
 #var/spool
 var/tmp
-#usr/local/bin/asterisk
-#usr/local/bin/sanedloop
-#var/log/net-traffic.log
+dev/null
+dev/console
+tmp

@@ -22,4 +22,4 @@ usr/local/bin/rebuild-initrd
 usr/local/bin/scanhd
 usr/local/sbin/setup
 usr/bin/ldd
-
+usr/share/doc/licenses/GPLv3
