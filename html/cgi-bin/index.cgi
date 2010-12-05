@@ -139,7 +139,7 @@ my $dialButtonDisabled = "disabled='disabled'";
 &Header::openbigbox('', 'center');
 
 # licence agreement
-if ($cgiparams{'ACTION'} eq 'Yes' && $cgiparams{'gpl_accepted'} eq '1') {
+if ($cgiparams{'ACTION'} eq $Lang::tr{'yes'} && $cgiparams{'gpl_accepted'} eq '1') {
 	system('touch /var/ipfire/main/gpl_accepted')
 }
 if (`find /var/ipfire/main/gpl_accepted 2>/dev/null`) {
