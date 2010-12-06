@@ -520,6 +520,8 @@ buildipfire() {
   ipfiremake rrdtool
   ipfiremake setserial
   ipfiremake setup
+  ipfiremake libdnet
+  ipfiremake daq
   ipfiremake snort
   ipfiremake oinkmaster
   ipfiremake squid
