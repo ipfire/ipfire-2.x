@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
 		replace("/harddisk/boot/grub/grub.conf", "splashimage", "#splashimage");
 		replace("/harddisk/boot/grub/grub.conf", "#serial", "serial");
 		replace("/harddisk/boot/grub/grub.conf", "#terminal", "terminal");
-		replace("/harddisk/boot/grub/grub.conf", " panic=10 ", " console=ttyS0,38400 panic=10 ");
+		replace("/harddisk/boot/grub/grub.conf", " panic=10 ", " console=ttyS0,38400n8 panic=10 ");
 
 		/*inittab*/
 		replace("/harddisk/etc/inittab", "1:2345:respawn:", "#1:2345:respawn:");
@@ -534,6 +534,9 @@ int main(int argc, char *argv[])
 		replace("/harddisk/etc/inittab", "6:2345:respawn:", "#6:2345:respawn:");
 		replace("/harddisk/etc/inittab", "#7:2345:respawn:", "7:2345:respawn:");
 	}
+
+	/* Set marker that the user has already accepted the gpl */
+	mysystem("/usr/bin/touch /harddisk/var/ipfire/main/gpl_accepted");
 
 	/* Copy restore file from cdrom */
 	if (unattended && (strlen(restore_file) > 0)) {

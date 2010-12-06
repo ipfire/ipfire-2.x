@@ -43,6 +43,14 @@ ENTRY=`grep "savedefault" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $ENTRY > /dev/null
 let ENTRY=$_+1
+
+#Check if the system use serial console...
+if [ "$(grep "^serial" /boot/grub/grub.conf)" == "" ]; then
+	console=""
+else
+	console=" console=ttyS0,38400n8"
+fi
+
 #
 # backup grub.conf
 #
@@ -52,7 +60,7 @@ cp /boot/grub/grub.conf /boot/grub/grub-backup-$KVER-pae.conf
 #
 echo "" >> /boot/grub/grub.conf
 echo "title IPFire (PAE-Kernel)" >> /boot/grub/grub.conf
-echo "  kernel /vmlinuz-$KVER-ipfire-pae root=$ROOT panic=10 $MOUNT" >> /boot/grub/grub.conf
+echo "  kernel /vmlinuz-$KVER-ipfire-pae root=$ROOT panic=10$console $MOUNT" >> /boot/grub/grub.conf
 echo "  initrd /ipfirerd-$KVER-pae.img" >> /boot/grub/grub.conf
 echo "  savedefault $ENTRY" >> /boot/grub/grub.conf
 #

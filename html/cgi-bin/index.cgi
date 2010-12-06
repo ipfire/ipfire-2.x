@@ -39,6 +39,7 @@ my $warnmessage = '';
 my $refresh = "";
 my $ipaddr='';
 
+
 &Header::showhttpheaders();
 
 $cgiparams{'ACTION'} = '';
@@ -56,6 +57,14 @@ my %mainsettings = ();
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 my $connstate = &Header::connectionstatus();
+
+# check if reboot is necessary
+my $reboot = 0;
+if (`find /var/run/need_reboot 2>/dev/null`) {
+	$reboot = 1;	
+}
+
+
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'} || $cgiparams{'ACTION'} eq $Lang::tr{'reboot'}) {
 	$refresh = "<meta http-equiv='refresh' content='300;'>";
@@ -128,8 +137,13 @@ my $dialButtonDisabled = "disabled='disabled'";
 
 &Header::openpage($Lang::tr{'main page'}, 1, $refresh);
 &Header::openbigbox('', 'center');
-&Header::openbox('100%', 'center', &Header::cleanhtml(`/bin/uname -n`,"y"));
 
+# licence agreement
+if ($cgiparams{'ACTION'} eq $Lang::tr{'yes'} && $cgiparams{'gpl_accepted'} eq '1') {
+	system('touch /var/ipfire/main/gpl_accepted')
+}
+if (`find /var/ipfire/main/gpl_accepted 2>/dev/null`) {
+&Header::openbox('100%', 'center', &Header::cleanhtml(`/bin/uname -n`,"y"));
 
 
 if ( ( $pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ )) {
@@ -428,6 +442,7 @@ foreach my $file (@files) {
 	}
 }
 
+
 if ($warnmessage) {
 	print "<tr><td align='center' bgcolor=$Header::colourred colspan='3'><font color='white'>$warnmessage</font></table>";
 }
@@ -437,8 +452,10 @@ END
 ;
 &Pakfire::dblist("upgrade", "notice");
 print <<END;
-
 END
+if ($reboot == 1) {
+	print "<br /><br /><font color='red'>$Lang::tr{'needreboot'}!</font>";
+}
 } else {
 	my $message='';
 	if ($death) {
@@ -462,5 +479,37 @@ END
 } 
 
 &Header::closebox();
+}
+
+else {
+&Header::openbox('100%', 'left', $Lang::tr{'gpl license agreement'});
+print <<END;
+	$Lang::tr{'gpl please read carefully the general public license and accept it below'}.
+	<br /><br />
+END
+;	
+if (`find /usr/share/doc/licenses/GPLv3 2>/dev/null`) {
+	print '<textarea rows=\'25\' cols=\'75\' readonly=\'true\'>';
+	print `cat /usr/share/doc/licenses/GPLv3`;
+	print '</textarea>';
+}
+else {
+	print '<br /><a href=\'http://www.gnu.org/licenses/gpl-3.0.txt\' target=\'_blank\'>GNU GENERAL PUBLIC LICENSE</a><br />';
+}
+print <<END;
+	<p>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='checkbox' name='gpl_accepted' value='1'/> $Lang::tr{'gpl i accept these terms and conditions'}.
+			<br/ >
+			<input type='submit' name='ACTION' value=$Lang::tr{'yes'} />
+		</form>
+	</p>
+	<a href='http://www.gnu.org/licenses/translations.html' target='_blank'>$Lang::tr{'gpl unofficial translation of the general public license v3'}</a>
+
+END
+
+&Header::closebox();
+}
+
 &Header::closebigbox();
 &Header::closepage();
