@@ -52,6 +52,9 @@ echo etc/mkinitcpio.d >> /opt/pakfire/tmp/ROOTFILES
 echo lib/initcpio >> /opt/pakfire/tmp/ROOTFILES
 echo sbin/mkinitcpio >> /opt/pakfire/tmp/ROOTFILES
 echo usr/bin/iw >> /opt/pakfire/tmp/ROOTFILES
+echo etc/snort >> /opt/pakfire/tmp/ROOTFILES
+echo usr/lib/snort_* >> /opt/pakfire/tmp/ROOTFILES
+echo usr/lib/squid >> /opt/pakfire/tmp/ROOTFILES
 
 # Backup the files
 tar cjvf /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
@@ -76,6 +79,19 @@ rm -rf /usr/bin/iw
 # Backup grub.conf
 #
 cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
+
+#
+# Stop services to save memory
+#
+/etc/init.d/snort stop
+/etc/init.d/squid stop
+#
+#
+# Remove old snort...
+rm -rf /etc/snort
+rm -rf /usr/lib/snort_*
+# Remove old squid...
+rm -rf /usr/lib/squid
 #
 # Unpack the updated files
 #
@@ -84,12 +100,6 @@ echo Unpack the updated files ...
 #
 tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
 	--no-overwrite-dir
-
-#
-# Stop services to save memory
-#
-/etc/init.d/snort stop
-/etc/init.d/squid stop
 
 # Convert /etc/fstab entries to UUID ...
 #
