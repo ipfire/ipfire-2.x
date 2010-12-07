@@ -4,4 +4,3 @@ etc/ipsec.secrets
 etc/ipsec.user.conf
 etc/ipsec.user.secrets
 var/updatecache
-etc/snort/snort.conf
