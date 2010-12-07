@@ -13,6 +13,7 @@ srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/html/images/urlfilter/copy.gif
 var/ipfire/general-functions.pl
+var/ipfire/graphs.pl
 var/ipfire/extrahd/bin/extrahd.pl
 var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
