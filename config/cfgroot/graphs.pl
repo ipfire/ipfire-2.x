@@ -773,7 +773,7 @@ sub updatehwtempgraph {
 		"-w 600",
 		"-h 125",
 		"-r",
-		"-t ".$Lang::tr{'sensors temp'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period},
+		"-t ".$Lang::tr{'mbmon temp'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
