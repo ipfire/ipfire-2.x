@@ -575,8 +575,6 @@ buildipfire() {
   ipfiremake gnump3d
   ipfiremake libsigc++
   ipfiremake applejuice
-  ipfiremake ocaml
-  ipfiremake mldonkey
   ipfiremake libtorrent
   ipfiremake rtorrent
   ipfiremake ipfireseeder
