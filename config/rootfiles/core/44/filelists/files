@@ -4,6 +4,7 @@ etc/rc.d/init.d/checkfstab
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/squid
 etc/rc.d/init.d/networking/dhcpcd.exe
+etc/rc.d/init.d/networking/red
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
@@ -11,6 +12,7 @@ srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/html/images/urlfilter/copy.gif
 var/ipfire/general-functions.pl
 var/ipfire/graphs.pl

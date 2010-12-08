@@ -773,14 +773,26 @@ print <<END
         <td colspan='2' width='50%'></td>
         <td width='25%'><input type='text' name='CONCENTRATORNAME' value='$pppsettings{'CONCENTRATORNAME'}' /></td>
 </tr>
-<tr>
-        <td width='25%'>MTU</td>
-        <td colspan='2' width='50%'></td>
-        <td width='25%'><input type='text' name='MTU' value='$pppsettings{'MTU'}' /></td>
-</tr>
 END
 ;
 }
+
+print <<END
+<tr><td colspan='4' width='100%'><br></br></td></tr>
+<tr>
+        <td bgcolor='$color{'color20'}' colspan='4' width='100%'><b>MTU/MRU</b></td>
+</tr>
+<tr>
+<tr>
+        <td width='25%'>MTU</td>
+        <td width='25%'><input type='text' name='MTU' value='$pppsettings{'MTU'}' /></td>
+</tr>
+<tr>
+        <td width='25%'>MRU</td>
+        <td width='25%'><input type='text' name='MRU' value='$pppsettings{'MRU'}' /></td>
+</tr>
+END
+;
 
 print <<END
 <tr><td colspan='4' width='100%'><br></br></td></tr>
