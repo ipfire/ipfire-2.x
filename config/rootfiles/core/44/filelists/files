@@ -27,5 +27,6 @@ usr/local/bin/timectrl
 usr/local/bin/rebuild-initrd
 usr/local/bin/scanhd
 usr/local/sbin/setup
+usr/local/share/GeoIP/GeoIP.dat
 usr/bin/ldd
 usr/share/doc/licenses/GPLv3
