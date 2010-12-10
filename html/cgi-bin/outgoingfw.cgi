@@ -699,7 +699,8 @@ END
 ;
 	my @ipgroups = qx(ls $configpath/ipgroups/);
 	foreach (sort @ipgroups){
-		print "\t\t\t\t\t<option value='$_' $selected{'SNET'}{'$_'}>$_</option>\n";
+		chomp($_);
+		print "\t\t\t\t\t<option value='$_' $selected{'SNET'}{$_}>$_</option>\n";
 	}
 	print <<END
 					</optgroup>
@@ -708,7 +709,8 @@ END
 ;
 	my @macgroups = qx(ls $configpath/macgroups/);
 	foreach (sort @macgroups){
-		print "\t\t\t\t\t<option value='$_' $selected{'SNET'}{'$_'}>$_</option>\n";
+		chomp($_);
+		print "\t\t\t\t\t<option value='$_' $selected{'SNET'}{$_}>$_</option>\n";
 	}
 	print <<END
 					</optgroup>

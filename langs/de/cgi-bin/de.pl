@@ -1275,6 +1275,8 @@
 'outgoing firewall' => 'Ausgehende Firewall',
 'outgoing firewall add ip group' => 'IP Adressgruppen hinzufügen',
 'outgoing firewall add mac group' => 'MAC Adressgruppen hinzufügen',
+'outgoing firewall edit ip group' => 'IP Adressgruppen bearbeiten',
+'outgoing firewall edit mac group' => 'MAC Adressgruppen bearbeiten',
 'outgoing firewall group error' => 'Eine Gruppe mit dem selben Namen existiert bereits.',
 'outgoing firewall groups' => 'Firewall Gruppen',
 'outgoing firewall ip groups' => 'Ausgehende Firewall IP Adressgruppen',

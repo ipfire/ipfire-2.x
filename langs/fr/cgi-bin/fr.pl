@@ -1300,6 +1300,8 @@
 'outgoing firewall' => 'Pare-feu sortant',
 'outgoing firewall add ip group' => 'Ajouter un groupe d\'adresses IP',
 'outgoing firewall add mac group' => 'Ajouter un groupe d\'adresses MAC',
+'outgoing firewall edit ip group' => 'Modifier un groupe d\'adresses IP',
+'outgoing firewall edit mac group' => 'Modifier un groupe d\'adresses MAC',
 'outgoing firewall group error' => 'Un groupe portant le même nom existe.',
 'outgoing firewall groups' => 'Groupes de pare-feu',
 'outgoing firewall ip groups' => 'Groupes d\'adresses IP du pare-feu sortant',
