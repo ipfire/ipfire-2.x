@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -48,8 +48,8 @@ my $partitionentry = "";
 my $devicefile = "/var/ipfire/extrahd/devices";
 my $scanfile = "/var/ipfire/extrahd/scan";
 my $partitionsfile = "/var/ipfire/extrahd/partitions";
-system("/usr/local/bin/scanhd ide");
-system("/usr/local/bin/scanhd partitions");
+system("/usr/local/bin/extrahdctrl scanhd ide");
+system("/usr/local/bin/extrahdctrl scanhd partitions");
 
 &Header::showhttpheaders();
 
@@ -181,7 +181,7 @@ END
 		@scanline = split( /\;/, $scanentry );
 		print <<END
 			<tr><td colspan="5">&nbsp;
-			<tr><td align='center'><b>/dev/$scanline[0]</b>
+			<tr><td align='left' colspan="2"><b>/dev/$scanline[0]</b>
 				<td align='center' colspan="2">$scanline[1]
 END
 ;
@@ -206,9 +206,11 @@ END
 				$size = int($partitionline[1] / 1024);
 				print <<END
 				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<tr><td align="center">/dev/$partitionline[0]
+				<tr><td align="left" colspan=5><b>UUID=$partitionline[2]</b></td></tr>
+				<tr>
+				<td align="list">/dev/$partitionline[0]</td>
 				<td align="center">$Lang::tr{'size'} $size MB
-				<td align='center'><select name="FS">
+				<td align="center"><select name="FS">
 										<option value="auto">auto</option>
 										<option value="ext3">ext3</option>
 										<option value="reiserfs">reiserfs</option>
