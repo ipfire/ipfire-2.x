@@ -65,9 +65,9 @@ $selected{'macgroup'}{$outgrpsettings{'macgroup'}} = "selected='selected'";
 # my $debugCount = 0;
 # foreach my $line (sort keys %outgrpsettings) {
 # print "$line = $outgrpsettings{$line}<br />\n";
- # $debugCount++;
+# $debugCount++;
 # }
-# print "&nbsp;Count: $debugCount\n";
+# print "Count: $debugCount\n";
 # &Header::closebox();
 # DEBUG DEBUG
 ###############
@@ -78,6 +78,9 @@ $selected{'macgroup'}{$outgrpsettings{'macgroup'}} = "selected='selected'";
 if ($outgrpsettings{'ACTION'} eq 'newipgroup')
 {
 	&newipgroup();
+}elsif ($outgrpsettings{'ACTION'} eq 'editipgroup')
+{
+	&editipgroup();
 } elsif ($outgrpsettings{'ACTION'} eq 'deleteipgroup' ) {
 	unlink("$configpath/ipgroups/$outgrpsettings{'ipgroup'}");
 } elsif ($outgrpsettings{'ACTION'} eq 'addipgroup') {
@@ -90,6 +93,7 @@ if ($outgrpsettings{'ACTION'} eq 'newipgroup')
 		$errormessage =  "$Lang::tr{'outgoing firewall reserved groupname'}";
 	} else {
 		open (FILE, ">$configpath/ipgroups/$outgrpsettings{'ipgroup'}") or die "Can't save $outgrpsettings{'ipgroup'} settings $!";
+		$outgrpsettings{'ipgroupcontent'} =~ s/\s*$//;
 		flock (FILE, 2);
 		print FILE $outgrpsettings{'ipgroupcontent'}."\n";
 		close FILE;
@@ -99,7 +103,10 @@ if ($outgrpsettings{'ACTION'} eq 'newipgroup')
 if ($outgrpsettings{'ACTION'} eq 'newmacgroup')
 {
 	&newmacgroup();
-} elsif ($outgrpsettings{'ACTION'} eq 'deletemacgroup' ) {
+}elsif ($outgrpsettings{'ACTION'} eq 'editmacgroup')
+{
+	&editmacgroup();
+}elsif ($outgrpsettings{'ACTION'} eq 'deletemacgroup' ) {
 	unlink("$configpath/macgroups/$outgrpsettings{'macgroup'}");
 } elsif ($outgrpsettings{'ACTION'} eq 'addmacgroup') {
 
@@ -111,6 +118,7 @@ if ($outgrpsettings{'ACTION'} eq 'newmacgroup')
 		$errormessage =  "$Lang::tr{'outgoing firewall reserved groupname'}";
 	} else {
 		open (FILE, ">$configpath/macgroups/$outgrpsettings{'macgroup'}") or die "Can't save $outgrpsettings{'macgroup'} settings $!";
+		$outgrpsettings{'macgroupcontent'} =~ s/\s*$//;
 		flock (FILE, 2);
 		print FILE $outgrpsettings{'macgroupcontent'}."\n";
 		close FILE;
@@ -176,20 +184,27 @@ print <<END
 <table width='10%' cellspacing='0'>
 <tr>
 	<td align='center'>
-		<form method='post' action='$ENV{'SCRIPT_NAME'}#outgoing showipgroup'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='hidden' name='ACTION' value='editipgroup' />
+			<input type='hidden' name='ipgroup' value='$outgrpsettings{'ipgroup'}' />
+			<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
+		</form>
+	</td>
+	<td align='center'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='ACTION' value='newipgroup' />
 			<input type='image' alt='$Lang::tr{'new'}' title='$Lang::tr{'new'}' src='/images/list-add.png' />
 		</form>
 	</td>
 	<td align='center'>
-		<form method='post' action='$ENV{'SCRIPT_NAME'}#outgoing showipgroup'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='ACTION' value='saveipgroup' />
 			<input type='hidden' name='ipgroup' value='$outgrpsettings{'ipgroup'}' />
 			<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' />
 		</form>
 	</td>
 	<td align='center'>
-		<form method='post' action='$ENV{'SCRIPT_NAME'}#outgoing showipgroup'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='ACTION' value='deleteipgroup' />
 			<input type='hidden' name='ipgroup' value='$outgrpsettings{'ipgroup'}' />
 			<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
@@ -253,20 +268,27 @@ print <<END
 <table width='10%' cellspacing='0'>
 <tr>
 	<td align='center'>
-		<form method='post' action='$ENV{'SCRIPT_NAME'}#outgoing showmacgroup'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='hidden' name='ACTION' value='editmacgroup' />
+			<input type='hidden' name='macgroup' value='$outgrpsettings{'macgroup'}' />
+			<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
+		</form>
+	</td>
+	<td align='center'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='ACTION' value='newmacgroup' />
 			<input type='image' alt='$Lang::tr{'new'}' title='$Lang::tr{'new'}' src='/images/list-add.png' />
 		</form>
 	</td>
 	<td align='center'>
-		<form method='post' action='$ENV{'SCRIPT_NAME'}#outgoing showmacgroup'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='ACTION' value='savemacgroup' />
 			<input type='hidden' name='macgroup' value='$outgrpsettings{'macgroup'}' />
 			<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' />
 		</form>
 	</td>
 	<td align='center'>
-		<form method='post' action='$ENV{'SCRIPT_NAME'}#outgoing showmacgroup'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='ACTION' value='deletemacgroup' />
 			<input type='hidden' name='macgroup' value='$outgrpsettings{'macgroup'}' />
 			<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
@@ -302,7 +324,7 @@ print <<END
 		</tr>
 		<tr>
 			<td  align='left' colspan='2'>
-				<input type='text' name='ipgroup' value='newgroup' size="30" />
+				<input type='text' name='ipgroup' value='newipgroup' size="30" />
 			</td>
 			<td  align='left'>
 				<input type='hidden' name='ACTION' value='addipgroup' />
@@ -311,7 +333,46 @@ print <<END
 		</tr>
 		<tr>
 			<td  align='left' colspan='3'>
-				<textarea name="ipgroupcontent" cols="20" rows="5" Wrap="off">192.168.1.0/24\n192.168.3.0/255.255.255.0\n192.168.0.1\n192.168.0.2\n</textarea>
+				<textarea name="ipgroupcontent" cols="40" rows="5" Wrap="off">192.168.1.0/24\n192.168.3.0/255.255.255.0\n192.168.0.1\n192.168.0.2\n</textarea>
+			</td>
+		</tr>
+	</table>
+	</form>
+END
+;
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit 0;
+}
+
+sub editipgroup
+{
+my $ipgroupcontent = `cat $configpath/ipgroups/$outgrpsettings{'ipgroup'} 2>/dev/null`;
+
+	&Header::openbox('100%', 'center', $Lang::tr{'outgoing firewall edit ip group'});
+
+print <<END
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='95%' cellspacing='0'>
+		<tr>
+			<td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'outgoing firewall edit ip group'}</b></td>
+		</tr>
+		<tr>
+			<td colspan='3'  align='left'><br /></td>
+		</tr>
+		<tr>
+			<td  align='left' colspan='2'>
+				<input type='text' name='ipgroup' value='$outgrpsettings{'ipgroup'}' size='30' readonly style='color:$color{'color20'}'/>
+			</td>
+			<td  align='left'>
+				<input type='hidden' name='ACTION' value='addipgroup' />
+				<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' />
+			</td>
+		</tr>
+		<tr>
+			<td  align='left' colspan='3'>
+				<textarea name="ipgroupcontent" cols="40" rows="5" Wrap="off">$ipgroupcontent</textarea>
 			</td>
 		</tr>
 	</table>
@@ -339,7 +400,7 @@ print <<END
 		</tr>
 		<tr>
 			<td  align='left' colspan='2'>
-				<input type='text' name='macgroup' value='newgroup' size="30" />
+				<input type='text' name='macgroup' value='newmacgroup' size="30" />
 			</td>
 			<td  align='left'>
 				<input type='hidden' name='ACTION' value='addmacgroup' />
@@ -349,6 +410,45 @@ print <<END
 		<tr>
 			<td  align='left' colspan='3'>
 				<textarea name="macgroupcontent" cols="20" rows="5" Wrap="off">00:24:F6:04:5F:2b\n14:26:36:5A:5F:2B\n</textarea>
+			</td>
+		</tr>
+	</table>
+	</form>
+END
+;
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit 0;
+}
+
+sub editmacgroup
+{
+my $macgroupcontent = `cat $configpath/macgroups/$outgrpsettings{'macgroup'} 2>/dev/null`;
+
+	&Header::openbox('100%', 'center', $Lang::tr{'outgoing firewall edit mac group'});
+
+print <<END
+	<form method='post' action='$ENV{'SCRIPT_NAME'}#outgoing editmacgroup'>
+	<table width='95%' cellspacing='0'>
+		<tr>
+			<td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'outgoing firewall edit mac group'}</b></td>
+		</tr>
+		<tr>
+			<td colspan='3'  align='left'><br /></td>
+		</tr>
+		<tr>
+			<td  align='left' colspan='2'>
+				<input type='text' name='macgroup' value='$outgrpsettings{'macgroup'}' size='30' readonly style='color:$color{'color20'}'/>
+			</td>
+			<td  align='left'>
+				<input type='hidden' name='ACTION' value='addmacgroup' />
+				<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' />
+			</td>
+		</tr>
+		<tr>
+			<td  align='left' colspan='3'>
+				<textarea name="macgroupcontent" cols="20" rows="5" Wrap="off">$macgroupcontent</textarea>
 			</td>
 		</tr>
 	</table>

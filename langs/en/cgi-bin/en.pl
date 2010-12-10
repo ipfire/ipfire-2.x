@@ -1303,6 +1303,8 @@
 'outgoing firewall' => 'Outgoing Firewall',
 'outgoing firewall add ip group' => 'Add IP Address Group',
 'outgoing firewall add mac group' => 'Add MAC Address Group',
+'outgoing firewall edit ip group' => 'Edit IP Address Group',
+'outgoing firewall edit mac group' => 'Edit MAC Address Group',
 'outgoing firewall group error' => 'A group with the same name exists.',
 'outgoing firewall groups' => 'Firewall Groups',
 'outgoing firewall ip groups' => 'Outgoing Firewall IP Address Groups',
