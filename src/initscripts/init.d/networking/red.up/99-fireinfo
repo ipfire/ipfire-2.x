@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Send the fireinfo profile after first boot (if enabled)
+
+INDICATION="/var/run/fireinfo"
+
+if [ ! -e "${INDICATION}" ]; then
+	/usr/bin/sendprofile >/dev/null 2>&1
+
+	touch ${INDICATION}
+fi
+
+exit 0
