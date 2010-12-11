@@ -19,9 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Path for testing. Need to be changed for release!
-IPFireISO=people.ipfire.org/~arne_f/testing/next/ipfire.iso
-#IPFireISO=download.ipfire.org/iso/ipfire.iso
+IPFireISO=download.ipfire.org/iso/ipfire.iso
 
 #Get user defined download from boot cmdline
 grep "netinstall=" /proc/cmdline > /dev/null && CMDLINE=1
