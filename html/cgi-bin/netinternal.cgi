@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -64,7 +64,7 @@ if ( $querry[0] =~ /wireless/ ){
 	if ($netsettings{'BLUE_DEV'}) {push (@graphs, ($netsettings{'BLUE_DEV'})); }
 	if ($netsettings{'ORANGE_DEV'}) {push (@graphs, ($netsettings{'ORANGE_DEV'})); }
 
-	my @wirelessgraphs = `ls -dA /var/log/rrd/collectd/localhost/wireless*`;
+	my @wirelessgraphs = `ls -dA /var/log/rrd/collectd/localhost/wireless* 2>/dev/null`;
 	foreach (@wirelessgraphs){
 		$_ =~ /(.*)\/wireless-(.*)/;
 		push(@wireless,$2);

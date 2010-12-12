@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -56,7 +56,7 @@ if ( $querry[0] =~ "memory"){
 	&Graphs::makegraphbox("memory.cgi","memory","day");
 	&Header::closebox();
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/swap` ) {
+	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/swap 2>/dev/null` ) {
 	    &Header::openbox('100%', 'center', "Swap $Lang::tr{'graph'}");
 	    &Graphs::makegraphbox("memory.cgi","swap","day");
 	    &Header::closebox();
