@@ -553,7 +553,7 @@ int main(int argc, char *argv[])
 	if (!unattended) {
 		sprintf(message, ctr[TR_CONGRATULATIONS_LONG],
 				NAME, SNAME, NAME);
-		newtWinMessage(ctr[TR_CONGRATULATIONS], ctr[TR_OK], message);
+		newtWinMessage(ctr[TR_CONGRATULATIONS], ctr[TR_PRESS_OK_TO_REBOOT], message);
 	}
 
 	allok = 1;
