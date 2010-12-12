@@ -605,13 +605,13 @@ EXIT:
 
 	newtFinished();
 
-	system("/bin/umount /harddisk/proc");
-	system("/bin/umount /harddisk/dev");
-	system("/bin/umount /harddisk/sys");
+	system("/bin/umount /harddisk/proc >/dev/null 2>&1");
+	system("/bin/umount /harddisk/dev >/dev/null 2>&1");
+	system("/bin/umount /harddisk/sys >/dev/null 2>&1");
 
-	system("/bin/umount /harddisk/var");
-	system("/bin/umount /harddisk/boot");
-	system("/bin/umount /harddisk");
+	system("/bin/umount /harddisk/var >/dev/null 2>&1");
+	system("/bin/umount /harddisk/boot >/dev/null 2>&1");
+	system("/bin/umount /harddisk >/dev/null 2>&1");
 
 	if (!(allok))
 		system("/etc/halt");
