@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -53,7 +53,7 @@ if ( $mainsettings{'RRDLOG'} eq "" ){
 
 my $count = 0;
 my @sensorsgraphs = ();
-my @sensorsdir = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/`;
+my @sensorsdir = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/ 2>/dev/null`;
 foreach (@sensorsdir){
 	chomp($_);chop($_);
 	foreach (`ls $_/*`){
@@ -100,7 +100,7 @@ sub makegraphbox {
 # collectd we are now able to handle any kind of cpucount
 
 sub updatecpugraph {
-	my $cpucount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/cpu-*/ | wc -l`;
+	my $cpucount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/cpu-*/ 2>/dev/null | wc -l`;
 	my $period    = $_[0];
 	my @command = (
 		"-",
@@ -996,7 +996,7 @@ sub updateqosgraph {
 # Generate the CPU Frequency Graph for the current period of time for values given by collectd an lm_sensors
 
 sub updatecpufreqgraph {
-	my $cpucount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/cpu-*/ | wc -l`;
+	my $cpucount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/cpu-*/ 2>/dev/null | wc -l`;
 	my $period    = $_[0];
 	my @command = (
 		"-",
@@ -1042,7 +1042,7 @@ sub updatecpufreqgraph {
 # Generate the Thermal Zone Temp CPU Graph
 
 sub updatethermaltempgraph {
-	my $thermalcount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone* | wc -l 2>/dev/null`;
+	my $thermalcount = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone* 2>/dev/null | wc -l`;
 	my $period    = $_[0];
 	my @command = (
 		"-",
@@ -1097,6 +1097,6 @@ sub random_hex_color {
 }
 
 sub getprocesses {
-	my @processesgraph = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/processes-*/`;
+	my @processesgraph = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/processes-*/ 2>/dev/null`;
 	return @processesgraph;
 }

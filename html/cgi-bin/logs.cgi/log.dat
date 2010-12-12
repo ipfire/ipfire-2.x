@@ -26,10 +26,6 @@ my %mainsettings = ();
 
 use POSIX();
 
-#workaround to suppress a warning when a variable is used only once
-my @dummy = ( ${Header::table2colour} );
-undef (@dummy);
-
 my %cgiparams=();
 my %logsettings=();
 my $errormessage = '';
@@ -171,7 +167,7 @@ my $date = $cgiparams{'DAY'} == 0 ? '' :  $cgiparams{'DAY'} <= 9 ? "0$cgiparams{
     # calculate end of active week (saturday 23H59)
     my @then = ();
     @then = localtime(time());
-    my $sunday = POSIX::mktime( 0, 0, 0, @then[3], @then[4], @then[5]);
+    my $sunday = POSIX::mktime( 0, 0, 0, $then[3], $then[4], $then[5]);
     $sunday += (6-$then[6]) * 86400;
 
     # Convert delta in second to full weeks

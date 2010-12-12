@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -93,7 +93,7 @@ if ( $querry[0] =~ "hwtemp"){
 		&General::writehash("${General::swroot}/sensors/settings", \%sensorsettings);
 	}
 
-	my @disks = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
+	my @disks = `kudzu -qps -c HD 2>/dev/null | grep device: | cut -d" " -f2 | sort | uniq`;
 
 	foreach (@disks){
 		my $disk = $_;
@@ -105,31 +105,31 @@ if ( $querry[0] =~ "hwtemp"){
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone*` ) {
+	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone* 2>/dev/null` ) {
 		&Header::openbox('100%', 'center', "ACPI Thermal-Zone Temp $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","thermaltemp","day");
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/temperature-*` ) {
+	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/temperature-* 2>/dev/null` ) {
 		&Header::openbox('100%', 'center', "hwtemp $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day","375");
 		Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/fanspeed-*` ) {
+	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/fanspeed-* 2>/dev/null` ) {
 		&Header::openbox('100%', 'center', "hwfan $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","hwfan","day");
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/voltage-*` ) {
+	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/voltage-* 2>/dev/null` ) {
 		&Header::openbox('100%', 'center', "hwvolt $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","hwvolt","day","435");
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*` ) {
+	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-* 2>/dev/null` ) {
 		sensorsbox();
 	}
 	&Header::closebigbox();
