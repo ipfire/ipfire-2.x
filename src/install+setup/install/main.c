@@ -151,10 +151,10 @@ int main(int argc, char *argv[])
 
 	newtPushHelpLine(ctr[TR_HELPLINE]);
 
-	sprintf(message, ctr[TR_WELCOME], NAME);
-	newtWinMessage(title, ctr[TR_OK], message);
-
 	if (!unattended) {
+		sprintf(message, ctr[TR_WELCOME], NAME);
+		newtWinMessage(title, ctr[TR_OK], message);
+
 		if (disclaimerbox(discl_msg)==0) {
 			errorbox(ctr[TR_LICENSE_NOT_ACCEPTED]);
 			goto EXIT;
