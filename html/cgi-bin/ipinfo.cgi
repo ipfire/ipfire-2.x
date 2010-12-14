@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -39,8 +39,6 @@ my %cgiparams=();
 $ENV{'QUERY_STRING'} =~s/&//g;
 my @addrs = split(/ip=/,$ENV{'QUERY_STRING'});
 
-my %whois_servers = ("RIPE"=>"whois.ripe.net","APNIC"=>"whois.apnic.net","LACNIC"=>"whois.lacnic.net");
-
 &Header::openpage($Lang::tr{'ip info'}, 1, '');
 
 &Header::openbigbox('100%', 'left');
@@ -58,15 +56,15 @@ next if $addr eq "";
 	my $sock = new IO::Socket::INET ( PeerAddr => $whoisname, PeerPort => 43, Proto => 'tcp');
 	if ($sock)
 	{
-		print $sock "$addr\n";
+		print $sock "n $addr\n";
 		while (<$sock>) {
-			$extraquery = $1 if (/NetType:    Allocated to (\S+)\s+/);
+			$extraquery = $1 if (/ReferralServer: whois:\/\/(\S+)\s+/);
 			push(@lines,$_);
 		}
 		close($sock);
 		if ($extraquery) {
 			undef (@lines);
-			$whoisname = $whois_servers{$extraquery};
+			$whoisname = $extraquery;
 			my $sock = new IO::Socket::INET ( PeerAddr => $whoisname, PeerPort => 43, Proto => 'tcp');
 			if ($sock)
 			{
