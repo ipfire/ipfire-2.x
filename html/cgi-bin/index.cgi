@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -58,20 +58,14 @@ my %mainsettings = ();
 
 my $connstate = &Header::connectionstatus();
 
-# check if reboot is necessary
-my $reboot = 0;
-if (`find /var/run/need_reboot 2>/dev/null`) {
-	$reboot = 1;	
-}
-
-
-
+	if ( -e "/var/ipfire/main/gpl-acceted" ) {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'} || $cgiparams{'ACTION'} eq $Lang::tr{'reboot'}) {
 	$refresh = "<meta http-equiv='refresh' content='300;'>";
 } elsif ($connstate =~ /$Lang::tr{'connecting'}/ || /$Lang::tr{'connection closed'}/ ){
 	$refresh = "<meta http-equiv='refresh' content='5;'>";
 } elsif ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refreshindex") {
 	$refresh = "<meta http-equiv='refresh' content='30;'>";
+}
 }
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'dial profile'})
@@ -142,7 +136,7 @@ my $dialButtonDisabled = "disabled='disabled'";
 if ($cgiparams{'ACTION'} eq $Lang::tr{'yes'} && $cgiparams{'gpl_accepted'} eq '1') {
 	system('touch /var/ipfire/main/gpl_accepted')
 }
-if (`find /var/ipfire/main/gpl_accepted 2>/dev/null`) {
+if ( -e "/var/ipfire/main/gpl_accepted" ) {
 &Header::openbox('100%', 'center', &Header::cleanhtml(`/bin/uname -n`,"y"));
 
 
@@ -453,7 +447,7 @@ END
 &Pakfire::dblist("upgrade", "notice");
 print <<END;
 END
-if ($reboot == 1) {
+if ( -e "/var/run/need_reboot" ) {
 	print "<br /><br /><font color='red'>$Lang::tr{'needreboot'}!</font>";
 }
 } else {
@@ -488,7 +482,7 @@ print <<END;
 	<br /><br />
 END
 ;	
-if (`find /usr/share/doc/licenses/GPLv3 2>/dev/null`) {
+if ( -e "/usr/share/doc/licenses/GPLv3" ) {
 	print '<textarea rows=\'25\' cols=\'75\' readonly=\'true\'>';
 	print `cat /usr/share/doc/licenses/GPLv3`;
 	print '</textarea>';
