@@ -193,7 +193,8 @@ print <<END
 END
 ;
 foreach (@backups){
-	chomp($_);
+if ( $_ !~ /ipf$/){next;}
+chomp($_);
 my $Datei = "/var/ipfire/backup/".$_;
 my @Info = stat($Datei);
 my $Size = $Info[7] / 1024 / 1024;
@@ -202,6 +203,7 @@ print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Siz
 print "<td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='delete' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' /></form></td></tr>";
 }
 foreach (@backupisos){
+if ( $_ !~ /iso$/){next;}
 chomp($_);
 my $Datei = "/var/tmp/backupiso/".$_;
 my @Info = stat($Datei);
