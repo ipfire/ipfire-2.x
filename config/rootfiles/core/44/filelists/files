@@ -7,7 +7,9 @@ etc/rc.d/init.d/networking/dhcpcd.exe
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/networking/red.up/99-fireinfo
 srv/web/ipfire/cgi-bin/extrahd.cgi
+srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
