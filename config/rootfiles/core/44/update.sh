@@ -101,6 +101,12 @@ echo Unpack the updated files ...
 tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
 	--no-overwrite-dir
 
+# Re-read crontab
+fcrontab -z
+
+# Remove old pakfire cronjob.
+rm -f /etc/fcron.daily/pakfire-update
+
 # Convert /etc/fstab entries to UUID ...
 #
 echo Convert fstab entries to UUID ...
