@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -35,6 +35,8 @@ my %cgiparams=();
 my %checked = ();
 my $message = "";
 my $errormessage = "";
+my @backups = "";
+my @backupisos = "";
 
 $a = new CGI;
 
@@ -150,8 +152,13 @@ if ( $message ne "" ){
 	&Header::closebox();
 }
 
-my @backups = `cd /var/ipfire/backup/ && ls *.ipf 2>/dev/null`;
-my @backupisos = `cd /var/tmp/backupiso/ && ls *.iso 2>/dev/null`;
+if ( -e "/var/ipfire/backup/" ){
+	@backups = `cd /var/ipfire/backup/ && ls *.ipf 2>/dev/null`;
+}
+
+if ( -e "/var/tmp/backupiso/" ){
+	@backupisos = `cd /var/tmp/backupiso/ && ls *.iso 2>/dev/null`;
+}
 
 &Header::openbox('100%', 'center', $Lang::tr{'backup'});
 
@@ -186,7 +193,7 @@ print <<END
 END
 ;
 foreach (@backups){
-chomp($_);
+	chomp($_);
 my $Datei = "/var/ipfire/backup/".$_;
 my @Info = stat($Datei);
 my $Size = $Info[7] / 1024 / 1024;

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -275,7 +275,7 @@ sub isrunningaddon{
 	my $exename;
 	my @memory;
 
-	my $testcmd = `/usr/local/bin/addonctrl $_ status`;
+	my $testcmd = `/usr/local/bin/addonctrl $_ status 2>/dev/null`;
 
 	if ( $testcmd =~ /is\ running/ && $testcmd !~ /is\ not\ running/){
 		$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
