@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 #
-KVER="2.6.32.26"
+KVER="2.6.32.27"
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
@@ -100,6 +100,12 @@ echo Unpack the updated files ...
 #
 tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
 	--no-overwrite-dir
+
+# Re-read crontab
+fcrontab -z
+
+# Remove old pakfire cronjob.
+rm -f /etc/fcron.daily/pakfire-update
 
 # Convert /etc/fstab entries to UUID ...
 #

@@ -151,10 +151,10 @@ int main(int argc, char *argv[])
 
 	newtPushHelpLine(ctr[TR_HELPLINE]);
 
-	sprintf(message, ctr[TR_WELCOME], NAME);
-	newtWinMessage(title, ctr[TR_OK], message);
-
 	if (!unattended) {
+		sprintf(message, ctr[TR_WELCOME], NAME);
+		newtWinMessage(title, ctr[TR_OK], message);
+
 		if (disclaimerbox(discl_msg)==0) {
 			errorbox(ctr[TR_LICENSE_NOT_ACCEPTED]);
 			goto EXIT;
@@ -553,7 +553,7 @@ int main(int argc, char *argv[])
 	if (!unattended) {
 		sprintf(message, ctr[TR_CONGRATULATIONS_LONG],
 				NAME, SNAME, NAME);
-		newtWinMessage(ctr[TR_CONGRATULATIONS], ctr[TR_OK], message);
+		newtWinMessage(ctr[TR_CONGRATULATIONS], ctr[TR_PRESS_OK_TO_REBOOT], message);
 	}
 
 	allok = 1;
@@ -605,13 +605,13 @@ EXIT:
 
 	newtFinished();
 
-	system("/bin/umount /harddisk/proc");
-	system("/bin/umount /harddisk/dev");
-	system("/bin/umount /harddisk/sys");
+	system("/bin/umount /harddisk/proc >/dev/null 2>&1");
+	system("/bin/umount /harddisk/dev >/dev/null 2>&1");
+	system("/bin/umount /harddisk/sys >/dev/null 2>&1");
 
-	system("/bin/umount /harddisk/var");
-	system("/bin/umount /harddisk/boot");
-	system("/bin/umount /harddisk");
+	system("/bin/umount /harddisk/var >/dev/null 2>&1");
+	system("/bin/umount /harddisk/boot >/dev/null 2>&1");
+	system("/bin/umount /harddisk >/dev/null 2>&1");
 
 	if (!(allok))
 		system("/etc/halt");

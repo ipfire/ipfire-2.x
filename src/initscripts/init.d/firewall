@@ -188,10 +188,10 @@ case "$1" in
 	/sbin/iptables -A FORWARD -j OUTGOINGFW
 
 	# localhost and ethernet.
-	/sbin/iptables -I INPUT 1 -i lo -s 127.0.0.0/8 -d 127.0.0.0/8 -m state --state NEW -j ACCEPT
+	/sbin/iptables -I INPUT 1 -i lo -m state --state NEW -j ACCEPT
 	/sbin/iptables -A INPUT   -s 127.0.0.0/8 -m state --state NEW -j DROP   # Loopback not on lo
 	/sbin/iptables -A INPUT   -d 127.0.0.0/8 -m state --state NEW -j DROP
-	/sbin/iptables -A FORWARD -i lo -s 127.0.0.0/8 -d 127.0.0.0/8 -m state --state NEW -j ACCEPT
+	/sbin/iptables -A FORWARD -i lo -m state --state NEW -j ACCEPT
 	/sbin/iptables -A FORWARD -s 127.0.0.0/8 -m state --state NEW -j DROP
 	/sbin/iptables -A FORWARD -d 127.0.0.0/8 -m state --state NEW -j DROP
 	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m state --state NEW -j ACCEPT ! -p icmp
