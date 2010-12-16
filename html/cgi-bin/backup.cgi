@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -35,6 +35,8 @@ my %cgiparams=();
 my %checked = ();
 my $message = "";
 my $errormessage = "";
+my @backups = "";
+my @backupisos = "";
 
 $a = new CGI;
 
@@ -150,8 +152,13 @@ if ( $message ne "" ){
 	&Header::closebox();
 }
 
-my @backups = `cd /var/ipfire/backup/ && ls *.ipf 2>/dev/null`;
-my @backupisos = `cd /var/tmp/backupiso/ && ls *.iso 2>/dev/null`;
+if ( -e "/var/ipfire/backup/" ){
+	@backups = `cd /var/ipfire/backup/ && ls *.ipf 2>/dev/null`;
+}
+
+if ( -e "/var/tmp/backupiso/" ){
+	@backupisos = `cd /var/tmp/backupiso/ && ls *.iso 2>/dev/null`;
+}
 
 &Header::openbox('100%', 'center', $Lang::tr{'backup'});
 
@@ -186,6 +193,7 @@ print <<END
 END
 ;
 foreach (@backups){
+if ( $_ !~ /ipf$/){next;}
 chomp($_);
 my $Datei = "/var/ipfire/backup/".$_;
 my @Info = stat($Datei);
@@ -195,6 +203,7 @@ print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Siz
 print "<td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='delete' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' /></form></td></tr>";
 }
 foreach (@backupisos){
+if ( $_ !~ /iso$/){next;}
 chomp($_);
 my $Datei = "/var/tmp/backupiso/".$_;
 my @Info = stat($Datei);

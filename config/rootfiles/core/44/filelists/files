@@ -23,6 +23,8 @@ srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/netexternal.cgi
 srv/web/ipfire/cgi-bin/netinternal.cgi
 srv/web/ipfire/cgi-bin/system.cgi
+srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/html/images/urlfilter/copy.gif
 var/ipfire/general-functions.pl

@@ -55,9 +55,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mv -vf $(DIR_APP)/pakfire.conf $(DIR_APP)/etc/
 	chown root.root $(DIR_APP) -R
 	chmod 755 $(DIR_APP)/pakfire
-	
-	ln -sf ../../opt/pakfire/pakfire /etc/fcron.daily/pakfire-update
-	
 	touch /var/log/pakfire.log
 	chown root.nobody /var/log/pakfire.log
 	chmod 664 /var/log/pakfire.log
