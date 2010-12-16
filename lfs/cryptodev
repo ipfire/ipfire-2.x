@@ -34,10 +34,10 @@ else
 endif
 endif
 
-VER        = 20091126
+VER        = 0.8
 
-THISAPP    = cryptodev-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = cryptodev-linux-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 26ffa32ef75bea7e980ab66166616e95
+$(DL_FILE)_MD5 = eee36cb7bb71cc18f7c46a84c998ecac
 
 install : $(TARGET)
 
@@ -82,7 +82,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make build \
 		KERNEL_DIR=/lib/modules/$(KVER)-$(VERSUFIX)/build
 
