@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 	/* German is the default */
 	for (choice = 0; langnames[choice]; choice++)
 	{
-		if (strcmp(langnames[choice], "Deutsch") == 0)
+		if (strcmp(langnames[choice], "English") == 0)
 			break;
 	}
 	if (!langnames[choice])
