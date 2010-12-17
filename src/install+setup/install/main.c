@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 	char commandstring[STRING_SIZE];
 	char mkfscommand[STRING_SIZE];
 	char *fstypes[] = { "ext2", "ext3", "ext4", "ReiserFS", NULL };
-	int fstype = EXT3;
+	int fstype = EXT4;
 	int choice;
 	int i;
 	int found = 0;
