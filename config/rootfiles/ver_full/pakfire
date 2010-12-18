@@ -1,4 +1,3 @@
-etc/fcron.daily/pakfire-update
 #opt/pakfire
 opt/pakfire/cache
 #opt/pakfire/db
