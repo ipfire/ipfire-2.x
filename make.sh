@@ -365,9 +365,9 @@ buildipfire() {
   ipfiremake dahdi			XEN=1 KMOD=1
   ipfiremake cryptodev			XEN=1
   ipfiremake compat-wireless		XEN=1
-#  ipfiremake r8169			XEN=1
-#  ipfiremake r8168			XEN=1
-#  ipfiremake r8101			XEN=1
+  ipfiremake r8169			XEN=1
+  ipfiremake r8168			XEN=1
+  ipfiremake r8101			XEN=1
   ipfiremake e1000			XEN=1
   ipfiremake e1000e			XEN=1
   ipfiremake igb			XEN=1
