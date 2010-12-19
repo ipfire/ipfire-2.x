@@ -241,7 +241,33 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 # Delete old lm-sensor modullist to force search at next boot
 #
 rm -rf /etc/sysconfig/lm_sensors
-/usr/bin/logger -p syslog.emerg -t kernel "Upgrade finished. If you use a customized grub.cfg"
-/usr/bin/logger -p syslog.emerg -t kernel "Check it before reboot !!!"
-/usr/bin/logger -p syslog.emerg -t kernel " *** Please reboot... *** "
-touch /var/run/need_reboot
+#
+# Change version of Pakfire.conf
+#
+OLDVERSION=`grep "version = " /opt/pakfire/etc/pakfire.conf | cut -d'"' -f2`
+NEWVERSION="2.9"
+sed -i "s|$OLDVERSION|$NEWVERSION|g" /opt/pakfire/etc/pakfire.conf
+#
+# After pakfire has ended run it again and update the lists and do upgrade
+#
+echo '#!/bin/bash'                                        >  /tmp/pak_update
+echo 'while [ "$(ps -A | grep " update.sh")" != "" ]; do' >> /tmp/pak_update
+echo '    sleep 1'                                        >> /tmp/pak_update
+echo 'done'                                               >> /tmp/pak_update
+echo 'while [ "$(ps -A | grep " pakfire")" != "" ]; do'   >> /tmp/pak_update
+echo '    sleep 1'                                        >> /tmp/pak_update
+echo 'done'                                               >> /tmp/pak_update
+echo '/opt/pakfire/pakfire update -y --force'             >> /tmp/pak_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
+echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-44 "Upgrade finished. If you use a customized grub.cfg"' >> /tmp/pak_update
+echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-44 "Check it before reboot !!!"' >> /tmp/pak_update
+echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-44 " *** Please reboot... *** "' >> /tmp/pak_update
+echo 'touch /var/run/need_reboot ' >> /tmp/pak_update
+#
+chmod +x /tmp/pak_update
+/tmp/pak_update &
+echo
+echo Please wait until pakfire has ended...
+echo
