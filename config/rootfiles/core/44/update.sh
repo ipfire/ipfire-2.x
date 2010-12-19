@@ -179,6 +179,19 @@ grep -v "reply_body_max_size 0" > /var/ipfire/proxy/squid.conf
 echo >> /var/ipfire/proxy/squid.conf
 echo error_directory /etc/squid/errors >> /var/ipfire/proxy/squid.conf
 
+#Convert extrahd entries to UUID
+cp -f /var/ipfire/extrahd/devices /var/ipfire/extrahd/devices.org
+while read entry
+do
+	device=`echo $entry | cut -f1 -d";"`
+	uuid=`blkid  -c /dev/null -s UUID -o value /dev/$device`
+	if [ ! -z $uuid ]; then
+		sed -i -e "s|$device|UUID=$uuid|g" /var/ipfire/extrahd/devices
+		sed -i -e "s|/dev/$device|UUID=$uuid|g" /var/ipfire/extrahd/fstab
+		sed -i -e "s|/dev/$device|UUID=$uuid|g" /etc/fstab
+	fi
+done < /var/ipfire/extrahd/devices.org
+
 #
 # Start services
 #
