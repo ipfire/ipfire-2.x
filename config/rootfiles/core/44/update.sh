@@ -101,9 +101,6 @@ echo Unpack the updated files ...
 tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
 	--no-overwrite-dir
 
-# Re-read crontab
-fcrontab -z
-
 # Remove old pakfire cronjob.
 rm -f /etc/fcron.daily/pakfire-update
 
@@ -172,6 +169,20 @@ fi
 #
 /etc/init.d/squid start
 /etc/init.d/snort start
+
+
+# Add pakfire and fireinfo cronjobs...
+grep -v "# fireinfo" /var/spool/cron/root.orig |
+grep -v "/usr/bin/sendprofile" |
+grep -v "# pakfire" |
+grep -v "/usr/local/bin/pakfire" > /var/tmp/root.tmp
+echo "" >> /var/tmp/root.tmp
+echo "# fireinfo" >> /var/tmp/root.tmp
+echo "%nightly,random * 23-4 /usr/bin/sendprofile >/dev/null 2>&1" >> /var/tmp/root.tmp
+echo "" >> /var/tmp/root.tmp
+echo "# pakfire" >> /var/tmp/root.tmp
+echo "%nightly,random * 23-4 /usr/local/bin/pakfire update >/dev/null 2>&1" >> /var/tmp/root.tmp
+fcrontab /var/tmp/root.tmp
 
 #
 # Modify grub.conf
