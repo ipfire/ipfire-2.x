@@ -1,4 +1,5 @@
 etc/system-release
+etc/issue
 etc/rc.d/init.d/checkfs
 etc/rc.d/init.d/checkfstab
 etc/rc.d/init.d/firewall
