@@ -85,6 +85,8 @@ cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
 #
 /etc/init.d/snort stop
 /etc/init.d/squid stop
+/etc/init.d/ipsec stop
+
 #
 #
 # Remove old snort...
@@ -164,11 +166,17 @@ if [ ! -z $SWAP ]; then
 	echo "WARNING! swap not found!!!"
 fi
 
+#new strongswan need keyexchange=ikev1 because this is not default anymore
+mv /var/ipfire/vpn/ipsec.conf /var/ipfire/vpn/ipsec.conf.org
+grep -v "keyexchange=ikev1" /var/ipfire/vpn/ipsec.conf.org > /var/ipfire/vpn/ipsec.conf
+sed -i "s|^conn [A-Za-z].*$|&\n\tkeyexchange=ikev1|g" /var/ipfire/vpn/ipsec.conf
+
 #
 # Start services
 #
 /etc/init.d/squid start
 /etc/init.d/snort start
+/etc/init.d/ipsec start
 
 
 # Add pakfire and fireinfo cronjobs...
