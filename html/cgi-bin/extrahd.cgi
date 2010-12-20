@@ -139,7 +139,7 @@ END
 	{
 		@deviceline = split( /\;/, $deviceentry );
 		my $color="$Header::colourred";
-		if ( `/bin/mountpoint $deviceline[2]` ) {
+		if ( ! `/bin/mountpoint $deviceline[2] | grep " not "`  ) {
 			$color=$Header::colourgreen;
 		}
 		print <<END
