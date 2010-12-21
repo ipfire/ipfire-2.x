@@ -170,6 +170,7 @@ fi
 mv /var/ipfire/vpn/ipsec.conf /var/ipfire/vpn/ipsec.conf.org
 grep -v "keyexchange=ikev1" /var/ipfire/vpn/ipsec.conf.org > /var/ipfire/vpn/ipsec.conf
 sed -i "s|^conn [A-Za-z].*$|&\n\tkeyexchange=ikev1|g" /var/ipfire/vpn/ipsec.conf
+chown nobody:nobody /var/ipfire/vpn/ipsec.conf
 
 #new squid has some changed options. Build a basic config to be able start squid.
 mv /var/ipfire/proxy/squid.conf /var/ipfire/proxy/squid.conf.org
@@ -178,6 +179,7 @@ grep -v "error_directory " | \
 grep -v "reply_body_max_size 0" > /var/ipfire/proxy/squid.conf
 echo >> /var/ipfire/proxy/squid.conf
 echo error_directory /etc/squid/errors >> /var/ipfire/proxy/squid.conf
+chown nobody:nobody /var/ipfire/proxy/squid.conf
 
 #Convert extrahd entries to UUID
 cp -f /var/ipfire/extrahd/devices /var/ipfire/extrahd/devices.org
