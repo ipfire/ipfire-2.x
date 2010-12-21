@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2005-2010  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -107,6 +107,7 @@ else
 	rm -rf /lib/udev/devices
 	cd $(DIR_APP) && tar jxf $(DIR_DL)/udev-config-6.2.tar.bz2
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/udev-config-6.2_persistent-storage-fix.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/udev-config-6.2_remove-lfs-usb-rule.patch
 	install -dv /lib/{firmware,udev/devices/{pts,shm}}
 	echo "Put device firmwares here ..." > /lib/firmware/dirinfo
 	mknod -m0666 /lib/udev/devices/null c 1 3
