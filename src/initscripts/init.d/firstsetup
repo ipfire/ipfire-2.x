@@ -1,4 +1,5 @@
 #!/bin/bash
+/etc/init.d/sysklogd start
 export LANG=en_US.utf8
 /usr/local/sbin/setup /dev/tty2 INSTALL
 echo Restarting udev...
@@ -6,4 +7,5 @@ killall udevd
 /sbin/udevd --daemon
 /sbin/udevadm trigger
 /sbin/udevadm settle
+/etc/init.d/sysklogd stop
 rm -f /etc/rc.d/rcsysinit.d/S75firstsetup
