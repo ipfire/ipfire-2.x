@@ -202,7 +202,7 @@ EXIT:
 		{
 			newtWinMessage(ctr[TR_WARNING], ctr[TR_OK], ctr[TR_SETUP_NOT_COMPLETE]);
 
-			fprintf(flog, "Setup program not finnished.\n");
+			fprintf(flog, "Setup has program not finished.\n");
 			fflush(flog);
 			fclose(flog);
 
