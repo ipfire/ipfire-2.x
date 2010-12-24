@@ -199,7 +199,17 @@ EXIT:
 		if (autook)
 			newtWinMessage(title, ctr[TR_OK], ctr[TR_SETUP_FINISHED]);
 		else
+		{
 			newtWinMessage(ctr[TR_WARNING], ctr[TR_OK], ctr[TR_SETUP_NOT_COMPLETE]);
+
+			fprintf(flog, "Setup program not finnished.\n");
+			fflush(flog);
+			fclose(flog);
+
+			newtFinished();
+
+			return 1;
+		}
 	}
 
 	fprintf(flog, "Setup program ended.\n");
