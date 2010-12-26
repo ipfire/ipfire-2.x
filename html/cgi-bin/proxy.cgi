@@ -3075,10 +3075,8 @@ cache_mem $proxysettings{'CACHE_MEM'} MB
 END
 	;
 
-	if ($proxysettings{'CACHE_SIZE'} eq '0')
+	if ($proxysettings{'CACHE_SIZE'} ne '0')
 	{
-		print FILE "cache_dir null /var/tmp\n\n";
-	} else {
 		print FILE "cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256\n\n";
 	}
 

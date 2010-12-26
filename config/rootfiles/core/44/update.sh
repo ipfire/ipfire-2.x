@@ -176,6 +176,7 @@ chown nobody:nobody /var/ipfire/vpn/ipsec.conf
 mv /var/ipfire/proxy/squid.conf /var/ipfire/proxy/squid.conf.org
 grep -v "header_access " /var/ipfire/proxy/squid.conf.org | \
 grep -v "error_directory " | \
+grep -v "cache_dir null" | \
 grep -v "reply_body_max_size 0" > /var/ipfire/proxy/squid.conf
 echo >> /var/ipfire/proxy/squid.conf
 echo error_directory /etc/squid/errors >> /var/ipfire/proxy/squid.conf
