@@ -1,0 +1,15 @@
+Patch by Arne Fitzenreiter <arne_f@ipfire.org>
+Fix uevent PHYSDEVDRIVER entry
+
+diff -Naur linux-2.6.32.27.org/drivers/net/usb/mcs7830.c linux-2.6.32.27/drivers/net/usb/mcs7830.c
+--- linux-2.6.32.27.org/drivers/net/usb/mcs7830.c	2010-12-09 22:29:45.000000000 +0100
++++ linux-2.6.32.27/drivers/net/usb/mcs7830.c	2010-12-26 16:51:21.344792257 +0100
+@@ -88,7 +88,7 @@
+ 	u8 config;
+ };
+ 
+-static const char driver_name[] = "MOSCHIP usb-ethernet driver";
++static const char driver_name[] = "mcs7830";
+ 
+ static int mcs7830_get_reg(struct usbnet *dev, u16 index, u16 size, void *data)
+ {
