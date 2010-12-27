@@ -208,6 +208,7 @@ int handledhcp(void)
 			
 				file = fopen(CONFIG_ROOT "/dhcp/dhcpd.conf", "w");
 				fprintf(file, "ddns-update-style none;\n");
+				fprintf(file, "authoritative;\n");
 				fprintf(file, "subnet %s netmask %s\n", greennetaddress, greennetmask);
 				fprintf(file, "{\n");
 				fprintf(file, "\toption subnet-mask %s;\n", greennetmask);
