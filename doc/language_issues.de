@@ -230,7 +230,6 @@ WARNING: translation string unused: max outgoing size
 WARNING: translation string unused: max size
 WARNING: translation string unused: mbmon fan in
 WARNING: translation string unused: mbmon graphs
-WARNING: translation string unused: mbmon temp
 WARNING: translation string unused: mbmon temp in
 WARNING: translation string unused: mbmon value
 WARNING: translation string unused: min size
@@ -463,4 +462,3 @@ WARNING: untranslated string: cpu frequency per
 WARNING: untranslated string: new
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: qos add subclass
-WARNING: untranslated string: sensors temp

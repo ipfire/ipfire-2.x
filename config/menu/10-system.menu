@@ -28,6 +28,12 @@
 				'title' => "$Lang::tr{'backup'}",
 				'enabled' => 1,
 				};
+    $subsystem->{'41.fireinfo'} = {
+				'caption' => $Lang::tr{'system information'},
+				'uri' => '/cgi-bin/fireinfo.cgi',
+				'title' => "$Lang::tr{'system information'}",
+				'enabled' => 1,
+				};
     $subsystem->{'99.credits'} = {
 				'caption' => $Lang::tr{'credits'},
 				'uri' => '/cgi-bin/credits.cgi',

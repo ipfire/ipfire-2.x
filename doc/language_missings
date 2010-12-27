@@ -12,9 +12,23 @@
 ############################################################################
 < dns address deleted txt
 < extrahd detected drives
+< fireinfo ipfire version
+< fireinfo is disabled
+< fireinfo is enabled
+< fireinfo is submitted
+< fireinfo is submitted button
+< fireinfo kernel version
+< fireinfo not submitted
+< fireinfo not submitted button
+< fireinfo pakfire version
+< fireinfo please enable
+< fireinfo settings
+< fireinfo system version
+< fireinfo your profile id
 < ntp common settings
 < ntp sync
 < snort working
+< system information
 < upload new ruleset
 < urlfilter file ext block
 < urlfilter mode block
@@ -45,8 +59,23 @@
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
 < Async logging enabled
+< fireinfo ipfire version
+< fireinfo is disabled
+< fireinfo is enabled
+< fireinfo is submitted
+< fireinfo is submitted button
+< fireinfo kernel version
+< fireinfo not submitted
+< fireinfo not submitted button
+< fireinfo pakfire version
+< fireinfo please enable
+< fireinfo settings
+< fireinfo system version
+< fireinfo your profile id
 < outgoing firewall add ip group
 < outgoing firewall add mac group
+< outgoing firewall edit ip group
+< outgoing firewall edit mac group
 < outgoing firewall group error
 < outgoing firewall groups
 < outgoing firewall ip groups
@@ -58,3 +87,4 @@
 < outgoing firewall p2p description 3
 < outgoing firewall view group
 < Set time on boot
+< system information

@@ -388,6 +388,11 @@ END
 END
 	}
 
+# Fireinfo
+if ( ! -e "/var/ipfire/main/send_profile") {
+	$warnmessage .= "<li><a style='color: white;' href='fireinfo.cgi'>$Lang::tr{'fireinfo please enable'}</a></li>";
+}
+
 # Memory usage warning
 my @free = `/usr/bin/free`;
 $free[1] =~ m/(\d+)/;
@@ -435,7 +440,6 @@ foreach my $file (@files) {
 		$warnmessage .= "<li> $Lang::tr{'smartwarn1'} /dev/$disk $Lang::tr{'smartwarn2'} !</li>\n\n";
 	}
 }
-
 
 if ($warnmessage) {
 	print "<tr><td align='center' bgcolor=$Header::colourred colspan='3'><font color='white'>$warnmessage</font></table>";

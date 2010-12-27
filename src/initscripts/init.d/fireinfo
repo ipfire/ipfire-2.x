@@ -1,0 +1,32 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/fireinfo
+#
+# Description : Fireinfo profile generator
+#
+# Authors     : IPFire Team
+#
+# Notes       : This script saves the fireinfo profile to a file which
+#               is needed to show that information on the webinterface.
+#               No data is sent to the server.
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		mkdir -p /var/ipfire/fireinfo 2>/dev/null
+
+		sendprofile --public-id > /var/ipfire/fireinfo/public_id
+		sendprofile --dump > /var/ipfire/fireinfo/profile
+		;;
+
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/fireinfo

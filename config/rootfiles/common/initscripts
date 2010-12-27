@@ -27,6 +27,7 @@ etc/rc.d/init.d/dhcp
 etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/fcron
 #etc/rc.d/init.d/fetchmail
+etc/rc.d/init.d/fireinfo
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/firstsetup
 etc/rc.d/init.d/functions
@@ -211,6 +212,7 @@ etc/rc.d/rcsysinit.d/S70console
 etc/rc.d/rcsysinit.d/S75firstsetup
 etc/rc.d/rcsysinit.d/S80localnet
 etc/rc.d/rcsysinit.d/S90sysctl
+etc/rc.d/rcsysinit.d/S99fireinfo
 #etc/sysconfig
 etc/sysconfig/createfiles
 etc/sysconfig/firewall.local

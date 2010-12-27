@@ -7,6 +7,8 @@ etc/rc.d/init.d/squid
 etc/rc.d/init.d/networking/dhcpcd.exe
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/networking/red.up/99-fireinfo
+etc/rc.d/rcsysinit.d/S99fireinfo
+srv/web/ipfire/cgi-bin/fireinfo.cgi
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/index.cgi
@@ -35,6 +37,7 @@ var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
 var/ipfire/langs/fr.pl
 var/ipfire/langs/es.pl
+var/ipfire/menu.d/10-system.menu
 usr/local/bin/timectrl
 usr/local/bin/rebuild-initrd
 usr/local/bin/scanhd

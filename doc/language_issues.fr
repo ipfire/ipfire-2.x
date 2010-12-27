@@ -258,7 +258,6 @@ WARNING: translation string unused: max outgoing size
 WARNING: translation string unused: max size
 WARNING: translation string unused: mbmon fan in
 WARNING: translation string unused: mbmon graphs
-WARNING: translation string unused: mbmon temp
 WARNING: translation string unused: mbmon temp in
 WARNING: translation string unused: mbmon value
 WARNING: translation string unused: min size
@@ -498,12 +497,26 @@ WARNING: untranslated string: bytes
 WARNING: untranslated string: cpu frequency per
 WARNING: untranslated string: dns address deleted txt
 WARNING: untranslated string: extrahd detected drives
+WARNING: untranslated string: fireinfo ipfire version
+WARNING: untranslated string: fireinfo is disabled
+WARNING: untranslated string: fireinfo is enabled
+WARNING: untranslated string: fireinfo is submitted
+WARNING: untranslated string: fireinfo is submitted button
+WARNING: untranslated string: fireinfo kernel version
+WARNING: untranslated string: fireinfo not submitted
+WARNING: untranslated string: fireinfo not submitted button
+WARNING: untranslated string: fireinfo pakfire version
+WARNING: untranslated string: fireinfo please enable
+WARNING: untranslated string: fireinfo settings
+WARNING: untranslated string: fireinfo system version
+WARNING: untranslated string: fireinfo your profile id
 WARNING: untranslated string: new
 WARNING: untranslated string: ntp common settings
 WARNING: untranslated string: ntp sync
 WARNING: untranslated string: outgoing firewall reserved groupname
-WARNING: untranslated string: sensors temp
+WARNING: untranslated string: pakfire ago
 WARNING: untranslated string: snort working
+WARNING: untranslated string: system information
 WARNING: untranslated string: upload new ruleset
 WARNING: untranslated string: urlfilter file ext block
 WARNING: untranslated string: urlfilter mode block

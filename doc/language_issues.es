@@ -257,7 +257,6 @@ WARNING: translation string unused: max outgoing size
 WARNING: translation string unused: max size
 WARNING: translation string unused: mbmon fan in
 WARNING: translation string unused: mbmon graphs
-WARNING: translation string unused: mbmon temp
 WARNING: translation string unused: mbmon temp in
 WARNING: translation string unused: mbmon value
 WARNING: translation string unused: min size
@@ -496,9 +495,24 @@ WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: Set time on boot
 WARNING: untranslated string: bytes
 WARNING: untranslated string: cpu frequency per
+WARNING: untranslated string: fireinfo ipfire version
+WARNING: untranslated string: fireinfo is disabled
+WARNING: untranslated string: fireinfo is enabled
+WARNING: untranslated string: fireinfo is submitted
+WARNING: untranslated string: fireinfo is submitted button
+WARNING: untranslated string: fireinfo kernel version
+WARNING: untranslated string: fireinfo not submitted
+WARNING: untranslated string: fireinfo not submitted button
+WARNING: untranslated string: fireinfo pakfire version
+WARNING: untranslated string: fireinfo please enable
+WARNING: untranslated string: fireinfo settings
+WARNING: untranslated string: fireinfo system version
+WARNING: untranslated string: fireinfo your profile id
 WARNING: untranslated string: new
 WARNING: untranslated string: outgoing firewall add ip group
 WARNING: untranslated string: outgoing firewall add mac group
+WARNING: untranslated string: outgoing firewall edit ip group
+WARNING: untranslated string: outgoing firewall edit mac group
 WARNING: untranslated string: outgoing firewall group error
 WARNING: untranslated string: outgoing firewall groups
 WARNING: untranslated string: outgoing firewall ip groups
@@ -510,4 +524,5 @@ WARNING: untranslated string: outgoing firewall p2p description 2
 WARNING: untranslated string: outgoing firewall p2p description 3
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: outgoing firewall view group
-WARNING: untranslated string: sensors temp
+WARNING: untranslated string: pakfire ago
+WARNING: untranslated string: system information

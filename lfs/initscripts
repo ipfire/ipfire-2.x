@@ -172,6 +172,7 @@ $(TARGET) :
 	ln -sf ../init.d/firstsetup  /etc/rc.d/rcsysinit.d/S75firstsetup
 	ln -sf ../init.d/localnet    /etc/rc.d/rcsysinit.d/S80localnet
 	ln -sf ../init.d/sysctl      /etc/rc.d/rcsysinit.d/S90sysctl
+	ln -sf ../init.d/fireinfo    /etc/rc.d/rcsysinit.d/S99fireinfo
 	
 	ln -sf ../../dnsmasq /etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq
 	ln -sf ../../firewall /etc/rc.d/init.d/networking/red.up/20-RL-firewall
