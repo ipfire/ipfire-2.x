@@ -8,7 +8,7 @@ etc/rc.d/init.d/squid
 etc/rc.d/init.d/networking/dhcpcd.exe
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/networking/red.up/99-fireinfo
-etc/rc.d/rcsysinit.d/S99fireinfo
+etc/rc.d/rc3.d/S15fireinfo
 srv/web/ipfire/cgi-bin/fireinfo.cgi
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
