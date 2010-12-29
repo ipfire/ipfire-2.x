@@ -564,9 +564,9 @@ char *fr_tr[] = {
 /* TR_DHCP_STOPSERVER */
 "Arrêt du serveur DHCP ...",
 /* TR_LICENSE_ACCEPT */
-"I accept this license.",
+"J'accepte les termes de cette licence.",
 /* TR_LICENSE_NOT_ACCEPTED */
-"License not accepted. Exit!",
+"Je n'accepte pas les termes de cette licence, quitter le programme d'installation.",
 /* TR_EXT2FS_DESCR */
 "Ext2 - Filesystem without Journal (suggested for flashdrives)",
 /* TR_EXT3FS_DESCR */
