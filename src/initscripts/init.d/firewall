@@ -54,7 +54,7 @@ iptables_init() {
 	/sbin/iptables -N BADTCP
 
 	#Don't check loopback
-	/sbin/iptables -A INPUT   -i lo -j RETURN
+	/sbin/iptables -A BADTCP -i lo -j RETURN
 
 	# Disallow packets frequently used by port-scanners
 	# nmap xmas
