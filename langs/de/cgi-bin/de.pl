@@ -846,7 +846,7 @@
 'global settings' => 'Globale Einstellungen',
 'gpl i accept these terms and conditions' => 'Ich akzeptiere diese Bedingungen und Konditionen',
 'gpl license agreement' => 'Lizenz Vereinbarung',
-'gpl please read carefully the general public license and accept it below' => 'Bitte die General Public License genau lesen und diese unten akzeptiere',
+'gpl please read carefully the general public license and accept it below' => 'Bitte die General Public License genau lesen und diese unten akzeptieren.',
 'gpl unofficial translation of the general public license v3' => 'Inoffizielle Übersetzung der General Public License v3',
 'graph' => 'Diagramm',
 'graph per' => 'pro',

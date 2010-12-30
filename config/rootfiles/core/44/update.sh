@@ -200,8 +200,9 @@ done < /var/ipfire/extrahd/devices.org
 #
 /etc/init.d/squid start
 /etc/init.d/snort start
-/etc/init.d/ipsec start
-
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	/etc/init.d/ipsec start
+fi
 
 # Add pakfire and fireinfo cronjobs...
 grep -v "# fireinfo" /var/spool/cron/root.orig |
