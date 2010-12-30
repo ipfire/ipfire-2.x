@@ -247,6 +247,10 @@ if [ "${ROOT:0:7}" == "/dev/hd" ];then
 	sed -i -e "s|${ROOT:0:8}|/dev/sda|g" /etc/fstab
 fi
 #
+# Don't show gpl on updated systens
+#
+touch /var/ipfire/main/gpl_accepted
+#
 # ReInstall grub
 #
 grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
