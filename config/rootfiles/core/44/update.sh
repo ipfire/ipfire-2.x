@@ -103,6 +103,12 @@ echo Unpack the updated files ...
 tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
 	--no-overwrite-dir
 
+#
+# Change collectd init symlinks
+#
+rm -f /etc/rc.d/rc3.d/S21collectd
+ln -f -s ../init.d/collectd /etc/rc.d/rc3.d/S29collectd
+
 # Remove old pakfire cronjob.
 rm -f /etc/fcron.daily/pakfire-update
 
