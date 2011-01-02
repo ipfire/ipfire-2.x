@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -115,8 +115,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cp -f $(DIR_SRC)/config/updxlrator/updxlrator-lib.pl /var/ipfire/updatexlrator//updxlrator-lib.pl
 
-	-mkdir -p /usr/lib/squid/errors.ipfire
-	cp -fr $(DIR_SRC)/config/proxy/errors.ipfire/* /usr/lib/squid/errors.ipfire/
 	chmod 755 /usr/sbin/updxlrator /var/ipfire/updatexlrator/bin/checkup \
 		/var/ipfire/updatexlrator/bin/download \
 		/var/ipfire/updatexlrator/bin/convert \
@@ -142,6 +140,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f $(DIR_SRC)/config/proxy/proxy.pac /srv/web/ipfire/html/proxy.pac
 	chown nobody.nobody /srv/web/ipfire/html/proxy.pac
 	ln -sf /srv/web/ipfire/html/proxy.pac /srv/web/ipfire/html/wpad.dat
+
+	#Copy stylesheets for the errorpages
+	cp -f $(DIR_SRC)/config/proxy/errorpage-ipfire.css /var/ipfire/proxy/
+	cp -f /etc/squid/errorpage.css /var/ipfire/proxy/errorpage-squid.css
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

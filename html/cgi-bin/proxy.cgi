@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -3080,12 +3080,7 @@ END
 		print FILE "cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256\n\n";
 	}
 
-	if (($proxysettings{'ERR_DESIGN'} eq 'ipfire' ))
-	{
-		print FILE "error_directory $errordir.ipfire/$proxysettings{'ERR_LANGUAGE'}\n\n";
-	} else {
-		print FILE "error_directory $errordir/$proxysettings{'ERR_LANGUAGE'}\n\n";
-	}
+	print FILE "error_directory $errordir/$proxysettings{'ERR_LANGUAGE'}\n\n";
 
 	if ($proxysettings{'OFFLINE_MODE'} eq 'on') {  print FILE "offline_mode on\n\n"; }
 
@@ -3372,8 +3367,7 @@ acl IPFire_no_access_mac arp "$acl_src_noaccess_mac"
 END
 		;
 		print FILE "deny_info ";
-		if ((($proxysettings{'ERR_DESIGN'} eq 'ipfire') && (-e "$errordir.ipfire/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")) ||
-		    (($proxysettings{'ERR_DESIGN'} eq 'squid') && (-e "$errordir/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")))
+		if (($proxysettings{'ERR_DESIGN'} eq 'squid') && (-e "$errordir/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED"))
 		{
 			print FILE "ERR_ACCESS_DISABLED";
 		} else {
@@ -3381,8 +3375,7 @@ END
 		}
 		print FILE " IPFire_no_access_ips\n";
 		print FILE "deny_info ";
-		if ((($proxysettings{'ERR_DESIGN'} eq 'ipfire') && (-e "$errordir.ipfire/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")) ||
-		    (($proxysettings{'ERR_DESIGN'} eq 'squid') && (-e "$errordir/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED")))
+		if (($proxysettings{'ERR_DESIGN'} eq 'squid') && (-e "$errordir/$proxysettings{'ERR_LANGUAGE'}/ERR_ACCESS_DISABLED"))
 		{
 			print FILE "ERR_ACCESS_DISABLED";
 		} else {
