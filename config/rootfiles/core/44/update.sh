@@ -210,6 +210,15 @@ if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
 
+#
+# Rebuild qosscript if enabled
+#
+if [ -e /var/ipfire/qos/enable ]; then
+	/usr/local/bin/qosctrl stop
+	/usr/local/bin/qosctrl generate
+	/usr/local/bin/qosctrl start
+fi
+
 # Add pakfire and fireinfo cronjobs...
 grep -v "# fireinfo" /var/spool/cron/root.orig |
 grep -v "/usr/bin/sendprofile" |
