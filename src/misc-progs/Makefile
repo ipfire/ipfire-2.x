@@ -32,7 +32,7 @@ SUID_PROGS = setdmzholes setportfw setxtaccess \
 	wirelessctrl getipstat getiptstate qosctrl launch-ether-wake \
 	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
-	setaliases urlfilterctrl updxlratorctrl
+	setaliases urlfilterctrl updxlratorctrl fireinfoctrl
 SUID_UPDX = updxsetperms
 
 install : all
@@ -154,3 +154,7 @@ setaliases: setaliases.c setuid.o ../install+setup/libsmooth/varval.o
 
 updxsetperms: updxsetperms.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ updxsetperms.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+fireinfoctrl: fireinfoctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ fireinfoctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+

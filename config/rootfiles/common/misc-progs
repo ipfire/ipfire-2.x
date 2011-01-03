@@ -4,6 +4,7 @@ usr/local/bin/backupctrl
 #usr/local/bin/clamavctrl
 usr/local/bin/dhcpctrl
 usr/local/bin/extrahdctrl
+usr/local/bin/fireinfoctrl
 usr/local/bin/getipstat
 usr/local/bin/getiptstate
 #usr/local/bin/iowrap

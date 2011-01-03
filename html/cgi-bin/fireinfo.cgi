@@ -55,6 +55,7 @@ if ("$fireinfosettings{'ACTION'}" eq "trigger") {
 		unlink "$configfile";
 		$fireinfosettings{'ENABLE_FIREINFO'} = 'off';
 	}
+	system("/usr/local/bin/fireinfoctrl &");
 }
 
 &Header::openpage('Fireinfo', 1, '');

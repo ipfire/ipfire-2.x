@@ -39,6 +39,7 @@ var/ipfire/langs/en.pl
 var/ipfire/langs/fr.pl
 var/ipfire/langs/es.pl
 var/ipfire/menu.d/10-system.menu
+usr/local/bin/fireinfoctrl
 usr/local/bin/timectrl
 usr/local/bin/rebuild-initrd
 usr/local/bin/scanhd
