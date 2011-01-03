@@ -762,6 +762,12 @@ buildpackages() {
   fi
   mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
 
+  cd $BASEDIR
+  for i in `ls *.bz2 *.img.gz *.iso`; do
+	md5sum $i > $i.md5
+  done
+  cd $PWD
+
   # Cleanup
   stdumount
   rm -rf $BASEDIR/build/tmp/*
@@ -838,8 +844,10 @@ build)
 	buildpackages
 	
 	beautify build_stage "Checking Logfiles for new Files"
-	cd ..
+
+	cd $BASEDIR
 	tools/checknewlog.pl
+	cd $PWD
 
 	beautify build_end
 	;;
@@ -871,6 +879,7 @@ clean)
 	if [ -h /tools ]; then
 		rm -f /tools
 	fi
+	rm -f $BASEDIR/ipfire-*
 	beautify message DONE
 	;;
 downloadsrc)

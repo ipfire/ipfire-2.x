@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -517,6 +517,9 @@ print <<END
 
 	### ADD QOS-INC CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-INC
+	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN
+	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN
+	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN
 	iptables -t mangle -A POSTROUTING -m mark ! --mark 0 ! -o $qossettings{'RED_DEV'} -j IMQ --todev 0
 	iptables -t mangle -I FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC
 	iptables -t mangle -A FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS
@@ -531,6 +534,9 @@ print <<END
 
 	### ADD QOS-INC CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-INC
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0
 	iptables -t mangle -I PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
@@ -690,6 +696,12 @@ print <<END
 	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
 	# STOP IMQ-DEVICE
 	ip link set $qossettings{'IMQ_DEV'} down >/dev/null 2>&1
+	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN >/dev/null 2>&1
+	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN >/dev/null 2>&1
+	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -m mark ! --mark 0 ! -o $qossettings{'RED_DEV'} -j IMQ --todev 0 >/dev/null 2>&1
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0  >/dev/null 2>&1
 	# rmmod imq # this crash on 2.6.25.xx

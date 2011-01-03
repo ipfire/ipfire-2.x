@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -91,7 +91,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	cp -vf $(DIR_SRC)/config/collectd/collectd.* /etc/
 	ln -f -s ../init.d/collectd /etc/rc.d/rc0.d/K50collectd 
-	ln -f -s ../init.d/collectd /etc/rc.d/rc3.d/S21collectd
+	ln -f -s ../init.d/collectd /etc/rc.d/rc3.d/S29collectd
 	ln -f -s ../init.d/collectd /etc/rc.d/rc6.d/K50collectd 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -7,12 +7,13 @@
 chown -R squid:squid /var/log/squid
 chown -R squid:squid /var/log/squidGuard
 
+
 transparent() {
 		DEVICE=$1
-		
+
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 		eval $(/usr/local/bin/readhash /var/ipfire/proxy/settings)
-		
+
 		# If the proxy port is not set we set the default to 800.
 		if [ -z $PROXY_PORT ]; then
 			PROXY_PORT=800
@@ -55,13 +56,21 @@ case "$1" in
 		evaluate_retval
 		exit
 		fi
+
+
+		eval $(/usr/local/bin/readhash /var/ipfire/proxy/advanced/settings)
+		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
 		if [ -e /var/ipfire/proxy/enable -o -e /var/ipfire/proxy/enable_blue ]; then
+
+			# Add Address to errorpage stylesheet
+			sed "s|XXXhostXXX|$GREEN_ADDRESS|g" /var/ipfire/proxy/errorpage-$ERR_DESIGN.css > \
+				/etc/squid/errorpage.css
+
 			boot_mesg "Starting Squid Proxy Server..."
 			loadproc /usr/sbin/squid -z >/dev/null 2>&1
 			loadproc /usr/sbin/squid
 		fi
-
-		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 		if [ -e /var/ipfire/proxy/transparent ]; then
 			transparent $GREEN_DEV

@@ -103,6 +103,12 @@ echo Unpack the updated files ...
 tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
 	--no-overwrite-dir
 
+#
+# Change collectd init symlinks
+#
+rm -f /etc/rc.d/rc3.d/S21collectd
+ln -f -s ../init.d/collectd /etc/rc.d/rc3.d/S29collectd
+
 # Remove old pakfire cronjob.
 rm -f /etc/fcron.daily/pakfire-update
 
@@ -202,6 +208,15 @@ done < /var/ipfire/extrahd/devices.org
 /etc/init.d/snort start
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
+fi
+
+#
+# Rebuild qosscript if enabled
+#
+if [ -e /var/ipfire/qos/enable ]; then
+	/usr/local/bin/qosctrl stop
+	/usr/local/bin/qosctrl generate
+	/usr/local/bin/qosctrl start
 fi
 
 # Add pakfire and fireinfo cronjobs...
