@@ -3,7 +3,7 @@
 COREVER=`cat /opt/pakfire/db/core/mine`
 # FIXME: edit this lines before release
 URL=http://download.ipfire.org/iso/
-ISO=ipfire-2.9beta1.i586-full-core$COREVER.iso
+ISO=ipfire-2.9beta3.i586-full-core$COREVER.iso
 
 if [ -z "$1" ]; then 
 	echo usage: $0 backup-file
