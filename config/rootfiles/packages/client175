@@ -46,6 +46,7 @@ srv/client175/cherrypy/process/wspbus.py
 #srv/client175/cherrypy/wsgiserver
 srv/client175/cherrypy/wsgiserver/__init__.py
 srv/client175/covers.py
+srv/client175/lyricwiki.py
 #srv/client175/metadata
 srv/client175/metadata/COPYING
 srv/client175/metadata/__init__.py
@@ -2843,6 +2844,7 @@ srv/client175/static/icons/fugue/folder-horizontal.png
 srv/client175/static/icons/fugue/folder-microphone.png
 srv/client175/static/icons/fugue/folder-open-document-music.png
 srv/client175/static/icons/fugue/folder-open.png
+srv/client175/static/icons/fugue/globe--plus.png
 srv/client175/static/icons/fugue/home.png
 srv/client175/static/icons/fugue/information-frame.png
 srv/client175/static/icons/fugue/information.png
@@ -2850,9 +2852,12 @@ srv/client175/static/icons/fugue/layout-select-sidebar-right.png
 srv/client175/static/icons/fugue/magnifier.png
 srv/client175/static/icons/fugue/microphone.png
 srv/client175/static/icons/fugue/music.png
+srv/client175/static/icons/fugue/output-off.png
+srv/client175/static/icons/fugue/output-on.png
 srv/client175/static/icons/fugue/pencil.png
 srv/client175/static/icons/fugue/plus-octagon.png
 srv/client175/static/icons/fugue/plus.png
+srv/client175/static/icons/fugue/speaker.png
 srv/client175/static/icons/fugue/tag--pencil.png
 srv/client175/static/icons/fugue/tag.png
 srv/client175/static/icons/fugue/ui-tab--plus.png
@@ -2878,6 +2883,7 @@ srv/client175/static/mutagen/COPYING.txt
 srv/client175/static/rgbcolor.js
 srv/client175/static/style.css
 srv/client175/static/tb_btn_fix.css
+var/ipfire/backup/addons/includes/client175
 etc/rc.d/rc0.d/K34client175
 etc/rc.d/rc6.d/K34client175
 etc/rc.d/rc3.d/S66client175
