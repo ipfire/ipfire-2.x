@@ -568,19 +568,19 @@ char *fr_tr[] = {
 /* TR_LICENSE_NOT_ACCEPTED */
 "Je n'accepte pas les termes de cette licence, quitter le programme d'installation.",
 /* TR_EXT2FS_DESCR */
-"Ext2 - Filesystem without Journal (suggested for flashdrives)",
+"Ext2 - Système de fichiers sans journal (suggéré pour les cartes flash)",
 /* TR_EXT3FS_DESCR */
-"Ext3 - Filesystem with Journal",
+"Ext3 - Système de fichiers avec journal",
 /* TR_EXT4FS_DESCR */
-"Ext4 - Filesystem with Journal",
+"Ext4 - Système de fichiers avec journal",
 /* TR_REISERFS_DESCR */
-"ReiserFS - Filesystem with Journal",
+"ReiserFS - Système de fichiers avec journal",
 /* TR_NO_LOCAL_SOURCE */
-"No local source media found. Starting download.",
+"Pas de source locale trouvée. Démarrage du téléchargement.",
 /* TR_DOWNLOADING_ISO */
-"Downloading Installation-Image ...",
+"Téléchargement du fichier image ISO ...",
 /* TR_DOWNLOAD_ERROR */
-"Error while downloading!",
+"Erreur pendant le téléchargement!",
 /* TR_DHCP_FORCE_MTU */
 "Force DHCP mtu:",
 };

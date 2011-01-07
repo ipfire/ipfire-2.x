@@ -556,7 +556,7 @@ char *es_tr[] = {
 /* TR_IGNORE */
 "Ignorar",
 /* TR_PPP_DIALUP */
-"PPP DIALUP (PPPoE, Modem, ATM ...)",
+"PPP DIALUP (PPPoE, modem, ATM ...)",
 /* TR_DHCP */
 "DHCP",
 /* TR_DHCP_STARTSERVER */
@@ -568,13 +568,13 @@ char *es_tr[] = {
 /* TR_LICENSE_NOT_ACCEPTED */
 "License not accepted. Exit!",
 /* TR_EXT2FS_DESCR */
-"Ext2 - Filesystem without Journal (suggested for flashdrives)",
+"Ext2 - Filesystem without journal (suggested for flashdrives)",
 /* TR_EXT3FS_DESCR */
-"Ext3 - Filesystem with Journal",
+"Ext3 - Filesystem with journal",
 /* TR_EXT4FS_DESCR */
-"Ext4 - Filesystem with Journal",
+"Ext4 - Filesystem with journal",
 /* TR_REISERFS_DESCR */
-"ReiserFS - Filesystem with Journal",
+"ReiserFS - Filesystem with journal",
 /* TR_NO_LOCAL_SOURCE */
 "No local source media found. Starting download.",
 /* TR_DOWNLOADING_ISO */
