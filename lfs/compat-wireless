@@ -46,11 +46,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) asix-3.5.0a.tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+asix-3.5.0a.tar.bz2 = $(DL_FROM)/asix-3.5.0a.tar.bz2
 
 $(DL_FILE)_MD5 = 41c51280e5aa140c62a2a9871e2ae505
+asix-3.5.0a.tar.bz2_MD5=cc57513505d3ad1a43b58add91d2bba7
 
 install : $(TARGET)
 
@@ -81,6 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
 
+
 	# Enable some USB ID's in rt2800usb driver
 	echo "CONFIG_RT2800USB_RT30XX=y"  >> $(DIR_APP)/config.mk
 	echo "CONFIG_RT2800USB_RT35XX=y"  >> $(DIR_APP)/config.mk
@@ -93,6 +96,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp $(DIR_APP)/drivers/net/usb/new/*.c $(DIR_APP)/drivers/net/usb
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.34-usbnet_compile.patch
+
+	# Build Updated asix usb-lan driver
+	cd $(DIR_APP)/drivers/net/usb && tar xvf $(DIR_DL)/asix-3.5.0a.tar.bz2
 
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) \
 		KMODPATH_ARG='INSTALL_MOD_PATH=' KMODDIR=kernel install-modules
