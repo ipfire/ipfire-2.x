@@ -13,7 +13,7 @@
 html body {
 	margin: 0;
 	padding: 0;
-	background: #700000;
+	background: #880400;
 	font-size: 12px;
 	color: #1e1e1e;
 }
@@ -21,7 +21,7 @@ html body {
 /* Page displayed title area */
 #titles {
 	margin-left: 15px;
-	padding: 35px;
+	padding: 30px;
 	padding-left: 170px;
 	background: url('http://XXXhostXXX:81/images/IPFire.png') no-repeat left;
 }
