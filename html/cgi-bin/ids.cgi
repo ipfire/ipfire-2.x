@@ -278,7 +278,8 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} e
 {
 	$errormessage = $Lang::tr{'invalid input for oink code'} unless (
 	    ($snortsettings{'OINKCODE'} =~ /^[a-z0-9]+$/)  ||
-	    ($snortsettings{'RULESTYPE'} eq 'nothing' )       );
+	    ($snortsettings{'RULESTYPE'} eq 'nothing' ) ||
+	    ($snortsettings{'RULESTYPE'} eq 'community' ));
 
 	&General::writehash("${General::swroot}/snort/settings", \%snortsettings);
 	if ($snortsettings{'ENABLE_SNORT'} eq 'on')
@@ -537,10 +538,8 @@ print <<END
 	<td width='30%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'download new ruleset'}' />
 END
 ;
-
-if ( $snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'} ) {
-	$snortsettings{'INSTALLDATE'} = `/bin/date +'%Y-%m-%d'`;
-	&General::writehash("${General::swroot}/snort/settings", \%snortsettings);
+if ( -e "/var/tmp/snortrules.tar.gz"){
+	$snortsettings{'INSTALLDATE'} = `ls -la /var/tmp/snortrules.tar.gz  | cut -d" " -f6-8`;
 }
 print "&nbsp;$Lang::tr{'updates installed'}: $snortsettings{'INSTALLDATE'}</td>";
 
