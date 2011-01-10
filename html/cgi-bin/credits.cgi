@@ -95,7 +95,7 @@ There are: Advanced Proxy with URL-Filter and Update-Accelerator, ZERINA, Connec
 Distributed by Marco Sondermann, Ufuk Altinkaynak, Thomas Eichstaedt and Olaf Westrik.</p>
 <p>
 
-This product includes GeoLite data crated by MaxMind, available from <a href='http://www.maxmind.com/' target="_blank">http://www.maxmind.com/</a>.
+This product includes GeoLite data created by MaxMind, available from <a href='http://www.maxmind.com/' target="_blank">http://www.maxmind.com/</a>.
 </p>
 END
 ;
