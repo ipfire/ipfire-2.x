@@ -539,7 +539,8 @@ print <<END
 END
 ;
 if ( -e "/var/tmp/snortrules.tar.gz"){
-	$snortsettings{'INSTALLDATE'} = `ls -la /var/tmp/snortrules.tar.gz  | cut -d" " -f6-8`;
+	my @Info = stat("/var/tmp/snortrules.tar.gz");
+	$snortsettings{'INSTALLDATE'} = localtime($Info[9]);
 }
 print "&nbsp;$Lang::tr{'updates installed'}: $snortsettings{'INSTALLDATE'}</td>";
 
