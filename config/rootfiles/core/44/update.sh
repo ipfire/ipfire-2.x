@@ -75,6 +75,8 @@ rm -rf /lib/initcpio
 rm -rf /sbin/mkinitcpio
 # Remove old iw (new is in usr/sbin)
 rm -rf /usr/bin/iw
+# Remove old usb_modeswitch data
+rm -rf /etc/usb_modeswitch.d
 #
 # Backup grub.conf
 #
