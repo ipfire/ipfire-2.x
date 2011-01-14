@@ -82,7 +82,7 @@ ifneq "$(ROOT)" ""
 endif
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && ./configure.gnu --prefix=/usr -Dman1dir=/usr/share/man/man1 \
-		-Dman3dir=/usr/share/man/man3 -Dpager="/usr/bin/less -isR"
+		-Dman3dir=/usr/share/man/man3 -Dpager="/usr/bin/less -isR" -Dusethreads
 	cd $(DIR_APP) && sed -i 's/^0$$//' makefile
 	cd $(DIR_APP) && sed -i 's/^0$$//' x2p/makefile
 	cd $(DIR_APP) && make $(MAKETUNING)
