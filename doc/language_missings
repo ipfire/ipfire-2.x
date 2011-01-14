@@ -24,6 +24,10 @@
 < fireinfo please enable
 < fireinfo settings
 < fireinfo system version
+< fireinfo why descr1
+< fireinfo why descr2
+< fireinfo why enable
+< fireinfo why read more
 < fireinfo your profile id
 < ntp common settings
 < ntp sync
@@ -71,6 +75,10 @@
 < fireinfo please enable
 < fireinfo settings
 < fireinfo system version
+< fireinfo why descr1
+< fireinfo why descr2
+< fireinfo why enable
+< fireinfo why read more
 < fireinfo your profile id
 < outgoing firewall add ip group
 < outgoing firewall add mac group
