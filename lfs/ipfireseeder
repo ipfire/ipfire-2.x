@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ipfireseeder
-PAK_VER    = 19
+PAK_VER    = 20
 
 DEPS       = "rtorrent"
 
@@ -45,8 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 414ee9455996e4fbc0a642bd4984dcb5
-
+$(DL_FILE)_MD5 = 70365fee7ca86b2e059eda81ed804b49
 
 install : $(TARGET)
 
