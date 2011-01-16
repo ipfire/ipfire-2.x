@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -61,13 +61,13 @@ if ("$fireinfosettings{'ACTION'}" eq "trigger") {
 &Header::openpage('Fireinfo', 1, '');
 
 if ($fireinfosettings{'ENABLE_FIREINFO'} ne "on") {
-	&Header::openbox("100%", "left", "Why should I enable fireinfo?");
+	&Header::openbox("100%", "left", "$Lang::tr{'fireinfo why enable'}");
 
 	print <<END;
 <font color="$Header::colourred">
 	<p>
-		It is very important for the development of IPFire that you enable this
-		service. <a href="http://fireinfo.ipfire.org" target="_blank">Read more about the reasons.</a>
+		$Lang::tr{'fireinfo why descr1'}
+		$Lang::tr{'fireinfo why descr2'}<a href="http://fireinfo.ipfire.org" target="_blank">$Lang::tr{'fireinfo why read more'}</a>
 	</p>
 </font>
 END

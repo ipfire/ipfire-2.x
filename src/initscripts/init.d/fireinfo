@@ -19,6 +19,11 @@ case "${1}" in
 	start)
 		mkdir -p /var/ipfire/fireinfo 2>/dev/null
 
+		# Generate Pakfire uuid if not present
+		if [ ! -e /opt/pakfire/db/uuid ]; then
+		    uuidgen > /opt/pakfire/db/uuid
+		fi
+
 		sendprofile --public-id > /var/ipfire/fireinfo/public_id
 		sendprofile --dump > /var/ipfire/fireinfo/profile
 		;;

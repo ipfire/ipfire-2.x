@@ -41,6 +41,7 @@ var/ipfire/langs/es.pl
 var/ipfire/menu.d/10-system.menu
 usr/local/bin/fireinfoctrl
 var/ipfire/qos/bin/makeqosscripts.pl
+usr/local/bin/backupiso
 usr/local/bin/timectrl
 usr/local/bin/rebuild-initrd
 usr/local/bin/scanhd

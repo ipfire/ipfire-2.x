@@ -19,7 +19,9 @@
 #                                                                             #
 ###############################################################################
 
-IPFireISO=download.ipfire.org/iso/ipfire.iso
+#lfs change the url while build!
+IPFireISO=ipfire.iso
+#
 
 #Get user defined download from boot cmdline
 grep "netinstall=" /proc/cmdline > /dev/null && CMDLINE=1
