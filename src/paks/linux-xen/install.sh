@@ -62,7 +62,7 @@ uname -r | grep "ipfire-xen";
 if [ ${?} = 0 ]; then
 	#Xen Kernel is active
 	#Set grub default entry to this kernel
-	sed -i -e "s|^default saved|default $ENTRY|g" /boot/grub/grub.conf
+	sed -i -e "s|^default .*|default $ENTRY|g" /boot/grub/grub.conf
 	#Remove ramdisk of normal kernel (not enough space)
 	rm -f /boot/ipfirerd-$KVER.img
 else
