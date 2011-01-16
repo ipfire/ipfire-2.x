@@ -51,7 +51,7 @@ cp /boot/grub/grub.conf /boot/grub/grub-backup-$KVER-xen.conf
 # Add new Entry to grub.conf
 #
 echo "" >> /boot/grub/grub.conf
-echo "title IPFire (XEN-Kernel)" >> /boot/grub/grub.conf
+echo "title IPFire (XEN-Kernel $KVER)" >> /boot/grub/grub.conf
 echo "  kernel /vmlinuz-$KVER-ipfire-xen root=$ROOT panic=10 console=xvc0 $MOUNT" >> /boot/grub/grub.conf
 echo "  initrd /ipfirerd-$KVER-xen.img" >> /boot/grub/grub.conf
 echo "# savedefault $ENTRY" >> /boot/grub/grub.conf
