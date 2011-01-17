@@ -50,8 +50,8 @@ usr/lib/perl5/site_perl/5.8.8/URI/tn3270.pm
 usr/lib/perl5/site_perl/5.8.8/URI/urn.pm
 usr/lib/perl5/site_perl/5.8.8/URI/urn/isbn.pm
 usr/lib/perl5/site_perl/5.8.8/URI/urn/oid.pm
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/URI
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/URI/.packlist
+#usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/auto/URI
+#usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/auto/URI/.packlist
 #usr/share/man/man3/URI.3
 #usr/share/man/man3/URI::Escape.3
 #usr/share/man/man3/URI::Heuristic.3

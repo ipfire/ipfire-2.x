@@ -63,8 +63,8 @@ usr/lib/perl5/site_perl/5.8.8/Net/HTTPS.pm
 #usr/lib/perl5/site_perl/5.8.8/WWW/RobotRules
 usr/lib/perl5/site_perl/5.8.8/WWW/RobotRules.pm
 usr/lib/perl5/site_perl/5.8.8/WWW/RobotRules/AnyDBM_File.pm
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/libwww-perl
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/libwww-perl/.packlist
+#usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/auto/libwww-perl
+#usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/auto/libwww-perl/.packlist
 #usr/lib/perl5/site_perl/5.8.8/lwpcook.pod
 #usr/lib/perl5/site_perl/5.8.8/lwptut.pod
 #usr/share/man/man3/Bundle::LWP.3

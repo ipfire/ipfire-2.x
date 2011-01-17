@@ -1,4 +1,3 @@
-etc/rc.d/init.d/spamassassin
 etc/mail
 #etc/mail/spamassassin
 #etc/mail/spamassassin/init.pre
@@ -91,8 +90,8 @@ usr/lib/perl5/site_perl/5.8.8/Mail/SpamAssassin.pm
 #usr/lib/perl5/site_perl/5.8.8/Mail/SpamAssassin/Util/DependencyInfo.pm
 #usr/lib/perl5/site_perl/5.8.8/Mail/SpamAssassin/Util/Progress.pm
 #usr/lib/perl5/site_perl/5.8.8/Mail/SpamAssassin/Util/RegistrarBoundaries.pm
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Mail/SpamAssassin
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Mail/SpamAssassin/.packlist
+#usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/auto/Mail/SpamAssassin
+#usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/auto/Mail/SpamAssassin/.packlist
 #usr/lib/perl5/site_perl/5.8.8/spamassassin-run.pod
 #usr/share/man/man1/sa-learn.1
 #usr/share/man/man1/sa-update.1
@@ -199,3 +198,4 @@ usr/share/spamassassin
 #usr/share/spamassassin/sa-update-pubkey.txt
 #usr/share/spamassassin/triplets.txt
 #usr/share/spamassassin/user_prefs.template
+etc/rc.d/init.d/spamassassin

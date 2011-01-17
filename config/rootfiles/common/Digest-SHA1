@@ -1,8 +1,8 @@
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/Digest
-usr/lib/perl5/site_perl/5.8.8/i586-linux/Digest/SHA1.pm
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Digest
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Digest/SHA1
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Digest/SHA1/.packlist
-#usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Digest/SHA1/SHA1.bs
-usr/lib/perl5/site_perl/5.8.8/i586-linux/auto/Digest/SHA1/SHA1.so
+#usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/Digest
+usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/Digest/SHA1.pm
+#usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/auto/Digest
+#usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/auto/Digest/SHA1
+#usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/auto/Digest/SHA1/.packlist
+#usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/auto/Digest/SHA1/SHA1.bs
+usr/lib/perl5/site_perl/5.8.8/i586-linux-thread-multi/auto/Digest/SHA1/SHA1.so
 #usr/share/man/man3/Digest::SHA1.3
