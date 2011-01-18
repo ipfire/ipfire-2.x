@@ -507,6 +507,10 @@ WARNING: untranslated string: fireinfo pakfire version
 WARNING: untranslated string: fireinfo please enable
 WARNING: untranslated string: fireinfo settings
 WARNING: untranslated string: fireinfo system version
+WARNING: untranslated string: fireinfo why descr1
+WARNING: untranslated string: fireinfo why descr2
+WARNING: untranslated string: fireinfo why enable
+WARNING: untranslated string: fireinfo why read more
 WARNING: untranslated string: fireinfo your profile id
 WARNING: untranslated string: new
 WARNING: untranslated string: outgoing firewall add ip group
