@@ -1,0 +1,18 @@
+commit ac68f90a0229083d755e7e2e8980822405ac2da8
+Author: Michael Tremer <michael.tremer@ipfire.org>
+Date:   Tue Jan 18 19:11:06 2011 +0100
+
+    Add invalid ID: 00020003-0004-0005-0006-000700080009.
+
+diff --git a/fireinfo/system.py b/fireinfo/system.py
+index 135c29b..690eae2 100644
+--- a/fireinfo/system.py
++++ b/fireinfo/system.py
+@@ -41,6 +41,7 @@ INVALID_ID_STRINGS = (
+ 	"N/A", "n/a",
+ 	"12345", "54321", "202020",
+ 	"Chassis", "chassis",
++	"00020003-0004-0005-0006-000700080009",
+ )
+ 
+ class Singleton(type):
