@@ -1,4 +1,7 @@
 etc/system-release
 etc/issue
+srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi

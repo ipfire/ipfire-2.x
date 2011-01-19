@@ -431,7 +431,7 @@ foreach my $line (@df) {
 }
 
 # S.M.A.R.T. health warning
-my @files = `/bin/ls /var/run/smartctl_out_hddtemp-*`;
+my @files = `/bin/ls /var/run/smartctl_out_hddtemp-* 2>/dev/null`;
 foreach my $file (@files) {
 	chomp ($file);
 	my $disk=`echo $file | cut -d"-" -f2`;
