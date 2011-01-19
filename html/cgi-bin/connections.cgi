@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -57,7 +57,7 @@ if (open(IP, "${General::swroot}/red/local-ipaddress")) {
         push(@colour, ${Header::colourfw} );
 }
 
-my @vpn = `/usr/local/bin/ipsecctrl I|grep erouted|cut -d"]" -f3|cut -d"=" -f4|cut -d";" -f1| sed "s|/| |g"`;
+my @vpn = `/usr/local/bin/ipsecctrl I 2>/dev/null|grep erouted|cut -d"]" -f3|cut -d"=" -f4|cut -d";" -f1| sed "s|/| |g"`;
   foreach my $route (@vpn) {
                 chomp($route);
                 my @temp = split(/[\t ]+/, $route);

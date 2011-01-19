@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -58,7 +58,7 @@ my %mainsettings = ();
 
 my $connstate = &Header::connectionstatus();
 
-	if ( -e "/var/ipfire/main/gpl-acceted" ) {
+	if ( -e "/var/ipfire/main/gpl-accepted" ) {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'} || $cgiparams{'ACTION'} eq $Lang::tr{'reboot'}) {
 	$refresh = "<meta http-equiv='refresh' content='300;'>";
 } elsif ($connstate =~ /$Lang::tr{'connecting'}/ || /$Lang::tr{'connection closed'}/ ){
@@ -431,7 +431,7 @@ foreach my $line (@df) {
 }
 
 # S.M.A.R.T. health warning
-my @files = `/bin/ls /var/run/smartctl_out_hddtemp-*`;
+my @files = `/bin/ls /var/run/smartctl_out_hddtemp-* 2>/dev/null`;
 foreach my $file (@files) {
 	chomp ($file);
 	my $disk=`echo $file | cut -d"-" -f2`;
