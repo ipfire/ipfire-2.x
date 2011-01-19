@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -486,7 +486,7 @@ print <<END
 END
 ;
 
-my $atmdev=`cat /proc/net/atm/devices | grep 0`;
+my $atmdev=`cat /proc/net/atm/devices 2>/dev/null | grep 0`;
 chomp ($atmdev);
 if ($atmdev ne '') {
         print <<END

@@ -101,7 +101,10 @@ while (<>) {
 	#  Section: Linux Downloads
 	# -----------------------------------------------------------
 
-	if ($source_url =~ m@^[h|f]t?tp://[^?]+\.(deb|rpm)$@i)
+	if (
+		($source_url =~ m@^[h|f]t?tp://[^?]+\.(deb|rpm)$@i) ||
+		($source_url =~ m@^[h|f]t?tp://[^?]+/distfiles/[^?]+\.(tar\.gz|tar\.bz2|tgz|zip|patch\.bz2|gz|docx|patch|pdf|exe)$@i)
+	)
 	{
 		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"Linux",$mirror);
 	}
@@ -157,7 +160,11 @@ while (<>) {
 	# Section: Avira Downloads
 	# -----------------------------------------------------------
 
-	if ($source_url =~ m@^http://dl[0-9]\.avgate\.net/.*\.(htm|html|gz)$@i)
+	if (
+		($source_url =~ m@^http://dl[0-9]\.avgate\.net/.*\.(htm|html|gz)$@i) ||
+		($source_url =~ m@^http://80.190.130.19[4-5]/update/.*\.(htm|html|gz)$@i) ||
+		($source_url =~ m@^http://62.146.64.14[6-7]/update/.*\.(htm|html|gz)$@i)
+	)
 	{
 		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"Avira",$mirror);
 	}

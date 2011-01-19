@@ -26,6 +26,8 @@
 
 #
 #Stop services
+echo Stopping Proxy
+/etc/init.d/squid stop 2>/dev/null
 
 #
 #Extract files
@@ -33,6 +35,8 @@ extract_files
 
 #
 #Start services
+echo Starting Proxy
+/etc/init.d/squid start 2>/dev/null
 
 #
 #Update Language cache

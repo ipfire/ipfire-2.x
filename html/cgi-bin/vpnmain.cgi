@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2010  IPFire Team  info@ipfire.org                       #
+# Copyright (C) 2007-2011  IPFire Team  info@ipfire.org                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -2400,7 +2400,7 @@ EOF
     &General::readhasharray("${General::swroot}/vpn/config", \%confighash);
     $cgiparams{'CA_NAME'} = '';
 
-    my @status = `/usr/local/bin/ipsecctrl I`;
+    my @status = `/usr/local/bin/ipsecctrl I 2>/dev/null`;
 
     # suggest a default name for this side
     if ($cgiparams{'VPN_IP'} eq '' && -e "${General::swroot}/red/active") {
