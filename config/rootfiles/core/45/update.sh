@@ -37,6 +37,8 @@ extract_files
 #Start services
 echo Starting Proxy
 /etc/init.d/squid start 2>/dev/null
+echo Rewriting Outgoing FW Rules
+/var/ipfire/outgoing/bin/outgoingfw.pl
 
 #
 #Update Language cache
