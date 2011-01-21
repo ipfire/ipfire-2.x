@@ -1,6 +1,6 @@
 #!/usr/bin/perl 
 ##################################################
-#####     VPN-Watch.pl     Version 0.5       #####
+#####     VPN-Watch.pl     Version 0.6       #####
 ##################################################
 #                                                #
 #   VPN-Watch is part of the IPFire Firewall     #
@@ -32,7 +32,7 @@ while ( $i == 0){
   $round++;
 
    # Reset roundcounter after 10 min. To do established check.
-  if ($round > 9) { $round=0 }
+  if ($round > 9) { $round==0 }
 
   if (open(FILE, "<${General::swroot}/vpn/config")) {    @vpnsettings = <FILE>;
     close(FILE);
@@ -55,17 +55,22 @@ foreach (@vpnsettings){
   my $remoteip = `/usr/bin/ping -c 1 $remotehostname 2>/dev/null | head -n1 | awk '{print \$3}' | tr -d '()' | tr -d ':'`;chomp($remoteip);
   if ($remoteip eq ""){next;if ($debug){logger("Unable to resolve $remotehostname.");}}
   my $ipmatch= `echo "$status" | grep '$remoteip' | grep '$settings[2]'`;
-  my $established= `echo "$status" | grep '$settings[2]' | grep 'erouted;'`; 
+  my $established= `echo "$status" | grep '$settings[2]' | grep 'erouted;'`;
   
-  if ( $ipmatch eq '' ){
+  if ( $ipmatch eq '' && $status ne ''){
     logger("Remote IP for host $remotehostname($remoteip) has changed, restarting ipsec.");
     system("/usr/local/bin/ipsecctrl S $settings[0]");
+    $round=0;
     last; #all connections will reloaded
           #remove this if ipsecctrl can restart single con again
   }
-  if ( ($round = 0) && ($established eq '')) {
+
+  if ($debug){logger("Round=".$round." and established=".$established);}
+
+  if ( ($round == 0) && ($established eq '')) {
     logger("Connection to $remotehostname($remoteip) not erouted, restarting ipsec.");
     system("/usr/local/bin/ipsecctrl S $settings[0]");
+    $round=0;
     last; #all connections will reloaded
           #remove this if ipsecctrl can restart single con again
 

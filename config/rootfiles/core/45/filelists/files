@@ -8,3 +8,4 @@ srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/sbin/updxlrator
 var/ipfire/outgoing/bin/outgoingfw.pl
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
+usr/local/bin/vpn-watch
