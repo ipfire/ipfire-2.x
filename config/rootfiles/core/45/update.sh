@@ -25,6 +25,9 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
 #
+# Remove core updates from pakfire cache to save space...
+rm -f /var/cache/pakfire core-upgrade-*.ipfire
+#
 #Stop services
 echo Stopping Proxy
 /etc/init.d/squid stop 2>/dev/null
