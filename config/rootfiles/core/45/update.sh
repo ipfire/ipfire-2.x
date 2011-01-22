@@ -26,7 +26,7 @@
 
 #
 # Remove core updates from pakfire cache to save space...
-rm -f /var/cache/pakfire core-upgrade-*.ipfire
+rm -f /var/cache/pakfire/core-upgrade-*.ipfire
 #
 #Stop services
 echo Stopping Proxy
@@ -37,6 +37,12 @@ killall vpn-watch
 #
 #Extract files
 extract_files
+
+#
+# Remove some addon cronjobs if the addons are not installed
+[ ! -e /opt/pakfire/db/installed/meta-cacti ] && rm -f /etc/fcron.cyclic/cacti.cron
+[ ! -e /opt/pakfire/db/installed/meta-gnump3d ] && rm -f /etc/fcron.daily/gnump3d-index
+[ ! -e /opt/pakfire/db/installed/meta-asterisk ] && rm -f /etc/fcron.minutely/wakeup.sh
 
 # Remove disable cron mails...
 sed "s|MAILTO=root|MAILTO=|g" < /var/spool/cron/root.orig > /var/tmp/root.tmp
