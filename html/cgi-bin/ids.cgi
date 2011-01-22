@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2010  IPFire Team                                        #
+# Copyright (C) 2005-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -97,7 +97,7 @@ if (-e "/etc/snort/snort.conf") {
 	close(FILE);
 	open(FILE, ">/etc/snort/snort.conf") or die 'Unable to write snort config file.';
 
-    my @rules = `cd /etc/snort/rules/ && ls *.rules`;    # With this loop the rule might be display with correct rulepath set
+    my @rules = `cd /etc/snort/rules/ && ls *.rules 2>/dev/null`;    # With this loop the rule might be display with correct rulepath set
   	foreach (@rules) {
   	chomp $_;
   	my $temp = join(";",@snortconfig);
