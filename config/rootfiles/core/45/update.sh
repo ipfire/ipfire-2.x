@@ -35,6 +35,10 @@ killall vpn-watch
 #Extract files
 extract_files
 
+# Remove disable cron mails...
+sed "s|MAILTO=root|MAILTO=|g" < /var/spool/cron/root.orig > /var/tmp/root.tmp
+fcrontab /var/tmp/root.tmp
+
 #
 #Start services
 echo Starting Proxy
