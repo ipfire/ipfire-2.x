@@ -57,7 +57,7 @@ foreach (@vpnsettings){
   my $ipmatch= `echo "$status" | grep '$remoteip' | grep '$settings[2]'`;
   my $established= `echo "$status" | grep '$settings[2]' | grep 'erouted;'`;
   
-  if ( $ipmatch eq '' && $status ne ''){
+  if ( $round == 0 && $ipmatch eq '' && $status ne ''){
     logger("Remote IP for host $remotehostname($remoteip) has changed, restarting ipsec.");
     system("/usr/local/bin/ipsecctrl S $settings[0]");
     $round=0;
