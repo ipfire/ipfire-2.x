@@ -207,6 +207,7 @@ foreach $configentry (sort @configs)
 				}
 
 				if ($configline[17] && $configline[18]) {
+					$DAY = "";
 					if ($configline[10]){$DAY = "Mon,"}
 					if ($configline[11]){$DAY .= "Tue,"}
 					if ($configline[12]){$DAY .= "Wed,"}
