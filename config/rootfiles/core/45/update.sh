@@ -28,6 +28,8 @@
 #Stop services
 echo Stopping Proxy
 /etc/init.d/squid stop 2>/dev/null
+echo Stopping vpn-watch
+killall vpn-watch
 
 #
 #Extract files
@@ -37,6 +39,10 @@ extract_files
 #Start services
 echo Starting Proxy
 /etc/init.d/squid start 2>/dev/null
+echo Rewriting Outgoing FW Rules
+/var/ipfire/outgoing/bin/outgoingfw.pl
+echo Starting vpn-watch
+/usr/local/bin/vpn-watch &
 
 #
 #Update Language cache

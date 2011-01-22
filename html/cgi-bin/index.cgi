@@ -407,7 +407,7 @@ if ($used / $mem > 90) {
 # Diskspace usage warning
 my @temp=();
 my $temp2=();
-my @df = `/bin/df -B M -x rootfs`;
+my @df = `/bin/df -B M -P -x rootfs`;
 foreach my $line (@df) {
 	next if $line =~ m/^Filesystem/;
 	if ($line =~ m/root/ ) {

@@ -70,7 +70,7 @@ if ( $querry[0] =~ "sd?" || $querry[0] =~ "hd?" || $querry[0] =~ "xvd??"){
 	
 	&Header::openbox('100%', 'center', $Lang::tr{'disk usage'});
 	print "<table width='95%' cellspacing='5'>\n";
-	open(DF,'/bin/df -B M -x rootfs|');
+	open(DF,'/bin/df -P -B M -x rootfs|');
 	while(<DF>){
 		if ($_ =~ m/^Filesystem/ ){
 			print <<END
@@ -108,7 +108,7 @@ END
 	close DF;
 	print "<tr><td colspan='7'>&nbsp;\n<tr><td colspan='7'><h3>Inodes</h3>\n";
 
-	open(DF,'/bin/df -i -x rootfs|');
+	open(DF,'/bin/df -P -i -x rootfs|');
 	while(<DF>){
 		if ($_ =~ m/^Filesystem/ ){
 			print <<END

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2010  IPFire Team                                        #
+# Copyright (C) 2007-2011  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,6 +25,7 @@ use strict;
 #use warnings;
 
 require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/lang.pl";
 
 my %outfwsettings = ();
 my %checked = ();
@@ -218,7 +219,13 @@ foreach $configentry (sort @configs)
 
 				$CMD = "$CMD -o $netsettings{'RED_DEV'}";
 
-				if ($configline[9] eq "aktiv") {
+				if ( $configline[9] eq $Lang::tr{'aktiv'} && $outfwsettings{'POLICY'} eq 'MODE1' ) {
+					if ($DEBUG) {
+						print "$CMD -m limit --limit 10/minute -j LOG --log-prefix 'LOG_OUTGOINGFW '\n";
+					} else {
+						system("$CMD -m limit --limit 10/minute -j LOG --log-prefix 'LOG_OUTGOINGFW '");
+					}
+				} elsif ( $configline[9] eq $Lang::tr{'aktiv'} && $outfwsettings{'POLICY'} eq 'MODE2' ) {
 					if ($DEBUG) {
 						print "$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW '\n";
 					} else {
