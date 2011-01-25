@@ -54,7 +54,7 @@ echo Starting Proxy
 /etc/init.d/squid start 2>/dev/null
 echo Rewriting Outgoing FW Rules
 /var/ipfire/outgoing/bin/outgoingfw.pl
-if [ `grep "ENABLED=on" /var/ipfire/vpn/setting` ]; then
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	echo Starting vpn-watch
 	/usr/local/bin/vpn-watch &
 fi
