@@ -63,10 +63,18 @@ fi
 #Update Language cache
 #perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+#Disable geode_aes modul
+mv /lib/modules/2.6.32.28-ipfire/kernel/drivers/crypto/geode-aes.ko \
+   /lib/modules/2.6.32.28-ipfire/kernel/drivers/crypto/geode-aes.ko.off >/dev/null 2>&1
+mv /lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/crypto/geode-aes.ko \
+   /lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/crypto/geode-aes.ko.off >/dev/null 2>&1
+mv /lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/crypto/geode-aes.ko \
+   /lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/crypto/geode-aes.ko.off >/dev/null 2>&1
+
 #Rebuild module dep's
-#depmod 2.6.32.28-ipfire
-#depmod 2.6.32.28-ipfire-pae
-#depmod 2.6.32.28-ipfire-xen
+depmod 2.6.32.28-ipfire     >/dev/null 2>&1
+depmod 2.6.32.28-ipfire-pae >/dev/null 2>&1
+depmod 2.6.32.28-ipfire-xen >/dev/null 2>&1
 
 #
 #Finish
