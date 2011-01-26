@@ -333,7 +333,7 @@ foreach $_ (@log)
         my $comment = $3; 
         my $packet = $4;
 
-        $packet =~ /IN=(\w+)/;       my $iface=$1; if ( $1 eq "27" ){ $iface="";}
+        $packet =~ /IN=(\w+)/;       my $iface=$1; if ( $1 =~ /2./ ){ $iface="";}
         $packet =~ /SRC=([\d\.]+)/;  my $srcaddr=$1;
         $packet =~ /DST=([\d\.]+)/;  my $dstaddr=$1;
         $packet =~ /MAC=([\w+\:]+)/; my $macaddr=$1;

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -82,7 +82,6 @@ my @templist=();
 my $cachemem=0;
 my $proxy1='';
 my $proxy2='';
-my $replybodymaxsize=0;
 my $browser_regexp='';
 my $needhup = 0;
 my $errormessage='';
@@ -3870,19 +3869,18 @@ END
 request_body_max_size $proxysettings{'MAX_OUTGOING_SIZE'} KB
 END
 	;
-	$replybodymaxsize = 1024 * $proxysettings{'MAX_INCOMING_SIZE'};
 	if ($proxysettings{'MAX_INCOMING_SIZE'} > 0) {
-		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size 0 deny IPFire_unrestricted_ips\n"; }
-		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size 0 deny IPFire_unrestricted_mac\n"; }
+		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size none IPFire_unrestricted_ips\n"; }
+		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size none IPFire_unrestricted_mac\n"; }
 		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
 		{
-			if (!-z $extgrp) { print FILE "reply_body_max_size 0 deny for_extended_users\n"; }
+			if (!-z $extgrp) { print FILE "reply_body_max_size none for_extended_users\n"; }
 		}
 	}
 	
-	if ( $replybodymaxsize != '0' )
+	if ( $proxysettings{'MAX_INCOMING_SIZE'} != '0' )
 	{
-		print FILE "reply_body_max_size $replybodymaxsize deny all\n\n";
+		print FILE "reply_body_max_size $proxysettings{'MAX_INCOMING_SIZE'} KB all\n\n";
 	}
 
 	print FILE "visible_hostname";

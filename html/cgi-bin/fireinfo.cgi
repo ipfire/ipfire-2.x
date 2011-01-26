@@ -152,7 +152,7 @@ print <<END;
 	</tr>
 	<tr>
 		<!-- spacer -->
-		<td colspan="2">&nbsp;</td>
+		<td colspan="2"><font color='$Header::colourgreen'>&nbsp;</font></td>
 	</tr>
 	<tr>
 		<td colspan='2'>

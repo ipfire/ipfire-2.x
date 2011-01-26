@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2010  IPTifre Team                                       #
+# Copyright (C) 2005-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -242,7 +242,7 @@ $selected{'TXPOWER'}{$wlanapsettings{'TXPOWER'}} = "selected='selected'";
 $selected{'HW_MODE'}{$wlanapsettings{'HW_MODE'}} = "selected='selected'";
 $selected{'MACMODE'}{$wlanapsettings{'MACMODE'}} = "selected='selected'";
 
-my @channellist_cmd = `iwlist $wlanapsettings{'INTERFACE'} channel`;
+my @channellist_cmd = `iwlist $wlanapsettings{'INTERFACE'} channel 2>/dev/null`;
 # get available channels
 
 my @temp;
@@ -253,7 +253,7 @@ if ( $channel =~ /\d+/ ){push(@temp,$channel);}
 }
 my @channellist = @temp;
 
-my @txpower_cmd = `iwlist $wlanapsettings{'INTERFACE'} txpower`;
+my @txpower_cmd = `iwlist $wlanapsettings{'INTERFACE'} txpower 2>/dev/null`;
 # get available channels
 
 my @temp;
