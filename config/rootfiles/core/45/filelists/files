@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/httpd/conf/ssl-global.conf
 etc/rc.d/init.d/functions
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/fireinfo.cgi
