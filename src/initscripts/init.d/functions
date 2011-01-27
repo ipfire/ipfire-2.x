@@ -27,7 +27,7 @@ KILLDELAY="10"
 ## Screen Dimensions
 # Find current screen size
 if [ -z "${COLUMNS}" ]; then
-	COLUMNS=$(stty size)
+	COLUMNS=$(stty size 2>/dev/null)
 	COLUMNS=${COLUMNS##* }
 fi
 

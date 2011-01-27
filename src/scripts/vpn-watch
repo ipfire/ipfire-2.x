@@ -1,6 +1,6 @@
 #!/usr/bin/perl 
 ##################################################
-#####     VPN-Watch.pl     Version 0.6       #####
+#####     VPN-Watch.pl     Version 0.6a      #####
 ##################################################
 #                                                #
 #   VPN-Watch is part of the IPFire Firewall     #
@@ -31,8 +31,8 @@ while ( $i == 0){
 
   $round++;
 
-   # Reset roundcounter after 10 min. To do established check.
-  if ($round > 9) { $round=0; }
+   # Reset roundcounter after 60 min. To do established check.
+  if ($round > 59) { $round=0; }
 
   if (open(FILE, "<${General::swroot}/vpn/config")) {    @vpnsettings = <FILE>;
     close(FILE);
@@ -56,8 +56,9 @@ foreach (@vpnsettings){
   if ($remoteip eq ""){next;if ($debug){logger("Unable to resolve $remotehostname.");}}
   my $ipmatch= `echo "$status" | grep '$remoteip' | grep '$settings[2]'`;
   my $established= `echo "$status" | grep '$settings[2]' | grep 'erouted;'`;
-  
-  if ( $round == 0 && $ipmatch eq '' && $status ne ''){
+  my $known= `echo "$status" | grep '$settings[2]'`;
+
+  if ( $ipmatch eq '' && $known ne '' ){
     logger("Remote IP for host $remotehostname($remoteip) has changed, restarting ipsec.");
     system("/usr/local/bin/ipsecctrl S $settings[0]");
     $round=0;

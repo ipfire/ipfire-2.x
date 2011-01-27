@@ -93,6 +93,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod u-s /usr/bin/fcrontab /usr/bin/fcronsighup
 	mkdir -p /etc/fcron.minutely /etc/fcron.cyclic /etc/fcron.hourly \
 		/etc/fcron.daily /etc/fcron.weekly /etc/fcron.monthly
+
+	#Create Placeholder files
+	echo "Place scripts run minutely here ..." > /etc/fcron.minutely/info.txt
+	echo "Place scripts run cyclic here ..." > /etc/fcron.cyclic/info.txt 
+	echo "Place scripts run hourly here ..." > /etc/fcron.hourly/info.txt
+	echo "Place scripts run daily here ..." > /etc/fcron.daily/info.txt
+	echo "Place scripts run weekly here ..." > /etc/fcron.weekly/info.txt
+	echo "Place scripts run monthly here ..." > /etc/fcron.monthly/info.txt
+
 	/usr/bin/fcrontab $(DIR_SRC)/config/cron/crontab
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -25,6 +25,9 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
 #
+# Remove core updates from pakfire cache to save space...
+rm -f /var/cache/pakfire/core-upgrade-*.ipfire
+#
 #Stop services
 echo Stopping Proxy
 /etc/init.d/squid stop 2>/dev/null
@@ -36,22 +39,42 @@ killall vpn-watch
 extract_files
 
 #
+# Remove some addon cronjobs if the addons are not installed
+[ ! -e /opt/pakfire/db/installed/meta-cacti ] && rm -f /etc/fcron.cyclic/cacti.cron
+[ ! -e /opt/pakfire/db/installed/meta-gnump3d ] && rm -f /etc/fcron.daily/gnump3d-index
+[ ! -e /opt/pakfire/db/installed/meta-asterisk ] && rm -f /etc/fcron.minutely/wakeup.sh
+
+# Remove disable cron mails...
+sed "s|MAILTO=root|MAILTO=|g" < /var/spool/cron/root.orig > /var/tmp/root.tmp
+fcrontab /var/tmp/root.tmp
+
+#
 #Start services
 echo Starting Proxy
 /etc/init.d/squid start 2>/dev/null
 echo Rewriting Outgoing FW Rules
 /var/ipfire/outgoing/bin/outgoingfw.pl
-echo Starting vpn-watch
-/usr/local/bin/vpn-watch &
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	echo Starting vpn-watch
+	/usr/local/bin/vpn-watch &
+fi
 
 #
 #Update Language cache
 #perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+#Disable geode_aes modul
+mv /lib/modules/2.6.32.28-ipfire/kernel/drivers/crypto/geode-aes.ko \
+   /lib/modules/2.6.32.28-ipfire/kernel/drivers/crypto/geode-aes.ko.off >/dev/null 2>&1
+mv /lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/crypto/geode-aes.ko \
+   /lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/crypto/geode-aes.ko.off >/dev/null 2>&1
+mv /lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/crypto/geode-aes.ko \
+   /lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/crypto/geode-aes.ko.off >/dev/null 2>&1
+
 #Rebuild module dep's
-#depmod 2.6.32.28-ipfire
-#depmod 2.6.32.28-ipfire-pae
-#depmod 2.6.32.28-ipfire-xen
+depmod 2.6.32.28-ipfire     >/dev/null 2>&1
+depmod 2.6.32.28-ipfire-pae >/dev/null 2>&1
+depmod 2.6.32.28-ipfire-xen >/dev/null 2>&1
 
 #
 #Finish

@@ -208,5 +208,9 @@ endif
 	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
 	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
 
+	# Disable geode_aes modul
+	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko \
+           /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko.off
+
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)

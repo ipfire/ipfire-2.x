@@ -139,4 +139,7 @@ $(TARGET) :
 	done
 	chown root:nobody $(CONFIG_ROOT)/dhcpc
 
+	# Set outgoingfw.pl executable
+	chmod 755 $(CONFIG_ROOT)/outgoing/bin/outgoingfw.pl
+
 	@$(POSTBUILD)
