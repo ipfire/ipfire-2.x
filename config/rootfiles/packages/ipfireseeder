@@ -1,5 +1,5 @@
 etc/rc.d/init.d/ipfireseeder
 #var/ipfire/seeder
-var/ipfire/seeder/ipfire-2.9.i586-full-core44.iso.torrent
+var/ipfire/seeder/ipfire-2.9.i586-full-core45.iso.torrent
 #var/log/seeder
 var/log/seeder/info
