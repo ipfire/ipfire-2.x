@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.8.7e
+VER        = 0.8.7g
 
 THISAPP    = cacti-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cacti
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = "netsnmpd mysql"
 
@@ -44,7 +44,8 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7563a58a57d2c6cc0da28cc341a30969
+$(DL_FILE)_MD5 = 268421cb1a58d3444f7ecbddb4c4b016
+
 
 install : $(TARGET)
 
