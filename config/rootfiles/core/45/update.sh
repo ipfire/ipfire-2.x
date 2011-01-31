@@ -48,6 +48,10 @@ extract_files
 sed "s|MAILTO=root|MAILTO=|g" < /var/spool/cron/root.orig > /var/tmp/root.tmp
 fcrontab /var/tmp/root.tmp
 
+# Disable snort packet decoding alerts
+sed -i "s|#config disable_decode_alerts|config disable_decode_alerts|g" /etc/snort/snort.conf
+sed -i "s|#config disable_tcpopt_alerts|config disable_tcpopt_alerts|g" /etc/snort/snort.conf
+
 #
 #Start services
 echo Starting Proxy
