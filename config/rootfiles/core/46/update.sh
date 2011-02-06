@@ -25,6 +25,9 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
 #
+# Remove core updates from pakfire cache to save space...
+rm -f /var/cache/pakfire/core-upgrade-*.ipfire
+#
 #Stop services
 
 #
@@ -38,10 +41,15 @@ extract_files
 #Update Language cache
 #perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+# Rebuild initrd of optional pae and xen kernel
+KVER=2.6.32.28
+[ -e /boot/ipfirerd-$KVER-pae.img ] && /sbin/dracut --force --verbose /boot/ipfirerd-$KVER-pae.img $KVER-ipfire-pae
+[ -e /boot/ipfirerd-$KVER-xen.img ] && /sbin/dracut --force --verbose /boot/ipfirerd-$KVER-xen.img $KVER-ipfire-xen
+
 #Rebuild module dep's
-#depmod 2.6.32.28-ipfire
-#depmod 2.6.32.28-ipfire-pae
-#depmod 2.6.32.28-ipfire-xen
+depmod 2.6.32.28-ipfire     >/dev/null 2>&1
+depmod 2.6.32.28-ipfire-pae >/dev/null 2>&1
+depmod 2.6.32.28-ipfire-xen >/dev/null 2>&1
 
 #
 #Finish

@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.9"							# Version number
-CORE="45"							# Core Level (Filename)
+CORE="46"							# Core Level (Filename)
 PAKFIRE_CORE="45"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -686,6 +686,9 @@ buildipfire() {
   ipfiremake client175
   ipfiremake powertop
   ipfiremake parted
+  ipfiremake swig
+  ipfiremake python-m2crypto
+  ipfiremake crda
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild

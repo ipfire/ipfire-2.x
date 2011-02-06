@@ -1,16 +1,3 @@
+etc/modprobe.d/ralink_wireless
 etc/udev/rules.d/50-compat_firmware.rules
-#lib/modules/2.6.32.12-ipfire/kernel/compat
-#lib/modules/2.6.32.12-ipfire/kernel/compat/compat.ko
-#lib/modules/2.6.32.12-ipfire/kernel/compat/compat_firmware_class.ko
-#lib/modules/2.6.32.12-ipfire/kernel/drivers/bluetooth/ath3k.ko
-#lib/modules/2.6.32.12-ipfire/kernel/drivers/bluetooth/bpa10x.ko
-#lib/modules/2.6.32.12-ipfire/kernel/drivers/bluetooth/btuart_cs.ko
-#lib/modules/2.6.32.12-ipfire/kernel/drivers/bluetooth/hci_uart.ko
-#lib/modules/2.6.32.12-ipfire/kernel/drivers/net/wireless/ath/ath9k/ath9k_common.ko
-#lib/modules/2.6.32.12-ipfire/kernel/drivers/net/wireless/ath/ath9k/ath9k_hw.ko
-#lib/modules/2.6.32.12-ipfire/kernel/drivers/net/wireless/mac80211_hwsim.ko
-#lib/modules/2.6.32.12-ipfire/kernel/drivers/net/wireless/rt2x00/rt2800lib.ko
-#lib/modules/2.6.32.12-ipfire/kernel/drivers/net/wireless/rt2x00/rt2800pci.ko
-#lib/modules/2.6.32.12-ipfire/kernel/drivers/net/wireless/wl12xx/wl1271.ko
-#lib/modules/2.6.32.12-ipfire/kernel/net/bluetooth/bluetooth.ko
 lib/udev/compat_firmware.sh
