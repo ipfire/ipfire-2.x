@@ -1,3 +1,4 @@
 etc/system-release
 boot/ipfirerd-2.6.32.28.img
 opt/pakfire/lib/functions.pl
+var/ipfire/backup/include
