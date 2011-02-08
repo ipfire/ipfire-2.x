@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,35 +24,27 @@
 
 include Config
 
-ifeq "$(PAE)" "1"
-	VERSUFIX=ipfire-pae
-else
-ifeq "$(XEN)" "1"
-	VERSUFIX=ipfire-xen
-else
-	VERSUFIX=ipfire
-endif
-endif
+VER        = 0.21.1
 
-VER        = 2.6.37-4-sn
-
-THISAPP    = compat-wireless-$(VER)
-DL_FILE    = compat-wireless-$(VER).tar.bz2
+THISAPP    = M2Crypto-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+#PROG       = python-m2crypto
+#PAK_VER    = 1
+
+#DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) asix-3.5.0a.tar.bz2
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-asix-3.5.0a.tar.bz2 = $(DL_FROM)/asix-3.5.0a.tar.bz2
 
-$(DL_FILE)_MD5 = be07898fa2e28a06c1b90dd424270ad2
-asix-3.5.0a.tar.bz2_MD5=cc57513505d3ad1a43b58add91d2bba7
+$(DL_FILE)_MD5 = f93d8462ff7646397a9f77a2fe602d17
 
 install : $(TARGET)
 
@@ -61,6 +53,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+#dist: 
+#	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -81,28 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
-
-	# Copy USB-Net drivers from Kernel...
-	mkdir $(DIR_APP)/drivers/net/usb/new
-	cp $(DIR_APP)/drivers/net/usb/*.c $(DIR_APP)/drivers/net/usb/new
-	cp /usr/src/linux/drivers/net/usb/{*.c,*.h,Makefile} $(DIR_APP)/drivers/net/usb
-	cp $(DIR_APP)/drivers/net/usb/new/*.c $(DIR_APP)/drivers/net/usb
-
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.34-usbnet_compile.patch
-
-	# Build Updated asix usb-lan driver
-	cd $(DIR_APP)/drivers/net/usb && tar xvf $(DIR_DL)/asix-3.5.0a.tar.bz2
-
-	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) \
-		KMODPATH_ARG='INSTALL_MOD_PATH=' KMODDIR=kernel install-modules
-
-	# Install firmware udev files...
-	cd $(DIR_APP)/udev && install -m 644 50-compat_firmware.rules /etc/udev/rules.d/
-	cd $(DIR_APP)/udev && install -m 755 compat_firmware.sh /lib/udev/
-
-	# Disable hwcrypt on rt73 ...
-	echo "options rt73usb nohwcrypt=1" > /etc/modprobe.d/ralink_wireless
-
-	-rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && python setup.py install
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

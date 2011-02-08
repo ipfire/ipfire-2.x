@@ -87,7 +87,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --enable-referer-log \
 	      --enable-snmp \
 	   --with-pthreads --with-dl \
-	   --with-maxfd="16384"
+	   --with-maxfd="16384" \
+	   --with-large-files
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

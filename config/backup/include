@@ -7,6 +7,7 @@
 /etc/passwd
 /etc/shadow
 /etc/group
+/etc/ipsec.user.*
 /etc/sysconfig/*
 /etc/hosts*
 /etc/httpd/*
