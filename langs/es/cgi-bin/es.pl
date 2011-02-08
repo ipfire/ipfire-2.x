@@ -535,6 +535,7 @@
 'cpu idle usage' => 'Uso de CPU inactivo',
 'cpu interrupt usage' => 'Uso de interrupción de CPU',
 'cpu iowait usage' => 'CPU esperando IO',
+'cpu frequency per' => 'CPU frecuencia por',
 'cpu irq usage' => 'Uso de IRQ del CPU',
 'cpu nice usage' => 'Buen uso de CPU',
 'cpu steal usage' => 'uso de CPU steal',
