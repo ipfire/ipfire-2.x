@@ -2,3 +2,10 @@ etc/system-release
 boot/ipfirerd-2.6.32.28.img
 opt/pakfire/lib/functions.pl
 var/ipfire/backup/include
+srv/web/ipfire/cgi-bin/system.cgi
+srv/web/ipfire/cgi-bin/ddns.cgi
+usr/local/bin/setddns.pl
+var/ipfire/langs/de.pl
+var/ipfire/langs/en.pl
+var/ipfire/langs/es.pl
+var/ipfire/langs/fr.pl

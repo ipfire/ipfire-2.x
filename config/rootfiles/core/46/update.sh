@@ -40,7 +40,7 @@ extract_files
 
 #
 #Update Language cache
-#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 # Rebuild initrd of optional pae and xen kernel
 KVER=2.6.32.28
