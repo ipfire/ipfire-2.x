@@ -54,5 +54,7 @@ depmod 2.6.32.28-ipfire-xen >/dev/null 2>&1
 
 #
 #Finish
+/etc/init.d/fireinfo start
+sendprofile
 #Don't report the exitcode last command
 exit 0
