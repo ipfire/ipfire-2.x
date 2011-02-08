@@ -390,7 +390,7 @@ if ($ip ne $ipcache) {
 			        &General::log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'} : failure (could not connect to server)");
 			    }
 			}
-			elsif ($settings{'SERVICE'} eq 'regfish') {
+			elsif ($settings{'SERVICE'} eq 'strato') {
 				# use proxy ?
 				my %proxysettings;
 				&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
@@ -398,24 +398,61 @@ if ($ip ne $ipcache) {
 					my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
 					Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
 				}
-				my ($out, $response) = Net::SSLeay::get_https(  'dyndns.regfish.de',
+
+				if ($settings{'HOSTNAME'} eq '') {
+					$settings{'HOSTDOMAIN'} = $settings{'DOMAIN'};
+				} else {
+					$settings{'HOSTDOMAIN'} = "$settings{'HOSTNAME'}.$settings{'DOMAIN'}";
+				}
+
+				my ($out, $response) = Net::SSLeay::get_https(  'dyndns.strato.com',
+									    443,
+									    "/nic/update?hostname=$settings{'HOSTDOMAIN'}&myip=$ip",
+	                						    Net::SSLeay::make_headers('User-Agent' => 'IPFire',
+									     'Authorization' => 'Basic ' . encode_base64("$settings{'LOGIN'}:$settings{'PASSWORD'}") )
+									 );
+
+				if ($response =~ m%HTTP/1\.. 200 OK%) {
+					#Valid responses from update => ErrCount=0
+					if ( $out =~ m/good |nochg /ig) {
+						&General::log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'} : success");
+						$success++;
+					} else {
+						&General::log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'} : failure1 ($out)");
+						$success++;
+					}
+				} elsif ( $out =~ m/<title>(.*)<\/title>/ig ) {
+					&General::log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'} : failure2 ($1)");
+				} else {
+					&General::log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'} : failure3 ($response)");
+				}
+			}
+			elsif ($settings{'SERVICE'} eq 'regfish') {
+			    # use proxy ?
+			    my %proxysettings;
+			    &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+			    if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
+				my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+				Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
+			    }
+					my ($out, $response) = Net::SSLeay::get_https(  'dyndns.regfish.de',
 										443,
 										"/?fqdn=$settings{'DOMAIN'}&ipv4=$ip&forcehost=1&authtype=secure&token=$settings{'LOGIN'}",
 										Net::SSLeay::make_headers('User-Agent' => 'Ipfire' )
 										);
-				#Valid responses from service are:
-				# success|100|update succeeded!
-				# success|101|no update needed at this time..
-				if ($response =~ m%HTTP/1\.. 200 OK%) {
-					if ( $out !~ m/(success\|(100|101)\|)/ig ) {
-						&General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : failure ($out)");
-					} else {
-						&General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : success");
-						$success++;
-					}
+			    #Valid responses from service are:
+			    #success|100|update succeeded!
+			    #success|101|no update needed at this time..
+			    if ($response =~ m%HTTP/1\.. 200 OK%) {
+				if ( $out !~ m/(success\|(100|101)\|)/ig ) {
+				    &General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : failure ($out)");
 				} else {
-					&General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : failure (could not connect to server)");
+				    &General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : success");
+				    $success++;
 				}
+			    } else {
+			        &General::log("Dynamic DNS ip-update for $settings{'DOMAIN'} : failure (could not connect to server)");
+			    }
 			}
 			elsif ($settings{'SERVICE'} eq 'ovh') {
 				my %proxysettings;
