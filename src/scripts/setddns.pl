@@ -174,33 +174,6 @@ if ($ip ne $ipcache) {
 			        &General::log("Dynamic DNS ip-update for cjb.net ($settings{'LOGIN'}) : failure (could not connect to server)");
 			    }
 			}
-			elsif ($settings{'SERVICE'} eq 'mydyn') {
-			    # use proxy ?
-			    my %proxysettings;
-			    &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
-			    if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
-				my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
-				Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
-			    }
-
-			    my ($out, $response) = Net::SSLeay::get_http(  'www.mydyn.de',
-									    80,
-									    "/cgi-bin/update.pl?$settings{'LOGIN'}-$settings{'PASSWORD'}",
-									    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
-									);
-
-			    if ($response =~ m%HTTP/1\.. 200 OK%) {
-				if ( $out !~ m/The IP address of the subdomain/ ) {
-				    &General::log("Dynamic DNS ip-update for mydyn.de ($settings{'LOGIN'}) : failure (bad password or login)");
-				} else {
-				    &General::log("Dynamic DNS ip-update for mydyn.de ($settings{'LOGIN'}) : success");
-				    $success++;
-				}
-			    } else {
-			        &General::log("Dynamic DNS ip-update for mydyn.de ($settings{'LOGIN'}) : failure (could not connect to server)");
-			    }
-
-			}
 			elsif ($settings{'SERVICE'} eq 'selfhost') {
 			    # use proxy ?
 			    my %proxysettings;
