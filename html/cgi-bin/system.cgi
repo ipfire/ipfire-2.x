@@ -56,15 +56,15 @@ if ( $querry[0] =~ "cpufreq"){
 	&Header::openpage($Lang::tr{'status information'}, 1, '');
 	&Header::openbigbox('100%', 'left');
 
+	&Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("system.cgi","cpu","day","325");
+	&Header::closebox();
+
 	if ( -e "$mainsettings{'RRDLOG'}/collectd/localhost/cpufreq/cpufreq-0.rrd"){
 		&Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("system.cgi","cpufreq","day","325");
 		&Header::closebox();
 	}
-
-	&Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("system.cgi","cpu","day","325");
-	&Header::closebox();
 
 	&Header::openbox('100%', 'center', "Load $Lang::tr{'graph'}");
 	&Graphs::makegraphbox("system.cgi","load","day");

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -243,12 +243,12 @@ $checked{'SERVICE'}{'easydns.com'} = '';
 $checked{'SERVICE'}{'enom.com'} = '';
 $checked{'SERVICE'}{'freedns.afraid.org'} = '';
 $checked{'SERVICE'}{'hn.org'} = '';
-$checked{'SERVICE'}{'mydyn.de'} = '';
 $checked{'SERVICE'}{'no-ip.com'} = '';
 $checked{'SERVICE'}{'nsupdate'} = '';
 $checked{'SERVICE'}{'ovh.com'} = '';
 $checked{'SERVICE'}{'regfish.com'} = '';
 $checked{'SERVICE'}{'selfhost.de'} = '';
+$checked{'SERVICE'}{'strato.com'} = '';
 $checked{'SERVICE'}{'tzo.com'} = '';
 $checked{'SERVICE'}{'zoneedit.com'} = '';
 $checked{'SERVICE'}{$settings{'SERVICE'}} = "selected='selected'";
@@ -336,12 +336,12 @@ print <<END
     <option $checked{'SERVICE'}{'enom.com'}>enom.com</option>
     <option $checked{'SERVICE'}{'freedns.afraid.org'}>freedns.afraid.org</option>
     <option $checked{'SERVICE'}{'hn.org'}>hn.org</option>
-    <option $checked{'SERVICE'}{'mydyn.de'}>mydyn.de</option>
     <option $checked{'SERVICE'}{'no-ip.com'}>no-ip.com</option>
     <option $checked{'SERVICE'}{'nsupdate'}>nsupdate</option>
     <option $checked{'SERVICE'}{'ovh.com'}>ovh.com</option>
     <option $checked{'SERVICE'}{'regfish.com'}>regfish.com</option>
     <option $checked{'SERVICE'}{'selfhost.de'}>selfhost.de</option>
+    <option $checked{'SERVICE'}{'strato.com'}>strato.com</option>
 <!--    <option $checked{'SERVICE'}{'tzo.com'}>tzo.com</option>        comment this service out until a working fix is developed -->
     <option $checked{'SERVICE'}{'zoneedit.com'}>zoneedit.com</option>
     </select></td>

@@ -17,6 +17,7 @@
 'ConnSched down' => 'Down',
 'ConnSched ipsecstart' => 'IPSec (re)start',
 'ConnSched ipsecstop' => 'IPSec stop',
+'cpu frequency per' => 'CPU frequency per',
 'ConnSched reconnect' => 'Reconnect',
 'ConnSched scheduled actions' => 'Scheduled actions',
 'ConnSched scheduler' => 'Scheduler',

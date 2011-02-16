@@ -36,10 +36,11 @@ extract_files
 
 #
 #Start services
+/etc/init.d/squid restart
 
 #
 #Update Language cache
-#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 # Rebuild initrd of optional pae and xen kernel
 KVER=2.6.32.28
@@ -53,5 +54,7 @@ depmod 2.6.32.28-ipfire-xen >/dev/null 2>&1
 
 #
 #Finish
+/etc/init.d/fireinfo start
+sendprofile
 #Don't report the exitcode last command
 exit 0

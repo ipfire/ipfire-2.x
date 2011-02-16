@@ -1,0 +1,4 @@
+etc/system-release
+srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
+var/ipfire/backup/include
