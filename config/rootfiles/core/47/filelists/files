@@ -1,2 +1,4 @@
 etc/system-release
+etc/rc.d/init.d/sshd
 srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/remote.cgi
