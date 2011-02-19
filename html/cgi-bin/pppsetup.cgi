@@ -200,6 +200,16 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
         delete $pppsettings{'ENCAP_RFC1483'};
         delete $pppsettings{'ENCAP_RFC2364'};
 
+        if ((!($pppsettings{'INET_VLAN'} =~ /^\d+$/)) ||
+		($pppsettings{'INET_VLAN'} eq '') ||
+		($pppsettings{'INET_VLAN'} > 4095) ) {
+			$errormessage = 'INET_VLAN - '.$Lang::tr{'invalid input'}; }
+
+        if ((!($pppsettings{'IPTV_VLAN'} =~ /^\d+$/)) ||
+		($pppsettings{'IPTV_VLAN'} eq '') ||
+		($pppsettings{'IPTV_VLAN'} > 4095) ) {
+			$errormessage = 'IPTV_VLAN - '.$Lang::tr{'invalid input'}; }
+
 ERROR:
         if ($errormessage) {
                 $pppsettings{'VALID'} = 'no'; }
@@ -412,6 +422,9 @@ $checked{'DNS'}{$pppsettings{'DNS'}} = "checked='checked'";
 $checked{'IPTV'}{'enable'} = '';
 $checked{'IPTV'}{'disable'} = '';
 $checked{'IPTV'}{$pppsettings{'IPTV'}} = "checked='checked'";
+
+if ($pppsettings{'INET_VLAN'} eq '') { $pppsettings{'INET_VLAN'}='7'; }
+if ($pppsettings{'IPTV_VLAN'} eq '') { $pppsettings{'IPTV_VLAN'}='8'; }
 
 &Header::openpage($Lang::tr{'ppp setup'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -747,7 +760,14 @@ print <<END
 		</tr>
 		<tr>
 		        <td colspan='3' width='100%'><input type='radio' name='IPTV' value='disable' $checked{'IPTV'}{'disable'}>$Lang::tr{'off'}</td>
-		 </tr>
+		</tr>
+		<tr>
+			<td>INET_VLAN</td>
+			<td><input size=5 type='number' name='INET_VLAN' value='$pppsettings{'INET_VLAN'}' /></td>
+			<td>IPTV_VLAN</td>
+			<td><input size=5 type='number' name='IPTV_VLAN' value='$pppsettings{'IPTV_VLAN'}' /></td>
+		</tr>
+
 END
 ;
 	}
@@ -921,6 +941,8 @@ sub initprofile
         $pppsettings{'BACKUPPROFILE'} = $pppsettings{'PROFILE'};
         $pppsettings{'IPTVSERVERS'} = '192.168.2.51/32';
         $pppsettings{'IPTV'} = 'disable';
+        $pppsettings{'INET_VLAN'} = '7';
+        $pppsettings{'IPTV_VLAN'} = '8';
 
 	if ( -e '/usr/local/bin/igmpproxy'){
 	        $pppsettings{'IPTV'} = 'enable';

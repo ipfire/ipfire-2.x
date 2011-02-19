@@ -19,9 +19,8 @@
 . ${rc_functions}
 
 #Define some defaults
-RED_VDSL_INET_VLAN=7
-RED_VDSL_IPTV_VLAN=8
-RED_VDSL_IPTV_DISABLE=0
+INET_VLAN=7
+IPTV_VLAN=8
 
 eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 if [ "$RRDLOG" == "" ]; then
@@ -252,48 +251,48 @@ case "${1}" in
 			fi
 
 			if [ "$TYPE" == "vdsl" ]; then
-				boot_mesg "Createing VLAN Interface ${DEVICE}.${RED_VDSL_INET_VLAN} ..."
+				boot_mesg "Createing VLAN Interface ${DEVICE}.${INET_VLAN} ..."
 				modprobe 8021q
-				vconfig add ${DEVICE} ${RED_VDSL_INET_VLAN}
+				vconfig add ${DEVICE} ${INET_VLAN}
 				if [ -n "$MAC1" ]; then
-					boot_mesg "Setting mac address on ${DEVICE}.${RED_VDSL_INET_VLAN} to ${MAC1}"	
-					ip link set dev ${DEVICE}.${RED_VDSL_INET_VLAN} address ${MAC1}
+					boot_mesg "Setting mac address on ${DEVICE}.${INET_VLAN} to ${MAC1}"	
+					ip link set dev ${DEVICE}.${INET_VLAN} address ${MAC1}
 					evaluate_retval
 				fi
-				PPP_NIC=${DEVICE}.${RED_VDSL_INET_VLAN}
+				PPP_NIC=${DEVICE}.${INET_VLAN}
 				sleep 0.2
 				ip link set ${PPP_NIC} up
 				TYPE="pppoe"
 			fi
 			if [ "${IPTV}" == "enable" ]; then
-				PIDFILE="/var/run/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.pid"
-				LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.info"
+				PIDFILE="/var/run/dhcpcd-${DEVICE}.${IPTV_VLAN}.pid"
+				LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.${IPTV_VLAN}.info"
 				# Test to see if there is a stale pid file
 				if [ -f "$PIDFILE" ]; then
 					ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
 					if [ $? != 0 ]; then
-						rm -f /var/run/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.pid > /dev/null
+						rm -f /var/run/dhcpcd-${DEVICE}.${IPTV_VLAN}.pid > /dev/null
 					fi
 				fi
 
 				if [ ! -f "$PIDFILE" ]; then
-					boot_mesg "Createing VLAN Interface ${DEVICE}.${RED_VDSL_IPTV_VLAN} ..."
+					boot_mesg "Createing VLAN Interface ${DEVICE}.${IPTV_VLAN} ..."
 					modprobe 8021q
-					vconfig add ${DEVICE} ${RED_VDSL_IPTV_VLAN}
+					vconfig add ${DEVICE} ${IPTV_VLAN}
 					if [ -n "$MAC2" ]; then
-						boot_mesg "Setting mac address on ${DEVICE}.${RED_VDSL_IPTV_VLAN} to ${MAC2}"	
-						ip link set dev ${DEVICE}.${RED_VDSL_IPTV_VLAN} address ${MAC2}
+						boot_mesg "Setting mac address on ${DEVICE}.${IPTV_VLAN} to ${MAC2}"	
+						ip link set dev ${DEVICE}.${IPTV_VLAN} address ${MAC2}
 						evaluate_retval
 					fi
-					boot_mesg -n "Starting dhcpcd on the ${DEVICE}.${RED_VDSL_IPTV_VLAN} interface..."
-					/sbin/dhcpcd ${DEVICE}.${RED_VDSL_IPTV_VLAN} ${DHCP_START} >/dev/null 2>&1
+					boot_mesg -n "Starting dhcpcd on the ${DEVICE}.${IPTV_VLAN} interface..."
+					/sbin/dhcpcd ${DEVICE}.${IPTV_VLAN} ${DHCP_START} >/dev/null 2>&1
 					RET="$?"
 
 					if [ "$RET" = "0" ]; then
-						. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.${RED_VDSL_IPTV_VLAN}.info
+						. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.${IPTV_VLAN}.info
 						echo ""
 						echo_ok
-						boot_mesg "           DHCP Assigned Settings for ${DEVICE}.${RED_VDSL_IPTV_VLAN}:"
+						boot_mesg "           DHCP Assigned Settings for ${DEVICE}.${IPTV_VLAN}:"
 						boot_mesg_flush
 						boot_mesg "           IP Address:      $ip_address"
 						boot_mesg_flush
@@ -553,12 +552,12 @@ case "${1}" in
 		fi
 
 		if [ "$DEVICE" != "${GREEN_DEV}" ] && [ "$DEVICE" != "" ]; then
-			link_status=`ip link show $DEVICE.${RED_VDSL_INET_VLAN} 2> /dev/null`
+			link_status=`ip link show $DEVICE.${INET_VLAN} 2> /dev/null`
 			if [ -n "${link_status}" ]; then
 				if echo "${link_status}" | grep -q UP; then
-					boot_mesg "Bringing down the ${DEVICE}.${RED_VDSL_INET_VLAN} interface..."
-					ip link set ${DEVICE}.${RED_VDSL_INET_VLAN} down
-					vconfig rem ${DEVICE}.${RED_VDSL_INET_VLAN}
+					boot_mesg "Bringing down the ${DEVICE}.${INET_VLAN} interface..."
+					ip link set ${DEVICE}.${INET_VLAN} down
+					vconfig rem ${DEVICE}.${INET_VLAN}
 					evaluate_retval
 				fi
 			else
