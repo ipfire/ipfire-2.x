@@ -27,13 +27,13 @@ include Config
 VER        = 1.00
 
 THISAPP    = ipfireseeder-$(VER)
-DL_FILE    = ipfire-2.9.i586-full-core45.iso.torrent
+DL_FILE    = ipfire-2.9.i586-full-core46.iso.torrent
 
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ipfireseeder
-PAK_VER    = 21
+PAK_VER    = 22
 
 DEPS       = "rtorrent"
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3e68353572b67ba3837e15134b124a22
+$(DL_FILE)_MD5 = 8484574559180f14f9c98d7d3140c3ed
 
 install : $(TARGET)
 
