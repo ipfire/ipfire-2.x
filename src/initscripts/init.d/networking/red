@@ -363,6 +363,10 @@ case "${1}" in
 					fi
 				fi
 				ip link set ${PPP_NIC} up
+				if [ -n "${PPTP_ROUTE}" ]; then
+					boot_mesg "Set route ${PPTP_ROUTE} to pptp server..."
+					route add ${PPTP_ROUTE}
+				fi
 			else
 				boot_mesg "Bringing up the PPP via ${TYPE} on ${COMPORT}..."
 			fi
@@ -549,6 +553,10 @@ case "${1}" in
 					killproc dhcpcd
 				fi
 			fi
+		fi
+
+		if [ -n "${PPTP_ROUTE}" ]; then
+			route del ${PPTP_ROUTE}
 		fi
 
 		if [ "$DEVICE" != "${GREEN_DEV}" ] && [ "$DEVICE" != "" ]; then

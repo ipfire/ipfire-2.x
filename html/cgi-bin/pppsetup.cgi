@@ -709,6 +709,11 @@ print <<END
         <td width='25%'>My Netconfig</td>
         <td colspan='3'><input size=50 type='text' name='PPTP_NICCFG' value='$pppsettings{'PPTP_NICCFG'}' /></td>
 </tr>
+<tr>
+        <td width='25%'>PPTP Route&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td colspan='3'><input size=50 type='text' name='PPTP_ROUTE' value='$pppsettings{'PPTP_ROUTE'}' /></td>
+</tr>
+
 END
 ;
 }
@@ -927,6 +932,7 @@ sub initprofile
         $pppsettings{'VCI'} = '32';
         $pppsettings{'PPTP_PEER'} = '10.0.0.138';
 	$pppsettings{'PPTP_NICCFG'} = '10.0.0.140/24 broadcast 10.0.0.255';
+	$pppsettings{'PPTP_ROUTE'} = '';
         $pppsettings{'PROTOCOL'} = 'RFC2364';
         $pppsettings{'MTU'} = '1492';
         $pppsettings{'MRU'} = '1492';
