@@ -17,6 +17,7 @@ case "$1" in
        ssh-keygen -qf /etc/ssh/ssh_host_rsa_key -N ''
        ssh-keygen -qf /etc/ssh/ssh_host_key -N '' -t rsa1
        ssh-keygen -qf /etc/ssh/ssh_host_dsa_key -N '' -t dsa
+       ssh-keygen -qf /etc/ssh/ssh_host_ecdsa_key -N '' -t ecdsa
     fi
 
         [ -e "/var/ipfire/remote/enablessh" ] || exit 0 # SSH is not enabled

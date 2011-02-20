@@ -23,4 +23,4 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
-/usr/local/bin/clamavctrl enable
+/usr/local/bin/clamavctrl enable &

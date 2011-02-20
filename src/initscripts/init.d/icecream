@@ -15,24 +15,32 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-SCHEDULER=minerva.ipfire.org
+#SCHEDULER=minerva.ipfire.org
+ENABLE_SCHEDULER=on
 JOBS=8
-PORT=10244
 
 case "${1}" in
 	start)
 		boot_mesg "Starting Icecream Daemon..."
-		/opt/icecream/sbin/iceccd -d -s ${SCHEDULER} -m ${JOBS} -p ${PORT}
+		ARGS="-d -m ${JOBS}"
+		if [ -n "${SCHEDULER}" ]; then
+			ARGS="${ARGS} -s ${SCHEDULER}"
+		fi
+		/opt/icecream/sbin/iceccd ${ARGS}
 		evaluate_retval
-		if ! grep -q "${PORT}" /var/ipfire/xtaccess/config ; then
-			echo "tcp,0.0.0.0/0,${PORT},on,0.0.0.0,Icecream" >> /var/ipfire/xtaccess/config
-			/usr/local/bin/setxtaccess
+
+		if [ "${ENABLE_SCHEDULER}" = "on" ]; then
+			/opt/icecream/sbin/icecc-scheduler -d
 		fi
 		;;
 		
 	stop)
 		boot_mesg "Stopping Icecream Daemon..."
 		killproc /opt/icecream/sbin/iceccd
+
+		if [ "${ENABLE_SCHEDULER}" = "on" ]; then
+			killproc /opt/icecream/sbin/icecc-scheduler
+		fi
 		;;
 
 	restart)

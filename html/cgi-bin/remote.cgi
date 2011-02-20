@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -180,6 +180,7 @@ END
 &viewkey("/etc/ssh/ssh_host_key.pub","RSA1");
 &viewkey("/etc/ssh/ssh_host_rsa_key.pub","RSA2");
 &viewkey("/etc/ssh/ssh_host_dsa_key.pub","DSA");
+&viewkey("/etc/ssh/ssh_host_ecdsa_key.pub","ECDSA");
 
 print "</table>\n";
 

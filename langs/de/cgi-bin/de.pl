@@ -18,6 +18,7 @@
 'ConnSched ipsecstart' => 'IPSec (neu)starten',
 'ConnSched ipsecstop' => 'IPSec stop',
 'ConnSched reconnect' => 'Neu verbinden',
+'cpu frequency per' => 'CPU Frequenz pro',
 'ConnSched scheduled actions' => 'Geplante Aktionen',
 'ConnSched scheduler' => 'Scheduler',
 'ConnSched select profile' => 'Wähle Profil',

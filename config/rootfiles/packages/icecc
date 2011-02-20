@@ -1,6 +1,11 @@
 #opt/icecream
 #opt/icecream/bin
+#opt/icecream/bin/c++
+#opt/icecream/bin/cc
+#opt/icecream/bin/g++
+#opt/icecream/bin/gcc
 #opt/icecream/bin/icecc
+#opt/icecream/bin/icerun
 #opt/icecream/include
 #opt/icecream/include/icecc
 #opt/icecream/include/icecc/comm.h

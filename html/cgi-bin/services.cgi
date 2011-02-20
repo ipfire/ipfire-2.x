@@ -279,6 +279,7 @@ sub isrunningaddon{
 
 	if ( $testcmd =~ /is\ running/ && $testcmd !~ /is\ not\ running/){
 		$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
+		$testcmd =~ s/.* //gi;
 		$testcmd =~ s/[a-z_]//gi;
 		$testcmd =~ s/\[[0-1]\;[0-9]+//gi;
 		$testcmd =~ s/[\(\)\.]//gi;

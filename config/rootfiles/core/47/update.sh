@@ -34,6 +34,11 @@ rm -f /var/cache/pakfire/core-upgrade-*.ipfire
 #Extract files
 extract_files
 
+#Generate ssh ecdsa host key if not present
+if [ ! -e /etc/ssh/ssh_host_ecdsa_key ]; then
+   ssh-keygen -qf /etc/ssh/ssh_host_ecdsa_key -N '' -t ecdsa
+fi
+
 #
 #Start services
 
@@ -48,5 +53,7 @@ extract_files
 
 #
 #Finish
+/etc/init.d/fireinfo start
+sendprofile
 #Don't report the exitcode last command
 exit 0
