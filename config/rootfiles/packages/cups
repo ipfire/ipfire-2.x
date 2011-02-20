@@ -106,7 +106,7 @@ usr/lib/libcupsmime.so
 usr/lib/libcupsmime.so.1
 usr/lib/libcupsppdc.so
 usr/lib/libcupsppdc.so.1
-#usr/lib/php/extensions/no-debug-non-zts-20060613/phpcups.so
+#usr/lib/php/extensions/no-debug-non-zts-20090626/phpcups.so
 usr/sbin/accept
 usr/sbin/cupsaccept
 usr/sbin/cupsaddsmb
