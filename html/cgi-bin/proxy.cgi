@@ -3192,7 +3192,7 @@ END
 		{
 			if ($proxysettings{'NTLM_ENABLE_INT_AUTH'} eq 'on')
 			{
-				print FILE "auth_param ntlm program $authdir/ntlm_auth $proxysettings{'NTLM_DOMAIN'}/$proxysettings{'NTLM_PDC'}";
+				print FILE "auth_param ntlm program $authdir/ntlm_smb_lm_auth $proxysettings{'NTLM_DOMAIN'}/$proxysettings{'NTLM_PDC'}";
 				if ($proxysettings{'NTLM_BDC'} eq '') { print FILE "\n"; } else { print FILE " $proxysettings{'NTLM_DOMAIN'}/$proxysettings{'NTLM_BDC'}\n"; }
 				print FILE "auth_param ntlm children $proxysettings{'AUTH_CHILDREN'}\n";
 				if (!($proxysettings{'AUTH_IPCACHE_TTL'} eq '0')) { print FILE "\nauthenticate_ip_ttl $proxysettings{'AUTH_IPCACHE_TTL'} minutes\n"; }
