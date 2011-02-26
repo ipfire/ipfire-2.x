@@ -25,8 +25,13 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
 #
-# Remove core updates from pakfire cache to save space...
-rm -f /var/cache/pakfire/core-upgrade-*.ipfire
+# Remove old core updates from pakfire cache to save space...
+core=47
+for (( i=1; i<=$core; i++ ))
+do
+	rm -f /var/cache/pakfire/core-upgrade-$i.ipfire
+done
+
 #
 #Stop services
 
