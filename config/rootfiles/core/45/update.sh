@@ -29,7 +29,7 @@
 core=45
 for (( i=1; i<=$core; i++ ))
 do
-	rm -f /var/cache/pakfire/core-upgrade-$i.ipfire
+	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
 #
