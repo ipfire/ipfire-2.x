@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -30,7 +30,7 @@ THISAPP    = mpfire-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpfire
-PAK_VER    = 9
+PAK_VER    = 10
 
 DEPS       = "mpd mpc"
 
@@ -70,8 +70,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 664 /var/ipfire/mpfire/playlist.m3u
 	chmod 755 /srv/web/ipfire/html/images/mpfire
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/mpfire /var/ipfire/backup/addons/includes/mpfire
-	-mkdir -p /usr/lib/perl5/site_perl/5.8.8/Audio/
-	cp -vrf $(DIR_SRC)/config/mpfire/perl/Audio/MPD* /usr/lib/perl5/site_perl/5.8.8/Audio/
-	cp -vrf $(DIR_SRC)/config/mpfire/perl/Accessor* /usr/lib/perl5/5.8.8/Class/
-	cp -vrf $(DIR_SRC)/config/mpfire/perl/Readonly.pm /usr/lib/perl5/5.8.8/Readonly.pm
+	-mkdir -p /usr/lib/perl5/site_perl/5.12.3/Audio/
+	cp -vrf $(DIR_SRC)/config/mpfire/perl/Audio/MPD* /usr/lib/perl5/site_perl/5.12.3/Audio/
+	cp -vrf $(DIR_SRC)/config/mpfire/perl/Accessor* /usr/lib/perl5/5.12.3/Class/
+	cp -vrf $(DIR_SRC)/config/mpfire/perl/Readonly.pm /usr/lib/perl5/5.12.3/Readonly.pm
 	@$(POSTBUILD)
