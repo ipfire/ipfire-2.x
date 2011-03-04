@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.7
+VER        = 2.7.1
 
 THISAPP    = Python-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0e8c9ec32abf5b732bea7d91b38c3339
+$(DL_FILE)_MD5 = aa27bc25725137ba155910bd8e5ddc4f
 
 install : $(TARGET)
 
