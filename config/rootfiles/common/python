@@ -1843,6 +1843,7 @@ usr/lib/python2.7/lib-dynload/_multibytecodec.so
 usr/lib/python2.7/lib-dynload/_multiprocessing.so
 usr/lib/python2.7/lib-dynload/_random.so
 usr/lib/python2.7/lib-dynload/_socket.so
+usr/lib/python2.7/lib-dynload/_sqlite3.so
 usr/lib/python2.7/lib-dynload/_ssl.so
 usr/lib/python2.7/lib-dynload/_struct.so
 usr/lib/python2.7/lib-dynload/_testcapi.so

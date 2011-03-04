@@ -416,6 +416,7 @@ buildipfire() {
   ipfiremake pam
   ipfiremake openssl
   ipfiremake curl
+  ipfiremake sqlite
   ipfiremake python
   ipfiremake fireinfo
   ipfiremake libnet
@@ -649,7 +650,6 @@ buildipfire() {
   ipfiremake splix
   ipfiremake streamripper
   ipfiremake sshfs
-  ipfiremake sqlite
   ipfiremake taglib
   ipfiremake mediatomb
   ipfiremake sslh
