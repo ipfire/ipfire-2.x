@@ -690,6 +690,7 @@ buildipfire() {
   ipfiremake python-m2crypto
   ipfiremake crda
   ipfiremake python-distutils-extra
+  ipfiremake python-lzma
 
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
