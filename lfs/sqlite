@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.6.10
+VER        = 3.7.3
 
 THISAPP    = sqlite-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sqlite
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a03bdc86df4025b6881d58557e4b5bd3
+$(DL_FILE)_MD5 = 5437978aae90350cf984993091e0d695
 
 install : $(TARGET)
 

@@ -416,6 +416,7 @@ buildipfire() {
   ipfiremake pam
   ipfiremake openssl
   ipfiremake curl
+  ipfiremake tcl
   ipfiremake sqlite
   ipfiremake python
   ipfiremake fireinfo
@@ -680,7 +681,6 @@ buildipfire() {
   ipfiremake pound
   ipfiremake minicom
   ipfiremake ddrescue
-  ipfiremake tcl
   ipfiremake imspector
   ipfiremake miniupnpd
   ipfiremake client175
