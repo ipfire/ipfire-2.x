@@ -693,6 +693,8 @@ buildipfire() {
   ipfiremake python-lzma
   ipfiremake python-progressbar
   ipfiremake python-xattr
+  ipfiremake intltool
+  ipfiremake pakfire3-deps
 
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
