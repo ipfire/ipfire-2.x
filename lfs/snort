@@ -71,8 +71,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/snort* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls \
-	    --sysconfdir=/etc/snort --target=i586 \
-	    --enable-linux-smp-stats --enable-smb-alerts
+		--sysconfdir=/etc/snort --target=i586 \
+		--enable-linux-smp-stats --enable-smb-alerts \
+		--enable-gre --enable-mpls --enable-targetbased \
+		--enable-decoder-preprocessor-rules --enable-ppm \
+		--enable-perfprofiling --enable-zlib --enable-active-response \
+		--enable-normalizer --enable-reload --enable-react --enable-flexresp3
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	mv /usr/bin/snort /usr/sbin/
