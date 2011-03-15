@@ -91,7 +91,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --with-filedescriptors=16384 \
 	   --with-large-files \
 	   --with-aio \
-	   --enable-async-io \
+	   --enable-async-io=8 \
 	   --enable-unlinkd \
 	   --enable-ntln-fail-open \
 	   --enable-ntlm-auth-helpers="smb_lm,no_check,fakeauth" \
