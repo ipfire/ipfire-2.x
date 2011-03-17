@@ -777,6 +777,15 @@ END
 ;
 	}
 	else {
+		if ($pppsettings{'TYPE'} eq 'vdsl') {
+print <<END
+			<tr>
+				<td>INET_VLAN</td>
+				<td><input size=5 type='number' name='INET_VLAN' value='$pppsettings{'INET_VLAN'}' /></td>
+			</tr>
+END
+;
+		}
 	print "<tr><td colspan='4' width='100%'>No IPTV possible install addon igmpproxy</td></tr>";
 	}
 }
