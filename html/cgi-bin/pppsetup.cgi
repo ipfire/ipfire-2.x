@@ -748,7 +748,7 @@ END
         if ($pppsettings{'TYPE'} =~ /^(pppoe|vdsl|pppoeatm)$/) {
 print <<END
 <tr>
-        <td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>IPTV:</b></td>
+        <td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>IPTV/VLAN:</b></td>
 </tr>
 END
 ;
@@ -777,6 +777,7 @@ END
 ;
 	}
 	else {
+	print "<tr><td colspan='4' width='100%'>No IPTV possible install addon igmpproxy</td></tr>";
 		if ($pppsettings{'TYPE'} eq 'vdsl') {
 print <<END
 			<tr>
@@ -786,7 +787,6 @@ print <<END
 END
 ;
 		}
-	print "<tr><td colspan='4' width='100%'>No IPTV possible install addon igmpproxy</td></tr>";
 	}
 }
 
