@@ -40,6 +40,7 @@ usr/lib/squid/diskd
 #usr/lib/squid/errors/af/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/af/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/af/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/af/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/af/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/af/ERR_INVALID_REQ
 #usr/lib/squid/errors/af/ERR_INVALID_RESP
@@ -93,6 +94,7 @@ usr/lib/squid/diskd
 #usr/lib/squid/errors/ar/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/ar/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/ar/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/ar/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/ar/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/ar/ERR_INVALID_REQ
 #usr/lib/squid/errors/ar/ERR_INVALID_RESP
@@ -131,6 +133,7 @@ usr/lib/squid/diskd
 #usr/lib/squid/errors/az/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/az/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/az/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/az/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/az/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/az/ERR_INVALID_REQ
 #usr/lib/squid/errors/az/ERR_INVALID_RESP
@@ -169,6 +172,7 @@ usr/lib/squid/diskd
 #usr/lib/squid/errors/bg/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/bg/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/bg/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/bg/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/bg/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/bg/ERR_INVALID_REQ
 #usr/lib/squid/errors/bg/ERR_INVALID_RESP
@@ -206,6 +210,7 @@ usr/lib/squid/diskd
 #usr/lib/squid/errors/ca/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/ca/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/ca/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/ca/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/ca/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/ca/ERR_INVALID_REQ
 #usr/lib/squid/errors/ca/ERR_INVALID_RESP
@@ -244,6 +249,7 @@ usr/lib/squid/diskd
 #usr/lib/squid/errors/cs/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/cs/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/cs/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/cs/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/cs/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/cs/ERR_INVALID_REQ
 #usr/lib/squid/errors/cs/ERR_INVALID_RESP
@@ -282,6 +288,7 @@ usr/lib/squid/diskd
 #usr/lib/squid/errors/da/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/da/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/da/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/da/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/da/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/da/ERR_INVALID_REQ
 #usr/lib/squid/errors/da/ERR_INVALID_RESP
@@ -324,6 +331,7 @@ usr/lib/squid/errors/de/ERR_FTP_PUT_CREATED
 usr/lib/squid/errors/de/ERR_FTP_PUT_ERROR
 usr/lib/squid/errors/de/ERR_FTP_PUT_MODIFIED
 usr/lib/squid/errors/de/ERR_FTP_UNAVAILABLE
+usr/lib/squid/errors/de/ERR_GATEWAY_FAILURE
 usr/lib/squid/errors/de/ERR_ICAP_FAILURE
 usr/lib/squid/errors/de/ERR_INVALID_REQ
 usr/lib/squid/errors/de/ERR_INVALID_RESP
@@ -362,6 +370,7 @@ usr/lib/squid/errors/de/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/el/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/el/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/el/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/el/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/el/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/el/ERR_INVALID_REQ
 #usr/lib/squid/errors/el/ERR_INVALID_RESP
@@ -414,6 +423,7 @@ usr/lib/squid/errors/en/ERR_FTP_PUT_CREATED
 usr/lib/squid/errors/en/ERR_FTP_PUT_ERROR
 usr/lib/squid/errors/en/ERR_FTP_PUT_MODIFIED
 usr/lib/squid/errors/en/ERR_FTP_UNAVAILABLE
+usr/lib/squid/errors/en/ERR_GATEWAY_FAILURE
 usr/lib/squid/errors/en/ERR_ICAP_FAILURE
 usr/lib/squid/errors/en/ERR_INVALID_REQ
 usr/lib/squid/errors/en/ERR_INVALID_RESP
@@ -470,6 +480,7 @@ usr/lib/squid/errors/es/ERR_FTP_PUT_CREATED
 usr/lib/squid/errors/es/ERR_FTP_PUT_ERROR
 usr/lib/squid/errors/es/ERR_FTP_PUT_MODIFIED
 usr/lib/squid/errors/es/ERR_FTP_UNAVAILABLE
+usr/lib/squid/errors/es/ERR_GATEWAY_FAILURE
 usr/lib/squid/errors/es/ERR_ICAP_FAILURE
 usr/lib/squid/errors/es/ERR_INVALID_REQ
 usr/lib/squid/errors/es/ERR_INVALID_RESP
@@ -508,6 +519,7 @@ usr/lib/squid/errors/es/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/et/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/et/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/et/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/et/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/et/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/et/ERR_INVALID_REQ
 #usr/lib/squid/errors/et/ERR_INVALID_RESP
@@ -547,6 +559,7 @@ usr/lib/squid/errors/es/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/fa/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/fa/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/fa/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/fa/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/fa/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/fa/ERR_INVALID_REQ
 #usr/lib/squid/errors/fa/ERR_INVALID_RESP
@@ -585,6 +598,7 @@ usr/lib/squid/errors/es/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/fi/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/fi/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/fi/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/fi/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/fi/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/fi/ERR_INVALID_REQ
 #usr/lib/squid/errors/fi/ERR_INVALID_RESP
@@ -628,6 +642,7 @@ usr/lib/squid/errors/fr/ERR_FTP_PUT_CREATED
 usr/lib/squid/errors/fr/ERR_FTP_PUT_ERROR
 usr/lib/squid/errors/fr/ERR_FTP_PUT_MODIFIED
 usr/lib/squid/errors/fr/ERR_FTP_UNAVAILABLE
+usr/lib/squid/errors/fr/ERR_GATEWAY_FAILURE
 usr/lib/squid/errors/fr/ERR_ICAP_FAILURE
 usr/lib/squid/errors/fr/ERR_INVALID_REQ
 usr/lib/squid/errors/fr/ERR_INVALID_RESP
@@ -666,6 +681,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/he/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/he/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/he/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/he/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/he/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/he/ERR_INVALID_REQ
 #usr/lib/squid/errors/he/ERR_INVALID_RESP
@@ -704,6 +720,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/hu/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/hu/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/hu/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/hu/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/hu/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/hu/ERR_INVALID_REQ
 #usr/lib/squid/errors/hu/ERR_INVALID_RESP
@@ -743,6 +760,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/hy/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/hy/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/hy/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/hy/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/hy/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/hy/ERR_INVALID_REQ
 #usr/lib/squid/errors/hy/ERR_INVALID_RESP
@@ -781,6 +799,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/id/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/id/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/id/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/id/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/id/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/id/ERR_INVALID_REQ
 #usr/lib/squid/errors/id/ERR_INVALID_RESP
@@ -820,6 +839,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/it/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/it/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/it/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/it/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/it/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/it/ERR_INVALID_REQ
 #usr/lib/squid/errors/it/ERR_INVALID_RESP
@@ -858,6 +878,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/ja/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/ja/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/ja/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/ja/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/ja/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/ja/ERR_INVALID_REQ
 #usr/lib/squid/errors/ja/ERR_INVALID_RESP
@@ -897,6 +918,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/ko/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/ko/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/ko/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/ko/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/ko/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/ko/ERR_INVALID_REQ
 #usr/lib/squid/errors/ko/ERR_INVALID_RESP
@@ -935,6 +957,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/lt/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/lt/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/lt/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/lt/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/lt/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/lt/ERR_INVALID_REQ
 #usr/lib/squid/errors/lt/ERR_INVALID_RESP
@@ -973,6 +996,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/lv/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/lv/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/lv/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/lv/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/lv/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/lv/ERR_INVALID_REQ
 #usr/lib/squid/errors/lv/ERR_INVALID_RESP
@@ -1011,6 +1035,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/ms/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/ms/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/ms/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/ms/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/ms/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/ms/ERR_INVALID_REQ
 #usr/lib/squid/errors/ms/ERR_INVALID_RESP
@@ -1049,6 +1074,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/nl/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/nl/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/nl/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/nl/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/nl/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/nl/ERR_INVALID_REQ
 #usr/lib/squid/errors/nl/ERR_INVALID_RESP
@@ -1086,6 +1112,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/oc/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/oc/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/oc/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/oc/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/oc/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/oc/ERR_INVALID_REQ
 #usr/lib/squid/errors/oc/ERR_INVALID_RESP
@@ -1124,6 +1151,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/pl/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/pl/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/pl/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/pl/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/pl/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/pl/ERR_INVALID_REQ
 #usr/lib/squid/errors/pl/ERR_INVALID_RESP
@@ -1162,6 +1190,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/pt-br/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/pt-br/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/pt-br/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/pt-br/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/pt-br/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/pt-br/ERR_INVALID_REQ
 #usr/lib/squid/errors/pt-br/ERR_INVALID_RESP
@@ -1199,6 +1228,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/pt/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/pt/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/pt/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/pt/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/pt/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/pt/ERR_INVALID_REQ
 #usr/lib/squid/errors/pt/ERR_INVALID_RESP
@@ -1238,6 +1268,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/ro/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/ro/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/ro/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/ro/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/ro/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/ro/ERR_INVALID_REQ
 #usr/lib/squid/errors/ro/ERR_INVALID_RESP
@@ -1276,6 +1307,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/ru/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/ru/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/ru/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/ru/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/ru/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/ru/ERR_INVALID_REQ
 #usr/lib/squid/errors/ru/ERR_INVALID_RESP
@@ -1314,6 +1346,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/sk/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/sk/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/sk/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/sk/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/sk/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/sk/ERR_INVALID_REQ
 #usr/lib/squid/errors/sk/ERR_INVALID_RESP
@@ -1352,6 +1385,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/sr-cyrl/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/sr-cyrl/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/sr-cyrl/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/sr-cyrl/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/sr-cyrl/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/sr-cyrl/ERR_INVALID_REQ
 #usr/lib/squid/errors/sr-cyrl/ERR_INVALID_RESP
@@ -1390,6 +1424,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/sr-latn/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/sr-latn/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/sr-latn/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/sr-latn/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/sr-latn/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/sr-latn/ERR_INVALID_REQ
 #usr/lib/squid/errors/sr-latn/ERR_INVALID_RESP
@@ -1430,6 +1465,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/sv/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/sv/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/sv/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/sv/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/sv/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/sv/ERR_INVALID_REQ
 #usr/lib/squid/errors/sv/ERR_INVALID_RESP
@@ -1467,6 +1503,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/templates/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/templates/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/templates/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/templates/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/templates/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/templates/ERR_INVALID_REQ
 #usr/lib/squid/errors/templates/ERR_INVALID_RESP
@@ -1505,6 +1542,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/th/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/th/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/th/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/th/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/th/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/th/ERR_INVALID_REQ
 #usr/lib/squid/errors/th/ERR_INVALID_RESP
@@ -1543,6 +1581,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/tr/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/tr/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/tr/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/tr/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/tr/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/tr/ERR_INVALID_REQ
 #usr/lib/squid/errors/tr/ERR_INVALID_RESP
@@ -1581,6 +1620,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/uk/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/uk/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/uk/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/uk/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/uk/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/uk/ERR_INVALID_REQ
 #usr/lib/squid/errors/uk/ERR_INVALID_RESP
@@ -1618,6 +1658,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/uz/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/uz/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/uz/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/uz/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/uz/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/uz/ERR_INVALID_REQ
 #usr/lib/squid/errors/uz/ERR_INVALID_RESP
@@ -1656,6 +1697,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/vi/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/vi/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/vi/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/vi/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/vi/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/vi/ERR_INVALID_REQ
 #usr/lib/squid/errors/vi/ERR_INVALID_RESP
@@ -1693,6 +1735,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/zh-cn/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/zh-cn/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/zh-cn/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/zh-cn/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/zh-cn/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/zh-cn/ERR_INVALID_REQ
 #usr/lib/squid/errors/zh-cn/ERR_INVALID_RESP
@@ -1733,6 +1776,7 @@ usr/lib/squid/errors/fr/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/zh-tw/ERR_FTP_PUT_ERROR
 #usr/lib/squid/errors/zh-tw/ERR_FTP_PUT_MODIFIED
 #usr/lib/squid/errors/zh-tw/ERR_FTP_UNAVAILABLE
+#usr/lib/squid/errors/zh-tw/ERR_GATEWAY_FAILURE
 #usr/lib/squid/errors/zh-tw/ERR_ICAP_FAILURE
 #usr/lib/squid/errors/zh-tw/ERR_INVALID_REQ
 #usr/lib/squid/errors/zh-tw/ERR_INVALID_RESP
@@ -1787,22 +1831,28 @@ usr/lib/squid/msnt_auth
 usr/lib/squid/ncsa_auth
 usr/lib/squid/no_check.pl
 usr/lib/squid/ntlm_smb_lm_auth
+usr/lib/squid/pam_auth
+usr/lib/squid/pinger
 usr/lib/squid/smb_auth
 usr/lib/squid/smb_auth.pl
 usr/lib/squid/smb_auth.sh
 usr/lib/squid/squid_ldap_auth
 usr/lib/squid/squid_ldap_group
+usr/lib/squid/squid_radius_auth
 usr/lib/squid/squid_session
 usr/lib/squid/squid_unix_group
 usr/lib/squid/unlinkd
+usr/lib/squid/wbinfo_group.pl
 usr/sbin/squid
 usr/sbin/updxlrator
 #usr/share/man/man1/squidclient.1
 #usr/share/man/man8/cachemgr.cgi.8
 #usr/share/man/man8/ncsa_auth.8
+#usr/share/man/man8/pam_auth.8
 #usr/share/man/man8/squid.8
 #usr/share/man/man8/squid_ldap_auth.8
 #usr/share/man/man8/squid_ldap_group.8
+#usr/share/man/man8/squid_radius_auth.8
 #usr/share/man/man8/squid_session.8
 #usr/share/man/man8/squid_unix_group.8
 var/ipfire/proxy/errorpage-ipfire.css

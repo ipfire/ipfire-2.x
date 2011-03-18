@@ -139,13 +139,12 @@ usr/sbin/winbindd
 #usr/share/man/man1/testparm.1
 #usr/share/man/man1/vfstest.1
 #usr/share/man/man1/wbinfo.1
-#usr/share/man/man5/pam_winbind.conf.5
 #usr/share/man/man5/lmhosts.5
+#usr/share/man/man5/pam_winbind.conf.5
 #usr/share/man/man5/smb.conf.5
 #usr/share/man/man5/smbgetrc.5
 #usr/share/man/man5/smbpasswd.5
 #usr/share/man/man7/libsmbclient.7
-#usr/share/man/man7/pam_winbind.7
 #usr/share/man/man7/samba.7
 #usr/share/man/man7/winbind_krb5_locator.7
 #usr/share/man/man8/eventlogadm.8

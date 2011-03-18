@@ -80,6 +80,7 @@ usr/sbin/snort
 #usr/share/doc/snort/README.pcap_readmode
 #usr/share/doc/snort/README.ppm
 #usr/share/doc/snort/README.reload
+#usr/share/doc/snort/README.rzb_saac
 #usr/share/doc/snort/README.sensitive_data
 #usr/share/doc/snort/README.sfportscan
 #usr/share/doc/snort/README.ssh

@@ -26,7 +26,7 @@
 
 #
 # Remove old core updates from pakfire cache to save space...
-core=46
+core=48
 for (( i=1; i<=$core; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
@@ -41,21 +41,15 @@ extract_files
 
 #
 #Start services
-/etc/init.d/squid restart
 
 #
 #Update Language cache
-perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
-
-# Rebuild initrd of optional pae and xen kernel
-KVER=2.6.32.28
-[ -e /boot/ipfirerd-$KVER-pae.img ] && /sbin/dracut --force --verbose /boot/ipfirerd-$KVER-pae.img $KVER-ipfire-pae
-[ -e /boot/ipfirerd-$KVER-xen.img ] && /sbin/dracut --force --verbose /boot/ipfirerd-$KVER-xen.img $KVER-ipfire-xen
+#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #Rebuild module dep's
-depmod 2.6.32.28-ipfire     >/dev/null 2>&1
-depmod 2.6.32.28-ipfire-pae >/dev/null 2>&1
-depmod 2.6.32.28-ipfire-xen >/dev/null 2>&1
+#depmod 2.6.32.28-ipfire     >/dev/null 2>&1
+#depmod 2.6.32.28-ipfire-pae >/dev/null 2>&1
+#depmod 2.6.32.28-ipfire-xen >/dev/null 2>&1
 
 #
 #Finish
