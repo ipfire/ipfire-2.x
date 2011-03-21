@@ -34,7 +34,7 @@ else
 endif
 endif
 
-VER        = 2.6.37-4-sn
+VER        = 2.6.38-3-ns
 
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = compat-wireless-$(VER).tar.bz2
@@ -51,7 +51,7 @@ objects = $(DL_FILE) asix-3.5.0a.tar.bz2
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 asix-3.5.0a.tar.bz2 = $(DL_FROM)/asix-3.5.0a.tar.bz2
 
-$(DL_FILE)_MD5 = be07898fa2e28a06c1b90dd424270ad2
+$(DL_FILE)_MD5 = c4c78d1d41c28f0e9c48ab8098a0a9f2
 asix-3.5.0a.tar.bz2_MD5=cc57513505d3ad1a43b58add91d2bba7
 
 install : $(TARGET)
