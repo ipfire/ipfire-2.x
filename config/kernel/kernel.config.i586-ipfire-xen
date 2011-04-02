@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.32.27-ipfire-xen
-# Thu Dec 30 14:49:34 2010
+# Linux kernel version: 2.6.32.33
+# Mon Mar 21 14:20:43 2011
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -89,7 +89,6 @@ CONFIG_RCU_FANOUT=32
 # CONFIG_IKCONFIG is not set
 CONFIG_LOG_BUF_SHIFT=17
 CONFIG_HAVE_UNSTABLE_SCHED_CLOCK=y
-# CONFIG_GROUP_SCHED is not set
 # CONFIG_CGROUPS is not set
 CONFIG_SYSFS_DEPRECATED=y
 CONFIG_SYSFS_DEPRECATED_V2=y
@@ -243,6 +242,7 @@ CONFIG_SWIOTLB=y
 CONFIG_IOMMU_HELPER=y
 # CONFIG_IOMMU_API is not set
 CONFIG_NR_CPUS=8
+CONFIG_IRQ_TIME_ACCOUNTING=y
 CONFIG_PREEMPT_NONE=y
 # CONFIG_PREEMPT_VOLUNTARY is not set
 # CONFIG_PREEMPT is not set
