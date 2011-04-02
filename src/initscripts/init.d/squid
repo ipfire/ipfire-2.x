@@ -88,6 +88,7 @@ case "$1" in
 			evaluate_retval
 			killproc /usr/bin/squidGuard >/dev/null
 			killproc /usr/sbin/updxlrator >/dev/null
+			killproc /usr/bin/squidclamav >/dev/null
 			killproc /usr/sbin/squid >/dev/null
 			rm -rf /var/run/squid.pid	
 		fi

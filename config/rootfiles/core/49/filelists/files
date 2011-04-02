@@ -1,2 +1,3 @@
 etc/system-release
+etc/init.d/squid
 srv/web/ipfire/cgi-bin/proxy.cgi
