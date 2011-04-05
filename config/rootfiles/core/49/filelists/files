@@ -4,3 +4,7 @@ var/ipfire/backup/bin/backup.pl
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
+var/ipfire/langs/de.pl
+var/ipfire/langs/en.pl
+var/ipfire/langs/es.pl
+var/ipfire/langs/fr.pl
