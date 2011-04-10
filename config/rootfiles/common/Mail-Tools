@@ -25,7 +25,7 @@ usr/lib/perl5/site_perl/5.12.3/Mail/Mailer/qmail.pm
 usr/lib/perl5/site_perl/5.12.3/Mail/Mailer/rfc822.pm
 usr/lib/perl5/site_perl/5.12.3/Mail/Mailer/sendmail.pm
 usr/lib/perl5/site_perl/5.12.3/Mail/Mailer/smtp.pm
-#usr/lib/perl5/site_perl/5.12.3/Mail/Mailer/smtps.pm
+usr/lib/perl5/site_perl/5.12.3/Mail/Mailer/smtps.pm
 usr/lib/perl5/site_perl/5.12.3/Mail/Mailer/testfile.pm
 usr/lib/perl5/site_perl/5.12.3/Mail/Send.pm
 #usr/lib/perl5/site_perl/5.12.3/Mail/Send.pod
