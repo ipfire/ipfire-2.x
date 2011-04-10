@@ -1862,35 +1862,6 @@ END
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
     }
-#test33
-
-###
-### Choose between adding a host-net or net-net connection
-###
-} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'add'} && $cgiparams{'TYPE'} eq '') {
-	&General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
-	&Header::openbigbox('100%', 'LEFT', '', '');
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'connection type'});
-	print <<END
-	    <b>$Lang::tr{'connection type'}:</b><br />
-	    <table><form method='post'>
-	    <tr><td><input type='radio' name='TYPE' value='host' checked /></td>
-		<td class='base'>$Lang::tr{'host to net vpn'}</td></tr>
-	    <tr><td><input type='radio' name='TYPE' value='net' disabled='disabled' /></td>
-		<td class='base'>$Lang::tr{'net to net vpn'}</td></tr>
-	    <tr><td align='center' colspan='2'><input type='submit' name='ACTION' value='$Lang::tr{'add'}' /></td></tr>
-	    </form></table>
-END
-	;
-	&Header::closebox();
-	&Header::closebigbox();
-	&Header::closepage();
-	exit (0);
-###
-### Adding a new connection
-###
 } elsif (($cgiparams{'ACTION'} eq $Lang::tr{'add'}) ||
 	 ($cgiparams{'ACTION'} eq $Lang::tr{'edit'}) ||
 	 ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'ADVANCED'} eq '')) {
@@ -1904,9 +1875,10 @@ END
 	    $errormessage = $Lang::tr{'invalid key'};
 	    goto VPNCONF_END;
 	}
+
 	$cgiparams{'ENABLED'}	= $confighash{$cgiparams{'KEY'}}[0];
 	$cgiparams{'NAME'}	= $confighash{$cgiparams{'KEY'}}[1];
-	$cgiparams{'TYPE'}	= $confighash{$cgiparams{'KEY'}}[3];
+	$cgiparams{'TYPE'}	= 'host';
 	$cgiparams{'AUTH'} 	= $confighash{$cgiparams{'KEY'}}[4];
 	$cgiparams{'PSK'}	= $confighash{$cgiparams{'KEY'}}[5];
 	$cgiparams{'SIDE'}	= $confighash{$cgiparams{'KEY'}}[6];
@@ -1946,11 +1918,6 @@ END
 	    goto VPNCONF_ERROR;
 	}
 
-#	if (($cgiparams{'TYPE'} eq 'net') && ($cgiparams{'SIDE'} !~ /^(left|right)$/)) {
-#	    $errormessage = $Lang::tr{'ipfire side is invalid'};
-#	    goto VPNCONF_ERROR;
-#	}
-
 	# Check if there is no other entry with this name
 	if (! $cgiparams{'KEY'}) {
 	    foreach my $key (keys %confighash) {
@@ -1959,11 +1926,6 @@ END
 		    goto VPNCONF_ERROR;
 		}
 	    }
-	}
-
-	if (($cgiparams{'TYPE'} eq 'net') && (! $cgiparams{'REMOTE'})) {
-	    $errormessage = $Lang::tr{'invalid input for remote host/ip'};
-	    goto VPNCONF_ERROR;
 	}
 
 	if ($cgiparams{'REMOTE'}) {
@@ -1993,10 +1955,6 @@ END
 			goto VPNCONF_ERROR;
 		}
 	    }
-	}
-	if (($cgiparams{'TYPE'} eq 'net') && (! &General::validipandmask($cgiparams{'REMOTE_SUBNET'}))) {
-                $errormessage = $Lang::tr{'remote subnet is invalid'};
-		goto VPNCONF_ERROR;
 	}
 
 	if ($cgiparams{'ENABLED'} !~ /^(on|off)$/) {
@@ -2121,6 +2079,9 @@ END
 		goto VPNCONF_ERROR;
 	    }
 	} elsif ($cgiparams{'AUTH'} eq 'certgen') {
+	
+	    $cgiparams{'CERT_NAME'} =~ s/ //g;
+	
 	    if ($cgiparams{'KEY'}) {
 		$errormessage = $Lang::tr{'cant change certificates'};
 		goto VPNCONF_ERROR;
@@ -2279,16 +2240,12 @@ END
 	if ((! $cgiparams{'KEY'}) && $cgiparams{'AUTH'} ne 'psk') {
 	    $confighash{$key}[2] = $cgiparams{'CERT_NAME'};
 	}
-	$confighash{$key}[3] = $cgiparams{'TYPE'};
+	$confighash{$key}[3] = 'host';
 	if ($cgiparams{'AUTH'} eq 'psk') {
 	    $confighash{$key}[4] = 'psk';
 	    $confighash{$key}[5] = $cgiparams{'PSK'};
 	} else {
 	    $confighash{$key}[4] = 'cert';
-	}
-	if ($cgiparams{'TYPE'} eq 'net') {
-	    $confighash{$key}[6] = $cgiparams{'SIDE'};
-	    $confighash{$key}[11] = $cgiparams{'REMOTE_SUBNET'};
 	}
 	$confighash{$key}[8] = $cgiparams{'LOCAL_SUBNET'};
 	$confighash{$key}[10] = $cgiparams{'REMOTE'};
@@ -2376,7 +2333,7 @@ END
 	}
 
 	print "<form method='post' enctype='multipart/form-data'>";
-	print "<input type='hidden' name='TYPE' value='$cgiparams{'TYPE'}' />";
+	print "<input type='hidden' name='TYPE' value='host' />";
 
 	if ($cgiparams{'KEY'}) {
 	    print "<input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />";
@@ -2386,7 +2343,6 @@ END
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'connection'}:");
 	print "<table width='100%'>\n";
 	print "<tr><td width='25%' class='boldbase'>$Lang::tr{'name'}:</td>";
-	if ($cgiparams{'TYPE'} eq 'host') {
 	    if ($cgiparams{'KEY'}) {
 		print "<td width='35%' class='base'><input type='hidden' name='NAME' value='$cgiparams{'NAME'}' />$cgiparams{'NAME'}</td>\n";
 	    } else {
@@ -2402,42 +2358,6 @@ END
 #	    print "<option value='ORANGE' $selected{'INTERFACE'}{'ORANGE'}>ORANGE</option>";
 #	    print "</select></td></tr>";
 #	    print <<END
-	} else {
-	    print "<input type='hidden' name='INTERFACE' value='red' />";
-	    if ($cgiparams{'KEY'}) {
-		print "<td width='25%' class='base' nowrap='nowrap'><input type='hidden' name='NAME' value='$cgiparams{'NAME'}' />$cgiparams{'NAME'}</td>";
-	    } else {
-		print "<td width='25%'><input type='text' name='NAME' value='$cgiparams{'NAME'}' maxlength='20' /></td>";
-	    }
-	    print <<END
-		    <td width='25%'>&nbsp;</td>
-		    <td width='25%'>&nbsp;</td></tr>
-		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'Act as'}</td>
-		    <td><select name='SIDE'><option value='server' $selected{'SIDE'}{'server'}>OpenVPN Server</option>
-					    <option value='client' $selected{'SIDE'}{'client'}>OpenVPN Client</option></select></td>
- 		    <td class='boldbase'>$Lang::tr{'remote host/ip'}:</td>
-		    <td><input type='TEXT' name='REMOTE' value='$cgiparams{'REMOTE'}' /></td></tr>
-		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'local subnet'}</td>
-		    <td><input type='TEXT' name='LOCAL_SUBNET' value='$cgiparams{'LOCAL_SUBNET'}' /></td>
-		    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'remote subnet'}</td>
-		    <td><input type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' /></td></tr>
-ttt
-		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn subnet'}</td>
-		    <td><input type='TEXT' name='OVPN_SUBNET' value='$cgiparams{'OVPN_SUBNET'}' /></td></tr>
-		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td>
-		    <td><select name='PROTOCOL'><option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP</option>
-                        			<option value='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP</option></select></td>
-		    <td class='boldbase'>$Lang::tr{'destination port'}:</td>
-		    <td><input type='TEXT' name='DEST_PORT' value='$cgiparams{'DEST_PORT'}' size='5' /></td></tr>
-	        <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
-		    <td><input type='checkbox' name='COMPLZO' $checked{'COMPLZO'}{'on'} /></td>
-	        <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;<img src='/blob.gif' /></td>
-		    <td> <input type='TEXT' name='MTU' VALUE='$cgiparams{'MTU'}'size='5' /></TD>
-		    		    
-
-END
-	    ;
-	}
 	print "<tr><td class='boldbase'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' /></td>";
 	print "<td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td></tr>";
 	
@@ -2519,6 +2439,11 @@ END
 	    print <<END
 	    </select></td></tr>
 	    <tr><td>&nbsp;</td>
+		
+		<td class='base'>$Lang::tr{'valid till'} (days):</td>
+		<td class='base' nowrap='nowrap'><input type='text' name='DAYS_VALID' value='$cgiparams{'DAYS_VALID'}' size='32' $cakeydisabled /></td></tr>		
+		
+		<tr><td>&nbsp;</td>
 		<td class='base'>$Lang::tr{'pkcs12 file password'}:</td>
 		<td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS1' value='$cgiparams{'CERT_PASS1'}' size='32' $cakeydisabled /></td></tr>
 	    <tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:<BR>($Lang::tr{'confirmation'})</td>

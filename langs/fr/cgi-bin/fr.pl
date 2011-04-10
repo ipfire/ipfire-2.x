@@ -1760,7 +1760,7 @@
 'update transcript' => 'Mettre à jour transcript',
 'updatedatabase' => 'Mettre à jour la base de données avec le dernier rapport',
 'updates' => 'Mises à jour',
-'updates installed' => 'Mises à jour installées',
+'updates installed' => 'Mise à jour de l ensemble de règles',
 'updates is old1' => 'Votre fichier de mise à jour est vieux de ',
 'updates is old2' => 'jours. Il est recommandé de le mettre à jour depuis la page <b>Système>Mises à jour</b>.',
 'updxlrtr 3 months' => 'trois mois',

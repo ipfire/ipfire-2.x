@@ -1749,7 +1749,7 @@
 'update transcript' => 'Actualizar transcripción',
 'updatedatabase' => 'Actualizar base de datos con el último reporte',
 'updates' => 'Actualizaciones',
-'updates installed' => 'Actualizaciones instaladas:',
+'updates installed' => 'Conjunto de reglas de actualización de',
 'updates is old1' => 'Su archivo de actualización es',
 'updates is old2' => 'días de antigüedad. Recomendamos actualizarse en la página <b>Actualizaciones del Sistema</b>.',
 'updxlrtr 3 months' => 'tres meses',

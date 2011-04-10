@@ -1749,7 +1749,7 @@
 'update transcript' => 'Aktualisieren',
 'updatedatabase' => 'Datenbank auf Stand der letzten Reports setzen',
 'updates' => 'Updates',
-'updates installed' => 'Updates wurden installiert',
+'updates installed' => 'Regelsatz vom',
 'updates is old1' => 'Ihre Update-Datei ist ',
 'updates is old2' => 'Tage alt. Wir empfehlen Ihnen, Ihr System über die &quot;Updates&quot;-Seite zu aktualisieren.',
 'updxlrtr 3 months' => 'drei Monaten',
