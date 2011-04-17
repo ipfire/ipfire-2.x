@@ -163,6 +163,7 @@ $(TARGET) :
 	ln -sf ../init.d/modules     /etc/rc.d/rcsysinit.d/S05modules
 	ln -sf ../init.d/udev        /etc/rc.d/rcsysinit.d/S10udev
 	ln -sf ../init.d/checkfstab  /etc/rc.d/rcsysinit.d/S19checkfstab
+	ln -sf ../init.d/waitdrives  /etc/rc.d/rcsysinit.d/S19waitdrives
 	ln -sf ../init.d/swap        /etc/rc.d/rcsysinit.d/S20swap
 	ln -sf ../init.d/checkfs     /etc/rc.d/rcsysinit.d/S30checkfs
 	ln -sf ../init.d/mountfs     /etc/rc.d/rcsysinit.d/S40mountfs

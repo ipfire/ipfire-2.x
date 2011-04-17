@@ -13,6 +13,7 @@ etc/rc.d/init.d/beep
 #etc/rc.d/init.d/bluetooth
 etc/rc.d/init.d/checkfs
 etc/rc.d/init.d/checkfstab
+etc/rc.d/init.d/waitdrives
 #etc/rc.d/init.d/clamav
 etc/rc.d/init.d/cleanfs
 #etc/rc.d/init.d/client175
@@ -202,6 +203,7 @@ etc/rc.d/rcsysinit.d/S00mountkernfs
 etc/rc.d/rcsysinit.d/S05modules
 etc/rc.d/rcsysinit.d/S10udev
 etc/rc.d/rcsysinit.d/S19checkfstab
+etc/rc.d/rcsysinit.d/S19waitdrives
 etc/rc.d/rcsysinit.d/S20swap
 etc/rc.d/rcsysinit.d/S30checkfs
 etc/rc.d/rcsysinit.d/S40mountfs

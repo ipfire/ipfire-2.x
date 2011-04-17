@@ -9,6 +9,7 @@ usr/bin/ntfs-3g.probe
 usr/bin/ntfs-3g.secaudit
 usr/bin/ntfs-3g.usermap
 #usr/include/ntfs-3g
+#usr/include/ntfs-3g/acls.h
 #usr/include/ntfs-3g/attrib.h
 #usr/include/ntfs-3g/attrlist.h
 #usr/include/ntfs-3g/bitmap.h
@@ -41,7 +42,6 @@ usr/bin/ntfs-3g.usermap
 #usr/include/ntfs-3g/support.h
 #usr/include/ntfs-3g/types.h
 #usr/include/ntfs-3g/unistr.h
-#usr/include/ntfs-3g/version.h
 #usr/include/ntfs-3g/volume.h
 #usr/include/ntfs-3g/xattrs.h
 #usr/lib/libntfs-3g.a
