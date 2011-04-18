@@ -177,9 +177,10 @@ END
 			# blacklist some packages
 			#
 			# alsa has trouble with the volume saving and was not really stopped
+			# mdadm should not stopped with webif because this could crash the system
 			#
 			chomp($_);
-			if ($_ ne "alsa"){
+			if ( ($_ ne "alsa") && ($_ ne "mdadm") ) {
 				$lines++;
 				if ($lines % 2){
 					print "<tr bgcolor='$color{'color22'}'>";
