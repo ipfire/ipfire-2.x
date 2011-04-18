@@ -6,6 +6,12 @@ case "$1" in
 		if [ -e /dev/md ]; then
 			echo 'md;"MDADM software-raid";' >> /var/ipfire/extrahd/scan
 		fi
+		if [ -e /dev/mmcblk0 ]; then
+			echo 'mmcblk0;"MMC/SD Cardreader";' >> /var/ipfire/extrahd/scan
+		fi
+		if [ -e /dev/mmcblk1 ]; then
+			echo 'mmcblk1;"MMC/SD Cardreader";' >> /var/ipfire/extrahd/scan
+		fi
 		;;
 	partitions)
 		cat /proc/partitions | awk '{print $4 " " $3 }' | grep -v name | grep -v "^[:space:]*$" | \
