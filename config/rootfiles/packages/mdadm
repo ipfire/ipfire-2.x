@@ -1,4 +1,6 @@
-lib/udev/rules.d
+etc/rc.d/rc0.d/S85mdadm
+etc/rc.d/rc6.d/S75mdadm
+etc/rc.d/rcsysinit.d/S15mdadm
 lib/udev/rules.d/64-md-raid.rules
 sbin/mdadm
 sbin/mdmon
