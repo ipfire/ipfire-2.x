@@ -26,11 +26,6 @@ check_drives () {
 
 case "${1}" in
 	start)
-		if [ -e /sbin/mdadm ]; then
-			boot_mesg "Assemble mdadm managed raid-drives ..."
-			mdadm --assemble --scan
-		fi
-
 		drives=`grep "^UUID=" /etc/fstab | cut -f1 | cut -d" " -f1 | cut -d"=" -f2`;
 
 		check_drives;
