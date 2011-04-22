@@ -9,3 +9,4 @@ sbin/mdmon
 #usr/share/man/man8/mdadm.8
 #usr/share/man/man8/mdmon.8
 etc/rc.d/init.d/mdadm
+srv/web/ipfire/cgi-bin/mdstat.cgi

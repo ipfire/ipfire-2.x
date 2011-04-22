@@ -13,4 +13,5 @@ var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
 var/ipfire/langs/es.pl
 var/ipfire/langs/fr.pl
+var/ipfire/menu.d/20-status.menu
 usr/local/bin/scanhd
