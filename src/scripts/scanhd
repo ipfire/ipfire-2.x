@@ -3,8 +3,8 @@
 case "$1" in
 	ide)
 		/sbin/kudzu -qps -c HD | egrep "desc|device:" | awk -F': ' '{print $2}' | sed -e '/"$/a\\' -e "s/$/\;/g" | tr "\n" "XX" | sed -e "s/XX/\n/g" -e "s/\;X/\;/g" | grep '^"' -v > /var/ipfire/extrahd/scan
-		if [ -e /dev/md ]; then
-			echo 'md;"MDADM software-raid";' >> /var/ipfire/extrahd/scan
+		if [ -e /dev/.mdadm ]; then
+			echo 'md;"MD Software-Raid";' >> /var/ipfire/extrahd/scan
 		fi
 		if [ -e /dev/mmcblk0 ]; then
 			echo 'mmcblk0;"MMC/SD Cardreader";' >> /var/ipfire/extrahd/scan

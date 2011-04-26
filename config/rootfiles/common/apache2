@@ -1333,6 +1333,7 @@ srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/iptables.cgi
 srv/web/ipfire/cgi-bin/logs.cgi
 srv/web/ipfire/cgi-bin/mac.cgi
+#srv/web/ipfire/cgi-bin/mdstat.cgi
 srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/modem.cgi
