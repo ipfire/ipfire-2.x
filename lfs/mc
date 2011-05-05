@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.7.3
+VER        = 4.7.5.2
 
 THISAPP    = mc-$(VER)
 DL_FILE    = $(THISAPP).tar.lzma
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mc
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = "glib"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 15b017b370668683aa8cbf6730667510
+$(DL_FILE)_MD5 = 9fede28ed63ced53f1beeba2f95473da
 
 install : $(TARGET)
 
