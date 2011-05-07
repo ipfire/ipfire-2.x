@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,20 +24,13 @@
 
 include Config
 
-VER        = 5.12.3
+VER        = 0.16.4
 
-THISAPP    = perl-$(VER)
+THISAPP    = libsatsolver-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-
-# Normal build or /tools build.
-#
-ifeq "$(ROOT)" ""
-  TARGET = $(DIR_INFO)/$(THISAPP)
-else
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -45,9 +38,9 @@ endif
 
 objects = $(DL_FILE)
 
-$(DL_FILE)                  = $(DL_FROM)/$(DL_FILE)
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5              = 72f3f7e1c700e79bbf9d9279ca5b42d9
+$(DL_FILE)_MD5 = 563414330c29e9b49be0e43358185a78
 
 install : $(TARGET)
 
@@ -77,24 +70,30 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-ifneq "$(ROOT)" ""
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-libc-2.patch
-endif
-ifeq "$(ROOT)" ""
-	cd $(DIR_APP) && ./configure.gnu --prefix=/usr -Dman1dir=/usr/share/man/man1 \
-		-Dman3dir=/usr/share/man/man3 -Dpager="/usr/bin/less -isR" -Dusethreads
-	cd $(DIR_APP) && sed -i 's/^0$$//' makefile
-	cd $(DIR_APP) && sed -i 's/^0$$//' x2p/makefile
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
-else
-	cd $(DIR_APP) && ./configure.gnu --prefix=/tools -Dstatic_ext='Data/Dumper Fcntl IO'
-	cd $(DIR_APP) && sed -i 's/^0$$//' makefile
-	cd $(DIR_APP) && sed -i 's/^0$$//' x2p/makefile
-	cd $(DIR_APP) && make perl utilities
-	cd $(DIR_APP) && cp -v perl pod/pod2man /tools/bin
-	cd $(DIR_APP) && mkdir -pv /tools/lib/perl5/$(VER)
-	cd $(DIR_APP) && cp -Rv lib/* /tools/lib/perl5/$(VER)
-endif
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsatsolver-Build-only-libraries.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsatsolver-Create-linker-scripts-that-do-only-export-the-needed.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsatsolver-Make-libsatsolver-ext-a-versioned-shared-lib.patch
+
+	# Who releases code with -Werror?
+	cd $(DIR_APP) && sed -e "s/-Werror//g" -i CMakeLists.txt
+
+	# Make sure that libsatsolverext is linked properly to all needed
+	# libraries.
+	cd $(DIR_APP) && echo "TARGET_LINK_LIBRARIES(satsolverext satsolver \$${EXPAT_LIBRARY} \$${ZLIB_LIBRARY})" \
+		>> ext/CMakeLists.txt
+
+	# Remove the RPM stuff when we build with -DFEDORA=1 because we
+	# do not support RPM.
+	cd $(DIR_APP) && sed -e "s/DEBIAN/FEDORA/g" -i ext/CMakeLists.txt
+
+	cd $(DIR_APP) && mkdir build
+	cd $(DIR_APP)/build && cmake .. -DFEDORA=1 \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_SKIP_RPATH=1
+	cd $(DIR_APP)/build && make $(PARALELLISMFLAGS)
+
+	cd $(DIR_APP)/build && make install
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
