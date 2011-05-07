@@ -1,0 +1,51 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/waitdrives
+#
+# Description : Wait for drives before fscheck/mount
+#
+# Authors     : Arne Fitzenreiter - arne_f@ipfire.org
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+check_drives () {
+	drives_ready="1";
+	for drive in $drives; do
+		if [ `blkid | grep $drive | wc -l` == 0 ]; then
+			drives_ready="0";
+		fi
+	done
+}
+
+case "${1}" in
+	start)
+		drives=`grep "^UUID=" /etc/fstab | cut -f1 | cut -d" " -f1 | cut -d"=" -f2`;
+
+		check_drives;
+		if [ "$drives_ready" == "0" ]; then
+			boot_mesg -n "Wait for devices used in fstab "
+			for (( i=1; i<30; i++)) do
+				check_drives;
+				if [ "$drives_ready" == "1" ]; then
+					break;
+				fi
+				boot_mesg -n "."
+				sleep 1
+			done
+		fi
+		exit 0;
+		;;
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/waitdrives

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.1.1
+VER        = 3.2.1
 
 THISAPP    = mdadm-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mdadm
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4fd8e375a2ee314becd3196c1a250d98
+$(DL_FILE)_MD5 = d1e2549202bd79d9e99f1498d1109530
 
 install : $(TARGET)
 
@@ -79,5 +79,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	ln -sf ../init.d/mdadm /etc/rc.d/rcsysinit.d/S11mdadm
+	ln -sf ../init.d/mdadm /etc/rc.d/rc0.d/S85mdadm
+	ln -sf ../init.d/mdadm /etc/rc.d/rc6.d/S75mdadm
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

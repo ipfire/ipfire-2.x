@@ -66,6 +66,8 @@ if ( $cgiparams{'ACTION'} eq "download" )
 		open(DLFILE, "</var/ipfire/backup/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
 		my @fileholder = <DLFILE>;
 		print "Content-Type:application/x-download\n";
+		my @fileinfo = stat("/var/ipfire/backup/$cgiparams{'FILE'}");
+		print "Content-Length:$fileinfo[7]\n";
 		print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
 		print @fileholder;
 		exit (0);
@@ -75,6 +77,8 @@ if ( $cgiparams{'ACTION'} eq "downloadiso" )
 		open(DLFILE, "</var/tmp/backupiso/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
 		my @fileholder = <DLFILE>;
 		print "Content-Type:application/x-download\n";
+		my @fileinfo = stat("/var/tmp/backupiso/$cgiparams{'FILE'}");
+		print "Content-Length:$fileinfo[7]\n";
 		print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
 		print @fileholder;
 		exit (0);
@@ -84,6 +88,8 @@ if ( $cgiparams{'ACTION'} eq "downloadaddon" )
 		open(DLFILE, "</var/ipfire/backup/addons/backup/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
 		my @fileholder = <DLFILE>;
 		print "Content-Type:application/x-download\n";
+		my @fileinfo = stat("/var/ipfire/backup/addons/backup/$cgiparams{'FILE'}");
+		print "Content-Length:$fileinfo[7]\n";
 		print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
 		print @fileholder;
 		exit (0);

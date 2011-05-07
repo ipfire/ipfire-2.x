@@ -1,4 +1,6 @@
-lib/udev/rules.d
+etc/rc.d/rc0.d/S85mdadm
+etc/rc.d/rc6.d/S75mdadm
+etc/rc.d/rcsysinit.d/S11mdadm
 lib/udev/rules.d/64-md-raid.rules
 sbin/mdadm
 sbin/mdmon
@@ -7,3 +9,4 @@ sbin/mdmon
 #usr/share/man/man8/mdadm.8
 #usr/share/man/man8/mdmon.8
 etc/rc.d/init.d/mdadm
+srv/web/ipfire/cgi-bin/mdstat.cgi

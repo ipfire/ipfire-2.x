@@ -46,7 +46,7 @@ if (($ARGV[0] eq 'include') || ($ARGV[0] eq 'iso')) {
   print DATEI @include;
   print "/var/log/messages";
   close(DATEI);
-  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
+  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude' --files-from='/var/ipfire/backup/include.user' --exclude-from='/var/ipfire/backup/exclude.user'");
   system("rm /tmp/include");
   if ($ARGV[0] eq 'iso') {
   	system("/usr/local/bin/backupiso $Jahr$Monat$Monatstag-$Stunden$Minuten &");
@@ -57,7 +57,7 @@ elsif ($ARGV[0] eq 'exclude') {
   open(DATEI, ">/tmp/include") || die "Could not save temp include file";
   print DATEI @include;
   close(DATEI);
-  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude'");
+  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten.ipf --files-from='/tmp/include' --exclude-from='/var/ipfire/backup/exclude' --files-from='/var/ipfire/backup/include.user' --exclude-from='/var/ipfire/backup/exclude.user'");
   system("rm /tmp/include");
 }
 elsif ($ARGV[0] eq 'restore') {

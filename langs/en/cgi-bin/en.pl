@@ -1782,7 +1782,7 @@
 'update transcript' => 'Update transcript',
 'updatedatabase' => 'Update Database with last report',
 'updates' => 'Updates',
-'updates installed' => 'Updates Installed',
+'updates installed' => 'Ruleset update from',
 'updates is old1' => 'Your update file is ',
 'updates is old2' => 'days old. We recommend you update it on the <b>System>Updates</b> page.',
 'updxlrtr 3 months' => 'three months',

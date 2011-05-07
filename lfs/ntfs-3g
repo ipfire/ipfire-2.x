@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2009.4.4
+VER        = 2011.1.15
 
 THISAPP    = ntfs-3g-$(VER)
 DL_FILE    = $(THISAPP).tgz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e0b5c170f088a8d82968f0a6b34d31da
+$(DL_FILE)_MD5 = 15a5cf5752012269fa168c24191f00e2
 
 install : $(TARGET)
 
