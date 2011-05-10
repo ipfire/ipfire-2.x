@@ -24,46 +24,17 @@
 
 include Config
 
-VER        = 2.17
+VER        = 0.16.4
 
-THISAPP    = binutils-$(VER)
+THISAPP    = libsatsolver-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
-# Normal build or /tools build.
-#
-ifeq "$(ROOT)" ""
-ifeq "$(LFS_PASS)" "install"
-  TARGET = $(DIR_INFO)/$(THISAPP)-install
-  EXTRA_CONFIG = --prefix=/opt/$(MACHINE)-uClibc \
-		--build=$(MACHINE)-pc-linux-gnu \
-		--host=$(MACHINE)-pc-linux-gnu \
-		--target=$(MACHINE)-linux-uclibc \
-		--disable-nls \
-		--enable-multilib \
-		--disable-werror
-  EXTRA_MAKE = all
-  EXTRA_INSTALL = 
-else
-  TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --enable-shared --disable-nls
-  EXTRA_MAKE = tooldir=/usr
-  EXTRA_INSTALL = tooldir=/usr
-endif
-else
-ifeq "$(PASS)" "1"
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools1
-  EXTRA_CONFIG = --prefix=/tools --disable-nls --disable-werror --disable-gprof
-  EXTRA_MAKE = LDFLAGS="-all-static"
-  EXTRA_INSTALL = 
-else
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools2
-  EXTRA_CONFIG = --prefix=/tools --with-lib-path=/tools/lib --disable-nls
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
-endif
-endif
+PROG       = libsatsolver
+DEPS       = ""
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -73,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e26e2e06b6e4bf3acf1dc8688a94c0d1
+$(DL_FILE)_MD5 = 563414330c29e9b49be0e43358185a78
 
 install : $(TARGET)
 
@@ -82,6 +53,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist : 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -102,28 +76,31 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	@mkdir $(DIR_SRC)/binutils-build
-	cd $(DIR_SRC)/binutils-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
-ifeq "$(PASS)" "1"
-	cd $(DIR_SRC)/binutils-build && make configure-host
-endif
-	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) $(MAKETUNING)
-	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
-ifeq "$(ROOT)" ""
-ifneq "$(LFS_PASS)" "install"
-	cp -v $(DIR_APP)/include/libiberty.h /usr/include
-endif
-else
-ifeq "$(PASS)" "1"
-	cd $(DIR_SRC)/binutils-build && make -C ld clean
-	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/tools/lib
-	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new /tools/bin
-else
-	cd $(DIR_SRC)/binutils-build && make -C ld clean
-	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/usr/lib:/lib
-	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new /tools/bin
-endif
-endif
-	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsatsolver-Build-only-libraries.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsatsolver-Create-linker-scripts-that-do-only-export-the-needed.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsatsolver-Make-libsatsolver-ext-a-versioned-shared-lib.patch
+
+	# Who releases code with -Werror?
+	cd $(DIR_APP) && sed -e "s/-Werror//g" -i CMakeLists.txt
+
+	# Make sure that libsatsolverext is linked properly to all needed
+	# libraries.
+	cd $(DIR_APP) && echo "TARGET_LINK_LIBRARIES(satsolverext satsolver \$${EXPAT_LIBRARY} \$${ZLIB_LIBRARY})" \
+		>> ext/CMakeLists.txt
+
+	# Remove the RPM stuff when we build with -DFEDORA=1 because we
+	# do not support RPM.
+	cd $(DIR_APP) && sed -e "s/DEBIAN/FEDORA/g" -i ext/CMakeLists.txt
+
+	cd $(DIR_APP) && mkdir build
+	cd $(DIR_APP)/build && cmake .. -DFEDORA=1 \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_SKIP_RPATH=1
+	cd $(DIR_APP)/build && make $(PARALELLISMFLAGS)
+
+	cd $(DIR_APP)/build && make install
+
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

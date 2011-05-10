@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -43,7 +43,7 @@ ifeq "$(ROOT)" ""
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools-pass$(PASS)
   EXTRA_CONFIG = --prefix=/tools --disable-nls
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
