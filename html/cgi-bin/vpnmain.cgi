@@ -1383,15 +1383,15 @@ END
 
 	# Allow nothing or a string (DN,FDQN,) beginning with @
 	# with no comma but slashes between RID eg @O=FR/C=Paris/OU=myhome/CN=franck
-	if ( ($cgiparams{'LOCAL_ID'} !~ /^(|[\w.-]*@[\w. =*\/-]+|\d\.\d\.\d\.\d)$/) ||
-	    ($cgiparams{'REMOTE_ID'} !~ /^(|[\w.-]*@[\w. =*\/-]+|\d\.\d\.\d\.\d)$/) ||
+	if ( ($cgiparams{'LOCAL_ID'} !~ /^(|[\w.-]*@[\w. =*\/-]+|\d+\.\d+\.\d+\.\d+)$/) ||
+	    ($cgiparams{'REMOTE_ID'} !~ /^(|[\w.-]*@[\w. =*\/-]+|\d+\.\d+\.\d+\.\d+)$/) ||
 	    (($cgiparams{'REMOTE_ID'} eq $cgiparams{'LOCAL_ID'}) && ($cgiparams{'LOCAL_ID'} ne ''))
 	   ) {
 	    $errormessage = $Lang::tr{'invalid local-remote id'} . '<br />' .
 	    'DER_ASN1_DN: @c=FR/ou=Paris/ou=Home/cn=*<br />' .
 	    'FQDN: @ipfire.org<br />' .
 	    'USER_FQDN: info@ipfire.org<br />' .
-	    'IPV4_ADDR: @123.123.123.123';
+	    'IPV4_ADDR: 123.123.123.123';
 	    goto VPNCONF_ERROR;
 	}
 	# If Auth is DN, verify existance of Remote ID.
