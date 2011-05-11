@@ -691,6 +691,7 @@ buildipfire() {
   ipfiremake python-m2crypto
   ipfiremake crda
   ipfiremake libsatsolver
+  ipfiremake python-satsolver
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
