@@ -32,6 +32,10 @@ DL_FROM    = http://source.ipfire.org/source-3.x
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+PROG       = python-satsolver
+DEPS       = "libsatsolver"
+PAK_VER    = 1
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -49,6 +53,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist :
+	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -75,11 +82,17 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/python-satsover-fix-building-without-rpm.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/python-satsolver-only-python-bindings.patch
 
+	# Aaaahh!
+	cd $(DIR_APP) && sed -e "s/-Werror//g" -i CMakeLists.txt
+
 	cd $(DIR_APP) && mkdir build
 	cd $(DIR_APP)/build && cmake .. -DDEBIAN=1 \
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DCMAKE_BUILD_TYPE=Release \
-		-DCMAKE_SKIP_RPATH=1
+		-DCMAKE_SKIP_RPATH=1 \
+		-DPYTHON_LIBRARY=/usr/lib/libpython2.7.so \
+		-DPYTHON_INCLUDE_PATH=/usr/include/python2.7
+
 	cd $(DIR_APP)/build && make $(PARALELLISMFLAGS)
 
 	# Install only the python bindings. That's all we need.
