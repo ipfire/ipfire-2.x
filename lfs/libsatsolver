@@ -93,6 +93,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# do not support RPM.
 	cd $(DIR_APP) && sed -e "s/DEBIAN/FEDORA/g" -i ext/CMakeLists.txt
 
+	# Our version of glibc has no __qsort_r
+	cd $(DIR_APP) && echo "#define USE_OWN_QSORT" >> src/util.h
+
 	cd $(DIR_APP) && mkdir build
 	cd $(DIR_APP)/build && cmake .. -DFEDORA=1 \
 		-DCMAKE_INSTALL_PREFIX=/usr \
