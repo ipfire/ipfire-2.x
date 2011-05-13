@@ -28,7 +28,7 @@ VER        = 0.16.0-20110429-868eae9
 
 THISAPP    = sat-solver-bindings-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
-DL_FROM    = $(URL_IPFIRE)
+DL_FROM    = http://source.ipfire.org/source-3.x
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
