@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2007-2011 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -28,7 +28,9 @@ ln -svf  /etc/init.d/mpd /etc/rc.d/rc0.d/K35mpd
 ln -svf  /etc/init.d/mpd /etc/rc.d/rc6.d/K35mpd
 ln -svf  /var/ipfire/mpfire/mpd.conf /etc/mpd.conf
 chmod 755 /srv/web/ipfire/html/images/mpfire
-touch /var/log/mpd.error.log
 touch /var/log/mpd.log
 restore_backup ${NAME}
+# comment removed option from config
+sed -i -e "s|^error_file|#error_file|g" /var/ipfire/mpfire/mpd.conf
+#
 /etc/init.d/mpd start
