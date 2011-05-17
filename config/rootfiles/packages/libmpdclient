@@ -24,6 +24,7 @@
 #usr/include/mpd/response.h
 #usr/include/mpd/search.h
 #usr/include/mpd/send.h
+#usr/include/mpd/settings.h
 #usr/include/mpd/song.h
 #usr/include/mpd/stats.h
 #usr/include/mpd/status.h
@@ -34,7 +35,7 @@
 #usr/lib/libmpdclient.la
 usr/lib/libmpdclient.so
 usr/lib/libmpdclient.so.2
-usr/lib/libmpdclient.so.2.0.0
+usr/lib/libmpdclient.so.2.0.1
 #usr/lib/pkgconfig/libmpdclient.pc
 #usr/share/doc/libmpdclient
 #usr/share/doc/libmpdclient/COPYING
