@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.12.3
+VER        = 0.14.1
 
 THISAPP    = qemu-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = qemu
-PAK_VER    = 10
+PAK_VER    = 11
 
 DEPS       = "sdl"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d215e4568650e8019816397174c090e1
+$(DL_FILE)_MD5 = b6c713a8db638e173af53a62d5178640
 
 install : $(TARGET)
 
@@ -77,7 +77,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr \
+
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/qemu-0.14.1_missing_ATFCWD_hack.patch
+
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
 		--target-list="i386-linux-user i386-softmmu"
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
