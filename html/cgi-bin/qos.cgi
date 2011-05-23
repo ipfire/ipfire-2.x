@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -531,7 +531,7 @@ END
 	open( FILE, "> $level7file" ) or die "Unable to write $level7file";
 	print FILE <<END
 102;$qossettings{'RED_DEV'};dns;;;
-102;$qossettings{'RED_DEV'};sip;;;
+102;$qossettings{'RED_DEV'};rtp;;;
 102;$qossettings{'RED_DEV'};skypetoskype;;;
 103;$qossettings{'RED_DEV'};ssh;;;
 103;$qossettings{'RED_DEV'};rdp;;;
@@ -540,6 +540,7 @@ END
 104;$qossettings{'RED_DEV'};pop3;;;
 120;$qossettings{'RED_DEV'};applejuice;;;
 120;$qossettings{'RED_DEV'};bittorrent;;;
+200;imq0;rtp;;;
 200;imq0;skypetoskype;;;
 203;imq0;ssh;;;
 203;imq0;rdp;;;
