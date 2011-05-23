@@ -1,4 +1,5 @@
 etc/system-release
+etc/httpd/conf/server-tuning.conf
 etc/rc.d/init.d/squid
 etc/rc.d/init.d/waitdrives
 etc/rc.d/rcsysinit.d/S19waitdrives
