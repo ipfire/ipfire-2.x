@@ -17,14 +17,14 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2010 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2007-2011 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
 #
-KVER=2.6.32.40
+KVER=2.6.32.41
 ROOT=`mount | grep " / " | cut -d" " -f1`
 ROOTUUID=`blkid -c /dev/null -sUUID $ROOT | cut -d'"' -f2`
 if [ ! -z $ROOTUUID ]; then
