@@ -34,7 +34,7 @@ else
 endif
 endif
 
-VER        = 2.6.38-3-ns
+VER        = 2.6.39-1-sn
 
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = compat-wireless-$(VER).tar.bz2
@@ -51,7 +51,7 @@ objects = $(DL_FILE) asix-3.5.0a.tar.bz2
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 asix-3.5.0a.tar.bz2 = $(DL_FROM)/asix-3.5.0a.tar.bz2
 
-$(DL_FILE)_MD5 = c4c78d1d41c28f0e9c48ab8098a0a9f2
+$(DL_FILE)_MD5 = ac2b20607d75de8ce2b30b74995383a6
 asix-3.5.0a.tar.bz2_MD5=cc57513505d3ad1a43b58add91d2bba7
 
 install : $(TARGET)
@@ -83,6 +83,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
 
+	# kfifo has no license info and taints kernel
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.39_kfifo_module_info.patch
+
 	# Copy USB-Net drivers from Kernel...
 	mkdir $(DIR_APP)/drivers/net/usb/new
 	cp $(DIR_APP)/drivers/net/usb/*.c $(DIR_APP)/drivers/net/usb/new
@@ -100,9 +103,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Install firmware udev files...
 	cd $(DIR_APP)/udev && install -m 644 50-compat_firmware.rules /etc/udev/rules.d/
 	cd $(DIR_APP)/udev && install -m 755 compat_firmware.sh /lib/udev/
-
-	# Disable hwcrypt on rt73 ...
-	echo "options rt73usb nohwcrypt=1" > /etc/modprobe.d/ralink_wireless
 
 	-rm -rf $(DIR_APP)
 	@$(POSTBUILD)

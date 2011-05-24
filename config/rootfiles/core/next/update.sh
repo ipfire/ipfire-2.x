@@ -82,6 +82,10 @@ tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
 	--no-overwrite-dir
 
 #
+# Enable ralink rt73 hardware encryption again
+rm -f /etc/modprobe.d/ralink_wireless
+
+#
 # Start services
 #
 /etc/init.d/squid start
