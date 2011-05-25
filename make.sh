@@ -358,6 +358,7 @@ buildipfire() {
   ipfiremake which
   ipfiremake xz
   ipfiremake linux-firmware
+  ipfiremake zd1211-firmware
   ipfiremake linux			XEN=1
   ipfiremake kqemu			XEN=1
   ipfiremake v4l-dvb			XEN=1
