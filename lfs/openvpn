@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -77,6 +77,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && cp -Rvf $(DIR_SRC)/config/ovpn /var/ipfire
 	cd $(DIR_APP)/plugin/auth-pam && make
 	cp -pvf $(DIR_APP)/plugin/auth-pam/openvpn-auth-pam.so /lib/
+	cd $(DIR_APP)/plugin/down-root && make
+	cp -pvf $(DIR_APP)/plugin/down-root/openvpn-down-root.so /lib/
 	-mkdir -vp /var/ipfire/ovpn/ca
 	-mkdir -vp /var/ipfire/ovpn/crls
 	touch /var/ipfire/ovpn/ovpn-leases.db
