@@ -1,0 +1,1 @@
+/srv/web/ipfire/html/proxy.pac
