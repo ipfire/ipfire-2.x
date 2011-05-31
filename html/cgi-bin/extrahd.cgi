@@ -207,7 +207,7 @@ END
 		foreach $partitionentry (sort @partitions)
 		{
 			@partitionline = split( /\;/, $partitionentry );
-			if (( "$partitionline[0]" =~ /^$scanline[0]/ ) && ! ( "$partitionline[0]" eq "$scanline[0]" )) {
+			if (( "$partitionline[0]" =~ /^$scanline[0]/ ) && !( "$partitionline[2]" eq "" )) {
 				$size = int($partitionline[1] / 1024);
 				print <<END
 				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
