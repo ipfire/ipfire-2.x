@@ -690,6 +690,7 @@ buildipfire() {
   ipfiremake parted
   ipfiremake swig
   ipfiremake python-m2crypto
+  ipfiremake wireless-regdb
   ipfiremake crda
   ipfiremake libsatsolver
   ipfiremake python-satsolver
