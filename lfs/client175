@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.5a
+VER        = 0.7
 
 THISAPP    = client175_$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = client175
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = "mpfire"
 
@@ -44,7 +44,8 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 578ad4ba1743f3b0801a806659f550c8
+$(DL_FILE)_MD5 = 975b69de79dc2649d8acba294cc0c5eb
+
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
@@ -76,11 +77,12 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxvf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
 	@rm -rf /srv/client175
 	mkdir -pv /srv/client175
 
 	cd $(DIR_APP) && mv -vf * /srv/client175
+
 	cp -vf $(DIR_SRC)/config/client175/site.conf /srv/client175/
 
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/client175 \
