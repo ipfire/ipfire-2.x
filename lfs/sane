@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,23 +24,16 @@
 
 include Config
 
-VER        = 1.0.19
+VER        = 1.0.22
 
 THISAPP    = sane-$(VER)
 DL_FILE    = sane-backends-$(VER).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/sane-backends-$(VER)
-ifeq "$(KMOD)" "1"
-ifeq "$(SMP)" "1"
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-smp
-else
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod
-endif
-else
 TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+
 PROG       = sane
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "libtiff"
 
@@ -52,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8c0936272dcfd4e98c51512699f1c06f
+$(DL_FILE)_MD5 = fadf56a60f4776bfb24491f66b617cf5
 
 install : $(TARGET)
 
@@ -85,21 +78,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(KMOD)" "1"
-	cd $(DIR_APP)/doc/plustek && cp -vf Makefile.kernel26 \
-				$(DIR_APP)/backend/Makefile
-ifeq "$(SMP)" "1"
-	cd $(DIR_APP)/backend && make -C /lib/modules/$(KVER)-ipfire-smp/build/ \
-				    SUBDIRS=$(DIR_APP)/backend modules
-	cd $(DIR_APP)/backend && install -m 644 pt_drv.ko \
-	    /lib/modules/$(KVER)-ipfire-smp/kernel/drivers/parport/
-else
-	cd $(DIR_APP)/backend && make -C /lib/modules/$(KVER)-ipfire/build/ \
-				    SUBDIRS=$(DIR_APP)/backend modules
-	cd $(DIR_APP)/backend && install -m 644 pt_drv.ko \
-	    /lib/modules/$(KVER)-ipfire/kernel/drivers/parport/
-endif
-else
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
 				     --disable-ipv6 \
 				     --enable-parport-directio
@@ -112,7 +90,5 @@ else
 	ln -sf ../init.d/sane /etc/rc.d/rc6.d/K10sane
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/sane  \
 			/var/ipfire/backup/addons/includes/sane
-endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
-	
