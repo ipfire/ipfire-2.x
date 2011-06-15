@@ -5,7 +5,7 @@
 #                                                                          #
 # IPFire is free software; you can redistribute it and/or modify           #
 # it under the terms of the GNU General Public License as published by     #
-# the Free Software Foundation; either version 2 of the License, or        #
+# the Free Software Foundation; either version 3 of the License, or        #
 # (at your option) any later version.                                      #
 #                                                                          #
 # IPFire is distributed in the hope that it will be useful,                #
@@ -17,20 +17,43 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2011 IPFire-Team <info@ipfire.org>.                   #
+# Copyright (C) 2011 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-extract_files
-ln -svf  /etc/init.d/mpd /etc/rc.d/rc3.d/S65mpd
-ln -svf  /etc/init.d/mpd /etc/rc.d/rc0.d/K35mpd
-ln -svf  /etc/init.d/mpd /etc/rc.d/rc6.d/K35mpd
-ln -svf  /var/ipfire/mpfire/mpd.conf /etc/mpd.conf
-chmod 755 /srv/web/ipfire/html/images/mpfire
-touch /var/log/mpd.log
-restore_backup ${NAME}
-# comment removed option from config
-sed -i -e "s|^error_file|#error_file|g" /var/ipfire/mpfire/mpd.conf
+/usr/local/bin/backupctrl exclude >/dev/null 2>&1
+
 #
-/etc/init.d/mpd start
+# Remove old core updates from pakfire cache to save space...
+core=50
+for (( i=1; i<=$core; i++ ))
+do
+	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
+done
+
+#
+#Stop services
+
+#
+#Extract files
+extract_files
+
+#
+#Start services
+
+#
+#Update Language cache
+#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+
+#Rebuild module dep's
+#depmod 2.6.32.28-ipfire     >/dev/null 2>&1
+#depmod 2.6.32.28-ipfire-pae >/dev/null 2>&1
+#depmod 2.6.32.28-ipfire-xen >/dev/null 2>&1
+
+#
+#Finish
+/etc/init.d/fireinfo start
+sendprofile
+#Don't report the exitcode last command
+exit 0

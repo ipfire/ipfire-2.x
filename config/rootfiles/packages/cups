@@ -883,7 +883,6 @@ usr/share/doc/cups/help
 #usr/share/doc/cups/help/man-cupsenable.html
 #usr/share/doc/cups/help/man-cupstestdsc.html
 #usr/share/doc/cups/help/man-cupstestppd.html
-#usr/share/doc/cups/help/man-drv.html
 #usr/share/doc/cups/help/man-filter.html
 #usr/share/doc/cups/help/man-lp.html
 #usr/share/doc/cups/help/man-lpadmin.html
@@ -948,6 +947,7 @@ usr/share/doc/cups/images
 #usr/share/doc/cups/images/cups-postscript-chain.png
 #usr/share/doc/cups/images/cups-raster-chain.png
 #usr/share/doc/cups/images/cups.png
+#usr/share/doc/cups/images/generic.png
 #usr/share/doc/cups/images/left.gif
 #usr/share/doc/cups/images/raster.png
 #usr/share/doc/cups/images/right.gif
@@ -1012,7 +1012,6 @@ usr/share/doc/cups/robots.txt
 #usr/share/man/man5/printers.conf.5.gz
 #usr/share/man/man5/subscriptions.conf.5.gz
 #usr/share/man/man7/backend.7.gz
-#usr/share/man/man7/drv.7.gz
 #usr/share/man/man7/filter.7.gz
 #usr/share/man/man7/notifier.7.gz
 #usr/share/man/man8/accept.8.gz

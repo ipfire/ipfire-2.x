@@ -1355,7 +1355,7 @@
 'pakfire install package' => 'Sie möchten folgende Pakete installieren: ',
 'pakfire installed addons' => 'Installierte Addons:',
 'pakfire last core list update' => 'Letztes Corelisten Update vor',
-'pakfire last package update' => 'Letztes Pakelisten Update vor',
+'pakfire last package update' => 'Letztes Paketlisten Update vor',
 'pakfire last serverlist update' => 'Letztes Serverlisten Update vor',
 'pakfire last update' => 'Letzes Update vor',
 'pakfire possible dependency' => ' Möglicherweise haben diese Pakete Abhängigkeiten, d.h. andere Pakete müssen zusätzlich installiert werden. Dazu sehen sie unten eine Liste.',

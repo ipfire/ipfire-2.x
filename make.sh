@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.9"							# Version number
-CORE="49"							# Core Level (Filename)
-PAKFIRE_CORE="48"						# Core Level (PAKFIRE)
+CORE="50"							# Core Level (Filename)
+PAKFIRE_CORE="49"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -247,6 +247,7 @@ buildtoolchain() {
     NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
     export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
     lfsmake1 ccache	PASS=1
+    lfsmake1 make	PASS=1
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
     export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
@@ -270,7 +271,7 @@ buildtoolchain() {
     lfsmake1 grep
     lfsmake1 gzip
     lfsmake1 m4
-    lfsmake1 make
+    lfsmake1 make	PASS=2
     lfsmake1 patch
     lfsmake1 perl
     lfsmake1 sed
