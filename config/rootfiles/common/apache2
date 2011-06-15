@@ -1306,6 +1306,11 @@ usr/lib/apache/mod_userdir.so
 usr/lib/apache/mod_usertrack.so
 usr/lib/apache/mod_version.so
 usr/lib/apache/mod_vhost_alias.so
+#usr/lib/apr-util-1
+usr/lib/apr-util-1/apr_dbd_sqlite3-1.so
+#usr/lib/apr-util-1/apr_dbd_sqlite3.a
+#usr/lib/apr-util-1/apr_dbd_sqlite3.la
+usr/lib/apr-util-1/apr_dbd_sqlite3.so
 #usr/lib/apr.exp
 #usr/lib/aprutil.exp
 #usr/lib/libapr-1.a
