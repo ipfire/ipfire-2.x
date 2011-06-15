@@ -24,13 +24,17 @@
 
 include Config
 
-VER        = 2.7.2
+VER        = 0.5.3
 
-THISAPP    = Python-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
+THISAPP    = pyliblzma-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = python-lzma
+PAK_VER    = 1
+
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 75c87a80c6ddb0b785a57ea3583e04fa
+$(DL_FILE)_MD5 = 500f61116ee1ab4063b49c121786863a
 
 install : $(TARGET)
 
@@ -49,6 +53,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -69,10 +76,12 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-gdbm-1.patch
-	cd $(DIR_APP) && OPT="$(CFLAGS)" ./configure --prefix=/usr --enable-shared
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && python setup.py install
+	# unzip the egg because it won't work without
+	cd /usr/lib/python2.7/site-packages && \
+		unzip pyliblzma-$(VER)-py2.7-linux-i686.egg
+	rm -rf /usr/lib/python2.7/site-packages/pyliblzma-$(VER)-py2.7-linux-i686.egg
+	rm -rf /usr/lib/python2.7/site-packages/EGG-INFO
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

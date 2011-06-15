@@ -1,2 +1,3 @@
 srv/web/ipfire/html/proxy.pac
 var/updatecache
+etc/collectd.custom
