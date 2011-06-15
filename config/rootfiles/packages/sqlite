@@ -7,6 +7,4 @@ usr/lib/libsqlite3.so
 usr/lib/libsqlite3.so.0
 usr/lib/libsqlite3.so.0.8.6
 #usr/lib/pkgconfig/sqlite3.pc
-#usr/lib/tcl8.4/sqlite3
-usr/lib/tcl8.4/sqlite3/libtclsqlite3.so
-usr/lib/tcl8.4/sqlite3/pkgIndex.tcl
+#usr/share/man/man1/sqlite3.1
