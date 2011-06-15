@@ -24,13 +24,17 @@
 
 include Config
 
-VER        = 2.7.2
+VER        = 2.25
 
-THISAPP    = Python-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
+THISAPP    = python-distutils-extra-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = python-distutils-extra
+PAK_VER    = 1
+
+DEPS       = "python-distutils"
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 75c87a80c6ddb0b785a57ea3583e04fa
+$(DL_FILE)_MD5 = 76d298db8d6d4fcdbf5d190046f70362
 
 install : $(TARGET)
 
@@ -49,6 +53,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -69,10 +76,10 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-gdbm-1.patch
-	cd $(DIR_APP) && OPT="$(CFLAGS)" ./configure --prefix=/usr --enable-shared
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && python setup.py install
+	mv -f /usr/lib/python2.7/site-packages/python_distutils_extra-$(VER)-py2.7.egg/DistUtilsExtra \
+		/usr/lib/python2.7/site-packages/
+	rm -rf 	/usr/lib/python2.7/site-packages/python_distutils_extra-$(VER)-py2.7.egg
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
