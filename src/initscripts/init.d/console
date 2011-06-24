@@ -17,16 +17,18 @@
 . ${rc_functions}
 eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 
+# English is default
+FONT="lat0-16"
+KEYMAP_CORRECTIONS="euro2"
+
 if [ "$LANGUAGE" == "de" ]; then
-	#KEYMAP="de-latin1"
-	KEYMAP_CORRECTIONS="euro2"
 	LEGACY_CHARSET="iso-8859-15"
 	#FONT="LatArCyrHeb-16 -m 8859-15"
 	FONT="lat0-16 -m 8859-15"
-else
-	# English
-	FONT="lat0-16"
-	KEYMAP_CORRECTIONS="euro2"
+fi
+
+if [ "$LANGUAGE" == "pl" ]; then
+	FONT="lat2-16"
 fi
 
 UNICODE="1"
