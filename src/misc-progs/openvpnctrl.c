@@ -368,11 +368,15 @@ void setFirewallRules(void) {
 void stopDaemon(void) {
 	char command[STRING_SIZE];
 
-	snprintf(command, STRING_SIZE - 1, "/bin/killall openvpn");
-	executeCommand(command);
+	int pid = readPidFile("/var/run/openvpn.pid");
+	if (pid == NULL) {
+		exit(1);
+	}
+
+	fprintf(stderr, "Killing PID %d.\n", pid);
+	kill(pid, SIGTERM);
+
 	snprintf(command, STRING_SIZE - 1, "/bin/rm -f /var/run/openvpn.pid");
-	executeCommand(command);
-	snprintf(command, STRING_SIZE-1, "/sbin/modprobe -r tun");
 	executeCommand(command);
 }
 
@@ -429,6 +433,20 @@ void startNet2Net(char *name) {
 	executeCommand(command);
 }
 
+int readPidFile(const char *pidfile) {
+	FILE *fp = fopen(pidfile, "r");
+	if (fp == NULL) {
+		fprintf(stderr, "PID file not found: '%s'\n", pidfile);
+		exit(1);
+	}
+
+	int pid = NULL;
+	fscanf(fp, "%d", &pid);
+	fclose(fp);
+
+	return pid;
+}
+
 void killNet2Net(char *name) {
 	connection *conn = NULL;
 	connection *conn_iter;
@@ -451,16 +469,10 @@ void killNet2Net(char *name) {
 	char pidfile[STRING_SIZE];
 	snprintf(&pidfile, STRING_SIZE - 1, "/var/run/%sn2n.pid", conn->name);
 
-	FILE *fp = fopen(pidfile, "r");
-	if (fp == NULL) {
-		fprintf(stderr, "Could not determine PID for connection '%s'.\n", conn->name);
-		fprintf(stderr, "PID file not found: '%s'\n", pidfile);
+	int pid = readPidFile(pidfile);
+	if (pid == NULL) {
 		exit(1);
 	}
-
-	int pid;
-	fscanf(fp, "%d", &pid);
-	fclose(fp);
 
 	fprintf(stderr, "Killing PID %d.\n", pid);
 	kill(pid, SIGTERM);
