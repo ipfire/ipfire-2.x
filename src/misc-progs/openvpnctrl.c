@@ -24,7 +24,7 @@ char enableorange[STRING_SIZE] = "off";
 char OVPNRED[STRING_SIZE] = "OVPN";
 char OVPNBLUE[STRING_SIZE] = "OVPN_BLUE_";
 char OVPNORANGE[STRING_SIZE] = "OVPN_ORANGE_";
-char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.1.0";
+char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.1.1";
 
 struct connection_struct {
 	char name[STRING_SIZE];
@@ -46,9 +46,9 @@ void exithandler(void)
 void usage(void)
 {
 #ifdef ovpndebug
-	printf("Wrapper for OpenVPN v%s-debug\n", WRAPPERVERSION);
+	printf("Wrapper for OpenVPN %s-debug\n", WRAPPERVERSION);
 #else
-	printf("Wrapper for OpenVPN v%s\n", WRAPPERVERSION);
+	printf("Wrapper for OpenVPN %s\n", WRAPPERVERSION);
 #endif
 	printf("openvpnctrl <option>\n");
 	printf(" Valid options are:\n");
@@ -198,7 +198,7 @@ void executeCommand(char *command) {
 void setChainRules(char *chain, char *interface, char *protocol, char *port)
 {
 	char str[STRING_SIZE];
-	
+
 	sprintf(str, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %s -j ACCEPT", chain, interface, protocol, port);
 	executeCommand(str);
 	sprintf(str, "/sbin/iptables -A %sINPUT -i tun+ -j ACCEPT", chain);
@@ -342,6 +342,11 @@ void setFirewallRules(void) {
 	// read connection configuration
 	connection *conn = getConnections();
 
+	// Flush all chains.
+	flushChain(OVPNRED);
+	flushChain(OVPNBLUE);
+	flushChain(OVPNORANGE);
+
 	// set firewall rules
 	if (!strcmp(enablered, "on") && strlen(redif))
 		setChainRules(OVPNRED, redif, protocol, dport);
@@ -351,10 +356,10 @@ void setFirewallRules(void) {
 		setChainRules(OVPNORANGE, orangeif, protocol, dport);
 
 	// set firewall rules for n2n connections
-	char port[STRING_SIZE];
+	char *port;
 	while (conn) {
 		sprintf(port, "%d", conn->port);
-		setChainRules(OVPNRED, redif, &conn->proto, &port);
+		setChainRules(OVPNRED, redif, conn->proto, port);
 		conn = conn->next;
 	}
 }
@@ -402,6 +407,9 @@ void startNet2Net(char *name) {
 		fprintf(stderr, "Connection not found.\n");
 		exit(1);
 	}
+
+	// Make sure all firewall rules are up to date.
+	setFirewallRules();
 
 	char command[STRING_SIZE];
 	sprintf(command, "/usr/sbin/openvpn --config " CONFIG_ROOT "/ovpn/n2nconf/%s/%s.conf", conn->name, conn->name);
