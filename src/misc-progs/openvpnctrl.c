@@ -1,3 +1,4 @@
+#include <signal.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -24,7 +25,7 @@ char enableorange[STRING_SIZE] = "off";
 char OVPNRED[STRING_SIZE] = "OVPN";
 char OVPNBLUE[STRING_SIZE] = "OVPN_BLUE_";
 char OVPNORANGE[STRING_SIZE] = "OVPN_ORANGE_";
-char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.1.1";
+char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.1.2";
 
 struct connection_struct {
 	char name[STRING_SIZE];
@@ -408,16 +409,63 @@ void startNet2Net(char *name) {
 		exit(1);
 	}
 
+	char configfile[STRING_SIZE];
+	snprintf(configfile, STRING_SIZE - 1, CONFIG_ROOT "/ovpn/n2nconf/%s/%s.conf",
+		conn->name, conn->name);
+
+	FILE *fp = fopen(configfile, "r");
+	if (fp == NULL) {
+		fprintf(stderr, "Could not find configuration file for connection '%s' at '%s'.\n",
+			conn->name, configfile);
+		exit(2);
+	}
+	fclose(fp);
+
 	// Make sure all firewall rules are up to date.
 	setFirewallRules();
 
 	char command[STRING_SIZE];
-	sprintf(command, "/usr/sbin/openvpn --config " CONFIG_ROOT "/ovpn/n2nconf/%s/%s.conf", conn->name, conn->name);
+	sprintf(command, "/usr/sbin/openvpn --config %s", configfile);
 	executeCommand(command);
 }
 
-void killNet2Net(char *conn) {
-	printf("TO BE DONE %s\n", conn);
+void killNet2Net(char *name) {
+	connection *conn = NULL;
+	connection *conn_iter;
+
+	conn_iter = getConnections();
+
+	while (conn_iter) {
+		if (strcmp(conn_iter->name, name) == 0) {
+			conn = conn_iter;
+			break;
+		}
+		conn_iter = conn_iter->next;
+	}
+
+	if (conn == NULL) {
+		fprintf(stderr, "Connection not found.\n");
+		exit(1);
+	}
+
+	char pidfile[STRING_SIZE];
+	snprintf(&pidfile, STRING_SIZE - 1, "/var/run/%sn2n.pid", conn->name);
+
+	FILE *fp = fopen(pidfile, "r");
+	if (fp == NULL) {
+		fprintf(stderr, "Could not determine PID for connection '%s'.\n", conn->name);
+		fprintf(stderr, "PID file not found: '%s'\n", pidfile);
+		exit(1);
+	}
+
+	int pid;
+	fscanf(fp, "%d", &pid);
+	fclose(fp);
+
+	fprintf(stderr, "Killing PID %d.\n", pid);
+	kill(pid, SIGTERM);
+
+	exit(0);
 }
 
 void displayopenvpn(void) {
