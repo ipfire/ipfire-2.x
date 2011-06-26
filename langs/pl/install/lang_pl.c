@@ -1,5 +1,5 @@
 /*
- * English (en) Data File
+ * Polish (pl) Data File
  *
  * This file is part of the IPFire.
  * 
@@ -19,10 +19,6 @@
  * 
  * (c) IPFire Team  <info@ipfire.org>
  *
- * based on work of SmoothWall and IPCop
- *
- * (c) The SmoothWall Team
- *  
  */
  
 #include "libsmooth.h"
