@@ -1,3 +1,4 @@
+etc/sysctl.conf
 etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/extrahd.cgi

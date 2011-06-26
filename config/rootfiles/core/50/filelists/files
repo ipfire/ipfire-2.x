@@ -1,4 +1,3 @@
-etc/sysctl.conf
 etc/system-release
 var/ipfire/langs/
 etc/rc.d/init.d/console
