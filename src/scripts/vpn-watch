@@ -43,6 +43,7 @@ my $status = `ipsec whack --status`;
 foreach (@vpnsettings){
  my @settings = split(/,/,$_);
 
+  if ($settings[30] eq 'ikev2'){next;}
   if ($settings[27] ne 'RED'){next;}
   if ($settings[4] ne 'net'){next;}  
   if ($settings[1] ne 'on'){next;}chomp($settings[29]);

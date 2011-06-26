@@ -2,7 +2,11 @@ etc/sysctl.conf
 etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/extrahd.cgi
+srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
 var/ipfire/langs/es.pl
 var/ipfire/langs/fr.pl
+usr/local/bin/ipsecctrl
+usr/local/bin/vpn-watch

@@ -1,6 +1,7 @@
 %tr = ( 
 %tr,
 
+'vpn keyexchange' => 'Schlüsseltausch',
 'Act as' => 'Konfiguriert als',
 'Add Level7 rule' => 'Level7-Regel hinzufügen',
 'Add Port Rule' => 'Port Regel hinzufügen',
