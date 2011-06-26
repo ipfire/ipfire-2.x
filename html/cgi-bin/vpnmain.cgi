@@ -395,8 +395,11 @@ sub writeipsecfiles {
 	    print CONF "\tpfsgroup=$lconfighash{$key}[23]\n";
 	}
 
-	# IKE V1
-	print CONF "\tkeyexchange=ikev1\n";
+	# IKE V1 or V2
+	if (! $lconfighash{$key}[29]) {
+	   $lconfighash{$key}[29] = "ikev1";
+	}
+	print CONF "\tkeyexchange=$lconfighash{$key}[29]\n";
 
 	# Lifetimes
 	print CONF "\tikelifetime=$lconfighash{$key}[16]h\n" if ($lconfighash{$key}[16]);
@@ -1288,6 +1291,7 @@ END
 	$cgiparams{'REMARK'}		= $confighash{$cgiparams{'KEY'}}[25];
 	$cgiparams{'INTERFACE'}		= $confighash{$cgiparams{'KEY'}}[26];
 	$cgiparams{'DPD_ACTION'}	= $confighash{$cgiparams{'KEY'}}[27];
+	$cgiparams{'IKE_VERSION'}	= $confighash{$cgiparams{'KEY'}}[29];
 	$cgiparams{'IKE_ENCRYPTION'} 	= $confighash{$cgiparams{'KEY'}}[18];
 	$cgiparams{'IKE_INTEGRITY'}  	= $confighash{$cgiparams{'KEY'}}[19];
 	$cgiparams{'IKE_GROUPTYPE'}  	= $confighash{$cgiparams{'KEY'}}[20];
@@ -1790,6 +1794,7 @@ END
 	$confighash{$key}[25] = $cgiparams{'REMARK'};
 	$confighash{$key}[26] = $cgiparams{'INTERFACE'};
 	$confighash{$key}[27] = $cgiparams{'DPD_ACTION'};
+	$confighash{$key}[29] = $cgiparams{'IKE_VERSION'};
 
 	#dont forget advanced value
 	$confighash{$key}[18] = $cgiparams{'IKE_ENCRYPTION'};
@@ -1845,6 +1850,11 @@ END
 	    $cgiparams{'DPD_ACTION'} = 'restart';
 	}
 
+	# Default IKE Version to V1
+	if (! $cgiparams{'IKE_VERSION'}) {
+	    $cgiparams{'IKE_VERSION'} = 'ikev1';
+	}
+
 	# Default is yes for 'pfs'
 	$cgiparams{'PFS'}     = 'on';
 	
@@ -1894,6 +1904,10 @@ END
     $selected{'DPD_ACTION'}{'hold'} = '';
     $selected{'DPD_ACTION'}{'restart'} = '';
     $selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
+
+    $selected{'IKE_VERSION'}{'ikev1'} = '';
+    $selected{'IKE_VERSION'}{'ikev2'} = '';
+    $selected{'IKE_VERSION'}{$cgiparams{'IKE_VERSION'}} = "selected='selected'";
 
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
@@ -1974,6 +1988,12 @@ END
 	    <td><input type='text' name='REMOTE_ID' value='$cgiparams{'REMOTE_ID'}' /></td>
 	</tr><tr>
 	</tr><td><br /></td><tr>
+	    <td>$Lang::tr{'ike version'}:</td>
+	    <td><select name='IKE_VERSION'>
+    		<option value='ikev1' $selected{'IKE_VERSION'}{'ikev1'}>IKEv1</option>
+    		<option value='ikev2' $selected{'IKE_VERSION'}{'ikev2'}>IKEv2</option>
+    		</select></a>
+	    </td>
 	    <td>$Lang::tr{'dpd action'}:</td>
 	    <td><select name='DPD_ACTION'>
     		<option value='clear' $selected{'DPD_ACTION'}{'clear'}>clear</option>
