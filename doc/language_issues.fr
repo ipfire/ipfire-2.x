@@ -168,7 +168,8 @@ WARNING: translation string unused: error external access
 WARNING: translation string unused: expected
 WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
-WARNING: translation string unused: extrahd founded drives
+WARNING: translation string unused: extrahd unable to read
+WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall graphs
 WARNING: translation string unused: firewall log viewer
@@ -497,7 +498,6 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
 WARNING: untranslated string: dns address deleted txt
-WARNING: untranslated string: extrahd detected drives
 WARNING: untranslated string: fireinfo ipfire version
 WARNING: untranslated string: fireinfo is disabled
 WARNING: untranslated string: fireinfo is enabled
@@ -525,6 +525,7 @@ WARNING: untranslated string: system information
 WARNING: untranslated string: upload new ruleset
 WARNING: untranslated string: urlfilter file ext block
 WARNING: untranslated string: urlfilter mode block
+WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: wlanap access point
 WARNING: untranslated string: wlanap channel
 WARNING: untranslated string: wlanap debugging

@@ -168,6 +168,8 @@ WARNING: translation string unused: error external access
 WARNING: translation string unused: expected
 WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
+WARNING: translation string unused: extrahd unable to read
+WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall graphs
 WARNING: translation string unused: firewall log viewer
@@ -531,3 +533,4 @@ WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: outgoing firewall view group
 WARNING: untranslated string: pakfire ago
 WARNING: untranslated string: system information
+WARNING: untranslated string: vpn keyexchange
