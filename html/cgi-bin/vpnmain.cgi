@@ -2527,7 +2527,7 @@ END
 	    print "<tr bgcolor='$color{'color22'}'>\n";
 	}
 	print "<td align='center' nowrap='nowrap'>$confighash{$key}[1]</td>";
-	print "<td align='center' nowrap='nowrap'>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
+	print "<td align='center' nowrap='nowrap'>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ") $confighash{$key}[29]</td>";
 	if ($confighash{$key}[2] eq '%auth-dn') {
 	    print "<td align='left' nowrap='nowrap'>$confighash{$key}[9]</td>";
 	} elsif ($confighash{$key}[4] eq 'cert') {
