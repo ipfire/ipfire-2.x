@@ -1988,7 +1988,7 @@ END
 	    <td><input type='text' name='REMOTE_ID' value='$cgiparams{'REMOTE_ID'}' /></td>
 	</tr><tr>
 	</tr><td><br /></td><tr>
-	    <td>$Lang::tr{'ike version'}:</td>
+	    <td>$Lang::tr{'vpn keyexchange'}:</td>
 	    <td><select name='IKE_VERSION'>
     		<option value='ikev1' $selected{'IKE_VERSION'}{'ikev1'}>IKEv1</option>
     		<option value='ikev2' $selected{'IKE_VERSION'}{'ikev2'}>IKEv2</option>
