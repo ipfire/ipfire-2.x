@@ -1159,6 +1159,7 @@
 'min delay' => 'Minimale Verzögerung',
 'min size' => 'Min. Objektgröße (kB):',
 'minimal' => 'Minimal',
+'minute' => 'Minute',
 'minutes' => 'Minuten',
 'misc-options' => 'Sonstige Optionen',
 'missing dat' => 'Verschlüsseltes Archiv wurde nicht gefunden',
