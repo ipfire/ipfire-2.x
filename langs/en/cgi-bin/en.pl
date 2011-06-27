@@ -1177,6 +1177,7 @@
 'min delay' => 'Minimum delay',
 'min size' => 'Min object size (KB):',
 'minimal' => 'Minimal',
+'minute' => 'Minute',
 'minutes' => 'Minutes',
 'misc-options' => 'Miscellaneous options',
 'missing dat' => 'Encrypted archive not found',
