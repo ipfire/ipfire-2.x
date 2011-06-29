@@ -122,6 +122,20 @@ connection *getConnections() {
 	return conn_first;
 }
 
+int readPidFile(const char *pidfile) {
+	FILE *fp = fopen(pidfile, "r");
+	if (fp == NULL) {
+		fprintf(stderr, "PID file not found: '%s'\n", pidfile);
+		exit(1);
+	}
+
+	int pid = 0;
+	fscanf(fp, "%d", &pid);
+	fclose(fp);
+
+	return pid;
+}
+
 void ovpnInit(void) {
 	
 	// Read OpenVPN configuration
@@ -358,7 +372,7 @@ void stopDaemon(void) {
 	char command[STRING_SIZE];
 
 	int pid = readPidFile("/var/run/openvpn.pid");
-	if (pid == NULL) {
+	if (!pid > 0) {
 		exit(1);
 	}
 
@@ -422,20 +436,6 @@ void startNet2Net(char *name) {
 	executeCommand(command);
 }
 
-int readPidFile(const char *pidfile) {
-	FILE *fp = fopen(pidfile, "r");
-	if (fp == NULL) {
-		fprintf(stderr, "PID file not found: '%s'\n", pidfile);
-		exit(1);
-	}
-
-	int pid = NULL;
-	fscanf(fp, "%d", &pid);
-	fclose(fp);
-
-	return pid;
-}
-
 void killNet2Net(char *name) {
 	connection *conn = NULL;
 	connection *conn_iter;
@@ -456,10 +456,10 @@ void killNet2Net(char *name) {
 	}
 
 	char pidfile[STRING_SIZE];
-	snprintf(&pidfile, STRING_SIZE - 1, "/var/run/%sn2n.pid", conn->name);
+	snprintf(pidfile, STRING_SIZE - 1, "/var/run/%sn2n.pid", conn->name);
 
 	int pid = readPidFile(pidfile);
-	if (pid == NULL) {
+	if (!pid > 0) {
 		exit(1);
 	}
 
