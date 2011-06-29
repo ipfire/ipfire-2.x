@@ -268,39 +268,34 @@ void createChain(char *chain) {
 }
 
 void createAllChains(void) {
-	if (!((strcmp(enablered, "on")==0) || (strcmp(enableblue, "on")==0) || (strcmp(enableorange, "on")==0))){
-		fprintf(stderr, "OpenVPN is not enabled on any interface\n");
-		exit(1);
-	} else {
-		// create chain and chain references
-		if (!strcmp(enableorange, "on")) {
-			if (strlen(orangeif)) {
-				createChain(OVPNORANGE);
-				createChainReference(OVPNORANGE);
-			} else {
-				fprintf(stderr, "OpenVPN enabled on orange but no orange interface found\n");
-				//exit(1);
-			}
+	// create chain and chain references
+	if (!strcmp(enableorange, "on")) {
+		if (strlen(orangeif)) {
+			createChain(OVPNORANGE);
+			createChainReference(OVPNORANGE);
+		} else {
+			fprintf(stderr, "OpenVPN enabled on orange but no orange interface found\n");
+			//exit(1);
 		}
-	
-		if (!strcmp(enableblue, "on")) {
-			if (strlen(blueif)) {
-				createChain(OVPNBLUE);
-				createChainReference(OVPNBLUE);
-			} else {
-				fprintf(stderr, "OpenVPN enabled on blue but no blue interface found\n");
-				//exit(1);
-			}
+	}
+
+	if (!strcmp(enableblue, "on")) {
+		if (strlen(blueif)) {
+			createChain(OVPNBLUE);
+			createChainReference(OVPNBLUE);
+		} else {
+			fprintf(stderr, "OpenVPN enabled on blue but no blue interface found\n");
+			//exit(1);
 		}
-	
-		if (!strcmp(enablered, "on")) {
-			if (strlen(redif)) {
-				createChain(OVPNRED);
-				createChainReference(OVPNRED);
-			} else {
-				fprintf(stderr, "OpenVPN enabled on red but no red interface found\n");
-				//exit(1);
-			}
+	}
+
+	if (!strcmp(enablered, "on")) {
+		if (strlen(redif)) {
+			createChain(OVPNRED);
+			createChainReference(OVPNRED);
+		} else {
+			fprintf(stderr, "OpenVPN enabled on red but no red interface found\n");
+			//exit(1);
 		}
 	}
 }
@@ -309,12 +304,6 @@ void setFirewallRules(void) {
 	char protocol[STRING_SIZE] = "";
 	char dport[STRING_SIZE] = "";
 	char dovpnip[STRING_SIZE] = "";
-
-	/* check if it makes sence to proceed further */
-	if (!((strcmp(enablered, "on")==0) || (strcmp(enableblue, "on")==0) || (strcmp(enableorange, "on")==0))){
-		fprintf(stderr, "Config error, at least one device must be enabled\n");
-		exit(1);
-	}
 
 	kv = initkeyvalues();
 	if (!readkeyvalues(kv, CONFIG_ROOT "/ovpn/settings"))
