@@ -466,6 +466,10 @@ void killNet2Net(char *name) {
 	fprintf(stderr, "Killing PID %d.\n", pid);
 	kill(pid, SIGTERM);
 
+	char command[STRING_SIZE];
+	snprintf(command, STRING_SIZE - 1, "/bin/rm -f %s", pidfile);
+	executeCommand(command);
+
 	exit(0);
 }
 
