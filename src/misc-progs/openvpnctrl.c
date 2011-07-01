@@ -361,7 +361,7 @@ void setFirewallRules(void) {
 
 	// set firewall rules for n2n connections
 	char *port;
-	while (conn) {
+	while (conn != NULL) {
 		sprintf(port, "%d", conn->port);
 		setChainRules(OVPNRED, redif, conn->proto, port);
 		conn = conn->next;
