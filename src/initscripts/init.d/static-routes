@@ -1,0 +1,39 @@
+#!/bin/bash
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+
+function init_table() {
+	# Check if table does already exist. If not we add it.
+	if (ip rule | grep -qeE static >/dev/null 2>&1); then
+		return
+	fi
+
+	ip rule add table static
+}
+
+
+case "${1}" in
+	start)
+              	boot_mesg "Adding static routes..."
+
+		# First, initialize the table
+                init_table
+
+		### ADD ALL ROUTES
+
+		evaluate_retval
+                ;;
+
+        stop)
+             	boot_mesg "Removing static routes..."
+                ip route flush table static >/dev/null 2>&1
+		evaluate_retval
+                ;;
+
+        *)
+          	echo "Usage: ${0} {start|stop}"
+               	exit 1
+                ;;
+esac
