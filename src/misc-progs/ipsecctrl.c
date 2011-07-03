@@ -156,7 +156,15 @@ void turn_connection_off (char *name) {
         snprintf(command, STRING_SIZE - 1, 
                 "/usr/sbin/ipsec whack --delete --name %s >/dev/null", name);
         safe_system(command);
+        snprintf(command, STRING_SIZE - 1, 
+                "/usr/sbin/ipsec stroke down %s >/dev/null", name);
+        safe_system(command);
+        snprintf(command, STRING_SIZE - 1, 
+                "/usr/sbin/ipsec stroke delete %s >/dev/null", name);
+        safe_system(command);
         safe_system("/usr/sbin/ipsec whack --rereadall >/dev/null");
+        safe_system("/usr/sbin/ipsec stroke rereadall >/dev/null");
+
 }
 
 
