@@ -1,0 +1,20 @@
+diff -Naur strongswan-4.5.2.org/src/ipsec/ipsec.in strongswan-4.5.2/src/ipsec/ipsec.in
+--- strongswan-4.5.2.org/src/ipsec/ipsec.in	2010-12-18 17:19:05.000000000 +0100
++++ strongswan-4.5.2/src/ipsec/ipsec.in	2011-07-03 11:39:39.501501334 +0200
+@@ -326,7 +326,7 @@
+ 		if [ -n "$spid" ]
+ 		then
+ 			kill $spid 2>/dev/null
+-			loop=5
++			loop=30
+ 			while [ $loop -gt 0 ] ; do
+ 				kill -0 $spid 2>/dev/null || break
+ 				sleep 1
+@@ -335,6 +335,7 @@
+ 			if [ $loop -eq 0 ]
+ 			then
+ 				kill -KILL $spid 2>/dev/null
++				killall -KILL charon 2>/dev/null
+ 				rm -f $IPSEC_STARTER_PID
+ 			fi
+ 		fi
