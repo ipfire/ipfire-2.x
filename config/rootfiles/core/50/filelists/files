@@ -3,3 +3,7 @@ var/ipfire/langs/
 etc/rc.d/init.d/console
 usr/local/sbin/setup
 var/ipfire/graphs.pl
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+usr/local/share/GeoIP/GeoIP.dat
+usr/share/hwdata/pci.ids
+usr/share/hwdata/usb.ids
