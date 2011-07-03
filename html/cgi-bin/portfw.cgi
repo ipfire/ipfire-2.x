@@ -1038,7 +1038,7 @@ sub disallowreserved
 {
 	# port 67 and 68 same for tcp and udp, don't bother putting in an array
 	my $msg = "";
-	my @tcp_reserved = (81,222,444);
+	my @tcp_reserved = ();
 	my $prt = $_[0]; # the port or range
 	my $ryn = $_[1]; # tells us whether or not it is a port range
 	my $prot = $_[2]; # protocol
