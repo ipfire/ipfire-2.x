@@ -370,7 +370,7 @@ END
 			} else {
 			    foreach my $line (@status) {
 				if (($line =~ /\"$confighash{$key}[1]\".*IPsec SA established/) ||
-				    ($line =~/ $confighash{$key}[1]\{.*INSTALLED/ ))
+				    ($line =~/$confighash{$key}[1]\{.*INSTALLED/ ))
 				    {
 				    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
 				}
