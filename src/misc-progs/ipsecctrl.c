@@ -59,9 +59,9 @@ void open_physical (char *interface, int nat_traversal_port) {
 //        safe_system(str);
         // IKE
 
-        sprintf(str, "/sbin/iptables -D IPSECINPUT -p udp -i %s --sport 500 --dport 500 -j ACCEPT >/dev/null 2>&1", interface);
+        sprintf(str, "/sbin/iptables -D IPSECINPUT -p udp -i %s --dport 500 -j ACCEPT >/dev/null 2>&1", interface);
         safe_system(str);
-        sprintf(str, "/sbin/iptables -A IPSECINPUT -p udp -i %s --sport 500 --dport 500 -j ACCEPT", interface);
+        sprintf(str, "/sbin/iptables -A IPSECINPUT -p udp -i %s --dport 500 -j ACCEPT", interface);
         safe_system(str);
 
         if (! nat_traversal_port) 
