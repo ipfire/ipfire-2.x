@@ -87,6 +87,8 @@ if ($outgrpsettings{'ACTION'} eq 'newipgroup')
 
 	if ( -e "$configpath/macgroups/$outgrpsettings{'ipgroup'}" ){
 		$errormessage =  "$Lang::tr{'outgoing firewall group error'}";
+	} elsif ( $outgrpsettings{'ipgroup'} =~ /\W/ ){
+		$errormessage = $Lang::tr{'name must only contain characters'}." - ".$outgrpsettings{'ipgroup'};
 	} elsif ( $outgrpsettings{'ipgroup'} eq "all" || $outgrpsettings{'ipgroup'} eq "red" || $outgrpsettings{'ipgroup'} eq "blue" ||
 			$outgrpsettings{'ipgroup'} eq "green" || $outgrpsettings{'ipgroup'} eq "orange" || $outgrpsettings{'ipgroup'} eq "ip" ||
 			$outgrpsettings{'ipgroup'} eq "mac" || $outgrpsettings{'ipgroup'} eq "ovpn" || $outgrpsettings{'ipgroup'} eq "ipsec" ) {
@@ -112,6 +114,8 @@ if ($outgrpsettings{'ACTION'} eq 'newmacgroup')
 
 	if ( -e "$configpath/ipgroups/$outgrpsettings{'macgroup'}" ){
 		$errormessage =  "$Lang::tr{'outgoing firewall group error'}";
+	} elsif ( $outgrpsettings{'macgroup'} =~ /\W/ ){
+		$errormessage = $Lang::tr{'name must only contain characters'}." - ".$outgrpsettings{'macgroup'};
 	} elsif ( $outgrpsettings{'macgroup'} eq "all" || $outgrpsettings{'macgroup'} eq "red" || $outgrpsettings{'macgroup'} eq "blue" ||
 			$outgrpsettings{'macgroup'} eq "green" || $outgrpsettings{'macgroup'} eq "orange" || $outgrpsettings{'macgroup'} eq "ip" ||
 			$outgrpsettings{'macgroup'} eq "mac" || $outgrpsettings{'macgroup'} eq "ovpn" || $outgrpsettings{'macgroup'} eq "ipsec" ) {
