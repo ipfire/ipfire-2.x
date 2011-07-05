@@ -18,6 +18,7 @@ usr/local/bin/outgoingfwctrl
 usr/local/bin/pakfire
 usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
+usr/local/bin/rebuildroutes
 usr/local/bin/redctrl
 #usr/local/bin/sambactrl
 usr/local/bin/setaliases
