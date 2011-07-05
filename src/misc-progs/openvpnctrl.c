@@ -360,7 +360,7 @@ void setFirewallRules(void) {
 		setChainRules(OVPNORANGE, orangeif, protocol, dport);
 
 	// set firewall rules for n2n connections
-	char *port;
+	char port[STRING_SIZE];
 	while (conn != NULL) {
 		sprintf(port, "%d", conn->port);
 		setChainRules(OVPNRED, redif, conn->proto, port);
