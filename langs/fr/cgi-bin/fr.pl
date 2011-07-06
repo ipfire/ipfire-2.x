@@ -5,6 +5,8 @@
 'Add Level7 rule' => 'Ajouter une règle Level7',
 'Add Port Rule' => 'Ajouter une règle de port',
 'Add Rule' => 'Ajouter une règle',
+'Edit an existing route' => 'Modifier une route existante',
+'Add a route' => 'Ajouter une route',
 'Async logging enabled' => 'Activer l\'écriture asynchrone du fichier syslog',
 'Choose Rule' => 'Choisissez <u>une</u> des règles suivantes.',
 'Class' => 'Classe',

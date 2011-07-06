@@ -5,6 +5,8 @@
 'Add Level7 rule' => 'añadir regla de Nivel 7',
 'Add Port Rule' => 'Añadir Regla de Puerto',
 'Add Rule' => 'Añadir Regla',
+'Edit an existing route' => 'Editar una route existente',
+'Add a route' => 'Añadir una route',
 'Choose Rule' => 'Seleccione <u>una</u> de las siguientes reglas.',
 'Class' => 'Clase',
 'Class was deleted' => 'con subclases potenciales fué eliminado',

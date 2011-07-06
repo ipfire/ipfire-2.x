@@ -8,6 +8,8 @@
 'Async logging enabled' => 'WłÄ�cz asynchroniczny zapis do pliku syslog',
 'Choose Rule' => 'Wybierz <u>jednÄ�</u> z poniższych reguł.',
 'Class' => 'Klasa',
+'Edit an existing route' => 'Edytuj istniejaca trase',
+'Add a route' => 'Dodaj trase',
 'Class was deleted' => 'wraz z ewentualnymi podklasami została usuniÄ�ta',
 'Client status and controlc' => 'Client status and control:',
 'ConnSched action' => 'Zadanie:',

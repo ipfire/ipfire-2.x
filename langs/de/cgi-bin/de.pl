@@ -2,6 +2,8 @@
 %tr,
 
 'Act as' => 'Konfiguriert als',
+'Edit an existing route' => 'Eine existierende Route editieren',
+'Add a route' => 'Eine Route hinzufügen',
 'Add Level7 rule' => 'Level7-Regel hinzufügen',
 'Add Port Rule' => 'Port Regel hinzufügen',
 'Add Rule' => 'Regel hinzufügen',

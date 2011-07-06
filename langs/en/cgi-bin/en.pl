@@ -4,6 +4,8 @@
 'Act as' => 'Act as:',
 'Add Level7 rule' => 'Add Level7 rule',
 'Add Port Rule' => 'Add port rule',
+'Edit an existing route' => 'Edit an existing route',
+'Add a route' => 'Add a route',
 'Add Rule' => 'Add rule',
 'Async logging enabled' => 'Enable asynchronous writing of the syslog file',
 'Choose Rule' => 'Choose <u>one</u> of the following rules.',
