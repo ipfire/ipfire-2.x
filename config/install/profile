@@ -4,4 +4,4 @@ TERM=linux
 LANG=en_US.UTF-8
 export TERM LANG
 
-/bin/unicode_start lat0-16
+/usr/bin/unicode_start

@@ -46,6 +46,7 @@ srv/client175/cherrypy/process/wspbus.py
 #srv/client175/cherrypy/wsgiserver
 srv/client175/cherrypy/wsgiserver/__init__.py
 srv/client175/covers.py
+srv/client175/httpd.conf.example
 srv/client175/lyricwiki.py
 #srv/client175/metadata
 srv/client175/metadata/COPYING
@@ -99,6 +100,7 @@ srv/client175/site.conf
 srv/client175/static/COPYING.txt
 srv/client175/static/Thumbs.db
 srv/client175/static/covers
+srv/client175/static/covers/album_blank.png
 #srv/client175/static/ext
 srv/client175/static/ext/ext-all-debug.js
 srv/client175/static/ext/ext-all.js
@@ -2844,6 +2846,7 @@ srv/client175/static/icons/fugue/folder-horizontal.png
 srv/client175/static/icons/fugue/folder-microphone.png
 srv/client175/static/icons/fugue/folder-open-document-music.png
 srv/client175/static/icons/fugue/folder-open.png
+srv/client175/static/icons/fugue/gear.png
 srv/client175/static/icons/fugue/globe--plus.png
 srv/client175/static/icons/fugue/home.png
 srv/client175/static/icons/fugue/information-frame.png

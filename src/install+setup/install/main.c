@@ -33,15 +33,16 @@ extern char *en_tr[];
 extern char *es_tr[];
 extern char *de_tr[];
 extern char *fr_tr[];
+extern char *pl_tr[];
 
 int main(int argc, char *argv[])
 {
 
 	char discl_msg[40000] =	"Disclaimer\n";
 
-	char *langnames[] = { "Deutsch", "English", "Français", "Español", NULL };
-	char *shortlangnames[] = { "de", "en", "fr", "es", NULL };
-	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, NULL };
+	char *langnames[] = { "Deutsch", "English", "Français", "Español", "Polski", NULL };
+	char *shortlangnames[] = { "de", "en", "fr", "es", "pl", NULL };
+	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, pl_tr, NULL };
 	char hdletter;
 	char harddrive[30], sourcedrive[5];	/* Device holder. */
 	struct devparams hdparams, cdromparams; /* Params for CDROM and HD */

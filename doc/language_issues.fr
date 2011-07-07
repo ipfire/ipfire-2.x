@@ -1,3 +1,4 @@
+WARNING: translation string unused: Act as
 WARNING: translation string unused: Client status and controlc
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
@@ -221,6 +222,7 @@ WARNING: translation string unused: invalid upstream proxy username or password 
 WARNING: translation string unused: invert
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ipfire side
+WARNING: translation string unused: ipfire side is invalid
 WARNING: translation string unused: iptable rules
 WARNING: translation string unused: isdn
 WARNING: translation string unused: isdn settings
@@ -494,7 +496,6 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
-WARNING: untranslated string: cpu frequency per
 WARNING: untranslated string: dns address deleted txt
 WARNING: untranslated string: extrahd detected drives
 WARNING: untranslated string: fireinfo ipfire version

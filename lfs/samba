@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.5.8
+VER        = 3.5.9
 
 THISAPP    = samba-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 34
+PAK_VER    = 35
 
 DEPS       = "cups"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 355b4530c20997e94aebc74cd6ea5307
+$(DL_FILE)_MD5 = fc3fe1103cf9d71abe12a8c604f31c76
 
 install : $(TARGET)
 
