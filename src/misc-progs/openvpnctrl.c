@@ -8,7 +8,7 @@
 #include "setuid.h"
 #include "libsmooth.h"
 
-#define ovpndebug
+#define noovpndebug
 
 // global vars
 	struct keyvalue *kv = NULL;
