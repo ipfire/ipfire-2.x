@@ -8,7 +8,7 @@
 #include "setuid.h"
 #include "libsmooth.h"
 
-#define noovpndebug
+#define ovpndebug
 
 // global vars
 	struct keyvalue *kv = NULL;
@@ -29,6 +29,7 @@ char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.1.2";
 
 struct connection_struct {
 	char name[STRING_SIZE];
+	char type[STRING_SIZE];
 	char proto[STRING_SIZE];
 	int port;
 	struct connection_struct *next;
@@ -106,6 +107,8 @@ connection *getConnections() {
 		while (result) {
 			if (count == 2) {
 				strcpy(conn_curr->name, result);
+			} else if (count == 4) {
+				strcpy(conn_curr->type, result);
 			} else if (count == 12) {
 				strcpy(conn_curr->proto, result);
 			} else if (count == 13) {
@@ -343,9 +346,6 @@ void setFirewallRules(void) {
 	}
 	freekeyvalues(kv);
 
-	// read connection configuration
-	connection *conn = getConnections();
-
 	// Flush all chains.
 	flushChain(OVPNRED);
 	flushChain(OVPNBLUE);
@@ -359,11 +359,18 @@ void setFirewallRules(void) {
 	if (!strcmp(enableorange, "on") && strlen(orangeif))
 		setChainRules(OVPNORANGE, orangeif, protocol, dport);
 
+	// read connection configuration
+	connection *conn = getConnections();
+
 	// set firewall rules for n2n connections
-	char port[STRING_SIZE];
+	char command[STRING_SIZE];
 	while (conn != NULL) {
-		sprintf(port, "%d", conn->port);
-		setChainRules(OVPNRED, redif, conn->proto, port);
+		if (strcmp(conn->type, "net") == 0) {
+			sprintf(command, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %d -j ACCEPT",
+				OVPNRED, redif, conn->proto, conn->port);
+			executeCommand(command);
+		}
+
 		conn = conn->next;
 	}
 }
@@ -404,7 +411,7 @@ void startNet2Net(char *name) {
 	conn_iter = getConnections();
 
 	while (conn_iter) {
-		if (strcmp(conn_iter->name, name) == 0) {
+		if ((strcmp(conn_iter->type, "net") == 0) && (strcmp(conn_iter->name, name) == 0)) {
 			conn = conn_iter;
 			break;
 		}
@@ -487,6 +494,8 @@ int main(int argc, char *argv[]) {
 	    usage();
 
 	if(argc == 3) {
+		ovpnInit();
+
 		if( (strcmp(argv[1], "-sn2n") == 0) || (strcmp(argv[1], "--start-net-2-net") == 0) ) {
 			startNet2Net(argv[2]);
 			return 0;
