@@ -34,13 +34,18 @@ done
 
 #
 #Stop services
-
+/etc/init.d/apache stop
+/etc/init.d/collectd stop
+/etc/init.d/squid stop
 #
 #Extract files
 extract_files
 
 #
 #Start services
+/etc/init.d/squid start
+/etc/init.d/collectd start
+/etc/init.d/apache start
 
 #
 #Update Language cache
