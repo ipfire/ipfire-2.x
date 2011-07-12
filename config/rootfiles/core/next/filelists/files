@@ -8,5 +8,6 @@ var/ipfire/langs/de.pl
 var/ipfire/langs/en.pl
 var/ipfire/langs/es.pl
 var/ipfire/langs/fr.pl
+var/ipfire/langs/pl.pl
 usr/local/bin/ipsecctrl
 usr/local/bin/vpn-watch
