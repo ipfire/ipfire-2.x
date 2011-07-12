@@ -1009,7 +1009,6 @@ sub updatecpufreqgraph {
 		"--alt-y-grid",
 		"-w 600",
 		"-h 125",
-		"-l 0",
 		"-r",
 		"-t ".$Lang::tr{'cpu frequency per'}." ".$Lang::tr{$period},
 		"-v MHz",
