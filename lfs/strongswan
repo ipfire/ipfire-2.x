@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.5.2
+VER        = 4.5.3dr7
 
 THISAPP    = strongswan-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ac33b8f849a274127f84df0838cae953
+$(DL_FILE)_MD5 = 72036d309e254c0b3cad8e5473d68218
 
 install : $(TARGET)
 
@@ -72,7 +72,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-4.4.0_ipfire.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-4.5.2-force_kill_charon.patch
 
 	cd $(DIR_APP) && ./configure --prefix="/usr" --sysconfdir="/etc" \
 					--enable-cisco-quirks \
