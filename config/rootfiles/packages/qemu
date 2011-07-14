@@ -14,6 +14,7 @@ usr/bin/qemu-nbd
 usr/share/qemu
 usr/share/qemu/bamboo.dtb
 usr/share/qemu/bios.bin
+usr/share/qemu/extboot.bin
 usr/share/qemu/gpxe-eepro100-80861209.rom
 usr/share/qemu/keymaps
 usr/share/qemu/keymaps/ar
@@ -64,6 +65,7 @@ usr/share/qemu/pxe-pcnet.bin
 usr/share/qemu/pxe-rtl8139.bin
 usr/share/qemu/pxe-virtio.bin
 usr/share/qemu/s390-zipl.rom
+usr/share/qemu/vapic.bin
 usr/share/qemu/vgabios-cirrus.bin
 usr/share/qemu/vgabios-qxl.bin
 usr/share/qemu/vgabios-stdvga.bin
