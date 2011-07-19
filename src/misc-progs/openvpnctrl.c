@@ -439,7 +439,9 @@ void startNet2Net(char *name) {
 	setFirewallRules();
 
 	char command[STRING_SIZE];
-	sprintf(command, "/usr/sbin/openvpn --config %s", configfile);
+	snprintf(command, STRING_SIZE-1, "/sbin/modprobe tun");
+	executeCommand(command);
+	snprintf(command, STRING_SIZE-1, "/usr/sbin/openvpn --config %s", configfile);
 	executeCommand(command);
 }
 
