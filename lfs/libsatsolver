@@ -24,17 +24,17 @@
 
 include Config
 
-VER        = 0.16.4
+VER        = 0.16.4-c57e9df
 
 THISAPP    = libsatsolver-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = libsatsolver
 DEPS       = ""
-PAK_VER    = 1
+PAK_VER    = 2
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 563414330c29e9b49be0e43358185a78
+$(DL_FILE)_MD5 = 756cae7df92fd3faa0a49883378d8c98
 
 install : $(TARGET)
 
@@ -76,9 +76,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsatsolver-Build-only-libraries.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsatsolver-Create-linker-scripts-that-do-only-export-the-needed.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsatsolver-Make-libsatsolver-ext-a-versioned-shared-lib.patch
 
 	# Who releases code with -Werror?
