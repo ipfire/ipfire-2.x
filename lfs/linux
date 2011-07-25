@@ -125,6 +125,9 @@ else
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32-imq-test2.patch
 endif
 
+	# Patch CVE 2011-1767 and 1768 dos hole
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.43-cve_2011_1767+1768.patch
+
 	# Not report deprecated syscall 1.23 (for kudzu)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
 
