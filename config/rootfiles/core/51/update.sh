@@ -68,7 +68,7 @@ rm -rf /boot/System.map-*
 rm -rf /boot/config-*
 rm -rf /boot/ipfirerd-*
 rm -rf /boot/vmlinuz-*
-rm -rf /lib/modules/*-ipfire
+rm -rf /lib/modules/*
 #
 # Backup grub.conf
 #
@@ -147,6 +147,8 @@ rm -rf /etc/sysconfig/lm_sensors
 /usr/bin/logger -p syslog.emerg -t core-upgrade-51 "Check it before reboot !!!"
 /usr/bin/logger -p syslog.emerg -t core-upgrade-51 " *** Please reboot... *** "
 
+# This update need a reboot.
+touch /var/run/need_reboot
 
 #
 #Finish
