@@ -94,7 +94,7 @@ lib/modules/2.6.32.28-ipfire/kernel/drivers/net/wireless/rtl818x/rtl8180.ko
 lib/modules/2.6.32.28-ipfire/kernel/drivers/net/wireless/rtl818x/rtl8187.ko
 lib/modules/2.6.32.28-ipfire/kernel/drivers/net/wireless/wl1251/wl1251.ko
 lib/modules/2.6.32.28-ipfire/kernel/drivers/net/wireless/wl1251/wl1251_sdio.ko
-lib/modules/2.6.32.28-ipfire/kernel/drivers/net/wireless/wl12xx/wl1271.ko
+#lib/modules/2.6.32.28-ipfire/kernel/drivers/net/wireless/wl12xx/wl1271.ko
 lib/modules/2.6.32.28-ipfire/kernel/drivers/net/wireless/zd1211rw/zd1211rw.ko
 lib/modules/2.6.32.28-ipfire/kernel/drivers/ssb/ssb.ko
 lib/modules/2.6.32.28-ipfire/kernel/drivers/staging/ath6kl/ath6kl.ko
@@ -208,7 +208,7 @@ lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/net/wireless/rtl818x/rtl8180.ko
 lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/net/wireless/rtl818x/rtl8187.ko
 lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/net/wireless/wl1251/wl1251.ko
 lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/net/wireless/wl1251/wl1251_sdio.ko
-lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/net/wireless/wl12xx/wl1271.ko
+#lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/net/wireless/wl12xx/wl1271.ko
 lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/net/wireless/zd1211rw/zd1211rw.ko
 lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/ssb/ssb.ko
 lib/modules/2.6.32.28-ipfire-pae/kernel/drivers/staging/ath6kl/ath6kl.ko
@@ -322,7 +322,7 @@ lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/net/wireless/rtl818x/rtl8180.ko
 lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/net/wireless/rtl818x/rtl8187.ko
 lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/net/wireless/wl1251/wl1251.ko
 lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/net/wireless/wl1251/wl1251_sdio.ko
-lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/net/wireless/wl12xx/wl1271.ko
+#lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/net/wireless/wl12xx/wl1271.ko
 lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/net/wireless/zd1211rw/zd1211rw.ko
 lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/ssb/ssb.ko
 lib/modules/2.6.32.28-ipfire-xen/kernel/drivers/staging/ath6kl/ath6kl.ko

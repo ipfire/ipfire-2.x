@@ -1,3 +1,2 @@
-etc/modprobe.d/ralink_wireless
 etc/udev/rules.d/50-compat_firmware.rules
 lib/udev/compat_firmware.sh

@@ -196,6 +196,7 @@ define PAK
 	fi
 	cp -v /usr/src/config/rootfiles/packages/$(PROG) /install/packages/package/ROOTFILES
 	sed -e 's/KVER/$(KVER)/g' -i /install/packages/package/ROOTFILES
+	sed -e 's/xxxKVERxxx/$(KVER)/g' -i /install/packages/package/install.sh
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
 	cd / && tar cf /install/packages/package/files.tmp --files-from=/install/packages/package/ROOTFILES --exclude='#*' \
 		-p --numeric-owner
