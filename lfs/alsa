@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team <info@ipfire.org>                           #
+# Copyright (C) 2007-2011  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,17 +34,17 @@ else
 endif
 endif
 
-VER        = 1.0.23
-UVER       = 1.0.23
-FVER       = 1.0.23
-DVER       = 1.0.23
+VER        = 1.0.24.1
+UVER       = 1.0.24.2
+FVER       = 1.0.24.1
+DVER       = 1.0.24
 
 THISAPP    = alsa-lib-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = alsa
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       = ""
 
@@ -66,10 +66,10 @@ alsa-utils-$(UVER).tar.bz2 = $(DL_FROM)/alsa-utils-$(UVER).tar.bz2
 alsa-firmware-$(FVER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(FVER).tar.bz2
 alsa-driver-$(DVER).tar.bz2 = $(DL_FROM)/alsa-driver-$(DVER).tar.bz2
 
-$(DL_FILE)_MD5 = f48b50421d8a69d2d806d9c47e534f0d
-alsa-utils-$(UVER).tar.bz2_MD5 = cb0cf46029ac9549cf3a31bff6a4f4e1
-alsa-firmware-$(FVER).tar.bz2_MD5 = e3f755331d6d485f6fd697249b90f877
-alsa-driver-$(DVER).tar.bz2_MD5 = 4be102f995bd4cc68e6e8178b0d19ec2
+$(DL_FILE)_MD5 = 7cc05f25e1d5b65da8fb3fdcd540f226
+alsa-utils-$(UVER).tar.bz2_MD5 = 8238cd57cb301d1c36bcf0ecb59ce6b2
+alsa-firmware-$(FVER).tar.bz2_MD5 = d37434dfcfececd8581d2f0bbe2fcf1b
+alsa-driver-$(DVER).tar.bz2_MD5 = a4ffd80745ce5098dfd48d83c2769e0e
 
 install : $(TARGET)
 

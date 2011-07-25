@@ -63,7 +63,7 @@ core/%:
 	
 	#Change KVER to Kernelversion
 	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
-	
+
 	#Remove doubled files with tar/untar/tar to save space
 	tar -c -C / --files-from=/tmp/ROOTFILES \
 		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
@@ -80,6 +80,9 @@ core/%:
 	#build package
 	cp -f $(DIR_SRC)/config/rootfiles/$@/update.sh /install/packages/package
 	chmod 755 /install/packages/package/update.sh
+	#Change xxxKVERxxx to Kernelversion
+	sed -e "s/xxxKVERxxx/$(KVER)/g" -i /install/packages/package/update.sh
+
 	cd /install/packages/package && tar cf ../core-upgrade-$(VERSION)-$$(basename $@).ipfire \
 		update.sh files ROOTFILES
 	rm -rf /install/packages/package

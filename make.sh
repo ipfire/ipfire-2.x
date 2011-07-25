@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.9"							# Version number
-CORE="50"							# Core Level (Filename)
-PAKFIRE_CORE="50"						# Core Level (PAKFIRE)
+CORE="51"							# Core Level (Filename)
+PAKFIRE_CORE="51"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -358,6 +358,7 @@ buildipfire() {
   ipfiremake which
   ipfiremake xz
   ipfiremake linux-firmware
+  ipfiremake zd1211-firmware
   ipfiremake linux			XEN=1
   ipfiremake kqemu			XEN=1
   ipfiremake v4l-dvb			XEN=1
@@ -689,6 +690,7 @@ buildipfire() {
   ipfiremake parted
   ipfiremake swig
   ipfiremake python-m2crypto
+  ipfiremake wireless-regdb
   ipfiremake crda
   ipfiremake libsatsolver
   ipfiremake python-satsolver
