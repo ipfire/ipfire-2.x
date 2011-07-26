@@ -28,6 +28,7 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< minute
 < ntp common settings
 < ntp sync
 < snort working
@@ -80,6 +81,7 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< minute
 < outgoing firewall add ip group
 < outgoing firewall add mac group
 < outgoing firewall edit ip group
@@ -112,4 +114,5 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< minute
 < vpn keyexchange

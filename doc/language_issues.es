@@ -264,7 +264,6 @@ WARNING: translation string unused: mbmon graphs
 WARNING: translation string unused: mbmon temp in
 WARNING: translation string unused: mbmon value
 WARNING: translation string unused: min size
-WARNING: translation string unused: minutes
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
 WARNING: translation string unused: modem on com1
@@ -515,6 +514,7 @@ WARNING: untranslated string: fireinfo why descr2
 WARNING: untranslated string: fireinfo why enable
 WARNING: untranslated string: fireinfo why read more
 WARNING: untranslated string: fireinfo your profile id
+WARNING: untranslated string: minute
 WARNING: untranslated string: new
 WARNING: untranslated string: outgoing firewall add ip group
 WARNING: untranslated string: outgoing firewall add mac group
@@ -532,5 +532,9 @@ WARNING: untranslated string: outgoing firewall p2p description 3
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: outgoing firewall view group
 WARNING: untranslated string: pakfire ago
+WARNING: untranslated string: route config changed
+WARNING: untranslated string: routing config added
+WARNING: untranslated string: routing config changed
+WARNING: untranslated string: routing table
 WARNING: untranslated string: system information
 WARNING: untranslated string: vpn keyexchange
