@@ -528,9 +528,9 @@ my @ovsubnettemp =  split(/\./,$cgiparams{'OVPN_SUBNET'});
 my $ovsubnet =  "@ovsubnettemp[0].@ovsubnettemp[1].@ovsubnettemp[2]";
 my $tunmtu =  $cgiparams{'MTU'};
 if ($tunmtu eq '') {$tunmtu = '1500'} else {$tunmtu = $cgiparams{'MTU'}};
-  
-  if ( !-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") { 
-    mkdir("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}", 0770); }
+
+unless(-d "${General::swroot}/ovpn/n2nconf/"){mkdir "${General::swroot}/ovpn/n2nconf", 0755 or die "Unable to create dir $!";}
+unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}", 0770 or die "Unable to create dir $!";}   
 
   open(SERVERCONF,    ">${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Unable to open ${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf: $!";
   
@@ -604,8 +604,8 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq 'net' && 
         my $tunmtu =  $cgiparams{'MTU'};
         if ($tunmtu eq '') {$tunmtu = '1500'} else {$tunmtu = $cgiparams{'MTU'}};
    
-   if ( !-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") { 
-        mkdir("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}", 0770); }  
+unless(-d "${General::swroot}/ovpn/n2nconf/"){mkdir "${General::swroot}/ovpn/n2nconf", 0755 or die "Unable to create dir $!";}
+unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}", 0770 or die "Unable to create dir $!";}
   
   open(CLIENTCONF,    ">${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Unable to open ${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf: $!";
   
@@ -1549,7 +1549,7 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    print CLIENTCONF "persist-key\n";
    print CLIENTCONF "#\n";
    print CLIENTCONF "# IP/DNS fuer das Server Gateway - g2g Mode\n"; 
-   print CLIENTCONF "remote $netsettings{'RED_ADDRESS'}\n";
+   print CLIENTCONF "remote $vpnsettings{'VPN_IP'}\n";
    print CLIENTCONF "#\n"; 
    print CLIENTCONF "# IP Adressen des VPN Tunnels\n"; 
    print CLIENTCONF "ifconfig $ovsubnet.2 $ovsubnet.1\n"; 
@@ -1597,7 +1597,7 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    print CLIENTCONF "# Management Interface aktivieren\n"; 
    print CLIENTCONF "# management localhost 4711\n";
    print CLIENTCONF "# remsub $confighash{$cgiparams{'KEY'}}[11]\n";
-
+  
 
     close(CLIENTCONF);
         
@@ -2471,8 +2471,8 @@ if ($confighash{$cgiparams{'KEY'}}) {
 	$cgiparams{'PSK'}	= $confighash{$cgiparams{'KEY'}}[5];
 	$cgiparams{'SIDE'}	= $confighash{$cgiparams{'KEY'}}[6];
 	$cgiparams{'LOCAL_SUBNET'} = $confighash{$cgiparams{'KEY'}}[8];
-	$cgiparams{'REMOTE'}	= $confighash{$cgiparams{'KEY'}}[10];
-	$cgiparams{'REMOTE_SUBNET'} = $confighash{$cgiparams{'KEY'}}[11];
+  $cgiparams{'REMOTE'}	= $confighash{$cgiparams{'KEY'}}[10];
+  $cgiparams{'REMOTE_SUBNET'} = $confighash{$cgiparams{'KEY'}}[11];
 	$cgiparams{'REMARK'}	= $confighash{$cgiparams{'KEY'}}[25];
 	$cgiparams{'INTERFACE'}	= $confighash{$cgiparams{'KEY'}}[26];
 #new fields	
