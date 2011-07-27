@@ -25,7 +25,7 @@ char enableorange[STRING_SIZE] = "off";
 char OVPNRED[STRING_SIZE] = "OVPN";
 char OVPNBLUE[STRING_SIZE] = "OVPN_BLUE_";
 char OVPNORANGE[STRING_SIZE] = "OVPN_ORANGE_";
-char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.1.2";
+char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.0";
 
 struct connection_struct {
 	char name[STRING_SIZE];
@@ -60,6 +60,12 @@ void usage(void)
 	printf("      kills/stops OpenVPN\n");
 	printf(" -r   --restart\n");
 	printf("      restarts OpenVPN (implicitly creates chains and firewall rules)\n");
+	printf(" -sn2n --start-net-2-net\n");
+	printf("      starts all net2net connections\n");
+	printf("      you may pass a connection name to the switch to only start a specific one\n");
+	printf(" -kn2n --kill-net-2-net\n");
+	printf("      kills all net2net connections\n");
+	printf("      you may pass a connection name to the switch to only start a specific one\n");
 	printf(" -d   --display\n");
 	printf("      displays OpenVPN status to syslog\n");
 	printf(" -fwr --firewall-rules\n");
@@ -482,6 +488,28 @@ void killNet2Net(char *name) {
 	exit(0);
 }
 
+void startAllNet2Net() {
+	connection *conn = getConnections();
+
+	while(conn) {
+		startNet2Net(conn->name);
+		conn = conn->next;
+	}
+
+	exit(0);
+}
+
+void killAllNet2Net() {
+	connection *conn = getConnections();
+
+	while(conn) {
+		killNet2Net(conn->name);
+		conn = conn->next;
+	}
+
+	exit(0);
+}
+
 void displayopenvpn(void) {
 	char command[STRING_SIZE];
 
@@ -531,6 +559,14 @@ int main(int argc, char *argv[]) {
 				createAllChains();
 				setFirewallRules();
 				startDaemon();
+				return 0;
+			}
+			else if( (strcmp(argv[1], "-sn2n") == 0) || (strcmp(argv[1], "--start-net-2-net") == 0) ) {
+				startAllNet2Net();
+				return 0;
+			}
+			else if( (strcmp(argv[1], "-kn2n") == 0) || (strcmp(argv[1], "--kill-net-2-net") == 0) ) {
+				killAllNet2Net();
 				return 0;
 			}
 			else if( (strcmp(argv[1], "-sdo") == 0) || (strcmp(argv[1], "--start-daemon-only") == 0) ) {
