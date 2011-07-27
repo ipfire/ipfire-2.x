@@ -693,7 +693,6 @@ buildipfire() {
   ipfiremake wireless-regdb
   ipfiremake crda
   ipfiremake libsatsolver
-  ipfiremake python-satsolver
   ipfiremake python-distutils-extra
   ipfiremake python-lzma
   ipfiremake python-progressbar
