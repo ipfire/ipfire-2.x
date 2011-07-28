@@ -46,7 +46,7 @@
 #usr/include/satsolver/util.h
 usr/lib/libsatsolver.so
 usr/lib/libsatsolver.so.0
-usr/lib/libsatsolver.so.0.16
+usr/lib/libsatsolver.so.0.17
 usr/lib/libsatsolverext.so
 usr/lib/libsatsolverext.so.0
-usr/lib/libsatsolverext.so.0.16
+usr/lib/libsatsolverext.so.0.17
