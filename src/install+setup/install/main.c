@@ -1,3 +1,4 @@
+
 /* SmoothWall install program.
  *
  * This program is distributed under the terms of the GNU General Public
@@ -34,15 +35,16 @@ extern char *es_tr[];
 extern char *de_tr[];
 extern char *fr_tr[];
 extern char *pl_tr[];
+extern char *ru_tr[];
 
 int main(int argc, char *argv[])
 {
 
 	char discl_msg[40000] =	"Disclaimer\n";
 
-	char *langnames[] = { "Deutsch", "English", "Français", "Español", "Polski", NULL };
-	char *shortlangnames[] = { "de", "en", "fr", "es", "pl", NULL };
-	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, pl_tr, NULL };
+	char *langnames[] = { "Deutsch", "English", "Français", "Español", "Polski", "Русский", NULL };
+	char *shortlangnames[] = { "de", "en", "fr", "es", "pl", "ru", NULL };
+	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, pl_tr, ru_tr, NULL };
 	char hdletter;
 	char harddrive[30], sourcedrive[5];	/* Device holder. */
 	struct devparams hdparams, cdromparams; /* Params for CDROM and HD */
