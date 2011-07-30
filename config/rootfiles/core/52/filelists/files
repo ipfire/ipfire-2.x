@@ -1,3 +1,5 @@
 etc/system-release
 var/ipfire/langs/
 etc/sysctl.conf
+etc/rc.d/init.d/console
+usr/local/bin/setup
