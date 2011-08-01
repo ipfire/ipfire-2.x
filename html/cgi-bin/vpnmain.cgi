@@ -475,7 +475,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	goto SAVE_ERROR;
     }
 
-    if ( !&General::validipandmask($cgiparams{'RW_NET'}) ) {
+    if ( $cgiparams{'RW_NET'} ne '' and !&General::validipandmask($cgiparams{'RW_NET'}) ) {
 	$errormessage = $Lang::tr{'urlfilter invalid ip or mask error'};
 	goto SAVE_ERROR;
     }
