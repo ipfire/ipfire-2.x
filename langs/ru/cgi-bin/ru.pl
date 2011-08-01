@@ -372,7 +372,7 @@
 'backup explain key no1' => 'Вам следует сохранить этот ключь для восстановления на новых машинах, IPFire допускает только одноразовое создание/импорт ключа.',
 'backup explain key no2' => 'floppy дискеты восстановления не связаны с этим ключом.',
 'backup export key' => 'Экспорт ключа',
-'backup extract key' => 'Извлеч ключ,
+'backup extract key' => 'Извлеч ключ',
 'backup from' => 'Восстановить из',
 'backup generate key' => 'Генерировать ключ',
 'backup import dat file' => 'Импортировать файл восстановления (.dat) ',
