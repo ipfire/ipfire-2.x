@@ -252,7 +252,7 @@ char *ru_tr[] = {
 /* TR_KEYBOARD_MAPPING */
 "Раскладка клавиатуры",
 /* TR_KEYBOARD_MAPPING_LONG */
-"Укажите тип используемой клавиатуры из списка ниже.",
+"Укажите тип используемой клавиатуры из списка ниже. (обычно подходит ru_win )",
 /* TR_LEASED_LINE */
 "Зарезервированная строка",
 /* TR_LOADING_MODULE */
@@ -398,7 +398,7 @@ char *ru_tr[] = {
 /* TR_SECTION_MENU */
 "Меню разделов",
 /* TR_SELECT */
-"Выделить",
+"Выбрать",
 /* TR_SELECT_CDROM_TYPE */
 "Выделить тип CDROM",
 /* TR_SELECT_CDROM_TYPE_LONG */
@@ -446,7 +446,7 @@ char *ru_tr[] = {
 /* TR_THIS_DRIVER_MODULE_IS_ALREADY_LOADED */
 "Модуль этого драйвера уже установлен.",
 /* TR_TIMEZONE */
-"Временная зона",
+"Часовой пояс",
 /* TR_TIMEZONE_LONG */
 "Укажите свою временную зону из списка ниже.",
 /* TR_UNABLE_TO_EJECT_CDROM */
