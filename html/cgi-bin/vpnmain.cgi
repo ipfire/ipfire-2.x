@@ -111,6 +111,7 @@ $cgiparams{'ROOTCERT_EMAIL'} = '';
 $cgiparams{'ROOTCERT_OU'} = '';
 $cgiparams{'ROOTCERT_CITY'} = '';
 $cgiparams{'ROOTCERT_STATE'} = '';
+$cgiparams{'RW_NET'} = '';
 
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
@@ -474,6 +475,11 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	goto SAVE_ERROR;
     }
 
+    if ( !&General::validipandmask($cgiparams{'RW_NET'}) ) {
+	$errormessage = $Lang::tr{'urlfilter invalid ip or mask error'};
+	goto SAVE_ERROR;
+    }
+
     map ($vpnsettings{$_} = $cgiparams{$_},
 	('ENABLED','DBG_CRYPT','DBG_PARSING','DBG_EMITTING','DBG_CONTROL',
 	 'DBG_DNS'));
@@ -482,6 +488,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'VPN_DELAYED_START'} = $cgiparams{'VPN_DELAYED_START'};
     $vpnsettings{'VPN_OVERRIDE_MTU'} = $cgiparams{'VPN_OVERRIDE_MTU'};
     $vpnsettings{'VPN_WATCH'} = $cgiparams{'VPN_WATCH'};
+    $vpnsettings{'RW_NET'} = $cgiparams{'RW_NET'};
     &General::writehash("${General::swroot}/vpn/settings", \%vpnsettings);
     &writeipsecfiles();
     if (&vpnenabled) {
@@ -2477,6 +2484,10 @@ print <<END
     <tr>
 	<td  class='base' nowrap='nowrap'>$Lang::tr{'vpn delayed start'}:&nbsp;<img src='/blob.gif' alt='*' /><img src='/blob.gif' alt='*' /></td>
 	<td ><input type='text' name='VPN_DELAYED_START' value='$cgiparams{'VPN_DELAYED_START'}' /></td>
+    </tr>
+    <tr>
+	<td  class='base' nowrap='nowrap'>$Lang::tr{'host to net vpn'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td ><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
     </tr>
  </table>
 <p>$Lang::tr{'vpn watch'}:<input type='checkbox' name='VPN_WATCH' $checked{'VPN_WATCH'} /></p>
