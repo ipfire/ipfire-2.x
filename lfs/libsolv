@@ -24,17 +24,17 @@
 
 include Config
 
-VER        = 0.16.4-c57e9df
+VER        = 0.0.0-0db9d7f
 
-THISAPP    = libsatsolver-$(VER)
+THISAPP    = libsolv-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-PROG       = libsatsolver
+PROG       = libsolv
 DEPS       = ""
-PAK_VER    = 2
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 756cae7df92fd3faa0a49883378d8c98
+$(DL_FILE)_MD5 = ba95c404d807bc71297c508a7127a3d9
 
 install : $(TARGET)
 
@@ -77,15 +77,18 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsatsolver-Build-only-libraries.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libsatsolver-Make-libsatsolver-ext-a-versioned-shared-lib.patch
 
 	# Who releases code with -Werror?
 	cd $(DIR_APP) && sed -e "s/-Werror//g" -i CMakeLists.txt
 
+	# Disable bindings, examples and tools.
+	cd $(DIR_APP) && sed "/bindings/d" -i CMakeLists.txt
+	cd $(DIR_APP) && sed "/examples/d" -i CMakeLists.txt
+	cd $(DIR_APP) && sed "/tools/d" -i CMakeLists.txt
+
 	# Make sure that libsatsolverext is linked properly to all needed
 	# libraries.
-	cd $(DIR_APP) && echo "TARGET_LINK_LIBRARIES(satsolverext satsolver \$${EXPAT_LIBRARY} \$${ZLIB_LIBRARY})" \
+	cd $(DIR_APP) && echo "TARGET_LINK_LIBRARIES(libsolvext libsolv \$${EXPAT_LIBRARY} \$${ZLIB_LIBRARY})" \
 		>> ext/CMakeLists.txt
 
 	# Remove the RPM stuff when we build with -DFEDORA=1 because we

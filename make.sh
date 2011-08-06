@@ -692,7 +692,7 @@ buildipfire() {
   ipfiremake python-m2crypto
   ipfiremake wireless-regdb
   ipfiremake crda
-  ipfiremake libsatsolver
+  ipfiremake libsolv
   ipfiremake python-distutils-extra
   ipfiremake python-lzma
   ipfiremake python-progressbar
