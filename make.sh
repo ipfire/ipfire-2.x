@@ -615,7 +615,7 @@ buildipfire() {
   ipfiremake phpSANE
   ipfiremake tunctl
   ipfiremake nagios
-  ipfiremake nrpe
+  ipfiremake nagios_nrpe
   ipfiremake ebtables
   ipfiremake fontconfig
   ipfiremake freefont
