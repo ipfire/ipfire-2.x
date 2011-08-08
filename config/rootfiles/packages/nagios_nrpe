@@ -1,1 +1,3 @@
+#root/.rnd
+usr/bin/nrpe
 usr/lib/nagios/check_nrpe
