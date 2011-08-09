@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .43
-VER        = 2.6.32.43
+PATCHLEVEL = .44
+VER        = 2.6.32.44
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -35,7 +35,7 @@ CFLAGS     =
 CXXFLAGS   =
 
 PROG	   = linux-xen
-PAK_VER    = 17
+PAK_VER    = 18
 DEPS	   = ""
 
 # Normal build or XEN build.
@@ -68,7 +68,7 @@ patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 reiser4-for-2.6.32.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.32.patch.bz2
 xen-patches-2.6.32-2f.tar.bz2		= $(URL_IPFIRE)/xen-patches-2.6.32-2f.tar.bz2
 
-$(DL_FILE)_MD5				= d6819da012da0d9772ac79da9dce3d63
+$(DL_FILE)_MD5				= 38d43bb91fff88783f57ada146415029
 netfilter-layer7-v2.22.tar.gz_MD5	= 98dff8a3d5a31885b73341633f69501f
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 reiser4-for-2.6.32.patch.bz2_MD5	= 3246397973d9271eb8e6d7c97c5d2d91
@@ -124,9 +124,6 @@ else
 	# Linux Intermediate Queueing Device
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32-imq-test2.patch
 endif
-
-	# Patch CVE 2011-1767 and 1768 dos hole
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.43-cve_2011_1767+1768.patch
 
 	# Not report deprecated syscall 1.23 (for kudzu)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
