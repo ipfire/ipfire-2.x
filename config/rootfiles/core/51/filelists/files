@@ -1,2 +1,3 @@
 etc/system-release
+etc/sysctl.conf
 var/ipfire/langs/

@@ -11,6 +11,7 @@
 #usr/include/mpd/error.h
 #usr/include/mpd/idle.h
 #usr/include/mpd/list.h
+#usr/include/mpd/message.h
 #usr/include/mpd/mixer.h
 #usr/include/mpd/output.h
 #usr/include/mpd/pair.h
@@ -35,7 +36,7 @@
 #usr/lib/libmpdclient.la
 usr/lib/libmpdclient.so
 usr/lib/libmpdclient.so.2
-usr/lib/libmpdclient.so.2.0.1
+usr/lib/libmpdclient.so.2.0.5
 #usr/lib/pkgconfig/libmpdclient.pc
 #usr/share/doc/libmpdclient
 #usr/share/doc/libmpdclient/COPYING

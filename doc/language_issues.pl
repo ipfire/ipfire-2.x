@@ -338,6 +338,7 @@ WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
+WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire updates
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key

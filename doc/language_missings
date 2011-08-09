@@ -116,3 +116,22 @@
 < extrahd you cant mount
 < minute
 < vpn keyexchange
+############################################################################
+# Checking install/setup translations for language: ru                     #
+############################################################################
+############################################################################
+# Checking cgi-bin translations for language: ru                           #
+############################################################################
+< Add a route
+< Edit an existing route
+< extrahd because there is already a device mounted
+< extrahd cant umount
+< extrahd install or load driver
+< extrahd maybe the device is in use
+< extrahd to
+< extrahd to root
+< extrahd unable to read
+< extrahd unable to write
+< extrahd you cant mount
+< minute
+< vpn keyexchange

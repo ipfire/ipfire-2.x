@@ -37,6 +37,7 @@ WARNING: translation string unused: advproxy errmsg no password
 WARNING: translation string unused: advproxy errmsg password incorrect
 WARNING: translation string unused: advproxy no cre groups
 WARNING: translation string unused: advproxy ssadvanced proxy
+WARNING: translation string unused: advproxy update information
 WARNING: translation string unused: advproxy update notification
 WARNING: translation string unused: alcatelusb help
 WARNING: translation string unused: alcatelusb upload
@@ -46,20 +47,38 @@ WARNING: translation string unused: allmsg
 WARNING: translation string unused: alt information
 WARNING: translation string unused: alt ovpn
 WARNING: translation string unused: and
+WARNING: translation string unused: ansi t1.483
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: available updates
+WARNING: translation string unused: backup archive
+WARNING: translation string unused: backup clear archive
 WARNING: translation string unused: backup config floppy
 WARNING: translation string unused: backup configuration
+WARNING: translation string unused: backup erase key
+WARNING: translation string unused: backup explain key
+WARNING: translation string unused: backup explain key li1
+WARNING: translation string unused: backup explain key li2
+WARNING: translation string unused: backup explain key li3
+WARNING: translation string unused: backup explain key no1
+WARNING: translation string unused: backup explain key no2
 WARNING: translation string unused: backup export key
+WARNING: translation string unused: backup extract key
 WARNING: translation string unused: backup generate key
 WARNING: translation string unused: backup import dat file
+WARNING: translation string unused: backup import key
 WARNING: translation string unused: backup key
+WARNING: translation string unused: backup key file
+WARNING: translation string unused: backup key info
+WARNING: translation string unused: backup media info
 WARNING: translation string unused: backup missing key
 WARNING: translation string unused: backup password
+WARNING: translation string unused: backup protect key password
 WARNING: translation string unused: backup sets
 WARNING: translation string unused: backup to floppy
 WARNING: translation string unused: bad characters in
+WARNING: translation string unused: bewan adsl pci st
+WARNING: translation string unused: bewan adsl usb
 WARNING: translation string unused: bitrate
 WARNING: translation string unused: bleeding rules
 WARNING: translation string unused: blue access use hint
@@ -72,6 +91,7 @@ WARNING: translation string unused: capsinactive
 WARNING: translation string unused: cfg restart
 WARNING: translation string unused: check for net traffic update
 WARNING: translation string unused: choose config
+WARNING: translation string unused: choose media
 WARNING: translation string unused: clear cache
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
@@ -81,6 +101,7 @@ WARNING: translation string unused: core notice 2
 WARNING: translation string unused: core notice 3
 WARNING: translation string unused: could not connect to
 WARNING: translation string unused: could not connect to www ipcop org
+WARNING: translation string unused: could not connect to www ipfire org
 WARNING: translation string unused: could not create directory
 WARNING: translation string unused: could not download latest patch list
 WARNING: translation string unused: could not download the available updates list
@@ -110,6 +131,8 @@ WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
 WARNING: translation string unused: dhcp fixed lease help1
 WARNING: translation string unused: dhcp mode
+WARNING: translation string unused: dhcp server disabled on blue interface
+WARNING: translation string unused: dhcp server enabled on blue interface
 WARNING: translation string unused: dial user password
 WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
@@ -117,6 +140,7 @@ WARNING: translation string unused: disconnect
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
+WARNING: translation string unused: done
 WARNING: translation string unused: driver
 WARNING: translation string unused: dynamic dns client
 WARNING: translation string unused: eciadsl help
@@ -144,8 +168,6 @@ WARNING: translation string unused: error external access
 WARNING: translation string unused: expected
 WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
-WARNING: translation string unused: extrahd unable to read
-WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall graphs
 WARNING: translation string unused: firewall log viewer
@@ -160,6 +182,8 @@ WARNING: translation string unused: from email pw
 WARNING: translation string unused: from email server
 WARNING: translation string unused: from email user
 WARNING: translation string unused: from warn email bad
+WARNING: translation string unused: g.dtm
+WARNING: translation string unused: g.lite
 WARNING: translation string unused: gen static key
 WARNING: translation string unused: generate
 WARNING: translation string unused: genkey
@@ -180,6 +204,7 @@ WARNING: translation string unused: importkey
 WARNING: translation string unused: in
 WARNING: translation string unused: incorrect password
 WARNING: translation string unused: insert floppy
+WARNING: translation string unused: insert removable device
 WARNING: translation string unused: install new update
 WARNING: translation string unused: installed
 WARNING: translation string unused: installed updates
@@ -274,6 +299,7 @@ WARNING: translation string unused: no modem selected
 WARNING: translation string unused: no set selected
 WARNING: translation string unused: nonetworkname
 WARNING: translation string unused: noservicename
+WARNING: translation string unused: notes
 WARNING: translation string unused: o-no
 WARNING: translation string unused: o-yes
 WARNING: translation string unused: online help en
@@ -327,6 +353,7 @@ WARNING: translation string unused: proxy no proxy extend
 WARNING: translation string unused: proxy no proxy local
 WARNING: translation string unused: proxy port
 WARNING: translation string unused: psk
+WARNING: translation string unused: quick control
 WARNING: translation string unused: reboot schedule
 WARNING: translation string unused: rebooting
 WARNING: translation string unused: refresh update list
@@ -353,7 +380,10 @@ WARNING: translation string unused: service removed
 WARNING: translation string unused: service updated
 WARNING: translation string unused: servicename
 WARNING: translation string unused: services settings
+WARNING: translation string unused: shaping add options
 WARNING: translation string unused: shaping list options
+WARNING: translation string unused: show areas
+WARNING: translation string unused: show lines
 WARNING: translation string unused: shutdown control
 WARNING: translation string unused: shutdown2
 WARNING: translation string unused: shutting down
@@ -431,6 +461,7 @@ WARNING: translation string unused: updxlrtr invalid num of children
 WARNING: translation string unused: updxlrtr unknown
 WARNING: translation string unused: updxlrtr update information
 WARNING: translation string unused: updxlrtr update notification
+WARNING: translation string unused: upload fcdsl.o
 WARNING: translation string unused: upload file
 WARNING: translation string unused: upload static key
 WARNING: translation string unused: upload successful
@@ -460,12 +491,22 @@ WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: Add a route
+WARNING: untranslated string: Edit an existing route
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
+WARNING: untranslated string: extrahd because there is already a device mounted
+WARNING: untranslated string: extrahd cant umount
+WARNING: untranslated string: extrahd install or load driver
+WARNING: untranslated string: extrahd maybe the device is in use
+WARNING: untranslated string: extrahd to
+WARNING: untranslated string: extrahd to root
+WARNING: untranslated string: extrahd you cant mount
+WARNING: untranslated string: minute
 WARNING: untranslated string: new
 WARNING: untranslated string: outgoing firewall reserved groupname
-WARNING: untranslated string: qos add subclass
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: vpn keyexchange

@@ -1,2 +1,4 @@
 etc/system-release
 var/ipfire/langs/
+etc/rc.d/init.d/console
+usr/local/sbin/setup

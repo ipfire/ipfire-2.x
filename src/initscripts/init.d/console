@@ -31,6 +31,10 @@ if [ "$LANGUAGE" == "pl" ]; then
 	FONT="lat2-16"
 fi
 
+if [ "$LANGUAGE" == "ru" ]; then
+	FONT="LatArCyrHeb-16"
+fi
+
 UNICODE="1"
 BROKEN_COMPOSE="0"
 
