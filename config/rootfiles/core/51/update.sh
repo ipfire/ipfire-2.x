@@ -44,12 +44,11 @@ fi
 
 
 #
-# check if we the backup file already exist
-if [ -e /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 ]; then
-    echo Moving backup to backup-old ...
-    mv -f /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
-       /var/ipfire/backup/core-upgrade_$KVER-old.tar.bz2
-fi
+# erase old backups to prefent disk-full on small installations
+rm -f /var/ipfire/backup/core-upgrade_*.tar.bz2
+
+#
+# backup
 echo First we made a backup of all files that was inside of the
 echo update archive. This may take a while ...
 # Add some files that are not in the package to backup
