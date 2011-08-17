@@ -79,7 +79,7 @@ cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
 /etc/init.d/snort stop
 /etc/init.d/squid stop
 /etc/init.d/ipsec stop
-
+/etc/init.d/dhcp stop
 #
 # Unpack the updated files
 #
@@ -96,11 +96,13 @@ rm -f /etc/modprobe.d/ralink_wireless
 #
 # Start services
 #
+/etc/init.d/dhcp start
 /etc/init.d/squid start
 /etc/init.d/snort start
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
+
 
 #
 # Modify grub.conf
