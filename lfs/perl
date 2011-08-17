@@ -88,6 +88,7 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
+	cd $(DIR_APP) && sed -i -e 's|-fstack-protector|-fno-stack-protector|g' Configure
 	cd $(DIR_APP) && ./configure.gnu --prefix=/tools -Dstatic_ext='Data/Dumper Fcntl IO'
 	cd $(DIR_APP) && sed -i 's/^0$$//' makefile
 	cd $(DIR_APP) && sed -i 's/^0$$//' x2p/makefile
