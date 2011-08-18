@@ -526,8 +526,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq 'net' && 
 my @remsubnet = split(/\//,$cgiparams{'REMOTE_SUBNET'});
 my @ovsubnettemp =  split(/\./,$cgiparams{'OVPN_SUBNET'});
 my $ovsubnet =  "@ovsubnettemp[0].@ovsubnettemp[1].@ovsubnettemp[2]";
-my $tunmtu =  $cgiparams{'MTU'};
-if ($tunmtu eq '') {$tunmtu = '1500'} else {$tunmtu = $cgiparams{'MTU'}};
+my $tunmtu =  '';
 
 unless(-d "${General::swroot}/ovpn/n2nconf/"){mkdir "${General::swroot}/ovpn/n2nconf", 0755 or die "Unable to create dir $!";}
 unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}", 0770 or die "Unable to create dir $!";}   
@@ -559,9 +558,18 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "proto $cgiparams{'PROTOCOL'}\n"; 
   print SERVERCONF "\n"; 
   print SERVERCONF "# Paketgroessen\n"; 
+  if ($cgiparams{'MTU'} eq '') {$tunmtu = '1400'} else {$tunmtu = $cgiparams{'MTU'}};
   print SERVERCONF "tun-mtu $tunmtu\n"; 
-  print SERVERCONF "fragment 1300\n"; 
+  if ($cgiparams{'PROTOCOL'} eq 'udp') {
+  if ($cgiparams{'FRAGMENT'} eq '') {
+  print SERVERCONF "fragment 1300\r\n";
+  } else {
+  print SERVERCONF "fragment $cgiparams{'FRAGMENT'}\n"
+  }
+  if ($cgiparams{'MSSFIX'} eq 'on') {
   print SERVERCONF "mssfix\n"; 
+  }
+  }
   print SERVERCONF "\n"; 
   print SERVERCONF "# Auth Server\n"; 
   print SERVERCONF "tls-server\n"; 
@@ -601,9 +609,8 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq 'net' && 
         my @ovsubnettemp =  split(/\./,$cgiparams{'OVPN_SUBNET'});
         my $ovsubnet =  "@ovsubnettemp[0].@ovsubnettemp[1].@ovsubnettemp[2]";
         my @remsubnet =  split(/\//,$cgiparams{'REMOTE_SUBNET'});
-        my $tunmtu =  $cgiparams{'MTU'};
-        if ($tunmtu eq '') {$tunmtu = '1500'} else {$tunmtu = $cgiparams{'MTU'}};
-   
+        my $tunmtu =  '';
+           
 unless(-d "${General::swroot}/ovpn/n2nconf/"){mkdir "${General::swroot}/ovpn/n2nconf", 0755 or die "Unable to create dir $!";}
 unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}", 0770 or die "Unable to create dir $!";}
   
@@ -634,9 +641,18 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print CLIENTCONF "proto $cgiparams{'PROTOCOL'}\n"; 
   print CLIENTCONF "#\n"; 
   print CLIENTCONF "# Paketgroessen\n"; 
+  if ($cgiparams{'MTU'} eq '') {$tunmtu = '1400'} else {$tunmtu = $cgiparams{'MTU'}};
   print CLIENTCONF "tun-mtu $tunmtu\n"; 
-  print CLIENTCONF "fragment 1300\n"; 
+  if ($cgiparams{'PROTOCOL'} eq 'udp') {
+  if ($cgiparams{'FRAGMENT'} eq '') {
+  print CLIENTCONF "fragment 1300\r\n";
+  } else {
+  print CLIENTCONF "fragment $cgiparams{'FRAGMENT'}\n"
+  }
+  if ($cgiparams{'MSSFIX'} eq 'on') {
   print CLIENTCONF "mssfix\n"; 
+  }
+  }
   print CLIENTCONF "#\n"; 
   print CLIENTCONF "# Auth. Client\n"; 
   print CLIENTCONF "tls-client\n"; 
@@ -1564,10 +1580,18 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    print CLIENTCONF "proto $confighash{$cgiparams{'KEY'}}[28]\n"; 
    print CLIENTCONF "#\n"; 
    print CLIENTCONF "# Paketgroessen\n"; 
-   if ($confighash{$cgiparams{'KEY'}}[31] eq '') {$tunmtu = '1500'} else {$tunmtu = $confighash{$cgiparams{'KEY'}}[31]};
+   if ($confighash{$cgiparams{'KEY'}}[31] eq '') {$tunmtu = '1400'} else {$tunmtu = $confighash{$cgiparams{'KEY'}}[31]};
    print CLIENTCONF "tun-mtu $tunmtu\n"; 
-   print CLIENTCONF "fragment 1300\n"; 
+   if ($confighash{$cgiparams{'KEY'}}[28] eq 'udp') {
+   if ($cgiparams{'FRAGMENT'} eq '') {
+   print CLIENTCONF "fragment 1300\r\n";
+   } else {
+   print CLIENTCONF "fragment $cgiparams{'FRAGMENT'}\n"
+   }
+   if ($confighash{$cgiparams{'KEY'}}[23] eq 'on') {
    print CLIENTCONF "mssfix\n"; 
+   }
+   }
    print CLIENTCONF "#\n"; 
    print CLIENTCONF "# Auth. Client\n"; 
    print CLIENTCONF "tls-client\n"; 
@@ -2200,7 +2224,6 @@ END
 	my @confdetails;
 	my $uplconffilename ='';
 	my $uplp12name = '';
-	my $complzoactive ='';
 	my @rem_subnet;
 	my @rem_subnet2;
 	my @tmposupnet3;	
@@ -2291,31 +2314,27 @@ END
 	}	
 	
 my $complzoactive;
-#my @n2nroute = split(/ /, (grep { /^route/ } @firen2nconf)[0]);
+my $mssfixactive;
+my $n2nfragment;
 my @n2nproto = split(/ /, (grep { /^proto/ } @firen2nconf)[0]);
 my @n2nport = split(/ /, (grep { /^port/ } @firen2nconf)[0]);
 my @n2ntunmtu = split(/ /, (grep { /^tun-mtu/ } @firen2nconf)[0]);
 my @n2ncomplzo = grep { /^comp-lzo/ } @firen2nconf;
 if ($n2ncomplzo[0] =~ /comp-lzo/){$complzoactive = "on";} else {$complzoactive = "off";}	
+my @n2nmssfix  = grep { /^mssfix/ } @firen2nconf;
+if ($n2nmssfix[0] =~ /mssfix/){$mssfixactive = "on";} else {$mssfixactive = "off";}
+my @n2nfragment = split(/ /, (grep { /^fragment/ } @firen2nconf)[0]);
 my @n2nremote = split(/ /, (grep { /^remote/ } @firen2nconf)[0]);
 my @n2novpnsuball = split(/ /, (grep { /^ifconfig/ } @firen2nconf)[0]);
 my @n2novpnsub =  split(/\./,$n2novpnsuball[1]);
 my @n2nremsub = split(/ /, (grep { /^route/ } @firen2nconf)[0]);
 my @n2nlocalsub  = split(/ /, (grep { /^# remsub/ } @firen2nconf)[0]);
 
-#	$errormessage = &Ovpnfunc::ovelapplausi("$tmposupnet3[0].$tmposupnet3[1].$tmposupnet3[2].0","255.255.255.0");
-#	if ($errormessage ne ''){
-#		goto N2N_ERROR;
-#	}
-
 ###
 # m.a.d delete CR and LF from arrays for this chomp doesnt work
 ###
 
-#$n2nroute[1] =~ s/\n|\r//g;
 $n2nremote[1] =~ s/\n|\r//g;
-#$n2nroute[1] =~ s/\n|\r//g;
-#$n2nroute[2] =~ s/\n|\r//g;
 $n2novpnsub[0] =~ s/\n|\r//g;
 $n2novpnsub[1] =~ s/\n|\r//g;
 $n2novpnsub[2] =~ s/\n|\r//g;
@@ -2324,7 +2343,9 @@ $n2nport[1] =~ s/\n|\r//g;
 $n2ntunmtu[1] =~ s/\n|\r//g;
 $n2nremsub[1] =~ s/\n|\r//g;
 $n2nlocalsub[2] =~ s/\n|\r//g;
+$n2nfragment[1] =~ s/\n|\r//g;
 chomp ($complzoactive);
+chomp ($mssfixactive);
 
 ###
 # m.a.d Write n2n config
@@ -2341,6 +2362,35 @@ chomp ($complzoactive);
 		}
 	}
 
+###
+# Check if RemSubnet is green orange blue
+###
+
+
+###
+# Check if OpenVPN Subnet is valid
+###
+
+foreach my $dkey (keys %confighash) {
+		if ($confighash{$dkey}[27] eq "$n2novpnsub[0].$n2novpnsub[1].$n2novpnsub[2].0/255.255.255.0") {
+			$errormessage = 'The OpenVPN Subnet is already in use';
+			goto N2N_ERROR;			
+		}
+	}
+
+###
+# Check im Dest Port is vaild
+###
+
+foreach my $dkey (keys %confighash) {
+		if ($confighash{$dkey}[29] eq $n2nport[1] ) {
+			$errormessage = 'The OpenVPN Port is already in use';
+			goto N2N_ERROR;			
+		}
+	}
+	
+	
+	
   $key = &General::findhasharraykey (\%confighash);
 
 	foreach my $i (0 .. 31) { $confighash{$key}[$i] = "";}
@@ -2353,7 +2403,9 @@ chomp ($complzoactive);
 	$confighash{$key}[8] =  $n2nlocalsub[2];
   $confighash{$key}[10] = $n2nremote[1];
   $confighash{$key}[11] = $n2nremsub[1];		
-	$confighash{$key}[25] = 'IPFire n2n Client';
+	$confighash{$key}[23] = $mssfixactive;
+	$confighash{$key}[24] = $n2nfragment[1];
+  $confighash{$key}[25] = 'IPFire n2n Client';
 	$confighash{$key}[26] = 'red';
   $confighash{$key}[27] = "$n2novpnsub[0].$n2novpnsub[1].$n2novpnsub[2].0/255.255.255.0";
   $confighash{$key}[28] = $n2nproto[1];
@@ -2363,6 +2415,7 @@ chomp ($complzoactive);
 
 
   &General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+ 
   N2N_ERROR:
 		
 	&Header::showhttpheaders();
@@ -2473,6 +2526,9 @@ if ($confighash{$cgiparams{'KEY'}}) {
 	$cgiparams{'LOCAL_SUBNET'} = $confighash{$cgiparams{'KEY'}}[8];
   $cgiparams{'REMOTE'}	= $confighash{$cgiparams{'KEY'}}[10];
   $cgiparams{'REMOTE_SUBNET'} = $confighash{$cgiparams{'KEY'}}[11];
+# n2n m.a.d new fields
+  $cgiparams{'MSSFIX'} = $confighash{$cgiparams{'KEY'}}[23];
+  $cgiparams{'FRAGMENT'} = $confighash{$cgiparams{'KEY'}}[24];
 	$cgiparams{'REMARK'}	= $confighash{$cgiparams{'KEY'}}[25];
 	$cgiparams{'INTERFACE'}	= $confighash{$cgiparams{'KEY'}}[26];
 #new fields	
@@ -2481,8 +2537,10 @@ if ($confighash{$cgiparams{'KEY'}}) {
 	$cgiparams{'DEST_PORT'}	  = $confighash{$cgiparams{'KEY'}}[29];
 	$cgiparams{'COMPLZO'}	  = $confighash{$cgiparams{'KEY'}}[30];
 	$cgiparams{'MTU'}	  = $confighash{$cgiparams{'KEY'}}[31];
+
 #new fields
 #ab hiere error uebernehmen
+
     } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 	if ($cgiparams{'TYPE'} !~ /^(host|net)$/) {
@@ -2505,6 +2563,35 @@ if ($confighash{$cgiparams{'KEY'}}) {
 	    $errormessage = $Lang::tr{'name too long'};
 	    goto VPNCONF_ERROR;
 	}
+
+###
+# n2n Plausi m.a.d
+###
+
+		if ($cgiparams{'DEST_PORT'} eq  $vpnsettings{'DDEST_PORT'}) {
+			$errormessage = 'The Destination Port is used by the OpenVPN Server please change';
+			goto VPNCONF_ERROR;			
+		}
+
+    if ($cgiparams{'OVPN_SUBNET'} eq  $vpnsettings{'DOVPN_SUBNET'}) {
+			$errormessage = 'The OpenVPN Subnet is used by the OpenVPN Server please change';
+			goto VPNCONF_ERROR;			
+		}
+
+	  if (($cgiparams{'PROTOCOL'} eq 'tcp') && ($cgiparams{'MSSFIX'} eq 'on')) {
+	    $errormessage = 'mssfix only allowed with udp';
+	    goto VPNCONF_ERROR;
+    }
+     
+    if (($cgiparams{'PROTOCOL'} eq 'tcp') && ($cgiparams{'FRAGMENT'} ne '')) {
+	    $errormessage = 'fragment only allowed with udp';
+	    goto VPNCONF_ERROR;
+    }
+    
+
+###
+# n2n Plausi m.a.d
+###
 
 #	if (($cgiparams{'TYPE'} eq 'net') && ($cgiparams{'SIDE'} !~ /^(left|right)$/)) {
 #	    $errormessage = $Lang::tr{'ipfire side is invalid'};
@@ -2852,6 +2939,12 @@ if ($confighash{$cgiparams{'KEY'}}) {
 	}
 	$confighash{$key}[8] = $cgiparams{'LOCAL_SUBNET'};
 	$confighash{$key}[10] = $cgiparams{'REMOTE'};
+  $confighash{$key}[23] = $cgiparams{'MSSFIX'};
+  if ($cgiparams{'FRAGMENT'} eq '') {
+  $confighash{$key}[24] = '1300';
+  } else {
+  $confighash{$key}[24] = $cgiparams{'FRAGMENT'};
+  }
 	$confighash{$key}[25] = $cgiparams{'REMARK'};
 	$confighash{$key}[26] = $cgiparams{'INTERFACE'};
 # new fields	
@@ -2903,6 +2996,11 @@ if ($confighash{$cgiparams{'KEY'}}) {
     $selected{'SIDE'}{'server'} = '';
     $selected{'SIDE'}{'client'} = '';
     $selected{'SIDE'}{$cgiparams{'SIDE'}} = 'SELECTED';
+    
+    $selected{'PROTOCOL'}{'udp'} = '';
+    $selected{'PROTOCOL'}{'tcp'} = '';
+    $selected{'PROTOCOL'}{$cgiparams{'PROTOCOL'}} = 'SELECTED';
+
 
     $checked{'AUTH'}{'psk'} = '';
     $checked{'AUTH'}{'certreq'} = '';
@@ -2915,6 +3013,10 @@ if ($confighash{$cgiparams{'KEY'}}) {
     $checked{'COMPLZO'}{'off'} = '';
     $checked{'COMPLZO'}{'on'} = '';
     $checked{'COMPLZO'}{$cgiparams{'COMPLZO'}} = 'CHECKED';
+
+    $checked{'MSSFIX'}{'off'} = '';
+    $checked{'MSSFIX'}{'on'} = '';
+    $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
 
 
     if (1) {
@@ -2984,19 +3086,29 @@ if ($confighash{$cgiparams{'KEY'}}) {
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn subnet'}</td>
 		    <td><input type='TEXT' name='OVPN_SUBNET' value='$cgiparams{'OVPN_SUBNET'}' /></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td>
-		    <td><select name='PROTOCOL'><option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP</option>
-                        			<option value='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP</option></select></td>
-		    <td class='boldbase'>$Lang::tr{'destination port'}:</td>
+		 
+     <td><select name='PROTOCOL'><option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP</option>
+                        			<option value='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP</option></select></td>   
+		    
+        <td class='boldbase'>$Lang::tr{'destination port'}:</td>
 		    <td><input type='TEXT' name='DEST_PORT' value='$cgiparams{'DEST_PORT'}' size='5' /></td></tr>
-	        <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
+	        <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'} &nbsp;<img src='/blob.gif'</td>
 		    <td><input type='checkbox' name='COMPLZO' $checked{'COMPLZO'}{'on'} /></td>
+		    
+		      <tr><td class='boldbase' nowrap='nowrap'>mssfix &nbsp;<img src='/blob.gif' /></td>
+		    <td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
+		    
+		      <tr><td class='boldbase' nowrap='nowrap'>Fragment &nbsp;<img src='/blob.gif' /></td>
+		    <td><input type='TEXT' name='FRAGMENT' VALUE='$cgiparams{'FRAGMENT'}'size='5' /></td>
+		    <td>Default: <span class="base">1300</span></td>
+		    
 	        <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;<img src='/blob.gif' /></td>
 		    <td> <input type='TEXT' name='MTU' VALUE='$cgiparams{'MTU'}'size='5' /></TD>
-		    		    
 
 END
 	    ;
 	}
+
 	print "<tr><td class='boldbase'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' /></td>";
 	print "<td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td></tr>";
 	
@@ -3211,7 +3323,10 @@ END
     $checked{'DCOMPLZO'}{'off'} = '';
     $checked{'DCOMPLZO'}{'on'} = '';
     $checked{'DCOMPLZO'}{$cgiparams{'DCOMPLZO'}} = 'CHECKED';
-
+# m.a.d
+    $checked{'MSSFIX'}{'off'} = '';
+    $checked{'MSSFIX'}{'on'} = '';
+    $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
 #new settings
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
