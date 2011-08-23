@@ -142,10 +142,42 @@ int decode_line (char *s,
 */
 void turn_connection_on (char *name, char *type) {
 /*
-    if you find a way to start a single connection without changing all add it
-    here. Change also vpn-watch.
+	Rename the connection and run ipsec update and rename it back to readd
+	a deleted connection. Because ipsec update ignores connection that have
+	not changed since last load.
 */
-        safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
+        char command[STRING_SIZE];
+        memset(command, 0, STRING_SIZE);
+        snprintf(command, STRING_SIZE - 1, 
+                "sed -i -e 's|^conn %s$|conn %s-renamed|g' /var/ipfire/vpn/ipsec.conf >/dev/null", name, name);
+        safe_system(command);
+
+	// Down and delete IKEv2 Tunnel before ipsec update
+        snprintf(command, STRING_SIZE - 1, 
+                "/usr/sbin/ipsec stroke down %s >/dev/null", name);
+        safe_system(command);
+        snprintf(command, STRING_SIZE - 1, 
+                "/usr/sbin/ipsec stroke delete %s >/dev/null", name);
+        safe_system(command);
+
+        safe_system("/etc/rc.d/init.d/ipsec update >/dev/null");
+
+	sleep(1);
+
+	// Back to original name
+	snprintf(command, STRING_SIZE - 1, 
+                "sed -i -e 's|^conn %s-renamed$|conn %s|g' /var/ipfire/vpn/ipsec.conf >/dev/null", name, name);
+        safe_system(command);
+
+	// Down and delete IKEv2 Tunnel before ipsec update
+        snprintf(command, STRING_SIZE - 1, 
+                "/usr/sbin/ipsec stroke down %s-renamed >/dev/null", name);
+        safe_system(command);
+        snprintf(command, STRING_SIZE - 1, 
+                "/usr/sbin/ipsec stroke delete %s-renamed >/dev/null", name);
+        safe_system(command);
+
+        safe_system("/etc/rc.d/init.d/ipsec update >/dev/null");
 }
 /*
     issue ipsec commmands to turn off connection 'name'
@@ -162,6 +194,7 @@ void turn_connection_off (char *name) {
         snprintf(command, STRING_SIZE - 1, 
                 "/usr/sbin/ipsec stroke delete %s >/dev/null", name);
         safe_system(command);
+
         safe_system("/usr/sbin/ipsec whack --rereadall >/dev/null");
         safe_system("/usr/sbin/ipsec stroke rereadall >/dev/null");
 

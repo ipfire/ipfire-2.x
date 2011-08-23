@@ -439,6 +439,7 @@ sub writeipsecfiles {
 	# Automatically start only if a net-to-net connection
 	if ($lconfighash{$key}[3] eq 'host') {
 	    print CONF "\tauto=add\n";
+	    print CONF "\trightsourceip=$lvpnsettings{'RW_NET'}\n";
 	} else {
 	    print CONF "\tauto=start\n";
 	}
