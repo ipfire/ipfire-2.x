@@ -143,6 +143,11 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
 rm -rf /etc/sysconfig/lm_sensors
 
+# Ensure that all data was written...
+sync
+sync
+sync
+
 # Reboot message to console
 /usr/bin/logger -p syslog.emerg -t core-upgrade-51 "Upgrade finished. If you use a customized grub.cfg"
 /usr/bin/logger -p syslog.emerg -t core-upgrade-51 "Check it before reboot !!!"
@@ -155,5 +160,12 @@ touch /var/run/need_reboot
 #Finish
 /etc/init.d/fireinfo start
 sendprofile
+
+# Ensure that all data was written...
+sync
+sync
+sync
+
+#
 #Don't report the exitcode last command
 exit 0
