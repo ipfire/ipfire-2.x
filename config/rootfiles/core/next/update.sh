@@ -73,6 +73,19 @@ cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
 /etc/init.d/ipsec stop
 
 #
+# Remove old strongswan libs
+rm -rf /usr/lib/libcharon.so
+rm -rf /usr/lib/libcharon.so.0
+rm -rf /usr/lib/libcharon.so.0.0.0
+rm -rf /usr/lib/libhydra.so
+rm -rf /usr/lib/libhydra.so.0
+rm -rf /usr/lib/libhydra.so.0.0.0
+rm -rf /usr/lib/libstrongswan.so
+rm -rf /usr/lib/libstrongswan.so.0
+rm -rf /usr/lib/libstrongswan.so.0.0.0
+rm -rf /usr/libexec/ipsec/plugins
+
+#
 # Unpack the updated files
 #
 echo
