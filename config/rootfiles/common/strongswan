@@ -33,6 +33,7 @@ usr/libexec/ipsec/_updown_espmark
 usr/libexec/ipsec/charon
 usr/libexec/ipsec/openac
 usr/libexec/ipsec/pki
+#usr/lib/ipsec
 #usr/lib/ipsec/plugins
 #usr/lib/ipsec/plugins/libstrongswan-aes.a
 #usr/lib/ipsec/plugins/libstrongswan-aes.la
