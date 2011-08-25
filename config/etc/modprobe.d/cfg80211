@@ -1,2 +1,2 @@
-options cfg80211 ieee80211_regdom=EU
+#options cfg80211 ieee80211_regdom=DE
 blacklist ieee80211
