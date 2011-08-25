@@ -23,116 +23,53 @@
 #
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
-#
-KVER="xxxKVERxxx"
-MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
-# Nur den letzten Parameter verwenden
-echo $MOUNT > /dev/null
-MOUNT=$_
-if [ ! $MOUNT == "rw" ]; then
-	MOUNT="ro"
-fi
-
 
 #
-# check if we the backup file already exist
-if [ -e /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 ]; then
-    echo Moving backup to backup-old ...
-    mv -f /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
-       /var/ipfire/backup/core-upgrade_$KVER-old.tar.bz2
-fi
-echo First we made a backup of all files that was inside of the
-echo update archive. This may take a while ...
-# Add some files that are not in the package to backup
-echo lib/modules >> /opt/pakfire/tmp/ROOTFILES
-echo boot >> /opt/pakfire/tmp/ROOTFILES
-
-# Backup the files
-tar cjvf /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
-    -C / -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' > /dev/null 2>&1
-
-echo
-echo Update Kernel to $KVER ...
-# Remove old kernel, configs, initrd, modules ...
-#
-rm -rf /boot/System.map-*
-rm -rf /boot/config-*
-rm -rf /boot/ipfirerd-*
-rm -rf /boot/vmlinuz-*
-rm -rf /lib/modules/*-ipfire
-#
-# Backup grub.conf
-#
-cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
+# Remove old core updates from pakfire cache to save space...
+core=52
+for (( i=1; i<=$core; i++ ))
+do
+	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
+done
 
 #
-# Stop services to save memory
-#
-/etc/init.d/snort stop
-/etc/init.d/squid stop
+#Stop services
+
 /etc/init.d/ipsec stop
 
 #
-# Unpack the updated files
-#
-echo
-echo Unpack the updated files ...
-#
-tar xvf /opt/pakfire/tmp/files --preserve --numeric-owner -C / \
-	--no-overwrite-dir
+# Remove old strongswan libs
+rm -rf /usr/lib/libcharon.so
+rm -rf /usr/lib/libcharon.so.0
+rm -rf /usr/lib/libcharon.so.0.0.0
+rm -rf /usr/lib/libhydra.so
+rm -rf /usr/lib/libhydra.so.0
+rm -rf /usr/lib/libhydra.so.0.0.0
+rm -rf /usr/lib/libstrongswan.so
+rm -rf /usr/lib/libstrongswan.so.0
+rm -rf /usr/lib/libstrongswan.so.0.0.0
+rm -rf /usr/libexec/ipsec/plugins
 
 #
-# Enable ralink rt73 hardware encryption again
-rm -f /etc/modprobe.d/ralink_wireless
+#Extract files
+extract_files
 
 #
-# Start services
-#
-/etc/init.d/squid start
-/etc/init.d/snort start
+#Start services
+
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
 
 #
-# Modify grub.conf
-#
-echo
-echo Update grub configuration ...
-ROOT=`mount | grep " / " | cut -d" " -f1`
-if [ ! -z $ROOT ]; then
-	ROOTUUID=`blkid -c /dev/null -sUUID $ROOT | cut -d'"' -f2`
-fi
-if [ ! -z $ROOTUUID ]; then
-	sed -i "s|ROOT|UUID=$ROOTUUID|g" /boot/grub/grub.conf
-else
-	sed -i "s|ROOT|$ROOT|g" /boot/grub/grub.conf
-fi
-sed -i "s|KVER|$KVER|g" /boot/grub/grub.conf
-sed -i "s|MOUNT|$MOUNT|g" /boot/grub/grub.conf
-
-if [ "$(grep "^serial" /boot/grub/grub.conf.org)" == "" ]; then
-	echo "grub use default console ..."
-else
-	echo "grub use serial console ..."
-	sed -i -e "s|splashimage|#splashimage|g" /boot/grub/grub.conf
-	sed -i -e "s|#serial|serial|g" /boot/grub/grub.conf
-	sed -i -e "s|#terminal|terminal|g" /boot/grub/grub.conf
-	sed -i -e "s| panic=10 | console=ttyS0,38400n8 panic=10 |g" /boot/grub/grub.conf
-fi
-#
-# ReInstall grub
-#
-grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
-#
-# Rebuild Language
-#
+#Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
-#
-# Delete old lm-sensor modullist to force search at next boot
-#
-rm -rf /etc/sysconfig/lm_sensors
-##
+
+#Rebuild module dep's
+#depmod 2.6.32.45-ipfire     >/dev/null 2>&1
+#depmod 2.6.32.45-ipfire-pae >/dev/null 2>&1
+#depmod 2.6.32.45-ipfire-xen >/dev/null 2>&1
+
 ## Change version of Pakfire.conf
 ##
 #OLDVERSION=`grep "version = " /opt/pakfire/etc/pakfire.conf | cut -d'"' -f2`
@@ -162,6 +99,10 @@ rm -rf /etc/sysconfig/lm_sensors
 #echo
 #echo Please wait until pakfire has ended...
 #echo
-/usr/bin/logger -p syslog.emerg -t core-upgrade-next "Upgrade finished. If you use a customized grub.cfg"
-/usr/bin/logger -p syslog.emerg -t core-upgrade-next "Check it before reboot !!!"
-/usr/bin/logger -p syslog.emerg -t core-upgrade-next " *** Please reboot... *** "
+
+#
+#Finish
+/etc/init.d/fireinfo start
+sendprofile
+#Don't report the exitcode last command
+exit 0

@@ -44,12 +44,11 @@ fi
 
 
 #
-# check if we the backup file already exist
-if [ -e /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 ]; then
-    echo Moving backup to backup-old ...
-    mv -f /var/ipfire/backup/core-upgrade_$KVER.tar.bz2 \
-       /var/ipfire/backup/core-upgrade_$KVER-old.tar.bz2
-fi
+# erase old backups to prefent disk-full on small installations
+rm -f /var/ipfire/backup/core-upgrade_*.tar.bz2
+
+#
+# backup
 echo First we made a backup of all files that was inside of the
 echo update archive. This may take a while ...
 # Add some files that are not in the package to backup
@@ -80,7 +79,7 @@ cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
 /etc/init.d/snort stop
 /etc/init.d/squid stop
 /etc/init.d/ipsec stop
-
+/etc/init.d/dhcp stop
 #
 # Unpack the updated files
 #
@@ -97,11 +96,13 @@ rm -f /etc/modprobe.d/ralink_wireless
 #
 # Start services
 #
+/etc/init.d/dhcp start
 /etc/init.d/squid start
 /etc/init.d/snort start
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
+
 
 #
 # Modify grub.conf
@@ -142,6 +143,11 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 #
 rm -rf /etc/sysconfig/lm_sensors
 
+# Ensure that all data was written...
+sync
+sync
+sync
+
 # Reboot message to console
 /usr/bin/logger -p syslog.emerg -t core-upgrade-51 "Upgrade finished. If you use a customized grub.cfg"
 /usr/bin/logger -p syslog.emerg -t core-upgrade-51 "Check it before reboot !!!"
@@ -154,5 +160,12 @@ touch /var/run/need_reboot
 #Finish
 /etc/init.d/fireinfo start
 sendprofile
+
+# Ensure that all data was written...
+sync
+sync
+sync
+
+#
 #Don't report the exitcode last command
 exit 0
