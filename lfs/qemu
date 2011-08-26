@@ -82,7 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/qemu-0.15.0_missing_definitions_hack.patch
 
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
-		--target-list="i386-linux-user i386-softmmu"
+		--target-list="i386-linux-user i386-softmmu arm-softmmu"
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

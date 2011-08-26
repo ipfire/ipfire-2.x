@@ -6,6 +6,7 @@ usr/bin/qemu-i386
 usr/bin/qemu-img
 usr/bin/qemu-io
 usr/bin/qemu-nbd
+usr/bin/qemu-system-arm
 #usr/share/doc/qemu
 #usr/share/doc/qemu/qemu-doc.html
 #usr/share/doc/qemu/qemu-tech.html
