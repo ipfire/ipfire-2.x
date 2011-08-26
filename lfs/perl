@@ -80,6 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifneq "$(ROOT)" ""
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-libc-2.patch
 endif
+	cd $(DIR_APP) && sed -i -e 's|-fstack-protector|-fno-stack-protector|g' Configure
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && ./configure.gnu --prefix=/usr -Dman1dir=/usr/share/man/man1 \
 		-Dman3dir=/usr/share/man/man3 -Dpager="/usr/bin/less -isR" -Dusethreads
@@ -88,7 +89,6 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
-	cd $(DIR_APP) && sed -i -e 's|-fstack-protector|-fno-stack-protector|g' Configure
 	cd $(DIR_APP) && ./configure.gnu --prefix=/tools -Dstatic_ext='Data/Dumper Fcntl IO'
 	cd $(DIR_APP) && sed -i 's/^0$$//' makefile
 	cd $(DIR_APP) && sed -i 's/^0$$//' x2p/makefile
