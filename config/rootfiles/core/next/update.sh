@@ -50,6 +50,9 @@ rm -rf /usr/lib/libstrongswan.so.0
 rm -rf /usr/lib/libstrongswan.so.0.0.0
 rm -rf /usr/libexec/ipsec/plugins
 
+# Remove old usb_modeswitch_data
+rm -rf /etc/usb_modeswitch.d
+
 #
 #Extract files
 extract_files
