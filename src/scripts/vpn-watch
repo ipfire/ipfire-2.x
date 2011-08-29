@@ -31,8 +31,8 @@ while ( $i == 0){
 
   $round++;
 
-   # Reset roundcounter after 60 min. To do established check.
-  if ($round > 59) { $round=0; }
+   # Reset roundcounter after 10 min. To do established check.
+  if ($round > 9) { $round=0; }
 
   if (open(FILE, "<${General::swroot}/vpn/config")) {    @vpnsettings = <FILE>;
     close(FILE);
