@@ -96,6 +96,7 @@ else
 				hwclock/hwclock.c
 	-mkdir -p /var/lib/hwclock
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-cramfs-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/util-linux-buildfix.patch
 	cd $(DIR_APP) && ./configure
 	cd $(DIR_APP) && make $(MAKETUNING) HAVE_KILL=yes HAVE_SLN=yes
 	cd $(DIR_APP) && make HAVE_KILL=yes HAVE_SLN=yes install
