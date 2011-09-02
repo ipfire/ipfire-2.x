@@ -70,7 +70,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+ifeq "$(MACHINE)" "arm"
+	# ARM cannot use the x86 assembly code.
+	cd $(DIR_APP) && make -f unix/Makefile LOCAL_UNZIP=-D_FILE_OFFSET_BITS=64 linux_noasm
+else
 	cd $(DIR_APP) && make -f unix/Makefile LOCAL_UNZIP=-D_FILE_OFFSET_BITS=64 linux
+endif
 	cd $(DIR_APP) && make prefix=/usr install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
