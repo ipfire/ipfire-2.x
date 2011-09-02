@@ -24,7 +24,11 @@
 
 include Config
 
-VER        = 4.0.4
+ifeq "$(MACHINE)" "arm"
+	VER = 4.1.2
+else
+	VER = 4.0.4
+endif
 
 THISAPP    = gcc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -93,7 +97,8 @@ ifeq "$(PASS)" "1"
 		--with-local-prefix=/tools \
 		--disable-nls \
 		--enable-shared \
-		--enable-languages=c
+		--enable-languages=c \
+		--disable-bootstrap
   EXTRA_MAKE = 
   #bootstrap BOOT_LDFLAGS="-static"
   EXTRA_INSTALL = 
@@ -112,6 +117,25 @@ else
 endif
 endif
 
+ifeq "$(MACHINE)" "arm"
+	EXTRA_CONFIG += \
+		--build=$(BUILDTARGET) \
+		--host=$(BUILDTARGET) \
+		--target=$(BUILDTARGET) \
+		--with-float=soft \
+		--disable-libmudflap \
+		--disable-libssp \
+		--disable-libgomp \
+		--enable-threads=posix \
+		--enable-long-long \
+		--enable-c99 \
+		--enable-__cxa_atexit \
+		--disable-multilib
+endif
+
+export XCFLAGS = $(CFLAGS)
+export TCFLAGS = $(CFLAGS)
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -119,7 +143,11 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8970debbc55bea85ee80961d733080f0
+ifeq "$(MACHINE)" "arm"
+	$(DL_FILE)_MD5 = a4a3eb15c96030906d8494959eeda23c
+else
+	$(DL_FILE)_MD5 = 8970debbc55bea85ee80961d733080f0
+endif
 
 install : $(TARGET)
 
@@ -150,6 +178,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/gcc-build
+
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/gcc-4.1.2-gcc_eh.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/gcc-4.1.2-arm-linux-soft-float.patch
+
 ifeq "$(ROOT)" ""
 ifeq "$(INST)" "1"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-uclibc-conf.patch
@@ -192,6 +224,9 @@ ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 	ln -sfv gcc /tools/bin/cc
+	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-gcc
+	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-g++
+	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-cc
 else
 	cd $(DIR_APP) && cp -v gcc/Makefile.in{,.orig}
 	cd $(DIR_APP) && sed 's@\./fixinc\.sh@-c true@' gcc/Makefile.in.orig > gcc/Makefile.in

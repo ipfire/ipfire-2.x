@@ -224,6 +224,14 @@ if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE ]; then
 	CXXFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
 	C2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
 	CXX2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
+elif [ 'armv5tejl' = $MACHINE -o 'armv5tel' = $MACHINE ]; then
+	echo "`date -u '+%b %e %T'`: Machine is ARM (or equivalent)" >> $LOGFILE
+	MACHINE=arm
+	BUILDTARGET=arm-unknown-linux-gnueabi
+	CFLAGS="-O2 -march=armv5te -fomit-frame-pointer -pipe"
+	CXXFLAGS="$CFLAGS"
+	C2FLAGS="$CFLAGS"
+	CXX2FLAGS="$CXXFLAGS"
 else
 	echo "`date -u '+%b %e %T'`: Can't determine your architecture - $MACHINE" >> $LOGFILE
 	exit 1
@@ -319,12 +327,14 @@ lfsmakecommoncheck()
 
 	echo -ne "`date -u '+%b %e %T'`: Building $* " >> $LOGFILE
 
-	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t " download  >> $LOGFILE 2>&1
+	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+		MESSAGE="$1\t " download  >> $LOGFILE 2>&1
 	if [ $? -ne 0 ]; then
 		exiterror "Download error in $1"
 	fi
 
-	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
+	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+		MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
 	if [ $? -ne 0 ]; then
 		exiterror "md5sum error in $1, check file in cache or signature"
 	fi

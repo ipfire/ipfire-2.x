@@ -51,7 +51,23 @@ else
 endif
 endif
 
-TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
+ifeq "$(HEADERS)" "1"
+ifeq "$(TOOLS)" "1"
+	TARGET = $(DIR_INFO)/linux-libc-headers-$(VER)-$(VERSUFIX)-tools
+	HEADERS_PREFIX = /tools
+else
+	TARGET = $(DIR_INFO)/linux-libc-headers-$(VER)-$(VERSUFIX)
+	HEADERS_PREFIX = /usr
+endif
+else
+	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
+endif
+
+ifeq "$(MACHINE)" "arm"
+	HEADERS_ARCH=arm
+else
+	HEADERS_ARCH=x86
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -105,7 +121,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/linux $(DIR_SRC)/linux-*-suse_xen_patches $(DIR_SRC)/xen-* && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-	ln -s linux-$(VER) /usr/src/linux
+	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 ifeq "$(XEN)" "1"
 	# Apply gentoo Xen patches
@@ -149,12 +165,19 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_ipg-fix-driver-name.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
+ifeq "$(HEADERS)" "1"
+	# Install the header files
+	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) INSTALL_HDR_PATH=dest headers_install
+	-mkdir -pv $(BUILDROOT)/$(HEADERS_PREFIX)/include
+	cd $(DIR_APP) && find dest/include \( -name .install -o -name ..install.cmd \) -delete
+	cd $(DIR_APP) && cp -rv dest/include/* $(BUILDROOT)/$(HEADERS_PREFIX)/include
+else
+
 	# Install ipfire logo
 	cd $(DIR_APP) && cp -vf $(DIR_SRC)/config/kernel/ipfire_logo.ppm \
 		drivers/video/logo/logo_linux_clut224.ppm
 
 	# Cleanup kernel source
-
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config
 	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
 	cd $(DIR_APP) && make CC="$(KGCC)" clean
@@ -211,6 +234,7 @@ endif
 	# Disable geode_aes modul
 	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko \
            /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko.off
+endif
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)

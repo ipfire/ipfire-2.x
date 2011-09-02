@@ -81,6 +81,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/util-linux-2.12r-umount-no-special.patch
 ifeq "$(ROOT)" ""
 ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && CFLAGS="-Os -fomit-frame-pointer" ./configure

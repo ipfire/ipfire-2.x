@@ -243,15 +243,19 @@ buildtoolchain() {
 
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
     export LOGFILE
-    ORG_PATH=$PATH
     NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
     export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
+    ORG_PATH=$PATH
+    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
     lfsmake1 ccache	PASS=1
     lfsmake1 make	PASS=1
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
-    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    lfsmake1 linux-libc-header
+    if [ "${MACHINE}" = "arm" ]; then
+        lfsmake1 linux TOOLS=1 HEADERS=1
+    else
+        lfsmake1 linux-libc-header
+    fi
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain PASS=1
     lfsmake1 tcl
@@ -286,7 +290,11 @@ buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
     lfsmake2 stage2
-    lfsmake2 linux-libc-header
+    if [ "${MACHINE}" = "arm" ]; then
+        lfsmake2 linux HEADERS=1
+    else
+        lfsmake2 linux-libc-header
+    fi
     lfsmake2 man-pages
     lfsmake2 glibc
     lfsmake2 cleanup-toolchain	PASS=3
@@ -340,7 +348,11 @@ buildbase() {
     lfsmake2 udev
     lfsmake2 util-linux
     lfsmake2 vim
-    lfsmake2 grub
+
+    # ARM cannot use grub.
+    if [ "${MACHINE}" != "arm" ]; then
+      lfsmake2 grub
+    fi
 }
 
 buildipfire() {
@@ -359,39 +371,49 @@ buildipfire() {
   ipfiremake xz
   ipfiremake linux-firmware
   ipfiremake zd1211-firmware
-  ipfiremake linux			XEN=1
-  ipfiremake kqemu			XEN=1
-  ipfiremake v4l-dvb			XEN=1
-  ipfiremake madwifi			XEN=1
-  ipfiremake mISDN			XEN=1
-  ipfiremake dahdi			XEN=1 KMOD=1
-  ipfiremake cryptodev			XEN=1
-  ipfiremake compat-wireless		XEN=1
-  ipfiremake r8169			XEN=1
-  ipfiremake r8168			XEN=1
-  ipfiremake r8101			XEN=1
-  ipfiremake e1000			XEN=1
-  ipfiremake e1000e			XEN=1
-  ipfiremake igb			XEN=1
-  ipfiremake linux			PAE=1
-  ipfiremake kqemu			PAE=1
-  ipfiremake kvm-kmod			PAE=1
-  ipfiremake v4l-dvb			PAE=1
-  ipfiremake madwifi			PAE=1
-  ipfiremake alsa			PAE=1 KMOD=1
-  ipfiremake mISDN			PAE=1
-  ipfiremake dahdi			PAE=1 KMOD=1
-  ipfiremake cryptodev			PAE=1
-  ipfiremake compat-wireless		PAE=1
-#  ipfiremake r8169			PAE=1
-#  ipfiremake r8168			PAE=1
-#  ipfiremake r8101			PAE=1
-  ipfiremake e1000			PAE=1
-  ipfiremake e1000e			PAE=1
-  ipfiremake igb			PAE=1
+
+  # The xen and PAE kernels are only available for x86
+  if [ "${MACHINE}" != "arm" ]; then
+    ipfiremake linux			XEN=1
+    ipfiremake kqemu			XEN=1
+    ipfiremake v4l-dvb			XEN=1
+    ipfiremake madwifi			XEN=1
+    ipfiremake mISDN			XEN=1
+    ipfiremake dahdi			XEN=1 KMOD=1
+    ipfiremake cryptodev			XEN=1
+    ipfiremake compat-wireless		XEN=1
+    ipfiremake r8169			XEN=1
+    ipfiremake r8168			XEN=1
+    ipfiremake r8101			XEN=1
+    ipfiremake e1000			XEN=1
+    ipfiremake e1000e			XEN=1
+    ipfiremake igb			XEN=1
+    ipfiremake linux			PAE=1
+    ipfiremake kqemu			PAE=1
+    ipfiremake kvm-kmod			PAE=1
+    ipfiremake v4l-dvb			PAE=1
+    ipfiremake madwifi			PAE=1
+    ipfiremake alsa			PAE=1 KMOD=1
+    ipfiremake mISDN			PAE=1
+    ipfiremake dahdi			PAE=1 KMOD=1
+    ipfiremake cryptodev			PAE=1
+    ipfiremake compat-wireless		PAE=1
+#    ipfiremake r8169			PAE=1
+#    ipfiremake r8168			PAE=1
+#    ipfiremake r8101			PAE=1
+    ipfiremake e1000			PAE=1
+    ipfiremake e1000e			PAE=1
+    ipfiremake igb			PAE=1
+  fi
+
+  # Default kernel build
   ipfiremake linux
-  ipfiremake kqemu
-  ipfiremake kvm-kmod
+
+  # Virtualization helpers are only available for x86.
+  if [ "${MACHINE}" != "arm" ]; then
+    ipfiremake kqemu
+    ipfiremake kvm-kmod
+  fi
   ipfiremake v4l-dvb
   ipfiremake madwifi
   ipfiremake alsa			KMOD=1
@@ -915,7 +937,8 @@ downloadsrc)
 		for i in *; do
 			if [ -f "$i" -a "$i" != "Config" ]; then
 				echo -ne "Loading $i"
-				make -s -f $i LFS_BASEDIR=$BASEDIR MESSAGE="$i\t ($c/$MAX_RETRIES)" download >> $LOGFILE 2>&1
+				make -s -f $i LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+					MESSAGE="$i\t ($c/$MAX_RETRIES)" download >> $LOGFILE 2>&1
 				if [ $? -ne 0 ]; then
 					beautify message FAIL
 					FINISHED=0
@@ -931,7 +954,8 @@ downloadsrc)
 	ERROR=0
 	for i in *; do
 		if [ -f "$i" -a "$i" != "Config" ]; then
-			make -s -f $i LFS_BASEDIR=$BASEDIR MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
+			make -s -f $i LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+				MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
 			if [ $? -ne 0 ]; then
 				echo -ne "MD5 difference in lfs/$i"
 				beautify message FAIL
@@ -957,7 +981,7 @@ toolchain)
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz \
 		build/{bin,etc,usr/bin,usr/local} \
-		build/tools/{bin,etc,*-linux-gnu,include,lib,libexec,sbin,share,var} \
+		build/tools/{bin,etc,*-linux-gnu*,include,lib,libexec,sbin,share,var} \
 		log >> $LOGFILE
 	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.md5
