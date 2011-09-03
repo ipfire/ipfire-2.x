@@ -139,11 +139,13 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 	}
 	
 	# Permit an empty HOSTNAME for the nsupdate, regfish, dyndns, enom, ovh, zoneedit, no-ip, easydns
+	#and namecheap
         unless ($settings{'SERVICE'} eq 'zoneedit.com' || $settings{'SERVICE'} eq 'nsupdate' || 
 		$settings{'SERVICE'} eq 'dyndns-custom'|| $settings{'SERVICE'} eq 'regfish.com' || 
 		$settings{'SERVICE'} eq 'enom.com' || $settings{'SERVICE'} eq 'dnspark.com' ||
 		$settings{'SERVICE'} eq 'ovh.com' || $settings{'HOSTNAME'} ne '' ||
-		$settings{'SERVICE'} eq 'no-ip.com' || $settings{'SERVICE'} eq 'easydns.com' ) {
+		$settings{'SERVICE'} eq 'no-ip.com' || $settings{'SERVICE'} eq 'easydns.com'  ||
+		$settings{'SERVICE'} eq 'namecheap.com' )	{
 	    $errormessage = $Lang::tr{'hostname not set'};
 	}
 	unless ($settings{'HOSTNAME'} eq '' || $settings{'HOSTNAME'} =~ /^[a-zA-Z_0-9-]+$/) {
@@ -243,6 +245,7 @@ $checked{'SERVICE'}{'easydns.com'} = '';
 $checked{'SERVICE'}{'enom.com'} = '';
 $checked{'SERVICE'}{'freedns.afraid.org'} = '';
 $checked{'SERVICE'}{'hn.org'} = '';
+$checked{'SERVICE'}{'namecheap.com'} = '';
 $checked{'SERVICE'}{'no-ip.com'} = '';
 $checked{'SERVICE'}{'nsupdate'} = '';
 $checked{'SERVICE'}{'ovh.com'} = '';
@@ -336,6 +339,7 @@ print <<END
     <option $checked{'SERVICE'}{'enom.com'}>enom.com</option>
     <option $checked{'SERVICE'}{'freedns.afraid.org'}>freedns.afraid.org</option>
     <option $checked{'SERVICE'}{'hn.org'}>hn.org</option>
+	<option $checked{'SERVICE'}{'namecheap.com'}>namecheap.com</option>
     <option $checked{'SERVICE'}{'no-ip.com'}>no-ip.com</option>
     <option $checked{'SERVICE'}{'nsupdate'}>nsupdate</option>
     <option $checked{'SERVICE'}{'ovh.com'}>ovh.com</option>

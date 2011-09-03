@@ -515,6 +515,36 @@ if ($ip ne $ipcache) {
 			        &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure (could not connect to server)");
 			    }
 			}
+			#namecheap test
+			elsif ($settings{'SERVICE'} eq 'namecheap') {
+				# use proxy ?
+				my %proxysettings;
+				&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+				if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
+					my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+					Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
+				}
+
+				my ($out, $response) = Net::SSLeay::get_https(  'dynamicdns.park-your-domain.com',
+								443,
+								"/update?host=$settings{'HOSTNAME'}&domain=$settings{'DOMAIN'}&password=$settings{'PASSWORD'}&ip=$ip",
+								Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
+								);
+					#Valid responses from service are:
+					# wait confirmation!!
+					if ($response =~ m%HTTP/1\.. 200 OK%) {
+						if ( $out !~ m/<ErrCount>0<\/ErrCount>/ ) {
+							$out =~ m/<Err1>(.*)<\/Err1>/;
+							&General::log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'} : failure ($1)");
+						} else {
+							&General::log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'} : success");
+							$success++;
+						}
+					} else {
+						&General::log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'} : failure (could not connect to server)");
+				}
+			}
+			#end namecheap test
 			elsif ($settings{'SERVICE'} eq 'dynu') {
 			    # use proxy ?
 			    my %proxysettings;

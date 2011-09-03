@@ -34,6 +34,7 @@ done
 
 #
 #Stop services
+/etc/init.d/apache stop
 
 #
 #Extract files
@@ -41,6 +42,7 @@ extract_files
 
 #
 #Start services
+/etc/init.d/apache start
 
 #
 #Update Language cache
