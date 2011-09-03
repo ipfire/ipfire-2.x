@@ -1684,6 +1684,7 @@
 'start ovpn server' => 'Start OpenVPN Server',
 'state or province' => 'State or Province',
 'static ip' => 'Static IP',
+'static routes' => 'Static routes',
 'status' => 'Status',
 'status information' => 'Status information',
 'status ovpn' => '4. OpenVPN Status / Configuration:',

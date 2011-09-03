@@ -1651,6 +1651,7 @@
 'start ovpn server' => 'Starte OpenVPN Server',
 'state or province' => 'Bundesstat oder Provinz',
 'static ip' => 'Statisch IP',
+'static routes' => 'Statische Routen',
 'status' => 'Status',
 'status information' => 'Statusinformationen',
 'status ovpn' => 'OpenVPN',

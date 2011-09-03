@@ -32,6 +32,7 @@
 < ntp common settings
 < ntp sync
 < snort working
+< static routes
 < system information
 < upload new ruleset
 < urlfilter file ext block
@@ -97,6 +98,7 @@
 < outgoing firewall p2p description 3
 < outgoing firewall view group
 < Set time on boot
+< static routes
 < system information
 < vpn keyexchange
 ############################################################################
@@ -115,6 +117,7 @@
 < extrahd unable to write
 < extrahd you cant mount
 < minute
+< static routes
 < vpn keyexchange
 ############################################################################
 # Checking install/setup translations for language: ru                     #
@@ -134,4 +137,5 @@
 < extrahd unable to write
 < extrahd you cant mount
 < minute
+< static routes
 < vpn keyexchange

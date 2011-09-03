@@ -526,6 +526,7 @@ WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: snort working
+WARNING: untranslated string: static routes
 WARNING: untranslated string: system information
 WARNING: untranslated string: upload new ruleset
 WARNING: untranslated string: urlfilter file ext block

@@ -509,4 +509,5 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: static routes
 WARNING: untranslated string: vpn keyexchange
