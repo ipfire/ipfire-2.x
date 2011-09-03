@@ -2,3 +2,5 @@ etc/system-release
 var/ipfire/langs/
 etc/rc.d/init.d/console
 usr/local/sbin/setup
+usr/local/bin/setddns.pl
+srv/web/ipfire/cgi-bin/ddns.cgi
