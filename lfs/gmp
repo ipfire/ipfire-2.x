@@ -32,6 +32,10 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+ifeq "$(MACHINE)" "i586"
+	CONFIGURE_ARGS = ABI=32
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -70,8 +74,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ABI=32 ./configure --prefix=/usr --enable-cxx \
-		--enable-mpbsd --disable-nls
+	cd $(DIR_APP) && $(CONFIGURE_ARGS) ./configure --prefix=/usr \
+		--enable-cxx --enable-mpbsd --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
