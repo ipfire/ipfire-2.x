@@ -73,7 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && PAGE=A4 ./configure --prefix=/usr --enable-multibyte --disable-nls
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	ln -sv eqn /usr/bin/geqn
-	ln -sv tbl /usr/bin/gtbl
+	ln -svf eqn /usr/bin/geqn
+	ln -svf tbl /usr/bin/gtbl
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
