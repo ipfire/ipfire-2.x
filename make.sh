@@ -407,26 +407,26 @@ buildipfire() {
   fi
 
   # Default kernel build
-  ipfiremake linux
+  #ipfiremake linux
+  ipfiremake v4l-dvb
 
   # Virtualization helpers are only available for x86.
   if [ "${MACHINE}" != "arm" ]; then
     ipfiremake kqemu
     ipfiremake kvm-kmod
   fi
-  ipfiremake v4l-dvb
-  ipfiremake madwifi
-  ipfiremake alsa			KMOD=1
-  ipfiremake mISDN
+  #ipfiremake madwifi
+  #ipfiremake alsa			KMOD=1
+  #ipfiremake mISDN
   ipfiremake dahdi			KMOD=1
   ipfiremake cryptodev
-  ipfiremake compat-wireless
+  #ipfiremake compat-wireless
 #  ipfiremake r8169
 #  ipfiremake r8168
 #  ipfiremake r8101
-  ipfiremake e1000
-  ipfiremake e1000e
-  ipfiremake igb
+  #ipfiremake e1000
+  #ipfiremake e1000e
+  #ipfiremake igb
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
