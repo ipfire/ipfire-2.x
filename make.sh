@@ -428,7 +428,7 @@ buildipfire() {
   #ipfiremake e1000e
   #ipfiremake igb
   ipfiremake pkg-config
-  ipfiremake linux-atm
+  #ipfiremake linux-atm
   ipfiremake cpio
 
   installmake strip
