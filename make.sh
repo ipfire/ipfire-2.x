@@ -443,7 +443,7 @@ buildipfire() {
   ipfiremake tcl
   ipfiremake sqlite
   ipfiremake python
-  ipfiremake fireinfo
+  #ipfiremake fireinfo
   ipfiremake libnet
   ipfiremake libnl
   ipfiremake libidn
