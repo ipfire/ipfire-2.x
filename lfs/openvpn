@@ -81,6 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -pvf $(DIR_APP)/plugin/down-root/openvpn-down-root.so /lib/
 	-mkdir -vp /var/ipfire/ovpn/ca
 	-mkdir -vp /var/ipfire/ovpn/crls
+	-mkdir -vp /var/ipfire/ovpn/n2nconf
 	touch /var/ipfire/ovpn/ovpn-leases.db
 	chmod 700 /var/ipfire/ovpn/ovpn-leases.db
 	chown -R nobody:nobody /var/ipfire/ovpn
