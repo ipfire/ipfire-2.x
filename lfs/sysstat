@@ -70,6 +70,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/sysstat-6.0.2-sysconf.patch
+	cd $(DIR_APP) && sed "/asm\/page.h/d" -i common.c
 	cd $(DIR_APP) && cp -vf $(DIR_SRC)/config/sysstat/CONFIG build/
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
