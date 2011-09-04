@@ -390,6 +390,25 @@ END
 END
 	}
 
+###
+# m.a.d n2n
+###
+
+if ( -d "${General::swroot}/ovpn/n2nconf") {
+my %confighash=();
+&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+foreach my $dkey (keys %confighash) {
+if ($confighash{$dkey}[0] eq 'on' && $confighash{$dkey}[3] eq 'net') {
+my @n2novpnet =  split(/\//,$confighash{$dkey}[27]);
+    print <<END;
+		<tr><td align='center' bgcolor='$Header::colourvpn' width='25%'><a href="/cgi-bin/ovpnmain.cgi"><font size='2' color='white'><b>OpenVPN n2n</b></font></a><br>
+  	<td width='30%' align='center'> $n2novpnet[0]
+ 		<td width='45%' align='center'><font color=$Header::colourblue>$confighash{$dkey}[6]</font>
+END
+}
+}
+  }
+
 # Fireinfo
 if ( ! -e "/var/ipfire/main/send_profile") {
 	$warnmessage .= "<li><a style='color: white;' href='fireinfo.cgi'>$Lang::tr{'fireinfo please enable'}</a></li>";
