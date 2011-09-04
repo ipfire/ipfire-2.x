@@ -58,6 +58,11 @@ rm -rf /etc/usb_modeswitch.d
 extract_files
 
 #
+#Replace now unsupported EU regdomain by a "DE" comment.
+sed -i -e "s|^options cfg80211 ieee80211_regdom=EU|#options cfg80211 ieee80211_regdom=DE|g" \
+		/etc/modprobe.d/cfg80211
+
+#
 #Start services
 
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
