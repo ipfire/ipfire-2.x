@@ -58,6 +58,11 @@ rm -rf /etc/usb_modeswitch.d
 extract_files
 
 #
+#Replace now unsupported EU regdomain by a "DE" comment.
+sed -i -e "s|^options cfg80211 ieee80211_regdom=EU|#options cfg80211 ieee80211_regdom=DE|g" \
+		/etc/modprobe.d/cfg80211
+
+#
 #Start services
 
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
@@ -69,9 +74,9 @@ fi
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #Rebuild module dep's
-#depmod 2.6.32.45-ipfire     >/dev/null 2>&1
-#depmod 2.6.32.45-ipfire-pae >/dev/null 2>&1
-#depmod 2.6.32.45-ipfire-xen >/dev/null 2>&1
+depmod 2.6.32.45-ipfire     >/dev/null 2>&1
+depmod 2.6.32.45-ipfire-pae >/dev/null 2>&1
+depmod 2.6.32.45-ipfire-xen >/dev/null 2>&1
 
 ## Change version of Pakfire.conf
 ##
