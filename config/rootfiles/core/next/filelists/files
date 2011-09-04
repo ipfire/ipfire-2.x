@@ -5,7 +5,6 @@ etc/system-release
 etc/issue
 etc/iproute2/rt_tables
 etc/rc.d/init.d/networking/red
-etc/rc.d/init.d/static-routes
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/outgoinggrp.cgi
