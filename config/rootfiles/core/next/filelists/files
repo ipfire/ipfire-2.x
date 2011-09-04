@@ -23,3 +23,4 @@ usr/local/bin/openvpnctrl
 usr/local/bin/vpn-watch
 usr/local/bin/rebuildroutes
 var/ipfire/main/routing
+var/ipfire/menu.d/30-network.menu
