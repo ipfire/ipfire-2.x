@@ -69,9 +69,9 @@ fi
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #Rebuild module dep's
-#depmod 2.6.32.45-ipfire     >/dev/null 2>&1
-#depmod 2.6.32.45-ipfire-pae >/dev/null 2>&1
-#depmod 2.6.32.45-ipfire-xen >/dev/null 2>&1
+depmod 2.6.32.45-ipfire     >/dev/null 2>&1
+depmod 2.6.32.45-ipfire-pae >/dev/null 2>&1
+depmod 2.6.32.45-ipfire-xen >/dev/null 2>&1
 
 ## Change version of Pakfire.conf
 ##
