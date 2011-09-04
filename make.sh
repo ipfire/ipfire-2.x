@@ -189,7 +189,11 @@ prepareenv() {
     set +h
     LC_ALL=POSIX
     if [ -z $MAKETUNING ]; then
-       MAKETUNING="-j6"
+        if [ "${MACHINE:0:3}" = "arm" ]; then
+            MAKETUNING="-j2"
+        else
+            MAKETUNING="-j6"
+        fi
     fi
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
