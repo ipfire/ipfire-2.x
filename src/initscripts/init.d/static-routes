@@ -35,7 +35,7 @@ function create_all_routes() {
 			continue
 		fi
 
-		ip route add ${network} via ${gateway} table static
+		ip route add ${network} via ${gateway} table static proto static
 	done < ${file}
 }
 
