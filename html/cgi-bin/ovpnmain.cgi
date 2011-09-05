@@ -397,6 +397,22 @@ sub emptyserverlog{
 
 }
 
+###
+# m.a.d net2net
+###
+
+sub validdotmask
+{
+	my $ipdotmask = $_[0];
+	if (&General::validip($ipdotmask)) { return 0; }
+	if (!($ipdotmask =~ /^(.*?)\/(.*?)$/)) {  }
+	my $mask = $2;
+	if (($mask =~ /\./ )) { return 0; }	
+  return 1;
+}
+ 
+
+
 #hier die refresh page
 if ( -e "${General::swroot}/ovpn/gencanow") {
     my $refresh = '';
@@ -517,7 +533,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 }
 
 ###
-# m.a.d Save net2net server config
+# m.a.d net2net
 ###
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq 'net' && $cgiparams{'SIDE'} eq 'server')
@@ -534,13 +550,14 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   open(SERVERCONF,    ">${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Unable to open ${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf: $!";
   
   flock SERVERCONF, 2;
-  print SERVERCONF "# n2n Open VPN Server Config by ummeegge und m.a.d\n"; 
+  print SERVERCONF "# IPFire n2n Open VPN Server Config by ummeegge und m.a.d\n"; 
   print SERVERCONF "\n"; 
   print SERVERCONF "# User Sicherheit\n";
   print SERVERCONF "user nobody\n";
   print SERVERCONF "group nobody\n";
   print SERVERCONF "persist-tun\n";
   print SERVERCONF "persist-key\n";
+  print SERVERCONF "script-security 2\n";
   print SERVERCONF "\n";
   print SERVERCONF "# IP/DNS fuer das Server Gateway - g2g Mode\n"; 
   print SERVERCONF "remote $cgiparams{'REMOTE'}\n";
@@ -602,8 +619,9 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
 }
 
 ###
-# m.a.d Save net2net client config
+# m.a.d net2net
 ###
+
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq 'net' && $cgiparams{'SIDE'} eq 'client')
 {
         my @ovsubnettemp =  split(/\./,$cgiparams{'OVPN_SUBNET'});
@@ -617,13 +635,14 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   open(CLIENTCONF,    ">${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Unable to open ${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf: $!";
   
   flock CLIENTCONF, 2;
-  print CLIENTCONF "# rewritten n2n Open VPN Client Config by ummeegge und m.a.d\n";
+  print CLIENTCONF "# IPFire rewritten n2n Open VPN Client Config by ummeegge und m.a.d\n";
   print CLIENTCONF "#\n"; 
   print CLIENTCONF "# User Sicherheit\n";
   print CLIENTCONF "user nobody\n";
   print CLIENTCONF "group nobody\n";
   print CLIENTCONF "persist-tun\n";
   print CLIENTCONF "persist-key\n";
+  print CLIENTCONF "script-security 2\n";
   print CLIENTCONF "#\n";
   print CLIENTCONF "# IP/DNS fuer das Server Gateway - g2g Mode\n"; 
   print CLIENTCONF "remote $cgiparams{'REMOTE'}\n";
@@ -632,7 +651,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print CLIENTCONF "ifconfig $ovsubnet.2 $ovsubnet.1\n"; 
   print CLIENTCONF "#\n"; 
   print CLIENTCONF "# Netzwerk auf dem Server Gateway\n"; 
-  print CLIENTCONF "route @remsubnet[0]/@remsubnet[1]\n"; 
+  print CLIENTCONF "route @remsubnet[0] @remsubnet[1]\n"; 
   print CLIENTCONF "# Device fuer den Tunnel\n"; 
   print CLIENTCONF "dev tun\n"; 
   print CLIENTCONF "#\n"; 
@@ -683,10 +702,6 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
 
 }
   
-###
-# m.a.d Save net2net config  end
-###
-
 ###
 ### Save main settings
 ###
@@ -1488,7 +1503,7 @@ END
 ###
 
 ###
-# m.a.d net2net Anpassung
+# m.a.d net2net
 ###
 
 }elsif ($cgiparams{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
@@ -1540,8 +1555,8 @@ END
     my $zippath = "$tempdir/";
 
 ###
-# m.a.d net2net DL Client Package
-###  
+# m.a.d net2net
+###
 
 if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
         
@@ -1551,18 +1566,20 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
         my @ovsubnettemp =  split(/\./,$confighash{$cgiparams{'KEY'}}[27]);
         my $ovsubnet =  "@ovsubnettemp[0].@ovsubnettemp[1].@ovsubnettemp[2]";
         my $tunmtu = ''; 
+        my @remsubnet = split(/\//,$confighash{$cgiparams{'KEY'}}[8]);
         
     open(CLIENTCONF, ">$tempdir/$clientovpn") or die "Unable to open tempfile: $!";
     flock CLIENTCONF, 2;
     
     my $zip = Archive::Zip->new();
-   print CLIENTCONF "# n2n Open VPN Client Config by ummeegge und m.a.d\n";
+   print CLIENTCONF "# IPFire n2n Open VPN Client Config by ummeegge und m.a.d\n";
    print CLIENTCONF "# \n";
    print CLIENTCONF "# User Sicherheit\n";
    print CLIENTCONF "user nobody\n";
    print CLIENTCONF "group nobody\n";
    print CLIENTCONF "persist-tun\n";
    print CLIENTCONF "persist-key\n";
+   print CLIENTCONF "script-security 2\n";
    print CLIENTCONF "#\n";
    print CLIENTCONF "# IP/DNS fuer das Server Gateway - g2g Mode\n"; 
    print CLIENTCONF "remote $vpnsettings{'VPN_IP'}\n";
@@ -1571,7 +1588,7 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    print CLIENTCONF "ifconfig $ovsubnet.2 $ovsubnet.1\n"; 
    print CLIENTCONF "#\n"; 
    print CLIENTCONF "# Netzwerk auf dem Server Gateway\n"; 
-   print CLIENTCONF "route $confighash{$cgiparams{'KEY'}}[8]\n";
+   print CLIENTCONF "route $remsubnet[0] $remsubnet[1]\n";
    print CLIENTCONF "# Device fuer den Tunnel\n"; 
    print CLIENTCONF "dev $vpnsettings{'DDEVICE'}\n"; 
    print CLIENTCONF "#\n"; 
@@ -1642,7 +1659,7 @@ else
         $clientovpn = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.ovpn";
 
 ###
-# m.a.d net2net DL Client Package end
+# m.a.d net2net
 ###
   
     open(CLIENTCONF, ">$tempdir/$clientovpn") or die "Unable to open tempfile: $!";
@@ -1732,8 +1749,9 @@ else
 	my $temp = `/usr/bin/openssl ca -revoke ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
 
 ###
-# m.a.d net2net Anpassung
+# m.a.d net2net
 ###
+
  if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 
 	my $conffile = glob("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]/$confighash{$cgiparams{'KEY'}}[1].conf");
@@ -1743,9 +1761,6 @@ else
   rmdir ("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") || die "Kann Verzeichnis nicht loeschen: $!";
   
 }
-###
-# m.a.d net2net Anpassung end
-###
 
   unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
 	unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
@@ -2185,7 +2200,7 @@ END
 ###
 
 ###
-# m.a.d Anpassung wegen upload n2n Package
+# m.a.d net2net
 ###
 
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'add'} && $cgiparams{'TYPE'} eq '') {
@@ -2215,7 +2230,7 @@ END
 	exit (0);
 
 ###
-# m.a.d uploading a IPFire n2n Client package
+# m.a.d net2net
 ###
 
 }  elsif (($cgiparams{'ACTION'} eq $Lang::tr{'add'}) && ($cgiparams{'TYPE'} eq 'net2net')){
@@ -2288,15 +2303,15 @@ END
 		goto N2N_ERROR;
 	}
 
-###	
-# m.a.d prepare imported ipfire net2net data
+###
+# m.a.d net2net
 ###
 
  my @n2nname = split(/\./,$uplconffilename);
     $n2nname[0] =~ s/\n|\r//g;
 
-    if ( !-d "${General::swroot}/ovpn/n2nconf/$n2nname[0]") { 
-      mkdir("${General::swroot}/ovpn/n2nconf/$n2nname[0]", 0770); } 
+    unless(-d "${General::swroot}/ovpn/n2nconf/"){mkdir "${General::swroot}/ovpn/n2nconf", 0755 or die "Unable to create dir $!";}
+    unless(-d "${General::swroot}/ovpn/n2nconf/$n2nname[0]"){mkdir "${General::swroot}/ovpn/n2nconf/$n2nname[0]", 0770 or die "Unable to create dir $!";}   
 
 	move("$tempdir/$uplconffilename", "${General::swroot}/ovpn/n2nconf/$n2nname[0]/$uplconffilename");
 
@@ -2348,7 +2363,7 @@ chomp ($complzoactive);
 chomp ($mssfixactive);
 
 ###
-# m.a.d Write n2n config
+# m.a.d net2net
 ###
 
 ###
@@ -2446,6 +2461,8 @@ foreach my $dkey (keys %confighash) {
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td><td><b>$confighash{$key}[28]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'destination port'}:</td><td><b>$confighash{$key}[29]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td><td><b>$confighash{$key}[30]</b></td></tr>
+		<tr><td class='boldbase' nowrap='nowrap'>MSSFIX </td><td><b>$confighash{$key}[23]</b></td></tr>
+		<tr><td class='boldbase' nowrap='nowrap'>Fragment </td><td><b>$confighash{$key}[24]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}</td><td><b>$confighash{$key}[31]</b></td></tr>
 		<tr><td>&nbsp;</td><td>&nbsp;</td></tr>	
     </table>
@@ -2497,7 +2514,7 @@ if ($confighash{$cgiparams{'KEY'}}) {
     
 
 ###
-# m.a.d end uploading a IPFire n2n Client package
+# m.a.d net2net
 ###
 
 
@@ -2565,10 +2582,12 @@ if ($confighash{$cgiparams{'KEY'}}) {
 	}
 
 ###
-# n2n Plausi m.a.d
+# m.a.d net2net
 ###
 
-		if ($cgiparams{'DEST_PORT'} eq  $vpnsettings{'DDEST_PORT'}) {
+if ($cgiparams{'TYPE'} eq 'net') {
+		
+    if ($cgiparams{'DEST_PORT'} eq  $vpnsettings{'DDEST_PORT'}) {
 			$errormessage = 'The Destination Port is used by the OpenVPN Server please change';
 			goto VPNCONF_ERROR;			
 		}
@@ -2587,11 +2606,22 @@ if ($confighash{$cgiparams{'KEY'}}) {
 	    $errormessage = 'fragment only allowed with udp';
 	    goto VPNCONF_ERROR;
     }
-    
 
-###
-# n2n Plausi m.a.d
-###
+    if ( &validdotmask ($cgiparams{'LOCAL_SUBNET'}))  {
+		    $errormessage = 'Prefix not allowed for Local Subnet. Please enter Subnet Mask e.g. 255.255.255.0';
+		    		    goto VPNCONF_ERROR;
+		} 
+    
+    if ( &validdotmask ($cgiparams{'OVPN_SUBNET'}))  {
+		    $errormessage = 'Prefix not allowed for OpenVPN Subnet. Please enter Subnet Mask e.g. 255.255.255.0';
+		    		    goto VPNCONF_ERROR;
+		} 
+    
+    if ( &validdotmask ($cgiparams{'REMOTE_SUBNET'}))  {
+		    $errormessage = 'Prefix not allowed for Remote Subnet. Please enter Subnet Mask e.g. 255.255.255.0';
+		    		    goto VPNCONF_ERROR;
+		} 
+}
 
 #	if (($cgiparams{'TYPE'} eq 'net') && ($cgiparams{'SIDE'} !~ /^(left|right)$/)) {
 #	    $errormessage = $Lang::tr{'ipfire side is invalid'};
@@ -3169,7 +3199,7 @@ END
 ;
 
 ###
-# m.a.d  Disbale upload cert for n2n connections
+# m.a.d net2net
 ###
 
 } else {
@@ -3192,7 +3222,7 @@ END
 }
 
 ###
-# m.a.d  Disbale upload cert for n2n connections end
+# m.a.d net2net
 ###
 
 	    foreach my $country (sort keys %{Countries::countries}) {
@@ -3203,7 +3233,7 @@ END
 		print ">$country</option>";
 	    }
 ###
-# m.a.d  Disbale pkcs-password for n2n connections
+# m.a.d net2net
 ###
 
 if ($cgiparams{'TYPE'} eq 'host') {
@@ -3230,7 +3260,7 @@ END
 }
 
 ###
-# m.a.d  Disbale pkcs-password for n2n connections end
+# m.a.d net2net
 ###
 	    ;
 	    &Header::closebox();
@@ -3575,7 +3605,7 @@ END
     if ( -f "${General::swroot}/ovpn/ca/cacert.pem" ) {
 
 ###
-# m.a.d Client Status Table
+# m.a.d net2net
 ###
 
     &Header::openbox('100%', 'LEFT', $Lang::tr{'Client status and controlc' });
@@ -3624,15 +3654,12 @@ END
 	} else {
 
 ###
-# m.a.d net2net Status
-###		    
+# m.a.d net2net
+###
 
-  if ($confighash{$cgiparams{'KEY'}}[3] eq 'host'){
-
-	    my $cn;
-    	my @match = ();	
-	    foreach my $line (@status) {
-
+	        my $cn;
+    	    my @match = ();	
+	  foreach my $line (@status) {
 		chomp($line);
 		if ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
 		    @match = split(m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $line);
@@ -3641,15 +3668,15 @@ END
 		    }	    
 	    	$cn =~ s/[_]/ /g;
 		    if ($cn eq "$confighash{$key}[2]") {
-			$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+			$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
 		    }
-		 }   
-    }
-     } else {
+
+     if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
+  
        my @tempovpnsubnet = split("\/",$confighash{$key}[27]);
 			 my @ovpnip = split /\./,$tempovpnsubnet[0];
 			 my $pingip = "";
-			
+			 
       		if ($confighash{$key}[6] eq 'server') {
 						$pingip = "$ovpnip[0].$ovpnip[1].$ovpnip[2].2";
 					} else {
@@ -3665,10 +3692,8 @@ END
       
        }	
 	}
-
-###
-# m.a.d net2net Status end
-###	
+}
+}
 
 
 	my $disable_clientdl = "disabled='disabled'";

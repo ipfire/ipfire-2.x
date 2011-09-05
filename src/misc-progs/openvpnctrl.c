@@ -25,7 +25,7 @@ char enableorange[STRING_SIZE] = "off";
 char OVPNRED[STRING_SIZE] = "OVPN";
 char OVPNBLUE[STRING_SIZE] = "OVPN_BLUE_";
 char OVPNORANGE[STRING_SIZE] = "OVPN_ORANGE_";
-char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.0";
+char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.1";
 
 struct connection_struct {
 	char name[STRING_SIZE];
@@ -88,7 +88,8 @@ connection *getConnections() {
 	}
 
 	char line[STRING_SIZE] = "";
-	char *result;
+	char result[STRING_SIZE] = "";
+	char *resultptr;
 	int count;
 	connection *conn_first = NULL;
 	connection *conn_last = NULL;
@@ -109,19 +110,31 @@ connection *getConnections() {
 		conn_last = conn_curr;
 
 		count = 0;
-		result = strtok(line, ",");
-		while (result) {
+		char *lineptr = &line;
+		while (1) {
+			if (*lineptr == NULL)
+				break;
+
+			resultptr = result;
+			while (*lineptr != NULL) {
+				if (*lineptr == ',') {
+					lineptr++;
+					break;
+				}
+				*resultptr++ = *lineptr++;
+			}
+			*resultptr = '\0';
+
 			if (count == 2) {
 				strcpy(conn_curr->name, result);
 			} else if (count == 4) {
 				strcpy(conn_curr->type, result);
-			} else if (count == 12) {
+			} else if (count == 29) {
 				strcpy(conn_curr->proto, result);
-			} else if (count == 13) {
+			} else if (count == 30) {
 				conn_curr->port = atoi(result);
 			}
 
-			result = strtok(NULL, ",");
 			count++;
 		}
 	}

@@ -11,6 +11,7 @@ var/ipfire/ovpn/caconfig
 var/ipfire/ovpn/certs/index.txt
 var/ipfire/ovpn/certs/serial
 var/ipfire/ovpn/crls
+var/ipfire/ovpn/n2nconf
 #var/ipfire/ovpn/openssl
 var/ipfire/ovpn/openssl/ovpn.cnf
 var/ipfire/ovpn/ovpn-leases.db
