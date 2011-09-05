@@ -5,3 +5,4 @@ usr/local/sbin/setup
 usr/local/bin/setddns.pl
 srv/web/ipfire/cgi-bin/ddns.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
+var/ipfire/graphs.pl
