@@ -3147,6 +3147,7 @@ END
 
 		if ($proxysettings{'AUTH_METHOD'} eq 'ldap')
 		{
+			print FILE "auth_param basic utf8 on\n";
 			print FILE "auth_param basic program $authdir/squid_ldap_auth -b \"$proxysettings{'LDAP_BASEDN'}\"";
 			if (!($proxysettings{'LDAP_BINDDN_USER'} eq '')) { print FILE " -D \"$proxysettings{'LDAP_BINDDN_USER'}\""; }
 			if (!($proxysettings{'LDAP_BINDDN_PASS'} eq '')) { print FILE " -w $proxysettings{'LDAP_BINDDN_PASS'}"; }
