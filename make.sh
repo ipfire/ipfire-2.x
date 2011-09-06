@@ -639,7 +639,7 @@ buildipfire() {
   ipfiremake sane
   ipfiremake netpbm
   ipfiremake phpSANE
-  ipfiremake tunctl
+  #ipfiremake tunctl
   ipfiremake nagios
   ipfiremake nagios_nrpe
   ipfiremake ebtables
