@@ -623,7 +623,7 @@ buildipfire() {
   ipfiremake strongswan
   ipfiremake lsof
   ipfiremake centerim
-  ipfiremake br2684ctl
+  #ipfiremake br2684ctl
   ipfiremake pcmciautils
   ipfiremake lm_sensors
   ipfiremake liboping
