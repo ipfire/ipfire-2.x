@@ -670,7 +670,7 @@ buildipfire() {
     ipfiremake syslinux
   fi
   ipfiremake tftpd
-  ipfiremake cpufrequtils
+  #ipfiremake cpufrequtils
   ipfiremake dbus
   ipfiremake bluetooth
   ipfiremake gutenprint
