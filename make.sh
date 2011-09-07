@@ -693,7 +693,9 @@ buildipfire() {
   ipfiremake perl-DBD-mysql
   ipfiremake cacti
   ipfiremake icecc
-  ipfiremake openvmtools
+  if [ "${MACHINE:0:3}" != "arm" ]; then
+    ipfiremake openvmtools
+  fi
   ipfiremake nagiosql
   ipfiremake iftop
   ipfiremake motion
