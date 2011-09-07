@@ -97,6 +97,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Build Updated asix usb-lan driver
 	cd $(DIR_APP)/drivers/net/usb && tar xvf $(DIR_DL)/asix-3.5.0a.tar.bz2
 
+ifeq "$(MACHINE)" "arm"
+	# B43+B44 driver doesn't build on arm
+	cd $(DIR_APP) && sed -i -e "s|CONFIG_B43=m||g" config.mk
+	cd $(DIR_APP) && sed -i -e "s|CONFIG_B44=m||g" config.mk
+endif
+
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) \
 		KMODPATH_ARG='INSTALL_MOD_PATH=' KMODDIR=kernel install-modules
 
