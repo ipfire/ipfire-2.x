@@ -432,7 +432,7 @@ buildipfire() {
   #ipfiremake e1000e
   #ipfiremake igb
   ipfiremake pkg-config
-  #ipfiremake linux-atm
+  ipfiremake linux-atm
   ipfiremake cpio
 
   installmake strip
@@ -623,7 +623,7 @@ buildipfire() {
   ipfiremake strongswan
   ipfiremake lsof
   ipfiremake centerim
-  #ipfiremake br2684ctl
+  ipfiremake br2684ctl
   ipfiremake pcmciautils
   ipfiremake lm_sensors
   ipfiremake liboping
@@ -639,7 +639,7 @@ buildipfire() {
   ipfiremake sane
   ipfiremake netpbm
   ipfiremake phpSANE
-  #ipfiremake tunctl
+  ipfiremake tunctl
   ipfiremake nagios
   ipfiremake nagios_nrpe
   ipfiremake ebtables
