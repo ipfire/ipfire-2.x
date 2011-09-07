@@ -4,7 +4,8 @@ etc/sysctl.conf
 etc/system-release
 etc/issue
 etc/iproute2/rt_tables
-etc/rc.d/init.d/networking/red
+etc/rc.d/init.d/networking/red.up/50-ovpn
+etc/rc.d/init.d/networking/red.down/10-ovpn
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/outgoinggrp.cgi
