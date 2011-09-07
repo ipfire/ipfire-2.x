@@ -751,9 +751,11 @@ buildinstaller() {
   # Run installer scripts one by one
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
-  ipfiremake as86
-  ipfiremake mbr
-  ipfiremake memtest
+  if [ "${MACHINE:0:3}" != "arm" ]; then
+    ipfiremake as86
+    ipfiremake mbr
+    ipfiremake memtest
+  fi
   ipfiremake installer
   cp -f $BASEDIR/doc/COPYING $BASEDIR/build/install/initrd/
   installmake strip
