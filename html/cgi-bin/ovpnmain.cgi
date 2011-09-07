@@ -2549,7 +2549,8 @@ if ($confighash{$cgiparams{'KEY'}}) {
 
     } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
-	if ($cgiparams{'TYPE'} !~ /^(host|net)$/) {
+	
+  if ($cgiparams{'TYPE'} !~ /^(host|net)$/) {
 	    $errormessage = $Lang::tr{'connection type is invalid'};
 	    if ($cgiparams{'TYPE'} eq 'net') {
       unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
@@ -3026,6 +3027,33 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$confighash{$key}[31] = $cgiparams{'MTU'};
 # new fileds	
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+
+###
+# m.a.d n2n begin
+###
+	
+	if ($cgiparams{'TYPE'} eq 'net') {
+	
+	if (-e "/var/run/$confighash{$key}[1]n2n.pid") {
+  system('/usr/local/bin/openvpnctrl', '-kn2n', $confighash{$cgiparams{'KEY'}}[1]);
+	
+  &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+	my $key = $cgiparams{'KEY'};
+	if (! $key) {
+	    $key = &General::findhasharraykey (\%confighash);
+	    foreach my $i (0 .. 31) { $confighash{$key}[$i] = "";}
+	    }
+  $confighash{$key}[0] = 'on';
+  &General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+  
+  system('/usr/local/bin/openvpnctrl', '-sn2n', $confighash{$cgiparams{'KEY'}}[1]);
+	 }          
+  }
+
+###
+# m.a.d n2n end
+###	
+
 	if ($cgiparams{'EDIT_ADVANCED'} eq 'on') {
 	    $cgiparams{'KEY'} = $key;
 	    $cgiparams{'ACTION'} = $Lang::tr{'advanced'};
@@ -3699,24 +3727,24 @@ END
 ###       
        
        if ($confighash{$key}[3] eq 'net') {
-       my @tempovpnsubnet = split("\/",$confighash{$key}[27]);
-			 my @ovpnip = split /\./,$tempovpnsubnet[0];
-			 my $pingip = "";
-			 
-      		if ($confighash{$key}[6] eq 'server') {
-						$pingip = "$ovpnip[0].$ovpnip[1].$ovpnip[2].2";
-					} else {
-						$pingip = "$ovpnip[0].$ovpnip[1].$ovpnip[2].1";
-					}
-				
-         my $p = Net::Ping->new("udp",1);
-				
-         if ($p->ping($pingip)) {
-			   $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
-			   }	
-			   $p->close();	
-      
-       }	
+#        my @tempovpnsubnet = split("\/",$confighash{$key}[27]);
+#		  	 my @ovpnip = split /\./,$tempovpnsubnet[0];
+#			   my $pingip = "";
+#      	 if ($confighash{$key}[6] eq 'server') {
+#				 $pingip = "$ovpnip[0].$ovpnip[1].$ovpnip[2].2";
+#				 } else {
+#				 $pingip = "$ovpnip[0].$ovpnip[1].$ovpnip[2].1";
+#				 }
+#        my $p = Net::Ping->new("udp",1);
+#        if ($p->ping($pingip)) {
+#			   $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
+#			   }	
+#			   $p->close();	
+
+       if (-e "/var/run/$confighash{$key}[1]n2n.pid") {
+       $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
+       } 
+    }	
 
 	        my $cn;
     	    my @match = ();	
