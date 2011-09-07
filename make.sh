@@ -663,8 +663,8 @@ buildipfire() {
   ipfiremake vnstat
   ipfiremake vnstati
   ipfiremake iw
-  ipfiremake wpa_supplicant
-  ipfiremake hostapd
+  #ipfiremake wpa_supplicant
+  #ipfiremake hostapd
   ipfiremake urlgrabber
   ipfiremake syslinux
   ipfiremake tftpd
