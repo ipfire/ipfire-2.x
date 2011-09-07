@@ -666,7 +666,9 @@ buildipfire() {
   #ipfiremake wpa_supplicant
   #ipfiremake hostapd
   ipfiremake urlgrabber
-  ipfiremake syslinux
+  if [ "${MACHINE:0:3}" != "arm" ]; then
+    ipfiremake syslinux
+  fi
   ipfiremake tftpd
   ipfiremake cpufrequtils
   ipfiremake dbus
