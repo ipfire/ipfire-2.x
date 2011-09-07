@@ -704,8 +704,8 @@ buildipfire() {
   ipfiremake watchdog
   ipfiremake libpri
   ipfiremake dahdi
-  ipfiremake asterisk
-  ipfiremake lcr
+  #ipfiremake asterisk
+  #ipfiremake lcr
   ipfiremake usb_modeswitch
   ipfiremake usb_modeswitch_data
   ipfiremake zerofree
