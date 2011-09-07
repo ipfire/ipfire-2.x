@@ -189,7 +189,11 @@ prepareenv() {
     set +h
     LC_ALL=POSIX
     if [ -z $MAKETUNING ]; then
-       MAKETUNING="-j6"
+        if [ "${MACHINE:0:3}" = "arm" ]; then
+            MAKETUNING="-j2"
+        else
+            MAKETUNING="-j6"
+        fi
     fi
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
@@ -622,7 +626,7 @@ buildipfire() {
   ipfiremake strongswan
   ipfiremake lsof
   ipfiremake centerim
-  ipfiremake br2684ctl
+  #ipfiremake br2684ctl
   ipfiremake pcmciautils
   ipfiremake lm_sensors
   ipfiremake liboping
@@ -633,12 +637,12 @@ buildipfire() {
   ipfiremake igmpproxy
   ipfiremake fbset
   ipfiremake sdl
-  ipfiremake qemu
-  ipfiremake qemu-kqemu
+  #ipfiremake qemu
+  #ipfiremake qemu-kqemu
   ipfiremake sane
   ipfiremake netpbm
   ipfiremake phpSANE
-  ipfiremake tunctl
+  #ipfiremake tunctl
   ipfiremake nagios
   ipfiremake nagios_nrpe
   ipfiremake ebtables
@@ -649,7 +653,7 @@ buildipfire() {
   ipfiremake faad2
   ipfiremake ffmpeg
   ipfiremake videolan
-  ipfiremake vdr
+  #ipfiremake vdr
   ipfiremake w_scan
   ipfiremake icecast
   ipfiremake icegenerator
@@ -662,12 +666,14 @@ buildipfire() {
   ipfiremake vnstat
   ipfiremake vnstati
   ipfiremake iw
-  ipfiremake wpa_supplicant
-  ipfiremake hostapd
+  #ipfiremake wpa_supplicant
+  #ipfiremake hostapd
   ipfiremake urlgrabber
-  ipfiremake syslinux
+  if [ "${MACHINE:0:3}" != "arm" ]; then
+    ipfiremake syslinux
+  fi
   ipfiremake tftpd
-  ipfiremake cpufrequtils
+  #ipfiremake cpufrequtils
   ipfiremake dbus
   ipfiremake bluetooth
   ipfiremake gutenprint
@@ -690,7 +696,9 @@ buildipfire() {
   ipfiremake perl-DBD-mysql
   ipfiremake cacti
   ipfiremake icecc
-  ipfiremake openvmtools
+  if [ "${MACHINE:0:3}" != "arm" ]; then
+    ipfiremake openvmtools
+  fi
   ipfiremake nagiosql
   ipfiremake iftop
   ipfiremake motion
@@ -699,8 +707,8 @@ buildipfire() {
   ipfiremake watchdog
   ipfiremake libpri
   ipfiremake dahdi
-  ipfiremake asterisk
-  ipfiremake lcr
+  #ipfiremake asterisk
+  #ipfiremake lcr
   ipfiremake usb_modeswitch
   ipfiremake usb_modeswitch_data
   ipfiremake zerofree
@@ -746,9 +754,11 @@ buildinstaller() {
   # Run installer scripts one by one
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
-  ipfiremake as86
-  ipfiremake mbr
-  ipfiremake memtest
+  if [ "${MACHINE:0:3}" != "arm" ]; then
+    ipfiremake as86
+    ipfiremake mbr
+    ipfiremake memtest
+  fi
   ipfiremake installer
   cp -f $BASEDIR/doc/COPYING $BASEDIR/build/install/initrd/
   installmake strip

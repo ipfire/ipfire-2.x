@@ -77,6 +77,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+ifeq "$(MACHINE)" "arm"
+	cd $(DIR_APP) && sed -e "s/ceill/ceil/g" -i src/*.cpp
+endif
 	cd $(DIR_APP) && make DISABLE_JBIG=1 $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
