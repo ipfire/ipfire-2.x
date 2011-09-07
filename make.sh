@@ -650,7 +650,7 @@ buildipfire() {
   ipfiremake faad2
   ipfiremake ffmpeg
   ipfiremake videolan
-  ipfiremake vdr
+  #ipfiremake vdr
   ipfiremake w_scan
   ipfiremake icecast
   ipfiremake icegenerator
