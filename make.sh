@@ -666,8 +666,8 @@ buildipfire() {
   ipfiremake vnstat
   ipfiremake vnstati
   ipfiremake iw
-  #ipfiremake wpa_supplicant
-  #ipfiremake hostapd
+  ipfiremake wpa_supplicant
+  ipfiremake hostapd
   ipfiremake urlgrabber
   if [ "${MACHINE:0:3}" != "arm" ]; then
     ipfiremake syslinux
