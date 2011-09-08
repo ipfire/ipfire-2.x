@@ -51,7 +51,7 @@ init_networking() {
 	fi
 
 	/etc/rc.d/init.d/dnsmasq start
-	/etc/rc.d/init.d/static-routing start
+	/etc/rc.d/init.d/static-routes start
 }
 
 DO="${1}"
