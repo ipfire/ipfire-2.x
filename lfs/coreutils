@@ -105,14 +105,16 @@ ifeq "$(ROOT)" ""
 	#ln -sf ../../bin/install /usr/bin
 	mv -f /bin/uname /bin/uname.bak
 	echo '#!/bin/bash'				>  /bin/uname
-	echo '/bin/uname.bak $$* | sed 's/i.86/$(MACHINE)/g'' >> /bin/uname
+	echo 'kernel=`/bin/uname.bak -r`' >> /bin/uname
+	echo '/bin/uname.bak $$* | sed 's/i.86/$(MACHINE)/g' | sed "s/$$kernel/2.6.32.45-ipfire/g"' >> /bin/uname
 	chmod 755 /bin/uname
 	dircolors -p > /etc/dircolors
 else
 	rm /tools/bin/hostname
 	mv -f /tools/bin/uname /tools/bin/uname.bak
 	echo '#!/bin/bash'					>  /tools/bin/uname
-	echo '/tools/bin/uname.bak $$* | sed 's/i.86/$(MACHINE)/g''	>> /tools/bin/uname
+	echo 'kernel=`/tools/uname.bak -r`' >> /bin/uname
+	echo '/tools/uname.bak $$* | sed 's/i.86/$(MACHINE)/g' | sed "s/$$kernel/2.6.32.45-ipfire/g"' >> /bin/uname
 	chmod 755 /tools/bin/uname
 endif
 	@rm -rf $(DIR_APP)
