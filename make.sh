@@ -537,7 +537,6 @@ buildipfire() {
   ipfiremake wireless
   ipfiremake libsafe
   ipfiremake pakfire
-  ipfiremake java
   ipfiremake spandsp
   ipfiremake lzo
   ipfiremake openvpn
