@@ -30,8 +30,6 @@ THISAPP    = gcc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-CFLAGS     =
-CXXFLAGS   =
 
 # Normal build or /tools build.
 #
@@ -72,6 +70,8 @@ else
   EXTRA_INSTALL = 
 endif
 endif
+
+EXTRA_CONFIG += --build=$(BUILDTARGET) --host=$(BUILDTARGET) --target=$(BUILDTARGET)
 
 ###############################################################################
 # Top-level Rules
