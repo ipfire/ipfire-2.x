@@ -18,6 +18,7 @@ usr/local/bin/ipsecctrl
 usr/local/bin/openvpnctrl
 usr/local/bin/vpn-watch
 usr/local/bin/rebuildroutes
+usr/local/sbin/setup
 var/ipfire/main/routing
 var/ipfire/menu.d/30-network.menu
 opt/pakfire/etc/pakfire.conf
