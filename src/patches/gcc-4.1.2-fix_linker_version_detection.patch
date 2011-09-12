@@ -6,7 +6,7 @@ diff -Naur gcc-4.1.2.org/libstdc++-v3/configure gcc-4.1.2/libstdc++-v3/configure
  
      ldver=`$LD --version 2>/dev/null | head -1 | \
 -           sed -e 's/GNU ld version \([0-9.][0-9.]*\).*/\1/'`
-+           sed -e 's/GNU ld (GNU binutils) \([0-9.][0-9.]*\).*/\1/'`
++           sed -e 's/GNU ld .*) \([0-9.][0-9.]*\).*/\1/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
             $AWK -F. '{ if (NF<3) $3=0; print ($1*100+$2)*100+$3 }'`
