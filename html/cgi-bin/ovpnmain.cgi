@@ -558,32 +558,35 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "persist-tun\n";
   print SERVERCONF "persist-key\n";
   print SERVERCONF "script-security 2\n";
-  print SERVERCONF "# IP/DNS for the Server Gateway - g2g Mode\n"; 
+  print SERVERCONF "# IP/DNS for remote Server Gateway\n"; 
   print SERVERCONF "remote $cgiparams{'REMOTE'}\n";
   print SERVERCONF "float\n";
-  print SERVERCONF "# IP address of the n2n VPN Subnet\n"; 
+  print SERVERCONF "# IP adresses of the VPN Subnet\n"; 
   print SERVERCONF "ifconfig $ovsubnet.1 $ovsubnet.2\n"; 
-  print SERVERCONF "# Client gateway network\n"; 
+  print SERVERCONF "# Client Gateway Network\n"; 
   print SERVERCONF "route @remsubnet[0] @remsubnet[1]\n";
-  print SERVERCONF "# tun device\n"; 
+  print SERVERCONF "# tun Device\n"; 
   print SERVERCONF "dev tun\n"; 
-  print SERVERCONF "#Port and protocol\n"; 
+  print SERVERCONF "# Port and Protokol\n"; 
   print SERVERCONF "port $cgiparams{'DEST_PORT'}\n"; 
-  print SERVERCONF "proto $cgiparams{'PROTOCOL'}\n"; 
-  print SERVERCONF "# Paketsize\n"; 
+  
+  if ($cgiparams{'PROTOCOL'} eq 'tcp') {
+  print SERVERCONF "proto tcp-server\n";
+  print SERVERCONF "# Packet size\n";
   if ($cgiparams{'MTU'} eq '') {$tunmtu = '1400'} else {$tunmtu = $cgiparams{'MTU'}};
-  print SERVERCONF "tun-mtu $tunmtu\n"; 
+  print SERVERCONF "tun-mtu $tunmtu\n";
+  }
+  
   if ($cgiparams{'PROTOCOL'} eq 'udp') {
-  if ($cgiparams{'FRAGMENT'} eq '') {
-  print SERVERCONF "fragment 1300\r\n";
-  } else {
-  print SERVERCONF "fragment $cgiparams{'FRAGMENT'}\n"
+  print SERVERCONF "proto udp\n"; 
+  print SERVERCONF "# Paketsize\n";
+  if ($cgiparams{'MTU'} eq '') {$tunmtu = '1500'} else {$tunmtu = $cgiparams{'MTU'}};
+  print SERVERCONF "tun-mtu $tunmtu\n";
+  if ($cgiparams{'FRAGMENT'} ne '')  {print SERVERCONF "fragment $cgiparams{'FRAGMENT'}\n";}
+  if ($cgiparams{'MSSFIX'} eq 'on') {print SERVERCONF "mssfix\n";}
   }
-  if ($cgiparams{'MSSFIX'} eq 'on') {
-  print SERVERCONF "mssfix\n"; 
-  }
-  }
-  print SERVERCONF "# Auth Server\n"; 
+   
+  print SERVERCONF "# Auth. Server\n"; 
   print SERVERCONF "tls-server\n"; 
   print SERVERCONF "ca ${General::swroot}/ovpn/ca/cacert.pem\n"; 
   print SERVERCONF "cert ${General::swroot}/ovpn/certs/servercert.pem\n"; 
@@ -592,17 +595,17 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "# Cipher\n"; 
   print SERVERCONF "cipher AES-256-CBC\n"; 
   if ($cgiparams{'COMPLZO'} eq 'on') {
-   print SERVERCONF "# Enable compession\n";
+   print SERVERCONF "# Enable Compression\n";
    print SERVERCONF "comp-lzo\r\n";
      }
-  print SERVERCONF "# Debug level\n"; 
+  print SERVERCONF "# Debug Level\n"; 
   print SERVERCONF "verb 3\n"; 
   print SERVERCONF "# Tunnel check\n"; 
   print SERVERCONF "keepalive 10 60\n"; 
-  print SERVERCONF "# start as daemon\n"; 
+  print SERVERCONF "# Start as daemon\n"; 
   print SERVERCONF "daemon $cgiparams{'NAME'}n2n\n"; 
   print SERVERCONF "writepid /var/run/$cgiparams{'NAME'}n2n.pid\n"; 
-  print SERVERCONF "# Activate Management Interface on Port\n"; 
+  print SERVERCONF "# Activate Management Interface and Port\n"; 
   print SERVERCONF "#management localhost 4711\n";
   close(SERVERCONF);
 
@@ -633,48 +636,52 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print CLIENTCONF "persist-tun\n";
   print CLIENTCONF "persist-key\n";
   print CLIENTCONF "script-security 2\n";
-  print CLIENTCONF "# IP/DNS for the Server Gateway - g2g Mode\n"; 
+  print CLIENTCONF "# IP/DNS for remote Server Gateway\n"; 
   print CLIENTCONF "remote $cgiparams{'REMOTE'}\n";
   print CLIENTCONF "float\n";
-  print CLIENTCONF "# IP address of the n2n VPN Subnet\n"; 
+  print CLIENTCONF "# IP adresses of the VPN Subnet\n"; 
   print CLIENTCONF "ifconfig $ovsubnet.2 $ovsubnet.1\n"; 
-  print CLIENTCONF "# Server gateway network\n"; 
+  print CLIENTCONF "# Server Gateway Network\n"; 
   print CLIENTCONF "route @remsubnet[0] @remsubnet[1]\n"; 
-  print CLIENTCONF "# tun device\n"; 
+  print CLIENTCONF "# tun Device\n"; 
   print CLIENTCONF "dev tun\n"; 
-  print CLIENTCONF "#Port and protocol\n"; 
+  print CLIENTCONF "# Port and Protokol\n"; 
   print CLIENTCONF "port $cgiparams{'DEST_PORT'}\n"; 
-  print CLIENTCONF "proto $cgiparams{'PROTOCOL'}\n"; 
-  print CLIENTCONF "# Paketsize\n"; 
+
+  if ($cgiparams{'PROTOCOL'} eq 'tcp') {
+  print CLIENTCONF "proto tcp-client\n";
+  print CLIENTCONF "# Packet size\n";
   if ($cgiparams{'MTU'} eq '') {$tunmtu = '1400'} else {$tunmtu = $cgiparams{'MTU'}};
-  print CLIENTCONF "tun-mtu $tunmtu\n"; 
+  print CLIENTCONF "tun-mtu $tunmtu\n";
+  print CLIENTCONF "ns-cert-type server\n";
+  }
+  
   if ($cgiparams{'PROTOCOL'} eq 'udp') {
-  if ($cgiparams{'FRAGMENT'} eq '') {
-  print CLIENTCONF "fragment 1300\r\n";
-  } else {
-  print CLIENTCONF "fragment $cgiparams{'FRAGMENT'}\n"
+  print CLIENTCONF "proto udp\n"; 
+  print CLIENTCONF "# Paketsize\n";
+  if ($cgiparams{'MTU'} eq '') {$tunmtu = '1500'} else {$tunmtu = $cgiparams{'MTU'}};
+  print CLIENTCONF "tun-mtu $tunmtu\n";
+  if ($cgiparams{'FRAGMENT'} ne '')  {print CLIENTCONF "fragment $cgiparams{'FRAGMENT'}\n";}
+  if ($cgiparams{'MSSFIX'} eq 'on') {print CLIENTCONF "mssfix\n";}
   }
-  if ($cgiparams{'MSSFIX'} eq 'on') {
-  print CLIENTCONF "mssfix\n"; 
-  }
-  }
+     
   print CLIENTCONF "# Auth. Client\n"; 
   print CLIENTCONF "tls-client\n"; 
   print CLIENTCONF "# Cipher\n"; 
   print CLIENTCONF "cipher AES-256-CBC\n"; 
   print CLIENTCONF "pkcs12 ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}.p12\r\n";
   if ($cgiparams{'COMPLZO'} eq 'on') {
-   print CLIENTCONF "# Enable compession\n";
+   print CLIENTCONF "# Enable Compression\n";
    print CLIENTCONF "comp-lzo\r\n";
      }
   print CLIENTCONF "# Debug Level\n"; 
   print CLIENTCONF "verb 3\n"; 
   print CLIENTCONF "# Tunnel check\n"; 
   print CLIENTCONF "keepalive 10 60\n"; 
-  print CLIENTCONF "# Start sa daemon\n"; 
+  print CLIENTCONF "# Start as daemon\n"; 
   print CLIENTCONF "daemon $cgiparams{'NAME'}n2n\n";
   print CLIENTCONF "writepid /var/run/$cgiparams{'NAME'}n2n.pid\n"; 
-  print CLIENTCONF "# Activate Management Interface on Port\n"; 
+  print CLIENTCONF "# Activate Management Interface and Port\n"; 
   print CLIENTCONF "# management localhost 4711\n";
   close(CLIENTCONF);
 
@@ -1558,31 +1565,35 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    print CLIENTCONF "persist-tun\n";
    print CLIENTCONF "persist-key\n";
    print CLIENTCONF "script-security 2\n";
-   print CLIENTCONF "# IP/DNS for the Server Gateway - g2g Mode\n"; 
+   print CLIENTCONF "# IP/DNS for remote Server Gateway\n"; 
    print CLIENTCONF "remote $vpnsettings{'VPN_IP'}\n";
    print CLIENTCONF "float\n";
-   print CLIENTCONF "# IP adress of the VPN Subnet\n"; 
+   print CLIENTCONF "# IP adresses of the VPN Subnet\n"; 
    print CLIENTCONF "ifconfig $ovsubnet.2 $ovsubnet.1\n"; 
    print CLIENTCONF "# Server Gateway Network\n"; 
    print CLIENTCONF "route $remsubnet[0] $remsubnet[1]\n";
    print CLIENTCONF "# tun Device\n"; 
    print CLIENTCONF "dev $vpnsettings{'DDEVICE'}\n"; 
-   print CLIENTCONF "#Port and Protokoll\n"; 
+   print CLIENTCONF "# Port and Protokoll\n"; 
    print CLIENTCONF "port $confighash{$cgiparams{'KEY'}}[29]\n"; 
-   print CLIENTCONF "proto $confighash{$cgiparams{'KEY'}}[28]\n"; 
-   print CLIENTCONF "# Paketsize\n"; 
+   
+   if ($confighash{$cgiparams{'KEY'}}[28] eq 'tcp') {
+   print CLIENTCONF "proto tcp-client\n";
+   print CLIENTCONF "# Packet size\n";
    if ($confighash{$cgiparams{'KEY'}}[31] eq '') {$tunmtu = '1400'} else {$tunmtu = $confighash{$cgiparams{'KEY'}}[31]};
-   print CLIENTCONF "tun-mtu $tunmtu\n"; 
+   print CLIENTCONF "tun-mtu $tunmtu\n";
+   print CLIENTCONF "ns-cert-type server\n";
+   }
+  
    if ($confighash{$cgiparams{'KEY'}}[28] eq 'udp') {
-   if ($cgiparams{'FRAGMENT'} eq '') {
-   print CLIENTCONF "fragment 1300\r\n";
-   } else {
-   print CLIENTCONF "fragment $cgiparams{'FRAGMENT'}\n"
+   print CLIENTCONF "proto udp\n"; 
+   print CLIENTCONF "# Paketsize\n";
+   if ($confighash{$cgiparams{'KEY'}}[31] eq '') {$tunmtu = '1500'} else {$tunmtu = $confighash{$cgiparams{'KEY'}}[31]};
+   print CLIENTCONF "tun-mtu $tunmtu\n";
+   if ($cgiparams{'FRAGMENT'} ne '')  {print CLIENTCONF "fragment $cgiparams{'FRAGMENT'}\n";}
+   if ($confighash{$cgiparams{'KEY'}}[23] eq 'on') {print CLIENTCONF "mssfix\n";}
    }
-   if ($confighash{$cgiparams{'KEY'}}[23] eq 'on') {
-   print CLIENTCONF "mssfix\n"; 
-   }
-   }
+      
    print CLIENTCONF "# Auth. Client\n"; 
    print CLIENTCONF "tls-client\n"; 
    print CLIENTCONF "# Cipher\n"; 
@@ -1906,8 +1917,8 @@ ADV_ERROR:
      	<tr>
      	  <td class='base'>fragment <br></td>
      	  <td><input type='TEXT' name='FRAGMENT' value='$cgiparams{'FRAGMENT'}' size='10' /></td>
-     	  <td>Default: <span class="base">1300</span></td>
-   	  </tr>
+        <td>Default: <span class="base">1300</span></td>
+      </tr>
      	<tr>
      	  <td class='base'>mssfix</td>
      	  <td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
@@ -2315,7 +2326,8 @@ END
 my $complzoactive;
 my $mssfixactive;
 my $n2nfragment;
-my @n2nproto = split(/ /, (grep { /^proto/ } @firen2nconf)[0]);
+my @n2nproto2 = split(/ /, (grep { /^proto/ } @firen2nconf)[0]);
+my @n2nproto = split(/-/, @n2nproto2[1]);
 my @n2nport = split(/ /, (grep { /^port/ } @firen2nconf)[0]);
 my @n2ntunmtu = split(/ /, (grep { /^tun-mtu/ } @firen2nconf)[0]);
 my @n2ncomplzo = grep { /^comp-lzo/ } @firen2nconf;
@@ -2329,6 +2341,7 @@ my @n2novpnsub =  split(/\./,$n2novpnsuball[1]);
 my @n2nremsub = split(/ /, (grep { /^route/ } @firen2nconf)[0]);
 my @n2nlocalsub  = split(/ /, (grep { /^# remsub/ } @firen2nconf)[0]);
 
+
 ###
 # m.a.d delete CR and LF from arrays for this chomp doesnt work
 ###
@@ -2337,7 +2350,7 @@ $n2nremote[1] =~ s/\n|\r//g;
 $n2novpnsub[0] =~ s/\n|\r//g;
 $n2novpnsub[1] =~ s/\n|\r//g;
 $n2novpnsub[2] =~ s/\n|\r//g;
-$n2nproto[1] =~ s/\n|\r//g;
+$n2nproto[0] =~ s/\n|\r//g;
 $n2nport[1] =~ s/\n|\r//g;
 $n2ntunmtu[1] =~ s/\n|\r//g;
 $n2nremsub[1] =~ s/\n|\r//g;
@@ -2412,7 +2425,7 @@ foreach my $dkey (keys %confighash) {
   $confighash{$key}[25] = 'IPFire n2n Client';
 	$confighash{$key}[26] = 'red';
   $confighash{$key}[27] = "$n2novpnsub[0].$n2novpnsub[1].$n2novpnsub[2].0/255.255.255.0";
-  $confighash{$key}[28] = $n2nproto[1];
+  $confighash{$key}[28] = $n2nproto[0];
   $confighash{$key}[29] = $n2nport[1];
   $confighash{$key}[30] = $complzoactive;
   $confighash{$key}[31] = $n2ntunmtu[1];
@@ -2684,8 +2697,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		    if (&valid_dns_host($cgiparams{'REMOTE'})) {
 			$warnmessage = "$Lang::tr{'check vpn lr'} $cgiparams{'REMOTE'}. $Lang::tr{'dns check failed'}";
 			if ($cgiparams{'TYPE'} eq 'net') {
-      unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+
       }
 		    }
 		}
@@ -3012,11 +3024,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$confighash{$key}[8] = $cgiparams{'LOCAL_SUBNET'};
 	$confighash{$key}[10] = $cgiparams{'REMOTE'};
   $confighash{$key}[23] = $cgiparams{'MSSFIX'};
-  if ($cgiparams{'FRAGMENT'} eq '') {
-  $confighash{$key}[24] = '1300';
-  } else {
   $confighash{$key}[24] = $cgiparams{'FRAGMENT'};
-  }
 	$confighash{$key}[25] = $cgiparams{'REMARK'};
 	$confighash{$key}[26] = $cgiparams{'INTERFACE'};
 # new fields	
