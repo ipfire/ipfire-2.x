@@ -13,6 +13,7 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/routing.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 var/ipfire/langs/
 usr/local/bin/ipsecctrl
 usr/local/bin/openvpnctrl
