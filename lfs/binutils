@@ -24,7 +24,7 @@
 
 include Config
 
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	VER = 2.18
 else
 	VER = 2.17
@@ -72,7 +72,7 @@ else
 endif
 endif
 
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	EXTRA_CONFIG += \
 		--host=$(BUILDTARGET) \
 		--build=$(BUILDTARGET) \
@@ -89,7 +89,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	$(DL_FILE)_MD5 = 9d22ee4dafa3a194457caf4706f9cf01
 else
 	$(DL_FILE)_MD5 = e26e2e06b6e4bf3acf1dc8688a94c0d1

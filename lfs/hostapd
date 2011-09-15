@@ -82,7 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-cp /usr/src/linux/include/linux/netfilter/nfnetlink.h /usr/include/linux/netfilter/
 	-cp /usr/src/linux/include/linux/netfilter/nfnetlink_compat.h /usr/include/linux/netfilter/
 	cd $(DIR_APP)/hostapd && cp $(DIR_SRC)/config/hostapd/config ./.config
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP)/hostapd && sed -e "s/^CONFIG_DRIVER_MADWIFI=y/#&/" -i .config
 endif
 	cd $(DIR_APP)/hostapd && sed -e "s@/usr/local@/usr@g" -i Makefile

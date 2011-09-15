@@ -29,7 +29,7 @@ VER        = ipfire
 THISAPP    = cleanup-toolchain
 TARGET     = $(DIR_INFO)/$(THISAPP)-$(PASS)-tools
 
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	GCC_VER = 4.1.2
 else
 	GCC_VER = 4.0.4

@@ -24,7 +24,7 @@
 
 include Config
 
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	VER = 2.5
 else
 	VER = 2.3.6
@@ -55,10 +55,10 @@ else
   EXTRA_INSTALL =
 endif
 
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	# Disable hardware FP for ARM.
 	EXTRA_CONFIG += \
-		--build=$(MACHINE) \
+		--build=arm \
 		--host=$(BUILDTARGET) \
 		--without-fp \
 		--enable-add-ons=nptl,ports
@@ -76,7 +76,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 glibc-libidn-$(VER).tar.bz2 = $(DL_FROM)/glibc-libidn-$(VER).tar.bz2
 
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	$(DL_FILE)_MD5 = 1fb29764a6a650a4d5b409dda227ac9f
 	glibc-libidn-$(VER).tar.bz2_MD5 = 8787868ba8962d9b125997ec2f25ac01
 else
@@ -85,7 +85,7 @@ else
 endif
 
 # ARM needs glibc-ports
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	objects += glibc-ports-$(VER).tar.bz2
 	glibc-ports-$(VER).tar.bz2 = $(DL_FROM)/glibc-ports-$(VER).tar.bz2
 	glibc-ports-$(VER).tar.bz2_MD5 = 183f6d46e8fa5e4b2aff240ab1586c2e
@@ -120,7 +120,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/glibc-build
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && tar jxf $(DIR_DL)/glibc-ports-$(VER).tar.bz2
 	cd $(DIR_APP) && mv -v glibc-ports-$(VER) ports
 
@@ -139,7 +139,7 @@ ifeq "$(MACHINE)" "i586"
 endif
 	# This locale causes a loop on bash login - exclude it
 	cd $(DIR_APP) && sed -i '/vi_VN.TCVN/d' localedata/SUPPORTED
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.3 -o|' \
 		scripts/test-installation.pl
 else
