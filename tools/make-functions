@@ -226,8 +226,9 @@ if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE ]; then
 	CXX2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
 elif [ 'armv5tejl' = $MACHINE -o 'armv5tel' = $MACHINE ]; then
 	echo "`date -u '+%b %e %T'`: Machine is ARM (or equivalent)" >> $LOGFILE
-	MACHINE=arm
-	BUILDTARGET=arm-unknown-linux-gnueabi
+	MACHINE=armv5tel
+	MACHINE_TYPE=arm
+	BUILDTARGET=${MACHINE}-unknown-linux-gnueabi
 	CFLAGS="-O2 -march=armv5te -fomit-frame-pointer -pipe"
 	CXXFLAGS="$CFLAGS"
 	C2FLAGS="$CFLAGS"
@@ -282,7 +283,9 @@ entershell() {
 		CCACHE_COMPRESS=1 \
 		CCACHE_HASHDIR=1 \
 		KVER=$KVER \
-		BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+		BUILDTARGET="$BUILDTARGET" \
+		MACHINE="$MACHINE" \
+		MACHINE_TYPE="$MACHINE_TYPE" \
 		KGCC="ccache /usr/bin/gcc" \
 		/tools/bin/bash
 	if [ $? -ne 0 ]; then
@@ -328,12 +331,14 @@ lfsmakecommoncheck()
 	echo -ne "`date -u '+%b %e %T'`: Building $* " >> $LOGFILE
 
 	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+		MACHINE_TYPE="$MACHINE_TYPE" \
 		MESSAGE="$1\t " download  >> $LOGFILE 2>&1
 	if [ $? -ne 0 ]; then
 		exiterror "Download error in $1"
 	fi
 
 	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+		MACHINE_TYPE="$MACHINE_TYPE" \
 		MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
 	if [ $? -ne 0 ]; then
 		exiterror "md5sum error in $1, check file in cache or signature"
@@ -350,6 +355,7 @@ lfsmake1() {
 
 	cd $BASEDIR/lfs && make -f $* 	BUILDTARGET=$BUILDTARGET \
 						MACHINE=$MACHINE \
+						MACHINE_TYPE=$MACHINE_TYPE \
 						LFS_BASEDIR=$BASEDIR \
 						ROOT=$LFS \
 						KVER=$KVER \
@@ -383,6 +389,7 @@ lfsmake2() {
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						MACHINE_TYPE="$MACHINE_TYPE" \
 						IPFVER="$IPFVER" \
 						/tools/bin/bash -x -c "cd /usr/src/lfs && \
 						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
@@ -415,6 +422,7 @@ ipfiremake() {
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						MACHINE_TYPE="$MACHINE_TYPE" \
 						IPFVER="$IPFVER" \
 						/bin/bash -x -c "cd /usr/src/lfs && \
 						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
@@ -446,6 +454,7 @@ ipfiredist() {
 					CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
 					KVER=$KVER IPFVER="$IPFVER" \
 					BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+					MACHINE_TYPE="$MACHINE_TYPE" \
 					/bin/bash -x -c "cd /usr/src/lfs && \
 					make -f $1 LFS_BASEDIR=/usr/src dist" >>$LOGFILE 2>&1
 
@@ -477,6 +486,7 @@ installmake() {
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
 						KVER=$KVER IPFVER="$IPFVER" \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						MACHINE_TYPE="$MACHINE_TYPE" \
 		    /bin/bash -x -c "cd /usr/src/lfs && \
 		    make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 
