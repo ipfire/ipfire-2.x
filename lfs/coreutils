@@ -40,7 +40,7 @@ ifeq "$(ROOT)" ""
   EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  EXTRA_CONFIG = --prefix=/tools --disable-nls --host=$(MACHINE)
+  EXTRA_CONFIG = --prefix=/tools --disable-nls
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
