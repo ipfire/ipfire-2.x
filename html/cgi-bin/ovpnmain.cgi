@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -33,8 +33,8 @@ require "${General::swroot}/header.pl";
 require "${General::swroot}/countries.pl";
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::colourgreen} );
 undef (@dummy);
@@ -2607,49 +2607,49 @@ if ($confighash{$cgiparams{'KEY'}}) {
 if ($cgiparams{'TYPE'} eq 'net') {
 		
     if ($cgiparams{'DEST_PORT'} eq  $vpnsettings{'DDEST_PORT'}) {
-			$errormessage = 'The Destination Port is used by the OpenVPN Server please change';
+			$errormessage = $Lang::tr{'openvpn destination port used'};
 			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
       goto VPNCONF_ERROR;			
 		}
 
     if ($cgiparams{'OVPN_SUBNET'} eq  $vpnsettings{'DOVPN_SUBNET'}) {
-			$errormessage = 'The OpenVPN Subnet is used by the OpenVPN Server please change';
+			$errormessage = $Lang::tr{'openvpn subnet is used'};
 			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 			goto VPNCONF_ERROR;			
 		}
 
 	  if (($cgiparams{'PROTOCOL'} eq 'tcp') && ($cgiparams{'MSSFIX'} eq 'on')) {
-	    $errormessage = 'mssfix only allowed with udp';
+	    $errormessage = $Lang::tr{'openvpn mssfix allowed with udp'};
 	    unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 	    goto VPNCONF_ERROR;
     }
      
     if (($cgiparams{'PROTOCOL'} eq 'tcp') && ($cgiparams{'FRAGMENT'} ne '')) {
-	    $errormessage = 'fragment only allowed with udp';
+	    $errormessage = $Lang::tr{'openvpn fragment allowed with udp'};
 	    unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 	    goto VPNCONF_ERROR;
     }
 
     if ( &validdotmask ($cgiparams{'LOCAL_SUBNET'}))  {
-		  $errormessage = 'Prefix not allowed for Local Subnet. Please enter Subnet Mask e.g. 255.255.255.0';
+		  $errormessage = $Lang::tr{'openvpn prefix local subnet'};
 		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 		  goto VPNCONF_ERROR;
 		} 
     
     if ( &validdotmask ($cgiparams{'OVPN_SUBNET'}))  {
-		  $errormessage = 'Prefix not allowed for OpenVPN Subnet. Please enter Subnet Mask e.g. 255.255.255.0';
+		  $errormessage = $Lang::tr{'openvpn prefix openvpn subnet'};
 		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 		  goto VPNCONF_ERROR;
 		} 
     
     if ( &validdotmask ($cgiparams{'REMOTE_SUBNET'}))  {
-		  $errormessage = 'Prefix not allowed for Remote Subnet. Please enter Subnet Mask e.g. 255.255.255.0';
+		  $errormessage = $Lang::tr{'openvpn prefix remote subnet'};
 		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 		  goto VPNCONF_ERROR;
@@ -3182,8 +3182,8 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		    <td width='25%'>&nbsp;</td>
 		    <td width='25%'>&nbsp;</td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'Act as'}</td>
-		    <td><select name='SIDE'><option value='server' $selected{'SIDE'}{'server'}>OpenVPN Server</option>
-					    <option value='client' $selected{'SIDE'}{'client'}>OpenVPN Client</option></select></td>
+		    <td><select name='SIDE'><option value='server' $selected{'SIDE'}{'server'}>$Lang::tr{'openvpn server'}</option>
+					    <option value='client' $selected{'SIDE'}{'client'}>$Lang::tr{'openvpn client'}</option></select></td>
  		    <td class='boldbase'>$Lang::tr{'remote host/ip'}:</td>
 		    <td><input type='TEXT' name='REMOTE' value='$cgiparams{'REMOTE'}' /></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'local subnet'}</td>
@@ -3205,9 +3205,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		      <tr><td class='boldbase' nowrap='nowrap'>mssfix &nbsp;<img src='/blob.gif' /></td>
 		    <td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
 		    
-		      <tr><td class='boldbase' nowrap='nowrap'>Fragment &nbsp;<img src='/blob.gif' /></td>
+		      <tr><td class='boldbase' nowrap='nowrap'>fragment &nbsp;<img src='/blob.gif' /></td>
 		    <td><input type='TEXT' name='FRAGMENT' VALUE='$cgiparams{'FRAGMENT'}'size='5' /></td>
-		    <td>Default: <span class="base">1300</span></td>
+		    <td>$Lang::tr{'openvpn default'}: <span class="base">1300</span></td>
 		    
 	        <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;<img src='/blob.gif' /></td>
 		    <td> <input type='TEXT' name='MTU' VALUE='$cgiparams{'MTU'}'size='5' /></TD>
@@ -3727,7 +3727,7 @@ END
 	my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
 
 	if ($confighash{$key}[0] eq 'off') {
-	    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+	    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'openvpn disabled'}</font></b></td></tr></table>";
 	} else {
 
 ###
@@ -3750,7 +3750,7 @@ END
 #			   $p->close();	
 
        if (-e "/var/run/$confighash{$key}[1]n2n.pid") {
-       $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
+       $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'openvpn enabled'}</font></b></td></tr></table>";
        } 
     }	
 

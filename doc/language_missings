@@ -31,6 +31,16 @@
 < minute
 < ntp common settings
 < ntp sync
+< openvpn default
+< openvpn destination port used
+< openvpn disabled
+< openvpn enabled
+< openvpn fragment allowed with udp
+< openvpn mssfix allowed with udp
+< openvpn prefix local subnet
+< openvpn prefix openvpn subnet
+< openvpn prefix remote subnet
+< openvpn subnet is used
 < snort working
 < static routes
 < system information
@@ -83,6 +93,16 @@
 < fireinfo why read more
 < fireinfo your profile id
 < minute
+< openvpn default
+< openvpn destination port used
+< openvpn disabled
+< openvpn enabled
+< openvpn fragment allowed with udp
+< openvpn mssfix allowed with udp
+< openvpn prefix local subnet
+< openvpn prefix openvpn subnet
+< openvpn prefix remote subnet
+< openvpn subnet is used
 < outgoing firewall add ip group
 < outgoing firewall add mac group
 < outgoing firewall edit ip group
@@ -117,6 +137,16 @@
 < extrahd unable to write
 < extrahd you cant mount
 < minute
+< openvpn default
+< openvpn destination port used
+< openvpn disabled
+< openvpn enabled
+< openvpn fragment allowed with udp
+< openvpn mssfix allowed with udp
+< openvpn prefix local subnet
+< openvpn prefix openvpn subnet
+< openvpn prefix remote subnet
+< openvpn subnet is used
 < static routes
 < vpn keyexchange
 ############################################################################
@@ -126,6 +156,8 @@
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
 < Add a route
+< day-graph
+< disk access per
 < Edit an existing route
 < extrahd because there is already a device mounted
 < extrahd cant umount
@@ -136,6 +168,23 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< frequency
+< hour-graph
+< incoming traffic in bytes per second
 < minute
+< month-graph
+< openvpn default
+< openvpn destination port used
+< openvpn disabled
+< openvpn enabled
+< openvpn fragment allowed with udp
+< openvpn mssfix allowed with udp
+< openvpn prefix local subnet
+< openvpn prefix openvpn subnet
+< openvpn prefix remote subnet
+< openvpn subnet is used
+< outgoing traffic in bytes per second
 < static routes
 < vpn keyexchange
+< week-graph
+< year-graph
