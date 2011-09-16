@@ -16,8 +16,8 @@ usr/lib/perl5/site_perl/5.12.3/Net/Server/Proto/UDP.pm
 usr/lib/perl5/site_perl/5.12.3/Net/Server/Proto/UNIX.pm
 usr/lib/perl5/site_perl/5.12.3/Net/Server/SIG.pm
 usr/lib/perl5/site_perl/5.12.3/Net/Server/Single.pm
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Net/Server
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Net/Server/.packlist
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/Server
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/Server/.packlist
 #usr/share/man/man3/Net::Server.3
 #usr/share/man/man3/Net::Server::Daemonize.3
 #usr/share/man/man3/Net::Server::Fork.3
