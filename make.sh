@@ -437,9 +437,6 @@ buildipfire() {
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
-
-  installmake strip
-
   ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
