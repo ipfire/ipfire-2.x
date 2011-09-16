@@ -478,7 +478,7 @@ buildipfire() {
   ipfiremake arping
   ipfiremake beep
   ipfiremake bind
-  ipfiremake cdrtools
+  ipfiremake dvdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
