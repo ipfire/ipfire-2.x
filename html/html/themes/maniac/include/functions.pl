@@ -369,6 +369,9 @@ END
 
 		<br class="clear" />	
 		<div id="footer" class="fixed">
+		<br>
+		<img height=70 src=/images/IPFire.png>&nbsp&nbsp&nbsp&nbsp<img height=70 src=/images/linuxUSER.png>
+		<br>
 			<b>Status:</b> $status <b>Uptime:</b>$uptime
 END
 ;
