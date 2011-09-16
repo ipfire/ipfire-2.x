@@ -431,9 +431,9 @@ buildipfire() {
 #  ipfiremake r8169
 #  ipfiremake r8168
 #  ipfiremake r8101
-  ipfiremake e1000
-  ipfiremake e1000e
-  ipfiremake igb
+  #ipfiremake e1000
+  #ipfiremake e1000e
+  #ipfiremake igb
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
