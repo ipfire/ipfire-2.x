@@ -73,8 +73,8 @@ for i in $( ls -v ${rc_base}/rc${runlevel}.d/S* 2> /dev/null)
 do
 	suffix=${i#$rc_base/rc$runlevel.d/S[0-9][0-9]}
 
-	# Skip if initskript is disabled at bootprompt
-	grep "skipinit=$suffix" /proc/cmdline > /dev/null && continue
+	# Skip if initscript is disabled at bootprompt
+	grep "skipinit=$suffix" /proc/cmdline >/dev/null 2>&1 && continue
 
 	if [ "${previous}" != "N" ]; then
 		stop=$rc_base/rc$runlevel.d/K[0-9][0-9]$suffix
