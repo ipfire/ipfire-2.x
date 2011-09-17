@@ -2842,9 +2842,9 @@ usr/share/terminfo/v/vt100-w-am
 usr/share/terminfo/v/vt100-w-nam
 usr/share/terminfo/v/vt100-w-nav
 usr/share/terminfo/v/vt100nam
-#usr/share/terminfo/v/vt102
-#usr/share/terminfo/v/vt102-nsgr
-#usr/share/terminfo/v/vt102-w
+usr/share/terminfo/v/vt102
+usr/share/terminfo/v/vt102-nsgr
+usr/share/terminfo/v/vt102-w
 #usr/share/terminfo/v/vt125
 #usr/share/terminfo/v/vt131
 #usr/share/terminfo/v/vt132
