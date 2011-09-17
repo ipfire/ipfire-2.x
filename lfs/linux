@@ -165,6 +165,12 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_ipg-fix-driver-name.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
+ifeq "$(MACHINE)" "arm"
+	# Add dreamplug support on ARM
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45-arm_kirkwood_dreamplug.patch
+endif
+
+
 ifeq "$(HEADERS)" "1"
 	# Install the header files
 	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) INSTALL_HDR_PATH=dest headers_install
@@ -187,10 +193,11 @@ ifeq "$(XEN)" "1"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
 	cd $(DIR_APP) && cp -v arch/i386/boot/vmlinuz /boot/vmlinuz-$(VER)-$(VERSUFIX)
 else
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
 ifeq "$(MACHINE)" "arm"
-	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage
+	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 else
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 endif
 endif
