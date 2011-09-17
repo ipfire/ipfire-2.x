@@ -130,16 +130,13 @@ define POSTBUILD
 		else LFS_SCRIPT=$(firstword $(MAKEFILE_LIST)); \
 		fi; \
 		echo $(LFS_SCRIPT); \
-		ROOTFILE=`find $(DIR_SRC)/config/rootfiles/common $(DIR_SRC)/config/rootfiles/packages -maxdepth 1 -type f -name $$LFS_SCRIPT`; \
-		if [ "$$ROOTFILE" = "" ]; then \
-			ROOTFILE=`find $(DIR_SRC)/config/rootfiles/ver_$(IPFVER) -type f -name $$LFS_SCRIPT`; \
-		fi; \
+		ROOTFILE=$$(find $(DIR_SRC)/config/rootfiles/{common,packages}/{$(TARGET),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
 		if [ "$$ROOTFILE" = "" ]; then \
 			touch $(TARGET)_missing_rootfile; \
 			ROOTFILE=$(TARGET)_missing_rootfile ; \
 			echo "error $$LFS_SCRIPT not found in config/rootfiles"; \
 		fi; \
-		sed "s/KVER/$(KVER)/g" $$ROOTFILE > $(TARGET)_rootfile; \
+		sed -e "s/BUILDTARGET/$(BUILDTARGET)/g" -e "s/KVER/$(KVER)/g" -e "s/MACHINE/$(MACHINE)/g" $$ROOTFILE > $(TARGET)_rootfile; \
 		for line in `cat $(TARGET)_diff`; do \
 			if grep -qG "^#$$line$$" $(TARGET)_rootfile; then echo "#$$line" >> $(TARGET); \
 			elif grep -qG "^$$line$$" $(TARGET)_rootfile ; then echo "$$line" >> $(TARGET); \
@@ -195,7 +192,7 @@ define PAK
 		/install/packages/package; \
 	fi
 	cp -v /usr/src/config/rootfiles/packages/$(PROG) /install/packages/package/ROOTFILES
-	sed -e 's/KVER/$(KVER)/g' -i /install/packages/package/ROOTFILES
+	sed -e 's/BUILDTARGET/$(BUILDTARGET)/g' -e 's/KVER/$(KVER)/g' -e 's/MACHINE/$(MACHINE)/g' -i /install/packages/package/ROOTFILES
 	sed -e 's/xxxKVERxxx/$(KVER)/g' -i /install/packages/package/install.sh
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
 	cd / && tar cf /install/packages/package/files.tmp --files-from=/install/packages/package/ROOTFILES --exclude='#*' \

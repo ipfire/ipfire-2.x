@@ -162,7 +162,6 @@ $(TARGET) :
 	ln -sf ../init.d/mountkernfs /etc/rc.d/rcsysinit.d/S00mountkernfs
 	ln -sf ../init.d/modules     /etc/rc.d/rcsysinit.d/S05modules
 	ln -sf ../init.d/udev        /etc/rc.d/rcsysinit.d/S10udev
-	ln -sf ../init.d/checkfstab  /etc/rc.d/rcsysinit.d/S19checkfstab
 	ln -sf ../init.d/waitdrives  /etc/rc.d/rcsysinit.d/S19waitdrives
 	ln -sf ../init.d/swap        /etc/rc.d/rcsysinit.d/S20swap
 	ln -sf ../init.d/checkfs     /etc/rc.d/rcsysinit.d/S30checkfs
@@ -199,5 +198,12 @@ $(TARGET) :
 	for i in green blue orange; do \
 		ln -sf any /etc/rc.d/init.d/networking/$$i; \
 	done
-	
+
+	# ARM does not need checkfstab
+ifeq "$(MACHINE_TYPE)" "arm"
+	rm -vf /etc/rc.d/init.d/checkfstab
+else
+	ln -sf ../init.d/checkfstab  /etc/rc.d/rcsysinit.d/S19checkfstab
+endif
+
 	@$(POSTBUILD)

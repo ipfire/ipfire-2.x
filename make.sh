@@ -255,7 +255,7 @@ buildtoolchain() {
     lfsmake1 make	PASS=1
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
-    if [ "${MACHINE}" = "arm" ]; then
+    if [ "${MACHINE_TYPE}" = "arm" ]; then
         lfsmake1 linux TOOLS=1 HEADERS=1
     else
         lfsmake1 linux-libc-header
@@ -294,7 +294,7 @@ buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
     lfsmake2 stage2
-    if [ "${MACHINE}" = "arm" ]; then
+    if [ "${MACHINE_TYPE}" = "arm" ]; then
         lfsmake2 linux HEADERS=1
     else
         lfsmake2 linux-libc-header
@@ -354,7 +354,7 @@ buildbase() {
     lfsmake2 vim
 
     # ARM cannot use grub.
-    if [ "${MACHINE}" != "arm" ]; then
+    if [ "${MACHINE_TYPE}" != "arm" ]; then
       lfsmake2 grub
     fi
 }
@@ -376,12 +376,12 @@ buildipfire() {
   ipfiremake linux-firmware
   ipfiremake zd1211-firmware
 
-  if [ "${MACHINE}" == "arm" ]; then
+  if [ "${MACHINE_TYPE}" == "arm" ]; then
 	ipfiremake u-boot
   fi
 
   # The xen and PAE kernels are only available for x86
-  if [ "${MACHINE}" != "arm" ]; then
+  if [ "${MACHINE_TYPE}" != "arm" ]; then
     ipfiremake linux			XEN=1
     ipfiremake kqemu			XEN=1
     ipfiremake v4l-dvb			XEN=1
@@ -418,7 +418,7 @@ buildipfire() {
   ipfiremake linux
   ipfiremake v4l-dvb
 
-  if [ "${MACHINE}" != "arm" ]; then
+  if [ "${MACHINE_TYPE}" != "arm" ]; then
     # Virtualization helpers are only available for x86.
     ipfiremake kqemu
     ipfiremake kvm-kmod
@@ -435,15 +435,12 @@ buildipfire() {
 #  ipfiremake r8169
 #  ipfiremake r8168
 #  ipfiremake r8101
-  ipfiremake e1000
-  ipfiremake e1000e
-  ipfiremake igb
+  #ipfiremake e1000
+  #ipfiremake e1000e
+  #ipfiremake igb
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
-
-  installmake strip
-
   ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
@@ -485,7 +482,7 @@ buildipfire() {
   ipfiremake arping
   ipfiremake beep
   ipfiremake bind
-  ipfiremake cdrtools
+  ipfiremake dvdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
@@ -673,7 +670,7 @@ buildipfire() {
   ipfiremake wpa_supplicant
   ipfiremake hostapd
   ipfiremake urlgrabber
-  if [ "${MACHINE:0:3}" != "arm" ]; then
+  if [ "${MACHINE_TYPE}" != "arm" ]; then
     ipfiremake syslinux
   fi
   ipfiremake tftpd
@@ -700,7 +697,7 @@ buildipfire() {
   ipfiremake perl-DBD-mysql
   ipfiremake cacti
   ipfiremake icecc
-  if [ "${MACHINE:0:3}" != "arm" ]; then
+  if [ "${MACHINE_TYPE}" != "arm" ]; then
     ipfiremake openvmtools
   fi
   ipfiremake nagiosql
@@ -758,7 +755,7 @@ buildinstaller() {
   # Run installer scripts one by one
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
-  if [ "${MACHINE:0:3}" != "arm" ]; then
+  if [ "${MACHINE_TYPE}" != "arm" ]; then
     ipfiremake as86
     ipfiremake mbr
     ipfiremake memtest
@@ -795,11 +792,13 @@ buildpackages() {
   $0 git log
 
   # Create images for install
-	ipfiremake cdrom ED=$IPFVER
+  ipfiremake cdrom ED=$IPFVER
 
   # Check if there is a loop device for building in virtual environments
-  if [ $BUILD_IMAGES == 1 ] &&  ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
-	ipfiremake usb-stick ED=$IPFVER
+  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
+	if [ "${MACHINE_TYPE}" != "arm" ]; then
+		ipfiremake usb-stick ED=$IPFVER
+	fi
 	ipfiremake flash-images ED=$IPFVER
   fi
 

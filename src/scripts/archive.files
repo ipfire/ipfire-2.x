@@ -1,8 +1,8 @@
-#!/usr/bin/perl
+#!/bin/bash
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007, 2008 Michael Tremer & Christian Schmidt                 #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,28 +19,27 @@
 #                                                                             #
 ###############################################################################
 
-package Conf;
+FILELIST=
 
-$version = "@VERSION@";
+for dir in $@; do
+	for exclude in ${dir}/${MACHINE}/*; do
+		EXCLUDE="$EXCLUDE $exclude"
+	done
 
-$mainserver = "pakfire.ipfire.org";
+	FILELIST="${FILELIST} ${EXCLUDE}"
 
-$cachedir = "/opt/pakfire/cache";
-$dbdir = "/opt/pakfire/db";
-$coredir = "/opt/pakfire/db/core";
-$tmpdir = "/opt/pakfire/tmp";
-$logdir = "/opt/pakfire/logs";
+	for include in ${dir}/*; do
+		[ -d ${include} ] && continue
+		IN=true
+		for exclude in ${EXCLUDE}; do
+			if [ "$(basename ${exclude})" = "$(basename ${include})" ]; then
+				IN=false
+				break
+			fi
+		done
+		${IN} && FILELIST="${FILELIST} ${include}"
+	done
+done
 
-if ( -e "$dbdir/uuid" ) {
-	$uuid = `cat $dbdir/uuid`;
-	chomp($uuid);
-}
-
-if ( -e "$coredir/mine" ) {
-	$core_mine = `cat $coredir/mine`;
-	chomp($core_mine);
-} else {
-	$core_mine = "0";
-}
-
-1;
+cat ${FILELIST} | grep -v ^# | sort | uniq | \
+	sed -e "s/KVER/${KVER}/g" -e "s/MACHINE/${MACHINE}/g" -e "s/BUILDTARGET/${BUILDTARGET}/g"

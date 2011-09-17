@@ -40,7 +40,7 @@ ifeq "$(ROOT)" ""
   EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  EXTRA_CONFIG = --prefix=/tools --disable-nls --host=$(MACHINE)
+  EXTRA_CONFIG = --prefix=/tools --disable-nls
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
@@ -107,15 +107,13 @@ ifeq "$(ROOT)" ""
 	ln -sf test /bin/[
 	#ln -sf ../../bin/install /usr/bin
 	mv -f /bin/uname /bin/uname.bak
-	echo '#!/bin/bash'				>  /bin/uname
-	echo '/bin/uname.bak $$* | sed 's/i.86/$(MACHINE)/g'' >> /bin/uname
+	cp -vf $(DIR_SRC)/src/scripts/uname /bin/uname
 	chmod 755 /bin/uname
 	dircolors -p > /etc/dircolors
 else
 	rm /tools/bin/hostname
 	mv -f /tools/bin/uname /tools/bin/uname.bak
-	echo '#!/bin/bash'					>  /tools/bin/uname
-	echo '/tools/bin/uname.bak $$* | sed 's/i.86/$(MACHINE)/g''	>> /tools/bin/uname
+	cp -vf $(DIR_SRC)/src/scripts/uname /tools/bin/uname
 	chmod 755 /tools/bin/uname
 endif
 	@rm -rf $(DIR_APP)

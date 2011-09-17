@@ -29,6 +29,12 @@ VER = ipfire
 THISAPP    = cdrom
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+ifeq "$(MACHINE_TYPE)" "arm"
+	TAR_OPTIONS =
+else
+	TAR_OPTIONS = --lzma
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -47,18 +53,20 @@ md5 :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf /install/cdrom /tmp/*
+	mkdir -p /install/cdrom/doc
 
-	#Clear mtab (prevents .journal problems)
+	# Clear mtab (prevents .journal problems)
+	rm -vf /etc/mtab
 	echo > /etc/mtab
+
+	# Create filelist for packaging.
+	BUILDTARGET="$(BUILDTARGET)" MACHINE="$(MACHINE)" KVER="$(KVER)" \
+		$(DIR_SRC)/src/scripts/archive.files \
+		$(DIR_SRC)/config/rootfiles/common \
+		> /tmp/ROOTFILES
 
 	# Compress root filesystem
 	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
-	mkdir -p /install/cdrom/doc
-	find $(DIR_SRC)/config/rootfiles/common -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
-	find $(DIR_SRC)/config/rootfiles/ver_$(ED) -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
-	find $(DIR_SRC)/config/rootfiles/core/*/files -maxdepth 1 -type f | xargs cat >> /tmp/ROOTFILES
-	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
-
 	tar -c -C / --files-from=/tmp/ROOTFILES \
 		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
 		--exclude='proc/*' --exclude='tmp/ROOTFILES'
@@ -66,7 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
 	@mkdir /tmp/sys
-	cd /tmp && tar  cf /install/cdrom/$(SNAME)-$(VERSION).tlz --lzma * && rm -rf *
+	cd /tmp && tar  cf /install/cdrom/$(SNAME)-$(VERSION).tlz $(TAR_OPTIONS) * && rm -rf *
 
 	# Other files
 	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt > /install/cdrom/README.txt
@@ -78,17 +86,25 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp $(DIR_SRC)/config/syslinux/unattended.conf    /install/cdrom/boot/unattended.conf
 
 	# Make the ISO
-	mkdir -p /install/cdrom/boot/isolinux; \
-	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog; \
-	cp /install/images/initrd                   /install/cdrom/boot/isolinux/instroot; \
-	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz; \
-	cp $(DIR_SRC)/config/syslinux/syslinux.cfg  /install/cdrom/boot/isolinux/isolinux.cfg; \
-	cp $(DIR_SRC)/config/syslinux/boot.msg      /install/cdrom/boot/isolinux/boot.msg; \
-	cp $(DIR_SRC)/config/syslinux/splash.lss    /install/cdrom/boot/isolinux/splash.lss; \
-	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest; \
-	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin; \
+	mkdir -p /install/cdrom/boot/isolinux
+	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog
+	cp /install/images/initrd                   /install/cdrom/boot/isolinux/instroot
+	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
+ifneq "$(MACHINE_TYPE)" "arm"
+	cp $(DIR_SRC)/config/syslinux/syslinux.cfg  /install/cdrom/boot/isolinux/isolinux.cfg
+	cp $(DIR_SRC)/config/syslinux/boot.msg      /install/cdrom/boot/isolinux/boot.msg
+	cp $(DIR_SRC)/config/syslinux/splash.lss    /install/cdrom/boot/isolinux/splash.lss
+	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
+	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin
+endif
 	cd /install/cdrom && find -type f ! -name md5sum.txt | grep -v "./boot" | \
-						xargs md5sum > md5sum.txt; \
+						xargs md5sum > md5sum.txt
+
+ifeq "$(MACHINE_TYPE)" "arm"
+	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
+		. > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-$(ED)-core$(CORE).iso
+else
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
     	    -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
     	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-$(ED)-core$(CORE).iso
+endif

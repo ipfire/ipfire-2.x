@@ -12,10 +12,10 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/arch
 #lib/modules/KVER-ipfire/kernel/arch/x86
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto
-#lib/modules/KVER-ipfire/kernel/arch/x86/crypto/aes-i586.ko
+#lib/modules/KVER-ipfire/kernel/arch/x86/crypto/aes-MACHINE.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/crc32c-intel.ko
-#lib/modules/KVER-ipfire/kernel/arch/x86/crypto/salsa20-i586.ko
-#lib/modules/KVER-ipfire/kernel/arch/x86/crypto/twofish-i586.ko
+#lib/modules/KVER-ipfire/kernel/arch/x86/crypto/salsa20-MACHINE.ko
+#lib/modules/KVER-ipfire/kernel/arch/x86/crypto/twofish-MACHINE.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/kernel
 #lib/modules/KVER-ipfire/kernel/arch/x86/kernel/apm.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/kernel/cpu

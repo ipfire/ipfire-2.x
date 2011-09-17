@@ -63,7 +63,7 @@ else
 	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
 endif
 
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	HEADERS_ARCH=arm
 else
 	HEADERS_ARCH=x86
@@ -193,7 +193,7 @@ ifeq "$(XEN)" "1"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
 	cd $(DIR_APP) && cp -v arch/i386/boot/vmlinuz /boot/vmlinuz-$(VER)-$(VERSUFIX)
 else
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage
 	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 else
@@ -242,7 +242,7 @@ endif
 	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
 	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
 
-ifneq "$(MACHINE)" "arm"
+ifneq "$(MACHINE_TYPE)" "arm"
 	# Disable geode_aes modul
 	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko \
            /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko.off

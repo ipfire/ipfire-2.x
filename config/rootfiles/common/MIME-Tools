@@ -24,9 +24,9 @@ usr/lib/perl5/site_perl/5.12.3/MIME/Parser/Results.pm
 usr/lib/perl5/site_perl/5.12.3/MIME/Tools.pm
 usr/lib/perl5/site_perl/5.12.3/MIME/WordDecoder.pm
 usr/lib/perl5/site_perl/5.12.3/MIME/Words.pm
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/MIME
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/MIME/tools
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/MIME/tools/.packlist
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/MIME
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/MIME/tools
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/MIME/tools/.packlist
 #usr/share/man/man3/MIME::Body.3
 #usr/share/man/man3/MIME::Decoder.3
 #usr/share/man/man3/MIME::Decoder::Base64.3
