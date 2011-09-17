@@ -788,11 +788,13 @@ buildpackages() {
   $0 git log
 
   # Create images for install
-	ipfiremake cdrom ED=$IPFVER
+  ipfiremake cdrom ED=$IPFVER
 
   # Check if there is a loop device for building in virtual environments
-  if [ $BUILD_IMAGES == 1 ] &&  ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
-	ipfiremake usb-stick ED=$IPFVER
+  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
+	if [ "${MACHINE_TYPE}" != "arm" ]; then
+		ipfiremake usb-stick ED=$IPFVER
+	fi
 	ipfiremake flash-images ED=$IPFVER
   fi
 
