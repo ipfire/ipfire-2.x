@@ -102,9 +102,9 @@ endif
 
 ifeq "$(MACHINE_TYPE)" "arm"
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-		. > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-$(ED)-core$(CORE).iso
+		. > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
 else
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
     	    -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
-    	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-$(ED)-core$(CORE).iso
+    	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
 endif

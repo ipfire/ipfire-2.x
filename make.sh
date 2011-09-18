@@ -38,7 +38,6 @@ MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 TOOLCHAINVER=1
-IPFVER="full"				# Which versions should be compiled? (full|devel)
 
 BUILDMACHINE=$MACHINE
     if [ "$MACHINE" = "x86_64" ]; then
@@ -777,14 +776,14 @@ buildpackages() {
   $0 git log
 
   # Create images for install
-  ipfiremake cdrom ED=$IPFVER
+  ipfiremake cdrom
 
   # Check if there is a loop device for building in virtual environments
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
 	if [ "${MACHINE_TYPE}" != "arm" ]; then
-		ipfiremake usb-stick ED=$IPFVER
+		ipfiremake usb-stick
 	fi
-	ipfiremake flash-images ED=$IPFVER
+	ipfiremake flash-images
   fi
 
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
@@ -795,7 +794,7 @@ buildpackages() {
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
         cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
         cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
-	ipfiremake xen-image ED=$IPFVER
+	ipfiremake xen-image
 	rm -rf $LFS/install/packages/linux-xen-*.ipfire
 	rm -rf $LFS/install/packages/meta-linux-xen
   fi

@@ -399,7 +399,6 @@ lfsmake2() {
 						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
-						IPFVER="$IPFVER" \
 						/tools/bin/bash -x -c "cd /usr/src/lfs && \
 						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 	local COMPILE_SUCCESS=$?
@@ -432,7 +431,6 @@ ipfiremake() {
 						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
-						IPFVER="$IPFVER" \
 						/bin/bash -x -c "cd /usr/src/lfs && \
 						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 
@@ -461,7 +459,7 @@ ipfiredist() {
 					NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 					CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
 					CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
-					KVER=$KVER IPFVER="$IPFVER" \
+					KVER=$KVER \
 					BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
 					MACHINE_TYPE="$MACHINE_TYPE" \
 					/bin/bash -x -c "cd /usr/src/lfs && \
@@ -493,7 +491,7 @@ installmake() {
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						CFLAGS="-Os" CXXFLAGS="-Os" \
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
-						KVER=$KVER IPFVER="$IPFVER" \
+						KVER=$KVER \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
 		    /bin/bash -x -c "cd /usr/src/lfs && \
