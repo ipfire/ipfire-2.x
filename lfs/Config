@@ -130,7 +130,7 @@ define POSTBUILD
 		else LFS_SCRIPT=$(firstword $(MAKEFILE_LIST)); \
 		fi; \
 		echo $(LFS_SCRIPT); \
-		ROOTFILE=$$(find $(DIR_SRC)/config/rootfiles/{common,packages}/{$(TARGET),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
+		ROOTFILE=$$(find $(DIR_SRC)/config/rootfiles/{common,packages}/{$(MACHINE),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
 		if [ "$$ROOTFILE" = "" ]; then \
 			touch $(TARGET)_missing_rootfile; \
 			ROOTFILE=$(TARGET)_missing_rootfile ; \
