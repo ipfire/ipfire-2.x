@@ -10,24 +10,6 @@ Optional
 		If you want to use it, do it before build step
 
 Maintainer / advanced commands
-    changelog : Loads the latest changelog from SVN.
-        check : Test if packages files are still available for download
-		  This is faster on http URL with --spider, but still slow on ftp
-		  because of real load.
-   checkclean : Erase all check mark on cache directory to be able to check
-		  another time
-         dist : Mainly produce a diff from previous version to track wich
-		  files have been changed
-         make : Does a complete compile with fetching source packages.
-          pxe : <start|stop|reload> 
-                Starts, stops or reloads a small tftp daemon for pxe boot.
     toolchain : Create our own toolchain package to save 20% of build time.
         shell : Enter a shell inside the chroot, used to tune lfs script
 		  and / or during kernel upgrade to rebuild a new .config
-          svn : <update|diff|commit|dist>
-          update <rev> : Loads the latest source files from svn or if <rev> is given
-                         it loads this revision.
-                  diff : Mainly produce a diff from previous version to track wich
-                         files have been changed
-                commit : Applies your changes to the svn.
-            dist <rev> : Tar the source code from revision.
