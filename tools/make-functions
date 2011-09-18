@@ -185,7 +185,6 @@ beautify()
 					echo -ne "${SET_RESULT_COL}[${FAIL} FAIL ${NORMAL}]\n"
 					;;
 				SKIP)
-					echo -ne "${SET_TIME_COL}[ ${BOLD}${SET_TIME_COL_REAL}$PKG_TIME${NORMAL} ]"
 					echo -ne "${SET_RESULT_COL}[${SKIP} SKIP ${NORMAL}]\n"
 					;;
 			esac
@@ -317,6 +316,16 @@ lfsmakecommoncheck()
 
 	local PKG_VER=`get_pkg_ver $BASEDIR/lfs/$1`
 	beautify make_pkg "$PKG_VER $*"
+
+	# Check if this package is supported by our architecture.
+	# If no SUP_ARCH is found, we assume the package can be built for all.
+	if grep "^SUP_ARCH" ${BASEDIR}/lfs/${1} >/dev/null; then
+		# Check if package supports ${MACHINE} or all architectures.
+		if ! grep -E "^SUP_ARCH.*${MACHINE}|^SUP_ARCH.*all" ${BASEDIR}/lfs/${1} >/dev/null; then
+			beautify result SKIP
+			return 1
+		fi
+	fi
 
 	# Script slipped?
 	local i

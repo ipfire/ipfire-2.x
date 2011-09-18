@@ -35,6 +35,7 @@ DL_FILE4   = vdr-epgsearch-0.9.24.tgz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+SUP_ARCH   = i586
 PROG       = vdr
 PAK_VER    = 5
 

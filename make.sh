@@ -352,11 +352,7 @@ buildbase() {
     lfsmake2 udev
     lfsmake2 util-linux
     lfsmake2 vim
-
-    # ARM cannot use grub.
-    if [ "${MACHINE_TYPE}" != "arm" ]; then
-      lfsmake2 grub
-    fi
+    lfsmake2 grub
 }
 
 buildipfire() {
@@ -413,27 +409,24 @@ buildipfire() {
   # Default kernel build
   ipfiremake linux
   ipfiremake v4l-dvb
-
-  if [ "${MACHINE_TYPE}" != "arm" ]; then
-    # Virtualization helpers are only available for x86.
-    ipfiremake kqemu
-    ipfiremake kvm-kmod
-    #unsupported arch (armv5)
-    ipfiremake madwifi
+  ipfiremake kqemu
+  ipfiremake kvm-kmod
+  ipfiremake madwifi
+  if [ "${MACHINE_TYPE}" = "arm" ]; then
     #todo enable alsa driver in kernel config
     ipfiremake alsa			KMOD=1
-    #undefined declaration in echo canceler try to fix later
-    ipfiremake mISDN
   fi
+  #undefined declaration in echo canceler try to fix later
+  ipfiremake mISDN
   ipfiremake dahdi			KMOD=1
   ipfiremake cryptodev
   ipfiremake compat-wireless
 #  ipfiremake r8169
 #  ipfiremake r8168
 #  ipfiremake r8101
-  #ipfiremake e1000
-  #ipfiremake e1000e
-  #ipfiremake igb
+  ipfiremake e1000
+  ipfiremake e1000e
+  ipfiremake igb
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
@@ -634,8 +627,8 @@ buildipfire() {
   ipfiremake igmpproxy
   ipfiremake fbset
   ipfiremake sdl
-  #ipfiremake qemu
-  #ipfiremake qemu-kqemu
+  ipfiremake qemu
+  ipfiremake qemu-kqemu
   ipfiremake sane
   ipfiremake netpbm
   ipfiremake phpSANE
@@ -650,7 +643,7 @@ buildipfire() {
   ipfiremake faad2
   ipfiremake ffmpeg
   ipfiremake videolan
-  #ipfiremake vdr
+  ipfiremake vdr
   ipfiremake w_scan
   ipfiremake icecast
   ipfiremake icegenerator
@@ -666,11 +659,9 @@ buildipfire() {
   ipfiremake wpa_supplicant
   ipfiremake hostapd
   ipfiremake urlgrabber
-  if [ "${MACHINE_TYPE}" != "arm" ]; then
-    ipfiremake syslinux
-  fi
+  ipfiremake syslinux
   ipfiremake tftpd
-  #ipfiremake cpufrequtils
+  ipfiremake cpufrequtils
   ipfiremake dbus
   ipfiremake bluetooth
   ipfiremake gutenprint
@@ -693,9 +684,7 @@ buildipfire() {
   ipfiremake perl-DBD-mysql
   ipfiremake cacti
   ipfiremake icecc
-  if [ "${MACHINE_TYPE}" != "arm" ]; then
-    ipfiremake openvmtools
-  fi
+  ipfiremake openvmtools
   ipfiremake nagiosql
   ipfiremake iftop
   ipfiremake motion
@@ -704,8 +693,8 @@ buildipfire() {
   ipfiremake watchdog
   ipfiremake libpri
   ipfiremake dahdi
-  #ipfiremake asterisk
-  #ipfiremake lcr
+  ipfiremake asterisk
+  ipfiremake lcr
   ipfiremake usb_modeswitch
   ipfiremake usb_modeswitch_data
   ipfiremake zerofree
@@ -751,11 +740,9 @@ buildinstaller() {
   # Run installer scripts one by one
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
-  if [ "${MACHINE_TYPE}" != "arm" ]; then
-    ipfiremake as86
-    ipfiremake mbr
-    ipfiremake memtest
-  fi
+  ipfiremake as86
+  ipfiremake mbr
+  ipfiremake memtest
   ipfiremake installer
   cp -f $BASEDIR/doc/COPYING $BASEDIR/build/install/initrd/
   installmake strip
@@ -948,7 +935,8 @@ downloadsrc)
 		cd $BASEDIR/lfs
 		for i in *; do
 			if [ -f "$i" -a "$i" != "Config" ]; then
-				echo -ne "Loading $i"
+				lfsmakecommoncheck ${i} || continue
+
 				make -s -f $i LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
 					MESSAGE="$i\t ($c/$MAX_RETRIES)" download >> $LOGFILE 2>&1
 				if [ $? -ne 0 ]; then
