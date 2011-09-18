@@ -371,10 +371,7 @@ buildipfire() {
   ipfiremake xz
   ipfiremake linux-firmware
   ipfiremake zd1211-firmware
-
-  if [ "${MACHINE_TYPE}" == "arm" ]; then
-	ipfiremake u-boot
-  fi
+  ipfiremake u-boot
 
   # The xen and PAE kernels are only available for x86
   if [ "${MACHINE_TYPE}" != "arm" ]; then
