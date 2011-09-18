@@ -40,14 +40,14 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr \
-    --disable-profile \
+    --disable-profile --enable-add-ons \
     --enable-kernel=2.6.0 --libexecdir=/usr/lib/glibc
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
   EXTRA_CONFIG = --prefix=/tools \
-    --disable-profile \
+    --disable-profile --enable-add-ons \
     --enable-kernel=2.6.0 --with-binutils=/tools/bin \
     --without-gd --with-headers=/tools/include \
     --without-selinux
@@ -60,10 +60,7 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	EXTRA_CONFIG += \
 		--build=arm \
 		--host=$(BUILDTARGET) \
-		--without-fp \
-		--enable-add-ons=nptl,ports
-else
-	EXTRA_CONFIG += --enable-add-ons
+		--without-fp
 endif
 
 ###############################################################################
