@@ -24,11 +24,7 @@
 
 include Config
 
-ifeq "$(MACHINE_TYPE)" "arm"
-	VER = 2.18
-else
-	VER = 2.17
-endif
+VER        = 2.18
 
 THISAPP    = binutils-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -41,23 +37,10 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 # Normal build or /tools build.
 #
 ifeq "$(ROOT)" ""
-ifeq "$(LFS_PASS)" "install"
-  TARGET = $(DIR_INFO)/$(THISAPP)-install
-  EXTRA_CONFIG = --prefix=/opt/$(MACHINE)-uClibc \
-		--build=$(MACHINE)-pc-linux-gnu \
-		--host=$(MACHINE)-pc-linux-gnu \
-		--target=$(MACHINE)-linux-uclibc \
-		--disable-nls \
-		--enable-multilib \
-		--disable-werror
-  EXTRA_MAKE = all
-  EXTRA_INSTALL = 
-else
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr --enable-shared --disable-nls
   EXTRA_MAKE = tooldir=/usr
   EXTRA_INSTALL = tooldir=/usr
-endif
 else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
@@ -79,6 +62,8 @@ ifeq "$(MACHINE_TYPE)" "arm"
 		--target=$(BUILDTARGET) \
 		--with-abi=aapcs-linux \
 		--with-float=soft
+else
+	EXTRA_CONFIG += --build=$(BUILDTARGET)
 endif
 
 ###############################################################################
@@ -89,11 +74,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-ifeq "$(MACHINE_TYPE)" "arm"
-	$(DL_FILE)_MD5 = 9d22ee4dafa3a194457caf4706f9cf01
-else
-	$(DL_FILE)_MD5 = e26e2e06b6e4bf3acf1dc8688a94c0d1
-endif
+$(DL_FILE)_MD5 = 9d22ee4dafa3a194457caf4706f9cf01
 
 install : $(TARGET)
 
@@ -124,6 +105,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/binutils-build
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-configure-1.patch
 	cd $(DIR_SRC)/binutils-build && MACHINE= $(DIR_APP)/configure $(EXTRA_CONFIG)
 ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/binutils-build && make configure-host MAKEINFO=makeinfo MACHINE=
@@ -131,9 +113,7 @@ endif
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) $(MAKETUNING) MAKEINFO=makeinfo MACHINE=
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install MAKEINFO=makeinfo MACHINE=
 ifeq "$(ROOT)" ""
-ifneq "$(LFS_PASS)" "install"
 	cp -v $(DIR_APP)/include/libiberty.h /usr/include
-endif
 else
 ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/binutils-build && make -C ld clean MACHINE=

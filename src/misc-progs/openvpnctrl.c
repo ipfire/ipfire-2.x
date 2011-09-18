@@ -1,3 +1,4 @@
+#include <signal.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -24,7 +25,17 @@ char enableorange[STRING_SIZE] = "off";
 char OVPNRED[STRING_SIZE] = "OVPN";
 char OVPNBLUE[STRING_SIZE] = "OVPN_BLUE_";
 char OVPNORANGE[STRING_SIZE] = "OVPN_ORANGE_";
-char WRAPPERVERSION[STRING_SIZE] = "2.0.1.6";
+char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.1";
+
+struct connection_struct {
+	char name[STRING_SIZE];
+	char type[STRING_SIZE];
+	char proto[STRING_SIZE];
+	int port;
+	struct connection_struct *next;
+};
+
+typedef struct connection_struct connection;
 
 void exithandler(void)
 {
@@ -37,9 +48,9 @@ void exithandler(void)
 void usage(void)
 {
 #ifdef ovpndebug
-	printf("Wrapper for OpenVPN v%s-debug\n", WRAPPERVERSION);
+	printf("Wrapper for OpenVPN %s-debug\n", WRAPPERVERSION);
 #else
-	printf("Wrapper for OpenVPN v%s\n", WRAPPERVERSION);
+	printf("Wrapper for OpenVPN %s\n", WRAPPERVERSION);
 #endif
 	printf("openvpnctrl <option>\n");
 	printf(" Valid options are:\n");
@@ -49,6 +60,12 @@ void usage(void)
 	printf("      kills/stops OpenVPN\n");
 	printf(" -r   --restart\n");
 	printf("      restarts OpenVPN (implicitly creates chains and firewall rules)\n");
+	printf(" -sn2n --start-net-2-net\n");
+	printf("      starts all net2net connections\n");
+	printf("      you may pass a connection name to the switch to only start a specific one\n");
+	printf(" -kn2n --kill-net-2-net\n");
+	printf("      kills all net2net connections\n");
+	printf("      you may pass a connection name to the switch to only start a specific one\n");
 	printf(" -d   --display\n");
 	printf("      displays OpenVPN status to syslog\n");
 	printf(" -fwr --firewall-rules\n");
@@ -60,6 +77,85 @@ void usage(void)
 	printf(" -dcr --delete-chains-and-rules\n");
 	printf("      removes all chains for OpenVPN\n");
 	exit(1);
+}
+
+connection *getConnections() {
+	FILE *fp = NULL;
+
+	if (!(fp = fopen(CONFIG_ROOT "/ovpn/ovpnconfig", "r"))) {
+		fprintf(stderr, "Could not open openvpn n2n configuration file.\n");
+		exit(1);
+	}
+
+	char line[STRING_SIZE] = "";
+	char result[STRING_SIZE] = "";
+	char *resultptr;
+	int count;
+	connection *conn_first = NULL;
+	connection *conn_last = NULL;
+	connection *conn_curr;
+
+	while ((fgets(line, STRING_SIZE, fp) != NULL)) {
+		if (line[strlen(line) - 1] == '\n')
+			line[strlen(line) - 1] = '\0';
+
+		conn_curr = (connection *)malloc(sizeof(connection));
+		memset(conn_curr, 0, sizeof(connection));
+
+		if (conn_first == NULL) {
+			conn_first = conn_curr;
+		} else {
+			conn_last->next = conn_curr;
+		}
+		conn_last = conn_curr;
+
+		count = 0;
+		char *lineptr = &line;
+		while (1) {
+			if (*lineptr == NULL)
+				break;
+
+			resultptr = result;
+			while (*lineptr != NULL) {
+				if (*lineptr == ',') {
+					lineptr++;
+					break;
+				}
+				*resultptr++ = *lineptr++;
+			}
+			*resultptr = '\0';
+
+			if (count == 2) {
+				strcpy(conn_curr->name, result);
+			} else if (count == 4) {
+				strcpy(conn_curr->type, result);
+			} else if (count == 29) {
+				strcpy(conn_curr->proto, result);
+			} else if (count == 30) {
+				conn_curr->port = atoi(result);
+			}
+
+			count++;
+		}
+	}
+
+	fclose(fp);
+
+	return conn_first;
+}
+
+int readPidFile(const char *pidfile) {
+	FILE *fp = fopen(pidfile, "r");
+	if (fp == NULL) {
+		fprintf(stderr, "PID file not found: '%s'\n", pidfile);
+		exit(1);
+	}
+
+	int pid = 0;
+	fscanf(fp, "%d", &pid);
+	fclose(fp);
+
+	return pid;
 }
 
 void ovpnInit(void) {
@@ -139,7 +235,7 @@ void executeCommand(char *command) {
 void setChainRules(char *chain, char *interface, char *protocol, char *port)
 {
 	char str[STRING_SIZE];
-	
+
 	sprintf(str, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %s -j ACCEPT", chain, interface, protocol, port);
 	executeCommand(str);
 	sprintf(str, "/sbin/iptables -A %sINPUT -i tun+ -j ACCEPT", chain);
@@ -208,39 +304,34 @@ void createChain(char *chain) {
 }
 
 void createAllChains(void) {
-	if (!((strcmp(enablered, "on")==0) || (strcmp(enableblue, "on")==0) || (strcmp(enableorange, "on")==0))){
-		fprintf(stderr, "OpenVPN is not enabled on any interface\n");
-		exit(1);
-	} else {
-		// create chain and chain references
-		if (!strcmp(enableorange, "on")) {
-			if (strlen(orangeif)) {
-				createChain(OVPNORANGE);
-				createChainReference(OVPNORANGE);
-			} else {
-				fprintf(stderr, "OpenVPN enabled on orange but no orange interface found\n");
-				//exit(1);
-			}
+	// create chain and chain references
+	if (!strcmp(enableorange, "on")) {
+		if (strlen(orangeif)) {
+			createChain(OVPNORANGE);
+			createChainReference(OVPNORANGE);
+		} else {
+			fprintf(stderr, "OpenVPN enabled on orange but no orange interface found\n");
+			//exit(1);
 		}
-	
-		if (!strcmp(enableblue, "on")) {
-			if (strlen(blueif)) {
-				createChain(OVPNBLUE);
-				createChainReference(OVPNBLUE);
-			} else {
-				fprintf(stderr, "OpenVPN enabled on blue but no blue interface found\n");
-				//exit(1);
-			}
+	}
+
+	if (!strcmp(enableblue, "on")) {
+		if (strlen(blueif)) {
+			createChain(OVPNBLUE);
+			createChainReference(OVPNBLUE);
+		} else {
+			fprintf(stderr, "OpenVPN enabled on blue but no blue interface found\n");
+			//exit(1);
 		}
-	
-		if (!strcmp(enablered, "on")) {
-			if (strlen(redif)) {
-				createChain(OVPNRED);
-				createChainReference(OVPNRED);
-			} else {
-				fprintf(stderr, "OpenVPN enabled on red but no red interface found\n");
-				//exit(1);
-			}
+	}
+
+	if (!strcmp(enablered, "on")) {
+		if (strlen(redif)) {
+			createChain(OVPNRED);
+			createChainReference(OVPNRED);
+		} else {
+			fprintf(stderr, "OpenVPN enabled on red but no red interface found\n");
+			//exit(1);
 		}
 	}
 }
@@ -249,12 +340,6 @@ void setFirewallRules(void) {
 	char protocol[STRING_SIZE] = "";
 	char dport[STRING_SIZE] = "";
 	char dovpnip[STRING_SIZE] = "";
-
-	/* check if it makes sence to proceed further */
-	if (!((strcmp(enablered, "on")==0) || (strcmp(enableblue, "on")==0) || (strcmp(enableorange, "on")==0))){
-		fprintf(stderr, "Config error, at least one device must be enabled\n");
-		exit(1);
-	}
 
 	kv = initkeyvalues();
 	if (!readkeyvalues(kv, CONFIG_ROOT "/ovpn/settings"))
@@ -280,6 +365,11 @@ void setFirewallRules(void) {
 	}
 	freekeyvalues(kv);
 
+	// Flush all chains.
+	flushChain(OVPNRED);
+	flushChain(OVPNBLUE);
+	flushChain(OVPNORANGE);
+
 	// set firewall rules
 	if (!strcmp(enablered, "on") && strlen(redif))
 		setChainRules(OVPNRED, redif, protocol, dport);
@@ -287,16 +377,35 @@ void setFirewallRules(void) {
 		setChainRules(OVPNBLUE, blueif, protocol, dport);
 	if (!strcmp(enableorange, "on") && strlen(orangeif))
 		setChainRules(OVPNORANGE, orangeif, protocol, dport);
+
+	// read connection configuration
+	connection *conn = getConnections();
+
+	// set firewall rules for n2n connections
+	char command[STRING_SIZE];
+	while (conn != NULL) {
+		if (strcmp(conn->type, "net") == 0) {
+			sprintf(command, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %d -j ACCEPT",
+				OVPNRED, redif, conn->proto, conn->port);
+			executeCommand(command);
+		}
+
+		conn = conn->next;
+	}
 }
 
 void stopDaemon(void) {
 	char command[STRING_SIZE];
 
-	snprintf(command, STRING_SIZE - 1, "/bin/killall openvpn");
-	executeCommand(command);
+	int pid = readPidFile("/var/run/openvpn.pid");
+	if (!pid > 0) {
+		exit(1);
+	}
+
+	fprintf(stderr, "Killing PID %d.\n", pid);
+	kill(pid, SIGTERM);
+
 	snprintf(command, STRING_SIZE - 1, "/bin/rm -f /var/run/openvpn.pid");
-	executeCommand(command);
-	snprintf(command, STRING_SIZE-1, "/sbin/modprobe -r tun");
 	executeCommand(command);
 }
 
@@ -314,6 +423,106 @@ void startDaemon(void) {
 	}
 }
 
+void startNet2Net(char *name) {
+	connection *conn = NULL;
+	connection *conn_iter;
+
+	conn_iter = getConnections();
+
+	while (conn_iter) {
+		if ((strcmp(conn_iter->type, "net") == 0) && (strcmp(conn_iter->name, name) == 0)) {
+			conn = conn_iter;
+			break;
+		}
+		conn_iter = conn_iter->next;
+	}
+
+	if (conn == NULL) {
+		fprintf(stderr, "Connection not found.\n");
+		exit(1);
+	}
+
+	char configfile[STRING_SIZE];
+	snprintf(configfile, STRING_SIZE - 1, CONFIG_ROOT "/ovpn/n2nconf/%s/%s.conf",
+		conn->name, conn->name);
+
+	FILE *fp = fopen(configfile, "r");
+	if (fp == NULL) {
+		fprintf(stderr, "Could not find configuration file for connection '%s' at '%s'.\n",
+			conn->name, configfile);
+		exit(2);
+	}
+	fclose(fp);
+
+	// Make sure all firewall rules are up to date.
+	setFirewallRules();
+
+	char command[STRING_SIZE];
+	snprintf(command, STRING_SIZE-1, "/sbin/modprobe tun");
+	executeCommand(command);
+	snprintf(command, STRING_SIZE-1, "/usr/sbin/openvpn --config %s", configfile);
+	executeCommand(command);
+}
+
+void killNet2Net(char *name) {
+	connection *conn = NULL;
+	connection *conn_iter;
+
+	conn_iter = getConnections();
+
+	while (conn_iter) {
+		if (strcmp(conn_iter->name, name) == 0) {
+			conn = conn_iter;
+			break;
+		}
+		conn_iter = conn_iter->next;
+	}
+
+	if (conn == NULL) {
+		fprintf(stderr, "Connection not found.\n");
+		exit(1);
+	}
+
+	char pidfile[STRING_SIZE];
+	snprintf(pidfile, STRING_SIZE - 1, "/var/run/%sn2n.pid", conn->name);
+
+	int pid = readPidFile(pidfile);
+	if (!pid > 0) {
+		exit(1);
+	}
+
+	fprintf(stderr, "Killing PID %d.\n", pid);
+	kill(pid, SIGTERM);
+
+	char command[STRING_SIZE];
+	snprintf(command, STRING_SIZE - 1, "/bin/rm -f %s", pidfile);
+	executeCommand(command);
+
+	exit(0);
+}
+
+void startAllNet2Net() {
+	connection *conn = getConnections();
+
+	while(conn) {
+		startNet2Net(conn->name);
+		conn = conn->next;
+	}
+
+	exit(0);
+}
+
+void killAllNet2Net() {
+	connection *conn = getConnections();
+
+	while(conn) {
+		killNet2Net(conn->name);
+		conn = conn->next;
+	}
+
+	exit(0);
+}
+
 void displayopenvpn(void) {
 	char command[STRING_SIZE];
 
@@ -326,8 +535,23 @@ int main(int argc, char *argv[]) {
 	    exit(1);
 	if(argc < 2)
 	    usage();
-	
-	if(argc == 2) {
+
+	if(argc == 3) {
+		ovpnInit();
+
+		if( (strcmp(argv[1], "-sn2n") == 0) || (strcmp(argv[1], "--start-net-2-net") == 0) ) {
+			startNet2Net(argv[2]);
+			return 0;
+		}
+		else if( (strcmp(argv[1], "-kn2n") == 0) || (strcmp(argv[1], "--kill-net-2-net") == 0) ) {
+			killNet2Net(argv[2]);
+			return 0;
+		} else {
+			usage();
+			return 1;
+		}
+	}
+	else if(argc == 2) {
 		if( (strcmp(argv[1], "-k") == 0) || (strcmp(argv[1], "--kill") == 0) ) {
 			stopDaemon();
 			return 0;
@@ -348,6 +572,14 @@ int main(int argc, char *argv[]) {
 				createAllChains();
 				setFirewallRules();
 				startDaemon();
+				return 0;
+			}
+			else if( (strcmp(argv[1], "-sn2n") == 0) || (strcmp(argv[1], "--start-net-2-net") == 0) ) {
+				startAllNet2Net();
+				return 0;
+			}
+			else if( (strcmp(argv[1], "-kn2n") == 0) || (strcmp(argv[1], "--kill-net-2-net") == 0) ) {
+				killAllNet2Net();
 				return 0;
 			}
 			else if( (strcmp(argv[1], "-sdo") == 0) || (strcmp(argv[1], "--start-daemon-only") == 0) ) {

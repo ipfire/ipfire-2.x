@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.18.1.1
+VER        = 1.21
 
 THISAPP    = groff-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 511dbd64b67548c99805f1521f82cc5e
+$(DL_FILE)_MD5 = 8b8cd29385b97616a0f0d96d0951c5bf
 
 install : $(TARGET)
 
@@ -77,7 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && PAGE=A4 ./configure --prefix=/usr --enable-multibyte --disable-nls
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	ln -sv eqn /usr/bin/geqn
-	ln -sv tbl /usr/bin/gtbl
+	ln -svf eqn /usr/bin/geqn
+	ln -svf tbl /usr/bin/gtbl
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

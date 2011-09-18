@@ -458,7 +458,7 @@ case "${1}" in
 			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach mtu ${MTU}"
 			PPP_STD_OPTIONS+=" mru ${MRU} noaccomp nodeflate nopcomp novj novjccomp"
 			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME} lcp-echo-interval 20"
-			PPP_STD_OPTIONS+=" lcp-echo-failure 3 ${AUTH}"
+			PPP_STD_OPTIONS+=" lcp-echo-failure 5 ${AUTH}"
 				
 			### Debugging
 			#

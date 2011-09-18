@@ -1,4 +1,3 @@
-WARNING: translation string unused: Act as
 WARNING: translation string unused: Client status and controlc
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
@@ -174,7 +173,6 @@ WARNING: translation string unused: firewall log viewer
 WARNING: translation string unused: firmware
 WARNING: translation string unused: firmware upload
 WARNING: translation string unused: force update
-WARNING: translation string unused: frequency
 WARNING: translation string unused: fritzdsl help
 WARNING: translation string unused: fritzdsl upload
 WARNING: translation string unused: from email adr
@@ -221,7 +219,6 @@ WARNING: translation string unused: invalid upstream proxy username or password 
 WARNING: translation string unused: invert
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ipfire side
-WARNING: translation string unused: ipfire side is invalid
 WARNING: translation string unused: iptable rules
 WARNING: translation string unused: isdn
 WARNING: translation string unused: isdn settings
@@ -304,8 +301,6 @@ WARNING: translation string unused: o-no
 WARNING: translation string unused: o-yes
 WARNING: translation string unused: online help en
 WARNING: translation string unused: only red
-WARNING: translation string unused: openvpn client
-WARNING: translation string unused: openvpn server
 WARNING: translation string unused: optional data
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
@@ -335,6 +330,7 @@ WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
+WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire updates
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
@@ -490,8 +486,36 @@ WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: Add a route
+WARNING: untranslated string: Edit an existing route
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
+WARNING: untranslated string: disk access per
+WARNING: untranslated string: extrahd because there is already a device mounted
+WARNING: untranslated string: extrahd cant umount
+WARNING: untranslated string: extrahd install or load driver
+WARNING: untranslated string: extrahd maybe the device is in use
+WARNING: untranslated string: extrahd to
+WARNING: untranslated string: extrahd to root
+WARNING: untranslated string: extrahd you cant mount
+WARNING: untranslated string: incoming traffic in bytes per second
 WARNING: untranslated string: minute
 WARNING: untranslated string: new
+WARNING: untranslated string: openvpn default
+WARNING: untranslated string: openvpn destination port used
+WARNING: untranslated string: openvpn disabled
+WARNING: untranslated string: openvpn enabled
+WARNING: untranslated string: openvpn fragment allowed with udp
+WARNING: untranslated string: openvpn mssfix allowed with udp
+WARNING: untranslated string: openvpn prefix local subnet
+WARNING: untranslated string: openvpn prefix openvpn subnet
+WARNING: untranslated string: openvpn prefix remote subnet
+WARNING: untranslated string: openvpn subnet is used
 WARNING: untranslated string: outgoing firewall reserved groupname
+WARNING: untranslated string: outgoing traffic in bytes per second
+WARNING: untranslated string: route config changed
+WARNING: untranslated string: routing config added
+WARNING: untranslated string: routing config changed
+WARNING: untranslated string: routing table
+WARNING: untranslated string: static routes
+WARNING: untranslated string: vpn keyexchange

@@ -67,6 +67,7 @@ var/ipfire/mac
 var/ipfire/main
 #var/ipfire/main/disable_nf_sip
 #var/ipfire/main/hosts
+#var/ipfire/main/routing
 #var/ipfire/main/settings
 #var/ipfire/menu.d
 var/ipfire/menu.d/00-menu.main

@@ -1,4 +1,3 @@
-WARNING: translation string unused: Act as
 WARNING: translation string unused: Client status and controlc
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
@@ -118,6 +117,7 @@ WARNING: translation string unused: custom networks
 WARNING: translation string unused: custom services
 WARNING: translation string unused: daily firewallhits
 WARNING: translation string unused: dat without key
+WARNING: translation string unused: day-graph
 WARNING: translation string unused: dbfile
 WARNING: translation string unused: ddns help dnsmadeeasy
 WARNING: translation string unused: ddns help freedns
@@ -168,7 +168,8 @@ WARNING: translation string unused: error external access
 WARNING: translation string unused: expected
 WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
-WARNING: translation string unused: extrahd founded drives
+WARNING: translation string unused: extrahd unable to read
+WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall graphs
 WARNING: translation string unused: firewall log viewer
@@ -194,6 +195,7 @@ WARNING: translation string unused: hint
 WARNING: translation string unused: host
 WARNING: translation string unused: host configuration
 WARNING: translation string unused: hostname and domain already in use
+WARNING: translation string unused: hour-graph
 WARNING: translation string unused: hours2
 WARNING: translation string unused: ibod for dual isdn only
 WARNING: translation string unused: icmp selected but no type
@@ -222,7 +224,6 @@ WARNING: translation string unused: invalid upstream proxy username or password 
 WARNING: translation string unused: invert
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ipfire side
-WARNING: translation string unused: ipfire side is invalid
 WARNING: translation string unused: iptable rules
 WARNING: translation string unused: isdn
 WARNING: translation string unused: isdn settings
@@ -271,6 +272,7 @@ WARNING: translation string unused: modem on com3
 WARNING: translation string unused: modem on com4
 WARNING: translation string unused: modem on com5
 WARNING: translation string unused: modulation
+WARNING: translation string unused: month-graph
 WARNING: translation string unused: monthly firewallhits
 WARNING: translation string unused: monthly start day bad
 WARNING: translation string unused: monthly traffic bad
@@ -305,8 +307,6 @@ WARNING: translation string unused: o-no
 WARNING: translation string unused: o-yes
 WARNING: translation string unused: online help en
 WARNING: translation string unused: only red
-WARNING: translation string unused: openvpn client
-WARNING: translation string unused: openvpn server
 WARNING: translation string unused: optional data
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
@@ -336,6 +336,7 @@ WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
+WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire updates
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
@@ -490,13 +491,14 @@ WARNING: translation string unused: vpn on green
 WARNING: translation string unused: vpn on orange
 WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
+WARNING: translation string unused: week-graph
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: xtaccess bad transfert
+WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
 WARNING: untranslated string: dns address deleted txt
-WARNING: untranslated string: extrahd detected drives
 WARNING: untranslated string: fireinfo ipfire version
 WARNING: untranslated string: fireinfo is disabled
 WARNING: untranslated string: fireinfo is enabled
@@ -518,13 +520,29 @@ WARNING: untranslated string: minute
 WARNING: untranslated string: new
 WARNING: untranslated string: ntp common settings
 WARNING: untranslated string: ntp sync
+WARNING: untranslated string: openvpn default
+WARNING: untranslated string: openvpn destination port used
+WARNING: untranslated string: openvpn disabled
+WARNING: untranslated string: openvpn enabled
+WARNING: untranslated string: openvpn fragment allowed with udp
+WARNING: untranslated string: openvpn mssfix allowed with udp
+WARNING: untranslated string: openvpn prefix local subnet
+WARNING: untranslated string: openvpn prefix openvpn subnet
+WARNING: untranslated string: openvpn prefix remote subnet
+WARNING: untranslated string: openvpn subnet is used
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: pakfire ago
+WARNING: untranslated string: route config changed
+WARNING: untranslated string: routing config added
+WARNING: untranslated string: routing config changed
+WARNING: untranslated string: routing table
 WARNING: untranslated string: snort working
+WARNING: untranslated string: static routes
 WARNING: untranslated string: system information
 WARNING: untranslated string: upload new ruleset
 WARNING: untranslated string: urlfilter file ext block
 WARNING: untranslated string: urlfilter mode block
+WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: wlanap access point
 WARNING: untranslated string: wlanap channel
 WARNING: untranslated string: wlanap debugging

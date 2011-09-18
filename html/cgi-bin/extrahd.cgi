@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -79,11 +79,11 @@ if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'})
 		@deviceline = split( /\;/, $deviceentry );
 		if ( "$extrahdsettings{'PATH'}" eq "$deviceline[2]" ) {
 			$ok = "false";
-			$errormessage = "You can't mount $extrahdsettings{'DEVICE'} to $extrahdsettings{'PATH'}, because there is already a device mounted.";
+			$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'}$Lang::tr{'extrahd because there is already a device mounted'}.";
 		}
 		if ( "$extrahdsettings{'PATH'}" eq "/" ) {
 			$ok = "false";
-			$errormessage = "You can't mount $extrahdsettings{'DEVICE'} to root /.";
+			$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to root'}.";
 		}
 	}
 
@@ -113,7 +113,7 @@ elsif ($extrahdsettings{'ACTION'} eq $Lang::tr{'delete'})
 		}
 		close FILE;
 	} else {
-		$errormessage = "Can't umount $extrahdsettings{'PATH'}. Maybe the device is in use?";
+		$errormessage = "$Lang::tr{'extrahd cant umount'} $extrahdsettings{'PATH'}$Lang::tr{'extrahd maybe the device is in use'}?";
 	}
 }
 
@@ -143,10 +143,10 @@ END
 			$color=$Header::colourgreen;
 		}
 		print <<END
-			<tr><td colspan="5">&nbsp;
-			<tr><td align='center'><font color=$color><b>$deviceline[0]</b></font>
-				<td align='center'>$deviceline[1]
-				<td align='center'>$deviceline[2]
+			<tr><td colspan="4">&nbsp;</td></tr>
+			<tr><td align='left'><font color=$color><b>$deviceline[0]</b></font></td>
+				<td align='left'>$deviceline[1]</td>
+				<td align='left'>$deviceline[2]</td>
 				<td align='center'>
 					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='DEVICE' value='$deviceline[0]' />
@@ -154,7 +154,7 @@ END
 						<input type='hidden' name='PATH' value='$deviceline[2]' />
 						<input type='hidden' name='ACTION' value=$Lang::tr{'delete'} />
 						<input type='image' alt=$Lang::tr{'delete'} src='/images/delete.gif' />
-					</form>
+					</form></td></tr>
 END
 ;
 	}
@@ -179,21 +179,26 @@ END
 	foreach $scanentry (sort @scans)
 	{
 		@scanline = split( /\;/, $scanentry );
-		print <<END
-			<tr><td colspan="5">&nbsp;
-			<tr><td align='left' colspan="2"><b>/dev/$scanline[0]</b>
-				<td align='center' colspan="2">$scanline[1]
+		# remove wrong entries like usb controller name
+		if ($scanline[1] ne "\n")
+		{
+			print <<END
+				<tr><td colspan="5">&nbsp;</td></tr>
+				<tr><td align='left' colspan="2"><b>/dev/$scanline[0]</b></td>
+				<td align='center' colspan="2">$scanline[1]</td>
 END
 ;
+
+		}
 		foreach $partitionentry (sort @partitions)
 		{
 			@partitionline = split( /\;/, $partitionentry );
 			if ( "$partitionline[0]" eq "$scanline[0]" ) {
 				$size = int($partitionline[1] / 1024);
 				print <<END
-				<td align='center'>$Lang::tr{'size'} $size MB
-				<td>&nbsp;
-				<tr><td colspan="5">&nbsp;
+				<td align='center'>$Lang::tr{'size'} $size MB</td>
+				<td>&nbsp;</td></tr>
+				<tr><td colspan="5">&nbsp;</td></tr>
 END
 ;
 			}
@@ -206,24 +211,27 @@ END
 				$size = int($partitionline[1] / 1024);
 				print <<END
 				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<tr><td align="left" colspan=5><b>UUID=$partitionline[2]</b></td></tr>
+				<tr><td align="left" colspan=5><strong>UUID=$partitionline[2]</strong></td></tr>
 				<tr>
 				<td align="list">/dev/$partitionline[0]</td>
-				<td align="center">$Lang::tr{'size'} $size MB
+				<td align="center">$Lang::tr{'size'} $size MB</td>
 				<td align="center"><select name="FS">
 										<option value="auto">auto</option>
 										<option value="ext3">ext3</option>
+										<option value="ext4">ext4</option>
 										<option value="reiserfs">reiserfs</option>
 										<option value="vfat">fat</option>
 										<option value="ntfs-3g">ntfs (experimental)</option>
-									   </select>
-				<td align="center"><input type='text' name='PATH' value=/mnt/harddisk />
+									   </select></td>
+				<td align="center"><input type='text' name='PATH' value=/mnt/harddisk /></td>
 				<td align="center">
 					<input type='hidden' name='DEVICE' value='$partitionline[0]' />
 					<input type='hidden' name='UUID' value='$partitionline[2]' />
 					<input type='hidden' name='ACTION' value=$Lang::tr{'add'} />
 					<input type='image' alt=$Lang::tr{'add'} src='/images/add.gif' />
-				</form>
+				</form></td></tr>
+END
+;
 
 END
 ;
@@ -232,7 +240,9 @@ END
 	}
 
 	print <<END
-	<tr><td align="center" colspan="5">If your device isn't listed here, you need to install or load the driver.<br />If you can see your device but no partitions you have to create them first.
+	<tr><td align="center" colspan="5">&nbsp;</td></tr>
+	<tr><td align="center" colspan="5">&nbsp;</td></tr>
+	<tr><td align="center" colspan="5">$Lang::tr{'extrahd install or load driver'}</td></tr>
 	</table>
 END
 ;

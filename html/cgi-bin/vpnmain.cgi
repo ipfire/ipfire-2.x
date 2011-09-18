@@ -111,6 +111,7 @@ $cgiparams{'ROOTCERT_EMAIL'} = '';
 $cgiparams{'ROOTCERT_OU'} = '';
 $cgiparams{'ROOTCERT_CITY'} = '';
 $cgiparams{'ROOTCERT_STATE'} = '';
+$cgiparams{'RW_NET'} = '';
 
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
@@ -395,8 +396,11 @@ sub writeipsecfiles {
 	    print CONF "\tpfsgroup=$lconfighash{$key}[23]\n";
 	}
 
-	# IKE V1
-	print CONF "\tkeyexchange=ikev1\n";
+	# IKE V1 or V2
+	if (! $lconfighash{$key}[29]) {
+	   $lconfighash{$key}[29] = "ikev1";
+	}
+	print CONF "\tkeyexchange=$lconfighash{$key}[29]\n";
 
 	# Lifetimes
 	print CONF "\tikelifetime=$lconfighash{$key}[16]h\n" if ($lconfighash{$key}[16]);
@@ -435,6 +439,7 @@ sub writeipsecfiles {
 	# Automatically start only if a net-to-net connection
 	if ($lconfighash{$key}[3] eq 'host') {
 	    print CONF "\tauto=add\n";
+	    print CONF "\trightsourceip=$lvpnsettings{'RW_NET'}\n";
 	} else {
 	    print CONF "\tauto=start\n";
 	}
@@ -471,6 +476,11 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	goto SAVE_ERROR;
     }
 
+    if ( $cgiparams{'RW_NET'} ne '' and !&General::validipandmask($cgiparams{'RW_NET'}) ) {
+	$errormessage = $Lang::tr{'urlfilter invalid ip or mask error'};
+	goto SAVE_ERROR;
+    }
+
     map ($vpnsettings{$_} = $cgiparams{$_},
 	('ENABLED','DBG_CRYPT','DBG_PARSING','DBG_EMITTING','DBG_CONTROL',
 	 'DBG_DNS'));
@@ -479,6 +489,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'VPN_DELAYED_START'} = $cgiparams{'VPN_DELAYED_START'};
     $vpnsettings{'VPN_OVERRIDE_MTU'} = $cgiparams{'VPN_OVERRIDE_MTU'};
     $vpnsettings{'VPN_WATCH'} = $cgiparams{'VPN_WATCH'};
+    $vpnsettings{'RW_NET'} = $cgiparams{'RW_NET'};
     &General::writehash("${General::swroot}/vpn/settings", \%vpnsettings);
     &writeipsecfiles();
     if (&vpnenabled) {
@@ -1288,6 +1299,7 @@ END
 	$cgiparams{'REMARK'}		= $confighash{$cgiparams{'KEY'}}[25];
 	$cgiparams{'INTERFACE'}		= $confighash{$cgiparams{'KEY'}}[26];
 	$cgiparams{'DPD_ACTION'}	= $confighash{$cgiparams{'KEY'}}[27];
+	$cgiparams{'IKE_VERSION'}	= $confighash{$cgiparams{'KEY'}}[29];
 	$cgiparams{'IKE_ENCRYPTION'} 	= $confighash{$cgiparams{'KEY'}}[18];
 	$cgiparams{'IKE_INTEGRITY'}  	= $confighash{$cgiparams{'KEY'}}[19];
 	$cgiparams{'IKE_GROUPTYPE'}  	= $confighash{$cgiparams{'KEY'}}[20];
@@ -1790,6 +1802,7 @@ END
 	$confighash{$key}[25] = $cgiparams{'REMARK'};
 	$confighash{$key}[26] = $cgiparams{'INTERFACE'};
 	$confighash{$key}[27] = $cgiparams{'DPD_ACTION'};
+	$confighash{$key}[29] = $cgiparams{'IKE_VERSION'};
 
 	#dont forget advanced value
 	$confighash{$key}[18] = $cgiparams{'IKE_ENCRYPTION'};
@@ -1845,6 +1858,11 @@ END
 	    $cgiparams{'DPD_ACTION'} = 'restart';
 	}
 
+	# Default IKE Version to V1
+	if (! $cgiparams{'IKE_VERSION'}) {
+	    $cgiparams{'IKE_VERSION'} = 'ikev1';
+	}
+
 	# Default is yes for 'pfs'
 	$cgiparams{'PFS'}     = 'on';
 	
@@ -1894,6 +1912,10 @@ END
     $selected{'DPD_ACTION'}{'hold'} = '';
     $selected{'DPD_ACTION'}{'restart'} = '';
     $selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
+
+    $selected{'IKE_VERSION'}{'ikev1'} = '';
+    $selected{'IKE_VERSION'}{'ikev2'} = '';
+    $selected{'IKE_VERSION'}{$cgiparams{'IKE_VERSION'}} = "selected='selected'";
 
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
@@ -1974,6 +1996,12 @@ END
 	    <td><input type='text' name='REMOTE_ID' value='$cgiparams{'REMOTE_ID'}' /></td>
 	</tr><tr>
 	</tr><td><br /></td><tr>
+	    <td>$Lang::tr{'vpn keyexchange'}:</td>
+	    <td><select name='IKE_VERSION'>
+    		<option value='ikev1' $selected{'IKE_VERSION'}{'ikev1'}>IKEv1</option>
+    		<option value='ikev2' $selected{'IKE_VERSION'}{'ikev2'}>IKEv2</option>
+    		</select></a>
+	    </td>
 	    <td>$Lang::tr{'dpd action'}:</td>
 	    <td><select name='DPD_ACTION'>
     		<option value='clear' $selected{'DPD_ACTION'}{'clear'}>clear</option>
@@ -2458,6 +2486,10 @@ print <<END
 	<td  class='base' nowrap='nowrap'>$Lang::tr{'vpn delayed start'}:&nbsp;<img src='/blob.gif' alt='*' /><img src='/blob.gif' alt='*' /></td>
 	<td ><input type='text' name='VPN_DELAYED_START' value='$cgiparams{'VPN_DELAYED_START'}' /></td>
     </tr>
+    <tr>
+	<td  class='base' nowrap='nowrap'>$Lang::tr{'host to net vpn'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td ><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
+    </tr>
  </table>
 <p>$Lang::tr{'vpn watch'}:<input type='checkbox' name='VPN_WATCH' $checked{'VPN_WATCH'} /></p>
 <p>PLUTO DEBUG&nbsp;=
@@ -2507,7 +2539,7 @@ END
 	    print "<tr bgcolor='$color{'color22'}'>\n";
 	}
 	print "<td align='center' nowrap='nowrap'>$confighash{$key}[1]</td>";
-	print "<td align='center' nowrap='nowrap'>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
+	print "<td align='center' nowrap='nowrap'>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ") $confighash{$key}[29]</td>";
 	if ($confighash{$key}[2] eq '%auth-dn') {
 	    print "<td align='left' nowrap='nowrap'>$confighash{$key}[9]</td>";
 	} elsif ($confighash{$key}[4] eq 'cert') {
@@ -2519,7 +2551,9 @@ END
 	# get real state
 	my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
 	foreach my $line (@status) {
-	    if ($line =~ /\"$confighash{$key}[1]\".*IPsec SA established/) {
+	    if (($line =~ /\"$confighash{$key}[1]\".*IPsec SA established/) ||
+	       ($line =~ /$confighash{$key}[1]\{.*INSTALLED/))
+	    {
 		$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
 	    }
 	}

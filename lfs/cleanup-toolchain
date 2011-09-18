@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -29,11 +29,7 @@ VER        = ipfire
 THISAPP    = cleanup-toolchain
 TARGET     = $(DIR_INFO)/$(THISAPP)-$(PASS)-tools
 
-ifeq "$(MACHINE_TYPE)" "arm"
-	GCC_VER = 4.1.2
-else
-	GCC_VER = 4.0.4
-endif
+GCC_VER    = 4.1.2
 
 ###############################################################################
 # Top-level Rules

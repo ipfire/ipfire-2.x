@@ -24,16 +24,16 @@
 
 include Config
 
-VER        = 0.14.1
+VER        = 0.15.0
 
-THISAPP    = qemu-$(VER)
+THISAPP    = qemu-kvm-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586
 PROG       = qemu
-PAK_VER    = 11
+PAK_VER    = 13
 
 DEPS       = "sdl"
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b6c713a8db638e173af53a62d5178640
+$(DL_FILE)_MD5 = b45b0deebba4ce47dcaaab3807f6ed47
 
 install : $(TARGET)
 
@@ -79,10 +79,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/qemu-0.14.1_missing_ATFCWD_hack.patch
+	cd $(DIR_APP) && sed -i -e 's|CFLAGS+="-march=i486"|CFLAGS+=""|g' configure
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/qemu-0.15.0_missing_definitions_hack.patch
 
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
-		--target-list="i386-linux-user i386-softmmu"
+		--target-list="i386-linux-user i386-softmmu arm-softmmu"
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

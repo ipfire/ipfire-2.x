@@ -1,0 +1,67 @@
+#!/bin/bash
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+
+function init_table() {
+	# Check if table does already exist. If not we add it.
+	if (ip rule | grep -q "static" >/dev/null 2>&1); then
+		return
+	fi
+
+	ip rule add table static
+}
+
+function create_all_routes() {
+	local file=${1}
+	shift
+
+	# Remote all routes.
+	ip route flush table static >/dev/null 2>&1
+
+	local status
+	local network
+	local gateway
+	local remark
+
+	# Read all routes from the configuration file and add the enabled ones
+	# immediately.
+	while IFS=, read status network gateway remark; do
+		[ "${status}" = "on" ] || continue
+
+		if [ -z "${network}" -o -z "${gateway}" ]; then
+			# Silently skipping invalid routes.
+			continue
+		fi
+
+		ip route add ${network} via ${gateway} table static proto static
+	done < ${file}
+}
+
+CONFIGFILE="/var/ipfire/main/routing"
+
+case "${1}" in
+	start)
+		boot_mesg "Adding static routes..."
+
+		# First, initialize the table
+		init_table
+
+		# Add all routes
+		create_all_routes ${CONFIGFILE}
+
+		evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Removing static routes..."
+		ip route flush table static >/dev/null 2>&1
+		evaluate_retval
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop}"
+		exit 1
+		;;
+esac

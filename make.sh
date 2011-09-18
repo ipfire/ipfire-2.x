@@ -24,9 +24,9 @@
 
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
-VERSION="2.9"							# Version number
-CORE="52"							# Core Level (Filename)
-PAKFIRE_CORE="51"						# Core Level (PAKFIRE)
+VERSION="2.11"							# Version number
+CORE="53"							# Core Level (Filename)
+PAKFIRE_CORE="52"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -286,6 +286,7 @@ buildtoolchain() {
     lfsmake1 tar
     lfsmake1 texinfo
     lfsmake1 util-linux
+    lfsmake1 strip
     lfsmake1 cleanup-toolchain	PASS=2
     export PATH=$ORG_PATH
 }
@@ -557,7 +558,6 @@ buildipfire() {
   ipfiremake wireless
   ipfiremake libsafe
   ipfiremake pakfire
-  ipfiremake java
   ipfiremake spandsp
   ipfiremake lzo
   ipfiremake openvpn
@@ -713,8 +713,7 @@ buildipfire() {
   ipfiremake python-m2crypto
   ipfiremake wireless-regdb
   ipfiremake crda
-  ipfiremake libsatsolver
-  ipfiremake python-satsolver
+  ipfiremake libsolv
   ipfiremake python-distutils-extra
   ipfiremake python-lzma
   ipfiremake python-progressbar
@@ -730,7 +729,7 @@ buildipfire() {
   echo >> $BASEDIR/build/var/ipfire/firebuild
   cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
   echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
-  if [ "$GIT_BRANCH" = "master" ]; then
+  if [ "$GIT_BRANCH" = "next" ]; then
 	echo "$NAME $VERSION - (Development Build: $GIT_LASTCOMMIT)" > $BASEDIR/build/etc/system-release
   else
 	echo "$NAME $VERSION - $GIT_BRANCH" > $BASEDIR/build/etc/system-release
@@ -845,7 +844,7 @@ ipfirepackages() {
 case "$1" in 
 build)
 	clear
-	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz 2> /dev/null | head -n 1`
+	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
 	if [ ! -f log/cleanup-toolchain-2-tools ]; then
 		if [ ! -n "$PACKAGE" ]; then
@@ -978,27 +977,27 @@ toolchain)
 	prepareenv
 	beautify build_stage "Toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
 	buildtoolchain
-	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
+	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $MACHINE" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
-	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz \
+	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
 		build/{bin,etc,usr/bin,usr/local} \
 		build/tools/{bin,etc,*-linux-gnu*,include,lib,libexec,sbin,share,var} \
 		log >> $LOGFILE
-	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.tar.gz \
-		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE.md5
+	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
+		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.md5
 	stdumount
 	;;
 gettoolchain)
 	# arbitrary name to be updated in case of new toolchain package upload
-	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$BUILDMACHINE
+	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE
 	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.gz ]; then
 		URL_TOOLCHAIN=`grep URL_TOOLCHAIN lfs/Config | awk '{ print $3 }'`
 		test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
-		echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for $BUILDMACHINE" | tee -a $LOGFILE
+		echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for $MACHINE" | tee -a $LOGFILE
 		cd $BASEDIR/cache/toolchains
 		wget -U "IPFireSourceGrabber/2.x" $URL_TOOLCHAIN/$PACKAGE.tar.gz $URL_TOOLCHAIN/$PACKAGE.md5 >& /dev/null
 		if [ $? -ne 0 ]; then
-			echo "`date -u '+%b %e %T'`: error downloading $PACKAGE toolchain for $BUILDMACHINE machine" | tee -a $LOGFILE
+			echo "`date -u '+%b %e %T'`: error downloading $PACKAGE toolchain for $MACHINE machine" | tee -a $LOGFILE
 		else
 			if [ "`md5sum $PACKAGE.tar.gz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
 				echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE

@@ -76,5 +76,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING) SBINDIR=/sbin
 	cd $(DIR_APP) && make SBINDIR=/sbin install
 	cd $(DIR_APP) && mv -v /sbin/arpd /usr/sbin
+
+	# Add table for static routing
+	echo "200	static" >> /etc/iproute2/rt_tables
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

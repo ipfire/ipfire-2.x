@@ -61,6 +61,8 @@ ifeq "$(MACHINE_TYPE)" "arm"
 		--build=arm \
 		--host=$(BUILDTARGET) \
 		--without-fp
+else
+	EXTRA_CONFIG += --build=$(BUILDTARGET)
 endif
 
 ###############################################################################

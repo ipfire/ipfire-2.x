@@ -80,6 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifneq "$(ROOT)" ""
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-libc-2.patch
 endif
+	cd $(DIR_APP) && sed -i -e 's|-fstack-protector|-fno-stack-protector|g' Configure
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && ./configure.gnu --prefix=/usr -Dman1dir=/usr/share/man/man1 \
 		-Dman3dir=/usr/share/man/man3 -Dpager="/usr/bin/less -isR" -Dusethreads

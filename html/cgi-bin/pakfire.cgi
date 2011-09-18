@@ -43,7 +43,6 @@ $pakfiresettings{'VALID'} = '';
 $pakfiresettings{'INSPAKS'} = '';
 $pakfiresettings{'DELPAKS'} = '';
 $pakfiresettings{'AUTOUPDATE'} = 'off';
-$pakfiresettings{'AUTOUPGRADE'} = 'off';
 $pakfiresettings{'HEALTHCHECK'} = 'on';
 $pakfiresettings{'UUID'} = 'on';
 
@@ -153,12 +152,6 @@ END
 		system("/usr/local/bin/pakfire disable updates  >/dev/null 2>&1");
 	}
 
-	if ($pakfiresettings{'AUTOUPGRADE'} eq 'on') {
-		system("/usr/local/bin/pakfire enable upgrades >/dev/null 2>&1");
-	} else {
-		system("/usr/local/bin/pakfire disable upgrades >/dev/null 2>&1");
-	}
-
 	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 }
 
@@ -170,9 +163,6 @@ my %checked=();
 $checked{'AUTOUPDATE'}{'off'} = '';
 $checked{'AUTOUPDATE'}{'on'} = '';
 $checked{'AUTOUPDATE'}{$pakfiresettings{'AUTOUPDATE'}} = "checked='checked'";
-$checked{'AUTOUPGRADE'}{'off'} = '';
-$checked{'AUTOUPGRADE'}{'on'} = '';
-$checked{'AUTOUPGRADE'}{$pakfiresettings{'AUTOUPGRADE'}} = "checked='checked'";
 $checked{'HEALTHCHECK'}{'off'} = '';
 $checked{'HEALTHCHECK'}{'on'} = '';
 $checked{'HEALTHCHECK'}{$pakfiresettings{'HEALTHCHECK'}} = "checked='checked'";
@@ -302,9 +292,6 @@ print <<END;
 			<tr><td align='left' width='45%'>$Lang::tr{'pakfire update daily'}</td><td width="55%" align="left">
           on <input type='radio' name='AUTOUPDATE' value='on' $checked{'AUTOUPDATE'}{'on'} /> |
           <input type='radio' name='AUTOUPDATE' value='off' $checked{'AUTOUPDATE'}{'off'} /> off </td></tr>
-			<tr><td align='left' width='45%'>$Lang::tr{'pakfire core update auto'}</td><td align="left">
-          on <input type='radio' name='AUTOUPGRADE' value='on' $checked{'AUTOUPGRADE'}{'on'} /> |
-          <input type='radio' name='AUTOUPGRADE' value='off' $checked{'AUTOUPGRADE'}{'off'} /> off </td></tr>
 			<tr><td align='left' width='45%'>$Lang::tr{'pakfire health check'}</td><td align="left">
           on <input type='radio' name='HEALTHCHECK' value='on' $checked{'HEALTHCHECK'}{'on'} /> |
           <input type='radio' name='HEALTHCHECK' value='off' $checked{'HEALTHCHECK'}{'off'} /> off </td></tr>          

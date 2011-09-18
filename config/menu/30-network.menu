@@ -35,6 +35,12 @@
 				 'title' => "$Lang::tr{'edit hosts'}",
 				 'enabled' => 1,
 				 };
+    $subnetwork->{'51.routes'} = {
+				 'caption' => $Lang::tr{'static routes'},
+				 'uri' => '/cgi-bin/routing.cgi',
+				 'title' => "$Lang::tr{'static routes'}",
+				 'enabled' => 1,
+				 };
     $subnetwork->{'60.upload'} = {
 				  'caption' => $Lang::tr{'upload'},
 				  'uri' => '/cgi-bin/upload.cgi',

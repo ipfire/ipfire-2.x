@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,16 +24,16 @@
 
 include Config
 
-VER        = 0.16.0-20110429-868eae9
+VER        = 0.0.0-0db9d7f
 
-THISAPP    = sat-solver-bindings-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
-DL_FROM    = http://source.ipfire.org/source-3.x
+THISAPP    = libsolv-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-PROG       = python-satsolver
-DEPS       = "libsatsolver"
+PROG       = libsolv
+DEPS       = ""
 PAK_VER    = 1
 
 ###############################################################################
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 479f3b57a9f9a59c7b24e37aedda7469
+$(DL_FILE)_MD5 = ba95c404d807bc71297c508a7127a3d9
 
 install : $(TARGET)
 
@@ -54,8 +54,8 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist :
-	$(PAK)
+dist : 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -73,30 +73,39 @@ $(subst %,%_MD5,$(objects)) :
 ###############################################################################
 # Installation Details
 ###############################################################################
+
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
-	# Workaround for weak tarball
-	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE) -C $(DIR_APP)
-
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/python-satsover-fix-building-without-rpm.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/python-satsolver-only-python-bindings.patch
-
-	# Aaaahh!
+	# Who releases code with -Werror?
 	cd $(DIR_APP) && sed -e "s/-Werror//g" -i CMakeLists.txt
 
+	# Disable bindings, examples and tools.
+	cd $(DIR_APP) && sed "/bindings/d" -i CMakeLists.txt
+	cd $(DIR_APP) && sed "/examples/d" -i CMakeLists.txt
+	cd $(DIR_APP) && sed "/tools/d" -i CMakeLists.txt
+
+	# Make sure that libsatsolverext is linked properly to all needed
+	# libraries.
+	cd $(DIR_APP) && echo "TARGET_LINK_LIBRARIES(libsolvext libsolv \$${EXPAT_LIBRARY} \$${ZLIB_LIBRARY})" \
+		>> ext/CMakeLists.txt
+
+	# Remove the RPM stuff when we build with -DFEDORA=1 because we
+	# do not support RPM.
+	cd $(DIR_APP) && sed -e "s/DEBIAN/FEDORA/g" -i ext/CMakeLists.txt
+
+	# Our version of glibc has no __qsort_r
+	cd $(DIR_APP) && echo "#define USE_OWN_QSORT" >> src/util.h
+
 	cd $(DIR_APP) && mkdir build
-	cd $(DIR_APP)/build && cmake .. -DDEBIAN=1 \
+	cd $(DIR_APP)/build && cmake .. -DFEDORA=1 \
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DCMAKE_BUILD_TYPE=Release \
-		-DCMAKE_SKIP_RPATH=1 \
-		-DPYTHON_LIBRARY=/usr/lib/libpython2.7.so \
-		-DPYTHON_INCLUDE_PATH=/usr/include/python2.7
-
+		-DCMAKE_SKIP_RPATH=1
 	cd $(DIR_APP)/build && make $(PARALELLISMFLAGS)
 
-	# Install only the python bindings. That's all we need.
-	cd $(DIR_APP)/build/bindings/python && make install
+	cd $(DIR_APP)/build && make install
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
