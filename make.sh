@@ -585,6 +585,7 @@ buildipfire() {
   ipfiremake rsync
   ipfiremake tcpwrapper
   ipfiremake libevent
+  ipfiremake libevent2
   ipfiremake portmap
   ipfiremake nfs
   ipfiremake nmap
