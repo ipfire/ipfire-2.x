@@ -414,7 +414,7 @@ buildipfire() {
   ipfiremake kqemu
   ipfiremake kvm-kmod
   ipfiremake madwifi
-  if [ "${MACHINE_TYPE}" = "arm" ]; then
+  if [ "${MACHINE_TYPE}" != "arm" ]; then
     #todo enable alsa driver in kernel config
     ipfiremake alsa			KMOD=1
   fi
