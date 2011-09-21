@@ -90,8 +90,8 @@ usr/lib/perl5/site_perl/5.12.3/Mail/SpamAssassin.pm
 #usr/lib/perl5/site_perl/5.12.3/Mail/SpamAssassin/Util/DependencyInfo.pm
 #usr/lib/perl5/site_perl/5.12.3/Mail/SpamAssassin/Util/Progress.pm
 #usr/lib/perl5/site_perl/5.12.3/Mail/SpamAssassin/Util/RegistrarBoundaries.pm
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Mail/SpamAssassin
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Mail/SpamAssassin/.packlist
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Mail/SpamAssassin
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Mail/SpamAssassin/.packlist
 #usr/lib/perl5/site_perl/5.12.3/spamassassin-run.pod
 #usr/share/man/man1/sa-learn.1
 #usr/share/man/man1/sa-update.1

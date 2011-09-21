@@ -21,8 +21,8 @@ usr/lib/perl5/site_perl/5.12.3/Foomatic/DB.pm
 usr/lib/perl5/site_perl/5.12.3/Foomatic/Defaults.pm
 usr/lib/perl5/site_perl/5.12.3/Foomatic/PPD.pm
 usr/lib/perl5/site_perl/5.12.3/Foomatic/UIElem.pm
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Foomatic
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Foomatic/.packlist
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Foomatic
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Foomatic/.packlist
 #usr/lib/ppr
 #usr/lib/ppr/interfaces
 usr/lib/ppr/interfaces/foomatic-rip
