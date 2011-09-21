@@ -22,7 +22,17 @@
 FILELIST=
 
 for dir in $@; do
+	# Skip all objects that do not exist.
+	[ -e "${dir}" ] || continue
+
+	# Files go directly to the rootfile.
+	if [ -f "${dir}" ]; then
+		FILELIST="${FILELIST} ${dir}"
+		continue
+	fi
+
 	for exclude in ${dir}/${MACHINE}/*; do
+		[ -f "${exclude}" ] || continue
 		EXCLUDE="$EXCLUDE $exclude"
 	done
 
@@ -41,5 +51,5 @@ for dir in $@; do
 	done
 done
 
-cat ${FILELIST} | grep -v ^# | sort | uniq | \
+cat ${FILELIST} 2>/dev/null | grep -v ^# | sort | uniq | \
 	sed -e "s/KVER/${KVER}/g" -e "s/MACHINE/${MACHINE}/g" -e "s/BUILDTARGET/${BUILDTARGET}/g"
