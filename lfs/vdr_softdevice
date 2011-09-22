@@ -28,6 +28,7 @@ VER        = plugin
 
 THISAPP    = vdr_softdevice-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
+SUP_ARCH   = i586
 PROG       = vdr_softdevice
 PAK_VER    = 5
 
