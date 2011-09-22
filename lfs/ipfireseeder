@@ -32,6 +32,7 @@ DL_FILE    = ipfire-2.9.i586-full-core51.iso.torrent
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+SUP_ARCH   = i586
 PROG       = ipfireseeder
 PAK_VER    = 27
 
