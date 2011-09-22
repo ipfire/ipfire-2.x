@@ -790,7 +790,7 @@ buildpackages() {
   ipfirepackages
 
   # Check if there is a loop device for building in virtual environments
-  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
+  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]) && [ "${MACHINE_TYPE}" != "arm" ]; then
         cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
         cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
 	ipfiremake xen-image ED=$IPFVER
@@ -827,7 +827,10 @@ buildpackages() {
 
 ipfirepackages() {
 	ipfiremake core-updates
-	for i in $(ls -1 $BASEDIR/config/rootfiles/packages); do
+
+	local i
+	for i in $(find $BASEDIR/config/rootfiles/packages{${machine},} -maxdepth 1 -type f); do
+		i=$(basename ${i})
 		if [ -e $BASEDIR/lfs/$i ]; then
 			ipfiredist $i
 		else

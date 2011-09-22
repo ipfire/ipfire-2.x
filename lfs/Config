@@ -191,7 +191,12 @@ define PAK
 		cp -f /usr/src/src/paks/default/{,un}install.sh /usr/src/src/paks/default/update.sh \
 		/install/packages/package; \
 	fi
-	cp -v /usr/src/config/rootfiles/packages/$(PROG) /install/packages/package/ROOTFILES
+	for i in $(DIR_SRC)/config/rootfiles/packages/{$(MACHINE),}/$(PROG); do \
+		if [ -e "$${i}" ]; then \
+			cp -v $${i} /install/packages/package/ROOTFILES; \
+			break; \
+		fi; \
+	done
 	sed -e 's/BUILDTARGET/$(BUILDTARGET)/g' -e 's/KVER/$(KVER)/g' -e 's/MACHINE/$(MACHINE)/g' -i /install/packages/package/ROOTFILES
 	sed -e 's/xxxKVERxxx/$(KVER)/g' -i /install/packages/package/install.sh
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
