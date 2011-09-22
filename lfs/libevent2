@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,24 +24,13 @@
 
 include Config
 
-ifeq "$(PAE)" "1"
-	VERSUFIX=ipfire-pae
-else
-ifeq "$(XEN)" "1"
-	VERSUFIX=ipfire-xen
-else
-	VERSUFIX=ipfire
-endif
-endif
+VER        = 2.0.13-stable
 
-VER        = git20110427
-
-THISAPP    = v4l-dvb-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
+THISAPP    = libevent-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-PAK_VER    = 2
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -51,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8b83a89332fe8468ebffd516a4a47128
+$(DL_FILE)_MD5 = af786b4b3f790c9d3279792edf7867fc
 
 install : $(TARGET)
 
@@ -60,9 +49,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -83,9 +69,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make all KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=2.6.32
-	cd $(DIR_APP) && make install KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=2.6.32
-	ln -sf $(DIR_APP)/ /usr/src/v4l-dvb
-#	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

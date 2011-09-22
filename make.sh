@@ -38,7 +38,6 @@ MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 TOOLCHAINVER=1
-IPFVER="full"				# Which versions should be compiled? (full|devel)
 
 BUILDMACHINE=$MACHINE
     if [ "$MACHINE" = "x86_64" ]; then
@@ -605,6 +604,7 @@ buildipfire() {
   ipfiremake rsync
   ipfiremake tcpwrapper
   ipfiremake libevent
+  ipfiremake libevent2
   ipfiremake portmap
   ipfiremake nfs
   ipfiremake nmap
@@ -720,6 +720,7 @@ buildipfire() {
   ipfiremake python-xattr
   ipfiremake intltool
   ipfiremake pakfire3-deps
+  ipfiremake transmission
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
@@ -775,14 +776,14 @@ buildpackages() {
   $0 git log
 
   # Create images for install
-  ipfiremake cdrom ED=$IPFVER
+  ipfiremake cdrom
 
   # Check if there is a loop device for building in virtual environments
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
 	if [ "${MACHINE_TYPE}" != "arm" ]; then
-		ipfiremake usb-stick ED=$IPFVER
+		ipfiremake usb-stick
 	fi
-	ipfiremake flash-images ED=$IPFVER
+	ipfiremake flash-images
   fi
 
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
@@ -793,7 +794,7 @@ buildpackages() {
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]) && [ "${MACHINE_TYPE}" != "arm" ]; then
         cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
         cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
-	ipfiremake xen-image ED=$IPFVER
+	ipfiremake xen-image
 	rm -rf $LFS/install/packages/linux-xen-*.ipfire
 	rm -rf $LFS/install/packages/meta-linux-xen
   fi
@@ -1028,54 +1029,6 @@ othersrc)
 	fi
 	stdumount
 	;;
-git)
-	case "$2" in
-	  update|up)
-	  		## REMOVES ALL UNCOMMITTED CHANGES!
-	  		[ "$3" == "--force" ] && git checkout -f
-			git pull
-	  	;;
-	  commit|ci)
-	  	shift 2
-			git commit $*
-			
-			[ "$?" -eq "0" ] || exiterror "git commit $* failed."
-			
-			echo -e "${BOLD}Do you want to push, too? [y/N]${NORMAL}"
-			read
-			[ -z $REPLY ] && exit 0
-			for i in y Y j J; do
-				if [ "$i" == "$REPLY" ]; then
-					$0 git push
-					exit $?
-				fi
-			done
-			exiterror "\"$REPLY\" is not a valid answer."
-	  	;;
-	  dist)
-			git archive HEAD | gzip -9 > ${SNAME}-${VERSION}.tar.gz
-		  ;;
-	  diff|di)
-			echo -ne "Make a local diff to last revision"
-			git diff HEAD > ipfire-diff-$(date +'%Y-%m-%d-%H:%M').diff
-			evaluate 1
-			echo "Diff was successfully saved to ipfire-diff-$(date +'%Y-%m-%d-%H:%M').diff"
-			git diff --stat
-	  	;;
-	  push)
-	  	[ -z $GIT_USER ] && exiterror "You have to setup GIT_USER first."
-			GIT_URL="ssh://${GIT_USER}@git.ipfire.org/pub/git/ipfire-2.x"
-			
-		git push ${GIT_URL} $3
-	  	;;
-	  log)
-		[ -z $GIT_TAG ]  || LAST_TAG=$GIT_TAG
-		[ -z $LAST_TAG ] || EXT="$LAST_TAG..HEAD"
-
-		git log -n 500 --no-merges --pretty=medium --shortstat $EXT > $BASEDIR/doc/ChangeLog
-	;;
-	esac
-	;;
 uploadsrc)
 	PWD=`pwd`
 	if [ -z $IPFIRE_USER ]; then
@@ -1097,82 +1050,8 @@ uploadsrc)
 	cd $PWD
 	exit 0
 	;;
-batch)
-	if [ "$2" = "--background" ]; then
-		batch_script
-		exit $?
-	fi
-	if [ `screen -ls | grep -q ipfire` ]; then
-		echo "Build is already running, sorry!"
-		exit 1
-	else
-		if [ "$2" = "--rebuild" ]; then
-			export IPFIRE_REBUILD=1
-			echo "REBUILD!"
-		else
-			export IPFIRE_REBUILD=0
-		fi
-		echo -en "${BOLD}***IPFire-Batch-Build is starting...${NORMAL}"
-		screen -dmS ipfire $0 batch --background
-		evaluate 1
-		exit 0
-	fi
-	;;
-watch)
-	watch_screen
-	;;
-pxe)
-	case "$2" in
-	  start)
-		start_tftpd
-		;;
-	  stop)
-		stop_tftpd
-		;;
-	  reload|restart)
-		reload_tftpd
-		;;		
-	esac
-	exit 0
-	;;
 lang)
 	update_langs
-	;;
-"")
-	clear
-	select name in "Exit" "IPFIRE: Downloadsrc" "IPFIRE: Build (silent)" "IPFIRE: Watch Build" "IPFIRE: Batch" "IPFIRE: Clean" "LOG: Tail" "Help"
-	do
-	case $name in
-	"IPFIRE: Downloadsrc")
-		$0 downloadsrc
-		;;
-	"IPFIRE: Build (silent)")
-		$0 build-silent
-		;;
-	"IPFIRE: Watch Build")
-		$0 watch
-		;;
-	"IPFIRE: Batch")
-		$0 batch
-		;;
-	"IPFIRE: Clean")
-		$0 clean
-		;;
-	"Help")
-		echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain}"
-		cat doc/make.sh-usage
-		;;
-	"LOG: Tail")
-		tail -f log/_*
-		;;
-	"Exit")
-		break
-		;;
-	esac
-	done
-	;;
-config)
-	make_config
 	;;
 *)
 	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain}"

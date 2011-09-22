@@ -37,12 +37,6 @@ URL_IPFIRE  = http://source.ipfire.org/source-2.x
 URL_TOOLCHAIN = http://source.ipfire.org/toolchains
 URL_SOURCE = source.ipfire.org:/pub/source/source-2.x
 
-# Default compiler optimizations.
-#
-FLAGS_OPT   = -O2
-FLAGS_CPU   = -mcpu=$(MACHINE)
-FLAGS_ARCH  = -march=$(MACHINE)
-
 # Don't change this; it will be overridden by other makefiles where necessary.
 #
 ROOT =

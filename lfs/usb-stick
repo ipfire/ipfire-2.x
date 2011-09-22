@@ -44,15 +44,11 @@ md5 :
 ###############################################################################
 # Installation Details
 ###############################################################################
-IMGfdd := /install/images/$(SNAME)-$(VERSION)-install-usb-fdd.$(MACHINE)-$(ED)-core$(CORE).img
-IMGhdd := /install/images/$(SNAME)-$(VERSION)-install-usb-hdd.$(MACHINE)-$(ED)-core$(CORE).img
+IMGfdd := /install/images/$(SNAME)-$(VERSION)-install-usb-fdd.$(MACHINE)-full-core$(CORE).img
+IMGhdd := /install/images/$(SNAME)-$(VERSION)-install-usb-hdd.$(MACHINE)-full-core$(CORE).img
 IMGfs  := /install/images/fs
 
-ifeq "$(ED)" "devel"
-	DISKSIZE=480000
-else
-	DISKSIZE=120000
-endif
+DISKSIZE=120000
 
 define COPY_TO_IMG
 	mkdosfs -n IPFIRE -F 16 -I $$IMAGE && \

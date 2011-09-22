@@ -118,6 +118,7 @@ etc/rc.d/init.d/teamspeak
 etc/rc.d/init.d/template
 #etc/rc.d/init.d/tftpd
 etc/rc.d/init.d/tmpfs
+#etc/rc.d/init.d/transmission
 etc/rc.d/init.d/udev
 etc/rc.d/init.d/udev_retry
 etc/rc.d/init.d/upnpd
@@ -146,7 +147,6 @@ etc/rc.d/rc0.d/K80network
 #etc/rc.d/rc0.d/K85messagebus
 etc/rc.d/rc0.d/K85tmpfs
 etc/rc.d/rc0.d/K90sysklogd
-etc/rc.d/rc0.d/K99beep
 etc/rc.d/rc0.d/S60sendsignals
 etc/rc.d/rc0.d/S70localnet
 etc/rc.d/rc0.d/S80mountfs
@@ -170,7 +170,6 @@ etc/rc.d/rc3.d/S40fcron
 #etc/rc.d/rc3.d/S98mediatomb
 etc/rc.d/rc3.d/S98rc.local
 #etc/rc.d/rc3.d/S98sslh
-etc/rc.d/rc3.d/S99beep
 #etc/rc.d/rc3.d/S99imspetor
 #etc/rc.d/rc3.d/S99motion
 #etc/rc.d/rc3.d/S99vdradmin
@@ -193,7 +192,6 @@ etc/rc.d/rc6.d/K80network
 #etc/rc.d/rc6.d/K85messagebus
 etc/rc.d/rc6.d/K85tmpfs
 etc/rc.d/rc6.d/K90sysklogd
-etc/rc.d/rc6.d/K99beep
 etc/rc.d/rc6.d/S60sendsignals
 etc/rc.d/rc6.d/S70mountfs
 etc/rc.d/rc6.d/S80swap

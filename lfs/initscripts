@@ -128,9 +128,6 @@ $(TARGET) :
 	ln -sf ../init.d/random      /etc/rc.d/rc3.d/S25random
 	ln -sf ../init.d/random      /etc/rc.d/rc6.d/K45random
 	ln -sf ../../sysconfig/rc.local /etc/rc.d/rc3.d/S98rc.local
-	ln -sf ../init.d/beep        /etc/rc.d/rc0.d/K99beep
-	ln -sf ../init.d/beep        /etc/rc.d/rc3.d/S99beep
-	ln -sf ../init.d/beep        /etc/rc.d/rc6.d/K99beep
 	ln -sf ../init.d/tmpfs       /etc/rc.d/rc0.d/K85tmpfs
 	ln -sf ../init.d/tmpfs       /etc/rc.d/rc3.d/S01tmpfs
 	ln -sf ../init.d/tmpfs       /etc/rc.d/rc6.d/K85tmpfs
