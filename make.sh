@@ -772,10 +772,6 @@ buildpackages() {
   # packages-list.txt is ready to be displayed for wiki page
   beautify message DONE
   
-  # Update changelog
-  cd $BASEDIR
-  $0 git log
-
   # Create images for install
   ipfiremake cdrom
 

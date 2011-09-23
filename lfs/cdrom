@@ -78,8 +78,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Other files
 	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt > /install/cdrom/README.txt
-	cp $(DIR_SRC)/doc/COPYING				/install/cdrom/
-	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt}	/install/cdrom/doc
+	cp $(DIR_SRC)/doc/COPYING		/install/cdrom/
+	cp $(DIR_SRC)/doc/packages-list.txt	/install/cdrom/doc
 
 	# Configuration
 	mkdir -p /install/cdrom/boot
