@@ -301,6 +301,7 @@ buildbase() {
     fi
     lfsmake2 man-pages
     lfsmake2 glibc
+    lfsmake2 tzdata
     lfsmake2 cleanup-toolchain	PASS=3
     lfsmake2 binutils
     lfsmake2 gcc

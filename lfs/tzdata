@@ -1,0 +1,93 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+TZDATA_VER = 2011j
+TZCODE_VER = 2011i
+
+THISAPP    = tzdata
+DL_FILE    = tzdata-base-0.tar.bz2
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+SUP_ARCH   = armv5tel
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE) tzdata$(TZDATA_VER).tar.gz tzcode$(TZCODE_VER).tar.gz
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+tzdata$(TZDATA_VER).tar.gz = $(DL_FROM)/tzdata$(TZDATA_VER).tar.gz
+tzcode$(TZCODE_VER).tar.gz = $(DL_FROM)/tzcode$(TZCODE_VER).tar.gz
+
+$(DL_FILE)_MD5 = e36d2f742c22f8c8dbf0686ac9769b55
+tzdata$(TZDATA_VER).tar.gz_MD5 = 30a6bebdbdd03c5bd29241c15f569d50
+tzcode$(TZCODE_VER).tar.gz_MD5 = cf7f4335b7c8682899fa2814e711c1b2
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	mkdir -pv $(DIR_APP)/tzdata$(TZDATA_VER) $(DIR_APP)/tzcode$(TZCODE_VER)
+	tar axf $(DIR_DL)/tzdata$(TZDATA_VER).tar.gz -C $(DIR_APP)/tzdata$(TZDATA_VER)
+	tar axf $(DIR_DL)/tzcode$(TZCODE_VER).tar.gz -C $(DIR_APP)/tzcode$(TZCODE_VER)
+
+	cd $(DIR_APP) && sed -e 's|@objpfx@|$(DIR_APP)/obj/|' \
+		-e 's|@datadir@|/usr/share|' \
+		Makeconfig.in > Makeconfig
+	cd $(DIR_APP) && make $(MAKETUNING)
+
+	cd $(DIR_APP) && sed -i 's|@install_root@||' Makeconfig
+	cd $(DIR_APP) && make install
+
+	cp -f /usr/share/zoneinfo/GMT /etc/localtime
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)
