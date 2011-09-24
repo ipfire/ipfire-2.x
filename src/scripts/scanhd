@@ -1,17 +1,14 @@
 #!/bin/bash
-
 case "$1" in
 	ide)
-		/sbin/kudzu -qps -c HD | egrep "desc|device:" | awk -F': ' '{print $2}' | sed -e '/"$/a\\' -e "s/$/\;/g" | tr "\n" "XX" | sed -e "s/XX/\n/g" -e "s/\;X/\;/g" | grep '^"' -v > /var/ipfire/extrahd/scan
-		if [ -e /dev/.mdadm ]; then
-			echo 'md;"MD Software-Raid";' >> /var/ipfire/extrahd/scan
-		fi
-		if [ -e /dev/mmcblk0 ]; then
-			echo 'mmcblk0;"MMC/SD Cardreader";' >> /var/ipfire/extrahd/scan
-		fi
-		if [ -e /dev/mmcblk1 ]; then
-			echo 'mmcblk1;"MMC/SD Cardreader";' >> /var/ipfire/extrahd/scan
-		fi
+		rm -f /var/ipfire/extrahd/scan
+		for DEV in `find /sys/block/* -maxdepth 0 ! -name sr* ! -name ram* ! -name loop* -exec basename {} \; | sort | uniq`
+		do
+			VENDOR=`cat /sys/block/$DEV/device/vendor 2>/dev/null`
+			MODEL=`cat /sys/block/$DEV/device/model 2>/dev/null`
+			REV=`cat /sys/block/$DEV/device/rev 2>/dev/null`
+			echo "$DEV;$VENDOR $MODEL $REV" >> /var/ipfire/extrahd/scan
+		done
 		;;
 	partitions)
 		cat /proc/partitions | awk '{print $4 " " $3 }' | grep -v name | grep -v "^[:space:]*$" | \
