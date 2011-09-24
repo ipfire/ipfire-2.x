@@ -22,7 +22,7 @@
 # IPFire HDD Shutdown state reader
 #
 
-my @devices = `kudzu -qps -c HD | grep device: | cut -d" " -f2 | sort | uniq`;
+my @devices = `find /sys/block/* -maxdepth 0 ! -name sr* ! -name loop* ! -name ram* -exec basename {} \\; | sort | uniq`;
 my $diskstats = "";
 my $newdiskstats = "";
 my $debug = 1;

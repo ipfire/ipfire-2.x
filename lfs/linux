@@ -165,7 +165,7 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_ipg-fix-driver-name.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
-ifeq "$(MACHINE)" "arm"
+ifeq "$(MACHINE_TYPE)" "arm"
 	# Add dreamplug support on ARM
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45-arm_kirkwood_dreamplug.patch
 endif
