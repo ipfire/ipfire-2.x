@@ -774,7 +774,9 @@ buildpackages() {
   
   # Update changelog
   cd $BASEDIR
-  $0 git log
+  [ -z $GIT_TAG ]  || LAST_TAG=$GIT_TAG
+  [ -z $LAST_TAG ] || EXT="$LAST_TAG..HEAD"
+  git log -n 500 --no-merges --pretty=medium --shortstat $EXT > $BASEDIR/doc/ChangeLog
 
   # Create images for install
   ipfiremake cdrom
