@@ -92,5 +92,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# needed.
 	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER).img $(KVER)-ipfire
 
+ifeq "$(MACHINE_TYPE)" "arm"
+	#Convert initrd to uboot-image
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER).img uInit
+endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -772,6 +772,12 @@ buildpackages() {
   # packages-list.txt is ready to be displayed for wiki page
   beautify message DONE
   
+  # Update changelog
+  cd $BASEDIR
+  [ -z $GIT_TAG ]  || LAST_TAG=$GIT_TAG
+  [ -z $LAST_TAG ] || EXT="$LAST_TAG..HEAD"
+  git log -n 500 --no-merges --pretty=medium --shortstat $EXT > $BASEDIR/doc/ChangeLog
+
   # Create images for install
   ipfiremake cdrom
 
