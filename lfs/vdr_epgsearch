@@ -28,7 +28,6 @@ VER        = plugin
 
 THISAPP    = vdr_epgsearch-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-SUP_ARCH   = i586
 PROG       = vdr_epgsearch
 PAK_VER    = 5
 
