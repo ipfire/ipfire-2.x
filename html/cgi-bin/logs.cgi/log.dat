@@ -61,7 +61,7 @@ my %sections = (
         'auth' => '(\w+\(pam_unix\)\[.*\]: )',
         'kernel' => '(kernel: (?!DROP_))',
         'ipsec' => '(ipsec_[\w_]+: |pluto\[.*\]: |charon: |vpnwatch: )',
-        'openvpn' => '(openvpnserver)\[.*\]: ',
+        'openvpn' => '(openvpnserver\[.*\]: |.*n2n\[.*\]: )',
         'pakfire' => '(pakfire:) ',
         'wireless' => '(hostapd:|kernel: ath.*:|kernel: wifi[0-9]:) '
 	 );

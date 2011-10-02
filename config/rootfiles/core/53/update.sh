@@ -36,6 +36,7 @@ done
 #Stop services
 
 /etc/init.d/ipsec stop
+/etc/init.d/apache stop
 
 #
 # Remove old strongswan libs
@@ -65,6 +66,7 @@ sed -i -e "s|^options cfg80211 ieee80211_regdom=EU|#options cfg80211 ieee80211_r
 #
 #Start services
 
+/etc/init.d/apache start
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
