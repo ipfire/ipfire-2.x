@@ -1,0 +1,6 @@
+lib/modules/2.6.32.45-ipfire/kernel/arch/x86/kvm/kvm.ko
+lib/modules/2.6.32.45-ipfire/kernel/arch/x86/kvm/kvm-amd.ko
+lib/modules/2.6.32.45-ipfire/kernel/arch/x86/kvm/kvm-intel.ko
+lib/modules/2.6.32.45-ipfire-pae/kernel/arch/x86/kvm/kvm.ko
+lib/modules/2.6.32.45-ipfire-pae/kernel/arch/x86/kvm/kvm-amd.ko
+lib/modules/2.6.32.45-ipfire-pae/kernel/arch/x86/kvm/kvm-intel.ko

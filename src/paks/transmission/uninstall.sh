@@ -22,6 +22,8 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+stop_service ${NAME}
+make_backup ${NAME}
 remove_files
 
 # Remove all start links.

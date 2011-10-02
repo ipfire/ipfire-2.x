@@ -5,7 +5,7 @@
 #                                                                          #
 # IPFire is free software; you can redistribute it and/or modify           #
 # it under the terms of the GNU General Public License as published by     #
-# the Free Software Foundation; either version 2 of the License, or        #
+# the Free Software Foundation; either version 3 of the License, or        #
 # (at your option) any later version.                                      #
 #                                                                          #
 # IPFire is distributed in the hope that it will be useful,                #
@@ -17,25 +17,44 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2011 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+/usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
+#
+# Remove old core updates from pakfire cache to save space...
+core=54
+for (( i=1; i<=$core; i++ ))
+do
+	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
+done
+
+#
+#Stop services
+
+#
+#Extract files
 extract_files
-restore_backup ${NAME}
-# Create download directories if they do not yet exist.
-mkdir -p /var/transmission/{downloads,incomplete} 2>/dev/null
 
-# Adjust permissions.
-chown nobody.nobody /etc/transmission /var/transmission
+#
+#Start services
 
-# create startlinks
-ln -sf ../init.d/transmission /etc/rc.d/rc0.d/K20transmission
-ln -sf ../init.d/transmission /etc/rc.d/rc3.d/S99transmission
-ln -sf ../init.d/transmission /etc/rc.d/rc6.d/K20transmission
 
-# Start the service.
-start_service --background ${NAME}
+#
+#Update Language cache
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+
+#Rebuild module dep's
+#depmod 2.6.32.45-ipfire     >/dev/null 2>&1
+#depmod 2.6.32.45-ipfire-pae >/dev/null 2>&1
+#depmod 2.6.32.45-ipfire-xen >/dev/null 2>&1
+
+#
+#Finish
+/etc/init.d/fireinfo start
+sendprofile
+#Don't report the exitcode last command
 exit 0

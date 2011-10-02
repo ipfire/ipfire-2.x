@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = transmission
 PAK_VER    = 1
 
-DEPS       = ""
+DEPS       = "libevent2"
 
 ###############################################################################
 # Top-level Rules
