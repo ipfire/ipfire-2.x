@@ -24,18 +24,18 @@
 . /opt/pakfire/lib/functions.sh
 
 extract_files
-
+restore_backup ${NAME}
 # Create download directories if they do not yet exist.
 mkdir -p /var/transmission/{downloads,incomplete} 2>/dev/null
 
 # Adjust permissions.
 chown nobody.nobody /etc/transmission /var/transmission
 
-# Start the service.
-/etc/init.d/transmission start
-
+# create startlinks
 ln -sf ../init.d/transmission /etc/rc.d/rc0.d/K20transmission
 ln -sf ../init.d/transmission /etc/rc.d/rc3.d/S99transmission
 ln -sf ../init.d/transmission /etc/rc.d/rc6.d/K20transmission
 
+# Start the service.
+start_service --background ${NAME}
 exit 0
