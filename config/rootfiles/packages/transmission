@@ -1,3 +1,4 @@
+var/ipfire/backup/addons/includes/transmission
 #etc/transmission
 etc/transmission/settings.json
 usr/bin/transmission-cli
@@ -64,3 +65,4 @@ usr/share/transmission
 #usr/share/transmission/web/stylesheets/ie6.css
 #usr/share/transmission/web/stylesheets/ie7.css
 #usr/share/transmission/web/stylesheets/iphone.css
+etc/rc.d/init.d/transmission
