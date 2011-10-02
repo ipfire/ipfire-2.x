@@ -71,14 +71,6 @@ mkdir $BASEDIR/log/ 2>/dev/null
 
 if [ -f .config ]; then
 	. .config
-else
-	echo -e  "${BOLD}No configuration found!${NORMAL}"
-	echo -ne "Do you want to create one (y/N)?"
-	read CREATE_CONFIG
-	echo ""
-	if [ "$CREATE_CONFIG" == "y" ]; then
-		make_config
-	fi
 fi
 
 if [ -z $EDITOR ]; then
