@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.de>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -31,6 +31,11 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+
+PROG       = libevent2
+PAK_VER    = 1
+
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -62,7 +67,8 @@ $(patsubst %,$(DIR_DL)/%,$(objects)) :
 
 $(subst %,%_MD5,$(objects)) :
 	@$(MD5)
-
+dist: 
+	@$(PAK)
 ###############################################################################
 # Installation Details
 ###############################################################################
