@@ -196,6 +196,7 @@ else
 ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage
 	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage
 else
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
