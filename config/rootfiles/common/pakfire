@@ -7,6 +7,7 @@ opt/pakfire/db/lists
 opt/pakfire/db/meta
 opt/pakfire/db/rootfiles
 #opt/pakfire/etc
+#opt/pakfire/pakfire.conf
 opt/pakfire/etc/pakfire.conf
 #opt/pakfire/lib
 opt/pakfire/lib/functions.pl
