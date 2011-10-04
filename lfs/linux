@@ -34,7 +34,6 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PROG	   = linux-xen
 PAK_VER    = 19
 DEPS	   = ""
 
