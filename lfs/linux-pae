@@ -29,4 +29,4 @@ VER	   = kernel
 include linux
 
 PROG	   = linux-pae
-ARCH	   = i586
+SUP_ARCH   = i586

@@ -29,4 +29,4 @@ VER	   = kernel
 include linux
 
 PROG	   = linux-xen
-ARCH	   = i586
+SUP_ARCH   = i586
