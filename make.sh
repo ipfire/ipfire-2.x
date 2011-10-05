@@ -368,59 +368,59 @@ buildipfire() {
 
   # The xen and PAE kernels are only available for x86
   if [ "${MACHINE_TYPE}" != "arm" ]; then
-    ipfiremake linux			XEN=1
-    ipfiremake kqemu			XEN=1
-    ipfiremake v4l-dvb			XEN=1
-    ipfiremake madwifi			XEN=1
-    ipfiremake mISDN			XEN=1
-    ipfiremake dahdi			XEN=1 KMOD=1
-    ipfiremake cryptodev			XEN=1
-    ipfiremake compat-wireless		XEN=1
-    ipfiremake r8169			XEN=1
-    ipfiremake r8168			XEN=1
-    ipfiremake r8101			XEN=1
-    ipfiremake e1000			XEN=1
-    ipfiremake e1000e			XEN=1
-    ipfiremake igb			XEN=1
-    ipfiremake linux			PAE=1
-    ipfiremake kqemu			PAE=1
-    ipfiremake kvm-kmod			PAE=1
-    ipfiremake v4l-dvb			PAE=1
-    ipfiremake madwifi			PAE=1
-    ipfiremake alsa			PAE=1 KMOD=1
-    ipfiremake mISDN			PAE=1
-    ipfiremake dahdi			PAE=1 KMOD=1
-    ipfiremake cryptodev			PAE=1
-    ipfiremake compat-wireless		PAE=1
-#    ipfiremake r8169			PAE=1
-#    ipfiremake r8168			PAE=1
-#    ipfiremake r8101			PAE=1
-    ipfiremake e1000			PAE=1
-    ipfiremake e1000e			PAE=1
-    ipfiremake igb			PAE=1
+    ipfiremake linux			KCFG="-xen"
+    ipfiremake kqemu			KCFG="-xen"
+    ipfiremake v4l-dvb			KCFG="-xen"
+    ipfiremake madwifi			KCFG="-xen"
+    ipfiremake mISDN			KCFG="-xen"
+    ipfiremake dahdi			KCFG="-xen" KMOD=1
+    ipfiremake cryptodev		KCFG="-xen"
+    ipfiremake compat-wireless		KCFG="-xen"
+    ipfiremake r8169			KCFG="-xen"
+    ipfiremake r8168			KCFG="-xen"
+    ipfiremake r8101			KCFG="-xen"
+    ipfiremake e1000			KCFG="-xen"
+    ipfiremake e1000e			KCFG="-xen"
+    ipfiremake igb			KCFG="-xen"
+    ipfiremake linux			KCFG="-pae"
+    ipfiremake kqemu			KCFG="-pae"
+    ipfiremake kvm-kmod			KCFG="-pae"
+    ipfiremake v4l-dvb			KCFG="-pae"
+    ipfiremake madwifi			KCFG="-pae"
+    ipfiremake alsa			KCFG="-pae" KMOD=1
+    ipfiremake mISDN			KCFG="-pae"
+    ipfiremake dahdi			KCFG="-pae" KMOD=1
+    ipfiremake cryptodev		KCFG="-pae"
+    ipfiremake compat-wireless		KCFG="-pae"
+#    ipfiremake r8169			KCFG="-pae"
+#    ipfiremake r8168			KCFG="-pae"
+#    ipfiremake r8101			KCFG="-pae"
+    ipfiremake e1000			KCFG="-pae"
+    ipfiremake e1000e			KCFG="-pae"
+    ipfiremake igb			KCFG="-pae"
   fi
 
   # Default kernel build
-  ipfiremake linux
-  ipfiremake v4l-dvb
-  ipfiremake kqemu
-  ipfiremake kvm-kmod
-  ipfiremake madwifi
+  ipfiremake linux			KCFG=""
+  ipfiremake v4l-dvb			KCFG=""
+  ipfiremake kqemu			KCFG=""
+  ipfiremake kvm-kmod			KCFG=""
+  ipfiremake madwifi			KCFG=""
   if [ "${MACHINE_TYPE}" != "arm" ]; then
     #todo enable alsa driver in kernel config
-    ipfiremake alsa			KMOD=1
+    ipfiremake alsa			KCFG="" KMOD=1
   fi
   #undefined declaration in echo canceler try to fix later
-  ipfiremake mISDN
-  ipfiremake dahdi			KMOD=1
-  ipfiremake cryptodev
-  ipfiremake compat-wireless
-#  ipfiremake r8169
-#  ipfiremake r8168
-#  ipfiremake r8101
-  ipfiremake e1000
-  ipfiremake e1000e
-  ipfiremake igb
+  ipfiremake mISDN			KCFG=""
+  ipfiremake dahdi			KCFG="" KMOD=1
+  ipfiremake cryptodev			KCFG=""
+  ipfiremake compat-wireless		KCFG=""
+#  ipfiremake r8169			KCFG=""
+#  ipfiremake r8168			KCFG=""
+#  ipfiremake r8101			KCFG=""
+  ipfiremake e1000			KCFG=""
+  ipfiremake e1000e			KCFG=""
+  ipfiremake igb			KCFG=""
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio

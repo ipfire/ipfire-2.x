@@ -24,15 +24,7 @@
 
 include Config
 
-ifeq "$(PAE)" "1"
-	VERSUFIX = ipfire-pae
-else
-ifeq "$(XEN)" "1"
-	VERSUFIX = ipfire-xen
-else
-	VERSUFIX = ipfire
-endif
-endif
+VERSUFIX = ipfire$(KCFG)
 
 VER        = 8.0.30
 

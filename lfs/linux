@@ -40,15 +40,7 @@ DEPS	   = ""
 # Normal build or XEN build.
 #
 
-ifeq "$(PAE)" "1"
-	VERSUFIX=ipfire-pae
-else
-ifeq "$(XEN)" "1"
-	VERSUFIX=ipfire-xen
-else
-	VERSUFIX=ipfire
-endif
-endif
+VERSUFIX=ipfire$(KCFG)
 
 ifeq "$(HEADERS)" "1"
 ifeq "$(TOOLS)" "1"
@@ -122,7 +114,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
-ifeq "$(XEN)" "1"
+ifeq "$(KCFG)" "-xen"
 	# Apply gentoo Xen patches
 	mkdir -p $(DIR_SRC)/xen-patches
 	cd $(DIR_SRC)/xen-patches && tar jxf $(DIR_DL)/xen-patches-2.6.32-2f.tar.bz2
@@ -188,7 +180,7 @@ else
 	cd $(DIR_APP) && make CC="$(KGCC)" clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-$(VERSUFIX)/' Makefile
 
-ifeq "$(XEN)" "1"
+ifeq "$(KCFG)" "-xen"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
 	cd $(DIR_APP) && cp -v arch/i386/boot/vmlinuz /boot/vmlinuz-$(VER)-$(VERSUFIX)
 else
@@ -209,8 +201,7 @@ endif
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
 
-ifneq "$(PAE)" "1"
-ifneq "$(XEN)" "1"
+ifeq "$(KCFG)" ""
 	# Only do this once on the standard kernel pass
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 
@@ -235,7 +226,6 @@ ifneq "$(XEN)" "1"
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6
 
-endif
 endif
 
 	# Remove mISDN modules

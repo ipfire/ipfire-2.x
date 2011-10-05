@@ -82,16 +82,8 @@ define PREBUILD
 	# Fix installation on partial rebuild, so modules install where they should
 	# and not everytime on the last compiled kernel
 	if [ -f $(DIR_SRC)/linux-$(KVER) ]; then \
-		if [ "$(PAE)" = "1" ]; then \
-			cd $(DIR_SRC)/linux-$(KVER) && \
-				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire-pae+' Makefile; \
-		elif [ "$(XEN)" = "" ]; then \
-			cd $(DIR_SRC)/linux-$(KVER) && \
-				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire+' Makefile; \
-		else \
-			cd $(DIR_SRC)/linux-$(KVER) && \
-				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire-xen+' Makefile; \
-		fi; \
+		cd $(DIR_SRC)/linux-$(KVER) && \
+			sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire$(KCFG)+' Makefile; \
 	fi
 endef
 else
@@ -119,10 +111,7 @@ define POSTBUILD
 	# $(TARGET)_rootfile : ROOTFILE with KVER replacement
 	# $(TARGET) : log result with {commented|include|added} files
 	if [ -s "$(TARGET)_diff" ]; then \
-		if [ "$(PAE)" = "1" ]; then LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))-pae; \
-		elif [ "$(XEN)" = "1" ]; then LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))-xen; \
-		else LFS_SCRIPT=$(firstword $(MAKEFILE_LIST)); \
-		fi; \
+		LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))$(KCFG); \
 		echo $(LFS_SCRIPT); \
 		ROOTFILE=$$(find $(DIR_SRC)/config/rootfiles/{common,packages}/{$(MACHINE),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
 		if [ "$$ROOTFILE" = "" ]; then \
