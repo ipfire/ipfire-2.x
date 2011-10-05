@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -195,12 +195,14 @@ beautify()
 
 get_pkg_ver()
 {
-	PKG_VER=`grep ^VER $1 | awk '{print $3}'`
+	PKG_VER=`grep -E "^VER |^VER=|^VER	" $1 | awk '{print $3}'`
 
 	if [ -z $PKG_VER ]; then
 		PKG_VER=`grep "Exp " $1 | awk '{print $4}'`
 	fi
-
+	if [ -z $PKG_VER ]; then
+		PKG_VER="?"
+	fi
 	if [ ${#PKG_VER} -gt $VER_WIDTH ]; then
 		# If a package version number is greater than $VER_WIDTH, we keep the first 4 characters
 		# and replace enough characters to fit the resulting string on the screen.  We'll replace
