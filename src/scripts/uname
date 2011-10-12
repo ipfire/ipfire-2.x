@@ -20,9 +20,9 @@ output=$(${uname} $@)
 output=$(sed -e "s/${kernel}/${KVER}/g" <<<${output})
 
 case "${machine}" in
-	arm*)
+	armv*)
 		echo "${output}" | \
-			sed -e "s/armv.tej?l?/${MACHINE}/g"
+			sed -e "s/armv.*l/${MACHINE}/g"
 		;;
 
 	i?86)
