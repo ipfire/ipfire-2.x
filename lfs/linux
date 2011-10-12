@@ -60,6 +60,13 @@ else
 	HEADERS_ARCH=x86
 endif
 
+ifeq "$(KCFG)" ""
+LASTKERNEL=1
+endif
+ifeq "$(KCFG)" "-kirkwood"
+LASTKERNEL=1
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -156,8 +163,8 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_ipg-fix-driver-name.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
-ifeq "$(MACHINE_TYPE)" "arm"
-	# Add dreamplug support on ARM
+ifeq "$(KCFG)" "-kirkwood"
+	# Add dreamplug support on ARM-kirkwood
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45-arm_kirkwood_dreamplug.patch
 endif
 
@@ -184,13 +191,18 @@ ifeq "$(KCFG)" "-xen"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
 	cd $(DIR_APP) && cp -v arch/i386/boot/vmlinuz /boot/vmlinuz-$(VER)-$(VERSUFIX)
 else
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(KCFG)" "-kirkwood"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage
 	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage
+	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
+else
+ifeq "$(KCFG)" "-versatile"
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 else
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+endif
 endif
 endif
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
@@ -201,8 +213,8 @@ endif
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
 
-ifeq "$(KCFG)" ""
-	# Only do this once on the standard kernel pass
+ifeq "$(LASTKERNEL)" "1"
+	# Only do this once
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 
 	# Blacklist matroxfb_base
@@ -225,7 +237,6 @@ ifeq "$(KCFG)" ""
 
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6
-
 endif
 
 	# Remove mISDN modules

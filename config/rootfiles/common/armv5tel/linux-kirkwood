@@ -1,0 +1,5 @@
+boot/uInit-ipfire-kirkwood
+boot/uImage-ipfire-kirkwood
+boot/System.map-KVER-ipfire-kirkwood
+boot/config-KVER-ipfire-kirkwood
+lib/modules/KVER-ipfire-kirkwood

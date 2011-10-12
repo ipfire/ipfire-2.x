@@ -398,29 +398,56 @@ buildipfire() {
     ipfiremake e1000			KCFG="-pae"
     ipfiremake e1000e			KCFG="-pae"
     ipfiremake igb			KCFG="-pae"
-  fi
-
-  # Default kernel build
-  ipfiremake linux			KCFG=""
-  ipfiremake v4l-dvb			KCFG=""
-  ipfiremake kqemu			KCFG=""
-  ipfiremake kvm-kmod			KCFG=""
-  ipfiremake madwifi			KCFG=""
-  if [ "${MACHINE_TYPE}" != "arm" ]; then
-    #todo enable alsa driver in kernel config
+    ipfiremake linux			KCFG=""
+    ipfiremake v4l-dvb			KCFG=""
+    ipfiremake kqemu			KCFG=""
+    ipfiremake kvm-kmod			KCFG=""
+    ipfiremake madwifi			KCFG=""
     ipfiremake alsa			KCFG="" KMOD=1
+    ipfiremake mISDN			KCFG=""
+    ipfiremake dahdi			KCFG="" KMOD=1
+    ipfiremake cryptodev		KCFG=""
+    ipfiremake compat-wireless		KCFG=""
+#    ipfiremake r8169			KCFG=""
+#    ipfiremake r8168			KCFG=""
+#    ipfiremake r8101			KCFG=""
+    ipfiremake e1000			KCFG=""
+    ipfiremake e1000e			KCFG=""
+    ipfiremake igb			KCFG=""
+  else
+    # arm-versatile kernel build
+    ipfiremake linux			KCFG="-versatile"
+    ipfiremake v4l-dvb			KCFG="-versatile"
+    ipfiremake kqemu			KCFG="-versatile"
+    ipfiremake kvm-kmod			KCFG="-versatile"
+    ipfiremake madwifi			KCFG="-versatile"
+    ipfiremake mISDN			KCFG="-versatile"
+    ipfiremake dahdi			KCFG="-versatile" KMOD=1
+    ipfiremake cryptodev		KCFG="-versatile"
+    ipfiremake compat-wireless		KCFG="-versatile"
+#  ipfiremake r8169			KCFG="-versatile"
+#  ipfiremake r8168			KCFG="-versatile"
+#  ipfiremake r8101			KCFG="-versatile"
+    ipfiremake e1000			KCFG="-versatile"
+    ipfiremake e1000e			KCFG="-versatile"
+    ipfiremake igb			KCFG="-versatile"
+    # arm-kirkwood kernel build
+    ipfiremake linux			KCFG="-kirkwood"
+    ipfiremake v4l-dvb			KCFG="-kirkwood"
+    ipfiremake kqemu			KCFG="-kirkwood"
+    ipfiremake kvm-kmod			KCFG="-kirkwood"
+    ipfiremake madwifi			KCFG="-kirkwood"
+    ipfiremake mISDN			KCFG="-kirkwood"
+    ipfiremake dahdi			KCFG="-kirkwood" KMOD=1
+    ipfiremake cryptodev		KCFG="-kirkwood"
+    ipfiremake compat-wireless		KCFG="-kirkwood"
+#  ipfiremake r8169			KCFG="-kirkwood"
+#  ipfiremake r8168			KCFG="-kirkwood"
+#  ipfiremake r8101			KCFG="-kirkwood"
+    ipfiremake e1000			KCFG="-kirkwood"
+    ipfiremake e1000e			KCFG="-kirkwood"
+    ipfiremake igb			KCFG="-kirkwood"
   fi
-  #undefined declaration in echo canceler try to fix later
-  ipfiremake mISDN			KCFG=""
-  ipfiremake dahdi			KCFG="" KMOD=1
-  ipfiremake cryptodev			KCFG=""
-  ipfiremake compat-wireless		KCFG=""
-#  ipfiremake r8169			KCFG=""
-#  ipfiremake r8168			KCFG=""
-#  ipfiremake r8101			KCFG=""
-  ipfiremake e1000			KCFG=""
-  ipfiremake e1000e			KCFG=""
-  ipfiremake igb			KCFG=""
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio

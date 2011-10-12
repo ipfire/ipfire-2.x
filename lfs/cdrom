@@ -88,9 +88,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Make the ISO
 	mkdir -p /install/cdrom/boot/isolinux
 	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog
-	cp /install/images/initrd                   /install/cdrom/boot/isolinux/instroot
-	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
 ifneq "$(MACHINE_TYPE)" "arm"
+	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
+	cp /install/images/initrd                   /install/cdrom/boot/isolinux/instroot
 	cp $(DIR_SRC)/config/syslinux/syslinux.cfg  /install/cdrom/boot/isolinux/isolinux.cfg
 	cp $(DIR_SRC)/config/syslinux/boot.msg      /install/cdrom/boot/isolinux/boot.msg
 	cp $(DIR_SRC)/config/syslinux/splash.lss    /install/cdrom/boot/isolinux/splash.lss
@@ -101,6 +101,7 @@ endif
 						xargs md5sum > md5sum.txt
 
 ifeq "$(MACHINE_TYPE)" "arm"
+	mkdir -p /install/images
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
 		. > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
 else
