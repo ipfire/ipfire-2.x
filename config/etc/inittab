@@ -26,6 +26,6 @@ su:S016:once:/sbin/sulogin
 5:2345:respawn:/sbin/agetty tty5 9600
 6:2345:respawn:/sbin/agetty tty6 9600
 # *** Uncomment for serial console
-#7:2345:respawn:/sbin/agetty console 115200
+#7:2345:respawn:/sbin/agetty ttyS0 115200
 
 # End /etc/inittab
