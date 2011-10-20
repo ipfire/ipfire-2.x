@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.33
+VER        = 2.41
 
 THISAPP    = transmission-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = transmission
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "libevent2"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 76df2b002e9e243f2e4607b40c019974
+$(DL_FILE)_MD5 = 0d0a061dfb92c0cb359dc531d5da0a94
 
 install : $(TARGET)
 
