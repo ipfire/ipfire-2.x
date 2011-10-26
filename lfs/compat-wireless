@@ -93,6 +93,9 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	# B43+B44 driver doesn't build on arm
 	cd $(DIR_APP) && sed -i -e "s|CONFIG_B43=m||g" config.mk
 	cd $(DIR_APP) && sed -i -e "s|CONFIG_B44=m||g" config.mk
+	# Add libartas uAP driver
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.0-libertas_uap.patch
+	cd $(DIR_APP)&& echo CONFIG_LIBERTAS_UAP=m >> config.mk
 endif
 
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) \
