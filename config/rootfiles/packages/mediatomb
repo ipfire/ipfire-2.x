@@ -3,7 +3,6 @@ usr/bin/mediatomb
 #usr/share/mediatomb
 #usr/share/mediatomb/js
 usr/share/mediatomb/js/common.js
-usr/share/mediatomb/js/import-dvd.js
 usr/share/mediatomb/js/import.js
 usr/share/mediatomb/js/playlists.js
 usr/share/mediatomb/mappings.xml
