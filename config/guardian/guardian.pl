@@ -95,8 +95,17 @@ for (;;) {
 	if (seek(ALERT2,0,1)){
 		while (<ALERT2>) {
 			chop;
-			if ($_=~/.*sshd.*Failed password for root from.*/) {
-				my @array=split(/ /,$_);&checkssh ($array[11], "possible SSH-Bruteforce Attack");}
+			if ($_=~/.*sshd.*Failed password for .* from.*/) {
+				my @array=split(/ /,$_);
+				my $temp = "";
+				if ( $array[11] eq "port" ) {
+					$temp = $array[10];
+				} elsif ( $array[11] eq "from" ) {
+					$temp = $array[12];
+				} else {
+					$temp = $array[11];
+				}
+				&checkssh ($temp, "possible SSH-Bruteforce Attack");}
 			}
 	}
 
@@ -164,24 +173,28 @@ sub checkssh {
 
 	return 1 if ($source eq $gatewayaddr); # or our gateway
 
-	if ($sshhash{$dest} eq "" ){
-		$sshhash{$dest} = 1;
+	return 0 if ($sshhash{$source} > 4); # allready blocked
+
+	if ( ($ignore{$source} == 1) ){
+		&write_log("Ignoring attack because $source is in my ignore list\n");
+		return 1;
 	}
-	if ($sshhash{$dest} >= 3 ) {
-		&write_log ("source = $source, count $sshhash{$dest} - blocking for ssh attack.\n");
+
+	if ($sshhash{$source} == 4 ) {
+		&write_log ("source = $source, blocking for ssh attack.\n");
 		&ipchain ($source, "", $type);
+		$sshhash{$source} = $sshhash{$source}+1;
+		return 0;
 	}
-# you will see this if the destination was not in the $sshhash, and the
-# packet was not ignored before the target check..
-	else {
-		&write_log ("Odd.. source = $source, ssh count only $sshhash{$dest} - No action done.\n");
-		if (defined ($opt_d)) {
-			foreach $key (keys %sshhash) {
-				&write_log ("sshhash{$key} = %sshhash{$key}\n");
-			}
-		}
-		$sshhash{$key} = $sshhash{$key}+1;
+
+	if ($sshhash{$source} eq "" ){
+		$sshhash{$source} = 1;
+		&write_log ("SSH Attack = $source, ssh count only $sshhash{$source} - No action done.\n");
+		return 0;
 	}
+
+	$sshhash{$source} = $sshhash{$source}+1;
+	&write_log ("SSH Attack = $source, ssh count only $sshhash{$source} - No action done.\n");
 }
 
 sub ipchain {
@@ -221,9 +234,9 @@ sub build_ignore_hash {
 			$count++;
 		}
 		close (IGNORE);
-		print "Loaded $count addresses from $ignorefile\n";
+		&write_log("Loaded $count addresses from $ignorefile\n");
 	} else {
-		print "No ignore file was loaded!\n";
+		&write_log("No ignore file was loaded!\n");
 	}
 }
 
