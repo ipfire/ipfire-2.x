@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -31,7 +31,6 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = i586
 PROG       = asterisk
 PAK_VER    = 5
 
@@ -114,6 +113,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-core-sounds-en-gsm-1.4.16.tar.gz $(DIR_APP)/sounds/
 	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-extra-sounds-en-gsm-1.4.9.tar.gz $(DIR_APP)/sounds/
 	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-moh-opsound-gsm.tar.gz $(DIR_APP)/sounds/
+
+	# Remove wrong cpu optimization (march=armv5tel)
+	cd $(DIR_APP) && sed -i -e "s|^PROC=.*||g" makeopts
 
 	# compile and install
 	cd $(DIR_APP) && make $(MAKETUNING) all
