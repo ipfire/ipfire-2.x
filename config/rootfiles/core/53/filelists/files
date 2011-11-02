@@ -23,3 +23,4 @@ usr/local/sbin/setup
 var/ipfire/main/routing
 var/ipfire/menu.d/30-network.menu
 opt/pakfire/etc/pakfire.conf
+usr/local/bin/backupiso
