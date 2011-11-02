@@ -75,6 +75,7 @@ etc/rc.d/rc6.d/K30asterisk
 #usr/include/asterisk/rtp.h
 #usr/include/asterisk/say.h
 #usr/include/asterisk/sched.h
+#usr/include/asterisk/select.h
 #usr/include/asterisk/sha1.h
 #usr/include/asterisk/slinfactory.h
 #usr/include/asterisk/smdi.h
@@ -84,6 +85,7 @@ etc/rc.d/rc6.d/K30asterisk
 #usr/include/asterisk/strings.h
 #usr/include/asterisk/tdd.h
 #usr/include/asterisk/term.h
+#usr/include/asterisk/test.h
 #usr/include/asterisk/threadstorage.h
 #usr/include/asterisk/time.h
 #usr/include/asterisk/tonezone_compat.h
@@ -110,7 +112,6 @@ usr/lib/asterisk/modules/app_dahdibarge.so
 usr/lib/asterisk/modules/app_dahdiras.so
 usr/lib/asterisk/modules/app_dahdiscan.so
 usr/lib/asterisk/modules/app_db.so
-usr/lib/asterisk/modules/app_devstate.so
 usr/lib/asterisk/modules/app_dial.so
 usr/lib/asterisk/modules/app_dictate.so
 usr/lib/asterisk/modules/app_directed_pickup.so
@@ -120,7 +121,6 @@ usr/lib/asterisk/modules/app_dumpchan.so
 usr/lib/asterisk/modules/app_echo.so
 usr/lib/asterisk/modules/app_exec.so
 usr/lib/asterisk/modules/app_externalivr.so
-usr/lib/asterisk/modules/app_fax.so
 usr/lib/asterisk/modules/app_festival.so
 usr/lib/asterisk/modules/app_flash.so
 usr/lib/asterisk/modules/app_followme.so
@@ -139,11 +139,8 @@ usr/lib/asterisk/modules/app_mixmonitor.so
 usr/lib/asterisk/modules/app_morsecode.so
 usr/lib/asterisk/modules/app_mp3.so
 usr/lib/asterisk/modules/app_nbscat.so
-usr/lib/asterisk/modules/app_nv_backgrounddetect.so
-usr/lib/asterisk/modules/app_nv_faxdetect.so
 usr/lib/asterisk/modules/app_page.so
 usr/lib/asterisk/modules/app_parkandannounce.so
-usr/lib/asterisk/modules/app_pickup2.so
 usr/lib/asterisk/modules/app_playback.so
 usr/lib/asterisk/modules/app_privacy.so
 usr/lib/asterisk/modules/app_queue.so
@@ -171,7 +168,6 @@ usr/lib/asterisk/modules/app_test.so
 usr/lib/asterisk/modules/app_transfer.so
 usr/lib/asterisk/modules/app_url.so
 usr/lib/asterisk/modules/app_userevent.so
-usr/lib/asterisk/modules/app_valetparking.so
 usr/lib/asterisk/modules/app_verbose.so
 usr/lib/asterisk/modules/app_voicemail.so
 usr/lib/asterisk/modules/app_waitforring.so
@@ -226,7 +222,6 @@ usr/lib/asterisk/modules/func_channel.so
 usr/lib/asterisk/modules/func_curl.so
 usr/lib/asterisk/modules/func_cut.so
 usr/lib/asterisk/modules/func_db.so
-usr/lib/asterisk/modules/func_devstate.so
 usr/lib/asterisk/modules/func_enum.so
 usr/lib/asterisk/modules/func_env.so
 usr/lib/asterisk/modules/func_global.so
@@ -364,7 +359,7 @@ var/lib/asterisk/images/asterisk-intro.jpg
 var/lib/asterisk/keys/freeworlddialup.pub
 var/lib/asterisk/keys/iaxtel.pub
 #var/lib/asterisk/moh
-var/lib/asterisk/moh/.asterisk-moh-opsound-gsm
+var/lib/asterisk/moh/.asterisk-moh-opsound-gsm-2.03
 var/lib/asterisk/moh/CHANGES-asterisk-moh-opsound-gsm
 var/lib/asterisk/moh/CREDITS-asterisk-moh-opsound-gsm
 var/lib/asterisk/moh/LICENSE-asterisk-moh-opsound-gsm
@@ -374,14 +369,14 @@ var/lib/asterisk/moh/macroform-the_simplicity.gsm
 var/lib/asterisk/moh/manolo_camp-morning_coffee.gsm
 var/lib/asterisk/moh/reno_project-system.gsm
 #var/lib/asterisk/sounds
-var/lib/asterisk/sounds/.asterisk-core-sounds-en-gsm-1.4.16
-var/lib/asterisk/sounds/.asterisk-extra-sounds-en-gsm-1.4.9
+var/lib/asterisk/sounds/.asterisk-core-sounds-en-gsm-1.4.20
+var/lib/asterisk/sounds/.asterisk-extra-sounds-en-gsm-1.4.11
 var/lib/asterisk/sounds/1-for-am-2-for-pm.gsm
 var/lib/asterisk/sounds/1-yes-2-no.gsm
-var/lib/asterisk/sounds/CHANGES-asterisk-core-en-1.4.16
-var/lib/asterisk/sounds/CHANGES-asterisk-extra-en-1.4.9
-var/lib/asterisk/sounds/CREDITS-asterisk-core-en-1.4.16
-var/lib/asterisk/sounds/LICENSE-asterisk-core-en-1.4.16
+var/lib/asterisk/sounds/CHANGES-asterisk-core-en-1.4.20
+var/lib/asterisk/sounds/CHANGES-asterisk-extra-en-1.4.11
+var/lib/asterisk/sounds/CREDITS-asterisk-core-en-1.4.20
+var/lib/asterisk/sounds/LICENSE-asterisk-core-en-1.4.20
 var/lib/asterisk/sounds/T-changed-to.gsm
 var/lib/asterisk/sounds/T-is-not-available.gsm
 var/lib/asterisk/sounds/T-to-disable-ancmnt.gsm
@@ -447,6 +442,7 @@ var/lib/asterisk/sounds/are-you-still-there2.gsm
 var/lib/asterisk/sounds/arizona.gsm
 var/lib/asterisk/sounds/arkansas.gsm
 var/lib/asterisk/sounds/arlington.gsm
+var/lib/asterisk/sounds/ascending-2tone.gsm
 var/lib/asterisk/sounds/astcc-account-balance-is.gsm
 var/lib/asterisk/sounds/astcc-account-number-invalid.gsm
 var/lib/asterisk/sounds/astcc-balance-of-account-is.gsm
@@ -538,7 +534,7 @@ var/lib/asterisk/sounds/carried-away-by-monkeys.gsm
 var/lib/asterisk/sounds/cause-code.gsm
 var/lib/asterisk/sounds/cc-amex.gsm
 var/lib/asterisk/sounds/cc-discover.gsm
-var/lib/asterisk/sounds/cc-nastercard.gsm
+var/lib/asterisk/sounds/cc-mastercard.gsm
 var/lib/asterisk/sounds/cc-visa.gsm
 var/lib/asterisk/sounds/celsius.gsm
 var/lib/asterisk/sounds/cent.gsm
@@ -599,12 +595,16 @@ var/lib/asterisk/sounds/conf-lockednow.gsm
 var/lib/asterisk/sounds/conf-muted.gsm
 var/lib/asterisk/sounds/conf-noempty.gsm
 var/lib/asterisk/sounds/conf-nonextended.gsm
+var/lib/asterisk/sounds/conf-now-muted.gsm
+var/lib/asterisk/sounds/conf-now-recording.gsm
+var/lib/asterisk/sounds/conf-now-unmuted.gsm
 var/lib/asterisk/sounds/conf-onlyone.gsm
 var/lib/asterisk/sounds/conf-onlyperson.gsm
 var/lib/asterisk/sounds/conf-onlypersonleft.gsm
 var/lib/asterisk/sounds/conf-otherinparty.gsm
 var/lib/asterisk/sounds/conf-peopleinconf.gsm
 var/lib/asterisk/sounds/conf-placeintoconf.gsm
+var/lib/asterisk/sounds/conf-roll-callcomplete.gsm
 var/lib/asterisk/sounds/conf-sysop.gsm
 var/lib/asterisk/sounds/conf-sysopreq.gsm
 var/lib/asterisk/sounds/conf-sysopreqcancelled.gsm
@@ -863,6 +863,7 @@ var/lib/asterisk/sounds/denver.gsm
 var/lib/asterisk/sounds/department-administrator.gsm
 var/lib/asterisk/sounds/department.gsm
 var/lib/asterisk/sounds/deposit.gsm
+var/lib/asterisk/sounds/descending-2tone.gsm
 var/lib/asterisk/sounds/design.gsm
 var/lib/asterisk/sounds/detroit.gsm
 var/lib/asterisk/sounds/development.gsm
@@ -926,6 +927,7 @@ var/lib/asterisk/sounds/digits/9.gsm
 var/lib/asterisk/sounds/digits/90.gsm
 var/lib/asterisk/sounds/digits/a-m.gsm
 var/lib/asterisk/sounds/digits/at.gsm
+var/lib/asterisk/sounds/digits/billion.gsm
 var/lib/asterisk/sounds/digits/day-0.gsm
 var/lib/asterisk/sounds/digits/day-1.gsm
 var/lib/asterisk/sounds/digits/day-2.gsm
@@ -1054,11 +1056,21 @@ var/lib/asterisk/sounds/digits/h-20.gsm
 var/lib/asterisk/sounds/digits/h-3.gsm
 var/lib/asterisk/sounds/digits/h-30.gsm
 var/lib/asterisk/sounds/digits/h-4.gsm
+var/lib/asterisk/sounds/digits/h-40.gsm
 var/lib/asterisk/sounds/digits/h-5.gsm
+var/lib/asterisk/sounds/digits/h-50.gsm
 var/lib/asterisk/sounds/digits/h-6.gsm
+var/lib/asterisk/sounds/digits/h-60.gsm
 var/lib/asterisk/sounds/digits/h-7.gsm
+var/lib/asterisk/sounds/digits/h-70.gsm
 var/lib/asterisk/sounds/digits/h-8.gsm
+var/lib/asterisk/sounds/digits/h-80.gsm
 var/lib/asterisk/sounds/digits/h-9.gsm
+var/lib/asterisk/sounds/digits/h-90.gsm
+var/lib/asterisk/sounds/digits/h-billion.gsm
+var/lib/asterisk/sounds/digits/h-hundred.gsm
+var/lib/asterisk/sounds/digits/h-million.gsm
+var/lib/asterisk/sounds/digits/h-thousand.gsm
 var/lib/asterisk/sounds/digits/hundred.gsm
 var/lib/asterisk/sounds/digits/million.gsm
 var/lib/asterisk/sounds/digits/minus.gsm
@@ -1128,6 +1140,7 @@ var/lib/asterisk/sounds/el-paso.gsm
 var/lib/asterisk/sounds/eleventh.gsm
 var/lib/asterisk/sounds/email.gsm
 var/lib/asterisk/sounds/emergency.gsm
+var/lib/asterisk/sounds/en_AU
 var/lib/asterisk/sounds/enabled.gsm
 var/lib/asterisk/sounds/encode.gsm
 var/lib/asterisk/sounds/engineering.gsm
@@ -1763,6 +1776,7 @@ var/lib/asterisk/sounds/pascal2.gsm
 var/lib/asterisk/sounds/patchy.gsm
 var/lib/asterisk/sounds/pbx-invalid.gsm
 var/lib/asterisk/sounds/pbx-invalidpark.gsm
+var/lib/asterisk/sounds/pbx-parkingfailed.gsm
 var/lib/asterisk/sounds/pbx-transfer.gsm
 var/lib/asterisk/sounds/pence.gsm
 var/lib/asterisk/sounds/pennies.gsm
@@ -1955,6 +1969,7 @@ var/lib/asterisk/sounds/quarter.gsm
 var/lib/asterisk/sounds/queue-callswaiting.gsm
 var/lib/asterisk/sounds/queue-holdtime.gsm
 var/lib/asterisk/sounds/queue-less-than.gsm
+var/lib/asterisk/sounds/queue-minute.gsm
 var/lib/asterisk/sounds/queue-minutes.gsm
 var/lib/asterisk/sounds/queue-periodic-announce.gsm
 var/lib/asterisk/sounds/queue-quantity1.gsm
