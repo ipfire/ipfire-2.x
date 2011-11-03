@@ -76,9 +76,20 @@ fi
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #Rebuild module dep's
-depmod 2.6.32.45-ipfire     >/dev/null 2>&1
-depmod 2.6.32.45-ipfire-pae >/dev/null 2>&1
-depmod 2.6.32.45-ipfire-xen >/dev/null 2>&1
+depmod -a 2.6.32.45-ipfire     >/dev/null 2>&1
+depmod -a 2.6.32.45-ipfire-pae >/dev/null 2>&1
+depmod -a 2.6.32.45-ipfire-xen >/dev/null 2>&1
+
+#Rebuild initrd's because some compat-wireless modules are inside
+/sbin/dracut --force --verbose /boot/ipfirerd-2.6.32.45.img 2.6.32.45-ipfire
+if [ -e /boot/ipfirerd-2.6.32.45-pae.img ]; then
+/sbin/dracut --force --verbose /boot/ipfirerd-2.6.32.45-pae.img 2.6.32.45-ipfire-pae
+fi
+if [ -e /boot/ipfirerd-2.6.32.45-xen.img ]; then
+/sbin/dracut --force --verbose /boot/ipfirerd-2.6.32.45-xen.img 2.6.32.45-ipfire-xen
+fi
+
+sync
 
 #
 # After pakfire has ended run it again and update the lists and do upgrade
