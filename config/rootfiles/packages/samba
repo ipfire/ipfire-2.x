@@ -171,6 +171,7 @@ usr/sbin/winbindd
 #usr/share/man/man8/umount.cifs.8
 #usr/share/man/man8/vfs_acl_tdb.8
 #usr/share/man/man8/vfs_acl_xattr.8
+#usr/share/man/man8/vfs_aio_fork.8
 #usr/share/man/man8/vfs_audit.8
 #usr/share/man/man8/vfs_cacheprime.8
 #usr/share/man/man8/vfs_cap.8
