@@ -102,6 +102,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo "Place scripts run weekly here ..." > /etc/fcron.weekly/info.txt
 	echo "Place scripts run monthly here ..." > /etc/fcron.monthly/info.txt
 
+	chmod 640 /etc/fcron.{conf,allow,deny}
 	/usr/bin/fcrontab $(DIR_SRC)/config/cron/crontab
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
