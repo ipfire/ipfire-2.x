@@ -603,7 +603,6 @@ buildipfire() {
   ipfiremake lm_sensors
   ipfiremake liboping
   ipfiremake collectd
-  ipfiremake lcd4linux
   ipfiremake teamspeak
   ipfiremake elinks
   ipfiremake igmpproxy
@@ -702,6 +701,8 @@ buildipfire() {
   ipfiremake intltool
   ipfiremake pakfire3-deps
   ipfiremake transmission
+  ipfiremake dpfhack
+  ipfiremake lcd4linux
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
