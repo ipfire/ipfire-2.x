@@ -1351,7 +1351,7 @@ END
 	}
 
 	if ($cgiparams{'REMOTE'}) {
-	    if (! &General::validip($cgiparams{'REMOTE'})) {
+	    if (($cgiparams{'REMOTE'} ne '%any') && (! &General::validip($cgiparams{'REMOTE'}))) {
 		if (! &General::validfqdn ($cgiparams{'REMOTE'}))  {
 		    $errormessage = $Lang::tr{'invalid input for remote host/ip'};
 		    goto VPNCONF_ERROR;

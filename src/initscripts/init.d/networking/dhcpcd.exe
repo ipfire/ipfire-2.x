@@ -39,7 +39,7 @@ dhcpcd_up()
 		fi
 
 		#Check if we have to restart the services at update
-		[ ! -e "/var/ipfire/red/active" ] update=1;
+		[ ! -e "/var/ipfire/red/active" ] && update=1;
 		if [ "$old_domain_name_service" != "$new_domain_name_service" ]; then
 			update=1;
 		fi
