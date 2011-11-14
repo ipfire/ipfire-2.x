@@ -26,14 +26,13 @@ include Config
 
 VERSUFIX   = ipfire$(KCFG)
 
-VER        = 3.0.19
+VER        = 3.2.10
 
 THISAPP    = igb-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
-SUP_ARCH   = i586
 
 ###############################################################################
 # Top-level Rules
@@ -43,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8fdc04600bea4a4188672a1a8d0eb73b
+$(DL_FILE)_MD5 = 22d09e7f7c8f0b23f744914e41c7ce43
 
 install : $(TARGET)
 
