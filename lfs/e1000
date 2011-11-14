@@ -34,7 +34,7 @@ else
 endif
 endif
 
-VER        = 8.0.30
+VER        = 8.0.35
 
 THISAPP    = e1000-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d85a64fdde2987b27ac6fbab5be605a0
+$(DL_FILE)_MD5 = 0f452b979f7a7b9ea0b5a87a117f7408
 
 install : $(TARGET)
 
