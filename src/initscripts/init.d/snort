@@ -61,15 +61,15 @@ case "$1" in
 			fi
 		fi
 		HOMENET+="127.0.0.1"
-		echo "var HOME_NET [$HOMENET]" > /etc/snort/vars
+		echo "ipvar HOME_NET [$HOMENET]" > /etc/snort/vars
 
 		DNS1=`cat /var/ipfire/red/dns1 2>/dev/null`
 		DNS2=`cat /var/ipfire/red/dns2 2>/dev/null`
 
 		if [ "$DNS2" ]; then
-			echo "var DNS_SERVERS [$DNS1,$DNS2]" >> /etc/snort/vars
+			echo "ipvar DNS_SERVERS [$DNS1,$DNS2]" >> /etc/snort/vars
 		else
-			echo "var DNS_SERVERS $DNS1" >> /etc/snort/vars
+			echo "ipvar DNS_SERVERS $DNS1" >> /etc/snort/vars
 		fi
 
                 for DEVICE in $DEVICES; do
