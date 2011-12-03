@@ -165,9 +165,6 @@ ifeq "$(ROOT)" ""
 	mkdir -p /usr/lib/locale
 	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f ISO-8859-1 en_US
 	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f UTF-8      en_US.utf8
-ifneq "$(MACHINE_TYPE)" "arm"
-	cp -f /usr/share/zoneinfo/GMT /etc/localtime
-endif
 endif
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build
 	@$(POSTBUILD)

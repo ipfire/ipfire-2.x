@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-TZDATA_VER = 2011j
+TZDATA_VER = 2011n
 TZCODE_VER = 2011i
 
 THISAPP    = tzdata
@@ -32,7 +32,6 @@ DL_FILE    = tzdata-base-0.tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = armv5tel
 
 ###############################################################################
 # Top-level Rules
@@ -45,7 +44,7 @@ tzdata$(TZDATA_VER).tar.gz = $(DL_FROM)/tzdata$(TZDATA_VER).tar.gz
 tzcode$(TZCODE_VER).tar.gz = $(DL_FROM)/tzcode$(TZCODE_VER).tar.gz
 
 $(DL_FILE)_MD5 = e36d2f742c22f8c8dbf0686ac9769b55
-tzdata$(TZDATA_VER).tar.gz_MD5 = 30a6bebdbdd03c5bd29241c15f569d50
+tzdata$(TZDATA_VER).tar.gz_MD5 = 20dbfb28efa008ddbf6dd34601ea40fa
 tzcode$(TZCODE_VER).tar.gz_MD5 = cf7f4335b7c8682899fa2814e711c1b2
 
 install : $(TARGET)
