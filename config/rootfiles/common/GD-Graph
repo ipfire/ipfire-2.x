@@ -17,8 +17,8 @@ usr/lib/perl5/site_perl/5.12.3/GD/Graph/mixed.pm
 usr/lib/perl5/site_perl/5.12.3/GD/Graph/pie.pm
 usr/lib/perl5/site_perl/5.12.3/GD/Graph/points.pm
 usr/lib/perl5/site_perl/5.12.3/GD/Graph/utils.pm
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/GD/Graph
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/GD/Graph/.packlist
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/GD/Graph
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/GD/Graph/.packlist
 #usr/share/man/man3/GD::Graph.3
 #usr/share/man/man3/GD::Graph::Data.3
 #usr/share/man/man3/GD::Graph::Error.3

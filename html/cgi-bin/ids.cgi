@@ -263,13 +263,9 @@ if (-e "/etc/snort/snort.conf") {
 #######################  End added for snort rules control  #################################
 
 if ($snortsettings{'RULES'} eq 'subscripted') {
-	#$url="http://dl.snort.org/sub-rules/snortrules-snapshot-2.8_s.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
-	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2904_s.tar.gz/$snortsettings{'OINKCODE'}";
-	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8_s.tar.gz";
+	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2912_s.tar.gz/$snortsettings{'OINKCODE'}";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
-	#$url="http://dl.snort.org/reg-rules/snortrules-snapshot-2.8.tar.gz?oink_code=$snortsettings{'OINKCODE'}";
-	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2904.tar.gz/$snortsettings{'OINKCODE'}";
-	#$url="http://www.snort.org/pub-bin/oinkmaster.cgi/$snortsettings{'OINKCODE'}/snortrules-snapshot-2.8.tar.gz";
+	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2912.tar.gz/$snortsettings{'OINKCODE'}";
 } else {
 	$url="http://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz";
 }

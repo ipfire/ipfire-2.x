@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.41
+VER        = 5.42
 
 THISAPP    = smartmontools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4577886bea79d4ff12bd9a7d323ce692
+$(DL_FILE)_MD5 = 4460bf9a79a1252ff5c00ba52cf76b2a
 
 install : $(TARGET)
 

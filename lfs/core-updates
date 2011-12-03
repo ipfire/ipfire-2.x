@@ -49,13 +49,18 @@ CORE = $(patsubst $(DIR_SRC)/config/rootfiles/%,%,$(wildcard $(DIR_SRC)/config/r
 
 $(TARGET) : $(CORE)
 
+.PHONY:
 core/%:
 	rm -rf /install/packages/package
 	mkdir -p /install/packages/package
 	eval $$(cat /usr/src/config/rootfiles/$@/meta)
 
-	#Generate ROOTFILES from filelists	
-	find $(DIR_SRC)/config/rootfiles/$@/filelists/* -maxdepth 1 | xargs cat >> /tmp/ROOTFILES.tmp
+	#Generate ROOTFILES from filelists
+	$(DIR_SRC)/src/scripts/archive.files \
+		$(DIR_SRC)/config/rootfiles/$@/filelists \
+		$(DIR_SRC)/config/rootfiles/$@/files \
+		$(DIR_SRC)/config/rootfiles/$@/files.$(MACHINE) \
+		> /tmp/ROOTFILES.tmp
 
 	#remove excluded files from ROOTFILES
 	grep -f $(DIR_SRC)/config/rootfiles/$@/exclude -v /tmp/ROOTFILES.tmp > /tmp/ROOTFILES

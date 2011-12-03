@@ -128,9 +128,6 @@ $(TARGET) :
 	ln -sf ../init.d/random      /etc/rc.d/rc3.d/S25random
 	ln -sf ../init.d/random      /etc/rc.d/rc6.d/K45random
 	ln -sf ../../sysconfig/rc.local /etc/rc.d/rc3.d/S98rc.local
-	ln -sf ../init.d/beep        /etc/rc.d/rc0.d/K99beep
-	ln -sf ../init.d/beep        /etc/rc.d/rc3.d/S99beep
-	ln -sf ../init.d/beep        /etc/rc.d/rc6.d/K99beep
 	ln -sf ../init.d/tmpfs       /etc/rc.d/rc0.d/K85tmpfs
 	ln -sf ../init.d/tmpfs       /etc/rc.d/rc3.d/S01tmpfs
 	ln -sf ../init.d/tmpfs       /etc/rc.d/rc6.d/K85tmpfs
@@ -162,7 +159,6 @@ $(TARGET) :
 	ln -sf ../init.d/mountkernfs /etc/rc.d/rcsysinit.d/S00mountkernfs
 	ln -sf ../init.d/modules     /etc/rc.d/rcsysinit.d/S05modules
 	ln -sf ../init.d/udev        /etc/rc.d/rcsysinit.d/S10udev
-	ln -sf ../init.d/checkfstab  /etc/rc.d/rcsysinit.d/S19checkfstab
 	ln -sf ../init.d/waitdrives  /etc/rc.d/rcsysinit.d/S19waitdrives
 	ln -sf ../init.d/swap        /etc/rc.d/rcsysinit.d/S20swap
 	ln -sf ../init.d/checkfs     /etc/rc.d/rcsysinit.d/S30checkfs
@@ -199,5 +195,12 @@ $(TARGET) :
 	for i in green blue orange; do \
 		ln -sf any /etc/rc.d/init.d/networking/$$i; \
 	done
-	
+
+	# ARM does not need checkfstab
+ifeq "$(MACHINE_TYPE)" "arm"
+	rm -vf /etc/rc.d/init.d/checkfstab
+else
+	ln -sf ../init.d/checkfstab  /etc/rc.d/rcsysinit.d/S19checkfstab
+endif
+
 	@$(POSTBUILD)

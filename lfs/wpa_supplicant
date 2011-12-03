@@ -75,6 +75,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP)/wpa_supplicant && cp $(DIR_SRC)/config/wpa_supplicant/config ./.config
+ifeq "$(MACHINE_TYPE)" "arm"
+	cd $(DIR_APP)/wpa_supplicant && sed -e "s/^CONFIG_DRIVER_MADWIFI=y/#&/" -i .config
+endif
 	cd $(DIR_APP)/wpa_supplicant && sed -e "s/wpa_cli\ dynamic_eap_methods/wpa_cli\ #dynamic_eap_methods/" -i Makefile
 	cd $(DIR_APP)/wpa_supplicant && sed -e "s@/usr/local@/usr@g" -i Makefile
 	cd $(DIR_APP)/wpa_supplicant && CFLAGS+=-I/usr/src/linux/include make && make install

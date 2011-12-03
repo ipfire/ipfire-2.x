@@ -88,7 +88,17 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/usr/share/dracut/modules.d/99base/init
 
 	# Build initramdisk
-	/sbin/dracut --force --verbose /boot/ipfirerd-$(KVER).img $(KVER)-ipfire
+	# Strip all binaries in that initrd, because no debugging code is
+	# needed.
 
+ifeq "$(MACHINE_TYPE)" "arm"
+	# versatile kernel
+	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-versatile.img $(KVER)-ipfire-versatile
+	# kirkwood kernel
+	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-kirkwood.img $(KVER)-ipfire-kirkwood
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-kirkwood.img uInit-ipfire-kirkwood
+else
+	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER).img $(KVER)-ipfire
+endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

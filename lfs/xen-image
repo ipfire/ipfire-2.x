@@ -44,7 +44,7 @@ md5 :
 ###############################################################################
 # Installation Details
 ###############################################################################
-IMGinst  := /install/images/$(SNAME)-$(VERSION).xen.$(MACHINE)-$(ED)-core$(CORE).tar.bz2
+IMGinst  := /install/images/$(SNAME)-$(VERSION).xen.$(MACHINE)-full-core$(CORE).tar.bz2
 MNThdd   := /install/harddisk
 
 IMGboot  := /install/images/$(SNAME)/$(SNAME)-boot.img

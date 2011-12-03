@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -185,7 +185,6 @@ beautify()
 					echo -ne "${SET_RESULT_COL}[${FAIL} FAIL ${NORMAL}]\n"
 					;;
 				SKIP)
-					echo -ne "${SET_TIME_COL}[ ${BOLD}${SET_TIME_COL_REAL}$PKG_TIME${NORMAL} ]"
 					echo -ne "${SET_RESULT_COL}[${SKIP} SKIP ${NORMAL}]\n"
 					;;
 			esac
@@ -196,12 +195,14 @@ beautify()
 
 get_pkg_ver()
 {
-	PKG_VER=`grep ^VER $1 | awk '{print $3}'`
+	PKG_VER=`grep -E "^VER |^VER=|^VER	" $1 | awk '{print $3}'`
 
 	if [ -z $PKG_VER ]; then
 		PKG_VER=`grep "Exp " $1 | awk '{print $4}'`
 	fi
-
+	if [ -z $PKG_VER ]; then
+		PKG_VER="?"
+	fi
 	if [ ${#PKG_VER} -gt $VER_WIDTH ]; then
 		# If a package version number is greater than $VER_WIDTH, we keep the first 4 characters
 		# and replace enough characters to fit the resulting string on the screen.  We'll replace
@@ -224,6 +225,15 @@ if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE ]; then
 	CXXFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
 	C2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
 	CXX2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
+elif [ 'armv5tejl' = $MACHINE -o 'armv5tel' = $MACHINE ]; then
+	echo "`date -u '+%b %e %T'`: Machine is ARM (or equivalent)" >> $LOGFILE
+	MACHINE=armv5tel
+	MACHINE_TYPE=arm
+	BUILDTARGET=${MACHINE}-unknown-linux-gnueabi
+	CFLAGS="-O2 -march=armv5te -fomit-frame-pointer -pipe"
+	CXXFLAGS="$CFLAGS"
+	C2FLAGS="$CFLAGS"
+	CXX2FLAGS="$CXXFLAGS"
 else
 	echo "`date -u '+%b %e %T'`: Can't determine your architecture - $MACHINE" >> $LOGFILE
 	exit 1
@@ -274,7 +284,9 @@ entershell() {
 		CCACHE_COMPRESS=1 \
 		CCACHE_HASHDIR=1 \
 		KVER=$KVER \
-		BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+		BUILDTARGET="$BUILDTARGET" \
+		MACHINE="$MACHINE" \
+		MACHINE_TYPE="$MACHINE_TYPE" \
 		KGCC="ccache /usr/bin/gcc" \
 		/tools/bin/bash
 	if [ $? -ne 0 ]; then
@@ -307,6 +319,16 @@ lfsmakecommoncheck()
 	local PKG_VER=`get_pkg_ver $BASEDIR/lfs/$1`
 	beautify make_pkg "$PKG_VER $*"
 
+	# Check if this package is supported by our architecture.
+	# If no SUP_ARCH is found, we assume the package can be built for all.
+	if grep "^SUP_ARCH" ${BASEDIR}/lfs/${1} >/dev/null; then
+		# Check if package supports ${MACHINE} or all architectures.
+		if ! grep -E "^SUP_ARCH.*${MACHINE}|^SUP_ARCH.*all" ${BASEDIR}/lfs/${1} >/dev/null; then
+			beautify result SKIP
+			return 1
+		fi
+	fi
+
 	# Script slipped?
 	local i
 	for i in $SKIP_PACKAGE_LIST
@@ -319,12 +341,16 @@ lfsmakecommoncheck()
 
 	echo -ne "`date -u '+%b %e %T'`: Building $* " >> $LOGFILE
 
-	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t " download  >> $LOGFILE 2>&1
+	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+		MACHINE_TYPE="$MACHINE_TYPE" \
+		MESSAGE="$1\t " download  >> $LOGFILE 2>&1
 	if [ $? -ne 0 ]; then
 		exiterror "Download error in $1"
 	fi
 
-	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
+	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+		MACHINE_TYPE="$MACHINE_TYPE" \
+		MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
 	if [ $? -ne 0 ]; then
 		exiterror "md5sum error in $1, check file in cache or signature"
 	fi
@@ -340,6 +366,7 @@ lfsmake1() {
 
 	cd $BASEDIR/lfs && make -f $* 	BUILDTARGET=$BUILDTARGET \
 						MACHINE=$MACHINE \
+						MACHINE_TYPE=$MACHINE_TYPE \
 						LFS_BASEDIR=$BASEDIR \
 						ROOT=$LFS \
 						KVER=$KVER \
@@ -373,7 +400,7 @@ lfsmake2() {
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
-						IPFVER="$IPFVER" \
+						MACHINE_TYPE="$MACHINE_TYPE" \
 						/tools/bin/bash -x -c "cd /usr/src/lfs && \
 						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 	local COMPILE_SUCCESS=$?
@@ -405,7 +432,7 @@ ipfiremake() {
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
-						IPFVER="$IPFVER" \
+						MACHINE_TYPE="$MACHINE_TYPE" \
 						/bin/bash -x -c "cd /usr/src/lfs && \
 						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 
@@ -434,8 +461,9 @@ ipfiredist() {
 					NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 					CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
 					CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
-					KVER=$KVER IPFVER="$IPFVER" \
+					KVER=$KVER \
 					BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+					MACHINE_TYPE="$MACHINE_TYPE" \
 					/bin/bash -x -c "cd /usr/src/lfs && \
 					make -f $1 LFS_BASEDIR=/usr/src dist" >>$LOGFILE 2>&1
 
@@ -465,8 +493,9 @@ installmake() {
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						CFLAGS="-Os" CXXFLAGS="-Os" \
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
-						KVER=$KVER IPFVER="$IPFVER" \
+						KVER=$KVER \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						MACHINE_TYPE="$MACHINE_TYPE" \
 		    /bin/bash -x -c "cd /usr/src/lfs && \
 		    make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 
@@ -480,247 +509,6 @@ installmake() {
 		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
 	fi
 	return 0
-}
-
-update_logs() {
-	tar cfz log/ipfire-logs-`date +'%Y-%m-%d-%H:%M'`.tgz log/_build.*
-	rm -f log/_build.*
-}
-
-batch_script() {
-	echo -ne "${BOLD}***This is our auto buildscript! Have fun...${NORMAL}\n"
-	update_logs
-	evaluate 1
-
-	if [ "$IPFIRE_REBUILD" -eq "0" ]; then
-		export IPFIRE_START_TIME=`date`
-
-		$0 clean
-		evaluate 1
-
-		$0 git update --force
-		evaluate 1 mail_me UPDATE
-
-		echo "### EXPORT SOURCES"
-		$0 git dist
-		evaluate 1 mail_me DIST
-	fi
-
-	echo "### RUNNING BUILD"
-	$0 build
-	evaluate 1 mail_me ERROR
-
-	echo "### UPLOADING ISO"
-	$0 upload iso
-	evaluate 1 mail_me ISO
-	
-	echo -ne "### UPLOADING PAKS"
-	$0 upload paks
-	evaluate 1 mail_me PAKS
-
-	echo -ne "${BOLD}***SUCCESS!${NORMAL}"
-	mail_me success
-	exit 0
-}
-
-watch_screen() {
-	echo -e "${BOLD}Exit with Ctrl+A, Ctrl+D.${NORMAL}"
-	sleep 0.5
-	screen -x ipfire
-}
-
-mail_me() {
-	echo "From: $MAIL_FROM" > /tmp/ipfire_mail_body.$$
-	echo "To: $MAIL_TO" >> /tmp/ipfire_mail_body.$$
-	case "$1" in
-		success)
-			cat <<END >> /tmp/ipfire_mail_body.$$
-Subject: SUCCESS: IPFIRE-BUILD on `hostname`
-Building IPFire on `hostname` was successfull!
-You can find the ISO on your ftp server if you told the script where it is.
-
-Statistics:
------------
-Started:	$IPFIRE_START_TIME
-Finished:	`date`
-
-Best Regards
-Your IPFire-Build-Script
-
-END
-		echo -ne "${BOLD}***Sending success message${NORMAL}"
-		;;
-		*)
-			cat <<END >> /tmp/ipfire_mail_body.$$
-Subject: ERROR $1: IPFIRE-BUILD on `hostname`
-When I was building IPFire on `hostname`, I have found an ERROR with name $1!
-Here you can see the logs and detect the reason for this error.
-
-Best Regards
-Your IPFire-Build-Script
-
-
-Here is a summary... The full logs are in the attachment.
----------------------------------------------------------
-
-`tail log/_*`
-END
-		echo -ne "${BOLD}***Sending error message${NORMAL}"
-		;;
-	esac
-
-sleep 15
-	python tools/sendEmail < /tmp/ipfire_mail_body.$$
-	if [ "$?" -eq "0" ]; then
-		beautify message DONE
-	else
-		beautify message FAIL
-	fi
-	rm -f /tmp/ipfire_mail_body.$$
-}
-
-make_config() {
-	clear
-	echo -e "${BOLD}***This will create your configuration...${NORMAL}"
-	echo -ne "***If your are ready press <ENTER>!"
-	read
-	clear
-	echo -ne "***The buildscript will create a full iso image.\n"
-	echo -ne "***If you want to skip any package please enter its name here seperated with space.\n"
-	echo -ne "Actually in the list are: $SKIP_PACKAGE_LIST\n"
-	echo -ne "Do you want to change this? (y/N) "
-	read YESNO
-	if [ "$YESNO" == "y" ]; then
-		echo -ne "Please type: "
-		read SKIP_PACKAGE_LIST
-		echo -ne "You entered: $SKIP_PACKAGE_LIST\n"
-	fi
-
-	clear
-	echo -ne "***When you have compiled successfully, there is the possibility\n"
-	echo -ne "***to upload the iso image to a ftp server.\n"
-	echo -ne "***If the url is empty there will be no upload.\n"
-	echo -ne "Actually there is: $FTP_ISO_URL\n"
-	echo -ne "Do you want to change this? (y/N) "
-	read YESNO
-	if [ "$YESNO" == "y" ]; then
-		echo -ne "Please type the url: "
-		read FTP_ISO_URL
-		echo -ne "Please type the path: "
-		read FTP_ISO_PATH
-		echo -ne "Please type the username: "
-		read FTP_ISO_USER
-		echo -ne "Please type the password (hidden): "
-		read -s FTP_ISO_PASS
-		
-	fi
-
-	clear
-	echo -ne "***When you add some new software you can easyly\n"
-	echo -ne "***upload the source code to our repository server.\n"
-	echo -ne "***If the url is empty there will be no upload.\n"
-	echo -ne "Actually there is: $FTP_CACHE_URL\n"
-	echo -ne "Do you want to change this? (y/N) "
-	read YESNO
-	if [ "$YESNO" == "y" ]; then
-		echo -ne "Please type the url: "
-		read FTP_CACHE_URL
-		echo -ne "Please type the path: "
-		read FTP_CACHE_PATH
-		echo -ne "Please type the username: "
-		read FTP_CACHE_USER
-		echo -ne "Please type the password (hidden): "
-		read -s FTP_CACHE_PASS
-		
-	fi
-
-	clear
-	echo -ne "***If there are some important messages you\n"
-	echo -ne "***can get a notification mail.\n"
-	echo -ne "***Please type one ore more email adresses (seperated by comma).\n"
-	echo -ne "Actually there is: $MAIL_TO\n"
-	echo -ne "Do you want to change this? (y/N) "
-	read YESNO
-	if [ "$YESNO" == "y" ]; then
-		echo -ne "Please type: "
-		read MAIL_TO
-		echo -ne "You should enter a mail server to login...\n"
-		echo -ne "Please type the url: "
-		read MAIL_SERVER
-		echo -ne "Please type where the email is from: "
-		read MAIL_FROM
-		echo -ne "Please type the username: "
-		read MAIL_USER
-		echo -ne "Please type the password (hidden): "
-		read -s MAIL_PASS
-		
-	fi
-	echo -ne "\n${BOLD}***Saving...${NORMAL}"
-	cat <<END > $BASEDIR/.config
-### iso server
-FTP_ISO_URL=$FTP_ISO_URL
-FTP_ISO_PATH=$FTP_ISO_PATH
-FTP_ISO_USER=$FTP_ISO_USER
-FTP_ISO_PASS=$FTP_ISO_PASS
-### cache server
-FTP_CACHE_URL=$FTP_CACHE_URL
-FTP_CACHE_PATH=$FTP_CACHE_PATH
-FTP_CACHE_USER=$FTP_CACHE_USER
-FTP_CACHE_PASS=$FTP_CACHE_PASS
-### mail reports
-MAIL_TO="$MAIL_TO"
-MAIL_FROM=$MAIL_FROM
-MAIL_SERVER=$MAIL_SERVER
-MAIL_USER=$MAIL_USER
-MAIL_PASS=$MAIL_PASS
-### misc
-SKIP_PACKAGE_LIST="$SKIP_PACKAGE_LIST"
-END
-	beautify message DONE
-}
-
-compile_tftpd() {
-	mkdir $BASEDIR/tmp
-	tar xvfz $BASEDIR/cache/tftp-hpa-0.42.tar.gz -C $BASEDIR/tmp
-	cd $BASEDIR/tmp/tftp-hpa-*
-		./configure --prefix=/ipfire/trunk/tools/ \
-			--sbindir=/ipfire/trunk/tools/ --disable-nls
-		make
-		install -c tftpd/tftpd $BASEDIR/tools/in.tftpd
-	cd -
-	rm -rf $BASEDIR/tmp/tftp-hpa-*
-}
-
-start_tftpd() {
-	if [ ! -e $BASEDIR/tools/in.tftpd ]; then
-		compile_tftpd
-	fi
-	reload_tftpd
-	if [ "$?" == "0" ]; then
-		$BASEDIR/tools/in.tftpd -l -s $BASEDIR/tftpboot
-		beautify message DONE
-	else
-		echo -en "You don not have a pxe boot image in your base directory.\nPlease compile first."
-		beautify message FAIL
-		exit 1
-	fi
-}
-
-stop_tftpd() {
-	echo -n "Stopping TFTPD..."
-	killall in.tftpd >/dev/null 2>&1
-	sleep 3
-	killall -9 in.tftp >/dev/null 2>&1
-	beautify message DONE
-}
-
-reload_tftpd() {
-	if [ -e $BASEDIR/ipfire-$VERSION.$MACHINE-pxe.tgz ]; then
-		mkdir -p $BASEDIR/tftpboot
-		tar xfz $BASEDIR/ipfire-$VERSION.$MACHINE-pxe.tgz -C $BASEDIR/tftpboot
-		return 0
-	fi
-	return 1
 }
 
 update_langs() {

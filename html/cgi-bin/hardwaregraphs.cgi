@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2010  IPFire Team                                        #
+# Copyright (C) 2005-2011  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -93,7 +93,7 @@ if ( $querry[0] =~ "hwtemp"){
 		&General::writehash("${General::swroot}/sensors/settings", \%sensorsettings);
 	}
 
-	my @disks = `kudzu -qps -c HD 2>/dev/null | grep device: | cut -d" " -f2 | sort | uniq`;
+	my @disks = `find /sys/block/* -maxdepth 0 ! -name sr* ! -name loop* ! -name ram* -exec basename {} \\; | sort | uniq`;
 
 	foreach (@disks){
 		my $disk = $_;

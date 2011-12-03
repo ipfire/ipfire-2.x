@@ -31,8 +31,8 @@ usr/lib/perl5/site_perl/5.12.3/Mail/Send.pm
 #usr/lib/perl5/site_perl/5.12.3/Mail/Send.pod
 usr/lib/perl5/site_perl/5.12.3/Mail/Util.pm
 #usr/lib/perl5/site_perl/5.12.3/Mail/Util.pod
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Mail
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Mail/.packlist
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Mail
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Mail/.packlist
 #usr/share/man/man3/Mail::Address.3
 #usr/share/man/man3/Mail::Cap.3
 #usr/share/man/man3/Mail::Field.3

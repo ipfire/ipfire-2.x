@@ -44,8 +44,8 @@ md5 :
 ###############################################################################
 # Installation Details
 ###############################################################################
-IMGinst  := /install/images/$(SNAME)-$(VERSION).1gb-ext2.$(MACHINE)-$(ED)-core$(CORE).img
-IMGinsts := /install/images/$(SNAME)-$(VERSION).1gb-ext2-scon.$(MACHINE)-$(ED)-core$(CORE).img
+IMGinst  := /install/images/$(SNAME)-$(VERSION).1gb-ext2.$(MACHINE)-full-core$(CORE).img
+IMGinsts := /install/images/$(SNAME)-$(VERSION).1gb-ext2-scon.$(MACHINE)-full-core$(CORE).img
 MNThdd   := /install/harddisk
 IMGpart  := /install/images/part_area
 IMGboot  := /install/images/bootfs
@@ -68,7 +68,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	dd bs=1M if=/dev/zero of=$(IMGvar) count=$(SIZEvar)
 
 	# Format them
+ifeq "$(MACHINE_TYPE)" "arm"
+	mkfs.vfat $(IMGboot)
+else
 	mkfs.ext2 -F $(IMGboot)
+endif
 	mkfs.ext2 -F $(IMGroot)
 	mkfs.ext2 -F $(IMGvar)
 
@@ -81,29 +85,36 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mount -o loop $(IMGvar)  $(MNThdd)/var
 
 	# Install IPFire
-	tar -C $(MNThdd)/ -xvf /install/cdrom/$(SNAME)-$(VERSION).tlz --lzma
+	tar -C $(MNThdd)/ -xvaf /install/cdrom/$(SNAME)-$(VERSION).tlz
 	echo "LANGUAGE=en" >> $(MNThdd)/var/ipfire/main/settings
 	echo "HOSTNAME=$(SNAME)" >> $(MNThdd)/var/ipfire/main/settings
 	echo "THEME=ipfire" >> $(MNThdd)/var/ipfire/main/settings
-	touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
+	-touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
 	mv $(MNThdd)/bin/uname.bak $(MNThdd)/bin/uname
 	mkdir $(MNThdd)/proc
 	mount --bind /proc $(MNThdd)/proc
 	mount --bind /dev  $(MNThdd)/dev
 	mount --bind /sys  $(MNThdd)/sys
 	chroot $(MNThdd) /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
-	sed -i -e "s|MOUNT|ro|g" $(MNThdd)/boot/grub/grub.conf
-	sed -i -e "s|KVER|$(KVER)|g" $(MNThdd)/boot/grub/grub.conf
-	sed -i -e "s|ROOT|UUID=$$(blkid -sUUID $(IMGroot) | cut -d'"' -f2)|g" $(MNThdd)/boot/grub/grub.conf
-	ln -s grub.conf $(MNThdd)/boot/grub/menu.lst
 	sed -i -e "s|DEVICE1|UUID=$$(blkid -sUUID $(IMGboot) | cut -d'"' -f2)|g" $(MNThdd)/etc/fstab
+ifeq "$(MACHINE_TYPE)" "arm"
+	# ARM flash images have a VFAT partition for /boot.
+	sed -i -e "s|ext2|vfat|" $(MNThdd)/etc/fstab
+endif
 	sed -i -e "s|DEVICE2|#DEVICE2|g" $(MNThdd)/etc/fstab
 	sed -i -e "s|DEVICE3|UUID=$$(blkid -sUUID $(IMGroot) | cut -d'"' -f2)|g" $(MNThdd)/etc/fstab
 	sed -i -e "s|DEVICE4|UUID=$$(blkid -sUUID $(IMGvar) | cut -d'"' -f2)|g" $(MNThdd)/etc/fstab
 	sed -i -e "s|FSTYPE|ext2|g" $(MNThdd)/etc/fstab
 
+ifneq "$(MACHINE_TYPE)" "arm"
+	sed -i -e "s|MOUNT|ro|g" $(MNThdd)/boot/grub/grub.conf
+	sed -i -e "s|KVER|$(KVER)|g" $(MNThdd)/boot/grub/grub.conf
+	sed -i -e "s|ROOT|UUID=$$(blkid -sUUID $(IMGroot) | cut -d'"' -f2)|g" $(MNThdd)/boot/grub/grub.conf
+	ln -s grub.conf $(MNThdd)/boot/grub/menu.lst
+
 	# Copy grub files manually
 	cp -f $(MNThdd)/usr/share/grub/i386-pc/* $(MNThdd)/boot/grub/
+endif
 
 	# Unmount
 	umount $(MNThdd)/proc
@@ -114,7 +125,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	umount $(MNThdd)
 
 	# zerofree the ext3 images to get better compression
+ifneq "$(MACHINE_TYPE)" "arm"
 	zerofree $(IMGboot)
+endif
 	zerofree $(IMGroot)
 	zerofree $(IMGvar)
 
@@ -124,6 +137,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo -e ",$(SIZEboot),L,*\n,0,0\n,$(SIZEroot),L\n,$(SIZEvar),L\n" \
 		| sfdisk -D -uM -H 64 -S 32 $(IMGinst)
 
+ifneq "$(MACHINE_TYPE)" "arm"
 	# Install grub
 	echo "device (hd0) $(IMGinst)" > /tmp/grubinst.tmp
 	echo "root (hd0,0)"           >> /tmp/grubinst.tmp
@@ -131,6 +145,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo "quit"                   >> /tmp/grubinst.tmp
 	grub < /tmp/grubinst.tmp
 	rm -f /tmp/grubinst.tmp
+endif
 
 	# Compress Image
 	gzip -f9 $(IMGinst)
@@ -140,10 +155,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mount -o loop $(IMGroot) $(MNThdd)
 	mount -o loop $(IMGboot) $(MNThdd)/boot
 
+ifneq "$(MACHINE_TYPE)" "arm"
 	sed -i -e "s|splashimage|#splashimage|g" $(MNThdd)/boot/grub/grub.conf
 	sed -i -e "s|#serial|serial|g" $(MNThdd)/boot/grub/grub.conf
 	sed -i -e "s|#terminal|terminal|g" $(MNThdd)/boot/grub/grub.conf
-	sed -i -e "s| panic=10 | console=ttyS0,38400n8 panic=10 |g" $(MNThdd)/boot/grub/grub.conf
+	sed -i -e "s| panic=10 | console=ttyS0,115200n8 panic=10 |g" $(MNThdd)/boot/grub/grub.conf
+endif
 
 	sed -i -e "s|1:2345:respawn:|#1:2345:respawn:|g" $(MNThdd)/etc/inittab
 	sed -i -e "s|2:2345:respawn:|#2:2345:respawn:|g" $(MNThdd)/etc/inittab
@@ -157,7 +174,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	umount $(MNThdd)
 
 	# zerofree the ext3 images to get better compression
+ifneq "$(MACHINE_TYPE)" "arm"
 	zerofree $(IMGboot)
+endif
 	zerofree $(IMGroot)
 	zerofree $(IMGvar)
 
@@ -168,6 +187,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo -e ",$(SIZEboot),L,*\n,0,0\n,$(SIZEroot),L\n,$(SIZEvar),L\n" \
 		| sfdisk -D -uM -H 64 -S 32 $(IMGinsts)
 
+ifneq "$(MACHINE_TYPE)" "arm"
 	# Install grub
 	echo "device (hd0) $(IMGinsts)" > /tmp/grubinst.tmp
 	echo "root (hd0,0)"            >> /tmp/grubinst.tmp
@@ -175,6 +195,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo "quit"                    >> /tmp/grubinst.tmp
 	grub < /tmp/grubinst.tmp
 	rm -f /tmp/grubinst.tmp
+endif
 
 	# Compress Image
 	gzip -f9 $(IMGinsts)

@@ -85,8 +85,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils-5.96-rename-tee.patch
 ifeq "$(ROOT)" ""
+ifeq "$(MACHINE)" "i586"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-uname-1.patch
+endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-suppress_uptime_kill_su-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-i18n-1.patch
 	cd $(DIR_APP) && chmod +x tests/sort/sort-mb-tests
@@ -106,17 +109,13 @@ ifeq "$(ROOT)" ""
 	ln -sf test /bin/[
 	#ln -sf ../../bin/install /usr/bin
 	mv -f /bin/uname /bin/uname.bak
-	echo '#!/bin/bash'				>  /bin/uname
-	echo 'kernel=`/bin/uname.bak -r`' >> /bin/uname
-	echo '/bin/uname.bak $$* | sed 's/i.86/$(MACHINE)/g' | sed "s/$$kernel/2.6.32.45-ipfire/g"' >> /bin/uname
+	cp -vf $(DIR_SRC)/src/scripts/uname /bin/uname
 	chmod 755 /bin/uname
 	dircolors -p > /etc/dircolors
 else
 	rm /tools/bin/hostname
 	mv -f /tools/bin/uname /tools/bin/uname.bak
-	echo '#!/bin/bash'					>  /tools/bin/uname
-	echo 'kernel=`/tools/bin/uname.bak -r`' >> /tools/bin/uname
-	echo '/tools/bin/uname.bak $$* | sed 's/i.86/$(MACHINE)/g' | sed "s/$$kernel/2.6.32.45-ipfire/g"' >> /tools/bin/uname
+	cp -vf $(DIR_SRC)/src/scripts/uname /tools/bin/uname
 	chmod 755 /tools/bin/uname
 endif
 	@rm -rf $(DIR_APP)

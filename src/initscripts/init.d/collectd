@@ -20,6 +20,13 @@ case "$1" in
 			fi
 		fi
 
+		# ARM does not support to scan for sensors. In that case,
+		# we create an empty configuration file.
+		machine=$(uname -m)
+		if [ "${machine:0:3}" = "arm" ]; then
+			touch /etc/sysconfig/lm_sensors
+		fi
+
 		# At first run search for sensors with sensors-detect
 		if [ ! -e /etc/sysconfig/lm_sensors ]; then
 			boot_mesg "Searching for Sensors..."

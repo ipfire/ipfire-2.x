@@ -38,7 +38,6 @@ MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 TOOLCHAINVER=1
-IPFVER="full"				# Which versions should be compiled? (full|devel)
 
 BUILDMACHINE=$MACHINE
     if [ "$MACHINE" = "x86_64" ]; then
@@ -72,14 +71,6 @@ mkdir $BASEDIR/log/ 2>/dev/null
 
 if [ -f .config ]; then
 	. .config
-else
-	echo -e  "${BOLD}No configuration found!${NORMAL}"
-	echo -ne "Do you want to create one (y/N)?"
-	read CREATE_CONFIG
-	echo ""
-	if [ "$CREATE_CONFIG" == "y" ]; then
-		make_config
-	fi
 fi
 
 if [ -z $EDITOR ]; then
@@ -189,7 +180,11 @@ prepareenv() {
     set +h
     LC_ALL=POSIX
     if [ -z $MAKETUNING ]; then
-       MAKETUNING="-j6"
+        if [ "${MACHINE:0:3}" = "arm" ]; then
+            MAKETUNING="-j2"
+        else
+            MAKETUNING="-j6"
+        fi
     fi
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
@@ -243,15 +238,19 @@ buildtoolchain() {
 
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
     export LOGFILE
-    ORG_PATH=$PATH
     NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
     export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
+    ORG_PATH=$PATH
+    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
     lfsmake1 ccache	PASS=1
     lfsmake1 make	PASS=1
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
-    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    lfsmake1 linux-libc-header
+    if [ "${MACHINE_TYPE}" = "arm" ]; then
+        lfsmake1 linux TOOLS=1 HEADERS=1
+    else
+        lfsmake1 linux-libc-header
+    fi
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain PASS=1
     lfsmake1 tcl
@@ -287,9 +286,14 @@ buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
     lfsmake2 stage2
-    lfsmake2 linux-libc-header
+    if [ "${MACHINE_TYPE}" = "arm" ]; then
+        lfsmake2 linux HEADERS=1
+    else
+        lfsmake2 linux-libc-header
+    fi
     lfsmake2 man-pages
     lfsmake2 glibc
+    lfsmake2 tzdata
     lfsmake2 cleanup-toolchain	PASS=3
     lfsmake2 binutils
     lfsmake2 gcc
@@ -360,58 +364,93 @@ buildipfire() {
   ipfiremake xz
   ipfiremake linux-firmware
   ipfiremake zd1211-firmware
-  ipfiremake linux			XEN=1
-  ipfiremake kqemu			XEN=1
-  ipfiremake v4l-dvb			XEN=1
-  ipfiremake madwifi			XEN=1
-  ipfiremake mISDN			XEN=1
-  ipfiremake dahdi			XEN=1 KMOD=1
-  ipfiremake cryptodev			XEN=1
-  ipfiremake compat-wireless		XEN=1
-  ipfiremake r8169			XEN=1
-  ipfiremake r8168			XEN=1
-  ipfiremake r8101			XEN=1
-  ipfiremake e1000			XEN=1
-  ipfiremake e1000e			XEN=1
-  ipfiremake igb			XEN=1
-  ipfiremake linux			PAE=1
-  ipfiremake kqemu			PAE=1
-  ipfiremake kvm-kmod			PAE=1
-  ipfiremake v4l-dvb			PAE=1
-  ipfiremake madwifi			PAE=1
-  ipfiremake alsa			PAE=1 KMOD=1
-  ipfiremake mISDN			PAE=1
-  ipfiremake dahdi			PAE=1 KMOD=1
-  ipfiremake cryptodev			PAE=1
-  ipfiremake compat-wireless		PAE=1
-#  ipfiremake r8169			PAE=1
-#  ipfiremake r8168			PAE=1
-#  ipfiremake r8101			PAE=1
-  ipfiremake e1000			PAE=1
-  ipfiremake e1000e			PAE=1
-  ipfiremake igb			PAE=1
-  ipfiremake linux
-  ipfiremake kqemu
-  ipfiremake kvm-kmod
-  ipfiremake v4l-dvb
-  ipfiremake madwifi
-  ipfiremake alsa			KMOD=1
-  ipfiremake mISDN
-  ipfiremake dahdi			KMOD=1
-  ipfiremake cryptodev
-  ipfiremake compat-wireless
-#  ipfiremake r8169
-#  ipfiremake r8168
-#  ipfiremake r8101
-  ipfiremake e1000
-  ipfiremake e1000e
-  ipfiremake igb
+  ipfiremake u-boot
+
+  # The xen and PAE kernels are only available for x86
+  if [ "${MACHINE_TYPE}" != "arm" ]; then
+    ipfiremake linux			KCFG="-xen"
+    ipfiremake kqemu			KCFG="-xen"
+    ipfiremake v4l-dvb			KCFG="-xen"
+    ipfiremake madwifi			KCFG="-xen"
+    ipfiremake mISDN			KCFG="-xen"
+    ipfiremake dahdi			KCFG="-xen" KMOD=1
+    ipfiremake cryptodev		KCFG="-xen"
+    ipfiremake compat-wireless		KCFG="-xen"
+    ipfiremake r8169			KCFG="-xen"
+    ipfiremake r8168			KCFG="-xen"
+    ipfiremake r8101			KCFG="-xen"
+    ipfiremake e1000			KCFG="-xen"
+    ipfiremake e1000e			KCFG="-xen"
+    ipfiremake igb			KCFG="-xen"
+    ipfiremake linux			KCFG="-pae"
+    ipfiremake kqemu			KCFG="-pae"
+    ipfiremake kvm-kmod			KCFG="-pae"
+    ipfiremake v4l-dvb			KCFG="-pae"
+    ipfiremake madwifi			KCFG="-pae"
+    ipfiremake alsa			KCFG="-pae" KMOD=1
+    ipfiremake mISDN			KCFG="-pae"
+    ipfiremake dahdi			KCFG="-pae" KMOD=1
+    ipfiremake cryptodev		KCFG="-pae"
+    ipfiremake compat-wireless		KCFG="-pae"
+#    ipfiremake r8169			KCFG="-pae"
+#    ipfiremake r8168			KCFG="-pae"
+#    ipfiremake r8101			KCFG="-pae"
+    ipfiremake e1000			KCFG="-pae"
+    ipfiremake e1000e			KCFG="-pae"
+    ipfiremake igb			KCFG="-pae"
+    ipfiremake linux			KCFG=""
+    ipfiremake v4l-dvb			KCFG=""
+    ipfiremake kqemu			KCFG=""
+    ipfiremake kvm-kmod			KCFG=""
+    ipfiremake madwifi			KCFG=""
+    ipfiremake alsa			KCFG="" KMOD=1
+    ipfiremake mISDN			KCFG=""
+    ipfiremake dahdi			KCFG="" KMOD=1
+    ipfiremake cryptodev		KCFG=""
+    ipfiremake compat-wireless		KCFG=""
+#    ipfiremake r8169			KCFG=""
+#    ipfiremake r8168			KCFG=""
+#    ipfiremake r8101			KCFG=""
+    ipfiremake e1000			KCFG=""
+    ipfiremake e1000e			KCFG=""
+    ipfiremake igb			KCFG=""
+  else
+    # arm-versatile kernel build
+    ipfiremake linux			KCFG="-versatile"
+    ipfiremake v4l-dvb			KCFG="-versatile"
+    ipfiremake kqemu			KCFG="-versatile"
+    ipfiremake kvm-kmod			KCFG="-versatile"
+    ipfiremake madwifi			KCFG="-versatile"
+    ipfiremake mISDN			KCFG="-versatile"
+    ipfiremake dahdi			KCFG="-versatile" KMOD=1
+    ipfiremake cryptodev		KCFG="-versatile"
+    ipfiremake compat-wireless		KCFG="-versatile"
+#  ipfiremake r8169			KCFG="-versatile"
+#  ipfiremake r8168			KCFG="-versatile"
+#  ipfiremake r8101			KCFG="-versatile"
+    ipfiremake e1000			KCFG="-versatile"
+    ipfiremake e1000e			KCFG="-versatile"
+    ipfiremake igb			KCFG="-versatile"
+    # arm-kirkwood kernel build
+    ipfiremake linux			KCFG="-kirkwood"
+    ipfiremake v4l-dvb			KCFG="-kirkwood"
+    ipfiremake kqemu			KCFG="-kirkwood"
+    ipfiremake kvm-kmod			KCFG="-kirkwood"
+    ipfiremake madwifi			KCFG="-kirkwood"
+    ipfiremake mISDN			KCFG="-kirkwood"
+    ipfiremake dahdi			KCFG="-kirkwood" KMOD=1
+    ipfiremake cryptodev		KCFG="-kirkwood"
+    ipfiremake compat-wireless		KCFG="-kirkwood"
+#  ipfiremake r8169			KCFG="-kirkwood"
+#  ipfiremake r8168			KCFG="-kirkwood"
+#  ipfiremake r8101			KCFG="-kirkwood"
+    ipfiremake e1000			KCFG="-kirkwood"
+    ipfiremake e1000e			KCFG="-kirkwood"
+    ipfiremake igb			KCFG="-kirkwood"
+  fi
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
-
-  installmake strip
-
   ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
@@ -453,7 +492,7 @@ buildipfire() {
   ipfiremake arping
   ipfiremake beep
   ipfiremake bind
-  ipfiremake cdrtools
+  ipfiremake dvdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
@@ -712,10 +751,10 @@ buildipfire() {
   echo >> $BASEDIR/build/var/ipfire/firebuild
   cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
   echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
-  if [ "$GIT_BRANCH" = "master" ]; then
-	echo "$NAME $VERSION - (Development Build: $GIT_LASTCOMMIT)" > $BASEDIR/build/etc/system-release
+  if [ "$GIT_BRANCH" = "master" -o "$GIT_BRANCH" = "next" ]; then
+	echo "$NAME $VERSION ($MACHINE) - Development Build: $GIT_LASTCOMMIT" > $BASEDIR/build/etc/system-release
   else
-	echo "$NAME $VERSION - $GIT_BRANCH" > $BASEDIR/build/etc/system-release
+	echo "$NAME $VERSION ($MACHINE) - $GIT_BRANCH" > $BASEDIR/build/etc/system-release
   fi
 }
 
@@ -755,15 +794,19 @@ buildpackages() {
   
   # Update changelog
   cd $BASEDIR
-  $0 git log
+  [ -z $GIT_TAG ]  || LAST_TAG=$GIT_TAG
+  [ -z $LAST_TAG ] || EXT="$LAST_TAG..HEAD"
+  git log -n 500 --no-merges --pretty=medium --shortstat $EXT > $BASEDIR/doc/ChangeLog
 
   # Create images for install
-	ipfiremake cdrom ED=$IPFVER
+  ipfiremake cdrom
 
   # Check if there is a loop device for building in virtual environments
-  if [ $BUILD_IMAGES == 1 ] &&  ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
-	ipfiremake usb-stick ED=$IPFVER
-	ipfiremake flash-images ED=$IPFVER
+  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
+	if [ "${MACHINE_TYPE}" != "arm" ]; then
+		ipfiremake usb-stick
+	fi
+	ipfiremake flash-images
   fi
 
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
@@ -771,10 +814,10 @@ buildpackages() {
   ipfirepackages
 
   # Check if there is a loop device for building in virtual environments
-  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
+  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]) && [ "${MACHINE_TYPE}" != "arm" ]; then
         cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
         cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
-	ipfiremake xen-image ED=$IPFVER
+	ipfiremake xen-image
 	rm -rf $LFS/install/packages/linux-xen-*.ipfire
 	rm -rf $LFS/install/packages/meta-linux-xen
   fi
@@ -808,7 +851,10 @@ buildpackages() {
 
 ipfirepackages() {
 	ipfiremake core-updates
-	for i in $(ls -1 $BASEDIR/config/rootfiles/packages); do
+
+	local i
+	for i in $(find $BASEDIR/config/rootfiles/packages{${machine},} -maxdepth 1 -type f); do
+		i=$(basename ${i})
 		if [ -e $BASEDIR/lfs/$i ]; then
 			ipfiredist $i
 		else
@@ -916,8 +962,10 @@ downloadsrc)
 		cd $BASEDIR/lfs
 		for i in *; do
 			if [ -f "$i" -a "$i" != "Config" ]; then
-				echo -ne "Loading $i"
-				make -s -f $i LFS_BASEDIR=$BASEDIR MESSAGE="$i\t ($c/$MAX_RETRIES)" download >> $LOGFILE 2>&1
+				lfsmakecommoncheck ${i} || continue
+
+				make -s -f $i LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+					MESSAGE="$i\t ($c/$MAX_RETRIES)" download >> $LOGFILE 2>&1
 				if [ $? -ne 0 ]; then
 					beautify message FAIL
 					FINISHED=0
@@ -933,7 +981,8 @@ downloadsrc)
 	ERROR=0
 	for i in *; do
 		if [ -f "$i" -a "$i" != "Config" ]; then
-			make -s -f $i LFS_BASEDIR=$BASEDIR MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
+			make -s -f $i LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+				MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
 			if [ $? -ne 0 ]; then
 				echo -ne "MD5 difference in lfs/$i"
 				beautify message FAIL
@@ -959,7 +1008,7 @@ toolchain)
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
 		build/{bin,etc,usr/bin,usr/local} \
-		build/tools/{bin,etc,*-linux-gnu,include,lib,libexec,sbin,share,var} \
+		build/tools/{bin,etc,*-linux-gnu*,include,lib,libexec,sbin,share,var} \
 		log >> $LOGFILE
 	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.md5
@@ -1003,54 +1052,6 @@ othersrc)
 	fi
 	stdumount
 	;;
-git)
-	case "$2" in
-	  update|up)
-	  		## REMOVES ALL UNCOMMITTED CHANGES!
-	  		[ "$3" == "--force" ] && git checkout -f
-			git pull
-	  	;;
-	  commit|ci)
-	  	shift 2
-			git commit $*
-			
-			[ "$?" -eq "0" ] || exiterror "git commit $* failed."
-			
-			echo -e "${BOLD}Do you want to push, too? [y/N]${NORMAL}"
-			read
-			[ -z $REPLY ] && exit 0
-			for i in y Y j J; do
-				if [ "$i" == "$REPLY" ]; then
-					$0 git push
-					exit $?
-				fi
-			done
-			exiterror "\"$REPLY\" is not a valid answer."
-	  	;;
-	  dist)
-			git archive HEAD | gzip -9 > ${SNAME}-${VERSION}.tar.gz
-		  ;;
-	  diff|di)
-			echo -ne "Make a local diff to last revision"
-			git diff HEAD > ipfire-diff-$(date +'%Y-%m-%d-%H:%M').diff
-			evaluate 1
-			echo "Diff was successfully saved to ipfire-diff-$(date +'%Y-%m-%d-%H:%M').diff"
-			git diff --stat
-	  	;;
-	  push)
-	  	[ -z $GIT_USER ] && exiterror "You have to setup GIT_USER first."
-			GIT_URL="ssh://${GIT_USER}@git.ipfire.org/pub/git/ipfire-2.x"
-			
-		git push ${GIT_URL} $3
-	  	;;
-	  log)
-		[ -z $GIT_TAG ]  || LAST_TAG=$GIT_TAG
-		[ -z $LAST_TAG ] || EXT="$LAST_TAG..HEAD"
-
-		git log -n 500 --no-merges --pretty=medium --shortstat $EXT > $BASEDIR/doc/ChangeLog
-	;;
-	esac
-	;;
 uploadsrc)
 	PWD=`pwd`
 	if [ -z $IPFIRE_USER ]; then
@@ -1072,82 +1073,8 @@ uploadsrc)
 	cd $PWD
 	exit 0
 	;;
-batch)
-	if [ "$2" = "--background" ]; then
-		batch_script
-		exit $?
-	fi
-	if [ `screen -ls | grep -q ipfire` ]; then
-		echo "Build is already running, sorry!"
-		exit 1
-	else
-		if [ "$2" = "--rebuild" ]; then
-			export IPFIRE_REBUILD=1
-			echo "REBUILD!"
-		else
-			export IPFIRE_REBUILD=0
-		fi
-		echo -en "${BOLD}***IPFire-Batch-Build is starting...${NORMAL}"
-		screen -dmS ipfire $0 batch --background
-		evaluate 1
-		exit 0
-	fi
-	;;
-watch)
-	watch_screen
-	;;
-pxe)
-	case "$2" in
-	  start)
-		start_tftpd
-		;;
-	  stop)
-		stop_tftpd
-		;;
-	  reload|restart)
-		reload_tftpd
-		;;		
-	esac
-	exit 0
-	;;
 lang)
 	update_langs
-	;;
-"")
-	clear
-	select name in "Exit" "IPFIRE: Downloadsrc" "IPFIRE: Build (silent)" "IPFIRE: Watch Build" "IPFIRE: Batch" "IPFIRE: Clean" "LOG: Tail" "Help"
-	do
-	case $name in
-	"IPFIRE: Downloadsrc")
-		$0 downloadsrc
-		;;
-	"IPFIRE: Build (silent)")
-		$0 build-silent
-		;;
-	"IPFIRE: Watch Build")
-		$0 watch
-		;;
-	"IPFIRE: Batch")
-		$0 batch
-		;;
-	"IPFIRE: Clean")
-		$0 clean
-		;;
-	"Help")
-		echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain}"
-		cat doc/make.sh-usage
-		;;
-	"LOG: Tail")
-		tail -f log/_*
-		;;
-	"Exit")
-		break
-		;;
-	esac
-	done
-	;;
-config)
-	make_config
 	;;
 *)
 	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain}"

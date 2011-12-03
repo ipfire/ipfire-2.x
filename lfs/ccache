@@ -77,6 +77,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -sf ccache $(ROOT)/usr/local/bin/gcc
 	ln -sf ccache $(ROOT)/usr/local/bin/g++
 	ln -sf ccache $(ROOT)/usr/local/bin/cc
+	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-gcc
+	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-g++
+	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-cc
 	$(ROOT)/usr/local/bin/ccache -z
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

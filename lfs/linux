@@ -34,24 +34,38 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PROG	   = linux-xen
 PAK_VER    = 19
 DEPS	   = ""
 
 # Normal build or XEN build.
 #
 
-ifeq "$(PAE)" "1"
-	VERSUFIX=ipfire-pae
+VERSUFIX=ipfire$(KCFG)
+
+ifeq "$(HEADERS)" "1"
+ifeq "$(TOOLS)" "1"
+	TARGET = $(DIR_INFO)/linux-libc-headers-$(VER)-$(VERSUFIX)-tools
+	HEADERS_PREFIX = /tools
 else
-ifeq "$(XEN)" "1"
-	VERSUFIX=ipfire-xen
-else
-	VERSUFIX=ipfire
+	TARGET = $(DIR_INFO)/linux-libc-headers-$(VER)-$(VERSUFIX)
+	HEADERS_PREFIX = /usr
 endif
+else
+	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
 endif
 
-TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
+ifeq "$(MACHINE_TYPE)" "arm"
+	HEADERS_ARCH=arm
+else
+	HEADERS_ARCH=x86
+endif
+
+ifeq "$(KCFG)" ""
+LASTKERNEL=1
+endif
+ifeq "$(KCFG)" "-kirkwood"
+LASTKERNEL=1
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -105,9 +119,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/linux $(DIR_SRC)/linux-*-suse_xen_patches $(DIR_SRC)/xen-* && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-	ln -s linux-$(VER) /usr/src/linux
+	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
-ifeq "$(XEN)" "1"
+ifeq "$(KCFG)" "-xen"
 	# Apply gentoo Xen patches
 	mkdir -p $(DIR_SRC)/xen-patches
 	cd $(DIR_SRC)/xen-patches && tar jxf $(DIR_DL)/xen-patches-2.6.32-2f.tar.bz2
@@ -149,23 +163,50 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_ipg-fix-driver-name.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
+ifeq "$(KCFG)" "-kirkwood"
+	# Add dreamplug,guruplug and icy 62x0  support on ARM-kirkwood
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45-arm_kirkwood_setups.patch
+endif
+
+ifeq "$(MACHINE_TYPE)" "arm"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45_align_ssb_modtable_32bit_boundary.patch
+endif
+
+ifeq "$(HEADERS)" "1"
+	# Install the header files
+	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) INSTALL_HDR_PATH=dest headers_install
+	-mkdir -pv $(BUILDROOT)/$(HEADERS_PREFIX)/include
+	cd $(DIR_APP) && find dest/include \( -name .install -o -name ..install.cmd \) -delete
+	cd $(DIR_APP) && cp -rv dest/include/* $(BUILDROOT)/$(HEADERS_PREFIX)/include
+else
+
 	# Install ipfire logo
 	cd $(DIR_APP) && cp -vf $(DIR_SRC)/config/kernel/ipfire_logo.ppm \
 		drivers/video/logo/logo_linux_clut224.ppm
 
 	# Cleanup kernel source
-
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config
 	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
 	cd $(DIR_APP) && make CC="$(KGCC)" clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-$(VERSUFIX)/' Makefile
 
-ifeq "$(XEN)" "1"
+ifeq "$(KCFG)" "-xen"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
 	cd $(DIR_APP) && cp -v arch/i386/boot/vmlinuz /boot/vmlinuz-$(VER)-$(VERSUFIX)
 else
+ifeq "$(KCFG)" "-kirkwood"
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage
+	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
+else
+ifeq "$(KCFG)" "-versatile"
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+else
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+endif
+endif
 endif
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
@@ -175,9 +216,8 @@ endif
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
 
-ifneq "$(PAE)" "1"
-ifneq "$(XEN)" "1"
-	# Only do this once on the standard kernel pass
+ifeq "$(LASTKERNEL)" "1"
+	# Only do this once
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 
 	# Blacklist matroxfb_base
@@ -200,17 +240,18 @@ ifneq "$(XEN)" "1"
 
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6
-
-endif
 endif
 
 	# Remove mISDN modules
 	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
 	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
 
+ifneq "$(MACHINE_TYPE)" "arm"
 	# Disable geode_aes modul
 	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko \
            /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko.off
+endif
+endif
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)

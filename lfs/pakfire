@@ -30,6 +30,12 @@ THISAPP    = pakfire
 DIR_APP    = /opt/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+ifeq "$(MACHINE_TYPE)" "arm"
+	PAKFIRE_VERSION = $(VERSION)-$(MACHINE)
+else
+	PAKFIRE_VERSION = $(VERSION)
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -52,7 +58,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -p /opt/pakfire/{db/{meta,lists,rootfiles,installed,core},etc,lib,tmp} \
 		/var/log/pakfire /var/cache/pakfire
 	cp -fRv $(DIR_SRC)/src/pakfire/* $(DIR_APP)
-	mv -vf $(DIR_APP)/pakfire.conf $(DIR_APP)/etc/
+	sed -e "s/@VERSION@/$(PAKFIRE_VERSION)/g" \
+		< $(DIR_APP)/pakfire.conf \
+		> $(DIR_APP)/etc/pakfire.conf
 	chown root.root $(DIR_APP) -R
 	chmod 755 $(DIR_APP)/pakfire
 	touch /var/log/pakfire.log

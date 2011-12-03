@@ -1,0 +1,4 @@
+etc/modprobe.d/framebuffer
+etc/modprobe.d/ipv6
+etc/modprobe.d/isdn
+sbin/gen_init_cpio

@@ -24,23 +24,29 @@
 
 include Config
 
-VER        = 2.01.01a58
+TZDATA_VER = 2011j
+TZCODE_VER = 2011i
 
-THISAPP    = cdrtools-2.01.01
-DL_FILE    = cdrtools-$(VER).tar.gz
+THISAPP    = tzdata
+DL_FILE    = tzdata-base-0.tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+SUP_ARCH   = armv5tel
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) tzdata$(TZDATA_VER).tar.gz tzcode$(TZCODE_VER).tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+tzdata$(TZDATA_VER).tar.gz = $(DL_FROM)/tzdata$(TZDATA_VER).tar.gz
+tzcode$(TZCODE_VER).tar.gz = $(DL_FROM)/tzcode$(TZCODE_VER).tar.gz
 
-$(DL_FILE)_MD5 = 6a17354df11c325bba9941d69e9c0294
+$(DL_FILE)_MD5 = e36d2f742c22f8c8dbf0686ac9769b55
+tzdata$(TZDATA_VER).tar.gz_MD5 = 30a6bebdbdd03c5bd29241c15f569d50
+tzcode$(TZCODE_VER).tar.gz_MD5 = cf7f4335b7c8682899fa2814e711c1b2
 
 install : $(TARGET)
 
@@ -69,8 +75,19 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root $(MAKETUNING)
-	cd $(DIR_APP) && make INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root install
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	mkdir -pv $(DIR_APP)/tzdata$(TZDATA_VER) $(DIR_APP)/tzcode$(TZCODE_VER)
+	tar axf $(DIR_DL)/tzdata$(TZDATA_VER).tar.gz -C $(DIR_APP)/tzdata$(TZDATA_VER)
+	tar axf $(DIR_DL)/tzcode$(TZCODE_VER).tar.gz -C $(DIR_APP)/tzcode$(TZCODE_VER)
+
+	cd $(DIR_APP) && sed -e 's|@objpfx@|$(DIR_APP)/obj/|' \
+		-e 's|@datadir@|/usr/share|' \
+		Makeconfig.in > Makeconfig
+	cd $(DIR_APP) && make $(MAKETUNING)
+
+	cd $(DIR_APP) && sed -i 's|@install_root@||' Makeconfig
+	cd $(DIR_APP) && make install
+
+	cp -f /usr/share/zoneinfo/GMT /etc/localtime
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

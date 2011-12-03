@@ -1,0 +1,272 @@
+Submitted By: Dan Nicholson <dbn_dot_lists_at_gmail_dot_com>
+Date: 2006-07-08
+Initial Package Version: 2.12r
+Origin: Upstream
+Upstream Status: Applied in util-linux-2.13-pre6.tar.bz2
+Description: Replaces uses of *llseek with lseek. Fixes an issue
+	compiling util-linux with kernel headers from linux-2.6.18-rc1
+	headers_install.
+
+diff -pur -x '*.rej' util-linux-2.12r.orig/fdisk/Makefile util-linux-2.12r/fdisk/Makefile
+--- util-linux-2.12r.orig/fdisk/Makefile	2004-09-06 20:28:58.000000000 +0000
++++ util-linux-2.12r/fdisk/Makefile	2006-07-08 15:40:57.140375072 +0000
+@@ -39,7 +39,7 @@ else
+ endif
+ endif
+ 
+-cfdisk: cfdisk.o llseek.o disksize.o i386_sys_types.o $(LIB)/xstrncpy.o
++cfdisk: cfdisk.o disksize.o i386_sys_types.o $(LIB)/xstrncpy.o
+ ifeq "$(HAVE_SLANG)" "yes"
+ 	$(CC) $(LDFLAGS) $^ -o $@ $(LIBSLANG)
+ else
+@@ -55,7 +55,7 @@ activate: sfdisk
+ 	rm -f activate
+ 	ln -s sfdisk activate
+ 
+-fdisk: fdisk.o llseek.o disksize.o fdiskbsdlabel.o fdisksgilabel.o \
++fdisk: fdisk.o disksize.o fdiskbsdlabel.o fdisksgilabel.o \
+ 	fdisksunlabel.o fdiskaixlabel.o i386_sys_types.o partname.o
+ fdisk.o: fdisk.c fdisk.h
+ fdiskbsdlabel.o: fdiskbsdlabel.c fdisk.h fdiskbsdlabel.h
+diff -pur -x '*.rej' util-linux-2.12r.orig/fdisk/cfdisk.c util-linux-2.12r/fdisk/cfdisk.c
+--- util-linux-2.12r.orig/fdisk/cfdisk.c	2005-09-09 21:44:57.000000000 +0000
++++ util-linux-2.12r/fdisk/cfdisk.c	2006-07-08 15:40:23.458901045 +0000
+@@ -84,9 +84,6 @@
+ #include "xstrncpy.h"
+ #include "common.h"
+ 
+-extern long long ext2_llseek(unsigned int fd, long long offset,
+-			     unsigned int origin);
+-
+ #define VERSION UTIL_LINUX_VERSION
+ 
+ #define DEFAULT_DEVICE "/dev/hda"
+@@ -552,7 +549,7 @@ die_x(int ret) {
+ 
+ static void
+ read_sector(char *buffer, long long sect_num) {
+-    if (ext2_llseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
++    if (lseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
+ 	fatal(_("Cannot seek on disk drive"), 2);
+     if (read(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
+ 	fatal(_("Cannot read disk drive"), 2);
+@@ -560,7 +557,7 @@ read_sector(char *buffer, long long sect
+ 
+ static void
+ write_sector(char *buffer, long long sect_num) {
+-    if (ext2_llseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
++    if (lseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
+ 	fatal(_("Cannot seek on disk drive"), 2);
+     if (write(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
+ 	fatal(_("Cannot write disk drive"), 2);
+@@ -587,7 +584,7 @@ get_dos_label(int i) {
+ 	long long offset;
+ 
+ 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE;
+-	if (ext2_llseek(fd, offset, SEEK_SET) == offset
++	if (lseek(fd, offset, SEEK_SET) == offset
+ 	    && read(fd, &sector, sizeof(sector)) == sizeof(sector)) {
+ 		dos_copy_to_info(p_info[i].ostype, OSTYPESZ,
+ 				 sector+DOS_OSTYPE_OFFSET, DOS_OSTYPE_SZ);
+@@ -672,7 +669,7 @@ get_linux_label(int i) {
+ 
+ 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE
+ 		+ 1024;
+-	if (ext2_llseek(fd, offset, SEEK_SET) == offset
++	if (lseek(fd, offset, SEEK_SET) == offset
+ 	    && read(fd, &e2fsb, sizeof(e2fsb)) == sizeof(e2fsb)
+ 	    && e2fsb.s_magic[0] + (e2fsb.s_magic[1]<<8) == EXT2_SUPER_MAGIC) {
+ 		label = e2fsb.s_volume_name;
+@@ -688,7 +685,7 @@ get_linux_label(int i) {
+ 	}
+ 
+ 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE + 0;
+-	if (ext2_llseek(fd, offset, SEEK_SET) == offset
++	if (lseek(fd, offset, SEEK_SET) == offset
+ 	    && read(fd, &xfsb, sizeof(xfsb)) == sizeof(xfsb)
+ 	    && !strncmp(xfsb.s_magic, XFS_SUPER_MAGIC, 4)) {
+ 		label = xfsb.s_fname;
+@@ -702,7 +699,7 @@ get_linux_label(int i) {
+ 	/* jfs? */
+ 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE
+ 		+ JFS_SUPER1_OFF;
+-	if (ext2_llseek(fd, offset, SEEK_SET) == offset
++	if (lseek(fd, offset, SEEK_SET) == offset
+ 	    && read(fd, &jfsb, sizeof(jfsb)) == sizeof(jfsb)
+ 	    && !strncmp(jfsb.s_magic, JFS_MAGIC, strlen(JFS_MAGIC))) {
+ 		label = jfsb.s_label;
+@@ -716,7 +713,7 @@ get_linux_label(int i) {
+ 	/* reiserfs? */
+ 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE
+ 		+ REISERFS_DISK_OFFSET_IN_BYTES;
+-	if (ext2_llseek(fd, offset, SEEK_SET) == offset
++	if (lseek(fd, offset, SEEK_SET) == offset
+ 	    && read(fd, &reiserfsb, sizeof(reiserfsb)) == sizeof(reiserfsb)
+ 	    && has_reiserfs_magic_string(&reiserfsb, &reiserfs_is_3_6)) {
+ 		if (reiserfs_is_3_6) {
+@@ -1860,7 +1857,7 @@ write_part_table(void) {
+ 
+ 	 while (!done) {
+ 	      mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X,
+-		       _("Are you sure you want write the partition table "
++		       _("Are you sure you want to write the partition table "
+ 		       "to disk? (yes or no): "));
+ 	      len = get_string(response, LINE_LENGTH, NULL);
+ 	      clear_warning();
+diff -pur -x '*.rej' util-linux-2.12r.orig/fdisk/fdisk.c util-linux-2.12r/fdisk/fdisk.c
+--- util-linux-2.12r.orig/fdisk/fdisk.c	2004-12-18 02:00:31.000000000 +0000
++++ util-linux-2.12r/fdisk/fdisk.c	2006-07-08 15:40:23.461899841 +0000
+@@ -239,8 +239,8 @@ void fatal(enum failure why) {
+ 
+ static void
+ seek_sector(int fd, unsigned int secno) {
+-	long long offset = (long long) secno * sector_size;
+-	if (ext2_llseek(fd, offset, SEEK_SET) == (long long) -1)
++	off_t offset = (off_t) secno * sector_size;
++	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
+ 		fatal(unable_to_seek);
+ }
+ 
+diff -pur -x '*.rej' util-linux-2.12r.orig/fdisk/fdisk.h util-linux-2.12r/fdisk/fdisk.h
+--- util-linux-2.12r.orig/fdisk/fdisk.h	2004-12-15 18:19:06.000000000 +0000
++++ util-linux-2.12r/fdisk/fdisk.h	2006-07-08 15:40:23.462899439 +0000
+@@ -26,9 +26,6 @@
+ #define cround(n)	(display_in_cyl_units ? ((n)/units_per_sector)+1 : (n))
+ #define scround(x)	(((x)+units_per_sector-1)/units_per_sector)
+ 
+-extern long long ext2_llseek(unsigned int fd, long long offset,
+-			     unsigned int origin);
+-
+ #if defined(__GNUC__) && (defined(__arm__) || defined(__alpha__))
+ # define PACKED __attribute__ ((packed))
+ #else
+diff -pur -x '*.rej' util-linux-2.12r.orig/fdisk/fdiskbsdlabel.c util-linux-2.12r/fdisk/fdiskbsdlabel.c
+--- util-linux-2.12r.orig/fdisk/fdiskbsdlabel.c	2003-07-13 21:12:47.000000000 +0000
++++ util-linux-2.12r/fdisk/fdiskbsdlabel.c	2006-07-08 15:40:23.463899038 +0000
+@@ -566,7 +566,7 @@ xbsd_write_bootstrap (void)
+   sector = get_start_sect(xbsd_part);
+ #endif
+ 
+-  if (ext2_llseek (fd, (long long) sector * SECTOR_SIZE, SEEK_SET) == -1)
++  if (lseek (fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
+     fatal (unable_to_seek);
+   if (BSD_BBSIZE != write (fd, disklabelbuffer, BSD_BBSIZE))
+     fatal (unable_to_write);
+@@ -735,7 +735,7 @@ xbsd_readlabel (struct partition *p, str
+ 	sector = 0;
+ #endif
+ 
+-	if (ext2_llseek (fd, (long long) sector * SECTOR_SIZE, SEEK_SET) == -1)
++	if (lseek (fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
+ 		fatal (unable_to_seek);
+ 	if (BSD_BBSIZE != read (fd, disklabelbuffer, BSD_BBSIZE))
+ 		fatal (unable_to_read);
+@@ -781,12 +781,12 @@ xbsd_writelabel (struct partition *p, st
+ 
+ #if defined (__alpha__) && BSD_LABELSECTOR == 0
+   alpha_bootblock_checksum (disklabelbuffer);
+-  if (ext2_llseek (fd, (long long) 0, SEEK_SET) == -1)
++  if (lseek (fd, (off_t) 0, SEEK_SET) == -1)
+     fatal (unable_to_seek);
+   if (BSD_BBSIZE != write (fd, disklabelbuffer, BSD_BBSIZE))
+     fatal (unable_to_write);
+ #else
+-  if (ext2_llseek (fd, (long long) sector * SECTOR_SIZE + BSD_LABELOFFSET,
++  if (lseek (fd, (off_t) sector * SECTOR_SIZE + BSD_LABELOFFSET,
+ 		   SEEK_SET) == -1)
+     fatal (unable_to_seek);
+   if (sizeof (struct xbsd_disklabel) != write (fd, d, sizeof (struct xbsd_disklabel)))
+diff -pur -x '*.rej' util-linux-2.12r.orig/fdisk/fdisksgilabel.c util-linux-2.12r/fdisk/fdisksgilabel.c
+--- util-linux-2.12r.orig/fdisk/fdisksgilabel.c	2004-12-18 01:53:45.000000000 +0000
++++ util-linux-2.12r/fdisk/fdisksgilabel.c	2006-07-08 15:40:23.464898637 +0000
+@@ -379,7 +379,7 @@ sgi_write_table(void) {
+ 		 */
+ 		sgiinfo *info = fill_sgiinfo();
+ 		int infostartblock = SSWAP32(sgilabel->directory[0].vol_file_start);
+-		if (ext2_llseek(fd, (long long)infostartblock*
++		if (lseek(fd, (off_t) infostartblock*
+ 				SECTOR_SIZE, SEEK_SET) < 0)
+ 			fatal(unable_to_seek);
+ 		if (write(fd, info, SECTOR_SIZE) != SECTOR_SIZE)
+diff -pur -x '*.rej' util-linux-2.12r.orig/fdisk/sfdisk.c util-linux-2.12r/fdisk/sfdisk.c
+--- util-linux-2.12r.orig/fdisk/sfdisk.c	2005-01-04 22:31:57.000000000 +0000
++++ util-linux-2.12r/fdisk/sfdisk.c	2006-07-08 15:40:23.467897432 +0000
+@@ -164,36 +164,17 @@ fatal(char *s, ...) {
+ /*
+  * sseek: seek to specified sector - return 0 on failure
+  *
+- * For >4GB disks lseek needs a > 32bit arg, and we have to use llseek.
+- * On the other hand, a 32 bit sector number is OK until 2TB.
+- * The routines _llseek and sseek below are the only ones that
+- * know about the loff_t type.
+- *
+  * Note: we use 512-byte sectors here, irrespective of the hardware ss.
+  */
+-#undef use_lseek
+-#if defined (__alpha__) || defined (__ia64__) || defined (__x86_64__) || defined (__s390x__)
+-#define use_lseek
+-#endif
+-
+-#ifndef use_lseek
+-static __attribute__used
+-_syscall5(int,  _llseek,  unsigned int,  fd, ulong, hi, ulong, lo,
+-       loff_t *, res, unsigned int, wh);
+-#endif
+ 
+ static int
+ sseek(char *dev, unsigned int fd, unsigned long s) {
+-    loff_t in, out;
+-    in = ((loff_t) s << 9);
++    off_t in, out;
++    in = ((off_t) s << 9);
+     out = 1;
+ 
+-#ifndef use_lseek
+-    if (_llseek (fd, in>>32, in & 0xffffffff, &out, SEEK_SET) != 0) {
+-#else
+     if ((out = lseek(fd, in, SEEK_SET)) != in) {
+-#endif
+-	perror("llseek");
++	perror("lseek");
+ 	error(_("seek error on %s - cannot seek to %lu\n"), dev, s);
+ 	return 0;
+     }
+diff -pur -x '*.rej' util-linux-2.12r.orig/partx/partx.c util-linux-2.12r/partx/partx.c
+--- util-linux-2.12r.orig/partx/partx.c	2004-08-23 20:13:27.000000000 +0000
++++ util-linux-2.12r/partx/partx.c	2006-07-08 15:40:23.469896630 +0000
+@@ -330,34 +330,15 @@ xmalloc (size_t size) {
+ 	return t;
+ }
+ 
+-/*
+- * sseek: seek to specified sector
+- */
+-#if !defined (__alpha__) && !defined (__ia64__) && !defined (__s390x__) && !defined(__x86_64__)
+-#define NEED__llseek
+-#endif
+-
+-#ifdef NEED__llseek
+-#include <linux/unistd.h>       /* _syscall */
+-static
+-_syscall5(int,  _llseek,  uint,  fd, ulong, hi, ulong, lo,
+-	  long long *, res, uint, wh);
+-#endif
+-
+ static int
+ sseek(int fd, unsigned int secnr) {
+ 	long long in, out;
+ 	in = ((long long) secnr << 9);
+ 	out = 1;
+ 
+-#ifdef NEED__llseek
+-	if (_llseek (fd, in>>32, in & 0xffffffff, &out, SEEK_SET) != 0
+-	    || out != in)
+-#else
+ 	if ((out = lseek(fd, in, SEEK_SET)) != in)
+-#endif
+ 	{
+-		fprintf(stderr, "llseek error\n");
++		fprintf(stderr, "lseek error\n");
+ 		return -1;
+ 	}
+ 	return 0;

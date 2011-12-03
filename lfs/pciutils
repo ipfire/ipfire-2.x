@@ -90,6 +90,10 @@ ifeq "$(LFS_PASS)" "install"
 	cd $(DIR_APP) && install -m 0644 lib/libpci.a /opt/$(MACHINE)-uClibc/lib
 	cd $(DIR_APP) && install -m 0644 lib/*.h /opt/$(MACHINE)-uClibc/include/pci
 else
+ifeq "$(MACHINE_TYPE)" "arm"
+	cd $(DIR_APP)/lib && ./configure
+	cd $(DIR_APP)/lib && sed -e "s/^#error.*$$/#define CPU_ARCH_ARM/" -i config.h
+endif
 	cd $(DIR_APP) && make PREFIX=/usr $(MAKETUNING)
 	cd $(DIR_APP) && make PREFIX=/usr install
 	cd $(DIR_APP) && install -v -m 755 -d /usr/include/pci

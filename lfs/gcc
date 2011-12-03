@@ -52,9 +52,9 @@ ifeq "$(PASS)" "1"
 		--with-local-prefix=/tools \
 		--disable-nls \
 		--enable-shared \
-		--enable-languages=c
-  EXTRA_MAKE = bootstrap
-  # BOOT_LDFLAGS="-static"
+		--enable-languages=c \
+		--disable-bootstrap
+  EXTRA_MAKE = 
   EXTRA_INSTALL = 
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
@@ -71,7 +71,27 @@ else
 endif
 endif
 
-EXTRA_CONFIG += --build=$(BUILDTARGET) --host=$(BUILDTARGET) --target=$(BUILDTARGET)
+ifeq "$(MACHINE_TYPE)" "arm"
+	EXTRA_CONFIG += \
+		--build=$(BUILDTARGET) \
+		--host=$(BUILDTARGET) \
+		--target=$(BUILDTARGET) \
+		--with-float=soft \
+		--disable-libmudflap \
+		--disable-libssp \
+		--disable-libgomp \
+		--enable-threads=posix \
+		--enable-long-long \
+		--enable-c99 \
+		--enable-__cxa_atexit \
+		--disable-multilib
+else
+	EXTRA_CONFIG += --build=$(BUILDTARGET) --host=$(BUILDTARGET) \
+		--target=$(BUILDTARGET)
+endif
+
+export XCFLAGS = $(CFLAGS)
+export TCFLAGS = $(CFLAGS)
 
 ###############################################################################
 # Top-level Rules
@@ -112,6 +132,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-fix_linker_version_detection.patch
 	@mkdir $(DIR_SRC)/gcc-build
+
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/gcc-4.1.2-gcc_eh.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/gcc-4.1.2-arm-linux-soft-float.patch
+
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in
 	cd $(DIR_APP) && sed -i 's/^XCFLAGS =$$/& -fomit-frame-pointer/' gcc/Makefile.in
@@ -129,6 +153,9 @@ ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 	ln -sfv gcc /tools/bin/cc
+	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-gcc
+	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-g++
+	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-cc
 else
 	cd $(DIR_APP) && cp -v gcc/Makefile.in{,.orig}
 	cd $(DIR_APP) && sed 's@\./fixinc\.sh@-c true@' gcc/Makefile.in.orig > gcc/Makefile.in

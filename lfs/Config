@@ -37,12 +37,6 @@ URL_IPFIRE  = http://source.ipfire.org/source-2.x
 URL_TOOLCHAIN = http://source.ipfire.org/toolchains
 URL_SOURCE = source.ipfire.org:/pub/source/source-2.x
 
-# Default compiler optimizations.
-#
-FLAGS_OPT   = -O2
-FLAGS_CPU   = -mcpu=$(MACHINE)
-FLAGS_ARCH  = -march=$(MACHINE)
-
 # Don't change this; it will be overridden by other makefiles where necessary.
 #
 ROOT =
@@ -88,16 +82,8 @@ define PREBUILD
 	# Fix installation on partial rebuild, so modules install where they should
 	# and not everytime on the last compiled kernel
 	if [ -f $(DIR_SRC)/linux-$(KVER) ]; then \
-		if [ "$(PAE)" = "1" ]; then \
-			cd $(DIR_SRC)/linux-$(KVER) && \
-				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire-pae+' Makefile; \
-		elif [ "$(XEN)" = "" ]; then \
-			cd $(DIR_SRC)/linux-$(KVER) && \
-				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire+' Makefile; \
-		else \
-			cd $(DIR_SRC)/linux-$(KVER) && \
-				sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire-xen+' Makefile; \
-		fi; \
+		cd $(DIR_SRC)/linux-$(KVER) && \
+			sed -i -e 's+^EXTRAVERSION.*$$+EXTRAVERSION\ =\ $(word 4,$(subst ., .,$(KVER)))-ipfire$(KCFG)+' Makefile; \
 	fi
 endef
 else
@@ -125,21 +111,15 @@ define POSTBUILD
 	# $(TARGET)_rootfile : ROOTFILE with KVER replacement
 	# $(TARGET) : log result with {commented|include|added} files
 	if [ -s "$(TARGET)_diff" ]; then \
-		if [ "$(PAE)" = "1" ]; then LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))-pae; \
-		elif [ "$(XEN)" = "1" ]; then LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))-xen; \
-		else LFS_SCRIPT=$(firstword $(MAKEFILE_LIST)); \
-		fi; \
+		LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))$(KCFG); \
 		echo $(LFS_SCRIPT); \
-		ROOTFILE=`find $(DIR_SRC)/config/rootfiles/common $(DIR_SRC)/config/rootfiles/packages -maxdepth 1 -type f -name $$LFS_SCRIPT`; \
-		if [ "$$ROOTFILE" = "" ]; then \
-			ROOTFILE=`find $(DIR_SRC)/config/rootfiles/ver_$(IPFVER) -type f -name $$LFS_SCRIPT`; \
-		fi; \
+		ROOTFILE=$$(find $(DIR_SRC)/config/rootfiles/{common,packages}/{$(MACHINE),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
 		if [ "$$ROOTFILE" = "" ]; then \
 			touch $(TARGET)_missing_rootfile; \
 			ROOTFILE=$(TARGET)_missing_rootfile ; \
 			echo "error $$LFS_SCRIPT not found in config/rootfiles"; \
 		fi; \
-		sed "s/KVER/$(KVER)/g" $$ROOTFILE > $(TARGET)_rootfile; \
+		sed -e "s/BUILDTARGET/$(BUILDTARGET)/g" -e "s/KVER/$(KVER)/g" -e "s/MACHINE/$(MACHINE)/g" $$ROOTFILE > $(TARGET)_rootfile; \
 		for line in `cat $(TARGET)_diff`; do \
 			if grep -qG "^#$$line$$" $(TARGET)_rootfile; then echo "#$$line" >> $(TARGET); \
 			elif grep -qG "^$$line$$" $(TARGET)_rootfile ; then echo "$$line" >> $(TARGET); \
@@ -194,8 +174,13 @@ define PAK
 		cp -f /usr/src/src/paks/default/{,un}install.sh /usr/src/src/paks/default/update.sh \
 		/install/packages/package; \
 	fi
-	cp -v /usr/src/config/rootfiles/packages/$(PROG) /install/packages/package/ROOTFILES
-	sed -e 's/KVER/$(KVER)/g' -i /install/packages/package/ROOTFILES
+	for i in $(DIR_SRC)/config/rootfiles/packages/{$(MACHINE),}/$(PROG); do \
+		if [ -e "$${i}" ]; then \
+			cp -v $${i} /install/packages/package/ROOTFILES; \
+			break; \
+		fi; \
+	done
+	sed -e 's/BUILDTARGET/$(BUILDTARGET)/g' -e 's/KVER/$(KVER)/g' -e 's/MACHINE/$(MACHINE)/g' -i /install/packages/package/ROOTFILES
 	sed -e 's/xxxKVERxxx/$(KVER)/g' -i /install/packages/package/install.sh
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
 	cd / && tar cf /install/packages/package/files.tmp --files-from=/install/packages/package/ROOTFILES --exclude='#*' \

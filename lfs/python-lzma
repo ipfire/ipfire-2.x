@@ -80,8 +80,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && python setup.py install
 	# unzip the egg because it won't work without
 	cd /usr/lib/python2.7/site-packages && \
-		unzip pyliblzma-$(VER)-py2.7-linux-i686.egg
-	rm -rf /usr/lib/python2.7/site-packages/pyliblzma-$(VER)-py2.7-linux-i686.egg
+		unzip pyliblzma-$(VER)-py2.7-linux-*.egg
+	rm -rf /usr/lib/python2.7/site-packages/pyliblzma-$(VER)-py2.7-linux-*.egg
 	rm -rf /usr/lib/python2.7/site-packages/EGG-INFO
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
