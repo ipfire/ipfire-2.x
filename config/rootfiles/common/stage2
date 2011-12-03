@@ -17,6 +17,7 @@ etc/inputrc
 #etc/ipsec.user.secrets
 etc/issue
 etc/ld.so.conf
+etc/localtime
 etc/logrotate.conf
 etc/mime.types
 etc/modprobe.d
