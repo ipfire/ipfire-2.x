@@ -75,7 +75,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && ./configure --prefix="/usr" --sysconfdir="/etc" \
 					--enable-cisco-quirks \
-					--enable-curl
+					--enable-curl \
+					--enable-nattransport
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
