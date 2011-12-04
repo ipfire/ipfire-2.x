@@ -35,6 +35,10 @@ done
 #
 #Stop services
 
+/etc/init.d/ipsec stop
+/etc/init.d/squid stop
+/etc/init.d/snort stop
+
 #
 #Extract files
 extract_files
@@ -42,15 +46,30 @@ extract_files
 #
 #Start services
 
+/etc/init.d/squid start
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	/etc/init.d/ipsec start
+fi
 
 #
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #Rebuild module dep's
-#depmod 2.6.32.45-ipfire     >/dev/null 2>&1
-#depmod 2.6.32.45-ipfire-pae >/dev/null 2>&1
-#depmod 2.6.32.45-ipfire-xen >/dev/null 2>&1
+depmod -a 2.6.32.45-ipfire     >/dev/null 2>&1
+depmod -a 2.6.32.45-ipfire-pae >/dev/null 2>&1
+depmod -a 2.6.32.45-ipfire-xen >/dev/null 2>&1
+
+#Rebuild initrd's because some compat-wireless modules are inside
+/sbin/dracut --force --verbose /boot/ipfirerd-2.6.32.45.img 2.6.32.45-ipfire
+if [ -e /boot/ipfirerd-2.6.32.45-pae.img ]; then
+/sbin/dracut --force --verbose /boot/ipfirerd-2.6.32.45-pae.img 2.6.32.45-ipfire-pae
+fi
+if [ -e /boot/ipfirerd-2.6.32.45-xen.img ]; then
+/sbin/dracut --force --verbose /boot/ipfirerd-2.6.32.45-xen.img 2.6.32.45-ipfire-xen
+fi
+
+sync
 
 #
 #Finish

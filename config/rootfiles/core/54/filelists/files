@@ -1,2 +1,17 @@
 etc/system-release
 etc/issue
+var/ipfire/langs
+usr/share/hwdata/pci.ids
+usr/share/hwdata/usb.ids
+etc/rc.d/init.d/network
+etc/rc.d/init.d/networking/dhcpcd.exe
+etc/rc.d/init.d/rc
+etc/rc.d/init.d/smartenabler
+etc/rc.d/init.d/snort
+usr/local/bin/hddshutdown
+usr/local/bin/makegraphs
+usr/local/bin/scanhd
+srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/media.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi

@@ -1,0 +1,9 @@
+lib/modules/2.6.32.45-ipfire/kernel/drivers/net/e1000/e1000.ko
+lib/modules/2.6.32.45-ipfire/kernel/drivers/net/e1000e/e1000e.ko
+lib/modules/2.6.32.45-ipfire/kernel/drivers/net/igb/igb.ko
+lib/modules/2.6.32.45-ipfire-pae/kernel/drivers/net/e1000/e1000.ko
+lib/modules/2.6.32.45-ipfire-pae/kernel/drivers/net/e1000e/e1000e.ko
+lib/modules/2.6.32.45-ipfire-pae/kernel/drivers/net/igb/igb.ko
+lib/modules/2.6.32.45-ipfire-xen/kernel/drivers/net/e1000/e1000.ko
+lib/modules/2.6.32.45-ipfire-xen/kernel/drivers/net/e1000e/e1000e.ko
+lib/modules/2.6.32.45-ipfire-xen/kernel/drivers/net/igb/igb.ko
