@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/snort/snort.conf
 var/ipfire/langs
 usr/share/hwdata/pci.ids
 usr/share/hwdata/usb.ids
