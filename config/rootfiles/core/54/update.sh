@@ -40,6 +40,10 @@ done
 /etc/init.d/snort stop
 
 #
+# Flush old usb-modeswitch data
+rm -rf /usr/share/usb_modeswitch
+
+#
 #Extract files
 extract_files
 

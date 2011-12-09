@@ -1031,6 +1031,7 @@ END
 	    nsComment="OpenSSL Generated Certificate"
 	    subjectKeyIdentifier=hash
 	    authorityKeyIdentifier=keyid,issuer:always
+	    extendedKeyUsage = serverAuth
 END
 ;
 	    print $fh "subjectAltName=$cgiparams{'SUBJECTALTNAME'}" if ($cgiparams{'SUBJECTALTNAME'});
