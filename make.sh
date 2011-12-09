@@ -364,6 +364,7 @@ buildipfire() {
   ipfiremake xz
   ipfiremake linux-firmware
   ipfiremake zd1211-firmware
+  ipfiremake fw_ath9k_htc
   ipfiremake u-boot
 
   # The xen and PAE kernels are only available for x86
