@@ -270,10 +270,26 @@ exiterror() {
 	exit 1
 }
 
+fake_environ() {
+	[ -e "${BASEDIR}/build/tools/lib/libpakfire_preload.so" ] || return
+
+	local env="LD_PRELOAD=/tools/lib/libpakfire_preload.so"
+
+	# Fake kernel version, because some of the packages do not compile
+	# with kernel 3.0 and later.
+	env="${env} UTS_RELEASE=${KVER}"
+
+	# Fake machine version.
+	env="${env} UTS_MACHINE=${MACHINE}"
+
+	echo "${env}"
+}
+
 entershell() {
 	if [ ! -e $BASEDIR/build/usr/src/lfs/ ]; then
 		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/"
 	fi
+
 	echo "Entering to a shell inside LFS chroot, go out with exit"
 	$linux32 chroot $LFS /tools/bin/env -i HOME=/root TERM=$TERM PS1='\u:\w\$ ' \
 		PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
@@ -288,6 +304,7 @@ entershell() {
 		MACHINE="$MACHINE" \
 		MACHINE_TYPE="$MACHINE_TYPE" \
 		KGCC="ccache /usr/bin/gcc" \
+		$(fake_environ) \
 		/tools/bin/bash
 	if [ $? -ne 0 ]; then
 			beautify message FAIL
@@ -371,6 +388,7 @@ lfsmake1() {
 						ROOT=$LFS \
 						KVER=$KVER \
 						MAKETUNING=$MAKETUNING \
+						$(fake_environ) \
 						install >> $LOGFILE 2>&1
 	local COMPILE_SUCCESS=$?
 	local PKG_TIME_END=`date +%s`
@@ -401,6 +419,7 @@ lfsmake2() {
 						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
+						$(fake_environ) \
 						/tools/bin/bash -x -c "cd /usr/src/lfs && \
 						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 	local COMPILE_SUCCESS=$?
@@ -433,6 +452,7 @@ ipfiremake() {
 						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
+						$(fake_environ) \
 						/bin/bash -x -c "cd /usr/src/lfs && \
 						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 
@@ -464,6 +484,7 @@ ipfiredist() {
 					KVER=$KVER \
 					BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
 					MACHINE_TYPE="$MACHINE_TYPE" \
+					$(fake_environ) \
 					/bin/bash -x -c "cd /usr/src/lfs && \
 					make -f $1 LFS_BASEDIR=/usr/src dist" >>$LOGFILE 2>&1
 
