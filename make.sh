@@ -229,9 +229,28 @@ prepareenv() {
 }
 
 buildtoolchain() {
-    if [ "$(uname -m)" = "x86_64" ]; then
-        exiterror "Cannot build toolchain on x86_64. Please use the download."
-    fi
+    local error=false
+    case "${MACHINE}:$(uname -m)" in
+        # x86
+        i586:i586|i586:i686)
+            # These are working.
+            ;;
+        i586:*)
+            error=true
+            ;;
+
+        # ARM
+        armv5tel:armv5tel|armv5tel:armv5tejl)
+            # These are working.
+            ;;
+        armv5tel:*)
+            error=true
+            ;;
+    esac
+
+    ${error} && \
+        exiterror "Cannot build ${MACHINE} toolchain on $(uname -m). Please use the download if any."
+
     if [ "$(uname -r | grep ipfire)" ]; then
         exiterror "Cannot build toolchain on ipfire. Please use the download."
     fi
