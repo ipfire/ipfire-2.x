@@ -230,7 +230,7 @@ elif [ 'armv5tejl' = $MACHINE -o 'armv5tel' = $MACHINE -o 'armv7l' = $MACHINE ];
 	MACHINE=armv5tel
 	MACHINE_TYPE=arm
 	BUILDTARGET=${MACHINE}-unknown-linux-gnueabi
-	CFLAGS="-O2 -march=armv5te -fomit-frame-pointer -pipe"
+	CFLAGS="-O2 -march=armv5te -mfloat-abi=soft -fomit-frame-pointer -pipe"
 	CXXFLAGS="$CFLAGS"
 	C2FLAGS="$CFLAGS"
 	CXX2FLAGS="$CXXFLAGS"
