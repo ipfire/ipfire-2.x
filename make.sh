@@ -37,7 +37,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=1
+TOOLCHAINVER=2
 
 BUILDMACHINE=$MACHINE
     if [ "$MACHINE" = "x86_64" ]; then
@@ -229,9 +229,28 @@ prepareenv() {
 }
 
 buildtoolchain() {
-    if [ "$(uname -m)" = "x86_64" ]; then
-        exiterror "Cannot build toolchain on x86_64. Please use the download."
-    fi
+    local error=false
+    case "${MACHINE}:$(uname -m)" in
+        # x86
+        i586:i586|i586:i686)
+            # These are working.
+            ;;
+        i586:*)
+            error=true
+            ;;
+
+        # ARM
+        armv5tel:armv5tel|armv5tel:armv5tejl)
+            # These are working.
+            ;;
+        armv5tel:*)
+            error=true
+            ;;
+    esac
+
+    ${error} && \
+        exiterror "Cannot build ${MACHINE} toolchain on $(uname -m). Please use the download if any."
+
     if [ "$(uname -r | grep ipfire)" ]; then
         exiterror "Cannot build toolchain on ipfire. Please use the download."
     fi
@@ -242,6 +261,7 @@ buildtoolchain() {
     export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
     ORG_PATH=$PATH
     export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
+    lfsmake1 fake-environ	PASS=1
     lfsmake1 ccache	PASS=1
     lfsmake1 make	PASS=1
     lfsmake1 binutils	PASS=1
@@ -253,6 +273,7 @@ buildtoolchain() {
     fi
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain PASS=1
+    lfsmake1 fake-environ	PASS=2
     lfsmake1 tcl
     lfsmake1 expect
     lfsmake1 dejagnu
