@@ -1,0 +1,6 @@
+lib/modules/2.6.32.45-ipfire-kirkwood/kernel/drivers/net/e1000/e1000.ko
+lib/modules/2.6.32.45-ipfire-kirkwood/kernel/drivers/net/e1000e/e1000e.ko
+lib/modules/2.6.32.45-ipfire-kirkwood/kernel/drivers/net/igb/igb.ko
+lib/modules/2.6.32.45-ipfire-versatile/kernel/drivers/net/e1000/e1000.ko
+lib/modules/2.6.32.45-ipfire-versatile/kernel/drivers/net/e1000e/e1000e.ko
+lib/modules/2.6.32.45-ipfire-versatile/kernel/drivers/net/igb/igb.ko
