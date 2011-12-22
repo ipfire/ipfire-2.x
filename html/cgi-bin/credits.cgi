@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -65,30 +65,35 @@ print <<END
 
 <p><b>Development:</b><br />
 
-Project Leader - Michael Tremer
-(<a href='mailto:mitch\@ipfire.org'>mitch\@ipfire.org</a>)<br />
-Vice Project Leader - Christian Schmidt
-(<a href='mailto:maniacikarus\@ipfire.org'>maniacikarus\@ipfire.org</a>)<br />
-Maintainer IPFire 2.x - Arne Fitzenreiter
-(<a href='mailto:arne\@ipfire.org'>arne\@ipfire.org</a>)<br />
-Developer - Stefan Schantl
-(<a href='mailto:Stevee\@ipfire.org'>stevee\@ipfire.org</a>)<br />
-Developer - Jan Paul T&uuml;cking
-(<a href='mailto:earl\@ipfire.org'>earl\@ipfire.org</a>)<br />
-Developer & Webmaster - Heiner Schmeling
-(<a href='mailto:cm\@ipfire.org'>cm\@ipfire.org</a>)<br />
-Developer (Addons) - Peter Pfeiffer
-(<a href='mailto:peterman\@ipfire.org'>peterman\@ipfire.org</a>)<br />
-Supporter, Wiki-Admin & Sponsor - Ronald Wiesinger
-(<a href='mailto:rowie\@ipfire.org'>rowie\@ipfire.org</a>)<br />
-Supporter & Wiki-Admin - Silvio Rechenbach
-(<a href='mailto:exciter\@ipfire.org'>exciter\@ipfire.org</a>)<br />
-Sponsor - Peter Schaelchli
-(<a href='mailto:scp\@ipfire.org'>scp\@ipfire.org</a>)<br />
-Sponsor - Sven Nierlein
-(<a href='mailto:affect\@ipfire.org'>affect\@versatel.de</a>)<br />
-Sponsor  - Rene Zingel
-(<a href='mailto:linuxadmin\@ipfire.org'>linuxadmin\@ipfire.org</a>)<br />
+Arne Fitzenreiter
+(<a href='mailto:arne.fitzenreiter\@ipfire.org'>arne.fitzenreiter\@ipfire.org</a>)  - Maintainer IPFire 2.x <br />
+Michael Tremer
+(<a href='mailto:michael.tremer\@ipfire.org'>michael.tremer\@ipfire.org</a>) - Project Leader <br />
+Christian Schmidt
+(<a href='mailto:christian.schmidt\@ipfire.org'>christian.schmidt\@ipfire.org</a>) - Vice Project Leader <br />
+Stefan Schantl
+(<a href='mailto:stefan.schantl\@ipfire.org'>stefan.schantl\@ipfire.org</a>)<br />
+Jan Paul T&uuml;cking
+(<a href='mailto:jan.tuecking\@ipfire.org'>jan.tuecking\@ipfire.org</a>)<br />
+Heiner Schmeling
+(<a href='mailto:heiner.schmeling\@ipfire.org'>heiner.schmeling\@ipfire.org</a>)<br />
+Ronald Wiesinger
+(<a href='mailto:ronald.wiesinger\@ipfire.org'>ronald.wiesinger\@ipfire.org</a>)<br />
+Silvio Rechenbach
+(<a href='mailto:silvio.rechenbach\@ipfire.org'>silvio.rechenbach\@ipfire.org</a>)<br />
+Dirk Wagner
+(<a href='mailto:dirk.wagner\@ipfire.org'>dirk.wagner\@ipfire.org</a>)<br />
+Erik Kapfer
+(<a href='mailto:erik.kapfer\@ipfire.org'>erik.kapfer\@ipfire.org</a>)<br />
+Alfred Haas
+(<a href='mailto:alfred.haas\@ipfire.org'>alfred.haas\@ipfire.org</a>)<br />
+
+<p><b>Inactive:</b><br />
+
+Peter Pfeiffer
+(<a href='mailto:peter.pfeifer\@ipfire.org'>peter.pfeifer\@ipfire.org</a>)<br />
+Peter Sch&auml;lchli
+(<a href='mailto:peter.schaelchli\@ipfire.org'>peter.schaelchli\@ipfire.org</a>)<br />
 </p>
 <p>Some parts of the distribution are left ajar on third-party software, that is licensed under the GPL, too.<br />
 There are: Advanced Proxy with URL-Filter and Update-Accelerator, ZERINA, Connection Scheduler, Hddtemp and Wake-on-LAN.<br />
