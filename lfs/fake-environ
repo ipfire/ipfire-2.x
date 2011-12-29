@@ -52,7 +52,7 @@ $(TARGET) :
 	cp -rvf $(DIR_SRC)/src/$(THISAPP) $(DIR_APP)
 
 	cd $(DIR_APP) && make install CFLAGS="$(CFLAGS)" \
-		TOOLS_DIR="$(TOOLS_DIR)"
+		TOOLS_DIR="/tools"
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

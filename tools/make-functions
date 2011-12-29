@@ -225,17 +225,17 @@ if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE ]; then
 	CXXFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
 	C2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
 	CXX2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
-elif [ 'armv5tejl' = $MACHINE -o 'armv5tel' = $MACHINE ]; then
+elif [ 'armv5tejl' = $MACHINE -o 'armv5tel' = $MACHINE -o 'armv7l' = $MACHINE ]; then
 	echo "`date -u '+%b %e %T'`: Machine is ARM (or equivalent)" >> $LOGFILE
 	MACHINE=armv5tel
 	MACHINE_TYPE=arm
 	BUILDTARGET=${MACHINE}-unknown-linux-gnueabi
-	CFLAGS="-O2 -march=armv5te -fomit-frame-pointer -pipe"
+	CFLAGS="-O2 -march=armv5te -mfloat-abi=soft -fomit-frame-pointer -pipe"
 	CXXFLAGS="$CFLAGS"
 	C2FLAGS="$CFLAGS"
 	CXX2FLAGS="$CXXFLAGS"
 else
-	echo "`date -u '+%b %e %T'`: Can't determine your architecture - $MACHINE" >> $LOGFILE
+	echo "`date -u '+%b %e %T'`: Can't determine your architecture - $MACHINE"
 	exit 1
 fi
 
