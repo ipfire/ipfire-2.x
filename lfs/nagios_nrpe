@@ -85,6 +85,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-nrpe-group=nobody \
 		--with-nagios-user=nobody \
 		--with-nagios-group=nobody \
+		--enable-command-args \
 		ac_cv_lib_wrap_main=no
 
 	cd $(DIR_APP) && make $(MAKETUNING)
