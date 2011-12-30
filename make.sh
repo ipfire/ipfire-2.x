@@ -240,7 +240,7 @@ buildtoolchain() {
             ;;
 
         # ARM
-        armv5tel:armv5tel|armv5tel:armv5tejl)
+        armv5tel:armv5tel|armv5tel:armv5tejl|armv5tel:armv7l)
             # These are working.
             ;;
         armv5tel:*)
