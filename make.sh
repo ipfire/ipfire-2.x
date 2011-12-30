@@ -260,12 +260,11 @@ buildtoolchain() {
     NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
     export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
     ORG_PATH=$PATH
-    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    lfsmake1 fake-environ	PASS=1
     lfsmake1 ccache	PASS=1
     lfsmake1 make	PASS=1
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
+    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
     if [ "${MACHINE_TYPE}" = "arm" ]; then
         lfsmake1 linux TOOLS=1 HEADERS=1
     else
@@ -273,7 +272,7 @@ buildtoolchain() {
     fi
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain PASS=1
-    lfsmake1 fake-environ	PASS=2
+    lfsmake1 fake-environ
     lfsmake1 tcl
     lfsmake1 expect
     lfsmake1 dejagnu
