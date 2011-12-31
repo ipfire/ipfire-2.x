@@ -463,9 +463,6 @@ int main(int argc, char *argv[])
 	/* Save language und local settings */
 	write_lang_configs(shortlangname);
 
-	/* Rename uname */
-	rename ("/harddisk/bin/uname.bak", "/harddisk/bin/uname");
-
 	/* mount proc filesystem */
 	mysystem("mkdir /harddisk/proc");
 	mysystem("/bin/mount --bind /proc /harddisk/proc");
