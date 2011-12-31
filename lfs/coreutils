@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -108,15 +108,9 @@ ifeq "$(ROOT)" ""
 	mv -v /usr/bin/{head,sleep,nice} /bin
 	ln -sf test /bin/[
 	#ln -sf ../../bin/install /usr/bin
-	mv -f /bin/uname /bin/uname.bak
-	cp -vf $(DIR_SRC)/src/scripts/uname /bin/uname
-	chmod 755 /bin/uname
 	dircolors -p > /etc/dircolors
 else
 	rm /tools/bin/hostname
-	mv -f /tools/bin/uname /tools/bin/uname.bak
-	cp -vf $(DIR_SRC)/src/scripts/uname /tools/bin/uname
-	chmod 755 /tools/bin/uname
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
