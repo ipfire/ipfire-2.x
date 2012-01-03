@@ -1002,6 +1002,7 @@ downloadsrc)
 	ERROR=0
 	for i in *; do
 		if [ -f "$i" -a "$i" != "Config" ]; then
+			lfsmakecommoncheck ${i} > /dev/null || continue
 			make -s -f $i LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
 				MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
 			if [ $? -ne 0 ]; then
