@@ -44,6 +44,10 @@ done
 rm -rf /usr/share/usb_modeswitch
 
 #
+# Flush old snort rules
+rm -rf /etc/snort/rules
+
+#
 #Extract files
 extract_files
 

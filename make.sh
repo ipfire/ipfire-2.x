@@ -37,7 +37,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=2
+TOOLCHAINVER=3
 
 BUILDMACHINE=$MACHINE
     if [ "$MACHINE" = "x86_64" ]; then
@@ -240,7 +240,7 @@ buildtoolchain() {
             ;;
 
         # ARM
-        armv5tel:armv5tel|armv5tel:armv5tejl)
+        armv5tel:armv5tel|armv5tel:armv5tejl|armv5tel:armv7l)
             # These are working.
             ;;
         armv5tel:*)
@@ -260,12 +260,11 @@ buildtoolchain() {
     NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
     export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
     ORG_PATH=$PATH
-    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    lfsmake1 fake-environ	PASS=1
     lfsmake1 ccache	PASS=1
     lfsmake1 make	PASS=1
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
+    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
     if [ "${MACHINE_TYPE}" = "arm" ]; then
         lfsmake1 linux TOOLS=1 HEADERS=1
     else
@@ -273,7 +272,7 @@ buildtoolchain() {
     fi
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain PASS=1
-    lfsmake1 fake-environ	PASS=2
+    lfsmake1 fake-environ
     lfsmake1 tcl
     lfsmake1 expect
     lfsmake1 dejagnu
@@ -1003,6 +1002,7 @@ downloadsrc)
 	ERROR=0
 	for i in *; do
 		if [ -f "$i" -a "$i" != "Config" ]; then
+			lfsmakecommoncheck ${i} > /dev/null || continue
 			make -s -f $i LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
 				MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
 			if [ $? -ne 0 ]; then

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -115,7 +115,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo "HOSTNAME=$(SNAME)" >> $(MNThdd)/var/ipfire/main/settings
 	echo "THEME=ipfire" >> $(MNThdd)/var/ipfire/main/settings
 	touch $(MNThdd)/lib/modules/$(KVER)-ipfire-xen/modules.dep
-	mv $(MNThdd)/bin/uname.bak $(MNThdd)/bin/uname
 	mkdir $(MNThdd)/proc
 	mount --bind /proc $(MNThdd)/proc
 	mount --bind /dev  $(MNThdd)/dev
