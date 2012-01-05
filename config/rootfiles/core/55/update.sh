@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2011 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2012 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -34,7 +34,8 @@ done
 
 #
 #Stop services
-
+/etc/init.d/sshd stop
+/etc/init.d/apache stop
 
 #
 #Extract files
@@ -42,6 +43,8 @@ extract_files
 
 #
 #Start services
+/etc/init.d/apache start
+/etc/init.d/sshd start
 
 
 #
@@ -63,6 +66,9 @@ extract_files
 #fi
 
 sync
+
+# This update need a reboot...
+touch /var/run/need_reboot
 
 #
 #Finish
