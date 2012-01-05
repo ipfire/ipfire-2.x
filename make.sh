@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2011 IPFire-Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2012 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.11"							# Version number
 CORE="55"							# Core Level (Filename)
-PAKFIRE_CORE="54"						# Core Level (PAKFIRE)
+PAKFIRE_CORE="55"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -1002,6 +1002,7 @@ downloadsrc)
 	ERROR=0
 	for i in *; do
 		if [ -f "$i" -a "$i" != "Config" ]; then
+			lfsmakecommoncheck ${i} > /dev/null || continue
 			make -s -f $i LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
 				MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
 			if [ $? -ne 0 ]; then
