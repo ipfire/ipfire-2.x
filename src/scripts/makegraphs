@@ -102,7 +102,7 @@ sub updatehdddata{
 ## Update vnstat
 system ('/usr/bin/vnstat -u');
 
-my @disks = `find /sys/block/* -maxdepth 0 ! -name sr* ! -name loop* ! -name ram* -exec basename {} \\; | sort | uniq`;
+my @disks = `ls -1 /sys/block | grep -E '^sd|^xvd|^vd|^md' | sort | uniq`;
 system("unlink /var/run/hddstatus 2>/dev/null && touch /var/run/hddstatus");
 foreach (@disks){
 	my $disk = $_;

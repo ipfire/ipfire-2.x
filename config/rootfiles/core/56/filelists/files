@@ -1,2 +1,7 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/smartenabler
+srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
+srv/web/ipfire/cgi-bin/media.cgi
+usr/local/bin/hddshutdown
+usr/local/bin/makegraphs
