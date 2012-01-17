@@ -40,6 +40,11 @@ done
 extract_files
 
 #
+#Edit baudrate in grub.conf and inittab
+sed -i -e "s|38400|115200|g" /boot/grub/grub.conf
+sed -i -e "s|38400|115200|g" /etc/inittab
+
+#
 #Start services
 
 
