@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.32.45-ipfire
-# Thu Dec 29 15:16:04 2011
+# Linux kernel version: 2.6.32.41-ipfire
+# Tue May 31 14:26:02 2011
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -3593,9 +3593,7 @@ CONFIG_JFFS2_CMODE_PRIORITY=y
 # CONFIG_QNX4FS_FS is not set
 # CONFIG_ROMFS_FS is not set
 # CONFIG_SYSV_FS is not set
-CONFIG_UFS_FS=m
-# CONFIG_UFS_FS_WRITE is not set
-# CONFIG_UFS_DEBUG is not set
+# CONFIG_UFS_FS is not set
 # CONFIG_EXOFS_FS is not set
 CONFIG_NETWORK_FILESYSTEMS=y
 CONFIG_NFS_FS=m
