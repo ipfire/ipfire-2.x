@@ -69,7 +69,7 @@ sed -i -e "s|38400|115200|g" /etc/inittab
 sync
 
 # This update need a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 #
 #Finish
