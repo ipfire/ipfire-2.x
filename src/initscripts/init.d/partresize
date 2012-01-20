@@ -18,8 +18,9 @@
 case "${1}" in
 	start)
 
-		# Ensure that / is writeable
-		mount -o remount,rw /
+		boot_mesg "Mounting root file system in read/write mode ..."
+		mount -o remount,rw / > /dev/null
+		evaluate_retval
 
 		# Detect device
 		ROOT=`mount | grep -m1 " / " | cut -d" " -f1`;
@@ -32,6 +33,8 @@ case "${1}" in
 		rm -f /etc/rc.d/rcsysinit.d/S25partresize
 
 		boot_mesg "Rebooting ..."
+		sync
+		mount -o remount,ro / > /dev/null
 		reboot -f
 
 		;;

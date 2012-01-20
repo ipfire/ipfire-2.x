@@ -17,11 +17,11 @@
 
 case "${1}" in
 	start)
+		boot_mesg "Mounting root file system in read/write mode ..."
+		mount -o remount,rw / > /dev/null
+		evaluate_retval
+
 		boot_mesg "Autoresize /var partition to use the whole drive ..."
-
-		# Ensure that / is writeable
-		mount
-
 		# Detect device
 		ROOT=`mount | grep -m1 " / " | cut -d" " -f1`;
 		DRV=${ROOT::`expr length $ROOT`-1}
@@ -34,6 +34,7 @@ case "${1}" in
 
 		# Erase symlink, it should run only once
 		rm -f /etc/rc.d/rcsysinit.d/S26fsresize
+		sync
 
 		exit 0;
 		;;
