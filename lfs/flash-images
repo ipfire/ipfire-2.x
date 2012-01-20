@@ -111,6 +111,11 @@ ifneq "$(MACHINE_TYPE)" "arm"
 	sed -i -e "s|ROOT|UUID=$$(blkid -sUUID $(IMGroot) | cut -d'"' -f2)|g" $(MNThdd)/boot/grub/grub.conf
 	ln -s grub.conf $(MNThdd)/boot/grub/menu.lst
 
+	# Setup symlink for partresize at first boot...
+	ln -sf ../init.d/partresize $(MNThdd)/etc/rc.d/rcsysinit.d/S25partresize
+	# Setup symlink for fsresize at second boot...
+	ln -sf ../init.d/fsresize $(MNThdd)/etc/rc.d/rcsysinit.d/S26fsresize
+
 	# Copy grub files manually
 	cp -f $(MNThdd)/usr/share/grub/i386-pc/* $(MNThdd)/boot/grub/
 endif
@@ -123,12 +128,18 @@ endif
 	umount $(MNThdd)/var
 	umount $(MNThdd)
 
-	# zerofree the ext3 images to get better compression
+	# zerofree the ext2 images to get better compression
 ifneq "$(MACHINE_TYPE)" "arm"
 	zerofree $(IMGboot)
+	-fsck.ext2 -f -y $(IMGboot)
+	fsck.ext2 -f -y $(IMGboot)
 endif
 	zerofree $(IMGroot)
+	-fsck.ext2 -f -y  $(IMGroot)
+	fsck.ext2 -f -y  $(IMGroot)
 	zerofree $(IMGvar)
+	-fsck.ext2 -f -y  $(IMGvar)
+	fsck.ext2 -f -y  $(IMGvar)
 
 	# Cat to an image
 	cat $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar) > $(IMGinst)
@@ -175,9 +186,15 @@ endif
 	# zerofree the ext3 images to get better compression
 ifneq "$(MACHINE_TYPE)" "arm"
 	zerofree $(IMGboot)
+	-fsck.ext2 -f -y  $(IMGboot)
+	fsck.ext2 -f -y  $(IMGboot)
 endif
 	zerofree $(IMGroot)
+	-fsck.ext2 -f -y  $(IMGroot)
+	fsck.ext2 -f -y  $(IMGroot)
 	zerofree $(IMGvar)
+	-fsck.ext2 -f -y  $(IMGvar)
+	fsck.ext2 -f -y  $(IMGvar)
 
 	# Cat to an image
 	cat $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar) > $(IMGinsts)
