@@ -34,6 +34,8 @@ done
 
 #
 #Stop services
+/etc/init.d/sshd stop
+/etc/init.d/apache stop
 
 #
 #Extract files
@@ -46,7 +48,8 @@ sed -i -e "s|38400|115200|g" /etc/inittab
 
 #
 #Start services
-
+/etc/init.d/apache start
+/etc/init.d/sshd start
 
 #
 #Update Language cache
