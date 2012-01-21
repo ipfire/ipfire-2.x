@@ -571,6 +571,7 @@ buildipfire() {
   ipfiremake Text-Tabs+Wrap
   ipfiremake Locale-Country
   ipfiremake XML-Parser
+  ipfiremake Crypt-PasswdMD5
   ipfiremake python-setuptools
   ipfiremake python-clientform
   ipfiremake python-mechanize
