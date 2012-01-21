@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/smartenabler
 srv/web/ipfire/cgi-bin/chpasswd.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi

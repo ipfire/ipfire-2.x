@@ -40,6 +40,10 @@ case "${1}" in
 		;;
 
 	stop)
+		boot_mesg "Syncing discs..."
+		sync && sync
+		evaluate_retval
+
 		boot_mesg "Unmounting all other currently mounted file systems..."
 		umount -a -d -r &>/dev/null
 		evaluate_retval
