@@ -44,15 +44,15 @@ md5 :
 ###############################################################################
 # Installation Details
 ###############################################################################
-IMGinst  := /install/images/$(SNAME)-$(VERSION).1gb-ext2.$(MACHINE)-full-core$(CORE).img
-IMGinsts := /install/images/$(SNAME)-$(VERSION).1gb-ext2-scon.$(MACHINE)-full-core$(CORE).img
+IMGinst  := /install/images/$(SNAME)-$(VERSION).2gb-ext2.$(MACHINE)-full-core$(CORE).img
+IMGinsts := /install/images/$(SNAME)-$(VERSION).2gb-ext2-scon.$(MACHINE)-full-core$(CORE).img
 MNThdd   := /install/harddisk
 IMGpart  := /install/images/part_area
 IMGboot  := /install/images/bootfs
 # don't change SIZEboot this without checking Image size
 SIZEboot := 20
 IMGroot  := /install/images/rootfs
-SIZEroot := 500
+SIZEroot := 1400
 IMGvar   := /install/images/varfs
 SIZEvar  := 430
 
