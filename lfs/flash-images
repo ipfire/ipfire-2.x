@@ -111,14 +111,14 @@ ifneq "$(MACHINE_TYPE)" "arm"
 	sed -i -e "s|ROOT|UUID=$$(blkid -sUUID $(IMGroot) | cut -d'"' -f2)|g" $(MNThdd)/boot/grub/grub.conf
 	ln -s grub.conf $(MNThdd)/boot/grub/menu.lst
 
+	# Copy grub files manually
+	cp -f $(MNThdd)/usr/share/grub/i386-pc/* $(MNThdd)/boot/grub/
+endif
+
 	# Setup symlink for partresize at first boot...
 	ln -sf ../init.d/partresize $(MNThdd)/etc/rc.d/rcsysinit.d/S25partresize
 	# Setup symlink for fsresize at second boot...
 	ln -sf ../init.d/fsresize $(MNThdd)/etc/rc.d/rcsysinit.d/S26fsresize
-
-	# Copy grub files manually
-	cp -f $(MNThdd)/usr/share/grub/i386-pc/* $(MNThdd)/boot/grub/
-endif
 
 	# Unmount
 	umount $(MNThdd)/proc
