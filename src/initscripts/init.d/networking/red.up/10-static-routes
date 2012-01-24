@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Update the static routes.
+exec /etc/rc.d/init.d/static-routes start
