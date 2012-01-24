@@ -8,3 +8,4 @@ srv/web/ipfire/cgi-bin/media.cgi
 usr/local/bin/hddshutdown
 usr/local/bin/makegraphs
 usr/local/bin/openvpnctrl
+usr/local/bin/readhash
