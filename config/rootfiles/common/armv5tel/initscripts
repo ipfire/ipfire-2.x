@@ -220,3 +220,6 @@ etc/sysconfig/modules
 etc/sysconfig/rc
 etc/sysconfig/rc.local
 etc/init.d
+etc/rc.d/init.d/networking/red.down/10-static-routes
+etc/rc.d/init.d/networking/red.up/10-static-routes
+#etc/rc.d/init.d/transmission
