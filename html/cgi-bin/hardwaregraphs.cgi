@@ -67,7 +67,7 @@ if ( $querry[0] =~ "hwtemp"){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
 	&Graphs::updatethermaltempgraph($querry[1]);
-}elsif ( $querry[0] =~ "sd?" || $querry[0] =~ "hd?" || $querry[0] =~ "xvd??" ){
+}elsif ( $querry[0] =~ "sd?" ){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
 	&Graphs::updatehddgraph($querry[0],$querry[1]);
@@ -93,7 +93,7 @@ if ( $querry[0] =~ "hwtemp"){
 		&General::writehash("${General::swroot}/sensors/settings", \%sensorsettings);
 	}
 
-	my @disks = `find /sys/block/* -maxdepth 0 ! -name sr* ! -name loop* ! -name ram* -exec basename {} \\; | sort | uniq`;
+	my @disks = `ls -1 /sys/block | grep -E '^sd' | sort | uniq`;
 
 	foreach (@disks){
 		my $disk = $_;

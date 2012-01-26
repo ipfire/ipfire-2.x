@@ -25,12 +25,13 @@ char enableorange[STRING_SIZE] = "off";
 char OVPNRED[STRING_SIZE] = "OVPN";
 char OVPNBLUE[STRING_SIZE] = "OVPN_BLUE_";
 char OVPNORANGE[STRING_SIZE] = "OVPN_ORANGE_";
-char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.1";
+char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.2";
 
 struct connection_struct {
 	char name[STRING_SIZE];
 	char type[STRING_SIZE];
 	char proto[STRING_SIZE];
+	char status[STRING_SIZE];
 	int port;
 	struct connection_struct *next;
 };
@@ -125,7 +126,9 @@ connection *getConnections() {
 			}
 			*resultptr = '\0';
 
-			if (count == 2) {
+			if (count == 1) {
+				strcpy(conn_curr->status, result);
+			} else if (count == 2) {
 				strcpy(conn_curr->name, result);
 			} else if (count == 4) {
 				strcpy(conn_curr->type, result);
@@ -423,7 +426,7 @@ void startDaemon(void) {
 	}
 }
 
-void startNet2Net(char *name) {
+int startNet2Net(char *name) {
 	connection *conn = NULL;
 	connection *conn_iter;
 
@@ -439,8 +442,15 @@ void startNet2Net(char *name) {
 
 	if (conn == NULL) {
 		fprintf(stderr, "Connection not found.\n");
-		exit(1);
+		return 1;
 	}
+
+	if (strcmp(conn->status, "on") != 0) {
+		fprintf(stderr, "Connection '%s' is not enabled.\n", conn->name);
+		return 1;
+	}
+
+	fprintf(stderr, "Starting connection %s...\n", conn->name);
 
 	char configfile[STRING_SIZE];
 	snprintf(configfile, STRING_SIZE - 1, CONFIG_ROOT "/ovpn/n2nconf/%s/%s.conf",
@@ -450,7 +460,7 @@ void startNet2Net(char *name) {
 	if (fp == NULL) {
 		fprintf(stderr, "Could not find configuration file for connection '%s' at '%s'.\n",
 			conn->name, configfile);
-		exit(2);
+		return 2;
 	}
 	fclose(fp);
 
@@ -462,9 +472,11 @@ void startNet2Net(char *name) {
 	executeCommand(command);
 	snprintf(command, STRING_SIZE-1, "/usr/sbin/openvpn --config %s", configfile);
 	executeCommand(command);
+
+	return 0;
 }
 
-void killNet2Net(char *name) {
+int killNet2Net(char *name) {
 	connection *conn = NULL;
 	connection *conn_iter;
 
@@ -480,7 +492,7 @@ void killNet2Net(char *name) {
 
 	if (conn == NULL) {
 		fprintf(stderr, "Connection not found.\n");
-		exit(1);
+		return 1;
 	}
 
 	char pidfile[STRING_SIZE];
@@ -488,39 +500,64 @@ void killNet2Net(char *name) {
 
 	int pid = readPidFile(pidfile);
 	if (!pid > 0) {
-		exit(1);
+		fprintf(stderr, "Could not read pid file of connection %s.", conn->name);
+		return 1;
 	}
 
-	fprintf(stderr, "Killing PID %d.\n", pid);
+	fprintf(stderr, "Killing connection %s (PID %d)...\n", conn->name, pid);
 	kill(pid, SIGTERM);
 
 	char command[STRING_SIZE];
 	snprintf(command, STRING_SIZE - 1, "/bin/rm -f %s", pidfile);
 	executeCommand(command);
 
-	exit(0);
+	return 0;
 }
 
 void startAllNet2Net() {
+	int exitcode = 0, _exitcode = 0;
+
 	connection *conn = getConnections();
 
 	while(conn) {
-		startNet2Net(conn->name);
+		/* Skip all connections that are not of type "net" or disabled. */
+		if ((strcmp(conn->type, "net") != 0) || (strcmp(conn->status, "on") != 0)) {
+			conn = conn->next;
+			continue;
+		}
+
+		_exitcode = startNet2Net(conn->name);
 		conn = conn->next;
+
+		if (_exitcode > exitcode) {
+			exitcode = _exitcode;
+		}
 	}
 
-	exit(0);
+	exit(exitcode);
 }
 
 void killAllNet2Net() {
+	int exitcode = 0, _exitcode = 0;
+
 	connection *conn = getConnections();
 
 	while(conn) {
-		killNet2Net(conn->name);
+		/* Skip all connections that are not of type "net". */
+		if (strcmp(conn->type, "net") != 0) {
+			conn = conn->next;
+			continue;
+		}
+
+		_exitcode = killNet2Net(conn->name);
 		conn = conn->next;
+
+		if (_exitcode > exitcode) {
+			exitcode = _exitcode;
+		}
 	}
 
-	exit(0);
+	exit(exitcode);
 }
 
 void displayopenvpn(void) {

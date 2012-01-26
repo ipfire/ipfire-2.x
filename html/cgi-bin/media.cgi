@@ -45,9 +45,9 @@ my @querry = split(/\?/,$ENV{'QUERY_STRING'});
 $querry[0] = '' unless defined $querry[0];
 $querry[1] = 'hour' unless defined $querry[1];
 
-my @devices = `find /sys/block/* -maxdepth 0 ! -name sr* ! -name loop* ! -name ram* -exec basename {} \\; | sort | uniq`;
+my @devices = `ls -1 /sys/block | grep -E '^sd|^xvd|^vd|^md' | sort | uniq`;
 
-if ( $querry[0] =~ "sd?" || $querry[0] =~ "hd?" || $querry[0] =~ "xvd??"){
+if ( $querry[0] =~ "sd?" || $querry[0] =~ "xvd??" || $querry[0] =~ "vd?" || $querry[0] =~ "md*" ){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
 	

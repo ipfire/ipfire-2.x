@@ -20,6 +20,7 @@
 ###############################################################################
 
 use CGI qw(param);
+use Crypt::PasswdMD5;
 
 $swroot = "/var/ipfire";
 
@@ -98,7 +99,10 @@ if ($cgiparams{'SUBMIT'} eq $tr{'advproxy chgwebpwd change password'})
 		$errormessage = $tr{'advproxy errmsg invalid user'};
 		goto ERROR;
 	}
-	if (!(crypt($cgiparams{'OLD_PASSWORD'}, $cryptpwd) eq $cryptpwd))
+	if (
+	    !(crypt($cgiparams{'OLD_PASSWORD'}, $cryptpwd) eq $cryptpwd) &&
+	    !(apache_md5_crypt($cgiparams{'OLD_PASSWORD'}, $cryptpwd) eq $cryptpwd)
+	   )
 	{
 		$errormessage = $tr{'advproxy errmsg password incorrect'};
 		goto ERROR;

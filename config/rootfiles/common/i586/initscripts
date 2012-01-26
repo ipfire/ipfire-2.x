@@ -94,6 +94,8 @@ etc/rc.d/init.d/networking/red.up/99-pakfire-update
 etc/rc.d/init.d/ntp
 #etc/rc.d/init.d/nut
 #etc/rc.d/init.d/openvmtools
+etc/rc.d/init.d/partresize
+etc/rc.d/init.d/fsresize
 #etc/rc.d/init.d/portmap
 #etc/rc.d/init.d/postfix
 #etc/rc.d/init.d/pound
@@ -221,3 +223,5 @@ etc/sysconfig/modules
 etc/sysconfig/rc
 etc/sysconfig/rc.local
 etc/init.d
+etc/rc.d/init.d/networking/red.down/10-static-routes
+etc/rc.d/init.d/networking/red.up/10-static-routes

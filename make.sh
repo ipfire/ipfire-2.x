@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.11"							# Version number
-CORE="55"							# Core Level (Filename)
-PAKFIRE_CORE="55"						# Core Level (PAKFIRE)
+CORE="56"							# Core Level (Filename)
+PAKFIRE_CORE="56"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -571,6 +571,7 @@ buildipfire() {
   ipfiremake Text-Tabs+Wrap
   ipfiremake Locale-Country
   ipfiremake XML-Parser
+  ipfiremake Crypt-PasswdMD5
   ipfiremake python-setuptools
   ipfiremake python-clientform
   ipfiremake python-mechanize

@@ -1,0 +1,11 @@
+etc/system-release
+etc/issue
+etc/rc.d/init.d/mountfs
+etc/rc.d/init.d/smartenabler
+srv/web/ipfire/cgi-bin/chpasswd.cgi
+srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
+srv/web/ipfire/cgi-bin/media.cgi
+usr/local/bin/hddshutdown
+usr/local/bin/makegraphs
+usr/local/bin/openvpnctrl
+usr/local/bin/readhash
