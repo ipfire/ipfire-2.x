@@ -26,7 +26,7 @@ case "${1}" in
 		ROOT=`mount | grep -m1 " / " | cut -d" " -f1`;
 		DRV=${ROOT::`expr length $ROOT`-1}
 		boot_mesg " * check filesystem on ${DRV}4 before resize ..."
-		fsck -f ${DRV}4
+		fsck -f -y ${DRV}4
 
 		boot_mesg " * resize ${DRV}4 ..."
 		resize2fs -p ${DRV}4
