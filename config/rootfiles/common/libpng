@@ -9,12 +9,12 @@
 #usr/lib/libpng.la
 usr/lib/libpng.so
 usr/lib/libpng.so.3
-usr/lib/libpng.so.3.44.0
+usr/lib/libpng.so.3.46.0
 #usr/lib/libpng12.a
 #usr/lib/libpng12.la
 usr/lib/libpng12.so
 usr/lib/libpng12.so.0
-usr/lib/libpng12.so.0.44.0
+usr/lib/libpng12.so.0.46.0
 #usr/lib/pkgconfig/libpng.pc
 #usr/lib/pkgconfig/libpng12.pc
 #usr/share/man/man3/libpng.3
