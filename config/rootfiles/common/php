@@ -197,6 +197,7 @@ usr/bin/php
 #usr/include/php/ext/standard/credits.h
 #usr/include/php/ext/standard/credits_ext.h
 #usr/include/php/ext/standard/credits_sapi.h
+#usr/include/php/ext/standard/crypt_blowfish.h
 #usr/include/php/ext/standard/crypt_freesec.h
 #usr/include/php/ext/standard/css.h
 #usr/include/php/ext/standard/cyr_convert.h

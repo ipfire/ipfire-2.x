@@ -24,18 +24,13 @@
 
 include Config
 
-VER        = 5.3.5
+VER        = 5.3.10
 
 THISAPP    = php-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = php
-PAK_VER    = 1
-
-DEPS       = ""
-
 
 ###############################################################################
 # Top-level Rules
@@ -47,7 +42,7 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 idn-0.1.tgz = $(DL_FROM)/idn-0.1.tgz
 Log-1.9.11.tgz = $(DL_FROM)/Log-1.9.11.tgz
 
-$(DL_FILE)_MD5 = 8aaf20c95e91f25c5b6a591e5d6d61b9
+$(DL_FILE)_MD5 = 816259e5ca7d0a7e943e56a3bb32b17f
 idn-0.1.tgz_MD5 = ef8635ec22348325a76abd2abddca4a1
 Log-1.9.11.tgz_MD5 = fb7c648b212f12fdb5ce1ab687793513
 
@@ -58,9 +53,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
