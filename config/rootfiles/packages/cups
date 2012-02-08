@@ -949,8 +949,10 @@ usr/share/doc/cups/images
 #usr/share/doc/cups/images/cups.png
 #usr/share/doc/cups/images/generic.png
 #usr/share/doc/cups/images/left.gif
+#usr/share/doc/cups/images/raster-organization.png
 #usr/share/doc/cups/images/raster.png
 #usr/share/doc/cups/images/right.gif
+#usr/share/doc/cups/images/sample-image.png
 #usr/share/doc/cups/images/sel.gif
 #usr/share/doc/cups/images/smiley.jpg
 #usr/share/doc/cups/images/unsel.gif
