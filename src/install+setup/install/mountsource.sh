@@ -36,15 +36,17 @@ done
 
 # scan HD device part1 (usb sticks, etc.)
 for DEVICE in $(kudzu -qps -t 30 -c HD | grep device: | cut -d ' ' -f 2 | sort | uniq); do
-		mount /dev/${DEVICE}1 /cdrom 2> /dev/null
+	for DEVICEP in $(ls /dev/${DEVICE}? | sed "s/\/dev\///");do
+		mount /dev/${DEVICEP} /cdrom 2> /dev/null
 		if [ -n "$(ls /cdrom/ipfire-*.tlz 2>/dev/null)" ]; then
-			echo -n ${DEVICE}1 > /tmp/source_device
-			echo "Found tarball on ${DEVICE}1"
+			echo -n ${DEVICEP} > /tmp/source_device
+			echo "Found tarball on ${DEVICEP}"
 			exit 0
 		else
-			echo "Found no tarballs on ${DEVICE}1 - SKIP"
+			echo "Found no tarballs on ${DEVICEP} - SKIP"
 		fi
 		umount /cdrom 2> /dev/null
+	done
 done
 
 # scan HD device unpart (usb sticks, etc.)
