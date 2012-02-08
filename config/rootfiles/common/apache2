@@ -482,6 +482,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/license.html.en
 #srv/web/ipfire/manual/logs.html
 #srv/web/ipfire/manual/logs.html.en
+#srv/web/ipfire/manual/logs.html.fr
 #srv/web/ipfire/manual/logs.html.ja.utf8
 #srv/web/ipfire/manual/logs.html.ko.euc-kr
 #srv/web/ipfire/manual/logs.html.tr.utf8
@@ -758,11 +759,14 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/mod/mod_proxy_connect.html.ja.utf8
 #srv/web/ipfire/manual/mod/mod_proxy_ftp.html
 #srv/web/ipfire/manual/mod/mod_proxy_ftp.html.en
+#srv/web/ipfire/manual/mod/mod_proxy_ftp.html.ja.utf8
 #srv/web/ipfire/manual/mod/mod_proxy_http.html
 #srv/web/ipfire/manual/mod/mod_proxy_http.html.en
 #srv/web/ipfire/manual/mod/mod_proxy_http.html.fr
+#srv/web/ipfire/manual/mod/mod_proxy_http.html.ja.utf8
 #srv/web/ipfire/manual/mod/mod_proxy_scgi.html
 #srv/web/ipfire/manual/mod/mod_proxy_scgi.html.en
+#srv/web/ipfire/manual/mod/mod_proxy_scgi.html.ja.utf8
 #srv/web/ipfire/manual/mod/mod_reqtimeout.html
 #srv/web/ipfire/manual/mod/mod_reqtimeout.html.en
 #srv/web/ipfire/manual/mod/mod_rewrite.html
@@ -873,6 +877,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/new_features_2_2.html
 #srv/web/ipfire/manual/new_features_2_2.html.en
 #srv/web/ipfire/manual/new_features_2_2.html.fr
+#srv/web/ipfire/manual/new_features_2_2.html.ja.utf8
 #srv/web/ipfire/manual/new_features_2_2.html.ko.euc-kr
 #srv/web/ipfire/manual/new_features_2_2.html.pt-br
 #srv/web/ipfire/manual/new_features_2_2.html.tr.utf8
@@ -942,6 +947,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/programs/index.html
 #srv/web/ipfire/manual/programs/index.html.en
 #srv/web/ipfire/manual/programs/index.html.es
+#srv/web/ipfire/manual/programs/index.html.ja.utf8
 #srv/web/ipfire/manual/programs/index.html.ko.euc-kr
 #srv/web/ipfire/manual/programs/index.html.ru.koi8-r
 #srv/web/ipfire/manual/programs/index.html.tr.utf8
@@ -1066,6 +1072,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/upgrading.html.de
 #srv/web/ipfire/manual/upgrading.html.en
 #srv/web/ipfire/manual/upgrading.html.fr
+#srv/web/ipfire/manual/upgrading.html.ja.utf8
 #srv/web/ipfire/manual/urlmapping.html
 #srv/web/ipfire/manual/urlmapping.html.en
 #srv/web/ipfire/manual/urlmapping.html.ja.utf8
@@ -1135,6 +1142,7 @@ etc/httpd/conf/mime.types
 #usr/include/apache/apr_atomic.h
 #usr/include/apache/apr_base64.h
 #usr/include/apache/apr_buckets.h
+#usr/include/apache/apr_crypto.h
 #usr/include/apache/apr_date.h
 #usr/include/apache/apr_dbd.h
 #usr/include/apache/apr_dbm.h
@@ -1194,6 +1202,7 @@ etc/httpd/conf/mime.types
 #usr/include/apache/apr_xlate.h
 #usr/include/apache/apr_xml.h
 #usr/include/apache/apu.h
+#usr/include/apache/apu_errno.h
 #usr/include/apache/apu_version.h
 #usr/include/apache/apu_want.h
 #usr/include/apache/http_config.h
@@ -1322,7 +1331,7 @@ usr/lib/libapr-1.so.0.4.5
 #usr/lib/libaprutil-1.la
 usr/lib/libaprutil-1.so
 usr/lib/libaprutil-1.so.0
-usr/lib/libaprutil-1.so.0.3.12
+usr/lib/libaprutil-1.so.0.4.1
 #usr/lib/pkgconfig/apr-1.pc
 #usr/lib/pkgconfig/apr-util-1.pc
 #usr/sbin/ab
@@ -1340,16 +1349,17 @@ usr/sbin/httpd
 #usr/sbin/httxt2dbm
 #usr/sbin/logresolve
 #usr/sbin/rotatelogs
+#usr/share/man/man1/ab.1
+#usr/share/man/man1/apxs.1
 #usr/share/man/man1/dbmmanage.1
 #usr/share/man/man1/htdbm.1
 #usr/share/man/man1/htdigest.1
 #usr/share/man/man1/htpasswd.1
-#usr/share/man/man8/ab.8
+#usr/share/man/man1/httxt2dbm.1
+#usr/share/man/man1/logresolve.1
 #usr/share/man/man8/apachectl.8
-#usr/share/man/man8/apxs.8
 #usr/share/man/man8/htcacheclean.8
 #usr/share/man/man8/httpd.8
-#usr/share/man/man8/logresolve.8
 #usr/share/man/man8/rotatelogs.8
 #usr/share/man/man8/suexec.8
 var/log/httpd
