@@ -134,7 +134,7 @@ else
 	chown -v root:root /usr/lib/apache/httpd.exp \
 	    /usr/sbin/{apxs,apachectl,dbmmanage,envvars{,-std}} \
 	    /usr/share/man/man1/{ab,apxs,dbmmanage,ht{dbm,digest,passwd,txt2dbm}}.1 \
-	    /usr/share/man/man1/{logresolve}.1 \
+	    /usr/share/man/man1/logresolve.1 \
 	    /usr/share/man/man8/{apachectl,htcacheclean,httpd}.8 \
 	    /usr/share/man/man8/{rotatelogs,suexec}.8
 	@rm -rf $(DIR_APP)
