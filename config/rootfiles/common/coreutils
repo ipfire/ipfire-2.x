@@ -20,8 +20,7 @@ bin/rmdir
 bin/sleep
 bin/sync
 bin/true
-#bin/uname
-bin/uname.bak
+bin/uname
 etc/dircolors
 usr/bin/[
 usr/bin/basename

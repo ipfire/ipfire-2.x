@@ -1,0 +1,48 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/partresize
+#
+# Description : Resize the /var partition to the drivesize
+#
+# Authors     : Arne Fitzenreiter - arne_f@ipfire.org
+#
+# Version     : 1.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+
+		boot_mesg "Mounting root file system in read/write mode ..."
+		mount -o remount,rw / > /dev/null
+		evaluate_retval
+
+		# Detect device
+		ROOT=`mount | grep -m1 " / " | cut -d" " -f1`;
+		DRV=${ROOT::`expr length $ROOT`-1}
+
+		boot_mesg "Change Partition 4 to all free space ..."
+		echo -e 'd\n4\nn\np\n4\n\n\nw\nq\n' | fdisk ${DRV}
+
+		# Erase symlink, it should run only once
+		rm -f /etc/rc.d/rcsysinit.d/S25partresize
+
+		boot_mesg "Rebooting ..."
+		sync
+		mount -o remount,ro / > /dev/null
+		reboot -f
+
+		;;
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/partresize
+

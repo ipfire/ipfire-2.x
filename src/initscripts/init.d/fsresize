@@ -1,0 +1,47 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/fsresize
+#
+# Description : Resize the /var filesystem
+#
+# Authors     : Arne Fitzenreiter - arne_f@ipfire.org
+#
+# Version     : 1.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Mounting root file system in read/write mode ..."
+		mount -o remount,rw / > /dev/null
+		evaluate_retval
+
+		boot_mesg "Autoresize /var partition to use the whole drive ..."
+		# Detect device
+		ROOT=`mount | grep -m1 " / " | cut -d" " -f1`;
+		DRV=${ROOT::`expr length $ROOT`-1}
+		boot_mesg " * check filesystem on ${DRV}4 before resize ..."
+		fsck -f -y ${DRV}4
+
+		boot_mesg " * resize ${DRV}4 ..."
+		resize2fs -p ${DRV}4
+		evaluate_retval
+
+		# Erase symlink, it should run only once
+		rm -f /etc/rc.d/rcsysinit.d/S26fsresize
+		sync
+
+		exit 0;
+		;;
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/26fsresize

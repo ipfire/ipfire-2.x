@@ -26,7 +26,7 @@
 
 #
 # Remove old core updates from pakfire cache to save space...
-core=55
+core=56
 for (( i=1; i<=$core; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
@@ -42,10 +42,14 @@ done
 extract_files
 
 #
+#Edit baudrate in grub.conf and inittab
+sed -i -e "s|38400|115200|g" /boot/grub/grub.conf
+sed -i -e "s|38400|115200|g" /etc/inittab
+
+#
 #Start services
 /etc/init.d/apache start
 /etc/init.d/sshd start
-
 
 #
 #Update Language cache

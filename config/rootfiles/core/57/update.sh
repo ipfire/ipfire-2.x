@@ -26,7 +26,7 @@
 
 #
 # Remove old core updates from pakfire cache to save space...
-core=55
+core=57
 for (( i=1; i<=$core; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
@@ -34,18 +34,14 @@ done
 
 #
 #Stop services
-/etc/init.d/sshd stop
-/etc/init.d/apache stop
 
 #
 #Extract files
 extract_files
 
+
 #
 #Start services
-/etc/init.d/apache start
-/etc/init.d/sshd start
-
 
 #
 #Update Language cache
@@ -68,7 +64,7 @@ extract_files
 sync
 
 # This update need a reboot...
-touch /var/run/need_reboot
+#touch /var/run/need_reboot
 
 #
 #Finish

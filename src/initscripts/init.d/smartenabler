@@ -7,7 +7,7 @@
 case "$1" in
 	start)
 	        boot_mesg -n "Enabling S.M.A.R.T.: ";
-		for disk in `find /sys/block/* -maxdepth 0 ! -name sr* ! -name ram* ! -name loop* -exec basename {} \; | sort | uniq`; do 
+		for disk in `ls -1 /sys/block | grep -E '^sd' | sort | uniq`; do 
 		    /usr/sbin/smartctl --smart=on /dev/$disk > /dev/nul;
 		    if [ ${?} = 0 ]; then 
 			boot_mesg -n "$SUCCESS$disk$NORMAL ";

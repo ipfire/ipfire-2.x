@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -44,15 +44,15 @@ md5 :
 ###############################################################################
 # Installation Details
 ###############################################################################
-IMGinst  := /install/images/$(SNAME)-$(VERSION).1gb-ext2.$(MACHINE)-full-core$(CORE).img
-IMGinsts := /install/images/$(SNAME)-$(VERSION).1gb-ext2-scon.$(MACHINE)-full-core$(CORE).img
+IMGinst  := /install/images/$(SNAME)-$(VERSION).2gb-ext2.$(MACHINE)-full-core$(CORE).img
+IMGinsts := /install/images/$(SNAME)-$(VERSION).2gb-ext2-scon.$(MACHINE)-full-core$(CORE).img
 MNThdd   := /install/harddisk
 IMGpart  := /install/images/part_area
 IMGboot  := /install/images/bootfs
 # don't change SIZEboot this without checking Image size
 SIZEboot := 20
 IMGroot  := /install/images/rootfs
-SIZEroot := 500
+SIZEroot := 1400
 IMGvar   := /install/images/varfs
 SIZEvar  := 430
 
@@ -90,7 +90,6 @@ endif
 	echo "HOSTNAME=$(SNAME)" >> $(MNThdd)/var/ipfire/main/settings
 	echo "THEME=ipfire" >> $(MNThdd)/var/ipfire/main/settings
 	-touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
-	mv $(MNThdd)/bin/uname.bak $(MNThdd)/bin/uname
 	mkdir $(MNThdd)/proc
 	mount --bind /proc $(MNThdd)/proc
 	mount --bind /dev  $(MNThdd)/dev
@@ -116,6 +115,11 @@ ifneq "$(MACHINE_TYPE)" "arm"
 	cp -f $(MNThdd)/usr/share/grub/i386-pc/* $(MNThdd)/boot/grub/
 endif
 
+	# Setup symlink for partresize at first boot...
+	ln -sf ../init.d/partresize $(MNThdd)/etc/rc.d/rcsysinit.d/S25partresize
+	# Setup symlink for fsresize at second boot...
+	ln -sf ../init.d/fsresize $(MNThdd)/etc/rc.d/rcsysinit.d/S26fsresize
+
 	# Unmount
 	umount $(MNThdd)/proc
 	umount $(MNThdd)/dev
@@ -124,12 +128,18 @@ endif
 	umount $(MNThdd)/var
 	umount $(MNThdd)
 
-	# zerofree the ext3 images to get better compression
+	# zerofree the ext2 images to get better compression
 ifneq "$(MACHINE_TYPE)" "arm"
 	zerofree $(IMGboot)
+	-fsck.ext2 -f -y $(IMGboot)
+	fsck.ext2 -f -y $(IMGboot)
 endif
 	zerofree $(IMGroot)
+	-fsck.ext2 -f -y  $(IMGroot)
+	fsck.ext2 -f -y  $(IMGroot)
 	zerofree $(IMGvar)
+	-fsck.ext2 -f -y  $(IMGvar)
+	fsck.ext2 -f -y  $(IMGvar)
 
 	# Cat to an image
 	cat $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar) > $(IMGinst)
@@ -176,9 +186,15 @@ endif
 	# zerofree the ext3 images to get better compression
 ifneq "$(MACHINE_TYPE)" "arm"
 	zerofree $(IMGboot)
+	-fsck.ext2 -f -y  $(IMGboot)
+	fsck.ext2 -f -y  $(IMGboot)
 endif
 	zerofree $(IMGroot)
+	-fsck.ext2 -f -y  $(IMGroot)
+	fsck.ext2 -f -y  $(IMGroot)
 	zerofree $(IMGvar)
+	-fsck.ext2 -f -y  $(IMGvar)
+	fsck.ext2 -f -y  $(IMGvar)
 
 	# Cat to an image
 	cat $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar) > $(IMGinsts)

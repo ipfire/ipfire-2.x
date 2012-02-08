@@ -22,7 +22,8 @@
 # IPFire HDD Shutdown state reader
 #
 
-my @devices = `find /sys/block/* -maxdepth 0 ! -name sr* ! -name loop* ! -name ram* -exec basename {} \\; | sort | uniq`;
+# Also devices that cannot shutdown must be here for mediagraphs.
+my @devices = `ls -1 /sys/block | grep -E '^sd|^xvd|^vd|^md' | sort | uniq`;
 my $diskstats = "";
 my $newdiskstats = "";
 my $debug = 1;

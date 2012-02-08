@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2011 IPFire-Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2012 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.11"							# Version number
-CORE="55"							# Core Level (Filename)
-PAKFIRE_CORE="54"						# Core Level (PAKFIRE)
+CORE="57"							# Core Level (Filename)
+PAKFIRE_CORE="56"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -37,7 +37,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=2
+TOOLCHAINVER=3
 
 BUILDMACHINE=$MACHINE
     if [ "$MACHINE" = "x86_64" ]; then
@@ -240,7 +240,7 @@ buildtoolchain() {
             ;;
 
         # ARM
-        armv5tel:armv5tel|armv5tel:armv5tejl)
+        armv5tel:armv5tel|armv5tel:armv5tejl|armv5tel:armv7l)
             # These are working.
             ;;
         armv5tel:*)
@@ -260,12 +260,11 @@ buildtoolchain() {
     NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
     export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
     ORG_PATH=$PATH
-    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    lfsmake1 fake-environ	PASS=1
     lfsmake1 ccache	PASS=1
     lfsmake1 make	PASS=1
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
+    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
     if [ "${MACHINE_TYPE}" = "arm" ]; then
         lfsmake1 linux TOOLS=1 HEADERS=1
     else
@@ -273,7 +272,7 @@ buildtoolchain() {
     fi
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain PASS=1
-    lfsmake1 fake-environ	PASS=2
+    lfsmake1 fake-environ
     lfsmake1 tcl
     lfsmake1 expect
     lfsmake1 dejagnu
@@ -572,6 +571,7 @@ buildipfire() {
   ipfiremake Text-Tabs+Wrap
   ipfiremake Locale-Country
   ipfiremake XML-Parser
+  ipfiremake Crypt-PasswdMD5
   ipfiremake python-setuptools
   ipfiremake python-clientform
   ipfiremake python-mechanize
@@ -1003,6 +1003,7 @@ downloadsrc)
 	ERROR=0
 	for i in *; do
 		if [ -f "$i" -a "$i" != "Config" ]; then
+			lfsmakecommoncheck ${i} > /dev/null || continue
 			make -s -f $i LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
 				MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
 			if [ $? -ne 0 ]; then
