@@ -1,4 +1,4 @@
-#etc/vimrc
+etc/vimrc
 #usr/bin/ex
 #usr/bin/rview
 #usr/bin/rvim
@@ -17,7 +17,7 @@ usr/bin/vim
 #usr/share/man/man1/vimdiff.1
 #usr/share/man/man1/vimtutor.1
 #usr/share/man/man1/xxd.1
-#usr/share/vim
+usr/share/vim
 #usr/share/vim/vim72
 #usr/share/vim/vim72/autoload
 #usr/share/vim/vim72/autoload/README.txt
