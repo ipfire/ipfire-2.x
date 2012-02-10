@@ -73,6 +73,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-4.5.3_ipfire.patch
 
+	# Customize the welcome banner.
+	sed -i $(DIR_APP)/src/pluto/modecfg.c \
+		-e 's/^#define.*DEFAULT_UNITY_BANNER.*/#define DEFAULT_UNITY_BANNER "Welcome to IPFire - An Open Source Firewall Solution.\\n"/'
+
 	cd $(DIR_APP) && ./configure --prefix="/usr" --sysconfdir="/etc" \
 					--enable-cisco-quirks \
 					--enable-curl \
