@@ -69,7 +69,7 @@ usr/lib/libnutscan.so.1.0.0
 #usr/lib/libupsclient.la
 usr/lib/libupsclient.so
 usr/lib/libupsclient.so.1
-usr/lib/libupsclient.so.1.0.0
+usr/lib/libupsclient.so.1.1.0
 usr/sbin/upsd
 usr/sbin/upsmon
 usr/sbin/upssched
