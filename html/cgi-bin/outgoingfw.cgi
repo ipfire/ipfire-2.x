@@ -631,7 +631,7 @@ END
 sub addrule
 {
 	&Header::openbox('100%', 'center', $Lang::tr{'Add Rule'});
-	if ($outfwsettings{'EDIT'} eq 'no') { $selected{'ENABLED'} = 'checked'; }
+	if ($outfwsettings{'ENABLED'} eq 'on') { $selected{'ENABLED'} = 'checked'; }
 	$selected{'TIME_FROM'}{$outfwsettings{'TIME_FROM'}} = "selected='selected'";
 	$selected{'TIME_TO'}{$outfwsettings{'TIME_TO'}} = "selected='selected'";
 print <<END
