@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2012  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 VERSUFIX=ipfire$(KCFG)
 
-VER        = 3.0-2
+VER        = 3.2.5-1
 
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = compat-wireless-$(VER).tar.bz2
@@ -43,7 +43,7 @@ objects = $(DL_FILE) asix-3.5.0a.tar.bz2
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 asix-3.5.0a.tar.bz2 = $(DL_FROM)/asix-3.5.0a.tar.bz2
 
-$(DL_FILE)_MD5 = 7f2d0de30bf9c3e9a941d9e67971e9b3
+$(DL_FILE)_MD5 = 19670520d7f0289a5b4c6fb28520b2ac
 asix-3.5.0a.tar.bz2_MD5=cc57513505d3ad1a43b58add91d2bba7
 
 install : $(TARGET)
@@ -89,13 +89,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Build Updated asix usb-lan driver
 	cd $(DIR_APP)/drivers/net/usb && tar xvf $(DIR_DL)/asix-3.5.0a.tar.bz2
 
-ifeq "$(MACHINE_TYPE)" "arm"
-	# B43+B44 driver doesn't build on arm
-#	cd $(DIR_APP) && sed -i -e "s|CONFIG_B43=m||g" config.mk
-#	cd $(DIR_APP) && sed -i -e "s|CONFIG_B44=m||g" config.mk
 	# Add libartas uAP driver
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.0-libertas_uap.patch
 	cd $(DIR_APP)&& echo CONFIG_LIBERTAS_UAP=m >> config.mk
+
+ifeq "$(MACHINE_TYPE)" "arm"
+	# fix atomic64 functions
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.2.5-1-fix_atomic64_t_on_arm.patch
 endif
 
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) \
