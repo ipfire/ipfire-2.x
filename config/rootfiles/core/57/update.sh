@@ -36,16 +36,19 @@ done
 #Stop services
 /etc/init.d/squid stop
 /etc/init.d/apache stop
+/etc/init.d/ipsec stop
 
 #
 #Extract files
 extract_files
 
-
 #
 #Start services
 /etc/init.d/squid start
 /etc/init.d/apache start
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	/etc/init.d/ipsec start
+fi
 
 #
 #Update Language cache
