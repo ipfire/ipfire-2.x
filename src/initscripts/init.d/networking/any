@@ -80,15 +80,19 @@ case "${1}" in
 		# Create & Enable vnstat data collection
 		/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
 		
-		boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
-		ip addr add ${args} dev ${DEVICE}
-		evaluate_retval
+		if [ ! "${ADDRESS}" == "1.1.1.1" ]; then
+			boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
+			ip addr add ${args} dev ${DEVICE}
+			evaluate_retval
+		fi
 		;;
 
 	stop)
-		boot_mesg "Removing IPv4 addresses from the ${DEVICE} interface..."
-		ip addr flush dev ${DEVICE}
-		evaluate_retval
+		if [ ! "${ADDRESS}" == "1.1.1.1" ]; then
+			boot_mesg "Removing IPv4 addresses from the ${DEVICE} interface..."
+			ip addr flush dev ${DEVICE}
+			evaluate_retval
+		fi
 
 		# Disable vnstat collection
 		/usr/bin/vnstat -u -i ${DEVICE}	-r --disable > /dev/null 2>&1
