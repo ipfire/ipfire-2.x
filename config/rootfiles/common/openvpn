@@ -1,5 +1,6 @@
-lib/openvpn-auth-pam.so
-lib/openvpn-down-root.so
+usr/lib/openvpn
+usr/lib/openvpn/openvpn-auth-pam.so
+usr/lib/openvpn/openvpn-down-root.so
 usr/sbin/openvpn
 #usr/share/doc/openvpn
 #usr/share/doc/openvpn/management-notes.txt
@@ -16,5 +17,6 @@ var/ipfire/ovpn/n2nconf
 var/ipfire/ovpn/openssl/ovpn.cnf
 var/ipfire/ovpn/ovpn-leases.db
 var/ipfire/ovpn/ovpnconfig
+var/ipfire/ovpn/scripts
 var/ipfire/ovpn/settings
 var/ipfire/ovpn/verify

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.2.1
+VER        = 2.2.2
 
 THISAPP    = openvpn-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 500bee5449b29906150569aaf2eb2730
+$(DL_FILE)_MD5 = c5181e27b7945fa6276d21873329c5c7
 
 install : $(TARGET)
 
@@ -70,20 +70,26 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire/ovpn \
-						--enable-pthread
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/var/ipfire/ovpn \
+		--enable-password-save \
+		--enable-pthread
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && cp -Rvf $(DIR_SRC)/config/ovpn /var/ipfire
+	-mkdir -pv /usr/lib/openvpn
 	cd $(DIR_APP)/plugin/auth-pam && make
-	cp -pvf $(DIR_APP)/plugin/auth-pam/openvpn-auth-pam.so /lib/
+	cp -pvf $(DIR_APP)/plugin/auth-pam/openvpn-auth-pam.so /usr/lib/openvpn
 	cd $(DIR_APP)/plugin/down-root && make
-	cp -pvf $(DIR_APP)/plugin/down-root/openvpn-down-root.so /lib/
+	cp -pvf $(DIR_APP)/plugin/down-root/openvpn-down-root.so /usr/lib/openvpn
 	-mkdir -vp /var/ipfire/ovpn/ca
 	-mkdir -vp /var/ipfire/ovpn/crls
 	-mkdir -vp /var/ipfire/ovpn/n2nconf
+	-mkdir -vp /var/ipfire/ovpn/scripts
 	touch /var/ipfire/ovpn/ovpn-leases.db
 	chmod 700 /var/ipfire/ovpn/ovpn-leases.db
+	chown -R root:root /var/ipfire/ovpn/scripts
 	chown -R nobody:nobody /var/ipfire/ovpn
 	chown root.nobody /var/log/ovpnserver.log
 	chmod 755 /var/ipfire/ovpn/verify
