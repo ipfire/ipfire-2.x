@@ -37,11 +37,14 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) v4l-dvb_update_it913x_1_25.patch.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+v4l-dvb_update_it913x_1_25.patch.gz = $(DL_FROM)/v4l-dvb_update_it913x_1_25.patch.gz
 
 $(DL_FILE)_MD5 = 264c5f4ad7aad8dd2960799c80a7908c
+v4l-dvb_update_it913x_1_25.patch.gz_MD5 = c3e397bd64f618edbfcaa56466cdbf14
+
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
@@ -70,6 +73,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP)/linux && zcat $(DIR_DL)/v4l-dvb_update_it913x_1_25.patch.gz | \
+					patch -Np1 
 	cd $(DIR_APP) && make allyesconfig KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=2.6.32
 	cd $(DIR_APP) && make all KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=2.6.32
 	cd $(DIR_APP) && make install KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=2.6.32
