@@ -2,3 +2,4 @@ etc/system-release
 etc/issue
 etc/rc.d/init.d/networking/red.up/10-static-routes
 etc/rc.d/init.d/networking/red.down/10-static-routes
+etc/rc.d/init.d/networking/any
