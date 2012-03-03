@@ -165,7 +165,7 @@ endif
 
 ifeq "$(KCFG)" "-kirkwood"
 	# Add dreamplug,guruplug and icy 62x0  support on ARM-kirkwood
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45-arm_kirkwood_setups.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.57-arm_kirkwood_setups.patch
 endif
 
 ifeq "$(MACHINE_TYPE)" "arm"
