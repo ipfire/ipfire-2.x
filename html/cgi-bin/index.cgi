@@ -20,6 +20,7 @@
 ###############################################################################
 
 use strict;
+use Net::Telnet;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -387,8 +388,53 @@ END
 		<tr><td align='center' bgcolor='$Header::colourovpn' width='25%'><a href="/cgi-bin/ovpnmain.cgi"><font size='2' color='white'><b>OpenVPN</b></font></a><br>
 	  	<td width='30%' align='center'>$ovpnip
   		<td width='45%' align='center'><font color=$Header::colourgreen>Online</font>
+	
 END
+
 	}
+
+###
+# m.a.d n2n
+###
+
+if ( -d "${General::swroot}/ovpn/n2nconf") {
+my %confighash=();
+my $display = '';
+
+&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+foreach my $dkey (keys %confighash) {
+if ($confighash{$dkey}[3] eq 'net') {
+
+
+          if (-e "/var/run/$confighash{$dkey}[1]n2n.pid") {
+          my @output = "";
+          my @tustate = "";
+          my $tport = $confighash{$dkey}[22];
+          my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport); 
+          if ($tport ne '') {
+          $tnet->open('127.0.0.1');
+          @output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
+          @tustate = split(/\,/, $output[1]);
+         if ( $tustate[1] eq 'CONNECTED')
+          { $display = "<font color=$Header::colourgreen>$Lang::tr{'capsopen'}</font>";
+          } else {
+          $display = "<font color=$Header::colourred>$tustate[1]</font>"; }
+ 
+	print <<END;
+	<tr><td align='center' bgcolor='$Header::colourvpn' width='25%'><a href="/cgi-bin/ovpnmain.cgi"><font size='2' color='white'><b>OpenVPN n2n</b></font></a><br>
+  <td width='30%' align='center'> $confighash{$dkey}[10]<td width='45%' align='center'> $display 
+
+END
+;
+}
+}
+}
+}
+}
+
+###
+# m.a.d n2n end
+###
 
 # Fireinfo
 if ( ! -e "/var/ipfire/main/send_profile") {
