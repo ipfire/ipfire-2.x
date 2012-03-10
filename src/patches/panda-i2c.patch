@@ -1,0 +1,22 @@
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index 58a58c7..bba0441 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -276,7 +276,7 @@ static void omap_i2c_unidle(struct omap_i2c_dev *dev)
+ 
+ 	pm_runtime_get_sync(&pdev->dev);
+ 
+-	if (cpu_is_omap34xx()) {
++	if (cpu_is_omap34xx() || cpu_is_omap44xx()) {
+ 		omap_i2c_write_reg(dev, OMAP_I2C_CON_REG, 0);
+ 		omap_i2c_write_reg(dev, OMAP_I2C_PSC_REG, dev->pscstate);
+ 		omap_i2c_write_reg(dev, OMAP_I2C_SCLL_REG, dev->scllstate);
+@@ -493,7 +493,7 @@ static int omap_i2c_init(struct omap_i2c_dev *dev)
+ 			OMAP_I2C_IE_AL)  | ((dev->fifo_size) ?
+ 				(OMAP_I2C_IE_RDR | OMAP_I2C_IE_XDR) : 0);
+ 	omap_i2c_write_reg(dev, OMAP_I2C_IE_REG, dev->iestate);
+-	if (cpu_is_omap34xx()) {
++	if (cpu_is_omap34xx() || cpu_is_omap44xx()) {
+ 		dev->pscstate = psc;
+ 		dev->scllstate = scll;
+ 		dev->sclhstate = sclh;
