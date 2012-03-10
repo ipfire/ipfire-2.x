@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -40,10 +40,10 @@ for card in `ls /sys/class/net`; do
 				if [ ! "$hwaddr" == "00:00:00:00:00:00" ];then
 				if [ ! "$hwaddr" == "ff:ff:ff:ff:ff:ff" ];then
 
-					driver=`grep PHYSDEVDRIVER= /sys/class/net/$card/uevent | cut -d"=" -f2`
-					type=`grep PHYSDEVBUS= /sys/class/net/$card/uevent | cut -d"=" -f2`
+					driver=`grep DRIVER= /sys/class/net/$card/device/uevent | cut -d"=" -f2`
+					type=`grep MODALIAS= /sys/class/net/$card/device/uevent | cut -d"=" -f2 | cut -d":" -f1`
 
-					#Default if not avaiable in /sys/class/net
+					#Default if not available in /sys/class/net
 					if [ "a$type" == "a" ]; then
 						type="???"
 					fi
