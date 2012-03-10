@@ -79,9 +79,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -sv vim /usr/bin/vi
 	echo "set nocompatible"	>  /etc/vimrc
 	echo "set backspace=2"	>> /etc/vimrc
+	echo "set ruler"		>> /etc/vimrc
 	echo "syntax on"		>> /etc/vimrc
 	echo -e "if (&term == \"iterm\") || (&term == \"putty\")" >> /etc/vimrc
-	echo "set background=dark"	>> /etc/vimrc
+	echo "  set background=dark"	>> /etc/vimrc
 	echo "endif"			>> /etc/vimrc
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

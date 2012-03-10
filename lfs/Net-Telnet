@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 1.2.3
+VER        = 3.03
 
-THISAPP    = usb-modeswitch-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = Net-Telnet-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9b29e8b0d93d7604a9e5efc4696d37a3
+$(DL_FILE)_MD5 = 2f7d34b09d6117baefe89d44cff9d5fc
 
 install : $(TARGET)
 
@@ -69,9 +69,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make clean
-	cd $(DIR_APP) && make all $(MAKETUNING) $(EXTRA_MAKE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && perl Makefile.PL
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

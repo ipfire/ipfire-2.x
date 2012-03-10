@@ -26,7 +26,7 @@
 
 #
 # Remove old core updates from pakfire cache to save space...
-core=57
+core=58
 for (( i=1; i<=$core; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
@@ -34,8 +34,6 @@ done
 
 #
 #Stop services
-/etc/init.d/squid stop
-/etc/init.d/apache stop
 /etc/init.d/ipsec stop
 
 #
@@ -44,15 +42,13 @@ extract_files
 
 #
 #Start services
-/etc/init.d/squid start
-/etc/init.d/apache start
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
 
 #
 #Update Language cache
-#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #Rebuild module dep's
 #depmod -a 2.6.32.45-ipfire     >/dev/null 2>&1
