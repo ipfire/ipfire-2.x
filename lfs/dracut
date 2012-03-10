@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,6 +25,9 @@
 include Config
 
 VER        = 006
+
+# Version of the omap kernel
+KVER3 = `grep "^VER " $(DIR_SRC)/lfs/linux3 | sed "s| ||g" | cut -d"=" -f2`
 
 THISAPP    = dracut-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -97,6 +100,10 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	# kirkwood kernel
 	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-kirkwood.img $(KVER)-ipfire-kirkwood
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-kirkwood.img uInit-ipfire-kirkwood
+
+	# omap kernel
+	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER3)-omap.img $(KVER3)-ipfire-omap
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER3)-omap.img uInit-ipfire-omap
 else
 	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER).img $(KVER)-ipfire
 endif

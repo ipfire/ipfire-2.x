@@ -436,6 +436,9 @@ buildipfire() {
     ipfiremake e1000e			KCFG=""
     ipfiremake igb			KCFG=""
   else
+    # arm-omap kernel build
+    ipfiremake linux3			KCFG="-omap"
+
     # arm-versatile kernel build
     ipfiremake linux			KCFG="-versatile"
     ipfiremake v4l-dvb			KCFG="-versatile"
