@@ -803,6 +803,29 @@ buildipfire() {
   ipfiremake iotop
   ipfiremake stunnel
   ipfiremake sslscan
+  ipfiremake bacula
+  echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
+  cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
+  echo >> $BASEDIR/build/var/ipfire/firebuild
+  git log -1 >> $BASEDIR/build/var/ipfire/firebuild
+  echo >> $BASEDIR/build/var/ipfire/firebuild
+  git status >> $BASEDIR/build/var/ipfire/firebuild
+  echo >> $BASEDIR/build/var/ipfire/firebuild
+  cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
+  echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
+  if [ "$(git status -s | wc -l)" == "0" ]; then
+	GIT_STATUS=""
+  else
+	GIT_STATUS="-dirty"
+  fi
+  case "$GIT_BRANCH" in
+	core*|beta?|rc?)
+	    echo "$NAME $VERSION ($MACHINE) - $GIT_BRANCH$GIT_STATUS" > $BASEDIR/build/etc/system-release
+	    ;;
+	*)
+	    echo "$NAME $VERSION ($MACHINE) - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS" > $BASEDIR/build/etc/system-release
+	    ;;
+  esac
 }
 
 buildinstaller() {
