@@ -189,9 +189,12 @@ ifeq "$(MACHINE_TYPE)" "arm"
 endif
 
 ifeq "$(KCFG)" "-omap"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/panda-usb-power.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/panda-i2c.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.0.23-panda-sound.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/panda-usb-power.patch
+#
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.40-pandaboard-wlan-fix.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.40-pandaboard-dvi720p.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.40-pandaboard-i2c-fix.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.x-smsc95xx-add_mac_addr_param.patch
 endif
 
 ifeq "$(HEADERS)" "1"
