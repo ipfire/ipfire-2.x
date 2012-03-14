@@ -24,7 +24,11 @@ case "${1}" in
 
 		# Detect device
 		ROOT=`mount | grep -m1 " / " | cut -d" " -f1`;
-		DRV=${ROOT::`expr length $ROOT`-1}
+		if [ "${ROOT:`expr length $ROOT`-2:1}" == "p" ]; then
+			DRV=${ROOT::`expr length $ROOT`-2}
+		else
+			DRV=${ROOT::`expr length $ROOT`-1}
+		fi
 
 		boot_mesg "Change Partition 4 to all free space ..."
 		echo -e 'd\n4\nn\np\n4\n\n\nw\nq\n' | fdisk ${DRV}
