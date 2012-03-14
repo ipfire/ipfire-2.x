@@ -50,11 +50,11 @@ MNThdd   := /install/harddisk
 IMGpart  := /install/images/part_area
 IMGboot  := /install/images/bootfs
 # don't change SIZEboot this without checking Image size
-SIZEboot := 20
+SIZEboot := 50
 IMGroot  := /install/images/rootfs
 SIZEroot := 1400
 IMGvar   := /install/images/varfs
-SIZEvar  := 430
+SIZEvar  := 400
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf $(MNThdd) $(IMGinst) $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar) && mkdir -p $(MNThdd)
@@ -63,7 +63,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	dd bs=1k if=/dev/zero of=$(IMGpart) count=16
 
 	# Create images for filesystems
-	dd bs=1K if=/dev/zero of=$(IMGboot) count=20464  # 20MB-16K
+	dd bs=1K if=/dev/zero of=$(IMGboot) count=51184  # 50MB-16K
 	dd bs=1M if=/dev/zero of=$(IMGroot) count=$(SIZEroot)
 	dd bs=1M if=/dev/zero of=$(IMGvar) count=$(SIZEvar)
 
@@ -83,6 +83,15 @@ endif
 	mkdir $(MNThdd)/var/log
 	mount -o loop $(IMGboot) $(MNThdd)/boot
 	mount -o loop $(IMGvar)  $(MNThdd)/var
+
+	# Install MLO and uboot first
+ifeq "$(MACHINE_TYPE)" "arm"
+	cp -v /boot/MLO $(MNThdd)/boot/
+	cp -v /boot/u-boot.bin $(MNThdd)/boot/
+	sync
+	umount $(MNThdd)/boot
+	mount -o loop $(IMGboot) $(MNThdd)/boot
+endif
 
 	# Install IPFire
 	tar -C $(MNThdd)/ -xvaf /install/cdrom/$(SNAME)-$(VERSION).tlz
@@ -143,9 +152,15 @@ endif
 
 	# Cat to an image
 	cat $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar) > $(IMGinst)
+
 	# Write Partition table
+ifneq "$(MACHINE_TYPE)" "arm"
 	echo -e ",$(SIZEboot),L,*\n,0,0\n,$(SIZEroot),L\n,$(SIZEvar),L\n" \
 		| sfdisk -D -uM -H 64 -S 32 $(IMGinst)
+else
+	echo -e ",$(SIZEboot),c,*\n,0,0\n,$(SIZEroot),L\n,$(SIZEvar),L\n" \
+		| sfdisk -D -uM -H 64 -S 32 $(IMGinst)
+endif
 
 ifneq "$(MACHINE_TYPE)" "arm"
 	# Install grub
@@ -199,9 +214,15 @@ endif
 	# Cat to an image
 	cat $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar) > $(IMGinsts)
 	rm -vf $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar)
+
 	# Write Partition table
+ifneq "$(MACHINE_TYPE)" "arm"
 	echo -e ",$(SIZEboot),L,*\n,0,0\n,$(SIZEroot),L\n,$(SIZEvar),L\n" \
 		| sfdisk -D -uM -H 64 -S 32 $(IMGinsts)
+else
+	echo -e ",$(SIZEboot),c,*\n,0,0\n,$(SIZEroot),L\n,$(SIZEvar),L\n" \
+		| sfdisk -D -uM -H 64 -S 32 $(IMGinsts)
+endif
 
 ifneq "$(MACHINE_TYPE)" "arm"
 	# Install grub
@@ -217,4 +238,3 @@ endif
 	gzip -f9 $(IMGinsts)
 
 	rm -rf $(MNThdd) $(IMGpart) $(IMGboot) $(IMGroot) $(IMGvar)
-
