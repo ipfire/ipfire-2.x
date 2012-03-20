@@ -155,8 +155,8 @@ endif
 	# Reiser4 (don't check if fail (some patches are already in xen patchset)
 #	-cd $(DIR_APP) && bzcat $(DIR_DL)/reiser4-for-2.6.32.patch.bz2 | patch -Np1
 
-	# ipp2p 0.8.2-pomng
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.8-ipp2p-0.8.2-pomng.patch
+	# ipp2p 0.8.2-ipfire
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.0-ipp2p-0.8.2-ipfire.patch
 
 	# Layer7-patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/netfilter_layer7_2.22_kernel3.0.patch
