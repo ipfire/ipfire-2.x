@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2012  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -83,15 +83,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.1.99-gcc4.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.2.3-multilib.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.2.3-sata.patch
-ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP)/lib && CFLAGS="-Os -fomit-frame-pointer" ./configure
-	cd $(DIR_APP)/lib && CFLAGS="-Os -fomit-frame-pointer" make $(MAKETUNING)
-	-mkdir -p /opt/$(MACHINE)-uClibc/include/pci
-	cd $(DIR_APP) && install -m 0644 lib/libpci.a /opt/$(MACHINE)-uClibc/lib
-	cd $(DIR_APP) && install -m 0644 lib/*.h /opt/$(MACHINE)-uClibc/include/pci
-else
 ifeq "$(MACHINE_TYPE)" "arm"
-	cd $(DIR_APP)/lib && ./configure
+	cd $(DIR_APP)/lib && ./configure /usr/share/hwdata $(VER)
 	cd $(DIR_APP)/lib && sed -e "s/^#error.*$$/#define CPU_ARCH_ARM/" -i config.h
 endif
 	cd $(DIR_APP) && make PREFIX=/usr $(MAKETUNING)
@@ -99,6 +92,5 @@ endif
 	cd $(DIR_APP) && install -v -m 755 -d /usr/include/pci
 	cd $(DIR_APP) && install -v -m 644 lib/libpci.a /usr/lib
 	cd $(DIR_APP) && install -v -m 644 lib/*.h /usr/include/pci
-endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
