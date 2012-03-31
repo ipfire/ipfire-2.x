@@ -1558,6 +1558,8 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/fs/smbfs/smbfs.ko
 #lib/modules/KVER-ipfire-pae/kernel/fs/udf
 #lib/modules/KVER-ipfire-pae/kernel/fs/udf/udf.ko
+#lib/modules/KVER-ipfire-pae/kernel/fs/ufs
+#lib/modules/KVER-ipfire-pae/kernel/fs/ufs/xfs.ko
 #lib/modules/KVER-ipfire-pae/kernel/fs/xfs
 #lib/modules/KVER-ipfire-pae/kernel/fs/xfs/xfs.ko
 #lib/modules/KVER-ipfire-pae/kernel/lib

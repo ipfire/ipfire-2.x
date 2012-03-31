@@ -1555,6 +1555,8 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/fs/smbfs/smbfs.ko
 #lib/modules/KVER-ipfire/kernel/fs/udf
 #lib/modules/KVER-ipfire/kernel/fs/udf/udf.ko
+#lib/modules/KVER-ipfire/kernel/fs/ufs
+#lib/modules/KVER-ipfire/kernel/fs/ufs/xfs.ko
 #lib/modules/KVER-ipfire/kernel/fs/xfs
 #lib/modules/KVER-ipfire/kernel/fs/xfs/xfs.ko
 #lib/modules/KVER-ipfire/kernel/lib
