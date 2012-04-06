@@ -51,9 +51,16 @@ fi
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #Rebuild module dep's
-#depmod -a 2.6.32.45-ipfire     >/dev/null 2>&1
-#depmod -a 2.6.32.45-ipfire-pae >/dev/null 2>&1
-#depmod -a 2.6.32.45-ipfire-xen >/dev/null 2>&1
+arch=`uname -m`
+if [ ${arch::3} == "arm" ]; then
+	depmod -a 2.6.32.45-ipfire-versatile >/dev/null 2>&1
+	depmod -a 2.6.32.45-ipfire-kirkwood >/dev/null 2>&1
+else
+	depmod -a 2.6.32.45-ipfire     >/dev/null 2>&1
+	depmod -a 2.6.32.45-ipfire-pae >/dev/null 2>&1
+	depmod -a 2.6.32.45-ipfire-xen >/dev/null 2>&1
+fi
+
 
 #Rebuild initrd's because some compat-wireless modules are inside
 #/sbin/dracut --force --verbose /boot/ipfirerd-2.6.32.45.img 2.6.32.45-ipfire
@@ -67,7 +74,7 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 sync
 
 # This update need a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 #
 #Finish

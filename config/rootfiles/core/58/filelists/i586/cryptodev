@@ -1,0 +1,3 @@
+lib/modules/2.6.32.45-ipfire/extra/cryptodev.ko
+lib/modules/2.6.32.45-ipfire-pae/extra/cryptodev.ko
+lib/modules/2.6.32.45-ipfire-xen/extra/cryptodev.ko
