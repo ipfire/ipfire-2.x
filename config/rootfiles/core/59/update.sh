@@ -26,7 +26,7 @@
 
 #
 # Remove old core updates from pakfire cache to save space...
-core=58
+core=59
 for (( i=1; i<=$core; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
@@ -34,11 +34,9 @@ done
 
 #
 #Stop services
-/etc/init.d/ipsec stop
 
 #
 #Extract files
-extract_files
 
 #
 #Start services
@@ -51,15 +49,15 @@ fi
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #Rebuild module dep's
-arch=`uname -m`
-if [ ${arch::3} == "arm" ]; then
-	depmod -a 2.6.32.45-ipfire-versatile >/dev/null 2>&1
-	depmod -a 2.6.32.45-ipfire-kirkwood >/dev/null 2>&1
-else
-	depmod -a 2.6.32.45-ipfire     >/dev/null 2>&1
-	depmod -a 2.6.32.45-ipfire-pae >/dev/null 2>&1
-	depmod -a 2.6.32.45-ipfire-xen >/dev/null 2>&1
-fi
+#arch=`uname -m`
+#if [ ${arch::3} == "arm" ]; then
+#	depmod -a 2.6.32.45-ipfire-versatile >/dev/null 2>&1
+#	depmod -a 2.6.32.45-ipfire-kirkwood >/dev/null 2>&1
+#else
+#	depmod -a 2.6.32.45-ipfire     >/dev/null 2>&1
+#	depmod -a 2.6.32.45-ipfire-pae >/dev/null 2>&1
+#	depmod -a 2.6.32.45-ipfire-xen >/dev/null 2>&1
+#fi
 
 
 #Rebuild initrd's because some compat-wireless modules are inside
@@ -74,7 +72,7 @@ fi
 sync
 
 # This update need a reboot...
-touch /var/run/need_reboot
+#touch /var/run/need_reboot
 
 #
 #Finish
