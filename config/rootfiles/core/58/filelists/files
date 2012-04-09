@@ -1,7 +1,10 @@
 etc/system-release
 etc/issue
 etc/vimrc
+<<<<<<< HEAD
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 var/ipfire/general-functions.pl
 var/ipfire/langs
+=======
+>>>>>>> master
