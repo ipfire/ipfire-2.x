@@ -3,6 +3,8 @@
 #usr/bin/pydoc
 usr/bin/python
 #usr/bin/python-config
+usr/bin/python2
+#usr/bin/python2-config
 usr/bin/python2.7
 #usr/bin/python2.7-config
 #usr/bin/smtpd.py
@@ -103,6 +105,7 @@ usr/lib/libpython2.7.so
 usr/lib/libpython2.7.so.1.0
 #usr/lib/pkgconfig/python-2.7.pc
 #usr/lib/pkgconfig/python.pc
+#usr/lib/pkgconfig/python2.pc
 #usr/lib/python2.7
 #usr/lib/python2.7/BaseHTTPServer.py
 usr/lib/python2.7/BaseHTTPServer.pyc
@@ -920,6 +923,7 @@ usr/lib/python2.7/dis.pyc
 #usr/lib/python2.7/distutils/tests/test_versionpredicate.py
 #usr/lib/python2.7/distutils/tests/test_versionpredicate.pyc
 #usr/lib/python2.7/distutils/tests/test_versionpredicate.pyo
+#usr/lib/python2.7/distutils/tests/xxmodule.c
 #usr/lib/python2.7/distutils/text_file.py
 #usr/lib/python2.7/distutils/text_file.pyc
 #usr/lib/python2.7/distutils/text_file.pyo
@@ -1815,7 +1819,7 @@ usr/lib/python2.7/json/tool.pyc
 usr/lib/python2.7/keyword.pyc
 #usr/lib/python2.7/keyword.pyo
 #usr/lib/python2.7/lib-dynload
-usr/lib/python2.7/lib-dynload/Python-2.7.2-py2.7.egg-info
+usr/lib/python2.7/lib-dynload/Python-2.7.3-py2.7.egg-info
 usr/lib/python2.7/lib-dynload/_bisect.so
 usr/lib/python2.7/lib-dynload/_bsddb.so
 usr/lib/python2.7/lib-dynload/_codecs_cn.so
@@ -1973,9 +1977,9 @@ usr/lib/python2.7/lib-dynload/zlib.so
 #usr/lib/python2.7/lib-tk/turtle.pyo
 #usr/lib/python2.7/lib2to3
 #usr/lib/python2.7/lib2to3/Grammar.txt
-#usr/lib/python2.7/lib2to3/Grammar2.7.2.final.0.pickle
+#usr/lib/python2.7/lib2to3/Grammar2.7.3.final.0.pickle
 #usr/lib/python2.7/lib2to3/PatternGrammar.txt
-#usr/lib/python2.7/lib2to3/PatternGrammar2.7.2.final.0.pickle
+#usr/lib/python2.7/lib2to3/PatternGrammar2.7.3.final.0.pickle
 #usr/lib/python2.7/lib2to3/__init__.py
 #usr/lib/python2.7/lib2to3/__init__.pyc
 #usr/lib/python2.7/lib2to3/__init__.pyo
@@ -2666,6 +2670,10 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/cjkencodings/gbk.txt
 #usr/lib/python2.7/test/cjkencodings/hz-utf8.txt
 #usr/lib/python2.7/test/cjkencodings/hz.txt
+#usr/lib/python2.7/test/cjkencodings/iso2022_jp-utf8.txt
+#usr/lib/python2.7/test/cjkencodings/iso2022_jp.txt
+#usr/lib/python2.7/test/cjkencodings/iso2022_kr-utf8.txt
+#usr/lib/python2.7/test/cjkencodings/iso2022_kr.txt
 #usr/lib/python2.7/test/cjkencodings/johab-utf8.txt
 #usr/lib/python2.7/test/cjkencodings/johab.txt
 #usr/lib/python2.7/test/cjkencodings/shift_jis-utf8.txt
@@ -2861,6 +2869,7 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/mapping_tests.pyc
 #usr/lib/python2.7/test/mapping_tests.pyo
 #usr/lib/python2.7/test/math_testcases.txt
+#usr/lib/python2.7/test/nokia.pem
 #usr/lib/python2.7/test/nullcert.pem
 #usr/lib/python2.7/test/outstanding_bugs.py
 #usr/lib/python2.7/test/outstanding_bugs.pyc
@@ -2889,9 +2898,6 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/re_tests.py
 #usr/lib/python2.7/test/re_tests.pyc
 #usr/lib/python2.7/test/re_tests.pyo
-#usr/lib/python2.7/test/regex_tests.py
-#usr/lib/python2.7/test/regex_tests.pyc
-#usr/lib/python2.7/test/regex_tests.pyo
 #usr/lib/python2.7/test/regrtest.py
 #usr/lib/python2.7/test/regrtest.pyc
 #usr/lib/python2.7/test/regrtest.pyo
@@ -2924,7 +2930,6 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/subprocessdata/sigchild_ignore.py
 #usr/lib/python2.7/test/subprocessdata/sigchild_ignore.pyc
 #usr/lib/python2.7/test/subprocessdata/sigchild_ignore.pyo
-#usr/lib/python2.7/test/svn_python_org_https_cert.pem
 #usr/lib/python2.7/test/test_MimeWriter.py
 #usr/lib/python2.7/test/test_MimeWriter.pyc
 #usr/lib/python2.7/test/test_MimeWriter.pyo
@@ -3093,6 +3098,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/test_codecencodings_hk.py
 #usr/lib/python2.7/test/test_codecencodings_hk.pyc
 #usr/lib/python2.7/test/test_codecencodings_hk.pyo
+#usr/lib/python2.7/test/test_codecencodings_iso2022.py
+#usr/lib/python2.7/test/test_codecencodings_iso2022.pyc
+#usr/lib/python2.7/test/test_codecencodings_iso2022.pyo
 #usr/lib/python2.7/test/test_codecencodings_jp.py
 #usr/lib/python2.7/test/test_codecencodings_jp.pyc
 #usr/lib/python2.7/test/test_codecencodings_jp.pyo
@@ -3722,6 +3730,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/test_py3kwarn.py
 #usr/lib/python2.7/test/test_py3kwarn.pyc
 #usr/lib/python2.7/test/test_py3kwarn.pyo
+#usr/lib/python2.7/test/test_py_compile.py
+#usr/lib/python2.7/test/test_py_compile.pyc
+#usr/lib/python2.7/test/test_py_compile.pyo
 #usr/lib/python2.7/test/test_pyclbr.py
 #usr/lib/python2.7/test/test_pyclbr.pyc
 #usr/lib/python2.7/test/test_pyclbr.pyo
