@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2010  IPFire Team                                        #
+# Copyright (C) 2005-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -77,7 +77,7 @@ my %servicenames = ('SMB Daemon' => 'smbd','NetBIOS Nameserver' => 'nmbd');
 
 $sambasettings{'WORKGRP'} = 'homeip.net';
 $sambasettings{'NETBIOSNAME'} = 'IPFire';
-$sambasettings{'SRVSTRING'} = 'Samba running on IPFire 2.9';
+$sambasettings{'SRVSTRING'} = 'Samba running on IPFire 2.x';
 $sambasettings{'INTERFACES'} = '';
 $sambasettings{'SECURITY'} = 'share';
 $sambasettings{'OSLEVEL'} = '33';
