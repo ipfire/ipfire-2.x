@@ -1,0 +1,31 @@
+diff -Naur traceroute-2.0.18.org/traceroute/traceroute.c traceroute-2.0.18/traceroute/traceroute.c
+--- traceroute-2.0.18.org/traceroute/traceroute.c	2011-08-18 17:19:48.000000000 +0200
++++ traceroute-2.0.18/traceroute/traceroute.c	2012-05-06 12:42:55.000000000 +0200
+@@ -31,6 +31,9 @@
+ #include "version.h"
+ #include "traceroute.h"
+ 
++#ifndef IPV6_TCLASS
++#define IPV6_TCLASS 67
++#endif
+ 
+ #ifndef ICMP6_DST_UNREACH_BEYONDSCOPE
+ #ifdef ICMP6_DST_UNREACH_NOTNEIGHBOR
+@@ -186,7 +189,7 @@
+ 
+ 	memset (&hints, 0, sizeof (hints));
+ 	hints.ai_family = af;
+-	hints.ai_flags = AI_IDN;
++	/* hints.ai_flags = AI_IDN; */
+ 
+ 	ret = getaddrinfo (name, NULL, &hints, &res);
+ 	if (ret) {
+@@ -688,7 +691,7 @@
+ 
+ 	    buf[0] = '\0';
+ 	    getnameinfo (&res->sa, sizeof (*res), buf, sizeof (buf),
+-							    0, 0, NI_IDN);
++							    0, 0, 0);
+ 	    printf (" %s (%s)", buf[0] ? buf : str, str);
+ 	}
+ 
