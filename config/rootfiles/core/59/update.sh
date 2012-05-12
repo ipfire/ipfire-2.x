@@ -34,12 +34,15 @@ done
 
 #
 #Stop services
+/etc/init.d/ipsec stop
+/etc/init.d/sshd stop
 
 #
 #Extract files
 
 #
 #Start services
+/etc/init.d/sshd start
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
