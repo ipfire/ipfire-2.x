@@ -33,6 +33,9 @@ usr/lib/ipsec/plugins/libstrongswan-aes.so
 #usr/lib/ipsec/plugins/libstrongswan-attr.a
 #usr/lib/ipsec/plugins/libstrongswan-attr.la
 usr/lib/ipsec/plugins/libstrongswan-attr.so
+#usr/lib/ipsec/plugins/libstrongswan-cmac.a
+#usr/lib/ipsec/plugins/libstrongswan-cmac.la
+usr/lib/ipsec/plugins/libstrongswan-cmac.so
 #usr/lib/ipsec/plugins/libstrongswan-constraints.a
 #usr/lib/ipsec/plugins/libstrongswan-constraints.la
 usr/lib/ipsec/plugins/libstrongswan-constraints.so
