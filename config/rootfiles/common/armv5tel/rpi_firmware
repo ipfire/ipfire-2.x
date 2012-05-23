@@ -1,0 +1,6 @@
+boot/bootcode.bin
+boot/cmdline.txt
+#boot/first32k.bin
+boot/loader.bin
+boot/start.elf
+#boot/LICENCE.broadcom

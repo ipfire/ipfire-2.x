@@ -1,0 +1,4 @@
+boot/kernel.img
+boot/System.map-2.6.41.10-ipfire-rpi
+boot/config-2.6.41.10-ipfire-rpi
+lib/modules/2.6.41.10-ipfire-rpi

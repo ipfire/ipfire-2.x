@@ -384,6 +384,7 @@ buildipfire() {
   ipfiremake xz
   ipfiremake linux-firmware
   ipfiremake zd1211-firmware
+  ipfiremake rpi-firmware
   ipfiremake fw_ath9k_htc
   ipfiremake u-boot
 
@@ -437,6 +438,8 @@ buildipfire() {
     ipfiremake igb			KCFG=""
   else
     # arm-omap kernel build
+    ipfiremake linux-rpi		KCFG="-rpi"
+
     ipfiremake linux3			KCFG="-omap"
 
     # arm-versatile kernel build

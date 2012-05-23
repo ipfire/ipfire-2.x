@@ -185,6 +185,8 @@ ifneq "$(MACHINE_TYPE)" "arm"
 	sed -i -e "s|#serial|serial|g" $(MNThdd)/boot/grub/grub.conf
 	sed -i -e "s|#terminal|terminal|g" $(MNThdd)/boot/grub/grub.conf
 	sed -i -e "s| panic=10 | console=ttyS0,115200n8 panic=10 |g" $(MNThdd)/boot/grub/grub.conf
+else
+	sed -i -e "s| console=tty1 | console=ttyAMA0,115200n8 |g" $(MNThdd)/boot/cmdline.txt
 endif
 
 	sed -i -e "s|1:2345:respawn:|#1:2345:respawn:|g" $(MNThdd)/etc/inittab
