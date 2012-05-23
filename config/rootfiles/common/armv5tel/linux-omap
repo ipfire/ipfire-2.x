@@ -1,5 +1,5 @@
 boot/uInit-ipfire-omap
 boot/uImage-ipfire-omap
-boot/System.map-2.6.40.30-ipfire-omap
-boot/config-2.6.40.30-ipfire-omap
-lib/modules/2.6.40.30-ipfire-omap
+boot/System.map-2.6.40.32-ipfire-omap
+boot/config-2.6.40.32-ipfire-omap
+lib/modules/2.6.40.32-ipfire-omap
