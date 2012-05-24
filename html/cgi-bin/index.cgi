@@ -421,7 +421,7 @@ if ($confighash{$dkey}[3] eq 'net') {
           $display = "<font color=$Header::colourred>$tustate[1]</font>"; }
  
 	print <<END;
-	<tr><td align='center' bgcolor='$Header::colourvpn' width='25%'><a href="/cgi-bin/ovpnmain.cgi"><font size='2' color='white'><b>OpenVPN n2n</b></font></a><br>
+	<tr><td align='center' bgcolor='$Header::colourovpn' width='25%'><a href="/cgi-bin/ovpnmain.cgi"><font size='2' color='white'><b>OpenVPN n2n</b></font></a><br>
   <td width='30%' align='center'> $confighash{$dkey}[10]<td width='45%' align='center'> $display 
 
 END
