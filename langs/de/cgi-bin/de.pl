@@ -1368,7 +1368,7 @@
 'ovpnstatus log' => 'OVPN-Status-Log',
 'ovpnsys log' => 'OVPN-System-Log',
 'ovpn routes push options' => 'Route push Optionen',
-'ovpn routes push' => 'Routen',
+'ovpn routes push' => 'Routen (eine pro Zeile)',
 'ovpn errmsg invalid ip or mask' => 'Ungültige Netzwerk-Adresse oder Subnetzmaske',
 'ovpn errmsg green already pushed' => 'Route für grünes Netzwerk wird immer gesetzt',
 'package failed to install' => 'Programmpaket konnte nicht installiert werden.',
