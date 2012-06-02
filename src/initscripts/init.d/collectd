@@ -86,9 +86,14 @@ case "$1" in
 			sed -i -e "s|^#LoadPlugin swap|LoadPlugin swap|g" /etc/collectd.conf
 		fi
 
-		boot_mesg "Starting Collection daemon..."
-		/usr/sbin/collectd -C /etc/collectd.conf
-		evaluate_retval
+		if [ $(date +%Y) -gt 2011 ]; then
+			boot_mesg "Starting Collection daemon..."
+			/usr/sbin/collectd -C /etc/collectd.conf
+			evaluate_retval
+		else
+			boot_mesg "collectd: cannot start with incorrect time ($(date))."
+			echo_warning;
+		fi
 		;;
 	stop)
 		boot_mesg "Stopping Collection daemon..."
