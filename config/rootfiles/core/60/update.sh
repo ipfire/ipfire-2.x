@@ -26,7 +26,7 @@
 
 #
 # Remove old core updates from pakfire cache to save space...
-core=59
+core=60
 for (( i=1; i<=$core; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
@@ -35,22 +35,19 @@ done
 #
 #Stop services
 /etc/init.d/ipsec stop
-/etc/init.d/sshd stop
 
 #
 #Extract files
 extract_files
-
 #
 #Start services
-/etc/init.d/sshd start
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
 
 #
 #Update Language cache
-perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 #Rebuild module dep's
 #arch=`uname -m`

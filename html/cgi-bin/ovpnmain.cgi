@@ -573,6 +573,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 	&write_routepushfile;
 	undef $vpnsettings{'ROUTES_PUSH'};
     }
+	else {
+	undef $vpnsettings{'ROUTES_PUSH'};
+	&write_routepushfile;
+    }
     if ((length($cgiparams{'MAX_CLIENTS'}) == 0) || (($cgiparams{'MAX_CLIENTS'}) < 1 ) || (($cgiparams{'MAX_CLIENTS'}) > 255 )) {
         $errormessage = $Lang::tr{'invalid input for max clients'};
         goto ADV_ERROR;
