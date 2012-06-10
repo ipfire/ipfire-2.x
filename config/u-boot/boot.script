@@ -1,4 +1,4 @@
 fatload mmc 0:1 0x80000000 uImage-ipfire-omap
 fatload mmc 0:1 0x81600000 uInit-ipfire-omap
-setenv bootargs vram=32M console=ttyO2,115200n8 rootwait smsc95xx.macaddr=$usbethaddr root=/dev/mmcblk0p3 rw
+setenv bootargs vram=32M console=tty1 omapfb.mode=dvi:800x600MR-16@60 rootwait smsc95xx.macaddr=$usbethaddr root=/dev/mmcblk0p3 rw
 bootm 0x80000000 0x81600000

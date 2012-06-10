@@ -2,11 +2,11 @@
 ########################################################################
 # Begin $rc_base/init.d/partresize
 #
-# Description : Resize the /var partition to the drivesize
+# Description : Resize the root partition to the drivesize
 #
 # Authors     : Arne Fitzenreiter - arne_f@ipfire.org
 #
-# Version     : 1.00
+# Version     : 1.01
 #
 # Notes       :
 #
@@ -30,8 +30,8 @@ case "${1}" in
 			DRV=${ROOT::`expr length $ROOT`-1}
 		fi
 
-		boot_mesg "Change Partition 4 to all free space ..."
-		echo -e 'd\n4\nn\np\n4\n\n\nw\nq\n' | fdisk ${DRV}
+		boot_mesg "Change Partition $(DRV)3 to all free space ..."
+		echo -e 'd\n3\nn\np\n3\n\n\nw\nq\n' | fdisk ${DRV}
 
 		# Erase symlink, it should run only once
 		rm -f /etc/rc.d/rcsysinit.d/S25partresize
