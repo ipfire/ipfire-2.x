@@ -438,7 +438,7 @@ buildipfire() {
     ipfiremake igb			KCFG=""
   else
     # arm-omap kernel build
-    ipfiremake linux-rpi		KCFG="-rpi"
+    ipfiremake linux3			KCFG="-rpi"
 
     ipfiremake linux3			KCFG="-omap"
 
