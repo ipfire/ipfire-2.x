@@ -41,6 +41,7 @@ extract_files
 
 #
 #Start services
+/etc/init.d/squid restart &>/dev/null
 
 #
 #Update Language cache
