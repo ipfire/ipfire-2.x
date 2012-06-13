@@ -24,11 +24,7 @@
 
 include Config
 
-ifeq "$(MACHINE_TYPE)" "arm"
-	VER = 2.5
-else
-	VER = 2.3.6
-endif
+VER = 2.5
 
 THISAPP    = glibc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -73,13 +69,8 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 glibc-libidn-$(VER).tar.bz2 = $(DL_FROM)/glibc-libidn-$(VER).tar.bz2
 
-ifeq "$(MACHINE_TYPE)" "arm"
-	$(DL_FILE)_MD5 = 1fb29764a6a650a4d5b409dda227ac9f
-	glibc-libidn-$(VER).tar.bz2_MD5 = 8787868ba8962d9b125997ec2f25ac01
-else
-	$(DL_FILE)_MD5 = bfdce99f82d6dbcb64b7f11c05d6bc96
-	glibc-libidn-$(VER).tar.bz2_MD5 = 49dbe06ce830fc73874d6b38bdc5b4db
-endif
+$(DL_FILE)_MD5 = 1fb29764a6a650a4d5b409dda227ac9f
+glibc-libidn-$(VER).tar.bz2_MD5 = 8787868ba8962d9b125997ec2f25ac01
 
 # ARM needs glibc-ports
 ifeq "$(MACHINE_TYPE)" "arm"
@@ -125,15 +116,9 @@ ifeq "$(MACHINE_TYPE)" "arm"
 
 	# asm/page.h should not be included in sysdeps/unix/sysv/linux/arm/ioperm.c.
 	cd $(DIR_APP) && sed "/asm\/page.h/d" -i ports/sysdeps/unix/sysv/linux/arm/ioperm.c
-else
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-dont_use_origin_on_privil_exec.patch
 endif
 
 ifeq "$(ROOT)" ""
-ifeq "$(MACHINE)" "i586"
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-linux_types-1.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-inotify-1.patch
-endif
 	# This locale causes a loop on bash login - exclude it
 	cd $(DIR_APP) && sed -i '/vi_VN.TCVN/d' localedata/SUPPORTED
 ifeq "$(MACHINE_TYPE)" "arm"
@@ -150,9 +135,6 @@ ifeq "$(ROOT)" ""
 	touch /etc/ld.so.conf
 	cd $(DIR_SRC)/glibc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) install
-ifeq "$(MACHINE)" "i586"
-	cp -v $(DIR_APP)/sysdeps/unix/sysv/linux/inotify.h /usr/include/sys
-endif
 else
 	-mkdir /tools/etc
 	touch /tools/etc/ld.so.conf
