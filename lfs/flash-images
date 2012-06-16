@@ -50,7 +50,7 @@ MNThdd   := /install/harddisk
 IMGpart  := /install/images/part_area
 IMGboot  := /install/images/bootfs
 # don't change SIZEboot this without checking Image size
-SIZEboot := 50
+SIZEboot := 64
 IMGroot  := /install/images/rootfs
 SIZEroot := 600
 
@@ -61,7 +61,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	dd bs=1k if=/dev/zero of=$(IMGpart) count=16
 
 	# Create images for filesystems
-	dd bs=1K if=/dev/zero of=$(IMGboot) count=51184  # 50MB-16K
+	dd bs=1K if=/dev/zero of=$(IMGboot) count=65520  # 64MB-16K
 	dd bs=1M if=/dev/zero of=$(IMGroot) count=$(SIZEroot)
 
 	# Format them
