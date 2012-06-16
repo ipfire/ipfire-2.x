@@ -24,17 +24,17 @@
 
 include Config
 
-PATCHLEVEL = .19
+PATCHLEVEL = .20
 
-VER           = 2.6.42.19
+VER           = 2.6.42.20
 
-XVERS         = 3.2.19
+XVERS         = 3.2.20
 XVERSION      = 2
 XPATCHLEVEL   = 6
 XSUBLEVEL     = 42
-XEXTRAVERSION = .19
+XEXTRAVERSION = .20
 
-RPI_PATCHES = linux-3.2-bootc-5b84c25
+RPI_PATCHES = linux-3.2-bootc-6ab6087
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(XVERS).tar.bz2
@@ -83,9 +83,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
-$(DL_FILE)_MD5				= 64c732cb425eb8787b841d11309bb335
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 0b2fac563b093465f5c6b3d571e57399
-
+$(DL_FILE)_MD5				= bd0063a747c3ea0ecdcc85a512d9760a
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= fd87188cbd0b168a2b335db3d661ece9
 
 install : $(TARGET)
 
@@ -174,6 +173,7 @@ ifeq "$(KCFG)" "-rpi"
 	cd $(DIR_APP) && xzcat $(DIR_DL)/rpi-patches-$(RPI_PATCHES).patch.xz | patch -Np1
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-bcm2835-alsamixer.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-bcm2835-limit_volume.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-bcm2708-sdhci_patches.patch
 endif
 
 ifeq "$(HEADERS)" "1"
