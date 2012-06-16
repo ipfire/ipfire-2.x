@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.99.4.0
+VER        = 0.99.10.0
 
 THISAPP    = Linux-PAM-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 267ea71253615342261f9fc486d06647
+$(DL_FILE)_MD5 = be4dd1d34ac5933408e13e48f3eb710a
 
 install : $(TARGET)
 
@@ -70,7 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pam-0.99.3.0-hostname.patch
 	cd $(DIR_APP) && ./configure --libdir=/usr/lib \
 		            --sbindir=/lib/security \
 		            --enable-securedir=/lib/security \
@@ -81,9 +80,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod -v 4755 /lib/security/unix_chkpwd
 	mv -v /lib/security/pam_tally /sbin
 	mv -v /usr/lib/libpam*.so.0* /lib
-	ln -v -sf ../../lib/libpam.so.0.81.3 /usr/lib/libpam.so
+	ln -v -sf ../../lib/libpam.so.0.81.10 /usr/lib/libpam.so
 	ln -v -sf ../../lib/libpamc.so.0.81.0 /usr/lib/libpamc.so
-	ln -v -sf ../../lib/libpam_misc.so.0.81.2 /usr/lib/libpam_misc.so
+	ln -v -sf ../../lib/libpam_misc.so.0.81.3 /usr/lib/libpam_misc.so
 	-mkdir -p /etc/pam.d
 	cp $(DIR_SRC)/config/pam/* /etc/pam.d
 	chown root.root -R /etc/pam.d
