@@ -30,7 +30,7 @@ case "${1}" in
 			DRV=${ROOT::`expr length $ROOT`-1}
 		fi
 
-		boot_mesg "Change Partition $(DRV)3 to all free space ..."
+		boot_mesg "Change Partition ${DRV}3 to all free space ..."
 		echo -e 'd\n3\nn\np\n3\n\n\nw\nq\n' | fdisk ${DRV}
 
 		# Erase symlink, it should run only once
