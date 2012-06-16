@@ -4,11 +4,7 @@
 #usr/info/flex.info
 #usr/info/flex.info-1
 #usr/info/flex.info-2
-#usr/info/flex.info-3
-#usr/info/flex.info-4
-#usr/info/flex.info-5
-#usr/info/flex.info-6
-#usr/info/flex.info-7
 #usr/lib/libfl.a
+#usr/lib/libfl_pic.a
 #usr/lib/libl.a
 #usr/man/man1/flex.1
