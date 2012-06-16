@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = ipf1
+VER        = ipf2
 
 THISAPP    = raspberrypi-firmware_$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -39,7 +39,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ffae4e109de698987795f1d5cb952ed6
+$(DL_FILE)_MD5 = e79be217f9d6c0a882a21b7c8614e804
 
 install : $(TARGET)
 
