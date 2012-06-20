@@ -84,6 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/plugin/down-root && make
 	cp -pvf $(DIR_APP)/plugin/down-root/openvpn-down-root.so /usr/lib/openvpn
 	-mkdir -vp /var/ipfire/ovpn/ca
+	-mkdir -vp /var/ipfire/ovpn/ccd
 	-mkdir -vp /var/ipfire/ovpn/crls
 	-mkdir -vp /var/ipfire/ovpn/n2nconf
 	-mkdir -vp /var/ipfire/ovpn/scripts

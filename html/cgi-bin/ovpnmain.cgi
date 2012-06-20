@@ -334,6 +334,7 @@ sub writeserverconf {
     print CONF "port $sovpnsettings{'DDEST_PORT'}\n";
     print CONF "script-security 3 system\n";
     print CONF "ifconfig-pool-persist /var/ipfire/ovpn/ovpn-leases.db 3600\n";
+    print CONF "client-config-dir /var/ipfire/ovpn/ccd\n";
     print CONF "tls-server\n";
     print CONF "ca /var/ipfire/ovpn/ca/cacert.pem\n";
     print CONF "cert /var/ipfire/ovpn/certs/servercert.pem\n";
