@@ -3873,7 +3873,7 @@ END
 	;
         my $id = 0;
         my $gif;
-        foreach my $key (keys %confighash) {
+	 foreach my $key (sort { uc($confighash{$a}[1]) cmp uc($confighash{$b}[1]) } keys %confighash) {
     	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 
 	if ($id % 2) {
