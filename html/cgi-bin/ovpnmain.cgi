@@ -2910,7 +2910,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 
 	    # Sign the certificate request and move it
 	    # Sign the host certificate request
-	    system('/usr/bin/openssl', 'ca', '-days', '999999',
+	    system('/usr/bin/openssl', 'ca', '-days', "$cgiparams{'DAYS_VALID'}",
 		'-batch', '-notext',
 		'-in', $filename,
 		'-out', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem",
@@ -3089,7 +3089,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 	
 	    # Sign the host certificate request
-	    system('/usr/bin/openssl', 'ca', '-days', '999999',
+	    system('/usr/bin/openssl', 'ca', '-days', "$cgiparams{'DAYS_VALID'}",
 		'-batch', '-notext',
 		'-in',  "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}req.pem",
 		'-out', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem",
