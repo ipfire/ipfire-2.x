@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -115,7 +115,7 @@ while($line = <>) {
 exit 0;
 
 sub writetolog {
-	open(DATEI, ">>/var/log/squid/redirector_debug") || die "Unable to acces file /var/log/redirector_debug";
+	open(DATEI, ">>/var/log/squid/redirector_debug") || die "Unable to acces file /var/log/squid/redirector_debug";
 	my $log = shift;
 	print DATEI $log."\n";
 	close(DATEI);
