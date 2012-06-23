@@ -105,7 +105,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --enable-ipf-transparent \
 	   --enable-kill-parent-hack \
 	   --disable-wccpv2 \
-	   --disable-icap-client \
+	   --enable-icap-client \
 	   --disable-esi
 
 	cd $(DIR_APP) && make $(MAKETUNING)

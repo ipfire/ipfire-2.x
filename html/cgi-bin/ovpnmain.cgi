@@ -334,6 +334,7 @@ sub writeserverconf {
     print CONF "port $sovpnsettings{'DDEST_PORT'}\n";
     print CONF "script-security 3 system\n";
     print CONF "ifconfig-pool-persist /var/ipfire/ovpn/ovpn-leases.db 3600\n";
+    print CONF "client-config-dir /var/ipfire/ovpn/ccd\n";
     print CONF "tls-server\n";
     print CONF "ca /var/ipfire/ovpn/ca/cacert.pem\n";
     print CONF "cert /var/ipfire/ovpn/certs/servercert.pem\n";
@@ -358,7 +359,7 @@ sub writeserverconf {
     if ($sovpnsettings{MSSFIX} eq 'on') {
 	print CONF "mssfix\n";
     }
-    if ($sovpnsettings{FRAGMENT} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') {
+    if (($sovpnsettings{FRAGMENT} ne '' && $sovpnsettings{FRAGMENT} ne 0) && $sovpnsettings{'DPROTOCOL'} ne 'tcp') {
 	print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";
     }
     if ($sovpnsettings{KEEPALIVE_1} > 0 && $sovpnsettings{KEEPALIVE_2} > 0) {	
@@ -2910,7 +2911,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 
 	    # Sign the certificate request and move it
 	    # Sign the host certificate request
-	    system('/usr/bin/openssl', 'ca', '-days', '999999',
+	    system('/usr/bin/openssl', 'ca', '-days', "$cgiparams{'DAYS_VALID'}",
 		'-batch', '-notext',
 		'-in', $filename,
 		'-out', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem",
@@ -3089,7 +3090,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 	
 	    # Sign the host certificate request
-	    system('/usr/bin/openssl', 'ca', '-days', '999999',
+	    system('/usr/bin/openssl', 'ca', '-days', "$cgiparams{'DAYS_VALID'}",
 		'-batch', '-notext',
 		'-in',  "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}req.pem",
 		'-out', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem",
@@ -3873,7 +3874,7 @@ END
 	;
         my $id = 0;
         my $gif;
-        foreach my $key (keys %confighash) {
+	 foreach my $key (sort { uc($confighash{$a}[1]) cmp uc($confighash{$b}[1]) } keys %confighash) {
     	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 
 	if ($id % 2) {

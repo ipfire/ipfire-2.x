@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.4.42
+VER        = 1.8.13.0
 
 THISAPP    = asterisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 6
+PAK_VER    = 7
 
-CHAN_CAPI  = chan_capi-1.1.4
+CHAN_CAPI  = chan_capi-20120614
 
 DEPS       = "libpri libtiff libvorbis libogg spandsp netsnmpd"
 
@@ -47,24 +47,21 @@ objects = $(DL_FILE) \
 	asterisk-core-sounds-en-gsm-1.4.22.tar.gz \
 	asterisk-extra-sounds-en-gsm-1.4.11.tar.gz \
 	asterisk-moh-opsound-gsm-2.03.tar.gz \
-	asterisk-addons-1.4.13.tar.gz \
-	$(CHAN_CAPI).tar.gz
+	$(CHAN_CAPI).tgz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 asterisk-core-sounds-en-gsm-1.4.22.tar.gz = $(URL_IPFIRE)/asterisk-core-sounds-en-gsm-1.4.22.tar.gz
 asterisk-extra-sounds-en-gsm-1.4.11.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-gsm-1.4.11.tar.gz
 asterisk-moh-opsound-gsm-2.03.tar.gz = $(URL_IPFIRE)/asterisk-moh-opsound-gsm-2.03.tar.gz
 asterisk-1.4-de-prompts.tar.gz = $(URL_IPFIRE)/asterisk-1.4-de-prompts.tar.gz
-asterisk-addons-1.4.13.tar.gz = $(URL_IPFIRE)/asterisk-addons-1.4.13.tar.gz
-$(CHAN_CAPI).tar.gz = $(URL_IPFIRE)/$(CHAN_CAPI).tar.gz
+$(CHAN_CAPI).tgz = $(URL_IPFIRE)/$(CHAN_CAPI).tgz
 
-$(DL_FILE)_MD5 = 332f2f67e0eefe84b1e55320eab45166
+$(DL_FILE)_MD5 = e7f2cb19068c1211c907062f9e96c47a
 asterisk-core-sounds-en-gsm-1.4.22.tar.gz_MD5 = 2a99a45c0675135255bc65796b12f7c6
 asterisk-extra-sounds-en-gsm-1.4.11.tar.gz_MD5 = 5479cb4cb81d678304d96f35e4933a11
 asterisk-moh-opsound-gsm-2.03.tar.gz_MD5 = 09066f55f1358f298bc1a6e4678a3ddf
 asterisk-1.4-de-prompts.tar.gz_MD5 = 626a2b95071a5505851e43874dfbfd5c
-asterisk-addons-1.4.13.tar.gz_MD5 = e59471b6f25901a82e45b9e5e0c73703
-$(CHAN_CAPI).tar.gz_MD5 = 18fa835e724b7814deafbfa5b8cb01eb
+$(CHAN_CAPI).tgz_MD5 = c190f44eb362bf258b27f92c3458e4bf
 
 install : $(TARGET)
 
@@ -122,16 +119,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make samples
 
-	# extract and configure asterisk-addons
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/asterisk-addons-1.4.13.tar.gz
-	cd $(DIR_SRC)/asterisk-addons-* && ./configure --prefix=/usr --sysconfdir=/var/ipfire
-	# enable additional features (--> NOT NEEDED, DEFAULT CONFIG INCLUDES ALL)
-	#cd $(DIR_SRC)/asterisk-addons-* && cp -f $(DIR_SRC)/config/asterisk/addons.makeopts menuselect.makeopts
-	# make and install asterisk-addons
-	cd $(DIR_SRC)/asterisk-addons-* && make $(MAKETUNING) all
-	cd $(DIR_SRC)/asterisk-addons-* && make install
-	cd $(DIR_SRC)/asterisk-addons-* && make samples
-
 	# add german sounds and remove README.txt
 	tar xfz $(DIR_DL)/asterisk-1.4-de-prompts.tar.gz -C /var/lib/asterisk/sounds/
 	-rm -f /var/lib/asterisk/sounds/README.txt
@@ -147,10 +134,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -f -s /var/ipfire/asterisk/wakeup/wakeup.sh /etc/fcron.minutely/wakeup.sh
 
 	# build and install chan capi (needed for isdn)
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(CHAN_CAPI).tar.gz
-	cd $(DIR_SRC)/$(CHAN_CAPI) && make $(MAKETUNING)
-	cd $(DIR_SRC)/$(CHAN_CAPI) && make install
-	@rm -rf $(DIR_SRC)/$(CHAN_CAPI)
+	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(CHAN_CAPI).tgz
+	cd $(DIR_SRC)/chan-capi-HEAD && sed -i -e 's/^CFLAGS+=-Wno-unused-but-set-variable$$//' Makefile
+	cd $(DIR_SRC)/chan-capi-HEAD && make $(MAKETUNING)
+	cd $(DIR_SRC)/chan-capi-HEAD && make install
+	@rm -rf $(DIR_SRC)/chan-capi-HEAD
 
 	# be sure all source is removed
 	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-*

@@ -86,7 +86,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_SRC)/foomatic-* && cd $(DIR_SRC) && \
+	@rm -rf $(DIR_SRC)/foomatic-* /usr/share/foomatic && cd $(DIR_SRC) && \
 		tar zxf $(DIR_DL)/$(DL_FILE) && \
 		tar zxf $(DIR_DL)/foomatic-db-$(DATE).tar.gz && \
 		tar zxf $(DIR_DL)/foomatic-db-engine-$(VER).tar.gz && \
