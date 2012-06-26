@@ -72,6 +72,10 @@ else
 endif
 	mkfs.ext4 -O ^has_journal,extent -F $(IMGroot)
 
+	# Most systems that use Flashimages has no RTC at boot
+	# so the interval check should disables
+	tune2fs -i0 $(IMGroot)
+
 	# Mount Images
 	mount -o loop $(IMGroot) $(MNThdd)
 	mkdir $(MNThdd)/boot
