@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 2.6.42.19-ipfire-omap Kernel Configuration
+# Linux/arm 3.2.21 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_HAVE_PWM=y
