@@ -13,8 +13,8 @@ etc/hddtemp.db
 etc/host.conf
 etc/inittab
 etc/inputrc
-#etc/ipsec.user.conf
-#etc/ipsec.user.secrets
+etc/ipsec.user.conf
+etc/ipsec.user.secrets
 etc/issue
 etc/ld.so.conf
 etc/localtime
