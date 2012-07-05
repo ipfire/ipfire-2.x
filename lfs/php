@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.3.13
+VER        = 5.3.14
 
 THISAPP    = php-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -42,7 +42,7 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 idn-0.1.tgz = $(DL_FROM)/idn-0.1.tgz
 Log-1.9.11.tgz = $(DL_FROM)/Log-1.9.11.tgz
 
-$(DL_FILE)_MD5 = 370be99c5cdc2e756c82c44d774933c8
+$(DL_FILE)_MD5 = 7caac4f71e2f21426c11ac153e538392
 idn-0.1.tgz_MD5 = ef8635ec22348325a76abd2abddca4a1
 Log-1.9.11.tgz_MD5 = fb7c648b212f12fdb5ce1ab687793513
 
