@@ -24,7 +24,7 @@
 
 include Config
 
-VER           = 3.2.21
+VER           = 3.2.22
 
 RPI_PATCHES = linux-3.2-bootc-a1f8d7a
 
@@ -75,7 +75,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
-$(DL_FILE)_MD5				= c8a4ae25eb44f9122f386068e30e7e2e
+$(DL_FILE)_MD5				= c1d28d8e27e1011687c52db17617cb8e
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= c3891a7f38609783358e765d784e5e6e
 
 install : $(TARGET)
