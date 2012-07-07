@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -488,6 +488,14 @@ foreach my $file (@files) {
 		$warnmessage .= "<li> $Lang::tr{'smartwarn1'} /dev/$disk $Lang::tr{'smartwarn2'} !</li>\n\n";
 	}
 }
+
+# Reiser4 warning
+my @files = `mount | grep " reiser4 (" 2>/dev/null`;
+foreach my $disk (@files) {
+	chomp ($disk);
+	$warnmessage .= "<li>$disk - $Lang::tr{'deprecated fs warn'}</li>\n\n";
+}
+
 
 if ($warnmessage) {
 	print "<tr><td align='center' bgcolor=$Header::colourred colspan='3'><font color='white'>$warnmessage</font></table>";
