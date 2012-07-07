@@ -602,6 +602,7 @@
 'delete share' => 'Delete share',
 'delete user' => 'Delete user',
 'demon login script' => 'Demon login script',
+'deprecated fs warn' => 'Deprecated filesystem! Newer kernel drop the support. Backup and reformat!',
 'description' => 'Description',
 'dest ip and port' => 'Dest. IP: Port',
 'destination' => 'Destination',

@@ -581,6 +581,7 @@
 'delete share' => 'Freigabe löschen',
 'delete user' => 'Benutzer löschen',
 'demon login script' => 'Demon-Anmeldeskript',
+'deprecated fs warn' => 'Veraltetes Dateisystem! Keine Unterstützung in neueren Kernelversionen. Sichern und Umformatieren!',
 'description' => 'Beschreibung',
 'dest ip and port' => 'Ziel-IP:Port',
 'destination' => 'Ziel',
