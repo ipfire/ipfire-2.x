@@ -3,6 +3,7 @@ etc/issue
 etc/rc.d/init.d/collectd
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
 var/ipfire/general-functions.pl
 var/ipfire/langs
 usr/sbin/redirect_wrapper
