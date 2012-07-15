@@ -36,6 +36,10 @@ done
 #Stop services
 
 #
+#Remove old usb_modeswitch_data
+rm -rf /usr/share/usb_modeswitch
+
+#
 #Extract files
 extract_files
 
