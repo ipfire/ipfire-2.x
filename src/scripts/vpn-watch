@@ -7,6 +7,11 @@
 #                                                #
 ##################################################
 
+# XXX The vpn-watch daemon is disabled, because
+# apparently, it is not needed anymore after
+# strongswan has abandoned pluto.
+exit(0);
+
 use strict;
 
 require '/var/ipfire/general-functions.pl';
