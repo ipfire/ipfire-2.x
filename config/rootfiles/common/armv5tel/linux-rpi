@@ -1,4 +1,4 @@
 boot/kernel.img
-boot/System.map-3.2.22-ipfire-rpi
-boot/config-3.2.22-ipfire-rpi
-lib/modules/3.2.22-ipfire-rpi
+boot/System.map-3.2.23-ipfire-rpi
+boot/config-3.2.23-ipfire-rpi
+lib/modules/3.2.23-ipfire-rpi
