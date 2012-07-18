@@ -7,4 +7,5 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 var/ipfire/general-functions.pl
 var/ipfire/langs
+usr/local/bin/getconntracktable
 usr/sbin/redirect_wrapper
