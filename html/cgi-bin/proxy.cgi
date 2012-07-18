@@ -3930,6 +3930,11 @@ END
 		print FILE "url_rewrite_program /usr/sbin/redirect_wrapper\n";
 		print FILE "url_rewrite_children $proxysettings{'CHILDREN'}\n\n";
 	}
+
+	# Include file with user defined settings.
+	if (-e "/etc/squid/squid.conf.local") {
+		print FILE "include /etc/squid/squid.conf.local\n";
+	}
 	close FILE;
 }
 
