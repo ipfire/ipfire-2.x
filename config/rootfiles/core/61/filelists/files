@@ -3,6 +3,7 @@ etc/issue
 etc/rc.d/init.d/collectd
 opt/pakfire/lib/functions.sh
 srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 var/ipfire/general-functions.pl
