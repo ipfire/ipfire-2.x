@@ -173,7 +173,7 @@ if (-e "${General::swroot}/ovpn/settings") {
 	}
 }
 
-open(IPSEC, "/var/ipfire/vpn/config");
+open(IPSEC, "${General::swroot}/var/ipfire/vpn/config");
 my @ipsec = <IPSEC>;
 close(IPSEC);
 
@@ -188,6 +188,26 @@ foreach my $line (@ipsec) {
 	push(@network, $network);
 	push(@masklen, $mask);
 	push(@colour, ${Header::colourvpn});
+}
+
+if (-e "${General::swroot}/ovpn/n2nconf") {
+	open(OVPNN2N, "${General::swroot}/ovpn/ovpnconfig");
+	my @ovpnn2n = <OVPNN2N>;
+	close(OVPNN2N);
+
+	foreach my $line (@ovpnn2n) {
+		my @ovpn = split(',', $line);
+		next if ($ovpn[4] ne 'net');
+
+		my ($network, $mask) = split("/", $ovpn[12]);
+		if (!&General::validip($mask)) {
+			$mask = ipv4_cidr2msk($mask);
+		}
+
+		push(@network, $network);
+		push(@masklen, $mask);
+		push(@colour, ${Header::colourovpn});
+	}
 }
 
 # Show the page.
