@@ -1,3 +1,4 @@
 etc/system-release
 etc/issue
+usr/local/bin/ipsecctrl
 usr/local/bin/vpn-watch

@@ -78,7 +78,6 @@ void ipsec_norules() {
         safe_system("/sbin/iptables -F IPSECINPUT");
         safe_system("/sbin/iptables -F IPSECFORWARD");
         safe_system("/sbin/iptables -F IPSECOUTPUT");
-
 }
 
 /*
@@ -87,8 +86,7 @@ void ipsec_norules() {
 int decode_line (char *s, 
                 char **key,
                 char **name,
-                char **type,
-                char **interface
+                char **type
                 ) {
         int count = 0;
         *key = NULL;
@@ -108,8 +106,6 @@ int decode_line (char *s,
                         *name = result;
                 if (count == 4)
                         *type = result;
-                if (count == 27)
-                        *interface = result;
                 count++;
                 result = strsep(&s, ",");
         }
@@ -128,11 +124,6 @@ int decode_line (char *s,
                 return 0;
         }
 
-        if (! (strcmp(*interface, "RED") == 0 || strcmp(*interface, "GREEN") == 0 ||
-                strcmp(*interface, "ORANGE") == 0 || strcmp(*interface, "BLUE") == 0)) {
-                fprintf(stderr, "Bad interface name: %s\n", *interface);
-                return 0;
-        }
         //it's a valid & active line
         return 1;
 }
@@ -140,69 +131,48 @@ int decode_line (char *s,
 /*
     issue ipsec commmands to turn on connection 'name'
 */
-void turn_connection_on (char *name, char *type) {
-/*
-	Rename the connection and run ipsec update and rename it back to readd
-	a deleted connection. Because ipsec update ignores connection that have
-	not changed since last load.
-*/
+void turn_connection_on(char *name, char *type) {
+	/*
+	 * To bring up a connection, we need to reload the configuration
+	 * and issue ipsec up afterwards. To make sure the connection
+	 * is not established from the start, we bring it down in advance.
+	 */
         char command[STRING_SIZE];
-        memset(command, 0, STRING_SIZE);
+
+	// Bring down the connection (if established).
         snprintf(command, STRING_SIZE - 1, 
-                "sed -i -e 's|^conn %s$|conn %s-renamed|g' /var/ipfire/vpn/ipsec.conf >/dev/null", name, name);
+                "/usr/sbin/ipsec down %s >/dev/null", name);
         safe_system(command);
 
-	// Down and delete IKEv2 Tunnel before ipsec update
-        snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec stroke down %s >/dev/null", name);
-        safe_system(command);
-        snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec stroke delete %s >/dev/null", name);
-        safe_system(command);
+	// Reload the configuration into the daemon.
+	safe_system("/usr/sbin/ipsec reload >/dev/null 2>&1");
 
-        safe_system("/etc/rc.d/init.d/ipsec update >/dev/null");
-
-	sleep(1);
-
-	// Back to original name
-	snprintf(command, STRING_SIZE - 1, 
-                "sed -i -e 's|^conn %s-renamed$|conn %s|g' /var/ipfire/vpn/ipsec.conf >/dev/null", name, name);
-        safe_system(command);
-
-	// Down and delete IKEv2 Tunnel before ipsec update
-        snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec stroke down %s-renamed >/dev/null", name);
-        safe_system(command);
-        snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec stroke delete %s-renamed >/dev/null", name);
-        safe_system(command);
-
-        safe_system("/etc/rc.d/init.d/ipsec update >/dev/null");
+	// Bring the connection up again.
+	snprintf(command, STRING_SIZE - 1,
+		"/usr/sbin/ipsec up %s >/dev/null", name);
+	safe_system(command);
 }
+
 /*
     issue ipsec commmands to turn off connection 'name'
 */
 void turn_connection_off (char *name) {
+	/*
+	 * To turn off a connection, all SAs must be turned down.
+	 * After that, the configuration must be reloaded.
+	 */
         char command[STRING_SIZE];
-        memset(command, 0, STRING_SIZE);
+
+	// Bring down the connection.
         snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec whack --delete --name %s >/dev/null", name);
-        safe_system(command);
-        snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec stroke down %s >/dev/null", name);
-        safe_system(command);
-        snprintf(command, STRING_SIZE - 1, 
-                "/usr/sbin/ipsec stroke delete %s >/dev/null", name);
+                "/usr/sbin/ipsec down %s >/dev/null", name);
         safe_system(command);
 
-        safe_system("/usr/sbin/ipsec whack --rereadall >/dev/null");
-        safe_system("/usr/sbin/ipsec stroke rereadall >/dev/null");
-
+	// Reload, so the connection is dropped.
+        safe_system("/usr/sbin/ipsec reload >/dev/null 2>&1");
 }
 
-
 int main(int argc, char *argv[]) {
-
         char configtype[STRING_SIZE];
         char redtype[STRING_SIZE] = "";
         struct keyvalue *kv = NULL;
@@ -218,26 +188,15 @@ int main(int argc, char *argv[]) {
                 
 
         if (strcmp(argv[1], "I") == 0) {
-                safe_system("/usr/sbin/ipsec whack --status");
-                safe_system("/usr/sbin/ipsec stroke status");
+                safe_system("/usr/sbin/ipsec status");
                 exit(0);
         }
 
         if (strcmp(argv[1], "R") == 0) {
-                safe_system("/usr/sbin/ipsec whack --rereadall >/dev/null");
-                safe_system("/usr/sbin/ipsec stroke rereadall >/dev/null");
+                safe_system("/usr/sbin/ipsec reload >/dev/null 2>&1");
                 exit(0);
         }
 
- /* Get vpnwatch pid */
-
-
-	if ((argc == 2) && (file = fopen("/var/run/vpn-watch.pid", "r"))) {
-	    safe_system("kill -9 $(cat /var/run/vpn-watch.pid)");
-	    safe_system("unlink /var/run/vpn-watch.pid");
-	    close(file);
-	}
- 
         /* FIXME: workaround for pclose() issue - still no real idea why
          * this is happening */
         signal(SIGCHLD, SIG_DFL);
@@ -245,16 +204,10 @@ int main(int argc, char *argv[]) {
         /* handle operations that doesn't need start the ipsec system */
         if (argc == 2) {
                 if (strcmp(argv[1], "D") == 0) {
-                        /* Only shutdown pluto if it really is running */
-                        /* Get pluto pid */
-                        if (file = fopen("/var/run/pluto.pid", "r")) {
-                                safe_system("/etc/rc.d/init.d/ipsec stop 2> /dev/null >/dev/null");
-                                close(file);
-                        }
+                        safe_system("/usr/sbin/ipsec stop >/dev/null 2>&1");
                         ipsec_norules();
                         exit(0);
                 }
-
         }
 
         /* read vpn config */
@@ -300,97 +253,69 @@ int main(int argc, char *argv[]) {
         char if_blue[STRING_SIZE] = "";
         char s[STRING_SIZE];
 
-        if (!(file = fopen(CONFIG_ROOT "/vpn/config", "r"))) {
-                fprintf(stderr, "Couldn't open vpn settings file");
-                exit(1);
+        // when RED is up, find interface name in special file
+        FILE *ifacefile = NULL;
+        if ((ifacefile = fopen(CONFIG_ROOT "/red/iface", "r"))) {
+                if (fgets(if_red, STRING_SIZE, ifacefile)) {
+                        if (if_red[strlen(if_red) - 1] == '\n')
+                                if_red[strlen(if_red) - 1] = '\0';
+                }
+                fclose (ifacefile);
+
+                if (VALID_DEVICE(if_red))
+                        enable_red++;
         }
-        while (fgets(s, STRING_SIZE, file) != NULL) {
-                char *key;
-                char *name;
-                char *type;
-                char *interface;
-                if (!decode_line(s,&key,&name,&type,&interface))
-                    continue;
-                /* search interface */
-                if (!enable_red && strcmp (interface, "RED") == 0) {
-                        // when RED is up, find interface name in special file
-                        FILE *ifacefile = NULL;
-                        if ((ifacefile = fopen(CONFIG_ROOT "/red/iface", "r"))) {
-                            if (fgets(if_red, STRING_SIZE, ifacefile)) {
-                                if (if_red[strlen(if_red) - 1] == '\n')
-                                        if_red[strlen(if_red) - 1] = '\0';
-                            }
-                            fclose (ifacefile);
 
-                            if (VALID_DEVICE(if_red))
-                                enable_red+=2;                  // present and running
-                        }
-                }
+	// Check if GREEN is enabled.
+        findkey(kv, "GREEN_DEV", if_green);
+        if (VALID_DEVICE(if_green))
+                enable_green++;
+        else
+                fprintf(stderr, "IPSec enabled on green but green interface is invalid or not found\n");
 
-                if (!enable_green && strcmp (interface, "GREEN") == 0) {
-                        enable_green = 1;
-                        findkey(kv, "GREEN_DEV", if_green);
-                        if (VALID_DEVICE(if_green))
-                            enable_green++;
-                        else
-                            fprintf(stderr, "IPSec enabled on green but green interface is invalid or not found\n");
-                }
+	// Check if ORANGE is enabled.
+        findkey(kv, "ORANGE_DEV", if_orange);
+        if (VALID_DEVICE(if_orange))
+                enable_orange++;
+        else
+                fprintf(stderr, "IPSec enabled on orange but orange interface is invalid or not found\n");
 
-                if (!enable_orange && strcmp (interface, "ORANGE") == 0) {
-                        enable_orange = 1;
-                        findkey(kv, "ORANGE_DEV", if_orange);
-                        if (VALID_DEVICE(if_orange))
-                            enable_orange++;
-                        else
-                            fprintf(stderr, "IPSec enabled on orange but orange interface is invalid or not found\n");
-                }
+	// Check if BLUE is enabled.
+        findkey(kv, "BLUE_DEV", if_blue);
+        if (VALID_DEVICE(if_blue))
+                enable_blue++;
+        else
+                fprintf(stderr, "IPSec enabled on blue but blue interface is invalid or not found\n");
 
-                if (!enable_blue && strcmp (interface, "BLUE") == 0) {
-                        enable_blue++;
-                        findkey(kv, "BLUE_DEV", if_blue);
-                        if (VALID_DEVICE(if_blue))
-                            enable_blue++;
-                        else
-                            fprintf(stderr, "IPSec enabled on blue but blue interface is invalid or not found\n");
-
-                }
-        }
-        fclose(file);
         freekeyvalues(kv);
 
-        // do nothing if something is in error condition
-        if ((enable_red==1) || (enable_green==1) || (enable_orange==1) || (enable_blue==1) )
-            exit(1);
-
         // exit if nothing to do
-        if ( (enable_red+enable_green+enable_orange+enable_blue) == 0 )
+        if ((enable_red+enable_green+enable_orange+enable_blue) == 0)
             exit(0);
 
         // open needed ports
-        // todo: read a nat_t indicator to allow or not openning UDP/4500
-        if (enable_red==2)
+        if (enable_red > 0)
                 open_physical(if_red, 4500);
 
-        if (enable_green==2)
+        if (enable_green > 0)
                 open_physical(if_green, 4500);
 
-        if (enable_orange==2)
+        if (enable_orange > 0)
                 open_physical(if_orange, 4500);
 
-        if (enable_blue==2)
+        if (enable_blue > 0)
                 open_physical(if_blue, 4500);
 
         // start the system
         if ((argc == 2) && strcmp(argv[1], "S") == 0) {
-		safe_system("/etc/rc.d/init.d/ipsec restart >/dev/null");
-		safe_system("/usr/local/bin/vpn-watch &");
+		safe_system("/usr/sbin/ipsec restart >/dev/null");
                 exit(0);
         }
 
         // it is a selective start or stop
         // second param is only a number 'key'
         if ((argc == 2) || strspn(argv[2], NUMBERS) != strlen(argv[2])) {
-                fprintf(stderr, "Bad arg\n");
+                fprintf(stderr, "Bad arg: %s\n", argv[2]);
                 usage();
                 exit(1);
         }
@@ -404,26 +329,17 @@ int main(int argc, char *argv[]) {
                 char *key;
                 char *name;
                 char *type;
-                char *interface;
-                if (!decode_line(s,&key,&name,&type,&interface))
+                if (!decode_line(s,&key,&name,&type))
                         continue;
 
-                // start/stop a vpn if belonging to specified interface
-                if (strcmp(argv[1], interface) == 0 ) {
-                            if (strcmp(argv[2], "0")==0)
-                                turn_connection_off (name);
-                            else
-                                turn_connection_on (name, type);
-                        continue;
-                }
                 // is it the 'key' requested ?
                 if (strcmp(argv[2], key) != 0)
                         continue;
+
                 // Start or Delete this Connection
                 if (strcmp(argv[1], "S") == 0)
                         turn_connection_on (name, type);
-                else
-                if (strcmp(argv[1], "D") == 0)
+                else if (strcmp(argv[1], "D") == 0)
                         turn_connection_off (name);
                 else {
                         fprintf(stderr, "Bad command\n");
@@ -431,5 +347,6 @@ int main(int argc, char *argv[]) {
                 }
         }
         fclose(file);
+
         return 0;
 }
