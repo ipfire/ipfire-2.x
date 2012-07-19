@@ -34,7 +34,7 @@ done
 
 #
 #Stop services
-ipsec stop
+ipsecctrl D
 
 #
 #Extract files
@@ -42,13 +42,14 @@ extract_files
 
 # Remove old pluto binaries.
 rm -f /usr/libexec/ipsec/{pluto,_pluto_adns,whack}
+rm -f /usr/local/bin/vpn-watch
 
 #
 #Start services
 
 # Call the CGI script to regenerate the configuration files.
 /srv/web/ipfire/cgi-bin/vpnmain.cgi
-ipsec start
+ipsecctrl S
 
 #
 #Update Language cache
