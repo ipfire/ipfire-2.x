@@ -246,7 +246,7 @@ sub writeipsecfiles {
     flock SECRETS, 2;
     print CONF "version 2\n\n";
     print CONF "conn %default\n";
-    print CONF "\tkeyingtries=0\n";
+    print CONF "\tkeyingtries=%forever\n";
     print CONF "\n";
 
     # Add user includes to config file
@@ -335,14 +335,19 @@ sub writeipsecfiles {
 	    foreach my $i (@encs) {
 		foreach my $j (@ints) {
 			my $modp = "";
-			foreach my $k (@groups) {
-			    if ($comma != 0) { print CONF ","; } else { $comma = 1; }
-			    if ($pfs eq "on") {
-				$modp = "-modp$k";
-			    } else {
-			        $modp = "";
-			    }
-			    print CONF "$i-$j$modp";
+			if ($pfs eq "on") {
+				foreach my $k (@groups) {
+				    if ($comma != 0) { print CONF ","; } else { $comma = 1; }
+				    if ($pfs eq "on") {
+					$modp = "-modp$k";
+				    } else {
+				        $modp = "";
+				    }
+				    print CONF "$i-$j$modp";
+				}
+			} else {
+				if ($comma != 0) { print CONF ","; } else { $comma = 1; }
+				print CONF "$i-$j";
 			}
 		}
 	    }
@@ -426,11 +431,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	goto SAVE_ERROR;
     }
 
-    unless ($cgiparams{'VPN_WATCH'} =~ /^(|off|on)$/ ) {
-	$errormessage = $Lang::tr{'invalid input'};
-	goto SAVE_ERROR;
-    }
-
     if ( $cgiparams{'RW_NET'} ne '' and !&General::validipandmask($cgiparams{'RW_NET'}) ) {
 	$errormessage = $Lang::tr{'urlfilter invalid ip or mask error'};
 	goto SAVE_ERROR;
@@ -438,7 +438,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 
     $vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
     $vpnsettings{'VPN_DELAYED_START'} = $cgiparams{'VPN_DELAYED_START'};
-    $vpnsettings{'VPN_WATCH'} = $cgiparams{'VPN_WATCH'};
     $vpnsettings{'RW_NET'} = $cgiparams{'RW_NET'};
     &General::writehash("${General::swroot}/vpn/settings", \%vpnsettings);
     &writeipsecfiles();
@@ -2385,7 +2384,6 @@ EOF
     $cgiparams{'VPN_IP'} ='%defaultroute' if ($cgiparams{'VPN_IP'} eq '');
     
     $cgiparams{'VPN_DELAYED_START'} = 0 if (! defined ($cgiparams{'VPN_DELAYED_START'}));
-    $checked{'VPN_WATCH'} = $cgiparams{'VPN_WATCH'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'ENABLED'} = $cgiparams{'ENABLED'} eq 'on' ? "checked='checked'" : '';
 
     &Header::showhttpheaders();
@@ -2420,7 +2418,6 @@ print <<END
 	<td ><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
     </tr>
  </table>
-<p>$Lang::tr{'vpn watch'}:<input type='checkbox' name='VPN_WATCH' $checked{'VPN_WATCH'} /></p>
 <hr />
 <table width='100%'>
 <tr>
