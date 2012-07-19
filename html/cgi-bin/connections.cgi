@@ -290,8 +290,28 @@ foreach my $line (@conntrack) {
 	# L4 protocol (tcp, udp, ...).
 	my $l4proto = $conn[2];
 
+	# Translate unknown protocols.
 	if ($l4proto eq 'unknown') {
-		$l4proto = '';
+		my $l4protonum = $conn[3];
+		if ($l4protonum eq '2') {
+			$l4proto = 'IGMP';
+		} elsif ($l4protonum eq '4') {
+			$l4proto = 'IPv4 Encap';
+		} elsif ($l4protonum eq '33') {
+			$l4proto = 'DCCP';
+		} elsif ($l4protonum eq '41') {
+			$l4proto = 'IPv6 Encap';
+		} elsif ($l4protonum eq '50') {
+			$l4proto = 'ESP';
+		} elsif ($l4protonum eq '51') {
+			$l4proto = 'AH';
+		} elsif ($l4protonum eq '132') {
+			$l4proto = 'SCTP';
+		} else {
+			$l4proto = $l4protonum;
+		}
+	} else {
+		$l4proto = uc($l4proto);
 	}
 
 	# Source and destination.
@@ -304,7 +324,7 @@ foreach my $line (@conntrack) {
 
 	my $ttl = $conn[4];
 	my $state;
-	if ($l4proto eq 'tcp') {
+	if ($l4proto eq 'TCP') {
 		$state = $conn[5];
 	}
 
@@ -337,21 +357,21 @@ foreach my $line (@conntrack) {
 	my $sip_colour = ipcolour($sip);
 	my $dip_colour = ipcolour($dip);
 
-    my $sserv = '';
-    if ($sport < 1024) {
+	my $sserv = '';
+	if ($sport < 1024) {
 		$sserv = uc(getservbyport($sport, lc($l4proto)));
 		if ($sserv ne '') {
 			$sserv = "&nbsp;($sserv)";
 		}
-    }
+	}
 
-    my $dserv = '';
-    if ($dport < 1024) {
+	my $dserv = '';
+	if ($dport < 1024) {
 		$dserv = uc(getservbyport($dport, lc($l4proto)));
 		if ($dserv ne '') {
 			$dserv = "&nbsp;($dserv)";
 		}
-    }
+	}
 
 	my $bytes_in = format_bytes($bytes[0]);
 	my $bytes_out = format_bytes($bytes[1]);
