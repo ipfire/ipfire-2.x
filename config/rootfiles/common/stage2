@@ -13,8 +13,8 @@ etc/hddtemp.db
 etc/host.conf
 etc/inittab
 etc/inputrc
-#etc/ipsec.user.conf
-#etc/ipsec.user.secrets
+etc/ipsec.user.conf
+etc/ipsec.user.secrets
 etc/issue
 etc/ld.so.conf
 etc/localtime
@@ -75,7 +75,6 @@ usr/local/bin/setddns.pl
 usr/local/bin/settime
 usr/local/bin/timecheck
 #usr/local/bin/uname
-usr/local/bin/vpn-watch
 #usr/local/include
 #usr/local/lib
 #usr/local/sbin

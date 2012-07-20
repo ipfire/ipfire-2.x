@@ -1,0 +1,6 @@
+etc/system-release
+etc/issue
+etc/rc.d/init.d/tmpfs
+srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/local/bin/ipsecctrl

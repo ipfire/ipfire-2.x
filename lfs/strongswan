@@ -24,13 +24,19 @@
 
 include Config
 
-VER        = 4.6.4
+VER        = 5.0.0
 
 THISAPP    = strongswan-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+
+ifeq "$(MACHINE)" "i586"
+	PADLOCK = --enable-padlock
+else
+	PADLOCK = --disable-padlock
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4c0999c42faa0860ae0afc4f8efd9d04
+$(DL_FILE)_MD5 = c8b861305def7c0abae04f7bbefec212
 
 install : $(TARGET)
 
@@ -73,17 +79,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-4.5.3_ipfire.patch
 
-	# Customize the welcome banner.
-	sed -i $(DIR_APP)/src/pluto/modecfg.c \
-		-e 's/^#define.*DEFAULT_UNITY_BANNER.*/#define DEFAULT_UNITY_BANNER "Welcome to IPFire - An Open Source Firewall Solution.\\n"/'
-
-	cd $(DIR_APP) && ./configure --prefix="/usr" --sysconfdir="/etc" \
-					--enable-cisco-quirks \
-					--enable-curl \
-					--enable-nat-transport
+	cd $(DIR_APP) && ./configure \
+		--prefix="/usr" \
+		--sysconfdir="/etc" \
+		--enable-curl \
+		--enable-openssl \
+		$(PADLOCK)
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	# Remove all library files we don't want or need.
+	rm -vf /usr/lib/ipsec/plugins/*.{,l}a
 
 	-rm -rfv /etc/rc*.d/*ipsec
 	cd $(DIR_SRC) && cp src/initscripts/init.d/ipsec /etc/rc.d/init.d/ipsec
