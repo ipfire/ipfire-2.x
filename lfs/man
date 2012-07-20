@@ -74,6 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && mv man/es{_ES.88591,}
 	cd $(DIR_APP) && mv man/it{_IT.88591,}
 	cd $(DIR_APP) && mv man/ja{_JP.eucJP,}
+	cd $(DIR_APP) && sed -i "s/-I-//g" {lib,src}/Makefile*
 	cd $(DIR_APP) && sed -i 's,\*_\*,??,' man/Makefile.in
 	cd $(DIR_APP) && sed -i '/\t\/usr\/man/d' src/man_db.conf.in
 	cd $(DIR_APP) && echo -e "#define WEB_BROWSER \"exec /usr/bin/lynx\"" >> include/manconfig.h.in
