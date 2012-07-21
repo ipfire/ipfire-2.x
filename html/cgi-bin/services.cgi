@@ -240,7 +240,7 @@ sub isrunning{
 	my $pid = '';
 	my $testcmd = '';
 	my $exename;
-	my @memory;
+	my $memory;
 
 	$cmd =~ /(^[a-z]+)/;
 	$exename = $1;
@@ -256,13 +256,18 @@ sub isrunning{
 			}
 			close FILE;
 		}
-		if (open(FILE, "/proc/${pid}/statm")){
-				my $temp = <FILE>;
-				@memory = split(/ /,$temp);
+		if (open(FILE, "/proc/${pid}/status")) {
+			while (<FILE>) {
+				my ($key, $val) = split(":", $_, 2);
+				if ($key eq 'VmRSS') {
+					$memory = $val;
+					last;
+				}
+			}
+			close(FILE);
 		}
-		close FILE;
 		if ($testcmd =~ /$exename/){
-			$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td><td align='center'>$pid</td><td align='center'>$memory[0] KB</td>";
+			$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td><td align='center'>$pid</td><td align='center'>$memory</td>";
 		}
 	}
 	return $status;

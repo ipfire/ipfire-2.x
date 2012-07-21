@@ -32,7 +32,8 @@ SUID_PROGS = setdmzholes setportfw setxtaccess \
 	wirelessctrl getipstat getiptstate qosctrl launch-ether-wake \
 	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
-	setaliases urlfilterctrl updxlratorctrl fireinfoctrl rebuildroutes
+	setaliases urlfilterctrl updxlratorctrl fireinfoctrl rebuildroutes \
+	getconntracktable
 SUID_UPDX = updxsetperms
 
 install : all
@@ -160,3 +161,6 @@ fireinfoctrl: fireinfoctrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 rebuildroutes: rebuildroutes.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ rebuildroutes.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+getconntracktable: getconntracktable.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ getconntracktable.c setuid.o ../install+setup/libsmooth/varval.o -o $@

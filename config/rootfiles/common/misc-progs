@@ -5,6 +5,7 @@ usr/local/bin/backupctrl
 usr/local/bin/dhcpctrl
 usr/local/bin/extrahdctrl
 usr/local/bin/fireinfoctrl
+usr/local/bin/getconntracktable
 usr/local/bin/getipstat
 usr/local/bin/getiptstate
 #usr/local/bin/iowrap
