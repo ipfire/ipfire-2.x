@@ -24,9 +24,9 @@
 
 include Config
 
-VER           = 3.2.22
+VER           = 3.2.23
 
-RPI_PATCHES = linux-3.2-bootc-a1f8d7a
+RPI_PATCHES = linux-3.2-bootc-f23da7f
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.bz2
@@ -75,8 +75,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
-$(DL_FILE)_MD5				= c1d28d8e27e1011687c52db17617cb8e
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= c3891a7f38609783358e765d784e5e6e
+$(DL_FILE)_MD5				= 1fc88918d247293d236d5dc169bf0b30
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 5651c6411bb1cbdbfe4b2908c117aaf3
 
 install : $(TARGET)
 
