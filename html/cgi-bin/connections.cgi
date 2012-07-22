@@ -32,6 +32,8 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+my $colour_multicast = "#A0A0A0";
+
 &Header::showhttpheaders();
 
 my @network=();
@@ -147,6 +149,11 @@ if ($netsettings{'ORANGE_DEV'}) {
 	}
 }
 
+# Highlight multicast connections.
+push(@network, "224.0.0.0");
+push(@masklen, "239.0.0.0");
+push(@colour, $colour_multicast);
+
 # Add OpenVPN net and RED/BLUE/ORANGE entry (when appropriate)
 if (-e "${General::swroot}/ovpn/settings") {
 	my %ovpnsettings = ();
@@ -173,7 +180,7 @@ if (-e "${General::swroot}/ovpn/settings") {
 	}
 }
 
-open(IPSEC, "${General::swroot}/var/ipfire/vpn/config");
+open(IPSEC, "${General::swroot}/vpn/config");
 my @ipsec = <IPSEC>;
 close(IPSEC);
 
@@ -242,6 +249,9 @@ print <<END;
 			</td>
 			<td align='center' bgcolor='${Header::colourovpn}'>
 				<b><font color='#FFFFFF'>$Lang::tr{'OpenVPN'}</font></b>
+			</td>
+			<td align='center' bgcolor='$colour_multicast'>
+				<b><font color='#FFFFFF'>Multicast</font></b>
 			</td>
 		</tr>
 	</table>
