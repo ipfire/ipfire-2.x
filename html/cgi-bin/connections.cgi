@@ -173,7 +173,7 @@ if (-e "${General::swroot}/ovpn/settings") {
 	}
 }
 
-open(IPSEC, "${General::swroot}/var/ipfire/vpn/config");
+open(IPSEC, "${General::swroot}/vpn/config");
 my @ipsec = <IPSEC>;
 close(IPSEC);
 
