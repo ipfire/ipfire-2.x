@@ -1,0 +1,13 @@
+--- Logwatch.pm.orig    2012-06-20 09:58:12.786294471 +0200
++++ Logwatch.pm 2012-06-20 09:41:59.443055298 +0200
+@@ -4,6 +4,10 @@
+
+ package Logwatch;
+
++# Define interace version 5 for Date::Manip
++BEGIN {
++       $Date::Manip::Backend = 'DM5';
++}
+ use strict;
+ use Exporter;
+ use POSIX qw(strftime);

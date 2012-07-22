@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 20100601
+VER        = 1.10
 
 THISAPP    = lcr-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = lcr
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 68ccdcbe741df38c0f79d14c1b5473f5
+$(DL_FILE)_MD5 = ccde843ee92f4d75f697d8a9e9fa3ba9
 
 install : $(TARGET)
 
@@ -76,7 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_SRC)/lcr && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_SRC)/lcr && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_SRC)/lcr && sed -i 's|usr/local/lcr|var/ipfire/lcr|g' Makefile.in
 	cd $(DIR_SRC)/lcr && sed -i 's|usr/local/lcr|var/ipfire/lcr|g' Makefile.am
 	cd $(DIR_SRC)/lcr && ./configure --prefix=/usr

@@ -39,6 +39,7 @@ done
 
 #
 #Extract files
+extract_files
 
 #
 #Start services

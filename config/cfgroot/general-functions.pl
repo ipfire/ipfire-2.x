@@ -414,6 +414,14 @@ sub ipcidr
 	return "$ip\/$cidr";
 }
 
+sub ipcidr2msk
+{
+       my ($ip,$cidr) = &Net::IPv4Addr::ipv4_parse(shift);
+       my $netmask = &Net::IPv4Addr::ipv4_cidr2msk($cidr);
+       return "$ip\/$netmask";
+}
+
+
 sub validemail {
     my $mail = shift;
     return 0 if ( $mail !~ /^[0-9a-zA-Z\.\-\_]+\@[0-9a-zA-Z\.\-]+$/ );

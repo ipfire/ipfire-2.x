@@ -94,7 +94,7 @@ sub processlogfiles
 		{
 			if ($filestr =~ /access\.log/) {
 				open (LOG,"gzip -dc $filestr |");
-				foreach (<LOG>) {
+				while (<LOG>) {
 					if (substr($_,0,10) >= $date_from) { if (substr($_,0,10) <= $date_to) { print TMPLOG "$_"; } }
 				}
 				close(LOG);
@@ -106,7 +106,7 @@ sub processlogfiles
 	{
 		if ($filestr =~ /access\.log/) {
 			open (LOG,$filestr);
-			foreach (<LOG>) {
+			while (<LOG>) {
 				if (substr($_,0,10) >= $date_from) { if (substr($_,0,10) <= $date_to) { print TMPLOG "$_"; } }
 			}
 			close(LOG);

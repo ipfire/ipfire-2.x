@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -20,6 +20,7 @@
 ###############################################################################
 
 use strict;
+use Net::Telnet;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -355,7 +356,7 @@ END
 END
 		my $id = 0;
 		my $gif;
-		foreach my $key (keys %confighash) {
+		foreach my $key (sort { uc($confighash{$a}[1]) cmp uc($confighash{$b}[1]) } keys %confighash) {
 			if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 
 			if ($id % 2) {
@@ -387,8 +388,57 @@ END
 		<tr><td align='center' bgcolor='$Header::colourovpn' width='25%'><a href="/cgi-bin/ovpnmain.cgi"><font size='2' color='white'><b>OpenVPN</b></font></a><br>
 	  	<td width='30%' align='center'>$ovpnip
   		<td width='45%' align='center'><font color=$Header::colourgreen>Online</font>
+	
 END
+
 	}
+
+###
+# Print the OpenVPN N2N connection status.
+###
+if ( -d "${General::swroot}/ovpn/n2nconf") {
+	my %confighash=();
+
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+	foreach my $dkey (keys %confighash) {
+		if (($confighash{$dkey}[3] eq 'net') && (-e "/var/run/$confighash{$dkey}[1]n2n.pid")) {
+			my $tport = $confighash{$dkey}[22];
+			next if ($tport eq '');
+
+			my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport); 
+			$tnet->open('127.0.0.1');
+			my @output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
+			my @tustate = split(/\,/, $output[1]);
+
+			my $display;
+			my $display_colour = $Header::colourred;
+			if ( $tustate[1] eq 'CONNECTED') {
+				$display_colour = $Header::colourgreen;
+				$display = $Lang::tr{'capsopen'};
+			} else {
+				$display = $tustate[1];
+			}
+ 
+			print <<END;
+			<tr>
+				<td align='left' nowrap='nowrap' bgcolor='$color{'color22'}'>
+					$confighash{$dkey}[1]
+				</td>
+				<td align='center'>
+					$confighash{$dkey}[11]
+				</td>
+				<td align='center' bgcolor='$display_colour'>
+					<b>
+						<font color='#FFFFFF'>
+							$display
+						</font>
+					</b>
+				</td>
+			</tr>
+END
+		}
+	}
+}
 
 # Fireinfo
 if ( ! -e "/var/ipfire/main/send_profile") {
@@ -442,6 +492,14 @@ foreach my $file (@files) {
 		$warnmessage .= "<li> $Lang::tr{'smartwarn1'} /dev/$disk $Lang::tr{'smartwarn2'} !</li>\n\n";
 	}
 }
+
+# Reiser4 warning
+my @files = `mount | grep " reiser4 (" 2>/dev/null`;
+foreach my $disk (@files) {
+	chomp ($disk);
+	$warnmessage .= "<li>$disk - $Lang::tr{'deprecated fs warn'}</li>\n\n";
+}
+
 
 if ($warnmessage) {
 	print "<tr><td align='center' bgcolor=$Header::colourred colspan='3'><font color='white'>$warnmessage</font></table>";

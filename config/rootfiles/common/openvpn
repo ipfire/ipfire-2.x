@@ -8,6 +8,7 @@ usr/sbin/openvpn
 var/ipfire/ovpn
 var/ipfire/ovpn/ca
 var/ipfire/ovpn/caconfig
+var/ipfire/ovpn/ccd
 #var/ipfire/ovpn/certs
 var/ipfire/ovpn/certs/index.txt
 var/ipfire/ovpn/certs/serial

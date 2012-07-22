@@ -1,0 +1,15 @@
+etc/system-release
+etc/issue
+etc/rc.d/init.d/collectd
+opt/pakfire/lib/functions.sh
+srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/connections.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
+srv/web/ipfire/cgi-bin/services.cgi
+var/ipfire/general-functions.pl
+var/ipfire/langs
+var/ipfire/proxy/calamaris/bin/mkreport
+usr/local/bin/getconntracktable
+usr/sbin/redirect_wrapper
