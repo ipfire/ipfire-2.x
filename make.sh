@@ -265,11 +265,7 @@ buildtoolchain() {
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
     export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    if [ "${MACHINE_TYPE}" = "arm" ]; then
-        lfsmake1 linux TOOLS=1 HEADERS=1
-    else
-        lfsmake1 linux-libc-header
-    fi
+    lfsmake1 linux TOOLS=1 HEADERS=1
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain PASS=1
     lfsmake1 fake-environ
@@ -306,11 +302,7 @@ buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
     lfsmake2 stage2
-    if [ "${MACHINE_TYPE}" = "arm" ]; then
-        lfsmake2 linux HEADERS=1
-    else
-        lfsmake2 linux-libc-header
-    fi
+    lfsmake2 linux HEADERS=1
     lfsmake2 man-pages
     lfsmake2 glibc
     lfsmake2 tzdata
