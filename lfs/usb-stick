@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -92,7 +92,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	COUNT=$$((`du -k -s $(IMGfs) | awk '{print $$1}'` + 32 )); \
 	dd bs=1k if=/dev/zero of=$(IMGhdd) count=$$COUNT
 	# write mbr before partitioning save a 'not msdos fs' warning from sfdisk
-	/usr/local/sbin/install-mbr -f $(IMGhdd)
+	/usr/sbin/install-mbr -f $(IMGhdd)
 	echo -e "0,,6,*\n;\n;\n;" | sfdisk -qLD -H 64 -S 32 $(IMGhdd)
 	# copy the entire partition, make the fs and dd back
 	dd if=$(IMGfs) of=$(IMGhdd) bs=512 seek=32
