@@ -265,7 +265,7 @@ buildtoolchain() {
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
     export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    lfsmake1 linux TOOLS=1 HEADERS=1
+    lfsmake1 linux2 TOOLS=1 HEADERS=1
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain PASS=1
     lfsmake1 fake-environ
@@ -302,7 +302,7 @@ buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
     lfsmake2 stage2
-    lfsmake2 linux HEADERS=1
+    lfsmake2 linux2 HEADERS=1
     lfsmake2 man-pages
     lfsmake2 glibc
     lfsmake2 tzdata
@@ -382,7 +382,7 @@ buildipfire() {
 
   # The xen and PAE kernels are only available for x86
   if [ "${MACHINE_TYPE}" != "arm" ]; then
-    ipfiremake linux			KCFG="-xen"
+    ipfiremake linux2			KCFG="-xen"
     ipfiremake kqemu			KCFG="-xen"
     ipfiremake v4l-dvb			KCFG="-xen"
     ipfiremake madwifi			KCFG="-xen"
@@ -396,6 +396,7 @@ buildipfire() {
     ipfiremake e1000			KCFG="-xen"
     ipfiremake e1000e			KCFG="-xen"
     ipfiremake igb			KCFG="-xen"
+
     ipfiremake linux			KCFG="-pae"
     ipfiremake kqemu			KCFG="-pae"
     ipfiremake kvm-kmod			KCFG="-pae"
@@ -412,6 +413,7 @@ buildipfire() {
     ipfiremake e1000			KCFG="-pae"
     ipfiremake e1000e			KCFG="-pae"
     ipfiremake igb			KCFG="-pae"
+
     ipfiremake linux			KCFG=""
     ipfiremake v4l-dvb			KCFG=""
     ipfiremake kqemu			KCFG=""

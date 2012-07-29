@@ -1,0 +1,260 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2012  IPFire Team <info@ipfire.org>                      #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+PATCHLEVEL = .59
+VER        = 2.6.32.59
+
+THISAPP    = linux-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+CFLAGS     =
+CXXFLAGS   =
+
+PAK_VER    = 20
+DEPS	   = ""
+
+# Normal build or XEN build.
+#
+
+VERSUFIX=ipfire$(KCFG)
+
+ifeq "$(HEADERS)" "1"
+ifeq "$(TOOLS)" "1"
+	TARGET = $(DIR_INFO)/linux-libc-headers-$(VER)-$(VERSUFIX)-tools
+	HEADERS_PREFIX = /tools
+else
+	TARGET = $(DIR_INFO)/linux-libc-headers-$(VER)-$(VERSUFIX)
+	HEADERS_PREFIX = /usr
+endif
+else
+	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
+endif
+
+ifeq "$(MACHINE_TYPE)" "arm"
+	HEADERS_ARCH=arm
+else
+	HEADERS_ARCH=x86
+endif
+
+ifeq "$(KCFG)" ""
+LASTKERNEL=1
+endif
+ifeq "$(KCFG)" "-kirkwood"
+LASTKERNEL=1
+endif
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+objects =$(DL_FILE) \
+	netfilter-layer7-v2.22.tar.gz \
+	patch-2.6.16-nath323-1.3.bz2 \
+	reiser4-for-2.6.32.patch.bz2 \
+	xen-patches-2.6.32-2f.tar.bz2
+
+$(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
+netfilter-layer7-v2.22.tar.gz		= $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
+patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
+reiser4-for-2.6.32.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.32.patch.bz2
+xen-patches-2.6.32-2f.tar.bz2		= $(URL_IPFIRE)/xen-patches-2.6.32-2f.tar.bz2
+
+$(DL_FILE)_MD5				= 69c68c4a8eb0f04b051a7dbcff16f6d0
+netfilter-layer7-v2.22.tar.gz_MD5	= 98dff8a3d5a31885b73341633f69501f
+patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
+reiser4-for-2.6.32.patch.bz2_MD5	= 3246397973d9271eb8e6d7c97c5d2d91
+xen-patches-2.6.32-2f.tar.bz2_MD5	= b59d6f89e11accb9d40354418e13f31b
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+dist:
+	@$(PAK)
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/linux $(DIR_SRC)/linux-*-suse_xen_patches $(DIR_SRC)/xen-* && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	ln -svf linux-$(VER) $(DIR_SRC)/linux
+
+ifeq "$(KCFG)" "-xen"
+	# Apply gentoo Xen patches
+	mkdir -p $(DIR_SRC)/xen-patches
+	cd $(DIR_SRC)/xen-patches && tar jxf $(DIR_DL)/xen-patches-2.6.32-2f.tar.bz2
+
+	for x in `ls -1 $(DIR_SRC)/xen-patches/*.patch1`; do \
+		echo "*********** [Patch: $$x]"; \
+		cd $(DIR_APP) && pwd && patch -Np1 < $$x || exit 1; \
+	done
+	rm -rf $(DIR_SRC)/xen-patches
+
+	# Linux Intermediate Queueing Device
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.8-xen-imq-test2.patch
+else
+	# Linux Intermediate Queueing Device
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32-imq-test2.patch
+endif
+
+	# Not report deprecated syscall 1.23 (for kudzu)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
+
+	# Reiser4 (don't check if fail (some patches are already in xen patchset)
+	-cd $(DIR_APP) && bzcat $(DIR_DL)/reiser4-for-2.6.32.patch.bz2 | patch -Np1
+
+	# ipp2p 0.8.2-pomng
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.8-ipp2p-0.8.2-pomng.patch
+
+	# Layer7-patch
+	cd $(DIR_SRC) && rm -rf $(DIR_SRC)/netfilter-layer7-v2.22
+	cd $(DIR_SRC) && tar xzf $(DIR_DL)/netfilter-layer7-v2.22.tar.gz
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/netfilter-layer7-v2.22/kernel-2.6.25-2.6.28-layer7-2.22.patch
+
+	# Add some more LED triggers
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.11-netdev-1.patch
+
+	# Huawei Android Phones (Vodafone V845, T-Mobile Pulse/mini ...)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.15-option_add_huawei_android.patch
+
+	# Fix uevent PHYSDEVDRIVER
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_ipg-fix-driver-name.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
+
+	# Fix mv_cesa
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32-crypto-mv_cesa.patch
+
+ifeq "$(KCFG)" "-kirkwood"
+	# Add dreamplug,guruplug and icy 62x0  support on ARM-kirkwood
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.57-arm_kirkwood_setups.patch
+endif
+
+ifeq "$(MACHINE_TYPE)" "arm"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45_align_ssb_modtable_32bit_boundary.patch
+endif
+
+ifeq "$(HEADERS)" "1"
+	# Install the header files
+	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) INSTALL_HDR_PATH=dest headers_install
+	-mkdir -pv $(BUILDROOT)/$(HEADERS_PREFIX)/include
+	cd $(DIR_APP) && find dest/include \( -name .install -o -name ..install.cmd \) -delete
+	cd $(DIR_APP) && cp -rv dest/include/* $(BUILDROOT)/$(HEADERS_PREFIX)/include
+else
+
+	# Install ipfire logo
+	cd $(DIR_APP) && cp -vf $(DIR_SRC)/config/kernel/ipfire_logo.ppm \
+		drivers/video/logo/logo_linux_clut224.ppm
+
+	# Cleanup kernel source
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config
+	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
+	cd $(DIR_APP) && make CC="$(KGCC)" clean
+	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ $(PATCHLEVEL)-$(VERSUFIX)/' Makefile
+
+ifeq "$(KCFG)" "-xen"
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" vmlinuz
+	cd $(DIR_APP) && cp -v arch/i386/boot/vmlinuz /boot/vmlinuz-$(VER)-$(VERSUFIX)
+else
+ifeq "$(KCFG)" "-kirkwood"
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage
+	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
+else
+ifeq "$(KCFG)" "-versatile"
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+else
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
+	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+endif
+endif
+endif
+	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
+	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
+	ln -sf System.map-$(VER)-$(VERSUFIX) /boot/System.map-$(VERSUFIX)
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
+
+ifeq "$(LASTKERNEL)" "1"
+	# Only do this once
+	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
+
+	# Blacklist matroxfb_base
+	echo "blacklist matroxfb_base" >> /etc/modprobe.d/framebuffer
+	# Blacklist old framebuffer modules
+	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/video -name *fb.ko); do \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer ; \
+	done
+	# Blacklist new drm framebuffer modules
+	for f in $$(ls -1 /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/gpu/drm/*/*.ko); do \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer ; \
+	done
+	sed -i -e "s|.ko||g" /etc/modprobe.d/framebuffer
+
+	# Blacklist isdn modules
+	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn -name *.ko); do \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/isdn ; \
+	done
+	sed -i -e "s|.ko||g" /etc/modprobe.d/isdn
+
+	# Disable ipv6 at runtime
+	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6
+endif
+
+	# Remove mISDN modules
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
+	rm -rvf /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
+
+ifneq "$(MACHINE_TYPE)" "arm"
+	# Disable geode_aes modul
+	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko \
+           /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko.off
+endif
+endif
+
+	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
+	@$(POSTBUILD)

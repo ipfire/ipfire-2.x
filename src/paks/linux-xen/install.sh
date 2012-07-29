@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 #
-KVER=xxxKVERxxx
+KVER=2.6.32.59
 ROOT=`mount | grep " / " | cut -d" " -f1`
 ROOTUUID=`blkid -c /dev/null -sUUID $ROOT | cut -d'"' -f2`
 if [ ! -z $ROOTUUID ]; then
