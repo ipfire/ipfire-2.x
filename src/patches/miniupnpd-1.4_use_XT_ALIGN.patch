@@ -1,0 +1,47 @@
+diff -Naur miniupnpd-1.4.org/netfilter/iptcrdr.c miniupnpd-1.4/netfilter/iptcrdr.c
+--- miniupnpd-1.4.org/netfilter/iptcrdr.c	2009-10-10 21:19:41.000000000 +0200
++++ miniupnpd-1.4/netfilter/iptcrdr.c	2012-07-29 16:09:42.640363971 +0200
+@@ -443,8 +443,8 @@
+ 	struct ipt_entry_match *match;
+ 	struct ipt_tcp * tcpinfo;
+ 	size_t size;
+-	size =   IPT_ALIGN(sizeof(struct ipt_entry_match))
+-	       + IPT_ALIGN(sizeof(struct ipt_tcp));
++	size =   XT_ALIGN(sizeof(struct ipt_entry_match))
++	       + XT_ALIGN(sizeof(struct ipt_tcp));
+ 	match = calloc(1, size);
+ 	match->u.match_size = size;
+ 	strncpy(match->u.user.name, "tcp", IPT_FUNCTION_MAXNAMELEN);
+@@ -462,8 +462,8 @@
+ 	struct ipt_entry_match *match;
+ 	struct ipt_udp * udpinfo;
+ 	size_t size;
+-	size =   IPT_ALIGN(sizeof(struct ipt_entry_match))
+-	       + IPT_ALIGN(sizeof(struct ipt_udp));
++	size =   XT_ALIGN(sizeof(struct ipt_entry_match))
++	       + XT_ALIGN(sizeof(struct ipt_udp));
+ 	match = calloc(1, size);
+ 	match->u.match_size = size;
+ 	strncpy(match->u.user.name, "udp", IPT_FUNCTION_MAXNAMELEN);
+@@ -483,8 +483,8 @@
+ 	struct ip_nat_range * range;
+ 	size_t size;
+ 
+-	size =   IPT_ALIGN(sizeof(struct ipt_entry_target))
+-	       + IPT_ALIGN(sizeof(struct ip_nat_multi_range));
++	size =   XT_ALIGN(sizeof(struct ipt_entry_target))
++	       + XT_ALIGN(sizeof(struct ip_nat_multi_range));
+ 	target = calloc(1, size);
+ 	target->u.target_size = size;
+ 	strncpy(target->u.user.name, "DNAT", IPT_FUNCTION_MAXNAMELEN);
+@@ -614,8 +614,8 @@
+ {
+ 	struct ipt_entry_target * target = NULL;
+ 	size_t size;
+-	size =   IPT_ALIGN(sizeof(struct ipt_entry_target))
+-	       + IPT_ALIGN(sizeof(int));
++	size =   XT_ALIGN(sizeof(struct ipt_entry_target))
++	       + XT_ALIGN(sizeof(int));
+ 	target = calloc(1, size);
+ 	target->u.user.target_size = size;
+ 	strncpy(target->u.user.name, "ACCEPT", IPT_FUNCTION_MAXNAMELEN);
