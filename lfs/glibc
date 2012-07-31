@@ -113,6 +113,7 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && mv -v glibc-ports-$(VER) ports
 
 	cd $(DIR_APP)/ports && patch -Np1 -i $(DIR_SRC)/src/patches/glibc-ports-avoid-using-asm-procinfo.patch
+	cd $(DIR_APP)/ports && patch -Np1 -i $(DIR_SRC)/src/patches/glibc-arm-dont-use-swp.patch
 
 	# asm/page.h should not be included in sysdeps/unix/sysv/linux/arm/ioperm.c.
 	cd $(DIR_APP) && sed "/asm\/page.h/d" -i ports/sysdeps/unix/sysv/linux/arm/ioperm.c
