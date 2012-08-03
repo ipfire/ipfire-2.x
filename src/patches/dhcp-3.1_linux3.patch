@@ -1,0 +1,11 @@
+diff -Naur dhcp-3.1-ESV-R3.org/configure dhcp-3.1-ESV-R3/configure
+--- dhcp-3.1-ESV-R3.org/configure	2005-03-17 21:14:55.000000000 +0100
++++ dhcp-3.1-ESV-R3/configure	2012-06-17 12:19:29.000000000 +0200
+@@ -104,6 +104,7 @@
+ 	     2) sysname=linux-2.2 ;;
+ 	     *) sysname=linux-2.2 ;;
+ 	   esac;;
++	3) sysname=linux-2.2 ;;
+       esac;;
+     SunOS)
+       release=`uname -r`
