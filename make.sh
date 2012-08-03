@@ -383,7 +383,6 @@ buildipfire() {
   # The xen and PAE kernels are only available for x86
   if [ "${MACHINE_TYPE}" != "arm" ]; then
     ipfiremake linux2			KCFG="-xen"
-    ipfiremake kqemu			KCFG="-xen"
     ipfiremake v4l-dvb			KCFG="-xen"
     ipfiremake mISDN			KCFG="-xen"
     ipfiremake dahdi			KCFG="-xen" KMOD=1
@@ -397,7 +396,6 @@ buildipfire() {
     ipfiremake igb			KCFG="-xen"
 
     ipfiremake linux			KCFG="-pae"
-    ipfiremake kqemu			KCFG="-pae"
     ipfiremake kvm-kmod			KCFG="-pae"
     ipfiremake v4l-dvb			KCFG="-pae"
     ipfiremake alsa			KCFG="-pae" KMOD=1
@@ -414,7 +412,6 @@ buildipfire() {
 
     ipfiremake linux			KCFG=""
     ipfiremake v4l-dvb			KCFG=""
-    ipfiremake kqemu			KCFG=""
     ipfiremake kvm-kmod			KCFG=""
     ipfiremake alsa			KCFG="" KMOD=1
     ipfiremake mISDN			KCFG=""
@@ -436,7 +433,6 @@ buildipfire() {
     # arm-versatile kernel build
     ipfiremake linux			KCFG="-versatile"
     ipfiremake v4l-dvb			KCFG="-versatile"
-    ipfiremake kqemu			KCFG="-versatile"
     ipfiremake kvm-kmod			KCFG="-versatile"
     ipfiremake mISDN			KCFG="-versatile"
     ipfiremake dahdi			KCFG="-versatile" KMOD=1
@@ -451,7 +447,6 @@ buildipfire() {
     # arm-kirkwood kernel build
     ipfiremake linux			KCFG="-kirkwood"
     ipfiremake v4l-dvb			KCFG="-kirkwood"
-    ipfiremake kqemu			KCFG="-kirkwood"
     ipfiremake kvm-kmod			KCFG="-kirkwood"
     ipfiremake mISDN			KCFG="-kirkwood"
     ipfiremake dahdi			KCFG="-kirkwood" KMOD=1
@@ -666,7 +661,6 @@ buildipfire() {
   ipfiremake fbset
   ipfiremake sdl
   ipfiremake qemu
-  ipfiremake qemu-kqemu
   ipfiremake sane
   ipfiremake netpbm
   ipfiremake phpSANE
