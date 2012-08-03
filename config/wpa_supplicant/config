@@ -50,9 +50,9 @@ CONFIG_DRIVER_HOSTAP=y
 #CFLAGS += -I../../include/wireless
 
 # Driver interface for madwifi driver
-CONFIG_DRIVER_MADWIFI=y
+#CONFIG_DRIVER_MADWIFI=y
 # Set include directory to the madwifi source tree
-CFLAGS += -I/usr/src/madwifi
+#CFLAGS += -I/usr/src/madwifi
 
 # Driver interface for Prism54 driver
 # (Note: Prism54 is not yet supported, i.e., this will not work as-is and is

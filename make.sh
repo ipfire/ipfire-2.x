@@ -385,7 +385,6 @@ buildipfire() {
     ipfiremake linux2			KCFG="-xen"
     ipfiremake kqemu			KCFG="-xen"
     ipfiremake v4l-dvb			KCFG="-xen"
-    ipfiremake madwifi			KCFG="-xen"
     ipfiremake mISDN			KCFG="-xen"
     ipfiremake dahdi			KCFG="-xen" KMOD=1
     ipfiremake cryptodev		KCFG="-xen"
@@ -401,7 +400,6 @@ buildipfire() {
     ipfiremake kqemu			KCFG="-pae"
     ipfiremake kvm-kmod			KCFG="-pae"
     ipfiremake v4l-dvb			KCFG="-pae"
-    ipfiremake madwifi			KCFG="-pae"
     ipfiremake alsa			KCFG="-pae" KMOD=1
     ipfiremake mISDN			KCFG="-pae"
     ipfiremake dahdi			KCFG="-pae" KMOD=1
@@ -418,7 +416,6 @@ buildipfire() {
     ipfiremake v4l-dvb			KCFG=""
     ipfiremake kqemu			KCFG=""
     ipfiremake kvm-kmod			KCFG=""
-    ipfiremake madwifi			KCFG=""
     ipfiremake alsa			KCFG="" KMOD=1
     ipfiremake mISDN			KCFG=""
     ipfiremake dahdi			KCFG="" KMOD=1
@@ -441,7 +438,6 @@ buildipfire() {
     ipfiremake v4l-dvb			KCFG="-versatile"
     ipfiremake kqemu			KCFG="-versatile"
     ipfiremake kvm-kmod			KCFG="-versatile"
-    ipfiremake madwifi			KCFG="-versatile"
     ipfiremake mISDN			KCFG="-versatile"
     ipfiremake dahdi			KCFG="-versatile" KMOD=1
     ipfiremake cryptodev		KCFG="-versatile"
@@ -457,7 +453,6 @@ buildipfire() {
     ipfiremake v4l-dvb			KCFG="-kirkwood"
     ipfiremake kqemu			KCFG="-kirkwood"
     ipfiremake kvm-kmod			KCFG="-kirkwood"
-    ipfiremake madwifi			KCFG="-kirkwood"
     ipfiremake mISDN			KCFG="-kirkwood"
     ipfiremake dahdi			KCFG="-kirkwood" KMOD=1
     ipfiremake cryptodev		KCFG="-kirkwood"
