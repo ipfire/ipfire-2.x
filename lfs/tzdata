@@ -24,6 +24,7 @@
 
 include Config
 
+VER        = 2011n
 TZDATA_VER = 2011n
 TZCODE_VER = 2011i
 
