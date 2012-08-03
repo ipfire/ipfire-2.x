@@ -1,6 +1,6 @@
-diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/Makefile compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/Makefile
---- compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/Makefile	2011-10-21 11:13:58.697110085 +0200
+diff -Naur compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/Makefile compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/Makefile
+--- compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/Makefile	2012-07-31 14:23:04.000000000 +0200
 @@ -0,0 +1,6 @@
 +obj-$(CONFIG_LIBERTAS_UAP) += uap8xxx.o
 +
@@ -8,9 +8,9 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/Makefile 
 +uap8xxx-$(CONFIG_PROC_FS) += uap_proc.o uap_debug.o
 +
 +EXTRA_CFLAGS += -DFPNUM='"52"' -DPXA3XX_DMA_ALIGN -DDEBUG_LEVEL1
-diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_debug.c compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_debug.c
---- compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_debug.c	1970-01-01 01:00:00.000000000 +0100
-+++ compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_debug.c	2011-10-21 11:13:58.707113466 +0200
+diff -Naur compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_debug.c compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_debug.c
+--- compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_debug.c	1970-01-01 01:00:00.000000000 +0100
++++ compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_debug.c	2012-07-31 14:23:04.000000000 +0200
 @@ -0,0 +1,261 @@
 +/** @file uap_debug.c
 +  * @brief This file contains functions for debug proc file.
@@ -273,9 +273,9 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_debug
 +}
 +
 +#endif
-diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_drv.h compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_drv.h
---- compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_drv.h	1970-01-01 01:00:00.000000000 +0100
-+++ compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_drv.h	2011-10-21 11:13:58.717113637 +0200
+diff -Naur compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_drv.h compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_drv.h
+--- compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_drv.h	1970-01-01 01:00:00.000000000 +0100
++++ compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_drv.h	2012-07-31 14:23:04.000000000 +0200
 @@ -0,0 +1,667 @@
 +/** @file uap_drv.h
 +  * @brief This file contains Linux OS related definitions and
@@ -944,9 +944,9 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_drv.h
 +int sbi_wakeup_firmware(uap_private * priv);
 +
 +#endif /* _UAP_DRV_H */
-diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_fw.h compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_fw.h
---- compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_fw.h	1970-01-01 01:00:00.000000000 +0100
-+++ compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_fw.h	2011-10-21 11:13:58.727115088 +0200
+diff -Naur compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_fw.h compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_fw.h
+--- compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_fw.h	1970-01-01 01:00:00.000000000 +0100
++++ compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_fw.h	2012-07-31 14:23:04.000000000 +0200
 @@ -0,0 +1,359 @@
 +/** @file uap_fw.h
 + *
@@ -1307,9 +1307,9 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_fw.h 
 +    u8 MacAddr[ETH_ALEN];
 +} __ATTRIB_PACK__ AP_Event;
 +#endif /* _UAP_FW_H */
-diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_headers.h compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_headers.h
---- compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_headers.h	1970-01-01 01:00:00.000000000 +0100
-+++ compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_headers.h	2011-10-21 11:13:58.727115088 +0200
+diff -Naur compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_headers.h compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_headers.h
+--- compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_headers.h	1970-01-01 01:00:00.000000000 +0100
++++ compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_headers.h	2012-07-31 14:23:04.000000000 +0200
 @@ -0,0 +1,64 @@
 +/** @file uap_headers.h
 + *
@@ -1375,10 +1375,10 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_heade
 +#include "uap_sdio_mmc.h"
 +
 +#endif /* _UAP_HEADERS_H */
-diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_main.c compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_main.c
---- compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_main.c	1970-01-01 01:00:00.000000000 +0100
-+++ compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_main.c	2011-10-21 11:13:58.767112032 +0200
-@@ -0,0 +1,1830 @@
+diff -Naur compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_main.c compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_main.c
+--- compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_main.c	1970-01-01 01:00:00.000000000 +0100
++++ compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_main.c	2012-07-31 14:25:28.473230753 +0200
+@@ -0,0 +1,1815 @@
 +/** @file uap_main.c
 +  * @brief This file contains the major functions in uAP
 +  * driver. It includes init, exit etc..
@@ -2703,20 +2703,6 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_main.
 +}
 +
 +/**
-+ *  @brief This function sets multicast addresses to firmware
-+ *
-+ *  @param dev     A pointer to net_device structure
-+ *  @return        n/a
-+ */
-+static void
-+uap_set_multicast_list(struct net_device *dev)
-+{
-+    ENTER();
-+#warning uap_set_multicast_list not implemented. Expect problems with IPv6.
-+    LEAVE();
-+}
-+
-+/**
 + *  @brief This function handles the timeout of packet
 + *  transmission
 + *
@@ -2939,7 +2925,6 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_main.
 +    .ndo_set_mac_address = uap_set_mac_address,
 +    .ndo_tx_timeout = uap_tx_timeout,
 +    .ndo_get_stats = uap_get_stats,
-+    .ndo_set_multicast_list = uap_set_multicast_list,
 +};
 +#endif
 +
@@ -3209,10 +3194,10 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_main.
 +MODULE_AUTHOR("Marvell International Ltd.");
 +MODULE_VERSION(DRIVER_VERSION);
 +MODULE_LICENSE("GPL");
-diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_proc.c compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_proc.c
---- compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_proc.c	1970-01-01 01:00:00.000000000 +0100
-+++ compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_proc.c	2011-10-21 11:32:37.857111835 +0200
-@@ -0,0 +1,302 @@
+diff -Naur compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_proc.c compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_proc.c
+--- compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_proc.c	1970-01-01 01:00:00.000000000 +0100
++++ compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_proc.c	2012-07-31 14:23:04.000000000 +0200
+@@ -0,0 +1,296 @@
 +/** @file uap_proc.c
 +  * @brief This file contains functions for proc file.
 +  *
@@ -3308,15 +3293,9 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_proc.
 +        p += sprintf(p,
 +                     "MCAddr[%d]=\"%02x:%02x:%02x:%02x:%02x:%02x\"\n",
 +                     i++,
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35))
 +                     ha->addr[0], ha->addr[1],
 +                     ha->addr[2], ha->addr[3],
 +                     ha->addr[4], ha->addr[5]);
-+#else
-+                     ha->dmi_addr[0], ha->dmi_addr[1],
-+                     ha->dmi_addr[2], ha->dmi_addr[3],
-+                     ha->dmi_addr[4], ha->dmi_addr[5]);
-+#endif
 +    }
 +
 +    p += sprintf(p, "num_tx_bytes = %lu\n", priv->stats.tx_bytes);
@@ -3515,9 +3494,9 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_proc.
 +}
 +
 +#endif
-diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_sdio_mmc.c compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_sdio_mmc.c
---- compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_sdio_mmc.c	1970-01-01 01:00:00.000000000 +0100
-+++ compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_sdio_mmc.c	2011-10-21 11:13:58.807113416 +0200
+diff -Naur compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_sdio_mmc.c compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_sdio_mmc.c
+--- compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_sdio_mmc.c	1970-01-01 01:00:00.000000000 +0100
++++ compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_sdio_mmc.c	2012-07-31 14:23:04.000000000 +0200
 @@ -0,0 +1,1428 @@
 +/** @file uap_sdio_mmc.c
 + *  @brief This file contains SDIO IF (interface) module
@@ -4947,9 +4926,9 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_sdio_
 +    LEAVE();
 +    return ret;
 +}
-diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_sdio_mmc.h compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_sdio_mmc.h
---- compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_sdio_mmc.h	1970-01-01 01:00:00.000000000 +0100
-+++ compat-wireless-3.0-2/drivers/net/wireless/libertas_uap/uap_sdio_mmc.h	2011-10-21 11:13:58.807113416 +0200
+diff -Naur compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_sdio_mmc.h compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_sdio_mmc.h
+--- compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/libertas_uap/uap_sdio_mmc.h	1970-01-01 01:00:00.000000000 +0100
++++ compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/libertas_uap/uap_sdio_mmc.h	2012-07-31 14:23:04.000000000 +0200
 @@ -0,0 +1,136 @@
 +/** @file uap_sdio_mmc.h
 + *  @brief This file contains SDIO IF (interface) module
@@ -5087,9 +5066,9 @@ diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/libertas_uap/uap_sdio_
 +};
 +
 +#endif /* _UAP_SDIO_MMC_H */
-diff -Naur compat-wireless-3.0-2.org/drivers/net/wireless/Makefile compat-wireless-3.0-2/drivers/net/wireless/Makefile
---- compat-wireless-3.0-2.org/drivers/net/wireless/Makefile	2011-07-28 00:47:28.000000000 +0200
-+++ compat-wireless-3.0-2/drivers/net/wireless/Makefile	2011-10-21 11:13:58.697110085 +0200
+diff -Naur compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/Makefile compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/Makefile
+--- compat-wireless-3.5-rc5-1-snpc.org/drivers/net/wireless/Makefile	2012-07-05 03:48:01.000000000 +0200
++++ compat-wireless-3.5-rc5-1-snpc/drivers/net/wireless/Makefile	2012-07-31 14:20:01.343608619 +0200
 @@ -22,6 +22,8 @@
  
  obj-$(CONFIG_LIBERTAS_THINFIRM)	+= libertas_tf/

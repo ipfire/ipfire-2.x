@@ -26,7 +26,7 @@ include Config
 
 VERSUFIX=ipfire$(KCFG)
 
-VER        = 3.2.5-1
+VER        = 3.5-1-snpc
 
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = compat-wireless-$(VER).tar.bz2
@@ -38,13 +38,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) asix-3.5.0a.tar.bz2
+objects = $(DL_FILE) asix-4.4.0.tar.xz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-asix-3.5.0a.tar.bz2 = $(DL_FROM)/asix-3.5.0a.tar.bz2
+asix-4.4.0.tar.xz = $(DL_FROM)/asix-4.4.0.tar.xz
 
-$(DL_FILE)_MD5 = 19670520d7f0289a5b4c6fb28520b2ac
-asix-3.5.0a.tar.bz2_MD5=cc57513505d3ad1a43b58add91d2bba7
+$(DL_FILE)_MD5 = 7099f748a9d2c05fffea7e5ea4f41a0b
+asix-4.4.0.tar.xz_MD5=633609e889de41554826e0e2cd7bffde
 
 install : $(TARGET)
 
@@ -87,11 +87,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.34-usbnet_compile.patch
 
 	# Build Updated asix usb-lan driver
-	cd $(DIR_APP)/drivers/net/usb && tar xvf $(DIR_DL)/asix-3.5.0a.tar.bz2
+	cd $(DIR_APP)/drivers/net/usb && tar xvJf $(DIR_DL)/asix-4.4.0.tar.xz
 
 	# Add libartas uAP driver
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.0-libertas_uap.patch
-	cd $(DIR_APP)&& echo CONFIG_LIBERTAS_UAP=m >> config.mk
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.5-libertas_uap.patch
+
+	# uAP will not build with xen-kernel (2.6)
+ifneq "$(KCFG)" "xen"
+	cd $(DIR_APP) && echo export CONFIG_LIBERTAS_UAP=m >> config.mk
+endif
 
 ifeq "$(MACHINE_TYPE)" "arm"
 	# fix atomic64 functions
