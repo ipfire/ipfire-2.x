@@ -353,6 +353,13 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		$errormessage = $Lang::tr{'advproxy errmsg invalid proxy port'};
 		goto ERROR;
 	}
+	if (!($proxysettings{'UPSTREAM_PROXY'} eq '')) {
+	  my @temp = split(/:/,$proxysettings{'UPSTREAM_PROXY'});
+	  if (!(&General::validip($temp[0]))) {
+	    $errormessage = $Lang::tr{'advproxy errmsg invalid upstream proxy'};
+	    goto ERROR;
+          }
+        }
 	if (!($proxysettings{'CACHE_SIZE'} =~ /^\d+/) ||
 		($proxysettings{'CACHE_SIZE'} < 10))
 	{
@@ -984,7 +991,7 @@ print <<END
 <tr><td class='base' >$Lang::tr{'processes'}<input type='text' name='CHILDREN' value='$proxysettings{'CHILDREN'}' size='5' /></td>
 END
 ;
-my $count = `arp -a | wc -l`;
+my $count = `ip n| wc -l`;
 if ( $count < 1 ){$count = 1;}
 if ( -e "/usr/bin/squidclamav" ) {
 	print "<td class='base'><b>".$Lang::tr{'advproxy squidclamav'}."</b><br />";
@@ -3013,7 +3020,7 @@ sub writeconfig
 	}
 
 	$_ = $proxysettings{'UPSTREAM_PROXY'};
-	my ($remotehost, $remoteport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+        my ($remotehost, $remoteport) = split(/:/,$_);
 
 	if ($remoteport eq '') { $remoteport = 80; }
 
@@ -3922,6 +3929,11 @@ END
 	{
 		print FILE "url_rewrite_program /usr/sbin/redirect_wrapper\n";
 		print FILE "url_rewrite_children $proxysettings{'CHILDREN'}\n\n";
+	}
+
+	# Include file with user defined settings.
+	if (-e "/etc/squid/squid.conf.local") {
+		print FILE "include /etc/squid/squid.conf.local\n";
 	}
 	close FILE;
 }

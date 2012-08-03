@@ -394,47 +394,51 @@ END
 	}
 
 ###
-# m.a.d n2n
+# Print the OpenVPN N2N connection status.
 ###
-
 if ( -d "${General::swroot}/ovpn/n2nconf") {
-my %confighash=();
-my $display = '';
+	my %confighash=();
 
-&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-foreach my $dkey (keys %confighash) {
-if ($confighash{$dkey}[3] eq 'net') {
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+	foreach my $dkey (keys %confighash) {
+		if (($confighash{$dkey}[3] eq 'net') && (-e "/var/run/$confighash{$dkey}[1]n2n.pid")) {
+			my $tport = $confighash{$dkey}[22];
+			next if ($tport eq '');
 
+			my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport); 
+			$tnet->open('127.0.0.1');
+			my @output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
+			my @tustate = split(/\,/, $output[1]);
 
-          if (-e "/var/run/$confighash{$dkey}[1]n2n.pid") {
-          my @output = "";
-          my @tustate = "";
-          my $tport = $confighash{$dkey}[22];
-          my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport); 
-          if ($tport ne '') {
-          $tnet->open('127.0.0.1');
-          @output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
-          @tustate = split(/\,/, $output[1]);
-         if ( $tustate[1] eq 'CONNECTED')
-          { $display = "<font color=$Header::colourgreen>$Lang::tr{'capsopen'}</font>";
-          } else {
-          $display = "<font color=$Header::colourred>$tustate[1]</font>"; }
+			my $display;
+			my $display_colour = $Header::colourred;
+			if ( $tustate[1] eq 'CONNECTED') {
+				$display_colour = $Header::colourgreen;
+				$display = $Lang::tr{'capsopen'};
+			} else {
+				$display = $tustate[1];
+			}
  
-	print <<END;
-	<tr><td align='center' bgcolor='$Header::colourovpn' width='25%'><a href="/cgi-bin/ovpnmain.cgi"><font size='2' color='white'><b>OpenVPN n2n</b></font></a><br>
-  <td width='30%' align='center'> $confighash{$dkey}[10]<td width='45%' align='center'> $display 
-
+			print <<END;
+			<tr>
+				<td align='left' nowrap='nowrap' bgcolor='$color{'color22'}'>
+					$confighash{$dkey}[1]
+				</td>
+				<td align='center'>
+					$confighash{$dkey}[11]
+				</td>
+				<td align='center' bgcolor='$display_colour'>
+					<b>
+						<font color='#FFFFFF'>
+							$display
+						</font>
+					</b>
+				</td>
+			</tr>
 END
-;
+		}
+	}
 }
-}
-}
-}
-}
-
-###
-# m.a.d n2n end
-###
 
 # Fireinfo
 if ( ! -e "/var/ipfire/main/send_profile") {
