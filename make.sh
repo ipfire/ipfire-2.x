@@ -386,7 +386,7 @@ buildipfire() {
 #    ipfiremake v4l-dvb			KCFG="-xen"
 #    ipfiremake mISDN			KCFG="-xen"
 #    ipfiremake dahdi			KCFG="-xen" KMOD=1
-#    ipfiremake cryptodev		KCFG="-xen"
+    ipfiremake cryptodev		KCFG="-xen"
 #    ipfiremake compat-wireless		KCFG="-xen"
 #    ipfiremake r8169			KCFG="-xen"
 #    ipfiremake r8168			KCFG="-xen"
@@ -437,7 +437,7 @@ buildipfire() {
 #    ipfiremake kvm-kmod			KCFG="-versatile"
 #    ipfiremake mISDN			KCFG="-versatile"
 #    ipfiremake dahdi			KCFG="-versatile" KMOD=1
-#    ipfiremake cryptodev		KCFG="-versatile"
+    ipfiremake cryptodev		KCFG="-versatile"
     ipfiremake compat-wireless		KCFG="-versatile"
 #    ipfiremake r8169			KCFG="-versatile"
 #    ipfiremake r8168			KCFG="-versatile"

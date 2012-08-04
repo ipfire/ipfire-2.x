@@ -24,6 +24,10 @@
 
 include Config
 
+ifeq "$(KCFG)" "-xen"
+	KVER = 2.6.32.59
+endif
+
 VERSUFIX=ipfire$(KCFG)
 
 VER        = 1.4
@@ -81,6 +85,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /usr/include/crypto
 	cd $(DIR_APP) && make install \
 		KERNEL_DIR=/lib/modules/$(KVER)-$(VERSUFIX)/build
-#	ln -svf ../crypto/cryptodev.h /usr/include/linux/cryptodev.h
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
