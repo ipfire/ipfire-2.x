@@ -28,6 +28,10 @@ VERSUFIX=ipfire$(KCFG)
 
 VER        = 3.5-1-snpc
 
+ifeq "$(KCFG)" "-xen"
+	KVER = 2.6.32.59
+endif
+
 THISAPP    = compat-wireless-$(VER)
 DL_FILE    = compat-wireless-$(VER).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
@@ -93,7 +97,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.5-libertas_uap.patch
 
 	# uAP will not build with xen-kernel (2.6)
-ifneq "$(KCFG)" "xen"
+ifneq "$(KCFG)" "-xen"
 	cd $(DIR_APP) && echo export CONFIG_LIBERTAS_UAP=m >> config.mk
 endif
 

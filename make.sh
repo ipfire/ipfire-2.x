@@ -387,7 +387,7 @@ buildipfire() {
 #    ipfiremake mISDN			KCFG="-xen"
 #    ipfiremake dahdi			KCFG="-xen" KMOD=1
     ipfiremake cryptodev		KCFG="-xen"
-#    ipfiremake compat-wireless		KCFG="-xen"
+    ipfiremake compat-wireless		KCFG="-xen"
 #    ipfiremake r8169			KCFG="-xen"
 #    ipfiremake r8168			KCFG="-xen"
 #    ipfiremake r8101			KCFG="-xen"
