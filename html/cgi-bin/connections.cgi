@@ -133,6 +133,11 @@ if ($netsettings{'BLUE_DEV'}) {
 	}
 }
 
+# Add Orange Firewall Interface
+push(@network, $netsettings{'ORANGE_ADDRESS'});
+push(@masklen, "255.255.255.255" );
+push(@colour, ${Header::colourfw} );
+
 # Add Orange Network
 if ($netsettings{'ORANGE_DEV'}) {
 	push(@network, $netsettings{'ORANGE_NETADDRESS'});
