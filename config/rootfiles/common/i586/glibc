@@ -474,7 +474,7 @@ usr/bin/ldd
 #usr/lib/crt1.o
 #usr/lib/crti.o
 #usr/lib/crtn.o
-#usr/lib/gconv
+usr/lib/gconv
 #usr/lib/gconv/ANSI_X3.110.so
 #usr/lib/gconv/ARMSCII-8.so
 #usr/lib/gconv/ASMO_449.so
