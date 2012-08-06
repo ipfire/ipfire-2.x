@@ -331,9 +331,13 @@ foreach my $line (@conntrack) {
 
 	# Source and destination.
 	my $sip;
+	my $sip_ret;
 	my $dip;
+	my $dip_ret;
 	my $sport;
+	my $sport_ret;
 	my $dport;
+	my $dport_ret;
 	my @packets;
 	my @bytes;
 
@@ -349,16 +353,32 @@ foreach my $line (@conntrack) {
 
 		switch ($key) {
 			case "src" {
-				$sip = $val;
+				if ($sip == "") {
+					$sip = $val;
+				} else {
+					$dip_ret = $val;
+				}
 			}
 			case "dst" {
-				$dip = $val;
+				if ($dip == "") {
+					$dip = $val;
+				} else {
+					$sip_ret = $val;
+				}
 			}
 			case "sport" {
-				$sport = $val;
+				if ($sport == "") {
+					$sport = $val;
+				} else {
+					$dport_ret = $val;
+				}
 			}
 			case "dport" {
-				$dport = $val;
+				if ($dport == "") {
+					$dport = $val;
+				} else {
+					$sport_ret = $val;
+				}
 			}
 			case "packets" {
 				push(@packets, $val);
@@ -375,17 +395,11 @@ foreach my $line (@conntrack) {
 	my $sserv = '';
 	if ($sport < 1024) {
 		$sserv = uc(getservbyport($sport, lc($l4proto)));
-		if ($sserv ne '') {
-			$sserv = "&nbsp;($sserv)";
-		}
 	}
 
 	my $dserv = '';
 	if ($dport < 1024) {
 		$dserv = uc(getservbyport($dport, lc($l4proto)));
-		if ($dserv ne '') {
-			$dserv = "&nbsp;($dserv)";
-		}
 	}
 
 	my $bytes_in = format_bytes($bytes[0]);
@@ -394,6 +408,49 @@ foreach my $line (@conntrack) {
 	# Format TTL
 	$ttl = format_time($ttl);
 
+	my $sip_extra;
+	if ($sip ne $sip_ret) {
+		$sip_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$sip_extra .= "<a href='/cgi-bin/ipinfo.cgi?ip=$sip_ret'>";
+		$sip_extra .= "	<font color='#FFFFFF'>$sip_ret</font>";
+		$sip_extra .= "</a>";
+	}
+
+	my $dip_extra;
+	if ($dip ne $dip_ret) {
+		$dip_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$dip_extra .= "<a href='/cgi-bin/ipinfo.cgi?ip=$dip_ret'>";
+		$dip_extra .= " <font color='#FFFFFF'>$dip_ret</font>";
+		$dip_extra .= "</a>";
+	}
+
+
+	my $sport_extra;
+	if ($sport ne $sport_ret) {
+		my $sserv_ret = '';
+		if ($sport_ret < 1024) {
+			$sserv_ret = uc(getservbyport($sport_ret, lc($l4proto)));
+		}
+
+		$sport_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$sport_extra .= "<a href='http://isc.sans.org/port_details.php?port=$sport_ret' target='top' title='$sserv_ret'>";
+		$sport_extra .= " <font color='#FFFFFF'>$sport_ret</font>";
+		$sport_extra .= "</a>";
+	}
+
+	my $dport_extra;
+	if ($dport ne $dport_ret) {
+		my $dserv_ret = '';
+		if ($dport_ret < 1024) {
+			$dserv_ret = uc(getservbyport($dport_ret, lc($l4proto)));
+		}
+
+		$dport_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$dport_extra .= "<a href='http://isc.sans.org/port_details.php?port=$dport_ret' target='top' title='$dserv_ret'>";
+		$dport_extra .= " <font color='#FFFFFF'>$dport_ret</font>";
+		$dport_extra .= "</a>";
+	}
+
 	print <<END;
 	<tr>
 		<td align='center'>$l4proto</td>
@@ -401,21 +458,25 @@ foreach my $line (@conntrack) {
 			<a href='/cgi-bin/ipinfo.cgi?ip=$sip'>
 				<font color='#FFFFFF'>$sip</font>
 			</a>
+			$sip_extra
 		</td>
 		<td align='center' bgcolor='$sip_colour'>
-			<a href='http://isc.sans.org/port_details.php?port=$sport' target='top'>
-				<font color='#FFFFFF'>$sport$sserv</font>
+			<a href='http://isc.sans.org/port_details.php?port=$sport' target='top' title='$sserv'>
+				<font color='#FFFFFF'>$sport</font>
 			</a>
+			$sport_extra
 		</td>
 		<td align='center' bgcolor='$dip_colour'>
 			<a href='/cgi-bin/ipinfo.cgi?ip=$dip'>
 				<font color='#FFFFFF'>$dip</font>
 			</a>
+			$dip_extra
 		</td>
 		<td align='center' bgcolor='$dip_colour'>
-			<a href='http://isc.sans.org/port_details.php?port=$dport' target='top'>
-				<font color='#FFFFFF'>$dport$dserv</font>
+			<a href='http://isc.sans.org/port_details.php?port=$dport' target='top' title='$dserv'>
+				<font color='#FFFFFF'>$dport</font>
 			</a>
+			$dport_extra
 		</td>
 		<td align='center'>
 			$bytes_in / $bytes_out
