@@ -73,6 +73,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libnl-1.1-ULONG_MAX.patch
 	cd $(DIR_APP) && ln -s /usr/src/linux/include/linux/if_vlan.h \
 					      include/linux/if_vlan.h
 	cd $(DIR_APP) && ln -s /usr/src/linux/include/linux/netfilter/nf_conntrack_common.h \

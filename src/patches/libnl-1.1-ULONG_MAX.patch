@@ -1,0 +1,11 @@
+--- libnl-1.1/include/netlink-local.h.orig	2008-06-08 19:09:20.000000000 +0200
++++ libnl-1.1/include/netlink-local.h	2008-06-08 19:09:33.000000000 +0200
+@@ -26,6 +26,7 @@
+ #include <sys/socket.h>
+ #include <inttypes.h>
+ #include <assert.h>
++#include <limits.h>
+ 
+ #include <arpa/inet.h>
+ #include <netdb.h>
+
