@@ -67,6 +67,9 @@ ifeq "$(PASS)" "2"
 	-strip --strip-unneeded /tools/{,s}bin/*
 	rm -rfv /tools/{info,man} /usr/local/man
 	chown -R root:root /tools
+
+	# Install CPUID header.
+	install -m 644 -v $(DIR_SRC)/headers/cpuid.h /tools/include
 endif
 ifeq "$(PASS)" "3"
 	mv -v /tools/bin/{ld,ld-old}

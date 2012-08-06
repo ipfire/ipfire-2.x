@@ -36,29 +36,41 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr \
-    --disable-profile --enable-add-ons \
-    --enable-kernel=2.6.0 --libexecdir=/usr/lib/glibc
+  EXTRA_CONFIG = \
+	--prefix=/usr \
+	--libexecdir=/usr/lib/glibc
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  EXTRA_CONFIG = --prefix=/tools \
-    --disable-profile --enable-add-ons \
-    --enable-kernel=2.6.0 --with-binutils=/tools/bin \
-    --without-gd --with-headers=/tools/include \
-    --without-selinux
+  EXTRA_CONFIG = \
+	--prefix=/tools \
+	--with-binutils=/tools/bin \
+	--with-headers=/tools/include \
+	--without-gd
   EXTRA_MAKE =
   EXTRA_INSTALL =
 endif
 
 EXTRA_CONFIG += --build=$(BUILDTARGET)
 
+# Enable some extra optimization for the glibc code.
+export CFLAGS := $(subst -O2,-O3,$(CFLAGS))
+
 ifeq "$(MACHINE_TYPE)" "arm"
 	# Disable hardware FP for ARM.
 	EXTRA_CONFIG += \
 		--without-fp
 endif
+
+# Add some general configuration flags
+EXTRA_CONFIG += \
+	--disable-profile \
+	--enable-kernel=2.6.16 \
+	--enable-add-ons \
+	--without-selinux \
+	--enable-experimental-malloc \
+	--enable-bind-now
 
 ###############################################################################
 # Top-level Rules
