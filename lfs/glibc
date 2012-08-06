@@ -24,7 +24,8 @@
 
 include Config
 
-VER = 2.5
+VER        = 2.12.2
+PORTS_VER  = 2.12.1
 
 THISAPP    = glibc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -63,20 +64,17 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	glibc-libidn-$(VER).tar.bz2
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-glibc-libidn-$(VER).tar.bz2 = $(DL_FROM)/glibc-libidn-$(VER).tar.bz2
 
-$(DL_FILE)_MD5 = 1fb29764a6a650a4d5b409dda227ac9f
-glibc-libidn-$(VER).tar.bz2_MD5 = 8787868ba8962d9b125997ec2f25ac01
+$(DL_FILE)_MD5 = 903fcfa547df2f453476800e0838fe52
 
 # ARM needs glibc-ports
 ifeq "$(MACHINE_TYPE)" "arm"
-	objects += glibc-ports-$(VER).tar.bz2
-	glibc-ports-$(VER).tar.bz2 = $(DL_FROM)/glibc-ports-$(VER).tar.bz2
-	glibc-ports-$(VER).tar.bz2_MD5 = 183f6d46e8fa5e4b2aff240ab1586c2e
+	objects += glibc-ports-$(PORTS_VER).tar.bz2
+	glibc-ports-$(PORTS_VER).tar.bz2 = $(DL_FROM)/glibc-ports-$(PORTS_VER).tar.bz2
+	glibc-ports-$(PORTS_VER).tar.bz2_MD5 = cb01ab976180e98287cef5079e35359e
 endif
 
 install : $(TARGET)
