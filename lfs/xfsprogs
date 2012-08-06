@@ -77,6 +77,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && sed -i "/include/a #include <sys\/stat.h>" \
+		libxfs/xfs_ialloc.c quota/quot.c mdrestore/xfs_mdrestore.c \
+		rtcp/xfs_rtcp.c
 	cd $(DIR_APP) && make DEBUG=-DNDEBUG INSTALL_USER=root INSTALL_GROUP=root \
 												LOCAL_CONFIGURE_OPTIONS="--enable-readline=yes"
 	cd $(DIR_APP) && make install
