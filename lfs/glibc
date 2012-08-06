@@ -107,13 +107,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/glibc-build
 ifeq "$(MACHINE_TYPE)" "arm"
-	cd $(DIR_APP) && tar jxf $(DIR_DL)/glibc-ports-$(VER).tar.bz2
-	cd $(DIR_APP) && mv -v glibc-ports-$(VER) ports
-
-	cd $(DIR_APP)/ports && patch -Np1 -i $(DIR_SRC)/src/patches/glibc-ports-avoid-using-asm-procinfo.patch
-
-	# asm/page.h should not be included in sysdeps/unix/sysv/linux/arm/ioperm.c.
-	cd $(DIR_APP) && sed "/asm\/page.h/d" -i ports/sysdeps/unix/sysv/linux/arm/ioperm.c
+	cd $(DIR_APP) && tar jxf $(DIR_DL)/glibc-ports-$(PORTS_VER).tar.bz2
+	cd $(DIR_APP) && mv -v glibc-ports-$(PORTS_VER) ports
 endif
 
 ifeq "$(ROOT)" ""
