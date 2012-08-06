@@ -1,0 +1,56 @@
+--- coreutils-6.0.orig/lib/utimens.c	2006-06-11 09:14:31.000000000 +0200
++++ coreutils-6.0/lib/utimens.c	2007-07-17 00:41:08.000000000 +0200
+@@ -75,7 +75,7 @@
+    Return 0 on success, -1 (setting errno) on failure.  */
+ 
+ int
+-futimens (int fd ATTRIBUTE_UNUSED,
++cu_futimens (int fd ATTRIBUTE_UNUSED,
+ 	  char const *file, struct timespec const timespec[2])
+ {
+   /* There's currently no interface to set file timestamps with
+@@ -168,5 +168,5 @@
+ int
+ utimens (char const *file, struct timespec const timespec[2])
+ {
+-  return futimens (-1, file, timespec);
++  return cu_futimens (-1, file, timespec);
+ }
+--- coreutils-6.0.orig/lib/utimens.h	2004-11-23 21:41:51.000000000 +0100
++++ coreutils-6.0/lib/utimens.h	2007-07-17 00:41:31.000000000 +0200
+@@ -1,3 +1,3 @@
+ #include "timespec.h"
+-int futimens (int, char const *, struct timespec const [2]);
++int cu_futimens (int, char const *, struct timespec const [2]);
+ int utimens (char const *, struct timespec const [2]);
+--- coreutils-6.0.orig/src/copy.c	2007-07-16 23:18:42.000000000 +0200
++++ coreutils-6.0/src/copy.c	2007-07-17 00:43:10.000000000 +0200
+@@ -648,7 +648,7 @@
+       timespec[0] = get_stat_atime (src_sb);
+       timespec[1] = get_stat_mtime (src_sb);
+ 
+-      if (futimens (dest_desc, dst_name, timespec) != 0)
++      if (cu_futimens (dest_desc, dst_name, timespec) != 0)
+ 	{
+ 	  error (0, errno, _("preserving times for %s"), quote (dst_name));
+ 	  if (x->require_preserve)
+--- coreutils-6.0.orig/src/touch.c	2005-11-02 11:01:07.000000000 +0100
++++ coreutils-6.0/src/touch.c	2007-07-17 00:43:51.000000000 +0200
+@@ -167,7 +167,7 @@
+ 
+   if (amtime_now)
+     {
+-      /* Pass NULL to futimens so it will not fail if we have
++      /* Pass NULL to cu_futimens so it will not fail if we have
+ 	 write access to the file, but don't own it.  */
+       t = NULL;
+     }
+@@ -182,7 +182,7 @@
+       t = timespec;
+     }
+ 
+-  ok = (futimens (fd, (fd == STDOUT_FILENO ? NULL : file), t) == 0);
++  ok = (cu_futimens (fd, (fd == STDOUT_FILENO ? NULL : file), t) == 0);
+ 
+   if (fd == STDIN_FILENO)
+     {
