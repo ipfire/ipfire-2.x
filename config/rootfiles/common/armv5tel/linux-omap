@@ -1,5 +1,5 @@
 boot/uInit-ipfire-omap
 boot/uImage-ipfire-omap
-boot/System.map-3.2.23-ipfire-omap
-boot/config-3.2.23-ipfire-omap
-lib/modules/3.2.23-ipfire-omap
+boot/System.map-KVER-ipfire-omap
+boot/config-KVER-ipfire-omap
+lib/modules/KVER-ipfire-omap

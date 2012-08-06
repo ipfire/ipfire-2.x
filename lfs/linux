@@ -114,9 +114,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Linux Intermediate Queueing Device
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-imq.patch
 
-	# Not report deprecated syscall 1.23 (for kudzu)
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
-
 	# ipp2p 0.8.2-ipfire
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.0-ipp2p-0.8.2-ipfire.patch
 
@@ -135,7 +132,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 ifeq "$(KCFG)" "-kirkwood"
 	# Add dreamplug,guruplug and icy 62x0  support on ARM-kirkwood
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45-arm_kirkwood_setups.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.25-arm_kirkwood_setups.patch
 endif
 
 ifeq "$(MACHINE_TYPE)" "arm"

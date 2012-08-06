@@ -428,8 +428,32 @@ buildipfire() {
   else
     # arm-omap kernel build
     ipfiremake linux			KCFG="-rpi"
+#    ipfiremake v4l-dvb			KCFG="-rpi"
+#    ipfiremake kvm-kmod			KCFG="-rpi"
+#    ipfiremake mISDN			KCFG="-rpi"
+#    ipfiremake dahdi			KCFG="-rpi" KMOD=1
+    ipfiremake cryptodev		KCFG="-rpi"
+#    ipfiremake compat-wireless		KCFG="-rpi"
+#    ipfiremake r8169			KCFG="-rpi"
+#    ipfiremake r8168			KCFG="-rpi"
+#    ipfiremake r8101			KCFG="-rpi"
+#    ipfiremake e1000			KCFG="-rpi"
+#    ipfiremake e1000e			KCFG="-rpi"
+#    ipfiremake igb			KCFG="-rpi"
 
     ipfiremake linux			KCFG="-omap"
+#    ipfiremake v4l-dvb			KCFG="-omap"
+#    ipfiremake kvm-kmod			KCFG="-omap"
+#    ipfiremake mISDN			KCFG="-omap"
+#    ipfiremake dahdi			KCFG="-omap" KMOD=1
+    ipfiremake cryptodev		KCFG="-omap"
+#    ipfiremake compat-wireless		KCFG="-omap"
+#    ipfiremake r8169			KCFG="-omap"
+#    ipfiremake r8168			KCFG="-omap"
+#    ipfiremake r8101			KCFG="-omap"
+#    ipfiremake e1000			KCFG="-omap"
+#    ipfiremake e1000e			KCFG="-omap"
+#    ipfiremake igb			KCFG="-omap"
 
     # arm-versatile kernel build
     ipfiremake linux			KCFG="-versatile"

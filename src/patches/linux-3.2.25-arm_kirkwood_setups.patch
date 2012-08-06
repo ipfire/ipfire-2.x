@@ -1,7 +1,7 @@
-diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/dreamplug-setup.c linux-2.6.32.57/arch/arm/mach-kirkwood/dreamplug-setup.c
---- linux-2.6.32.57.org/arch/arm/mach-kirkwood/dreamplug-setup.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-2.6.32.57/arch/arm/mach-kirkwood/dreamplug-setup.c	2012-03-02 09:22:40.107199269 +0100
-@@ -0,0 +1,140 @@
+diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/dreamplug-setup.c linux-3.2.25/arch/arm/mach-kirkwood/dreamplug-setup.c
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/dreamplug-setup.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-3.2.25/arch/arm/mach-kirkwood/dreamplug-setup.c	2012-08-05 19:04:12.000000000 +0200
+@@ -0,0 +1,139 @@
 +/*
 + * arch/arm/mach-kirkwood/dreamplug-setup.c
 + *
@@ -134,155 +134,48 @@ diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/dreamplug-setup.c linux-2.
 +
 +MACHINE_START(DREAMPLUG, "Marvell DreamPlug Reference Board")
 +	/* Maintainer: Siddarth Gore <gores <at> marvell.com> */
-+	.phys_io	= KIRKWOOD_REGS_PHYS_BASE,
-+	.io_pg_offst	= ((KIRKWOOD_REGS_VIRT_BASE) >> 18) & 0xfffc,
-+	.boot_params	= 0x00000100,
++	.atag_offset	= 0x100,
 +	.init_machine	= dreamplug_init,
 +	.map_io		= kirkwood_map_io,
++	.init_early	= kirkwood_init_early,
 +	.init_irq	= kirkwood_init_irq,
 +	.timer		= &kirkwood_timer,
 +MACHINE_END
-diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/guruplug-setup.c linux-2.6.32.57/arch/arm/mach-kirkwood/guruplug-setup.c
---- linux-2.6.32.57.org/arch/arm/mach-kirkwood/guruplug-setup.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-2.6.32.57/arch/arm/mach-kirkwood/guruplug-setup.c	2012-03-02 23:36:51.627514981 +0100
-@@ -0,0 +1,133 @@
-+/*
-+ * arch/arm/mach-kirkwood/guruplug-setup.c
-+ *
-+ * Marvell GuruPlug Reference Board Setup
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
+diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/guruplug-setup.c linux-3.2.25/arch/arm/mach-kirkwood/guruplug-setup.c
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/guruplug-setup.c	2012-08-02 15:38:04.000000000 +0200
++++ linux-3.2.25/arch/arm/mach-kirkwood/guruplug-setup.c	2012-08-05 19:05:22.000000000 +0200
+@@ -11,6 +11,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
 +#include <linux/mtd/mtd.h>
-+#include <linux/mtd/partitions.h>
-+#include <linux/ata_platform.h>
-+#include <linux/mv643xx_eth.h>
-+#include <linux/gpio.h>
-+#include <linux/leds.h>
-+#include <asm/mach-types.h>
-+#include <asm/mach/arch.h>
-+#include <mach/kirkwood.h>
-+#include <plat/mvsdio.h>
-+#include "common.h"
-+#include "mpp.h"
-+
-+static struct mtd_partition guruplug_nand_parts[] = {
-+	{
-+		.name = "u-boot",
-+		.offset = 0,
+ #include <linux/mtd/partitions.h>
+ #include <linux/ata_platform.h>
+ #include <linux/mv643xx_eth.h>
+@@ -27,15 +28,16 @@
+ 	{
+ 		.name = "u-boot",
+ 		.offset = 0,
+-		.size = SZ_1M
 +		.size = SZ_1M,
 +		.mask_flags = MTD_WRITEABLE, /* read only */
-+	}, {
-+		.name = "uImage",
-+		.offset = MTDPART_OFS_NXTBLK,
+ 	}, {
+ 		.name = "uImage",
+ 		.offset = MTDPART_OFS_NXTBLK,
+-		.size = SZ_4M
 +		.size = SZ_4M,
-+	}, {
-+		.name = "root",
-+		.offset = MTDPART_OFS_NXTBLK,
+ 	}, {
+ 		.name = "root",
+ 		.offset = MTDPART_OFS_NXTBLK,
+-		.size = MTDPART_SIZ_FULL
 +		.size = MTDPART_SIZ_FULL,
-+	},
-+};
-+
-+static struct mv643xx_eth_platform_data guruplug_ge00_data = {
-+	.phy_addr	= MV643XX_ETH_PHY_ADDR(0),
-+};
-+
-+static struct mv643xx_eth_platform_data guruplug_ge01_data = {
-+	.phy_addr	= MV643XX_ETH_PHY_ADDR(1),
-+};
-+
-+static struct mv_sata_platform_data guruplug_sata_data = {
-+	.n_ports	= 1,
-+};
-+
-+static struct mvsdio_platform_data guruplug_mvsdio_data = {
-+	/* unfortunately the CD signal has not been connected */
-+};
-+
-+static struct gpio_led guruplug_led_pins[] = {
-+	{
-+		.name			= "guruplug:red:health",
-+		.gpio			= 46,
-+		.active_low		= 1,
-+	},
-+	{
-+		.name			= "guruplug:green:health",
-+		.gpio			= 47,
-+		.active_low		= 1,
-+	},
-+	{
-+		.name			= "guruplug:red:wmode",
-+		.gpio			= 48,
-+		.active_low		= 1,
-+	},
-+	{
-+		.name			= "guruplug:green:wmode",
-+		.gpio			= 49,
-+		.active_low		= 1,
-+	},
-+};
-+
-+static struct gpio_led_platform_data guruplug_led_data = {
-+	.leds		= guruplug_led_pins,
-+	.num_leds	= ARRAY_SIZE(guruplug_led_pins),
-+};
-+
-+static struct platform_device guruplug_leds = {
-+	.name	= "leds-gpio",
-+	.id	= -1,
-+	.dev	= {
-+		.platform_data	= &guruplug_led_data,
-+	}
-+};
-+
-+static unsigned int guruplug_mpp_config[] __initdata = {
-+	MPP46_GPIO,	/* M_RLED */
-+	MPP47_GPIO,	/* M_GLED */
-+	MPP48_GPIO,	/* B_RLED */
-+	MPP49_GPIO,	/* B_GLED */
-+	0
-+};
-+
-+static void __init guruplug_init(void)
-+{
-+	/*
-+	 * Basic setup. Needs to be called early.
-+	 */
-+	kirkwood_init();
-+	kirkwood_mpp_conf(guruplug_mpp_config);
-+
-+	kirkwood_uart0_init();
-+	kirkwood_nand_init(ARRAY_AND_SIZE(guruplug_nand_parts), 25);
-+
-+	kirkwood_ehci_init();
-+	kirkwood_ge00_init(&guruplug_ge00_data);
-+	kirkwood_ge01_init(&guruplug_ge01_data);
-+	kirkwood_sata_init(&guruplug_sata_data);
-+	kirkwood_sdio_init(&guruplug_mvsdio_data);
-+
-+	platform_device_register(&guruplug_leds);
-+}
-+
-+MACHINE_START(GURUPLUG, "Marvell GuruPlug Reference Board")
-+	/* Maintainer: Siddarth Gore <gores@marvell.com> */
-+	.phys_io	= KIRKWOOD_REGS_PHYS_BASE,
-+	.io_pg_offst	= ((KIRKWOOD_REGS_VIRT_BASE) >> 18) & 0xfffc,
-+	.boot_params	= 0x00000100,
-+	.init_machine	= guruplug_init,
-+	.map_io		= kirkwood_map_io,
-+	.init_irq	= kirkwood_init_irq,
-+	.timer		= &kirkwood_timer,
-+MACHINE_END
-diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/iconnect-setup.c linux-2.6.32.57/arch/arm/mach-kirkwood/iconnect-setup.c
---- linux-2.6.32.57.org/arch/arm/mach-kirkwood/iconnect-setup.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-2.6.32.57/arch/arm/mach-kirkwood/iconnect-setup.c	2012-03-03 00:15:42.757514706 +0100
-@@ -0,0 +1,211 @@
+ 	},
+ };
+ 
+diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/iconnect-setup.c linux-3.2.25/arch/arm/mach-kirkwood/iconnect-setup.c
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/iconnect-setup.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-3.2.25/arch/arm/mach-kirkwood/iconnect-setup.c	2012-08-05 19:06:06.000000000 +0200
+@@ -0,0 +1,212 @@
 +/*
 + * arch/arm/mach-kirkwood/iconnect-setup.c
 + *
@@ -480,7 +373,7 @@ diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/iconnect-setup.c linux-2.6
 +static int __init iconnect_pci_init(void)
 +{
 +	if (machine_is_iconnect()) {
-+		kirkwood_pcie_init();
++		kirkwood_pcie_init(KW_PCIE0);
 +	}
 +	return 0;
 +}
@@ -488,18 +381,19 @@ diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/iconnect-setup.c linux-2.6
 +
 +MACHINE_START(ICONNECT, "Iomega iConnect Wireless Data Station")
 +	/* Maintainer: Arne Fitzenreiter <arne_f@ipfire.org> */
-+	.boot_params	= 0x00000100,
++	.atag_offset	= 0x100,
 +	.init_machine	= iconnect_init,
 +	.map_io		= kirkwood_map_io,
++	.init_early	= kirkwood_init_early,
 +	.init_irq	= kirkwood_init_irq,
 +	.timer		= &kirkwood_timer,
 +MACHINE_END
-diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/Kconfig linux-2.6.32.57/arch/arm/mach-kirkwood/Kconfig
---- linux-2.6.32.57.org/arch/arm/mach-kirkwood/Kconfig	2012-02-13 20:29:11.000000000 +0100
-+++ linux-2.6.32.57/arch/arm/mach-kirkwood/Kconfig	2012-03-02 09:28:49.387192309 +0100
-@@ -32,6 +32,18 @@
+diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/Kconfig linux-3.2.25/arch/arm/mach-kirkwood/Kconfig
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/Kconfig	2012-08-02 15:38:04.000000000 +0200
++++ linux-3.2.25/arch/arm/mach-kirkwood/Kconfig	2012-08-05 18:45:22.015253501 +0200
+@@ -44,6 +44,12 @@
  	  Say 'Y' here if you want your kernel to support the
- 	  Marvell SheevaPlug Reference Board.
+ 	  Marvell GuruPlug Reference Board.
  
 +config MACH_DREAMPLUG
 +	bool "Marvell DreamPlug Reference Board"
@@ -507,18 +401,12 @@ diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/Kconfig linux-2.6.32.57/ar
 +	  Say 'Y' here if you want your kernel to support the
 +	  Marvell DreamPlug Reference Board.
 +
-+config MACH_GURUPLUG
-+	bool "Marvell GuruPlug Reference Board"
-+	help
-+	  Say 'Y' here if you want your kernel to support the
-+	  Marvell GuruPlug Reference Board.
-+
  config MACH_TS219
- 	bool "QNAP TS-119 and TS-219 Turbo NAS"
+ 	bool "QNAP TS-110, TS-119, TS-119P+, TS-210, TS-219, TS-219P and TS-219P+ Turbo NAS"
  	help
-@@ -44,6 +56,18 @@
+@@ -130,6 +136,18 @@
  	  Say 'Y' here if you want your kernel to support the
- 	  Marvell OpenRD Base Board.
+ 	  HP t5325 Thin Client.
  
 +config MACH_ICONNECT
 +	bool "Iomega iConnect Wireless Data Station"
@@ -527,46 +415,48 @@ diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/Kconfig linux-2.6.32.57/ar
 +	  Iomega iConnect Wireless Data Station.
 +
 +config MACH_NAS6210
-+	bool "RaidSonic ICY BOX IB-NAS62x0"
++	bool "Raidsonic ICY BOX IB-62x0"
 +	help
 +	  Say 'Y' here if you want your kernel to support the
-+	  RaidSonic ICY BOX IB-NAS62x0 device.
++	  Raidsonic ICY BOX IB-62x0.
 +
  endmenu
  
  endif
-diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/Makefile linux-2.6.32.57/arch/arm/mach-kirkwood/Makefile
---- linux-2.6.32.57.org/arch/arm/mach-kirkwood/Makefile	2012-02-13 20:29:11.000000000 +0100
-+++ linux-2.6.32.57/arch/arm/mach-kirkwood/Makefile	2012-03-02 09:26:39.447195212 +0100
-@@ -5,7 +5,11 @@
- obj-$(CONFIG_MACH_RD88F6281)		+= rd88f6281-setup.o
- obj-$(CONFIG_MACH_MV88F6281GTW_GE)	+= mv88f6281gtw_ge-setup.o
+diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/Makefile linux-3.2.25/arch/arm/mach-kirkwood/Makefile
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/Makefile	2012-08-02 15:38:04.000000000 +0200
++++ linux-3.2.25/arch/arm/mach-kirkwood/Makefile	2012-08-05 18:46:49.015253501 +0200
+@@ -7,6 +7,7 @@
  obj-$(CONFIG_MACH_SHEEVAPLUG)		+= sheevaplug-setup.o
-+obj-$(CONFIG_MACH_GURUPLUG)		+= guruplug-setup.o
+ obj-$(CONFIG_MACH_ESATA_SHEEVAPLUG)	+= sheevaplug-setup.o
+ obj-$(CONFIG_MACH_GURUPLUG)		+= guruplug-setup.o
 +obj-$(CONFIG_MACH_DREAMPLUG)		+= dreamplug-setup.o
- obj-$(CONFIG_MACH_TS219)		+= ts219-setup.o
- obj-$(CONFIG_MACH_OPENRD_BASE)		+= openrd_base-setup.o
+ obj-$(CONFIG_MACH_DOCKSTAR)		+= dockstar-setup.o
+ obj-$(CONFIG_MACH_TS219)		+= ts219-setup.o tsx1x-common.o
+ obj-$(CONFIG_MACH_TS41X)		+= ts41x-setup.o tsx1x-common.o
+@@ -18,5 +19,7 @@
+ obj-$(CONFIG_MACH_NET2BIG_V2)		+= netxbig_v2-setup.o lacie_v2-common.o
+ obj-$(CONFIG_MACH_NET5BIG_V2)		+= netxbig_v2-setup.o lacie_v2-common.o
+ obj-$(CONFIG_MACH_T5325)		+= t5325-setup.o
 +obj-$(CONFIG_MACH_ICONNECT)		+= iconnect-setup.o
 +obj-$(CONFIG_MACH_NAS6210)		+= nas6210-setup.o
  
  obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
-diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/mpp.h linux-2.6.32.57/arch/arm/mach-kirkwood/mpp.h
---- linux-2.6.32.57.org/arch/arm/mach-kirkwood/mpp.h	2012-02-13 20:29:11.000000000 +0100
-+++ linux-2.6.32.57/arch/arm/mach-kirkwood/mpp.h	2012-03-02 10:26:53.987196429 +0100
-@@ -102,7 +102,9 @@
- #define MPP11_PTP_CLK		MPP( 11, 0xd, 1, 0, 1,   1,   1,   1    )
- #define MPP11_SATA0_ACTn	MPP( 11, 0x5, 0, 1, 0,   1,   1,   1    )
+diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/mpp.h linux-3.2.25/arch/arm/mach-kirkwood/mpp.h
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/mpp.h	2012-08-02 15:38:04.000000000 +0200
++++ linux-3.2.25/arch/arm/mach-kirkwood/mpp.h	2012-08-05 19:08:23.835566001 +0200
+@@ -102,6 +102,7 @@
+ #define MPP11_SATA0_ACTn	MPP( 11, 0x5, 0, 0, 0,   1,   1,   1,   1 )
  
-+
- #define MPP12_GPO		MPP( 12, 0x0, 0, 1, 1,   1,   1,   1    )
-+#define MPP12_GPIO		MPP( 12, 0x0, 1, 1, 1,   1,   1,   1    )
- #define MPP12_SD_CLK		MPP( 12, 0x1, 0, 1, 1,   1,   1,   1    )
- 
- #define MPP13_GPIO		MPP( 13, 0x0, 1, 1, 1,   1,   1,   1    )
-diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/nas6210-setup.c linux-2.6.32.57/arch/arm/mach-kirkwood/nas6210-setup.c
---- linux-2.6.32.57.org/arch/arm/mach-kirkwood/nas6210-setup.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-2.6.32.57/arch/arm/mach-kirkwood/nas6210-setup.c	2012-03-02 23:37:35.077514152 +0100
-@@ -0,0 +1,183 @@
+ #define MPP12_GPO		MPP( 12, 0x0, 0, 1, 1,   1,   1,   1,   1 )
++#define MPP12_GPIO		MPP( 12, 0x0, 1, 1, 1,   1,   1,   1,   1 )
+ #define MPP12_SD_CLK		MPP( 12, 0x1, 0, 0, 1,   1,   1,   1,   1 )
+ #define MPP12_AU_SPDIF0		MPP( 12, 0xa, 0, 0, 0,   0,   0,   0,   1 )
+ #define MPP12_SPI_MOSI		MPP( 12, 0xb, 0, 0, 0,   0,   0,   0,   1 )
+diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/nas6210-setup.c linux-3.2.25/arch/arm/mach-kirkwood/nas6210-setup.c
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/nas6210-setup.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-3.2.25/arch/arm/mach-kirkwood/nas6210-setup.c	2012-08-05 19:06:40.000000000 +0200
+@@ -0,0 +1,184 @@
 +/*
 + * arch/arm/mach-kirkwood/nas6210-setup.c
 + *
@@ -736,7 +626,7 @@ diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/nas6210-setup.c linux-2.6.
 +static int __init nas6210_pci_init(void)
 +{
 +	if (machine_is_nas6210()) {
-+		kirkwood_pcie_init();
++		kirkwood_pcie_init(KW_PCIE0);
 +	}
 +	return 0;
 +}
@@ -744,20 +634,25 @@ diff -Naur linux-2.6.32.57.org/arch/arm/mach-kirkwood/nas6210-setup.c linux-2.6.
 +
 +MACHINE_START(NAS6210, "RaidSonic ICY BOX IB-NAS62x0")
 +	/* Maintainer: Arne Fitzenreiter <arne_f@ipfire.org> */
-+	.boot_params	= 0x00000100,
++	.atag_offset	= 0x00000100,
 +	.init_machine	= nas6210_init,
 +	.map_io		= kirkwood_map_io,
++	.init_early	= kirkwood_init_early,
 +	.init_irq	= kirkwood_init_irq,
 +	.timer		= &kirkwood_timer,
 +MACHINE_END
-diff -Naur linux-2.6.32.57.org/arch/arm/tools/mach-types linux-2.6.32.57/arch/arm/tools/mach-types
---- linux-2.6.32.57.org/arch/arm/tools/mach-types	2012-02-13 20:29:11.000000000 +0100
-+++ linux-2.6.32.57/arch/arm/tools/mach-types	2012-03-02 09:25:26.787196718 +0100
-@@ -2536,3 +2536,7 @@
- mxt_td60		MACH_MXT_TD60		MXT_TD60		2550
- esyx			MACH_ESYX		ESYX			2551
- bulldog			MACH_BULLDOG		BULLDOG			2553
-+guruplug		MACH_GURUPLUG		GURUPLUG		2601
+diff -Naur linux-3.2.25.org/arch/arm/tools/mach-types linux-3.2.25/arch/arm/tools/mach-types
+--- linux-3.2.25.org/arch/arm/tools/mach-types	2012-08-02 15:38:04.000000000 +0200
++++ linux-3.2.25/arch/arm/tools/mach-types	2012-08-05 18:39:17.218378501 +0200
+@@ -455,9 +455,9 @@
+ mx23evk			MACH_MX23EVK		MX23EVK			2629
+ ap4evb			MACH_AP4EVB		AP4EVB			2630
+ mityomapl138		MACH_MITYOMAPL138	MITYOMAPL138		2650
+-guruplug		MACH_GURUPLUG		GURUPLUG		2659
 +dreamplug		MACH_DREAMPLUG		DREAMPLUG		2659
-+iconnect		MACH_ICONNECT		ICONNECT		2870
-+nas6210			MACH_NAS6210		NAS6210			3104
+ spear310		MACH_SPEAR310		SPEAR310		2660
+-spear320		MACH_SPEAR320		SPEAR320		2661
++guruplug		MACH_GURUPLUG		GURUPLUG		2661
+ aquila			MACH_AQUILA		AQUILA			2676
+ sheeva_esata		MACH_ESATA_SHEEVAPLUG	ESATA_SHEEVAPLUG	2678
+ msm7x30_surf		MACH_MSM7X30_SURF	MSM7X30_SURF		2679
