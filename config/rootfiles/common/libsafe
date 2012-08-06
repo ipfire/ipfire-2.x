@@ -1,4 +1,0 @@
-etc/ld.so.preload
-lib/libsafe.so.2
-lib/libsafe.so.2.0.16
-#usr/man/man8/libsafe.8

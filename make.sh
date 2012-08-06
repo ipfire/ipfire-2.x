@@ -589,7 +589,6 @@ buildipfire() {
   ipfiremake traceroute
   ipfiremake vlan
   ipfiremake wireless
-  ipfiremake libsafe
   ipfiremake pakfire
   ipfiremake spandsp
   ipfiremake lzo
