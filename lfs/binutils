@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.18
+VER        = 2.22
 
 THISAPP    = binutils-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -71,7 +71,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9d22ee4dafa3a194457caf4706f9cf01
+$(DL_FILE)_MD5 = ee0f10756c84979622b992a4a61ea3f5
 
 install : $(TARGET)
 
@@ -102,7 +102,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/binutils-build
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-configure-1.patch
 	cd $(DIR_SRC)/binutils-build && MACHINE= $(DIR_APP)/configure $(EXTRA_CONFIG)
 ifeq "$(PASS)" "1"
 	cd $(DIR_SRC)/binutils-build && make configure-host MAKEINFO=makeinfo MACHINE=
