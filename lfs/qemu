@@ -78,12 +78,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-
-	cd $(DIR_APP) && sed -i -e 's|CFLAGS+="-march=i486"|CFLAGS+=""|g' configure
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/qemu-0.15.0_missing_definitions_hack.patch
-
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
-		--target-list="i386-linux-user i386-softmmu arm-softmmu"
+		--target-list="i386-linux-user i386-softmmu arm-softmmu" \
+		--extra-cflags="$(CFLAGS)"
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

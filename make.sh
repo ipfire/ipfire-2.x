@@ -222,7 +222,7 @@ prepareenv() {
     # Run LFS static binary creation scripts one by one
     export CCACHE_DIR=$BASEDIR/ccache
     export CCACHE_COMPRESS=1
-    export CCACHE_HASHDIR=1
+    export CCACHE_COMPILERCHECK="none"
 
     # Remove pre-install list of installed files in case user erase some files before rebuild
     rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
@@ -589,7 +589,6 @@ buildipfire() {
   ipfiremake traceroute
   ipfiremake vlan
   ipfiremake wireless
-  ipfiremake libsafe
   ipfiremake pakfire
   ipfiremake spandsp
   ipfiremake lzo
@@ -605,7 +604,6 @@ buildipfire() {
   ipfiremake wget
   ipfiremake bridge-utils
   ipfiremake screen
-  ipfiremake hddtemp
   ipfiremake smartmontools
   ipfiremake htop
 #  ipfiremake postfix               # unknown system type linux 3.2.x
