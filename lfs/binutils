@@ -60,7 +60,8 @@ EXTRA_CONFIG += --build=$(BUILDTARGET)
 ifeq "$(MACHINE_TYPE)" "arm"
 	EXTRA_CONFIG += \
 		--with-abi=aapcs-linux \
-		--with-float=soft
+		--with-float=soft \
+		--disable-initfini-array
 endif
 
 ###############################################################################
