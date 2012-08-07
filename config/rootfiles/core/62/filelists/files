@@ -2,3 +2,4 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/connections.cgi
 usr/lib/gconv
+var/ipfire/outgoing/bin/outgoingfw.pl
