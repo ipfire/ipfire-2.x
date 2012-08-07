@@ -604,7 +604,6 @@ buildipfire() {
   ipfiremake wget
   ipfiremake bridge-utils
   ipfiremake screen
-  ipfiremake hddtemp
   ipfiremake smartmontools
   ipfiremake htop
 #  ipfiremake postfix               # unknown system type linux 3.2.x
