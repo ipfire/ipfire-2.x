@@ -487,6 +487,7 @@ buildipfire() {
   ipfiremake libnl
   ipfiremake libidn
   ipfiremake libjpeg
+  ipfiremake libexif
   ipfiremake libpng
   ipfiremake libtiff
   ipfiremake libart
@@ -632,6 +633,7 @@ buildipfire() {
   ipfiremake libogg
   ipfiremake libvorbis
   ipfiremake libdvbpsi
+  ipfiremake flac
   ipfiremake lame
   ipfiremake sox
   ipfiremake libshout
