@@ -436,6 +436,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	goto SAVE_ERROR;
     }
 
+    $vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
     $vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
     $vpnsettings{'VPN_DELAYED_START'} = $cgiparams{'VPN_DELAYED_START'};
     $vpnsettings{'RW_NET'} = $cgiparams{'RW_NET'};
