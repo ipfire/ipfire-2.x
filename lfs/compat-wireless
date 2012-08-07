@@ -101,10 +101,10 @@ ifneq "$(KCFG)" "-xen"
 	cd $(DIR_APP) && echo export CONFIG_LIBERTAS_UAP=m >> config.mk
 endif
 
-ifeq "$(MACHINE_TYPE)" "arm"
-	# fix atomic64 functions
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.2.5-1-fix_atomic64_t_on_arm.patch
-endif
+#ifeq "$(MACHINE_TYPE)" "arm"
+#	# fix atomic64 functions
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.2.5-1-fix_atomic64_t_on_arm.patch
+#endif
 
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) \
 		KMODPATH_ARG='INSTALL_MOD_PATH=' KMODDIR=kernel install-modules
