@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = miniupnpd
-PAK_VER    = 0
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -76,6 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/miniupnpd-iptcrdr.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/miniupnpd-1.4_use_XT_ALIGN.patch
 	cd $(DIR_APP) && make -f Makefile.linux \
 		CFLAGS="$(CFLAGS) -DIPTABLES_143 -I/usr/src/linux/include"
 

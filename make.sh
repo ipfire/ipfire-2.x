@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.11"							# Version number
-CORE="61"							# Core Level (Filename)
+CORE="62"							# Core Level (Filename)
 PAKFIRE_CORE="61"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -265,7 +265,7 @@ buildtoolchain() {
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
     export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    lfsmake1 linux TOOLS=1 HEADERS=1
+    lfsmake1 linux2 TOOLS=1 HEADERS=1
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain PASS=1
     lfsmake1 fake-environ
@@ -302,7 +302,7 @@ buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
     lfsmake2 stage2
-    lfsmake2 linux HEADERS=1
+    lfsmake2 linux2 HEADERS=1
     lfsmake2 man-pages
     lfsmake2 glibc
     lfsmake2 tzdata
@@ -382,90 +382,107 @@ buildipfire() {
 
   # The xen and PAE kernels are only available for x86
   if [ "${MACHINE_TYPE}" != "arm" ]; then
-    ipfiremake linux			KCFG="-xen"
-    ipfiremake kqemu			KCFG="-xen"
-    ipfiremake v4l-dvb			KCFG="-xen"
-    ipfiremake madwifi			KCFG="-xen"
-    ipfiremake mISDN			KCFG="-xen"
-    ipfiremake dahdi			KCFG="-xen" KMOD=1
+    ipfiremake linux2			KCFG="-xen"
+#    ipfiremake v4l-dvb			KCFG="-xen"
+#    ipfiremake mISDN			KCFG="-xen"
+#    ipfiremake dahdi			KCFG="-xen" KMOD=1
     ipfiremake cryptodev		KCFG="-xen"
     ipfiremake compat-wireless		KCFG="-xen"
-    ipfiremake r8169			KCFG="-xen"
-    ipfiremake r8168			KCFG="-xen"
-    ipfiremake r8101			KCFG="-xen"
-    ipfiremake e1000			KCFG="-xen"
-    ipfiremake e1000e			KCFG="-xen"
-    ipfiremake igb			KCFG="-xen"
+#    ipfiremake r8169			KCFG="-xen"
+#    ipfiremake r8168			KCFG="-xen"
+#    ipfiremake r8101			KCFG="-xen"
+#    ipfiremake e1000			KCFG="-xen"
+#    ipfiremake e1000e			KCFG="-xen"
+#    ipfiremake igb			KCFG="-xen"
+
     ipfiremake linux			KCFG="-pae"
-    ipfiremake kqemu			KCFG="-pae"
-    ipfiremake kvm-kmod			KCFG="-pae"
-    ipfiremake v4l-dvb			KCFG="-pae"
-    ipfiremake madwifi			KCFG="-pae"
+#    ipfiremake kvm-kmod			KCFG="-pae"
+#    ipfiremake v4l-dvb			KCFG="-pae"
     ipfiremake alsa			KCFG="-pae" KMOD=1
-    ipfiremake mISDN			KCFG="-pae"
-    ipfiremake dahdi			KCFG="-pae" KMOD=1
+#    ipfiremake mISDN			KCFG="-pae"
+#    ipfiremake dahdi			KCFG="-pae" KMOD=1
     ipfiremake cryptodev		KCFG="-pae"
     ipfiremake compat-wireless		KCFG="-pae"
 #    ipfiremake r8169			KCFG="-pae"
 #    ipfiremake r8168			KCFG="-pae"
 #    ipfiremake r8101			KCFG="-pae"
-    ipfiremake e1000			KCFG="-pae"
-    ipfiremake e1000e			KCFG="-pae"
-    ipfiremake igb			KCFG="-pae"
+#    ipfiremake e1000			KCFG="-pae"
+#    ipfiremake e1000e			KCFG="-pae"
+#    ipfiremake igb			KCFG="-pae"
+
     ipfiremake linux			KCFG=""
-    ipfiremake v4l-dvb			KCFG=""
-    ipfiremake kqemu			KCFG=""
-    ipfiremake kvm-kmod			KCFG=""
-    ipfiremake madwifi			KCFG=""
+#    ipfiremake kvm-kmod			KCFG=""
+#    ipfiremake v4l-dvb			KCFG=""
     ipfiremake alsa			KCFG="" KMOD=1
-    ipfiremake mISDN			KCFG=""
-    ipfiremake dahdi			KCFG="" KMOD=1
+#    ipfiremake mISDN			KCFG=""
+#    ipfiremake dahdi			KCFG="" KMOD=1
     ipfiremake cryptodev		KCFG=""
     ipfiremake compat-wireless		KCFG=""
 #    ipfiremake r8169			KCFG=""
 #    ipfiremake r8168			KCFG=""
 #    ipfiremake r8101			KCFG=""
-    ipfiremake e1000			KCFG=""
-    ipfiremake e1000e			KCFG=""
-    ipfiremake igb			KCFG=""
+#    ipfiremake e1000			KCFG=""
+#    ipfiremake e1000e			KCFG=""
+#    ipfiremake igb			KCFG=""
+
   else
     # arm-omap kernel build
-    ipfiremake linux3			KCFG="-rpi"
+    ipfiremake linux			KCFG="-rpi"
+#    ipfiremake v4l-dvb			KCFG="-rpi"
+#    ipfiremake kvm-kmod			KCFG="-rpi"
+#    ipfiremake mISDN			KCFG="-rpi"
+#    ipfiremake dahdi			KCFG="-rpi" KMOD=1
+    ipfiremake cryptodev		KCFG="-rpi"
+#    ipfiremake compat-wireless		KCFG="-rpi"
+#    ipfiremake r8169			KCFG="-rpi"
+#    ipfiremake r8168			KCFG="-rpi"
+#    ipfiremake r8101			KCFG="-rpi"
+#    ipfiremake e1000			KCFG="-rpi"
+#    ipfiremake e1000e			KCFG="-rpi"
+#    ipfiremake igb			KCFG="-rpi"
 
-    ipfiremake linux3			KCFG="-omap"
+    ipfiremake linux			KCFG="-omap"
+#    ipfiremake v4l-dvb			KCFG="-omap"
+#    ipfiremake kvm-kmod			KCFG="-omap"
+#    ipfiremake mISDN			KCFG="-omap"
+#    ipfiremake dahdi			KCFG="-omap" KMOD=1
+    ipfiremake cryptodev		KCFG="-omap"
+#    ipfiremake compat-wireless		KCFG="-omap"
+#    ipfiremake r8169			KCFG="-omap"
+#    ipfiremake r8168			KCFG="-omap"
+#    ipfiremake r8101			KCFG="-omap"
+#    ipfiremake e1000			KCFG="-omap"
+#    ipfiremake e1000e			KCFG="-omap"
+#    ipfiremake igb			KCFG="-omap"
 
     # arm-versatile kernel build
     ipfiremake linux			KCFG="-versatile"
-    ipfiremake v4l-dvb			KCFG="-versatile"
-    ipfiremake kqemu			KCFG="-versatile"
-    ipfiremake kvm-kmod			KCFG="-versatile"
-    ipfiremake madwifi			KCFG="-versatile"
-    ipfiremake mISDN			KCFG="-versatile"
-    ipfiremake dahdi			KCFG="-versatile" KMOD=1
+#    ipfiremake v4l-dvb			KCFG="-versatile"
+#    ipfiremake kvm-kmod			KCFG="-versatile"
+#    ipfiremake mISDN			KCFG="-versatile"
+#    ipfiremake dahdi			KCFG="-versatile" KMOD=1
     ipfiremake cryptodev		KCFG="-versatile"
     ipfiremake compat-wireless		KCFG="-versatile"
-#  ipfiremake r8169			KCFG="-versatile"
-#  ipfiremake r8168			KCFG="-versatile"
-#  ipfiremake r8101			KCFG="-versatile"
-    ipfiremake e1000			KCFG="-versatile"
-    ipfiremake e1000e			KCFG="-versatile"
-    ipfiremake igb			KCFG="-versatile"
+#    ipfiremake r8169			KCFG="-versatile"
+#    ipfiremake r8168			KCFG="-versatile"
+#    ipfiremake r8101			KCFG="-versatile"
+#    ipfiremake e1000			KCFG="-versatile"
+#    ipfiremake e1000e			KCFG="-versatile"
+#    ipfiremake igb			KCFG="-versatile"
     # arm-kirkwood kernel build
     ipfiremake linux			KCFG="-kirkwood"
-    ipfiremake v4l-dvb			KCFG="-kirkwood"
-    ipfiremake kqemu			KCFG="-kirkwood"
-    ipfiremake kvm-kmod			KCFG="-kirkwood"
-    ipfiremake madwifi			KCFG="-kirkwood"
-    ipfiremake mISDN			KCFG="-kirkwood"
-    ipfiremake dahdi			KCFG="-kirkwood" KMOD=1
+#    ipfiremake v4l-dvb			KCFG="-kirkwood"
+#    ipfiremake kvm-kmod			KCFG="-kirkwood"
+#    ipfiremake mISDN			KCFG="-kirkwood"
+#    ipfiremake dahdi			KCFG="-kirkwood" KMOD=1
     ipfiremake cryptodev		KCFG="-kirkwood"
     ipfiremake compat-wireless		KCFG="-kirkwood"
-#  ipfiremake r8169			KCFG="-kirkwood"
-#  ipfiremake r8168			KCFG="-kirkwood"
-#  ipfiremake r8101			KCFG="-kirkwood"
-    ipfiremake e1000			KCFG="-kirkwood"
-    ipfiremake e1000e			KCFG="-kirkwood"
-    ipfiremake igb			KCFG="-kirkwood"
+#    ipfiremake r8169			KCFG="-kirkwood"
+#    ipfiremake r8168			KCFG="-kirkwood"
+#    ipfiremake r8101			KCFG="-kirkwood"
+#    ipfiremake e1000			KCFG="-kirkwood"
+#    ipfiremake e1000e			KCFG="-kirkwood"
+#    ipfiremake igb			KCFG="-kirkwood"
   fi
   ipfiremake pkg-config
   ipfiremake linux-atm
@@ -615,7 +632,7 @@ buildipfire() {
   ipfiremake hddtemp
   ipfiremake smartmontools
   ipfiremake htop
-  ipfiremake postfix
+#  ipfiremake postfix               # unknown system type linux 3.2.x
   ipfiremake fetchmail
   ipfiremake cyrus-imapd
   ipfiremake openmailadmin
@@ -669,7 +686,6 @@ buildipfire() {
   ipfiremake fbset
   ipfiremake sdl
   ipfiremake qemu
-  ipfiremake qemu-kqemu
   ipfiremake sane
   ipfiremake netpbm
   ipfiremake phpSANE
@@ -733,9 +749,9 @@ buildipfire() {
   ipfiremake nut
   ipfiremake watchdog
   ipfiremake libpri
-  ipfiremake dahdi
-  ipfiremake asterisk
-  ipfiremake lcr
+#  ipfiremake dahdi               # update needed for 3.2.x
+#  ipfiremake asterisk
+#  ipfiremake lcr
   ipfiremake usb_modeswitch
   ipfiremake usb_modeswitch_data
   ipfiremake zerofree
@@ -745,7 +761,7 @@ buildipfire() {
   ipfiremake minicom
   ipfiremake ddrescue
   ipfiremake imspector
-  ipfiremake miniupnpd
+#  ipfiremake miniupnpd              # will not build
   ipfiremake client175
   ipfiremake powertop
   ipfiremake parted

@@ -80,6 +80,6 @@ ifeq "$(MACHINE_TYPE)" "arm"
 endif
 	cd $(DIR_APP)/wpa_supplicant && sed -e "s/wpa_cli\ dynamic_eap_methods/wpa_cli\ #dynamic_eap_methods/" -i Makefile
 	cd $(DIR_APP)/wpa_supplicant && sed -e "s@/usr/local@/usr@g" -i Makefile
-	cd $(DIR_APP)/wpa_supplicant && CFLAGS+=-I/usr/src/linux/include make && make install
+	cd $(DIR_APP)/wpa_supplicant && make && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

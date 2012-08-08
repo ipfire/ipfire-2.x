@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.4.6
+VER        = 1.4.14
 
 THISAPP    = iptables-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -45,7 +45,7 @@ netfilter-layer7-v2.22.tar.gz 		= $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
 libnfnetlink-1.0.0.tar.bz2		= $(URL_IPFIRE)/libnfnetlink-1.0.0.tar.bz2
 libnetfilter_queue-0.0.17.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-0.0.17.tar.bz2
 
-$(DL_FILE)_MD5 = c67cf30e281a924def6426be0973df56
+$(DL_FILE)_MD5 = 5ab24ad683f76689cfe7e0c73f44855d
 netfilter-layer7-v2.22.tar.gz_MD5 = 98dff8a3d5a31885b73341633f69501f
 libnfnetlink-1.0.0.tar.bz2_MD5 = 016fdec8389242615024c529acc1adb8
 libnetfilter_queue-0.0.17.tar.bz2_MD5 = 2cde35e678ead3a8f9eb896bf807a159
@@ -89,11 +89,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	                 ./extensions/
 
 	# ipp2p 0.8.2-pomng
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.6-ipp2p-0.8.2-pomng.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.14-ipp2p-0.8.2-ipfire.patch
 
 	# imq
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.6-imq_test1.patch
-	chmod +x $(DIR_APP)/extensions/.IMQ-test*
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.12-IMQ-test4.diff
+#	chmod +x $(DIR_APP)/extensions/.IMQ-test*
 
 	cd $(DIR_APP) && ./configure  --prefix=/usr --with-ksource=/usr/src/linux \
 				    --libdir=/lib --includedir=/usr/include --enable-libipq \
