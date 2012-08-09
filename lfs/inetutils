@@ -75,7 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --libexecdir=/usr/sbin \
 				--sysconfdir=/etc --localstatedir=/var \
 				--mandir=/usr/share/man --infodir=/usr/share/info \
-				--disable-logger --disable-syslogd
+				--disable-logger --disable-syslogd --disable-telnet --disable-telnetd
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	mv -v /usr/bin/ping /bin
