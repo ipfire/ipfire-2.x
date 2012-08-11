@@ -220,6 +220,7 @@ get_pkg_ver()
 if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE ]; then
 	echo "`date -u '+%b %e %T'`: Machine is iX86 (or equivalent)" >> $LOGFILE
 	MACHINE=i586
+	CROSSTARGET=${MACHINE}-cross-linux-gnu
 	BUILDTARGET=i586-pc-linux-gnu
 	CFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
 	CXXFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
@@ -229,6 +230,7 @@ elif [ 'armv5tejl' = $MACHINE -o 'armv5tel' = $MACHINE -o 'armv6l' = $MACHINE -o
 	echo "`date -u '+%b %e %T'`: Machine is ARM (or equivalent)" >> $LOGFILE
 	MACHINE=armv5tel
 	MACHINE_TYPE=arm
+	CROSSTARGET=${MACHINE}-cross-linux-gnueabi
 	BUILDTARGET=${MACHINE}-unknown-linux-gnueabi
 	CFLAGS="-O2 -march=armv5te -mfloat-abi=soft -fomit-frame-pointer -pipe"
 	CXXFLAGS="$CFLAGS"
@@ -301,6 +303,7 @@ entershell() {
 		CCACHE_COMPILERCHECK="none" \
 		KVER=$KVER \
 		BUILDTARGET="$BUILDTARGET" \
+		CROSSTARGET="${CROSSTARGET}" \
 		MACHINE="$MACHINE" \
 		MACHINE_TYPE="$MACHINE_TYPE" \
 		KGCC="ccache /usr/bin/gcc" \
@@ -382,6 +385,7 @@ lfsmake1() {
 	local PKG_TIME_START=`date +%s`
 
 	cd $BASEDIR/lfs && make -f $* 	BUILDTARGET=$BUILDTARGET \
+						CROSSTARGET="${CROSSTARGET}" \
 						MACHINE=$MACHINE \
 						MACHINE_TYPE=$MACHINE_TYPE \
 						LFS_BASEDIR=$BASEDIR \
@@ -418,7 +422,9 @@ lfsmake2() {
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
 						CCACHE_COMPILERCHECK="none" \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
-						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						BUILDTARGET="$BUILDTARGET" \
+						CROSSTARGET="${CROSSTARGET}" \
+						MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
 						$(fake_environ) \
 						/tools/bin/bash -x -c "cd /usr/src/lfs && \
@@ -452,7 +458,9 @@ ipfiremake() {
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
 						CCACHE_COMPILERCHECK="none" \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
-						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						BUILDTARGET="$BUILDTARGET" \
+						CROSSTARGET="${CROSSTARGET}" \
+						MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
 						$(fake_environ) \
 						/bin/bash -x -c "cd /usr/src/lfs && \
@@ -485,7 +493,9 @@ ipfiredist() {
 					CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
 					CCACHE_COMPILERCHECK="none" \
 					KVER=$KVER \
-					BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+					BUILDTARGET="$BUILDTARGET" \
+					CROSSTARGET="${CROSSTARGET}" \
+					MACHINE="$MACHINE" \
 					MACHINE_TYPE="$MACHINE_TYPE" \
 					$(fake_environ) \
 					/bin/bash -x -c "cd /usr/src/lfs && \
@@ -518,7 +528,9 @@ installmake() {
 						CFLAGS="-Os" CXXFLAGS="-Os" \
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
 						KVER=$KVER \
-						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						BUILDTARGET="$BUILDTARGET" \
+						CROSSTARGET="${CROSSTARGET}" \
+						MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
 		    /bin/bash -x -c "cd /usr/src/lfs && \
 		    make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
