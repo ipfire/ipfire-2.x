@@ -57,7 +57,11 @@ ifeq "$(PASS)" "1"
 		-e 's@/lib\(64\)\?/ld@/tools&@g' \
 		-e "/^\*cpp:$$/{n;s,$$, -isystem /tools/include,}" > $$SPECS
 endif
+
 ifeq "$(PASS)" "2"
+	# Remove the first cross compiler which is not needed anymore.
+	find /tools/ -name "$(CROSSTARGET)*" | xargs rm -rfv
+
 	-strip --strip-debug /tools/lib/*
 	-strip --strip-unneeded /tools/{,s}bin/*
 	rm -rfv /tools/{,share}/{info,man} /usr/local/man
