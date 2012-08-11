@@ -32,6 +32,13 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-pass$(PASS)
 
+ifeq "$(PASS)" "1"
+	CFLAGS += -static
+endif
+
+# Set max cache size to 5GB
+CFLAGS += -DDEFAULT_MAXSIZE=5242880
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -70,15 +77,25 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && CFLAGS="-O2 -static -DDEFAULT_MAXSIZE=5242880" ./configure --prefix=$(ROOT)/usr/local
+	cd $(DIR_APP) && ./configure --prefix=/tools
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
-	ln -sf ccache $(ROOT)/usr/local/bin/gcc
-	ln -sf ccache $(ROOT)/usr/local/bin/g++
-	ln -sf ccache $(ROOT)/usr/local/bin/cc
-	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-gcc
-	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-g++
-	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-cc
-	$(ROOT)/usr/local/bin/ccache -z
+
+ifeq "$(PASS)" "1"
+	mkdir -pv /tools/ccache/bin
+	ln -svf ../../bin/ccache /tools/ccache/bin/gcc
+	ln -svf ../../bin/ccache /tools/ccache/bin/g++
+	ln -svf ../../bin/ccache /tools/ccache/bin/cc
+	ln -svf ../../bin/ccache /tools/ccache/bin/$(CROSSTARGET)-gcc
+	ln -svf ../../bin/ccache /tools/ccache/bin/$(CROSSTARGET)-g++
+	ln -svf ../../bin/ccache /tools/ccache/bin/$(CROSSTARGET)-cc
+endif
+
+ifeq "$(PASS)" "2"
+	ln -svf ../../bin/ccache /tools/ccache/bin/$(BUILDTARGET)-gcc
+	ln -svf ../../bin/ccache /tools/ccache/bin/$(BUILDTARGET)-g++
+	ln -svf ../../bin/ccache /tools/ccache/bin/$(BUILDTARGET)-cc
+endif
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
