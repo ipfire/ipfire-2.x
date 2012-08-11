@@ -257,24 +257,23 @@ buildtoolchain() {
 
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
     export LOGFILE
-    NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
-    export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
-    ORG_PATH=$PATH
-    lfsmake1 ccache	PASS=1
-    lfsmake1 make	PASS=1
-    lfsmake1 binutils	PASS=1
-    lfsmake1 gcc		PASS=1
-    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    lfsmake1 linux2 TOOLS=1 HEADERS=1
+
+    local ORG_PATH=$PATH
+    export PATH="/tools/ccache/bin:/tools/bin:$PATH"
+    lfsmake1 fake-environ		PASS=1
+    lfsmake1 ccache			PASS=1
+    lfsmake1 binutils			PASS=1
+    lfsmake1 gcc			PASS=1
+    lfsmake1 linux2			TOOLS=1 HEADERS=1
     lfsmake1 glibc
-    lfsmake1 cleanup-toolchain PASS=1
-    lfsmake1 fake-environ
+    lfsmake1 cleanup-toolchain		PASS=1
+    lfsmake1 binutils			PASS=2
+    lfsmake1 gcc			PASS=2
+    lfsmake1 fake-environ		PASS=2
+    lfsmake1 ccache			PASS=2
     lfsmake1 tcl
     lfsmake1 expect
     lfsmake1 dejagnu
-    lfsmake1 gcc		PASS=2
-    lfsmake1 binutils	PASS=2
-    lfsmake1 ccache	PASS=2
     lfsmake1 ncurses
     lfsmake1 bash
     lfsmake1 bzip2
@@ -286,15 +285,13 @@ buildtoolchain() {
     lfsmake1 grep
     lfsmake1 gzip
     lfsmake1 m4
-    lfsmake1 make	PASS=2
+    lfsmake1 make
     lfsmake1 patch
     lfsmake1 perl
     lfsmake1 sed
     lfsmake1 tar
     lfsmake1 texinfo
-    lfsmake1 util-linux
-    lfsmake1 strip
-    lfsmake1 cleanup-toolchain	PASS=2
+    lfsmake1 cleanup-toolchain		PASS=2
     export PATH=$ORG_PATH
 }
 
@@ -1045,9 +1042,7 @@ toolchain)
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $MACHINE" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
-		build/{bin,etc,usr/bin,usr/local} \
-		build/tools/{bin,etc,*-linux-gnu*,include,lib,libexec,sbin,share,var} \
-		log >> $LOGFILE
+		build/tools log >> $LOGFILE
 	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.md5
 	stdumount
