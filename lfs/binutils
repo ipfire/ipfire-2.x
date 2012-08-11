@@ -44,6 +44,7 @@ ifeq "$(ROOT)" ""
 else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
+  CFLAGS =
   EXTRA_CONFIG = --prefix=/tools --disable-nls --disable-werror --disable-gprof
   #EXTRA_MAKE = LDFLAGS="-all-static"
   EXTRA_INSTALL = 
