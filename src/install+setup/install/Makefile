@@ -21,10 +21,10 @@
 
 CC      = gcc 
 CFLAGS  = -Os -Wall
-INCLUDE = -I/opt/i586-uClibc/include
+INCLUDE =
 
 LD      = gcc
-LDFLAGS = -L/install/lib
+LDFLAGS =
 LIBS    = -lnewt -lslang -lpci
 
 COMPILE = $(CC) -c $(INCLUDE) $(CFLAGS)

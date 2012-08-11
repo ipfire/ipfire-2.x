@@ -28,11 +28,7 @@ VER = ipfire
 
 THISAPP    = misc-progs
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(LFS_PASS)" "install"
-  TARGET     = $(DIR_INFO)/$(THISAPP)-install
-else
-  TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -53,10 +49,6 @@ md5 :
 $(TARGET) :
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/install+setup && cp -R $(DIR_SRC)/src/misc-progs/ $(DIR_SRC)
-ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP) && make CFLAGS="-Os -fomit-frame-pointer" iowrap
-	cd $(DIR_APP) && install -m 0755 iowrap /install/initrd/bin
-else
 	cp -R $(DIR_SRC)/src/install+setup/ $(DIR_SRC)
 	for i in $(DIR_SRC)/langs/*/install/lang_*.c ; do \
 	    cp $$i $(DIR_SRC)/install+setup/libsmooth; \
@@ -67,6 +59,5 @@ else
 	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'" 
 	cd $(DIR_APP) && make CFLAGS="$(CFLAGS) -Wall -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DSNAME='\"$(SNAME)\"'"
 	cd $(DIR_APP) && make install
-endif
 	@rm -rf $(DIR_APP) $(DIR_SRC)/install+setup
 	@$(POSTBUILD)

@@ -20,7 +20,7 @@
 
 CC      = gcc
 CFLAGS  = -O2 -Wall
-INCLUDE = -I/opt/i586-uClibc/include
+INCLUDE =
 
 LD      = ld
 LDFLAGS = -i

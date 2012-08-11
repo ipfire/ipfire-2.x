@@ -46,7 +46,6 @@ md5 :
 ###############################################################################
 
 $(TARGET) :
-ifeq "$(LFS_PASS)" "install"
 	# Add -ls before -exec if you want to verify what files are in the path to be stripped
 	# A running binary can't be stripped, so use the version from /tools
 	# It may fail (signal 11) under circonstance not identified by me (Gilles),
@@ -59,5 +58,3 @@ ifeq "$(LFS_PASS)" "install"
 	-/tools/bin/strip --strip-all /{,usr/}{,local/}{bin,sbin}/* /install/{initrd,misc}/bin/* /usr/lib/cyrus/* 2>/dev/null
 	-/tools/bin/strip --strip-all /usr/lib/awk/{grcat,pwcat} 2>/dev/null
 	-/tools/bin/strip --strip-all /usr/lib/gcc/*-linux-gnu/4.0.4/{cc1*,collect2} 2>/dev/null
-endif
-

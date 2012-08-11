@@ -800,7 +800,6 @@ buildinstaller() {
   ipfiremake mbr
   ipfiremake memtest
   ipfiremake installer
-  cp -f $BASEDIR/doc/COPYING $BASEDIR/build/install/initrd/
   installmake strip
   ipfiremake initrd
 }

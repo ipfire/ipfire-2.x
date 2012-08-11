@@ -520,10 +520,9 @@ installmake() {
 	local PKG_TIME_START=`date +%s`
 	$linux32 chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/opt/i586-uClibc/i586-linux-uclibc/bin:/opt/i586-uClibc/bin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 						VERSION=$VERSION \
 						CONFIG_ROOT=$CONFIG_ROOT \
-						LFS_PASS="install" \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						CFLAGS="-Os" CXXFLAGS="-Os" \
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \

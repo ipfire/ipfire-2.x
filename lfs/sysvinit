@@ -30,11 +30,7 @@ THISAPP    = sysvinit-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(LFS_PASS)" "install"
-  TARGET     = $(DIR_INFO)/$(THISAPP)-install
-else
-  TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -74,16 +70,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP)/src && sed -i s'/-O2/-Os\ -fomit-frame-pointer/' Makefile
-	cd $(DIR_APP)/src && make killall5
-	cd $(DIR_APP)/src && install -m 0755 killall5 /install/initrd/bin
-else
 	cd $(DIR_APP) && cp src/init.c{,.backup}
 	cd $(DIR_APP) && sed -i 's@Sending processes@& started by init@g' \
 				src/init.c
 	cd $(DIR_APP) && make $(MAKETUNING) -C src 
 	cd $(DIR_APP) && make -C src install
-endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

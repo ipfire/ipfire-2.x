@@ -27,11 +27,7 @@ include Config
 VER        = ipfire
 
 THISAPP    = hwdata
-ifeq "$(LFS_PASS)" "install"
-  TARGET     = $(DIR_INFO)/$(THISAPP)-install
-else
-  TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -53,11 +49,6 @@ md5 :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-ifeq "$(LFS_PASS)" "install"
-	-mkdir -p -m 755 /install/initrd/usr/share/hwdata
-	install -m 644 $(DIR_SRC)/src/hwdata/*.ids /install/initrd/usr/share/hwdata
-else
 	-mkdir -p -m 755 /usr/share/hwdata
 	install -m 644 $(DIR_SRC)/src/hwdata/*.ids /usr/share/hwdata
-endif
 	@$(POSTBUILD)

@@ -30,11 +30,7 @@ THISAPP    = newt-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(LFS_PASS)" "install"
-  TARGET     = $(DIR_INFO)/$(THISAPP)-install
-else
-  TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -75,20 +71,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/newt-0.51.6-if1close.patch
-ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP) && ./configure --without-gpm-support --host $(MACHINE)-uclibc
-	cd $(DIR_APP) && sed -i 's%^CFLAGS.*$$%CFLAGS = -Os -fomit-frame-pointer -Wall -D_GNU_SOURCE -DUTF8 -I/opt/i586-uClibc/include%' Makefile
-	cd $(DIR_APP) && make libnewt.a
-	-mkdir -p /opt/$(MACHINE)-uClibc/{include,lib}
-	cd $(DIR_APP) && install -m 0644 libnewt.a /opt/$(MACHINE)-uClibc/lib/libnewt.a
-	cd $(DIR_APP) && install -m 0644 newt.h /opt/$(MACHINE)-uClibc/include/newt.h
-else
 	cd $(DIR_APP) && ./configure --without-gpm-support
 	cd $(DIR_APP) && sed -i 's%^CFLAGS.*$$%CFLAGS = $(CFLAGS) -Wall -D_GNU_SOURCE%' Makefile
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && install -m 0644 newt.h /usr/include
 	ln -sf libnewt.so.0.51 /usr/lib/libnewt.so
-endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
