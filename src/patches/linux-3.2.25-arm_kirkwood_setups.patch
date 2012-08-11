@@ -1,7 +1,19 @@
+diff -Naur linux-3.2.25.org/arch/arm/Kconfig linux-3.2.25/arch/arm/Kconfig
+--- linux-3.2.25.org/arch/arm/Kconfig	2012-08-02 09:38:04.000000000 -0400
++++ linux-3.2.25/arch/arm/Kconfig	2012-08-11 04:42:20.985949735 -0400
+@@ -197,7 +197,7 @@
+ 
+ config ARM_PATCH_PHYS_VIRT
+ 	bool "Patch physical to virtual translations at runtime" if EMBEDDED
+-	default y
++	default n
+ 	depends on !XIP_KERNEL && MMU
+ 	depends on !ARCH_REALVIEW || !SPARSEMEM
+ 	help
 diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/dreamplug-setup.c linux-3.2.25/arch/arm/mach-kirkwood/dreamplug-setup.c
---- linux-3.2.25.org/arch/arm/mach-kirkwood/dreamplug-setup.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-3.2.25/arch/arm/mach-kirkwood/dreamplug-setup.c	2012-08-05 19:04:12.000000000 +0200
-@@ -0,0 +1,139 @@
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/dreamplug-setup.c	1969-12-31 19:00:00.000000000 -0500
++++ linux-3.2.25/arch/arm/mach-kirkwood/dreamplug-setup.c	2012-08-11 10:22:53.242276474 -0400
+@@ -0,0 +1,148 @@
 +/*
 + * arch/arm/mach-kirkwood/dreamplug-setup.c
 + *
@@ -141,9 +153,18 @@ diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/dreamplug-setup.c linux-3.2.2
 +	.init_irq	= kirkwood_init_irq,
 +	.timer		= &kirkwood_timer,
 +MACHINE_END
++
++MACHINE_START(DREAMPLUG1, "Marvell DreamPlug Reference Board")
++	.atag_offset	= 0x100,
++	.init_machine	= dreamplug_init,
++	.map_io		= kirkwood_map_io,
++	.init_early	= kirkwood_init_early,
++	.init_irq	= kirkwood_init_irq,
++	.timer		= &kirkwood_timer,
++MACHINE_END
 diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/guruplug-setup.c linux-3.2.25/arch/arm/mach-kirkwood/guruplug-setup.c
---- linux-3.2.25.org/arch/arm/mach-kirkwood/guruplug-setup.c	2012-08-02 15:38:04.000000000 +0200
-+++ linux-3.2.25/arch/arm/mach-kirkwood/guruplug-setup.c	2012-08-05 19:05:22.000000000 +0200
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/guruplug-setup.c	2012-08-02 09:38:04.000000000 -0400
++++ linux-3.2.25/arch/arm/mach-kirkwood/guruplug-setup.c	2012-08-05 13:05:22.000000000 -0400
 @@ -11,6 +11,7 @@
  #include <linux/kernel.h>
  #include <linux/init.h>
@@ -173,8 +194,8 @@ diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/guruplug-setup.c linux-3.2.25
  };
  
 diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/iconnect-setup.c linux-3.2.25/arch/arm/mach-kirkwood/iconnect-setup.c
---- linux-3.2.25.org/arch/arm/mach-kirkwood/iconnect-setup.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-3.2.25/arch/arm/mach-kirkwood/iconnect-setup.c	2012-08-05 19:06:06.000000000 +0200
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/iconnect-setup.c	1969-12-31 19:00:00.000000000 -0500
++++ linux-3.2.25/arch/arm/mach-kirkwood/iconnect-setup.c	2012-08-11 04:58:00.565660184 -0400
 @@ -0,0 +1,212 @@
 +/*
 + * arch/arm/mach-kirkwood/iconnect-setup.c
@@ -389,8 +410,8 @@ diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/iconnect-setup.c linux-3.2.25
 +	.timer		= &kirkwood_timer,
 +MACHINE_END
 diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/Kconfig linux-3.2.25/arch/arm/mach-kirkwood/Kconfig
---- linux-3.2.25.org/arch/arm/mach-kirkwood/Kconfig	2012-08-02 15:38:04.000000000 +0200
-+++ linux-3.2.25/arch/arm/mach-kirkwood/Kconfig	2012-08-05 18:45:22.015253501 +0200
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/Kconfig	2012-08-02 09:38:04.000000000 -0400
++++ linux-3.2.25/arch/arm/mach-kirkwood/Kconfig	2012-08-05 12:45:22.015253501 -0400
 @@ -44,6 +44,12 @@
  	  Say 'Y' here if you want your kernel to support the
  	  Marvell GuruPlug Reference Board.
@@ -424,8 +445,8 @@ diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/Kconfig linux-3.2.25/arch/arm
  
  endif
 diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/Makefile linux-3.2.25/arch/arm/mach-kirkwood/Makefile
---- linux-3.2.25.org/arch/arm/mach-kirkwood/Makefile	2012-08-02 15:38:04.000000000 +0200
-+++ linux-3.2.25/arch/arm/mach-kirkwood/Makefile	2012-08-05 18:46:49.015253501 +0200
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/Makefile	2012-08-02 09:38:04.000000000 -0400
++++ linux-3.2.25/arch/arm/mach-kirkwood/Makefile	2012-08-05 12:46:49.015253501 -0400
 @@ -7,6 +7,7 @@
  obj-$(CONFIG_MACH_SHEEVAPLUG)		+= sheevaplug-setup.o
  obj-$(CONFIG_MACH_ESATA_SHEEVAPLUG)	+= sheevaplug-setup.o
@@ -443,8 +464,8 @@ diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/Makefile linux-3.2.25/arch/ar
  
  obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
 diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/mpp.h linux-3.2.25/arch/arm/mach-kirkwood/mpp.h
---- linux-3.2.25.org/arch/arm/mach-kirkwood/mpp.h	2012-08-02 15:38:04.000000000 +0200
-+++ linux-3.2.25/arch/arm/mach-kirkwood/mpp.h	2012-08-05 19:08:23.835566001 +0200
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/mpp.h	2012-08-02 09:38:04.000000000 -0400
++++ linux-3.2.25/arch/arm/mach-kirkwood/mpp.h	2012-08-05 13:08:23.835566001 -0400
 @@ -102,6 +102,7 @@
  #define MPP11_SATA0_ACTn	MPP( 11, 0x5, 0, 0, 0,   1,   1,   1,   1 )
  
@@ -454,8 +475,8 @@ diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/mpp.h linux-3.2.25/arch/arm/m
  #define MPP12_AU_SPDIF0		MPP( 12, 0xa, 0, 0, 0,   0,   0,   0,   1 )
  #define MPP12_SPI_MOSI		MPP( 12, 0xb, 0, 0, 0,   0,   0,   0,   1 )
 diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/nas6210-setup.c linux-3.2.25/arch/arm/mach-kirkwood/nas6210-setup.c
---- linux-3.2.25.org/arch/arm/mach-kirkwood/nas6210-setup.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-3.2.25/arch/arm/mach-kirkwood/nas6210-setup.c	2012-08-05 19:06:40.000000000 +0200
+--- linux-3.2.25.org/arch/arm/mach-kirkwood/nas6210-setup.c	1969-12-31 19:00:00.000000000 -0500
++++ linux-3.2.25/arch/arm/mach-kirkwood/nas6210-setup.c	2012-08-11 04:58:35.223186956 -0400
 @@ -0,0 +1,184 @@
 +/*
 + * arch/arm/mach-kirkwood/nas6210-setup.c
@@ -642,17 +663,30 @@ diff -Naur linux-3.2.25.org/arch/arm/mach-kirkwood/nas6210-setup.c linux-3.2.25/
 +	.timer		= &kirkwood_timer,
 +MACHINE_END
 diff -Naur linux-3.2.25.org/arch/arm/tools/mach-types linux-3.2.25/arch/arm/tools/mach-types
---- linux-3.2.25.org/arch/arm/tools/mach-types	2012-08-02 15:38:04.000000000 +0200
-+++ linux-3.2.25/arch/arm/tools/mach-types	2012-08-05 18:39:17.218378501 +0200
-@@ -455,9 +455,9 @@
+--- linux-3.2.25.org/arch/arm/tools/mach-types	2012-08-02 09:38:04.000000000 -0400
++++ linux-3.2.25/arch/arm/tools/mach-types	2012-08-11 10:18:52.849620229 -0400
+@@ -448,6 +448,7 @@
+ riot_bei2		MACH_RIOT_BEI2		RIOT_BEI2		2576
+ riot_x37		MACH_RIOT_X37		RIOT_X37		2578
+ pca101			MACH_PCA101		PCA101			2595
++guruplug		MACH_GURUPLUG		GURUPLUG		2601
+ capc7117		MACH_CAPC7117		CAPC7117		2612
+ icontrol		MACH_ICONTROL		ICONTROL		2624
+ gplugd			MACH_GPLUGD		GPLUGD			2625
+@@ -455,7 +456,7 @@
  mx23evk			MACH_MX23EVK		MX23EVK			2629
  ap4evb			MACH_AP4EVB		AP4EVB			2630
  mityomapl138		MACH_MITYOMAPL138	MITYOMAPL138		2650
 -guruplug		MACH_GURUPLUG		GURUPLUG		2659
-+dreamplug		MACH_DREAMPLUG		DREAMPLUG		2659
++dreamplug1		MACH_DREAMPLUG1		DREAMPLUG1		2659
  spear310		MACH_SPEAR310		SPEAR310		2660
--spear320		MACH_SPEAR320		SPEAR320		2661
-+guruplug		MACH_GURUPLUG		GURUPLUG		2661
+ spear320		MACH_SPEAR320		SPEAR320		2661
  aquila			MACH_AQUILA		AQUILA			2676
- sheeva_esata		MACH_ESATA_SHEEVAPLUG	ESATA_SHEEVAPLUG	2678
- msm7x30_surf		MACH_MSM7X30_SURF	MSM7X30_SURF		2679
+@@ -1123,6 +1124,7 @@
+ thales_adc		MACH_THALES_ADC		THALES_ADC		3492
+ ubisys_p9d_evp		MACH_UBISYS_P9D_EVP	UBISYS_P9D_EVP		3493
+ atdgp318		MACH_ATDGP318		ATDGP318		3494
++dreamplug		MACH_DREAMPLUG		DREAMPLUG		3550
+ m28evk			MACH_M28EVK		M28EVK			3613
+ smdk4212		MACH_SMDK4212		SMDK4212		3638
+ smdk4412		MACH_SMDK4412		SMDK4412		3765
