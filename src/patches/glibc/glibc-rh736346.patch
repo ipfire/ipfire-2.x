@@ -1,0 +1,116 @@
+2011-01-14  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #10563]
+	* sysdeps/unix/sysv/linux/i386/setgroups.c: Use INLINE_SETXID_SYSCALL
+	to make the syscall.
+	* sysdeps/unix/sysv/linux/setgroups.c: New file.
+
+2011-01-14  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #10563]
+	* sysdeps/pthread/setxid.h (__SETXID_1): Add cast to assignment.
+	(__SETXID_2): Likewise.
+	(__SETXID_3): Likewise.
+
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/pthread/setxid.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/pthread/setxid.h
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/pthread/setxid.h
+@@ -20,11 +20,11 @@
+ #include <sysdep.h>
+ 
+ #define __SETXID_1(cmd, arg1) \
+-  cmd.id[0] = arg1
++  cmd.id[0] = (long int) arg1
+ #define __SETXID_2(cmd, arg1, arg2) \
+-  __SETXID_1 (cmd, arg1); cmd.id[1] = arg2
++  __SETXID_1 (cmd, arg1); cmd.id[1] = (long int) arg2
+ #define __SETXID_3(cmd, arg1, arg2, arg3) \
+-  __SETXID_2 (cmd, arg1, arg2); cmd.id[2] = arg3
++  __SETXID_2 (cmd, arg1, arg2); cmd.id[2] = (long int) arg3
+ 
+ #ifdef SINGLE_THREAD
+ # define INLINE_SETXID_SYSCALL(name, nr, args...) \
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/i386/setgroups.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/unix/sysv/linux/i386/setgroups.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/i386/setgroups.c
+@@ -25,6 +25,7 @@
+ #include <sys/syscall.h>
+ #include <bp-checks.h>
+ 
++#include <setxid.h>
+ #include <linux/posix_types.h>
+ #include <kernel-features.h>
+ 
+@@ -44,7 +45,7 @@ int
+ setgroups (size_t n, const gid_t *groups)
+ {
+ #if __ASSUME_32BITUIDS > 0
+-  return INLINE_SYSCALL (setgroups32, 2, n, CHECK_N (groups, n));
++  return INLINE_SETXID_SYSCALL (setgroups32, 2, n, CHECK_N (groups, n));
+ #else
+   if (n > (size_t) __sysconf (_SC_NGROUPS_MAX))
+     {
+@@ -62,7 +63,8 @@ setgroups (size_t n, const gid_t *groups
+ 	  int result;
+ 	  int saved_errno = errno;
+ 
+-	  result = INLINE_SYSCALL (setgroups32, 2, n, CHECK_N (groups, n));
++	  result = INLINE_SETXID_SYSCALL (setgroups32, 2, n,
++					  CHECK_N (groups, n));
+ 	  if (result == 0 || errno != ENOSYS)
+ 	    return result;
+ 
+@@ -80,7 +82,8 @@ setgroups (size_t n, const gid_t *groups
+ 	    }
+ 	}
+ 
+-      return INLINE_SYSCALL (setgroups, 2, n, CHECK_N (kernel_groups, n));
++      return INLINE_SETXID_SYSCALL (setgroups, 2, n,
++				    CHECK_N (kernel_groups, n));
+     }
+ #endif
+ }
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/setgroups.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/setgroups.c
+@@ -0,0 +1,37 @@
++/* Copyright (C) 1997,1998,2000,2002,2004,2006,2011
++   Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#include <errno.h>
++#include <grp.h>
++#include <setxid.h>
++#include <sysdep.h>
++
++
++/* Set the group set for the current user to GROUPS (N of them).  For
++   Linux we must convert the array of groups into the format that the
++   kernel expects.  */
++int
++setgroups (size_t n, const gid_t *groups)
++{
++#ifdef __NR_setgroups32
++# error "wrong setgroups.c file used"
++#endif
++  return INLINE_SETXID_SYSCALL (setgroups, 2, n, groups);
++}
++libc_hidden_def (setgroups)

@@ -1,0 +1,875 @@
+2011-02-05  Ulrich Drepper  <drepper@gmail.com>
+
+	* nscd/nscd-client.h: Define MAX_TIMEOUT_VALUE.
+	(struct datahead): Reuse 32 bits of the alignment for a TTL field.
+	* nscd/aicache.c (addhstaiX): Return timeout of added value.
+	(readdhstai): Return value of addhstaiX call.
+	* nscd/grpcache.c (cache_addgr): Return timeout of added value.
+	(addgrbyX): Return value returned by cache_addgr.
+	(readdgrbyname): Return value returned by addgrbyX.
+	(readdgrbygid): Likewise.
+	* nscd/pwdcache.c (cache_addpw): Return timeout of added value.
+	(addpwbyX): Return value returned by cache_addpw.
+	(readdpwbyname): Return value returned by addhstbyX.
+	(readdpwbyuid): Likewise.
+	* nscd/servicescache.c (cache_addserv): Return timeout of added value.
+	(addservbyX): Return value returned by cache_addserv.
+	(readdservbyname): Return value returned by addservbyX:
+	(readdservbyport): Likewise.
+	* nscd/hstcache.c (cache_addhst): Return timeout of added value.
+	(addhstbyX): Return value returned by cache_addhst.
+	(readdhstbyname): Return value returned by addhstbyX.
+	(readdhstbyaddr): Likewise.
+	(readdhstbynamev6): Likewise.
+	(readdhstbyaddrv6): Likewise.
+	* nscd/initgrcache.c (addinitgroupsX): Return timeout of added value.
+	(readdinitgroups): Return value returned by addinitgroupsX.
+	* nscd/cache.c (readdfcts): Change return value of functions to time_t.
+	(prune_cache): Keep track of timeout value of re-added entries.
+	* nscd/connections.c (nscd_run_prune): Use MAX_TIMEOUT_VALUE.
+	* nscd/nscd.h: Adjust prototypes of readd* functions.
+
+Index: glibc-2.12-2-gc4ccff1/nscd/aicache.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nscd/aicache.c
++++ glibc-2.12-2-gc4ccff1/nscd/aicache.c
+@@ -58,7 +58,7 @@ static const ai_response_header notfound
+ };
+ 
+ 
+-static void
++static time_t
+ addhstaiX (struct database_dyn *db, int fd, request_header *req,
+ 	   void *key, uid_t uid, struct hashentry *const he,
+ 	   struct datahead *dh)
+@@ -119,6 +119,7 @@ addhstaiX (struct database_dyn *db, int 
+   ssize_t total = 0;
+   char *key_copy = NULL;
+   bool alloca_used = false;
++  time_t timeout = MAX_TIMEOUT_VALUE;
+ 
+   while (!no_more)
+     {
+@@ -388,8 +389,8 @@ addhstaiX (struct database_dyn *db, int 
+       dataset->head.usable = true;
+ 
+       /* Compute the timeout time.  */
+-      dataset->head.timeout = time (NULL) + (ttl == INT32_MAX
+-					     ? db->postimeout : ttl);
++      dataset->head.ttl = ttl == INT32_MAX ? db->postimeout : ttl;
++      timeout = dataset->head.timeout = time (NULL) + dataset->head.ttl;
+ 
+       dataset->resp.version = NSCD_VERSION;
+       dataset->resp.found = 1;
+@@ -421,6 +422,7 @@ addhstaiX (struct database_dyn *db, int 
+ 		 timeout value.  Note that the new record has been
+ 		 allocated on the stack and need not be freed.  */
+ 	      dh->timeout = dataset->head.timeout;
++	      dh->ttl = dataset->head.ttl;
+ 	      ++dh->nreloads;
+ 	    }
+ 	  else
+@@ -496,6 +498,9 @@ next_nip:
+       if (reload_count != UINT_MAX && dh->nreloads == reload_count)
+ 	/* Do not reset the value if we never not reload the record.  */
+ 	dh->nreloads = reload_count - 1;
++
++      /* Reload with the same time-to-live value.  */
++      timeout = dh->timeout = time (NULL) + dh->ttl;
+     }
+   else
+     {
+@@ -517,7 +522,8 @@ next_nip:
+ 	  dataset->head.usable = true;
+ 
+ 	  /* Compute the timeout time.  */
+-	  dataset->head.timeout = time (NULL) + db->negtimeout;
++	  timeout = dataset->head.timeout = time (NULL) + db->negtimeout;
++	  dataset->head.ttl = db->negtimeout;
+ 
+ 	  /* This is the reply.  */
+ 	  memcpy (&dataset->resp, &notfound, total);
+@@ -551,6 +557,8 @@ next_nip:
+       if (dh != NULL)
+ 	dh->usable = false;
+     }
++
++  return timeout;
+ }
+ 
+ 
+@@ -562,7 +570,7 @@ addhstai (struct database_dyn *db, int f
+ }
+ 
+ 
+-void
++time_t
+ readdhstai (struct database_dyn *db, struct hashentry *he, struct datahead *dh)
+ {
+   request_header req =
+@@ -571,5 +579,5 @@ readdhstai (struct database_dyn *db, str
+       .key_len = he->len
+     };
+ 
+-  addhstaiX (db, -1, &req, db->data + he->key, he->owner, he, dh);
++  return addhstaiX (db, -1, &req, db->data + he->key, he->owner, he, dh);
+ }
+Index: glibc-2.12-2-gc4ccff1/nscd/cache.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nscd/cache.c
++++ glibc-2.12-2-gc4ccff1/nscd/cache.c
+@@ -45,9 +45,9 @@ extern void *xcalloc (size_t n, size_t s
+ unsigned int reload_count = DEFAULT_RELOAD_LIMIT;
+ 
+ 
+-static void (*const readdfcts[LASTREQ]) (struct database_dyn *,
+-					 struct hashentry *,
+-					 struct datahead *) =
++static time_t (*const readdfcts[LASTREQ]) (struct database_dyn *,
++					   struct hashentry *,
++					   struct datahead *) =
+ {
+   [GETPWBYNAME] = readdpwbyname,
+   [GETPWBYUID] = readdpwbyuid,
+@@ -389,7 +389,8 @@ prune_cache (struct database_dyn *table,
+ 		      assert (runp->type < LASTREQ
+ 			      && readdfcts[runp->type] != NULL);
+ 
+-		      readdfcts[runp->type] (table, runp, dh);
++		      time_t timeout = readdfcts[runp->type] (table, runp, dh);
++		      next_timeout = MIN (next_timeout, timeout);
+ 
+ 		      /* If the entry has been replaced, we might need
+ 			 cleanup.  */
+Index: glibc-2.12-2-gc4ccff1/nscd/connections.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nscd/connections.c
++++ glibc-2.12-2-gc4ccff1/nscd/connections.c
+@@ -1533,10 +1533,7 @@ nscd_run_prune (void *p)
+ 	     pruning we want to know about it.  Therefore set the
+ 	     timeout to the maximum.  It will be descreased when adding
+ 	     new entries to the cache, if necessary.  */
+-	  if (sizeof (time_t) == sizeof (long int))
+-	    dbs[my_number].wakeup_time = LONG_MAX;
+-	  else
+-	    dbs[my_number].wakeup_time = INT_MAX;
++	  dbs[my_number].wakeup_time = MAX_TIMEOUT_VALUE;
+ 
+ 	  /* Unconditionally reset the flag.  */
+ 	  time_t prune_now = dbs[my_number].clear_cache ? LONG_MAX : now;
+Index: glibc-2.12-2-gc4ccff1/nscd/grpcache.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nscd/grpcache.c
++++ glibc-2.12-2-gc4ccff1/nscd/grpcache.c
+@@ -71,7 +71,7 @@ static const gr_response_header notfound
+ };
+ 
+ 
+-static void
++static time_t
+ cache_addgr (struct database_dyn *db, int fd, request_header *req,
+ 	     const void *key, struct group *grp, uid_t owner,
+ 	     struct hashentry *const he, struct datahead *dh, int errval)
+@@ -91,6 +91,7 @@ cache_addgr (struct database_dyn *db, in
+ 
+   assert (offsetof (struct dataset, resp) == offsetof (struct datahead, data));
+ 
++  time_t timeout = MAX_TIMEOUT_VALUE;
+   if (grp == NULL)
+     {
+       if (he != NULL && errval == EAGAIN)
+@@ -102,6 +103,9 @@ cache_addgr (struct database_dyn *db, in
+ 	    /* Do not reset the value if we never not reload the record.  */
+ 	    dh->nreloads = reload_count - 1;
+ 
++	  /* Reload with the same time-to-live value.  */
++	  timeout = dh->timeout = t + db->postimeout;
++
+ 	  written = total = 0;
+ 	}
+       else
+@@ -125,7 +129,7 @@ cache_addgr (struct database_dyn *db, in
+ 	      dataset->head.usable = true;
+ 
+ 	      /* Compute the timeout time.  */
+-	      dataset->head.timeout = t + db->negtimeout;
++	      timeout = dataset->head.timeout = t + db->negtimeout;
+ 
+ 	      /* This is the reply.  */
+ 	      memcpy (&dataset->resp, &notfound, total);
+@@ -217,7 +221,7 @@ cache_addgr (struct database_dyn *db, in
+       dataset->head.usable = true;
+ 
+       /* Compute the timeout time.  */
+-      dataset->head.timeout = t + db->postimeout;
++      timeout = dataset->head.timeout = t + db->postimeout;
+ 
+       dataset->resp.version = NSCD_VERSION;
+       dataset->resp.found = 1;
+@@ -379,6 +383,8 @@ cache_addgr (struct database_dyn *db, in
+       dbg_log (_("short write in %s: %s"),  __FUNCTION__,
+ 	       strerror_r (errno, buf, sizeof (buf)));
+     }
++
++  return timeout;
+ }
+ 
+ 
+@@ -400,7 +406,7 @@ lookup (int type, union keytype key, str
+ }
+ 
+ 
+-static void
++static time_t
+ addgrbyX (struct database_dyn *db, int fd, request_header *req,
+ 	  union keytype key, const char *keystr, uid_t uid,
+ 	  struct hashentry *he, struct datahead *dh)
+@@ -456,10 +462,12 @@ addgrbyX (struct database_dyn *db, int f
+ 	buffer = (char *) extend_alloca (buffer, buflen, 2 * buflen);
+     }
+ 
+-  cache_addgr (db, fd, req, keystr, grp, uid, he, dh, errval);
++  time_t timeout = cache_addgr (db, fd, req, keystr, grp, uid, he, dh, errval);
+ 
+   if (use_malloc)
+     free (buffer);
++
++  return timeout;
+ }
+ 
+ 
+@@ -473,7 +481,7 @@ addgrbyname (struct database_dyn *db, in
+ }
+ 
+ 
+-void
++time_t
+ readdgrbyname (struct database_dyn *db, struct hashentry *he,
+ 	       struct datahead *dh)
+ {
+@@ -484,7 +492,7 @@ readdgrbyname (struct database_dyn *db, 
+     };
+   union keytype u = { .v = db->data + he->key };
+ 
+-  addgrbyX (db, -1, &req, u, db->data + he->key, he->owner, he, dh);
++  return addgrbyX (db, -1, &req, u, db->data + he->key, he->owner, he, dh);
+ }
+ 
+ 
+@@ -510,7 +518,7 @@ addgrbygid (struct database_dyn *db, int
+ }
+ 
+ 
+-void
++time_t
+ readdgrbygid (struct database_dyn *db, struct hashentry *he,
+ 	      struct datahead *dh)
+ {
+@@ -527,5 +535,5 @@ readdgrbygid (struct database_dyn *db, s
+     };
+   union keytype u = { .g = gid };
+ 
+-  addgrbyX (db, -1, &req, u, db->data + he->key, he->owner, he, dh);
++  return addgrbyX (db, -1, &req, u, db->data + he->key, he->owner, he, dh);
+ }
+Index: glibc-2.12-2-gc4ccff1/nscd/hstcache.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nscd/hstcache.c
++++ glibc-2.12-2-gc4ccff1/nscd/hstcache.c
+@@ -91,7 +91,7 @@ static const hst_response_header tryagai
+ };
+ 
+ 
+-static void
++static time_t
+ cache_addhst (struct database_dyn *db, int fd, request_header *req,
+ 	      const void *key, struct hostent *hst, uid_t owner,
+ 	      struct hashentry *const he, struct datahead *dh, int errval,
+@@ -111,6 +111,7 @@ cache_addhst (struct database_dyn *db, i
+ 
+   assert (offsetof (struct dataset, resp) == offsetof (struct datahead, data));
+ 
++  time_t timeout = MAX_TIMEOUT_VALUE;
+   if (hst == NULL)
+     {
+       if (he != NULL && errval == EAGAIN)
+@@ -121,6 +122,9 @@ cache_addhst (struct database_dyn *db, i
+ 	  if (reload_count != UINT_MAX)
+ 	    /* Do not reset the value if we never not reload the record.  */
+ 	    dh->nreloads = reload_count - 1;
++
++	  /* Reload with the same time-to-live value.  */
++	  timeout = dh->timeout = t + dh->ttl;
+ 	}
+       else
+ 	{
+@@ -149,8 +153,8 @@ cache_addhst (struct database_dyn *db, i
+ 	      dataset->head.usable = true;
+ 
+ 	      /* Compute the timeout time.  */
+-	      dataset->head.timeout = t + (ttl == INT32_MAX
+-					   ? db->negtimeout : ttl);
++	      dataset->head.ttl = ttl == INT32_MAX ? db->negtimeout : ttl;
++	      timeout = dataset->head.timeout = t + dataset->head.ttl;
+ 
+ 	      /* This is the reply.  */
+ 	      memcpy (&dataset->resp, resp, total);
+@@ -214,7 +218,7 @@ cache_addhst (struct database_dyn *db, i
+ 
+       if (h_addr_list_cnt == 0)
+ 	/* Invalid entry.  */
+-	return;
++	return MAX_TIMEOUT_VALUE;
+ 
+       total += (sizeof (struct dataset)
+ 		+ h_name_len
+@@ -255,7 +259,8 @@ cache_addhst (struct database_dyn *db, i
+       dataset->head.usable = true;
+ 
+       /* Compute the timeout time.  */
+-      dataset->head.timeout = t + (ttl == INT32_MAX ? db->postimeout : ttl);
++      dataset->head.ttl = ttl == INT32_MAX ? db->postimeout : ttl;
++      timeout = dataset->head.timeout = t + dataset->head.ttl;
+ 
+       dataset->resp.version = NSCD_VERSION;
+       dataset->resp.found = 1;
+@@ -312,6 +317,7 @@ cache_addhst (struct database_dyn *db, i
+ 		 timeout value.  Note that the new record has been
+ 		 allocated on the stack and need not be freed.  */
+ 	      assert (h_addr_list_cnt == 1);
++	      dh->ttl = dataset->head.ttl;
+ 	      dh->timeout = dataset->head.timeout;
+ 	      ++dh->nreloads;
+ 	    }
+@@ -433,6 +439,8 @@ cache_addhst (struct database_dyn *db, i
+       dbg_log (_("short write in %s: %s"),  __FUNCTION__,
+ 	       strerror_r (errno, buf, sizeof (buf)));
+     }
++
++  return timeout;
+ }
+ 
+ 
+@@ -454,7 +462,7 @@ lookup (int type, void *key, struct host
+ }
+ 
+ 
+-static void
++static time_t
+ addhstbyX (struct database_dyn *db, int fd, request_header *req,
+ 	   void *key, uid_t uid, struct hashentry *he, struct datahead *dh)
+ {
+@@ -520,11 +528,13 @@ addhstbyX (struct database_dyn *db, int 
+ 	buffer = (char *) extend_alloca (buffer, buflen, 2 * buflen);
+     }
+ 
+-  cache_addhst (db, fd, req, key, hst, uid, he, dh,
+-		h_errno == TRY_AGAIN ? errval : 0, ttl);
++  time_t timeout = cache_addhst (db, fd, req, key, hst, uid, he, dh,
++				 h_errno == TRY_AGAIN ? errval : 0, ttl);
+ 
+   if (use_malloc)
+     free (buffer);
++
++  return timeout;
+ }
+ 
+ 
+@@ -536,7 +546,7 @@ addhstbyname (struct database_dyn *db, i
+ }
+ 
+ 
+-void
++time_t
+ readdhstbyname (struct database_dyn *db, struct hashentry *he,
+ 		struct datahead *dh)
+ {
+@@ -546,7 +556,7 @@ readdhstbyname (struct database_dyn *db,
+       .key_len = he->len
+     };
+ 
+-  addhstbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
++  return addhstbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
+ }
+ 
+ 
+@@ -558,7 +568,7 @@ addhstbyaddr (struct database_dyn *db, i
+ }
+ 
+ 
+-void
++time_t
+ readdhstbyaddr (struct database_dyn *db, struct hashentry *he,
+ 		struct datahead *dh)
+ {
+@@ -568,7 +578,7 @@ readdhstbyaddr (struct database_dyn *db,
+       .key_len = he->len
+     };
+ 
+-  addhstbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
++  return addhstbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
+ }
+ 
+ 
+@@ -580,7 +590,7 @@ addhstbynamev6 (struct database_dyn *db,
+ }
+ 
+ 
+-void
++time_t
+ readdhstbynamev6 (struct database_dyn *db, struct hashentry *he,
+ 		  struct datahead *dh)
+ {
+@@ -590,7 +600,7 @@ readdhstbynamev6 (struct database_dyn *d
+       .key_len = he->len
+     };
+ 
+-  addhstbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
++  return addhstbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
+ }
+ 
+ 
+@@ -602,7 +612,7 @@ addhstbyaddrv6 (struct database_dyn *db,
+ }
+ 
+ 
+-void
++time_t
+ readdhstbyaddrv6 (struct database_dyn *db, struct hashentry *he,
+ 		  struct datahead *dh)
+ {
+@@ -612,5 +622,5 @@ readdhstbyaddrv6 (struct database_dyn *d
+       .key_len = he->len
+     };
+ 
+-  addhstbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
++  return addhstbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
+ }
+Index: glibc-2.12-2-gc4ccff1/nscd/initgrcache.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nscd/initgrcache.c
++++ glibc-2.12-2-gc4ccff1/nscd/initgrcache.c
+@@ -52,7 +52,7 @@ static const initgr_response_header notf
+ #include "../grp/compat-initgroups.c"
+ 
+ 
+-static void
++static time_t
+ addinitgroupsX (struct database_dyn *db, int fd, request_header *req,
+ 		void *key, uid_t uid, struct hashentry *const he,
+ 		struct datahead *dh)
+@@ -174,7 +174,9 @@ addinitgroupsX (struct database_dyn *db,
+ 
+   ssize_t total;
+   ssize_t written;
++  time_t timeout;
+  out:
++  timeout = MAX_TIMEOUT_VALUE;
+   if (!any_success)
+     {
+       /* Nothing found.  Create a negative result record.  */
+@@ -188,6 +190,9 @@ addinitgroupsX (struct database_dyn *db,
+ 	  if (reload_count != UINT_MAX && dh->nreloads == reload_count)
+ 	    /* Do not reset the value if we never not reload the record.  */
+ 	    dh->nreloads = reload_count - 1;
++
++	  /* Reload with the same time-to-live value.  */
++	  timeout = dh->timeout = time (NULL) + db->postimeout;
+ 	}
+       else
+ 	{
+@@ -209,7 +214,7 @@ addinitgroupsX (struct database_dyn *db,
+ 	      dataset->head.usable = true;
+ 
+ 	      /* Compute the timeout time.  */
+-	      dataset->head.timeout = time (NULL) + db->negtimeout;
++	      timeout = dataset->head.timeout = time (NULL) + db->negtimeout;
+ 
+ 	      /* This is the reply.  */
+ 	      memcpy (&dataset->resp, &notfound, total);
+@@ -273,7 +278,7 @@ addinitgroupsX (struct database_dyn *db,
+       dataset->head.usable = true;
+ 
+       /* Compute the timeout time.  */
+-      dataset->head.timeout = time (NULL) + db->postimeout;
++      timeout = dataset->head.timeout = time (NULL) + db->postimeout;
+ 
+       dataset->resp.version = NSCD_VERSION;
+       dataset->resp.found = 1;
+@@ -401,6 +406,8 @@ addinitgroupsX (struct database_dyn *db,
+       dbg_log (_("short write in %s: %s"), __FUNCTION__,
+ 	       strerror_r (errno, buf, sizeof (buf)));
+     }
++
++  return timeout;
+ }
+ 
+ 
+@@ -412,7 +419,7 @@ addinitgroups (struct database_dyn *db, 
+ }
+ 
+ 
+-void
++time_t
+ readdinitgroups (struct database_dyn *db, struct hashentry *he,
+ 		 struct datahead *dh)
+ {
+@@ -422,5 +429,5 @@ readdinitgroups (struct database_dyn *db
+       .key_len = he->len
+     };
+ 
+-  addinitgroupsX (db, -1, &req, db->data + he->key, he->owner, he, dh);
++  return addinitgroupsX (db, -1, &req, db->data + he->key, he->owner, he, dh);
+ }
+Index: glibc-2.12-2-gc4ccff1/nscd/nscd-client.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nscd/nscd-client.h
++++ glibc-2.12-2-gc4ccff1/nscd/nscd-client.h
+@@ -179,6 +179,10 @@ typedef uint32_t ref_t;
+ /* Timestamp type.  */
+ typedef uint64_t nscd_time_t;
+ 
++/* Maximum timestamp.  */
++#define MAX_TIMEOUT_VALUE \
++  (sizeof (time_t) == sizeof (long int) ? LONG_MAX : INT_MAX)
++
+ /* Alignment requirement of the beginning of the data region.  */
+ #define ALIGN 16
+ 
+@@ -192,7 +196,8 @@ struct datahead
+   uint8_t notfound;		/* Nonzero if data has not been found.  */
+   uint8_t nreloads;		/* Reloads without use.  */
+   uint8_t usable;		/* False if the entry must be ignored.  */
+-  uint64_t :40;			/* Alignment.  */
++  uint8_t unused;		/* Unused.  */
++  uint32_t ttl;			/* TTL value used.  */
+ 
+   /* We need to have the following element aligned for the response
+      header data types and their use in the 'struct dataset' types
+Index: glibc-2.12-2-gc4ccff1/nscd/nscd.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nscd/nscd.h
++++ glibc-2.12-2-gc4ccff1/nscd/nscd.h
+@@ -217,20 +217,20 @@ extern void addpwbyname (struct database
+ 			 void *key, uid_t uid);
+ extern void addpwbyuid (struct database_dyn *db, int fd, request_header *req,
+ 			void *key, uid_t uid);
+-extern void readdpwbyname (struct database_dyn *db, struct hashentry *he,
+-			   struct datahead *dh);
+-extern void readdpwbyuid (struct database_dyn *db, struct hashentry *he,
+-			  struct datahead *dh);
++extern time_t readdpwbyname (struct database_dyn *db, struct hashentry *he,
++			     struct datahead *dh);
++extern time_t readdpwbyuid (struct database_dyn *db, struct hashentry *he,
++			    struct datahead *dh);
+ 
+ /* grpcache.c */
+ extern void addgrbyname (struct database_dyn *db, int fd, request_header *req,
+ 			 void *key, uid_t uid);
+ extern void addgrbygid (struct database_dyn *db, int fd, request_header *req,
+ 			void *key, uid_t uid);
+-extern void readdgrbyname (struct database_dyn *db, struct hashentry *he,
+-			   struct datahead *dh);
+-extern void readdgrbygid (struct database_dyn *db, struct hashentry *he,
+-			  struct datahead *dh);
++extern time_t readdgrbyname (struct database_dyn *db, struct hashentry *he,
++			     struct datahead *dh);
++extern time_t readdgrbygid (struct database_dyn *db, struct hashentry *he,
++			    struct datahead *dh);
+ 
+ /* hstcache.c */
+ extern void addhstbyname (struct database_dyn *db, int fd, request_header *req,
+@@ -241,37 +241,37 @@ extern void addhstbynamev6 (struct datab
+ 			    request_header *req, void *key, uid_t uid);
+ extern void addhstbyaddrv6 (struct database_dyn *db, int fd,
+ 			    request_header *req, void *key, uid_t uid);
+-extern void readdhstbyname (struct database_dyn *db, struct hashentry *he,
+-			    struct datahead *dh);
+-extern void readdhstbyaddr (struct database_dyn *db, struct hashentry *he,
+-			    struct datahead *dh);
+-extern void readdhstbynamev6 (struct database_dyn *db, struct hashentry *he,
++extern time_t readdhstbyname (struct database_dyn *db, struct hashentry *he,
+ 			      struct datahead *dh);
+-extern void readdhstbyaddrv6 (struct database_dyn *db, struct hashentry *he,
++extern time_t readdhstbyaddr (struct database_dyn *db, struct hashentry *he,
+ 			      struct datahead *dh);
++extern time_t readdhstbynamev6 (struct database_dyn *db, struct hashentry *he,
++				struct datahead *dh);
++extern time_t readdhstbyaddrv6 (struct database_dyn *db, struct hashentry *he,
++				struct datahead *dh);
+ 
+ /* aicache.c */
+ extern void addhstai (struct database_dyn *db, int fd, request_header *req,
+ 		      void *key, uid_t uid);
+-extern void readdhstai (struct database_dyn *db, struct hashentry *he,
+-			struct datahead *dh);
++extern time_t readdhstai (struct database_dyn *db, struct hashentry *he,
++			  struct datahead *dh);
+ 
+ 
+ /* initgrcache.c */
+ extern void addinitgroups (struct database_dyn *db, int fd,
+ 			   request_header *req, void *key, uid_t uid);
+-extern void readdinitgroups (struct database_dyn *db, struct hashentry *he,
+-			     struct datahead *dh);
++extern time_t readdinitgroups (struct database_dyn *db, struct hashentry *he,
++			       struct datahead *dh);
+ 
+ /* servicecache.c */
+ extern void addservbyname (struct database_dyn *db, int fd,
+ 			   request_header *req, void *key, uid_t uid);
+-extern void readdservbyname (struct database_dyn *db, struct hashentry *he,
+-			     struct datahead *dh);
++extern time_t readdservbyname (struct database_dyn *db, struct hashentry *he,
++			       struct datahead *dh);
+ extern void addservbyport (struct database_dyn *db, int fd,
+ 			   request_header *req, void *key, uid_t uid);
+-extern void readdservbyport (struct database_dyn *db, struct hashentry *he,
+-			     struct datahead *dh);
++extern time_t readdservbyport (struct database_dyn *db, struct hashentry *he,
++			       struct datahead *dh);
+ 
+ /* mem.c */
+ extern void *mempool_alloc (struct database_dyn *db, size_t len,
+Index: glibc-2.12-2-gc4ccff1/nscd/pwdcache.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nscd/pwdcache.c
++++ glibc-2.12-2-gc4ccff1/nscd/pwdcache.c
+@@ -77,7 +77,7 @@ static const pw_response_header notfound
+ };
+ 
+ 
+-static void
++static time_t
+ cache_addpw (struct database_dyn *db, int fd, request_header *req,
+ 	     const void *key, struct passwd *pwd, uid_t owner,
+ 	     struct hashentry *const he, struct datahead *dh, int errval)
+@@ -97,6 +97,7 @@ cache_addpw (struct database_dyn *db, in
+ 
+   assert (offsetof (struct dataset, resp) == offsetof (struct datahead, data));
+ 
++  time_t timeout = MAX_TIMEOUT_VALUE;
+   if (pwd == NULL)
+     {
+       if (he != NULL && errval == EAGAIN)
+@@ -108,6 +109,9 @@ cache_addpw (struct database_dyn *db, in
+ 	    /* Do not reset the value if we never not reload the record.  */
+ 	    dh->nreloads = reload_count - 1;
+ 
++	  /* Reload with the same time-to-live value.  */
++	  timeout = dh->timeout = t + db->postimeout;
++
+ 	  written = total = 0;
+ 	}
+       else
+@@ -132,7 +136,7 @@ cache_addpw (struct database_dyn *db, in
+ 	      dataset->head.usable = true;
+ 
+ 	      /* Compute the timeout time.  */
+-	      dataset->head.timeout = t + db->negtimeout;
++	      timeout = dataset->head.timeout = t + db->negtimeout;
+ 
+ 	      /* This is the reply.  */
+ 	      memcpy (&dataset->resp, &notfound, total);
+@@ -212,7 +216,7 @@ cache_addpw (struct database_dyn *db, in
+       dataset->head.usable = true;
+ 
+       /* Compute the timeout time.  */
+-      dataset->head.timeout = t + db->postimeout;
++      timeout = dataset->head.timeout = t + db->postimeout;
+ 
+       dataset->resp.version = NSCD_VERSION;
+       dataset->resp.found = 1;
+@@ -293,8 +297,8 @@ cache_addpw (struct database_dyn *db, in
+ 	      assert ((char *) dataset - (char *) db->head
+ 		      + total
+ 		      <= (sizeof (struct database_pers_head)
+-                          + db->head->module * sizeof (ref_t)
+-                          + db->head->data_size));
++			  + db->head->module * sizeof (ref_t)
++			  + db->head->data_size));
+ 	      written = sendfileall (fd, db->wr_fd,
+ 				     (char *) &dataset->resp
+ 				     - (char *) db->head, dataset->head.recsize );
+@@ -374,6 +378,8 @@ cache_addpw (struct database_dyn *db, in
+       dbg_log (_("short write in %s: %s"),  __FUNCTION__,
+ 	       strerror_r (errno, buf, sizeof (buf)));
+     }
++
++  return timeout;
+ }
+ 
+ 
+@@ -395,7 +401,7 @@ lookup (int type, union keytype key, str
+ }
+ 
+ 
+-static void
++static time_t
+ addpwbyX (struct database_dyn *db, int fd, request_header *req,
+ 	  union keytype key, const char *keystr, uid_t c_uid,
+ 	  struct hashentry *he, struct datahead *dh)
+@@ -452,10 +458,13 @@ addpwbyX (struct database_dyn *db, int f
+     }
+ 
+   /* Add the entry to the cache.  */
+-  cache_addpw (db, fd, req, keystr, pwd, c_uid, he, dh, errval);
++  time_t timeout = cache_addpw (db, fd, req, keystr, pwd, c_uid, he, dh,
++				errval);
+ 
+   if (use_malloc)
+     free (buffer);
++
++  return timeout;
+ }
+ 
+ 
+@@ -469,7 +478,7 @@ addpwbyname (struct database_dyn *db, in
+ }
+ 
+ 
+-void
++time_t
+ readdpwbyname (struct database_dyn *db, struct hashentry *he,
+ 	       struct datahead *dh)
+ {
+@@ -480,7 +489,7 @@ readdpwbyname (struct database_dyn *db, 
+     };
+   union keytype u = { .v = db->data + he->key };
+ 
+-  addpwbyX (db, -1, &req, u, db->data + he->key, he->owner, he, dh);
++  return addpwbyX (db, -1, &req, u, db->data + he->key, he->owner, he, dh);
+ }
+ 
+ 
+@@ -506,7 +515,7 @@ addpwbyuid (struct database_dyn *db, int
+ }
+ 
+ 
+-void
++time_t
+ readdpwbyuid (struct database_dyn *db, struct hashentry *he,
+ 	      struct datahead *dh)
+ {
+@@ -523,5 +532,5 @@ readdpwbyuid (struct database_dyn *db, s
+     };
+   union keytype u = { .u = uid };
+ 
+-  addpwbyX (db, -1, &req, u, db->data + he->key, he->owner, he, dh);
++  return addpwbyX (db, -1, &req, u, db->data + he->key, he->owner, he, dh);
+ }
+Index: glibc-2.12-2-gc4ccff1/nscd/servicescache.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nscd/servicescache.c
++++ glibc-2.12-2-gc4ccff1/nscd/servicescache.c
+@@ -61,7 +61,7 @@ static const serv_response_header notfou
+ };
+ 
+ 
+-static void
++static time_t
+ cache_addserv (struct database_dyn *db, int fd, request_header *req,
+ 	       const void *key, struct servent *serv, uid_t owner,
+ 	       struct hashentry *const he, struct datahead *dh, int errval)
+@@ -81,6 +81,7 @@ cache_addserv (struct database_dyn *db, 
+ 
+   assert (offsetof (struct dataset, resp) == offsetof (struct datahead, data));
+ 
++  time_t timeout = MAX_TIMEOUT_VALUE;
+   if (serv == NULL)
+     {
+       if (he != NULL && errval == EAGAIN)
+@@ -92,6 +93,9 @@ cache_addserv (struct database_dyn *db, 
+ 	    /* Do not reset the value if we never not reload the record.  */
+ 	    dh->nreloads = reload_count - 1;
+ 
++	  /* Reload with the same time-to-live value.  */
++	  timeout = dh->timeout = t + db->postimeout;
++
+ 	  written = total = 0;
+ 	}
+       else
+@@ -115,7 +119,7 @@ cache_addserv (struct database_dyn *db, 
+ 	      dataset->head.usable = true;
+ 
+ 	      /* Compute the timeout time.  */
+-	      dataset->head.timeout = t + db->negtimeout;
++	      timeout = dataset->head.timeout = t + db->negtimeout;
+ 
+ 	      /* This is the reply.  */
+ 	      memcpy (&dataset->resp, &notfound, total);
+@@ -203,7 +207,7 @@ cache_addserv (struct database_dyn *db, 
+       dataset->head.usable = true;
+ 
+       /* Compute the timeout time.  */
+-      dataset->head.timeout = t + db->postimeout;
++      timeout = dataset->head.timeout = t + db->postimeout;
+ 
+       dataset->resp.version = NSCD_VERSION;
+       dataset->resp.found = 1;
+@@ -328,6 +332,8 @@ cache_addserv (struct database_dyn *db, 
+       dbg_log (_("short write in %s: %s"),  __FUNCTION__,
+ 	       strerror_r (errno, buf, sizeof (buf)));
+     }
++
++  return timeout;
+ }
+ 
+ 
+@@ -354,7 +360,7 @@ lookup (int type, char *key, struct serv
+ }
+ 
+ 
+-static void
++static time_t
+ addservbyX (struct database_dyn *db, int fd, request_header *req,
+ 	    char *key, uid_t uid, struct hashentry *he, struct datahead *dh)
+ {
+@@ -409,10 +415,12 @@ addservbyX (struct database_dyn *db, int
+ 	buffer = (char *) extend_alloca (buffer, buflen, 2 * buflen);
+     }
+ 
+-  cache_addserv (db, fd, req, key, serv, uid, he, dh, errval);
++  time_t timeout = cache_addserv (db, fd, req, key, serv, uid, he, dh, errval);
+ 
+   if (use_malloc)
+     free (buffer);
++
++  return timeout;
+ }
+ 
+ 
+@@ -424,7 +432,7 @@ addservbyname (struct database_dyn *db, 
+ }
+ 
+ 
+-void
++time_t
+ readdservbyname (struct database_dyn *db, struct hashentry *he,
+ 		 struct datahead *dh)
+ {
+@@ -434,7 +442,7 @@ readdservbyname (struct database_dyn *db
+       .key_len = he->len
+     };
+ 
+-  addservbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
++  return addservbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
+ }
+ 
+ 
+@@ -446,7 +454,7 @@ addservbyport (struct database_dyn *db, 
+ }
+ 
+ 
+-void
++time_t
+ readdservbyport (struct database_dyn *db, struct hashentry *he,
+ 		 struct datahead *dh)
+ {
+@@ -456,5 +464,5 @@ readdservbyport (struct database_dyn *db
+       .key_len = he->len
+     };
+ 
+-  addservbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
++  return addservbyX (db, -1, &req, db->data + he->key, he->owner, he, dh);
+ }

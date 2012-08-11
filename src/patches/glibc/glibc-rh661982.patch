@@ -1,0 +1,188 @@
+2010-12-10  Andreas Schwab  <schwab@redhat.com>
+
+	* wcsmbs/wchar.h (wcpcpy, wcpncpy): Only declare under
+	_GNU_SOURCE.
+
+2010-12-10  Andreas Schwab  <schwab@redhat.com>
+
+	* wcsmbs/wchar.h (wcpcpy, wcpncpy): Add __restrict.
+	* wcsmbs/bits/wchar2.h (__wmemmove_chk_warn, wmemmove, wmemset):
+	Remove __restrict.
+	(wcscpy, __wcpcpy_chk, __wcpcpy_alias, wcpcpy, wcsncpy, wcpncpy)
+	(wcscat, wcsncat, __wcrtomb_chk, wcrtomb): Add __restrict.
+
+2010-12-09  Jakub Jelinek  <jakub@redhat.com>
+
+	* string/bits/string3.h (memmove, bcopy): Remove __restrict.
+
+Index: glibc-2.12-2-gc4ccff1/string/bits/string3.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/string/bits/string3.h
++++ glibc-2.12-2-gc4ccff1/string/bits/string3.h
+@@ -53,8 +53,7 @@ __NTH (memcpy (void *__restrict __dest, 
+ }
+ 
+ __extern_always_inline void *
+-__NTH (memmove (void *__restrict __dest, __const void *__restrict __src,
+-		size_t __len))
++__NTH (memmove (void *__dest, __const void *__src, size_t __len))
+ {
+   return __builtin___memmove_chk (__dest, __src, __len, __bos0 (__dest));
+ }
+@@ -88,8 +87,7 @@ __NTH (memset (void *__dest, int __ch, s
+ 
+ #ifdef __USE_BSD
+ __extern_always_inline void
+-__NTH (bcopy (__const void *__restrict __src, void *__restrict __dest,
+-	      size_t __len))
++__NTH (bcopy (__const void *__src, void *__dest, size_t __len))
+ {
+   (void) __builtin___memmove_chk (__dest, __src, __len, __bos0 (__dest));
+ }
+Index: glibc-2.12-2-gc4ccff1/wcsmbs/bits/wchar2.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/wcsmbs/bits/wchar2.h
++++ glibc-2.12-2-gc4ccff1/wcsmbs/bits/wchar2.h
+@@ -60,15 +60,13 @@ extern wchar_t *__REDIRECT_NTH (__wmemmo
+ 						   __const wchar_t *__s2,
+ 						   size_t __n), wmemmove);
+ extern wchar_t *__REDIRECT_NTH (__wmemmove_chk_warn,
+-				(wchar_t *__restrict __s1,
+-				 __const wchar_t *__restrict __s2, size_t __n,
+-				 size_t __ns1), __wmemmove_chk)
++				(wchar_t *__s1, __const wchar_t *__s2,
++				 size_t __n, size_t __ns1), __wmemmove_chk)
+      __warnattr ("wmemmove called with length bigger than size of destination "
+ 		 "buffer");
+ 
+ __extern_always_inline wchar_t *
+-__NTH (wmemmove (wchar_t *__restrict __s1, __const wchar_t *__restrict __s2,
+-		 size_t __n))
++__NTH (wmemmove (wchar_t *__s1, __const wchar_t *__s2, size_t __n))
+ {
+   if (__bos0 (__s1) != (size_t) -1)
+     {
+@@ -129,7 +127,7 @@ extern wchar_t *__REDIRECT_NTH (__wmemse
+ 		 "buffer");
+ 
+ __extern_always_inline wchar_t *
+-__NTH (wmemset (wchar_t *__restrict __s, wchar_t __c, size_t __n))
++__NTH (wmemset (wchar_t *__s, wchar_t __c, size_t __n))
+ {
+   if (__bos0 (__s) != (size_t) -1)
+     {
+@@ -152,7 +150,7 @@ extern wchar_t *__REDIRECT_NTH (__wcscpy
+ 				 __const wchar_t *__restrict __src), wcscpy);
+ 
+ __extern_always_inline wchar_t *
+-__NTH (wcscpy (wchar_t *__dest, __const wchar_t *__src))
++__NTH (wcscpy (wchar_t *__restrict __dest, __const wchar_t *__restrict __src))
+ {
+   if (__bos (__dest) != (size_t) -1)
+     return __wcscpy_chk (__dest, __src, __bos (__dest) / sizeof (wchar_t));
+@@ -160,14 +158,15 @@ __NTH (wcscpy (wchar_t *__dest, __const 
+ }
+ 
+ 
+-extern wchar_t *__wcpcpy_chk (wchar_t *__dest, __const wchar_t *__src,
++extern wchar_t *__wcpcpy_chk (wchar_t *__restrict __dest,
++			      __const wchar_t *__restrict __src,
+ 			      size_t __destlen) __THROW;
+-extern wchar_t *__REDIRECT_NTH (__wcpcpy_alias, (wchar_t *__dest,
+-						 __const wchar_t *__src),
+-				wcpcpy);
++extern wchar_t *__REDIRECT_NTH (__wcpcpy_alias,
++				(wchar_t *__restrict __dest,
++				 __const wchar_t *__restrict __src), wcpcpy);
+ 
+ __extern_always_inline wchar_t *
+-__NTH (wcpcpy (wchar_t *__dest, __const wchar_t *__src))
++__NTH (wcpcpy (wchar_t *__restrict __dest, __const wchar_t *__restrict __src))
+ {
+   if (__bos (__dest) != (size_t) -1)
+     return __wcpcpy_chk (__dest, __src, __bos (__dest) / sizeof (wchar_t));
+@@ -190,7 +189,8 @@ extern wchar_t *__REDIRECT_NTH (__wcsncp
+ 		 "buffer");
+ 
+ __extern_always_inline wchar_t *
+-__NTH (wcsncpy (wchar_t *__dest, __const wchar_t *__src, size_t __n))
++__NTH (wcsncpy (wchar_t *__restrict __dest, __const wchar_t *__restrict __src,
++		size_t __n))
+ {
+   if (__bos (__dest) != (size_t) -1)
+     {
+@@ -220,7 +220,8 @@ extern wchar_t *__REDIRECT_NTH (__wcpncp
+ 		 "buffer");
+ 
+ __extern_always_inline wchar_t *
+-__NTH (wcpncpy (wchar_t *__dest, __const wchar_t *__src, size_t __n))
++__NTH (wcpncpy (wchar_t *__restrict __dest, __const wchar_t *__restrict __src,
++		size_t __n))
+ {
+   if (__bos (__dest) != (size_t) -1)
+     {
+@@ -243,7 +244,7 @@ extern wchar_t *__REDIRECT_NTH (__wcscat
+ 				 __const wchar_t *__restrict __src), wcscat);
+ 
+ __extern_always_inline wchar_t *
+-__NTH (wcscat (wchar_t *__dest, __const wchar_t *__src))
++__NTH (wcscat (wchar_t *__restrict __dest, __const wchar_t *__restrict __src))
+ {
+   if (__bos (__dest) != (size_t) -1)
+     return __wcscat_chk (__dest, __src, __bos (__dest) / sizeof (wchar_t));
+@@ -260,7 +261,8 @@ extern wchar_t *__REDIRECT_NTH (__wcsnca
+ 				 size_t __n), wcsncat);
+ 
+ __extern_always_inline wchar_t *
+-__NTH (wcsncat (wchar_t *__dest, __const wchar_t *__src, size_t __n))
++__NTH (wcsncat (wchar_t *__restrict __dest, __const wchar_t *__restrict __src,
++		size_t __n))
+ {
+   if (__bos (__dest) != (size_t) -1)
+     return __wcsncat_chk (__dest, __src, __n,
+@@ -428,14 +430,16 @@ fgetws_unlocked (wchar_t *__restrict __s
+ #endif
+ 
+ 
+-extern size_t __wcrtomb_chk (char *__s, wchar_t __wchar, mbstate_t *__p,
+-			  size_t __buflen) __THROW __wur;
++extern size_t __wcrtomb_chk (char *__restrict __s, wchar_t __wchar,
++			     mbstate_t *__restrict __p,
++			     size_t __buflen) __THROW __wur;
+ extern size_t __REDIRECT_NTH (__wcrtomb_alias,
+ 			      (char *__restrict __s, wchar_t __wchar,
+ 			       mbstate_t *__restrict __ps), wcrtomb) __wur;
+ 
+ __extern_always_inline __wur size_t
+-__NTH (wcrtomb (char *__s, wchar_t __wchar, mbstate_t *__ps))
++__NTH (wcrtomb (char *__restrict __s, wchar_t __wchar,
++		mbstate_t *__restrict __ps))
+ {
+   /* We would have to include <limits.h> to get a definition of MB_LEN_MAX.
+      But this would only disturb the namespace.  So we define our own
+Index: glibc-2.12-2-gc4ccff1/wcsmbs/wchar.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/wcsmbs/wchar.h
++++ glibc-2.12-2-gc4ccff1/wcsmbs/wchar.h
+@@ -555,17 +555,17 @@ extern float wcstof_l (__const wchar_t *
+ extern long double wcstold_l (__const wchar_t *__restrict __nptr,
+ 			      wchar_t **__restrict __endptr,
+ 			      __locale_t __loc) __THROW;
+-#endif /* GNU */
+ 
+ 
+-#ifdef	__USE_XOPEN2K8
+ /* Copy SRC to DEST, returning the address of the terminating L'\0' in
+    DEST.  */
+-extern wchar_t *wcpcpy (wchar_t *__dest, __const wchar_t *__src) __THROW;
++extern wchar_t *wcpcpy (wchar_t *__restrict __dest,
++			__const wchar_t *__restrict __src) __THROW;
+ 
+ /* Copy no more than N characters of SRC to DEST, returning the address of
+    the last character written into DEST.  */
+-extern wchar_t *wcpncpy (wchar_t *__dest, __const wchar_t *__src, size_t __n)
++extern wchar_t *wcpncpy (wchar_t *__restrict __dest,
++			 __const wchar_t *__restrict __src, size_t __n)
+      __THROW;
+ #endif	/* use GNU */
+ 

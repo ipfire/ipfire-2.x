@@ -1,0 +1,35 @@
+	* malloc/arena.c (arena_get2): Avoid unnecessarily
+	retrieving #cpus from /proc.
+	* malloc/malloc.c (mALLOPt): Clamp arena_test based on
+	the value of arena_max.
+
+diff --git a/malloc/arena.c b/malloc/arena.c
+index cb8548b..00f1da5 100644
+--- a/malloc/arena.c
++++ b/malloc/arena.c
+@@ -828,7 +828,7 @@ arena_get2(mstate a_tsd, size_t size)
+ 	{
+ 	  if (mp_.arena_max != 0)
+ 	    narenas_limit = mp_.arena_max;
+-	  else
++	  else if (narenas > mp_.arena_test)
+ 	    {
+ 	      int n  = __get_nprocs ();
+ 
+diff --git a/malloc/malloc.c b/malloc/malloc.c
+index 8608083..f8d32da 100644
+--- a/malloc/malloc.c
++++ b/malloc/malloc.c
+@@ -6134,6 +6134,12 @@ int mALLOPt(param_number, value) int par
+     break;
+ #endif
+   }
++#ifdef PER_THREAD
++  /* Clamp ARENA_TEST from ARENA_MAX to avoid creating too many
++     arenas.  */
++  if (mp_.arena_max > 0 && mp_.arena_max <= mp_.arena_test)
++    mp_.arena_test = mp_.arena_max - 1;
++#endif
+   (void)mutex_unlock(&av->mutex);
+   return res;
+ }

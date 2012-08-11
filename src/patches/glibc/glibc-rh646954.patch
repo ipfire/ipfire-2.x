@@ -1,0 +1,216 @@
+2010-10-26  Ulrich Drepper  <drepper@gmail.com>
+
+	* elf/rtld.c (dl_main): Move assertion after the point where rtld map
+	is added to the list.
+
+2010-10-20  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+	    Ulrich Drepper  <drepper@gmail.com>
+
+	* elf/dl-object.c (_dl_new_object): Don't append the new object to
+	the global list here.  Move code to...
+	(_dl_add_to_namespace_list): ...here.  New function.
+	* elf/rtld.c (dl_main): Invoke _dl_add_to_namespace_list.
+	* sysdeps/generic/ldsodefs.h (_dl_add_to_namespace_list): Declare.
+	* elf/dl-load.c (lose): Don't remove the element from the list.
+	(_dl_map_object_from_fd): Invoke _dl_add_to_namespace_list.
+	(_dl_map_object): Likewise.
+
+Index: glibc-2.12-2-gc4ccff1/elf/dl-load.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-load.c
++++ glibc-2.12-2-gc4ccff1/elf/dl-load.c
+@@ -797,22 +797,7 @@ lose (int code, int fd, const char *name
+   /* The file might already be closed.  */
+   if (fd != -1)
+     (void) __close (fd);
+-  if (l != NULL)
+-    {
+-      /* We modify the list of loaded objects.  */
+-      __rtld_lock_lock_recursive (GL(dl_load_write_lock));
+-      /* Remove the stillborn object from the list and free it.  */
+-      assert (l->l_next == NULL);
+-      if (l->l_prev == NULL)
+-	/* No other module loaded. This happens only in the static library,
+-	   or in rtld under --verify.  */
+-	GL(dl_ns)[l->l_ns]._ns_loaded = NULL;
+-      else
+-	l->l_prev->l_next = NULL;
+-      --GL(dl_ns)[l->l_ns]._ns_nloaded;
+-      free (l);
+-      __rtld_lock_unlock_recursive (GL(dl_load_write_lock));
+-    }
++  free (l);
+   free (realname);
+ 
+   if (r != NULL)
+@@ -897,6 +882,9 @@ _dl_map_object_from_fd (const char *name
+ 	 never be unloaded.  */
+       __close (fd);
+ 
++      /* Add the map for the mirrored object to the object list.  */
++      _dl_add_to_namespace_list (l, nsid);
++
+       return l;
+     }
+ #endif
+@@ -1491,6 +1479,9 @@ cannot enable executable stack as shared
+     add_name_to_object (l, ((const char *) D_PTR (l, l_info[DT_STRTAB])
+ 			    + l->l_info[DT_SONAME]->d_un.d_val));
+ 
++  /* Now that the object is fully initialized add it to the object list.  */
++  _dl_add_to_namespace_list (l, nsid);
++
+ #ifdef SHARED
+   /* Auditing checkpoint: we have a new object.  */
+   if (__builtin_expect (GLRO(dl_naudit) > 0, 0)
+@@ -2215,7 +2206,7 @@ _dl_map_object (struct link_map *loader,
+ 	     have.  */
+ 	  static const Elf_Symndx dummy_bucket = STN_UNDEF;
+ 
+-	  /* Enter the new object in the list of loaded objects.  */
++	  /* Allocate a new object map.  */
+ 	  if ((name_copy = local_strdup (name)) == NULL
+ 	      || (l = _dl_new_object (name_copy, name, type, loader,
+ 				      mode, nsid)) == NULL)
+@@ -2233,6 +2224,9 @@ _dl_map_object (struct link_map *loader,
+ 	  l->l_nbuckets = 1;
+ 	  l->l_relocated = 1;
+ 
++	  /* Enter the object in the object list.  */
++	  _dl_add_to_namespace_list (l, nsid);
++
+ 	  return l;
+ 	}
+       else if (found_other_class)
+Index: glibc-2.12-2-gc4ccff1/elf/dl-object.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-object.c
++++ glibc-2.12-2-gc4ccff1/elf/dl-object.c
+@@ -26,16 +26,41 @@
+ #include <assert.h>
+ 
+ 
++/* Add the new link_map NEW to the end of the namespace list.  */
++void
++internal_function
++_dl_add_to_namespace_list (struct link_map *new, Lmid_t nsid)
++{
++  /* We modify the list of loaded objects.  */
++  __rtld_lock_lock_recursive (GL(dl_load_write_lock));
++
++  if (GL(dl_ns)[nsid]._ns_loaded != NULL)
++    {
++      struct link_map *l = GL(dl_ns)[nsid]._ns_loaded;
++      while (l->l_next != NULL)
++	l = l->l_next;
++      new->l_prev = l;
++      /* new->l_next = NULL;   Would be necessary but we use calloc.  */
++      l->l_next = new;
++    }
++  else
++    GL(dl_ns)[nsid]._ns_loaded = new;
++  ++GL(dl_ns)[nsid]._ns_nloaded;
++  new->l_serial = GL(dl_load_adds);
++  ++GL(dl_load_adds);
++
++  __rtld_lock_unlock_recursive (GL(dl_load_write_lock));
++}
++
++
+ /* Allocate a `struct link_map' for a new object being loaded,
+    and enter it into the _dl_loaded list.  */
+-
+ struct link_map *
+ internal_function
+ _dl_new_object (char *realname, const char *libname, int type,
+ 		struct link_map *loader, int mode, Lmid_t nsid)
+ {
+   struct link_map *l;
+-  int idx;
+   size_t libname_len = strlen (libname) + 1;
+   struct link_map *new;
+   struct libname_list *newname;
+@@ -93,31 +118,12 @@ _dl_new_object (char *realname, const ch
+   new->l_scope = new->l_scope_mem;
+   new->l_scope_max = sizeof (new->l_scope_mem) / sizeof (new->l_scope_mem[0]);
+ 
+-  /* We modify the list of loaded objects.  */
+-  __rtld_lock_lock_recursive (GL(dl_load_write_lock));
+-
+   /* Counter for the scopes we have to handle.  */
+-  idx = 0;
++  int idx = 0;
+ 
+   if (GL(dl_ns)[nsid]._ns_loaded != NULL)
+-    {
+-      l = GL(dl_ns)[nsid]._ns_loaded;
+-      while (l->l_next != NULL)
+-	l = l->l_next;
+-      new->l_prev = l;
+-      /* new->l_next = NULL;	Would be necessary but we use calloc.  */
+-      l->l_next = new;
+-
+-      /* Add the global scope.  */
+-      new->l_scope[idx++] = &GL(dl_ns)[nsid]._ns_loaded->l_searchlist;
+-    }
+-  else
+-    GL(dl_ns)[nsid]._ns_loaded = new;
+-  ++GL(dl_ns)[nsid]._ns_nloaded;
+-  new->l_serial = GL(dl_load_adds);
+-  ++GL(dl_load_adds);
+-
+-  __rtld_lock_unlock_recursive (GL(dl_load_write_lock));
++    /* Add the global scope.  */
++    new->l_scope[idx++] = &GL(dl_ns)[nsid]._ns_loaded->l_searchlist;
+ 
+   /* If we have no loader the new object acts as it.  */
+   if (loader == NULL)
+Index: glibc-2.12-2-gc4ccff1/elf/rtld.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/rtld.c
++++ glibc-2.12-2-gc4ccff1/elf/rtld.c
+@@ -1108,11 +1108,15 @@ of this helper program; chances are you 
+       main_map = _dl_new_object ((char *) "", "", lt_executable, NULL,
+ 				 __RTLD_OPENEXEC, LM_ID_BASE);
+       assert (main_map != NULL);
+-      assert (main_map == GL(dl_ns)[LM_ID_BASE]._ns_loaded);
+       main_map->l_phdr = phdr;
+       main_map->l_phnum = phnum;
+       main_map->l_entry = *user_entry;
+ 
++      /* Even though the link map is not yet fully initialized we can add
++	 it to the map list since there are no possible users running yet.  */
++      _dl_add_to_namespace_list (main_map, LM_ID_BASE);
++      assert (main_map == GL(dl_ns)[LM_ID_BASE]._ns_loaded);
++
+       /* At this point we are in a bit of trouble.  We would have to
+ 	 fill in the values for l_dev and l_ino.  But in general we
+ 	 do not know where the file is.  We also do not handle AT_EXECFD
+@@ -1380,6 +1384,9 @@ of this helper program; chances are you 
+ 	      l->l_libname->name = memcpy (copy, dsoname, len);
+ 	    }
+ 
++	  /* Add the vDSO to the object list.  */
++	  _dl_add_to_namespace_list (l, LM_ID_BASE);
++
+ 	  /* Rearrange the list so this DSO appears after rtld_map.  */
+ 	  assert (l->l_next == NULL);
+ 	  assert (l->l_prev == main_map);
+Index: glibc-2.12-2-gc4ccff1/sysdeps/generic/ldsodefs.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/generic/ldsodefs.h
++++ glibc-2.12-2-gc4ccff1/sysdeps/generic/ldsodefs.h
+@@ -891,8 +891,11 @@ extern lookup_t _dl_lookup_symbol_x (con
+ extern ElfW(Addr) _dl_symbol_value (struct link_map *map, const char *name)
+      internal_function;
+ 
+-/* Allocate a `struct link_map' for a new object being loaded,
+-   and enter it into the _dl_main_map list.  */
++/* Add the new link_map NEW to the end of the namespace list.  */
++extern void _dl_add_to_namespace_list (struct link_map *new, Lmid_t nsid)
++     internal_function attribute_hidden;
++
++/* Allocate a `struct link_map' for a new object being loaded.  */
+ extern struct link_map *_dl_new_object (char *realname, const char *libname,
+ 					int type, struct link_map *loader,
+ 					int mode, Lmid_t nsid)

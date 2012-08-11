@@ -1,0 +1,26 @@
+2010-09-07  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/cacheinfo.c (init_cacheinfo): Round cache sizes
+	up to multiple of 256 bytes.
+
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/cacheinfo.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/cacheinfo.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/cacheinfo.c
+@@ -661,12 +661,16 @@ init_cacheinfo (void)
+ 
+   if (data > 0)
+     {
++      /* Round data cache size up to multiple of 256 bytes.  */
++      data = (data + 255) & ~255L;
+       __x86_64_data_cache_size_half = data / 2;
+       __x86_64_data_cache_size = data;
+     }
+ 
+   if (shared > 0)
+     {
++      /* Round shared cache size up to multiple of 256 bytes.  */
++      shared = (shared + 255) & ~255L;
+       __x86_64_shared_cache_size_half = shared / 2;
+       __x86_64_shared_cache_size = shared;
+     }

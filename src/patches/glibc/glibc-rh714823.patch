@@ -1,0 +1,126 @@
+2011-06-28  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): Don't use gethostbyaddr
+	to determine canonical name.
+
+2011-06-22  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): Fix last change.
+
+2011-06-21  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #12885]
+	* sysdeps/posix/getaddrinfo.c (gaih_inet): When looking up only IPv6
+	addresses using gethostbyname4_r ignore IPv4 addresses.
+
+Index: glibc-2.12-2-gc4ccff1/sysdeps/posix/getaddrinfo.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/posix/getaddrinfo.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/posix/getaddrinfo.c
+@@ -512,10 +512,11 @@ gaih_inet (const char *name, const struc
+ 
+ 	  /* If we do not have to look for IPv4 and IPv6 together, use
+ 	     the simple, old functions.  */
+-	  if (req->ai_family == AF_INET
+-	      || (req->ai_family == AF_INET6
+-		  && ((req->ai_flags & AI_V4MAPPED) == 0
+-		      || (req->ai_flags & AI_ALL) == 0)))
++	  if ((req->ai_family == AF_INET
++	       || (req->ai_family == AF_INET6
++		   && ((req->ai_flags & AI_V4MAPPED) == 0
++		       || (req->ai_flags & AI_ALL) == 0)))
++	      && (req->ai_flags & AI_CANONNAME) == 0)
+ 	    {
+ 	      int family = req->ai_family;
+ 	      size_t tmpbuflen = 512;
+@@ -731,16 +732,44 @@ gaih_inet (const char *name, const struc
+ 					      tmpbuflen, 2 * tmpbuflen);
+ 		    }
+ 
+-		  no_inet6_data = no_data;
+-
+ 		  if (status == NSS_STATUS_SUCCESS)
+ 		    {
++		      assert (!no_data);
++		      no_data = 1;
++
+ 		      if ((req->ai_flags & AI_CANONNAME) != 0 && canon == NULL)
+ 			canon = (*pat)->name;
+ 
+ 		      while (*pat != NULL)
+-			pat = &((*pat)->next);
++			{
++			  if ((*pat)->family == AF_INET
++			      && req->ai_family == AF_INET6
++			      && (req->ai_flags & AI_V4MAPPED) != 0)
++			    {
++			      uint32_t *pataddr = (*pat)->addr;
++			      (*pat)->family = AF_INET6;
++			      pataddr[3] = pataddr[0];
++			      pataddr[2] = htonl (0xffff);
++			      pataddr[1] = 0;
++			      pataddr[0] = 0;
++			      pat = &((*pat)->next);
++			      no_data = 0;
++			    }
++			  else if (req->ai_family == AF_UNSPEC
++				   || (*pat)->family == req->ai_family)
++			    {
++			      pat = &((*pat)->next);
++
++			      no_data = 0;
++			      if (req->ai_family == AF_INET6)
++				got_ipv6 = true;
++			    }
++			  else
++			    *pat = ((*pat)->next);
++			}
+ 		    }
++
++		  no_inet6_data = no_data;
+ 		}
+ 	      else
+ 		{
+@@ -905,39 +934,9 @@ gaih_inet (const char *name, const struc
+ 	  {
+ 	    if (canon == NULL)
+ 	      {
+-		struct hostent *h = NULL;
+-		int herrno;
+-		struct hostent th;
+-		size_t tmpbuflen = 512;
+-		char *tmpbuf = NULL;
+-
+-		do
+-		  {
+-		    tmpbuf = extend_alloca (tmpbuf, tmpbuflen, tmpbuflen * 2);
+-		    rc = __gethostbyaddr_r (at2->addr,
+-					    ((at2->family == AF_INET6)
+-					     ? sizeof (struct in6_addr)
+-					     : sizeof (struct in_addr)),
+-					    at2->family, &th, tmpbuf,
+-					    tmpbuflen, &h, &herrno);
+-		  }
+-		while (rc == ERANGE && herrno == NETDB_INTERNAL);
+-
+-		if (rc != 0 && herrno == NETDB_INTERNAL)
+-		  {
+-		    __set_h_errno (herrno);
+-		    return -EAI_SYSTEM;
+-		  }
+-
+-		if (h != NULL)
+-		  canon = h->h_name;
+-		else
+-		  {
+-		    assert (orig_name != NULL);
+-		    /* If the canonical name cannot be determined, use
+-		       the passed in string.  */
+-		    canon = orig_name;
+-		  }
++		/* If the canonical name cannot be determined, use
++		   the passed in string.  */
++		canon = orig_name;
+ 	      }
+ 
+ #ifdef HAVE_LIBIDN

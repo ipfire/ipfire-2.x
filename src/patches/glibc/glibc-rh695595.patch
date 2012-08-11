@@ -1,0 +1,17 @@
+2010-11-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features):
+	Support Intel processor model 6 and model 0x2c.
+
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/init-arch.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/multiarch/init-arch.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/init-arch.c
+@@ -81,6 +81,7 @@ __init_cpu_features (void)
+ 	    case 0x1e:
+ 	    case 0x1f:
+ 	    case 0x25:
++	    case 0x2c:
+ 	    case 0x2e:
+ 	    case 0x2f:
+ 	      /* Rep string instructions are fast on Intel Core i3, i5

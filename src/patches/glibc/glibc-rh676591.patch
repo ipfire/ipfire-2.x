@@ -1,0 +1,352 @@
+2011-05-15  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #11901]
+	* include/stdlib.h: Move include protection to the right place.
+	Define abort_msg_s.  Declare __abort_msg with it.
+	* stdlib/abort.c (__abort_msg): Adjust type.
+	* assert/assert.c (__assert_fail_base): New function.  Majority
+	of code from __assert_fail.  Allocate memory for __abort_msg with
+	mmap.
+	(__assert_fail): Now call __assert_fail_base.
+	* assert/assert-perr.c: Remove bulk of implementation.  Use
+	__assert_fail_base.
+	* include/assert.hL Declare __assert_fail_base.
+	* sysdeps/posix/libc_fatal.c: Allocate memory for __abort_msg with
+	mmap.
+	* sysdeps/unix/sysv/linux/libc_fatal.c: Likewise.
+
+Index: glibc-2.12-2-gc4ccff1/assert/assert-perr.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/assert/assert-perr.c
++++ glibc-2.12-2-gc4ccff1/assert/assert-perr.c
+@@ -17,66 +17,23 @@
+    02111-1307 USA.  */
+ 
+ #include <assert.h>
+-#include <atomic.h>
+ #include <libintl.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+ #include <string.h>
+-#include <sysdep.h>
+-#include <unistd.h>
+ 
+ 
+-extern const char *__progname;
+-
+-#ifdef USE_IN_LIBIO
+-# include <wchar.h>
+-# include <libio/iolibio.h>
+-# define fflush(s) INTUSE(_IO_fflush) (s)
+-#endif
+-
+ /* This function, when passed an error number, a filename, and a line
+    number, prints a message on the standard error stream of the form:
+-   	a.c:10: foobar: Unexpected error: Computer bought the farm
++	a.c:10: foobar: Unexpected error: Computer bought the farm
+    It then aborts program execution via a call to `abort'.  */
+-
+-#ifdef FATAL_PREPARE_INCLUDE
+-# include FATAL_PREPARE_INCLUDE
+-#endif
+-
+ void
+ __assert_perror_fail (int errnum,
+ 		      const char *file, unsigned int line,
+ 		      const char *function)
+ {
+   char errbuf[1024];
+-  char *buf;
+-
+-#ifdef FATAL_PREPARE
+-  FATAL_PREPARE;
+-#endif
+-
+-  if (__asprintf (&buf, _("%s%s%s:%u: %s%sUnexpected error: %s.\n"),
+-		  __progname, __progname[0] ? ": " : "",
+-		  file, line,
+-		  function ? function : "", function ? ": " : "",
+-		  __strerror_r (errnum, errbuf, sizeof errbuf)) >= 0)
+-    {
+-      /* Print the message.  */
+-      (void) __fxprintf (NULL, "%s", buf);
+-      (void) fflush (stderr);
+-
+-      /* We have to free the old buffer since the application might
+-	 catch the SIGABRT signal.  */
+-      char *old = atomic_exchange_acq (&__abort_msg, buf);
+-      free (old);
+-    }
+-  else
+-    {
+-      /* At least print a minimal message.  */
+-      static const char errstr[] = "Unexpected error.\n";
+-      __libc_write (STDERR_FILENO, errstr, sizeof (errstr) - 1);
+-    }
+ 
+-  abort ();
++  char *e = __strerror_r (errnum, errbuf, sizeof errbuf);
++  __assert_fail_base (_("%s%s%s:%u: %s%sUnexpected error: %s.\n"),
++		      e, file, line, function);
+ }
+ libc_hidden_def (__assert_perror_fail)
+Index: glibc-2.12-2-gc4ccff1/assert/assert.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/assert/assert.c
++++ glibc-2.12-2-gc4ccff1/assert/assert.c
+@@ -19,11 +19,13 @@
+ 
+ #include <assert.h>
+ #include <atomic.h>
++#include <ldsodefs.h>
+ #include <libintl.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <sysdep.h>
+ #include <unistd.h>
++#include <sys/mman.h>
+ 
+ 
+ extern const char *__progname;
+@@ -45,31 +47,44 @@ extern const char *__progname;
+ #endif
+ 
+ 
+-#undef __assert_fail
+ void
+-__assert_fail (const char *assertion, const char *file, unsigned int line,
+-	       const char *function)
++__assert_fail_base (const char *fmt, const char *assertion, const char *file,
++		    unsigned int line, const char *function)
+ {
+-  char *buf;
++  char *str;
+ 
+ #ifdef FATAL_PREPARE
+   FATAL_PREPARE;
+ #endif
+ 
+-  if (__asprintf (&buf, _("%s%s%s:%u: %s%sAssertion `%s' failed.\n"),
++  int total;
++  if (__asprintf (&str, fmt,
+ 		  __progname, __progname[0] ? ": " : "",
+ 		  file, line,
+ 		  function ? function : "", function ? ": " : "",
+-		  assertion) >= 0)
++		  assertion, &total) >= 0)
+     {
+       /* Print the message.  */
+-      (void) __fxprintf (NULL, "%s", buf);
++      (void) __fxprintf (NULL, "%s", str);
+       (void) fflush (stderr);
+ 
+-      /* We have to free the old buffer since the application might
+-	 catch the SIGABRT signal.  */
+-      char *old = atomic_exchange_acq (&__abort_msg, buf);
+-      free (old);
++      total = (total + 1 + GLRO(dl_pagesize) - 1) & ~(GLRO(dl_pagesize) - 1);
++      struct abort_msg_s *buf = __mmap (NULL, total, PROT_READ | PROT_WRITE,
++					MAP_ANON | MAP_PRIVATE, -1, 0);
++      if (__builtin_expect (buf != MAP_FAILED, 1))
++	{
++	  buf->size = total;
++	  strcpy (buf->msg, str);
++
++	  /* We have to free the old buffer since the application might
++	     catch the SIGABRT signal.  */
++	  struct abort_msg_s *old = atomic_exchange_acq (&__abort_msg, buf);
++
++	  if (old != NULL)
++	    __munmap (old, old->size);
++	}
++
++      free (str);
+     }
+   else
+     {
+@@ -80,4 +95,14 @@ __assert_fail (const char *assertion, co
+ 
+   abort ();
+ }
++
++
++#undef __assert_fail
++void
++__assert_fail (const char *assertion, const char *file, unsigned int line,
++	       const char *function)
++{
++  __assert_fail_base (_("%s%s%s:%u: %s%sAssertion `%s' failed.\n%n"),
++		      assertion, file, line, function);
++}
+ hidden_def(__assert_fail)
+Index: glibc-2.12-2-gc4ccff1/include/assert.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/include/assert.h
++++ glibc-2.12-2-gc4ccff1/include/assert.h
+@@ -13,6 +13,12 @@ extern void __assert_perror_fail (int __
+ 				  __const char *__function)
+      __THROW __attribute__ ((__noreturn__));
+ 
++/* The real implementation of the two functions above.  */
++extern void __assert_fail_base (const char *fmt, const char *assertion,
++				const char *file, unsigned int line,
++				const char *function)
++     __THROW  __attribute__ ((__noreturn__));
++
+ #if !defined NOT_IN_libc || defined IS_IN_rtld
+ hidden_proto (__assert_fail)
+ hidden_proto (__assert_perror_fail)
+Index: glibc-2.12-2-gc4ccff1/include/stdlib.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/include/stdlib.h
++++ glibc-2.12-2-gc4ccff1/include/stdlib.h
+@@ -223,16 +223,21 @@ extern int __qfcvt_r (long double __valu
+ # define __cxa_atexit(func, arg, d) INTUSE(__cxa_atexit) (func, arg, d)
+ # endif
+ 
+-#endif
+-
+ extern void *__default_morecore (ptrdiff_t) __THROW;
+ libc_hidden_proto (__default_morecore)
+ 
+-extern char *__abort_msg;
++struct abort_msg_s
++{
++  unsigned int size;
++  char msg[0];
++};
++extern struct abort_msg_s *__abort_msg;
+ libc_hidden_proto (__abort_msg)
+ 
+ __END_DECLS
+ 
++#endif
++
+ #undef __Need_M_And_C
+ 
+ #endif  /* include/stdlib.h */
+Index: glibc-2.12-2-gc4ccff1/stdlib/abort.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/stdlib/abort.c
++++ glibc-2.12-2-gc4ccff1/stdlib/abort.c
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ /* Exported variable to locate abort message in core files etc.  */
+-char *__abort_msg __attribute__ ((nocommon));
++struct abort_msg_s *__abort_msg __attribute__ ((nocommon));
+ libc_hidden_def (__abort_msg)
+ 
+ /* We must avoid to run in circles.  Therefore we remember how far we
+Index: glibc-2.12-2-gc4ccff1/sysdeps/posix/libc_fatal.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/posix/libc_fatal.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/posix/libc_fatal.c
+@@ -20,6 +20,7 @@
+ #include <atomic.h>
+ #include <errno.h>
+ #include <fcntl.h>
++#include <ldsodefs.h>
+ #include <paths.h>
+ #include <stdarg.h>
+ #include <stdbool.h>
+@@ -125,18 +126,28 @@ __libc_message (int do_abort, const char
+       if (TEMP_FAILURE_RETRY (__writev (fd, iov, nlist)) == total)
+ 	written = true;
+ 
+-      char *buf = do_abort ? malloc (total + 1) : NULL;
+-      if (buf != NULL)
++      if (do_abort)
+ 	{
+-	  char *wp = buf;
+-	  for (int cnt = 0; cnt < nlist; ++cnt)
+-	    wp = mempcpy (wp, iov[cnt].iov_base, iov[cnt].iov_len);
+-	  *wp = '\0';
+-
+-	  /* We have to free the old buffer since the application might
+-	     catch the SIGABRT signal.  */
+-	  char *old = atomic_exchange_acq (&__abort_msg, buf);
+-	  free (old);
++	  total = ((total + 1 + GLRO(dl_pagesize) - 1)
++		   & ~(GLRO(dl_pagesize) - 1));
++	  struct abort_msg_s *buf = __mmap (NULL, total,
++					    PROT_READ | PROT_WRITE,
++					    MAP_ANON | MAP_PRIVATE, -1, 0);
++	  if (buf != MAP_FAILED)
++	    {
++	      buf->size = total;
++	      char *wp = buf->msg;
++	      for (int cnt = 0; cnt < nlist; ++cnt)
++		wp = mempcpy (wp, iov[cnt].iov_base, iov[cnt].iov_len);
++	      *wp = '\0';
++
++	      /* We have to free the old buffer since the application might
++		 catch the SIGABRT signal.  */
++	      struct abort_msg_s *old = atomic_exchange_acq (&__abort_msg,
++							     buf);
++	      if (old != NULL)
++		__munmap (old, old->size);
++	    }
+ 	}
+     }
+ 
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/libc_fatal.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/unix/sysv/linux/libc_fatal.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/libc_fatal.c
+@@ -20,6 +20,7 @@
+ #include <atomic.h>
+ #include <errno.h>
+ #include <fcntl.h>
++#include <ldsodefs.h>
+ #include <paths.h>
+ #include <stdarg.h>
+ #include <stdbool.h>
+@@ -28,6 +29,7 @@
+ #include <string.h>
+ #include <sysdep.h>
+ #include <unistd.h>
++#include <sys/mman.h>
+ #include <sys/syslog.h>
+ #include <execinfo.h>
+ 
+@@ -134,18 +136,28 @@ __libc_message (int do_abort, const char
+       if (cnt == total)
+ 	written = true;
+ 
+-      char *buf = do_abort ? malloc (total + 1) : NULL;
+-      if (buf != NULL)
++      if (do_abort)
+ 	{
+-	  char *wp = buf;
+-	  for (int cnt = 0; cnt < nlist; ++cnt)
+-	    wp = mempcpy (wp, iov[cnt].iov_base, iov[cnt].iov_len);
+-	  *wp = '\0';
+-
+-	  /* We have to free the old buffer since the application might
+-	     catch the SIGABRT signal.  */
+-	  char *old = atomic_exchange_acq (&__abort_msg, buf);
+-	  free (old);
++	  total = ((total + 1 + GLRO(dl_pagesize) - 1)
++		   & ~(GLRO(dl_pagesize) - 1));
++	  struct abort_msg_s *buf = __mmap (NULL, total,
++					    PROT_READ | PROT_WRITE,
++					    MAP_ANON | MAP_PRIVATE, -1, 0);
++	  if (__builtin_expect (buf != MAP_FAILED, 1))
++	    {
++	      buf->size = total;
++	      char *wp = buf->msg;
++	      for (int cnt = 0; cnt < nlist; ++cnt)
++		wp = mempcpy (wp, iov[cnt].iov_base, iov[cnt].iov_len);
++	      *wp = '\0';
++
++	      /* We have to free the old buffer since the application might
++		 catch the SIGABRT signal.  */
++	      struct abort_msg_s *old = atomic_exchange_acq (&__abort_msg,
++							     buf);
++	      if (old != NULL)
++		__munmap (old, old->size);
++	    }
+ 	}
+     }
+ 

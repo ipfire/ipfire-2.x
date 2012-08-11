@@ -1,0 +1,153 @@
+diff -rcp a/nscd/grpcache.c b/nscd/grpcache.c
+*** a/nscd/grpcache.c	Wed Apr 11 12:50:07 2012
+--- b/nscd/grpcache.c	Wed Apr 11 21:45:58 2012
+*************** cache_addgr (struct database_dyn *db, in
+*** 178,184 ****
+        char *cp;
+        const size_t key_len = strlen (key);
+        const size_t buf_len = 3 * sizeof (grp->gr_gid) + key_len + 1;
+!       char *buf = alloca (buf_len);
+        ssize_t n;
+        size_t cnt;
+  
+--- 178,185 ----
+        char *cp;
+        const size_t key_len = strlen (key);
+        const size_t buf_len = 3 * sizeof (grp->gr_gid) + key_len + 1;
+!       size_t alloca_used = 0;
+!       char *buf = alloca_account (buf_len, alloca_used);
+        ssize_t n;
+        size_t cnt;
+  
+*************** cache_addgr (struct database_dyn *db, in
+*** 190,196 ****
+        /* Determine the length of all members.  */
+        while (grp->gr_mem[gr_mem_cnt])
+  	++gr_mem_cnt;
+!       gr_mem_len = (uint32_t *) alloca (gr_mem_cnt * sizeof (uint32_t));
+        for (gr_mem_cnt = 0; grp->gr_mem[gr_mem_cnt]; ++gr_mem_cnt)
+  	{
+  	  gr_mem_len[gr_mem_cnt] = strlen (grp->gr_mem[gr_mem_cnt]) + 1;
+--- 191,198 ----
+        /* Determine the length of all members.  */
+        while (grp->gr_mem[gr_mem_cnt])
+  	++gr_mem_cnt;
+!       gr_mem_len = (uint32_t *) alloca_account (gr_mem_cnt * sizeof (uint32_t),
+! 						alloca_used);
+        for (gr_mem_cnt = 0; grp->gr_mem[gr_mem_cnt]; ++gr_mem_cnt)
+  	{
+  	  gr_mem_len[gr_mem_cnt] = strlen (grp->gr_mem[gr_mem_cnt]) + 1;
+*************** cache_addgr (struct database_dyn *db, in
+*** 205,214 ****
+  	 change.  Allocate memory on the cache since it is likely
+  	 discarded anyway.  If it turns out to be necessary to have a
+  	 new record we can still allocate real memory.  */
+!       bool alloca_used = false;
+        dataset = NULL;
+  
+!       if (he == NULL)
+  	dataset = (struct dataset *) mempool_alloc (db, total + n, 1);
+  
+        if (dataset == NULL)
+--- 207,216 ----
+  	 change.  Allocate memory on the cache since it is likely
+  	 discarded anyway.  If it turns out to be necessary to have a
+  	 new record we can still allocate real memory.  */
+!       bool dataset_in_stack_or_freed = false;
+        dataset = NULL;
+  
+!       if (he == NULL || ! __libc_use_alloca (alloca_used + total + n))
+  	dataset = (struct dataset *) mempool_alloc (db, total + n, 1);
+  
+        if (dataset == NULL)
+*************** cache_addgr (struct database_dyn *db, in
+*** 216,225 ****
+  	  /* We cannot permanently add the result in the moment.  But
+  	     we can provide the result as is.  Store the data in some
+  	     temporary memory.  */
+! 	  dataset = (struct dataset *) alloca (total + n);
+  
+  	  /* We cannot add this record to the permanent database.  */
+! 	  alloca_used = true;
+  	}
+  
+        dataset->head.allocsize = total + n;
+--- 218,227 ----
+  	  /* We cannot permanently add the result in the moment.  But
+  	     we can provide the result as is.  Store the data in some
+  	     temporary memory.  */
+! 	  dataset = (struct dataset *) alloca_account (total + n, alloca_used);
+  
+  	  /* We cannot add this record to the permanent database.  */
+! 	  dataset_in_stack_or_freed = true;
+  	}
+  
+        dataset->head.allocsize = total + n;
+*************** cache_addgr (struct database_dyn *db, in
+*** 273,278 ****
+--- 275,288 ----
+  		 allocated on the stack and need not be freed.  */
+  	      dh->timeout = dataset->head.timeout;
+  	      ++dh->nreloads;
++ 
++ 	      /* If the new record was not allocated on the stack, then it must
++ 		 be freed.  Note that it can no longer be used.  */
++ 	      if (! dataset_in_stack_or_freed)
++ 		{
++ 		  free (dataset);
++ 		  dataset_in_stack_or_freed = true;
++ 		}
+  	    }
+  	  else
+  	    {
+*************** cache_addgr (struct database_dyn *db, in
+*** 288,294 ****
+  		  key_copy = (char *) newp + (key_copy - (char *) dataset);
+  
+  		  dataset = memcpy (newp, dataset, total + n);
+! 		  alloca_used = false;
+  		}
+  
+  	      /* Mark the old record as obsolete.  */
+--- 298,304 ----
+  		  key_copy = (char *) newp + (key_copy - (char *) dataset);
+  
+  		  dataset = memcpy (newp, dataset, total + n);
+! 		  dataset_in_stack_or_freed = false;
+  		}
+  
+  	      /* Mark the old record as obsolete.  */
+*************** cache_addgr (struct database_dyn *db, in
+*** 303,309 ****
+  	  assert (fd != -1);
+  
+  #ifdef HAVE_SENDFILE
+! 	  if (__builtin_expect (db->mmap_used, 1) && !alloca_used)
+  	    {
+  	      assert (db->wr_fd != -1);
+  	      assert ((char *) &dataset->resp > (char *) db->data);
+--- 313,319 ----
+  	  assert (fd != -1);
+  
+  #ifdef HAVE_SENDFILE
+! 	  if (__builtin_expect (db->mmap_used, 1) && !dataset_in_stack_or_freed)
+  	    {
+  	      assert (db->wr_fd != -1);
+  	      assert ((char *) &dataset->resp > (char *) db->data);
+*************** cache_addgr (struct database_dyn *db, in
+*** 330,336 ****
+  
+        /* Add the record to the database.  But only if it has not been
+  	 stored on the stack.  */
+!       if (! alloca_used)
+  	{
+  	  /* If necessary, we also propagate the data to disk.  */
+  	  if (db->persistent)
+--- 340,346 ----
+  
+        /* Add the record to the database.  But only if it has not been
+  	 stored on the stack.  */
+!       if (! dataset_in_stack_or_freed)
+  	{
+  	  /* If necessary, we also propagate the data to disk.  */
+  	  if (db->persistent)

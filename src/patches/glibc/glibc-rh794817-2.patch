@@ -1,0 +1,85 @@
+diff -rup a/stdio-common/vfprintf.c b/stdio-common/vfprintf.c
+--- a/stdio-common/vfprintf.c	2012-03-05 09:43:14.705536167 -0700
++++ b/stdio-common/vfprintf.c	2012-03-05 09:48:11.602890982 -0700
+@@ -822,7 +822,7 @@ vfprintf (FILE *s, const CHAR_T *format,
+ 									      \
+ 	if (function_done < 0)						      \
+ 	  {								      \
+-	    /* Error in print handler.  */				      \
++	    /* Error in print handler; up to handler to set errno.  */	      \
+ 	    done = -1;							      \
+ 	    goto all_done;						      \
+ 	  }								      \
+@@ -876,7 +876,7 @@ vfprintf (FILE *s, const CHAR_T *format,
+ 									      \
+ 	if (function_done < 0)						      \
+ 	  {								      \
+-	    /* Error in print handler.  */				      \
++	    /* Error in print handler; up to handler to set errno.  */	      \
+ 	    done = -1;							      \
+ 	    goto all_done;						      \
+ 	  }								      \
+@@ -1117,7 +1117,7 @@ vfprintf (FILE *s, const CHAR_T *format,
+ 			 &mbstate);					      \
+ 	if (len == (size_t) -1)						      \
+ 	  {								      \
+-	    /* Something went wron gduring the conversion.  Bail out.  */     \
++	    /* Something went wrong during the conversion.  Bail out.  */     \
+ 	    done = -1;							      \
+ 	    goto all_done;						      \
+ 	  }								      \
+@@ -1188,6 +1188,7 @@ vfprintf (FILE *s, const CHAR_T *format,
+ 		      if (__mbsnrtowcs (ignore, &str2, strend - str2,	      \
+ 					ignore_size, &ps) == (size_t) -1)     \
+ 			{						      \
++			  /* Conversion function has set errno.  */	      \
+ 			  done = -1;					      \
+ 			  goto all_done;				      \
+ 			}						      \
+@@ -1599,6 +1600,7 @@ vfprintf (FILE *s, const CHAR_T *format,
+ 	  if (spec == L_('\0'))
+ 	    {
+ 	      /* The format string ended before the specifier is complete.  */
++	      __set_errno (EINVAL);
+ 	      done = -1;
+ 	      goto all_done;
+ 	    }
+@@ -1696,17 +1698,20 @@ do_positional:
+ 
+     /* Determine the number of arguments the format string consumes.  */
+     nargs = MAX (nargs, max_ref_arg);
++    /* Calculate total size needed to represent a single argument across
++       all three argument-related arrays.  */
+     bytes_per_arg = sizeof (*args_value) + sizeof (*args_size)
+                     + sizeof (*args_type);
+ 
+     /* Check for potential integer overflow.  */
+-    if (nargs > SIZE_MAX / bytes_per_arg)
++    if (__builtin_expect (nargs > SIZE_MAX / bytes_per_arg, 0))
+       {
++         __set_errno (ERANGE);
+          done = -1;
+          goto all_done;
+       }
+ 
+-    /* Allocate memory for the argument descriptions.  */
++    /* Allocate memory for all three argument arrays.  */
+     if (__libc_use_alloca (nargs * bytes_per_arg))
+         args_value = alloca (nargs * bytes_per_arg);
+     else
+@@ -1937,6 +1942,7 @@ do_positional:
+ 		       about # of chars.  */
+ 		    if (function_done < 0)
+ 		      {
++			/* Function has set errno.  */
+ 			done = -1;
+ 			goto all_done;
+ 		      }
+@@ -1971,6 +1977,7 @@ do_positional:
+ 		 of chars.  */
+ 	      if (function_done < 0)
+ 		{
++		  /* Function has set errno.  */
+ 		  done = -1;
+ 		  goto all_done;
+ 		}

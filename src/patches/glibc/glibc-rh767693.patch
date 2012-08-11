@@ -1,0 +1,89 @@
+commit 97ac2654b2d831acaa18a2b018b0736245903fd2
+Author: Ulrich Drepper <drepper@gmail.com>
+Date:   Sat Dec 17 20:18:42 2011 -0500
+
+    Check values from TZ file header
+
+
+	[BZ #13506]
+	* time/tzfile.c (__tzfile_read): Check values from file header.
+
+diff -ru a/time/tzfile.c b/time/tzfile.c
+--- a/time/tzfile.c	2010-05-04 11:27:23.000000000 +0000
++++ b/time/tzfile.c	2011-12-19 06:39:49.875358578 +0000
+@@ -19,6 +19,7 @@
+ 
+ #include <assert.h>
+ #include <limits.h>
++#include <stdint.h>
+ #include <stdio.h>
+ #include <stdio_ext.h>
+ #include <stdlib.h>
+@@ -234,23 +235,58 @@
+       goto read_again;
+     }
+ 
++  if (__builtin_expect (num_transitions
++			> ((SIZE_MAX - (__alignof__ (struct ttinfo) - 1))
++			   / (sizeof (time_t) + 1)), 0))
++    goto lose;
+   total_size = num_transitions * (sizeof (time_t) + 1);
+   total_size = ((total_size + __alignof__ (struct ttinfo) - 1)
+ 		& ~(__alignof__ (struct ttinfo) - 1));
+   types_idx = total_size;
+-  total_size += num_types * sizeof (struct ttinfo) + chars;
++  if (__builtin_expect (num_types
++			> (SIZE_MAX - total_size) / sizeof (struct ttinfo), 0))
++    goto lose;
++  total_size += num_types * sizeof (struct ttinfo);
++  if (__builtin_expect (chars > SIZE_MAX - total_size, 0))
++    goto lose;
++  total_size += chars;
++  if (__builtin_expect (__alignof__ (struct leap) - 1
++			> SIZE_MAX - total_size, 0))
++    goto lose;
+   total_size = ((total_size + __alignof__ (struct leap) - 1)
+ 		& ~(__alignof__ (struct leap) - 1));
+   leaps_idx = total_size;
++  if (__builtin_expect (num_leaps
++			> (SIZE_MAX - total_size) / sizeof (struct leap), 0))
++    goto lose;
+   total_size += num_leaps * sizeof (struct leap);
+-  tzspec_len = (sizeof (time_t) == 8 && trans_width == 8
+-		? st.st_size - (ftello (f)
+-				+ num_transitions * (8 + 1)
+-				+ num_types * 6
+-				+ chars
+-				+ num_leaps * 12
+-				+ num_isstd
+-				+ num_isgmt) - 1 : 0);
++  tzspec_len = 0;
++  if (sizeof (time_t) == 8 && trans_width == 8)
++    {
++      off_t rem = st.st_size - ftello (f);
++      if (__builtin_expect (rem < 0
++			    || (size_t) rem < (num_transitions * (8 + 1)
++					       + num_types * 6
++					       + chars), 0))
++	goto lose;
++      tzspec_len = (size_t) rem - (num_transitions * (8 + 1)
++				   + num_types * 6
++				   + chars);
++      if (__builtin_expect (num_leaps > SIZE_MAX / 12
++			    || tzspec_len < num_leaps * 12, 0))
++	goto lose;
++      tzspec_len -= num_leaps * 12;
++      if (__builtin_expect (tzspec_len < num_isstd, 0))
++	goto lose;
++      tzspec_len -= num_isstd;
++      if (__builtin_expect (tzspec_len == 0 || tzspec_len - 1 < num_isgmt, 0))
++	goto lose;
++      tzspec_len -= num_isgmt + 1;
++      if (__builtin_expect (SIZE_MAX - total_size < tzspec_len, 0))
++	goto lose;
++    }
++  if (__builtin_expect (SIZE_MAX - total_size - tzspec_len < extra, 0))
++    goto lose;
+ 
+   /* Allocate enough memory including the extra block requested by the
+      caller.  */

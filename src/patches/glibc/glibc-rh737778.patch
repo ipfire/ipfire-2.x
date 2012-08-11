@@ -1,0 +1,122 @@
+2011-08-14  Roland McGrath  <roland@hack.frob.com>
+
+	* locale/Makefile (locale-CPPFLAGS): Renamed CPPFLAGS-locale-programs.
+	(locale-CPPFLAGS): New variable; put LOCALEDIR, LOCALE_ALIAS_PATH and
+	-Iprograms here.
+	(cppflags-iterator.mk sequence): Use locale-programs in place of nonlib.
+	(localedef-modules): Add localedef.
+	(locale-modules): Add locale.
+
+2011-08-13  Ulrich Drepper  <drepper@gmail.com>
+
+	* intl/l10nflist.c (_nl_normalize_codeset): Make it compile outside
+	of libc.  Make tolower call locale-independent.  Optimize a bit by
+	using isdigit instead of isalnum.
+	* locale/Makefile (locale-CPPFLAGS): Add -DNOT_IN_libc.
+
+2011-08-11  Ulrich Drepper  <drepper@gmail.com>
+
+	* intl/l10nflist.c (_nl_make_l10nflist): Use locale-independent
+	classification.
+
+Index: glibc-2.12-2-gc4ccff1/intl/l10nflist.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/intl/l10nflist.c
++++ glibc-2.12-2-gc4ccff1/intl/l10nflist.c
+@@ -332,13 +332,18 @@ _nl_normalize_codeset (codeset, name_len
+   char *retval;
+   char *wp;
+   size_t cnt;
++#ifdef NOT_IN_libc
++  locale_t locale = newlocale (0, "C", NULL);
++#else
++# define locale _nl_C_locobj_ptr
++#endif
+ 
+   for (cnt = 0; cnt < name_len; ++cnt)
+-    if (isalnum ((unsigned char) codeset[cnt]))
++    if (__isalnum_l ((unsigned char) codeset[cnt], locale))
+       {
+ 	++len;
+ 
+-	if (isalpha ((unsigned char) codeset[cnt]))
++	if (! __isdigit_l ((unsigned char) codeset[cnt], locale))
+ 	  only_digit = 0;
+       }
+ 
+@@ -346,15 +351,14 @@ _nl_normalize_codeset (codeset, name_len
+ 
+   if (retval != NULL)
+     {
++      wp = retval;
+       if (only_digit)
+-	wp = stpcpy (retval, "iso");
+-      else
+-	wp = retval;
++	wp = stpcpy (wp, "iso");
+ 
+       for (cnt = 0; cnt < name_len; ++cnt)
+-	if (isalpha ((unsigned char) codeset[cnt]))
+-	  *wp++ = tolower ((unsigned char) codeset[cnt]);
+-	else if (isdigit ((unsigned char) codeset[cnt]))
++	if (__isalpha_l ((unsigned char) codeset[cnt], locale))
++	  *wp++ = __tolower_l ((unsigned char) codeset[cnt], locale);
++	else if (__isdigit_l ((unsigned char) codeset[cnt], locale))
+ 	  *wp++ = codeset[cnt];
+ 
+       *wp = '\0';
+Index: glibc-2.12-2-gc4ccff1/locale/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/locale/Makefile
++++ glibc-2.12-2-gc4ccff1/locale/Makefile
+@@ -59,10 +59,11 @@ vpath %.c programs ../crypt
+ vpath %.h programs
+ vpath %.gperf programs
+ 
+-localedef-modules	:= $(categories:%=ld-%) charmap linereader locfile \
++localedef-modules	:= localedef $(categories:%=ld-%) \
++			   charmap linereader locfile \
+ 			   repertoire locarchive
+ localedef-aux		:= md5
+-locale-modules		:= locale-spec
++locale-modules		:= locale locale-spec
+ lib-modules		:= charmap-dir simple-hash xmalloc xstrdup
+ 
+ 
+@@ -90,22 +91,27 @@ endif
+ 
+ localepath = "$(localedir):$(i18ndir)"
+ 
+-locale-CPPFLAGS := -DLOCALE_PATH='$(localepath)' \
+-		   -DLOCALEDIR='"$(localedir)"' \
+-		   -DLOCALE_ALIAS_PATH='"$(msgcatdir)"' \
+-		   -DCHARMAP_PATH='"$(i18ndir)/charmaps"' \
+-		   -DREPERTOIREMAP_PATH='"$(i18ndir)/repertoiremaps"' \
+-		   -DLOCSRCDIR='"$(i18ndir)/locales"' -DHAVE_CONFIG_H \
+-		   -Iprograms
++# -Iprograms doesn't really belong here, but this gets it at the head
++# of the list instead of the tail, where CPPFLAGS-$(lib) gets added.
++# We need it before the standard -I's to see programs/config.h first.
++locale-CPPFLAGS = -DLOCALEDIR='"$(localedir)"' \
++		  -DLOCALE_ALIAS_PATH='"$(msgcatdir)"' \
++		  -Iprograms
++
++CPPFLAGS-locale-programs = -DLOCALE_PATH='$(localepath)' \
++			   -DCHARMAP_PATH='"$(i18ndir)/charmaps"' \
++			   -DREPERTOIREMAP_PATH='"$(i18ndir)/repertoiremaps"' \
++			   -DLOCSRCDIR='"$(i18ndir)/locales"' \
++			   -DHAVE_CONFIG_H -DNOT_IN_libc
+ 
+ CFLAGS-charmap.c = -Wno-write-strings -Wno-char-subscripts
+ CFLAGS-locfile.c = -Wno-write-strings -Wno-char-subscripts
+ CFLAGS-charmap-dir.c = -Wno-write-strings
+ 
+-# This makes sure -DNOT_IN_libc is passed for all these modules.
++# This makes sure -DNOT_IN_libc et al are passed for all these modules.
+ cpp-srcs-left := $(addsuffix .c,$(localedef-modules) $(localedef-aux) \
+ 				$(locale-modules) $(lib-modules))
+-lib := nonlib
++lib := locale-programs
+ include $(patsubst %,$(..)cppflags-iterator.mk,$(cpp-srcs-left))
+ 
+ # Depend on libc.so so a DT_NEEDED is generated in the shared objects.

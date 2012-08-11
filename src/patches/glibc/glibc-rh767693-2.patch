@@ -1,0 +1,79 @@
+Index: glibc-2.5-20061008T1257/sunrpc/svc_tcp.c
+===================================================================
+--- glibc-2.5-20061008T1257.orig/sunrpc/svc_tcp.c
++++ glibc-2.5-20061008T1257/sunrpc/svc_tcp.c
+@@ -50,6 +50,7 @@ static char sccsid[] = "@(#)svc_tcp.c 1.
+ #include <sys/poll.h>
+ #include <errno.h>
+ #include <stdlib.h>
++#include <time.h>
+ 
+ #ifdef USE_IN_LIBIO
+ # include <wchar.h>
+@@ -249,6 +250,11 @@ again:
+     {
+       if (errno == EINTR)
+ 	goto again;
++      if (errno == EMFILE)
++        {
++          struct timespec ts = { .tv_sec = 0, .tv_nsec = 50000000 };
++          __nanosleep(&ts , NULL);
++        }
+       return FALSE;
+     }
+   /*
+Index: glibc-2.5-20061008T1257/sunrpc/svc_udp.c
+===================================================================
+--- glibc-2.5-20061008T1257.orig/sunrpc/svc_udp.c
++++ glibc-2.5-20061008T1257/sunrpc/svc_udp.c
+@@ -46,6 +46,7 @@ static char sccsid[] = "@(#)svc_udp.c 1.
+ #include <sys/socket.h>
+ #include <errno.h>
+ #include <libintl.h>
++#include <time.h>
+ 
+ #ifdef IP_PKTINFO
+ #include <sys/uio.h>
+@@ -277,8 +278,16 @@ again:
+ 		       (int) su->su_iosz, 0,
+ 		       (struct sockaddr *) &(xprt->xp_raddr), &len);
+   xprt->xp_addrlen = len;
+-  if (rlen == -1 && errno == EINTR)
+-    goto again;
++  if (rlen == -1)
++    {
++      if (errno == EINTR)
++        goto again;
++      if (errno == EMFILE)
++        {
++          struct timespec ts = { .tv_sec = 0, .tv_nsec = 50000000 };
++          __nanosleep(&ts , NULL);
++        }
++    }
+   if (rlen < 16)		/* < 4 32-bit ints? */
+     return FALSE;
+   xdrs->x_op = XDR_DECODE;
+Index: glibc-2.5-20061008T1257/sunrpc/svc_unix.c
+===================================================================
+--- glibc-2.5-20061008T1257.orig/sunrpc/svc_unix.c
++++ glibc-2.5-20061008T1257/sunrpc/svc_unix.c
+@@ -48,6 +48,7 @@
+ #include <errno.h>
+ #include <stdlib.h>
+ #include <libintl.h>
++#include <time.h>
+ 
+ #ifdef USE_IN_LIBIO
+ # include <wchar.h>
+@@ -247,6 +248,11 @@ again:
+     {
+       if (errno == EINTR)
+ 	goto again;
++      if (errno == EMFILE)
++        {
++          struct timespec ts = { .tv_sec = 0, .tv_nsec = 50000000 };
++          __nanosleep(&ts , NULL);
++        }
+       return FALSE;
+     }
+   /*

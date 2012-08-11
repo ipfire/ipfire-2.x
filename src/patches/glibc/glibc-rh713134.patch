@@ -1,0 +1,36 @@
+2011-03-18  Andreas Schwab  <schwab@redhat.com>
+
+	* elf/ldd.bash.in: Never run file directly.
+
+Index: glibc-2.12-2-gc4ccff1/elf/ldd.bash.in
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/ldd.bash.in
++++ glibc-2.12-2-gc4ccff1/elf/ldd.bash.in
+@@ -167,18 +167,6 @@ warning: you do not have execution permi
+       fi
+     done
+     case $ret in
+-    0)
+-      # If the program exits with exit code 5, it means the process has been
+-      # invoked with __libc_enable_secure.  Fall back to running it through
+-      # the dynamic linker.
+-      try_trace "$file"
+-      rc=$?
+-      if [ $rc = 5 ]; then
+-	try_trace "$RTLD" "$file"
+-	rc=$?
+-      fi
+-      [ $rc = 0 ] || result=1
+-      ;;
+     1)
+       # This can be a non-ELF binary or no binary at all.
+       nonelf "$file" || {
+@@ -186,7 +174,7 @@ warning: you do not have execution permi
+ 	result=1
+       }
+       ;;
+-    2)
++    0|2)
+       try_trace "$RTLD" "$file" || result=1
+       ;;
+     *)

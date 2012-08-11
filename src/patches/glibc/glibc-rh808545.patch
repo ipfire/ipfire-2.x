@@ -1,0 +1,44 @@
+diff -rup a/resolv/nss_dns/dns-host.c b/resolv/nss_dns/dns-host.c
+--- a/resolv/nss_dns/dns-host.c	2012-04-18 11:17:31.527539744 -0600
++++ b/resolv/nss_dns/dns-host.c	2012-04-18 11:21:45.441394159 -0600
+@@ -745,6 +745,10 @@ getanswer_r (const querybuf *answer, int
+ 
+       if ((qtype == T_A || qtype == T_AAAA) && type == T_CNAME)
+ 	{
++	  /* A CNAME could also have a TTL entry.  */
++	  if (ttlp != NULL && ttl < *ttlp)
++	      *ttlp = ttl;
++
+ 	  if (ap >= &host_data->aliases[MAX_NR_ALIASES - 1])
+ 	    continue;
+ 	  n = dn_expand (answer->buf, end_of_message, cp, tbuf, sizeof tbuf);
+@@ -906,7 +910,7 @@ getanswer_r (const querybuf *answer, int
+ 	    {
+ 	      register int nn;
+ 
+-	      if (ttlp != NULL)
++	      if (ttlp != NULL && ttl < *ttlp)
+ 		*ttlp = ttl;
+ 	      if (canonp != NULL)
+ 		*canonp = bp;
+@@ -1082,6 +1086,11 @@ gaih_getanswer_slice (const querybuf *an
+       if (type == T_CNAME)
+ 	{
+ 	  char tbuf[MAXDNAME];
++
++	  /* A CNAME could also have a TTL entry.  */
++	  if (ttlp != NULL && ttl < *ttlp)
++	    *ttlp = ttl;
++
+ 	  n = dn_expand (answer->buf, end_of_message, cp, tbuf, sizeof tbuf);
+ 	  if (__builtin_expect (n < 0 || res_hnok (tbuf) == 0, 0))
+ 	    {
+@@ -1162,7 +1171,7 @@ gaih_getanswer_slice (const querybuf *an
+ 
+       if (*firstp)
+ 	{
+-	  if (ttlp != NULL)
++	  if (ttlp != NULL && ttl < *ttlp)
+ 	    *ttlp = ttl;
+ 
+ 	  (*pat)->name = canon ?: h_name;

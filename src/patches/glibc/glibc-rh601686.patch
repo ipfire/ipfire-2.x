@@ -1,0 +1,4640 @@
+2010-11-09  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #12205]
+	* string/test-strncasecmp.c (check_result): New function.
+	(do_one_test): Use it.
+	(check1): New function.
+	(test_main): Use it.
+	* sysdeps/i386/i686/multiarch/strcmp.S (nibble_ashr_use_sse4_2_exit):
+	Support strcasecmp and strncasecmp.
+
+2010-10-03  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #12077]
+	* sysdeps/x86_64/strcmp.S: Fix handling of remaining bytes in buffer
+	for strncmp and strncasecmp.
+	* string/stratcliff.c: Add tests for strcmp and strncmp.
+	* wcsmbs/wcsatcliff.c: Adjust for stratcliff change.
+
+2010-09-20  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/strcmp.S: Fix another type in strncasecmp limit
+	detection.
+
+2010-08-19  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/multiarch/strcmp.S: Fix two typos in strncasecmp
+	handling.
+
+2010-08-15  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/strcmp.S: Use correct register for fourth parameter
+	of strncasecmp_l.
+	* sysdeps/multiarch/strcmp.S: Likewise.
+
+2010-08-14  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/Makefile [subdir=string] (sysdep_routines): Add
+	strncase_l-nonascii.
+	* sysdeps/x86_64/multiarch/Makefile [subdir=string] (sysdep_routines):
+	Add strncase_l-ssse3.
+	* sysdeps/x86_64/multiarch/strcmp.S: Prepare for use as strncasecmp.
+	* sysdeps/x86_64/strcmp.S: Likewise.
+	* sysdeps/x86_64/multiarch/strncase_l-ssse3.S: New file.
+	* sysdeps/x86_64/multiarch/strncase_l.S: New file.
+	* sysdeps/x86_64/strncase.S: New file.
+	* sysdeps/x86_64/strncase_l-nonascii.c: New file.
+	* sysdeps/x86_64/strncase_l.S: New file.
+	* string/Makefile (strop-tests): Add strncasecmp.
+	* string/test-strncasecmp.c: New file.
+
+	* sysdeps/x86_64/strcasecmp_l-nonascii.c: Add prototype to avoid
+	warning.
+
+	* sysdeps/x86_64/strcmp.S: Move definition of NO_NOLOCALE_ALIAS to...
+	* sysdeps/x86_64/multiarch/strcasecmp_l-ssse3.S: ... here.
+
+2010-07-31  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/multiarch/Makefile [subdir=string] (sysdep_routines):
+	Add strcasecmp_l-ssse3.
+	* sysdeps/x86_64/multiarch/strcmp.S: Add support to compile for
+	strcasecmp.
+	* sysdeps/x86_64/strcmp.S: Allow more flexible compiling of strcasecmp.
+	* sysdeps/x86_64/multiarch/strcasecmp_l.S: New file.
+	* sysdeps/x86_64/multiarch/strcasecmp_l-ssse3.S: New file.
+
+2010-07-30  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/multiarch/strcmp.S: Pretty printing.
+
+	* string/Makefile (strop-tests): Add strcasecmp.
+	* sysdeps/x86_64/Makefile [subdir=string] (sysdep_routines): Add
+	strcasecmp_l-nonascii.
+	(gen-as-const-headers): Add locale-defines.sym.
+	* sysdeps/x86_64/strcmp.S: Add support for strcasecmp implementation.
+	* sysdeps/x86_64/strcasecmp.S: New file.
+	* sysdeps/x86_64/strcasecmp_l.S: New file.
+	* sysdeps/x86_64/strcasecmp_l-nonascii.c: New file.
+	* sysdeps/x86_64/locale-defines.sym: New file.
+	* string/test-strcasecmp.c: New file.
+
+	* string/test-strcasestr.c: Test both ends of the range of characters.
+	* sysdeps/x86_64/multiarch/strstr.c: Fix UCHIGH definition.
+
+2010-07-26  Ulrich Drepper  <drepper@redhat.com>
+
+	* string/test-strnlen.c: New file.
+	* string/Makefile (strop-tests): Add strnlen.
+	* string/tester.c (test_strnlen): Add a few more test cases.
+	* string/tst-strlen.c: Better error reporting.
+
+	* sysdeps/x86_64/strnlen.S: New file.
+
+2010-07-24  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/multiarch/strstr.c (__m128i_strloadu_tolower): Use
+	lower-latency instructions.
+
+2010-07-23  Ulrich Drepper  <drepper@redhat.com>
+
+	* string/test-strcasestr.c: New file.
+	* string/test-strstr.c: New file.
+	* string/Makefile (strop-tests): Add strstr and strcasestr.
+	* string/str-two-way.h: Don't undefine MAX.
+	* string/strcasestr.c: Don't define alias if NO_ALIAS is defined.
+
+2010-07-21  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/i386/i686/multiarch/Makefile (sysdep_routines): Add
+	strcasestr-nonascii.
+	(CFLAGS-strcasestr-nonascii.c): Define.
+	* sysdeps/i386/i686/multiarch/strcasestr-nonascii.c: New file.
+	* sysdeps/x86_64/multiarch/strcasestr-nonascii.c (STRSTR_SSE42):
+	Remove unused attribute.
+
+2010-07-16  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/multiarch/strstr.c: Rewrite to avoid indirect function
+	call in strcasestr.
+	* sysdeps/x86_64/multiarch/strcasestr.c: Declare
+	__strcasestr_sse42_nonascii.
+	* sysdeps/x86_64/multiarch/Makefile: Add rules to build
+	strcasestr-nonascii.c.
+	* sysdeps/x86_64/multiarch/strcasestr-nonascii.c: New file.
+
+Index: glibc-2.12-2-gc4ccff1/string/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/string/Makefile
++++ glibc-2.12-2-gc4ccff1/string/Makefile
+@@ -48,7 +48,8 @@ o-objects.ob	:= memcpy.o memset.o memchr
+ 
+ strop-tests	:= memchr memcmp memcpy memmove mempcpy memset memccpy	\
+ 		   stpcpy stpncpy strcat strchr strcmp strcpy strcspn	\
+-		   strlen strncmp strncpy strpbrk strrchr strspn memmem
++		   strlen strncmp strncpy strpbrk strrchr strspn memmem	\
++		   strstr strcasestr strnlen strcasecmp strncasecmp
+ tests		:= tester inl-tester noinl-tester testcopy test-ffs	\
+ 		   tst-strlen stratcliff tst-svc tst-inlcall		\
+ 		   bug-strncat1 bug-strspn1 bug-strpbrk1 tst-bswap	\
+Index: glibc-2.12-2-gc4ccff1/string/str-two-way.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/string/str-two-way.h
++++ glibc-2.12-2-gc4ccff1/string/str-two-way.h
+@@ -426,5 +426,4 @@ two_way_long_needle (const unsigned char
+ #undef AVAILABLE
+ #undef CANON_ELEMENT
+ #undef CMP_FUNC
+-#undef MAX
+ #undef RETURN_TYPE
+Index: glibc-2.12-2-gc4ccff1/string/stratcliff.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/string/stratcliff.c
++++ glibc-2.12-2-gc4ccff1/string/stratcliff.c
+@@ -47,6 +47,8 @@
+ # define MEMCPY memcpy
+ # define MEMPCPY mempcpy
+ # define MEMCHR memchr
++# define STRCMP strcmp
++# define STRNCMP strncmp
+ #endif
+ 
+ 
+@@ -277,7 +279,74 @@ do_test (void)
+ 
+ 	      adr[inner] = L('T');
+ 	    }
+-        }
++	}
++
++      /* strcmp/wcscmp tests */
++      for (outer = 1; outer < 32; ++outer)
++	for (middle = 0; middle < 16; ++middle)
++	  {
++	    MEMSET (adr + middle, L('T'), 256);
++	    adr[256] = L('\0');
++	    MEMSET (dest + nchars - outer, L('T'), outer - 1);
++	    dest[nchars - 1] = L('\0');
++
++	    if (STRCMP (adr + middle, dest + nchars - outer) <= 0)
++	      {
++		printf ("%s 1 flunked for outer = %d, middle = %d\n",
++			STRINGIFY (STRCMP), outer, middle);
++		result = 1;
++	      }
++
++	    if (STRCMP (dest + nchars - outer, adr + middle) >= 0)
++	      {
++		printf ("%s 2 flunked for outer = %d, middle = %d\n",
++			STRINGIFY (STRCMP), outer, middle);
++		result = 1;
++	      }
++	  }
++
++      /* strncmp/wcsncmp tests */
++      for (outer = 1; outer < 32; ++outer)
++	for (middle = 0; middle < 16; ++middle)
++	  {
++	    MEMSET (adr + middle, L('T'), 256);
++	    adr[256] = L('\0');
++	    MEMSET (dest + nchars - outer, L('T'), outer - 1);
++	    dest[nchars - 1] = L('U');
++
++	    for (inner = 0; inner < outer; ++inner)
++	      {
++		if (STRNCMP (adr + middle, dest + nchars - outer, inner) != 0)
++		  {
++		    printf ("%s 1 flunked for outer = %d, middle = %d, "
++			    "inner = %d\n",
++			    STRINGIFY (STRNCMP), outer, middle, inner);
++		    result = 1;
++		  }
++
++		if (STRNCMP (dest + nchars - outer, adr + middle, inner) != 0)
++		  {
++		    printf ("%s 2 flunked for outer = %d, middle = %d, "
++			    "inner = %d\n",
++			    STRINGIFY (STRNCMP), outer, middle, inner);
++		    result = 1;
++		  }
++	      }
++
++	    if (STRNCMP (adr + middle, dest + nchars - outer, outer) >= 0)
++	      {
++		printf ("%s 1 flunked for outer = %d, middle = %d, full\n",
++			STRINGIFY (STRNCMP), outer, middle);
++		result = 1;
++	      }
++
++	    if (STRNCMP (dest + nchars - outer, adr + middle, outer) <= 0)
++	      {
++		printf ("%s 2 flunked for outer = %d, middle = %d, full\n",
++			STRINGIFY (STRNCMP), outer, middle);
++		result = 1;
++	      }
++	  }
+ 
+       /* strncpy/wcsncpy tests */
+       adr[nchars - 1] = L('T');
+Index: glibc-2.12-2-gc4ccff1/string/strcasestr.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/string/strcasestr.c
++++ glibc-2.12-2-gc4ccff1/string/strcasestr.c
+@@ -103,4 +103,6 @@ STRCASESTR (const char *haystack_start, 
+ 
+ #undef LONG_NEEDLE_THRESHOLD
+ 
++#ifndef NO_ALIAS
+ weak_alias (__strcasestr, strcasestr)
++#endif
+Index: glibc-2.12-2-gc4ccff1/string/test-strcasecmp.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/string/test-strcasecmp.c
+@@ -0,0 +1,276 @@
++/* Test and measure strcasecmp functions.
++   Copyright (C) 1999, 2002, 2003, 2005, 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++   Written by Jakub Jelinek <jakub@redhat.com>, 1999.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#include <ctype.h>
++#define TEST_MAIN
++#include "test-string.h"
++
++typedef int (*proto_t) (const char *, const char *);
++static int simple_strcasecmp (const char *, const char *);
++static int stupid_strcasecmp (const char *, const char *);
++
++IMPL (stupid_strcasecmp, 0)
++IMPL (simple_strcasecmp, 0)
++IMPL (strcasecmp, 1)
++
++static int
++simple_strcasecmp (const char *s1, const char *s2)
++{
++  int ret;
++
++  while ((ret = ((unsigned char) tolower (*s1)
++		 - (unsigned char) tolower (*s2))) == 0
++	 && *s1++)
++    ++s2;
++  return ret;
++}
++
++static int
++stupid_strcasecmp (const char *s1, const char *s2)
++{
++  size_t ns1 = strlen (s1) + 1, ns2 = strlen (s2) + 1;
++  size_t n = ns1 < ns2 ? ns1 : ns2;
++  int ret = 0;
++
++  while (n--)
++    {
++      if ((ret = ((unsigned char) tolower (*s1)
++		  - (unsigned char) tolower (*s2))) != 0)
++	break;
++      ++s1;
++      ++s2;
++    }
++  return ret;
++}
++
++static void
++do_one_test (impl_t *impl, const char *s1, const char *s2, int exp_result)
++{
++  int result = CALL (impl, s1, s2);
++  if ((exp_result == 0 && result != 0)
++      || (exp_result < 0 && result >= 0)
++      || (exp_result > 0 && result <= 0))
++    {
++      error (0, 0, "Wrong result in function %s %d %d", impl->name,
++	     result, exp_result);
++      ret = 1;
++      return;
++    }
++
++  if (HP_TIMING_AVAIL)
++    {
++      hp_timing_t start __attribute ((unused));
++      hp_timing_t stop __attribute ((unused));
++      hp_timing_t best_time = ~ (hp_timing_t) 0;
++      size_t i;
++
++      for (i = 0; i < 32; ++i)
++	{
++	  HP_TIMING_NOW (start);
++	  CALL (impl, s1, s2);
++	  HP_TIMING_NOW (stop);
++	  HP_TIMING_BEST (best_time, start, stop);
++	}
++
++      printf ("\t%zd", (size_t) best_time);
++    }
++}
++
++static void
++do_test (size_t align1, size_t align2, size_t len, int max_char,
++	 int exp_result)
++{
++  size_t i;
++  char *s1, *s2;
++
++  if (len == 0)
++    return;
++
++  align1 &= 7;
++  if (align1 + len + 1 >= page_size)
++    return;
++
++  align2 &= 7;
++  if (align2 + len + 1 >= page_size)
++    return;
++
++  s1 = (char *) (buf1 + align1);
++  s2 = (char *) (buf2 + align2);
++
++  for (i = 0; i < len; i++)
++    {
++      s1[i] = toupper (1 + 23 * i % max_char);
++      s2[i] = tolower (s1[i]);
++    }
++
++  s1[len] = s2[len] = 0;
++  s1[len + 1] = 23;
++  s2[len + 1] = 24 + exp_result;
++  if ((s2[len - 1] == 'z' && exp_result == -1)
++      || (s2[len - 1] == 'a' && exp_result == 1))
++    s1[len - 1] += exp_result;
++  else
++    s2[len - 1] -= exp_result;
++
++  if (HP_TIMING_AVAIL)
++    printf ("Length %4zd, alignment %2zd/%2zd:", len, align1, align2);
++
++  FOR_EACH_IMPL (impl, 0)
++    do_one_test (impl, s1, s2, exp_result);
++
++  if (HP_TIMING_AVAIL)
++    putchar ('\n');
++}
++
++static void
++do_random_tests (void)
++{
++  size_t i, j, n, align1, align2, pos, len1, len2;
++  int result;
++  long r;
++  unsigned char *p1 = buf1 + page_size - 512;
++  unsigned char *p2 = buf2 + page_size - 512;
++
++  for (n = 0; n < ITERATIONS; n++)
++    {
++      align1 = random () & 31;
++      if (random () & 1)
++	align2 = random () & 31;
++      else
++	align2 = align1 + (random () & 24);
++      pos = random () & 511;
++      j = align1 > align2 ? align1 : align2;
++      if (pos + j >= 511)
++	pos = 510 - j - (random () & 7);
++      len1 = random () & 511;
++      if (pos >= len1 && (random () & 1))
++	len1 = pos + (random () & 7);
++      if (len1 + j >= 512)
++	len1 = 511 - j - (random () & 7);
++      if (pos >= len1)
++	len2 = len1;
++      else
++	len2 = len1 + (len1 != 511 - j ? random () % (511 - j - len1) : 0);
++      j = (pos > len2 ? pos : len2) + align1 + 64;
++      if (j > 512)
++	j = 512;
++      for (i = 0; i < j; ++i)
++	{
++	  p1[i] = tolower (random () & 255);
++	  if (i < len1 + align1 && !p1[i])
++	    {
++	      p1[i] = tolower (random () & 255);
++	      if (!p1[i])
++		p1[i] = tolower (1 + (random () & 127));
++	    }
++	}
++      for (i = 0; i < j; ++i)
++	{
++	  p2[i] = toupper (random () & 255);
++	  if (i < len2 + align2 && !p2[i])
++	    {
++	      p2[i] = toupper (random () & 255);
++	      if (!p2[i])
++		toupper (p2[i] = 1 + (random () & 127));
++	    }
++	}
++
++      result = 0;
++      memcpy (p2 + align2, p1 + align1, pos);
++      if (pos < len1)
++	{
++	  if (tolower (p2[align2 + pos]) == p1[align1 + pos])
++	    {
++	      p2[align2 + pos] = toupper (random () & 255);
++	      if (tolower (p2[align2 + pos]) == p1[align1 + pos])
++		p2[align2 + pos] = toupper (p1[align1 + pos]
++					    + 3 + (random () & 127));
++	    }
++
++	  if (p1[align1 + pos] < tolower (p2[align2 + pos]))
++	    result = -1;
++	  else
++	    result = 1;
++	}
++      p1[len1 + align1] = 0;
++      p2[len2 + align2] = 0;
++
++      FOR_EACH_IMPL (impl, 1)
++	{
++	  r = CALL (impl, (char *) (p1 + align1), (char *) (p2 + align2));
++	  /* Test whether on 64-bit architectures where ABI requires
++	     callee to promote has the promotion been done.  */
++	  asm ("" : "=g" (r) : "0" (r));
++	  if ((r == 0 && result)
++	      || (r < 0 && result >= 0)
++	      || (r > 0 && result <= 0))
++	    {
++	      error (0, 0, "Iteration %zd - wrong result in function %s (%zd, %zd, %zd, %zd, %zd) %ld != %d, p1 %p p2 %p",
++		     n, impl->name, align1, align2, len1, len2, pos, r, result, p1, p2);
++	      ret = 1;
++	    }
++	}
++    }
++}
++
++int
++test_main (void)
++{
++  size_t i;
++
++  test_init ();
++
++  printf ("%23s", "");
++  FOR_EACH_IMPL (impl, 0)
++    printf ("\t%s", impl->name);
++  putchar ('\n');
++
++  for (i = 1; i < 16; ++i)
++    {
++      do_test (i, i, i, 127, 0);
++      do_test (i, i, i, 127, 1);
++      do_test (i, i, i, 127, -1);
++    }
++
++  for (i = 1; i < 10; ++i)
++    {
++      do_test (0, 0, 2 << i, 127, 0);
++      do_test (0, 0, 2 << i, 254, 0);
++      do_test (0, 0, 2 << i, 127, 1);
++      do_test (0, 0, 2 << i, 254, 1);
++      do_test (0, 0, 2 << i, 127, -1);
++      do_test (0, 0, 2 << i, 254, -1);
++    }
++
++  for (i = 1; i < 8; ++i)
++    {
++      do_test (i, 2 * i, 8 << i, 127, 0);
++      do_test (2 * i, i, 8 << i, 254, 0);
++      do_test (i, 2 * i, 8 << i, 127, 1);
++      do_test (2 * i, i, 8 << i, 254, 1);
++      do_test (i, 2 * i, 8 << i, 127, -1);
++      do_test (2 * i, i, 8 << i, 254, -1);
++    }
++
++  do_random_tests ();
++  return ret;
++}
++
++#include "../test-skeleton.c"
+Index: glibc-2.12-2-gc4ccff1/string/test-strcasestr.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/string/test-strcasestr.c
+@@ -0,0 +1,197 @@
++/* Test and measure strcasestr functions.
++   Copyright (C) 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++   Written by Ulrich Drepper <drepper@redhat.com>, 2010.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#define TEST_MAIN
++#include "test-string.h"
++
++
++#define STRCASESTR simple_strcasestr
++#define NO_ALIAS
++#define __strncasecmp strncasecmp
++#include "strcasestr.c"
++
++
++static char *
++stupid_strcasestr (const char *s1, const char *s2)
++{
++  ssize_t s1len = strlen (s1);
++  ssize_t s2len = strlen (s2);
++
++  if (s2len > s1len)
++    return NULL;
++
++  for (ssize_t i = 0; i <= s1len - s2len; ++i)
++    {
++      size_t j;
++      for (j = 0; j < s2len; ++j)
++	if (tolower (s1[i + j]) != tolower (s2[j]))
++	  break;
++      if (j == s2len)
++	return (char *) s1 + i;
++    }
++
++  return NULL;
++}
++
++
++typedef char *(*proto_t) (const char *, const char *);
++
++IMPL (stupid_strcasestr, 0)
++IMPL (simple_strcasestr, 0)
++IMPL (strcasestr, 1)
++
++
++static void
++do_one_test (impl_t *impl, const char *s1, const char *s2, char *exp_result)
++{
++  char *result = CALL (impl, s1, s2);
++  if (result != exp_result)
++    {
++      error (0, 0, "Wrong result in function %s %s %s", impl->name,
++	     result, exp_result);
++      ret = 1;
++      return;
++    }
++
++  if (HP_TIMING_AVAIL)
++    {
++      hp_timing_t start __attribute ((unused));
++      hp_timing_t stop __attribute ((unused));
++      hp_timing_t best_time = ~(hp_timing_t) 0;
++      size_t i;
++
++      for (i = 0; i < 32; ++i)
++	{
++	  HP_TIMING_NOW (start);
++	  CALL (impl, s1, s2);
++	  HP_TIMING_NOW (stop);
++	  HP_TIMING_BEST (best_time, start, stop);
++	}
++
++      printf ("\t%zd", (size_t) best_time);
++    }
++}
++
++
++static void
++do_test (size_t align1, size_t align2, size_t len1, size_t len2,
++	 int fail)
++{
++  char *s1 = (char *) (buf1 + align1);
++  char *s2 = (char *) (buf2 + align2);
++
++  static const char d[] = "1234567890abcxyz";
++#define dl (sizeof (d) - 1)
++  char *ss2 = s2;
++  for (size_t l = len2; l > 0; l = l > dl ? l - dl : 0)
++    {
++      size_t t = l > dl ? dl : l;
++      ss2 = mempcpy (ss2, d, t);
++    }
++  s2[len2] = '\0';
++
++  if (fail)
++    {
++      char *ss1 = s1;
++      for (size_t l = len1; l > 0; l = l > dl ? l - dl : 0)
++	{
++	  size_t t = l > dl ? dl : l;
++	  memcpy (ss1, d, t);
++	  ++ss1[len2 > 7 ? 7 : len2 - 1];
++	  ss1 += t;
++	}
++    }
++  else
++    {
++      memset (s1, '0', len1);
++      for (size_t i = 0; i < len2; ++i)
++	s1[len1 - len2 + i] = toupper (s2[i]);
++    }
++  s1[len1] = '\0';
++
++  if (HP_TIMING_AVAIL)
++    printf ("Length %4zd/%zd, alignment %2zd/%2zd, %s:",
++	    len1, len2, align1, align2, fail ? "fail" : "found");
++
++  FOR_EACH_IMPL (impl, 0)
++    do_one_test (impl, s1, s2, fail ? NULL : s1 + len1 - len2);
++
++  if (HP_TIMING_AVAIL)
++    putchar ('\n');
++}
++
++
++static int
++test_main (void)
++{
++  test_init ();
++
++  printf ("%23s", "");
++  FOR_EACH_IMPL (impl, 0)
++    printf ("\t%s", impl->name);
++  putchar ('\n');
++
++  for (size_t klen = 2; klen < 32; ++klen)
++    for (size_t hlen = 2 * klen; hlen < 16 * klen; hlen += klen)
++      {
++	do_test (0, 0, hlen, klen, 0);
++	do_test (0, 0, hlen, klen, 1);
++	do_test (0, 3, hlen, klen, 0);
++	do_test (0, 3, hlen, klen, 1);
++	do_test (0, 9, hlen, klen, 0);
++	do_test (0, 9, hlen, klen, 1);
++	do_test (0, 15, hlen, klen, 0);
++	do_test (0, 15, hlen, klen, 1);
++
++	do_test (3, 0, hlen, klen, 0);
++	do_test (3, 0, hlen, klen, 1);
++	do_test (3, 3, hlen, klen, 0);
++	do_test (3, 3, hlen, klen, 1);
++	do_test (3, 9, hlen, klen, 0);
++	do_test (3, 9, hlen, klen, 1);
++	do_test (3, 15, hlen, klen, 0);
++	do_test (3, 15, hlen, klen, 1);
++
++	do_test (9, 0, hlen, klen, 0);
++	do_test (9, 0, hlen, klen, 1);
++	do_test (9, 3, hlen, klen, 0);
++	do_test (9, 3, hlen, klen, 1);
++	do_test (9, 9, hlen, klen, 0);
++	do_test (9, 9, hlen, klen, 1);
++	do_test (9, 15, hlen, klen, 0);
++	do_test (9, 15, hlen, klen, 1);
++
++	do_test (15, 0, hlen, klen, 0);
++	do_test (15, 0, hlen, klen, 1);
++	do_test (15, 3, hlen, klen, 0);
++	do_test (15, 3, hlen, klen, 1);
++	do_test (15, 9, hlen, klen, 0);
++	do_test (15, 9, hlen, klen, 1);
++	do_test (15, 15, hlen, klen, 0);
++	do_test (15, 15, hlen, klen, 1);
++      }
++
++  do_test (0, 0, page_size - 1, 16, 0);
++  do_test (0, 0, page_size - 1, 16, 1);
++
++  return ret;
++}
++
++#include "../test-skeleton.c"
+Index: glibc-2.12-2-gc4ccff1/string/test-strncasecmp.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/string/test-strncasecmp.c
+@@ -0,0 +1,349 @@
++/* Test and measure strncasecmp functions.
++   Copyright (C) 1999, 2002, 2003, 2005, 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++   Written by Jakub Jelinek <jakub@redhat.com>, 1999.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#include <ctype.h>
++#define TEST_MAIN
++#include "test-string.h"
++
++typedef int (*proto_t) (const char *, const char *, size_t);
++static int simple_strncasecmp (const char *, const char *, size_t);
++static int stupid_strncasecmp (const char *, const char *, size_t);
++
++IMPL (stupid_strncasecmp, 0)
++IMPL (simple_strncasecmp, 0)
++IMPL (strncasecmp, 1)
++
++static int
++simple_strncasecmp (const char *s1, const char *s2, size_t n)
++{
++  int ret;
++
++  if (n == 0)
++    return 0;
++
++  while ((ret = ((unsigned char) tolower (*s1)
++		 - (unsigned char) tolower (*s2))) == 0
++	 && *s1++)
++    {
++      if (--n == 0)
++	return 0;
++      ++s2;
++    }
++  return ret;
++}
++
++static int
++stupid_strncasecmp (const char *s1, const char *s2, size_t max)
++{
++  size_t ns1 = strlen (s1) + 1;
++  size_t ns2 = strlen (s2) + 1;
++  size_t n = ns1 < ns2 ? ns1 : ns2;
++  if (n > max)
++    n = max;
++  int ret = 0;
++
++  while (n--)
++    {
++      if ((ret = ((unsigned char) tolower (*s1)
++		  - (unsigned char) tolower (*s2))) != 0)
++	break;
++      ++s1;
++      ++s2;
++    }
++  return ret;
++}
++
++static int
++check_result (impl_t *impl, const char *s1, const char *s2, size_t n,
++	      int exp_result)
++{
++  int result = CALL (impl, s1, s2, n);
++  if ((exp_result == 0 && result != 0)
++      || (exp_result < 0 && result >= 0)
++      || (exp_result > 0 && result <= 0))
++    {
++      error (0, 0, "Wrong result in function %s %d %d", impl->name,
++	     result, exp_result);
++      ret = 1;
++      return -1;
++    }
++
++  return 0;
++}
++
++static void
++do_one_test (impl_t *impl, const char *s1, const char *s2, size_t n,
++	     int exp_result)
++{
++  if (check_result (impl, s1, s2, n, exp_result) < 0)
++    return;
++
++  if (HP_TIMING_AVAIL)
++    {
++      hp_timing_t start __attribute ((unused));
++      hp_timing_t stop __attribute ((unused));
++      hp_timing_t best_time = ~ (hp_timing_t) 0;
++      size_t i;
++
++      for (i = 0; i < 32; ++i)
++	{
++	  HP_TIMING_NOW (start);
++	  CALL (impl, s1, s2, n);
++	  HP_TIMING_NOW (stop);
++	  HP_TIMING_BEST (best_time, start, stop);
++	}
++
++      printf ("\t%zd", (size_t) best_time);
++    }
++}
++
++static void
++do_test (size_t align1, size_t align2, size_t n, size_t len, int max_char,
++	 int exp_result)
++{
++  size_t i;
++  char *s1, *s2;
++
++  if (len == 0)
++    return;
++
++  align1 &= 7;
++  if (align1 + len + 1 >= page_size)
++    return;
++
++  align2 &= 7;
++  if (align2 + len + 1 >= page_size)
++    return;
++
++  s1 = (char *) (buf1 + align1);
++  s2 = (char *) (buf2 + align2);
++
++  for (i = 0; i < len; i++)
++    {
++      s1[i] = toupper (1 + 23 * i % max_char);
++      s2[i] = tolower (s1[i]);
++    }
++
++  s1[len] = s2[len] = 0;
++  s1[len + 1] = 23;
++  s2[len + 1] = 24 + exp_result;
++  if ((s2[len - 1] == 'z' && exp_result == -1)
++      || (s2[len - 1] == 'a' && exp_result == 1))
++    s1[len - 1] += exp_result;
++  else
++    s2[len - 1] -= exp_result;
++
++  if (HP_TIMING_AVAIL)
++    printf ("Length %4zd, alignment %2zd/%2zd:", len, align1, align2);
++
++  FOR_EACH_IMPL (impl, 0)
++    do_one_test (impl, s1, s2, n, exp_result);
++
++  if (HP_TIMING_AVAIL)
++    putchar ('\n');
++}
++
++static void
++do_random_tests (void)
++{
++  size_t i, j, n, align1, align2, pos, len1, len2;
++  int result;
++  long r;
++  unsigned char *p1 = buf1 + page_size - 512;
++  unsigned char *p2 = buf2 + page_size - 512;
++
++  for (n = 0; n < ITERATIONS; n++)
++    {
++      align1 = random () & 31;
++      if (random () & 1)
++	align2 = random () & 31;
++      else
++	align2 = align1 + (random () & 24);
++      pos = random () & 511;
++      j = align1 > align2 ? align1 : align2;
++      if (pos + j >= 511)
++	pos = 510 - j - (random () & 7);
++      len1 = random () & 511;
++      if (pos >= len1 && (random () & 1))
++	len1 = pos + (random () & 7);
++      if (len1 + j >= 512)
++	len1 = 511 - j - (random () & 7);
++      if (pos >= len1)
++	len2 = len1;
++      else
++	len2 = len1 + (len1 != 511 - j ? random () % (511 - j - len1) : 0);
++      j = (pos > len2 ? pos : len2) + align1 + 64;
++      if (j > 512)
++	j = 512;
++      for (i = 0; i < j; ++i)
++	{
++	  p1[i] = tolower (random () & 255);
++	  if (i < len1 + align1 && !p1[i])
++	    {
++	      p1[i] = tolower (random () & 255);
++	      if (!p1[i])
++		p1[i] = tolower (1 + (random () & 127));
++	    }
++	}
++      for (i = 0; i < j; ++i)
++	{
++	  p2[i] = toupper (random () & 255);
++	  if (i < len2 + align2 && !p2[i])
++	    {
++	      p2[i] = toupper (random () & 255);
++	      if (!p2[i])
++		toupper (p2[i] = 1 + (random () & 127));
++	    }
++	}
++
++      result = 0;
++      memcpy (p2 + align2, p1 + align1, pos);
++      if (pos < len1)
++	{
++	  if (tolower (p2[align2 + pos]) == p1[align1 + pos])
++	    {
++	      p2[align2 + pos] = toupper (random () & 255);
++	      if (tolower (p2[align2 + pos]) == p1[align1 + pos])
++		p2[align2 + pos] = toupper (p1[align1 + pos]
++					    + 3 + (random () & 127));
++	    }
++
++	  if (p1[align1 + pos] < tolower (p2[align2 + pos]))
++	    result = -1;
++	  else
++	    result = 1;
++	}
++      p1[len1 + align1] = 0;
++      p2[len2 + align2] = 0;
++
++      FOR_EACH_IMPL (impl, 1)
++	{
++	  r = CALL (impl, (char *) (p1 + align1), (char *) (p2 + align2),
++		    pos + 1 + (random () & 255));
++	  /* Test whether on 64-bit architectures where ABI requires
++	     callee to promote has the promotion been done.  */
++	  asm ("" : "=g" (r) : "0" (r));
++	  if ((r == 0 && result)
++	      || (r < 0 && result >= 0)
++	      || (r > 0 && result <= 0))
++	    {
++	      error (0, 0, "Iteration %zd - wrong result in function %s (%zd, %zd, %zd, %zd, %zd) %ld != %d, p1 %p p2 %p",
++		     n, impl->name, align1, align2, len1, len2, pos, r, result, p1, p2);
++	      ret = 1;
++	    }
++	}
++    }
++}
++
++
++static void
++check1 (void)
++{
++  static char cp [4096+16] __attribute__ ((aligned(4096)));
++  static char gotrel[4096] __attribute__ ((aligned(4096)));
++  char *s1 = cp + 0xffa;
++  char *s2 = gotrel + 0xcbe;
++  int exp_result;
++  size_t n = 6;
++
++  strcpy (s1, "gottpoff");
++  strcpy (s2, "GOTPLT");
++
++  exp_result = simple_strncasecmp (s1, s2, n);
++  FOR_EACH_IMPL (impl, 0)
++    check_result (impl, s1, s2, n, exp_result);
++}
++
++int
++test_main (void)
++{
++  size_t i;
++
++  test_init ();
++
++  check1 ();
++
++  printf ("%23s", "");
++  FOR_EACH_IMPL (impl, 0)
++    printf ("\t%s", impl->name);
++  putchar ('\n');
++
++  for (i = 1; i < 16; ++i)
++    {
++      do_test (i, i, i - 1, i, 127, 0);
++
++      do_test (i, i, i, i, 127, 0);
++      do_test (i, i, i, i, 127, 1);
++      do_test (i, i, i, i, 127, -1);
++
++      do_test (i, i, i + 1, i, 127, 0);
++      do_test (i, i, i + 1, i, 127, 1);
++      do_test (i, i, i + 1, i, 127, -1);
++    }
++
++  for (i = 1; i < 10; ++i)
++    {
++      do_test (0, 0, (2 << i) - 1, 2 << i, 127, 0);
++      do_test (0, 0, 2 << i, 2 << i, 254, 0);
++      do_test (0, 0, (2 << i) + 1, 2 << i, 127, 0);
++
++      do_test (0, 0, (2 << i) + 1, 2 << i, 254, 0);
++
++      do_test (0, 0, 2 << i, 2 << i, 127, 1);
++      do_test (0, 0, (2 << i) + 10, 2 << i, 127, 1);
++
++      do_test (0, 0, 2 << i, 2 << i, 254, 1);
++      do_test (0, 0, (2 << i) + 10, 2 << i, 254, 1);
++
++      do_test (0, 0, 2 << i, 2 << i, 127, -1);
++      do_test (0, 0, (2 << i) + 10, 2 << i, 127, -1);
++
++      do_test (0, 0, 2 << i, 2 << i, 254, -1);
++      do_test (0, 0, (2 << i) + 10, 2 << i, 254, -1);
++    }
++
++  for (i = 1; i < 8; ++i)
++    {
++      do_test (i, 2 * i, (8 << i) - 1, 8 << i, 127, 0);
++      do_test (i, 2 * i, 8 << i, 8 << i, 127, 0);
++      do_test (i, 2 * i, (8 << i) + 100, 8 << i, 127, 0);
++
++      do_test (2 * i, i, (8 << i) - 1, 8 << i, 254, 0);
++      do_test (2 * i, i, 8 << i, 8 << i, 254, 0);
++      do_test (2 * i, i, (8 << i) + 100, 8 << i, 254, 0);
++
++      do_test (i, 2 * i, 8 << i, 8 << i, 127, 1);
++      do_test (i, 2 * i, (8 << i) + 100, 8 << i, 127, 1);
++
++      do_test (2 * i, i, 8 << i, 8 << i, 254, 1);
++      do_test (2 * i, i, (8 << i) + 100, 8 << i, 254, 1);
++
++      do_test (i, 2 * i, 8 << i, 8 << i, 127, -1);
++      do_test (i, 2 * i, (8 << i) + 100, 8 << i, 127, -1);
++
++      do_test (2 * i, i, 8 << i, 8 << i, 254, -1);
++      do_test (2 * i, i, (8 << i) + 100, 8 << i, 254, -1);
++    }
++
++  do_random_tests ();
++  return ret;
++}
++
++#include "../test-skeleton.c"
+Index: glibc-2.12-2-gc4ccff1/string/test-strnlen.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/string/test-strnlen.c
+@@ -0,0 +1,197 @@
++/* Test and measure strlen functions.
++   Copyright (C) 1999, 2002, 2003, 2005, 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++   Written by Jakub Jelinek <jakub@redhat.com>, 1999.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#define TEST_MAIN
++#include "test-string.h"
++
++typedef size_t (*proto_t) (const char *, size_t);
++size_t simple_strnlen (const char *, size_t);
++
++IMPL (simple_strnlen, 0)
++IMPL (strnlen, 1)
++
++size_t
++simple_strnlen (const char *s, size_t maxlen)
++{
++  size_t i;
++
++  for (i = 0; i < maxlen && s[i]; ++i);
++  return i;
++}
++
++static void
++do_one_test (impl_t *impl, const char *s, size_t maxlen, size_t exp_len)
++{
++  size_t len = CALL (impl, s, maxlen);
++  if (len != exp_len)
++    {
++      error (0, 0, "Wrong result in function %s %zd %zd", impl->name,
++	     len, exp_len);
++      ret = 1;
++      return;
++    }
++
++  if (HP_TIMING_AVAIL)
++    {
++      hp_timing_t start __attribute ((unused));
++      hp_timing_t stop __attribute ((unused));
++      hp_timing_t best_time = ~ (hp_timing_t) 0;
++      size_t i;
++
++      for (i = 0; i < 32; ++i)
++	{
++	  HP_TIMING_NOW (start);
++	  CALL (impl, s, maxlen);
++	  HP_TIMING_NOW (stop);
++	  HP_TIMING_BEST (best_time, start, stop);
++	}
++
++      printf ("\t%zd", (size_t) best_time);
++    }
++}
++
++static void
++do_test (size_t align, size_t len, size_t maxlen, int max_char)
++{
++  size_t i;
++
++  align &= 7;
++  if (align + len >= page_size)
++    return;
++
++  for (i = 0; i < len; ++i)
++    buf1[align + i] = 1 + 7 * i % max_char;
++  buf1[align + len] = 0;
++
++  if (HP_TIMING_AVAIL)
++    printf ("Length %4zd, alignment %2zd:", len, align);
++
++  FOR_EACH_IMPL (impl, 0)
++    do_one_test (impl, (char *) (buf1 + align), maxlen, MIN (len, maxlen));
++
++  if (HP_TIMING_AVAIL)
++    putchar ('\n');
++}
++
++static void
++do_random_tests (void)
++{
++  size_t i, j, n, align, len;
++  unsigned char *p = buf1 + page_size - 512;
++
++  for (n = 0; n < ITERATIONS; n++)
++    {
++      align = random () & 15;
++      len = random () & 511;
++      if (len + align > 510)
++	len = 511 - align - (random () & 7);
++      j = len + align + 64;
++      if (j > 512)
++	j = 512;
++
++      for (i = 0; i < j; i++)
++	{
++	  if (i == len + align)
++	    p[i] = 0;
++	  else
++	    {
++	      p[i] = random () & 255;
++	      if (i >= align && i < len + align && !p[i])
++		p[i] = (random () & 127) + 1;
++	    }
++	}
++
++      FOR_EACH_IMPL (impl, 1)
++	{
++	  if (len > 0
++	      && CALL (impl, (char *) (p + align), len - 1) != len - 1)
++	    {
++	      error (0, 0, "Iteration %zd (limited) - wrong result in function %s (%zd) %zd != %zd, p %p",
++		     n, impl->name, align,
++		     CALL (impl, (char *) (p + align), len - 1), len - 1, p);
++	      ret = 1;
++	    }
++	  if (CALL (impl, (char *) (p + align), len) != len)
++	    {
++	      error (0, 0, "Iteration %zd (exact) - wrong result in function %s (%zd) %zd != %zd, p %p",
++		     n, impl->name, align,
++		     CALL (impl, (char *) (p + align), len), len, p);
++	      ret = 1;
++	    }
++	  if (CALL (impl, (char *) (p + align), len + 1) != len)
++	    {
++	      error (0, 0, "Iteration %zd (long) - wrong result in function %s (%zd) %zd != %zd, p %p",
++		     n, impl->name, align,
++		     CALL (impl, (char *) (p + align), len + 1), len, p);
++	      ret = 1;
++	    }
++	}
++    }
++}
++
++int
++test_main (void)
++{
++  size_t i;
++
++  test_init ();
++
++  printf ("%20s", "");
++  FOR_EACH_IMPL (impl, 0)
++    printf ("\t%s", impl->name);
++  putchar ('\n');
++
++  for (i = 1; i < 8; ++i)
++    {
++      do_test (0, i, i - 1, 127);
++      do_test (0, i, i, 127);
++      do_test (0, i, i + 1, 127);
++    }
++
++  for (i = 1; i < 8; ++i)
++    {
++      do_test (i, i, i - 1, 127);
++      do_test (i, i, i, 127);
++      do_test (i, i, i + 1, 127);
++    }
++
++  for (i = 2; i <= 10; ++i)
++    {
++      do_test (0, 1 << i, 5000, 127);
++      do_test (1, 1 << i, 5000, 127);
++    }
++
++  for (i = 1; i < 8; ++i)
++    do_test (0, i, 5000, 255);
++
++  for (i = 1; i < 8; ++i)
++    do_test (i, i, 5000, 255);
++
++  for (i = 2; i <= 10; ++i)
++    {
++      do_test (0, 1 << i, 5000, 255);
++      do_test (1, 1 << i, 5000, 255);
++    }
++
++  do_random_tests ();
++  return ret;
++}
++
++#include "../test-skeleton.c"
+Index: glibc-2.12-2-gc4ccff1/string/test-strstr.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/string/test-strstr.c
+@@ -0,0 +1,194 @@
++/* Test and measure strstr functions.
++   Copyright (C) 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++   Written by Ulrich Drepper <drepper@redhat.com>, 2010.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#define TEST_MAIN
++#include "test-string.h"
++
++
++#define STRSTR simple_strstr
++#include "strstr.c"
++
++
++static char *
++stupid_strstr (const char *s1, const char *s2)
++{
++  ssize_t s1len = strlen (s1);
++  ssize_t s2len = strlen (s2);
++
++  if (s2len > s1len)
++    return NULL;
++
++  for (ssize_t i = 0; i <= s1len - s2len; ++i)
++    {
++      size_t j;
++      for (j = 0; j < s2len; ++j)
++	if (s1[i + j] != s2[j])
++	  break;
++      if (j == s2len)
++	return (char *) s1 + i;
++    }
++
++  return NULL;
++}
++
++
++typedef char *(*proto_t) (const char *, const char *);
++
++IMPL (stupid_strstr, 0)
++IMPL (simple_strstr, 0)
++IMPL (strstr, 1)
++
++
++static void
++do_one_test (impl_t *impl, const char *s1, const char *s2, char *exp_result)
++{
++  char *result = CALL (impl, s1, s2);
++  if (result != exp_result)
++    {
++      error (0, 0, "Wrong result in function %s %s %s", impl->name,
++	     result, exp_result);
++      ret = 1;
++      return;
++    }
++
++  if (HP_TIMING_AVAIL)
++    {
++      hp_timing_t start __attribute ((unused));
++      hp_timing_t stop __attribute ((unused));
++      hp_timing_t best_time = ~(hp_timing_t) 0;
++      size_t i;
++
++      for (i = 0; i < 32; ++i)
++	{
++	  HP_TIMING_NOW (start);
++	  CALL (impl, s1, s2);
++	  HP_TIMING_NOW (stop);
++	  HP_TIMING_BEST (best_time, start, stop);
++	}
++
++      printf ("\t%zd", (size_t) best_time);
++    }
++}
++
++
++static void
++do_test (size_t align1, size_t align2, size_t len1, size_t len2,
++	 int fail)
++{
++  char *s1 = (char *) (buf1 + align1);
++  char *s2 = (char *) (buf2 + align2);
++
++  static const char d[] = "1234567890abcdef";
++#define dl (sizeof (d) - 1)
++  char *ss2 = s2;
++  for (size_t l = len2; l > 0; l = l > dl ? l - dl : 0)
++    {
++      size_t t = l > dl ? dl : l;
++      ss2 = mempcpy (ss2, d, t);
++    }
++  s2[len2] = '\0';
++
++  if (fail)
++    {
++      char *ss1 = s1;
++      for (size_t l = len1; l > 0; l = l > dl ? l - dl : 0)
++	{
++	  size_t t = l > dl ? dl : l;
++	  memcpy (ss1, d, t);
++	  ++ss1[len2 > 7 ? 7 : len2 - 1];
++	  ss1 += t;
++	}
++    }
++  else
++    {
++      memset (s1, '0', len1);
++      memcpy (s1 + len1 - len2, s2, len2);
++    }
++  s1[len1] = '\0';
++
++  if (HP_TIMING_AVAIL)
++    printf ("Length %4zd/%zd, alignment %2zd/%2zd, %s:",
++	    len1, len2, align1, align2, fail ? "fail" : "found");
++
++  FOR_EACH_IMPL (impl, 0)
++    do_one_test (impl, s1, s2, fail ? NULL : s1 + len1 - len2);
++
++  if (HP_TIMING_AVAIL)
++    putchar ('\n');
++}
++
++
++static int
++test_main (void)
++{
++  test_init ();
++
++  printf ("%23s", "");
++  FOR_EACH_IMPL (impl, 0)
++    printf ("\t%s", impl->name);
++  putchar ('\n');
++
++  for (size_t klen = 2; klen < 32; ++klen)
++    for (size_t hlen = 2 * klen; hlen < 16 * klen; hlen += klen)
++      {
++	do_test (0, 0, hlen, klen, 0);
++	do_test (0, 0, hlen, klen, 1);
++	do_test (0, 3, hlen, klen, 0);
++	do_test (0, 3, hlen, klen, 1);
++	do_test (0, 9, hlen, klen, 0);
++	do_test (0, 9, hlen, klen, 1);
++	do_test (0, 15, hlen, klen, 0);
++	do_test (0, 15, hlen, klen, 1);
++
++	do_test (3, 0, hlen, klen, 0);
++	do_test (3, 0, hlen, klen, 1);
++	do_test (3, 3, hlen, klen, 0);
++	do_test (3, 3, hlen, klen, 1);
++	do_test (3, 9, hlen, klen, 0);
++	do_test (3, 9, hlen, klen, 1);
++	do_test (3, 15, hlen, klen, 0);
++	do_test (3, 15, hlen, klen, 1);
++
++	do_test (9, 0, hlen, klen, 0);
++	do_test (9, 0, hlen, klen, 1);
++	do_test (9, 3, hlen, klen, 0);
++	do_test (9, 3, hlen, klen, 1);
++	do_test (9, 9, hlen, klen, 0);
++	do_test (9, 9, hlen, klen, 1);
++	do_test (9, 15, hlen, klen, 0);
++	do_test (9, 15, hlen, klen, 1);
++
++	do_test (15, 0, hlen, klen, 0);
++	do_test (15, 0, hlen, klen, 1);
++	do_test (15, 3, hlen, klen, 0);
++	do_test (15, 3, hlen, klen, 1);
++	do_test (15, 9, hlen, klen, 0);
++	do_test (15, 9, hlen, klen, 1);
++	do_test (15, 15, hlen, klen, 0);
++	do_test (15, 15, hlen, klen, 1);
++      }
++
++  do_test (0, 0, page_size - 1, 16, 0);
++  do_test (0, 0, page_size - 1, 16, 1);
++
++  return ret;
++}
++
++#include "../test-skeleton.c"
+Index: glibc-2.12-2-gc4ccff1/string/tester.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/string/tester.c
++++ glibc-2.12-2-gc4ccff1/string/tester.c
+@@ -441,20 +441,21 @@ test_strnlen (void)
+   check (strnlen ("", 10) == 0, 1);		/* Empty. */
+   check (strnlen ("a", 10) == 1, 2);		/* Single char. */
+   check (strnlen ("abcd", 10) == 4, 3);		/* Multiple chars. */
+-  check (strnlen ("foo", (size_t)-1) == 3, 4);	/* limits of n. */
++  check (strnlen ("foo", (size_t) -1) == 3, 4);	/* limits of n. */
++  check (strnlen ("abcd", 0) == 0, 5);		/* Restricted. */
++  check (strnlen ("abcd", 1) == 1, 6);		/* Restricted. */
++  check (strnlen ("abcd", 2) == 2, 7);		/* Restricted. */
++  check (strnlen ("abcd", 3) == 3, 8);		/* Restricted. */
++  check (strnlen ("abcd", 4) == 4, 9);		/* Restricted. */
+ 
+-  {
+-    char buf[4096];
+-    int i;
+-    char *p;
+-    for (i=0; i < 0x100; i++)
+-      {
+-	p = (char *) ((unsigned long int)(buf + 0xff) & ~0xff) + i;
+-	strcpy (p, "OK");
+-	strcpy (p+3, "BAD/WRONG");
+-	check (strnlen (p, 100) == 2, 5+i);
+-      }
+-   }
++  char buf[4096];
++  for (int i = 0; i < 0x100; ++i)
++    {
++      char *p = (char *) ((unsigned long int)(buf + 0xff) & ~0xff) + i;
++      strcpy (p, "OK");
++      strcpy (p + 3, "BAD/WRONG");
++      check (strnlen (p, 100) == 2, 10 + i);
++    }
+ }
+ 
+ static void
+Index: glibc-2.12-2-gc4ccff1/string/tst-strlen.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/string/tst-strlen.c
++++ glibc-2.12-2-gc4ccff1/string/tst-strlen.c
+@@ -31,11 +31,21 @@ main(int argc, char *argv[])
+ 	      buf[words * 4 + 3] = (last & 8) != 0 ? 'e' : '\0';
+ 	      buf[words * 4 + 4] = '\0';
+ 
+-	      if (strlen (buf) != words * 4 + lens[last]
+-		  || strnlen (buf, -1) != words * 4 + lens[last])
++	      if (strlen (buf) != words * 4 + lens[last])
+ 		{
+-		  printf ("failed for base=%Zu, words=%Zu, and last=%Zu\n",
+-			  base, words, last);
++		  printf ("\
++strlen failed for base=%Zu, words=%Zu, and last=%Zu (is %zd, expected %zd)\n",
++			  base, words, last,
++			  strlen (buf), words * 4 + lens[last]);
++		  return 1;
++		}
++
++	      if (strnlen (buf, -1) != words * 4 + lens[last])
++		{
++		  printf ("\
++strnlen failed for base=%Zu, words=%Zu, and last=%Zu (is %zd, expected %zd)\n",
++			  base, words, last,
++			  strnlen (buf, -1), words * 4 + lens[last]);
+ 		  return 1;
+ 		}
+ 	    }
+Index: glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/i386/i686/multiarch/Makefile
++++ glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/Makefile
+@@ -9,7 +9,7 @@ sysdep_routines += bzero-sse2 memset-sse
+ 		   memmove-ssse3-rep bcopy-ssse3 bcopy-ssse3-rep \
+ 		   memset-sse2-rep bzero-sse2-rep strcmp-ssse3 \
+ 		   strcmp-sse4 strncmp-c strncmp-ssse3 strncmp-sse4 \
+-		   memcmp-ssse3 memcmp-sse4
++		   memcmp-ssse3 memcmp-sse4 strcasestr-nonascii
+ ifeq (yes,$(config-cflags-sse4))
+ sysdep_routines += strcspn-c strpbrk-c strspn-c strstr-c strcasestr-c
+ CFLAGS-strcspn-c.c += -msse4
+@@ -17,6 +17,7 @@ CFLAGS-strpbrk-c.c += -msse4
+ CFLAGS-strspn-c.c += -msse4
+ CFLAGS-strstr.c += -msse4
+ CFLAGS-strcasestr.c += -msse4
++CFLAGS-strcasestr-nonascii.c += -msse4
+ endif
+ endif
+ 
+Index: glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/strcasestr-nonascii.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/strcasestr-nonascii.c
+@@ -0,0 +1,2 @@
++#include <nmmintrin.h>
++#include <sysdeps/x86_64/multiarch/strcasestr-nonascii.c>
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/Makefile
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/Makefile
+@@ -12,7 +12,8 @@ sysdep_routines += _mcount
+ endif
+ 
+ ifeq ($(subdir),string)
+-sysdep_routines += cacheinfo
++sysdep_routines += cacheinfo strcasecmp_l-nonascii strncase_l-nonascii
++gen-as-const-headers += locale-defines.sym
+ endif
+ 
+ ifeq ($(subdir),elf)
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/locale-defines.sym
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/locale-defines.sym
+@@ -0,0 +1,11 @@
++#include <locale/localeinfo.h>
++#include <langinfo.h>
++#include <stddef.h>
++
++--
++
++LOCALE_T___LOCALES		offsetof (struct __locale_struct, __locales)
++LC_CTYPE
++_NL_CTYPE_NONASCII_CASE
++LOCALE_DATA_VALUES		offsetof (struct __locale_data, values)
++SIZEOF_VALUES			sizeof (((struct __locale_data *) 0)->values[0])
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/multiarch/Makefile
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/Makefile
+@@ -5,7 +5,9 @@ endif
+ 
+ ifeq ($(subdir),string)
+ sysdep_routines += stpncpy-c strncpy-c strcmp-ssse3 strncmp-ssse3 \
+-		   strend-sse4 memcmp-sse4
++		   strend-sse4 memcmp-sse4 \
++		   strcasestr-nonascii strcasecmp_l-ssse3 \
++		   strncase_l-ssse3
+ ifeq (yes,$(config-cflags-sse4))
+ sysdep_routines += strcspn-c strpbrk-c strspn-c strstr-c strcasestr-c
+ CFLAGS-strcspn-c.c += -msse4
+@@ -13,5 +15,6 @@ CFLAGS-strpbrk-c.c += -msse4
+ CFLAGS-strspn-c.c += -msse4
+ CFLAGS-strstr.c += -msse4
+ CFLAGS-strcasestr.c += -msse4
++CFLAGS-strcasestr-nonascii.c += -msse4
+ endif
+ endif
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strcasecmp_l-ssse3.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strcasecmp_l-ssse3.S
+@@ -0,0 +1,6 @@
++#define USE_SSSE3 1
++#define USE_AS_STRCASECMP_L
++#define NO_NOLOCALE_ALIAS
++#define STRCMP __strcasecmp_l_ssse3
++#define __strcasecmp __strcasecmp_ssse3
++#include "../strcmp.S"
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strcasecmp_l.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strcasecmp_l.S
+@@ -0,0 +1,6 @@
++#define STRCMP __strcasecmp_l
++#define USE_AS_STRCASECMP_L
++#include "strcmp.S"
++
++weak_alias (__strcasecmp_l, strcasecmp_l)
++libc_hidden_def (strcasecmp_l)
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strcasestr-nonascii.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strcasestr-nonascii.c
+@@ -0,0 +1,50 @@
++/* strstr with SSE4.2 intrinsics
++   Copyright (C) 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++# include <ctype.h>
++
++
++/* Similar to __m128i_strloadu.  Convert to lower case for none-POSIX/C
++   locale.  */
++static inline __m128i
++__m128i_strloadu_tolower (const unsigned char *p)
++{
++  union
++    {
++      char b[16];
++      __m128i x;
++    } u;
++
++  for (int i = 0; i < 16; ++i)
++    if (p[i] == 0)
++      {
++	u.b[i] = 0;
++	break;
++      }
++    else
++      u.b[i] = tolower (p[i]);
++
++  return u.x;
++}
++
++
++#define STRCASESTR_NONASCII
++#define USE_AS_STRCASESTR
++#define STRSTR_SSE42 __strcasestr_sse42_nonascii
++#include "strstr.c"
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strcasestr.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/multiarch/strcasestr.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strcasestr.c
+@@ -1,3 +1,7 @@
++extern char *__strcasestr_sse42_nonascii (const unsigned char *s1,
++					  const unsigned char *s2)
++  attribute_hidden;
++
+ #define USE_AS_STRCASESTR
+ #define STRSTR_SSE42 __strcasestr_sse42
+ #include "strstr.c"
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strcmp.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/multiarch/strcmp.S
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strcmp.S
+@@ -24,7 +24,7 @@
+ #ifdef USE_AS_STRNCMP
+ /* Since the counter, %r11, is unsigned, we branch to strcmp_exitz
+    if the new counter > the old one or is 0.  */
+-#define UPDATE_STRNCMP_COUNTER				\
++# define UPDATE_STRNCMP_COUNTER				\
+ 	/* calculate left number to compare */		\
+ 	lea	-16(%rcx, %r11), %r9;			\
+ 	cmp	%r9, %r11;				\
+@@ -33,23 +33,50 @@
+ 	je	LABEL(strcmp_exitz_sse4_2);		\
+ 	mov	%r9, %r11
+ 
+-#define STRCMP_SSE42	__strncmp_sse42
+-#define STRCMP_SSSE3	__strncmp_ssse3
+-#define STRCMP_SSE2	__strncmp_sse2
+-#define __GI_STRCMP	__GI_strncmp
++# define STRCMP_SSE42	__strncmp_sse42
++# define STRCMP_SSSE3	__strncmp_ssse3
++# define STRCMP_SSE2	__strncmp_sse2
++# define __GI_STRCMP	__GI_strncmp
++#elif defined USE_AS_STRCASECMP_L
++# include "locale-defines.h"
++
++# define UPDATE_STRNCMP_COUNTER
++
++# define STRCMP_SSE42	__strcasecmp_l_sse42
++# define STRCMP_SSSE3	__strcasecmp_l_ssse3
++# define STRCMP_SSE2	__strcasecmp_l_sse2
++# define __GI_STRCMP	__GI___strcasecmp_l
++#elif defined USE_AS_STRNCASECMP_L
++# include "locale-defines.h"
++
++/* Since the counter, %r11, is unsigned, we branch to strcmp_exitz
++   if the new counter > the old one or is 0.  */
++# define UPDATE_STRNCMP_COUNTER				\
++	/* calculate left number to compare */		\
++	lea	-16(%rcx, %r11), %r9;			\
++	cmp	%r9, %r11;				\
++	jb	LABEL(strcmp_exitz_sse4_2);		\
++	test	%r9, %r9;				\
++	je	LABEL(strcmp_exitz_sse4_2);		\
++	mov	%r9, %r11
++
++# define STRCMP_SSE42	__strncasecmp_l_sse42
++# define STRCMP_SSSE3	__strncasecmp_l_ssse3
++# define STRCMP_SSE2	__strncasecmp_l_sse2
++# define __GI_STRCMP	__GI___strncasecmp_l
+ #else
+-#define UPDATE_STRNCMP_COUNTER
+-#ifndef STRCMP
+-#define STRCMP		strcmp
+-#define STRCMP_SSE42	__strcmp_sse42
+-#define STRCMP_SSSE3	__strcmp_ssse3
+-#define STRCMP_SSE2	__strcmp_sse2
+-#define __GI_STRCMP	__GI_strcmp
+-#endif
++# define UPDATE_STRNCMP_COUNTER
++# ifndef STRCMP
++#  define STRCMP	strcmp
++#  define STRCMP_SSE42	__strcmp_sse42
++#  define STRCMP_SSSE3	__strcmp_ssse3
++#  define STRCMP_SSE2	__strcmp_sse2
++#  define __GI_STRCMP	__GI_strcmp
++# endif
+ #endif
+ 
+ #ifndef LABEL
+-#define LABEL(l) L(l)
++# define LABEL(l) L(l)
+ #endif
+ 
+ /* Define multiple versions only for the definition in libc.  Don't
+@@ -73,6 +100,43 @@ ENTRY(STRCMP)
+ 2:	ret
+ END(STRCMP)
+ 
++# ifdef USE_AS_STRCASECMP_L
++ENTRY(__strcasecmp)
++	.type	__strcasecmp, @gnu_indirect_function
++	cmpl	$0, __cpu_features+KIND_OFFSET(%rip)
++	jne	1f
++	call	__init_cpu_features
++1:
++	leaq	__strcasecmp_sse42(%rip), %rax
++	testl	$bit_SSE4_2, __cpu_features+CPUID_OFFSET+index_SSE4_2(%rip)
++	jnz	2f
++	leaq	__strcasecmp_ssse3(%rip), %rax
++	testl	$bit_SSSE3, __cpu_features+CPUID_OFFSET+index_SSSE3(%rip)
++	jnz	2f
++	leaq	__strcasecmp_sse2(%rip), %rax
++2:	ret
++END(__strcasecmp)
++weak_alias (__strcasecmp, strcasecmp)
++# endif
++# ifdef USE_AS_STRNCASECMP_L
++ENTRY(__strncasecmp)
++	.type	__strncasecmp, @gnu_indirect_function
++	cmpl	$0, __cpu_features+KIND_OFFSET(%rip)
++	jne	1f
++	call	__init_cpu_features
++1:
++	leaq	__strncasecmp_sse42(%rip), %rax
++	testl	$bit_SSE4_2, __cpu_features+CPUID_OFFSET+index_SSE4_2(%rip)
++	jnz	2f
++	leaq	__strncasecmp_ssse3(%rip), %rax
++	testl	$bit_SSSE3, __cpu_features+CPUID_OFFSET+index_SSSE3(%rip)
++	jnz	2f
++	leaq	__strncasecmp_sse2(%rip), %rax
++2:	ret
++END(__strncasecmp)
++weak_alias (__strncasecmp, strncasecmp)
++# endif
++
+ /* We use 0x1a:
+ 	_SIDD_SBYTE_OPS
+ 	| _SIDD_CMP_EQUAL_EACH
+@@ -101,8 +165,31 @@ END(STRCMP)
+ 
+ 	/* Put all SSE 4.2 functions together.  */
+ 	.section .text.sse4.2,"ax",@progbits
+-	.align 	16
++	.align	16
+ 	.type	STRCMP_SSE42, @function
++# ifdef USE_AS_STRCASECMP_L
++ENTRY (__strcasecmp_sse42)
++	movq	__libc_tsd_LOCALE@gottpoff(%rip),%rax
++	movq	%fs:(%rax),%rdx
++
++	// XXX 5 byte should be before the function
++	/* 5-byte NOP.  */
++	.byte	0x0f,0x1f,0x44,0x00,0x00
++END (__strcasecmp_sse42)
++	/* FALLTHROUGH to strcasecmp_l.  */
++# endif
++# ifdef USE_AS_STRNCASECMP_L
++ENTRY (__strncasecmp_sse42)
++	movq	__libc_tsd_LOCALE@gottpoff(%rip),%rax
++	movq	%fs:(%rax),%rcx
++
++	// XXX 5 byte should be before the function
++	/* 5-byte NOP.  */
++	.byte	0x0f,0x1f,0x44,0x00,0x00
++END (__strncasecmp_sse42)
++	/* FALLTHROUGH to strncasecmp_l.  */
++# endif
++
+ STRCMP_SSE42:
+ 	cfi_startproc
+ 	CALL_MCOUNT
+@@ -110,24 +197,87 @@ STRCMP_SSE42:
+ /*
+  * This implementation uses SSE to compare up to 16 bytes at a time.
+  */
+-#ifdef USE_AS_STRNCMP
++# ifdef USE_AS_STRCASECMP_L
++	/* We have to fall back on the C implementation for locales
++	   with encodings not matching ASCII for single bytes.  */
++#  if LOCALE_T___LOCALES != 0 || LC_CTYPE != 0
++	movq	LOCALE_T___LOCALES+LC_CTYPE*8(%rdx), %rax
++#  else
++	movq	(%rdx), %rax
++#  endif
++	testl	$0, LOCALE_DATA_VALUES+_NL_CTYPE_NONASCII_CASE*SIZEOF_VALUES(%rax)
++	jne	__strcasecmp_l_nonascii
++# endif
++# ifdef USE_AS_STRNCASECMP_L
++	/* We have to fall back on the C implementation for locales
++	   with encodings not matching ASCII for single bytes.  */
++#  if LOCALE_T___LOCALES != 0 || LC_CTYPE != 0
++	movq	LOCALE_T___LOCALES+LC_CTYPE*8(%rcx), %rax
++#  else
++	movq	(%rcx), %rax
++#  endif
++	testl	$0, LOCALE_DATA_VALUES+_NL_CTYPE_NONASCII_CASE*SIZEOF_VALUES(%rax)
++	jne	__strncasecmp_l_nonascii
++# endif
++
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	test	%rdx, %rdx
+ 	je	LABEL(strcmp_exitz_sse4_2)
+ 	cmp	$1, %rdx
+ 	je	LABEL(Byte0_sse4_2)
+ 	mov	%rdx, %r11
+-#endif
++# endif
+ 	mov	%esi, %ecx
+ 	mov	%edi, %eax
+ /* Use 64bit AND here to avoid long NOP padding.  */
+ 	and	$0x3f, %rcx		/* rsi alignment in cache line */
+ 	and	$0x3f, %rax		/* rdi alignment in cache line */
++# if defined USE_AS_STRCASECMP_L || defined USE_AS_STRNCASECMP_L
++	.section .rodata.cst16,"aM",@progbits,16
++	.align 16
++.Lbelowupper_sse4:
++	.quad	0x4040404040404040
++	.quad	0x4040404040404040
++.Ltopupper_sse4:
++	.quad	0x5b5b5b5b5b5b5b5b
++	.quad	0x5b5b5b5b5b5b5b5b
++.Ltouppermask_sse4:
++	.quad	0x2020202020202020
++	.quad	0x2020202020202020
++	.previous
++	movdqa	.Lbelowupper_sse4(%rip), %xmm4
++#  define UCLOW_reg %xmm4
++	movdqa	.Ltopupper_sse4(%rip), %xmm5
++#  define UCHIGH_reg %xmm5
++	movdqa	.Ltouppermask_sse4(%rip), %xmm6
++#  define LCQWORD_reg %xmm6
++# endif
+ 	cmp	$0x30, %ecx
+ 	ja	LABEL(crosscache_sse4_2)/* rsi: 16-byte load will cross cache line */
+ 	cmp	$0x30, %eax
+ 	ja	LABEL(crosscache_sse4_2)/* rdi: 16-byte load will cross cache line */
+ 	movdqu	(%rdi), %xmm1
+ 	movdqu	(%rsi), %xmm2
++# if defined USE_AS_STRCASECMP_L || defined USE_AS_STRNCASECMP_L
++#  define TOLOWER(reg1, reg2) \
++	movdqa	reg1, %xmm7;					\
++	movdqa	UCHIGH_reg, %xmm8;				\
++	movdqa	reg2, %xmm9;					\
++	movdqa	UCHIGH_reg, %xmm10;				\
++	pcmpgtb	UCLOW_reg, %xmm7;				\
++	pcmpgtb	reg1, %xmm8;					\
++	pcmpgtb	UCLOW_reg, %xmm9;				\
++	pcmpgtb	reg2, %xmm10;					\
++	pand	%xmm8, %xmm7;					\
++	pand	%xmm10, %xmm9;					\
++	pand	LCQWORD_reg, %xmm7;				\
++	pand	LCQWORD_reg, %xmm9;				\
++	por	%xmm7, reg1;					\
++	por	%xmm9, reg2
++	TOLOWER (%xmm1, %xmm2)
++# else
++#  define TOLOWER(reg1, reg2)
++# endif
+ 	pxor	%xmm0, %xmm0		/* clear %xmm0 for null char checks */
+ 	pcmpeqb	%xmm1, %xmm0		/* Any null chars? */
+ 	pcmpeqb	%xmm2, %xmm1		/* compare first 16 bytes for equality */
+@@ -135,10 +285,10 @@ STRCMP_SSE42:
+ 	pmovmskb %xmm1, %edx
+ 	sub	$0xffff, %edx		/* if first 16 bytes are same, edx == 0xffff */
+ 	jnz	LABEL(less16bytes_sse4_2)/* If not, find different value or null char */
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)/* finish comparision */
+-#endif
++# endif
+ 	add	$16, %rsi		/* prepare to search next 16 bytes */
+ 	add	$16, %rdi		/* prepare to search next 16 bytes */
+ 
+@@ -180,7 +330,13 @@ LABEL(ashr_0_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pxor	%xmm0, %xmm0			/* clear %xmm0 for null char check */
+ 	pcmpeqb	%xmm1, %xmm0			/* Any null chars? */
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpeqb	(%rdi), %xmm1			/* compare 16 bytes for equality */
++# else
++	movdqa	(%rdi), %xmm2
++	TOLOWER (%xmm1, %xmm2)
++	pcmpeqb	%xmm2, %xmm1			/* compare 16 bytes for equality */
++# endif
+ 	psubb	%xmm0, %xmm1			/* packed sub of comparison results*/
+ 	pmovmskb %xmm1, %r9d
+ 	shr	%cl, %edx			/* adjust 0xffff for offset */
+@@ -204,44 +360,60 @@ LABEL(ashr_0_sse4_2):
+ 	.p2align 4
+ LABEL(ashr_0_use_sse4_2):
+ 	movdqa	(%rdi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri      $0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	lea	16(%rdx), %rdx
+ 	jbe	LABEL(ashr_0_use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	movdqa	(%rdi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri      $0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	lea	16(%rdx), %rdx
+ 	jbe	LABEL(ashr_0_use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	jmp	LABEL(ashr_0_use_sse4_2)
+ 
+ 
+ 	.p2align 4
+ LABEL(ashr_0_use_sse4_2_exit):
+ 	jnc	LABEL(strcmp_exitz_sse4_2)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	%rcx, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	lea	-16(%rdx, %rcx), %rcx
+ 	movzbl	(%rdi, %rcx), %eax
+ 	movzbl	(%rsi, %rcx), %edx
++# if defined USE_AS_STRCASECMP_L || defined USE_AS_STRNCASECMP_L
++	leaq	_nl_C_LC_CTYPE_tolower+128*4(%rip), %rcx
++	movl	(%rcx,%rax,4), %eax
++	movl	(%rcx,%rdx,4), %edx
++# endif
+ 	sub	%edx, %eax
+ 	ret
+ 
+ 
+ 
+-
+ /*
+  * The following cases will be handled by ashr_1
+- * rcx(offset of rsi)  rax(offset of rdi)   relative offset   	corresponding case
++ * rcx(offset of rsi)  rax(offset of rdi)   relative offset	corresponding case
+  *        n(15)            n -15            0(15 +(n-15) - n)         ashr_1
+  */
+ 	.p2align 4
+@@ -251,6 +423,7 @@ LABEL(ashr_1_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0		/* Any null chars? */
+ 	pslldq	$15, %xmm2		/* shift first string to align with second */
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2		/* compare 16 bytes for equality */
+ 	psubb	%xmm0, %xmm2		/* packed sub of comparison results*/
+ 	pmovmskb %xmm2, %r9d
+@@ -281,12 +454,18 @@ LABEL(loop_ashr_1_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $1, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -294,12 +473,18 @@ LABEL(loop_ashr_1_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $1, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_1_use_sse4_2)
+ 
+@@ -309,10 +494,10 @@ LABEL(nibble_ashr_1_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$1, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$14, %ecx
+ 	ja	LABEL(loop_ashr_1_use_sse4_2)
+ 
+@@ -320,7 +505,7 @@ LABEL(nibble_ashr_1_use_sse4_2):
+ 
+ /*
+  * The following cases will be handled by ashr_2
+- * rcx(offset of rsi)  rax(offset of rdi)   relative offset   	corresponding case
++ * rcx(offset of rsi)  rax(offset of rdi)   relative offset	corresponding case
+  *        n(14~15)            n -14         1(15 +(n-14) - n)         ashr_2
+  */
+ 	.p2align 4
+@@ -330,6 +515,7 @@ LABEL(ashr_2_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$14, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -360,12 +546,18 @@ LABEL(loop_ashr_2_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $2, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -373,12 +565,18 @@ LABEL(loop_ashr_2_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $2, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_2_use_sse4_2)
+ 
+@@ -388,10 +586,10 @@ LABEL(nibble_ashr_2_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$2, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$13, %ecx
+ 	ja	LABEL(loop_ashr_2_use_sse4_2)
+ 
+@@ -409,6 +607,7 @@ LABEL(ashr_3_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$13, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -439,12 +638,18 @@ LABEL(loop_ashr_3_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $3, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -452,12 +657,18 @@ LABEL(loop_ashr_3_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $3, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_3_use_sse4_2)
+ 
+@@ -467,10 +678,10 @@ LABEL(nibble_ashr_3_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$3, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$12, %ecx
+ 	ja	LABEL(loop_ashr_3_use_sse4_2)
+ 
+@@ -488,6 +699,7 @@ LABEL(ashr_4_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$12, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -519,12 +731,18 @@ LABEL(loop_ashr_4_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $4, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -532,12 +750,18 @@ LABEL(loop_ashr_4_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $4, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_4_use_sse4_2)
+ 
+@@ -547,10 +771,10 @@ LABEL(nibble_ashr_4_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$4, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$11, %ecx
+ 	ja	LABEL(loop_ashr_4_use_sse4_2)
+ 
+@@ -559,7 +783,7 @@ LABEL(nibble_ashr_4_use_sse4_2):
+ /*
+  * The following cases will be handled by ashr_5
+  *  rcx(offset of rsi)  rax(offset of rdi)        relative offset      corresponding case
+- *        n(11~15)          n - 11      	  4(15 +(n-11) - n)         ashr_5
++ *        n(11~15)          n - 11		  4(15 +(n-11) - n)         ashr_5
+  */
+ 	.p2align 4
+ LABEL(ashr_5_sse4_2):
+@@ -568,6 +792,7 @@ LABEL(ashr_5_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$11, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -599,12 +824,18 @@ LABEL(loop_ashr_5_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $5, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -613,12 +844,18 @@ LABEL(loop_ashr_5_use_sse4_2):
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 
+ 	palignr $5, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_5_use_sse4_2)
+ 
+@@ -628,10 +865,10 @@ LABEL(nibble_ashr_5_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$5, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$10, %ecx
+ 	ja	LABEL(loop_ashr_5_use_sse4_2)
+ 
+@@ -640,7 +877,7 @@ LABEL(nibble_ashr_5_use_sse4_2):
+ /*
+  * The following cases will be handled by ashr_6
+  *  rcx(offset of rsi)  rax(offset of rdi)        relative offset      corresponding case
+- *        n(10~15)          n - 10      	  5(15 +(n-10) - n)         ashr_6
++ *        n(10~15)          n - 10		  5(15 +(n-10) - n)         ashr_6
+  */
+ 	.p2align 4
+ LABEL(ashr_6_sse4_2):
+@@ -649,6 +886,7 @@ LABEL(ashr_6_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$10, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -680,12 +918,18 @@ LABEL(loop_ashr_6_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $6, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -693,12 +937,18 @@ LABEL(loop_ashr_6_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $6, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_6_use_sse4_2)
+ 
+@@ -708,10 +958,10 @@ LABEL(nibble_ashr_6_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$6, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$9, %ecx
+ 	ja	LABEL(loop_ashr_6_use_sse4_2)
+ 
+@@ -720,7 +970,7 @@ LABEL(nibble_ashr_6_use_sse4_2):
+ /*
+  * The following cases will be handled by ashr_7
+  *  rcx(offset of rsi)  rax(offset of rdi)        relative offset      corresponding case
+- *        n(9~15)          n - 9      	        6(15 +(n - 9) - n)         ashr_7
++ *        n(9~15)          n - 9		  6(15 +(n - 9) - n)         ashr_7
+  */
+ 	.p2align 4
+ LABEL(ashr_7_sse4_2):
+@@ -729,6 +979,7 @@ LABEL(ashr_7_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$9, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -760,12 +1011,18 @@ LABEL(loop_ashr_7_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $7, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -773,12 +1030,18 @@ LABEL(loop_ashr_7_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $7, -16(%rdi, %rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_7_use_sse4_2)
+ 
+@@ -788,10 +1051,10 @@ LABEL(nibble_ashr_7_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$7, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$8, %ecx
+ 	ja	LABEL(loop_ashr_7_use_sse4_2)
+ 
+@@ -800,7 +1063,7 @@ LABEL(nibble_ashr_7_use_sse4_2):
+ /*
+  *  The following cases will be handled by ashr_8
+  *  rcx(offset of rsi)  rax(offset of rdi)        relative offset	 corresponding case
+- *        n(8~15)          n - 8      	        7(15 +(n - 8) - n)         ashr_8
++ *        n(8~15)          n - 8		  7(15 +(n - 8) - n)         ashr_8
+  */
+ 	.p2align 4
+ LABEL(ashr_8_sse4_2):
+@@ -809,6 +1072,7 @@ LABEL(ashr_8_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$8, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -840,12 +1104,18 @@ LABEL(loop_ashr_8_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $8, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -853,12 +1123,18 @@ LABEL(loop_ashr_8_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $8, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_8_use_sse4_2)
+ 
+@@ -868,10 +1144,10 @@ LABEL(nibble_ashr_8_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$8, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$7, %ecx
+ 	ja	LABEL(loop_ashr_8_use_sse4_2)
+ 
+@@ -880,7 +1156,7 @@ LABEL(nibble_ashr_8_use_sse4_2):
+ /*
+  *  The following cases will be handled by ashr_9
+  *  rcx(offset of rsi)  rax(offset of rdi)        relative offset	 corresponding case
+- *        n(7~15)          n - 7      	        8(15 +(n - 7) - n)         ashr_9
++ *        n(7~15)          n - 7		  8(15 +(n - 7) - n)         ashr_9
+  */
+ 	.p2align 4
+ LABEL(ashr_9_sse4_2):
+@@ -889,6 +1165,7 @@ LABEL(ashr_9_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$7, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -921,12 +1198,18 @@ LABEL(loop_ashr_9_use_sse4_2):
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 
+ 	palignr $9, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -934,12 +1217,18 @@ LABEL(loop_ashr_9_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $9, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_9_use_sse4_2)
+ 
+@@ -949,10 +1238,10 @@ LABEL(nibble_ashr_9_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$9, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$6, %ecx
+ 	ja	LABEL(loop_ashr_9_use_sse4_2)
+ 
+@@ -961,7 +1250,7 @@ LABEL(nibble_ashr_9_use_sse4_2):
+ /*
+  *  The following cases will be handled by ashr_10
+  *  rcx(offset of rsi)  rax(offset of rdi)        relative offset	 corresponding case
+- *        n(6~15)          n - 6      	        9(15 +(n - 6) - n)         ashr_10
++ *        n(6~15)          n - 6		  9(15 +(n - 6) - n)         ashr_10
+  */
+ 	.p2align 4
+ LABEL(ashr_10_sse4_2):
+@@ -970,6 +1259,7 @@ LABEL(ashr_10_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$6, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1001,12 +1291,18 @@ LABEL(loop_ashr_10_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $10, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -1014,12 +1310,18 @@ LABEL(loop_ashr_10_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $10, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_10_use_sse4_2)
+ 
+@@ -1029,10 +1331,10 @@ LABEL(nibble_ashr_10_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$10, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$5, %ecx
+ 	ja	LABEL(loop_ashr_10_use_sse4_2)
+ 
+@@ -1041,7 +1343,7 @@ LABEL(nibble_ashr_10_use_sse4_2):
+ /*
+  *  The following cases will be handled by ashr_11
+  *  rcx(offset of rsi)  rax(offset of rdi)        relative offset	 corresponding case
+- *        n(5~15)          n - 5      	        10(15 +(n - 5) - n)         ashr_11
++ *        n(5~15)          n - 5		  10(15 +(n - 5) - n)         ashr_11
+  */
+ 	.p2align 4
+ LABEL(ashr_11_sse4_2):
+@@ -1050,6 +1352,7 @@ LABEL(ashr_11_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$5, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1081,12 +1384,18 @@ LABEL(loop_ashr_11_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $11, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -1094,12 +1403,18 @@ LABEL(loop_ashr_11_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $11, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_11_use_sse4_2)
+ 
+@@ -1109,10 +1424,10 @@ LABEL(nibble_ashr_11_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$11, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$4, %ecx
+ 	ja	LABEL(loop_ashr_11_use_sse4_2)
+ 
+@@ -1121,7 +1436,7 @@ LABEL(nibble_ashr_11_use_sse4_2):
+ /*
+  *  The following cases will be handled by ashr_12
+  *  rcx(offset of rsi)  rax(offset of rdi)        relative offset	 corresponding case
+- *        n(4~15)          n - 4      	        11(15 +(n - 4) - n)         ashr_12
++ *        n(4~15)          n - 4		  11(15 +(n - 4) - n)         ashr_12
+  */
+ 	.p2align 4
+ LABEL(ashr_12_sse4_2):
+@@ -1130,6 +1445,7 @@ LABEL(ashr_12_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$4, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1161,12 +1477,18 @@ LABEL(loop_ashr_12_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $12, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -1174,12 +1496,18 @@ LABEL(loop_ashr_12_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $12, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_12_use_sse4_2)
+ 
+@@ -1189,10 +1517,10 @@ LABEL(nibble_ashr_12_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$12, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$3, %ecx
+ 	ja	LABEL(loop_ashr_12_use_sse4_2)
+ 
+@@ -1201,7 +1529,7 @@ LABEL(nibble_ashr_12_use_sse4_2):
+ /*
+  *  The following cases will be handled by ashr_13
+  *  rcx(offset of rsi)  rax(offset of rdi)        relative offset	 corresponding case
+- *        n(3~15)          n - 3      	        12(15 +(n - 3) - n)         ashr_13
++ *        n(3~15)          n - 3		  12(15 +(n - 3) - n)         ashr_13
+  */
+ 	.p2align 4
+ LABEL(ashr_13_sse4_2):
+@@ -1210,6 +1538,7 @@ LABEL(ashr_13_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$3, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1242,12 +1571,18 @@ LABEL(loop_ashr_13_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $13, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -1255,12 +1590,18 @@ LABEL(loop_ashr_13_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $13, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_13_use_sse4_2)
+ 
+@@ -1270,10 +1611,10 @@ LABEL(nibble_ashr_13_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$13, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$2, %ecx
+ 	ja	LABEL(loop_ashr_13_use_sse4_2)
+ 
+@@ -1282,7 +1623,7 @@ LABEL(nibble_ashr_13_use_sse4_2):
+ /*
+  *  The following cases will be handled by ashr_14
+  *  rcx(offset of rsi)  rax(offset of rdi)        relative offset	 corresponding case
+- *        n(2~15)          n - 2      	        13(15 +(n - 2) - n)         ashr_14
++ *        n(2~15)          n - 2		  13(15 +(n - 2) - n)         ashr_14
+  */
+ 	.p2align 4
+ LABEL(ashr_14_sse4_2):
+@@ -1291,6 +1632,7 @@ LABEL(ashr_14_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq  $2, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1323,12 +1665,18 @@ LABEL(loop_ashr_14_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $14, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -1336,12 +1684,18 @@ LABEL(loop_ashr_14_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $14, -16(%rdi, %rdx), %xmm0
+-	pcmpistri	$0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_14_use_sse4_2)
+ 
+@@ -1351,10 +1705,10 @@ LABEL(nibble_ashr_14_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$14, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$1, %ecx
+ 	ja	LABEL(loop_ashr_14_use_sse4_2)
+ 
+@@ -1363,7 +1717,7 @@ LABEL(nibble_ashr_14_use_sse4_2):
+ /*
+  *  The following cases will be handled by ashr_15
+  *  rcx(offset of rsi)  rax(offset of rdi)        relative offset	 corresponding case
+- *        n(1~15)          n - 1      	        14(15 +(n - 1) - n)         ashr_15
++ *        n(1~15)          n - 1		  14(15 +(n - 1) - n)         ashr_15
+  */
+ 	.p2align 4
+ LABEL(ashr_15_sse4_2):
+@@ -1372,6 +1726,7 @@ LABEL(ashr_15_sse4_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$1, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1406,12 +1761,18 @@ LABEL(loop_ashr_15_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $15, -16(%rdi, %rdx), %xmm0
+-	pcmpistri      $0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 
+ 	add	$16, %rdx
+ 	add	$16, %r10
+@@ -1419,12 +1780,18 @@ LABEL(loop_ashr_15_use_sse4_2):
+ 
+ 	movdqa	(%rdi, %rdx), %xmm0
+ 	palignr $15, -16(%rdi, %rdx), %xmm0
+-	pcmpistri      $0x1a,(%rsi,%rdx), %xmm0
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
++	pcmpistri $0x1a, (%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	jbe	LABEL(use_sse4_2_exit)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	$16, %rdx
+ 	jmp	LABEL(loop_ashr_15_use_sse4_2)
+ 
+@@ -1434,22 +1801,28 @@ LABEL(nibble_ashr_15_use_sse4_2):
+ 	movdqa	-16(%rdi, %rdx), %xmm0
+ 	psrldq	$15, %xmm0
+ 	pcmpistri      $0x3a,%xmm0, %xmm0
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	cmp	%r11, %rcx
+ 	jae	LABEL(nibble_ashr_use_sse4_2_exit)
+-#endif
++# endif
+ 	cmp	$0, %ecx
+ 	ja	LABEL(loop_ashr_15_use_sse4_2)
+ 
+ LABEL(nibble_ashr_use_sse4_2_exit):
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpistri      $0x1a,(%rsi,%rdx), %xmm0
++# else
++	movdqa	(%rsi,%rdx), %xmm1
++	TOLOWER (%xmm0, %xmm1)
++	pcmpistri $0x1a, %xmm1, %xmm0
++# endif
+ 	.p2align 4
+ LABEL(use_sse4_2_exit):
+ 	jnc	LABEL(strcmp_exitz_sse4_2)
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	%rcx, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	add	%rcx, %rdx
+ 	lea	-16(%rdi, %r9), %rdi
+ 	movzbl	(%rdi, %rdx), %eax
+@@ -1458,6 +1831,12 @@ LABEL(use_sse4_2_exit):
+ 	jz	LABEL(use_sse4_2_ret_sse4_2)
+ 	xchg	%eax, %edx
+ LABEL(use_sse4_2_ret_sse4_2):
++# if defined USE_AS_STRCASECMP_L || defined USE_AS_STRNCASECMP_L
++	leaq	_nl_C_LC_CTYPE_tolower+128*4(%rip), %rcx
++	movl	(%rcx,%rdx,4), %edx
++	movl	(%rcx,%rax,4), %eax
++# endif
++
+ 	sub	%edx, %eax
+ 	ret
+ 
+@@ -1473,13 +1852,19 @@ LABEL(ret_sse4_2):
+ LABEL(less16bytes_sse4_2):
+ 	bsf	%rdx, %rdx		/* find and store bit index in %rdx */
+ 
+-#ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	%rdx, %r11
+ 	jbe	LABEL(strcmp_exitz_sse4_2)
+-#endif
++# endif
+ 	movzbl	(%rsi, %rdx), %ecx
+ 	movzbl	(%rdi, %rdx), %eax
+ 
++# if defined USE_AS_STRCASECMP_L || defined USE_AS_STRNCASECMP_L
++	leaq	_nl_C_LC_CTYPE_tolower+128*4(%rip), %rdx
++	movl	(%rdx,%rcx,4), %ecx
++	movl	(%rdx,%rax,4), %eax
++# endif
++
+ 	sub	%ecx, %eax
+ 	ret
+ 
+@@ -1488,15 +1873,27 @@ LABEL(strcmp_exitz_sse4_2):
+ 	ret
+ 
+ 	.p2align 4
++	// XXX Same as code above
+ LABEL(Byte0_sse4_2):
+ 	movzx	(%rsi), %ecx
+ 	movzx	(%rdi), %eax
+ 
++# if defined USE_AS_STRCASECMP_L || defined USE_AS_STRNCASECMP_L
++	leaq	_nl_C_LC_CTYPE_tolower+128*4(%rip), %rdx
++	movl	(%rdx,%rcx,4), %ecx
++	movl	(%rdx,%rax,4), %eax
++# endif
++
+ 	sub	%ecx, %eax
+ 	ret
+ 	cfi_endproc
+ 	.size	STRCMP_SSE42, .-STRCMP_SSE42
+ 
++# undef UCLOW_reg
++# undef UCHIGH_reg
++# undef LCQWORD_reg
++# undef TOLOWER
++
+ 	/* Put all SSE 4.2 functions together.  */
+ 	.section .rodata.sse4.2,"a",@progbits
+ 	.p2align 3
+@@ -1528,6 +1925,27 @@ LABEL(unaligned_table_sse4_2):
+ # undef END
+ # define END(name) \
+ 	cfi_endproc; .size STRCMP_SSE2, .-STRCMP_SSE2
++
++# ifdef USE_AS_STRCASECMP_L
++#  define ENTRY2(name) \
++	.type __strcasecmp_sse2, @function; \
++	.align 16; \
++	__strcasecmp_sse2: cfi_startproc; \
++	CALL_MCOUNT
++#  define END2(name) \
++	cfi_endproc; .size __strcasecmp_sse2, .-__strcasecmp_sse2
++# endif
++
++# ifdef USE_AS_STRNCASECMP_L
++#  define ENTRY2(name) \
++	.type __strncasecmp_sse2, @function; \
++	.align 16; \
++	__strncasecmp_sse2: cfi_startproc; \
++	CALL_MCOUNT
++#  define END2(name) \
++	cfi_endproc; .size __strncasecmp_sse2, .-__strncasecmp_sse2
++# endif
++
+ # undef libc_hidden_builtin_def
+ /* It doesn't make sense to send libc-internal strcmp calls through a PLT.
+    The speedup we get from using SSE4.2 instruction is likely eaten away
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strncase_l-ssse3.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strncase_l-ssse3.S
+@@ -0,0 +1,6 @@
++#define USE_SSSE3 1
++#define USE_AS_STRNCASECMP_L
++#define NO_NOLOCALE_ALIAS
++#define STRCMP __strncasecmp_l_ssse3
++#define __strncasecmp __strncasecmp_ssse3
++#include "../strcmp.S"
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strncase_l.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strncase_l.S
+@@ -0,0 +1,6 @@
++#define STRCMP __strncasecmp_l
++#define USE_AS_STRNCASECMP_L
++#include "strcmp.S"
++
++weak_alias (__strncasecmp_l, strncasecmp_l)
++libc_hidden_def (strncasecmp_l)
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strstr.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/multiarch/strstr.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strstr.c
+@@ -67,10 +67,10 @@
+ 
+    case		ECX	CFlag	ZFlag	SFlag
+     3		 X	  1	  0	  0/1
+-    4a		 0  	  1	  0	  0
+-    4b		 0  	  1	  0	  1
+-    4c		0 < X  	  1	  0	  0/1
+-    5		16 	  0	  1	  0
++    4a		 0	  1	  0	  0
++    4b		 0	  1	  0	  1
++    4c		0 < X	  1	  0	  0/1
++    5		16	  0	  1	  0
+ 
+    3. An initial ordered-comparison fragment match, we fix up to do
+       subsequent string comparison
+@@ -147,8 +147,7 @@ __m128i_shift_right (__m128i value, int 
+    If EOS occurs within less than 16B before 4KB boundary, we don't
+    cross to next page.  */
+ 
+-static __m128i
+-__attribute__ ((section (".text.sse4.2")))
++static inline __m128i
+ __m128i_strloadu (const unsigned char * p)
+ {
+   int offset = ((size_t) p & (16 - 1));
+@@ -164,59 +163,36 @@ __m128i_strloadu (const unsigned char * 
+   return _mm_loadu_si128 ((__m128i *) p);
+ }
+ 
+-#ifdef USE_AS_STRCASESTR
++#if defined USE_AS_STRCASESTR && !defined STRCASESTR_NONASCII
+ 
+ /* Similar to __m128i_strloadu.  Convert to lower case for POSIX/C
+    locale.  */
+-
+-static __m128i
+-__attribute__ ((section (".text.sse4.2")))
+-__m128i_strloadu_tolower_posix (const unsigned char * p)
++static inline __m128i
++__m128i_strloadu_tolower (const unsigned char *p, __m128i rangeuc,
++			  __m128i u2ldelta)
+ {
+   __m128i frag = __m128i_strloadu (p);
+ 
+-  /* Convert frag to lower case for POSIX/C locale.  */
+-  __m128i rangeuc = _mm_set_epi64x (0x0, 0x5a41);
+-  __m128i u2ldelta = _mm_set1_epi64x (0xe0e0e0e0e0e0e0e0);
+-  __m128i mask1 = _mm_cmpistrm (rangeuc, frag, 0x44);
+-  __m128i mask2 = _mm_blendv_epi8 (u2ldelta, frag, mask1);
+-  mask2 = _mm_sub_epi8 (mask2, u2ldelta);
+-  return  _mm_blendv_epi8 (frag, mask2, mask1);
++#define UCLOW 0x4040404040404040ULL
++#define UCHIGH 0x5b5b5b5b5b5b5b5bULL
++#define LCQWORD 0x2020202020202020ULL
++  /* Compare if 'Z' > bytes. Inverted way to get a mask for byte <= 'Z'.  */
++  __m128i r2 = _mm_cmpgt_epi8 (_mm_set1_epi64x (UCHIGH), frag);
++  /* Compare if bytes are > 'A' - 1.  */
++  __m128i r1 = _mm_cmpgt_epi8 (frag, _mm_set1_epi64x (UCLOW));
++  /* Mask byte == ff if byte(r2) <= 'Z' and byte(r1) > 'A' - 1.  */
++  __m128i mask = _mm_and_si128 (r2, r1);
++  /* Apply lowercase bit 6 mask for above mask bytes == ff.  */
++  return _mm_or_si128 (frag, _mm_and_si128 (mask, _mm_set1_epi64x (LCQWORD)));
+ }
+ 
+-/* Similar to __m128i_strloadu.  Convert to lower case for none-POSIX/C
+-   locale.  */
+-
+-static __m128i
+-__attribute__ ((section (".text.sse4.2")))
+-__m128i_strloadu_tolower (const unsigned char * p)
+-{
+-  union
+-    {
+-      char b[16];
+-      __m128i x;
+-    } u;
+-
+-  for (int i = 0; i < 16; i++)
+-    if (p[i] == 0)
+-      {
+-	u.b[i] = 0;
+-	break;
+-      }
+-    else
+-      u.b[i] = tolower (p[i]);
+-
+-  return u.x;
+-}
+ #endif
+ 
+ /* Calculate Knuth-Morris-Pratt string searching algorithm (or KMP
+    algorithm) overlap for a fully populated 16B vector.
+    Input parameter: 1st 16Byte loaded from the reference string of a
+ 		    strstr function.
+-   We don't use KMP algorithm if reference string is less than 16B.
+- */
+-
++   We don't use KMP algorithm if reference string is less than 16B.  */
+ static int
+ __inline__ __attribute__ ((__always_inline__,))
+ KMP16Bovrlap (__m128i s2)
+@@ -236,7 +212,7 @@ KMP16Bovrlap (__m128i s2)
+     return 1;
+   else if (!k1)
+     {
+-      /* There are al least two ditinct char in s2.  If byte 0 and 1 are
++      /* There are al least two distinct chars in s2.  If byte 0 and 1 are
+ 	 idential and the distinct value lies farther down, we can deduce
+ 	 the next byte offset to restart full compare is least no earlier
+ 	 than byte 3.  */
+@@ -256,23 +232,30 @@ STRSTR_SSE42 (const unsigned char *s1, c
+ #define p1 s1
+   const unsigned char *p2 = s2;
+ 
+-  if (p2[0] == '\0')
++#ifndef STRCASESTR_NONASCII
++  if (__builtin_expect (p2[0] == '\0', 0))
+     return (char *) p1;
+ 
+-  if (p1[0] == '\0')
++  if (__builtin_expect (p1[0] == '\0', 0))
+     return NULL;
+ 
+   /* Check if p1 length is 1 byte long.  */
+-  if (p1[1] == '\0')
++  if (__builtin_expect (p1[1] == '\0', 0))
+     return p2[1] == '\0' && CMPBYTE (p1[0], p2[0]) ? (char *) p1 : NULL;
++#endif
+ 
+ #ifdef USE_AS_STRCASESTR
+-  __m128i (*strloadu) (const unsigned char *);
+-
+-  if (_NL_CURRENT_WORD (LC_CTYPE, _NL_CTYPE_NONASCII_CASE) == 0)
+-    strloadu = __m128i_strloadu_tolower_posix;
+-  else
+-    strloadu = __m128i_strloadu_tolower;
++# ifndef STRCASESTR_NONASCII
++  if (__builtin_expect (_NL_CURRENT_WORD (LC_CTYPE, _NL_CTYPE_NONASCII_CASE)
++			!= 0, 0))
++    return __strcasestr_sse42_nonascii (s1, s2);
++
++  const __m128i rangeuc = _mm_set_epi64x (0x0, 0x5a41);
++  const __m128i u2ldelta = _mm_set1_epi64x (0xe0e0e0e0e0e0e0e0);
++#  define strloadu(p) __m128i_strloadu_tolower (p, rangeuc, u2ldelta)
++# else
++#  define strloadu __m128i_strloadu_tolower
++# endif
+ #else
+ # define strloadu __m128i_strloadu
+ #endif
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strcasecmp.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strcasecmp.S
+@@ -0,0 +1 @@
++/* In strcasecmp_l.S.  */
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strcasecmp_l-nonascii.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strcasecmp_l-nonascii.c
+@@ -0,0 +1,8 @@
++#include <string.h>
++
++extern int __strcasecmp_l_nonascii (__const char *__s1, __const char *__s2,
++				    __locale_t __loc);
++
++#define __strcasecmp_l __strcasecmp_l_nonascii
++#define USE_IN_EXTENDED_LOCALE_MODEL    1
++#include <string/strcasecmp.c>
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strcasecmp_l.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strcasecmp_l.S
+@@ -0,0 +1,6 @@
++#define STRCMP __strcasecmp_l
++#define USE_AS_STRCASECMP_L
++#include "strcmp.S"
++
++weak_alias (__strcasecmp_l, strcasecmp_l)
++libc_hidden_def (strcasecmp_l)
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strcmp.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/strcmp.S
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strcmp.S
+@@ -51,6 +51,31 @@
+ 	je	LABEL(strcmp_exitz);			\
+ 	mov	%r9, %r11
+ 
++#elif defined USE_AS_STRCASECMP_L
++# include "locale-defines.h"
++
++/* No support for strcasecmp outside libc so far since it is not needed.  */
++# ifdef NOT_IN_lib
++#  error "strcasecmp_l not implemented so far"
++# endif
++
++# define UPDATE_STRNCMP_COUNTER
++#elif defined USE_AS_STRNCASECMP_L
++# include "locale-defines.h"
++
++/* No support for strncasecmp outside libc so far since it is not needed.  */
++# ifdef NOT_IN_lib
++#  error "strncasecmp_l not implemented so far"
++# endif
++
++# define UPDATE_STRNCMP_COUNTER				\
++	/* calculate left number to compare */		\
++	lea	-16(%rcx, %r11), %r9;			\
++	cmp	%r9, %r11;				\
++	jb	LABEL(strcmp_exitz);			\
++	test	%r9, %r9;				\
++	je	LABEL(strcmp_exitz);			\
++	mov	%r9, %r11
+ #else
+ # define UPDATE_STRNCMP_COUNTER
+ # ifndef STRCMP
+@@ -64,6 +89,46 @@
+ 	.section .text.ssse3,"ax",@progbits
+ #endif
+ 
++#ifdef USE_AS_STRCASECMP_L
++# ifndef ENTRY2
++#  define ENTRY2(name) ENTRY (name)
++#  define END2(name) END (name)
++# endif
++
++ENTRY2 (__strcasecmp)
++	movq	__libc_tsd_LOCALE@gottpoff(%rip),%rax
++	movq	%fs:(%rax),%rdx
++
++	// XXX 5 byte should be before the function
++	/* 5-byte NOP.  */
++	.byte	0x0f,0x1f,0x44,0x00,0x00
++END2 (__strcasecmp)
++# ifndef NO_NOLOCALE_ALIAS
++weak_alias (__strcasecmp, strcasecmp)
++libc_hidden_def (__strcasecmp)
++# endif
++	/* FALLTHROUGH to strcasecmp_l.  */
++#elif defined USE_AS_STRNCASECMP_L
++# ifndef ENTRY2
++#  define ENTRY2(name) ENTRY (name)
++#  define END2(name) END (name)
++# endif
++
++ENTRY2 (__strncasecmp)
++	movq	__libc_tsd_LOCALE@gottpoff(%rip),%rax
++	movq	%fs:(%rax),%rcx
++
++	// XXX 5 byte should be before the function
++	/* 5-byte NOP.  */
++	.byte	0x0f,0x1f,0x44,0x00,0x00
++END2 (__strncasecmp)
++# ifndef NO_NOLOCALE_ALIAS
++weak_alias (__strncasecmp, strncasecmp)
++libc_hidden_def (__strncasecmp)
++# endif
++	/* FALLTHROUGH to strncasecmp_l.  */
++#endif
++
+ ENTRY (BP_SYM (STRCMP))
+ #ifdef NOT_IN_libc
+ /* Simple version since we can't use SSE registers in ld.so.  */
+@@ -84,10 +149,32 @@ L(neq):	movl	$1, %eax
+ 	ret
+ END (BP_SYM (STRCMP))
+ #else	/* NOT_IN_libc */
++# ifdef USE_AS_STRCASECMP_L
++	/* We have to fall back on the C implementation for locales
++	   with encodings not matching ASCII for single bytes.  */
++#  if LOCALE_T___LOCALES != 0 || LC_CTYPE != 0
++	movq	LOCALE_T___LOCALES+LC_CTYPE*8(%rdx), %rax
++#  else
++	movq	(%rdx), %rax
++#  endif
++	testl	$0, LOCALE_DATA_VALUES+_NL_CTYPE_NONASCII_CASE*SIZEOF_VALUES(%rax)
++	jne	__strcasecmp_l_nonascii
++# elif defined USE_AS_STRNCASECMP_L
++	/* We have to fall back on the C implementation for locales
++	   with encodings not matching ASCII for single bytes.  */
++#  if LOCALE_T___LOCALES != 0 || LC_CTYPE != 0
++	movq	LOCALE_T___LOCALES+LC_CTYPE*8(%rcx), %rax
++#  else
++	movq	(%rcx), %rax
++#  endif
++	testl	$0, LOCALE_DATA_VALUES+_NL_CTYPE_NONASCII_CASE*SIZEOF_VALUES(%rax)
++	jne	__strncasecmp_l_nonascii
++# endif
++
+ /*
+  * This implementation uses SSE to compare up to 16 bytes at a time.
+  */
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	test	%rdx, %rdx
+ 	je	LABEL(strcmp_exitz)
+ 	cmp	$1, %rdx
+@@ -99,6 +186,26 @@ END (BP_SYM (STRCMP))
+ /* Use 64bit AND here to avoid long NOP padding.  */
+ 	and	$0x3f, %rcx		/* rsi alignment in cache line */
+ 	and	$0x3f, %rax		/* rdi alignment in cache line */
++# if defined USE_AS_STRCASECMP_L || defined USE_AS_STRNCASECMP_L
++	.section .rodata.cst16,"aM",@progbits,16
++	.align 16
++.Lbelowupper:
++	.quad	0x4040404040404040
++	.quad	0x4040404040404040
++.Ltopupper:
++	.quad	0x5b5b5b5b5b5b5b5b
++	.quad	0x5b5b5b5b5b5b5b5b
++.Ltouppermask:
++	.quad	0x2020202020202020
++	.quad	0x2020202020202020
++	.previous
++	movdqa	.Lbelowupper(%rip), %xmm5
++#  define UCLOW_reg %xmm5
++	movdqa	.Ltopupper(%rip), %xmm6
++#  define UCHIGH_reg %xmm6
++	movdqa	.Ltouppermask(%rip), %xmm7
++#  define LCQWORD_reg %xmm7
++# endif
+ 	cmp	$0x30, %ecx
+ 	ja	LABEL(crosscache)	/* rsi: 16-byte load will cross cache line */
+ 	cmp	$0x30, %eax
+@@ -107,6 +214,26 @@ END (BP_SYM (STRCMP))
+ 	movlpd	(%rsi), %xmm2
+ 	movhpd	8(%rdi), %xmm1
+ 	movhpd	8(%rsi), %xmm2
++# if defined USE_AS_STRCASECMP_L || defined USE_AS_STRNCASECMP_L
++#  define TOLOWER(reg1, reg2) \
++	movdqa	reg1, %xmm8;					\
++	movdqa	UCHIGH_reg, %xmm9;				\
++	movdqa	reg2, %xmm10;					\
++	movdqa	UCHIGH_reg, %xmm11;				\
++	pcmpgtb	UCLOW_reg, %xmm8;				\
++	pcmpgtb	reg1, %xmm9;					\
++	pcmpgtb	UCLOW_reg, %xmm10;				\
++	pcmpgtb	reg2, %xmm11;					\
++	pand	%xmm9, %xmm8;					\
++	pand	%xmm11, %xmm10;					\
++	pand	LCQWORD_reg, %xmm8;				\
++	pand	LCQWORD_reg, %xmm10;				\
++	por	%xmm8, reg1;					\
++	por	%xmm10, reg2
++	TOLOWER (%xmm1, %xmm2)
++# else
++#  define TOLOWER(reg1, reg2)
++# endif
+ 	pxor	%xmm0, %xmm0		/* clear %xmm0 for null char checks */
+ 	pcmpeqb	%xmm1, %xmm0		/* Any null chars? */
+ 	pcmpeqb	%xmm2, %xmm1		/* compare first 16 bytes for equality */
+@@ -114,7 +241,7 @@ END (BP_SYM (STRCMP))
+ 	pmovmskb %xmm1, %edx
+ 	sub	$0xffff, %edx		/* if first 16 bytes are same, edx == 0xffff */
+ 	jnz	LABEL(less16bytes)	/* If not, find different value or null char */
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)	/* finish comparision */
+ # endif
+@@ -159,7 +286,13 @@ LABEL(ashr_0):
+ 	movdqa	(%rsi), %xmm1
+ 	pxor	%xmm0, %xmm0			/* clear %xmm0 for null char check */
+ 	pcmpeqb	%xmm1, %xmm0			/* Any null chars? */
++# if !defined USE_AS_STRCASECMP_L && !defined USE_AS_STRNCASECMP_L
+ 	pcmpeqb	(%rdi), %xmm1			/* compare 16 bytes for equality */
++# else
++	movdqa	(%rdi), %xmm2
++	TOLOWER (%xmm1, %xmm2)
++	pcmpeqb	%xmm2, %xmm1			/* compare 16 bytes for equality */
++# endif
+ 	psubb	%xmm0, %xmm1			/* packed sub of comparison results*/
+ 	pmovmskb %xmm1, %r9d
+ 	shr	%cl, %edx			/* adjust 0xffff for offset */
+@@ -183,6 +316,7 @@ LABEL(ashr_0):
+ LABEL(loop_ashr_0):
+ 	movdqa	(%rsi, %rcx), %xmm1
+ 	movdqa	(%rdi, %rcx), %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -191,13 +325,14 @@ LABEL(loop_ashr_0):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)		/* mismatch or null char seen */
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+ 	add	$16, %rcx
+ 	movdqa	(%rsi, %rcx), %xmm1
+ 	movdqa	(%rdi, %rcx), %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -205,7 +340,7 @@ LABEL(loop_ashr_0):
+ 	pmovmskb %xmm1, %edx
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -214,7 +349,7 @@ LABEL(loop_ashr_0):
+ 
+ /*
+  * The following cases will be handled by ashr_1
+- * rcx(offset of rsi)  rax(offset of rdi)   relative offset   	corresponding case
++ * rcx(offset of rsi)  rax(offset of rdi)   relative offset	corresponding case
+  *        n(15)            n -15            0(15 +(n-15) - n)         ashr_1
+  */
+ 	.p2align 4
+@@ -224,6 +359,7 @@ LABEL(ashr_1):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0		/* Any null chars? */
+ 	pslldq	$15, %xmm2		/* shift first string to align with second */
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2		/* compare 16 bytes for equality */
+ 	psubb	%xmm0, %xmm2		/* packed sub of comparison results*/
+ 	pmovmskb %xmm2, %r9d
+@@ -263,6 +399,7 @@ LABEL(gobble_ashr_1):
+ # else
+ 	palignr	$1, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -271,7 +408,7 @@ LABEL(gobble_ashr_1):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -292,6 +429,7 @@ LABEL(gobble_ashr_1):
+ # else
+ 	palignr	$1, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -300,7 +438,7 @@ LABEL(gobble_ashr_1):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -319,8 +457,8 @@ LABEL(nibble_ashr_1):
+ 	test	$0xfffe, %edx
+ 	jnz	LABEL(ashr_1_exittail)	/* find null char*/
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$14, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$15, %r11
+ 	jbe	LABEL(ashr_1_exittail)
+ # endif
+ 
+@@ -351,6 +489,7 @@ LABEL(ashr_2):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$14, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -390,6 +529,7 @@ LABEL(gobble_ashr_2):
+ # else
+ 	palignr	$2, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -398,7 +538,7 @@ LABEL(gobble_ashr_2):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -420,6 +560,7 @@ LABEL(gobble_ashr_2):
+ # else
+ 	palignr	$2, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -428,7 +569,7 @@ LABEL(gobble_ashr_2):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -444,8 +585,8 @@ LABEL(nibble_ashr_2):
+ 	test	$0xfffc, %edx
+ 	jnz	LABEL(ashr_2_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$13, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$14, %r11
+ 	jbe	LABEL(ashr_2_exittail)
+ # endif
+ 
+@@ -472,6 +613,7 @@ LABEL(ashr_3):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$13, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -512,6 +654,7 @@ LABEL(gobble_ashr_3):
+ # else
+ 	palignr	$3, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -520,7 +663,7 @@ LABEL(gobble_ashr_3):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -542,6 +685,7 @@ LABEL(gobble_ashr_3):
+ # else
+ 	palignr	$3, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -550,7 +694,7 @@ LABEL(gobble_ashr_3):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -566,8 +710,8 @@ LABEL(nibble_ashr_3):
+ 	test	$0xfff8, %edx
+ 	jnz	LABEL(ashr_3_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$12, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$13, %r11
+ 	jbe	LABEL(ashr_3_exittail)
+ # endif
+ 
+@@ -594,6 +738,7 @@ LABEL(ashr_4):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$12, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -634,6 +779,7 @@ LABEL(gobble_ashr_4):
+ # else
+ 	palignr	$4, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -642,7 +788,7 @@ LABEL(gobble_ashr_4):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -664,6 +810,7 @@ LABEL(gobble_ashr_4):
+ # else
+ 	palignr	$4, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -672,7 +819,7 @@ LABEL(gobble_ashr_4):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -688,8 +835,8 @@ LABEL(nibble_ashr_4):
+ 	test	$0xfff0, %edx
+ 	jnz	LABEL(ashr_4_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$11, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$12, %r11
+ 	jbe	LABEL(ashr_4_exittail)
+ # endif
+ 
+@@ -716,6 +863,7 @@ LABEL(ashr_5):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$11, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -756,6 +904,7 @@ LABEL(gobble_ashr_5):
+ # else
+ 	palignr	$5, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -764,7 +913,7 @@ LABEL(gobble_ashr_5):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -786,6 +935,7 @@ LABEL(gobble_ashr_5):
+ # else
+ 	palignr	$5, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -794,7 +944,7 @@ LABEL(gobble_ashr_5):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -810,8 +960,8 @@ LABEL(nibble_ashr_5):
+ 	test	$0xffe0, %edx
+ 	jnz	LABEL(ashr_5_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$10, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$11, %r11
+ 	jbe	LABEL(ashr_5_exittail)
+ # endif
+ 
+@@ -838,6 +988,7 @@ LABEL(ashr_6):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$10, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -878,6 +1029,7 @@ LABEL(gobble_ashr_6):
+ # else
+ 	palignr	$6, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -886,7 +1038,7 @@ LABEL(gobble_ashr_6):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -908,6 +1060,7 @@ LABEL(gobble_ashr_6):
+ # else
+ 	palignr	$6, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -916,7 +1069,7 @@ LABEL(gobble_ashr_6):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -932,8 +1085,8 @@ LABEL(nibble_ashr_6):
+ 	test	$0xffc0, %edx
+ 	jnz	LABEL(ashr_6_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$9, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$10, %r11
+ 	jbe	LABEL(ashr_6_exittail)
+ # endif
+ 
+@@ -960,6 +1113,7 @@ LABEL(ashr_7):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$9, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1000,6 +1154,7 @@ LABEL(gobble_ashr_7):
+ # else
+ 	palignr	$7, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1008,7 +1163,7 @@ LABEL(gobble_ashr_7):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1030,6 +1185,7 @@ LABEL(gobble_ashr_7):
+ # else
+ 	palignr	$7, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1038,7 +1194,7 @@ LABEL(gobble_ashr_7):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1054,8 +1210,8 @@ LABEL(nibble_ashr_7):
+ 	test	$0xff80, %edx
+ 	jnz	LABEL(ashr_7_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$8, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$9, %r11
+ 	jbe	LABEL(ashr_7_exittail)
+ # endif
+ 
+@@ -1082,6 +1238,7 @@ LABEL(ashr_8):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$8, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1122,6 +1279,7 @@ LABEL(gobble_ashr_8):
+ # else
+ 	palignr	$8, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1130,7 +1288,7 @@ LABEL(gobble_ashr_8):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1152,6 +1310,7 @@ LABEL(gobble_ashr_8):
+ # else
+ 	palignr	$8, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1160,7 +1319,7 @@ LABEL(gobble_ashr_8):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1176,8 +1335,8 @@ LABEL(nibble_ashr_8):
+ 	test	$0xff00, %edx
+ 	jnz	LABEL(ashr_8_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$7, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$8, %r11
+ 	jbe	LABEL(ashr_8_exittail)
+ # endif
+ 
+@@ -1204,6 +1363,7 @@ LABEL(ashr_9):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$7, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1244,6 +1404,7 @@ LABEL(gobble_ashr_9):
+ # else
+ 	palignr	$9, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1252,7 +1413,7 @@ LABEL(gobble_ashr_9):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1274,6 +1435,7 @@ LABEL(gobble_ashr_9):
+ # else
+ 	palignr	$9, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1282,7 +1444,7 @@ LABEL(gobble_ashr_9):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1298,8 +1460,8 @@ LABEL(nibble_ashr_9):
+ 	test	$0xfe00, %edx
+ 	jnz	LABEL(ashr_9_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$6, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$7, %r11
+ 	jbe	LABEL(ashr_9_exittail)
+ # endif
+ 
+@@ -1326,6 +1488,7 @@ LABEL(ashr_10):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$6, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1366,6 +1529,7 @@ LABEL(gobble_ashr_10):
+ # else
+ 	palignr	$10, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1374,7 +1538,7 @@ LABEL(gobble_ashr_10):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1396,6 +1560,7 @@ LABEL(gobble_ashr_10):
+ # else
+ 	palignr	$10, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1404,7 +1569,7 @@ LABEL(gobble_ashr_10):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1420,8 +1585,8 @@ LABEL(nibble_ashr_10):
+ 	test	$0xfc00, %edx
+ 	jnz	LABEL(ashr_10_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$5, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$6, %r11
+ 	jbe	LABEL(ashr_10_exittail)
+ # endif
+ 
+@@ -1448,6 +1613,7 @@ LABEL(ashr_11):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$5, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1488,6 +1654,7 @@ LABEL(gobble_ashr_11):
+ # else
+ 	palignr	$11, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1496,7 +1663,7 @@ LABEL(gobble_ashr_11):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1518,6 +1685,7 @@ LABEL(gobble_ashr_11):
+ # else
+ 	palignr	$11, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1526,7 +1694,7 @@ LABEL(gobble_ashr_11):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1542,8 +1710,8 @@ LABEL(nibble_ashr_11):
+ 	test	$0xf800, %edx
+ 	jnz	LABEL(ashr_11_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$4, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$5, %r11
+ 	jbe	LABEL(ashr_11_exittail)
+ # endif
+ 
+@@ -1570,6 +1738,7 @@ LABEL(ashr_12):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$4, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1610,6 +1779,7 @@ LABEL(gobble_ashr_12):
+ # else
+ 	palignr	$12, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1618,7 +1788,7 @@ LABEL(gobble_ashr_12):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1640,6 +1810,7 @@ LABEL(gobble_ashr_12):
+ # else
+ 	palignr	$12, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1648,7 +1819,7 @@ LABEL(gobble_ashr_12):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1664,8 +1835,8 @@ LABEL(nibble_ashr_12):
+ 	test	$0xf000, %edx
+ 	jnz	LABEL(ashr_12_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$3, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$4, %r11
+ 	jbe	LABEL(ashr_12_exittail)
+ # endif
+ 
+@@ -1692,6 +1863,7 @@ LABEL(ashr_13):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$3, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1732,6 +1904,7 @@ LABEL(gobble_ashr_13):
+ # else
+ 	palignr	$13, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1740,7 +1913,7 @@ LABEL(gobble_ashr_13):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1762,6 +1935,7 @@ LABEL(gobble_ashr_13):
+ # else
+ 	palignr	$13, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1770,7 +1944,7 @@ LABEL(gobble_ashr_13):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1786,8 +1960,8 @@ LABEL(nibble_ashr_13):
+ 	test	$0xe000, %edx
+ 	jnz	LABEL(ashr_13_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$2, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$3, %r11
+ 	jbe	LABEL(ashr_13_exittail)
+ # endif
+ 
+@@ -1814,6 +1988,7 @@ LABEL(ashr_14):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq  $2, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1854,6 +2029,7 @@ LABEL(gobble_ashr_14):
+ # else
+ 	palignr	$14, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1862,7 +2038,7 @@ LABEL(gobble_ashr_14):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1884,6 +2060,7 @@ LABEL(gobble_ashr_14):
+ # else
+ 	palignr	$14, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1892,7 +2069,7 @@ LABEL(gobble_ashr_14):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP | defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -1908,8 +2085,8 @@ LABEL(nibble_ashr_14):
+ 	test	$0xc000, %edx
+ 	jnz	LABEL(ashr_14_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	cmp	$1, %r11
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmp	$2, %r11
+ 	jbe	LABEL(ashr_14_exittail)
+ # endif
+ 
+@@ -1936,6 +2113,7 @@ LABEL(ashr_15):
+ 	movdqa	(%rsi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pslldq	$1, %xmm2
++	TOLOWER (%xmm1, %xmm2)
+ 	pcmpeqb	%xmm1, %xmm2
+ 	psubb	%xmm0, %xmm2
+ 	pmovmskb %xmm2, %r9d
+@@ -1978,6 +2156,7 @@ LABEL(gobble_ashr_15):
+ # else
+ 	palignr	$15, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -1986,7 +2165,7 @@ LABEL(gobble_ashr_15):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -2008,6 +2187,7 @@ LABEL(gobble_ashr_15):
+ # else
+ 	palignr	$15, %xmm3, %xmm2	/* merge into one 16byte value */
+ # endif
++	TOLOWER (%xmm1, %xmm2)
+ 
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pcmpeqb	%xmm2, %xmm1
+@@ -2016,7 +2196,7 @@ LABEL(gobble_ashr_15):
+ 	sub	$0xffff, %edx
+ 	jnz	LABEL(exit)
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	$16, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+@@ -2032,9 +2212,9 @@ LABEL(nibble_ashr_15):
+ 	test	$0x8000, %edx
+ 	jnz	LABEL(ashr_15_exittail)
+ 
+-# ifdef USE_AS_STRNCMP
+-	test	%r11, %r11
+-	je	LABEL(ashr_15_exittail)
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
++	cmpq	$1, %r11
++	jbe	LABEL(ashr_15_exittail)
+ # endif
+ 
+ 	pxor	%xmm0, %xmm0
+@@ -2049,6 +2229,7 @@ LABEL(ashr_15_exittail):
+ 
+ 	.p2align 4
+ LABEL(aftertail):
++	TOLOWER (%xmm1, %xmm3)
+ 	pcmpeqb	%xmm3, %xmm1
+ 	psubb	%xmm0, %xmm1
+ 	pmovmskb %xmm1, %edx
+@@ -2069,13 +2250,19 @@ LABEL(ret):
+ LABEL(less16bytes):
+ 	bsf	%rdx, %rdx		/* find and store bit index in %rdx */
+ 
+-# ifdef USE_AS_STRNCMP
++# if defined USE_AS_STRNCMP || defined USE_AS_STRNCASECMP_L
+ 	sub	%rdx, %r11
+ 	jbe	LABEL(strcmp_exitz)
+ # endif
+ 	movzbl	(%rsi, %rdx), %ecx
+ 	movzbl	(%rdi, %rdx), %eax
+ 
++# if defined USE_AS_STRCASECMP_L || defined USE_AS_STRNCASECMP_L
++	leaq	_nl_C_LC_CTYPE_tolower+128*4(%rip), %rdx
++	movl	(%rdx,%rcx,4), %ecx
++	movl	(%rdx,%rax,4), %eax
++# endif
++
+ 	sub	%ecx, %eax
+ 	ret
+ 
+@@ -2088,6 +2275,12 @@ LABEL(Byte0):
+ 	movzx	(%rsi), %ecx
+ 	movzx	(%rdi), %eax
+ 
++# if defined USE_AS_STRCASECMP_L || defined USE_AS_STRNCASECMP_L
++	leaq	_nl_C_LC_CTYPE_tolower+128*4(%rip), %rdx
++	movl	(%rdx,%rcx,4), %ecx
++	movl	(%rdx,%rax,4), %eax
++# endif
++
+ 	sub	%ecx, %eax
+ 	ret
+ END (BP_SYM (STRCMP))
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strncase.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strncase.S
+@@ -0,0 +1 @@
++/* In strncase_l.S.  */
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strncase_l-nonascii.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strncase_l-nonascii.c
+@@ -0,0 +1,8 @@
++#include <string.h>
++
++extern int __strncasecmp_l_nonascii (__const char *__s1, __const char *__s2,
++				     size_t __n, __locale_t __loc);
++
++#define __strncasecmp_l __strncasecmp_l_nonascii
++#define USE_IN_EXTENDED_LOCALE_MODEL    1
++#include <string/strncase.c>
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strncase_l.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strncase_l.S
+@@ -0,0 +1,6 @@
++#define STRCMP __strncasecmp_l
++#define USE_AS_STRNCASECMP_L
++#include "strcmp.S"
++
++weak_alias (__strncasecmp_l, strncasecmp_l)
++libc_hidden_def (strncasecmp_l)
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strnlen.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strnlen.S
+@@ -0,0 +1,64 @@
++/* strnlen(str,maxlen) -- determine the length of the string STR up to MAXLEN.
++   Copyright (C) 2010 Free Software Foundation, Inc.
++   Contributed by Ulrich Drepper <drepper@redhat.com>.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#include <sysdep.h>
++
++
++	.text
++ENTRY(__strnlen)
++	movq	%rsi, %rax
++	testq	%rsi, %rsi
++	jz	3f
++	pxor	%xmm2, %xmm2
++	movq	%rdi, %rcx
++	movq	%rdi, %r8
++	movq	$16, %r9
++	andq	$~15, %rdi
++	movdqa	%xmm2, %xmm1
++	pcmpeqb	(%rdi), %xmm2
++	orl	$0xffffffff, %r10d
++	subq	%rdi, %rcx
++	shll	%cl, %r10d
++	subq	%rcx, %r9
++	pmovmskb %xmm2, %edx
++	andl	%r10d, %edx
++	jnz	1f
++	subq	%r9, %rsi
++	jbe	3f
++
++2:	movdqa	16(%rdi), %xmm0
++	leaq	16(%rdi), %rdi
++	pcmpeqb	%xmm1, %xmm0
++	pmovmskb %xmm0, %edx
++	testl	%edx, %edx
++	jnz	1f
++	subq	$16, %rsi
++	jnbe	2b
++3:	ret
++
++1:	subq	%r8, %rdi
++	bsfl	%edx, %edx
++	addq	%rdi, %rdx
++	cmpq	%rdx, %rax
++	cmovnbq	%rdx, %rax
++	ret
++END(__strnlen)
++weak_alias (__strnlen, strnlen)
++libc_hidden_def (strnlen)
+Index: glibc-2.12-2-gc4ccff1/wcsmbs/wcsatcliff.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/wcsmbs/wcsatcliff.c
++++ glibc-2.12-2-gc4ccff1/wcsmbs/wcsatcliff.c
+@@ -16,6 +16,8 @@
+ #define MEMCPY wmemcpy
+ #define MEMPCPY wmempcpy
+ #define MEMCHR wmemchr
++#define STRCMP wcscmp
++#define STRNCMP wcsncmp
+ 
+ 
+ #include "../string/stratcliff.c"

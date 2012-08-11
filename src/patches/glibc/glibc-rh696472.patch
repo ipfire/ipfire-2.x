@@ -1,0 +1,36 @@
+commit 3d29045b5e8329d97693eda8d98f1d1e60b99c8f
+Author: H.J. Lu <hongjiu.lu@intel.com>
+Date:   Fri Jun 3 07:01:25 2011 -0400
+
+    Assume Intel Core i3/i5/i7 processor if AVX is available
+
+2011-06-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features):
+	Assume Intel Core i3/i5/i7 processor if AVX is available.
+
+diff --git a/sysdeps/x86_64/multiarch/init-arch.c b/sysdeps/x86_64/multiarch/init-arch.c
+index 34ec2df..809d105 100644
+--- a/sysdeps/x86_64/multiarch/init-arch.c
++++ b/sysdeps/x86_64/multiarch/init-arch.c
+@@ -74,6 +74,7 @@ __init_cpu_features (void)
+ 	}
+       else if (family == 0x06)
+ 	{
++	  ecx = __cpu_features.cpuid[COMMON_CPUID_INDEX_1].ecx;
+ 	  model += extended_model;
+ 	  switch (model)
+ 	    {
+@@ -83,6 +84,12 @@ __init_cpu_features (void)
+ 	      __cpu_features.feature[index_Slow_BSF] |= bit_Slow_BSF;
+ 	      break;
+ 
++	    default:
++	      /* Unknown family 0x06 processors.  Assuming this is one
++	         of Core i3/i5/i7 processors if AVX is available.  */
++	      if ((ecx & bit_AVX) == 0)
++		break;
++
+ 	    case 0x1a:
+ 	    case 0x1e:
+ 	    case 0x1f:

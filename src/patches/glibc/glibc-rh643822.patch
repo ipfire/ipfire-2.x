@@ -1,0 +1,64 @@
+2010-12-09  Andreas Schwab  <schwab@redhat.com>
+
+	* elf/dl-object.c (_dl_new_object): Ignore origin of privileged
+	program.
+
+2010-10-18  Andreas Schwab  <schwab@redhat.com>
+
+	* elf/dl-open.c (dl_open_worker): Don't expand DST here, let
+	_dl_map_object do it.
+
+Index: glibc-2.12-2-gc4ccff1/elf/dl-object.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-object.c
++++ glibc-2.12-2-gc4ccff1/elf/dl-object.c
+@@ -214,6 +214,9 @@ _dl_new_object (char *realname, const ch
+     out:
+       new->l_origin = origin;
+     }
++  else if (INTUSE(__libc_enable_secure) && type == lt_executable)
++    /* The origin of a privileged program cannot be trusted.  */
++    new->l_origin = (char *) -1;
+ 
+   return new;
+ }
+Index: glibc-2.12-2-gc4ccff1/elf/dl-open.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-open.c
++++ glibc-2.12-2-gc4ccff1/elf/dl-open.c
+@@ -221,35 +221,6 @@ dl_open_worker (void *a)
+ 
+   assert (_dl_debug_initialize (0, args->nsid)->r_state == RT_CONSISTENT);
+ 
+-  /* Maybe we have to expand a DST.  */
+-  if (__builtin_expect (dst != NULL, 0))
+-    {
+-      size_t len = strlen (file);
+-
+-      /* Determine how much space we need.  We have to allocate the
+-	 memory locally.  */
+-      size_t required = DL_DST_REQUIRED (call_map, file, len,
+-					 _dl_dst_count (dst, 0));
+-
+-      /* Get space for the new file name.  */
+-      char *new_file = (char *) alloca (required + 1);
+-
+-      /* Generate the new file name.  */
+-      _dl_dst_substitute (call_map, file, new_file, 0);
+-
+-      /* If the substitution failed don't try to load.  */
+-      if (*new_file == '\0')
+-	_dl_signal_error (0, "dlopen", NULL,
+-			  N_("empty dynamic string token substitution"));
+-
+-      /* Now we have a new file name.  */
+-      file = new_file;
+-
+-      /* It does not matter whether call_map is set even if we
+-	 computed it only because of the DST.  Since the path contains
+-	 a slash the value is not used.  See dl-load.c.  */
+-    }
+-
+   /* Load the named object.  */
+   struct link_map *new;
+   args->map = new = _dl_map_object (call_map, file, 0, lt_loaded, 0,

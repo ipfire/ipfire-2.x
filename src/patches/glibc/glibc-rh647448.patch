@@ -1,0 +1,58 @@
+2010-10-25  Ulrich Drepper  <drepper@redhat.com>
+
+	[BZ #12159]
+	* sysdeps/x86_64/multiarch/strchr.S: Fix propagation of search byte
+	into all bytes of SSE register.
+	Patch by Richard Li <richardpku@gmail.com>.
+
+Index: glibc-2.12-2-gc4ccff1/string/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/string/Makefile
++++ glibc-2.12-2-gc4ccff1/string/Makefile
+@@ -55,7 +55,7 @@ tests		:= tester inl-tester noinl-tester
+ 		   tst-strtok tst-strxfrm bug-strcoll1 tst-strfry	\
+ 		   bug-strtok1 $(addprefix test-,$(strop-tests))	\
+ 		   bug-envz1 tst-strxfrm2 tst-endian tst-svc2		\
+-		   bug-strstr1
++		   bug-strstr1 bug-strchr1
+ distribute	:= memcopy.h pagecopy.h tst-svc.expect test-string.h	\
+ 		   str-two-way.h
+ 
+Index: glibc-2.12-2-gc4ccff1/string/bug-strchr1.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/string/bug-strchr1.c
+@@ -0,0 +1,14 @@
++#include <stdio.h>
++#include <string.h>
++
++static int
++do_test (void)
++{
++  char s[] __attribute__((aligned(16))) = "\xff";
++  char *p = strchr (s, '\xfe');
++  printf ("%p\n", p);
++  return p != NULL;
++}
++
++#define TEST_FUNCTION do_test ()
++#include "../test-skeleton.c"
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strchr.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/multiarch/strchr.S
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strchr.S
+@@ -87,13 +87,13 @@ __strchr_sse42:
+ 	pxor	%xmm2, %xmm2
+ 	movd	%esi, %xmm1
+ 	movl	%edi, %ecx
++	pshufb  %xmm2, %xmm1
+ 	andl	$15, %ecx
+ 	movq	%rdi, %r8
+ 	je	L(aligned_start)
+ 
+ /* Handle unaligned string.  */
+ 	andq	$-16, %r8
+-	pshufb  %xmm2, %xmm1
+ 	movdqa	(%r8), %xmm0
+ 	pcmpeqb	 %xmm0, %xmm2
+ 	pcmpeqb	 %xmm1, %xmm0

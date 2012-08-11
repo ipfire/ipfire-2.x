@@ -1,0 +1,14 @@
+--- a/nptl/pthread_create.c	2011-12-13 11:41:37.000000000 -0700
++++ b/nptl/pthread_create.c	2011-12-14 10:03:13.000000000 -0700
+@@ -440,8 +440,9 @@
+   int err = ALLOCATE_STACK (iattr, &pd);
+   if (__builtin_expect (err != 0, 0))
+     /* Something went wrong.  Maybe a parameter of the attributes is
+-       invalid or we could not allocate memory.  */
+-    return err;
++       invalid or we could not allocate memory.  Note we have to
++       translate error codes.  */
++    return err == ENOMEM ? EAGAIN : err;
+ 
+ 
+   /* Initialize the TCB.  All initializations with zero should be

@@ -1,0 +1,173 @@
+Index: glibc-2.12-2-gc4ccff1/malloc/arena.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/malloc/arena.c
++++ glibc-2.12-2-gc4ccff1/malloc/arena.c
+@@ -870,7 +870,7 @@ heap_trim(heap, pad) heap_info *heap; si
+     heap = prev_heap;
+     if(!prev_inuse(p)) { /* consolidate backward */
+       p = prev_chunk(p);
+-      unlink(p, bck, fwd);
++      unlink(ar_ptr, p, bck, fwd);
+     }
+     assert(((unsigned long)((char*)p + new_size) & (pagesz-1)) == 0);
+     assert( ((char*)p + new_size) == ((char*)heap + heap->size) );
+Index: glibc-2.12-2-gc4ccff1/malloc/hooks.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/malloc/hooks.c
++++ glibc-2.12-2-gc4ccff1/malloc/hooks.c
+@@ -219,7 +219,9 @@ top_check()
+ 	(char*)t + chunksize(t) == mp_.sbrk_base + main_arena.system_mem)))
+     return 0;
+ 
++  mutex_unlock(&main_arena);
+   malloc_printerr (check_action, "malloc: top chunk is corrupt", t);
++  mutex_lock(&main_arena);
+ 
+   /* Try to set up a new top chunk. */
+   brk = MORECORE(0);
+Index: glibc-2.12-2-gc4ccff1/malloc/malloc.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/malloc/malloc.c
++++ glibc-2.12-2-gc4ccff1/malloc/malloc.c
+@@ -2109,12 +2109,14 @@ typedef struct malloc_chunk* mbinptr;
+ #define last(b)      ((b)->bk)
+ 
+ /* Take a chunk off a bin list */
+-#define unlink(P, BK, FD) {                                            \
++#define unlink(AV, P, BK, FD) {					       \
+   FD = P->fd;                                                          \
+   BK = P->bk;                                                          \
+-  if (__builtin_expect (FD->bk != P || BK->fd != P, 0))                \
++  if (__builtin_expect (FD->bk != P || BK->fd != P, 0)) {	       \
++    mutex_unlock(&(AV)->mutex);					       \
+     malloc_printerr (check_action, "corrupted double-linked list", P); \
+-  else {                                                               \
++    mutex_lock(&(AV)->mutex);					       \
++  } else {							       \
+     FD->bk = BK;                                                       \
+     BK->fd = FD;                                                       \
+     if (!in_smallbin_range (P->size)				       \
+@@ -3257,7 +3259,9 @@ static Void_t* sYSMALLOc(nb, av) INTERNA
+ 
+     else if (contiguous(av) && old_size && brk < old_end) {
+       /* Oops!  Someone else killed our space..  Can't touch anything.  */
++      mutex_unlock(&av->mutex);
+       malloc_printerr (3, "break adjusted to free malloc space", brk);
++      mutex_lock(&av->mutex);
+     }
+ 
+     /*
+@@ -4305,7 +4309,9 @@ _int_malloc(mstate av, size_t bytes)
+ 	{
+ 	  errstr = "malloc(): memory corruption (fast)";
+ 	errout:
++	  mutex_unlock(&av->mutex);
+ 	  malloc_printerr (check_action, errstr, chunk2mem (victim));
++	  mutex_lock(&av->mutex);
+ 	  return NULL;
+ 	}
+ #ifndef ATOMIC_FASTBINS
+@@ -4393,8 +4399,12 @@ _int_malloc(mstate av, size_t bytes)
+       bck = victim->bk;
+       if (__builtin_expect (victim->size <= 2 * SIZE_SZ, 0)
+ 	  || __builtin_expect (victim->size > av->system_mem, 0))
+-	malloc_printerr (check_action, "malloc(): memory corruption",
+-			 chunk2mem (victim));
++	{
++	  void *p = chunk2mem(victim);
++	  mutex_unlock(&av->mutex);
++	  malloc_printerr (check_action, "malloc(): memory corruption", p);
++	  mutex_lock(&av->mutex);
++	}
+       size = chunksize(victim);
+ 
+       /*
+@@ -4535,7 +4545,7 @@ _int_malloc(mstate av, size_t bytes)
+ 	  victim = victim->fd;
+ 
+ 	remainder_size = size - nb;
+-	unlink(victim, bck, fwd);
++	unlink(av, victim, bck, fwd);
+ 
+ 	/* Exhaust */
+ 	if (remainder_size < MINSIZE)  {
+@@ -4633,7 +4643,7 @@ _int_malloc(mstate av, size_t bytes)
+ 	remainder_size = size - nb;
+ 
+ 	/* unlink */
+-	unlink(victim, bck, fwd);
++	unlink(av, victim, bck, fwd);
+ 
+ 	/* Exhaust */
+ 	if (remainder_size < MINSIZE) {
+@@ -4789,10 +4799,14 @@ _int_free(mstate av, mchunkptr p)
+       errstr = "free(): invalid pointer";
+     errout:
+ #ifdef ATOMIC_FASTBINS
+-      if (! have_lock && locked)
++      if (have_lock || locked)
+ 	(void)mutex_unlock(&av->mutex);
+ #endif
+       malloc_printerr (check_action, errstr, chunk2mem(p));
++#ifdef ATOMIC_FASTBINS
++      if (have_lock)
++	mutex_lock(&av->mutex);
++#endif
+       return;
+     }
+   /* We know that each chunk is at least MINSIZE bytes in size.  */
+@@ -4961,7 +4975,7 @@ _int_free(mstate av, mchunkptr p)
+       prevsize = p->prev_size;
+       size += prevsize;
+       p = chunk_at_offset(p, -((long) prevsize));
+-      unlink(p, bck, fwd);
++      unlink(av, p, bck, fwd);
+     }
+ 
+     if (nextchunk != av->top) {
+@@ -4970,7 +4984,7 @@ _int_free(mstate av, mchunkptr p)
+ 
+       /* consolidate forward */
+       if (!nextinuse) {
+-	unlink(nextchunk, bck, fwd);
++	unlink(av, nextchunk, bck, fwd);
+ 	size += nextsize;
+       } else
+ 	clear_inuse_bit_at_offset(nextchunk, 0);
+@@ -5158,7 +5172,7 @@ static void malloc_consolidate(av) mstat
+ 	    prevsize = p->prev_size;
+ 	    size += prevsize;
+ 	    p = chunk_at_offset(p, -((long) prevsize));
+-	    unlink(p, bck, fwd);
++	    unlink(av, p, bck, fwd);
+ 	  }
+ 
+ 	  if (nextchunk != av->top) {
+@@ -5166,7 +5180,7 @@ static void malloc_consolidate(av) mstat
+ 
+ 	    if (!nextinuse) {
+ 	      size += nextsize;
+-	      unlink(nextchunk, bck, fwd);
++	      unlink(av, nextchunk, bck, fwd);
+ 	    } else
+ 	      clear_inuse_bit_at_offset(nextchunk, 0);
+ 
+@@ -5235,7 +5249,9 @@ _int_realloc(mstate av, mchunkptr oldp, 
+     {
+       errstr = "realloc(): invalid old size";
+     errout:
++      mutex_unlock(&av->mutex);
+       malloc_printerr (check_action, errstr, chunk2mem(oldp));
++      mutex_lock(&av->mutex);
+       return NULL;
+     }
+ 
+@@ -5282,7 +5298,7 @@ _int_realloc(mstate av, mchunkptr oldp, 
+ 	       (unsigned long)(newsize = oldsize + nextsize) >=
+ 	       (unsigned long)(nb)) {
+ 	newp = oldp;
+-	unlink(next, bck, fwd);
++	unlink(av, next, bck, fwd);
+       }
+ 
+       /* allocate, copy, free */

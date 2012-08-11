@@ -1,0 +1,86 @@
+2011-03-28  Andreas Schwab  <schwab@linux-m68k.org>
+
+	* sysdeps/powerpc/powerpc32/power4/strncmp.S: Don't read past
+	differing bytes.
+	* sysdeps/powerpc/powerpc64/power4/strncmp.S: Likewise.
+
+diff --git a/sysdeps/powerpc/powerpc32/power4/strncmp.S b/sysdeps/powerpc/powerpc32/power4/strncmp.S
+index fc0835e..f5d47af 100644
+--- a/sysdeps/powerpc/powerpc32/power4/strncmp.S
++++ b/sysdeps/powerpc/powerpc32/power4/strncmp.S
+@@ -139,30 +139,31 @@ L(u1):
+ 	bdz	L(u4)
+ 	cmpw	rWORD1, rWORD2
+ 	beq-	cr1, L(u4)
++	bne-	L(u4)
+ 	lbzu    rWORD3, 1(rSTR1)
+ 	lbzu	rWORD4, 1(rSTR2)
+-	bne-	L(u4)
+ 	cmpwi	cr1, rWORD3, 0
+ 	bdz	L(u3)
+ 	cmpw	rWORD3, rWORD4
+ 	beq-    cr1, L(u3)
++	bne-    L(u3)
+ 	lbzu	rWORD1, 1(rSTR1)
+ 	lbzu	rWORD2, 1(rSTR2)
+-	bne-    L(u3)
+ 	cmpwi	cr1, rWORD1, 0
+ 	bdz	L(u4)
+ 	cmpw	rWORD1, rWORD2
+ 	beq-	cr1, L(u4)
++	bne-	L(u4)
+ 	lbzu	rWORD3, 1(rSTR1)
+ 	lbzu	rWORD4, 1(rSTR2)
+-	bne-	L(u4)
+ 	cmpwi	cr1, rWORD3, 0
+ 	bdz	L(u3)
+ 	cmpw	rWORD3, rWORD4
+ 	beq-    cr1, L(u3)
++	bne-	L(u3)
+ 	lbzu	rWORD1, 1(rSTR1)
+ 	lbzu	rWORD2, 1(rSTR2)
+-	beq+    L(u1)
++	b       L(u1)
+ 
+ L(u3):  sub     rRTN, rWORD3, rWORD4
+         blr
+diff --git a/sysdeps/powerpc/powerpc64/power4/strncmp.S b/sysdeps/powerpc/powerpc64/power4/strncmp.S
+index 7a1665d..94ae85b 100644
+--- a/sysdeps/powerpc/powerpc64/power4/strncmp.S
++++ b/sysdeps/powerpc/powerpc64/power4/strncmp.S
+@@ -143,30 +143,31 @@ L(u1):
+ 	bdz	L(u4)
+ 	cmpd	rWORD1, rWORD2
+ 	beq-	cr1, L(u4)
++	bne-	L(u4)
+ 	lbzu    rWORD3, 1(rSTR1)
+ 	lbzu	rWORD4, 1(rSTR2)
+-	bne-	L(u4)
+ 	cmpdi	cr1, rWORD3, 0
+ 	bdz	L(u3)
+ 	cmpd	rWORD3, rWORD4
+ 	beq-    cr1, L(u3)
++	bne-    L(u3)
+ 	lbzu	rWORD1, 1(rSTR1)
+ 	lbzu	rWORD2, 1(rSTR2)
+-	bne-    L(u3)
+ 	cmpdi	cr1, rWORD1, 0
+ 	bdz	L(u4)
+ 	cmpd	rWORD1, rWORD2
+ 	beq-	cr1, L(u4)
++	bne-	L(u4)
+ 	lbzu	rWORD3, 1(rSTR1)
+ 	lbzu	rWORD4, 1(rSTR2)
+-	bne-	L(u4)
+ 	cmpdi	cr1, rWORD3, 0
+ 	bdz	L(u3)
+ 	cmpd	rWORD3, rWORD4
+ 	beq-    cr1, L(u3)
++	bne-    L(u3)
+ 	lbzu	rWORD1, 1(rSTR1)
+ 	lbzu	rWORD2, 1(rSTR2)
+-	beq+    L(u1)
++	b       L(u1)
+ 
+ L(u3):  sub     rRTN, rWORD3, rWORD4
+         blr

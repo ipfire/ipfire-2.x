@@ -1,0 +1,45 @@
+2010-11-24  Andreas Schwab  <schwab@redhat.com>
+
+	* resolv/nss_dns/dns-host.c (getanswer_r): Don't handle ttl == 0
+	specially.
+	(gaih_getanswer_slice): Likewise.
+
+Index: glibc-2.12-2-gc4ccff1/resolv/nss_dns/dns-host.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/resolv/nss_dns/dns-host.c
++++ glibc-2.12-2-gc4ccff1/resolv/nss_dns/dns-host.c
+@@ -599,7 +599,6 @@ getanswer_r (const querybuf *answer, int
+   int (*name_ok) (const char *);
+   u_char packtmp[NS_MAXCDNAME];
+   int have_to_map = 0;
+-  int32_t ttl = 0;
+   uintptr_t pad = -(uintptr_t) buffer % __alignof__ (struct host_data);
+   buffer += pad;
+   if (__builtin_expect (buflen < sizeof (struct host_data) + pad, 0))
+@@ -733,7 +732,7 @@ getanswer_r (const querybuf *answer, int
+       cp += INT16SZ;			/* type */
+       class = __ns_get16 (cp);
+       cp += INT16SZ;			/* class */
+-      ttl = __ns_get32 (cp);
++      int32_t ttl = __ns_get32 (cp);
+       cp += INT32SZ;			/* TTL */
+       n = __ns_get16 (cp);
+       cp += INT16SZ;			/* len */
+@@ -907,7 +906,7 @@ getanswer_r (const querybuf *answer, int
+ 	    {
+ 	      register int nn;
+ 
+-	      if (ttlp != NULL && ttl != 0)
++	      if (ttlp != NULL)
+ 		*ttlp = ttl;
+ 	      if (canonp != NULL)
+ 		*canonp = bp;
+@@ -1163,7 +1162,7 @@ gaih_getanswer_slice (const querybuf *an
+ 
+       if (*firstp)
+ 	{
+-	  if (ttl != 0 && ttlp != NULL)
++	  if (ttlp != NULL)
+ 	    *ttlp = ttl;
+ 
+ 	  (*pat)->name = canon ?: h_name;

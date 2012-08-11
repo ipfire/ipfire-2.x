@@ -1,0 +1,21 @@
+commit 6a5ee1029b3966c5ae9adaaa881e255b2880f511
+Author: Ulrich Drepper <drepper@gmail.com>
+Date:   Sun Mar 6 00:01:50 2011 -0500
+
+    Fix loading first object along a path when tracing.
+
+diff --git a/elf/dl-load.c b/elf/dl-load.c
+index 1ad16a0..f866066 100644
+--- a/elf/dl-load.c
++++ b/elf/dl-load.c
+@@ -2111,7 +2111,9 @@ _dl_map_object (struct link_map *loader, const char *name,
+ 	    {
+ #ifdef SHARED
+ 	      // XXX Correct to unconditionally default to namespace 0?
+-	      l = loader ?: GL(dl_ns)[LM_ID_BASE]._ns_loaded;
++	      l = (loader
++		   ?: GL(dl_ns)[LM_ID_BASE]._ns_loaded
++		   ?: &GL(dl_rtld_map));
+ #else
+ 	      l = loader;
+ #endif

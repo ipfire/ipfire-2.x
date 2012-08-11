@@ -1,0 +1,114 @@
+diff -rup a/malloc/arena.c b/malloc/arena.c
+--- a/malloc/arena.c	2012-03-02 10:22:47.025002715 -0700
++++ b/malloc/arena.c	2012-03-02 10:27:47.442361529 -0700
+@@ -123,14 +123,14 @@ int __malloc_initialized = -1;
+   if(ptr) \
+     (void)mutex_lock(&ptr->mutex); \
+   else \
+-    ptr = arena_get2(ptr, (size)); \
++    ptr = arena_get2(ptr, (size), false); \
+ } while(0)
+ #else
+ #define arena_lock(ptr, size) do { \
+   if(ptr && !mutex_trylock(&ptr->mutex)) { \
+     THREAD_STAT(++(ptr->stat_lock_direct)); \
+   } else \
+-    ptr = arena_get2(ptr, (size)); \
++    ptr = arena_get2(ptr, (size), false); \
+ } while(0)
+ #endif
+ 
+@@ -982,7 +982,7 @@ get_free_list (void)
+ 
+ 
+ static mstate
+-reused_arena (void)
++reused_arena (bool retrying)
+ {
+   mstate result;
+   static mstate next_to_use;
+@@ -999,6 +999,15 @@ reused_arena (void)
+     }
+   while (result != next_to_use);
+ 
++  /* If we are retrying due to a failure to allocate in the main
++     arena, don't wait for the main arena to become available, select
++     another.
++
++     To really fix this right we would have to try the allocation
++     in every other arena, but that seems like severe overkill.  */
++  if (retrying && result == &main_arena)
++    result = result->next;
++
+   /* No arena available.  Wait for the next in line.  */
+   (void)mutex_lock(&result->mutex);
+ 
+@@ -1014,9 +1023,9 @@ reused_arena (void)
+ static mstate
+ internal_function
+ #if __STD_C
+-arena_get2(mstate a_tsd, size_t size)
++arena_get2(mstate a_tsd, size_t size, bool retrying)
+ #else
+-arena_get2(a_tsd, size) mstate a_tsd; size_t size;
++arena_get2(a_tsd, size, retrying) mstate a_tsd; size_t size; bool retrying
+ #endif
+ {
+   mstate a;
+@@ -1055,7 +1064,7 @@ arena_get2(a_tsd, size) mstate a_tsd; si
+ 	    catomic_decrement (&narenas);
+ 	}
+       else
+-	a = reused_arena ();
++	a = reused_arena (retrying);
+     }
+ #else
+   if(!a_tsd)
+diff -rup a/malloc/malloc.c b/malloc/malloc.c
+--- a/malloc/malloc.c	2012-03-02 10:22:47.061002519 -0700
++++ b/malloc/malloc.c	2012-03-02 10:23:53.151643863 -0700
+@@ -3671,7 +3671,7 @@ public_mALLOc(size_t bytes)
+       /* ... or sbrk() has failed and there is still a chance to mmap() */
+       mstate prev = ar_ptr->next ? ar_ptr : 0;
+       (void)mutex_unlock(&ar_ptr->mutex);
+-      ar_ptr = arena_get2(prev, bytes);
++      ar_ptr = arena_get2(prev, bytes, true);
+       if(ar_ptr) {
+ 	victim = _int_malloc(ar_ptr, bytes);
+ 	(void)mutex_unlock(&ar_ptr->mutex);
+@@ -3892,7 +3892,7 @@ public_mEMALIGn(size_t alignment, size_t
+       /* ... or sbrk() has failed and there is still a chance to mmap() */
+       mstate prev = ar_ptr->next ? ar_ptr : 0;
+       (void)mutex_unlock(&ar_ptr->mutex);
+-      ar_ptr = arena_get2(prev, bytes);
++      ar_ptr = arena_get2(prev, bytes, true);
+       if(ar_ptr) {
+ 	p = _int_memalign(ar_ptr, alignment, bytes);
+ 	(void)mutex_unlock(&ar_ptr->mutex);
+@@ -3943,7 +3943,7 @@ public_vALLOc(size_t bytes)
+       /* ... or sbrk() has failed and there is still a chance to mmap() */
+       mstate prev = ar_ptr->next ? ar_ptr : 0;
+       (void)mutex_unlock(&ar_ptr->mutex);
+-      ar_ptr = arena_get2(prev, bytes);
++      ar_ptr = arena_get2(prev, bytes, true);
+       if(ar_ptr) {
+ 	p = _int_memalign(ar_ptr, pagesz, bytes);
+ 	(void)mutex_unlock(&ar_ptr->mutex);
+@@ -3992,7 +3992,7 @@ public_pVALLOc(size_t bytes)
+       /* ... or sbrk() has failed and there is still a chance to mmap() */
+       mstate prev = ar_ptr->next ? ar_ptr : 0;
+       (void)mutex_unlock(&ar_ptr->mutex);
+-      ar_ptr = arena_get2(prev, bytes + 2*pagesz + MINSIZE);
++      ar_ptr = arena_get2(prev, bytes + 2*pagesz + MINSIZE, true);
+       if(ar_ptr) {
+ 	p = _int_memalign(ar_ptr, pagesz, rounded_bytes);
+ 	(void)mutex_unlock(&ar_ptr->mutex);
+@@ -4086,7 +4086,7 @@ public_cALLOc(size_t n, size_t elem_size
+       /* ... or sbrk() has failed and there is still a chance to mmap() */
+       mstate prev = av->next ? av : 0;
+       (void)mutex_unlock(&av->mutex);
+-      av = arena_get2(prev, sz);
++      av = arena_get2(prev, sz, true);
+       if(av) {
+ 	mem = _int_malloc(av, sz);
+ 	(void)mutex_unlock(&av->mutex);

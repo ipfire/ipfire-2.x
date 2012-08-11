@@ -1,0 +1,23 @@
+diff -rup c/resolv/res_send.c d/resolv/res_send.c
+--- c/resolv/res_send.c	2012-01-01 05:16:32.000000000 -0700
++++ d/resolv/res_send.c	2012-03-30 12:39:30.862467628 -0600
+@@ -409,6 +409,7 @@ __libc_res_nsend(res_state statp, const
+ 	 */
+ 	if (EXT(statp).nsinit == 0) {
+ 		unsigned char map[MAXNS];
++		unsigned int ext_total_nscount;
+ 
+ 		memset (map, MAXNS, sizeof (map));
+ 		for (n = 0; n < MAXNS; n++) {
+@@ -422,8 +423,9 @@ __libc_res_nsend(res_state statp, const
+ 			}
+ 		}
+ 		n = statp->nscount;
+-		if (statp->nscount > EXT(statp).nscount)
+-			for (n = EXT(statp).nscount, ns = 0;
++		ext_total_nscount = EXT(statp).nscount + EXT(statp).nscount6;
++		if (statp->nscount > ext_total_nscount)
++			for (n = ext_total_nscount, ns = 0;
+ 			     n < statp->nscount; n++) {
+ 				while (ns < MAXNS
+ 				       && EXT(statp).nsmap[ns] != MAXNS)

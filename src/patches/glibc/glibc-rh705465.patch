@@ -1,0 +1,449 @@
+2011-11-07  Andreas Schwab  <schwab@redhat.com>
+
+	* nss/nss_files/files-initgroups.c (_nss_files_initgroups_dyn):
+	Fix size of allocated buffer.
+
+2011-05-10  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #11257]
+	* grp/initgroups.c (internal_getgrouplist): When we found the service
+	list through the initgroups entry in nsswitch.conf do not always
+	continue on a successful lookup.  Don't always use the
+	__nss_group_data-ase value if it is set.
+	* nss/nsswitch.conf (initgroups): Change action for successful db
+	lookup to continue for compatibility.
+
+2011-05-06  Ulrich Drepper  <drepper@gmail.com>
+
+	* nss/nss_files/files-initgroups.c (_nss_files_initgroups_dyn): Return
+	NSS_STATUS_NOTFOUND if no record was found.
+
+2011-04-29  Ulrich Drepper  <drepper@gmail.com>
+
+	* grp/initgroups.c (internal_getgrouplist): Prefer initgroups setting
+	to groups setting in database lookup.
+	* nss/nsswitch.conf: Add initgroups entry.
+
+2011-04-21  Ulrich Drepper  <drepper@gmail.com>
+
+	* nss/nss_files/files-initgroups.c (_nss_files_initgroups_dyn): Fix
+	problem in reallocation in last patch.
+
+2011-04-19  Ulrich Drepper  <drepper@gmail.com>
+
+	* nss/nss_files/files-initgroups.c: New file.
+	* nss/Makefile (libnss_files-routines): Add files-initgroups.
+	* nss/Versions (libnss_files) [GLIBC_PRIVATE]: Export
+	_nss_files_initgroups_dyn.
+
+2011-01-13  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #10484]
+	* nss/nss_files/files-hosts.c (HOST_DB_LOOKUP): Handle overflows of
+	temporary buffer used to handle multi lookups locally.
+	* include/alloca.h: Add libc_hidden_proto for __libc_alloca_cutoff.
+
+2011-01-13  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #10484]
+	* Versions [libc] (GLIBC_PRIVATE): Export __libc_alloca_cutoff.
+	* alloca_cutoff.c: Add libc_hidden_def.
+
+Index: glibc-2.12-2-gc4ccff1/grp/initgroups.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/grp/initgroups.c
++++ glibc-2.12-2-gc4ccff1/grp/initgroups.c
+@@ -43,6 +43,8 @@ extern int __nss_group_lookup (service_u
+ extern void *__nss_lookup_function (service_user *ni, const char *fct_name);
+ 
+ extern service_user *__nss_group_database attribute_hidden;
++static service_user *initgroups_database;
++static bool use_initgroups_entry;
+ 
+ 
+ #include "compat-initgroups.c"
+@@ -67,32 +69,41 @@ internal_getgrouplist (const char *user,
+     }
+ #endif
+ 
+-  service_user *nip = NULL;
+-  initgroups_dyn_function fct;
+   enum nss_status status = NSS_STATUS_UNAVAIL;
+-  int no_more;
+-  /* Start is one, because we have the first group as parameter.  */
+-  long int start = 1;
++  int no_more = 0;
+ 
+   /* Never store more than the starting *SIZE number of elements.  */
+   assert (*size > 0);
+   (*groupsp)[0] = group;
++  /* Start is one, because we have the first group as parameter.  */
++  long int start = 1;
+ 
+-  if (__nss_group_database != NULL)
++  if (initgroups_database == NULL)
+     {
+-      no_more = 0;
+-      nip = __nss_group_database;
++      no_more = __nss_database_lookup ("initgroups", NULL, "",
++				       &initgroups_database);
++      if (no_more == 0 && initgroups_database == NULL)
++	{
++	  if (__nss_group_database == NULL)
++	    no_more = __nss_database_lookup ("group", NULL, "compat files",
++					     &__nss_group_database);
++
++	  initgroups_database = __nss_group_database;
++	}
++      else if (initgroups_database != NULL)
++	{
++	  assert (no_more == 0);
++	  use_initgroups_entry = true;
++	}
+     }
+-  else
+-    no_more = __nss_database_lookup ("group", NULL,
+-				     "compat [NOTFOUND=return] files", &nip);
+ 
++  service_user *nip = initgroups_database;
+   while (! no_more)
+     {
+       long int prev_start = start;
+ 
+-      fct = __nss_lookup_function (nip, "initgroups_dyn");
+-
++      initgroups_dyn_function fct = __nss_lookup_function (nip,
++							   "initgroups_dyn");
+       if (fct == NULL)
+ 	status = compat_call (nip, user, group, &start, size, groupsp,
+ 			      limit, &errno);
+@@ -119,7 +130,13 @@ internal_getgrouplist (const char *user,
+       if (NSS_STATUS_TRYAGAIN > status || status > NSS_STATUS_RETURN)
+ 	__libc_fatal ("illegal status in internal_getgrouplist");
+ 
+-      if (status != NSS_STATUS_SUCCESS
++      /* For compatibility reason we will continue to look for more
++	 entries using the next service even though data has already
++	 been found if the nsswitch.conf file contained only a 'groups'
++	 line and no 'initgroups' line.  If the latter is available
++	 we always respect the status.  This means that the default
++	 for successful lookups is to return.  */
++      if ((use_initgroups_entry || status != NSS_STATUS_SUCCESS)
+ 	  && nss_next_action (nip, status) == NSS_ACTION_RETURN)
+ 	 break;
+ 
+Index: glibc-2.12-2-gc4ccff1/include/alloca.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/include/alloca.h
++++ glibc-2.12-2-gc4ccff1/include/alloca.h
+@@ -14,6 +14,7 @@ extern void *__alloca (size_t __size);
+ 
+ extern int __libc_use_alloca (size_t size) __attribute__ ((const));
+ extern int __libc_alloca_cutoff (size_t size) __attribute__ ((const));
++libc_hidden_proto (__libc_alloca_cutoff)
+ 
+ #define __MAX_ALLOCA_CUTOFF	65536
+ 
+Index: glibc-2.12-2-gc4ccff1/nptl/Versions
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/Versions
++++ glibc-2.12-2-gc4ccff1/nptl/Versions
+@@ -27,6 +27,7 @@ libc {
+     pthread_cond_broadcast; pthread_cond_timedwait;
+   }
+   GLIBC_PRIVATE {
++    __libc_alloca_cutoff;
+     # Internal libc interface to libpthread
+     __libc_dl_error_tsd;
+   }
+Index: glibc-2.12-2-gc4ccff1/nptl/alloca_cutoff.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/alloca_cutoff.c
++++ glibc-2.12-2-gc4ccff1/nptl/alloca_cutoff.c
+@@ -34,3 +34,4 @@ __libc_alloca_cutoff (size_t size)
+ 			  assume the maximum available stack space.  */
+ 		       ?: __MAX_ALLOCA_CUTOFF * 4));
+ }
++libc_hidden_def (__libc_alloca_cutoff)
+Index: glibc-2.12-2-gc4ccff1/nss/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nss/Makefile
++++ glibc-2.12-2-gc4ccff1/nss/Makefile
+@@ -63,7 +63,7 @@ vpath %.c $(subdir-dirs)
+ 
+ 
+ libnss_files-routines	:= $(addprefix files-,$(databases)) \
+-			   files-have_o_cloexec
++			   files-initgroups files-have_o_cloexec
+ distribute		+= files-XXX.c files-parse.c
+ 
+ 
+Index: glibc-2.12-2-gc4ccff1/nss/Versions
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nss/Versions
++++ glibc-2.12-2-gc4ccff1/nss/Versions
+@@ -95,5 +95,7 @@ libnss_files {
+     _nss_netgroup_parseline;
+     _nss_files_getpublickey;
+     _nss_files_getsecretkey;
++
++    _nss_files_initgroups_dyn;
+   }
+ }
+Index: glibc-2.12-2-gc4ccff1/nss/nss_files/files-hosts.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nss/nss_files/files-hosts.c
++++ glibc-2.12-2-gc4ccff1/nss/nss_files/files-hosts.c
+@@ -129,19 +129,22 @@ _nss_files_get##name##_r (proto,					   
+ 	  && _res_hconf.flags & HCONF_FLAG_MULTI)			      \
+ 	{								      \
+ 	  /* We have to get all host entries from the file.  */		      \
+-	  const size_t tmp_buflen = MIN (buflen, 4096);			      \
+-	  char tmp_buffer[tmp_buflen]					      \
++	  size_t tmp_buflen = MIN (buflen, 4096);			      \
++	  char tmp_buffer_stack[tmp_buflen]				      \
+ 	    __attribute__ ((__aligned__ (__alignof__ (struct hostent_data))));\
++	  char *tmp_buffer = tmp_buffer_stack;				      \
+ 	  struct hostent tmp_result_buf;				      \
+ 	  int naddrs = 1;						      \
+ 	  int naliases = 0;						      \
+ 	  char *bufferend;						      \
++	  bool tmp_buffer_malloced = false;				      \
+ 									      \
+ 	  while (result->h_aliases[naliases] != NULL)			      \
+ 	    ++naliases;							      \
+ 									      \
+ 	  bufferend = (char *) &result->h_aliases[naliases + 1];	      \
+ 									      \
++	again:								      \
+ 	  while ((status = internal_getent (&tmp_result_buf, tmp_buffer,      \
+ 					    tmp_buflen, errnop H_ERRNO_ARG    \
+ 					    EXTRA_ARGS_VALUE))		      \
+@@ -182,7 +185,7 @@ _nss_files_get##name##_r (proto,					   
+ 		    }							      \
+ 		  /* If the real name is different add it also to the	      \
+ 		     aliases.  This means that there is a duplication	      \
+-		     in the alias list but this is really the users	      \
++		     in the alias list but this is really the user's	      \
+ 		     problem.  */					      \
+ 		  if (strcmp (old_result->h_name,			      \
+ 			      tmp_result_buf.h_name) != 0)		      \
+@@ -204,7 +207,7 @@ _nss_files_get##name##_r (proto,					   
+ 		      *errnop = ERANGE;					      \
+ 		      *herrnop = NETDB_INTERNAL;			      \
+ 		      status = NSS_STATUS_TRYAGAIN;			      \
+-		      break;						      \
++		      goto out;						      \
+ 		    }							      \
+ 									      \
+ 		  new_h_addr_list =					      \
+@@ -268,8 +271,54 @@ _nss_files_get##name##_r (proto,					   
+ 		}							      \
+ 	    }								      \
+ 									      \
+-	  if (status != NSS_STATUS_TRYAGAIN)				      \
++	  if (status == NSS_STATUS_TRYAGAIN)				      \
++	    {								      \
++	      size_t newsize = 2 * tmp_buflen;				      \
++	      if (tmp_buffer_malloced)					      \
++		{							      \
++		  char *newp = realloc (tmp_buffer, newsize);		      \
++		  if (newp != NULL)					      \
++		    {							      \
++		      assert ((((uintptr_t) newp)			      \
++			       & (__alignof__ (struct hostent_data) - 1))     \
++			      == 0);					      \
++		      tmp_buffer = newp;				      \
++		      tmp_buflen = newsize;				      \
++		      goto again;					      \
++		    }							      \
++		}							      \
++	      else if (!__libc_use_alloca (buflen + newsize))		      \
++		{							      \
++		  tmp_buffer = malloc (newsize);			      \
++		  if (tmp_buffer != NULL)				      \
++		    {							      \
++		      assert ((((uintptr_t) tmp_buffer)			      \
++			       & (__alignof__ (struct hostent_data) - 1))     \
++			      == 0);					      \
++		      tmp_buffer_malloced = true;			      \
++		      tmp_buflen = newsize;				      \
++		      goto again;					      \
++		    }							      \
++		}							      \
++	      else							      \
++		{							      \
++		  tmp_buffer						      \
++		    = extend_alloca (tmp_buffer, tmp_buflen,		      \
++				     newsize				      \
++				     + __alignof__ (struct hostent_data));    \
++		  tmp_buffer = (char *) (((uintptr_t) tmp_buffer	      \
++					  + __alignof__ (struct hostent_data) \
++					  - 1)				      \
++					 & ~(__alignof__ (struct hostent_data)\
++					     - 1));			      \
++		  goto again;						      \
++		}							      \
++	    }								      \
++	  else								      \
+ 	    status = NSS_STATUS_SUCCESS;				      \
++	out:								      \
++	  if (tmp_buffer_malloced)					      \
++	    free (tmp_buffer);						      \
+ 	}								      \
+ 									      \
+ 									      \
+Index: glibc-2.12-2-gc4ccff1/nss/nss_files/files-initgroups.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/nss/nss_files/files-initgroups.c
+@@ -0,0 +1,137 @@
++/* Initgroups handling in nss_files module.
++   Copyright (C) 2011 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#include <alloca.h>
++#include <errno.h>
++#include <grp.h>
++#include <nss.h>
++#include <stdio_ext.h>
++#include <string.h>
++#include <sys/param.h>
++
++enum nss_status
++_nss_files_initgroups_dyn (const char *user, gid_t group, long int *start,
++			   long int *size, gid_t **groupsp, long int limit,
++			   int *errnop)
++{
++  FILE *stream = fopen ("/etc/group", "re");
++  if (stream == NULL)
++    {
++      *errnop = errno;
++      return *errnop == ENOMEM ? NSS_STATUS_TRYAGAIN : NSS_STATUS_UNAVAIL;
++    }
++
++  /* No other thread using this stream.  */
++  __fsetlocking (stream, FSETLOCKING_BYCALLER);
++
++  char *line = NULL;
++  size_t linelen = 0;
++  enum nss_status status = NSS_STATUS_SUCCESS;
++  bool any = false;
++
++  size_t buflen = 1024;
++  void *buffer = alloca (buflen);
++  bool buffer_use_malloc = false;
++
++  gid_t *groups = *groupsp;
++
++  /* We have to iterate over the entire file.  */
++  while (!feof_unlocked (stream))
++    {
++      ssize_t n = getline (&line, &linelen, stream);
++      if (n < 0)
++	{
++	  if (! feof_unlocked (stream))
++	    status = ((*errnop = errno) == ENOMEM
++		      ? NSS_STATUS_TRYAGAIN : NSS_STATUS_UNAVAIL);
++	  break;
++	}
++
++      struct group grp;
++      int res;
++      while ((res = _nss_files_parse_grent (line, &grp, buffer, buflen,
++					    errnop)) == -1)
++	{
++	  size_t newbuflen = 2 * buflen;
++	  if (buffer_use_malloc || ! __libc_use_alloca (buflen + newbuflen))
++	    {
++	      void *newbuf = realloc (buffer_use_malloc ? buffer : NULL,
++				      newbuflen);
++	      if (newbuf == NULL)
++		{
++		  *errnop = ENOMEM;
++		  status = NSS_STATUS_TRYAGAIN;
++		  goto out;
++		}
++	      buffer = newbuf;
++	      buflen = newbuflen;
++	      buffer_use_malloc = true;
++	    }
++	  else
++	    buffer = extend_alloca (buffer, buflen, newbuflen);
++	}
++
++      if (res > 0 && grp.gr_gid != group)
++	for (char **m = grp.gr_mem; *m != NULL; ++m)
++	  if (strcmp (*m, user) == 0)
++	    {
++	      /* Matches user.  Insert this group.  */
++	      if (*start == *size)
++		{
++		  /* Need a bigger buffer.  */
++		  if (limit > 0 && *size == limit)
++		    /* We reached the maximum.  */
++		    goto out;
++
++		  long int newsize;
++		  if (limit <= 0)
++		    newsize = 2 * *size;
++		  else
++		    newsize = MIN (limit, 2 * *size);
++
++		  gid_t *newgroups = realloc (groups,
++					      newsize * sizeof (*groups));
++		  if (newgroups == NULL)
++		    {
++		      *errnop = ENOMEM;
++		      status = NSS_STATUS_TRYAGAIN;
++		      goto out;
++		    }
++		  *groupsp = groups = newgroups;
++		  *size = newsize;
++		}
++
++	      groups[*start] = grp.gr_gid;
++	      *start += 1;
++	      any = true;
++
++	      break;
++	    }
++    }
++
++ out:
++  /* Free memory.  */
++  if (buffer_use_malloc)
++    free (buffer);
++  free (line);
++
++  fclose (stream);
++
++  return status == NSS_STATUS_SUCCESS && !any ? NSS_STATUS_NOTFOUND : status;
++}
+Index: glibc-2.12-2-gc4ccff1/nss/nsswitch.conf
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nss/nsswitch.conf
++++ glibc-2.12-2-gc4ccff1/nss/nsswitch.conf
+@@ -5,6 +5,7 @@
+ 
+ passwd:		db files
+ group:		db files
++initgroups:	db [SUCCESS=continue] files
+ shadow:		db files
+ gshadow:	files
+ 

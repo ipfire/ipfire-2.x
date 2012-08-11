@@ -1,0 +1,296 @@
+2010-07-03  Ulrich Drepper  <drepper@redhat.com>
+
+	* tst-abstime.c (do_test): Some more cleanups
+
+2010-07-02  Ulrich Drepper  <drepper@redhat.com>
+
+	* tst-abstime.c: Correct testing and add test for sem_timedwait.
+
+2010-07-01  Andreas Schwab  <schwab@redhat.com>
+	    Ulrich Drepper  <drepper@redhat.com>
+
+	* Makefile (tests): Add tst-abstime.
+	* tst-abstime.c: New file.
+	* sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
+	(__lll_timedlock_wait): Check for timestamp before the Epoch.
+	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.S
+	(__lll_timedlock_wait): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/lowlevelrobustlock.S
+	(__lll_robust_timedlock_wait): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+	(__pthread_cond_timedwait): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedrdlock.S
+	(pthread_rwlock_timedrdlock): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S
+	(pthread_rwlock_timedwrlock): Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S (sem_timedwait):
+	Likewise.
+
+Index: glibc-2.12-2-gc4ccff1/nptl/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/Makefile
++++ glibc-2.12-2-gc4ccff1/nptl/Makefile
+@@ -256,6 +256,7 @@ tests = tst-typesizes \
+ 	tst-sched1 \
+ 	tst-backtrace1 \
+ 	tst-oddstacklimit \
++	tst-abstime \
+ 	tst-vfork1 tst-vfork2 tst-vfork1x tst-vfork2x \
+ 	tst-getpid1 tst-getpid2 tst-getpid3 \
+ 	tst-initializers1 $(patsubst %,tst-initializers1-%,c89 gnu89 c99 gnu99)
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
+@@ -188,6 +188,9 @@ __lll_timedlock_wait:
+ 	je	.Lreltmo
+ # endif
+ 
++	cmpl	$0, (%edx)
++	js	8f
++
+ 	movl	%ecx, %ebx
+ 	movl	%esi, %ecx
+ 	movl	%edx, %esi
+@@ -223,6 +226,9 @@ __lll_timedlock_wait:
+ 	cfi_restore(%ebp)
+ 	ret
+ 
++8:	movl	$ETIMEDOUT, %eax
++	jmp	7b
++
+ # ifndef __ASSUME_FUTEX_CLOCK_REALTIME
+ .Lreltmo:
+ 	/* Check for a valid timeout value.  */
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S
+@@ -169,9 +169,13 @@ __lll_timedlock_wait:
+ 	je	.Lreltmo
+ # endif
+ 
++	cmpq	$0, (%rdx)
++	js	5f
++
+ 	pushq	%r9
+ 	cfi_adjust_cfa_offset(8)
+ 	cfi_rel_offset(%r9, 0)
++
+ 	movq	%rdx, %r10
+ 	movl	$0xffffffff, %r9d
+ 	LOAD_FUTEX_WAIT_ABS (%esi)
+@@ -202,6 +206,9 @@ __lll_timedlock_wait:
+ 	cfi_restore(%r9)
+ 	retq
+ 
++5:	movl	$ETIMEDOUT, %eax
++	retq
++
+ # ifndef __ASSUME_FUTEX_CLOCK_REALTIME
+ .Lreltmo:
+ 	/* Check for a valid timeout value.  */
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevelrobustlock.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevelrobustlock.S
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevelrobustlock.S
+@@ -125,6 +125,9 @@ __lll_robust_timedlock_wait:
+ 	je	.Lreltmo
+ # endif
+ 
++	cmpq	$0, (%rdx)
++	js	7f
++
+ 	pushq	%r9
+ 	cfi_adjust_cfa_offset(8)
+ 	cfi_rel_offset(%r9, 0)
+@@ -180,6 +183,9 @@ __lll_robust_timedlock_wait:
+ 	cfi_adjust_cfa_offset(-8)
+ 	cfi_restore(%r9)
+ 
++7:	movl	$ETIMEDOUT, %eax
++	retq
++
+ 
+ # ifndef __ASSUME_FUTEX_CLOCK_REALTIME
+ .Lreltmo:
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+@@ -144,6 +144,10 @@ __pthread_cond_timedwait:
+ 	movq	%r9, 24(%rsp)
+ 	movl	%edx, 4(%rsp)
+ 
++	cmpq	$0, (%r13)
++	movq	$-ETIMEDOUT, %r14
++	js	36f
++
+ 38:	movl	cond_futex(%rdi), %r12d
+ 
+ 	/* Unlock.  */
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedrdlock.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedrdlock.S
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedrdlock.S
+@@ -102,6 +102,9 @@ pthread_rwlock_timedrdlock:
+ 	je	.Lreltmo
+ #endif
+ 
++	cmpq	$0, (%r13)
++	js	16f		/* Time is already up.  */
++
+ 	movl	$FUTEX_PRIVATE_FLAG|FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, %esi
+ 	xorl	PSHARED(%r12), %esi
+ 	movq	%r13, %r10
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S
+@@ -99,6 +99,9 @@ pthread_rwlock_timedwrlock:
+ 	je	.Lreltmo
+ #endif
+ 
++	cmpq	$0, (%r13)
++	js	16f		/* Time is already up. */
++
+ 	movl	$FUTEX_PRIVATE_FLAG|FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, %esi
+ 	xorl	PSHARED(%r12), %esi
+ 	movq	%r13, %r10
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S
+@@ -77,6 +77,9 @@ sem_timedwait:
+ 	je	.Lreltmo
+ #endif
+ 
++	cmpq	$0, (%rsi)
++	js	16f
++
+ 	/* This push is only needed to store the sem_t pointer for the
+ 	   exception handler.  */
+ 	pushq	%rdi
+@@ -169,6 +172,19 @@ sem_timedwait:
+ 
+ 	retq
+ 
++16:
++#if USE___THREAD
++	movq	errno@gottpoff(%rip), %rdx
++	movl	$ETIMEDOUT, %fs:(%rdx)
++#else
++	callq	__errno_location@plt
++	movl	$ETIMEDOUT, (%rax)
++#endif
++
++	orl	$-1, %eax
++
++	retq
++
+ #ifndef __ASSUME_FUTEX_CLOCK_REALTIME
+ .Lreltmo:
+ 	pushq	%r12
+Index: glibc-2.12-2-gc4ccff1/nptl/tst-abstime.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/nptl/tst-abstime.c
+@@ -0,0 +1,98 @@
++/* Copyright (C) 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++   Contributed by Andreas Schwab <schwab@redhat.com>, 2010.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#include <errno.h>
++#include <pthread.h>
++#include <semaphore.h>
++#include <stdio.h>
++
++static pthread_cond_t c = PTHREAD_COND_INITIALIZER;
++static pthread_mutex_t m1 = PTHREAD_MUTEX_INITIALIZER;
++static pthread_mutex_t m2 = PTHREAD_MUTEX_INITIALIZER;
++static pthread_rwlock_t rw1 = PTHREAD_RWLOCK_INITIALIZER;
++static pthread_rwlock_t rw2 = PTHREAD_RWLOCK_INITIALIZER;
++static sem_t sem;
++
++static void *
++th (void *arg)
++{
++  long int res = 0;
++  int r;
++  struct timespec t = { -2, 0 };
++
++  r = pthread_mutex_timedlock (&m1, &t);
++  if (r != ETIMEDOUT)
++    {
++      puts ("pthread_mutex_timedlock did not return ETIMEDOUT");
++      res = 1;
++    }
++  r = pthread_rwlock_timedrdlock (&rw1, &t);
++  if (r != ETIMEDOUT)
++    {
++      puts ("pthread_rwlock_timedrdlock did not return ETIMEDOUT");
++      res = 1;
++    }
++  r = pthread_rwlock_timedwrlock (&rw2, &t);
++  if (r != ETIMEDOUT)
++    {
++      puts ("pthread_rwlock_timedwrlock did not return ETIMEDOUT");
++      res = 1;
++    }
++  return (void *) res;
++}
++
++static int
++do_test (void)
++{
++  int res = 0;
++  int r;
++  struct timespec t = { -2, 0 };
++  pthread_t pth;
++
++  sem_init (&sem, 0, 0);
++  r = sem_timedwait (&sem, &t);
++  if (r != -1 || errno != ETIMEDOUT)
++    {
++      puts ("sem_timedwait did not fail with ETIMEDOUT");
++      res = 1;
++    }
++
++  pthread_mutex_lock (&m1);
++  pthread_rwlock_wrlock (&rw1);
++  pthread_rwlock_rdlock (&rw2);
++  pthread_mutex_lock (&m2);
++  if (pthread_create (&pth, 0, th, 0) != 0)
++    {
++      puts ("cannot create thread");
++      return 1;
++    }
++  r = pthread_cond_timedwait (&c, &m2, &t);
++  if (r != ETIMEDOUT)
++    {
++      puts ("pthread_cond_timedwait did not return ETIMEDOUT");
++      res = 1;
++    }
++  void *thres;
++  pthread_join (pth, &thres);
++  return res | (thres != NULL);
++}
++
++
++#define TEST_FUNCTION do_test ()
++#include "../test-skeleton.c"
