@@ -46,13 +46,6 @@ md5 :
 ###############################################################################
 
 $(TARGET) :
-
-ifeq "$(LFS_PASS)" "toolchain"
-	-find $(TOOLS_DIR)/lib -type f -exec $(TOOLS_DIR)/bin/strip --strip-debug '{}' ';'
-	-find $(TOOLS_DIR)/{bin,sbin,libexec} -type f -exec $(TOOLS_DIR)/bin/strip --strip-all '{}' ';'
-	rm -rf $(TOOLS_DIR)/{,share/}{doc,info,man}
-endif
-
 ifeq "$(LFS_PASS)" "install"
 	# Add -ls before -exec if you want to verify what files are in the path to be stripped
 	# A running binary can't be stripped, so use the version from /tools
