@@ -41,7 +41,7 @@ ifeq "$(ROOT)" ""
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
   EXTRA_CONFIG = --prefix=/tools --disable-nls \
-    --disable-perl-regexp
+    --disable-perl-regexp --without-included-regex
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
