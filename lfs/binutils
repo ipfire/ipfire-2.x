@@ -31,9 +31,6 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# XXX maybe we can remove that ugly MACHINE= by this
-#unexport MACHINE
-
 # Normal build or /tools build.
 #
 ifeq "$(ROOT)" ""
@@ -44,24 +41,34 @@ ifeq "$(ROOT)" ""
 else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
-  EXTRA_CONFIG = --prefix=/tools --disable-nls --disable-werror --disable-gprof
-  #EXTRA_MAKE = LDFLAGS="-all-static"
+  EXTRA_CONFIG = \
+	--target=$(CROSSTARGET) \
+	--prefix=/tools \
+	--disable-nls \
+	--disable-werror
+  EXTRA_MAKE =
   EXTRA_INSTALL = 
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
-  EXTRA_CONFIG = --prefix=/tools --with-lib-path=/tools/lib --disable-nls
+  EXTRA_ENV = \
+	CC="$(CROSSTARGET)-gcc -B/tools/lib/" \
+	AR="$(CROSSTARGET)-ar" \
+	RANLIB="$(CROSSTARGET)-ranlib"
+  EXTRA_CONFIG = \
+	--host=$(BUILDTARGET) \
+	--build=$(BUILDTARGET) \
+	--prefix=/tools \
+	--with-lib-path=/tools/lib \
+	--disable-nls
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
 endif
 
-EXTRA_CONFIG += --build=$(BUILDTARGET)
-
 ifeq "$(MACHINE_TYPE)" "arm"
 	EXTRA_CONFIG += \
 		--with-abi=aapcs-linux \
-		--with-float=soft \
-		--disable-initfini-array
+		--with-float=soft
 endif
 
 ###############################################################################
@@ -103,20 +110,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/binutils-build
-	cd $(DIR_SRC)/binutils-build && MACHINE= $(DIR_APP)/configure $(EXTRA_CONFIG)
-ifeq "$(PASS)" "1"
-	cd $(DIR_SRC)/binutils-build && make configure-host MAKEINFO=makeinfo MACHINE=
-endif
-	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) $(MAKETUNING) MAKEINFO=makeinfo MACHINE=
-	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install MAKEINFO=makeinfo MACHINE=
+	cd $(DIR_SRC)/binutils-build && $(EXTRA_ENV) MACHINE= $(DIR_APP)/configure $(EXTRA_CONFIG)
+	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) $(MAKETUNING) MACHINE=
+	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install MACHINE=
 ifeq "$(ROOT)" ""
 	cp -v $(DIR_APP)/include/libiberty.h /usr/include
 else
-ifeq "$(PASS)" "1"
-	cd $(DIR_SRC)/binutils-build && make -C ld clean MACHINE=
-	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/tools/lib MACHINE=
-	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new /tools/bin
-else
+ifeq "$(PASS)" "2"
 	cd $(DIR_SRC)/binutils-build && make -C ld clean MACHINE=
 	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/usr/lib:/lib MACHINE=
 	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new /tools/bin
