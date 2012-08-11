@@ -39,8 +39,6 @@ ifeq "$(LFS_PASS)" "install"
 else
   TARGET = $(DIR_INFO)/$(THISAPP)
 endif
-else
-  TARGET = $(DIR_INFO)/$(THISAPP)-tools
 endif
 
 ###############################################################################
@@ -101,13 +99,6 @@ else
 	cd $(DIR_APP) && make $(MAKETUNING) HAVE_KILL=yes HAVE_SLN=yes
 	cd $(DIR_APP) && make HAVE_KILL=yes HAVE_SLN=yes install
 endif
-else
-	cd $(DIR_APP) && sed -i 's@/usr/include@/tools/include@g' configure
-	cd $(DIR_APP) && ./configure
-	cd $(DIR_APP) && make $(MAKETUNING) -C lib
-	cd $(DIR_APP) && make $(MAKETUNING) -C mount mount umount
-	cd $(DIR_APP) && make $(MAKETUNING) -C text-utils more
-	cd $(DIR_APP) && cp mount/{,u}mount text-utils/more /tools/bin
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
