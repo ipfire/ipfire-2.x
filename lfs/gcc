@@ -24,7 +24,10 @@
 
 include Config
 
-VER        = 4.1.2
+VER        = 4.4.7
+
+GMP_VER    = 5.0.5
+MPFR_VER   = 2.4.2
 
 THISAPP    = gcc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -48,24 +51,43 @@ ifeq "$(ROOT)" ""
 else
 ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
-  EXTRA_CONFIG = --prefix=/tools \
-		--with-local-prefix=/tools \
-		--disable-nls \
-		--enable-shared \
-		--enable-languages=c \
-		--disable-bootstrap
+  EXTRA_CONFIG = \
+	--target=$(CROSSTARGET) \
+	--prefix=/tools \
+	--disable-nls \
+	--disable-shared \
+	--disable-decimal-float \
+	--disable-threads \
+	--disable-libmudflap \
+	--disable-libssp \
+	--disable-libgomp \
+	--disable-libquadmath \
+	--with-newlib \
+	--without-headers \
+	--without-ppl \
+	--without-cloog \
+	--enable-languages=c
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
-  EXTRA_CONFIG = --prefix=/tools \
-		--with-local-prefix=/tools \
-		--enable-clocale=gnu \
-		--enable-shared \
-		--enable-threads=posix \
-		--enable-__cxa_atexit \
-		--enable-languages=c,c++ \
-		--disable-libstdcxx-pch
+  EXTRA_ENV = \
+	CC="$(CROSSTARGET)-gcc -B/tools/lib/" \
+	AR="$(CROSSTARGET)-ar" \
+	RANLIB="$(CROSSTARGET)-ranlib"
+  EXTRA_CONFIG = \
+	--host=$(BUILDTARGET) \
+	--build=$(BUILDTARGET) \
+	--target=$(BUILDTARGET) \
+	--prefix=/tools \
+	--with-local-prefix=/tools \
+	--enable-clocale=gnu \
+	--enable-shared \
+	--enable-threads=posix \
+	--enable-__cxa_atexit \
+	--enable-languages=c,c++ \
+	--disable-libstdcxx-pch \
+	--disable-bootstrap
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
@@ -73,21 +95,7 @@ endif
 
 ifeq "$(MACHINE_TYPE)" "arm"
 	EXTRA_CONFIG += \
-		--build=$(BUILDTARGET) \
-		--host=$(BUILDTARGET) \
-		--target=$(BUILDTARGET) \
-		--with-float=soft \
-		--disable-libmudflap \
-		--disable-libssp \
-		--disable-libgomp \
-		--enable-threads=posix \
-		--enable-long-long \
-		--enable-c99 \
-		--enable-__cxa_atexit \
-		--disable-multilib
-else
-	EXTRA_CONFIG += --build=$(BUILDTARGET) --host=$(BUILDTARGET) \
-		--target=$(BUILDTARGET)
+		--with-float=soft
 endif
 
 export XCFLAGS = $(CFLAGS)
@@ -96,11 +104,18 @@ export TCFLAGS = $(CFLAGS)
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-objects = $(DL_FILE)
+
+objects = $(DL_FILE) \
+	gmp-$(GMP_VER).tar.bz2 \
+	mpfr-$(MPFR_VER).tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+gmp-$(GMP_VER).tar.bz2 = $(DL_FROM)/gmp-$(GMP_VER).tar.bz2
+mpfr-$(MPFR_VER).tar.bz2 = $(DL_FROM)/mpfr-$(MPFR_VER).tar.bz2
 
-$(DL_FILE)_MD5 = a4a3eb15c96030906d8494959eeda23c
+$(DL_FILE)_MD5			= 295709feb4441b04e87dea3f1bab4281
+gmp-$(GMP_VER).tar.bz2_MD5	= 041487d25e9c230b0c42b106361055fe
+mpfr-$(MPFR_VER).tar.bz2_MD5	= 89e59fe665e2b3ad44a6789f40b059a0
 
 install : $(TARGET)
 
@@ -130,42 +145,55 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-fix_linker_version_detection.patch
 	@mkdir $(DIR_SRC)/gcc-build
 
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/gcc-4.1.2-gcc_eh.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/gcc-4.1.2-arm-linux-soft-float.patch
+ifneq "$(ROOT)" ""
+	# Build gmp and mpfr internally in toolchain.
+	cd $(DIR_APP) && tar xfa $(DIR_DL)/gmp-$(GMP_VER).tar.bz2
+	cd $(DIR_APP) && mv -v gmp-$(GMP_VER) gmp
+	cd $(DIR_APP) && tar xfa $(DIR_DL)/mpfr-$(MPFR_VER).tar.bz2
+	cd $(DIR_APP) && mv -v mpfr-$(MPFR_VER) mpfr
 
-ifeq "$(ROOT)" ""
-	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in
-	cd $(DIR_APP) && sed -i 's/^XCFLAGS =$$/& -fomit-frame-pointer/' gcc/Makefile.in
-	cd $(DIR_APP) && sed -i 's@\./fixinc\.sh@-c true@' gcc/Makefile.in
-	cd $(DIR_APP) && sed -i 's/@have_mktemp_command@/yes/' gcc/gccbug.in
+ifeq    "$(PASS)" "1"
+	# GCC does not detect stack protection correctly, which causes problems
+	# for the build of libresolv_pic.a.
+	cd $(DIR_APP) && sed -i '/k prot/agcc_cv_libc_provides_ssp=yes' gcc/configure
+endif
 
-	cd $(DIR_SRC)/gcc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
+ifeq    "$(PASS)" "2"
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/gcc-4.4.3-startfiles_fix-1.patch
+
+	cd $(DIR_APP) && sed -i gcc/Makefile.in \
+		-e 's@\./fixinc\.sh@-c true@' \
+		-e 's/^T_CFLAGS =$$/& -fomit-frame-pointer/'
+
+	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
+			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h); do \
+		echo "Processing $${file}..."; \
+		sed -i $${file} \
+			-e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
+			-e 's@/usr@/tools@g'; \
+		echo '#undef STANDARD_INCLUDE_DIR' >> $${file}; \
+		echo '#define STANDARD_INCLUDE_DIR 0' >> $${file}; \
+		echo '#define STANDARD_STARTFILE_PREFIX_1 ""' >> $${file}; \
+		echo '#define STANDARD_STARTFILE_PREFIX_2 ""' >> $${file}; \
+	done
+endif
+endif
+
+	# The actual build.
+	cd $(DIR_SRC)/gcc-build && \
+		$(EXTRA_ENV) \
+		$(DIR_APP)/configure \
+			$(EXTRA_CONFIG)
 	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
-	ln -sfv ../usr/bin/cpp /lib
-	ln -sfv gcc /usr/bin/cc
+
+ifneq "$(ROOT)" ""
+ifeq    "$(PASS)" "1"
+	ln -svf libgcc.a $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
 else
-ifeq "$(PASS)" "1"
-	cd $(DIR_SRC)/gcc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
-	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
-	ln -sfv gcc /tools/bin/cc
-	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-gcc
-	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-g++
-	ln -sf ccache $(ROOT)/usr/local/bin/$(BUILDTARGET)-cc
-else
-	cd $(DIR_APP) && cp -v gcc/Makefile.in{,.orig}
-	cd $(DIR_APP) && sed 's@\./fixinc\.sh@-c true@' gcc/Makefile.in.orig > gcc/Makefile.in
-	cd $(DIR_APP) && cp -v gcc/Makefile.in{,.tmp}
-	cd $(DIR_APP) && sed 's/^XCFLAGS =$\/& -fomit-frame-pointer/' gcc/Makefile.in.tmp \
-				> gcc/Makefile.in
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-specs-1.patch
-	cd $(DIR_SRC)/gcc-build && $(DIR_APP)/configure $(EXTRA_CONFIG)
-	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
+	ln -svf gcc /tools/bin/cc
 endif
 endif
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build
