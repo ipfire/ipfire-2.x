@@ -73,7 +73,6 @@ my $PROTO = "";
 my $DPORT = "";
 my $DEV = "";
 my $MAC = "";
-my $POLICY = "";
 my $DO = "";
 my $DAY = "";
 
@@ -90,11 +89,9 @@ close FILE;
 
 if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
 	$outfwsettings{'STATE'} = "ALLOW";
-	$POLICY = "DROP";
 	$DO = "RETURN";
 } elsif ( $outfwsettings{'POLICY'} eq 'MODE2' ) {
 	$outfwsettings{'STATE'} = "DENY";
-	$POLICY = "RETURN";
 	$DO = "DROP -m comment --comment 'DROP_OUTGOINGFW '";
 }
 
