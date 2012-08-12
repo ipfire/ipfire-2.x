@@ -62,19 +62,26 @@ ifeq "$(PASS)" "2"
 	# Remove the first cross compiler which is not needed anymore.
 	find /tools/ -name "$(CROSSTARGET)*" | xargs rm -rfv
 
-	-strip --strip-debug /tools/lib/*
-	-strip --strip-unneeded /tools/{,s}bin/*
-	rm -rfv /tools/{,share}/{info,man} /usr/local/man
-	chown -R root:root /tools
+	# Remove man and info pages.
+	rm -rfv /tools/{,share}/{info,man}
+
+	# Strip all binaries.
+	STRIP="/usr/bin/strip" $(DIR_SRC)/src/stripper /tools/
+
+	# Fix ownership of the toolchain.
+	chown -R root:root /tools/
 endif
+
 ifeq "$(PASS)" "3"
 	mv -v /tools/bin/{ld,ld-old}
 	mv -v /tools/$(BUILDTARGET)/bin/{ld,ld-old}
 	mv -v /tools/bin/{ld-new,ld}
 	ln -sv /tools/bin/ld /tools/$(BUILDTARGET)/bin/ld
-	gcc -dumpspecs | \
-	perl -p -e 's@/tools/lib/ld-linux.so@/lib/ld-linux.so@g;' \
-	    -e 's@\*startfile_prefix_spec:\n@$$_/usr/lib/ @g;' > \
-	    /tools/lib/gcc/$(BUILDTARGET)/$(GCC_VER)/specs
+
+	gcc -dumpspecs | sed \
+		-e 's@/tools@@g' \
+		-e '/\*startfile_prefix_spec:/{n;s@.*@/usr/lib/ @}' \
+		-e '/\*cpp:/{n;s@$$@ -isystem /usr/include@}' > \
+		$$(dirname $$(gcc -print-libgcc-file-name))/specs
 endif
 	@$(POSTBUILD)

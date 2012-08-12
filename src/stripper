@@ -1,0 +1,27 @@
+#!/bin/bash
+
+function _strip() {
+	local file=${1}
+
+	local cmd="${STRIP-strip}"
+
+	case "$(file -bi ${file})" in
+		application/x-sharedlib*)
+			cmd="${cmd} --strip-debug --remove-section=.comment --remove-section=.note"
+			;;
+		*)
+			cmd="${cmd} --strip-unneeded"
+			;;
+	esac
+
+	echo "Stripping ${file}..."
+	${cmd} ${file}
+}
+
+for dir in $@; do
+	find ${dir} -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) \
+		| file -N -f - | sed -n -e 's/^\(.*\):[   ]*.*ELF.*, not stripped/\1/p' |
+		while read file; do
+			_strip ${file}
+		done
+done
