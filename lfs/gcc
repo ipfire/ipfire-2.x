@@ -38,14 +38,16 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr \
-		--libexecdir=/usr/lib \
-		--enable-shared \
-		--enable-threads=posix \
-		--enable-__cxa_atexit \
-		--enable-clocale=gnu \
-		--enable-languages=c,c++ \
-		--disable-nls
+  EXTRA_CONFIG = \
+	--prefix=/usr \
+	--libexecdir=/usr/lib \
+	--enable-shared \
+	--enable-threads=posix \
+	--enable-__cxa_atexit \
+	--enable-clocale=gnu \
+	--enable-languages=c,c++ \
+	--disable-bootstrap \
+	--disable-nls
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
@@ -95,7 +97,8 @@ endif
 
 ifeq "$(MACHINE_TYPE)" "arm"
 	EXTRA_CONFIG += \
-		--with-float=soft
+		--with-float=soft \
+		--disable-sjlj-exceptions
 endif
 
 export XCFLAGS = $(CFLAGS)
@@ -163,10 +166,6 @@ endif
 ifeq    "$(PASS)" "2"
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/gcc-4.4.3-startfiles_fix-1.patch
 
-	cd $(DIR_APP) && sed -i gcc/Makefile.in \
-		-e 's@\./fixinc\.sh@-c true@' \
-		-e 's/^T_CFLAGS =$$/& -fomit-frame-pointer/'
-
 	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
 			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h); do \
 		echo "Processing $${file}..."; \
@@ -181,6 +180,11 @@ ifeq    "$(PASS)" "2"
 endif
 endif
 
+	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in
+	cd $(DIR_APP) && sed -i gcc/Makefile.in \
+		-e 's@\./fixinc\.sh@-c true@' \
+		-e 's/^T_CFLAGS =$$/& -fomit-frame-pointer/'
+
 	# The actual build.
 	cd $(DIR_SRC)/gcc-build && \
 		$(EXTRA_ENV) \
@@ -189,7 +193,9 @@ endif
 	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 
-ifneq "$(ROOT)" ""
+ifeq "$(ROOT)" ""
+	ln -svf ../usr/bin/cpp /lib
+else
 ifeq    "$(PASS)" "1"
 	ln -svf libgcc.a $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
 else
