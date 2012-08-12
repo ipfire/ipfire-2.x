@@ -35,7 +35,10 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --enable-shared --disable-nls
+  EXTRA_CONFIG = \
+	--prefix=/usr \
+	--enable-shared \
+	--disable-nls
   EXTRA_MAKE = tooldir=/usr
   EXTRA_INSTALL = tooldir=/usr
 else
