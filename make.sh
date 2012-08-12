@@ -299,13 +299,19 @@ buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
     lfsmake2 stage2
-    lfsmake2 linux2 HEADERS=1
+    lfsmake2 linux2			HEADERS=1
     lfsmake2 man-pages
     lfsmake2 glibc
     lfsmake2 tzdata
-    lfsmake2 cleanup-toolchain	PASS=3
+    lfsmake2 cleanup-toolchain		PASS=3
+    lfsmake2 zlib
     lfsmake2 binutils
+    lfsmake2 gmp
+    lfsmake2 gmp-compat
+    lfsmake2 mpfr
+    lfsmake2 file
     lfsmake2 gcc
+    lfsmake2 sed
     lfsmake2 berkeley
     lfsmake2 coreutils
     lfsmake2 iana-etc
@@ -313,11 +319,9 @@ buildbase() {
     lfsmake2 bison
     lfsmake2 ncurses
     lfsmake2 procps
-    lfsmake2 sed
     lfsmake2 libtool
     lfsmake2 perl
     lfsmake2 readline
-    lfsmake2 zlib
     lfsmake2 autoconf
     lfsmake2 automake
     lfsmake2 bash
@@ -325,7 +329,6 @@ buildbase() {
     lfsmake2 diffutils
     lfsmake2 e2fsprogs
     lfsmake2 ed
-    lfsmake2 file
     lfsmake2 findutils
     lfsmake2 flex
     lfsmake2 gawk
@@ -487,7 +490,6 @@ buildipfire() {
   ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
-  ipfiremake gmp
   ipfiremake pam
   ipfiremake openssl
   ipfiremake curl
