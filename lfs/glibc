@@ -37,6 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = \
+	--build=$(BUILDTARGET) \
 	--prefix=/usr \
 	--libexecdir=/usr/lib/glibc
   EXTRA_MAKE =
@@ -56,7 +57,8 @@ else
 endif
 
 # Enable some extra optimization for the glibc code.
-export CFLAGS := -O3 -DNDEBUG -fasynchronous-unwind-tables -fPIC -DPIC
+export CFLAGS := -O3 -DNDEBUG -fasynchronous-unwind-tables -fPIC -DPIC \
+	-DNO_CTORS_DTORS_SECTIONS
 
 ifeq "$(MACHINE)" "i586"
 	CFLAGS += -march=i586 -mtune=generic -mno-tls-direct-seg-refs
@@ -125,7 +127,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/glibc-build
 
-	# Apply all patches.
+ifeq "$(MACHINE_TYPE)" "arm"
+	cd $(DIR_APP) && tar jxf $(DIR_DL)/glibc-ports-$(PORTS_VER).tar.bz2
+	cd $(DIR_APP) && mv -v glibc-ports-$(PORTS_VER) ports
+endif
+
+# Apply all patches.
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-aliasing.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-fedora.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-getlogin-r.patch
@@ -227,18 +234,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh837026.patch
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-resolv-stack_chk_fail.patch
+	# http://sourceware.org/bugzilla/show_bug.cgi?id=12354
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-cfi-entry-not-closed.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-remove-ctors-dtors-output-sections.patch
 
 	# Fixes:
 	#   Makefile:235: *** mixed implicit and normal rules.  Stop.
 	cd $(DIR_APP) && sed -i 's/ot \$$/ot:\n\ttouch $$@\n$$/' manual/Makefile
 
 	# Fix an issue when building glibc with gcc 4.7.
-	cd $(DIR_APP) && sed -i "s/ -lgcc_s//" Makeconfig
-
-ifeq "$(MACHINE_TYPE)" "arm"
-	cd $(DIR_APP) && tar jxf $(DIR_DL)/glibc-ports-$(PORTS_VER).tar.bz2
-	cd $(DIR_APP) && mv -v glibc-ports-$(PORTS_VER) ports
-endif
+	#cd $(DIR_APP) && sed -i "s/ -lgcc_s//" Makeconfig
 
 ifeq "$(ROOT)" ""
 ifeq "$(MACHINE_TYPE)" "arm"
