@@ -86,15 +86,18 @@ ifeq "$(PASS)" "1"
 	ln -svf ../../bin/ccache /tools/ccache/bin/gcc
 	ln -svf ../../bin/ccache /tools/ccache/bin/g++
 	ln -svf ../../bin/ccache /tools/ccache/bin/cc
+	ln -svf ../../bin/ccache /tools/ccache/bin/c++
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(CROSSTARGET)-gcc
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(CROSSTARGET)-g++
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(CROSSTARGET)-cc
+	ln -svf ../../bin/ccache /tools/ccache/bin/$(CROSSTARGET)-c++
 endif
 
 ifeq "$(PASS)" "2"
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(BUILDTARGET)-gcc
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(BUILDTARGET)-g++
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(BUILDTARGET)-cc
+	ln -svf ../../bin/ccache /tools/ccache/bin/$(BUILDTARGET)-c++
 endif
 
 	@rm -rf $(DIR_APP)
