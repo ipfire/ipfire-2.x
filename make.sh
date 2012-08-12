@@ -463,20 +463,6 @@ buildipfire() {
 #    ipfiremake e1000e			KCFG="-omap"
 #    ipfiremake igb			KCFG="-omap"
 
-    # arm-versatile kernel build
-    ipfiremake linux			KCFG="-versatile"
-#    ipfiremake v4l-dvb			KCFG="-versatile"
-#    ipfiremake kvm-kmod			KCFG="-versatile"
-#    ipfiremake mISDN			KCFG="-versatile"
-#    ipfiremake dahdi			KCFG="-versatile" KMOD=1
-    ipfiremake cryptodev		KCFG="-versatile"
-    ipfiremake compat-wireless		KCFG="-versatile"
-#    ipfiremake r8169			KCFG="-versatile"
-#    ipfiremake r8168			KCFG="-versatile"
-#    ipfiremake r8101			KCFG="-versatile"
-#    ipfiremake e1000			KCFG="-versatile"
-#    ipfiremake e1000e			KCFG="-versatile"
-#    ipfiremake igb			KCFG="-versatile"
     # arm-kirkwood kernel build
     ipfiremake linux			KCFG="-kirkwood"
 #    ipfiremake v4l-dvb			KCFG="-kirkwood"

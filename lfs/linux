@@ -189,13 +189,8 @@ ifeq "$(KCFG)" "-rpi"
 	cd /boot  && cat first32k.bin $(DIR_APP)/arch/arm/boot/Image > kernel.img
 	cd $(DIR_APP) && cp -v /boot/kernel.img /boot/vmlinuz-$(VER)-$(VERSUFIX)
 else
-ifeq "$(KCFG)" "-versatile"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage
-	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-else
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-endif
 endif
 endif
 endif
