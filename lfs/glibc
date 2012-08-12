@@ -132,7 +132,7 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && mv -v glibc-ports-$(PORTS_VER) ports
 endif
 
-# Apply all patches.
+	# Apply all patches.
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-aliasing.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-fedora.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-getlogin-r.patch
