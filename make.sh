@@ -270,10 +270,10 @@ buildtoolchain() {
     ORG_PATH=$PATH
     lfsmake1 ccache	PASS=1
     lfsmake1 make	PASS=1
+    lfsmake1 linux2 TOOLS=1 HEADERS=1
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
     export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    lfsmake1 linux2 TOOLS=1 HEADERS=1
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain PASS=1
     lfsmake1 fake-environ
