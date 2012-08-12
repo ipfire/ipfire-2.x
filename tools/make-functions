@@ -294,7 +294,7 @@ entershell() {
 
 	echo "Entering to a shell inside LFS chroot, go out with exit"
 	$linux32 chroot $LFS /tools/bin/env -i HOME=/root TERM=$TERM PS1='\u:\w\$ ' \
-		PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
+		PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
 		VERSION=$VERSION CONFIG_ROOT=$CONFIG_ROOT \
 		NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 		CFLAGS="$CF2LAGS" CXXFLAGS="$CXX2FLAGS" \
@@ -414,7 +414,7 @@ lfsmake2() {
 	local PKG_TIME_START=`date +%s`
 	$linux32 chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
+						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
 						VERSION=$VERSION \
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
@@ -449,7 +449,7 @@ ipfiremake() {
 	local PKG_TIME_START=`date +%s`
 	$linux32 chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 						VERSION=$VERSION \
 						CORE=$CORE \
 						CONFIG_ROOT=$CONFIG_ROOT \
@@ -485,7 +485,7 @@ ipfiredist() {
 	local PKG_TIME_START=`date +%s`
 	chroot $LFS /tools/bin/env -i 	HOME=/root \
 					TERM=$TERM PS1='\u:\w\$ ' \
-					PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+					PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 					VERSION=$VERSION \
 					CONFIG_ROOT=$CONFIG_ROOT \
 					NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
@@ -520,7 +520,7 @@ installmake() {
 	local PKG_TIME_START=`date +%s`
 	$linux32 chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 						VERSION=$VERSION \
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
