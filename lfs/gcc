@@ -200,6 +200,7 @@ endif
 
 ifeq "$(ROOT)" ""
 	ln -svf ../usr/bin/cpp /lib
+	ln -svf gcc /usr/bin/cc
 else
 ifeq    "$(PASS)" "1"
 	ln -svf libgcc.a $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
