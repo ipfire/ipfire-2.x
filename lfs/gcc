@@ -53,7 +53,7 @@ ifeq "$(PASS)" "1"
 		--disable-nls \
 		--enable-shared \
 		--enable-languages=c \
-		--disable-bootstrap
+		--enable-bootstrap
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 else
@@ -92,6 +92,10 @@ endif
 
 export XCFLAGS = $(CFLAGS)
 export TCFLAGS = $(CFLAGS)
+
+ifeq "$(PASS)" "1"
+  CFLAGS =
+endif
 
 ###############################################################################
 # Top-level Rules

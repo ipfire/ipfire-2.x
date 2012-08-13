@@ -92,8 +92,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# needed.
 
 ifeq "$(MACHINE_TYPE)" "arm"
-	# versatile kernel
-	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-versatile.img $(KVER)-ipfire-versatile
 	# kirkwood kernel
 	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-kirkwood.img $(KVER)-ipfire-kirkwood
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-kirkwood.img uInit-ipfire-kirkwood

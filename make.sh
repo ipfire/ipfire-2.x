@@ -37,7 +37,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=3
+TOOLCHAINVER=4
 
 BUILDMACHINE=$MACHINE
     if [ "$MACHINE" = "x86_64" ]; then
@@ -240,7 +240,7 @@ buildtoolchain() {
             ;;
 
         # ARM
-        armv5tel:armv5tel|armv5tel:armv5tejl|armv5tel:armv7l)
+        armv5tel:armv5tel|armv5tel:armv5tejl|armv5tel:armv6l|armv5tel:armv7l)
             # These are working.
             ;;
         armv5tel:*)
@@ -255,6 +255,14 @@ buildtoolchain() {
         exiterror "Cannot build toolchain on ipfire. Please use the download."
     fi
 
+    if [ ! -e /usr/include/asm -o ! -e /usr/include/bits -o ! -e /usr/include/gnu -o ! -e /usr/include/sys ]; then
+        exiterror "Cannot build toolchain without (asm, bits, gnu or sys includes). Please fix or use the download."
+    fi
+
+    if [ ! -e /usr/lib/libc.so ]; then
+        exiterror "Cannot build toolchain without (/usr/lib/libc.so). Please fix or use the download."
+    fi
+
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
     export LOGFILE
     NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
@@ -262,10 +270,10 @@ buildtoolchain() {
     ORG_PATH=$PATH
     lfsmake1 ccache	PASS=1
     lfsmake1 make	PASS=1
+    lfsmake1 linux2 TOOLS=1 HEADERS=1
     lfsmake1 binutils	PASS=1
     lfsmake1 gcc		PASS=1
     export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
-    lfsmake1 linux2 TOOLS=1 HEADERS=1
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain PASS=1
     lfsmake1 fake-environ
@@ -455,20 +463,6 @@ buildipfire() {
 #    ipfiremake e1000e			KCFG="-omap"
 #    ipfiremake igb			KCFG="-omap"
 
-    # arm-versatile kernel build
-    ipfiremake linux			KCFG="-versatile"
-#    ipfiremake v4l-dvb			KCFG="-versatile"
-#    ipfiremake kvm-kmod			KCFG="-versatile"
-#    ipfiremake mISDN			KCFG="-versatile"
-#    ipfiremake dahdi			KCFG="-versatile" KMOD=1
-    ipfiremake cryptodev		KCFG="-versatile"
-    ipfiremake compat-wireless		KCFG="-versatile"
-#    ipfiremake r8169			KCFG="-versatile"
-#    ipfiremake r8168			KCFG="-versatile"
-#    ipfiremake r8101			KCFG="-versatile"
-#    ipfiremake e1000			KCFG="-versatile"
-#    ipfiremake e1000e			KCFG="-versatile"
-#    ipfiremake igb			KCFG="-versatile"
     # arm-kirkwood kernel build
     ipfiremake linux			KCFG="-kirkwood"
 #    ipfiremake v4l-dvb			KCFG="-kirkwood"

@@ -70,8 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/$(THISAPP)-no_compiler_mtime.patch
-	cd $(DIR_APP) && CFLAGS="-O2 -static -DDEFAULT_MAXSIZE=2097152" ./configure --prefix=$(ROOT)/usr/local
+	cd $(DIR_APP) && CFLAGS="-O2 -static -DDEFAULT_MAXSIZE=5242880" ./configure --prefix=$(ROOT)/usr/local
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	ln -sf ccache $(ROOT)/usr/local/bin/gcc
