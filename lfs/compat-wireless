@@ -26,7 +26,7 @@ include Config
 
 VERSUFIX=ipfire$(KCFG)
 
-VER        = 3.5-1-snpc
+VER        = 3.5-3-snpc
 
 ifeq "$(KCFG)" "-xen"
 	KVER = 2.6.32.59
@@ -47,7 +47,7 @@ objects = $(DL_FILE) asix-4.4.0.tar.xz
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 asix-4.4.0.tar.xz = $(DL_FROM)/asix-4.4.0.tar.xz
 
-$(DL_FILE)_MD5 = 7099f748a9d2c05fffea7e5ea4f41a0b
+$(DL_FILE)_MD5 = 66f27eed39aacd567f67025305273cd7
 asix-4.4.0.tar.xz_MD5=633609e889de41554826e0e2cd7bffde
 
 install : $(TARGET)
@@ -82,6 +82,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# kfifo has no license info and taints kernel
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.39_kfifo_module_info.patch
 
+	# Build ath5k only if target has pci
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.5-build_ath5k_only_with_pci.patch
+
 	# Copy USB-Net drivers from Kernel...
 	mkdir $(DIR_APP)/drivers/net/usb/new
 	cp $(DIR_APP)/drivers/net/usb/*.c $(DIR_APP)/drivers/net/usb/new
@@ -101,12 +104,12 @@ ifneq "$(KCFG)" "-xen"
 	cd $(DIR_APP) && echo export CONFIG_LIBERTAS_UAP=m >> config.mk
 endif
 
-#ifeq "$(MACHINE_TYPE)" "arm"
-#	# fix atomic64 functions
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.2.5-1-fix_atomic64_t_on_arm.patch
-#endif
+	# Erase some modules that are obsolete or moved to other path
+	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/net/bluetooth
+	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/wl12*
 
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX) \
+		KLIB_BUILD=/lib/modules/$(KVER)-$(VERSUFIX)/build \
 		KMODPATH_ARG='INSTALL_MOD_PATH=' KMODDIR=kernel install-modules
 
 	# Install firmware udev files...

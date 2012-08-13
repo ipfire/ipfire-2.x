@@ -441,7 +441,7 @@ buildipfire() {
 #    ipfiremake mISDN			KCFG="-rpi"
 #    ipfiremake dahdi			KCFG="-rpi" KMOD=1
     ipfiremake cryptodev		KCFG="-rpi"
-#    ipfiremake compat-wireless		KCFG="-rpi"
+    ipfiremake compat-wireless		KCFG="-rpi"
 #    ipfiremake r8169			KCFG="-rpi"
 #    ipfiremake r8168			KCFG="-rpi"
 #    ipfiremake r8101			KCFG="-rpi"
@@ -455,7 +455,7 @@ buildipfire() {
 #    ipfiremake mISDN			KCFG="-omap"
 #    ipfiremake dahdi			KCFG="-omap" KMOD=1
     ipfiremake cryptodev		KCFG="-omap"
-#    ipfiremake compat-wireless		KCFG="-omap"
+    ipfiremake compat-wireless		KCFG="-omap"
 #    ipfiremake r8169			KCFG="-omap"
 #    ipfiremake r8168			KCFG="-omap"
 #    ipfiremake r8101			KCFG="-omap"
