@@ -1,0 +1,25 @@
+From: Jesper Dangaard Brouer <hawk@comx.dk>
+Date: Tue, 24 Jan 2012 16:03:33 -0500
+Subject: [PATCH 3/3] net: flow_dissector.c missing include linux/export.h
+
+commit c452ed70771cea3af73d21a5914989137fbd28b8 upstream.
+
+The file net/core/flow_dissector.c seems to be missing
+including linux/export.h.
+
+Signed-off-by: Jesper Dangaard Brouer <hawk@comx.dk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+
+diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
+index 0985b9b..a225089 100644
+--- a/net/core/flow_dissector.c
++++ b/net/core/flow_dissector.c
+@@ -1,4 +1,5 @@
+ #include <linux/skbuff.h>
++#include <linux/export.h>
+ #include <linux/ip.h>
+ #include <linux/ipv6.h>
+ #include <linux/if_vlan.h>
+-- 
+1.7.10
+
