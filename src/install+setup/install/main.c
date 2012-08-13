@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 
 	// Load common modules
 	mysystem("/sbin/modprobe iso9660"); // CDROM
-	mysystem("/sbin/modprobe ext2"); // Boot patition
+//	mysystem("/sbin/modprobe ext2"); // Boot patition
 	mysystem("/sbin/modprobe vfat"); // USB key
 	
 	/* German is the default */
@@ -375,16 +375,16 @@ int main(int argc, char *argv[])
 	}
 	
 	if (fstype == EXT2) {
-		mysystem("/sbin/modprobe ext2");
+//		mysystem("/sbin/modprobe ext2");
 		sprintf(mkfscommand, "/sbin/mke2fs -T ext2");
 	} else if (fstype == REISERFS) {
 		mysystem("/sbin/modprobe reiserfs");
 		sprintf(mkfscommand, "/sbin/mkreiserfs -f");
 	} else if (fstype == EXT3) {
-		mysystem("/sbin/modprobe ext3");
+//		mysystem("/sbin/modprobe ext3");
 		sprintf(mkfscommand, "/sbin/mke2fs -T ext3");
 	} else if (fstype == EXT4) {
-		mysystem("/sbin/modprobe ext4");
+//		mysystem("/sbin/modprobe ext4");
 		sprintf(mkfscommand, "/sbin/mke2fs -T ext4");
 	}
 

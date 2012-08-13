@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -21,30 +21,10 @@
 
 echo "Scanning for possible destination drives"
 
-# scan IDE devices
-echo "--> IDE"
-for DEVICE in $(kudzu -qps -t 30 -c HD -b IDE | grep device: | cut -d ' ' -f 2 | sort | uniq); do
-		if [ "$(grep ${DEVICE} /proc/partitions)" = "" ]; then
-			umount /harddisk 2> /dev/null
-			echo "${DEVICE} is empty - SKIP"
-			continue
-		fi
-		mount /dev/${DEVICE}1 /harddisk 2> /dev/null
-		if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
-			umount /harddisk 2> /dev/null
-			echo "${DEVICE}1 is source drive - SKIP"
-			continue
-		else
-			umount /harddisk 2> /dev/null
-			echo -n "$DEVICE" > /tmp/dest_device
-			echo "${DEVICE} - yes, it is our destination"
-			exit 0 # IDE / use DEVICE for grub
-		fi
-done
-
-# scan USB/SCSI devices
-echo "--> USB/SCSI"
-for DEVICE in $(kudzu -qps -t 30 -c HD -b SCSI | grep device: | cut -d ' ' -f 2 | sort | uniq); do
+# scan sd?
+echo "--> sd?"
+for DEVICE in `find /sys/block/* -maxdepth 0 -name sd* -exec basename {} \; | sort | uniq`
+do
 		if [ "$(grep ${DEVICE} /proc/partitions)" = "" ]; then
 			umount /harddisk 2> /dev/null
 			echo "${DEVICE} is empty - SKIP"
@@ -66,19 +46,15 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b SCSI | grep device: | cut -d ' ' -f 2 
 				umount /harddisk 2> /dev/null
 				echo -n "$DEVICE" > /tmp/dest_device
 				echo "${DEVICE} - yes, it is our destination"
-				exit 1 # SCSI/USB (always use /dev/sda as bootdevicename)
+				exit 1 # (always use /dev/sda as bootdevicename)
 			fi
 		fi
 done
 
-# scan RAID devices
-echo "--> RAID"
-for DEVICE in $(kudzu -qps -t 30 -c HD -b RAID | grep device: | cut -d ' ' -f 2 | sort | uniq); do
-		if [ "$(grep ${DEVICE}p1 /proc/partitions)" = "" ]; then
-			umount /harddisk 2> /dev/null
-			echo "${DEVICE}p1 is empty - SKIP"
-			continue
-		fi
+# scan other
+echo "--> other"
+for DEVICE in `find /sys/block/* -maxdepth 0 ! -name sd* ! -name sr* ! -name fd* ! -name loop* ! -name ram* -exec basename {} \; | sort | uniq`
+do
 		mount /dev/${DEVICE}p1 /harddisk 2> /dev/null
 		if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
 			umount /harddisk 2> /dev/null
@@ -111,39 +87,5 @@ for DEVICE in $(kudzu -qps -t 30 -c HD -b RAID | grep device: | cut -d ' ' -f 2 
 			fi
 		fi
 done
-
-# Virtio devices
-echo "--> Virtio"
-for DEVICE in vda vdb vdc vdd; do
-		if [ ! -e /dev/${DEVICE} ]; then
-			continue
-		else
-			if [ "$(grep ${DEVICE} /proc/partitions)" = "" ]; then
-				umount /harddisk 2> /dev/null
-				echo "${DEVICE} is empty - SKIP"
-				continue
-			fi
-			mount /dev/${DEVICE} /harddisk 2> /dev/null
-			if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
-				umount /harddisk 2> /dev/null
-				echo "${DEVICE} is source drive - SKIP"
-				continue
-			else
-				umount /harddisk 2> /dev/null
-				mount /dev/${DEVICE}1 /harddisk 2> /dev/null
-				if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
-					umount /harddisk 2> /dev/null
-					echo "${DEVICE}1 is source drive - SKIP"
-					continue
-				else
-					umount /harddisk 2> /dev/null
-					echo -n "$DEVICE" > /tmp/dest_device
-					echo "${DEVICE} - yes, it is our destination"
-					exit 0 # like ide / use device for grub
-				fi
-			fi
-		fi
-done
-
 
 exit 10 # Nothing found
