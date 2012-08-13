@@ -43,10 +43,6 @@ case "$1" in
 			mkdir -p /var/run/mysql
 			chown mysql:mysql /var/run/mysql
 		fi
-		if [ ! -e /var/run/pluto ]; then
-			mkdir -p /var/run/pluto
-			chmod 700 /var/run/pluto
-		fi
 		if [ ! -e /var/run/saslauthd ]; then
 			mkdir -p /var/run/saslauthd
 		fi

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -21,8 +21,9 @@
 
 echo "Scanning source media"
 
-# scan CDROM devices
-for DEVICE in $(kudzu -qps -t 30 -c CDROM | grep device: | cut -d ' ' -f 2 | sort | uniq); do
+# scan all Block devices
+for DEVICE in `find /sys/block/* -maxdepth 0 ! -name fd* ! -name loop* ! -name ram* -exec basename {} \;`
+do
 		mount /dev/${DEVICE} /cdrom 2> /dev/null
 		if [ -n "$(ls /cdrom/ipfire-*.tlz 2>/dev/null)" ]; then
 			echo -n ${DEVICE} > /tmp/source_device
@@ -34,9 +35,10 @@ for DEVICE in $(kudzu -qps -t 30 -c CDROM | grep device: | cut -d ' ' -f 2 | sor
 		umount /cdrom 2> /dev/null
 done
 
-# scan HD device part1 (usb sticks, etc.)
-for DEVICE in $(kudzu -qps -t 30 -c HD | grep device: | cut -d ' ' -f 2 | sort | uniq); do
-	for DEVICEP in $(ls /dev/${DEVICE}? | sed "s/\/dev\///");do
+# scan all Partitions on block devices
+for DEVICE in `find /sys/block/* -maxdepth 0 ! -name fd* ! -name loop* ! -name ram* -exec basename {} \;`
+do
+	for DEVICEP in $(ls /dev/${DEVICE}? | sed "s/\/dev\///" 2> /dev/null);do
 		mount /dev/${DEVICEP} /cdrom 2> /dev/null
 		if [ -n "$(ls /cdrom/ipfire-*.tlz 2>/dev/null)" ]; then
 			echo -n ${DEVICEP} > /tmp/source_device
@@ -49,17 +51,20 @@ for DEVICE in $(kudzu -qps -t 30 -c HD | grep device: | cut -d ' ' -f 2 | sort |
 	done
 done
 
-# scan HD device unpart (usb sticks, etc.)
-for DEVICE in $(kudzu -qps -t 30 -c HD | grep device: | cut -d ' ' -f 2 | sort | uniq); do
-		mount /dev/${DEVICE} /cdrom 2> /dev/null
+# scan all Partitions on raid/mmc devices
+for DEVICE in `find /sys/block/* -maxdepth 0 ! -name fd* ! -name loop* ! -name ram* -exec basename {} \;`
+do
+	for DEVICEP in $(ls /dev/${DEVICE}p? | sed "s/\/dev\///");do
+		mount /dev/${DEVICEP} /cdrom 2> /dev/null
 		if [ -n "$(ls /cdrom/ipfire-*.tlz 2>/dev/null)" ]; then
-			echo -n ${DEVICE} > /tmp/source_device
-			echo "Found tarball on ${DEVICE}"
+			echo -n ${DEVICEP} > /tmp/source_device
+			echo "Found tarball on ${DEVICEP}"
 			exit 0
 		else
-			echo "Found no tarballs on ${DEVICE} - SKIP"
+			echo "Found no tarballs on ${DEVICEP} - SKIP"
 		fi
 		umount /cdrom 2> /dev/null
+	done
 done
 
 exit 10

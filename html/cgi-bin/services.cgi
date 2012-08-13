@@ -54,7 +54,7 @@ my %servicenames =(
 	$Lang::tr{'kernel logging server'} => 'klogd',
 	$Lang::tr{'ntp server'} => 'ntpd',
 	$Lang::tr{'secure shell server'} => 'sshd',
-	$Lang::tr{'vpn'} => 'pluto',
+	$Lang::tr{'vpn'} => 'charon',
 	$Lang::tr{'web proxy'} => 'squid',
 	'OpenVPN' => 'openvpn'
 );

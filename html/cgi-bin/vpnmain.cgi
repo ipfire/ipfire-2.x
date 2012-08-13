@@ -73,17 +73,9 @@ $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'EDIT_ADVANCED'} = 'off';
 $cgiparams{'ACTION'} = '';
 $cgiparams{'CA_NAME'} = '';
-$cgiparams{'DBG_CRYPT'} = '';
-$cgiparams{'DBG_PARSING'} = '';
-$cgiparams{'DBG_EMITTING'} = '';
-$cgiparams{'DBG_CONTROL'} = '';
-$cgiparams{'DBG_KLIPS'} = '';
-$cgiparams{'DBG_DNS'} = '';
-$cgiparams{'DBG_NAT_T'} = '';
 $cgiparams{'KEY'} = '';
 $cgiparams{'TYPE'} = '';
 $cgiparams{'ADVANCED'} = '';
-$cgiparams{'INTERFACE'} = '';
 $cgiparams{'NAME'} = '';
 $cgiparams{'LOCAL_SUBNET'} = '';
 $cgiparams{'REMOTE_SUBNET'} = '';
@@ -253,50 +245,8 @@ sub writeipsecfiles {
     flock CONF, 2;
     flock SECRETS, 2;
     print CONF "version 2\n\n";
-    print CONF "config setup\n";
-    #create an ipsec Interface for each 'enabled' ones
-    #loop trought configuration and add physical interfaces to the list
-    my $interfaces = "\tinterfaces=\"";
-    foreach my $key (keys %lconfighash) {
-	next if ($lconfighash{$key}[0] ne 'on');
-        $interfaces .= "%defaultroute " 		    if ($interfaces !~ /defaultroute/ && $lconfighash{$key}[26] eq 'RED');
-	$interfaces .= "$netsettings{'GREEN_DEV'} "  if ($interfaces !~ /ipsec1/	      && $lconfighash{$key}[26] eq 'GREEN');
-	$interfaces .= "$netsettings{'BLUE_DEV'} "   if ($interfaces !~ /ipsec2/	      && $lconfighash{$key}[26] eq 'BLUE');
-	$interfaces .= "$netsettings{'ORANGE_DEV'} " if ($interfaces !~ /ipsec3/	      && $lconfighash{$key}[26] eq 'ORANGE');
-    }
-    print CONF $interfaces . "\"\n";
-
-    my $plutodebug = '';			# build debug list
-    map ($plutodebug .= $lvpnsettings{$_} eq 'on' ? lc (substr($_,4)).' ' : '',
-	('DBG_CRYPT','DBG_PARSING','DBG_EMITTING','DBG_CONTROL',
-	 'DBG_DNS'));
-    $plutodebug = 'none' if $plutodebug eq '';  # if nothing selected, use 'none'.
-    #print CONF "\tklipsdebug=\"none\"\n";
-    print CONF "\tplutodebug=\"$plutodebug\"\n";
-    # deprecated in ipsec.conf version 2
-    #print CONF "\tplutoload=%search\n";
-    #print CONF "\tplutostart=%search\n";
-    print CONF "\tuniqueids=yes\n";
-    print CONF "\tnat_traversal=yes\n";
-    print CONF "\toverridemtu=$lvpnsettings{'VPN_OVERRIDE_MTU'}\n" if ($lvpnsettings{'VPN_OVERRIDE_MTU'} ne '');
-    print CONF "\tvirtual_private=%v4:10.0.0.0/8,%v4:172.16.0.0/12,%v4:192.168.0.0/16";
-    print CONF ",%v4:!$green_cidr";
-    if (length($netsettings{'ORANGE_DEV'}) > 2) {
-	print CONF ",%v4:!$orange_cidr";
-    }
-    if (length($netsettings{'BLUE_DEV'}) > 2) {
-	print CONF ",%v4:!$blue_cidr";
-    }
-    foreach my $key (keys %lconfighash) {
-	if ($lconfighash{$key}[3] eq 'net') {
-	    print CONF ",%v4:!$lconfighash{$key}[11]";
-	}
-    }
-    print CONF "\n\n";
     print CONF "conn %default\n";
-    print CONF "\tkeyingtries=0\n";
-    #strongswan doesn't know this
-    #print CONF "\tdisablearrivalcheck=no\n";
+    print CONF "\tkeyingtries=%forever\n";
     print CONF "\n";
 
     # Add user includes to config file
@@ -329,7 +279,6 @@ sub writeipsecfiles {
 
 	print CONF "conn $lconfighash{$key}[1]\n";
 	print CONF "\tleft=$localside\n";
-	print CONF "\tleftnexthop=%defaultroute\n" if ($lconfighash{$key}[26] eq 'RED' && $lvpnsettings{'VPN_IP'} ne '%defaultroute');
 	my $cidr_net=&General::ipcidr($lconfighash{$key}[8]);
 	print CONF "\tleftsubnet=$cidr_net\n";
 	print CONF "\tleftfirewall=yes\n";
@@ -339,7 +288,6 @@ sub writeipsecfiles {
 	if ($lconfighash{$key}[3] eq 'net') {
 	    my $cidr_net=&General::ipcidr($lconfighash{$key}[11]);
 	    print CONF "\trightsubnet=$cidr_net\n";
-	    print CONF "\trightnexthop=%defaultroute\n";
 	} elsif ($lconfighash{$key}[10] eq '%any' && $lconfighash{$key}[14] eq 'on') { #vhost allowed for roadwarriors?
 	    print CONF "\trightsubnet=vhost:%no,%priv\n";
 	}
@@ -353,6 +301,9 @@ sub writeipsecfiles {
 	# Local and Remote IDs
 	print CONF "\tleftid=\"$lconfighash{$key}[7]\"\n" if ($lconfighash{$key}[7]);
 	print CONF "\trightid=\"$lconfighash{$key}[9]\"\n" if ($lconfighash{$key}[9]);
+
+	# Is PFS enabled?
+	my $pfs = $lconfighash{$key}[28] eq 'on' ? 'on' : 'off';
 
 	# Algorithms
 	if ($lconfighash{$key}[18] && $lconfighash{$key}[19] && $lconfighash{$key}[20]) {
@@ -379,11 +330,25 @@ sub writeipsecfiles {
 	    print CONF "\tesp=";
 	    my @encs   = split('\|', $lconfighash{$key}[21]);
 	    my @ints   = split('\|', $lconfighash{$key}[22]);
+	    my @groups = split('\|', $lconfighash{$key}[20]);
 	    my $comma = 0;
 	    foreach my $i (@encs) {
 		foreach my $j (@ints) {
-		    if ($comma != 0) { print CONF ","; } else { $comma = 1; }
-		    print CONF "$i-$j";
+			my $modp = "";
+			if ($pfs eq "on") {
+				foreach my $k (@groups) {
+				    if ($comma != 0) { print CONF ","; } else { $comma = 1; }
+				    if ($pfs eq "on") {
+					$modp = "-modp$k";
+				    } else {
+				        $modp = "";
+				    }
+				    print CONF "$i-$j$modp";
+				}
+			} else {
+				if ($comma != 0) { print CONF ","; } else { $comma = 1; }
+				print CONF "$i-$j";
+			}
 		}
 	    }
 	    if ($lconfighash{$key}[24] eq 'on') {	#only proposed algorythms?
@@ -391,9 +356,6 @@ sub writeipsecfiles {
 	    } else {
 		print CONF "\n";
 	    }
-	}
-	if ($lconfighash{$key}[23]) {
-	    print CONF "\tpfsgroup=$lconfighash{$key}[23]\n";
 	}
 
 	# IKE V1 or V2
@@ -413,9 +375,6 @@ sub writeipsecfiles {
 	print CONF "\tdpddelay=30\n";
 	print CONF "\tdpdtimeout=120\n";
 	print CONF "\tdpdaction=$lconfighash{$key}[27]\n";
-
-	# Disable pfs ?
-	print CONF "\tpfs=". ($lconfighash{$key}[28] eq 'on' ? "yes\n" : "no\n");
 
 	# Build Authentication details:  LEFTid RIGHTid : PSK psk
 	my $psk_line;
@@ -450,6 +409,12 @@ sub writeipsecfiles {
     close(SECRETS);
 }
 
+# Hook to regenerate the configuration files.
+if ($ENV{"REMOTE_ADDR"} eq "") {
+	writeipsecfiles;
+	exit(0);
+}
+
 ###
 ### Save main settings
 ###
@@ -466,29 +431,13 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	goto SAVE_ERROR;
     }
 
-    unless ($cgiparams{'VPN_OVERRIDE_MTU'} =~ /^(|[0-9]{1,5})$/ ) { #allow 0-99999
-	$errormessage = $Lang::tr{'vpn mtu invalid'};
-	goto SAVE_ERROR;
-    }
-
-    unless ($cgiparams{'VPN_WATCH'} =~ /^(|off|on)$/ ) {
-	$errormessage = $Lang::tr{'invalid input'};
-	goto SAVE_ERROR;
-    }
-
     if ( $cgiparams{'RW_NET'} ne '' and !&General::validipandmask($cgiparams{'RW_NET'}) ) {
 	$errormessage = $Lang::tr{'urlfilter invalid ip or mask error'};
 	goto SAVE_ERROR;
     }
 
-    map ($vpnsettings{$_} = $cgiparams{$_},
-	('ENABLED','DBG_CRYPT','DBG_PARSING','DBG_EMITTING','DBG_CONTROL',
-	 'DBG_DNS'));
-
     $vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
     $vpnsettings{'VPN_DELAYED_START'} = $cgiparams{'VPN_DELAYED_START'};
-    $vpnsettings{'VPN_OVERRIDE_MTU'} = $cgiparams{'VPN_OVERRIDE_MTU'};
-    $vpnsettings{'VPN_WATCH'} = $cgiparams{'VPN_WATCH'};
     $vpnsettings{'RW_NET'} = $cgiparams{'RW_NET'};
     &General::writehash("${General::swroot}/vpn/settings", \%vpnsettings);
     &writeipsecfiles();
@@ -1298,7 +1247,6 @@ END
 	$cgiparams{'REMOTE'}		= $confighash{$cgiparams{'KEY'}}[10];
 	$cgiparams{'REMOTE_SUBNET'} 	= $confighash{$cgiparams{'KEY'}}[11];
 	$cgiparams{'REMARK'}		= $confighash{$cgiparams{'KEY'}}[25];
-	$cgiparams{'INTERFACE'}		= $confighash{$cgiparams{'KEY'}}[26];
 	$cgiparams{'DPD_ACTION'}	= $confighash{$cgiparams{'KEY'}}[27];
 	$cgiparams{'IKE_VERSION'}	= $confighash{$cgiparams{'KEY'}}[29];
 	$cgiparams{'IKE_ENCRYPTION'} 	= $confighash{$cgiparams{'KEY'}}[18];
@@ -1801,7 +1749,7 @@ END
 	$confighash{$key}[9] = $cgiparams{'REMOTE_ID'};
 	$confighash{$key}[10] = $cgiparams{'REMOTE'};
 	$confighash{$key}[25] = $cgiparams{'REMARK'};
-	$confighash{$key}[26] = $cgiparams{'INTERFACE'};
+	$confighash{$key}[26] = ""; # Formerly INTERFACE
 	$confighash{$key}[27] = $cgiparams{'DPD_ACTION'};
 	$confighash{$key}[29] = $cgiparams{'IKE_VERSION'};
 
@@ -1859,28 +1807,25 @@ END
 	    $cgiparams{'DPD_ACTION'} = 'restart';
 	}
 
-	# Default IKE Version to V1
-	if (! $cgiparams{'IKE_VERSION'}) {
-	    $cgiparams{'IKE_VERSION'} = 'ikev1';
+	# Default IKE Version to v2
+	if (!$cgiparams{'IKE_VERSION'}) {
+	    $cgiparams{'IKE_VERSION'} = 'ikev2';
 	}
 
-	# Default is yes for 'pfs'
-	$cgiparams{'PFS'}     = 'on';
-	
 	# ID are empty
 	$cgiparams{'LOCAL_ID'}  = '';
 	$cgiparams{'REMOTE_ID'} = '';
 
 	#use default advanced value
-	$cgiparams{'IKE_ENCRYPTION'} = 'aes128|3des';	#[18];
+	$cgiparams{'IKE_ENCRYPTION'} = 'aes256|aes128|3des';	#[18];
 	$cgiparams{'IKE_INTEGRITY'}  = 'sha|md5';	#[19];
-	$cgiparams{'IKE_GROUPTYPE'}  = '1536|1024';	#[20];
+	$cgiparams{'IKE_GROUPTYPE'}  = '2048';		#[20];
 	$cgiparams{'IKE_LIFETIME'}   = '1';		#[16];
-	$cgiparams{'ESP_ENCRYPTION'} = 'aes128|3des';	#[21];
+	$cgiparams{'ESP_ENCRYPTION'} = 'aes256|aes128|3des';	#[21];
 	$cgiparams{'ESP_INTEGRITY'}  = 'sha1|md5';	#[22];
 	$cgiparams{'ESP_GROUPTYPE'}  = '';		#[23];
 	$cgiparams{'ESP_KEYLIFE'}    = '8';		#[17];
-	$cgiparams{'COMPRESSION'}    = 'off';		#[13];
+	$cgiparams{'COMPRESSION'}    = 'on';		#[13];
 	$cgiparams{'ONLY_PROPOSED'}  = 'off';		#[24];
 	$cgiparams{'PFS'}	     = 'on';		#[28];
 	$cgiparams{'VHOST'}          = 'on'; 		#[14];
@@ -1902,12 +1847,6 @@ END
     $checked{'AUTH'}{'pkcs12'} = '';
     $checked{'AUTH'}{'auth-dn'} = '';
     $checked{'AUTH'}{$cgiparams{'AUTH'}} = "checked='checked'";
-
-    $selected{'INTERFACE'}{'RED'} = '';
-    $selected{'INTERFACE'}{'ORANGE'} = '';
-    $selected{'INTERFACE'}{'GREEN'} = '';
-    $selected{'INTERFACE'}{'BLUE'} = '';
-    $selected{'INTERFACE'}{$cgiparams{'INTERFACE'}} = "selected='selected'";
 
     $selected{'DPD_ACTION'}{'clear'} = '';
     $selected{'DPD_ACTION'}{'hold'} = '';
@@ -1975,22 +1914,24 @@ END
 	$blob = "<img src='/blob.gif' alt='*' />";
     };
 
-    print "<tr><td>$Lang::tr{'host ip'}:</td>";
-    print "<td><select name='INTERFACE'>";
-    print "<option value='RED' $selected{'INTERFACE'}{'RED'}>RED ($vpnsettings{'VPN_IP'})</option>";
-    print "<option value='GREEN' $selected{'INTERFACE'}{'GREEN'}>GREEN ($netsettings{'GREEN_ADDRESS'})</option>";
-    print "<option value='BLUE' $selected{'INTERFACE'}{'BLUE'}>BLUE ($netsettings{'BLUE_ADDRESS'})</option>" if ($netsettings{'BLUE_DEV'} ne '');
-    print "<option value='ORANGE' $selected{'INTERFACE'}{'ORANGE'}>ORANGE ($netsettings{'ORANGE_ADDRESS'})</option>" if ($netsettings{'ORANGE_DEV'} ne '');
-    print "</select></td>";
     print <<END
+	<tr>
 	    <td class='boldbase'>$Lang::tr{'remote host/ip'}:&nbsp;$blob</td>
-	    <td><input type='text' name='REMOTE' value='$cgiparams{'REMOTE'}' size='30' /></td>
-	</tr><tr>
-	    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'local subnet'}</td>
-	    <td><input type='text' name='LOCAL_SUBNET' value='$cgiparams{'LOCAL_SUBNET'}' size='30' /></td>
+	    <td>
+	        <input type='text' name='REMOTE' value='$cgiparams{'REMOTE'}' size='30' />
+	    </td>
 	    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'remote subnet'}</td>
-	    <td><input $disabled type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' size='30' /></td>
-	</tr><tr>
+	    <td>
+	        <input $disabled type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' size='30' />
+	    </td>
+	</tr>
+	<tr>
+	    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'local subnet'}</td>
+	    <td colspan='3'>
+	        <input type='text' name='LOCAL_SUBNET' value='$cgiparams{'LOCAL_SUBNET'}' size='30' />
+	    </td>
+	</tr>
+	<tr>
 	    <td class='boldbase'>$Lang::tr{'vpn local id'}:<br />($Lang::tr{'eg'} <tt>&#64;xy.example.com</tt>)</td>
 	    <td><input type='text' name='LOCAL_ID' value='$cgiparams{'LOCAL_ID'}' /></td>
 	    <td class='boldbase'>$Lang::tr{'vpn remote id'}:</td>
@@ -1999,22 +1940,18 @@ END
 	</tr><td><br /></td><tr>
 	    <td>$Lang::tr{'vpn keyexchange'}:</td>
 	    <td><select name='IKE_VERSION'>
-    		<option value='ikev1' $selected{'IKE_VERSION'}{'ikev1'}>IKEv1</option>
     		<option value='ikev2' $selected{'IKE_VERSION'}{'ikev2'}>IKEv2</option>
-    		</select></a>
+    		<option value='ikev1' $selected{'IKE_VERSION'}{'ikev1'}>IKEv1</option>
+    		</select>
 	    </td>
 	    <td>$Lang::tr{'dpd action'}:</td>
 	    <td><select name='DPD_ACTION'>
     		<option value='clear' $selected{'DPD_ACTION'}{'clear'}>clear</option>
     		<option value='hold' $selected{'DPD_ACTION'}{'hold'}>hold</option>
     		<option value='restart' $selected{'DPD_ACTION'}{'restart'}>restart</option>
-		</select>&nbsp; <a href='http://www.openswan.com/docs/local/README.DPD'>?</a>
+		</select>
 	    </td>
 	</tr><tr>
-<!--http://www.openswan.com/docs/local/README.DPD
-    http://bugs.xelerance.com/view.php?id=156
-    restart = clear + reinitiate connection
--->
 	    <td class='boldbase'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 	    <td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td>
 	</tr>
@@ -2447,11 +2384,7 @@ EOF
     $cgiparams{'VPN_IP'} ='%defaultroute' if ($cgiparams{'VPN_IP'} eq '');
     
     $cgiparams{'VPN_DELAYED_START'} = 0 if (! defined ($cgiparams{'VPN_DELAYED_START'}));
-    $checked{'VPN_WATCH'} = $cgiparams{'VPN_WATCH'} eq 'on' ? "checked='checked'" : '' ;
-    map ($checked{$_} = $cgiparams{$_} eq 'on' ? "checked='checked'" : '',
-	('ENABLED','DBG_CRYPT','DBG_PARSING','DBG_EMITTING','DBG_CONTROL',
-	 'DBG_DNS'));
-
+    $checked{'ENABLED'} = $cgiparams{'ENABLED'} eq 'on' ? "checked='checked'" : '';
 
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
@@ -2475,13 +2408,6 @@ EOF
     </tr>
 END
     ;
-    print <<END
-    <tr>
-	<td class='base' nowrap='nowrap'>$Lang::tr{'override mtu'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td ><input type='text' name='VPN_OVERRIDE_MTU' value='$cgiparams{'VPN_OVERRIDE_MTU'}' /></td>
-    </tr>
-END
-    ;
 print <<END
     <tr>
 	<td  class='base' nowrap='nowrap'>$Lang::tr{'vpn delayed start'}:&nbsp;<img src='/blob.gif' alt='*' /><img src='/blob.gif' alt='*' /></td>
@@ -2492,13 +2418,6 @@ print <<END
 	<td ><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
     </tr>
  </table>
-<p>$Lang::tr{'vpn watch'}:<input type='checkbox' name='VPN_WATCH' $checked{'VPN_WATCH'} /></p>
-<p>PLUTO DEBUG&nbsp;=
-crypt:<input type='checkbox' name='DBG_CRYPT' $checked{'DBG_CRYPT'} />,&nbsp;
-parsing:<input type='checkbox' name='DBG_PARSING' $checked{'DBG_PARSING'} />,&nbsp;
-emitting:<input type='checkbox' name='DBG_EMITTING' $checked{'DBG_EMITTING'} />,&nbsp;
-control:<input type='checkbox' name='DBG_CONTROL' $checked{'DBG_CONTROL'} />,&nbsp;
-dns:<input type='checkbox' name='DBG_DNS' $checked{'DBG_DNS'} />&nbsp;
 <hr />
 <table width='100%'>
 <tr>
