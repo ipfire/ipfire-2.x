@@ -72,6 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-gcc4_fixes-3.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-daemon_fixes-1.patch
+	cd $(DIR_APP) && sed -i '/#include/a #include <stdlib.h>' libicmp/icmp_timestamp.c
 	cd $(DIR_APP) && ./configure --prefix=/usr --libexecdir=/usr/sbin \
 				--sysconfdir=/etc --localstatedir=/var \
 				--mandir=/usr/share/man --infodir=/usr/share/info \
