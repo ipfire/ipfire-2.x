@@ -543,7 +543,6 @@ buildipfire() {
   ipfiremake iptables
   ipfiremake libupnp
   ipfiremake ipaddr
-  ipfiremake iptstate
   ipfiremake iputils
   ipfiremake l7-protocols
   ipfiremake mISDNuser
@@ -645,7 +644,6 @@ buildipfire() {
   ipfiremake cmake
   ipfiremake gnump3d
   ipfiremake libsigc++
-  ipfiremake applejuice
   ipfiremake libtorrent
   ipfiremake rtorrent
   ipfiremake ipfireseeder
