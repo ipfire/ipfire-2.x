@@ -232,7 +232,7 @@ buildtoolchain() {
     local error=false
     case "${MACHINE}:$(uname -m)" in
         # x86
-        i586:i586|i586:i686)
+        i586:i586|i586:i686|i586:x86_64)
             # These are working.
             ;;
         i586:*)
@@ -251,16 +251,9 @@ buildtoolchain() {
     ${error} && \
         exiterror "Cannot build ${MACHINE} toolchain on $(uname -m). Please use the download if any."
 
-    if [ "$(uname -r | grep ipfire)" ]; then
-        exiterror "Cannot build toolchain on ipfire. Please use the download."
-    fi
-
-    if [ ! -e /usr/include/asm -o ! -e /usr/include/bits -o ! -e /usr/include/gnu -o ! -e /usr/include/sys ]; then
-        exiterror "Cannot build toolchain without (asm, bits, gnu or sys includes). Please fix or use the download."
-    fi
-
-    if [ ! -e /usr/lib/libc.so ]; then
-        exiterror "Cannot build toolchain without (/usr/lib/libc.so). Please fix or use the download."
+    local gcc=$(type -p gcc)
+    if [ -z "${gcc}" ]; then
+        exiterror "Could not find GCC. You will need a working build enviroment in order to build the toolchain."
     fi
 
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
