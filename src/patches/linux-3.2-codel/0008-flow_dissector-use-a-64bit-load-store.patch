@@ -1,0 +1,90 @@
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Date: Mon, 28 Nov 2011 20:30:35 +0000
+Subject: [PATCH 2/3] flow_dissector: use a 64bit load/store
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+commit 4d77d2b567ec66a443792d99e96ac760991d80d0 upstream.
+
+Le lundi 28 novembre 2011 à 19:06 -0500, David Miller a écrit :
+> From: Dimitris Michailidis <dm@chelsio.com>
+> Date: Mon, 28 Nov 2011 08:25:39 -0800
+>
+> >> +bool skb_flow_dissect(const struct sk_buff *skb, struct flow_keys
+> >> *flow)
+> >> +{
+> >> +	int poff, nhoff = skb_network_offset(skb);
+> >> +	u8 ip_proto;
+> >> +	u16 proto = skb->protocol;
+> >
+> > __be16 instead of u16 for proto?
+>
+> I'll take care of this when I apply these patches.
+
+( CC trimmed )
+
+Thanks David !
+
+Here is a small patch to use one 64bit load/store on x86_64 instead of
+two 32bit load/stores.
+
+[PATCH net-next] flow_dissector: use a 64bit load/store
+
+gcc compiler is smart enough to use a single load/store if we
+memcpy(dptr, sptr, 8) on x86_64, regardless of
+CONFIG_CC_OPTIMIZE_FOR_SIZE
+
+In IP header, daddr immediately follows saddr, this wont change in the
+future. We only need to make sure our flow_keys (src,dst) fields wont
+break the rule.
+
+Signed-off-by: Eric Dumazet <eric.dumazet@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+
+diff --git a/include/net/flow_keys.h b/include/net/flow_keys.h
+index e4cb285..80461c1 100644
+--- a/include/net/flow_keys.h
++++ b/include/net/flow_keys.h
+@@ -2,6 +2,7 @@
+ #define _NET_FLOW_KEYS_H
+ 
+ struct flow_keys {
++	/* (src,dst) must be grouped, in the same way than in IP header */
+ 	__be32 src;
+ 	__be32 dst;
+ 	union {
+diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
+index f0516d9..0985b9b 100644
+--- a/net/core/flow_dissector.c
++++ b/net/core/flow_dissector.c
+@@ -8,6 +8,16 @@
+ #include <linux/ppp_defs.h>
+ #include <net/flow_keys.h>
+ 
++/* copy saddr & daddr, possibly using 64bit load/store
++ * Equivalent to :	flow->src = iph->saddr;
++ *			flow->dst = iph->daddr;
++ */
++static void iph_to_flow_copy_addrs(struct flow_keys *flow, const struct iphdr *iph)
++{
++	BUILD_BUG_ON(offsetof(typeof(*flow), dst) !=
++		     offsetof(typeof(*flow), src) + sizeof(flow->src));
++	memcpy(&flow->src, &iph->saddr, sizeof(flow->src) + sizeof(flow->dst));
++}
+ 
+ bool skb_flow_dissect(const struct sk_buff *skb, struct flow_keys *flow)
+ {
+@@ -31,8 +41,7 @@ ip:
+ 			ip_proto = 0;
+ 		else
+ 			ip_proto = iph->protocol;
+-		flow->src = iph->saddr;
+-		flow->dst = iph->daddr;
++		iph_to_flow_copy_addrs(flow, iph);
+ 		nhoff += iph->ihl * 4;
+ 		break;
+ 	}
+-- 
+1.7.10
+

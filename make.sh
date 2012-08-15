@@ -356,7 +356,6 @@ buildbase() {
     lfsmake2 net-tools
     lfsmake2 patch
     lfsmake2 psmisc
-    lfsmake2 reiser4progs
     lfsmake2 shadow
     lfsmake2 sysklogd
     lfsmake2 sysvinit
