@@ -261,7 +261,6 @@ buildtoolchain() {
 
     local ORG_PATH=$PATH
     export PATH="/tools/ccache/bin:/tools/bin:$PATH"
-    lfsmake1 fake-environ		PASS=1
     lfsmake1 ccache			PASS=1
     lfsmake1 binutils			PASS=1
     lfsmake1 gcc			PASS=1
@@ -270,7 +269,6 @@ buildtoolchain() {
     lfsmake1 cleanup-toolchain		PASS=1
     lfsmake1 binutils			PASS=2
     lfsmake1 gcc			PASS=2
-    lfsmake1 fake-environ		PASS=2
     lfsmake1 ccache			PASS=2
     lfsmake1 tcl
     lfsmake1 expect
@@ -292,6 +290,7 @@ buildtoolchain() {
     lfsmake1 sed
     lfsmake1 tar
     lfsmake1 texinfo
+    lfsmake1 fake-environ
     lfsmake1 cleanup-toolchain		PASS=2
     export PATH=$ORG_PATH
 }
