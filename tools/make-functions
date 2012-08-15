@@ -392,7 +392,6 @@ lfsmake1() {
 						ROOT=$LFS \
 						KVER=$KVER \
 						MAKETUNING=$MAKETUNING \
-						$(fake_environ) \
 						install >> $LOGFILE 2>&1
 	local COMPILE_SUCCESS=$?
 	local PKG_TIME_END=`date +%s`
