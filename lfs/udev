@@ -101,5 +101,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 755 /etc/udev/dvb.sh
 	touch /etc/udev/rules.d/30-persistent-network.rules
 	cp -vf $(DIR_SRC)/config/udev/blacklist /etc/modprobe.d/blacklist
+
+	# Install codel rules.
+	install -v -m 644 $(DIR_SRC)/config/udev/99-codel.rules \
+		/lib/udev/rules.d
+	install -m 755 $(DIR_SRC)/config/udev/enable_codel \
+		/lib/udev/enable_codel
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
