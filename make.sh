@@ -42,7 +42,6 @@ TOOLCHAINVER=5
 BUILDMACHINE=$MACHINE
     if [ "$MACHINE" = "x86_64" ]; then
         BUILDMACHINE="i686";
-        linux32="linux32";
     fi
 
 

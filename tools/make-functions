@@ -293,7 +293,7 @@ entershell() {
 	fi
 
 	echo "Entering to a shell inside LFS chroot, go out with exit"
-	$linux32 chroot $LFS /tools/bin/env -i HOME=/root TERM=$TERM PS1='\u:\w\$ ' \
+	chroot $LFS /tools/bin/env -i HOME=/root TERM=$TERM PS1='\u:\w\$ ' \
 		PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
 		VERSION=$VERSION CONFIG_ROOT=$CONFIG_ROOT \
 		NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
@@ -411,7 +411,7 @@ lfsmake2() {
 	[ $? == 1 ] && return 0
 
 	local PKG_TIME_START=`date +%s`
-	$linux32 chroot $LFS /tools/bin/env -i 	HOME=/root \
+	chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
 						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
 						VERSION=$VERSION \
@@ -446,7 +446,7 @@ ipfiremake() {
 	[ $? == 1 ] && return 0
 
 	local PKG_TIME_START=`date +%s`
-	$linux32 chroot $LFS /tools/bin/env -i 	HOME=/root \
+	chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
 						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 						VERSION=$VERSION \
@@ -517,7 +517,7 @@ installmake() {
 	[ $? == 1 ] && return 0
 
 	local PKG_TIME_START=`date +%s`
-	$linux32 chroot $LFS /tools/bin/env -i 	HOME=/root \
+	chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
 						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 						VERSION=$VERSION \
