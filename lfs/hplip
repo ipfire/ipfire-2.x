@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.7.10
+VER        = 3.12.6
 
 THISAPP    = hplip-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = hplip
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = eafb815ca4b4bb5a2f35a76ee3c2dc72
+$(DL_FILE)_MD5 = 5303938e8630775ea6fb383af85775e5
 
 install : $(TARGET)
 
