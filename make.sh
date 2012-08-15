@@ -348,7 +348,6 @@ buildbase() {
     lfsmake2 iproute2
     lfsmake2 kbd
     lfsmake2 less
-    lfsmake2 libaal
     lfsmake2 make
     lfsmake2 man
     lfsmake2 mktemp
