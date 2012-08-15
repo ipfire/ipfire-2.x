@@ -114,6 +114,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/binutils-build
+
+	# Prevent installing libiberty to lib64.
+	cd $(DIR_APP) && sed -i 's%\(^MULTIOSDIR = \).*%\1 ../lib%' libiberty/Makefile.in
+
 	cd $(DIR_SRC)/binutils-build && $(EXTRA_ENV) MACHINE= $(DIR_APP)/configure $(EXTRA_CONFIG)
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) $(MAKETUNING) MACHINE=
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install MACHINE=
