@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.3.20
+VER        = 2.4.32
 
 THISAPP    = openldap-$(VER)
 DL_FILE    = $(THISAPP).tgz
@@ -32,11 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = openldap
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
-
-export CPPFLAGS = -D_GNU_SOURCE
 
 ###############################################################################
 # Top-level Rules
@@ -46,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 49d2c5b9378a7b57e1fb03948acb8e32
+$(DL_FILE)_MD5 = 6a3e85cf61860ca5e8a1eba6753dd9d0
 
 install : $(TARGET)
 
@@ -79,23 +77,23 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr \
-		            --libexecdir=/usr/sbin \
-		            --sysconfdir=/etc \
-		            --localstatedir=/srv/ldap \
-		            --disable-debug \
-		            --enable-dynamic \
-		            --enable-crypt \
-		            --enable-modules \
-		            --enable-ldap \
-		            --enable-ldbm \
-		            --enable-dyngroup \
-		            --enable-dynlist \
-		            --enable-ppolicy \
-		            --enable-valsort
-	cd $(DIR_APP) && make depend
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--libexecdir=/usr/lib \
+		--sysconfdir=/etc \
+		--localstatedir=/srv/ldap \
+		--with-threads=posix \
+		--disable-perl \
+		--enable-dynamic \
+		--enable-crypt \
+		--enable-modules \
+		--enable-rlookups \
+		--enable-backends=mod \
+		--enable-overlays=mod \
+		--enable-sql=no \
+		--enable-ndb=no \
+		--disable-static
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
-	chmod -v 755 /usr/lib/libl*-2.3.so.0.2.8
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
