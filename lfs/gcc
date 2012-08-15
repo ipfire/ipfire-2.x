@@ -68,8 +68,7 @@ ifeq "$(PASS)" "1"
 	--without-headers \
 	--without-ppl \
 	--without-cloog \
-	--enable-languages=c \
-	--enable-bootstrap
+	--enable-languages=c
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 else
