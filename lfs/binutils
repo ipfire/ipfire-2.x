@@ -43,6 +43,7 @@ ifeq "$(ROOT)" ""
   EXTRA_INSTALL = tooldir=/usr
 else
 ifeq "$(PASS)" "1"
+  CFLAGS := $(patsubst -march=%,,$(CFLAGS))
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = \
 	--target=$(CROSSTARGET) \
