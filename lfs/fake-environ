@@ -28,7 +28,7 @@ VER = 1.0
 
 THISAPP    = fake-environ
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)-tools$(PASS)
+TARGET     = $(DIR_INFO)/$(THISAPP)-tools
 
 ###############################################################################
 # Top-level Rules

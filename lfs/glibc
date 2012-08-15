@@ -57,13 +57,12 @@ else
 endif
 
 # Enable some extra optimization for the glibc code.
-export CFLAGS := -O3 -DNDEBUG -fasynchronous-unwind-tables -fPIC -DPIC \
+CFLAGS = -O3 -DNDEBUG -fasynchronous-unwind-tables -fPIC -DPIC \
 	-DNO_CTORS_DTORS_SECTIONS
 
 ifeq "$(MACHINE)" "i586"
 	CFLAGS += -march=i586 -mtune=generic -mno-tls-direct-seg-refs
 endif
-
 
 ifeq "$(MACHINE_TYPE)" "arm"
 	# Disable hardware FP for ARM.
@@ -260,7 +259,7 @@ endif
 		CFLAGS="$(CFLAGS) -fno-asynchronous-unwind-tables" \
 		$(DIR_APP)/configure $(EXTRA_CONFIG)
 	cd $(DIR_SRC)/glibc-build && make PARALLELMFLAGS=$(MAKETUNING) \
-		CFLAFS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
+		CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
 	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) install
 
 ifeq "$(ROOT)" ""

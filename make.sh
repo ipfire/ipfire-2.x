@@ -42,7 +42,6 @@ TOOLCHAINVER=5
 BUILDMACHINE=$MACHINE
     if [ "$MACHINE" = "x86_64" ]; then
         BUILDMACHINE="i686";
-        linux32="linux32";
     fi
 
 
@@ -214,11 +213,6 @@ prepareenv() {
     mount --bind $BASEDIR/log    $BASEDIR/build/usr/src/log
     mount --bind $BASEDIR/src    $BASEDIR/build/usr/src/src
 
-    # This is a temporary hack!!!
-    if [ ! -f /tools/bin/hostname ]; then
-      cp -f /bin/hostname /tools/bin/hostname 2>/dev/null
-    fi
-
     # Run LFS static binary creation scripts one by one
     export CCACHE_DIR=$BASEDIR/ccache
     export CCACHE_COMPRESS=1
@@ -232,7 +226,7 @@ buildtoolchain() {
     local error=false
     case "${MACHINE}:$(uname -m)" in
         # x86
-        i586:i586|i586:i686)
+        i586:i586|i586:i686|i586:x86_64)
             # These are working.
             ;;
         i586:*)
@@ -251,16 +245,9 @@ buildtoolchain() {
     ${error} && \
         exiterror "Cannot build ${MACHINE} toolchain on $(uname -m). Please use the download if any."
 
-    if [ "$(uname -r | grep ipfire)" ]; then
-        exiterror "Cannot build toolchain on ipfire. Please use the download."
-    fi
-
-    if [ ! -e /usr/include/asm -o ! -e /usr/include/bits -o ! -e /usr/include/gnu -o ! -e /usr/include/sys ]; then
-        exiterror "Cannot build toolchain without (asm, bits, gnu or sys includes). Please fix or use the download."
-    fi
-
-    if [ ! -e /usr/lib/libc.so ]; then
-        exiterror "Cannot build toolchain without (/usr/lib/libc.so). Please fix or use the download."
+    local gcc=$(type -p gcc)
+    if [ -z "${gcc}" ]; then
+        exiterror "Could not find GCC. You will need a working build enviroment in order to build the toolchain."
     fi
 
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
@@ -268,7 +255,6 @@ buildtoolchain() {
 
     local ORG_PATH=$PATH
     export PATH="/tools/ccache/bin:/tools/bin:$PATH"
-    lfsmake1 fake-environ		PASS=1
     lfsmake1 ccache			PASS=1
     lfsmake1 binutils			PASS=1
     lfsmake1 gcc			PASS=1
@@ -277,7 +263,6 @@ buildtoolchain() {
     lfsmake1 cleanup-toolchain		PASS=1
     lfsmake1 binutils			PASS=2
     lfsmake1 gcc			PASS=2
-    lfsmake1 fake-environ		PASS=2
     lfsmake1 ccache			PASS=2
     lfsmake1 tcl
     lfsmake1 expect
@@ -299,6 +284,7 @@ buildtoolchain() {
     lfsmake1 sed
     lfsmake1 tar
     lfsmake1 texinfo
+    lfsmake1 fake-environ
     lfsmake1 cleanup-toolchain		PASS=2
     export PATH=$ORG_PATH
 }
@@ -1033,7 +1019,7 @@ toolchain)
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $MACHINE" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
-		build/tools log >> $LOGFILE
+		build/tools build/bin/sh log >> $LOGFILE
 	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.md5
 	stdumount
