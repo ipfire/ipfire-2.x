@@ -130,6 +130,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && tar jxf $(DIR_DL)/glibc-ports-$(PORTS_VER).tar.bz2
 	cd $(DIR_APP) && mv -v glibc-ports-$(PORTS_VER) ports
+
+	# http://sourceware.org/bugzilla/show_bug.cgi?id=12354
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-cfi-entry-not-closed.patch
 endif
 
 	# Apply all patches.
@@ -234,8 +237,6 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh837026.patch
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-resolv-stack_chk_fail.patch
-	# http://sourceware.org/bugzilla/show_bug.cgi?id=12354
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-cfi-entry-not-closed.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-remove-ctors-dtors-output-sections.patch
 
 	# Fixes:
