@@ -1022,7 +1022,7 @@ toolchain)
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $MACHINE" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
-		build/tools log >> $LOGFILE
+		build/tools build/bin/sh log >> $LOGFILE
 	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.md5
 	stdumount
