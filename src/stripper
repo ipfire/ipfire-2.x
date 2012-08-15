@@ -6,7 +6,7 @@ function _strip() {
 	local cmd="${STRIP-strip}"
 
 	case "$(file -bi ${file})" in
-		application/x-sharedlib*)
+		application/x-sharedlib*|application/x-archive*)
 			cmd="${cmd} --strip-debug --remove-section=.comment --remove-section=.note"
 			;;
 		*)
@@ -19,8 +19,16 @@ function _strip() {
 }
 
 for dir in $@; do
+	# Strip shared objects.
 	find ${dir} -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) \
 		| file -N -f - | sed -n -e 's/^\(.*\):[   ]*.*ELF.*, not stripped/\1/p' |
+		while read file; do
+			_strip ${file}
+		done
+
+	# Strip static archives.
+	find ${dir} -name \*.a -a -exec file {} \; \
+		| grep 'current ar archive' | sed -n -e 's/^\(.*\):[ 	]*current ar archive/\1/p' |
 		while read file; do
 			_strip ${file}
 		done
