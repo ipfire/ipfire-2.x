@@ -1,0 +1,153 @@
+2010-07-22  Jakub Jelinek  <jakub@redhat.com>
+
+	* gimplify.c (enum gimplify_omp_var_data): Add
+	GOVD_THREADPRIVATE_WARNED.
+	(gimplify_bind_expr): Add GOVD_LOCAL | GOVD_SEEN even for global vars.
+	(omp_notice_threadprivate_variable): Note used threadprivate vars
+	with current function's context in shared clauses.
+	(gimplify_adjust_omp_clauses_1): Allow globals with current function's
+	context in taskreg shared clause.
+	* omp-low.c (lower_rec_input_clauses): For function-local is_global_var
+	VAR_DECLs in shared clauses add a decl copy with DECL_VALUE_EXPR
+	pointing to the original.
+
+	* trans-openmp.c (gfc_omp_private_debug_clause): Return false for
+	threadprivate decls.
+
+	* gcc.dg/gomp/tls-3.c: New test.
+
+--- gcc/fortran/trans-openmp.c.jj	2010-06-24 21:47:09.908230044 +0200
++++ gcc/fortran/trans-openmp.c	2010-07-26 10:45:15.830229443 +0200
+@@ -351,6 +351,18 @@ gfc_omp_disregard_value_expr (tree decl,
+ bool
+ gfc_omp_private_debug_clause (tree decl, bool shared)
+ {
++  if (TREE_STATIC (decl) || DECL_EXTERNAL (decl))
++    {
++      if (DECL_THREAD_LOCAL_P (decl))
++	return false;
++      if (DECL_HAS_VALUE_EXPR_P (decl))
++	{
++	  tree value = get_base_address (DECL_VALUE_EXPR (decl));
++	  if (value && DECL_P (value) && DECL_THREAD_LOCAL_P (value))
++	    return false;
++	}
++    }
++
+   if (GFC_DECL_CRAY_POINTEE (decl))
+     return true;
+ 
+--- gcc/gimplify.c.jj	2010-07-09 09:01:37.049604412 +0200
++++ gcc/gimplify.c	2010-07-26 10:50:05.646291216 +0200
+@@ -66,6 +66,7 @@ enum gimplify_omp_var_data
+   GOVD_LOCAL = 128,
+   GOVD_DEBUG_PRIVATE = 256,
+   GOVD_PRIVATE_OUTER_REF = 512,
++  GOVD_THREADPRIVATE_WARNED = 1024,
+   GOVD_DATA_SHARE_CLASS = (GOVD_SHARED | GOVD_PRIVATE | GOVD_FIRSTPRIVATE
+ 			   | GOVD_LASTPRIVATE | GOVD_REDUCTION | GOVD_LOCAL)
+ };
+@@ -1234,7 +1235,7 @@ gimplify_bind_expr (tree *expr_p, gimple
+ 	  struct gimplify_omp_ctx *ctx = gimplify_omp_ctxp;
+ 
+ 	  /* Mark variable as local.  */
+-	  if (ctx && !is_global_var (t)
++	  if (ctx
+ 	      && (! DECL_SEEN_IN_BIND_EXPR_P (t)
+ 		  || splay_tree_lookup (ctx->variables,
+ 					(splay_tree_key) t) == NULL))
+@@ -5339,18 +5340,36 @@ omp_notice_threadprivate_variable (struc
+ {
+   splay_tree_node n;
+ 
+-  if (ctx->region_type != ORT_UNTIED_TASK)
++  while (ctx && ctx->region_type == ORT_WORKSHARE)
++    {
++      n = splay_tree_lookup (ctx->variables, (splay_tree_key)decl);
++      if (n != NULL)
++	{
++	  gcc_assert (n->value & GOVD_LOCAL);
++	  return false;
++	}
++      ctx = ctx->outer_context;
++    }
++  if (ctx == NULL)
+     return false;
++
+   n = splay_tree_lookup (ctx->variables, (splay_tree_key)decl);
+   if (n == NULL)
++    n = splay_tree_insert (ctx->variables, (splay_tree_key)decl,
++			   DECL_CONTEXT (decl) == current_function_decl
++			   ? GOVD_SHARED | GOVD_SEEN : 0);
++  if (ctx->region_type == ORT_UNTIED_TASK
++      && (n->value & GOVD_THREADPRIVATE_WARNED) == 0)
+     {
+       error ("threadprivate variable %qs used in untied task",
+ 	     IDENTIFIER_POINTER (DECL_NAME (decl)));
+       error ("%Henclosing task", &ctx->location);
+-      splay_tree_insert (ctx->variables, (splay_tree_key)decl, 0);
++      n->value |= GOVD_THREADPRIVATE_WARNED;
+     }
+   if (decl2)
+-    splay_tree_insert (ctx->variables, (splay_tree_key)decl2, 0);
++    splay_tree_insert (ctx->variables, (splay_tree_key)decl2,
++		       DECL_CONTEXT (decl2) == current_function_decl
++		       ? GOVD_SHARED | GOVD_SEEN : 0);
+   return false;
+ }
+ 
+@@ -5779,7 +5798,9 @@ gimplify_adjust_omp_clauses_1 (splay_tre
+ 		break;
+ 	      ctx = ctx->outer_context;
+ 	    }
+-	  if (ctx == NULL)
++	  if (ctx == NULL
++	      && (DECL_CONTEXT (decl) != current_function_decl
++		  || gimplify_omp_ctxp->region_type == ORT_WORKSHARE))
+ 	    return 0;
+ 	}
+       code = OMP_CLAUSE_SHARED;
+--- gcc/omp-low.c.jj	2010-06-11 11:06:00.913659301 +0200
++++ gcc/omp-low.c	2010-07-26 10:45:15.866229447 +0200
+@@ -2222,6 +2222,17 @@ lower_rec_input_clauses (tree clauses, g
+ 		continue;
+ 	      break;
+ 	    case OMP_CLAUSE_SHARED:
++	      if (pass == 0
++		  && is_global_var (OMP_CLAUSE_DECL (c))
++		  && (DECL_CONTEXT (OMP_CLAUSE_DECL (c))
++		      == current_function_decl)
++		  && is_taskreg_ctx (ctx)
++		  && !DECL_IGNORED_P (OMP_CLAUSE_DECL (c)))
++		{
++		  new_var = omp_copy_decl_1 (OMP_CLAUSE_DECL (c), ctx);
++		  SET_DECL_VALUE_EXPR (new_var, OMP_CLAUSE_DECL (c));
++		  DECL_HAS_VALUE_EXPR_P (new_var) = 1;
++		}
+ 	      if (maybe_lookup_decl (OMP_CLAUSE_DECL (c), ctx) == NULL)
+ 		{
+ 		  gcc_assert (is_global_var (OMP_CLAUSE_DECL (c)));
+--- gcc/testsuite/gcc.dg/gomp/tls-3.c.jj	2010-07-26 10:45:15.868228753 +0200
++++ gcc/testsuite/gcc.dg/gomp/tls-3.c	2010-07-26 10:45:15.868228753 +0200
+@@ -0,0 +1,21 @@
++/* { dg-do compile } */
++/* { dg-require-effective-target tls_native } */
++
++int thr;
++#pragma omp threadprivate(thr)
++
++void
++foo (void)
++{
++  #pragma omp task untied	/* { dg-error "enclosing task" } */
++  {
++    static int thr2;
++    #pragma omp threadprivate(thr2)
++    static int thr3;
++    #pragma omp threadprivate(thr3)
++    thr++;	/* { dg-error "used in untied task" } */
++    thr2++;	/* { dg-error "used in untied task" } */
++    thr++;
++    thr2++;
++  }
++}

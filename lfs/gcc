@@ -34,6 +34,9 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
+CFLAGS    := $(patsubst -march=%,,$(CFLAGS))
+CFLAGS    := $(patsubst -mtune=%,,$(CFLAGS))
+
 # Normal build or /tools build.
 #
 ifeq "$(ROOT)" ""
@@ -52,7 +55,6 @@ ifeq "$(ROOT)" ""
   EXTRA_INSTALL =
 else
 ifeq "$(PASS)" "1"
-  CFLAGS := $(patsubst -march=%,,$(CFLAGS))
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = \
 	--target=$(CROSSTARGET) \
@@ -101,6 +103,17 @@ ifeq "$(MACHINE_TYPE)" "arm"
 		--with-float=soft \
 		--disable-sjlj-exceptions
 endif
+
+ifeq "$(MACHINE)" "i586"
+	EXTRA_CONFIG += \
+		--with-arch=i586 \
+		--with-tune=generic
+endif
+
+EXTRA_CONFIG += \
+	--with-bugurl=http://bugtracker.ipfire.org \
+	--disable-libunwind-exceptions \
+	--enable-gnu-unique-object
 
 export XCFLAGS = $(CFLAGS)
 export TCFLAGS = $(CFLAGS)
@@ -154,6 +167,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/gcc-build
+
+	# Apply patches.
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-build-id.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-c++-builtin-redecl.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-i386-libgomp.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-libtool-no-rpath.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-no-add-needed.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-pr33763.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-rh330771.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-rh533181.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-rh610785.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-unwind-debug-hook.patch
 
 ifneq "$(ROOT)" ""
 	# Build gmp and mpfr internally in toolchain.

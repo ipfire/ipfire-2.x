@@ -1,0 +1,74 @@
+2010-07-07  Jakub Jelinek  <jakub@redhat.com>
+
+	* tree-sra.c (sra_build_assignment): Don't add BIT_XOR_EXPR/MINUS_EXPR
+	of signbit if signbit is the most significant bit of utype already.
+
+	* gcc.c-torture/execute/20100707-1.c: New test.
+
+--- gcc/tree-sra.c.jj	2010-05-13 13:08:52.000000000 +0200
++++ gcc/tree-sra.c	2010-07-06 19:50:09.000000000 +0200
+@@ -2211,7 +2211,10 @@ sra_build_assignment (tree dst, tree src
+ 
+       /* Perform sign extension, if required.
+ 	 ???  This should never be necessary.  */
+-      if (!unsignedp)
++      if (!unsignedp
++	  && (TREE_INT_CST_LOW (width) != TYPE_PRECISION (utype)
++	      || (TREE_INT_CST_LOW (width)
++		  != GET_MODE_BITSIZE (TYPE_MODE (utype)))))
+ 	{
+ 	  tree signbit = int_const_binop (LSHIFT_EXPR,
+ 					  build_int_cst_wide (utype, 1, 0),
+--- gcc/testsuite/gcc.c-torture/execute/20100707-1.c	2010-05-27 15:41:40.446237053 +0200
++++ gcc/testsuite/gcc.c-torture/execute/20100707-1.c	2010-07-06 13:55:35.000000000 +0200
+@@ -0,0 +1,50 @@
++struct S { int s; };
++struct T { int w; int h; };
++int vr;
++
++inline struct T
++bar (const struct S * x)
++{
++  struct T t;
++  t.w = vr;
++  t.h = x->s;
++  return t;
++}
++
++__attribute__ ((noinline))
++void foo (struct S * w, unsigned char *x, int y, int *z[2])
++{
++  struct T t;
++  int i, j, k;
++  t = bar (w);
++  k = t.w + 2;
++  for (i = 0; i <= t.h; i++)
++    {
++      int *u = z[i > 0] + 1;
++      unsigned char *v;
++      int q = 0;
++      v = x + k * i + 1;
++      for (j = 0; j < t.w; j++)
++	{
++	  int m = u[j];
++	  if (m > y && !q && v[j - k] != 2)
++	    v[j] = 0;
++	}
++    }
++}
++
++unsigned char b[64];
++
++int
++main (void)
++{
++  int v[32], *z[2];
++  struct S s;
++  __builtin_memset (v, 0, sizeof (v));
++  vr = 16;
++  s.s = 16;
++  z[0] = v;
++  z[1] = v;
++  foo (&s, b + 32, -1, z);
++  return 0;
++}
