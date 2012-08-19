@@ -1,0 +1,62 @@
+Index: vdr-1.6.0/recording.c
+===================================================================
+--- vdr-1.6.0.orig/recording.c
++++ vdr-1.6.0/recording.c
+@@ -509,8 +509,8 @@ cRecording::cRecording(cTimer *Timer, co
+      Utf8Strn0Cpy(SubtitleBuffer, Subtitle, MAX_SUBTITLE_LENGTH);
+      Subtitle = SubtitleBuffer;
+      }
+-  char *macroTITLE   = strstr(Timer->File(), TIMERMACRO_TITLE);
+-  char *macroEPISODE = strstr(Timer->File(), TIMERMACRO_EPISODE);
++  const char *macroTITLE   = strstr(Timer->File(), TIMERMACRO_TITLE);
++  const char *macroEPISODE = strstr(Timer->File(), TIMERMACRO_EPISODE);
+   if (macroTITLE || macroEPISODE) {
+      name = strdup(Timer->File());
+      name = strreplace(name, TIMERMACRO_TITLE, Title);
+@@ -551,7 +551,7 @@ cRecording::cRecording(const char *FileN
+   sortBuffer = NULL;
+   fileName = strdup(FileName);
+   FileName += strlen(VideoDirectory) + 1;
+-  char *p = strrchr(FileName, '/');
++  const char *p = strrchr(FileName, '/');
+ 
+   name = NULL;
+   info = new cRecordingInfo;
+@@ -1022,7 +1022,8 @@ void cRecordings::DelByName(const char *
+   if (recording) {
+      cThreadLock DeletedRecordingsLock(&DeletedRecordings);
+      Del(recording, false);
+-     char *ext = strrchr(recording->FileName(), '.');
++     // wtf?
++     char *ext = strrchr(const_cast<char*>(recording->FileName()), '.');
+      if (ext) {
+         strncpy(ext, DELEXT, strlen(ext));
+         recording->fileSizeMB = DirSizeMB(recording->FileName());
+Index: vdr-1.6.0/svdrp.c
+===================================================================
+--- vdr-1.6.0.orig/svdrp.c
++++ vdr-1.6.0/svdrp.c
+@@ -736,7 +736,7 @@ void cSVDRP::CmdGRAB(const char *Option)
+      char *strtok_next;
+      FileName = strtok_r(p, delim, &strtok_next);
+      // image type:
+-     char *Extension = strrchr(FileName, '.');
++     const char *Extension = strrchr(FileName, '.');
+      if (Extension) {
+         if (strcasecmp(Extension, ".jpg") == 0 || strcasecmp(Extension, ".jpeg") == 0)
+            Jpeg = true;
+@@ -796,12 +796,12 @@ void cSVDRP::CmdGRAB(const char *Option)
+      if (FileName) {
+         if (grabImageDir) {
+            cString s;
+-           char *slash = strrchr(FileName, '/');
++           char *slash = strrchr(const_cast<char*>(FileName), '/');
+            if (!slash) {
+               s = AddDirectory(grabImageDir, FileName);
+               FileName = s;
+               }
+-           slash = strrchr(FileName, '/'); // there definitely is one
++           slash = strrchr(const_cast<char*>(FileName), '/'); // there definitely is one
+            *slash = 0;
+            char *r = realpath(FileName, RealFileName);
+            *slash = '/';

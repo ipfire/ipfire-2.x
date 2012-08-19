@@ -104,6 +104,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/PLUGINS/src && tar xvf $(DIR_DL)/$(DL_FILE4)
 	cd $(DIR_APP)/PLUGINS/src && ln -s epgsearch-0.9.24 epgsearch
 	cd $(DIR_APP) && patch -Np1 -i PLUGINS/src/epgsearch/patches/MainMenuHooks-v1_0.patch 
+	cd $(DIR_APP)/PLUGINS/src/epgsearch && sed -i '/include/a #include <langinfo.h>/' \
+		epgsearch.c
+	cd $(DIR_APP)/PLUGINS/src/epgsearch && patch -Np1 < $(DIR_SRC)/src/patches/vdr-plugin-epgsearch-gcc44.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vdr-1.6.0-gcc44-fixes.patch
 	cd $(DIR_APP) && make VIDEODIR=/var/video plugins $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make VIDEODIR=/var/video vdr $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make DFB_SUPPORT=1  FB_SUPPORT=1  VIDIX_SUPPORT=1  $(MAKETUNING) $(EXTRA_MAKE)
