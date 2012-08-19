@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.6.16-060323
+VER        = 3.4.0
 
 THISAPP    = iproute2-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -35,13 +35,12 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-objects = $(DL_FILE) htb3.6-020525.tgz
+
+objects = $(DL_FILE)
 
 $(DL_FILE)             = $(DL_FROM)/$(DL_FILE)
-htb3.6-020525.tgz      = $(DL_FROM)/htb3.6-020525.tgz
 
-$(DL_FILE)_MD5         = f31d4516b35bbfeaa72c762f5959e97c
-htb3.6-020525.tgz_MD5  = 3064fd8642ce6a7e155a29c5205b99d4
+$(DL_FILE)_MD5         = 879d3fac4e90809598b2864ec4a0cbf8
 
 install : $(TARGET)
 
@@ -70,9 +69,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-#	cd $(DIR_APP) && tar xfz $(DIR_DL)/htb3.6-020525.tgz *.diff
-#	cd $(DIR_APP) && for i in htb3*tc.diff ; do patch -Np1 < $$i; done
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make $(MAKETUNING) SBINDIR=/sbin
 	cd $(DIR_APP) && make SBINDIR=/sbin install
 	cd $(DIR_APP) && mv -v /sbin/arpd /usr/sbin

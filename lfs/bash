@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.1
+VER        = 3.2
 
 THISAPP    = bash-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -48,8 +48,6 @@ else
   EXTRA_INSTALL = 
 endif
 
-EXTRA_CONFIG += --build=$(BUILDTARGET)
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -58,7 +56,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)             = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5         = ef5304c4b22aaa5088972c792ed45d72
+$(DL_FILE)_MD5         = 00bfa16d58e034e3c2aa27f390390d30
 
 install : $(TARGET)
 
@@ -88,8 +86,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-fixes-8.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-login.patch
+
+	for i in $$(seq 1 51); do \
+		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash32-$$(printf "%03d" "$${i}") || exit 1; \
+	done
+
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install

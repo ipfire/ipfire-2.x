@@ -699,7 +699,6 @@ buildipfire() {
   ipfiremake netcat
   ipfiremake 7zip
   ipfiremake lynis
-  ipfiremake splix
   ipfiremake streamripper
   ipfiremake sshfs
   ipfiremake taglib
