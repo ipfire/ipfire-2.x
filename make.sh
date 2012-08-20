@@ -316,6 +316,7 @@ buildbase() {
     lfsmake2 libtool
     lfsmake2 perl
     lfsmake2 readline
+    lfsmake2 readline-compat
     lfsmake2 autoconf
     lfsmake2 automake
     lfsmake2 bash
