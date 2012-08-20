@@ -1,6 +1,6 @@
 bin/bash
 bin/cat
-bin/grep
+bin/echo
 bin/pwd
 bin/stty
 #boot
@@ -17,7 +17,6 @@ etc/ipsec.user.conf
 etc/ipsec.user.secrets
 etc/issue
 etc/ld.so.conf
-etc/localtime
 etc/logrotate.conf
 etc/mime.types
 etc/modprobe.d
@@ -56,8 +55,13 @@ root/ipfire
 #usr/bin/perl
 #usr/include
 #usr/lib
-usr/lib/libgcc_s.so
+#usr/lib/libgcc_s.so
 usr/lib/libgcc_s.so.1
+#usr/lib/libstdc++.la
+#usr/lib/libstdc++.so
+usr/lib/libstdc++.so.6
+#usr/local
+#usr/local/bin
 #usr/local/bin/archive.files
 usr/local/bin/backupiso
 usr/local/bin/connscheduler
@@ -74,13 +78,15 @@ usr/local/bin/scanhd
 usr/local/bin/setddns.pl
 usr/local/bin/settime
 usr/local/bin/timecheck
-#usr/local/bin/uname
 #usr/local/include
 #usr/local/lib
 #usr/local/sbin
+#usr/local/share
 #usr/local/share/doc
 #usr/local/share/info
 #usr/local/share/locale
+#usr/local/share/man
+#usr/local/share/man/man1
 #usr/local/share/man/man2
 #usr/local/share/man/man3
 #usr/local/share/man/man4
@@ -132,6 +138,3 @@ var/run
 var/run/utmp
 #var/spool
 var/tmp
-dev/null
-dev/console
-tmp
