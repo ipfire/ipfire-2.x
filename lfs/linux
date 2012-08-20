@@ -111,9 +111,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
-	# Apply backported codel patches
-	cd $(DIR_APP) && cat $(DIR_SRC)/src/patches/linux-3.2-codel/*.patch | patch -Np1
-
 	# Linux Intermediate Queueing Device
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-imq.patch
 
