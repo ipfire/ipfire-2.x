@@ -284,6 +284,7 @@ buildtoolchain() {
     lfsmake1 sed
     lfsmake1 tar
     lfsmake1 texinfo
+    lfsmake1 xz
     lfsmake1 fake-environ
     lfsmake1 cleanup-toolchain		PASS=2
     export PATH=$ORG_PATH
@@ -350,6 +351,7 @@ buildbase() {
     lfsmake2 udev
     lfsmake2 util-linux
     lfsmake2 vim
+    lfsmake2 xz
     lfsmake2 grub
 }
 
@@ -366,7 +368,6 @@ buildipfire() {
   ipfiremake pptp
   ipfiremake unzip
   ipfiremake which
-  ipfiremake xz
   ipfiremake linux-firmware
   ipfiremake zd1211-firmware
   ipfiremake rpi-firmware
