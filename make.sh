@@ -318,6 +318,8 @@ buildbase() {
     lfsmake2 perl
     lfsmake2 readline
     lfsmake2 readline-compat
+    lfsmake2 pcre
+    lfsmake2 pcre-compat
     lfsmake2 autoconf
     lfsmake2 automake
     lfsmake2 bash
