@@ -70,6 +70,9 @@ ifeq "$(PASS)" "2"
 
 	# Fix ownership of the toolchain.
 	chown -R root:root /tools/
+
+	# Update/create linker cache.
+	/tools/sbin/ldconfig
 endif
 
 ifeq "$(PASS)" "3"
