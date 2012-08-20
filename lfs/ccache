@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-pass$(PASS)
 
 ifeq "$(PASS)" "1"
-	CFLAGS := $(patsubst -march=%,,$(CFLAGS)) -static
+	CFLAGS := $(patsubst -march=%,,$(CFLAGS))
 endif
 
 # Set max cache size to 5GB
