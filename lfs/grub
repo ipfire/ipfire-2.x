@@ -32,7 +32,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586
-CFLAGS     =
+CFLAGS     = -O0 -fno-reorder-functions -fno-strict-aliasing -Wall -Werror \
+	-Wno-shadow -Wno-unused -Wno-pointer-sign
 CXXFLAGS   =
 
 ###############################################################################
@@ -73,54 +74,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-disk_geometry-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.90-append.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.90-symlinkmenulst.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.91-splashimagehelp.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-configfile.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/grub-0.93-endedit.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-graphics-bootterm.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.93-special-device-names.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.94-i2o.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-graphics.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-hiddenmenu-tweak.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-md.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-md-rework.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-md-mbr.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-moreraid.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-nonmbr.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-odirect.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-recheck-bad.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-staticcurses.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-xpmjunk.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-cmdline-size.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-datadir.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-dmraid.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-dmraid-partition-names.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-install.in.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-mactel-kbd.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-mpath.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-nxstack.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-nx-multiinstall.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-once.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.95-splash-error-term.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.94-installcopyonly.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-prototypes.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-stderr.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-bz429187-cciss.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-dmraid-recheck-bad.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97-mdadm-path.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97_grub-install_virtio.patch
 
-	# XXX Does not work anymore
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-0.97_grub-install_virtio.patch
+	# Applying patches.
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-fedora-18.patch
+	cd $(DIR_APP) && autoreconf
+	cd $(DIR_APP) && autoconf
 
-	cd $(DIR_APP) && perl -pi -e 's,/usr/lib/grub/i386-pc,/usr/share/grub/i386-pc,' docs/grub.texi
-	cd $(DIR_APP) && sed -i 's/AM_INIT_AUTOMAKE/&\nAM_PROG_AS/' configure.ac
-
-	cd $(DIR_APP) && aclocal && autoheader && autoconf && automake --add-missing
-	cd $(DIR_APP) && CFLAGS="-Os -s -fno-strict-aliasing" ./configure --prefix=/usr
-
+	# Build.
+	cd $(DIR_APP) && CFLAGS="$(CFLAGS)" ./configure --prefix=/usr \
+		--disable-auto-linux-mem-opt
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
