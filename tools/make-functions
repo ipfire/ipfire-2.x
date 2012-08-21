@@ -530,8 +530,9 @@ installmake() {
 						CROSSTARGET="${CROSSTARGET}" \
 						MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
-		    /bin/bash -x -c "cd /usr/src/lfs && \
-		    make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
+						LD_LIBRARY_PATH=/tools/lib \
+		    /tools/bin/bash -x -c "cd /usr/src/lfs && \
+		    /tools/bin/make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 
 	local COMPILE_SUCCESS=$?
 	local PKG_TIME_END=`date +%s`

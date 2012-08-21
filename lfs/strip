@@ -46,4 +46,5 @@ md5 :
 ###############################################################################
 
 $(TARGET) :
-	STRIP="/tools/bin/strip" $(DIR_SRC)/src/stripper /
+	STRIP="/tools/bin/strip" $(DIR_SRC)/src/stripper / \
+		--exclude=/usr/src --exclude=/tools
