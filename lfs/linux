@@ -26,7 +26,7 @@ include Config
 
 VER           = 3.2.28
 
-RPI_PATCHES = linux-3.2-bootc-f23da7f
+RPI_PATCHES = linux-3.2.27-091073b
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.bz2
@@ -76,7 +76,7 @@ $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
 $(DL_FILE)_MD5				= d387130f084f48fae7b2d1756f6c9257
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 5651c6411bb1cbdbfe4b2908c117aaf3
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 9daec752fba403a488818df6dd57a714
 
 install : $(TARGET)
 
@@ -152,8 +152,7 @@ endif
 ifeq "$(KCFG)" "-rpi"
 	# Apply Raspberry Pi kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/rpi-patches-$(RPI_PATCHES).patch.xz | patch -Np1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-bcm2835-alsamixer.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-bcm2835-limit_volume.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.27-rpi_fix_dwc_common_build.patch
 endif
 
 ifeq "$(HEADERS)" "1"
