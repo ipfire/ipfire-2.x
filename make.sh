@@ -611,7 +611,7 @@ buildipfire() {
   ipfiremake screen
   ipfiremake smartmontools
   ipfiremake htop
-#  ipfiremake postfix               # unknown system type linux 3.2.x
+  ipfiremake postfix
   ipfiremake fetchmail
   ipfiremake cyrus-imapd
   ipfiremake openmailadmin
