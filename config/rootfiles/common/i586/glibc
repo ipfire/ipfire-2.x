@@ -1209,7 +1209,7 @@ usr/lib/locale/locale-archive
 #usr/share/i18n/locales/nl_NL
 #usr/share/i18n/locales/nl_NL@euro
 #usr/share/i18n/locales/nn_NO
-+usr/share/i18n/locales/no_NO
+#usr/share/i18n/locales/no_NO
 #usr/share/i18n/locales/nr_ZA
 #usr/share/i18n/locales/nso_ZA
 #usr/share/i18n/locales/oc_FR

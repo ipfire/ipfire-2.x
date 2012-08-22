@@ -59,7 +59,7 @@ usr/bin/printf
 #usr/bin/ptx
 usr/bin/readlink
 usr/bin/seq
-#usr/bin/sha1sum
+usr/bin/sha1sum
 usr/bin/shred
 usr/bin/sort
 usr/bin/split

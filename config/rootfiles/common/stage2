@@ -4,6 +4,8 @@ bin/echo
 bin/pwd
 bin/stty
 #boot
+dev/console
+dev/null
 etc/bashrc
 etc/certparams
 etc/e2fsck.conf
@@ -52,6 +54,8 @@ mnt
 root/ipfire
 #sbin
 #srv
+tmp
+#usr/bin
 #usr/bin/perl
 #usr/include
 #usr/lib
