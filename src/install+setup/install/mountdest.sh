@@ -23,7 +23,7 @@ echo "Scanning for possible destination drives"
 
 # scan sd?
 echo "--> sd?"
-for DEVICE in `find /sys/block/* -maxdepth 0 -name sd* -exec basename {} \; | sort | uniq`
+for DEVICE in `find /sys/block/* -maxdepth 0 -name sd* -or -name vd* -exec basename {} \; | sort | uniq`
 do
 		if [ "$(grep ${DEVICE} /proc/partitions)" = "" ]; then
 			umount /harddisk 2> /dev/null
