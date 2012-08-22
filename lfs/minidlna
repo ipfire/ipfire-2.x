@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,17 +24,17 @@
 
 include Config
 
-VER        = 0.9.7
+VER        = 1.0.25
 
-THISAPP    = icecc-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = minidlna-$(VER)
+DL_FILE    = minidlna_$(VER)_src.tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = icecc
-PAK_VER    = 3
+PROG       = minidlna
+PAK_VER    = 1
 
-DEPS       = ""
+DEPS       = "ffmpeg flac libexif libid3tag libogg"
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c06900c2f4011428d0d48826a04f74fb
+$(DL_FILE)_MD5 = d966256baf2f9b068b9de871ab5dade5
 
 install : $(TARGET)
 
@@ -76,12 +76,11 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/icecream-rename-scheduler.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/icecream-0.9.7-platform-arm.patch
-	cd $(DIR_APP) && ./configure \
-				--prefix=/opt/icecream
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
+
+	# Install configuration.
+	install -m 644 $(DIR_SRC)/config/minidlna/minidlna.conf /etc
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
