@@ -24,7 +24,7 @@
 
 include Config
 
-VER           = 3.2.27
+VER           = 3.2.28
 
 RPI_PATCHES = linux-3.2-bootc-f23da7f
 
@@ -75,7 +75,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
-$(DL_FILE)_MD5				= ba14821366a1c055bcd0fe210297d09b
+$(DL_FILE)_MD5				= d387130f084f48fae7b2d1756f6c9257
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 5651c6411bb1cbdbfe4b2908c117aaf3
 
 install : $(TARGET)
@@ -110,9 +110,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/linux && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
-
-	# Apply backported codel patches
-	cd $(DIR_APP) && cat $(DIR_SRC)/src/patches/linux-3.2-codel/*.patch | patch -Np1
 
 	# Linux Intermediate Queueing Device
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-imq.patch

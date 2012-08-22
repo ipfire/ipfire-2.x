@@ -318,6 +318,8 @@ buildbase() {
     lfsmake2 perl
     lfsmake2 readline
     lfsmake2 readline-compat
+    lfsmake2 pcre
+    lfsmake2 pcre-compat
     lfsmake2 autoconf
     lfsmake2 automake
     lfsmake2 bash
@@ -376,12 +378,12 @@ buildipfire() {
 
   # The xen and PAE kernels are only available for x86
   if [ "${MACHINE_TYPE}" != "arm" ]; then
-    ipfiremake linux2			KCFG="-xen"
+#    ipfiremake linux2			KCFG="-xen"
 #    ipfiremake v4l-dvb			KCFG="-xen"
 #    ipfiremake mISDN			KCFG="-xen"
 #    ipfiremake dahdi			KCFG="-xen" KMOD=1
-    ipfiremake cryptodev		KCFG="-xen"
-    ipfiremake compat-wireless		KCFG="-xen"
+#    ipfiremake cryptodev		KCFG="-xen"
+#    ipfiremake compat-wireless		KCFG="-xen"
 #    ipfiremake r8169			KCFG="-xen"
 #    ipfiremake r8168			KCFG="-xen"
 #    ipfiremake r8101			KCFG="-xen"

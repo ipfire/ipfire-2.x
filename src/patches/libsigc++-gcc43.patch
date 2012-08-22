@@ -1,0 +1,85 @@
+diff -urN libsigc++-2.0-2.0.17.old/sigc++/signal.h libsigc++-2.0-2.0.17/sigc++/signal.h
+--- libsigc++-2.0-2.0.17.old/sigc++/signal.h	2005-12-20 08:35:21.000000000 +0000
++++ libsigc++-2.0-2.0.17/sigc++/signal.h	2008-02-22 00:22:44.000000000 +0000
+@@ -1661,7 +1661,7 @@
+   typedef internal::signal_emit0<T_return, T_accumulator> emitter_type;
+   typedef typename emitter_type::result_type         result_type;
+   typedef slot<T_return>    slot_type;
+-  typedef slot_list<slot_type>                       slot_list_type;
++  typedef sigc::slot_list<slot_type>                       slot_list_type;
+   typedef typename slot_list_type::iterator               iterator;
+   typedef typename slot_list_type::const_iterator         const_iterator;
+   typedef typename slot_list_type::reverse_iterator       reverse_iterator;
+@@ -1770,7 +1770,7 @@
+   typedef internal::signal_emit1<T_return, T_arg1, T_accumulator> emitter_type;
+   typedef typename emitter_type::result_type         result_type;
+   typedef slot<T_return, T_arg1>    slot_type;
+-  typedef slot_list<slot_type>                       slot_list_type;
++  typedef sigc::slot_list<slot_type>                       slot_list_type;
+   typedef typename slot_list_type::iterator               iterator;
+   typedef typename slot_list_type::const_iterator         const_iterator;
+   typedef typename slot_list_type::reverse_iterator       reverse_iterator;
+@@ -1881,7 +1881,7 @@
+   typedef internal::signal_emit2<T_return, T_arg1,T_arg2, T_accumulator> emitter_type;
+   typedef typename emitter_type::result_type         result_type;
+   typedef slot<T_return, T_arg1,T_arg2>    slot_type;
+-  typedef slot_list<slot_type>                       slot_list_type;
++  typedef sigc::slot_list<slot_type>                       slot_list_type;
+   typedef typename slot_list_type::iterator               iterator;
+   typedef typename slot_list_type::const_iterator         const_iterator;
+   typedef typename slot_list_type::reverse_iterator       reverse_iterator;
+@@ -1994,7 +1994,7 @@
+   typedef internal::signal_emit3<T_return, T_arg1,T_arg2,T_arg3, T_accumulator> emitter_type;
+   typedef typename emitter_type::result_type         result_type;
+   typedef slot<T_return, T_arg1,T_arg2,T_arg3>    slot_type;
+-  typedef slot_list<slot_type>                       slot_list_type;
++  typedef sigc::slot_list<slot_type>                       slot_list_type;
+   typedef typename slot_list_type::iterator               iterator;
+   typedef typename slot_list_type::const_iterator         const_iterator;
+   typedef typename slot_list_type::reverse_iterator       reverse_iterator;
+@@ -2109,7 +2109,7 @@
+   typedef internal::signal_emit4<T_return, T_arg1,T_arg2,T_arg3,T_arg4, T_accumulator> emitter_type;
+   typedef typename emitter_type::result_type         result_type;
+   typedef slot<T_return, T_arg1,T_arg2,T_arg3,T_arg4>    slot_type;
+-  typedef slot_list<slot_type>                       slot_list_type;
++  typedef sigc::slot_list<slot_type>                       slot_list_type;
+   typedef typename slot_list_type::iterator               iterator;
+   typedef typename slot_list_type::const_iterator         const_iterator;
+   typedef typename slot_list_type::reverse_iterator       reverse_iterator;
+@@ -2226,7 +2226,7 @@
+   typedef internal::signal_emit5<T_return, T_arg1,T_arg2,T_arg3,T_arg4,T_arg5, T_accumulator> emitter_type;
+   typedef typename emitter_type::result_type         result_type;
+   typedef slot<T_return, T_arg1,T_arg2,T_arg3,T_arg4,T_arg5>    slot_type;
+-  typedef slot_list<slot_type>                       slot_list_type;
++  typedef sigc::slot_list<slot_type>                       slot_list_type;
+   typedef typename slot_list_type::iterator               iterator;
+   typedef typename slot_list_type::const_iterator         const_iterator;
+   typedef typename slot_list_type::reverse_iterator       reverse_iterator;
+@@ -2345,7 +2345,7 @@
+   typedef internal::signal_emit6<T_return, T_arg1,T_arg2,T_arg3,T_arg4,T_arg5,T_arg6, T_accumulator> emitter_type;
+   typedef typename emitter_type::result_type         result_type;
+   typedef slot<T_return, T_arg1,T_arg2,T_arg3,T_arg4,T_arg5,T_arg6>    slot_type;
+-  typedef slot_list<slot_type>                       slot_list_type;
++  typedef sigc::slot_list<slot_type>                       slot_list_type;
+   typedef typename slot_list_type::iterator               iterator;
+   typedef typename slot_list_type::const_iterator         const_iterator;
+   typedef typename slot_list_type::reverse_iterator       reverse_iterator;
+@@ -2466,7 +2466,7 @@
+   typedef internal::signal_emit7<T_return, T_arg1,T_arg2,T_arg3,T_arg4,T_arg5,T_arg6,T_arg7, T_accumulator> emitter_type;
+   typedef typename emitter_type::result_type         result_type;
+   typedef slot<T_return, T_arg1,T_arg2,T_arg3,T_arg4,T_arg5,T_arg6,T_arg7>    slot_type;
+-  typedef slot_list<slot_type>                       slot_list_type;
++  typedef sigc::slot_list<slot_type>                       slot_list_type;
+   typedef typename slot_list_type::iterator               iterator;
+   typedef typename slot_list_type::const_iterator         const_iterator;
+   typedef typename slot_list_type::reverse_iterator       reverse_iterator;
+diff -urN libsigc++-2.0-2.0.17.old/tests/test_copy_invalid_slot.cc libsigc++-2.0-2.0.17/tests/test_copy_invalid_slot.cc
+--- libsigc++-2.0-2.0.17.old/tests/test_copy_invalid_slot.cc	2005-05-01 02:00:47.000000000 +0000
++++ libsigc++-2.0-2.0.17/tests/test_copy_invalid_slot.cc	2008-02-22 00:24:08.000000000 +0000
+@@ -1,4 +1,6 @@
+ #include <iostream>
++#include <cstdlib>
++#include <cstring>
+ #include <sigc++/sigc++.h>
+ 
+ void Foo(sigc::trackable &t) {}
