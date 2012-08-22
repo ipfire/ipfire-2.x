@@ -237,13 +237,12 @@ endif
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-resolv-stack_chk_fail.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-remove-ctors-dtors-output-sections.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-test-installation.pl-nss_test1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-test-installation.pl-libgcc_s.patch
 
 	# Fixes:
 	#   Makefile:235: *** mixed implicit and normal rules.  Stop.
 	cd $(DIR_APP) && sed -i 's/ot \$$/ot:\n\ttouch $$@\n$$/' manual/Makefile
-
-	# Fix an issue when building glibc with gcc 4.7.
-	#cd $(DIR_APP) && sed -i "s/ -lgcc_s//" Makeconfig
 
 ifeq "$(ROOT)" ""
 ifeq "$(MACHINE_TYPE)" "arm"
