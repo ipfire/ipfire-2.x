@@ -1,7 +1,3 @@
-usr/bin/fc-cache
-usr/bin/fc-cat
-usr/bin/fc-list
-usr/bin/fc-match
 #etc/fonts
 #etc/fonts/conf.avail
 etc/fonts/conf.avail/10-autohint.conf
@@ -49,6 +45,10 @@ etc/fonts/conf.d/90-synthetic.conf
 #etc/fonts/conf.d/README
 etc/fonts/fonts.conf
 etc/fonts/fonts.dtd
+usr/bin/fc-cache
+usr/bin/fc-cat
+usr/bin/fc-list
+usr/bin/fc-match
 #usr/include/fontconfig
 #usr/include/fontconfig/fcfreetype.h
 #usr/include/fontconfig/fcprivate.h
@@ -59,7 +59,6 @@ usr/lib/libfontconfig.so
 usr/lib/libfontconfig.so.1
 usr/lib/libfontconfig.so.1.3.0
 usr/lib/pkgconfig/fontconfig.pc
-usr/var/cache/fontconfig
 #usr/share/doc/fontconfig
 #usr/share/doc/fontconfig/fontconfig-devel
 #usr/share/doc/fontconfig/fontconfig-devel.pdf
@@ -420,4 +419,6 @@ usr/var/cache/fontconfig
 #usr/share/man/man3/FcValuePrint.3
 #usr/share/man/man3/FcValueSave.3
 #usr/share/man/man5/fonts-conf.5
+#usr/var
 #usr/var/cache
+usr/var/cache/fontconfig

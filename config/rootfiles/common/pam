@@ -11,7 +11,9 @@ etc/security
 #etc/security/group.conf
 #etc/security/limits.conf
 #etc/security/limits.d
+#etc/security/namespace.conf
 #etc/security/namespace.d
+#etc/security/namespace.init
 #etc/security/pam_env.conf
 #etc/security/time.conf
 lib/libpam.so.0
@@ -63,6 +65,8 @@ lib/security/pam_mail.so
 #lib/security/pam_mkhomedir.so
 #lib/security/pam_motd.la
 #lib/security/pam_motd.so
+#lib/security/pam_namespace.la
+#lib/security/pam_namespace.so
 #lib/security/pam_nologin.la
 lib/security/pam_nologin.so
 #lib/security/pam_permit.la
@@ -161,6 +165,7 @@ usr/lib/libpamc.so
 #usr/share/man/man5/access.conf.5
 #usr/share/man/man5/group.conf.5
 #usr/share/man/man5/limits.conf.5
+#usr/share/man/man5/namespace.conf.5
 #usr/share/man/man5/pam.conf.5
 #usr/share/man/man5/pam.d.5
 #usr/share/man/man5/pam_env.conf.5
@@ -188,6 +193,7 @@ usr/lib/libpamc.so
 #usr/share/man/man8/pam_mail.8
 #usr/share/man/man8/pam_mkhomedir.8
 #usr/share/man/man8/pam_motd.8
+#usr/share/man/man8/pam_namespace.8
 #usr/share/man/man8/pam_nologin.8
 #usr/share/man/man8/pam_permit.8
 #usr/share/man/man8/pam_rhosts.8
