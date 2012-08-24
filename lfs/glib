@@ -24,17 +24,13 @@
 
 include Config
 
-VER        = 2.22.2
+VER        = 2.32.3
 
 THISAPP    = glib-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = glib
-PAK_VER    = 3
-
-DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +40,8 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 846a86c74b74d5b16826aa5508940f9b
+$(DL_FILE)_MD5 = 9bd3ac535c24b6c162be13b2c43c5adc
+
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
@@ -52,9 +49,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -75,8 +69,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
+		--with-pcre=system
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
