@@ -396,7 +396,7 @@ buildipfire() {
 #    ipfiremake v4l-dvb			KCFG="-pae"
     ipfiremake alsa			KCFG="-pae" KMOD=1
 #    ipfiremake mISDN			KCFG="-pae"
-#    ipfiremake dahdi			KCFG="-pae" KMOD=1
+    ipfiremake dahdi			KCFG="-pae" KMOD=1
     ipfiremake cryptodev		KCFG="-pae"
     ipfiremake compat-wireless		KCFG="-pae"
 #    ipfiremake r8169			KCFG="-pae"
@@ -411,7 +411,7 @@ buildipfire() {
 #    ipfiremake v4l-dvb			KCFG=""
     ipfiremake alsa			KCFG="" KMOD=1
 #    ipfiremake mISDN			KCFG=""
-#    ipfiremake dahdi			KCFG="" KMOD=1
+    ipfiremake dahdi			KCFG="" KMOD=1
     ipfiremake cryptodev		KCFG=""
     ipfiremake compat-wireless		KCFG=""
 #    ipfiremake r8169			KCFG=""
@@ -726,9 +726,9 @@ buildipfire() {
   ipfiremake nut
   ipfiremake watchdog
   ipfiremake libpri
-#  ipfiremake dahdi               # update needed for 3.2.x
-#  ipfiremake asterisk
-#  ipfiremake lcr
+  ipfiremake dahdi
+  ipfiremake asterisk
+  ipfiremake lcr
   ipfiremake usb_modeswitch
   ipfiremake usb_modeswitch_data
   ipfiremake zerofree
