@@ -100,6 +100,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/time-settings		$(CONFIG_ROOT)/time/settings
 	cp $(DIR_SRC)/config/cfgroot/logging-settings		$(CONFIG_ROOT)/logging/settings
 	cp $(DIR_SRC)/config/cfgroot/useragents			$(CONFIG_ROOT)/proxy/advanced
+	cp $(DIR_SRC)/config/cfgroot/ethernet-vlans		$(CONFIG_ROOT)/ethernet/vlans
 	cp $(DIR_SRC)/langs/list					$(CONFIG_ROOT)/langs/
 
 	# Oneliner configfiles
