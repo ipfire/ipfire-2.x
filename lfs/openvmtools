@@ -34,7 +34,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586
 PROG       = openvmtools
 PAK_VER    = 1
-DEPS       = "glib"
+
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules

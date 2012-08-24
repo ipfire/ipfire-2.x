@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = bluetooth
 PAK_VER    = 1
 
-DEPS       = "dbus glib"
+DEPS       = "dbus"
 
 ###############################################################################
 # Top-level Rules

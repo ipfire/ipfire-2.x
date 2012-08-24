@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nagios
 PAK_VER    = 2
 
-DEPS       = "glib traceroute libtool"
+DEPS       = "traceroute libtool"
 
 ###############################################################################
 # Top-level Rules
