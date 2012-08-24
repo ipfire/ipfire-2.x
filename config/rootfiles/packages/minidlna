@@ -1,2 +1,3 @@
+etc/rc.d/init.d/minidlna
 etc/minidlna.conf
 usr/sbin/minidlna
