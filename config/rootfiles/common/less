@@ -1,6 +1,6 @@
 usr/bin/less
 #usr/bin/lessecho
 #usr/bin/lesskey
-#usr/man/man1/less.1
-#usr/man/man1/lessecho.1
-#usr/man/man1/lesskey.1
+#usr/share/man/man1/less.1
+#usr/share/man/man1/lessecho.1
+#usr/share/man/man1/lesskey.1
