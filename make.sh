@@ -581,6 +581,11 @@ buildipfire() {
   ipfiremake noip_updater
   ipfiremake ntp
   ipfiremake openssh
+  ipfiremake fontconfig
+  ipfiremake freefont
+  ipfiremake pixman
+  ipfiremake cairo
+  ipfiremake pango
   ipfiremake rrdtool
   ipfiremake setserial
   ipfiremake setup
@@ -672,8 +677,6 @@ buildipfire() {
   ipfiremake nagios
   ipfiremake nagios_nrpe
   ipfiremake ebtables
-  ipfiremake fontconfig
-  ipfiremake freefont
   ipfiremake directfb
   ipfiremake dfb++
   ipfiremake faad2
