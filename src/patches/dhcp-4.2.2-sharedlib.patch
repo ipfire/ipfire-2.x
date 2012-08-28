@@ -1,0 +1,119 @@
+diff -up dhcp-4.2.2/client/Makefile.am.sharedlib dhcp-4.2.2/client/Makefile.am
+--- dhcp-4.2.2/client/Makefile.am.sharedlib	2011-09-09 16:35:56.000000000 +0200
++++ dhcp-4.2.2/client/Makefile.am	2011-09-09 16:36:29.849007951 +0200
+@@ -4,7 +4,7 @@ dhclient_SOURCES = clparse.c dhclient.c
+ 		   scripts/bsdos scripts/freebsd scripts/linux scripts/macos \
+ 		   scripts/netbsd scripts/nextstep scripts/openbsd \
+ 		   scripts/solaris scripts/openwrt
+-dhclient_LDADD = ../common/libdhcp.a ../omapip/libomapi.a \
++dhclient_LDADD = ../common/libdhcp.a ../omapip/libomapi.la \
+ 		 $(BIND9_LIBDIR) -ldns-export -lisc-export $(CAPNG_LDADD)
+ man_MANS = dhclient.8 dhclient-script.8 dhclient.conf.5 dhclient.leases.5
+ EXTRA_DIST = $(man_MANS)
+diff -up dhcp-4.2.2/configure.ac.sharedlib dhcp-4.2.2/configure.ac
+--- dhcp-4.2.2/configure.ac.sharedlib	2011-09-09 16:35:56.097000001 +0200
++++ dhcp-4.2.2/configure.ac	2011-09-09 16:35:56.383000000 +0200
+@@ -30,7 +30,8 @@ fi
+ # Use this to define _GNU_SOURCE to pull in the IPv6 Advanced Socket API.
+ AC_USE_SYSTEM_EXTENSIONS
+ 
+-AC_PROG_RANLIB
++# Use libtool to simplify building of shared libraries
++AC_PROG_LIBTOOL
+ AC_CONFIG_HEADERS([includes/config.h])
+ 
+ # we sometimes need to know byte order for building packets
+diff -up dhcp-4.2.2/dhcpctl/Makefile.am.sharedlib dhcp-4.2.2/dhcpctl/Makefile.am
+--- dhcp-4.2.2/dhcpctl/Makefile.am.sharedlib	2011-09-09 16:35:55.459000001 +0200
++++ dhcp-4.2.2/dhcpctl/Makefile.am	2011-09-09 16:35:56.384000000 +0200
+@@ -1,15 +1,15 @@
+ bin_PROGRAMS = omshell
+-lib_LIBRARIES = libdhcpctl.a
++lib_LTLIBRARIES = libdhcpctl.la
+ noinst_PROGRAMS = cltest
+ man_MANS = omshell.1 dhcpctl.3
+ EXTRA_DIST = $(man_MANS)
+ 
+ omshell_SOURCES = omshell.c
+-omshell_LDADD = libdhcpctl.a ../common/libdhcp.a ../omapip/libomapi.a \
++omshell_LDADD = libdhcpctl.la ../common/libdhcp.a ../omapip/libomapi.la \
+ 	        $(BIND9_LIBDIR) -ldns-export -lisc-export
+ 
+-libdhcpctl_a_SOURCES = dhcpctl.c callback.c remote.c
++libdhcpctl_la_SOURCES = dhcpctl.c callback.c remote.c
+ 
+ cltest_SOURCES = cltest.c
+-cltest_LDADD = libdhcpctl.a ../common/libdhcp.a ../omapip/libomapi.a \
++cltest_LDADD = libdhcpctl.la ../common/libdhcp.a ../omapip/libomapi.la \
+ 	       $(BIND9_LIBDIR) -ldns-export -lisc-export
+diff -up dhcp-4.2.2/dst/base64.c.sharedlib dhcp-4.2.2/dst/base64.c
+--- dhcp-4.2.2/dst/base64.c.sharedlib	2009-11-20 02:49:01.000000000 +0100
++++ dhcp-4.2.2/dst/base64.c	2011-09-09 16:35:56.385000000 +0200
+@@ -64,6 +64,7 @@ static const char rcsid[] = "$Id: base64
+ 
+ #include <sys/socket.h>
+ 
++#include "dst_internal.h"
+ #include "cdefs.h"
+ #include "osdep.h"
+ #include "arpa/nameser.h"
+diff -up dhcp-4.2.2/dst/Makefile.am.sharedlib dhcp-4.2.2/dst/Makefile.am
+--- dhcp-4.2.2/dst/Makefile.am.sharedlib	2007-05-29 18:32:10.000000000 +0200
++++ dhcp-4.2.2/dst/Makefile.am	2011-09-09 16:35:56.386000000 +0200
+@@ -1,8 +1,8 @@
+ AM_CPPFLAGS = -DMINIRES_LIB -DHMAC_MD5
+ 
+-lib_LIBRARIES = libdst.a
++lib_LTLIBRARIES = libdst.la
+ 
+-libdst_a_SOURCES = dst_support.c dst_api.c hmac_link.c md5_dgst.c \
++libdst_la_SOURCES = dst_support.c dst_api.c hmac_link.c md5_dgst.c \
+ 		   base64.c prandom.c
+ 
+ EXTRA_DIST = dst_internal.h md5.h md5_locl.h
+diff -up dhcp-4.2.2/omapip/Makefile.am.sharedlib dhcp-4.2.2/omapip/Makefile.am
+--- dhcp-4.2.2/omapip/Makefile.am.sharedlib	2011-09-09 16:35:55.000000000 +0200
++++ dhcp-4.2.2/omapip/Makefile.am	2011-09-09 16:37:36.734000324 +0200
+@@ -1,7 +1,7 @@
+-lib_LIBRARIES = libomapi.a
++lib_LTLIBRARIES = libomapi.la
+ noinst_PROGRAMS = svtest
+ 
+-libomapi_a_SOURCES = protocol.c buffer.c alloc.c result.c connection.c \
++libomapi_la_SOURCES = protocol.c buffer.c alloc.c result.c connection.c \
+ 		     errwarn.c listener.c dispatch.c generic.c support.c \
+ 		     handle.c message.c convert.c hash.c auth.c inet_addr.c \
+ 		     array.c trace.c toisc.c iscprint.c isclib.c
+@@ -10,5 +10,5 @@ man_MANS = omapi.3
+ EXTRA_DIST = $(man_MANS)
+ 
+ svtest_SOURCES = test.c
+-svtest_LDADD = libomapi.a $(BIND9_LIBDIR) -ldns-export -lisc-export
++svtest_LDADD = libomapi.la $(BIND9_LIBDIR) -ldns-export -lisc-export
+ 
+diff -up dhcp-4.2.2/relay/Makefile.am.sharedlib dhcp-4.2.2/relay/Makefile.am
+--- dhcp-4.2.2/relay/Makefile.am.sharedlib	2011-09-09 16:35:56.000000000 +0200
++++ dhcp-4.2.2/relay/Makefile.am	2011-09-09 16:37:57.058019749 +0200
+@@ -2,7 +2,7 @@ AM_CPPFLAGS = -DLOCALSTATEDIR='"@localst
+ 
+ sbin_PROGRAMS = dhcrelay
+ dhcrelay_SOURCES = dhcrelay.c
+-dhcrelay_LDADD = ../common/libdhcp.a ../omapip/libomapi.a \
++dhcrelay_LDADD = ../common/libdhcp.a ../omapip/libomapi.la \
+ 		 $(BIND9_LIBDIR) -ldns-export -lisc-export $(CAPNG_LDADD)
+ man_MANS = dhcrelay.8
+ EXTRA_DIST = $(man_MANS)
+diff -up dhcp-4.2.2/server/Makefile.am.sharedlib dhcp-4.2.2/server/Makefile.am
+--- dhcp-4.2.2/server/Makefile.am.sharedlib	2011-09-09 16:35:56.000000000 +0200
++++ dhcp-4.2.2/server/Makefile.am	2011-09-09 16:38:56.291004599 +0200
+@@ -7,8 +7,8 @@ dhcpd_SOURCES = dhcpd.c dhcp.c bootp.c c
+ 		dhcpv6.c mdb6.c ldap.c ldap_casa.c
+ 
+ dhcpd_CFLAGS = $(LDAP_CFLAGS)
+-dhcpd_LDADD = ../common/libdhcp.a ../omapip/libomapi.a \
+-	      ../dhcpctl/libdhcpctl.a $(BIND9_LIBDIR) -ldns-export -lisc-export \
++dhcpd_LDADD = ../common/libdhcp.a ../omapip/libomapi.la \
++	      ../dhcpctl/libdhcpctl.la $(BIND9_LIBDIR) -ldns-export -lisc-export \
+ 	      $(CAPNG_LDADD)
+ 
+ man_MANS = dhcpd.8 dhcpd.conf.5 dhcpd.leases.5

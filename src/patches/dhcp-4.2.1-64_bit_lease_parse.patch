@@ -1,0 +1,94 @@
+diff -up dhcp-4.2.1b1/common/dispatch.c.64-bit_lease_parse dhcp-4.2.1b1/common/dispatch.c
+diff -up dhcp-4.2.1b1/common/parse.c.64-bit_lease_parse dhcp-4.2.1b1/common/parse.c
+--- dhcp-4.2.1b1/common/parse.c.64-bit_lease_parse	2010-12-30 00:01:42.000000000 +0100
++++ dhcp-4.2.1b1/common/parse.c	2011-01-28 08:01:10.000000000 +0100
+@@ -909,8 +909,8 @@ TIME 
+ parse_date_core(cfile)
+ 	struct parse *cfile;
+ {
+-	int guess;
+-	int tzoff, wday, year, mon, mday, hour, min, sec;
++	TIME guess;
++	long int tzoff, wday, year, mon, mday, hour, min, sec;
+ 	const char *val;
+ 	enum dhcp_token token;
+ 	static int months[11] = { 31, 59, 90, 120, 151, 181,
+@@ -936,7 +936,7 @@ parse_date_core(cfile)
+ 		}
+ 
+ 		token = next_token(&val, NULL, cfile); /* consume number */
+-		guess = atoi(val);
++		guess = atol(val);
+ 
+ 		return((TIME)guess);
+ 	}
+@@ -948,7 +948,7 @@ parse_date_core(cfile)
+ 		return((TIME)0);
+ 	}
+ 	token = next_token(&val, NULL, cfile); /* consume day of week */
+-	wday = atoi(val);
++	wday = atol(val);
+ 
+ 	/* Year... */
+ 	token = peek_token(&val, NULL, cfile);
+@@ -964,7 +964,7 @@ parse_date_core(cfile)
+ 	   somebody invents a time machine, I think we can safely disregard
+ 	   it.   This actually works around a stupid Y2K bug that was present
+ 	   in a very early beta release of dhcpd. */
+-	year = atoi(val);
++	year = atol(val);
+ 	if (year > 1900)
+ 		year -= 1900;
+ 
+@@ -988,7 +988,7 @@ parse_date_core(cfile)
+ 		return((TIME)0);
+ 	}
+ 	token = next_token(&val, NULL, cfile); /* consume month */	
+-	mon = atoi(val) - 1;
++	mon = atol(val) - 1;
+ 
+ 	/* Slash separating month from day... */
+ 	token = peek_token(&val, NULL, cfile);
+@@ -1010,7 +1010,7 @@ parse_date_core(cfile)
+ 		return((TIME)0);
+ 	}
+ 	token = next_token(&val, NULL, cfile); /* consume day of month */
+-	mday = atoi(val);
++	mday = atol(val);
+ 
+ 	/* Hour... */
+ 	token = peek_token(&val, NULL, cfile);
+@@ -1021,7 +1021,7 @@ parse_date_core(cfile)
+ 		return((TIME)0);
+ 	}
+ 	token = next_token(&val, NULL, cfile); /* consume hour */
+-	hour = atoi(val);
++	hour = atol(val);
+ 
+ 	/* Colon separating hour from minute... */
+ 	token = peek_token(&val, NULL, cfile);
+@@ -1043,7 +1043,7 @@ parse_date_core(cfile)
+ 		return((TIME)0);
+ 	}
+ 	token = next_token(&val, NULL, cfile); /* consume minute */
+-	min = atoi(val);
++	min = atol(val);
+ 
+ 	/* Colon separating minute from second... */
+ 	token = peek_token(&val, NULL, cfile);
+@@ -1065,13 +1065,13 @@ parse_date_core(cfile)
+ 		return((TIME)0);
+ 	}
+ 	token = next_token(&val, NULL, cfile); /* consume second */
+-	sec = atoi(val);
++	sec = atol(val);
+ 
+ 	tzoff = 0;
+ 	token = peek_token(&val, NULL, cfile);
+ 	if (token == NUMBER) {
+ 		token = next_token(&val, NULL, cfile); /* consume tzoff */
+-		tzoff = atoi(val);
++		tzoff = atol(val);
+ 	} else if (token != SEMI) {
+ 		token = next_token(&val, NULL, cfile);
+ 		parse_warn(cfile,

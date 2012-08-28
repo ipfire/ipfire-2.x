@@ -1,0 +1,538 @@
+diff -up dhcp-4.2.2/client/dhclient.c.lpf-ib dhcp-4.2.2/client/dhclient.c
+--- dhcp-4.2.2/client/dhclient.c.lpf-ib	2011-09-19 11:24:08.693775799 +0200
++++ dhcp-4.2.2/client/dhclient.c	2011-09-19 11:24:08.703775541 +0200
+@@ -113,6 +113,8 @@ static int check_domain_name_list(const 
+ static int check_option_values(struct universe *universe, unsigned int opt,
+ 			       const char *ptr, size_t len);
+ 
++static void setup_ib_interface(struct interface_info *ip);
++
+ int
+ main(int argc, char **argv) {
+ 	int fd;
+@@ -919,6 +921,14 @@ main(int argc, char **argv) {
+ 	}
+ 	srandom(seed + cur_time + (unsigned)getpid());
+ 
++	/* Setup specific Infiniband options */
++	for (ip = interfaces; ip; ip = ip->next) {
++		if (ip->client &&
++		    (ip->hw_address.hbuf[0] == HTYPE_INFINIBAND)) {
++			setup_ib_interface(ip);
++		}
++	}
++
+ 	/* Start a configuration state machine for each interface. */
+ #ifdef DHCPv6
+ 	if (local_family == AF_INET6) {
+@@ -1195,6 +1205,29 @@ int find_subnet (struct subnet **sp,
+ 	return 0;
+ }
+ 
++static void setup_ib_interface(struct interface_info *ip)
++{
++	struct group *g;
++
++	/* Set the broadcast flag */
++	ip->client->config->bootp_broadcast_always = 1;
++
++	/*
++	 * Find out if a dhcp-client-identifier option was specified either
++	 * in the config file or on the command line
++	 */
++	for (g = ip->client->config->on_transmission; g != NULL; g = g->next) {
++		if ((g->statements != NULL) &&
++		    (strcmp(g->statements->data.option->option->name,
++			    "dhcp-client-identifier") == 0)) {
++			return;
++		}
++	}
++
++	/* No client ID specified */
++	log_fatal("dhcp-client-identifier must be specified for InfiniBand");
++}
++
+ /* Individual States:
+  *
+  * Each routine is called from the dhclient_state_machine() in one of
+diff -up dhcp-4.2.2/common/bpf.c.lpf-ib dhcp-4.2.2/common/bpf.c
+--- dhcp-4.2.2/common/bpf.c.lpf-ib	2011-09-19 11:24:08.694775773 +0200
++++ dhcp-4.2.2/common/bpf.c	2011-09-19 11:24:08.704775516 +0200
+@@ -198,11 +198,44 @@ struct bpf_insn dhcp_bpf_filter [] = {
+ 	BPF_STMT(BPF_RET+BPF_K, 0),
+ };
+ 
++/* Packet filter program for DHCP over Infiniband.
++ *
++ * XXX
++ * Changes to the filter program may require changes to the constant offsets
++ * used in lpf_gen_filter_setup to patch the port in the BPF program!
++ * XXX
++ */
++struct bpf_insn dhcp_ib_bpf_filter [] = {
++	/* Packet filter for Infiniband */
++	/* Make sure it's a UDP packet... */
++	BPF_STMT(BPF_LD + BPF_B + BPF_ABS, 9),
++	BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, IPPROTO_UDP, 0, 6),
++
++	/* Make sure this isn't a fragment... */
++	BPF_STMT(BPF_LD + BPF_H + BPF_ABS, 6),
++	BPF_JUMP(BPF_JMP + BPF_JSET + BPF_K, 0x1fff, 4, 0),
++
++	/* Get the IP header length... */
++	BPF_STMT(BPF_LDX + BPF_B + BPF_MSH, 0),
++
++	/* Make sure it's to the right port... */
++	BPF_STMT(BPF_LD + BPF_H + BPF_IND, 2),
++	BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, 67, 0, 1),
++
++	/* If we passed all the tests, ask for the whole packet. */
++	BPF_STMT(BPF_RET + BPF_K, (u_int)-1),
++
++	/* Otherwise, drop it. */
++	BPF_STMT(BPF_RET + BPF_K, 0),
++};
++
+ #if defined (DEC_FDDI)
+ struct bpf_insn *bpf_fddi_filter;
+ #endif
+ 
+ int dhcp_bpf_filter_len = sizeof dhcp_bpf_filter / sizeof (struct bpf_insn);
++int dhcp_ib_bpf_filter_len = sizeof dhcp_ib_bpf_filter / sizeof (struct bpf_insn);
++
+ #if defined (HAVE_TR_SUPPORT)
+ struct bpf_insn dhcp_bpf_tr_filter [] = {
+         /* accept all token ring packets due to variable length header */
+diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
+--- dhcp-4.2.2/common/lpf.c.lpf-ib	2011-09-19 11:24:08.694775773 +0200
++++ dhcp-4.2.2/common/lpf.c	2011-09-19 11:26:15.107109935 +0200
+@@ -42,6 +42,7 @@
+ #include "includes/netinet/udp.h"
+ #include "includes/netinet/if_ether.h"
+ #include <net/if.h>
++#include <ifaddrs.h>
+ 
+ #ifndef PACKET_AUXDATA
+ #define PACKET_AUXDATA 8
+@@ -59,6 +60,15 @@ struct tpacket_auxdata
+ /* Reinitializes the specified interface after an address change.   This
+    is not required for packet-filter APIs. */
+ 
++/* Default broadcast address for IPoIB */
++static unsigned char default_ib_bcast_addr[20] = {
++ 	0x00, 0xff, 0xff, 0xff,
++	0xff, 0x12, 0x40, 0x1b,
++	0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00,
++	0xff, 0xff, 0xff, 0xff
++};
++
+ #ifdef USE_LPF_SEND
+ void if_reinitialize_send (info)
+ 	struct interface_info *info;
+@@ -86,10 +96,21 @@ int if_register_lpf (info)
+ 		struct sockaddr common;
+ 	} sa;
+ 	struct ifreq ifr;
++	int type;
++	int protocol;
+ 
+ 	/* Make an LPF socket. */
+-	if ((sock = socket(PF_PACKET, SOCK_RAW,
+-			   htons((short)ETH_P_ALL))) < 0) {
++	get_hw_addr(info);
++
++	if (info->hw_address.hbuf[0] == HTYPE_INFINIBAND) {
++		type = SOCK_DGRAM;
++		protocol = ETHERTYPE_IP;
++	} else {
++		type = SOCK_RAW;
++		protocol = ETH_P_ALL;
++	}
++
++	if ((sock = socket(PF_PACKET, type, htons((short)protocol))) < 0) {
+ 		if (errno == ENOPROTOOPT || errno == EPROTONOSUPPORT ||
+ 		    errno == ESOCKTNOSUPPORT || errno == EPFNOSUPPORT ||
+ 		    errno == EAFNOSUPPORT || errno == EINVAL) {
+@@ -112,6 +133,7 @@ int if_register_lpf (info)
+ 	/* Bind to the interface name */
+ 	memset (&sa, 0, sizeof sa);
+ 	sa.ll.sll_family = AF_PACKET;
++	sa.ll.sll_protocol = htons(protocol);
+ 	sa.ll.sll_ifindex = ifr.ifr_ifindex;
+ 	if (bind (sock, &sa.common, sizeof sa)) {
+ 		if (errno == ENOPROTOOPT || errno == EPROTONOSUPPORT ||
+@@ -127,8 +149,6 @@ int if_register_lpf (info)
+ 		log_fatal ("Bind socket to interface: %m");
+ 	}
+ 
+-	get_hw_addr(info->name, &info->hw_address);
+-
+ 	return sock;
+ }
+ #endif /* USE_LPF_SEND || USE_LPF_RECEIVE */
+@@ -183,6 +203,8 @@ void if_deregister_send (info)
+    in bpf includes... */
+ extern struct sock_filter dhcp_bpf_filter [];
+ extern int dhcp_bpf_filter_len;
++extern struct sock_filter dhcp_ib_bpf_filter [];
++extern int dhcp_ib_bpf_filter_len;
+ 
+ #if defined (HAVE_TR_SUPPORT)
+ extern struct sock_filter dhcp_bpf_tr_filter [];
+@@ -200,11 +222,13 @@ void if_register_receive (info)
+ 	/* Open a LPF device and hang it on this interface... */
+ 	info -> rfdesc = if_register_lpf (info);
+ 
+-	val = 1;
+-	if (setsockopt (info -> rfdesc, SOL_PACKET, PACKET_AUXDATA, &val,
+-			sizeof val) < 0) {
+-		if (errno != ENOPROTOOPT)
+-			log_fatal ("Failed to set auxiliary packet data: %m");
++	if (info->hw_address.hbuf[0] != HTYPE_INFINIBAND) {
++		val = 1;
++		if (setsockopt (info -> rfdesc, SOL_PACKET, PACKET_AUXDATA,
++				&val, sizeof val) < 0) {
++			if (errno != ENOPROTOOPT)
++				log_fatal ("Failed to set auxiliary packet data: %m");
++		}
+ 	}
+ 
+ #if defined (HAVE_TR_SUPPORT)
+@@ -250,15 +274,28 @@ static void lpf_gen_filter_setup (info)
+ 
+ 	memset(&p, 0, sizeof(p));
+ 
+-	/* Set up the bpf filter program structure.    This is defined in
+-	   bpf.c */
+-	p.len = dhcp_bpf_filter_len;
+-	p.filter = dhcp_bpf_filter;
+-
+-        /* Patch the server port into the LPF  program...
+-	   XXX changes to filter program may require changes
+-	   to the insn number(s) used below! XXX */
+-	dhcp_bpf_filter [8].k = ntohs ((short)local_port);
++	if (info->hw_address.hbuf[0] == HTYPE_INFINIBAND) {
++		/* Set up the bpf filter program structure. */
++		p.len = dhcp_ib_bpf_filter_len;
++		p.filter = dhcp_ib_bpf_filter;
++
++		/* Patch the server port into the LPF program...
++		   XXX
++		   changes to filter program may require changes
++		   to the insn number(s) used below!
++		   XXX */
++		dhcp_ib_bpf_filter[6].k = ntohs ((short)local_port);
++	} else {
++		/* Set up the bpf filter program structure.
++		   This is defined in bpf.c */
++		p.len = dhcp_bpf_filter_len;
++		p.filter = dhcp_bpf_filter;
++
++		/* Patch the server port into the LPF  program...
++		   XXX changes to filter program may require changes
++		   to the insn number(s) used below! XXX */
++		dhcp_bpf_filter [8].k = ntohs ((short)local_port);
++	}
+ 
+ 	if (setsockopt (info -> rfdesc, SOL_SOCKET, SO_ATTACH_FILTER, &p,
+ 			sizeof p) < 0) {
+@@ -315,6 +352,54 @@ static void lpf_tr_filter_setup (info)
+ #endif /* USE_LPF_RECEIVE */
+ 
+ #ifdef USE_LPF_SEND
++ssize_t send_packet_ib(interface, packet, raw, len, from, to, hto)
++	struct interface_info *interface;
++	struct packet *packet;
++	struct dhcp_packet *raw;
++	size_t len;
++	struct in_addr from;
++	struct sockaddr_in *to;
++	struct hardware *hto;
++{
++	unsigned ibufp = 0;
++	double ih [1536 / sizeof (double)];
++	unsigned char *buf = (unsigned char *)ih;
++	ssize_t result;
++
++	union sockunion {
++		struct sockaddr sa;
++		struct sockaddr_ll sll;
++		struct sockaddr_storage ss;
++	} su;
++
++	assemble_udp_ip_header (interface, buf, &ibufp, from.s_addr,
++				to->sin_addr.s_addr, to->sin_port,
++				(unsigned char *)raw, len);
++	memcpy (buf + ibufp, raw, len);
++
++	memset(&su, 0, sizeof(su));
++	su.sll.sll_family = AF_PACKET;
++	su.sll.sll_protocol = htons(ETHERTYPE_IP);
++
++	if (!(su.sll.sll_ifindex = if_nametoindex(interface->name))) {
++		errno = ENOENT;
++		log_error ("send_packet_ib: %m - failed to get if index");
++		return -1;
++	}
++
++	su.sll.sll_hatype = htons(HTYPE_INFINIBAND);
++	su.sll.sll_halen = sizeof(interface->bcast_addr);
++	memcpy(&su.sll.sll_addr, interface->bcast_addr, 20);
++
++	result = sendto(interface->wfdesc, buf, ibufp + len, 0,
++			&su.sa, sizeof(su));
++
++	if (result < 0)
++		log_error ("send_packet_ib: %m");
++
++	return result;
++}
++
+ ssize_t send_packet (interface, packet, raw, len, from, to, hto)
+ 	struct interface_info *interface;
+ 	struct packet *packet;
+@@ -335,6 +420,11 @@ ssize_t send_packet (interface, packet, 
+ 		return send_fallback (interface, packet, raw,
+ 				      len, from, to, hto);
+ 
++	if (interface->hw_address.hbuf[0] == HTYPE_INFINIBAND) {
++		return send_packet_ib(interface, packet, raw, len, from,
++				      to, hto);
++	}
++
+ 	if (hto == NULL && interface->anycast_mac_addr.hlen)
+ 		hto = &interface->anycast_mac_addr;
+ 
+@@ -356,6 +446,42 @@ ssize_t send_packet (interface, packet, 
+ #endif /* USE_LPF_SEND */
+ 
+ #ifdef USE_LPF_RECEIVE
++ssize_t receive_packet_ib (interface, buf, len, from, hfrom)
++	struct interface_info *interface;
++	unsigned char *buf;
++	size_t len;
++	struct sockaddr_in *from;
++	struct hardware *hfrom;
++{
++	int length = 0;
++	int offset = 0;
++	unsigned char ibuf [1536];
++	unsigned bufix = 0;
++	unsigned paylen;
++
++	length = read(interface->rfdesc, ibuf, sizeof(ibuf));
++
++	if (length <= 0)
++		return length;
++
++	offset = decode_udp_ip_header(interface, ibuf, bufix, from,
++				       (unsigned)length, &paylen, 0);
++
++	if (offset < 0)
++		return 0;
++
++	bufix += offset;
++	length -= offset;
++
++	if (length < paylen)
++		log_fatal("Internal inconsistency at %s:%d.", MDL);
++
++	/* Copy out the data in the packet... */
++	memcpy(buf, &ibuf[bufix], paylen);
++
++	return (ssize_t)paylen;
++}
++
+ ssize_t receive_packet (interface, buf, len, from, hfrom)
+ 	struct interface_info *interface;
+ 	unsigned char *buf;
+@@ -382,6 +508,10 @@ ssize_t receive_packet (interface, buf, 
+ 	};
+ 	struct cmsghdr *cmsg;
+ 
++	if (interface->hw_address.hbuf[0] == HTYPE_INFINIBAND) {
++		return receive_packet_ib(interface, buf, len, from, hfrom);
++	}
++
+ 	length = recvmsg (interface -> rfdesc, &msg, 0);
+ 	if (length <= 0)
+ 		return length;
+@@ -462,33 +592,44 @@ void maybe_setup_fallback ()
+ }
+ 
+ void
+-get_hw_addr(const char *name, struct hardware *hw) {
+-	int sock;
+-	struct ifreq tmp;
+-	struct sockaddr *sa;
++get_hw_addr(struct interface_info *info)
++{
++	struct hardware *hw = &info->hw_address;
++	char *name = info->name;
++	struct ifaddrs *ifaddrs;
++	struct ifaddrs *ifa;
++	struct sockaddr_ll *sll = NULL;
+ 
+-	if (strlen(name) >= sizeof(tmp.ifr_name)) {
+-		log_fatal("Device name too long: \"%s\"", name);
+-	}
++	if (getifaddrs(&ifaddrs) == -1)
++		log_fatal("Failed to get interfaces");
+ 
+-	sock = socket(AF_INET, SOCK_DGRAM, 0);
+-	if (sock < 0) {
+-		log_fatal("Can't create socket for \"%s\": %m", name);
++	for (ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
++
++		if (ifa->ifa_addr == NULL)
++			continue;
++
++		if (ifa->ifa_addr->sa_family != AF_PACKET)
++			continue;
++
++		if (ifa->ifa_flags & IFF_LOOPBACK)
++			continue;
++
++		if (strcmp(ifa->ifa_name, name) == 0) {
++			sll = (struct sockaddr_ll *)(void *)ifa->ifa_addr;
++			break;
++		}
+ 	}
+ 
+-	memset(&tmp, 0, sizeof(tmp));
+-	strcpy(tmp.ifr_name, name);
+-	if (ioctl(sock, SIOCGIFHWADDR, &tmp) < 0) {
+-		log_fatal("Error getting hardware address for \"%s\": %m", 
+-			  name);
++	if (sll == NULL) {
++		freeifaddrs(ifaddrs);
++		log_fatal("Failed to get HW address for %s\n", name);
+ 	}
+ 
+-	sa = &tmp.ifr_hwaddr;
+-	switch (sa->sa_family) {
++	switch (sll->sll_hatype) {
+ 		case ARPHRD_ETHER:
+ 			hw->hlen = 7;
+ 			hw->hbuf[0] = HTYPE_ETHER;
+-			memcpy(&hw->hbuf[1], sa->sa_data, 6);
++			memcpy(&hw->hbuf[1], sll->sll_addr, 6);
+ 			break;
+ 		case ARPHRD_IEEE802:
+ #ifdef ARPHRD_IEEE802_TR
+@@ -496,18 +637,35 @@ get_hw_addr(const char *name, struct har
+ #endif /* ARPHRD_IEEE802_TR */
+ 			hw->hlen = 7;
+ 			hw->hbuf[0] = HTYPE_IEEE802;
+-			memcpy(&hw->hbuf[1], sa->sa_data, 6);
++			memcpy(&hw->hbuf[1], sll->sll_addr, 6);
+ 			break;
+ 		case ARPHRD_FDDI:
+ 			hw->hlen = 17;
+ 			hw->hbuf[0] = HTYPE_FDDI;
+-			memcpy(&hw->hbuf[1], sa->sa_data, 16);
++			memcpy(&hw->hbuf[1], sll->sll_addr, 16);
++			break;
++		case ARPHRD_INFINIBAND:
++			/* For Infiniband, save the broadcast address and store
++			 * the port GUID into the hardware address.
++			 */
++			if (ifa->ifa_flags & IFF_BROADCAST) {
++				struct sockaddr_ll *bll;
++
++				bll = (struct sockaddr_ll *)ifa->ifa_broadaddr;
++				memcpy(&info->bcast_addr, bll->sll_addr, 20);
++			} else {
++				memcpy(&info->bcast_addr, default_ib_bcast_addr,
++				       20);
++			}
++
++			hw->hlen = 1;
++			hw->hbuf[0] = HTYPE_INFINIBAND;
+ 			break;
+ #if defined(ARPHRD_PPP)
+ 		case ARPHRD_PPP:
+ 			if (local_family != AF_INET6)
+-				log_fatal("Unsupported device type %d for \"%s\"",
+-				           sa->sa_family, name);
++				log_fatal("Unsupported device type %ld for \"%s\"",
++					  (long int)sll->sll_family, name);
+ 			hw->hlen = 0;
+ 			hw->hbuf[0] = HTYPE_RESERVED;
+ 			/* 0xdeadbeef should never occur on the wire,
+@@ -520,10 +678,11 @@ get_hw_addr(const char *name, struct har
+ 			break;
+ #endif
+ 		default:
++			freeifaddrs(ifaddrs);
+ 			log_fatal("Unsupported device type %ld for \"%s\"",
+-				  (long int)sa->sa_family, name);
++				  (long int)sll->sll_family, name);
+ 	}
+ 
+-	close(sock);
++	freeifaddrs(ifaddrs);
+ }
+ #endif
+diff -up dhcp-4.2.2/common/socket.c.lpf-ib dhcp-4.2.2/common/socket.c
+--- dhcp-4.2.2/common/socket.c.lpf-ib	2011-06-27 18:18:20.000000000 +0200
++++ dhcp-4.2.2/common/socket.c	2011-09-19 11:24:08.705775490 +0200
+@@ -324,7 +324,7 @@ void if_register_send (info)
+ 	info->wfdesc = if_register_socket(info, AF_INET, 0);
+ 	/* If this is a normal IPv4 address, get the hardware address. */
+ 	if (strcmp(info->name, "fallback") != 0)
+-		get_hw_addr(info->name, &info->hw_address);
++		get_hw_addr(info);
+ #if defined (USE_SOCKET_FALLBACK)
+ 	/* Fallback only registers for send, but may need to receive as
+ 	   well. */
+@@ -387,7 +387,7 @@ void if_register_receive (info)
+ #endif /* IP_PKTINFO... */
+ 	/* If this is a normal IPv4 address, get the hardware address. */
+ 	if (strcmp(info->name, "fallback") != 0)
+-		get_hw_addr(info->name, &info->hw_address);
++		get_hw_addr(info);
+ 
+ 	if (!quiet_interface_discovery)
+ 		log_info ("Listening on Socket/%s%s%s",
+@@ -497,7 +497,7 @@ if_register6(struct interface_info *info
+ 	if (req_multi)
+ 		if_register_multicast(info);
+ 
+-	get_hw_addr(info->name, &info->hw_address);
++	get_hw_addr(info);
+ 
+ 	if (!quiet_interface_discovery) {
+ 		if (info->shared_network != NULL) {
+diff -up dhcp-4.2.2/includes/dhcpd.h.lpf-ib dhcp-4.2.2/includes/dhcpd.h
+--- dhcp-4.2.2/includes/dhcpd.h.lpf-ib	2011-09-19 11:24:08.696775721 +0200
++++ dhcp-4.2.2/includes/dhcpd.h	2011-09-19 11:24:08.707775438 +0200
+@@ -1243,6 +1243,7 @@ struct interface_info {
+ 	struct shared_network *shared_network;
+ 				/* Networks connected to this interface. */
+ 	struct hardware hw_address;	/* Its physical address. */
++	u_int8_t bcast_addr[20];	/* Infiniband broadcast address */
+ 	struct in_addr *addresses;	/* Addresses associated with this
+ 					 * interface.
+ 					 */
+@@ -2356,7 +2357,7 @@ void print_dns_status (int, struct dhcp_
+ #endif
+ const char *print_time(TIME);
+ 
+-void get_hw_addr(const char *name, struct hardware *hw);
++void get_hw_addr(struct interface_info *info);
+ 
+ /* socket.c */
+ #if defined (USE_SOCKET_SEND) || defined (USE_SOCKET_RECEIVE) \
+diff -up dhcp-4.2.2/includes/dhcp.h.lpf-ib dhcp-4.2.2/includes/dhcp.h
+--- dhcp-4.2.2/includes/dhcp.h.lpf-ib	2011-09-19 11:24:08.696775721 +0200
++++ dhcp-4.2.2/includes/dhcp.h	2011-09-19 11:24:08.707775438 +0200
+@@ -79,6 +79,7 @@ struct dhcp_packet {
+ #define HTYPE_ETHER	1               /* Ethernet 10Mbps              */
+ #define HTYPE_IEEE802	6               /* IEEE 802.2 Token Ring...	*/
+ #define HTYPE_FDDI	8		/* FDDI...			*/
++#define HTYPE_INFINIBAND 32		/* Infiniband IPoIB		*/
+ 
+ #define HTYPE_RESERVED  0               /* RFC 5494 */
+ 

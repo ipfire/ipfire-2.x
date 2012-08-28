@@ -1,0 +1,323 @@
+diff -up dhcp-4.2.2b1/client/dhclient.8.capability dhcp-4.2.2b1/client/dhclient.8
+--- dhcp-4.2.2b1/client/dhclient.8.capability	2011-07-01 15:09:06.603784531 +0200
++++ dhcp-4.2.2b1/client/dhclient.8	2011-07-01 15:09:06.663783913 +0200
+@@ -118,6 +118,9 @@ dhclient - Dynamic Host Configuration Pr
+ .B -w
+ ]
+ [
++.B -nc
++]
++[
+ .B -B
+ ]
+ [
+@@ -296,6 +299,32 @@ has been added or removed, so that the c
+ address on that interface.
+ 
+ .TP
++.BI \-nc
++Do not drop capabilities.
++
++Normally, if
++.B dhclient
++was compiled with libcap-ng support,
++.B dhclient
++drops most capabilities immediately upon startup.  While more secure,
++this greatly restricts the additional actions that hooks in
++.B dhclient-script (8)
++can take.  (For example, any daemons that 
++.B dhclient-script (8)
++starts or restarts will inherit the restricted capabilities as well,
++which may interfere with their correct operation.)  Thus, the
++.BI \-nc
++option can be used to prevent
++.B dhclient
++from dropping capabilities.
++
++The
++.BI \-nc
++option is ignored if
++.B dhclient
++was not compiled with libcap-ng support.
++
++.TP
+ .BI \-B
+ Set the BOOTP broadcast flag in request packets so servers will always
+ broadcast replies.
+diff -up dhcp-4.2.2b1/client/dhclient.c.capability dhcp-4.2.2b1/client/dhclient.c
+--- dhcp-4.2.2b1/client/dhclient.c.capability	2011-07-01 15:09:06.644784107 +0200
++++ dhcp-4.2.2b1/client/dhclient.c	2011-07-01 15:09:06.664783903 +0200
+@@ -39,6 +39,10 @@
+ #include <limits.h>
+ #include <dns/result.h>
+ 
++#ifdef HAVE_LIBCAP_NG
++#include <cap-ng.h>
++#endif
++
+ /*
+  * Defined in stdio.h when _GNU_SOURCE is set, but we don't want to define
+  * that when building ISC code.
+@@ -141,6 +145,9 @@ main(int argc, char **argv) {
+ 	int timeout_arg = 0;
+ 	char *arg_conf = NULL;
+ 	int arg_conf_len = 0;
++#ifdef HAVE_LIBCAP_NG
++	int keep_capabilities = 0;
++#endif
+ 
+ 	/* Initialize client globals. */
+ 	memset(&default_duid, 0, sizeof(default_duid));
+@@ -410,6 +417,10 @@ main(int argc, char **argv) {
+ 			}
+ 
+ 			dhclient_request_options = argv[i];
++		} else if (!strcmp(argv[i], "-nc")) {
++#ifdef HAVE_LIBCAP_NG
++			keep_capabilities = 1;
++#endif
+ 		} else if (argv[i][0] == '-') {
+ 		    usage();
+ 		} else if (interfaces_requested < 0) {
+@@ -458,6 +469,19 @@ main(int argc, char **argv) {
+ 		path_dhclient_script = s;
+ 	}
+ 
++#ifdef HAVE_LIBCAP_NG
++	/* Drop capabilities */
++	if (!keep_capabilities) {
++		capng_clear(CAPNG_SELECT_CAPS);
++		capng_update(CAPNG_ADD, CAPNG_EFFECTIVE|CAPNG_PERMITTED,
++				CAP_DAC_OVERRIDE); // Drop this someday
++		capng_updatev(CAPNG_ADD, CAPNG_EFFECTIVE|CAPNG_PERMITTED,
++				CAP_NET_ADMIN, CAP_NET_RAW,
++				CAP_NET_BIND_SERVICE, CAP_SYS_ADMIN, -1);
++		capng_apply(CAPNG_SELECT_CAPS);
++	}
++#endif
++
+ 	/* Set up the initial dhcp option universe. */
+ 	initialize_common_option_spaces();
+ 
+diff -up dhcp-4.2.2b1/client/dhclient-script.8.capability dhcp-4.2.2b1/client/dhclient-script.8
+--- dhcp-4.2.2b1/client/dhclient-script.8.capability	2011-07-01 15:09:06.604784521 +0200
++++ dhcp-4.2.2b1/client/dhclient-script.8	2011-07-01 15:09:06.666783883 +0200
+@@ -239,6 +239,16 @@ repeatedly initialized to the values pro
+ the other.   Assuming the information provided by both servers is
+ valid, this shouldn't cause any real problems, but it could be
+ confusing.
++.PP
++Normally, if dhclient was compiled with libcap-ng support,
++dhclient drops most capabilities immediately upon startup.
++While more secure, this greatly restricts the additional actions that
++hooks in dhclient-script can take. For example, any daemons that
++dhclient-script starts or restarts will inherit the restricted
++capabilities as well, which may interfere with their correct operation.
++Thus, the
++.BI \-nc
++option can be used to prevent dhclient from dropping capabilities.
+ .SH SEE ALSO
+ dhclient(8), dhcpd(8), dhcrelay(8), dhclient.conf(5) and
+ dhclient.leases(5).
+diff -up dhcp-4.2.2b1/client/Makefile.am.capability dhcp-4.2.2b1/client/Makefile.am
+--- dhcp-4.2.2b1/client/Makefile.am.capability	2011-07-01 15:09:06.526785327 +0200
++++ dhcp-4.2.2b1/client/Makefile.am	2011-07-01 15:09:06.667783873 +0200
+@@ -5,7 +5,7 @@ dhclient_SOURCES = clparse.c dhclient.c 
+ 		   scripts/netbsd scripts/nextstep scripts/openbsd \
+ 		   scripts/solaris scripts/openwrt
+ dhclient_LDADD = ../common/libdhcp.a ../omapip/libomapi.a \
+-		 $(BIND9_LIBDIR) -ldns-export -lisc-export
++		 $(BIND9_LIBDIR) -ldns-export -lisc-export $(CAPNG_LDADD)
+ man_MANS = dhclient.8 dhclient-script.8 dhclient.conf.5 dhclient.leases.5
+ EXTRA_DIST = $(man_MANS)
+ 
+diff -up dhcp-4.2.2b1/configure.ac.capability dhcp-4.2.2b1/configure.ac
+--- dhcp-4.2.2b1/configure.ac.capability	2011-07-01 15:09:06.527785317 +0200
++++ dhcp-4.2.2b1/configure.ac	2011-07-01 15:09:06.667783873 +0200
+@@ -449,6 +449,41 @@ AC_TRY_LINK(
+ # Look for optional headers.
+ AC_CHECK_HEADERS(sys/socket.h net/if_dl.h net/if6.h regex.h)
+ 
++# look for capabilities library
++AC_ARG_WITH(libcap-ng,
++    [  --with-libcap-ng=[auto/yes/no]  Add Libcap-ng support [default=auto]],,
++    with_libcap_ng=auto)
++
++# Check for Libcap-ng API
++#
++# libcap-ng detection
++if test x$with_libcap_ng = xno ; then
++    have_libcap_ng=no;
++else
++    # Start by checking for header file
++    AC_CHECK_HEADER(cap-ng.h, capng_headers=yes, capng_headers=no)
++
++    # See if we have libcap-ng library
++    AC_CHECK_LIB(cap-ng, capng_clear,
++                 CAPNG_LDADD=-lcap-ng,)
++
++    # Check results are usable
++    if test x$with_libcap_ng = xyes -a x$CAPNG_LDADD = x ; then
++       AC_MSG_ERROR(libcap-ng support was requested and the library was not found)
++    fi
++    if test x$CAPNG_LDADD != x -a $capng_headers = no ; then
++       AC_MSG_ERROR(libcap-ng libraries found but headers are missing)
++    fi
++fi
++AC_SUBST(CAPNG_LDADD)
++AC_MSG_CHECKING(whether to use libcap-ng)
++if test x$CAPNG_LDADD != x ; then
++    AC_DEFINE(HAVE_LIBCAP_NG,1,[libcap-ng support])
++    AC_MSG_RESULT(yes)
++else
++    AC_MSG_RESULT(no)
++fi
++
+ # Solaris needs some libraries for functions
+ AC_SEARCH_LIBS(socket, [socket])
+ AC_SEARCH_LIBS(inet_ntoa, [nsl])
+diff -up dhcp-4.2.2b1/relay/dhcrelay.c.capability dhcp-4.2.2b1/relay/dhcrelay.c
+--- dhcp-4.2.2b1/relay/dhcrelay.c.capability	2011-07-01 15:09:06.626784295 +0200
++++ dhcp-4.2.2b1/relay/dhcrelay.c	2011-07-01 15:12:05.362223794 +0200
+@@ -36,6 +36,11 @@
+ #include <syslog.h>
+ #include <sys/time.h>
+ 
++#ifdef HAVE_LIBCAP_NG
++#  include <cap-ng.h>
++   int keep_capabilities = 0;
++#endif
++
+ TIME default_lease_time = 43200; /* 12 hours... */
+ TIME max_lease_time = 86400; /* 24 hours... */
+ struct tree_cache *global_options[256];
+@@ -356,6 +361,10 @@ main(int argc, char **argv) {
+ 			sl->next = upstreams;
+ 			upstreams = sl;
+ #endif
++		} else if (!strcmp(argv[i], "-nc")) {
++#ifdef HAVE_LIBCAP_NG
++			keep_capabilities = 1;
++#endif
+ 		} else if (!strcmp(argv[i], "-pf")) {
+ 			if (++i == argc)
+ 				usage();
+@@ -426,6 +435,17 @@ main(int argc, char **argv) {
+ #endif
+ 	}
+ 
++#ifdef HAVE_LIBCAP_NG
++	/* Drop capabilities */
++	if (!keep_capabilities) {
++		capng_clear(CAPNG_SELECT_BOTH);
++		capng_updatev(CAPNG_ADD, CAPNG_EFFECTIVE|CAPNG_PERMITTED,
++				CAP_NET_RAW, CAP_NET_BIND_SERVICE, -1);
++		capng_apply(CAPNG_SELECT_BOTH);
++		log_info ("Dropped all unnecessary capabilities.");
++	}
++#endif
++
+ 	if (!quiet) {
+ 		log_info("%s %s", message, PACKAGE_VERSION);
+ 		log_info(copyright);
+@@ -573,6 +593,15 @@ main(int argc, char **argv) {
+ 		dhcpv6_packet_handler = do_packet6;
+ #endif
+ 
++#ifdef HAVE_LIBCAP_NG
++	/* Drop all capabilities */
++	if (!keep_capabilities) {
++		capng_clear(CAPNG_SELECT_BOTH);
++		capng_apply(CAPNG_SELECT_BOTH);
++		log_info ("Dropped all capabilities.");
++	}
++#endif
++
+ 	/* Start dispatching packets and timeouts... */
+ 	dispatch();
+ 
+diff -up dhcp-4.2.2b1/relay/Makefile.am.capability dhcp-4.2.2b1/relay/Makefile.am
+--- dhcp-4.2.2b1/relay/Makefile.am.capability	2011-07-01 15:09:06.546785121 +0200
++++ dhcp-4.2.2b1/relay/Makefile.am	2011-07-01 15:09:06.670783841 +0200
+@@ -3,7 +3,7 @@ AM_CPPFLAGS = -DLOCALSTATEDIR='"@localst
+ sbin_PROGRAMS = dhcrelay
+ dhcrelay_SOURCES = dhcrelay.c
+ dhcrelay_LDADD = ../common/libdhcp.a ../omapip/libomapi.a \
+-		 $(BIND9_LIBDIR) -ldns-export -lisc-export
++		 $(BIND9_LIBDIR) -ldns-export -lisc-export $(CAPNG_LDADD)
+ man_MANS = dhcrelay.8
+ EXTRA_DIST = $(man_MANS)
+ 
+diff -up dhcp-4.2.2b1/server/dhcpd.c.capability dhcp-4.2.2b1/server/dhcpd.c
+--- dhcp-4.2.2b1/server/dhcpd.c.capability	2011-07-01 15:09:06.636784192 +0200
++++ dhcp-4.2.2b1/server/dhcpd.c	2011-07-01 15:09:06.670783841 +0200
+@@ -58,6 +58,11 @@ static const char url [] =
+ #  undef group
+ #endif /* PARANOIA */
+ 
++#ifdef HAVE_LIBCAP_NG
++#  include <cap-ng.h>
++   int keep_capabilities = 0;
++#endif
++
+ static void usage(void);
+ 
+ struct iaddr server_identifier;
+@@ -403,6 +408,10 @@ main(int argc, char **argv) {
+ 			traceinfile = argv [i];
+ 			trace_replay_init ();
+ #endif /* TRACING */
++		} else if (!strcmp(argv[i], "-nc")) {
++#ifdef HAVE_LIBCAP_NG
++			keep_capabilities = 1;
++#endif
+ 		} else if (argv [i][0] == '-') {
+ 			usage ();
+ 		} else {
+@@ -459,6 +468,17 @@ main(int argc, char **argv) {
+         }
+ #endif /* DHCPv6 */
+ 
++#ifdef HAVE_LIBCAP_NG
++	/* Drop capabilities */
++	if (!keep_capabilities) {
++		capng_clear(CAPNG_SELECT_BOTH);
++		capng_updatev(CAPNG_ADD, CAPNG_EFFECTIVE|CAPNG_PERMITTED,
++				CAP_NET_RAW, CAP_NET_BIND_SERVICE, CAP_SYS_CHROOT, CAP_SETUID, CAP_SETGID, -1);
++		capng_apply(CAPNG_SELECT_BOTH);
++		log_info ("Dropped all unnecessary capabilities.");
++	}
++#endif
++
+         /*
+          * convert relative path names to absolute, for files that need
+          * to be reopened after chdir() has been called
+@@ -859,6 +879,15 @@ main(int argc, char **argv) {
+ 	omapi_set_int_value ((omapi_object_t *)dhcp_control_object,
+ 			     (omapi_object_t *)0, "state", server_running);
+ 
++#ifdef HAVE_LIBCAP_NG
++	/* Drop all capabilities */
++	if (!keep_capabilities) {
++		capng_clear(CAPNG_SELECT_BOTH);
++		capng_apply(CAPNG_SELECT_BOTH);
++		log_info ("Dropped all capabilities.");
++	}
++#endif
++
+ 	/* Receive packets and dispatch them... */
+ 	dispatch ();
+ 
+diff -up dhcp-4.2.2b1/server/Makefile.am.capability dhcp-4.2.2b1/server/Makefile.am
+--- dhcp-4.2.2b1/server/Makefile.am.capability	2011-07-01 15:09:06.546785121 +0200
++++ dhcp-4.2.2b1/server/Makefile.am	2011-07-01 15:09:06.671783830 +0200
+@@ -8,7 +8,8 @@ dhcpd_SOURCES = dhcpd.c dhcp.c bootp.c c
+ 
+ dhcpd_CFLAGS = $(LDAP_CFLAGS)
+ dhcpd_LDADD = ../common/libdhcp.a ../omapip/libomapi.a \
+-	      ../dhcpctl/libdhcpctl.a $(BIND9_LIBDIR) -ldns-export -lisc-export
++	      ../dhcpctl/libdhcpctl.a $(BIND9_LIBDIR) -ldns-export -lisc-export \
++	      $(CAPNG_LDADD)
+ 
+ man_MANS = dhcpd.8 dhcpd.conf.5 dhcpd.leases.5
+ EXTRA_DIST = $(man_MANS)
