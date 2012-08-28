@@ -1,0 +1,69 @@
+2011-07-07  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #12868]
+	* sysdeps/unix/sysv/linux/linux_fsinfo.h: Define Lustre constants.
+	* sysdeps/unix/sysv/linux/internal_statvfs.c (__statvfs_getflags):
+	Handle Lustre.
+	* sysdeps/unix/sysv/linux/pathconf.c (__statfs_link_max): Likewise.
+	(__statfs_filesize_max): Likewise.
+	Patch mostly by Andreas Dilger <adilger@whamcloud.com>.
+
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/internal_statvfs.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/unix/sysv/linux/internal_statvfs.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/internal_statvfs.c
+@@ -109,6 +109,9 @@ __statvfs_getflags (const char *name, in
+     case LOGFS_MAGIC_U32:
+       fsname = "logfs";
+       break;
++    case LUSTRE_SUPER_MAGIC:
++      fsname = "lustre";
++      break;
+     }
+ 
+   FILE *mtab = __setmntent ("/proc/mounts", "r");
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/linux_fsinfo.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/unix/sysv/linux/linux_fsinfo.h
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/linux_fsinfo.h
+@@ -77,6 +77,9 @@
+ /* Constant that identifies the `logfs´ filesystem.  */
+ #define LOGFS_MAGIC_U32		0xc97e8168u
+ 
++/* Constant that identifies the `lustre' filesystem.  */
++#define LUSTRE_SUPER_MAGIC	0x0BD00BD0
++
+ /* Constants that identify the `minix2' filesystem.  */
+ #define MINIX2_SUPER_MAGIC	0x2468
+ #define MINIX2_SUPER_MAGIC2	0x2478
+@@ -144,6 +147,8 @@
+ /* Maximum link counts.  */
+ #define COH_LINK_MAX		10000
+ #define EXT2_LINK_MAX		32000
++#define EXT4_LINK_MAX		65000
++#define LUSTRE_LINK_MAX		EXT4_LINK_MAX
+ #define MINIX2_LINK_MAX		65530
+ #define MINIX_LINK_MAX		250
+ #define REISERFS_LINK_MAX	64535
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/pathconf.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/unix/sysv/linux/pathconf.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/pathconf.c
+@@ -104,6 +104,9 @@ __statfs_link_max (int result, const str
+     case XFS_SUPER_MAGIC:
+       return XFS_LINK_MAX;
+ 
++    case LUSTRE_SUPER_MAGIC:
++      return LUSTRE_LINK_MAX;
++
+     default:
+       return LINUX_LINK_MAX;
+     }
+@@ -136,6 +139,7 @@ __statfs_filesize_max (int result, const
+     case UDF_SUPER_MAGIC:
+     case JFS_SUPER_MAGIC:
+     case VXFS_SUPER_MAGIC:
++    case LUSTRE_SUPER_MAGIC:
+       return 64;
+ 
+     case MSDOS_SUPER_MAGIC:

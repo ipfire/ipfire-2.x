@@ -30,11 +30,7 @@ THISAPP    = kudzu-$(VER)
 DL_FILE    = kudzu-$(VER).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(LFS_PASS)" "install"
-  TARGET     = $(DIR_INFO)/$(THISAPP)-install
-else
-  TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -75,18 +71,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kudzu-usbnet.patch
-ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP) && patch -N < $(DIR_SRC)/src/patches/kudzu-link-lintl.diff
-	cd $(DIR_APP) && make RPM_OPT_FLAGS="-O2 -I/opt/$(MACHINE)-uClibc/include" \
-		ARCH=$(MACHINE)
-	cd $(DIR_APP) && install -m 0755 kudzu /install/initrd/bin/kudzu
-	#cd $(DIR_APP) && install -m 0644 libkudzu.a /install/initrd/lib
-	#cd $(DIR_APP) && install -m 0644 libkudzu_loader.a /install/initrd/lib
-else
 	rm -rf /usr/sbin/kudzu
 	cd $(DIR_APP) && ARCH=$(MACHINE) RPM_OPT_FLAGS="$(CFLAGS)" make
 	cd $(DIR_APP) && ARCH=$(MACHINE) RPM_OPT_FLAGS="$(CFLAGS)" make install
 	cd $(DIR_APP) && ARCH=$(MACHINE) RPM_OPT_FLAGS="$(CFLAGS)" make install-program
-endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -1,0 +1,17 @@
+diff -up apcupsd-3.14.5/src/apcaccess.c.gcc44 apcupsd-3.14.5/src/apcaccess.c
+--- apcupsd-3.14.5/src/apcaccess.c.gcc44 2009-02-24 10:36:35.781325750 +0100
++++ apcupsd-3.14.5/src/apcaccess.c 2009-02-24 10:38:12.416285478 +0100
+@@ -86,10 +86,10 @@ int main(int argc, char **argv)
+    }
+ 
+    if (argc > 2) {                 /* assume host:port */
+-      char *p;
++      char *p = argv[2];
+ 
+-      host = argv[2];
+-      p = strchr(host, ':');
++      host = p;
++      p = strchr(p, ':');
+       if (p) {
+          *p++ = 0;
+          port = atoi(p); 

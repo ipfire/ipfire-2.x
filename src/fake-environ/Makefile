@@ -19,7 +19,7 @@ all: $(LIB)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(LIB): $(OBJECTS)
-	$(CC) $(CFLAGS) -shared -o $@ $? -ldl
+	$(CC) $(CFLAGS) -shared -o $@ $? -ldl -static-libgcc
 
 .PHONY: install
 install: all

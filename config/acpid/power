@@ -1,0 +1,4 @@
+# ACPID config to power down machine if powerbutton is pressed
+
+event=button/power.*
+action=/etc/acpi/actions/power.sh

@@ -79,6 +79,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/directfb-1.1.1-fix-mknod.patch
 	cd $(DIR_APP) && sed -i "s/checkfor_matrox=yes/checkfor_matrox=no/g" configure
 	cd $(DIR_APP) && sed -i "s/checkfor_cle266=no/checkfor_cle266=yes/g" configure
 	cd $(DIR_APP) && sed -i "s/checkfor_omap=.*/checkfor_omap=no/g" configure

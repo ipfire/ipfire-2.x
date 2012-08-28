@@ -1,0 +1,34 @@
+2011-08-17  Ulrich Drepper  <drepper@gmail.com>
+
+	* Makeconfig (override CFLAGS): Add library-specific CFLAGS.
+	* resolv/Makefile: Define CFLAGS-libresolv.
+
+Index: glibc-2.12-2-gc4ccff1/Makeconfig
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/Makeconfig
++++ glibc-2.12-2-gc4ccff1/Makeconfig
+@@ -700,7 +700,9 @@ CPPFLAGS = $($(subdir)-CPPFLAGS) $(+incl
+ override CFLAGS	= -std=gnu99 $(gnu89-inline-CFLAGS) \
+ 		  $(filter-out %frame-pointer,$(+cflags)) $(+gccwarn-c) \
+ 		  $(sysdep-CFLAGS) $(CFLAGS-$(suffix $@)) $(CFLAGS-$(<F)) \
+-		  $(CFLAGS-$(@F))
++		  $(CFLAGS-$(@F)) \
++		  $(foreach lib,$(libof-$(basename $(@F))) \
++				$(libof-$(<F)) $(libof-$(@F)),$(CFLAGS-$(lib)))
+ override CXXFLAGS = $(c++-sysincludes) \
+ 		    $(filter-out %frame-pointer,$(+cflags)) $(sysdep-CFLAGS) \
+ 		    $(CFLAGS-$(suffix $@)) $(CFLAGS-$(<F)) $(CFLAGS-$(@F))
+Index: glibc-2.12-2-gc4ccff1/resolv/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/resolv/Makefile
++++ glibc-2.12-2-gc4ccff1/resolv/Makefile
+@@ -76,6 +76,9 @@ CPPFLAGS += -Dgethostbyname=res_gethostb
+ 	    -Dgetnetbyname=res_getnetbyname \
+ 	    -Dgetnetbyaddr=res_getnetbyaddr
+ 
++ifeq (yes,$(have-ssp))
++CFLAGS-libresolv += -fstack-protector
++endif
+ CFLAGS-res_hconf.c = -fexceptions
+ CFLAGS-res_send.c += -fno-strict-aliasing
+ 

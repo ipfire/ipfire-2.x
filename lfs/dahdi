@@ -26,8 +26,8 @@ include Config
 
 VERSUFIX=ipfire$(KCFG)
 
-VER        = 2.2.1
-TVER       = 2.2.1
+VER        = 2.6.1
+TVER       = 2.6.1
 
 DL_FILE    = dahdi-linux-$(VER).tar.gz
 DL_FILE1   = dahdi-tools-$(TVER).tar.gz
@@ -38,10 +38,9 @@ DIR_APP    = $(DIR_SRC)/dahdi-linux-$(VER)
 DIR_APP1   = $(DIR_SRC)/dahdi-tools-$(TVER)
 
 PROG       = dahdi
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
-
 
 ifeq "$(KMOD)" "1"
 	TARGET = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
@@ -49,21 +48,19 @@ else
 	TARGET = $(DIR_INFO)/$(THISAPP)
 endif
 
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) $(DL_FILE1) dahdi-linux-2.2.1-firmware.tar.bz2
+objects = $(DL_FILE) $(DL_FILE1) dahdi-linux-2.6.1-firmware.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 $(DL_FILE1) = $(DL_FROM)/$(DL_FILE1)
-dahdi-linux-2.2.1-firmware.tar.bz2 = $(DL_FROM)/dahdi-linux-2.2.1-firmware.tar.bz2
+dahdi-linux-2.6.1-firmware.tar.gz = $(DL_FROM)/dahdi-linux-2.6.1-firmware.tar.gz
 
-$(DL_FILE)_MD5 = 46e4abbe743830045364fc716d293e88
-$(DL_FILE1)_MD5 = 04e7097929851f744f777400125180db
-dahdi-linux-2.2.1-firmware.tar.bz2_MD5 = ccc50ded1641cd619e8d3a4615a6ad19
-
+$(DL_FILE)_MD5 = 75932fe3d4a6e656165aaaa7a1377305
+$(DL_FILE1)_MD5 = c2e4f476a8e7f96a5cad46dd9b648446
+dahdi-linux-2.6.1-firmware.tar.gz_MD5 = cb804d1b4dd1b644d3c1638daa12dcf5
 
 install : $(TARGET)
 
@@ -97,8 +94,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 
 	rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC) && tar jxf $(DIR_DL)/dahdi-linux-2.2.1-firmware.tar.bz2
-	cd $(DIR_APP) && make $(MAKETUNING) clean all KVERS=$(KVER)
+	cd $(DIR_SRC) && tar axf $(DIR_DL)/dahdi-linux-2.6.1-firmware.tar.gz
+	cd $(DIR_APP) && make $(MAKETUNING) clean all KVERS=$(KVER)-$(VERSUFIX)
 
 ifeq "$(KMOD)" "1"
 	cd $(DIR_APP) && make install-modules KVERS=$(KVER)-$(VERSUFIX)
@@ -141,4 +138,3 @@ else
 	echo "dahdi_dummy" >> /etc/dahdi/modules
 endif
 	@$(POSTBUILD)
-

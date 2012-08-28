@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.1.5
+VER        = 4.2.1
 
 THISAPP    = sed-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -36,13 +36,11 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr --bindir=/bin --disable-nls
-  EXTRA_LDFLAGS =
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
   EXTRA_CONFIG = --prefix=/tools --disable-nls
-  EXTRA_LDFLAGS =
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
@@ -55,7 +53,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7a1cbbbb3341287308e140bd4834c3ba
+$(DL_FILE)_MD5 = f0fd4d7da574d4707e442285fd2d3b86
 
 install : $(TARGET)
 
@@ -85,7 +83,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && LDFLAGS="$(EXTRA_LDFLAGS)" ./configure $(EXTRA_CONFIG)
+	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 	@rm -rf $(DIR_APP)

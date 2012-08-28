@@ -1,0 +1,78 @@
+2010-10-06  Ulrich Drepper  <drepper@gmail.com>
+
+	* string/bug-strstr1.c: New file.
+	* string/Makefile: Add rules to build and run bug-strstr1.
+
+2010-10-05  Eric Blake  <eblake@redhat.com>
+
+	[BZ #12092]
+	* string/str-two-way.h (two_way_long_needle): Always clear memory
+	when skipping input due to the shift table.
+
+Index: glibc-2.12-2-gc4ccff1/string/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/string/Makefile
++++ glibc-2.12-2-gc4ccff1/string/Makefile
+@@ -54,7 +54,8 @@ tests		:= tester inl-tester noinl-tester
+ 		   bug-strncat1 bug-strspn1 bug-strpbrk1 tst-bswap	\
+ 		   tst-strtok tst-strxfrm bug-strcoll1 tst-strfry	\
+ 		   bug-strtok1 $(addprefix test-,$(strop-tests))	\
+-		   bug-envz1 tst-strxfrm2 tst-endian tst-svc2
++		   bug-envz1 tst-strxfrm2 tst-endian tst-svc2		\
++		   bug-strstr1
+ distribute	:= memcopy.h pagecopy.h tst-svc.expect test-string.h	\
+ 		   str-two-way.h
+ 
+@@ -73,6 +74,7 @@ CFLAGS-tst-strlen.c = -fno-builtin
+ CFLAGS-stratcliff.c = -fno-builtin
+ CFLAGS-test-ffs.c = -fno-builtin
+ CFLAGS-tst-inlcall.c = -fno-builtin
++CFLAGS-bug-strstr1.c = -fno-builtin
+ 
+ ifeq ($(cross-compiling),no)
+ tests: $(objpfx)tst-svc.out
+Index: glibc-2.12-2-gc4ccff1/string/bug-strstr1.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/string/bug-strstr1.c
+@@ -0,0 +1,26 @@
++#include <stdio.h>
++#include <string.h>
++
++int main (int argc, char** argv)
++{
++  const char haystack[] =
++    "F_BD_CE_BD_EF_BF_BD_EF_BF_BD_EF_BF_BD_EF_BF_BD_C3_88_20_EF_BF_BD_EF_BF_BD_EF_BF_BD_C3_A7_20_EF_BF_BD";
++
++  const char needle[] =
++    "_EF_BF_BD_EF_BF_BD_EF_BF_BD_EF_BF_BD_EF_BF_BD";
++
++  const char* sub = strstr (haystack, needle);
++
++  if (sub != NULL)
++    {
++      int j;
++
++      fprintf (stderr, "BUG: expected NULL, got:\n%s\n%s\n", sub, needle);
++      for (j = 0; needle[j] != '\0'; ++j)
++        putchar (needle[j] == sub[j] ? ' ' : '^');
++      puts ("");
++      return 1;
++    }
++
++  return 0;
++}
+Index: glibc-2.12-2-gc4ccff1/string/str-two-way.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/string/str-two-way.h
++++ glibc-2.12-2-gc4ccff1/string/str-two-way.h
+@@ -350,8 +350,8 @@ two_way_long_needle (const unsigned char
+ 		     a byte out of place, there can be no match until
+ 		     after the mismatch.  */
+ 		  shift = needle_len - period;
+-		  memory = 0;
+ 		}
++	      memory = 0;
+ 	      j += shift;
+ 	      continue;
+ 	    }

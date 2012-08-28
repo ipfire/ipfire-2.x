@@ -1,0 +1,57 @@
+#!/tools/bin/bash
+
+dirs=""
+excludes="/dev /proc /sys /run"
+
+while [ $# -gt 0 ]; do
+	case "${1}" in
+		--exclude=*)
+			excludes="${excludes} ${1#*=}"
+			;;
+		*)
+			dirs="${dirs} ${1}"
+			;;
+	esac
+	shift
+done
+
+function _strip() {
+	local file=${1}
+	local cmd="${STRIP-strip}"
+
+	local exclude l
+	for exclude in ${excludes}; do
+		l=${#exclude}
+		if [ "${file:0:${l}}" = "${exclude}" ]; then
+			return 0
+		fi
+	done
+
+	case "$(file -bi ${file})" in
+		application/x-sharedlib*|application/x-archive*)
+			cmd="${cmd} --strip-debug --remove-section=.comment --remove-section=.note"
+			;;
+		*)
+			cmd="${cmd} --strip-unneeded"
+			;;
+	esac
+
+	echo "Stripping ${file}..."
+	${cmd} ${file}
+}
+
+for dir in ${dirs}; do
+	# Strip shared objects.
+	find ${dir} -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) \
+		| file -N -f - | sed -n -e 's/^\(.*\):[   ]*.*ELF.*, not stripped/\1/p' |
+		while read file; do
+			_strip ${file}
+		done
+
+	# Strip static archives.
+	find ${dir} -name \*.a -a -exec file {} \; \
+		| grep 'current ar archive' | sed -n -e 's/^\(.*\):[ 	]*current ar archive/\1/p' |
+		while read file; do
+			_strip ${file}
+		done
+done

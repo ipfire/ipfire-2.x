@@ -24,7 +24,8 @@
 
 include Config
 
-VER = 2.5
+VER        = 2.12-2-gc4ccff1
+PORTS_VER  = 2.12.1
 
 THISAPP    = glibc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -35,23 +36,33 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr \
-    --disable-profile --enable-add-ons \
-    --enable-kernel=2.6.0 --libexecdir=/usr/lib/glibc
+  EXTRA_CONFIG = \
+	--build=$(BUILDTARGET) \
+	--prefix=/usr \
+	--libexecdir=/usr/lib/glibc
   EXTRA_MAKE =
   EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  EXTRA_CONFIG = --prefix=/tools \
-    --disable-profile --enable-add-ons \
-    --enable-kernel=2.6.0 --with-binutils=/tools/bin \
-    --without-gd --with-headers=/tools/include \
-    --without-selinux
+  EXTRA_CONFIG = \
+	--host=$(CROSSTARGET) \
+	--build=$(BUILDTARGET) \
+	--prefix=/tools \
+	--with-headers=/tools/include \
+	libc_cv_forced_unwind=yes \
+	libc_cv_ctors_header=yes \
+	libc_cv_c_cleanup=yes
   EXTRA_MAKE =
   EXTRA_INSTALL =
 endif
 
-EXTRA_CONFIG += --build=$(BUILDTARGET)
+# Enable some extra optimization for the glibc code.
+CFLAGS = -O3 -DNDEBUG -fasynchronous-unwind-tables -fPIC -DPIC \
+	-DNO_CTORS_DTORS_SECTIONS
+
+ifeq "$(MACHINE)" "i586"
+	CFLAGS += -march=i586 -mtune=generic -mno-tls-direct-seg-refs
+endif
 
 ifeq "$(MACHINE_TYPE)" "arm"
 	# Disable hardware FP for ARM.
@@ -59,24 +70,30 @@ ifeq "$(MACHINE_TYPE)" "arm"
 		--without-fp
 endif
 
+# Add some general configuration flags
+EXTRA_CONFIG += \
+	--disable-profile \
+	--enable-kernel=2.6.0 \
+	--enable-add-ons \
+	--without-selinux \
+	--enable-experimental-malloc \
+	--enable-bind-now
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	glibc-libidn-$(VER).tar.bz2
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-glibc-libidn-$(VER).tar.bz2 = $(DL_FROM)/glibc-libidn-$(VER).tar.bz2
 
-$(DL_FILE)_MD5 = 1fb29764a6a650a4d5b409dda227ac9f
-glibc-libidn-$(VER).tar.bz2_MD5 = 8787868ba8962d9b125997ec2f25ac01
+$(DL_FILE)_MD5 = 450958ad3d3b5a432b356376904c96b0
 
 # ARM needs glibc-ports
 ifeq "$(MACHINE_TYPE)" "arm"
-	objects += glibc-ports-$(VER).tar.bz2
-	glibc-ports-$(VER).tar.bz2 = $(DL_FROM)/glibc-ports-$(VER).tar.bz2
-	glibc-ports-$(VER).tar.bz2_MD5 = 183f6d46e8fa5e4b2aff240ab1586c2e
+	objects += glibc-ports-$(PORTS_VER).tar.bz2
+	glibc-ports-$(PORTS_VER).tar.bz2 = $(DL_FROM)/glibc-ports-$(PORTS_VER).tar.bz2
+	glibc-ports-$(PORTS_VER).tar.bz2_MD5 = cb01ab976180e98287cef5079e35359e
 endif
 
 install : $(TARGET)
@@ -108,20 +125,126 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/glibc-build
+
 ifeq "$(MACHINE_TYPE)" "arm"
-	cd $(DIR_APP) && tar jxf $(DIR_DL)/glibc-ports-$(VER).tar.bz2
-	cd $(DIR_APP) && mv -v glibc-ports-$(VER) ports
+	cd $(DIR_APP) && tar jxf $(DIR_DL)/glibc-ports-$(PORTS_VER).tar.bz2
+	cd $(DIR_APP) && mv -v glibc-ports-$(PORTS_VER) ports
 
-	cd $(DIR_APP)/ports && patch -Np1 -i $(DIR_SRC)/src/patches/glibc-ports-avoid-using-asm-procinfo.patch
-	cd $(DIR_APP)/ports && patch -Np1 -i $(DIR_SRC)/src/patches/glibc-arm-dont-use-swp.patch
-
-	# asm/page.h should not be included in sysdeps/unix/sysv/linux/arm/ioperm.c.
-	cd $(DIR_APP) && sed "/asm\/page.h/d" -i ports/sysdeps/unix/sysv/linux/arm/ioperm.c
+	# http://sourceware.org/bugzilla/show_bug.cgi?id=12354
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-cfi-entry-not-closed.patch
 endif
 
+	# Apply all patches.
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-aliasing.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-fedora.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-getlogin-r.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-localedata.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-recvmmsg.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh580498.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh582738.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh587360.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh593396.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh593686.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh601686.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh607010.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh607461.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh615090.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh615701.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh621959.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh623187.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh625893.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh630801.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh631011.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh641128.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh642584.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh643822.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh645672.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh646954.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh647448.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh652661.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh656014.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh656530.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh657572.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh661982.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh667974.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh676076.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh676591.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh681054.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh688720.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh688980.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh689471.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh692177.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh692838.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh694386.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh695595.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh695963.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh696472.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh697421.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh699724.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh700507.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh703480.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh703481.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh705465.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh711927.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh711987.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh712248.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh713134.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh714823.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh718057.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh726517.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh730379.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh731042.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh736346.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh737778.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh738665.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh738763.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh739184.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh739971.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh740506.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh740506-2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh749188.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh750531.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh751750.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh752122.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh757888.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh766513.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh767146.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh767693.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh767693-2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh767746.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh771342.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh782585.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh784402.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh785984.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh788959.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh788959-2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh789189.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh789209.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh789238.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh789238-2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh794817.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh794817-2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh795498.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh797094-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh797094-2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh804630.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh804689.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh808337.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh808545.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh809602.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh833716.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh837026.patch
+
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-resolv-stack_chk_fail.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-remove-ctors-dtors-output-sections.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-test-installation.pl-nss_test1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-test-installation.pl-libgcc_s.patch
+
+	# Fixes:
+	#   Makefile:235: *** mixed implicit and normal rules.  Stop.
+	cd $(DIR_APP) && sed -i 's/ot \$$/ot:\n\ttouch $$@\n$$/' manual/Makefile
+
 ifeq "$(ROOT)" ""
-	# This locale causes a loop on bash login - exclude it
-	cd $(DIR_APP) && sed -i '/vi_VN.TCVN/d' localedata/SUPPORTED
 ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.3 -o|' \
 		scripts/test-installation.pl
@@ -130,21 +253,16 @@ else
 		scripts/test-installation.pl
 endif
 endif
-	cd $(DIR_SRC)/glibc-build && CFLAGS="$(CFLAGS)" $(DIR_APP)/configure $(EXTRA_CONFIG)
+
+	cd $(DIR_SRC)/glibc-build && \
+		CFLAGS="$(CFLAGS) -fno-asynchronous-unwind-tables" \
+		$(DIR_APP)/configure $(EXTRA_CONFIG)
+	cd $(DIR_SRC)/glibc-build && make PARALLELMFLAGS=$(MAKETUNING) \
+		CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
+	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) install
 
 ifeq "$(ROOT)" ""
-	touch /etc/ld.so.conf
-	cd $(DIR_SRC)/glibc-build && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) install
-else
-	-mkdir /tools/etc
-	touch /tools/etc/ld.so.conf
-	cd $(DIR_SRC)/glibc-build && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) install
-endif
-
 	# Creating the locales
-ifeq "$(ROOT)" ""
 	mkdir -p /usr/lib/locale
 	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f ISO-8859-1 en_US
 	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f UTF-8      en_US.utf8

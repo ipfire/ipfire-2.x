@@ -1,0 +1,1284 @@
+2010-08-27  Ulrich Drepper  <drepper@redhat.com>
+
+	* sysdeps/x86_64/multiarch/strlen-no-bsf.S: Move to .text.slow section.
+
+	* sysdeps/x86_64/strlen.S: Minimal code improvement.
+
+2010-08-26  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/strlen.S: Unroll the loop.
+	* sysdeps/x86_64/multiarch/Makefile (sysdep_routines): Add
+	strlen-sse2 strlen-sse2-bsf.
+	* sysdeps/x86_64/multiarch/strlen.S ((strlen): Return
+	__strlen_no_bsf if bit_Slow_BSF is set.
+	(__strlen_sse42): Removed.
+	* sysdeps/x86_64/multiarch/strlen-no-bsf.S: New file.
+	* sysdeps/x86_64/multiarch/strlen-sse4.S: New file.
+
+2010-08-25  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/i386/i686/multiarch/Makefile (sysdep_routines): Add
+	strlen-sse2 strlen-sse2-bsf.
+	* sysdeps/i386/i686/multiarch/strlen.S (strlen): Return
+	__strlen_sse2_bsf if bit_Slow_BSF is unset.
+	(__strlen_sse2): Removed.
+	* sysdeps/i386/i686/multiarch/strlen-sse2-bsf.S: New file.
+	* sysdeps/i386/i686/multiarch/strlen-sse2.S: New file.
+	* sysdeps/x86_64/multiarch/init-arch.c (__init_cpu_features): Set
+	bit_Slow_BSF for Atom.
+	* sysdeps/x86_64/multiarch/init-arch.h (bit_Slow_BSF): Define.
+	(index_Slow_BSF): Define.
+	(HAS_SLOW_BSF): Define.
+
+Index: glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/i386/i686/multiarch/Makefile
++++ glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/Makefile
+@@ -9,7 +9,8 @@ sysdep_routines += bzero-sse2 memset-sse
+ 		   memmove-ssse3-rep bcopy-ssse3 bcopy-ssse3-rep \
+ 		   memset-sse2-rep bzero-sse2-rep strcmp-ssse3 \
+ 		   strcmp-sse4 strncmp-c strncmp-ssse3 strncmp-sse4 \
+-		   memcmp-ssse3 memcmp-sse4 strcasestr-nonascii
++		   memcmp-ssse3 memcmp-sse4 strcasestr-nonascii \
++		   strlen-sse2 strlen-sse2-bsf
+ ifeq (yes,$(config-cflags-sse4))
+ sysdep_routines += strcspn-c strpbrk-c strspn-c strstr-c strcasestr-c
+ CFLAGS-strcspn-c.c += -msse4
+Index: glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/strlen-sse2-bsf.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/strlen-sse2-bsf.S
+@@ -0,0 +1,127 @@
++/* strlen with SSE2 and BSF
++   Copyright (C) 2010 Free Software Foundation, Inc.
++   Contributed by Intel Corporation.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#if defined SHARED && !defined NOT_IN_libc
++
++#include <sysdep.h>
++#include "asm-syntax.h"
++
++#define CFI_PUSH(REG)						\
++  cfi_adjust_cfa_offset (4);					\
++  cfi_rel_offset (REG, 0)
++
++#define CFI_POP(REG)						\
++  cfi_adjust_cfa_offset (-4);					\
++  cfi_restore (REG)
++
++#define PUSH(REG)	pushl REG; CFI_PUSH (REG)
++#define POP(REG)	popl REG; CFI_POP (REG)
++#define PARMS		4 + 8	/* Preserve ESI and EDI.  */
++#define	STR		PARMS
++#define ENTRANCE	PUSH (%esi); PUSH (%edi); cfi_remember_state
++#define RETURN		POP (%edi); POP (%esi); ret; \
++			cfi_restore_state; cfi_remember_state
++
++	.text
++ENTRY ( __strlen_sse2_bsf)
++	ENTRANCE
++	mov	STR(%esp), %edi
++	xor	%eax, %eax
++	mov	%edi, %ecx
++	and	$0x3f, %ecx
++	pxor	%xmm0, %xmm0
++	cmp	$0x30, %ecx
++	ja	L(next)
++	movdqu	(%edi), %xmm1
++	pcmpeqb	%xmm1, %xmm0
++	pmovmskb %xmm0, %edx
++	test	%edx, %edx
++	jnz	L(exit_less16)
++	mov	%edi, %eax
++	and	$-16, %eax
++	jmp	L(align16_start)
++L(next):
++
++	mov	%edi, %eax
++	and	$-16, %eax
++	pcmpeqb	(%eax), %xmm0
++	mov	$-1, %esi
++	sub	%eax, %ecx
++	shl	%cl, %esi
++	pmovmskb %xmm0, %edx
++	and	%esi, %edx
++	jnz	L(exit)
++L(align16_start):
++	pxor	%xmm0, %xmm0
++	pxor	%xmm1, %xmm1
++	pxor	%xmm2, %xmm2
++	pxor	%xmm3, %xmm3
++	.p2align 4
++L(align16_loop):
++	pcmpeqb	16(%eax), %xmm0
++	pmovmskb %xmm0, %edx
++	test	%edx, %edx
++	jnz	L(exit16)
++
++	pcmpeqb	32(%eax), %xmm1
++	pmovmskb %xmm1, %edx
++	test	%edx, %edx
++	jnz	L(exit32)
++
++	pcmpeqb	48(%eax), %xmm2
++	pmovmskb %xmm2, %edx
++	test	%edx, %edx
++	jnz	L(exit48)
++
++	pcmpeqb	64(%eax), %xmm3
++	pmovmskb %xmm3, %edx
++	lea	64(%eax), %eax
++	test	%edx, %edx
++	jz	L(align16_loop)
++L(exit):
++	sub	%edi, %eax
++L(exit_less16):
++	bsf	%edx, %edx
++	add	%edx, %eax
++	RETURN
++L(exit16):
++	sub	%edi, %eax
++	bsf	%edx, %edx
++	add	%edx, %eax
++	add	$16, %eax
++	RETURN
++L(exit32):
++	sub	%edi, %eax
++	bsf	%edx, %edx
++	add	%edx, %eax
++	add	$32, %eax
++	RETURN
++L(exit48):
++	sub	%edi, %eax
++	bsf	%edx, %edx
++	add	%edx, %eax
++	add	$48, %eax
++	POP (%edi)
++	POP (%esi)
++	ret
++
++END ( __strlen_sse2_bsf)
++
++#endif
+Index: glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/strlen-sse2.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/strlen-sse2.S
+@@ -0,0 +1,347 @@
++/* strlen with SSE2
++   Copyright (C) 2010 Free Software Foundation, Inc.
++   Contributed by Intel Corporation.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#if defined SHARED && !defined NOT_IN_libc
++
++#include <sysdep.h>
++#include "asm-syntax.h"
++
++#define CFI_PUSH(REG)						\
++  cfi_adjust_cfa_offset (4);					\
++  cfi_rel_offset (REG, 0)
++
++#define CFI_POP(REG)						\
++  cfi_adjust_cfa_offset (-4);					\
++  cfi_restore (REG)
++
++#define PUSH(REG)	pushl REG; CFI_PUSH (REG)
++#define POP(REG)	popl REG; CFI_POP (REG)
++#define PARMS		4
++#define	STR		PARMS
++#define ENTRANCE
++#define RETURN		ret
++
++	.text
++ENTRY (__strlen_sse2)
++	ENTRANCE
++	mov	STR(%esp), %edx
++	xor	%eax, %eax
++	cmpb	$0, (%edx)
++	jz	L(exit_tail0)
++	cmpb	$0, 1(%edx)
++	jz	L(exit_tail1)
++	cmpb	$0, 2(%edx)
++	jz	L(exit_tail2)
++	cmpb	$0, 3(%edx)
++	jz	L(exit_tail3)
++	cmpb	$0, 4(%edx)
++	jz	L(exit_tail4)
++	cmpb	$0, 5(%edx)
++	jz	L(exit_tail5)
++	cmpb	$0, 6(%edx)
++	jz	L(exit_tail6)
++	cmpb	$0, 7(%edx)
++	jz	L(exit_tail7)
++	cmpb	$0, 8(%edx)
++	jz	L(exit_tail8)
++	cmpb	$0, 9(%edx)
++	jz	L(exit_tail9)
++	cmpb	$0, 10(%edx)
++	jz	L(exit_tail10)
++	cmpb	$0, 11(%edx)
++	jz	L(exit_tail11)
++	cmpb	$0, 12(%edx)
++	jz	L(exit_tail12)
++	cmpb	$0, 13(%edx)
++	jz	L(exit_tail13)
++	cmpb	$0, 14(%edx)
++	jz	L(exit_tail14)
++	cmpb	$0, 15(%edx)
++	jz	L(exit_tail15)
++	pxor	%xmm0, %xmm0
++	mov	%edx, %eax
++	mov	%edx, %ecx
++	and	$-16, %eax
++	add	$16, %ecx
++	add	$16, %eax
++
++	pcmpeqb	(%eax), %xmm0
++	pmovmskb %xmm0, %edx
++	pxor	%xmm1, %xmm1
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm1
++	pmovmskb %xmm1, %edx
++	pxor	%xmm2, %xmm2
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++
++	pcmpeqb	(%eax), %xmm2
++	pmovmskb %xmm2, %edx
++	pxor	%xmm3, %xmm3
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm3
++	pmovmskb %xmm3, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm0
++	pmovmskb %xmm0, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm1
++	pmovmskb %xmm1, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm2
++	pmovmskb %xmm2, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm3
++	pmovmskb %xmm3, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm0
++	pmovmskb %xmm0, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm1
++	pmovmskb %xmm1, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm2
++	pmovmskb %xmm2, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm3
++	pmovmskb %xmm3, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm0
++	pmovmskb %xmm0, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm1
++	pmovmskb %xmm1, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm2
++	pmovmskb %xmm2, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	pcmpeqb	(%eax), %xmm3
++	pmovmskb %xmm3, %edx
++	test	%edx, %edx
++	lea	16(%eax), %eax
++	jnz	L(exit)
++
++	and	$-0x40, %eax
++	PUSH (%esi)
++	PUSH (%edi)
++	PUSH (%ebx)
++	PUSH (%ebp)
++	xor	%ebp, %ebp
++L(aligned_64):
++	pcmpeqb	(%eax), %xmm0
++	pcmpeqb	16(%eax), %xmm1
++	pcmpeqb	32(%eax), %xmm2
++	pcmpeqb	48(%eax), %xmm3
++	pmovmskb %xmm0, %edx
++	pmovmskb %xmm1, %esi
++	pmovmskb %xmm2, %edi
++	pmovmskb %xmm3, %ebx
++	or	%edx, %ebp
++	or	%esi, %ebp
++	or	%edi, %ebp
++	or	%ebx, %ebp
++	lea	64(%eax), %eax
++	jz	L(aligned_64)
++L(48leave):
++	test	%edx, %edx
++	jnz	L(aligned_64_exit_16)
++	test	%esi, %esi
++	jnz	L(aligned_64_exit_32)
++	test	%edi, %edi
++	jnz	L(aligned_64_exit_48)
++	mov	%ebx, %edx
++	lea	(%eax), %eax
++	jmp	L(aligned_64_exit)
++L(aligned_64_exit_48):
++	lea	-16(%eax), %eax
++	mov	%edi, %edx
++	jmp	L(aligned_64_exit)
++L(aligned_64_exit_32):
++	lea	-32(%eax), %eax
++	mov	%esi, %edx
++	jmp	L(aligned_64_exit)
++L(aligned_64_exit_16):
++	lea	-48(%eax), %eax
++L(aligned_64_exit):
++	POP (%ebp)
++	POP (%ebx)
++	POP (%edi)
++	POP (%esi)
++L(exit):
++	sub	%ecx, %eax
++	test	%dl, %dl
++	jz	L(exit_high)
++	test	$0x01, %dl
++	jnz	L(exit_tail0)
++
++	test	$0x02, %dl
++	jnz	L(exit_tail1)
++
++	test	$0x04, %dl
++	jnz	L(exit_tail2)
++
++	test	$0x08, %dl
++	jnz	L(exit_tail3)
++
++	test	$0x10, %dl
++	jnz	L(exit_tail4)
++
++	test	$0x20, %dl
++	jnz	L(exit_tail5)
++
++	test	$0x40, %dl
++	jnz	L(exit_tail6)
++	add	$7, %eax
++L(exit_tail0):
++	RETURN
++
++L(exit_high):
++	add	$8, %eax
++	test	$0x01, %dh
++	jnz	L(exit_tail0)
++
++	test	$0x02, %dh
++	jnz	L(exit_tail1)
++
++	test	$0x04, %dh
++	jnz	L(exit_tail2)
++
++	test	$0x08, %dh
++	jnz	L(exit_tail3)
++
++	test	$0x10, %dh
++	jnz	L(exit_tail4)
++
++	test	$0x20, %dh
++	jnz	L(exit_tail5)
++
++	test	$0x40, %dh
++	jnz	L(exit_tail6)
++	add	$7, %eax
++	RETURN
++
++	.p2align 4
++L(exit_tail1):
++	add	$1, %eax
++	RETURN
++
++L(exit_tail2):
++	add	$2, %eax
++	RETURN
++
++L(exit_tail3):
++	add	$3, %eax
++	RETURN
++
++L(exit_tail4):
++	add	$4, %eax
++	RETURN
++
++L(exit_tail5):
++	add	$5, %eax
++	RETURN
++
++L(exit_tail6):
++	add	$6, %eax
++	RETURN
++
++L(exit_tail7):
++	add	$7, %eax
++	RETURN
++
++L(exit_tail8):
++	add	$8, %eax
++	RETURN
++
++L(exit_tail9):
++	add	$9, %eax
++	RETURN
++
++L(exit_tail10):
++	add	$10, %eax
++	RETURN
++
++L(exit_tail11):
++	add	$11, %eax
++	RETURN
++
++L(exit_tail12):
++	add	$12, %eax
++	RETURN
++
++L(exit_tail13):
++	add	$13, %eax
++	RETURN
++
++L(exit_tail14):
++	add	$14, %eax
++	RETURN
++
++L(exit_tail15):
++	add	$15, %eax
++	ret
++
++END (__strlen_sse2)
++
++#endif
+Index: glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/strlen.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/i386/i686/multiarch/strlen.S
++++ glibc-2.12-2-gc4ccff1/sysdeps/i386/i686/multiarch/strlen.S
+@@ -48,6 +48,9 @@ ENTRY(strlen)
+ 1:	leal	__strlen_ia32@GOTOFF(%ebx), %eax
+ 	testl	$bit_SSE2, CPUID_OFFSET+index_SSE2+__cpu_features@GOTOFF(%ebx)
+ 	jz	2f
++	leal	__strlen_sse2_bsf@GOTOFF(%ebx), %eax
++	testl	$bit_Slow_BSF, FEATURE_OFFSET+index_Slow_BSF+__cpu_features@GOTOFF(%ebx)
++	jz	2f
+ 	leal	__strlen_sse2@GOTOFF(%ebx), %eax
+ 2:	popl	%ebx
+ 	cfi_adjust_cfa_offset (-4);
+@@ -55,84 +58,6 @@ ENTRY(strlen)
+ 	ret
+ END(strlen)
+ 
+-#define CFI_POP(REG)						\
+-  cfi_adjust_cfa_offset (-4);					\
+-  cfi_restore (REG)
+-
+-#define RETURN		popl %esi; CFI_POP (esi); ret
+-
+-	.text
+-ENTRY (__strlen_sse2)
+-/*
+- * This implementation uses SSE instructions to compare up to 16 bytes
+- * at a time looking for the end of string (null char).
+- */
+-	pushl	%esi
+-	cfi_adjust_cfa_offset (4)
+-	cfi_rel_offset (%esi, 0)
+-	mov	8(%esp), %eax
+-	mov	%eax, %ecx
+-	pxor	%xmm0, %xmm0		/* 16 null chars */
+-	mov	%eax, %esi
+-	and	$15, %ecx
+-	jz	1f			/* string is 16 byte aligned */
+-
+-	/*
+-	* Unaligned case. Round down to 16-byte boundary before comparing
+-	* 16 bytes for a null char. The code then compensates for any extra chars
+-	* preceding the start of the string.
+-	*/
+-	and	$-16, %esi
+-
+-	pcmpeqb	(%esi), %xmm0
+-	lea	16(%eax), %esi
+-	pmovmskb %xmm0, %edx
+-
+-	shr	%cl, %edx		/* Compensate for bytes preceding the string */
+-	test	%edx, %edx
+-	jnz	2f
+-	sub	%ecx, %esi		/* no null, adjust to next 16-byte boundary */
+-	pxor	%xmm0, %xmm0		/* clear xmm0, may have been changed... */
+-
+-	.p2align 4
+-1:					/* 16 byte aligned */
+-	pcmpeqb	(%esi), %xmm0		/* look for null bytes */
+-	pmovmskb %xmm0, %edx		/* move each byte mask of %xmm0 to edx */
+-
+-	add	$16, %esi		/* prepare to search next 16 bytes */
+-	test	%edx, %edx		/* if no null byte, %edx must be 0 */
+-	jnz	2f			/* found a null */
+-
+-	pcmpeqb	(%esi), %xmm0
+-	pmovmskb %xmm0, %edx
+-	add	$16, %esi
+-	test	%edx, %edx
+-	jnz	2f
+-
+-	pcmpeqb	(%esi), %xmm0
+-	pmovmskb %xmm0, %edx
+-	add	$16, %esi
+-	test	%edx, %edx
+-	jnz	2f
+-
+-	pcmpeqb	(%esi), %xmm0
+-	pmovmskb %xmm0, %edx
+-	add	$16, %esi
+-	test	%edx, %edx
+-	jz	1b
+-
+-2:
+-	neg	%eax
+-	lea	-16(%eax, %esi), %eax	/* calculate exact offset */
+-	bsf	%edx, %ecx		/* Least significant 1 bit is index of null */
+-	add	%ecx, %eax
+-	popl	%esi
+-	cfi_adjust_cfa_offset (-4)
+-	cfi_restore (%esi)
+-	ret
+-
+-END (__strlen_sse2)
+-
+ # undef ENTRY
+ # define ENTRY(name) \
+ 	.type __strlen_ia32, @function; \
+--- a/sysdeps/x86_64/multiarch/Makefile	2012-03-01 10:43:30.060487726 -0700
++++ b/sysdeps/x86_64/multiarch/Makefile	2012-03-01 10:45:57.894692115 -0700
+@@ -7,7 +7,7 @@ ifeq ($(subdir),string)
+ sysdep_routines += stpncpy-c strncpy-c strcmp-ssse3 strncmp-ssse3 \
+ 		   strend-sse4 memcmp-sse4 \
+ 		   strcasestr-nonascii strcasecmp_l-ssse3 \
+-		   strncase_l-ssse3 \
++		   strncase_l-ssse3 strlen-sse4 strlen-no-bsf \
+ 		   memset-x86-64
+ ifeq (yes,$(config-cflags-sse4))
+ sysdep_routines += strcspn-c strpbrk-c strspn-c strstr-c strcasestr-c
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/init-arch.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/multiarch/init-arch.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/init-arch.c
+@@ -77,6 +77,12 @@ __init_cpu_features (void)
+ 	  model += extended_model;
+ 	  switch (model)
+ 	    {
++	    case 0x1c:
++	    case 0x26:
++	      /* BSF is slow on Atom.  */
++	      __cpu_features.feature[index_Slow_BSF] |= bit_Slow_BSF;
++	      break;
++
+ 	    case 0x1a:
+ 	    case 0x1e:
+ 	    case 0x1f:
+--- a/sysdeps/x86_64/multiarch/init-arch.h	2012-03-01 10:43:30.061487720 -0700
++++ b/sysdeps/x86_64/multiarch/init-arch.h	2012-03-01 10:48:13.371963005 -0700
+@@ -17,6 +17,7 @@
+    02111-1307 USA.  */
+ 
+ #define bit_Fast_Rep_String		(1 << 0)
++#define bit_Slow_BSF                   (1 << 2)
+ #define bit_Prefer_SSE_for_memop	(1 << 3)
+ 
+ #ifdef	__ASSEMBLER__
+@@ -34,6 +35,7 @@
+ # define index_SSE4_2	COMMON_CPUID_INDEX_1*CPUID_SIZE+CPUID_ECX_OFFSET
+ 
+ #define index_Fast_Rep_String	FEATURE_INDEX_1*FEATURE_SIZE
++# define index_Slow_BSF                        FEATURE_INDEX_1*FEATURE_SIZE
+ # define index_Prefer_SSE_for_memop	FEATURE_INDEX_1*FEATURE_SIZE
+ 
+ #else	/* __ASSEMBLER__ */
+@@ -105,11 +107,15 @@ extern const struct cpu_features *__get_
+ # define HAS_FMA	HAS_CPU_FEATURE (COMMON_CPUID_INDEX_1, ecx, 12)
+ 
+ # define index_Fast_Rep_String	FEATURE_INDEX_1
++# define index_Slow_BSF                        FEATURE_INDEX_1
+ # define index_Prefer_SSE_for_memop	FEATURE_INDEX_1
+ 
+ #define HAS_ARCH_FEATURE(idx, bit) \
+   ((__get_cpu_features ()->feature[idx] & (bit)) != 0)
+ 
++#define HAS_SLOW_BSF \
++  HAS_ARCH_FEATURE (index_Slow_BSF, bit_Slow_BSF)
++
+ #define HAS_PREFER_SSE_FOR_MEMOP \
+   HAS_ARCH_FEATURE (index_Prefer_SSE_for_memop, bit_Prefer_SSE_for_memop)
+ 
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strlen-no-bsf.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strlen-no-bsf.S
+@@ -0,0 +1,309 @@
++/* strlen without BSF
++   Copyright (C) 2010 Free Software Foundation, Inc.
++   Contributed by Intel Corporation.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#if defined SHARED && !defined NOT_IN_libc
++
++#include <sysdep.h>
++
++	.section .text.slow,"ax",@progbits
++ENTRY (__strlen_no_bsf)
++	xor	%eax, %eax
++	cmpb	$0, (%rdi)
++	jz	L(exit_tail0)
++	cmpb	$0, 1(%rdi)
++	jz	L(exit_tail1)
++	cmpb	$0, 2(%rdi)
++	jz	L(exit_tail2)
++	cmpb	$0, 3(%rdi)
++	jz	L(exit_tail3)
++	cmpb	$0, 4(%rdi)
++	jz	L(exit_tail4)
++	cmpb	$0, 5(%rdi)
++	jz	L(exit_tail5)
++	cmpb	$0, 6(%rdi)
++	jz	L(exit_tail6)
++	cmpb	$0, 7(%rdi)
++	jz	L(exit_tail7)
++	cmpb	$0, 8(%rdi)
++	jz	L(exit_tail8)
++	cmpb	$0, 9(%rdi)
++	jz	L(exit_tail9)
++	cmpb	$0, 10(%rdi)
++	jz	L(exit_tail10)
++	cmpb	$0, 11(%rdi)
++	jz	L(exit_tail11)
++	cmpb	$0, 12(%rdi)
++	jz	L(exit_tail12)
++	cmpb	$0, 13(%rdi)
++	jz	L(exit_tail13)
++	cmpb	$0, 14(%rdi)
++	jz	L(exit_tail14)
++	cmpb	$0, 15(%rdi)
++	jz	L(exit_tail15)
++	pxor	%xmm0, %xmm0
++	mov	%rdi, %rcx
++	mov	%rdi, %rax
++	and	$-16, %rax
++	add	$16, %rax
++	add	$16, %rcx
++
++	pcmpeqb	(%rax), %xmm0
++	pmovmskb %xmm0, %edx
++	pxor	%xmm1, %xmm1
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm1
++	pmovmskb %xmm1, %edx
++	pxor	%xmm2, %xmm2
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++
++	pcmpeqb	(%rax), %xmm2
++	pmovmskb %xmm2, %edx
++	pxor	%xmm3, %xmm3
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm3
++	pmovmskb %xmm3, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm0
++	pmovmskb %xmm0, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm1
++	pmovmskb %xmm1, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm2
++	pmovmskb %xmm2, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm3
++	pmovmskb %xmm3, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm0
++	pmovmskb %xmm0, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm1
++	pmovmskb %xmm1, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm2
++	pmovmskb %xmm2, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm3
++	pmovmskb %xmm3, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm0
++	pmovmskb %xmm0, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm1
++	pmovmskb %xmm1, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm2
++	pmovmskb %xmm2, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	pcmpeqb	(%rax), %xmm3
++	pmovmskb %xmm3, %edx
++	test	%edx, %edx
++	lea	16(%rax), %rax
++	jnz	L(exit)
++
++	and	$-0x40, %rax
++	xor	%r8d, %r8d
++L(aligned_64):
++	pcmpeqb	(%rax), %xmm0
++	pcmpeqb	16(%rax), %xmm1
++	pcmpeqb	32(%rax), %xmm2
++	pcmpeqb	48(%rax), %xmm3
++	pmovmskb %xmm0, %edx
++	pmovmskb %xmm1, %esi
++	pmovmskb %xmm2, %edi
++	pmovmskb %xmm3, %r9d
++	or	%edx, %r8d
++	or	%esi, %r8d
++	or	%edi, %r8d
++	or	%r9d, %r8d
++	lea	64(%rax), %rax
++	jz	L(aligned_64)
++
++	test	%edx, %edx
++	jnz	L(aligned_64_exit_16)
++	test	%esi, %esi
++	jnz	L(aligned_64_exit_32)
++	test	%edi, %edi
++	jnz	L(aligned_64_exit_48)
++L(aligned_64_exit_64):
++	mov	%r9d, %edx
++	jmp	L(aligned_64_exit)
++L(aligned_64_exit_48):
++	lea	-16(%rax), %rax
++	mov	%edi, %edx
++	jmp	L(aligned_64_exit)
++L(aligned_64_exit_32):
++	lea	-32(%rax), %rax
++	mov	%esi, %edx
++	jmp	L(aligned_64_exit)
++L(aligned_64_exit_16):
++	lea	-48(%rax), %rax
++L(aligned_64_exit):
++L(exit):
++	sub	%rcx, %rax
++	test	%dl, %dl
++	jz	L(exit_high)
++	test	$0x01, %dl
++	jnz	L(exit_tail0)
++
++	test	$0x02, %dl
++	jnz	L(exit_tail1)
++
++	test	$0x04, %dl
++	jnz	L(exit_tail2)
++
++	test	$0x08, %dl
++	jnz	L(exit_tail3)
++
++	test	$0x10, %dl
++	jnz	L(exit_tail4)
++
++	test	$0x20, %dl
++	jnz	L(exit_tail5)
++
++	test	$0x40, %dl
++	jnz	L(exit_tail6)
++	add	$7, %eax
++L(exit_tail0):
++	ret
++
++L(exit_high):
++	add	$8, %eax
++	test	$0x01, %dh
++	jnz	L(exit_tail0)
++
++	test	$0x02, %dh
++	jnz	L(exit_tail1)
++
++	test	$0x04, %dh
++	jnz	L(exit_tail2)
++
++	test	$0x08, %dh
++	jnz	L(exit_tail3)
++
++	test	$0x10, %dh
++	jnz	L(exit_tail4)
++
++	test	$0x20, %dh
++	jnz	L(exit_tail5)
++
++	test	$0x40, %dh
++	jnz	L(exit_tail6)
++	add	$7, %eax
++	ret
++	.p2align 4
++L(exit_tail1):
++	add	$1, %eax
++	ret
++
++L(exit_tail2):
++	add	$2, %eax
++	ret
++
++L(exit_tail3):
++	add	$3, %eax
++	ret
++
++L(exit_tail4):
++	add	$4, %eax
++	ret
++
++L(exit_tail5):
++	add	$5, %eax
++	ret
++L(exit_tail6):
++	add	$6, %eax
++	ret
++L(exit_tail7):
++	add	$7, %eax
++	ret
++L(exit_tail8):
++	add	$8, %eax
++	ret
++L(exit_tail9):
++	add	$9, %eax
++	ret
++L(exit_tail10):
++	add	$10, %eax
++	ret
++L(exit_tail11):
++	add	$11, %eax
++	ret
++L(exit_tail12):
++	add	$12, %eax
++	ret
++L(exit_tail13):
++	add	$13, %eax
++	ret
++L(exit_tail14):
++	add	$14, %eax
++	ret
++L(exit_tail15):
++	add	$15, %eax
++	ret
++END (__strlen_no_bsf)
++
++#endif
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strlen-sse4.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strlen-sse4.S
+@@ -0,0 +1,85 @@
++/* strlen with SSE4
++   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
++   Contributed by Ulrich Drepper <drepper@redhat.com>.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#if defined SHARED && !defined NOT_IN_libc
++
++#include <sysdep.h>
++
++	.section .text.sse4.2,"ax",@progbits
++ENTRY (__strlen_sse42)
++	pxor	%xmm1, %xmm1
++	movl	%edi, %ecx
++	movq	%rdi, %r8
++	andq	$~15, %rdi
++	xor	%edi, %ecx
++	pcmpeqb	(%rdi), %xmm1
++	pmovmskb %xmm1, %edx
++	shrl	%cl, %edx
++	shll	%cl, %edx
++	andl	%edx, %edx
++	jnz	L(less16bytes)
++	pxor	%xmm1, %xmm1
++
++	.p2align 4
++L(more64bytes_loop):
++	pcmpistri $0x08, 16(%rdi), %xmm1
++	jz	L(more32bytes)
++
++	pcmpistri $0x08, 32(%rdi), %xmm1
++	jz	L(more48bytes)
++
++	pcmpistri $0x08, 48(%rdi), %xmm1
++	jz	L(more64bytes)
++
++	add	$64, %rdi
++	pcmpistri $0x08, (%rdi), %xmm1
++	jnz	L(more64bytes_loop)
++	leaq	(%rdi,%rcx), %rax
++	subq	%r8, %rax
++	ret
++
++	.p2align 4
++L(more32bytes):
++	leaq	16(%rdi,%rcx, 1), %rax
++	subq	%r8, %rax
++	ret
++
++	.p2align 4
++L(more48bytes):
++	leaq	32(%rdi,%rcx, 1), %rax
++	subq	%r8, %rax
++	ret
++
++	.p2align 4
++L(more64bytes):
++	leaq	48(%rdi,%rcx, 1), %rax
++	subq	%r8, %rax
++	ret
++
++	.p2align 4
++L(less16bytes):
++	subq	%r8, %rdi
++	bsfl	%edx, %eax
++	addq	%rdi, %rax
++	ret
++
++END (__strlen_sse42)
++
++#endif
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strlen.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/multiarch/strlen.S
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/multiarch/strlen.S
+@@ -36,74 +36,12 @@ ENTRY(strlen)
+ 	testl	$bit_SSE4_2, __cpu_features+CPUID_OFFSET+index_SSE4_2(%rip)
+ 	jz	2f
+ 	leaq	__strlen_sse42(%rip), %rax
+-2:	ret
+-END(strlen)
+-
+-
+-	.section .text.sse4.2,"ax",@progbits
+-	.align 	16
+-	.type	__strlen_sse42, @function
+-__strlen_sse42:
+-	cfi_startproc
+-	CALL_MCOUNT
+-	pxor	%xmm1, %xmm1
+-	movl	%edi, %ecx
+-	movq	%rdi, %r8
+-	andq	$~15, %rdi
+-	xor	%edi, %ecx
+-	pcmpeqb	(%rdi), %xmm1
+-	pmovmskb %xmm1, %edx
+-	shrl	%cl, %edx
+-	shll	%cl, %edx
+-	andl	%edx, %edx
+-	jnz	L(less16bytes)
+-	pxor	%xmm1, %xmm1
+-
+-	.p2align 4
+-L(more64bytes_loop):
+-	pcmpistri $0x08, 16(%rdi), %xmm1
+-	jz	L(more32bytes)
+-
+-	pcmpistri $0x08, 32(%rdi), %xmm1
+-	jz	L(more48bytes)
+-
+-	pcmpistri $0x08, 48(%rdi), %xmm1
+-	jz	L(more64bytes)
+-
+-	add	$64, %rdi
+-	pcmpistri $0x08, (%rdi), %xmm1
+-	jnz	L(more64bytes_loop)
+-	leaq	(%rdi,%rcx), %rax
+-	subq	%r8, %rax
+-	ret
+-
+-	.p2align 4
+-L(more32bytes):
+-	leaq	16(%rdi,%rcx, 1), %rax
+-	subq	%r8, %rax
+-	ret
+-
+-	.p2align 4
+-L(more48bytes):
+-	leaq	32(%rdi,%rcx, 1), %rax
+-	subq	%r8, %rax
+-	ret
+-
+-	.p2align 4
+-L(more64bytes):
+-	leaq	48(%rdi,%rcx, 1), %rax
+-	subq	%r8, %rax
+ 	ret
+-
+-	.p2align 4
+-L(less16bytes):
+-	subq	%r8, %rdi
+-	bsfl	%edx, %eax
+-	addq	%rdi, %rax
+-	ret
+-	cfi_endproc
+-	.size	__strlen_sse42, .-__strlen_sse42
+-
++2:	testl	$bit_Slow_BSF, __cpu_features+FEATURE_OFFSET+index_Slow_BSF(%rip)
++	jz	3f
++	leaq    __strlen_no_bsf(%rip), %rax
++3:	ret
++END(strlen)
+ 
+ # undef ENTRY
+ # define ENTRY(name) \
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strlen.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/strlen.S
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/strlen.S
+@@ -23,29 +23,80 @@
+ 
+ 	.text
+ ENTRY(strlen)
+-	pxor	%xmm2, %xmm2
+-	movq	%rdi, %rcx
+-	movq	%rdi, %r8
+-	andq	$~15, %rdi
+-	movdqa	%xmm2, %xmm1
+-	pcmpeqb	(%rdi), %xmm2
+-	orl	$0xffffffff, %esi
+-	subq	%rdi, %rcx
+-	shll	%cl, %esi
+-	pmovmskb %xmm2, %edx
+-	andl	%esi, %edx
+-	jnz	1f
+-
+-2:	movdqa	16(%rdi), %xmm0
+-	leaq	16(%rdi), %rdi
++	xor	%rax, %rax
++	mov	%edi, %ecx
++	and	$0x3f, %ecx
++	pxor	%xmm0, %xmm0
++	cmp	$0x30, %ecx
++	ja	L(next)
++	movdqu	(%rdi), %xmm1
+ 	pcmpeqb	%xmm1, %xmm0
+ 	pmovmskb %xmm0, %edx
+-	testl	%edx, %edx
+-	jz	2b
++	test	%edx, %edx
++	jnz	L(exit_less16)
++	mov	%rdi, %rax
++	and	$-16, %rax
++	jmp	L(align16_start)
++L(next):
++	mov	%rdi, %rax
++	and	$-16, %rax
++	pcmpeqb	(%rax), %xmm0
++	mov	$-1, %esi
++	sub	%rax, %rcx
++	shl	%cl, %esi
++	pmovmskb %xmm0, %edx
++	and	%esi, %edx
++	jnz	L(exit)
++L(align16_start):
++	pxor	%xmm0, %xmm0
++	pxor	%xmm1, %xmm1
++	pxor	%xmm2, %xmm2
++	pxor	%xmm3, %xmm3
++	.p2align 4
++L(align16_loop):
++	pcmpeqb	16(%rax), %xmm0
++	pmovmskb %xmm0, %edx
++	test	%edx, %edx
++	jnz	L(exit16)
+ 
+-1:	subq	%r8, %rdi
+-	bsfl	%edx, %eax
+-	addq	%rdi, %rax
++	pcmpeqb	32(%rax), %xmm1
++	pmovmskb %xmm1, %edx
++	test	%edx, %edx
++	jnz	L(exit32)
++
++	pcmpeqb	48(%rax), %xmm2
++	pmovmskb %xmm2, %edx
++	test	%edx, %edx
++	jnz	L(exit48)
++
++	pcmpeqb	64(%rax), %xmm3
++	pmovmskb %xmm3, %edx
++	lea	64(%rax), %rax
++	test	%edx, %edx
++	jz	L(align16_loop)
++L(exit):
++	sub	%rdi, %rax
++L(exit_less16):
++	bsf	%rdx, %rdx
++	add	%rdx, %rax
++	ret
++	.p2align 4
++L(exit16):
++	sub	%rdi, %rax
++	bsf	%rdx, %rdx
++	lea	16(%rdx,%rax), %rax
++	ret
++	.p2align 4
++L(exit32):
++	sub	%rdi, %rax
++	bsf	%rdx, %rdx
++	lea	32(%rdx,%rax), %rax
++	ret
++	.p2align 4
++L(exit48):
++	sub	%rdi, %rax
++	bsf	%rdx, %rdx
++	lea	48(%rdx,%rax), %rax
+ 	ret
+ END(strlen)
+ libc_hidden_builtin_def (strlen)

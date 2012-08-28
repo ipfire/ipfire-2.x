@@ -1,0 +1,260 @@
+2011-07-24  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* sysdeps/x86_64/dl-trampoline.S (_dl_runtime_profile): Simplify
+	AVX check.
+
+2011-08-20  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/x86_64/dl-trampoline.h: If MORE_CODE is defined, restore
+	the CFI state in the end.
+	* sysdeps/x86_64/dl-trampoline.S: Define MORE_CODE before first
+	inclusion of dl-trampoline.h.
+	Based on a patch by Jiri Olsa <jolsa@redhat.com>.
+
+2011-07-23  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/x86_64/dl-trampoline.S (_dl_runtime_profile): Fix one more
+	typo.
+	(_dl_x86_64_save_sse): Likewise.
+
+2011-07-22  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/x86_64/dl-trampoline.S (_dl_runtime_profile): Fix test for
+	OSXSAVE.
+	(_dl_x86_64_save_sse): Likewise.
+
+2011-07-21  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/x86_64/dl-trampoline.S (_dl_runtime_profile): Fix last
+	change.
+	(_dl_x86_64_save_sse): Use correct AVX check.
+
+2011-07-20  Ulrich Drepper  <drepper@gmail.com>
+
+	[BZ #13007]
+	* sysdeps/x86_64/dl-trampoline.S (_dl_runtime_profile): More complete
+	check for AVX enablement so that we don't crash with old kernels and
+	new hardware.
+	* elf/tst-audit4.c: Add same checks here.
+	* elf/tst-audit6.c: Likewise.
+
+Index: glibc-2.12-2-gc4ccff1/elf/tst-audit4.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/tst-audit4.c
++++ glibc-2.12-2-gc4ccff1/elf/tst-audit4.c
+@@ -6,16 +6,30 @@
+ #include <cpuid.h>
+ #include <immintrin.h>
+ 
++
++static int
++avx_enabled (void)
++{
++  unsigned int eax, ebx, ecx, edx;
++
++  if (__get_cpuid (1, &eax, &ebx, &ecx, &edx) == 0
++      || (ecx & (bit_AVX | bit_OSXSAVE)) != (bit_AVX | bit_OSXSAVE))
++    return 0;
++
++  /* Check the OS has AVX and SSE saving enabled.  */
++  asm ("xgetbv" : "=a" (eax), "=d" (edx) : "c" (0));
++
++  return (eax & 6) == 6;
++}
++
++
+ extern __m256i audit_test (__m256i, __m256i, __m256i, __m256i,
+ 			   __m256i, __m256i, __m256i, __m256i);
+ int
+ main (void)
+ {
+-  unsigned int eax, ebx, ecx, edx;
+-
+   /* Run AVX test only if AVX is supported.  */
+-  if (__get_cpuid (1, &eax, &ebx, &ecx, &edx)
+-      && (ecx & bit_AVX))
++  if (avx_enabled ())
+     {
+       __m256i ymm = _mm256_setzero_si256 ();
+       __m256i ret = audit_test (ymm, ymm, ymm, ymm, ymm, ymm, ymm, ymm);
+Index: glibc-2.12-2-gc4ccff1/elf/tst-audit6.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/tst-audit6.c
++++ glibc-2.12-2-gc4ccff1/elf/tst-audit6.c
+@@ -8,14 +8,28 @@
+ extern __m128i audit_test (__m128i, __m128i, __m128i, __m128i,
+ 			   __m128i, __m128i, __m128i, __m128i);
+ 
+-int
+-main (void)
++
++static int
++avx_enabled (void)
+ {
+   unsigned int eax, ebx, ecx, edx;
+ 
++  if (__get_cpuid (1, &eax, &ebx, &ecx, &edx) == 0
++      || (ecx & (bit_AVX | bit_OSXSAVE)) != (bit_AVX | bit_OSXSAVE))
++    return 0;
++
++  /* Check the OS has AVX and SSE saving enabled.  */
++  asm ("xgetbv" : "=a" (eax), "=d" (edx) : "c" (0));
++
++  return (eax & 6) == 6;
++}
++
++
++int
++main (void)
++{
+   /* Run AVX test only if AVX is supported.  */
+-  if (__get_cpuid (1, &eax, &ebx, &ecx, &edx)
+-      && (ecx & bit_AVX))
++  if (avx_enabled ())
+     {
+       __m128i xmm = _mm_setzero_si128 ();
+       __m128i ret = audit_test (xmm, xmm, xmm, xmm, xmm, xmm, xmm, xmm);
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/dl-trampoline.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/dl-trampoline.S
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/dl-trampoline.S
+@@ -139,24 +139,31 @@ L(have_avx):
+ 	movl	$1, %eax
+ 	cpuid
+ 	movq	%r11,%rbx		# Restore rbx
+-	movl	$1, %eax
+-	testl	$(1 << 28), %ecx
++	xorl	%eax, %eax
++	// AVX and XSAVE supported?
++	andl	$((1 << 28) | (1 << 27)), %ecx
++	cmpl	$((1 << 28) | (1 << 27)), %ecx
+ 	jne	2f
+-	negl	%eax
+-2:	movl	%eax, L(have_avx)(%rip)
++	xorl	%ecx, %ecx
++	// Get XFEATURE_ENABLED_MASK
++	xgetbv
++	andl	$0x6, %eax
++2:	subl	$0x5, %eax
++	movl	%eax, L(have_avx)(%rip)
+ 	cmpl	$0, %eax
+ 
+ 1:	js	L(no_avx)
+ 
+ #  define RESTORE_AVX
++#  define MORE_CODE
+ #  include "dl-trampoline.h"
+ 
+ 	.align 16
+ L(no_avx):
+ # endif
+ 
+-#  undef RESTORE_AVX
+-#  include "dl-trampoline.h"
++# undef RESTORE_AVX
++# include "dl-trampoline.h"
+ 
+ 	cfi_endproc
+ 	.size _dl_runtime_profile, .-_dl_runtime_profile
+@@ -176,11 +183,20 @@ _dl_x86_64_save_sse:
+ 	movl	$1, %eax
+ 	cpuid
+ 	movq	%r11,%rbx		# Restore rbx
+-	movl	$1, %eax
+-	testl	$(1 << 28), %ecx
++	xorl	%eax, %eax
++	// AVX and XSAVE supported?
++	andl	$((1 << 28) | (1 << 27)), %ecx
++	cmpl	$((1 << 28) | (1 << 27)), %ecx
+ 	jne	2f
+-	negl	%eax
+-2:	movl	%eax, L(have_avx)(%rip)
++	xorl	%ecx, %ecx
++	// Get XFEATURE_ENABLED_MASK
++	xgetbv
++	andl	$0x6, %eax
++	cmpl	$0x6, %eax
++	// Nonzero if SSE and AVX state saving is enabled.
++	sete	%al
++2:	leal	-1(%eax,%eax), %eax
++	movl	%eax, L(have_avx)(%rip)
+ 	cmpl	$0, %eax
+ 
+ 1:	js	L(no_avx5)
+Index: glibc-2.12-2-gc4ccff1/sysdeps/x86_64/dl-trampoline.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/x86_64/dl-trampoline.h
++++ glibc-2.12-2-gc4ccff1/sysdeps/x86_64/dl-trampoline.h
+@@ -195,14 +195,14 @@
+ 	   _dl_call_pltexit.  The La_x86_64_regs is being pointed by rsp now,
+ 	   so we just need to allocate the sizeof(La_x86_64_retval) space on
+ 	   the stack, since the alignment has already been taken care of. */
+-# ifdef RESTORE_AVX
++#ifdef RESTORE_AVX
+ 	/* sizeof(La_x86_64_retval).  Need extra space for 2 SSE
+ 	   registers to detect if xmm0/xmm1 registers are changed
+ 	   by audit module.  */
+ 	subq $(LRV_SIZE + XMM_SIZE*2), %rsp
+-# else
++#else
+ 	subq $LRV_SIZE, %rsp	# sizeof(La_x86_64_retval)
+-# endif
++#endif
+ 	movq %rsp, %rcx		# La_x86_64_retval argument to %rcx.
+ 
+ 	/* Fill in the La_x86_64_retval structure.  */
+@@ -212,7 +212,7 @@
+ 	movaps %xmm0, LRV_XMM0_OFFSET(%rcx)
+ 	movaps %xmm1, LRV_XMM1_OFFSET(%rcx)
+ 
+-# ifdef RESTORE_AVX
++#ifdef RESTORE_AVX
+ 	/* This is to support AVX audit modules.  */
+ 	vmovdqu %ymm0, LRV_VECTOR0_OFFSET(%rcx)
+ 	vmovdqu %ymm1, LRV_VECTOR1_OFFSET(%rcx)
+@@ -221,14 +221,14 @@
+ 	   by audit module.  */
+ 	vmovdqa %xmm0,		  (LRV_SIZE)(%rcx)
+ 	vmovdqa %xmm1, (LRV_SIZE + XMM_SIZE)(%rcx)
+-# endif
++#endif
+ 
+ 	fstpt LRV_ST0_OFFSET(%rcx)
+ 	fstpt LRV_ST1_OFFSET(%rcx)
+ 
+ 	movq 24(%rbx), %rdx	# La_x86_64_regs argument to %rdx.
+ 	movq 40(%rbx), %rsi	# Copy args pushed by PLT in register.
+-        movq 32(%rbx), %rdi	# %rdi: link_map, %rsi: reloc_index
++	movq 32(%rbx), %rdi	# %rdi: link_map, %rsi: reloc_index
+ 	call _dl_call_pltexit
+ 
+ 	/* Restore return registers.  */
+@@ -238,7 +238,7 @@
+ 	movaps LRV_XMM0_OFFSET(%rsp), %xmm0
+ 	movaps LRV_XMM1_OFFSET(%rsp), %xmm1
+ 
+-# ifdef RESTORE_AVX
++#ifdef RESTORE_AVX
+ 	/* Check if xmm0/xmm1 registers are changed by audit module.  */
+ 	vpcmpeqq (LRV_SIZE)(%rsp), %xmm0, %xmm2
+ 	vpmovmskb %xmm2, %esi
+@@ -253,7 +253,7 @@
+ 	vmovdqu LRV_VECTOR1_OFFSET(%rsp), %ymm1
+ 
+ 1:
+-# endif
++#endif
+ 
+ 	fldt LRV_ST1_OFFSET(%rsp)
+ 	fldt LRV_ST0_OFFSET(%rsp)
+@@ -267,3 +267,10 @@
+ 				# (eats the reloc index and link_map)
+ 	cfi_adjust_cfa_offset(-48)
+ 	retq
++
++#ifdef MORE_CODE
++	cfi_adjust_cfa_offset(48)
++	cfi_rel_offset(%rbx, 0)
++	cfi_def_cfa_register(%rbx)
++# undef MORE_CODE
++#endif

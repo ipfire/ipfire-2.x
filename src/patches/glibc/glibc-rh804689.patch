@@ -1,0 +1,23 @@
+diff -rup a/sysdeps/posix/getaddrinfo.c b/sysdeps/posix/getaddrinfo.c
+--- a/sysdeps/posix/getaddrinfo.c	2012-03-20 21:31:14.177358937 -0600
++++ b/sysdeps/posix/getaddrinfo.c	2012-03-21 09:13:17.198290683 -0600
+@@ -560,15 +563,11 @@ gaih_inet (const char *name, const struc
+ 	  int no_more;
+ 	  int old_res_options;
+ 
+-	  /* If we do not have to look for IPv4 and IPv6 together, use
+-	     the simple, old functions.  */
+-	  if ((req->ai_family == AF_INET
+-	       || (req->ai_family == AF_INET6
+-		   && ((req->ai_flags & AI_V4MAPPED) == 0
+-		       || (req->ai_flags & AI_ALL) == 0)))
+-	      && (req->ai_flags & AI_CANONNAME) == 0)
++	  /* If we do not have to look for IPv6 addresses, use
++	     the simple, old functions, which do not support
++	     IPv6 scope ids. */
++	  if (req->ai_family == AF_INET)
+ 	    {
+-	      int family = req->ai_family;
+ 	      size_t tmpbuflen = 512;
+ 	      assert (tmpbuf == NULL);
+ 	      tmpbuf = alloca_account (tmpbuflen, alloca_used);

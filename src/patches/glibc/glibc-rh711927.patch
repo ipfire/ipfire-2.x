@@ -1,0 +1,503 @@
+Index: glibc-2.12-2-gc4ccff1/config.h.in
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/config.h.in
++++ glibc-2.12-2-gc4ccff1/config.h.in
+@@ -201,6 +201,9 @@
+ /* Define if multi-arch DSOs should be generated.  */
+ #undef USE_MULTIARCH
+ 
++/* Define if Systemtap <sys/sdt.h> probes should be defined.  */
++#undef USE_STAP_PROBE
++
+ /*
+  */
+ 
+Index: glibc-2.12-2-gc4ccff1/configure
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/configure
++++ glibc-2.12-2-gc4ccff1/configure
+@@ -830,6 +830,7 @@ enable_all_warnings
+ enable_multi_arch
+ enable_experimental_malloc
+ enable_nss_crypt
++enable_systemtap
+ with_cpu
+ '
+       ac_precious_vars='build_alias
+@@ -1501,6 +1502,7 @@ Optional Features:
+   --enable-experimental-malloc
+                           enable experimental malloc features
+   --enable-nss-crypt      enable libcrypt to use nss
++  --enable-systemtap      enable systemtap static probe points [default=no]
+ 
+ Optional Packages:
+   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+@@ -3932,6 +3934,79 @@ else
+ fi
+ 
+ 
++# Check whether --enable-systemtap was given.
++if test "${enable_systemtap+set}" = set; then
++  enableval=$enable_systemtap; systemtap=$enableval
++else
++  systemtap=no
++fi
++
++if test x$systemtap != xno; then
++
++  { $as_echo "$as_me:$LINENO: checking for systemtap static probe support" >&5
++$as_echo_n "checking for systemtap static probe support... " >&6; }
++if test "${libc_cv_sdt+set}" = set; then
++  $as_echo_n "(cached) " >&6
++else
++    old_CFLAGS="$CFLAGS"
++  CFLAGS="-std=gnu99 $CFLAGS"
++  cat >conftest.$ac_ext <<_ACEOF
++#include <sys/sdt.h>
++void foo (int i, void *p)
++{
++  asm ("" STAP_PROBE_ASM (foo, bar, STAP_PROBE_ASM_TEMPLATE (2)) ""
++       :: STAP_PROBE_ASM_OPERANDS (2, i, p));
++}
++_ACEOF
++rm -f conftest.$ac_objext
++if { (ac_try="$ac_compile"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
++$as_echo "$ac_try_echo") >&5
++  (eval "$ac_compile") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } && {
++	 test -z "$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       } && test -s conftest.$ac_objext; then
++  libc_cv_sdt=yes
++else
++  $as_echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++	libc_cv_sdt=no
++fi
++
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++  CFLAGS="$old_CFLAGS"
++fi
++{ $as_echo "$as_me:$LINENO: result: $libc_cv_sdt" >&5
++$as_echo "$libc_cv_sdt" >&6; }
++  if test $libc_cv_sdt = yes; then
++    cat >>confdefs.h <<\_ACEOF
++#define USE_STAP_PROBE 1
++_ACEOF
++
++  else
++    { { $as_echo "$as_me:$LINENO: error: in \`$ac_pwd':" >&5
++$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
++{ { $as_echo "$as_me:$LINENO: error: systemtap support needs sys/sdt.h with asm support
++See \`config.log' for more details." >&5
++$as_echo "$as_me: error: systemtap support needs sys/sdt.h with asm support
++See \`config.log' for more details." >&2;}
++   { (exit 1); exit 1; }; }; }
++  fi
++
++fi
++
++
+ # The way shlib-versions is used to generate soversions.mk uses a
+ # fairly simplistic model for name recognition that can't distinguish
+ # i486-pc-linux-gnu fully from i486-pc-gnu.  So we mutate a $host_os
+Index: glibc-2.12-2-gc4ccff1/configure.in
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/configure.in
++++ glibc-2.12-2-gc4ccff1/configure.in
+@@ -319,6 +319,29 @@ else
+ fi
+ AC_SUBST(libc_cv_nss_crypt)
+ 
++AC_ARG_ENABLE([systemtap],
++              [AS_HELP_STRING([--enable-systemtap],
++	       [enable systemtap static probe points @<:@default=no@:>@])],
++              [systemtap=$enableval],
++	      [systemtap=no])
++AS_IF([test x$systemtap != xno], [
++  AC_CACHE_CHECK([for systemtap static probe support], libc_cv_sdt, [dnl
++  old_CFLAGS="$CFLAGS"
++  CFLAGS="-std=gnu99 $CFLAGS"
++  AC_COMPILE_IFELSE([#include <sys/sdt.h>
++void foo (int i, void *p)
++{
++  asm ("" STAP_PROBE_ASM (foo, bar, STAP_PROBE_ASM_TEMPLATE (2)) ""
++       :: STAP_PROBE_ASM_OPERANDS (2, i, p));
++}], [libc_cv_sdt=yes], [libc_cv_sdt=no])
++  CFLAGS="$old_CFLAGS"])
++  if test $libc_cv_sdt = yes; then
++    AC_DEFINE([USE_STAP_PROBE])
++  else
++    AC_MSG_FAILURE([systemtap support needs sys/sdt.h with asm support])
++  fi
++])
++
+ # The way shlib-versions is used to generate soversions.mk uses a
+ # fairly simplistic model for name recognition that can't distinguish
+ # i486-pc-linux-gnu fully from i486-pc-gnu.  So we mutate a $host_os
+Index: glibc-2.12-2-gc4ccff1/elf/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/Makefile
++++ glibc-2.12-2-gc4ccff1/elf/Makefile
+@@ -458,7 +458,8 @@ CFLAGS-ldconfig.c = $(SYSCONF-FLAGS) -D'
+ CFLAGS-dl-cache.c = $(SYSCONF-FLAGS)
+ CFLAGS-cache.c = $(SYSCONF-FLAGS)
+ 
+-CPPFLAGS-.os += $(if $(filter $(@F),$(patsubst %,%.os,$(all-rtld-routines))),-DNOT_IN_libc=1 -DIS_IN_rtld=1)
++CPPFLAGS-.os += $(if $(filter $(@F),$(patsubst %,%.os,$(all-rtld-routines))),\
++		     -DNOT_IN_libc=1 -DIS_IN_rtld=1 -DIN_LIB=rtld)
+ 
+ test-modules = $(addprefix $(objpfx),$(addsuffix .so,$(strip $(modules-names))))
+ generated += $(addsuffix .so,$(strip $(modules-names)))
+Index: glibc-2.12-2-gc4ccff1/elf/dl-close.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-close.c
++++ glibc-2.12-2-gc4ccff1/elf/dl-close.c
+@@ -32,6 +32,7 @@
+ #include <sys/mman.h>
+ #include <sysdep-cancel.h>
+ #include <tls.h>
++#include <stap-probe.h>
+ 
+ 
+ /* Type of the constructor functions.  */
+@@ -469,6 +470,7 @@ _dl_close_worker (struct link_map *map)
+   struct r_debug *r = _dl_debug_initialize (0, nsid);
+   r->r_state = RT_DELETE;
+   _dl_debug_state ();
++  LIBC_PROBE (rtld_unmap_start, 2, nsid, r);
+ 
+   if (unload_global)
+     {
+@@ -722,6 +724,7 @@ _dl_close_worker (struct link_map *map)
+   /* Notify the debugger those objects are finalized and gone.  */
+   r->r_state = RT_CONSISTENT;
+   _dl_debug_state ();
++  LIBC_PROBE (rtld_unmap_complete, 2, nsid, r);
+ 
+   /* Recheck if we need to retry, release the lock.  */
+  out:
+Index: glibc-2.12-2-gc4ccff1/elf/dl-load.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-load.c
++++ glibc-2.12-2-gc4ccff1/elf/dl-load.c
+@@ -36,6 +36,7 @@
+ #include <stackinfo.h>
+ #include <caller.h>
+ #include <sysdep.h>
++#include <stap-probe.h>
+ 
+ #include <dl-dst.h>
+ 
+@@ -806,7 +807,7 @@ _dl_init_paths (const char *llp)
+ static void
+ __attribute__ ((noreturn, noinline))
+ lose (int code, int fd, const char *name, char *realname, struct link_map *l,
+-      const char *msg, struct r_debug *r)
++      const char *msg, struct r_debug *r, Lmid_t nsid)
+ {
+   /* The file might already be closed.  */
+   if (fd != -1)
+@@ -818,6 +819,7 @@ lose (int code, int fd, const char *name
+     {
+       r->r_state = RT_CONSISTENT;
+       _dl_debug_state ();
++      LIBC_PROBE (rtld_map_complete, 2, nsid, r);
+     }
+ 
+   _dl_signal_error (code, name, NULL, msg);
+@@ -856,7 +858,7 @@ _dl_map_object_from_fd (const char *name
+       errval = errno;
+     call_lose:
+       lose (errval, fd, name, realname, l, errstring,
+-	    make_consistent ? r : NULL);
++	    make_consistent ? r : NULL, nsid);
+     }
+ 
+   /* Look again to see if the real name matched another already loaded.  */
+@@ -963,6 +965,7 @@ _dl_map_object_from_fd (const char *name
+ 	 linking has not been used before.  */
+       r->r_state = RT_ADD;
+       _dl_debug_state ();
++      LIBC_PROBE (rtld_map_start, 2, nsid, r);
+       make_consistent = true;
+     }
+   else
+@@ -1656,7 +1659,7 @@ open_verify (const char *name, struct fi
+ 	      name = strdupa (realname);
+ 	      free (realname);
+ 	    }
+-	  lose (errval, fd, name, NULL, NULL, errstring, NULL);
++	  lose (errval, fd, name, NULL, NULL, errstring, NULL, 0);
+ 	}
+ 
+       /* See whether the ELF header is what we expect.  */
+Index: glibc-2.12-2-gc4ccff1/elf/dl-open.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-open.c
++++ glibc-2.12-2-gc4ccff1/elf/dl-open.c
+@@ -33,6 +33,7 @@
+ #include <caller.h>
+ #include <sysdep-cancel.h>
+ #include <tls.h>
++#include <stap-probe.h>
+ 
+ #include <dl-dst.h>
+ 
+@@ -297,6 +298,7 @@ dl_open_worker (void *a)
+   struct r_debug *r = _dl_debug_initialize (0, args->nsid);
+   r->r_state = RT_CONSISTENT;
+   _dl_debug_state ();
++  LIBC_PROBE (rtld_map_complete, 2, args->nsid, r);
+ 
+   /* Only do lazy relocation if `LD_BIND_NOW' is not set.  */
+   int reloc_mode = mode & __RTLD_AUDIT;
+@@ -309,10 +311,18 @@ dl_open_worker (void *a)
+   struct link_map *l = new;
+   while (l->l_next)
+     l = l->l_next;
++  int relocation_in_progress = 0;
+   while (1)
+     {
+       if (! l->l_real->l_relocated)
+ 	{
++	  if (! relocation_in_progress)
++	    {
++	      /* Notify the debugger that relocations are about to happen.  */
++	      LIBC_PROBE (rtld_reloc_start, 2, args->nsid, r);
++	      relocation_in_progress = 1;
++	    }
++
+ #ifdef SHARED
+ 	  if (__builtin_expect (GLRO(dl_profile) != NULL, 0))
+ 	    {
+@@ -460,6 +470,10 @@ cannot load any more object with static 
+     _dl_fatal_printf (N_("\
+ TLS generation counter wrapped!  Please report this."));
+ 
++  /* Notify the debugger all new objects have been relocated.  */
++  if (relocation_in_progress)
++    LIBC_PROBE (rtld_reloc_complete, 2, args->nsid, r);
++
+   /* Run the initializer functions of new objects.  */
+   _dl_init (new, args->argc, args->argv, args->env);
+ 
+Index: glibc-2.12-2-gc4ccff1/elf/rtld-Rules
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/rtld-Rules
++++ glibc-2.12-2-gc4ccff1/elf/rtld-Rules
+@@ -122,6 +122,6 @@ ifdef rtld-depfiles
+ endif
+ 
+ # This here is the whole point of all the shenanigans.
+-rtld-CPPFLAGS := -DNOT_IN_libc=1 -DIS_IN_rtld=1
++rtld-CPPFLAGS := -DNOT_IN_libc=1 -DIS_IN_rtld=1 -DIN_LIB=rtld
+ 
+ endif
+Index: glibc-2.12-2-gc4ccff1/elf/rtld.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/rtld.c
++++ glibc-2.12-2-gc4ccff1/elf/rtld.c
+@@ -40,6 +40,7 @@
+ #include <dl-osinfo.h>
+ #include <dl-procinfo.h>
+ #include <tls.h>
++#include <stap-probe.h>
+ 
+ #include <assert.h>
+ 
+@@ -1656,6 +1657,7 @@ ERROR: ld.so: object '%s' cannot be load
+   /* We start adding objects.  */
+   r->r_state = RT_ADD;
+   _dl_debug_state ();
++  LIBC_PROBE (rtld_init_start, 2, LM_ID_BASE, r);
+ 
+   /* Auditing checkpoint: we are ready to signal that the initial map
+      is being constructed.  */
+@@ -2353,6 +2355,7 @@ ERROR: ld.so: object '%s' cannot be load
+   r = _dl_debug_initialize (0, LM_ID_BASE);
+   r->r_state = RT_CONSISTENT;
+   _dl_debug_state ();
++  LIBC_PROBE (rtld_init_complete, 2, LM_ID_BASE, r);
+ 
+ #ifndef MAP_COPY
+   /* We must munmap() the cache file.  */
+Index: glibc-2.12-2-gc4ccff1/extra-lib.mk
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/extra-lib.mk
++++ glibc-2.12-2-gc4ccff1/extra-lib.mk
+@@ -101,4 +101,4 @@ ifneq (,$(cpp-srcs-left))
+ include $(patsubst %,$(..)cppflags-iterator.mk,$(cpp-srcs-left))
+ endif
+ 
+-CPPFLAGS-$(lib) := -DNOT_IN_libc=1 -DIS_IN_$(lib)=1
++CPPFLAGS-$(lib) := -DNOT_IN_libc=1 -DIS_IN_$(lib)=1 -DIN_LIB=$(lib)
+Index: glibc-2.12-2-gc4ccff1/include/stap-probe.h
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/include/stap-probe.h
+@@ -0,0 +1,140 @@
++/* Macros for defining Systemtap <sys/sdt.h> static probe points.
++   Copyright (C) 2011 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#ifndef _STAP_PROBE_H
++#define _STAP_PROBE_H 1
++
++#ifdef USE_STAP_PROBE
++
++# include <sys/sdt.h>
++
++/* Our code uses one macro LIBC_PROBE (name, n, arg1, ..., argn).
++
++   Without USE_STAP_PROBE, that does nothing but evaluates all
++   its arguments (to prevent bit rot, unlike e.g. assert).
++
++   Systemtap's header defines the macros STAP_PROBE (provider, name) and
++   STAP_PROBEn (provider, name, arg1, ..., argn).  For "provider" we paste
++   in the IN_LIB name (libc, libpthread, etc.) automagically.  */
++
++# ifndef NOT_IN_libc
++#  define IN_LIB	libc
++# elif !defined IN_LIB
++/* This is intentionally defined with extra unquoted commas in it so
++   that macro substitution will bomb out when it is used.  We don't
++   just use #error here, so that this header can be included by
++   other headers that use LIBC_PROBE inside their own macros.  We
++   only want such headers to fail to compile if those macros are
++   actually used in a context where IN_LIB has not been defined.  */
++#  define IN_LIB	,,,missing -DIN_LIB=... -- not extra-lib.mk?,,,
++# endif
++
++# define LIBC_PROBE(name, n, ...)	\
++  LIBC_PROBE_1 (IN_LIB, name, n, ## __VA_ARGS__)
++
++# define LIBC_PROBE_1(lib, name, n, ...) \
++  STAP_PROBE##n (lib, name, ## __VA_ARGS__)
++
++# define STAP_PROBE0		STAP_PROBE
++
++# define LIBC_PROBE_ASM(name, template) \
++  STAP_PROBE_ASM (IN_LIB, name, template)
++
++# define LIBC_PROBE_ASM_OPERANDS STAP_PROBE_ASM_OPERANDS
++
++#else  /* Not USE_STAP_PROBE.  */
++
++# ifndef __ASSEMBLER__
++#  define LIBC_PROBE(name, n, ...)		DUMMY_PROBE##n (__VA_ARGS__)
++# else
++#  define LIBC_PROBE(name, n, ...)		/* Nothing.  */
++# endif
++
++# define LIBC_PROBE_ASM(name, template)		/* Nothing.  */
++# define LIBC_PROBE_ASM_OPERANDS(n, ...)	/* Nothing.  */
++
++/* This silliness lets us evaluate all the arguments for each arity
++   of probe.  My kingdom for a real macro system.  */
++
++# define DUMMY_PROBE0()			do {} while (0)
++# define DUMMY_PROBE1(a1)		do {} while ((void) (a1), 0)
++# define DUMMY_PROBE2(a1, a2)		do {} while ((void) (a1), \
++						     (void) (a2), 0)
++# define DUMMY_PROBE3(a1, a2, a3)	do {} while ((void) (a1), \
++						     (void) (a2), \
++						     (void) (a3), 0)
++# define DUMMY_PROBE4(a1, a2, a3, a4)	do {} while ((void) (a1), \
++						     (void) (a2), \
++						     (void) (a3), \
++						     (void) (a4), 0)
++# define DUMMY_PROBE5(a1, a2, a3, a4, a5)			  \
++					do {} while ((void) (a1), \
++						     (void) (a2), \
++						     (void) (a3), \
++						     (void) (a4), \
++						     (void) (a5), 0)
++# define DUMMY_PROBE6(a1, a2, a3, a4, a5, a6)			  \
++					do {} while ((void) (a1), \
++						     (void) (a2), \
++						     (void) (a3), \
++						     (void) (a4), \
++						     (void) (a5), \
++						     (void) (a6), 0)
++# define DUMMY_PROBE7(a1, a2, a3, a4, a5, a6, a7)		  \
++					do {} while ((void) (a1), \
++						     (void) (a2), \
++						     (void) (a3), \
++						     (void) (a4), \
++						     (void) (a5), \
++						     (void) (a6), \
++						     (void) (a7), 0)
++# define DUMMY_PROBE8(a1, a2, a3, a4, a5, a6, a7, a8)		  \
++					do {} while ((void) (a1), \
++						     (void) (a2), \
++						     (void) (a3), \
++						     (void) (a4), \
++						     (void) (a5), \
++						     (void) (a6), \
++						     (void) (a7), \
++						     (void) (a8), 0)
++# define DUMMY_PROBE9(a1, a2, a3, a4, a5, a6, a7, a8, a9)	  \
++					do {} while ((void) (a1), \
++						     (void) (a2), \
++						     (void) (a3), \
++						     (void) (a4), \
++						     (void) (a5), \
++						     (void) (a6), \
++						     (void) (a7), \
++						     (void) (a8), \
++						     (void) (a9), 0)
++# define DUMMY_PROBE10(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)	  \
++					do {} while ((void) (a1), \
++						     (void) (a2), \
++						     (void) (a3), \
++						     (void) (a4), \
++						     (void) (a5), \
++						     (void) (a6), \
++						     (void) (a7), \
++						     (void) (a8), \
++						     (void) (a9), \
++						     (void) (a10), 0)
++
++#endif	/* USE_STAP_PROBE.  */
++
++#endif	/* stap-probe.h */
+Index: glibc-2.12-2-gc4ccff1/scripts/check-local-headers.sh
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/scripts/check-local-headers.sh
++++ glibc-2.12-2-gc4ccff1/scripts/check-local-headers.sh
+@@ -31,6 +31,8 @@ fgrep -v "$includedir/asm" |
+ fgrep -v "$includedir/linux" |
+ fgrep -v "$includedir/selinux" |
+ fgrep -v "$includedir/sys/capability.h" |
++fgrep -v "$includedir/sys/sdt.h" |
++fgrep -v "$includedir/sys/sdt-config.h" |
+ fgrep -v "$includedir/gd" |
+ fgrep -v "$includedir/nss3"; then
+   # If we found a match something is wrong.

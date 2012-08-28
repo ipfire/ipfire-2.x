@@ -30,11 +30,7 @@ THISAPP    = reiserfsprogs-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(LFS_PASS)" "install"
-	TARGET = $(DIR_INFO)/$(THISAPP)-install
-else
-	TARGET = $(DIR_INFO)/$(THISAPP)
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -74,16 +70,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP) && ./configure --prefix=/ --sbindir=/sbin
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && install -v -m 755 mkreiserfs/mkreiserfs /install/initrd/sbin/mkreiserfs
-else
 	cd $(DIR_APP) && ./configure --prefix=/usr --sbindir=/sbin
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	ln -svf reiserfsck /sbin/fsck.reiserfs
 	ln -svf mkreiserfs /sbin/mkfs.reiserfs
-endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

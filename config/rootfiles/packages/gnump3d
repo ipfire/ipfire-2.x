@@ -1,9 +1,9 @@
+etc/fcron.daily/gnump3d-index
 #etc/gnump3d
 etc/gnump3d/file.types
 etc/gnump3d/gnump3d.conf
 etc/gnump3d/mime.types
 etc/rc.d/init.d/gnump3d
-etc/fcron.daily/gnump3d-index
 usr/bin/gnump3d
 usr/bin/gnump3d-index
 usr/bin/gnump3d-top
@@ -43,7 +43,8 @@ usr/lib/perl5/5.12.3/gnump3d/readtags.pm
 usr/lib/perl5/5.12.3/gnump3d/sorting.pm
 usr/lib/perl5/5.12.3/gnump3d/tagcache.pm
 usr/lib/perl5/5.12.3/gnump3d/url.pm
-usr/lib/perl5/5.12.3/Pod
+#usr/local/man
+#usr/local/man/man1
 #usr/local/man/man1/gnump3d-index.1
 #usr/local/man/man1/gnump3d-top.1
 #usr/local/man/man1/gnump3d.1
@@ -53,7 +54,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/Avalon/AUTHOR
 #usr/share/gnump3d/Avalon/COPYING.html
 #usr/share/gnump3d/Avalon/base.css
-#usr/share/gnump3d/Avalon/bug.html
 #usr/share/gnump3d/Avalon/error.html
 #usr/share/gnump3d/Avalon/gnump3d-logo.jpg
 #usr/share/gnump3d/Avalon/html_footer.tmpl
@@ -77,7 +77,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/BlueBox/AUTHOR
 #usr/share/gnump3d/BlueBox/BlueBox.css
 #usr/share/gnump3d/BlueBox/COPYING.html
-#usr/share/gnump3d/BlueBox/bug.html
 #usr/share/gnump3d/BlueBox/error.html
 #usr/share/gnump3d/BlueBox/extras.html
 #usr/share/gnump3d/BlueBox/footer.tmpl
@@ -99,7 +98,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/Clean
 #usr/share/gnump3d/Clean/AUTHOR
 #usr/share/gnump3d/Clean/COPYING.html
-#usr/share/gnump3d/Clean/bug.html
 #usr/share/gnump3d/Clean/error.html
 #usr/share/gnump3d/Clean/index.html
 #usr/share/gnump3d/Clean/info.html
@@ -118,7 +116,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/LaFrere
 #usr/share/gnump3d/LaFrere/AUTHOR
 #usr/share/gnump3d/LaFrere/COPYING.html
-#usr/share/gnump3d/LaFrere/bug.html
 #usr/share/gnump3d/LaFrere/error.html
 #usr/share/gnump3d/LaFrere/index.html
 #usr/share/gnump3d/LaFrere/info.html
@@ -137,7 +134,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/Liquid/AUTHOR
 #usr/share/gnump3d/Liquid/COPYING.html
 #usr/share/gnump3d/Liquid/bck.gif
-#usr/share/gnump3d/Liquid/bug.html
 #usr/share/gnump3d/Liquid/cel-bar-anthrazite-act.gif
 #usr/share/gnump3d/Liquid/cel-bar-anthrazite.gif
 #usr/share/gnump3d/Liquid/cel-bar-aqua-act.gif
@@ -188,7 +184,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/Musicus
 #usr/share/gnump3d/Musicus/AUTHOR
 #usr/share/gnump3d/Musicus/COPYING.html
-#usr/share/gnump3d/Musicus/bug.html
 #usr/share/gnump3d/Musicus/error.html
 #usr/share/gnump3d/Musicus/extras.html
 #usr/share/gnump3d/Musicus/footer.tmpl
@@ -214,7 +209,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/Nomad/Nomad_theme.css
 #usr/share/gnump3d/Nomad/SmallHome.gif
 #usr/share/gnump3d/Nomad/bg.gif
-#usr/share/gnump3d/Nomad/bug.html
 #usr/share/gnump3d/Nomad/error.html
 #usr/share/gnump3d/Nomad/gnump3d_themes_footer.tmpl
 #usr/share/gnump3d/Nomad/gnump3d_themes_header.tmpl
@@ -235,7 +229,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/SchwartzNGrau
 #usr/share/gnump3d/SchwartzNGrau/AUTHOR
 #usr/share/gnump3d/SchwartzNGrau/COPYING.html
-#usr/share/gnump3d/SchwartzNGrau/bug.html
 #usr/share/gnump3d/SchwartzNGrau/clear.gif
 #usr/share/gnump3d/SchwartzNGrau/error.html
 #usr/share/gnump3d/SchwartzNGrau/index.html
@@ -254,7 +247,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/Tabular
 #usr/share/gnump3d/Tabular/AUTHOR
 #usr/share/gnump3d/Tabular/COPYING.html
-#usr/share/gnump3d/Tabular/bug.html
 #usr/share/gnump3d/Tabular/error.html
 #usr/share/gnump3d/Tabular/extras.html
 #usr/share/gnump3d/Tabular/footer.tmpl
@@ -276,7 +268,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/Thexder
 #usr/share/gnump3d/Thexder/AUTHOR
 #usr/share/gnump3d/Thexder/COPYING.html
-#usr/share/gnump3d/Thexder/bug.html
 #usr/share/gnump3d/Thexder/dig_temp2_01.jpg
 #usr/share/gnump3d/Thexder/dig_temp2_02.jpg
 #usr/share/gnump3d/Thexder/dig_temp2_03.gif
@@ -308,7 +299,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/default
 #usr/share/gnump3d/default/AUTHOR
 #usr/share/gnump3d/default/COPYING.html
-#usr/share/gnump3d/default/bug.html
 #usr/share/gnump3d/default/error.html
 #usr/share/gnump3d/default/footer.tmpl
 #usr/share/gnump3d/default/header.tmpl
@@ -328,7 +318,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/dotNET
 #usr/share/gnump3d/dotNET/AUTHOR
 #usr/share/gnump3d/dotNET/COPYING.html
-#usr/share/gnump3d/dotNET/bug.html
 #usr/share/gnump3d/dotNET/content.tmpl
 #usr/share/gnump3d/dotNET/error.html
 #usr/share/gnump3d/dotNET/header.tmpl
@@ -365,7 +354,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/nausicaa
 #usr/share/gnump3d/nausicaa/AUTHOR
 #usr/share/gnump3d/nausicaa/COPYING.html
-#usr/share/gnump3d/nausicaa/bug.html
 #usr/share/gnump3d/nausicaa/error.html
 #usr/share/gnump3d/nausicaa/extras.html
 #usr/share/gnump3d/nausicaa/index.html
@@ -382,7 +370,6 @@ usr/share/gnump3d
 #usr/share/gnump3d/redgrey
 #usr/share/gnump3d/redgrey/AUTHOR
 #usr/share/gnump3d/redgrey/COPYING.html
-#usr/share/gnump3d/redgrey/bug.html
 #usr/share/gnump3d/redgrey/error.html
 #usr/share/gnump3d/redgrey/header.tmpl
 #usr/share/gnump3d/redgrey/index.html
@@ -400,5 +387,4 @@ usr/share/gnump3d
 var/cache/gnump3d
 var/cache/gnump3d/serving
 var/log/gnump3d
-#var/mp3
 var/mp3/info

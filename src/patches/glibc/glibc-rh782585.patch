@@ -1,0 +1,329 @@
+diff -rup a/elf/dl-close.c b/elf/dl-close.c
+--- a/elf/dl-close.c	2012-01-19 12:59:42.759484350 -0700
++++ b/elf/dl-close.c	2012-01-19 14:10:20.439263806 -0700
+@@ -223,7 +223,7 @@ _dl_close_worker (struct link_map *map)
+     }
+ 
+   /* Sort the entries.  */
+-  _dl_sort_fini (ns->_ns_loaded, maps, nloaded, used, nsid);
++  _dl_sort_fini (maps, nloaded, used, nsid);
+ 
+   /* Call all termination functions at once.  */
+ #ifdef SHARED
+diff -rup a/elf/dl-deps.c b/elf/dl-deps.c
+--- a/elf/dl-deps.c	2012-01-19 12:59:42.716484301 -0700
++++ b/elf/dl-deps.c	2012-01-19 13:52:35.223720556 -0700
+@@ -614,51 +614,67 @@ Filters not supported with LD_TRACE_PREL
+ 	map->l_searchlist.r_list[i]->l_reserved = 0;
+     }
+ 
+-  /* Now determine the order in which the initialization has to happen.  */
++  /* Sort the initializer list to take dependencies into account.  The binary
++     itself will always be initialize last.  */
+   memcpy (l_initfini, map->l_searchlist.r_list,
+ 	  nlist * sizeof (struct link_map *));
+-  /* We can skip looking for the binary itself which is at the front
+-     of the search list.  Look through the list backward so that circular
+-     dependencies are not changing the order.  */
+-  for (i = 1; i < nlist; ++i)
++  if (__builtin_expect (nlist > 1, 1))
+     {
+-      struct link_map *l = map->l_searchlist.r_list[i];
+-      unsigned int j;
+-      unsigned int k;
+-
+-      /* Find the place in the initfini list where the map is currently
+-	 located.  */
+-      for (j = 1; l_initfini[j] != l; ++j)
+-	;
+-
+-      /* Find all object for which the current one is a dependency and
+-	 move the found object (if necessary) in front.  */
+-      for (k = j + 1; k < nlist; ++k)
++      /* We can skip looking for the binary itself which is at the front
++	 of the search list.  */
++      i = 1;
++      unsigned int seen[nlist];
++      memset (seen, 0, nlist * sizeof (seen[0]));
++      while (1)
+ 	{
+-	  struct link_map **runp;
+-
+-	  runp = l_initfini[k]->l_initfini;
+-	  if (runp != NULL)
++	  /* Keep track of which object we looked at this round.  */
++	  ++seen[i];
++	  struct link_map *thisp = l_initfini[i];
++
++	  /* Find the last object in the list for which the current one is
++	     a dependency and move the current object behind the object
++	     with the dependency.  */
++	  unsigned int k = nlist - 1;
++	  while (k > i)
+ 	    {
+-	      while (*runp != NULL)
+-		if (__builtin_expect (*runp++ == l, 0))
+-		  {
+-		    struct link_map *here = l_initfini[k];
+-
+-		    /* Move it now.  */
+-		    memmove (&l_initfini[j] + 1, &l_initfini[j],
+-			     (k - j) * sizeof (struct link_map *));
+-		    l_initfini[j] = here;
+-
+-		    /* Don't insert further matches before the last
+-		       entry moved to the front.  */
+-		    ++j;
++	      struct link_map **runp = l_initfini[k]->l_initfini;
++	      if (runp != NULL)
++		/* Look through the dependencies of the object.  */
++		while (*runp != NULL)
++		  if (__builtin_expect (*runp++ == thisp, 0))
++		    {
++		      /* Move the current object to the back past the last
++			 object with it as the dependency.  */
++		      memmove (&l_initfini[i], &l_initfini[i + 1],
++			       (k - i) * sizeof (l_initfini[0]));
++		      l_initfini[k] = thisp;
++
++		      if (seen[i + 1] > nlist - i - 2)
++			{
++			  ++i;
++			  goto next_clear;
++			}
++
++		      unsigned int this_seen = seen[i];
++		      memmove (&seen[i], &seen[i + 1],
++			       (k - i) * sizeof (seen[0]));
++		      seen[k] = this_seen;
++
++		      goto next;
++		    }
+ 
+-		    break;
+-		  }
++	      --k;
+ 	    }
++
++	  if (++i == nlist)
++	    break;
++	next_clear:
++	  memset (&seen[i], 0, (nlist - i) * sizeof (seen[0]));
++
++	next:;
+ 	}
+     }
++
+   /* Terminate the list of dependencies.  */
+   l_initfini[nlist] = NULL;
+   atomic_write_barrier ();
+diff -rup a/elf/dl-fini.c b/elf/dl-fini.c
+--- a/elf/dl-fini.c	2010-05-04 05:27:23.000000000 -0600
++++ b/elf/dl-fini.c	2012-01-19 13:56:38.653842046 -0700
+@@ -1,5 +1,6 @@
+ /* Call the termination functions of loaded shared objects.
+-   Copyright (C) 1995,96,1998-2002,2004-2005,2009 Free Software Foundation, Inc.
++   Copyright (C) 1995,96,1998-2002,2004-2005,2009,2011
++   Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -29,89 +30,100 @@ typedef void (*fini_t) (void);
+ 
+ void
+ internal_function
+-_dl_sort_fini (struct link_map *l, struct link_map **maps, size_t nmaps,
+-	       char *used, Lmid_t ns)
++_dl_sort_fini (struct link_map **maps, size_t nmaps, char *used, Lmid_t ns)
+ {
+-  if (ns == LM_ID_BASE)
+-    /* The main executable always comes first.  */
+-    l = l->l_next;
+-
+-  for (; l != NULL; l = l->l_next)
+-    /* Do not handle ld.so in secondary namespaces and object which
+-       are not removed.  */
+-    if (l == l->l_real && l->l_idx != -1)
+-      {
+-	/* Find the place in the 'maps' array.  */
+-	unsigned int j;
+-	for (j = ns == LM_ID_BASE ? 1 : 0; maps[j] != l; ++j)
+-	  assert (j < nmaps);
+-
+-	/* Find all object for which the current one is a dependency
+-	   and move the found object (if necessary) in front.  */
+-	for (unsigned int k = j + 1; k < nmaps; ++k)
+-	  {
+-	    struct link_map **runp = maps[k]->l_initfini;
+-	    if (runp != NULL)
+-	      {
+-		while (*runp != NULL)
+-		  if (*runp == l)
+-		    {
+-		      struct link_map *here = maps[k];
++  /* A list of one element need not be sorted.  */
++  if (nmaps == 1)
++    return;
++
++  /* We can skip looking for the binary itself which is at the front
++     of the search list for the main namespace.  */
++  unsigned int i = ns == LM_ID_BASE;
++  unsigned int seen[nmaps];
++  memset (seen, 0, nmaps * sizeof (seen[0]));
++  while (1)
++    {
++      /* Keep track of which object we looked at this round.  */
++      ++seen[i];
++      struct link_map *thisp = maps[i];
++
++      /* Do not handle ld.so in secondary namespaces and object which
++	 are not removed.  */
++      if (thisp != thisp->l_real || thisp->l_idx == -1)
++	goto skip;
++
++      /* Find the last object in the list for which the current one is
++	 a dependency and move the current object behind the object
++	 with the dependency.  */
++      unsigned int k = nmaps - 1;
++      while (k > i)
++	{
++	  struct link_map **runp = maps[k]->l_initfini;
++	  if (runp != NULL)
++	    /* Look through the dependencies of the object.  */
++	    while (*runp != NULL)
++	      if (__builtin_expect (*runp++ == thisp, 0))
++		{
++		move:
++		  /* Move the current object to the back past the last
++		     object with it as the dependency.  */
++		  memmove (&maps[i], &maps[i + 1],
++			   (k - i) * sizeof (maps[0]));
++		  maps[k] = thisp;
+ 
+-		      /* Move it now.  */
+-		      memmove (&maps[j] + 1,
+-			       &maps[j], (k - j) * sizeof (struct link_map *));
+-		      maps[j] = here;
++		  if (used != NULL)
++		    {
++		      char here_used = used[i];
++		      memmove (&used[i], &used[i + 1],
++			       (k - i) * sizeof (used[0]));
++		      used[k] = here_used;
++		    }
+ 
+-		      if (used != NULL)
+-			{
+-			  char here_used = used[k];
++		  if (seen[i + 1] > nmaps - i - 2)
++		    {
++		      ++i;
++		      goto next_clear;
++		    }
+ 
+-			  memmove (&used[j] + 1,
+-				   &used[j], (k - j) * sizeof (char));
+-			  used[j] = here_used;
+-			}
++		  unsigned int this_seen = seen[i];
++		  memmove (&seen[i], &seen[i + 1], (k - i) * sizeof (seen[0]));
++		  seen[k] = this_seen;
+ 
+-		      ++j;
++		  goto next;
++		}
+ 
+-		      break;
+-		    }
+-		  else
+-		    ++runp;
+-	      }
+-
+-	    if (__builtin_expect (maps[k]->l_reldeps != NULL, 0))
+-	      {
+-		unsigned int m = maps[k]->l_reldeps->act;
+-		struct link_map **relmaps = &maps[k]->l_reldeps->list[0];
++	  if (__builtin_expect (maps[k]->l_reldeps != NULL, 0))
++	    {
++	      unsigned int m = maps[k]->l_reldeps->act;
++	      struct link_map **relmaps = &maps[k]->l_reldeps->list[0];
+ 
+-		while (m-- > 0)
++	      /* Look through the relocation dependencies of the object.  */
++	      while (m-- > 0)
++		if (__builtin_expect (relmaps[m] == thisp, 0))
+ 		  {
+-		    if (relmaps[m] == l)
+-		      {
+-			struct link_map *here = maps[k];
+-
+-			/* Move it now.  */
+-			memmove (&maps[j] + 1,
+-				 &maps[j],
+-				 (k - j) * sizeof (struct link_map *));
+-			maps[j] = here;
+-
+-			if (used != NULL)
+-			  {
+-			    char here_used = used[k];
+-
+-			    memmove (&used[j] + 1,
+-				     &used[j], (k - j) * sizeof (char));
+-			    used[j] = here_used;
+-			  }
+-
+-			break;
+-		      }
++		    /* If a cycle exists with a link time dependency,
++		       preserve the latter.  */
++		    struct link_map **runp = thisp->l_initfini;
++		    if (runp != NULL)
++		      while (*runp != NULL)
++			if (__builtin_expect (*runp++ == maps[k], 0))
++			  goto ignore;
++		    goto move;
+ 		  }
+-	      }
+-	  }
+-      }
++	    ignore:;
++	    }
++
++	  --k;
++	}
++
++    skip:
++      if (++i == nmaps)
++	break;
++    next_clear:
++      memset (&seen[i], 0, (nmaps - i) * sizeof (seen[0]));
++
++    next:;
++    }
+ }
+ 
+ 
+@@ -196,9 +208,8 @@ _dl_fini (void)
+       assert (ns == LM_ID_BASE || i == nloaded || i == nloaded - 1);
+       nmaps = i;
+ 
+-      if (nmaps != 0)
+-	/* Now we have to do the sorting.  */
+-	_dl_sort_fini (GL(dl_ns)[ns]._ns_loaded, maps, nmaps, NULL, ns);
++      /* Now we have to do the sorting.  */
++      _dl_sort_fini (maps, nmaps, NULL, ns);
+ 
+       /* We do not rely on the linked list of loaded object anymore from
+ 	 this point on.  We have our own list here (maps).  The various
+diff -rup a/sysdeps/generic/ldsodefs.h b/sysdeps/generic/ldsodefs.h
+--- a/sysdeps/generic/ldsodefs.h	2012-01-19 12:59:42.446483997 -0700
++++ b/sysdeps/generic/ldsodefs.h	2012-01-19 14:16:36.242453532 -0700
+@@ -947,7 +947,7 @@ extern void _dl_init (struct link_map *m
+ extern void _dl_fini (void) internal_function;
+ 
+ /* Sort array MAPS according to dependencies of the contained objects.  */
+-extern void _dl_sort_fini (struct link_map *l, struct link_map **maps,
++extern void _dl_sort_fini (struct link_map **maps,
+ 			   size_t nmaps, char *used, Lmid_t ns)
+      internal_function;
+ 

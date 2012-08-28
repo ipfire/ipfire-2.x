@@ -1,0 +1,23 @@
+2010-07-20  Roland McGrath  <roland@redhat.com>
+
+	* elf/dl-sysdep.c (_dl_important_hwcaps): Add dsocaps mask to
+	dl_hwcap_mask as well as dl_hwcap.  Without this, dsocaps matching in
+	ld.so.cache was broken.  With it, there is no way to disable dsocaps
+	like LD_HWCAP_MASK can disable hwcaps.
+
+Index: glibc-2.12-2-gc4ccff1/elf/dl-sysdep.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-sysdep.c
++++ glibc-2.12-2-gc4ccff1/elf/dl-sysdep.c
+@@ -425,6 +425,11 @@ _dl_important_hwcaps (const char *platfo
+     {
+       const ElfW(Word) mask = ((const ElfW(Word) *) dsocaps)[-1];
+       GLRO(dl_hwcap) |= (uint64_t) mask << _DL_FIRST_EXTRA;
++      /* Note that we add the dsocaps to the set already chosen by the
++	 LD_HWCAP_MASK environment variable (or default HWCAP_IMPORTANT).
++	 So there is no way to request ignoring an OS-supplied dsocap
++	 string and bit like you can ignore an OS-supplied HWCAP bit.  */
++      GLRO(dl_hwcap_mask) |= (uint64_t) mask << _DL_FIRST_EXTRA;
+       size_t len;
+       for (const char *p = dsocaps; p < dsocaps + dsocapslen; p += len + 1)
+ 	{

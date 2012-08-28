@@ -1,0 +1,18 @@
+2010-06-10  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/unix/sysv/linux/getpagesize.c: Don't assume AT_PAGESIZE
+	is always available.
+
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/getpagesize.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/unix/sysv/linux/getpagesize.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/getpagesize.c
+@@ -28,7 +28,7 @@
+ int
+ __getpagesize ()
+ {
+-#ifdef __ASSUME_AT_PAGESIZE
++#if 0 && defined __ASSUME_AT_PAGESIZE
+   assert (GLRO(dl_pagesize) != 0);
+   return GLRO(dl_pagesize);
+ #else

@@ -77,6 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP)/converter && patch -Np1 < $(DIR_SRC)/src/patches/netpbm-10.26.46-getline.patch
 	cp $(DIR_SRC)/config/netpbm/Makefile.config $(DIR_APP)
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make package PKGDIR=/usr/local/netpbm

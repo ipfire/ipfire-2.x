@@ -1,0 +1,34 @@
+2007-10-16  Jakub Jelinek  <jakub@redhat.com>
+
+	* Makefile.am (libgcj_tools_la_LIBADD): Add.
+	* Makefile.in: Regenerated.
+
+--- libjava/Makefile.am.jj	2009-05-06 08:14:50.000000000 +0200
++++ libjava/Makefile.am	2009-05-06 10:26:43.000000000 +0200
+@@ -314,6 +314,8 @@ libgcj_tools_la_SOURCES = classpath/tool
+ libgcj_tools_la_GCJFLAGS = $(AM_GCJFLAGS) -findirect-dispatch \
+  -fno-bootstrap-classes -fno-indirect-classes \
+  -fsource-filename=$(here)/classpath/tools/all-classes.lst
++## See jv_convert_LDADD.
++libgcj_tools_la_LIBADD = -L$(here)/.libs libgcj.la
+ libgcj_tools_la_LDFLAGS = -rpath $(toolexeclibdir) \
+  -version-info `grep -v '^\#' $(srcdir)/libtool-version` \
+  $(LIBGCJ_LD_SYMBOLIC_FUNCTIONS)
+--- libjava/Makefile.in.jj	2009-05-06 08:14:49.000000000 +0200
++++ libjava/Makefile.in	2009-05-06 10:27:18.000000000 +0200
+@@ -160,7 +160,6 @@ am__objects_1 = gnu/gcj/xlib/lib_gnu_awt
+ am_lib_gnu_awt_xlib_la_OBJECTS = $(am__objects_1)
+ lib_gnu_awt_xlib_la_OBJECTS = $(am_lib_gnu_awt_xlib_la_OBJECTS)
+ @XLIB_AWT_TRUE@am_lib_gnu_awt_xlib_la_rpath = -rpath $(toolexeclibdir)
+-libgcj_tools_la_LIBADD =
+ am_libgcj_tools_la_OBJECTS = classpath/tools/libgcj_tools_la-tools.lo
+ libgcj_tools_la_OBJECTS = $(am_libgcj_tools_la_OBJECTS)
+ @INTERPRETER_TRUE@am__DEPENDENCIES_1 = gnu/classpath/jdwp.lo \
+@@ -1041,6 +1040,7 @@ libgcj_tools_la_GCJFLAGS = $(AM_GCJFLAGS
+  -fno-bootstrap-classes -fno-indirect-classes \
+  -fsource-filename=$(here)/classpath/tools/all-classes.lst
+ 
++libgcj_tools_la_LIBADD = -L$(here)/.libs libgcj.la
+ libgcj_tools_la_LDFLAGS = -rpath $(toolexeclibdir) \
+  -version-info `grep -v '^\#' $(srcdir)/libtool-version` \
+  $(LIBGCJ_LD_SYMBOLIC_FUNCTIONS)

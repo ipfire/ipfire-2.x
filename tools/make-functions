@@ -220,6 +220,7 @@ get_pkg_ver()
 if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE ]; then
 	echo "`date -u '+%b %e %T'`: Machine is iX86 (or equivalent)" >> $LOGFILE
 	MACHINE=i586
+	CROSSTARGET=${MACHINE}-cross-linux-gnu
 	BUILDTARGET=i586-pc-linux-gnu
 	CFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
 	CXXFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
@@ -229,6 +230,7 @@ elif [ 'armv5tejl' = $MACHINE -o 'armv5tel' = $MACHINE -o 'armv6l' = $MACHINE -o
 	echo "`date -u '+%b %e %T'`: Machine is ARM (or equivalent)" >> $LOGFILE
 	MACHINE=armv5tel
 	MACHINE_TYPE=arm
+	CROSSTARGET=${MACHINE}-cross-linux-gnueabi
 	BUILDTARGET=${MACHINE}-unknown-linux-gnueabi
 	CFLAGS="-O2 -march=armv5te -mfloat-abi=soft -fomit-frame-pointer -pipe"
 	CXXFLAGS="$CFLAGS"
@@ -291,8 +293,8 @@ entershell() {
 	fi
 
 	echo "Entering to a shell inside LFS chroot, go out with exit"
-	$linux32 chroot $LFS /tools/bin/env -i HOME=/root TERM=$TERM PS1='\u:\w\$ ' \
-		PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
+	chroot $LFS /tools/bin/env -i HOME=/root TERM=$TERM PS1='\u:\w\$ ' \
+		PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
 		VERSION=$VERSION CONFIG_ROOT=$CONFIG_ROOT \
 		NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 		CFLAGS="$CF2LAGS" CXXFLAGS="$CXX2FLAGS" \
@@ -301,6 +303,7 @@ entershell() {
 		CCACHE_COMPILERCHECK="none" \
 		KVER=$KVER \
 		BUILDTARGET="$BUILDTARGET" \
+		CROSSTARGET="${CROSSTARGET}" \
 		MACHINE="$MACHINE" \
 		MACHINE_TYPE="$MACHINE_TYPE" \
 		KGCC="ccache /usr/bin/gcc" \
@@ -382,13 +385,13 @@ lfsmake1() {
 	local PKG_TIME_START=`date +%s`
 
 	cd $BASEDIR/lfs && make -f $* 	BUILDTARGET=$BUILDTARGET \
+						CROSSTARGET="${CROSSTARGET}" \
 						MACHINE=$MACHINE \
 						MACHINE_TYPE=$MACHINE_TYPE \
 						LFS_BASEDIR=$BASEDIR \
 						ROOT=$LFS \
 						KVER=$KVER \
 						MAKETUNING=$MAKETUNING \
-						$(fake_environ) \
 						install >> $LOGFILE 2>&1
 	local COMPILE_SUCCESS=$?
 	local PKG_TIME_END=`date +%s`
@@ -408,9 +411,9 @@ lfsmake2() {
 	[ $? == 1 ] && return 0
 
 	local PKG_TIME_START=`date +%s`
-	$linux32 chroot $LFS /tools/bin/env -i 	HOME=/root \
+	chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
+						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
 						VERSION=$VERSION \
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
@@ -418,7 +421,9 @@ lfsmake2() {
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
 						CCACHE_COMPILERCHECK="none" \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
-						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						BUILDTARGET="$BUILDTARGET" \
+						CROSSTARGET="${CROSSTARGET}" \
+						MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
 						$(fake_environ) \
 						/tools/bin/bash -x -c "cd /usr/src/lfs && \
@@ -441,9 +446,9 @@ ipfiremake() {
 	[ $? == 1 ] && return 0
 
 	local PKG_TIME_START=`date +%s`
-	$linux32 chroot $LFS /tools/bin/env -i 	HOME=/root \
+	chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 						VERSION=$VERSION \
 						CORE=$CORE \
 						CONFIG_ROOT=$CONFIG_ROOT \
@@ -452,7 +457,9 @@ ipfiremake() {
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
 						CCACHE_COMPILERCHECK="none" \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
-						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						BUILDTARGET="$BUILDTARGET" \
+						CROSSTARGET="${CROSSTARGET}" \
+						MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
 						$(fake_environ) \
 						/bin/bash -x -c "cd /usr/src/lfs && \
@@ -477,7 +484,7 @@ ipfiredist() {
 	local PKG_TIME_START=`date +%s`
 	chroot $LFS /tools/bin/env -i 	HOME=/root \
 					TERM=$TERM PS1='\u:\w\$ ' \
-					PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+					PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 					VERSION=$VERSION \
 					CONFIG_ROOT=$CONFIG_ROOT \
 					NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
@@ -485,7 +492,9 @@ ipfiredist() {
 					CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
 					CCACHE_COMPILERCHECK="none" \
 					KVER=$KVER \
-					BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+					BUILDTARGET="$BUILDTARGET" \
+					CROSSTARGET="${CROSSTARGET}" \
+					MACHINE="$MACHINE" \
 					MACHINE_TYPE="$MACHINE_TYPE" \
 					$(fake_environ) \
 					/bin/bash -x -c "cd /usr/src/lfs && \
@@ -508,20 +517,22 @@ installmake() {
 	[ $? == 1 ] && return 0
 
 	local PKG_TIME_START=`date +%s`
-	$linux32 chroot $LFS /tools/bin/env -i 	HOME=/root \
+	chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/opt/i586-uClibc/i586-linux-uclibc/bin:/opt/i586-uClibc/bin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
+						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 						VERSION=$VERSION \
 						CONFIG_ROOT=$CONFIG_ROOT \
-						LFS_PASS="install" \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						CFLAGS="-Os" CXXFLAGS="-Os" \
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
 						KVER=$KVER \
-						BUILDTARGET="$BUILDTARGET" MACHINE="$MACHINE" \
+						BUILDTARGET="$BUILDTARGET" \
+						CROSSTARGET="${CROSSTARGET}" \
+						MACHINE="$MACHINE" \
 						MACHINE_TYPE="$MACHINE_TYPE" \
-		    /bin/bash -x -c "cd /usr/src/lfs && \
-		    make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
+						LD_LIBRARY_PATH=/tools/lib \
+		    /tools/bin/bash -x -c "cd /usr/src/lfs && \
+		    /tools/bin/make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 
 	local COMPILE_SUCCESS=$?
 	local PKG_TIME_END=`date +%s`

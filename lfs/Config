@@ -96,6 +96,8 @@ endif
 #
 ifeq "$(ROOT)" ""
 define POSTBUILD
+	@echo "Updating linker cache..."
+	@type -p ldconfig >/dev/null && ldconfig || :
 	@echo "Install done; saving file list to $(TARGET) ..."
 	@$(FIND_FILES) > $(DIR_SRC)/lsalrnew
 	@diff $(DIR_SRC)/lsalr $(DIR_SRC)/lsalrnew | grep '^> ' | sed 's/^> //' > $(TARGET)_diff

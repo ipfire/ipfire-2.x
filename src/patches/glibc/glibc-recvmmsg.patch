@@ -1,0 +1,182 @@
+2010-05-21  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/unix/sysv/linux/Makefile (sysdep_routines): Add recvmmsg
+	and internal_recvmmsg.
+	* sysdeps/unix/sysv/linux/recvmmsg.c: New file.
+	* sysdeps/unix/sysv/linux/internal_recvmmsg.S: New file.
+	* sysdeps/unix/sysv/linux/socketcall.h (SOCKOP_recvmmsg): Define.
+	* sysdeps/unix/sysv/linux/syscalls.list (recvmmsg): Remove.
+
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/unix/sysv/linux/Makefile
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/Makefile
+@@ -12,7 +12,7 @@ CFLAGS-malloc.c += -DMORECORE_CLEARS=2
+ endif
+ 
+ ifeq ($(subdir),socket)
+-sysdep_routines += internal_accept4
++sysdep_routines += internal_accept4 recvmmsg internal_recvmmsg
+ endif
+ 
+ ifeq ($(subdir),misc)
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/internal_recvmmsg.S
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/internal_recvmmsg.S
+@@ -0,0 +1,14 @@
++#include <kernel-features.h>
++#include <sys/syscall.h>
++#if !defined __NR_recvmmsg && defined __NR_socketcall
++# define socket	recvmmsg
++# ifdef __ASSUME_RECVMMSG
++#  define __socket recvmmsg
++# else
++#  define __socket __internal_recvmmsg
++# endif
++# define NARGS 5
++# define NEED_CANCELLATION
++# define NO_WEAK_ALIAS
++# include <socket.S>
++#endif
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/kernel-features.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/unix/sysv/linux/kernel-features.h
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/kernel-features.h
+@@ -547,3 +547,8 @@
+ #if __LINUX_KERNEL_VERSION >= 0x020620
+ # define __ASSUME_F_GETOWN_EX	1
+ #endif
++
++/* Support for the recvmmsg syscall was added in 2.6.33.  */
++#if __LINUX_KERNEL_VERSION >= 0x020621
++# define __ASSUME_RECVMMSG	1
++#endif
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/recvmmsg.c
+===================================================================
+--- /dev/null
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/recvmmsg.c
+@@ -0,0 +1,100 @@
++/* Copyright (C) 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++   Contributed by Andreas Schwab <schwab@redhat.com>, 2010.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#include <errno.h>
++#include <sys/socket.h>
++
++#include <sysdep-cancel.h>
++#include <sys/syscall.h>
++#include <kernel-features.h>
++
++
++#ifdef __NR_recvmmsg
++int
++recvmmsg (int fd, struct mmsghdr *vmessages, unsigned int vlen, int flags,
++	  const struct timespec *tmo)
++{
++  if (SINGLE_THREAD_P)
++    return INLINE_SYSCALL (recvmmsg, 5, fd, vmessages, vlen, flags, tmo);
++
++  int oldtype = LIBC_CANCEL_ASYNC ();
++
++  int result = INLINE_SYSCALL (recvmmsg, 5, fd, vmessages, vlen, flags, tmo);
++
++  LIBC_CANCEL_RESET (oldtype);
++
++  return result;
++}
++#elif defined __NR_socketcall
++# ifndef __ASSUME_RECVMMSG
++extern int __internal_recvmmsg (int fd, struct mmsghdr *vmessages,
++				unsigned int vlen, int flags,
++				const struct timespec *tmo)
++     attribute_hidden;
++
++static int have_recvmmsg;
++
++int
++recvmmsg (int fd, struct mmsghdr *vmessages, unsigned int vlen, int flags,
++	  const struct timespec *tmo)
++{
++  if (__builtin_expect (have_recvmmsg >= 0, 1))
++    {
++      int ret = __internal_recvmmsg (fd, vmessages, vlen, flags, tmo);
++      /* The kernel returns -EINVAL for unknown socket operations.
++	 We need to convert that error to an ENOSYS error.  */
++      if (__builtin_expect (ret < 0, 0)
++	  && have_recvmmsg == 0
++	  && errno == EINVAL)
++	{
++	  /* Try another call, this time with an invalid file
++	     descriptor and all other parameters cleared.  This call
++	     will not cause any harm and it will return
++	     immediately.  */
++	  ret = __internal_recvmmsg (-1, 0, 0, 0, 0);
++	  if (errno == EINVAL)
++	    {
++	      have_recvmmsg = -1;
++	      __set_errno (ENOSYS);
++	    }
++	  else
++	    {
++	      have_recvmmsg = 1;
++	      __set_errno (EINVAL);
++	    }
++	  return -1;
++	}
++      return ret;
++    }
++  __set_errno (ENOSYS);
++  return -1;
++}
++# else
++/* When __ASSUME_RECVMMSG recvmmsg is defined in internal_recvmmsg.S.  */
++# endif
++#else
++int
++recvmmsg (int fd, struct mmsghdr *vmessages, unsigned int vlen, int flags,
++	  const struct timespec *tmo)
++{
++  __set_errno (ENOSYS);
++  return -1;
++}
++stub_warning (recvmmsg)
++#endif
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/socketcall.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/unix/sysv/linux/socketcall.h
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/socketcall.h
+@@ -44,5 +44,6 @@
+ #define SOCKOP_sendmsg		16
+ #define SOCKOP_recvmsg		17
+ #define SOCKOP_accept4		18
++#define SOCKOP_recvmmsg		19
+ 
+ #endif /* sys/socketcall.h */
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/syscalls.list
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/unix/sysv/linux/syscalls.list
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/syscalls.list
+@@ -53,7 +53,6 @@ prctl		EXTRA	prctl		i:iiiii	__prctl		prc
+ putpmsg		-	putpmsg		i:ippii	putpmsg
+ query_module	EXTRA	query_module	i:sipip	query_module
+ quotactl	EXTRA	quotactl	i:isip	quotactl
+-recvmmsg	EXTRA	recvmmsg	Ci:ipiip	recvmmsg
+ remap_file_pages -	remap_file_pages i:piiii	__remap_file_pages remap_file_pages
+ sched_getp	-	sched_getparam	i:ip	__sched_getparam	sched_getparam
+ sched_gets	-	sched_getscheduler	i:i	__sched_getscheduler	sched_getscheduler

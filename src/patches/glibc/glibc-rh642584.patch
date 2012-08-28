@@ -1,0 +1,41 @@
+2010-10-13  H.J. Lu  <hongjiu.lu@intel.com>
+
+	[BZ #12113]
+	* sysdeps/x86_64/pthreaddef.h (TCB_ALIGNMENT): Changed to 32.
+	* sysdeps/x86_64/tls.h (TLS_TCB_ALIGN): Defined with alignment
+	of "struct pthread".
+
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/x86_64/pthreaddef.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/x86_64/pthreaddef.h
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/x86_64/pthreaddef.h
+@@ -27,8 +27,9 @@
+ /* Minimal stack size after allocating thread descriptor and guard size.  */
+ #define MINIMAL_REST_STACK	2048
+ 
+-/* Alignment requirement for TCB.  */
+-#define TCB_ALIGNMENT		16
++/* Alignment requirement for TCB.  Need to store post-AVX vector registers
++   in the TCB and we want the storage to be aligned at 32-byte.  */
++#define TCB_ALIGNMENT		32
+ 
+ 
+ /* Location of current stack frame.  The frame pointer is not usable.  */
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/x86_64/tls.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/x86_64/tls.h
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/x86_64/tls.h
+@@ -117,12 +117,7 @@ typedef struct
+ # define TLS_TCB_SIZE sizeof (struct pthread)
+ 
+ /* Alignment requirements for the TCB.  */
+-//# define TLS_TCB_ALIGN __alignof__ (struct pthread)
+-// Normally the above would be correct  But we have to store post-AVX
+-// vector registers in the TCB and we want the storage to be aligned.
+-// unfortunately there isn't yet a type for these values and hence no
+-// 32-byte alignment requirement.  Make this explicit, for now.
+-# define TLS_TCB_ALIGN 32
++# define TLS_TCB_ALIGN __alignof__ (struct pthread)
+ 
+ /* The TCB can have any size and the memory following the address the
+    thread pointer points to is unspecified.  Allocate the TCB there.  */

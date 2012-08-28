@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.1
+VER        = 6.2
 
 THISAPP    = readline-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7ee5a692db88b30ca48927a13fd60e46
+$(DL_FILE)_MD5 = 67948acb2ca081f23359d0256e9a271c
 
 install : $(TARGET)
 
@@ -70,16 +70,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/readline-5.1-fixes-3.patch
-	cd $(DIR_APP) && sed -i '/MV.*old/d' Makefile.in
-	cd $(DIR_APP) && sed -i '/{OLDSUFF}/c:' support/shlib-install
-	cd $(DIR_APP) && ./configure --prefix=/usr --libdir=/lib
+
+	for i in $$(seq 1 4); do \
+		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/readline/readline62-$$(printf "%03d" "$${i}") || exit 1; \
+	done
+
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-static
 	cd $(DIR_APP) && make $(MAKETUNING) SHLIB_LIBS=-lncurses
 	cd $(DIR_APP) && make install
-	chmod -v 755 /lib/lib{readline,history}.so*
-	mv -v /lib/lib{readline,history}.a /usr/lib
-	rm -v /lib/lib{readline,history}.so
-	ln -sfv ../../lib/libreadline.so.5 /usr/lib/libreadline.so
-	ln -sfv ../../lib/libhistory.so.5 /usr/lib/libhistory.so
+
+	rm -rfv /usr/share/readline
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

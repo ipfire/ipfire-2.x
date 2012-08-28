@@ -1,0 +1,14 @@
+diff -rup a/po/ja.po b/po/ja.po
+--- a/po/ja.po	2010-05-04 05:27:23.000000000 -0600
++++ b/po/ja.po	2012-02-07 12:21:03.023806370 -0700
+@@ -3549,8 +3549,8 @@ msgstr "%s: 不正なオプションです -- %c\n
+ 
+ #: posix/getopt.c:945 posix/getopt.c:948
+ #, c-format
+-msgid "%s: invalid option -- %c\n"
+-msgstr "%s: オプションが違います -- %c\n"
++msgid "%s: invalid option -- '%c'\n"
++msgstr "%s: オプションが違います -- '%c'\n"
+ 
+ #: posix/getopt.c:1003 posix/getopt.c:1022 posix/getopt.c:1234
+ #: posix/getopt.c:1255

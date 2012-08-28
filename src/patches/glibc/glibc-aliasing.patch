@@ -1,0 +1,87 @@
+Index: glibc-2.12-2-gc4ccff1/elf/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/Makefile
++++ glibc-2.12-2-gc4ccff1/elf/Makefile
+@@ -129,6 +129,7 @@ include ../Makeconfig
+ ifeq ($(unwind-find-fde),yes)
+ routines += unwind-dw2-fde-glibc
+ shared-only-routines += unwind-dw2-fde-glibc
++CFLAGS-unwind-dw2-fde-glibc.c += -fno-strict-aliasing
+ endif
+ 
+ before-compile  = $(objpfx)trusted-dirs.h
+Index: glibc-2.12-2-gc4ccff1/inet/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/inet/Makefile
++++ glibc-2.12-2-gc4ccff1/inet/Makefile
+@@ -57,6 +57,8 @@ tests := htontest test_ifindex tst-ntoa 
+ 
+ include ../Rules
+ 
++CFLAGS-tst-inet6_rth.c += -fno-strict-aliasing
++
+ ifeq ($(have-thread-library),yes)
+ 
+ CFLAGS-gethstbyad_r.c = -DUSE_NSCD=1 -fexceptions
+Index: glibc-2.12-2-gc4ccff1/nis/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nis/Makefile
++++ glibc-2.12-2-gc4ccff1/nis/Makefile
+@@ -69,6 +69,8 @@ libnss_nisplus-inhibit-o = $(filter-out 
+ 
+ include ../Rules
+ 
++CFLAGS-nis_findserv.c += -fno-strict-aliasing
++CFLAGS-ypclnt.c += -fno-strict-aliasing
+ 
+ $(objpfx)libnss_compat.so: $(objpfx)libnsl.so$(libnsl.so-version)
+ $(objpfx)libnss_nis.so: $(objpfx)libnsl.so$(libnsl.so-version) \
+Index: glibc-2.12-2-gc4ccff1/nss/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nss/Makefile
++++ glibc-2.12-2-gc4ccff1/nss/Makefile
+@@ -74,6 +74,7 @@ endif
+ 
+ include ../Rules
+ 
++CFLAGS-files-hosts.c += -fno-strict-aliasing
+ 
+ ifeq (yes,$(build-static-nss))
+ $(objpfx)getent: $(objpfx)libnss_files.a
+Index: glibc-2.12-2-gc4ccff1/resolv/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/resolv/Makefile
++++ glibc-2.12-2-gc4ccff1/resolv/Makefile
+@@ -77,6 +77,7 @@ CPPFLAGS += -Dgethostbyname=res_gethostb
+ 	    -Dgetnetbyaddr=res_getnetbyaddr
+ 
+ CFLAGS-res_hconf.c = -fexceptions
++CFLAGS-res_send.c += -fno-strict-aliasing
+ 
+ # The BIND code elicits some harmless warnings.
+ +cflags += -Wno-strict-prototypes -Wno-write-strings
+Index: glibc-2.12-2-gc4ccff1/sunrpc/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sunrpc/Makefile
++++ glibc-2.12-2-gc4ccff1/sunrpc/Makefile
+@@ -129,6 +129,10 @@ CFLAGS-openchild.c = -fexceptions
+ 
+ CPPFLAGS += -D_RPC_THREAD_SAFE_
+ 
++CFLAGS-clnt_tcp.c += -fno-strict-aliasing
++CFLAGS-clnt_udp.c += -fno-strict-aliasing
++CFLAGS-clnt_unix.c += -fno-strict-aliasing
++
+ include ../Rules
+ 
+ $(objpfx)rpcgen: $(addprefix $(objpfx),$(rpcgen-objs)) \
+Index: glibc-2.12-2-gc4ccff1/sysdeps/powerpc/powerpc64/elf/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/powerpc/powerpc64/elf/Makefile
++++ glibc-2.12-2-gc4ccff1/sysdeps/powerpc/powerpc64/elf/Makefile
+@@ -9,3 +9,5 @@ CFLAGS-rtld-mempcpy.os = $(no-special-re
+ CFLAGS-rtld-memmove.os = $(no-special-regs)
+ CFLAGS-rtld-memchr.os = $(no-special-regs)
+ CFLAGS-rtld-strnlen.os = $(no-special-regs)
++
++CFLAGS-gmon-start.c += -fno-strict-aliasing

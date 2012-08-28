@@ -1,0 +1,149 @@
+2011-09-15  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/pthread/list.h: Define only list_t if __need_list_t is
+	defined.
+	(list_add): Add atomic_write_barrier.
+	* descr.h: Define __need_list_t before including <list.h>.
+	* nptl-init.c: Include <list.h>
+	* allocatestack.c: Likewise.
+
+2011-09-15  Andreas Schwab  <schwab@redhat.com>
+
+	* thread_dbP.h: Include <list.h>
+
+Index: glibc-2.12-2-gc4ccff1/nptl/allocatestack.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/allocatestack.c
++++ glibc-2.12-2-gc4ccff1/nptl/allocatestack.c
+@@ -27,6 +27,7 @@
+ #include <sys/param.h>
+ #include <dl-sysdep.h>
+ #include <tls.h>
++#include <list.h>
+ #include <lowlevellock.h>
+ #include <kernel-features.h>
+ 
+Index: glibc-2.12-2-gc4ccff1/nptl/descr.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/descr.h
++++ glibc-2.12-2-gc4ccff1/nptl/descr.h
+@@ -26,6 +26,7 @@
+ #include <stdbool.h>
+ #include <sys/types.h>
+ #include <hp-timing.h>
++#define __need_list_t
+ #include <list.h>
+ #include <lowlevellock.h>
+ #include <pthreaddef.h>
+Index: glibc-2.12-2-gc4ccff1/nptl/nptl-init.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/nptl-init.c
++++ glibc-2.12-2-gc4ccff1/nptl/nptl-init.c
+@@ -29,6 +29,7 @@
+ #include <atomic.h>
+ #include <ldsodefs.h>
+ #include <tls.h>
++#include <list.h>
+ #include <fork.h>
+ #include <version.h>
+ #include <shlib-compat.h>
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/pthread/list.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/pthread/list.h
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/pthread/list.h
+@@ -18,27 +18,39 @@
+    02111-1307 USA.  */
+ 
+ #ifndef _LIST_H
+-#define _LIST_H	1
++
++#ifndef __need_list_t
++# define _LIST_H	1
++#endif
+ 
+ /* The definitions of this file are adopted from those which can be
+    found in the Linux kernel headers to enable people familiar with
+    the latter find their way in these sources as well.  */
+ 
+ 
++#if defined __need_list_t || defined _LIST_H
++# ifndef __list_t_defined
++#  define __list_t_defined
+ /* Basic type for the double-link list.  */
+ typedef struct list_head
+ {
+   struct list_head *next;
+   struct list_head *prev;
+ } list_t;
++# endif
++# undef __need_list_t
++#endif
++
++#ifdef _LIST_H
+ 
++# include <atomic.h>
+ 
+ /* Define a variable with the head and tail of the list.  */
+-#define LIST_HEAD(name) \
++# define LIST_HEAD(name) \
+   list_t name = { &(name), &(name) }
+ 
+ /* Initialize a new list head.  */
+-#define INIT_LIST_HEAD(ptr) \
++# define INIT_LIST_HEAD(ptr) \
+   (ptr)->next = (ptr)->prev = (ptr)
+ 
+ 
+@@ -49,6 +61,7 @@ list_add (list_t *newp, list_t *head)
+   newp->next = head->next;
+   newp->prev = head;
+   head->next->prev = newp;
++  atomic_write_barrier ();
+   head->next = newp;
+ }
+ 
+@@ -78,26 +91,28 @@ list_splice (list_t *add, list_t *head)
+ 
+ 
+ /* Get typed element from list at a given position.  */
+-#define list_entry(ptr, type, member) \
++# define list_entry(ptr, type, member) \
+   ((type *) ((char *) (ptr) - (unsigned long) (&((type *) 0)->member)))
+ 
+ 
+ 
+ /* Iterate forward over the elements of the list.  */
+-#define list_for_each(pos, head) \
++# define list_for_each(pos, head) \
+   for (pos = (head)->next; pos != (head); pos = pos->next)
+ 
+ 
+ /* Iterate forward over the elements of the list.  */
+-#define list_for_each_prev(pos, head) \
++# define list_for_each_prev(pos, head) \
+   for (pos = (head)->prev; pos != (head); pos = pos->prev)
+ 
+ 
+ /* Iterate backwards over the elements list.  The list elements can be
+    removed from the list while doing this.  */
+-#define list_for_each_prev_safe(pos, p, head) \
++# define list_for_each_prev_safe(pos, p, head) \
+   for (pos = (head)->prev, p = pos->prev; \
+        pos != (head); \
+        pos = p, p = pos->prev)
+ 
++#endif /* _LIST_H */
++
+ #endif	/* list.h */
+Index: glibc-2.12-2-gc4ccff1/nptl_db/thread_dbP.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl_db/thread_dbP.h
++++ glibc-2.12-2-gc4ccff1/nptl_db/thread_dbP.h
+@@ -29,6 +29,7 @@
+ #include "proc_service.h"
+ #include "thread_db.h"
+ #include "../nptl/pthreadP.h"  	/* This is for *_BITMASK only.  */
++#include <list.h>
+ 
+ /* Indeces for the symbol names.  */
+ enum

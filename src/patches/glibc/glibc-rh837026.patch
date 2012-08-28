@@ -1,0 +1,30 @@
+diff -rup a/resolv/res_send.c b/resolv/res_send.c
+--- a/resolv/res_send.c	2012-06-28 11:55:38.361886650 -0600
++++ b/resolv/res_send.c	2012-06-28 11:51:38.253963687 -0600
+@@ -424,17 +424,15 @@ __libc_res_nsend(res_state statp, const
+ 		}
+ 		n = statp->nscount;
+ 		ext_total_nscount = EXT(statp).nscount + EXT(statp).nscount6;
+-		if (statp->nscount > ext_total_nscount)
+-			for (n = ext_total_nscount, ns = 0;
+-			     n < statp->nscount; n++) {
+-				while (ns < MAXNS
+-				       && EXT(statp).nsmap[ns] != MAXNS)
+-					ns++;
+-				if (ns == MAXNS)
+-					break;
+-				EXT(statp).nsmap[ns] = n;
+-				map[n] = ns++;
+-			}
++		for (n = 0, ns = 0; n < statp->nscount - ext_total_nscount; n++) {
++			while (ns < MAXNS
++			       && EXT(statp).nsmap[ns] != MAXNS)
++				ns++;
++			if (ns == MAXNS)
++				break;
++			EXT(statp).nsmap[ns] = n;
++			map[n] = ns++;
++		}
+ 		EXT(statp).nscount = n;
+ 		for (ns = 0; ns < EXT(statp).nscount; ns++) {
+ 			n = map[ns];

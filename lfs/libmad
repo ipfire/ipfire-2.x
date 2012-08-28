@@ -77,6 +77,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libmad-0.15.1b-cflags.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libmad-0.15.1b-cflags-O2.patch
+	cd $(DIR_APP) && autoconf
+
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install

@@ -1116,6 +1116,7 @@ usr/lib/libssl.so.0.9.8
 #usr/share/man/man3/dsa.3
 #usr/share/man/man3/ecdsa.3
 #usr/share/man/man3/engine.3
+#usr/share/man/man3/err.3
 #usr/share/man/man3/evp.3
 #usr/share/man/man3/hmac.3
 #usr/share/man/man3/i2d_ASN1_OBJECT.3
@@ -1163,7 +1164,6 @@ usr/lib/libssl.so.0.9.8
 #usr/share/man/man3/md5.3
 #usr/share/man/man3/mdc2.3
 #usr/share/man/man3/pem.3
-#usr/share/man/man3/rand.3
 #usr/share/man/man3/rc4.3
 #usr/share/man/man3/ripemd.3
 #usr/share/man/man3/rsa.3

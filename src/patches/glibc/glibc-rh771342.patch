@@ -1,0 +1,155 @@
+2011-06-30  Ulrich Drepper  <drepper@gmail.com>
+
+	* nptl-init.c (__nptl_set_robust): New function.
+	(pthread_functions): Add reference.
+	* npthreadP.h: Declare __nptl_set_robust.
+	* sysdeps/pthread/pthread-functions.h (pthread_functions): Add
+	ptr_set_robust member.
+	* sysdeps/unix/sysv/linux/fork.c: Call set_robust_list syscall in
+	child if threads are used.
+
+diff -Nrup a/nptl/nptl-init.c b/nptl/nptl-init.c
+--- a/nptl/nptl-init.c	2011-12-20 00:29:54.645538691 -0700
++++ b/nptl/nptl-init.c	2012-01-03 10:18:38.977513783 -0700
+@@ -69,6 +69,13 @@ extern void __libc_setup_tls (size_t tcb
+ #endif
+ 
+ #ifdef SHARED
++static
++#else
++extern
++#endif
++void __nptl_set_robust (struct pthread *);
++
++#ifdef SHARED
+ static void nptl_freeres (void);
+ 
+ 
+@@ -131,13 +138,25 @@ static const struct pthread_functions pt
+     .ptr__nptl_deallocate_tsd = __nptl_deallocate_tsd,
+     .ptr__nptl_setxid = __nptl_setxid,
+     /* For now only the stack cache needs to be freed.  */
+-    .ptr_freeres = nptl_freeres
++    .ptr_freeres = nptl_freeres,
++    .ptr_set_robust = __nptl_set_robust
+   };
+ # define ptr_pthread_functions &pthread_functions
+ #else
+ # define ptr_pthread_functions NULL
+ #endif
+ 
++#ifdef SHARED
++static
++#endif
++void
++__nptl_set_robust (struct pthread *self)
++{
++  INTERNAL_SYSCALL_DECL (err);
++  INTERNAL_SYSCALL (set_robust_list, err, 2, &self->robust_head,
++                   sizeof (struct robust_list_head));
++}
++
+ 
+ #ifdef SHARED
+ /* This function is called indirectly from the freeres code in libc.  */
+diff -Nrup a/nptl/pthreadP.h b/nptl/pthreadP.h
+--- a/nptl/pthreadP.h	2010-05-04 05:27:23.000000000 -0600
++++ b/nptl/pthreadP.h	2012-01-03 10:12:35.599269269 -0700
+@@ -555,17 +555,20 @@ extern void __pthread_cleanup_pop_restor
+ 
+ /* Old cleanup interfaces, still used in libc.so.  */
+ extern void _pthread_cleanup_push (struct _pthread_cleanup_buffer *buffer,
+-                                   void (*routine) (void *), void *arg);
++				   void (*routine) (void *), void *arg);
+ extern void _pthread_cleanup_pop (struct _pthread_cleanup_buffer *buffer,
+-                                  int execute);
++				  int execute);
+ extern void _pthread_cleanup_push_defer (struct _pthread_cleanup_buffer *buffer,
+-                                         void (*routine) (void *), void *arg);
++					 void (*routine) (void *), void *arg);
+ extern void _pthread_cleanup_pop_restore (struct _pthread_cleanup_buffer *buffer,
+-                                          int execute);
++					  int execute);
+ 
+ extern void __nptl_deallocate_tsd (void) attribute_hidden;
+ 
+ extern int __nptl_setxid (struct xid_command *cmdp) attribute_hidden;
++#ifndef SHARED
++extern void __nptl_set_robust (struct pthread *self);
++#endif
+ 
+ extern void __free_stacks (size_t limit) attribute_hidden;
+ 
+diff -Nrup a/nptl/sysdeps/pthread/pthread-functions.h b/nptl/sysdeps/pthread/pthread-functions.h
+--- a/nptl/sysdeps/pthread/pthread-functions.h	2010-05-04 05:27:23.000000000 -0600
++++ b/nptl/sysdeps/pthread/pthread-functions.h	2012-01-03 10:12:35.639269301 -0700
+@@ -97,6 +97,7 @@ struct pthread_functions
+   void (*ptr__nptl_deallocate_tsd) (void);
+   int (*ptr__nptl_setxid) (struct xid_command *);
+   void (*ptr_freeres) (void);
++  void (*ptr_set_robust) (struct pthread *);
+ };
+ 
+ /* Variable in libc.so.  */
+diff -Nrup a/nptl/sysdeps/unix/sysv/linux/fork.c b/nptl/sysdeps/unix/sysv/linux/fork.c
+--- a/nptl/sysdeps/unix/sysv/linux/fork.c	2010-05-04 05:27:23.000000000 -0600
++++ b/nptl/sysdeps/unix/sysv/linux/fork.c	2012-01-03 10:12:35.649269309 -0700
+@@ -29,6 +29,7 @@
+ #include <ldsodefs.h>
+ #include <bits/stdio-lock.h>
+ #include <atomic.h>
++#include <pthreadP.h>
+ 
+ 
+ unsigned long int *__fork_generation_pointer;
+@@ -86,8 +87,8 @@ __libc_fork (void)
+ 	 just go away.  The unloading code works in the order of the
+ 	 list.
+ 
+-         While executing the registered handlers we are building a
+-         list of all the entries so that we can go backward later on.  */
++	 While executing the registered handlers we are building a
++	 list of all the entries so that we can go backward later on.  */
+       while (1)
+ 	{
+ 	  /* Execute the handler if there is one.  */
+@@ -154,6 +155,24 @@ __libc_fork (void)
+       GL(dl_cpuclock_offset) = now;
+ #endif
+ 
++#ifdef __NR_set_robust_list
++      /* Initialize the robust mutex list which has been reset during
++	 the fork.  We do not check for errors since if it fails here
++	 it failed at process start as well and noone could have used
++	 robust mutexes.  We also do not have to set
++	 self->robust_head.futex_offset since we inherit the correct
++	 value from the parent.  */
++# ifdef SHARED
++      if (__libc_pthread_functions.ptr_set_robust != NULL)
++	PTHFCT_CALL (ptr_set_robust, (self));
++# else
++      extern __typeof (__nptl_set_robust) __nptl_set_robust
++	__attribute__((weak));
++      if (__builtin_expect (__nptl_set_robust != NULL, 0))
++	__nptl_set_robust (self);
++# endif
++#endif
++
+       /* Reset the file list.  These are recursive mutexes.  */
+       fresetlockfiles ();
+ 
+@@ -170,10 +189,10 @@ __libc_fork (void)
+ 	    allp->handler->child_handler ();
+ 
+ 	  /* Note that we do not have to wake any possible waiter.
+- 	     This is the only thread in the new process.  The count
+- 	     may have been bumped up by other threads doing a fork.
+- 	     We reset it to 1, to avoid waiting for non-existing
+- 	     thread(s) to release the count.  */
++	     This is the only thread in the new process.  The count
++	     may have been bumped up by other threads doing a fork.
++	     We reset it to 1, to avoid waiting for non-existing
++	     thread(s) to release the count.  */
+ 	  allp->handler->refcntr = 1;
+ 
+ 	  /* XXX We could at this point look through the object pool

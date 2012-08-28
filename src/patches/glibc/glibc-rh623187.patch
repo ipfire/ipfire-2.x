@@ -1,0 +1,18 @@
+2010-08-10  Dinakar Guniguntala  <dino@in.ibm.com>
+	    Stefan Hajnoczi  <stefanha@linux.vnet.ibm.com>
+
+	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_signal.S: If
+	FUTEX_WAKE_OP fails make sure to call FUTEX_WAKE instead.
+
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/i386/i486/pthread_cond_signal.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/unix/sysv/linux/i386/i486/pthread_cond_signal.S
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/i386/i486/pthread_cond_signal.S
+@@ -163,7 +163,6 @@ __pthread_cond_signal:
+ #endif
+ 	orl	$FUTEX_WAKE, %ecx
+ 
+-	xorl	$(FUTEX_WAKE ^ FUTEX_WAKE_OP), %ecx
+ 	movl	$SYS_futex, %eax
+ 	/* %edx should be 1 already from $FUTEX_WAKE_OP syscall.
+ 	movl	$1, %edx  */

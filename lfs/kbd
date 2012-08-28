@@ -30,11 +30,7 @@ THISAPP    = kbd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(LFS_PASS)" "install"
-  TARGET     = $(DIR_INFO)/$(THISAPP)-install
-else
-  TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -78,21 +74,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-more-programs-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-backspace-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-gcc4_fixes-1.patch
-ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP) && CFLAGS="-Os -fomit-frame-pointer" ./configure --disable-nls
-	cd $(DIR_APP)/src && make CFLAGS="-Os -fomit-frame-pointer" DATA_DIR=/lib/kbd BINDIR=/bin setfont kbd_mode dumpkeys loadkeys loadunimap showconsolefont
-	cd $(DIR_APP)/src && install -m 0755 setfont loadunimap kbd_mode dumpkeys loadkeys showconsolefont unicode_start unicode_stop /install/initrd/bin
-	mkdir -p /install/initrd/lib/kbd/consolefonts
-	cd $(DIR_APP) && install -m 0644 data/consolefonts/lat0-16.psfu /install/initrd/lib/kbd/consolefonts
-	cd $(DIR_APP) && install -m 0644 data/consolefonts/lat1-16.psfu /install/initrd/lib/kbd/consolefonts
-	cd $(DIR_APP) && install -m 0644 data/consolefonts/lat2-16.psfu /install/initrd/lib/kbd/consolefonts
-	cd $(DIR_APP) && install -m 0644 data/consolefonts/lat5-16.psfu /install/initrd/lib/kbd/consolefonts
-	cd $(DIR_APP) && install -m 0644 data/consolefonts/iso07u-16.psfu /install/initrd/lib/kbd/consolefonts
-else
 	cd $(DIR_APP) && ./configure --datadir=/lib/kbd --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	mv -v /usr/bin/{kbd_mode,openvt,setfont} /bin
-endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

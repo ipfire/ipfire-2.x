@@ -30,11 +30,7 @@ THISAPP    = slang-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(LFS_PASS)" "install"
-  TARGET     = $(DIR_INFO)/$(THISAPP)-install
-else
-  TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -78,13 +74,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/slang-utf8-acs.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/slang-1.4.5-utf8-segv.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/slang-utf8-fix.patch
-ifeq "$(LFS_PASS)" "install"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/slang-1.4.9-uclibc.patch
-	cd $(DIR_APP) && ./configure --prefix=""
-	cd $(DIR_APP)/src && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP)/src && make install DESTDIR="/opt/$(MACHINE)-uClibc"
-	ln -sf libslang-utf8.a /opt/$(MACHINE)-uClibc/lib/libslang.a
-else
 	perl -p -i -e 's/(ELF_CFLAGS=\"[^\"]*)-O2([^\"]*\".*)/$1'"$(CFLAGS)"' $2/gs' configure
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make elf all
@@ -92,6 +81,5 @@ else
 	ln -sf libslang-utf8.so.1.4.9 /usr/lib/libslang-utf8.so.1
 	ln -sf libslang-utf8.so /usr/lib/libslang.so
 	ln -sf libslang-utf8.a /usr/lib/libslang.a
-endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

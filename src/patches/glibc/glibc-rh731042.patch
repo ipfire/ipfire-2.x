@@ -1,0 +1,51 @@
+2011-08-08  Andreas Schwab  <schwab@redhat.com>
+
+	* sysdeps/unix/sysv/linux/x86_64/cancellation.S: Maintain aligned
+	stack.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S: Likewise.
+	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_wait.S: Likewise.
+
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/cancellation.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/unix/sysv/linux/x86_64/cancellation.S
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/cancellation.S
+@@ -71,7 +71,9 @@ ENTRY(__pthread_enable_asynccancel)
+ 
+ 1:	ret
+ 
+-3:	movq	$TCB_PTHREAD_CANCELED, %fs:RESULT
++3:	subq	$8, %rsp
++	cfi_adjust_cfa_offset(8)
++	movq	$TCB_PTHREAD_CANCELED, %fs:RESULT
+ 	lock
+ 	orl	$TCB_EXITING_BITMASK, %fs:CANCELHANDLING
+ 	movq	%fs:CLEANUP_JMP_BUF, %rdi
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+@@ -63,9 +63,9 @@ __pthread_cond_timedwait:
+ 	cfi_adjust_cfa_offset(8)
+ 	cfi_rel_offset(%r15, 0)
+ #ifdef __ASSUME_FUTEX_CLOCK_REALTIME
+-# define FRAME_SIZE 32
++# define FRAME_SIZE (32+8)
+ #else
+-# define FRAME_SIZE 48
++# define FRAME_SIZE (48+8)
+ #endif
+ 	subq	$FRAME_SIZE, %rsp
+ 	cfi_adjust_cfa_offset(FRAME_SIZE)
+Index: glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_wait.S
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_wait.S
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_wait.S
+@@ -45,7 +45,7 @@ __pthread_cond_wait:
+ 	cfi_lsda(DW_EH_PE_udata4, .LexceptSTART)
+ #endif
+ 
+-#define FRAME_SIZE 32
++#define FRAME_SIZE (32+8)
+ 	leaq	-FRAME_SIZE(%rsp), %rsp
+ 	cfi_adjust_cfa_offset(FRAME_SIZE)
+ 

@@ -1,0 +1,13 @@
+diff --git a/resolv/nss_dns/dns-host.c b/resolv/nss_dns/dns-host.c
+index 01369f6..44ad04d 100644
+--- a/resolv/nss_dns/dns-host.c
++++ b/resolv/nss_dns/dns-host.c
+@@ -1219,7 +1219,7 @@ gaih_getanswer (const querybuf *answer1, int anslen1, const querybuf *answer2,
+ 				  &first);
+   if ((status == NSS_STATUS_SUCCESS || status == NSS_STATUS_NOTFOUND
+        || (status == NSS_STATUS_TRYAGAIN
+-	   && (errno != ERANGE || *h_errnop != NO_RECOVERY)))
++	   && (*errnop != ERANGE || *h_errnop == NO_RECOVERY)))
+       && answer2 != NULL && anslen2 > 0)
+     {
+       enum nss_status status2 = gaih_getanswer_slice(answer2, anslen2, qname,

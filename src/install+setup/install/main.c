@@ -510,6 +510,15 @@ int main(int argc, char *argv[])
 
 	system("/bin/sed -e 's#/harddisk#/#g' -e 's#//#/#g'  < /proc/mounts > /harddisk/etc/mtab");
 
+	/*
+	 * Generate device.map to help grub finding the device to install itself on.
+	 */
+	FILE *f = NULL;
+	if (f = fopen("/harddisk/boot/grub/device.map", "w")) {
+		fprintf(f, "(hd0) %s\n", hdparams.devnode_part);
+		fclose(f);
+	}
+
 	snprintf(commandstring, STRING_SIZE, 
 		 "/usr/sbin/chroot /harddisk /usr/sbin/grub-install --no-floppy %s", hdparams.devnode_disk);
 	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_GRUB])) {

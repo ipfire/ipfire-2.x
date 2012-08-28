@@ -1,0 +1,17 @@
+2011-09-15  Ulrich Drepper  <drepper@gmail.com>
+
+	* sysdeps/unix/sysv/linux/bits/in.h (IP_MULTICAST_ALL): Define.
+	Patch mostly by Neil Horman <nhorman@tuxdriver.com>.
+
+Index: glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/bits/in.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/unix/sysv/linux/bits/in.h
++++ glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/bits/in.h
+@@ -70,6 +70,7 @@
+ #define IP_XFRM_POLICY	17
+ #define IP_PASSSEC	18
+ #define IP_TRANSPARENT	19
++#define IP_MULTICAST_ALL 49	/* bool */
+ 
+ /* TProxy original addresses */
+ #define IP_ORIGDSTADDR       20

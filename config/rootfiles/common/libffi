@@ -1,0 +1,15 @@
+#usr/lib/libffi-3.0.11
+#usr/lib/libffi-3.0.11/include
+#usr/lib/libffi-3.0.11/include/ffi.h
+#usr/lib/libffi-3.0.11/include/ffitarget.h
+#usr/lib/libffi.a
+#usr/lib/libffi.la
+#usr/lib/libffi.so
+usr/lib/libffi.so.6
+usr/lib/libffi.so.6.0.0
+#usr/lib/pkgconfig/libffi.pc
+#usr/share/info/libffi.info
+#usr/share/man/man3/ffi.3
+#usr/share/man/man3/ffi_call.3
+#usr/share/man/man3/ffi_prep_cif.3
+#usr/share/man/man3/ffi_prep_cif_var.3

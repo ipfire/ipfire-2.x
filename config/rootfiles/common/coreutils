@@ -1,4 +1,4 @@
-#bin/[
+bin/[
 bin/chgrp
 bin/chmod
 bin/chown
@@ -6,7 +6,6 @@ bin/cp
 bin/date
 bin/dd
 bin/df
-bin/echo
 bin/false
 bin/head
 bin/ln
@@ -59,7 +58,7 @@ usr/bin/printf
 #usr/bin/ptx
 usr/bin/readlink
 usr/bin/seq
-#usr/bin/sha1sum
+usr/bin/sha1sum
 usr/bin/shred
 usr/bin/sort
 usr/bin/split
@@ -84,7 +83,6 @@ usr/bin/whoami
 usr/bin/yes
 usr/sbin/chroot
 #usr/share/info/coreutils.info
-#usr/share/info/dir
 #usr/share/man/man1/basename.1
 #usr/share/man/man1/cat.1
 #usr/share/man/man1/chroot.1

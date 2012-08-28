@@ -7,7 +7,6 @@ usr/local/bin/extrahdctrl
 usr/local/bin/fireinfoctrl
 usr/local/bin/getconntracktable
 usr/local/bin/getipstat
-usr/local/bin/getiptstate
 #usr/local/bin/iowrap
 usr/local/bin/ipfirereboot
 usr/local/bin/ipsecctrl

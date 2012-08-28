@@ -29,7 +29,7 @@ SUID_PROGS = setdmzholes setportfw setxtaccess \
 	ipsecctrl timectrl dhcpctrl snortctrl \
 	applejuicectrl rebuildhosts backupctrl \
 	logwatch openvpnctrl outgoingfwctrl \
-	wirelessctrl getipstat getiptstate qosctrl launch-ether-wake \
+	wirelessctrl getipstat qosctrl launch-ether-wake \
 	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
 	setaliases urlfilterctrl updxlratorctrl fireinfoctrl rebuildroutes \

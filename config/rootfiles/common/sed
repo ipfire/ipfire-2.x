@@ -1,5 +1,3 @@
 bin/sed
-#usr/info/sed.info
-#usr/info/sed.info-1
-#usr/info/sed.info-2
-#usr/man/man1/sed.1
+#usr/share/info/sed.info
+#usr/share/man/man1/sed.1

@@ -1,7 +1,7 @@
 bin/egrep
 bin/fgrep
 bin/grep
-#usr/info/grep.info
-#usr/man/man1/egrep.1
-#usr/man/man1/fgrep.1
-#usr/man/man1/grep.1
+#usr/share/info/grep.info
+#usr/share/man/man1/egrep.1
+#usr/share/man/man1/fgrep.1
+#usr/share/man/man1/grep.1

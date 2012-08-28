@@ -1,0 +1,188 @@
+2011-02-23  Andreas Schwab  <schwab@redhat.com>
+
+	[BZ #12509]
+	* elf/dl-load.c (_dl_map_object_from_fd): Free realname before
+	returning unsuccessfully.
+	* elf/Makefile ($(objpfx)noload-mem): New rule.
+	(noload-ENV): Define.
+	(tests): Add $(objpfx)noload-mem.
+	* elf/noload.c: Include <memcheck.h>.
+	(main): Call mtrace.  Close all opened handles.
+
+2010-09-27  Andreas Schwab  <schwab@redhat.com>
+
+	* include/link.h (struct link_map): Add l_free_initfini.
+	* elf/dl-deps.c (_dl_map_object_deps): Set it when assigning
+	l_initfini.
+	* elf/rtld.c (dl_main): Clear it on all objects loaded on startup.
+	* elf/dl-libc.c (free_mem): Free l_initfini if l_free_initfini is
+	set.
+
+Index: glibc-2.12-2-gc4ccff1/elf/Makefile
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/Makefile
++++ glibc-2.12-2-gc4ccff1/elf/Makefile
+@@ -211,7 +211,7 @@ endif
+ ifeq (yesyes,$(have-fpie)$(build-shared))
+ tests: $(objpfx)tst-pie1.out
+ endif
+-tests: $(objpfx)tst-leaks1-mem
++tests: $(objpfx)tst-leaks1-mem $(objpfx)noload-mem
+ tlsmod17a-suffixes = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+ tlsmod18a-suffixes = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
+@@ -664,6 +664,10 @@ $(objpfx)noload: $(objpfx)testobj1.so $(
+ LDFLAGS-noload = -rdynamic
+ $(objpfx)noload.out: $(objpfx)testobj5.so
+ 
++$(objpfx)noload-mem: $(objpfx)noload.out
++	$(common-objpfx)malloc/mtrace $(objpfx)noload.mtrace > $@
++noload-ENV = MALLOC_TRACE=$(objpfx)noload.mtrace
++
+ LDFLAGS-nodelete = -rdynamic
+ LDFLAGS-nodelmod1.so = -Wl,--enable-new-dtags,-z,nodelete
+ LDFLAGS-nodelmod4.so = -Wl,--enable-new-dtags,-z,nodelete
+Index: glibc-2.12-2-gc4ccff1/elf/dl-deps.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-deps.c
++++ glibc-2.12-2-gc4ccff1/elf/dl-deps.c
+@@ -478,6 +478,7 @@ _dl_map_object_deps (struct link_map *ma
+ 		  nneeded * sizeof needed[0]);
+ 	  atomic_write_barrier ();
+ 	  l->l_initfini = l_initfini;
++	  l->l_free_initfini = 1;
+ 	}
+ 
+       /* If we have no auxiliary objects just go on to the next map.  */
+@@ -662,6 +663,7 @@ Filters not supported with LD_TRACE_PREL
+   l_initfini[nlist] = NULL;
+   atomic_write_barrier ();
+   map->l_initfini = l_initfini;
++  map->l_free_initfini = 1;
+   if (l_reldeps != NULL)
+     {
+       atomic_write_barrier ();
+Index: glibc-2.12-2-gc4ccff1/elf/dl-libc.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-libc.c
++++ glibc-2.12-2-gc4ccff1/elf/dl-libc.c
+@@ -250,5 +250,9 @@ libc_freeres_fn (free_mem)
+ 	    if (! old->dont_free)
+ 	    free (old);
+ 	  }
++
++	/* Free the initfini dependency list.  */
++	if (l->l_free_initfini)
++	  free (l->l_initfini);
+       }
+ }
+Index: glibc-2.12-2-gc4ccff1/elf/dl-load.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-load.c
++++ glibc-2.12-2-gc4ccff1/elf/dl-load.c
+@@ -907,6 +907,7 @@ _dl_map_object_from_fd (const char *name
+     {
+       /* We are not supposed to load the object unless it is already
+ 	 loaded.  So return now.  */
++      free (realname);
+       __close (fd);
+       return NULL;
+     }
+@@ -925,6 +926,7 @@ _dl_map_object_from_fd (const char *name
+       _dl_zerofd = _dl_sysdep_open_zero_fill ();
+       if (_dl_zerofd == -1)
+ 	{
++	  free (realname);
+ 	  __close (fd);
+ 	  _dl_signal_error (errno, NULL, NULL,
+ 			    N_("cannot open zero fill device"));
+Index: glibc-2.12-2-gc4ccff1/elf/noload.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/noload.c
++++ glibc-2.12-2-gc4ccff1/elf/noload.c
+@@ -1,20 +1,28 @@
+ #include <dlfcn.h>
+ #include <stdio.h>
++#include <mcheck.h>
+ 
+ int
+ main (void)
+ {
+   int result = 0;
++  void *p;
++
++  mtrace ();
+ 
+   /* First try to load an object which is a dependency.  This should
+      succeed.  */
+-  if (dlopen ("testobj1.so", RTLD_LAZY | RTLD_NOLOAD) == NULL)
++  p = dlopen ("testobj1.so", RTLD_LAZY | RTLD_NOLOAD);
++  if (p == NULL)
+     {
+       printf ("cannot open \"testobj1.so\": %s\n", dlerror ());
+       result = 1;
+     }
+   else
+-    puts ("loading \"testobj1.so\" succeeded, OK");
++    {
++      puts ("loading \"testobj1.so\" succeeded, OK");
++      dlclose (p);
++    }
+ 
+   /* Now try loading an object which is not already loaded.  */
+   if (dlopen ("testobj5.so", RTLD_LAZY | RTLD_NOLOAD) != NULL)
+@@ -25,8 +33,6 @@ main (void)
+   else
+     {
+       /* Load the object and run the same test again.  */
+-      void *p;
+-
+       puts ("\"testobj5.so\" wasn't loaded and RTLD_NOLOAD prevented it, OK");
+ 
+       p = dlopen ("testobj5.so", RTLD_LAZY);
+@@ -41,13 +47,17 @@ main (void)
+ 	{
+ 	  puts ("loading \"testobj5.so\" succeeded, OK");
+ 
+-	  if (dlopen ("testobj5.so", RTLD_LAZY | RTLD_NOLOAD) == NULL)
++	  void *q = dlopen ("testobj5.so", RTLD_LAZY | RTLD_NOLOAD);
++	  if (q == NULL)
+ 	    {
+ 	      printf ("cannot open \"testobj5.so\": %s\n", dlerror ());
+ 	      result = 1;
+ 	    }
+ 	  else
+-	    puts ("loading \"testobj5.so\" with RTLD_NOLOAD succeeded, OK");
++	    {
++	      puts ("loading \"testobj5.so\" with RTLD_NOLOAD succeeded, OK");
++	      dlclose (q);
++	    }
+ 
+ 	  if (dlclose (p) != 0)
+ 	    {
+Index: glibc-2.12-2-gc4ccff1/elf/rtld.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/elf/rtld.c
++++ glibc-2.12-2-gc4ccff1/elf/rtld.c
+@@ -2249,6 +2249,7 @@ ERROR: ld.so: object '%s' cannot be load
+ 	      lnp->dont_free = 1;
+ 	      lnp = lnp->next;
+ 	    }
++	  l->l_free_initfini = 0;
+ 
+ 	  if (l != &GL(dl_rtld_map))
+ 	    _dl_relocate_object (l, l->l_scope, GLRO(dl_lazy) ? RTLD_LAZY : 0,
+Index: glibc-2.12-2-gc4ccff1/include/link.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/include/link.h
++++ glibc-2.12-2-gc4ccff1/include/link.h
+@@ -192,6 +192,9 @@ struct link_map
+ 						 during LD_TRACE_PRELINKING=1
+ 						 contains any DT_SYMBOLIC
+ 						 libraries.  */
++    unsigned int l_free_initfini:1; /* Nonzero if l_initfini can be
++				       freed, ie. not allocated with
++				       the dummy malloc in ld.so.  */
+ 
+     /* Collected information about own RPATH directories.  */
+     struct r_search_path_struct l_rpath_dirs;

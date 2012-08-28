@@ -37,12 +37,11 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=4
+TOOLCHAINVER=5
 
 BUILDMACHINE=$MACHINE
     if [ "$MACHINE" = "x86_64" ]; then
         BUILDMACHINE="i686";
-        linux32="linux32";
     fi
 
 
@@ -214,11 +213,6 @@ prepareenv() {
     mount --bind $BASEDIR/log    $BASEDIR/build/usr/src/log
     mount --bind $BASEDIR/src    $BASEDIR/build/usr/src/src
 
-    # This is a temporary hack!!!
-    if [ ! -f /tools/bin/hostname ]; then
-      cp -f /bin/hostname /tools/bin/hostname 2>/dev/null
-    fi
-
     # Run LFS static binary creation scripts one by one
     export CCACHE_DIR=$BASEDIR/ccache
     export CCACHE_COMPRESS=1
@@ -232,7 +226,7 @@ buildtoolchain() {
     local error=false
     case "${MACHINE}:$(uname -m)" in
         # x86
-        i586:i586|i586:i686)
+        i586:i586|i586:i686|i586:x86_64)
             # These are working.
             ;;
         i586:*)
@@ -251,38 +245,28 @@ buildtoolchain() {
     ${error} && \
         exiterror "Cannot build ${MACHINE} toolchain on $(uname -m). Please use the download if any."
 
-    if [ "$(uname -r | grep ipfire)" ]; then
-        exiterror "Cannot build toolchain on ipfire. Please use the download."
-    fi
-
-    if [ ! -e /usr/include/asm -o ! -e /usr/include/bits -o ! -e /usr/include/gnu -o ! -e /usr/include/sys ]; then
-        exiterror "Cannot build toolchain without (asm, bits, gnu or sys includes). Please fix or use the download."
-    fi
-
-    if [ ! -e /usr/lib/libc.so ]; then
-        exiterror "Cannot build toolchain without (/usr/lib/libc.so). Please fix or use the download."
+    local gcc=$(type -p gcc)
+    if [ -z "${gcc}" ]; then
+        exiterror "Could not find GCC. You will need a working build enviroment in order to build the toolchain."
     fi
 
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
     export LOGFILE
-    NATIVEGCC=`gcc --version | grep GCC | awk {'print $3'}`
-    export NATIVEGCC GCCmajor=${NATIVEGCC:0:1} GCCminor=${NATIVEGCC:2:1} GCCrelease=${NATIVEGCC:4:1}
-    ORG_PATH=$PATH
-    lfsmake1 ccache	PASS=1
-    lfsmake1 make	PASS=1
-    lfsmake1 linux2 TOOLS=1 HEADERS=1
-    lfsmake1 binutils	PASS=1
-    lfsmake1 gcc		PASS=1
-    export PATH=$BASEDIR/build/usr/local/bin:$BASEDIR/build/tools/bin:$PATH
+
+    local ORG_PATH=$PATH
+    export PATH="/tools/ccache/bin:/tools/bin:$PATH"
+    lfsmake1 ccache			PASS=1
+    lfsmake1 binutils			PASS=1
+    lfsmake1 gcc			PASS=1
+    lfsmake1 linux2			TOOLS=1 HEADERS=1
     lfsmake1 glibc
-    lfsmake1 cleanup-toolchain PASS=1
-    lfsmake1 fake-environ
+    lfsmake1 cleanup-toolchain		PASS=1
+    lfsmake1 binutils			PASS=2
+    lfsmake1 gcc			PASS=2
+    lfsmake1 ccache			PASS=2
     lfsmake1 tcl
     lfsmake1 expect
     lfsmake1 dejagnu
-    lfsmake1 gcc		PASS=2
-    lfsmake1 binutils	PASS=2
-    lfsmake1 ccache	PASS=2
     lfsmake1 ncurses
     lfsmake1 bash
     lfsmake1 bzip2
@@ -294,15 +278,15 @@ buildtoolchain() {
     lfsmake1 grep
     lfsmake1 gzip
     lfsmake1 m4
-    lfsmake1 make	PASS=2
+    lfsmake1 make
     lfsmake1 patch
     lfsmake1 perl
     lfsmake1 sed
     lfsmake1 tar
     lfsmake1 texinfo
-    lfsmake1 util-linux
-    lfsmake1 strip
-    lfsmake1 cleanup-toolchain	PASS=2
+    lfsmake1 xz
+    lfsmake1 fake-environ
+    lfsmake1 cleanup-toolchain		PASS=2
     export PATH=$ORG_PATH
 }
 
@@ -310,13 +294,19 @@ buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
     lfsmake2 stage2
-    lfsmake2 linux2 HEADERS=1
+    lfsmake2 linux2			HEADERS=1
     lfsmake2 man-pages
     lfsmake2 glibc
     lfsmake2 tzdata
-    lfsmake2 cleanup-toolchain	PASS=3
+    lfsmake2 cleanup-toolchain		PASS=3
+    lfsmake2 zlib
     lfsmake2 binutils
+    lfsmake2 gmp
+    lfsmake2 gmp-compat
+    lfsmake2 mpfr
+    lfsmake2 file
     lfsmake2 gcc
+    lfsmake2 sed
     lfsmake2 berkeley
     lfsmake2 coreutils
     lfsmake2 iana-etc
@@ -324,11 +314,12 @@ buildbase() {
     lfsmake2 bison
     lfsmake2 ncurses
     lfsmake2 procps
-    lfsmake2 sed
     lfsmake2 libtool
     lfsmake2 perl
     lfsmake2 readline
-    lfsmake2 zlib
+    lfsmake2 readline-compat
+    lfsmake2 pcre
+    lfsmake2 pcre-compat
     lfsmake2 autoconf
     lfsmake2 automake
     lfsmake2 bash
@@ -336,7 +327,6 @@ buildbase() {
     lfsmake2 diffutils
     lfsmake2 e2fsprogs
     lfsmake2 ed
-    lfsmake2 file
     lfsmake2 findutils
     lfsmake2 flex
     lfsmake2 gawk
@@ -348,7 +338,6 @@ buildbase() {
     lfsmake2 iproute2
     lfsmake2 kbd
     lfsmake2 less
-    lfsmake2 libaal
     lfsmake2 make
     lfsmake2 man
     lfsmake2 mktemp
@@ -356,7 +345,6 @@ buildbase() {
     lfsmake2 net-tools
     lfsmake2 patch
     lfsmake2 psmisc
-    lfsmake2 reiser4progs
     lfsmake2 shadow
     lfsmake2 sysklogd
     lfsmake2 sysvinit
@@ -365,6 +353,7 @@ buildbase() {
     lfsmake2 udev
     lfsmake2 util-linux
     lfsmake2 vim
+    lfsmake2 xz
     lfsmake2 grub
 }
 
@@ -381,7 +370,6 @@ buildipfire() {
   ipfiremake pptp
   ipfiremake unzip
   ipfiremake which
-  ipfiremake xz
   ipfiremake linux-firmware
   ipfiremake zd1211-firmware
   ipfiremake rpi-firmware
@@ -393,7 +381,7 @@ buildipfire() {
     ipfiremake linux2			KCFG="-xen"
 #    ipfiremake v4l-dvb			KCFG="-xen"
 #    ipfiremake mISDN			KCFG="-xen"
-#    ipfiremake dahdi			KCFG="-xen" KMOD=1
+    ipfiremake dahdi			KCFG="-xen" KMOD=1
     ipfiremake cryptodev		KCFG="-xen"
     ipfiremake compat-wireless		KCFG="-xen"
 #    ipfiremake r8169			KCFG="-xen"
@@ -408,7 +396,7 @@ buildipfire() {
 #    ipfiremake v4l-dvb			KCFG="-pae"
     ipfiremake alsa			KCFG="-pae" KMOD=1
 #    ipfiremake mISDN			KCFG="-pae"
-#    ipfiremake dahdi			KCFG="-pae" KMOD=1
+    ipfiremake dahdi			KCFG="-pae" KMOD=1
     ipfiremake cryptodev		KCFG="-pae"
     ipfiremake compat-wireless		KCFG="-pae"
 #    ipfiremake r8169			KCFG="-pae"
@@ -423,7 +411,7 @@ buildipfire() {
 #    ipfiremake v4l-dvb			KCFG=""
     ipfiremake alsa			KCFG="" KMOD=1
 #    ipfiremake mISDN			KCFG=""
-#    ipfiremake dahdi			KCFG="" KMOD=1
+    ipfiremake dahdi			KCFG="" KMOD=1
     ipfiremake cryptodev		KCFG=""
     ipfiremake compat-wireless		KCFG=""
 #    ipfiremake r8169			KCFG=""
@@ -484,7 +472,6 @@ buildipfire() {
   ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
-  ipfiremake gmp
   ipfiremake pam
   ipfiremake openssl
   ipfiremake curl
@@ -496,6 +483,7 @@ buildipfire() {
   ipfiremake libnl
   ipfiremake libidn
   ipfiremake libjpeg
+  ipfiremake libexif
   ipfiremake libpng
   ipfiremake libtiff
   ipfiremake libart
@@ -545,7 +533,6 @@ buildipfire() {
   ipfiremake iptables
   ipfiremake libupnp
   ipfiremake ipaddr
-  ipfiremake iptstate
   ipfiremake iputils
   ipfiremake l7-protocols
   ipfiremake mISDNuser
@@ -587,12 +574,18 @@ buildipfire() {
   ipfiremake python-mechanize
   ipfiremake python-feedparser
   ipfiremake python-rssdler
+  ipfiremake libffi
   ipfiremake glib
   ipfiremake GeoIP
   ipfiremake fwhits
   ipfiremake noip_updater
   ipfiremake ntp
   ipfiremake openssh
+  ipfiremake fontconfig
+  ipfiremake freefont
+  ipfiremake pixman
+  ipfiremake cairo
+  ipfiremake pango
   ipfiremake rrdtool
   ipfiremake setserial
   ipfiremake setup
@@ -607,7 +600,6 @@ buildipfire() {
   ipfiremake traceroute
   ipfiremake vlan
   ipfiremake wireless
-  ipfiremake libsafe
   ipfiremake pakfire
   ipfiremake spandsp
   ipfiremake lzo
@@ -623,10 +615,9 @@ buildipfire() {
   ipfiremake wget
   ipfiremake bridge-utils
   ipfiremake screen
-  ipfiremake hddtemp
   ipfiremake smartmontools
   ipfiremake htop
-#  ipfiremake postfix               # unknown system type linux 3.2.x
+  ipfiremake postfix
   ipfiremake fetchmail
   ipfiremake cyrus-imapd
   ipfiremake openmailadmin
@@ -641,6 +632,7 @@ buildipfire() {
   ipfiremake libogg
   ipfiremake libvorbis
   ipfiremake libdvbpsi
+  ipfiremake flac
   ipfiremake lame
   ipfiremake sox
   ipfiremake libshout
@@ -649,7 +641,6 @@ buildipfire() {
   ipfiremake cmake
   ipfiremake gnump3d
   ipfiremake libsigc++
-  ipfiremake applejuice
   ipfiremake libtorrent
   ipfiremake rtorrent
   ipfiremake ipfireseeder
@@ -668,7 +659,6 @@ buildipfire() {
   ipfiremake vsftpd
   ipfiremake strongswan
   ipfiremake lsof
-  ipfiremake centerim
   ipfiremake br2684ctl
   ipfiremake pcmciautils
   ipfiremake lm_sensors
@@ -687,8 +677,6 @@ buildipfire() {
   ipfiremake nagios
   ipfiremake nagios_nrpe
   ipfiremake ebtables
-  ipfiremake fontconfig
-  ipfiremake freefont
   ipfiremake directfb
   ipfiremake dfb++
   ipfiremake faad2
@@ -721,7 +709,6 @@ buildipfire() {
   ipfiremake netcat
   ipfiremake 7zip
   ipfiremake lynis
-  ipfiremake splix
   ipfiremake streamripper
   ipfiremake sshfs
   ipfiremake taglib
@@ -743,9 +730,9 @@ buildipfire() {
   ipfiremake nut
   ipfiremake watchdog
   ipfiremake libpri
-#  ipfiremake dahdi               # update needed for 3.2.x
-#  ipfiremake asterisk
-#  ipfiremake lcr
+  ipfiremake dahdi
+  ipfiremake asterisk
+  ipfiremake lcr
   ipfiremake usb_modeswitch
   ipfiremake usb_modeswitch_data
   ipfiremake zerofree
@@ -755,7 +742,7 @@ buildipfire() {
   ipfiremake minicom
   ipfiremake ddrescue
   ipfiremake imspector
-#  ipfiremake miniupnpd              # will not build
+  ipfiremake miniupnpd
   ipfiremake client175
   ipfiremake powertop
   ipfiremake parted
@@ -775,6 +762,8 @@ buildipfire() {
   ipfiremake lcd4linux
   ipfiremake mtr
   ipfiremake tcpick
+  ipfiremake minidlna
+  ipfiremake acpid
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
@@ -799,7 +788,6 @@ buildinstaller() {
   ipfiremake mbr
   ipfiremake memtest
   ipfiremake installer
-  cp -f $BASEDIR/doc/COPYING $BASEDIR/build/install/initrd/
   installmake strip
   ipfiremake initrd
 }
@@ -1041,9 +1029,7 @@ toolchain)
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $MACHINE" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
-		build/{bin,etc,usr/bin,usr/local} \
-		build/tools/{bin,etc,*-linux-gnu*,include,lib,libexec,sbin,share,var} \
-		log >> $LOGFILE
+		build/tools build/bin/sh log >> $LOGFILE
 	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.md5
 	stdumount
