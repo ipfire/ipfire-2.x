@@ -89,7 +89,7 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 else
 	cd $(DIR_APP)/gettext-tools && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP)/gettext-tools && make -C lib
+	cd $(DIR_APP)/gettext-tools && make -C gnulib-lib
 	cd $(DIR_APP)/gettext-tools && make -C src msgfmt
 	cd $(DIR_APP)/gettext-tools && cp -v src/msgfmt /tools/bin
 endif

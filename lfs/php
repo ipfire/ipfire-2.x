@@ -32,6 +32,10 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+ifeq "$(MACHINE_TYPE)" "arm"
+	CFLAGS    := $(patsubst -march=%,,$(CFLAGS))
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
