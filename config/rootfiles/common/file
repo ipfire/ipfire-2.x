@@ -9,7 +9,3 @@ usr/lib/libmagic.so.1.0.0
 #usr/share/man/man3/libmagic.3
 #usr/share/man/man4/magic.4
 usr/share/misc/magic.mgc
-usr/share/file/magic
-usr/share/file/magic.mgc
-usr/share/file/magic.mime
-usr/share/file/magic.mime.mgc
