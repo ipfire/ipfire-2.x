@@ -44,6 +44,7 @@ ifeq "$(ROOT)" ""
 else
 ifeq "$(PASS)" "1"
   CFLAGS := $(patsubst -march=%,,$(CFLAGS))
+  CFLAGS := $(patsubst -mfloat-abi=%,,$(CFLAGS))
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = \
 	--target=$(CROSSTARGET) \

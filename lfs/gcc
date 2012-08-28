@@ -36,6 +36,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 CFLAGS    := $(patsubst -march=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mtune=%,,$(CFLAGS))
+CFLAGS    := $(patsubst -mfloat-abi=%,,$(CFLAGS))
 
 # Normal build or /tools build.
 #
@@ -117,10 +118,6 @@ EXTRA_CONFIG += \
 
 export XCFLAGS = $(CFLAGS)
 export TCFLAGS = $(CFLAGS)
-
-ifeq "$(PASS)" "1"
-  CFLAGS =
-endif
 
 ###############################################################################
 # Top-level Rules
