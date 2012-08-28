@@ -24,12 +24,12 @@
 
 include Config
 
-VER        = 4.8
+VER        = 4.13a
 
 THISAPP    = texinfo-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/texinfo-4.13
 
 # Normal build or /tools build.
 #
@@ -53,7 +53,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6ba369bbfe4afaa56122e65b3ee3a68c
+$(DL_FILE)_MD5 = 71ba711519209b5fb583fed2b3d86fcb
 
 install : $(TARGET)
 
@@ -82,11 +82,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(ROOT)" ""
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-multibyte-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-tempfile_fix-2.patch
-endif
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
