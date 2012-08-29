@@ -381,7 +381,6 @@ buildipfire() {
     ipfiremake linux2			KCFG="-xen"
 #    ipfiremake v4l-dvb			KCFG="-xen"
 #    ipfiremake mISDN			KCFG="-xen"
-    ipfiremake dahdi			KCFG="-xen" KMOD=1
     ipfiremake cryptodev		KCFG="-xen"
     ipfiremake compat-wireless		KCFG="-xen"
 #    ipfiremake r8169			KCFG="-xen"
@@ -396,7 +395,6 @@ buildipfire() {
 #    ipfiremake v4l-dvb			KCFG="-pae"
     ipfiremake alsa			KCFG="-pae" KMOD=1
 #    ipfiremake mISDN			KCFG="-pae"
-    ipfiremake dahdi			KCFG="-pae" KMOD=1
     ipfiremake cryptodev		KCFG="-pae"
     ipfiremake compat-wireless		KCFG="-pae"
 #    ipfiremake r8169			KCFG="-pae"
@@ -411,7 +409,6 @@ buildipfire() {
 #    ipfiremake v4l-dvb			KCFG=""
     ipfiremake alsa			KCFG="" KMOD=1
 #    ipfiremake mISDN			KCFG=""
-    ipfiremake dahdi			KCFG="" KMOD=1
     ipfiremake cryptodev		KCFG=""
     ipfiremake compat-wireless		KCFG=""
 #    ipfiremake r8169			KCFG=""
@@ -427,7 +424,6 @@ buildipfire() {
 #    ipfiremake v4l-dvb			KCFG="-rpi"
 #    ipfiremake kvm-kmod			KCFG="-rpi"
 #    ipfiremake mISDN			KCFG="-rpi"
-#    ipfiremake dahdi			KCFG="-rpi" KMOD=1
     ipfiremake cryptodev		KCFG="-rpi"
     ipfiremake compat-wireless		KCFG="-rpi"
 #    ipfiremake r8169			KCFG="-rpi"
@@ -441,7 +437,6 @@ buildipfire() {
 #    ipfiremake v4l-dvb			KCFG="-omap"
 #    ipfiremake kvm-kmod			KCFG="-omap"
 #    ipfiremake mISDN			KCFG="-omap"
-#    ipfiremake dahdi			KCFG="-omap" KMOD=1
     ipfiremake cryptodev		KCFG="-omap"
     ipfiremake compat-wireless		KCFG="-omap"
 #    ipfiremake r8169			KCFG="-omap"
@@ -456,7 +451,6 @@ buildipfire() {
 #    ipfiremake v4l-dvb			KCFG="-kirkwood"
 #    ipfiremake kvm-kmod			KCFG="-kirkwood"
 #    ipfiremake mISDN			KCFG="-kirkwood"
-#    ipfiremake dahdi			KCFG="-kirkwood" KMOD=1
     ipfiremake cryptodev		KCFG="-kirkwood"
     ipfiremake compat-wireless		KCFG="-kirkwood"
 #    ipfiremake r8169			KCFG="-kirkwood"
@@ -465,6 +459,7 @@ buildipfire() {
 #    ipfiremake e1000			KCFG="-kirkwood"
 #    ipfiremake e1000e			KCFG="-kirkwood"
 #    ipfiremake igb			KCFG="-kirkwood"
+
   fi
   ipfiremake pkg-config
   ipfiremake linux-atm
@@ -730,7 +725,6 @@ buildipfire() {
   ipfiremake nut
   ipfiremake watchdog
   ipfiremake libpri
-  ipfiremake dahdi
   ipfiremake asterisk
   ipfiremake lcr
   ipfiremake usb_modeswitch
