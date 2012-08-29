@@ -14,6 +14,7 @@
  
 #define INST_FILECOUNT 10700
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
+#define LICENSE_FILE	"/cdrom/COPYING"
 
 #define EXT2 0
 #define EXT3 1
@@ -120,16 +121,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	// Read gpl ...
-	if (! (copying = fopen("/COPYING", "r")))
-	{
-		fprintf(flog,      "Couldn't open gpl (/COPYING)\n");
-		sprintf(discl_msg, "Couldn't open gpl (/COPYING)\n");
-	} else {
-		fread(discl_msg, 1, 40000, copying);
-		fclose(copying);
-	}
-
 	// Load common modules
 	mysystem("/sbin/modprobe iso9660"); // CDROM
 //	mysystem("/sbin/modprobe ext2"); // Boot patition
@@ -157,11 +148,6 @@ int main(int argc, char *argv[])
 	if (!unattended) {
 		sprintf(message, ctr[TR_WELCOME], NAME);
 		newtWinMessage(title, ctr[TR_OK], message);
-
-		if (disclaimerbox(discl_msg)==0) {
-			errorbox(ctr[TR_LICENSE_NOT_ACCEPTED]);
-			goto EXIT;
-		}
 	}
 
 	mysystem("/bin/mountsource.sh");
@@ -178,7 +164,23 @@ int main(int argc, char *argv[])
 	fgets(sourcedrive, 5, handle);
 	fprintf(flog, "Source drive: %s\n", sourcedrive);
 	fclose(handle);
-	
+
+	if (!unattended) {
+		// Read the license file.
+		if (!(copying = fopen(LICENSE_FILE, "r"))) {
+			sprintf(discl_msg, "Could not open license file: %s\n", LICENSE_FILE);
+			fprintf(flog, discl_msg);
+		} else {
+			fread(discl_msg, 1, 40000, copying);
+			fclose(copying);
+
+			if (disclaimerbox(discl_msg)==0) {
+				errorbox(ctr[TR_LICENSE_NOT_ACCEPTED]);
+				goto EXIT;
+			}
+		}
+	}
+
 	i = 0;
 	while (found == 0) {
 		i++;
