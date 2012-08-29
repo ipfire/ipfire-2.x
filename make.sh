@@ -582,6 +582,7 @@ buildipfire() {
   ipfiremake ntp
   ipfiremake openssh
   ipfiremake fontconfig
+  ipfiremake dejavu-fonts-ttf
   ipfiremake freefont
   ipfiremake pixman
   ipfiremake cairo
