@@ -76,6 +76,7 @@ $qossettings{'IMQ_DEV'} = 'imq0';
 $qossettings{'TOS'} = '';
 $qossettings{'VALID'} = 'yes';
 $qossettings{'IMQ_MODE'} = 'PREROUTING';
+$qossettings{'QLENGTH'} = '1000';
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
 
@@ -480,7 +481,7 @@ foreach $classentry (sort @classes)
 	if ($qossettings{'IMQ_DEV'} eq $classline[0]) {
 		$qossettings{'DEVICE'} = $classline[0];
 		$qossettings{'CLASS'} = $classline[1];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: sfq perturb $qossettings{'SFQ_PERTUB'}\n";
+		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: fq_codel\n";
 	}
 }
 foreach $subclassentry (sort @subclasses) {
@@ -488,7 +489,7 @@ foreach $subclassentry (sort @subclasses) {
 	if ($qossettings{'IMQ_DEV'} eq $subclassline[0]) {
 		$qossettings{'DEVICE'} = $subclassline[0];
 		$qossettings{'SCLASS'} = $subclassline[2];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: sfq perturb $qossettings{'SFQ_PERTUB'}\n";
+		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: fq_codel\n";
 	}
 }
 print "\n\t### FILTER TRAFFIC INTO CLASSES\n";
