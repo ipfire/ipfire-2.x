@@ -74,8 +74,7 @@ $qossettings{'DEFCLASS_INC'} = '';
 $qossettings{'DEFCLASS_OUT'} = '';
 $qossettings{'ACK'} = '';
 $qossettings{'MTU'} = '1492';
-$qossettings{'SFQ_PERTUB'} = '10';
-$qossettings{'QLENGTH'} = '30';
+$qossettings{'QLENGTH'} = '1000';
 $qossettings{'RED_DEV'} = 'ppp0';
 $qossettings{'IMQ_DEV'} = 'imq0';
 $qossettings{'VALID'} = 'yes';
@@ -1448,9 +1447,6 @@ sub expert
 		    <td width='33%' align='center'>$Lang::tr{'mtu QoS'}
 		<tr><td width='33%' align='right'>$Lang::tr{'Queuelenght'}:<td width='33%' align='left'>
 			<input type='text' name='QLENGTH' maxlength='8' required='2' value='$qossettings{'QLENGTH'}' />
-		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>SFQ Perturb:<td width='33%' align='left'>
-			<input type='text' name='SFQ_PERTUB' maxlength='8' required='1' value='$qossettings{'SFQ_PERTUB'}' />
 		    <td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
 		</table>
 		</form>

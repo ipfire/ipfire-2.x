@@ -9,7 +9,7 @@
 
 # shell variables must consist of alphanumeric characters and underscores,
 # and begin with an alphabetic character or underscore.
-VARNAME='[A-Za-z_][A-zA-z0-9_]*'
+VARNAME='[A-Za-z_][A-Za-z0-9_]*'
 
 # For the assigned value we only accept a limited number of characters - none
 # of which are shell metachars

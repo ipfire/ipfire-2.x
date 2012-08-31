@@ -1,4 +1,3 @@
-#!/bin/sh
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
@@ -21,71 +20,87 @@
 
 echo "Scanning for possible destination drives"
 
-# scan sd?
-echo "--> sd?"
-for DEVICE in `find /sys/block/* -maxdepth 0 -name sd* -or -name vd* -exec basename {} \; | sort | uniq`
-do
-		if [ "$(grep ${DEVICE} /proc/partitions)" = "" ]; then
-			umount /harddisk 2> /dev/null
-			echo "${DEVICE} is empty - SKIP"
-			continue
-		fi
-		mount /dev/${DEVICE} /harddisk 2> /dev/null
+function _mount() {
+	local what=${1}
+
+	# Don't mount if the device does not exist.
+	[ -e "${what}" ] || return 1
+
+	mount ${what} /harddisk 2>/dev/null
+}
+
+function _umount() {
+	umount -l /harddisk 2>/dev/null
+}
+
+function check_source_drive() {
+	local device="/dev/${1}"
+
+	local ret=1
+	local dev
+	for dev in ${device} ${device}1; do
+		# Mount the device (if possible).
+		_mount ${dev} || continue
+
 		if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
-			umount /harddisk 2> /dev/null
-			echo "${DEVICE} is source drive - SKIP"
-			continue
-		else
-			umount /harddisk 2> /dev/null
-			mount /dev/${DEVICE}1 /harddisk 2> /dev/null
-			if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
-				umount /harddisk 2> /dev/null
-				echo "${DEVICE}1 is source drive - SKIP"
-				continue
-			else
-				umount /harddisk 2> /dev/null
-				echo -n "$DEVICE" > /tmp/dest_device
-				echo "${DEVICE} - yes, it is our destination"
-				exit 1 # (always use /dev/sda as bootdevicename)
-			fi
+			ret=0
 		fi
+
+		_umount
+
+		# Stop if the device has been detected as a source drive.
+		[ "${ret}" = "0" ] && break
+	done
+
+	return ${ret}
+}
+
+for path in /sys/block/*; do
+	device=$(basename ${path})
+
+	# Skip devices which cannot be used.
+	case "${device}" in
+		# Virtual devices.
+		loop*|ram*)
+			continue
+			;;
+		# Floppy.
+		fd*)
+			continue
+			;;
+	esac
+
+	# Guess if this could be a raid device.
+	for dev in ${device} ${device}p1; do
+		if [ -e "/dev/${dev}" ]; then
+			device=${dev}
+			break
+		fi
+	done
+
+	echo "Checking ${device}"
+	if check_source_drive ${device}; then
+		echo "  is source drive - skipping"
+		continue
+	fi
+
+	# Found it.
+	echo "  OK, this is it..."
+	echo -n "${device}" > /tmp/dest_device
+
+	# Exit code table:
+	#  1: sda
+	#  2: RAID
+	# 10: nothing found
+	case "${device}" in
+		*p1)
+			exit 2
+			;;
+		*)
+			exit 1
+			;;
+	esac
 done
 
-# scan other
-echo "--> other"
-for DEVICE in `find /sys/block/* -maxdepth 0 ! -name sd* ! -name sr* ! -name fd* ! -name loop* ! -name ram* -exec basename {} \; | sort | uniq`
-do
-		mount /dev/${DEVICE}p1 /harddisk 2> /dev/null
-		if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
-			umount /harddisk 2> /dev/null
-			echo "${DEVICE}p1 is source drive - SKIP"
-			continue
-		else
-			umount /harddisk 2> /dev/null
-			if [ "$(grep ${DEVICE} /proc/partitions)" = "" ]; then
-				umount /harddisk 2> /dev/null
-				echo "${DEVICE} is empty - SKIP"
-				continue
-			fi
-			mount /dev/${DEVICE}1 /harddisk 2> /dev/null
-			if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
-				umount /harddisk 2> /dev/null
-				echo "${DEVICE}1 is source drive - SKIP"
-				continue
-			else
-				umount /harddisk 2> /dev/null
-				mount /dev/${DEVICE} /harddisk 2> /dev/null
-				if [ -n "$(ls /harddisk/ipfire-*.tlz 2>/dev/null)" ]; then
-					umount /harddisk 2> /dev/null
-					echo "${DEVICE} is source drive - SKIP"
-					continue
-				else
-					echo -n "$DEVICE" > /tmp/dest_device
-					echo "${DEVICE} - yes, it is our destination"
-					exit 2 # Raid ( /dev/device/diskx )
-				fi
-			fi
-		fi
-done
-
-exit 10 # Nothing found
+# Nothing found.
+exit 10
