@@ -35,6 +35,7 @@ var/ipfire/ethernet
 #var/ipfire/ethernet/known_nics
 #var/ipfire/ethernet/scanned_nics
 #var/ipfire/ethernet/settings
+#var/ipfire/ethernet/vlans
 #var/ipfire/extrahd
 #var/ipfire/extrahd/bin
 var/ipfire/extrahd/bin/extrahd.pl
@@ -57,9 +58,9 @@ var/ipfire/langs
 #var/ipfire/langs/en.pl
 #var/ipfire/langs/es.pl
 #var/ipfire/langs/fr.pl
+#var/ipfire/langs/list
 #var/ipfire/langs/pl.pl
 #var/ipfire/langs/ru.pl
-#var/ipfire/langs/list
 var/ipfire/logging
 #var/ipfire/logging/settings
 var/ipfire/mac
@@ -179,5 +180,5 @@ var/ipfire/wireless
 #var/ipfire/wireless/settings
 var/ipfire/xtaccess
 #var/ipfire/xtaccess/config
-var/ipfire/firebuild
-etc/system-release
+-var/ipfire/firebuild
+-etc/system-release
