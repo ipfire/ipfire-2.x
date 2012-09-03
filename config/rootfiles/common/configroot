@@ -180,5 +180,5 @@ var/ipfire/wireless
 #var/ipfire/wireless/settings
 var/ipfire/xtaccess
 #var/ipfire/xtaccess/config
--var/ipfire/firebuild
--etc/system-release
+var/ipfire/firebuild
+etc/system-release
