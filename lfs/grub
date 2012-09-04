@@ -32,8 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586
-CFLAGS     = -O0 -fno-reorder-functions -fno-strict-aliasing -Wall -Werror \
-	-Wno-shadow -Wno-unused -Wno-pointer-sign
+CFLAGS     =
 CXXFLAGS   =
 
 ###############################################################################
@@ -81,8 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && autoconf
 
 	# Build.
-	cd $(DIR_APP) && CFLAGS="$(CFLAGS)" ./configure --prefix=/usr \
-		--disable-auto-linux-mem-opt
+	cd $(DIR_APP) && CFLAGS="$(CFLAGS)" ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
