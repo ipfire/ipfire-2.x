@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.9.6
+VER        = 0.9.7
 
 THISAPP    = icecc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = icecc
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c6dacb3f28eade45f603a99245cde4fd
+$(DL_FILE)_MD5 = c06900c2f4011428d0d48826a04f74fb
 
 install : $(TARGET)
 
@@ -78,6 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/icecream-rename-scheduler.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/icecream-0.9.7-platform-arm.patch
 	cd $(DIR_APP) && ./configure \
 				--prefix=/opt/icecream
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)

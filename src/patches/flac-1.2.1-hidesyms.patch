@@ -1,0 +1,39 @@
+diff -up flac-1.2.1/src/libFLAC/include/private/ogg_helper.h.hidesyms flac-1.2.1/src/libFLAC/include/private/ogg_helper.h
+--- flac-1.2.1/src/libFLAC/include/private/ogg_helper.h.hidesyms	2007-02-02 07:22:40.000000000 +0100
++++ flac-1.2.1/src/libFLAC/include/private/ogg_helper.h	2008-01-29 15:27:13.000000000 +0100
+@@ -35,9 +35,13 @@
+ #include <ogg/ogg.h>
+ #include "FLAC/stream_encoder.h" /* for FLAC__StreamEncoder */
+ 
++__attribute__((__visibility__("hidden")))
+ void simple_ogg_page__init(ogg_page *page);
++__attribute__((__visibility__("hidden")))
+ void simple_ogg_page__clear(ogg_page *page);
++__attribute__((__visibility__("hidden")))
+ FLAC__bool simple_ogg_page__get_at(FLAC__StreamEncoder *encoder, FLAC__uint64 position, ogg_page *page, FLAC__StreamEncoderSeekCallback seek_callback, FLAC__StreamEncoderReadCallback read_callback, void *client_data);
++__attribute__((__visibility__("hidden")))
+ FLAC__bool simple_ogg_page__set_at(FLAC__StreamEncoder *encoder, FLAC__uint64 position, ogg_page *page, FLAC__StreamEncoderSeekCallback seek_callback, FLAC__StreamEncoderWriteCallback write_callback, void *client_data);
+ 
+ #endif
+diff -up flac-1.2.1/src/libFLAC/include/private/bitreader.h.hidesyms flac-1.2.1/src/libFLAC/include/private/bitreader.h
+--- flac-1.2.1/src/libFLAC/include/private/bitreader.h.hidesyms	2007-07-10 22:22:19.000000000 +0200
++++ flac-1.2.1/src/libFLAC/include/private/bitreader.h	2008-01-29 15:27:13.000000000 +0100
+@@ -95,5 +95,6 @@ FLAC__bool FLAC__bitreader_read_golomb_u
+ FLAC__bool FLAC__bitreader_read_utf8_uint32(FLAC__BitReader *br, FLAC__uint32 *val, FLAC__byte *raw, unsigned *rawlen);
+ FLAC__bool FLAC__bitreader_read_utf8_uint64(FLAC__BitReader *br, FLAC__uint64 *val, FLAC__byte *raw, unsigned *rawlen);
+ 
++__attribute__((__visibility__("hidden")))
+ FLAC__bool bitreader_read_from_client_(FLAC__BitReader *br);
+ #endif
+diff -up flac-1.2.1/src/libFLAC/ia32/stream_encoder_asm.nasm.hidesyms flac-1.2.1/src/libFLAC/ia32/stream_encoder_asm.nasm
+--- flac-1.2.1/src/libFLAC/ia32/stream_encoder_asm.nasm.hidesyms	2008-01-29 15:27:13.000000000 +0100
++++ flac-1.2.1/src/libFLAC/ia32/stream_encoder_asm.nasm	2008-01-29 15:28:32.000000000 +0100
+@@ -34,7 +34,7 @@
+ 
+ 	data_section
+ 
+-cglobal precompute_partition_info_sums_32bit_asm_ia32_
++cglobal precompute_partition_info_sums_32bit_asm_ia32_:function hidden
+ 
+ 	code_section
+ 

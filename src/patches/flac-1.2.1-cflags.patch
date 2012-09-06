@@ -1,0 +1,45 @@
+diff -up flac-1.2.1/src/libFLAC/Makefile.am.cflags flac-1.2.1/src/libFLAC/Makefile.am
+--- flac-1.2.1/src/libFLAC/Makefile.am.cflags	2007-09-14 23:06:17.000000000 +0200
++++ flac-1.2.1/src/libFLAC/Makefile.am	2008-03-17 14:19:29.000000000 +0100
+@@ -41,7 +41,7 @@ CPUCFLAGS = -faltivec -force_cpusubtype_
+ else
+ # Linux-gcc for PPC does not have -force_cpusubtype_ALL, it is Darwin-specific
+ #@@@ PPC optimizations temporarily disabled
+-CPUCFLAGS = -maltivec -mabi=altivec -DFLAC__NO_ASM
++CPUCFLAGS = -DFLAC__NO_ASM
+ endif
+ endif
+ 
+@@ -69,7 +69,7 @@ endif
+ endif
+ endif
+ 
+-libFLAC_la_LIBADD = $(LOCAL_EXTRA_LIBADD) @OGG_LIBS@
++libFLAC_la_LIBADD = $(LOCAL_EXTRA_LIBADD) @OGG_LIBS@ libFLAC_extracflags.la
+ 
+ SUBDIRS = $(ARCH_SUBDIRS) include .
+ 
+@@ -112,7 +112,10 @@ libFLAC_la_SOURCES = \
+ 	metadata_iterators.c \
+ 	metadata_object.c \
+ 	stream_decoder.c \
+-	stream_encoder.c \
+ 	stream_encoder_framing.c \
+ 	window.c \
+ 	$(extra_ogg_sources)
++
++noinst_LTLIBRARIES = libFLAC_extracflags.la
++libFLAC_extracflags_la_SOURCES = stream_encoder.c
++libFLAC_extracflags_la_CFLAGS = $(AM_CFLAGS) -funroll-loops
+diff -up flac-1.2.1/configure.in.cflags flac-1.2.1/configure.in
+--- flac-1.2.1/configure.in.cflags	2007-09-13 17:48:42.000000000 +0200
++++ flac-1.2.1/configure.in	2008-03-17 14:17:08.000000000 +0100
+@@ -301,7 +301,7 @@ else
+ 	CPPFLAGS="-DNDEBUG $CPPFLAGS"
+ 	if test "x$GCC" = xyes; then
+ 		CPPFLAGS="-DFLaC__INLINE=__inline__ $CPPFLAGS"
+-		CFLAGS="-O3 -funroll-loops -finline-functions -Wall -W -Winline $CFLAGS"
++		CFLAGS="-Wall -W -Winline $CFLAGS"
+ 	fi
+ fi
+ 
