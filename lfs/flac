@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,17 +24,17 @@
 
 include Config
 
-VER        = 6.01
+VER        = 1.2.1
 
-THISAPP    = nmap-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = flac-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = nmap
-PAK_VER    = 6
+PROG       = flac
+PAK_VER    = 1
 
-DEPS       = ""
+DEPS       = "libogg"
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a1a71940f238abb835dbf3ee7412bcea
+$(DL_FILE)_MD5 = 153c8b15a54da428d1f0fadc756c22c7
 
 install : $(TARGET)
 
@@ -76,8 +76,19 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --without-nmapfe --without-zenmap
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/flac-1.2.1-asm.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/flac-1.2.1-bitreader.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/flac-1.2.1-cflags.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/flac-1.2.1-gcc43.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/flac-1.2.1-hidesyms.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/flac-1.2.1-tests.patch
+	cd $(DIR_APP) && ./autogen.sh -V
+	cd $(DIR_APP) && \
+		./configure \
+		--prefix=/usr \
+		--disable-xmms-plugin \
+		--disable-thorough-tests
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

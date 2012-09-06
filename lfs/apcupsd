@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.14.4
+VER        = 3.14.10
 
 THISAPP    = apcupsd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = apcupsd
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 78811129db1a882b9a2b9afd540470b3
+$(DL_FILE)_MD5 = 5928822d855c5cf7ac29655e3e0b8c23
 
 install : $(TARGET)
 

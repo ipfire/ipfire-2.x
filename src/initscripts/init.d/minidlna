@@ -1,0 +1,48 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/minidlna
+#
+# Description : minidlna - UPNP/DLNA streaming server
+#
+# Authors     : Michael Tremer <michael.tremer@ipfire.org>
+#
+# Version     : 01.00
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting minidlna..."
+		loadproc /usr/sbin/minidlna
+		;;
+
+	stop)
+		boot_mesg "Stopping minidlna..."
+		killproc /usr/sbin/minidlna
+		;;
+
+	reload)
+		boot_mesg "Reloading minidlna..."
+		reloadproc /usr/sbin/minidlna
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/minidlna
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/minidlna

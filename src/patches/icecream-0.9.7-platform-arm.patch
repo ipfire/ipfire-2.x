@@ -1,0 +1,22 @@
+Index: services/scheduler.cpp
+===================================================================
+--- services/scheduler.cpp	(revision 1310078)
++++ services/scheduler.cpp	(working copy)
+@@ -52,7 +52,7 @@
+ #include "config.h"
+ #include "bench.h"
+ 
+-#define DEBUG_SCHEDULER 0
++#define DEBUG_SCHEDULER 1
+ 
+ /* TODO:
+    * leak check
+@@ -613,6 +613,8 @@
+ 
+       platform_map.insert( make_pair( string( "ppc" ), string( "ppc64" ) ) );
+       platform_map.insert( make_pair( string( "s390" ), string( "s390x" ) ) );
++
++      platform_map.insert( make_pair( string( "armv5tel"), string( "armv7l" ) ) );
+     }
+ 
+   multimap<string, string>::const_iterator end = platform_map.upper_bound( target );

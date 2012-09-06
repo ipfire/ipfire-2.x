@@ -1,0 +1,41 @@
+diff -up flac-1.2.1/test/test_seeking.sh.tests flac-1.2.1/test/test_seeking.sh
+--- flac-1.2.1/test/test_seeking.sh.tests	2007-09-11 09:33:04.000000000 +0200
++++ flac-1.2.1/test/test_seeking.sh	2008-01-29 13:52:03.000000000 +0100
+@@ -103,7 +103,7 @@ tiny_seek_count=100
+ if [ "$FLAC__TEST_LEVEL" -gt 1 ] ; then
+ 	small_seek_count=10000
+ else
+-	small_seek_count=100000
++	small_seek_count=100
+ fi
+ 
+ for suffix in '' '-s' ; do
+diff -up flac-1.2.1/test/test_streams.sh.tests flac-1.2.1/test/test_streams.sh
+--- flac-1.2.1/test/test_streams.sh.tests	2007-06-16 21:58:39.000000000 +0200
++++ flac-1.2.1/test/test_streams.sh	2008-03-17 13:57:39.000000000 +0100
+@@ -39,6 +39,10 @@ if [ x"$FLAC__TEST_LEVEL" = x ] ; then
+ 	FLAC__TEST_LEVEL=1
+ fi
+ 
++if [ "$FLAC__TEST_LEVEL" -eq 0 ] ; then
++	exit 0
++fi
++
+ flac --help 1>/dev/null 2>/dev/null || die "ERROR can't find flac executable"
+ 
+ run_flac ()
+diff -up flac-1.2.1/src/test_streams/main.c.tests flac-1.2.1/src/test_streams/main.c
+--- flac-1.2.1/src/test_streams/main.c.tests	2007-08-31 07:54:49.000000000 +0200
++++ flac-1.2.1/src/test_streams/main.c	2008-01-29 13:53:46.000000000 +0100
+@@ -898,9 +898,9 @@ int main(int argc, char *argv[])
+ 	if(!generate_noise("noise.raw", 65536 * 8 * 3)) return 1;
+ 	if(!generate_noise("noise8m32.raw", 32)) return 1;
+ 	if(!generate_wackywavs()) return 1;
+-	for(channels = 1; channels <= 8; channels++) {
++	for(channels = 1; channels <= 2; channels++) {
+ 		unsigned bits_per_sample;
+-		for(bits_per_sample = 4; bits_per_sample <= 24; bits_per_sample++) {
++		for(bits_per_sample = 8; bits_per_sample <= 24; bits_per_sample += 8) {
+ 			static const unsigned nsamples[] = { 1, 111, 4777 } ;
+ 			unsigned samples;
+ 			for(samples = 0; samples < sizeof(nsamples)/sizeof(nsamples[0]); samples++) {

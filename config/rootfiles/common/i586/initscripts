@@ -48,6 +48,7 @@ etc/rc.d/init.d/mISDN
 #etc/rc.d/init.d/mediatomb
 #etc/rc.d/init.d/messagebus
 #etc/rc.d/init.d/miau
+#etc/rc.d/init.d/minidlna
 #etc/rc.d/init.d/miniupnpd
 #etc/rc.d/init.d/mldonkey
 etc/rc.d/init.d/modules
@@ -58,6 +59,7 @@ etc/rc.d/init.d/mountkernfs
 #etc/rc.d/init.d/mysql
 #etc/rc.d/init.d/netsnmpd
 etc/rc.d/init.d/network
+etc/rc.d/init.d/network-vlans
 #etc/rc.d/init.d/networking
 etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/blue
@@ -215,6 +217,7 @@ etc/rc.d/rcsysinit.d/S70console
 etc/rc.d/rcsysinit.d/S75firstsetup
 etc/rc.d/rcsysinit.d/S80localnet
 etc/rc.d/rcsysinit.d/S90sysctl
+etc/rc.d/rcsysinit.d/S91network-vlans
 etc/rc.d/rc3.d/S15fireinfo
 #etc/sysconfig
 etc/sysconfig/createfiles
