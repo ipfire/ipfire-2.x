@@ -1,4 +1,8 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/network-vlans
+etc/rc.d/rcsysinit.d/S91network-vlans
 srv/web/ipfire/cgi-bin/connections.cgi
 usr/lib/gconv
+var/ipfire/ethernet/vlans
+var/ipfire/outgoing/bin/outgoingfw.pl

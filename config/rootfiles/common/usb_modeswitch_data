@@ -5,6 +5,7 @@ usr/share/usb_modeswitch/03f0:002a
 usr/share/usb_modeswitch/0408:f000
 usr/share/usb_modeswitch/0421:060c
 usr/share/usb_modeswitch/0421:0610
+usr/share/usb_modeswitch/0421:061d
 usr/share/usb_modeswitch/0421:0622
 usr/share/usb_modeswitch/0421:0627
 usr/share/usb_modeswitch/0421:062c
@@ -35,6 +36,7 @@ usr/share/usb_modeswitch/05c7:1000
 usr/share/usb_modeswitch/072f:100d
 usr/share/usb_modeswitch/07d1:a800
 usr/share/usb_modeswitch/07d1:a804
+usr/share/usb_modeswitch/0922:1001
 usr/share/usb_modeswitch/0930:0d46
 usr/share/usb_modeswitch/0ace:2011
 usr/share/usb_modeswitch/0ace:20ff
@@ -77,6 +79,7 @@ usr/share/usb_modeswitch/0af0:8302
 usr/share/usb_modeswitch/0af0:8304
 usr/share/usb_modeswitch/0af0:8400
 usr/share/usb_modeswitch/0af0:8600
+usr/share/usb_modeswitch/0af0:8700
 usr/share/usb_modeswitch/0af0:8800
 usr/share/usb_modeswitch/0af0:8900
 usr/share/usb_modeswitch/0af0:9000
@@ -163,6 +166,7 @@ usr/share/usb_modeswitch/1410:5041
 usr/share/usb_modeswitch/1410:5059
 usr/share/usb_modeswitch/148e:a000
 usr/share/usb_modeswitch/148f:2578
+usr/share/usb_modeswitch/15eb:7153
 usr/share/usb_modeswitch/16d8:6281
 usr/share/usb_modeswitch/16d8:6803
 usr/share/usb_modeswitch/16d8:6804
@@ -184,12 +188,15 @@ usr/share/usb_modeswitch/19d2:0110
 usr/share/usb_modeswitch/19d2:0115
 usr/share/usb_modeswitch/19d2:0146
 usr/share/usb_modeswitch/19d2:0149
+usr/share/usb_modeswitch/19d2:0154
 usr/share/usb_modeswitch/19d2:0166
 usr/share/usb_modeswitch/19d2:0169
+usr/share/usb_modeswitch/19d2:0325
 usr/share/usb_modeswitch/19d2:1001
 usr/share/usb_modeswitch/19d2:1007
 usr/share/usb_modeswitch/19d2:1009
 usr/share/usb_modeswitch/19d2:1013
+usr/share/usb_modeswitch/19d2:1017
 usr/share/usb_modeswitch/19d2:1171
 usr/share/usb_modeswitch/19d2:1175
 usr/share/usb_modeswitch/19d2:1179
@@ -209,7 +216,9 @@ usr/share/usb_modeswitch/1a8d:1000
 usr/share/usb_modeswitch/1a8d:2000
 usr/share/usb_modeswitch/1ab7:5700
 usr/share/usb_modeswitch/1b7d:0700
+usr/share/usb_modeswitch/1bbb:00ca
 usr/share/usb_modeswitch/1bbb:f000
+usr/share/usb_modeswitch/1bbb:f017
 usr/share/usb_modeswitch/1bbb:f052
 usr/share/usb_modeswitch/1c9e:1001
 usr/share/usb_modeswitch/1c9e:6061
@@ -227,6 +236,7 @@ usr/share/usb_modeswitch/1edf:6003
 usr/share/usb_modeswitch/1ee8:0009
 usr/share/usb_modeswitch/1ee8:0013
 usr/share/usb_modeswitch/1ee8:0040
+usr/share/usb_modeswitch/1ee8:004a
 usr/share/usb_modeswitch/1ee8:0060
 usr/share/usb_modeswitch/1f28:0021
 usr/share/usb_modeswitch/1fac:0032
@@ -237,7 +247,10 @@ usr/share/usb_modeswitch/201e:2009
 usr/share/usb_modeswitch/2020:f00e
 usr/share/usb_modeswitch/2077:f000
 usr/share/usb_modeswitch/21f5:1000
+usr/share/usb_modeswitch/22de:6803
 usr/share/usb_modeswitch/22f4:0021
 usr/share/usb_modeswitch/230d:0001
 usr/share/usb_modeswitch/230d:0007
+usr/share/usb_modeswitch/230d:0101
+usr/share/usb_modeswitch/2357:0200
 usr/share/usb_modeswitch/8888:6500
