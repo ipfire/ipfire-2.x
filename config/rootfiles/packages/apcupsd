@@ -12,11 +12,12 @@ etc/apcupsd/onbattery
 etc/rc.d/rc0.d/K35apcupsd
 etc/rc.d/rc3.d/S65apcupsd
 etc/rc.d/rc6.d/K35apcupsd
+#root/.lesshst
 sbin/apcaccess
 sbin/apctest
 sbin/apcupsd
 sbin/smtp
-#srv/web/ipfire/cgi-bin/multimon.cgi
+srv/web/ipfire/cgi-bin/multimon.cgi
 srv/web/ipfire/cgi-bin/upsfstats.cgi
 srv/web/ipfire/cgi-bin/upsimage.cgi
 srv/web/ipfire/cgi-bin/upsstats.cgi
@@ -25,6 +26,10 @@ srv/web/ipfire/cgi-bin/upsstats.cgi
 #usr/share/hal/fdi/policy
 #usr/share/hal/fdi/policy/20thirdparty
 #usr/share/hal/fdi/policy/20thirdparty/80-apcupsd-ups-policy.fdi
+#usr/share/man/man5/apcupsd.conf.5
+#usr/share/man/man8/apcaccess.8
+#usr/share/man/man8/apccontrol.8
+#usr/share/man/man8/apctest.8
 #usr/share/man/man8/apcupsd.8
 etc/rc.d/init.d/apcupsd
 var/ipfire/menu.d/EX-apcupsd.menu
