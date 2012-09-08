@@ -375,7 +375,7 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_UNABLE_TO_PARTITION]);
 		goto EXIT;
 	}
-	
+
 	if (fstype == EXT2) {
 //		mysystem("/sbin/modprobe ext2");
 		sprintf(mkfscommand, "/sbin/mke2fs -T ext2");
@@ -517,7 +517,7 @@ int main(int argc, char *argv[])
 	 */
 	FILE *f = NULL;
 	if (f = fopen("/harddisk/boot/grub/device.map", "w")) {
-		fprintf(f, "(hd0) %s\n", hdparams.devnode_part);
+		fprintf(f, "(hd0) %s\n", hdparams.devnode_disk);
 		fclose(f);
 	}
 

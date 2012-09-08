@@ -18,6 +18,10 @@
 #                                                                             #
 ###############################################################################
 
+# Set histchars to an empty string so we are able to replace an
+# exclamation mark.
+histchars=
+
 echo "Scanning for possible destination drives"
 
 function _mount() {
@@ -70,6 +74,9 @@ for path in /sys/block/*; do
 			;;
 	esac
 
+	# Replace any exclamation marks (e.g. cciss!c0d0).
+	device=${device//!/\/}
+
 	# Guess if this could be a raid device.
 	for dev in ${device} ${device}p1; do
 		if [ -e "/dev/${dev}" ]; then
@@ -93,7 +100,7 @@ for path in /sys/block/*; do
 	#  2: RAID
 	# 10: nothing found
 	case "${device}" in
-		*p1)
+		*p1|*c0d0)
 			exit 2
 			;;
 		*)
