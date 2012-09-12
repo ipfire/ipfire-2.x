@@ -35,6 +35,24 @@ require "${General::swroot}/header.pl";
 
 &Header::openbigbox('100%', 'center');
 
+&Header::openbox('100%', 'left', $Lang::tr{'donation'});
+
+print <<END
+<p>$Lang::tr{'donation-text'}</p>
+	<div align="center">
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+			<input type="hidden" name="cmd" value="_s-xclick">
+			<input type="hidden" name="hosted_button_id" value="HHBTSN9QRWPAY">
+			<input type="image" src="$Lang::tr{'donation-link'}" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+			<img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
+		</form>
+	</div>
+<br />
+
+END
+;
+&Header::closebox();
+
 &Header::openbox('100%', 'left', $Lang::tr{'credits'});
 
 print <<END

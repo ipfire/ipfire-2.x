@@ -1,0 +1,73 @@
+diff -up flac-1.2.1/src/libFLAC/stream_decoder.c.asm flac-1.2.1/src/libFLAC/stream_decoder.c
+--- flac-1.2.1/src/libFLAC/stream_decoder.c.asm	2007-09-13 17:38:05.000000000 +0200
++++ flac-1.2.1/src/libFLAC/stream_decoder.c	2008-01-29 10:32:17.000000000 +0100
+@@ -421,7 +421,7 @@ static FLAC__StreamDecoderInitStatus ini
+ #ifdef FLAC__CPU_IA32
+ 		FLAC__ASSERT(decoder->private_->cpuinfo.type == FLAC__CPUINFO_TYPE_IA32);
+ #ifdef FLAC__HAS_NASM
+-#if 1 /*@@@@@@ OPT: not clearly faster, needs more testing */
++#if 0 /*@@@@@@ OPT: not clearly faster, needs more testing */
+ 		if(decoder->private_->cpuinfo.data.ia32.bswap)
+ 			decoder->private_->local_bitreader_read_rice_signed_block = FLAC__bitreader_read_rice_signed_block_asm_ia32_bswap;
+ #endif
+diff -up flac-1.2.1/src/libFLAC/ia32/lpc_asm.nasm.asm flac-1.2.1/src/libFLAC/ia32/lpc_asm.nasm
+--- flac-1.2.1/src/libFLAC/ia32/lpc_asm.nasm.asm	2007-03-22 05:13:05.000000000 +0100
++++ flac-1.2.1/src/libFLAC/ia32/lpc_asm.nasm	2008-01-29 10:34:09.000000000 +0100
+@@ -1507,5 +1507,5 @@ cident FLAC__lpc_restore_signal_asm_ia32
+ end
+ 
+ %ifdef OBJ_FORMAT_elf
+-       section .note.GNU-stack noalloc
++       section .note.GNU-stack progbits noalloc noexec nowrite align=1
+ %endif
+diff -up flac-1.2.1/src/libFLAC/ia32/Makefile.am.asm flac-1.2.1/src/libFLAC/ia32/Makefile.am
+--- flac-1.2.1/src/libFLAC/ia32/Makefile.am.asm	2007-04-04 02:01:13.000000000 +0200
++++ flac-1.2.1/src/libFLAC/ia32/Makefile.am	2008-03-17 14:04:37.000000000 +0100
+@@ -37,7 +37,6 @@ STRIP_NON_ASM = sh $(top_srcdir)/strip_n
+ 
+ noinst_LTLIBRARIES = libFLAC-asm.la
+ libFLAC_asm_la_SOURCES = \
+-	bitreader_asm.nasm \
+ 	cpu_asm.nasm \
+ 	fixed_asm.nasm \
+ 	lpc_asm.nasm \
+diff -up flac-1.2.1/src/libFLAC/ia32/bitreader_asm.nasm.asm flac-1.2.1/src/libFLAC/ia32/bitreader_asm.nasm
+--- flac-1.2.1/src/libFLAC/ia32/bitreader_asm.nasm.asm	2007-03-30 02:54:53.000000000 +0200
++++ flac-1.2.1/src/libFLAC/ia32/bitreader_asm.nasm	2008-01-29 10:32:57.000000000 +0100
+@@ -564,5 +564,5 @@ cident FLAC__bitreader_read_rice_signed_
+ end
+ 
+ %ifdef OBJ_FORMAT_elf
+-	section .note.GNU-stack noalloc
++	section .note.GNU-stack progbits noalloc noexec nowrite align=1
+ %endif
+diff -up flac-1.2.1/src/libFLAC/ia32/fixed_asm.nasm.asm flac-1.2.1/src/libFLAC/ia32/fixed_asm.nasm
+--- flac-1.2.1/src/libFLAC/ia32/fixed_asm.nasm.asm	2007-03-22 05:13:05.000000000 +0100
++++ flac-1.2.1/src/libFLAC/ia32/fixed_asm.nasm	2008-01-29 10:33:52.000000000 +0100
+@@ -308,5 +308,5 @@ cident FLAC__fixed_compute_best_predicto
+ end
+ 
+ %ifdef OBJ_FORMAT_elf
+-       section .note.GNU-stack noalloc
++       section .note.GNU-stack progbits noalloc noexec nowrite align=1
+ %endif
+diff -up flac-1.2.1/src/libFLAC/ia32/cpu_asm.nasm.asm flac-1.2.1/src/libFLAC/ia32/cpu_asm.nasm
+--- flac-1.2.1/src/libFLAC/ia32/cpu_asm.nasm.asm	2007-03-22 05:13:05.000000000 +0100
++++ flac-1.2.1/src/libFLAC/ia32/cpu_asm.nasm	2008-01-29 10:33:24.000000000 +0100
+@@ -117,5 +117,5 @@ cident FLAC__cpu_info_extended_amd_asm_i
+ end
+ 
+ %ifdef OBJ_FORMAT_elf
+-       section .note.GNU-stack noalloc
++       section .note.GNU-stack progbits noalloc noexec nowrite align=1
+ %endif
+diff -up flac-1.2.1/src/libFLAC/ia32/stream_encoder_asm.nasm.asm flac-1.2.1/src/libFLAC/ia32/stream_encoder_asm.nasm
+--- flac-1.2.1/src/libFLAC/ia32/stream_encoder_asm.nasm.asm	2007-06-19 22:01:27.000000000 +0200
++++ flac-1.2.1/src/libFLAC/ia32/stream_encoder_asm.nasm	2008-01-29 10:34:40.000000000 +0100
+@@ -155,5 +155,5 @@ cident precompute_partition_info_sums_32
+ end
+ 
+ %ifdef OBJ_FORMAT_elf
+-	section .note.GNU-stack noalloc
++	section .note.GNU-stack progbits noalloc noexec nowrite align=1
+ %endif

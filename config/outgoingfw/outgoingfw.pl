@@ -73,7 +73,6 @@ my $PROTO = "";
 my $DPORT = "";
 my $DEV = "";
 my $MAC = "";
-my $POLICY = "";
 my $DO = "";
 my $DAY = "";
 
@@ -90,11 +89,9 @@ close FILE;
 
 if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
 	$outfwsettings{'STATE'} = "ALLOW";
-	$POLICY = "DROP";
-	$DO = "ACCEPT";
+	$DO = "RETURN";
 } elsif ( $outfwsettings{'POLICY'} eq 'MODE2' ) {
 	$outfwsettings{'STATE'} = "DENY";
-	$POLICY = "ACCEPT";
 	$DO = "DROP -m comment --comment 'DROP_OUTGOINGFW '";
 }
 
@@ -112,13 +109,13 @@ if ( $outfwsettings{'POLICY'} eq 'MODE0' ) {
 }
 
 if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
-	$CMD = "/sbin/iptables -A OUTGOINGFW -m state --state ESTABLISHED,RELATED -j ACCEPT";
+	$CMD = "/sbin/iptables -A OUTGOINGFW -m state --state ESTABLISHED,RELATED -j RETURN";
 	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
-	$CMD = "/sbin/iptables -A OUTGOINGFWMAC -m state --state ESTABLISHED,RELATED -j ACCEPT";
+	$CMD = "/sbin/iptables -A OUTGOINGFWMAC -m state --state ESTABLISHED,RELATED -j RETURN";
 	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
-		$CMD = "/sbin/iptables -A OUTGOINGFW -p icmp -j ACCEPT";
+		$CMD = "/sbin/iptables -A OUTGOINGFW -p icmp -j RETURN";
 	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
-		$CMD = "/sbin/iptables -A OUTGOINGFWMAC -p icmp -j ACCEPT";
+		$CMD = "/sbin/iptables -A OUTGOINGFWMAC -p icmp -j RETURN";
 	if ($DEBUG) { print "$CMD\n"; } else { system("$CMD"); }
 }
 
@@ -260,7 +257,7 @@ foreach $p2pentry (sort @p2ps)
 			$P2PSTRING = "$P2PSTRING --$p2pline[1]";
 		}
 	} else {
-		$DO = "ACCEPT";
+		$DO = "RETURN";
 		if ("$p2pline[2]" eq "on") {
 			$P2PSTRING = "$P2PSTRING --$p2pline[1]";
 		}

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,13 +19,10 @@
 #                                                                             #
 ###############################################################################
 
-my @network=();
-my @masklen=();
-my @colour=();
+use strict;
 
 use Net::IPv4Addr qw( :all );
-
-use strict;
+use Switch;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -35,42 +32,64 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-#workaround to suppress a warning when a variable is used only once
-my @dummy = ( ${Header::table1colour} );
-undef (@dummy);
+my $colour_multicast = "#A0A0A0";
 
-# Read various files
+&Header::showhttpheaders();
+
+my @network=();
+my @masklen=();
+my @colour=();
 
 my %netsettings=();
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-open (ACTIVE, '/usr/local/bin/getiptstate |') or die 'Unable to open ip_conntrack';
-my @active = <ACTIVE>;
-close (ACTIVE);
+#workaround to suppress a warning when a variable is used only once
+my @dummy = ( ${Header::table1colour} );
+undef (@dummy);
+
+# Read the connection tracking table.
+open(CONNTRACK, "/usr/local/bin/getconntracktable | sort -k 5,5 --numeric-sort --reverse |") or die "Unable to read conntrack table";
+my @conntrack = <CONNTRACK>;
+close(CONNTRACK);
+
+# Collect data for the @network array.
+
+# Add Firewall Localhost 127.0.0.1
+push(@network, '127.0.0.1');
+push(@masklen, '255.255.255.255');
+push(@colour, ${Header::colourfw});
 
 if (open(IP, "${General::swroot}/red/local-ipaddress")) {
-        my $redip = <IP>;
-        close(IP);
-        chomp $redip;
-        push(@network, $redip);
-        push(@masklen, '255.255.255.255' );
-        push(@colour, ${Header::colourfw} );
+	my $redip = <IP>;
+	close(IP);
+
+	chomp $redip;
+	push(@network, $redip);
+	push(@masklen, '255.255.255.255');
+	push(@colour, ${Header::colourfw});
 }
 
-my @vpn = `/usr/local/bin/ipsecctrl I 2>/dev/null|grep erouted|cut -d"]" -f3|cut -d"=" -f4|cut -d";" -f1| sed "s|/| |g"`;
-  foreach my $route (@vpn) {
-                chomp($route);
-                my @temp = split(/[\t ]+/, $route);
-                if ( $temp[0] eq '$redip' ){next;}
-                push(@network, $temp[0]);
-                push(@masklen, $temp[1]);
-                push(@colour, ${Header::colourvpn} );
-        }
+# Add STATIC RED aliases
+if ($netsettings{'RED_DEV'}) {
+	my $aliasfile = "${General::swroot}/ethernet/aliases";
+	open(ALIASES, $aliasfile) or die 'Unable to open aliases file.';
+	my @aliases = <ALIASES>;
+	close(ALIASES);
 
-my $aliasfile = "${General::swroot}/ethernet/aliases";
-open(ALIASES, $aliasfile) or die 'Unable to open aliases file.';
-my @aliases = <ALIASES>;
-close(ALIASES);
+	# We have a RED eth iface
+	if ($netsettings{'RED_TYPE'} eq 'STATIC') {
+		# We have a STATIC RED eth iface
+		foreach my $line (@aliases) {
+			chomp($line);
+			my @temp = split(/\,/,$line);
+			if ($temp[0]) {
+				push(@network, $temp[0]);
+				push(@masklen, $netsettings{'RED_NETMASK'} );
+				push(@colour, ${Header::colourfw} );
+			}
+		}
+	}
+}
 
 # Add Green Firewall Interface
 push(@network, $netsettings{'GREEN_ADDRESS'});
@@ -85,32 +104,11 @@ push(@colour, ${Header::colourgreen} );
 # Add Green Routes to Array
 my @routes = `/sbin/route -n | /bin/grep $netsettings{'GREEN_DEV'}`;
 foreach my $route (@routes) {
-        chomp($route);
-        my @temp = split(/[\t ]+/, $route);
-        push(@network, $temp[0]);
-        push(@masklen, $temp[2]);
-        push(@colour, ${Header::colourgreen} );
-}
-
-# Add Firewall Localhost 127.0.0.1
-push(@network, '127.0.0.1');
-push(@masklen, '255.255.255.255' );
-push(@colour, ${Header::colourfw} );
-
-# Add Orange Network
-if ($netsettings{'ORANGE_DEV'}) {
-        push(@network, $netsettings{'ORANGE_NETADDRESS'});
-        push(@masklen, $netsettings{'ORANGE_NETMASK'} );
-        push(@colour, ${Header::colourorange} );
-        # Add Orange Routes to Array
-        @routes = `/sbin/route -n | /bin/grep $netsettings{'ORANGE_DEV'}`;
-        foreach my $route (@routes) {
-                  chomp($route);
-                my @temp = split(/[\t ]+/, $route);
-                push(@network, $temp[0]);
-                push(@masklen, $temp[2]);
-                push(@colour, ${Header::colourorange} );
-        }
+	chomp($route);
+	my @temp = split(/[\t ]+/, $route);
+	push(@network, $temp[0]);
+	push(@masklen, $temp[2]);
+	push(@colour, ${Header::colourgreen} );
 }
 
 # Add Blue Firewall Interface
@@ -120,304 +118,431 @@ push(@colour, ${Header::colourfw} );
 
 # Add Blue Network
 if ($netsettings{'BLUE_DEV'}) {
-        push(@network, $netsettings{'BLUE_NETADDRESS'});
-        push(@masklen, $netsettings{'BLUE_NETMASK'} );
-        push(@colour, ${Header::colourblue} );
-        # Add Blue Routes to Array
-        @routes = `/sbin/route -n | /bin/grep $netsettings{'BLUE_DEV'}`;
-        foreach my $route (@routes) {
-                  chomp($route);
-                my @temp = split(/[\t ]+/, $route);
-                push(@network, $temp[0]);
-                push(@masklen, $temp[2]);
-                push(@colour, ${Header::colourblue} );
-        }
+	push(@network, $netsettings{'BLUE_NETADDRESS'});
+	push(@masklen, $netsettings{'BLUE_NETMASK'} );
+	push(@colour, ${Header::colourblue} );
+
+	# Add Blue Routes to Array
+	@routes = `/sbin/route -n | /bin/grep $netsettings{'BLUE_DEV'}`;
+	foreach my $route (@routes) {
+		chomp($route);
+		my @temp = split(/[\t ]+/, $route);
+		push(@network, $temp[0]);
+		push(@masklen, $temp[2]);
+		push(@colour, ${Header::colourblue} );
+	}
 }
+
+# Add Orange Firewall Interface
+push(@network, $netsettings{'ORANGE_ADDRESS'});
+push(@masklen, "255.255.255.255" );
+push(@colour, ${Header::colourfw} );
+
+# Add Orange Network
+if ($netsettings{'ORANGE_DEV'}) {
+	push(@network, $netsettings{'ORANGE_NETADDRESS'});
+	push(@masklen, $netsettings{'ORANGE_NETMASK'} );
+	push(@colour, ${Header::colourorange} );
+	# Add Orange Routes to Array
+	@routes = `/sbin/route -n | /bin/grep $netsettings{'ORANGE_DEV'}`;
+	foreach my $route (@routes) {
+		chomp($route);
+		my @temp = split(/[\t ]+/, $route);
+		push(@network, $temp[0]);
+		push(@masklen, $temp[2]);
+		push(@colour, ${Header::colourorange} );
+	}
+}
+
+# Highlight multicast connections.
+push(@network, "224.0.0.0");
+push(@masklen, "239.0.0.0");
+push(@colour, $colour_multicast);
 
 # Add OpenVPN net and RED/BLUE/ORANGE entry (when appropriate)
 if (-e "${General::swroot}/ovpn/settings") {
-    my %ovpnsettings = ();    
-    &General::readhash("${General::swroot}/ovpn/settings", \%ovpnsettings);
-    my @tempovpnsubnet = split("\/",$ovpnsettings{'DOVPN_SUBNET'});
+	my %ovpnsettings = ();
+	&General::readhash("${General::swroot}/ovpn/settings", \%ovpnsettings);
+	my @tempovpnsubnet = split("\/",$ovpnsettings{'DOVPN_SUBNET'});
 
-    # add OpenVPN net
-                push(@network, $tempovpnsubnet[0]);
-                push(@masklen, $tempovpnsubnet[1]);
-                push(@colour, ${Header::colourovpn} );
+	# add OpenVPN net
+	push(@network, $tempovpnsubnet[0]);
+	push(@masklen, $tempovpnsubnet[1]);
+	push(@colour, ${Header::colourovpn} );
 
+	# add BLUE:port / proto
+	if (($ovpnsettings{'ENABLED_BLUE'} eq 'on') && $netsettings{'BLUE_DEV'}) {
+		push(@network, $netsettings{'BLUE_ADDRESS'} );
+		push(@masklen, '255.255.255.255' );
+		push(@colour, ${Header::colourovpn});
+	}
 
-    if ( ($ovpnsettings{'ENABLED_BLUE'} eq 'on') && $netsettings{'BLUE_DEV'} ) {
-      # add BLUE:port / proto
-            push(@network, $netsettings{'BLUE_ADDRESS'} );
-            push(@masklen, '255.255.255.255' );
-                  push(@colour, ${Header::colourovpn} );
-    }
-    if ( ($ovpnsettings{'ENABLED_ORANGE'} eq 'on') && $netsettings{'ORANGE_DEV'} ) {
-      # add ORANGE:port / proto
-            push(@network, $netsettings{'ORANGE_ADDRESS'} );
-            push(@masklen, '255.255.255.255' );
-                  push(@colour, ${Header::colourovpn} );
-    }
+	# add ORANGE:port / proto
+	if (($ovpnsettings{'ENABLED_ORANGE'} eq 'on') && $netsettings{'ORANGE_DEV'}) {
+		push(@network, $netsettings{'ORANGE_ADDRESS'} );
+		push(@masklen, '255.255.255.255' );
+		push(@colour, ${Header::colourovpn} );
+	}
 }
 
-# Add STATIC RED aliases
-if ($netsettings{'RED_DEV'}) {
-        # We have a RED eth iface
-        if ($netsettings{'RED_TYPE'} eq 'STATIC') {
-                # We have a STATIC RED eth iface
-                foreach my $line (@aliases)
-                {
-                        chomp($line);
-                        my @temp = split(/\,/,$line);
-                        if ( $temp[0] ) {
-                                push(@network, $temp[0]);
-                                push(@masklen, $netsettings{'RED_NETMASK'} );
-                                push(@colour, ${Header::colourfw} );
-                        }
-                }
-        }
+open(IPSEC, "${General::swroot}/vpn/config");
+my @ipsec = <IPSEC>;
+close(IPSEC);
+
+foreach my $line (@ipsec) {
+	my @vpn = split(',', $line);
+	my ($network, $mask) = split("/", $vpn[12]);
+
+	if (!&General::validip($mask)) {
+		$mask = ipv4_cidr2msk($mask);
+	}
+
+	push(@network, $network);
+	push(@masklen, $mask);
+	push(@colour, ${Header::colourvpn});
 }
 
-# Add VPNs
-if ( $vpn[0] ne 'none' ) {
-        foreach my $line (@vpn) {
-                my @temp = split(/[\t ]+/,$line);
-                my @temp1 = split(/[\/:]+/,$temp[3]);
-                push(@network, $temp1[0]);
-                push(@masklen, ipv4_cidr2msk($temp1[1]));
-                push(@colour, ${Header::colourvpn} );
-        }
+if (-e "${General::swroot}/ovpn/n2nconf") {
+	open(OVPNN2N, "${General::swroot}/ovpn/ovpnconfig");
+	my @ovpnn2n = <OVPNN2N>;
+	close(OVPNN2N);
+
+	foreach my $line (@ovpnn2n) {
+		my @ovpn = split(',', $line);
+		next if ($ovpn[4] ne 'net');
+
+		my ($network, $mask) = split("/", $ovpn[12]);
+		if (!&General::validip($mask)) {
+			$mask = ipv4_cidr2msk($mask);
+		}
+
+		push(@network, $network);
+		push(@masklen, $mask);
+		push(@colour, ${Header::colourovpn});
+	}
 }
 
-#Establish simple filtering&sorting boxes on top of table
-
-our %cgiparams;
-&Header::getcgihash(\%cgiparams);
-
-my @list_proto = ($Lang::tr{'all'}, 'icmp', 'udp', 'tcp');
-my @list_state = ($Lang::tr{'all'}, 'SYN_SENT', 'SYN_RECV', 'ESTABLISHED', 'FIN_WAIT',
-                    'CLOSE_WAIT', 'LAST_ACK', 'TIME_WAIT', 'CLOSE', 'LISTEN');
-my @list_mark = ($Lang::tr{'all'}, '[ASSURED]', '[UNREPLIED]');
-my @list_sort = ('orgsip','protocol', 'expires', 'status', 'orgdip', 'orgsp',
-                    'orgdp', 'exsip', 'exdip', 'exsp', 'exdp', 'marked');
-
-# init or silently correct unknown value...
-if ( ! grep ( /^$cgiparams{'SEE_PROTO'}$/ , @list_proto )) { $cgiparams{'SEE_PROTO'} = $list_proto[0] };
-if ( ! grep ( /^$cgiparams{'SEE_STATE'}$/ , @list_state )) { $cgiparams{'SEE_STATE'} = $list_state[0] };
-if ( ($cgiparams{'SEE_MARK'} ne $Lang::tr{'all'}) &&	# ok the grep should work but it doesn't because of
-     ($cgiparams{'SEE_MARK'} ne '[ASSURED]') &&		# the '[' & ']' interpreted as list separator.
-     ($cgiparams{'SEE_MARK'} ne '[UNREPLIED]')		# So, explicitly enumerate items.
-   )  { $cgiparams{'SEE_MARK'}  = $list_mark[0] };
-if ( ! grep ( /^$cgiparams{'SEE_SORT'}$/  , @list_sort ))  { $cgiparams{'SEE_SORT'}  = $list_sort[0] };
-# *.*.*.* or a valid IP
-if ( $cgiparams{'SEE_SRC'}  !~ /^(\*\.\*\.\*\.\*\.|\d+\.\d+\.\d+\.\d+)$/) {  $cgiparams{'SEE_SRC'} = '*.*.*.*' };
-if ( $cgiparams{'SEE_DEST'} !~ /^(\*\.\*\.\*\.\*\.|\d+\.\d+\.\d+\.\d+)$/) {  $cgiparams{'SEE_DEST'} = '*.*.*.*' };
-
-
-our %entries = ();	# will hold the lines analyzed correctly
-my $unknownlines = '';	# should be empty all the time...
-my $index = 0;		# just a counter to make unique entryies in entries
-
-&Header::showhttpheaders();
+# Show the page.
 &Header::openpage($Lang::tr{'connections'}, 1, '');
 &Header::openbigbox('100%', 'left');
 &Header::openbox('100%', 'left', $Lang::tr{'connection tracking'});
 
-# Build listbox objects
-my $menu_proto = &make_select ('SEE_PROTO', $cgiparams{'SEE_PROTO'}, @list_proto);
-my $menu_state = &make_select ('SEE_STATE', $cgiparams{'SEE_STATE'}, @list_state);
-
-print <<END
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<table width='100%'>
-<tr><td align='center'><b>$Lang::tr{'legend'} : </b></td>
-    <td align='center' bgcolor='${Header::colourgreen}'><b><font color='#FFFFFF'>$Lang::tr{'lan'}</font></b></td>
-    <td align='center' bgcolor='${Header::colourred}'><b><font color='#FFFFFF'>$Lang::tr{'internet'}</font></b></td>
-    <td align='center' bgcolor='${Header::colourorange}'><b><font color='#FFFFFF'>$Lang::tr{'dmz'}</font></b></td>
-    <td align='center' bgcolor='${Header::colourblue}'><b><font color='#FFFFFF'>$Lang::tr{'wireless'}</font></b></td>
-    <td align='center' bgcolor='${Header::colourfw}'><b><font color='#FFFFFF'>IPFire</font></b></td>
-    <td align='center' bgcolor='${Header::colourvpn}'><b><font color='#FFFFFF'>$Lang::tr{'vpn'}</font></b></td>
-    <td align='center' bgcolor='${Header::colourovpn}'><b><font color='#FFFFFF'>$Lang::tr{'OpenVPN'}</font></b></td>
-</tr>
-</table>
-<br />
-<table width='100%'>
-<tr><td align='center'><font size=2>$Lang::tr{'source ip and port'}</font></td>
-		<td>&nbsp;</td>
-		<td align='center'><font size=2>$Lang::tr{'dest ip and port'}</font></td>
-		<td>&nbsp;</td>
-		<td align='center'><font size=2>$Lang::tr{'protocol'}</font></td>
-		<td align='center'><font size=2>$Lang::tr{'connection'}<br></br>$Lang::tr{'status'}</font></td>
-    <td align='center'><font size=2>$Lang::tr{'expires'}<br></br>($Lang::tr{'seconds'})</font></td>
-    
-</tr>
-<tr><td colspan='4'>&nbsp;</td>
-		<td align='center'>$menu_proto</td>
-    <td align='center'>$menu_state</td>
-    <td>&nbsp;</td>
-</tr>
-<tr>
-    <td align='center' colspan='7'></td>
-</tr>
-<tr>
-    <td align='center' colspan='7'><input type='submit' value="$Lang::tr{'update'}" /></td>
-</tr>
-
+# Print legend.
+print <<END;
+	<table width='100%'>
+		<tr>
+			<td align='center'>
+				<b>$Lang::tr{'legend'} : </b>
+			</td>
+			<td align='center' bgcolor='${Header::colourgreen}'>
+				<b><font color='#FFFFFF'>$Lang::tr{'lan'}</font></b>
+			</td>
+			<td align='center' bgcolor='${Header::colourred}'>
+				<b><font color='#FFFFFF'>$Lang::tr{'internet'}</font></b>
+			</td>
+			<td align='center' bgcolor='${Header::colourorange}'>
+				<b><font color='#FFFFFF'>$Lang::tr{'dmz'}</font></b>
+			</td>
+			<td align='center' bgcolor='${Header::colourblue}'>
+				<b><font color='#FFFFFF'>$Lang::tr{'wireless'}</font></b>
+			</td>
+			<td align='center' bgcolor='${Header::colourfw}'>
+				<b><font color='#FFFFFF'>IPFire</font></b>
+			</td>
+			<td align='center' bgcolor='${Header::colourvpn}'>
+				<b><font color='#FFFFFF'>$Lang::tr{'vpn'}</font></b>
+			</td>
+			<td align='center' bgcolor='${Header::colourovpn}'>
+				<b><font color='#FFFFFF'>$Lang::tr{'OpenVPN'}</font></b>
+			</td>
+			<td align='center' bgcolor='$colour_multicast'>
+				<b><font color='#FFFFFF'>Multicast</font></b>
+			</td>
+		</tr>
+	</table>
+	<br>
 END
-;
 
-my $i=0;
-foreach my $line (@active) {
-    $i++;
-    if ($i < 3) {
-			next;
-    }
-    chomp($line);
-    my @temp = split(' ',$line);
-
-    my ($sip, $sport) = split(':', $temp[0]);
-    my ($dip, $dport) = split(':', $temp[1]);
-    my $proto = $temp[2];
-    my $state; my $ttl;
-    if ( $proto eq "esp" ){$state = "";$ttl = $temp[3];}
-    elsif ( $proto eq "icmp" ){$state = "";$ttl = $temp[4];}
-    else{$state = $temp[3];$ttl = $temp[4];}
-    
-    next if( !(
-              		(($cgiparams{'SEE_PROTO'}  eq $Lang::tr{'all'}) || ($proto  eq $cgiparams{'SEE_PROTO'} ))
-    	         && (($cgiparams{'SEE_STATE'}  eq $Lang::tr{'all'}) || ($state  eq $cgiparams{'SEE_STATE'} ))
-               && (($cgiparams{'SEE_SRC'}    eq "*.*.*.*")        || ($sip    eq $cgiparams{'SEE_SRC'}   ))
-               && (($cgiparams{'SEE_DEST'}   eq "*.*.*.*")    	  || ($dip    eq $cgiparams{'SEE_DEST'}  ))
-              ));
-
-    if (($proto eq 'udp') && ($ttl eq '')) {
-			$ttl = $state;
-			$state = '&nbsp;';	
-    }
-
-    my $sipcol = ipcolour($sip);
-    my $dipcol = ipcolour($dip);
-
-    my $sserv = '';
-    if ($sport < 1024) {
-	$sserv = uc(getservbyport($sport, lc($proto)));
-	if ($sserv ne '') {
-	    $sserv = "&nbsp;($sserv)";
-	}
-    }
-
-    my $dserv = '';
-    if ($dport < 1024) {
-	$dserv = uc(getservbyport($dport, lc($proto)));
-	if ($dserv ne '') {
-	    $dserv = "&nbsp;($dserv)";
-	}
-    }
-
-    print <<END
-    <tr >
-      <td align='center' bgcolor='$sipcol'>
-        <a href='/cgi-bin/ipinfo.cgi?ip=$sip'>
-          <font color='#FFFFFF'>$sip</font>
-        </a>
-      </td>
-      <td align='center' bgcolor='$sipcol'>
-        <a href='http://isc.sans.org/port_details.php?port=$sport' target='top'>
-          <font color='#FFFFFF'>$sport$sserv</font>
-        </a>
-      </td>
-      <td align='center' bgcolor='$dipcol'>
-        <a href='/cgi-bin/ipinfo.cgi?ip=$dip'>
-          <font color='#FFFFFF'>$dip</font>
-        </a>
-      </td>
-      <td align='center' bgcolor='$dipcol'>
-        <a href='http://isc.sans.org/port_details.php?port=$dport' target='top'>
-          <font color='#FFFFFF'>$dport$dserv</font>
-        </a>
-      </td>
-      <td align='center'>$proto</td>
-      <td align='center'>$state</td>
-      <td align='center'>$ttl</td>
-    </tr>
+# Print table header.
+print <<END;
+	<table width='100%'>
+		<tr>
+			<th align='center'>
+				$Lang::tr{'protocol'}
+			</th>
+			<th align='center'>
+				$Lang::tr{'source ip and port'}
+			</th>
+			<th>&nbsp;</th>
+			<th align='center'>
+				$Lang::tr{'dest ip and port'}
+			</th>
+			<th>&nbsp;</th>
+			<th align='center'>
+				$Lang::tr{'download'} /
+				<br>$Lang::tr{'upload'}
+			</th>
+			<th align='center'>
+				$Lang::tr{'connection'}<br>$Lang::tr{'status'}
+			</th>
+			<th align='center'>
+				$Lang::tr{'expires'}<br>($Lang::tr{'seconds'})
+			</th>
+		</tr>
 END
-;
+
+foreach my $line (@conntrack) {
+	my @conn = split(' ', $line);
+
+	# The first bit is the l3 protocol.
+	my $l3proto = $conn[0];
+
+	# Skip everything that is not IPv4.
+	if ($l3proto ne 'ipv4') {
+		next;
+	}
+
+	# L4 protocol (tcp, udp, ...).
+	my $l4proto = $conn[2];
+
+	# Translate unknown protocols.
+	if ($l4proto eq 'unknown') {
+		my $l4protonum = $conn[3];
+		if ($l4protonum eq '2') {
+			$l4proto = 'IGMP';
+		} elsif ($l4protonum eq '4') {
+			$l4proto = 'IPv4 Encap';
+		} elsif ($l4protonum eq '33') {
+			$l4proto = 'DCCP';
+		} elsif ($l4protonum eq '41') {
+			$l4proto = 'IPv6 Encap';
+		} elsif ($l4protonum eq '50') {
+			$l4proto = 'ESP';
+		} elsif ($l4protonum eq '51') {
+			$l4proto = 'AH';
+		} elsif ($l4protonum eq '132') {
+			$l4proto = 'SCTP';
+		} else {
+			$l4proto = $l4protonum;
+		}
+	} else {
+		$l4proto = uc($l4proto);
+	}
+
+	# Source and destination.
+	my $sip;
+	my $sip_ret;
+	my $dip;
+	my $dip_ret;
+	my $sport;
+	my $sport_ret;
+	my $dport;
+	my $dport_ret;
+	my @packets;
+	my @bytes;
+
+	my $ttl = $conn[4];
+	my $state;
+	if ($l4proto eq 'TCP') {
+		$state = $conn[5];
+	}
+
+	# Kick out everything that is not IPv4.
+	foreach my $item (@conn) {
+		my ($key, $val) = split('=', $item);
+
+		switch ($key) {
+			case "src" {
+				if ($sip == "") {
+					$sip = $val;
+				} else {
+					$dip_ret = $val;
+				}
+			}
+			case "dst" {
+				if ($dip == "") {
+					$dip = $val;
+				} else {
+					$sip_ret = $val;
+				}
+			}
+			case "sport" {
+				if ($sport == "") {
+					$sport = $val;
+				} else {
+					$dport_ret = $val;
+				}
+			}
+			case "dport" {
+				if ($dport == "") {
+					$dport = $val;
+				} else {
+					$sport_ret = $val;
+				}
+			}
+			case "packets" {
+				push(@packets, $val);
+			}
+			case "bytes" {
+				push(@bytes, $val);
+			}
+		}
+	}
+
+	my $sip_colour = ipcolour($sip);
+	my $dip_colour = ipcolour($dip);
+
+	my $sserv = '';
+	if ($sport < 1024) {
+		$sserv = uc(getservbyport($sport, lc($l4proto)));
+	}
+
+	my $dserv = '';
+	if ($dport < 1024) {
+		$dserv = uc(getservbyport($dport, lc($l4proto)));
+	}
+
+	my $bytes_in = format_bytes($bytes[0]);
+	my $bytes_out = format_bytes($bytes[1]);
+
+	# Format TTL
+	$ttl = format_time($ttl);
+
+	my $sip_extra;
+	if ($sip ne $sip_ret) {
+		$sip_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$sip_extra .= "<a href='/cgi-bin/ipinfo.cgi?ip=$sip_ret'>";
+		$sip_extra .= "	<font color='#FFFFFF'>$sip_ret</font>";
+		$sip_extra .= "</a>";
+	}
+
+	my $dip_extra;
+	if ($dip ne $dip_ret) {
+		$dip_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$dip_extra .= "<a href='/cgi-bin/ipinfo.cgi?ip=$dip_ret'>";
+		$dip_extra .= " <font color='#FFFFFF'>$dip_ret</font>";
+		$dip_extra .= "</a>";
+	}
+
+
+	my $sport_extra;
+	if ($sport ne $sport_ret) {
+		my $sserv_ret = '';
+		if ($sport_ret < 1024) {
+			$sserv_ret = uc(getservbyport($sport_ret, lc($l4proto)));
+		}
+
+		$sport_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$sport_extra .= "<a href='http://isc.sans.org/port_details.php?port=$sport_ret' target='top' title='$sserv_ret'>";
+		$sport_extra .= " <font color='#FFFFFF'>$sport_ret</font>";
+		$sport_extra .= "</a>";
+	}
+
+	my $dport_extra;
+	if ($dport ne $dport_ret) {
+		my $dserv_ret = '';
+		if ($dport_ret < 1024) {
+			$dserv_ret = uc(getservbyport($dport_ret, lc($l4proto)));
+		}
+
+		$dport_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$dport_extra .= "<a href='http://isc.sans.org/port_details.php?port=$dport_ret' target='top' title='$dserv_ret'>";
+		$dport_extra .= " <font color='#FFFFFF'>$dport_ret</font>";
+		$dport_extra .= "</a>";
+	}
+
+	print <<END;
+	<tr>
+		<td align='center'>$l4proto</td>
+		<td align='center' bgcolor='$sip_colour'>
+			<a href='/cgi-bin/ipinfo.cgi?ip=$sip'>
+				<font color='#FFFFFF'>$sip</font>
+			</a>
+			$sip_extra
+		</td>
+		<td align='center' bgcolor='$sip_colour'>
+			<a href='http://isc.sans.org/port_details.php?port=$sport' target='top' title='$sserv'>
+				<font color='#FFFFFF'>$sport</font>
+			</a>
+			$sport_extra
+		</td>
+		<td align='center' bgcolor='$dip_colour'>
+			<a href='/cgi-bin/ipinfo.cgi?ip=$dip'>
+				<font color='#FFFFFF'>$dip</font>
+			</a>
+			$dip_extra
+		</td>
+		<td align='center' bgcolor='$dip_colour'>
+			<a href='http://isc.sans.org/port_details.php?port=$dport' target='top' title='$dserv'>
+				<font color='#FFFFFF'>$dport</font>
+			</a>
+			$dport_extra
+		</td>
+		<td align='center'>
+			$bytes_in / $bytes_out
+		</td>
+		<td align='center'>$state</td>
+		<td align='center'>$ttl</td>
+	</tr>
+END
 }
 
-print "</table></form>";
+# Close the main table.
+print "</table>";
 
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
 
+sub format_bytes($) {
+	my $bytes = shift;
+	my @units = ("B", "k", "M", "G", "T");
+
+	foreach my $unit (@units) {
+		if ($bytes < 1024) {
+			return sprintf("%d%s", $bytes, $unit);
+		}
+
+		$bytes /= 1024;
+	}
+
+	return sprintf("%d%s", $bytes, $units[$#units]);
+}
+
+sub format_time($) {
+	my $time = shift;
+
+	my $seconds = $time % 60;
+	my $minutes = $time / 60;
+
+	my $hours = 0;
+	if ($minutes >= 60) {
+		$hours = $minutes / 60;
+		$minutes %= 60;
+	}
+
+	return sprintf("%3d:%02d:%02d", $hours, $minutes, $seconds);
+}
+
 sub ipcolour($) {
-        my $id = 0;
-        my $line;
-        my $colour = ${Header::colourred};
-        my ($ip) = $_[0];
-        my $found = 0;
-        foreach $line (@network) {
-					if ($network[$id] eq '') {
-			 			$id++;
-					} else {
-						if (!$found && ipv4_in_network( $network[$id] , $masklen[$id], $ip) ) {
-							$found = 1;
-							$colour = $colour[$id];
-						}
-						$id++;
-					}
-        }
-        return $colour
-}
+	my $id = 0;
+	my $colour = ${Header::colourred};
+	my ($ip) = $_[0];
+	my $found = 0;
 
-# Create a string containing a complete SELECT html object 
-# param1: name
-# param2: current value selected
-# param3: field list
-sub make_select ($,$,$) {
-        my $select_name = shift;
-        my $selected    = shift;
-        my $select = "<select name='$select_name'>";
+	foreach my $line (@network) {
+		if ($network[$id] eq '') {
+			$id++;
+		} else {
+			if (!$found && ipv4_in_network($network[$id], $masklen[$id], $ip) ) {
+				$found = 1;
+				$colour = $colour[$id];
+			}
+			$id++;
+		}
+	}
 
-        foreach my $value (@_) {
-                    my $check = $selected eq $value ? "selected='selected'" : '';
-                    $select .= "<option $check value='$value'>$value</option>";
-        }
-        $select .= "</select>";
-        return $select;
-}
-
-# Build a list of IP obtained from the %entries hash
-# param1: IP field name
-sub get_known_ips ($) {
-        my $field = shift;
-        my $qs = $cgiparams{'SEE_SORT'};	# switch the sort order
-        $cgiparams{'SEE_SORT'} = $field;
-
-        my @liste=('*.*.*.*');
-        foreach my $entry ( sort sort_entries keys %entries) {
-                    push (@liste, $entries{$entry}->{$field}) if (! grep (/^$entries{$entry}->{$field}$/,@liste) );
-        }
-
-        $cgiparams{'SEE_SORT'} = $qs;	#restore sort order
-        return @liste;
-}
-
-# Used to sort the table containing the lines displayed.
-sub sort_entries { #Reverse is not implemented
-        my $qs=$cgiparams{'SEE_SORT'};
-        if ($qs =~ /orgsip|orgdip|exsip|exdip/) {
-                my @a = split(/\./,$entries{$a}->{$qs});
-                my @b = split(/\./,$entries{$b}->{$qs});
-                ($a[0]<=>$b[0]) ||
-                ($a[1]<=>$b[1]) ||
-                ($a[2]<=>$b[2]) ||
-                ($a[3]<=>$b[3]);
-        } elsif ($qs =~ /expire|orgsp|orgdp|exsp|exdp/) {
-                    $entries{$a}->{$qs} <=> $entries{$b}->{$qs};
-        } else {
-                    $entries{$a}->{$qs} cmp $entries{$b}->{$qs};
-        }
+	return $colour;
 }
 
 1;
