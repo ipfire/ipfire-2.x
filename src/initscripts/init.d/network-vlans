@@ -26,7 +26,7 @@ CONFIG_FILE="/var/ipfire/ethernet/vlans"
 # Skip immediately if no configuration file has been found.
 [ -e "${CONFIG_FILE}" ] || exit 0
 
-eval $(readhash ${CONFIG_FILE})
+eval $(/usr/local/bin/readhash ${CONFIG_FILE})
 
 # This is start or stop.
 action=${1}
@@ -52,21 +52,26 @@ for interface in green0 blue0 orange0; do
 
 	case "${action}" in
 		start)
+			# If no parent device has been configured, we assume
+			# that this interface is not set up for VLANs and
+			# silently go on.
+			[ -z "${PARENT_DEV}" ] && continue
+
 			# Check if the interface does already exists.
 			# If so, we skip creating it.
 			if [ -d "/sys/class/net/${interface}" ]; then
-				echo "Interface ${interface} already exists."
+				echo "Interface ${interface} already exists." >&2
 				continue
 			fi
 
 			# Check if the parent interface exists.
-			if [ -z "${PARENT_DEV}" ] || [ ! -d "/sys/class/net/${PARENT_DEV}" ]; then
-				echo "${interface}: Parent device is not set or does not exist: ${PARENT_DEV}"
+			if [ ! -d "/sys/class/net/${PARENT_DEV}" ]; then
+				echo "${interface}: Parent device is not set or does not exist: ${PARENT_DEV}" >&2
 				continue
 			fi
 
 			if [ -z "${VLAN_ID}" ]; then
-				echo "${interface}: You did not set the VLAN ID."
+				echo "${interface}: You did not set the VLAN ID." >&2
 				continue
 			fi
 
