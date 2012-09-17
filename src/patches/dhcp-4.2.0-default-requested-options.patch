@@ -1,0 +1,44 @@
+diff -up dhcp-4.2.0/client/clparse.c.requested dhcp-4.2.0/client/clparse.c
+--- dhcp-4.2.0/client/clparse.c.requested	2010-07-21 13:29:05.000000000 +0200
++++ dhcp-4.2.0/client/clparse.c	2010-07-21 13:50:29.000000000 +0200
+@@ -37,7 +37,7 @@
+ 
+ struct client_config top_level_config;
+ 
+-#define NUM_DEFAULT_REQUESTED_OPTS	9
++#define NUM_DEFAULT_REQUESTED_OPTS	14
+ struct option *default_requested_options[NUM_DEFAULT_REQUESTED_OPTS + 1];
+ 
+ static void parse_client_default_duid(struct parse *cfile);
+@@ -111,6 +111,31 @@ isc_result_t read_client_conf ()
+ 	option_code_hash_lookup(&default_requested_options[8],
+ 				dhcpv6_universe.code_hash, &code, 0, MDL);
+ 
++	/* 10 */
++	code = DHO_NIS_DOMAIN;
++	option_code_hash_lookup(&default_requested_options[9],
++				dhcp_universe.code_hash, &code, 0, MDL);
++
++	/* 11 */
++	code = DHO_NIS_SERVERS;
++	option_code_hash_lookup(&default_requested_options[10],
++				dhcp_universe.code_hash, &code, 0, MDL);
++
++	/* 12 */
++	code = DHO_NTP_SERVERS;
++	option_code_hash_lookup(&default_requested_options[11],
++				dhcp_universe.code_hash, &code, 0, MDL);
++
++	/* 13 */
++	code = DHO_INTERFACE_MTU;
++	option_code_hash_lookup(&default_requested_options[12],
++				dhcp_universe.code_hash, &code, 0, MDL);
++
++	/* 14 */
++	code = DHO_DOMAIN_SEARCH;
++	option_code_hash_lookup(&default_requested_options[13],
++				dhcp_universe.code_hash, &code, 0, MDL);
++
+ 	for (code = 0 ; code < NUM_DEFAULT_REQUESTED_OPTS ; code++) {
+ 		if (default_requested_options[code] == NULL)
+ 			log_fatal("Unable to find option definition for "
