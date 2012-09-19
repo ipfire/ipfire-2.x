@@ -26,24 +26,28 @@ include Config
 
 VERSUFIX=ipfire$(KCFG)
 
-VER        = 20111225
+VER        = 20120916
 THISAPP    = v4l-dvb-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
+ifeq "$(KCFG)" "-xen"
+	XVER = 2.6.32
+	KVER = 2.6.32.59
+else
+	XVER = 3.2.0
+endif
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) v4l-dvb_update_it913x_1_25.patch.gz
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-v4l-dvb_update_it913x_1_25.patch.gz = $(DL_FROM)/v4l-dvb_update_it913x_1_25.patch.gz
 
-$(DL_FILE)_MD5 = 264c5f4ad7aad8dd2960799c80a7908c
-v4l-dvb_update_it913x_1_25.patch.gz_MD5 = c3e397bd64f618edbfcaa56466cdbf14
+$(DL_FILE)_MD5 = 7824fdd540605c54584df0d16f0e923b
 
 install : $(TARGET)
 
@@ -73,10 +77,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/linux && zcat $(DIR_DL)/v4l-dvb_update_it913x_1_25.patch.gz | \
-					patch -Np1 
-	cd $(DIR_APP) && make allyesconfig KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=2.6.32
-	cd $(DIR_APP) && make all KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=2.6.32
-	cd $(DIR_APP) && make install KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=2.6.32
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/v4l-dvb_rtl28xx_add_usb_ids.patch
+	cd $(DIR_APP) && make allyesconfig KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=$(XVER)
+	cd $(DIR_APP) && make all KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=$(XVER)
+	cd $(DIR_APP) && make install KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=$(XVER)
 	ln -sf $(DIR_APP)/ /usr/src/v4l-dvb
 	@$(POSTBUILD)

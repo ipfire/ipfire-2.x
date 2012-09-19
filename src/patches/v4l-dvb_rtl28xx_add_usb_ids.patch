@@ -1,0 +1,14 @@
+diff -Naur v4l-dvb-20120916.org/linux/drivers/media/usb/dvb-usb-v2/rtl28xxu.c v4l-dvb-20120916/linux/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
+--- v4l-dvb-20120916.org/linux/drivers/media/usb/dvb-usb-v2/rtl28xxu.c	2012-09-16 05:46:03.000000000 +0200
++++ v4l-dvb-20120916/linux/drivers/media/usb/dvb-usb-v2/rtl28xxu.c	2012-09-19 20:03:04.538168193 +0200
+@@ -1228,6 +1228,10 @@
+ 		&rtl2832u_props, "G-Tek Electronics Group Lifeview LV5TDLX DVB-T", NULL) },
+ 	{ DVB_USB_DEVICE(USB_VID_TERRATEC, USB_PID_NOXON_DAB_STICK,
+ 		&rtl2832u_props, "NOXON DAB/DAB+ USB dongle", NULL) },
++	{ DVB_USB_DEVICE(0x1d19, 0x1101,
++		&rtl2832u_props, "DK DVB-T USB dongle", NULL) },
++	{ DVB_USB_DEVICE(0x1f4d, 0xc803,
++		&rtl2832u_props, "Trekstor DVB-T DAB FM USB dongle", NULL) },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(usb, rtl28xxu_id_table);

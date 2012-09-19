@@ -379,7 +379,7 @@ buildipfire() {
   # The xen and PAE kernels are only available for x86
   if [ "${MACHINE_TYPE}" != "arm" ]; then
     ipfiremake linux2			KCFG="-xen"
-#    ipfiremake v4l-dvb			KCFG="-xen"
+    ipfiremake v4l-dvb			KCFG="-xen"
 #    ipfiremake mISDN			KCFG="-xen"
     ipfiremake cryptodev		KCFG="-xen"
     ipfiremake compat-wireless		KCFG="-xen"
@@ -392,7 +392,7 @@ buildipfire() {
 
     ipfiremake linux			KCFG="-pae"
 #    ipfiremake kvm-kmod			KCFG="-pae"
-#    ipfiremake v4l-dvb			KCFG="-pae"
+    ipfiremake v4l-dvb			KCFG="-pae"
     ipfiremake alsa			KCFG="-pae" KMOD=1
 #    ipfiremake mISDN			KCFG="-pae"
     ipfiremake cryptodev		KCFG="-pae"
@@ -406,7 +406,7 @@ buildipfire() {
 
     ipfiremake linux			KCFG=""
 #    ipfiremake kvm-kmod			KCFG=""
-#    ipfiremake v4l-dvb			KCFG=""
+    ipfiremake v4l-dvb			KCFG=""
     ipfiremake alsa			KCFG="" KMOD=1
 #    ipfiremake mISDN			KCFG=""
     ipfiremake cryptodev		KCFG=""
