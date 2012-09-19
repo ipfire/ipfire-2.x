@@ -24,7 +24,7 @@
 
 include Config
 
-VER           = 3.2.28
+VER           = 3.2.29
 
 RPI_PATCHES = linux-3.2.27-091073b
 
@@ -75,7 +75,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
-$(DL_FILE)_MD5				= d387130f084f48fae7b2d1756f6c9257
+$(DL_FILE)_MD5				= 89c76e7849e6dc8288d297e1d6f03e81
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 9daec752fba403a488818df6dd57a714
 
 install : $(TARGET)
@@ -119,12 +119,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Layer7-patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/netfilter_layer7_2.22_kernel3.0.patch
-
-	# Add some more LED triggers
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.11-netdev-1.patch
-
-	# Huawei Android Phones (Vodafone V845, T-Mobile Pulse/mini ...)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.15-option_add_huawei_android.patch
 
 	# Fix uevent PHYSDEVDRIVER
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_ipg-fix-driver-name.patch
