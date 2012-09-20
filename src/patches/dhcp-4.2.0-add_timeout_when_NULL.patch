@@ -1,0 +1,14 @@
+diff -up dhcp-4.2.0/common/dispatch.c.dracut dhcp-4.2.0/common/dispatch.c
+--- dhcp-4.2.0/common/dispatch.c.dracut	2010-06-01 19:29:59.000000000 +0200
++++ dhcp-4.2.0/common/dispatch.c	2010-07-21 16:10:09.000000000 +0200
+@@ -189,6 +189,10 @@ void add_timeout (when, where, what, ref
+ 	isc_interval_t interval;
+ 	isc_time_t expires;
+ 
++	if (when == NULL) {
++		return;
++	}
++
+ 	/* See if this timeout supersedes an existing timeout. */
+ 	t = (struct timeout *)0;
+ 	for (q = timeouts; q; q = q->next) {

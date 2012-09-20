@@ -1,0 +1,48 @@
+diff -up dhcp-4.2.1b1/client/dhc6.c.retransmission dhcp-4.2.1b1/client/dhc6.c
+--- dhcp-4.2.1b1/client/dhc6.c.retransmission	2011-01-28 08:40:56.000000000 +0100
++++ dhcp-4.2.1b1/client/dhc6.c	2011-01-28 08:39:22.000000000 +0100
+@@ -361,7 +361,7 @@ dhc6_retrans_init(struct client_state *c
+ static void
+ dhc6_retrans_advance(struct client_state *client)
+ {
+-	struct timeval elapsed;
++	struct timeval elapsed, elapsed_after_RT;
+ 
+ 	/* elapsed = cur - start */
+ 	elapsed.tv_sec = cur_tv.tv_sec - client->start_time.tv_sec;
+@@ -378,6 +378,8 @@ dhc6_retrans_advance(struct client_state
+ 		elapsed.tv_sec += 1;
+ 		elapsed.tv_usec -= 1000000;
+ 	}
++	elapsed_after_RT.tv_sec = elapsed.tv_sec;
++	elapsed_after_RT.tv_usec = elapsed.tv_usec;
+ 
+ 	/*
+ 	 * RT for each subsequent message transmission is based on the previous
+@@ -415,13 +417,10 @@ dhc6_retrans_advance(struct client_state
+ 		elapsed.tv_usec -= 1000000;
+ 	}
+ 	if (elapsed.tv_sec >= client->MRD) {
+-		/*
+-		 * wake at RT + cur = start + MRD
+-		 */
+-		client->RT = client->MRD +
+-			(client->start_time.tv_sec - cur_tv.tv_sec);
+-		client->RT = client->RT * 100 +
+-			(client->start_time.tv_usec - cur_tv.tv_usec) / 10000;
++		client->RT = client->MRD - elapsed_after_RT.tv_sec;
++		client->RT = client->RT * 100 - elapsed_after_RT.tv_usec / 10000;
++		if (client->RT < 0)
++			client->RT = 0;
+ 	}
+ 	client->txcount++;
+ }
+@@ -1497,7 +1496,7 @@ check_timing6 (struct client_state *clie
+ 	}
+ 
+ 	/* Check if finished (-1 argument). */
+-	if ((client->MRD != 0) && (elapsed.tv_sec > client->MRD)) {
++	if ((client->MRD != 0) && (elapsed.tv_sec >= client->MRD)) {
+ 		log_info("Max retransmission duration exceeded.");
+ 		return(CHK_TIM_MRD_EXCEEDED);
+ 	}

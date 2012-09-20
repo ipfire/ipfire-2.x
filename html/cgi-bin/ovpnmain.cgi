@@ -356,14 +356,11 @@ sub writeserverconf {
     if ($sovpnsettings{CLIENT2CLIENT} eq 'on') {
 	print CONF "client-to-client\n";
     }
-    if ($sovpnsettings{'DPROTOCOL'} eq 'udp') {
-        if ($sovpnsettings{MSSFIX} eq 'on') {
-	    print CONF "mssfix\n";
-        }
-        if ($sovpnsettings{'FRAGMENT'} eq '' || $sovpnsettings{'FRAGMENT'} eq 0) {
-		$sovpnsettings{'FRAGMENT'} = '1300';
-        }
-        print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";
+    if ($sovpnsettings{MSSFIX} eq 'on') {
+	print CONF "mssfix\n";
+    }
+    if ($sovpnsettings{FRAGMENT} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') {
+	print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";   
     }
     if ($sovpnsettings{KEEPALIVE_1} > 0 && $sovpnsettings{KEEPALIVE_2} > 0) {	
 	print CONF "keepalive $sovpnsettings{'KEEPALIVE_1'} $sovpnsettings{'KEEPALIVE_2'}\n";
@@ -532,7 +529,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     	}
     }
     if ($cgiparams{'MSSFIX'} ne 'on') {
-    	$vpnsettings{'MSSFIX'} = 'off';
+    	delete $vpnsettings{'MSSFIX'};
     } else {
     	$vpnsettings{'MSSFIX'} = $cgiparams{'MSSFIX'};
     }
@@ -1905,12 +1902,6 @@ ADV_ERROR:
     }
     if ($cgiparams{'LOG_VERB'} eq '') {
 	$cgiparams{'LOG_VERB'} =  '3';
-    }
-    if ($cgiparams{'MSSFIX'} eq '') {
-        $cgiparams{'MSSFIX'} = 'on';
-    }
-    if ($cgiparams{'FRAGMENT'} eq '') {
-        $cgiparams{'FRAGMENT'} = '1300';
     }
     $checked{'CLIENT2CLIENT'}{'off'} = '';
     $checked{'CLIENT2CLIENT'}{'on'} = '';

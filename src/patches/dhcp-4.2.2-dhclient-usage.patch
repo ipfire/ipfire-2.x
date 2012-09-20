@@ -1,0 +1,14 @@
+diff -up dhcp-4.2.2b1/client/dhclient.c.usage dhcp-4.2.2b1/client/dhclient.c
+--- dhcp-4.2.2b1/client/dhclient.c.usage	2011-07-01 13:55:16.000000000 +0200
++++ dhcp-4.2.2b1/client/dhclient.c	2011-07-01 13:58:55.243800602 +0200
+@@ -1047,6 +1047,10 @@ static void usage()
+ 		  "                [-s server-addr] [-cf config-file] "
+ 		  "[-lf lease-file]\n"
+ 		  "                [-pf pid-file] [--no-pid] [-e VAR=val]\n"
++		  "                [-I <dhcp-client-identifier>] [-B]\n"
++		  "                [-H <host-name> | -F <fqdn.fqdn>] [-timeout <timeout>]\n"
++		  "                [-V <vendor-class-identifier>]\n"
++		  "                [-R <request option list>]\n"
+ 		  "                [-sf script-file] [interface]");
+ }
+ 

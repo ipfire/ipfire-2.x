@@ -1,0 +1,4 @@
+usr/bin/telnet
+#usr/man/man1/telnet.1
+#usr/man/man5/issue.net.5
+#usr/sbin/in.telnetd

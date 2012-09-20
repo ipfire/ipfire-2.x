@@ -4,7 +4,6 @@ bin/ping
 #usr/bin/rlogin
 #usr/bin/rsh
 #usr/bin/talk
-#usr/bin/telnet
 #usr/bin/tftp
 usr/bin/whois
 #usr/sbin/ftpd
@@ -13,7 +12,6 @@ usr/bin/whois
 #usr/sbin/rlogind
 #usr/sbin/rshd
 #usr/sbin/talkd
-#usr/sbin/telnetd
 #usr/sbin/tftpd
 #usr/sbin/uucpd
 #usr/share/info/inetutils.info

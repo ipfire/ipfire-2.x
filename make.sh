@@ -362,6 +362,7 @@ buildipfire() {
   export LOGFILE
   ipfiremake configroot
   ipfiremake backup
+  ipfiremake bind
   ipfiremake dhcp
   ipfiremake dhcpcd
   ipfiremake libusb
@@ -504,7 +505,6 @@ buildipfire() {
   ipfiremake apache2			PASS=C
   ipfiremake arping
   ipfiremake beep
-  ipfiremake bind
   ipfiremake dvdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools
@@ -760,6 +760,7 @@ buildipfire() {
   ipfiremake minidlna
   ipfiremake acpid
   ipfiremake fping
+  ipfiremake telnet
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild

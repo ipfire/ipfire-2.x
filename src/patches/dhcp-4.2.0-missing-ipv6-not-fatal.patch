@@ -1,0 +1,40 @@
+diff -up dhcp-4.2.0/common/discover.c.noipv6 dhcp-4.2.0/common/discover.c
+--- dhcp-4.2.0/common/discover.c.noipv6	2010-07-21 14:31:13.000000000 +0200
++++ dhcp-4.2.0/common/discover.c	2010-07-21 16:04:57.000000000 +0200
+@@ -443,7 +443,7 @@ begin_iface_scan(struct iface_conf_list 
+ 	}
+ 
+ #ifdef DHCPv6
+-	if (local_family == AF_INET6) {
++	if ((local_family == AF_INET6) && !access("/proc/net/if_inet6", R_OK)) {
+ 		ifaces->fp6 = fopen("/proc/net/if_inet6", "re");
+ 		if (ifaces->fp6 == NULL) {
+ 			log_error("Error opening '/proc/net/if_inet6' to "
+@@ -454,6 +454,8 @@ begin_iface_scan(struct iface_conf_list 
+ 			ifaces->fp = NULL;
+ 			return 0;
+ 		}
++	} else {
++		ifaces->fp6 = NULL;
+ 	}
+ #endif
+ 
+@@ -721,7 +723,7 @@ next_iface(struct iface_info *info, int 
+ 		return 1;
+ 	}
+ #ifdef DHCPv6
+-	if (!(*err)) {
++	if (!(*err) && ifaces->fp6) {
+ 		if (local_family == AF_INET6)
+ 			return next_iface6(info, err, ifaces);
+ 	}
+@@ -740,7 +742,8 @@ end_iface_scan(struct iface_conf_list *i
+ 	ifaces->sock = -1;
+ #ifdef DHCPv6
+ 	if (local_family == AF_INET6) {
+-		fclose(ifaces->fp6);
++		if (ifaces->fp6)
++			fclose(ifaces->fp6);
+ 		ifaces->fp6 = NULL;
+ 	}
+ #endif
