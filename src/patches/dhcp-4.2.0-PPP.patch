@@ -1,0 +1,150 @@
+diff -up dhcp-4.2.0-P1/client/dhc6.c.PPP dhcp-4.2.0-P1/client/dhc6.c
+--- dhcp-4.2.0-P1/client/dhc6.c.PPP	2010-11-05 10:47:37.000000000 +0100
++++ dhcp-4.2.0-P1/client/dhc6.c	2010-11-09 15:54:12.000000000 +0100
+@@ -129,7 +129,7 @@ extern int stateless;
+  * is not how it is intended.  Upcoming rearchitecting the client should
+  * address this "one daemon model."
+  */
+-void
++isc_result_t
+ form_duid(struct data_string *duid, const char *file, int line)
+ {
+ 	struct interface_info *ip;
+@@ -141,6 +141,15 @@ form_duid(struct data_string *duid, cons
+ 	if (ip == NULL)
+ 		log_fatal("Impossible condition at %s:%d.", MDL);
+ 
++	while (ip && ip->hw_address.hbuf[0] == HTYPE_RESERVED) {
++		/* Try the other interfaces */
++		log_debug("Cannot form default DUID from interface %s.", ip->name);
++		ip = ip->next;
++	}
++	if (ip == NULL) {
++		return ISC_R_UNEXPECTED;
++	}
++
+ 	if ((ip->hw_address.hlen == 0) ||
+ 	    (ip->hw_address.hlen > sizeof(ip->hw_address.hbuf)))
+ 		log_fatal("Impossible hardware address length at %s:%d.", MDL);
+@@ -176,6 +185,8 @@ form_duid(struct data_string *duid, cons
+ 		memcpy(duid->buffer->data + 4, ip->hw_address.hbuf + 1,
+ 		       ip->hw_address.hlen - 1);
+ 	}
++
++	return ISC_R_SUCCESS;
+ }
+ 
+ /*
+@@ -5289,7 +5300,8 @@ make_client6_options(struct client_state
+ 	 */
+ 	if ((oc = lookup_option(&dhcpv6_universe, *op,
+ 				D6O_CLIENTID)) == NULL) {
+-		if (!option_cache(&oc, &default_duid, NULL, clientid_option,
++		if (default_duid.len == 0 ||
++		    !option_cache(&oc, &default_duid, NULL, clientid_option,
+ 				  MDL))
+ 			log_fatal("Failure assembling a DUID.");
+ 
+diff -up dhcp-4.2.0-P1/client/dhclient.c.PPP dhcp-4.2.0-P1/client/dhclient.c
+--- dhcp-4.2.0-P1/client/dhclient.c.PPP	2010-11-05 10:47:37.000000000 +0100
++++ dhcp-4.2.0-P1/client/dhclient.c	2010-11-09 15:37:26.000000000 +0100
+@@ -911,8 +911,8 @@ main(int argc, char **argv) {
+ 			if (default_duid.buffer != NULL)
+ 				data_string_forget(&default_duid, MDL);
+ 
+-			form_duid(&default_duid, MDL);
+-			write_duid(&default_duid);
++			if (form_duid(&default_duid, MDL) == ISC_R_SUCCESS)
++				write_duid(&default_duid);
+ 		}
+ 
+ 		for (ip = interfaces ; ip != NULL ; ip = ip->next) {
+diff -up dhcp-4.2.0-P1/common/bpf.c.PPP dhcp-4.2.0-P1/common/bpf.c
+--- dhcp-4.2.0-P1/common/bpf.c.PPP	2010-11-05 10:47:37.000000000 +0100
++++ dhcp-4.2.0-P1/common/bpf.c	2010-11-09 15:42:42.000000000 +0100
+@@ -599,6 +599,22 @@ get_hw_addr(const char *name, struct har
+                         memcpy(&hw->hbuf[1], LLADDR(sa), sa->sdl_alen);
+                         break;
+ #endif /* IFT_FDDI */
++#if defined(IFT_PPP)
++                case IFT_PPP:
++                        if (local_family != AF_INET6)
++                             log_fatal("Unsupported device type %d for \"%s\"",
++                                        sa->sdl_type, name);
++                        hw->hlen = 0;
++                        hw->hbuf[0] = HTYPE_RESERVED;
++                        /* 0xdeadbeef should never occur on the wire,
++                         *  and is a signature that something went wrong.
++                         */
++                        hw->hbuf[1] = 0xde;
++                        hw->hbuf[2] = 0xad;
++                        hw->hbuf[3] = 0xbe;
++                        hw->hbuf[4] = 0xef;
++                        break;
++#endif
+                 default:
+                         log_fatal("Unsupported device type %d for \"%s\"",
+                                   sa->sdl_type, name);
+diff -up dhcp-4.2.0-P1/common/lpf.c.PPP dhcp-4.2.0-P1/common/lpf.c
+--- dhcp-4.2.0-P1/common/lpf.c.PPP	2010-11-05 10:47:37.000000000 +0100
++++ dhcp-4.2.0-P1/common/lpf.c	2010-11-09 15:45:40.000000000 +0100
+@@ -502,6 +502,22 @@ get_hw_addr(const char *name, struct har
+ 			hw->hbuf[0] = HTYPE_FDDI;
+ 			memcpy(&hw->hbuf[1], sa->sa_data, 16);
+ 			break;
++#if defined(ARPHRD_PPP)
++		case ARPHRD_PPP:
++			if (local_family != AF_INET6)
++				log_fatal("Unsupported device type %d for \"%s\"",
++				           sa->sa_family, name);
++			hw->hlen = 0;
++			hw->hbuf[0] = HTYPE_RESERVED;
++			/* 0xdeadbeef should never occur on the wire,
++			 * and is a signature that something went wrong.
++			 */
++			hw->hbuf[1] = 0xde;
++			hw->hbuf[2] = 0xad;
++			hw->hbuf[3] = 0xbe;
++			hw->hbuf[4] = 0xef;
++			break;
++#endif
+ 		default:
+ 			log_fatal("Unsupported device type %ld for \"%s\"",
+ 				  (long int)sa->sa_family, name);
+diff -up dhcp-4.2.0-P1/includes/dhcpd.h.PPP dhcp-4.2.0-P1/includes/dhcpd.h
+--- dhcp-4.2.0-P1/includes/dhcpd.h.PPP	2010-11-05 10:47:37.000000000 +0100
++++ dhcp-4.2.0-P1/includes/dhcpd.h	2010-11-09 15:46:58.000000000 +0100
+@@ -2733,7 +2733,7 @@ void dhcpv4_client_assignments(void);
+ void dhcpv6_client_assignments(void);
+ 
+ /* dhc6.c */
+-void form_duid(struct data_string *duid, const char *file, int line);
++isc_result_t form_duid(struct data_string *duid, const char *file, int line);
+ void dhc6_lease_destroy(struct dhc6_lease **src, const char *file, int line);
+ void start_init6(struct client_state *client);
+ void start_info_request6(struct client_state *client);
+diff -up dhcp-4.2.0-P1/includes/dhcp.h.PPP dhcp-4.2.0-P1/includes/dhcp.h
+--- dhcp-4.2.0-P1/includes/dhcp.h.PPP	2010-11-05 10:47:37.000000000 +0100
++++ dhcp-4.2.0-P1/includes/dhcp.h	2010-11-09 15:48:53.000000000 +0100
+@@ -80,6 +80,8 @@ struct dhcp_packet {
+ #define HTYPE_IEEE802	6               /* IEEE 802.2 Token Ring...	*/
+ #define HTYPE_FDDI	8		/* FDDI...			*/
+ 
++#define HTYPE_RESERVED  0               /* RFC 5494 */
++
+ /* Magic cookie validating dhcp options field (and bootp vendor
+    extensions field). */
+ #define DHCP_OPTIONS_COOKIE	"\143\202\123\143"
+diff -up dhcp-4.2.0-P1/server/dhcpv6.c.PPP dhcp-4.2.0-P1/server/dhcpv6.c
+--- dhcp-4.2.0-P1/server/dhcpv6.c.PPP	2010-11-05 10:47:37.000000000 +0100
++++ dhcp-4.2.0-P1/server/dhcpv6.c	2010-11-09 15:50:17.000000000 +0100
+@@ -300,6 +300,9 @@ generate_new_server_duid(void) {
+ 		if (p->hw_address.hlen > 0) {
+ 			break;
+ 		}
++		if (p->next == NULL && p->hw_address.hbuf[0] == HTYPE_RESERVED) {
++			log_error("Can not generate DUID from interfaces which do not have hardware addresses, please configure server-duid!");
++		}
+ 	}
+ 	if (p == NULL) {
+ 		return ISC_R_UNEXPECTED;

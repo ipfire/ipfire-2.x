@@ -373,6 +373,7 @@ buildipfire() {
   export LOGFILE
   ipfiremake configroot
   ipfiremake backup
+  ipfiremake bind
   ipfiremake dhcp
   ipfiremake dhcpcd
   ipfiremake libusb
@@ -513,7 +514,6 @@ buildipfire() {
   ipfiremake apache2			PASS=C
   ipfiremake arping
   ipfiremake beep
-  ipfiremake bind
   ipfiremake dvdrtools
   ipfiremake dnsmasq
   ipfiremake dosfstools

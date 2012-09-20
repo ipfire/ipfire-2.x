@@ -1,0 +1,149 @@
+diff -up dhcp-4.2.2/client/Makefile.am.rh637017 dhcp-4.2.2/client/Makefile.am
+--- dhcp-4.2.2/client/Makefile.am.rh637017	2010-09-15 00:32:36.000000000 +0200
++++ dhcp-4.2.2/client/Makefile.am	2011-08-11 17:28:58.923897561 +0200
+@@ -5,7 +5,7 @@ dhclient_SOURCES = clparse.c dhclient.c 
+ 		   scripts/netbsd scripts/nextstep scripts/openbsd \
+ 		   scripts/solaris scripts/openwrt
+ dhclient_LDADD = ../common/libdhcp.a ../omapip/libomapi.a \
+-		 ../bind/lib/libdns.a ../bind/lib/libisc.a
++		 $(BIND9_LIBDIR) -ldns-export -lisc-export
+ man_MANS = dhclient.8 dhclient-script.8 dhclient.conf.5 dhclient.leases.5
+ EXTRA_DIST = $(man_MANS)
+ 
+diff -up dhcp-4.2.2/common/tests/Makefile.am.rh637017 dhcp-4.2.2/common/tests/Makefile.am
+--- dhcp-4.2.2/common/tests/Makefile.am.rh637017	2009-10-28 05:12:30.000000000 +0100
++++ dhcp-4.2.2/common/tests/Makefile.am	2011-08-11 17:33:45.258637236 +0200
+@@ -6,6 +6,5 @@ TESTS = test_alloc
+ 
+ test_alloc_SOURCES = test_alloc.c
+ test_alloc_LDADD = ../libdhcp.a ../../tests/libt_api.a \
+-	../../omapip/libomapi.a ../../bind/lib/libdns.a \
+-        ../../bind/lib/libisc.a
+-
++	../../omapip/libomapi.a \
++	 $(BIND9_LIBDIR) -ldns-export -lisc-export
+diff -up dhcp-4.2.2/configure.ac.rh637017 dhcp-4.2.2/configure.ac
+--- dhcp-4.2.2/configure.ac.rh637017	2011-07-20 02:32:18.000000000 +0200
++++ dhcp-4.2.2/configure.ac	2011-08-11 17:28:58.924897535 +0200
+@@ -512,20 +512,37 @@ AC_CHECK_MEMBER(struct msghdr.msg_contro
+ libbind=
+ AC_ARG_WITH(libbind,
+ 	AC_HELP_STRING([--with-libbind=PATH],
+-		       [bind includes and libraries are in PATH 
+-		        (default is ./bind)]),
++		       [bind includes are in PATH 
++		        (default is ./bind/includes)]),
+ 	use_libbind="$withval", use_libbind="no")
+ case "$use_libbind" in 
++yes|no)
++	libbind="\${top_srcdir}/bind/include"
++	;;
++*)
++	libbind="$use_libbind"
++	;;
++esac
++
++BIND9_LIBDIR='-L$(top_builddir)/bind/lib'
++AC_ARG_WITH(libbind-libs,
++	AC_HELP_STRING([--with-libbind-libs=PATH],
++		       [bind9 export libraries are in PATH]),
++		       [libbind_libs="$withval"], [libbind_libs='no'])
++case "$libbind_libs" in
+ yes)
+-	libbind="\${top_srcdir}/bind"
++	AC_MSG_ERROR([Specify path to bind9 libraries])
+ 	;;
+ no)
+-	libbind="\${top_srcdir}/bind"
++	BUNDLED_BIND=yes
+ 	;;
+ *)
+-	libbind="$use_libbind"
++	BIND9_LIBDIR="-L$libbind_libs"
++	BUNDLED_BIND=no
+ 	;;
+ esac
++AM_CONDITIONAL([BUNDLED_BIND], [test "$BUNDLED_BIND" = yes])
++AC_SUBST([BIND9_LIBDIR])
+ 
+ # OpenLDAP support.
+ AC_ARG_WITH(ldap,
+@@ -562,7 +579,7 @@ fi
+ CFLAGS="$CFLAGS $STD_CWARNINGS"
+ 
+ # Try to add the bind include directory
+-CFLAGS="$CFLAGS -I$libbind/include"
++CFLAGS="$CFLAGS -I$libbind"
+ 
+ AC_C_FLEXIBLE_ARRAY_MEMBER
+ 
+diff -up dhcp-4.2.2/dhcpctl/Makefile.am.rh637017 dhcp-4.2.2/dhcpctl/Makefile.am
+--- dhcp-4.2.2/dhcpctl/Makefile.am.rh637017	2009-10-28 05:12:30.000000000 +0100
++++ dhcp-4.2.2/dhcpctl/Makefile.am	2011-08-11 17:28:58.924897535 +0200
+@@ -6,10 +6,10 @@ EXTRA_DIST = $(man_MANS)
+ 
+ omshell_SOURCES = omshell.c
+ omshell_LDADD = libdhcpctl.a ../common/libdhcp.a ../omapip/libomapi.a \
+-	        ../bind/lib/libdns.a ../bind/lib/libisc.a
++	        $(BIND9_LIBDIR) -ldns-export -lisc-export
+ 
+ libdhcpctl_a_SOURCES = dhcpctl.c callback.c remote.c
+ 
+ cltest_SOURCES = cltest.c
+ cltest_LDADD = libdhcpctl.a ../common/libdhcp.a ../omapip/libomapi.a \
+-	       ../bind/lib/libdns.a ../bind/lib/libisc.a
+\ No newline at end of file
++	       $(BIND9_LIBDIR) -ldns-export -lisc-export
+diff -up dhcp-4.2.2/Makefile.am.rh637017 dhcp-4.2.2/Makefile.am
+--- dhcp-4.2.2/Makefile.am.rh637017	2010-03-25 00:30:38.000000000 +0100
++++ dhcp-4.2.2/Makefile.am	2011-08-11 17:28:58.925897509 +0200
+@@ -21,7 +21,13 @@ EXTRA_DIST = RELNOTES LICENSE \
+ 	     util/bindvar.sh \
+ 	     bind/Makefile bind/bind.tar.gz bind/version.tmp 
+ 
+-SUBDIRS = bind includes tests common dst omapip client dhcpctl relay server
++if BUNDLED_BIND
++SUBDIRS = bind
++else
++SUBDIRS = 
++endif
++
++SUBDIRS += includes tests common dst omapip client dhcpctl relay server
+ 
+ nobase_include_HEADERS = dhcpctl/dhcpctl.h
+ 
+diff -up dhcp-4.2.2/omapip/Makefile.am.rh637017 dhcp-4.2.2/omapip/Makefile.am
+--- dhcp-4.2.2/omapip/Makefile.am.rh637017	2010-02-12 01:13:54.000000000 +0100
++++ dhcp-4.2.2/omapip/Makefile.am	2011-08-11 17:28:58.939897149 +0200
+@@ -10,5 +10,5 @@ man_MANS = omapi.3
+ EXTRA_DIST = $(man_MANS)
+ 
+ svtest_SOURCES = test.c
+-svtest_LDADD = libomapi.a ../bind/lib/libdns.a ../bind/lib/libisc.a
++svtest_LDADD = libomapi.a $(BIND9_LIBDIR) -ldns-export -lisc-export
+ 
+diff -up dhcp-4.2.2/relay/Makefile.am.rh637017 dhcp-4.2.2/relay/Makefile.am
+--- dhcp-4.2.2/relay/Makefile.am.rh637017	2009-10-28 05:12:30.000000000 +0100
++++ dhcp-4.2.2/relay/Makefile.am	2011-08-11 17:28:58.940897123 +0200
+@@ -3,7 +3,7 @@ AM_CPPFLAGS = -DLOCALSTATEDIR='"@localst
+ sbin_PROGRAMS = dhcrelay
+ dhcrelay_SOURCES = dhcrelay.c
+ dhcrelay_LDADD = ../common/libdhcp.a ../omapip/libomapi.a \
+-		 ../bind/lib/libdns.a ../bind/lib/libisc.a
++		 $(BIND9_LIBDIR) -ldns-export -lisc-export
+ man_MANS = dhcrelay.8
+ EXTRA_DIST = $(man_MANS)
+ 
+diff -up dhcp-4.2.2/server/Makefile.am.rh637017 dhcp-4.2.2/server/Makefile.am
+--- dhcp-4.2.2/server/Makefile.am.rh637017	2010-03-24 22:49:47.000000000 +0100
++++ dhcp-4.2.2/server/Makefile.am	2011-08-11 17:28:58.944897021 +0200
+@@ -8,8 +8,7 @@ dhcpd_SOURCES = dhcpd.c dhcp.c bootp.c c
+ 
+ dhcpd_CFLAGS = $(LDAP_CFLAGS)
+ dhcpd_LDADD = ../common/libdhcp.a ../omapip/libomapi.a \
+-	      ../dhcpctl/libdhcpctl.a ../bind/lib/libdns.a \
+-	      ../bind/lib/libisc.a
++	      ../dhcpctl/libdhcpctl.a $(BIND9_LIBDIR) -ldns-export -lisc-export
+ 
+ man_MANS = dhcpd.8 dhcpd.conf.5 dhcpd.leases.5
+ EXTRA_DIST = $(man_MANS)

@@ -1,0 +1,140 @@
+diff -up dhcp-4.2.0/server/dhcpv6.c.noprefixavail dhcp-4.2.0/server/dhcpv6.c
+--- dhcp-4.2.0/server/dhcpv6.c.noprefixavail	2010-10-07 13:48:45.000000000 +0200
++++ dhcp-4.2.0/server/dhcpv6.c	2010-10-13 11:00:25.000000000 +0200
+@@ -1134,7 +1134,7 @@ try_client_v6_prefix(struct iasubopt **p
+ 		return DHCP_R_INVALIDARG;
+ 	}
+ 	tmp_plen = (int) requested_pref->data[0];
+-	if ((tmp_plen < 3) || (tmp_plen > 128)) {
++	if ((tmp_plen < 3) || (tmp_plen > 128) ||((int)tmp_plen != pool->units)) {
+ 		return ISC_R_FAILURE;
+ 	}
+ 	memcpy(&tmp_pref, requested_pref->data + 1, sizeof(tmp_pref));
+@@ -1147,9 +1147,8 @@ try_client_v6_prefix(struct iasubopt **p
+ 		return ISC_R_FAILURE;
+ 	}
+ 
+-	if (((int)tmp_plen != pool->units) ||
+-	    !ipv6_in_pool(&tmp_pref, pool)) {
+-		return ISC_R_FAILURE;
++	if (!ipv6_in_pool(&tmp_pref, pool)) {
++		return ISC_R_ADDRNOTAVAIL;
+ 	}
+ 
+ 	if (prefix6_exists(pool, &tmp_pref, tmp_plen)) {
+@@ -1409,13 +1408,6 @@ lease_to_client(struct data_string *repl
+ 		if ((status != ISC_R_SUCCESS) &&
+ 		    (status != ISC_R_NORESOURCES))
+ 			goto exit;
+-
+-		/*
+-		 * If any prefix cannot be given to any IA_PD, then
+-		 * set the NoPrefixAvail status code.
+-		 */
+-		if (reply.client_resources == 0)
+-			no_resources_avail = ISC_TRUE;
+ 	}
+ 
+ 	/*
+@@ -1549,36 +1541,6 @@ lease_to_client(struct data_string *repl
+ 					       reply.opt_state, reply.packet,
+ 					       required_opts_NAA,
+ 					       NULL);
+-	} else if (no_resources_avail && (reply.ia_count == 0) &&
+-		   (reply.packet->dhcpv6_msg_type == DHCPV6_SOLICIT))
+-	{
+-		/* Set the NoPrefixAvail status code. */
+-		if (!set_status_code(STATUS_NoPrefixAvail,
+-				     "No prefixes available for this "
+-				     "interface.", reply.opt_state)) {
+-			log_error("lease_to_client: Unable to set "
+-				  "NoPrefixAvail status code.");
+-			goto exit;
+-		}
+-
+-		/* Rewind the cursor to the start. */
+-		reply.cursor = REPLY_OPTIONS_INDEX;
+-
+-		/*
+-		 * Produce an advertise that includes only:
+-		 *
+-		 * Status code.
+-		 * Server DUID.
+-		 * Client DUID.
+-		 */
+-		reply.buf.reply.msg_type = DHCPV6_ADVERTISE;
+-		reply.cursor += store_options6((char *)reply.buf.data +
+-							reply.cursor,
+-					       sizeof(reply.buf) -
+-					       		reply.cursor,
+-					       reply.opt_state, reply.packet,
+-					       required_opts_NAA,
+-					       NULL);
+ 	} else {
+ 		/*
+ 		 * Having stored the client's IA's, store any options that
+@@ -2793,16 +2755,18 @@ find_client_temporaries(struct reply_sta
+  */
+ static isc_result_t
+ reply_process_try_addr(struct reply_state *reply, struct iaddr *addr) {
+-	isc_result_t status = ISC_R_NORESOURCES;
++	isc_result_t status = ISC_R_ADDRNOTAVAIL;
+ 	struct ipv6_pool *pool;
+ 	int i;
+ 	struct data_string data_addr;
+ 
+ 	if ((reply == NULL) || (reply->shared == NULL) ||
+-	    (reply->shared->ipv6_pools == NULL) || (addr == NULL) ||
+-	    (reply->lease != NULL))
++	    (addr == NULL) || (reply->lease != NULL))
+ 		return DHCP_R_INVALIDARG;
+ 
++	if (reply->shared->ipv6_pools == NULL)
++		return ISC_R_ADDRNOTAVAIL;
++
+ 	memset(&data_addr, 0, sizeof(data_addr));
+ 	data_addr.len = addr->len;
+ 	data_addr.data = addr->iabuf;
+@@ -3314,7 +3278,9 @@ reply_process_ia_pd(struct reply_state *
+ 		if (status == ISC_R_CANCELED)
+ 			break;
+ 
+-		if ((status != ISC_R_SUCCESS) && (status != ISC_R_ADDRINUSE))
++		if ((status != ISC_R_SUCCESS) &&
++		    (status != ISC_R_ADDRINUSE) &&
++		    (status != ISC_R_ADDRNOTAVAIL))
+ 			goto cleanup;
+ 	}
+ 
+@@ -3594,7 +3560,8 @@ reply_process_prefix(struct reply_state 
+ 
+ 			/* Either error out or skip this prefix. */
+ 			if ((status != ISC_R_SUCCESS) && 
+-			    (status != ISC_R_ADDRINUSE)) 
++			    (status != ISC_R_ADDRINUSE) &&
++			    (status != ISC_R_ADDRNOTAVAIL))
+ 				goto cleanup;
+ 
+ 			if (reply->lease == NULL) {
+@@ -3773,16 +3740,18 @@ prefix_is_owned(struct reply_state *repl
+ static isc_result_t
+ reply_process_try_prefix(struct reply_state *reply,
+ 			 struct iaddrcidrnet *pref) {
+-	isc_result_t status = ISC_R_NORESOURCES;
++	isc_result_t status = ISC_R_ADDRNOTAVAIL;
+ 	struct ipv6_pool *pool;
+ 	int i;
+ 	struct data_string data_pref;
+ 
+ 	if ((reply == NULL) || (reply->shared == NULL) ||
+-	    (reply->shared->ipv6_pools == NULL) || (pref == NULL) ||
+-	    (reply->lease != NULL))
++	    (pref == NULL) || (reply->lease != NULL))
+ 		return DHCP_R_INVALIDARG;
+ 
++	if (reply->shared->ipv6_pools == NULL)
++		return ISC_R_ADDRNOTAVAIL;
++
+ 	memset(&data_pref, 0, sizeof(data_pref));
+ 	data_pref.len = 17;
+ 	if (!buffer_allocate(&data_pref.buffer, data_pref.len, MDL)) {

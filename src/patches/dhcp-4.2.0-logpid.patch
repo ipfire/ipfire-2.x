@@ -1,0 +1,12 @@
+diff -up dhcp-4.2.0/client/dhclient.c.logpid dhcp-4.2.0/client/dhclient.c
+--- dhcp-4.2.0/client/dhclient.c.logpid	2010-07-21 16:13:52.000000000 +0200
++++ dhcp-4.2.0/client/dhclient.c	2010-07-21 16:16:51.000000000 +0200
+@@ -154,7 +154,7 @@ main(int argc, char **argv) {
+ 	else if (fd != -1)
+ 		close(fd);
+ 
+-	openlog("dhclient", LOG_NDELAY, LOG_DAEMON);
++	openlog("dhclient", LOG_NDELAY | LOG_PID, LOG_DAEMON);
+ 
+ #if !(defined(DEBUG) || defined(__CYGWIN32__))
+ 	setlogmask(LOG_UPTO(LOG_INFO));

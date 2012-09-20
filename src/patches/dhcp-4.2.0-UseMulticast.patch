@@ -1,0 +1,229 @@
+diff -up dhcp-4.2.0/server/dhcpv6.c.UseMulticast dhcp-4.2.0/server/dhcpv6.c
+--- dhcp-4.2.0/server/dhcpv6.c.UseMulticast	2010-06-01 19:30:00.000000000 +0200
++++ dhcp-4.2.0/server/dhcpv6.c	2010-07-21 16:17:30.000000000 +0200
+@@ -346,6 +346,48 @@ generate_new_server_duid(void) {
+ }
+ 
+ /*
++ * Is the D6O_UNICAST option defined in dhcpd.conf ?
++ */
++static isc_boolean_t unicast_option_defined;
++
++/*
++ * Did we already search dhcpd.conf for D6O_UNICAST option ?
++ * We need to store it here to not parse dhcpd.conf repeatedly.
++ */
++static isc_boolean_t unicast_option_parsed = ISC_FALSE;
++
++
++/*
++ * Is the D6O_UNICAST option defined in dhcpd.conf ?
++ */
++isc_boolean_t
++is_unicast_option_defined(void) {
++	struct option_state *opt_state;
++	struct option_cache *oc;
++
++	/*
++	 * If we are looking for the unicast option for the first time
++	 */
++	if (unicast_option_parsed == ISC_FALSE) {
++		unicast_option_parsed = ISC_TRUE;
++		opt_state = NULL;
++		if (!option_state_allocate(&opt_state, MDL)) {
++			log_fatal("No memory for option state.");
++		}
++
++		execute_statements_in_scope(NULL, NULL, NULL, NULL, NULL,
++				opt_state, &global_scope, root_group, NULL);
++
++		oc = lookup_option(&dhcpv6_universe, opt_state, D6O_UNICAST);
++		unicast_option_defined = (oc != NULL);
++
++		option_state_dereference(&opt_state, MDL);
++	}
++
++	return (unicast_option_defined);
++}
++
++/*
+  * Get the client identifier from the packet.
+  */
+ isc_result_t
+@@ -1405,6 +1447,56 @@ lease_to_client(struct data_string *repl
+ 						    reply.shared->group);
+ 	}
+ 
++	/* reject unicast message, unless we set unicast option */
++	if ((packet->unicast == ISC_TRUE) && !is_unicast_option_defined())
++	/*
++	 * RFC3315 section 18.2.1 (Request):
++	 *
++	 * When the server receives a Request message via unicast from a client
++	 * to which the server has not sent a unicast option, the server
++	 * discards the Request message and responds with a Reply message
++	 * containing a Status Code option with the value UseMulticast, a Server
++	 * Identifier option containing the server's DUID, the Client Identifier
++	 * option from the client message, and no other options.
++	 *
++	 * Section 18.2.3 (Renew):
++	 *
++	 * When the server receives a Renew message via unicast from a client to
++	 * which the server has not sent a unicast option, the server discards
++	 * the Renew message and responds with a Reply message containing a
++	 * Status Code option with the value UseMulticast, a Server Identifier
++	 * option containing the server's DUID, the Client Identifier option
++	 * from the client message, and no other options.
++	 */
++	{
++		/* Set the UseMulticast status code. */
++		if (!set_status_code(STATUS_UseMulticast,
++					"Unicast not allowed by server.",
++					reply.opt_state)) {
++			log_error("lease_to_client: Unable to set "
++					"UseMulticast status code.");
++			goto exit;
++		}
++
++		/* Rewind the cursor to the start. */
++		reply.cursor = REPLY_OPTIONS_INDEX;
++
++		/*
++		 * Produce an reply that includes only:
++		 *
++		 * Status code.
++		 * Server DUID.
++		 * Client DUID.
++		 */
++		reply.cursor += store_options6((char *)reply.buf.data +
++					reply.cursor,
++					sizeof(reply.buf) -
++					reply.cursor,
++					reply.opt_state, reply.packet,
++					required_opts_NAA,
++					NULL);
++	} else if (no_resources_avail && (reply.ia_count != 0) &&
++	    (reply.packet->dhcpv6_msg_type == DHCPV6_SOLICIT))
+ 	/*
+ 	 * RFC3315 section 17.2.2 (Solicit):
+ 	 *
+@@ -1429,8 +1521,6 @@ lease_to_client(struct data_string *repl
+ 	 * the server.
+ 	 * Sends a Renew/Rebind if the IA is not in the Reply message.
+ 	 */
+-	if (no_resources_avail && (reply.ia_count != 0) &&
+-	    (reply.packet->dhcpv6_msg_type == DHCPV6_SOLICIT))
+ 	{
+ 		/* Set the NoAddrsAvail status code. */
+ 		if (!set_status_code(STATUS_NoAddrsAvail,
+@@ -4128,7 +4218,6 @@ dhcpv6_solicit(struct data_string *reply
+  * Very similar to Solicit handling, except the server DUID is required.
+  */
+ 
+-/* TODO: reject unicast messages, unless we set unicast option */
+ static void
+ dhcpv6_request(struct data_string *reply_ret, struct packet *packet) {
+ 	struct data_string client_id;
+@@ -4443,7 +4532,6 @@ exit:
+  * except for the error code of when addresses don't match.
+  */
+ 
+-/* TODO: reject unicast messages, unless we set unicast option */
+ static void
+ dhcpv6_renew(struct data_string *reply, struct packet *packet) {
+ 	struct data_string client_id;
+@@ -4688,18 +4776,60 @@ iterate_over_ia_na(struct data_string *r
+ 		goto exit;
+ 	}
+ 
+-	snprintf(status_msg, sizeof(status_msg), "%s received.", packet_type);
+-	if (!set_status_code(STATUS_Success, status_msg, opt_state)) {
+-		goto exit;
+-	}
++	/* reject unicast message, unless we set unicast option */
++	if ((packet->unicast == ISC_TRUE) && !is_unicast_option_defined()) {
++		/*
++		 * RFC3315 section 18.2.6 (Release):
++		 *
++		 * When the server receives a Release message via unicast from a client
++		 * to which the server has not sent a unicast option, the server
++		 * discards the Release message and responds with a Reply message
++		 * containing a Status Code option with value UseMulticast, a Server
++		 * Identifier option containing the server's DUID, the Client Identifier
++		 * option from the client message, and no other options.
++		 *
++		 * Section 18.2.7 (Decline):
++		 *
++		 * When the server receives a Decline message via unicast from a client
++		 * to which the server has not sent a unicast option, the server
++		 * discards the Decline message and responds with a Reply message
++		 * containing a Status Code option with the value UseMulticast, a Server
++		 * Identifier option containing the server's DUID, the Client Identifier
++		 * option from the client message, and no other options.
++		 */
++		snprintf(status_msg, sizeof(status_msg),
++				 "%s received unicast.", packet_type);
++		if (!set_status_code(STATUS_UseMulticast, status_msg, opt_state)) {
++			goto exit;
++		}
+ 
+-	/* 
+-	 * Add our options that are not associated with any IA_NA or IA_TA. 
+-	 */
+-	reply_ofs += store_options6(reply_data+reply_ofs,
+-				    sizeof(reply_data)-reply_ofs, 
++		/*
++		 * Produce an reply that includes only:
++		 *
++		 * Status code.
++		 * Server DUID.
++		 * Client DUID.
++		 */
++		reply_ofs += store_options6(reply_data+reply_ofs,
++				    sizeof(reply_data)-reply_ofs,
+ 				    opt_state, packet,
+-				    required_opts, NULL);
++				    required_opts_NAA, NULL);
++
++		goto return_reply;
++	} else {
++		snprintf(status_msg, sizeof(status_msg), "%s received.", packet_type);
++		if (!set_status_code(STATUS_Success, status_msg, opt_state)) {
++			goto exit;
++		}
++
++		/*
++		 * Add our options that are not associated with any IA_NA or IA_TA.
++		 */
++		reply_ofs += store_options6(reply_data+reply_ofs,
++					    sizeof(reply_data)-reply_ofs,
++					    opt_state, packet,
++					    required_opts, NULL);
++	}
+ 
+ 	/*
+ 	 * Loop through the IA_NA reported by the client, and deal with
+@@ -4838,6 +4968,7 @@ iterate_over_ia_na(struct data_string *r
+ 	/* 
+ 	 * Return our reply to the caller.
+ 	 */
++return_reply:
+ 	reply_ret->len = reply_ofs;
+ 	reply_ret->buffer = NULL;
+ 	if (!buffer_allocate(&reply_ret->buffer, reply_ofs, MDL)) {
+@@ -4883,7 +5014,6 @@ exit:
+  * we still need to be aware of this possibility.
+  */
+ 
+-/* TODO: reject unicast messages, unless we set unicast option */
+ /* TODO: IA_TA */
+ static void
+ dhcpv6_decline(struct data_string *reply, struct packet *packet) {
+@@ -5355,7 +5485,6 @@ exit:
+  * Release means a client is done with the leases.
+  */
+ 
+-/* TODO: reject unicast messages, unless we set unicast option */
+ static void
+ dhcpv6_release(struct data_string *reply, struct packet *packet) {
+ 	struct data_string client_id;

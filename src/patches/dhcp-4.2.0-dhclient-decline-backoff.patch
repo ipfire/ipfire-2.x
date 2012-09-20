@@ -1,0 +1,63 @@
+diff -up dhcp-4.2.0/client/dhclient.c.backoff dhcp-4.2.0/client/dhclient.c
+--- dhcp-4.2.0/client/dhclient.c.backoff	2010-07-21 13:37:03.000000000 +0200
++++ dhcp-4.2.0/client/dhclient.c	2010-07-21 13:38:31.000000000 +0200
+@@ -1208,6 +1208,8 @@ void state_init (cpp)
+ 	void *cpp;
+ {
+ 	struct client_state *client = cpp;
++	enum dhcp_state init_state = client->state;
++	struct timeval tv;
+ 
+ 	ASSERT_STATE(state, S_INIT);
+ 
+@@ -1220,9 +1222,18 @@ void state_init (cpp)
+ 	client -> first_sending = cur_time;
+ 	client -> interval = client -> config -> initial_interval;
+ 
+-	/* Add an immediate timeout to cause the first DHCPDISCOVER packet
+-	   to go out. */
+-	send_discover (client);
++	if (init_state != S_DECLINED) {
++		/* Add an immediate timeout to cause the first DHCPDISCOVER packet
++		   to go out. */
++		send_discover(client);
++	} else {
++		/* We've received an OFFER and it has been DECLINEd by dhclient-script.
++		 * wait for a random time between 1 and backoff_cutoff seconds before
++		 * trying again. */
++		tv . tv_sec = cur_time + ((1 + (random() >> 2)) %  client->config->backoff_cutoff);
++		tv . tv_usec = 0;
++		add_timeout(&tv, send_discover, client, 0, 0);
++	}
+ }
+ 
+ /*
+@@ -1501,6 +1512,7 @@ void bind_lease (client)
+ 		send_decline (client);
+ 		destroy_client_lease (client -> new);
+ 		client -> new = (struct client_lease *)0;
++		client -> state = S_DECLINED;
+ 		state_init (client);
+ 		return;
+ 	}
+@@ -3711,6 +3723,7 @@ void client_location_changed ()
+ 			      case S_INIT:
+ 			      case S_REBINDING:
+ 			      case S_STOPPED:
++			      case S_DECLINED:
+ 				break;
+ 			}
+ 			client -> state = S_INIT;
+diff -up dhcp-4.2.0/includes/dhcpd.h.backoff dhcp-4.2.0/includes/dhcpd.h
+--- dhcp-4.2.0/includes/dhcpd.h.backoff	2010-07-21 13:29:05.000000000 +0200
++++ dhcp-4.2.0/includes/dhcpd.h	2010-07-21 13:38:31.000000000 +0200
+@@ -1056,7 +1056,8 @@ enum dhcp_state {
+ 	S_BOUND = 5,
+ 	S_RENEWING = 6,
+ 	S_REBINDING = 7,
+-	S_STOPPED = 8
++	S_STOPPED = 8,
++	S_DECLINED = 9
+ };
+ 
+ /* Authentication and BOOTP policy possibilities (not all values work
