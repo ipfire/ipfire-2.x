@@ -241,19 +241,22 @@ END
 print <<END;
 
 
+
 <!-- Table of networks -->
 <table border='0' width=80%>
-  <tr>	<th bgcolor='$color{'color20'}'>$Lang::tr{'network'}
-	<th bgcolor='$color{'color20'}'>IP
-	<th bgcolor='$color{'color20'}'>$Lang::tr{'status'}
-  <tr>	<td align='center' bgcolor='$Header::colourred' width='25%'><a href="/cgi-bin/pppsetup.cgi"><font size='2' color='white'><b>$Lang::tr{'internet'}</b></font></a><br>
-	<td width='30%' align='center'>$ipaddr 
-	<td width='45%' align='center'>$connstate
+  <tr>  <th bgcolor='$color{'color20'}'>$Lang::tr{'network'}</th>
+        <th bgcolor='$color{'color20'}'>IP</th>
+        <th bgcolor='$color{'color20'}'>$Lang::tr{'status'}</th></tr>
+  <tr>  <td align='center' bgcolor='$Header::colourred' width='25%'><a href="/cgi-bin/pppsetup.cgi"><font size='2' color='white'><b>$Lang::tr{'internet'}</b></font></a><br></td>
+        <td width='30%' align='center'>$ipaddr </td>
+        <td width='45%' align='center'>$connstate 
 END
 if ( $netsettings{'RED_TYPE'} ne "STATIC" && $netsettings{'RED_TYPE'} ne "DHCP" ){
 print `/usr/local/bin/dialctrl.pl show`;
 print <<END;
-	<tr><td colspan='2'>
+        </td></tr>
+        <tr><td colspan='2'>
+
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'profile'}:
 			<select name='PROFILE'>
 END
