@@ -71,8 +71,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-3.1_linux3.patch
-
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-remove-bind.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-errwarn-message.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-options.patch
