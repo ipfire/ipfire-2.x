@@ -422,7 +422,7 @@ buildipfire() {
   else
     # arm-omap kernel build
     ipfiremake linux			KCFG="-rpi"
-#    ipfiremake v4l-dvb			KCFG="-rpi"
+    ipfiremake v4l-dvb			KCFG="-rpi"
 #    ipfiremake kvm-kmod			KCFG="-rpi"
 #    ipfiremake mISDN			KCFG="-rpi"
     ipfiremake cryptodev		KCFG="-rpi"
@@ -449,7 +449,7 @@ buildipfire() {
 
     # arm-kirkwood kernel build
     ipfiremake linux			KCFG="-kirkwood"
-#    ipfiremake v4l-dvb			KCFG="-kirkwood"
+    ipfiremake v4l-dvb			KCFG="-kirkwood"
 #    ipfiremake kvm-kmod			KCFG="-kirkwood"
 #    ipfiremake mISDN			KCFG="-kirkwood"
     ipfiremake cryptodev		KCFG="-kirkwood"
