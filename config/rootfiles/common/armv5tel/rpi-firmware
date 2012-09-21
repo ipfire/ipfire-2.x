@@ -5,6 +5,7 @@ boot/arm224_start.elf
 boot/arm240_start.elf
 boot/bootcode.bin
 boot/cmdline.txt
+boot/config.txt
 #boot/first32k.bin
 boot/loader.bin
 boot/start.elf

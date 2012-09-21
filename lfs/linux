@@ -26,7 +26,7 @@ include Config
 
 VER           = 3.2.30
 
-RPI_PATCHES = linux-3.2.27-091073b
+RPI_PATCHES = linux-3.2.27-807223a
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.bz2
@@ -76,7 +76,7 @@ $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
 $(DL_FILE)_MD5				= d899e65520424a27661009ea43b28103
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 9daec752fba403a488818df6dd57a714
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= b072ccb2534ff910fd5867fc0da1b24a
 
 install : $(TARGET)
 
@@ -146,7 +146,6 @@ endif
 ifeq "$(KCFG)" "-rpi"
 	# Apply Raspberry Pi kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/rpi-patches-$(RPI_PATCHES).patch.xz | patch -Np1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.27-rpi_fix_dwc_common_build.patch
 endif
 
 ifeq "$(HEADERS)" "1"
