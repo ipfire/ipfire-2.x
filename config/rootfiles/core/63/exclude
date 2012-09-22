@@ -10,3 +10,4 @@ var/ipfire/ovpn
 etc/ssh/ssh_config
 etc/ssh/sshd_config
 etc/ssl/openssl.cnf
+var/state/dhcp/dhcpd.leases
