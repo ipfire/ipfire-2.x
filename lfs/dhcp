@@ -112,7 +112,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && \
 		./configure \
 			--prefix=/usr \
-			--sysconfdir=/etc \
+			--sysconfdir=/etc/dhcp \
 			--with-srv-lease-file=/var/state/dhcp/dhcpd.leases \
 			--disable-static \
 			--enable-paranoia \
@@ -125,6 +125,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -pv /var/state/dhcp
 	touch /var/state/dhcp/dhcpd.leases
 
-	ln -sf $(CONFIG_ROOT)/dhcp/dhcpd.conf /etc/dhcpd.conf
+	ln -svf $(CONFIG_ROOT)/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
