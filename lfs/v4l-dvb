@@ -88,6 +88,10 @@ ifeq "$(KCFG)" "-omap"
 		"s|^CONFIG_IR_RX51=m|# CONFIG_IR_RX51 is not set|g" \
 		v4l/.config
 endif
+	# Disable Radio Shark (missing tuner module)
+	cd $(DIR_APP) && sed -i -e \
+		"s|^CONFIG_RADIO_SHARK=m|# CONFIG_RADIO_SHARK is not set|g" \
+		v4l/.config
 	cd $(DIR_APP) && make all KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=$(XVER)
 	cd $(DIR_APP) && make install KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=$(XVER)
 	ln -sf $(DIR_APP)/ /usr/src/v4l-dvb
