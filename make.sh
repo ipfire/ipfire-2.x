@@ -435,7 +435,7 @@ buildipfire() {
 #    ipfiremake igb			KCFG="-rpi"
 
     ipfiremake linux			KCFG="-omap"
-#    ipfiremake v4l-dvb			KCFG="-omap"
+    ipfiremake v4l-dvb			KCFG="-omap"
 #    ipfiremake kvm-kmod			KCFG="-omap"
 #    ipfiremake mISDN			KCFG="-omap"
     ipfiremake cryptodev		KCFG="-omap"

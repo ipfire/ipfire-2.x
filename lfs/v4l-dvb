@@ -79,6 +79,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/v4l-dvb_rtl28xx_add_usb_ids.patch
 	cd $(DIR_APP) && make allyesconfig KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=$(XVER)
+ifeq "$(KCFG)" "-omap"
+	# Disable failing OMAP2 Video Out and IR RX51 driver
+	cd $(DIR_APP) && sed -i -e \
+		"s|^CONFIG_VIDEO_OMAP2_VOUT=m|# CONFIG_VIDEO_OMAP2_VOUT is not set|g" \
+		v4l/.config
+	cd $(DIR_APP) && sed -i -e \
+		"s|^CONFIG_IR_RX51=m|# CONFIG_IR_RX51 is not set|g" \
+		v4l/.config
+endif
 	cd $(DIR_APP) && make all KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=$(XVER)
 	cd $(DIR_APP) && make install KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=$(XVER)
 	ln -sf $(DIR_APP)/ /usr/src/v4l-dvb
