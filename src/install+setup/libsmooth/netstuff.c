@@ -221,7 +221,14 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 				setnetaddress(kv, colour);
 				result = 1;
 			}
-		}			
+		}
+		/* Workaround for a bug that dhcp radiobutton also end the dialog at arm
+		*/
+		else {
+			if (es.u.co != cancel) {
+				error = 1;
+			}
+		}
 	}
 	while (error);
 
@@ -322,7 +329,7 @@ void networkdialogcallbacktype(newtComponent cm, void *data)
 		newtEntrySetFlags(dhcpforcemtuentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);		
 	}
 	newtRefresh();
-	newtDrawForm(networkform);	
+	newtDrawForm(networkform);
 }
 
 int interfacecheck(struct keyvalue *kv, char *colour)
