@@ -1818,12 +1818,12 @@ END
 	$cgiparams{'REMOTE_ID'} = '';
 
 	#use default advanced value
-	$cgiparams{'IKE_ENCRYPTION'} = 'aes256|aes128|3des';	#[18];
-	$cgiparams{'IKE_INTEGRITY'}  = 'sha|md5';	#[19];
-	$cgiparams{'IKE_GROUPTYPE'}  = '2048';		#[20];
+	$cgiparams{'IKE_ENCRYPTION'} = 'aes256|aes192|aes128|3des';	#[18];
+	$cgiparams{'IKE_INTEGRITY'}  = 'sha2_256|sha|md5';	#[19];
+	$cgiparams{'IKE_GROUPTYPE'}  = '8192|6144|4096|3072|2048|1536|1024';		#[20];
 	$cgiparams{'IKE_LIFETIME'}   = '1';		#[16];
-	$cgiparams{'ESP_ENCRYPTION'} = 'aes256|aes128|3des';	#[21];
-	$cgiparams{'ESP_INTEGRITY'}  = 'sha1|md5';	#[22];
+	$cgiparams{'ESP_ENCRYPTION'} = 'aes256|aes192|aes128|3des';	#[21];
+	$cgiparams{'ESP_INTEGRITY'}  = 'sha2_256|sha1|md5';	#[22];
 	$cgiparams{'ESP_GROUPTYPE'}  = '';		#[23];
 	$cgiparams{'ESP_KEYLIFE'}    = '8';		#[17];
 	$cgiparams{'COMPRESSION'}    = 'on';		#[13];
@@ -2094,7 +2094,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(sha2_512|sha2_256|sha|md5)$/) {
+	    if ($val !~ /^(sha2_512|sha2_384|sha2_256|sha|md5|aesxcbc)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2124,7 +2124,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(aes256|aes128|3des)$/) {
+	    if ($val !~ /^(aes256|aes192|aes128|3des)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2135,13 +2135,13 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(sha2_512|sha2_256|sha1|md5)$/) {
+	    if ($val !~ /^(sha2_512|sha2_384|sha2_256|sha1|md5|aesxcbc)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
 	}
 	if ($cgiparams{'ESP_GROUPTYPE'} ne '' &&
-	    $cgiparams{'ESP_GROUPTYPE'} !~  /^modp(1024|1536|2048|3072|4096)$/) {
+	    $cgiparams{'ESP_GROUPTYPE'} !~  /^modp(1024|1536|2048|3072|4096|6144|8192)$/) {
 	    $errormessage = $Lang::tr{'invalid input'};
 	    goto ADVANCED_ERROR;
 	}
@@ -2206,14 +2206,17 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
     ADVANCED_ERROR:
     $checked{'IKE_ENCRYPTION'}{'aes256'} = '';
+    $checked{'IKE_ENCRYPTION'}{'aes192'} = '';
     $checked{'IKE_ENCRYPTION'}{'aes128'} = '';
     $checked{'IKE_ENCRYPTION'}{'3des'} = '';
     my @temp = split('\|', $cgiparams{'IKE_ENCRYPTION'});
     foreach my $key (@temp) {$checked{'IKE_ENCRYPTION'}{$key} = "selected='selected'"; }
     $checked{'IKE_INTEGRITY'}{'sha2_512'} = '';
+    $checked{'IKE_INTEGRITY'}{'sha2_384'} = '';
     $checked{'IKE_INTEGRITY'}{'sha2_256'} = '';
     $checked{'IKE_INTEGRITY'}{'sha'} = '';
     $checked{'IKE_INTEGRITY'}{'md5'} = '';
+    $checked{'IKE_INTEGRITY'}{'aesxcbc'} = '';
     @temp = split('\|', $cgiparams{'IKE_INTEGRITY'});
     foreach my $key (@temp) {$checked{'IKE_INTEGRITY'}{$key} = "selected='selected'"; }
     $checked{'IKE_GROUPTYPE'}{'768'} = '';
@@ -2230,16 +2233,18 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     # 768 is not supported by strongswan
     $checked{'IKE_GROUPTYPE'}{'768'} = '';
 
-
     $checked{'ESP_ENCRYPTION'}{'aes256'} = '';
+    $checked{'ESP_ENCRYPTION'}{'aes192'} = '';
     $checked{'ESP_ENCRYPTION'}{'aes128'} = '';
     $checked{'ESP_ENCRYPTION'}{'3des'} = '';
     @temp = split('\|', $cgiparams{'ESP_ENCRYPTION'});
     foreach my $key (@temp) {$checked{'ESP_ENCRYPTION'}{$key} = "selected='selected'"; }
     $checked{'ESP_INTEGRITY'}{'sha2_512'} = '';
+    $checked{'ESP_INTEGRITY'}{'sha2_384'} = '';
     $checked{'ESP_INTEGRITY'}{'sha2_256'} = '';
     $checked{'ESP_INTEGRITY'}{'sha1'} = '';
     $checked{'ESP_INTEGRITY'}{'md5'} = '';
+    $checked{'ESP_INTEGRITY'}{'aesxcbc'} = '';
     @temp = split('\|', $cgiparams{'ESP_INTEGRITY'});
     foreach my $key (@temp) {$checked{'ESP_INTEGRITY'}{$key} = "selected='selected'"; }
     $checked{'ESP_GROUPTYPE'}{$cgiparams{'ESP_GROUPTYPE'}} = "selected='selected'";
@@ -2277,14 +2282,19 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	<tr><td class='boldbase' align='right' valign='top'>$Lang::tr{'ike encryption'}</td><td class='boldbase' valign='top'>
 		<select name='IKE_ENCRYPTION' multiple='multiple' size='4'>
 		<option value='aes256' $checked{'IKE_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
+		<option value='aes192' $checked{'IKE_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
 		<option value='aes128' $checked{'IKE_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
 		<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>3DES</option>
 		</select></td>
 
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike integrity'}</td><td class='boldbase' valign='top'>
 		<select name='IKE_INTEGRITY' multiple='multiple' size='4'>
-		<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA</option>
+		<option value='sha2_512' $checked{'IKE_INTEGRITY'}{'sha2_512'}>SHA2 512 bit</option>
+		<option value='sha2_384' $checked{'IKE_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
+		<option value='sha2_256' $checked{'IKE_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
+		<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA1</option>
 		<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5</option>
+		<option value='aesxcbc' $checked{'IKE_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
 		</select></td>
 	
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike grouptype'}</td><td class='boldbase' valign='top'>
@@ -2307,13 +2317,19 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp encryption'}</td><td class='boldbase' valign='top'>
 		<select name='ESP_ENCRYPTION' multiple='multiple' size='4'>
 		<option value='aes256' $checked{'ESP_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
+		<option value='aes192' $checked{'ESP_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
 		<option value='aes128' $checked{'ESP_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
 		<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>3DES</option>
 
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp integrity'}</td><td class='boldbase' valign='top'>
 		<select name='ESP_INTEGRITY' multiple='multiple' size='4'>
+		<option value='sha2_512' $checked{'ESP_INTEGRITY'}{'sha2_512'}>SHA2 512 bit</option>
+		<option value='sha2_384' $checked{'ESP_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
+		<option value='sha2_256' $checked{'ESP_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
 		<option value='sha1' $checked{'ESP_INTEGRITY'}{'sha1'}>SHA1</option>
-		<option value='md5' $checked{'ESP_INTEGRITY'}{'md5'}>MD5</option></select></td>
+		<option value='md5' $checked{'ESP_INTEGRITY'}{'md5'}>MD5</option>
+		<option value='aesxcbc' $checked{'ESP_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
+		</select></td>
 
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp grouptype'}</td><td class='boldbase' valign='top'>
 		<select name='ESP_GROUPTYPE'>
