@@ -26,7 +26,7 @@
 
 #
 # Remove old core updates from pakfire cache to save space...
-core=62
+core=63
 for (( i=1; i<=$core; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
@@ -37,6 +37,7 @@ rm -f /etc/dhcpd.conf
 
 #
 #Stop services
+/etc/init.d/apache stop
 
 #
 #Extract files
@@ -44,6 +45,7 @@ extract_files
 
 #
 #Start services
+/etc/init.d/apache start
 
 #
 #Update Language cache
