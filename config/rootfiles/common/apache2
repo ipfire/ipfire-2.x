@@ -439,6 +439,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/images/mod_rewrite_fig2.gif
 #srv/web/ipfire/manual/images/mod_rewrite_fig2.png
 #srv/web/ipfire/manual/images/pixel.gif
+#srv/web/ipfire/manual/images/rewrite_backreferences.png
 #srv/web/ipfire/manual/images/rewrite_rule_flow.png
 #srv/web/ipfire/manual/images/right.gif
 #srv/web/ipfire/manual/images/ssl_intro_fig1.gif
@@ -1051,6 +1052,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/style/css/manual-zip-100pc.css
 #srv/web/ipfire/manual/style/css/manual-zip.css
 #srv/web/ipfire/manual/style/css/manual.css
+#srv/web/ipfire/manual/style/css/prettify.css
 #srv/web/ipfire/manual/style/faq.dtd
 #srv/web/ipfire/manual/style/lang
 #srv/web/ipfire/manual/style/lang.dtd
@@ -1058,6 +1060,8 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/style/latex/atbeginend.sty
 #srv/web/ipfire/manual/style/manualpage.dtd
 #srv/web/ipfire/manual/style/modulesynopsis.dtd
+#srv/web/ipfire/manual/style/scripts
+#srv/web/ipfire/manual/style/scripts/prettify.js
 #srv/web/ipfire/manual/style/sitemap.dtd
 #srv/web/ipfire/manual/style/version.ent
 #srv/web/ipfire/manual/style/xsl
@@ -1326,7 +1330,7 @@ usr/lib/apr-util-1/apr_dbd_sqlite3.so
 #usr/lib/libapr-1.la
 usr/lib/libapr-1.so
 usr/lib/libapr-1.so.0
-usr/lib/libapr-1.so.0.4.5
+usr/lib/libapr-1.so.0.4.6
 #usr/lib/libaprutil-1.a
 #usr/lib/libaprutil-1.la
 usr/lib/libaprutil-1.so
@@ -1349,17 +1353,17 @@ usr/sbin/httpd
 #usr/sbin/httxt2dbm
 #usr/sbin/logresolve
 #usr/sbin/rotatelogs
-#usr/share/man/man1/ab.1
-#usr/share/man/man1/apxs.1
 #usr/share/man/man1/dbmmanage.1
 #usr/share/man/man1/htdbm.1
 #usr/share/man/man1/htdigest.1
 #usr/share/man/man1/htpasswd.1
 #usr/share/man/man1/httxt2dbm.1
-#usr/share/man/man1/logresolve.1
+#usr/share/man/man8/ab.8
 #usr/share/man/man8/apachectl.8
+#usr/share/man/man8/apxs.8
 #usr/share/man/man8/htcacheclean.8
 #usr/share/man/man8/httpd.8
+#usr/share/man/man8/logresolve.8
 #usr/share/man/man8/rotatelogs.8
 #usr/share/man/man8/suexec.8
 var/log/httpd
