@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 2.2.22
+VER        = 2.2.23
 
 THISAPP    = httpd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -47,7 +47,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 httpd-2.2.2-config-1.patch = $(DL_FROM)/httpd-2.2.2-config-1.patch
 
-$(DL_FILE)_MD5 = 9fe3093194c8a57f085ff7c3fc43715f
+$(DL_FILE)_MD5 = ca133de0e4b4b15316990a97186b9993
 httpd-2.2.2-config-1.patch_MD5 = e02a3ec5925eb9e111400b9aa229f822
 
 install : $(TARGET)
@@ -133,10 +133,9 @@ else
 	cd $(DIR_APP) && make install
 	chown -v root:root /usr/lib/apache/httpd.exp \
 	    /usr/sbin/{apxs,apachectl,dbmmanage,envvars{,-std}} \
-	    /usr/share/man/man1/{ab,apxs,dbmmanage,ht{dbm,digest,passwd,txt2dbm}}.1 \
-	    /usr/share/man/man1/logresolve.1 \
-	    /usr/share/man/man8/{apachectl,htcacheclean,httpd}.8 \
-	    /usr/share/man/man8/{rotatelogs,suexec}.8
+	    /usr/share/man/man1/{dbmmanage,ht{dbm,digest,passwd,txt2dbm}}.1 \
+	    /usr/share/man/man8/{ab,apachectl,apxs,htcacheclean,httpd}.8 \
+	    /usr/share/man/man8/{logresolve,rotatelogs,suexec}.8
 	@rm -rf $(DIR_APP)
 endif
 	@$(POSTBUILD)

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.1-ESV-R3
+VER        = 4.2.2
 
 THISAPP    = dhcp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = af3d8db60f62664f1d5538b81e406459
+$(DL_FILE)_MD5 = bb0f0434cd796f76aa7cead391d71f31
 
 install : $(TARGET)
 
@@ -70,10 +70,59 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-remove-bind.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-errwarn-message.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-options.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-release-by-ifup.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-dhclient-decline-backoff.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-unicast-bootp.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-dhclient-usage.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-default-requested-options.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-xen-checksum.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.1-manpages.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-paths.patch
+	# Has to be enabled after glibc update.
+	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-CLOEXEC.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-inherit-leases.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-garbage-chars.patch
+	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-missing-ipv6-not-fatal.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-add_timeout_when_NULL.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.1-64_bit_lease_parse.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-capability.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-logpid.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-UseMulticast.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.1-sendDecline.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.1-retransmission.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-rfc3442-classless-static-routes.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-honor-expired.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-noprefixavail.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-sharedlib.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.0-PPP.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-lpf-ib.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-improved-xid.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.2-gpxe-cid.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp-4.2.1-invalid-dhclient-conf.patch
+
+	# Remove bundled BIND stuff.
+	# (requires newer autoconf)
+	#rm -rfv $(DIR_APP)/bind/bind.tar.gz
+	#cd $(DIR_APP) && autoreconf --verbose --force --install
+
+	cd $(DIR_APP) && \
+		./configure \
+			--prefix=/usr \
+			--sysconfdir=/etc/dhcp \
+			--with-srv-lease-file=/var/state/dhcp/dhcpd.leases \
+			--disable-static \
+			--enable-paranoia \
+			--enable-early-chroot \
+			--disable-dhcpv6
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make LIBDIR=/usr/lib INCDIR=/usr/include install
+	cd $(DIR_APP) && make install
+
+	mkdir -pv /var/state/dhcp
 	touch /var/state/dhcp/dhcpd.leases
-	ln -sf $(CONFIG_ROOT)/dhcp/dhcpd.conf /etc/dhcpd.conf
+
+	ln -svf $(CONFIG_ROOT)/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

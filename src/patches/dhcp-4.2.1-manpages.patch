@@ -1,0 +1,264 @@
+diff -up dhcp-4.2.1b1/client/dhclient.8.man dhcp-4.2.1b1/client/dhclient.8
+--- dhcp-4.2.1b1/client/dhclient.8.man	2010-07-14 22:09:34.000000000 +0200
++++ dhcp-4.2.1b1/client/dhclient.8	2011-01-27 18:19:07.000000000 +0100
+@@ -115,6 +115,33 @@ dhclient - Dynamic Host Configuration Pr
+ .B -w
+ ]
+ [
++.B -B
++]
++[
++.B -I
++.I dhcp-client-identifier
++]
++[
++.B -H
++.I host-name
++]
++[
++.B -F
++.I fqdn.fqdn
++]
++[
++.B -V
++.I vendor-class-identifier
++]
++[
++.B -R
++.I request-option-list
++]
++[
++.B -timeout
++.I timeout
++]
++[
+ .B -v
+ ]
+ [
+@@ -264,6 +291,69 @@ not to exit when it doesn't find any suc
+ program can then be used to notify the client when a network interface
+ has been added or removed, so that the client can attempt to configure an IP
+ address on that interface.
++
++.TP
++.BI \-B
++Set the BOOTP broadcast flag in request packets so servers will always
++broadcast replies.
++
++.TP
++.BI \-I\ <dhcp-client-identifier>
++Specify the dhcp-client-identifier option to send to the DHCP server.
++
++.TP
++.BI \-H\ <host-name>
++Specify the host-name option to send to the DHCP server.  The host-name
++string only contains the client's hostname prefix, to which the server will
++append the ddns-domainname or domain-name options, if any, to derive the
++fully qualified domain name of the client.  The
++.B -H
++option cannot be used with the
++.B -F
++option.
++
++.TP
++.BI \-F\ <fqdn.fqdn>
++Specify the fqdn.fqdn option to send to the DHCP server.  This option cannot
++be used with the
++.B -H
++option.  The fqdn.fqdn option must specify the complete domain name of the
++client host, which the server may use for dynamic DNS updates.
++
++.TP
++.BI \-V\ <vendor-class-identifier>
++Specify the vendor-class-identifier option to send to the DHCP server.
++
++.TP
++.BI \-R\ <option>[,<option>...]
++Specify the list of options the client is to request from the server.  The
++option list must be a single string consisting of option names separated
++by at least one command and optional space characters.  The default option
++list is:
++
++.BR
++    subnet-mask, broadcast-address, time-offset, routers,
++.BR
++    domain-search, domain-name, domain-name-servers, host-name, 
++.BR
++    nis-domain, nis-servers, ntp-servers, interface-mtu
++
++.TP
++.B -R
++option does not append options to the default request, it overrides the
++default request list.  Keep this in mind if you want to request an
++additional option besides the default request list.  You will have to
++specify all option names for the
++.B -R
++parameter.
++
++.TP
++.BI \-timeout\ <timeout>
++Specify the time after which
++.B dhclient
++will decide that no DHCP servers can be contacted when no responses have been
++received.
++
+ .TP
+ .BI \-n
+ Do not configure any interfaces.  This is most likely to be useful in
+diff -up dhcp-4.2.1b1/client/dhclient.conf.5.man dhcp-4.2.1b1/client/dhclient.conf.5
+--- dhcp-4.2.1b1/client/dhclient.conf.5.man	2010-09-15 01:03:56.000000000 +0200
++++ dhcp-4.2.1b1/client/dhclient.conf.5	2011-01-27 18:22:56.000000000 +0100
+@@ -186,7 +186,8 @@ responding to the client send the client
+ options.   Only the option names should be specified in the request
+ statement - not option parameters.   By default, the DHCPv4 client
+ requests the subnet-mask, broadcast-address, time-offset, routers,
+-domain-name, domain-name-servers and host-name options while the DHCPv6
++domain-search, domain-name, domain-name-servers, host-name, nis-domain,
++nis-servers, ntp-servers and interface-mtu options while the DHCPv6
+ client requests the dhcp6 name-servers and domain-search options.  Note
+ that if you enter a \'request\' statement, you over-ride these defaults
+ and these options will not be requested.
+@@ -672,6 +673,17 @@ know the DHCP service(s) anycast MAC add
+ client.  The \fIlink-type\fR and \fImac-address\fR parameters are configured
+ in a similar manner to the \fBhardware\fR statement.
+ .PP
++ \fBbootp-broadcast-always;\fR
++.PP
++The
++.B bootp-broadcast-always
++statement instructs dhclient to always set the bootp broadcast flag in
++request packets, so that servers will always broadcast replies.
++This is equivalent to supplying the dhclient -B argument, and has
++the same effect as specifying 'always-broadcast' in the server's dhcpd.conf.
++This option is provided as an extension to enable dhclient to work
++on IBM s390 Linux guests.
++.PP
+ .SH SAMPLE
+ The following configuration file is used on a laptop running NetBSD
+ 1.3.   The laptop has an IP alias of 192.5.5.213, and has one
+@@ -697,7 +709,7 @@ interface "ep0" {
+     supersede domain-search "fugue.com", "rc.vix.com", "home.vix.com";
+     prepend domain-name-servers 127.0.0.1;
+     request subnet-mask, broadcast-address, time-offset, routers,
+-	    domain-name, domain-name-servers, host-name;
++	    domain-search, domain-name, domain-name-servers, host-name;
+     require subnet-mask, domain-name-servers;
+     script "CLIENTBINDIR/dhclient-script";
+     media "media 10baseT/UTP", "media 10base2/BNC";
+diff -up dhcp-4.2.1b1/client/dhclient-script.8.man dhcp-4.2.1b1/client/dhclient-script.8
+--- dhcp-4.2.1b1/client/dhclient-script.8.man	2010-07-06 21:03:11.000000000 +0200
++++ dhcp-4.2.1b1/client/dhclient-script.8	2011-01-27 18:24:44.000000000 +0100
+@@ -47,7 +47,7 @@ customizations are needed, they should b
+ exit hooks provided (see HOOKS for details).   These hooks will allow the
+ user to override the default behaviour of the client in creating a
+ .B /etc/resolv.conf
+-file.
++file, and to handle DHCP options not handled by default.
+ .PP
+ No standard client script exists for some operating systems, even though
+ the actual client may work, so a pioneering user may well need to create
+@@ -91,6 +91,26 @@ present.   The
+ .B ETCDIR/dhclient-exit-hooks
+ script can modify the valid of exit_status to change the exit status
+ of dhclient-script.
++.PP
++Immediately after dhclient brings an interface UP with a new IP address,
++subnet mask, and routes, in the REBOOT/BOUND states, it will check for the
++existence of an executable
++.B ETCDIR/dhclient-up-hooks
++script, and source it if found. This script can handle DHCP options in
++the environment that are not handled by default. A per-interface.
++.B ETCDIR/dhclient-${IF}-up-hooks
++script will override the generic script and be sourced when interface
++$IF has been brought up.
++.PP
++Immediately before dhclient brings an interface DOWN, removing its IP
++address, subnet mask, and routes, in the STOP/RELEASE  states, it will
++check for the existence of an executable
++.B ETCDIR/dhclient-down-hooks
++script, and source it if found. This script can handle DHCP options in
++the environment that are not handled by default. A per-interface
++.B ETCDIR/dhclient-${IF}-down-hooks
++script will override the generic script and be sourced when interface
++$IF is about to be brought down.
+ .SH OPERATION
+ When dhclient needs to invoke the client configuration script, it
+ defines a set of variables in the environment, and then invokes
+diff -up dhcp-4.2.1b1/common/dhcp-options.5.man dhcp-4.2.1b1/common/dhcp-options.5
+--- dhcp-4.2.1b1/common/dhcp-options.5.man	2010-07-13 22:56:56.000000000 +0200
++++ dhcp-4.2.1b1/common/dhcp-options.5	2011-01-27 18:25:57.000000000 +0100
+@@ -913,6 +913,21 @@ classless IP routing - it does not inclu
+ classless IP routing is now the most widely deployed routing standard,
+ this option is virtually useless, and is not implemented by any of the
+ popular DHCP clients, for example the Microsoft DHCP client.
++.PP
++NOTE to Fedora dhclient users:
++.br
++dhclient-script interprets trailing 0 octets of the target as indicating
++the subnet class of the route, so for the following static-routes value:
++.br
++        option static-routes 172.0.0.0 172.16.2.254,
++.br
++                             192.168.0.0 192.168.2.254;
++.br
++dhclient-script will create routes:
++.br
++        172/8 via 172.16.2.254 dev $interface
++.br
++        192.168/16 via 192.168.2.254 dev $interface
+ .RE
+ .PP
+ .nf
+diff -up dhcp-4.2.1b1/server/dhcpd.conf.5.man dhcp-4.2.1b1/server/dhcpd.conf.5
+--- dhcp-4.2.1b1/server/dhcpd.conf.5.man	2010-07-06 21:03:12.000000000 +0200
++++ dhcp-4.2.1b1/server/dhcpd.conf.5	2011-01-27 18:29:12.000000000 +0100
+@@ -519,6 +519,9 @@ pool {
+ };
+ .fi
+ .PP
++Dynamic BOOTP leases are not compatible with failover, and, as such,
++you need to disallow BOOTP in pools that you are using failover for.
++.PP
+ The  server currently  does very  little  sanity checking,  so if  you
+ configure it wrong, it will just  fail in odd ways.  I would recommend
+ therefore that you either do  failover or don't do failover, but don't
+@@ -533,9 +536,9 @@ primary server might look like this:
+ failover peer "foo" {
+   primary;
+   address anthrax.rc.vix.com;
+-  port 519;
++  port 647;
+   peer address trantor.rc.vix.com;
+-  peer port 520;
++  peer port 847;
+   max-response-delay 60;
+   max-unacked-updates 10;
+   mclt 3600;
+@@ -1305,7 +1308,7 @@ the zone containing PTR records - for IS
+ .PP
+ .nf
+ key DHCP_UPDATER {
+-  algorithm HMAC-MD5.SIG-ALG.REG.INT;
++  algorithm hmac-md5;
+   secret pRP5FapFoJ95JEL06sv4PQ==;
+ };
+ 
+@@ -1328,7 +1331,7 @@ dhcpd.conf file:
+ .PP
+ .nf
+ key DHCP_UPDATER {
+-  algorithm HMAC-MD5.SIG-ALG.REG.INT;
++  algorithm hmac-md5;
+   secret pRP5FapFoJ95JEL06sv4PQ==;
+ };
+ 
+@@ -2540,7 +2543,8 @@ statement
+ The \fInext-server\fR statement is used to specify the host address of
+ the server from which the initial boot file (specified in the
+ \fIfilename\fR statement) is to be loaded.   \fIServer-name\fR should
+-be a numeric IP address or a domain name.
++be a numeric IP address or a domain name.  If no \fInext-server\fR statement
++applies to a given client, the address 0.0.0.0 is used.
+ .RE
+ .PP
+ The

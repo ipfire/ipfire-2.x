@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,26 +24,29 @@
 
 include Config
 
-VER        = 1.17
-DATVER     = 02102012
-
-THISAPP    = Geo-IP-PurePerl-$(VER)
+VER        = 0.17
+THISAPP    = netkit-telnet-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = telnet
+PAK_VER    = 1
+
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) GeoIP.dat-$(DATVER).gz
+objects = $(DL_FILE) \
+	telnet-client.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-GeoIP.dat-$(DATVER).gz = $(DL_FROM)/GeoIP.dat-$(DATVER).gz
+telnet-client.tar.gz = $(DL_FROM)/telnet-client.tar.gz
 
-$(DL_FILE)_MD5 = 42a6b9d4dd2563a20c8998556216e1de
-GeoIP.dat-$(DATVER).gz_MD5 = 371c7ea4a8c8b963594ec3031e798696
+$(DL_FILE)_MD5 = d6beabaaf53fe6e382c42ce3faa05a36
+telnet-client.tar.gz_MD5 = d74983062470c5a3e7ae14f34c489e00
 
 install : $(TARGET)
 
@@ -52,6 +55,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -73,11 +79,28 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && perl Makefile.PL
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd ${DIR_APP} && mv telnet telnet-netkit
+	cd ${DIR_APP} && tar zxf $(DIR_DL)/telnet-client.tar.gz
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/telnet-client-cvs.patch0
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/telnet-0.17-env.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/telnet-0.17-pek.patch0
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/telnet-0.17-issue.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/telnet-0.17-sa-01-49.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/telnet-0.17-8bit.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/telnet-0.17-argv.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/telnet-0.17-conf.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/telnet-0.17-cleanup_race.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/telnet-0.17-CAN-2005-468_469.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/telnet-gethostbyname.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/netkit-telnet-0.17-ipv6.diff
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/netkit-telnet-0.17-nodns.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/telnet-0.17-errno_test_sys_bsd.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/netkit-telnet-0.17-reallynodns.patch
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make 
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && mkdir -p /usr/local/share/GeoIP && \
-		zcat $(DIR_DL)/GeoIP.dat-$(DATVER).gz > /usr/local/share/GeoIP/GeoIP.dat
-	cd $(DIR_APP) && chmod 777 /srv/web/ipfire/html/images/flags
+	rm -f /usr/sbin/telnetd
+	rm -f /usr/man/man8/in.telnetd.8
+	rm -f /usr/man/man8/telnetd.8
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
