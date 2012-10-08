@@ -270,22 +270,16 @@ int main(int argc, char *argv[]) {
         findkey(kv, "GREEN_DEV", if_green);
         if (VALID_DEVICE(if_green))
                 enable_green++;
-        else
-                fprintf(stderr, "IPSec enabled on green but green interface is invalid or not found\n");
 
 	// Check if ORANGE is enabled.
         findkey(kv, "ORANGE_DEV", if_orange);
         if (VALID_DEVICE(if_orange))
                 enable_orange++;
-        else
-                fprintf(stderr, "IPSec enabled on orange but orange interface is invalid or not found\n");
 
 	// Check if BLUE is enabled.
         findkey(kv, "BLUE_DEV", if_blue);
         if (VALID_DEVICE(if_blue))
                 enable_blue++;
-        else
-                fprintf(stderr, "IPSec enabled on blue but blue interface is invalid or not found\n");
 
         freekeyvalues(kv);
 
