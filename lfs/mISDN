@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,13 +26,17 @@ include Config
 
 VERSUFIX=ipfire$(KCFG)
 
-VER        = 20100525
+ifeq "$(KCFG)" "-xen"
+	KVER = "2.6.32.59"
+endif
+
+VER        = 20121008
 
 THISAPP    = mISDN-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
+TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(VERSUFIX)
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0f91aa47ee95833d74c8a81ffc6f6fd3
+$(DL_FILE)_MD5 = 7fee0514fd523176b36fca53b02b45cc
 
 install : $(TARGET)
 
@@ -71,7 +75,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_SRC)/mISDN* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_SRC)/mISDN* && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_SRC)/mISDN && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb-reportl1down.patch
 	cd $(DIR_SRC)/mISDN && patch -Np1 < $(DIR_SRC)/src/patches/mISDN_hfc-s_add_id.patch
 ifeq "$(MACHINE_TYPE)" "arm"
@@ -82,7 +86,7 @@ endif
 	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) modules
 	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) \
 			INSTALL_PREFIX=$(DIR_SRC)/mISDN/dest/ \
-			modules-install
+			modules_install
 	mv $(DIR_SRC)/mISDN/dest/lib/modules/*/extra \
 		/lib/modules/$(KVER)-$(VERSUFIX)/mISDN
 

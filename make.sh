@@ -380,7 +380,7 @@ buildipfire() {
   if [ "${MACHINE_TYPE}" != "arm" ]; then
     ipfiremake linux2			KCFG="-xen"
     ipfiremake v4l-dvb			KCFG="-xen"
-#    ipfiremake mISDN			KCFG="-xen"
+    ipfiremake mISDN			KCFG="-xen"
     ipfiremake cryptodev		KCFG="-xen"
     ipfiremake compat-wireless		KCFG="-xen"
 #    ipfiremake r8169			KCFG="-xen"
@@ -394,7 +394,7 @@ buildipfire() {
 #    ipfiremake kvm-kmod			KCFG="-pae"
     ipfiremake v4l-dvb			KCFG="-pae"
     ipfiremake alsa			KCFG="-pae" KMOD=1
-#    ipfiremake mISDN			KCFG="-pae"
+    ipfiremake mISDN			KCFG="-pae"
     ipfiremake cryptodev		KCFG="-pae"
     ipfiremake compat-wireless		KCFG="-pae"
 #    ipfiremake r8169			KCFG="-pae"
@@ -408,7 +408,7 @@ buildipfire() {
 #    ipfiremake kvm-kmod			KCFG=""
     ipfiremake v4l-dvb			KCFG=""
     ipfiremake alsa			KCFG="" KMOD=1
-#    ipfiremake mISDN			KCFG=""
+    ipfiremake mISDN			KCFG=""
     ipfiremake cryptodev		KCFG=""
     ipfiremake compat-wireless		KCFG=""
 #    ipfiremake r8169			KCFG=""
