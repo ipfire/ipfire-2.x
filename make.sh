@@ -380,7 +380,7 @@ buildipfire() {
   if [ "${MACHINE_TYPE}" != "arm" ]; then
     ipfiremake linux2			KCFG="-xen"
     ipfiremake v4l-dvb			KCFG="-xen"
-#    ipfiremake mISDN			KCFG="-xen"
+    ipfiremake mISDN			KCFG="-xen"
     ipfiremake cryptodev		KCFG="-xen"
     ipfiremake compat-wireless		KCFG="-xen"
 #    ipfiremake r8169			KCFG="-xen"
@@ -394,7 +394,7 @@ buildipfire() {
 #    ipfiremake kvm-kmod			KCFG="-pae"
     ipfiremake v4l-dvb			KCFG="-pae"
     ipfiremake alsa			KCFG="-pae" KMOD=1
-#    ipfiremake mISDN			KCFG="-pae"
+    ipfiremake mISDN			KCFG="-pae"
     ipfiremake cryptodev		KCFG="-pae"
     ipfiremake compat-wireless		KCFG="-pae"
 #    ipfiremake r8169			KCFG="-pae"
@@ -408,7 +408,7 @@ buildipfire() {
 #    ipfiremake kvm-kmod			KCFG=""
     ipfiremake v4l-dvb			KCFG=""
     ipfiremake alsa			KCFG="" KMOD=1
-#    ipfiremake mISDN			KCFG=""
+    ipfiremake mISDN			KCFG=""
     ipfiremake cryptodev		KCFG=""
     ipfiremake compat-wireless		KCFG=""
 #    ipfiremake r8169			KCFG=""
@@ -839,6 +839,8 @@ buildpackages() {
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]) && [ "${MACHINE_TYPE}" != "arm" ]; then
         cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
         cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
+        cp -f $BASEDIR/packages/linux-pae-*.ipfire $LFS/install/packages/
+        cp -f $BASEDIR/packages/meta-linux-pae $LFS/install/packages/
 	ipfiremake xen-image
 	rm -rf $LFS/install/packages/linux-xen-*.ipfire
 	rm -rf $LFS/install/packages/meta-linux-xen

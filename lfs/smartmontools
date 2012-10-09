@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.42
+VER        = 5.43
 
 THISAPP    = smartmontools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4460bf9a79a1252ff5c00ba52cf76b2a
+$(DL_FILE)_MD5 = a1cb2c3d8cc2de377037fe9e7cef40a9
 
 install : $(TARGET)
 
@@ -71,7 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/smartmontools-5.39-exit_segfault.patch
-	cd $(DIR_APP) && ./autogen.sh
+	cd $(DIR_APP) && autoreconf
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make BUILD_INFO='"($(NAME) $(VERSION))"' $(MAKETUNING)
 	cd $(DIR_APP) && make install

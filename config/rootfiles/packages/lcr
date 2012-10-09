@@ -385,6 +385,7 @@ var/ipfire/lcr/vbox_german/record_play.isdn
 var/ipfire/lcr/vbox_german/record_record.isdn
 var/ipfire/lcr/vbox_german/store_ask.isdn
 var/ipfire/lcr/vbox_german/store_done.isdn
+var/log/lcr
 usr/sbin/genextension
 usr/sbin/genrc
 usr/sbin/lcr

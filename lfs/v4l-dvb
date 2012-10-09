@@ -35,7 +35,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
 ifeq "$(KCFG)" "-xen"
 	XVER = 2.6.32
-	KVER = 2.6.32.59
+	KVER = 2.6.32.60
 else
 	XVER = 3.2.0
 endif

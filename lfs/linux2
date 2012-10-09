@@ -24,8 +24,8 @@
 
 include Config
 
-PATCHLEVEL = .59
-VER        = 2.6.32.59
+PATCHLEVEL = .60
+VER        = 2.6.32.60
 
 THISAPP    = linux-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 20
+PAK_VER    = 21
 DEPS	   = ""
 
 # Normal build or XEN build.
@@ -82,7 +82,7 @@ patch-2.6.16-nath323-1.3.bz2		= $(URL_IPFIRE)/patch-2.6.16-nath323-1.3.bz2
 reiser4-for-2.6.32.patch.bz2		= $(URL_IPFIRE)/reiser4-for-2.6.32.patch.bz2
 xen-patches-2.6.32-2g.tar.bz2		= $(URL_IPFIRE)/xen-patches-2.6.32-2g.tar.bz2
 
-$(DL_FILE)_MD5				= 69c68c4a8eb0f04b051a7dbcff16f6d0
+$(DL_FILE)_MD5				= a8e037a78c5fabefd2baa83f7ae0b8b1
 netfilter-layer7-v2.22.tar.gz_MD5	= 98dff8a3d5a31885b73341633f69501f
 patch-2.6.16-nath323-1.3.bz2_MD5	= f926409ff703a307baf54b57ab75d138
 reiser4-for-2.6.32.patch.bz2_MD5	= 3246397973d9271eb8e6d7c97c5d2d91
