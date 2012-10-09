@@ -29,8 +29,8 @@ VER	   = 0
 THISAPP    = pakfire3-deps
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = pakfire3-deps
-PAK_VER    = 1
-DEPS       = "intltool git make libsatsolver python-satsolver python-distutils python-distutils-extra python-lzma python-progressbar python-xattr sqlite urlgrabber"
+PAK_VER    = 2
+DEPS       = "intltool git make libsatsolver pycurl python-satsolver python-distutils python-distutils-extra python-lzma python-progressbar python-xattr sqlite urlgrabber"
 
 ###############################################################################
 
