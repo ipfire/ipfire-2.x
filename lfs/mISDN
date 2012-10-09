@@ -27,7 +27,7 @@ include Config
 VERSUFIX=ipfire$(KCFG)
 
 ifeq "$(KCFG)" "-xen"
-	KVER = "2.6.32.59"
+	KVER = "2.6.32.60"
 endif
 
 VER        = 20121008

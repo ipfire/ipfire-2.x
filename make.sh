@@ -834,6 +834,8 @@ buildpackages() {
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]) && [ "${MACHINE_TYPE}" != "arm" ]; then
         cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
         cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
+        cp -f $BASEDIR/packages/linux-pae-*.ipfire $LFS/install/packages/
+        cp -f $BASEDIR/packages/meta-linux-pae $LFS/install/packages/
 	ipfiremake xen-image
 	rm -rf $LFS/install/packages/linux-xen-*.ipfire
 	rm -rf $LFS/install/packages/meta-linux-xen
