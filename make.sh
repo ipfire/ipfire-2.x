@@ -693,6 +693,7 @@ buildipfire() {
   ipfiremake iw
   ipfiremake wpa_supplicant
   ipfiremake hostapd
+  ipfiremake pycurl
   ipfiremake urlgrabber
   ipfiremake syslinux
   ipfiremake tftpd
