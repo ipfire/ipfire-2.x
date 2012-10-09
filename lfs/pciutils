@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.2.3
+VER        = 3.1.10
 
 THISAPP    = pciutils-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 86cc20eaa0360587497a8105d33e57fc
+$(DL_FILE)_MD5 = cdb1e5a95ab7ac67349f10c8f77a6d3c
 
 install : $(TARGET)
 
@@ -69,24 +69,22 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && sed -i 's/null ;/null 2>\&1 ;/' update-pciids.sh
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-strip.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.1.10-scan.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-havepread.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-devicetype.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.2.1-idpath.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.1.99-gcc4.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.2.3-multilib.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pciutils-2.2.3-sata.patch
-ifeq "$(MACHINE_TYPE)" "arm"
-	cd $(DIR_APP)/lib && ./configure /usr/share/hwdata $(VER)
-	cd $(DIR_APP)/lib && sed -e "s/^#error.*$$/#define CPU_ARCH_ARM/" -i config.h
-endif
-	cd $(DIR_APP) && make PREFIX=/usr $(MAKETUNING)
-	cd $(DIR_APP) && make PREFIX=/usr install
-	cd $(DIR_APP) && install -v -m 755 -d /usr/include/pci
-	cd $(DIR_APP) && install -v -m 644 lib/libpci.a /usr/lib
-	cd $(DIR_APP) && install -v -m 644 lib/*.h /usr/include/pci
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && make SHARED=yes OPT="$(CFLAGS)" PREFIX=/usr STRIP="" \
+		IDSDIR=/usr/share/hwdata ZLIB=no $(MAKETUNING)
+
+	cd $(DIR_APP) && install -p lspci setpci /bin
+	cd $(DIR_APP) && install -p update-pciids /sbin
+	cd $(DIR_APP) && install -p lib/libpci.so.* /lib/
+	ln -svf ../../lib/libpci.so.$(VER) /usr/lib/libpci.so
+
+	# Install headers.
+	mkdir -pv /usr/include/pci
+	cd $(DIR_APP) && install -p lib/pci.h /usr/include/pci
+	cd $(DIR_APP) && install -p lib/header.h /usr/include/pci
+	cd $(DIR_APP) && install -p lib/config.h /usr/include/pci
+	cd $(DIR_APP) && install -p lib/types.h /usr/include/pci
+	cd $(DIR_APP) && install -p lib/libpci.pc /usr/lib/pkgconfig
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
