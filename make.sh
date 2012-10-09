@@ -761,8 +761,8 @@ buildipfire() {
   ipfiremake acpid
   ipfiremake fping
   ipfiremake telnet
-  ipfiremake libassuan
   ipfiremake libgpg-error
+  ipfiremake libassuan
   ipfiremake gpgme
   ipfiremake pygpgme
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
