@@ -1,0 +1,5 @@
+etc/system-release
+etc/issue
+etc/rc.d/init.d/network-vlans
+srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi

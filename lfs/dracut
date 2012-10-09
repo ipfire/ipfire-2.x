@@ -96,7 +96,7 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-kirkwood.img $(KVER)-ipfire-kirkwood
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-kirkwood.img uInit-ipfire-kirkwood
 	# omap kernel
-	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-omap.img $(KVER3)-ipfire-omap
+	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-omap.img $(KVER)-ipfire-omap
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-omap.img uInit-ipfire-omap
 else
 	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER).img $(KVER)-ipfire

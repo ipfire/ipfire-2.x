@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.13"							# Version number
-CORE="62"							# Core Level (Filename)
-PAKFIRE_CORE="62"						# Core Level (PAKFIRE)
+CORE="63"							# Core Level (Filename)
+PAKFIRE_CORE="63"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -374,7 +374,6 @@ buildipfire() {
   ipfiremake linux-firmware
   ipfiremake zd1211-firmware
   ipfiremake rpi-firmware
-  ipfiremake fw_ath9k_htc
   ipfiremake u-boot
 
   # The xen and PAE kernels are only available for x86
@@ -435,7 +434,7 @@ buildipfire() {
 #    ipfiremake igb			KCFG="-rpi"
 
     ipfiremake linux			KCFG="-omap"
-#    ipfiremake v4l-dvb			KCFG="-omap"
+    ipfiremake v4l-dvb			KCFG="-omap"
 #    ipfiremake kvm-kmod			KCFG="-omap"
 #    ipfiremake mISDN			KCFG="-omap"
     ipfiremake cryptodev		KCFG="-omap"

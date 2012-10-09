@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 9f7cff0
+VER        = b87bc42
 THISAPP    = rpi-firmware-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4de4db529fc2c0000d381d016675e115
+$(DL_FILE)_MD5 = 2e2bb3a72e9a13a90c60c84f76e77fa2
 
 install : $(TARGET)
 
@@ -70,5 +70,5 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@cd / && tar axf $(DIR_DL)/$(DL_FILE)
-	cp $(DIR_SRC)/config/rpi-firmware/config.txt /boot
+	cp -f $(DIR_SRC)/config/rpi-firmware/config.txt /boot
 	@$(POSTBUILD)

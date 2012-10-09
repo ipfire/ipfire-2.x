@@ -77,7 +77,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	mv -v /usr/lib/libz.so.$(VER) /lib/libz.so.$(VER)
 	ln -svf libz.so.$(VER) /lib/libz.so.1
+	ln -svf libz.so.$(VER) /lib/libz.so
 	rm -vf /usr/lib/libz.so.1
+	rm -vf /usr/lib/libz.so
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

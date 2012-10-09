@@ -11,7 +11,7 @@ case "$1" in
 		done
 		;;
 	partitions)
-		cat /proc/partitions | awk '{print $4 " " $3 }' | grep -v name | grep -v "^[:space:]*$" | \
+		cat /proc/partitions | awk '{print $4 " " $3 }' | grep -v name | grep -v "^[[:space:]]*$" | \
 			while read device size; do
 				[ -z "${device}" ] && continue
 				echo "${device};${size};$(blkid -c /dev/null -s UUID -o value /dev/${device});"
