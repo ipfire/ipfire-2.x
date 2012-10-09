@@ -34,7 +34,7 @@ done
 
 #
 #Stop services
-ipsecctrl D
+/usr/local/bin/ipsecctrl D
 
 #
 #Extract files
@@ -49,7 +49,7 @@ rm -f /usr/local/bin/vpn-watch
 
 # Call the CGI script to regenerate the configuration files.
 /srv/web/ipfire/cgi-bin/vpnmain.cgi
-ipsecctrl S
+/usr/local/bin/ipsecctrl S
 
 #
 #Update Language cache

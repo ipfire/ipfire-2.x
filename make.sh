@@ -692,6 +692,7 @@ buildipfire() {
   ipfiremake iw
   ipfiremake wpa_supplicant
   ipfiremake hostapd
+  ipfiremake pycurl
   ipfiremake urlgrabber
   ipfiremake syslinux
   ipfiremake tftpd
@@ -760,6 +761,10 @@ buildipfire() {
   ipfiremake acpid
   ipfiremake fping
   ipfiremake telnet
+  ipfiremake libgpg-error
+  ipfiremake libassuan
+  ipfiremake gpgme
+  ipfiremake pygpgme
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
