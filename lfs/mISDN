@@ -82,6 +82,19 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	# Remove unsupported timestampcounter on arm. the result seems to be unused
 	cd $(DIR_SRC)/mISDN && sed -i -e "s|rdtscl(pChan->ulTimestampIn);||g" drivers/isdn/mISDN/octvqe/octvqe_linux.c
 endif
+ifeq "$(NOPCI)" "1"
+	# Disable PCI drivers if kernel has no PCI
+	cd $(DIR_SRC)/mISDN && sed -i -e "s|^CONFIG_MISDN_HFCPCI|#&|g" mISDN.cfg.default
+	cd $(DIR_SRC)/mISDN && sed -i -e "s|^CONFIG_MISDN_HFCMULTI|#&|g" mISDN.cfg.default
+	cd $(DIR_SRC)/mISDN && sed -i -e "s|^CONFIG_MISDN_XHFC|#&|g" mISDN.cfg.default
+	cd $(DIR_SRC)/mISDN && sed -i -e "s|^CONFIG_MISDN_AVMFRITZ|#&|g" mISDN.cfg.default
+	cd $(DIR_SRC)/mISDN && sed -i -e "s|^CONFIG_MISDN_SPEEDFAX|#&|g" mISDN.cfg.default
+	cd $(DIR_SRC)/mISDN && sed -i -e "s|^CONFIG_MISDN_INFINEON|#&|g" mISDN.cfg.default
+	cd $(DIR_SRC)/mISDN && sed -i -e "s|^CONFIG_MISDN_W6692|#&|g" mISDN.cfg.default
+	cd $(DIR_SRC)/mISDN && sed -i -e "s|^CONFIG_MISDN_NETJET|#&|g" mISDN.cfg.default
+	cd $(DIR_SRC)/mISDN && sed -i -e "s|^CONFIG_MISDN_IPAC|#&|g" mISDN.cfg.default
+	cd $(DIR_SRC)/mISDN && sed -i -e "s|^CONFIG_MISDN_ISAR|#&|g" mISDN.cfg.default
+endif
 	cd $(DIR_SRC)/mISDN && ./configure --with-kerneldir=/usr/src/linux
 	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) modules
 	cd $(DIR_SRC)/mISDN && make KVERS=$(KVER)-$(VERSUFIX) \
