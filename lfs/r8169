@@ -27,6 +27,9 @@ include Config
 VERSUFIX = ipfire$(KCFG)
 ifeq "$(KCFG)" "-xen"
 	KVER = 2.6.32.60
+	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net
+else
+	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/ethernet/realtek
 endif
 
 VER        = 6.017.00
@@ -78,11 +81,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	#Save original r8169 module
-	-mv /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/r8169.ko \
-	    /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/r8169.ko.org
+	-mv $(MODPATH)/r8169.ko \
+	    $(MODPATH)/r8169.ko.org
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/r8169_add_missing_pciids.patch
 	cd $(DIR_APP) && make -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ SUBDIRS=$(DIR_APP)/src modules
-	cd $(DIR_APP)/src && install -m 644 r8169.ko /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net 
+	cd $(DIR_APP)/src && install -m 644 r8169.ko $(MODPATH)
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
