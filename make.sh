@@ -421,7 +421,7 @@ buildipfire() {
     ipfiremake linux			KCFG="-rpi"
     ipfiremake v4l-dvb			KCFG="-rpi"
 #    ipfiremake kvm-kmod			KCFG="-rpi"
-#    ipfiremake mISDN			KCFG="-rpi"
+    ipfiremake mISDN			KCFG="-rpi" NOPCI=1
     ipfiremake cryptodev		KCFG="-rpi"
     ipfiremake compat-wireless		KCFG="-rpi"
 #    ipfiremake r8169			KCFG="-rpi"
@@ -434,7 +434,7 @@ buildipfire() {
     ipfiremake linux			KCFG="-omap"
     ipfiremake v4l-dvb			KCFG="-omap"
 #    ipfiremake kvm-kmod			KCFG="-omap"
-#    ipfiremake mISDN			KCFG="-omap"
+    ipfiremake mISDN			KCFG="-omap" NOPCI=1
     ipfiremake cryptodev		KCFG="-omap"
     ipfiremake compat-wireless		KCFG="-omap"
 #    ipfiremake r8169			KCFG="-omap"
@@ -448,7 +448,7 @@ buildipfire() {
     ipfiremake linux			KCFG="-kirkwood"
     ipfiremake v4l-dvb			KCFG="-kirkwood"
 #    ipfiremake kvm-kmod			KCFG="-kirkwood"
-#    ipfiremake mISDN			KCFG="-kirkwood"
+    ipfiremake mISDN			KCFG="-kirkwood"
     ipfiremake cryptodev		KCFG="-kirkwood"
     ipfiremake compat-wireless		KCFG="-kirkwood"
 #    ipfiremake r8169			KCFG="-kirkwood"
