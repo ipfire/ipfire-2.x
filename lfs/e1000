@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2012  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,6 +25,12 @@
 include Config
 
 VERSUFIX = ipfire$(KCFG)
+
+# e1000 vendor modul is only for legacy xen kernel
+# The 3.2.x kernel has newer module.
+
+KVER = 2.6.32.60
+MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/e1000/
 
 VER        = 8.0.35
 
@@ -75,12 +81,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	#Save original e1000 module
-	-mv /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/e1000/e1000.ko \
-	    /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/e1000/e1000.ko.org
+	-mv $(MODPATH)/e1000.ko \
+	    $(MODPATH)/e1000.ko.org
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP)/src && make -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ \
 		SUBDIRS=$(DIR_APP)/src modules
-	cd $(DIR_APP)/src && install -m 644 e1000.ko \
-		/lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/e1000
+	cd $(DIR_APP)/src && install -m 644 e1000.ko $(MODPATH)
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

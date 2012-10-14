@@ -386,9 +386,9 @@ buildipfire() {
     ipfiremake r8169			KCFG="-xen"
     ipfiremake r8168			KCFG="-xen"
     ipfiremake r8101			KCFG="-xen"
-#    ipfiremake e1000			KCFG="-xen"
-#    ipfiremake e1000e			KCFG="-xen"
-#    ipfiremake igb			KCFG="-xen"
+    ipfiremake e1000			KCFG="-xen"
+    ipfiremake e1000e			KCFG="-xen"
+    ipfiremake igb			KCFG="-xen"
 
     ipfiremake linux			KCFG="-pae"
 #    ipfiremake kvm-kmod			KCFG="-pae"
@@ -400,9 +400,8 @@ buildipfire() {
     ipfiremake r8169			KCFG="-pae"
     ipfiremake r8168			KCFG="-pae"
     ipfiremake r8101			KCFG="-pae"
-#    ipfiremake e1000			KCFG="-pae"
-#    ipfiremake e1000e			KCFG="-pae"
-#    ipfiremake igb			KCFG="-pae"
+    ipfiremake e1000e			KCFG="-pae"
+    ipfiremake igb			KCFG="-pae"
 
     ipfiremake linux			KCFG=""
 #    ipfiremake kvm-kmod			KCFG=""
@@ -414,9 +413,8 @@ buildipfire() {
     ipfiremake r8169			KCFG=""
     ipfiremake r8168			KCFG=""
     ipfiremake r8101			KCFG=""
-#    ipfiremake e1000			KCFG=""
-#    ipfiremake e1000e			KCFG=""
-#    ipfiremake igb			KCFG=""
+    ipfiremake e1000e			KCFG=""
+    ipfiremake igb			KCFG=""
 
   else
     # arm-omap kernel build
