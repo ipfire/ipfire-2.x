@@ -3,6 +3,10 @@ boot/arm128_start.elf
 boot/arm192_start.elf
 boot/arm224_start.elf
 boot/arm240_start.elf
+boot/arm256_start.elf
+boot/arm384_start.elf
+boot/arm448_start.elf
+boot/arm496_start.elf
 boot/bootcode.bin
 boot/cmdline.txt
 boot/config.txt
