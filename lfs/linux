@@ -26,7 +26,7 @@ include Config
 
 VER           = 3.2.32
 
-RPI_PATCHES = linux-3.2.27-9245b4c
+RPI_PATCHES = linux-3.2.27-10182a3
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.bz2
@@ -76,7 +76,7 @@ $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
 $(DL_FILE)_MD5				= d2a4562d8c451e5ec43547e0d8babe57
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= c20baa8dc2527ce89a302862c3fc7f58
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= c60d806195e38e39d5cf382b4a0998db
 
 install : $(TARGET)
 
@@ -229,4 +229,3 @@ endif
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)
-c60d806195e38e39d5cf382b4a0998db  rpi-patches-linux-3.2.27-10182a3.patch.xz
