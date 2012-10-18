@@ -19,7 +19,7 @@ sdram_freq_min=250
 #arm_freq=1000
 #core_freq=450
 #sdram_freq=450
-#over_voltage=2
+#over_voltage=3
 
 ################################################################################
 #
