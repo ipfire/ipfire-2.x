@@ -376,8 +376,9 @@ buildipfire() {
   ipfiremake rpi-firmware
   ipfiremake u-boot
 
-  # The xen and PAE kernels are only available for x86
   if [ "${MACHINE_TYPE}" != "arm" ]; then
+
+    # x86-xen (Legacy XEN) kernel build
     ipfiremake linux2			KCFG="-xen"
     ipfiremake v4l-dvb			KCFG="-xen"
     ipfiremake mISDN			KCFG="-xen"
@@ -390,6 +391,7 @@ buildipfire() {
     ipfiremake e1000e			KCFG="-xen"
     ipfiremake igb			KCFG="-xen"
 
+    # x86-pae (Native and new XEN) kernel build
     ipfiremake linux			KCFG="-pae"
 #    ipfiremake kvm-kmod			KCFG="-pae"
     ipfiremake v4l-dvb			KCFG="-pae"
@@ -403,6 +405,7 @@ buildipfire() {
     ipfiremake e1000e			KCFG="-pae"
     ipfiremake igb			KCFG="-pae"
 
+    # x86 kernel build
     ipfiremake linux			KCFG=""
 #    ipfiremake kvm-kmod			KCFG=""
     ipfiremake v4l-dvb			KCFG=""
@@ -417,46 +420,31 @@ buildipfire() {
     ipfiremake igb			KCFG=""
 
   else
-    # arm-omap kernel build
+    # arm-rpi (Raspberry Pi) kernel build
     ipfiremake linux			KCFG="-rpi"
     ipfiremake v4l-dvb			KCFG="-rpi"
-#    ipfiremake kvm-kmod			KCFG="-rpi"
     ipfiremake mISDN			KCFG="-rpi" NOPCI=1
     ipfiremake cryptodev		KCFG="-rpi"
     ipfiremake compat-wireless		KCFG="-rpi"
-#    ipfiremake r8169			KCFG="-rpi"
-#    ipfiremake r8168			KCFG="-rpi"
-#    ipfiremake r8101			KCFG="-rpi"
-#    ipfiremake e1000			KCFG="-rpi"
-#    ipfiremake e1000e			KCFG="-rpi"
-#    ipfiremake igb			KCFG="-rpi"
 
+    # arm-omap (Panda Board) kernel build
     ipfiremake linux			KCFG="-omap"
     ipfiremake v4l-dvb			KCFG="-omap"
-#    ipfiremake kvm-kmod			KCFG="-omap"
     ipfiremake mISDN			KCFG="-omap" NOPCI=1
     ipfiremake cryptodev		KCFG="-omap"
     ipfiremake compat-wireless		KCFG="-omap"
-#    ipfiremake r8169			KCFG="-omap"
-#    ipfiremake r8168			KCFG="-omap"
-#    ipfiremake r8101			KCFG="-omap"
-#    ipfiremake e1000			KCFG="-omap"
-#    ipfiremake e1000e			KCFG="-omap"
-#    ipfiremake igb			KCFG="-omap"
 
-    # arm-kirkwood kernel build
+    # arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
     ipfiremake linux			KCFG="-kirkwood"
     ipfiremake v4l-dvb			KCFG="-kirkwood"
-#    ipfiremake kvm-kmod			KCFG="-kirkwood"
     ipfiremake mISDN			KCFG="-kirkwood"
     ipfiremake cryptodev		KCFG="-kirkwood"
     ipfiremake compat-wireless		KCFG="-kirkwood"
-#    ipfiremake r8169			KCFG="-kirkwood"
-#    ipfiremake r8168			KCFG="-kirkwood"
-#    ipfiremake r8101			KCFG="-kirkwood"
-#    ipfiremake e1000			KCFG="-kirkwood"
-#    ipfiremake e1000e			KCFG="-kirkwood"
-#    ipfiremake igb			KCFG="-kirkwood"
+    ipfiremake r8169			KCFG="-kirkwood"
+    ipfiremake r8168			KCFG="-kirkwood"
+    ipfiremake r8101			KCFG="-kirkwood"
+    ipfiremake e1000e			KCFG="-kirkwood"
+    ipfiremake igb			KCFG="-kirkwood"
 
   fi
   ipfiremake pkg-config
