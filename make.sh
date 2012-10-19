@@ -760,11 +760,14 @@ buildipfire() {
   echo >> $BASEDIR/build/var/ipfire/firebuild
   cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
   echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
-  if [ "$GIT_BRANCH" = "master" -o "$GIT_BRANCH" = "next" ]; then
-	echo "$NAME $VERSION ($MACHINE) - Development Build: $GIT_LASTCOMMIT" > $BASEDIR/build/etc/system-release
-  else
-	echo "$NAME $VERSION ($MACHINE) - $GIT_BRANCH" > $BASEDIR/build/etc/system-release
-  fi
+  case "$GIT_BRANCH" in
+	core*)
+	    echo "$NAME $VERSION ($MACHINE) - $GIT_BRANCH" > $BASEDIR/build/etc/system-release
+	    ;;
+	*)
+	    echo "$NAME $VERSION ($MACHINE) - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT" > $BASEDIR/build/etc/system-release
+	    ;;
+  esac
 }
 
 buildinstaller() {
