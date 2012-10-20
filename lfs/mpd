@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
 PAK_VER    = 14
 
-DEPS       = "alsa faad2 ffmpeg-libs lame libmad libshout libogg libid3tag libvorbis"
+DEPS       = "alsa faad2 ffmpeg-libs flac lame libmad libshout libogg libid3tag libvorbis"
 
 ###############################################################################
 # Top-level Rules
