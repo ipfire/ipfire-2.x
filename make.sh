@@ -737,7 +737,6 @@ buildipfire() {
   ipfiremake python-progressbar
   ipfiremake python-xattr
   ipfiremake intltool
-  ipfiremake pakfire3-deps
   ipfiremake transmission
   ipfiremake dpfhack
   ipfiremake lcd4linux
@@ -751,6 +750,7 @@ buildipfire() {
   ipfiremake libassuan
   ipfiremake gpgme
   ipfiremake pygpgme
+  ipfiremake pakfire3
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
