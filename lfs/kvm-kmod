@@ -26,7 +26,7 @@ include Config
 
 VERSUFIX=ipfire$(KCFG)
 
-VER        = 3.0b
+VER        = 3.6
 
 THISAPP    = kvm-kmod-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 19792041adc25779b31ea5c5fdca7d8c
+$(DL_FILE)_MD5 = 3e51d395d6a0ecac6ae600a0515880c2
 
 install : $(TARGET)
 
@@ -76,7 +76,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)_remove_pvclock_scale_delta_redefinition.patch
 	cd $(DIR_APP) && ./configure --kerneldir=/usr/src/linux
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && install -m 644 x86/*.ko \

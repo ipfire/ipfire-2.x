@@ -393,7 +393,7 @@ buildipfire() {
 
     # x86-pae (Native and new XEN) kernel build
     ipfiremake linux			KCFG="-pae"
-#    ipfiremake kvm-kmod			KCFG="-pae"
+    ipfiremake kvm-kmod			KCFG="-pae"
     ipfiremake v4l-dvb			KCFG="-pae"
     ipfiremake alsa			KCFG="-pae" KMOD=1
     ipfiremake mISDN			KCFG="-pae"
@@ -407,7 +407,7 @@ buildipfire() {
 
     # x86 kernel build
     ipfiremake linux			KCFG=""
-#    ipfiremake kvm-kmod			KCFG=""
+    ipfiremake kvm-kmod			KCFG=""
     ipfiremake v4l-dvb			KCFG=""
     ipfiremake alsa			KCFG="" KMOD=1
     ipfiremake mISDN			KCFG=""
