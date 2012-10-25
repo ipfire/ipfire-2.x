@@ -372,6 +372,7 @@ buildipfire() {
   ipfiremake unzip
   ipfiremake which
   ipfiremake linux-firmware
+  ipfiremake dvb-firmwares
   ipfiremake zd1211-firmware
   ipfiremake rpi-firmware
   ipfiremake u-boot
