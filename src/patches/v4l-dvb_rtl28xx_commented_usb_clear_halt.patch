@@ -1,0 +1,12 @@
+diff -Naur v4l-dvb-20120916.org/linux/drivers/media/usb/dvb-usb-v2/rtl28xxu.c v4l-dvb-20120916/linux/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
+--- v4l-dvb-20120916.org/linux/drivers/media/usb/dvb-usb-v2/rtl28xxu.c	2012-09-16 05:46:03.000000000 +0200
++++ v4l-dvb-20120916/linux/drivers/media/usb/dvb-usb-v2/rtl28xxu.c	2012-10-24 13:48:13.113373414 +0200
+@@ -836,7 +836,7 @@
+ 	if (onoff) {
+ 		buf[0] = 0x00;
+ 		buf[1] = 0x00;
+-		usb_clear_halt(d->udev, usb_rcvbulkpipe(d->udev, 0x81));
++//		usb_clear_halt(d->udev, usb_rcvbulkpipe(d->udev, 0x81));
+ 	} else {
+ 		buf[0] = 0x10; /* stall EPA */
+ 		buf[1] = 0x02; /* reset EPA */
