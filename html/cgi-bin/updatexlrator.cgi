@@ -1362,7 +1362,7 @@ sub printlegendicons
 		<td><img src='/images/updbooster/updxl-globe.gif' alt='$Lang::tr{'updxlrtr last checkup'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr last checkup'}</td>
 		<td class='base'>&nbsp;</td>
-		<td><img src='/images/updbooster/delete.gif' alt='$Lang::tr{'updxlrtr remove file'}' /></td>
+		<td><img src='/images/delete.gif' alt='$Lang::tr{'updxlrtr remove file'}' /></td>
 		<td class='base'>$Lang::tr{'updxlrtr remove file'}</td>
 		<td class='base'>&nbsp;</td>
 		<td class='base'>&nbsp;</td>

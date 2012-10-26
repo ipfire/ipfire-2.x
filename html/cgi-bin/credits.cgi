@@ -39,16 +39,11 @@ require "${General::swroot}/header.pl";
 
 print <<END
 <p>$Lang::tr{'donation-text'}</p>
-	<div align="center">
-		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-			<input type="hidden" name="cmd" value="_s-xclick">
-			<input type="hidden" name="hosted_button_id" value="HHBTSN9QRWPAY">
-			<input type="image" src="$Lang::tr{'donation-link'}" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-			<img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
-		</form>
-	</div>
-<br />
 
+<div align="center">
+	<a href="http://www.ipfire.org/donate">$Lang::tr{'donation'}</a>
+</div>
+<br>
 END
 ;
 &Header::closebox();
@@ -73,8 +68,6 @@ Christian Schmidt
 (<a href='mailto:christian.schmidt\@ipfire.org'>christian.schmidt\@ipfire.org</a>) - Vice Project Leader <br />
 Stefan Schantl
 (<a href='mailto:stefan.schantl\@ipfire.org'>stefan.schantl\@ipfire.org</a>)<br />
-Jan Paul T&uuml;cking
-(<a href='mailto:jan.tuecking\@ipfire.org'>jan.tuecking\@ipfire.org</a>)<br />
 Heiner Schmeling
 (<a href='mailto:heiner.schmeling\@ipfire.org'>heiner.schmeling\@ipfire.org</a>)<br />
 Ronald Wiesinger
@@ -94,12 +87,10 @@ Peter Pfeiffer
 (<a href='mailto:peter.pfeifer\@ipfire.org'>peter.pfeifer\@ipfire.org</a>)<br />
 Peter Sch&auml;lchli
 (<a href='mailto:peter.schaelchli\@ipfire.org'>peter.schaelchli\@ipfire.org</a>)<br />
+Jan Paul T&uuml;cking
+(<a href='mailto:jan.tuecking\@ipfire.org'>jan.tuecking\@ipfire.org</a>)<br />
 </p>
-<p>Some parts of the distribution are left ajar on third-party software, that is licensed under the GPL, too.<br />
-There are: Advanced Proxy with URL-Filter and Update-Accelerator, ZERINA, Connection Scheduler, Hddtemp and Wake-on-LAN.<br />
-Distributed by Marco Sondermann, Ufuk Altinkaynak, Thomas Eichstaedt and Olaf Westrik.</p>
 <p>
-
 This product includes GeoLite data created by MaxMind, available from <a href='http://www.maxmind.com/' target="_blank">http://www.maxmind.com/</a>.
 </p>
 END
