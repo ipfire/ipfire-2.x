@@ -169,6 +169,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i -e "s|^thermal|#thermal|g" $(MNThdd)/etc/sysconfig/modules
 	sed -i -e "s|^video|#video|g" $(MNThdd)/etc/sysconfig/modules
 
+	# Copy readme and config
+	cp $(DIR_SRC)/config/xen-image/* \
+		/install/images/$(SNAME)
+
 	# Unmount
 	umount $(MNThdd)/proc
 	umount $(MNThdd)/dev
