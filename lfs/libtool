@@ -33,8 +33,6 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = libtool
-PAK_VER    = 2
-DEPS       = ""
 
 ###############################################################################
 # Top-level Rules

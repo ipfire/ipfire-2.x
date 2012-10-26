@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nagios
 PAK_VER    = 2
 
-DEPS       = "traceroute libtool"
+DEPS       = "traceroute"
 
 ###############################################################################
 # Top-level Rules
@@ -111,6 +111,3 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -s /etc/init.d/nagios /etc/rc.d/rc6.d/K33nagios
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
-
-
-
