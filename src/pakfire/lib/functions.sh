@@ -24,13 +24,13 @@
 
 extract_files() {
 	echo "Extracting files..."
-	tar xvf /opt/pakfire/tmp/files --no-overwrite-dir -p --numeric-owner -C /
+	tar xavf /opt/pakfire/tmp/files --no-overwrite-dir -p --numeric-owner -C /
 	echo "...Finished."
 }
 
 extract_backup_includes() {
 	echo "Extracting backup includes..."
-	tar xvf /opt/pakfire/tmp/files --no-overwrite-dir -p --numeric-owner -C / \
+	tar xavf /opt/pakfire/tmp/files --no-overwrite-dir -p --numeric-owner -C / \
 		var/ipfire/backup/addons/includes
 	echo "...Finished."
 }
