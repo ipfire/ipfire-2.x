@@ -77,7 +77,7 @@ core/%:
 	mv -f /tmp/ROOTFILES /install/packages/package/ROOTFILES
 	tar -p --numeric-owner -x  -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
-	cd /tmp && tar cf /install/packages/package/files * && rm -rf *
+	cd /tmp && tar cJf /install/packages/package/files.tar.xz * && rm -rf *
 	cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
 	rm /install/packages/package/ROOTFILES
 	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES
@@ -89,7 +89,7 @@ core/%:
 	sed -e "s/xxxKVERxxx/$(KVER)/g" -i /install/packages/package/update.sh
 
 	cd /install/packages/package && tar cf ../core-upgrade-$(VERSION)-$$(basename $@).ipfire \
-		update.sh files ROOTFILES
+		update.sh files.tar.xz ROOTFILES
 	rm -rf /install/packages/package
 	sed -e "s/NAME/core-upgrade/g" \
 		-e "s/VER/$(VERSION)/g" \

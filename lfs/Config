@@ -191,7 +191,7 @@ define PAK
 	tar xf /install/packages/package/files.tmp -C /install/packages/package/tmp/ \
 		-p --numeric-owner
 	rm -f /install/packages/package/files.tmp
-	cd /install/packages/package/tmp/ && tar -c -p --numeric-owner -f /install/packages/package/files * 		
+	cd /install/packages/package/tmp/ && tar -c -p --numeric-owner -J -f /install/packages/package/files.tar.xz * 		
 	rm -r /install/packages/package/tmp
 	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
 	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES
