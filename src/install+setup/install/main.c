@@ -57,7 +57,6 @@ int main(int argc, char *argv[])
 	int choice;
 	int i;
 	int found = 0;
-	int firstrun = 0;
 	char shortlangname[10];
 	char message[1000];
 	char title[STRING_SIZE];
@@ -203,13 +202,8 @@ int main(int argc, char *argv[])
 				found = 1;
 				break;
 			case 10: // No harddisk found
-				if (firstrun == 1) {
-					errorbox(ctr[TR_NO_HARDDISK]);
-					goto EXIT;
-				}
-				// Do this if the kudzu-scan fails...
-				runcommandwithstatus("/bin/probehw.sh deep-scan", ctr[TR_PROBING_HARDWARE]);
-				firstrun = 1;
+				errorbox(ctr[TR_NO_HARDDISK]);
+				goto EXIT;
 		}
 	}
 

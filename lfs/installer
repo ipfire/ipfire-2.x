@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -61,7 +61,7 @@ $(TARGET) :
 	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
 	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DKERNEL_VERSION='\"$(KVER)\"'"
 	cd $(DIR_APP)/install && install -v -m 0755 install probenic.sh \
-		probehw.sh downloadsource.sh mountsource.sh mountdest.sh /install/initrd/bin
+		downloadsource.sh mountsource.sh mountdest.sh /install/initrd/bin
 	#Patch ISO Name for download ...
 	sed -i -e "s|ipfire.iso|download.ipfire.org/releases/ipfire-2.x/$(VERSION)-core$(CORE)/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso|g" \
 				/install/initrd/bin/downloadsource.sh
