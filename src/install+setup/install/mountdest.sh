@@ -72,6 +72,10 @@ for path in /sys/block/*; do
 		fd*)
 			continue
 			;;
+		# Cd/Tape.
+		sr*)
+			continue
+			;;
 	esac
 
 	# Replace any exclamation marks (e.g. cciss!c0d0).
