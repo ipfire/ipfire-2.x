@@ -139,9 +139,6 @@ else
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32-imq-test2.patch
 endif
 
-	# Not report deprecated syscall 1.23 (for kudzu)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.25.18-not_report_sysctl_1.23.patch
-
 	# Reiser4 (don't check if fail (some patches are already in xen patchset)
 	-cd $(DIR_APP) && bzcat $(DIR_DL)/reiser4-for-2.6.32.patch.bz2 | patch -Np1
 

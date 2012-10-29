@@ -519,7 +519,6 @@ buildipfire() {
   ipfiremake mISDNuser
   ipfiremake capi4k-utils
   ipfiremake hwdata
-  ipfiremake kudzu
   ipfiremake logrotate
   ipfiremake logwatch
   ipfiremake misc-progs
