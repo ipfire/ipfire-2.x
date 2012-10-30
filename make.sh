@@ -866,7 +866,7 @@ ipfirepackages() {
 	ipfiremake core-updates
 
 	local i
-	for i in $(find $BASEDIR/config/rootfiles/packages{${machine},} -maxdepth 1 -type f); do
+	for i in $(find $BASEDIR/config/rootfiles/packages{/${MACHINE},} -maxdepth 1 -type f); do
 		i=$(basename ${i})
 		if [ -e $BASEDIR/lfs/$i ]; then
 			ipfiredist $i
