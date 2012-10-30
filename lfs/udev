@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 125
+VER        = 141
 
 THISAPP    = udev-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -36,13 +36,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) udev-config-6.2.tar.bz2
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-udev-config-6.2.tar.bz2 = $(DL_FROM)/udev-config-6.2.tar.bz2
 
-$(DL_FILE)_MD5 = be98e04cefdd9ca76b8fe7e92735ce29
-udev-config-6.2.tar.bz2_MD5 = 9ff2667ab0f7bfe8182966ef690078a0
+$(DL_FILE)_MD5 = 1670fe81cabf5161319c52084cf81134
 
 install : $(TARGET)
 
@@ -71,35 +69,32 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-125-netif_rename.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-141_no_netif_rename.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-125-ext4_wo_journal.patch
 	rm -rf /lib/udev/devices
-	cd $(DIR_APP) && tar jxf $(DIR_DL)/udev-config-6.2.tar.bz2
-	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/udev-config-6.2_persistent-storage-fix.patch
-	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/udev-config-6.2_remove-lfs-usb-rule.patch
 	install -dv /lib/{firmware,udev/devices/{pts,shm}}
-	echo "Put device firmwares here ..." > /lib/firmware/dirinfo
 	mknod -m0666 /lib/udev/devices/null c 1 3
 	ln -sv /proc/self/fd /lib/udev/devices/fd
 	ln -sv /proc/self/fd/0 /lib/udev/devices/stdin
 	ln -sv /proc/self/fd/1 /lib/udev/devices/stdout
 	ln -sv /proc/self/fd/2 /lib/udev/devices/stderr
 	ln -sv /proc/kcore /lib/udev/devices/core
+	cd $(DIR_APP) && ./configure --disable-introspection --sbindir=/sbin --sysconfdir=/etc --libexecdir=/lib/udev
 	cd $(DIR_APP) && make $(MAKETUNING) EXTRAS="extras/ata_id extras/cdrom_id extras/edd_id \
 					extras/firmware extras/floppy extras/path_id \
 					extras/scsi_id extras/usb_id extras/volume_id"
 	cd $(DIR_APP) && make DESTDIR=/ EXTRAS="extras/ata_id extras/cdrom_id extras/edd_id \
 					extras/firmware extras/floppy extras/path_id \
 					extras/scsi_id extras/usb_id extras/volume_id" install
-	cd $(DIR_APP) && cp -v udev-config-6.2/[0-9]* /etc/udev/rules.d/
-	cp -rf $(DIR_SRC)/config/udev/10-dvb.rules /etc/udev/rules.d/
-	cp -rf $(DIR_SRC)/config/udev/55-scsi-cdrom.rules /etc/udev/rules.d/
-	chmod 644 /etc/udev/rules.d/10-dvb.rules
-	chmod 644 /etc/udev/rules.d/55-scsi-cdrom.rules
-	cp -rf $(DIR_SRC)/config/udev/dvb.sh /etc/udev/
-	chmod 755 /etc/udev/dvb.sh
+
+	# Disable net generator rule. This does not work with the setup.
+	rm -f /lib/udev/rules.d/75-persistent-net-generator.rules
+
+	# Create rule file for the setup
 	touch /etc/udev/rules.d/30-persistent-network.rules
+
+	# Blacklist some modules
 	cp -vf $(DIR_SRC)/config/udev/blacklist /etc/modprobe.d/blacklist
 
 	# Install codel rules.

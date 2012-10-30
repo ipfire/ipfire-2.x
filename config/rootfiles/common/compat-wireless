@@ -1,2 +1,2 @@
-etc/udev/rules.d/50-compat_firmware.rules
+lib/udev/rules.d/50-compat_firmware.rules
 lib/udev/compat_firmware.sh

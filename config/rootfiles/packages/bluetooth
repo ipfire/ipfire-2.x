@@ -6,7 +6,7 @@ etc/bluetooth/main.conf
 etc/bluetooth/network.conf
 etc/bluetooth/rfcomm.conf
 etc/dbus-1/system.d/bluetooth.conf
-etc/udev/rules.d/24-bluetooth.rules
+#lib/udev/rules.d/24-bluetooth.rules
 lib/firmware/BCM-LEGAL.txt
 lib/firmware/BCM2033-FW.bin
 lib/firmware/BCM2033-MD.hex

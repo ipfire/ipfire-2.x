@@ -117,7 +117,7 @@ endif
 		KMODPATH_ARG='INSTALL_MOD_PATH=' KMODDIR=kernel install-modules
 
 	# Install firmware udev files...
-	cd $(DIR_APP)/udev && install -m 644 50-compat_firmware.rules /etc/udev/rules.d/
+	cd $(DIR_APP)/udev && install -m 644 50-compat_firmware.rules /lib/udev/rules.d/
 	cd $(DIR_APP)/udev && install -m 755 compat_firmware.sh /lib/udev/
 
 	-rm -rf $(DIR_APP)

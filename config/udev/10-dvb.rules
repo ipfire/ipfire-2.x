@@ -1,2 +1,0 @@
-# Create DVB Devices
-KERNEL=="dvb*", PROGRAM="/etc/udev/dvb.sh %k", NAME="%c"

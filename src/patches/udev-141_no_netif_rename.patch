@@ -1,0 +1,50 @@
+diff -Naur udev-141.org/udev/udev-event.c udev-141/udev/udev-event.c
+--- udev-141.org/udev/udev-event.c	2009-02-24 15:08:35.000000000 +0100
++++ udev-141/udev/udev-event.c	2012-10-30 12:27:00.262833136 +0100
+@@ -486,45 +486,8 @@
+ 	if (err == 0)
+ 		rename_netif_kernel_log(ifr);
+ 	else {
+-		int loop;
+-
+-		/* see if the destination interface name already exists */
+-		if (errno != EEXIST) {
+-			err(event->udev, "error changing netif name %s to %s: %m\n",
+-			    ifr.ifr_name, ifr.ifr_newname);
+-			goto exit;
+-		}
+-
+-		/* free our own name, another process may wait for us */
+-		util_strlcpy(ifr.ifr_newname, udev_device_get_sysname(dev), IFNAMSIZ);
+-		util_strlcat(ifr.ifr_newname, "_rename", IFNAMSIZ);
+-		err = ioctl(sk, SIOCSIFNAME, &ifr);
+-		if (err != 0) {
+-			err(event->udev, "error changing netif name %s to %s: %m\n",
++		err(event->udev, "error changing netif name %s to %s: %m\n",
+ 			    ifr.ifr_name, ifr.ifr_newname);
+-			goto exit;
+-		}
+-
+-		/* wait 90 seconds for our target to become available */
+-		util_strlcpy(ifr.ifr_name, ifr.ifr_newname, IFNAMSIZ);
+-		util_strlcpy(ifr.ifr_newname, event->name, IFNAMSIZ);
+-		loop = 90 * 20;
+-		while (loop--) {
+-			err = ioctl(sk, SIOCSIFNAME, &ifr);
+-			if (err == 0) {
+-				rename_netif_kernel_log(ifr);
+-				break;
+-			}
+-
+-			if (errno != EEXIST) {
+-				err(event->udev, "error changing net interface name %s to %s: %m\n",
+-				    ifr.ifr_name, ifr.ifr_newname);
+-				break;
+-			}
+-			dbg(event->udev, "wait for netif '%s' to become free, loop=%i\n",
+-			    event->name, (90 * 20) - loop);
+-			usleep(1000 * 1000 / 20);
+-		}
+ 	}
+ exit:
+ 	close(sk);

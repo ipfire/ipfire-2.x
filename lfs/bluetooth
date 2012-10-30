@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -108,7 +108,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    --sysconfdir=/etc --localstatedir=/var --libexecdir=/lib
 	cd $(DIR_SRC)/bluez-hcidump-1.42 && make $(MAKETUNING)
 	cd $(DIR_SRC)/bluez-hcidump-1.42 && make install
-	mv -f /etc/udev/bluetooth.rules /etc/udev/rules.d/24-bluetooth.rules
+	mv -f /etc/udev/bluetooth.rules /lib/udev/rules.d/24-bluetooth.rules
 	# Change bluetooth peername to Hostname-devicenumber
 	sed -i -e 's|name "BlueZ (%d)";|name "%h-%d";|g' /etc/bluetooth/hcid.conf
 	# Create empty config files
