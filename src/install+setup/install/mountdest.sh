@@ -95,6 +95,11 @@ for path in /sys/block/*; do
 		continue
 	fi
 
+	if [ $(cat /sys/block/${device}/size) == 0 ]; then
+		echo "  is empty - skipping"
+		continue
+	fi
+
 	# Found it.
 	echo "  OK, this is it..."
 	echo -n "${device}" > /tmp/dest_device
