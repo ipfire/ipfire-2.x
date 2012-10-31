@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2005-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -123,7 +123,7 @@ if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'wlanap del interface'}" ){
 
 if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'save'}" ){
 	# verify WPA Passphrase, must be 8 .. 63 characters - only wiht enabled enc
-	if (($wlanapsettings{'ENC'} eq "wpa1") || ($wlanapsettings{'ENC'} eq "wpa2")){
+	if (($wlanapsettings{'ENC'} eq "wpa1") || ($wlanapsettings{'ENC'} eq "wpa2") || ($wlanapsettings{'ENC'} eq "wpa1+2")){
 		if ( (length($wlanapsettings{'PWD'}) < 8) || (length($wlanapsettings{'PWD'}) > 63)){
 			$errormessage .= "$Lang::tr{'wlanap invalid wpa'}<br />";
 		}
@@ -230,6 +230,11 @@ END
 			}
 		}
 	}
+}
+
+# Change old "n" to "gn"
+if ( $wlanapsettings{'HW_MODE'} eq 'n' ) {
+	$wlanapsettings{'HW_MODE'}='gn';
 }
 
 $checked{'HIDESSID'}{'off'} = '';
@@ -350,7 +355,8 @@ print <<END
 		<option value='a' $selected{'HW_MODE'}{'a'}>802.11a</option>
 		<option value='b' $selected{'HW_MODE'}{'b'}>802.11b</option>
 		<option value='g' $selected{'HW_MODE'}{'g'}>802.11g</option>
-		<option value='n' $selected{'HW_MODE'}{'n'}>802.11n</option>
+		<option value='an' $selected{'HW_MODE'}{'an'}>802.11an</option>
+		<option value='gn' $selected{'HW_MODE'}{'gn'}>802.11gn</option>
 	</select>
 </td></tr>
 
@@ -359,6 +365,7 @@ print <<END
 		<option value='none' $selected{'ENC'}{'none'}>$Lang::tr{'wlanap none'}</option>
 		<option value='wpa1' $selected{'ENC'}{'wpa1'}>WPA1</option>
 		<option value='wpa2' $selected{'ENC'}{'wpa2'}>WPA2</option>
+		<option value='wpa1+2' $selected{'ENC'}{'wpa1+2'}>WPA1+2</option>
 	</select>
 </td></tr>
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap channel'}:&nbsp;</td><td class='base' colspan='3'>
@@ -478,7 +485,16 @@ driver=$wlanapsettings{'DRIVER_HOSTAPD'}
 channel=$wlanapsettings{'CHANNEL'}
 END
 ;
- if ( $wlanapsettings{'HW_MODE'} eq 'n' ){
+ if ( $wlanapsettings{'HW_MODE'} eq 'an' ){
+	print CONFIGFILE <<END
+hw_mode=a
+ieee80211n=1
+wmm_enabled=1
+ht_capab=$wlanapsettings{'HTCAPS'}
+END
+;
+
+ }elsif ( $wlanapsettings{'HW_MODE'} eq 'gn' ){
 	print CONFIGFILE <<END
 hw_mode=g
 ieee80211n=1
@@ -529,7 +545,7 @@ END
 wpa=1
 wpa_passphrase=$wlanapsettings{'PWD'}
 wpa_key_mgmt=WPA-PSK
-wpa_pairwise=CCMP TKIP
+wpa_pairwise=TKIP
 END
 ;
  }elsif ( $wlanapsettings{'ENC'} eq 'wpa2'){
@@ -539,7 +555,18 @@ END
 wpa=2
 wpa_passphrase=$wlanapsettings{'PWD'}
 wpa_key_mgmt=WPA-PSK
-wpa_pairwise=CCMP TKIP
+rsn_pairwise=CCMP
+END
+;
+ } elsif ( $wlanapsettings{'ENC'} eq 'wpa1+2'){
+	print CONFIGFILE <<END
+######################### wpa hostapd configuration ############################
+#
+wpa=3
+wpa_passphrase=$wlanapsettings{'PWD'}
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
 END
 ;
  }
