@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
 	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, pl_tr, ru_tr, NULL };
 	char hdletter;
 	char harddrive[30], sourcedrive[5];	/* Device holder. */
+	char harddrive_info[STRING_SIZE];	/* Additional infos about target */
 	struct devparams hdparams, cdromparams; /* Params for CDROM and HD */
 	int rc = 0;
 	char commandstring[STRING_SIZE];
@@ -213,6 +214,12 @@ int main(int argc, char *argv[])
 	}
 	fgets(harddrive, 30, handle);
 	fclose(handle);
+	if ((handle = fopen("/tmp/dest_device_info", "r")) == NULL) {
+		sprintf(harddrive_info, "%s", harddrive);
+	}
+	fgets(harddrive_info, 70, handle);
+	fclose(handle);
+
 			
 	/* load unattended configuration */
 	if (unattended) {
@@ -236,7 +243,7 @@ int main(int argc, char *argv[])
 
 	fprintf(flog, "Destination drive: %s\n", hdparams.devnode_disk);
 	
-	sprintf(message, ctr[TR_PREPARE_HARDDISK], hdparams.devnode_disk);
+	sprintf(message, ctr[TR_PREPARE_HARDDISK], harddrive_info);
 	if (unattended) {
 	    hardyn = 1;
 	} else {

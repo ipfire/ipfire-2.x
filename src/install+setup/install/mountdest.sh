@@ -79,18 +79,18 @@ for path in /sys/block/*; do
 	esac
 
 	# Replace any exclamation marks (e.g. cciss!c0d0).
-	device=${device//!/\/}
+	device_=${device//!/\/}
 
 	# Guess if this could be a raid device.
-	for dev in ${device} ${device}p1; do
+	for dev in ${device_} ${device_}p1; do
 		if [ -e "/dev/${dev}" ]; then
 			device=${dev}
 			break
 		fi
 	done
 
-	echo "Checking ${device}"
-	if check_source_drive ${device}; then
+	echo "Checking ${device_}"
+	if check_source_drive ${device_}; then
 		echo "  is source drive - skipping"
 		continue
 	fi
@@ -102,13 +102,22 @@ for path in /sys/block/*; do
 
 	# Found it.
 	echo "  OK, this is it..."
-	echo -n "${device}" > /tmp/dest_device
+	echo -n "${device_}" > /tmp/dest_device
+
+	# Build string with drive details
+	echo -n "/dev/${device_} (" > /tmp/dest_device_info
+	# size is in sectors (512 Bytes)
+	let DISK_SIZE=$(cat /sys/block/${device}/size)/2097152
+	echo -n "$DISK_SIZE GB - " >> /tmp/dest_device_info
+	echo -n "$(cat /sys/block/${device}/device/vendor) " >> /tmp/dest_device_info
+	echo -n "$(cat /sys/block/${device}/device/model) " >> /tmp/dest_device_info
+	echo -n "$(cat /sys/block/${device}/device/rev))" >> /tmp/dest_device_info
 
 	# Exit code table:
 	#  1: sda
 	#  2: RAID
 	# 10: nothing found
-	case "${device}" in
+	case "${device_}" in
 		*p1|*c0d0)
 			exit 2
 			;;
