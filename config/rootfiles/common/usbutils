@@ -1,4 +1,5 @@
 #usr/man/man8/lsusb.8
 usr/sbin/lsusb
 usr/sbin/update-usbids
+#usr/share/hwdata
 #usr/share/hwdata/usb.ids

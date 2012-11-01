@@ -17,6 +17,7 @@
 usr/lib/libatm.so
 usr/lib/libatm.so.1
 usr/lib/libatm.so.1.0.0
+#usr/man/man4
 #usr/man/man4/atmsigd.conf.4
 #usr/man/man7/qos.7
 #usr/man/man7/sap.7

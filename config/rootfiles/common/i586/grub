@@ -4,14 +4,6 @@ boot/grub/ipfire.xpm.gz
 boot/grub/stage1
 boot/grub/stage2
 #usr/bin/mbchk
-#usr/info/grub.info
-#usr/info/multiboot.info
-#usr/man/man1/mbchk.1
-#usr/man/man8/grub-crypt.8
-#usr/man/man8/grub-install.8
-#usr/man/man8/grub-md5-crypt.8
-#usr/man/man8/grub-terminfo.8
-#usr/man/man8/grub.8
 usr/sbin/grub
 usr/sbin/grub-crypt
 usr/sbin/grub-install
@@ -32,3 +24,11 @@ usr/share/grub
 #usr/share/grub/i386-pc/ufs2_stage1_5
 #usr/share/grub/i386-pc/vstafs_stage1_5
 #usr/share/grub/i386-pc/xfs_stage1_5
+#usr/share/info/grub.info
+#usr/share/info/multiboot.info
+#usr/share/man/man1/mbchk.1
+#usr/share/man/man8/grub-crypt.8
+#usr/share/man/man8/grub-install.8
+#usr/share/man/man8/grub-md5-crypt.8
+#usr/share/man/man8/grub-terminfo.8
+#usr/share/man/man8/grub.8

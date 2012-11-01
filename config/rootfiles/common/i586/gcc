@@ -789,6 +789,8 @@ usr/lib/libssp.so.0.0.0
 usr/lib/libstdc++.so.6.0.13
 #usr/lib/libsupc++.a
 #usr/lib/libsupc++.la
+#usr/man
+#usr/man/man1
 #usr/man/man1/cpp.1
 #usr/man/man1/g++.1
 #usr/man/man1/gcc.1

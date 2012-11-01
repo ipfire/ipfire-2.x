@@ -51,7 +51,7 @@ else
 	HEADERS_PREFIX = /usr
 endif
 else
-	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
+	TARGET = $(DIR_INFO)/linux-xen-$(VER)-$(VERSUFIX)
 endif
 
 ifeq "$(MACHINE_TYPE)" "arm"

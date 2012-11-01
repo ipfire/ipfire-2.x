@@ -28,8 +28,6 @@ usr/lib/libFLAC.so.8
 usr/lib/libFLAC.so.8.2.0
 #usr/lib/pkgconfig/flac++.pc
 #usr/lib/pkgconfig/flac.pc
-#usr/man/man1/flac.1
-#usr/man/man1/metaflac.1
 #usr/share/aclocal/libFLAC++.m4
 #usr/share/aclocal/libFLAC.m4
 #usr/share/doc/flac-1.2.1
@@ -312,3 +310,5 @@ usr/lib/libFLAC.so.8.2.0
 #usr/share/doc/flac-1.2.1/html/ru/index.html
 #usr/share/doc/flac-1.2.1/html/ru/links.html
 #usr/share/doc/flac-1.2.1/html/ru/news.html
+#usr/share/man/man1/flac.1
+#usr/share/man/man1/metaflac.1

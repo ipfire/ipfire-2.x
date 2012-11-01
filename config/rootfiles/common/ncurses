@@ -88,6 +88,7 @@ usr/lib/libtinfo.so.5.9
 #usr/man/man1/toe.1m
 #usr/man/man1/tput.1
 #usr/man/man1/tset.1
+#usr/man/man3
 #usr/man/man3/BC.3x
 #usr/man/man3/COLORS.3x
 #usr/man/man3/COLOR_PAIR.3x
@@ -937,6 +938,7 @@ usr/lib/libtinfo.so.5.9
 #usr/man/man3/wunctrl_sp.3x
 #usr/man/man3/wvline.3x
 #usr/man/man3/wvline_set.3x
+#usr/man/man5
 #usr/man/man5/term.5
 #usr/man/man5/terminfo.5
 #usr/man/man7/term.7
