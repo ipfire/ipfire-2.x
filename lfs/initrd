@@ -71,6 +71,9 @@ $(TARGET) :
 
 	cd /install/initrd/ && patch -Np0 < $(DIR_SRC)/src/patches/dracut-init_start_ipfireinstaller.patch
 
+	# Hide udev messages
+	sed -i -e "s|err|none|g" /install/initrd/etc/udev/udev.conf
+
 	# make new dependencies 
 	depmod -a -F /boot/System.map-$(KVER)-ipfire $(KVER)-ipfire
 
