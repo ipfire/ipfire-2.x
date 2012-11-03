@@ -1,0 +1,4 @@
+etc/system-release
+etc/issue
+srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
