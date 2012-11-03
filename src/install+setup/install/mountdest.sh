@@ -95,7 +95,8 @@ for path in /sys/block/*; do
 		continue
 	fi
 
-	if [ $(cat /sys/block/${device}/size) == 0 ]; then
+	device_size=$(cat /sys/block/${device}/size)
+	if [ "${device_size}" = "0" ]; then
 		echo "  is empty - skipping"
 		continue
 	fi
@@ -104,14 +105,18 @@ for path in /sys/block/*; do
 	echo "  OK, this is it..."
 	echo -n "${device_}" > /tmp/dest_device
 
+	# Disk size to GiB.
+	device_size=$(( ${device_size} / 2097152 ))
+
 	# Build string with drive details
-	echo -n "/dev/${device_} (" > /tmp/dest_device_info
-	# size is in sectors (512 Bytes)
-	let DISK_SIZE=$(cat /sys/block/${device}/size)/2097152
-	echo -n "$DISK_SIZE GB - " >> /tmp/dest_device_info
-	echo -n "$(cat /sys/block/${device}/device/vendor) " >> /tmp/dest_device_info
-	echo -n "$(cat /sys/block/${device}/device/model) " >> /tmp/dest_device_info
-	echo -n "$(cat /sys/block/${device}/device/rev))" >> /tmp/dest_device_info
+	device_str="/dev/${device_} - ${device_size} GiB -"
+	device_str="${device_str} $(cat /sys/block/${device}/device/vendor)"
+	device_str="${device_str} $(cat /sys/block/${device}/device/model)"
+
+	# Remove all whitespace.
+	device_str=$(echo ${device_str})
+
+	echo -n "${device_str}" > /tmp/dest_device_info
 
 	# Exit code table:
 	#  1: sda
