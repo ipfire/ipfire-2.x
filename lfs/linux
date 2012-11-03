@@ -183,12 +183,12 @@ ifeq "$(KCFG)" "-rpi"
 else
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
 endif
 endif
 endif
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
-	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
 	ln -sf System.map-$(VER)-$(VERSUFIX) /boot/System.map-$(VERSUFIX)
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install

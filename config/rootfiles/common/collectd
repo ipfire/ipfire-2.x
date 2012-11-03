@@ -151,8 +151,8 @@ usr/lib/libcollectdclient.so.0.0.0
 #usr/lib/perl5/site_perl/5.12.3/Collectd/Plugins/Monitorus.pm
 #usr/lib/perl5/site_perl/5.12.3/Collectd/Plugins/OpenVZ.pm
 #usr/lib/perl5/site_perl/5.12.3/Collectd/Unixsock.pm
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Collectd
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Collectd/.packlist
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Collectd
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Collectd/.packlist
 #usr/lib/pkgconfig/libcollectdclient.pc
 usr/sbin/collectd
 usr/sbin/collectdmon
