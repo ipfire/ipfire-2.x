@@ -24,12 +24,11 @@
 
 include Config
 
-VER        = 2011n
-TZDATA_VER = 2011n
-TZCODE_VER = 2011i
+VER        = 2012h
+TZDATA_VER = 2012h
+TZCODE_VER = 2012h
 
-THISAPP    = tzdata
-DL_FILE    = tzdata-base-0.tar.bz2
+THISAPP    = tzdata-$(VER)
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -38,15 +37,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) tzdata$(TZDATA_VER).tar.gz tzcode$(TZCODE_VER).tar.gz
+objects = tzdata$(TZDATA_VER).tar.gz tzcode$(TZCODE_VER).tar.gz
 
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 tzdata$(TZDATA_VER).tar.gz = $(DL_FROM)/tzdata$(TZDATA_VER).tar.gz
 tzcode$(TZCODE_VER).tar.gz = $(DL_FROM)/tzcode$(TZCODE_VER).tar.gz
 
-$(DL_FILE)_MD5 = e36d2f742c22f8c8dbf0686ac9769b55
-tzdata$(TZDATA_VER).tar.gz_MD5 = 20dbfb28efa008ddbf6dd34601ea40fa
-tzcode$(TZCODE_VER).tar.gz_MD5 = cf7f4335b7c8682899fa2814e711c1b2
+tzdata$(TZDATA_VER).tar.gz_MD5 = b937335e087fb85b7f8e3ce33e69184b
+tzcode$(TZCODE_VER).tar.gz_MD5 = 44b3b6c3e50240ac44f16437040a7ba2
 
 install : $(TARGET)
 
@@ -75,19 +72,21 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && mkdir -pv $(DIR_APP)
 	mkdir -pv $(DIR_APP)/tzdata$(TZDATA_VER) $(DIR_APP)/tzcode$(TZCODE_VER)
-	tar axf $(DIR_DL)/tzdata$(TZDATA_VER).tar.gz -C $(DIR_APP)/tzdata$(TZDATA_VER)
-	tar axf $(DIR_DL)/tzcode$(TZCODE_VER).tar.gz -C $(DIR_APP)/tzcode$(TZCODE_VER)
+	tar axf $(DIR_DL)/tzdata$(TZDATA_VER).tar.gz -C $(DIR_APP)
+	tar axf $(DIR_DL)/tzcode$(TZCODE_VER).tar.gz -C $(DIR_APP)
 
-	cd $(DIR_APP) && sed -e 's|@objpfx@|$(DIR_APP)/obj/|' \
-		-e 's|@datadir@|/usr/share|' \
-		Makeconfig.in > Makeconfig
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make TOPDIR=/usr ETCDIR=/tmp LIBDIR=/tmp MANDIR=/tmp \
+		TZDIR=/usr/share/zoneinfo all
+	cd $(DIR_APP) && make TOPDIR=/usr ETCDIR=/tmp LIBDIR=/tmp MANDIR=/tmp \
+		TZDIR=/usr/share/zoneinfo install
 
-	cd $(DIR_APP) && sed -i 's|@install_root@||' Makeconfig
-	cd $(DIR_APP) && make install
+	-mkdir -pv /usr/share/zoneinfo
+	mv -v /usr/share/zoneinfo-posix /usr/share/zoneinfo/posix
+	mv -v /usr/share/zoneinfo-leaps /usr/share/zoneinfo/right
+	rm -vf /usr/share/zoneinfo/localtime
 
-	cp -f /usr/share/zoneinfo/GMT /etc/localtime
+	cp -vf /usr/share/zoneinfo/GMT /etc/localtime
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

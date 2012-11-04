@@ -100,6 +100,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/America/Coral_Harbour
 #usr/share/zoneinfo/America/Cordoba
 #usr/share/zoneinfo/America/Costa_Rica
++usr/share/zoneinfo/America/Creston
 #usr/share/zoneinfo/America/Cuiaba
 #usr/share/zoneinfo/America/Curacao
 #usr/share/zoneinfo/America/Danmarkshavn
@@ -594,12 +595,14 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/US/Michigan
 #usr/share/zoneinfo/US/Mountain
 #usr/share/zoneinfo/US/Pacific
+#usr/share/zoneinfo/US/Pacific-New
 #usr/share/zoneinfo/US/Samoa
 #usr/share/zoneinfo/UTC
 #usr/share/zoneinfo/Universal
 #usr/share/zoneinfo/W-SU
 #usr/share/zoneinfo/WET
 #usr/share/zoneinfo/Zulu
+#usr/share/zoneinfo/iso3166.tab
 #usr/share/zoneinfo/posix
 #usr/share/zoneinfo/posix/Africa
 #usr/share/zoneinfo/posix/Africa/Abidjan
@@ -702,6 +705,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/posix/America/Coral_Harbour
 #usr/share/zoneinfo/posix/America/Cordoba
 #usr/share/zoneinfo/posix/America/Costa_Rica
+#usr/share/zoneinfo/posix/America/Creston
 #usr/share/zoneinfo/posix/America/Cuiaba
 #usr/share/zoneinfo/posix/America/Curacao
 #usr/share/zoneinfo/posix/America/Danmarkshavn
@@ -1196,6 +1200,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/posix/US/Michigan
 #usr/share/zoneinfo/posix/US/Mountain
 #usr/share/zoneinfo/posix/US/Pacific
+#usr/share/zoneinfo/posix/US/Pacific-New
 #usr/share/zoneinfo/posix/US/Samoa
 #usr/share/zoneinfo/posix/UTC
 #usr/share/zoneinfo/posix/Universal
@@ -1305,6 +1310,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/right/America/Coral_Harbour
 #usr/share/zoneinfo/right/America/Cordoba
 #usr/share/zoneinfo/right/America/Costa_Rica
+#usr/share/zoneinfo/right/America/Creston
 #usr/share/zoneinfo/right/America/Cuiaba
 #usr/share/zoneinfo/right/America/Curacao
 #usr/share/zoneinfo/right/America/Danmarkshavn
@@ -1799,9 +1805,11 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/right/US/Michigan
 #usr/share/zoneinfo/right/US/Mountain
 #usr/share/zoneinfo/right/US/Pacific
+#usr/share/zoneinfo/right/US/Pacific-New
 #usr/share/zoneinfo/right/US/Samoa
 #usr/share/zoneinfo/right/UTC
 #usr/share/zoneinfo/right/Universal
 #usr/share/zoneinfo/right/W-SU
 #usr/share/zoneinfo/right/WET
 #usr/share/zoneinfo/right/Zulu
+#usr/share/zoneinfo/zone.tab
