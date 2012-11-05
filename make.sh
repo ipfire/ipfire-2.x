@@ -624,7 +624,6 @@ buildipfire() {
   ipfiremake libsigc++
   ipfiremake libtorrent
   ipfiremake rtorrent
-  ipfiremake ipfireseeder
   ipfiremake rsync
   ipfiremake tcpwrapper
   ipfiremake libevent

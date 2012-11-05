@@ -1,5 +1,0 @@
-etc/rc.d/init.d/ipfireseeder
-#var/ipfire/seeder
-var/ipfire/seeder/ipfire-2.9.MACHINE-full-core51.iso.torrent
-#var/log/seeder
-var/log/seeder/info
