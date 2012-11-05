@@ -661,7 +661,6 @@ buildipfire() {
   ipfiremake dfb++
   ipfiremake faad2
   ipfiremake ffmpeg
-  ipfiremake videolan
   ipfiremake vdr
   ipfiremake w_scan
   ipfiremake icecast
