@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 3.2.25 Kernel Configuration
+# Linux/arm 3.2.33 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -2202,6 +2202,7 @@ CONFIG_I2C_VIAPRO=m
 #
 # I2C system bus drivers (mostly embedded / system-on-chip)
 #
+CONFIG_I2C_DESIGNWARE_CORE=m
 CONFIG_I2C_DESIGNWARE_PCI=m
 CONFIG_I2C_GPIO=m
 CONFIG_I2C_INTEL_MID=m
@@ -3572,6 +3573,7 @@ CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
 #
 # iptables trigger is under Netfilter config (LED target)
 #
+CONFIG_LEDS_TRIGGER_NETDEV=m
 # CONFIG_ACCESSIBILITY is not set
 # CONFIG_INFINIBAND is not set
 CONFIG_RTC_LIB=y

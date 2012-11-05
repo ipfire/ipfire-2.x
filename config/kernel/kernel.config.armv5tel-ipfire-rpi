@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 3.2.32 Kernel Configuration
+# Linux/arm 3.2.33 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -2566,6 +2566,7 @@ CONFIG_LEDS_TRIGGER_DEFAULT_ON=m
 #
 # iptables trigger is under Netfilter config (LED target)
 #
+CONFIG_LEDS_TRIGGER_NETDEV=m
 # CONFIG_ACCESSIBILITY is not set
 CONFIG_RTC_LIB=y
 CONFIG_RTC_CLASS=y
