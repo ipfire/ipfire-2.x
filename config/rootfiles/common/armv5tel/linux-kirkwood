@@ -3,7 +3,7 @@ boot/System.map-KVER-ipfire-kirkwood
 boot/config-KVER-ipfire-kirkwood
 boot/uImage-ipfire-kirkwood
 boot/vmlinuz-KVER-ipfire-kirkwood
-boot/vmlinuz-ipfire-kirkwood
+#boot/vmlinuz-ipfire-kirkwood
 etc/modprobe.d/framebuffer
 etc/modprobe.d/ipv6
 etc/modprobe.d/isdn
@@ -563,6 +563,7 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/leds/ledtrig-backlight.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/leds/ledtrig-gpio.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/leds/ledtrig-heartbeat.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/leds/ledtrig-netdev.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/leds/ledtrig-timer.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/md
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/md/dm-bufio.ko

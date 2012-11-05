@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/i386 3.2.32 Kernel Configuration
+# Linux/i386 3.2.33 Kernel Configuration
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -3951,6 +3951,7 @@ CONFIG_LEDS_TRIGGER_DEFAULT_ON=m
 #
 # iptables trigger is under Netfilter config (LED target)
 #
+CONFIG_LEDS_TRIGGER_NETDEV=m
 # CONFIG_ACCESSIBILITY is not set
 # CONFIG_INFINIBAND is not set
 # CONFIG_EDAC is not set

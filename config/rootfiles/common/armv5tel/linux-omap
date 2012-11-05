@@ -3,7 +3,7 @@ boot/System.map-KVER-ipfire-omap
 boot/config-KVER-ipfire-omap
 boot/uImage-ipfire-omap
 boot/vmlinuz-KVER-ipfire-omap
-boot/vmlinuz-ipfire-omap
+#boot/vmlinuz-ipfire-omap
 lib/modules/KVER-ipfire-omap
 #lib/modules/KVER-ipfire-omap/build
 #lib/modules/KVER-ipfire-omap/kernel
@@ -380,6 +380,7 @@ lib/modules/KVER-ipfire-omap
 #lib/modules/KVER-ipfire-omap/kernel/drivers/leds/ledtrig-backlight.ko
 #lib/modules/KVER-ipfire-omap/kernel/drivers/leds/ledtrig-default-on.ko
 #lib/modules/KVER-ipfire-omap/kernel/drivers/leds/ledtrig-gpio.ko
+#lib/modules/KVER-ipfire-omap/kernel/drivers/leds/ledtrig-netdev.ko
 #lib/modules/KVER-ipfire-omap/kernel/drivers/leds/ledtrig-timer.ko
 #lib/modules/KVER-ipfire-omap/kernel/drivers/md
 #lib/modules/KVER-ipfire-omap/kernel/drivers/md/dm-bufio.ko

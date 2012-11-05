@@ -718,6 +718,7 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/ledtrig-default-on.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/ledtrig-gpio.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/ledtrig-heartbeat.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/leds/ledtrig-netdev.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/ledtrig-timer.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/lguest
 #lib/modules/KVER-ipfire-pae/kernel/drivers/lguest/lg.ko
