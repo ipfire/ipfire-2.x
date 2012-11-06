@@ -188,7 +188,6 @@ case "$1" in
 
 	# Outgoing Firewall
 	/sbin/iptables -A FORWARD -j OUTGOINGFWMAC
-	/sbin/iptables -A FORWARD -j OUTGOINGFW
 
 	# localhost and ethernet.
 	/sbin/iptables -A INPUT   -i lo -m state --state NEW -j ACCEPT
