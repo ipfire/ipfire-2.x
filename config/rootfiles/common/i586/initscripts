@@ -142,6 +142,7 @@ etc/rc.d/rc0.d/K28apache
 etc/rc.d/rc0.d/K30sshd
 #etc/rc.d/rc0.d/K34client175
 etc/rc.d/rc0.d/K45random
+etc/rc.d/rc0.d/K47setclock
 etc/rc.d/rc0.d/K49cyrus-sasl
 etc/rc.d/rc0.d/K78snort
 etc/rc.d/rc0.d/K79leds
@@ -187,6 +188,7 @@ etc/rc.d/rc6.d/K28apache
 etc/rc.d/rc6.d/K30sshd
 #etc/rc.d/rc6.d/K34client175
 etc/rc.d/rc6.d/K45random
+etc/rc.d/rc6.d/K47setclock
 etc/rc.d/rc6.d/K49cyrus-sasl
 etc/rc.d/rc6.d/K78snort
 etc/rc.d/rc6.d/K79leds

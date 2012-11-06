@@ -38,7 +38,7 @@ case ${1} in
 		;;
 
 	*)
-		echo "Usage: ${0} {start}"
+		echo "Usage: ${0} {start} {stop}"
 		;;
 
 esac
