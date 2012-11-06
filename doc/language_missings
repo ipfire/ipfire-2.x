@@ -10,6 +10,8 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< advproxy errmsg invalid upstream proxy
+< deprecated fs warn
 < dns address deleted txt
 < fireinfo ipfire version
 < fireinfo is disabled
@@ -41,12 +43,15 @@
 < openvpn prefix openvpn subnet
 < openvpn prefix remote subnet
 < openvpn subnet is used
+< other
+< our donors
 < snort working
 < static routes
 < system information
 < upload new ruleset
 < urlfilter file ext block
 < urlfilter mode block
+< visit us at
 < vpn keyexchange
 < wlanap access point
 < wlanap channel
@@ -74,7 +79,9 @@
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
+< advproxy errmsg invalid upstream proxy
 < Async logging enabled
+< deprecated fs warn
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -103,6 +110,8 @@
 < openvpn prefix openvpn subnet
 < openvpn prefix remote subnet
 < openvpn subnet is used
+< other
+< our donors
 < outgoing firewall add ip group
 < outgoing firewall add mac group
 < outgoing firewall edit ip group
@@ -120,6 +129,7 @@
 < Set time on boot
 < static routes
 < system information
+< visit us at
 < vpn keyexchange
 ############################################################################
 # Checking install/setup translations for language: pl                     #
@@ -127,6 +137,8 @@
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
+< advproxy errmsg invalid upstream proxy
+< deprecated fs warn
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -147,7 +159,10 @@
 < openvpn prefix openvpn subnet
 < openvpn prefix remote subnet
 < openvpn subnet is used
+< other
+< our donors
 < static routes
+< visit us at
 < vpn keyexchange
 ############################################################################
 # Checking install/setup translations for language: ru                     #
@@ -156,7 +171,9 @@
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
 < Add a route
+< advproxy errmsg invalid upstream proxy
 < day-graph
+< deprecated fs warn
 < disk access per
 < Edit an existing route
 < extrahd because there is already a device mounted
@@ -183,8 +200,11 @@
 < openvpn prefix openvpn subnet
 < openvpn prefix remote subnet
 < openvpn subnet is used
+< other
+< our donors
 < outgoing traffic in bytes per second
 < static routes
+< visit us at
 < vpn keyexchange
 < week-graph
 < year-graph

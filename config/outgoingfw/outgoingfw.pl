@@ -181,6 +181,7 @@ foreach $configentry (sort @configs)
 			@PROTO = ("tcp","udp");
 		}
 
+		my $macrule = 0;
 		foreach $PROTO (@PROTO){
 			foreach $SOURCE (@SOURCE) {
 				$SOURCE =~ s/\s//gi;
@@ -189,9 +190,10 @@ foreach $configentry (sort @configs)
 
 				if ( ( $configline[6] ne "" || $configline[2] eq 'mac' ) && $configline[2] ne 'all'){
 					$SOURCE =~ s/[^a-zA-Z0-9]/:/gi;
-					$CMD = "/sbin/iptables -A OUTGOINGFWMAC -m mac --mac-source $SOURCE -d $DESTINATION -p $PROTO";
+					$CMD = "-m mac --mac-source $SOURCE -d $DESTINATION -p $PROTO";
+					$macrule = 1;
 				} else {
-					$CMD = "/sbin/iptables -A OUTGOINGFW -s $SOURCE -d $DESTINATION -p $PROTO";
+					$CMD = "-s $SOURCE -d $DESTINATION -p $PROTO";
 				}
 
 				 if ($configline[8] && ( $configline[3] ne 'esp' || $configline[3] ne 'gre') ) {
@@ -218,24 +220,12 @@ foreach $configentry (sort @configs)
 				$CMD = "$CMD -o $netsettings{'RED_DEV'}";
 
 				if ( $configline[9] eq $Lang::tr{'aktiv'} && $outfwsettings{'POLICY'} eq 'MODE1' ) {
-					if ($DEBUG) {
-						print "$CMD -m limit --limit 10/minute -j LOG --log-prefix 'LOG_OUTGOINGFW '\n";
-					} else {
-						system("$CMD -m limit --limit 10/minute -j LOG --log-prefix 'LOG_OUTGOINGFW '");
-					}
+					applyrule("$CMD -m limit --limit 10/minute -j LOG --log-prefix 'LOG_OUTGOINGFW '", $macrule);
 				} elsif ( $configline[9] eq $Lang::tr{'aktiv'} && $outfwsettings{'POLICY'} eq 'MODE2' ) {
-					if ($DEBUG) {
-						print "$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW '\n";
-					} else {
-						system("$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW '");
-					}
+					applyrule("$CMD -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW '", $macrule);
 				}
 
-				if ($DEBUG) {
-					print "$CMD -j $DO\n";
-				} else {
-					system("$CMD -j $DO");
-				}
+				applyrule("$CMD -j $DO", $macrule);
 			}
 		}
 	}
@@ -246,10 +236,9 @@ open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
 @p2ps = <FILE>;
 close FILE;
 
-$CMD = "/sbin/iptables -A OUTGOINGFW -m ipp2p";
+$CMD = "-m ipp2p";
 
-foreach $p2pentry (sort @p2ps)
-{
+foreach $p2pentry (sort @p2ps) {
 	@p2pline = split( /\;/, $p2pentry );
 	if ( $outfwsettings{'POLICY'} eq 'MODE2' ) {
 		$DO = "DROP";
@@ -264,27 +253,23 @@ foreach $p2pentry (sort @p2ps)
 	}
 }
 if ($P2PSTRING) {
-	if ($DEBUG) {
-		print "$CMD $P2PSTRING -j $DO\n";
-	} else {
-		system("$CMD $P2PSTRING -j $DO");
-	}
+	applyrule("$CMD $P2PSTRING -j $DO", 0);
 }
 
 if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
-	 if ( $outfwsettings{'MODE1LOG'} eq 'on' ) {
-		 	$CMD = "/sbin/iptables -A OUTGOINGFW -o $netsettings{'RED_DEV'} -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW '";
-		if ($DEBUG) {
-			print "$CMD\n";
-		} else {
-			system("$CMD");
-		}
-	 }
+	if ( $outfwsettings{'MODE1LOG'} eq 'on' ) {
+		applyrule("-o $netsettings{'RED_DEV'} -m limit --limit 10/minute -j LOG --log-prefix 'DROP_OUTGOINGFW '", 0);
+	}
 
-	$CMD = "/sbin/iptables -A OUTGOINGFW -o $netsettings{'RED_DEV'} -j DROP -m comment --comment 'DROP_OUTGOINGFW '";
-	if ($DEBUG) {
-		print "$CMD\n";
-	} else {
-		system("$CMD");
+	applyrule("-o $netsettings{'RED_DEV'} -j DROP -m comment --comment 'DROP_OUTGOINGFW '", 0);
+}
+
+sub applyrule($$) {
+	my $cmd = shift;
+	my $macrule = shift;
+
+	system("/sbin/iptables -A OUTGOINGFWMAC $cmd");
+	if ($macrule == 0) {
+		system("/sbin/iptables -A OUTGOINGFW $cmd");
 	}
 }

@@ -139,6 +139,7 @@ WARNING: translation string unused: disconnect
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
+WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
 WARNING: translation string unused: driver
 WARNING: translation string unused: dynamic dns client
@@ -489,7 +490,9 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Add a route
 WARNING: untranslated string: Edit an existing route
 WARNING: untranslated string: Scan for Songs
+WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: bytes
+WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: disk access per
 WARNING: untranslated string: extrahd because there is already a device mounted
 WARNING: untranslated string: extrahd cant umount
@@ -503,14 +506,14 @@ WARNING: untranslated string: minute
 WARNING: untranslated string: new
 WARNING: untranslated string: openvpn default
 WARNING: untranslated string: openvpn destination port used
-WARNING: untranslated string: openvpn disabled
-WARNING: untranslated string: openvpn enabled
 WARNING: untranslated string: openvpn fragment allowed with udp
 WARNING: untranslated string: openvpn mssfix allowed with udp
 WARNING: untranslated string: openvpn prefix local subnet
 WARNING: untranslated string: openvpn prefix openvpn subnet
 WARNING: untranslated string: openvpn prefix remote subnet
 WARNING: untranslated string: openvpn subnet is used
+WARNING: untranslated string: other
+WARNING: untranslated string: our donors
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: outgoing traffic in bytes per second
 WARNING: untranslated string: route config changed
@@ -518,4 +521,5 @@ WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: static routes
+WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange
