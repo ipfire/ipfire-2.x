@@ -1,6 +1,7 @@
 bin/mountpoint
 bin/pidof
 #sbin/bootlogd
+#sbin/fstab-decode
 sbin/halt
 sbin/init
 sbin/killall5
@@ -20,10 +21,12 @@ usr/bin/wall
 #usr/share/man/man1/lastb.1
 #usr/share/man/man1/mesg.1
 #usr/share/man/man1/mountpoint.1
+#usr/share/man/man1/utmpdump.1
 #usr/share/man/man1/wall.1
 #usr/share/man/man5/initscript.5
 #usr/share/man/man5/inittab.5
 #usr/share/man/man8/bootlogd.8
+#usr/share/man/man8/fstab-decode.8
 #usr/share/man/man8/halt.8
 #usr/share/man/man8/init.8
 #usr/share/man/man8/killall5.8
