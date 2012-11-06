@@ -6,11 +6,13 @@ usr/lib/libebt_among.so
 usr/lib/libebt_arp.so
 usr/lib/libebt_arpreply.so
 usr/lib/libebt_ip.so
+usr/lib/libebt_ip6.so
 usr/lib/libebt_limit.so
 usr/lib/libebt_log.so
 usr/lib/libebt_mark.so
 usr/lib/libebt_mark_m.so
 usr/lib/libebt_nat.so
+usr/lib/libebt_nflog.so
 usr/lib/libebt_pkttype.so
 usr/lib/libebt_redirect.so
 usr/lib/libebt_standard.so

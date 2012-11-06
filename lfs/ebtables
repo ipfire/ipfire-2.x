@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.8-2
+VER        = 2.0.10-4
 
 THISAPP    = ebtables-v$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ebtables
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,8 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 66bcbcb2dcf3b981ad4e86e1720e796e
+$(DL_FILE)_MD5 = 506742a3d44b9925955425a659c1a8d0
+
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
