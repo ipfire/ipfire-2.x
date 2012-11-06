@@ -1378,7 +1378,6 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/rtc
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-bq32k.ko
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-bq4802.ko
-#lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-cmos.ko
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-ds1286.ko
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-ds1307.ko
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-ds1374.ko
