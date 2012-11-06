@@ -140,6 +140,7 @@ WARNING: translation string unused: disconnect
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
+WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
 WARNING: translation string unused: driver
 WARNING: translation string unused: dynamic dns client
@@ -497,7 +498,9 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
+WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: bytes
+WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: dns address deleted txt
 WARNING: untranslated string: fireinfo ipfire version
 WARNING: untranslated string: fireinfo is disabled
@@ -522,14 +525,14 @@ WARNING: untranslated string: ntp common settings
 WARNING: untranslated string: ntp sync
 WARNING: untranslated string: openvpn default
 WARNING: untranslated string: openvpn destination port used
-WARNING: untranslated string: openvpn disabled
-WARNING: untranslated string: openvpn enabled
 WARNING: untranslated string: openvpn fragment allowed with udp
 WARNING: untranslated string: openvpn mssfix allowed with udp
 WARNING: untranslated string: openvpn prefix local subnet
 WARNING: untranslated string: openvpn prefix openvpn subnet
 WARNING: untranslated string: openvpn prefix remote subnet
 WARNING: untranslated string: openvpn subnet is used
+WARNING: untranslated string: other
+WARNING: untranslated string: our donors
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: pakfire ago
 WARNING: untranslated string: route config changed
@@ -542,6 +545,7 @@ WARNING: untranslated string: system information
 WARNING: untranslated string: upload new ruleset
 WARNING: untranslated string: urlfilter file ext block
 WARNING: untranslated string: urlfilter mode block
+WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: wlanap access point
 WARNING: untranslated string: wlanap channel

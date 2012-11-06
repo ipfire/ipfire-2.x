@@ -140,6 +140,7 @@ WARNING: translation string unused: disconnect
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
+WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
 WARNING: translation string unused: driver
 WARNING: translation string unused: dynamic dns client
@@ -498,7 +499,9 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Async logging enabled
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: Set time on boot
+WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: bytes
+WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: fireinfo ipfire version
 WARNING: untranslated string: fireinfo is disabled
 WARNING: untranslated string: fireinfo is enabled
@@ -520,14 +523,14 @@ WARNING: untranslated string: minute
 WARNING: untranslated string: new
 WARNING: untranslated string: openvpn default
 WARNING: untranslated string: openvpn destination port used
-WARNING: untranslated string: openvpn disabled
-WARNING: untranslated string: openvpn enabled
 WARNING: untranslated string: openvpn fragment allowed with udp
 WARNING: untranslated string: openvpn mssfix allowed with udp
 WARNING: untranslated string: openvpn prefix local subnet
 WARNING: untranslated string: openvpn prefix openvpn subnet
 WARNING: untranslated string: openvpn prefix remote subnet
 WARNING: untranslated string: openvpn subnet is used
+WARNING: untranslated string: other
+WARNING: untranslated string: our donors
 WARNING: untranslated string: outgoing firewall add ip group
 WARNING: untranslated string: outgoing firewall add mac group
 WARNING: untranslated string: outgoing firewall edit ip group
@@ -550,4 +553,5 @@ WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: static routes
 WARNING: untranslated string: system information
+WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange

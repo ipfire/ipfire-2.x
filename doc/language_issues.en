@@ -140,6 +140,7 @@ WARNING: translation string unused: disconnect
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
+WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
 WARNING: translation string unused: driver
 WARNING: translation string unused: dynamic dns client
@@ -307,6 +308,8 @@ WARNING: translation string unused: o-no
 WARNING: translation string unused: o-yes
 WARNING: translation string unused: online help en
 WARNING: translation string unused: only red
+WARNING: translation string unused: openvpn disabled
+WARNING: translation string unused: openvpn enabled
 WARNING: translation string unused: optional data
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
