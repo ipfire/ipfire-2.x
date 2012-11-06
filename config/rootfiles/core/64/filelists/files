@@ -1,4 +1,6 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/firewall
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
+var/ipfire/outgoing/bin/outgoingfw.pl
