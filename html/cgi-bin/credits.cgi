@@ -41,9 +41,16 @@ print <<END
 <p>$Lang::tr{'donation-text'}</p>
 
 <div align="center">
-	<a href="http://www.ipfire.org/donate">$Lang::tr{'donation'}</a>
+	<a href="http://www.ipfire.org/donate">
+		<strong>$Lang::tr{'donation'}</strong>
+	</a>
 </div>
-<br>
+<br><br><hr><br>
+<p style="text-align: center;">
+	$Lang::tr{'our donors'}:
+
+	<a href="http://www.irrsinn.de" target="_blank">irrsinn.de gmbh</a>
+</p>
 END
 ;
 &Header::closebox();
@@ -51,12 +58,11 @@ END
 &Header::openbox('100%', 'left', $Lang::tr{'credits'});
 
 print <<END
-<br /><center><b><a href='http://www.ipfire.org/' target="_blank">http://www.ipfire.org/</a></b></center>
-<br />
-<p>
-	<b>IPFire is based on IPCop and Smoothwall. Many thanks to its developers.</b><br />
-	<b>We want to say thank you to all of the developers who ever contributed anything to IPFire.</b>
-</p>
+<br>
+<center>
+	$Lang::tr{'visit us at'}: <b><a href='http://www.ipfire.org/' target="_blank">http://www.ipfire.org/</a></b>
+</center>
+<br><hr><br>
 
 <p><b>Development:</b><br />
 
@@ -90,23 +96,18 @@ Peter Sch&auml;lchli
 Jan Paul T&uuml;cking
 (<a href='mailto:jan.tuecking\@ipfire.org'>jan.tuecking\@ipfire.org</a>)<br />
 </p>
-<p>
-This product includes GeoLite data created by MaxMind, available from <a href='http://www.maxmind.com/' target="_blank">http://www.maxmind.com/</a>.
-</p>
 END
 ;
 &Header::closebox();
 
-&Header::openbox('100%', 'left', 'General Public License v3');
-if ( -e "/usr/share/doc/licenses/GPLv3" )  {
-	print '<textarea rows="25" cols="75" readonly="true">';
-	print `cat "/usr/share/doc/licenses/GPLv3"`;
-	print '</textarea>';
-}
-else {
-	print '<br /><a href="http://www.gnu.org/licenses/gpl-3.0.txt" target="_blank">GENERAL PUBLIC LICENSE</a><br />';
-}
-
+&Header::openbox("100%", "left", $Lang::tr{'other'});
+print <<END
+	<p>
+		This product includes GeoLite data created by MaxMind, available from
+		<a href='http://www.maxmind.com/' target="_blank">http://www.maxmind.com/</a>.
+	</p>
+END
+;
 &Header::closebox();
 
 &Header::closebigbox();
