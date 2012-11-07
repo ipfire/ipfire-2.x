@@ -24,6 +24,15 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
+function add_to_backup ()
+{
+	# Add path to ROOTFILES but remove old entries to prevent double
+	# files in the tar
+	grep -v "^$1" /opt/pakfire/tmp/ROOTFILES > /opt/pakfire/tmp/ROOTFILES.tmp
+	mv /opt/pakfire/tmp/ROOTFILES.tmp /opt/pakfire/tmp/ROOTFILES
+	echo $1 >> /opt/pakfire/tmp/ROOTFILES
+}
+
 #
 # Remove old core updates from pakfire cache to save space...
 core=65
@@ -52,12 +61,13 @@ fi
 echo First we made a backup of all files that was inside of the
 echo update archive. This may take a while ...
 # Add some files that are not in the package to backup
-echo lib/modules >> /opt/pakfire/tmp/ROOTFILES
-echo etc/udev >> /opt/pakfire/tmp/ROOTFILES
-echo lib/udev >> /opt/pakfire/tmp/ROOTFILES
-echo boot >> /opt/pakfire/tmp/ROOTFILES
-echo etc/snort >> /opt/pakfire/tmp/ROOTFILES
-echo usr/lib/snort_* >> /opt/pakfire/tmp/ROOTFILES
+add_to_backup lib/modules
+add_to_backup etc/udev
+add_to_backup lib/udev
+add_to_backup boot
+add_to_backup etc/snort
+add_to_backup usr/lib/snort_*
+add_to_backup usr/share/zoneinfo
 
 # Backup the files
 tar cJvf /var/ipfire/backup/core-upgrade_$KVER.tar.xz \
@@ -76,12 +86,16 @@ rm -rf /lib/modules/*-ipfire
 #
 # Remove old udev rules.
 #
-cp /etc/udev/rules.d/29-ct-server-network.rules /tmp/
+if [ -e /etc/udev/rules.d/29-ct-server-network.rules ]; then
+	cp /etc/udev/rules.d/29-ct-server-network.rules /tmp/
+fi
 cp /etc/udev/rules.d/30-persistent-network.rules /tmp/
 rm -rf /etc/udev
 rm -rf /lib/udev
 mkdir -p /etc/udev/rules.d
-mv /tmp/29-ct-server-network.rules /etc/udev/rules.d/
+if [ -e /tmp/rules.d/29-ct-server-network.rules ]; then
+	mv /tmp/29-ct-server-network.rules /etc/udev/rules.d/
+fi
 mv /tmp/30-persistent-network.rules /etc/udev/rules.d/
 
 #
@@ -95,9 +109,10 @@ cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
 /etc/init.d/squid stop
 /etc/init.d/ipsec stop
 
-#Remove old snort
+#Remove old snort and zoneinfo
 rm -rf /etc/snort
 rm -rf /usr/lib/snort_*
+rm -rf /usr/share/zoneinfo
 
 #
 #Extract files
