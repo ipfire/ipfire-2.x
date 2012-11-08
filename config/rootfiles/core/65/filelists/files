@@ -7,6 +7,8 @@ etc/rc.d/init.d/partresize
 etc/rc.d/init.d/fsresize
 etc/rc.d/init.d/setclock
 etc/rc.d/init.d/tmpfs
+etc/rc.d/init.d/udev
+etc/rc.d/init.d/udev_retry
 etc/rc.d/rc0.d/K47setclock
 etc/rc.d/rc6.d/K47setclock
 srv/web/ipfire/cgi-bin/credits.cgi
