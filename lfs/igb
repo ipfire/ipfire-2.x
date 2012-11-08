@@ -84,8 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mv $(MODPATH)/igb.ko \
 	    $(MODPATH)//igb.ko.org
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/src && make -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ \
-		SUBDIRS=$(DIR_APP)/src modules
+	cd $(DIR_APP)/src && make BUILD_KERNEL=$(KVER)-$(VERSUFIX)
 	cd $(DIR_APP)/src && install -m 644 igb.ko $(MODPATH)
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
