@@ -162,7 +162,7 @@ else
 	sed -i -e "s|splashimage|#splashimage|g" /boot/grub/grub.conf
 	sed -i -e "s|#serial|serial|g" /boot/grub/grub.conf
 	sed -i -e "s|#terminal|terminal|g" /boot/grub/grub.conf
-	sed -i -e "s| panic=10 | console=ttyS0,38400n8 panic=10 |g" /boot/grub/grub.conf
+	sed -i -e "s| panic=10 | console=ttyS0,115200n8 panic=10 |g" /boot/grub/grub.conf
 fi
 #
 # Delete old lm-sensor modullist to force search at next boot
