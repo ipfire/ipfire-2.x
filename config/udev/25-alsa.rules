@@ -1,0 +1,8 @@
+# alsa device go in their own subdirectory
+
+KERNEL=="controlC[0-9]*", NAME="snd/%k", GROUP="audio"
+KERNEL=="hw[CD0-9]*",     NAME="snd/%k", GROUP="audio"
+KERNEL=="pcm[CD0-9cp]*",  NAME="snd/%k", GROUP="audio"
+KERNEL=="midiC[D0-9]*",   NAME="snd/%k", GROUP="audio"
+KERNEL=="timer",          NAME="snd/%k", GROUP="audio"
+KERNEL=="seq",            NAME="snd/%k", GROUP="audio"

@@ -30,6 +30,7 @@ lib/udev
 #lib/udev/path_id
 #lib/udev/rule_generator.functions
 #lib/udev/rules.d
+#lib/udev/rules.d/25-alsa.rules
 #lib/udev/rules.d/50-firmware.rules
 #lib/udev/rules.d/50-udev-default.rules
 #lib/udev/rules.d/60-cdrom_id.rules

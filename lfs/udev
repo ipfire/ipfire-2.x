@@ -97,6 +97,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Blacklist some modules
 	cp -vf $(DIR_SRC)/config/udev/blacklist /etc/modprobe.d/blacklist
 
+	# Install alsa rules.
+	install -v -m 644 $(DIR_SRC)/config/udev/25-alsa.rules \
+		/lib/udev/rules.d
+
 	# Install codel rules.
 	install -v -m 644 $(DIR_SRC)/config/udev/99-codel.rules \
 		/lib/udev/rules.d
