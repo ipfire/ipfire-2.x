@@ -98,7 +98,9 @@ rm -rf /boot/System.map-*
 rm -rf /boot/config-*
 rm -rf /boot/ipfirerd-*
 rm -rf /boot/vmlinuz-*
-rm -rf /lib/modules/*-ipfire
+rm -rf /boot/uImage-ipfire-*
+rm -rf /boot/uInit-ipfire-*
+rm -rf /lib/modules
 #
 # Remove old udev rules.
 #
