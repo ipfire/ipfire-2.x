@@ -42,6 +42,21 @@ do
 done
 
 #
+# Do some sanity checks.
+
+if [ "$(grep " xavf " /opt/pakfire/lib/functions.sh)" == "" ]; then
+	/usr/bin/logger -p syslog.emerg -t core-upgrade-$core \
+		"ERROR: this update need a newer pakfire version (core64)."
+	exit 1
+fi
+if [ ! "$(mount | grep " reiser4 (")" == "" ]; then
+	/usr/bin/logger -p syslog.emerg -t core-upgrade-$core \
+		"ERROR: cannot update because there is a reiser4 fs mounted."
+	exit 2
+fi
+
+#
+#
 KVER="3.2.33"
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
@@ -68,6 +83,7 @@ add_to_backup boot
 add_to_backup etc/snort
 add_to_backup usr/lib/snort_*
 add_to_backup usr/share/zoneinfo
+add_to_backup lib/libncurses*
 
 # Backup the files
 tar cJvf /var/ipfire/backup/core-upgrade_$KVER.tar.xz \
@@ -109,10 +125,11 @@ cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
 /etc/init.d/squid stop
 /etc/init.d/ipsec stop
 
-#Remove old snort and zoneinfo
+#Remove old snort, zoneinfo and ncurses-libs(wrong path).
 rm -rf /etc/snort
 rm -rf /usr/lib/snort_*
 rm -rf /usr/share/zoneinfo
+rm -rf /lib/libncurses*
 
 #
 #Extract files
@@ -193,9 +210,9 @@ echo '/opt/pakfire/pakfire update -y --force'             >> /tmp/pak_update
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
-echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-65 "Upgrade finished. If you use a customized grub.cfg"' >> /tmp/pak_update
-echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-65 "Check it before reboot !!!"' >> /tmp/pak_update
-echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-65 " *** Please reboot... *** "' >> /tmp/pak_update
+echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-$core "Upgrade finished. If you use a customized grub.cfg"' >> /tmp/pak_update
+echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-$core "Check it before reboot !!!"' >> /tmp/pak_update
+echo '/usr/bin/logger -p syslog.emerg -t core-upgrade-$core " *** Please reboot... *** "' >> /tmp/pak_update
 echo 'touch /var/run/need_reboot ' >> /tmp/pak_update
 #
 chmod +x /tmp/pak_update
