@@ -18,5 +18,6 @@ srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/langs
+var/ipfire/outgoing/bin/outgoingfw.pl
 var/ipfire/qos/bin/makeqosscripts.pl
 usr/local/bin/readhash

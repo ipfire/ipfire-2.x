@@ -68,6 +68,7 @@ add_to_backup boot
 add_to_backup etc/snort
 add_to_backup usr/lib/snort_*
 add_to_backup usr/share/zoneinfo
+add_to_backup lib/libncurses*
 
 # Backup the files
 tar cJvf /var/ipfire/backup/core-upgrade_$KVER.tar.xz \
@@ -109,10 +110,11 @@ cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
 /etc/init.d/squid stop
 /etc/init.d/ipsec stop
 
-#Remove old snort and zoneinfo
+#Remove old snort, zoneinfo and ncurses-libs(wrong path).
 rm -rf /etc/snort
 rm -rf /usr/lib/snort_*
 rm -rf /usr/share/zoneinfo
+rm -rf /lib/libncurses*
 
 #
 #Extract files
