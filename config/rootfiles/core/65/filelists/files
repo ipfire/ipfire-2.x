@@ -4,6 +4,7 @@ etc/sysctl.conf
 etc/securetty
 opt/pakfire/etc/pakfire.conf
 etc/rc.d/init.d/partresize
+etc/rc.d/init.d/firewall
 etc/rc.d/init.d/fsresize
 etc/rc.d/init.d/setclock
 etc/rc.d/init.d/tmpfs
@@ -21,3 +22,4 @@ var/ipfire/langs
 var/ipfire/outgoing/bin/outgoingfw.pl
 var/ipfire/qos/bin/makeqosscripts.pl
 usr/local/bin/readhash
+usr/local/bin/scanhd
