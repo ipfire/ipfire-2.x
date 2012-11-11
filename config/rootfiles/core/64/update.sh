@@ -71,8 +71,10 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 sync
 
-# This update need a reboot...
-#touch /var/run/need_reboot
+# This update need a reboot if outgoingfw is used
+if [ -s /var/ipfire/outgoing/rules ]; then
+	touch /var/run/need_reboot
+fi
 
 #
 #Finish
