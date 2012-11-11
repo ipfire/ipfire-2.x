@@ -75,18 +75,19 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
 	# Applying patches.
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-fedora-18.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-gentoo-14.patch
 	cd $(DIR_APP) && autoreconf
 	cd $(DIR_APP) && autoconf
 
 	# Build.
-	cd $(DIR_APP) && CFLAGS="$(CFLAGS)" ./configure --prefix=/usr
+	cd $(DIR_APP) && CFLAGS="$(CFLAGS)" ./configure --prefix=/usr \
+		--disable-auto-linux-mem-opt
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
 	# grub files
 	mkdir -vp /boot/grub
-	cp -v /usr/share/grub/i386-pc/stage{1,2} /boot/grub
+	cp -v /usr/lib/grub/i386-pc/stage{1,2} /boot/grub
 	for i in $(DIR_SRC)/config/grub/*; do \
 	    [ -f $$i ] && cp -f $$i /boot/grub; \
 	done
