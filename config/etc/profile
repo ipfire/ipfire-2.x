@@ -1,64 +1,76 @@
-# Begin /etc/profile
-# Written for Beyond Linux From Scratch
-# by James Robertson <jameswrobertson@earthlink.net>
-# modifications by Dagmar d'Surreal <rivyqntzne@pbzpnfg.arg>
+# /etc/profile
 
-# System wide environment variables and startup programs.
+# System wide environment and startup programs, for login setup
+# Functions and aliases go in /etc/bashrc
 
-# System wide aliases and functions should go in /etc/bashrc.  Personal
-# environment variables and startup programs should go into
-# ~/.bash_profile.  Personal aliases and functions should go into
-# ~/.bashrc.
+# It's NOT a good idea to change this file unless you know what you
+# are doing. It's much better to create a custom.sh shell script in
+# /etc/profile.d/ to make custom changes to your environment, as this
+# will prevent the need for merging in future updates.
 
-# Functions to help us manage paths.  Second argument is the name of the
-# path variable to be modified (default: PATH)
-pathremove () {
-        local IFS=':'
-        local NEWPATH
-        local DIR
-        local PATHVARIABLE=${2:-PATH}
-        for DIR in ${!PATHVARIABLE} ; do
-                if [ "$DIR" != "$1" ] ; then
-                  NEWPATH=${NEWPATH:+$NEWPATH:}$DIR
-                fi
-        done
-        export $PATHVARIABLE="$NEWPATH"
-}
-
-pathprepend () {
-        pathremove $1 $2
-        local PATHVARIABLE=${2:-PATH}
-        export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
-}
-
-pathappend () {
-        pathremove $1 $2
-        local PATHVARIABLE=${2:-PATH}
-        export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
+pathmunge () {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ] ; then
+                PATH=$PATH:$1
+            else
+                PATH=$1:$PATH
+            fi
+    esac
 }
 
 
-# Set the initial path
-export PATH=/bin:/usr/bin
-
-if [ $EUID -eq 0 ] ; then
-        pathappend /sbin:/usr/sbin
-        unset HISTFILE
+if [ -x /usr/bin/id ]; then
+    if [ -z "$EUID" ]; then
+        # ksh workaround
+        EUID=`id -u`
+        UID=`id -ru`
+    fi
+    USER="`id -un`"
+    LOGNAME=$USER
+    MAIL="/var/spool/mail/$USER"
 fi
 
-# Setup some environment variables.
-export HISTSIZE=1000
-export HISTIGNORE="&:[bf]g:exit"
-export PS1="[\u@\h \w]\\$ "
-#export PS1='\u@\h:\w\$ '
+# Path manipulation
+if [ "$EUID" = "0" ]; then
+    pathmunge /usr/sbin
+    pathmunge /usr/local/sbin
+else
+    pathmunge /usr/local/sbin after
+    pathmunge /usr/sbin after
+fi
 
-for script in /etc/profile.d/*.sh ; do
-        if [ -r $script ] ; then
-                . $script
+HOSTNAME=`/usr/bin/hostname 2>/dev/null`
+HISTSIZE=1000
+if [ "$HISTCONTROL" = "ignorespace" ] ; then
+    export HISTCONTROL=ignoreboth
+else
+    export HISTCONTROL=ignoredups
+fi
+
+export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE HISTCONTROL
+
+# By default, we want umask to get set. This sets it for login shell
+# Current threshold for system reserved uid/gids is 200
+# You could check uidgid reservation validity in
+# /usr/share/doc/setup-*/uidgid file
+if [ $UID -gt 199 ] && [ "`id -gn`" = "`id -un`" ]; then
+    umask 002
+else
+    umask 022
+fi
+
+for i in /etc/profile.d/*.sh ; do
+    if [ -r "$i" ]; then
+        if [ "${-#*i}" != "$-" ]; then 
+            . "$i"
+        else
+            . "$i" >/dev/null 2>&1
         fi
+    fi
 done
 
-# Now to clean up
-unset pathremove pathprepend pathappend
-
-# End /etc/profile
+unset i
+unset pathmunge

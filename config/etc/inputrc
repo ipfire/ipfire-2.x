@@ -1,42 +1,42 @@
-# Begin /etc/inputrc
+# do not bell on tab-completion
+#set bell-style none
 
-# Allow the command prompt to wrap to the next line
-set horizontal-scroll-mode Off
+set meta-flag on
+set input-meta on
+set convert-meta off
+set output-meta on
 
-# Enable 8bit input
-set meta-flag On
-set input-meta On
+# Completed names which are symbolic links to
+# directories have a slash appended.
+set mark-symlinked-directories on
 
-# Turns off 8th bit stripping
-set convert-meta Off
+$if mode=emacs
 
-# Keep the 8th bit for display
-set output-meta On
-
-# none, visible or audible
-set bell-style none
-
-# All of the following map the escape sequence of the
-# value contained inside the 1st argument to the
-# readline specific functions
-
-"\eOd": backward-word
-"\eOc": forward-word
-
-# for linux console
+# for linux console and RH/Debian xterm
 "\e[1~": beginning-of-line
 "\e[4~": end-of-line
-"\e[5~": beginning-of-history
-"\e[6~": end-of-history
+# commented out keymappings for pgup/pgdown to reach begin/end of history
+#"\e[5~": beginning-of-history
+#"\e[6~": end-of-history
+"\e[5~": history-search-backward
+"\e[6~": history-search-forward
 "\e[3~": delete-char
 "\e[2~": quoted-insert
+"\e[5C": forward-word
+"\e[5D": backward-word
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
 
-# for xterm
+# for rxvt
+"\e[8~": end-of-line
+"\eOc": forward-word
+"\eOd": backward-word
+
+# for non RH/Debian xterm, can't hurt for RH/DEbian xterm
 "\eOH": beginning-of-line
 "\eOF": end-of-line
 
-# for Konsole
+# for freebsd console
 "\e[H": beginning-of-line
 "\e[F": end-of-line
-
-# End /etc/inputrc
+$endif

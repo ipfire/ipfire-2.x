@@ -83,7 +83,11 @@ $(TARGET) :
 	    [ -f $$i ] && cp $$i /etc/profile.d; \
 	done
 	chmod 755 /etc/bashrc
-	ln -svf ../bashrc /etc/profile.d/bashrc.sh
+
+	# Install root's bash files.
+	for i in $(DIR_SRC)/config/bash/dot_*; do \
+		[ -f $$i ] && cp $$i /root/$$(basename $${i/dot_/\.}); \
+	done
 
 	# Scripts
 	for i in `find $(DIR_SRC)/src/scripts -maxdepth 1 -type f`; do \

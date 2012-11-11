@@ -20,7 +20,7 @@ bin/sleep
 bin/sync
 bin/true
 bin/uname
-etc/dircolors
+etc/DIR_COLORS
 usr/bin/[
 usr/bin/basename
 #usr/bin/cksum

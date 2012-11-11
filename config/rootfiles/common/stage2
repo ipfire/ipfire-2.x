@@ -31,11 +31,11 @@ etc/nsswitch.conf
 etc/passwd
 etc/profile
 #etc/profile.d
-etc/profile.d/bashrc.sh
-etc/profile.d/dircolors.sh
-etc/profile.d/extrapaths.sh
+etc/profile.d/colorls.sh
 etc/profile.d/i18n.sh
+etc/profile.d/lang.sh
 etc/profile.d/readline.sh
+etc/profile.d/term256.sh
 etc/profile.d/umask.sh
 etc/resolv.conf
 etc/securetty
@@ -51,6 +51,9 @@ media/usbkey
 mnt
 #opt
 #root
+root/.bash_logout
+root/.bash_profile
+root/.bashrc
 root/ipfire
 #sbin
 #srv

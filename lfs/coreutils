@@ -109,7 +109,7 @@ ifeq "$(ROOT)" ""
 	mv -v /usr/bin/{head,sleep,nice} /bin
 	ln -sf test /bin/[
 	#ln -sf ../../bin/install /usr/bin
-	dircolors -p > /etc/dircolors
+	dircolors -p > /etc/DIR_COLORS
 else
 	rm /tools/bin/hostname
 endif
