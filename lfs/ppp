@@ -32,6 +32,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+CFLAGS    += -fno-strict-aliasing
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -80,7 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-close.patch
 	cd $(DIR_APP) && sed -i -e "s+/etc/ppp/connect-errors+/var/log/connect-errors+" pppd/pathnames.h
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make $(MAKETUNING) CC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make install-etcppp
 	touch /var/log/connect-errors
