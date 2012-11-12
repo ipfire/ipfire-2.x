@@ -1,4 +1,5 @@
 #boot/grub
+boot/grub/default
 boot/grub/grub.conf
 boot/grub/ipfire.xpm.gz
 boot/grub/stage1

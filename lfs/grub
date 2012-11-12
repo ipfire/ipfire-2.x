@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -91,6 +91,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	for i in $(DIR_SRC)/config/grub/*; do \
 	    [ -f $$i ] && cp -f $$i /boot/grub; \
 	done
+
+	# generate default file
+	grub-set-default 0
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
