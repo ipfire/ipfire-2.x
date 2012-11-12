@@ -3,7 +3,7 @@
 etc/rc.d/helper/getdnsfromdhcpc.pl
 etc/rc.d/helper/writeipac.pl
 #etc/rc.d/init.d
-#etc/rc.d/init.d/acpid
+etc/rc.d/init.d/acpid
 #etc/rc.d/init.d/alsa
 #etc/rc.d/init.d/amavisd
 etc/rc.d/init.d/apache

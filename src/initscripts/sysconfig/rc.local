@@ -20,8 +20,3 @@
 ###############################################################################
 # Used for private calls after boot                                           #
 ###############################################################################
-
-# power button shutdown
-if grep -q '^button' /proc/modules ; then
-    ( head -1 /proc/acpi/event | grep -q 'button/power PWRF' && poweroff ) &
-fi
