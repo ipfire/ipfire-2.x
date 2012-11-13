@@ -93,6 +93,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash32-$$(printf "%03d" "$${i}") || exit 1; \
 	done
 
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-paths-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-profile-1.patch
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install

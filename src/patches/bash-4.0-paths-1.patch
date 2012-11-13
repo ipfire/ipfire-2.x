@@ -1,0 +1,30 @@
+--- bash-3.0/config.h.in.paths	2004-07-21 21:08:31.000000000 +0100
++++ bash-3.0/config.h.in	2004-07-28 09:16:27.257884999 +0100
+@@ -197,7 +197,7 @@
+ 
+ /* System paths */
+ 
+-#define DEFAULT_MAIL_DIRECTORY "/usr/spool/mail"
++#define DEFAULT_MAIL_DIRECTORY "/var/spool/mail"
+ 
+ /* Characteristics of the system's header files and libraries that affect
+    the compilation environment. */
+--- bash-3.0/config-top.h.paths	2003-08-05 15:36:12.000000000 +0100
++++ bash-3.0/config-top.h	2004-07-28 09:36:27.117205637 +0100
+@@ -52,14 +52,14 @@
+ /* The default value of the PATH variable. */
+ #ifndef DEFAULT_PATH_VALUE
+ #define DEFAULT_PATH_VALUE \
+-  "/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:."
++  "/usr/local/bin:/bin:/usr/bin"
+ #endif
+ 
+ /* The value for PATH when invoking `command -p'.  This is only used when
+    the Posix.2 confstr () function, or CS_PATH define are not present. */
+ #ifndef STANDARD_UTILS_PATH
+ #define STANDARD_UTILS_PATH \
+-  "/bin:/usr/bin:/sbin:/usr/sbin:/etc:/usr/etc"
++  "/bin:/usr/bin:/usr/sbin:/sbin"
+ #endif
+ 
+ /* Default primary and secondary prompt strings. */
