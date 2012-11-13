@@ -23,7 +23,7 @@ case "${1}" in
 
 		sleep ${KILLDELAY}
 
-		if [ "${error_value}" = 0 ]; then
+		if [ "${error_value}" = 0 -o "${error_value}" = 2 ]; then
 			echo_ok
 		else
 			echo_failure
@@ -35,7 +35,7 @@ case "${1}" in
 
 		sleep ${KILLDELAY}
 
-		if [ "${error_value}" = 0 ]; then
+		if [ "${error_value}" = 0 -o "${error_value}" = 2 ]; then
 			echo_ok
 		else
 			echo_failure
