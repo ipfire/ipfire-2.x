@@ -26,7 +26,7 @@ include Config
 
 VERSUFIX=ipfire$(KCFG)
 
-VER        = 3.6.2-1-snp
+VER        = 3.6.6-1-snp
 
 ifeq "$(KCFG)" "-xen"
 	KVER = 2.6.32.60
@@ -47,7 +47,7 @@ objects = $(DL_FILE) asix-4.4.0.tar.xz
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 asix-4.4.0.tar.xz = $(DL_FROM)/asix-4.4.0.tar.xz
 
-$(DL_FILE)_MD5 = 3adbfc455f883d297e02cac2d8d2c40f
+$(DL_FILE)_MD5 = e20f1b5a50095cf3483fd171ea9d3f92
 
 asix-4.4.0.tar.xz_MD5=633609e889de41554826e0e2cd7bffde
 
