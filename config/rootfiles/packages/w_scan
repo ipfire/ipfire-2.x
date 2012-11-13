@@ -1,2 +1,2 @@
-opt/vdr/bin/w_scan
-opt/vdr/bin/w_scan_start
+usr/bin/w_scan
+#usr/share/man/man1/w_scan.1
