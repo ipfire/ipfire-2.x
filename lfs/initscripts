@@ -203,7 +203,9 @@ $(TARGET) :
 ifeq "$(MACHINE_TYPE)" "arm"
 	rm -vf /etc/rc.d/init.d/{acpid,checkfstab}
 else
-	ln -sf ../init.d/acpid       /etc/rc.d/rcsysinit.d/S51acpid
+	ln -sf ../init.d/acpid       /etc/rc.d/rc3.d/S12acpid
+	ln -sf ../init.d/acpid       /etc/rc.d/rc0.d/K87acpid
+	ln -sf ../init.d/acpid       /etc/rc.d/rc6.d/K87acpid
 	ln -sf ../init.d/checkfstab  /etc/rc.d/rcsysinit.d/S19checkfstab
 endif
 
