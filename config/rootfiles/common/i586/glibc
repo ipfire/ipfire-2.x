@@ -354,6 +354,7 @@ usr/bin/ldd
 #usr/include/rpcsvc/yppasswd.x
 #usr/include/rpcsvc/ypupd.h
 #usr/include/sched.h
+#usr/include/scsi/scsi.h
 #usr/include/scsi/scsi_ioctl.h
 #usr/include/scsi/sg.h
 #usr/include/search.h

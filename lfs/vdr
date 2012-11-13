@@ -89,7 +89,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	
+
+	# Install obsolete V4L1 videodev header.
+	cp $(DIR_SRC)/config/include/obsolete_videodev.h /usr/include/linux/videodev.h
+
 	# Accept also DVB_API_VERSION 5
 	cd $(DIR_APP) && sed -i -e "s|DVB_API_VERSION != 3|& \&\& DVB_API_VERSION != 5|g" dvbdevice.h
 	
@@ -120,5 +123,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -sf ../init.d/vdr /etc/rc.d/rc6.d/K40vdr
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/vdr \
 	                 /var/ipfire/backup/addons/includes/vdr
+
+	# Remove obsolete V4L1 videodev header.
+	rm -f /usr/include/linux/videodev.h
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

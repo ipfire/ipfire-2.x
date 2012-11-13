@@ -40,16 +40,12 @@ DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
 
-ifeq "$(HEADERS)" "1"
 ifeq "$(TOOLS)" "1"
-	TARGET = $(DIR_INFO)/linux-libc-headers-$(VER)-$(VERSUFIX)-tools
+	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)-tools
 	HEADERS_PREFIX = /tools
 else
-	TARGET = $(DIR_INFO)/linux-libc-headers-$(VER)-$(VERSUFIX)
-	HEADERS_PREFIX = /usr
-endif
-else
 	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
+	HEADERS_PREFIX = /usr
 endif
 
 ifeq "$(MACHINE_TYPE)" "arm"
@@ -151,7 +147,7 @@ ifeq "$(KCFG)" "-rpi"
 	cd $(DIR_APP) && xzcat $(DIR_DL)/rpi-patches-$(RPI_PATCHES).patch.xz | patch -Np1
 endif
 
-ifeq "$(HEADERS)" "1"
+ifeq "$(KCFG)" "-headers"
 	# Install the header files
 	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) INSTALL_HDR_PATH=dest headers_install
 	-mkdir -pv $(BUILDROOT)/$(HEADERS_PREFIX)/include

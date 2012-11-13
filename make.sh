@@ -258,7 +258,7 @@ buildtoolchain() {
     lfsmake1 ccache			PASS=1
     lfsmake1 binutils			PASS=1
     lfsmake1 gcc			PASS=1
-    lfsmake1 linux2			TOOLS=1 HEADERS=1
+    lfsmake1 linux			TOOLS=1 KCFG="-headers"
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain		PASS=1
     lfsmake1 binutils			PASS=2
@@ -294,7 +294,7 @@ buildbase() {
     LOGFILE="$BASEDIR/log/_build.base.log"
     export LOGFILE
     lfsmake2 stage2
-    lfsmake2 linux2			HEADERS=1
+    lfsmake2 linux			KCFG="-headers"
     lfsmake2 man-pages
     lfsmake2 glibc
     lfsmake2 tzdata

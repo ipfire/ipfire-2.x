@@ -77,11 +77,19 @@ dist:
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+
+	#Install obsolete V4L1 videodev.h
+	cp $(DIR_SRC)/config/include/obsolete_videodev.h /usr/include/linux/videodev.h
+
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cp -vf $(DIR_SRC)/config/motion/motion.conf /etc
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/motion \
 			 /var/ipfire/backup/addons/includes/motion
+
+	#Remove obsolete V4L1 videodev.h
+	rm -f /usr/include/linux/videodev.h
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
