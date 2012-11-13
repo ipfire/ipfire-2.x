@@ -52,7 +52,6 @@ sbin/ldconfig
 #usr/bin/getent
 #usr/bin/iconv
 usr/bin/ldd
-#usr/bin/lddlibc4
 #usr/bin/locale
 #usr/bin/localedef
 #usr/bin/mtrace
@@ -208,7 +207,6 @@ usr/bin/ldd
 #usr/include/gnu-versions.h
 #usr/include/gnu/lib-names.h
 #usr/include/gnu/libc-version.h
-#usr/include/gnu/stubs-32.h
 #usr/include/gnu/stubs.h
 #usr/include/grp.h
 #usr/include/gshadow.h
@@ -354,6 +352,7 @@ usr/bin/ldd
 #usr/include/rpcsvc/yppasswd.x
 #usr/include/rpcsvc/ypupd.h
 #usr/include/sched.h
+#usr/include/scsi/scsi.h
 #usr/include/scsi/scsi_ioctl.h
 #usr/include/scsi/sg.h
 #usr/include/search.h
@@ -374,7 +373,6 @@ usr/bin/ldd
 #usr/include/sys/acct.h
 #usr/include/sys/bitypes.h
 #usr/include/sys/cdefs.h
-#usr/include/sys/debugreg.h
 #usr/include/sys/dir.h
 #usr/include/sys/elf.h
 #usr/include/sys/epoll.h
@@ -398,7 +396,6 @@ usr/bin/ldd
 #usr/include/sys/mtio.h
 #usr/include/sys/param.h
 #usr/include/sys/pci.h
-#usr/include/sys/perm.h
 #usr/include/sys/personality.h
 #usr/include/sys/poll.h
 #usr/include/sys/prctl.h
@@ -409,7 +406,6 @@ usr/bin/ldd
 #usr/include/sys/quota.h
 #usr/include/sys/raw.h
 #usr/include/sys/reboot.h
-#usr/include/sys/reg.h
 #usr/include/sys/resource.h
 #usr/include/sys/select.h
 #usr/include/sys/sem.h
@@ -448,7 +444,6 @@ usr/bin/ldd
 #usr/include/sys/utsname.h
 #usr/include/sys/vfs.h
 #usr/include/sys/vlimit.h
-#usr/include/sys/vm86.h
 #usr/include/sys/vt.h
 #usr/include/sys/vtimes.h
 #usr/include/sys/wait.h
