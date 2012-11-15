@@ -1,4 +1,4 @@
-#usr/bin/whiptail
+usr/bin/whiptail
 #usr/include/newt.h
 #usr/lib/libnewt.a
 usr/lib/libnewt.so
