@@ -1,0 +1,134 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+###############################################################################
+# w_scan_start for IPFire v 1.00 - 2012-11-15 Arne Fitzenreiter - inital vers.#
+###############################################################################
+
+err_msg ()
+{
+	whiptail --msgbox "$1" 8 70 --title "Error"
+	clear
+	exit 1
+}
+
+chk_cancel ()
+{
+	if [ ! "${?}" == 0 ];then
+		clear
+		echo "Terminated by user!"
+		exit 0
+	fi
+}
+
+yes_no ()
+{
+	whiptail --yesno "$1" 8 70
+	chk_cancel
+}
+
+WSCAN=$(which w_scan)
+
+# Some initial checks...
+if [ -z $WSCAN ];then 
+	err_msg "w_scan not found!";
+fi
+if [ ! -e /dev/dvb/adapter[0-9]/frontend[0-9] ];then 
+	err_msg "No dvb tuner frontend found!";
+fi
+
+# Is vdr running?
+if [ "$(ps -A | grep " runvdr$")" != "" ] ;then
+	yes_no "Vdr is runnung. Cannot scan with active vdr. Should i stop it?"
+	clear
+	/etc/init.d/vdr stop
+	HAS_VDR_STOPPED=YES
+fi
+
+# Select DVB type
+whiptail --checklist "\nSelect DVB type" 12 40 3 \
+                     DVB-T "Terrestrial" yes \
+                     DVB-C "Cable"       no \
+                     DVB-S "Satelite"    no \
+                     2>/tmp/w_scan_type
+chk_cancel
+W_SCAN_TYPE=$(cat /tmp/w_scan_type)
+rm /tmp/w_scan_type
+
+if [[ "$W_SCAN_TYPE" == *DVB-T* ]] || [[ "$W_SCAN_TYPE" == *DVB-C* ]]; then
+	# Generate and run separate country menubox and default germany
+	echo '#!/bin/bash' > /tmp/w_scan_countryselect.sh
+	echo 'whiptail --radiolist "\nSelect country" 19 70 10 \' >> /tmp/w_scan_countryselect.sh
+	$WSCAN -c? 2>&1 | cut -f2,4 | sed 's|[	]| "|g' | sed 's|$|" off \\|g' | sed 's|"GERMANY" off |"GERMANY" on |g' >> /tmp/w_scan_countryselect.sh
+	echo ' 2>/tmp/w_scan_country' >> /tmp/w_scan_countryselect.sh
+	sh /tmp/w_scan_countryselect.sh
+	chk_cancel
+	rm /tmp/w_scan_countryselect.sh
+	W_SCAN_COUNTRY=$(cat /tmp/w_scan_country)
+	rm /tmp/w_scan_country
+fi
+
+if [[ "$W_SCAN_TYPE" == *DVB-S* ]]; then
+	# Generate and run separate satelite menubox and default astra
+	echo '#!/bin/bash' > /tmp/w_scan_satselect.sh
+	echo 'whiptail --checklist "\nSelect satelites" 19 70 10 \' >> /tmp/w_scan_satselect.sh
+	$WSCAN -s? 2>&1 | cut -f2,4 | sed 's|[	]| "|g' | sed 's|$|" off \\|g' | sed 's|19.2 east.*|19.2 east Astra 1F/1G/1H/1KR/1L" on \\|g' >> /tmp/w_scan_satselect.sh
+	echo ' 2>/tmp/w_scan_satelite' >> /tmp/w_scan_satselect.sh
+	sh /tmp/w_scan_satselect.sh
+	chk_cancel
+	rm /tmp/w_scan_satselect.sh
+	W_SCAN_SATELITE=$(cat /tmp/w_scan_satelite | sed 's|"||g')
+	rm /tmp/w_scan_satelite
+fi
+
+# Now start the scan ...
+clear
+rm -rf /tmp/channels.conf
+if [[ "$W_SCAN_TYPE" == *DVB-T* ]]; then
+	echo ":->W-SCAN DVB-T $(date)" >>/tmp/channels.conf
+	$WSCAN -f t -c $W_SCAN_COUNTRY -C UTF-8 >>/tmp/channels.conf
+fi
+if [[ "$W_SCAN_TYPE" == *DVB-C* ]]; then
+	echo ":->W-SCAN DVB-C $(date)" >>/tmp/channels.conf
+	$WSCAN -f c -c $W_SCAN_COUNTRY -C UTF-8 >>/tmp/channels.conf
+fi
+if [[ "$W_SCAN_TYPE" == *DVB-S* ]]; then
+	for SATELITE in $W_SCAN_SATELITE;
+	do
+		echo ":->W-SCAN DVB-S-$SATELITE $(date)" >>/tmp/channels.conf
+		$WSCAN -f s -s $SATELITE -C UTF-8 >>/tmp/channels.conf
+	done
+fi
+
+# Save result to current dir.
+cp /tmp/channels.conf w_scan-$(date +%Y%m%d%H%M).channels.conf
+echo Results saved to w_scan-$(date +%Y%m%d%H%M).channels.conf
+
+# Do this only if vdr is installed ...
+if [ -e /opt/pakfire/db/installed/meta-vdr ]; then
+	yes_no "Install new channels-conf for vdr."
+	# Backup old channels conf...
+	cp -f /opt/vdr/etc/channels.conf \
+		/opt/vdr/etc/channels.conf.backup$(date +%Y%m%d%H%M)
+	cp -f /tmp/channels.conf /opt/vdr/etc/
+	yes_no "Should i start the vdr?"
+	clear
+	/etc/init.d/vdr start
+fi

@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = w_scan
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -81,5 +81,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	install -m 755 $(DIR_SRC)/config/w_scan/w_scan_start /usr/bin/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
