@@ -75,6 +75,7 @@ usr/local/bin/setddns.pl
 usr/local/bin/settime
 usr/local/bin/timecheck
 #usr/local/bin/uname
+usr/local/bin/update-lang-cache
 usr/local/bin/vpn-watch
 #usr/local/include
 #usr/local/lib
