@@ -1,0 +1,9 @@
+diff -up bash-3.2/config-top.h.ssh_source_bash bash-3.2/config-top.h
+--- bash-3.2/config-top.h.ssh_source_bash	2008-10-23 15:08:04.000000000 +0200
++++ bash-3.2/config-top.h	2008-10-23 15:08:33.000000000 +0200
+@@ -86,4 +86,4 @@
+ 
+ /* Define this if you want bash to try to check whether it's being run by
+    sshd and source the .bashrc if so (like the rshd behavior). */
+-/* #define SSH_SOURCE_BASHRC */
++#define SSH_SOURCE_BASHRC
