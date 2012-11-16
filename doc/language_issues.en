@@ -87,6 +87,8 @@ WARNING: translation string unused: cache size
 WARNING: translation string unused: calamaris report interval (in minutes)
 WARNING: translation string unused: calc traffic all x minutes
 WARNING: translation string unused: capsinactive
+WARNING: translation string unused: ccd err iroute
+WARNING: translation string unused: ccd err netadr
 WARNING: translation string unused: cfg restart
 WARNING: translation string unused: check for net traffic update
 WARNING: translation string unused: choose config

@@ -18,8 +18,7 @@ use strict;
 use Socket;
 use IO::Socket;
 use Net::SSLeay;
-use Net::IPv4Addr;
-
+use Net::IPv4Addr qw(:all);
 $|=1; # line buffering
 
 $General::version = 'VERSION';
@@ -212,19 +211,175 @@ sub validipormask
 	return &validmask($mask);
 }
 
+sub subtocidr
+{
+	#gets: Subnet in decimal (255.255.255.0) 
+	#Gives: 24 (The cidr of network)
+	my ($byte1, $byte2, $byte3, $byte4) = split(/\./, $_[0].".0.0.0.0"); 
+	my $num = ($byte1 * 16777216) + ($byte2 * 65536) + ($byte3 * 256) + $byte4; 
+	my $bin = unpack("B*", pack("N", $num)); 
+	my $count = ($bin =~ tr/1/1/); 
+	return $count;
+}
+
+sub cidrtosub
+{
+	#gets: Cidr of network (20-30 for ccd) 
+	#Konverts 30 to 255.255.255.252 e.g
+	my $cidr=$_[0];
+    my $netmask = &Net::IPv4Addr::ipv4_cidr2msk($cidr);
+    return "$netmask";
+}
+  
+sub iporsubtodec
+{
+	#Gets: Ip address or subnetmask in decimal oder CIDR
+	#Gives: What it gets only in CIDR format
+	my $subnet=$_[0];
+	my $net;
+	my $mask;
+	my $full=0;
+	if ($subnet =~ /^(.*?)\/(.*?)$/) {
+		($net,$mask) = split (/\//,$subnet);
+		$full=1;
+		return "$subnet";
+	}else{
+		$mask=$subnet;
+	}
+	#Subnet already in decimal and valid?
+	if ($mask=~/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/ &&(($1<=255  && $2<=$1 && $3<=$2  && $4<=$3 )))	{
+		for (my $i=8;$i<=32;$i++){
+			if (&General::cidrtosub($i) eq $mask){
+				if ($full == 0){return $mask;}else{
+							 return $net."/".$mask;
+				}
+			}
+		}	
+	}
+	#Subnet in binary format?
+	if ($mask=~/^(\d{1,2})$/ && (($1<=32 && $1>=8))){
+			if($full == 0){ return &General::cidrtosub($mask);}else{
+						 return $net."/".&General::cidrtosub($mask);
+			}
+	}else{
+			return 3;
+	}
+	return 3;
+}
+  
+  
+sub iporsubtocidr
+{
+	#gets: Ip Address  or subnetmask in decimal oder CIDR
+	#Gives: What it gets only in CIDR format
+	my $subnet=$_[0];
+	my $net;
+	my $mask;
+	my $full=0;
+	if ($subnet =~ /^(.*?)\/(.*?)$/) {
+		($net,$mask) = split (/\//,$subnet);
+		$full=1;
+	}else{
+		$mask=$subnet;
+	}
+	#Subnet in decimal and valid?
+	if ($mask=~/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/ &&(($1<=255  && $2<=$1 && $3<=$2  && $4<=$3 )))	{
+		for (my $i=8;$i<=32;$i++){
+			if (&General::cidrtosub($i) eq $mask){
+				if ($full == 0){return &General::subtocidr($mask);}else{
+							 return $net."/".&General::subtocidr($mask);
+				}
+			}
+		}	
+	}
+	#Subnet already in binary format?
+	if ($mask=~/^(\d{1,2})$/ && (($1<=32 && $1>=8))){
+			if($full == 0){ return $mask;}else{
+						 return $net."/".$mask;
+			}
+	}else{
+			return 3;
+	}
+	return 3;
+}
+
+sub getnetworkip
+{
+	#Gets:  IP, CIDR    (10.10.10.0-255, 24)
+	#Gives:  10.10.10.0
+	my ($ccdip,$ccdsubnet) = @_;
+	my $ip_address_binary = inet_aton( $ccdip );
+	my $netmask_binary    = ~pack("N", (2**(32-$ccdsubnet))-1);
+	my $network_address    = inet_ntoa( $ip_address_binary & $netmask_binary );
+	return $network_address;
+}
+
+sub getccdbc
+{
+	#Gets: IP in Form ("192.168.0.0/24")
+	#Gives: Broadcastaddress of network
+	my $ccdnet=$_;
+	my ($ccdip,$ccdsubnet) = split "/",$ccdnet;
+	my $ip_address_binary = inet_aton( $ccdip );
+	my $netmask_binary    = ~pack("N", (2**(32-$ccdsubnet))-1);
+	my $broadcast_address  = inet_ntoa( $ip_address_binary | ~$netmask_binary );
+	return $broadcast_address;
+}
+sub getnextip
+{
+	my ($byte1,$byte2,$byte3,$byte4) = split (/\./,$_[0]);
+	my $step=$_[1];
+	for (my $x=1;$x<=$step;$x++){
+		$byte4++;
+		if($byte4==255){ $byte4=0;$byte3++;}
+			if($byte3==255){$byte3=0;$byte2++;}
+				if ($byte2==255){$byte2=0;$byte1++}
+	
+	}
+	return "$byte1.$byte2.$byte3.$byte4";
+}
+sub getlastip
+{
+	my ($byte1,$byte2,$byte3,$byte4) = split (/\./,$_[0]);
+	my $step=$_[1];
+	for (my $x=$step;$x>=1;$x--){
+		$byte4--;
+		if($byte4==0){ $byte4=255;$byte3--;}
+			if($byte3==0){$byte3=255;$byte2--;}
+				if ($byte2==0){$byte2=255;$byte1--}
+	}
+	return "$byte1.$byte2.$byte3.$byte4";
+}
+
 sub validipandmask
 {
-	my $ipandmask = $_[0];
-
-	# split it into number and mask.
-	if (!($ipandmask =~ /^(.*?)\/(.*?)$/)) {
-		return 0; }
-	my $ip = $1;
-	my $mask = $2;
-	# first part not a ip?
-	if (!(&validip($ip))) {
-		return 0; }
-	return &validmask($mask);
+	#Gets: Ip address in 192.168.0.0/24 or 192.168.0.0/255.255.255.0 and checks if subnet valid
+	#Gives: True bzw 0 if success or false 
+	my $ccdnet=$_[0];
+	my $subcidr;
+	
+	if (!($ccdnet =~ /^(.*?)\/(.*?)$/)) {
+		return 0;
+	}
+	my ($ccdip,$ccdsubnet)=split (/\//, $ccdnet);
+	#IP valid?
+	if ($ccdip=~/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/ &&(($1>0 && $1<=255 && $2>=0 && $2<=255 && $3>=0 && $3<=255 && $4<=255 ))) {
+		#Subnet in decimal and valid?
+		if ($ccdsubnet=~/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/ &&(($1<=255  && $2<=$1 && $3<=$2  && $4<=$3 )))	{
+			for (my $i=8;$i<=30;$i++){
+				if (&General::cidrtosub($i) eq $ccdsubnet){
+					return 1;
+				}
+			}	
+		#Subnet already in binary format?
+		}elsif ($ccdsubnet=~/^(\d{1,2})$/ && (($1<=30 && $1>=8))){
+			return 1;
+		}else{
+			return 0;
+		}
+		
+	}
+	return 0;
 }
 
 sub validport
@@ -276,7 +431,7 @@ sub validhostname
 	if (length ($hostname) < 1 || length ($hostname) > 63) {
 		return 0;}
 	# Only valid characters are a-z, A-Z, 0-9 and -
-	if ($hostname !~ /^[a-zA-Z0-9-]*$/) {
+	if ($hostname !~ /^[a-zA-Z0-9-\s]*$/) {
 		return 0;}
 	# First character can only be a letter or a digit
 	if (substr ($hostname, 0, 1) !~ /^[a-zA-Z0-9]*$/) {
@@ -407,7 +562,12 @@ sub NextIP
 				   )
 			     );
 }
-
+sub NextIP2
+{
+    return &Socket::inet_ntoa( pack("N", 4 +  unpack('N', &Socket::inet_aton(shift))
+				   )
+			     );
+}
 sub ipcidr
 {
 	my ($ip,$cidr) = &Net::IPv4Addr::ipv4_parse(shift);
@@ -465,13 +625,13 @@ sub writehasharray {
     open(FILE, ">$filename") or die "Unable to write to file $filename";
 
     foreach $key (keys %$hash) {
-	if ($key =~ /^[0-9]+$/) {
-	    print FILE "$key";
-	    foreach $i (0 .. $#{$hash->{$key}}) {
-		print FILE ",$hash->{$key}[$i]";
-	    }
-	    print FILE "\n";
-	}
+		if ($key =~ /^[0-9]+$/) {
+			print FILE "$key";
+			foreach $i (0 .. $#{$hash->{$key}}) {
+				print FILE ",$hash->{$key}[$i]";
+			}
+			print FILE "\n";
+		}
     }
     close FILE;
     return;

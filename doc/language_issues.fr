@@ -499,7 +499,41 @@ WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
+WARNING: untranslated string: attention
 WARNING: untranslated string: bytes
+WARNING: untranslated string: ccd add
+WARNING: untranslated string: ccd choose net
+WARNING: untranslated string: ccd client options
+WARNING: untranslated string: ccd clientip
+WARNING: untranslated string: ccd dynrange
+WARNING: untranslated string: ccd err blue
+WARNING: untranslated string: ccd err green
+WARNING: untranslated string: ccd err hostinnet
+WARNING: untranslated string: ccd err inuse
+WARNING: untranslated string: ccd err invalidname
+WARNING: untranslated string: ccd err invalidnet
+WARNING: untranslated string: ccd err irouteexist
+WARNING: untranslated string: ccd err isovpnnet
+WARNING: untranslated string: ccd err issubnet
+WARNING: untranslated string: ccd err name
+WARNING: untranslated string: ccd err nameexist
+WARNING: untranslated string: ccd err netadrexist
+WARNING: untranslated string: ccd err orange
+WARNING: untranslated string: ccd err red
+WARNING: untranslated string: ccd err routeovpn
+WARNING: untranslated string: ccd err routeovpn2
+WARNING: untranslated string: ccd hint
+WARNING: untranslated string: ccd invalid
+WARNING: untranslated string: ccd iroute
+WARNING: untranslated string: ccd iroute2
+WARNING: untranslated string: ccd iroutehint
+WARNING: untranslated string: ccd modify
+WARNING: untranslated string: ccd name
+WARNING: untranslated string: ccd net
+WARNING: untranslated string: ccd none
+WARNING: untranslated string: ccd routes
+WARNING: untranslated string: ccd subnet
+WARNING: untranslated string: ccd used
 WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: dns address deleted txt
 WARNING: untranslated string: fireinfo ipfire version
@@ -539,6 +573,7 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: server restart
 WARNING: untranslated string: snort working
 WARNING: untranslated string: static routes
 WARNING: untranslated string: system information

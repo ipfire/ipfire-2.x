@@ -500,7 +500,41 @@ WARNING: untranslated string: Async logging enabled
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: Set time on boot
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
+WARNING: untranslated string: attention
 WARNING: untranslated string: bytes
+WARNING: untranslated string: ccd add
+WARNING: untranslated string: ccd choose net
+WARNING: untranslated string: ccd client options
+WARNING: untranslated string: ccd clientip
+WARNING: untranslated string: ccd dynrange
+WARNING: untranslated string: ccd err blue
+WARNING: untranslated string: ccd err green
+WARNING: untranslated string: ccd err hostinnet
+WARNING: untranslated string: ccd err inuse
+WARNING: untranslated string: ccd err invalidname
+WARNING: untranslated string: ccd err invalidnet
+WARNING: untranslated string: ccd err irouteexist
+WARNING: untranslated string: ccd err isovpnnet
+WARNING: untranslated string: ccd err issubnet
+WARNING: untranslated string: ccd err name
+WARNING: untranslated string: ccd err nameexist
+WARNING: untranslated string: ccd err netadrexist
+WARNING: untranslated string: ccd err orange
+WARNING: untranslated string: ccd err red
+WARNING: untranslated string: ccd err routeovpn
+WARNING: untranslated string: ccd err routeovpn2
+WARNING: untranslated string: ccd hint
+WARNING: untranslated string: ccd invalid
+WARNING: untranslated string: ccd iroute
+WARNING: untranslated string: ccd iroute2
+WARNING: untranslated string: ccd iroutehint
+WARNING: untranslated string: ccd modify
+WARNING: untranslated string: ccd name
+WARNING: untranslated string: ccd net
+WARNING: untranslated string: ccd none
+WARNING: untranslated string: ccd routes
+WARNING: untranslated string: ccd subnet
+WARNING: untranslated string: ccd used
 WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: fireinfo ipfire version
 WARNING: untranslated string: fireinfo is disabled
@@ -546,11 +580,16 @@ WARNING: untranslated string: outgoing firewall p2p description 2
 WARNING: untranslated string: outgoing firewall p2p description 3
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: outgoing firewall view group
+WARNING: untranslated string: ovpn errmsg green already pushed
+WARNING: untranslated string: ovpn errmsg invalid ip or mask
+WARNING: untranslated string: ovpn routes push
+WARNING: untranslated string: ovpn routes push options
 WARNING: untranslated string: pakfire ago
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: server restart
 WARNING: untranslated string: static routes
 WARNING: untranslated string: system information
 WARNING: untranslated string: visit us at
