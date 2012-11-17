@@ -78,6 +78,7 @@ $cgiparams{'ROUTES_PUSH'} = '';
 $cgiparams{'DCOMPLZO'} = 'off';
 $cgiparams{'MSSFIX'} = '';
 $cgiparams{'number'} = '';
+$cgiparams{'PMTU_DISCOVERY'} = '';
 $routes_push_file = "${General::swroot}/ovpn/routes_push";
 unless (-e $routes_push_file)    { system("touch $routes_push_file"); }
 unless (-e "${General::swroot}/ovpn/ccd.conf")    { system("touch ${General::swroot}/ovpn/ccd.conf"); }
@@ -333,7 +334,6 @@ sub writeserverconf {
     print CONF "#DAN prepare OpenVPN for listening on blue and orange\n";
     print CONF ";local $sovpnsettings{'VPN_IP'}\n";
     print CONF "dev $sovpnsettings{'DDEVICE'}\n";
-    print CONF "$sovpnsettings{'DDEVICE'}-mtu $sovpnsettings{'DMTU'}\n";
     print CONF "proto $sovpnsettings{'DPROTOCOL'}\n";
     print CONF "port $sovpnsettings{'DDEST_PORT'}\n";
     print CONF "script-security 3 system\n";
@@ -347,7 +347,18 @@ sub writeserverconf {
     my @tempovpnsubnet = split("\/",$sovpnsettings{'DOVPN_SUBNET'});
     print CONF "server $tempovpnsubnet[0] $tempovpnsubnet[1]\n";
     #print CONF "push \"route $netsettings{'GREEN_NETADDRESS'} $netsettings{'GREEN_NETMASK'}\"\n";
-    
+   
+    # Check if we are using mssfix, fragment or mtu-disc and set the corretct mtu of 1500.
+    # If we doesn't use one of them, we can use the configured mtu value.
+    if ($sovpnsettings{'MSSFIX'} eq 'on') 
+	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; }
+    elsif ($sovpnsettings{'FRAGMENT'} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') 
+	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; }
+    elsif ($sovpnsettings{'PMTU_DISCOVERY'} ne 'off')
+	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; } 
+    else 
+	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu $sovpnsettings{'DMTU'}\n"; }
+
     if ($vpnsettings{'ROUTES_PUSH'} ne '') {
 		@temp = split(/\n/,$vpnsettings{'ROUTES_PUSH'});
 		foreach (@temp)
@@ -383,6 +394,11 @@ sub writeserverconf {
     if ($sovpnsettings{FRAGMENT} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') {
 	print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";   
     }
+
+    if ($sovpnsettings{PMTU_DISCOVERY} ne 'off') {
+	print CONF "mtu-disc $sovpnsettings{'PMTU_DISCOVERY'}\n";
+    }
+
     if ($sovpnsettings{KEEPALIVE_1} > 0 && $sovpnsettings{KEEPALIVE_2} > 0) {	
 	print CONF "keepalive $sovpnsettings{'KEEPALIVE_1'} $sovpnsettings{'KEEPALIVE_2'}\n";
     }	
@@ -813,6 +829,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
     $vpnsettings{'DHCP_WINS'} = $cgiparams{'DHCP_WINS'};
     $vpnsettings{'ROUTES_PUSH'} = $cgiparams{'ROUTES_PUSH'};
+    $vpnsettings{'PMTU_DISCOVERY'} = $cgiparams{'PMTU_DISCOVERY'};
     my @temp=();
     
     if ($cgiparams{'FRAGMENT'} eq '') {
@@ -830,6 +847,14 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     } else {
     	$vpnsettings{'MSSFIX'} = $cgiparams{'MSSFIX'};
     }
+
+    if ($cgiparams{'PMTU_DISCOVERY'} ne 'off') {
+	if (($cgiparams{'MSSFIX'} eq 'on') || ($cgiparams{'FRAGMENT'} ne '')) {
+		$errormessage = $Lang::tr{'ovpn mtu-disc with mssfix or fragment'};
+		goto ADV_ERROR;
+	}
+    }
+		
     if ($cgiparams{'DHCP_DOMAIN'} ne ''){
 	unless (&General::validfqdn($cgiparams{'DHCP_DOMAIN'}) || &General::validip($cgiparams{'DHCP_DOMAIN'})) {
 		$errormessage = $Lang::tr{'invalid input for dhcp domain'};
@@ -976,6 +1001,13 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   if ($cgiparams{'FRAGMENT'} ne '') {print SERVERCONF "fragment $cgiparams{'FRAGMENT'}\n";} 
   if ($cgiparams{'MSSFIX'} eq 'on') {print SERVERCONF "mssfix\n"; }; 
   }
+  if ($cgiparams{'PMTU_DISCOVERY'} ne 'off') {
+	if(($cgiparams{'MSSFIX'} ne 'on') || ($cgiparams{'FRAGMENT'} eq '')) {
+		if($cgiparams{'MTU'} eq '1500') {
+			print SERVERCONF "mtu-disc $cgiparams{'PMTU_DISCOVERY'}\n";
+		}
+	}
+  }
   print SERVERCONF "# Auth. Server\n"; 
   print SERVERCONF "tls-server\n"; 
   print SERVERCONF "ca ${General::swroot}/ovpn/ca/cacert.pem\n"; 
@@ -1054,7 +1086,13 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   if ($cgiparams{'FRAGMENT'} ne '') {print CLIENTCONF "fragment $cgiparams{'FRAGMENT'}\n";}
   if ($cgiparams{'MSSFIX'} eq 'on') {print CLIENTCONF "mssfix\n"; }; 
   }
- 
+   if ($cgiparams{'PMTU_DISCOVERY'} ne 'off') {
+        if(($cgiparams{'MSSFIX'} ne 'on') || ($cgiparams{'FRAGMENT'} eq '')) {
+		if ($cgiparams{'MTU'} eq '1500') {
+                	print CLIENTCONF "mtu-disc $cgiparams{'PMTU_DISCOVERY'}\n";
+		}
+        }
+  } 
   print CLIENTCONF "ns-cert-type server\n";   
   print CLIENTCONF "# Auth. Client\n"; 
   print CLIENTCONF "tls-client\n"; 
@@ -1982,6 +2020,13 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    if ($confighash{$cgiparams{'KEY'}}[24] ne '') {print CLIENTCONF "fragment $confighash{$cgiparams{'KEY'}}[24]\n";}
    if ($confighash{$cgiparams{'KEY'}}[23] eq 'on') {print CLIENTCONF "mssfix\n";}
    }
+   if ($confighash{$cgiparams{'KEY'}}[38] ne 'off') {
+	if (($confighash{$cgiparams{'KEY'}}[23] ne 'on') || ($confighash{$cgiparams{'KEY'}}[24] eq '')) {
+		if ($tunmtu eq '1500' ) {
+			print CLIENTCONF "mtu-disc $confighash{$cgiparams{'KEY'}}[38]\n";
+		}
+	}
+   }
    print CLIENTCONF "ns-cert-type server\n";   
    print CLIENTCONF "# Auth. Client\n"; 
    print CLIENTCONF "tls-client\n"; 
@@ -2041,7 +2086,18 @@ else
     print CLIENTCONF "nobind\n";
     print CLIENTCONF "dev $vpnsettings{'DDEVICE'}\r\n";
     print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}\r\n";
-    print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu $vpnsettings{'DMTU'}\r\n";
+
+    # Check if we are using fragment, mssfix or mtu-disc and set MTU to 1500
+    # or use configured value.
+    if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' )
+	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
+    elsif ($vpnsettings{MSSFIX} eq 'on')
+	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
+    elsif ($vpnsettings{PMTU_DISCOVERY} ne 'off')
+	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
+    else
+	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu $vpnsettings{'DMTU'}\r\n"; }
+
     if ( $vpnsettings{'ENABLED'} eq 'on'){
     	print CLIENTCONF "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
 	if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' && (&haveBlueNet())){	
@@ -2084,6 +2140,11 @@ else
     }
     if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
 	print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
+    }
+    if ($vpnsettings{PMTU_DISCOVERY} ne 'off') {
+	if(($vpnsettings{MSSFIX} ne 'on') || ($vpnsettings{FRAGMENT} eq '')) {
+		print CLIENTCONF "mtu-disc $vpnsettings{'PMTU_DISCOVERY'}\n";
+	}
     }
     close(CLIENTCONF);
         
@@ -2264,6 +2325,7 @@ ADV_ERROR:
     $checked{'MSSFIX'}{'off'} = '';
     $checked{'MSSFIX'}{'on'} = '';
     $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
+    $checked{'PMTU_DISCOVERY'}{$cgiparams{'PMTU_DISCOVERY'}} = 'checked=\'checked\'';
     $selected{'LOG_VERB'}{'1'} = '';
     $selected{'LOG_VERB'}{'2'} = '';
     $selected{'LOG_VERB'}{'3'} = '';
@@ -2335,7 +2397,7 @@ print <<END;
 	<td class'base'><b>$Lang::tr{'misc-options'}</b></td>
     </tr>
     <tr>
-	<td width='20%'></td> <td width='15%'> </td><td width='15%'> </td><td width='50%'></td>
+	<td width='20%'></td> <td width='15%'> </td><td width='15%'> </td><td width='15%'></td><td width='35%'></td>
     </tr>
     <tr>
 	<td class='base'>Client-To-Client</td>
@@ -2364,7 +2426,15 @@ print <<END;
      	  <td class='base'>mssfix</td>
      	  <td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
      	  <td>Default: on</td>
-   	  </tr>	
+   	  </tr>
+
+	<tr>
+		<td class='base'>$Lang::tr{'ovpn mtu-disc'}</td>
+		<td><input type='radio' name='PMTU_DISCOVERY' value='yes' $checked{'PMTU_DISCOVERY'}{'yes'} /> $Lang::tr{'ovpn mtu-disc yes'}</td>
+		<td><input type='radio' name='PMTU_DISCOVERY' value='maybe' $checked{'PMTU_DISCOVERY'}{'maybe'} /> $Lang::tr{'ovpn mtu-disc maybe'}</td>
+		<td><input type='radio' name='PMTU_DISCOVERY' value='no' $checked{'PMTU_DISCOVERY'}{'no'} /> $Lang::tr{'ovpn mtu-disc no'}</td>
+		<td><input type='radio' name='PMTU_DISCOVERY' value='off' $checked{'PMTU_DISCOVERY'}{'off'} /> $Lang::tr{'ovpn mtu-disc off'}</td>
+	</tr>
 </table>
 
 <!--
@@ -2922,6 +2992,7 @@ END
 my $complzoactive;
 my $mssfixactive;
 my $n2nfragment;
+my @n2nmtudisc = split(/ /, (grep { /^mtu-disc/ } @firen2nconf)[0]);;
 my @n2nproto2 = split(/ /, (grep { /^proto/ } @firen2nconf)[0]);
 my @n2nproto = split(/-/, $n2nproto2[1]);
 my @n2nport = split(/ /, (grep { /^port/ } @firen2nconf)[0]);
@@ -2956,6 +3027,7 @@ $n2nremsub[2] =~ s/\n|\r//g;
 $n2nlocalsub[2] =~ s/\n|\r//g;
 $n2nfragment[1] =~ s/\n|\r//g;
 $n2nmgmt[2] =~ s/\n|\r//g;
+$n2nmtudisc[1] =~ s/\n|\r//g;
 chomp ($complzoactive);
 chomp ($mssfixactive);
 
@@ -3009,26 +3081,28 @@ foreach my $dkey (keys %confighash) {
 	
   $key = &General::findhasharraykey (\%confighash);
 
-	foreach my $i (0 .. 38) { $confighash{$key}[$i] = "";}
+	foreach my $i (0 .. 39) { $confighash{$key}[$i] = "";}
+
 	$confighash{$key}[0] = 'off';
 	$confighash{$key}[1] = $n2nname[0];
-    $confighash{$key}[2] = $n2nname[0];	
+	$confighash{$key}[2] = $n2nname[0];	
 	$confighash{$key}[3] = 'net';
 	$confighash{$key}[4] = 'cert';	
 	$confighash{$key}[6] = 'client';		
 	$confighash{$key}[8] =  $n2nlocalsub[2];
-    $confighash{$key}[10] = $n2nremote[1];
-    $confighash{$key}[11] = "$n2nremsub[1]/$n2nremsub[2]";		
+	$confighash{$key}[10] = $n2nremote[1];
+	$confighash{$key}[11] = "$n2nremsub[1]/$n2nremsub[2]";		
 	$confighash{$key}[22] = $n2nmgmt[2];
-    $confighash{$key}[23] = $mssfixactive;
+	$confighash{$key}[23] = $mssfixactive;
 	$confighash{$key}[24] = $n2nfragment[1];
-    $confighash{$key}[25] = 'IPFire n2n Client';
+	$confighash{$key}[25] = 'IPFire n2n Client';
 	$confighash{$key}[26] = 'red';
-    $confighash{$key}[27] = "$n2novpnsub[0].$n2novpnsub[1].$n2novpnsub[2].0/255.255.255.0";
-    $confighash{$key}[28] = $n2nproto[0];
-    $confighash{$key}[29] = $n2nport[1];
-    $confighash{$key}[30] = $complzoactive;
-    $confighash{$key}[31] = $n2ntunmtu[1];
+	$confighash{$key}[27] = "$n2novpnsub[0].$n2novpnsub[1].$n2novpnsub[2].0/255.255.255.0";
+	$confighash{$key}[28] = $n2nproto[0];
+	$confighash{$key}[29] = $n2nport[1];
+	$confighash{$key}[30] = $complzoactive;
+	$confighash{$key}[31] = $n2ntunmtu[1];
+	$confighash{$key}[38] = $n2nmtudisc[1]; 
 
 
   &General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
@@ -3066,6 +3140,7 @@ foreach my $dkey (keys %confighash) {
 		<tr><td class='boldbase' nowrap='nowrap'>MSSFIX </td><td><b>$confighash{$key}[23]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>Fragment </td><td><b>$confighash{$key}[24]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}</td><td><b>$confighash{$key}[31]</b></td></tr>
+		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn mtu-disc'}</td><td><b>$confighash{$key}[38]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>Management Port </td><td><b>$confighash{$key}[22]</b></td></tr>
 		<tr><td>&nbsp;</td><td>&nbsp;</td></tr>	
     </table>
@@ -3163,6 +3238,7 @@ if ($confighash{$cgiparams{'KEY'}}) {
 		$cgiparams{'CCD_DNS1'}			= $confighash{$cgiparams{'KEY'}}[35];
 		$cgiparams{'CCD_DNS2'}			= $confighash{$cgiparams{'KEY'}}[36];
 		$cgiparams{'CCD_WINS'}			= $confighash{$cgiparams{'KEY'}}[37];
+		$cgiparams{'PMTU_DISCOVERY'} = $confighash{$cgiparams{'KEY'}}[38];
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 	
@@ -3390,6 +3466,22 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 	    goto VPNCONF_ERROR;
+    }
+
+    if (($cgiparams{'PMTU_DISCOVERY'} ne 'off') && ($cgiparams{'MTU'} ne '1500')) {
+	$errormessage = $Lang::tr{'ovpn mtu-disc and mtu not 1500'};
+	unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+	rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+	goto VPNCONF_ERROR;
+    }
+
+    if ($cgiparams{'PMTU_DISCOVERY'} ne 'off') {
+	if (($cgiparams{'FRAGMENT'} ne '') || ($cgiparams{'MSSFIX'} eq 'on')) {
+		$errormessage = $Lang::tr{'ovpn mtu-disc with mssfix or fragment'};
+		unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+		rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+		goto VPNCONF_ERROR;
+	}
     }
 
     if ( &validdotmask ($cgiparams{'LOCAL_SUBNET'}))  {
@@ -3810,8 +3902,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$confighash{$key}[35] 		= $cgiparams{'CCD_DNS1'};
 	$confighash{$key}[36] 		= $cgiparams{'CCD_DNS2'};
 	$confighash{$key}[37] 		= $cgiparams{'CCD_WINS'};
-		
-		
+	$confighash{$key}[38]		= $cgiparams{'PMTU_DISCOVERY'};
+
+
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 	
 	if ($cgiparams{'CHECK1'} ){
@@ -3975,6 +4068,8 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $checked{'MSSFIX'}{'on'} = '';
     $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
 
+    $checked{'PMTU_DISCOVERY'}{$cgiparams{'PMTU_DISCOVERY'}} = 'checked=\'checked\'';
+
 
     if (1) {
 	&Header::showhttpheaders();
@@ -4076,10 +4171,20 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		    <td> <input type='TEXT' name='OVPN_MGMT' VALUE='$cgiparams{'OVPN_MGMT'}'size='5' /></td>
         <td colspan='2'>$Lang::tr{'openvpn default'}: <span class="base">$Lang::tr{'destination port'}</span></td>
 
+	<tr>
+		<td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn mtu-disc'}</td>
+		<td colspan='2'>
+			<input type='radio' name='PMTU_DISCOVERY' value='yes' $checked{'PMTU_DISCOVERY'}{'yes'} /> $Lang::tr{'ovpn mtu-disc yes'}
+			<input type='radio' name='PMTU_DISCOVERY' value='maybe' $checked{'PMTU_DISCOVERY'}{'maybe'} /> $Lang::tr{'ovpn mtu-disc maybe'}
+        		<input type='radio' name='PMTU_DISCOVERY' value='no' $checked{'PMTU_DISCOVERY'}{'no'} /> $Lang::tr{'ovpn mtu-disc no'}
+	        	<input type='radio' name='PMTU_DISCOVERY' value='off' $checked{'PMTU_DISCOVERY'}{'off'} /> $Lang::tr{'ovpn mtu-disc off'}
+		</td>
+	</tr>
+
 END
 ;
 	}
-
+#jumper
 	print "<tr><td class='boldbase'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' /></td>";
 	print "<td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td></tr></table>";
 	
