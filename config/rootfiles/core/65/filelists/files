@@ -6,6 +6,7 @@ opt/pakfire/etc/pakfire.conf
 etc/rc.d/init.d/partresize
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/fsresize
+etc/rc.d/init.d/sendsignals
 etc/rc.d/init.d/setclock
 etc/rc.d/init.d/tmpfs
 etc/rc.d/init.d/udev
