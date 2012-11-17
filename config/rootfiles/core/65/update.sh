@@ -191,6 +191,12 @@ else
 	sed -i -e "s|#terminal|terminal|g" /boot/grub/grub.conf
 	sed -i -e "s| panic=10 | console=ttyS0,115200n8 panic=10 |g" /boot/grub/grub.conf
 fi
+
+#
+# ReInstall grub
+#
+grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
+
 #
 # Delete old lm-sensor modullist to force search at next boot
 #

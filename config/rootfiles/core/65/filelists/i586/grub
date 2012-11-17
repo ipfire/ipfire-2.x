@@ -1,2 +1,1 @@
-#boot/grub
-boot/grub/grub.conf
+../../../../common/i586/grub
