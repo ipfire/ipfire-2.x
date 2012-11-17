@@ -57,7 +57,7 @@ fi
 
 #
 #
-KVER="3.2.33"
+KVER="3.2.34"
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null

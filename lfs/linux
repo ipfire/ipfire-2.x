@@ -24,7 +24,7 @@
 
 include Config
 
-VER           = 3.2.33
+VER           = 3.2.34
 
 RPI_PATCHES = linux-3.2.27-9245b4c
 
@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 22
+PAK_VER    = 23
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -71,7 +71,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
-$(DL_FILE)_MD5				= 486521c7b00a92fc99e122b84ae9f089
+$(DL_FILE)_MD5				= a16ecee73774d4f73388870fb593d811
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= c20baa8dc2527ce89a302862c3fc7f58
 
 install : $(TARGET)
