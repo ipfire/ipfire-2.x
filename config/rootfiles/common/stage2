@@ -4,8 +4,6 @@ bin/echo
 bin/pwd
 bin/stty
 #boot
-dev/console
-dev/null
 etc/bashrc
 etc/certparams
 etc/e2fsck.conf
@@ -32,6 +30,8 @@ etc/passwd
 etc/profile
 #etc/profile.d
 etc/profile.d/colorls.sh
+etc/profile.d/extrapaths.sh
+etc/profile.d/glib2-locale.sh
 etc/profile.d/i18n.sh
 etc/profile.d/lang.sh
 etc/profile.d/readline.sh
@@ -57,7 +57,6 @@ root/.bashrc
 root/ipfire
 #sbin
 #srv
-tmp
 #usr/bin
 #usr/bin/perl
 #usr/include
@@ -145,3 +144,6 @@ var/run
 var/run/utmp
 #var/spool
 var/tmp
+dev/console
+dev/null
+tmp

@@ -1,0 +1,17 @@
+etc/bashrc
+etc/profile
+etc/profile.d/colorls.sh
+etc/profile.d/extrapaths.sh
+etc/profile.d/glib2-locale.sh
+etc/profile.d/i18n.sh
+etc/profile.d/lang.sh
+etc/profile.d/readline.sh
+etc/profile.d/term256.sh
+etc/profile.d/umask.sh
+etc/securetty
+etc/sysctl.conf
+root/.bash_logout
+root/.bash_profile
+root/.bashrc
+usr/lib/libgcc_s.so.1
+usr/lib/libstdc++.so.6
