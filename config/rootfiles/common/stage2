@@ -95,6 +95,7 @@ usr/local/bin/vpn-watch
 #usr/local/share/zoneinfo
 #usr/local/src
 #usr/sbin
+usr/sbin/ovpn-ccd-convert
 #usr/share
 #usr/share/doc
 #usr/share/doc/licenses

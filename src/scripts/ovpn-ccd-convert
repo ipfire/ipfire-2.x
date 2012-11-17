@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+
+my %net=();
+my %ovpnconfig=();
+my @serverconf=();
+my $greennet;
+my $greensubnet;
+
+require '/var/ipfire/general-functions.pl';
+
+if ( -e "/var/run/openvpn.pid"){
+	system('/usr/local/bin/openvpnctrl', '-k');
+}
+
+&General::readhash("/var/ipfire/ethernet/settings", \%net);
+	$greennet=$net{'GREEN_NETADDRESS'};
+	$greensubnet=$net{'GREEN_NETMASK'};
+open(FILE,"/var/ipfire/ovpn/server.conf");
+				while (<FILE>) {
+					$_=~s/\s*$//g;
+					if ($_ ne "route $greennet $greensubnet"){
+						push (@serverconf,$_."\n");
+					}else{
+						print"\nFound ROUTE >>route $greennet $greensubnet<< in server.conf.. Deleted!";
+					}
+				}
+
+&General::readhasharray("/var/ipfire/ovpn/ovpnconfig", \%ovpnconfig);
+foreach my $key (keys %ovpnconfig){
+	if($ovpnconfig{$key}[32] eq ''){
+		open ( CCDRWCONF,'>',"/var/ipfire/ovpn/ccd/$ovpnconfig{$key}[2]") or die "Unable to create clientconfigfile $!";
+		print CCDRWCONF "# OpenVPN Clientconfig from CCD extension by Copymaster#\n\n";
+		print CCDRWCONF "#This client uses the dynamic pool\n\n";
+		print CCDRWCONF "\n#Client gets routes to these Networks (behind IPFIRE)\n";
+		print CCDRWCONF "push \"route $greennet $greensubnet\"\n";
+		close CCDRWCONF;
+		print"Client $ovpnconfig{$key}[2] converted! \n";
+	}else{
+		print "Client $ovpnconfig{$key}[2] NOT converted!\n";
+	}
+	$ovpnconfig{$key}[32] = 'dynamic';
+}
+&General::writehasharray("/var/ipfire/ovpn/ovpnconfig", \%ovpnconfig);
+system('/usr/local/bin/openvpnctrl', '-s');
+
