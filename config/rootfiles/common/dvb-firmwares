@@ -2,6 +2,7 @@ lib/firmware/dvb-fe-bcm3510-01.fw
 lib/firmware/dvb-fe-or51132-qam.fw
 lib/firmware/dvb-fe-or51132-vsb.fw
 lib/firmware/dvb-fe-or51211.fw
+lib/firmware/dvb-ttpci-01.fw
 #lib/firmware/dvb-ttpci-01.fw-261a
 #lib/firmware/dvb-ttpci-01.fw-261b
 #lib/firmware/dvb-ttpci-01.fw-261c

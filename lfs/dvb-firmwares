@@ -72,4 +72,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /lib/firmware
 	tar axf $(DIR_DL)/$(DL_FILE) \
 		-C /lib/firmware/
+	# use newest ttpci firmware
+	cp /lib/firmware/dvb-ttpci-01.fw-2622 /lib/firmware/dvb-ttpci-01.fw
 	@$(POSTBUILD)
