@@ -84,6 +84,10 @@ add_to_backup etc/snort
 add_to_backup usr/lib/snort_*
 add_to_backup usr/share/zoneinfo
 add_to_backup lib/libncurses*
+add_to_backup etc/dircolors
+add_to_backup etc/profile.d
+add_to_backup usr/share/terminfo
+
 
 # Backup the files
 tar cJvf /var/ipfire/backup/core-upgrade_$KVER.tar.xz \
@@ -101,6 +105,10 @@ rm -rf /boot/vmlinuz-*
 rm -rf /boot/uImage-ipfire-*
 rm -rf /boot/uInit-ipfire-*
 rm -rf /lib/modules
+rm -rf /etc/dircolors
+rm -rf /etc/profile.d
+rm -rf /usr/share/terminfo
+
 #
 # Remove old udev rules.
 #
