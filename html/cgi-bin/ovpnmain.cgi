@@ -354,7 +354,7 @@ sub writeserverconf {
 	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; }
     elsif ($sovpnsettings{'FRAGMENT'} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') 
 	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; }
-    elsif ($sovpnsettings{'PMTU_DISCOVERY'} ne 'off')
+    elsif (($sovpnsettings{'PMTU_DISCOVERY'} ne 'off') || ($sovpnsettings{'PMTU_DISCOVERY'} ne ''))
 	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; } 
     else 
 	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu $sovpnsettings{'DMTU'}\n"; }
@@ -395,7 +395,7 @@ sub writeserverconf {
 	print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";   
     }
 
-    if ($sovpnsettings{PMTU_DISCOVERY} ne 'off') {
+    if (($sovpnsettings{PMTU_DISCOVERY} ne 'off') || ($sovpnsettings{'PMTU_DISCOVERY'} ne '')) {
 	print CONF "mtu-disc $sovpnsettings{'PMTU_DISCOVERY'}\n";
     }
 
@@ -1001,7 +1001,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   if ($cgiparams{'FRAGMENT'} ne '') {print SERVERCONF "fragment $cgiparams{'FRAGMENT'}\n";} 
   if ($cgiparams{'MSSFIX'} eq 'on') {print SERVERCONF "mssfix\n"; }; 
   }
-  if ($cgiparams{'PMTU_DISCOVERY'} ne 'off') {
+  if (($cgiparams{'PMTU_DISCOVERY'} ne 'off') || ($cgiparams{'PMTU_DISCOVERY'} ne '')) {
 	if(($cgiparams{'MSSFIX'} ne 'on') || ($cgiparams{'FRAGMENT'} eq '')) {
 		if($cgiparams{'MTU'} eq '1500') {
 			print SERVERCONF "mtu-disc $cgiparams{'PMTU_DISCOVERY'}\n";
@@ -1086,7 +1086,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   if ($cgiparams{'FRAGMENT'} ne '') {print CLIENTCONF "fragment $cgiparams{'FRAGMENT'}\n";}
   if ($cgiparams{'MSSFIX'} eq 'on') {print CLIENTCONF "mssfix\n"; }; 
   }
-   if ($cgiparams{'PMTU_DISCOVERY'} ne 'off') {
+   if (($cgiparams{'PMTU_DISCOVERY'} ne 'off') || ($cgiparams{'PMTU_DISCOVERY'} ne '')) {
         if(($cgiparams{'MSSFIX'} ne 'on') || ($cgiparams{'FRAGMENT'} eq '')) {
 		if ($cgiparams{'MTU'} eq '1500') {
                 	print CLIENTCONF "mtu-disc $cgiparams{'PMTU_DISCOVERY'}\n";
@@ -2093,7 +2093,7 @@ else
 	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
     elsif ($vpnsettings{MSSFIX} eq 'on')
 	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
-    elsif ($vpnsettings{PMTU_DISCOVERY} ne 'off')
+    elsif (($vpnsettings{PMTU_DISCOVERY} ne 'off') || ($cgiparams{'PMTU_DISCOVERY'} ne ''))
 	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
     else
 	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu $vpnsettings{'DMTU'}\r\n"; }
@@ -2141,7 +2141,7 @@ else
     if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
 	print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
     }
-    if ($vpnsettings{PMTU_DISCOVERY} ne 'off') {
+    if (($vpnsettings{PMTU_DISCOVERY} ne 'off') || ($cgiparams{'PMTU_DISCOVERY'} ne '')) {
 	if(($vpnsettings{MSSFIX} ne 'on') || ($vpnsettings{FRAGMENT} eq '')) {
 		print CLIENTCONF "mtu-disc $vpnsettings{'PMTU_DISCOVERY'}\n";
 	}
