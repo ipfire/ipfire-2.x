@@ -1,5 +1,5 @@
-#boot/ipfirerd-3.2.33-kirkwood.img
-#boot/ipfirerd-3.2.33-omap.img
+#boot/ipfirerd-KVER-kirkwood.img
+#boot/ipfirerd-KVER-omap.img
 #boot/uInit-ipfire-kirkwood
 #boot/uInit-ipfire-omap
 etc/dracut.conf
