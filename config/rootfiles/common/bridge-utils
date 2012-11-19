@@ -1,4 +1,2 @@
-#usr/include/libbridge.h
-#usr/lib/libbridge.a
-#usr/man/man8/brctl.8
 usr/sbin/brctl
+#usr/share/man/man8/brctl.8
