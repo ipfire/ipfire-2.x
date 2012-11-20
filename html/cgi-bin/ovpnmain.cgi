@@ -4012,6 +4012,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 ###	
         $cgiparams{'MSSFIX'} = 'on';
         $cgiparams{'FRAGMENT'} = '1300';
+	$cgiparams{'PMTU_DISCOVERY'} = 'off';
 ###
 # m.a.d n2n end
 ###	
