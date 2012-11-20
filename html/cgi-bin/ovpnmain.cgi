@@ -50,6 +50,9 @@ my %mainsettings = ();
 ###
 ### Initialize variables
 ###
+my %ccdconfhash=();
+my %ccdroutehash=();
+my %ccdroute2hash=();
 my %netsettings=();
 my %cgiparams=();
 my %vpnsettings=();
@@ -2202,7 +2205,7 @@ else
 	{
 		unlink "${General::swroot}/ovpn/ccd/$confighash{$cgiparams{'KEY'}}[2]";
 	}
-	my %ccdroutehash=();
+	
 	&General::readhasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
 	foreach my $key (keys %ccdroutehash) {
 		if ($ccdroutehash{$key}[0] eq $confighash{$cgiparams{'KEY'}}[1]){
@@ -2210,7 +2213,7 @@ else
 		}
 	}
 	&General::writehasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
-	my %ccdroute2hash=();
+	
 	&General::readhasharray("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
 	foreach my $key (keys %ccdroute2hash) {
 		if ($ccdroute2hash{$key}[0] eq $confighash{$cgiparams{'KEY'}}[1]){
@@ -3311,7 +3314,7 @@ if ($confighash{$cgiparams{'KEY'}}) {
 	}
 	undef @temp;
 	#check route field and convert it to decimal
-	my %ccdroute2hash=();
+	
 	my $val=0;
 	my $i=1;
 	
@@ -4194,11 +4197,8 @@ END
 
 		print"</tr></table><br><br>";
 #A.Marx CCD new client		
-	
+if ($cgiparams{'TYPE'} eq 'host') {	
 	    print "<table border='0' width='100%' cellspacing='1' cellpadding='0'><tr><td colspan='3'><hr><br><b>$Lang::tr{'ccd choose net'}</td></tr><tr><td height='20' colspan='3'></td></tr>";
-	    my %ccdconfhash=();
-	    my %ccdroutehash=();
-	    my %ccdroute2hash=();
 	    my %vpnnet=();
 	    my $vpnip;
 	    &General::readhash("${General::swroot}/ovpn/settings", \%vpnnet);
@@ -4227,6 +4227,7 @@ END
 		}
 		print "</table><br><br><hr><br><br>";
 	}
+}
 # ccd end
 	&Header::closebox();
 	if ($cgiparams{'KEY'} && $cgiparams{'AUTH'} eq 'psk') {
@@ -4338,10 +4339,12 @@ END
 	    &Header::closebox();
 	    
 	}
+
+#A.Marx CCD new client	
+if ($cgiparams{'TYPE'} eq 'host') {
 	    print"<br><br>";
 	    &Header::openbox('100%', 'LEFT', "$Lang::tr{'ccd client options'}:");
 
-#A.Marx CCD new client
 	
 	print <<END;
 	<table border='0' width='100%'>
@@ -4400,7 +4403,7 @@ END
 								$set=1;
 							}
 							if (&haveBlueNet()){
-								if($netsettings{'BLUE_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'BLUE_NETMASK'} eq $ccdroute2hash{$key}[$i])) {
+								if($netsettings{'BLUE_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'BLUE_NETMASK'}) eq $ccdroute2hash{$key}[$i]) {
 								$selblue=1;
 								
 								}
@@ -4425,7 +4428,7 @@ END
 END
 ;
      &Header::closebox();
-	
+}
 	print "<div align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' />";
 	if ($cgiparams{'KEY'}) {
 #	    print "<input type='submit' name='ACTION' value='$Lang::tr{'advanced'}' />";

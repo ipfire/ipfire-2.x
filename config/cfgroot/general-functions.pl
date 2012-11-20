@@ -325,30 +325,47 @@ sub getccdbc
 	my $broadcast_address  = inet_ntoa( $ip_address_binary | ~$netmask_binary );
 	return $broadcast_address;
 }
+
+sub ip2dec 
+{
+    my $ip_num;
+    my $ip=$_[0];
+    if ( $ip =~ /(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/ ) {
+        $ip_num = (($1*256**3) + ($2*256**2) + ($3*256) + $4);
+    } else {
+        $ip_num = -1;
+    }
+    $ip_num = (($1*256**3) + ($2*256**2) + ($3*256) + $4);
+    return($ip_num);
+}
+
+sub dec2ip 
+{
+    my $ip;
+    my $ip_num=$_[0];
+	my $o1=$ip_num%256;
+	$ip_num=int($ip_num/256);
+	my $o2=$ip_num%256;
+	$ip_num=int($ip_num/256);
+	my $o3=$ip_num%256;
+	$ip_num=int($ip_num/256);
+	my $o4=$ip_num%256;
+	$ip="$o4.$o3.$o2.$o1";
+    return ($ip);
+}
+
 sub getnextip
 {
-	my ($byte1,$byte2,$byte3,$byte4) = split (/\./,$_[0]);
-	my $step=$_[1];
-	for (my $x=1;$x<=$step;$x++){
-		$byte4++;
-		if($byte4==255){ $byte4=0;$byte3++;}
-			if($byte3==255){$byte3=0;$byte2++;}
-				if ($byte2==255){$byte2=0;$byte1++}
-	
-	}
-	return "$byte1.$byte2.$byte3.$byte4";
+	my $decip=&ip2dec($_[0]);
+	$decip=$decip+4;
+	return &dec2ip($decip);
 }
+
 sub getlastip
 {
-	my ($byte1,$byte2,$byte3,$byte4) = split (/\./,$_[0]);
-	my $step=$_[1];
-	for (my $x=$step;$x>=1;$x--){
-		$byte4--;
-		if($byte4==0){ $byte4=255;$byte3--;}
-			if($byte3==0){$byte3=255;$byte2--;}
-				if ($byte2==0){$byte2=255;$byte1--}
-	}
-	return "$byte1.$byte2.$byte3.$byte4";
+	my $decip=&ip2dec($_[0]);
+	$decip--;
+	return &dec2ip($decip);
 }
 
 sub validipandmask

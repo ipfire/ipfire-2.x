@@ -27,7 +27,7 @@ open(FILE,"/var/ipfire/ovpn/server.conf");
 
 &General::readhasharray("/var/ipfire/ovpn/ovpnconfig", \%ovpnconfig);
 foreach my $key (keys %ovpnconfig){
-	if($ovpnconfig{$key}[32] eq ''){
+	if($ovpnconfig{$key}[32] eq '' && $ovpnconfig{$key}[3] eq 'host'){
 		open ( CCDRWCONF,'>',"/var/ipfire/ovpn/ccd/$ovpnconfig{$key}[2]") or die "Unable to create clientconfigfile $!";
 		print CCDRWCONF "# OpenVPN Clientconfig from CCD extension by Copymaster#\n\n";
 		print CCDRWCONF "#This client uses the dynamic pool\n\n";
