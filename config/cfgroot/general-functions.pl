@@ -383,13 +383,13 @@ sub validipandmask
 	if ($ccdip=~/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/ &&(($1>0 && $1<=255 && $2>=0 && $2<=255 && $3>=0 && $3<=255 && $4<=255 ))) {
 		#Subnet in decimal and valid?
 		if ($ccdsubnet=~/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/ &&(($1<=255  && $2<=$1 && $3<=$2  && $4<=$3 )))	{
-			for (my $i=8;$i<=30;$i++){
+			for (my $i=8;$i<=32;$i++){
 				if (&General::cidrtosub($i) eq $ccdsubnet){
 					return 1;
 				}
 			}	
 		#Subnet already in binary format?
-		}elsif ($ccdsubnet=~/^(\d{1,2})$/ && (($1<=30 && $1>=8))){
+		}elsif ($ccdsubnet=~/^(\d{1,2})$/ && (($1<=32 && $1>=8))){
 			return 1;
 		}else{
 			return 0;

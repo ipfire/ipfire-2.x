@@ -494,21 +494,36 @@ sub addccdnet
 	my $checkup;
 	my $ccdip;
 	my $baseaddress;
-	if(!&General::validhostname($ccdname)){
+	
+	
+	#check name	
+	if ($ccdname eq '') 
+	{
+		$errormessage=$errormessage.$Lang::tr{'ccd err name'}."<br>";
+		return
+	}
+	
+	if(!&General::validhostname($ccdname))
+	{
 		$errormessage=$Lang::tr{'ccd err invalidname'};
 		return;
 	}
-	#check ip
-	if (&General::validipandmask($ccdnet)){
-			$ccdnet=&General::iporsubtocidr($ccdnet);	
-	}else{
+		
+	($ccdip,$subcidr) = split (/\//,$ccdnet);
+	$subcidr=&General::iporsubtocidr($subcidr);
+	#check subnet
+	if ($subcidr > 30)
+	{
 		$errormessage=$Lang::tr{'ccd err invalidnet'};
 		return;
 	}
-	($ccdip,$subcidr) = split (/\//,$ccdnet);
-	if ($ccdname eq '') {
-		$errormessage=$errormessage.$Lang::tr{'ccd err name'}."<br>";
+	#check ip
+	if (!&General::validipandmask($ccdnet)){
+		$errormessage=$Lang::tr{'ccd err invalidnet'};
+		return;
 	}
+	
+	
 	#check if we try to use same network as ovpn server
 	if (&General::iporsubtocidr($ccdnet) eq &General::iporsubtocidr($ovpnsubnet)) {
 			$errormessage=$errormessage.$Lang::tr{'ccd err isovpnnet'}."<br>";
