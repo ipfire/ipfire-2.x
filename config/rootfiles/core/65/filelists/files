@@ -17,6 +17,8 @@ etc/rc.d/init.d/udev
 etc/rc.d/init.d/udev_retry
 etc/rc.d/rc0.d/K47setclock
 etc/rc.d/rc6.d/K47setclock
+opt/pakfire/db/core/mine
+opt/pakfire/lib/functions.sh
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/qos.cgi

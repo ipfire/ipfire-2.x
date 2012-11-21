@@ -43,16 +43,10 @@ done
 
 #
 # Do some sanity checks.
-
-if [ "$(grep " xavf " /opt/pakfire/lib/functions.sh)" == "" ]; then
-	/usr/bin/logger -p syslog.emerg -t core-upgrade-$core \
-		"ERROR: this update need a newer pakfire version (core64)."
-	exit 1
-fi
 if [ ! "$(mount | grep " reiser4 (")" == "" ]; then
 	/usr/bin/logger -p syslog.emerg -t core-upgrade-$core \
 		"ERROR: cannot update because there is a reiser4 fs mounted."
-	exit 2
+	exit 1
 fi
 
 #
@@ -143,7 +137,7 @@ rm -rf /lib/libncurses*
 
 #
 #Extract files
-extract_files
+tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
 
 #
 # Start services
