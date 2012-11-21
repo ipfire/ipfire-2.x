@@ -3,10 +3,13 @@ etc/issue
 etc/sysctl.conf
 etc/securetty
 opt/pakfire/etc/pakfire.conf
-etc/rc.d/init.d/partresize
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/fsresize
+etc/rc.d/init.d/halt
+etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/network
+etc/rc.d/init.d/partresize
+etc/rc.d/init.d/reboot
 etc/rc.d/init.d/sendsignals
 etc/rc.d/init.d/setclock
 etc/rc.d/init.d/tmpfs
