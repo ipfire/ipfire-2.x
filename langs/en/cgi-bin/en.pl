@@ -1641,7 +1641,7 @@
 'september' => 'September',
 'serial' => 'Serial',
 'server reserved' => 'The connection name server is reserved and not allowed',
-'server restart' => 'If you change these settings you have to restart the OpenVPN server for the changes to take effect!',
+'server restart' => 'You are not able to save any changes while the OpenVPN server is running.',
 'server string' => 'Server String',
 'service' => 'Service',
 'service added' => 'Custom network service added',

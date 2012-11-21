@@ -321,7 +321,6 @@ sub disallowreserved
 	return;
 }
 
-
 sub writeserverconf {
     my %sovpnsettings = ();  
     my @temp = ();  
@@ -2221,7 +2220,7 @@ else
 		}
 	}
 	&General::writehasharray("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
-	
+	&writeserverconf;
 	
 	
 # CCD end 
@@ -2486,7 +2485,21 @@ if ( -e "/var/run/openvpn.pid"){
 print"	<br><b><font color='#990000'>$Lang::tr{'attention'}:</b></font><br>
 		$Lang::tr{'server restart'}<br><br>
 		<hr>";
-}
+		print<<END
+<table width='100%'>
+<tr>
+    <td>&nbsp;</td>
+    <td allign='center'><input type='submit' name='ACTION' value='$Lang::tr{'save-adv-options'}' disabled='disabled' /></td>
+    <td allign='center'><input type='submit' name='ACTION' value='$Lang::tr{'cancel-adv-options'}' /></td>
+    <td>&nbsp;</td>    
+</tr>
+</table>    
+</form>
+END
+;		
+		
+		
+}else{
 
 print<<END
 <table width='100%'>
@@ -2500,7 +2513,7 @@ print<<END
 </form>
 END
 ;				   
-
+}
     &Header::closebox();
 #    print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
     &Header::closebigbox();
@@ -3218,7 +3231,7 @@ if ($confighash{$cgiparams{'KEY'}}) {
 		$cgiparams{'ENABLED'}			= $confighash{$cgiparams{'KEY'}}[0];
 		$cgiparams{'NAME'}				= $confighash{$cgiparams{'KEY'}}[1];
 		$cgiparams{'TYPE'}				= $confighash{$cgiparams{'KEY'}}[3];
-		$cgiparams{'AUTH'} 			= $confighash{$cgiparams{'KEY'}}[4];
+		$cgiparams{'AUTH'} 				= $confighash{$cgiparams{'KEY'}}[4];
 		$cgiparams{'PSK'}				= $confighash{$cgiparams{'KEY'}}[5];
 		$cgiparams{'SIDE'}				= $confighash{$cgiparams{'KEY'}}[6];
 		$cgiparams{'LOCAL_SUBNET'}		= $confighash{$cgiparams{'KEY'}}[8];
@@ -3226,27 +3239,27 @@ if ($confighash{$cgiparams{'KEY'}}) {
 		$cgiparams{'REMOTE_SUBNET'} 	= $confighash{$cgiparams{'KEY'}}[11];
 		$cgiparams{'OVPN_MGMT'} 		= $confighash{$cgiparams{'KEY'}}[22];
 		$cgiparams{'MSSFIX'} 			= $confighash{$cgiparams{'KEY'}}[23];
-		$cgiparams{'FRAGMENT'} 		= $confighash{$cgiparams{'KEY'}}[24];
+		$cgiparams{'FRAGMENT'} 			= $confighash{$cgiparams{'KEY'}}[24];
 		$cgiparams{'REMARK'}			= $confighash{$cgiparams{'KEY'}}[25];
-		$cgiparams{'INTERFACE'}		= $confighash{$cgiparams{'KEY'}}[26];
+		$cgiparams{'INTERFACE'}			= $confighash{$cgiparams{'KEY'}}[26];
 		$cgiparams{'OVPN_SUBNET'} 		= $confighash{$cgiparams{'KEY'}}[27];
 		$cgiparams{'PROTOCOL'}	  		= $confighash{$cgiparams{'KEY'}}[28];
-		$cgiparams{'DEST_PORT'}	  	= $confighash{$cgiparams{'KEY'}}[29];
+		$cgiparams{'DEST_PORT'}	  		= $confighash{$cgiparams{'KEY'}}[29];
 		$cgiparams{'COMPLZO'}	  		= $confighash{$cgiparams{'KEY'}}[30];
 		$cgiparams{'MTU'}	  			= $confighash{$cgiparams{'KEY'}}[31];
-		$cgiparams{'CHECK1'}   		= $confighash{$cgiparams{'KEY'}}[32];
+		$cgiparams{'CHECK1'}   			= $confighash{$cgiparams{'KEY'}}[32];
 		my $name=$cgiparams{'CHECK1'}	;
 		$cgiparams{$name}				= $confighash{$cgiparams{'KEY'}}[33];
 		$cgiparams{'RG'}				= $confighash{$cgiparams{'KEY'}}[34];
 		$cgiparams{'CCD_DNS1'}			= $confighash{$cgiparams{'KEY'}}[35];
 		$cgiparams{'CCD_DNS2'}			= $confighash{$cgiparams{'KEY'}}[36];
 		$cgiparams{'CCD_WINS'}			= $confighash{$cgiparams{'KEY'}}[37];
-		$cgiparams{'PMTU_DISCOVERY'} = $confighash{$cgiparams{'KEY'}}[38];
+		$cgiparams{'PMTU_DISCOVERY'} 	= $confighash{$cgiparams{'KEY'}}[38];
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 	
 #A.Marx CCD check iroute field and convert it to decimal
-
+if ($cgiparams{'TYPE'} eq 'host') {
 	my @temp=();
 	my %ccdroutehash=();
 	my $keypoint=0;
@@ -3269,6 +3282,7 @@ if ($confighash{$cgiparams{'KEY'}}) {
 			chomp($val);
 			$val=~s/\s*$//g; 
 			my($ip,$cidr) = split(/\//,$val);
+			$ip=&General::getnetworkip($ip,&General::iporsubtocidr($cidr));
 			$cidr=&General::iporsubtodec($cidr);
 			
 			#check if iroute exists in ccdroute
@@ -3282,16 +3296,24 @@ if ($confighash{$cgiparams{'KEY'}}) {
 			}
 																	
 			#check for existing network IP's
-			if ((&General::IpInSubnet ($ip,$netsettings{GREEN_NETADDRESS},$netsettings{GREEN_NETMASK}) && $netsettings{GREEN_NETADDRESS} ne '0.0.0.0')|| 
-				(&General::IpInSubnet ($ip,$netsettings{RED_NETADDRESS},$netsettings{RED_NETMASK}) && $netsettings{RED_NETADDRESS} ne '0.0.0.0')||
-				(&General::IpInSubnet ($ip,$netsettings{BLUE_NETADDRESS},$netsettings{BLUE_NETMASK}) && $netsettings{BLUE_NETADDRESS} ne '0.0.0.0' && $netsettings{BLUE_NETADDRESS} gt '')||
-				(&General::IpInSubnet ($ip,$netsettings{ORANGE_NETADDRESS},$netsettings{ORANGE_NETMASK}) && $netsettings{ORANGE_NETADDRESS} ne '0.0.0.0' && $netsettings{ORANGE_NETADDRESS} gt '' )){
-				$errormessage="$ip USED FOR SYSTEM!";
+			if (&General::IpInSubnet ($ip,$netsettings{GREEN_NETADDRESS},$netsettings{GREEN_NETMASK}) && $netsettings{GREEN_NETADDRESS} ne '0.0.0.0')
+			{
+				$errormessage=$Lang::tr{'ccd err green'};
+				goto VPNCONF_ERROR;
+			}elsif(&General::IpInSubnet ($ip,$netsettings{RED_NETADDRESS},$netsettings{RED_NETMASK}) && $netsettings{RED_NETADDRESS} ne '0.0.0.0')
+			{
+				$errormessage=$Lang::tr{'ccd err red'};
+				goto VPNCONF_ERROR;
+			}elsif(&General::IpInSubnet ($ip,$netsettings{BLUE_NETADDRESS},$netsettings{BLUE_NETMASK}) && $netsettings{BLUE_NETADDRESS} ne '0.0.0.0' && $netsettings{BLUE_NETADDRESS} gt '')
+			{
+				$errormessage=$Lang::tr{'ccd err blue'};
+				goto VPNCONF_ERROR;
+			}elsif(&General::IpInSubnet ($ip,$netsettings{ORANGE_NETADDRESS},$netsettings{ORANGE_NETMASK}) && $netsettings{ORANGE_NETADDRESS} ne '0.0.0.0' && $netsettings{ORANGE_NETADDRESS} gt '' )
+			{
+				$errormessage=$Lang::tr{'ccd err orange'};
 				goto VPNCONF_ERROR;
 			}
-			
-			
-			
+						
 			if (&General::validipandmask($val)){
 				$ccdroutehash{$keypoint}[$i] = $ip."/".$cidr;
 			}else{
@@ -3314,51 +3336,44 @@ if ($confighash{$cgiparams{'KEY'}}) {
 	}
 	undef @temp;
 	#check route field and convert it to decimal
-	
 	my $val=0;
 	my $i=1;
-	
 	&General::readhasharray("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
-	if($cgiparams{'IFROUTE'} eq $Lang::tr{'ccd none'} || $cgiparams{'IFROUTE'} eq '') { 
-			undef $cgiparams{'IFROUTE'};
-			foreach my $key (keys %ccdroute2hash){
-				if ($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}) {
-					delete $ccdroute2hash{$key};
-				}
-			}
-			&General::writehasharray("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
-	}else{
-		#find key to use
-		foreach my $key (keys %ccdroute2hash) {
-			if ($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}) {
-				$keypoint=$key;
-				delete $ccdroute2hash{$key};
-			}else{
-				$keypoint = &General::findhasharraykey (\%ccdroute2hash);
-				&General::writehasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
-				&writeserverconf;
-			}
+	#find key to use
+	foreach my $key (keys %ccdroute2hash) {
+		if ($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}) {
+			$keypoint=$key;
+			delete $ccdroute2hash{$key};
+		}else{
+			$keypoint = &General::findhasharraykey (\%ccdroute2hash);
+			&General::writehasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
+			&writeserverconf;
 		}
-		$ccdroute2hash{$keypoint}[0]=$cgiparams{'NAME'};
-		@temp = split(/\|/,$cgiparams{'IFROUTE'});
-		my %ownnet=();
-		&General::readhash("${General::swroot}/ethernet/settings", \%ownnet);
-		foreach $val (@temp){
-			chomp($val);
-			$val=~s/\s*$//g; 
-			if ($val eq $Lang::tr{'green'})
-			{
-				$val=$ownnet{GREEN_NETADDRESS}."/".$ownnet{GREEN_NETMASK};
-			}
-			if ($val eq $Lang::tr{'blue'})
-			{
-				$val=$ownnet{BLUE_NETADDRESS}."/".$ownnet{BLUE_NETMASK};
-			}
-			if ($val eq $Lang::tr{'orange'})
-			{
-				$val=$ownnet{ORANGE_NETADDRESS}."/".$ownnet{ORANGE_NETMASK};
-			}
-			my ($ip,$cidr) = split (/\//, $val);
+	}
+	$ccdroute2hash{$keypoint}[0]=$cgiparams{'NAME'};
+	if ($cgiparams{'IFROUTE'} eq ''){$cgiparams{'IFROUTE'} = $Lang::tr{'ccd none'};}
+	@temp = split(/\|/,$cgiparams{'IFROUTE'});
+	my %ownnet=();
+	&General::readhash("${General::swroot}/ethernet/settings", \%ownnet);
+	foreach $val (@temp){
+		chomp($val);
+		$val=~s/\s*$//g; 
+		if ($val eq $Lang::tr{'green'})
+		{
+			$val=$ownnet{GREEN_NETADDRESS}."/".$ownnet{GREEN_NETMASK};
+		}
+		if ($val eq $Lang::tr{'blue'})
+		{
+			$val=$ownnet{BLUE_NETADDRESS}."/".$ownnet{BLUE_NETMASK};
+		}
+		if ($val eq $Lang::tr{'orange'})
+		{
+			$val=$ownnet{ORANGE_NETADDRESS}."/".$ownnet{ORANGE_NETMASK};
+		}
+		my ($ip,$cidr) = split (/\//, $val);
+		
+		if ($val ne $Lang::tr{'ccd none'})
+		{	
 			if (! &check_routes_push($val)){$errormessage=$errormessage."Route $val ".$Lang::tr{'ccd err routeovpn2'}." ($val)";goto VPNCONF_ERROR;}
 			if (! &check_ccdroute($val)){$errormessage=$errormessage."<br>Route $val ".$Lang::tr{'ccd err inuse'}." ($val)" ;goto VPNCONF_ERROR;}
 			if (! &check_ccdconf($val)){$errormessage=$errormessage."<br>Route $val ".$Lang::tr{'ccd err routeovpn'}." ($val)";goto VPNCONF_ERROR;}
@@ -3369,10 +3384,13 @@ if ($confighash{$cgiparams{'KEY'}}) {
 				$errormessage=$errormessage."Route ".$Lang::tr{'ccd invalid'}." ($val)";
 				goto VPNCONF_ERROR;
 			}
-			$i++;
-		}	
-		&General::writehasharray("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
-	}
+		}else{
+			$ccdroute2hash{$keypoint}[$i]='';
+		}
+		$i++;
+	}	
+	&General::writehasharray("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
+
 	#check dns1 ip
 	if ($cgiparams{'CCD_DNS1'} ne '' &&  ! &General::validip($cgiparams{'CCD_DNS1'})) {
 			$errormessage=$errormessage."<br>".$Lang::tr{'invalid input for dhcp dns'}." 1";
@@ -3388,10 +3406,10 @@ if ($confighash{$cgiparams{'KEY'}}) {
 			$errormessage=$errormessage."<br>".$Lang::tr{'invalid input for dhcp wins'};
 			goto VPNCONF_ERROR;
 	}
-	
+}
 
 #CCD End
-	
+
 	
  if ($cgiparams{'TYPE'} !~ /^(host|net)$/) {
 	    $errormessage = $Lang::tr{'connection type is invalid'};
@@ -3881,7 +3899,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    $confighash{$key}[6] 	= $cgiparams{'SIDE'};
 	    $confighash{$key}[11] 	= $cgiparams{'REMOTE_SUBNET'};
 	}
-	$confighash{$key}[8] 		= $cgiparams{'LOCAL_SUBNET'};
+	$confighash{$key}[8] 			= $cgiparams{'LOCAL_SUBNET'};
 	$confighash{$key}[10] 		= $cgiparams{'REMOTE'};
   if ($cgiparams{'OVPN_MGMT'} eq '') {
 	$confighash{$key}[22] 		= $confighash{$key}[29];
@@ -3905,7 +3923,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$confighash{$key}[35] 		= $cgiparams{'CCD_DNS1'};
 	$confighash{$key}[36] 		= $cgiparams{'CCD_DNS2'};
 	$confighash{$key}[37] 		= $cgiparams{'CCD_WINS'};
-	$confighash{$key}[38]		= $cgiparams{'PMTU_DISCOVERY'};
+	$confighash{$key}[38]			= $cgiparams{'PMTU_DISCOVERY'};
 
 
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
@@ -3927,6 +3945,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 				print CCDRWCONF "\n#Redirect Gateway: \n#All IP traffic is redirected through the vpn \n";
 				print CCDRWCONF "push redirect-gateway\n";
 			}
+			&General::readhasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
 			if ($cgiparams{'IR'} ne ''){
 				print CCDRWCONF "\n#Client routes these Networks (behind Client)\n";
 				foreach my $key (keys %ccdroutehash){
@@ -3938,6 +3957,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 					}
 				}
 			}
+			if ($cgiparams{'IFROUTE'} eq $Lang::tr{'ccd none'} ){$cgiparams{'IFROUTE'}='';}
 			if ($cgiparams{'IFROUTE'} ne ''){
 				print CCDRWCONF "\n#Client gets routes to these Networks (behind IPFIRE)\n";
 				foreach my $key (keys %ccdroute2hash){
@@ -3946,7 +3966,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 							if($ccdroute2hash{$key}[$i] eq $Lang::tr{'blue'}){
 								my %blue=();
 								&General::readhash("${General::swroot}/ethernet/settings", \%blue);
-								print CCDRWCONF "push \"route $blue{BLUE_ADDRESS}  $blue{BLUE_NETMASK}\n";
+								print CCDRWCONF "push \"route $blue{BLUE_ADDRESS} $blue{BLUE_NETMASK}\n";
 							}elsif($ccdroute2hash{$key}[$i] eq $Lang::tr{'orange'}){
 								my %orange=();
 								&General::readhash("${General::swroot}/ethernet/settings", \%orange);
@@ -4376,51 +4396,66 @@ END
 	<tr><td colspan='4'><br></td></tr>
 	<tr><td valign='top' rowspan='3'>$Lang::tr{'ccd iroute2'}</td><td align='left' valign='top' rowspan='3'><select name='IFROUTE' style="width: 205px"; size='6' multiple>
 END
-
+	
+	my $set=0;
+	my $selorange=0;
+	my $selblue=0;
+	my $selgreen=0;
+	my $helpblue=0;
+	my $helporange=0;
+	my $other=0;
+	my @temp=();
+	
 	our @current = ();
-		open(FILE, "${General::swroot}/main/routing") ;
-	    @current = <FILE>;
-	    close (FILE);
-		&General::readhasharray ("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
-		my $set=0;
-		my $selorange=0;
-		my $selblue=0;
-		my $helpblue=0;
-		my $helporange=0;
-		print"<option>$Lang::tr{'ccd none'}</option>";
-		print"<option selected>$Lang::tr{'green'}</option>";
-				
-		foreach my $line (@current) {
-			chomp($line);				# remove newline
-			my @temp=split(/\,/,$line);
-			$temp[1] = '' unless defined $temp[1]; # not always populated
-			my ($a,$b) = split(/\//,$temp[1]);
-			$temp[1] = $a."/".&General::iporsubtocidr($b);
-			foreach my $key (keys %ccdroute2hash) {
-				if($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}){
-					foreach my $i (1 .. $#{$ccdroute2hash{$key}}) {
-											
-							if($ccdroute2hash{$key}[$i] eq $a."/".&General::iporsubtodec($b)){
-								$set=1;
-							}
-							if (&haveBlueNet()){
-								if($netsettings{'BLUE_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'BLUE_NETMASK'}) eq $ccdroute2hash{$key}[$i]) {
-								$selblue=1;
-								
-								}
-							}
-							if (&haveOrangeNet()){
-								if($netsettings{'ORANGE_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'ORANGE_NETMASK'}) eq $ccdroute2hash{$key}[$i]) {
-									$selorange=1;
-								}
-							}
-						}
+	open(FILE, "${General::swroot}/main/routing") ;
+	@current = <FILE>;
+	close (FILE);
+	&General::readhasharray ("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);		
+	print"<option>$Lang::tr{'ccd none'}</option>";
+	#check if static routes are defined for client
+	foreach my $line (@current) {
+		chomp($line);	
+		$line=~s/\s*$//g; 			# remove newline
+		@temp=split(/\,/,$line);
+		$temp[1] = '' unless defined $temp[1]; # not always populated
+		my ($a,$b) = split(/\//,$temp[1]);
+		$temp[1] = $a."/".&General::iporsubtocidr($b);
+		foreach my $key (keys %ccdroute2hash) {
+			if($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}){
+				foreach my $i (1 .. $#{$ccdroute2hash{$key}}) {
+					if($ccdroute2hash{$key}[$i] eq $a."/".&General::iporsubtodec($b)){
+						$set=1;
 					}
 				}
-				if ($set == '1'){ print"<option selected>$temp[1]</option>";$set=0;}else{print"<option>$temp[1]</option>";}
-				if (&haveBlueNet() && $selblue == '1'){ print"<option selected>$Lang::tr{'blue'}</option>";$selblue=0;}elsif(&haveBlueNet() && $selblue == '0'){print"<option>$Lang::tr{'blue'}</option>";}
-				if (&haveOrangeNet() && $selorange == '1'){ print"<option selected>$Lang::tr{'orange'}</option>";$selorange=0;}elsif(&haveOrangeNet() && $selorange == '0'){print"<option>$Lang::tr{'orange'}</option>";}
 			}
+		}
+		if ($set == '1' && $#temp != -1){ print"<option selected>$temp[1]</option>";$set=0;}elsif($set == '0' && $#temp != -1){print"<option>$temp[1]</option>";}
+	}	
+	#check if green,blue,orange are defined for client
+	foreach my $key (keys %ccdroute2hash) {
+		if($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}){
+			$other=1;
+			foreach my $i (1 .. $#{$ccdroute2hash{$key}}) {
+				if ($ccdroute2hash{$key}[$i] eq $netsettings{'GREEN_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'GREEN_NETMASK'})){
+					$selgreen=1;
+				}
+				if (&haveBlueNet()){
+					if( $ccdroute2hash{$key}[$i] eq $netsettings{'BLUE_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'BLUE_NETMASK'})) {
+						$selblue=1;
+					}
+				}
+				if (&haveOrangeNet()){
+					if( $ccdroute2hash{$key}[$i] eq $netsettings{'ORANGE_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'ORANGE_NETMASK'}) ) {
+						$selorange=1;
+					}
+				}
+			}
+		}
+	}
+	if (&haveBlueNet() && $selblue == '1'){ print"<option selected>$Lang::tr{'blue'}</option>";$selblue=0;}elsif(&haveBlueNet() && $selblue == '0'){print"<option>$Lang::tr{'blue'}</option>";}
+	if (&haveOrangeNet() && $selorange == '1'){ print"<option selected>$Lang::tr{'orange'}</option>";$selorange=0;}elsif(&haveOrangeNet() && $selorange == '0'){print"<option>$Lang::tr{'orange'}</option>";}			
+	if ($selgreen == '1' || $other == '0'){ print"<option selected>$Lang::tr{'green'}</option>";$set=0;}else{print"<option>$Lang::tr{'green'}</option>";};
+	
 	print<<END
 	</select></td><td valign='top'>DNS1:</td><td valign='top'><input type='TEXT' name='CCD_DNS1' value='$cgiparams{'CCD_DNS1'}' size='30' /></td></tr>
 	<tr valign='top'><td>DNS2:</td><td><input type='TEXT' name='CCD_DNS2' value='$cgiparams{'CCD_DNS2'}' size='30' /></td></tr>

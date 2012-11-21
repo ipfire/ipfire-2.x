@@ -1612,7 +1612,7 @@
 'september' => 'September',
 'serial' => 'serielle',
 'server reserved' => 'The connection name server is reserved and not allowed',
-'server restart' => 'Wenn hier etwas geändert wird, muss der openVPN Server neu gestartet werden, damit die Einstellungen übernommen werden!',
+'server restart' => 'Änderungen können nicht gespeichert werden, solange der OpenVPN-Server läuft.',
 'server string' => 'Server String',
 'service' => 'Dienst',
 'service added' => 'Benutzerdefinierter Netzwerkdienst wurde hinzugefügt',

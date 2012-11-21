@@ -5,10 +5,11 @@ my %ovpnconfig=();
 my @serverconf=();
 my $greennet;
 my $greensubnet;
-
+my $running='off';
 require '/var/ipfire/general-functions.pl';
 
 if ( -e "/var/run/openvpn.pid"){
+	$running='on';
 	system('/usr/local/bin/openvpnctrl', '-k');
 }
 
@@ -41,5 +42,7 @@ foreach my $key (keys %ovpnconfig){
 	$ovpnconfig{$key}[32] = 'dynamic';
 }
 &General::writehasharray("/var/ipfire/ovpn/ovpnconfig", \%ovpnconfig);
-system('/usr/local/bin/openvpnctrl', '-s');
-
+if ($running eq 'on')
+{
+	system('/usr/local/bin/openvpnctrl', '-s');
+}
