@@ -48,7 +48,7 @@ let ENTRY=$_+1
 if [ "$(grep "^serial" /boot/grub/grub.conf)" == "" ]; then
 	console=""
 else
-	console=" console=ttyS0,38400n8"
+	console=" console=ttyS0,115200n8"
 fi
 
 #
@@ -77,3 +77,4 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 	grub-set-default $ENTRY
 	touch /var/run/need_reboot
 fi
+sync && sync
