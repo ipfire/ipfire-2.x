@@ -357,7 +357,9 @@ sub writeserverconf {
 	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; }
     elsif ($sovpnsettings{'FRAGMENT'} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') 
 	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; }
-    elsif ($sovpnsettings{'PMTU_DISCOVERY'} ne 'off')
+    elsif (($sovpnsettings{'PMTU_DISCOVERY'} eq 'yes') ||
+	   ($sovpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
+	   ($sovpnsettings{'PMTU_DISCOVERY'} eq 'no' ))
 	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; } 
     else 
 	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu $sovpnsettings{'DMTU'}\n"; }
@@ -398,8 +400,11 @@ sub writeserverconf {
 	print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";   
     }
 
-    if ($sovpnsettings{PMTU_DISCOVERY} ne 'off') {
-	print CONF "mtu-disc $sovpnsettings{'PMTU_DISCOVERY'}\n";
+    # Check if a valid operating mode has been choosen and use it.
+    if (($sovpnsettings{'PMTU_DISCOVERY'} eq 'yes') ||
+	($sovpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
+	($sovpnsettings{'PMTU_DISCOVERY'} eq 'no' )) {
+		print CONF "mtu-disc $sovpnsettings{'PMTU_DISCOVERY'}\n";
     }
 
     if ($sovpnsettings{KEEPALIVE_1} > 0 && $sovpnsettings{KEEPALIVE_2} > 0) {	
@@ -851,7 +856,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     	$vpnsettings{'MSSFIX'} = $cgiparams{'MSSFIX'};
     }
 
-    if ($cgiparams{'PMTU_DISCOVERY'} ne 'off') {
+    if (($cgiparams{'PMTU_DISCOVERY'} eq 'yes') ||
+        ($cgiparams{'PMTU_DISCOVERY'} eq 'maybe') ||
+        ($cgiparams{'PMTU_DISCOVERY'} eq 'no' )) {
+
 	if (($cgiparams{'MSSFIX'} eq 'on') || ($cgiparams{'FRAGMENT'} ne '')) {
 		$errormessage = $Lang::tr{'ovpn mtu-disc with mssfix or fragment'};
 		goto ADV_ERROR;
@@ -1004,7 +1012,11 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   if ($cgiparams{'FRAGMENT'} ne '') {print SERVERCONF "fragment $cgiparams{'FRAGMENT'}\n";} 
   if ($cgiparams{'MSSFIX'} eq 'on') {print SERVERCONF "mssfix\n"; }; 
   }
-  if ($cgiparams{'PMTU_DISCOVERY'} ne 'off') {
+
+  # Check if a valid operating mode has been choosen and use it.
+  if (($cgiparams{'PMTU_DISCOVERY'} eq 'yes') ||
+      ($cgiparams{'PMTU_DISCOVERY'} eq 'maybe') ||
+      ($cgiparams{'PMTU_DISCOVERY'} eq 'no' )) {
 	if(($cgiparams{'MSSFIX'} ne 'on') || ($cgiparams{'FRAGMENT'} eq '')) {
 		if($cgiparams{'MTU'} eq '1500') {
 			print SERVERCONF "mtu-disc $cgiparams{'PMTU_DISCOVERY'}\n";
@@ -1089,13 +1101,18 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   if ($cgiparams{'FRAGMENT'} ne '') {print CLIENTCONF "fragment $cgiparams{'FRAGMENT'}\n";}
   if ($cgiparams{'MSSFIX'} eq 'on') {print CLIENTCONF "mssfix\n"; }; 
   }
-   if ($cgiparams{'PMTU_DISCOVERY'} ne 'off') {
+
+  # Check if a valid operating mode has been choosen and use it.
+  if (($cgiparams{'PMTU_DISCOVERY'} eq 'yes') ||
+      ($cgiparams{'PMTU_DISCOVERY'} eq 'maybe') ||
+      ($cgiparams{'PMTU_DISCOVERY'} eq 'no' )) {
         if(($cgiparams{'MSSFIX'} ne 'on') || ($cgiparams{'FRAGMENT'} eq '')) {
 		if ($cgiparams{'MTU'} eq '1500') {
                 	print CLIENTCONF "mtu-disc $cgiparams{'PMTU_DISCOVERY'}\n";
 		}
         }
-  } 
+  }
+ 
   print CLIENTCONF "ns-cert-type server\n";   
   print CLIENTCONF "# Auth. Client\n"; 
   print CLIENTCONF "tls-client\n"; 
@@ -2023,7 +2040,9 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    if ($confighash{$cgiparams{'KEY'}}[24] ne '') {print CLIENTCONF "fragment $confighash{$cgiparams{'KEY'}}[24]\n";}
    if ($confighash{$cgiparams{'KEY'}}[23] eq 'on') {print CLIENTCONF "mssfix\n";}
    }
-   if ($confighash{$cgiparams{'KEY'}}[38] ne 'off') {
+   if (($confighash{$cgiparams{'KEY'}}[38] eq 'yes') ||
+       ($confighash{$cgiparams{'KEY'}}[38] eq 'maybe') ||
+       ($confighash{$cgiparams{'KEY'}}[38] eq 'no' )) {
 	if (($confighash{$cgiparams{'KEY'}}[23] ne 'on') || ($confighash{$cgiparams{'KEY'}}[24] eq '')) {
 		if ($tunmtu eq '1500' ) {
 			print CLIENTCONF "mtu-disc $confighash{$cgiparams{'KEY'}}[38]\n";
@@ -2096,7 +2115,9 @@ else
 	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
     elsif ($vpnsettings{MSSFIX} eq 'on')
 	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
-    elsif ($vpnsettings{PMTU_DISCOVERY} ne 'off')
+    elsif (($vpnsettings{'PMTU_DISCOVERY'} eq 'yes') ||
+           ($vpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
+           ($vpnsettings{'PMTU_DISCOVERY'} eq 'no' )) 
 	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
     else
 	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu $vpnsettings{'DMTU'}\r\n"; }
@@ -2144,7 +2165,11 @@ else
     if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
 	print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
     }
-    if ($vpnsettings{PMTU_DISCOVERY} ne 'off') {
+
+    # Check if a valid operating mode has been choosen and use it.
+    if (($vpnsettings{'PMTU_DISCOVERY'} eq 'yes') ||
+        ($vpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
+        ($vpnsettings{'PMTU_DISCOVERY'} eq 'no' )) {
 	if(($vpnsettings{MSSFIX} ne 'on') || ($vpnsettings{FRAGMENT} eq '')) {
 		print CLIENTCONF "mtu-disc $vpnsettings{'PMTU_DISCOVERY'}\n";
 	}
