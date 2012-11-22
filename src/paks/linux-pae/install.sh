@@ -71,3 +71,9 @@ echo "  savedefault $ENTRY" >> /boot/grub/grub.conf
 # Create new module depency
 #
 depmod -a $KVER-ipfire-pae
+
+# Default pae and request a reboot if pae is supported
+if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
+	grub-set-default $ENTRY
+	touch /var/run/need_reboot
+fi
