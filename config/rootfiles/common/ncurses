@@ -9,7 +9,7 @@ usr/bin/reset
 #usr/bin/tic
 #usr/bin/toe
 usr/bin/tput
-#usr/bin/tset
+usr/bin/tset
 #usr/include/curses.h
 #usr/include/cursesapp.h
 #usr/include/cursesf.h
