@@ -81,6 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/v4l-dvb_rtl28xx_commented_usb_clear_halt.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/v4l-dvb_usbv2_dont_report_pidfilter_fail.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/v4l-dvb_bestunar_us638x.patch
 
 	cd $(DIR_APP) && make allyesconfig KERNELRELEASE=$(KVER)-$(VERSUFIX) VER=$(XVER)
 ifeq "$(KCFG)" "-omap"
