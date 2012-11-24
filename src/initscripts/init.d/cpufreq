@@ -20,8 +20,8 @@ case "${1}" in
 		boot_mesg -n "Starting cpufreq... "
 
 		# try cpufreq hardware depend modules
-		for i in $(find /lib/modules/$(uname -r)/kernel/arch/x86/kernel/cpu/cpufreq \
-		           ! -name speedstep-lib.ko ! -name p4-clockmod.ko | sort -d -r); do
+		for i in $(find /lib/modules/$(uname -r)/kernel/drivers/cpufreq \
+		           ! -name speedstep-lib.ko ! -name p4-clockmod.ko ! -name "cpufreq_*" ! -name mperf.ko | sort -d -r); do
 			module=$(basename $i | cut -d. -f1);
 			modprobe $module > /dev/null 2>&1;
 			if [ ${?} = 0 ]; then
