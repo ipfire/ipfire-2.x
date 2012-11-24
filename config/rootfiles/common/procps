@@ -15,7 +15,7 @@ usr/bin/top
 usr/bin/uptime
 usr/bin/vmstat
 usr/bin/w
-#usr/bin/watch
+usr/bin/watch
 #usr/share/man/man1/free.1
 #usr/share/man/man1/kill.1
 #usr/share/man/man1/pgrep.1
