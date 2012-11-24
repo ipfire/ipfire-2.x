@@ -169,6 +169,9 @@ if [ -e /var/ipfire/qos/enable ]; then
 	/usr/local/bin/qosctrl start
 fi
 
+# Remove preloading libsafe.
+rm -f /etc/ld.so.preload
+
 #
 # Modify grub.conf
 #
