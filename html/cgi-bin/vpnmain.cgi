@@ -245,6 +245,9 @@ sub writeipsecfiles {
     flock CONF, 2;
     flock SECRETS, 2;
     print CONF "version 2\n\n";
+    print CONF "config setup\n";
+    print CONF "\tcharondebug=\"dmn 0, mgr 0, ike 0, chd 0, job 0, cfg 0, knl 0, net 0, asn 0, enc 0, lib 0, esp 0, tls 0, tnc 0, imc 0, imv 0, pts 0\"\n";
+    print CONF "\n";
     print CONF "conn %default\n";
     print CONF "\tkeyingtries=%forever\n";
     print CONF "\n";

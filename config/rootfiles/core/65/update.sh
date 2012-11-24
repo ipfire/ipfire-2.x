@@ -172,6 +172,9 @@ fi
 # Remove preloading libsafe.
 rm -f /etc/ld.so.preload
 
+# Regenerate ipsec configuration files.
+/srv/web/ipfire/cgi-bin/vpnmain.cgi
+
 #
 # Modify grub.conf
 #
