@@ -85,6 +85,8 @@ add_to_backup etc/profile.d
 add_to_backup usr/share/terminfo
 add_to_backup etc/sysconfig/lm_sensors
 add_to_backup etc/sysconfig/rc.local
+add_to_backup usr/local/bin/vpn-watch
+add_to_backup usr/libexec/ipsec
 
 # Backup the files
 tar cJvf /var/ipfire/backup/core-upgrade_$KVER.tar.xz \
@@ -147,9 +149,16 @@ rm -rf /usr/lib/snort_*
 rm -rf /usr/share/zoneinfo
 rm -rf /lib/libncurses*
 
+# Remove old pluto binaries.
+rm -f /usr/libexec/ipsec/{pluto,_pluto_adns,whack}
+rm -f /usr/local/bin/vpn-watch
+
 #
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
+
+# Regenerate ipsec configuration files.
+/srv/web/ipfire/cgi-bin/vpnmain.cgi
 
 #
 # Start services
@@ -171,9 +180,6 @@ fi
 
 # Remove preloading libsafe.
 rm -f /etc/ld.so.preload
-
-# Regenerate ipsec configuration files.
-/srv/web/ipfire/cgi-bin/vpnmain.cgi
 
 #
 # Modify grub.conf
