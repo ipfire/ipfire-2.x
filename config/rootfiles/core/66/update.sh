@@ -36,8 +36,7 @@ function add_to_backup ()
 #
 # Remove old core updates from pakfire cache to save space...
 #
-# TODO: need to be corrected before release
-core=64
+core=66
 for (( i=1; i<=$core; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
@@ -64,10 +63,10 @@ fi
 
 #
 # check if we the backup file already exist
-if [ -e /var/ipfire/backup/core-upgrade_$KVER.tar.xz ]; then
+if [ -e /var/ipfire/backup/core-upgrade$core_$KVER.tar.xz ]; then
     echo Moving backup to backup-old ...
-    mv -f /var/ipfire/backup/core-upgrade_$KVER.tar.xz \
-       /var/ipfire/backup/core-upgrade_$KVER-old.tar.xz
+    mv -f /var/ipfire/backup/core-upgrade$core_$KVER.tar.xz \
+       /var/ipfire/backup/core-upgrade$core_$KVER-old.tar.xz
 fi
 echo First we made a backup of all files that was inside of the
 echo update archive. This may take a while ...
@@ -116,6 +115,7 @@ rm -rf /lib/modules
 rm -rf /etc/dircolors
 rm -rf /etc/profile.d
 rm -rf /usr/share/terminfo
+rm -rf /bin/[
 
 #
 # Remove old udev rules.
