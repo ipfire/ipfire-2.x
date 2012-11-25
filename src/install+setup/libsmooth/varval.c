@@ -151,6 +151,9 @@ int findkey(struct keyvalue *head, char *key, char *value)
 		cur = cur->next;
 	}
 
+	// Empty value if we could not find key.
+	value[0] = '\0';
+
 	return 0;
 }
 
