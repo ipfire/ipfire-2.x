@@ -239,15 +239,15 @@ rm -rf /opt/pakfire/db/*/meta-glib
 rm -rf /opt/pakfire/db/*/meta-linux-pae
 if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 	echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
-	echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
-	echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-pae
+	echo "ProgVersion: 3.2.34" >> /opt/pakfire/db/installed/meta-linux-pae
+	echo "Release: 23"     >> /opt/pakfire/db/installed/meta-linux-pae
 fi
 
 # Force reinstall xen kernel if it was installed
 if [ -e "/opt/pakfire/db/installed/meta-linux-xen" ]; then
 	echo "Name: linux-xen" > /opt/pakfire/db/installed/meta-linux-xen
-	echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-xen
-	echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-xen
+	echo "ProgVersion: 2.6.32.60" >> /opt/pakfire/db/installed/meta-linux-xen
+	echo "Release: 23"     >> /opt/pakfire/db/installed/meta-linux-xen
 fi
 
 #
