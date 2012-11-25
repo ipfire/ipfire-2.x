@@ -1,4 +1,10 @@
 #!/bin/bash
+
+# Exit if firstsetup was already done...
+if [ -e /var/ipfire/main/firstsetup_ok ]; then
+	exit 0;
+fi
+
 # Edit the serial console entry at /etc/inittab matching to console parameter.
 ser_console() {
 	while test x"$1" != x
@@ -27,10 +33,19 @@ if [ "${?}" == "1" ]; then
 	echo Setup not finished. Rebooting ...
 	reboot -f
 fi
+
+# plan install pae kernel at next pakfire update if pae is supported
+rm -rf /opt/pakfire/db/*/meta-linux-pae
+if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
+	echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
+	echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
+	echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-pae
+fi
+
 echo Restarting udev...
 killall udevd
 /sbin/udevd --daemon
 /sbin/udevadm trigger
 /sbin/udevadm settle
 /etc/init.d/sysklogd stop
-rm -f /etc/rc.d/rcsysinit.d/S75firstsetup
+touch /var/ipfire/main/firstsetup_ok
