@@ -98,6 +98,7 @@ if ($reportsettings{'ACTION'} eq $Lang::tr{'calamaris create report'})
 	delete $reportsettings{'DAY_END'};
 	delete $reportsettings{'MONTH_END'};
 	delete $reportsettings{'YEAR_END'};
+	delete $reportsettings{'REPORT'};
 
 	&General::writehash("${General::swroot}/proxy/calamaris/settings", \%reportsettings);
 
@@ -493,12 +494,11 @@ END
 if (@reports)
 {
 	print "<td><select name='REPORT' size='5'>\n";
-	my $n=0;
 	foreach (@reports)
 	{
 		@reportdata=split(/#/);
 		print "\t<option ";
-		if ($n eq '0') { print "selected "; $reportsettings{'REPORT'}=$reportdata[1]; $n++}
+		if ($reportsettings{'REPORT'} eq $reportdata[1]) { print "selected ";}
 		print "value='$reportdata[1]'>$reportdata[2] &nbsp;-&nbsp; $reportdata[3]</option>\n";
 	}
 	print "</select></td>\n";
