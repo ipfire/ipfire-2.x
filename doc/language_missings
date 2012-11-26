@@ -45,6 +45,7 @@
 < ccd modify
 < ccd name
 < ccd net
+< ccd noaddnet
 < ccd none
 < ccd routes
 < ccd subnet
@@ -83,6 +84,18 @@
 < openvpn subnet is used
 < other
 < our donors
+< ovpn mtu-disc
+< ovpn mtu-disc and mtu not 1500
+< ovpn mtu-disc maybe
+< ovpn mtu-disc no
+< ovpn mtu-disc off
+< ovpn mtu-disc with mssfix or fragment
+< ovpn mtu-disc yes
+< proxy reports
+< proxy reports daily
+< proxy reports monthly
+< proxy reports today
+< proxy reports weekly
 < server restart
 < snort working
 < static routes
@@ -153,6 +166,7 @@
 < ccd modify
 < ccd name
 < ccd net
+< ccd noaddnet
 < ccd none
 < ccd routes
 < ccd subnet
@@ -204,8 +218,20 @@
 < outgoing firewall view group
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
+< ovpn mtu-disc
+< ovpn mtu-disc and mtu not 1500
+< ovpn mtu-disc maybe
+< ovpn mtu-disc no
+< ovpn mtu-disc off
+< ovpn mtu-disc with mssfix or fragment
+< ovpn mtu-disc yes
 < ovpn routes push
 < ovpn routes push options
+< proxy reports
+< proxy reports daily
+< proxy reports monthly
+< proxy reports today
+< proxy reports weekly
 < server restart
 < Set time on boot
 < static routes
@@ -252,6 +278,7 @@
 < ccd modify
 < ccd name
 < ccd net
+< ccd noaddnet
 < ccd none
 < ccd routes
 < ccd subnet
@@ -281,8 +308,20 @@
 < our donors
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
+< ovpn mtu-disc
+< ovpn mtu-disc and mtu not 1500
+< ovpn mtu-disc maybe
+< ovpn mtu-disc no
+< ovpn mtu-disc off
+< ovpn mtu-disc with mssfix or fragment
+< ovpn mtu-disc yes
 < ovpn routes push
 < ovpn routes push options
+< proxy reports
+< proxy reports daily
+< proxy reports monthly
+< proxy reports today
+< proxy reports weekly
 < server restart
 < static routes
 < visit us at
@@ -328,6 +367,7 @@
 < ccd modify
 < ccd name
 < ccd net
+< ccd noaddnet
 < ccd none
 < ccd routes
 < ccd subnet
@@ -363,6 +403,18 @@
 < other
 < our donors
 < outgoing traffic in bytes per second
+< ovpn mtu-disc
+< ovpn mtu-disc and mtu not 1500
+< ovpn mtu-disc maybe
+< ovpn mtu-disc no
+< ovpn mtu-disc off
+< ovpn mtu-disc with mssfix or fragment
+< ovpn mtu-disc yes
+< proxy reports
+< proxy reports daily
+< proxy reports monthly
+< proxy reports today
+< proxy reports weekly
 < server restart
 < static routes
 < visit us at

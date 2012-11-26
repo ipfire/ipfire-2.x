@@ -531,6 +531,7 @@ WARNING: untranslated string: ccd iroutehint
 WARNING: untranslated string: ccd modify
 WARNING: untranslated string: ccd name
 WARNING: untranslated string: ccd net
+WARNING: untranslated string: ccd noaddnet
 WARNING: untranslated string: ccd none
 WARNING: untranslated string: ccd routes
 WARNING: untranslated string: ccd subnet
@@ -582,9 +583,21 @@ WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: outgoing firewall view group
 WARNING: untranslated string: ovpn errmsg green already pushed
 WARNING: untranslated string: ovpn errmsg invalid ip or mask
+WARNING: untranslated string: ovpn mtu-disc
+WARNING: untranslated string: ovpn mtu-disc and mtu not 1500
+WARNING: untranslated string: ovpn mtu-disc maybe
+WARNING: untranslated string: ovpn mtu-disc no
+WARNING: untranslated string: ovpn mtu-disc off
+WARNING: untranslated string: ovpn mtu-disc with mssfix or fragment
+WARNING: untranslated string: ovpn mtu-disc yes
 WARNING: untranslated string: ovpn routes push
 WARNING: untranslated string: ovpn routes push options
 WARNING: untranslated string: pakfire ago
+WARNING: untranslated string: proxy reports
+WARNING: untranslated string: proxy reports daily
+WARNING: untranslated string: proxy reports monthly
+WARNING: untranslated string: proxy reports today
+WARNING: untranslated string: proxy reports weekly
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
