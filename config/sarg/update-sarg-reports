@@ -95,6 +95,13 @@ function compile_report() {
 	local reports_path="${REPORTS_PATH}/${interval}"
 	mkdir -p ${reports_path}
 
+	# Remove already existant data on today's reports.
+	case "${interval}" in
+		today)
+			rm -rf ${reports_path}/*
+			;;
+	esac
+
 	# Run SARG.
 	get_logs ${max_logs} | sarg -f ${SARG_CONFIG} -l - -d ${date} -o ${reports_path}
 }
