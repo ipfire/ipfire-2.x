@@ -2579,6 +2579,8 @@ END
 	if ($cgiparams{'ACTION'} eq 'editsave'){
 		my ($a,$b) =split (/\|/,$cgiparams{'ccdname'});
 		if ( $a ne $b){ &modccdnet($a,$b);}
+		$cgiparams{'ccdname'}='';
+		$cgiparams{'ccdsubnet'}='';
 	}
 	
 	if ($cgiparams{'ACTION'} eq $Lang::tr{'ccd add'}) {
@@ -2633,6 +2635,11 @@ END
 	&Header::closebox();
 }
 	&Header::openbox('100%', 'LEFT',$Lang::tr{'ccd net'} );
+	if ( -e "/var/run/openvpn.pid"){
+		print "<b>$Lang::tr{'attention'}:</b><br>";
+		print "$Lang::tr{'ccd noaddnet'}<br><hr>";
+	}
+	
 	print <<END
     <table width='100%' border='0'  cellpadding='0' cellspacing='1'>
     <tr>
@@ -3303,6 +3310,8 @@ if ($cgiparams{'TYPE'} eq 'host') {
 	my @temp=();
 	my %ccdroutehash=();
 	my $keypoint=0;
+	my $ip;
+	my $cidr;
 	if ($cgiparams{'IR'} ne ''){
 		@temp = split("\n",$cgiparams{'IR'});
 		&General::readhasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
@@ -3321,18 +3330,31 @@ if ($cgiparams{'TYPE'} eq 'host') {
 		foreach $val (@temp){
 			chomp($val);
 			$val=~s/\s*$//g; 
-			my($ip,$cidr) = split(/\//,$val);
-			$ip=&General::getnetworkip($ip,&General::iporsubtocidr($cidr));
-			$cidr=&General::iporsubtodec($cidr);
-			
-			#check if iroute exists in ccdroute
+			#check if iroute exists in ccdroute or if new iroute is part of an existing one
 			foreach my $key (keys %ccdroutehash) {
 				foreach my $oldiroute ( 1 .. $#{$ccdroutehash{$key}}){
-					if ($ccdroutehash{$key}[$oldiroute] eq "$ip/$cidr") {
-						$errormessage=$Lang::tr{'ccd err irouteexist'};
-						goto VPNCONF_ERROR;
-					}
+						if ($ccdroutehash{$key}[$oldiroute] eq "$val") {
+							$errormessage=$errormessage.$Lang::tr{'ccd err irouteexist'};
+							goto VPNCONF_ERROR;
+						}
+						my ($ip1,$cidr1) = split (/\//, $val);
+						my ($ip2,$cidr2) = split (/\//, $ccdroutehash{$key}[$oldiroute]);
+						if (&General::IpInSubnet ($ip1,$ip2,$cidr2)){
+							$errormessage=$errormessage.$Lang::tr{'ccd err irouteexist'};
+							goto VPNCONF_ERROR;
+						} 
+									
 				}
+			}
+			if (!&General::validipandmask($val)){
+				$errormessage=$errormessage."Route ".$Lang::tr{'ccd invalid'}." ($val)";
+				goto VPNCONF_ERROR;
+			}else{
+				($ip,$cidr) = split(/\//,$val);
+				$ip=&General::getnetworkip($ip,&General::iporsubtocidr($cidr));
+				$cidr=&General::iporsubtodec($cidr);
+				$ccdroutehash{$keypoint}[$i] = $ip."/".$cidr;
+			
 			}
 																	
 			#check for existing network IP's

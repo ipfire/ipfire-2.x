@@ -506,6 +506,7 @@
 'ccd modify' => 'Change network',
 'ccd name' => 'Name',
 'ccd net' => 'Static IP address pools',
+'ccd noaddnet' => 'You can only add new static networks when OpenVPN server is stopped.',
 'ccd none' => 'None',
 'ccd routes' => 'Routing:',
 'ccd subnet' => 'Subnet',

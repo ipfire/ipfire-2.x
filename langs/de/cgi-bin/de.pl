@@ -488,6 +488,7 @@
 'ccd modify' => 'Netzwerk ändern',
 'ccd name' => 'Name',
 'ccd net' => 'Statische IP-Adressen-Pools',
+'ccd noaddnet' => 'Neue statische Netze können erst erstellt werden, wenn der openVPN Server gestoppt wurde.',
 'ccd none' => 'Keine',
 'ccd routes' => 'Routen:',
 'ccd subnet' => 'Subnetz',
