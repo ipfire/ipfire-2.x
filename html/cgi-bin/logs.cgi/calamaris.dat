@@ -24,6 +24,7 @@ my $unique=time;
 
 my $squidlogdir = "/var/log/squid";
 my $reportdir = "${General::swroot}/proxy/calamaris/reports";
+my $sargdir = "/var/log/sarg";
 
 unless (-e $reportdir) { mkdir($reportdir) }
 
@@ -240,6 +241,86 @@ if ($errormessage) {
 	print "<font class='base'>$errormessage&nbsp;</font>\n";
 	&Header::closebox();
 }
+
+# Link sarg reports.
+if (-e $sargdir) {
+	&Header::openbox('100%', 'left', "$Lang::tr{'proxy reports'}:");
+
+	print <<END;
+		<table width="100%">
+			<tr>
+END
+
+	# Today.
+	if (-e "$sargdir/today") {
+		print <<END;
+			<td width="25%" align="center">
+				<a href="/proxy-reports/today" target="_blank">$Lang::tr{'proxy reports today'}</a>
+			</td>
+END
+	} else {
+		print <<END;
+			<td width="25%" align="center">
+				$Lang::tr{'proxy reports today'}
+			</td>
+END
+	}
+
+	# Daily.
+	if (-e "$sargdir/daily") {
+		print <<END;
+			<td width="25%" align="center">
+				<a href="/proxy-reports/daily" target="_blank">$Lang::tr{'proxy reports daily'}</a>
+			</td>
+END
+	} else {
+		print <<END;
+			<td width="25%" align="center">
+				$Lang::tr{'proxy reports daily'}
+			</td>
+END
+	}
+
+	# Weekly.
+	if (-e "$sargdir/weekly") {
+		print <<END;
+			<td width="25%" align="center">
+				<a href="/proxy-reports/weekly" target="_blank">$Lang::tr{'proxy reports weekly'}</a>
+			</td>
+END
+	} else {
+		print <<END;
+			<td width="25%" align="center">
+				$Lang::tr{'proxy reports weekly'}
+			</td>
+END
+	}
+
+	# Monthly.
+	if (-e "$sargdir/monthly") {
+		print <<END;
+			<td width="25%" align="center">
+				<a href="/proxy-reports/monthly" target="_blank">$Lang::tr{'proxy reports monthly'}</a>
+			</td>
+END
+	} else {
+		print <<END;
+			<td width="25%" align="center">
+				$Lang::tr{'proxy reports monthly'}
+			</td>
+END
+	}
+
+	print <<END;
+			</tr>
+		</table>
+
+		<br><br>
+END
+
+	&Header::closebox();
+}
+
 
 &Header::openbox('100%', 'left', "$Lang::tr{'settings'}:");
 
