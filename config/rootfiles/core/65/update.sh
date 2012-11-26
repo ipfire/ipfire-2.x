@@ -49,6 +49,9 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 # Convert OpenVPN RW connections.
 /usr/sbin/ovpn-ccd-convert
 
+# Re-read crontab.
+fcrontab -z &>/dev/null
+
 #Rebuild module dep's
 #arch=`uname -m`
 #if [ ${arch::3} == "arm" ]; then
