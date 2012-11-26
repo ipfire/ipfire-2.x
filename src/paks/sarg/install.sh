@@ -27,3 +27,8 @@ restore_backup ${NAME}
 
 # Create data directory.
 [ -d "/var/log/sarg" ] || mkdir /var/log/sarg
+
+# Create initial report.
+/usr/sbin/update-sarg-reports today >/dev/null 2>&1
+
+exit 0
