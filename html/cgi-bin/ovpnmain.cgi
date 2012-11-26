@@ -497,7 +497,6 @@ sub addccdnet
 	my @ccdconf=();
 	my $ccdname=$_[0];
 	my $ccdnet=$_[1];
-	my $ovpnsubnet=$_[2];
 	my $subcidr;
 	my @ip2=();
 	my $checkup;
@@ -532,29 +531,8 @@ sub addccdnet
 		return;
 	}
 	
+	$errormessage=&General::checksubnets($ccdname,$ccdnet);
 	
-	#check if we try to use same network as ovpn server
-	if (&General::iporsubtocidr($ccdnet) eq &General::iporsubtocidr($ovpnsubnet)) {
-			$errormessage=$errormessage.$Lang::tr{'ccd err isovpnnet'}."<br>";
-	}
-		
-	#check if we use a name/subnet that already exists
-	&General::readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
-	foreach my $key (keys %ccdconfhash) {
-			@ccdconf=split(/\//,$ccdconfhash{$key}[1]);
-			if ($ccdname eq $ccdconfhash{$key}[0]) {$errormessage=$errormessage.$Lang::tr{'ccd err nameexist'}."<br>";}
-			my ($newip,$newsub) = split(/\//,$ccdnet);
-			if (&General::IpInSubnet($newip,$ccdconf[0],&General::iporsubtodec($ccdconf[1]))) {$errormessage=$errormessage.$Lang::tr{'ccd err issubnet'}."<br>";}
-			
-	}
-	#check if we use one of ipfire's networks (green,orange,blue)
-	my %ownnet=();
-	&General::readhash("${General::swroot}/ethernet/settings", \%ownnet);
-	if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &General::IpInSubnet($ownnet{'GREEN_NETADDRESS'},$ccdip,&General::iporsubtodec($subcidr))){ $errormessage=$Lang::tr{'ccd err green'};}
-	if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && &General::IpInSubnet($ownnet{'ORANGE_NETADDRESS'},$ccdip,&General::iporsubtodec($subcidr))){ $errormessage=$Lang::tr{'ccd err orange'};}
-	if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &General::IpInSubnet($ownnet{'BLUE_NETADDRESS'},$ccdip,&General::iporsubtodec($subcidr))){ $errormessage=$Lang::tr{'ccd err blue'};}
-	if (($ownnet{'RED_NETADDRESS'} 	ne '' && $ownnet{'RED_NETADDRESS'} 	ne '0.0.0.0') && &General::IpInSubnet($ownnet{'RED_NETADDRESS'},$ccdip,&General::iporsubtodec($subcidr))){ $errormessage=$Lang::tr{'ccd err red'};}
-		
 		
 	if (!$errormessage) {
 		my %ccdconfhash=();
@@ -2588,7 +2566,7 @@ END
 	}
 	
 	if ($cgiparams{'ACTION'} eq $Lang::tr{'ccd add'}) {
-		&addccdnet($cgiparams{'ccdname'},$cgiparams{'ccdsubnet'},$cgiparams{'DOVPN_SUBNET'});
+		&addccdnet($cgiparams{'ccdname'},$cgiparams{'ccdsubnet'});
 	}
 	if ($errormessage) {
 	    &Header::openbox('100%', 'LEFT', $Lang::tr{'error messages'});

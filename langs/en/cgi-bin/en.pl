@@ -2264,6 +2264,7 @@
 'you can only define one roadwarrior connection when using pre-shared key authentication' => 'You can only define one Roadwarrior connection when using pre-shared key authentication.<br />Either you already have a Roadwarrior connection with pre-shared key authentication, or you\'re trying to add one now.',
 'your department' => 'Your department',
 'your e-mail' => 'Your e-mail address',
+'ccd err isipsecnet' => 'The given subnet address already used by an IPsec network.',
 );
 
 #EOF
