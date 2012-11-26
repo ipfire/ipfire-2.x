@@ -157,6 +157,10 @@ rm -f /usr/local/bin/vpn-watch
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
 
+#
+#Reload init to close old linker/glibc
+telinit u
+
 # Regenerate ipsec configuration files.
 /srv/web/ipfire/cgi-bin/vpnmain.cgi
 
