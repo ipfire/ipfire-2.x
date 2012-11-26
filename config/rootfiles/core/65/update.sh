@@ -52,6 +52,9 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 # Re-read crontab.
 fcrontab -z &>/dev/null
 
+# Reload apache configuration.
+/etc/init.d/apache reload &>/dev/null
+
 #Rebuild module dep's
 #arch=`uname -m`
 #if [ ${arch::3} == "arm" ]; then
