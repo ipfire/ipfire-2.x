@@ -45,11 +45,11 @@ int main(void)
 {
 	FILE *ipfile = NULL, *ifacefile = NULL;
 	int count;
-	char iface[STRING_SIZE];
-	char locip[STRING_SIZE];
-	char greenip[STRING_SIZE], greenmask[STRING_SIZE];
-	char bluedev[STRING_SIZE], blueip[STRING_SIZE], bluemask[STRING_SIZE];
-	char orangedev[STRING_SIZE], orangeip[STRING_SIZE], orangemask[STRING_SIZE];
+	char iface[STRING_SIZE] ="";
+	char locip[STRING_SIZE] ="";
+	char greenip[STRING_SIZE] ="", greenmask[STRING_SIZE] ="";
+	char bluedev[STRING_SIZE] ="", blueip[STRING_SIZE] ="", bluemask[STRING_SIZE] ="";
+	char orangedev[STRING_SIZE] ="", orangeip[STRING_SIZE] ="", orangemask[STRING_SIZE] ="";
 	char *protocol;
 	char *srcip;
 	char *locport;
