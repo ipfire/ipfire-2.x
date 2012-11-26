@@ -41,11 +41,11 @@ void exithandler(void)
 int main(int argc, char *argv[])
 {
 	int fdpid; 
-	char hostname[STRING_SIZE];
+	char hostname[STRING_SIZE] = "";
 	char domainname[STRING_SIZE] = "";
 	char gateway[STRING_SIZE] = "";
 	char buffer[STRING_SIZE];
-	char address[STRING_SIZE];
+	char address[STRING_SIZE] = "";
 	char *active, *ip, *host, *domain;
 	int pid;
 
