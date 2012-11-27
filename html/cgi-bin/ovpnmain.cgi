@@ -64,6 +64,10 @@ my $warnmessage = '';
 my $errormessage = '';
 my %settings=();
 my $routes_push_file = '';
+my $confighost="${General::swroot}/fwhosts/customhosts";
+my $configgrp="${General::swroot}/fwhosts/customgroups";
+my $customnet="${General::swroot}/fwhosts/customnetworks";
+my $name;
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'ENABLED_BLUE'} = 'off';
@@ -2651,7 +2655,7 @@ END
 	&General::readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);	
 	my @ccdconf=();
 	my $count=0;
-	foreach my $key (keys %ccdconfhash) {
+	foreach my $key (sort { uc($ccdconfhash{$a}[0]) cmp uc($ccdconfhash{$b}[0]) } keys %ccdconfhash) {
 		@ccdconf=($ccdconfhash{$key}[0],$ccdconfhash{$key}[1]);
 		$count++;
 		my $ccdhosts = &hostsinnet($ccdconf[0]);
@@ -3295,7 +3299,7 @@ if ($confighash{$cgiparams{'KEY'}}) {
 		$cgiparams{'COMPLZO'}	  		= $confighash{$cgiparams{'KEY'}}[30];
 		$cgiparams{'MTU'}	  			= $confighash{$cgiparams{'KEY'}}[31];
 		$cgiparams{'CHECK1'}   			= $confighash{$cgiparams{'KEY'}}[32];
-		my $name=$cgiparams{'CHECK1'}	;
+		$name=$cgiparams{'CHECK1'}	;
 		$cgiparams{$name}				= $confighash{$cgiparams{'KEY'}}[33];
 		$cgiparams{'RG'}				= $confighash{$cgiparams{'KEY'}}[34];
 		$cgiparams{'CCD_DNS1'}			= $confighash{$cgiparams{'KEY'}}[35];
@@ -3979,7 +3983,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$confighash{$key}[30] 		= $cgiparams{'COMPLZO'};
 	$confighash{$key}[31] 		= $cgiparams{'MTU'};
 	$confighash{$key}[32] 		= $cgiparams{'CHECK1'};
-	my $name=$cgiparams{'CHECK1'};
+	$name=$cgiparams{'CHECK1'};
 	$confighash{$key}[33] 		= $cgiparams{$name};
 	$confighash{$key}[34] 		= $cgiparams{'RG'};
 	$confighash{$key}[35] 		= $cgiparams{'CCD_DNS1'};
@@ -3994,7 +3998,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		
 		my ($ccdip,$ccdsub)=split "/",$cgiparams{$name};
 		my ($a,$b,$c,$d) = split (/\./,$ccdip);
-			if ( -e "${General::swroot}/ovpn/ccd/$confighash{$key}[2]"){unlink "${General::swroot}/ovpn/ccd/$cgiparams{'CERT_NAME'}";}
+			if ( -e "${General::swroot}/ovpn/ccd/$confighash{$key}[2]"){
+				unlink "${General::swroot}/ovpn/ccd/$cgiparams{'CERT_NAME'}";
+			}
 			open ( CCDRWCONF,'>',"${General::swroot}/ovpn/ccd/$confighash{$key}[2]") or die "Unable to create clientconfigfile $!";
 			print CCDRWCONF "# OpenVPN Clientconfig from CCD extension by Copymaster#\n\n";
 			if($cgiparams{'CHECK1'} eq 'dynamic'){
@@ -4300,7 +4306,7 @@ if ($cgiparams{'TYPE'} eq 'host') {
 		
 	if (! -z "${General::swroot}/ovpn/ccd.conf"){	
 		print"<table border='0' width='100%' cellspacing='1' cellpadding='0'><tr><td width='1%'></td><td width='30%' class='boldbase' align='center'><b>$Lang::tr{'ccd name'}</td><td width='15%' class='boldbase' align='center'><b>$Lang::tr{'network'}</td><td class='boldbase' align='center' width='18%'><b>$Lang::tr{'ccd clientip'}</td></tr>";
-		foreach my $key (keys %ccdconfhash) {
+		foreach my $key (sort { uc($ccdconfhash{$a}[0]) cmp uc($ccdconfhash{$b}[0]) } keys %ccdconfhash) {
 			$count++;
 			@ccdconf=($ccdconfhash{$key}[0],$ccdconfhash{$key}[1]);
 			if ($count % 2){print"<tr bgcolor='$color{'color22'}'>";}else{print"<tr bgcolor='$color{'color20'}'>";}
@@ -4466,6 +4472,7 @@ END
 	my $helpblue=0;
 	my $helporange=0;
 	my $other=0;
+	my $none=0;
 	my @temp=();
 	
 	our @current = ();
@@ -4473,7 +4480,20 @@ END
 	@current = <FILE>;
 	close (FILE);
 	&General::readhasharray ("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);		
-	print"<option>$Lang::tr{'ccd none'}</option>";
+	#check for "none"
+	foreach my $key (keys %ccdroute2hash) {
+		if($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}){
+			if ($ccdroute2hash{$key}[1] eq ''){
+				$none=1;
+				last;
+			}
+		}
+	}
+	if ($none ne '1'){
+		print"<option>$Lang::tr{'ccd none'}</option>";
+	}else{
+		print"<option selected>$Lang::tr{'ccd none'}</option>";
+	}
 	#check if static routes are defined for client
 	foreach my $line (@current) {
 		chomp($line);	
