@@ -514,6 +514,7 @@ WARNING: untranslated string: ccd err inuse
 WARNING: untranslated string: ccd err invalidname
 WARNING: untranslated string: ccd err invalidnet
 WARNING: untranslated string: ccd err irouteexist
+WARNING: untranslated string: ccd err isipsecnet
 WARNING: untranslated string: ccd err isovpnnet
 WARNING: untranslated string: ccd err issubnet
 WARNING: untranslated string: ccd err name

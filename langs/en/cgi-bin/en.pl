@@ -488,6 +488,7 @@
 'ccd err invalidnet' => 'Invalid IP address. Format: 192.168.0.0/24 or 192.168.0.0/255.255.255.0.',
 'ccd err iroute' => 'Network address for route is invalid.',
 'ccd err irouteexist' => 'This route is already in use.',
+'ccd err isipsecnet' => 'The given subnet address already used by an IPsec network.',
 'ccd err isovpnnet' => 'Subnet address already in use for OpenVPN Server.',
 'ccd err issubnet' => 'Subnet address already in use.',
 'ccd err name' => 'Please choose a name.',
@@ -2264,7 +2265,6 @@
 'you can only define one roadwarrior connection when using pre-shared key authentication' => 'You can only define one Roadwarrior connection when using pre-shared key authentication.<br />Either you already have a Roadwarrior connection with pre-shared key authentication, or you\'re trying to add one now.',
 'your department' => 'Your department',
 'your e-mail' => 'Your e-mail address',
-'ccd err isipsecnet' => 'The given subnet address already used by an IPsec network.',
 );
 
 #EOF
