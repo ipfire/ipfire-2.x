@@ -3533,13 +3533,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    goto VPNCONF_ERROR;
     }
 
-    if (($cgiparams{'PMTU_DISCOVERY'} ne 'off') && ($cgiparams{'MTU'} ne '1500')) {
-	$errormessage = $Lang::tr{'ovpn mtu-disc and mtu not 1500'};
-	unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-	rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
-	goto VPNCONF_ERROR;
-    }
-
     if ($cgiparams{'PMTU_DISCOVERY'} ne 'off') {
 	if (($cgiparams{'FRAGMENT'} ne '') || ($cgiparams{'MSSFIX'} eq 'on')) {
 		$errormessage = $Lang::tr{'ovpn mtu-disc with mssfix or fragment'};
@@ -3547,6 +3540,13 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 		goto VPNCONF_ERROR;
 	}
+    }
+
+    if (($cgiparams{'PMTU_DISCOVERY'} ne 'off') && ($cgiparams{'MTU'} ne '1500')) {
+	$errormessage = $Lang::tr{'ovpn mtu-disc and mtu not 1500'};
+	unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+	rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+	goto VPNCONF_ERROR;
     }
 
     if ( &validdotmask ($cgiparams{'LOCAL_SUBNET'}))  {
@@ -4243,7 +4243,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 
 	<tr>
 		<td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn mtu-disc'}</td>
-		<td colspan='2'>
+		<td colspan='3'>
 			<input type='radio' name='PMTU_DISCOVERY' value='yes' $checked{'PMTU_DISCOVERY'}{'yes'} /> $Lang::tr{'ovpn mtu-disc yes'}
 			<input type='radio' name='PMTU_DISCOVERY' value='maybe' $checked{'PMTU_DISCOVERY'}{'maybe'} /> $Lang::tr{'ovpn mtu-disc maybe'}
         		<input type='radio' name='PMTU_DISCOVERY' value='no' $checked{'PMTU_DISCOVERY'}{'no'} /> $Lang::tr{'ovpn mtu-disc no'}
