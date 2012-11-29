@@ -3320,6 +3320,7 @@ if ($cgiparams{'TYPE'} eq 'host') {
 							goto VPNCONF_ERROR;
 						}
 						my ($ip1,$cidr1) = split (/\//, $val);
+						$ip1 = &General::getnetworkip($ip1,&General::iporsubtocidr($cidr1));
 						my ($ip2,$cidr2) = split (/\//, $ccdroutehash{$key}[$oldiroute]);
 						if (&General::IpInSubnet ($ip1,$ip2,$cidr2)){
 							$errormessage=$errormessage.$Lang::tr{'ccd err irouteexist'};
@@ -3980,11 +3981,11 @@ if ($cgiparams{'TYPE'} eq 'net') {
 				unlink "${General::swroot}/ovpn/ccd/$cgiparams{'CERT_NAME'}";
 			}
 			open ( CCDRWCONF,'>',"${General::swroot}/ovpn/ccd/$confighash{$key}[2]") or die "Unable to create clientconfigfile $!";
-			print CCDRWCONF "# OpenVPN Clientconfig from CCD extension by Copymaster#\n\n";
+			print CCDRWCONF "# OpenVPN clientconfig from ccd extension by Copymaster#\n\n";
 			if($cgiparams{'CHECK1'} eq 'dynamic'){
 				print CCDRWCONF "#This client uses the dynamic pool\n";
 			}else{
-				print CCDRWCONF "#Ip address client and Server\n";
+				print CCDRWCONF "#Ip address client and server\n";
 				print CCDRWCONF "ifconfig-push $ccdip ".&General::getlastip($ccdip,1)."\n";
 			}
 			if ($confighash{$key}[34] eq 'on'){
@@ -3993,7 +3994,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 			}
 			&General::readhasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
 			if ($cgiparams{'IR'} ne ''){
-				print CCDRWCONF "\n#Client routes these Networks (behind Client)\n";
+				print CCDRWCONF "\n#Client routes these networks (behind Client)\n";
 				foreach my $key (keys %ccdroutehash){
 					if ($ccdroutehash{$key}[0] eq $cgiparams{'NAME'}){
 						foreach my $i ( 1 .. $#{$ccdroutehash{$key}}){
@@ -4005,7 +4006,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 			}
 			if ($cgiparams{'IFROUTE'} eq $Lang::tr{'ccd none'} ){$cgiparams{'IFROUTE'}='';}
 			if ($cgiparams{'IFROUTE'} ne ''){
-				print CCDRWCONF "\n#Client gets routes to these Networks (behind IPFIRE)\n";
+				print CCDRWCONF "\n#Client gets routes to these networks (behind IPFire)\n";
 				foreach my $key (keys %ccdroute2hash){
 					if ($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}){
 						foreach my $i ( 1 .. $#{$ccdroute2hash{$key}}){
@@ -4027,7 +4028,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 			}
 			if(($cgiparams{'CCD_DNS1'} eq '') && ($cgiparams{'CCD_DNS1'} ne '')){ $cgiparams{'CCD_DNS1'} = $cgiparams{'CCD_DNS2'};$cgiparams{'CCD_DNS2'}='';}
 			if($cgiparams{'CCD_DNS1'} ne ''){
-				print CCDRWCONF "\n#Client gets these Nameservers\n";
+				print CCDRWCONF "\n#Client gets these nameservers\n";
 				print CCDRWCONF "push \"dhcp-option DNS $cgiparams{'CCD_DNS1'}\" \n";
 			}
 			if($cgiparams{'CCD_DNS2'} ne ''){
