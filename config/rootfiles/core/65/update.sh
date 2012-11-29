@@ -49,7 +49,9 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 # Convert OpenVPN RW connections.
 /usr/sbin/ovpn-ccd-convert
 
-# Re-read crontab.
+# Update crontab.
+sed -i /var/spool/cron/root.orig \
+	-e 's@^.*fcron.weekly.*$@\&nice(10),bootrun 47 2 \* \* 1\ttest -x /usr/local/bin/run-parts \&\& /usr/local/bin/run-parts /etc/fcron.weekly@'
 fcrontab -z &>/dev/null
 
 # Reload apache configuration.
