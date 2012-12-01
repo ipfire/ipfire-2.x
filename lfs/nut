@@ -80,7 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc/nut \
 			--with-usb --with-user=root --with-group=nut \
 			--with-wrap=no --with-udev-dir=/etc/udev
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 #	sed -i -e "s|ATTR{|SYSFS{|g" /etc/udev/rules.d/52-nut-usbups.rules
 	-mkdir -p /var/state/ups
