@@ -44,6 +44,32 @@ done
 
 #
 # Do some sanity checks.
+case $(uname -r) in
+	*-ipfire-versatile )
+		/usr/bin/logger -p syslog.emerg -t ipfire \
+			"core-update-$core: ERROR cannot update. versatile support is dropped."
+		# Report no error to pakfire. So it does not try to install it again.
+		exit 0
+		;;
+	*-ipfire-xen )
+		BOOTSIZE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f2 | tail -n 1`
+		if [ $BOOTSIZE -lt 28000 ]; then
+			/usr/bin/logger -p syslog.emerg -t ipfire \
+				"core-update-$core: ERROR cannot update because not enough space on boot."
+			exit 2
+		fi
+		;;
+	*-ipfire* )
+		# Ok.
+		;;
+	* )
+		/usr/bin/logger -p syslog.emerg -t ipfire \
+			"core-update-$core: ERROR cannot update. No IPFire Kernel."
+		# Report no error to pakfire. So it does not try to install it again.
+		exit 0
+	;;
+esac
+
 if [ ! "$(mount | grep " reiser4 (")" == "" ]; then
 	/usr/bin/logger -p syslog.emerg -t ipfire \
 		"core-update-$core: ERROR cannot update because there is a reiser4 fs mounted."
@@ -53,7 +79,7 @@ fi
 #
 #
 KVER="3.2.34"
-MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
+MOUNT=`grep "kernel" /boot/grub/grub.conf 2>/dev/null | tail -n 1 `
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
 MOUNT=$_
@@ -132,11 +158,14 @@ if [ -e /tmp/rules.d/29-ct-server-network.rules ]; then
 fi
 mv /tmp/30-persistent-network.rules /etc/udev/rules.d/
 
-#
-# Backup grub.conf
-#
-cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
-
+case $(uname -m) in
+	i?86 )
+		#
+		# Backup grub.conf
+		#
+		cp -vf /boot/grub/grub.conf /boot/grub/grub.conf.org
+	;;
+esac
 #
 #Stop services
 /etc/init.d/snort stop
@@ -156,6 +185,26 @@ rm -f /usr/local/bin/vpn-watch
 #
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
+
+# Check diskspace on boot
+BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
+
+if [ $BOOTSPACE -lt 1000 ]; then
+	case $(uname -r) in
+		*-ipfire-kirkwood )
+			# Special handling for old kirkwood images.
+			# (install only kirkwood kernel)
+			rm -rf /boot/*
+			tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p \
+				--numeric-owner -C / --wildcards 'boot/*-kirkwood*'
+			;;
+		* )
+			/usr/bin/logger -p syslog.emerg -t ipfire \
+				"core-update-$core: FATAL-ERROR space run out on boot. System is not bootable..."
+			exit 4
+			;;
+	esac
+fi
 
 #
 #Reload init to close old linker/glibc
@@ -185,40 +234,43 @@ fi
 # Remove preloading libsafe.
 rm -f /etc/ld.so.preload
 
-#
-# Modify grub.conf
-#
-echo
-echo Update grub configuration ...
-ROOT=`mount | grep " / " | cut -d" " -f1`
+case $(uname -m) in
+	i?86 )
+		#
+		# Modify grub.conf
+		#
+		echo
+		echo Update grub configuration ...
+		ROOT=`mount | grep " / " | cut -d" " -f1`
 
-if [ ! -z $ROOT ]; then
-	ROOTUUID=`blkid -c /dev/null -sUUID $ROOT | cut -d'"' -f2`
-fi
+		if [ ! -z $ROOT ]; then
+			ROOTUUID=`blkid -c /dev/null -sUUID $ROOT | cut -d'"' -f2`
+		fi
 
-if [ ! -z $ROOTUUID ]; then
-	sed -i "s|ROOT|UUID=$ROOTUUID|g" /boot/grub/grub.conf
-else
-	sed -i "s|ROOT|$ROOT|g" /boot/grub/grub.conf
-fi
-sed -i "s|KVER|$KVER|g" /boot/grub/grub.conf
-sed -i "s|MOUNT|$MOUNT|g" /boot/grub/grub.conf
+		if [ ! -z $ROOTUUID ]; then
+			sed -i "s|ROOT|UUID=$ROOTUUID|g" /boot/grub/grub.conf
+		else
+			sed -i "s|ROOT|$ROOT|g" /boot/grub/grub.conf
+		fi
+		sed -i "s|KVER|$KVER|g" /boot/grub/grub.conf
+		sed -i "s|MOUNT|$MOUNT|g" /boot/grub/grub.conf
 
-if [ "$(grep "^serial" /boot/grub/grub.conf.org)" == "" ]; then
-	echo "grub use default console ..."
-else
-	echo "grub use serial console ..."
-	sed -i -e "s|splashimage|#splashimage|g" /boot/grub/grub.conf
-	sed -i -e "s|#serial|serial|g" /boot/grub/grub.conf
-	sed -i -e "s|#terminal|terminal|g" /boot/grub/grub.conf
-	sed -i -e "s| panic=10 | console=ttyS0,115200n8 panic=10 |g" /boot/grub/grub.conf
-fi
+		if [ "$(grep "^serial" /boot/grub/grub.conf.org)" == "" ]; then
+			echo "grub use default console ..."
+		else
+			echo "grub use serial console ..."
+			sed -i -e "s|splashimage|#splashimage|g" /boot/grub/grub.conf
+			sed -i -e "s|#serial|serial|g" /boot/grub/grub.conf
+			sed -i -e "s|#terminal|terminal|g" /boot/grub/grub.conf
+			sed -i -e "s| panic=10 | console=ttyS0,115200n8 panic=10 |g" /boot/grub/grub.conf
+		fi
 
-#
-# ReInstall grub
-#
-grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
-
+		#
+		# ReInstall grub
+		#
+			grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
+	;;
+esac
 #
 # Delete old lm-sensor modullist to force search at next boot
 #
@@ -242,9 +294,16 @@ rm -rf /opt/pakfire/db/*/meta-glib
 # Force (re)install pae kernel if pae is supported
 rm -rf /opt/pakfire/db/*/meta-linux-pae
 if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
-	echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
-	echo "ProgVersion: 3.2.34" >> /opt/pakfire/db/installed/meta-linux-pae
-	echo "Release: 23"     >> /opt/pakfire/db/installed/meta-linux-pae
+	ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
+	BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
+	if [ $BOOTSPACE -lt 8000 -o $ROOTSPACE -lt 70000 ]; then
+		/usr/bin/logger -p syslog.emerg -t ipfire \
+			"core-update-$core: WARNING not enough space for pae kernel."
+	else
+		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
+		echo "ProgVersion: 3.2.34" >> /opt/pakfire/db/installed/meta-linux-pae
+		echo "Release: 23"     >> /opt/pakfire/db/installed/meta-linux-pae
+	fi
 fi
 
 # Force reinstall xen kernel if it was installed
