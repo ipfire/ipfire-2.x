@@ -396,7 +396,6 @@ buildipfire() {
     ipfiremake linux			KCFG="-pae"
     ipfiremake kvm-kmod			KCFG="-pae"
     ipfiremake v4l-dvb			KCFG="-pae"
-    ipfiremake alsa			KCFG="-pae" KMOD=1
     ipfiremake mISDN			KCFG="-pae"
     ipfiremake cryptodev		KCFG="-pae"
     ipfiremake compat-wireless		KCFG="-pae"
@@ -410,7 +409,6 @@ buildipfire() {
     ipfiremake linux			KCFG=""
     ipfiremake kvm-kmod			KCFG=""
     ipfiremake v4l-dvb			KCFG=""
-    ipfiremake alsa			KCFG="" KMOD=1
     ipfiremake mISDN			KCFG=""
     ipfiremake cryptodev		KCFG=""
     ipfiremake compat-wireless		KCFG=""

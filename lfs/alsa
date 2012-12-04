@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2012  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,10 +25,9 @@
 include Config
 
 
-VER        = 1.0.25
-UVER       = 1.0.25
+VER        = 1.0.26
+UVER       = 1.0.26
 FVER       = 1.0.25
-DVER       = 1.0.25
 
 VERSUFIX   = ipfire$(KCFG)
 
@@ -37,32 +36,25 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = alsa
-PAK_VER    = 10
+PAK_VER    = 11
 
 DEPS       = ""
 
-ifeq "$(KMOD)" "1"
-	TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
-else
-	TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) alsa-utils-$(UVER).tar.bz2 alsa-firmware-$(FVER).tar.bz2 \
-		alsa-driver-$(DVER).tar.bz2
+objects = $(DL_FILE) alsa-utils-$(UVER).tar.bz2 alsa-firmware-$(FVER).tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 alsa-utils-$(UVER).tar.bz2 = $(DL_FROM)/alsa-utils-$(UVER).tar.bz2
 alsa-firmware-$(FVER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(FVER).tar.bz2
-alsa-driver-$(DVER).tar.bz2 = $(DL_FROM)/alsa-driver-$(DVER).tar.bz2
 
-$(DL_FILE)_MD5 = 06fe5819020c6684b991dcffc5471304
-alsa-utils-$(UVER).tar.bz2_MD5 = f81f9dcb9a014fd32cb3a70066a5b9a9
+$(DL_FILE)_MD5 = 2dfa35d28471d721e592b616beedf965
+alsa-utils-$(UVER).tar.bz2_MD5 = 4dcf1017fafc91603af96705c073eca9
 alsa-firmware-$(FVER).tar.bz2_MD5 = f1939da45b162c83a726c54a470ef139
-alsa-driver-$(DVER).tar.bz2_MD5 = ac56465c262ced60b5eb2d6492d7a923
 
 install : $(TARGET)
 
@@ -95,14 +87,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_SRC)/alsa*
-ifeq "$(KMOD)" "1"
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-driver-$(DVER).tar.bz2
-	cd $(DIR_SRC)/alsa-driver-$(DVER) && sed -i -e "s| soc/ | |g" Makefile
-	cd $(DIR_SRC)/alsa-driver-$(DVER) && sed -i -e "s| soc||g" Makefile
-	cd $(DIR_SRC)/alsa-driver-$(DVER) && ./configure --with-kernel=/usr/src/linux
-	cd $(DIR_SRC)/alsa-driver-$(DVER) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/alsa-driver-$(DVER) && make install
-else
 	cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
@@ -115,6 +99,5 @@ else
 	cd $(DIR_SRC)/alsa-firmware-$(FVER) && ./configure
 	cd $(DIR_SRC)/alsa-firmware-$(FVER) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/alsa-firmware-$(FVER) && make install
-endif
 	@rm -rf $(DIR_SRC)/alsa*
 	@$(POSTBUILD)
