@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.32.60-ipfire-xen
-# Sat Oct 20 11:32:41 2012
+# Linux kernel version: 2.6.32.60
+# Wed Dec  5 04:32:07 2012
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -103,7 +103,7 @@ CONFIG_INITRAMFS_SOURCE=""
 CONFIG_RD_GZIP=y
 CONFIG_RD_BZIP2=y
 CONFIG_RD_LZMA=y
-CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
 CONFIG_SYSCTL=y
 CONFIG_ANON_INODES=y
 # CONFIG_EMBEDDED is not set
@@ -3559,6 +3559,7 @@ CONFIG_TRACING_SUPPORT=y
 # CONFIG_DMA_API_DEBUG is not set
 # CONFIG_SAMPLES is not set
 CONFIG_HAVE_ARCH_KMEMCHECK=y
+# CONFIG_KMEMCHECK is not set
 # CONFIG_STRICT_DEVMEM is not set
 CONFIG_EARLY_PRINTK=y
 # CONFIG_EARLY_PRINTK_DBGP is not set
