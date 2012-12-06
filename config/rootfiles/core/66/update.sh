@@ -171,6 +171,8 @@ esac
 /etc/init.d/snort stop
 /etc/init.d/squid stop
 /etc/init.d/ipsec stop
+/etc/init.d/apache stop
+
 
 #Remove old snort, zoneinfo and ncurses-libs(wrong path).
 rm -rf /etc/snort
@@ -201,6 +203,7 @@ if [ $BOOTSPACE -lt 1000 ]; then
 		* )
 			/usr/bin/logger -p syslog.emerg -t ipfire \
 				"core-update-$core: FATAL-ERROR space run out on boot. System is not bootable..."
+			/etc/init.d/apache start
 			exit 4
 			;;
 	esac
@@ -213,9 +216,18 @@ telinit u
 # Regenerate ipsec configuration files.
 /srv/web/ipfire/cgi-bin/vpnmain.cgi
 
+# Convert OpenVPN RW connections.
+/usr/sbin/ovpn-ccd-convert
+
+# Update crontab.
+sed -i /var/spool/cron/root.orig \
+	-e 's@^.*fcron.weekly.*$@\&nice(10),bootrun 47 2 \* \* 1\ttest -x /usr/local/bin/run-parts \&\& /usr/local/bin/run-parts /etc/fcron.weekly@'
+fcrontab -z &>/dev/null
+
 #
 # Start services
 #
+/etc/init.d/apache start
 /etc/init.d/squid start
 /etc/init.d/snort start
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
