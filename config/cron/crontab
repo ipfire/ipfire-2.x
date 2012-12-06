@@ -11,7 +11,7 @@ HOME=/
 */5 * * * *	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.cyclic
 01 * * * *	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.hourly
 &nice(10),bootrun 25 1 * * *	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.daily
-&nice(10),bootrun 47 2 * * 0	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.weekly
+&nice(10),bootrun 47 2 * * 1	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.weekly
 &nice(10),bootrun 52 3 1 * *	test -x /usr/local/bin/run-parts && /usr/local/bin/run-parts /etc/fcron.monthly
 
 # Log rotation

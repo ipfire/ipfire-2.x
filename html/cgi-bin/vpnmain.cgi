@@ -1367,6 +1367,14 @@ END
 	    goto VPNCONF_ERROR;
 	}
 
+	
+	if ($cgiparams{'TYPE'} eq 'net'){
+		$errormessage=&General::checksubnets($cgiparams{'NAME'},$cgiparams{'REMOTE_SUBNET'});
+		if ($errormessage ne ''){
+			goto VPNCONF_ERROR;
+		}
+		
+	}
 	if ($cgiparams{'AUTH'} eq 'psk') {
 	    if (! length($cgiparams{'PSK'}) ) {
 		$errormessage = $Lang::tr{'pre-shared key is too short'};

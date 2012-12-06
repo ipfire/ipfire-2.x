@@ -491,7 +491,43 @@ WARNING: untranslated string: Add a route
 WARNING: untranslated string: Edit an existing route
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
+WARNING: untranslated string: attention
 WARNING: untranslated string: bytes
+WARNING: untranslated string: ccd add
+WARNING: untranslated string: ccd choose net
+WARNING: untranslated string: ccd client options
+WARNING: untranslated string: ccd clientip
+WARNING: untranslated string: ccd dynrange
+WARNING: untranslated string: ccd err blue
+WARNING: untranslated string: ccd err green
+WARNING: untranslated string: ccd err hostinnet
+WARNING: untranslated string: ccd err inuse
+WARNING: untranslated string: ccd err invalidname
+WARNING: untranslated string: ccd err invalidnet
+WARNING: untranslated string: ccd err irouteexist
+WARNING: untranslated string: ccd err isipsecnet
+WARNING: untranslated string: ccd err isovpnnet
+WARNING: untranslated string: ccd err issubnet
+WARNING: untranslated string: ccd err name
+WARNING: untranslated string: ccd err nameexist
+WARNING: untranslated string: ccd err netadrexist
+WARNING: untranslated string: ccd err orange
+WARNING: untranslated string: ccd err red
+WARNING: untranslated string: ccd err routeovpn
+WARNING: untranslated string: ccd err routeovpn2
+WARNING: untranslated string: ccd hint
+WARNING: untranslated string: ccd invalid
+WARNING: untranslated string: ccd iroute
+WARNING: untranslated string: ccd iroute2
+WARNING: untranslated string: ccd iroutehint
+WARNING: untranslated string: ccd modify
+WARNING: untranslated string: ccd name
+WARNING: untranslated string: ccd net
+WARNING: untranslated string: ccd noaddnet
+WARNING: untranslated string: ccd none
+WARNING: untranslated string: ccd routes
+WARNING: untranslated string: ccd subnet
+WARNING: untranslated string: ccd used
 WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: disk access per
 WARNING: untranslated string: extrahd because there is already a device mounted
@@ -516,10 +552,23 @@ WARNING: untranslated string: other
 WARNING: untranslated string: our donors
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: outgoing traffic in bytes per second
+WARNING: untranslated string: ovpn mtu-disc
+WARNING: untranslated string: ovpn mtu-disc and mtu not 1500
+WARNING: untranslated string: ovpn mtu-disc maybe
+WARNING: untranslated string: ovpn mtu-disc no
+WARNING: untranslated string: ovpn mtu-disc off
+WARNING: untranslated string: ovpn mtu-disc with mssfix or fragment
+WARNING: untranslated string: ovpn mtu-disc yes
+WARNING: untranslated string: proxy reports
+WARNING: untranslated string: proxy reports daily
+WARNING: untranslated string: proxy reports monthly
+WARNING: untranslated string: proxy reports today
+WARNING: untranslated string: proxy reports weekly
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: server restart
 WARNING: untranslated string: static routes
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange

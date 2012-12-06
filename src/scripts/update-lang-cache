@@ -1,0 +1,3 @@
+#!/bin/sh
+perl -e "require '//var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+

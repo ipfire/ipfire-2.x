@@ -84,6 +84,9 @@ usr/local/bin/scanhd
 usr/local/bin/setddns.pl
 usr/local/bin/settime
 usr/local/bin/timecheck
+#usr/local/bin/uname
+usr/local/bin/update-lang-cache
+usr/local/bin/vpn-watch
 #usr/local/include
 #usr/local/lib
 #usr/local/sbin
@@ -105,6 +108,7 @@ usr/local/bin/timecheck
 #usr/local/share/zoneinfo
 #usr/local/src
 #usr/sbin
+usr/sbin/ovpn-ccd-convert
 #usr/share
 #usr/share/doc
 #usr/share/doc/licenses

@@ -1,0 +1,10 @@
+etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
+etc/system-release
+etc/issue
+srv/web/ipfire/cgi-bin/logs.cgi/calamaris.dat
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/sbin/ovpn-ccd-convert
+var/ipfire/general-functions.pl
+var/ipfire/langs
+var/ipfire/backup/include
