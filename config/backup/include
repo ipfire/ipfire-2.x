@@ -16,6 +16,7 @@
 /var/ipfire/dhcp/*
 /var/ipfire/main/*
 /var/ipfire/outgoing/groups
+/var/ipfire/outgoing/macgroups
 /var/ipfire/outgoing/rules
 /var/ipfire/outgoing/p2protocols
 /var/ipfire/ovpn
@@ -28,6 +29,8 @@
 /var/ipfire/vpn
 /var/log/ip-acct/*
 /var/log/rrd/*
+/var/log/rrd/collectd
+/var/log/rrd/vnstat
 /etc/sysconfig/firewall.local
 /etc/sysconfig/rc.local
 /root/.gitconfig

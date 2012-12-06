@@ -7,3 +7,4 @@ srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/sbin/ovpn-ccd-convert
 var/ipfire/general-functions.pl
 var/ipfire/langs
+var/ipfire/backup/include
