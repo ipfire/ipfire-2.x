@@ -3,11 +3,14 @@ boot/System.map-KVER-ipfire-rpi
 boot/config-KVER-ipfire-rpi
 boot/kernel.img
 boot/vmlinuz-KVER-ipfire-rpi
-#boot/vmlinuz-ipfire-rpi
 #lib/modules
 lib/modules/KVER-ipfire-rpi
 #lib/modules/KVER-ipfire-rpi/build
 #lib/modules/KVER-ipfire-rpi/kernel
+#lib/modules/KVER-ipfire-rpi/kernel/arch
+#lib/modules/KVER-ipfire-rpi/kernel/arch/arm
+#lib/modules/KVER-ipfire-rpi/kernel/arch/arm/mach-bcm2708
+#lib/modules/KVER-ipfire-rpi/kernel/arch/arm/mach-bcm2708/dmaer.ko
 #lib/modules/KVER-ipfire-rpi/kernel/crypto
 #lib/modules/KVER-ipfire-rpi/kernel/crypto/aes_generic.ko
 #lib/modules/KVER-ipfire-rpi/kernel/crypto/af_alg.ko
@@ -923,7 +926,6 @@ lib/modules/KVER-ipfire-rpi
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv6/esp6.ko
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv6/ip6_tunnel.ko
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv6/ipcomp6.ko
-#lib/modules/KVER-ipfire-rpi/kernel/net/ipv6/ipv6.ko
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv6/mip6.ko
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv6/netfilter
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv6/netfilter/ip6_queue.ko

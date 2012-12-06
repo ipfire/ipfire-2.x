@@ -3,7 +3,6 @@ boot/System.map-KVER-ipfire-omap
 boot/config-KVER-ipfire-omap
 boot/uImage-ipfire-omap
 boot/vmlinuz-KVER-ipfire-omap
-#boot/vmlinuz-ipfire-omap
 lib/modules/KVER-ipfire-omap
 #lib/modules/KVER-ipfire-omap/build
 #lib/modules/KVER-ipfire-omap/kernel
@@ -1032,7 +1031,6 @@ lib/modules/KVER-ipfire-omap
 #lib/modules/KVER-ipfire-omap/kernel/net/ipv6/esp6.ko
 #lib/modules/KVER-ipfire-omap/kernel/net/ipv6/ip6_tunnel.ko
 #lib/modules/KVER-ipfire-omap/kernel/net/ipv6/ipcomp6.ko
-#lib/modules/KVER-ipfire-omap/kernel/net/ipv6/ipv6.ko
 #lib/modules/KVER-ipfire-omap/kernel/net/ipv6/mip6.ko
 #lib/modules/KVER-ipfire-omap/kernel/net/ipv6/netfilter
 #lib/modules/KVER-ipfire-omap/kernel/net/ipv6/netfilter/ip6_queue.ko
@@ -1253,6 +1251,7 @@ lib/modules/KVER-ipfire-omap
 #lib/modules/KVER-ipfire-omap/kernel/sound/core/seq/snd-seq-midi.ko
 #lib/modules/KVER-ipfire-omap/kernel/sound/core/seq/snd-seq-virmidi.ko
 #lib/modules/KVER-ipfire-omap/kernel/sound/core/seq/snd-seq.ko
+#lib/modules/KVER-ipfire-omap/kernel/sound/core/snd-hrtimer.ko
 #lib/modules/KVER-ipfire-omap/kernel/sound/core/snd-hwdep.ko
 #lib/modules/KVER-ipfire-omap/kernel/sound/core/snd-page-alloc.ko
 #lib/modules/KVER-ipfire-omap/kernel/sound/core/snd-pcm.ko
@@ -1263,6 +1262,7 @@ lib/modules/KVER-ipfire-omap
 #lib/modules/KVER-ipfire-omap/kernel/sound/drivers/mpu401
 #lib/modules/KVER-ipfire-omap/kernel/sound/drivers/mpu401/snd-mpu401-uart.ko
 #lib/modules/KVER-ipfire-omap/kernel/sound/drivers/mpu401/snd-mpu401.ko
+#lib/modules/KVER-ipfire-omap/kernel/sound/drivers/snd-aloop.ko
 #lib/modules/KVER-ipfire-omap/kernel/sound/drivers/snd-dummy.ko
 #lib/modules/KVER-ipfire-omap/kernel/sound/drivers/snd-mtpav.ko
 #lib/modules/KVER-ipfire-omap/kernel/sound/drivers/snd-mts64.ko
