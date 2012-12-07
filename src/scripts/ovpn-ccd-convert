@@ -1,13 +1,15 @@
 #!/usr/bin/perl
-
+# Converter script for old openvpn clients
 my %net=();
 my %ovpnconfig=();
 my @serverconf=();
 my $greennet;
 my $greensubnet;
 my $running='off';
-require '/var/ipfire/general-functions.pl';
 
+require '/var/ipfire/general-functions.pl';
+unless (-d "${General::swroot}/ovpn/ccd") { system("mkdir ${General::swroot}/ovpn/ccd"); }
+system ("chown nobody.nobody ${General::swroot}/ovpn/ccd");
 if ( -e "/var/run/openvpn.pid"){
 	$running='on';
 	system('/usr/local/bin/openvpnctrl', '-k');
