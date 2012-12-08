@@ -78,7 +78,7 @@ fi
 
 #
 #
-KVER="3.2.34"
+KVER="3.2.35"
 MOUNT=`grep "kernel" /boot/grub/grub.conf 2>/dev/null | tail -n 1 `
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
@@ -313,8 +313,8 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 			"core-update-$core: WARNING not enough space for pae kernel."
 	else
 		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
-		echo "ProgVersion: 3.2.34" >> /opt/pakfire/db/installed/meta-linux-pae
-		echo "Release: 23"     >> /opt/pakfire/db/installed/meta-linux-pae
+		echo "ProgVersion: 3.2.35" >> /opt/pakfire/db/installed/meta-linux-pae
+		echo "Release: 24"     >> /opt/pakfire/db/installed/meta-linux-pae
 	fi
 fi
 
