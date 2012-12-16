@@ -1,0 +1,188 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - An Open Source Firewall Solution                               #
+# Copyright (C) 2012 Michael Tremer                                           #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+export LC_ALL=C
+
+SARG_CONFIG="/etc/sarg/sarg.conf"
+SQUID_LOG="/var/log/squid/access.log"
+REPORTS_PATH="/var/log/sarg"
+
+function date_calc() {
+	local when
+	local range="false"
+
+	case "${1}" in
+		month)
+			when="1 month ago"
+			range="true"
+			;;
+		week)
+			when="1 week ago"
+			;;
+		yesterday)
+			when="1 day ago"
+			;;
+		today)
+			when="today"
+			;;
+		*)
+			return 1
+			;;
+	esac
+
+	if [ "${range}" = "true" ]; then
+		echo "$(date --date "${when}" +01/%m/%Y)-$(date --date "${when}" +31/%m/%Y)"
+	else
+		date --date "${when}" +%d/%m/%Y
+	fi
+
+	return 0
+}
+
+function compile_report() {
+	local interval=${1}
+
+	local date
+	case "${interval}" in
+		today)
+			date=$(date_calc today)
+			;;
+		daily)
+			date=$(date_calc yesterday)
+			;;
+		weekly)
+			date="$(date_calc week)-$(date_calc yesterday)"
+			;;
+		monthly)
+			date="$(date_calc month)"
+			;;
+	esac
+	[ -n "${date}" ] || return 1
+
+	# Determine max. number of archived log files to search.
+	local max_logs
+	case "${interval}" in
+		today|daily)
+			max_logs=3
+			;;
+		weekly)
+			max_logs=14
+			;;
+		monthly)
+			max_logs=40
+			;;
+	esac
+
+	# Create reports_path, if not exists.
+	local reports_path="${REPORTS_PATH}/${interval}"
+	mkdir -p ${reports_path}
+
+	# Remove already existant data on today's reports.
+	case "${interval}" in
+		today)
+			rm -rf ${reports_path}/*
+			;;
+	esac
+
+	# Run SARG.
+	get_logs ${max_logs} | sarg -f ${SARG_CONFIG} -l - -d ${date} -o ${reports_path}
+}
+
+function get_logs() {
+	local max=${1}
+
+	if [ -z "${max}" ]; then
+		max=10000
+	fi
+
+	local idx=0
+	while [ ${idx} -le ${max} ]; do
+		file=$(search_log_file ${idx})
+
+		# If no log file could be opened, we are done.
+		[ -z "${file}" ] && break
+
+		case "${file}" in
+			# Logs in plain text.
+			*.log)
+				cat ${file}
+				;;
+
+			# GZip compressed log files.
+			*.gz)
+				gzip -d < ${file}
+				;;
+
+			# XZ compressed log files.
+			*.xz)
+				xz -d < ${file}
+				;;
+
+			# Unhandled stuff.
+			*)
+				echo "Unhandled file type: ${file}" >&2
+				;;
+		esac
+
+		idx=$(( ${idx} + 1 ))
+	done
+
+	return 0
+}
+
+function search_log_file() {
+	local idx=${1}
+
+	if [ "${idx}" = "0" ] && [ -e "${SQUID_LOG}" ]; then
+		echo "${SQUID_LOG}"
+		return 0
+	fi
+
+	local algo
+	for algo in gz xz; do
+		file="${SQUID_LOG}.${idx}.${algo}"
+
+		if [ -e "${file}" ]; then
+			echo "${file}"
+			return 0
+		fi
+	done
+
+	return 1
+}
+
+# Main.
+
+case "${1}" in
+	today|daily|weekly|monthly)
+		compile_report ${1}
+		;;
+	*)
+		echo "${0} - Squid proxy reports creation tool"
+		echo
+		echo "Usage: ${0} [interval]"
+		echo "    interval: today, daily, weekly, monthly"
+		echo
+		exit 0
+		;;
+esac
+
+exit 0

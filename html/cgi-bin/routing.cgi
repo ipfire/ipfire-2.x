@@ -118,6 +118,8 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 }
 
 if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
+	# Convert subnet masks to CIDR notation.
+	$settings{'IP'} = &General::iporsubtocidr($settings{'IP'});
 
 # Validate inputs
 	if (( !&General::validip($settings{'IP'})) and ( !&General::validipandmask($settings{'IP'}))){

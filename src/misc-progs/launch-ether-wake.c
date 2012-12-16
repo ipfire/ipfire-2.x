@@ -29,5 +29,9 @@ int main(int argc, char *argv[])
   snprintf(command, BUFFER_SIZE-1, "/usr/sbin/etherwake -i %s %s", argv[2], argv[1]);
   safe_system(command);
 
+  /* Send magic packet with broadcast flag set. */
+  snprintf(command, BUFFER_SIZE-1, "/usr/sbin/etherwake -i %s -b %s", argv[2], argv[1]);
+  safe_system(command);
+
   return(0);
 }

@@ -89,6 +89,9 @@ $(TARGET) :
 	    chmod 755 /usr/local/bin/`basename $$i`; \
 	done
 
+	# Move script to correct place.
+	mv -vf /usr/local/bin/ovpn-ccd-convert /usr/sbin/
+
 	# Nobody user
 	-mkdir -p /home/nobody
 	chown -R nobody:nobody /home/nobody
