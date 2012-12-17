@@ -1370,7 +1370,7 @@ CONFIG_IWMC3200TOP=m
 # Texas Instruments shared transport line discipline
 #
 CONFIG_TI_ST=m
-# CONFIG_SENSORS_LIS3_I2C is not set
+CONFIG_SENSORS_LIS3_I2C=m
 
 #
 # Altera FPGA firmware download module
@@ -3672,7 +3672,8 @@ CONFIG_HID_DRAGONRISE=m
 # CONFIG_HID_EMS_FF is not set
 CONFIG_HID_ELECOM=m
 CONFIG_HID_EZKEY=m
-# CONFIG_HID_HOLTEK is not set
+CONFIG_HID_HOLTEK=m
+# CONFIG_HOLTEK_FF is not set
 CONFIG_HID_KEYTOUCH=m
 CONFIG_HID_KYE=m
 CONFIG_HID_UCLOGIC=m

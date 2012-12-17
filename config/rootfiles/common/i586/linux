@@ -1,4 +1,4 @@
-boot/System.map-3.2.35-ipfire
+boot/System.map-KVER-ipfire
 boot/System.map-ipfire
 boot/config-KVER-ipfire
 boot/vmlinuz-KVER-ipfire
@@ -384,6 +384,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/hid/hid-ezkey.ko
 #lib/modules/KVER-ipfire/kernel/drivers/hid/hid-gaff.ko
 #lib/modules/KVER-ipfire/kernel/drivers/hid/hid-gyration.ko
+#lib/modules/KVER-ipfire/kernel/drivers/hid/hid-holtekff.ko
 #lib/modules/KVER-ipfire/kernel/drivers/hid/hid-kensington.ko
 #lib/modules/KVER-ipfire/kernel/drivers/hid/hid-keytouch.ko
 #lib/modules/KVER-ipfire/kernel/drivers/hid/hid-kye.ko
@@ -940,6 +941,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/misc/iwmc3200top/iwmc3200top.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/lis3lv02d
 #lib/modules/KVER-ipfire/kernel/drivers/misc/lis3lv02d/lis3lv02d.ko
+#lib/modules/KVER-ipfire/kernel/drivers/misc/lis3lv02d/lis3lv02d_i2c.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/pch_phub.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/ti-st
 #lib/modules/KVER-ipfire/kernel/drivers/misc/ti-st/st_drv.ko
