@@ -2,6 +2,9 @@
 
 # Personal items to perform on logout.
 
+# Clear console to not leak any information.
+clear
+
 echo "Bye bye."
 
 # End ~/.bash_logout
