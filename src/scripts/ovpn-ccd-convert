@@ -48,3 +48,4 @@ if ($running eq 'on')
 {
 	system('/usr/local/bin/openvpnctrl', '-s');
 }
+system ("chown nobody:nobody /var/ipfire/ovpn/ccd/*");

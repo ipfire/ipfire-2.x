@@ -53,7 +53,7 @@ $(TARGET) :
 	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dmzholes dns \
 			ethernet extrahd/bin fwlogs isdn key langs logging mac main  menu.d modem net-traffic \
 			net-traffic/templates nfs optionsfw outgoing/bin outgoing/groups outgoing/groups/ipgroups \
-			outgoing/groups/macgroups patches pakfire portfw ppp private proxy/advanced/cre \
+			outgoing/groups/macgroups ovpn patches pakfire portfw ppp private proxy/advanced/cre \
 			proxy/calamaris/bin qos/bin red remote sensors snort time tripwire/report \
 			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin upnp vpn \
 			wakeonlan wireless xtaccess ; do \
@@ -66,7 +66,7 @@ $(TARGET) :
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dmzholes/config dns/settings ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
 	    extrahd/scan extrahd/devices extrahd/partitions extrahd/settings fwlogs/ipsettings fwlogs/portsettings \
 	    isdn/settings mac/settings main/disable_nf_sip main/hosts main/routing main/settings net-traffic/settings optionsfw/settings outgoing/settings outgoing/rules \
-	    pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
+	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
 	    qos/tosconfig snort/settings tripwire/settings upnp/settings vpn/config vpn/settings vpn/ipsec.conf \
 	    vpn/ipsec.secrets vpn/caconfig wakeonlan/clients.conf wireless/config wireless/settings; do \
