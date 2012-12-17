@@ -280,7 +280,7 @@ case $(uname -m) in
 		#
 		# ReInstall grub
 		#
-			grub-install --no-floppy ${ROOT::`expr length $ROOT`-1} --recheck
+			grub-install --no-floppy ${ROOT::`expr length $ROOT`-1}
 	;;
 esac
 #
