@@ -2101,20 +2101,20 @@ else
     print CLIENTCONF "#OpenVPN Client conf\r\n";
     print CLIENTCONF "tls-client\r\n";
     print CLIENTCONF "client\r\n";
-    print CLIENTCONF "nobind\n";
+    print CLIENTCONF "nobind\r\n";
     print CLIENTCONF "dev $vpnsettings{'DDEVICE'}\r\n";
     print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}\r\n";
 
     # Check if we are using fragment, mssfix or mtu-disc and set MTU to 1500
     # or use configured value.
     if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' )
-	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
+	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\r\n"; }
     elsif ($vpnsettings{MSSFIX} eq 'on')
-	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
+	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\r\n"; }
     elsif (($vpnsettings{'PMTU_DISCOVERY'} eq 'yes') ||
            ($vpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
            ($vpnsettings{'PMTU_DISCOVERY'} eq 'no' )) 
-	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\n"; }
+	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\r\n"; }
     else
 	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu $vpnsettings{'DMTU'}\r\n"; }
 
@@ -2167,7 +2167,7 @@ else
         ($vpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
         ($vpnsettings{'PMTU_DISCOVERY'} eq 'no' )) {
 	if(($vpnsettings{MSSFIX} ne 'on') || ($vpnsettings{FRAGMENT} eq '')) {
-		print CLIENTCONF "mtu-disc $vpnsettings{'PMTU_DISCOVERY'}\n";
+		print CLIENTCONF "mtu-disc $vpnsettings{'PMTU_DISCOVERY'}\r\n";
 	}
     }
     close(CLIENTCONF);
