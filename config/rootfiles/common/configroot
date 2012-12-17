@@ -110,6 +110,10 @@ var/ipfire/outgoing/defaultservices
 #var/ipfire/outgoing/p2protocols
 #var/ipfire/outgoing/rules
 #var/ipfire/outgoing/settings
+var/ipfire/ovpn
+var/ipfire/ovpn/ccd.conf
+var/ipfire/ovpn/ccdroute
+var/ipfire/ovpn/ccdroute2
 var/ipfire/pakfire
 #var/ipfire/pakfire/settings
 #var/ipfire/patches
