@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 4.7.5.2
+VER        = 4.8.4
 
 THISAPP    = mc-$(VER)
-DL_FILE    = $(THISAPP).tar.lzma
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mc
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = "glib"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9fede28ed63ced53f1beeba2f95473da
+$(DL_FILE)_MD5 = a8edb8226cb25869f925ecce043faf1e
 
 install : $(TARGET)
 
@@ -76,8 +76,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xf $(DIR_DL)/$(DL_FILE) --lzma
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr \
+				--sysconfdir=/etc \
 				--without-x --disable-nls \
 				--with-samba \
 				--with-screen=ncurses
