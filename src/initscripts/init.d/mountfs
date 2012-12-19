@@ -49,8 +49,10 @@ case "${1}" in
 		boot_mesg "Unmounting all other currently mounted file systems..."
 		umount -a -d -r &>/dev/null
 		evaluate_retval
-		;;
 
+		# mount /sys again for led control at halt
+		mount /sys 2>&1 >/dev/null
+		;;
 	*)
 		echo "Usage: ${0} {start|stop}"
 		exit 1

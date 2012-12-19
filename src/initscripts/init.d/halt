@@ -21,8 +21,16 @@ case "${1}" in
 		boot_mesg "Remount root readonly..."
 		mount -f -o remount,ro / > /dev/null 2>&1
 		evaluate_retval
+
 		boot_mesg "Prepare for halt..."
 		sleep 2
+
+		#Disable all leds at shutdown
+		for led in $(ls /sys/class/leds); do
+			echo "none" > /sys/class/leds/$led/trigger
+			echo "0"    > /sys/class/leds/$led/brightness
+		done
+
 		halt -d -f -i -p
 		;;
 	*)
