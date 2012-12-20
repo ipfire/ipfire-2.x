@@ -9,62 +9,101 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+if [ -e $0.user ]; then
+	$0.user $*
+	exit ${?}
+fi
+
 # Load ethernet settings
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
-setup_red_modem() {
-	local led1=${1}
-	local led2=${2}
+if [ "${RED_DEV}" == "" ]; then
+	RED_DEV=ppp0
+fi
 
-	modprobe ledtrig-netdev
-
-	local i
-	for i in ${led1} ${led2}; do
-		echo "netdev" > ${i}/trigger
-		echo "${RED_DEV}" > ${i}/device_name
-	done
-
-	echo "rx" > ${led1}/mode
-	echo "tx" > ${led2}/mode
+# setup_netdev_trigger LED DEVICE MODE
+setup_netdev_trigger ()
+{
+	if [ -d "/sys/class/leds/$1" ]; then
+		modprobe -q ledtrig-netdev 2>&1 > /dev/null
+		echo "netdev" > /sys/class/leds/$1/trigger
+		echo "$2" >     /sys/class/leds/$1/device_name
+		echo "$3 $4" >  /sys/class/leds/$1/mode
+	fi
 }
 
-reset_trigger() {
-	[ -d "${1}" ] || return 0
-	echo "none" > ${1}/trigger
+# setup_netdev_trigger LED
+setup_heartbeat_trigger ()
+{
+	if [ -d "/sys/class/leds/$1" ]; then
+		modprobe -q ledtrig-heartbeat 2>&1 > /dev/null
+		echo "heartbeat" >  /sys/class/leds/$1/trigger
+	fi
 }
 
-start_alix2() {
-	modprobe -q leds-alix2 &>/dev/null
-
-	local i
-	for i in 1 2 3; do
-		if [ ! -d "/sys/class/leds/alix:${i}" ]; then
-			return 1
-		fi
-	done
-
-	setup_red_modem /sys/class/leds/alix:2 /sys/class/leds/alix:3
-}
-
-stop_alix2() {
-	local i
-	for i in 1 2 3; do
-		reset_trigger /sys/class/leds/alix:${i}
-	done
+# disable_led_trigger LED
+disable_led_trigger ()
+{
+	if [ -d "/sys/class/leds/$1" ]; then
+		echo "none" >     /sys/class/leds/$1/trigger
+		echo "0" >        /sys/class/leds/$1/brightness
+	fi
 }
 
 case "${1}" in
-	start|stop)
-		for i in alix2; do
-		  ${1}_${i}
-		done
+	start)
+		# Alix LED start
+		setup_netdev_trigger alix:2 ${RED_DEV} rx
+		setup_netdev_trigger alix:3 ${RED_DEV} tx
+
+		# Dreamplug
+		setup_netdev_trigger dreamplug:green:wlan ${GREEN_DEV} tx rx
+		setup_netdev_trigger dreamplug:blue:wlanap ${BLUE_DEV} tx rx
+		setup_netdev_trigger dreamplug:blue:bluetooth ${RED_DEV} tx rx
+
+		# Iomega iConnect start
+		setup_heartbeat_trigger iconnect:blue:otb
+		setup_netdev_trigger iconnect:blue:power ${RED_DEV} rx
+		setup_netdev_trigger iconnect:red:power ${RED_DEV} tx
+		setup_netdev_trigger iconnect:blue:usb_2 ${GREEN_DEV} tx rx
+		setup_netdev_trigger iconnect:blue:usb_3 ${BLUE_DEV} tx rx
+		setup_netdev_trigger iconnect:blue:usb_4 ${ORANGE_DEV} tx rx
+
+		# ICY Box LED start
+		setup_netdev_trigger nas6210:red:power ${RED_DEV} tx rx
+		setup_netdev_trigger nas6210:red:usb_copy ${GREEN_DEV} tx rx
+
 		exit 0
-		;;
+	;;
+
+	stop)
+		# Alix LED stop
+		disable_led_trigger alix:2
+		disable_led_trigger alix:3
+
+		# Dreamplug
+		disable_led_trigger dreamplug:green:wlan
+		disable_led_trigger dreamplug:blue:wlanap
+		disable_led_trigger dreamplug:blue:bluetooth
+
+		# Iomega iConnect stop (heartbeat will leave on)
+		disable_led_trigger iconnect:blue:power
+		disable_led_trigger iconnect:red:power
+		disable_led_trigger iconnect:blue:usb_2
+		disable_led_trigger iconnect:blue:usb_3
+		disable_led_trigger iconnect:blue:usb_4
+
+		# ICY Box LED stop
+		disable_led_trigger nas6210:red:power
+		disable_led_trigger nas6210:red:usb_copy
+
+		exit 0
+	;;
 
 	*)
 		echo "Usage: ${0} {start|stop}"
 		exit 1
-		;;
+	;;
 esac
 
 # End $rc_base/init.d/leds
