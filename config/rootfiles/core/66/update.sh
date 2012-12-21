@@ -219,6 +219,13 @@ telinit u
 # Convert OpenVPN RW connections.
 /usr/sbin/ovpn-ccd-convert
 
+touch /var/ipfire/ovpn/ccd.conf
+touch /var/ipfire/ovpn/ccdroute
+touch /var/ipfire/ovpn/ccdroute2
+chown nobody:nobody /var/ipfire/ovpn/ccd.conf
+chown nobody:nobody /var/ipfire/ovpn/ccdroute
+chown nobody:nobody /var/ipfire/ovpn/ccdroute2
+
 # Update crontab.
 sed -i /var/spool/cron/root.orig \
 	-e 's@^.*fcron.weekly.*$@\&nice(10),bootrun 47 2 \* \* 1\ttest -x /usr/local/bin/run-parts \&\& /usr/local/bin/run-parts /etc/fcron.weekly@'
