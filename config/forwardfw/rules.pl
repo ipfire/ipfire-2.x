@@ -111,7 +111,9 @@ sub preparerules
 }
 sub buildrules
 {
+	
 	my $hash=shift;
+	
 	foreach my $key (sort keys %$hash){
 		if($$hash{$key}[2] eq 'ON'){
 			#get source ip's
@@ -132,7 +134,7 @@ sub buildrules
 					}
 				}
 			}elsif($$hash{$key}[5] eq 'ipfire'){
-				
+
 				if($$hash{$key}[6] eq 'Default IP'){
 					open(FILE, "/var/ipfire/red/local-ipaddress") or die 'Unable to open config file.';
 					$targethash{$key}[0]= <FILE>;
@@ -147,20 +149,19 @@ sub buildrules
 			}else{
 				&get_address($$hash{$key}[5],$$hash{$key}[6],"tgt");
 			}
-			
 			##get source prot and port
 			$SRC_TGT='SRC';
 			$SPROT = &get_prot($hash,$key);
 			$SPORT = &get_port($hash,$key);
 			$SRC_TGT='';
-			
+
 			##get target prot and port
 			$DPROT=&get_prot($hash,$key);
-					
+
 			if ($DPROT eq ''){$DPROT=' ';}				
 			@DPROT=split(",",$DPROT);
-				
-						
+
+	
 			#get time if defined
 			if($$hash{$key}[18] eq 'ON'){
 				if($$hash{$key}[19] ne ''){push (@timeframe,"Mon");}
@@ -245,7 +246,7 @@ sub get_address
 	}
 	my $key = &General::findhasharraykey($hash);
 	if($base eq 'src_addr' || $base eq 'tgt_addr' ){
-		$$hash{$key}[0] = $configfwdfw{$key}[4];
+		$$hash{$key}[0] = $base2;
 	}elsif($base eq 'std_net_src' || $base eq 'std_net_tgt' || $base eq 'Standard Network'){
 		$$hash{$key}[0]=&fwlib::get_std_net_ip($base2);
 	}elsif($base eq 'cust_net_src' || $base eq 'cust_net_tgt' || $base eq 'Custom Network'){
