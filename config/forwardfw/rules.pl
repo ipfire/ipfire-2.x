@@ -1,0 +1,334 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2012														  #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+#																			  #
+# Hi folks! I hope this code is useful for all. I needed something to handle  #
+# my VPN Connections in a comfortable way. 				      				  #
+# This script builds firewallrules from the webinterface                      #
+###############################################################################
+
+
+use strict;
+no warnings 'uninitialized';
+
+# enable only the following on debugging purpose
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
+
+my %fwdfwsettings=();
+my %defaultNetworks=();
+my %configfwdfw=();
+my %color=();
+my %icmptypes=();
+my %ovpnSettings=();
+my %customgrp=();
+our %sourcehash=();
+our %targethash=();
+my @timeframe=();
+my %configinputfw=();
+my %aliases=();
+my @DPROT=();
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/lang.pl";
+require "${General::swroot}/forward/bin/firewall-lib.pl";
+
+my $configfwdfw		= "${General::swroot}/forward/config";
+my $configinput	    = "${General::swroot}/forward/input";
+my $configgrp		= "${General::swroot}/fwhosts/customgroups";
+my $errormessage='';
+my ($TYPE,$PROT,$SPROT,$DPROT,$SPORT,$DPORT,$TIME,$TIMEFROM,$TIMETILL,$SRC_TGT);
+my $CHAIN="FORWARDFW";
+
+
+&General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
+&General::readhasharray($configfwdfw, \%configfwdfw);
+&General::readhasharray($configinput, \%configinputfw);
+&General::readhasharray($configgrp, \%customgrp);
+&General::get_aliases(\%aliases);
+
+################################
+#    DEBUG/TEST                #
+################################
+my $MODE=0;     # 0 - normal operation
+				# 1 - print configline and rules to console	
+				# 
+################################		
+my $param=shift;
+
+if($param eq 'flush'){
+	if ($MODE eq '1'){
+		print " Flushing chains...\n";
+	}
+	&flush;
+}else{
+	if ($MODE eq '1'){
+		print " Flushing chains...\n";
+	}
+	&flush;
+	if ($MODE eq '1'){
+		print " Preparing rules...\n";
+	}
+	&preparerules;
+	if($MODE eq '0'){
+		if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
+			system ("iptables -A $CHAIN -j DROP"); 
+		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
+			system ("iptables -A $CHAIN -j ACCEPT");
+		}
+	}
+}
+
+sub flush
+{
+	system ("iptables -F FORWARDFW");
+	system ("iptables -F INPUTFW");
+}			
+sub preparerules
+{
+	if (! -z  "${General::swroot}/forward/config"){
+		&buildrules(\%configfwdfw);
+	}
+	if (! -z  "${General::swroot}/forward/input"){
+		&buildrules(\%configinputfw);
+	}
+}
+sub buildrules
+{
+	my $hash=shift;
+	foreach my $key (sort keys %$hash){
+		if($$hash{$key}[2] eq 'ON'){
+			#get source ip's
+			if ($$hash{$key}[3] eq 'cust_grp_src'){
+				foreach my $grp (sort keys %customgrp){
+						if($customgrp{$grp}[0] eq $$hash{$key}[4]){
+						&get_address($customgrp{$grp}[3],$customgrp{$grp}[2],"src");
+					}
+				}
+			}else{
+				&get_address($$hash{$key}[3],$$hash{$key}[4],"src");
+			}
+			#get target ip's
+			if ($$hash{$key}[5] eq 'cust_grp_tgt'){
+				foreach my $grp (sort keys %customgrp){
+					if($customgrp{$grp}[0] eq $$hash{$key}[6]){
+						&get_address($customgrp{$grp}[3],$customgrp{$grp}[2],"tgt");
+					}
+				}
+			}elsif($$hash{$key}[5] eq 'ipfire'){
+				
+				if($$hash{$key}[6] eq 'Default IP'){
+					open(FILE, "/var/ipfire/red/local-ipaddress") or die 'Unable to open config file.';
+					$targethash{$key}[0]= <FILE>;
+					close(FILE);
+				}else{
+					foreach my $alias (sort keys %aliases){
+						if ($$hash{$key}[6] eq $alias){
+							$targethash{$key}[0]=$aliases{$alias}{'IPT'};
+						}
+					}
+				}
+			}else{
+				&get_address($$hash{$key}[5],$$hash{$key}[6],"tgt");
+			}
+			
+			##get source prot and port
+			$SRC_TGT='SRC';
+			$SPROT = &get_prot($hash,$key);
+			$SPORT = &get_port($hash,$key);
+			$SRC_TGT='';
+			
+			##get target prot and port
+			$DPROT=&get_prot($hash,$key);
+					
+			if ($DPROT eq ''){$DPROT=' ';}				
+			@DPROT=split(",",$DPROT);
+				
+						
+			#get time if defined
+			if($$hash{$key}[18] eq 'ON'){
+				if($$hash{$key}[19] ne ''){push (@timeframe,"Mon");}
+				if($$hash{$key}[20] ne ''){push (@timeframe,"Tue");}
+				if($$hash{$key}[21] ne ''){push (@timeframe,"Wed");}
+				if($$hash{$key}[22] ne ''){push (@timeframe,"Thu");}
+				if($$hash{$key}[23] ne ''){push (@timeframe,"Fri");}
+				if($$hash{$key}[24] ne ''){push (@timeframe,"Sat");}
+				if($$hash{$key}[25] ne ''){push (@timeframe,"Sun");}
+				$TIME=join(",",@timeframe);
+				$TIMEFROM="--timestart $$hash{$key}[26] ";
+				$TIMETILL="--timestop $$hash{$key}[27] ";
+				$TIME="-m time --weekdays $TIME $TIMEFROM $TIMETILL";
+			}
+					
+			if ($MODE eq '1'){	
+				print "NR:$key ";
+				foreach my $i (0 .. $#{$$hash{$key}}){
+					print "$i: $$hash{$key}[$i]  ";
+				}
+				print "\n";
+				print"##################################\n";
+				#print rules to console
+				
+				foreach my $DPROT (@DPROT){
+					$DPORT = &get_port($hash,$key,$DPROT);
+					if ($SPROT ne ''){$PROT=$SPROT;}else{$PROT=$DPROT;}
+					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
+					foreach my $a (sort keys %sourcehash){
+						foreach my $b (sort keys %targethash){
+							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none'){
+								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
+									if ($$hash{$key}[17] eq 'ON'){
+										print "iptables -A $$hash{$key}[1] $PROT -s $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+									}
+									print "iptables -A $$hash{$key}[1] $PROT -s $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n"; 
+								}				
+							}
+						}
+					}
+					print"\n";
+				}
+			
+			}elsif($MODE eq '0'){
+				foreach my $DPROT (@DPROT){
+					$DPORT = &get_port($hash,$key,$DPROT);
+					if ($SPROT ne ''){$PROT=$SPROT;}else{$PROT=$DPROT;}
+					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
+					foreach my $a (sort keys %sourcehash){
+						foreach my $b (sort keys %targethash){
+							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none'){
+								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
+									if ($$hash{$key}[17] eq 'ON'){
+										system ("iptables -A $$hash{$key}[1] $PROT -s $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
+									}
+									system ("iptables -A $$hash{$key}[1] $PROT -s $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]"); 
+								}				
+							}
+						}
+					}
+					print"\n";
+				}
+			}
+		}
+		%sourcehash=();
+		%targethash=();
+		undef $TIME;
+		undef $TIMEFROM;
+		undef $TIMETILL;
+	}
+}
+sub get_address
+{
+	my $base=shift; #source of checking ($configfwdfw{$key}[x] or groupkey
+	my $base2=shift;
+	my $type=shift; #src or tgt
+	my $hash;
+	if ($type eq 'src'){
+		$hash=\%sourcehash;	
+	}else{
+		$hash=\%targethash;
+	}
+	my $key = &General::findhasharraykey($hash);
+	if($base eq 'src_addr' || $base eq 'tgt_addr' ){
+		$$hash{$key}[0] = $configfwdfw{$key}[4];
+	}elsif($base eq 'std_net_src' || $base eq 'std_net_tgt' || $base eq 'Standard Network'){
+		$$hash{$key}[0]=&fwlib::get_std_net_ip($base2);
+	}elsif($base eq 'cust_net_src' || $base eq 'cust_net_tgt' || $base eq 'Custom Network'){
+		$$hash{$key}[0]=&fwlib::get_net_ip($base2);
+	}elsif($base eq 'cust_host_src' || $base eq 'cust_host_tgt' || $base eq 'Custom Host'){
+		$$hash{$key}[0]=&fwlib::get_host_ip($base2,$type);
+	}elsif($base eq 'ovpn_net_src' || $base eq 'ovpn_net_tgt' || $base eq 'OpenVPN static network'){
+		$$hash{$key}[0]=&fwlib::get_ovpn_net_ip($base2,1);
+	}elsif($base eq 'ovpn_host_src' ||$base eq 'ovpn_host_tgt' || $base eq 'OpenVPN static host'){
+		$$hash{$key}[0]=&fwlib::get_ovpn_host_ip($base2,33);
+	}elsif($base eq 'ovpn_n2n_src' ||$base eq 'ovpn_n2n_tgt' || $base eq 'OpenVPN N-2-N'){
+		$$hash{$key}[0]=&fwlib::get_ovpn_n2n_ip($base2,27);
+	}elsif($base eq 'ipsec_net_src' || $base eq 'ipsec_net_tgt' || $base eq 'IpSec Network'){
+		$$hash{$key}[0]=&fwlib::get_ipsec_net_ip($base2,11);
+	}
+}
+sub get_prot
+{
+	my $hash=shift;
+	my $key=shift;
+	if ($$hash{$key}[7] eq 'ON' && $SRC_TGT eq 'SRC'){
+		if ($$hash{$key}[10] ne ''){
+			return"$$hash{$key}[8]";
+		}elsif($$hash{$key}[9] ne ''){
+			return"$$hash{$key}[8]";
+		}else{
+			return "$$hash{$key}[8]";
+		}
+	}elsif($$hash{$key}[11] eq 'ON' && $SRC_TGT eq ''){
+		if ($$hash{$key}[14] eq 'TGT_PORT'){
+			if ($$hash{$key}[15] ne ''){
+				return "$$hash{$key}[12]";
+			}elsif($$hash{$key}[13] ne ''){
+				return "$$hash{$key}[12]";
+			}else{
+				return "$$hash{$key}[12]";
+			}
+		}elsif($$hash{$key}[14] eq 'cust_srv'){
+			return &fwlib::get_srv_prot($$hash{$key}[15]);
+			
+		}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
+			return &fwlib::get_srvgrp_prot($$hash{$key}[15]);
+		}
+	}
+}
+sub get_port
+{
+	my $hash=shift;
+	my $key=shift;
+	my $prot=shift;
+	if ($$hash{$key}[7] eq 'ON' && $SRC_TGT eq 'SRC'){
+		if ($$hash{$key}[10] ne ''){
+			return "--sport $$hash{$key}[10] ";
+		}elsif($$hash{$key}[9] ne ''){
+			return "--icmp-type $$hash{$key}[9] ";
+		}
+	}elsif($$hash{$key}[11] eq 'ON' && $SRC_TGT eq ''){
+		
+		if($$hash{$key}[14] eq 'TGT_PORT'){
+			if ($$hash{$key}[15] ne ''){
+				return "--dport $$hash{$key}[15] ";
+			}elsif($$hash{$key}[13] ne '' && $$hash{$key}[13] ne 'All ICMP-Types'){
+				return "--icmp-type $$hash{$key}[13] ";
+			}elsif($$hash{$key}[13] ne '' && $$hash{$key}[13] eq 'All ICMP-Types'){
+				return;
+			}
+		}elsif($$hash{$key}[14] eq 'cust_srv'){
+			if ($prot ne 'ICMP'){
+				return "--dport ".&fwlib::get_srv_port($$hash{$key}[15],1,$prot);
+			}elsif($prot eq 'ICMP' && $$hash{$key}[15] ne 'All ICMP-Types'){
+				return "--icmp-type ".&fwlib::get_srv_port($$hash{$key}[15],3,$prot);
+			}elsif($prot eq 'ICMP' && $$hash{$key}[15] eq 'All ICMP-Types'){
+				return;
+			}
+		}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
+			if 	($prot ne 'ICMP'){
+				return &fwlib::get_srvgrp_port($$hash{$key}[15],$prot);
+			}
+			elsif($prot eq 'ICMP'){
+				return &fwlib::get_srvgrp_port($$hash{$key}[15],$prot);
+			}
+			
+			
+		}
+	}
+}
