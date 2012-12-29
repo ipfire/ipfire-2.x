@@ -9,8 +9,8 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-if [ -e $0.user ]; then
-	$0.user $*
+if [ -e /etc/init.d/leds.user ]; then
+	/etc/init.d/leds.user $*
 	exit ${?}
 fi
 
