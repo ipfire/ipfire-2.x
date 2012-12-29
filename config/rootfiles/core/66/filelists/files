@@ -1,5 +1,6 @@
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/issue
+etc/modprobe.d/cfg80211
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/fsresize
 etc/rc.d/init.d/halt
