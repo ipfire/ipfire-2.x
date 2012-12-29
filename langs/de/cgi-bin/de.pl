@@ -953,7 +953,7 @@
 'fwhost addrule' 		=> 'Neue Regel hinzufügen:',
 'fwhost any'			=> 'Alle',
 'fwhost attention'		=> 'ACHTUNG',
-'fwhost back'			=> 'Übernehmen',
+'fwhost back'			=> 'Zurück',
 'fwhost blue'			=> 'Blau',
 'fwhost ccdhost'		=> 'OpenVPN Clients:',
 'fwhost ccdnet'			=> 'OpenVPN Netzwerke:',

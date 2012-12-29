@@ -577,7 +577,7 @@ sub checksource
 		my @tmp= split (/\./,$ip);
 		if (($tmp[3] eq "0") || ($tmp[3] eq "255"))
 		{
-			$errormessage=$Lang::tr{'fwhost err hostip'};
+			$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
 		}
 		$fwdfwsettings{'src_addr'}="$ip/$subnet";
 				
@@ -650,9 +650,9 @@ sub checktarget
 		my @tmp= split (/\./,$ip);
 		if (($tmp[3] eq "0") || ($tmp[3] eq "255"))
 		{
-			$errormessage=$Lang::tr{'fwhost err hostip'};
+			$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
 		}
-		$fwdfwsettings{'tgt_addr'}=$ip."/".$subnet;
+		$fwdfwsettings{'tgt_addr'}="$ip/$subnet";
 				
 		if(!&General::validipandmask($fwdfwsettings{'tgt_addr'})){
 			$errormessage.=$Lang::tr{'fwdfw err tgt_addr'}."<br>";
@@ -762,7 +762,7 @@ sub checkrule
 			my ($tbyte1,$tbyte2,$tbyte3,$tbyte4)=split(".",$networkip2);
 				if ($sbyte1 eq $tbyte1 && $sbyte2 eq $tbyte2 && $sbyte3 eq $tbyte3){
 					$hint=$Lang::tr{'fwdfw hint ip1'}."<br>";
-					$hint.=$Lang::tr{'fwdfw hint ip2'}." Source: $networkip1/$scidr Target:$networkip2/$tcidr<br>";
+					$hint.=$Lang::tr{'fwdfw hint ip2'}." Source: $networkip1/$scidr Target: $networkip2/$tcidr<br>";
 				}
 		
 		}else{

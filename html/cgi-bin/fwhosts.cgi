@@ -1226,7 +1226,7 @@ END
 		print"<input type='submit' value='$Lang::tr{'save'}'><input type='hidden' name='ACTION' value='saveservice'></form>";
 	}
 	print<<END;
-	<form style='display:inline;' method='post'><input type='submit' value='$Lang::tr{'fwhost reset'}'></form></td></tr>
+	<form style='display:inline;' method='post'><input type='submit' value='$Lang::tr{'fwhost back'}'></form></td></tr>
 	</table></form>
 	
 	
