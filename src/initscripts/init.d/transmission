@@ -18,12 +18,16 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting transmission daemon..."
-		transmission-daemon -g /etc/transmission
+		chown -R nobody /etc/transmission
+		chown -R nobody /var/transmission
+		sudo -u nobody transmission-daemon -g /etc/transmission
+		evaluate_retval
 		;;
 
 	stop)
 		boot_mesg "Stopping transmission daemon..."
 		killall transmission-daemon
+		evaluate_retval
 		;;
 
 	restart)
