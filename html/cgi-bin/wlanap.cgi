@@ -49,6 +49,7 @@ my %mainsettings = ();
 my %netsettings=();
 my %wlanapsettings=();
 my $channel = '';
+my $country = '';
 my $txpower = '';
 
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -64,6 +65,7 @@ $wlanapsettings{'HIDESSID'} = 'off';
 $wlanapsettings{'ENC'} = 'wpa2';               # none / wpa1 /wpa2
 $wlanapsettings{'TXPOWER'} = 'auto';
 $wlanapsettings{'CHANNEL'} = '05';
+$wlanapsettings{'COUNTRY'} = '00';
 $wlanapsettings{'HW_MODE'} = 'g';
 $wlanapsettings{'PWD'} = 'IPFire-2.x';
 $wlanapsettings{'SYSLOGLEVEL'} = '0';
@@ -243,11 +245,17 @@ $checked{'HIDESSID'}{$wlanapsettings{'HIDESSID'}} = "checked='checked'";
 
 $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
 $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
+$selected{'COUNTRY'}{$wlanapsettings{'COUNTRY'}} = "selected='selected'";
 $selected{'TXPOWER'}{$wlanapsettings{'TXPOWER'}} = "selected='selected'";
 $selected{'HW_MODE'}{$wlanapsettings{'HW_MODE'}} = "selected='selected'";
 $selected{'MACMODE'}{$wlanapsettings{'MACMODE'}} = "selected='selected'";
 
-my @channellist_cmd = `iwlist $wlanapsettings{'INTERFACE'} channel 2>/dev/null`;
+my $monwlaninterface = $wlanapsettings{'INTERFACE'};
+if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
+	$monwlaninterface =  'mon.'.$wlanapsettings{'INTERFACE'};
+}
+
+my @channellist_cmd = `iwlist $monwlaninterface channel 2>/dev/null`;
 # get available channels
 
 my @temp;
@@ -258,8 +266,23 @@ if ( $channel =~ /\d+/ ){push(@temp,$channel);}
 }
 my @channellist = @temp;
 
-my @txpower_cmd = `iwlist $wlanapsettings{'INTERFACE'} txpower 2>/dev/null`;
-# get available channels
+my @countrylist_cmd = `regdbdump /usr/lib/crda/regulatory.bin 2>/dev/null`;
+# get available country codes
+
+my @temp;
+foreach (@countrylist_cmd){
+$_ =~ /country (.*):/;
+$country = $1;chomp $country;
+if ( $country =~ /[0,A-Z][0,A-Z]/ ) {push(@temp,$country);}
+}
+my @countrylist = @temp;
+
+my @txpower_cmd = `iwlist $monwlaninterface txpower 2>/dev/null`;
+if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
+	# There is a bug with NL80211 only all devices can displayed
+	@txpower_cmd = `iwlist txpower 2>/dev/null | sed -e "s|unknown transmit-power information.||g"`;
+}
+# get available power
 
 my @temp;
 foreach (@txpower_cmd){
@@ -374,6 +397,16 @@ END
 ;
 foreach $channel (@channellist){
 	print "<option $selected{'CHANNEL'}{$channel}>$channel</option>";
+}
+
+print <<END
+</select></td></tr>
+<tr><td width='25%' class='base'>$Lang::tr{'wlanap country'}:&nbsp;</td><td class='base' colspan='3'>
+	<select name='COUNTRY'>
+END
+;
+foreach $country (@countrylist){
+	print "<option $selected{'COUNTRY'}{$country}>$country</option>";
 }
 
 print <<END

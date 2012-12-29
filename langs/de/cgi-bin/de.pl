@@ -2201,6 +2201,7 @@
 'wireless config changed' => 'Wireless Konfiguration geändert',
 'wireless configuration' => 'Wireless-Konfiguration',
 'wlanap access point' => 'Access Point',
+'wlanap country' => 'Ländercode',
 'wlanap channel' => 'Kanal',
 'wlanap debugging' => 'Debugging',
 'wlanap del interface' => 'Ausgewähltes Interface zurücksetzen?',

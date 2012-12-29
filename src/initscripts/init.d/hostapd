@@ -3,6 +3,7 @@
 . ${rc_functions}
 
 CHANNEL="05"
+COUNTRY="00"
 TXPOWER="auto"
 INTERFACE="blue0"
 MACMODE="0"
@@ -73,6 +74,10 @@ case "${1}" in
 				/usr/bin/iwconfig $INTERFACE mode master > /dev/null
 			fi
 		fi
+
+		# First reset to World (00) and then set new country
+		/usr/sbin/iw reg set 00
+		/usr/sbin/iw reg set $COUNTRY
 
 		/usr/sbin/iwconfig $INTERFACE channel $CHANNEL 2>/dev/null
 		/usr/sbin/iwconfig $INTERFACE txpower $TXPOWER
