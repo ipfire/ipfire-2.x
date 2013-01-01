@@ -2720,3 +2720,6 @@ var/spool/asterisk/voicemail/default/1234/INBOX
 var/spool/asterisk/voicemail/default/1234/en
 var/spool/asterisk/voicemail/default/1234/en/busy.gsm
 var/spool/asterisk/voicemail/default/1234/en/unavail.gsm
+etc/rc.d/init.d/asterisk
+srv/web/ipfire/cgi-bin/asterisk
+var/ipfire/menu.d/EX-asterisk.menu
