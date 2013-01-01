@@ -1266,7 +1266,7 @@ END
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
 		print<<END;
 		<table width='100%' border='0'>
-		<tr><td colspan='2' >$Lang::tr{'remark'}:<input type='text' name='ruleremark' size='40' value='$fwdfwsettings{'ruleremark'}'></td></tr>
+		<tr><td colspan='2' >$Lang::tr{'remark'}:<input type='text' name='ruleremark' size='40' maxlength='255' value='$fwdfwsettings{'ruleremark'}'></td></tr>
 		<tr><td width='1%'><input type='checkbox' name='ACTIVE' value='ON' $checked{'ACTIVE'}{'ON'}></td><td>$Lang::tr{'fwdfw rule activate'}</td></tr>
 		<tr><td width='1%'><input type='checkbox' name='LOG' value='ON'  $checked{'LOG'}{'ON'}  ></td><td>$Lang::tr{'fwdfw log rule'}</td></tr>
 		</table><hr><br>
@@ -1464,7 +1464,7 @@ sub validremark
 
 	# Each part should be at least two characters in length
 	# but no more than 63 characters
-	if (length ($remark) < 1 || length ($remark) > 63) {
+	if (length ($remark) < 1 || length ($remark) > 255) {
 		return 0;}
 	# Only valid characters are a-z, A-Z, 0-9 and -
 	if ($remark !~ /^[a-zäöüA-ZÖÄÜ0-9-\s]*$/) {
@@ -1547,7 +1547,7 @@ sub viewtablenew
 		&General::readhasharray("$config", $hash);
 		print"<b>$title1</b><br>";
 		print"<table width='100%' border='0' cellspacing='1' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
-		print"<tr><td align='center' width='1%'><b>#</td><td></td><td align='center'><b>$Lang::tr{'fwdfw source'}</td><td><b>Log</td><td align='center'><b>$Lang::tr{'fwdfw target'}</td><td align='center'><b>$Lang::tr{'remark'}</td><td align='center' colspan='3'><b>$Lang::tr{'fwdfw action'}</td></tr>";
+		print"<tr><td align='center' width='1%'><b>#</td><td width='1%'></td><td align='center' width='20%'><b>$Lang::tr{'fwdfw source'}</td><td width='1%'><b>Log</td><td align='center' width='20%'><b>$Lang::tr{'fwdfw target'}</td><td align='center' width='70%'><b>$Lang::tr{'remark'}</td><td align='center' colspan='3' width='1%'><b>$Lang::tr{'fwdfw action'}</td></tr>";
 		foreach my $key (sort keys %$hash){
 			@tmpsrc=();
 			#check if vpn hosts/nets have been deleted
@@ -1637,7 +1637,7 @@ END
 			</td>
 			
 			<form method='post'>
-			<td width='1%'><input type='image' img src='$log' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw togglelog'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'/>
+			<td width='1%' align='left'><input type='image' img src='$log' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw togglelog'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'/>
 			<input type='hidden' name='key' value='$key' />
 			<input type='hidden' name='config' value='$config' />
 			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw togglelog'}' />
@@ -1645,7 +1645,7 @@ END
 END
 		
 			print<<END;
-			<td align='center'>
+			<td align='center' nowrap='nowrap'>
 END
 			if ($$hash{$key}[5] eq 'std_net_tgt'){
 				print &get_name($$hash{$key}[6]);
