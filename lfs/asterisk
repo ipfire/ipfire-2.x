@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.8.13.0
+VER        = 1.8.19.0
 
 THISAPP    = asterisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 7
+PAK_VER    = 8
 
 CHAN_CAPI  = chan_capi-20120614
 
@@ -44,20 +44,17 @@ DEPS       = "libpri libtiff libvorbis libogg spandsp netsnmpd"
 
 objects = $(DL_FILE) \
 	asterisk-1.4-de-prompts.tar.gz \
-	asterisk-core-sounds-en-gsm-1.4.22.tar.gz \
 	asterisk-extra-sounds-en-gsm-1.4.11.tar.gz \
 	asterisk-moh-opsound-gsm-2.03.tar.gz \
 	$(CHAN_CAPI).tgz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-asterisk-core-sounds-en-gsm-1.4.22.tar.gz = $(URL_IPFIRE)/asterisk-core-sounds-en-gsm-1.4.22.tar.gz
 asterisk-extra-sounds-en-gsm-1.4.11.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-gsm-1.4.11.tar.gz
 asterisk-moh-opsound-gsm-2.03.tar.gz = $(URL_IPFIRE)/asterisk-moh-opsound-gsm-2.03.tar.gz
 asterisk-1.4-de-prompts.tar.gz = $(URL_IPFIRE)/asterisk-1.4-de-prompts.tar.gz
 $(CHAN_CAPI).tgz = $(URL_IPFIRE)/$(CHAN_CAPI).tgz
 
-$(DL_FILE)_MD5 = e7f2cb19068c1211c907062f9e96c47a
-asterisk-core-sounds-en-gsm-1.4.22.tar.gz_MD5 = 2a99a45c0675135255bc65796b12f7c6
+$(DL_FILE)_MD5 = dc98436846cc2de57100d78747b1bdd1
 asterisk-extra-sounds-en-gsm-1.4.11.tar.gz_MD5 = 5479cb4cb81d678304d96f35e4933a11
 asterisk-moh-opsound-gsm-2.03.tar.gz_MD5 = 09066f55f1358f298bc1a6e4678a3ddf
 asterisk-1.4-de-prompts.tar.gz_MD5 = 626a2b95071a5505851e43874dfbfd5c
@@ -104,7 +101,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && cp -fv $(DIR_SRC)/config/asterisk/asterisk.makeopts menuselect.makeopts
 
 	# add additional sounds
-	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-core-sounds-en-gsm-1.4.22.tar.gz $(DIR_APP)/sounds/
 	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-extra-sounds-en-gsm-1.4.11.tar.gz $(DIR_APP)/sounds/
 	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-moh-opsound-gsm-2.03.tar.gz $(DIR_APP)/sounds/
 
