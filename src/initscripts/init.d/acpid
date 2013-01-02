@@ -9,14 +9,10 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-# ACPI daemon is only support on Intel architectures.
-case "$(uname -m)" in
-	i?86)
-		;;
-	*)
-		exit 0
-		;;
-esac
+# Test if ACPI is present
+if [ ! -d /proc/acpi ]; then
+	exit 0
+fi
 
 case "${1}" in
 	start)
