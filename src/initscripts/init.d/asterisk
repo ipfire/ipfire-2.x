@@ -23,7 +23,7 @@ case "${1}" in
 
 	stop)
 		boot_mesg "Stopping Asterisk PBX..."
-		asterisk -rx "stop gracefully" >/dev/null 2>&1
+		asterisk -rx "core stop gracefully" >/dev/null 2>&1
 		evaluate_retval
 		;;
 
