@@ -287,6 +287,13 @@ case "$1" in
 		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT "
 	fi
 	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_OUTPUT"
+	
+	if [ "$DROPFORWARD" == "on" ]; then
+		/sbin/iptables -A FORWARDFW -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARDFW "
+	fi
+	/sbin/iptables -A FORWARDFW -j DROP -m comment --comment "DROP_FORWARDFW"
+	
+	
         ;;
   startovpn)  
 	# run openvpn
@@ -323,7 +330,11 @@ case "$1" in
 		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT "
 	fi
 	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_OUTPUT"
-        ;;
+	if [ "$DROPFORWARD" == "on" ]; then
+		/sbin/iptables -A FORWARDFW -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARDFW "
+	fi
+	/sbin/iptables -A FORWARDFW -j DROP -m comment --comment "DROP_FORWARDFW"
+	;;
   stopovpn)
 	# stop openvpn
 	/usr/local/bin/openvpnctrl --delete-chains-and-rules

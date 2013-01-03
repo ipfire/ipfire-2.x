@@ -30,7 +30,7 @@ our %settings=();
 $settings{'DISABLEPING'} = 'NO';
 $settings{'DROPNEWNOTSYN'} = 'on';
 $settings{'DROPINPUT'} = 'on';
-$settings{'DROPOUTPUT'} = 'on';
+$settings{'DROPFORWARD'} = 'on';
 $settings{'DROPPORTSCAN'} = 'on';
 $settings{'DROPWIRELESSINPUT'} = 'on';
 $settings{'DROPWIRELESSFORWARD'} = 'on';
@@ -66,9 +66,9 @@ $checked{'DROPNEWNOTSYN'}{$settings{'DROPNEWNOTSYN'}} = "checked='checked'";
 $checked{'DROPINPUT'}{'off'} = '';
 $checked{'DROPINPUT'}{'on'} = '';
 $checked{'DROPINPUT'}{$settings{'DROPINPUT'}} = "checked='checked'";
-$checked{'DROPOUTPUT'}{'off'} = '';
-$checked{'DROPOUTPUT'}{'on'} = '';
-$checked{'DROPOUTPUT'}{$settings{'DROPOUTPUT'}} = "checked='checked'";
+$checked{'DROPFORWARD'}{'off'} = '';
+$checked{'DROPFORWARD'}{'on'} = '';
+$checked{'DROPFORWARD'}{$settings{'DROPFORWARD'}} = "checked='checked'";
 $checked{'DROPPORTSCAN'}{'off'} = '';
 $checked{'DROPPORTSCAN'}{'on'} = '';
 $checked{'DROPPORTSCAN'}{$settings{'DROPPORTSCAN'}} = "checked='checked'";
@@ -96,8 +96,8 @@ print <<END
 																						<input type='radio' name='DROPNEWNOTSYN' value='off' $checked{'DROPNEWNOTSYN'}{'off'} /> off</td></tr>
 <tr><td align='left' width='60%'>$Lang::tr{'drop input'}</td><td align='left'>on <input type='radio' name='DROPINPUT' value='on' $checked{'DROPINPUT'}{'on'} />/
 																						<input type='radio' name='DROPINPUT' value='off' $checked{'DROPINPUT'}{'off'} /> off</td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop output'}</td><td align='left'>on <input type='radio' name='DROPOUTPUT' value='on' $checked{'DROPOUTPUT'}{'on'} />/
-																						<input type='radio' name='DROPOUTPUT' value='off' $checked{'DROPOUTPUT'}{'off'} /> off</td></tr>
+<tr><td align='left' width='60%'>$Lang::tr{'drop forward'}</td><td align='left'>on <input type='radio' name='DROPFORWARD' value='on' $checked{'DROPFORWARD'}{'on'} />/
+																						<input type='radio' name='DROPFORWARD' value='off' $checked{'DROPFORWARD'}{'off'} /> off</td></tr>
 <tr><td align='left' width='60%'>$Lang::tr{'drop portscan'}</td><td align='left'>on <input type='radio' name='DROPPORTSCAN' value='on' $checked{'DROPPORTSCAN'}{'on'} />/
 																						<input type='radio' name='DROPPORTSCAN' value='off' $checked{'DROPPORTSCAN'}{'off'} /> off</td></tr>
 <tr><td align='left' width='60%'>$Lang::tr{'drop wirelessinput'}</td><td align='left'>on <input type='radio' name='DROPWIRELESSINPUT' value='on' $checked{'DROPWIRELESSINPUT'}{'on'} />/
