@@ -120,7 +120,7 @@ var/ipfire/optionsfw
 var/ipfire/outgoing
 #var/ipfire/outgoing/bin
 #var/ipfire/outgoing/bin/outgoingfw.pl
-var/ipfire/outgoing/defaultservices
+#var/ipfire/outgoing/defaultservices
 #var/ipfire/outgoing/groups
 #var/ipfire/outgoing/groups/ipgroups
 #var/ipfire/outgoing/groups/macgroups

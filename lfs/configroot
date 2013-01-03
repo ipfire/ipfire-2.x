@@ -53,7 +53,7 @@ $(TARGET) :
 	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dns dnsforward \
 			ethernet extrahd/bin fwlogs isdn key langs logging mac main menu.d modem net-traffic \
 			ethernet extrahd/bin fwlogs fwhosts forward forward/bin isdn key langs logging mac main  menu.d modem net-traffic \
-			net-traffic/templates nfs optionsfw outgoing/bin outgoing/groups outgoing/groups/ipgroups \
+			net-traffic/templates nfs optionsfw outgoing/bin \
 			outgoing/groups/macgroups ovpn patches pakfire portfw ppp private proxy/advanced/cre \
 			proxy/calamaris/bin qos/bin red remote sensors snort time tripwire/report \
 			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin upnp vpn \
@@ -65,9 +65,9 @@ $(TARGET) :
 	for i in auth/users backup/include.user backup/exclude.user \
 	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
-	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings fwlogs/ipsettings fwlogs/portsettings \
-	    forward/settings forward/config forward/input fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservices fwhosts/customservicegrp fwlogs/ipsettings fwlogs/portsettings \
-	    isdn/settings mac/settings main/disable_nf_sip main/hosts main/routing main/settings net-traffic/settings optionsfw/settings outgoing/settings outgoing/rules \
+	    extrahd/scan extrahd/devices extrahd/partitions extrahd/settings forward/settings forward/config forward/input \
+	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservices fwhosts/customservicegrp fwlogs/ipsettings fwlogs/portsettings \
+	    isdn/settings mac/settings main/disable_nf_sip main/hosts main/routing main/settings net-traffic/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 		ppp/settings-5 ppp/settings proxy/settings proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
 	    qos/tosconfig snort/settings tripwire/settings upnp/settings vpn/config vpn/settings vpn/ipsec.conf \
@@ -93,8 +93,6 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/net-traffic-admin.pl	$(CONFIG_ROOT)/net-traffic/net-traffic-admin.pl
 	cp $(DIR_SRC)/config/cfgroot/nfs-server			$(CONFIG_ROOT)/nfs/nfs-server
 	cp $(DIR_SRC)/config/cfgroot/p2protocols		$(CONFIG_ROOT)/outgoing/p2protocols
-	cp $(DIR_SRC)/config/outgoingfw/outgoingfw.pl	$(CONFIG_ROOT)/outgoing/bin/
-	cp $(DIR_SRC)/config/outgoingfw/defaultservices	$(CONFIG_ROOT)/outgoing/
 	cp $(DIR_SRC)/config/cfgroot/proxy-acl			$(CONFIG_ROOT)/proxy/acl-1.4
 	cp $(DIR_SRC)/config/qos/*						$(CONFIG_ROOT)/qos/bin/
 	cp $(DIR_SRC)/config/cfgroot/ssh-settings		$(CONFIG_ROOT)/remote/settings
@@ -118,14 +116,8 @@ $(TARGET) :
 	echo  "DROPOUTPUT=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPPORTSCAN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 
-	# Set outgoingfw.pl executable
-	chmod 755 $(CONFIG_ROOT)/outgoing/bin/outgoingfw.pl
-	
 	# set rules.pl executable
 	chmod 755 $(CONFIG_ROOT)/forward/bin/rules.pl
-	
-
-
 	# Modify variables in header.pl
 	sed -i -e "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" \
 	    -e "s+VERSION+$(VERSION)+g" \
@@ -142,7 +134,7 @@ $(TARGET) :
 
 	# Language files
 	cp $(DIR_SRC)/langs/*/cgi-bin/*.pl $(CONFIG_ROOT)/langs/
-	
+
 	# Configroot permissions
 	chown -R nobody:nobody $(CONFIG_ROOT)
 	chown      root:root   $(CONFIG_ROOT)

@@ -195,14 +195,14 @@ case "$1" in
 	# Outgoing Firewall
 	/sbin/iptables -A FORWARD -j OUTGOINGFWMAC
 
-    # Forward Firewall
-    /sbin/iptables -N FORWARDFW
-    /sbin/iptables -A FORWARD -j FORWARDFW
-    
-    # Input Firewall
-    /sbin/iptables -N INPUTFW
-    /sbin/iptables -A INPUT -m state --state NEW -j INPUTFW
-    
+	# Forward Firewall
+	/sbin/iptables -N FORWARDFW
+	/sbin/iptables -A FORWARD -j FORWARDFW
+
+	# Input Firewall
+	/sbin/iptables -N INPUTFW
+	/sbin/iptables -A INPUT -m state --state NEW -j INPUTFW
+
 	# localhost and ethernet.
 	/sbin/iptables -A INPUT   -i lo -m state --state NEW -j ACCEPT
 	/sbin/iptables -A INPUT   -s 127.0.0.0/8 -m state --state NEW -j DROP   # Loopback not on lo

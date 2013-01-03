@@ -28,7 +28,7 @@ SUID_PROGS = setportfw \
 	squidctrl sshctrl ipfirereboot \
 	ipsecctrl timectrl dhcpctrl snortctrl \
 	applejuicectrl rebuildhosts backupctrl \
-	logwatch openvpnctrl outgoingfwctrl forwardfwctrl \
+	logwatch openvpnctrl forwardfwctrl \
 	wirelessctrl getipstat qosctrl launch-ether-wake \
 	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
@@ -86,13 +86,10 @@ smartctrl: smartctrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 clamavctrl: clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-	
-outgoingfwctrl: outgoingfwctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ outgoingfwctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-	
+
 forwardfwctrl: forwardfwctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ forwardfwctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-	
+
 timectrl: timectrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ timectrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
