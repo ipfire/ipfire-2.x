@@ -512,6 +512,7 @@ sub deleterule
 	my %delhash=();
 	&General::readhasharray($fwdfwsettings{'config'}, \%delhash);
 	foreach my $key (sort keys %delhash){
+		
 		if ($key eq $fwdfwsettings{'key'}){
 			#check hosts/net and groups
 			&checkcounter($delhash{$key}[3],$delhash{$key}[4],,);
@@ -521,11 +522,10 @@ sub deleterule
 				&checkcounter($delhash{$key}[14],$delhash{$key}[15],,);
 			}
 		}
-		
 		if ($key ge $fwdfwsettings{'key'}) {
 			my $next = $key + 1;
 			if (exists $delhash{$next}) {
-				foreach my $i (0 .. $#{$configfwdfw{$next}}) {
+				foreach my $i (0 .. $#{$delhash{$next}}) {
 					$delhash{$key}[$i] = $delhash{$next}[$i];
 				}
 			}
@@ -537,6 +537,7 @@ sub deleterule
 
 	&General::writehasharray($fwdfwsettings{'config'}, \%delhash);
 	&rules;
+	
 	if($fwdfwsettings{'nobase'} ne 'on'){
 		&base;
 	}
