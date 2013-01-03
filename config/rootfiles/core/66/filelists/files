@@ -7,6 +7,7 @@ etc/rc.d/init.d/halt
 etc/rc.d/init.d/leds
 etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/network
+etc/rc.d/init.d/networking/red.up/01-conntrack-cleanup
 etc/rc.d/init.d/networking/red.up/98-leds
 etc/rc.d/init.d/partresize
 etc/rc.d/init.d/reboot
