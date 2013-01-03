@@ -401,7 +401,6 @@ sub validipandmask
 
 sub checksubnets
 {
-	
 	my %ccdconfhash=();			
 	my @ccdconf=();				
 	my $ccdname=$_[0];			
@@ -409,7 +408,6 @@ sub checksubnets
 	my $errormessage;
 	my ($ip,$cidr)=split(/\//,$ccdnet);
 	$cidr=&iporsubtocidr($cidr);
-	
 	
 	#get OVPN-Subnet (dynamic range)
 	my %ovpnconf=();
@@ -422,7 +420,7 @@ sub checksubnets
 			$errormessage=$errormessage.$Lang::tr{'ccd err isovpnnet'}."<br>";
 			return $errormessage;
 	}
-		
+	
 	#check if we use a network-name/subnet that already exists
 	&readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
 	foreach my $key (keys %ccdconfhash) {
@@ -440,31 +438,23 @@ sub checksubnets
 		}
 			
 	}
-	#check if we use a name which is already used by ovpn
-	
-	
-	
-	
 	
 	#check if we use a ipsec right network which is already defined
 	my %ipsecconf=();
 	&General::readhasharray("${General::swroot}/vpn/config", \%ipsecconf);
 	foreach my $key (keys %ipsecconf){
 		if ($ipsecconf{$key}[11] ne ''){
-			#$errormessage="DRIN!";
-			#return $errormessage;
-			
 			my ($ipsecip,$ipsecsub) = split (/\//, $ipsecconf{$key}[11]);
 			$ipsecsub=&iporsubtodec($ipsecsub);
-			
-			if ( &IpInSubnet ($ip,$ipsecip,$ipsecsub) ){
-				$errormessage=$Lang::tr{'ccd err isipsecnet'}." Name:  $ipsecconf{$key}[2]";
-				return $errormessage;
+			if($ipsecconf{$key}[1] ne $ccdname){
+				if ( &IpInSubnet ($ip,$ipsecip,$ipsecsub) ){
+					$errormessage=$Lang::tr{'ccd err isipsecnet'}." Name:  $ipsecconf{$key}[2]";
+					return $errormessage;
+				}
 			}
 		}
 	}
-	
-		
+
 	#check if we use one of ipfire's networks (green,orange,blue)
 	my %ownnet=();
 	&readhash("${General::swroot}/ethernet/settings", \%ownnet);
