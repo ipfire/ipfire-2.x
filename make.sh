@@ -509,7 +509,9 @@ buildipfire() {
   ipfiremake mtools
   ipfiremake initscripts
   ipfiremake whatmask
+  ipfiremake libmnl
   ipfiremake iptables
+  ipfiremake conntrack-tools
   ipfiremake libupnp
   ipfiremake ipaddr
   ipfiremake iputils

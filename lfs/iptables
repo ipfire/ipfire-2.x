@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -38,17 +38,23 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 objects = 	$(DL_FILE) \
 			netfilter-layer7-v2.22.tar.gz \
 			libnfnetlink-1.0.0.tar.bz2 \
-			libnetfilter_queue-0.0.17.tar.bz2
+			libnetfilter_queue-0.0.17.tar.bz2 \
+			libnetfilter_conntrack-1.0.2.tar.bz2 \
+			libnetfilter_cttimeout-1.0.0.tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 netfilter-layer7-v2.22.tar.gz 		= $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
 libnfnetlink-1.0.0.tar.bz2		= $(URL_IPFIRE)/libnfnetlink-1.0.0.tar.bz2
 libnetfilter_queue-0.0.17.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-0.0.17.tar.bz2
+libnetfilter_conntrack-1.0.2.tar.bz2	= $(URL_IPFIRE)/libnetfilter_conntrack-1.0.2.tar.bz2
+libnetfilter_cttimeout-1.0.0.tar.bz2	= $(URL_IPFIRE)/libnetfilter_cttimeout-1.0.0.tar.bz2
 
 $(DL_FILE)_MD5 = 5ab24ad683f76689cfe7e0c73f44855d
 netfilter-layer7-v2.22.tar.gz_MD5 = 98dff8a3d5a31885b73341633f69501f
 libnfnetlink-1.0.0.tar.bz2_MD5 = 016fdec8389242615024c529acc1adb8
 libnetfilter_queue-0.0.17.tar.bz2_MD5 = 2cde35e678ead3a8f9eb896bf807a159
+libnetfilter_conntrack-1.0.2.tar.bz2_MD5 = 447114b5d61bb9a9617ead3217c3d3ff
+libnetfilter_cttimeout-1.0.0.tar.bz2_MD5 = 7697437fc9ebb6f6b83df56a633db7f9
 
 install : $(TARGET)
 
@@ -123,6 +129,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && ./configure --prefix=/usr
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && make install
+
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnetfilter_conntrack-1.0.2.tar.bz2
+	cd $(DIR_SRC)/libnetfilter_conntrack-1.0.2 && ./configure --prefix=/usr
+	cd $(DIR_SRC)/libnetfilter_conntrack-1.0.2 && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/libnetfilter_conntrack-1.0.2 && make install
+
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnetfilter_cttimeout-1.0.0.tar.bz2
+	cd $(DIR_SRC)/libnetfilter_cttimeout-1.0.0 && ./configure --prefix=/usr
+	cd $(DIR_SRC)/libnetfilter_cttimeout-1.0.0 && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/libnetfilter_cttimeout-1.0.0 && make install
 
 	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-1.0.0 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.17
 	@$(POSTBUILD)

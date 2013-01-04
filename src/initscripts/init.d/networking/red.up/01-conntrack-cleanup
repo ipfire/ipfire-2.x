@@ -1,0 +1,25 @@
+#!/bin/bash
+############################################################################
+# conntrack-cleanup - remove conntrack entries with the last red ipaddress #
+############################################################################
+#
+
+curr_ip=`cat /var/ipfire/red/local-ipaddress 2>/dev/null`
+last_ip=`cat /var/lock/last-ipaddress 2>/dev/null`
+
+if [ "$curr_ip" == "$last_ip" ]; then
+	exit 0
+fi
+
+if [ -z "$curr_ip" ]; then
+	echo ERROR: cannot read current IP.
+	exit 1
+fi
+
+if [ ! -z "$last_ip" ]; then
+	conntrack -D -s $last_ip 2>&1 > /dev/null
+	conntrack -D -d $last_ip 2>&1 > /dev/null
+	conntrack -D -r $last_ip 2>&1 > /dev/null
+	conntrack -D -q $last_ip 2>&1 > /dev/null
+fi
+echo $curr_ip > /var/lock/last-ipaddress
