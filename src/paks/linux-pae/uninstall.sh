@@ -17,10 +17,15 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2010 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2007-2013 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
 remove_files
-#mv -f /boot/grub/grub-backup-2.6.32.*-pae.conf /boot/grub/grub.conf
+rm -rf /boot/ipfirerd-*-pae.img
+rm -rf /lib/modules/*-ipfire-pae
+cp /boot/grub/grub.conf /boot/grub/grub-backup-pae_uninstall.conf
+sed -i "/title IPFire (PAE-Kernel)/,+3d" /boot/grub/grub.conf
+grub-set-default 1
+sync && sync
