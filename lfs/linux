@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2013  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER           = 3.2.35
+VER           = 3.2.36
 
 RPI_PATCHES = linux-3.2.27-ada8b44
 
@@ -71,7 +71,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
-$(DL_FILE)_MD5				= 4566af86b5ae8f9dfce2442ccac79cc3
+$(DL_FILE)_MD5				= 9b92ea2160a9a383fad7487b5cfd653b
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 966687ff27e450e04ff50e0da829dc00
 
 install : $(TARGET)
