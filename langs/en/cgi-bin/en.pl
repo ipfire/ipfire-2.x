@@ -773,7 +773,7 @@
 'driver' => 'Driver',
 'drop input' => 'Log dropped input pakets',
 'drop newnotsyn' => 'Log dropped new not syn pakets',
-'drop forward' => 'Log dropped forward pakets',
+'drop forward' => 'Log dropped firewall pakets',
 'drop portscan' => 'Log dropped portscan pakets',
 'drop proxy' => 'Drop all packets not addressed to proxy',
 'drop samba' => 'Drop all Microsoft ports 135,137,138,139,445,1025',

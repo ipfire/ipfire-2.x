@@ -749,7 +749,7 @@
 'driver' => 'Treiber',
 'drop input' => 'Verworfene Input-Pakete loggen',
 'drop newnotsyn' => 'Verworfene New Not Syn Pakete loggen',
-'drop forward' => 'Verworfene Forward Pakete loggen',
+'drop forward' => 'Verworfene Firewall-Pakete loggen',
 'drop portscan' => 'Verworfene Portscan Pakete loggen',
 'drop proxy' => 'Alle Pakete verwerfen die nicht direkt an den Proxy gerichtet sind',
 'drop samba' => 'Alle Microsoft Pakete verwerfen, Ports 135,137,138,139,445,1025',
