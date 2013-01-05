@@ -22,8 +22,8 @@ usr/lib/perl5/site_perl/5.12.3/Git/I18N.pm
 #usr/lib/perl5/site_perl/5.12.3/Git/SVN/Prompt.pm
 #usr/lib/perl5/site_perl/5.12.3/Git/SVN/Ra.pm
 #usr/lib/perl5/site_perl/5.12.3/Git/SVN/Utils.pm
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Git
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Git/.packlist
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Git
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Git/.packlist
 usr/lib/python2.7/site-packages/git_remote_helpers
 #usr/lib/python2.7/site-packages/git_remote_helpers-0.1.0-py2.7.egg-info
 usr/lib/python2.7/site-packages/git_remote_helpers/__init__.py
