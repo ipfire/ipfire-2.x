@@ -114,7 +114,7 @@ add_to_backup usr/local/bin/vpn-watch
 add_to_backup usr/libexec/ipsec
 
 # Backup the files
-tar cJvf /var/ipfire/backup/core-upgrade_$KVER.tar.xz \
+tar cJvf /var/ipfire/backup/core-upgrade$core_$KVER.tar.xz \
     -C / -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' --exclude='/var/cache' > /dev/null 2>&1
 
 # Check diskspace on root
@@ -321,7 +321,7 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 	else
 		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
 		echo "ProgVersion: 3.2.35" >> /opt/pakfire/db/installed/meta-linux-pae
-		echo "Release: 24"     >> /opt/pakfire/db/installed/meta-linux-pae
+		echo "Release: 25"     >> /opt/pakfire/db/installed/meta-linux-pae
 	fi
 fi
 
