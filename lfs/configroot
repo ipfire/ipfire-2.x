@@ -111,9 +111,7 @@ $(TARGET) :
 	echo  "nameserver    1.2.3.4"	> $(CONFIG_ROOT)/ppp/fake-resolv.conf
 	echo  "DROPNEWNOTSYN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPINPUT=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPOUTPUT=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPINPUT=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPOUTPUT=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "DROPFORWARD=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPPORTSCAN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 
 	# set rules.pl executable
