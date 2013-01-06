@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -88,6 +88,12 @@ for path in /sys/block/*; do
 			break
 		fi
 	done
+
+	# Check if user want skip by commandline
+	if [ "$(grep "skipdst=${device_}" /proc/cmdline)" ]; then
+		echo "${device_} was skipped via cmdline."
+		continue
+	fi
 
 	echo "Checking ${device_}"
 	if check_source_drive ${device_}; then
