@@ -2,6 +2,9 @@ usr/local/bin/elinks
 #usr/local/etc
 #usr/local/etc/elinks
 usr/local/etc/elinks/elinks.conf
+#usr/local/share/locale/af
+#usr/local/share/locale/af/LC_MESSAGES
+#usr/local/share/locale/af/LC_MESSAGES/elinks.mo
 #usr/local/share/locale/be
 #usr/local/share/locale/be/LC_MESSAGES
 #usr/local/share/locale/be/LC_MESSAGES/elinks.mo
