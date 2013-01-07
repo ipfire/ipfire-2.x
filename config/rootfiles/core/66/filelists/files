@@ -36,6 +36,7 @@ usr/bin/watch
 usr/local/bin/readhash
 usr/local/bin/scanhd
 usr/sbin/ovpn-ccd-convert
+var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/include
 var/ipfire/general-functions.pl
 var/ipfire/langs
