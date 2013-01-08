@@ -88,9 +88,11 @@ if($param eq 'flush'){
 	&preparerules;
 	if($MODE eq '0'){
 		if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
-			system ("iptables -A $CHAIN -j DROP"); 
+			#system ("iptables -A $CHAIN -j DROP"); 
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
-			system ("iptables -A $CHAIN -j ACCEPT");
+			#system ("iptables -A $CHAIN -j ACCEPT");
+		}elsif($fwdfwsettings{'POLICY'} eq 'MODE0' || $fwdfwsettings{'POLICY'} eq 'MODE2'){
+			system ("iptables -A $CHAIN -m state --state NEW -j ACCEPT");
 		}
 	}
 }

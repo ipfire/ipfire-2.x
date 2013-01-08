@@ -211,7 +211,7 @@ case "$1" in
 	/sbin/iptables -A FORWARD -s 127.0.0.0/8 -m state --state NEW -j DROP
 	/sbin/iptables -A FORWARD -d 127.0.0.0/8 -m state --state NEW -j DROP
 	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m state --state NEW -j ACCEPT ! -p icmp
-	/sbin/iptables -A FORWARD -i $GREEN_DEV  -m state --state NEW -j ACCEPT
+	#/sbin/iptables -A FORWARD -i $GREEN_DEV  -m state --state NEW -j ACCEPT
 
 	# If a host on orange tries to initiate a connection to IPFire's red IP and
 	# the connection gets DNATed back through a port forward to a server on orange
@@ -283,18 +283,12 @@ case "$1" in
 		/sbin/iptables -A INPUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
 	fi
 	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
-	if [ "$DROPOUTPUT" == "on" ]; then
-		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT "
-	fi
-	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_OUTPUT"
-	
 	if [ "$DROPFORWARD" == "on" ]; then
-		/sbin/iptables -A FORWARDFW -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARDFW "
+		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
 	fi
-	/sbin/iptables -A FORWARDFW -j DROP -m comment --comment "DROP_FORWARDFW"
+	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
 	
-	
-        ;;
+	;;
   startovpn)  
 	# run openvpn
 	/usr/local/bin/openvpnctrl --create-chains-and-rules
@@ -326,14 +320,14 @@ case "$1" in
 		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
 	fi
 	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
-	if [ "$DROPOUTPUT" == "on" ]; then
-		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT "
-	fi
-	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_OUTPUT"
+	#if [ "$DROPOUTPUT" == "on" ]; then
+	#	/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT "
+	#fi
+	#/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_OUTPUT"
 	if [ "$DROPFORWARD" == "on" ]; then
 		/sbin/iptables -A FORWARDFW -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARDFW "
 	fi
-	/sbin/iptables -A FORWARDFW -j DROP -m comment --comment "DROP_FORWARDFW"
+	/sbin/iptables -A FORWARDFW -j DROP -m comment --comment "DROP_FORWARDFW-oberdropper"
 	;;
   stopovpn)
 	# stop openvpn
