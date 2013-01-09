@@ -47,6 +47,8 @@ my %defaultNetworks=();
 my %mainsettings=();
 my %ownnet=();
 my %ipsecsettings=();
+my %fwfwd=();
+my %fwinp=();
 
 my $errormessage;
 my $hint;
@@ -59,6 +61,8 @@ my $configccdhost	= "${General::swroot}/ovpn/ovpnconfig";
 my $configipsec		= "${General::swroot}/vpn/config";
 my $configsrv		= "${General::swroot}/fwhosts/customservices";
 my $configsrvgrp	= "${General::swroot}/fwhosts/customservicegrp";
+my $fwconfigfwd		= "${General::swroot}/forward/config";
+my $fwconfiginp		= "${General::swroot}/forward/input";
 
 unless (-e $confignet)    { system("touch $confignet"); }
 unless (-e $confighost)   { system("touch $confighost"); }
@@ -116,6 +120,9 @@ if ($fwhostsettings{'ACTION'} eq 'updatehost')
 		}
 	}
 	&General::writehasharray("$confighost", \%customhost);
+	
+	
+	
 	$fwhostsettings{'actualize'} = 'on';
 	$fwhostsettings{'ACTION'} = 'savehost';
 }
@@ -285,6 +292,28 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 						}
 					}
 					&General::writehasharray("$configgrp", \%customgrp);
+					#check if we need to update firewallrules
+					if ( ! -z $fwconfigfwd ){
+						&General::readhasharray("$fwconfigfwd", \%fwfwd);
+						foreach my $line (sort keys %fwfwd){
+							if ($fwfwd{$line}[4] eq $fwhostsettings{'orgname'}){
+								$fwfwd{$line}[4] = $fwhostsettings{'HOSTNAME'};
+							}
+							if ($fwfwd{$line}[6] eq $fwhostsettings{'orgname'}){
+								$fwfwd{$line}[6] = $fwhostsettings{'HOSTNAME'};
+							}
+						}
+						&General::writehasharray("$fwconfigfwd", \%fwfwd);
+					}
+					if ( ! -z $fwconfiginp ){
+						&General::readhasharray("$fwconfiginp", \%fwinp);
+						foreach my $line (sort keys %fwinp){
+							if ($fwfwd{$line}[4] eq $fwhostsettings{'orgname'}){
+								$fwfwd{$line}[4] = $fwhostsettings{'HOSTNAME'};
+							}
+						}
+						&General::writehasharray("$fwconfiginp", \%fwinp);
+					}
 				}
 			}					
 			my $key = &General::findhasharraykey (\%customnetwork);
@@ -416,9 +445,29 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 						}
 					}
 					&General::writehasharray("$configgrp", \%customgrp);
+					#check if we need to update firewallrules
+					if ( ! -z $fwconfigfwd ){
+						&General::readhasharray("$fwconfigfwd", \%fwfwd);
+						foreach my $line (sort keys %fwfwd){
+							if ($fwfwd{$line}[4] eq $fwhostsettings{'orgname'}){
+								$fwfwd{$line}[4] = $fwhostsettings{'HOSTNAME'};
+							}
+							if ($fwfwd{$line}[6] eq $fwhostsettings{'orgname'}){
+								$fwfwd{$line}[6] = $fwhostsettings{'HOSTNAME'};
+							}
+						}
+						&General::writehasharray("$fwconfigfwd", \%fwfwd);
+					}
+					if ( ! -z $fwconfiginp ){
+						&General::readhasharray("$fwconfiginp", \%fwinp);
+						foreach my $line (sort keys %fwinp){
+							if ($fwfwd{$line}[4] eq $fwhostsettings{'orgname'}){
+								$fwfwd{$line}[4] = $fwhostsettings{'HOSTNAME'};
+							}
+						}
+						&General::writehasharray("$fwconfiginp", \%fwinp);
+					}
 				}
-				
-				
 			}
 			my $key = &General::findhasharraykey (\%customhost);
 			foreach my $i (0 .. 3) { $customhost{$key}[$i] = "";}
@@ -1084,6 +1133,7 @@ END
 			foreach my $network (sort keys %defaultNetworks)
 			{
 				next if($defaultNetworks{$network}{'LOCATION'} eq "IPCOP");
+				next if($defaultNetworks{$network}{'NAME'} eq "RED");
 				print "<option value='$defaultNetworks{$network}{'NAME'}'";
 				print " selected='selected'" if ($fwhostsettings{'DEFAULT_SRC_ADR'} eq $defaultNetworks{$network}{'NAME'});
 				print ">$network</option>";
@@ -1186,7 +1236,7 @@ sub addservice
 	}
 	print<<END;
 	<table width='100%' border='0'><form method='post'>
-	<tr><td width='1%' nowrap='nowrap'>$Lang::tr{'fwhost srv_name'}:</td><td width='1%' nowrap='nowrap'><input type='text' name='SRV_NAME' value='$fwhostsettings{'SRV_NAME'}'></td><td width='1%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT'>
+	<tr><td width='1%' nowrap='nowrap'>$Lang::tr{'fwhost srv_name'}:</td><td width='1%' nowrap='nowrap'><input type='text' name='SRV_NAME' id='textbox1' value='$fwhostsettings{'SRV_NAME'}'><script>document.getElementById('textbox1').focus()</script></td><td width='1%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT'>
 END
 	foreach ("TCP","UDP","ICMP")
 	{

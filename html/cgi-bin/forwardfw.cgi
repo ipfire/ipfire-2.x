@@ -112,54 +112,50 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
-		
+
 	#check if we change an forward rule to an external access
-	if(	$fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{'oldgrp2a'} ne 'ipfire'){
+	if(	$fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{'oldgrp2a'} ne 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 		$fwdfwsettings{'updatefwrule'}='';
 		$fwdfwsettings{'config'}=$configfwdfw;
 		$fwdfwsettings{'nobase'}='on';
 		&deleterule;
+		&checkcounter(0,0,$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
+		&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 	}
-		
+
 	#check if we change an external access rule to an forward
-	if(	$fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire'){
+	if(	$fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 		$fwdfwsettings{'updatefwrule'}='';
 		$fwdfwsettings{'config'}=$configinput;
 		$fwdfwsettings{'nobase'}='on';
 		&deleterule;
+		&checkcounter(0,0,$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
+		&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 	}	
-		
 	#INPUT part
 	if($fwdfwsettings{'grp2'} eq 'ipfire'){
 		$fwdfwsettings{'chain'} = 'INPUTFW';
 		#check if we have an identical rule already
 		foreach my $key (sort keys %configinputfw){
 			if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'ruleremark'},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
-				eq "$configfwdfw{$key}[0],$configfwdfw{$key}[2],$configfwdfw{$key}[3],$configfwdfw{$key}[4],$configfwdfw{$key}[5],$configfwdfw{$key}[6],$configfwdfw{$key}[7],$configfwdfw{$key}[8],$configfwdfw{$key}[9],$configfwdfw{$key}[10],$configfwdfw{$key}[11],$configfwdfw{$key}[12],$configfwdfw{$key}[13],$configfwdfw{$key}[14],$configfwdfw{$key}[15],$configfwdfw{$key}[16],$configfwdfw{$key}[17],$configfwdfw{$key}[18],$configfwdfw{$key}[19],$configfwdfw{$key}[20],$configfwdfw{$key}[21],$configfwdfw{$key}[22],$configfwdfw{$key}[23],$configfwdfw{$key}[24],$configfwdfw{$key}[25],$configfwdfw{$key}[26],$configfwdfw{$key}[27]"){
-				 $errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-			}		
+				eq "$configinputfw{$key}[0],$configinputfw{$key}[2],$configinputfw{$key}[3],$configinputfw{$key}[4],$configinputfw{$key}[5],$configinputfw{$key}[6],$configinputfw{$key}[7],$configinputfw{$key}[8],$configinputfw{$key}[9],$configinputfw{$key}[10],$configinputfw{$key}[11],$configinputfw{$key}[12],$configinputfw{$key}[13],$configinputfw{$key}[14],$configinputfw{$key}[15],$configinputfw{$key}[16],$configinputfw{$key}[17],$configinputfw{$key}[18],$configinputfw{$key}[19],$configinputfw{$key}[20],$configinputfw{$key}[21],$configinputfw{$key}[22],$configinputfw{$key}[23],$configinputfw{$key}[24],$configinputfw{$key}[25],$configinputfw{$key}[26],$configinputfw{$key}[27]"){
+					$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+			}	
 		}	
-		
-			&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
-			if ($fwdfwsettings{'nobase'} ne 'on'){
-				&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
-			}
-			
-			if($fwdfwsettings{'oldusesrv'} eq '' &&  $fwdfwsettings{'USESRV'} eq 'ON'){
-				&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-			}elsif ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'oldusesrv'} eq 'ON') {
-				&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},0,0);
-			}elsif ($fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldgrp3b'} ne $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'updatefwrule'} eq 'on'){
-				&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-			}
-			
-			if ($fwdfwsettings{'nobase'} eq 'on'){
-				&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-			}
-			
-		
+
+		&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
+		if ($fwdfwsettings{'nobase'} ne 'on'){
+			&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
+		}
+		if($fwdfwsettings{'oldusesrv'} eq '' &&  $fwdfwsettings{'USESRV'} eq 'ON'){
+			&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
+		}elsif ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'oldusesrv'} eq 'ON') {
+			&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},0,0);
+		}elsif ($fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldgrp3b'} ne $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'updatefwrule'} eq 'on'){
+			&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
+		}
+
 		&saverule(\%configinputfw,$configinput);
-		
 		#print "Source: $fwdfwsettings{'grp1'} -> $fwdfwsettings{$fwdfwsettings{'grp1'}}<br>";
 		#print "Sourceport: $fwdfwsettings{'USE_SRC_PORT'}, $fwdfwsettings{'PROT'}, $fwdfwsettings{'ICMP_TYPES'}, $fwdfwsettings{'SRC_PORT'}<br>";
 		#print "Target: $fwdfwsettings{'grp2'} -> $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
@@ -181,9 +177,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		#print"ALT: $fwdfwsettings{'oldgrp2a'} $fwdfwsettings{'oldgrp2b'}	NEU:	$fwdfwsettings{'grp2'} $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
 		#print"ALT: $fwdfwsettings{'oldgrp3a'} $fwdfwsettings{'oldgrp3b'}	NEU:	$fwdfwsettings{'grp3'} $fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 		#print"DIENSTE Checkalt:$fwdfwsettings{'oldusesrv'}  DIENSTE Checkneu:$fwdfwsettings{'USESRV'}    DIENST ALT:$fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'}   DIENST NEU:$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
-	
-		
-		
 	}else{
 		$fwdfwsettings{'chain'} = 'FORWARDFW';
 		#check if we have an identical rule already
@@ -196,9 +189,9 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		}	
 		#increase counters
 		&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
-		
+
 		&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
-		
+
 		if($fwdfwsettings{'oldusesrv'} eq '' &&  $fwdfwsettings{'USESRV'} eq 'ON'){
 			&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 		}elsif ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'oldusesrv'} eq 'ON') {
@@ -206,14 +199,11 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		}elsif ($fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldgrp3b'} ne $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 		}
-		
 		if ($fwdfwsettings{'nobase'} eq 'on'){
 			&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 		}
-		
-		
 		&saverule(\%configfwdfw,$configfwdfw);
-				
+
 		#print "Source: $fwdfwsettings{'grp1'} -> $fwdfwsettings{$fwdfwsettings{'grp1'}}<br>";
 		#print "Sourceport: $fwdfwsettings{'USE_SRC_PORT'}, $fwdfwsettings{'PROT'}, $fwdfwsettings{'ICMP_TYPES'}, $fwdfwsettings{'SRC_PORT'}<br>";
 		#print "Target: $fwdfwsettings{'grp2'} -> $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
@@ -235,9 +225,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		#print"ALT: $fwdfwsettings{'oldgrp2a'} $fwdfwsettings{'oldgrp2b'}	NEU:	$fwdfwsettings{'grp2'} $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
 		#print"ALT: $fwdfwsettings{'oldgrp3a'} $fwdfwsettings{'oldgrp3b'}	NEU:	$fwdfwsettings{'grp3'} $fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 		#print"DIENSTE Checkalt:$fwdfwsettings{'oldusesrv'}  DIENSTE Checkneu:$fwdfwsettings{'USESRV'}    DIENST ALT:$fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'}   DIENST NEU:$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
-	
-		
-		
 	}
 	if ($errormessage){
 		&newrule;
@@ -245,7 +232,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		&rules;
 		&base;
 	}
-	
 }
 if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'reset'})
 {
@@ -264,12 +250,10 @@ if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'reset'})
 	$fwdfwsettings{'POLICY'}='MODE0';
 	system("rm ${General::swroot}/forward/config");
 	system("rm ${General::swroot}/forward/input");
-	%fwdfwsettings = ();
-	
 	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
 	unless (-e "${General::swroot}/forward/config")  	{ system("touch ${General::swroot}/forward/config"); }
 	unless (-e "${General::swroot}/forward/input")  	{ system("touch ${General::swroot}/forward/input"); }
-	
+	%fwdfwsettings = ();
 	&reread_rules;
 
 }
@@ -407,7 +391,7 @@ sub checkcounter
 	}elsif($base1 eq 'cust_srvgrp'){
 		&dec_counter($configsrvgrp,\%customservicegrp,$val1);	
 	}
-	
+
 	if($base2 eq 'cust_net_src' || $base2 eq 'cust_net_tgt'){
 		&inc_counter($confignet,\%customnetwork,$val2);
 	}elsif($base2 eq 'cust_host_src' || $base2 eq 'cust_host_tgt'){
@@ -426,13 +410,12 @@ sub inc_counter
 	my %hash=%{(shift)};
 	my $val=shift;
 	my $pos;
-	
+
 	&General::readhasharray($config, \%hash);
 	foreach my $key (sort { uc($hash{$a}[0]) cmp uc($hash{$b}[0]) }  keys %hash){
 		if($hash{$key}[0] eq $val){
 			$pos=$#{$hash{$key}};
 			$hash{$key}[$pos] = $hash{$key}[$pos]+1;
-			
 		}
 	}
 	&General::writehasharray($config, \%hash);
@@ -449,23 +432,21 @@ sub dec_counter
 		if($hash{$key}[0] eq $val){
 			$pos=$#{$hash{$key}};
 			$hash{$key}[$pos] = $hash{$key}[$pos]-1;
-			
 		}
 	}
 	&General::writehasharray($config, \%hash);
 }
 sub base
 {
-	
 	if ($fwdfwsettings{'POLICY'} eq 'MODE0'){ $selected{'POLICY'}{'MODE0'} = 'selected'; } else { $selected{'POLICY'}{'MODE0'} = ''; }
 	if ($fwdfwsettings{'POLICY'} eq 'MODE1'){ $selected{'POLICY'}{'MODE1'} = 'selected'; } else { $selected{'POLICY'}{'MODE1'} = ''; }
 	if ($fwdfwsettings{'POLICY'} eq 'MODE2'){ $selected{'POLICY'}{'MODE2'} = 'selected'; } else { $selected{'POLICY'}{'MODE2'} = ''; }
-	
+
 	&hint;
 	if ($fwdfwsettings{'POLICY'} ne 'MODE0'  && $fwdfwsettings{'POLICY'} ne '') {
 		&addrule;
 	}
-	
+
 	#print"<table width='100' border='1'><tr>";
 	#foreach (0 .. 40){
 		#my $i="color".$_;
@@ -494,7 +475,7 @@ sub addrule
 {
 	&error;
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw addrule'});
-	
+
 	print "<form method='post'>";
 	print "<table border='0'>";
 	print "<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw newrule'}'></td>";
@@ -505,7 +486,6 @@ sub addrule
 
 	&Header::closebox();
 	&viewtablerule;
-	
 }
 sub deleterule
 {
@@ -537,7 +517,7 @@ sub deleterule
 
 	&General::writehasharray($fwdfwsettings{'config'}, \%delhash);
 	&rules;
-	
+
 	if($fwdfwsettings{'nobase'} ne 'on'){
 		&base;
 	}
@@ -553,7 +533,6 @@ sub disable_rule
 	}
 	&General::writehasharray("$configfwdfw", \%configfwdfw);
 	&rules;
-	
 }
 sub checksource
 {
@@ -589,7 +568,7 @@ sub checksource
 		$errormessage.=$Lang::tr{'fwdfw err nosrcip'};
 		return $errormessage;
 	}
-		
+
 	#check empty fields
 	if ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq ''){ $errormessage.=$Lang::tr{'fwdfw err nosrc'}."<br>";}
 	#check icmp source
@@ -601,6 +580,12 @@ sub checksource
 					$fwdfwsettings{'ICMP_TYPES'}="$icmptypes{$key}[0]";
 				}
 			}
+		}elsif($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} eq 'GRE'){
+			$fwdfwsettings{'SRC_PORT'}='';
+			$fwdfwsettings{'ICMP_TYPES'}='';
+		}elsif($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} eq 'ESP'){
+			$fwdfwsettings{'SRC_PORT'}='';
+			$fwdfwsettings{'ICMP_TYPES'}='';
 		}elsif($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} ne 'ICMP'){
 			$fwdfwsettings{'ICMP_TYPES'}='';
 		}else{
@@ -608,7 +593,7 @@ sub checksource
 			$fwdfwsettings{'SRC_PORT'}='';
 			$fwdfwsettings{'PROT'}='';
 		}
-		
+
 	if($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} ne 'ICMP' && $fwdfwsettings{'SRC_PORT'} ne ''){
 		#change dashes with :
 		$fwdfwsettings{'SRC_PORT'}=~ tr/-/:/;
@@ -622,7 +607,7 @@ sub checksource
 		if ($fwdfwsettings{'SRC_PORT'} =~ /^(\d+)\:(\D)$/) {
 			$fwdfwsettings{'SRC_PORT'} = "$1:65535";
 		}
-		
+
 		$errormessage.=&General::validportrange($fwdfwsettings{'SRC_PORT'},'src');
 	}
 	return $errormessage;
@@ -630,8 +615,7 @@ sub checksource
 sub checktarget
 {
 	my ($ip,$subnet);
-	
-		
+
 	if ($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} ne ''){
 		#check if ip with subnet
 		if ($fwdfwsettings{'tgt_addr'} =~ /^(.*?)\/(.*?)$/) {
@@ -658,15 +642,15 @@ sub checktarget
 		if(!&General::validipandmask($fwdfwsettings{'tgt_addr'})){
 			$errormessage.=$Lang::tr{'fwdfw err tgt_addr'}."<br>";
 		}
-		
+
 	}elsif($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} eq ''){
 		$errormessage.=$Lang::tr{'fwdfw err notgtip'};
 		return $errormessage;
 	}
-		
+
 	#check empty fields
 	if ($fwdfwsettings{$fwdfwsettings{'grp2'}} eq ''){ $errormessage.=$Lang::tr{'fwdfw err notgt'}."<br>";}
-	
+
 	#check tgt services
 	if ($fwdfwsettings{'USESRV'} eq 'ON'){
 		if ($fwdfwsettings{'grp3'} eq 'cust_srv'){
@@ -682,7 +666,7 @@ sub checktarget
 			}
 		}
 		if ($fwdfwsettings{'grp3'} eq 'TGT_PORT'){
-			if ($fwdfwsettings{'TGT_PROT'} ne 'ICMP'){
+			if ($fwdfwsettings{'TGT_PROT'} ne 'ICMP' && $fwdfwsettings{'TGT_PROT'} ne 'GRE'){
 				if ($fwdfwsettings{'TGT_PORT'} ne ''){
 					#change dashes with :
 					$fwdfwsettings{'TGT_PORT'}=~ tr/-/:/;
@@ -697,19 +681,25 @@ sub checktarget
 					}
 					$errormessage .= &General::validportrange($fwdfwsettings{'TGT_PORT'}, 'destination');
 				}
+			}elsif ($fwdfwsettings{'TGT_PROT'} eq 'GRE'){
+					$fwdfwsettings{'TGT_PORT'} = '';
+					$fwdfwsettings{'ICMP_TGT'} = '';
+			}elsif($fwdfwsettings{'TGT_PORT'} eq 'ESP'){
+					$fwdfwsettings{'TGT_PORT'}='';
+					$fwdfwsettings{'ICMP_TGT'}='';
 			}elsif ($fwdfwsettings{'TGT_PROT'} eq 'ICMP'){
+				$fwdfwsettings{'TGT_PORT'} = '';
 				&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 				foreach my $key (keys %icmptypes){
 					
 					if ("$icmptypes{$key}[0] ($icmptypes{$key}[1])" eq $fwdfwsettings{'ICMP_TGT'}){
-						
 						$fwdfwsettings{'ICMP_TGT'}=$icmptypes{$key}[0];
 					}
 				}
 			}
 		}
 	}
-	
+
 	#check targetport
 	if ($fwdfwsettings{'USESRV'} ne 'ON'){
 		$fwdfwsettings{'grp3'}='';
@@ -717,17 +707,12 @@ sub checktarget
 		$fwdfwsettings{'TGT_PROT'}='';
 		$fwdfwsettings{'ICMP_TGT'}='';
 	}
-		
-		
 	#check timeframe
 	if($fwdfwsettings{'TIME'} eq 'ON'){
 		if($fwdfwsettings{'TIME_MON'} eq '' && $fwdfwsettings{'TIME_TUE'} eq '' && $fwdfwsettings{'TIME_WED'} eq '' && $fwdfwsettings{'TIME_THU'} eq '' && $fwdfwsettings{'TIME_FRI'} eq '' && $fwdfwsettings{'TIME_SAT'} eq '' && $fwdfwsettings{'TIME_SUN'} eq ''){
 			$errormessage=$Lang::tr{'fwdfw err time'};
 		}
 	}
-	
-	
-	
 	return $errormessage;
 }
 sub checkrule
@@ -741,17 +726,14 @@ sub checkrule
 		$errormessage.=$Lang::tr{'fwdfw err same'};
 		return $errormessage;
 	}
-		
+
 	#get source and targetip address if possible
 	my ($sip,$scidr,$tip,$tcidr);
 	($sip,$scidr)=&get_ip("src","grp1");
 	($tip,$tcidr)=&get_ip("tgt","grp2");
-	
-	
-	
+
 	#check same iprange in source and target
 	if ($sip ne '' && $scidr ne '' && $tip ne '' && $tcidr ne ''){
-		
 		my $networkip1=&General::getnetworkip($sip,$scidr);
 		my $networkip2=&General::getnetworkip($tip,$tcidr);
 		if ($scidr gt $tcidr){
@@ -759,20 +741,19 @@ sub checkrule
 				$errormessage.=$Lang::tr{'fwdfw err samesub'};
 			}
 		}elsif($scidr eq $tcidr && $scidr eq '32'){
-			my ($sbyte1,$sbyte2,$sbyte3,$sbyte4)=split(".",$networkip1);
-			my ($tbyte1,$tbyte2,$tbyte3,$tbyte4)=split(".",$networkip2);
+			my ($sbyte1,$sbyte2,$sbyte3,$sbyte4)=split(/\./,$networkip1);
+			my ($tbyte1,$tbyte2,$tbyte3,$tbyte4)=split(/\./,$networkip2);
 				if ($sbyte1 eq $tbyte1 && $sbyte2 eq $tbyte2 && $sbyte3 eq $tbyte3){
 					$hint=$Lang::tr{'fwdfw hint ip1'}."<br>";
 					$hint.=$Lang::tr{'fwdfw hint ip2'}." Source: $networkip1/$scidr Target: $networkip2/$tcidr<br>";
 				}
-		
 		}else{
 			if ( &General::IpInSubnet($networkip2,$sip,&General::iporsubtodec($scidr)) ){
 			$errormessage.=$Lang::tr{'fwdfw err samesub'};
 			}
 		}
 	}
-		
+
 	#check source and destination protocol if manual
 	if( $fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'USESRV'} eq 'ON'){
 		if($fwdfwsettings{'PROT'} ne $fwdfwsettings{'TGT_PROT'} && $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
@@ -791,7 +772,6 @@ sub checkrule
 			}
 		}
 	}
-	
 }
 sub get_ip
 {
@@ -842,7 +822,6 @@ sub get_ip
 			}
 		}
 	}
-	
 	return $a,$b;
 }
 sub newrule
@@ -858,14 +837,11 @@ sub newrule
 	&General::readhasharray("$configgrp", \%customgrp);
 	&General::readhasharray("$configipsec", \%ipsecconf);
 	&General::get_aliases(\%aliases);
-	
-		
 	my %checked=();
 	my $helper;
 	if($fwdfwsettings{'config'} eq ''){$fwdfwsettings{'config'}=$configfwdfw;}
 	my $config=$fwdfwsettings{'config'};
 	my %hash=();
-		
 	$checked{'grp1'}{$fwdfwsettings{'grp1'}} 				= 'CHECKED';
 	$checked{'grp2'}{$fwdfwsettings{'grp2'}} 				= 'CHECKED';
 	$checked{'grp3'}{$fwdfwsettings{'grp3'}} 				= 'CHECKED';
@@ -884,7 +860,6 @@ sub newrule
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
-	
 	#check if update and get values
 	if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on' && !$errormessage){
 		&General::readhasharray("$config", \%hash);
@@ -917,7 +892,6 @@ sub newrule
 				$fwdfwsettings{'TIME_SUN'}				= $hash{$key}[25];
 				$fwdfwsettings{'TIME_FROM'}				= $hash{$key}[26];
 				$fwdfwsettings{'TIME_TO'}				= $hash{$key}[27];
-				 
 				$checked{'grp1'}{$fwdfwsettings{'grp1'}} 				= 'CHECKED';
 				$checked{'grp2'}{$fwdfwsettings{'grp2'}} 				= 'CHECKED';
 				$checked{'grp3'}{$fwdfwsettings{'grp3'}} 				= 'CHECKED';
@@ -949,9 +923,9 @@ sub newrule
 		$fwdfwsettings{'ACTIVE'}='ON';
 		$checked{'ACTIVE'}{$fwdfwsettings{'ACTIVE'}} = 'CHECKED';
 	}
-	
+
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw addrule'});
-	
+
 print <<END;
 	<form method="post">
 	<table border='0'>
@@ -962,7 +936,7 @@ END
 		if($fwdfwsettings{'POLICY'} eq 'MODE2'){
 			$fwdfwsettings{'RULE_ACTION'} = 'DROP';
 		}
-			
+
 		if ($_ eq $fwdfwsettings{'RULE_ACTION'})
 		{
 			print"<option selected>$_</option>";
@@ -975,19 +949,19 @@ END
 
 	&Header::closebox();
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw source'});
-	
-	
+
+
 	#------SOURCE-------------------------------------------------------
 	print<<END;
 		<table width='100%' border='0'>
 		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td colspan='5'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' ></td></tr>
 		<tr><td colspan='7'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr>
 		<tr><td width='1%'><input type='radio' name='grp1' value='std_net_src' $checked{'grp1'}{'std_net_src'}></td><td nowrap='nowrap' width='12%'>$Lang::tr{'fwhost stdnet'}</td><td width='13%'><select name='std_net_src' style='min-width:185px;'>
-		
 END
 		foreach my $network (sort keys %defaultNetworks)
 		{
 			next if($defaultNetworks{$network}{'LOCATION'} eq "IPCOP");
+			next if($defaultNetworks{$network}{'NAME'} eq "RED");
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
 			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq $defaultNetworks{$network}{'NAME'});
 			print ">$network</option>";
@@ -1030,7 +1004,7 @@ END
 		}
 		print<<END;
 		</select></td></tr>
-		
+
 		<tr><td valign='top'><input type='radio' name='grp1' value='cust_grp_src' $checked{'grp1'}{'cust_grp_src'}></td><td >$Lang::tr{'fwhost cust grp'}</td><td><select name='cust_grp_src' style='min-width:185px;'>
 END
 		foreach my $key (sort { uc($customgrp{$a}[0]) cmp uc($customgrp{$b}[0]) } keys %customgrp) {
@@ -1038,8 +1012,6 @@ END
 				print"<option ";
 				print "selected='selected' " if ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq $customgrp{$key}[0]);
 				print ">$customgrp{$key}[0]</option>";
-				
-			
 			}
 			$helper=$customgrp{$key}[0];
 		}
@@ -1058,7 +1030,7 @@ END
 		print<<END;
 		</select></td></tr>
 END
-		
+
 #		<td valign='top'><input type='radio' name='grp1' value='ipsec_host_src' $checked{'grp1'}{'ipsec_host_src'}></td><td >$Lang::tr{'fwhost ipsec host'}</td><td><select name='ipsec_host_src' style='min-width:185px;'>
 #END
 #		foreach my $key (sort { uc($ipsecconf{$a}[1]) cmp uc($ipsecconf{$b}[1]) } keys %ipsecconf) {
@@ -1069,15 +1041,12 @@ END
 #			}
 #		}
 		print<<END;
-	
 		<tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
-		
-		
 		<table width='100%' border='0'>
 		<tr><td width='1%'><input type='checkbox' name='USE_SRC_PORT' value='ON' $checked{'USE_SRC_PORT'}{'ON'}></td><td width='51%' colspan='3'>$Lang::tr{'fwdfw use srcport'}</td>
 		<td width='15%' nowrap='nowrap'>$Lang::tr{'fwdfw man port'}</td><td><select name='PROT'>
 END
-		foreach ("TCP","UDP","GRE","ICMP")
+		foreach ("TCP","UDP","GRE","ESP","ICMP")
 		{
 			if ($_ eq $fwdfwsettings{'PROT'})
 			{
@@ -1111,19 +1080,17 @@ END
 		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td colspan='2'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16'><td><input type='radio' name='grp2' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>IPFire ($Lang::tr{'external access'})</b></td><td><select name='ipfire' style='min-width:185px;'>
 END
 		print "<option value='Default IP' $selected{'ipfire'}{'Default IP'}>Default IP</option>";
-		
+
 		foreach my $alias (sort keys %aliases)
 		{
 			print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias</option>";
 		}
-				
+
 		print<<END;
 		</td></tr>
 		<tr><td colspan='7'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr>
 		<tr><td width='1%'><input type='radio' name='grp2' value='std_net_tgt' $checked{'grp2'}{'std_net_tgt'}></td><td nowrap='nowrap' width='12%'>$Lang::tr{'fwhost stdnet'}</td><td width='13%'><select name='std_net_tgt' style='min-width:185px;'>
-		
 END
-		
 		foreach my $network (sort keys %defaultNetworks)
 		{
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
@@ -1134,7 +1101,6 @@ END
 		</select></td><td width='1%'><input type='radio' name='grp2' value='ovpn_net_tgt'  $checked{'grp2'}{'ovpn_net_tgt'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%'><select name='ovpn_net_tgt' style='min-width:185px;'>
 END
 		&fillselect(\%ccdnet,$fwdfwsettings{$fwdfwsettings{'grp2'}});
-		
 		print<<END;
 		</select></td></tr>
 		<tr><td><input type='radio' name='grp2' value='cust_net_tgt' $checked{'grp2'}{'cust_net_tgt'}></td><td>$Lang::tr{'fwhost cust net'}</td><td><select name='cust_net_tgt' style='min-width:185px;'>
@@ -1168,7 +1134,6 @@ END
 		}
 		print<<END;
 		</select></td></tr>
-		
 		<tr><td valign='top'><input type='radio' name='grp2' value='cust_grp_tgt' $checked{'grp2'}{'cust_grp_tgt'}></td><td >$Lang::tr{'fwhost cust grp'}</td><td><select name='cust_grp_tgt' style='min-width:185px;'>
 END
 		$helper='';
@@ -1194,7 +1159,6 @@ END
 		print<<END;
 		</select></td></tr>
 END
-		
 #		<td valign='top'><input type='radio' name='grp2' value='ipsec_host_tgt' $checked{'grp2'}{'ipsec_host_tgt'}></td><td >$Lang::tr{'fwhost ipsec host'}</td><td><select name='ipsec_host_tgt' style='min-width:185px;'>
 #END
 #		foreach my $key (sort { uc($ipsecconf{$a}[1]) cmp uc($ipsecconf{$b}[1]) } keys %ipsecconf) {
@@ -1208,12 +1172,12 @@ END
 		</table>
 		<b>$Lang::tr{'fwhost attention'}:</b><br>
 		$Lang::tr{'fwhost macwarn'}<br><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; '></hr><br>
-		
+
 		<table width='100%' border='0'>
 		<tr><td width='1%'><input type='checkbox' name='USESRV' value='ON' $checked{'USESRV'}{'ON'} ></td><td width='48%'>$Lang::tr{'fwdfw use srv'}</td><td width='1%'><input type='radio' name='grp3' value='cust_srv' checked></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td width='1%' colspan='2'><select name='cust_srv'style='min-width:230px;' >
 END
 		&General::readhasharray("$configsrv", \%customservice);
-		foreach my $key (sort keys %customservice){
+		foreach my $key (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0]) } keys %customservice){
 			print"<option ";
 			print"selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservice{$key}[0]);
 			print"value='$customservice{$key}[0]'>$customservice{$key}[0]</option>";
@@ -1224,7 +1188,7 @@ END
 END
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		my $helper;
-		foreach my $key (sort keys %customservicegrp){
+		foreach my $key (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0]) } keys %customservicegrp){
 			if ($helper ne $customservicegrp{$key}[0]){
 				print"<option ";
 				print"selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservicegrp{$key}[0]);
@@ -1236,7 +1200,7 @@ END
 		</select></td></tr>
 		<tr><td colspan='2'></td><td><input type='radio' name='grp3' value='TGT_PORT' $checked{'grp3'}{'TGT_PORT'}></td><td>$Lang::tr{'fwdfw man port'}</td><td><select name='TGT_PROT'>
 END
-		foreach ("TCP","UDP","GRE","ICMP")
+		foreach ("TCP","UDP","GRE","ESP","ICMP")
 		{
 			if ($_ eq $fwdfwsettings{'TGT_PROT'})
 			{
@@ -1261,7 +1225,7 @@ END
 		print<<END;
 		</select></td></tr>
 		</table><hr><br><br>
-		
+
 END
 		#---Activate/logging/remark-------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
@@ -1282,7 +1246,6 @@ END
 		<tr>
 			<td  align='left'>$Lang::tr{'time'}:</td>
 			<td width='30%' align='left'>$Lang::tr{'advproxy monday'} $Lang::tr{'advproxy tuesday'} $Lang::tr{'advproxy wednesday'} $Lang::tr{'advproxy thursday'} $Lang::tr{'advproxy friday'} $Lang::tr{'advproxy saturday'} $Lang::tr{'advproxy sunday'}</td>
-			
 			<td width='15%' align='left'>$Lang::tr{'advproxy from'}</td>
 			<td width='15%' align='left'>$Lang::tr{'advproxy to'}</td>
 		</tr>
@@ -1297,7 +1260,6 @@ END
 				<input type='checkbox' name='TIME_SAT' value='on' $checked{'TIME_SAT'}{'on'} />
 				<input type='checkbox' name='TIME_SUN' value='on' $checked{'TIME_SUN'}{$Lang::tr{'fwdfw wd_sun'}} />
 			</td>
-			
 			<td><select name='TIME_FROM'>
 END
 		for (my $i=0;$i<=23;$i++) {
@@ -1320,7 +1282,7 @@ END
 				print "\t\t\t\t\t<option $selected{'TIME_TO'}{$time}>$i:$j</option>\n";
 			}
 		}
-		print<<END;	
+		print<<END;
 		</select></td></tr>
 		</table><hr>
 END
@@ -1345,9 +1307,7 @@ END
 			<input type='hidden' name='oldgrp3a' value='$fwdfwsettings{'oldgrp3a'}' />
 			<input type='hidden' name='oldgrp3b' value='$fwdfwsettings{'oldgrp3b'}' />
 			<input type='hidden' name='oldusesrv' value='$fwdfwsettings{'oldusesrv'}' />
-			
 			<input type='hidden' name='ACTION' value='saverule' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td>
-			
 			</table></form>
 END
 		}
@@ -1355,7 +1315,6 @@ END
 }
 sub saverule
 {
-	
 	my $hash=shift;
 	my $config=shift;
 	&General::readhasharray("$config", $hash);
@@ -1456,7 +1415,7 @@ sub get_name
 	foreach my $network (sort keys %defaultNetworks)
 	{
 		return "$network" if ($val eq $defaultNetworks{$network}{'NAME'});
-	}	
+	}
 }
 sub validremark
 {
@@ -1468,13 +1427,13 @@ sub validremark
 	if (length ($remark) < 1 || length ($remark) > 255) {
 		return 0;}
 	# Only valid characters are a-z, A-Z, 0-9 and -
-	if ($remark !~ /^[a-zäöüA-ZÖÄÜ0-9-\s]*$/) {
+	if ($remark !~ /^[a-zäöüA-ZÖÄÜ0-9-.:\/\s]*$/) {
 		return 0;}
 	# First character can only be a letter or a digit
 	if (substr ($remark, 0, 1) !~ /^[a-zäöüA-ZÖÄÜ0-9]*$/) {
 		return 0;}
 	# Last character can only be a letter or a digit
-	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9]*$/) {
+	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9.]*$/) {
 		return 0;}
 	return 1;
 }
@@ -1494,7 +1453,7 @@ sub gettgtport
 	my $key=shift;
 	my $service;
 	my $prot;
-	
+
 	if($hash{$key}[11] eq 'ON' && $hash{$key}[12] ne 'ICMP'){
 		if($hash{$key}[14] eq 'cust_srv'){
 			&General::readhasharray("$configsrv", \%customservice);
@@ -1506,7 +1465,7 @@ sub gettgtport
 				}
 			}
 		}elsif($hash{$key}[14] eq 'cust_srvgrp'){
-			
+
 			$service=$hash{$key}[15];
 		}elsif($hash{$key}[14] eq 'TGT_PORT'){
 			$service=$hash{$key}[15];
@@ -1515,7 +1474,7 @@ sub gettgtport
 	}elsif($hash{$key}[11] eq 'ON' && $hash{$key}[12] eq 'ICMP'){
 		print" : ($hash{$key}[12]) <br>$hash{$key}[13]";
 	}
-	
+
 	if ($prot ne '' || $service ne ''){
 		print" :";
 		if ($prot ne ''){
@@ -1535,7 +1494,7 @@ sub viewtablenew
 	my $config=shift;
 	my $title=shift;
 	my $title1=shift;
-	
+
 	if ( ! -z "$config"){
 		&Header::openbox('100%', 'left',$title);
 		my $count=0;
@@ -1549,7 +1508,7 @@ sub viewtablenew
 		print"<b>$title1</b><br>";
 		print"<table width='100%' border='0' cellspacing='1' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
 		print"<tr><td align='center' width='1%'><b>#</td><td width='1%'></td><td align='center' width='20%'><b>$Lang::tr{'fwdfw source'}</td><td width='1%'><b>Log</td><td align='center' width='20%'><b>$Lang::tr{'fwdfw target'}</td><td align='center' width='70%'><b>$Lang::tr{'remark'}</td><td align='center' colspan='3' width='1%'><b>$Lang::tr{'fwdfw action'}</td></tr>";
-		foreach my $key (sort keys %$hash){
+		foreach my $key (sort  {$a <=> $b} keys %$hash){
 			@tmpsrc=();
 			#check if vpn hosts/nets have been deleted
 			if($$hash{$key}[3] =~ /ipsec/i || $$hash{$key}[3] =~ /ovpn/i){
@@ -1558,14 +1517,12 @@ sub viewtablenew
 			if($$hash{$key}[5] =~ /ipsec/i || $$hash{$key}[5] =~ /ovpn/i){
 				push (@tmpsrc,$$hash{$key}[6]);
 			}
-		
 			foreach my $host (@tmpsrc){
 				if($$hash{$key}[3] eq  'ipsec_net_src' || $$hash{$key}[5] eq 'ipsec_net_tgt'){
-						if(&fwlib::get_ipsec_net_ip($host,11) eq ''){
+					if(&fwlib::get_ipsec_net_ip($host,11) eq ''){
 						$coloryellow='on';
 						&disable_rule($key);
 						$$hash{$key}[2]='';
-						
 					}
 				}elsif($$hash{$key}[3] eq  'ovpn_net_src' || $$hash{$key}[5] eq 'ovpn_net_tgt'){
 					if(&fwlib::get_ovpn_net_ip($host,1) eq ''){
@@ -1589,10 +1546,8 @@ sub viewtablenew
 				$$hash{$key}[3]='';
 				$$hash{$key}[5]='';
 			}
-			
 			$$hash{'ACTIVE'}=$$hash{$key}[2];
 			$count++;
-			
 			if($coloryellow eq 'on'){
 				print"<tr bgcolor='$color{'color14'}' >";
 				$coloryellow='';
@@ -1604,7 +1559,6 @@ sub viewtablenew
 					print"<tr bgcolor='$color{'color20'}' >";
 				}
 			}
-			
 			print<<END;
 			<td align='right'>$key</td>
 END
@@ -1636,7 +1590,6 @@ END
 			}
 			print<<END;
 			</td>
-			
 			<form method='post'>
 			<td width='1%' align='left'><input type='image' img src='$log' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw togglelog'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'/>
 			<input type='hidden' name='key' value='$key' />
@@ -1662,7 +1615,6 @@ END
 				
 			}else{
 				$gif="/images/off.gif"
-				
 			}
 			print<<END;
 			<form method='post'>
@@ -1671,22 +1623,18 @@ END
 			<input type='hidden' name='config' value='$config' />
 			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw toggle'}' />
 			</td></form>
-			
 			<form method='post'>
 			<td  width='1%' ><input type='image' img src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'fwdfw edit'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
 			<input type='hidden' name='key' value='$key' />
 			<input type='hidden' name='config' value='$config' />
 			<input type='hidden' name='ACTION' value='editrule' />
 			</td></form></td>
-			
 			<form method='post'>
 			<td  width='1%'><input type='image' img src='/images/addblue.gif' alt='$Lang::tr{'fwdfw copy'}' title='$Lang::tr{'fwdfw copy'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
 			<input type='hidden' name='key' value='$key' />
 			<input type='hidden' name='config' value='$config' />
 			<input type='hidden' name='ACTION' value='copyrule' />
 			</td></form></td>
-			
-			
 			<form method='post'>
 			<td width='1%' ><input type='image' img src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'fwdfw delete'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'   />
 			<input type='hidden' name='key' value='$key' />
@@ -1706,7 +1654,6 @@ END
 			}else{
 				print"<td></td>";
 			}
-		
 			if (exists $$hash{$key+1}){
 				print<<END;
 				<form method='post'>
@@ -1729,9 +1676,7 @@ END
 				if($$hash{$key}[23] ne ''){push (@days,$Lang::tr{'fwdfw wd_fri'});}
 				if($$hash{$key}[24] ne ''){push (@days,$Lang::tr{'fwdfw wd_sat'});}
 				if($$hash{$key}[25] ne ''){push (@days,$Lang::tr{'fwdfw wd_sun'});}
-			
 				my $weekdays=join(",",@days);
-							
 				if (@days){
 					print"<tr bgcolor='#FFE4B5'><td colspan='4'>$Lang::tr{'fwdfw time'} ";
 					print"$weekdays";
@@ -1742,21 +1687,19 @@ END
 		print"</table>";
 		&Header::closebox();
 	}
-	
 }
 sub fillselect
 {
 	my %hash=%{(shift)};
 	my $val=shift;
 	my $key;
-	foreach my $key (sort { uc($hash{$a}[0]) cmp uc($hash{$b}[0]) }  keys %hash)
-		{
-			if($hash{$key}[0] eq $val){
-				print"<option value='$hash{$key}[0]' selected>$hash{$key}[0]</option>";
-			}else{
-				print"<option value='$hash{$key}[0]'>$hash{$key}[0]</option>";
-			}
+	foreach my $key (sort { uc($hash{$a}[0]) cmp uc($hash{$b}[0]) }  keys %hash){
+		if($hash{$key}[0] eq $val){
+			print"<option value='$hash{$key}[0]' selected>$hash{$key}[0]</option>";
+		}else{
+			print"<option value='$hash{$key}[0]'>$hash{$key}[0]</option>";
 		}
+	}
 }
 sub rules
 {

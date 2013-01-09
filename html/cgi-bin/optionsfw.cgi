@@ -44,13 +44,16 @@ my $warnmessage = '';
 &Header::getcgihash(\%settings);
 
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
+	
 	 $errormessage = $Lang::tr{'new optionsfw later'};
-	 delete $settings{'__CGI__'};delete $settings{'x'};delete $settings{'y'};
+	 delete $settings{'__CGI__'};
+	 delete $settings{'x'};
+	 delete $settings{'y'};
 	 &General::writehash($filename, \%settings);             # Save good settings
-   } else {
-	 &General::readhash($filename, \%settings);                      # Get saved settings and reset to good if needed
-	 }
-
+   }else {
+		&General::readhash($filename, \%settings);                      # Get saved settings and reset to good if needed
+	}
+	system("/usr/local/bin/forwardfwctrl");
 &Header::openpage($Lang::tr{'options fw'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -84,6 +87,7 @@ $checked{'DROPPROXY'}{$settings{'DROPPROXY'}} = "checked='checked'";
 $checked{'DROPSAMBA'}{'off'} = '';
 $checked{'DROPSAMBA'}{'on'} = '';
 $checked{'DROPSAMBA'}{$settings{'DROPSAMBA'}} = "checked='checked'";
+$selected{'FWPOLICY'}{$settings{'FWPOLICY'}}= 'selected';
 
 &Header::openbox('100%', 'center', $Lang::tr{'options fw'});
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
@@ -114,10 +118,19 @@ print <<END
 																						<input type='radio' name='DROPSAMBA' value='off' $checked{'DROPSAMBA'}{'off'} /> off</td></tr>
 </table>
 <br />
+<table width='95%' cellspacing='0'>
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw default drop'}</b></td></tr>
+<tr><td align='left' width='60%'>$Lang::tr{'drop action'}</td><td><select name='FWPOLICY'>
+<option value='DROP' $selected{'FWPOLICY'}{'DROP'}>DROP</option>
+<option value='REJECT' $selected{'FWPOLICY'}{'REJECT'}>REJECT</option></select>
+</td></tr>
+</table>
+
+<br />
 <table width='10%' cellspacing='0'>
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-												<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
-												<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td></tr>
+<input type='submit' name='ACTION' value=$Lang::tr{'save'} />
+</form></td></tr>
 </table>
 </form>
 END

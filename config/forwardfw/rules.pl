@@ -88,10 +88,11 @@ if($param eq 'flush'){
 	&preparerules;
 	if($MODE eq '0'){
 		if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
-			#system ("iptables -A $CHAIN -j DROP"); 
+			system ("/usr/sbin/firewall-forward-policy"); 
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
-			#system ("iptables -A $CHAIN -j ACCEPT");
+			system ("/usr/sbin/firewall-forward-policy"); 
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE0' || $fwdfwsettings{'POLICY'} eq 'MODE2'){
+			system ("/usr/sbin/firewall-forward-policy"); 
 			system ("iptables -A $CHAIN -m state --state NEW -j ACCEPT");
 		}
 	}
@@ -113,9 +114,7 @@ sub preparerules
 }
 sub buildrules
 {
-	
 	my $hash=shift;
-	
 	foreach my $key (sort keys %$hash){
 		if($$hash{$key}[2] eq 'ON'){
 			#get source ip's
@@ -163,7 +162,7 @@ sub buildrules
 			if ($DPROT eq ''){$DPROT=' ';}				
 			@DPROT=split(",",$DPROT);
 
-	
+
 			#get time if defined
 			if($$hash{$key}[18] eq 'ON'){
 				if($$hash{$key}[19] ne ''){push (@timeframe,"Mon");}
@@ -178,7 +177,7 @@ sub buildrules
 				$TIMETILL="--timestop $$hash{$key}[27] ";
 				$TIME="-m time --weekdays $TIME $TIMEFROM $TIMETILL";
 			}
-					
+
 			if ($MODE eq '1'){	
 				print "NR:$key ";
 				foreach my $i (0 .. $#{$$hash{$key}}){
@@ -187,7 +186,7 @@ sub buildrules
 				print "\n";
 				print"##################################\n";
 				#print rules to console
-				
+
 				foreach my $DPROT (@DPROT){
 					$DPORT = &get_port($hash,$key,$DPROT);
 					if ($SPROT ne ''){$PROT=$SPROT;}else{$PROT=$DPROT;}
@@ -206,7 +205,7 @@ sub buildrules
 					}
 					print"\n";
 				}
-			
+
 			}elsif($MODE eq '0'){
 				foreach my $DPROT (@DPROT){
 					$DPORT = &get_port($hash,$key,$DPROT);
@@ -302,11 +301,12 @@ sub get_port
 	if ($$hash{$key}[7] eq 'ON' && $SRC_TGT eq 'SRC'){
 		if ($$hash{$key}[10] ne ''){
 			return "--sport $$hash{$key}[10] ";
-		}elsif($$hash{$key}[9] ne ''){
+		}elsif($$hash{$key}[9] ne '' && $$hash{$key}[9] ne 'All ICMP-Types'){
 			return "--icmp-type $$hash{$key}[9] ";
+		}elsif($$hash{$key}[9] eq 'All ICMP-Types'){
+			return;
 		}
 	}elsif($$hash{$key}[11] eq 'ON' && $SRC_TGT eq ''){
-		
 		if($$hash{$key}[14] eq 'TGT_PORT'){
 			if ($$hash{$key}[15] ne ''){
 				return "--dport $$hash{$key}[15] ";
@@ -330,8 +330,6 @@ sub get_port
 			elsif($prot eq 'ICMP'){
 				return &fwlib::get_srvgrp_port($$hash{$key}[15],$prot);
 			}
-			
-			
 		}
 	}
 }

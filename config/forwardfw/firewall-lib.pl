@@ -215,6 +215,8 @@ sub get_std_net_ip
 		return "$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}";
 	}elsif($val eq 'BLUE'){
 		return "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
+	}elsif($val eq 'RED'){
+		return "0.0.0.0/0 -o red0";
 	}elsif($val =~ /OpenVPN/i){
 		return "$ovpnsettings{'DOVPN_SUBNET'}";
 	}elsif($val =~ /IPsec/i){

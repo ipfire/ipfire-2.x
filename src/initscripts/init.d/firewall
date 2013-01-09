@@ -226,12 +226,6 @@ case "$1" in
 	/sbin/iptables -N OPENSSLPHYSICAL
 	/sbin/iptables -A INPUT -j OPENSSLPHYSICAL
 
-	# WIRELESS chains
-	/sbin/iptables -N WIRELESSINPUT
-	/sbin/iptables -A INPUT -m state --state NEW -j WIRELESSINPUT
-	/sbin/iptables -N WIRELESSFORWARD
-	/sbin/iptables -A FORWARD -m state --state NEW -j WIRELESSFORWARD
-
 	# RED chain, used for the red interface
 	/sbin/iptables -N REDINPUT
 	/sbin/iptables -A INPUT -j REDINPUT
@@ -283,11 +277,16 @@ case "$1" in
 		/sbin/iptables -A INPUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
 	fi
 	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
-	if [ "$DROPFORWARD" == "on" ]; then
-		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
-	fi
-	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
+	#if [ "$DROPFORWARD" == "on" ]; then
+	#	/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
+	#fi
+	#/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
 	
+	#POLICY CHAIN
+	/sbin/iptables -N POLICY
+	/sbin/iptables -A FORWARD -j POLICY
+	
+	/usr/sbin/firewall-forward-policy
 	;;
   startovpn)  
 	# run openvpn
@@ -320,14 +319,10 @@ case "$1" in
 		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
 	fi
 	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
-	#if [ "$DROPOUTPUT" == "on" ]; then
-	#	/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT "
-	#fi
-	#/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_OUTPUT"
 	if [ "$DROPFORWARD" == "on" ]; then
-		/sbin/iptables -A FORWARDFW -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARDFW "
+		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
 	fi
-	/sbin/iptables -A FORWARDFW -j DROP -m comment --comment "DROP_FORWARDFW-oberdropper"
+	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
 	;;
   stopovpn)
 	# stop openvpn
