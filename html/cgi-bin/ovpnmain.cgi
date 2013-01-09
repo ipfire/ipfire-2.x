@@ -2436,7 +2436,7 @@ print <<END;
         <td><input type='text' name='MAX_CLIENTS' value='$cgiparams{'MAX_CLIENTS'}' size='10' /></td>
     </tr>	
      	<tr>
-     	  <td class='base'>Keppalive <br />
+     	  <td class='base'>Keepalive <br />
      	    (ping/ping-restart)</td>
      	  <td><input type='TEXT' name='KEEPALIVE_1' value='$cgiparams{'KEEPALIVE_1'}' size='10' /></td>
      	  <td><input type='TEXT' name='KEEPALIVE_2' value='$cgiparams{'KEEPALIVE_2'}' size='10' /></td>
