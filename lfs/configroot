@@ -53,8 +53,8 @@ $(TARGET) :
 	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dns dnsforward \
 			ethernet extrahd/bin fwlogs isdn key langs logging mac main menu.d modem net-traffic \
 			ethernet extrahd/bin fwlogs fwhosts forward forward/bin isdn key langs logging mac main  menu.d modem net-traffic \
-			net-traffic/templates nfs optionsfw outgoing/bin \
-			outgoing/groups/macgroups ovpn patches pakfire portfw ppp private proxy/advanced/cre \
+			net-traffic/templates nfs optionsfw \
+			ovpn patches pakfire portfw ppp private proxy/advanced/cre \
 			proxy/calamaris/bin qos/bin red remote sensors snort time tripwire/report \
 			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin upnp vpn \
 			wakeonlan wireless ; do \
@@ -92,7 +92,6 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/net-traffic-lib.pl		$(CONFIG_ROOT)/net-traffic/net-traffic-lib.pl
 	cp $(DIR_SRC)/config/cfgroot/net-traffic-admin.pl	$(CONFIG_ROOT)/net-traffic/net-traffic-admin.pl
 	cp $(DIR_SRC)/config/cfgroot/nfs-server			$(CONFIG_ROOT)/nfs/nfs-server
-	cp $(DIR_SRC)/config/cfgroot/p2protocols		$(CONFIG_ROOT)/outgoing/p2protocols
 	cp $(DIR_SRC)/config/cfgroot/proxy-acl			$(CONFIG_ROOT)/proxy/acl-1.4
 	cp $(DIR_SRC)/config/qos/*						$(CONFIG_ROOT)/qos/bin/
 	cp $(DIR_SRC)/config/cfgroot/ssh-settings		$(CONFIG_ROOT)/remote/settings
@@ -114,6 +113,7 @@ $(TARGET) :
 	echo  "DROPNEWNOTSYN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPINPUT=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPFORWARD=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "FWPOLICY=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPPORTSCAN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 
 	# set rules.pl executable
