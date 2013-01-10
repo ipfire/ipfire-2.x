@@ -35,5 +35,6 @@ usr/local/bin/timectrl
 usr/local/bin/updxlratorctrl
 usr/local/bin/upnpctrl
 usr/local/bin/urlfilterctrl
+usr/local/bin/wirelessclient
 usr/local/bin/wirelessctrl
 #usr/local/bin/wlanapctrl

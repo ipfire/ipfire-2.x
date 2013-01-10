@@ -10,6 +10,12 @@
 				'title' => "$Lang::tr{'alt dialup'}",
 				'enabled' => 1,
 				};
+    $subsystem->{'21.wlan'} = {
+				'caption' => $Lang::tr{'wlan client'},
+				'uri' => '/cgi-bin/wirelessclient.cgi',
+				'title' => "$Lang::tr{'wlan client'}",
+				'enabled' => 0,
+				};
     $subsystem->{'30.ssh'} = {
 				'caption' => $Lang::tr{'ssh access'},
 				'uri' => '/cgi-bin/remote.cgi',

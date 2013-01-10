@@ -120,6 +120,7 @@
 < vpn keyexchange
 < wlanap access point
 < wlanap channel
+< wlanap country
 < wlanap debugging
 < wlanap del interface
 < wlanap encryption
@@ -138,6 +139,36 @@
 < wlanap wlan services
 < wlanap wlan settings
 < wlanap wlan status
+< wlan client
+< wlan client advanced settings
+< wlan client and
+< wlan client bssid
+< wlan client ccmp
+< wlan client configuration
+< wlan client disconnected
+< wlan client duplicate ssid
+< wlan client edit entry
+< wlan client encryption
+< wlan client encryption none
+< wlan client encryption wep
+< wlan client encryption wpa
+< wlan client encryption wpa2
+< wlan client group cipher
+< wlan client group key algorithm
+< wlan client invalid key length
+< wlan client new entry
+< wlan client new network
+< wlan client pairwise cipher
+< wlan client pairwise key algorithm
+< wlan client pairwise key group key
+< wlan client psk
+< wlan client ssid
+< wlan client tkip
+< wlan client wpa mode
+< wlan client wpa mode all
+< wlan client wpa mode ccmp ccmp
+< wlan client wpa mode ccmp tkip
+< wlan client wpa mode tkip tkip
 ############################################################################
 # Checking install/setup translations for language: es                     #
 ############################################################################
@@ -264,6 +295,37 @@
 < uptime load average
 < visit us at
 < vpn keyexchange
+< wlanap country
+< wlan client
+< wlan client advanced settings
+< wlan client and
+< wlan client bssid
+< wlan client ccmp
+< wlan client configuration
+< wlan client disconnected
+< wlan client duplicate ssid
+< wlan client edit entry
+< wlan client encryption
+< wlan client encryption none
+< wlan client encryption wep
+< wlan client encryption wpa
+< wlan client encryption wpa2
+< wlan client group cipher
+< wlan client group key algorithm
+< wlan client invalid key length
+< wlan client new entry
+< wlan client new network
+< wlan client pairwise cipher
+< wlan client pairwise key algorithm
+< wlan client pairwise key group key
+< wlan client psk
+< wlan client ssid
+< wlan client tkip
+< wlan client wpa mode
+< wlan client wpa mode all
+< wlan client wpa mode ccmp ccmp
+< wlan client wpa mode ccmp tkip
+< wlan client wpa mode tkip tkip
 ############################################################################
 # Checking install/setup translations for language: pl                     #
 ############################################################################
@@ -365,6 +427,37 @@
 < uptime load average
 < visit us at
 < vpn keyexchange
+< wlanap country
+< wlan client
+< wlan client advanced settings
+< wlan client and
+< wlan client bssid
+< wlan client ccmp
+< wlan client configuration
+< wlan client disconnected
+< wlan client duplicate ssid
+< wlan client edit entry
+< wlan client encryption
+< wlan client encryption none
+< wlan client encryption wep
+< wlan client encryption wpa
+< wlan client encryption wpa2
+< wlan client group cipher
+< wlan client group key algorithm
+< wlan client invalid key length
+< wlan client new entry
+< wlan client new network
+< wlan client pairwise cipher
+< wlan client pairwise key algorithm
+< wlan client pairwise key group key
+< wlan client psk
+< wlan client ssid
+< wlan client tkip
+< wlan client wpa mode
+< wlan client wpa mode all
+< wlan client wpa mode ccmp ccmp
+< wlan client wpa mode ccmp tkip
+< wlan client wpa mode tkip tkip
 ############################################################################
 # Checking install/setup translations for language: ru                     #
 ############################################################################
@@ -472,4 +565,35 @@
 < visit us at
 < vpn keyexchange
 < week-graph
+< wlanap country
+< wlan client
+< wlan client advanced settings
+< wlan client and
+< wlan client bssid
+< wlan client ccmp
+< wlan client configuration
+< wlan client disconnected
+< wlan client duplicate ssid
+< wlan client edit entry
+< wlan client encryption
+< wlan client encryption none
+< wlan client encryption wep
+< wlan client encryption wpa
+< wlan client encryption wpa2
+< wlan client group cipher
+< wlan client group key algorithm
+< wlan client invalid key length
+< wlan client new entry
+< wlan client new network
+< wlan client pairwise cipher
+< wlan client pairwise key algorithm
+< wlan client pairwise key group key
+< wlan client psk
+< wlan client ssid
+< wlan client tkip
+< wlan client wpa mode
+< wlan client wpa mode all
+< wlan client wpa mode ccmp ccmp
+< wlan client wpa mode ccmp tkip
+< wlan client wpa mode tkip tkip
 < year-graph
