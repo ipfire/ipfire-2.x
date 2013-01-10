@@ -1399,7 +1399,7 @@
 'ovpn on blue' => 'OpenVPN auf BLAU',
 'ovpn on orange' => 'OpenVPN auf ORANGE',
 'ovpn on red' => 'OpenVPN auf ROT',
-'ovpn routes push' => 'Routen (eine pro Zeile)',
+'ovpn routes push' => 'Routen (eine pro Zeile) z.b. 192.168.10.0/255.255.255.0 192.168.20.0/24',
 'ovpn routes push options' => 'Route push Optionen',
 'ovpn server status' => 'OpenVPN Server Status',
 'ovpn subnet' => 'OpenVPN Subnetz (z.B. 10.0.10.0/255.255.255.0)',
