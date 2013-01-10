@@ -348,6 +348,11 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR;
 	}
+	if($proxysettings{'CACHE_MEM'} > $proxysettings{'CACHE_SIZE'}){
+		$errormessage = $Lang::tr{'advproxy errmsg cache'}." ".$proxysettings{'CACHE_MEM'}." > ".$proxysettings{'CACHE_SIZE'};
+		goto ERROR;
+	}
+	
 	if (!(&General::validport($proxysettings{'PROXY_PORT'})))
 	{
 		$errormessage = $Lang::tr{'advproxy errmsg invalid proxy port'};

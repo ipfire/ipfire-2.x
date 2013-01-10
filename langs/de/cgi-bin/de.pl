@@ -212,6 +212,7 @@
 'advproxy errmsg auth children' => 'Ungültige Anzahl Authentifizierungsprozesse',
 'advproxy errmsg auth ipcache may not be null' => 'Authentifizierungscache TTL darf nicht 0 sein wenn IP-Adressbeschränkungen verwendet werden',
 'advproxy errmsg auth ipcache ttl' => 'Ungültiger Wert für Benutzer/IP-Cache TTL',
+'advproxy errmsg cache' => 'Der RAM-Cache-Größe ist größer als die Festplatten-Cache-Größe:',
 'advproxy errmsg change fail' => 'Passwort konnte nicht geändert werden',
 'advproxy errmsg change success' => 'Passwort für Webzugriff erfolgreich geändert',
 'advproxy errmsg hdd cache size' => 'Ungültiger Wert für die Größe des Festplatten-Cachespeichers (min. 10 MB erforderlich)',

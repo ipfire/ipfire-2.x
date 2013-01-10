@@ -212,6 +212,7 @@
 'advproxy errmsg auth children' => 'Invalid number of authentication processes',
 'advproxy errmsg auth ipcache may not be null' => 'Authentication cache TTL may not be 0 when using IP address limits',
 'advproxy errmsg auth ipcache ttl' => 'Invalid value for user/IP cache TTL',
+'advproxy errmsg cache' => 'The RAM cache size is greater than the harddisk cache size:',
 'advproxy errmsg change fail' => 'Password could not be changed',
 'advproxy errmsg change success' => 'Password for web access sucessfully changed',
 'advproxy errmsg hdd cache size' => 'Invalid value for harddisk cache size (min 10 MB required)',
