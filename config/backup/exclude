@@ -1,5 +1,6 @@
 *.tmp
 /var/ipfire/ethernet/settings
+/var/ipfire/forward/bin/*
 /var/ipfire/proxy/calamaris/bin/*
 /var/ipfire/qos/bin/qos.pl
 /var/ipfire/urlfilter/blacklists/*/*.db

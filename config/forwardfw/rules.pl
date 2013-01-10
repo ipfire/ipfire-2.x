@@ -115,7 +115,9 @@ sub preparerules
 sub buildrules
 {
 	my $hash=shift;
+	my $STAG;
 	foreach my $key (sort keys %$hash){
+		$STAG='';
 		if($$hash{$key}[2] eq 'ON'){
 			#get source ip's
 			if ($$hash{$key}[3] eq 'cust_grp_src'){
@@ -195,17 +197,17 @@ sub buildrules
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none'){
 								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
+									if(substr($sourcehash{$a}[0], 4, 6) eq 'mac'){ $STAG="-s";}
 									if ($$hash{$key}[17] eq 'ON'){
-										print "iptables -A $$hash{$key}[1] $PROT -s $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
 									}
-									print "iptables -A $$hash{$key}[1] $PROT -s $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n"; 
+									print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n"; 
 								}				
 							}
 						}
 					}
 					print"\n";
 				}
-
 			}elsif($MODE eq '0'){
 				foreach my $DPROT (@DPROT){
 					$DPORT = &get_port($hash,$key,$DPROT);
@@ -215,10 +217,11 @@ sub buildrules
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none'){
 								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
+									if(substr($sourcehash{$a}[0], 4, 6) eq 'mac'){ $STAG="-s";}
 									if ($$hash{$key}[17] eq 'ON'){
-										system ("iptables -A $$hash{$key}[1] $PROT -s $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
+										system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
 									}
-									system ("iptables -A $$hash{$key}[1] $PROT -s $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]"); 
+									system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]"); 
 								}				
 							}
 						}
@@ -247,7 +250,11 @@ sub get_address
 	}
 	my $key = &General::findhasharraykey($hash);
 	if($base eq 'src_addr' || $base eq 'tgt_addr' ){
-		$$hash{$key}[0] = $base2;
+		if (&General::validmac($base2)){
+			$$hash{$key}[0] = "-m mac --mac-source $base2";
+		}else{
+			$$hash{$key}[0] = $base2;
+		}
 	}elsif($base eq 'std_net_src' || $base eq 'std_net_tgt' || $base eq 'Standard Network'){
 		$$hash{$key}[0]=&fwlib::get_std_net_ip($base2);
 	}elsif($base eq 'cust_net_src' || $base eq 'cust_net_tgt' || $base eq 'Custom Network'){
@@ -307,6 +314,7 @@ sub get_port
 			return;
 		}
 	}elsif($$hash{$key}[11] eq 'ON' && $SRC_TGT eq ''){
+		
 		if($$hash{$key}[14] eq 'TGT_PORT'){
 			if ($$hash{$key}[15] ne ''){
 				return "--dport $$hash{$key}[15] ";
@@ -330,6 +338,8 @@ sub get_port
 			elsif($prot eq 'ICMP'){
 				return &fwlib::get_srvgrp_port($$hash{$key}[15],$prot);
 			}
+			
+			
 		}
 	}
 }

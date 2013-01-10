@@ -544,24 +544,35 @@ sub checksource
 		if ($fwdfwsettings{'src_addr'} =~ /^(.*?)\/(.*?)$/) {
 			($ip,$subnet)=split (/\//,$fwdfwsettings{'src_addr'});
 			$subnet = &General::iporsubtocidr($subnet);
+			$fwdfwsettings{'isip'}='on';
 		}
 		#check if only ip
 		if($fwdfwsettings{'src_addr'}=~/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/){
 			$ip=$fwdfwsettings{'src_addr'};
 			$subnet = '32';
+			$fwdfwsettings{'isip'}='on';
 		}
-		#check and form valid IP
-		$ip=&General::ip2dec($ip);
-		$ip=&General::dec2ip($ip);
-		#check if net or broadcast
-		my @tmp= split (/\./,$ip);
-		if (($tmp[3] eq "0") || ($tmp[3] eq "255"))
-		{
-			$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
-		}
-		$fwdfwsettings{'src_addr'}="$ip/$subnet";
 				
-		if(!&General::validipandmask($fwdfwsettings{'src_addr'})){
+		if ($fwdfwsettings{'isip'} ne 'on'){
+			if (&General::validmac($fwdfwsettings{'src_addr'})){$fwdfwsettings{'ismac'}='on';}
+		}
+		if ($fwdfwsettings{'isip'} eq 'on'){
+			#check and form valid IP
+			$ip=&General::ip2dec($ip);
+			$ip=&General::dec2ip($ip);
+			#check if net or broadcast
+			my @tmp= split (/\./,$ip);
+			if (($tmp[3] eq "0") || ($tmp[3] eq "255"))
+			{
+				$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
+			}
+			$fwdfwsettings{'src_addr'}="$ip/$subnet";
+	
+			if(!&General::validipandmask($fwdfwsettings{'src_addr'})){
+				$errormessage.=$Lang::tr{'fwdfw err src_addr'}."<br>";
+			}
+		}
+		if ($fwdfwsettings{'isip'} ne 'on' && $fwdfwsettings{'ismac'} ne 'on'){
 			$errormessage.=$Lang::tr{'fwdfw err src_addr'}."<br>";
 		}
 	}elsif($fwdfwsettings{'src_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'src_addr'} eq ''){
