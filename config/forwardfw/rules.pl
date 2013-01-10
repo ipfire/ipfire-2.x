@@ -66,7 +66,7 @@ my $CHAIN="FORWARDFW";
 ################################
 #    DEBUG/TEST                #
 ################################
-my $MODE=0;     # 0 - normal operation
+my $MODE=1;     # 0 - normal operation
 				# 1 - print configline and rules to console	
 				# 
 ################################		
@@ -97,7 +97,6 @@ if($param eq 'flush'){
 		}
 	}
 }
-
 sub flush
 {
 	system ("iptables -F FORWARDFW");
@@ -197,7 +196,7 @@ sub buildrules
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none'){
 								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
-									if(substr($sourcehash{$a}[0], 4, 6) eq 'mac'){ $STAG="-s";}
+									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac'){ $STAG="-s";}
 									if ($$hash{$key}[17] eq 'ON'){
 										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
 									}
@@ -217,7 +216,7 @@ sub buildrules
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none'){
 								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
-									if(substr($sourcehash{$a}[0], 4, 6) eq 'mac'){ $STAG="-s";}
+									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac'){ $STAG="-s";}
 									if ($$hash{$key}[17] eq 'ON'){
 										system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
 									}
