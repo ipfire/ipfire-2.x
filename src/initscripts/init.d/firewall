@@ -226,7 +226,7 @@ case "$1" in
 	/sbin/iptables -N WIRELESSINPUT
 	/sbin/iptables -A INPUT -m state --state NEW -j WIRELESSINPUT
 	/sbin/iptables -N WIRELESSFORWARD
-	/sbin/iptables -A FORWARDFW -m state --state NEW -j WIRELESSFORWARD
+	/sbin/iptables -A FORWARD -m state --state NEW -j WIRELESSFORWARD
 
 	# OPenSSL
 	/sbin/iptables -N OPENSSLPHYSICAL
