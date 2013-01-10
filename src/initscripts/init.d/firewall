@@ -221,6 +221,12 @@ case "$1" in
 	# allow DHCP on BLUE to be turned on/off
 	/sbin/iptables -N DHCPBLUEINPUT 
 	/sbin/iptables -A INPUT -j DHCPBLUEINPUT
+	
+	# WIRELESS chains
+	/sbin/iptables -N WIRELESSINPUT
+	/sbin/iptables -A INPUT -m state --state NEW -j WIRELESSINPUT
+	/sbin/iptables -N WIRELESSFORWARD
+	/sbin/iptables -A FORWARDFW -m state --state NEW -j WIRELESSFORWARD
 
 	# OPenSSL
 	/sbin/iptables -N OPENSSLPHYSICAL

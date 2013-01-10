@@ -156,8 +156,8 @@ int main(void)
 									safe_system(command);
 									snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -s %s -i %s ! -o %s -j ACCEPT", macaddress, ipaddress, blue_dev, green_dev);
 									safe_system(command);
-									snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -s %s -i %s -j DMZHOLES", macaddress, ipaddress, blue_dev);
-									safe_system(command);
+									/*snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -s %s -i %s -j DMZHOLES", macaddress, ipaddress, blue_dev);
+									safe_system(command);*/
 							} else {
 
 									/* correctly formed mac address is 17 chars */
@@ -166,8 +166,8 @@ int main(void)
 													safe_system(command);
 													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -i %s ! -o %s -j ACCEPT", macaddress, blue_dev, green_dev);
 													safe_system(command);
-													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -i %s -j DMZHOLES", macaddress, blue_dev);
-													safe_system(command);
+													/*snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -i %s -j DMZHOLES", macaddress, blue_dev);
+													safe_system(command);*/
 									}
 
 									if (VALID_IP_AND_MASK(ipaddress)) {
@@ -175,8 +175,8 @@ int main(void)
 													safe_system(command);
 													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -s %s -i %s ! -o %s -j ACCEPT", ipaddress, blue_dev, green_dev);
 													safe_system(command);
-													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -s %s -i %s -j DMZHOLES", ipaddress, blue_dev);
-													safe_system(command);
+													/*snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -s %s -i %s -j DMZHOLES", ipaddress, blue_dev);
+													safe_system(command);*/
 									}
 							}
 							}
