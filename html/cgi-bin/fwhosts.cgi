@@ -1056,7 +1056,7 @@ sub addnet
 	$fwhostsettings{'orgname'}=$fwhostsettings{'HOSTNAME'};
 	print<<END;
 	<table border='0' width='100%'><form method='post' style='display:inline'  >
-	<tr><td>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'}></td><td>$Lang::tr{'fwhost netaddress'}</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14'></td><td align='right'>$Lang::tr{'netmask'}:</td><td align='right'><input type='TEXT' name='SUBNET' value='$fwhostsettings{'SUBNET'}' $fwhostsettings{'BLK_IP'} size='14'></td></tr>
+	<tr><td>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'}><script>document.getElementById('textbox1').focus()</script></td><td>$Lang::tr{'fwhost netaddress'}</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14'></td><td align='right'>$Lang::tr{'netmask'}:</td><td align='right'><input type='TEXT' name='SUBNET' value='$fwhostsettings{'SUBNET'}' $fwhostsettings{'BLK_IP'} size='14'></td></tr>
 	<tr><td colspan='6'><hr></hr></td></tr><tr>
 END
 	if ($fwhostsettings{'ACTION'} eq 'editnet' || $fwhostsettings{'error'} eq 'on')
@@ -1076,7 +1076,7 @@ sub addhost
 	$fwhostsettings{'orgname'}=$fwhostsettings{'HOSTNAME'};
 	print<<END;
 	<table border='0' width='100%'><form method='post' style='display:inline'>
-	<tr><td>$Lang::tr{'name'}:</td><td width='35%'><input type='TEXT' name='HOSTNAME' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} ></td><td><select name='type'>
+	<tr><td>$Lang::tr{'name'}:</td><td width='35%'><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} ><script>document.getElementById('textbox1').focus()</script></td><td><select name='type'>
 END
 	if ($fwhostsettings{'type'} eq 'ip'){print "<option value='ip' selected >IP</option>";}else{print "<option value='ip' >IP</option>";}
 	if ($fwhostsettings{'type'} eq 'mac'){print "<option value='mac' selected >MAC</option>";}else{print "<option value='mac' >MAC</option>";}
