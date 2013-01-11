@@ -136,13 +136,14 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	if($fwdfwsettings{'grp2'} eq 'ipfire'){
 		$fwdfwsettings{'chain'} = 'INPUTFW';
 		#check if we have an identical rule already
-		foreach my $key (sort keys %configinputfw){
-			if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'ruleremark'},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
-				eq "$configinputfw{$key}[0],$configinputfw{$key}[2],$configinputfw{$key}[3],$configinputfw{$key}[4],$configinputfw{$key}[5],$configinputfw{$key}[6],$configinputfw{$key}[7],$configinputfw{$key}[8],$configinputfw{$key}[9],$configinputfw{$key}[10],$configinputfw{$key}[11],$configinputfw{$key}[12],$configinputfw{$key}[13],$configinputfw{$key}[14],$configinputfw{$key}[15],$configinputfw{$key}[16],$configinputfw{$key}[17],$configinputfw{$key}[18],$configinputfw{$key}[19],$configinputfw{$key}[20],$configinputfw{$key}[21],$configinputfw{$key}[22],$configinputfw{$key}[23],$configinputfw{$key}[24],$configinputfw{$key}[25],$configinputfw{$key}[26],$configinputfw{$key}[27]"){
-					$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+		if($fwdfwsettings{'oldrulenumer'} eq $fwdfwsettings{'rulepos'}){
+			foreach my $key (sort keys %configinputfw){
+				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
+					eq "$configinputfw{$key}[0],$configinputfw{$key}[2],$configinputfw{$key}[3],$configinputfw{$key}[4],$configinputfw{$key}[5],$configinputfw{$key}[6],$configinputfw{$key}[7],$configinputfw{$key}[8],$configinputfw{$key}[9],$configinputfw{$key}[10],$configinputfw{$key}[11],$configinputfw{$key}[12],$configinputfw{$key}[13],$configinputfw{$key}[14],$configinputfw{$key}[15],$configinputfw{$key}[17],$configinputfw{$key}[18],$configinputfw{$key}[19],$configinputfw{$key}[20],$configinputfw{$key}[21],$configinputfw{$key}[22],$configinputfw{$key}[23],$configinputfw{$key}[24],$configinputfw{$key}[25],$configinputfw{$key}[26],$configinputfw{$key}[27]"){
+						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+				}	
 			}	
-		}	
-
+		}
 		&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
 		if ($fwdfwsettings{'nobase'} ne 'on'){
 			&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
@@ -179,19 +180,18 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		#print"DIENSTE Checkalt:$fwdfwsettings{'oldusesrv'}  DIENSTE Checkneu:$fwdfwsettings{'USESRV'}    DIENST ALT:$fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'}   DIENST NEU:$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 	}else{
 		$fwdfwsettings{'chain'} = 'FORWARDFW';
-		#check if we have an identical rule already
-		foreach my $key (sort keys %configfwdfw){
-					
-			if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'ruleremark'},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
-				eq "$configfwdfw{$key}[0],$configfwdfw{$key}[2],$configfwdfw{$key}[3],$configfwdfw{$key}[4],$configfwdfw{$key}[5],$configfwdfw{$key}[6],$configfwdfw{$key}[7],$configfwdfw{$key}[8],$configfwdfw{$key}[9],$configfwdfw{$key}[10],$configfwdfw{$key}[11],$configfwdfw{$key}[12],$configfwdfw{$key}[13],$configfwdfw{$key}[14],$configfwdfw{$key}[15],$configfwdfw{$key}[16],$configfwdfw{$key}[17],$configfwdfw{$key}[18],$configfwdfw{$key}[19],$configfwdfw{$key}[20],$configfwdfw{$key}[21],$configfwdfw{$key}[22],$configfwdfw{$key}[23],$configfwdfw{$key}[24],$configfwdfw{$key}[25],$configfwdfw{$key}[26],$configfwdfw{$key}[27]"){
-					$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-			}		
+		if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
+			#check if we have an identical rule already
+			foreach my $key (sort keys %configfwdfw){
+				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
+					eq "$configfwdfw{$key}[0],$configfwdfw{$key}[2],$configfwdfw{$key}[3],$configfwdfw{$key}[4],$configfwdfw{$key}[5],$configfwdfw{$key}[6],$configfwdfw{$key}[7],$configfwdfw{$key}[8],$configfwdfw{$key}[9],$configfwdfw{$key}[10],$configfwdfw{$key}[11],$configfwdfw{$key}[12],$configfwdfw{$key}[13],$configfwdfw{$key}[14],$configfwdfw{$key}[15],$configfwdfw{$key}[17],$configfwdfw{$key}[18],$configfwdfw{$key}[19],$configfwdfw{$key}[20],$configfwdfw{$key}[21],$configfwdfw{$key}[22],$configfwdfw{$key}[23],$configfwdfw{$key}[24],$configfwdfw{$key}[25],$configfwdfw{$key}[26],$configfwdfw{$key}[27]"){
+						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+				}		
+			}
 		}	
 		#increase counters
 		&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
-
 		&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
-
 		if($fwdfwsettings{'oldusesrv'} eq '' &&  $fwdfwsettings{'USESRV'} eq 'ON'){
 			&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 		}elsif ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'oldusesrv'} eq 'ON') {
@@ -203,7 +203,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 			&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 		}
 		&saverule(\%configfwdfw,$configfwdfw);
-
 		#print "Source: $fwdfwsettings{'grp1'} -> $fwdfwsettings{$fwdfwsettings{'grp1'}}<br>";
 		#print "Sourceport: $fwdfwsettings{'USE_SRC_PORT'}, $fwdfwsettings{'PROT'}, $fwdfwsettings{'ICMP_TYPES'}, $fwdfwsettings{'SRC_PORT'}<br>";
 		#print "Target: $fwdfwsettings{'grp2'} -> $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
@@ -491,8 +490,7 @@ sub deleterule
 {
 	my %delhash=();
 	&General::readhasharray($fwdfwsettings{'config'}, \%delhash);
-	foreach my $key (sort keys %delhash){
-		
+	foreach my $key (sort {$a <=> $b} keys %delhash){
 		if ($key eq $fwdfwsettings{'key'}){
 			#check hosts/net and groups
 			&checkcounter($delhash{$key}[3],$delhash{$key}[4],,);
@@ -850,6 +848,7 @@ sub newrule
 	&General::get_aliases(\%aliases);
 	my %checked=();
 	my $helper;
+	my $sum=0;
 	if($fwdfwsettings{'config'} eq ''){$fwdfwsettings{'config'}=$configfwdfw;}
 	my $config=$fwdfwsettings{'config'};
 	my %hash=();
@@ -875,7 +874,9 @@ sub newrule
 	if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on' && !$errormessage){
 		&General::readhasharray("$config", \%hash);
 		foreach my $key (sort keys %hash){
+			$sum++;
 			if ($key eq $fwdfwsettings{'key'}){
+				$fwdfwsettings{'oldrulenumber'}			= $key;
 				$fwdfwsettings{'RULE_ACTION'}			= $hash{$key}[0];
 				$fwdfwsettings{'ACTIVE'}				= $hash{$key}[2];
 				$fwdfwsettings{'grp1'}					= $hash{$key}[3];   
@@ -1242,7 +1243,20 @@ END
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
 		print<<END;
 		<table width='100%' border='0'>
-		<tr><td colspan='2' >$Lang::tr{'remark'}:<input type='text' name='ruleremark' size='40' maxlength='255' value='$fwdfwsettings{'ruleremark'}'></td></tr>
+		<tr><td width='12%'>$Lang::tr{'remark'}:</td><td align='left'><input type='text' name='ruleremark' size='40' maxlength='255' value='$fwdfwsettings{'ruleremark'}'></td></tr>
+END
+		if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on'){
+			print "<tr><td width='12%'>$Lang::tr{'fwdfw rulepos'}:</td><td><select name='rulepos' >";
+			for (my $count =1; $count <= $sum; $count++){ 
+				print"<option value='$count' ";
+				print"selected='selected'" if($fwdfwsettings{'oldrulenumber'} eq $count);
+				print">$count</option>";
+			}
+			print"</select></td></tr>";
+		}
+
+		print<<END;
+		</table><table width='100%'>
 		<tr><td width='1%'><input type='checkbox' name='ACTIVE' value='ON' $checked{'ACTIVE'}{'ON'}></td><td>$Lang::tr{'fwdfw rule activate'}</td></tr>
 		<tr><td width='1%'><input type='checkbox' name='LOG' value='ON'  $checked{'LOG'}{'ON'}  ></td><td>$Lang::tr{'fwdfw log rule'}</td></tr>
 		</table><hr><br>
@@ -1318,6 +1332,8 @@ END
 			<input type='hidden' name='oldgrp3a' value='$fwdfwsettings{'oldgrp3a'}' />
 			<input type='hidden' name='oldgrp3b' value='$fwdfwsettings{'oldgrp3b'}' />
 			<input type='hidden' name='oldusesrv' value='$fwdfwsettings{'oldusesrv'}' />
+			<input type='hidden' name='oldrulenumber' value='$fwdfwsettings{'oldrulenumber'}' />
+			<input type='hidden' name='rulenumber' value='$fwdfwsettings{'rulepos'}' />
 			<input type='hidden' name='ACTION' value='saverule' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td>
 			</table></form>
 END
@@ -1330,7 +1346,7 @@ sub saverule
 	my $config=shift;
 	&General::readhasharray("$config", $hash);
 	if (!$errormessage){
-		if ($fwdfwsettings{'updatefwrule'} ne 'on' ){
+		if ($fwdfwsettings{'updatefwrule'} ne 'on'){
 			my $key = &General::findhasharraykey ($hash);
 			$$hash{$key}[0]  = $fwdfwsettings{'RULE_ACTION'};
 			$$hash{$key}[1]  = $fwdfwsettings{'chain'};
@@ -1362,37 +1378,94 @@ sub saverule
 			$$hash{$key}[27] = $fwdfwsettings{'TIME_TO'};
 			&General::writehasharray("$config", $hash);
 		}else{
-			foreach my $key (sort keys %$hash){
-				if($key eq $fwdfwsettings{'key'}){
-					$$hash{$key}[0]  = $fwdfwsettings{'RULE_ACTION'};
-					$$hash{$key}[1]  = $fwdfwsettings{'chain'};
-					$$hash{$key}[2]  = $fwdfwsettings{'ACTIVE'};
-					$$hash{$key}[3]  = $fwdfwsettings{'grp1'};
-					$$hash{$key}[4]  = $fwdfwsettings{$fwdfwsettings{'grp1'}};
-					$$hash{$key}[5]  = $fwdfwsettings{'grp2'};
-					$$hash{$key}[6]  = $fwdfwsettings{$fwdfwsettings{'grp2'}};
-					$$hash{$key}[7]  = $fwdfwsettings{'USE_SRC_PORT'};
-					$$hash{$key}[8]  = $fwdfwsettings{'PROT'};
-					$$hash{$key}[9]  = $fwdfwsettings{'ICMP_TYPES'};
-					$$hash{$key}[10] = $fwdfwsettings{'SRC_PORT'};
-					$$hash{$key}[11] = $fwdfwsettings{'USESRV'};
-					$$hash{$key}[12] = $fwdfwsettings{'TGT_PROT'};
-					$$hash{$key}[13] = $fwdfwsettings{'ICMP_TGT'};
-					$$hash{$key}[14] = $fwdfwsettings{'grp3'};
-					$$hash{$key}[15] = $fwdfwsettings{$fwdfwsettings{'grp3'}};
-					$$hash{$key}[16] = $fwdfwsettings{'ruleremark'};
-					$$hash{$key}[17] = $fwdfwsettings{'LOG'};
-					$$hash{$key}[18] = $fwdfwsettings{'TIME'};
-					$$hash{$key}[19] = $fwdfwsettings{'TIME_MON'};
-					$$hash{$key}[20] = $fwdfwsettings{'TIME_TUE'};
-					$$hash{$key}[21] = $fwdfwsettings{'TIME_WED'};
-					$$hash{$key}[22] = $fwdfwsettings{'TIME_THU'};
-					$$hash{$key}[23] = $fwdfwsettings{'TIME_FRI'};
-					$$hash{$key}[24] = $fwdfwsettings{'TIME_SAT'};
-					$$hash{$key}[25] = $fwdfwsettings{'TIME_SUN'};
-					$$hash{$key}[26] = $fwdfwsettings{'TIME_FROM'};
-					$$hash{$key}[27] = $fwdfwsettings{'TIME_TO'};
-					last;
+			#ruleposition check
+			if($fwdfwsettings{'oldrulenumber'} gt $fwdfwsettings{'rulepos'}){
+				my %tmp=();
+				my $val=$fwdfwsettings{'oldrulenumber'}-$fwdfwsettings{'rulepos'};
+				for ($a=0;$a<$val;$a++){
+					$fwdfwsettings{'oldrulenumber'}=$fwdfwsettings{'oldrulenumber'}-$a;
+					foreach my $key (sort {$a <=> $b} keys %$hash){
+						if ($key eq $fwdfwsettings{'oldrulenumber'}) {
+							my $last = $key -1;
+							if (exists $$hash{$last}){
+								#save rule last
+								foreach my $y (0 .. $#{$$hash{$last}}) {
+									$tmp{0}[$y] = $$hash{$last}[$y];
+								}
+								#copy active rule to last
+								foreach my $i (0 .. $#{$$hash{$last}}) {
+									$$hash{$last}[$i] = $$hash{$key}[$i];
+								}
+								#copy saved rule to actual position
+								foreach my $x (0 .. $#{$tmp{0}}) {
+									$$hash{$key}[$x] = $tmp{0}[$x];
+								}
+							}
+						}
+					}
+				}
+				&General::writehasharray("$config", $hash);
+				&rules;
+			}elsif($fwdfwsettings{'rulepos'} gt $fwdfwsettings{'oldrulenumber'}){
+				my %tmp=();
+				my $val=$fwdfwsettings{'rulepos'}-$fwdfwsettings{'oldrulenumber'};
+				for ($a=0;$a<$val;$a++){
+					$fwdfwsettings{'oldrulenumber'}=$fwdfwsettings{'oldrulenumber'}+$a;
+					foreach my $key (sort {$a <=> $b} keys %$hash){
+						if ($key eq $fwdfwsettings{'oldrulenumber'}) {
+							my $next = $key + 1;
+							if (exists $$hash{$next}){
+								#save rule next
+								foreach my $y (0 .. $#{$$hash{$next}}) {
+									$tmp{0}[$y] = $$hash{$next}[$y];
+								}
+								#copy active rule to next
+								foreach my $i (0 .. $#{$$hash{$next}}) {
+									$$hash{$next}[$i] = $$hash{$key}[$i];
+								}
+								#copy saved rule to actual position
+								foreach my $x (0 .. $#{$tmp{0}}) {
+									$$hash{$key}[$x] = $tmp{0}[$x];
+								}
+							}
+						}
+					}
+				}
+				&General::writehasharray("$config", $hash);
+				&rules;
+			}else{
+				foreach my $key (sort {$a <=> $b} keys %$hash){
+					if($key eq $fwdfwsettings{'key'}){
+						$$hash{$key}[0]  = $fwdfwsettings{'RULE_ACTION'};
+						$$hash{$key}[1]  = $fwdfwsettings{'chain'};
+						$$hash{$key}[2]  = $fwdfwsettings{'ACTIVE'};
+						$$hash{$key}[3]  = $fwdfwsettings{'grp1'};
+						$$hash{$key}[4]  = $fwdfwsettings{$fwdfwsettings{'grp1'}};
+						$$hash{$key}[5]  = $fwdfwsettings{'grp2'};
+						$$hash{$key}[6]  = $fwdfwsettings{$fwdfwsettings{'grp2'}};
+						$$hash{$key}[7]  = $fwdfwsettings{'USE_SRC_PORT'};
+						$$hash{$key}[8]  = $fwdfwsettings{'PROT'};
+						$$hash{$key}[9]  = $fwdfwsettings{'ICMP_TYPES'};
+						$$hash{$key}[10] = $fwdfwsettings{'SRC_PORT'};
+						$$hash{$key}[11] = $fwdfwsettings{'USESRV'};
+						$$hash{$key}[12] = $fwdfwsettings{'TGT_PROT'};
+						$$hash{$key}[13] = $fwdfwsettings{'ICMP_TGT'};
+						$$hash{$key}[14] = $fwdfwsettings{'grp3'};
+						$$hash{$key}[15] = $fwdfwsettings{$fwdfwsettings{'grp3'}};
+						$$hash{$key}[16] = $fwdfwsettings{'ruleremark'};
+						$$hash{$key}[17] = $fwdfwsettings{'LOG'};
+						$$hash{$key}[18] = $fwdfwsettings{'TIME'};
+						$$hash{$key}[19] = $fwdfwsettings{'TIME_MON'};
+						$$hash{$key}[20] = $fwdfwsettings{'TIME_TUE'};
+						$$hash{$key}[21] = $fwdfwsettings{'TIME_WED'};
+						$$hash{$key}[22] = $fwdfwsettings{'TIME_THU'};
+						$$hash{$key}[23] = $fwdfwsettings{'TIME_FRI'};
+						$$hash{$key}[24] = $fwdfwsettings{'TIME_SAT'};
+						$$hash{$key}[25] = $fwdfwsettings{'TIME_SUN'};
+						$$hash{$key}[26] = $fwdfwsettings{'TIME_FROM'};
+						$$hash{$key}[27] = $fwdfwsettings{'TIME_TO'};
+						last;
+					}
 				}
 			}
 			&General::writehasharray("$config", $hash);
@@ -1438,7 +1511,7 @@ sub validremark
 	if (length ($remark) < 1 || length ($remark) > 255) {
 		return 0;}
 	# Only valid characters are a-z, A-Z, 0-9 and -
-	if ($remark !~ /^[a-zäöüA-ZÖÄÜ0-9-.:\/\s]*$/) {
+	if ($remark !~ /^[a-zäöüA-ZÖÄÜ0-9-.:_\/\s]*$/) {
 		return 0;}
 	# First character can only be a letter or a digit
 	if (substr ($remark, 0, 1) !~ /^[a-zäöüA-ZÖÄÜ0-9]*$/) {

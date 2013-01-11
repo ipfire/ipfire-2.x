@@ -952,6 +952,7 @@
 'fwdfw rules'			=> 'Rules',
 'fwdfw rule action' 	=> 'Rule action:',
 'fwdfw rule activate'	=> 'Activate rule',
+'fwdfw rulepos'			=> 'Ruleposition',
 'fwdfw source' 			=> 'Source',
 'fwdfw sourceip' 		=> 'Source address (MAC, IP or Network):',
 'fwdfw std network' 	=> 'Standard networks:',

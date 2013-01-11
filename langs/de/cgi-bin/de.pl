@@ -927,6 +927,7 @@
 'fwdfw rules'			=> 'Regeln',
 'fwdfw rule action' 	=> 'Regel Aktion:',
 'fwdfw rule activate'	=> 'Regel aktivieren',
+'fwdfw rulepos'			=> 'Regelposition',
 'fwdfw source' 			=> 'Quelle',
 'fwdfw sourceip' 		=> 'Quelladresse (MAC, IP oder Netzwerk):',
 'fwdfw std network' 	=> 'Standard Netzwerke:',
