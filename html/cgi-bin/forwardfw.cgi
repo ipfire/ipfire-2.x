@@ -510,7 +510,7 @@ sub deleterule
 		}
 	}
 	# Remove the very last entry.
-	my $last_key = (sort keys %delhash)[-1];
+	my $last_key = (sort {$a <=> $b} keys %delhash)[-1];
 	delete $delhash{$last_key};
 
 	&General::writehasharray($fwdfwsettings{'config'}, \%delhash);
