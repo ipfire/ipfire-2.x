@@ -1401,8 +1401,7 @@ sub saverule
 			if($fwdfwsettings{'oldrulenumber'} gt $fwdfwsettings{'rulepos'}){
 				my %tmp=();
 				my $val=$fwdfwsettings{'oldrulenumber'}-$fwdfwsettings{'rulepos'};
-				for ($a=0;$a<$val;$a++){
-					$fwdfwsettings{'oldrulenumber'}=$fwdfwsettings{'oldrulenumber'}-$a;
+				for (my $z=0;$z<$val;$z++){
 					foreach my $key (sort {$a <=> $b} keys %$hash){
 						if ($key eq $fwdfwsettings{'oldrulenumber'}) {
 							my $last = $key -1;
@@ -1422,15 +1421,15 @@ sub saverule
 							}
 						}
 					}
+					$fwdfwsettings{'oldrulenumber'}--;
 				}
 				&General::writehasharray("$config", $hash);
 				&rules;
 			}elsif($fwdfwsettings{'rulepos'} gt $fwdfwsettings{'oldrulenumber'}){
 				my %tmp=();
 				my $val=$fwdfwsettings{'rulepos'}-$fwdfwsettings{'oldrulenumber'};
-				for ($a=0;$a<$val;$a++){
-					$fwdfwsettings{'oldrulenumber'}=$fwdfwsettings{'oldrulenumber'}+$a;
-					foreach my $key (sort {$a <=> $b} keys %$hash){
+					for (my $z=0;$z<$val;$z++){
+						foreach my $key (sort {$a <=> $b} keys %$hash){
 						if ($key eq $fwdfwsettings{'oldrulenumber'}) {
 							my $next = $key + 1;
 							if (exists $$hash{$next}){
@@ -1449,6 +1448,7 @@ sub saverule
 							}
 						}
 					}
+					$fwdfwsettings{'oldrulenumber'}++;
 				}
 				&General::writehasharray("$config", $hash);
 				&rules;
