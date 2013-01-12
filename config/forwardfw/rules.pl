@@ -115,12 +115,12 @@ sub buildrules
 {
 	my $hash=shift;
 	my $STAG;
-	foreach my $key (sort keys %$hash){
+	foreach my $key (sort {$a <=> $b} keys %$hash){
 		$STAG='';
 		if($$hash{$key}[2] eq 'ON'){
 			#get source ip's
 			if ($$hash{$key}[3] eq 'cust_grp_src'){
-				foreach my $grp (sort keys %customgrp){
+				foreach my $grp (sort {$a <=> $b} keys %customgrp){
 						if($customgrp{$grp}[0] eq $$hash{$key}[4]){
 						&get_address($customgrp{$grp}[3],$customgrp{$grp}[2],"src");
 					}
@@ -130,7 +130,7 @@ sub buildrules
 			}
 			#get target ip's
 			if ($$hash{$key}[5] eq 'cust_grp_tgt'){
-				foreach my $grp (sort keys %customgrp){
+				foreach my $grp (sort {$a <=> $b} keys %customgrp){
 					if($customgrp{$grp}[0] eq $$hash{$key}[6]){
 						&get_address($customgrp{$grp}[3],$customgrp{$grp}[2],"tgt");
 					}
@@ -187,7 +187,6 @@ sub buildrules
 				print "\n";
 				print"##################################\n";
 				#print rules to console
-
 				foreach my $DPROT (@DPROT){
 					$DPORT = &get_port($hash,$key,$DPROT);
 					if ($SPROT ne ''){$PROT=$SPROT;}else{$PROT=$DPROT;}

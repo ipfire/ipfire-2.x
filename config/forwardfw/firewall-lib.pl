@@ -68,7 +68,7 @@ my $field;
 sub get_srv_prot
 {
 	my $val=shift;
-	foreach my $key (sort keys %customservice){
+	foreach my $key (sort {$a <=> $b} keys %customservice){
 		if($customservice{$key}[0] eq $val){
 			if ($customservice{$key}[0] eq $val){
 				return $customservice{$key}[2];
@@ -83,7 +83,7 @@ sub get_srvgrp_prot
 	my $tcp;
 	my $udp;
 	my $icmp;
-	foreach my $key (sort keys %customservicegrp){
+	foreach my $key (sort {$a <=> $b} keys %customservicegrp){
 		if($customservicegrp{$key}[0] eq $val){
 			if (&get_srv_prot($customservicegrp{$key}[2]) eq 'TCP'){ 
 				$tcp=1;
@@ -108,7 +108,7 @@ sub get_srv_port
 	my $val=shift;
 	my $field=shift;
 	my $prot=shift;
-	foreach my $key (sort keys %customservice){
+	foreach my $key (sort {$a <=> $b} keys %customservice){
 		if($customservice{$key}[0] eq $val){
 			if($customservice{$key}[2] eq $prot){
 				return $customservice{$key}[$field];
@@ -123,7 +123,7 @@ sub get_srvgrp_port
 	my $back;
 	my $value;
 	my @ips=();
-	foreach my $key (sort keys %customservicegrp){
+	foreach my $key (sort {$a <=> $b} keys %customservicegrp){
 		if($customservicegrp{$key}[0] eq $val){
 			if ($prot ne 'ICMP'){
 				$value=&get_srv_port($customservicegrp{$key}[2],1,$prot);
@@ -146,7 +146,7 @@ sub get_ipsec_net_ip
 {
 	my $val=shift;
 	my $field=shift;
-	foreach my $key (sort keys %ipsecconf){
+	foreach my $key (sort {$a <=> $b} keys %ipsecconf){
 		if($ipsecconf{$key}[1] eq $val){
 			return $ipsecconf{$key}[$field];
 		}
@@ -156,7 +156,7 @@ sub get_ipsec_host_ip
 {
 	my $val=shift;
 	my $field=shift;
-	foreach my $key (sort keys %ipsecconf){
+	foreach my $key (sort {$a <=> $b} keys %ipsecconf){
 		if($ipsecconf{$key}[1] eq $val){
 			return $ipsecconf{$key}[$field];
 		}
@@ -166,7 +166,7 @@ sub get_ovpn_n2n_ip
 {
 	my $val=shift;
 	my $field=shift;
-	foreach my $key (sort keys %ccdhost){
+	foreach my $key (sort {$a <=> $b} keys %ccdhost){
 		if($ccdhost{$key}[1] eq $val){
 			return $ccdhost{$key}[$field];
 		}
@@ -176,7 +176,7 @@ sub get_ovpn_host_ip
 {
 	my $val=shift;
 	my $field=shift;
-	foreach my $key (sort keys %ccdhost){
+	foreach my $key (sort {$a <=> $b} keys %ccdhost){
 		if($ccdhost{$key}[1] eq $val){
 			return $ccdhost{$key}[$field];
 		}
@@ -187,7 +187,7 @@ sub get_ovpn_net_ip
 	
 	my $val=shift;
 	my $field=shift;
-	foreach my $key (sort keys %ccdnet){
+	foreach my $key (sort {$a <=> $b} keys %ccdnet){
 		if($ccdnet{$key}[0] eq $val){
 			return $ccdnet{$key}[$field];
 		}
@@ -197,7 +197,7 @@ sub get_grp_ip
 {
 	my $val=shift;
 	my $src=shift;
-	foreach my $key (sort keys %customgrp){
+	foreach my $key (sort {$a <=> $b} keys %customgrp){
 		if ($customgrp{$key}[0] eq $val){
 			&get_address($customgrp{$key}[3],$src);
 		}
@@ -226,7 +226,7 @@ sub get_std_net_ip
 sub get_net_ip
 {
 	my $val=shift;
-	foreach my $key (sort keys %customnetwork){
+	foreach my $key (sort {$a <=> $b} keys %customnetwork){
 		if($customnetwork{$key}[0] eq $val){
 			return "$customnetwork{$key}[1]/$customnetwork{$key}[2]";
 		}  
@@ -236,7 +236,7 @@ sub get_host_ip
 {
 	my $val=shift;
 	my $src=shift;
-	foreach my $key (sort keys %customhost){
+	foreach my $key (sort {$a <=> $b} keys %customhost){
 		if($customhost{$key}[0] eq $val){
 			if ($customhost{$key}[1] eq 'mac' && $src eq 'src'){
 			return "-m mac --mac-source $customhost{$key}[2]";

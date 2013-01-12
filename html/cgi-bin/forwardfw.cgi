@@ -112,7 +112,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
-
 	#check if we change an forward rule to an external access
 	if(	$fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{'oldgrp2a'} ne 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 		$fwdfwsettings{'updatefwrule'}='';
@@ -122,7 +121,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		&checkcounter(0,0,$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
 		&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 	}
-
 	#check if we change an external access rule to an forward
 	if(	$fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 		$fwdfwsettings{'updatefwrule'}='';
@@ -141,8 +139,16 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
 					eq "$configinputfw{$key}[0],$configinputfw{$key}[2],$configinputfw{$key}[3],$configinputfw{$key}[4],$configinputfw{$key}[5],$configinputfw{$key}[6],$configinputfw{$key}[7],$configinputfw{$key}[8],$configinputfw{$key}[9],$configinputfw{$key}[10],$configinputfw{$key}[11],$configinputfw{$key}[12],$configinputfw{$key}[13],$configinputfw{$key}[14],$configinputfw{$key}[15],$configinputfw{$key}[17],$configinputfw{$key}[18],$configinputfw{$key}[19],$configinputfw{$key}[20],$configinputfw{$key}[21],$configinputfw{$key}[22],$configinputfw{$key}[23],$configinputfw{$key}[24],$configinputfw{$key}[25],$configinputfw{$key}[26],$configinputfw{$key}[27]"){
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+						$fwdfwsettings{'nosave'} = 'on';
 				}	
 			}	
+		}
+		#check if we just close a rule
+		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} ) {
+			if($fwdfwsettings{'nosave'} eq 'on' && $fwdfwsettings{'updatefwrule'} eq 'on'){
+				$errormessage='';
+				$fwdfwsettings{'nosave2'} = 'on';
+			}
 		}
 		&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
 		if ($fwdfwsettings{'nobase'} ne 'on'){
@@ -155,8 +161,9 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		}elsif ($fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldgrp3b'} ne $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 		}
-
-		&saverule(\%configinputfw,$configinput);
+		if($fwdfwsettings{'nosave2'} ne 'on'){
+			&saverule(\%configinputfw,$configinput);
+		}
 		#print "Source: $fwdfwsettings{'grp1'} -> $fwdfwsettings{$fwdfwsettings{'grp1'}}<br>";
 		#print "Sourceport: $fwdfwsettings{'USE_SRC_PORT'}, $fwdfwsettings{'PROT'}, $fwdfwsettings{'ICMP_TYPES'}, $fwdfwsettings{'SRC_PORT'}<br>";
 		#print "Target: $fwdfwsettings{'grp2'} -> $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
@@ -186,9 +193,17 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
 					eq "$configfwdfw{$key}[0],$configfwdfw{$key}[2],$configfwdfw{$key}[3],$configfwdfw{$key}[4],$configfwdfw{$key}[5],$configfwdfw{$key}[6],$configfwdfw{$key}[7],$configfwdfw{$key}[8],$configfwdfw{$key}[9],$configfwdfw{$key}[10],$configfwdfw{$key}[11],$configfwdfw{$key}[12],$configfwdfw{$key}[13],$configfwdfw{$key}[14],$configfwdfw{$key}[15],$configfwdfw{$key}[17],$configfwdfw{$key}[18],$configfwdfw{$key}[19],$configfwdfw{$key}[20],$configfwdfw{$key}[21],$configfwdfw{$key}[22],$configfwdfw{$key}[23],$configfwdfw{$key}[24],$configfwdfw{$key}[25],$configfwdfw{$key}[26],$configfwdfw{$key}[27]"){
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+						$fwdfwsettings{'nosave'} = 'on';
 				}		
 			}
 		}	
+		#check if we just close a rule
+		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} ) {
+			if($fwdfwsettings{'nosave'} eq 'on' && $fwdfwsettings{'updatefwrule'} eq 'on'){
+				$fwdfwsettings{'nosave2'} = 'on';
+				$errormessage='';
+			}
+		}
 		#increase counters
 		&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
 		&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
@@ -202,7 +217,9 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		if ($fwdfwsettings{'nobase'} eq 'on'){
 			&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 		}
-		&saverule(\%configfwdfw,$configfwdfw);
+		if ($fwdfwsettings{'nosave2'} ne 'on'){
+			&saverule(\%configfwdfw,$configfwdfw);
+		}	
 		#print "Source: $fwdfwsettings{'grp1'} -> $fwdfwsettings{$fwdfwsettings{'grp1'}}<br>";
 		#print "Sourceport: $fwdfwsettings{'USE_SRC_PORT'}, $fwdfwsettings{'PROT'}, $fwdfwsettings{'ICMP_TYPES'}, $fwdfwsettings{'SRC_PORT'}<br>";
 		#print "Target: $fwdfwsettings{'grp2'} -> $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
@@ -228,7 +245,9 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	if ($errormessage){
 		&newrule;
 	}else{
-		&rules;
+		if($fwdfwsettings{'nosave2'} ne 'on'){
+			&rules;
+		}
 		&base;
 	}
 }
@@ -491,7 +510,7 @@ sub deleterule
 	my %delhash=();
 	&General::readhasharray($fwdfwsettings{'config'}, \%delhash);
 	foreach my $key (sort {$a <=> $b} keys %delhash){
-		if ($key eq $fwdfwsettings{'key'}){
+		if ($key == $fwdfwsettings{'key'}){
 			#check hosts/net and groups
 			&checkcounter($delhash{$key}[3],$delhash{$key}[4],,);
 			&checkcounter($delhash{$key}[5],$delhash{$key}[6],,);
@@ -500,7 +519,7 @@ sub deleterule
 				&checkcounter($delhash{$key}[14],$delhash{$key}[15],,);
 			}
 		}
-		if ($key ge $fwdfwsettings{'key'}) {
+		if ($key >= $fwdfwsettings{'key'}) {
 			my $next = $key + 1;
 			if (exists $delhash{$next}) {
 				foreach my $i (0 .. $#{$delhash{$next}}) {
