@@ -330,7 +330,7 @@ int main(int argc, char *argv[])
 		
 	
   /* Calculating the amount of free space */
-	boot_partition = 20; /* in MB */
+	boot_partition = 64; /* in MB */
 	system_partition = disk - ( root_partition + swap_file + boot_partition );
 	
 	fprintf(flog, ", boot = %ld, swap = %ld, mylog = %ld, root = %ld\n",
