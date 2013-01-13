@@ -3086,12 +3086,6 @@ pid_filename /var/run/squid.pid
 cache_mem $proxysettings{'CACHE_MEM'} MB
 END
 	;
-
-	if ($proxysettings{'CACHE_SIZE'} ne '0')
-	{
-		print FILE "cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256\n\n";
-	}
-
 	print FILE "error_directory $errordir/$proxysettings{'ERR_LANGUAGE'}\n\n";
 
 	if ($proxysettings{'OFFLINE_MODE'} eq 'on') {  print FILE "offline_mode on\n\n"; }
@@ -3107,6 +3101,11 @@ END
 			print FILE "cache_replacement_policy $proxysettings{'CACHE_POLICY'}\n";
 		}
 		print FILE "\n";
+	}
+
+	if ($proxysettings{'CACHE_SIZE'} ne '0')
+	{
+		print FILE "cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256\n\n";
 	}
 
 	if ($proxysettings{'LOGGING'} eq 'on')
