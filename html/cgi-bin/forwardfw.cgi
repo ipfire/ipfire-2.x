@@ -624,6 +624,9 @@ sub checksource
 		}elsif($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} eq 'ESP'){
 			$fwdfwsettings{'SRC_PORT'}='';
 			$fwdfwsettings{'ICMP_TYPES'}='';
+		}elsif($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} eq 'AH'){
+			$fwdfwsettings{'SRC_PORT'}='';
+			$fwdfwsettings{'ICMP_TYPES'}='';	
 		}elsif($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} ne 'ICMP'){
 			$fwdfwsettings{'ICMP_TYPES'}='';
 		}else{
@@ -720,13 +723,16 @@ sub checktarget
 					$errormessage .= &General::validportrange($fwdfwsettings{'TGT_PORT'}, 'destination');
 				}
 			}elsif ($fwdfwsettings{'TGT_PROT'} eq 'GRE'){
-					$fwdfwsettings{'TGT_PORT'} = '';
+					$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
 					$fwdfwsettings{'ICMP_TGT'} = '';
 			}elsif($fwdfwsettings{'TGT_PORT'} eq 'ESP'){
-					$fwdfwsettings{'TGT_PORT'}='';
+					$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
+					$fwdfwsettings{'ICMP_TGT'}='';
+			}elsif($fwdfwsettings{'TGT_PORT'} eq 'AH'){
+					$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
 					$fwdfwsettings{'ICMP_TGT'}='';
 			}elsif ($fwdfwsettings{'TGT_PROT'} eq 'ICMP'){
-				$fwdfwsettings{'TGT_PORT'} = '';
+				$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
 				&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 				foreach my $key (keys %icmptypes){
 					
@@ -1088,7 +1094,7 @@ END
 		<tr><td width='1%'><input type='checkbox' name='USE_SRC_PORT' value='ON' $checked{'USE_SRC_PORT'}{'ON'}></td><td width='51%' colspan='3'>$Lang::tr{'fwdfw use srcport'}</td>
 		<td width='15%' nowrap='nowrap'>$Lang::tr{'fwdfw man port'}</td><td><select name='PROT'>
 END
-		foreach ("TCP","UDP","GRE","ESP","ICMP")
+		foreach ("TCP","UDP","GRE","ESP","AH","ICMP")
 		{
 			if ($_ eq $fwdfwsettings{'PROT'})
 			{
@@ -1242,7 +1248,7 @@ END
 		</select></td></tr>
 		<tr><td colspan='2'></td><td><input type='radio' name='grp3' value='TGT_PORT' $checked{'grp3'}{'TGT_PORT'}></td><td>$Lang::tr{'fwdfw man port'}</td><td><select name='TGT_PROT'>
 END
-		foreach ("TCP","UDP","GRE","ESP","ICMP")
+		foreach ("TCP","UDP","GRE","ESP","AH","ICMP")
 		{
 			if ($_ eq $fwdfwsettings{'TGT_PROT'})
 			{
