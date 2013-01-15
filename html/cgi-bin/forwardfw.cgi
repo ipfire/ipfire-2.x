@@ -734,7 +734,7 @@ sub checktarget
 			}
 		}
 		if ($fwdfwsettings{'grp3'} eq 'TGT_PORT'){
-			if ($fwdfwsettings{'TGT_PROT'} ne 'ICMP' && $fwdfwsettings{'TGT_PROT'} ne 'GRE'){
+			if ($fwdfwsettings{'TGT_PROT'} eq 'TCP' || $fwdfwsettings{'TGT_PROT'} eq 'UDP'){
 				if ($fwdfwsettings{'TGT_PORT'} ne ''){
 					#change dashes with :
 					$fwdfwsettings{'TGT_PORT'}=~ tr/-/:/;
@@ -751,15 +751,19 @@ sub checktarget
 				}
 			}elsif ($fwdfwsettings{'TGT_PROT'} eq 'GRE'){
 					$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
+					$fwdfwsettings{'TGT_PORT'} = '';
 					$fwdfwsettings{'ICMP_TGT'} = '';
-			}elsif($fwdfwsettings{'TGT_PORT'} eq 'ESP'){
+			}elsif($fwdfwsettings{'TGT_PROT'} eq 'ESP'){
 					$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
+					$fwdfwsettings{'TGT_PORT'} = '';
 					$fwdfwsettings{'ICMP_TGT'}='';
-			}elsif($fwdfwsettings{'TGT_PORT'} eq 'AH'){
+			}elsif($fwdfwsettings{'TGT_PROT'} eq 'AH'){
 					$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
+					$fwdfwsettings{'TGT_PORT'} = '';
 					$fwdfwsettings{'ICMP_TGT'}='';
 			}elsif ($fwdfwsettings{'TGT_PROT'} eq 'ICMP'){
 				$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
+				$fwdfwsettings{'TGT_PORT'} = '';
 				&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 				foreach my $key (keys %icmptypes){
 					
@@ -777,6 +781,7 @@ sub checktarget
 		$fwdfwsettings{$fwdfwsettings{'grp3'}}='';
 		$fwdfwsettings{'TGT_PROT'}='';
 		$fwdfwsettings{'ICMP_TGT'}='';
+
 	}
 	#check timeframe
 	if($fwdfwsettings{'TIME'} eq 'ON'){
