@@ -1987,8 +1987,6 @@ END
 	;
 	&Header::closebox();
     } elsif (! $cgiparams{'KEY'}) {
-	my $pskdisabled = ($vpnsettings{'VPN_IP'} eq '%defaultroute') ? "disabled='disabled'" : '' ;
-        $cgiparams{'PSK'} =  $Lang::tr{'vpn incompatible use of defaultroute'} if ($pskdisabled);
 	my $cakeydisabled = ( ! -f "${General::swroot}/private/cakey.pem" ) ? "disabled='disabled'" : '';
         $cgiparams{'CERT_NAME'} = $Lang::tr{'vpn no full pki'} if ($cakeydisabled);
 	my $cacrtdisabled = ( ! -f "${General::swroot}/ca/cacert.pem" ) ? "disabled='disabled'" : '';
@@ -1996,9 +1994,9 @@ END
 	&Header::openbox('100%', 'left', $Lang::tr{'authentication'});
 	print <<END
 	<table width='100%' cellpadding='0' cellspacing='5' border='0'>
-	<tr><td width='5%'><input type='radio' name='AUTH' value='psk' $checked{'AUTH'}{'psk'} $pskdisabled/></td>
+	<tr><td width='5%'><input type='radio' name='AUTH' value='psk' $checked{'AUTH'}{'psk'} /></td>
 	    <td class='base' width='55%'>$Lang::tr{'use a pre-shared key'}</td>
-	    <td class='base' width='40%'><input type='password' name='PSK' size='30' value='$cgiparams{'PSK'}' $pskdisabled/></td></tr>
+	    <td class='base' width='40%'><input type='password' name='PSK' size='30' value='$cgiparams{'PSK'}' /></td></tr>
 	<tr><td colspan='3' bgcolor='#000000'></td></tr>
 	<tr><td><input type='radio' name='AUTH' value='certreq' $checked{'AUTH'}{'certreq'} $cakeydisabled /></td>
 	    <td class='base'><hr />$Lang::tr{'upload a certificate request'}</td>
