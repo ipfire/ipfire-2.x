@@ -68,6 +68,7 @@ my %icmptypes=();
 my %ovpnsettings=();
 my %ipsecsettings=();
 my %aliases=();
+my @p2ps = ();
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -81,7 +82,7 @@ my $configipsecrw	= "${General::swroot}/vpn/settings";
 my $configfwdfw		= "${General::swroot}/forward/config";
 my $configinput		= "${General::swroot}/forward/input";
 my $configovpn		= "${General::swroot}/ovpn/settings";
-
+my $p2pfile			= "${General::swroot}/forward/p2protocols";
 my $errormessage='';
 my $hint='';
 my $ipgrp="${General::swroot}/outgoing/groups";
@@ -345,6 +346,29 @@ if ($fwdfwsettings{'ACTION'} eq 'copyrule')
 	#$fwdfwsettings{'updatefwrule'}='on';
 	&newrule;
 }
+if ($fwdfwsettings{'ACTION'} eq 'togglep2p')
+{
+	#$errormessage="Toggle $fwdfwsettings{'P2PROT'}<br>";
+	open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
+	@p2ps = <FILE>;
+	close FILE;
+	open( FILE, "> $p2pfile" ) or die "Unable to write $p2pfile";
+	foreach my $p2pentry (sort @p2ps)
+	{
+		my @p2pline = split( /\;/, $p2pentry );
+		if ($p2pline[1] eq $fwdfwsettings{'P2PROT'}) {
+			if($p2pline[2] eq 'on'){
+				$p2pline[2]='off';
+			}else{
+				$p2pline[2]='on';
+			}
+		}
+		print FILE "$p2pline[0];$p2pline[1];$p2pline[2];\n";
+	}
+	close FILE;
+	&rules;
+	&base;
+}
 if ($fwdfwsettings{'ACTION'} eq '')
 {
 	&base;
@@ -481,6 +505,9 @@ sub base
 		#print"<td bgcolor='$color{$i}'>$_</td>";
 	#}
 	#print"</tr></table>";
+	if ($fwdfwsettings{'POLICY'} eq 'MODE1' || $fwdfwsettings{'POLICY'} eq 'MODE2' ) {
+		&p2pblock;
+	}
 	&Header::openbox('100%', 'center', 'Policy');
 print <<END;
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -490,13 +517,13 @@ print <<END;
 		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 2:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoing firewall mode2'}</td></tr>
 		<tr><td colspan='3'><hr /></td></tr>
 		<tr><td width='10%' align='left'>	<select name='POLICY' style="width: 85px"><option value='MODE0' $selected{'POLICY'}{'MODE0'}>$Lang::tr{'mode'} 0</option><option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'mode'} 1</option><option value='MODE2' $selected{'POLICY'}{'MODE2'}>$Lang::tr{'mode'} 2</option></select>
-		    <td width='45%' align='left'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
-		    <td width='45%' align='left'>
+	    <td width='45%' align='left'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
+	    <td width='45%' align='left'>
 END
 	if ($fwdfwsettings{'POLICY'} ne 'MODE0'&& $fwdfwsettings{'POLICY'} ne '' ) {
 		print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value='$Lang::tr{'reset'}' />";
 	}
-print "</table></form>";
+	print "</table></form>";
 	&Header::closebox();
 }
 sub addrule
@@ -564,7 +591,7 @@ sub disable_rule
 sub checksource
 {
 	my ($ip,$subnet);
-	
+
 	#check ip-address if manual
 	if ($fwdfwsettings{'src_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'src_addr'} ne ''){
 		#check if ip with subnet
@@ -579,7 +606,7 @@ sub checksource
 			$subnet = '32';
 			$fwdfwsettings{'isip'}='on';
 		}
-				
+
 		if ($fwdfwsettings{'isip'} ne 'on'){
 			if (&General::validmac($fwdfwsettings{'src_addr'})){$fwdfwsettings{'ismac'}='on';}
 		}
@@ -594,7 +621,7 @@ sub checksource
 				$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
 			}
 			$fwdfwsettings{'src_addr'}="$ip/$subnet";
-	
+
 			if(!&General::validipandmask($fwdfwsettings{'src_addr'})){
 				$errormessage.=$Lang::tr{'fwdfw err src_addr'}."<br>";
 			}
@@ -671,7 +698,7 @@ sub checktarget
 		#check and form valid IP
 		$ip=&General::ip2dec($ip);
 		$ip=&General::dec2ip($ip);
-		
+
 		#check if net or broadcast
 		my @tmp= split (/\./,$ip);
 		if (($tmp[3] eq "0") || ($tmp[3] eq "255"))
@@ -994,10 +1021,8 @@ END
 	}
 	print"</select></td></tr></table><hr>";	
 
-
 	&Header::closebox();
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw source'});
-
 
 	#------SOURCE-------------------------------------------------------
 	print<<END;
@@ -1805,6 +1830,35 @@ END
 		print"</table>";
 		&Header::closebox();
 	}
+}
+sub p2pblock
+{
+	my $gif;
+	open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
+	@p2ps = <FILE>;
+	close FILE;
+	&Header::openbox('100%', 'center', 'P2P-Block');
+	print <<END;
+	<table width='40%' border='0'>
+	<tr bgcolor='$color{'color22'}'><td align=center colspan='2' width='30%'><b>$Lang::tr{'protocol'}</b><td width='10%' align=center><b>$Lang::tr{'status'}</b>
+END
+	foreach my $p2pentry (sort @p2ps)
+	{
+		my @p2pline = split( /\;/, $p2pentry );
+		if($p2pline[2] eq 'on'){
+			$gif="/images/on.gif"
+		}else{
+			$gif="/images/off.gif"
+		}
+		print <<END;
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<tr bgcolor='$color{'color20'}'>
+		<td width='66%' align='center' colspan='2'>$p2pline[0]:</td><td width='33%' align='center'><input type='hidden' name='P2PROT' value='$p2pline[1]' /><input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' ><input type='hidden' name='ACTION' value='togglep2p'></td></tr></form>
+END
+	}
+	print"<tr><td width='10%'><input type='image' img src='/images/on.gif'></td><td>$Lang::tr{'outgoing firewall p2p deny'}</td><td></td></tr>";
+	print"<tr><td width='10%'><input type='image' img src='/images/off.gif'></td><td>$Lang::tr{'outgoing firewall p2p allow'}</td><td></td></tr></table>";
+	&Header::closebox();
 }
 sub fillselect
 {

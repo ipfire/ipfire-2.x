@@ -24,7 +24,6 @@
 # This script builds firewallrules from the webinterface                      #
 ###############################################################################
 
-
 use strict;
 no warnings 'uninitialized';
 
@@ -45,12 +44,14 @@ my @timeframe=();
 my %configinputfw=();
 my %aliases=();
 my @DPROT=();
+my @p2ps=();
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/forward/bin/firewall-lib.pl";
 
 my $configfwdfw		= "${General::swroot}/forward/config";
 my $configinput	    = "${General::swroot}/forward/input";
+my $p2pfile			= "${General::swroot}/forward/p2protocols";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $errormessage='';
 my ($TYPE,$PROT,$SPROT,$DPROT,$SPORT,$DPORT,$TIME,$TIMEFROM,$TIMETILL,$SRC_TGT);
@@ -106,6 +107,7 @@ sub preparerules
 {
 	if (! -z  "${General::swroot}/forward/config"){
 		&buildrules(\%configfwdfw);
+		&p2pblock;
 	}
 	if (! -z  "${General::swroot}/forward/input"){
 		&buildrules(\%configinputfw);
@@ -163,7 +165,6 @@ sub buildrules
 			if ($DPROT eq ''){$DPROT=' ';}				
 			@DPROT=split(",",$DPROT);
 
-
 			#get time if defined
 			if($$hash{$key}[18] eq 'ON'){
 				if($$hash{$key}[19] ne ''){push (@timeframe,"Mon");}
@@ -178,7 +179,6 @@ sub buildrules
 				$TIMETILL="--timestop $$hash{$key}[27] ";
 				$TIME="-m time --weekdays $TIME $TIMEFROM $TIMETILL";
 			}
-
 			if ($MODE eq '1'){	
 				print "NR:$key ";
 				foreach my $i (0 .. $#{$$hash{$key}}){
@@ -235,6 +235,39 @@ sub buildrules
 		undef $TIMETILL;
 	}
 }
+sub p2pblock
+{
+	my $P2PSTRING;
+	my $DO;
+	open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
+	@p2ps = <FILE>;
+	close FILE;
+	my $CMD = "-m ipp2p";
+	foreach my $p2pentry (sort @p2ps) {
+		my @p2pline = split( /\;/, $p2pentry );
+		if ( $fwdfwsettings{'POLICY'} eq 'MODE2' ) {
+			$DO = "DROP";
+			if ("$p2pline[2]" eq "off") {
+				$P2PSTRING = "$P2PSTRING --$p2pline[1]";
+			}
+		} else {
+			$DO = "RETURN";
+			if ("$p2pline[2]" eq "on") {
+				$P2PSTRING = "$P2PSTRING --$p2pline[1]";
+			}
+		}
+	}
+	if ($MODE eq 1){
+		if($P2PSTRING){
+			print"/sbin/iptables -A FORWARDFW $CMD $P2PSTRING -j $DO\n";
+		}
+	}else{
+		if($P2PSTRING){
+			system("/sbin/iptables -A FORWARDFW $CMD $P2PSTRING -j $DO");
+		}
+	}
+}
+
 sub get_address
 {
 	my $base=shift; #source of checking ($configfwdfw{$key}[x] or groupkey
@@ -336,8 +369,6 @@ sub get_port
 			elsif($prot eq 'ICMP'){
 				return &fwlib::get_srvgrp_port($$hash{$key}[15],$prot);
 			}
-			
-			
 		}
 	}
 }
