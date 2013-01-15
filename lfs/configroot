@@ -115,7 +115,8 @@ $(TARGET) :
 	echo  "DROPFORWARD=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "FWPOLICY=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPPORTSCAN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-
+	echo  "POLICY=MODE0"		>> $(CONFIG_ROOT)/forward/settings
+	
 	# set rules.pl executable
 	chmod 755 $(CONFIG_ROOT)/forward/bin/rules.pl
 	# Modify variables in header.pl
