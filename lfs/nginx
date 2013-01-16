@@ -88,8 +88,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--http-fastcgi-temp-path=/var/spool/nginx/fastcgi_temp \
 		--http-log-path=/var/log/nginx/access.log \
 		--error-log-path=/var/log/nginx/error.log \
-		--user=http \
-		--group=http \
+		--user=nobody \
+		--group=nobody \
 		--with-imap --with-imap_ssl_module --with-http_ssl_module \
 		--with-http_stub_status_module \
 		--with-http_dav_module \

@@ -1,3 +1,4 @@
+usr/sbin/nginx
 etc/init.d/nginx
 etc/nginx/fastcgi.conf
 etc/nginx/fastcgi.conf.default
