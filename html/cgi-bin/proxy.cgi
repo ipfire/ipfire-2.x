@@ -348,7 +348,7 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ERROR;
 	}
-	if($proxysettings{'CACHE_MEM'} > $proxysettings{'CACHE_SIZE'}){
+	if($proxysettings{'CACHE_MEM'} > $proxysettings{'CACHE_SIZE'} && $proxysettings{'CACHE_SIZE'} > 0){
 		$errormessage = $Lang::tr{'advproxy errmsg cache'}." ".$proxysettings{'CACHE_MEM'}." > ".$proxysettings{'CACHE_SIZE'};
 		goto ERROR;
 	}
