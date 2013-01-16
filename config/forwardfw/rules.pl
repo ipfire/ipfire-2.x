@@ -89,10 +89,13 @@ if($param eq 'flush'){
 	&preparerules;
 	if($MODE eq '0'){
 		if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
+			&p2pblock;
 			system ("/usr/sbin/firewall-forward-policy"); 
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
+			&p2pblock;
 			system ("/usr/sbin/firewall-forward-policy"); 
-		}elsif($fwdfwsettings{'POLICY'} eq 'MODE0' || $fwdfwsettings{'POLICY'} eq 'MODE2'){
+			system ("iptables -A $CHAIN -m state --state NEW -j ACCEPT");
+		}elsif($fwdfwsettings{'POLICY'} eq 'MODE0'){
 			system ("/usr/sbin/firewall-forward-policy"); 
 			system ("iptables -A $CHAIN -m state --state NEW -j ACCEPT");
 		}
@@ -107,7 +110,6 @@ sub preparerules
 {
 	if (! -z  "${General::swroot}/forward/config"){
 		&buildrules(\%configfwdfw);
-		&p2pblock;
 	}
 	if (! -z  "${General::swroot}/forward/input"){
 		&buildrules(\%configinputfw);
