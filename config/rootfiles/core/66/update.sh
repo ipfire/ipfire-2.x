@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2012 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2013 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -78,7 +78,7 @@ fi
 
 #
 #
-KVER="3.2.35"
+KVER="3.2.37"
 MOUNT=`grep "kernel" /boot/grub/grub.conf 2>/dev/null | tail -n 1 `
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
@@ -320,8 +320,8 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 			"core-update-$core: WARNING not enough space for pae kernel."
 	else
 		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
-		echo "ProgVersion: 3.2.35" >> /opt/pakfire/db/installed/meta-linux-pae
-		echo "Release: 25"     >> /opt/pakfire/db/installed/meta-linux-pae
+		echo "ProgVersion: 3.2.37" >> /opt/pakfire/db/installed/meta-linux-pae
+		echo "Release: 26"     >> /opt/pakfire/db/installed/meta-linux-pae
 	fi
 fi
 
