@@ -1,1 +1,2 @@
+etc/fcron.daily/trim
 usr/bin/fstrim

@@ -72,5 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && install -m 0755 fstrim /usr/bin
+	# Install cronjob
+	install -m 0755 $(DIR_SRC)/config/fstrim/trim /etc/fcron.daily
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
