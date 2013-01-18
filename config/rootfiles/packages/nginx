@@ -18,3 +18,5 @@ etc/nginx/win-utf
 etc/rc.d/init.d/nginx
 usr/nginx/html/50x.html
 usr/nginx/html/index.html
+var/log/nginx
+var/spool/nginx
