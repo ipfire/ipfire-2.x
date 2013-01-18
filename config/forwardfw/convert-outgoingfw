@@ -227,7 +227,6 @@ sub check_grp
 }
 sub process_rules
 {
-	print "Outgoing ist im Mode $outsettings{'POLICY'}\n";
 	&General::readhash($fwdfwsettings,\%fwdsettings);
 	if($fwdsettings{'POLICY'} ne $outsettings{'POLICY'}){
 		$fwdsettings{'POLICY'}=$outsettings{'POLICY'};
@@ -253,7 +252,6 @@ sub process_rules
 	{
 		chomp($rule);
 		print LOG "processing: $rule\n";
-		print "$rule\n";
 		my @configline = split( /\;/, $rule );
 		my @prot=();
 		if($configline[0] eq $type){
@@ -392,7 +390,6 @@ sub process_rules
 		my $check;
 		foreach my $protocol (@prot){
 			$protocol=uc($protocol);
-			print"0:$action 1:FORWARDFW 2:$active 3:$grp1 4:$source 5:$grp2 6:$target 7:src_srv(leer) 8:srcprot(leer) 9:icmp(leer) 10:srcport(leer) 11:$useport 12:$protocol 13:icmp(leer) 14:$grp3 15:$port 16:$remark 17:$log 18:$time 19:$time_mon 20:$time_tue 21:$time_wed 22:$time_thu 23:$time_fri 24:$time_sat 25:$time_sun 26:$time_from 27:$time_to\n\n";
 			print LOG "-> Converted: $action,FORWARDFW,$active,$grp1,$source,$grp2,$target,,,,,$useport,$protocol,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to\n";
 			#Put rules into system....
 			###########################
@@ -416,11 +413,9 @@ sub process_rules
 						}
 					}
 					if($check1 eq 'on'){
-						print" schreibe in gruppe\n";
 						&General::writehasharray($configgroups,\%groups);
 					}
 				}
-				print"SCHREIBE REGEL!\n";
 				my $key = &General::findhasharraykey(\%fwconfig);
 				$fwconfig{$key}[0]	= $action;
 				$fwconfig{$key}[1] 	= "FORWARDFW";
