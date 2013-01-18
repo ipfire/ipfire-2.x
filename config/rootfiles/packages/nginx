@@ -1,5 +1,4 @@
-usr/sbin/nginx
-etc/init.d/nginx
+etc/nginx
 etc/nginx/fastcgi.conf
 etc/nginx/fastcgi.conf.default
 etc/nginx/fastcgi_params
@@ -15,8 +14,12 @@ etc/nginx/scgi_params.default
 etc/nginx/uwsgi_params
 etc/nginx/uwsgi_params.default
 etc/nginx/win-utf
-etc/rc.d/init.d/nginx
+usr/nginx
+usr/nginx/html
 usr/nginx/html/50x.html
 usr/nginx/html/index.html
+usr/sbin/nginx
 var/log/nginx
 var/spool/nginx
+etc/init.d/nginx
+etc/rc.d/init.d/nginx
