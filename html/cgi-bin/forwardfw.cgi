@@ -1014,15 +1014,21 @@ print <<END;
 END
 	foreach ("ACCEPT","DROP","REJECT")
 	{
-		if($fwdfwsettings{'POLICY'} eq 'MODE2'){
-			$fwdfwsettings{'RULE_ACTION'} = 'DROP';
-		}
-
-		if ($_ eq $fwdfwsettings{'RULE_ACTION'})
-		{
-			print"<option selected>$_</option>";
+		if($fwdfwsettings{'updatefwrule'} eq 'on'){
+			print"<option ";
+			print "selected='selected'" if ($fwdfwsettings{'RULE_ACTION'} eq $_);
+			print">$_</option>";
 		}else{
-			print"<option>$_</option>";
+			if($fwdfwsettings{'POLICY'} eq 'MODE2'){
+				$fwdfwsettings{'RULE_ACTION'} = 'DROP';
+			}
+	
+			if ($_ eq $fwdfwsettings{'RULE_ACTION'})
+			{
+				print"<option selected>$_</option>";
+			}else{
+				print"<option>$_</option>";
+			}
 		}
 	}
 	print"</select></td></tr></table><hr>";	
