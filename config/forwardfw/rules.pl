@@ -195,7 +195,7 @@ sub buildrules
 					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
-							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none'){
+							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
 								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac'){ $STAG="-s";}
 									if ($$hash{$key}[17] eq 'ON'){
@@ -215,7 +215,7 @@ sub buildrules
 					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
-							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none'){
+							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
 								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac'){ $STAG="-s";}
 									if ($$hash{$key}[17] eq 'ON'){
