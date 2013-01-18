@@ -110,6 +110,8 @@ usr/local/bin/update-lang-cache
 #usr/sbin
 usr/sbin/ovpn-ccd-convert
 usr/sbin/firewall-forward-policy
+usr/sbin/convert-xtaccess
+usr/sbin/convert-outgoingfw
 #usr/share
 #usr/share/doc
 #usr/share/doc/licenses

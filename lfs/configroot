@@ -101,6 +101,8 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/ethernet-vlans		$(CONFIG_ROOT)/ethernet/vlans
 	cp $(DIR_SRC)/langs/list						$(CONFIG_ROOT)/langs/
 	cp $(DIR_SRC)/config/forwardfw/rules.pl			$(CONFIG_ROOT)/forward/bin/rules.pl
+	cp $(DIR_SRC)/config/forwardfw/convert-xtaccess	/usr/sbin/convert-xtaccess
+	cp $(DIR_SRC)/config/forwardfw/convert-outgoingfw	/usr/sbin/convert-outgoingfw
 	cp $(DIR_SRC)/config/forwardfw/p2protocols		$(CONFIG_ROOT)/forward/p2protocols
 	cp $(DIR_SRC)/config/forwardfw/firewall-lib.pl	$(CONFIG_ROOT)/forward/bin/firewall-lib.pl
 	cp $(DIR_SRC)/config/forwardfw/firewall-forward-policy	/usr/sbin/firewall-forward-policy
@@ -120,6 +122,7 @@ $(TARGET) :
 	
 	# set rules.pl executable
 	chmod 755 $(CONFIG_ROOT)/forward/bin/rules.pl
+		
 	# Modify variables in header.pl
 	sed -i -e "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" \
 	    -e "s+VERSION+$(VERSION)+g" \

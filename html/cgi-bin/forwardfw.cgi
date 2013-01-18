@@ -192,6 +192,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		#print"ALT: $fwdfwsettings{'oldgrp3a'} $fwdfwsettings{'oldgrp3b'}	NEU:	$fwdfwsettings{'grp3'} $fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 		#print"DIENSTE Checkalt:$fwdfwsettings{'oldusesrv'}  DIENSTE Checkneu:$fwdfwsettings{'USESRV'}    DIENST ALT:$fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'}   DIENST NEU:$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 	}else{
+		#FORWARD PART
 		$fwdfwsettings{'chain'} = 'FORWARDFW';
 		if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
 			#check if we have an identical rule already
@@ -798,7 +799,7 @@ sub checkrule
 		$errormessage.=$Lang::tr{'fwdfw err remark'}."<br>";
 	}
 	#check if source and target identical
-	if ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq $fwdfwsettings{$fwdfwsettings{'grp2'}}){
+	if ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ALL'){
 		$errormessage.=$Lang::tr{'fwdfw err same'};
 		return $errormessage;
 	}
@@ -1349,7 +1350,7 @@ END
 				<input type='checkbox' name='TIME_THU' value='on' $checked{'TIME_THU'}{'on'} />
 				<input type='checkbox' name='TIME_FRI' value='on' $checked{'TIME_FRI'}{'on'} />
 				<input type='checkbox' name='TIME_SAT' value='on' $checked{'TIME_SAT'}{'on'} />
-				<input type='checkbox' name='TIME_SUN' value='on' $checked{'TIME_SUN'}{$Lang::tr{'fwdfw wd_sun'}} />
+				<input type='checkbox' name='TIME_SUN' value='on' $checked{'TIME_SUN'}{'on'} />
 			</td>
 			<td><select name='TIME_FROM'>
 END
@@ -1826,7 +1827,7 @@ END
 				if($$hash{$key}[25] ne ''){push (@days,$Lang::tr{'fwdfw wd_sun'});}
 				my $weekdays=join(",",@days);
 				if (@days){
-					print"<tr bgcolor='#FFE4B5'><td colspan='4'>$Lang::tr{'fwdfw time'} ";
+					print"<tr bgcolor='#FFE4B5'><td colspan='6'>$Lang::tr{'fwdfw time'} ";
 					print"$weekdays";
 					print "&nbsp $Lang::tr{'fwdfw from'} $$hash{$key}[26] &nbsp $Lang::tr{'fwdfw till'} $$hash{$key}[27]</td><td colspan='8'></d></tr>";
 				}
