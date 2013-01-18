@@ -31,17 +31,14 @@ my %fwconf=();
 my %fwdsettings=();
 &General::readhash($outfwsettings,\%outsettings);
 
-
 &process_groups;
 &process_rules;
 
-
-
 sub process_groups
 {
-	if(! -d "/var/log/firewall"){ mkdir("/var/log/firewall");}
-	if( -f "/var/log/firewall/ip-convert.log"){unlink ("/var/log/firewall/ip-convert.log");}
-	open (LOG, ">/var/log/firewall/ip-convert.log") or die $!;
+	if(! -d "/var/log/converters"){ mkdir("/var/log/converters");}
+	if( -f "/var/log/converters/groups-convert.log"){unlink ("/var/log/converters/groups-convert.log");}
+	open (LOG, ">/var/log/converters/groups-convert.log") or die $!;
 	#IP Group processing
 	foreach my $group (@ipgroups){
 		chomp $group;
@@ -237,8 +234,8 @@ sub process_rules
 		&General::writehash($fwdfwsettings,\%fwdsettings);
 	}
 	#open LOG
-	if( -f "/var/log/firewall/rule-convert.log"){unlink ("/var/log/firewall/rule-convert.log");}
-	open (LOG, ">/var/log/firewall/rule-convert.log") or die $!;
+	if( -f "/var/log/converters/outgoingfw-convert.log"){unlink ("/var/log/converters/outgoingfw-convert.log");}
+	open (LOG, ">/var/log/converters/outgoingfw-convert.log") or die $!;
 
 	my ($type,$action,$active,$grp1,$source,$grp2,$useport,$port,$prot,$grp3,$target,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to);
 	if ($outsettings{'POLICY'} eq 'MODE1'){
