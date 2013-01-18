@@ -22,7 +22,7 @@
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-
+use File::Path;
 my $debug = 1;
 my @include = "";
 my ($Sekunden, $Minuten, $Stunden, $Monatstag, $Monat, $Jahr, $Wochentag, $Jahrestag, $Sommerzeit) = localtime(time);
@@ -64,7 +64,17 @@ elsif ($ARGV[0] eq 'restore') {
   system("cd / && tar -xvz -p -f /tmp/restore.ipf");
   #Here some converter scripts to correct old Backups (before core 65)
   system("/usr/sbin/ovpn-ccd-convert");
-}
+  system("/usr/sbin/convert-xtaccess");
+  system("/usr/sbin/convert-outgoingfw");
+  
+  #clean up system, if an old backup was restored
+  if( -d "/var/ipfire/outgoing"){
+	  rmtree("/var/ipfire/outgoing");
+  }
+  if( -d "/var/ipfire/xtaccess"){
+	  rmtree("/var/ipfire/xtaccess");
+  }
+ }
 elsif ($ARGV[0] eq 'restoreaddon') {
   if ( -e "/tmp/$ARGV[1]" ){system("mv /tmp/$ARGV[1] /var/ipfire/backup/addons/backup/$ARGV[1]");}
   system("cd / && tar -xvz -p -f /var/ipfire/backup/addons/backup/$ARGV[1]");
