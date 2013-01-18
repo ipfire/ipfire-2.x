@@ -226,7 +226,6 @@ sub buildrules
 							}
 						}
 					}
-					print"\n";
 				}
 			}
 		}
