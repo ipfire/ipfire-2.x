@@ -1,0 +1,48 @@
+diff -Naur compat-wireless-3.6.8-1-snp.org/compat/compat-3.1.c compat-wireless-3.6.8-1-snp/compat/compat-3.1.c
+--- compat-wireless-3.6.8-1-snp.org/compat/compat-3.1.c	2012-11-29 06:03:45.000000000 +0100
++++ compat-wireless-3.6.8-1-snp/compat/compat-3.1.c	2013-01-18 16:50:08.799491784 +0100
+@@ -9,30 +9,6 @@
+  */
+ 
+ #include <linux/idr.h>
+-#include <linux/cpufreq.h>
+-
+-/* This backports:
+- * commit 3d73710880afa3d61cf57b5d4eb192e812eb7e4f
+- * Author: Jesse Barnes <jbarnes@virtuousgeek.org>
+- * Date:   Tue Jun 28 10:59:12 2011 -0700
+- *
+- * 	cpufreq: expose a cpufreq_quick_get_max routine
+- */
+-
+-unsigned int compat_cpufreq_quick_get_max(unsigned int cpu)
+-{
+-	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+-	unsigned int ret_freq = 0;
+-
+-	if (policy) {
+-		ret_freq = policy->max;
+-		cpufreq_cpu_put(policy);
+-	}
+-
+-	return ret_freq;
+-}
+-EXPORT_SYMBOL(compat_cpufreq_quick_get_max);
+-
+ 
+ static DEFINE_SPINLOCK(compat_simple_ida_lock);
+ 
+diff -Naur compat-wireless-3.6.8-1-snp.org/include/linux/compat-3.1.h compat-wireless-3.6.8-1-snp/include/linux/compat-3.1.h
+--- compat-wireless-3.6.8-1-snp.org/include/linux/compat-3.1.h	2012-10-24 15:22:50.000000000 +0200
++++ compat-wireless-3.6.8-1-snp/include/linux/compat-3.1.h	2013-01-18 16:52:04.106154741 +0100
+@@ -111,10 +111,6 @@
+ 
+ void ida_simple_remove(struct ida *ida, unsigned int id);
+ 
+-/* mask cpufreq_quick_get_max as RHEL6 backports this */
+-#define cpufreq_quick_get_max(a) compat_cpufreq_quick_get_max(a)
+-
+-unsigned int cpufreq_quick_get_max(unsigned int cpu);
+ #endif /* (LINUX_VERSION_CODE < KERNEL_VERSION(3,1,0)) */
+ 
+ #endif /* LINUX_3_1_COMPAT_H */

@@ -329,7 +329,7 @@ fi
 if [ -e "/opt/pakfire/db/installed/meta-linux-xen" ]; then
 	echo "Name: linux-xen" > /opt/pakfire/db/installed/meta-linux-xen
 	echo "ProgVersion: 2.6.32.60" >> /opt/pakfire/db/installed/meta-linux-xen
-	echo "Release: 23"     >> /opt/pakfire/db/installed/meta-linux-xen
+	echo "Release: 24"     >> /opt/pakfire/db/installed/meta-linux-xen
 	# Add xvc0 to /etc/securetty
 	echo "xvc0" >> /etc/securetty
 fi
