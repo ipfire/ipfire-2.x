@@ -365,7 +365,7 @@ sub process_rules
 				$grp2='std_net_tgt';
 				$target='ALL';
 			}
-			if($configline[8] ne ''){
+			if($configline[8] ne '' && $configline[3] ne 'gre' && $configline[3] ne 'esp'){
 				my @values=();
 				my @parts=split(",",$configline[8]);
 				foreach (@parts){
@@ -389,7 +389,6 @@ sub process_rules
 							next;
 						} 
 					 }
-					 
 				 }
 				$port=join("|",@values);
 				@values=();
