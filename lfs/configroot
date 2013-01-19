@@ -123,6 +123,9 @@ $(TARGET) :
 	# set rules.pl executable
 	chmod 755 $(CONFIG_ROOT)/forward/bin/rules.pl
 		
+	# set converters executable
+	chmod 755 /usr/sbin/convert-*
+	
 	# Modify variables in header.pl
 	sed -i -e "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" \
 	    -e "s+VERSION+$(VERSION)+g" \

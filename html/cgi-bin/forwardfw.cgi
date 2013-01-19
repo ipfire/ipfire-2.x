@@ -1654,7 +1654,6 @@ sub gettgtport
 	my $key=shift;
 	my $service;
 	my $prot;
-
 	if($hash{$key}[11] eq 'ON' && $hash{$key}[12] ne 'ICMP'){
 		if($hash{$key}[14] eq 'cust_srv'){
 			&General::readhasharray("$configsrv", \%customservice);
@@ -1669,8 +1668,9 @@ sub gettgtport
 			$hash{$key}[15]=~ s/\|/,/g;
 			$service=$hash{$key}[15];
 		}
-		
-		print": $service";
+		if($service){
+			print": $service";
+		}
 	}elsif($hash{$key}[11] eq 'ON' && $hash{$key}[12] eq 'ICMP'){
 		print":<br>$hash{$key}[13]";
 	}

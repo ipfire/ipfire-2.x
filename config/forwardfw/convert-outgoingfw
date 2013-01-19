@@ -182,10 +182,12 @@ sub new_hostgrp
 				$groups{$grpkey}[4]	= 0;
 			}
 		}
+		@hostarray=();
 	}
 	&General::writehasharray($confighosts,\%hosts);
 	&General::writehasharray($configgroups,\%groups);
 	&General::writehasharray($confignets,\%nets);
+	
 }
 sub check_host
 {
@@ -251,8 +253,10 @@ sub process_rules
 	foreach my $rule (@lines)
 	{
 		chomp($rule);
+		$port='';
 		print LOG "processing: $rule\n";
-		my @configline = split( /\;/, $rule );
+		my @configline=();
+		@configline = split( /\;/, $rule );
 		my @prot=();
 		if($configline[0] eq $type){
 			#some variables we can use from old config
@@ -262,7 +266,6 @@ sub process_rules
 				push(@prot,"udp");
 				$useport='ON';
 				$grp3='TGT_PORT';
-				
 			}else{
 				push(@prot,$configline[3]);
 				$useport='ON';
@@ -270,7 +273,6 @@ sub process_rules
 			}
 			if($configline[4] ne ''){ $remark=$configline[4];}else{$remark='';}
 			if($configline[9] eq 'aktiv'){ $log='ON';}else{$log='';}
-			
 			if($configline[10] eq 'on' && $configline[11] eq 'on' && $configline[12] eq 'on' && $configline[13] eq 'on' && $configline[14] eq 'on' && $configline[15] eq 'on' && $configline[16] eq 'on'){
 				if($configline[17] eq '00:00' && $configline[18] eq '00:00'){
 					$time='';
@@ -307,7 +309,9 @@ sub process_rules
 				print LOG "-> Rule not converted, ipsec+ interface is obsolet since IPFire 2.7 \n";
 				next;
 			}elsif ($configline[2] eq 'ovpn') {
-				&build_ovpn_grp;				
+				&build_ovpn_grp;		
+				$grp1='cust_grp_src';
+				$source='ovpn'		
 			}elsif ($configline[2] eq 'ip') {
 				my $z=&check_ip($configline[5]);
 				if($z){
@@ -385,9 +389,11 @@ sub process_rules
 							next;
 						} 
 					 }
+					 
 				 }
 				$port=join("|",@values);
 				@values=();
+				@parts=();
 			}
 		}else{
 			print LOG "-> Rule not converted because not for Firewall mode $outsettings{'POLICY'} (we are only converting for actual mode)\n";
