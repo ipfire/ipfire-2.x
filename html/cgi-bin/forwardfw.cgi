@@ -873,6 +873,8 @@ sub checkrule
 
 	#check source and destination protocol if manual
 	if( $fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'USESRV'} eq 'ON'){
+		
+		
 		if($fwdfwsettings{'PROT'} ne $fwdfwsettings{'TGT_PROT'} && $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
 			$errormessage.=$Lang::tr{'fwdfw err prot'};
 		}
@@ -1639,11 +1641,11 @@ sub getsrcport
 {
 	my %hash=%{(shift)};
 	my $key=shift;
-	if($hash{$key}[7] eq 'ON' && ($hash{$key}[8] eq 'TCP' || $hash{$key}[8] eq 'UDP')){
+	if($hash{$key}[7] eq 'ON' && $hash{$key}[8] ne '' && $hash{$key}[10]){
 		$hash{$key}[10]=~ s/\|/,/g;
-		print" : ($hash{$key}[8]) $hash{$key}[10]";
+		print": $hash{$key}[10]";
 	}elsif($hash{$key}[7] eq 'ON' && $hash{$key}[8] eq 'ICMP'){
-		print" : ($hash{$key}[8]) <br> $hash{$key}[9]";
+		print": <br>$hash{$key}[9] ";
 	}
 }
 sub gettgtport
@@ -1658,29 +1660,47 @@ sub gettgtport
 			&General::readhasharray("$configsrv", \%customservice);
 			foreach my $i (sort keys %customservice){
 				if($customservice{$i}[0] eq $hash{$key}[15]){
-					$prot = $hash{$key}[12];
 					$service = $customservice{$i}[0];
 				}
 			}
 		}elsif($hash{$key}[14] eq 'cust_srvgrp'){
-
 			$service=$hash{$key}[15];
 		}elsif($hash{$key}[14] eq 'TGT_PORT'){
 			$hash{$key}[15]=~ s/\|/,/g;
 			$service=$hash{$key}[15];
-			$prot=$hash{$key}[12];
 		}
+		
+		print": $service";
 	}elsif($hash{$key}[11] eq 'ON' && $hash{$key}[12] eq 'ICMP'){
-		print" : ($hash{$key}[12]) <br>$hash{$key}[13]";
+		print":<br>$hash{$key}[13]";
 	}
-
-	if ($prot ne '' || $service ne ''){
-		print" :";
-		if ($prot ne ''){
-			print"($prot) ";
+}
+sub get_serviceports
+{
+	my $type=shift;
+	my $name=shift;
+	&General::readhasharray("$configsrv", \%customservice);
+	&General::readhasharray("$configsrvgrp", \%customservicegrp);
+	my $protocols;
+	my $tcp;
+	my $udp;
+	if($type eq 'service'){
+		foreach my $key (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0]) } keys %customservice){
+			if ($customservice{$key}[0] eq $name){
+				$protocols=$customservice{$key}[2];
+			}
 		}
-		print" $service";
+		
+	}elsif($type eq 'group'){
+		foreach my $key (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0]) } keys %customservicegrp){
+			if ($customservicegrp{$key}[0] eq $name){
+				if($customservicegrp{$key}[4] eq 'TCP'){$tcp='TCP';}else{$udp='UDP';}
+			}
+		}
 	}
+	if($tcp){$protocols.="TCP";}
+	if($udp){$protocols.=",UDP";}
+	return $protocols;
 }
 sub viewtablerule
 {
@@ -1706,7 +1726,7 @@ sub viewtablenew
 		&General::readhasharray("$config", $hash);
 		print"<b>$title1</b><br>";
 		print"<table width='100%' border='0' cellspacing='1' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
-		print"<tr><td align='center' width='1%'><b>#</td><td width='1%'></td><td align='center' width='20%'><b>$Lang::tr{'fwdfw source'}</td><td width='1%'><b>Log</td><td align='center' width='20%'><b>$Lang::tr{'fwdfw target'}</td><td align='center' width='70%'><b>$Lang::tr{'remark'}</td><td align='center' colspan='3' width='1%'><b>$Lang::tr{'fwdfw action'}</td></tr>";
+		print"<tr><td align='center' width='1%'><b>#</td><td width='1%'></td><td align='center' ><b>$Lang::tr{'fwdfw source'}</td><td width='1%'><b>Log</td><td align='center' width='20%'><b>$Lang::tr{'fwdfw target'}</td><td align='center'><b>$Lang::tr{'protocol'}</b></td><td align='center' width='70%'><b>$Lang::tr{'remark'}</td><td align='center' colspan='3' width='1%'><b>$Lang::tr{'fwdfw action'}</td></tr>";
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
 			@tmpsrc=();
 			#check if vpn hosts/nets have been deleted
@@ -1775,7 +1795,7 @@ END
 				$rulecolor=$color{'color16'};
 			}
 			print"<td bgcolor='$rulecolor' width='2%' align='center'><span title='$tooltip'><b>$ruletype</b></span></td>";
-			print"<td align='center'>";
+			print"<td align='center' nowrap='nowrap'>";
 			if ($$hash{$key}[3] eq 'std_net_src'){
 				print &get_name($$hash{$key}[4]);
 			}else{
@@ -1807,7 +1827,23 @@ END
 			}
 			&gettgtport(\%$hash,$key);
 	################################################################################
-			print"</td><td width='20%'>$$hash{$key}[16]</td>";
+			print"</td>";
+			#Get Protocol
+			my $prot;
+			if ($$hash{$key}[12]){			#target prot if manual
+				$prot=$$hash{$key}[12];
+			}elsif($$hash{$key}[8]){		#source prot if manual
+				$prot=$$hash{$key}[8];
+			}elsif($$hash{$key}[14] eq 'cust_srv'){ 
+				$prot=&get_serviceports("service",$$hash{$key}[15]);
+			}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
+				$prot=&get_serviceports("group",$$hash{$key}[15]);
+			}else{
+				$prot=$Lang::tr{'all'};
+			}
+			print"<td align='center'>$prot</td>";
+			
+			print"<td width='20%'>$$hash{$key}[16]</td>";
 			
 			if($$hash{$key}[2] eq 'ON'){
 				$gif="/images/on.gif"

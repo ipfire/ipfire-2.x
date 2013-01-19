@@ -340,7 +340,11 @@ sub get_port
 	if ($$hash{$key}[7] eq 'ON' && $SRC_TGT eq 'SRC'){
 		if ($$hash{$key}[10] ne ''){
 			$$hash{$key}[10] =~ s/\|/,/g;
-			return "-m multiport --sport $$hash{$key}[10] ";
+			if(index($$hash{$key}[10],",") > 0){
+				return "-m multiport --sport $$hash{$key}[10] ";
+			}else{
+				return "--sport $$hash{$key}[10] ";
+			}
 		}elsif($$hash{$key}[9] ne '' && $$hash{$key}[9] ne 'All ICMP-Types'){
 			return "--icmp-type $$hash{$key}[9] ";
 		}elsif($$hash{$key}[9] eq 'All ICMP-Types'){
@@ -351,7 +355,11 @@ sub get_port
 		if($$hash{$key}[14] eq 'TGT_PORT'){
 			if ($$hash{$key}[15] ne ''){
 				$$hash{$key}[15] =~ s/\|/,/g;
-				return "-m multiport --dport $$hash{$key}[15] ";
+				if(index($$hash{$key}[15],",") > 0){
+					return "-m multiport --dport $$hash{$key}[15] ";
+				}else{
+					return "--dport $$hash{$key}[15] ";
+				}
 			}elsif($$hash{$key}[13] ne '' && $$hash{$key}[13] ne 'All ICMP-Types'){
 				return "--icmp-type $$hash{$key}[13] ";
 			}elsif($$hash{$key}[13] ne '' && $$hash{$key}[13] eq 'All ICMP-Types'){
