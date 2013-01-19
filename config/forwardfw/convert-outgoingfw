@@ -365,11 +365,9 @@ sub process_rules
 				my @values=();
 				my @parts=split(",",$configline[8]);
 				foreach (@parts){
-					print"PRüfe port $_\n";
 					if (!($_ =~ /^(\d+)\:(\d+)$/)) {
 						if(&General::validport($_)){
 							$useport='ON';	
-							print" push single\n";
 							push (@values,$_);
 							$grp3='TGT_PORT';
 						}else{
@@ -377,21 +375,19 @@ sub process_rules
 							next;
 						}
 					 }else{
-						 my ($a1,$a2) = split(/\:/,$_);
-						 if (&General::validport($a1) && &General::validport($a2) && $a1 < $a2){
+						my ($a1,$a2) = split(/\:/,$_);
+						if (&General::validport($a1) && &General::validport($a2) && $a1 < $a2){
 							$useport='ON';	
-							print"push range $_\n";
 							push (@values,"$a1:$a2");
 							$grp3='TGT_PORT';
-						 }else{
+						}else{
 							print LOG "-> Rule not converted, invalid destination Port \"$configline[8]\"\n"; 
 							next;
-						 } 
+						} 
 					 }
 				 }
-				 $port=join("|",@values);
-				 print"fertig, habe \"$port\"\n";
-				 @values=();
+				$port=join("|",@values);
+				@values=();
 			}
 		}else{
 			print LOG "-> Rule not converted because not for Firewall mode $outsettings{'POLICY'} (we are only converting for actual mode)\n";
