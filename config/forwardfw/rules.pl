@@ -339,7 +339,8 @@ sub get_port
 	my $prot=shift;
 	if ($$hash{$key}[7] eq 'ON' && $SRC_TGT eq 'SRC'){
 		if ($$hash{$key}[10] ne ''){
-			return "--sport $$hash{$key}[10] ";
+			$$hash{$key}[10] =~ s/\|/,/g;
+			return "-m multiport --sport $$hash{$key}[10] ";
 		}elsif($$hash{$key}[9] ne '' && $$hash{$key}[9] ne 'All ICMP-Types'){
 			return "--icmp-type $$hash{$key}[9] ";
 		}elsif($$hash{$key}[9] eq 'All ICMP-Types'){
@@ -349,7 +350,8 @@ sub get_port
 		
 		if($$hash{$key}[14] eq 'TGT_PORT'){
 			if ($$hash{$key}[15] ne ''){
-				return "--dport $$hash{$key}[15] ";
+				$$hash{$key}[15] =~ s/\|/,/g;
+				return "-m multiport --dport $$hash{$key}[15] ";
 			}elsif($$hash{$key}[13] ne '' && $$hash{$key}[13] ne 'All ICMP-Types'){
 				return "--icmp-type $$hash{$key}[13] ";
 			}elsif($$hash{$key}[13] ne '' && $$hash{$key}[13] eq 'All ICMP-Types'){

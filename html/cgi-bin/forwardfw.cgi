@@ -210,12 +210,13 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 			}
 		}	
 		#check if we just close a rule
-		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} ) {
+		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'} ) {
 			if($fwdfwsettings{'nosave'} eq 'on' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 				$fwdfwsettings{'nosave2'} = 'on';
 				$errormessage='';
 			}
 		}
+		
 		#increase counters
 		&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
 		&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
@@ -663,23 +664,42 @@ sub checksource
 			$fwdfwsettings{'PROT'}='';
 		}
 
-	if($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} ne 'ICMP' && $fwdfwsettings{'SRC_PORT'} ne ''){
-		#change dashes with :
-		$fwdfwsettings{'SRC_PORT'}=~ tr/-/:/;
-			
-		if ($fwdfwsettings{'SRC_PORT'} eq "*") {
-			$fwdfwsettings{'SRC_PORT'} = "1:65535";
+	if($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && ($fwdfwsettings{'PROT'} eq 'TCP' || $fwdfwsettings{'PROT'} eq 'UDP') && $fwdfwsettings{'SRC_PORT'} ne ''){
+		my @parts=split(",",$fwdfwsettings{'SRC_PORT'});
+		my @values=();
+		foreach (@parts){
+			chomp($_);
+			if ($_ =~ /^(\d+)\:(\d+)$/) {
+				my $check;
+				#change dashes with :
+				$_=~ tr/-/:/;
+				if ($_ eq "*") {
+					push(@values,"1:65535");
+					$check='on';
+				}
+				if ($_ =~ /^(\D)\:(\d+)$/) {
+					push(@values,"1:$2");
+					$check='on';
+				}
+				if ($_ =~ /^(\d+)\:(\D)$/) {
+					push(@values,"$1:65535");
+					$check='on'
+				}
+				$errormessage .= &General::validportrange($_, 'destination');
+				if(!$check){
+					push (@values,$_);
+				}
+			}else{
+				if (&General::validport($_)){
+					push (@values,$_);
+				}else{
+					
+				}
+			}
 		}
-		if ($fwdfwsettings{'SRC_PORT'} =~ /^(\D)\:(\d+)$/) {
-			$fwdfwsettings{'SRC_PORT'} = "1:$2";
-		}
-		if ($fwdfwsettings{'SRC_PORT'} =~ /^(\d+)\:(\D)$/) {
-			$fwdfwsettings{'SRC_PORT'} = "$1:65535";
-		}
-
-		$errormessage.=&General::validportrange($fwdfwsettings{'SRC_PORT'},'src');
+		$fwdfwsettings{'SRC_PORT'}=join("|",@values);
+		return $errormessage;
 	}
-	return $errormessage;
 }
 sub checktarget
 {
@@ -737,18 +757,39 @@ sub checktarget
 		if ($fwdfwsettings{'grp3'} eq 'TGT_PORT'){
 			if ($fwdfwsettings{'TGT_PROT'} eq 'TCP' || $fwdfwsettings{'TGT_PROT'} eq 'UDP'){
 				if ($fwdfwsettings{'TGT_PORT'} ne ''){
-					#change dashes with :
-					$fwdfwsettings{'TGT_PORT'}=~ tr/-/:/;
-					if ($fwdfwsettings{'TGT_PORT'} eq "*") {
-						$fwdfwsettings{'TGT_PORT'} = "1:65535";
+					my @parts=split(",",$fwdfwsettings{'TGT_PORT'});
+					my @values=();
+					foreach (@parts){
+						chomp($_);
+						if ($_ =~ /^(\d+)\:(\d+)$/) {
+							my $check;
+							#change dashes with :
+							$_=~ tr/-/:/;
+							if ($_ eq "*") {
+								push(@values,"1:65535");
+								$check='on';
+							}
+							if ($_ =~ /^(\D)\:(\d+)$/) {
+								push(@values,"1:$2");
+								$check='on';
+							}
+							if ($_ =~ /^(\d+)\:(\D)$/) {
+								push(@values,"$1:65535");
+								$check='on'
+							}
+							$errormessage .= &General::validportrange($_, 'destination');
+							if(!$check){
+								push (@values,$_);
+							}
+						}else{
+							if (&General::validport($_)){
+								push (@values,$_);
+							}else{
+								
+							}
+						}
 					}
-					if ($fwdfwsettings{'TGT_PORT'} =~ /^(\D)\:(\d+)$/) {
-						$fwdfwsettings{'TGT_PORT'} = "1:$2";
-					}
-					if ($fwdfwsettings{'TGT_PORT'} =~ /^(\d+)\:(\D)$/) {
-						$fwdfwsettings{'TGT_PORT'} = "$1:65535";
-					}
-					$errormessage .= &General::validportrange($fwdfwsettings{'TGT_PORT'}, 'destination');
+					$fwdfwsettings{'TGT_PORT'}=join("|",@values);
 				}
 			}elsif ($fwdfwsettings{'TGT_PROT'} eq 'GRE'){
 					$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
@@ -782,7 +823,6 @@ sub checktarget
 		$fwdfwsettings{$fwdfwsettings{'grp3'}}='';
 		$fwdfwsettings{'TGT_PROT'}='';
 		$fwdfwsettings{'ICMP_TGT'}='';
-
 	}
 	#check timeframe
 	if($fwdfwsettings{'TIME'} eq 'ON'){
@@ -1140,8 +1180,9 @@ END
 				print"<option>$_</option>";
 			}
 		}
+		$fwdfwsettings{'SRC_PORT'}=~ s/\|/,/g;
 		print<<END;
-		</select></td><td align='right'><input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='11' size='9' ></td></tr>
+		</select></td><td align='right'><input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18' ></td></tr>
 		<tr><td></td><td></td><td></td><td></td><td nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TYPES'>
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
@@ -1294,8 +1335,9 @@ END
 				print"<option>$_</option>";
 			}
 		}
+		$fwdfwsettings{'TGT_PORT'} =~ s/\|/,/g;
 		print<<END;
-		</select></td><td align='right'><input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='11' size='9' ></td></tr>
+		</select></td><td align='right'><input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18' ></td></tr>
 		<tr><td colspan='2'></td><td></td><td>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TGT'>
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
@@ -1407,6 +1449,7 @@ END
 			<input type='hidden' name='oldusesrv' value='$fwdfwsettings{'oldusesrv'}' />
 			<input type='hidden' name='oldrulenumber' value='$fwdfwsettings{'oldrulenumber'}' />
 			<input type='hidden' name='rulenumber' value='$fwdfwsettings{'rulepos'}' />
+			<input type='hidden' name='oldruleremark' value='$fwdfwsettings{'oldruleremark'}' />
 			<input type='hidden' name='ACTION' value='saverule' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td>
 			</table></form>
 END
@@ -1596,7 +1639,8 @@ sub getsrcport
 {
 	my %hash=%{(shift)};
 	my $key=shift;
-	if($hash{$key}[7] eq 'ON' && $hash{$key}[8] ne 'ICMP'){
+	if($hash{$key}[7] eq 'ON' && ($hash{$key}[8] eq 'TCP' || $hash{$key}[8] eq 'UDP')){
+		$hash{$key}[10]=~ s/\|/,/g;
 		print" : ($hash{$key}[8]) $hash{$key}[10]";
 	}elsif($hash{$key}[7] eq 'ON' && $hash{$key}[8] eq 'ICMP'){
 		print" : ($hash{$key}[8]) <br> $hash{$key}[9]";
@@ -1613,7 +1657,6 @@ sub gettgtport
 		if($hash{$key}[14] eq 'cust_srv'){
 			&General::readhasharray("$configsrv", \%customservice);
 			foreach my $i (sort keys %customservice){
-				#print "HHUHU: $customservice{$i}[0] und $hash{$key}[15]<br>";
 				if($customservice{$i}[0] eq $hash{$key}[15]){
 					$prot = $hash{$key}[12];
 					$service = $customservice{$i}[0];
@@ -1623,6 +1666,7 @@ sub gettgtport
 
 			$service=$hash{$key}[15];
 		}elsif($hash{$key}[14] eq 'TGT_PORT'){
+			$hash{$key}[15]=~ s/\|/,/g;
 			$service=$hash{$key}[15];
 			$prot=$hash{$key}[12];
 		}

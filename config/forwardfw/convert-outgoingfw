@@ -3,7 +3,7 @@
 
 require '/var/ipfire/general-functions.pl';
 use Socket;
-
+use File::Path;
 my $ipgrouppath 	= "${General::swroot}/outgoing/groups/ipgroups/";
 my $macgrouppath	= "${General::swroot}/outgoing/groups/macgroups/";
 my $outgoingrules	= "${General::swroot}/outgoing/rules";
@@ -37,7 +37,7 @@ my %fwdsettings=();
 sub process_groups
 {
 	if(! -d "/var/log/converters"){ mkdir("/var/log/converters");}
-	if( -f "/var/log/converters/groups-convert.log"){unlink ("/var/log/converters/groups-convert.log");}
+	if( -f "/var/log/converters/groups-convert.log"){rmtree("var/log/converters");}
 	open (LOG, ">/var/log/converters/groups-convert.log") or die $!;
 	#IP Group processing
 	foreach my $group (@ipgroups){
@@ -362,26 +362,36 @@ sub process_rules
 				$target='ALL';
 			}
 			if($configline[8] ne ''){
-				if (!($configline[8] =~ /^(\d+)\:(\d+)$/)) {
-					if(&General::validport($configline[8])){
-						$useport='ON';	
-						$port=$configline[8];
-						$grp3='TGT_PORT';
-					}else{
-						print LOG "-> Rule not converted, invalid destination Port \"$configline[8]\"\n";
-						next;
-					}
-				 }else{
-					 my ($a1,$a2) = split(/\:/,$configline[8]);
-					 if (&General::validport($a1) && &General::validport($a2) && $a1 < $a2){
-						$useport='ON';	
-						$port=$configline[8];
-						$grp3='TGT_PORT';
+				my @values=();
+				my @parts=split(",",$configline[8]);
+				foreach (@parts){
+					print"PRüfe port $_\n";
+					if (!($_ =~ /^(\d+)\:(\d+)$/)) {
+						if(&General::validport($_)){
+							$useport='ON';	
+							print" push single\n";
+							push (@values,$_);
+							$grp3='TGT_PORT';
+						}else{
+							print LOG "-> Rule not converted, invalid destination Port \"$configline[8]\"\n";
+							next;
+						}
 					 }else{
-						print LOG "-> Rule not converted, invalid destination Port \"$configline[8]\"\n"; 
-						next;
-					 } 
+						 my ($a1,$a2) = split(/\:/,$_);
+						 if (&General::validport($a1) && &General::validport($a2) && $a1 < $a2){
+							$useport='ON';	
+							print"push range $_\n";
+							push (@values,"$a1:$a2");
+							$grp3='TGT_PORT';
+						 }else{
+							print LOG "-> Rule not converted, invalid destination Port \"$configline[8]\"\n"; 
+							next;
+						 } 
+					 }
 				 }
+				 $port=join("|",@values);
+				 print"fertig, habe \"$port\"\n";
+				 @values=();
 			}
 		}else{
 			print LOG "-> Rule not converted because not for Firewall mode $outsettings{'POLICY'} (we are only converting for actual mode)\n";
