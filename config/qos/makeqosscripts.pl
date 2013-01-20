@@ -224,7 +224,7 @@ foreach $classentry (sort @classes)
 	if ($qossettings{'RED_DEV'} eq $classline[0]) {
 		$qossettings{'DEVICE'} = $classline[0];
 		$qossettings{'CLASS'} = $classline[1];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: sfq perturb $qossettings{'SFQ_PERTUB'}\n";
+		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: fq_codel\n";
 	}
 }
 foreach $subclassentry (sort @subclasses) {
@@ -232,7 +232,7 @@ foreach $subclassentry (sort @subclasses) {
 	if ($qossettings{'RED_DEV'} eq $subclassline[0]) {
 		$qossettings{'DEVICE'} = $subclassline[0];
 		$qossettings{'SCLASS'} = $subclassline[2];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: sfq perturb $qossettings{'SFQ_PERTUB'}\n";
+		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: fq_codel\n";
 	}
 }
 print "\n\t### FILTER TRAFFIC INTO CLASSES\n";
@@ -694,7 +694,9 @@ print <<END
 	(sleep 3 && killall -9 qosd &>/dev/null) &
 	# DELETE QDISCS
 	tc qdisc del dev $qossettings{'RED_DEV'} root >/dev/null 2>&1
+	tc qdisc add root dev $qossettings{'RED_DEV'} fq_codel >/dev/null 2>&1
 	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
+	tc qdisc add root dev $qossettings{'IMQ_DEV'} fq_codel >/dev/null 2>&1
 	# STOP IMQ-DEVICE
 	ip link set $qossettings{'IMQ_DEV'} down >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN >/dev/null 2>&1
