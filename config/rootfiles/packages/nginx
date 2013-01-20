@@ -15,9 +15,9 @@ etc/nginx/uwsgi_params
 etc/nginx/uwsgi_params.default
 etc/nginx/win-utf
 usr/nginx
-usr/nginx/html
-usr/nginx/html/50x.html
-usr/nginx/html/index.html
+usr/share/nginx/html
+usr/share/nginx/html/50x.html
+usr/share/nginx/html/index.html
 usr/sbin/nginx
 var/log/nginx
 var/spool/nginx

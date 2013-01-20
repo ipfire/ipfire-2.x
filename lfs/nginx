@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && tar xvf $(DIR_SRC)/cache/nginx_tcp_proxy_module.tar.bz2 -C $(DIR_APP)	
 	cd $(DIR_APP) && patch -p1 < nginx_tcp_proxy_module/tcp.patch
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr/nginx/ \
+		--prefix=/usr/share/nginx/ \
 		--conf-path=/etc/nginx/nginx.conf \
 		--sbin-path=/usr/sbin/nginx \
 		--pid-path=/var/run/nginx.pid \
