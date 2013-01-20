@@ -64,13 +64,24 @@ elsif ($ARGV[0] eq 'restore') {
   system("cd / && tar -xvz -p -f /tmp/restore.ipf");
   #Here some converter scripts to correct old Backups (before core 65)
   system("/usr/sbin/ovpn-ccd-convert");
-  if( -d "/var/ipfire/outgoing"){
+  if( -d "${General::swroot}/outgoing"){
+	  if( -f "${General::swroot}/forward/config" ){ 
+		  unlink("${General::swroot}/forward/config");
+		  system("touch ${General::swroot}/forward/config"); 
+		  chown 99,99,"${General::swroot}/forward/config";
+	  }
+	  if( -f "${General::swroot}/forward/input" ){ 
+		  unlink("${General::swroot}/forward/input");
+		  system("touch ${General::swroot}/forward/input"); 
+		  chown 99,99,"${General::swroot}/forward/input";
+	  } 
 	  system("/usr/sbin/convert-outgoingfw");
-	  rmtree("/var/ipfire/outgoing");
+	  rmtree("${General::swroot}/outgoing");
+	  system("/usr/local/bin/forwrdfwctrl");
   }
-  if( -d "/var/ipfire/xtaccess"){
+  if( -d "${General::swroot}/xtaccess"){
 	  system("/usr/sbin/convert-xtaccess");
-	  rmtree("/var/ipfire/xtaccess");
+	  rmtree("${General::swroot}/xtaccess");
   }
  }
 elsif ($ARGV[0] eq 'restoreaddon') {
