@@ -24,10 +24,21 @@ case ${1} in
 
 		# udev not create the rtc symlink if rtc is in the kernel
 		if [ ! -e /dev/rtc ]; then
-			ln -s rtc0 /dev/rtc
+			if [ -e /dev/rtc0 ]; then
+				ln -s rtc0 /dev/rtc
+			fi
 		fi
 
 		hwclock --hctosys ${CLOCKPARAMS} &>/dev/null
+		if [ ! ${?} == 0 ]; then
+			if [ ! -z /var/log/messages ]; then
+				boot_mesg -n "No RTC found, set time to last log accesstime ... "
+				DATE=`stat --format "%y" /var/log/messages | cut -d" " -f1`
+				TIME=`stat --format "%y" /var/log/messages | sed -e "s|\..*||g" | cut -d" " -f2`
+				date -s $DATE > /dev/null
+				date -s $TIME
+			fi
+		fi
 		evaluate_retval
 		;;
 
