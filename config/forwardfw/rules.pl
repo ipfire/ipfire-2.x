@@ -248,12 +248,12 @@ sub p2pblock
 		my @p2pline = split( /\;/, $p2pentry );
 		if ( $fwdfwsettings{'POLICY'} eq 'MODE2' ) {
 			$DO = "DROP";
-			if ("$p2pline[2]" eq "off") {
+			if ("$p2pline[2]" eq "on") {
 				$P2PSTRING = "$P2PSTRING --$p2pline[1]";
 			}
 		} else {
 			$DO = "RETURN";
-			if ("$p2pline[2]" eq "on") {
+			if ("$p2pline[2]" eq "off") {
 				$P2PSTRING = "$P2PSTRING --$p2pline[1]";
 			}
 		}

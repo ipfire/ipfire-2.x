@@ -37,7 +37,7 @@ my %fwdsettings=();
 &process_groups;
 &process_rules;
 &process_p2p;
-
+system("/usr/local/bin/forwardfwctrl");
 sub process_groups
 {
 	if(! -d "/var/log/converters"){ mkdir("/var/log/converters");}
@@ -279,16 +279,19 @@ sub process_rules
 		if($configline[0] eq $type){
 			#some variables we can use from old config
 			if($configline[1] eq 'on'){ $active='ON';}else{$active='';}
-			if($configline[3] eq 'all'){ 
+			if($configline[3] eq 'all' && $configline[8] ne ''){ 
+				push(@prot,"TCP");
+				push(@prot,"UDP");
+			}elsif($configline[3] eq 'all' && $configline[8] eq ''){
 				push(@prot,"");
-				$useport='ON';
-				$grp3='TGT_PORT';
 			}else{
 				push(@prot,$configline[3]);
-				$useport='ON';
-				$grp3='TGT_PORT';
 			}
-			if($configline[4] ne ''){ $remark=$configline[4];}else{$remark='';}
+			
+			if($configline[4] ne ''){ 
+				$configline[4] =~ s/,/;/g;
+				$remark = $configline[4];
+			}else{$remark = '';}
 			if($configline[9] eq 'aktiv'){ $log='ON';}else{$log='';}
 			if($configline[10] eq 'on' && $configline[11] eq 'on' && $configline[12] eq 'on' && $configline[13] eq 'on' && $configline[14] eq 'on' && $configline[15] eq 'on' && $configline[16] eq 'on'){
 				if($configline[17] eq '00:00' && $configline[18] eq '00:00'){
@@ -472,7 +475,6 @@ sub process_rules
 			}
 		}
 		&General::writehasharray($fwdfwconfig,\%fwconfig);
-		system("/usr/local/bin/forwardfwctrl");
 		@prot=();
 	}
 	close(LOG);
