@@ -335,8 +335,10 @@ sub process_rules
 			}elsif ($configline[2] eq 'ip') {
 				my $z=&check_ip($configline[5]);
 				if($z){
+					my ($ipa,$subn) = split("/",$z);
+					$subn=&General::iporsubtocidr($subn);
 					$grp1='src_addr';
-					$source=$z;
+					$source="$ipa/$subn";
 				}else{
 					print LOG "-> Rule not converted, missing/invalid source ip \"$configline[5]\"\n";
 					next;
@@ -369,8 +371,10 @@ sub process_rules
 			if($configline[7] ne ''){
 				my $address=&check_ip($configline[7]);
 				 if($address){
+					 my ($dip,$dsub) = split("/",$address);
+					 $dsub=&General::iporsubtocidr($dsub);
 					 $grp2='tgt_addr';
-					 $target=$address;
+					 $target="$dip/$dsub";
 				 }elsif(!$address){
 					my $getwebsiteip=&get_ip_from_domain($configline[7]);
 					if ($getwebsiteip){
