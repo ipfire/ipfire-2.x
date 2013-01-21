@@ -512,8 +512,11 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		}
 		if (!&General::validip($proxysettings{'LDAP_SERVER'}))
 		{
-			$errormessage = $Lang::tr{'advproxy errmsg ldap server'};
-			goto ERROR;
+			if (!&General::validdomainname($proxysettings{'LDAP_SERVER'}))
+			{
+				$errormessage = $Lang::tr{'advproxy errmsg ldap server'};
+				goto ERROR;
+			}
 		}
 		if (!&General::validport($proxysettings{'LDAP_PORT'}))
 		{

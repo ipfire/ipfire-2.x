@@ -229,7 +229,7 @@
 'advproxy errmsg ldap base dn' => 'LDAP base DN erforderlich',
 'advproxy errmsg ldap bind dn' => 'LDAP bind DN Benutzername und Passwort erforderlich',
 'advproxy errmsg ldap port' => 'Ungültige LDAP-Portnummer',
-'advproxy errmsg ldap server' => 'Ungültige IP-Adresse für den LDAP-Server',
+'advproxy errmsg ldap server' => 'Ungültige IP-Adresse/Hostname für den LDAP-Server',
 'advproxy errmsg max userip' => 'Ungültige Anzahl von IP-Adressen pro Benutzer',
 'advproxy errmsg mem cache size' => 'Ungültiger Wert für die Größe des RAM-Cachespeichers',
 'advproxy errmsg no browser' => 'Mindestens ein Browser oder Client muss für den Web-Zugriff zugelassen sein',
