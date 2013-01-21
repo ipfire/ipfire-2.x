@@ -2,8 +2,11 @@
 
 
 require '/var/ipfire/general-functions.pl';
+
 use Socket;
 use File::Path;
+use File::Copy;
+
 my $ipgrouppath 	= "${General::swroot}/outgoing/groups/ipgroups/";
 my $macgrouppath	= "${General::swroot}/outgoing/groups/macgroups/";
 my $outgoingrules	= "${General::swroot}/outgoing/rules";
@@ -33,6 +36,7 @@ my %fwdsettings=();
 
 &process_groups;
 &process_rules;
+&process_p2p;
 
 sub process_groups
 {
@@ -42,14 +46,17 @@ sub process_groups
 	#IP Group processing
 	foreach my $group (@ipgroups){
 		chomp $group;
+		print LOG "\nProcessing IP-GROUP: $group...\n";
 		open (DATEI, "<$ipgrouppath/$group");
 		my @zeilen = <DATEI>;
 		foreach my $ip (@zeilen){
 			chomp($ip);
 			$ip =~ s/\s//gi;
+			print LOG "Check IP $ip from Group $group ";
 			my $val=&check_ip($ip);
 			if($val){
 				push(@hostarray,$val.",ip");
+				print LOG "-> OK\n";
 			}
 			else{
 				print LOG "-> IP \"$ip\" from group $group not converted (invalid IP) \n";
@@ -65,17 +72,20 @@ sub process_groups
 	#MAC Group processing
 	foreach my $group (@macgroups){
 		chomp $group;
+		print LOG "\nProcessing MAC-GROUP: $group...\n";
 		open (DATEI, "<$macgrouppath/$group");
 		my @zeilen = <DATEI>;
 		foreach my $mac (@zeilen){
 			chomp($mac);
 			$mac =~ s/\s//gi;
+			print LOG "Checking MAC $mac from group $group ";
 			#MAC checking
 			if(&General::validmac($mac)){
 				$val=$mac;
 			}
 			if($val){
 				push(@hostarray,$val.",mac");
+				print LOG "-> OK\n";
 			}
 			else{
 				print LOG "-> Mac $mac from group $group not converted (invalid MAC)\n";
@@ -123,7 +133,8 @@ sub new_hostgrp
 			my ($ip,$type) 			= split(",",$adr);
 			my ($ippart,$subnet) 	= split("/",$ip);
 			my ($byte1,$byte2,$byte3,$byte4) = split(/\./,$subnet);
-			if($byte4 eq '255'){ 
+			if($byte4 eq '255'){
+				print LOG "Processing SINGLE HOST $ippart/$subnet from group $grp\n"; 
 				if(!&check_host($ip)){
 					my $key		= &General::findhasharraykey(\%hosts);
 					$name="host ";
@@ -133,10 +144,12 @@ sub new_hostgrp
 					$hosts{$key}[1]	= $type;
 					$hosts{$key}[2]	= $ip;
 					$hosts{$key}[3]	= 1;
+					print LOG "->Host (IP) $ip added to custom hosts\n"
 				}else{
-					print LOG "Host (IP) $ip already exists\n";
+					print LOG "->Host (IP) $ip already exists\n";
 				}
 			}elsif($byte4 < '255'){
+				print LOG "Processing NETWORK $ippart/$subnet from Group $grp\n";
 				if(!&check_net($ippart,$subnet)){
 					my $netkey	=  &General::findhasharraykey(\%nets);
 					$name="net ";
@@ -146,6 +159,7 @@ sub new_hostgrp
 					$nets{$netkey}[1] = $ippart;
 					$nets{$netkey}[2] = $subnet;
 					$nets{$netkey}[3] = 1;
+					print LOG "->Network $ippart/$subnet added to custom networks\n";
 				}else{
 					print LOG "Network $ippart already exists\n";
 				}
@@ -157,10 +171,12 @@ sub new_hostgrp
 				$groups{$grpkey}[2]	= $name2;
 				$groups{$grpkey}[3]	= $name3;
 				$groups{$grpkey}[4]	= 0;
+				print LOG "->$name2 added to group $grp\n";
 			}
 		}elsif($run eq 'mac'){
 			#MACRUN
 			my ($mac,$type) 			= split(",",$adr);
+			print LOG "Processing HOST (MAC) $mac\n";
 			if(!&check_host($mac)){
 				my $key		= &General::findhasharraykey(\%hosts);
 				$name="host ";
@@ -170,8 +186,9 @@ sub new_hostgrp
 				$hosts{$key}[1]	= $type;
 				$hosts{$key}[2]	= $mac;
 				$hosts{$key}[3]	= 1;
+				print LOG "->Host (MAC) $mac added to custom hosts\n";
 			}else{
-				print LOG "Host (MAC) $mac already exists\n";
+				print LOG "->Host (MAC) $mac already exists\n";
 			}
 			if($name2){
 				my $grpkey 	= &General::findhasharraykey(\%groups);
@@ -180,10 +197,11 @@ sub new_hostgrp
 				$groups{$grpkey}[2]	= $name2;
 				$groups{$grpkey}[3]	= $name3;
 				$groups{$grpkey}[4]	= 0;
+				print LOG "->$name2 added to group $grp\n";
 			}
 		}
-		@hostarray=();
 	}
+	@hostarray=();
 	&General::writehasharray($confighosts,\%hosts);
 	&General::writehasharray($configgroups,\%groups);
 	&General::writehasharray($confignets,\%nets);
@@ -262,8 +280,7 @@ sub process_rules
 			#some variables we can use from old config
 			if($configline[1] eq 'on'){ $active='ON';}else{$active='';}
 			if($configline[3] eq 'all'){ 
-				push(@prot,"tcp");
-				push(@prot,"udp");
+				push(@prot,"");
 				$useport='ON';
 				$grp3='TGT_PORT';
 			}else{
@@ -356,6 +373,7 @@ sub process_rules
 					if ($getwebsiteip){
 						$grp2='tgt_addr';
 						$target=$getwebsiteip;	
+						$remark.=" $configline[7]";
 					}else{
 						print LOG "-> Rule not converted, invalid domain \"$configline[7]\"\n";
 						next;
@@ -525,4 +543,9 @@ sub build_ovpn_grp
 	&General::writehasharray($confighosts,\%hosts);
 	&General::writehasharray($configgroups,\%groups);
 	&General::writehasharray($confignets,\%nets);
+}
+sub process_p2p
+{
+	copy("/var/ipfire/outgoing/p2protocols","/var/ipfire/forward/p2protocols");
+	chmod oct(0777), '/var/ipfire/forward/p2protocols';
 }
