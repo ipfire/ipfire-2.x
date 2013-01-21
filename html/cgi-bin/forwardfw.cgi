@@ -1916,7 +1916,7 @@ END
 				if($$hash{$key}[25] ne ''){push (@days,$Lang::tr{'fwdfw wd_sun'});}
 				my $weekdays=join(",",@days);
 				if (@days){
-					print"<tr bgcolor='#FFE4B5'><td colspan='6'>$Lang::tr{'fwdfw time'} ";
+					print"<tr bgcolor='#FFE4B5'><td colspan='7'>$Lang::tr{'fwdfw time'} ";
 					print"$weekdays";
 					print "&nbsp $Lang::tr{'fwdfw from'} $$hash{$key}[26] &nbsp $Lang::tr{'fwdfw till'} $$hash{$key}[27]</td><td colspan='8'></d></tr>";
 				}

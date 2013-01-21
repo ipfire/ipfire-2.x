@@ -919,7 +919,7 @@
 'fwdfw hint ip2'		=> 'Bitte überprüfen Sie ob diese Regel Sinn macht: ',
 'fwdfw ipsec network'	=> 'IPsec Netzwerke:',
 'fwdfw log rule'		=> 'Log Regel',
-'fwdfw man port'		=> 'Port(s) manuel:',
+'fwdfw man port'		=> 'Port(s) manuell:',
 'fwdfw moveup'			=> 'Hoch',
 'fwdfw movedown'		=> 'Runter',
 'fwdfw reread'			=> 'Übernehmen',
