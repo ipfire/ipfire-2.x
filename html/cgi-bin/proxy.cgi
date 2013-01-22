@@ -358,12 +358,17 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		$errormessage = $Lang::tr{'advproxy errmsg invalid proxy port'};
 		goto ERROR;
 	}
-	if (!($proxysettings{'UPSTREAM_PROXY'} eq '')) {
-	  my @temp = split(/:/,$proxysettings{'UPSTREAM_PROXY'});
-	  if (!(&General::validip($temp[0]))) {
-	    $errormessage = $Lang::tr{'advproxy errmsg invalid upstream proxy'};
-	    goto ERROR;
-          }
+	if (!($proxysettings{'UPSTREAM_PROXY'} eq ''))
+	{
+		my @temp = split(/:/,$proxysettings{'UPSTREAM_PROXY'});
+		if (!(&General::validip($temp[0])))
+		{
+			if (!(&General::validdomainname($temp[0])))
+			{
+				$errormessage = $Lang::tr{'advproxy errmsg invalid upstream proxy'};
+				goto ERROR;
+			}
+		}
         }
 	if (!($proxysettings{'CACHE_SIZE'} =~ /^\d+/) ||
 		($proxysettings{'CACHE_SIZE'} < 10))

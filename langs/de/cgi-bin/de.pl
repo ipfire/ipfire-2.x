@@ -223,7 +223,7 @@
 'advproxy errmsg invalid mac' => 'Ungültige MAC-Adresse',
 'advproxy errmsg invalid pdc' => 'Ungültiger Hostname für den Primary Domain Controller',
 'advproxy errmsg invalid proxy port' => 'Ungültiger Proxy-Port',
-'advproxy errmsg invalid upstream proxy' => 'Ungültige IP für Upstream-Proxy',
+'advproxy errmsg invalid upstream proxy' => 'Ungültige IP/Hostname für Upstream-Proxy',
 'advproxy errmsg invalid upstream proxy username or password setting' => 'Ungültiger Benutzername oder ungültiges Kennwort für Upstream Proxy',
 'advproxy errmsg invalid user' => 'Benutzername existiert nicht',
 'advproxy errmsg ldap base dn' => 'LDAP base DN erforderlich',
