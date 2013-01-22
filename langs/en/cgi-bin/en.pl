@@ -1682,7 +1682,7 @@
 'profile saved' => 'Profile saved: ',
 'profiles' => 'Profiles:',
 'proto' => 'Proto',
-'protocol' => 'Protocol:',
+'protocol' => 'Protocol',
 'proxy' => 'Proxy',
 'proxy access graphs' => 'Proxy access graphs',
 'proxy admin password' => 'Cache administrator password',
