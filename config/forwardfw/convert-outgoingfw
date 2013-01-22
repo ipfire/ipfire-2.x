@@ -292,7 +292,7 @@ sub process_rules
 				$configline[4] =~ s/,/;/g;
 				$remark = $configline[4];
 			}else{$remark = '';}
-			if($configline[9] eq 'aktiv'){ $log='ON';}else{$log='';}
+			if($configline[9] eq 'Active'){ $log='ON';}else{$log='';}
 			if($configline[10] eq 'on' && $configline[11] eq 'on' && $configline[12] eq 'on' && $configline[13] eq 'on' && $configline[14] eq 'on' && $configline[15] eq 'on' && $configline[16] eq 'on'){
 				if($configline[17] eq '00:00' && $configline[18] eq '00:00'){
 					$time='';
