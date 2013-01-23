@@ -1348,7 +1348,7 @@ sub viewtablenet
 END
 		}
 		my $count=0;
-		foreach my $key (sort { uc($customnetwork{$a}[0]) cmp uc($customnetwork{$b}[0]) } keys %customnetwork) {
+		foreach my $key (sort {$a <=> $b} keys %customnetwork) {
 			if ($fwhostsettings{'ACTION'} eq 'editnet' && $fwhostsettings{'HOSTNAME'} eq $customnetwork{$key}[0]) {
 				print" <tr bgcolor='${Header::colouryellow}'>";
 			}elsif ($count % 2)
@@ -1395,7 +1395,7 @@ sub viewtablehost
 END
 	}
 		my $count=0;
-		foreach my $key (sort { uc($customhost{$a}[0]) cmp uc($customhost{$b}[0]) } keys %customhost) {
+		foreach my $key (sort {$a <=> $b} keys %customhost) {
 			if ( ($fwhostsettings{'ACTION'} eq 'edithost' || $fwhostsettings{'error'}) && $fwhostsettings{'HOSTNAME'} eq $customhost{$key}[0]) {
 				print" <tr bgcolor='${Header::colouryellow}'>";
 			}elsif ($count % 2){ print" <tr bgcolor='$color{'color22'}'>";}
@@ -1442,7 +1442,7 @@ sub viewtablegrp
 	{ 
 		print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
 	}else{
-		foreach my $key (sort { uc($customgrp{$a}[0]) cmp uc($customgrp{$b}[0]) } sort { uc($customgrp{$a}[2]) cmp uc($customgrp{$b}[2]) } keys %customgrp){
+		foreach my $key (sort {$a <=> $b} keys %customgrp){
 			
 			$count++;
 			if ($helper ne $customgrp{$key}[0]){
@@ -1502,7 +1502,7 @@ sub viewtableservice
 			<table width='100%' border='0'>
 			<tr><td align='center'><b>$Lang::tr{'fwhost srv_name'}</td><td align='center'><b>$Lang::tr{'fwhost prot'}</td><td align='center'><b>$Lang::tr{'fwhost port'}</td><td align='center'><b>ICMP</td><td align='center'><b>$Lang::tr{'fwhost used'}</td><td></td><td width='3%'></td></tr>
 END
-		foreach my $key (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0]) } keys %customservice)
+		foreach my $key (sort {$a <=> $b} keys %customservice)
 		{
 			$count++;
 			if ( ($fwhostsettings{'updatesrv'} eq 'on' || $fwhostsettings{'error'}) && $fwhostsettings{'SRV_NAME'} eq $customservice{$key}[0]) {
@@ -1542,7 +1542,7 @@ sub viewtableservicegrp
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust srvgrp'});
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		my $number= keys %customservicegrp;
-		foreach my $key (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0]) }  keys %customservicegrp){
+		foreach my $key (sort { uc($customservicegrp{$a}[2]) cmp uc($customservicegrp{$b}[2]) } keys %customservicegrp){
 			$count++;
 			if ($helper ne $customservicegrp{$key}[0]){
 				$grpname=$customservicegrp{$key}[0];
