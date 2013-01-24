@@ -1934,8 +1934,8 @@ sub p2pblock
 	close FILE;
 	&Header::openbox('100%', 'center', 'P2P-Block');
 	print <<END;
-	<table width='40%' border='0'>
-	<tr bgcolor='$color{'color22'}'><td align=center colspan='2' width='30%'><b>$Lang::tr{'protocol'}</b><td width='10%' align=center><b>$Lang::tr{'status'}</b>
+	<table width='35%' border='1'>
+	<tr bgcolor='$color{'color22'}'><td align=center colspan='2' ><b>$Lang::tr{'protocol'}</b></td><td align='center'><b>$Lang::tr{'status'}</b></td></tr>
 END
 	foreach my $p2pentry (sort @p2ps)
 	{
@@ -1948,11 +1948,11 @@ END
 		print <<END;
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<tr bgcolor='$color{'color20'}'>
-		<td width='66%' align='center' colspan='2'>$p2pline[0]:</td><td width='33%' align='center'><input type='hidden' name='P2PROT' value='$p2pline[1]' /><input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' ><input type='hidden' name='ACTION' value='togglep2p'></td></tr></form>
+		<td align='center' colspan='2' >$p2pline[0]:</td><td align='center'><input type='hidden' name='P2PROT' value='$p2pline[1]' /><input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' ><input type='hidden' name='ACTION' value='togglep2p'></td></tr></form>
 END
 	}
-	print"<tr><td width='10%'><input type='image' img src='/images/on.gif'></td><td>$Lang::tr{'outgoing firewall p2p allow'}</td><td></td></tr>";
-	print"<tr><td width='10%'><input type='image' img src='/images/off.gif'></td><td>$Lang::tr{'outgoing firewall p2p deny'}</td><td></td></tr></table>";
+	print"<tr><td><input type='image' img src='/images/on.gif'></td><td  align='left'>$Lang::tr{'outgoing firewall p2p allow'}</td></tr>";
+	print"<tr><td><input type='image' img src='/images/off.gif'></td><td align='left'>$Lang::tr{'outgoing firewall p2p deny'}</td></tr></table>";
 	&Header::closebox();
 }
 sub fillselect
