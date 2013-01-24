@@ -1934,7 +1934,7 @@ sub p2pblock
 	close FILE;
 	&Header::openbox('100%', 'center', 'P2P-Block');
 	print <<END;
-	<table width='35%' border='1'>
+	<table width='35%' border='0'>
 	<tr bgcolor='$color{'color22'}'><td align=center colspan='2' ><b>$Lang::tr{'protocol'}</b></td><td align='center'><b>$Lang::tr{'status'}</b></td></tr>
 END
 	foreach my $p2pentry (sort @p2ps)
