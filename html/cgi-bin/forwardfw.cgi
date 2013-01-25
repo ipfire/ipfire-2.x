@@ -1951,8 +1951,8 @@ END
 		<td align='center' colspan='2' >$p2pline[0]:</td><td align='center'><input type='hidden' name='P2PROT' value='$p2pline[1]' /><input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' ><input type='hidden' name='ACTION' value='togglep2p'></td></tr></form>
 END
 	}
-	print"<tr><td><input type='image' img src='/images/on.gif'></td><td  align='left'>$Lang::tr{'outgoing firewall p2p allow'}</td></tr>";
-	print"<tr><td><input type='image' img src='/images/off.gif'></td><td align='left'>$Lang::tr{'outgoing firewall p2p deny'}</td></tr></table>";
+	print"<tr><td><img src='/images/on.gif'></td><td  align='left'>$Lang::tr{'outgoing firewall p2p allow'}</td></tr>";
+	print"<tr><td><img src='/images/off.gif'></td><td align='left'>$Lang::tr{'outgoing firewall p2p deny'}</td></tr></table>";
 	&Header::closebox();
 }
 sub fillselect
