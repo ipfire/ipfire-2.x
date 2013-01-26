@@ -335,7 +335,9 @@ case "$1" in
 	;;
   restart)
 	$0 stop
+	$0 stopovpn
 	$0 start
+	$0 startovpn
 	;;
   *)
         echo "Usage: $0 {start|stop|reload|restart}"
