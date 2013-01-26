@@ -43,3 +43,4 @@ var/ipfire/general-functions.pl
 var/ipfire/langs
 var/ipfire/outgoing/bin/outgoingfw.pl
 var/ipfire/qos/bin/makeqosscripts.pl
+var/ipfire/updatexlrator/bin/download
