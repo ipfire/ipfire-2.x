@@ -1,0 +1,3 @@
+sbin/mount.cifs
+#usr/local/include/cifsidmap.h
+#usr/local/share/man/man8/mount.cifs.8

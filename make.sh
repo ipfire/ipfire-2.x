@@ -590,6 +590,7 @@ buildipfire() {
   ipfiremake ghostscript
   ipfiremake foomatic
   ipfiremake hplip
+  ipfiremake cifs-utils
   ipfiremake samba
   ipfiremake sudo
   ipfiremake mc
