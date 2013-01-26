@@ -134,8 +134,9 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	#INPUT part
 	if($fwdfwsettings{'grp2'} eq 'ipfire'){
 		$fwdfwsettings{'chain'} = 'INPUTFW';
+		my $maxkey=&General::findhasharraykey(\%configinputfw);
 		#check if we have an identical rule already
-		if($fwdfwsettings{'oldrulenumer'} eq $fwdfwsettings{'rulepos'}){
+		if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
 			foreach my $key (sort keys %configinputfw){
 				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
 					eq "$configinputfw{$key}[0],$configinputfw{$key}[2],$configinputfw{$key}[3],$configinputfw{$key}[4],$configinputfw{$key}[5],$configinputfw{$key}[6],$configinputfw{$key}[7],$configinputfw{$key}[8],$configinputfw{$key}[9],$configinputfw{$key}[10],$configinputfw{$key}[11],$configinputfw{$key}[12],$configinputfw{$key}[13],$configinputfw{$key}[14],$configinputfw{$key}[15],$configinputfw{$key}[17],$configinputfw{$key}[18],$configinputfw{$key}[19],$configinputfw{$key}[20],$configinputfw{$key}[21],$configinputfw{$key}[22],$configinputfw{$key}[23],$configinputfw{$key}[24],$configinputfw{$key}[25],$configinputfw{$key}[26],$configinputfw{$key}[27]"){
@@ -150,6 +151,16 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 						}
 				}	
 			}	
+		}
+		#check Rulepos on new Rule
+		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
+			$fwdfwsettings{'oldrulenumber'}=$maxkey;
+			foreach my $key (sort keys %configinputfw){
+				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
+					eq "$configinputfw{$key}[0],$configinputfw{$key}[2],$configinputfw{$key}[3],$configinputfw{$key}[4],$configinputfw{$key}[5],$configinputfw{$key}[6],$configinputfw{$key}[7],$configinputfw{$key}[8],$configinputfw{$key}[9],$configinputfw{$key}[10],$configinputfw{$key}[11],$configinputfw{$key}[12],$configinputfw{$key}[13],$configinputfw{$key}[14],$configinputfw{$key}[15],$configinputfw{$key}[17],$configinputfw{$key}[18],$configinputfw{$key}[19],$configinputfw{$key}[20],$configinputfw{$key}[21],$configinputfw{$key}[22],$configinputfw{$key}[23],$configinputfw{$key}[24],$configinputfw{$key}[25],$configinputfw{$key}[26],$configinputfw{$key}[27]"){
+						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+				}
+			}
 		}
 		#check if we just close a rule
 		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} ) {
@@ -196,6 +207,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	}else{
 		#FORWARD PART
 		$fwdfwsettings{'chain'} = 'FORWARDFW';
+		my $maxkey=&General::findhasharraykey(\%configfwdfw);
 		if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
 			#check if we have an identical rule already
 			foreach my $key (sort keys %configfwdfw){
@@ -213,6 +225,16 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 				}		
 			}
 		}	
+		#check Rulepos on new Rule
+		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
+			$fwdfwsettings{'oldrulenumber'}=$maxkey;
+			foreach my $key (sort keys %configfwdfw){
+				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
+					eq "$configfwdfw{$key}[0],$configfwdfw{$key}[2],$configfwdfw{$key}[3],$configfwdfw{$key}[4],$configfwdfw{$key}[5],$configfwdfw{$key}[6],$configfwdfw{$key}[7],$configfwdfw{$key}[8],$configfwdfw{$key}[9],$configfwdfw{$key}[10],$configfwdfw{$key}[11],$configfwdfw{$key}[12],$configfwdfw{$key}[13],$configfwdfw{$key}[14],$configfwdfw{$key}[15],$configfwdfw{$key}[17],$configfwdfw{$key}[18],$configfwdfw{$key}[19],$configfwdfw{$key}[20],$configfwdfw{$key}[21],$configfwdfw{$key}[22],$configfwdfw{$key}[23],$configfwdfw{$key}[24],$configfwdfw{$key}[25],$configfwdfw{$key}[26],$configfwdfw{$key}[27]"){
+						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+				}		
+			}
+		}
 		#check if we just close a rule
 		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'} ) {
 			if($fwdfwsettings{'nosave'} eq 'on' && $fwdfwsettings{'updatefwrule'} eq 'on'){
@@ -989,7 +1011,7 @@ sub newrule
 		foreach my $key (sort keys %hash){
 			$sum++;
 			if ($key eq $fwdfwsettings{'key'}){
-				$fwdfwsettings{'oldrulenumber'}			= $key;
+				$fwdfwsettings{'oldrulenumber'}			= $fwdfwsettings{'key'};
 				$fwdfwsettings{'RULE_ACTION'}			= $hash{$key}[0];
 				$fwdfwsettings{'ACTIVE'}				= $hash{$key}[2];
 				$fwdfwsettings{'grp1'}					= $hash{$key}[3];   
@@ -1080,7 +1102,6 @@ END
 
 	&Header::closebox();
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw source'});
-
 	#------SOURCE-------------------------------------------------------
 	print<<END;
 		<table width='100%' border='0'>
@@ -1373,6 +1394,8 @@ END
 				print">$count</option>";
 			}
 			print"</select></td></tr>";
+		}else{
+			print "<tr><td width='12%'>$Lang::tr{'fwdfw rulepos'}:</td><td><input type='text' name='rulepos' size='2'></td></tr>";
 		}
 
 		print<<END;
@@ -1438,7 +1461,8 @@ END
 			<table border='0' width='100%'>
 			<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' />
 			<input type='hidden' name='config' value='$config' >
-			<input type='hidden' name='ACTION' value='saverule' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td>
+			<input type='hidden' name='ACTION' value='saverule' >
+			</form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td>
 			</table></form>
 END
 		}else{
