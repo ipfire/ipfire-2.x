@@ -358,12 +358,17 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		$errormessage = $Lang::tr{'advproxy errmsg invalid proxy port'};
 		goto ERROR;
 	}
-	if (!($proxysettings{'UPSTREAM_PROXY'} eq '')) {
-	  my @temp = split(/:/,$proxysettings{'UPSTREAM_PROXY'});
-	  if (!(&General::validip($temp[0]))) {
-	    $errormessage = $Lang::tr{'advproxy errmsg invalid upstream proxy'};
-	    goto ERROR;
-          }
+	if (!($proxysettings{'UPSTREAM_PROXY'} eq ''))
+	{
+		my @temp = split(/:/,$proxysettings{'UPSTREAM_PROXY'});
+		if (!(&General::validip($temp[0])))
+		{
+			if (!(&General::validdomainname($temp[0])))
+			{
+				$errormessage = $Lang::tr{'advproxy errmsg invalid upstream proxy'};
+				goto ERROR;
+			}
+		}
         }
 	if (!($proxysettings{'CACHE_SIZE'} =~ /^\d+/) ||
 		($proxysettings{'CACHE_SIZE'} < 10))
@@ -512,8 +517,11 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		}
 		if (!&General::validip($proxysettings{'LDAP_SERVER'}))
 		{
-			$errormessage = $Lang::tr{'advproxy errmsg ldap server'};
-			goto ERROR;
+			if (!&General::validdomainname($proxysettings{'LDAP_SERVER'}))
+			{
+				$errormessage = $Lang::tr{'advproxy errmsg ldap server'};
+				goto ERROR;
+			}
 		}
 		if (!&General::validport($proxysettings{'LDAP_PORT'}))
 		{
