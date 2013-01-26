@@ -6,6 +6,7 @@ etc/ipsec.conf
 etc/ipsec.secrets
 etc/ipsec.user.conf
 etc/ipsec.user.secrets
+var/log/cache
 var/updatecache
 etc/localtime
 var/ipfire/ovpn
