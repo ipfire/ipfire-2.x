@@ -111,6 +111,7 @@ add_to_backup usr/share/terminfo
 add_to_backup etc/sysconfig/lm_sensors
 add_to_backup etc/sysconfig/rc.local
 add_to_backup usr/local/bin/vpn-watch
+add_to_backup usr/local/bin/updxsetperms
 add_to_backup usr/libexec/ipsec
 
 # Backup the files
@@ -125,6 +126,9 @@ if [ $ROOTSPACE -lt 70000 ]; then
 		"core-update-$core: ERROR cannot update because not enough free space on root."
 	exit 2
 fi
+
+# Add user nobody to group squid.
+usermod -a -G squid nobody
 
 echo
 echo Update Kernel to $KVER ...
@@ -183,6 +187,9 @@ rm -rf /lib/libncurses*
 # Remove old pluto binaries.
 rm -f /usr/libexec/ipsec/{pluto,_pluto_adns,whack}
 rm -f /usr/local/bin/vpn-watch
+
+# Remove update accelerator permissions script.
+rm -f /usr/local/bin/updxsetperms
 
 #
 #Extract files
