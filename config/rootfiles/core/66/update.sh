@@ -287,6 +287,7 @@ case $(uname -m) in
 		#
 		# ReInstall grub
 		#
+			echo "(hd0) ${ROOT::`expr length $ROOT`-1}" > /boot/grub/device.map
 			grub-install --no-floppy ${ROOT::`expr length $ROOT`-1}
 	;;
 esac
