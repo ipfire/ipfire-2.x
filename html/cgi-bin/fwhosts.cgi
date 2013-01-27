@@ -1542,7 +1542,7 @@ sub viewtableservicegrp
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust srvgrp'});
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		my $number= keys %customservicegrp;
-		foreach my $key (sort { uc($customservicegrp{$a}[2]) cmp uc($customservicegrp{$b}[2]) } keys %customservicegrp){
+		foreach my $key (sort {$a <=> $b} keys %customservicegrp){
 			$count++;
 			if ($helper ne $customservicegrp{$key}[0]){
 				$grpname=$customservicegrp{$key}[0];
