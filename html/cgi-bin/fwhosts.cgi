@@ -1313,7 +1313,7 @@ END
 	<tr><td width='1%' nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td><select name='CUST_SRV' style='min-width:185px;'>
 END
 	&General::readhasharray("$configsrv", \%customservice);
-	foreach my $key (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0]) }  keys %customservice)
+	foreach my $key (sort {$a <=> $b}  keys %customservice)
 	{
 		print "<option>$customservice{$key}[0]</option>";
 	}
@@ -1538,11 +1538,10 @@ sub viewtableservicegrp
 	my $remark;
 	my $helper;
 	if (! -z $configsrvgrp){
-	
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust srvgrp'});
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		my $number= keys %customservicegrp;
-		foreach my $key (sort {$a <=> $b} keys %customservicegrp){
+		foreach my $key (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0])||  $a <=> $b } keys %customservicegrp){
 			$count++;
 			if ($helper ne $customservicegrp{$key}[0]){
 				$grpname=$customservicegrp{$key}[0];
@@ -1560,14 +1559,18 @@ sub viewtableservicegrp
 			}
 			if( $fwhostsettings{'SRVGRP_NAME'} eq $customservicegrp{$key}[0]) {
 				print" <tr bgcolor='${Header::colouryellow}'>";
-				}elsif ($count %2 == 0){print"<tr bgcolor='$color{'color22'}'>";}else{print"<tr bgcolor='$color{'color20'}'>";}
-				print "<td width='39%'>$customservicegrp{$key}[2]</td>";
-				print"<td align='center'>$customservicegrp{$key}[3]</td><td align='center'>$customservicegrp{$key}[4]</td><td width='1%'><form method='post'>";
-				if ($number gt '1'){
-					print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
-				}
-				print"<input type='hidden' name='ACTION' value='delgrpservice'><input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2],$customservicegrp{$key}[3]'></form></td></tr>";
-				$helper=$customservicegrp{$key}[0];
+			}elsif ($count %2 == 0){
+				print"<tr bgcolor='$color{'color22'}'>";
+			}else{
+				print"<tr bgcolor='$color{'color20'}'>";
+			}
+			print "<td width='39%'>$customservicegrp{$key}[2]</td>";
+			print"<td align='center'>$customservicegrp{$key}[3]</td><td align='center'>$customservicegrp{$key}[4]</td><td width='1%'><form method='post'>";
+			if ($number gt '1'){
+				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
+			}
+			print"<input type='hidden' name='ACTION' value='delgrpservice'><input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2],$customservicegrp{$key}[3]'></form></td></tr>";
+			$helper=$customservicegrp{$key}[0];
 		}
 		print"</table>";
 		&Header::closebox();
