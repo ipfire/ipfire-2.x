@@ -99,18 +99,22 @@ if($param eq 'flush'){
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
 			$defaultNetworks{'GREEN_NETMASK'}=&General::iporsubtocidr($defaultNetworks{'GREEN_NETMASK'});
 			$green="$defaultNetworks{'GREEN_ADDRESS'}/$defaultNetworks{'GREEN_NETMASK'}";
-			if ($defaultNetworks{'ORANGE_DEV'}){
-				$defaultNetworks{'ORANGE_NETMASK'}=&General::iporsubtocidr($defaultNetworks{'ORANGE_NETMASK'});
-				$orange="$defaultNetworks{'ORANGE_ADDRESS'}/$defaultNetworks{'ORANGE_NETMASK'}";
-				#set default rules for DMZ
-				system ("iptables -A $CHAIN -s $orange -d $green -j RETURN");
-			}
 			if ($defaultNetworks{'BLUE_DEV'}){
 				$defaultNetworks{'BLUE_NETMASK'}=&General::iporsubtocidr($defaultNetworks{'BLUE_NETMASK'});
 				$blue="$defaultNetworks{'BLUE_ADDRESS'}/$defaultNetworks{'BLUE_NETMASK'}";
 				#set default rules for BLUE
 				system ("iptables -A $CHAIN -s $blue -d $green -j RETURN");
 			}
+			if ($defaultNetworks{'ORANGE_DEV'}){
+				$defaultNetworks{'ORANGE_NETMASK'}=&General::iporsubtocidr($defaultNetworks{'ORANGE_NETMASK'});
+				$orange="$defaultNetworks{'ORANGE_ADDRESS'}/$defaultNetworks{'ORANGE_NETMASK'}";
+				#set default rules for DMZ
+				system ("iptables -A $CHAIN -s $orange -d $green -j RETURN");
+				if ($defaultNetworks{'BLUE_DEV'}){
+					system ("iptables -A $CHAIN -s $orange -d $blue -j RETURN");
+				}
+			}
+			
 			&p2pblock;
 			system ("iptables -A $CHAIN -m state --state NEW -j ACCEPT");
 			system ("/usr/sbin/firewall-forward-policy");

@@ -1718,6 +1718,7 @@ sub viewtablerule
 	
 	&viewtablenew(\%configfwdfw,$configfwdfw,$Lang::tr{'fwdfw rules'},"Forward" );
 	&viewtablenew(\%configfwdfw,$configfwdfw,'',"DMZ" );
+	&viewtablenew(\%configfwdfw,$configfwdfw,'',"WLAN" );
 	&viewtablenew(\%configinputfw,$configinput,"",$Lang::tr{'external access'} );
 }
 sub viewtablenew
@@ -1731,9 +1732,17 @@ sub viewtablenew
 	#check if there are DMZ entries
 	if ($title1 eq 'DMZ'){
 		foreach my $key (keys %$hash){
-			if ($$hash{$key}[4] eq 'ORANGE' || $$hash{$key}[6] eq 'ORANGE'){$go='on';} 
+			if ($$hash{$key}[4] eq 'ORANGE'){$go='on';last} 
 		}
-	}elsif( ! -z "$config" ){
+	}elsif($title1 eq 'WLAN'){
+		foreach my $key (keys %$hash){
+			if ($$hash{$key}[4] eq 'BLUE'){$go='on';last} 
+		}
+	}elsif($title1 eq 'Forward'){
+		foreach my $key (keys %$hash){
+			if (($$hash{$key}[4] ne 'ORANGE' && $$hash{$key}[4] ne 'BLUE')){$go='on';last} 
+		}
+	}elsif( ! -z $config){
 		$go='on';
 	}
 	if($go ne ''){
@@ -1750,8 +1759,9 @@ sub viewtablenew
 		print"<tr><td align='center' width='1%'><b>#</td><td width='1%'></td><td align='center' ><b>$Lang::tr{'fwdfw source'}</td><td width='1%'><b>Log</td><td align='center' width='20%'><b>$Lang::tr{'fwdfw target'}</td><td align='center'><b>$Lang::tr{'protocol'}</b></td><td align='center' width='70%'><b>$Lang::tr{'remark'}</td><td align='center' colspan='3' width='1%'><b>$Lang::tr{'fwdfw action'}</td></tr>";
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
 			#check if we have a FORWARDFW OR DMZ RULE
-			if ($title1 eq 'DMZ' && ($$hash{$key}[4] ne 'ORANGE' && $$hash{$key}[6] ne 'ORANGE')){next;}
-			if ($title1 eq 'Forward' && ($$hash{$key}[4] eq 'ORANGE' || $$hash{$key}[6] eq 'ORANGE')){next;}
+			if ($title1 eq 'DMZ' && ($$hash{$key}[4] ne 'ORANGE')){next;}
+			if ($title1 eq 'WLAN' && ($$hash{$key}[4] ne 'BLUE')){next;}
+			if ($title1 eq 'Forward' && ($$hash{$key}[4] eq 'ORANGE' || $$hash{$key}[4] eq 'BLUE')){next;}
 			@tmpsrc=();
 			#check if vpn hosts/nets have been deleted
 			if($$hash{$key}[3] =~ /ipsec/i || $$hash{$key}[3] =~ /ovpn/i){
