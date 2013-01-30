@@ -53,12 +53,16 @@ my $configfwdfw		= "${General::swroot}/forward/config";
 my $configinput	    = "${General::swroot}/forward/input";
 my $p2pfile			= "${General::swroot}/forward/p2protocols";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
+my $netsettings		= "${General::swroot}/ethernet/settings";
 my $errormessage='';
+my $orange;
+my $green;
 my ($TYPE,$PROT,$SPROT,$DPROT,$SPORT,$DPORT,$TIME,$TIMEFROM,$TIMETILL,$SRC_TGT);
 my $CHAIN="FORWARDFW";
 
 
 &General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
+&General::readhash("$netsettings", \%defaultNetworks);
 &General::readhasharray($configfwdfw, \%configfwdfw);
 &General::readhasharray($configinput, \%configinputfw);
 &General::readhasharray($configgrp, \%customgrp);
@@ -92,12 +96,17 @@ if($param eq 'flush'){
 			&p2pblock;
 			system ("/usr/sbin/firewall-forward-policy"); 
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
-			&p2pblock;
-			system ("/usr/sbin/firewall-forward-policy"); 
+			if ($defaultNetworks{'ORANGE_DEV'}){
+				$defaultNetworks{'ORANGE_NETMASK'}=&General::iporsubtocidr($defaultNetworks{'ORANGE_NETMASK'});
+				$defaultNetworks{'GREEN_NETMASK'}=&General::iporsubtocidr($defaultNetworks{'GREEN_NETMASK'});
+				$orange="$defaultNetworks{'ORANGE_ADDRESS'}/$defaultNetworks{'ORANGE_NETMASK'}";
+				$green="$defaultNetworks{'GREEN_ADDRESS'}/$defaultNetworks{'GREEN_NETMASK'}";
+				#set default rules for DMZ
+				system ("iptables -A $CHAIN -s $orange -d $green -j RETURN");
+				&p2pblock;
+			}
 			system ("iptables -A $CHAIN -m state --state NEW -j ACCEPT");
-		}elsif($fwdfwsettings{'POLICY'} eq 'MODE0'){
-			system ("/usr/sbin/firewall-forward-policy"); 
-			system ("iptables -A $CHAIN -m state --state NEW -j ACCEPT");
+			system ("/usr/sbin/firewall-forward-policy");
 		}
 	}
 }

@@ -351,9 +351,10 @@ case "$1" in
 	;;
   restart)
 	$0 stop
-	$0 stopovpn
 	$0 start
-	$0 startovpn
+	/usr/local/bin/forwardfwctrl
+	/usr/local/bin/openvpnctrl -s > /dev/null 2>&1
+	/usr/local/bin/openvpnctrl -sn2n > /dev/null 2>&1
 	;;
   *)
         echo "Usage: $0 {start|stop|reload|restart}"

@@ -731,9 +731,9 @@ sub checktarget
 		$ip=&General::ip2dec($ip);
 		$ip=&General::dec2ip($ip);
 
-		#check if net or broadcast
+		#check if net
 		my @tmp= split (/\./,$ip);
-		if (($tmp[3] eq "0") || ($tmp[3] eq "255"))
+		if ($tmp[3] eq "0")
 		{
 			$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
 		}
@@ -865,7 +865,7 @@ sub checkrule
 		my $networkip1=&General::getnetworkip($sip,$scidr);
 		my $networkip2=&General::getnetworkip($tip,$tcidr);
 		if ($scidr gt $tcidr){
-			if ( &General::IpInSubnet($networkip1,$tip,&General::iporsubtodec($tcidr)) ){
+			if ( &General::IpInSubnet($networkip1,$tip,&General::iporsubtodec($tcidr))){
 				$errormessage.=$Lang::tr{'fwdfw err samesub'};
 			}
 		}elsif($scidr eq $tcidr && $scidr eq '32'){
@@ -876,7 +876,7 @@ sub checkrule
 					$hint.=$Lang::tr{'fwdfw hint ip2'}." Source: $networkip1/$scidr Target: $networkip2/$tcidr<br>";
 				}
 		}else{
-			if ( &General::IpInSubnet($networkip2,$sip,&General::iporsubtodec($scidr)) ){
+			if ( &General::IpInSubnet($networkip2,$sip,&General::iporsubtodec($scidr)) && $tcidr ne '32' ){
 			$errormessage.=$Lang::tr{'fwdfw err samesub'};
 			}
 		}
@@ -884,9 +884,7 @@ sub checkrule
 
 	#check source and destination protocol if manual
 	if( $fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'USESRV'} eq 'ON'){
-		
-		
-		if($fwdfwsettings{'PROT'} ne $fwdfwsettings{'TGT_PROT'} && $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
+			if($fwdfwsettings{'PROT'} ne $fwdfwsettings{'TGT_PROT'} && $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
 			$errormessage.=$Lang::tr{'fwdfw err prot'};
 		}
 		#check source and destination protocol if source manual and dest servicegrp
