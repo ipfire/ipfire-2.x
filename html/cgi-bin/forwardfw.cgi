@@ -1997,7 +1997,9 @@ sub rules
 sub reread_rules
 {
 	system("/usr/local/bin/forwardfwctrl");
-	system("rm ${General::swroot}/forward/reread");
+	if ( -f "${General::swroot}/forward/reread"){
+		system("rm ${General::swroot}/forward/reread");
+	}
 }
 &Header::closebigbox();
 &Header::closepage();
