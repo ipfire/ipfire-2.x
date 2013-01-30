@@ -354,7 +354,7 @@ char *en_tr[] = {
 /* TR_PHONENUMBER_CANNOT_BE_EMPTY */
 "Phone number cannot be empty.",
 /* TR_PREPARE_HARDDISK */
-"The installation program will now prepare the harddisk on %s. First the disk will be partitioned, and then the partitions will have a filesystem put on them.",
+"The installation program will now prepare the harddisk on %s. First the disk will be partitioned, and then the partitions will have a filesystem put on them.\n\nALL DATA ON THE DISK WILL BE DESTROYED. Do you agree to continue?",
 /* TR_PRESS_OK_TO_REBOOT */
 "Press Ok to reboot.",
 /* TR_PRIMARY_DNS */

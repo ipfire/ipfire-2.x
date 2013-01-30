@@ -358,7 +358,7 @@ char *de_tr[] = {
 /* TR_PHONENUMBER_CANNOT_BE_EMPTY */
 "Die Telefonnummer darf nicht leer sein.",
 /* TR_PREPARE_HARDDISK */
-"Das Installationsprogramm wird jetzt die Festplatte %s vorbereiten. Zunächst wird die Festplatte partitioniert. Danach wird auf den Partitionen ein Dateisystem erstellt.",
+"Das Installationsprogramm wird jetzt die Festplatte %s vorbereiten. Zunächst wird die Festplatte partitioniert. Danach wird auf den Partitionen ein Dateisystem erstellt.\n\nALLE DATEN AUF DEM LAUFWERK WERDEN GELÖSCHT. Einverstanden?",
 /* TR_PRESS_OK_TO_REBOOT */
 "Drücken Sie Ok, um neu zu starten.",
 /* TR_PRIMARY_DNS */
