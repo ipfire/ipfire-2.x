@@ -731,9 +731,9 @@ sub checktarget
 		$ip=&General::ip2dec($ip);
 		$ip=&General::dec2ip($ip);
 
-		#check if net
+		#check if net or broadcast
 		my @tmp= split (/\./,$ip);
-		if ($tmp[3] eq "0")
+		if ($tmp[3] eq "0" || ($tmp[3] eq "255"))
 		{
 			$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
 		}
@@ -876,7 +876,7 @@ sub checkrule
 					$hint.=$Lang::tr{'fwdfw hint ip2'}." Source: $networkip1/$scidr Target: $networkip2/$tcidr<br>";
 				}
 		}else{
-			if ( &General::IpInSubnet($networkip2,$sip,&General::iporsubtodec($scidr)) && $tcidr ne '32' ){
+			if ( &General::IpInSubnet($networkip2,$sip,&General::iporsubtodec($scidr)) ){
 			$errormessage.=$Lang::tr{'fwdfw err samesub'};
 			}
 		}
