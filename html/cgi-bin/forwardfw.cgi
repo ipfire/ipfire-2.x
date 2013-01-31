@@ -531,7 +531,7 @@ print <<END;
 		<tr><td colspan='3'>$Lang::tr{'fwdfw pol text'}</td></tr>
 		
 		<tr><td colspan='3'><hr /></td></tr>
-		<tr><td width='10%' align='left'>	<select name='POLICY' style="width: 85px">
+		<tr><td width='15%' align='left'>	<select name='POLICY' style="width: 100px">
 		<option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
 		<option value='MODE2' $selected{'POLICY'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
 	    <td width='45%' align='left'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
