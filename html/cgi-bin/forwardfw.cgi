@@ -524,14 +524,16 @@ sub base
 	&hint;
 	&addrule;
 	&p2pblock;
-	&Header::openbox('100%', 'center', 'Policy');
+	&Header::openbox('100%', 'center', $Lang::tr{'fwdfw pol title'});
 print <<END;
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	<table width='100%'>
-		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 1:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoing firewall mode1'}</td></tr>
-		<tr><td width='10%' align='left'><b>$Lang::tr{'mode'} 2:</b><td width='90%' align='left' colspan='2'>$Lang::tr{'outgoing firewall mode2'}</td></tr>
+	<table width='100%' border='0'>
+		<tr><td colspan='3'>$Lang::tr{'fwdfw pol text'}</td></tr>
+		
 		<tr><td colspan='3'><hr /></td></tr>
-		<tr><td width='10%' align='left'>	<select name='POLICY' style="width: 85px">$Lang::tr{'mode'} 0</option><option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'mode'} 1</option><option value='MODE2' $selected{'POLICY'}{'MODE2'}>$Lang::tr{'mode'} 2</option></select>
+		<tr><td width='10%' align='left'>	<select name='POLICY' style="width: 85px">
+		<option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
+		<option value='MODE2' $selected{'POLICY'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
 	    <td width='45%' align='left'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
 	    <td width='45%' align='left'>
 END
