@@ -242,9 +242,9 @@ case "$1" in
 
 	iptables_red
 	
-	# DMZ pinhole chain.  setdmzholes setuid prog adds rules here to allow
+	# DMZ pinhole chain.  
 	# ORANGE to talk to GREEN / BLUE.
-	/sbin/iptables -N DMZHOLES
+
 	if [ "$ORANGE_DEV" != "" ]; then
 		/sbin/iptables -A FORWARD -i $ORANGE_DEV -m state --state NEW -j FORWARDFW
 	fi

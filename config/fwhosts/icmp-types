@@ -1,4 +1,4 @@
-0,echo-reply (pong),0
+0,echo-reply,0
 1,destination-unreachable,3
 2,network-unreachable,3/0
 3,host-unreachable,3/1
@@ -21,10 +21,10 @@
 20,host-redirect,5/1
 21,TOS-network-redirect,5/2
 22,TOS-host-redirect,5/3
-23,echo-request (ping),8
+23,echo-request,8
 24,router-advertisement,9
 25,router-solicitation,10
-26,time-exceeded (ttl-exceeded),11
+26,time-exceeded,11
 27,ttl-zero-during-transit,11/0
 28,ttl-zero-during-reassembly,11/1
 29,parameter-problem,12
