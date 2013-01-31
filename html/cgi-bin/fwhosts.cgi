@@ -1442,7 +1442,7 @@ sub viewtablegrp
 	{ 
 		print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
 	}else{
-		foreach my $key (sort {$a <=> $b} keys %customgrp){
+		foreach my $key (sort { uc($customgrp{$a}[0]) cmp uc($customgrp{$b}[0]) } sort { uc($customgrp{$a}[2]) cmp uc($customgrp{$b}[2]) } keys %customgrp){
 			
 			$count++;
 			if ($helper ne $customgrp{$key}[0]){
