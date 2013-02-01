@@ -800,9 +800,8 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 		$customservicegrp{$key}[0] = $fwhostsettings{'SRVGRP_NAME'};
 		$customservicegrp{$key}[1] = $fwhostsettings{'SRVGRP_REMARK'};
 		$customservicegrp{$key}[2] = $fwhostsettings{'CUST_SRV'};
-		$customservicegrp{$key}[3] = $port;
-		$customservicegrp{$key}[4] = $prot;
-		$customservicegrp{$key}[5] = $count;
+		$customservicegrp{$key}[3] = $count;
+		
 		&General::writehasharray("$configsrvgrp", \%customservicegrp );
 		$fwhostsettings{'updatesrvgrp'}='on';
 	}
@@ -1359,7 +1358,7 @@ END
 				print" <tr bgcolor='$color{'color20'}'>";
 			}
 			print<<END;
-			<td width='40%'><form method='post'>$customnetwork{$key}[0]</td><td width=25%'>$customnetwork{$key}[1]</td><td width='25%'>$customnetwork{$key}[2]</td><td align='center'>$customnetwork{$key}[3] x</td>
+			<td width='40%'><form method='post'>$customnetwork{$key}[0]</td><td width=25%'>$customnetwork{$key}[1]</td><td width='25%'>$customnetwork{$key}[2]</td><td align='center'>$customnetwork{$key}[3]x</td>
 			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='editnet'>
 			<input type='hidden' name='HOSTNAME' value='$customnetwork{$key}[0]' />
@@ -1402,7 +1401,7 @@ END
 			else{            print" <tr bgcolor='$color{'color20'}'>";}
 			my ($ip,$sub)=split(/\//,$customhost{$key}[2]);
 			print<<END;
-			<td width='40%'><form method='post'>$customhost{$key}[0]</td><td width='50%'>$customhost{$key}[2]</td><td align='center'>$customhost{$key}[3] x</td>
+			<td width='40%'><form method='post'>$customhost{$key}[0]</td><td width='50%'>$customhost{$key}[2]</td><td align='center'>$customhost{$key}[3]x</td>
 			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='edithost' />
 			<input type='hidden' name='HOSTNAME' value='$customhost{$key}[0]' />
@@ -1451,7 +1450,7 @@ sub viewtablegrp
 				if($count >=2){print"</table>";}
 				print "<br><b><u>$grpname</u></b> &nbsp &nbsp";
 				print " <b>$Lang::tr{'remark'}:</b>&nbsp $remark &nbsp " if ($remark ne '');
-				print "<b>$Lang::tr{'used'}:</b> $customgrp{$key}[4] x";
+				print "<b>$Lang::tr{'used'}:</b> $customgrp{$key}[4]x";
 				if($customgrp{$key}[4] == '0')
 				{
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='ACTION' value='delgrp'></form>";
@@ -1502,7 +1501,7 @@ sub viewtableservice
 			<table width='100%' border='0'>
 			<tr><td align='center'><b>$Lang::tr{'fwhost srv_name'}</td><td align='center'><b>$Lang::tr{'fwhost prot'}</td><td align='center'><b>$Lang::tr{'fwhost port'}</td><td align='center'><b>ICMP</td><td align='center'><b>$Lang::tr{'fwhost used'}</td><td></td><td width='3%'></td></tr>
 END
-		foreach my $key (sort {$a <=> $b} keys %customservice)
+		foreach my $key (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0])||  $a <=> $b } keys %customservice)
 		{
 			$count++;
 			if ( ($fwhostsettings{'updatesrv'} eq 'on' || $fwhostsettings{'error'}) && $fwhostsettings{'SRV_NAME'} eq $customservice{$key}[0]) {
@@ -1537,9 +1536,12 @@ sub viewtableservicegrp
 	my $grpname;
 	my $remark;
 	my $helper;
+	my $port;
+	my $protocol;
 	if (! -z $configsrvgrp){
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust srvgrp'});
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
+		&General::readhasharray("$configsrv", \%customservice);
 		my $number= keys %customservicegrp;
 		foreach my $key (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0])||  $a <=> $b } keys %customservicegrp){
 			$count++;
@@ -1549,8 +1551,8 @@ sub viewtableservicegrp
 				if($count >=2){print"</table>";}
 				print "<br><b><u>$grpname</u></b> &nbsp &nbsp ";
 				print "<b>$Lang::tr{'remark'}:</b>&nbsp $remark " if ($remark ne '');
-				print "&nbsp <b>$Lang::tr{'used'}:</b> $customservicegrp{$key}[5] x";
-				if($customservicegrp{$key}[5] == '0')
+				print "&nbsp <b>$Lang::tr{'used'}:</b> $customservicegrp{$key}[3]x";
+				if($customservicegrp{$key}[3] == '0')
 				{
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='ACTION' value='delservicegrp'></form>";
 				}
@@ -1559,13 +1561,21 @@ sub viewtableservicegrp
 			}
 			if( $fwhostsettings{'SRVGRP_NAME'} eq $customservicegrp{$key}[0]) {
 				print" <tr bgcolor='${Header::colouryellow}'>";
-			}elsif ($count %2 == 0){
+			}
+			if ($count %2 == 0){
 				print"<tr bgcolor='$color{'color22'}'>";
 			}else{
 				print"<tr bgcolor='$color{'color20'}'>";
 			}
 			print "<td width='39%'>$customservicegrp{$key}[2]</td>";
-			print"<td align='center'>$customservicegrp{$key}[3]</td><td align='center'>$customservicegrp{$key}[4]</td><td width='1%'><form method='post'>";
+			foreach my $srv (sort keys %customservice){
+				if ($customservicegrp{$key}[2] eq $customservice{$srv}[0]){
+					$protocol=$customservice{$srv}[2];
+					$port=$customservice{$srv}[1];
+					last;
+				}
+			}
+			print"<td align='center'>$port</td><td align='center'>$protocol</td><td width='1%'><form method='post'>";
 			if ($number gt '1'){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}
