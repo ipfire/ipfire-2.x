@@ -31,7 +31,7 @@ case ${1} in
 
 		hwclock --hctosys ${CLOCKPARAMS} &>/dev/null
 		if [ ! ${?} == 0 ]; then
-			if [ ! -z /var/log/messages ]; then
+			if [ -s /var/log/messages ]; then
 				boot_mesg -n "No RTC found, set time to last log accesstime ... "
 				DATE=`stat --format "%y" /var/log/messages | cut -d" " -f1`
 				TIME=`stat --format "%y" /var/log/messages | sed -e "s|\..*||g" | cut -d" " -f2`
