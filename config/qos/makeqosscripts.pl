@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -166,6 +166,7 @@ case "\$1" in
 	#ip link set dev $qossettings{'RED_DEV'} mtu $qossettings{'MTU'}
 
 	### ADD HTB QDISC FOR $qossettings{'RED_DEV'}
+	tc qdisc del dev $qossettings{'RED_DEV'} root >/dev/null 2>&1
 	tc qdisc add dev $qossettings{'RED_DEV'} root handle 1: htb default $qossettings{'DEFCLASS_OUT'}
 
 	### MAIN RATE LIMIT
@@ -423,6 +424,7 @@ print <<END
 	# ip link set dev $qossettings{'IMQ_DEV'} mtu $qossettings{'MTU'}
 
 	### ADD HTB QDISC FOR $qossettings{'IMQ_DEV'}
+	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
 	tc qdisc add dev $qossettings{'IMQ_DEV'} root handle 2: htb default $qossettings{'DEFCLASS_INC'}
 
 	### MAIN RATE LIMIT
@@ -693,7 +695,6 @@ print <<END
 	killall qosd >/dev/null 2>&1
 	(sleep 3 && killall -9 qosd &>/dev/null) &
 	# DELETE QDISCS
-	tc qdisc del dev $qossettings{'RED_DEV'} root >/dev/null 2>&1
 	tc qdisc add root dev $qossettings{'RED_DEV'} fq_codel >/dev/null 2>&1
 	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
 	tc qdisc add root dev $qossettings{'IMQ_DEV'} fq_codel >/dev/null 2>&1
