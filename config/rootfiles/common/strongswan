@@ -51,6 +51,7 @@ usr/lib/ipsec/plugins/libstrongswan-openssl.so
 usr/lib/ipsec/plugins/libstrongswan-pem.so
 usr/lib/ipsec/plugins/libstrongswan-pgp.so
 usr/lib/ipsec/plugins/libstrongswan-pkcs1.so
+usr/lib/ipsec/plugins/libstrongswan-pkcs7.so
 usr/lib/ipsec/plugins/libstrongswan-pkcs8.so
 usr/lib/ipsec/plugins/libstrongswan-pubkey.so
 usr/lib/ipsec/plugins/libstrongswan-random.so
