@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  info@ipfire.org                       #
+# Copyright (C) 2007-2013  IPFire Team  info@ipfire.org                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -1367,14 +1367,14 @@ END
 	    goto VPNCONF_ERROR;
 	}
 
-	
-	if ($cgiparams{'TYPE'} eq 'net'){
-		$errormessage=&General::checksubnets($cgiparams{'NAME'},$cgiparams{'REMOTE_SUBNET'});
-		if ($errormessage ne ''){
-			goto VPNCONF_ERROR;
-		}
-		
-	}
+#temporary disabled (BUG 10294)
+#	if ($cgiparams{'TYPE'} eq 'net'){
+#		$errormessage=&General::checksubnets($cgiparams{'NAME'},$cgiparams{'REMOTE_SUBNET'});
+#		if ($errormessage ne ''){
+#			goto VPNCONF_ERROR;
+#		}
+#		
+#	}
 	if ($cgiparams{'AUTH'} eq 'psk') {
 	    if (! length($cgiparams{'PSK'}) ) {
 		$errormessage = $Lang::tr{'pre-shared key is too short'};
