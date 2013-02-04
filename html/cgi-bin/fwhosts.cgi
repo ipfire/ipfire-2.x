@@ -120,9 +120,6 @@ if ($fwhostsettings{'ACTION'} eq 'updatehost')
 		}
 	}
 	&General::writehasharray("$confighost", \%customhost);
-	
-	
-	
 	$fwhostsettings{'actualize'} = 'on';
 	$fwhostsettings{'ACTION'} = 'savehost';
 }
@@ -131,7 +128,6 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 	my $count=0;
 	my $needrules=0;
 	$errormessage=&checkports(\%customservice);
-	
 	if (!$errormessage){
 		&General::readhasharray("$configsrv", \%customservice);
 		foreach my $key (keys %customservice)
@@ -166,19 +162,16 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 		$fwhostsettings{'SRV_NAME'}	= '';
 		$fwhostsettings{'SRV_PORT'}	= '';
 		$fwhostsettings{'PROT'}		= '';
-		
 	}else{
 		$fwhostsettings{'SRV_NAME'}	= $fwhostsettings{'oldsrvname'};
 		$fwhostsettings{'SRV_PORT'}	= $fwhostsettings{'oldsrvport'};
 		$fwhostsettings{'PROT'}		= $fwhostsettings{'oldsrvprot'};
 		$fwhostsettings{'updatesrv'}= 'on';
 	}
-	
 	if($needrules eq 'on'){
 		$errormessage="reread!";
 		&rules;
 	}
-	
 	&addservice;
 }
 # save
@@ -187,7 +180,6 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 	my $count=0;
 	my $needrules=0;
 	if ($fwhostsettings{'orgname'} eq ''){$fwhostsettings{'orgname'}=$fwhostsettings{'HOSTNAME'};}
-	
 	#check if all fields are set
 	if ($fwhostsettings{'HOSTNAME'} eq '' || $fwhostsettings{'IP'} eq '' || $fwhostsettings{'SUBNET'} eq '')
 	{
@@ -207,7 +199,6 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 		if(&General::iporsubtocidr($fwhostsettings{'SUBNET'}) eq '32')
 		{
 			$errormessage=$errormessage.$Lang::tr{'fwhost err sub32'};
-			
 		}
 		if($fwhostsettings{'error'} ne 'on'){
 			#check if we use one of ipfire's networks (green,orange,blue)
@@ -240,14 +231,12 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 		if (!$errormessage){
 			&plausicheck("editnet");
 		}
-		
 		#check if network ip is part of an already used one 
 		if(&checksubnet(\%customnetwork))
 		{
 			$errormessage=$errormessage.$Lang::tr{'fwhost err partofnet'};
 			$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
 		}				
-		
 		if($fwhostsettings{'actualize'} eq 'on' && $fwhostsettings{'newnet'} ne 'on' && $errormessage)
 		{
 			$fwhostsettings{'actualize'} = '';
@@ -260,7 +249,6 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			&General::writehasharray("$confignet", \%customnetwork);
 			undef %customnetwork;
 		} 			
-						
 		if (!$errormessage){
 			&General::readhasharray("$confignet", \%customnetwork);
 			if ($fwhostsettings{'ACTION'} eq 'updatenet'){
@@ -345,23 +333,19 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			&viewtablenet;
 		}
 	}
-	
 }
 if ($fwhostsettings{'ACTION'} eq 'savehost')
 {
 	my $count=0;
 	my $needrules=0;
 	if ($fwhostsettings{'orgname'} eq ''){$fwhostsettings{'orgname'}=$fwhostsettings{'HOSTNAME'};}
-	
 	$fwhostsettings{'SUBNET'}='32';
-		
 	#check if all fields are set
 	if ($fwhostsettings{'HOSTNAME'} eq '' || $fwhostsettings{'IP'} eq '' || $fwhostsettings{'SUBNET'} eq '')
 	{
 		$errormessage=$errormessage.$Lang::tr{'fwhost err empty'};
 		$fwhostsettings{'ACTION'} = 'edithost';
 	}else{
-	
 		if($fwhostsettings{'type'} eq 'ip' && $fwhostsettings{'IP'}=~/^([0-9a-fA-F]{1,2}:){5}[0-9a-fA-F]{1,2}$/){
 			$fwhostsettings{'type'} = 'mac';
 		}elsif($fwhostsettings{'type'} eq 'mac' && $fwhostsettings{'IP'}=~/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/){
@@ -374,13 +358,11 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			$fwhostsettings{'type'} = '';
 			$errormessage=$Lang::tr{'fwhost err ipmac'};
 		}
-		
 		if($fwhostsettings{'type'} eq 'mac' )
 		{
 			if ($fwhostsettings{'IP'}!~/^([0-9a-fA-F]{1,2}:){5}[0-9a-fA-F]{1,2}$/ )
 			{
 				$errormessage=$Lang::tr{'fwhost err mac'};
-				
 			}
 		}
 		#CHECK IP-PART
@@ -392,7 +374,6 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 						$errormessage.=$errormessage.$Lang::tr{'fwhost err ip'};
 						$fwhostsettings{'error'}='on';
 					}
-				
 			}elsif(rindex($fwhostsettings{'IP'},'/') ne '-1' ){
 				$errormessage=$errormessage.$Lang::tr{'fwhost err ipwithsub'};
 				$fwhostsettings{'error'}='on';
@@ -403,14 +384,10 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 				$errormessage=$Lang::tr{'fwhost err hostip'};
 			}
 		}
-			
-		
-		
 		#only check plausi when no error till now
 		if (!$errormessage){	
 			&plausicheck("edithost");
 		}
-				
 		if($fwhostsettings{'actualize'} eq 'on' && $fwhostsettings{'newhost'} ne 'on' && $errormessage){
 			$fwhostsettings{'actualize'} = '';
 			my $key = &General::findhasharraykey (\%customhost);
@@ -425,9 +402,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			$customhost{$key}[3] = $fwhostsettings{'count'};
 			&General::writehasharray("$confighost", \%customhost);
 			undef %customhost;
-				
 		} 
-		
 		if (!$errormessage){
 			#get count if host was edited
 			if($fwhostsettings{'actualize'} eq 'on'){
@@ -484,7 +459,6 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			if($fwhostsettings{'newhost'} eq 'on'){$count=0;}
 			$customhost{$key}[3] = $count;
 			&General::writehasharray("$confighost", \%customhost);
-			
 			#$fwhostsettings{'IP'} = $fwhostsettings{'IP'}."/".&General::iporsubtodec($fwhostsettings{'SUBNET'});
 			undef %customhost;
 			$fwhostsettings{'HOSTNAME'}='';
@@ -500,9 +474,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			&addhost;
 			&viewtablehost;
 		}
-	
 	}
-
 }
 if ($fwhostsettings{'ACTION'} eq 'savegrp')
 {
@@ -517,8 +489,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 	&General::readhasharray("$confignet", \%customnetwork);
 	&General::readhasharray("$confighost", \%customhost);
 	$grp=$fwhostsettings{'grp_name'};
-	
-	if (!&General::validhostname($grp)){$errormessage=$errormessage.$Lang::tr{'fwhost err name'};}
+	if (!&validhostname($grp)){$errormessage=$errormessage.$Lang::tr{'fwhost err name'};}
 	###check standard networks
 	if ($fwhostsettings{'grp2'} eq 'std_net'){
 		@target=$fwhostsettings{'DEFAULT_SRC_ADR'};
@@ -638,7 +609,6 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 			$customgrp{$key}[4] = $count;
 		}
 		&General::writehasharray("$configgrp", \%customgrp);
-		
 		#update counter in Host/Net
 		if($updcounter eq 'net'){
 			foreach my $key (keys %customnetwork) {
@@ -683,10 +653,8 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 if ($fwhostsettings{'ACTION'} eq 'saveservice')
 {
 	my $ICMP;
-	
 	&General::readhasharray("$configsrv", \%customservice );
 	$errormessage=&checkports(\%customservice);
-	
 	if ($fwhostsettings{'PROT'} eq 'ICMP'){
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 		foreach my $key (keys %icmptypes){
@@ -697,7 +665,6 @@ if ($fwhostsettings{'ACTION'} eq 'saveservice')
 	}
 	if($ICMP eq ''){$ICMP='BLANK';}
 	if (!$errormessage){
-		
 		my $key = &General::findhasharraykey (\%customservice);
 		foreach my $i (0 .. 4) { $customservice{$key}[$i] = "";}
 		$customservice{$key}[0] = $fwhostsettings{'SRV_NAME'};
@@ -711,11 +678,8 @@ if ($fwhostsettings{'ACTION'} eq 'saveservice')
 		$fwhostsettings{'SRV_PORT'}='';
 		$fwhostsettings{'PROT'}='';
 		$fwhostsettings{'ICMP_TYPES'}='';
-		
 	}
-	
 	&addservice;
-	
 }
 if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 {
@@ -724,13 +688,10 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 	my $count=0;
 	&General::readhasharray("$configsrvgrp", \%customservicegrp );
 	&General::readhasharray("$configsrv", \%customservice );
-	
 	$errormessage=&checkservicegroup;
-	
 	if (!$errormessage){
 		#on first save, we have to enter a dummy value
 		if ($fwhostsettings{'CUST_SRV'} eq ''){$fwhostsettings{'CUST_SRV'}=$Lang::tr{'fwhost empty'};}
-		
 		#on update, we have to delete the dummy entry
 		foreach my $key (keys %customservicegrp){
 			if ($customservicegrp{$key}[2] eq $Lang::tr{'fwhost empty'}){
@@ -770,14 +731,12 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 			}
 		}
 		&General::writehasharray("$configsrv", \%customservice );
-		
 		my $key = &General::findhasharraykey (\%customservicegrp);
 		foreach my $i (0 .. 3) { $customservice{$key}[$i] = "";}
 		$customservicegrp{$key}[0] = $fwhostsettings{'SRVGRP_NAME'};
 		$customservicegrp{$key}[1] = $fwhostsettings{'SRVGRP_REMARK'};
 		$customservicegrp{$key}[2] = $fwhostsettings{'CUST_SRV'};
 		$customservicegrp{$key}[3] = $count;
-		
 		&General::writehasharray("$configsrvgrp", \%customservicegrp );
 		$fwhostsettings{'updatesrvgrp'}='on';
 	}
@@ -870,7 +829,6 @@ if ($fwhostsettings{'ACTION'} eq 'delhost')
 	}
 	&addhost;
 	&viewtablehost;
-	
 }
 if ($fwhostsettings{'ACTION'} eq 'deletegrphost')
 {
@@ -1605,7 +1563,7 @@ sub checkservicegroup
 	
 	
 	#check name
-	if ( ! &General::validhostname($fwhostsettings{'SRVGRP_NAME'}))
+	if ( ! &validhostname($fwhostsettings{'SRVGRP_NAME'}))
 	{
 		$errormessage.=$Lang::tr{'fwhost err name'}."<br>";
 		return $errormessage;
@@ -1955,7 +1913,7 @@ sub checkports
 		$errormessage=$Lang::tr{'fwhost err port'};
 	}
 	#check valid name
-	if (! &General::validhostname($fwhostsettings{'SRV_NAME'})){
+	if (! &validhostname($fwhostsettings{'SRV_NAME'})){
 		$errormessage="<br>".$Lang::tr{'fwhost err name'};
 	}
 	#change dashes with :
@@ -1992,13 +1950,13 @@ sub validhostname
 	if (length ($hostname) < 1 || length ($hostname) > 63) {
 		return 0;}
 	# Only valid characters are a-z, A-Z, 0-9 and -
-	if ($hostname !~ /^[a-zA-ZäöüÖÄÜ0-9-\s]*$/) {
+	if ($hostname !~ /^[a-zA-ZäöüÖÄÜ0-9-_()\/\s]*$/) {
 		return 0;}
 	# First character can only be a letter or a digit
 	if (substr ($hostname, 0, 1) !~ /^[a-zA-ZöäüÖÄÜ0-9]*$/) {
 		return 0;}
 	# Last character can only be a letter or a digit
-	if (substr ($hostname, -1, 1) !~ /^[a-zA-ZöäüÖÄÜ0-9]*$/) {
+	if (substr ($hostname, -1, 1) !~ /^[a-zA-ZöäüÖÄÜ0-9()]*$/) {
 		return 0;}
 	return 1;
 }
