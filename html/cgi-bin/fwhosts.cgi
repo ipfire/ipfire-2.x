@@ -519,7 +519,6 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 	$grp=$fwhostsettings{'grp_name'};
 	
 	if (!&General::validhostname($grp)){$errormessage=$errormessage.$Lang::tr{'fwhost err name'};}
-	
 	###check standard networks
 	if ($fwhostsettings{'grp2'} eq 'std_net'){
 		@target=$fwhostsettings{'DEFAULT_SRC_ADR'};
@@ -570,7 +569,6 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		$fwhostsettings{'grp_name'}='';
 		$fwhostsettings{'remark'}='';
 	}
-	
 	#get address from IPSEC HOST
 	if ($fwhostsettings{'grp2'} eq 'ipsec_host' && $fwhostsettings{'IPSEC_HOST'} ne ''){
 		@target=$fwhostsettings{'IPSEC_HOST'};
@@ -589,7 +587,6 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		$fwhostsettings{'grp_name'}='';
 		$fwhostsettings{'remark'}='';
 	}
-	
 	#check if host/net exists in grp
 	my $test="$grp,$fwhostsettings{'oldremark'},@target";
 	foreach my $key (keys %customgrp) {
@@ -599,7 +596,6 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 			$fwhostsettings{'update'} = 'on';
 		}
 	}
-		
 	if (!$errormessage){
 		#on first save, we have an empty @target, so fill it with nothing
 		my $targetvalues=@target;
@@ -607,7 +603,6 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 			@target=$Lang::tr{'fwhost empty'};
 		}
 		#on update, we have to delete the dummy entry
-		
 		foreach my $key (keys %customgrp){
 			if ($customgrp{$key}[0] eq $grp && $customgrp{$key}[2] eq $Lang::tr{'fwhost empty'}){
 				delete $customgrp{$key};
@@ -616,21 +611,6 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		}
 		&General::writehasharray("$configgrp", \%customgrp);
 		&General::readhasharray("$configgrp", \%customgrp);
-		
-		
-		
-		#check if remark has also changed
-		if ($fwhostsettings{'remark'} ne $fwhostsettings{'oldremark'} && $fwhostsettings{'update'} eq 'on')
-		{
-			foreach my $key (keys %customgrp)
-			{
-				if($customgrp{$key}[0] eq $grp && $customgrp{$key}[1] eq $fwhostsettings{'oldremark'})
-				{
-					$customgrp{$key}[1]='';
-					$customgrp{$key}[1]=$rem;
-				}	
-			}
-		}
 		#get count used
 		foreach my $key (keys %customgrp)
 		{
@@ -676,13 +656,11 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 			}
 			&General::writehasharray("$confighost", \%customhost);
 		}
-		
 		$fwhostsettings{'update'}='on';
-		
 	}
-		if ($fwhostsettings{'remark'} ne $fwhostsettings{'oldremark'} && $errormessage)
+		if ($fwhostsettings{'remark'} ne $fwhostsettings{'oldremark'} )
 		{
-			foreach my $key (keys %customgrp)
+			foreach my $key (sort keys %customgrp)
 			{
 				if($customgrp{$key}[0] eq $grp && $customgrp{$key}[1] eq $fwhostsettings{'oldremark'})
 				{
@@ -690,9 +668,8 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 					$customgrp{$key}[1]=$rem;
 				}	
 			}
-			&General::writehasharray("$configsrvgrp", \%customservicegrp);
+			&General::writehasharray("$configgrp", \%customgrp);
 			$errormessage='';
-			$hint=$Lang::tr{'fwhost changeremark'};
 			$fwhostsettings{'update'}='on';
 		}
 		#check if ruleupdate is needed
@@ -702,7 +679,6 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		}
 		&addgrp;
 		&viewtablegrp;
-	
 }
 if ($fwhostsettings{'ACTION'} eq 'saveservice')
 {
@@ -1394,7 +1370,7 @@ sub viewtablehost
 END
 	}
 		my $count=0;
-		foreach my $key (sort {$a <=> $b} keys %customhost) {
+		foreach my $key (sort { uc($customhost{$a}[0]) cmp uc($customhost{$b}[0])||  $a <=> $b } keys %customhost) {
 			if ( ($fwhostsettings{'ACTION'} eq 'edithost' || $fwhostsettings{'error'}) && $fwhostsettings{'HOSTNAME'} eq $customhost{$key}[0]) {
 				print" <tr bgcolor='${Header::colouryellow}'>";
 			}elsif ($count % 2){ print" <tr bgcolor='$color{'color22'}'>";}
