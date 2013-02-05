@@ -317,6 +317,7 @@ WARNING: translation string unused: other countries
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
 WARNING: translation string unused: outgoing firewall p2p description
+WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn
 WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn dl
@@ -486,9 +487,12 @@ WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn aggrmode
+WARNING: translation string unused: vpn incompatible use of defaultroute
+WARNING: translation string unused: vpn mtu invalid
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: vpn on green
 WARNING: translation string unused: vpn on orange
+WARNING: translation string unused: vpn watch
 WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: week-graph
@@ -499,6 +503,7 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Async logging enabled
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: Set time on boot
+WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: attention
 WARNING: untranslated string: bytes
@@ -608,3 +613,4 @@ WARNING: untranslated string: static routes
 WARNING: untranslated string: system information
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange
+WARNING: untranslated string: wlanap country
