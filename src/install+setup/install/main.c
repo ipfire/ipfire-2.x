@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
 
 	char discl_msg[40000] =	"Disclaimer\n";
 
-	char *langnames[] = { "Deutsch", "English", "Français", "Español", "Polski", "Русский", NULL };
-	char *shortlangnames[] = { "de", "en", "fr", "es", "pl", "ru", NULL };
+	char *langnames[] = { "Deutsch", "English", "Français", "Español", "Nederlands", "Polski", "Русский", NULL };
+	char *shortlangnames[] = { "de", "en", "fr", "es", "nl", "pl", "ru", NULL };
 	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, pl_tr, ru_tr, NULL };
 	char hdletter;
 	char harddrive[30], sourcedrive[5];	/* Device holder. */
