@@ -35,6 +35,7 @@ extern char *en_tr[];
 extern char *es_tr[];
 extern char *de_tr[];
 extern char *fr_tr[];
+extern char *nl_tr[];
 extern char *pl_tr[];
 extern char *ru_tr[];
 
@@ -45,7 +46,7 @@ int main(int argc, char *argv[])
 
 	char *langnames[] = { "Deutsch", "English", "Français", "Español", "Nederlands", "Polski", "Русский", NULL };
 	char *shortlangnames[] = { "de", "en", "fr", "es", "nl", "pl", "ru", NULL };
-	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, pl_tr, ru_tr, NULL };
+	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, nl_tr, pl_tr, ru_tr, NULL };
 	char hdletter;
 	char harddrive[30], sourcedrive[5];	/* Device holder. */
 	char harddrive_info[STRING_SIZE];	/* Additional infos about target */
