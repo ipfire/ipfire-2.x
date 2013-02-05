@@ -27,6 +27,7 @@ opt/pakfire/lib/functions.sh
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/calamaris.dat
+srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
@@ -34,6 +35,7 @@ srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/bin/watch
+usr/local/bin/makegraphs
 usr/local/bin/readhash
 usr/local/bin/scanhd
 usr/sbin/ovpn-ccd-convert
