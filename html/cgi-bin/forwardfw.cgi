@@ -1703,16 +1703,20 @@ sub get_serviceports
 				$protocols=$customservice{$key}[2];
 			}
 		}
-		
 	}elsif($type eq 'group'){
 		foreach my $key (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0]) } keys %customservicegrp){
 			if ($customservicegrp{$key}[0] eq $name){
-				if($customservicegrp{$key}[4] eq 'TCP'){$tcp='TCP';}else{$udp='UDP';}
+				foreach my $key1 (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0]) } keys %customservice){
+					if ($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
+						if($customservice{$key1}[2] eq 'TCP'){$tcp='TCP';}else{$udp='UDP';}
+					}
+				}
 			}
 		}
 	}
-	if($tcp){$protocols.="TCP";}
-	if($udp){$protocols.=",UDP";}
+	if($tcp && $udp){$protocols="TCP,UDP";
+	}elsif($tcp){$protocols.="TCP";
+	}elsif($udp){$protocols.="UDP";}
 	return $protocols;
 }
 sub viewtablerule
