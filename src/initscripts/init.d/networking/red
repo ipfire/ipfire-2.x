@@ -120,8 +120,8 @@ case "${1}" in
 			echo -n "${DEVICE}" > /var/ipfire/red/iface
 			echo -n "${ADDRESS}"  > /var/ipfire/red/local-ipaddress
 			echo -n "${GATEWAY}" > /var/ipfire/red/remote-ipaddress
-			grep -v "gateway" /etc/hosts > /tmp/hosts
-			echo "$GATEWAY gateway"  >> /tmp/hosts
+			grep -v -E "\<gateway\>" /etc/hosts > /tmp/hosts
+			echo "$GATEWAY	gateway"  >> /tmp/hosts
 			mv /tmp/hosts /etc/hosts
 			echo -n "${DNS1}" > /var/ipfire/red/dns1
 			echo -n "${DNS2}" > /var/ipfire/red/dns2
