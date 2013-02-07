@@ -152,7 +152,7 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 		$customservice{$key1}[4] = $count;
 		&General::writehasharray("$configsrv", \%customservice);
 		
-		#check if we need to update configfiles for rules
+		#check if we need to update firewallrules
 		if ($fwhostsettings{'SRV_NAME'} ne $fwhostsettings{'oldsrvname'}){
 			if ( ! -z $fwconfigfwd ){
 				&General::readhasharray("$fwconfigfwd", \%fwfwd);
@@ -162,7 +162,6 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 					}
 				}
 				&General::writehasharray("$fwconfigfwd", \%fwfwd);
-				$needrules='on';
 			}
 			if ( ! -z $fwconfiginp ){
 				&General::readhasharray("$fwconfiginp", \%fwinp);
@@ -175,14 +174,14 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 			}
 			$needrules='on';
 		}
-		if($fwhostsettings{'updatesrv'} eq 'on'){
-			if($count gt 0 && $fwhostsettings{'oldsrvport'} ne $fwhostsettings{'SRV_PORT'} ){
-				$needrules='on';
-			}
-			if($count gt 0 && $fwhostsettings{'oldsrvprot'} ne $fwhostsettings{'PROT'} ){
-				$needrules='on';
-			}
+		
+		if($count gt 0 && $fwhostsettings{'oldsrvport'} ne $fwhostsettings{'SRV_PORT'} ){
+			$needrules='on';
 		}
+		if($count gt 0 && $fwhostsettings{'oldsrvprot'} ne $fwhostsettings{'PROT'} ){
+			$needrules='on';
+		}
+		
 		$fwhostsettings{'SRV_NAME'}	= '';
 		$fwhostsettings{'SRV_PORT'}	= '';
 		$fwhostsettings{'PROT'}		= '';
@@ -1749,14 +1748,12 @@ sub plausicheck
 	{
 		$errormessage.="<br>".$Lang::tr{'fwhost err hostexist'};
 		$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
-		#if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}=$edit;}
-		$fwhostsettings{'ACTION'}=$edit;
+		if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}=$edit;}
 	}
 	#check if host with this ip already exists
 	if (!&checkip(\%customhost,2))
 	{
 		$errormessage=$errormessage."<br>".$Lang::tr{'fwhost err ipcheck'};
-		
 	}
 		
 	
