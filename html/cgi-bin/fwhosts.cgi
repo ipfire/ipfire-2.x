@@ -482,7 +482,6 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			if($fwhostsettings{'newhost'} eq 'on'){$count=0;}
 			$customhost{$key}[3] = $count;
 			&General::writehasharray("$confighost", \%customhost);
-			#$fwhostsettings{'IP'} = $fwhostsettings{'IP'}."/".&General::iporsubtodec($fwhostsettings{'SUBNET'});
 			undef %customhost;
 			$fwhostsettings{'HOSTNAME'}='';
 			$fwhostsettings{'IP'}='';
@@ -1269,7 +1268,7 @@ END
 	<tr><td width='1%' nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td><select name='CUST_SRV' style='min-width:185px;'>
 END
 	&General::readhasharray("$configsrv", \%customservice);
-	foreach my $key (sort {$a <=> $b}  keys %customservice)
+	foreach my $key (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0])||  $a <=> $b } keys %customservice)
 	{
 		print "<option>$customservice{$key}[0]</option>";
 	}
@@ -1358,7 +1357,7 @@ END
 			else{            print" <tr bgcolor='$color{'color20'}'>";}
 			my ($ip,$sub)=split(/\//,$customhost{$key}[2]);
 			print<<END;
-			<td width='40%'><form method='post'>$customhost{$key}[0]</td><td width='50%'>$customhost{$key}[2]</td><td align='center'>$customhost{$key}[3]x</td>
+			<td width='40%'><form method='post'>$customhost{$key}[0]</td><td width='50%'>$ip</td><td align='center'>$customhost{$key}[3]x</td>
 			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='edithost' />
 			<input type='hidden' name='HOSTNAME' value='$customhost{$key}[0]' />
@@ -1748,9 +1747,10 @@ sub plausicheck
 	&General::readhasharray("$confighost", \%customhost);
 	if (!&checkname(\%customhost))
 	{
-		$errormessage=$errormessage."<br>".$Lang::tr{'fwhost err hostexist'};
+		$errormessage.="<br>".$Lang::tr{'fwhost err hostexist'};
 		$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
-		if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}=$edit;}
+		#if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}=$edit;}
+		$fwhostsettings{'ACTION'}=$edit;
 	}
 	#check if host with this ip already exists
 	if (!&checkip(\%customhost,2))
