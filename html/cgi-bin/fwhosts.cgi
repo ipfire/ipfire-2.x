@@ -151,6 +151,30 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 		$customservice{$key1}[3] = $fwhostsettings{'ICMP_TYPES'};
 		$customservice{$key1}[4] = $count;
 		&General::writehasharray("$configsrv", \%customservice);
+		
+		#check if we need to update configfiles for rules
+		if ($fwhostsettings{'SRV_NAME'} ne $fwhostsettings{'oldsrvname'}){
+			if ( ! -z $fwconfigfwd ){
+				&General::readhasharray("$fwconfigfwd", \%fwfwd);
+				foreach my $key (sort keys %fwfwd){
+					if ($fwfwd{$key}[15] eq $fwhostsettings{'oldsrvname'}){
+						$fwfwd{$key}[15] = $fwhostsettings{'SRV_NAME'};
+					}
+				}
+				&General::writehasharray("$fwconfigfwd", \%fwfwd);
+				$needrules='on';
+			}
+			if ( ! -z $fwconfiginp ){
+				&General::readhasharray("$fwconfiginp", \%fwinp);
+				foreach my $line (sort keys %fwinp){
+					if ($fwfwd{$line}[15] eq $fwhostsettings{'oldsrvname'}){
+						$fwfwd{$line}[15] = $fwhostsettings{'SRV_NAME'};
+					}
+				}
+				&General::writehasharray("$fwconfiginp", \%fwinp);
+			}
+			$needrules='on';
+		}
 		if($fwhostsettings{'updatesrv'} eq 'on'){
 			if($count gt 0 && $fwhostsettings{'oldsrvport'} ne $fwhostsettings{'SRV_PORT'} ){
 				$needrules='on';
@@ -169,7 +193,6 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 		$fwhostsettings{'updatesrv'}= 'on';
 	}
 	if($needrules eq 'on'){
-		$errormessage="reread!";
 		&rules;
 	}
 	&addservice;
