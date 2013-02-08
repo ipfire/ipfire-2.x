@@ -133,6 +133,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	}	
 	#INPUT part
 	if($fwdfwsettings{'grp2'} eq 'ipfire'){
+		$fwdfwsettings{'config'}=$configinput;
 		$fwdfwsettings{'chain'} = 'INPUTFW';
 		my $maxkey=&General::findhasharraykey(\%configinputfw);
 		#check if we have an identical rule already
@@ -206,6 +207,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		#print"DIENSTE Checkalt:$fwdfwsettings{'oldusesrv'}  DIENSTE Checkneu:$fwdfwsettings{'USESRV'}    DIENST ALT:$fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'}   DIENST NEU:$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 	}else{
 		#FORWARD PART
+		$fwdfwsettings{'config'}=$configfwdfw;
 		$fwdfwsettings{'chain'} = 'FORWARDFW';
 		my $maxkey=&General::findhasharraykey(\%configfwdfw);
 		if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
