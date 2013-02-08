@@ -108,7 +108,6 @@ if ($fwhostsettings{'ACTION'} eq 'updatehost')
 	{
 		if($customhost{$key}[0] eq $fwhostsettings{'orgname'})
 		{
-			$fwhostsettings{'orgname'} = $customhost{$key}[0];
 			if ($customhost{$key}[1] eq 'ip'){
 				($ip,$subnet) = split (/\//,$customhost{$key}[2]);
 			}else{
@@ -117,11 +116,15 @@ if ($fwhostsettings{'ACTION'} eq 'updatehost')
 			$fwhostsettings{'orgip'} = $ip;
 			$fwhostsettings{'count'} = $customhost{$key}[3];
 			delete $customhost{$key};
+			&General::writehasharray("$confighost", \%customhost);
 		}
 	}
-	&General::writehasharray("$confighost", \%customhost);
 	$fwhostsettings{'actualize'} = 'on';
+	if($fwhostsettings{'orgip'}){
 	$fwhostsettings{'ACTION'} = 'savehost';
+	}else{
+		$fwhostsettings{'ACTION'} = $Lang::tr{'fwhost newhost'};
+	}
 }
 if ($fwhostsettings{'ACTION'} eq 'updateservice')
 {
