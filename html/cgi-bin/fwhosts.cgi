@@ -151,7 +151,6 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 		$customservice{$key1}[3] = $fwhostsettings{'ICMP_TYPES'};
 		$customservice{$key1}[4] = $count;
 		&General::writehasharray("$configsrv", \%customservice);
-		
 		#check if we need to update firewallrules
 		if ($fwhostsettings{'SRV_NAME'} ne $fwhostsettings{'oldsrvname'}){
 			if ( ! -z $fwconfigfwd ){
@@ -172,8 +171,18 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 				}
 				&General::writehasharray("$fwconfiginp", \%fwinp);
 			}
+			#check if we need to update groups
+			&General::readhasharray("$configsrvgrp", \%customservicegrp);
+			foreach my $key (sort keys %customservicegrp){
+				if($customservicegrp{$key}[2] eq $fwhostsettings{'oldsrvname'}){
+					$customservicegrp{$key}[2] = $fwhostsettings{'SRV_NAME'};
+				}
+			}
+			&General::writehasharray("$configsrvgrp", \%customservicegrp);
+			
 			$needrules='on';
 		}
+		
 		
 		if($count gt 0 && $fwhostsettings{'oldsrvport'} ne $fwhostsettings{'SRV_PORT'} ){
 			$needrules='on';
