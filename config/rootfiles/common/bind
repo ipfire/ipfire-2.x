@@ -1,4 +1,4 @@
-#usr/bin/dig
+usr/bin/dig
 usr/bin/host
 usr/bin/nslookup
 usr/bin/nsupdate
