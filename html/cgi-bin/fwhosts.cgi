@@ -750,7 +750,7 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 		{
 			if($customservicegrp{$key}[0] eq $fwhostsettings{'SRVGRP_NAME'})
 			{
-				$count=$customservicegrp{$key}[5];
+				$count=$customservicegrp{$key}[3];
 				last;
 			}
 		}
@@ -1611,7 +1611,6 @@ sub checkservicegroup
 	{
 		$errormessage.=$Lang::tr{'fwhost err groupempty'}."<br>";
 	}
-	
 	#check if name already exists
 	if ($fwhostsettings{'updatesrvgrp'} ne 'on'){
 		foreach my $key (keys %customservicegrp) {
@@ -1623,14 +1622,10 @@ sub checkservicegroup
 	}
 	#check if service already exists in group
 	foreach my $key (keys %customservicegrp) {
-			if($customservicegrp{$key}[0] eq $fwhostsettings{'SRVGRP_NAME'} && $customservicegrp{$key}[2] eq $fwhostsettings{'CUST_SRV'} ){
-				$errormessage.=$Lang::tr{'fwhost err srvexist'}."<br>";
-			
-			}
+		if($customservicegrp{$key}[0] eq $fwhostsettings{'SRVGRP_NAME'} && $customservicegrp{$key}[2] eq $fwhostsettings{'CUST_SRV'} ){
+			$errormessage.=$Lang::tr{'fwhost err srvexist'}."<br>";
 		}
-	
-	
-	
+	}
 	return $errormessage;
 }
 sub error
