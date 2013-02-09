@@ -32,9 +32,9 @@ char *nl_tr[] = {
 /* TR_ISDN */
 "ISDN",
 /* TR_ERROR_PROBING_ISDN */
-"Niet in staat om te scannen op ISDN-apparaten.",
+"Kan ISDN-apparaten niet detecteren.",
 /* TR_PROBING_ISDN */
-"Scannen en configureren van ISDN-apparaten.",
+"Detecteren en configureren van ISDN-apparaten.",
 /* TR_MISSING_GREEN_IP */
 "Groen IP-adres ontbreekt!",
 /* TR_CHOOSE_FILESYSTEM */
@@ -74,7 +74,7 @@ char *nl_tr[] = {
 /* TR_ALL_CARDS_SUCCESSFULLY_ALLOCATED */
 "Alle kaarten zijn succesvol toegewezen.",
 /* TR_AUTODETECT */
-"* AUTODETECT *",
+"* AUTOMATISCH DETECTEREN *",
 /* TR_BUILDING_INITRD */
 "Aanmaken ramdisk...",
 /* TR_CANCEL */
@@ -86,7 +86,7 @@ char *nl_tr[] = {
 /* TR_CHECKING_FOR */
 "Controleert voor: %s",
 /* TR_CHOOSE_THE_ISDN_CARD_INSTALLED */
-"Kies de ISDN-kaart die geïnstalleerd is op deze computer.",
+"Kies de ISDN-kaart die geÃ¯nstalleerd is op deze computer.",
 /* TR_CHOOSE_THE_ISDN_PROTOCOL */
 "Kies het ISDN-protocol dat u nodig heeft.",
 /* TR_CONFIGURE_DHCP */
@@ -96,13 +96,13 @@ char *nl_tr[] = {
 /* TR_CONFIGURE_NETWORKING_LONG */
 "U moet nu het netwerk configureren door eerst de juiste driver te laden voor de GROENE interface. U kunt dit doen door ofwel automatisch te zoeken naar een netwerkkaart, of door de juiste driver te kiezen uit een lijst. Als u meer dan een kaart in uw machine heeft, dan kunt u die later in het installatieproces configureren. Mocht u meer dan een kaart van hetzelfde type als GROEN gebruiken en iedere kaart vereist speciale moduleparameters, dan moet u de parameters voor alle kaarten van dit type invoeren zodat alle kaarten actief kunnen worden waneer u de GROENE interface configureert.",
 /* TR_CONFIGURE_NETWORK_DRIVERS */
-"Configureer netwerkdrivers, en bepaal welke interface iedere kaart krijgt toegewezen.  De huidige configuratie is als volgt:\n\n",
+"Configureer netwerkdrivers en bepaal welke interface iedere kaart krijgt toegewezen.\nDe huidige configuratie is als volgt:\n\n",
 /* TR_CONFIGURE_THE_CDROM */
 "Configureer de CDROM door het juiste IO-adres en/of IRQ te kiezen.",
 /* TR_CONGRATULATIONS */
 "Gefeliciteerd!",
 /* TR_CONGRATULATIONS_LONG */
-"%s is succesvol geïnstalleerd. Verwijder a.u.b. de CDROM's in uw computer. U kunt nu de netwerkkaarten en ISDN configureren en de systeemwachtwoorden instellen. Nadat de setup is afgerond, kunt u met de webbrowser naar https://%s:444 (of hoe u %s ook genoemd heeft) en het inbelnetwerk configureren (als nodig) en de remote toegang.", 
+"%s is succesvol geÃ¯nstalleerd. Verwijder a.u.b. de CDROM's in uw computer. U kunt nu de netwerkkaarten en ISDN configureren en de systeemwachtwoorden instellen. Nadat de setup is afgerond, kunt u met de webbrowser naar https://%s:444 (of hoe u %s ook genoemd heeft) en het inbelnetwerk configureren (als nodig) en de remote toegang.", 
 /* TR_CONTINUE_NO_SWAP */
 "Uw vaste schijf is erg klein, maar u kunt verder gaan met een zeer kleine swap. (Wees hier voorzichtig mee).",
 /* TR_CURRENT_CONFIG */
@@ -132,7 +132,7 @@ char *nl_tr[] = {
 /* TR_DNS_AND_GATEWAY_SETTINGS */
 "DNS en Gateway instellingen",
 /* TR_DNS_AND_GATEWAY_SETTINGS_LONG */
-"Voer de DNS en gateway informatie in.  Deze instellingen worden alleen gebruikt met statische IP-adressen (en DHCP als DNS is ingesteld) op de RODE interface.",
+"Voer de DNS en gateway informatie in. Deze instellingen worden alleen gebruikt met statische IP-adressen (en DHCP als DNS is ingesteld) op de RODE interface.",
 /* TR_DNS_GATEWAY_WITH_GREEN */
 "Uw configuratie gebruikt geen ethernetadapter voor z'n RODE interface. DNS en gateway voor inbelgebruikers worden automatisch geconfigureerd tijdens inbellen.",
 /* TR_DOMAINNAME */
@@ -164,25 +164,25 @@ char *nl_tr[] = {
 /* TR_ENTER_ADDITIONAL_MODULE_PARAMS */
 "Bepaalde ISDN-kaarten (met name de ISA-kaarten) kunnen extra moduleparameters vereisen voor het instellen van IRQ- en IO-adressen. Als u zo'n ISDN-kaart heeft, voer deze parameters dan hier in. Bijvoorbeeld: \"io=0x280 irq=9\". Deze gegevens worden gebruikt tijdens de kaartdetectie.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Voer het %s 'admin' wachtwoord in.  Dit is de gebruikersnaam die gebruikt wordt om in te loggen op de %s webbeheerpagina's.",
+"Voer het %s 'admin' wachtwoord in. Dit is de gebruikersnaam die gebruikt wordt om in te loggen op de %s webbeheerpagina's.",
 /* TR_ENTER_DOMAINNAME */
-"Invoeren domeinnaam",
+"Voer de domeinnaam in",
 /* TR_ENTER_HOSTNAME */
-"Invoeren machinehostnaam.",
+"Voer de machinehostnaam in",
 /* TR_ENTER_IP_ADDRESS_INFO */
-"Invoeren IP-adres informatie",
+"Voer de IP-adres informatie in",
 /* TR_ENTER_NETWORK_DRIVER */
 "Automatisch detecteren van netwerkkaart is mislukt. Voer de drivernaam en optionele parameters in voor de netwerkkaart.",
 /* TR_ENTER_ROOT_PASSWORD */
-"Invoeren van het 'root' wachtwoord. Log in als deze gebruiker voor commandoregel toegang.",
+"Voer het 'root' wachtwoord in. Log in als deze gebruiker voor commandoregel toegang.",
 /* TR_ENTER_SETUP_PASSWORD */
 "WORDT VERWIJDERD",
 /* TR_ENTER_THE_IP_ADDRESS_INFORMATION */
-"Invoeren van IP-adres informatie voor de %s interface.",
+"Voer de IP-adres informatie in voor de %s interface.",
 /* TR_ENTER_THE_LOCAL_MSN */
-"Invoeren van lokaal telefoonnummer (MSN/EAZ).",
+"Voer lokaal telefoonnummer in (MSN/EAZ).",
 /* TR_ENTER_URL */
-"Invoeren van URL-pad naar de ipcop-<versie>.tgz en images/scsidrv-<versie>.img bestanden. WAARSCHUWING: DNS is niet beschikbaar! Dit zou http://X.X.X.X/<directory> moeten zijn",
+"Voer het URL-pad in naar de ipcop-<versie>.tgz en images/scsidrv-<versie>.img bestanden. WAARSCHUWING: DNS is niet beschikbaar! Dit zou http://X.X.X.X/<directory> moeten zijn",
 /* TR_ERROR */
 "Fout",
 /* TR_ERROR_PROBING_CDROM */
@@ -200,7 +200,7 @@ char *nl_tr[] = {
 /* TR_GERMAN_1TR6 */
 "German 1TR6",
 /* TR_HELPLINE */
-"              <Tab>/<Alt-Tab> schakelen tussen elementen   |  <Spatie> selecteert",
+"        <Tab>/<Alt-Tab> schakel tussen elementen   |  <Spatie> selecteer",
 /* TR_HOSTNAME */
 "Hostnaam",
 /* TR_HOSTNAME_CANNOT_BE_EMPTY */
@@ -290,7 +290,7 @@ char *nl_tr[] = {
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "Modulenaam mag niet leeg zijn.",
 /* TR_MODULE_PARAMETERS */
-"Invoeren van de modulenaam en parameters voor de driver die u nodig hebt.",
+"Voer de modulenaam en parameters in voor de driver die u nodig hebt.",
 /* TR_MOUNTING_BOOT_FILESYSTEM */
 "Koppelen van het boot bestandssysteem...",
 /* TR_MOUNTING_LOG_FILESYSTEM */
@@ -354,9 +354,9 @@ char *nl_tr[] = {
 /* TR_PHONENUMBER_CANNOT_BE_EMPTY */
 "Telefoonnummer mag niet leeg zijn.",
 /* TR_PREPARE_HARDDISK */
-"Het installatieprogramma zal nu de vaste schijf voorbereiden op %s. Eerst wordt de schijf gepartitioneerd, daarna zullen de bestandssystemen erop worden gezet.",
+"Het installatieprogramma zal nu de vaste schijf voorbereiden op %s. Eerst wordt de schijf gepartitioneerd, daarna zullen de bestandssystemen erop worden gezet.\n\nALLE DATA OP DE SCHIJF ZAL WORDEN GEWIST. Wilt u hiermee doorgaan?"",
 /* TR_PRESS_OK_TO_REBOOT */
-"Klik Ok om te herstarten.",
+"Druk Ok om te herstarten.",
 /* TR_PRIMARY_DNS */
 "Primaire DNS:",
 /* TR_PRIMARY_DNS_CR */
@@ -386,13 +386,13 @@ char *nl_tr[] = {
 /* TR_QUIT */
 "Stoppen",
 /* TR_RED_IN_USE */
-"ISDN (of een andere externe verbinding) is momenteel in gebruik.  U kunt ISDN niet configureren zolang de RODE interface actief is.",
+"ISDN (of een andere externe verbinding) is momenteel in gebruik. U kunt ISDN niet configureren zolang de RODE interface actief is.",
 /* TR_RESTART_REQUIRED */
 "\n\nAls de configuratie gereed is moet het netwerk herstart worden.",
 /* TR_RESTORE */
 "Terugzetten",
 /* TR_RESTORE_CONFIGURATION */
-"Als u een diskette heeft met een %s systeemconfiguratie daarop, plaats dan de diskette in het station en klik op de terugzetten-knop.",
+"Als u een diskette heeft met een %s systeemconfiguratie daarop, plaats dan de diskette in het station en druk op de terugzetten-knop.",
 /* TR_ROOT_PASSWORD */
 "'root' wachtwoord",
 /* TR_SECONDARY_DNS */
@@ -408,11 +408,11 @@ char *nl_tr[] = {
 /* TR_SELECT_CDROM_TYPE */
 "Selecteer CDROM type",
 /* TR_SELECT_CDROM_TYPE_LONG */
-"Er is geen CD-ROM gedetecteerd in deze machine.  Maak een keuze uit de volgende drivers waarmee %s de CD-ROM kan benaderen.",
+"Er is geen CD-ROM gedetecteerd in deze machine. Maak een keuze uit de volgende drivers waarmee %s de CD-ROM kan benaderen.",
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Selecteer installatiemedium",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"%s kan worden geïnstalleerd vanuit verschillende bronnen. De eenvoudigste manier is om de CDROM-speler van de machine te gebruiken. Als de computer geen CDROM-speler heeft, dan kunt vanaf een andere machine installeren die de installatiebestanden beschikbaar kan maken over het netwerk via HTTP of FTP.",
+"%s kan worden geÃ¯nstalleerd vanuit verschillende bronnen. De eenvoudigste manier is om de CDROM-speler van de machine te gebruiken. Als de computer geen CDROM-speler heeft, dan kunt vanaf een andere machine installeren die de installatiebestanden beschikbaar kan maken over het netwerk via HTTP of FTP.",
 /* TR_SELECT_NETWORK_DRIVER */
 "Selecteer netwerkdriver",
 /* TR_SELECT_NETWORK_DRIVER_LONG */
@@ -428,9 +428,9 @@ char *nl_tr[] = {
 /* TR_SETTING_SETUP_PASSWORD */
 "WORDT VERWIJDERD",
 /* TR_SETUP_FINISHED */
-"Setup is afgerond.  Klik Ok.",
+"Setup is afgerond. Druk Ok.",
 /* TR_SETUP_NOT_COMPLETE */
-"Initiële setup was niet volledig afgerond.  Verzeker u ervan dat de setup goed is afgerond door het setup programma nogmaals vanaf de commandoregel te draaien.",
+"InitiÃ«le setup was niet volledig afgerond. Verzeker u ervan dat de setup goed is afgerond door het setup programma nogmaals vanaf de commandoregel te starten.",
 /* TR_SETUP_PASSWORD */
 "WORDT VERWIJDERD",
 /* TR_SET_ADDITIONAL_MODULE_PARAMETERS */
@@ -548,7 +548,7 @@ char *nl_tr[] = {
 /* TR_WARNING_LONG */
 "Als u dit IP-adres wijzigt, en u bent op afstand ingelogd, dan zal de verbinding naar de %s machine worden verbroken en u zult opnieuw moeten verbinden naar het nieuwe IP-adres. Dit is een riskante handeling en moet alleen geprobeerd worden als u fysieke toegang tot de machine hebt, in het geval er iets fout gaat.",
 /* TR_WELCOME */
-"Welkom bij het %s installatieprogramma. Als u 'annuleren' op een van de volgende schermen selecteert zal de computer herstarten.",
+"Welkom bij het %s installatieprogramma. Als u 'annuleren' kiest op een van de volgende schermen selecteert zal de computer herstarten.",
 /* TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER */
 "Uw configuratie is ingesteld voor een enkele GROENE interface, welke al een driver toegewezen heeft.",
 /* TR_YES */
