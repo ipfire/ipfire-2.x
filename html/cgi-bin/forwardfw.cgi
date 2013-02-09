@@ -735,12 +735,12 @@ sub checktarget
 		$ip=&General::ip2dec($ip);
 		$ip=&General::dec2ip($ip);
 
-		#check if net or broadcast
-		my @tmp= split (/\./,$ip);
-		if ($tmp[3] eq "0" || ($tmp[3] eq "255"))
-		{
-			$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
-		}
+		##check if net or broadcast
+		#my @tmp= split (/\./,$ip);
+		#if ($tmp[3] eq "0" || ($tmp[3] eq "255"))
+		#{
+			#$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
+		#}
 		$fwdfwsettings{'tgt_addr'}="$ip/$subnet";
 				
 		if(!&General::validipandmask($fwdfwsettings{'tgt_addr'})){
@@ -1546,7 +1546,7 @@ sub saverule
 			}
 		}
 		&General::writehasharray("$config", $hash);
-		if($fwdfwsettings{'oldrulenumber'} gt $fwdfwsettings{'rulepos'}){
+		if($fwdfwsettings{'oldrulenumber'} > $fwdfwsettings{'rulepos'}){
 			my %tmp=();
 			my $val=$fwdfwsettings{'oldrulenumber'}-$fwdfwsettings{'rulepos'};
 			for (my $z=0;$z<$val;$z++){
@@ -1573,7 +1573,7 @@ sub saverule
 			}
 			&General::writehasharray("$config", $hash);
 			&rules;
-		}elsif($fwdfwsettings{'rulepos'} gt $fwdfwsettings{'oldrulenumber'}){
+		}elsif($fwdfwsettings{'rulepos'} > $fwdfwsettings{'oldrulenumber'}){
 			my %tmp=();
 			my $val=$fwdfwsettings{'rulepos'}-$fwdfwsettings{'oldrulenumber'};
 				for (my $z=0;$z<$val;$z++){
