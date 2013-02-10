@@ -182,18 +182,14 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 				}
 			}
 			&General::writehasharray("$configsrvgrp", \%customservicegrp);
-			
 			$needrules='on';
 		}
-		
-		
 		if($count gt 0 && $fwhostsettings{'oldsrvport'} ne $fwhostsettings{'SRV_PORT'} ){
 			$needrules='on';
 		}
 		if($count gt 0 && $fwhostsettings{'oldsrvprot'} ne $fwhostsettings{'PROT'} ){
 			$needrules='on';
 		}
-		
 		$fwhostsettings{'SRV_NAME'}	= '';
 		$fwhostsettings{'SRV_PORT'}	= '';
 		$fwhostsettings{'PROT'}		= '';
@@ -1367,6 +1363,7 @@ END
 			}elsif ($count % 2){ print" <tr bgcolor='$color{'color22'}'>";}
 			else{            print" <tr bgcolor='$color{'color20'}'>";}
 			my ($ip,$sub)=split(/\//,$customhost{$key}[2]);
+			$customhost{$key}[3]=~s/\s+//g;
 			print<<END;
 			<td width='40%'><form method='post'>$customhost{$key}[0]</td><td width='50%'>$ip</td><td align='center'>$customhost{$key}[3]x</td>
 			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
@@ -1400,18 +1397,18 @@ sub viewtablegrp
 	&General::readhasharray("$confignet", \%customnetwork);
 	my @grp=();
 	my $helper='';
-	my $count=0;
+	my $count=1;
 	my $grpname;
 	my $remark;
-	my $number=keys %customgrp;
+	my $number=1;
 	if (!keys %customgrp) 
 	{ 
 		print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
 	}else{
 		foreach my $key (sort { uc($customgrp{$a}[0]) cmp uc($customgrp{$b}[0]) } sort { uc($customgrp{$a}[2]) cmp uc($customgrp{$b}[2]) } keys %customgrp){
-			
 			$count++;
 			if ($helper ne $customgrp{$key}[0]){
+				$number=1;
 				$grpname=$customgrp{$key}[0];
 				$remark=$customgrp{$key}[1];
 				if($count >=2){print"</table>";}
@@ -1443,7 +1440,7 @@ sub viewtablegrp
 			}else{
 				print"<td>$ip</td><td>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";
 			}
-			if ($number gt '1' && $ip ne ''){
+			if ($number > 1 && $ip ne ''){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}
 			print"<input type='hidden' name='ACTION' value='deletegrphost'><input type='hidden' name='delhost' value='$grpname,$remark,$customgrp{$key}[2],$customgrp{$key}[3]'></form></td></tr>";
