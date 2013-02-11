@@ -211,7 +211,7 @@ case "$1" in
 	/sbin/iptables -A FORWARD -s 127.0.0.0/8 -m state --state NEW -j DROP
 	/sbin/iptables -A FORWARD -d 127.0.0.0/8 -m state --state NEW -j DROP
 	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m state --state NEW -j ACCEPT ! -p icmp
-	/sbin/iptables -A FORWARD -i $GREEN_DEV  -m state --state NEW -j ACCEPT
+	#/sbin/iptables -A FORWARD -i $GREEN_DEV  -m state --state NEW -j ACCEPT
 
 	# If a host on orange tries to initiate a connection to IPFire's red IP and
 	# the connection gets DNATed back through a port forward to a server on orange
@@ -227,7 +227,11 @@ case "$1" in
 	/sbin/iptables -A INPUT -m state --state NEW -j WIRELESSINPUT
 	/sbin/iptables -N WIRELESSFORWARD
 	/sbin/iptables -A FORWARD -m state --state NEW -j WIRELESSFORWARD
-
+	
+	# PORTFWACCESS chain, used for portforwarding
+	/sbin/iptables -N PORTFWACCESS
+	/sbin/iptables -A FORWARD -m state --state NEW -j PORTFWACCESS
+	
 	# OPenSSL
 	/sbin/iptables -N OPENSSLPHYSICAL
 	/sbin/iptables -A INPUT -j OPENSSLPHYSICAL
@@ -244,15 +248,10 @@ case "$1" in
 	
 	# DMZ pinhole chain.  
 	# ORANGE to talk to GREEN / BLUE.
-
 	if [ "$ORANGE_DEV" != "" ]; then
 		/sbin/iptables -A FORWARD -i $ORANGE_DEV -m state --state NEW -j FORWARDFW
 	fi
 	
-	# PORTFWACCESS chain, used for portforwarding
-	/sbin/iptables -N PORTFWACCESS
-	/sbin/iptables -A FORWARD -m state --state NEW -j PORTFWACCESS
-
 	# Custom prerouting chains (for transparent proxy and port forwarding)
 	/sbin/iptables -t nat -N SQUID
 	/sbin/iptables -t nat -A PREROUTING -j SQUID

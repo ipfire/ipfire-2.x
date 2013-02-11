@@ -1400,7 +1400,7 @@ sub viewtablegrp
 	my $count=1;
 	my $grpname;
 	my $remark;
-	my $number=1;
+	my $number;
 	if (!keys %customgrp) 
 	{ 
 		print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
@@ -1446,6 +1446,7 @@ sub viewtablegrp
 			print"<input type='hidden' name='ACTION' value='deletegrphost'><input type='hidden' name='delhost' value='$grpname,$remark,$customgrp{$key}[2],$customgrp{$key}[3]'></form></td></tr>";
 			
 			$helper=$customgrp{$key}[0];
+			$number++;
 		}
 		print"</table>";
 		
