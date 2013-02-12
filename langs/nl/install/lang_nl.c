@@ -354,7 +354,7 @@ char *nl_tr[] = {
 /* TR_PHONENUMBER_CANNOT_BE_EMPTY */
 "Telefoonnummer mag niet leeg zijn.",
 /* TR_PREPARE_HARDDISK */
-"Het installatieprogramma zal nu de vaste schijf voorbereiden op %s. Eerst wordt de schijf gepartitioneerd, daarna zullen de bestandssystemen erop worden gezet.\n\nALLE DATA OP DE SCHIJF ZAL WORDEN GEWIST. Wilt u hiermee doorgaan?"",
+"Het installatieprogramma zal nu de vaste schijf voorbereiden op %s. Eerst wordt de schijf gepartitioneerd, daarna zullen de bestandssystemen erop worden gezet.\n\nALLE DATA OP DE SCHIJF ZAL WORDEN GEWIST. Wilt u hiermee doorgaan?",
 /* TR_PRESS_OK_TO_REBOOT */
 "Druk Ok om te herstarten.",
 /* TR_PRIMARY_DNS */
