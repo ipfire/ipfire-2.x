@@ -16,10 +16,11 @@ usr/bin/curl
 usr/lib/libcurl.so
 usr/lib/libcurl.so.3
 usr/lib/libcurl.so.4
-usr/lib/libcurl.so.4.2.0
+usr/lib/libcurl.so.4.3.0
 #usr/lib/pkgconfig/libcurl.pc
 #usr/share/man/man1/curl-config.1
 #usr/share/man/man1/curl.1
+#usr/share/man/man1/mk-ca-bundle.1
 #usr/share/man/man3/curl_easy_cleanup.3
 #usr/share/man/man3/curl_easy_duphandle.3
 #usr/share/man/man3/curl_easy_escape.3
@@ -57,6 +58,7 @@ usr/lib/libcurl.so.4.2.0
 #usr/share/man/man3/curl_multi_socket_action.3
 #usr/share/man/man3/curl_multi_strerror.3
 #usr/share/man/man3/curl_multi_timeout.3
+#usr/share/man/man3/curl_multi_wait.3
 #usr/share/man/man3/curl_share_cleanup.3
 #usr/share/man/man3/curl_share_init.3
 #usr/share/man/man3/curl_share_setopt.3
