@@ -73,8 +73,6 @@ $qossettings{'DEF_INC_SPD'} = '';
 $qossettings{'DEFCLASS_INC'} = '';
 $qossettings{'DEFCLASS_OUT'} = '';
 $qossettings{'ACK'} = '';
-$qossettings{'MTU'} = '1492';
-$qossettings{'QLENGTH'} = '1000';
 $qossettings{'RED_DEV'} = 'ppp0';
 $qossettings{'IMQ_DEV'} = 'imq0';
 $qossettings{'VALID'} = 'yes';
@@ -659,13 +657,6 @@ END
 	&Header::closepage();
 	exit
 }
-elsif ($qossettings{'ACTION'} eq "$Lang::tr{'urlfilter advanced settings'}" )
-{
-	&expert();
-	&Header::closebigbox();
-	&Header::closepage();
-	exit
-}
 if ($qossettings{'ACTIONBW'} eq "$Lang::tr{'modify'}" )
 {
 	&changebandwidth();
@@ -749,11 +740,11 @@ END
 		</table>
 		</form>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table border='0' cellpadding='0' cellspacing='0'>
-			<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'parentclass add'}' />
-			    <td><input type='submit' name='ACTION' value='$Lang::tr{'urlfilter advanced settings'}' />
-			    <td><input type='submit' name='ACTION' value='$Lang::tr{'status'}' />
-			</tr></table>
+		<table width='66%' border='0'>
+			<tr><td width='100%' align='center'>
+			     <input type='submit' name='ACTION' value='$Lang::tr{'parentclass add'}' />
+			     <input type='submit' name='ACTION' value='$Lang::tr{'status'}' />
+			</td></tr></table>
 	</form>
 END
 ;
@@ -1435,26 +1426,6 @@ END
 			}
   	}
 	}
-
-sub expert
-{
-	&Header::openbox('100%', 'center', $Lang::tr{'expertoptions'});
-	print <<END
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='66%'>
-		<tr><td width='33%' align='right'>MTU:<td width='33%' align='left'>
-			<input type='text' name='MTU' maxlength='8' required='4' value='$qossettings{'MTU'}' />
-		    <td width='33%' align='center'>$Lang::tr{'mtu QoS'}
-		<tr><td width='33%' align='right'>$Lang::tr{'Queuelenght'}:<td width='33%' align='left'>
-			<input type='text' name='QLENGTH' maxlength='8' required='2' value='$qossettings{'QLENGTH'}' />
-		    <td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
-		</table>
-		</form>
-END
-;
-	&Header::closebox();
-}
-
 sub validminbwdth {
 	if ( $qossettings{'VALID'} eq 'yes' ) {
 		if ( $qossettings{'DEVICE'} eq $qossettings{'RED_DEV'} ) {
