@@ -1018,6 +1018,7 @@
 'fwhost ovpn_n2n'		=> 'OpenVPN N-2-N',
 'fwhost port'			=> 'Port(s)',
 'fwhost prot'			=> 'Protokoll',
+'fwhost reread'			=> 'Die Firewallregeln müssen neu eingelesen werden. Bitte Übernehmen klicken.',
 'fwhost reset'			=> 'Abbrechen',
 'fwhost services'		=> 'Dienste',
 'fwhost srv_name'		=> 'Dienstname',

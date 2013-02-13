@@ -80,6 +80,11 @@ unless (-e $configsrvgrp) { system("touch $configsrvgrp"); }
 &Header::openbigbox('100%', 'center');
 
 ## ACTION ####
+if ($fwhostsettings{'ACTION'} eq $Lang::tr{'fwdfw reread'})
+{
+	&reread_rules;
+	&showmenu;
+}
 # Update
 if ($fwhostsettings{'ACTION'} eq 'updatenet' )
 {
@@ -1003,9 +1008,15 @@ sub showmenu
 	<table border='0' width='100%'><form method='post'>
 	<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newnet'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newhost'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newgrp'}' /></td>
 	<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservice'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservicegrp'}' /></td></tr>
-	<tr><td colspan='6'><hr></hr></td></tr></table></form>
+	<tr><td colspan='6'><hr></hr></td>
 END
 	
+		
+	if (-f "${General::swroot}/fwhosts/reread"){
+		print "</tr><tr><td colspan='6'><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}'>$Lang::tr{'fwhost reread'}</td>";
+	}
+		print"</tr></table></form>";	
+
 	&Header::closebox();
 	
 }
@@ -1877,9 +1888,19 @@ sub getipforgroup
 }
 sub rules
 {
-	system ("/usr/local/bin/forwardfwctrl");
-	system("rm ${General::swroot}/forward/reread");
+	if (!-f "${General::swroot}/fwhosts/reread"){
+		system("touch ${General::swroot}/fwhosts/reread");
+	}
 }
+sub reread_rules
+{
+	system ("/usr/local/bin/forwardfwctrl");
+	if ( -f "${General::swroot}/fwhosts/reread"){
+		system("rm ${General::swroot}/fwhosts/reread");
+	}
+	
+}
+
 sub decrease
 {
 	my $grp=$_[0];
