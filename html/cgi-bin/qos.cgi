@@ -497,20 +497,21 @@ elsif ($qossettings{'ACTION'} eq $Lang::tr{'save'})
 }
 elsif ($qossettings{'ACTION'} eq $Lang::tr{'template'} )
 {
-	my @UP;
-	#print "UP<br />";
-	for(my $i = 1; $i <= 10; $i++) {
-	$UP[$i] = int($qossettings{'OUT_SPD'} / $i );
-	#print $i."=".$UP[$i]." ";
-	}
-	my @DOWN;
-	#print "<br /><br />Down<br />";
-	for(my $i = 1; $i <= 20; $i++) {
-	$DOWN[$i] = int($qossettings{'INC_SPD'} / $i);
-	#print $i."=".$DOWN[$i]." ";
-	}
-	open( FILE, "> $classfile" ) or die "Unable to write $classfile";
-	print FILE <<END
+	if (($qossettings{'OUT_SPD'} > 0) && ($qossettings{'INC_SPD'} > 0)) {
+		my @UP;
+		#print "UP<br />";
+		for(my $i = 1; $i <= 10; $i++) {
+		$UP[$i] = int($qossettings{'OUT_SPD'} / $i );
+		#print $i."=".$UP[$i]." ";
+		}
+		my @DOWN;
+		#print "<br /><br />Down<br />";
+		for(my $i = 1; $i <= 20; $i++) {
+		$DOWN[$i] = int($qossettings{'INC_SPD'} / $i);
+		#print $i."=".$DOWN[$i]." ";
+		}
+		open( FILE, "> $classfile" ) or die "Unable to write $classfile";
+		print FILE <<END
 imq0;200;1;$DOWN[10];$DOWN[1];;;8;VoIP;
 imq0;203;4;$DOWN[20];$DOWN[1];;;0;VPN;
 imq0;204;5;$DOWN[20];$DOWN[1];;;8;Webtraffic;
@@ -524,9 +525,9 @@ $qossettings{'RED_DEV'};120;7;1;$UP[1];;;1;P2P;
 $qossettings{'RED_DEV'};103;4;$UP[2];$UP[1];;;2;VPN;
 END
 ;
-	close FILE;
-	open( FILE, "> $level7file" ) or die "Unable to write $level7file";
-	print FILE <<END
+		close FILE;
+		open( FILE, "> $level7file" ) or die "Unable to write $level7file";
+		print FILE <<END
 102;$qossettings{'RED_DEV'};dns;;;
 102;$qossettings{'RED_DEV'};rtp;;;
 102;$qossettings{'RED_DEV'};skypetoskype;;;
@@ -548,9 +549,9 @@ END
 220;imq0;bittorrent;;;
 END
 ;
-	close FILE;
-	open( FILE, "> $portfile" ) or die "Unable to write $portfile";
-	print FILE <<END
+		close FILE;
+		open( FILE, "> $portfile" ) or die "Unable to write $portfile";
+		print FILE <<END
 101;$qossettings{'RED_DEV'};icmp;;;;;
 102;$qossettings{'RED_DEV'};tcp;;;;53;
 102;$qossettings{'RED_DEV'};udp;;;;53;
@@ -573,22 +574,25 @@ END
 204;imq0;tcp;;80;;;
 END
 ;
-	close FILE;
-	if ($qossettings{'DEF_INC_SPD'} eq '') {
-		$qossettings{'DEF_INC_SPD'} = int($qossettings{'INC_SPD'} * 0.9);
+		close FILE;
+		if ($qossettings{'DEF_INC_SPD'} eq '') {
+			$qossettings{'DEF_INC_SPD'} = int($qossettings{'INC_SPD'} * 0.9);
+		}
+		if ($qossettings{'DEF_OUT_SPD'} eq '') {
+			$qossettings{'DEF_OUT_SPD'} = int($qossettings{'OUT_SPD'} * 0.9);
+		}
+		$qossettings{'DEFCLASS_INC'} = "210";
+		$qossettings{'DEFCLASS_OUT'} = "110";
+		$qossettings{'ACK'} ="101";
+		$qossettings{'ENABLED'} = 'on';
+		&General::writehash("${General::swroot}/qos/settings", \%qossettings);
+		system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
+		system("/usr/bin/touch /var/ipfire/qos/enable");
+		system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
+		system("logger -t ipfire 'QoS started'");
+	} else {
+		$message = $Lang::tr{'qos enter bandwidths'};
 	}
-	if ($qossettings{'DEF_OUT_SPD'} eq '') {
-		$qossettings{'DEF_OUT_SPD'} = int($qossettings{'OUT_SPD'} * 0.9);
-	}
-	$qossettings{'DEFCLASS_INC'} = "210";
-	$qossettings{'DEFCLASS_OUT'} = "110";
-	$qossettings{'ACK'} ="101";
-	$qossettings{'ENABLED'} = 'on';
-	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
-	system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
-	system("/usr/bin/touch /var/ipfire/qos/enable");
-	system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
-	system("logger -t ipfire 'QoS started'");
 }
 elsif ($qossettings{'ACTION'} eq $Lang::tr{'status'} )
 {
