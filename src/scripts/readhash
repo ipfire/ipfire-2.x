@@ -13,7 +13,7 @@ VARNAME='[A-Za-z_][A-Za-z0-9_]*'
 
 # For the assigned value we only accept a limited number of characters - none
 # of which are shell metachars
-VARCHARS='A-Za-z0-9=/,.:_@#+-'
+VARCHARS='A-Za-z0-9=/,.:%_@#+-'
 VARVAL="[${VARCHARS}]*"
 
 sed -ne "s/\(${VARNAME}\)=\(${VARVAL}\)$/\1=\2/p" $1
