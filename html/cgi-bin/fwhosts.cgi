@@ -512,7 +512,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 }
 if ($fwhostsettings{'ACTION'} eq 'savegrp')
 {
-	my $grp;
+	my $grp=$fwhostsettings{'grp_name'};;
 	my $rem=$fwhostsettings{'remark'};
 	my $count;
 	my $type;
@@ -522,94 +522,106 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 	&General::readhasharray("$configgrp", \%customgrp);
 	&General::readhasharray("$confignet", \%customnetwork);
 	&General::readhasharray("$confighost", \%customhost);
-	$grp=$fwhostsettings{'grp_name'};
-	if (!&validhostname($grp)){$errormessage=$errormessage.$Lang::tr{'fwhost err name'};}
-	###check standard networks
-	if ($fwhostsettings{'grp2'} eq 'std_net'){
-		@target=$fwhostsettings{'DEFAULT_SRC_ADR'};
-		$type='Standard Network';	
+	#check name
+	if (!&validhostname($grp)){$errormessage.=$Lang::tr{'fwhost err name'};}
+	#check remark
+	if ($rem ne '' && !&validremark($rem) && $fwhostsettings{'update'} ne 'on'){
+		$errormessage.=$Lang::tr{'fwhost err remark'};
+		$fwhostsettings{'update'} = 'on';
+		$fwhostsettings{'remark'}=$fwhostsettings{'oldremark'};
+		&addgrp;
+		&viewtablegrp;
 	}
-	##check custom networks
-	if ($fwhostsettings{'grp2'} eq 'cust_net' && $fwhostsettings{'CUST_SRC_NET'} ne ''){
-		@target=$fwhostsettings{'CUST_SRC_NET'};
-		$updcounter='net';
-		$type='Custom Network';
-	}elsif($fwhostsettings{'grp2'} eq 'cust_net' && $fwhostsettings{'CUST_SRC_NET'} eq ''){
-		$errormessage=$Lang::tr{'fwhost err groupempty'}."<br>";
-		$fwhostsettings{'grp_name'}='';
-		$fwhostsettings{'remark'}='';
-	}
-	#check custom addresses
-	if ($fwhostsettings{'grp2'} eq 'cust_host' && $fwhostsettings{'CUST_SRC_HOST'} ne ''){
-		@target=$fwhostsettings{'CUST_SRC_HOST'};
-		$updcounter='host';
-		$type='Custom Host';
-	}elsif($fwhostsettings{'grp2'} eq 'cust_host' && $fwhostsettings{'CUST_SRC_HOST'} eq ''){
-		$errormessage=$Lang::tr{'fwhost err groupempty'}."<br>";
-		$fwhostsettings{'grp_name'}='';
-		$fwhostsettings{'remark'}='';
-	}
-	#get address from  ovpn ccd static net
-	if ($fwhostsettings{'grp2'} eq 'ovpn_net' && $fwhostsettings{'OVPN_CCD_NET'} ne ''){
-		@target=$fwhostsettings{'OVPN_CCD_NET'};
-		$type='OpenVPN static network';
-	}elsif($fwhostsettings{'grp2'} eq 'ovpn_net' && $fwhostsettings{'OVPN_CCD_NET'} eq ''){
-		$errormessage=$Lang::tr{'fwhost err groupempty'};
-		$fwhostsettings{'grp_name'}='';
-		$fwhostsettings{'remark'}='';
-	}
-	#get address from ovpn ccd static host
-	if ($fwhostsettings{'grp2'} eq 'ovpn_host' && $fwhostsettings{'OVPN_CCD_HOST'} ne ''){
-		@target=$fwhostsettings{'OVPN_CCD_HOST'};
-		$type='OpenVPN static host';
-	}elsif ($fwhostsettings{'grp2'} eq 'ovpn_host' && $fwhostsettings{'OVPN_CCD_HOST'} eq ''){
-		$errormessage=$Lang::tr{'fwhost err groupempty'};
-	}
-	#get address from ovpn ccd Net-2-Net
-	if ($fwhostsettings{'grp2'} eq 'ovpn_n2n' && $fwhostsettings{'OVPN_N2N'} ne ''){
-		@target=$fwhostsettings{'OVPN_N2N'};
-		$type='OpenVPN N-2-N';
-	}elsif ($fwhostsettings{'grp2'} eq 'ovpn_n2n' && $fwhostsettings{'OVPN_N2N'} eq ''){
-		$errormessage=$Lang::tr{'fwhost err groupempty'};
-		$fwhostsettings{'grp_name'}='';
-		$fwhostsettings{'remark'}='';
-	}
-	#get address from IPSEC HOST
-	if ($fwhostsettings{'grp2'} eq 'ipsec_host' && $fwhostsettings{'IPSEC_HOST'} ne ''){
-		@target=$fwhostsettings{'IPSEC_HOST'};
-		$type='IpSec Host';
-	}elsif ($fwhostsettings{'grp2'} eq 'ipsec_host' && $fwhostsettings{'IPSEC_HOST'} eq ''){
-		$errormessage=$Lang::tr{'fwhost err groupempty'};
-		$fwhostsettings{'grp_name'}='';
-		$fwhostsettings{'remark'}='';
-	}
-	#get address from IPSEC NETWORK
-	if ($fwhostsettings{'grp2'} eq 'ipsec_net' && $fwhostsettings{'IPSEC_NET'} ne ''){
-		@target=$fwhostsettings{'IPSEC_NET'};
-		$type='IpSec Network';
-	}elsif ($fwhostsettings{'grp2'} eq 'ipsec_net' && $fwhostsettings{'IPSEC_NET'} eq ''){
-		$errormessage=$Lang::tr{'fwhost err groupempty'};
-		$fwhostsettings{'grp_name'}='';
-		$fwhostsettings{'remark'}='';
-	}
-	#check if host/net exists in grp
-	my $test="$grp,$fwhostsettings{'oldremark'},@target";
-	foreach my $key (keys %customgrp) {
-		my $test1="$customgrp{$key}[0],$customgrp{$key}[1],$customgrp{$key}[2]";
-		if ($test1 eq $test){
-			$errormessage=$Lang::tr{'fwhost err isingrp'};
-			$fwhostsettings{'update'} = 'on';
+	if ($fwhostsettings{'update'} eq 'on'){
+		#check standard networks
+		if ($fwhostsettings{'grp2'} eq 'std_net'){
+			@target=$fwhostsettings{'DEFAULT_SRC_ADR'};
+			$type='Standard Network';	
+		}
+		#check custom networks
+		if ($fwhostsettings{'grp2'} eq 'cust_net' && $fwhostsettings{'CUST_SRC_NET'} ne ''){
+			@target=$fwhostsettings{'CUST_SRC_NET'};
+			$updcounter='net';
+			$type='Custom Network';
+		}elsif($fwhostsettings{'grp2'} eq 'cust_net' && $fwhostsettings{'CUST_SRC_NET'} eq ''){
+			$errormessage=$Lang::tr{'fwhost err groupempty'}."<br>";
+			$fwhostsettings{'grp_name'}='';
+			$fwhostsettings{'remark'}='';
+		}
+		#check custom addresses
+		if ($fwhostsettings{'grp2'} eq 'cust_host' && $fwhostsettings{'CUST_SRC_HOST'} ne ''){
+			@target=$fwhostsettings{'CUST_SRC_HOST'};
+			$updcounter='host';
+			$type='Custom Host';
+		}elsif($fwhostsettings{'grp2'} eq 'cust_host' && $fwhostsettings{'CUST_SRC_HOST'} eq ''){
+			$errormessage=$Lang::tr{'fwhost err groupempty'}."<br>";
+			$fwhostsettings{'grp_name'}='';
+			$fwhostsettings{'remark'}='';
+		}
+		#get address from  ovpn ccd static net
+		if ($fwhostsettings{'grp2'} eq 'ovpn_net' && $fwhostsettings{'OVPN_CCD_NET'} ne ''){
+			@target=$fwhostsettings{'OVPN_CCD_NET'};
+			$type='OpenVPN static network';
+		}elsif($fwhostsettings{'grp2'} eq 'ovpn_net' && $fwhostsettings{'OVPN_CCD_NET'} eq ''){
+			$errormessage=$Lang::tr{'fwhost err groupempty'};
+			$fwhostsettings{'grp_name'}='';
+			$fwhostsettings{'remark'}='';
+		}
+		#get address from ovpn ccd static host
+		if ($fwhostsettings{'grp2'} eq 'ovpn_host' && $fwhostsettings{'OVPN_CCD_HOST'} ne ''){
+			@target=$fwhostsettings{'OVPN_CCD_HOST'};
+			$type='OpenVPN static host';
+		}elsif ($fwhostsettings{'grp2'} eq 'ovpn_host' && $fwhostsettings{'OVPN_CCD_HOST'} eq ''){
+			$errormessage=$Lang::tr{'fwhost err groupempty'};
+		}
+		#get address from ovpn ccd Net-2-Net
+		if ($fwhostsettings{'grp2'} eq 'ovpn_n2n' && $fwhostsettings{'OVPN_N2N'} ne ''){
+			@target=$fwhostsettings{'OVPN_N2N'};
+			$type='OpenVPN N-2-N';
+		}elsif ($fwhostsettings{'grp2'} eq 'ovpn_n2n' && $fwhostsettings{'OVPN_N2N'} eq ''){
+			$errormessage=$Lang::tr{'fwhost err groupempty'};
+			$fwhostsettings{'grp_name'}='';
+			$fwhostsettings{'remark'}='';
+		}
+		#get address from IPSEC HOST
+		if ($fwhostsettings{'grp2'} eq 'ipsec_host' && $fwhostsettings{'IPSEC_HOST'} ne ''){
+			@target=$fwhostsettings{'IPSEC_HOST'};
+			$type='IpSec Host';
+		}elsif ($fwhostsettings{'grp2'} eq 'ipsec_host' && $fwhostsettings{'IPSEC_HOST'} eq ''){
+			$errormessage=$Lang::tr{'fwhost err groupempty'};
+			$fwhostsettings{'grp_name'}='';
+			$fwhostsettings{'remark'}='';
+		}
+		#get address from IPSEC NETWORK
+		if ($fwhostsettings{'grp2'} eq 'ipsec_net' && $fwhostsettings{'IPSEC_NET'} ne ''){
+			@target=$fwhostsettings{'IPSEC_NET'};
+			$type='IpSec Network';
+		}elsif ($fwhostsettings{'grp2'} eq 'ipsec_net' && $fwhostsettings{'IPSEC_NET'} eq ''){
+			$errormessage=$Lang::tr{'fwhost err groupempty'};
+			$fwhostsettings{'grp_name'}='';
+			$fwhostsettings{'remark'}='';
+		}
+		#check if host/net exists in grp
+		
+		my $test="$grp,$fwhostsettings{'oldremark'},@target";
+		foreach my $key (keys %customgrp) {
+			my $test1="$customgrp{$key}[0],$customgrp{$key}[1],$customgrp{$key}[2]";
+			if ($test1 eq $test){
+				$errormessage=$Lang::tr{'fwhost err isingrp'};
+				$fwhostsettings{'update'} = 'on';
+			}
 		}
 	}
+	
 	if (!$errormessage){
 		#on first save, we have an empty @target, so fill it with nothing
 		my $targetvalues=@target;
 		if ($targetvalues == '0'){
-			@target=$Lang::tr{'fwhost empty'};
+			@target="none";
 		}
 		#on update, we have to delete the dummy entry
 		foreach my $key (keys %customgrp){
-			if ($customgrp{$key}[0] eq $grp && $customgrp{$key}[2] eq $Lang::tr{'fwhost empty'}){
+			if ($customgrp{$key}[0] eq $grp && $customgrp{$key}[2] eq "none"){
 				delete $customgrp{$key};
 				last;
 			}
@@ -662,20 +674,6 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		}
 		$fwhostsettings{'update'}='on';
 	}
-		if ($fwhostsettings{'remark'} ne $fwhostsettings{'oldremark'} )
-		{
-			foreach my $key (sort keys %customgrp)
-			{
-				if($customgrp{$key}[0] eq $grp && $customgrp{$key}[1] eq $fwhostsettings{'oldremark'})
-				{
-					$customgrp{$key}[1]='';
-					$customgrp{$key}[1]=$rem;
-				}	
-			}
-			&General::writehasharray("$configgrp", \%customgrp);
-			$errormessage='';
-			$fwhostsettings{'update'}='on';
-		}
 		#check if ruleupdate is needed
 		if($count > 0 )
 		{
@@ -725,10 +723,12 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 	$errormessage=&checkservicegroup;
 	if (!$errormessage){
 		#on first save, we have to enter a dummy value
-		if ($fwhostsettings{'CUST_SRV'} eq ''){$fwhostsettings{'CUST_SRV'}=$Lang::tr{'fwhost empty'};}
+		if ($fwhostsettings{'CUST_SRV'} eq ''){
+			$fwhostsettings{'CUST_SRV'}='none';
+		}
 		#on update, we have to delete the dummy entry
 		foreach my $key (keys %customservicegrp){
-			if ($customservicegrp{$key}[2] eq $Lang::tr{'fwhost empty'}){
+			if ($customservicegrp{$key}[2] eq 'none'){
 				delete $customservicegrp{$key};
 				last;
 			}
@@ -773,20 +773,6 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 		$customservicegrp{$key}[3] = $count;
 		&General::writehasharray("$configsrvgrp", \%customservicegrp );
 		$fwhostsettings{'updatesrvgrp'}='on';
-	}
-	if ($fwhostsettings{'SRVGRP_REMARK'} ne $fwhostsettings{'oldsrvgrpremark'} && $errormessage){
-		foreach my $key (keys %customservicegrp)
-		{
-			if($customservicegrp{$key}[0] eq $fwhostsettings{'SRVGRP_NAME'} && $customservicegrp{$key}[1] eq $fwhostsettings{'oldsrvgrpremark'})
-			{
-				$customservicegrp{$key}[1]='';
-				$customservicegrp{$key}[1]=$fwhostsettings{'SRVGRP_REMARK'};
-			}	
-		}
-		&General::writehasharray("$configsrvgrp", \%customservicegrp);
-		$errormessage='';
-		$hint=$Lang::tr{'fwhost changeremark'};
-		$fwhostsettings{'update'}='on';
 	}
 	if ($count gt 0){
 		&rules;
@@ -994,6 +980,62 @@ if ($fwhostsettings{'ACTION'} eq $Lang::tr{'fwhost newservicegrp'})
 	&addservicegrp;
 	&viewtableservicegrp;
 }
+if ($fwhostsettings{'ACTION'} eq 'changegrpremark')
+{
+	&General::readhasharray("$configgrp", \%customgrp);
+	if ($fwhostsettings{'oldrem'} ne $fwhostsettings{'newrem'} && &validremark($fwhostsettings{'newrem'})){
+		foreach my $key (sort keys %customgrp)
+			{
+				#$customgrp{$key}[1]=~ s/\|/,/g;
+				if($customgrp{$key}[0] eq $fwhostsettings{'grp'} && $customgrp{$key}[1] eq $fwhostsettings{'oldrem'})
+				{
+					#$fwhostsettings{'newrem'}=~ s/,/\|/g;
+					$customgrp{$key}[1]='';
+					$customgrp{$key}[1]=$fwhostsettings{'newrem'};
+				}	
+			}
+			&General::writehasharray("$configgrp", \%customgrp);
+			$fwhostsettings{'update'}='on';
+			#$fwhostsettings{'newrem'}=~ s/\|/,/g;
+			$fwhostsettings{'remark'}=$fwhostsettings{'newrem'};
+	}else{
+		$errormessage=$Lang::tr{'fwhost err remark'};
+		$fwhostsettings{'remark'}=$fwhostsettings{'oldrem'};
+		$fwhostsettings{'grp_name'}=$fwhostsettings{'grp'};
+		$fwhostsettings{'update'} = 'on';
+	}
+	$fwhostsettings{'grp_name'}=$fwhostsettings{'grp'};
+	&addgrp;
+	&viewtablegrp;
+}
+if ($fwhostsettings{'ACTION'} eq 'changesrvgrpremark')
+{
+	&General::readhasharray("$configsrvgrp", \%customservicegrp );
+	if ($fwhostsettings{'oldsrvrem'} ne $fwhostsettings{'newsrvrem'} && &validremark($fwhostsettings{'newsrvrem'})){
+		foreach my $key (sort keys %customservicegrp)
+			{
+				#$customservicegrp{$key}[1]=~ s/\|/,/g;
+				if($customservicegrp{$key}[0] eq $fwhostsettings{'srvgrp'} && $customservicegrp{$key}[1] eq $fwhostsettings{'oldsrvrem'})
+				{
+					#$fwhostsettings{'newsrvrem'}=~ s/,/|/g;
+					$customservicegrp{$key}[1]='';
+					$customservicegrp{$key}[1]=$fwhostsettings{'newsrvrem'};
+				}	
+			}
+			&General::writehasharray("$configsrvgrp", \%customservicegrp);
+			$fwhostsettings{'updatesrvgrp'}='on';
+			#$fwhostsettings{'newsrvrem'}=~ s/\|/,/g;
+			$fwhostsettings{'SRVGRP_REMARK'}=$fwhostsettings{'newsrvrem'};
+	}else{
+		$errormessage=$Lang::tr{'fwhost err remark'};
+		$fwhostsettings{'SRVGRP_REMARK'}=$fwhostsettings{'oldsrvrem'};
+		$fwhostsettings{'SRVGRP_NAME'}=$fwhostsettings{'srvgrp'};
+		$fwhostsettings{'updatesrvgrp'} = 'on';
+	}
+	$fwhostsettings{'SRVGRP_NAME'}=$fwhostsettings{'srvgrp'};
+	&addservicegrp;
+	&viewtableservicegrp;
+}
 ###  VIEW  ###
 if($fwhostsettings{'ACTION'} eq '')
 {
@@ -1081,7 +1123,8 @@ sub addgrp
 	$checked{'check1'}{'on'} = '';
 	$checked{'grp2'}{$fwhostsettings{'grp2'}} = 'CHECKED';
 	$fwhostsettings{'oldremark'}=$fwhostsettings{'remark'};
-		
+	my $grp=$fwhostsettings{'grp_name'};
+	my $rem=$fwhostsettings{'remark'};
 		if ($fwhostsettings{'update'} eq ''){   
 			print<<END;
 			<table width='100%' border='0'><form method='post'>
@@ -1090,18 +1133,14 @@ sub addgrp
 END
 		}else{
 			print<<END;
-			<table width='100%' border='0'><form method='post'>
-			<tr><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='TEXT' name='grp_name'  value='$fwhostsettings{'grp_name'}' readonly ></td><td>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='remark' size='35' value='$fwhostsettings{'remark'}'></tr>
-			<tr><td colspan='5'><hr></td></tr></table>
+			<table width='100%' border='0'><form method='post' style='display:inline'>
+			<tr><td nowrap='nowrap' width='12%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='TEXT' name='grp'  value='$fwhostsettings{'grp_name'}' readonly ></td><td>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='newrem' size='35' value='$fwhostsettings{'remark'}'></td><td><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldrem' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='ACTION' value='changegrpremark' ></td></tr></table></form>
+			<hr>
 END
-	
 		}
 		if ($fwhostsettings{'update'} eq 'on'){
-			
-				
 			print<<END;
-			<table width='100%' border='0'><tr><td width='1%'><input type='radio' name='grp2' value='std_net'  checked></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost stdnet'}</td><td><select name='DEFAULT_SRC_ADR' style='min-width:185px;'>
-			
+			<form method='post'><input type='hidden' name='remark' value='$rem'><input type='hidden' name='grp_name' value='$grp'><table width='100%' border='0'><tr><td width='1%'><input type='radio' name='grp2' value='std_net'  checked></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost stdnet'}</td><td><select name='DEFAULT_SRC_ADR' style='min-width:185px;'>
 END
 			foreach my $network (sort keys %defaultNetworks)
 			{
@@ -1111,7 +1150,6 @@ END
 				print " selected='selected'" if ($fwhostsettings{'DEFAULT_SRC_ADR'} eq $defaultNetworks{$network}{'NAME'});
 				print ">$network</option>";
 			}
-	
 			print<<END;
 			</select></td><td width='1%'><input type='radio' name='grp2' value='ovpn_net'  $checked{'grp2'}{'ovpn_net'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_NET' style='min-width:185px;'>
 END
@@ -1120,7 +1158,6 @@ END
 			{
 				print"<option value='$ccdnet{$key}[0]'>$ccdnet{$key}[0]</option>";
 			}
-			
 			print<<END;
 			</select></td></tr>
 			<tr><td><input type='radio' name='grp2' value='cust_net' $checked{'grp2'}{'cust_net'}></td><td>$Lang::tr{'fwhost cust net'}</td><td><select name='CUST_SRC_NET' style='min-width:185px;'>
@@ -1129,7 +1166,6 @@ END
 			foreach my $key (sort { uc($customnetwork{$a}[0]) cmp uc($customnetwork{$b}[0]) } keys  %customnetwork) {
 				print"<option>$customnetwork{$key}[0]</option>";
 			}
-			
 			print<<END;
 			</select></td><td width='1%'><input type='radio' name='grp2' value='ovpn_host' $checked{'grp2'}{'ovpn_host'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_HOST' style='min-width:185px;'>
 END
@@ -1140,7 +1176,6 @@ END
 					print"<option value='$ccdhost{$key}[1]'>$ccdhost{$key}[1]</option>";
 				}
 			}
-			
 			print<<END;
 			</select></td></tr>
 			<tr><td valign='top'><input type='radio' name='grp2' value='cust_host' $checked{'grp2'}{'cust_host'}></td><td valign='top'>$Lang::tr{'fwhost cust addr'}</td><td><select name='CUST_SRC_HOST' style='min-width:185px;'>
@@ -1182,18 +1217,10 @@ END
 #			print<<END;
 #			</select></td></tr>
 #			<tr>
-			print<<END;
-			<br><br><br>
-			<b>$Lang::tr{'fwhost attention'}:</b><br>
-			$Lang::tr{'fwhost macwarn'}<br><hr>
-END
+			print"<br><br><b>$Lang::tr{'fwhost attention'}:</b><br>	$Lang::tr{'fwhost macwarn'}<br><hr>";
 		}
-		print<<END;
-		<table border='0' width='100%'>
-		<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td>
-		</table></form>
-END
-	
+			print"<table border='0' width='100%'>";
+			print"<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='update' value=$fwhostsettings{'update'} ><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td></table></form>";
 	&Header::closebox();
 }
 sub addservice
@@ -1264,7 +1291,6 @@ sub addservicegrp
 	&showmenu;
 	&Header::openbox('100%', 'left', $Lang::tr{'fwhost newservicegrp'});
 	$fwhostsettings{'oldsrvgrpremark'}=$fwhostsettings{'SRVGRP_REMARK'};
-	
 	if ($fwhostsettings{'updatesrvgrp'} eq ''){
 		print<<END;
 		<table width='100%' border='0'><form method='post'>
@@ -1274,15 +1300,15 @@ sub addservicegrp
 END
 	}else{
 		print<<END;
-		<table width='100%' border='0'><form method='post'>
-		<tr><td>$Lang::tr{'fwhost addgrpname'}</td><td><input type='text' name='SRVGRP_NAME' value='$fwhostsettings{'SRVGRP_NAME'}' readonly ></td><td>$Lang::tr{'remark'}:</td><td width='1%'><input type='text' name='SRVGRP_REMARK' size='35' value='$fwhostsettings{'SRVGRP_REMARK'}'></td></tr>
-		<tr><td colspan='4'><hr></td></td></tr>
-		</table>
+		<table width='100%' border='0'><form method='post' style='display:inline'>
+		<tr><td>$Lang::tr{'fwhost addgrpname'}</td><td><input type='text' name='srvgrp' value='$fwhostsettings{'SRVGRP_NAME'}' readonly ></td><td>$Lang::tr{'remark'}:</td><td width='1%'><input type='text' name='newsrvrem' size='35' value='$fwhostsettings{'SRVGRP_REMARK'}'></td><td><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldsrvrem' value='$fwhostsettings{'oldsrvgrpremark'}'><input type='hidden' name='ACTION' value='changesrvgrpremark' ></td></tr>
+		<tr><td colspan='5'><hr></td></td></tr>
+		</table></form>
 END
 	}
 	if($fwhostsettings{'updatesrvgrp'} eq 'on'){
 	print<<END;
-	<table border='0' width='100%'>
+	<form method='post'><input type='hidden' name='SRVGRP_REMARK' value='$fwhostsettings{'SRVGRP_REMARK'}'><input type='hidden' name='SRVGRP_NAME' value='$fwhostsettings{'SRVGRP_NAME'}'><table border='0' width='100%'>
 	<tr><td width='1%' nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td><select name='CUST_SRV' style='min-width:185px;'>
 END
 	&General::readhasharray("$configsrv", \%customservice);
@@ -1302,7 +1328,6 @@ END
 	<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='updatesrvgrp' value='$fwhostsettings{'updatesrvgrp'}'><input type='hidden' name='oldsrvgrpremark' value='$fwhostsettings{'oldsrvgrpremark'}'><input type='hidden' name='ACTION' value='saveservicegrp' ></form><form style='display:inline;' method='post'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'></td></tr>
 	</table></form>
 END
-	
 	&Header::closebox();
 }
 # View
@@ -1420,8 +1445,9 @@ sub viewtablegrp
 			$count++;
 			if ($helper ne $customgrp{$key}[0]){
 				$number=1;
+				if ($customgrp{$key}[2] eq "none"){$customgrp{$key}[2]=$Lang::tr{'fwhost empty'};}
 				$grpname=$customgrp{$key}[0];
-				$remark=$customgrp{$key}[1];
+				$remark="$customgrp{$key}[1]";
 				if($count >=2){print"</table>";}
 				print "<br><b><u>$grpname</u></b> &nbsp &nbsp";
 				print " <b>$Lang::tr{'remark'}:</b>&nbsp $remark &nbsp " if ($remark ne '');
@@ -1435,11 +1461,13 @@ sub viewtablegrp
 			}
 			if ( ($fwhostsettings{'ACTION'} eq 'editgrp' || $fwhostsettings{'update'} ne '') && $fwhostsettings{'grp_name'} eq $customgrp{$key}[0]) {
 				print" <tr bgcolor='${Header::colouryellow}'>";
-				}elsif ($count %2 == 0){print"<tr bgcolor='$color{'color22'}'>";}else{print"<tr bgcolor='$color{'color20'}'>";}
+			}elsif ($count %2 == 0){
+				print"<tr bgcolor='$color{'color22'}'>";
+			}else{
+				print"<tr bgcolor='$color{'color20'}'>";
+			}
 			my $ip=&getipforgroup($customgrp{$key}[2],$customgrp{$key}[3]);	
 			if ($ip eq ''){print"<tr bgcolor='${Header::colouryellow}'>";}
-			
-			
 			print "<td width='39%'>";
 			if($customgrp{$key}[3] eq 'Standard Network'){
 				print &get_name($customgrp{$key}[2])."</td>";
@@ -1523,7 +1551,10 @@ sub viewtableservicegrp
 			$count++;
 			if ($helper ne $customservicegrp{$key}[0]){
 				$grpname=$customservicegrp{$key}[0];
-				$remark=$customservicegrp{$key}[1];
+				if ($customservicegrp{$key}[2] eq "none"){
+					$customservicegrp{$key}[2]=$Lang::tr{'fwhost empty'};
+				}
+				$remark="$customservicegrp{$key}[1]";
 				if($count >=2){print"</table>";}
 				print "<br><b><u>$grpname</u></b> &nbsp &nbsp ";
 				print "<b>$Lang::tr{'remark'}:</b>&nbsp $remark " if ($remark ne '');
@@ -1537,8 +1568,7 @@ sub viewtableservicegrp
 			}
 			if( $fwhostsettings{'SRVGRP_NAME'} eq $customservicegrp{$key}[0]) {
 				print" <tr bgcolor='${Header::colouryellow}'>";
-			}
-			if ($count %2 == 0){
+			}elsif ($count %2 == 0){
 				print"<tr bgcolor='$color{'color22'}'>";
 			}else{
 				print"<tr bgcolor='$color{'color20'}'>";
@@ -1609,11 +1639,6 @@ sub checkservicegroup
 	{
 		$errormessage.=$Lang::tr{'fwhost err name'}."<br>";
 		return $errormessage;
-	}
-	#check remark
-	if ( ($fwhostsettings{'SRVGRP_REMARK'} ne '') && (! &validhostname($fwhostsettings{'SRVGRP_REMARK'})))
-	{
-		$errormessage.=$Lang::tr{'fwhost err remark'}."<br>";
 	}
 	#check empty selectbox
 	if (keys %customservice lt 1)
@@ -1900,7 +1925,6 @@ sub reread_rules
 	}
 	
 }
-
 sub decrease
 {
 	my $grp=$_[0];
@@ -2006,6 +2030,24 @@ sub validhostname
 		return 0;}
 	return 1;
 }
-
+sub validremark
+{
+	# Checks a hostname against RFC1035
+        my $remark = $_[0];
+	# Each part should be at least two characters in length
+	# but no more than 63 characters
+	if (length ($remark) < 1 || length ($remark) > 255) {
+		return 0;}
+	# Only valid characters are a-z, A-Z, 0-9 and -
+	if ($remark !~ /^[a-zäöüA-ZÖÄÜ0-9-.:;_\/\s]*$/) {
+		return 0;}
+	# First character can only be a letter or a digit
+	if (substr ($remark, 0, 1) !~ /^[a-zäöüA-ZÖÄÜ0-9]*$/) {
+		return 0;}
+	# Last character can only be a letter or a digit
+	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9.]*$/) {
+		return 0;}
+	return 1;
+}
 &Header::closebigbox();
 &Header::closepage();
