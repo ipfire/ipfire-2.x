@@ -1523,6 +1523,7 @@
 'psk' => 'PSK',
 'pulse' => 'Puls',
 'pulse dial' => 'Pulswahl:',
+'qos enter bandwidths' => 'Bitte geben Sie ihre Downstream- und Upstream-Bandbreite an!',
 'qos graphs' => 'Qos Diagramme',
 'qos warning' => 'Die Regel <strong>muss</strong> wieder gespeichert werden, ansonsten wird sie verworfen!',
 'quick playlist' => 'Quick Playlist',

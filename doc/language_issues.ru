@@ -5,6 +5,7 @@ WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Level7 rule
 WARNING: translation string unused: Local VPN IP
 WARNING: translation string unused: Ping
+WARNING: translation string unused: Queuelenght
 WARNING: translation string unused: Remote IP
 WARNING: translation string unused: Remote VPN IP
 WARNING: translation string unused: Resolv
@@ -166,6 +167,7 @@ WARNING: translation string unused: err rs 8 untar
 WARNING: translation string unused: error config
 WARNING: translation string unused: error external access
 WARNING: translation string unused: expected
+WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: filename
@@ -275,6 +277,7 @@ WARNING: translation string unused: monthly volume
 WARNING: translation string unused: monthly volume start day
 WARNING: translation string unused: monthly volume start day short
 WARNING: translation string unused: mount
+WARNING: translation string unused: mtu QoS
 WARNING: translation string unused: nat-traversal
 WARNING: translation string unused: net address
 WARNING: translation string unused: net config type
@@ -569,6 +572,7 @@ WARNING: untranslated string: proxy reports daily
 WARNING: untranslated string: proxy reports monthly
 WARNING: untranslated string: proxy reports today
 WARNING: untranslated string: proxy reports weekly
+WARNING: untranslated string: qos enter bandwidths
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed

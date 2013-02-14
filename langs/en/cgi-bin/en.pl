@@ -1551,6 +1551,7 @@
 'pulse' => 'Pulse',
 'pulse dial' => 'Pulse dial:',
 'qos add subclass' => 'Add subclass',
+'qos enter bandwidths' => 'You will need to enter your downstream and upstream bandwidth!',
 'qos graphs' => 'Qos Graphs',
 'qos warning' => 'The rule <strong>must</strong> be saved, otherwise it will be discarded!',
 'quick control' => 'Quick Control',

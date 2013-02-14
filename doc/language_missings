@@ -98,6 +98,7 @@
 < proxy reports monthly
 < proxy reports today
 < proxy reports weekly
+< qos enter bandwidths
 < server restart
 < snort working
 < static routes
@@ -236,6 +237,7 @@
 < proxy reports monthly
 < proxy reports today
 < proxy reports weekly
+< qos enter bandwidths
 < server restart
 < Set time on boot
 < static routes
@@ -328,6 +330,7 @@
 < proxy reports monthly
 < proxy reports today
 < proxy reports weekly
+< qos enter bandwidths
 < server restart
 < static routes
 < visit us at
@@ -423,6 +426,7 @@
 < proxy reports monthly
 < proxy reports today
 < proxy reports weekly
+< qos enter bandwidths
 < server restart
 < static routes
 < visit us at
