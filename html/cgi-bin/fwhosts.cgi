@@ -852,6 +852,8 @@ if ($fwhostsettings{'ACTION'} eq 'delhost')
 }
 if ($fwhostsettings{'ACTION'} eq 'deletegrphost')
 {
+	my $grpremark;
+	my $grpname;
 	&General::readhasharray("$configgrp", \%customgrp);
 	foreach my $key (keys %customgrp){
 		if($customgrp{$key}[0].",".$customgrp{$key}[1].",".$customgrp{$key}[2].",".$customgrp{$key}[3] eq $fwhostsettings{'delhost'}){
@@ -876,11 +878,17 @@ if ($fwhostsettings{'ACTION'} eq 'deletegrphost')
 				}
 				&General::writehasharray("$confighost", \%customhost);
 			}
+			$grpname=$customgrp{$key}[0];
+			$grpremark=$customgrp{$key}[1];
 			delete $customgrp{$key};
 		}
 	}
 	&General::writehasharray("$configgrp", \%customgrp);
 	&rules;
+	if ($fwhostsettings{'update'} eq 'on'){
+		$fwhostsettings{'remark'}= $grpremark;
+		$fwhostsettings{'grp_name'}=$grpname;
+	}
 	&addgrp;
 	&viewtablegrp;
 }
@@ -934,6 +942,8 @@ if ($fwhostsettings{'ACTION'} eq 'delservicegrp')
 }
 if ($fwhostsettings{'ACTION'} eq 'delgrpservice')
 {
+	my $grpname;
+	my $grpremark;
 	&General::readhasharray("$configsrvgrp", \%customservicegrp);
 	&General::readhasharray("$configsrv", \%customservice);
 	foreach my $key (keys %customservicegrp){
@@ -947,11 +957,18 @@ if ($fwhostsettings{'ACTION'} eq 'delgrpservice')
 				}
 			}
 			&General::writehasharray("$configsrv", \%customservice);
-			delete $customservicegrp{$key}
+			$grpname=$customservicegrp{$key}[0];
+			$grpremark=$customservicegrp{$key}[1];
+			delete $customservicegrp{$key};
 		}
 	}
 	&General::writehasharray("$configsrvgrp", \%customservicegrp);
 	&rules;
+	if ($fwhostsettings{'updatesrvgrp'} eq 'on'){
+	#$fwhostsettings{'updatesrvgrp'}='on';
+		$fwhostsettings{'SRVGRP_NAME'}=$grpname;
+		$fwhostsettings{'SRVGRP_REMARK'}=$grpremark;
+	}
 	&addservicegrp;
 	&viewtableservicegrp;
 	
@@ -1451,7 +1468,7 @@ sub viewtablegrp
 					{
 						$delflag++;
 					}
-					if($delflag > 1){
+					if($delflag > 0){
 						last;
 					}
 				}
@@ -1494,7 +1511,7 @@ sub viewtablegrp
 			if ($delflag > '1' && $ip ne ''){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}
-			print"<input type='hidden' name='ACTION' value='deletegrphost'><input type='hidden' name='delhost' value='$grpname,$remark,$customgrp{$key}[2],$customgrp{$key}[3]'></form></td></tr>";
+			print"<input type='hidden' name='ACTION' value='deletegrphost'><input type='hidden' name='update' value='$fwhostsettings{'update'}'><input type='hidden' name='delhost' value='$grpname,$remark,$customgrp{$key}[2],$customgrp{$key}[3]'></form></td></tr>";
 			
 			$helper=$customgrp{$key}[0];
 			$number++;
@@ -1554,7 +1571,6 @@ sub viewtableservicegrp
 	my $helper;
 	my $port;
 	my $protocol;
-	my $delflag;
 	if (! -z $configsrvgrp){
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust srvgrp'});
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
@@ -1605,10 +1621,10 @@ sub viewtableservicegrp
 				}
 			}
 			print"<td align='center'>$port</td><td align='center'>$protocol</td><td width='1%'><form method='post'>";
-			if ($delflag > '1'){
+			if ($number gt '1'){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}
-			print"<input type='hidden' name='ACTION' value='delgrpservice'><input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2],$customservicegrp{$key}[3]'></form></td></tr>";
+			print"<input type='hidden' name='ACTION' value='delgrpservice'><input type='hidden' name='updatesrvgrp' value='$fwhostsettings{'updatesrvgrp'}'><input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2],$customservicegrp{$key}[3]'></form></td></tr>";
 			$helper=$customservicegrp{$key}[0];
 		}
 		print"</table>";
