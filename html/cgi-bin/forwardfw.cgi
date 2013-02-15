@@ -552,7 +552,7 @@ sub addrule
 	print "<table border='0'>";
 	print "<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw newrule'}'></td>";
 	if (-f "${General::swroot}/forward/reread"){
-		print "<td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}'>$Lang::tr{'fwhost reread'}</td>";
+		print "<td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold;'>$Lang::tr{'fwhost reread'}</td>";
 	}
 		print"</tr></table></form><hr>";	
 

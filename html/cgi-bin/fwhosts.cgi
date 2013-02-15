@@ -1055,7 +1055,7 @@ END
 	
 		
 	if (-f "${General::swroot}/fwhosts/reread"){
-		print "</tr><tr><td colspan='6'><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}'>$Lang::tr{'fwhost reread'}</td>";
+		print "</tr><tr><td colspan='6'><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold;' >$Lang::tr{'fwhost reread'}</td>";
 	}
 		print"</tr></table></form>";	
 
@@ -1437,6 +1437,7 @@ sub viewtablegrp
 	my $grpname;
 	my $remark;
 	my $number;
+	my $delflag;
 	if (!keys %customgrp) 
 	{ 
 		print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
@@ -1444,6 +1445,17 @@ sub viewtablegrp
 		foreach my $key (sort { uc($customgrp{$a}[0]) cmp uc($customgrp{$b}[0]) } sort { uc($customgrp{$a}[2]) cmp uc($customgrp{$b}[2]) } keys %customgrp){
 			$count++;
 			if ($helper ne $customgrp{$key}[0]){
+				$delflag='0';
+				foreach my $key1 (sort { uc($customgrp{$a}[0]) cmp uc($customgrp{$b}[0]) } sort { uc($customgrp{$a}[2]) cmp uc($customgrp{$b}[2]) } keys %customgrp){
+					if ($customgrp{$key}[0] eq $customgrp{$key1}[0])
+					{
+						$delflag++;
+					}
+					#if($delflag > 0){
+						#last;
+					#}
+					
+				}
 				$number=1;
 				if ($customgrp{$key}[2] eq "none"){$customgrp{$key}[2]=$Lang::tr{'fwhost empty'};}
 				$grpname=$customgrp{$key}[0];
@@ -1459,6 +1471,7 @@ sub viewtablegrp
 				print"<form method='post' style='display:inline'><input type='image' src='/images/edit.gif' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='remark' value='$remark' ><input type='hidden' name='ACTION' value='editgrp'></form>";
 				print"<table width='100%' style='border: 1px solid  #000000;' rules='none' ><tr><td align='center'><b>Name</b></td><td align='center'><b>$Lang::tr{'ip address'}</b></td><td align='center' width='25%'><b>$Lang::tr{'fwhost type'}</td></tr>";
 			}
+			
 			if ( ($fwhostsettings{'ACTION'} eq 'editgrp' || $fwhostsettings{'update'} ne '') && $fwhostsettings{'grp_name'} eq $customgrp{$key}[0]) {
 				print" <tr bgcolor='${Header::colouryellow}'>";
 			}elsif ($count %2 == 0){
@@ -1479,7 +1492,7 @@ sub viewtablegrp
 			}else{
 				print"<td>$ip</td><td>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";
 			}
-			if ($number > 1 && $ip ne ''){
+			if ($delflag > '1' && $ip ne ''){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}
 			print"<input type='hidden' name='ACTION' value='deletegrphost'><input type='hidden' name='delhost' value='$grpname,$remark,$customgrp{$key}[2],$customgrp{$key}[3]'></form></td></tr>";
