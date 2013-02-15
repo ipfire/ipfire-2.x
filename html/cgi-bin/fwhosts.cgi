@@ -1451,10 +1451,9 @@ sub viewtablegrp
 					{
 						$delflag++;
 					}
-					#if($delflag > 0){
-						#last;
-					#}
-					
+					if($delflag > 1){
+						last;
+					}
 				}
 				$number=1;
 				if ($customgrp{$key}[2] eq "none"){$customgrp{$key}[2]=$Lang::tr{'fwhost empty'};}
@@ -1555,6 +1554,7 @@ sub viewtableservicegrp
 	my $helper;
 	my $port;
 	my $protocol;
+	my $delflag;
 	if (! -z $configsrvgrp){
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust srvgrp'});
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
@@ -1563,6 +1563,16 @@ sub viewtableservicegrp
 		foreach my $key (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0])||  $a <=> $b } keys %customservicegrp){
 			$count++;
 			if ($helper ne $customservicegrp{$key}[0]){
+				$delflag=0;
+				foreach my $key1 (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0]) } sort { uc($customservicegrp{$a}[2]) cmp uc($customservicegrp{$b}[2]) } keys %customservicegrp){
+					if ($customservicegrp{$key}[0] eq $customservicegrp{$key1}[0])
+					{
+						$delflag++;
+					}
+					if($delflag > 1){
+						last;
+					}
+				}
 				$grpname=$customservicegrp{$key}[0];
 				if ($customservicegrp{$key}[2] eq "none"){
 					$customservicegrp{$key}[2]=$Lang::tr{'fwhost empty'};
@@ -1595,7 +1605,7 @@ sub viewtableservicegrp
 				}
 			}
 			print"<td align='center'>$port</td><td align='center'>$protocol</td><td width='1%'><form method='post'>";
-			if ($number gt '1'){
+			if ($delflag > '1'){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}
 			print"<input type='hidden' name='ACTION' value='delgrpservice'><input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2],$customservicegrp{$key}[3]'></form></td></tr>";
