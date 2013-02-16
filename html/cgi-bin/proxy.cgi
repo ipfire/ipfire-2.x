@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -3556,15 +3556,15 @@ if ($delaypools) {
 
 if ($proxysettings{'NO_PROXY_LOCAL'} eq 'on')
 {
-	print FILE "#Prevent internal proxy access to Green\n";
-	print FILE "http_access deny IPFire_green_servers !IPFire_green_network\n\n";
+	print FILE "#Prevent internal proxy access to Green except IPFire itself\n";
+	print FILE "http_access deny IPFire_green_servers !IPFire_ips !IPFire_green_network\n\n";
 }
 
 if ($proxysettings{'NO_PROXY_LOCAL_BLUE'} eq 'on')
 {
-	print FILE "#Prevent internal proxy access from Blue\n";
+	print FILE "#Prevent internal proxy access from Blue except IPFire itself\n";
 	print FILE "http_access allow IPFire_blue_network IPFire_blue_servers\n";
-	print FILE "http_access deny  IPFire_blue_network IPFire_servers\n\n";
+	print FILE "http_access deny  IPFire_blue_network !IPFire_ips IPFire_servers\n\n";
 }
 
 	print FILE <<END

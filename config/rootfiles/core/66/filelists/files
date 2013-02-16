@@ -38,6 +38,7 @@ srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/bin/watch
+usr/local/bin/backupiso
 usr/local/bin/makegraphs
 usr/local/bin/readhash
 usr/local/bin/scanhd

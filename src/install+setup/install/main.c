@@ -277,7 +277,7 @@ int main(int argc, char *argv[])
 			ctr[TR_CANCEL], NULL);
 	} else {
 	    rc = 1;
-	    fstype = EXT3;
+	    fstype = EXT4;
 	}
 	if (rc == 2)
 		goto EXIT;
@@ -595,12 +595,6 @@ EXIT:
 		fflush(flog);
 		fclose(flog);
 		newtFinished();
-
-		if (unattended) {
-			// Remove Setup autorun after boot
-			if (system("rm -f /harddisk/etc/rc.d/rcsysinit.d/S75firstsetup"))
-				printf("Unable to disable setup autorun.\n");
-		}
 
 		if (system("/bin/umount /harddisk/proc"))
 			printf("Unable to umount /harddisk/proc.\n"); 

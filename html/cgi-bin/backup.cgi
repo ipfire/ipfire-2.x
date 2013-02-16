@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2010  IPFire Team                                        #
+# Copyright (C) 2005-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -176,7 +176,13 @@ print <<END
 	<td align='left'>
 		<input type='radio' name='BACKUPLOGS' value='include'/> $Lang::tr{'include logfiles'}<br/>
 		<input type='radio' name='BACKUPLOGS' value='exclude' checked='checked'/> $Lang::tr{'exclude logfiles'}<br/>
-		<input type='radio' name='BACKUPLOGS' value='iso' /> $Lang::tr{'generate iso'}
+END
+;
+my $MACHINE=`uname -m`;
+if ( ! ( $MACHINE =~ "arm" )) {
+	print"		<input type='radio' name='BACKUPLOGS' value='iso' /> $Lang::tr{'generate iso'}<br/>"
+}
+print <<END
 	</td>
 </tr>
 <tr><td align='center' colspan='2'>
