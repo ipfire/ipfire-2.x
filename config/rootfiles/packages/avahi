@@ -7,7 +7,7 @@ etc/avahi/services
 etc/avahi/services/sftp-ssh.service
 etc/avahi/services/smb.service
 etc/avahi/services/ssh.service
-etc/dbus-1/system.d/avahi-dbus.conf
+#etc/dbus-1/system.d/avahi-dbus.conf
 etc/rc.d/init.d/avahi
 usr/bin/avahi-browse
 usr/bin/avahi-browse-domains
@@ -82,10 +82,10 @@ usr/lib/libavahi-glib.so.1.0.2
 #usr/lib/libavahi-gobject.so
 usr/lib/libavahi-gobject.so.0
 usr/lib/libavahi-gobject.so.0.0.4
-usr/lib/pkgconfig/avahi-client.pc
-usr/lib/pkgconfig/avahi-core.pc
-usr/lib/pkgconfig/avahi-glib.pc
-usr/lib/pkgconfig/avahi-gobject.pc
+#usr/lib/pkgconfig/avahi-client.pc
+#usr/lib/pkgconfig/avahi-core.pc
+#usr/lib/pkgconfig/avahi-glib.pc
+#usr/lib/pkgconfig/avahi-gobject.pc
 usr/lib/python2.7/site-packages/avahi
 usr/lib/python2.7/site-packages/avahi/ServiceTypeDatabase.py
 usr/sbin/avahi-autoipd
@@ -160,5 +160,4 @@ usr/share/avahi/service-types
 #usr/share/man/man8/avahi-daemon.8
 #usr/share/man/man8/avahi-dnsconfd.8
 #usr/share/man/man8/avahi-dnsconfd.action.8
-usr/var/run
 etc/init.d/avahi
