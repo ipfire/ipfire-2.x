@@ -1,12 +1,15 @@
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/issue
 etc/modprobe.d/cfg80211
+etc/rc.d/init.d/cleanfs
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/fsresize
 etc/rc.d/init.d/halt
 etc/rc.d/init.d/leds
 etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/network
+etc/rc.d/init.d/networking/dhcpcd.exe
+etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/networking/red.up/01-conntrack-cleanup
 etc/rc.d/init.d/networking/red.up/98-leds
 etc/rc.d/init.d/partresize
@@ -27,6 +30,7 @@ opt/pakfire/lib/functions.sh
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/calamaris.dat
+srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
@@ -34,6 +38,7 @@ srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/bin/watch
+usr/local/bin/makegraphs
 usr/local/bin/readhash
 usr/local/bin/scanhd
 usr/sbin/ovpn-ccd-convert
@@ -43,3 +48,4 @@ var/ipfire/general-functions.pl
 var/ipfire/langs
 var/ipfire/outgoing/bin/outgoingfw.pl
 var/ipfire/qos/bin/makeqosscripts.pl
+var/ipfire/updatexlrator/bin/download

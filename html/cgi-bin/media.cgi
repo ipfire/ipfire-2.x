@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -45,9 +45,9 @@ my @querry = split(/\?/,$ENV{'QUERY_STRING'});
 $querry[0] = '' unless defined $querry[0];
 $querry[1] = 'hour' unless defined $querry[1];
 
-my @devices = `ls -1 /sys/block | grep -E '^sd|^xvd|^vd|^md' | sort | uniq`;
+my @devices = `ls -1 /sys/block | grep -E '^sd|^mmcblk|^xvd|^vd|^md' | sort | uniq`;
 
-if ( $querry[0] =~ "sd?" || $querry[0] =~ "xvd??" || $querry[0] =~ "vd?" || $querry[0] =~ "md*" ){
+if ( $querry[0] =~ "sd?" || $querry[0] =~ "mmcblk?" || $querry[0] =~ "xvd??" || $querry[0] =~ "vd?" || $querry[0] =~ "md*" ){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
 	

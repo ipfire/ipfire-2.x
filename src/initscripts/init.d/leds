@@ -53,6 +53,7 @@ disable_led_trigger ()
 case "${1}" in
 	start)
 		# Alix LED start
+		setup_heartbeat_trigger alix:1
 		setup_netdev_trigger alix:2 ${RED_DEV} rx
 		setup_netdev_trigger alix:3 ${RED_DEV} tx
 
@@ -78,6 +79,7 @@ case "${1}" in
 
 	stop)
 		# Alix LED stop
+		disable_led_trigger alix:1
 		disable_led_trigger alix:2
 		disable_led_trigger alix:3
 

@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2012 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2013 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -78,7 +78,7 @@ fi
 
 #
 #
-KVER="3.2.35"
+KVER="3.2.38"
 MOUNT=`grep "kernel" /boot/grub/grub.conf 2>/dev/null | tail -n 1 `
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
@@ -111,6 +111,7 @@ add_to_backup usr/share/terminfo
 add_to_backup etc/sysconfig/lm_sensors
 add_to_backup etc/sysconfig/rc.local
 add_to_backup usr/local/bin/vpn-watch
+add_to_backup usr/local/bin/updxsetperms
 add_to_backup usr/libexec/ipsec
 
 # Backup the files
@@ -125,6 +126,9 @@ if [ $ROOTSPACE -lt 70000 ]; then
 		"core-update-$core: ERROR cannot update because not enough free space on root."
 	exit 2
 fi
+
+# Add user nobody to group squid.
+usermod -a -G squid nobody
 
 echo
 echo Update Kernel to $KVER ...
@@ -183,6 +187,9 @@ rm -rf /lib/libncurses*
 # Remove old pluto binaries.
 rm -f /usr/libexec/ipsec/{pluto,_pluto_adns,whack}
 rm -f /usr/local/bin/vpn-watch
+
+# Remove update accelerator permissions script.
+rm -f /usr/local/bin/updxsetperms
 
 #
 #Extract files
@@ -287,6 +294,7 @@ case $(uname -m) in
 		#
 		# ReInstall grub
 		#
+			echo "(hd0) ${ROOT::`expr length $ROOT`-1}" > /boot/grub/device.map
 			grub-install --no-floppy ${ROOT::`expr length $ROOT`-1}
 	;;
 esac
@@ -320,8 +328,8 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 			"core-update-$core: WARNING not enough space for pae kernel."
 	else
 		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
-		echo "ProgVersion: 3.2.35" >> /opt/pakfire/db/installed/meta-linux-pae
-		echo "Release: 25"     >> /opt/pakfire/db/installed/meta-linux-pae
+		echo "ProgVersion: 3.2.38" >> /opt/pakfire/db/installed/meta-linux-pae
+		echo "Release: 27"     >> /opt/pakfire/db/installed/meta-linux-pae
 	fi
 fi
 
@@ -329,7 +337,9 @@ fi
 if [ -e "/opt/pakfire/db/installed/meta-linux-xen" ]; then
 	echo "Name: linux-xen" > /opt/pakfire/db/installed/meta-linux-xen
 	echo "ProgVersion: 2.6.32.60" >> /opt/pakfire/db/installed/meta-linux-xen
-	echo "Release: 23"     >> /opt/pakfire/db/installed/meta-linux-xen
+	echo "Release: 24"     >> /opt/pakfire/db/installed/meta-linux-xen
+	# Add xvc0 to /etc/securetty
+	echo "xvc0" >> /etc/securetty
 fi
 
 #

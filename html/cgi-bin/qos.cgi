@@ -73,8 +73,6 @@ $qossettings{'DEF_INC_SPD'} = '';
 $qossettings{'DEFCLASS_INC'} = '';
 $qossettings{'DEFCLASS_OUT'} = '';
 $qossettings{'ACK'} = '';
-$qossettings{'MTU'} = '1492';
-$qossettings{'QLENGTH'} = '1000';
 $qossettings{'RED_DEV'} = 'ppp0';
 $qossettings{'IMQ_DEV'} = 'imq0';
 $qossettings{'VALID'} = 'yes';
@@ -499,20 +497,21 @@ elsif ($qossettings{'ACTION'} eq $Lang::tr{'save'})
 }
 elsif ($qossettings{'ACTION'} eq $Lang::tr{'template'} )
 {
-	my @UP;
-	#print "UP<br />";
-	for(my $i = 1; $i <= 10; $i++) {
-	$UP[$i] = int($qossettings{'OUT_SPD'} / $i );
-	#print $i."=".$UP[$i]." ";
-	}
-	my @DOWN;
-	#print "<br /><br />Down<br />";
-	for(my $i = 1; $i <= 20; $i++) {
-	$DOWN[$i] = int($qossettings{'INC_SPD'} / $i);
-	#print $i."=".$DOWN[$i]." ";
-	}
-	open( FILE, "> $classfile" ) or die "Unable to write $classfile";
-	print FILE <<END
+	if (($qossettings{'OUT_SPD'} > 0) && ($qossettings{'INC_SPD'} > 0)) {
+		my @UP;
+		#print "UP<br />";
+		for(my $i = 1; $i <= 10; $i++) {
+		$UP[$i] = int($qossettings{'OUT_SPD'} / $i );
+		#print $i."=".$UP[$i]." ";
+		}
+		my @DOWN;
+		#print "<br /><br />Down<br />";
+		for(my $i = 1; $i <= 20; $i++) {
+		$DOWN[$i] = int($qossettings{'INC_SPD'} / $i);
+		#print $i."=".$DOWN[$i]." ";
+		}
+		open( FILE, "> $classfile" ) or die "Unable to write $classfile";
+		print FILE <<END
 imq0;200;1;$DOWN[10];$DOWN[1];;;8;VoIP;
 imq0;203;4;$DOWN[20];$DOWN[1];;;0;VPN;
 imq0;204;5;$DOWN[20];$DOWN[1];;;8;Webtraffic;
@@ -526,9 +525,9 @@ $qossettings{'RED_DEV'};120;7;1;$UP[1];;;1;P2P;
 $qossettings{'RED_DEV'};103;4;$UP[2];$UP[1];;;2;VPN;
 END
 ;
-	close FILE;
-	open( FILE, "> $level7file" ) or die "Unable to write $level7file";
-	print FILE <<END
+		close FILE;
+		open( FILE, "> $level7file" ) or die "Unable to write $level7file";
+		print FILE <<END
 102;$qossettings{'RED_DEV'};dns;;;
 102;$qossettings{'RED_DEV'};rtp;;;
 102;$qossettings{'RED_DEV'};skypetoskype;;;
@@ -550,9 +549,9 @@ END
 220;imq0;bittorrent;;;
 END
 ;
-	close FILE;
-	open( FILE, "> $portfile" ) or die "Unable to write $portfile";
-	print FILE <<END
+		close FILE;
+		open( FILE, "> $portfile" ) or die "Unable to write $portfile";
+		print FILE <<END
 101;$qossettings{'RED_DEV'};icmp;;;;;
 102;$qossettings{'RED_DEV'};tcp;;;;53;
 102;$qossettings{'RED_DEV'};udp;;;;53;
@@ -575,22 +574,25 @@ END
 204;imq0;tcp;;80;;;
 END
 ;
-	close FILE;
-	if ($qossettings{'DEF_INC_SPD'} eq '') {
-		$qossettings{'DEF_INC_SPD'} = int($qossettings{'INC_SPD'} * 0.9);
+		close FILE;
+		if ($qossettings{'DEF_INC_SPD'} eq '') {
+			$qossettings{'DEF_INC_SPD'} = int($qossettings{'INC_SPD'} * 0.9);
+		}
+		if ($qossettings{'DEF_OUT_SPD'} eq '') {
+			$qossettings{'DEF_OUT_SPD'} = int($qossettings{'OUT_SPD'} * 0.9);
+		}
+		$qossettings{'DEFCLASS_INC'} = "210";
+		$qossettings{'DEFCLASS_OUT'} = "110";
+		$qossettings{'ACK'} ="101";
+		$qossettings{'ENABLED'} = 'on';
+		&General::writehash("${General::swroot}/qos/settings", \%qossettings);
+		system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
+		system("/usr/bin/touch /var/ipfire/qos/enable");
+		system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
+		system("logger -t ipfire 'QoS started'");
+	} else {
+		$message = $Lang::tr{'qos enter bandwidths'};
 	}
-	if ($qossettings{'DEF_OUT_SPD'} eq '') {
-		$qossettings{'DEF_OUT_SPD'} = int($qossettings{'OUT_SPD'} * 0.9);
-	}
-	$qossettings{'DEFCLASS_INC'} = "210";
-	$qossettings{'DEFCLASS_OUT'} = "110";
-	$qossettings{'ACK'} ="101";
-	$qossettings{'ENABLED'} = 'on';
-	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
-	system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
-	system("/usr/bin/touch /var/ipfire/qos/enable");
-	system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
-	system("logger -t ipfire 'QoS started'");
 }
 elsif ($qossettings{'ACTION'} eq $Lang::tr{'status'} )
 {
@@ -655,13 +657,6 @@ END
 		</div>
 END
 ;
-	&Header::closebigbox();
-	&Header::closepage();
-	exit
-}
-elsif ($qossettings{'ACTION'} eq "$Lang::tr{'urlfilter advanced settings'}" )
-{
-	&expert();
 	&Header::closebigbox();
 	&Header::closepage();
 	exit
@@ -749,11 +744,11 @@ END
 		</table>
 		</form>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table border='0' cellpadding='0' cellspacing='0'>
-			<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'parentclass add'}' />
-			    <td><input type='submit' name='ACTION' value='$Lang::tr{'urlfilter advanced settings'}' />
-			    <td><input type='submit' name='ACTION' value='$Lang::tr{'status'}' />
-			</tr></table>
+		<table width='66%' border='0'>
+			<tr><td width='100%' align='center'>
+			     <input type='submit' name='ACTION' value='$Lang::tr{'parentclass add'}' />
+			     <input type='submit' name='ACTION' value='$Lang::tr{'status'}' />
+			</td></tr></table>
 	</form>
 END
 ;
@@ -1435,26 +1430,6 @@ END
 			}
   	}
 	}
-
-sub expert
-{
-	&Header::openbox('100%', 'center', $Lang::tr{'expertoptions'});
-	print <<END
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='66%'>
-		<tr><td width='33%' align='right'>MTU:<td width='33%' align='left'>
-			<input type='text' name='MTU' maxlength='8' required='4' value='$qossettings{'MTU'}' />
-		    <td width='33%' align='center'>$Lang::tr{'mtu QoS'}
-		<tr><td width='33%' align='right'>$Lang::tr{'Queuelenght'}:<td width='33%' align='left'>
-			<input type='text' name='QLENGTH' maxlength='8' required='2' value='$qossettings{'QLENGTH'}' />
-		    <td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
-		</table>
-		</form>
-END
-;
-	&Header::closebox();
-}
-
 sub validminbwdth {
 	if ( $qossettings{'VALID'} eq 'yes' ) {
 		if ( $qossettings{'DEVICE'} eq $qossettings{'RED_DEV'} ) {

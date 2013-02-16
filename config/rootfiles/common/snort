@@ -26,9 +26,10 @@ usr/bin/u2spewfoo
 #usr/include/snort/dynamic_output/snort_debug.h
 #usr/include/snort/dynamic_output/stream_api.h
 #usr/include/snort/dynamic_preproc
-#usr/include/snort/dynamic_preproc/attribute_table_api.h
 #usr/include/snort/dynamic_preproc/bitop.h
 #usr/include/snort/dynamic_preproc/cpuclock.h
+#usr/include/snort/dynamic_preproc/file_api.h
+#usr/include/snort/dynamic_preproc/file_lib.h
 #usr/include/snort/dynamic_preproc/idle_processing.h
 #usr/include/snort/dynamic_preproc/ipv6_port.h
 #usr/include/snort/dynamic_preproc/mempool.h
@@ -178,6 +179,7 @@ usr/sbin/snort
 #usr/share/doc/snort/README.dnp3
 #usr/share/doc/snort/README.dns
 #usr/share/doc/snort/README.event_queue
+#usr/share/doc/snort/README.file
 #usr/share/doc/snort/README.filters
 #usr/share/doc/snort/README.flowbits
 #usr/share/doc/snort/README.frag3

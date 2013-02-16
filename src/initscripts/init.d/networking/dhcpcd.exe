@@ -64,8 +64,8 @@ dhcpcd_up()
 		echo -n "$new_ip_address"  > /var/ipfire/red/local-ipaddress
 
 		#Get default gateway
-		grep -v " gateway$" /etc/hosts > /tmp/hosts
-		echo "$new_routers gateway"  >> /tmp/hosts
+		grep -v -E "\<gateway\>" /etc/hosts > /tmp/hosts
+		echo "$new_routers	gateway"  >> /tmp/hosts
 		mv /tmp/hosts /etc/hosts
 
 	fi

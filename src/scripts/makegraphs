@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2008-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2008-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -102,7 +102,7 @@ sub updatehdddata{
 ## Update vnstat
 system ('/usr/bin/vnstat -u');
 
-my @disks = `ls -1 /sys/block | grep -E '^sd|^xvd|^vd|^md' | sort | uniq`;
+my @disks = `ls -1 /sys/block | grep -E '^sd|^mmcblk|^xvd|^vd|^md' | sort | uniq`;
 system("unlink /var/run/hddstatus 2>/dev/null && touch /var/run/hddstatus");
 foreach (@disks){
 	my $disk = $_;

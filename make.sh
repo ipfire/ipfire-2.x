@@ -24,7 +24,7 @@
 
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
-VERSION="2.13beta1"							# Version number
+VERSION="2.13rc2"							# Version number
 CORE="65"							# Core Level (Filename)
 PAKFIRE_CORE="65"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
@@ -590,6 +590,7 @@ buildipfire() {
   ipfiremake ghostscript
   ipfiremake foomatic
   ipfiremake hplip
+  ipfiremake cifs-utils
   ipfiremake samba
   ipfiremake sudo
   ipfiremake mc
@@ -752,6 +753,8 @@ buildipfire() {
   ipfiremake stress
   ipfiremake libstatgrab
   ipfiremake sarg
+  ipfiremake fstrim
+  ipfiremake check_mk_agent
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
@@ -761,12 +764,17 @@ buildipfire() {
   echo >> $BASEDIR/build/var/ipfire/firebuild
   cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
   echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
+  if [ "$(git status -s | wc -l)" == "0" ]; then
+	GIT_STATUS=""
+  else
+	GIT_STATUS="-dirty"
+  fi
   case "$GIT_BRANCH" in
 	core*|beta?|rc?)
-	    echo "$NAME $VERSION ($MACHINE) - $GIT_BRANCH" > $BASEDIR/build/etc/system-release
+	    echo "$NAME $VERSION ($MACHINE) - $GIT_BRANCH$GIT_STATUS" > $BASEDIR/build/etc/system-release
 	    ;;
 	*)
-	    echo "$NAME $VERSION ($MACHINE) - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT" > $BASEDIR/build/etc/system-release
+	    echo "$NAME $VERSION ($MACHINE) - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS" > $BASEDIR/build/etc/system-release
 	    ;;
   esac
 }

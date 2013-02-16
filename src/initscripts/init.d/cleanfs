@@ -90,6 +90,9 @@ case "${1}" in
 		cd /var/lock &&
 		find . -type f ! -newer /proc -exec rm -f {} \; || failed=1
 
+		boot_mesg -n " /var/log/updatexlrator" ${NORMAL}
+		rm -f /var/log/updatexlrator/checkdeaddl.lck
+
 		boot_mesg " /var/run" ${NORMAL}
 		cd /var/run &&
 		find . ! -type d ! -name utmp ! -newer /proc \

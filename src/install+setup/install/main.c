@@ -35,6 +35,7 @@ extern char *en_tr[];
 extern char *es_tr[];
 extern char *de_tr[];
 extern char *fr_tr[];
+extern char *nl_tr[];
 extern char *pl_tr[];
 extern char *ru_tr[];
 
@@ -43,9 +44,9 @@ int main(int argc, char *argv[])
 
 	char discl_msg[40000] =	"Disclaimer\n";
 
-	char *langnames[] = { "Deutsch", "English", "Français", "Español", "Polski", "Русский", NULL };
-	char *shortlangnames[] = { "de", "en", "fr", "es", "pl", "ru", NULL };
-	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, pl_tr, ru_tr, NULL };
+	char *langnames[] = { "Deutsch", "English", "Français", "Español", "Nederlands", "Polski", "Русский", NULL };
+	char *shortlangnames[] = { "de", "en", "fr", "es", "nl", "pl", "ru", NULL };
+	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, nl_tr, pl_tr, ru_tr, NULL };
 	char hdletter;
 	char harddrive[30], sourcedrive[5];	/* Device holder. */
 	char harddrive_info[STRING_SIZE];	/* Additional infos about target */
@@ -330,7 +331,7 @@ int main(int argc, char *argv[])
 		
 	
   /* Calculating the amount of free space */
-	boot_partition = 20; /* in MB */
+	boot_partition = 64; /* in MB */
 	system_partition = disk - ( root_partition + swap_file + boot_partition );
 	
 	fprintf(flog, ", boot = %ld, swap = %ld, mylog = %ld, root = %ld\n",

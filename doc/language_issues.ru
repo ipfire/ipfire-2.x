@@ -5,6 +5,7 @@ WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Level7 rule
 WARNING: translation string unused: Local VPN IP
 WARNING: translation string unused: Ping
+WARNING: translation string unused: Queuelenght
 WARNING: translation string unused: Remote IP
 WARNING: translation string unused: Remote VPN IP
 WARNING: translation string unused: Resolv
@@ -166,6 +167,7 @@ WARNING: translation string unused: err rs 8 untar
 WARNING: translation string unused: error config
 WARNING: translation string unused: error external access
 WARNING: translation string unused: expected
+WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: filename
@@ -275,6 +277,7 @@ WARNING: translation string unused: monthly volume
 WARNING: translation string unused: monthly volume start day
 WARNING: translation string unused: monthly volume start day short
 WARNING: translation string unused: mount
+WARNING: translation string unused: mtu QoS
 WARNING: translation string unused: nat-traversal
 WARNING: translation string unused: net address
 WARNING: translation string unused: net config type
@@ -310,6 +313,7 @@ WARNING: translation string unused: original
 WARNING: translation string unused: other countries
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
+WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn
 WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn dl
@@ -479,9 +483,12 @@ WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn aggrmode
+WARNING: translation string unused: vpn incompatible use of defaultroute
+WARNING: translation string unused: vpn mtu invalid
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: vpn on green
 WARNING: translation string unused: vpn on orange
+WARNING: translation string unused: vpn watch
 WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: weekly firewallhits
@@ -490,6 +497,7 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Add a route
 WARNING: untranslated string: Edit an existing route
 WARNING: untranslated string: Scan for Songs
+WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: attention
 WARNING: untranslated string: bytes
@@ -564,6 +572,7 @@ WARNING: untranslated string: proxy reports daily
 WARNING: untranslated string: proxy reports monthly
 WARNING: untranslated string: proxy reports today
 WARNING: untranslated string: proxy reports weekly
+WARNING: untranslated string: qos enter bandwidths
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
@@ -572,3 +581,4 @@ WARNING: untranslated string: server restart
 WARNING: untranslated string: static routes
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange
+WARNING: untranslated string: wlanap country

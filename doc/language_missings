@@ -11,6 +11,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < attention
 < ccd add
@@ -97,6 +98,7 @@
 < proxy reports monthly
 < proxy reports today
 < proxy reports weekly
+< qos enter bandwidths
 < server restart
 < snort working
 < static routes
@@ -132,6 +134,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
+< advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < Async logging enabled
 < attention
@@ -234,6 +237,7 @@
 < proxy reports monthly
 < proxy reports today
 < proxy reports weekly
+< qos enter bandwidths
 < server restart
 < Set time on boot
 < static routes
@@ -246,6 +250,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
+< advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < attention
 < ccd add
@@ -325,6 +330,7 @@
 < proxy reports monthly
 < proxy reports today
 < proxy reports weekly
+< qos enter bandwidths
 < server restart
 < static routes
 < visit us at
@@ -336,6 +342,7 @@
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
 < Add a route
+< advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < attention
 < ccd add
@@ -419,6 +426,7 @@
 < proxy reports monthly
 < proxy reports today
 < proxy reports weekly
+< qos enter bandwidths
 < server restart
 < static routes
 < visit us at

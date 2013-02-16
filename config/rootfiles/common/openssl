@@ -1164,7 +1164,6 @@ usr/lib/libssl.so.0.9.8
 #usr/share/man/man3/md5.3
 #usr/share/man/man3/mdc2.3
 #usr/share/man/man3/pem.3
-#usr/share/man/man3/rand.3
 #usr/share/man/man3/rc4.3
 #usr/share/man/man3/ripemd.3
 #usr/share/man/man3/rsa.3

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  info@ipfire.org                       #
+# Copyright (C) 2007-2013  IPFire Team  info@ipfire.org                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -1367,14 +1367,14 @@ END
 	    goto VPNCONF_ERROR;
 	}
 
-	
-	if ($cgiparams{'TYPE'} eq 'net'){
-		$errormessage=&General::checksubnets($cgiparams{'NAME'},$cgiparams{'REMOTE_SUBNET'});
-		if ($errormessage ne ''){
-			goto VPNCONF_ERROR;
-		}
-		
-	}
+#temporary disabled (BUG 10294)
+#	if ($cgiparams{'TYPE'} eq 'net'){
+#		$errormessage=&General::checksubnets($cgiparams{'NAME'},$cgiparams{'REMOTE_SUBNET'});
+#		if ($errormessage ne ''){
+#			goto VPNCONF_ERROR;
+#		}
+#		
+#	}
 	if ($cgiparams{'AUTH'} eq 'psk') {
 	    if (! length($cgiparams{'PSK'}) ) {
 		$errormessage = $Lang::tr{'pre-shared key is too short'};
@@ -1987,8 +1987,6 @@ END
 	;
 	&Header::closebox();
     } elsif (! $cgiparams{'KEY'}) {
-	my $pskdisabled = ($vpnsettings{'VPN_IP'} eq '%defaultroute') ? "disabled='disabled'" : '' ;
-        $cgiparams{'PSK'} =  $Lang::tr{'vpn incompatible use of defaultroute'} if ($pskdisabled);
 	my $cakeydisabled = ( ! -f "${General::swroot}/private/cakey.pem" ) ? "disabled='disabled'" : '';
         $cgiparams{'CERT_NAME'} = $Lang::tr{'vpn no full pki'} if ($cakeydisabled);
 	my $cacrtdisabled = ( ! -f "${General::swroot}/ca/cacert.pem" ) ? "disabled='disabled'" : '';
@@ -1996,9 +1994,9 @@ END
 	&Header::openbox('100%', 'left', $Lang::tr{'authentication'});
 	print <<END
 	<table width='100%' cellpadding='0' cellspacing='5' border='0'>
-	<tr><td width='5%'><input type='radio' name='AUTH' value='psk' $checked{'AUTH'}{'psk'} $pskdisabled/></td>
+	<tr><td width='5%'><input type='radio' name='AUTH' value='psk' $checked{'AUTH'}{'psk'} /></td>
 	    <td class='base' width='55%'>$Lang::tr{'use a pre-shared key'}</td>
-	    <td class='base' width='40%'><input type='password' name='PSK' size='30' value='$cgiparams{'PSK'}' $pskdisabled/></td></tr>
+	    <td class='base' width='40%'><input type='password' name='PSK' size='30' value='$cgiparams{'PSK'}' /></td></tr>
 	<tr><td colspan='3' bgcolor='#000000'></td></tr>
 	<tr><td><input type='radio' name='AUTH' value='certreq' $checked{'AUTH'}{'certreq'} $cakeydisabled /></td>
 	    <td class='base'><hr />$Lang::tr{'upload a certificate request'}</td>
@@ -2094,7 +2092,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(aes256|aes128|3des)$/) {
+	    if ($val !~ /^(aes256|aes192|aes128|3des)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }

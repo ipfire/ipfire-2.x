@@ -49,7 +49,7 @@ $vendorid =~ tr/A-Z/a-z/;
 unless (-d "$repository/download/$vendorid")
 {
 	system("mkdir -p $repository/download/$vendorid");
-	system("chmod 775 $repository/download/$vendorid");
+	chmod 0775, "$repository/download/$vendorid";
 }
 
 if($restartdl == 0)
@@ -159,13 +159,13 @@ if ($_ == 0)
 	unless (-d "$repository/$vendorid")
 	{
 		system("mkdir -p $repository/$vendorid");
-		system("chmod 775 $repository/$vendorid");
+		chmod 0775, "$repository/$vendorid";
 	}
 
 	unless (-d "$repository/$vendorid/$uuid")
 	{
 		system("mkdir -p $repository/$vendorid/$uuid");
-		system("chmod 775 $repository/$vendorid/$uuid");
+		chmod 0775, "$repository/$vendorid/$uuid";
 	}
 
 	&writelog("Moving file to the cache directory: $vendorid/$uuid");
@@ -180,8 +180,15 @@ if ($_ == 0)
 	&UPDXLT::setcachestatus("$repository/$vendorid/$uuid/checkup.log",time);
 	&UPDXLT::setcachestatus("$repository/$vendorid/$uuid/access.log",time);
 
-	system("/usr/local/bin/updxsetperms");
-	system("chmod 775 $repository/$vendorid/$uuid/*");
+	# Update permissions of all files in the download directory.
+	my @files = (
+		"$repository/$vendorid/$uuid/source.url",
+		"$repository/$vendorid/$uuid/status",
+		"$repository/$vendorid/$uuid/checkup.log",
+		"$repository/$vendorid/$uuid/access.log",
+		"$repository/$vendorid/$uuid/$updatefile"
+	);
+	chmod 0664, @files;
 
 	unlink ("$repository/download/$vendorid/$updatefile.info");
 

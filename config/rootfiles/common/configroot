@@ -59,6 +59,7 @@ var/ipfire/langs
 #var/ipfire/langs/es.pl
 #var/ipfire/langs/fr.pl
 #var/ipfire/langs/list
+#var/ipfire/langs/nl.pl
 #var/ipfire/langs/pl.pl
 #var/ipfire/langs/ru.pl
 var/ipfire/logging

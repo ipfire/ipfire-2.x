@@ -85,6 +85,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Codel patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless_codel-avoid-a-nul-rec_inv_sqrt.patch
 
+	# compat-3.1 include a bogus cpufreq_backort
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.6.8-remove_3.1_cpufreq_backport.patch
+
 	# Build ath5k only if target has pci
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.5-build_ath5k_only_with_pci.patch
 

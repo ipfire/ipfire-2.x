@@ -14,7 +14,7 @@ dialout:x:16:
 floppy:x:19:
 tape:x:20:
 utmp:x:22:
-squid:x:23:
+squid:x:23:nobody
 ntp:x:38:
 dip:x:40:
 mysql:x:41:

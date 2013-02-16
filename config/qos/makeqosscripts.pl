@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -58,6 +58,7 @@ my $subclassfile = "/var/ipfire/qos/subclasses";
 my $level7file = "/var/ipfire/qos/level7config";
 my $portfile = "/var/ipfire/qos/portconfig";
 my $tosfile = "/var/ipfire/qos/tosconfig";
+my $fqcodel_options = "noecn limit 800 quantum 500";
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
@@ -70,13 +71,11 @@ $qossettings{'DEF_INC_SPD'} = '';
 $qossettings{'DEFCLASS_INC'} = '';
 $qossettings{'DEFCLASS_OUT'} = '';
 $qossettings{'ACK'} = '';
-$qossettings{'MTU'} = '1492';
 $qossettings{'RED_DEV'} = `cat /var/ipfire/red/iface`;
 $qossettings{'IMQ_DEV'} = 'imq0';
 $qossettings{'TOS'} = '';
 $qossettings{'VALID'} = 'yes';
 $qossettings{'IMQ_MODE'} = 'PREROUTING';
-$qossettings{'QLENGTH'} = '1000';
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
 
@@ -161,11 +160,8 @@ case "\$1" in
 	### INIT KERNEL
 	modprobe sch_htb
 
-	### SET QUEUE LENGTH & MTU - has just to be tested!!! IMPORTANT
-	ip link set dev $qossettings{'RED_DEV'} qlen $qossettings{'QLENGTH'}
-	#ip link set dev $qossettings{'RED_DEV'} mtu $qossettings{'MTU'}
-
 	### ADD HTB QDISC FOR $qossettings{'RED_DEV'}
+	tc qdisc del dev $qossettings{'RED_DEV'} root >/dev/null 2>&1
 	tc qdisc add dev $qossettings{'RED_DEV'} root handle 1: htb default $qossettings{'DEFCLASS_OUT'}
 
 	### MAIN RATE LIMIT
@@ -224,7 +220,7 @@ foreach $classentry (sort @classes)
 	if ($qossettings{'RED_DEV'} eq $classline[0]) {
 		$qossettings{'DEVICE'} = $classline[0];
 		$qossettings{'CLASS'} = $classline[1];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: sfq perturb $qossettings{'SFQ_PERTUB'}\n";
+		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: fq_codel $fqcodel_options\n";
 	}
 }
 foreach $subclassentry (sort @subclasses) {
@@ -232,7 +228,7 @@ foreach $subclassentry (sort @subclasses) {
 	if ($qossettings{'RED_DEV'} eq $subclassline[0]) {
 		$qossettings{'DEVICE'} = $subclassline[0];
 		$qossettings{'SCLASS'} = $subclassline[2];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: sfq perturb $qossettings{'SFQ_PERTUB'}\n";
+		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: fq_codel $fqcodel_options\n";
 	}
 }
 print "\n\t### FILTER TRAFFIC INTO CLASSES\n";
@@ -418,11 +414,8 @@ print <<END
 	modprobe imq numdevs=1
 	ip link set $qossettings{'IMQ_DEV'} up
 
-	### SET QUEUE LENGTH & MTU - has just to be tested!!! IMPORTANT
-	ip link set dev $qossettings{'IMQ_DEV'} qlen $qossettings{'QLENGTH'}
-	# ip link set dev $qossettings{'IMQ_DEV'} mtu $qossettings{'MTU'}
-
 	### ADD HTB QDISC FOR $qossettings{'IMQ_DEV'}
+	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
 	tc qdisc add dev $qossettings{'IMQ_DEV'} root handle 2: htb default $qossettings{'DEFCLASS_INC'}
 
 	### MAIN RATE LIMIT
@@ -481,7 +474,7 @@ foreach $classentry (sort @classes)
 	if ($qossettings{'IMQ_DEV'} eq $classline[0]) {
 		$qossettings{'DEVICE'} = $classline[0];
 		$qossettings{'CLASS'} = $classline[1];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: fq_codel\n";
+		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: fq_codel $fqcodel_options\n";
 	}
 }
 foreach $subclassentry (sort @subclasses) {
@@ -489,7 +482,7 @@ foreach $subclassentry (sort @subclasses) {
 	if ($qossettings{'IMQ_DEV'} eq $subclassline[0]) {
 		$qossettings{'DEVICE'} = $subclassline[0];
 		$qossettings{'SCLASS'} = $subclassline[2];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: fq_codel\n";
+		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: fq_codel $fqcodel_options\n";
 	}
 }
 print "\n\t### FILTER TRAFFIC INTO CLASSES\n";
@@ -694,7 +687,9 @@ print <<END
 	(sleep 3 && killall -9 qosd &>/dev/null) &
 	# DELETE QDISCS
 	tc qdisc del dev $qossettings{'RED_DEV'} root >/dev/null 2>&1
+	tc qdisc add root dev $qossettings{'RED_DEV'} fq_codel >/dev/null 2>&1
 	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
+	tc qdisc add root dev $qossettings{'IMQ_DEV'} fq_codel >/dev/null 2>&1
 	# STOP IMQ-DEVICE
 	ip link set $qossettings{'IMQ_DEV'} down >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN >/dev/null 2>&1

@@ -20,8 +20,8 @@ gpu_mem_512=32
 ###############################################################################
 #
 # underclock at idle
-arm_freq_min=500
-sdram_freq_min=250
+#arm_freq_min=500
+#sdram_freq_min=250
 #
 # use following paramters to overclock at load
 #arm_freq=1000
