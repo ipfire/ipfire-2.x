@@ -755,6 +755,9 @@ buildipfire() {
   ipfiremake sarg
   ipfiremake fstrim
   ipfiremake check_mk_agent
+  ipfiremake libdaemon
+  ipfiremake avahi
+  ipfiremake nginx
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
