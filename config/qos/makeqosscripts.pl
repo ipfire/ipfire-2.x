@@ -58,7 +58,7 @@ my $subclassfile = "/var/ipfire/qos/subclasses";
 my $level7file = "/var/ipfire/qos/level7config";
 my $portfile = "/var/ipfire/qos/portconfig";
 my $tosfile = "/var/ipfire/qos/tosconfig";
-my $fqcodel_options = "noecn limit 800 quantum 500";
+my $fqcodel_options = "limit 800 quantum 500";
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
