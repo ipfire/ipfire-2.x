@@ -44,6 +44,10 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
 $(DL_FILE)_MD5 = 4d299999bca4d2cecfbe48e51684a345
 
+objects += nginx_tcp_proxy_module.tar.bz2
+nginx_tcp_proxy_module.tar.bz2 = $(DL_FROM)/nginx_tcp_proxy_module.tar.bz2
+nginx_tcp_proxy_module.tar.bz2_MD5 = f07898b5b783ef65d416019b51cb1de8
+
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
