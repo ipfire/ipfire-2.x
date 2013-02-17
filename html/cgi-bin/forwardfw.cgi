@@ -118,31 +118,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
-
-	#check if we change an forward rule to an external access
-	if(	$fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{'oldgrp2a'} ne 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
-		&changerule($configfwdfw);
-	}
-	#check if we change an forward rule to an outgoing
-	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' && $fwdfwsettings{'oldgrp1b'} ne 'IPFire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
-		&changerule($configfwdfw);
-	}
-	#check if we change an external access rule to a forward
-	if(	$fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
-		&changerule($configinput);
-	}
-	#check if we change an external access rule to a outgoing
-	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' &&  $fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
-		&changerule($configinput);
-	}
-	#check if we change an outgoing rule to a forward
-	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'IPFire' && $fwdfwsettings{'oldgrp1b'} eq 'IPFire' && $fwdfwsettings{'grp2'} ne 'ipfire' &&$fwdfwsettings{'updatefwrule'} eq 'on'){
-		&changerule($configoutgoing);
-	}
-	#check if we change an outgoing rule to a external access
-	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'IPFire' && $fwdfwsettings{'oldgrp1b'} eq 'IPFire' && $fwdfwsettings{'grp2'} eq 'ipfire' &&  $fwdfwsettings{'updatefwrule'} eq 'on'){
-		&changerule($configoutgoing);
-	}
 	#check if we try to break rules
 	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' && $fwdfwsettings{'grp2'} eq 'ipfire'){
 		$errormessage.=$Lang::tr{'fwdfw err same'};
@@ -222,6 +197,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		#print"ALT: $fwdfwsettings{'oldgrp3a'} $fwdfwsettings{'oldgrp3b'}	NEU:	$fwdfwsettings{'grp3'} $fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 		#print"DIENSTE Checkalt:$fwdfwsettings{'oldusesrv'}  DIENSTE Checkneu:$fwdfwsettings{'USESRV'}    DIENST ALT:$fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'}   DIENST NEU:$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 	}elsif($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire'){
+		# OUTGOING PART
 		$fwdfwsettings{'config'}=$configoutgoing;
 		$fwdfwsettings{'chain'} = 'OUTGOINGFW';
 		my $maxkey=&General::findhasharraykey(\%configoutgoingfw);
@@ -484,8 +460,6 @@ sub changerule
 	&checkcounter(0,0,$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
 	&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 }
-
-
 sub pos_up
 {
 	my %uphash=();
@@ -1561,6 +1535,30 @@ sub saverule
 	my $config=shift;
 	&General::readhasharray("$config", $hash);
 	if (!$errormessage){
+		#check if we change an forward rule to an external access
+		if(	$fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{'oldgrp2a'} ne 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
+			&changerule($configfwdfw);
+		}
+		#check if we change an forward rule to an outgoing
+		if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' && $fwdfwsettings{'oldgrp1b'} ne 'IPFire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
+			&changerule($configfwdfw);
+		}
+		#check if we change an external access rule to a forward
+		if(	$fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
+			&changerule($configinput);
+		}
+		#check if we change an external access rule to a outgoing
+		if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' &&  $fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
+			&changerule($configinput);
+		}
+		#check if we change an outgoing rule to a forward
+		if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'IPFire' && $fwdfwsettings{'oldgrp1b'} eq 'IPFire' && $fwdfwsettings{'grp2'} ne 'ipfire' &&$fwdfwsettings{'updatefwrule'} eq 'on'){
+			&changerule($configoutgoing);
+		}
+		#check if we change an outgoing rule to a external access
+		if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'IPFire' && $fwdfwsettings{'oldgrp1b'} eq 'IPFire' && $fwdfwsettings{'grp2'} eq 'ipfire' &&  $fwdfwsettings{'updatefwrule'} eq 'on'){
+			&changerule($configoutgoing);
+		}
 		if ($fwdfwsettings{'updatefwrule'} ne 'on'){
 			my $key = &General::findhasharraykey ($hash);
 			$$hash{$key}[0]  = $fwdfwsettings{'RULE_ACTION'};
