@@ -66,6 +66,9 @@ sub setup_default_networks
 		$defaultNetworks->{$Lang::tr{'blue'}}{'IPT'} = "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
 		$defaultNetworks->{$Lang::tr{'blue'}}{'NAME'} = "BLUE";
 	}
+	
+	#IPFire himself
+	$defaultNetworks->{'IPFire'}{'NAME'} = "IPFire";
 
 	# OpenVPN
 	if(-e "${General::swroot}/ovpn/settings")
@@ -97,22 +100,6 @@ sub setup_default_networks
 			$defaultNetworks->{'IPsec RW ' .$ip."/".$sub}{'NAME'} = "IPsec RW";
 		}
 	}
-	#open(FILE, "${General::swroot}/ethernet/aliases") or die 'Unable to open aliases file.';
-	#my @current = <FILE>;
-	#close(FILE);
-	#my $ctr = 0;
-	#foreach my $line (@current)
-	#{
-		#if ($line ne ''){
-			#chomp($line);
-			#my @temp = split(/\,/,$line);
-			#if ($temp[2] eq '') {
-				#$temp[2] = "Alias $ctr : $temp[0]";
-			#}
-			#$defaultNetworks->{$temp[2]}{'IPT'} = "$temp[0]";
-			#$ctr++;
-		#}
-	#}
 }
 sub get_aliases
 {

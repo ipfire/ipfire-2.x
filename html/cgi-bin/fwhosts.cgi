@@ -1571,6 +1571,7 @@ sub viewtableservicegrp
 	my $helper;
 	my $port;
 	my $protocol;
+	my $delflag;
 	if (! -z $configsrvgrp){
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust srvgrp'});
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);

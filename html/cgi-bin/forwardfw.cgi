@@ -27,7 +27,7 @@
 # Now that the ccd extension is ready i am able to develop the main request.  #
 # Any feedback is appreciated.												  #
 #																			  #
-#																			  #
+#Copymaster																	  #
 ###############################################################################
 
 use strict;
@@ -45,6 +45,7 @@ unless (-d "${General::swroot}/forward") 			{ system("mkdir ${General::swroot}/f
 unless (-e "${General::swroot}/forward/settings")   { system("touch ${General::swroot}/forward/settings"); }
 unless (-e "${General::swroot}/forward/config")  	{ system("touch ${General::swroot}/forward/config"); }
 unless (-e "${General::swroot}/forward/input")  	{ system("touch ${General::swroot}/forward/input"); }
+unless (-e "${General::swroot}/forward/outgoing")  	{ system("touch ${General::swroot}/forward/outgoing"); }
 
 my %fwdfwsettings=();
 my %selected=() ;
@@ -60,6 +61,7 @@ my %customnetwork=();
 my %ccdhost=();
 my %configfwdfw=();
 my %configinputfw=();
+my %configoutgoingfw=();
 my %ipsecconf=();
 my %color=();
 my %mainsettings=();
@@ -69,6 +71,7 @@ my %ovpnsettings=();
 my %ipsecsettings=();
 my %aliases=();
 my @p2ps = ();
+
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -81,6 +84,7 @@ my $configipsec		= "${General::swroot}/vpn/config";
 my $configipsecrw	= "${General::swroot}/vpn/settings";
 my $configfwdfw		= "${General::swroot}/forward/config";
 my $configinput		= "${General::swroot}/forward/input";
+my $configoutgoing	= "${General::swroot}/forward/outgoing";
 my $configovpn		= "${General::swroot}/ovpn/settings";
 my $p2pfile			= "${General::swroot}/forward/p2protocols";
 my $errormessage='';
@@ -110,27 +114,39 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 {
 	&General::readhasharray("$configfwdfw", \%configfwdfw);
 	&General::readhasharray("$configinput", \%configinputfw);
+	&General::readhasharray("$configinput", \%configoutgoingfw);
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
+
 	#check if we change an forward rule to an external access
 	if(	$fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{'oldgrp2a'} ne 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
-		$fwdfwsettings{'updatefwrule'}='';
-		$fwdfwsettings{'config'}=$configfwdfw;
-		$fwdfwsettings{'nobase'}='on';
-		&deleterule;
-		&checkcounter(0,0,$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
-		&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
+		&changerule($configfwdfw);
 	}
-	#check if we change an external access rule to an forward
+	#check if we change an forward rule to an outgoing
+	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' && $fwdfwsettings{'oldgrp1b'} ne 'IPFire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
+		&changerule($configfwdfw);
+	}
+	#check if we change an external access rule to a forward
 	if(	$fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
-		$fwdfwsettings{'updatefwrule'}='';
-		$fwdfwsettings{'config'}=$configinput;
-		$fwdfwsettings{'nobase'}='on';
-		&deleterule;
-		&checkcounter(0,0,$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
-		&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-	}	
+		&changerule($configinput);
+	}
+	#check if we change an external access rule to a outgoing
+	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' &&  $fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
+		&changerule($configinput);
+	}
+	#check if we change an outgoing rule to a forward
+	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'IPFire' && $fwdfwsettings{'oldgrp1b'} eq 'IPFire' && $fwdfwsettings{'grp2'} ne 'ipfire' &&$fwdfwsettings{'updatefwrule'} eq 'on'){
+		&changerule($configoutgoing);
+	}
+	#check if we change an outgoing rule to a external access
+	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'IPFire' && $fwdfwsettings{'oldgrp1b'} eq 'IPFire' && $fwdfwsettings{'grp2'} eq 'ipfire' &&  $fwdfwsettings{'updatefwrule'} eq 'on'){
+		&changerule($configoutgoing);
+	}
+	#check if we try to break rules
+	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' && $fwdfwsettings{'grp2'} eq 'ipfire'){
+		$errormessage.=$Lang::tr{'fwdfw err same'};
+	}
 	#INPUT part
 	if($fwdfwsettings{'grp2'} eq 'ipfire'){
 		$fwdfwsettings{'config'}=$configinput;
@@ -205,6 +221,59 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		#print"ALT: $fwdfwsettings{'oldgrp2a'} $fwdfwsettings{'oldgrp2b'}	NEU:	$fwdfwsettings{'grp2'} $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
 		#print"ALT: $fwdfwsettings{'oldgrp3a'} $fwdfwsettings{'oldgrp3b'}	NEU:	$fwdfwsettings{'grp3'} $fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 		#print"DIENSTE Checkalt:$fwdfwsettings{'oldusesrv'}  DIENSTE Checkneu:$fwdfwsettings{'USESRV'}    DIENST ALT:$fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'}   DIENST NEU:$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
+	}elsif($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire'){
+		$fwdfwsettings{'config'}=$configoutgoing;
+		$fwdfwsettings{'chain'} = 'OUTGOINGFW';
+		my $maxkey=&General::findhasharraykey(\%configoutgoingfw);
+		if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
+			foreach my $key (sort keys %configoutgoingfw){
+				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}"
+					eq "$configoutgoingfw{$key}[0],$configoutgoingfw{$key}[2],$configoutgoingfw{$key}[3],$configoutgoingfw{$key}[4],$configoutgoingfw{$key}[5],$configoutgoingfw{$key}[6],$configoutgoingfw{$key}[7],$configoutgoingfw{$key}[8],$configoutgoingfw{$key}[9],$configoutgoingfw{$key}[10],$configoutgoingfw{$key}[11],$configoutgoingfw{$key}[12],$configoutgoingfw{$key}[13],$configoutgoingfw{$key}[14],$configoutgoingfw{$key}[15],$configoutgoingfw{$key}[17],$configoutgoingfw{$key}[18],$configoutgoingfw{$key}[19],$configoutgoingfw{$key}[20],$configoutgoingfw{$key}[21],$configoutgoingfw{$key}[22],$configoutgoingfw{$key}[23],$configoutgoingfw{$key}[24],$configoutgoingfw{$key}[25],$configoutgoingfw{$key}[26],$configoutgoingfw{$key}[27]"){
+						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+						if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && &validremark($fwdfwsettings{'ruleremark'})){
+							$errormessage='';
+						}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && !&validremark($fwdfwsettings{'ruleremark'})){
+							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
+						}
+						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
+							$fwdfwsettings{'nosave'} = 'on';
+						}
+				}
+			}
+		}
+		#check Rulepos on new Rule
+		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
+			$fwdfwsettings{'oldrulenumber'}=$maxkey;
+			foreach my $key (sort keys %configoutgoingfw){
+				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}"
+					eq "$configoutgoingfw{$key}[0],$configoutgoingfw{$key}[2],$configoutgoingfw{$key}[3],$configoutgoingfw{$key}[4],$configoutgoingfw{$key}[5],$configoutgoingfw{$key}[6],$configoutgoingfw{$key}[7],$configoutgoingfw{$key}[8],$configoutgoingfw{$key}[9],$configoutgoingfw{$key}[10],$configoutgoingfw{$key}[11],$configoutgoingfw{$key}[12],$configoutgoingfw{$key}[13],$configoutgoingfw{$key}[14],$configoutgoingfw{$key}[15],$configoutgoingfw{$key}[17],$configoutgoingfw{$key}[18],$configoutgoingfw{$key}[19],$configoutgoingfw{$key}[20],$configoutgoingfw{$key}[21],$configoutgoingfw{$key}[22],$configoutgoingfw{$key}[23],$configoutgoingfw{$key}[24],$configoutgoingfw{$key}[25],$configoutgoingfw{$key}[26],$configoutgoingfw{$key}[27]"){
+						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+				}
+			}
+		}
+		#check if we just close a rule
+		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'} ) {
+			if($fwdfwsettings{'nosave'} eq 'on' && $fwdfwsettings{'updatefwrule'} eq 'on'){
+				$fwdfwsettings{'nosave2'} = 'on';
+				$errormessage='';
+			}
+		}
+		#increase counters
+		&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
+		&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
+		if($fwdfwsettings{'oldusesrv'} eq '' &&  $fwdfwsettings{'USESRV'} eq 'ON'){
+			&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
+		}elsif ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'oldusesrv'} eq 'ON') {
+			&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},0,0);
+		}elsif ($fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldgrp3b'} ne $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'updatefwrule'} eq 'on'){
+			&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
+		}
+		if ($fwdfwsettings{'nobase'} eq 'on'){
+			&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
+		}
+		if ($fwdfwsettings{'nosave2'} ne 'on'){
+			&saverule(\%configoutgoingfw,$configoutgoing);
+		}
 	}else{
 		#FORWARD PART
 		$fwdfwsettings{'config'}=$configfwdfw;
@@ -405,6 +474,18 @@ if ($fwdfwsettings{'ACTION'} eq '')
 	&base;
 }
 ###  Functions  ####
+sub changerule
+{
+	my $oldchain=shift;
+	$fwdfwsettings{'updatefwrule'}='';
+	$fwdfwsettings{'config'}=$oldchain;
+	$fwdfwsettings{'nobase'}='on';
+	&deleterule;
+	&checkcounter(0,0,$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
+	&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
+}
+
+
 sub pos_up
 {
 	my %uphash=();
@@ -1233,6 +1314,7 @@ END
 END
 		foreach my $network (sort keys %defaultNetworks)
 		{
+			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
 			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp2'}} eq $defaultNetworks{$network}{'NAME'});
 			print ">$network</option>";
@@ -1728,6 +1810,7 @@ sub viewtablerule
 	&viewtablenew(\%configfwdfw,$configfwdfw,'',"DMZ" );
 	&viewtablenew(\%configfwdfw,$configfwdfw,'',"WLAN" );
 	&viewtablenew(\%configinputfw,$configinput,"",$Lang::tr{'external access'} );
+	&viewtablenew(\%configoutgoingfw,$configoutgoing,"","Outgoing" );
 }
 sub viewtablenew
 {
