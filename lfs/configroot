@@ -117,8 +117,11 @@ $(TARGET) :
 	echo  "DROPINPUT=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPFORWARD=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "FWPOLICY=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "FWPOLICY1=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPPORTSCAN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "DROPOUTGOING=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "POLICY=MODE2"		>> $(CONFIG_ROOT)/forward/settings
+	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/forward/settings
 	
 	# set rules.pl executable
 	chmod 755 $(CONFIG_ROOT)/forward/bin/rules.pl
