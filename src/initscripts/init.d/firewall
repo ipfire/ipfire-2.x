@@ -153,6 +153,7 @@ case "$1" in
 	/sbin/iptables -N OUTGOINGFW
 	/sbin/iptables -N OUTGOINGFWMAC
 	/sbin/iptables -A OUTPUT -j OUTGOINGFW
+	/sbin/iptables -A OUTGOINGFW -m state --state ESTABLISHED,RELATED -j ACCEPT
 	/sbin/iptables -t nat -N CUSTOMPREROUTING
 	/sbin/iptables -t nat -A PREROUTING -j CUSTOMPREROUTING
 	/sbin/iptables -t nat -N CUSTOMPOSTROUTING
@@ -295,10 +296,13 @@ case "$1" in
 	#/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
 	
 	#POLICY CHAIN
-	/sbin/iptables -N POLICY
-	/sbin/iptables -A FORWARD -j POLICY
+	/sbin/iptables -N POLICYFWD
+	/sbin/iptables -A FORWARD -j POLICYFWD
+	/sbin/iptables -N POLICYOUT
+	/sbin/iptables -A OUTPUT -j POLICYOUT
 	
-	/usr/sbin/firewall-forward-policy
+	
+	/usr/sbin/firewall-policy
 	;;
   startovpn)  
 	# run openvpn

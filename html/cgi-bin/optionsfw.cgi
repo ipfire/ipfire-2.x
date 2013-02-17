@@ -31,6 +31,7 @@ $settings{'DISABLEPING'} = 'NO';
 $settings{'DROPNEWNOTSYN'} = 'on';
 $settings{'DROPINPUT'} = 'on';
 $settings{'DROPFORWARD'} = 'on';
+$settings{'DROPOUTGOING'} = 'on';
 $settings{'DROPPORTSCAN'} = 'on';
 $settings{'DROPWIRELESSINPUT'} = 'on';
 $settings{'DROPWIRELESSFORWARD'} = 'on';
@@ -72,6 +73,9 @@ $checked{'DROPINPUT'}{$settings{'DROPINPUT'}} = "checked='checked'";
 $checked{'DROPFORWARD'}{'off'} = '';
 $checked{'DROPFORWARD'}{'on'} = '';
 $checked{'DROPFORWARD'}{$settings{'DROPFORWARD'}} = "checked='checked'";
+$checked{'DROPOUTGOING'}{'off'} = '';
+$checked{'DROPOUTGOING'}{'on'} = '';
+$checked{'DROPOUTGOING'}{$settings{'DROPOUTGOING'}} = "checked='checked'";
 $checked{'DROPPORTSCAN'}{'off'} = '';
 $checked{'DROPPORTSCAN'}{'on'} = '';
 $checked{'DROPPORTSCAN'}{$settings{'DROPPORTSCAN'}} = "checked='checked'";
@@ -102,6 +106,8 @@ print <<END
 																						<input type='radio' name='DROPINPUT' value='off' $checked{'DROPINPUT'}{'off'} /> off</td></tr>
 <tr><td align='left' width='60%'>$Lang::tr{'drop forward'}</td><td align='left'>on <input type='radio' name='DROPFORWARD' value='on' $checked{'DROPFORWARD'}{'on'} />/
 																						<input type='radio' name='DROPFORWARD' value='off' $checked{'DROPFORWARD'}{'off'} /> off</td></tr>
+<tr><td align='left' width='60%'>$Lang::tr{'drop outgoing'}</td><td align='left'>on <input type='radio' name='DROPOUTGOING' value='on' $checked{'DROPOUTGOING'}{'on'} />/
+																						<input type='radio' name='DROPOUTGOING' value='off' $checked{'DROPOUTGOING'}{'off'} /> off</td></tr>																						
 <tr><td align='left' width='60%'>$Lang::tr{'drop portscan'}</td><td align='left'>on <input type='radio' name='DROPPORTSCAN' value='on' $checked{'DROPPORTSCAN'}{'on'} />/
 																						<input type='radio' name='DROPPORTSCAN' value='off' $checked{'DROPPORTSCAN'}{'off'} /> off</td></tr>
 <tr><td align='left' width='60%'>$Lang::tr{'drop wirelessinput'}</td><td align='left'>on <input type='radio' name='DROPWIRELESSINPUT' value='on' $checked{'DROPWIRELESSINPUT'}{'on'} />/
@@ -123,6 +129,10 @@ print <<END
 <tr><td align='left' width='60%'>$Lang::tr{'drop action'}</td><td><select name='FWPOLICY'>
 <option value='DROP' $selected{'FWPOLICY'}{'DROP'}>DROP</option>
 <option value='REJECT' $selected{'FWPOLICY'}{'REJECT'}>REJECT</option></select>
+</td></tr>
+<tr><td align='left' width='60%'>$Lang::tr{'drop action1'}</td><td><select name='FWPOLICY1'>
+<option value='DROP' $selected{'FWPOLICY1'}{'DROP'}>DROP</option>
+<option value='REJECT' $selected{'FWPOLICY1'}{'REJECT'}>REJECT</option></select>
 </td></tr>
 </table>
 

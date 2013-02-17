@@ -42,6 +42,7 @@ our %sourcehash=();
 our %targethash=();
 my @timeframe=();
 my %configinputfw=();
+my %configoutgoingfw=();
 my %aliases=();
 my @DPROT=();
 my @p2ps=();
@@ -51,6 +52,7 @@ require "${General::swroot}/forward/bin/firewall-lib.pl";
 
 my $configfwdfw		= "${General::swroot}/forward/config";
 my $configinput	    = "${General::swroot}/forward/input";
+my $configoutgoing  = "${General::swroot}/forward/outgoing";
 my $p2pfile			= "${General::swroot}/forward/p2protocols";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
@@ -66,6 +68,7 @@ my $CHAIN="FORWARDFW";
 &General::readhash("$netsettings", \%defaultNetworks);
 &General::readhasharray($configfwdfw, \%configfwdfw);
 &General::readhasharray($configinput, \%configinputfw);
+&General::readhasharray($configoutgoing, \%configoutgoingfw);
 &General::readhasharray($configgrp, \%customgrp);
 &General::get_aliases(\%aliases);
 
@@ -95,7 +98,7 @@ if($param eq 'flush'){
 	if($MODE eq '0'){
 		if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
 			&p2pblock;
-			system ("/usr/sbin/firewall-forward-policy"); 
+			system ("/usr/sbin/firewall-policy"); 
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
 			$defaultNetworks{'GREEN_NETMASK'}=&General::iporsubtocidr($defaultNetworks{'GREEN_NETMASK'});
 			$green="$defaultNetworks{'GREEN_ADDRESS'}/$defaultNetworks{'GREEN_NETMASK'}";
@@ -117,7 +120,7 @@ if($param eq 'flush'){
 			
 			&p2pblock;
 			system ("iptables -A $CHAIN -m state --state NEW -j ACCEPT");
-			system ("/usr/sbin/firewall-forward-policy");
+			system ("/usr/sbin/firewall-policy");
 		}
 	}
 }
@@ -125,6 +128,7 @@ sub flush
 {
 	system ("iptables -F FORWARDFW");
 	system ("iptables -F INPUTFW");
+	system ("iptables -F OUTGOINGFW");
 }			
 sub preparerules
 {
@@ -133,6 +137,9 @@ sub preparerules
 	}
 	if (! -z  "${General::swroot}/forward/input"){
 		&buildrules(\%configinputfw);
+	}
+	if (! -z  "${General::swroot}/forward/outgoing"){
+		&buildrules(\%configoutgoingfw);
 	}
 }
 sub buildrules
@@ -160,7 +167,6 @@ sub buildrules
 					}
 				}
 			}elsif($$hash{$key}[5] eq 'ipfire'){
-
 				if($$hash{$key}[6] eq 'Default IP'){
 					open(FILE, "/var/ipfire/red/local-ipaddress") or die 'Unable to open config file.';
 					$targethash{$key}[0]= <FILE>;
@@ -217,7 +223,7 @@ sub buildrules
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
 								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
-									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac'){ $STAG="-s";}
+									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}
 									if ($$hash{$key}[17] eq 'ON'){
 										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
 									}
@@ -237,7 +243,7 @@ sub buildrules
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
 								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
-									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac'){ $STAG="-s";}
+									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}
 									if ($$hash{$key}[17] eq 'ON'){
 										system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
 									}

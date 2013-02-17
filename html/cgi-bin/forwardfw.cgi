@@ -105,8 +105,10 @@ my $ipgrp="${General::swroot}/outgoing/groups";
 if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'save'})
 {
 	my $MODE = $fwdfwsettings{'POLICY'};
+	my $MODE1 = $fwdfwsettings{'POLICY1'};
 	%fwdfwsettings = ();
 	$fwdfwsettings{'POLICY'} = "$MODE";
+	$fwdfwsettings{'POLICY1'} = "$MODE1";
 	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
 	&reread_rules;
 }
@@ -114,7 +116,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 {
 	&General::readhasharray("$configfwdfw", \%configfwdfw);
 	&General::readhasharray("$configinput", \%configinputfw);
-	&General::readhasharray("$configinput", \%configoutgoingfw);
+	&General::readhasharray("$configoutgoing", \%configoutgoingfw);
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
@@ -219,6 +221,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		}
 		#check Rulepos on new Rule
 		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
+			print"CHECK OUTGOING DOPPELTE REGEL<br>";
 			$fwdfwsettings{'oldrulenumber'}=$maxkey;
 			foreach my $key (sort keys %configoutgoingfw){
 				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}"
@@ -356,8 +359,29 @@ if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'reset'})
 	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
 	unless (-e "${General::swroot}/forward/config")  	{ system("touch ${General::swroot}/forward/config"); }
 	unless (-e "${General::swroot}/forward/input")  	{ system("touch ${General::swroot}/forward/input"); }
+	my $MODE1=$fwdfwsettings{'POLICY1'};
 	%fwdfwsettings = ();
 	$fwdfwsettings{'POLICY'}='MODE2';
+	$fwdfwsettings{'POLICY1'}=$MODE1;
+	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
+	&reread_rules;
+
+}
+if ($fwdfwsettings{'ACTION'} eq 'resetoutgoing')
+{
+	&General::readhasharray("$configoutgoing", \%configoutgoingfw);
+	foreach my $key (sort keys %configoutgoingfw){
+		&checkcounter($configoutgoingfw{$key}[3],$configoutgoingfw{$key}[4],,);
+		&checkcounter($configoutgoingfw{$key}[5],$configoutgoingfw{$key}[6],,);
+		&checkcounter($configoutgoingfw{$key}[14],$configoutgoingfw{$key}[15],,);
+	}
+	system("rm ${General::swroot}/forward/outgoing");
+	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
+	unless (-e "${General::swroot}/forward/outgoing")  	{ system("touch ${General::swroot}/forward/outgoing"); }
+	my $MODE=$fwdfwsettings{'POLICY'};
+	%fwdfwsettings = ();
+	$fwdfwsettings{'POLICY'}=$MODE;
+	$fwdfwsettings{'POLICY1'}='MODE2';
 	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
 	&reread_rules;
 
@@ -578,6 +602,8 @@ sub base
 {
 	if ($fwdfwsettings{'POLICY'} eq 'MODE1'){ $selected{'POLICY'}{'MODE1'} = 'selected'; } else { $selected{'POLICY'}{'MODE1'} = ''; }
 	if ($fwdfwsettings{'POLICY'} eq 'MODE2'){ $selected{'POLICY'}{'MODE2'} = 'selected'; } else { $selected{'POLICY'}{'MODE2'} = ''; }
+	if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){ $selected{'POLICY1'}{'MODE1'} = 'selected'; } else { $selected{'POLICY1'}{'MODE1'} = ''; }
+	if ($fwdfwsettings{'POLICY1'} eq 'MODE2'){ $selected{'POLICY1'}{'MODE2'} = 'selected'; } else { $selected{'POLICY1'}{'MODE2'} = ''; }
 	&hint;
 	&addrule;
 	&p2pblock;
@@ -585,8 +611,8 @@ sub base
 print <<END;
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%' border='0'>
+		<tr><td colspan='3' style='font-weight:bold;color:red;'>FORWARD </td></tr>
 		<tr><td colspan='3'>$Lang::tr{'fwdfw pol text'}</td></tr>
-		
 		<tr><td colspan='3'><hr /></td></tr>
 		<tr><td width='15%' align='left'>	<select name='POLICY' style="width: 100px">
 		<option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
@@ -595,6 +621,21 @@ print <<END;
 	    <td width='45%' align='left'>
 END
 	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value='$Lang::tr{'reset'}' />";
+	print "</table></form>";
+	print"<br><br>";
+	print <<END;
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='100%' border='0'>
+		<tr><td colspan='3' style='font-weight:bold;color:red;'>OUTGOING </td></tr>
+		<tr><td colspan='3'>$Lang::tr{'fwdfw pol text1'}</td></tr>
+		<tr><td colspan='3'><hr /></td></tr>
+		<tr><td width='15%' align='left'>	<select name='POLICY1' style="width: 100px">
+		<option value='MODE1' $selected{'POLICY1'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
+		<option value='MODE2' $selected{'POLICY1'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
+	    <td width='45%' align='left'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></form>
+	    <td width='45%' align='left'>
+END
+	print "$Lang::tr{'outgoing firewall reset'}: <form method='post' action='$ENV{'SCRIPT_NAME'}' style='display:inline'><input type='submit' value='$Lang::tr{'reset'}' /><input type='hidden' name='ACTION' value='resetoutgoing' />";
 	print "</table></form>";
 	&Header::closebox();
 }
@@ -1805,8 +1846,6 @@ sub viewtablerule
 {
 	
 	&viewtablenew(\%configfwdfw,$configfwdfw,$Lang::tr{'fwdfw rules'},"Forward" );
-	&viewtablenew(\%configfwdfw,$configfwdfw,'',"DMZ" );
-	&viewtablenew(\%configfwdfw,$configfwdfw,'',"WLAN" );
 	&viewtablenew(\%configinputfw,$configinput,"",$Lang::tr{'external access'} );
 	&viewtablenew(\%configoutgoingfw,$configoutgoing,"","Outgoing" );
 }
@@ -1818,23 +1857,7 @@ sub viewtablenew
 	my $title1=shift;
 	my $go='';
 	&General::readhasharray("$config", $hash);
-	#check if there are DMZ entries
-	if ($title1 eq 'DMZ'){
-		foreach my $key (keys %$hash){
-			if ($$hash{$key}[4] eq 'ORANGE'){$go='on';last} 
-		}
-	}elsif($title1 eq 'WLAN'){
-		foreach my $key (keys %$hash){
-			if ($$hash{$key}[4] eq 'BLUE'){$go='on';last} 
-		}
-	}elsif($title1 eq 'Forward'){
-		foreach my $key (keys %$hash){
-			if (($$hash{$key}[4] ne 'ORANGE' && $$hash{$key}[4] ne 'BLUE')){$go='on';last} 
-		}
-	}elsif( ! -z $config){
-		$go='on';
-	}
-	if($go ne ''){
+	if( ! -z $config){
 		&Header::openbox('100%', 'left',$title);
 		my $count=0;
 		my ($gif,$log);
@@ -1844,13 +1867,9 @@ sub viewtablenew
 		my @tmpsrc=();
 		my $coloryellow='';
 		print"<b>$title1</b><br>";
-		print"<table width='100%' border='0' cellspacing='1' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
+		print"<table width='100%' style='border: 1px solid  #000000;' rules='none'; padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
 		print"<tr><td align='center' width='1%'><b>#</td><td width='1%'></td><td align='center' ><b>$Lang::tr{'fwdfw source'}</td><td width='1%'><b>Log</td><td align='center' width='20%'><b>$Lang::tr{'fwdfw target'}</td><td align='center'><b>$Lang::tr{'protocol'}</b></td><td align='center' width='70%'><b>$Lang::tr{'remark'}</td><td align='center' colspan='3' width='1%'><b>$Lang::tr{'fwdfw action'}</td></tr>";
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
-			#check if we have a FORWARDFW OR DMZ RULE
-			if ($title1 eq 'DMZ' && ($$hash{$key}[4] ne 'ORANGE')){next;}
-			if ($title1 eq 'WLAN' && ($$hash{$key}[4] ne 'BLUE')){next;}
-			if ($title1 eq 'Forward' && ($$hash{$key}[4] eq 'ORANGE' || $$hash{$key}[4] eq 'BLUE')){next;}
 			@tmpsrc=();
 			#check if vpn hosts/nets have been deleted
 			if($$hash{$key}[3] =~ /ipsec/i || $$hash{$key}[3] =~ /ovpn/i){

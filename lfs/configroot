@@ -105,7 +105,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/forwardfw/convert-outgoingfw	/usr/sbin/convert-outgoingfw
 	cp $(DIR_SRC)/config/forwardfw/p2protocols		$(CONFIG_ROOT)/forward/p2protocols
 	cp $(DIR_SRC)/config/forwardfw/firewall-lib.pl	$(CONFIG_ROOT)/forward/bin/firewall-lib.pl
-	cp $(DIR_SRC)/config/forwardfw/firewall-forward-policy	/usr/sbin/firewall-forward-policy
+	cp $(DIR_SRC)/config/forwardfw/firewall-policy	/usr/sbin/firewall-policy
 	cp $(DIR_SRC)/config/fwhosts/icmp-types			$(CONFIG_ROOT)/fwhosts/icmp-types
 	cp $(DIR_SRC)/config/fwhosts/customservices		$(CONFIG_ROOT)/fwhosts/customservices
 	# Oneliner configfiles

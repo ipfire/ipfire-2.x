@@ -221,6 +221,8 @@ sub get_std_net_ip
 		return "$ovpnsettings{'DOVPN_SUBNET'}";
 	}elsif($val =~ /IPsec/i){
 		return "$ipsecsettings{'RW_NET'}";
+	}elsif($val eq 'IPFire'){
+		return ;
 	}
 }
 sub get_net_ip
