@@ -198,7 +198,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		#print"ALT: $fwdfwsettings{'oldgrp2a'} $fwdfwsettings{'oldgrp2b'}	NEU:	$fwdfwsettings{'grp2'} $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
 		#print"ALT: $fwdfwsettings{'oldgrp3a'} $fwdfwsettings{'oldgrp3b'}	NEU:	$fwdfwsettings{'grp3'} $fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 		#print"DIENSTE Checkalt:$fwdfwsettings{'oldusesrv'}  DIENSTE Checkneu:$fwdfwsettings{'USESRV'}    DIENST ALT:$fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'}   DIENST NEU:$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
-	}elsif($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire'){
+	}elsif($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' ){
 		# OUTGOING PART
 		$fwdfwsettings{'config'}=$configoutgoing;
 		$fwdfwsettings{'chain'} = 'OUTGOINGFW';

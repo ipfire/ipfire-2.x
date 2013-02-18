@@ -22,7 +22,7 @@ if [ "$POLICY" == "MODE1" ]; then
 		fi
 fi
 if [ "$POLICY1" == "MODE1" ]; then
-	/sbin/iptables -A OUTGOINGFW -m state --state ESTABLISHED,RELATED -j ACCEPT
+	/sbin/iptables -I OUTGOINGFW 1 -m state --state ESTABLISHED,RELATED -j ACCEPT
 		if [ "$FWPOLICY1" == "REJECT" ]; then
 			if [ "$DROPOUTGOING" == "on" ]; then
 				/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "REJECT_OUTPUT"
