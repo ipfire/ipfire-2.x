@@ -1000,7 +1000,7 @@ if ($fwhostsettings{'ACTION'} eq $Lang::tr{'fwhost newservicegrp'})
 if ($fwhostsettings{'ACTION'} eq 'changegrpremark')
 {
 	&General::readhasharray("$configgrp", \%customgrp);
-	if ($fwhostsettings{'oldrem'} ne $fwhostsettings{'newrem'} && &validremark($fwhostsettings{'newrem'})){
+	if ($fwhostsettings{'oldrem'} ne $fwhostsettings{'newrem'} && (&validremark($fwhostsettings{'newrem'}) || $fwhostsettings{'newrem'} eq '')){
 		foreach my $key (sort keys %customgrp)
 			{
 				#$customgrp{$key}[1]=~ s/\|/,/g;
@@ -1028,7 +1028,7 @@ if ($fwhostsettings{'ACTION'} eq 'changegrpremark')
 if ($fwhostsettings{'ACTION'} eq 'changesrvgrpremark')
 {
 	&General::readhasharray("$configsrvgrp", \%customservicegrp );
-	if ($fwhostsettings{'oldsrvrem'} ne $fwhostsettings{'newsrvrem'} && &validremark($fwhostsettings{'newsrvrem'})){
+	if ($fwhostsettings{'oldsrvrem'} ne $fwhostsettings{'newsrvrem'} && (&validremark($fwhostsettings{'newsrvrem'}) || $fwhostsettings{'newsrvrem'} eq '')){
 		foreach my $key (sort keys %customservicegrp)
 			{
 				#$customservicegrp{$key}[1]=~ s/\|/,/g;
@@ -1468,7 +1468,7 @@ sub viewtablegrp
 					{
 						$delflag++;
 					}
-					if($delflag > 0){
+					if($delflag > 1){
 						last;
 					}
 				}
@@ -1753,7 +1753,7 @@ sub plausicheck
 	
 	my $edit=shift;
 	#check hostname
-	if (!&General::validhostname($fwhostsettings{'HOSTNAME'}))
+	if (!&validhostname($fwhostsettings{'HOSTNAME'}))
 	{
 		$errormessage=$errormessage.$Lang::tr{'fwhost err name'};
 		$fwhostsettings{'BLK_IP'}='readonly';
@@ -1957,6 +1957,7 @@ sub rules
 {
 	if (!-f "${General::swroot}/fwhosts/reread"){
 		system("touch ${General::swroot}/fwhosts/reread");
+		system("touch ${General::swroot}/forward/reread");
 	}
 }
 sub reread_rules
@@ -1964,6 +1965,7 @@ sub reread_rules
 	system ("/usr/local/bin/forwardfwctrl");
 	if ( -f "${General::swroot}/fwhosts/reread"){
 		system("rm ${General::swroot}/fwhosts/reread");
+		system("rm ${General::swroot}/forward/reread");
 	}
 	
 }
@@ -2062,7 +2064,7 @@ sub validhostname
 	if (length ($hostname) < 1 || length ($hostname) > 63) {
 		return 0;}
 	# Only valid characters are a-z, A-Z, 0-9 and -
-	if ($hostname !~ /^[a-zA-ZäöüÖÄÜ0-9-_()\/\s]*$/) {
+	if ($hostname !~ /^[a-zA-ZäöüÖÄÜ0-9-_.;()\/\s]*$/) {
 		return 0;}
 	# First character can only be a letter or a digit
 	if (substr ($hostname, 0, 1) !~ /^[a-zA-ZöäüÖÄÜ0-9]*$/) {

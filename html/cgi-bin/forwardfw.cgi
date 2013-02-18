@@ -2110,6 +2110,7 @@ sub rules
 {
 	if (!-f "${General::swroot}/forward/reread"){
 		system("touch ${General::swroot}/forward/reread");
+		system("touch ${General::swroot}/fwhosts/reread");
 	}
 }
 sub reread_rules
@@ -2117,6 +2118,7 @@ sub reread_rules
 	system("/usr/local/bin/forwardfwctrl");
 	if ( -f "${General::swroot}/forward/reread"){
 		system("rm ${General::swroot}/forward/reread");
+		system("rm ${General::swroot}/fwhosts/reread");
 	}
 }
 &Header::closebigbox();
