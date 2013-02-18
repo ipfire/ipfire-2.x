@@ -1593,6 +1593,8 @@ sub viewtableservicegrp
 				$grpname=$customservicegrp{$key}[0];
 				if ($customservicegrp{$key}[2] eq "none"){
 					$customservicegrp{$key}[2]=$Lang::tr{'fwhost empty'};
+					$port='';
+					$protocol='';
 				}
 				$remark="$customservicegrp{$key}[1]";
 				if($count >=2){print"</table>";}
