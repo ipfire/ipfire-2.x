@@ -119,7 +119,7 @@ if ($fwhostsettings{'ACTION'} eq 'updatehost')
 				$ip = $customhost{$key}[2];
 			}
 			$fwhostsettings{'orgip'} = $ip;
-			$fwhostsettings{'count'} = $customhost{$key}[3];
+			$fwhostsettings{'count'} = $customhost{$key}[4];
 			delete $customhost{$key};
 			&General::writehasharray("$confighost", \%customhost);
 		}
@@ -400,6 +400,10 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 				$errormessage=$Lang::tr{'fwhost err mac'};
 			}
 		}
+		#check remark
+		if ($fwhostsettings{'HOSTREMARK'} ne '' && !&validremark($fwhostsettings{'HOSTREMARK'})){
+			$errormessage=$Lang::tr{'fwhost err remark'};
+		}
 		#CHECK IP-PART
 		if ($fwhostsettings{'type'} eq 'ip'){
 			#check for subnet
@@ -426,7 +430,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 		if($fwhostsettings{'actualize'} eq 'on' && $fwhostsettings{'newhost'} ne 'on' && $errormessage){
 			$fwhostsettings{'actualize'} = '';
 			my $key = &General::findhasharraykey (\%customhost);
-			foreach my $i (0 .. 3) { $customhost{$key}[$i] = "";}
+			foreach my $i (0 .. 4) { $customhost{$key}[$i] = "";}
 			$customhost{$key}[0] = $fwhostsettings{'orgname'} ;
 			$customhost{$key}[1] = $fwhostsettings{'type'} ;
 			if($customhost{$key}[1] eq 'ip'){
@@ -434,7 +438,8 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			}else{
 				$customhost{$key}[2] = $fwhostsettings{'orgip'};
 			}
-			$customhost{$key}[3] = $fwhostsettings{'count'};
+			$customhost{$key}[3] = $fwhostsettings{'HOSTREMARK'};
+			$customhost{$key}[4] = $fwhostsettings{'count'};
 			&General::writehasharray("$confighost", \%customhost);
 			undef %customhost;
 		} 
@@ -480,7 +485,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 				}
 			}
 			my $key = &General::findhasharraykey (\%customhost);
-			foreach my $i (0 .. 3) { $customhost{$key}[$i] = "";}
+			foreach my $i (0 .. 4) { $customhost{$key}[$i] = "";}
 			$customhost{$key}[0] = $fwhostsettings{'HOSTNAME'} ;
 			$customhost{$key}[1] = $fwhostsettings{'type'} ;
 			if ($fwhostsettings{'type'} eq 'ip'){
@@ -492,12 +497,14 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 				$customhost{$key}[2] = $fwhostsettings{'IP'};
 			}
 			if($fwhostsettings{'newhost'} eq 'on'){$count=0;}
-			$customhost{$key}[3] = $count;
+			$customhost{$key}[3] = $fwhostsettings{'HOSTREMARK'};
+			$customhost{$key}[4] =$count;
 			&General::writehasharray("$confighost", \%customhost);
 			undef %customhost;
 			$fwhostsettings{'HOSTNAME'}='';
 			$fwhostsettings{'IP'}='';
 			$fwhostsettings{'type'}='';
+			 $fwhostsettings{'HOSTREMARK'}='';
 			#check if we need to update rules while host was edited
 			if($needrules eq 'on'){
 				&rules;
@@ -527,10 +534,6 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 	#check remark
 	if ($rem ne '' && !&validremark($rem) && $fwhostsettings{'update'} ne 'on'){
 		$errormessage.=$Lang::tr{'fwhost err remark'};
-		$fwhostsettings{'update'} = 'on';
-		$fwhostsettings{'remark'}=$fwhostsettings{'oldremark'};
-		&addgrp;
-		&viewtablegrp;
 	}
 	if ($fwhostsettings{'update'} eq 'on'){
 		#check standard networks
@@ -667,7 +670,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		}elsif($updcounter eq 'host'){
 			foreach my $key (keys %customhost) {
 				if ($customhost{$key}[0] eq $fwhostsettings{'CUST_SRC_HOST'}){
-					$customhost{$key}[3]=$customhost{$key}[3]+1;
+					$customhost{$key}[4]=$customhost{$key}[3]+1;
 				}
 			}
 			&General::writehasharray("$confighost", \%customhost);
@@ -872,7 +875,7 @@ if ($fwhostsettings{'ACTION'} eq 'deletegrphost')
 				&General::readhasharray("$confighost", \%customhost);
 				foreach my $key1 (keys %customhost){
 					if ($customhost{$key1}[0] eq $customgrp{$key}[2]){
-						$customhost{$key1}[3] = $customhost{$key1}[3]-1;
+						$customhost{$key1}[4] = $customhost{$key1}[4]-1;
 						last;
 					}
 				}
@@ -884,7 +887,7 @@ if ($fwhostsettings{'ACTION'} eq 'deletegrphost')
 		}
 	}
 	&General::writehasharray("$configgrp", \%customgrp);
-	&rules;
+	if ($fwhostsettings{'grpcnt'} > 0){&rules;}
 	if ($fwhostsettings{'update'} eq 'on'){
 		$fwhostsettings{'remark'}= $grpremark;
 		$fwhostsettings{'grp_name'}=$grpname;
@@ -1114,6 +1117,7 @@ END
 	if ($fwhostsettings{'type'} eq 'mac'){print "<option value='mac' selected >MAC</option>";}else{print "<option value='mac' >MAC</option>";}
 	print<<END;
 	</option></select></td><td align='right' width='15%'>IP/MAC:</td><td align='right'><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} ></td></tr>
+	<tr><td>$Lang::tr{'remark'}:</td><td colspan='5'><input type='TEXT' name='HOSTREMARK' value='$fwhostsettings{'HOSTREMARK'}' size='64'></td></tr>
 	<tr><td colspan='7'><br><br><b>$Lang::tr{'fwhost attention'}</b><br>$Lang::tr{'fwhost macwarn'}</td></tr>
 	<tr><td colspan='7'><hr></hr></td></tr>
 END
@@ -1406,7 +1410,7 @@ sub viewtablehost
 		}else{
 		print<<END;
 		<table border='0' width='100%'>
-		<tr><td align='center'><b>$Lang::tr{'name'}</td><td align='center'><b>$Lang::tr{'fwhost ip_mac'}</td><td align='center'><b>$Lang::tr{'used'}</td><td></td><td width='3%'></td></tr>
+		<tr><td align='center'><b>$Lang::tr{'name'}</td><td align='center'><b>$Lang::tr{'fwhost ip_mac'}</td><td align='center'><b>$Lang::tr{'remark'}</td><td align='center'><b>$Lang::tr{'used'}</td><td></td><td width='3%'></td></tr>
 END
 	}
 		my $count=0;
@@ -1416,17 +1420,18 @@ END
 			}elsif ($count % 2){ print" <tr bgcolor='$color{'color22'}'>";}
 			else{            print" <tr bgcolor='$color{'color20'}'>";}
 			my ($ip,$sub)=split(/\//,$customhost{$key}[2]);
-			$customhost{$key}[3]=~s/\s+//g;
+			$customhost{$key}[4]=~s/\s+//g;
 			print<<END;
-			<td width='40%'><form method='post'>$customhost{$key}[0]</td><td width='50%'>$ip</td><td align='center'>$customhost{$key}[3]x</td>
+			<td width='20%'><form method='post'>$customhost{$key}[0]</td><td width='20%'>$ip</td><td width='50%'>$customhost{$key}[3]</td><td align='center'>$customhost{$key}[4]x</td>
 			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='edithost' />
 			<input type='hidden' name='HOSTNAME' value='$customhost{$key}[0]' />
 			<input type='hidden' name='IP' value='$ip' />
 			<input type='hidden' name='type' value='$customhost{$key}[1]' />
+			<input type='hidden' name='HOSTREMARK' value='$customhost{$key}[3]' />
 			</td></form>
 END
-			if($customhost{$key}[3] == '0')
+			if($customhost{$key}[4] == '0')
 			{
 				print"<td width='1%'><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delhost' /><input type='hidden' name='key' value='$customhost{$key}[0]' /></td></form></tr>";
 			}else{
@@ -1511,7 +1516,7 @@ sub viewtablegrp
 			if ($delflag > '1' && $ip ne ''){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}
-			print"<input type='hidden' name='ACTION' value='deletegrphost'><input type='hidden' name='update' value='$fwhostsettings{'update'}'><input type='hidden' name='delhost' value='$grpname,$remark,$customgrp{$key}[2],$customgrp{$key}[3]'></form></td></tr>";
+			print"<input type='hidden' name='ACTION' value='deletegrphost'><input type='hidden' name='grpcnt' value='$customgrp{$key}[4]'><input type='hidden' name='update' value='$fwhostsettings{'update'}'><input type='hidden' name='delhost' value='$grpname,$remark,$customgrp{$key}[2],$customgrp{$key}[3]'></form></td></tr>";
 			
 			$helper=$customgrp{$key}[0];
 			$number++;
@@ -1750,7 +1755,6 @@ sub deletefromgrp
 }
 sub plausicheck
 {
-	
 	my $edit=shift;
 	#check hostname
 	if (!&validhostname($fwhostsettings{'HOSTNAME'}))
@@ -1761,7 +1765,6 @@ sub plausicheck
 		if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}=$edit;}
 	}
 	#check if name collides with CCD Netname
-
 	&General::readhasharray("$configccdnet", \%ccdnet);
 	foreach my $key (keys %ccdnet) {
 		if($ccdnet{$key}[0] eq $fwhostsettings{'HOSTNAME'}){
@@ -1771,7 +1774,6 @@ sub plausicheck
 			last;
 		}
 	}
-
 	#check if IP collides with CCD NetIP
 	if ($fwhostsettings{'type'} ne 'mac'){
 		&General::readhasharray("$configccdnet", \%ccdnet);
@@ -1786,9 +1788,6 @@ sub plausicheck
 			}
 		}
 	}
-	
-	
-	
 	#check if name collides with CCD Hostname
 	&General::readhasharray("$configccdhost", \%ccdhost);
 	foreach my $key (keys %ccdhost) {
@@ -1838,8 +1837,6 @@ sub plausicheck
 	{
 		$errormessage=$errormessage."<br>".$Lang::tr{'fwhost err ipcheck'};
 	}
-		
-	
 	return;
 }
 sub getipforgroup
@@ -2083,13 +2080,13 @@ sub validremark
 	if (length ($remark) < 1 || length ($remark) > 255) {
 		return 0;}
 	# Only valid characters are a-z, A-Z, 0-9 and -
-	if ($remark !~ /^[a-zäöüA-ZÖÄÜ0-9-.:;_\/\s]*$/) {
+	if ($remark !~ /^[a-zäöüA-ZÖÄÜ0-9-.:;()_\/\s]*$/) {
 		return 0;}
 	# First character can only be a letter or a digit
 	if (substr ($remark, 0, 1) !~ /^[a-zäöüA-ZÖÄÜ0-9]*$/) {
 		return 0;}
 	# Last character can only be a letter or a digit
-	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9.]*$/) {
+	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9).]*$/) {
 		return 0;}
 	return 1;
 }
