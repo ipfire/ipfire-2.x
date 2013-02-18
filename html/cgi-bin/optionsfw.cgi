@@ -92,6 +92,8 @@ $checked{'DROPSAMBA'}{'off'} = '';
 $checked{'DROPSAMBA'}{'on'} = '';
 $checked{'DROPSAMBA'}{$settings{'DROPSAMBA'}} = "checked='checked'";
 $selected{'FWPOLICY'}{$settings{'FWPOLICY'}}= 'selected';
+$selected{'FWPOLICY1'}{$settings{'FWPOLICY1'}}= 'selected';
+
 
 &Header::openbox('100%', 'center', $Lang::tr{'options fw'});
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
