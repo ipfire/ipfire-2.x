@@ -772,7 +772,7 @@
 'dpd action' => 'Dead Peer Detection action',
 'driver' => 'Driver',
 'drop action' => 'Default behaviour of (forward) firewall in mode "Blocked"',
-'drop action' => 'Default behaviour of (outgoing) firewall in mode "Blocked"',
+'drop action1' => 'Default behaviour of (outgoing) firewall in mode "Blocked"',
 'drop input' => 'Log dropped input pakets',
 'drop newnotsyn' => 'Log dropped new not syn pakets',
 'drop forward' => 'Log dropped forward pakets',
