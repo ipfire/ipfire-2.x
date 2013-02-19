@@ -998,7 +998,7 @@
 'fwhost err ipwithsub'	=> 'Bitte IP Adresse OHNE Subnetzmaske eingeben',
 'fwhost err partofnet'	=> 'Dieses Netzwerk ist Teil eines bereits existierenden Netzwerks', 
 'fwhost err port'		=> 'Port muss gefüllt sein',
-'fwhost err remark'		=> 'Bemerkung ungültig. Erlaubte Zeichen: a-z, A-Z, 0-9 Leerzeichen und Bindestrich',
+'fwhost err remark'		=> 'Bemerkung ungültig. Erlaubte Zeichen: a-z, A-Z, 0-9 und -_();|.',
 'fwhost err srvexist'	=> 'Dieser Dienst ist bereits in der Gruppe',
 'fwhost err srv exists'	=> 'Ein Service mit diesem Namen existiert bereits',
 'fwhost err sub32'		=> 'Bitte Host hinzufügen. Dieses Subnetz ist kein Netzwerk',

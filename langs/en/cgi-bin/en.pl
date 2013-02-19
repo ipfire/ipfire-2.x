@@ -1023,7 +1023,7 @@
 'fwhost err ipwithsub'	=> 'Please provide IP address WITHOUT subnetmask',
 'fwhost err partofnet'	=> 'This network is part of an already existing one', 
 'fwhost err port'		=> 'Port is empty',
-'fwhost err remark'		=> 'Remark invalid. Allowed: a-z, A-Z, 0-9 space and minus',
+'fwhost err remark'		=> 'Remark invalid. Allowed: a-z, A-Z, 0-9 and -_();|.',
 'fwhost err srvexist'	=> 'Dieser Dienst ist bereits in der Gruppe',
 'fwhost err srv exists'	=> 'A Service with this name already exists',
 'fwhost err sub32'		=> 'Please add single host. This subnet is no network',
