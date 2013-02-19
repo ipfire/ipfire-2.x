@@ -96,7 +96,8 @@ if ($fwhostsettings{'ACTION'} eq 'updatenet' )
 			$fwhostsettings{'orgname'} 		= $customnetwork{$key}[0];
 			$fwhostsettings{'orgip'} 		= $customnetwork{$key}[1];
 			$fwhostsettings{'orgsub'} 		= $customnetwork{$key}[2];
-			$fwhostsettings{'count'} 		= $customnetwork{$key}[3];
+			$fwhostsettings{'netremark'}	= $customnetwork{$key}[3];
+			$fwhostsettings{'count'} 		= $customnetwork{$key}[4];
 			delete $customnetwork{$key};
 			
 		}
@@ -230,6 +231,11 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			$fwhostsettings{'NOCHECK'}	='false';
 			$fwhostsettings{'error'}	='on';
 		}
+		#check remark
+		if ($fwhostsettings{'NETREMARK'} ne '' && !&validremark($fwhostsettings{'NETREMARK'})){
+			$errormessage=$Lang::tr{'fwhost err remark'};
+			$fwhostsettings{'error'}	='on';
+		}
 		#check if subnet is sigle host
 		if(&General::iporsubtocidr($fwhostsettings{'SUBNET'}) eq '32')
 		{
@@ -280,17 +286,19 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			$customnetwork{$key}[0] = $fwhostsettings{'orgname'} ;
 			$customnetwork{$key}[1] = $fwhostsettings{'orgip'} ;
 			$customnetwork{$key}[2] = $fwhostsettings{'orgsub'};
-			$customnetwork{$key}[3] = $fwhostsettings{'count'};
+			$customnetwork{$key}[3] = $fwhostsettings{'NETREMARK'};
+			$customnetwork{$key}[4] = $fwhostsettings{'count'};
 			&General::writehasharray("$confignet", \%customnetwork);
 			undef %customnetwork;
 		} 			
 		if (!$errormessage){
+			
 			&General::readhasharray("$confignet", \%customnetwork);
 			if ($fwhostsettings{'ACTION'} eq 'updatenet'){
 				if ($fwhostsettings{'update'} == '0'){
 					foreach my $key (keys %customnetwork) {
 						if($customnetwork{$key}[0] eq $fwhostsettings{'orgname'}){
-							$count=$customnetwork{$key}[3];
+							$count=$customnetwork{$key}[4];
 							delete $customnetwork{$key};
 							last;
 						}
@@ -340,22 +348,24 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 				}
 			}					
 			my $key = &General::findhasharraykey (\%customnetwork);
-			foreach my $i (0 .. 3) { $customnetwork{$key}[$i] = "";}
+			foreach my $i (0 .. 4) { $customnetwork{$key}[$i] = "";}
 			$fwhostsettings{'SUBNET'}	= &General::iporsubtocidr($fwhostsettings{'SUBNET'});
 			$customnetwork{$key}[0] 	= $fwhostsettings{'HOSTNAME'};
 			#convert ip when leading '0' in byte
-			$fwhostsettings{'IP'}=&General::ip2dec($fwhostsettings{'IP'});
-			$fwhostsettings{'IP'}=&General::dec2ip($fwhostsettings{'IP'});
+			$fwhostsettings{'IP'}		=&General::ip2dec($fwhostsettings{'IP'});
+			$fwhostsettings{'IP'}		=&General::dec2ip($fwhostsettings{'IP'});
 			$customnetwork{$key}[1] 	= &General::getnetworkip($fwhostsettings{'IP'},$fwhostsettings{'SUBNET'}) ;
 			$customnetwork{$key}[2] 	= &General::iporsubtodec($fwhostsettings{'SUBNET'}) ;
 			if($fwhostsettings{'newnet'} eq 'on'){$count=0;}
-			$customnetwork{$key}[3] 	= $count;
+			$customnetwork{$key}[3] 	= $fwhostsettings{'NETREMARK'};
+			$customnetwork{$key}[4] 	= $count;
 			&General::writehasharray("$confignet", \%customnetwork);
 			$fwhostsettings{'IP'}=$fwhostsettings{'IP'}."/".&General::iporsubtodec($fwhostsettings{'SUBNET'});
 			undef %customnetwork;
 			$fwhostsettings{'HOSTNAME'}='';
 			$fwhostsettings{'IP'}='';
 			$fwhostsettings{'SUBNET'}='';
+			$fwhostsettings{'NETREMARK'}='';
 			#check if an edited net affected groups and need to reload rules
 			if ($needrules eq 'on'){
 				&rules;
@@ -662,7 +672,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		if($updcounter eq 'net'){
 			foreach my $key (keys %customnetwork) {
 				if($customnetwork{$key}[0] eq $fwhostsettings{'CUST_SRC_NET'}){
-					$customnetwork{$key}[3] = $customnetwork{$key}[3]+1;
+					$customnetwork{$key}[4] = $customnetwork{$key}[4]+1;
 					last;
 				}
 			}
@@ -1092,6 +1102,7 @@ sub addnet
 	print<<END;
 	<table border='0' width='100%'><form method='post' style='display:inline'  >
 	<tr><td>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'}><script>document.getElementById('textbox1').focus()</script></td><td>$Lang::tr{'fwhost netaddress'}</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14'></td><td align='right'>$Lang::tr{'netmask'}:</td><td align='right'><input type='TEXT' name='SUBNET' value='$fwhostsettings{'SUBNET'}' $fwhostsettings{'BLK_IP'} size='14'></td></tr>
+	<tr><td>$Lang::tr{'remark'}:</td><td colspan='5'><input type='TEXT' name='NETREMARK' value='$fwhostsettings{'NETREMARK'}' size='64'></td></tr>
 	<tr><td colspan='6'><hr></hr></td></tr><tr>
 END
 	if ($fwhostsettings{'ACTION'} eq 'editnet' || $fwhostsettings{'error'} eq 'on')
@@ -1363,7 +1374,7 @@ sub viewtablenet
 		}else{
 			print<<END;
 			<table border='0' width='100%'>
-			<tr><td align='center'><b>$Lang::tr{'name'}</td><td align='center'><b>$Lang::tr{'fwhost netaddress'}</td><td align='center'><b>$Lang::tr{'netmask'}</td><td align='center'><b>$Lang::tr{'used'}</td><td></td><td width='3%'></td></tr>
+			<tr><td align='center'><b>$Lang::tr{'name'}</td><td align='center'><b>$Lang::tr{'fwhost netaddress'}</td><td align='center'><b>$Lang::tr{'netmask'}</td><td align='center'><b>$Lang::tr{'remark'}</td><td align='center'><b>$Lang::tr{'used'}</td><td></td><td width='3%'></td></tr>
 END
 		}
 		my $count=0;
@@ -1378,15 +1389,16 @@ END
 				print" <tr bgcolor='$color{'color20'}'>";
 			}
 			print<<END;
-			<td width='40%'><form method='post'>$customnetwork{$key}[0]</td><td width=25%'>$customnetwork{$key}[1]</td><td width='25%'>$customnetwork{$key}[2]</td><td align='center'>$customnetwork{$key}[3]x</td>
+			<td width='20%'><form method='post'>$customnetwork{$key}[0]</td><td width=15%'>$customnetwork{$key}[1]</td><td width='15%'>$customnetwork{$key}[2]</td><td width='40%'>$customnetwork{$key}[3]</td><td align='center'>$customnetwork{$key}[4]x</td>
 			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='editnet'>
 			<input type='hidden' name='HOSTNAME' value='$customnetwork{$key}[0]' />
 			<input type='hidden' name='IP' value='$customnetwork{$key}[1]' />
 			<input type='hidden' name='SUBNET' value='$customnetwork{$key}[2]' />
+			<input type='hidden' name='NETREMARK' value='$customnetwork{$key}[3]' />
 			</td></form>
 END
-			if($customnetwork{$key}[3] == '0')
+			if($customnetwork{$key}[4] == '0')
 			{
 				print"<td width='1%'><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delnet' /><input type='hidden' name='key' value='$customnetwork{$key}[0]' /></td></form></tr>";
 			}else{
