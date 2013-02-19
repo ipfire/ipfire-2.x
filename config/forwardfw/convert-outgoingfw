@@ -249,6 +249,7 @@ sub process_rules
 	&General::readhash($fwdfwsettings,\%fwdsettings);
 	if($fwdsettings{'POLICY'} ne $outsettings{'POLICY'}){
 		$fwdsettings{'POLICY'}=$outsettings{'POLICY'};
+		$fwdsettings{'POLICY1'}='MODE2';
 		&General::writehash($fwdfwsettings,\%fwdsettings);
 	}
 	#open LOG
