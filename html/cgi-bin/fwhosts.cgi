@@ -286,7 +286,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			$customnetwork{$key}[0] = $fwhostsettings{'orgname'} ;
 			$customnetwork{$key}[1] = $fwhostsettings{'orgip'} ;
 			$customnetwork{$key}[2] = $fwhostsettings{'orgsub'};
-			$customnetwork{$key}[3] = $fwhostsettings{'NETREMARK'};
+			$customnetwork{$key}[3] = $fwhostsettings{'orgnetremark'};
 			$customnetwork{$key}[4] = $fwhostsettings{'count'};
 			&General::writehasharray("$confignet", \%customnetwork);
 			undef %customnetwork;
@@ -448,7 +448,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			}else{
 				$customhost{$key}[2] = $fwhostsettings{'orgip'};
 			}
-			$customhost{$key}[3] = $fwhostsettings{'HOSTREMARK'};
+			$customhost{$key}[3] = $fwhostsettings{'orgremark'};
 			$customhost{$key}[4] = $fwhostsettings{'count'};
 			&General::writehasharray("$confighost", \%customhost);
 			undef %customhost;
@@ -1099,6 +1099,7 @@ sub addnet
 	&showmenu;
 	&Header::openbox('100%', 'left', $Lang::tr{'fwhost addnet'});
 	$fwhostsettings{'orgname'}=$fwhostsettings{'HOSTNAME'};
+	$fwhostsettings{'orgnetremark'}=$fwhostsettings{'NETREMARK'};
 	print<<END;
 	<table border='0' width='100%'><form method='post' style='display:inline'  >
 	<tr><td>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'}><script>document.getElementById('textbox1').focus()</script></td><td>$Lang::tr{'fwhost netaddress'}:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14'></td><td align='right'>$Lang::tr{'netmask'}:</td><td align='right'><input type='TEXT' name='SUBNET' value='$fwhostsettings{'SUBNET'}' $fwhostsettings{'BLK_IP'} size='14'></td></tr>
@@ -1107,7 +1108,7 @@ sub addnet
 END
 	if ($fwhostsettings{'ACTION'} eq 'editnet' || $fwhostsettings{'error'} eq 'on')
 	{
-		print "<td colspan='6' align='right' ><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='updatenet'><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newnet' value='$fwhostsettings{'newnet'}'>";
+		print "<td colspan='6' align='right' ><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='updatenet'><input type='hidden' name='orgnetremark' value='$fwhostsettings{'orgnetremark'}' ><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newnet' value='$fwhostsettings{'newnet'}'>";
 	}else{
 		print "<td colspan='6' align='right'><input type='submit' value='$Lang::tr{'save'}' style='min-width:100px;'/><input type='hidden' name='ACTION' value='savenet'><input type='hidden' name='newnet' value='on'>";
 	}	
@@ -1120,6 +1121,7 @@ sub addhost
 	&showmenu;
 	&Header::openbox('100%', 'left', $Lang::tr{'fwhost addhost'});
 	$fwhostsettings{'orgname'}=$fwhostsettings{'HOSTNAME'};
+	$fwhostsettings{'orgremark'}=$fwhostsettings{'HOSTREMARK'};
 	print<<END;
 	<table border='0' width='100%'><form method='post' style='display:inline'>
 	<tr><td>$Lang::tr{'name'}:</td><td width='35%'><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} ><script>document.getElementById('textbox1').focus()</script></td><td><select name='type'>
@@ -1136,7 +1138,7 @@ END
 	if ($fwhostsettings{'ACTION'} eq 'edithost' || $fwhostsettings{'error'} eq 'on')
 	{
 		
-		print "	<td colspan='6' align='right'><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'/><input type='hidden' name='ACTION' value='updatehost'><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newhost' value='$fwhostsettings{'newhost'}'></form>";
+		print "	<td colspan='6' align='right'><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'/><input type='hidden' name='ACTION' value='updatehost'><input type='hidden' name='orgremark' value='$fwhostsettings{'orgremark'}' ><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newhost' value='$fwhostsettings{'newhost'}'></form>";
 	}else{
 		print "	<td colspan='6' align='right'><input type='submit' name='savehost' value='$Lang::tr{'save'}'style='min-width:100px;' /><input type='hidden' name='ACTION' value='savehost' /><input type='hidden' name='newhost' value='on'>";
 	}	
