@@ -1035,7 +1035,7 @@
 'fwhost ip_mac'			=> 'IP/MAC address',
 'fwhost ipsec host'		=> 'IPsec clients:',
 'fwhost ipsec net'		=> 'IPsec networks:',
-'fwhost netaddress'		=> 'Network address:',
+'fwhost netaddress'		=> 'Network address',
 'fwhost newnet' 		=> 'Network',
 'fwhost newhost' 		=> 'Host',
 'fwhost newgrp' 		=> 'Address grouping',

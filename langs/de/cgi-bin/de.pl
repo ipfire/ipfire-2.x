@@ -1010,6 +1010,7 @@
 'fwhost ip_mac'			=> 'IP/MAC Adresse',
 'fwhost ipsec host'		=> 'IpSec Clients:',
 'fwhost ipsec net'		=> 'IpSec Netzwerke:',
+'fwhost netaddress'		=> 'Netzwerk Adresse',
 'fwhost newnet' 		=> 'Netz Einstellungen',
 'fwhost newhost' 		=> 'Adress Einstellungen',
 'fwhost newgrp' 		=> 'Adress Gruppierung',
