@@ -1070,6 +1070,8 @@
 'from warn email bad' => 'From e-mail address is not valid',
 'fw blue' => 'Firewall options for BLUE interface',
 'fw default drop' => 'Firewall policy',
+'fw settings' => 'Firewall settings',
+'fw settings color' => 'Show colors in ruletable',
 'fw logging' => 'Firewall logging',
 'g.dtm' => 'TO BE REMOVED',
 'g.lite' => 'TO BE REMOVED',

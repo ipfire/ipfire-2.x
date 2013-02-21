@@ -91,6 +91,9 @@ $checked{'DROPPROXY'}{$settings{'DROPPROXY'}} = "checked='checked'";
 $checked{'DROPSAMBA'}{'off'} = '';
 $checked{'DROPSAMBA'}{'on'} = '';
 $checked{'DROPSAMBA'}{$settings{'DROPSAMBA'}} = "checked='checked'";
+$checked{'SHOWCOLORS'}{'off'} = '';
+$checked{'SHOWCOLORS'}{'on'} = '';
+$checked{'SHOWCOLORS'}{$settings{'SHOWCOLORS'}} = "checked='checked'";
 $selected{'FWPOLICY'}{$settings{'FWPOLICY'}}= 'selected';
 $selected{'FWPOLICY1'}{$settings{'FWPOLICY1'}}= 'selected';
 
@@ -117,7 +120,8 @@ print <<END
 <tr><td align='left' width='60%'>$Lang::tr{'drop wirelessforward'}</td><td align='left'>on <input type='radio' name='DROPWIRELESSFORWARD' value='on' $checked{'DROPWIRELESSFORWARD'}{'on'} />/
 																						<input type='radio' name='DROPWIRELESSFORWARD' value='off' $checked{'DROPWIRELESSFORWARD'}{'off'} /> off</td></tr>
 </table>
-<br />
+<br/>
+
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw blue'}</b></td></tr>
 <tr><td align='left' width='60%'>$Lang::tr{'drop proxy'}</td><td align='left'>on <input type='radio' name='DROPPROXY' value='on' $checked{'DROPPROXY'}{'on'} />/
@@ -125,6 +129,12 @@ print <<END
 <tr><td align='left' width='60%'>$Lang::tr{'drop samba'}</td><td align='left'>on <input type='radio' name='DROPSAMBA' value='on' $checked{'DROPSAMBA'}{'on'} />/
 																						<input type='radio' name='DROPSAMBA' value='off' $checked{'DROPSAMBA'}{'off'} /> off</td></tr>
 </table>
+<br>
+<table width='95%' cellspacing='0'>
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw settings'}</b></td></tr>
+<tr><td align='left' width='60%'>$Lang::tr{'fw settings color'}</td><td align='left'>on <input type='radio' name='SHOWCOLORS' value='on' $checked{'SHOWCOLORS'}{'on'} />/
+																						<input type='radio' name='SHOWCOLORS' value='off' $checked{'SHOWCOLORS'}{'off'} /> off</td></tr>
+</table>																						
 <br />
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw default drop'}</b></td></tr>

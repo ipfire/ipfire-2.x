@@ -70,6 +70,7 @@ my %icmptypes=();
 my %ovpnsettings=();
 my %ipsecsettings=();
 my %aliases=();
+my %optionsfw=();
 
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
@@ -85,14 +86,16 @@ my $configfwdfw		= "${General::swroot}/forward/config";
 my $configinput		= "${General::swroot}/forward/input";
 my $configoutgoing	= "${General::swroot}/forward/outgoing";
 my $configovpn		= "${General::swroot}/ovpn/settings";
+my $fwoptions 		= "${General::swroot}/optionsfw/settings";
 my $errormessage='';
 my $hint='';
 my $ipgrp="${General::swroot}/outgoing/groups";
-
+my $tdcolor='';
 
 &General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash($fwoptions, \%optionsfw); 
 
 &Header::showhttpheaders();
 &Header::getcgihash(\%fwdfwsettings);
@@ -133,9 +136,9 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
 					eq "$configinputfw{$key}[0],$configinputfw{$key}[2],$configinputfw{$key}[3],$configinputfw{$key}[4],$configinputfw{$key}[5],$configinputfw{$key}[6],$configinputfw{$key}[7],$configinputfw{$key}[8],$configinputfw{$key}[9],$configinputfw{$key}[10],$configinputfw{$key}[11],$configinputfw{$key}[12],$configinputfw{$key}[13],$configinputfw{$key}[14],$configinputfw{$key}[15],$configinputfw{$key}[17],$configinputfw{$key}[18],$configinputfw{$key}[19],$configinputfw{$key}[20],$configinputfw{$key}[21],$configinputfw{$key}[22],$configinputfw{$key}[23],$configinputfw{$key}[24],$configinputfw{$key}[25],$configinputfw{$key}[26],$configinputfw{$key}[27]"){
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-						if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && &validremark($fwdfwsettings{'ruleremark'})){
+						if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} eq ''){
 							$errormessage='';
-						}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && !&validremark($fwdfwsettings{'ruleremark'})){
+						}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
 							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
 						}
 						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
@@ -206,9 +209,9 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}"
 					eq "$configoutgoingfw{$key}[0],$configoutgoingfw{$key}[2],$configoutgoingfw{$key}[3],$configoutgoingfw{$key}[4],$configoutgoingfw{$key}[5],$configoutgoingfw{$key}[6],$configoutgoingfw{$key}[7],$configoutgoingfw{$key}[8],$configoutgoingfw{$key}[9],$configoutgoingfw{$key}[10],$configoutgoingfw{$key}[11],$configoutgoingfw{$key}[12],$configoutgoingfw{$key}[13],$configoutgoingfw{$key}[14],$configoutgoingfw{$key}[15],$configoutgoingfw{$key}[17],$configoutgoingfw{$key}[18],$configoutgoingfw{$key}[19],$configoutgoingfw{$key}[20],$configoutgoingfw{$key}[21],$configoutgoingfw{$key}[22],$configoutgoingfw{$key}[23],$configoutgoingfw{$key}[24],$configoutgoingfw{$key}[25],$configoutgoingfw{$key}[26],$configoutgoingfw{$key}[27]"){
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-						if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && &validremark($fwdfwsettings{'ruleremark'})){
+						if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} eq ''){
 							$errormessage='';
-						}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && !&validremark($fwdfwsettings{'ruleremark'})){
+						}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
 							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
 						}
 						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
@@ -262,9 +265,9 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'}" 
 					eq "$configfwdfw{$key}[0],$configfwdfw{$key}[2],$configfwdfw{$key}[3],$configfwdfw{$key}[4],$configfwdfw{$key}[5],$configfwdfw{$key}[6],$configfwdfw{$key}[7],$configfwdfw{$key}[8],$configfwdfw{$key}[9],$configfwdfw{$key}[10],$configfwdfw{$key}[11],$configfwdfw{$key}[12],$configfwdfw{$key}[13],$configfwdfw{$key}[14],$configfwdfw{$key}[15],$configfwdfw{$key}[17],$configfwdfw{$key}[18],$configfwdfw{$key}[19],$configfwdfw{$key}[20],$configfwdfw{$key}[21],$configfwdfw{$key}[22],$configfwdfw{$key}[23],$configfwdfw{$key}[24],$configfwdfw{$key}[25],$configfwdfw{$key}[26],$configfwdfw{$key}[27]"){
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-						if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && &validremark($fwdfwsettings{'ruleremark'})){
+						if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} eq ''){
 							$errormessage='';
-						}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && !&validremark($fwdfwsettings{'ruleremark'})){
+						}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
 							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
 						}
 						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
@@ -1817,7 +1820,7 @@ sub get_serviceports
 }
 sub viewtablerule
 {
-	
+	&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 	&viewtablenew(\%configfwdfw,$configfwdfw,$Lang::tr{'fwdfw rules'},"Forward" );
 	&viewtablenew(\%configinputfw,$configinput,"",$Lang::tr{'external access'} );
 	&viewtablenew(\%configoutgoingfw,$configoutgoing,"","Outgoing" );
@@ -1829,6 +1832,7 @@ sub viewtablenew
 	my $title=shift;
 	my $title1=shift;
 	my $go='';
+	&General::get_aliases(\%aliases);
 	&General::readhasharray("$config", $hash);
 	if( ! -z $config){
 		&Header::openbox('100%', 'left',$title);
@@ -1840,8 +1844,8 @@ sub viewtablenew
 		my @tmpsrc=();
 		my $coloryellow='';
 		print"<b>$title1</b><br>";
-		print"<table width='100%' style='border: 1px solid  #000000;' rules='none'; padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
-		print"<tr><td align='center' width='1%'><b>#</td><td width='1%'></td><td align='center' ><b>$Lang::tr{'fwdfw source'}</td><td width='1%'><b>Log</td><td align='center' width='20%'><b>$Lang::tr{'fwdfw target'}</td><td align='center'><b>$Lang::tr{'protocol'}</b></td><td align='center' width='70%'><b>$Lang::tr{'remark'}</td><td align='center' colspan='3' width='1%'><b>$Lang::tr{'fwdfw action'}</td></tr>";
+		print"<table width='100%' cellspacing='1'  rules='none'; padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
+		print"<tr><td align='center'><b>#</td><td ></td><td align='center'><b>$Lang::tr{'fwdfw source'}</td><td><b>Log</td><td align='center'><b>$Lang::tr{'fwdfw target'}</td><td align='center'><b>$Lang::tr{'protocol'}</b></td><td align='center'><b>$Lang::tr{'remark'}</td><td align='center' colspan='6'><b>$Lang::tr{'fwdfw action'}</td></tr>";
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
 			@tmpsrc=();
 			#check if vpn hosts/nets have been deleted
@@ -1887,14 +1891,15 @@ sub viewtablenew
 				$coloryellow='';
 			}elsif($coloryellow eq ''){
 				if ($count % 2){ 
-					print"<tr bgcolor='$color{'color22'}' >";
+					$color="$color{'color22'}";
 				}
 				else{
-					print"<tr bgcolor='$color{'color20'}' >";
+					$color="$color{'color20'}";
 				}
 			}
+			print"<tr bgcolor='$color' >";
 			print<<END;
-			<td align='right'>$key</td>
+			<td align='right' width='15'>$key</td>
 END
 			if ($$hash{$key}[0] eq 'ACCEPT'){
 				$ruletype='A';
@@ -1909,13 +1914,15 @@ END
 				$tooltip='REJECT';
 				$rulecolor=$color{'color16'};
 			}
-			print"<td bgcolor='$rulecolor' width='2%' align='center'><span title='$tooltip'><b>$ruletype</b></span></td>";
-			print"<td align='center' nowrap='nowrap'>";
+			print"<td bgcolor='$rulecolor' align='center' width='20'><span title='$tooltip'><b>$ruletype</b></span></td>";
+			&getcolor($$hash{$key}[4]);
+			print"<td align='center' width='160' $tdcolor>";
 			if ($$hash{$key}[3] eq 'std_net_src'){
 				print &get_name($$hash{$key}[4]);
 			}else{
 				print $$hash{$key}[4];
 			}
+			$tdcolor='';
 			&getsrcport(\%$hash,$key);
 			if ($$hash{$key}[17] eq 'ON'){
 				$log="/images/on.gif";
@@ -1925,14 +1932,15 @@ END
 			print<<END;
 			</td>
 			<form method='post'>
-			<td width='1%' align='left'><input type='image' img src='$log' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw togglelog'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'/>
+			<td align='left' width='25'><input type='image' img src='$log' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw togglelog'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'/>
 			<input type='hidden' name='key' value='$key' />
 			<input type='hidden' name='config' value='$config' />
 			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw togglelog'}' />
 			</td></form>
 END
+			&getcolor($$hash{$key}[6]);
 			print<<END;
-			<td align='center' nowrap='nowrap'>
+			<td align='center' width='160' $tdcolor>
 END
 			if ($$hash{$key}[5] eq 'std_net_tgt'){
 				print &get_name($$hash{$key}[6]);
@@ -1940,7 +1948,6 @@ END
 				print $$hash{$key}[6];
 			}
 			&gettgtport(\%$hash,$key);
-	################################################################################
 			print"</td>";
 			#Get Protocol
 			my $prot;
@@ -1956,66 +1963,6 @@ END
 				$prot=$Lang::tr{'all'};
 			}
 			print"<td align='center'>$prot</td>";
-			
-			print"<td width='20%'>$$hash{$key}[16]</td>";
-			
-			if($$hash{$key}[2] eq 'ON'){
-				$gif="/images/on.gif"
-				
-			}else{
-				$gif="/images/off.gif"
-			}
-			print<<END;
-			<form method='post'>
-			<td width='1%'><input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
-			<input type='hidden' name='key' value='$key' />
-			<input type='hidden' name='config' value='$config' />
-			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw toggle'}' />
-			</td></form>
-			<form method='post'>
-			<td  width='1%' ><input type='image' img src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'fwdfw edit'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
-			<input type='hidden' name='key' value='$key' />
-			<input type='hidden' name='config' value='$config' />
-			<input type='hidden' name='ACTION' value='editrule' />
-			</td></form></td>
-			<form method='post'>
-			<td  width='1%'><input type='image' img src='/images/addblue.gif' alt='$Lang::tr{'fwdfw copy'}' title='$Lang::tr{'fwdfw copy'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
-			<input type='hidden' name='key' value='$key' />
-			<input type='hidden' name='config' value='$config' />
-			<input type='hidden' name='ACTION' value='copyrule' />
-			</td></form></td>
-			<form method='post'>
-			<td width='1%' ><input type='image' img src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'fwdfw delete'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'   />
-			<input type='hidden' name='key' value='$key' />
-			<input type='hidden' name='config' value='$config' />
-			<input type='hidden' name='ACTION' value='deleterule' />
-			</td></form></td>
-END
-			if (exists $$hash{$key-1}){
-				print<<END;
-				<form method='post'>
-				<td width='1%'><input type='image' img src='/images/up.gif' alt='$Lang::tr{'fwdfw moveup'}' title='$Lang::tr{'fwdfw moveup'}'  style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
-				<input type='hidden' name='key' value='$key' />
-				<input type='hidden' name='config' value='$config' />
-				<input type='hidden' name='ACTION' value='moveup' />
-				</td></form></td>
-END
-			}else{
-				print"<td></td>";
-			}
-			if (exists $$hash{$key+1}){
-				print<<END;
-				<form method='post'>
-				<td  width='1%' ><input type='image' img src='/images/down.gif' alt='$Lang::tr{'fwdfw movedown'}' title='$Lang::tr{'fwdfw movedown'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
-				<input type='hidden' name='key' value='$key' />
-				<input type='hidden' name='config' value='$config' />
-				<input type='hidden' name='ACTION' value='movedown' />
-				</td></form></td></tr>
-END
-			}else{
-				print"<td></td></tr>";
-			}
-			#if timeframe set, print new line in table
 			if ($$hash{$key}[18] eq 'ON'){
 				my @days=();
 				if($$hash{$key}[19] ne ''){push (@days,$Lang::tr{'fwdfw wd_mon'});}
@@ -2027,14 +1974,113 @@ END
 				if($$hash{$key}[25] ne ''){push (@days,$Lang::tr{'fwdfw wd_sun'});}
 				my $weekdays=join(",",@days);
 				if (@days){
-					print"<tr bgcolor='#FFE4B5'><td colspan='6'>$Lang::tr{'fwdfw time'} ";
-					print"$weekdays";
-					print "&nbsp $Lang::tr{'fwdfw from'} $$hash{$key}[26] &nbsp $Lang::tr{'fwdfw till'} $$hash{$key}[27]</td><td colspan='8'></d></tr>";
+					print"<td align='center' width='100'>$weekdays &nbsp $$hash{$key}[26] - $$hash{$key}[27]</td>";
 				}
+			}else{
+					print"<td></td>";
+				}
+			if($$hash{$key}[2] eq 'ON'){
+				$gif="/images/on.gif"
+				
+			}else{
+				$gif="/images/off.gif"
 			}
+			print<<END;
+			<form method='post'>
+			<td width='25'><input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
+			<input type='hidden' name='key' value='$key' />
+			<input type='hidden' name='config' value='$config' />
+			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw toggle'}' />
+			</td></form>
+			<form method='post'>
+			<td  width='25' ><input type='image' img src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'fwdfw edit'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
+			<input type='hidden' name='key' value='$key' />
+			<input type='hidden' name='config' value='$config' />
+			<input type='hidden' name='ACTION' value='editrule' />
+			</td></form></td>
+			<form method='post'>
+			<td  width='25'><input type='image' img src='/images/addblue.gif' alt='$Lang::tr{'fwdfw copy'}' title='$Lang::tr{'fwdfw copy'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
+			<input type='hidden' name='key' value='$key' />
+			<input type='hidden' name='config' value='$config' />
+			<input type='hidden' name='ACTION' value='copyrule' />
+			</td></form></td>
+			<form method='post'>
+			<td width='25' ><input type='image' img src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'fwdfw delete'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'   />
+			<input type='hidden' name='key' value='$key' />
+			<input type='hidden' name='config' value='$config' />
+			<input type='hidden' name='ACTION' value='deleterule' />
+			</td></form></td>
+END
+			if (exists $$hash{$key-1}){
+				print<<END;
+				<form method='post'>
+				<td width='25'><input type='image' img src='/images/up.gif' alt='$Lang::tr{'fwdfw moveup'}' title='$Lang::tr{'fwdfw moveup'}'  style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
+				<input type='hidden' name='key' value='$key' />
+				<input type='hidden' name='config' value='$config' />
+				<input type='hidden' name='ACTION' value='moveup' />
+				</td></form></td>
+END
+			}else{
+				print"<td width='25'><input type='image' img src='/images/up.gif' style='visibility:hidden;'></td>";
+			}
+			if (exists $$hash{$key+1}){
+				print<<END;
+				<form method='post'>
+				<td width='25' ><input type='image' img src='/images/down.gif' alt='$Lang::tr{'fwdfw movedown'}' title='$Lang::tr{'fwdfw movedown'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
+				<input type='hidden' name='key' value='$key' />
+				<input type='hidden' name='config' value='$config' />
+				<input type='hidden' name='ACTION' value='movedown' />
+				</td></form></td></tr>
+END
+			}else{
+				print"<td width='25'><input type='image' img src='/images/down.gif' style='visibility:hidden;'></td></tr>";
+			}
+			#REMARK
+			print"<tr bgcolor='$color'><td colspan='13' style='border-bottom: 1px solid black'>";
+			print"<b>$Lang::tr{'remark'}:</b>&nbsp$$hash{$key}[16]</td></tr>";
 		}
 		print"</table>";
 		&Header::closebox();
+	}
+}
+sub getcolor
+{
+	my $val=shift;
+	if($optionsfw{'SHOWCOLORS'} eq 'on'){
+		foreach my $alias (sort keys %aliases)
+		{
+			if ($val eq $alias){
+				$tdcolor="style='border: 2px solid red;'";
+				return;
+			}
+		}
+		if ($val eq 'GREEN'){
+			$tdcolor="style='border: 2px solid green;'";
+		}elsif ($val eq 'ORANGE'){
+			$tdcolor="style='border: 2px solid orange;'";
+		}elsif ($val eq 'BLUE'){
+			$tdcolor="style='border: 2px solid blue;'";
+		}elsif ($val eq 'IPFire' ){
+			$tdcolor="style='border: 2px solid red;'";
+		}elsif($val =~ /^(.*?)\/(.*?)$/){
+			my ($sip,$scidr) = split ("/",$val);
+			if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
+				$tdcolor="style='border: 2px solid orange;'";
+			}
+			if ( &General::IpInSubnet($sip,$netsettings{'GREEN_ADDRESS'},$netsettings{'GREEN_NETMASK'})){
+				$tdcolor="style='border: 2px solid green;'";
+			}
+			if ( &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
+				$tdcolor="style='border: 2px solid blue;'";
+			}
+			if ( &General::IpInSubnet($sip,$netsettings{'RED_ADDRESS'},$netsettings{'RED_NETMASK'})){
+				$tdcolor="style='border: 2px solid red;'";
+			}
+		}elsif ($val eq 'Default IP'){
+			$tdcolor="style='border: 2px solid red;'";
+		}else{
+			$tdcolor='';
+		}
 	}
 }
 sub fillselect

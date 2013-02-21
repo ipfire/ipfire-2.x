@@ -1045,6 +1045,8 @@
 'from warn email bad' => 'Von Email Adresse ist nicht gültig',
 'fw blue' => 'Firewall Optionen für das Blaue Interface',
 'fw default drop' => 'Firewall Policy',
+'fw settings' => 'Firewall Einstellungen',
+'fw settings color' => 'Farben in Regeltabelle anzeigen',
 'fw logging' => 'Firewall Logging',
 'gateway' => 'Gateway',
 'gateway ip' => 'Gateway-IP',
