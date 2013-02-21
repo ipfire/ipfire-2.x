@@ -19,6 +19,7 @@ my $ovpnsettings	= "${General::swroot}/ovpn/settings";
 my $ovpnconfig		= "${General::swroot}/ovpn/ovpnconfig";
 my $ccdconfig		= "${General::swroot}/ovpn/ccd.conf";
 my $fwdfwconfig		= "${General::swroot}/forward/config";
+my $outfwconfig		= "${General::swroot}/forward/outgoing";
 my $fwdfwsettings	= "${General::swroot}/forward/settings";
 my @ipgroups = qx(ls $ipgrouppath);
 my @macgroups = qx(ls $macgrouppath);
@@ -30,7 +31,8 @@ my %groups=();
 my %settingsovpn=();
 my %configovpn=();
 my %ccdconf=();
-my %fwconf=();
+my %fwconfig=();
+my %fwconfigout=();
 my %fwdsettings=();
 &General::readhash($outfwsettings,\%outsettings);
 
@@ -246,17 +248,15 @@ sub check_grp
 }
 sub process_rules
 {
-	&General::readhash($fwdfwsettings,\%fwdsettings);
-	if($fwdsettings{'POLICY'} ne $outsettings{'POLICY'}){
-		if ($outsettings{'POLICY'} eq 'MODE0'){$outsettings{'POLICY'}='MODE2';}
-		$fwdsettings{'POLICY'}=$outsettings{'POLICY'};
-		&General::writehash($fwdfwsettings,\%fwdsettings);
-	}
-	#open LOG
-	if( -f "/var/log/converters/outgoingfw-convert.log"){unlink ("/var/log/converters/outgoingfw-convert.log");}
-	open (LOG, ">/var/log/converters/outgoingfw-convert.log") or die $!;
-
 	my ($type,$action,$active,$grp1,$source,$grp2,$useport,$port,$prot,$grp3,$target,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to);
+	print"uzlputz modus ist $outsettings{'POLICY'} \n";
+	&General::readhash($fwdfwsettings,\%fwdsettings);
+	if ($outsettings{'POLICY'} eq 'MODE0'){
+		$fwdfwsettings{'POLICY'}='MODE2';
+	}else{
+		$fwdsettings{'POLICY'}=$outsettings{'POLICY'};
+	}
+	&General::writehash($fwdfwsettings,\%fwdsettings);
 	if ($outsettings{'POLICY'} eq 'MODE1'){
 		$type='ALLOW';
 		$action='ACCEPT';
@@ -266,6 +266,9 @@ sub process_rules
 	}else{
 		return;
 	}
+	#open LOG
+	if( -f "/var/log/converters/outgoingfw-convert.log"){unlink ("/var/log/converters/outgoingfw-convert.log");}
+	open (LOG, ">/var/log/converters/outgoingfw-convert.log") or die $!;
 	open (DATEI, "<$outgoingrules");
 	my @lines = <DATEI>;
 	foreach my $rule (@lines)
@@ -320,8 +323,11 @@ sub process_rules
 				$grp1='std_net_src';
 				$source='ORANGE';
 			}elsif ($configline[2] eq 'red') {
-				print LOG "-> Rule not converted, is an outgoing rule.Please put it manually in /etc/sysconfig/firewall.local \n";
-				next;
+				$grp1='std_net_src';
+				$source='IPFire';
+				&General::readhash($fwdfwsettings,\%fwdsettings);
+				$fwdsettings{'POLICY1'}=$outsettings{'POLICY'};
+				&General::writehash($fwdfwsettings,\%fwdsettings);
 			}elsif ($configline[2] eq 'blue') {
 				$grp1='std_net_src';
 				$source='BLUE';
@@ -355,7 +361,6 @@ sub process_rules
 				$grp1='std_net_src';
 				$source='ALL';
 			}else{
-				#&General::readhasharray($configgroups,\%groups);
 				foreach my $key (sort keys %groups){
 					if($groups{$key}[0] eq $configline[2]){
 						$grp1='cust_grp_src';
@@ -423,16 +428,22 @@ sub process_rules
 			print LOG "-> Rule not converted because not for Firewall mode $outsettings{'POLICY'} (we are only converting for actual mode)\n";
 		}
 		&General::readhasharray($fwdfwconfig,\%fwconfig);
+		&General::readhasharray($outfwconfig,\%fwconfigout);
 		my $check;
+		my $chain;
 		foreach my $protocol (@prot){
+			if ($source eq 'IPFire'){
+				$chain='OUTGOINGFW';
+			}else{
+				$chain='FORWARDFW';
+			}
 			$protocol=uc($protocol);
-			print LOG "-> Converted: $action,FORWARDFW,$active,$grp1,$source,$grp2,$target,,,,,$useport,$protocol,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to\n";
+			print LOG "-> Converted: $action,$chain,$active,$grp1,$source,$grp2,$target,,,,,$useport,$protocol,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to\n";
 			#Put rules into system....
 			###########################
-			
 			#check for double rules
 			foreach my $key (sort keys %fwconfig){
-				if("$action,FORWARDFW,$active,$grp1,$source,$grp2,$target,,,,,$useport,$protocol,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to" 
+				if("$action,$chain,$active,$grp1,$source,$grp2,$target,,,,,$useport,$protocol,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to"
 					eq "$fwconfig{$key}[0],$fwconfig{$key}[1],$fwconfig{$key}[2],$fwconfig{$key}[3],$fwconfig{$key}[4],$fwconfig{$key}[5],$fwconfig{$key}[6],,,,,$fwconfig{$key}[11],$fwconfig{$key}[12],,$fwconfig{$key}[14],$fwconfig{$key}[15],$fwconfig{$key}[16],$fwconfig{$key}[17],$fwconfig{$key}[18],$fwconfig{$key}[19],$fwconfig{$key}[20],$fwconfig{$key}[21],$fwconfig{$key}[22],$fwconfig{$key}[23],$fwconfig{$key}[24],$fwconfig{$key}[25],$fwconfig{$key}[26],$fwconfig{$key}[27]"){
 						$check='on';
 						next;
@@ -452,33 +463,61 @@ sub process_rules
 						&General::writehasharray($configgroups,\%groups);
 					}
 				}
-				my $key = &General::findhasharraykey(\%fwconfig);
-				$fwconfig{$key}[0]	= $action;
-				$fwconfig{$key}[1] 	= "FORWARDFW";
-				$fwconfig{$key}[2] 	= $active;
-				$fwconfig{$key}[3] 	= $grp1;
-				$fwconfig{$key}[4] 	= $source;
-				$fwconfig{$key}[5] 	= $grp2;
-				$fwconfig{$key}[6] 	= $target;
-				$fwconfig{$key}[11] = $useport;
-				$fwconfig{$key}[12] = $protocol;
-				$fwconfig{$key}[14] = $grp3;
-				$fwconfig{$key}[15] = $port;
-				$fwconfig{$key}[16] = $remark;
-				$fwconfig{$key}[17] = $log;
-				$fwconfig{$key}[18] = $time;
-				$fwconfig{$key}[19] = $time_mon;
-				$fwconfig{$key}[20] = $time_tue;
-				$fwconfig{$key}[21] = $time_wed;
-				$fwconfig{$key}[22] = $time_thu;
-				$fwconfig{$key}[23] = $time_fri;
-				$fwconfig{$key}[24] = $time_sat;
-				$fwconfig{$key}[25] = $time_sun;
-				$fwconfig{$key}[26] = $time_from;
-				$fwconfig{$key}[27] = $time_to;
+				if ($chain eq 'FORWARDFW'){
+					my $key = &General::findhasharraykey(\%fwconfig);
+					$fwconfig{$key}[0]	= $action;
+					$fwconfig{$key}[1] 	= $chain;
+					$fwconfig{$key}[2] 	= $active;
+					$fwconfig{$key}[3] 	= $grp1;
+					$fwconfig{$key}[4] 	= $source;
+					$fwconfig{$key}[5] 	= $grp2;
+					$fwconfig{$key}[6] 	= $target;
+					$fwconfig{$key}[11] = $useport;
+					$fwconfig{$key}[12] = $protocol;
+					$fwconfig{$key}[14] = $grp3;
+					$fwconfig{$key}[15] = $port;
+					$fwconfig{$key}[16] = $remark;
+					$fwconfig{$key}[17] = $log;
+					$fwconfig{$key}[18] = $time;
+					$fwconfig{$key}[19] = $time_mon;
+					$fwconfig{$key}[20] = $time_tue;
+					$fwconfig{$key}[21] = $time_wed;
+					$fwconfig{$key}[22] = $time_thu;
+					$fwconfig{$key}[23] = $time_fri;
+					$fwconfig{$key}[24] = $time_sat;
+					$fwconfig{$key}[25] = $time_sun;
+					$fwconfig{$key}[26] = $time_from;
+					$fwconfig{$key}[27] = $time_to;
+				}else{
+					my $key = &General::findhasharraykey(\%fwconfigout);
+					$fwconfigout{$key}[0]	= $action;
+					$fwconfigout{$key}[1]	= $chain;
+					$fwconfigout{$key}[2]	= $active;
+					$fwconfigout{$key}[3] 	= $grp1;
+					$fwconfigout{$key}[4] 	= $source;
+					$fwconfigout{$key}[5] 	= $grp2;
+					$fwconfigout{$key}[6] 	= $target;
+					$fwconfigout{$key}[11] 	= $useport;
+					$fwconfigout{$key}[12] 	= $protocol;
+					$fwconfigout{$key}[14] 	= $grp3;
+					$fwconfigout{$key}[15] 	= $port;
+					$fwconfigout{$key}[16] 	= $remark;
+					$fwconfigout{$key}[17] 	= $log;
+					$fwconfigout{$key}[18] 	= $time;
+					$fwconfigout{$key}[19] 	= $time_mon;
+					$fwconfigout{$key}[20] 	= $time_tue;
+					$fwconfigout{$key}[21] 	= $time_wed;
+					$fwconfigout{$key}[22] 	= $time_thu;
+					$fwconfigout{$key}[23] 	= $time_fri;
+					$fwconfigout{$key}[24] 	= $time_sat;
+					$fwconfigout{$key}[25] 	= $time_sun;
+					$fwconfigout{$key}[26] 	= $time_from;
+					$fwconfigout{$key}[27] 	= $time_to;
+				}
+				&General::writehasharray($fwdfwconfig,\%fwconfig);
+				&General::writehasharray($outfwconfig,\%fwconfigout);
 			}
 		}
-		&General::writehasharray($fwdfwconfig,\%fwconfig);
 		@prot=();
 	}
 	close(LOG);
