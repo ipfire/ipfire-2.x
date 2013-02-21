@@ -70,7 +70,6 @@ my %icmptypes=();
 my %ovpnsettings=();
 my %ipsecsettings=();
 my %aliases=();
-my @p2ps = ();
 
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
@@ -86,7 +85,6 @@ my $configfwdfw		= "${General::swroot}/forward/config";
 my $configinput		= "${General::swroot}/forward/input";
 my $configoutgoing	= "${General::swroot}/forward/outgoing";
 my $configovpn		= "${General::swroot}/ovpn/settings";
-my $p2pfile			= "${General::swroot}/forward/p2protocols";
 my $errormessage='';
 my $hint='';
 my $ipgrp="${General::swroot}/outgoing/groups";
@@ -446,29 +444,6 @@ if ($fwdfwsettings{'ACTION'} eq 'copyrule')
 	#$fwdfwsettings{'updatefwrule'}='on';
 	&newrule;
 }
-if ($fwdfwsettings{'ACTION'} eq 'togglep2p')
-{
-	#$errormessage="Toggle $fwdfwsettings{'P2PROT'}<br>";
-	open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
-	@p2ps = <FILE>;
-	close FILE;
-	open( FILE, "> $p2pfile" ) or die "Unable to write $p2pfile";
-	foreach my $p2pentry (sort @p2ps)
-	{
-		my @p2pline = split( /\;/, $p2pentry );
-		if ($p2pline[1] eq $fwdfwsettings{'P2PROT'}) {
-			if($p2pline[2] eq 'on'){
-				$p2pline[2]='off';
-			}else{
-				$p2pline[2]='on';
-			}
-		}
-		print FILE "$p2pline[0];$p2pline[1];$p2pline[2];\n";
-	}
-	close FILE;
-	&rules;
-	&base;
-}
 if ($fwdfwsettings{'ACTION'} eq '')
 {
 	&base;
@@ -606,7 +581,7 @@ sub base
 	if ($fwdfwsettings{'POLICY1'} eq 'MODE2'){ $selected{'POLICY1'}{'MODE2'} = 'selected'; } else { $selected{'POLICY1'}{'MODE2'} = ''; }
 	&hint;
 	&addrule;
-	&p2pblock;
+	print "<br><hr><br><br>";
 	&Header::openbox('100%', 'center', $Lang::tr{'fwdfw pol title'});
 print <<END;
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -642,16 +617,14 @@ END
 sub addrule
 {
 	&error;
+	if (-f "${General::swroot}/forward/reread"){
+		print "<table border='0'><form method='post'><td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold;'>$Lang::tr{'fwhost reread'}</td></tr></table></form><hr><br>";
+	}
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw addrule'});
-
 	print "<form method='post'>";
 	print "<table border='0'>";
 	print "<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw newrule'}'></td>";
-	if (-f "${General::swroot}/forward/reread"){
-		print "<td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold;'>$Lang::tr{'fwhost reread'}</td>";
-	}
-		print"</tr></table></form><hr>";	
-
+	print"</tr></table></form><hr>";	
 	&Header::closebox();
 	&viewtablerule;
 }
@@ -2063,35 +2036,6 @@ END
 		print"</table>";
 		&Header::closebox();
 	}
-}
-sub p2pblock
-{
-	my $gif;
-	open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
-	@p2ps = <FILE>;
-	close FILE;
-	&Header::openbox('100%', 'center', 'P2P-Block');
-	print <<END;
-	<table width='35%' border='0'>
-	<tr bgcolor='$color{'color22'}'><td align=center colspan='2' ><b>$Lang::tr{'protocol'}</b></td><td align='center'><b>$Lang::tr{'status'}</b></td></tr>
-END
-	foreach my $p2pentry (sort @p2ps)
-	{
-		my @p2pline = split( /\;/, $p2pentry );
-		if($p2pline[2] eq 'on'){
-			$gif="/images/on.gif"
-		}else{
-			$gif="/images/off.gif"
-		}
-		print <<END;
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<tr bgcolor='$color{'color20'}'>
-		<td align='center' colspan='2' >$p2pline[0]:</td><td align='center'><input type='hidden' name='P2PROT' value='$p2pline[1]' /><input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' ><input type='hidden' name='ACTION' value='togglep2p'></td></tr></form>
-END
-	}
-	print"<tr><td><img src='/images/on.gif'></td><td  align='left'>$Lang::tr{'outgoing firewall p2p allow'}</td></tr>";
-	print"<tr><td><img src='/images/off.gif'></td><td align='left'>$Lang::tr{'outgoing firewall p2p deny'}</td></tr></table>";
-	&Header::closebox();
 }
 sub fillselect
 {

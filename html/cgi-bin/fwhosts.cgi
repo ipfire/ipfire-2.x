@@ -1074,21 +1074,16 @@ if($fwhostsettings{'ACTION'} eq '')
 ###  FUNCTIONS  ###
 sub showmenu
 {
-	
+	if (-f "${General::swroot}/forward/reread"){
+		print "<table border='0'><form method='post'><td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold;'>$Lang::tr{'fwhost reread'}</td></tr></table></form><hr><br>";
+	}
 	&Header::openbox('100%', 'left',$Lang::tr{'fwhost menu'});
 	print<<END;
 	<table border='0' width='100%'><form method='post'>
 	<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newnet'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newhost'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newgrp'}' /></td>
 	<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservice'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservicegrp'}' /></td></tr>
-	<tr><td colspan='6'><hr></hr></td>
+	<tr><td colspan='6'><hr></hr></td></tr></table></form>
 END
-	
-		
-	if (-f "${General::swroot}/fwhosts/reread"){
-		print "</tr><tr><td colspan='6'><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold;' >$Lang::tr{'fwhost reread'}</td>";
-	}
-		print"</tr></table></form>";	
-
 	&Header::closebox();
 	
 }

@@ -28,12 +28,18 @@
 				'title' => "Universal Plug and Play",
 				'enabled' => 0,
 				};
-	$subfirewall->{'80.optingsfw'} = {
+	$subfirewall->{'80.optionsfw'} = {
 				'caption' => $Lang::tr{'options fw'},
 				'uri' => '/cgi-bin/optionsfw.cgi',
 				'title' => "$Lang::tr{'options fw'}",
 				'enabled' => 1,
 				};
+	$subfirewall->{'81.p2p'} = {
+				'caption' => 'P2P-Block',
+				'uri' => '/cgi-bin/p2p-block.cgi',
+				'title' => "P2P-Block",
+				'enabled' => 1,
+				};					
 	$subfirewall->{'90.iptables'} = {
 				'caption' => $Lang::tr{'ipts'},
 				'uri' => '/cgi-bin/iptables.cgi',
