@@ -227,7 +227,7 @@ case "$1" in
 	/sbin/iptables -N WIRELESSINPUT
 	/sbin/iptables -A INPUT -m state --state NEW -j WIRELESSINPUT
 	/sbin/iptables -N WIRELESSFORWARD
-	/sbin/iptables -A FORWARD -m state --state NEW -j WIRELESSFORWARD
+	/sbin/iptables -A FORWARDFW -m state --state NEW -j WIRELESSFORWARD
 	
 	# PORTFWACCESS chain, used for portforwarding
 	/sbin/iptables -N PORTFWACCESS
@@ -300,9 +300,9 @@ case "$1" in
 	/sbin/iptables -A FORWARD -j POLICYFWD
 	/sbin/iptables -N POLICYOUT
 	/sbin/iptables -A OUTPUT -j POLICYOUT
-	
-	
+
 	/usr/sbin/firewall-policy
+	
 	;;
   startovpn)  
 	# run openvpn

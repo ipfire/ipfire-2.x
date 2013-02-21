@@ -595,10 +595,10 @@ print <<END;
 		<tr><td width='15%' align='left'>	<select name='POLICY' style="width: 100px">
 		<option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
 		<option value='MODE2' $selected{'POLICY'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
-	    <td width='45%' align='left'><input type='submit' name='ACTION' value=$Lang::tr{'save'} />
-	    <td width='45%' align='left'>
+	    <input type='submit' name='ACTION' value=$Lang::tr{'save'} /></td><td width='45%' align='right'>
+	    
 END
-	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value='$Lang::tr{'reset'}' />";
+	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value='$Lang::tr{'reset'}' /></td></tr>";
 	print "</table></form>";
 	print"<br><br>";
 	print <<END;
@@ -610,10 +610,10 @@ END
 		<tr><td width='15%' align='left'>	<select name='POLICY1' style="width: 100px">
 		<option value='MODE1' $selected{'POLICY1'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
 		<option value='MODE2' $selected{'POLICY1'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
-	    <td width='45%' align='left'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></form>
-	    <td width='45%' align='left'>
+	    <input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></form></td><td width='45%' align='right'>
+	    
 END
-	print "$Lang::tr{'outgoing firewall reset'}: <form method='post' action='$ENV{'SCRIPT_NAME'}' style='display:inline'><input type='submit' value='$Lang::tr{'reset'}' /><input type='hidden' name='ACTION' value='resetoutgoing' />";
+	print "$Lang::tr{'outgoing firewall reset'}: <form method='post' action='$ENV{'SCRIPT_NAME'}' style='display:inline'><input type='submit' value='$Lang::tr{'reset'}' /><input type='hidden' name='ACTION' value='resetoutgoing' /></tr>";
 	print "</table></form>";
 	&Header::closebox();
 }
