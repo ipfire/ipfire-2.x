@@ -251,10 +251,10 @@ sub process_rules
 	my ($type,$action,$active,$grp1,$source,$grp2,$useport,$port,$prot,$grp3,$target,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to);
 	print"uzlputz modus ist $outsettings{'POLICY'} \n";
 	&General::readhash($fwdfwsettings,\%fwdsettings);
-	if ($outsettings{'POLICY'} eq 'MODE0'){
-		$fwdfwsettings{'POLICY'}='MODE2';
+	if ($outsettings{'POLICY'} eq 'MODE1'){
+		$fwdfwsettings{'POLICY'}='MODE1';
 	}else{
-		$fwdsettings{'POLICY'}=$outsettings{'POLICY'};
+		$fwdsettings{'POLICY'}='MODE2';
 	}
 	&General::writehash($fwdfwsettings,\%fwdsettings);
 	if ($outsettings{'POLICY'} eq 'MODE1'){

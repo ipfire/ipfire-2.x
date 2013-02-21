@@ -584,7 +584,7 @@ sub base
 	if ($fwdfwsettings{'POLICY1'} eq 'MODE2'){ $selected{'POLICY1'}{'MODE2'} = 'selected'; } else { $selected{'POLICY1'}{'MODE2'} = ''; }
 	&hint;
 	&addrule;
-	print "<br><hr><br><br>";
+	print "<br><br>";
 	&Header::openbox('100%', 'center', $Lang::tr{'fwdfw pol title'});
 print <<END;
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -610,10 +610,10 @@ END
 		<tr><td width='15%' align='left'>	<select name='POLICY1' style="width: 100px">
 		<option value='MODE1' $selected{'POLICY1'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
 		<option value='MODE2' $selected{'POLICY1'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
-	    <input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></form></td><td width='45%' align='right'>
+	    <input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td><td width='45%' align='right'></form><form method='post' >
 	    
 END
-	print "$Lang::tr{'outgoing firewall reset'}: <form method='post' action='$ENV{'SCRIPT_NAME'}' style='display:inline'><input type='submit' value='$Lang::tr{'reset'}' /><input type='hidden' name='ACTION' value='resetoutgoing' /></tr>";
+	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' value='$Lang::tr{'reset'}' /><input type='hidden' name='ACTION' value='resetoutgoing' /></tr>";
 	print "</table></form>";
 	&Header::closebox();
 }
@@ -1269,7 +1269,7 @@ END
 		$fwdfwsettings{'SRC_PORT'}=~ s/\|/,/g;
 		print<<END;
 		</select></td><td align='right'><input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18' ></td></tr>
-		<tr><td></td><td></td><td></td><td></td><td nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TYPES'>
+		<tr><td></td><td></td><td></td><td></td><td nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TYPES' style='width:230px;'>
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 		print"<option>All ICMP-Types</option>";
@@ -1397,7 +1397,7 @@ END
 		}	
 		print<<END;
 		</select></td></tr>
-		<tr><td colspan='2'></td><td><input type='radio' name='grp3' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust srvgrp'}:</td><td colspan='2'><select name='cust_srvgrp'style='min-width:230px;' >
+		<tr><td colspan='2'></td><td><input type='radio' name='grp3' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust srvgrp'}:</td><td colspan='2'><select name='cust_srvgrp' style='min-width:230px;' >
 END
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		my $helper;
@@ -1425,7 +1425,7 @@ END
 		$fwdfwsettings{'TGT_PORT'} =~ s/\|/,/g;
 		print<<END;
 		</select></td><td align='right'><input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18' ></td></tr>
-		<tr><td colspan='2'></td><td></td><td>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TGT'>
+		<tr><td colspan='2'></td><td></td><td>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TGT' style='min-width:230px;'>
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 		print"<option>All ICMP-Types</option>";
@@ -1847,6 +1847,7 @@ sub viewtablenew
 		print"<table width='100%' cellspacing='1'  rules='none'; padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
 		print"<tr><td align='center'><b>#</td><td ></td><td align='center'><b>$Lang::tr{'fwdfw source'}</td><td><b>Log</td><td align='center'><b>$Lang::tr{'fwdfw target'}</td><td align='center'><b>$Lang::tr{'protocol'}</b></td><td align='center'><b>$Lang::tr{'remark'}</td><td align='center' colspan='6'><b>$Lang::tr{'fwdfw action'}</td></tr>";
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
+			$tdcolor='';
 			@tmpsrc=();
 			#check if vpn hosts/nets have been deleted
 			if($$hash{$key}[3] =~ /ipsec/i || $$hash{$key}[3] =~ /ovpn/i){
@@ -1881,8 +1882,8 @@ sub viewtablenew
 						$$hash{$key}[2]='';
 					}
 				}
-				$$hash{$key}[3]='';
-				$$hash{$key}[5]='';
+				#$$hash{$key}[3]='';
+				#$$hash{$key}[5]='';
 			}
 			$$hash{'ACTIVE'}=$$hash{$key}[2];
 			$count++;
@@ -1915,7 +1916,7 @@ END
 				$rulecolor=$color{'color16'};
 			}
 			print"<td bgcolor='$rulecolor' align='center' width='20'><span title='$tooltip'><b>$ruletype</b></span></td>";
-			&getcolor($$hash{$key}[4]);
+			&getcolor($$hash{$key}[3],$$hash{$key}[4]);
 			print"<td align='center' width='160' $tdcolor>";
 			if ($$hash{$key}[3] eq 'std_net_src'){
 				print &get_name($$hash{$key}[4]);
@@ -1938,7 +1939,7 @@ END
 			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw togglelog'}' />
 			</td></form>
 END
-			&getcolor($$hash{$key}[6]);
+			&getcolor($$hash{$key}[5],$$hash{$key}[6]);
 			print<<END;
 			<td align='center' width='160' $tdcolor>
 END
@@ -1947,6 +1948,7 @@ END
 			}else{
 				print $$hash{$key}[6];
 			}
+			$tdcolor='';
 			&gettgtport(\%$hash,$key);
 			print"</td>";
 			#Get Protocol
@@ -2041,12 +2043,22 @@ END
 		}
 		print"</table>";
 		&Header::closebox();
+		print "<hr>";
 	}
 }
 sub getcolor
 {
+	my $nettype=shift;
 	my $val=shift;
 	if($optionsfw{'SHOWCOLORS'} eq 'on'){
+		if ($nettype eq 'ovpn_n2n_src' || $nettype eq 'ovpn_n2n_tgt' || $nettype eq 'ovpn_net_src' || $nettype eq 'ovpn_net_tgt'|| $nettype eq 'ovpn_host_src' || $nettype eq 'ovpn_host_tgt'){
+			$tdcolor="style='border: 2px solid $Header::colourovpn;'";
+			return;
+		}
+		if ($nettype eq 'ipsec_net_src' || $nettype eq 'ipsec_net_tgt'){
+			$tdcolor="style='border: 2px solid $Header::colourvpn;'";
+			return;
+		}
 		foreach my $alias (sort keys %aliases)
 		{
 			if ($val eq $alias){
@@ -2055,26 +2067,23 @@ sub getcolor
 			}
 		}
 		if ($val eq 'GREEN'){
-			$tdcolor="style='border: 2px solid green;'";
+			$tdcolor="style='border: 2px solid $Header::colourgreen;'";
 		}elsif ($val eq 'ORANGE'){
-			$tdcolor="style='border: 2px solid orange;'";
+			$tdcolor="style='border: 2px solid $Header::colourorange;'";
 		}elsif ($val eq 'BLUE'){
-			$tdcolor="style='border: 2px solid blue;'";
+			$tdcolor="style='border: 2px solid $Header::colourblue;'";
 		}elsif ($val eq 'IPFire' ){
-			$tdcolor="style='border: 2px solid red;'";
+			$tdcolor="style='border: 2px solid $Header::colourred;'";
 		}elsif($val =~ /^(.*?)\/(.*?)$/){
 			my ($sip,$scidr) = split ("/",$val);
 			if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
-				$tdcolor="style='border: 2px solid orange;'";
+				$tdcolor="style='border: 2px solid $Header::colourorange;'";
 			}
 			if ( &General::IpInSubnet($sip,$netsettings{'GREEN_ADDRESS'},$netsettings{'GREEN_NETMASK'})){
-				$tdcolor="style='border: 2px solid green;'";
+				$tdcolor="style='border: 2px solid $Header::colourgreen;'";
 			}
 			if ( &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
-				$tdcolor="style='border: 2px solid blue;'";
-			}
-			if ( &General::IpInSubnet($sip,$netsettings{'RED_ADDRESS'},$netsettings{'RED_NETMASK'})){
-				$tdcolor="style='border: 2px solid red;'";
+				$tdcolor="style='border: 2px solid $Header::colourblue;'";
 			}
 		}elsif ($val eq 'Default IP'){
 			$tdcolor="style='border: 2px solid red;'";
