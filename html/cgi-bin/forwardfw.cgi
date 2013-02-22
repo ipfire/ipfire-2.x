@@ -342,35 +342,33 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 }
 if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'reset'})
 {
-	&General::readhasharray("$configfwdfw", \%configfwdfw);
-	foreach my $key (sort keys %configfwdfw){
-		&checkcounter($configfwdfw{$key}[3],$configfwdfw{$key}[4],,);
-		&checkcounter($configfwdfw{$key}[5],$configfwdfw{$key}[6],,);
-		&checkcounter($configfwdfw{$key}[14],$configfwdfw{$key}[15],,);
-	}
-		&General::readhasharray("$configinput", \%configinputfw);
-	foreach my $key (sort keys %configinputfw){
-		&checkcounter($configinputfw{$key}[3],$configinputfw{$key}[4],,);
-		&checkcounter($configinputfw{$key}[5],$configinputfw{$key}[6],,);
-		&checkcounter($configinputfw{$key}[14],$configinputfw{$key}[15],,);
-	}
-	
-	system("rm ${General::swroot}/forward/config");
-	system("rm ${General::swroot}/forward/input");
-	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
-	unless (-e "${General::swroot}/forward/config")  	{ system("touch ${General::swroot}/forward/config"); }
-	unless (-e "${General::swroot}/forward/input")  	{ system("touch ${General::swroot}/forward/input"); }
-	my $MODE1=$fwdfwsettings{'POLICY1'};
-	%fwdfwsettings = ();
-	$fwdfwsettings{'POLICY'}='MODE2';
-	$fwdfwsettings{'POLICY1'}=$MODE1;
-	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
-	&reread_rules;
-
-}
-if ($fwdfwsettings{'ACTION'} eq 'resetoutgoing')
-{
-	&General::readhasharray("$configoutgoing", \%configoutgoingfw);
+	if($fwdfwsettings{'poltype'} eq 'forward'){
+		&General::readhasharray("$configfwdfw", \%configfwdfw);
+		foreach my $key (sort keys %configfwdfw){
+			&checkcounter($configfwdfw{$key}[3],$configfwdfw{$key}[4],,);
+			&checkcounter($configfwdfw{$key}[5],$configfwdfw{$key}[6],,);
+			&checkcounter($configfwdfw{$key}[14],$configfwdfw{$key}[15],,);
+		}
+			&General::readhasharray("$configinput", \%configinputfw);
+		foreach my $key (sort keys %configinputfw){
+			&checkcounter($configinputfw{$key}[3],$configinputfw{$key}[4],,);
+			&checkcounter($configinputfw{$key}[5],$configinputfw{$key}[6],,);
+			&checkcounter($configinputfw{$key}[14],$configinputfw{$key}[15],,);
+		}
+		
+		system("rm ${General::swroot}/forward/config");
+		system("rm ${General::swroot}/forward/input");
+		&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
+		unless (-e "${General::swroot}/forward/config")  	{ system("touch ${General::swroot}/forward/config"); }
+		unless (-e "${General::swroot}/forward/input")  	{ system("touch ${General::swroot}/forward/input"); }
+		my $MODE1=$fwdfwsettings{'POLICY1'};
+		%fwdfwsettings = ();
+		$fwdfwsettings{'POLICY'}='MODE2';
+		$fwdfwsettings{'POLICY1'}=$MODE1;
+		&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
+		&reread_rules;
+	}else{
+		&General::readhasharray("$configoutgoing", \%configoutgoingfw);
 	foreach my $key (sort keys %configoutgoingfw){
 		&checkcounter($configoutgoingfw{$key}[3],$configoutgoingfw{$key}[4],,);
 		&checkcounter($configoutgoingfw{$key}[5],$configoutgoingfw{$key}[6],,);
@@ -385,7 +383,7 @@ if ($fwdfwsettings{'ACTION'} eq 'resetoutgoing')
 	$fwdfwsettings{'POLICY1'}='MODE2';
 	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
 	&reread_rules;
-
+	}
 }
 if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'fwdfw newrule'})
 {
@@ -598,7 +596,7 @@ print <<END;
 	    <input type='submit' name='ACTION' value=$Lang::tr{'save'} /></td><td width='45%' align='right'>
 	    
 END
-	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value='$Lang::tr{'reset'}' /></td></tr>";
+	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value='$Lang::tr{'reset'}' /><input type='hidden' name='poltype' value='forward' /></td></tr>";
 	print "</table></form>";
 	print"<br><br>";
 	print <<END;
@@ -610,10 +608,10 @@ END
 		<tr><td width='15%' align='left'>	<select name='POLICY1' style="width: 100px">
 		<option value='MODE1' $selected{'POLICY1'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
 		<option value='MODE2' $selected{'POLICY1'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
-	    <input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td><td width='45%' align='right'></form><form method='post' >
+	    <input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td><td width='45%' align='right'>
 	    
 END
-	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' value='$Lang::tr{'reset'}' /><input type='hidden' name='ACTION' value='resetoutgoing' /></tr>";
+	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value='$Lang::tr{'reset'}' /><input type='hidden' name='poltype' value='outgoing' /></tr>";
 	print "</table></form>";
 	&Header::closebox();
 }

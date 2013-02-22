@@ -35,6 +35,7 @@ $settings{'DROPOUTGOING'} = 'on';
 $settings{'DROPPORTSCAN'} = 'on';
 $settings{'DROPWIRELESSINPUT'} = 'on';
 $settings{'DROPWIRELESSFORWARD'} = 'on';
+$settings{'SHOWCOLORS'} = 'off';
 
 my $errormessage = '';
 my $warnmessage = '';
