@@ -1832,6 +1832,7 @@ sub viewtablenew
 	my $title1=shift;
 	my $go='';
 	&General::get_aliases(\%aliases);
+	&General::readhasharray("$confighost", \%customhost);
 	&General::readhasharray("$config", $hash);
 	if( ! -z $config){
 		if ($title1 eq $Lang::tr{'external access'} || $title1 eq 'Outgoing'){print"<br><br>";}
@@ -1844,7 +1845,7 @@ sub viewtablenew
 		my @tmpsrc=();
 		my $coloryellow='';
 		print"<b>$title1</b><br>";
-		print"<table width='100%' cellspacing='1'   style=' padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
+		print"<table width='100%' cellspacing='0' style=' padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
 		print"<tr><td align='center'><b>#</td><td ></td><td align='center'><b>$Lang::tr{'fwdfw source'}</td><td><b>Log</td><td align='center'><b>$Lang::tr{'fwdfw target'}</td><td align='center'><b>$Lang::tr{'protocol'}</b></td><td align='center'><b>$Lang::tr{'fwdfw time'}</td><td align='center' colspan='6'><b>$Lang::tr{'fwdfw action'}</td></tr>";
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
 			$tdcolor='';
@@ -1916,7 +1917,7 @@ END
 				$rulecolor=$color{'color16'};
 			}
 			print"<td bgcolor='$rulecolor' align='center' width='20'><span title='$tooltip'><b>$ruletype</b></span></td>";
-			&getcolor($$hash{$key}[3],$$hash{$key}[4]);
+			&getcolor($$hash{$key}[3],$$hash{$key}[4],\%customhost);
 			print"<td align='center' width='160' $tdcolor>";
 			if ($$hash{$key}[3] eq 'std_net_src'){
 				print &get_name($$hash{$key}[4]);
@@ -1939,7 +1940,7 @@ END
 			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw togglelog'}' />
 			</td></form>
 END
-			&getcolor($$hash{$key}[5],$$hash{$key}[6]);
+			&getcolor($$hash{$key}[5],$$hash{$key}[6],\%customhost);
 			print<<END;
 			<td align='center' width='160' $tdcolor>
 END
@@ -2039,7 +2040,7 @@ END
 			}
 			#REMARK
 			if ($optionsfw{'SHOWREMARK'} eq 'on'){
-				print"<tr bgcolor='$color'><td colspan='13' style='border-bottom: 1px solid black'>";
+				print"<tr bgcolor='$color'><td colspan='13'>";
 				print"<b>$Lang::tr{'remark'}:</b>&nbsp$$hash{$key}[16]</td></tr>";
 			}
 		}
@@ -2052,7 +2053,9 @@ sub getcolor
 {
 	my $nettype=shift;
 	my $val=shift;
+	my $hash=shift;
 	if($optionsfw{'SHOWCOLORS'} eq 'on'){
+		#VPN networks
 		if ($nettype eq 'ovpn_n2n_src' || $nettype eq 'ovpn_n2n_tgt' || $nettype eq 'ovpn_net_src' || $nettype eq 'ovpn_net_tgt'|| $nettype eq 'ovpn_host_src' || $nettype eq 'ovpn_host_tgt'){
 			$tdcolor="style='border: 2px solid $Header::colourovpn;'";
 			return;
@@ -2061,6 +2064,15 @@ sub getcolor
 			$tdcolor="style='border: 2px solid $Header::colourvpn;'";
 			return;
 		}
+		#custom Hosts
+		if ($nettype eq 'cust_host_src' || $nettype eq 'cust_host_tgt'){
+			foreach my $key (sort keys %$hash){
+				if ($$hash{$key}[0] eq $val){
+					$val=$$hash{$key}[2];
+				}
+			}
+		}
+		#ALIASE
 		foreach my $alias (sort keys %aliases)
 		{
 			if ($val eq $alias){
@@ -2068,6 +2080,7 @@ sub getcolor
 				return;
 			}
 		}
+		#standard networks
 		if ($val eq 'GREEN'){
 			$tdcolor="style='border: 2px solid $Header::colourgreen;'";
 		}elsif ($val eq 'ORANGE'){
