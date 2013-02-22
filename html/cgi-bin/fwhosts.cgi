@@ -1098,8 +1098,8 @@ sub addnet
 	print<<END;
 	<table border='0' width='100%'><form method='post' style='display:inline'  >
 	<tr><td>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'}><script>document.getElementById('textbox1').focus()</script></td><td>$Lang::tr{'fwhost netaddress'}:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14'></td><td align='right'>$Lang::tr{'netmask'}:</td><td align='right'><input type='TEXT' name='SUBNET' value='$fwhostsettings{'SUBNET'}' $fwhostsettings{'BLK_IP'} size='14'></td></tr>
-	<tr><td>$Lang::tr{'remark'}:</td><td colspan='5'><input type='TEXT' name='NETREMARK' value='$fwhostsettings{'NETREMARK'}' size='64'></td></tr>
-	<tr><td colspan='6'><hr></hr></td></tr><tr>
+	<tr><td>$Lang::tr{'remark'}:</td><td colspan='5'><input type='TEXT' name='NETREMARK' value='$fwhostsettings{'NETREMARK'}' size='110'></td></tr>
+	<tr><td colspan='6'><br><hr></hr></td></tr><tr>
 END
 	if ($fwhostsettings{'ACTION'} eq 'editnet' || $fwhostsettings{'error'} eq 'on')
 	{
@@ -1125,7 +1125,7 @@ END
 	if ($fwhostsettings{'type'} eq 'mac'){print "<option value='mac' selected >MAC</option>";}else{print "<option value='mac' >MAC</option>";}
 	print<<END;
 	</option></select></td><td align='right' width='15%'>IP/MAC:</td><td align='right'><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} ></td></tr>
-	<tr><td>$Lang::tr{'remark'}:</td><td colspan='5'><input type='TEXT' name='HOSTREMARK' value='$fwhostsettings{'HOSTREMARK'}' size='64'></td></tr>
+	<tr><td>$Lang::tr{'remark'}:</td><td colspan='5'><input type='TEXT' name='HOSTREMARK' value='$fwhostsettings{'HOSTREMARK'}' size='110'></td></tr>
 	<tr><td colspan='7'><br><br><b>$Lang::tr{'fwhost attention'}</b><br>$Lang::tr{'fwhost macwarn'}</td></tr>
 	<tr><td colspan='7'><hr></hr></td></tr>
 END
@@ -1158,7 +1158,7 @@ sub addgrp
 			print<<END;
 			<table width='100%' border='0'><form method='post'>
 			<tr><td>$Lang::tr{'fwhost addgrpname'}</td><td><input type='TEXT' name='grp_name' value='$fwhostsettings{'grp_name'}'></td><td>$Lang::tr{'remark'}:</td><td width='1%'><input type='TEXT' name='remark' size='35' value='$fwhostsettings{'remark'}'></tr>
-			<tr><td colspan='5'><hr></td></tr></table>
+			<tr><td colspan='5'><br><hr></td></tr></table>
 END
 		}else{
 			print<<END;
@@ -1288,7 +1288,7 @@ END
 	
 	print<<END;
 	</select></td>
-	<tr><td colspan='6'><hr></td></tr>
+	<tr><td colspan='6'><br><hr></td></tr>
 	<tr><td colspan='6' align='right'>
 END
 	if ($fwhostsettings{'updatesrv'} eq 'on')
@@ -1324,14 +1324,14 @@ sub addservicegrp
 		print<<END;
 		<table width='100%' border='0'><form method='post'>
 		<tr><td>$Lang::tr{'fwhost addgrpname'}</td><td><input type='text' name='SRVGRP_NAME' value='$fwhostsettings{'SRVGRP_NAME'}'></td><td>$Lang::tr{'remark'}:</td><td width='1%'><input type='text' name='SRVGRP_REMARK' size='35' value='$fwhostsettings{'SRVGRP_REMARK'}'></td></tr>
-		<tr><td colspan='4'><hr></td></td></tr>
+		<tr><td colspan='4'><br><hr></td></td></tr>
 		</table>
 END
 	}else{
 		print<<END;
 		<table width='100%' border='0'><form method='post' style='display:inline'>
 		<tr><td>$Lang::tr{'fwhost addgrpname'}</td><td><input type='text' name='srvgrp' value='$fwhostsettings{'SRVGRP_NAME'}' readonly ></td><td>$Lang::tr{'remark'}:</td><td width='1%'><input type='text' name='newsrvrem' size='35' value='$fwhostsettings{'SRVGRP_REMARK'}'></td><td><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldsrvrem' value='$fwhostsettings{'oldsrvgrpremark'}'><input type='hidden' name='ACTION' value='changesrvgrpremark' ></td></tr>
-		<tr><td colspan='5'><hr></td></td></tr>
+		<tr><td colspan='5'><br><hr></td></td></tr>
 		</table></form>
 END
 	}
@@ -1347,7 +1347,7 @@ END
 	}
 	print<<END;
 	</select></td></tr>
-	<tr><td colspan='4'><br><br><br></td></tr>
+	<tr><td colspan='4'><br><br></td></tr>
 	<tr><td colspan='4'><hr></td></tr>
 	</table>
 END

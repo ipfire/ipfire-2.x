@@ -1281,7 +1281,7 @@ END
 			}
 		}
 		print<<END;
-		</select></td></tr></table><hr>
+		</select></td></tr></table><br><hr>
 END
 		&Header::closebox();
 
@@ -1438,9 +1438,10 @@ END
 		}
 		print<<END;
 		</select></td></tr>
-		</table><hr><br><br>
+		</table><br><hr>
 
 END
+		&Header::closebox;
 		#---Activate/logging/remark-------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
 		print<<END;
@@ -1463,7 +1464,7 @@ END
 		</table><table width='100%'>
 		<tr><td width='1%'><input type='checkbox' name='ACTIVE' value='ON' $checked{'ACTIVE'}{'ON'}></td><td>$Lang::tr{'fwdfw rule activate'}</td></tr>
 		<tr><td width='1%'><input type='checkbox' name='LOG' value='ON'  $checked{'LOG'}{'ON'}  ></td><td>$Lang::tr{'fwdfw log rule'}</td></tr>
-		</table><hr><br>
+		</table><br><hr>
 END
 		&Header::closebox();
 		#---ADD TIMEFRAME-----------------------------------------------
@@ -1513,9 +1514,9 @@ END
 		}
 		print<<END;
 		</select></td></tr>
-		</table><hr>
+		</table><br><hr>
 END
-		&Header::closebox();
+		
 		#---ACTION------------------------------------------------------
 		if($fwdfwsettings{'updatefwrule'} ne 'on'){
 			print<<END;
