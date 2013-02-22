@@ -2071,6 +2071,8 @@ sub getcolor
 			$tdcolor="style='border: 2px solid $Header::colourorange;'";
 		}elsif ($val eq 'BLUE'){
 			$tdcolor="style='border: 2px solid $Header::colourblue;'";
+		}elsif ($val eq 'RED'){
+			$tdcolor="style='border: 2px solid $Header::colourred;'";
 		}elsif ($val eq 'IPFire' ){
 			$tdcolor="style='border: 2px solid $Header::colourred;'";
 		}elsif($val =~ /^(.*?)\/(.*?)$/){
