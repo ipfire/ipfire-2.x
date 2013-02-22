@@ -1834,6 +1834,7 @@ sub viewtablenew
 	&General::get_aliases(\%aliases);
 	&General::readhasharray("$config", $hash);
 	if( ! -z $config){
+		if ($title1 eq $Lang::tr{'external access'} || $title1 eq 'Outgoing'){print"<br><br>";}
 		&Header::openbox('100%', 'left',$title);
 		my $count=0;
 		my ($gif,$log);
