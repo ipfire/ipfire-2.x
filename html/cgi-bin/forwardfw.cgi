@@ -1844,7 +1844,7 @@ sub viewtablenew
 		my @tmpsrc=();
 		my $coloryellow='';
 		print"<b>$title1</b><br>";
-		print"<table width='100%' cellspacing='1'  rules='none'; padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
+		print"<table width='100%' cellspacing='1'   style=' padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'>";
 		print"<tr><td align='center'><b>#</td><td ></td><td align='center'><b>$Lang::tr{'fwdfw source'}</td><td><b>Log</td><td align='center'><b>$Lang::tr{'fwdfw target'}</td><td align='center'><b>$Lang::tr{'protocol'}</b></td><td align='center'><b>$Lang::tr{'fwdfw time'}</td><td align='center' colspan='6'><b>$Lang::tr{'fwdfw action'}</td></tr>";
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
 			$tdcolor='';
