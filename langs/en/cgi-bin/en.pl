@@ -965,7 +965,7 @@
 'fwdfw target'			=> 'Target',
 'fwdfw targetip'		=> 'Target address (IP or network):',
 'fwdfw till'			=> 'Till:',
-'fwdfw time'			=> 'Timeframe:',
+'fwdfw time'			=> 'Timeframe',
 'fwdfw timeframe'		=> 'Add timeframe',
 'fwdfw toggle'			=> 'Activate or deactivate',
 'fwdfw togglelog'		=> 'Activate or deactivate logging',

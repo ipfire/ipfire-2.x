@@ -940,7 +940,7 @@
 'fwdfw target'			=> 'Ziel',
 'fwdfw targetip'		=> 'Zieladresse (IP oder Netzwerk):',
 'fwdfw till'			=> 'Bis:',
-'fwdfw time'			=> 'Zeitrahmen:',
+'fwdfw time'			=> 'Zeitrahmen',
 'fwdfw timeframe'		=> 'Zeitrahmen hinzufügen',
 'fwdfw toggle'			=> 'Aktivieren oder deaktivieren',
 'fwdfw togglelog'		=> 'Log aktivieren oder deaktivieren',
