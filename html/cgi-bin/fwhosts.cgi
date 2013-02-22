@@ -1499,7 +1499,7 @@ sub viewtablegrp
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='ACTION' value='delgrp'></form>";
 				}
 				print"<form method='post' style='display:inline'><input type='image' src='/images/edit.gif' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='remark' value='$remark' ><input type='hidden' name='ACTION' value='editgrp'></form>";
-				print"<table width='100%' style='border: 1px solid  #000000;' rules='none' ><tr><td align='center'><b>Name</b></td><td align='center'><b>$Lang::tr{'ip address'}</b></td><td align='center' width='25%'><b>$Lang::tr{'fwhost type'}</td></tr>";
+				print"<table width='100%' style='border: 1px solid  #000000;' rules='none' ><tr><td align='center'><b>Name</b></td><td align='center'><b>$Lang::tr{'ip address'}</b></td><td align='center' width='25%'><b>$Lang::tr{'fwhost type'}</td><td></td></tr>";
 			}
 			
 			if ( ($fwhostsettings{'ACTION'} eq 'editgrp' || $fwhostsettings{'update'} ne '') && $fwhostsettings{'grp_name'} eq $customgrp{$key}[0]) {
@@ -1620,7 +1620,7 @@ sub viewtableservicegrp
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='ACTION' value='delservicegrp'></form>";
 				}
 				print"<form method='post' style='display:inline'><input type='image' src='/images/edit.gif' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='SRVGRP_REMARK' value='$remark' ><input type='hidden' name='ACTION' value='editservicegrp'></form>";
-				print"<table width='100%' style='border: 1px solid  #000000;' rules='none' ><tr><td align='center'><b>Name</b></td><td align='center'><b>$Lang::tr{'port'}</b></td><td align='center' width='25%'><b>$Lang::tr{'fwhost prot'}</td></tr>";
+				print"<table width='100%' style='border: 1px solid  #000000;' rules='none' ><tr><td align='center'><b>Name</b></td><td align='center'><b>$Lang::tr{'port'}</b></td><td align='center' width='25%'><b>$Lang::tr{'fwhost prot'}</td><td></td></tr>";
 			}
 			if( $fwhostsettings{'SRVGRP_NAME'} eq $customservicegrp{$key}[0]) {
 				print" <tr bgcolor='${Header::colouryellow}'>";
