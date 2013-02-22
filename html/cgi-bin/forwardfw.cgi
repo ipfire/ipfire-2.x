@@ -1900,7 +1900,7 @@ sub viewtablenew
 			}
 			print"<tr bgcolor='$color' >";
 			print<<END;
-			<td align='right' width='15'>$key</td>
+			<td align='right' width='15'><b>$key</b></td>
 END
 			if ($$hash{$key}[0] eq 'ACCEPT'){
 				$ruletype='A';
@@ -2038,8 +2038,10 @@ END
 				print"<td width='25'><input type='image' img src='/images/down.gif' style='visibility:hidden;'></td></tr>";
 			}
 			#REMARK
-			print"<tr bgcolor='$color'><td colspan='13' style='border-bottom: 1px solid black'>";
-			print"<b>$Lang::tr{'remark'}:</b>&nbsp$$hash{$key}[16]</td></tr>";
+			if ($optionsfw{'SHOWREMARK'} eq 'on'){
+				print"<tr bgcolor='$color'><td colspan='13' style='border-bottom: 1px solid black'>";
+				print"<b>$Lang::tr{'remark'}:</b>&nbsp$$hash{$key}[16]</td></tr>";
+			}
 		}
 		print"</table>";
 		&Header::closebox();
