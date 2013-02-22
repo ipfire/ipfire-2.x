@@ -587,8 +587,8 @@ sub base
 print <<END;
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%' border='0'>
-		<tr><td colspan='3' style='font-weight:bold;color:red;'>FORWARD </td></tr>
-		<tr><td colspan='3'>$Lang::tr{'fwdfw pol text'}</td></tr>
+		<tr><td colspan='3' style='font-weight:bold;color:red;' align='left'>FORWARD </td></tr>
+		<tr><td colspan='3' align='left'>$Lang::tr{'fwdfw pol text'}</td></tr>
 		<tr><td colspan='3'><hr /></td></tr>
 		<tr><td width='15%' align='left'>	<select name='POLICY' style="width: 100px">
 		<option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
@@ -602,8 +602,8 @@ END
 	print <<END;
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%' border='0'>
-		<tr><td colspan='3' style='font-weight:bold;color:red;'>OUTGOING </td></tr>
-		<tr><td colspan='3'>$Lang::tr{'fwdfw pol text1'}</td></tr>
+		<tr><td colspan='3' style='font-weight:bold;color:red;' align='left'>OUTGOING </td></tr>
+		<tr><td colspan='3' align='left'>$Lang::tr{'fwdfw pol text1'}</td></tr>
 		<tr><td colspan='3'><hr /></td></tr>
 		<tr><td width='15%' align='left'>	<select name='POLICY1' style="width: 100px">
 		<option value='MODE1' $selected{'POLICY1'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
