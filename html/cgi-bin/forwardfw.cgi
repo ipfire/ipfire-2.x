@@ -2040,8 +2040,8 @@ END
 			}
 			#REMARK
 			if ($optionsfw{'SHOWREMARK'} eq 'on'){
-				print"<tr bgcolor='$color'><td colspan='13'>";
-				print"<b>$Lang::tr{'remark'}:</b>&nbsp$$hash{$key}[16]</td></tr>";
+				print"<tr bgcolor='$color'>";
+				print"<td colspan='2'>&nbsp</td><td colspan='11'>$$hash{$key}[16]</td></tr>";
 			}
 		}
 		print"</table>";
@@ -2057,11 +2057,11 @@ sub getcolor
 	if($optionsfw{'SHOWCOLORS'} eq 'on'){
 		#VPN networks
 		if ($nettype eq 'ovpn_n2n_src' || $nettype eq 'ovpn_n2n_tgt' || $nettype eq 'ovpn_net_src' || $nettype eq 'ovpn_net_tgt'|| $nettype eq 'ovpn_host_src' || $nettype eq 'ovpn_host_tgt'){
-			$tdcolor="style='border: 2px solid $Header::colourovpn;'";
+			$tdcolor="style='border: 1px solid $Header::colourovpn;'";
 			return;
 		}
 		if ($nettype eq 'ipsec_net_src' || $nettype eq 'ipsec_net_tgt'){
-			$tdcolor="style='border: 2px solid $Header::colourvpn;'";
+			$tdcolor="style='border: 1px solid $Header::colourvpn;'";
 			return;
 		}
 		#custom Hosts
@@ -2082,28 +2082,28 @@ sub getcolor
 		}
 		#standard networks
 		if ($val eq 'GREEN'){
-			$tdcolor="style='border: 2px solid $Header::colourgreen;'";
+			$tdcolor="style='border: 1px solid $Header::colourgreen;'";
 		}elsif ($val eq 'ORANGE'){
-			$tdcolor="style='border: 2px solid $Header::colourorange;'";
+			$tdcolor="style='border: 1px solid $Header::colourorange;'";
 		}elsif ($val eq 'BLUE'){
-			$tdcolor="style='border: 2px solid $Header::colourblue;'";
+			$tdcolor="style='border: 1px solid $Header::colourblue;'";
 		}elsif ($val eq 'RED'){
-			$tdcolor="style='border: 2px solid $Header::colourred;'";
+			$tdcolor="style='border: 1px solid $Header::colourred;'";
 		}elsif ($val eq 'IPFire' ){
-			$tdcolor="style='border: 2px solid $Header::colourred;'";
+			$tdcolor="style='border: 1px solid $Header::colourred;'";
 		}elsif($val =~ /^(.*?)\/(.*?)$/){
 			my ($sip,$scidr) = split ("/",$val);
 			if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
-				$tdcolor="style='border: 2px solid $Header::colourorange;'";
+				$tdcolor="style='border: 1px solid $Header::colourorange;'";
 			}
 			if ( &General::IpInSubnet($sip,$netsettings{'GREEN_ADDRESS'},$netsettings{'GREEN_NETMASK'})){
-				$tdcolor="style='border: 2px solid $Header::colourgreen;'";
+				$tdcolor="style='border: 1px solid $Header::colourgreen;'";
 			}
 			if ( &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
-				$tdcolor="style='border: 2px solid $Header::colourblue;'";
+				$tdcolor="style='border: 1px solid $Header::colourblue;'";
 			}
 		}elsif ($val eq 'Default IP'){
-			$tdcolor="style='border: 2px solid red;'";
+			$tdcolor="style='border: 1px solid red;'";
 		}else{
 			$tdcolor='';
 		}
