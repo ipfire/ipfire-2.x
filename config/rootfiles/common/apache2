@@ -1414,6 +1414,7 @@ srv/web/ipfire/cgi-bin/netother.cgi
 #srv/web/ipfire/cgi-bin/outgoinggrp.cgi
 srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/p2p-block.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/portfw.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
