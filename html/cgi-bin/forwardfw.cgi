@@ -2041,7 +2041,7 @@ END
 			#REMARK
 			if ($optionsfw{'SHOWREMARK'} eq 'on'){
 				print"<tr bgcolor='$color'>";
-				print"<td colspan='2'>&nbsp</td><td colspan='11'>$$hash{$key}[16]</td></tr>";
+				print"<td>&nbsp</td><td bgcolor='$rulecolor'></td><td colspan='11'>$$hash{$key}[16]</td></tr>";
 			}
 		}
 		print"</table>";
