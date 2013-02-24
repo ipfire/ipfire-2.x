@@ -124,9 +124,14 @@ if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'wlanap del interface'}" ){
 }
 
 if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'save'}" ){
-	# verify WPA Passphrase, must be 8 .. 63 characters - only wiht enabled enc
+	# verify WPA Passphrase - only with enabled enc
 	if (($wlanapsettings{'ENC'} eq "wpa1") || ($wlanapsettings{'ENC'} eq "wpa2") || ($wlanapsettings{'ENC'} eq "wpa1+2")){
+		# must be 8 .. 63 characters
 		if ( (length($wlanapsettings{'PWD'}) < 8) || (length($wlanapsettings{'PWD'}) > 63)){
+			$errormessage .= "$Lang::tr{'wlanap invalid wpa'}<br />";
+		}
+		# only ASCII alowed
+		if ( ($wlanapsettings{'PWD'} !~ m/[\x00-\x7f]/) ){
 			$errormessage .= "$Lang::tr{'wlanap invalid wpa'}<br />";
 		}
 	}
@@ -394,8 +399,6 @@ print <<END
 END
 ;
 
-#
-# If channel's found use a select dropdown if not a text inputfield.
 if ( scalar @channellist > 0 ){
 	print <<END
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap channel'}:&nbsp;</td><td class='base' colspan='3'>
