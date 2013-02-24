@@ -256,7 +256,7 @@ $selected{'HW_MODE'}{$wlanapsettings{'HW_MODE'}} = "selected='selected'";
 $selected{'MACMODE'}{$wlanapsettings{'MACMODE'}} = "selected='selected'";
 
 my $monwlaninterface = $wlanapsettings{'INTERFACE'};
-if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
+if ( -d '/sys/class/net/mon.'.$wlanapsettings{'INTERFACE'} ) {
 	$monwlaninterface =  'mon.'.$wlanapsettings{'INTERFACE'};
 }
 
