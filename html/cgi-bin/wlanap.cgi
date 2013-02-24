@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2005-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -391,16 +391,31 @@ print <<END
 		<option value='wpa1+2' $selected{'ENC'}{'wpa1+2'}>WPA1+2</option>
 	</select>
 </td></tr>
+END
+;
+
+#
+# If channel's found use a select dropdown if not a text inputfield.
+if ( scalar @channellist > 0 ){
+	print <<END
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap channel'}:&nbsp;</td><td class='base' colspan='3'>
 	<select name='CHANNEL'>
 END
 ;
-foreach $channel (@channellist){
-	print "<option $selected{'CHANNEL'}{$channel}>$channel</option>";
+	foreach $channel (@channellist){
+		print "<option $selected{'CHANNEL'}{$channel}>$channel</option>";
+	}
+	print "</select></td></tr>"
+} else {
+	print <<END
+<tr><td width='25%' class='base'>$Lang::tr{'wlanap channel'}:&nbsp;</td><td class='base' colspan='3'>
+<input type='text' name='CHANNEL' size='10' value='$wlanapsettings{'CHANNEL'}' />
+</td></tr>
+END
+;
 }
 
 print <<END
-</select></td></tr>
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap country'}:&nbsp;</td><td class='base' colspan='3'>
 	<select name='COUNTRY'>
 END
