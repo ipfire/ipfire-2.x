@@ -51,6 +51,8 @@ var/ipfire/forward/bin/firewall-lib.pl
 var/ipfire/forward/settings
 var/ipfire/forward/config
 var/ipfire/forward/input
+var/ipfire/forward/outgoing
+var/ipfire/forward/dmz
 var/ipfire/forward/p2protocols
 var/ipfire/fwhosts
 var/ipfire/fwhosts/icmp-types

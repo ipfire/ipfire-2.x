@@ -65,7 +65,7 @@ $(TARGET) :
 	for i in auth/users backup/include.user backup/exclude.user \
 	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
-	    extrahd/scan extrahd/devices extrahd/partitions extrahd/settings forward/settings forward/config forward/input \
+	    extrahd/scan extrahd/devices extrahd/partitions extrahd/settings forward/settings forward/config forward/input forward/outgoing forward/dmz \
 	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwlogs/ipsettings fwlogs/portsettings \
 	    isdn/settings mac/settings main/disable_nf_sip main/hosts main/routing main/settings net-traffic/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
@@ -120,6 +120,9 @@ $(TARGET) :
 	echo  "FWPOLICY1=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPPORTSCAN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPOUTGOING=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "SHOWREMARK=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "SHOWCOLORS=off"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "SHOWTABLES=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "POLICY=MODE2"		>> $(CONFIG_ROOT)/forward/settings
 	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/forward/settings
 	
