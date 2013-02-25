@@ -142,8 +142,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' && $fwdfwsettings{'grp2'} eq 'ipfire'){
 		$errormessage.=$Lang::tr{'fwdfw err same'};
 	}
-	print" save1 checkorange ist $checkorange und oldorange ist $fwdfwsettings{'oldorange'}  neue grp1 ist $fwdfwsettings{$fwdfwsettings{'grp1'}} alte grp1 $fwdfwsettings{'oldgrp1b'}  und altgrp2 ist $fwdfwsettings{'oldgrp2a'} und aktuell grp2 $fwdfwsettings{'grp2'} und update ist $fwdfwsettings{'updatefwrule'}<br>";
-
 	#DMZ-Part
 	if ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'ORANGE' || $checkorange eq 'on'){
 		$fwdfwsettings{'config'}=$configdmz;
@@ -1645,68 +1643,66 @@ sub saverule
 	my $hash=shift;
 	my $config=shift;
 	&General::readhasharray("$config", $hash);
-	print" save1 checkorange ist $checkorange und oldorange ist $fwdfwsettings{'oldorange'}<br>";
-
 	if (!$errormessage){
 		#check if we change a DMZ to an outgoing
 		if( ($fwdfwsettings{'oldgrp1b'} eq 'ORANGE' || $fwdfwsettings{'oldorange'} eq 'on') && $fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configdmz);
-			print"1";
+			#print"1";
 		}
 		#check if we change a DMZ to an external access
 		elsif( $fwdfwsettings{'oldgrp1b'} eq 'ORANGE' && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE'  && $fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configdmz);
-			print"2";
+			#print"2";
 		}
 		#check if we change an external access rule to a outgoing
 		elsif( $fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' &&  $fwdfwsettings{'oldgrp1b'} ne 'IPFire' && $fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configinput);
-			print"3";
+			#print"3";
 		}
 		#check if we change an external access rule to a DMZ
 		elsif( $fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'ORANGE' &&  $fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configinput);
-			print"4";
+			#print"4";
 		}
 		#check if we change an outgoing rule to a external access
 		if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'IPFire' && $fwdfwsettings{'oldgrp1b'} eq 'IPFire' && $fwdfwsettings{'grp2'} eq 'ipfire' &&  $fwdfwsettings{'oldgrp2a'} ne 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configoutgoing);
-			print"5";
+			#print"5";
 		}
 		#check if we change an outgoing rule to a DMZ
 		if(	($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'ORANGE' || $checkorange eq 'on') && $fwdfwsettings{'oldgrp1b'} eq 'IPFire'  &&  $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configoutgoing);
-			print"6";
+			#print"6";
 		}
 		#check if we change an forward rule to an external access
 		elsif(	$fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{'oldgrp2a'} ne 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configfwdfw);
-			print"7";
+			#print"7";
 		}
 		#check if we change an forward rule to an DMZ
 		if(	($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'ORANGE' || $checkorange eq 'on') && ($fwdfwsettings{'oldgrp1b'} ne 'ORANGE' && $fwdfwsettings{'oldorange'} ne 'on') && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configfwdfw);
-			print"8";
+			#print"8";
 		}
 		#check if we change an forward rule to an outgoing
 		elsif( $fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' && $fwdfwsettings{'oldgrp1b'} ne 'IPFire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configfwdfw);
-			print"9";
+			#print"9";
 		}
 		#check if we change a DMZ to a forward
 		elsif( ($fwdfwsettings{'oldgrp1b'} eq 'ORANGE' || $fwdfwsettings{'oldorange'} eq 'on') && ($fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE' && $checkorange ne 'on') && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configdmz);
-			print"10";
+			#print"10";
 		}
 		#check if we change an external access rule to a forward
 		elsif(	$fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'oldgrp2a'} eq 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configinput);
-			print"11";
+			#print"11";
 		}
 		#check if we change an outgoing rule to a forward
 		elsif(	$fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'IPFire' && $fwdfwsettings{'oldgrp1b'} eq 'IPFire' && $fwdfwsettings{'grp2'} ne 'ipfire' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 			&changerule($configoutgoing);
-			print"12";
+			#print"12";
 		}
 		if ($fwdfwsettings{'updatefwrule'} ne 'on'){
 			my $key = &General::findhasharraykey ($hash);
