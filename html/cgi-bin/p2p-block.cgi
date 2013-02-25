@@ -121,6 +121,7 @@ END
 	}
 	print"<tr><td><img src='/images/on.gif'></td><td  align='left'>$Lang::tr{'outgoing firewall p2p allow'}</td></tr>";
 	print"<tr><td><img src='/images/off.gif'></td><td align='left'>$Lang::tr{'outgoing firewall p2p deny'}</td></tr></table>";
+	print"<br><br><br><table width='100%'><tr><td align='left'>$Lang::tr{'fwdfw p2p txt'}</td></tr></table>";
 	&Header::closebox();
 }
 sub rules
