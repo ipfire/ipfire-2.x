@@ -1,45 +1,45 @@
-    $subfirewall->{'10.dnat'} = {
-				 'caption' => $Lang::tr{'ssport forwarding'},
-				 'uri' => '/cgi-bin/portfw.cgi',
-				 'title' => "$Lang::tr{'ssport forwarding'}",
-				 'enabled' => 1,
-				 };
-    $subfirewall->{'30.wireless'} = {
-				'caption' => $Lang::tr{'blue access'},
-				'uri' => '/cgi-bin/wireless.cgi',
-				'title' => "$Lang::tr{'blue access'}",
-				'enabled' => 1,
-				 };
-    $subfirewall->{'51.forward'} = {
+    $subfirewall->{'10.forward'} = {
 				'caption' => $Lang::tr{'fwdfw menu'},
 				'uri' => '/cgi-bin/forwardfw.cgi',
 				'title' => "$Lang::tr{'fwdfw menu'}",
 				'enabled' => 1,
-				};			
-	$subfirewall->{'65.fwhost'} = {
+				};
+	$subfirewall->{'20.fwhost'} = {
 				'caption' => $Lang::tr{'fwhost menu'},
 				'uri' => '/cgi-bin/fwhosts.cgi',
 				'title' => "$Lang::tr{'fwhost menu'}",
 				'enabled' => 1,
 				};
-	$subfirewall->{'70.upnp'} = {
-				'caption' => 'UPnP',
-				'uri' => '/cgi-bin/upnp.cgi',
-				'title' => "Universal Plug and Play",
-				'enabled' => 0,
-				};
-	$subfirewall->{'80.optionsfw'} = {
+    $subfirewall->{'30.optionsfw'} = {
 				'caption' => $Lang::tr{'options fw'},
 				'uri' => '/cgi-bin/optionsfw.cgi',
 				'title' => "$Lang::tr{'options fw'}",
 				'enabled' => 1,
 				};
-	$subfirewall->{'81.p2p'} = {
+	$subfirewall->{'40.p2p'} = {
 				'caption' => 'P2P-Block',
 				'uri' => '/cgi-bin/p2p-block.cgi',
 				'title' => "P2P-Block",
 				'enabled' => 1,
-				};					
+				};
+    $subfirewall->{'50.dnat'} = {
+				 'caption' => $Lang::tr{'ssport forwarding'},
+				 'uri' => '/cgi-bin/portfw.cgi',
+				 'title' => "$Lang::tr{'ssport forwarding'}",
+				 'enabled' => 1,
+				 };
+    $subfirewall->{'60.wireless'} = {
+				'caption' => $Lang::tr{'blue access'},
+				'uri' => '/cgi-bin/wireless.cgi',
+				'title' => "$Lang::tr{'blue access'}",
+				'enabled' => 1,
+				 };
+    $subfirewall->{'70.upnp'} = {
+				'caption' => 'UPnP',
+				'uri' => '/cgi-bin/upnp.cgi',
+				'title' => "Universal Plug and Play",
+				'enabled' => 0,
+				};
 	$subfirewall->{'90.iptables'} = {
 				'caption' => $Lang::tr{'ipts'},
 				'uri' => '/cgi-bin/iptables.cgi',
