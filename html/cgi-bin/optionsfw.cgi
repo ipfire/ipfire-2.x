@@ -149,7 +149,7 @@ print <<END
 																						<input type='radio' name='SHOWCOLORS' value='off' $checked{'SHOWCOLORS'}{'off'} /> off</td></tr>
 <tr><td align='left' width='60%'>$Lang::tr{'fw settings remark'}</td><td align='left'>on <input type='radio' name='SHOWREMARK' value='on' $checked{'SHOWREMARK'}{'on'} />/
 																						<input type='radio' name='SHOWREMARK' value='off' $checked{'SHOWREMARK'}{'off'} /> off</td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'fw settings ruletable'}</td><td align='left'>on<input type='radio' name='SHOWTABLES' value='on' $checked{'SHOWTABLES'}{'on'} />/
+<tr><td align='left' width='60%'>$Lang::tr{'fw settings ruletable'}</td><td align='left'>on <input type='radio' name='SHOWTABLES' value='on' $checked{'SHOWTABLES'}{'on'} />/
 																						<input type='radio' name='SHOWTABLES' value='off' $checked{'SHOWTABLES'}{'off'} /> off</td></tr>
 </table>
 <br />
