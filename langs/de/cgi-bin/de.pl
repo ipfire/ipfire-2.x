@@ -924,7 +924,7 @@
 'fwdfw man port'		=> 'Port(s) manuell:',
 'fwdfw moveup'			=> 'Hoch',
 'fwdfw movedown'		=> 'Runter',
-'fwdfw p2p txt'			=> 'Hier können einzelne P2P Netzwerke erlaubt oder verboten werden. Das System setzt die Regeln automatisch unabhängig vom aktuellen Firewall Modus. Bitte beachten, dass ein erlaubtes P2P Netzwerk unter Umständen einen erheblichen Teil der Bandbreite beanspruchen kann, wenn der Client nicht korrekt konfiguriert ist. Eventuell sollten die QOS Einstellungen entsprechend gesetzt werden.',
+'fwdfw p2p txt'			=> 'Hier können einzelne P2P Netzwerke erlaubt oder verboten werden. Das System setzt die Regeln automatisch unabhängig vom aktuellen Firewall Modus. Bitte beachten, dass ein erlaubtes P2P Netzwerk unter Umständen einen erheblichen Teil der Bandbreite beanspruchen kann, wenn der Client nicht korrekt konfiguriert ist.',
 'fwdfw pol allow'		=> 'Zugelassen',
 'fwdfw pol block'		=> 'Blockiert',
 'fwdfw pol title'		=> 'Standardverhalten der Firewall',

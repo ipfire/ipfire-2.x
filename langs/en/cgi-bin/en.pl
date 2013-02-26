@@ -949,7 +949,7 @@
 'fwdfw man port'		=> 'Port(s) manual:',
 'fwdfw moveup'			=> 'Move up',
 'fwdfw movedown'		=> 'Move down',
-'fwdfw p2p txt'			=> 'Here you can admit or deny or allow single p2p networks. Just define which networks are allowed or denied and the system takes care of the rules depending on the firewall mode. An allowed p2p network may use a lot of bandwith if the clients are not configured correctly. Maybe you should have a look at the QOS settings.',
+'fwdfw p2p txt'			=> 'Here you can admit or deny or allow single p2p networks. Just define which networks are allowed or denied and the system takes care of the rules depending on the firewall mode. An allowed p2p network may use a lot of bandwith if the clients are not configured correctly.',
 'fwdfw pol allow'		=> 'Allowed',
 'fwdfw pol block'		=> 'Blocked',
 'fwdfw pol title'		=> 'Firewall default behavior',

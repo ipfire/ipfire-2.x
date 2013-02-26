@@ -37,6 +37,7 @@ $settings{'DROPWIRELESSINPUT'} = 'on';
 $settings{'DROPWIRELESSFORWARD'} = 'on';
 $settings{'SHOWCOLORS'} = 'off';
 $settings{'SHOWREMARK'} = 'on';
+$settings{'SHOWTABLES'} = 'on';
 
 my $errormessage = '';
 my $warnmessage = '';
@@ -99,8 +100,15 @@ $checked{'SHOWCOLORS'}{$settings{'SHOWCOLORS'}} = "checked='checked'";
 $checked{'SHOWREMARK'}{'off'} = '';
 $checked{'SHOWREMARK'}{'on'} = '';
 $checked{'SHOWREMARK'}{$settings{'SHOWREMARK'}} = "checked='checked'";
-$selected{'FWPOLICY'}{$settings{'FWPOLICY'}}= 'selected';
-$selected{'FWPOLICY1'}{$settings{'FWPOLICY1'}}= 'selected';
+$checked{'SHOWTABLES'}{'off'} = '';
+$checked{'SHOWTABLES'}{'on'} = '';
+$checked{'SHOWTABLES'}{$settings{'SHOWTABLES'}} = "checked='checked'";
+$checked{'FWPOLICY'}{'DROP'} = '';
+$checked{'FWPOLICY'}{'REJECT'} = '';
+$checked{'FWPOLICY'}{$settings{'FWPOLICY'}} = "checked='checked'";
+$checked{'FWPOLICY1'}{'DROP'} = '';
+$checked{'FWPOLICY1'}{'REJECT'} = '';
+$checked{'FWPOLICY1'}{$settings{'FWPOLICY1'}} = "checked='checked'";
 
 
 &Header::openbox('100%', 'center', $Lang::tr{'options fw'});
@@ -140,19 +148,18 @@ print <<END
 <tr><td align='left' width='60%'>$Lang::tr{'fw settings color'}</td><td align='left'>on <input type='radio' name='SHOWCOLORS' value='on' $checked{'SHOWCOLORS'}{'on'} />/
 																						<input type='radio' name='SHOWCOLORS' value='off' $checked{'SHOWCOLORS'}{'off'} /> off</td></tr>
 <tr><td align='left' width='60%'>$Lang::tr{'fw settings remark'}</td><td align='left'>on <input type='radio' name='SHOWREMARK' value='on' $checked{'SHOWREMARK'}{'on'} />/
-																						<input type='radio' name='SHOWREMARK' value='off' $checked{'SHOWREMARK'}{'off'} /> off</td></tr>																						
-</table>																						
+																						<input type='radio' name='SHOWREMARK' value='off' $checked{'SHOWREMARK'}{'off'} /> off</td></tr>
+<tr><td align='left' width='60%'>$Lang::tr{'fw settings ruletable'}</td><td align='left'>on<input type='radio' name='SHOWTABLES' value='on' $checked{'SHOWTABLES'}{'on'} />/
+																						<input type='radio' name='SHOWTABLES' value='off' $checked{'SHOWTABLES'}{'off'} /> off</td></tr>
+</table>
 <br />
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw default drop'}</b></td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop action'}</td><td><select name='FWPOLICY'>
-<option value='DROP' $selected{'FWPOLICY'}{'DROP'}>DROP</option>
-<option value='REJECT' $selected{'FWPOLICY'}{'REJECT'}>REJECT</option></select>
-</td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop action1'}</td><td><select name='FWPOLICY1'>
-<option value='DROP' $selected{'FWPOLICY1'}{'DROP'}>DROP</option>
-<option value='REJECT' $selected{'FWPOLICY1'}{'REJECT'}>REJECT</option></select>
-</td></tr>
+<tr><td align='left' width='60%'>$Lang::tr{'drop action'}</td><td align='left'>DROP <input type='radio' name='FWPOLICY' value='DROP' $checked{'FWPOLICY'}{'DROP'} />/
+																						<input type='radio' name='FWPOLICY' value='REJECT' $checked{'FWPOLICY'}{'REJECT'} /> REJECT</td></tr>
+<tr><td align='left' width='60%'>$Lang::tr{'drop action1'}</td><td align='left'>DROP <input type='radio' name='FWPOLICY1' value='DROP' $checked{'FWPOLICY1'}{'DROP'} />/
+																						<input type='radio' name='FWPOLICY1' value='REJECT' $checked{'FWPOLICY1'}{'REJECT'} /> REJECT</td></tr>
+
 </table>
 
 <br />
