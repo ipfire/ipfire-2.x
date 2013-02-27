@@ -111,5 +111,9 @@ ifneq "$(XEN)" "1"
 	sed -i -e "s|.ko||g" /etc/modprobe.d/mISDN
 endif
 
+	# Remove mISDN modules that was shipped with the kernel
+	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/isdn/mISDN
+	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/isdn/hardware/mISDN
+
 	@rm -rf $(DIR_SRC)/mISDN*
 	@$(POSTBUILD)
