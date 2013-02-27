@@ -1086,8 +1086,10 @@ sub addnet
 	$fwhostsettings{'orgnetremark'}=$fwhostsettings{'NETREMARK'};
 	print<<END;
 	<table border='0' width='100%'><form method='post' style='display:inline'  >
-	<tr><td width='10%'>$Lang::tr{'name'}:</td><td width='20%' align='left'><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'}><script>document.getElementById('textbox1').focus()</script></td><td>$Lang::tr{'fwhost netaddress'}:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14'></td><td align='right'>$Lang::tr{'netmask'}:</td><td align='right'><input type='TEXT' name='SUBNET' value='$fwhostsettings{'SUBNET'}' $fwhostsettings{'BLK_IP'} size='14'></td></tr>
-	<tr><td width='10%'>$Lang::tr{'remark'}:</td><td colspan='5'><input type='TEXT' name='NETREMARK' value='$fwhostsettings{'NETREMARK'}' style='width: 98%;'></td></tr>
+	<tr><td width='15%'>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='14'><script>document.getElementById('textbox1').focus()</script></td></tr>
+	<tr><td>$Lang::tr{'fwhost netaddress'}:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14' maxlength='15'></td></tr>
+	<tr><td>$Lang::tr{'netmask'}:</td><td><input type='TEXT' name='SUBNET' value='$fwhostsettings{'SUBNET'}' $fwhostsettings{'BLK_IP'} size='14' maxlength='15'></td></tr>
+	<tr><td>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='NETREMARK' value='$fwhostsettings{'NETREMARK'}' style='width: 98.5%;'></td></tr>
 	<tr><td colspan='6'><br><hr></hr></td></tr><tr>
 END
 	if ($fwhostsettings{'ACTION'} eq 'editnet' || $fwhostsettings{'error'} eq 'on')
@@ -1108,17 +1110,9 @@ sub addhost
 	$fwhostsettings{'orgremark'}=$fwhostsettings{'HOSTREMARK'};
 	print<<END;
 	<table border='0' width='100%'><form method='post' style='display:inline'>
-	<tr><td>$Lang::tr{'name'}:</td><td width='10%'><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} ><script>document.getElementById('textbox1').focus()</script></td>
-	
-END
-	#<td><select name='type'>
-	#if ($fwhostsettings{'type'} eq 'ip'){print "<option value='ip' selected >IP</option>";}else{print "<option value='ip' >IP</option>";}
-	#if ($fwhostsettings{'type'} eq 'mac'){print "<option value='mac' selected >MAC</option>";}else{print "<option value='mac' >MAC</option>";}
-	#</option></select></td>
-	print<<END;
-	
-	<td align='right'>IP/MAC:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} ></td></tr>
-	<tr><td width='10%'>$Lang::tr{'remark'}:</td><td colspan='3' ><input type='TEXT' name='HOSTREMARK' value='$fwhostsettings{'HOSTREMARK'}' style='width:60%;'></td></tr>
+	<tr><td>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='14'><script>document.getElementById('textbox1').focus()</script></td></tr>
+	<tr><td>IP/MAC:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14' maxlength='15'></td></tr>
+	<tr><td width='10%'>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='HOSTREMARK' value='$fwhostsettings{'HOSTREMARK'}' style='width:98%;'></td></tr>
 	<tr><td colspan='5'><br><br><b>$Lang::tr{'fwhost attention'}</b><br>$Lang::tr{'fwhost macwarn'}</td></tr>
 	<tr><td colspan='5'><hr></hr></td></tr>
 END
@@ -1126,9 +1120,9 @@ END
 	if ($fwhostsettings{'ACTION'} eq 'edithost' || $fwhostsettings{'error'} eq 'on')
 	{
 		
-		print "	<td colspan='6' align='right'><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'/><input type='hidden' name='ACTION' value='updatehost'><input type='hidden' name='orgremark' value='$fwhostsettings{'orgremark'}' ><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newhost' value='$fwhostsettings{'newhost'}'></form>";
+		print "	<td colspan='4' align='right'><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'/><input type='hidden' name='ACTION' value='updatehost'><input type='hidden' name='orgremark' value='$fwhostsettings{'orgremark'}' ><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newhost' value='$fwhostsettings{'newhost'}'></form>";
 	}else{
-		print "	<td colspan='6' align='right'><input type='submit' name='savehost' value='$Lang::tr{'save'}'style='min-width:100px;' /><input type='hidden' name='ACTION' value='savehost' /><input type='hidden' name='newhost' value='on'>";
+		print "	<td colspan='4' align='right'><input type='submit' name='savehost' value='$Lang::tr{'save'}'style='min-width:100px;' /><input type='hidden' name='ACTION' value='savehost' /><input type='hidden' name='newhost' value='on'>";
 	}	
 	print "	</form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;' ><input type='hidden' name='ACTION' value='resethost'></td></tr></table></form>";
 	&Header::closebox();
@@ -1140,7 +1134,14 @@ sub addgrp
 	&showmenu;
 	&Header::openbox('100%', 'left', $Lang::tr{'fwhost addgrp'});
 	&General::setup_default_networks(\%defaultNetworks);
+	&General::readhasharray("$configccdnet", \%ccdnet);
+	&General::readhasharray("$confignet", \%customnetwork);
+	&General::readhasharray("$configccdhost", \%ccdhost);
+	&General::readhasharray("$confighost", \%customhost);
+	&General::readhasharray("$configipsec", \%ipsecconf);
+
 	my %checked=();
+	my $show='';
 	$checked{'check1'}{'off'} = '';
 	$checked{'check1'}{'on'} = '';
 	$checked{'grp2'}{$fwhostsettings{'grp2'}} = 'CHECKED';
@@ -1150,19 +1151,25 @@ sub addgrp
 		if ($fwhostsettings{'update'} eq ''){   
 			print<<END;
 			<table width='100%' border='0'><form method='post'>
-			<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td width='20%'><input type='TEXT' name='grp_name' value='$fwhostsettings{'grp_name'}'></td><td width='10%'>$Lang::tr{'remark'}:</td><td ><input type='TEXT' name='remark' value='$fwhostsettings{'remark'}' style='width: 98%;'></tr>
-			<tr><td colspan='5'><br><hr></td></tr></table>
+			<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='TEXT' name='grp_name' value='$fwhostsettings{'grp_name'}' size='14'></td></tr>
+			<tr><td width='10%'>$Lang::tr{'remark'}:</td><td ><input type='TEXT' name='remark' value='$fwhostsettings{'remark'}' style='width: 98%;'></td></tr>
+			<tr><td colspan='2'><br><hr></td></tr></table>
 END
 		}else{
 			print<<END;
 			<table width='100%' border='0'><form method='post' style='display:inline'>
-			<tr><td nowrap='nowrap' width='12%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='TEXT' name='grp'  value='$fwhostsettings{'grp_name'}' readonly ></td><td>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='newrem' size='35' value='$fwhostsettings{'remark'}'></td><td><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldrem' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='ACTION' value='changegrpremark' ></td></tr></table></form>
+			<tr><td nowrap='nowrap' width='12%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='TEXT' name='grp'  value='$fwhostsettings{'grp_name'}' readonly ></td><td></td></tr>
+			<tr><td>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='newrem' size='45' value='$fwhostsettings{'remark'}' style='width:98%'></td><td align='right'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldrem' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='ACTION' value='changegrpremark' ></td></tr></table></form>
 			<hr>
 END
 		}
 		if ($fwhostsettings{'update'} eq 'on'){
 			print<<END;
-			<form method='post'><input type='hidden' name='remark' value='$rem'><input type='hidden' name='grp_name' value='$grp'><table width='100%' border='0'><tr><td width='1%'><input type='radio' name='grp2' value='std_net'  checked></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost stdnet'}</td><td><select name='DEFAULT_SRC_ADR' style='min-width:185px;'>
+			<form method='post'><input type='hidden' name='remark' value='$rem'><input type='hidden' name='grp_name' value='$grp'>
+			<table width='100%' border='0'>
+			<tr><td width=50% valign='top'>
+			<table width='100%' border='0'>
+			<tr><td width='1%'><input type='radio' name='grp2' value='std_net'  checked></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost stdnet'}</td><td><select name='DEFAULT_SRC_ADR' style='min-width:185px;'>
 END
 			foreach my $network (sort keys %defaultNetworks)
 			{
@@ -1172,77 +1179,67 @@ END
 				print " selected='selected'" if ($fwhostsettings{'DEFAULT_SRC_ADR'} eq $defaultNetworks{$network}{'NAME'});
 				print ">$network</option>";
 			}
-			print<<END;
-			</select></td><td width='1%'><input type='radio' name='grp2' value='ovpn_net'  $checked{'grp2'}{'ovpn_net'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_NET' style='min-width:185px;'>
-END
-			&General::readhasharray("$configccdnet", \%ccdnet);
-			foreach my $key (sort { uc($ccdnet{$a}[0]) cmp uc($ccdnet{$b}[0]) }  keys %ccdnet)
-			{
-				print"<option value='$ccdnet{$key}[0]'>$ccdnet{$key}[0]</option>";
+			print"</select></td></tr>";
+			if (! -z $confignet){
+				print"<tr><td><input type='radio' name='grp2' value='cust_net' $checked{'grp2'}{'cust_net'}></td><td>$Lang::tr{'fwhost cust net'}</td><td><select name='CUST_SRC_NET' style='min-width:185px;'>";
+				foreach my $key (sort { uc($customnetwork{$a}[0]) cmp uc($customnetwork{$b}[0]) } keys  %customnetwork) {
+					print"<option>$customnetwork{$key}[0]</option>";
+				}
+				print"</select></td></tr>";
 			}
-			print<<END;
-			</select></td></tr>
-			<tr><td><input type='radio' name='grp2' value='cust_net' $checked{'grp2'}{'cust_net'}></td><td>$Lang::tr{'fwhost cust net'}</td><td><select name='CUST_SRC_NET' style='min-width:185px;'>
-END
-			&General::readhasharray("$confignet", \%customnetwork);
-			foreach my $key (sort { uc($customnetwork{$a}[0]) cmp uc($customnetwork{$b}[0]) } keys  %customnetwork) {
-				print"<option>$customnetwork{$key}[0]</option>";
+			if (! -z $confighost){
+				print"<tr><td valign='top'><input type='radio' name='grp2' value='cust_host' $checked{'grp2'}{'cust_host'}></td><td valign='top'>$Lang::tr{'fwhost cust addr'}</td><td><select name='CUST_SRC_HOST' style='min-width:185px;'>";
+				foreach my $key (sort { uc($customhost{$a}[0]) cmp uc($customhost{$b}[0]) } keys %customhost) {
+					print"<option>$customhost{$key}[0]</option>";
+				}
+				print"</select></td></tr>";
 			}
-			print<<END;
-			</select></td><td width='1%'><input type='radio' name='grp2' value='ovpn_host' $checked{'grp2'}{'ovpn_host'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_HOST' style='min-width:185px;'>
-END
-			&General::readhasharray("$configccdhost", \%ccdhost);
+			print"</table>";
+			#Inner table right
+			print"</td><td valign='top'><table width='100%' border='0'>";
+			#OVPN networks
+			if (! -z $configccdnet){
+				print"<td width='1%'><input type='radio' name='grp2' value='ovpn_net'  $checked{'grp2'}{'ovpn_net'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_NET' style='min-width:185px;'>";
+				foreach my $key (sort { uc($ccdnet{$a}[0]) cmp uc($ccdnet{$b}[0]) }  keys %ccdnet)
+				{
+					print"<option value='$ccdnet{$key}[0]'>$ccdnet{$key}[0]</option>";
+				}
+				print"</select></td></tr>";
+			}
+			#OVPN clients
 			foreach my $key (sort { uc($ccdhost{$a}[0]) cmp uc($ccdhost{$b}[0]) } keys %ccdhost)
 			{
 				if ($ccdhost{$key}[33] ne ''){
+					print"<td width='1%'><input type='radio' name='grp2' value='ovpn_host' $checked{'grp2'}{'ovpn_host'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_HOST' style='min-width:185px;'>" if ($show eq '');
+					$show='1';
 					print"<option value='$ccdhost{$key}[1]'>$ccdhost{$key}[1]</option>";
 				}
 			}
-			print<<END;
-			</select></td></tr>
-			<tr><td valign='top'><input type='radio' name='grp2' value='cust_host' $checked{'grp2'}{'cust_host'}></td><td valign='top'>$Lang::tr{'fwhost cust addr'}</td><td><select name='CUST_SRC_HOST' style='min-width:185px;'>
-END
-			&General::readhasharray("$confighost", \%customhost);
-			foreach my $key (sort { uc($customhost{$a}[0]) cmp uc($customhost{$b}[0]) } keys %customhost) {
-				print"<option>$customhost{$key}[0]</option>";
-			}
-			print<<END;
-			</select></td><td width='1%'><input type='radio' name='grp2' value='ovpn_n2n' $checked{'grp2'}{'ovpn_n2n'}></td><td valign='top'>$Lang::tr{'fwhost ovpn_n2n'}</td><td colspan='3'><select name='OVPN_N2N' style='min-width:185px;'>
-END
-			&General::readhasharray("$configccdhost", \%ccdhost);
+			if ($show eq '1'){$show='';print"</select></td></tr>";}
+			#OVPN n2n networks
 			foreach my $key (sort { uc($ccdhost{$a}[0]) cmp uc($ccdhost{$b}[0]) } keys %ccdhost) {
 				if($ccdhost{$key}[3] eq 'net'){
+					print"<td width='1%'><input type='radio' name='grp2' value='ovpn_n2n' $checked{'grp2'}{'ovpn_n2n'}></td><td valign='top'>$Lang::tr{'fwhost ovpn_n2n'}</td><td colspan='3'><select name='OVPN_N2N' style='min-width:185px;'>" if ($show eq '');
+					$show='1';
 					print"<option>$ccdhost{$key}[1]</option>";
 				}
 			}
-			print<<END;
-			</select></td></tr>
-			<tr><td colspan='3'></td><td valign='top'><input type='radio' name='grp2' value='ipsec_net' $checked{'grp2'}{'ipsec_net'}></td><td valign='top'>$Lang::tr{'fwhost ipsec net'}</td><td><select name='IPSEC_NET' style='min-width:185px;'>
-END
-			&General::readhasharray("$configipsec", \%ipsecconf);
+			if ($show eq '1'){$show='';print"</select></td></tr>";}
+			#IPsec networks
 			foreach my $key (sort { uc($ipsecconf{$a}[0]) cmp uc($ipsecconf{$b}[0]) } keys %ipsecconf) {
 				if ($ipsecconf{$key}[3] eq 'net'){
+					print"<td valign='top'><input type='radio' name='grp2' value='ipsec_net' $checked{'grp2'}{'ipsec_net'}></td><td valign='top'>$Lang::tr{'fwhost ipsec net'}</td><td><select name='IPSEC_NET' style='min-width:185px;'>" if ($show eq '');
+					$show='1';
 					print"<option value='$ipsecconf{$key}[1]'>$ipsecconf{$key}[1]</option>";
 				}
 			}
-			print<<END;
-			</select></td></tr></table>
-END
-#			<td colspan='3'></td><td valign='top'><input type='radio' name='grp2' value='ipsec_host' $checked{'grp2'}{'ipsec_host'}></td><td valign='top'>$Lang::tr{'fwhost ipsec host'}</td><td><select name='IPSEC_HOST' style='min-width:185px;'>
-#END
-#			&General::readhasharray("$configipsec", \%ipsecconf);
-#			foreach my $key (sort { uc($ipsecconf{$a}[0]) cmp uc($ipsecconf{$b}[0]) } keys %ipsecconf) {
-#				if ($ipsecconf{$key}[3] eq 'host'){
-#					print"<option>$ipsecconf{$key}[1]</option>";
-#				}
-#			}
-#			print<<END;
-#			</select></td></tr>
-#			<tr>
+			if ($show eq '1'){$show='';print"</select></td></tr>";}
+			print"</table>";
+			print"</td></tr></table>";
 			print"<br><br><b>$Lang::tr{'fwhost attention'}:</b><br>	$Lang::tr{'fwhost macwarn'}<br><hr>";
 		}
-			print"<table border='0' width='100%'>";
-			print"<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='update' value=$fwhostsettings{'update'} ><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td></table></form>";
+		print"<table border='0' width='100%'>";
+		print"<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='update' value=$fwhostsettings{'update'} ><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td></table></form>";
 	&Header::closebox();
 }
 sub addservice
@@ -1258,7 +1255,8 @@ sub addservice
 	}
 	print<<END;
 	<table width='100%' border='0'><form method='post'>
-	<tr><td width='1%' nowrap='nowrap'>$Lang::tr{'fwhost srv_name'}:</td><td width='25%' nowrap='nowrap'><input type='text' name='SRV_NAME' id='textbox1' value='$fwhostsettings{'SRV_NAME'}'><script>document.getElementById('textbox1').focus()</script></td><td width='1%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td width='10%'><select name='PROT'>
+	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost srv_name'}:</td><td><input type='text' name='SRV_NAME' id='textbox1' value='$fwhostsettings{'SRV_NAME'}' size='14'><script>document.getElementById('textbox1').focus()</script></td></tr>
+	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT'>
 END
 	foreach ("TCP","UDP","ICMP")
 	{
@@ -1270,8 +1268,8 @@ END
 		}
 	}
 	print<<END;
-	</select></td><td width='2%'>$Lang::tr{'fwhost port'}:</td><td align='left'><input type='text' name='SRV_PORT' value='$fwhostsettings{'SRV_PORT'}' maxlength='11' size='9'></td></tr>
-	<tr><td></td><td></td><td nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td><select name='ICMP_TYPES'>
+	</select></td></tr>
+	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td><select name='ICMP_TYPES'>
 END
 	&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 	print"<option>All ICMP-Types</option>";
@@ -1280,7 +1278,8 @@ END
 	}
 	
 	print<<END;
-	</select></td>
+	</select></td></tr>
+	<tr><td width='10%'>$Lang::tr{'fwhost port'}:</td><td><input type='text' name='SRV_PORT' value='$fwhostsettings{'SRV_PORT'}' maxlength='11' size='14'></td></tr>
 	<tr><td colspan='6'><br><hr></td></tr>
 	<tr><td colspan='6' align='right'>
 END
@@ -1316,15 +1315,17 @@ sub addservicegrp
 	if ($fwhostsettings{'updatesrvgrp'} eq ''){
 		print<<END;
 		<table width='100%' border='0'><form method='post'>
-		<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td width='20%'><input type='text' name='SRVGRP_NAME' value='$fwhostsettings{'SRVGRP_NAME'}'></td><td width='10%'>$Lang::tr{'remark'}:</td><td><input type='text' name='SRVGRP_REMARK' value='$fwhostsettings{'SRVGRP_REMARK'}' style='width: 98%;'></td></tr>
-		<tr><td colspan='4'><br><hr></td></td></tr>
+		<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='text' name='SRVGRP_NAME' value='$fwhostsettings{'SRVGRP_NAME'}' size='14'></td></tr>
+		<tr><td width='10%'>$Lang::tr{'remark'}:</td><td><input type='text' name='SRVGRP_REMARK' value='$fwhostsettings{'SRVGRP_REMARK'}' style='width: 98%;'></td></tr>
+		<tr><td colspan='2'><br><hr></tr>
 		</table>
 END
 	}else{
 		print<<END;
 		<table width='100%' border='0'><form method='post' style='display:inline'>
-		<tr><td>$Lang::tr{'fwhost addgrpname'}</td><td><input type='text' name='srvgrp' value='$fwhostsettings{'SRVGRP_NAME'}' readonly ></td><td>$Lang::tr{'remark'}:</td><td width='1%'><input type='text' name='newsrvrem' size='35' value='$fwhostsettings{'SRVGRP_REMARK'}'></td><td><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldsrvrem' value='$fwhostsettings{'oldsrvgrpremark'}'><input type='hidden' name='ACTION' value='changesrvgrpremark' ></td></tr>
-		<tr><td colspan='5'><br><hr></td></td></tr>
+		<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='text' name='srvgrp' value='$fwhostsettings{'SRVGRP_NAME'}' readonly  size='14'></td><td width='3%'></td></tr>
+		<tr><td width='10%'>$Lang::tr{'remark'}:</td><td><input type='text' name='newsrvrem'  value='$fwhostsettings{'SRVGRP_REMARK'}' style='width:98%;'></td><td align='right'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldsrvrem' value='$fwhostsettings{'oldsrvgrpremark'}'><input type='hidden' name='ACTION' value='changesrvgrpremark' ></td></tr>
+		<tr><td colspan='3'><br><hr></td></td></tr>
 		</table></form>
 END
 	}
@@ -1977,7 +1978,7 @@ sub decrease
 		if ( ($customgrp{$key}[0] eq $grp) && ($customgrp{$key}[3] eq 'Custom Network')){
 			foreach my $key1 (sort keys %customnetwork){
 				if ($customnetwork{$key1}[0] eq $customgrp{$key}[2]){
-					$customnetwork{$key1}[3]=$customnetwork{$key1}[3]-1;
+					$customnetwork{$key1}[4]=$customnetwork{$key1}[4]-1;
 					last;
 				}
 			}
@@ -1986,7 +1987,7 @@ sub decrease
 		if (($customgrp{$key}[0] eq $grp) && ($customgrp{$key}[3] eq 'Custom Host')){
 			foreach my $key2 (sort keys %customhost){
 				if ($customhost{$key2}[0] eq $customgrp{$key}[2]){
-					$customhost{$key2}[3]=$customhost{$key2}[3]-1;
+					$customhost{$key2}[4]=$customhost{$key2}[4]-1;
 					last;
 				}
 			}
