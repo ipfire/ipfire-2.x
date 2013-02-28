@@ -11,6 +11,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < attention
@@ -134,6 +135,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
+< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < Async logging enabled
@@ -250,6 +252,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
+< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < attention
@@ -342,6 +345,7 @@
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
 < Add a route
+< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < attention
