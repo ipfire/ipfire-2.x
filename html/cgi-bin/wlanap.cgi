@@ -131,7 +131,7 @@ if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'save'}" ){
 			$errormessage .= "$Lang::tr{'wlanap invalid wpa'}<br />";
 		}
 		# only ASCII alowed
-		if ( ($wlanapsettings{'PWD'} !~ m/[\x00-\x7f]/) ){
+		if ( !($wlanapsettings{'PWD'} !~ /[^\x00-\x7f]/) ){
 			$errormessage .= "$Lang::tr{'wlanap invalid wpa'}<br />";
 		}
 	}
@@ -529,10 +529,12 @@ sub WriteConfig_hostapd{
 
 	open (CONFIGFILE, ">/var/ipfire/wlanap/hostapd.conf");
 	print CONFIGFILE <<END
+driver=$wlanapsettings{'DRIVER_HOSTAPD'}
 ######################### basic hostapd configuration ##########################
 #
 interface=$wlanapsettings{'INTERFACE'}
-driver=$wlanapsettings{'DRIVER_HOSTAPD'}
+country_code=$wlanapsettings{'COUNTRY'}
+ieee80211d=1
 channel=$wlanapsettings{'CHANNEL'}
 END
 ;
