@@ -111,11 +111,15 @@ for path in /sys/block/*; do
 	echo "  OK, this is it..."
 	echo -n "${device_}" > /tmp/dest_device
 
-	# Disk size to GiB.
-	device_size=$(( ${device_size} / 2097152 ))
+	if [ ${device_size} -gt 0 ]; then
+		# Disk size to GiB.
+		device_size=$(( ${device_size} / 2097152 ))
 
-	# Build string with drive details
-	device_str="/dev/${device_} - ${device_size} GiB -"
+		# Build string with drive details
+		device_str="/dev/${device_} - ${device_size} GiB -"
+	else
+		device_str="/dev/${device_} -"
+	fi
 	device_str="${device_str} $(cat /sys/block/${device}/device/vendor)"
 	device_str="${device_str} $(cat /sys/block/${device}/device/model)"
 
