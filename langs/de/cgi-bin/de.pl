@@ -930,6 +930,7 @@
 'fwdfw pol title'		=> 'Standardverhalten der Firewall',
 'fwdfw pol text'		=> 'Standardverhalten für Verbindungen aus den lokalen Netzwerken. Bei "Zugelassen" werden sämtliche Verbindungen zugelassen mit Ausnahme der konfigurierten Regeln. Mit "Blockiert" werden alle Verbindungsversuche blockiert, mit Ausnahme erstellten Regeln. Außerdem werden hier der externe Zugang und der Zugriff auf die DMZ geregelt.',
 'fwdfw pol text1'		=> 'Standardverhalten für Verbindungen von IPFire. Bei "Zugelassen" werden sämtliche Verbindungen zugelassen mit Ausnahme konfigurierten Regeln. Mit "Blockiert" werden alle Verbindungsversuche blockiert, mit Ausnahme der erstellten Regeln.Achtung! Mit diesen Einstellungen kann man sich aussperren. Normalerweise ist keine Änderung nötig.',
+'fwdfw red'				=> 'INTERNET',
 'fwdfw reread'			=> 'Übernehmen',
 'fwdfw rules'			=> 'Regeln',
 'fwdfw rule action' 	=> 'Regel Aktion:',

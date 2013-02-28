@@ -54,8 +54,8 @@ sub setup_default_networks
 	$defaultNetworks->{$Lang::tr{'green'}}{'NAME'} = "GREEN";
 
 	if ($netsettings{'RED_DEV'} ne ''){
-		$defaultNetworks->{$Lang::tr{'red'}}{'IPT'} = "$netsettings{'RED_NETADDRESS'}/$netsettings{'RED_NETMASK'}";
-		$defaultNetworks->{$Lang::tr{'red'}}{'NAME'} = "RED";
+		$defaultNetworks->{$Lang::tr{'fwdfw red'}}{'IPT'} = "$netsettings{'RED_NETADDRESS'}/$netsettings{'RED_NETMASK'}";
+		$defaultNetworks->{$Lang::tr{'fwdfw red'}}{'NAME'} = "RED";
 	}
 	if ($netsettings{'ORANGE_DEV'} ne ''){
 		$defaultNetworks->{$Lang::tr{'orange'}}{'IPT'} = "$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}";

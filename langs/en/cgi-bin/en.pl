@@ -955,6 +955,7 @@
 'fwdfw pol title'		=> 'Firewall default behavior',
 'fwdfw pol text'		=> 'Default behavior for connections from local networks. "Allowed" allows all connections from local networks except the defined rules. "Blocked" prohibits all connections except the defined ones. Also external access and connections to/from the demilitarized zone are configurable here.',
 'fwdfw pol text1'		=> 'Default behavior for connections from IPFire. "Allowed" allows all connections from local networks except the defined rules. "Blocked" prohibits all connections except the defined ones. Attention! You can lock yourself out with these settings. Normally there is no need to change anything here.',
+'fwdfw red'				=> 'INTERNET',
 'fwdfw reread'			=> 'Apply',
 'fwdfw rules'			=> 'Rules',
 'fwdfw rule action' 	=> 'Rule action:',
