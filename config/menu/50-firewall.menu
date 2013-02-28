@@ -10,18 +10,12 @@
 				'title' => "$Lang::tr{'fwhost menu'}",
 				'enabled' => 1,
 				};
-    $subfirewall->{'29.optionsfw'} = {
+    $subfirewall->{'30.optionsfw'} = {
 				'caption' => $Lang::tr{'options fw'},
 				'uri' => '/cgi-bin/optionsfw.cgi',
 				'title' => "$Lang::tr{'options fw'}",
 				'enabled' => 1,
 				};
-	$subfirewall->{'30.wireless'} = {
-				'caption' => $Lang::tr{'blue access'},
-				'uri' => '/cgi-bin/wireless.cgi',
-				'title' => "$Lang::tr{'blue access'}",
-				'enabled' => 1,
-				 };
 	$subfirewall->{'40.p2p'} = {
 				'caption' => 'P2P-Block',
 				'uri' => '/cgi-bin/p2p-block.cgi',
@@ -34,6 +28,12 @@
 				 'title' => "$Lang::tr{'ssport forwarding'}",
 				 'enabled' => 1,
 				 };
+	$subfirewall->{'60.wireless'} = {
+				'caption' => $Lang::tr{'blue access'},
+				'uri' => '/cgi-bin/wireless.cgi',
+				'title' => "$Lang::tr{'blue access'}",
+				'enabled' => 1,
+				 };			 
     $subfirewall->{'70.upnp'} = {
 				'caption' => 'UPnP',
 				'uri' => '/cgi-bin/upnp.cgi',
