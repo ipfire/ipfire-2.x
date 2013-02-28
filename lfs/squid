@@ -99,7 +99,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --enable-epoll \
 	   --disable-kqueue \
 	   --enable-select \
-	   --disable-cache-digests \
+	   --enable-cache-digests \
 	   --enable-forw-via-db \
 	   --enable-htcp \
 	   --enable-ipf-transparent \

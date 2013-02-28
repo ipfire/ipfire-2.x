@@ -497,6 +497,7 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Add a route
 WARNING: untranslated string: Edit an existing route
 WARNING: untranslated string: Scan for Songs
+WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: attention

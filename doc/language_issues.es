@@ -506,6 +506,7 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Async logging enabled
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: Set time on boot
+WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: attention

@@ -507,6 +507,7 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
+WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: bytes
 WARNING: untranslated string: ccd iroute2
 WARNING: untranslated string: new

@@ -221,6 +221,7 @@ $proxysettings{'MEM_POLICY'} = 'LRU';
 $proxysettings{'CACHE_POLICY'} = 'LRU';
 $proxysettings{'L1_DIRS'} = '16';
 $proxysettings{'OFFLINE_MODE'} = 'off';
+$proxysettings{'CACHE_DIGESTS'} = 'off';
 $proxysettings{'CLASSROOM_EXT'} = 'off';
 $proxysettings{'SUPERVISOR_PASSWORD'} = '';
 $proxysettings{'NO_PROXY_LOCAL'} = 'off';
@@ -737,6 +738,9 @@ $selected{'L1_DIRS'}{$proxysettings{'L1_DIRS'}} = "selected='selected'";
 $checked{'OFFLINE_MODE'}{'off'} = '';
 $checked{'OFFLINE_MODE'}{'on'} = '';
 $checked{'OFFLINE_MODE'}{$proxysettings{'OFFLINE_MODE'}} = "checked='checked'";
+$checked{'CACHE_DIGESTS'}{'off'} = '';
+$checked{'CACHE_DIGESTS'}{'on'} = '';
+$checked{'CACHE_DIGESTS'}{$proxysettings{'CACHE_DIGESTS'}} = "checked='checked'";
 
 $checked{'LOGGING'}{'off'} = '';
 $checked{'LOGGING'}{'on'} = '';
@@ -1169,6 +1173,10 @@ print <<END
 <tr>
 	<td class='base'>$Lang::tr{'advproxy offline mode'}:</td>
 	<td><input type='checkbox' name='OFFLINE_MODE' $checked{'OFFLINE_MODE'}{'on'} /></td>
+</tr>
+<tr>
+	<td class='base'>$Lang::tr{'advproxy cache-digest'}:</td>
+        <td><input type='checkbox' name='CACHE_DIGESTS' $checked{'CACHE_DIGESTS'}{'on'} /></td>
 </tr>
 </table>
 <hr size='1'>
@@ -3097,7 +3105,8 @@ END
 	print FILE "error_directory $errordir/$proxysettings{'ERR_LANGUAGE'}\n\n";
 
 	if ($proxysettings{'OFFLINE_MODE'} eq 'on') {  print FILE "offline_mode on\n\n"; }
-
+	if ($proxysettings{'CACHE_DIGESTS'} eq 'on') {  print FILE "digest_generation on\n\n"; } else {  print FILE "digest_generation off\n\n"; }
+	
 	if ((!($proxysettings{'MEM_POLICY'} eq 'LRU')) || (!($proxysettings{'CACHE_POLICY'} eq 'LRU')))
 	{
 		if (!($proxysettings{'MEM_POLICY'} eq 'LRU'))
