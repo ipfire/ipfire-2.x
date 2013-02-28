@@ -123,6 +123,7 @@ $(TARGET) :
 	echo  "SHOWREMARK=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "SHOWCOLORS=off"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "SHOWTABLES=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "SHOWDROPDOWN=off		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "POLICY=MODE2"		>> $(CONFIG_ROOT)/forward/settings
 	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/forward/settings
 	

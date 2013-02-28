@@ -1076,6 +1076,7 @@
 'fw settings color' => 'Show colors in ruletable',
 'fw settings remark' => 'Show remarks in ruletable',
 'fw settings ruletable' => 'Show empty ruletables',
+'fw settings dropdown' => 'Show all networks on rulecreation site',
 'fw logging' => 'Firewall logging',
 'g.dtm' => 'TO BE REMOVED',
 'g.lite' => 'TO BE REMOVED',

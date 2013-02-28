@@ -1026,7 +1026,7 @@ print<<END;
 		<table width='100%' border='0'>
 		<tr><td width='50%' valign='top'>
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='radio' name='$grp' value='std_net_$srctgt' $checked{$grp}{'std_net_'.$srctgt}></td><td>$Lang::tr{'fwhost stdnet'}</td><td><select name='std_net_$srctgt' style='min-width:185px;'>
+		<tr><td width='1%'><input type='radio' name='$grp' value='std_net_$srctgt' $checked{$grp}{'std_net_'.$srctgt}></td><td>$Lang::tr{'fwhost stdnet'}</td><td align='right'><select name='std_net_$srctgt' style='min-width:185px;'>
 END
 	foreach my $network (sort keys %defaultNetworks)
 		{
@@ -1038,20 +1038,20 @@ END
 		}
 	print"</select></td></tr>";
 	#custom networks
-	if (! -z $confignet){
-		print"<tr><td><input type='radio' name='$grp' value='cust_net_$srctgt' $checked{$grp}{'cust_net_'.$srctgt}></td><td>$Lang::tr{'fwhost cust net'}</td><td><select name='cust_net_$srctgt' style='min-width:185px;'>";
+	if (! -z $confignet || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
+		print"<tr><td><input type='radio' name='$grp' value='cust_net_$srctgt' $checked{$grp}{'cust_net_'.$srctgt}></td><td>$Lang::tr{'fwhost cust net'}</td><td align='right'><select name='cust_net_$srctgt' style='min-width:185px;'>";
 		&fillselect(\%customnetwork,$fwdfwsettings{$fwdfwsettings{$grp}});
 		print"</select></td>";
 	}
 	#custom hosts
-	if (! -z $confighost){
-		print"<tr><td><input type='radio' name='$grp' value='cust_host_$srctgt' $checked{$grp}{'cust_host_'.$srctgt}></td><td>$Lang::tr{'fwhost cust addr'}</td><td><select name='cust_host_$srctgt' style='min-width:185px;'>";
+	if (! -z $confighost || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
+		print"<tr><td><input type='radio' name='$grp' value='cust_host_$srctgt' $checked{$grp}{'cust_host_'.$srctgt}></td><td>$Lang::tr{'fwhost cust addr'}</td><td align='right'><select name='cust_host_$srctgt' style='min-width:185px;'>";
 		&fillselect(\%customhost,$fwdfwsettings{$fwdfwsettings{$grp}});
 		print"</select></td>";
 	}
 	#custom groups
-	if (! -z $configgrp){
-		print"<tr><td valign='top'><input type='radio' name='$grp' value='cust_grp_$srctgt' $checked{$grp}{'cust_grp_'.$srctgt}></td><td >$Lang::tr{'fwhost cust grp'}</td><td><select name='cust_grp_$srctgt' style='min-width:185px;'>";
+	if (! -z $configgrp || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
+		print"<tr><td valign='top'><input type='radio' name='$grp' value='cust_grp_$srctgt' $checked{$grp}{'cust_grp_'.$srctgt}></td><td >$Lang::tr{'fwhost cust grp'}</td><td align='right'><select name='cust_grp_$srctgt' style='min-width:185px;'>";
 		foreach my $key (sort { uc($customgrp{$a}[0]) cmp uc($customgrp{$b}[0]) } keys %customgrp) {
 			if($helper ne $customgrp{$key}[0]){
 				print"<option ";
@@ -1065,42 +1065,51 @@ END
 	#End left table. start right table (vpn)
 	print"</tr></table></td><td valign='top'><table width='100%' border='0'><tr>";
 	# CCD networks
-	if( ! -z $configccdnet){
-		print"<td width='1%'><input type='radio' name='$grp' value='ovpn_net_$srctgt'  $checked{$grp}{'ovpn_net_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%'><select name='ovpn_net_$srctgt' style='min-width:185px;'>";
+	if( ! -z $configccdnet || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
+		print"<td width='1%'><input type='radio' name='$grp' value='ovpn_net_$srctgt'  $checked{$grp}{'ovpn_net_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_net_$srctgt' style='min-width:185px;'>";
 		&fillselect(\%ccdnet,$fwdfwsettings{$fwdfwsettings{$grp}});
 		print"</select></td></tr>";
 	}
 	#OVPN CCD Hosts
 	foreach my $key (sort { uc($ccdhost{$a}[0]) cmp uc($ccdhost{$b}[0]) } keys %ccdhost){
-		if ($ccdhost{$key}[33] ne ''){
-			print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_host_$srctgt' $checked{$grp}{'ovpn_host_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%'><select name='ovpn_host_$srctgt' style='min-width:185px;'>" if ($show eq '');
+		if ($ccdhost{$key}[33] ne '' ){
+			print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_host_$srctgt' $checked{$grp}{'ovpn_host_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_host_$srctgt' style='min-width:185px;'>" if ($show eq '');
 			$show='1';
 			print "<option value='$ccdhost{$key}[1]'";
 			print "selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $ccdhost{$key}[1]);
 			print ">$ccdhost{$key}[1]</option>";
 		}
+	}
+	if($optionsfw{'SHOWDROPDOWN'} eq 'on' && $show eq ''){
+		print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_host_$srctgt' $checked{$grp}{'ovpn_host_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_host_$srctgt' style='min-width:185px;'></select></td></tr>" ;
 	}
 	if ($show eq '1'){$show='';print"</select></td></tr>";}
 	#OVPN N2N
 	foreach my $key (sort { uc($ccdhost{$a}[0]) cmp uc($ccdhost{$b}[0]) } keys %ccdhost){
 		if ($ccdhost{$key}[3] eq 'net'){
-			print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_n2n_$srctgt' $checked{$grp}{'ovpn_n2n_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%'><select name='ovpn_n2n_$srctgt' style='min-width:185px;'>" if ($show eq '');
-			my $show='1';
+			print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_n2n_$srctgt' $checked{$grp}{'ovpn_n2n_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ovpn_n2n'}:</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_n2n_$srctgt' style='min-width:185px;'>" if ($show eq '');
+			$show='1';
 			print "<option value='$ccdhost{$key}[1]'";
 			print "selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $ccdhost{$key}[1]);
 			print ">$ccdhost{$key}[1]</option>";
 		}
 	}
+	if($optionsfw{'SHOWDROPDOWN'} eq 'on' && $show eq ''){
+		print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_n2n_$srctgt' $checked{$grp}{'ovpn_n2n_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ovpn_n2n'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_n2n_$srctgt' style='min-width:185px;'></select></td></tr>" ;
+	}
 	if ($show eq '1'){$show='';print"</select></td></tr>";}
 	#IPsec netze
 	foreach my $key (sort { uc($ipsecconf{$a}[1]) cmp uc($ipsecconf{$b}[1]) } keys %ipsecconf) {
-		if ($ipsecconf{$key}[3] eq 'net'){
-			print"<tr><td valign='top'><input type='radio' name='$grp' value='ipsec_net_$srctgt' $checked{$grp}{'ipsec_net_'.$srctgt}></td><td >$Lang::tr{'fwhost ipsec net'}</td><td><select name='ipsec_net_$srctgt' style='min-width:185px;'>" if ($show eq '');
+		if ($ipsecconf{$key}[3] eq 'net' || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
+			print"<tr><td valign='top'><input type='radio' name='$grp' value='ipsec_net_$srctgt' $checked{$grp}{'ipsec_net_'.$srctgt}></td><td >$Lang::tr{'fwhost ipsec net'}</td><td align='right'><select name='ipsec_net_$srctgt' style='min-width:185px;'>" if ($show eq '');
 			$show='1';
 			print "<option ";
 			print "selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $ipsecconf{$key}[1]);
 			print ">$ipsecconf{$key}[1]</option>";
 		}
+	}
+	if($optionsfw{'SHOWDROPDOWN'} eq 'on' && $show eq ''){
+		print"<tr><td valign='top'><input type='radio' name='$grp' value='ipsec_net_$srctgt' $checked{$grp}{'ipsec_net_'.$srctgt}></td><td >$Lang::tr{'fwhost ipsec net'}</td><td align='right'><select name='ipsec_net_$srctgt' style='min-width:185px;'><select></td></tr>";
 	}
 	if ($show eq '1'){$show='';print"</select></td></tr>";}
 	

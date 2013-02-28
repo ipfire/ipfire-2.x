@@ -1051,6 +1051,7 @@
 'fw settings color' => 'Farben in Regeltabelle anzeigen',
 'fw settings remark' => 'Anmerkungen in Regeltabelle anzeigen',
 'fw settings ruletable' => 'Leere Regeltabellen anzeigen',
+'fw settings dropdown' => 'Alle Netzwerke auf Regelerstellungsseite anzeigen',
 'fw logging' => 'Firewall-Logging',
 'gateway' => 'Gateway',
 'gateway ip' => 'Gateway-IP',
