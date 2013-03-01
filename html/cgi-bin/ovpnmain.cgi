@@ -4969,19 +4969,13 @@ END
 }
 
 
-	my $disable_clientdl = "disabled='disabled'";
-	if (( $cgiparams{'ENABLED'} eq 'on') || 
-	    ( $cgiparams{'ENABLED_BLUE'} eq 'on') ||
-	    ( $cgiparams{'ENABLED_ORANGE'} eq 'on')){
-	    $disable_clientdl = "";
-	}
 	print <<END
 	<td align='center'>$active</td>
 		
 	<form method='post' name='frm${key}a'><td align='center'>
-	    <input type='image'  name='$Lang::tr{'dl client arch'}' $disable_clientdl src='/images/openvpn.png' alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' border='0' />
-	    <input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' $disable_clientdl />
-	    <input type='hidden' name='KEY' value='$key' $disable_clientdl />
+	    <input type='image'  name='$Lang::tr{'dl client arch'}' src='/images/openvpn.png' alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' border='0' />
+	    <input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
+	    <input type='hidden' name='KEY' value='$key' />
 	</td></form>
 END
 	;
