@@ -2210,7 +2210,7 @@
 'wlanap encryption' => 'Verschlüsselung',
 'wlanap informations' => 'Informationen',
 'wlanap interface' => 'Interface übernehmen',
-'wlanap invalid wpa' => 'Ungültige Länge in WPA-Passphrase. Muss zwischen 8 und 63 Zeichen lang sein.',
+'wlanap invalid wpa' => 'Ungültige Länge in WPA-Passphrase. Muss zwischen 8 und 63 ASCII-Zeichen lang sein.',
 'wlanap link dhcp' => 'Wireless Lan DHCP-Einstellungen',
 'wlanap link wireless' => 'Wireless Lan Clients freischalten',
 'wlanap no interface' => 'Ausgewähltes Interface ist keine WLAN-Karte!',

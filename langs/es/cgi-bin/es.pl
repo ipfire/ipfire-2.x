@@ -2134,7 +2134,7 @@
 'wlanap encryption' => 'Encriptación',
 'wlanap informations' => 'Información',
 'wlanap interface' => 'Seleccione la interface',
-'wlanap invalid wpa' => 'Longitud inválida en la frase WPA. Debe ser entre 8 y 63 caracteres.',
+'wlanap invalid wpa' => 'Longitud inválida en la frase WPA. Debe ser entre 8 y 63 ascii caracteres.',
 'wlanap link dhcp' => 'Configuración DHCP de la red inalámbrica.',
 'wlanap link wireless' => 'Activar clientes de red inalámbricos',
 'wlanap no interface' => '¡La interfaz seleccionada no es una tarjeta de red inalámbrica!',

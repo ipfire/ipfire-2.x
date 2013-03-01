@@ -2244,7 +2244,7 @@
 'wlanap encryption' => 'Encryption',
 'wlanap informations' => 'Informations',
 'wlanap interface' => 'Select interface',
-'wlanap invalid wpa' => 'Invalid length in WPA Passphrase. Must be between 8 and 63 characters.',
+'wlanap invalid wpa' => 'Invalid length in WPA Passphrase. Must be between 8 and 63 ascii characters.',
 'wlanap link dhcp' => 'Wireless lan DHCP configuration',
 'wlanap link wireless' => 'Activate wireless lan clients',
 'wlanap no interface' => 'Selected interface is not a wirless lan card!',

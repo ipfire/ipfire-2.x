@@ -2158,7 +2158,7 @@
 'wlanap encryption' => 'Szyfrowanie',
 'wlanap informations' => 'Informacje',
 'wlanap interface' => 'Wybierz interfejs',
-'wlanap invalid wpa' => 'Niepoprawna długość klucza WPA. Klucz musi zawierać od 8 do 63 znaków.',
+'wlanap invalid wpa' => 'Niepoprawna długość klucza WPA. Klucz musi zawierać od 8 do 63 ascii znaków.',
 'wlanap link dhcp' => 'Konfiguracja DHCP dla sieci bezprzewodowej',
 'wlanap link wireless' => 'Aktywuj klientów sieci bezprzewodowej',
 'wlanap no interface' => 'Wybrany interfejs nie jest kartą bezprzewodową!',

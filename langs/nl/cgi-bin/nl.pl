@@ -2241,7 +2241,7 @@
 'wlanap encryption' => 'Encryptie',
 'wlanap informations' => 'Informatie',
 'wlanap interface' => 'Selecteer interface',
-'wlanap invalid wpa' => 'Ongeldige lengte voor WPA wachtwoord. Moet tussen de 8 en 63 tekens zijn.',
+'wlanap invalid wpa' => 'Ongeldige lengte voor WPA wachtwoord. Moet tussen de 8 en 63 tekens ascii zijn.',
 'wlanap link dhcp' => 'Draadloze LAN DHCP configuratie',
 'wlanap link wireless' => 'Activeer draadloze LAN clients',
 'wlanap no interface' => 'Geselecteerde interface is geen draadloze LAN kaart!',
