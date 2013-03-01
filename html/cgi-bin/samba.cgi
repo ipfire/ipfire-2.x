@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2005-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -92,7 +92,7 @@ $sambasettings{'REMOTESYNC'} = '';
 $sambasettings{'PASSWORDSYNC'} = 'off';
 $sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
-$sambasettings{'MAPTOGUEST'} = 'Never';
+$sambasettings{'MAPTOGUEST'} = 'Bad User';
 $sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
 $sambasettings{'SYSLOGLEVEL'} = '1';
 $sambasettings{'SYSLOGONLY'} = 'on';
@@ -164,7 +164,7 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'PASSWORDSYNC'} = 'off';
 	$sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 	$sambasettings{'GUESTACCOUNT'} = 'samba';
-	$sambasettings{'MAPTOGUEST'} = 'Never';
+	$sambasettings{'MAPTOGUEST'} = 'Bad User';
 	$sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
 	$sambasettings{'SYSLOGLEVEL'} = '1';
 	$sambasettings{'SYSLOGONLY'} = 'on';
@@ -427,6 +427,9 @@ $checked{'VPN'}{'off'} = '';
 $checked{'VPN'}{'on'} = '';
 $checked{'VPN'}{$sambasettings{'VPN'}} = "checked='checked'";
 
+if ( $sambasettings{'MAPTOGUEST'} eq "Never" ) {
+	$sambasettings{'MAPTOGUEST'}="Bad User";
+}
 $selected{'MAPTOGUEST'}{$sambasettings{'MAPTOGUEST'}} = "selected='selected'";
 $selected{'SECURITY'}{$sambasettings{'SECURITY'}} = "selected='selected'";
 
@@ -530,7 +533,6 @@ print <<END
 																				<option value='server' $selected{'SECURITY'}{'server'}>Server</option>
 																				</select></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'map to guest'}</td><td align='left'><select name='MAPTOGUEST' style="width: 165px">
-																						<option value='Never' $selected{'MAPTOGUEST'}{'Never'}>Never</option>
 																						<option value='Bad User' $selected{'MAPTOGUEST'}{'Bad User'}>Bad User</option>
 																						<option value='Bad Password' $selected{'MAPTOGUEST'}{'Bad Password'}>Bad Password</option>
 																						</select></td></tr>
