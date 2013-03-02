@@ -863,7 +863,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     }
 		
     if ($cgiparams{'DHCP_DOMAIN'} ne ''){
-	unless (&General::validfqdn($cgiparams{'DHCP_DOMAIN'}) || &General::validip($cgiparams{'DHCP_DOMAIN'})) {
+	unless (&General::validdomainname($cgiparams{'DHCP_DOMAIN'}) || &General::validip($cgiparams{'DHCP_DOMAIN'})) {
 		$errormessage = $Lang::tr{'invalid input for dhcp domain'};
 	goto ADV_ERROR;
     	}
