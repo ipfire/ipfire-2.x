@@ -27,6 +27,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
+#
+# Changelog:
+# 2012-10-27: nightshift - Bugfix regarding showing wrong vendor icon while Download of new Updates
+# 2012-10-27: nightshift - Optimizing logic of check for vendor icons
+#
 
 use strict;
 
@@ -75,6 +80,7 @@ my @vendors=();
 my %vendorstats=();
 
 my $repository = "/var/updatecache/";
+my $webhome = "/srv/web/ipfire/html"; 
 my $hintcolour = '#FFFFCC';
 my $colourgray = '#808080';
 
@@ -549,46 +555,23 @@ END
 			print "<img src='/images/updbooster/updxl-led-gray.gif' alt='$Lang::tr{'updxlrtr condition suspended'}' />&nbsp;</td>\n";
 		}
 
-			print "\t\t<td align='center' nowrap='nowrap'>&nbsp;";
-			if ($vendorid =~ /^Adobe$/i)
-			{
-				print "<img src='/images/updbooster/updxl-src-adobe.gif' alt='Adobe'}' />&nbsp;</td>\n";
-			} elsif ($vendorid =~ /^Microsoft$/i)
-			{
-				print "<img src='/images/updbooster/updxl-src-windows.gif' alt='Microsoft'}' />&nbsp;</td>\n";
-			} elsif ($vendorid =~ /^Symantec$/i)
-			{
-				print "<img src='/images/updbooster/updxl-src-symantec.gif' alt='Symantec'}' />&nbsp;</td>\n";
-			} elsif ($vendorid =~ /^Linux$/i)
-			{
-				print "<img src='/images/updbooster/updxl-src-linux.gif' alt='Linux'}' />&nbsp;</td>\n";
-			} elsif ($vendorid =~ /^TrendMicro$/i)
-			{
-				print "<img src='/images/updbooster/updxl-src-trendmicro.gif' alt='Trend Micro'}' />&nbsp;</td>\n";
-			} elsif ($vendorid =~ /^Apple$/i)
-			{
-				print "<img src='/images/updbooster/updxl-src-apple.gif' alt='Apple'}' />&nbsp;</td>\n";
-			} elsif ($vendorid =~ /^Avast$/i)
-			{
-				print "<img src='/images/updbooster/updxl-src-avast.gif' alt='Avast'}' />&nbsp;</td>\n";
-			} else
-			{
-				if (-e "/home/httpd/html/images/updbooster/updxl-src-" . $vendorid . ".gif")
-				{
-					print "<img src='/images/updbooster/updxl-src-" . $vendorid . ".gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
-				} else {
-					print "<img src='/images/updbooster/updxl-src-unknown.gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
-				}
-			}
+		print "\t\t<td align='center' nowrap='nowrap'>&nbsp;";
 
-			$shortname = substr($updatefile,rindex($updatefile,"/")+1);
-			$shortname =~ s/(.*)_[\da-f]*(\.(exe|cab|psf)$)/$1_*$2/i;
+		if (($vendorid ne '') && (-e "$webhome/images/updbooster/updxl-src-$vendorid.gif"))
+		{
+			print "<img src='/images/updbooster/updxl-src-" . $vendorid . ".gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
+		} else {
+			print "<img src='/images/updbooster/updxl-src-unknown.gif' alt='" . ucfirst $vendorid . "' />&nbsp;</td>\n";
+		}
 
-			$filesize = $dlinfo{'REMOTESIZE'};
-			1 while $filesize =~ s/^(-?\d+)(\d{3})/$1.$2/;
-			$dlinfo{'VENDORID'}=ucfirst $vendorid;
+		$shortname = substr($updatefile,rindex($updatefile,"/")+1);
+		$shortname =~ s/(.*)_[\da-f]*(\.(exe|cab|psf)$)/$1_*$2/i;
 
-			print <<END
+		$filesize = $dlinfo{'REMOTESIZE'};
+		1 while $filesize =~ s/^(-?\d+)(\d{3})/$1.$2/;
+		$dlinfo{'VENDORID'} = ucfirst $vendorid;
+
+		print <<END
 		<td class='base' align='center'>&nbsp;$dlinfo{'VENDORID'}&nbsp;</td>
 		<td class='base' align='left' title='cache:/$updatefile'>$shortname</td>
 		<td class='base' align='right'  nowrap='nowrap'>&nbsp;$filesize&nbsp;</td>
