@@ -80,8 +80,8 @@ while (<>) {
 	# -----------------------------------------------------------
 
 	if (
-	    (($source_url =~ m@^http://[^/]*\.microsoft\.com/.*\.(exe|psf|msi|msp|cab)$@i) ||
-	     ($source_url =~ m@^http://[^/]*\.windowsupdate\.com/.*\.(exe|psf|msi|msp|cab)$@i))
+	    (($source_url =~ m@^http://[^/]*\.microsoft\.com/.*\.(exe|psf|msi|msp|msu|cab)$@i) ||
+	     ($source_url =~ m@^http://[^/]*\.windowsupdate\.com/.*\.(exe|psf|msi|msp|msu|cab)$@i))
 	&&   ($source_url !~ m@^http://[^/]*\.microsoft\.com/.*(/autoupd|selfupdate/).*\.cab@i)
 	&&   ($source_url !~ m@\&@)
 	   )
