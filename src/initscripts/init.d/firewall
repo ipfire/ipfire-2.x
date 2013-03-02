@@ -151,7 +151,6 @@ case "$1" in
 	/sbin/iptables -N CUSTOMOUTPUT
 	/sbin/iptables -A OUTPUT -j CUSTOMOUTPUT
 	/sbin/iptables -N OUTGOINGFW
-	/sbin/iptables -N OUTGOINGFWMAC
 	/sbin/iptables -A OUTPUT -j OUTGOINGFW
 	/sbin/iptables -A OUTGOINGFW -m state --state ESTABLISHED,RELATED -j ACCEPT
 	/sbin/iptables -t nat -N CUSTOMPREROUTING
@@ -188,13 +187,6 @@ case "$1" in
 	/sbin/iptables -t nat -N IPSECNAT
 	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
 	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
-
-	# TOR
-	/sbin/iptables -N TOR_INPUT
-	/sbin/iptables -A INPUT -j TOR_INPUT
-
-	# Outgoing Firewall
-	/sbin/iptables -A FORWARD -j OUTGOINGFWMAC
 
 	# Forward Firewall
 	/sbin/iptables -N FORWARDFW
