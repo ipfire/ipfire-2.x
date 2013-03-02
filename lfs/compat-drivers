@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2013  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,14 +26,14 @@ include Config
 
 VERSUFIX=ipfire$(KCFG)
 
-VER        = 3.6.8-1-snp
+VER        = 3.8-1-u
 
 ifeq "$(KCFG)" "-xen"
 	KVER = 2.6.32.60
 endif
 
-THISAPP    = compat-wireless-$(VER)
-DL_FILE    = compat-wireless-$(VER).tar.bz2
+THISAPP    = compat-drivers-$(VER)
+DL_FILE    = compat-drivers-$(VER).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
@@ -47,7 +47,7 @@ objects = $(DL_FILE) asix-4.4.0.tar.xz
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 asix-4.4.0.tar.xz = $(DL_FROM)/asix-4.4.0.tar.xz
 
-$(DL_FILE)_MD5 = 4120bc9841d6a1b5b92af34103f16a06
+$(DL_FILE)_MD5 = 557e3099c642455ec272d9ddf46de484
 asix-4.4.0.tar.xz_MD5=633609e889de41554826e0e2cd7bffde
 
 install : $(TARGET)
@@ -77,16 +77,13 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xaf $(DIR_DL)/$(DL_FILE)
 
 	# kfifo has no license info and taints kernel
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.39_kfifo_module_info.patch
 
 	# Codel patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless_codel-avoid-a-nul-rec_inv_sqrt.patch
-
-	# compat-3.1 include a bogus cpufreq_backort
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.6.8-remove_3.1_cpufreq_backport.patch
 
 	# Build ath5k only if target has pci
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.5-build_ath5k_only_with_pci.patch

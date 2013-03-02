@@ -384,7 +384,7 @@ buildipfire() {
     ipfiremake v4l-dvb			KCFG="-xen"
     ipfiremake mISDN			KCFG="-xen"
     ipfiremake cryptodev		KCFG="-xen"
-    ipfiremake compat-wireless		KCFG="-xen"
+    ipfiremake compat-drivers		KCFG="-xen"
     ipfiremake r8169			KCFG="-xen"
     ipfiremake r8168			KCFG="-xen"
     ipfiremake r8101			KCFG="-xen"
@@ -398,7 +398,7 @@ buildipfire() {
     ipfiremake v4l-dvb			KCFG="-pae"
     ipfiremake mISDN			KCFG="-pae"
     ipfiremake cryptodev		KCFG="-pae"
-    ipfiremake compat-wireless		KCFG="-pae"
+    ipfiremake compat-drivers		KCFG="-pae"
     ipfiremake r8169			KCFG="-pae"
     ipfiremake r8168			KCFG="-pae"
     ipfiremake r8101			KCFG="-pae"
@@ -411,7 +411,7 @@ buildipfire() {
     ipfiremake v4l-dvb			KCFG=""
     ipfiremake mISDN			KCFG=""
     ipfiremake cryptodev		KCFG=""
-    ipfiremake compat-wireless		KCFG=""
+    ipfiremake compat-drivers		KCFG=""
     ipfiremake r8169			KCFG=""
     ipfiremake r8168			KCFG=""
     ipfiremake r8101			KCFG=""
@@ -424,21 +424,21 @@ buildipfire() {
     ipfiremake v4l-dvb			KCFG="-rpi"
     ipfiremake mISDN			KCFG="-rpi" NOPCI=1
     ipfiremake cryptodev		KCFG="-rpi"
-    ipfiremake compat-wireless		KCFG="-rpi"
+    ipfiremake compat-drivers		KCFG="-rpi"
 
     # arm-omap (Panda Board) kernel build
     ipfiremake linux			KCFG="-omap"
     ipfiremake v4l-dvb			KCFG="-omap"
     ipfiremake mISDN			KCFG="-omap" NOPCI=1
     ipfiremake cryptodev		KCFG="-omap"
-    ipfiremake compat-wireless		KCFG="-omap"
+    ipfiremake compat-drivers		KCFG="-omap"
 
     # arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
     ipfiremake linux			KCFG="-kirkwood"
     ipfiremake v4l-dvb			KCFG="-kirkwood"
     ipfiremake mISDN			KCFG="-kirkwood"
     ipfiremake cryptodev		KCFG="-kirkwood"
-    ipfiremake compat-wireless		KCFG="-kirkwood"
+    ipfiremake compat-drivers		KCFG="-kirkwood"
     ipfiremake r8169			KCFG="-kirkwood"
     ipfiremake r8168			KCFG="-kirkwood"
     ipfiremake r8101			KCFG="-kirkwood"
