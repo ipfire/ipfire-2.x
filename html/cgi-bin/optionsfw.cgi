@@ -109,6 +109,7 @@ $checked{'SHOWDROPDOWN'}{'on'} = '';
 $checked{'SHOWDROPDOWN'}{$settings{'SHOWDROPDOWN'}} = "checked='checked'";
 $selected{'FWPOLICY'}{$settings{'FWPOLICY'}}= 'selected';
 $selected{'FWPOLICY1'}{$settings{'FWPOLICY1'}}= 'selected';
+$selected{'FWPOLICY2'}{$settings{'FWPOLICY2'}}= 'selected';
 
 
 &Header::openbox('100%', 'center', $Lang::tr{'options fw'});
@@ -164,6 +165,10 @@ print <<END
 <tr><td align='left' width='60%'>$Lang::tr{'drop action1'}</td><td><select name='FWPOLICY1'>
 <option value='DROP' $selected{'FWPOLICY1'}{'DROP'}>DROP</option>
 <option value='REJECT' $selected{'FWPOLICY1'}{'REJECT'}>REJECT</option></select>
+</td></tr>
+<tr><td align='left' width='60%'>$Lang::tr{'drop action2'}</td><td><select name='FWPOLICY2'>
+<option value='DROP' $selected{'FWPOLICY2'}{'DROP'}>DROP</option>
+<option value='REJECT' $selected{'FWPOLICY2'}{'REJECT'}>REJECT</option></select>
 </td></tr>
 </table>
 

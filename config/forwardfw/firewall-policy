@@ -5,14 +5,14 @@ eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
 
 iptables -F POLICYFWD
 iptables -F POLICYOUT
-
+iptables -F POLICYIN
 
 if [ "$POLICY" == "MODE1" ]; then
 		if [ "$FWPOLICY" == "REJECT" ]; then
 			if [ "$DROPFORWARD" == "on" ]; then
 				/sbin/iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "REJECT_FORWARD"
 			fi
-			/sbin/iptables -A POLICYFWD -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_FORWARD"
+			/sbin/iptables -A POLICYFWD -j REJECT --reject-with icmp-host-unreachable -m comment --comment "REJECT_FORWARD"
 		fi
 		if [ "$FWPOLICY" == "DROP" ]; then
 			if [ "$DROPFORWARD" == "on" ]; then
@@ -27,7 +27,7 @@ if [ "$POLICY1" == "MODE1" ]; then
 			if [ "$DROPOUTGOING" == "on" ]; then
 				/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "REJECT_OUTPUT"
 			fi
-				/sbin/iptables -A POLICYOUT -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_OUTPUT"
+				/sbin/iptables -A POLICYOUT -j REJECT --reject-with icmp-host-unreachable -m comment --comment "REJECT_OUTPUT"
 		fi
 		if [ "$FWPOLICY1" == "DROP" ]; then
 			if [ "$DROPOUTGOING" == "on" ]; then
@@ -36,4 +36,16 @@ if [ "$POLICY1" == "MODE1" ]; then
 				/sbin/iptables -A POLICYOUT -j DROP -m comment --comment "DROP_OUTPUT"
 		fi
 fi
-
+#INPUT
+if [ "$FWPOLICY2" == "REJECT" ]; then
+	if [ "$DROPINPUT" == "on" ]; then
+		/sbin/iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "REJECT_INPUT"
+	fi
+	/sbin/iptables -A POLICYIN -j REJECT --reject-with icmp-host-unreachable -m comment --comment "REJECT_FORWARD"
+fi
+if [ "$FWPOLICY2" == "DROP" ]; then
+	if [ "$DROPINPUT" == "on" ]; then
+		/sbin/iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
+	fi
+	/sbin/iptables -A POLICYIN -j DROP -m comment --comment "DROP_FORWARD"
+fi
