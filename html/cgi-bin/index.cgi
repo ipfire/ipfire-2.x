@@ -383,62 +383,79 @@ END
 			print "<td align='center'>$active</td>";
 		}
 	}
-	if ( `cat /var/ipfire/ovpn/settings | grep ^ENABLED=on` || 
-	     `cat /var/ipfire/ovpn/settings | grep ^ENABLED_BLUE=on` || 
-	     `cat /var/ipfire/ovpn/settings | grep ^ENABLED_ORANGE=on`) { 
-		my $ovpnip = `cat /var/ipfire/ovpn/settings | grep ^DOVPN_SUBNET= | cut -c 14- | sed -e 's\/\\/255.255.255.0\/\/'`;
-		print <<END;
-		<tr><td align='center' bgcolor='$Header::colourovpn' width='25%'><a href="/cgi-bin/ovpnmain.cgi"><font size='2' color='white'><b>OpenVPN</b></font></a><br>
-	  	<td width='30%' align='center'>$ovpnip
-  		<td width='45%' align='center'><font color=$Header::colourgreen>Online</font>
+
+###
+# Check if there is any OpenVPN connection configured.
+###
+
+if ( -s "${General::swroot}/ovpn/ovpnconfig")
+	{
+	print <<END;
 	
+	<tr>
+		<td align='center' bgcolor='$Header::colourovpn' width='25%'>
+			<a href="/cgi-bin/ovpnmain.cgi"><font size='2' color='white'><b>OpenVPN</b></font></a><br>
+		</td>
+END
+	# Check if the OpenVPN server for Road Warrior Connections is running and display status information.
+	my %confighash=();
+
+	&General::readhash("${General::swroot}/ovpn/settings", \%confighash);
+
+	if (($confighash{'ENABLED'} eq "on") ||
+	    ($confighash{'ENABLED_BLUE'} eq "on") ||
+	    ($confighash{'ENABLED_ORANGE'} eq "on")) {
+
+		my $ovpnip = $confighash{'DOVPN_SUBNET'};
+		print <<END;
+	  	<td width='30%' align='center'>$ovpnip
+  		<td width='45%' align='center'><font color=$Header::colourgreen>Online</font>	
 END
 
 	}
 
-###
-# Print the OpenVPN N2N connection status.
-###
-if ( -d "${General::swroot}/ovpn/n2nconf") {
-	my %confighash=();
+	# Print the OpenVPN N2N connection status.
+	if ( -d "${General::swroot}/ovpn/n2nconf") {
+		my %confighash=();
 
-	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-	foreach my $dkey (keys %confighash) {
-		if (($confighash{$dkey}[3] eq 'net') && (-e "/var/run/$confighash{$dkey}[1]n2n.pid")) {
-			my $tport = $confighash{$dkey}[22];
-			next if ($tport eq '');
+		&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+		foreach my $dkey (keys %confighash) {
+			if (($confighash{$dkey}[3] eq 'net') && (-e "/var/run/$confighash{$dkey}[1]n2n.pid")) {
+				my $tport = $confighash{$dkey}[22];
+				next if ($tport eq '');
 
-			my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport); 
-			$tnet->open('127.0.0.1');
-			my @output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
-			my @tustate = split(/\,/, $output[1]);
+				my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport); 
+				$tnet->open('127.0.0.1');
+				my @output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
+				my @tustate = split(/\,/, $output[1]);
 
-			my $display;
-			my $display_colour = $Header::colourred;
-			if ( $tustate[1] eq 'CONNECTED') {
-				$display_colour = $Header::colourgreen;
-				$display = $Lang::tr{'capsopen'};
-			} else {
-				$display = $tustate[1];
-			}
+				my $display;
+				my $display_colour = $Header::colourred;
+				if ( $tustate[1] eq 'CONNECTED') {
+					$display_colour = $Header::colourgreen;
+					$display = $Lang::tr{'capsopen'};
+				} else {
+					$display = $tustate[1];
+				}
  
-			print <<END;
-			<tr>
-				<td align='left' nowrap='nowrap' bgcolor='$color{'color22'}'>
-					$confighash{$dkey}[1]
-				</td>
-				<td align='center'>
-					$confighash{$dkey}[11]
-				</td>
-				<td align='center' bgcolor='$display_colour'>
-					<b>
-						<font color='#FFFFFF'>
-							$display
-						</font>
-					</b>
-				</td>
-			</tr>
+				print <<END;
+				<tr>
+					<td align='left' nowrap='nowrap' bgcolor='$color{'color22'}'>
+						$confighash{$dkey}[1]
+					</td>
+					<td align='center'>
+						$confighash{$dkey}[11]
+					</td>
+					<td align='center' bgcolor='$display_colour'>
+						<b>
+							<font color='#FFFFFF'>
+								$display
+							</font>
+						</b>
+					</td>
+				</tr>
 END
+			}
 		}
 	}
 }

@@ -8,6 +8,11 @@
 #
 # $Id: updxlrator,v 2.1 2009/01/10 00:00:00 marco.s Exp $
 #
+# ChangeLog:
+#
+# 2012-10-26: nightshift - move curly bracket to capture AVG download source.
+#			 - Adding BIG HINT for new update source#
+#
 
 use strict;
 use HTTP::Date;
@@ -75,8 +80,8 @@ while (<>) {
 	# -----------------------------------------------------------
 
 	if (
-	    (($source_url =~ m@^http://[^/]*\.microsoft\.com/.*\.(exe|psf|msi|msp|cab)$@i) ||
-	     ($source_url =~ m@^http://[^/]*\.windowsupdate\.com/.*\.(exe|psf|msi|msp|cab)$@i))
+	    (($source_url =~ m@^http://[^/]*\.microsoft\.com/.*\.(exe|psf|msi|msp|msu|cab)$@i) ||
+	     ($source_url =~ m@^http://[^/]*\.windowsupdate\.com/.*\.(exe|psf|msi|msp|msu|cab)$@i))
 	&&   ($source_url !~ m@^http://[^/]*\.microsoft\.com/.*(/autoupd|selfupdate/).*\.cab@i)
 	&&   ($source_url !~ m@\&@)
 	   )
@@ -87,6 +92,7 @@ while (<>) {
 	# -----------------------------------------------------------
 	#  Section: Adobe Downloads
 	# -----------------------------------------------------------
+
 
 	if (
 	    ($source_url =~ m@^http://(ar)?download\.adobe\.com/.*\.(exe|msi|bin|dmg|idx|gz)$@i) ||
@@ -178,8 +184,6 @@ while (<>) {
 		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"IPFire",$mirror);
 	}
 
-	}
-	
 	# -----------------------------------------------------------
 	# Section: AVG Downloads
 	# -----------------------------------------------------------
@@ -188,6 +192,9 @@ while (<>) {
 #	{
 #		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"AVG",$mirror);
 #	}
+
+# ----------- ADD NEW SOURCES BEFORE THIS LINE !!! ------------------
+	}
 
 	$request="$xlrator_url $hostaddr $username $method\n";
 
