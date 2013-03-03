@@ -34,6 +34,7 @@ done
 
 #
 #Stop services
+/etc/init.d/squid stop
 
 #
 #Extract files
@@ -41,6 +42,7 @@ extract_files
 
 #
 #Start services
+/etc/init.d/squid start
 
 #
 #Update Language cache
@@ -66,15 +68,15 @@ else
 fi
 
 #Rebuild initrd's
-if [ -e /boot/ipfirerd-3.2.38.img ]; then
-/sbin/dracut --force --verbose /boot/ipfirerd-3.2.38.img 3.2.38-ipfire
-fi
-if [ -e /boot/ipfirerd-3.2.38-pae.img ]; then
-/sbin/dracut --force --verbose /boot/ipfirerd-3.2.38-pae.img 3.2.38-ipfire-pae
-fi
-if [ -e /boot/ipfirerd-2.6.32.60-xen.img ]; then
-/sbin/dracut --force --verbose /boot/ipfirerd-2.6.32.60-xen.img 2.6.32.60-ipfire-xen
-fi
+#if [ -e /boot/ipfirerd-3.2.38.img ]; then
+#/sbin/dracut --force --verbose /boot/ipfirerd-3.2.38.img 3.2.38-ipfire
+#fi
+#if [ -e /boot/ipfirerd-3.2.38-pae.img ]; then
+#/sbin/dracut --force --verbose /boot/ipfirerd-3.2.38-pae.img 3.2.38-ipfire-pae
+#fi
+#if [ -e /boot/ipfirerd-2.6.32.60-xen.img ]; then
+#/sbin/dracut --force --verbose /boot/ipfirerd-2.6.32.60-xen.img 2.6.32.60-ipfire-xen
+#fi
 
 sync
 
