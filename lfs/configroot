@@ -118,6 +118,7 @@ $(TARGET) :
 	echo  "DROPFORWARD=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "FWPOLICY=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "FWPOLICY1=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "FWPOLICY2=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPPORTSCAN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPOUTGOING=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "SHOWREMARK=on"		>> $(CONFIG_ROOT)/optionsfw/settings
