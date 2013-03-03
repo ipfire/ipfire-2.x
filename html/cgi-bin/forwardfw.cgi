@@ -74,6 +74,7 @@ my %ipsecsettings=();
 my %aliases=();
 my %optionsfw=();
 
+my $VERSION='0.9.7.9';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -574,7 +575,9 @@ END
 	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value='$Lang::tr{'reset'}' /><input type='hidden' name='poltype' value='outgoing' /></tr>";
 	print "</table></form>";
 	&Header::closebox();
+	print "<br><br><div align='right'><font size='1' color='grey'>Version: $VERSION</div>";
 }
+
 sub changerule
 {
 	my $oldchain=shift;
