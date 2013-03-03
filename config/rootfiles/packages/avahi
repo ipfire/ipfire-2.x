@@ -160,4 +160,5 @@ usr/share/avahi/service-types
 #usr/share/man/man8/avahi-daemon.8
 #usr/share/man/man8/avahi-dnsconfd.8
 #usr/share/man/man8/avahi-dnsconfd.action.8
-etc/init.d/avahi
+#usr/var/run
+etc/rc.d/init.d/avahi
