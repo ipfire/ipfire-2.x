@@ -1,5 +1,7 @@
+etc/rc.d/init.d/nfs-server
 sbin/mount.nfs
 sbin/mount.nfs4
+sbin/osd_login
 sbin/umount.nfs
 sbin/umount.nfs4
 #usr/include/nfsidmap.h
@@ -20,6 +22,9 @@ usr/lib/libnfsidmap/static.so
 usr/lib/libnfsidmap/umich_ldap.so
 #usr/lib/pkgconfig/libnfsidmap.pc
 usr/sbin/exportfs
+usr/sbin/mountstats
+usr/sbin/nfsdcltrack
+usr/sbin/nfsiostat
 usr/sbin/nfsstat
 usr/sbin/rpc.idmapd
 usr/sbin/rpc.mountd
@@ -37,7 +42,10 @@ usr/sbin/start-statd
 #usr/share/man/man8/idmapd.8
 #usr/share/man/man8/mount.nfs.8
 #usr/share/man/man8/mountd.8
+#usr/share/man/man8/mountstats.8
 #usr/share/man/man8/nfsd.8
+#usr/share/man/man8/nfsdcltrack.8
+#usr/share/man/man8/nfsiostat.8
 #usr/share/man/man8/nfsstat.8
 #usr/share/man/man8/rpc.idmapd.8
 #usr/share/man/man8/rpc.mountd.8
@@ -56,5 +64,4 @@ var/lib/nfs/sm
 #var/lib/nfs/sm.bak
 var/lib/nfs/state
 var/lib/nfs/xtab
-etc/rc.d/init.d/nfs-server
 var/ipfire/nfs/nfs-server
