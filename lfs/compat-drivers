@@ -107,6 +107,15 @@ ifneq "$(KCFG)" "-xen"
 	cd $(DIR_APP) && echo export CONFIG_LIBERTAS_UAP=m >> config.mk
 endif
 
+ifeq "$(MACHINE_TYPE)" "arm"
+	# disable video because it not build on Arm
+	cd $(DIR_APP) && sed -i -e \
+		"s/export CONFIG_COMPAT_VIDEO_MODULES=y//g" config.mk
+
+	# Add a missing vmalloc ti atx
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-drivers-3.8-arm_missing_vmalloc.patch
+endif
+
 	# Erase some modules that are obsolete or moved to other path
 	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/net/bluetooth
 	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/wl12*
