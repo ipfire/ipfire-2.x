@@ -536,6 +536,7 @@ buildipfire() {
   ipfiremake Net-IPv4Addr
   ipfiremake Net_SSLeay
   ipfiremake IO-Stringy
+  ipfiremake IO-Socket-SSL
   ipfiremake Unix-Syslog
   ipfiremake Mail-Tools
   ipfiremake MIME-Tools
@@ -754,6 +755,7 @@ buildipfire() {
   ipfiremake libstatgrab
   ipfiremake sarg
   ipfiremake fstrim
+  ipfiremake sendEmail
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
