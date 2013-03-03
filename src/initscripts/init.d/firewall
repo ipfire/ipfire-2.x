@@ -288,6 +288,8 @@ case "$1" in
 	#/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
 	
 	#POLICY CHAIN
+	/sbin/iptables -N POLICYIN
+	/sbin/iptables -A INPUT -j POLICYIN
 	/sbin/iptables -N POLICYFWD
 	/sbin/iptables -A FORWARD -j POLICYFWD
 	/sbin/iptables -N POLICYOUT
