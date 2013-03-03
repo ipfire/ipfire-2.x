@@ -42,13 +42,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) asix-4.4.0.tar.xz
+objects = $(DL_FILE) asix-4.5.0a.tar.xz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-asix-4.4.0.tar.xz = $(DL_FROM)/asix-4.4.0.tar.xz
+asix-4.5.0a.tar.xz = $(DL_FROM)/asix-4.5.0a.tar.xz
 
 $(DL_FILE)_MD5 = 557e3099c642455ec272d9ddf46de484
-asix-4.4.0.tar.xz_MD5=633609e889de41554826e0e2cd7bffde
+asix-4.5.0a.tar.xz_MD5=4219ce7c0cae4fdb580f30ea50cad8e0
 
 install : $(TARGET)
 
@@ -97,7 +97,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.34-usbnet_compile.patch
 
 	# Build Updated asix usb-lan driver
-	cd $(DIR_APP)/drivers/net/usb && tar xvJf $(DIR_DL)/asix-4.4.0.tar.xz
+	cd $(DIR_APP)/drivers/net/usb && tar xvJf $(DIR_DL)/asix-4.5.0a.tar.xz
 
 	# Add libartas uAP driver
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.5-libertas_uap.patch
