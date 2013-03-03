@@ -14,6 +14,7 @@ etc/nginx/scgi_params.default
 etc/nginx/uwsgi_params
 etc/nginx/uwsgi_params.default
 etc/nginx/win-utf
+etc/rc.d/init.d/nginx
 usr/sbin/nginx
 usr/share/nginx
 usr/share/nginx/html
