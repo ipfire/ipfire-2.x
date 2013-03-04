@@ -214,7 +214,7 @@ foreach $configentry (sort @configs)
 					if ($configline[14]){$DAY .= "Fri,"}
 					if ($configline[15]){$DAY .= "Sat,"}
 					if ($configline[16]){$DAY .= "Sun"}
-					$CMD = "$CMD -m time --timestart $configline[17] --timestop $configline[18] --weekdays $DAY";
+					$CMD = "$CMD -m time --kerneltz --timestart $configline[17] --timestop $configline[18] --weekdays $DAY";
 				}
 
 				$CMD = "$CMD -o $netsettings{'RED_DEV'}";
