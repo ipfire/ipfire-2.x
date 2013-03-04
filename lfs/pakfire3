@@ -32,7 +32,7 @@ DL_FROM    = http://source.ipfire.org/releases/pakfire/
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = pakfire3
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = "libsolv pycurl pygpgme python-progressbar python-xattr sqlite urlgrabber"
 
@@ -78,6 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pakfire3-changes-for-ipfire2.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pakfire-database-Add-inst_size-column-when-creating-new-data.patch
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	rm -vf /usr/bin/pakfire3
