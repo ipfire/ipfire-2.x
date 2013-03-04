@@ -120,7 +120,6 @@ if($param eq 'flush'){
 					system ("iptables -A $CHAIN -s $orange -d $blue -j RETURN");
 				}
 			}
-			
 			&p2pblock;
 			system ("iptables -A $CHAIN -m state --state NEW -j ACCEPT");
 			system ("/usr/sbin/firewall-policy");
@@ -230,10 +229,20 @@ sub buildrules
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
 								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}
-									if ($$hash{$key}[17] eq 'ON'){
-										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+									if(substr($DPORT, 2, 4) eq 'icmp'){
+										my @icmprule= split(",",substr($DPORT, 12,));
+										foreach (@icmprule){
+											if ($$hash{$key}[17] eq 'ON'){
+												print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] --icmp-type $_ $TIME -j LOG\n";
+											}
+											print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] --icmp-type $_ $TIME -j $$hash{$key}[0]\n"; 
+										}
+									}else{
+										if ($$hash{$key}[17] eq 'ON'){
+											print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+										}
+										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n"; 
 									}
-									print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n"; 
 								}				
 							}
 						}
@@ -250,10 +259,20 @@ sub buildrules
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
 								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}
-									if ($$hash{$key}[17] eq 'ON'){
-										system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
+									if(substr($DPORT, 2, 4) eq 'icmp'){
+										my @icmprule= split(",",substr($DPORT, 12,));
+										foreach (@icmprule){
+											if ($$hash{$key}[17] eq 'ON'){
+												system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] -- icmp-type $_ $TIME -j LOG");
+											}
+											system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] --icmp-type $_ $TIME -j $$hash{$key}[0]"); 
+										}
+									}else{
+										if ($$hash{$key}[17] eq 'ON'){
+											system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
+										}
+										system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]"); 
 									}
-									system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]"); 
 								}				
 							}
 						}

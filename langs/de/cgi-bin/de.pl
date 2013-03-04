@@ -747,7 +747,7 @@
 'driver' => 'Treiber',
 'drop action' => 'Standardverhalten der (Forward) Firewall in Modus "Blocked"',
 'drop action1' => 'Standardverhalten der (Outgoing) Firewall in Modus "Blocked"',
-'drop action2' => 'Standardverhalten der (INPUT) Firewall',
+'drop action2' => 'Standardverhalten der (Input) Firewall',
 'drop input' => 'Verworfene Input Pakete loggen',
 'drop newnotsyn' => 'Verworfene New Not Syn Pakete loggen',
 'drop forward' => 'Verworfene (Forward) Firewall-Pakete loggen',
