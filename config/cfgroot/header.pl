@@ -164,7 +164,7 @@ sub showhttpheaders
 	print "Pragma: no-cache\n";
 	print "Cache-control: no-cache\n";
 	print "Connection: close\n";
-	print "Content-type: text/html\n\n";
+	print "Content-type: text/html; charset=UTF-8\n\n";
 }
 
 sub is_menu_visible($) {
