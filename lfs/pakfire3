@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.9.23
+VER        = 0.9.25
 
 THISAPP    = pakfire-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 10e6dd51c917faa8bd2e7435495de211
+$(DL_FILE)_MD5 = 8932670f3ac7c7ab1892b719a078de31
 
 install : $(TARGET)
 
