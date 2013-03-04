@@ -32,7 +32,7 @@ DL_FROM    = http://source.ipfire.org/releases/pakfire/
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = pakfire3
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = "libsolv pycurl pygpgme python-progressbar python-xattr sqlite urlgrabber"
 
