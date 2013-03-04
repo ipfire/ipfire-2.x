@@ -1,4 +1,11 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/firewall
+srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
+srv/web/ipfire/cgi-bin/updatexlrator.cgi
+srv/web/ipfire/html/images/updbooster/updxl-src-microsoft.gif
+srv/web/ipfire/html/images/updbooster/updxl-src-windows.gif
+usr/sbin/updxlrator
 var/ipfire/langs
