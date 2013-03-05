@@ -575,7 +575,7 @@ END
 	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value='$Lang::tr{'reset'}' /><input type='hidden' name='poltype' value='outgoing' /></tr>";
 	print "</table></form>";
 	&Header::closebox();
-	print "<br><br><div align='right'><font size='1' color='grey'>Version: $VERSION</div>";
+	print "<br><br><div align='right'><font size='1' color='grey'>Version: $VERSION</font></div>";
 }
 
 sub changerule
