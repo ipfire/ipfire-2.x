@@ -74,7 +74,7 @@ my %ipsecsettings=();
 my %aliases=();
 my %optionsfw=();
 
-my $VERSION='0.9.8.1';
+my $VERSION='0.9.8.2';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -2158,6 +2158,7 @@ END
 			}
 			my $protz=join(",",@protocols);
 			print"<td align='center'>$protz</td>";
+			@protocols=();
 			if ($$hash{$key}[18] eq 'ON'){
 				my @days=();
 				if($$hash{$key}[19] ne ''){push (@days,$Lang::tr{'fwdfw wd_mon'});}
