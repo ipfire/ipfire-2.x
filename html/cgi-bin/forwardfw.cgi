@@ -74,7 +74,7 @@ my %ipsecsettings=();
 my %aliases=();
 my %optionsfw=();
 
-my $VERSION='0.9.7.9';
+my $VERSION='0.9.8.0';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -96,7 +96,7 @@ my $hint='';
 my $ipgrp="${General::swroot}/outgoing/groups";
 my $tdcolor='';
 my $checkorange='';
-
+my @protocols;
 &General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
@@ -1223,13 +1223,14 @@ sub get_serviceports
 	my $name=shift;
 	&General::readhasharray("$configsrv", \%customservice);
 	&General::readhasharray("$configsrvgrp", \%customservicegrp);
-	my $protocols;
 	my $tcp;
 	my $udp;
+	my $icmp;
+	@protocols=();
 	if($type eq 'service'){
 		foreach my $key (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0]) } keys %customservice){
 			if ($customservice{$key}[0] eq $name){
-				$protocols=$customservice{$key}[2];
+				push (@protocols,$customservice{$key}[2]);
 			}
 		}
 	}elsif($type eq 'group'){
@@ -1237,16 +1238,32 @@ sub get_serviceports
 			if ($customservicegrp{$key}[0] eq $name){
 				foreach my $key1 (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0]) } keys %customservice){
 					if ($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
-						if($customservice{$key1}[2] eq 'TCP'){$tcp='TCP';}else{$udp='UDP';}
+						if($customservice{$key1}[2] eq 'TCP'){
+							$tcp='TCP';
+						}elsif($customservice{$key1}[2] eq 'ICMP'){
+							$icmp='ICMP';
+						}elsif($customservice{$key1}[2] eq 'UDP'){
+							$udp='UDP';
+						}
 					}
 				}
 			}
 		}
 	}
-	if($tcp && $udp){$protocols="TCP,UDP";
-	}elsif($tcp){$protocols.="TCP";
-	}elsif($udp){$protocols.="UDP";}
-	return $protocols;
+	if($tcp && $udp && $icmp){
+		push (@protocols,"All");
+		return @protocols;
+	}
+	if($tcp){
+		push (@protocols,"TCP");
+	}
+	if($udp){
+		push (@protocols,"UDP");
+	}
+	if($icmp){
+		push (@protocols,"ICMP");
+	}
+	return @protocols;
 }
 sub getcolor
 {
@@ -2059,8 +2076,6 @@ sub viewtablenew
 						$$hash{$key}[2]='';
 					}
 				}
-				#$$hash{$key}[3]='';
-				#$$hash{$key}[5]='';
 			}
 			$$hash{'ACTIVE'}=$$hash{$key}[2];
 			$count++;
@@ -2131,17 +2146,18 @@ END
 			#Get Protocol
 			my $prot;
 			if ($$hash{$key}[12]){			#target prot if manual
-				$prot=$$hash{$key}[12];
+				push (@protocols,$$hash{$key}[12]);
 			}elsif($$hash{$key}[8]){		#source prot if manual
-				$prot=$$hash{$key}[8];
+				push (@protocols,$$hash{$key}[8]);
 			}elsif($$hash{$key}[14] eq 'cust_srv'){ 
-				$prot=&get_serviceports("service",$$hash{$key}[15]);
+				&get_serviceports("service",$$hash{$key}[15]);
 			}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
-				$prot=&get_serviceports("group",$$hash{$key}[15]);
+				&get_serviceports("group",$$hash{$key}[15]);
 			}else{
-				$prot=$Lang::tr{'all'};
+				push (@protocols,$Lang::tr{'all'});
 			}
-			print"<td align='center'>$prot</td>";
+			my $protz=join(",",@protocols);
+			print"<td align='center'>$protz</td>";
 			if ($$hash{$key}[18] eq 'ON'){
 				my @days=();
 				if($$hash{$key}[19] ne ''){push (@days,$Lang::tr{'fwdfw wd_mon'});}
