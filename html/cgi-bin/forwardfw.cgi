@@ -74,7 +74,7 @@ my %ipsecsettings=();
 my %aliases=();
 my %optionsfw=();
 
-my $VERSION='0.9.8.0';
+my $VERSION='0.9.8.1';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
