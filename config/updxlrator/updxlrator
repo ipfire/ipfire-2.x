@@ -154,6 +154,15 @@ while (<>) {
 		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"Avast",$mirror);
 	}
 
+        # -----------------------------------------------------------
+        #  Section: Mozilla Downloads
+        # -----------------------------------------------------------
+
+	if ($source_url=~ m@^http://.*\.mozilla\.net/.*\.((complete|partial)\.mar|exe)$@i)
+	{ 
+		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"Mozilla",$unique);
+	}
+
 	# -----------------------------------------------------------
 	#  Section: Mcafee
 	# -----------------------------------------------------------
