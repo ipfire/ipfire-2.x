@@ -155,6 +155,13 @@ while (<>) {
 	}
 
 	# -----------------------------------------------------------
+	#  Section: Mcafee
+	# -----------------------------------------------------------
+	
+	if ($source_url =~ m@^http://update\.nai\.com/.*\.(mcs|z|gem|dat|zip)$@i)
+	{
+		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"mcafee",$mirror);
+	}
 	
 	# -----------------------------------------------------------
 	# Section: Avira Downloads
