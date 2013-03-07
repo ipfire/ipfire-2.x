@@ -210,7 +210,7 @@ sub buildrules
 				$TIME=join(",",@timeframe);
 				$TIMEFROM="--timestart $$hash{$key}[26] ";
 				$TIMETILL="--timestop $$hash{$key}[27] ";
-				$TIME="-m time --kerneltz --weekdays $TIME $TIMEFROM $TIMETILL";
+				$TIME="-m time --weekdays $TIME $TIMEFROM $TIMETILL";
 			}
 			if ($MODE eq '1'){	
 				print "NR:$key ";
