@@ -3144,12 +3144,12 @@ END
 	if ($proxysettings{'LOGGING'} eq 'on')
 	{
 		print FILE <<END
-access_log /var/log/squid/access.log
+access_log stdio:/var/log/squid/access.log
 cache_log /var/log/squid/cache.log
 cache_store_log none
 END
 	;
-		if ($proxysettings{'LOGUSERAGENT'} eq 'on') { print FILE "useragent_log \/var\/log\/squid\/user_agent.log\n"; }
+		if ($proxysettings{'LOGUSERAGENT'} eq 'on') { print FILE "access_log stdio:\/var\/log\/squid\/user_agent.log useragent\n"; }
 		if ($proxysettings{'LOGQUERY'} eq 'on') { print FILE "\nstrip_query_terms off\n"; }
 	} else {
 		print FILE <<END
@@ -3182,7 +3182,7 @@ END
 	{
 		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
 		{
-			print FILE "auth_param basic program $authdir/ncsa_auth $userdb\n";
+			print FILE "auth_param basic program $authdir/basic_ncsa_auth $userdb\n";
 			print FILE "auth_param basic children $proxysettings{'AUTH_CHILDREN'}\n";
 			print FILE "auth_param basic realm $authrealm\n";
 			print FILE "auth_param basic credentialsttl $proxysettings{'AUTH_CACHE_TTL'} minutes\n";
@@ -3192,7 +3192,7 @@ END
 		if ($proxysettings{'AUTH_METHOD'} eq 'ldap')
 		{
 			print FILE "auth_param basic utf8 on\n";
-			print FILE "auth_param basic program $authdir/squid_ldap_auth -b \"$proxysettings{'LDAP_BASEDN'}\"";
+			print FILE "auth_param basic program $authdir/basic_ldap_auth -b \"$proxysettings{'LDAP_BASEDN'}\"";
 			if (!($proxysettings{'LDAP_BINDDN_USER'} eq '')) { print FILE " -D \"$proxysettings{'LDAP_BINDDN_USER'}\""; }
 			if (!($proxysettings{'LDAP_BINDDN_PASS'} eq '')) { print FILE " -w $proxysettings{'LDAP_BINDDN_PASS'}"; }
 			if ($proxysettings{'LDAP_TYPE'} eq 'ADS')
@@ -3243,7 +3243,7 @@ END
 				print FILE "auth_param ntlm children $proxysettings{'AUTH_CHILDREN'}\n";
 				if (!($proxysettings{'AUTH_IPCACHE_TTL'} eq '0')) { print FILE "\nauthenticate_ip_ttl $proxysettings{'AUTH_IPCACHE_TTL'} minutes\n"; }
 			} else {
-				print FILE "auth_param basic program $authdir/msnt_auth\n";
+				print FILE "auth_param basic program $authdir/basic_msnt_auth\n";
 				print FILE "auth_param basic children $proxysettings{'AUTH_CHILDREN'}\n";
 				print FILE "auth_param basic realm $authrealm\n";
 				print FILE "auth_param basic credentialsttl $proxysettings{'AUTH_CACHE_TTL'} minutes\n";
@@ -3269,7 +3269,7 @@ END
 
 		if ($proxysettings{'AUTH_METHOD'} eq 'radius')
 		{
-			print FILE "auth_param basic program $authdir/squid_radius_auth -h $proxysettings{'RADIUS_SERVER'} -p $proxysettings{'RADIUS_PORT'} ";
+			print FILE "auth_param basic program $authdir/basic_radius_auth -h $proxysettings{'RADIUS_SERVER'} -p $proxysettings{'RADIUS_PORT'} ";
 			if (!($proxysettings{'RADIUS_IDENTIFIER'} eq '')) { print FILE "-i $proxysettings{'RADIUS_IDENTIFIER'} "; }
 			print FILE "-w $proxysettings{'RADIUS_SECRET'}\n";
 			print FILE "auth_param basic children $proxysettings{'AUTH_CHILDREN'}\n";
@@ -3362,11 +3362,6 @@ END
 		print FILE "acl blocked_mimetypes rep_mime_type \"$mimetypes\"\n\n";
 	}
 
-	print FILE <<END
-#acl all src all
-acl localhost src 127.0.0.1/32
-END
-;
 open (PORTS,"$acl_ports_ssl");
 @temp = <PORTS>;
 close PORTS;
@@ -3463,7 +3458,6 @@ END
 	if ($proxysettings{'ENABLE_CLAMAV'} eq 'on') {
 		print FILE "\n#Settings for squidclamav:\n";
 		print FILE "http_port 127.0.0.1:$proxysettings{'PROXY_PORT'} transparent\n";
-		print FILE "acl to_localhost dst 127.0.0.0/8\n";
 		print FILE "acl purge method PURGE\n";
 		print FILE "http_access deny to_localhost\n";
 		print FILE "http_access allow localhost\n";

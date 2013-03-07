@@ -62,13 +62,25 @@ case "$1" in
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 		if [ -e /var/ipfire/proxy/enable -o -e /var/ipfire/proxy/enable_blue ]; then
-
 			# Add Address to errorpage stylesheet
 			sed "s|XXXhostXXX|$GREEN_ADDRESS|g" /var/ipfire/proxy/errorpage-$ERR_DESIGN.css > \
 				/etc/squid/errorpage.css
 
+			boot_mesg "Creating Squid swap directories..."
+			/usr/sbin/squid -z >/dev/null 2>&1
+			evaluate_retval
+
+			# Make sure, that the process above has finished.
+			counter=5
+			while [ ${counter} -gt 0 ]; do
+				if pidofproc -s /usr/sbin/squid; then
+					sleep 1
+				else
+					break
+				fi
+			done
+
 			boot_mesg "Starting Squid Proxy Server..."
-			loadproc /usr/sbin/squid -z >/dev/null 2>&1
 			loadproc /usr/sbin/squid
 		fi
 
