@@ -74,7 +74,7 @@ my %ipsecsettings=();
 my %aliases=();
 my %optionsfw=();
 
-my $VERSION='0.9.8.2';
+my $VERSION='0.9.8.3';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -142,6 +142,12 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	#check if we try to break rules
 	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' && $fwdfwsettings{'grp2'} eq 'ipfire'){
 		$errormessage.=$Lang::tr{'fwdfw err same'};
+	}
+	#Konvert timeframe if defined
+	if ($fwdfwsettings{'TIME'} eq 'ON'){
+		$fwdfwsettings{'TIME_FROM'} = &timeconvert($fwdfwsettings{'TIME_FROM'},'2utc');
+		$fwdfwsettings{'TIME_TO'}   = &timeconvert($fwdfwsettings{'TIME_TO'},'2utc');
+		print "NACHHER: $fwdfwsettings{'TIME_FROM'} - $fwdfwsettings{'TIME_TO'}<br>";
 	}
 	#DMZ-Part
 	if ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'ORANGE' || $checkorange eq 'on'){
@@ -577,7 +583,6 @@ END
 	&Header::closebox();
 	print "<br><br><div align='right'><font size='1' color='grey'>Version: $VERSION</font></div>";
 }
-
 sub changerule
 {
 	my $oldchain=shift;
@@ -1386,6 +1391,8 @@ sub newrule
 	$checked{'TIME_FRI'}{$fwdfwsettings{'TIME_FRI'}} 		= 'CHECKED';
 	$checked{'TIME_SAT'}{$fwdfwsettings{'TIME_SAT'}} 		= 'CHECKED';
 	$checked{'TIME_SUN'}{$fwdfwsettings{'TIME_SUN'}} 		= 'CHECKED';
+	$fwdfwsettings{'TIME_FROM'} = &timeconvert($fwdfwsettings{'TIME_FROM'},'');
+	$fwdfwsettings{'TIME_TO'} = &timeconvert($fwdfwsettings{'TIME_TO'},'');
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
@@ -1478,7 +1485,8 @@ sub newrule
 		}	
 	}
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw addrule'});
-
+	$fwdfwsettings{'TIME_FROM'} = &timeconvert($fwdfwsettings{'TIME_FROM'},'');
+	$fwdfwsettings{'TIME_TO'} = &timeconvert($fwdfwsettings{'TIME_TO'},'');
 print <<END;
 	<form method="post">
 	<table border='0'>
@@ -1990,6 +1998,49 @@ sub saverule
 		}
 	}
 }
+sub timeconvert
+{
+	my $orgtime=shift;
+	my $type=shift;
+	my $newtime;
+	my ($hour,$min) = split (":", $orgtime);
+	my @locar = localtime(time);
+	my @gmtar = gmtime();
+	my $oldtime = $hour*60 + $min;
+	my $gmt = $gmtar[2]*60 + $gmtar[1];
+	my $loc = $locar[2]*60 + $locar[1];
+	my $diff;
+	my $newtime;
+	if ($gmt > $loc)
+	{
+		$diff = $gmt - $loc;
+		if ($type eq '2utc')
+		{
+			print"umrechnen nach UTC<br>";
+			$newtime = $oldtime + $diff;
+		}else{
+			$newtime = $oldtime - $diff;
+		}
+	}else{
+		$diff = $loc - $gmt;
+		if ($type eq '2utc')
+		{
+			$newtime = $oldtime - $diff;
+		}else{
+			$newtime = $oldtime + $diff;
+		}
+	}
+	if ($newtime < 0 ){
+		$newtime += 1440;
+	}
+	if ($newtime >= 1440){
+		$newtime -= 1440;
+	}
+	my $newhour =sprintf"%02d", $newtime/60;
+	my $newmin  = sprintf"%02d",$newtime % 60;
+	$newtime = "$newhour:$newmin";
+	return $newtime;
+}
 sub validremark
 {
 	# Checks a hostname against RFC1035
@@ -2170,7 +2221,10 @@ END
 				if($$hash{$key}[25] ne ''){push (@days,$Lang::tr{'fwdfw wd_sun'});}
 				my $weekdays=join(",",@days);
 				if (@days){
-					print"<td align='center' width='100'>$weekdays &nbsp $$hash{$key}[26] - $$hash{$key}[27]</td>";
+					my $from = &timeconvert($$hash{$key}[26],'2loc');
+					my $to = &timeconvert($$hash{$key}[27],'2loc');;
+					
+					print"<td align='center' width='100'>$weekdays &nbsp $from - $to</td>";
 				}
 			}else{
 					print"<td align='center'>24/7</td>";
