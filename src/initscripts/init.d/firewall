@@ -149,10 +149,10 @@ case "$1" in
 	/sbin/iptables -N CUSTOMFORWARD
 	/sbin/iptables -A FORWARD -j CUSTOMFORWARD
 	/sbin/iptables -N CUSTOMOUTPUT
+	/sbin/iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 	/sbin/iptables -A OUTPUT -j CUSTOMOUTPUT
 	/sbin/iptables -N OUTGOINGFW
 	/sbin/iptables -A OUTPUT -j OUTGOINGFW
-	/sbin/iptables -A OUTGOINGFW -m state --state ESTABLISHED,RELATED -j ACCEPT
 	/sbin/iptables -t nat -N CUSTOMPREROUTING
 	/sbin/iptables -t nat -A PREROUTING -j CUSTOMPREROUTING
 	/sbin/iptables -t nat -N CUSTOMPOSTROUTING
@@ -172,6 +172,10 @@ case "$1" in
 	# Accept everything connected
 	/sbin/iptables -A INPUT   -m state --state ESTABLISHED,RELATED -j ACCEPT
 	/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+	
+	# Accept everything on lo
+	iptables -A INPUT  -i lo -m state --state NEW -j ACCEPT
+	iptables -A OUTPUT -o lo -m state --state NEW -j ACCEPT
 	
 	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
 	/sbin/iptables -N IPSECINPUT

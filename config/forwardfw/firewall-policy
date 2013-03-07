@@ -7,6 +7,7 @@ iptables -F POLICYFWD
 iptables -F POLICYOUT
 iptables -F POLICYIN
 
+#FORWARDFW
 if [ "$POLICY" == "MODE1" ]; then
 		if [ "$FWPOLICY" == "REJECT" ]; then
 			if [ "$DROPFORWARD" == "on" ]; then
@@ -21,20 +22,20 @@ if [ "$POLICY" == "MODE1" ]; then
 			/sbin/iptables -A POLICYFWD -j DROP -m comment --comment "DROP_FORWARD"
 		fi
 fi
+#OUTGOINGFW
 if [ "$POLICY1" == "MODE1" ]; then
-	/sbin/iptables -I OUTGOINGFW 1 -m state --state ESTABLISHED,RELATED -j ACCEPT
-		if [ "$FWPOLICY1" == "REJECT" ]; then
-			if [ "$DROPOUTGOING" == "on" ]; then
-				/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "REJECT_OUTPUT"
-			fi
-				/sbin/iptables -A POLICYOUT -j REJECT --reject-with icmp-host-unreachable -m comment --comment "REJECT_OUTPUT"
+	if [ "$FWPOLICY1" == "REJECT" ]; then
+		if [ "$DROPOUTGOING" == "on" ]; then
+			/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "REJECT_OUTPUT"
 		fi
-		if [ "$FWPOLICY1" == "DROP" ]; then
-			if [ "$DROPOUTGOING" == "on" ]; then
-				/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT"
-			fi
-				/sbin/iptables -A POLICYOUT -j DROP -m comment --comment "DROP_OUTPUT"
+		/sbin/iptables -A POLICYOUT -j REJECT --reject-with icmp-host-unreachable -m comment --comment "REJECT_OUTPUT"
+	fi
+	if [ "$FWPOLICY1" == "DROP" ]; then
+		if [ "$DROPOUTGOING" == "on" ]; then
+			/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT"
 		fi
+			/sbin/iptables -A POLICYOUT -j DROP -m comment --comment "DROP_OUTPUT"
+	fi
 fi
 #INPUT
 if [ "$FWPOLICY2" == "REJECT" ]; then
