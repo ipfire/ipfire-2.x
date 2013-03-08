@@ -155,12 +155,28 @@ while (<>) {
 	#  Section: Avast Downloads
 	# -----------------------------------------------------------
 
-	if ($source_url =~ m@^http://download[\d]+\.avast\.com/.*\.(exe|vpu)$@i)
+	if ($source_url =~ m@^http://(ion|download)[\d]+\.avast\.com/.*\.(exe|vpu|vpx)$@i)
 	{
 		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"Avast",$mirror);
 	}
 
+        # -----------------------------------------------------------
+        #  Section: Mozilla Downloads
+        # -----------------------------------------------------------
+
+	if ($source_url=~ m@^http://.*\.mozilla\.net/.*\.((complete|partial)\.mar|exe)$@i)
+	{ 
+		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"Mozilla",$unique);
+	}
+
 	# -----------------------------------------------------------
+	#  Section: Mcafee
+	# -----------------------------------------------------------
+	
+	if ($source_url =~ m@^http://update\.nai\.com/.*\.(mcs|z|gem|dat|zip)$@i)
+	{
+		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"mcafee",$mirror);
+	}
 	
 	# -----------------------------------------------------------
 	# Section: Avira Downloads
