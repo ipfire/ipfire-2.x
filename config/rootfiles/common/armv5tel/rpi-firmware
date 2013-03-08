@@ -5,7 +5,5 @@ boot/config.txt
 #boot/first32k.bin
 boot/start.elf
 boot/start_cd.elf
-boot/start_x.elf
 boot/fixup.dat
 boot/fixup_cd.dat
-boot/fixup_x.dat

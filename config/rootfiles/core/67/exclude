@@ -1,5 +1,4 @@
 srv/web/ipfire/html/proxy.pac
-boot/config.txt
 etc/udev/rules.d/30-persistent-network.rules
 etc/collectd.custom
 etc/shadow
