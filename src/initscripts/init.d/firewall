@@ -252,9 +252,8 @@ case "$1" in
 	# upnp chain for our upnp daemon
 	/sbin/iptables -t nat -N UPNPFW
 	/sbin/iptables -t nat -A PREROUTING -j UPNPFW
-	/sbin/iptables -A FORWARD -m state --state NEW -j UPNPFW
-	# This chain only contains dummy rules.
 	/sbin/iptables -N UPNPFW
+	/sbin/iptables -A FORWARD -m state --state NEW -j UPNPFW
 
 	# Custom mangle chain (for port fowarding)
 	/sbin/iptables -t mangle -N PORTFWMANGLE
