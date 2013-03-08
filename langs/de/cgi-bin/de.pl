@@ -1927,6 +1927,8 @@
 'upstream password' => 'Proxy-Passwort:',
 'upstream proxy host:port' => 'Vorgelagerter Proxy (hostname:port)',
 'upstream username' => 'Proxy-Benutzername:',
+'uptime' => 'Betriebszeit',
+'uptime load average' => 'Ø Systemlast',
 'uptime and users' => 'Uptime und Benutzer:',
 'url filter' => 'URL-Filter',
 'urlfilter access' => 'Zugriff',

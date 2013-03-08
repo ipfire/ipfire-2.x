@@ -1960,6 +1960,8 @@
 'upstream password' => 'Upstream password:',
 'upstream proxy host:port' => 'Upstream proxy (host:port)',
 'upstream username' => 'Upstream username:',
+'uptime' => 'Uptime',
+'uptime load average' => 'Ø Load average',
 'uptime and users' => 'Uptime and users:',
 'url filter' => 'Content Filter',
 'urlfilter access' => 'Access',

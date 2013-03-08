@@ -335,9 +335,14 @@ END
 }
 
 sub closepage () {
-    my $status = &connectionstatus();
-    $uptime = `/usr/bin/uptime`;
-	
+	my $status = &connectionstatus();
+	my $uptime = `/usr/bin/uptime|cut -d \" \" -f 4-`;
+	$uptime =~ s/year(s|)/$Lang::tr{'year'}/;
+	$uptime =~ s/month(s|)/$Lang::tr{'month'}/;
+	$uptime =~ s/day(s|)/$Lang::tr{'day'}/;
+	$uptime =~ s/user(s|)/$Lang::tr{'user'}/;
+	$uptime =~ s/load average/$Lang::tr{'uptime load average'}/;     
+				
     print <<END
 			</div>
 		</div>
