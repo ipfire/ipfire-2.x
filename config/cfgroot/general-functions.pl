@@ -144,6 +144,10 @@ sub age
 	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
 	        $atime, $mtime, $ctime, $blksize, $blocks) = stat $_[0];
 	my $now = time;
+	my $timestring = '';
+	my $dset = 0;		# Day is set, when > 0
+	my $hset = 0;		# Hour is set, when > 0
+	my $mset = 0;		# Minute is set, when > 0
 
 	my $totalsecs = $now - $mtime;
 	my $days = int($totalsecs / 86400);
@@ -153,7 +157,50 @@ sub age
 	my $mins = $totalmins % 60;
 	my $secs = $totalsecs % 60;
 
-	return "${days}d ${hours}h ${mins}m ${secs}s";
+	if	($days > 1) { 
+		${timestring} .= ${days}.' '.$Lang::tr{'days'}.', ';
+		$dset = 1; 
+	}
+	elsif	($days == 1) { 
+		${timestring} .= ${days}.' '.$Lang::tr{'day'}.', ';
+		$dset = 1; 
+	}
+
+	if	(($hours > 1) && !($dset)) { 
+		${timestring} .= ${hours}.' '.$Lang::tr{'hours'}.', ';
+		$hset = 1;
+	}
+	elsif	(($hours == 1) && !($dset)) { 
+		${timestring} .= ${hours}.' '.$Lang::tr{'hour'}.', ';
+		$hset = 1;
+	}
+	elsif ($dset) {
+		${timestring} .= ${hours}.' '.$Lang::tr{'age shour'}.', ';
+		$hset = 1;
+	}
+
+	if	((($mins > 1) || ($mins == 0)) && !($dset || $hset)) { 
+		${timestring} .= ${mins}.' '.$Lang::tr{'minutes'}.', ';
+		$mset = 1;
+	}
+	elsif	(($mins == 1) && !($dset || $hset)) { 
+		${timestring} .= ${mins}.' '.$Lang::tr{'minute'}.', ';
+		$mset = 1;
+	}
+	else {
+		${timestring} .= ${mins}.' '.$Lang::tr{'age sminute'}.', '; 
+		$mset = 1;
+	}
+
+	if	((($secs > 1) || ($secs == 0)) && !($dset || $hset || $mset)) { 
+		${timestring} .= ${secs}.' '.$Lang::tr{'age seconds'};
+	}
+	elsif	(($secs == 1) && !($dset || $hset || $mset)) { 
+		${timestring} .= $secs.' '.$Lang::tr{'age second'};
+	}
+	else	{ ${timestring} .= $secs.' '.$Lang::tr{'age ssecond'}; }
+
+	return ${timestring};
 }
 
 sub validip
