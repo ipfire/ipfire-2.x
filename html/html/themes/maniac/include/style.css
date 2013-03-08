@@ -227,13 +227,13 @@ padding-top: 3.5em;
 {
 border-bottom: dotted 1px #E1E1E1;
 position: relative;
+padding-bottom: 0.4em;
 }
 
 #main_inner h3
 {
 font-size: 2.1em;
 padding-bottom: 0.1em;
-margin-bottom: 0.8em;
 }
 
 #main_inner h4
@@ -253,7 +253,7 @@ position: relative;
 {
 position: relative;
 font-size: 1.7em;
-padding-bottom: 1.2em;
+padding-bottom: 0.4em;
 }
 
 #main_inner .post ul.post_info
