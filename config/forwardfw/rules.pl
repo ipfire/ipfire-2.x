@@ -25,6 +25,7 @@
 ###############################################################################
 
 use strict;
+use Time::Local;
 no warnings 'uninitialized';
 
 # enable only the following on debugging purpose
@@ -200,6 +201,10 @@ sub buildrules
 
 			#get time if defined
 			if($$hash{$key}[18] eq 'ON'){
+				my ($time1,$time2,$daylight);
+				my $daylight=$$hash{$key}[28];
+				$time1=&get_time($$hash{$key}[26],$daylight);
+				$time2=&get_time($$hash{$key}[27],$daylight);
 				if($$hash{$key}[19] ne ''){push (@timeframe,"Mon");}
 				if($$hash{$key}[20] ne ''){push (@timeframe,"Tue");}
 				if($$hash{$key}[21] ne ''){push (@timeframe,"Wed");}
@@ -208,8 +213,9 @@ sub buildrules
 				if($$hash{$key}[24] ne ''){push (@timeframe,"Sat");}
 				if($$hash{$key}[25] ne ''){push (@timeframe,"Sun");}
 				$TIME=join(",",@timeframe);
-				$TIMEFROM="--timestart $$hash{$key}[26] ";
-				$TIMETILL="--timestop $$hash{$key}[27] ";
+				
+				$TIMEFROM="--timestart $time1 ";
+				$TIMETILL="--timestop $time2 ";
 				$TIME="-m time --weekdays $TIME $TIMEFROM $TIMETILL";
 			}
 			if ($MODE eq '1'){	
@@ -286,6 +292,36 @@ sub buildrules
 		undef $TIMEFROM;
 		undef $TIMETILL;
 	}
+}
+sub get_time
+{
+	my $val=shift;
+	my $val1=shift;
+	my $time;
+	my $minutes;
+	my $ruletime;
+	$minutes = &utcmin($val);
+	$ruletime = $minutes + &time_get_utc($val);
+	if ($ruletime < 0){$ruletime +=1440;}
+	if ($ruletime > 1440){$ruletime -=1440;}
+	$time=sprintf "%02d:%02d", $ruletime / 60, $ruletime % 60;
+	return $time;
+}
+sub time_get_utc
+{
+	# Calculates the UTCtime from a given time
+	my $val=shift;
+	my @localtime=localtime(time);
+	my @gmtime=gmtime(time);
+	my $diff = ($gmtime[2]*60+$gmtime[1]%60)-($localtime[2]*60+$localtime[1]%60);
+	return $diff;
+}
+sub utcmin
+{
+	my $ruletime=shift;
+	my ($hrs,$min) = split(":",$ruletime);
+	my $newtime = $hrs*60+$min;
+	return $newtime;
 }
 sub p2pblock
 {
