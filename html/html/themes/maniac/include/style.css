@@ -462,3 +462,9 @@ max-width: 2.5em;
 	position: relative;
 	width: 100%;
 	}
+
+/* FOOTER	COLORIZE BANDWIDTH */
+
+#rx_kbs { color: green; }
+
+#tx_kbs { color: red; }
