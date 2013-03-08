@@ -9,8 +9,31 @@
 # GPU Memory Settings (16,32,64 ... )
 # 16MB has a issue at reboot so we use 32MB memory split
 ###############################################################################
-gpu_mem_256=32
-gpu_mem_512=32
+gpu_mem=16
+
+###############################################################################
+#
+# hdmi/video options
+#
+###############################################################################
+#
+# Set this if monitor was not detected at reboot.
+#hdmi_force_hotplug=1
+#
+# hdmi_drive: 0 auto, 1 DVI (no Sound), 2 HDMI (Sound)
+#hdmi_drive=1
+#
+# sdtv_mode: 0 NTSC, 1 NTSC (JP), 3 PAL, 4 PAL (Brazil)
+#sdtv_mode=2
+# sdtv_ascpect: 0 4:3, 1 14:9, 2 16:9
+#sdtv_aspect=0
+#
+# overscan
+#overscan_left=16
+#overscan_right=16
+#overscan_top=16
+#overscan_bottom=16
+#
 
 ###############################################################################
 #
@@ -24,9 +47,10 @@ gpu_mem_512=32
 #sdram_freq_min=250
 #
 # use following paramters to overclock at load
-#arm_freq=1000
+#arm_freq=900
 #core_freq=450
 #sdram_freq=450
+# higher clock than 900Mhz most need over voltage. Use with care.
 #over_voltage=3
 
 ################################################################################
