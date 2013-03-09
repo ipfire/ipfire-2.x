@@ -249,7 +249,7 @@ position: relative;
 {
 position: relative;
 font-size: 1.7em;
-padding-bottom: 1.2em;
+padding-bottom: 0.4em;
 }
 
 #main_inner .post ul.post_info
@@ -433,3 +433,9 @@ max-width: 2.5em;
 	position: relative;
 	width: 100%;
 	}
+
+/* FOOTER	COLORIZE BANDWIDTH */
+
+#rx_kbs { color: green; }
+
+#tx_kbs { color: red; }

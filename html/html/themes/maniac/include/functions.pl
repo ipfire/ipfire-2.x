@@ -143,14 +143,12 @@ sub openpage {
     }
 
     print <<END
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html>
-  <head>
-  <title>$title</title>
-
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+		<title>$title</title>
     $extrahead
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 END
 ;
     if ($settings{'FX'} ne 'off') {
@@ -179,66 +177,53 @@ END
 ;
 if ($settings{'SPEED'} ne 'off') {
 print <<END
-                <script type="text/javascript" language="javascript">
-                 
-                    var http_request = false;
-                 
-                    function LoadInetInfo(url) {
-                 
-                        http_request = false;
-                 
-                        if (window.XMLHttpRequest) { // Mozilla, Safari,...
-                            http_request = new XMLHttpRequest();
-                            if (http_request.overrideMimeType) {
-                                http_request.overrideMimeType('text/xml');
-                                // zu dieser Zeile siehe weiter unten
-                            }
-                        } else if (window.ActiveXObject) { // IE
-                            try {
-                                http_request = new ActiveXObject("Msxml2.XMLHTTP");
-                            } catch (e) {
-                                try {
-                                    http_request = new ActiveXObject("Microsoft.XMLHTTP");
-                                } catch (e) {}
-                            }
-                        }
-                 
-                        if (!http_request) {
-                            alert('Ende :( Kann keine XMLHTTP-Instanz erzeugen');
-                            return false;
-                        }
-                        http_request.onreadystatechange = DisplayInetInfo;
-                        http_request.open('GET', url, true);
-                        http_request.send(null);
-                 
-                    }
-                 
-                    function DisplayInetInfo() {
-                        if (http_request.readyState == 4) {
-                             var xmldoc = http_request.responseXML;
-                             var root1_node = xmldoc.getElementsByTagName('rx_kbs').item(0);
-                             var root2_node = xmldoc.getElementsByTagName('tx_kbs').item(0);
-                             var root3_node = xmldoc.getElementsByTagName('rxb').item(0);
-                             var root4_node = xmldoc.getElementsByTagName('txb').item(0);
-                
-                             document.forms['speed'].txkb.value  = root1_node.firstChild.data;
-                             document.forms['speed'].rxkb.value  = root2_node.firstChild.data;
-                
-                                        // document.getElementsByTagName("input")[0].style.color = "#00FF00";
-                                        url    = "/cgi-bin/speed.cgi?rxb_last=" + root3_node.firstChild.data + "&txb_last=" + root4_node.firstChild.data;
-                
-                              window.setTimeout("LoadInetInfo(url)", 3000);
-                        }
-                 
-                    }
-                </script>
+    <script type="text/javascript" src="/include/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript">
+        var t_current;
+        var t_last;
+        var rxb_current;
+        var rxb_last;
+        var txb_current;
+        var txb_last;
+				function refreshInetInfo() {
+						\$.ajax({
+								url: '/cgi-bin/speed.cgi',
+											success: function(xml){
+											t_current = new Date();
+											var t_diff = t_current - t_last;
+											t_last = t_current;
+				
+											rxb_current = \$("rxb",xml).text();
+											var rxb_diff = rxb_current - rxb_last;
+											rxb_last = rxb_current;
+				
+											var rx_kbs = rxb_diff/t_diff;
+											rx_kbs = Math.round(rx_kbs*10)/10;
+				
+											txb_current = \$("txb",xml).text();
+											var txb_diff = txb_current - txb_last;
+											txb_last = txb_current;
+				
+											var tx_kbs = txb_diff/t_diff;
+											tx_kbs = Math.round(tx_kbs*10)/10;
+				
+											\$("#rx_kbs").text(rx_kbs + ' kb/s');
+											\$("#tx_kbs").text(tx_kbs + ' kb/s');
+											}
+								});
+								window.setTimeout("refreshInetInfo()", 3000);
+						}
+						\$(document).ready(function(){
+						refreshInetInfo();
+				});
+    </script>
   </head>
-  <body onLoad="LoadInetInfo('/cgi-bin/speed.cgi')">
+  <body>
 END
 ;
 }
 else {
-print "</head><body>";}
+print "</head>\n<body>";}
 print <<END
 <!-- IPFIRE HEADER -->
 
@@ -291,14 +276,12 @@ sub openpagewithoutmenu {
     }
 
     print <<END
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html>
-  <head>
-  <title>$title</title>
-
-    $extrahead
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+		<title>$title</title>
+		$extrahead
 END
 ;
     if ($settings{'FX'} ne 'off') {
@@ -348,9 +331,14 @@ END
 }
 
 sub closepage () {
-    my $status = &connectionstatus();
-    $uptime = `/usr/bin/uptime`;
-	
+	my $status = &connectionstatus();
+	my $uptime = `/usr/bin/uptime|cut -d \" \" -f 4-`;
+	$uptime =~ s/year(s|)/$Lang::tr{'year'}/;
+	$uptime =~ s/month(s|)/$Lang::tr{'month'}/;
+	$uptime =~ s/day(s|)/$Lang::tr{'day'}/;
+	$uptime =~ s/user(s|)/$Lang::tr{'user'}/;
+	$uptime =~ s/load average/$Lang::tr{'uptime load average'}/;     
+				
     print <<END
 			</div>
 		</div>
@@ -375,10 +363,9 @@ END
 if ($settings{'SPEED'} ne 'off') {
 print <<END                        
                         <br />
-                        <form name='speed'>
-                                <b>$Lang::tr{'bandwidth usage'}:</b> $Lang::tr{'incoming'}:<input type="text" name="rxkb" size="5" value="0 kb/s" style="font-size: 12px; font-family: Arial, Helvetica;text-align: center;color:green; border: none; padding: 0; background-color: #000000; vertical-align: middle" />
-                                $Lang::tr{'outgoing'}: <input type="text" name="txkb" size="5" value="0 kb/s" style="font-size: 12px; font-family: Arial, Helvetica;text-align: center;color:red; border: none; padding: 0; background-color: #000000; vertical-align: middle"/>
-                        </form>
+                                <b>$Lang::tr{'bandwidth usage'}:</b>
+				$Lang::tr{'incoming'}: <span id="rx_kbs"></span>&nbsp;$Lang::tr{'outgoing'}: <span id="tx_kbs"></span>
+
 END
 ;
 }
