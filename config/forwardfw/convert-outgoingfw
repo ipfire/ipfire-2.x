@@ -251,7 +251,6 @@ sub process_rules
 {
 	my ($type,$action,$active,$grp1,$source,$grp2,$useport,$port,$prot,$grp3,$target,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to);
 	&General::readhash($fwdfwsettings,\%fwdsettings);
-	print "altefirewall hat modus: $outsettings{'POLICY'}\n";
 	if ($outsettings{'POLICY'} eq 'MODE1'){
 		$fwdfwsettings{'POLICY'}='MODE1';
 		$type='ALLOW';
