@@ -186,7 +186,8 @@ sub new_hostgrp
 				$hosts{$key}[0]	= $name2;
 				$hosts{$key}[1]	= $type;
 				$hosts{$key}[2]	= $mac;
-				$hosts{$key}[3]	= 1;
+				$hosts{$key}[3]	= '';
+				$hosts{$key}[4]	= 1;
 				print LOG "->Host (MAC) $mac added to custom hosts\n";
 			}else{
 				print LOG "->Host (MAC) $mac already exists\n";
@@ -250,21 +251,20 @@ sub process_rules
 {
 	my ($type,$action,$active,$grp1,$source,$grp2,$useport,$port,$prot,$grp3,$target,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to);
 	&General::readhash($fwdfwsettings,\%fwdsettings);
+	print "altefirewall hat modus: $outsettings{'POLICY'}\n";
 	if ($outsettings{'POLICY'} eq 'MODE1'){
 		$fwdfwsettings{'POLICY'}='MODE1';
-	}else{
-		$fwdsettings{'POLICY'}='MODE2';
-	}
-	&General::writehash($fwdfwsettings,\%fwdsettings);
-	if ($outsettings{'POLICY'} eq 'MODE1'){
 		$type='ALLOW';
 		$action='ACCEPT';
 	}elsif($outsettings{'POLICY'} eq 'MODE2'){
+		$fwdsettings{'POLICY'}='MODE2';
 		$type='DENY';
 		$action='DROP';
 	}else{
 		return;
 	}
+	&General::writehash($fwdfwsettings,\%fwdsettings);
+	
 	#open LOG
 	if( -f "/var/log/converters/outgoingfw-convert.log"){unlink ("/var/log/converters/outgoingfw-convert.log");}
 	open (LOG, ">/var/log/converters/outgoingfw-convert.log") or die $!;
@@ -289,7 +289,6 @@ sub process_rules
 			}else{
 				push(@prot,$configline[3]);
 			}
-
 			if($configline[4] ne ''){ 
 				$configline[4] =~ s/,/;/g;
 				$remark = $configline[4];
@@ -326,6 +325,7 @@ sub process_rules
 				$source='IPFire';
 				&General::readhash($fwdfwsettings,\%fwdsettings);
 				$fwdsettings{'POLICY1'}=$outsettings{'POLICY'};
+				$fwdsettings{'POLICY'}=$outsettings{'POLICY'};
 				&General::writehash($fwdfwsettings,\%fwdsettings);
 			}elsif ($configline[2] eq 'blue') {
 				$grp1='std_net_src';
@@ -398,6 +398,7 @@ sub process_rules
 				my @values=();
 				my @parts=split(",",$configline[8]);
 				foreach (@parts){
+					$_=~ tr/-/:/;
 					if (!($_ =~ /^(\d+)\:(\d+)$/)) {
 						if(&General::validport($_)){
 							$useport='ON';	
