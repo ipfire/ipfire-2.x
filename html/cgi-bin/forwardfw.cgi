@@ -1388,7 +1388,7 @@ sub newrule
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
-	
+
 	#check if update and get values
 	if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on' && !$errormessage){
 		&General::readhasharray("$config", \%hash);
@@ -1482,32 +1482,7 @@ sub newrule
 		$fwdfwsettings{'TIME_FROM'} = &timeconvert($fwdfwsettings{'TIME_FROM'},'');
 		$fwdfwsettings{'TIME_TO'} = &timeconvert($fwdfwsettings{'TIME_TO'},'');
 	}
-print <<END;
-	<form method="post">
-	<table border='0'>
-	<tr><td nowrap>$Lang::tr{'fwdfw rule action'}</td><td><select name='RULE_ACTION'>
-END
-	foreach ("ACCEPT","DROP","REJECT")
-	{
-		if($fwdfwsettings{'updatefwrule'} eq 'on'){
-			print"<option ";
-			print "selected='selected'" if ($fwdfwsettings{'RULE_ACTION'} eq $_);
-			print">$_</option>";
-		}else{
-			if($fwdfwsettings{'POLICY'} eq 'MODE2'){
-				$fwdfwsettings{'RULE_ACTION'} = 'DROP';
-			}
-	
-			if ($_ eq $fwdfwsettings{'RULE_ACTION'})
-			{
-				print"<option selected>$_</option>";
-			}else{
-				print"<option>$_</option>";
-			}
-		}
-	}
-	print"</select></td></tr></table><hr>";	
-
+print "<form method='post'>";
 	&Header::closebox();
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw source'});
 	#------SOURCE-------------------------------------------------------
@@ -1518,7 +1493,6 @@ END
 		</table>
 END
 	&gen_dd_block('src','grp1');
-
 		print<<END;
 		<tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
 		<table width='100%' border='0'>
@@ -1557,13 +1531,18 @@ END
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
 		print<<END;
 		<table width='100%' border='0'>	
-		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td colspan='2'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16'><td><input type='radio' name='grp2' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>IPFire ($Lang::tr{'external access'})</b></td><td align='right'><select name='ipfire' style='width:200px;'>
+		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='57%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16'><td width='1%'><input type='radio' name='grp2' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>IPFire</b></td>
 END
-		print "<option value='Default IP' $selected{'ipfire'}{'Default IP'}>Default IP</option>";
+		if (! -z "${General::swroot}/ethernet/aliases"){
+			print"<td align='right'><select name='ipfire' style='width:200px;'>";
+			print "<option value='Default IP' $selected{'ipfire'}{'Default IP'}>Default IP</option>";
 
-		foreach my $alias (sort keys %aliases)
-		{
-			print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias</option>";
+			foreach my $alias (sort keys %aliases)
+			{
+				print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias</option>";
+			}
+		}else{
+			print"<td style='width:200px;'>";
 		}
 		print<<END;
 		</td></tr>
@@ -1633,8 +1612,28 @@ END
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
 		print<<END;
 		<table width='100%' border='0'>
-		<tr><td width='12%'>$Lang::tr{'remark'}:</td><td align='left'><input type='text' name='ruleremark' size='40' maxlength='255' value='$fwdfwsettings{'ruleremark'}'></td></tr>
+		<tr><td nowrap>$Lang::tr{'fwdfw rule action'}</td><td><select name='RULE_ACTION'>
 END
+		foreach ("ACCEPT","DROP","REJECT")
+		{
+			if($fwdfwsettings{'updatefwrule'} eq 'on'){
+				print"<option value='$_'";
+				print "selected='selected'" if ($fwdfwsettings{'RULE_ACTION'} eq $_);
+				print">$Lang::tr{'fwdfw '.$_}</option>";
+			}else{
+				if($fwdfwsettings{'POLICY'} eq 'MODE2'){
+					$fwdfwsettings{'RULE_ACTION'} = 'DROP';
+				}
+				if ($_ eq $fwdfwsettings{'RULE_ACTION'})
+				{
+					print"<option selected>$Lang::tr{'fwdfw '.$_}</option>";
+				}else{
+					print"<option>$Lang::tr{'fwdfw '.$_}</option>";
+				}
+			}
+		}
+		print"</select></td></tr>";	
+		print"<tr><td width='12%'>$Lang::tr{'remark'}:</td><td align='left'><input type='text' name='ruleremark' size='40' maxlength='255' value='$fwdfwsettings{'ruleremark'}'></td></tr>";
 		if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on'){
 			print "<tr><td width='12%'>$Lang::tr{'fwdfw rulepos'}:</td><td><select name='rulepos' >";
 			for (my $count =1; $count <= $sum; $count++){ 
