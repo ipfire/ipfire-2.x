@@ -96,6 +96,7 @@ sub process_groups
 		}
 		&new_hostgrp($group,'mac');
 		@hostarray=();
+		@zeilen=();
 	}
 	close (LOG);
 }
@@ -144,10 +145,14 @@ sub new_hostgrp
 					$hosts{$key}[0]	= $name2;
 					$hosts{$key}[1]	= $type;
 					$hosts{$key}[2]	= $ip;
-					$hosts{$key}[3]	= 1;
+					$hosts{$key}[3]	= '';
+					$hosts{$key}[4]	= 1;
 					print LOG "->Host (IP) $ip added to custom hosts\n"
 				}else{
-					print LOG "->Host (IP) $ip already exists\n";
+					print LOG "->Host (IP) $ip already exists in custom hosts\n";
+					$name="host ";
+					$name2=$name.$ippart;
+					$name3="Custom Host";
 				}
 			}elsif($byte4 < '255'){
 				print LOG "Processing NETWORK $ippart/$subnet from Group $grp\n";
@@ -159,10 +164,14 @@ sub new_hostgrp
 					$nets{$netkey}[0] = $name2;
 					$nets{$netkey}[1] = $ippart;
 					$nets{$netkey}[2] = $subnet;
-					$nets{$netkey}[3] = 1;
+					$nets{$netkey}[3] = '';
+					$nets{$netkey}[4] = 1;
 					print LOG "->Network $ippart/$subnet added to custom networks\n";
 				}else{
-					print LOG "Network $ippart already exists\n";
+					print LOG "Network $ippart already exists in custom networks\n";
+					$name="net ";
+					$name2=$name.$ippart;
+					$name3="Custom Network";
 				}
 			}
 			if($name2){
@@ -190,7 +199,10 @@ sub new_hostgrp
 				$hosts{$key}[4]	= 1;
 				print LOG "->Host (MAC) $mac added to custom hosts\n";
 			}else{
-				print LOG "->Host (MAC) $mac already exists\n";
+				print LOG "->Host (MAC) $mac already exists in custom hosts \n";
+				$name="host ";
+				$name2=$name.$mac;
+				$name3="Custom Host";
 			}
 			if($name2){
 				my $grpkey 	= &General::findhasharraykey(\%groups);
