@@ -65,7 +65,7 @@ my $green;
 my $blue;
 my ($TYPE,$PROT,$SPROT,$DPROT,$SPORT,$DPORT,$TIME,$TIMEFROM,$TIMETILL,$SRC_TGT);
 my $CHAIN="FORWARDFW";
-
+my $conexists='off';
 
 &General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
 &General::readhash("$netsettings", \%defaultNetworks);
@@ -75,6 +75,14 @@ my $CHAIN="FORWARDFW";
 &General::readhasharray($configoutgoing, \%configoutgoingfw);
 &General::readhasharray($configgrp, \%customgrp);
 &General::get_aliases(\%aliases);
+
+#check if we have an internetconnection
+open (CONN,"/var/ipfire/red/iface");
+my $con = <CONN>;
+close(CONN);
+if (-f "/var/ipfire/red/active"){
+	$conexists='on';
+}
 
 ################################
 #    DEBUG/TEST                #
@@ -153,6 +161,7 @@ sub buildrules
 	my $hash=shift;
 	my $STAG;
 	foreach my $key (sort {$a <=> $b} keys %$hash){
+		next if ($$hash{$key}[6] eq 'RED' && $conexists eq 'off' );
 		$STAG='';
 		if($$hash{$key}[2] eq 'ON'){
 			#get source ip's
@@ -375,7 +384,7 @@ sub get_address
 			$$hash{$key}[0] = $base2;
 		}
 	}elsif($base eq 'std_net_src' || $base eq 'std_net_tgt' || $base eq 'Standard Network'){
-		$$hash{$key}[0]=&fwlib::get_std_net_ip($base2);
+		$$hash{$key}[0]=&fwlib::get_std_net_ip($base2,$con);
 	}elsif($base eq 'cust_net_src' || $base eq 'cust_net_tgt' || $base eq 'Custom Network'){
 		$$hash{$key}[0]=&fwlib::get_net_ip($base2);
 	}elsif($base eq 'cust_host_src' || $base eq 'cust_host_tgt' || $base eq 'Custom Host'){

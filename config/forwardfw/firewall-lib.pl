@@ -207,6 +207,7 @@ sub get_grp_ip
 sub get_std_net_ip
 {
 	my $val=shift;
+	my $con=shift;
 	if ($val eq 'ALL'){
 		return "0.0.0.0/0.0.0.0";
 	}elsif($val eq 'GREEN'){
@@ -216,7 +217,7 @@ sub get_std_net_ip
 	}elsif($val eq 'BLUE'){
 		return "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
 	}elsif($val eq 'RED'){
-		return "0.0.0.0/0 -o red0";
+		return "0.0.0.0/0 -o $con";
 	}elsif($val =~ /OpenVPN/i){
 		return "$ovpnsettings{'DOVPN_SUBNET'}";
 	}elsif($val =~ /IPsec/i){
