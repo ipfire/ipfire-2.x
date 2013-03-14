@@ -174,7 +174,7 @@ sub new_hostgrp
 					$name3="Custom Network";
 				}
 			}
-			if($name2){
+			if($name2 && !&check_grp($grp,$name2)){
 				my $grpkey 	= &General::findhasharraykey(\%groups);
 				$groups{$grpkey}[0]	= $grp;
 				$groups{$grpkey}[1]	= '';
@@ -204,7 +204,7 @@ sub new_hostgrp
 				$name2=$name.$mac;
 				$name3="Custom Host";
 			}
-			if($name2){
+			if($name2 && !&check_grp($grp,$name2)){
 				my $grpkey 	= &General::findhasharraykey(\%groups);
 				$groups{$grpkey}[0]	= $grp;
 				$groups{$grpkey}[1]	= '';

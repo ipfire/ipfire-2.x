@@ -455,7 +455,6 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 					foreach my $key (sort keys %customgrp){
 						if($customgrp{$key}[2] eq $fwhostsettings{'orgname'}){
 							$customgrp{$key}[2]=$fwhostsettings{'HOSTNAME'};
-							last;
 						}
 					}
 					&General::writehasharray("$configgrp", \%customgrp);
@@ -1111,7 +1110,7 @@ sub addhost
 	print<<END;
 	<table border='0' width='100%'><form method='post' style='display:inline'>
 	<tr><td>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='14'><script>document.getElementById('textbox1').focus()</script></td></tr>
-	<tr><td>IP/MAC:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14' maxlength='15'></td></tr>
+	<tr><td>IP/MAC:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14' maxlength='17'></td></tr>
 	<tr><td width='10%'>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='HOSTREMARK' value='$fwhostsettings{'HOSTREMARK'}' style='width:98%;'></td></tr>
 	<tr><td colspan='5'><br><br><b>$Lang::tr{'fwhost attention'}</b><br>$Lang::tr{'fwhost macwarn'}</td></tr>
 	<tr><td colspan='5'><hr></hr></td></tr>

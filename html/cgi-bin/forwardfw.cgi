@@ -74,7 +74,7 @@ my %ipsecsettings=();
 my %aliases=();
 my %optionsfw=();
 
-my $VERSION='0.9.8.4';
+my $VERSION='0.9.8.6';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -123,7 +123,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	&General::readhasharray("$configfwdfw", \%configfwdfw);
 	&General::readhasharray("$configinput", \%configinputfw);
 	&General::readhasharray("$configoutgoing", \%configoutgoingfw);
-
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
@@ -420,18 +419,18 @@ if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'reset'})
 			&checkcounter($configfwdfw{$key}[5],$configfwdfw{$key}[6],,);
 			&checkcounter($configfwdfw{$key}[14],$configfwdfw{$key}[15],,);
 		}
-			&General::readhasharray("$configinput", \%configinputfw);
-		foreach my $key (sort keys %configinputfw){
-			&checkcounter($configinputfw{$key}[3],$configinputfw{$key}[4],,);
-			&checkcounter($configinputfw{$key}[5],$configinputfw{$key}[6],,);
-			&checkcounter($configinputfw{$key}[14],$configinputfw{$key}[15],,);
-		}
-		
+		#&General::readhasharray("$configinput", \%configinputfw);
+		#foreach my $key (sort keys %configinputfw){
+		#	&checkcounter($configinputfw{$key}[3],$configinputfw{$key}[4],,);
+		#	&checkcounter($configinputfw{$key}[5],$configinputfw{$key}[6],,);
+		#	&checkcounter($configinputfw{$key}[14],$configinputfw{$key}[15],,);
+		#}
+
 		system("rm ${General::swroot}/forward/config");
-		system("rm ${General::swroot}/forward/input");
+		#system("rm ${General::swroot}/forward/input");
 		&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
 		unless (-e "${General::swroot}/forward/config")  	{ system("touch ${General::swroot}/forward/config"); }
-		unless (-e "${General::swroot}/forward/input")  	{ system("touch ${General::swroot}/forward/input"); }
+		#unless (-e "${General::swroot}/forward/input")  	{ system("touch ${General::swroot}/forward/input"); }
 		my $MODE1=$fwdfwsettings{'POLICY1'};
 		%fwdfwsettings = ();
 		$fwdfwsettings{'POLICY'}='MODE2';
@@ -717,14 +716,7 @@ sub checktarget
 		$ip=&General::ip2dec($ip);
 		$ip=&General::dec2ip($ip);
 
-		##check if net or broadcast
-		#my @tmp= split (/\./,$ip);
-		#if ($tmp[3] eq "0" || ($tmp[3] eq "255"))
-		#{
-			#$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
-		#}
 		$fwdfwsettings{'tgt_addr'}="$ip/$subnet";
-				
 		if(!&General::validipandmask($fwdfwsettings{'tgt_addr'})){
 			$errormessage.=$Lang::tr{'fwdfw err tgt_addr'}."<br>";
 		}
@@ -1291,7 +1283,7 @@ sub getcolor
 		foreach my $alias (sort keys %aliases)
 		{
 			if ($val eq $alias){
-				$tdcolor="style='border: 2px solid red;'";
+				$tdcolor="style='border: 1px solid $Header::colourred;'";
 				return;
 			}
 		}
@@ -1318,7 +1310,7 @@ sub getcolor
 				$tdcolor="style='border: 1px solid $Header::colourblue;'";
 			}
 		}elsif ($val eq 'Default IP'){
-			$tdcolor="style='border: 1px solid red;'";
+			$tdcolor="style='border: 1px solid $Header::colourred;'";
 		}else{
 			$tdcolor='';
 		}
@@ -1488,7 +1480,7 @@ print "<form method='post'>";
 	#------SOURCE-------------------------------------------------------
 	print<<END;
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td colspan='5'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' ></td></tr>
+		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td colspan='5'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' size='16' maxlength='17'></td></tr>
 		<tr><td colspan='7'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr>
 		</table>
 END
@@ -1531,7 +1523,7 @@ END
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
 		print<<END;
 		<table width='100%' border='0'>	
-		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='57%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16'><td width='1%'><input type='radio' name='grp2' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>IPFire</b></td>
+		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='57%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='17'><td width='1%'><input type='radio' name='grp2' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>IPFire</b></td>
 END
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			print"<td align='right'><select name='ipfire' style='width:200px;'>";
@@ -1541,8 +1533,9 @@ END
 			{
 				print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias</option>";
 			}
+			
 		}else{
-			print"<td style='width:200px;'>";
+			print"<td style='width:200px;'><input type='hidden' name ='ipfire' value='Default IP'>";
 		}
 		print<<END;
 		</td></tr>
@@ -1626,9 +1619,9 @@ END
 				}
 				if ($_ eq $fwdfwsettings{'RULE_ACTION'})
 				{
-					print"<option selected>$Lang::tr{'fwdfw '.$_}</option>";
+					print"<option value='$_' selected>$Lang::tr{'fwdfw '.$_}</option>";
 				}else{
-					print"<option>$Lang::tr{'fwdfw '.$_}</option>";
+					print"<option value='$_'>$Lang::tr{'fwdfw '.$_}</option>";
 				}
 			}
 		}
