@@ -114,6 +114,7 @@ usr/sbin/winbindd
 #usr/share/locale/sv/LC_MESSAGES/pam_winbind.mo
 #usr/share/locale/zh_CN/LC_MESSAGES/pam_winbind.mo
 #usr/share/locale/zh_TW/LC_MESSAGES/pam_winbind.mo
+#usr/share/man/man1/dbwrap_tool.1
 #usr/share/man/man1/findsmb.1
 #usr/share/man/man1/log2pcap.1
 #usr/share/man/man1/nmblookup.1
