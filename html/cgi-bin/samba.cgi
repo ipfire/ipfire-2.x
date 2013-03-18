@@ -99,7 +99,7 @@ $sambasettings{'SYSLOGONLY'} = 'on';
 $sambasettings{'DOSCHARSET'} = 'CP850';
 $sambasettings{'UNIXCHARSET'} = 'UTF8';
 $sambasettings{'DISPLAYCHARSET'} = 'CP850';
-$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE';
+$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=819200 SO_SNDBUF=819200 SO_KEEPALIVE';
 $sambasettings{'WIDELINKS'} = 'on';
 $sambasettings{'UNIXEXTENSION'} = 'off';
 $sambasettings{'SMB2'} = 'off';
@@ -149,7 +149,7 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	system("/usr/local/bin/sambactrl smbglobalreset");
 	$sambasettings{'WORKGRP'} = 'homeip.net';
 	$sambasettings{'NETBIOSNAME'} = 'IPFire';
-	$sambasettings{'SRVSTRING'} = 'Samba running on IPFire 2.0';
+	$sambasettings{'SRVSTRING'} = 'Samba running on IPFire 2.x';
 	$sambasettings{'INTERFACES'} = '';
 	$sambasettings{'SECURITY'} = 'share';
 	$sambasettings{'OSLEVEL'} = '65';
@@ -183,7 +183,7 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'LOCALMASTER'} = 'off';
 	$sambasettings{'DOMAINMASTER'} = 'off';
 	$sambasettings{'PREFERREDMASTER'} = 'off';
-	$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE';
+	$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=819200 SO_SNDBUF=819200 SO_KEEPALIVE';
 	$sambasettings{'WIDELINKS'} = 'on';
 	$sambasettings{'UNIXEXTENSION'} = 'off';
 	$sambasettings{'SMB2'} = 'off';
