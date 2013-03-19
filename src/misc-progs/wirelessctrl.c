@@ -154,9 +154,7 @@ int main(void)
 									(VALID_IP_AND_MASK(ipaddress))) {
 									snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -m mac --mac-source %s -s %s -i %s -j ACCEPT", macaddress, ipaddress, blue_dev);
 									safe_system(command);
-									snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -s %s -i %s ! -o %s -j RETURN", macaddress, ipaddress, blue_dev, green_dev);
-									safe_system(command);
-									snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -s %s -i %s -j FORWARDFW", macaddress, ipaddress, blue_dev);
+									snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -s %s -i %s -j RETURN", macaddress, ipaddress, blue_dev);
 									safe_system(command);
 							} else {
 
@@ -164,18 +162,14 @@ int main(void)
 									if (strlen(macaddress) == 17) {
 													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -m mac --mac-source %s -i %s -j ACCEPT", macaddress, blue_dev);
 													safe_system(command);
-													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -i %s ! -o %s -j RETURN", macaddress, blue_dev, green_dev);
-													safe_system(command);
-													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -i %s -j FORWARDFW", macaddress, blue_dev);
+													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -i %s -j RETURN", macaddress, blue_dev);
 													safe_system(command);
 									}
 
 									if (VALID_IP_AND_MASK(ipaddress)) {
 													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -s %s -i %s -j ACCEPT", ipaddress, blue_dev);
 													safe_system(command);
-													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -s %s -i %s ! -o %s -j RETURN", ipaddress, blue_dev, green_dev);
-													safe_system(command);
-													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -s %s -i %s -j FORWARDFW", ipaddress, blue_dev);
+													snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -s %s -i %s -j RETURN", ipaddress, blue_dev);
 													safe_system(command);
 									}
 							}

@@ -1738,17 +1738,12 @@ END
 		<tr><td width='1%'><input type='checkbox' name='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'}></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr>
 		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
 END
-		if (! -z "${General::swroot}/ethernet/aliases"){
-			print"<td width='8%'>IPFire: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
-			print "<option value='ALL' $selected{'dnat'}{$Lang::tr{'all'}}>$Lang::tr{'all'}</option>";
-			print "<option value='Default IP' $selected{'dnat'}{'Default IP'}>Default IP</option>";
-
-			foreach my $alias (sort keys %aliases)
-			{
-				print "<option value='$alias' $selected{'dnat'}{$alias}>$alias</option>";
-			}
-		}else{
-			print"<td></td><td style='width:200px;'><input type='hidden' name ='ipfire' value='Default IP'>";
+		print"<td width='8%'>IPFire: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
+		print "<option value='ALL' $selected{'dnat'}{$Lang::tr{'all'}}>$Lang::tr{'all'}</option>";
+		print "<option value='Default IP' $selected{'dnat'}{'Default IP'}>Default IP</option>";
+		foreach my $alias (sort keys %aliases)
+		{
+			print "<option value='$alias' $selected{'dnat'}{$alias}>$alias</option>";
 		}
 		print"</td></tr>";
 		print"<tr><td colspan='4'></td><td>Port: </td><td align='right'><input type='text' name='dnatport' style='width:130px;' value=$fwdfwsettings{'dnatport'}> </td></tr>";

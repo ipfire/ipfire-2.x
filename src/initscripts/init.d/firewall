@@ -192,10 +192,6 @@ case "$1" in
 	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
 	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
 
-	# Forward Firewall
-	/sbin/iptables -N FORWARDFW
-	/sbin/iptables -A FORWARD -j FORWARDFW
-
 	# Input Firewall
 	/sbin/iptables -N INPUTFW
 	/sbin/iptables -A INPUT -m state --state NEW -j INPUTFW
@@ -225,6 +221,10 @@ case "$1" in
 	/sbin/iptables -N WIRELESSFORWARD
 	/sbin/iptables -A FORWARD -m state --state NEW -j WIRELESSFORWARD
 	
+	# Forward Firewall
+	/sbin/iptables -N FORWARDFW
+	/sbin/iptables -A FORWARD -j FORWARDFW
+		
 	# PORTFWACCESS chain, used for portforwarding
 	/sbin/iptables -N PORTFWACCESS
 	/sbin/iptables -A FORWARD -m state --state NEW -j PORTFWACCESS
@@ -284,12 +284,7 @@ case "$1" in
 	if [ "$DROPINPUT" == "on" ]; then
 		/sbin/iptables -A INPUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
 	fi
-	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
-	#if [ "$DROPFORWARD" == "on" ]; then
-	#	/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
-	#fi
-	#/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
-	
+		
 	#POLICY CHAIN
 	/sbin/iptables -N POLICYIN
 	/sbin/iptables -A INPUT -j POLICYIN
