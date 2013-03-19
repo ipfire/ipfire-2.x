@@ -185,8 +185,6 @@ $(TARGET) :
 		/etc/rc.d/init.d/networking/red.up/24-RS-snort
 	ln -sf ../../../../../usr/local/bin/qosctrl \
 		/etc/rc.d/init.d/networking/red.up/25-RS-qos
-	ln -sf ../../../../../usr/local/bin/setportfw \
-		/etc/rc.d/init.d/networking/red.up/26-portfw
 	ln -sf ../../../../../usr/local/bin/dialctrl.pl \
 		/etc/rc.d/init.d/networking/red.up/99-U-dialctrl.pl
 	ln -sf ../../squid /etc/rc.d/init.d/networking/red.up/28-RS-squid

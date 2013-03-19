@@ -24,8 +24,7 @@ CFLAGS=-O2 -Wall
 COMPILE=$(CC) $(CFLAGS)
 
 PROGS = iowrap
-SUID_PROGS = setportfw \
-	squidctrl sshctrl ipfirereboot \
+SUID_PROGS = squidctrl sshctrl ipfirereboot \
 	ipsecctrl timectrl dhcpctrl snortctrl \
 	applejuicectrl rebuildhosts backupctrl \
 	logwatch openvpnctrl forwardfwctrl \
@@ -95,9 +94,6 @@ timectrl: timectrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 launch-ether-wake: launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-setportfw: setportfw.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ setportfw.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 rebuildhosts: rebuildhosts.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ rebuildhosts.c setuid.o ../install+setup/libsmooth/varval.o -o $@

@@ -223,7 +223,7 @@ case "$1" in
 	/sbin/iptables -N WIRELESSINPUT
 	/sbin/iptables -A INPUT -m state --state NEW -j WIRELESSINPUT
 	/sbin/iptables -N WIRELESSFORWARD
-	/sbin/iptables -A FORWARDFW -m state --state NEW -j WIRELESSFORWARD
+	/sbin/iptables -A FORWARD -m state --state NEW -j WIRELESSFORWARD
 	
 	# PORTFWACCESS chain, used for portforwarding
 	/sbin/iptables -N PORTFWACCESS
@@ -252,18 +252,17 @@ case "$1" in
 	# Custom prerouting chains (for transparent proxy and port forwarding)
 	/sbin/iptables -t nat -N SQUID
 	/sbin/iptables -t nat -A PREROUTING -j SQUID
-	/sbin/iptables -t nat -N PORTFW
-	/sbin/iptables -t nat -A PREROUTING -j PORTFW
-
+	/sbin/iptables -t nat -N NAT_DESTINATION
+	/sbin/iptables -t nat -N NAT_SOURCE
+	/sbin/iptables -t nat -A PREROUTING -j NAT_DESTINATION
+	/sbin/iptables -t nat -A POSTROUTING -j NAT_SOURCE
+	
+	
 	# upnp chain for our upnp daemon
 	/sbin/iptables -t nat -N UPNPFW
 	/sbin/iptables -t nat -A PREROUTING -j UPNPFW
 	/sbin/iptables -N UPNPFW
 	/sbin/iptables -A FORWARD -m state --state NEW -j UPNPFW
-
-	# Custom mangle chain (for port fowarding)
-	/sbin/iptables -t mangle -N PORTFWMANGLE
-	/sbin/iptables -t mangle -A PREROUTING -j PORTFWMANGLE
 
 	# Postrouting rules (for port forwarding)
 	/sbin/iptables -t nat -A POSTROUTING -m mark --mark 1 -j SNAT \
@@ -354,7 +353,6 @@ case "$1" in
 	$0 stop
 	$0 start
 	/usr/local/bin/forwardfwctrl
-	/usr/local/bin/setportfw
 	/usr/local/bin/openvpnctrl -s > /dev/null 2>&1
 	/usr/local/bin/openvpnctrl -sn2n > /dev/null 2>&1
 	;;

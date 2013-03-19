@@ -24,7 +24,6 @@ usr/local/bin/rebuildroutes
 usr/local/bin/redctrl
 #usr/local/bin/sambactrl
 usr/local/bin/setaliases
-usr/local/bin/setportfw
 usr/local/bin/smartctrl
 usr/local/bin/snortctrl
 usr/local/bin/squidctrl
