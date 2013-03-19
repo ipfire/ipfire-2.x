@@ -22,13 +22,7 @@
 				'title' => "P2P-Block",
 				'enabled' => 1,
 				};
-    $subfirewall->{'50.dnat'} = {
-				 'caption' => $Lang::tr{'ssport forwarding'},
-				 'uri' => '/cgi-bin/portfw.cgi',
-				 'title' => "$Lang::tr{'ssport forwarding'}",
-				 'enabled' => 1,
-				 };
-	$subfirewall->{'60.wireless'} = {
+    $subfirewall->{'60.wireless'} = {
 				'caption' => $Lang::tr{'blue access'},
 				'uri' => '/cgi-bin/wireless.cgi',
 				'title' => "$Lang::tr{'blue access'}",
