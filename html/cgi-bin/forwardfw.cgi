@@ -765,7 +765,35 @@ sub checksource
 sub checktarget
 {
 	my ($ip,$subnet);
-
+	&General::readhasharray("$configsrv", \%customservice);
+	#check DNAT settings (has to be single Host and single Port)
+	if ($fwdfwsettings{'USE_NAT'} eq 'ON' && $fwdfwsettings{'nat'} eq 'dnat'){
+		if($fwdfwsettings{'grp2'} eq 'tgt_addr' || $fwdfwsettings{'grp2'} eq 'cust_host_tgt' || $fwdfwsettings{'grp2'} eq 'ovpn_host_tgt'){
+			if ($fwdfwsettings{'USESRV'} eq ''){
+				$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
+			}
+			#check if manual ip is a single Host (if set)
+			if ($fwdfwsettings{'grp2'} eq 'tgt_addr'){
+				my @tmp= split (/\./,$fwdfwsettings{$fwdfwsettings{'grp2'}});
+				my @tmp1= split ("/",$tmp[3]);
+				if (($tmp1[0] eq "0") || ($tmp1[0] eq "255"))
+				{
+					$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
+				}
+			}
+			#check if Port is a single Port
+			if ($fwdfwsettings{'nat'} eq 'dnat' &&  $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
+				if(($fwdfwsettings{'TGT_PROT'} ne 'TCP'|| $fwdfwsettings{'TGT_PROT'} ne 'UDP') && $fwdfwsettings{'TGT_PORT'} eq ''){
+					$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
+				}
+				if (($fwdfwsettings{'TGT_PROT'} eq 'TCP'|| $fwdfwsettings{'TGT_PROT'} eq 'UDP') && $fwdfwsettings{'TGT_PORT'} ne '' && !&check_natport($fwdfwsettings{'TGT_PORT'})){
+					$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
+				}
+			}
+		}else{
+			$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
+		}
+	}
 	if ($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} ne ''){
 		#check if ip with subnet
 		if ($fwdfwsettings{'tgt_addr'} =~ /^(.*?)\/(.*?)$/) {
@@ -785,15 +813,12 @@ sub checktarget
 		if(!&General::validipandmask($fwdfwsettings{'tgt_addr'})){
 			$errormessage.=$Lang::tr{'fwdfw err tgt_addr'}."<br>";
 		}
-
 	}elsif($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} eq ''){
 		$errormessage.=$Lang::tr{'fwdfw err notgtip'};
 		return $errormessage;
 	}
-
 	#check empty fields
 	if ($fwdfwsettings{$fwdfwsettings{'grp2'}} eq ''){ $errormessage.=$Lang::tr{'fwdfw err notgt'}."<br>";}
-
 	#check tgt services
 	if ($fwdfwsettings{'USESRV'} eq 'ON'){
 		if ($fwdfwsettings{'grp3'} eq 'cust_srv'){
@@ -886,8 +911,36 @@ sub checktarget
 	}
 	return $errormessage;
 }
+sub check_natport
+{
+	my $val=shift;
+	if ($val =~ "," || $val =~ ":" || $val>65536 || $val<0){
+		return 0;
+	}
+	return 1;
+}
 sub checkrule
 {
+	#check valid port for NAT
+	if($fwdfwsettings{'USE_NAT'} eq 'ON'){
+		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'grp3'} eq 'TGT_PORT' && $fwdfwsettings{'dnatport'} eq ''){$fwdfwsettings{'dnatport'}=$fwdfwsettings{'TGT_PORT'};}
+		if($fwdfwsettings{'nat'} eq 'dnat' && !&check_natport($fwdfwsettings{'dnatport'})){
+			$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
+		}
+		elsif($fwdfwsettings{'USESRV'} eq 'ON' && $fwdfwsettings{'grp3'} eq 'cust_srv'){
+			my $custsrvport;
+			#get servcie Protocol and Port
+			foreach my $key (sort keys %customservice){
+				if($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservice{$key}[0]){
+					if ($customservice{$key}[2] ne 'TCP' && $customservice{$key}[2] ne 'UDP'){
+						$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
+					}
+					$custsrvport= $customservice{$key}[1];
+				}
+			}
+			if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'dnatport'} eq ''){$fwdfwsettings{'dnatport'}=$custsrvport;}
+		}
+	}
 	#check valid remark
 	if ($fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
 		$errormessage.=$Lang::tr{'fwdfw err remark'}."<br>";
@@ -897,12 +950,10 @@ sub checkrule
 		$errormessage.=$Lang::tr{'fwdfw err same'};
 		return $errormessage;
 	}
-
 	#get source and targetip address if possible
 	my ($sip,$scidr,$tip,$tcidr);
 	($sip,$scidr)=&get_ip("src","grp1");
 	($tip,$tcidr)=&get_ip("tgt","grp2");
-
 	#check same iprange in source and target
 	if ($sip ne '' && $scidr ne '' && $tip ne '' && $tcidr ne ''){
 		my $networkip1=&General::getnetworkip($sip,$scidr);
@@ -924,7 +975,6 @@ sub checkrule
 			}
 		}
 	}
-
 	#check source and destination protocol if manual
 	if( $fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'USESRV'} eq 'ON'){
 			if($fwdfwsettings{'PROT'} ne $fwdfwsettings{'TGT_PROT'} && $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
@@ -932,7 +982,6 @@ sub checkrule
 		}
 		#check source and destination protocol if source manual and dest servicegrp
 		if ($fwdfwsettings{'grp3'} eq 'cust_srv'){
-			&General::readhasharray("$configsrv", \%customservice);
 			foreach my $key (sort keys %customservice){
 				if($customservice{$key}[0] eq $fwdfwsettings{$fwdfwsettings{'grp3'}}){
 					if ($customservice{$key}[2] ne $fwdfwsettings{'PROT'}){
@@ -1442,6 +1491,7 @@ sub newrule
 	$checked{'TIME_FRI'}{$fwdfwsettings{'TIME_FRI'}} 		= 'CHECKED';
 	$checked{'TIME_SAT'}{$fwdfwsettings{'TIME_SAT'}} 		= 'CHECKED';
 	$checked{'TIME_SUN'}{$fwdfwsettings{'TIME_SUN'}} 		= 'CHECKED';
+	$checked{'USE_NAT'}{$fwdfwsettings{'USE_NAT'}} 			= 'CHECKED';
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
@@ -1481,10 +1531,9 @@ sub newrule
 				$fwdfwsettings{'TIME_FROM'}				= $hash{$key}[26];
 				$fwdfwsettings{'TIME_TO'}				= $hash{$key}[27];
 				$fwdfwsettings{'USE_NAT'}				= $hash{$key}[28];
-				$fwdfwsettings{'nat'}					= $hash{$key}[32]; #changed order
+				$fwdfwsettings{'nat'}					= $hash{$key}[31]; #changed order
 				$fwdfwsettings{$fwdfwsettings{'nat'}}	= $hash{$key}[29];
-				$fwdfwsettings{'snatport'}				= $hash{$key}[30];
-				$fwdfwsettings{'dnatport'}				= $hash{$key}[31];
+				$fwdfwsettings{'dnatport'}				= $hash{$key}[30];
 				$checked{'grp1'}{$fwdfwsettings{'grp1'}} 				= 'CHECKED';
 				$checked{'grp2'}{$fwdfwsettings{'grp2'}} 				= 'CHECKED';
 				$checked{'grp3'}{$fwdfwsettings{'grp3'}} 				= 'CHECKED';
@@ -1686,11 +1735,11 @@ END
 		&Header::openbox('100%', 'left', 'NAT');
 		print<<END;
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'}></td><td>USE NAT</td><td colspan='5'></td></tr>
-		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' value='dnat' checked ></td><td width='20%'> DNAT</td>
+		<tr><td width='1%'><input type='checkbox' name='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'}></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr>
+		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
 END
 		if (! -z "${General::swroot}/ethernet/aliases"){
-			print"<td width='8%'>IPFire: </td><td width='20% align='right'><select name='dnat' style='width:140px;'>";
+			print"<td width='8%'>IPFire: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
 			print "<option value='ALL' $selected{'dnat'}{$Lang::tr{'all'}}>$Lang::tr{'all'}</option>";
 			print "<option value='Default IP' $selected{'dnat'}{'Default IP'}>Default IP</option>";
 
@@ -1698,15 +1747,6 @@ END
 			{
 				print "<option value='$alias' $selected{'dnat'}{$alias}>$alias</option>";
 			}
-			#foreach my $network (sort keys %defaultNetworks)
-			#{
-				#next if($defaultNetworks{$network}{'NAME'} eq "RED");
-				#next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
-				#next if($defaultNetworks{$network}{'NAME'} eq "ALL");
-				#print "<option value='$defaultNetworks{$network}{'NAME'}'";
-				#print " selected='selected'" if ($fwdfwsettings{'snatipfire'} eq $defaultNetworks{$network}{'NAME'});
-				#print ">$network</option>";
-			#}
 		}else{
 			print"<td></td><td style='width:200px;'><input type='hidden' name ='ipfire' value='Default IP'>";
 		}
@@ -1714,9 +1754,8 @@ END
 		print"<tr><td colspan='4'></td><td>Port: </td><td align='right'><input type='text' name='dnatport' style='width:130px;' value=$fwdfwsettings{'dnatport'}> </td></tr>";
 		print"<tr><td colspan='8'><br></td></tr>";
 		#SNAT
-		print"<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' value='snat'  $checked{'nat'}{'snat'}></td><td width='20%'> SNAT</td>";
-		print"<td width='8%'>IPFire: </td><td width='20% align='right'><select name='snat' style='width:140px;'>";
-		print "<option value='ALL' $selected{'snat'}{$Lang::tr{'all'}}>$Lang::tr{'all'}</option>";
+		print"<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' value='snat'  $checked{'nat'}{'snat'}></td><td width='20%'>$Lang::tr{'fwdfw snat'}</td>";
+		print"<td width='8%'>IPFire: </td><td width='20%' align='right'><select name='snat' style='width:140px;'>";
 		print "<option value='Default IP' $selected{'snat'}{'Default IP'}>Default IP</option>";
 		foreach my $alias (sort keys %aliases)
 			{
@@ -1727,11 +1766,11 @@ END
 			next if($defaultNetworks{$network}{'NAME'} eq "RED");
 			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
 			next if($defaultNetworks{$network}{'NAME'} eq "ALL");
+			next if($defaultNetworks{$network}{'NAME'} =~ /OpenVPN/i);
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
 			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'nat'}} eq $defaultNetworks{$network}{'NAME'});
 			print ">$network</option>";
 		}
-		print"<tr><td colspan='4'></td><td>Port: </td><td align='right'><input type='text' name='snatport' style='width:130px;'value=$fwdfwsettings{'snatport'} > </td></tr>";
 		print"</table>";
 		print"<hr>";
 		&Header::closebox();
@@ -2065,9 +2104,8 @@ sub saverule
 			if($fwdfwsettings{'USE_NAT'} eq 'ON'){
 				$$hash{$key}[28] = $fwdfwsettings{'USE_NAT'};
 				$$hash{$key}[29] = $fwdfwsettings{$fwdfwsettings{'nat'}};
-				$$hash{$key}[30] = $fwdfwsettings{'snatport'};
-				$$hash{$key}[31] = $fwdfwsettings{'dnatport'};
-				$$hash{$key}[32] = $fwdfwsettings{'nat'};
+				$$hash{$key}[30] = $fwdfwsettings{'dnatport'};
+				$$hash{$key}[31] = $fwdfwsettings{'nat'};
 			}
 			&General::writehasharray("$config", $hash);
 		}else{
@@ -2104,9 +2142,8 @@ sub saverule
 					if($fwdfwsettings{'USE_NAT'} eq 'ON'){
 						$$hash{$key}[28] = $fwdfwsettings{'USE_NAT'};
 						$$hash{$key}[29] = $fwdfwsettings{$fwdfwsettings{'nat'}};
-						$$hash{$key}[30] = $fwdfwsettings{'snatport'};
-						$$hash{$key}[31] = $fwdfwsettings{'dnatport'};
-						$$hash{$key}[32] = $fwdfwsettings{'nat'};
+						$$hash{$key}[30] = $fwdfwsettings{'dnatport'};
+						$$hash{$key}[31] = $fwdfwsettings{'nat'};
 					}
 					last;
 				}
@@ -2304,7 +2341,7 @@ END
 			$tdcolor='';
 			&getsrcport(\%$hash,$key);
 			#Is this a SNAT rule?
-			if ($$hash{$key}[32] eq 'snat'){
+			if ($$hash{$key}[31] eq 'snat'){
 				print"<br>SNAT -> $$hash{$key}[29]";
 				if ($$hash{$key}[30] ne ''){
 					print": $$hash{$key}[30]";
@@ -2329,10 +2366,10 @@ END
 			<td align='center' width='160' $tdcolor>
 END
 			#Is this a DNAT rule?
-			if ($$hash{$key}[32] eq 'dnat'){
+			if ($$hash{$key}[31] eq 'dnat'){
 				print "IPFire ($$hash{$key}[29])";
-				if($$hash{$key}[31] ne ''){
-					print": $$hash{$key}[31]";
+				if($$hash{$key}[30] ne ''){
+					print": $$hash{$key}[30]";
 				}
 				print"<br> DNAT->";
 			}

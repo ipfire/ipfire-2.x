@@ -45,6 +45,7 @@ my @timeframe=();
 my %configinputfw=();
 my %configoutgoingfw=();
 my %configdmzfw=();
+my %confignatfw=();
 my %aliases=();
 my @DPROT=();
 my @p2ps=();
@@ -56,6 +57,7 @@ my $configdmz		= "${General::swroot}/forward/dmz";
 my $configfwdfw		= "${General::swroot}/forward/config";
 my $configinput	    = "${General::swroot}/forward/input";
 my $configoutgoing  = "${General::swroot}/forward/outgoing";
+my $confignat		= "${General::swroot}/forward/nat";
 my $p2pfile			= "${General::swroot}/forward/p2protocols";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
@@ -66,13 +68,16 @@ my $blue;
 my ($TYPE,$PROT,$SPROT,$DPROT,$SPORT,$DPORT,$TIME,$TIMEFROM,$TIMETILL,$SRC_TGT);
 my $CHAIN="FORWARDFW";
 my $conexists='off';
-
+my $command = 'iptables -A';
+my $dnat='';
+my $snat='';
 &General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
 &General::readhash("$netsettings", \%defaultNetworks);
 &General::readhasharray($configdmz, \%configdmzfw);
 &General::readhasharray($configfwdfw, \%configfwdfw);
 &General::readhasharray($configinput, \%configinputfw);
 &General::readhasharray($configoutgoing, \%configoutgoingfw);
+&General::readhasharray($confignat, \%confignatfw);
 &General::readhasharray($configgrp, \%customgrp);
 &General::get_aliases(\%aliases);
 
@@ -83,7 +88,9 @@ close(CONN);
 if (-f "/var/ipfire/red/active"){
 	$conexists='on';
 }
-
+open (CONN1,"/var/ipfire/red/local-ipaddress");
+my $redip = <CONN1>;
+close(CONN1);
 ################################
 #    DEBUG/TEST                #
 ################################
@@ -155,13 +162,29 @@ sub preparerules
 	if (! -z  "${General::swroot}/forward/outgoing"){
 		&buildrules(\%configoutgoingfw);
 	}
+	if (! -z  "${General::swroot}/forward/nat"){
+		&buildrules(\%confignatfw);
+	}
 }
 sub buildrules
 {
 	my $hash=shift;
 	my $STAG;
+	my $natip;
+	my $snatport;
+	my $fireport;
 	foreach my $key (sort {$a <=> $b} keys %$hash){
 		next if ($$hash{$key}[6] eq 'RED' && $conexists eq 'off' );
+		if ($$hash{$key}[28] eq 'ON'){
+			$command='iptables -t nat -A';
+			$natip=&get_nat_ip($$hash{$key}[29]);
+			if($$hash{$key}[31] eq 'dnat'){
+				$$hash{$key}[0]='DNAT';
+				$fireport='--dport '.$$hash{$key}[30] if ($$hash{$key}[30]>0);
+			}else{
+				$$hash{$key}[0]='SNAT';
+			}
+		}
 		$STAG='';
 		if($$hash{$key}[2] eq 'ON'){
 			#get source ip's
@@ -248,15 +271,22 @@ sub buildrules
 										my @icmprule= split(",",substr($DPORT, 12,));
 										foreach (@icmprule){
 											if ($$hash{$key}[17] eq 'ON'){
-												print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] --icmp-type $_ $TIME -j LOG\n";
+												print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] --icmp-type $_ $TIME -j LOG\n";
 											}
-											print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] --icmp-type $_ $TIME -j $$hash{$key}[0]\n"; 
+											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] --icmp-type $_ $TIME -j $$hash{$key}[0]\n";
 										}
-									}else{
+									}elsif($$hash{$key}[28] ne 'ON'){
 										if ($$hash{$key}[17] eq 'ON'){
-											print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
 										}
-										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n"; 
+										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
+									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[32] eq 'dnat'){
+										#if ($$hash{$key}[17] eq 'ON'){
+											#print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+										#}
+										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $$hash{$key}[0]  --to $targethash{$b}[0]$DPORT\n";
+									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[32] eq 'snat'){
+										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]  --to $natip$fireport\n";
 									}
 								}				
 							}
@@ -278,15 +308,28 @@ sub buildrules
 										my @icmprule= split(",",substr($DPORT, 12,));
 										foreach (@icmprule){
 											if ($$hash{$key}[17] eq 'ON'){
-												system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] -- icmp-type $_ $TIME -j LOG");
+												system ("$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] -- icmp-type $_ $TIME -j LOG");
 											}
-											system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] --icmp-type $_ $TIME -j $$hash{$key}[0]"); 
+											system ("$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] --icmp-type $_ $TIME -j $$hash{$key}[0]");
 										}
-									}else{
+									}elsif($$hash{$key}[28] ne 'ON'){
 										if ($$hash{$key}[17] eq 'ON'){
-											system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
+											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
 										}
-										system ("iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]"); 
+										system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
+									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat'){
+										if ($$hash{$key}[17] eq 'ON'){
+											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
+										}
+										my $fwaccessdport="--dport ".substr($DPORT,1,) if ($DPORT);
+										my ($ip,$sub) =split("/",$targethash{$b}[0]);
+										system "iptables -A PORTFWACCESS $PROT $STAG $sourcehash{$a}[0] -d $targethash{$b}[0] $fwaccessdport $TIME \n";
+										system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $$hash{$key}[0]  --to $ip$DPORT\n";
+									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
+										if ($$hash{$key}[17] eq 'ON'){
+											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT '\n";
+										}
+										system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]  --to $natip$fireport\n";
 									}
 								}				
 							}
@@ -300,7 +343,27 @@ sub buildrules
 		undef $TIME;
 		undef $TIMEFROM;
 		undef $TIMETILL;
+		undef $fireport;
 	}
+}
+sub get_nat_ip
+{
+	my $val=shift;
+	my $result;
+	if($val eq 'RED' || $val eq 'GREEN' || $val eq 'ORANGE' || $val eq 'BLUE'){
+		$result=$defaultNetworks{$val.'_ADDRESS'};
+	}elsif($val eq 'ALL'){
+		$result='-i '.$con;
+	}elsif($val eq 'Default IP'){
+		$result='-d '.$redip;
+	}else{
+		foreach my $al (sort keys %aliases){
+			if($val eq $al){
+				$result='-d '.$aliases{$al}{'IPT'};
+			}
+		}
+	}
+	return $result;
 }
 sub get_time
 {
@@ -364,7 +427,6 @@ sub p2pblock
 		}
 	}
 }
-
 sub get_address
 {
 	my $base=shift; #source of checking ($configfwdfw{$key}[x] or groupkey
@@ -439,7 +501,11 @@ sub get_port
 			if(index($$hash{$key}[10],",") > 0){
 				return "-m multiport --sport $$hash{$key}[10] ";
 			}else{
-				return "--sport $$hash{$key}[10] ";
+				if($$hash{$key}[28] ne 'ON' || ($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat') ||($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat')  ){
+					return "--sport $$hash{$key}[10] ";
+				}else{
+					return ":$$hash{$key}[10]";
+				}
 			}
 		}elsif($$hash{$key}[9] ne '' && $$hash{$key}[9] ne 'All ICMP-Types'){
 			return "--icmp-type $$hash{$key}[9] ";
@@ -454,7 +520,11 @@ sub get_port
 				if(index($$hash{$key}[15],",") > 0){
 					return "-m multiport --dport $$hash{$key}[15] ";
 				}else{
-					return "--dport $$hash{$key}[15] ";
+					if($$hash{$key}[28] ne 'ON' || ($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat') ){
+						return "--dport $$hash{$key}[15] ";
+					 }else{
+						return ":$$hash{$key}[15]";
+					 }
 				}
 			}elsif($$hash{$key}[13] ne '' && $$hash{$key}[13] ne 'All ICMP-Types'){
 				return "--icmp-type $$hash{$key}[13] ";
