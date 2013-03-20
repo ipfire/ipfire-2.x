@@ -24,33 +24,19 @@
 
 include Config
 
-VER        = 1.7.41
-THISAPP    = vdr-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+VER        = 1.0.1.beta3
+THISAPP    = vdr-epgsearch-$(VER)
+DL_FILE    = $(THISAPP).tgz
 
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/epgsearch-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = vdr
-PAK_VER    = 6
+PROG       = vdr-epgsearch
+PAK_VER    = 1
 
-DEPS       = "freefont vdr-streamdev"
+DEPS       = "vdr"
 
-MAKE_OPTIONS = \
-	PREFIX=/usr \
-	BINDIR=/usr/bin \
-	CACHEDIR=/var/cache/vdr \
-	CONFDIR=/etc/vdr \
-	INCDIR=/usr/include \
-	LIBDIR=/usr/lib/vdr \
-	LOCDIR=/usr/share/locale \
-	MANDIR=/usr/share/man \
-	RESDIR=/usr/share/vdr \
-	RUNDIR=/var/run \
-	VARDIR=/var \
-	VIDEODIR=/var/video \
-	CFLAGS="$(CFLAGS)" \
-	CXXFLAGS="$(CXXFLAGS)"
+VDR_VER    = 1.7.41
 
 ###############################################################################
 # Top-level Rules
@@ -60,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)  = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5  = c7928bff45fa1c0e6dadf2c0a5adf94b
+$(DL_FILE)_MD5  = f39e5ace38ea99f114425687057e4dbe
 
 install : $(TARGET)
 
@@ -92,38 +78,32 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/vdr-epgsearch-1.0.1.beta3-paths.patch
 
-	# Compile main package.
-	cd $(DIR_APP) && make $(MAKE_OPTIONS) $(MAKETUNING) vdr include-dir
+	cd $(DIR_APP) && make $(MAKE_TUNING) LIBDIR=. VDRDIR=/usr/lib/vdr \
+		LOCALEDIR=$$(pwd)/locale all
 
-	# Compile bundled plugins.
-	#cd $(DIR_APP) && for plugin in ...; do \
-	#	make $(MAKETUNING) -C PLUGINS/src/$$plugin VDRDIR=$(DIR_APP) \
-	#		CFLAGS="$(CFLAGS) -I$(DIR_APP)/include" \
-	#		CXXFLAGS="$(CXXFLAGS) -I$(DIR_APP)/include" \
-	#		PLGCFG=$(DIR_APP)/plugins.mk all || exit 1; \
-	#done
+	cd $(DIR_APP) && install -m 755 libvdr-conflictcheckonly.so \
+		/usr/lib/vdr/libvdr-conflictcheckonly.so.$(VDR_VER)
+	cd $(DIR_APP) && install -m 755 libvdr-epgsearchonly.so \
+		/usr/lib/vdr/libvdr-epgsearchonly.so.$(VDR_VER)
+	cd $(DIR_APP) && install -m 755 libvdr-epgsearch.so \
+		/usr/lib/vdr/libvdr-epgsearch.so.$(VDR_VER)
+	cd $(DIR_APP) && install -m 755 libvdr-quickepgsearch.so \
+		/usr/lib/vdr/libvdr-quickepgsearch.so.$(VDR_VER)
 
-	# Install main package.
-	cd $(DIR_APP) && make install-bin install-dirs install-includes $(MAKE_OPTIONS)
-	mv -v /usr/bin/vdr /usr/sbin/vdr
+	install -m 644 \
+		$(DIR_SRC)/config/vdr/plugins.d/epgsearch.conf \
+		$(DIR_SRC)/config/vdr/plugins.d/epgsearchonly.conf \
+		$(DIR_SRC)/config/vdr/plugins.d/conflictcheckonly.conf \
+		$(DIR_SRC)/config/vdr/plugins.d/quickepgsearch.conf \
+		/etc/sysconfig/vdr-plugins.d
 
-	sed -e "s/VDR_PLUGIN_VERSION/$(VER)/" \
-		< $(DIR_SRC)/config/vdr/runvdr > /usr/sbin/runvdr
-	chmod 755 /usr/sbin/runvdr
+	-mkdir -pv /etc/vdr/plugins/epgsearch/conf.d
+	-mkdir -pv /var/lib/vdr/data/epgsearch
 
-	# Install configuration.
-	mkdir -pv /etc/vdr
-	mkdir -pv /etc/sysconfig/vdr-plugins.d
-	cd $(DIR_APP) && install -m 644 *.conf /etc/vdr
-
-	# Install start links and backup include file.
-	ln -sf ../init.d/vdr /etc/rc.d/rc3.d/S60vdr
-	ln -sf ../init.d/vdr /etc/rc.d/rc0.d/K40vdr
-	ln -sf ../init.d/vdr /etc/rc.d/rc6.d/K40vdr
-	install -v -m 644 $(DIR_SRC)/config/backup/includes/vdr \
-		/var/ipfire/backup/addons/includes/vdr
+	cd $(DIR_APP) && install -m 755 createcats /usr/bin/createcats
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

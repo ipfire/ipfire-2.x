@@ -1,0 +1,3 @@
+etc/vdr/plugins/vnsiserver
+etc/vdr/plugins/vnsiserver/allowed_hosts.conf
+usr/lib/vdr/libvdr-vnsiserver.so.1.7.41

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,29 +24,76 @@
 
 include Config
 
-VER        = plugin
+VER        = 0.6.1
+GIT_VER    = 10db11ac
+THISAPP    = vdr-streamdev-$(GIT_VER)
+DL_FILE    = $(THISAPP).tar.xz
 
-THISAPP    = vdr_softdevice-$(VER)
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-PROG       = vdr_softdevice
-PAK_VER    = 5
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = vdr-streamdev
+PAK_VER    = 1
 
-DEPS       = "vdr ffmpeg sdl alsa dfb++"
+DEPS       = "vdr"
+
+VDR_VER    = 1.7.41
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
 
-install : 
+$(DL_FILE)  = $(DL_FROM)/$(DL_FILE)
 
-check : 
+$(DL_FILE)_MD5  = e5011fd1a4b0624b192911f37c6040e3
 
-download :
+install : $(TARGET)
 
-md5 :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download : $(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	$(PAK)
+	@$(PAK)
 
 ###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && sed -i 's@$(VDRDIR)/device.h@/usr/include/vdr/device.h@' Makefile
+	cd $(DIR_APP) && make $(MAKE_TUNING) LIBDIR=. VDRDIR=/usr/lib/vdr \
+		LOCALEDIR=$$(pwd)/locale all
+
+	-mkdir -pv /etc/vdr/plugins/streamdev-server /usr/lib/vdr/bin
+	cd $(DIR_APP) && install -m 755 server/libvdr-streamdev-server.so \
+		/usr/lib/vdr/libvdr-streamdev-server.so.$(VDR_VER)
+	cd $(DIR_APP) && install -m 644 streamdev-server/streamdevhosts.conf \
+		/etc/vdr/plugins/streamdev-server
+	cd $(DIR_APP) && install -m 755 streamdev-server/externremux.sh \
+		/usr/lib/vdr/bin/externremux.sh
+	install -m 644 $(DIR_SRC)/config/vdr/plugins.d/streamdev-server.conf \
+		/etc/sysconfig/vdr-plugins.d
+
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

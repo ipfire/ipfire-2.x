@@ -1,0 +1,8 @@
+etc/sysconfig/vdr-plugins.d/streamdev-server.conf
+#etc/vdr/plugins
+etc/vdr/plugins/streamdev-server
+etc/vdr/plugins/streamdev-server/streamdevhosts.conf
+#usr/lib/vdr
+#usr/lib/vdr/bin
+usr/lib/vdr/bin/externremux.sh
+usr/lib/vdr/libvdr-streamdev-server.so.1.7.41
