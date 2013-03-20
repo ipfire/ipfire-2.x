@@ -957,6 +957,7 @@
 'fwdfw useless rule'	=> 'Diese Regel ist nicht zugelassen.',
 'fwdfw use srcport'		=> 'Quellport benutzen',
 'fwdfw use srv'			=> 'Zielport benutzen',
+'fwdfw natport used'	=> 'Der Natport wird bereits von einer anderen DNAT Regel benutzt',
 'fwdfw newrule' 		=> 'Neue Regel',
 'fwdfw wd_mon'			=> 'Mo',
 'fwdfw wd_tue'			=> 'Di',

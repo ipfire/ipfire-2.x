@@ -923,7 +923,19 @@ sub checkrule
 {
 	#check valid port for NAT
 	if($fwdfwsettings{'USE_NAT'} eq 'ON'){
+		#if no port is given in nat area, take target host port
 		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'grp3'} eq 'TGT_PORT' && $fwdfwsettings{'dnatport'} eq ''){$fwdfwsettings{'dnatport'}=$fwdfwsettings{'TGT_PORT'};}
+		
+		#check if given nat port is already used by another dnatrule
+		if($fwdfwsettings{'nat'} eq 'dnat'){
+			foreach my $id (sort keys %confignatfw){
+				if ($fwdfwsettings{'dnatport'} eq $confignatfw{$id}[30]){
+					$errormessage=$Lang::tr{'fwdfw natport used'}."<br>";
+				}
+			}
+		}
+		
+		#check if port given in nat area is a single valid port
 		if($fwdfwsettings{'nat'} eq 'dnat' && !&check_natport($fwdfwsettings{'dnatport'})){
 			$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
 		}

@@ -982,6 +982,7 @@
 'fwdfw useless rule'	=> 'This rule is rejected (useless).',
 'fwdfw use srcport'		=> 'Use sourceport',
 'fwdfw use srv'			=> 'Use targetport',
+'fwdfw natport used'	=> 'The NAT port is already used by another DNAT rule',
 'fwdfw newrule' 		=> 'New rule',
 'fwdfw wd_mon'			=> 'Mon',
 'fwdfw wd_tue'			=> 'Tue',
