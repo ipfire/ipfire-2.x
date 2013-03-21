@@ -85,14 +85,15 @@ sub build_rules
 		}else{
 			foreach my $ali (@alias){
 				my ($alias_ip,$alias_active,$alias_name) = split (",",$ali);
-				if($alias eq $alias_name){
+				if($alias eq $alias_ip){
+					chomp($alias_name);
 					$alias=$alias_name;
 				}
 			}
 		}
 		$active = uc $active;
 		$prot   = uc $prot;
-		$remark = chomp($remark);
+		chomp($remark);
 		push (@built_rules,"ACCEPT,NAT_DESTINATION,$active,$src,$src1,tgt_addr,$target/32,ON,$prot,,TGT_PORT,$targetport,$remark,00:00,00:00,ON,$alias,$ipfireport,dnat");
 		my $now=localtime;
 		print LOG "$now    Converted-> KEY: $count ACCEPT,NAT_DESTINATION,$active,$src,$src1,tgt_addr,$target/32,ON,$prot,,TGT_PORT,$targetport,$remark,00:00,00:00,ON,$alias,$ipfireport,dnat\n";
