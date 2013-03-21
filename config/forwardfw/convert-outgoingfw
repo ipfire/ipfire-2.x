@@ -1,5 +1,17 @@
 #!/usr/bin/perl
-
+######################################################################## 
+# Script:	convert-outgoingfw
+# Date:		21.03.2013
+# Author:	Alexander Marx (amarx@ipfire.org)
+########################################################################
+#
+# This script converts old groups and firewallrules 
+# to the new one. This is a 3-step process.
+# STEP1: convert groups ->LOG /var/log/converters
+# STEP2: convert rules  ->LOG /var/log/converters
+# STEP3: convert P2P rules 
+#
+########################################################################
 
 require '/var/ipfire/general-functions.pl';
 
@@ -35,10 +47,12 @@ my %fwconfig=();
 my %fwconfigout=();
 my %fwdsettings=();
 &General::readhash($outfwsettings,\%outsettings);
-
-&process_groups;
-&process_rules;
-&process_p2p;
+#ONLY RUN if /var/ipfire/outgoing exists
+if ( -d "/var/ipfire/outgoing"){
+	&process_groups;
+	&process_rules;
+	&process_p2p;
+}
 system("/usr/local/bin/forwardfwctrl");
 sub process_groups
 {
@@ -152,6 +166,13 @@ sub new_hostgrp
 					print LOG "->Host (IP) $ip already exists in custom hosts\n";
 					$name="host ";
 					$name2=$name.$ippart;
+					foreach my $key (sort keys %hosts){
+						if($hosts{$key}[0] eq $name2){
+							$hosts{$key}[4]++;
+						}
+					}
+					$name="host ";
+					$name2=$name.$ippart;
 					$name3="Custom Host";
 				}
 			}elsif($byte4 < '255'){
@@ -169,6 +190,13 @@ sub new_hostgrp
 					print LOG "->Network $ippart/$subnet added to custom networks\n";
 				}else{
 					print LOG "Network $ippart already exists in custom networks\n";
+					$name="net ";
+					$name2=$name.$ippart;
+					foreach my $key (sort keys %nets){
+						if($nets{$key}[0] eq $name2){
+							$nets{$key}[4]++;
+						}
+					}
 					$name="net ";
 					$name2=$name.$ippart;
 					$name3="Custom Network";
@@ -200,6 +228,13 @@ sub new_hostgrp
 				print LOG "->Host (MAC) $mac added to custom hosts\n";
 			}else{
 				print LOG "->Host (MAC) $mac already exists in custom hosts \n";
+				$name="host ";
+				$name2=$name.$mac;
+				foreach my $key (sort keys %hosts){
+					if($hosts{$key}[0] eq $name2){
+						$hosts{$key}[4]++;
+					}
+				}
 				$name="host ";
 				$name2=$name.$mac;
 				$name3="Custom Host";
