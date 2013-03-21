@@ -1511,7 +1511,7 @@ sub viewtablegrp
 				print "$customgrp{$key}[2]</td>";
 			}
 			if ($ip eq '' && $customgrp{$key}[2] ne $Lang::tr{'fwhost empty'}){
-				print "<td align='center'>$Lang::tr{'fwhost deleted'}</td><td align='left'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";   
+				print "<td align='center'>$Lang::tr{'fwhost deleted'}</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";   
 			}else{
 				print"<td align='center'>$ip</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";
 			}
