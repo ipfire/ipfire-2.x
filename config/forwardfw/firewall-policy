@@ -6,6 +6,7 @@ eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
 iptables -F POLICYFWD
 iptables -F POLICYOUT
 iptables -F POLICYIN
+IFACE=`cat /var/ipfire/red/iface`
 
 #FORWARDFW
 if [ "$POLICY" == "MODE1" ]; then
@@ -22,6 +23,7 @@ if [ "$POLICY" == "MODE1" ]; then
 			/sbin/iptables -A POLICYFWD -j DROP -m comment --comment "DROP_FORWARD"
 		fi
 else
+	/sbin/iptables -A POLICYFWD -i blue0 ! -o $IFACE -j DROP -m comment --comment "DROP_FORWARD_BLUE"
 	/sbin/iptables -A POLICYFWD -j ACCEPT -m comment --comment "DROP_FORWARD"
 fi
 
