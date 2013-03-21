@@ -204,13 +204,7 @@ case "$1" in
 	/sbin/iptables -A FORWARD -s 127.0.0.0/8 -m state --state NEW -j DROP
 	/sbin/iptables -A FORWARD -d 127.0.0.0/8 -m state --state NEW -j DROP
 	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m state --state NEW -j ACCEPT ! -p icmp
-	#/sbin/iptables -A FORWARD -i $GREEN_DEV  -m state --state NEW -j ACCEPT
-
-	# If a host on orange tries to initiate a connection to IPFire's red IP and
-	# the connection gets DNATed back through a port forward to a server on orange
-	# we end up with orange -> orange traffic passing through IPFire
-	[ "$ORANGE_DEV" != "" ] && /sbin/iptables -A FORWARD -i $ORANGE_DEV -o $ORANGE_DEV -m state --state NEW -j ACCEPT
-
+	
 	# allow DHCP on BLUE to be turned on/off
 	/sbin/iptables -N DHCPBLUEINPUT 
 	/sbin/iptables -A INPUT -j DHCPBLUEINPUT
@@ -242,13 +236,7 @@ case "$1" in
 	/sbin/iptables -t nat -A POSTROUTING -j REDNAT
 
 	iptables_red
-	
-	# DMZ pinhole chain.  
-	# ORANGE to talk to GREEN / BLUE.
-	if [ "$ORANGE_DEV" != "" ]; then
-		/sbin/iptables -A FORWARD -i $ORANGE_DEV -m state --state NEW -j FORWARDFW
-	fi
-	
+		
 	# Custom prerouting chains (for transparent proxy and port forwarding)
 	/sbin/iptables -t nat -N SQUID
 	/sbin/iptables -t nat -A PREROUTING -j SQUID
@@ -279,12 +267,6 @@ case "$1" in
 		/etc/sysconfig/firewall.local start
 	fi
 	
-	# last rule in input and forward chain is for logging.
-
-	if [ "$DROPINPUT" == "on" ]; then
-		/sbin/iptables -A INPUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
-	fi
-		
 	#POLICY CHAIN
 	/sbin/iptables -N POLICYIN
 	/sbin/iptables -A INPUT -j POLICYIN
