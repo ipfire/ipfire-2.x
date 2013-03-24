@@ -38,6 +38,7 @@ srv/web/ipfire/html/themes/maniac/include/style.css
 srv/web/ipfire/html/themes/maniac/include/upxlr.css
 srv/web/ipfire/html/themes/maniac/images/updxl-icons.gif
 srv/web/ipfire/html/include/jquery-1.9.1.min.js
+usr/bin/locale
 usr/local/bin/consort.sh
 var/ipfire/backup/include
 var/ipfire/header.pl
