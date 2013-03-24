@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = 0.9.0
-THISAPP    = vdr-vnsiserver3
+VER        = cc03615
+THISAPP    = vdr-vnsiserver3-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 
 DL_FROM    = $(URL_IPFIRE)
@@ -38,6 +38,10 @@ DEPS       = "vdr"
 
 VDR_VER    = 1.7.41
 
+EXTRA_FLAGS= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
+CFLAGS    += $(EXTRA_FLAGS)
+CXXFLAGS  += $(EXTRA_FLAGS)
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -46,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)  = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5  = 159a36577ea50d9772fcf5a92ffd38b5
+$(DL_FILE)_MD5  = 5100b1cb1ee936f64b99a76c492fbc3f
 
 install : $(TARGET)
 
@@ -81,13 +85,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && make $(MAKE_TUNING) LIBDIR=. VDRDIR=/usr/lib/vdr \
+		CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" \
 		LOCALEDIR=$$(pwd)/locale all
 
 	-mkdir -pv /etc/vdr/plugins/vnsiserver
-	cd $(DIR_APP) && install -m 755 libvdr-vnsiserver.so \
-		/usr/lib/vdr/libvdr-vnsiserver.so.$(VDR_VER)
+	cd $(DIR_APP) && install -m 755 libvdr-vnsiserver3.so \
+		/usr/lib/vdr/libvdr-vnsiserver3.so.$(VDR_VER)
 	cd $(DIR_APP) && install -m 644 vnsiserver/* /etc/vdr/plugins/vnsiserver
-	install -m 644 $(DIR_SRC)/config/vdr/plugins.d/vnsiserver.conf \
+	install -m 644 $(DIR_SRC)/config/vdr/plugins.d/vnsiserver3.conf \
 		/etc/sysconfig/vdr-plugins.d
 
 	@rm -rf $(DIR_APP)

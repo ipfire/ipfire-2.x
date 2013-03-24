@@ -16,7 +16,7 @@ VDR_OPTIONS=(--vfat)
 VDR_PLUGIN_ORDER="
 streamdev-server
 epgsearch
-vnsiserver
+vnsiserver3
 "
 
 # PATH where to find the internally used executables.
