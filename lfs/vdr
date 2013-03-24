@@ -116,7 +116,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Install configuration.
 	mkdir -pv /etc/vdr
 	mkdir -pv /etc/sysconfig/vdr-plugins.d
+	cd $(DIR_APP) && install -m 644 $(DIR_SRC)/config/vdr/vdr.sysconfig \
+		/etc/sysconfig/vdr
 	cd $(DIR_APP) && install -m 644 *.conf /etc/vdr
+
+	# Link development files.
+	mkdir -pv /usr/lib/vdr
+	cd $(DIR_APP) && cp -vf Make.global /usr/lib/vdr
+	ln -svf ../../include/vdr/config.h /usr/lib/vdr/config.h
+	ln -svf ../../include/vdr/device.h /usr/lib/vdr/device.h
 
 	# Install start links and backup include file.
 	ln -sf ../init.d/vdr /etc/rc.d/rc3.d/S60vdr

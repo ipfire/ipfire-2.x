@@ -65,45 +65,14 @@ reload_dvb()
     fi
 }
 
-set_rtcwake()
-{
-    # Check timestamp set by shutdown script.
-    local nexttimer=$( cat /var/run/vdr/next-timer 2>/dev/null )
-    rm -f /var/run/vdr/next-timer
-
-    if [[ $nexttimer != +([0-9]) ]] ; then
-        # Next timer timestamp not set by shutdown script or bogus,
-        # try to get it via SVDRP.
-        nexttimer=$( svdrpsend NEXT abs 2>/dev/null | \
-            sed -rne 's/^250[[:space:]]+[0-9]+[[:space:]]+([0-9]+).*/\1/p' )
-    fi
-
-    if [[ $nexttimer && $nexttimer -gt $( date +%s ) ]] ; then
-        [[ -f /etc/sysconfig/vdr ]] && . /etc/sysconfig/vdr
-        local when=$(( $nexttimer - ${WAKEUP_BEFORE_RECORDING:-10} * 60 ))
-        local hrwhen=$( date -d "1970-01-01 $when sec UTC" )
-        log "Setting wakeup time for next recording: $hrwhen"
-        /usr/sbin/rtcwake -m no -t $when >/dev/null
-    fi
-}
-
-if [[ $1 == --set-wakeup ]] ; then
-    # Just set RTC wakeup for next timer event.
-    set_rtcwake
-    exit $?
-fi
-
 rc=
 while true ; do
-
     VDR_OPTIONS=()
-    if [[ $VDR_INIT ]] ; then
-        [[ -f /etc/sysconfig/vdr ]] && . /etc/sysconfig/vdr
-        [[ $DAEMON_COREFILE_LIMIT ]] && \
-            ulimit -S -c $DAEMON_COREFILE_LIMIT &>/dev/null && \
-            VDR_OPTIONS+=( --userdump ) && cd ${TMPDIR:-/tmp}
-        build_cmdline
-    fi
+    [[ -f /etc/sysconfig/vdr ]] && . /etc/sysconfig/vdr
+    [[ $DAEMON_COREFILE_LIMIT ]] && \
+        ulimit -S -c $DAEMON_COREFILE_LIMIT &>/dev/null && \
+        VDR_OPTIONS+=( --userdump ) && cd ${TMPDIR:-/tmp}
+    build_cmdline
 
     $VDR "$@" "${VDR_OPTIONS[@]}"
     rc=$?

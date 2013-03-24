@@ -2,6 +2,7 @@ etc/rc.d/init.d/vdr
 etc/rc.d/rc0.d/K40vdr
 etc/rc.d/rc3.d/S60vdr
 etc/rc.d/rc6.d/K40vdr
+etc/sysconfig/vdr
 #etc/sysconfig/vdr-plugins.d
 etc/vdr
 etc/vdr/channels.conf
@@ -71,6 +72,10 @@ usr/bin/svdrpsend
 #usr/include/vdr/tools.h
 #usr/include/vdr/transfer.h
 #usr/include/vdr/videodir.h
+#usr/lib/vdr
+#usr/lib/vdr/Make.global
+#usr/lib/vdr/config.h
+#usr/lib/vdr/device.h
 usr/sbin/runvdr
 usr/sbin/vdr
 usr/share/vdr
