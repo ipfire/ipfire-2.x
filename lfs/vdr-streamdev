@@ -39,6 +39,10 @@ DEPS       = "vdr"
 
 VDR_VER    = 1.7.41
 
+EXTRA_FLAGS= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
+CFLAGS    += $(EXTRA_FLAGS)
+CXXFLAGS  += $(EXTRA_FLAGS)
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -83,6 +87,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && sed -i 's@$(VDRDIR)/device.h@/usr/include/vdr/device.h@' Makefile
 	cd $(DIR_APP) && make $(MAKE_TUNING) LIBDIR=. VDRDIR=/usr/lib/vdr \
+		CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" \
 		LOCALEDIR=$$(pwd)/locale all
 
 	-mkdir -pv /etc/vdr/plugins/streamdev-server /usr/lib/vdr/bin
