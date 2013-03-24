@@ -87,6 +87,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && install -m 755 libvdr-vnsiserver.so \
 		/usr/lib/vdr/libvdr-vnsiserver.so.$(VDR_VER)
 	cd $(DIR_APP) && install -m 644 vnsiserver/* /etc/vdr/plugins/vnsiserver
+	install -m 644 $(DIR_SRC)/config/vdr/plugins.d/vnsiserver.conf \
+		/etc/sysconfig/vdr-plugins.d
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
