@@ -53,7 +53,7 @@ sbin/ldconfig
 #usr/bin/iconv
 usr/bin/ldd
 #usr/bin/lddlibc4
-#usr/bin/locale
+usr/bin/locale
 #usr/bin/localedef
 #usr/bin/mtrace
 #usr/bin/pcprofiledump

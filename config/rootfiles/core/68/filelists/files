@@ -5,6 +5,7 @@ srv/web/ipfire/html/themes/ipfire/include/style.css
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 srv/web/ipfire/html/themes/maniac/include/style.css
 srv/web/ipfire/html/include/jquery-1.9.1.min.js
+usr/bin/locale
 var/ipfire/backup/include
 var/ipfire/header.pl
 var/ipfire/general-functions.pl
