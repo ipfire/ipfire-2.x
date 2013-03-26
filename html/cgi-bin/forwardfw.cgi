@@ -174,12 +174,13 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 				}
 			}
 		}
+		
 		#check Rulepos on new Rule
 		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
 			$fwdfwsettings{'oldrulenumber'}=$maxkey;
 			foreach my $key (sort keys %confignatfw){
-				print"$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'snatport'},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}<br>";
-				print"$confignatfw{$key}[0],$confignatfw{$key}[2],$confignatfw{$key}[3],$confignatfw{$key}[4],$confignatfw{$key}[5],$confignatfw{$key}[6],$confignatfw{$key}[7],$confignatfw{$key}[8],$confignatfw{$key}[9],$confignatfw{$key}[10],$confignatfw{$key}[11],$confignatfw{$key}[12],$confignatfw{$key}[13],$confignatfw{$key}[14],$confignatfw{$key}[15],$confignatfw{$key}[17],$confignatfw{$key}[19],$confignatfw{$key}[20],$confignatfw{$key}[21],$confignatfw{$key}[22],$confignatfw{$key}[23],$confignatfw{$key}[24],$confignatfw{$key}[25],$confignatfw{$key}[26],$confignatfw{$key}[27],$confignatfw{$key}[28],$confignatfw{$key}[29],$confignatfw{$key}[30],$confignatfw{$key}[31],$confignatfw{$key}[32]<br>";
+				#print"$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'snatport'},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}<br>";
+				#print"$confignatfw{$key}[0],$confignatfw{$key}[2],$confignatfw{$key}[3],$confignatfw{$key}[4],$confignatfw{$key}[5],$confignatfw{$key}[6],$confignatfw{$key}[7],$confignatfw{$key}[8],$confignatfw{$key}[9],$confignatfw{$key}[10],$confignatfw{$key}[11],$confignatfw{$key}[12],$confignatfw{$key}[13],$confignatfw{$key}[14],$confignatfw{$key}[15],$confignatfw{$key}[17],$confignatfw{$key}[19],$confignatfw{$key}[20],$confignatfw{$key}[21],$confignatfw{$key}[22],$confignatfw{$key}[23],$confignatfw{$key}[24],$confignatfw{$key}[25],$confignatfw{$key}[26],$confignatfw{$key}[27],$confignatfw{$key}[28],$confignatfw{$key}[29],$confignatfw{$key}[30],$confignatfw{$key}[31],$confignatfw{$key}[32]<br>";
 				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'snatport'},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}"
 					eq "$confignatfw{$key}[0],$confignatfw{$key}[2],$confignatfw{$key}[3],$confignatfw{$key}[4],$confignatfw{$key}[5],$confignatfw{$key}[6],$confignatfw{$key}[7],$confignatfw{$key}[8],$confignatfw{$key}[9],$confignatfw{$key}[10],$confignatfw{$key}[11],$confignatfw{$key}[12],$confignatfw{$key}[13],$confignatfw{$key}[14],$confignatfw{$key}[15],$confignatfw{$key}[17],$confignatfw{$key}[19],$confignatfw{$key}[20],$confignatfw{$key}[21],$confignatfw{$key}[22],$confignatfw{$key}[23],$confignatfw{$key}[24],$confignatfw{$key}[25],$confignatfw{$key}[26],$confignatfw{$key}[27],$confignatfw{$key}[28],$confignatfw{$key}[29],$confignatfw{$key}[30],$confignatfw{$key}[31],$confignatfw{$key}[32]"){
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
@@ -927,7 +928,7 @@ sub checkrule
 		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'grp3'} eq 'TGT_PORT' && $fwdfwsettings{'dnatport'} eq ''){$fwdfwsettings{'dnatport'}=$fwdfwsettings{'TGT_PORT'};}
 		
 		#check if given nat port is already used by another dnatrule
-		if($fwdfwsettings{'nat'} eq 'dnat'){
+		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'updatefwrule'} ne 'on'){
 			foreach my $id (sort keys %confignatfw){
 				if ($fwdfwsettings{'dnatport'} eq $confignatfw{$id}[30]){
 					$errormessage=$Lang::tr{'fwdfw natport used'}."<br>";
@@ -2072,12 +2073,6 @@ sub saverule
 			&changerule($configfwdfw);
 			#print"17";
 		}		
-		#Cleanup some values for NAT if they are not used
-		if($fwdfwsettings{'nat'} eq 'dnat'){
-			$fwdfwsettings{'snatport'}='';
-		}else{
-			$fwdfwsettings{'dnatport'}='';
-		}
 		if ($fwdfwsettings{'updatefwrule'} ne 'on'){
 			my $key = &General::findhasharraykey ($hash);
 			$$hash{$key}[0]  = $fwdfwsettings{'RULE_ACTION'};
