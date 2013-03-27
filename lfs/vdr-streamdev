@@ -93,8 +93,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /etc/vdr/plugins/streamdev-server /usr/lib/vdr/bin
 	cd $(DIR_APP) && install -m 755 server/libvdr-streamdev-server.so \
 		/usr/lib/vdr/libvdr-streamdev-server.so.$(VDR_VER)
-	cd $(DIR_APP) && install -m 644 streamdev-server/streamdevhosts.conf \
-		/etc/vdr/plugins/streamdev-server
+	ln -svf ../../svdrphosts.conf /etc/vdr/plugins/streamdev-server
 	cd $(DIR_APP) && install -m 755 streamdev-server/externremux.sh \
 		/usr/lib/vdr/bin/externremux.sh
 	install -m 644 $(DIR_SRC)/config/vdr/plugins.d/streamdev-server.conf \
