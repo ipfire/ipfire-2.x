@@ -18,7 +18,7 @@ CACHEDIR=${CACHEDIR:-$DESTDIR/var/cache/vdradmin}
 PIDFILE=${PIDFILE:-$DESTDIR/var/run/vdradmind.pid}
 VIDEODIR=${VIDEODIR:-/var/video}
 EPGIMAGES=${EPGIMAGES:-$VIDEODIR/epgimages}
-VDRCONF=${VDRCONF:-/opt/vdr/etc}
+VDRCONF=${VDRCONF:-/etc/vdr}
 
 function usage()
 {
