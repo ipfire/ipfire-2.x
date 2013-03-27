@@ -31,6 +31,6 @@ stop_service ${NAME}
 
 sed -i /etc/vdradmin/vdradmind.conf \
 	-e "s/^LANG = .*/LANG = en_US.utf8/g" \
-	-e "s/^PORT = .*/PORT = 6419/g"
+	-e "s/^VDR_PORT = .*/VDR_PORT = 6419/g"
 
 start_service ${NAME}
