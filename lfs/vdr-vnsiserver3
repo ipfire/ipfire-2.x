@@ -91,7 +91,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /etc/vdr/plugins/vnsiserver
 	cd $(DIR_APP) && install -m 755 libvdr-vnsiserver3.so \
 		/usr/lib/vdr/libvdr-vnsiserver3.so.$(VDR_VER)
-	cd $(DIR_APP) && install -m 644 vnsiserver/* /etc/vdr/plugins/vnsiserver
+	ln -svf ../../svdrphosts.conf /etc/vdr/plugins/vnsiserver3/allowed_hosts.conf
 	install -m 644 $(DIR_SRC)/config/vdr/plugins.d/vnsiserver3.conf \
 		/etc/sysconfig/vdr-plugins.d
 
