@@ -147,6 +147,9 @@ sub flush
 	system ("iptables -F FORWARDFW");
 	system ("iptables -F INPUTFW");
 	system ("iptables -F OUTGOINGFW");
+	system ("iptables -F PORTFWACCESS");
+	system ("iptables -t nat -F NAT_DESTINATION");
+	system ("iptables -t nat -F NAT_SOURCE");
 }			
 sub preparerules
 {
@@ -280,11 +283,14 @@ sub buildrules
 											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
 										}
 										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
-									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[32] eq 'dnat'){
-										#if ($$hash{$key}[17] eq 'ON'){
-											#print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $targethash{$b}[0] $DPORT $TIME -j LOG\n";
-										#}
-										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $$hash{$key}[0]  --to $targethash{$b}[0]$DPORT\n";
+									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat'){
+										if ($$hash{$key}[17] eq 'ON'){
+											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
+										}
+										my $fwaccessdport="--dport ".substr($DPORT,1,) if ($DPORT);
+										my ($ip,$sub) =split("/",$targethash{$b}[0]);
+										print "iptables -A PORTFWACCESS $PROT -i $con -d $ip $fwaccessdport $TIME -j ACCEPT\n";
+										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $$hash{$key}[0]  --to $ip$DPORT\n";
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[32] eq 'snat'){
 										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]  --to $natip$fireport\n";
 									}
@@ -323,7 +329,7 @@ sub buildrules
 										}
 										my $fwaccessdport="--dport ".substr($DPORT,1,) if ($DPORT);
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
-										system "iptables -A PORTFWACCESS $PROT $STAG $sourcehash{$a}[0] -d $targethash{$b}[0] $fwaccessdport $TIME \n";
+										system "iptables -A PORTFWACCESS $PROT -i $con -d $ip $fwaccessdport $TIME -j ACCEPT\n";
 										system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $$hash{$key}[0]  --to $ip$DPORT\n";
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
 										if ($$hash{$key}[17] eq 'ON'){
