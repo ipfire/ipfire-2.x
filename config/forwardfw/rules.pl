@@ -539,7 +539,11 @@ sub get_port
 			}
 		}elsif($$hash{$key}[14] eq 'cust_srv'){
 			if ($prot ne 'ICMP'){
-				return "--dport ".&fwlib::get_srv_port($$hash{$key}[15],1,$prot);
+				if($$hash{$key}[31] eq 'dnat'){
+					return ":".&fwlib::get_srv_port($$hash{$key}[15],1,$prot);
+				}else{
+					return "--dport ".&fwlib::get_srv_port($$hash{$key}[15],1,$prot);
+				}
 			}elsif($prot eq 'ICMP' && $$hash{$key}[15] ne 'All ICMP-Types'){
 				return "--icmp-type ".&fwlib::get_srv_port($$hash{$key}[15],3,$prot);
 			}elsif($prot eq 'ICMP' && $$hash{$key}[15] eq 'All ICMP-Types'){
