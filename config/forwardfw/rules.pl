@@ -287,10 +287,11 @@ sub buildrules
 										if ($$hash{$key}[17] eq 'ON'){
 											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
 										}
-										my $fwaccessdport="--dport ".substr($DPORT,1,) if ($DPORT);
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
-										print "iptables -A PORTFWACCESS $PROT -i $con -d $ip $fwaccessdport $TIME -j ACCEPT\n";
 										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $$hash{$key}[0]  --to $ip$DPORT\n";
+										$DPORT =~ s/\-/:/g;
+										my $fwaccessdport="--dport ".substr($DPORT,1,) if ($DPORT);
+										print "iptables -A PORTFWACCESS $PROT -i $con -d $ip $fwaccessdport $TIME -j ACCEPT\n";
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[32] eq 'snat'){
 										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]  --to $natip$fireport\n";
 									}
@@ -327,10 +328,12 @@ sub buildrules
 										if ($$hash{$key}[17] eq 'ON'){
 											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
 										}
-										my $fwaccessdport="--dport ".substr($DPORT,1,) if ($DPORT);
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
-										system "iptables -A PORTFWACCESS $PROT -i $con -d $ip $fwaccessdport $TIME -j ACCEPT\n";
 										system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $$hash{$key}[0]  --to $ip$DPORT\n";
+										$DPORT =~ s/\-/:/g;
+										my $fwaccessdport="--dport ".substr($DPORT,1,) if ($DPORT);
+										system "iptables -A PORTFWACCESS $PROT -i $con -d $ip $fwaccessdport $TIME -j ACCEPT\n";
+										
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
 										if ($$hash{$key}[17] eq 'ON'){
 											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT '\n";
@@ -519,7 +522,6 @@ sub get_port
 			return;
 		}
 	}elsif($$hash{$key}[11] eq 'ON' && $SRC_TGT eq ''){
-		
 		if($$hash{$key}[14] eq 'TGT_PORT'){
 			if ($$hash{$key}[15] ne ''){
 				$$hash{$key}[15] =~ s/\|/,/g;
@@ -529,6 +531,7 @@ sub get_port
 					if($$hash{$key}[28] ne 'ON' || ($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat') ){
 						return "--dport $$hash{$key}[15] ";
 					 }else{
+						 $$hash{$key}[15] =~ s/\:/-/g;
 						return ":$$hash{$key}[15]";
 					 }
 				}

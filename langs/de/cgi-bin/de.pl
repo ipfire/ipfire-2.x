@@ -901,7 +901,7 @@
 'fwdfw delete'			=> 'Löschen',
 'fwdfw dnat'			=> 'DNAT/Portforward (ersetze diese IP mit der aus ZIEL)',
 'fwdfw dnat error'		=> 'Für DNAT muss ein einzelner Host als ZIEL gewählt werden. Gruppen oder Netzwerke sind nicht erlaubt',
-'fwdfw dnat porterr'	=> 'Für NAT muss ein einzelner PORT (TCP/UDP) angegeben werden',
+'fwdfw dnat porterr'	=> 'Für NAT muss ein einzelner PORT oder PORTRANGE (TCP/UDP) angegeben werden',
 'fwdfw DROP'			=> 'Verwerfen (DROP)',
 'fwdfw edit'			=> 'Bearbeiten',
 'fwdfw err nosrc'		=> 'Keine Quelle gewählt',

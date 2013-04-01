@@ -731,7 +731,7 @@ sub checksource
 		my @values=();
 		foreach (@parts){
 			chomp($_);
-			if ($_ =~ /^(\d+)\:(\d+)$/) {
+			if ($_ =~ /^(\d+)\-(\d+)$/ || $_ =~ /^(\d+)\:(\d+)$/) {
 				my $check;
 				#change dashes with :
 				$_=~ tr/-/:/;
@@ -739,11 +739,11 @@ sub checksource
 					push(@values,"1:65535");
 					$check='on';
 				}
-				if ($_ =~ /^(\D)\:(\d+)$/) {
+				if ($_ =~ /^(\D)\:(\d+)$/ || $_ =~ /^(\D)\-(\d+)$/) {
 					push(@values,"1:$2");
 					$check='on';
 				}
-				if ($_ =~ /^(\d+)\:(\D)$/) {
+				if ($_ =~ /^(\d+)\:(\D)$/ || $_ =~ /^(\d+)\-(\D)$/ ) {
 					push(@values,"$1:65535");
 					$check='on'
 				}
@@ -837,11 +837,14 @@ sub checktarget
 		if ($fwdfwsettings{'grp3'} eq 'TGT_PORT'){
 			if ($fwdfwsettings{'TGT_PROT'} eq 'TCP' || $fwdfwsettings{'TGT_PROT'} eq 'UDP'){
 				if ($fwdfwsettings{'TGT_PORT'} ne ''){
+					if ($fwdfwsettings{'TGT_PORT'} =~ "," && $fwdfwsettings{'USE_NAT'}) {
+						$errormessage=$Lang::tr{'fwdfw dnat porterr'}."<br>";
+					}
 					my @parts=split(",",$fwdfwsettings{'TGT_PORT'});
 					my @values=();
 					foreach (@parts){
 						chomp($_);
-						if ($_ =~ /^(\d+)\:(\d+)$/) {
+						if ($_ =~ /^(\d+)\-(\d+)$/ || $_ =~ /^(\d+)\:(\d+)$/) {
 							my $check;
 							#change dashes with :
 							$_=~ tr/-/:/;
@@ -849,11 +852,11 @@ sub checktarget
 								push(@values,"1:65535");
 								$check='on';
 							}
-							if ($_ =~ /^(\D)\:(\d+)$/) {
+							if ($_ =~ /^(\D)\:(\d+)$/ || $_ =~ /^(\D)\-(\d+)$/) {
 								push(@values,"1:$2");
 								$check='on';
 							}
-							if ($_ =~ /^(\d+)\:(\D)$/) {
+							if ($_ =~ /^(\d+)\:(\D)$/ || $_ =~ /^(\d+)\-(\D)$/) {
 								push(@values,"$1:65535");
 								$check='on'
 							}
@@ -915,7 +918,22 @@ sub checktarget
 sub check_natport
 {
 	my $val=shift;
-	if ($val =~ "," || $val =~ ":" || $val>65536 || $val<0){
+	if($fwdfwsettings{'USE_NAT'} eq 'ON' && $fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'dnatport'} ne ''){
+		if ($fwdfwsettings{'dnatport'} =~ /^(\d+)\-(\d+)$/) {
+			$fwdfwsettings{'dnatport'} =~ tr/-/:/;
+			if ($fwdfwsettings{'dnatport'} eq "*") {
+				$fwdfwsettings{'dnatport'}="1:65535";
+			}
+			if ($fwdfwsettings{'dnatport'} =~ /^(\D)\:(\d+)$/) {
+				$fwdfwsettings{'dnatport'} = "1:$2";
+			}
+			if ($fwdfwsettings{'dnatport'} =~ /^(\d+)\:(\D)$/) {
+				$fwdfwsettings{'dnatport'} ="$1:65535";
+			}
+		}
+		return 1;
+	}
+	if ($val =~ "," || $val>65536 || $val<0){
 		return 0;
 	}
 	return 1;

@@ -926,7 +926,7 @@
 'fwdfw delete'			=> 'Delete',
 'fwdfw dnat'			=> 'DNAT/Portforward (replace this IP with the one from TARGET)',
 'fwdfw dnat error'		=> 'You have to select a single host for DNAT. Groups or networks are not allowed.',
-'fwdfw dnat porterr'	=> 'You have to select a single port (tcp/udp) for NAT',
+'fwdfw dnat porterr'	=> 'You have to select a single port or portrange (tcp/udp) for NAT',
 'fwdfw DROP'			=> 'DROP',
 'fwdfw edit'			=> 'Edit',
 'fwdfw err nosrc'		=> 'No source selected.',
