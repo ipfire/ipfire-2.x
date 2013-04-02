@@ -77,7 +77,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.0';
+my $VERSION='0.9.9.1';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -133,6 +133,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
+	
 	#check if manual ip (source) is orange network
 	if ($fwdfwsettings{'grp1'} eq 'src_addr'){
 		my ($sip,$scidr) = split("/",$fwdfwsettings{$fwdfwsettings{'grp1'}});
@@ -2034,7 +2035,7 @@ sub saverule
 			#print"6";
 		}
 		#check if we change a DMZ to a FORWARD/DMZ
-		elsif($fwdfwsettings{'oldruletype'} eq 'DMZ'  && $fwdfwsettings{'chain'} eq 'FORWARDFW' ){
+		elsif($fwdfwsettings{'oldruletype'} eq 'DMZ'  && $fwdfwsettings{'chain'} eq 'FORWARDFW' && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE'){
 			&changerule($configdmz);
 			#print"7";
 		}

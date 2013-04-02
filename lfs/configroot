@@ -65,7 +65,7 @@ $(TARGET) :
 	for i in auth/users backup/include.user backup/exclude.user \
 	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
-	    extrahd/scan extrahd/devices extrahd/partitions extrahd/settings forward/settings forward/config forward/input forward/outgoing forward/dmz \
+	    extrahd/scan extrahd/devices extrahd/partitions extrahd/settings forward/settings forward/config forward/input forward/outgoing forward/dmz forward/nat \
 	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwlogs/ipsettings fwlogs/portsettings \
 	    isdn/settings mac/settings main/disable_nf_sip main/hosts main/routing main/settings net-traffic/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
@@ -103,6 +103,8 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/forwardfw/rules.pl			$(CONFIG_ROOT)/forward/bin/rules.pl
 	cp $(DIR_SRC)/config/forwardfw/convert-xtaccess	/usr/sbin/convert-xtaccess
 	cp $(DIR_SRC)/config/forwardfw/convert-outgoingfw	/usr/sbin/convert-outgoingfw
+	cp $(DIR_SRC)/config/forwardfw/convert-dmz	/usr/sbin/convert-dmz
+	cp $(DIR_SRC)/config/forwardfw/convert-portfw	/usr/sbin/convert-portfw
 	cp $(DIR_SRC)/config/forwardfw/p2protocols		$(CONFIG_ROOT)/forward/p2protocols
 	cp $(DIR_SRC)/config/forwardfw/firewall-lib.pl	$(CONFIG_ROOT)/forward/bin/firewall-lib.pl
 	cp $(DIR_SRC)/config/forwardfw/firewall-policy	/usr/sbin/firewall-policy

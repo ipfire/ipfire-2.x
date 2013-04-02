@@ -64,25 +64,63 @@ elsif ($ARGV[0] eq 'restore') {
   system("cd / && tar -xvz -p -f /tmp/restore.ipf");
   #Here some converter scripts to correct old Backups (before core 65)
   system("/usr/sbin/ovpn-ccd-convert");
+  #OUTGOINGFW CONVERTER
   if( -d "${General::swroot}/outgoing"){
 	  if( -f "${General::swroot}/forward/config" ){ 
 		  unlink("${General::swroot}/forward/config");
 		  system("touch ${General::swroot}/forward/config"); 
 		  chown 99,99,"${General::swroot}/forward/config";
 	  }
-	  if( -f "${General::swroot}/forward/input" ){ 
-		  unlink("${General::swroot}/forward/input");
-		  system("touch ${General::swroot}/forward/input"); 
-		  chown 99,99,"${General::swroot}/forward/input";
-	  } 
+	  if( -f "${General::swroot}/forward/outgoing" ){
+		  unlink("${General::swroot}/forward/outgoing");
+		  system("touch ${General::swroot}/forward/outgoing");
+		  chown 99,99,"${General::swroot}/forward/outgoing";
+	  }
+	  unlink("${General::swroot}/fwhosts/*");
+	  system("touch ${General::swroot}/fwhosts/customgroups");
+	  system("touch ${General::swroot}/fwhosts/customhosts");
+	  system("touch ${General::swroot}/fwhosts/customnetworks");
+	  system("touch ${General::swroot}/fwhosts/customservicegrp");
+	  system("touch ${General::swroot}/fwhosts/customservices");
+	  chown 99,99,"${General::swroot}/fwhosts/*";
+	  #START CONVERTER "OUTGOINGFW"
 	  system("/usr/sbin/convert-outgoingfw");
 	  rmtree("${General::swroot}/outgoing");
-	  system("/usr/local/bin/forwrdfwctrl");
   }
+  #XTACCESS CONVERTER
   if( -d "${General::swroot}/xtaccess"){
+	  if( -f "${General::swroot}/forward/input" ){
+		  unlink("${General::swroot}/forward/input");
+		  system("touch ${General::swroot}/forward/input");
+		  chown 99,99,"${General::swroot}/forward/input";
+	  }
+	  #START CONVERTER "XTACCESS"
 	  system("/usr/sbin/convert-xtaccess");
 	  rmtree("${General::swroot}/xtaccess");
   }
+  #DMZ-HOLES CONVERTER
+  if( -d "${General::swroot}/dmz-holes"){
+	  if( -f "${General::swroot}/forward/dmz" ){
+		  unlink("${General::swroot}/forward/dmz");
+		  system("touch ${General::swroot}/forward/dmz");
+		  chown 99,99,"${General::swroot}/forward/dmz";
+	  }
+	  #START CONVERTER "DMZ-HOLES"
+	  system("/usr/sbin/convert-dmz");
+	  rmtree("${General::swroot}/xtaccess");
+  }
+  #PORTFORWARD CONVERTER
+  if( -d "${General::swroot}/portfw"){
+	  if( -f "${General::swroot}/forward/nat" ){
+		  unlink("${General::swroot}/forward/nat");
+		  system("touch ${General::swroot}/forward/nat");
+		  chown 99,99,"${General::swroot}/forward/nat";
+	  }
+	  #START CONVERTER "PORTFW"
+	  system("/usr/sbin/convert-portfw");
+	  rmtree("${General::swroot}/portfw");
+  }
+  system("/usr/local/bin/forwardfwctrl");
  }
 elsif ($ARGV[0] eq 'restoreaddon') {
   if ( -e "/tmp/$ARGV[1]" ){system("mv /tmp/$ARGV[1] /var/ipfire/backup/addons/backup/$ARGV[1]");}

@@ -112,6 +112,8 @@ usr/sbin/ovpn-ccd-convert
 usr/sbin/firewall-policy
 usr/sbin/convert-xtaccess
 usr/sbin/convert-outgoingfw
+usr/sbin/convert-dmz
+usr/sbin/convert-portfw
 #usr/share
 #usr/share/doc
 #usr/share/doc/licenses
