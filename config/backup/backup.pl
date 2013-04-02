@@ -76,15 +76,23 @@ elsif ($ARGV[0] eq 'restore') {
 		  system("touch ${General::swroot}/forward/outgoing");
 		  chown 99,99,"${General::swroot}/forward/outgoing";
 	  }
-	  unlink("${General::swroot}/fwhosts/*");
+	  unlink("${General::swroot}/fwhosts/customgroups");
+	  unlink("${General::swroot}/fwhosts/customhosts");
+	  unlink("${General::swroot}/fwhosts/customgroups");
+	  unlink("${General::swroot}/fwhosts/customnetworks");
+	  unlink("${General::swroot}/fwhosts/customservicegrp");
+	  unlink("${General::swroot}/fwhosts/customnetworks");
 	  system("touch ${General::swroot}/fwhosts/customgroups");
 	  system("touch ${General::swroot}/fwhosts/customhosts");
 	  system("touch ${General::swroot}/fwhosts/customnetworks");
 	  system("touch ${General::swroot}/fwhosts/customservicegrp");
-	  system("touch ${General::swroot}/fwhosts/customservices");
-	  chown 99,99,"${General::swroot}/fwhosts/*";
 	  #START CONVERTER "OUTGOINGFW"
 	  system("/usr/sbin/convert-outgoingfw");
+	  chown 99,99,"${General::swroot}/fwhosts/customgroups";
+	  chown 99,99,"${General::swroot}/fwhosts/customhosts";
+	  chown 99,99,"${General::swroot}/fwhosts/customnetworks";
+	  chown 99,99,"${General::swroot}/fwhosts/customservicegrp";
+	  #START CONVERTER "OUTGOINGFW"
 	  rmtree("${General::swroot}/outgoing");
   }
   #XTACCESS CONVERTER
@@ -92,10 +100,10 @@ elsif ($ARGV[0] eq 'restore') {
 	  if( -f "${General::swroot}/forward/input" ){
 		  unlink("${General::swroot}/forward/input");
 		  system("touch ${General::swroot}/forward/input");
-		  chown 99,99,"${General::swroot}/forward/input";
 	  }
 	  #START CONVERTER "XTACCESS"
 	  system("/usr/sbin/convert-xtaccess");
+	  chown 99,99,"${General::swroot}/forward/input";
 	  rmtree("${General::swroot}/xtaccess");
   }
   #DMZ-HOLES CONVERTER
@@ -103,10 +111,10 @@ elsif ($ARGV[0] eq 'restore') {
 	  if( -f "${General::swroot}/forward/dmz" ){
 		  unlink("${General::swroot}/forward/dmz");
 		  system("touch ${General::swroot}/forward/dmz");
-		  chown 99,99,"${General::swroot}/forward/dmz";
 	  }
 	  #START CONVERTER "DMZ-HOLES"
 	  system("/usr/sbin/convert-dmz");
+	  chown 99,99,"${General::swroot}/forward/dmz";
 	  rmtree("${General::swroot}/dmzholes");
   }
   #PORTFORWARD CONVERTER
@@ -114,10 +122,10 @@ elsif ($ARGV[0] eq 'restore') {
 	  if( -f "${General::swroot}/forward/nat" ){
 		  unlink("${General::swroot}/forward/nat");
 		  system("touch ${General::swroot}/forward/nat");
-		  chown 99,99,"${General::swroot}/forward/nat";
 	  }
 	  #START CONVERTER "PORTFW"
 	  system("/usr/sbin/convert-portfw");
+	  chown 99,99,"${General::swroot}/forward/nat";
 	  rmtree("${General::swroot}/portfw");
   }
   system("/usr/local/bin/forwardfwctrl");

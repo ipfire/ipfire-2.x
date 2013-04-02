@@ -863,7 +863,7 @@ if ($fwhostsettings{'ACTION'} eq 'deletegrphost')
 				&General::readhasharray("$confignet", \%customnetwork);
 				foreach my $key1 (keys %customnetwork){
 						if ($customnetwork{$key1}[0] eq $customgrp{$key}[2]){
-						$customnetwork{$key1}[3] = $customnetwork{$key1}[3]-1;
+						$customnetwork{$key1}[4] = $customnetwork{$key1}[4]-1;
 						last;
 					}
 				}

@@ -61,21 +61,22 @@ sub process_groups
 	open (LOG, ">/var/log/converters/groups-convert.log") or die $!;
 	#IP Group processing
 	foreach my $group (@ipgroups){
+		my $now=localtime;
 		chomp $group;
-		print LOG "\nProcessing IP-GROUP: $group...\n";
+		print LOG "\n$now Processing IP-GROUP: $group...\n";
 		open (DATEI, "<$ipgrouppath/$group");
 		my @zeilen = <DATEI>;
 		foreach my $ip (@zeilen){
 			chomp($ip);
 			$ip =~ s/\s//gi;
-			print LOG "Check IP $ip from Group $group ";
+			print LOG "$now Check IP $ip from Group $group ";
 			my $val=&check_ip($ip);
 			if($val){
 				push(@hostarray,$val.",ip");
-				print LOG "-> OK\n";
+				print LOG "$now -> OK\n";
 			}
 			else{
-				print LOG "-> IP \"$ip\" from group $group not converted (invalid IP) \n";
+				print LOG "$now -> IP \"$ip\" from group $group not converted (invalid IP) \n";
 			}
 			$val='';
 		}
@@ -94,17 +95,17 @@ sub process_groups
 		foreach my $mac (@zeilen){
 			chomp($mac);
 			$mac =~ s/\s//gi;
-			print LOG "Checking MAC $mac from group $group ";
+			print LOG "$now Checking MAC $mac from group $group ";
 			#MAC checking
 			if(&General::validmac($mac)){
 				$val=$mac;
 			}
 			if($val){
 				push(@hostarray,$val.",mac");
-				print LOG "-> OK\n";
+				print LOG "$now -> OK\n";
 			}
 			else{
-				print LOG "-> Mac $mac from group $group not converted (invalid MAC)\n";
+				print LOG "$now -> Mac $mac from group $group not converted (invalid MAC)\n";
 			}
 			$val='';
 		}
@@ -297,30 +298,31 @@ sub check_grp
 sub process_rules
 {
 	my ($type,$action,$active,$grp1,$source,$grp2,$useport,$port,$prot,$grp3,$target,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to);
-	&General::readhash($fwdfwsettings,\%fwdsettings);
-	if ($outsettings{'POLICY'} eq 'MODE1'){
-		$fwdfwsettings{'POLICY'}='MODE1';
-		$type='ALLOW';
-		$action='ACCEPT';
-	}elsif($outsettings{'POLICY'} eq 'MODE2'){
-		$fwdsettings{'POLICY'}='MODE2';
-		$type='DENY';
-		$action='DROP';
-	}else{
-		return;
-	}
-	&General::writehash($fwdfwsettings,\%fwdsettings);
-	
 	#open LOG
 	if( -f "/var/log/converters/outgoingfw-convert.log"){unlink ("/var/log/converters/outgoingfw-convert.log");}
 	open (LOG, ">/var/log/converters/outgoingfw-convert.log") or die $!;
+
+	&General::readhash($fwdfwsettings,\%fwdsettings);
+	if ($outsettings{'POLICY'} eq 'MODE1'){
+		$fwdsettings{'POLICY'}='MODE1';
+		$fwdsettings{'POLICY1'}='MODE2';
+		$type='ALLOW';
+		$action='ACCEPT';
+	}else{
+		$fwdsettings{'POLICY'}='MODE2';
+		$fwdsettings{'POLICY1'}='MODE2';
+		$type='DENY';
+		$action='DROP';
+	}
+	&General::writehash($fwdfwsettings,\%fwdsettings);
 	open (DATEI, "<$outgoingrules");
 	my @lines = <DATEI>;
 	foreach my $rule (@lines)
 	{
+		my $now=localtime;
 		chomp($rule);
 		$port='';
-		print LOG "processing: $rule\n";
+		print LOG "$now processing: $rule\n";
 		my @configline=();
 		@configline = split( /\;/, $rule );
 		my @prot=();
@@ -377,9 +379,10 @@ sub process_rules
 				$grp1='std_net_src';
 				$source='BLUE';
 			}elsif ($configline[2] eq 'ipsec') {
-				print LOG "-> Rule not converted, ipsec+ interface is obsolet since IPFire 2.7 \n";
+				print LOG "$now -> Rule not converted, ipsec+ interface is obsolet since IPFire 2.7 \n";
 				next;
 			}elsif ($configline[2] eq 'ovpn') {
+				print LOG "$now ->Creating networks/groups for OpenVPN...\n";
 				&build_ovpn_grp;		
 				$grp1='cust_grp_src';
 				$source='ovpn'		
@@ -391,7 +394,7 @@ sub process_rules
 					$grp1='src_addr';
 					$source="$ipa/$subn";
 				}else{
-					print LOG "-> Rule not converted, missing/invalid source ip \"$configline[5]\"\n";
+					print LOG "$now -> Rule not converted, missing/invalid source ip \"$configline[5]\"\n";
 					next;
 				}
 			}elsif ($configline[2] eq 'mac') {
@@ -399,7 +402,7 @@ sub process_rules
 					$grp1='src_addr';
 					$source=$configline[6];
 				}else{
-					print LOG"-> Rule not converted, invalid MAC \"$configline[6]\" \n";
+					print LOG"$now -> Rule not converted, invalid MAC \"$configline[6]\" \n";
 					next;
 				}
 			}elsif ($configline[2] eq 'all') {
@@ -413,7 +416,7 @@ sub process_rules
 					}
 				}
 				if ($grp1 eq '' || $source eq ''){
-					print LOG "-> Rule not converted, no valid source recognised\n";
+					print LOG "$now -> Rule not converted, no valid source recognised\n";
 				}
 			}
 			############################################################
@@ -432,7 +435,7 @@ sub process_rules
 						$target=$getwebsiteip;	
 						$remark.=" $configline[7]";
 					}else{
-						print LOG "-> Rule not converted, invalid domain \"$configline[7]\"\n";
+						print LOG "$now -> Rule not converted, invalid domain \"$configline[7]\"\n";
 						next;
 					}
 				 }
@@ -451,7 +454,7 @@ sub process_rules
 							push (@values,$_);
 							$grp3='TGT_PORT';
 						}else{
-							print LOG "-> Rule not converted, invalid destination Port \"$configline[8]\"\n";
+							print LOG "$now -> Rule not converted, invalid destination Port \"$configline[8]\"\n";
 							next;
 						}
 					 }else{
@@ -461,7 +464,7 @@ sub process_rules
 							push (@values,"$a1:$a2");
 							$grp3='TGT_PORT';
 						}else{
-							print LOG "-> Rule not converted, invalid destination Port \"$configline[8]\"\n"; 
+							print LOG "$now -> Rule not converted, invalid destination Port \"$configline[8]\"\n"; 
 							next;
 						} 
 					 }
@@ -478,13 +481,14 @@ sub process_rules
 		my $check;
 		my $chain;
 		foreach my $protocol (@prot){
+			my $now=localtime;
 			if ($source eq 'IPFire'){
 				$chain='OUTGOINGFW';
 			}else{
 				$chain='FORWARDFW';
 			}
 			$protocol=uc($protocol);
-			print LOG "-> Converted: $action,$chain,$active,$grp1,$source,$grp2,$target,,,,,$useport,$protocol,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to\n";
+			print LOG "$now -> Converted: $action,$chain,$active,$grp1,$source,$grp2,$target,,,,,$useport,$protocol,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to\n";
 			#Put rules into system....
 			###########################
 			#check for double rules
@@ -583,6 +587,7 @@ sub get_ip_from_domain
 }
 sub build_ovpn_grp
 {
+	my $now=localtime;
 	&General::readhasharray($confighosts,\%hosts);
 	&General::readhasharray($confignets,\%nets);
 	&General::readhasharray($configgroups,\%groups);
@@ -594,20 +599,24 @@ sub build_ovpn_grp
 	if($settingsovpn{'DOVPN_SUBNET'}){
 		my ($net,$subnet)=split("/",$settingsovpn{'DOVPN_SUBNET'});
 		push (@ovpnnets,"$net,$subnet,dynamic");
+		print LOG "$now ->found dynamic OpenVPN net\n"; 
 	}
 	foreach my $key (sort keys %ccdconf){
 		my ($net,$subnet)=split("/",$ccdconf{$key}[1]);
 		$subnet=&General::iporsubtodec($subnet);
 		push (@ovpnnets,"$net,$subnet,$ccdconf{$key}[0]");
+		print LOG "$now ->found OpenVPN static net $net/$subnet\n";
 	}
 	foreach my $key (sort keys %configovpn){
 		if ($configovpn{$key}[3] eq 'net'){
 			my ($net,$subnet)=split("/",$configovpn{$key}[27]);
 			push (@ovpnnets,"$net,$subnet,$configovpn{$key}[2]");
+			print LOG "$now ->found OpenVPN $net/$subnet $configovpn{$key}[2]\n";
 		}
 	}
 	#add ovpn nets to customnetworks/groups
 	foreach my $line (@ovpnnets){
+		my $now=localtime;
 		my ($net,$subnet,$name) = split(",",$line);
 		if (!&check_net($net,$subnet)){
 			my $netkey	=  &General::findhasharraykey(\%nets);
@@ -616,7 +625,9 @@ sub build_ovpn_grp
 			$nets{$netkey}[0] = $name2;
 			$nets{$netkey}[1] = $net;
 			$nets{$netkey}[2] = $subnet;
-			$nets{$netkey}[3] = 1;
+			$nets{$netkey}[3] = '';
+			$nets{$netkey}[4] = 1;
+			print LOG "$now ->added $name2 $net/$subnet to customnetworks\n";
 		}else{
 			print LOG "-> Custom Network with same IP already exist \"$net/$subnet\" (you can ignore this, if this run was manual from shell)\n"; 
 		}
@@ -627,6 +638,7 @@ sub build_ovpn_grp
 			$groups{$grpkey}[2]	= $name2;
 			$groups{$grpkey}[3]	= "Custom Network";
 			$groups{$grpkey}[4]	= 0;
+			print LOG "$now ->added $name2 to customgroup ovpn\n";
 		}
 		$name2='';
 	}
@@ -634,6 +646,7 @@ sub build_ovpn_grp
 	&General::writehasharray($confighosts,\%hosts);
 	&General::writehasharray($configgroups,\%groups);
 	&General::writehasharray($confignets,\%nets);
+	print LOG "$now ->finished OVPN\n";
 }
 sub process_p2p
 {
