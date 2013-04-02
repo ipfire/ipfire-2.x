@@ -49,8 +49,8 @@ sub process_rules{
 		my $now=localtime;
 		#get values from old configfile
 		my ($a,$b,$c,$d,$e,$f,$g,$h) = split (",",$line);
-		$h =~ s/\s//gi;
-		print LOG "$Now Processing A: $a   B: $b   C: $c   D: $d   E: $e   F: $f   G: $g   H: $h\n";
+		$h =~ s/\s*\n//gi;
+		print LOG "$now Processing A: $a   B: $b   C: $c   D: $d   E: $e   F: $f   G: $g   H: $h\n";
 		#Now convert values and check ip addresses
 		$a=uc($a);
 		$e=uc($e);
@@ -99,11 +99,11 @@ sub process_rules{
 				$field5='tgt_addr';
 				$field6=$c;
 			}else{
-				print LOG "$Now ->NOT Converted, invalid Source IP $b\n\n";
+				print LOG "$now ->NOT Converted, target ip $c not part of target network $g \n\n";
 				next;
 			}
 		}else{
-			print LOG "$now -> SOURCE IP INVALID. \n\n";
+			print LOG "$now -> TARGET IP INVALID. \n\n";
 			next;
 		}
 		$field12=$a;

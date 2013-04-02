@@ -66,9 +66,9 @@ elsif ($ARGV[0] eq 'restore') {
   system("/usr/sbin/ovpn-ccd-convert");
   #OUTGOINGFW CONVERTER
   if( -d "${General::swroot}/outgoing"){
-	  if( -f "${General::swroot}/forward/config" ){ 
+	  if( -f "${General::swroot}/forward/config" ){
 		  unlink("${General::swroot}/forward/config");
-		  system("touch ${General::swroot}/forward/config"); 
+		  system("touch ${General::swroot}/forward/config");
 		  chown 99,99,"${General::swroot}/forward/config";
 	  }
 	  if( -f "${General::swroot}/forward/outgoing" ){
@@ -99,7 +99,7 @@ elsif ($ARGV[0] eq 'restore') {
 	  rmtree("${General::swroot}/xtaccess");
   }
   #DMZ-HOLES CONVERTER
-  if( -d "${General::swroot}/dmz-holes"){
+  if( -d "${General::swroot}/dmzholes"){
 	  if( -f "${General::swroot}/forward/dmz" ){
 		  unlink("${General::swroot}/forward/dmz");
 		  system("touch ${General::swroot}/forward/dmz");
@@ -107,7 +107,7 @@ elsif ($ARGV[0] eq 'restore') {
 	  }
 	  #START CONVERTER "DMZ-HOLES"
 	  system("/usr/sbin/convert-dmz");
-	  rmtree("${General::swroot}/xtaccess");
+	  rmtree("${General::swroot}/dmzholes");
   }
   #PORTFORWARD CONVERTER
   if( -d "${General::swroot}/portfw"){
