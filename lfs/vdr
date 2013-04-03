@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.7.41
+VER        = 2.0.0
 THISAPP    = vdr-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 
@@ -60,7 +60,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)  = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5  = c7928bff45fa1c0e6dadf2c0a5adf94b
+$(DL_FILE)_MD5  = fd7f481b996e03fae3c00e80b6b0d301
 
 install : $(TARGET)
 
