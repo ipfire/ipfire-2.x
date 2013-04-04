@@ -1010,7 +1010,7 @@
 'fwhost cust service'	=> 'Custom services:',
 'fwhost cust srvgrp'	=> 'Custom servicegroups',
 'fwhost deleted'		=> 'Deleted',
-'fwhost empty'			=> 'No entries by now',
+'fwhost empty'			=> 'No rules defined',
 'fwhost err addr' 		=> 'Invalid IP or subnet',
 'fwhost err addrgrp'	=> 'Please provide a groupname',
 'fwhost err empty'		=> 'Please fill in all fields',

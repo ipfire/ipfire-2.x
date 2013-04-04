@@ -985,7 +985,7 @@
 'fwhost cust service'	=> 'Custom Dienste:',
 'fwhost cust srvgrp'	=> 'Custom Dienstgruppen',
 'fwhost deleted'		=> 'Gelöscht',
-'fwhost empty'			=> 'Keine Einträge vorhanden',
+'fwhost empty'			=> 'Keine Regeln definiert',
 'fwhost err addr' 		=> 'IP oder Subnetzmaske ungültig',
 'fwhost err addrgrp'	=> 'Bitte gruppenname angeben',
 'fwhost err empty'		=> 'Bitte alle Felder füllen',
