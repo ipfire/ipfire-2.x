@@ -77,7 +77,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.1';
+my $VERSION='0.9.9.2';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -161,17 +161,17 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		#check if we have an identical rule already
 		if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
 			foreach my $key (sort keys %confignatfw){
-				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'snatport'},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}"
-					eq "$confignatfw{$key}[0],$confignatfw{$key}[2],$confignatfw{$key}[3],$confignatfw{$key}[4],$confignatfw{$key}[5],$confignatfw{$key}[6],$confignatfw{$key}[7],$confignatfw{$key}[8],$confignatfw{$key}[9],$confignatfw{$key}[10],$confignatfw{$key}[11],$confignatfw{$key}[12],$confignatfw{$key}[13],$confignatfw{$key}[14],$confignatfw{$key}[15],$confignatfw{$key}[17],$confignatfw{$key}[19],$confignatfw{$key}[20],$confignatfw{$key}[21],$confignatfw{$key}[22],$confignatfw{$key}[23],$confignatfw{$key}[24],$confignatfw{$key}[25],$confignatfw{$key}[26],$confignatfw{$key}[27],$confignatfw{$key}[28],$confignatfw{$key}[29],$confignatfw{$key}[30],$confignatfw{$key}[31],$confignatfw{$key}[32]"){
-						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};                               
-						if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' ){
-							$errormessage='';                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-						}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
-							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
-						}
-						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
-							$fwdfwsettings{'nosave'} = 'on';
-						}
+				if ("$confignatfw{$key}[0],$confignatfw{$key}[1],$confignatfw{$key}[2],$confignatfw{$key}[3],$confignatfw{$key}[4],$confignatfw{$key}[5],$confignatfw{$key}[6],$confignatfw{$key}[11],$confignatfw{$key}[12],$confignatfw{$key}[14],$confignatfw{$key}[15],$confignatfw{$key}[28],$confignatfw{$key}[29],$confignatfw{$key}[30],$confignatfw{$key}[31]"
+				eq "$fwdfwsettings{'RULE_ACTION'},NAT_DESTINATION,$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}"){
+					$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+					if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' ){
+						$errormessage='';
+					}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
+						$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
+					}
+					if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
+						$fwdfwsettings{'nosave'} = 'on';
+					}
 				}
 			}
 		}
@@ -591,9 +591,9 @@ sub addrule
 {
 	&error;
 	if (-f "${General::swroot}/forward/reread"){
-		print "<table border='0'><form method='post'><td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold;'>$Lang::tr{'fwhost reread'}</td></tr></table></form><hr><br>";
+		print "<table border='0'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold; font-size: 14pt; text-decoration: blink;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div</td></tr></table></form><hr><br>";
 	}
-	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw addrule'});
+	&Header::openbox('100%', 'left', $Lang::tr{'firewall'});
 	print "<form method='post'>";
 	print "<table border='0'>";
 	print "<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw newrule'}'></td>";
@@ -768,7 +768,7 @@ sub checktarget
 {
 	my ($ip,$subnet);
 	&General::readhasharray("$configsrv", \%customservice);
-	#check DNAT settings (has to be single Host and single Port)
+	#check DNAT settings (has to be single Host and single Port or portrange)
 	if ($fwdfwsettings{'USE_NAT'} eq 'ON' && $fwdfwsettings{'nat'} eq 'dnat'){
 		if($fwdfwsettings{'grp2'} eq 'tgt_addr' || $fwdfwsettings{'grp2'} eq 'cust_host_tgt' || $fwdfwsettings{'grp2'} eq 'ovpn_host_tgt'){
 			if ($fwdfwsettings{'USESRV'} eq ''){
@@ -783,7 +783,7 @@ sub checktarget
 					$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
 				}
 			}
-			#check if Port is a single Port
+			#check if Port is a single Port or portrange
 			if ($fwdfwsettings{'nat'} eq 'dnat' &&  $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
 				if(($fwdfwsettings{'TGT_PROT'} ne 'TCP'|| $fwdfwsettings{'TGT_PROT'} ne 'UDP') && $fwdfwsettings{'TGT_PORT'} eq ''){
 					$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
@@ -945,17 +945,7 @@ sub checkrule
 	if($fwdfwsettings{'USE_NAT'} eq 'ON'){
 		#if no port is given in nat area, take target host port
 		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'grp3'} eq 'TGT_PORT' && $fwdfwsettings{'dnatport'} eq ''){$fwdfwsettings{'dnatport'}=$fwdfwsettings{'TGT_PORT'};}
-		
-		#check if given nat port is already used by another dnatrule
-		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'updatefwrule'} ne 'on'){
-			foreach my $id (sort keys %confignatfw){
-				if ($fwdfwsettings{'dnatport'} eq $confignatfw{$id}[30]){
-					$errormessage=$Lang::tr{'fwdfw natport used'}."<br>";
-				}
-			}
-		}
-		
-		#check if port given in nat area is a single valid port
+		#check if port given in nat area is a single valid port or portrange
 		if($fwdfwsettings{'nat'} eq 'dnat' && !&check_natport($fwdfwsettings{'dnatport'})){
 			$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
 		}
@@ -2346,12 +2336,7 @@ END
 				$tooltip='REJECT';
 				$rulecolor=$color{'color16'};
 			}
-			if($$hash{$key}[28] eq 'ON'){
-				print"<td bgcolor='$color' align='center' width='20'></td>";
-				$rulecolor=$color;
-			}else{
-				print"<td bgcolor='$rulecolor' align='center' width='20'><span title='$tooltip'><b>$ruletype</b></span></td>";
-			}
+			print"<td bgcolor='$rulecolor' align='center' width='20'><span title='$tooltip'><b>$ruletype</b></span></td>";
 			&getcolor($$hash{$key}[3],$$hash{$key}[4],\%customhost);
 			print"<td align='center' width='160' $tdcolor>";
 			if ($$hash{$key}[3] eq 'std_net_src'){

@@ -722,6 +722,10 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 	&General::readhasharray("$configsrvgrp", \%customservicegrp );
 	&General::readhasharray("$configsrv", \%customservice );
 	$errormessage=&checkservicegroup;
+	#check remark
+	if ($fwhostsettings{'SRVGRP_REMARK'} ne '' && !&validremark($fwhostsettings{'SRVGRP_REMARK'})){
+		$errormessage=$Lang::tr{'fwhost err remark'};
+	}
 	if (!$errormessage){
 		#on first save, we have to enter a dummy value
 		if ($fwhostsettings{'CUST_SRV'} eq ''){

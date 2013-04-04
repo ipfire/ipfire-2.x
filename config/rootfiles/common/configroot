@@ -53,7 +53,7 @@ var/ipfire/forward/config
 var/ipfire/forward/input
 var/ipfire/forward/outgoing
 var/ipfire/forward/dmz
-var/ipfire/forward/net
+var/ipfire/forward/nat
 var/ipfire/forward/p2protocols
 var/ipfire/fwhosts
 var/ipfire/fwhosts/icmp-types
