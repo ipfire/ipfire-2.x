@@ -64,6 +64,12 @@ $(TARGET) :
 
 	-cd / && cpio -d -p /install/initrd < /tmp/ROOTFILES
 
+	# Copy hid and network modules
+	cp -aRf /lib/modules/$(KVER)-ipfire/kernel/drivers/hid \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
+	cp -aRf /lib/modules/$(KVER)-ipfire/kernel/drivers/net \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
+
 	cd /install/initrd/etc && rm -f fstab
 	cp -aRf $(DIR_SRC)/config/install/* /install/initrd/etc/
 	rm -rf /install/initrd/usr/share/man
