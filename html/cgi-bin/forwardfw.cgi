@@ -77,7 +77,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.2';
+my $VERSION='0.9.9.3';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -593,7 +593,7 @@ sub addrule
 	if (-f "${General::swroot}/forward/reread"){
 		print "<table border='0'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold; font-size: 14pt; text-decoration: blink;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div</td></tr></table></form><hr><br>";
 	}
-	&Header::openbox('100%', 'left', $Lang::tr{'firewall'});
+	&Header::openbox('100%', 'left', "");
 	print "<form method='post'>";
 	print "<table border='0'>";
 	print "<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw newrule'}'></td>";
@@ -1622,11 +1622,7 @@ sub newrule
 		}	
 	}
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw addrule'});
-	if ($fwdfwsettings{'TIME'} eq 'ON'){	
-		$fwdfwsettings{'TIME_FROM'} = &timeconvert($fwdfwsettings{'TIME_FROM'},'');
-		$fwdfwsettings{'TIME_TO'} = &timeconvert($fwdfwsettings{'TIME_TO'},'');
-	}
-print "<form method='post'>";
+	print "<form method='post'>";
 	&Header::closebox();
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw source'});
 	#------SOURCE-------------------------------------------------------
@@ -2241,11 +2237,11 @@ sub validremark
 sub viewtablerule
 {
 	&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
-	&viewtablenew(\%configdmzfw,$configdmz,$Lang::tr{'fwdfw rules'},"DMZ" );
+	&viewtablenew(\%confignatfw,$confignat,"$Lang::tr{'fwdfw rules'}","Portforward / SNAT" );
 	&viewtablenew(\%configfwdfw,$configfwdfw,"","Forward" );
-	&viewtablenew(\%configinputfw,$configinput,"",$Lang::tr{'external access'} );
 	&viewtablenew(\%configoutgoingfw,$configoutgoing,"","Outgoing" );
-	&viewtablenew(\%confignatfw,$confignat,"","NAT" );
+	&viewtablenew(\%configinputfw,$configinput,"",$Lang::tr{'fwdfw xt access'} );
+	&viewtablenew(\%configdmzfw,$configdmz,"","DMZ" );
 }
 sub viewtablenew
 {
