@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 5.0.2
+VER        = 5.0.3
 
 THISAPP    = strongswan-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 77dc16443fd141f46183d3a4f60986ef
+$(DL_FILE)_MD5 = c37d841f8b0d11b14cf7f29fcdd20621
 
 install : $(TARGET)
 
@@ -75,7 +75,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-4.5.3_ipfire.patch
 
