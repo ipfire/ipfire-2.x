@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/modprobe.d/blacklist
 srv/web/ipfire/html/themes/ipfire/include/style.css
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 srv/web/ipfire/html/themes/maniac/include/style.css
