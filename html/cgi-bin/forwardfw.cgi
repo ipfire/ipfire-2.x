@@ -77,7 +77,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.3';
+my $VERSION='0.9.9.4';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -838,7 +838,7 @@ sub checktarget
 		if ($fwdfwsettings{'grp3'} eq 'TGT_PORT'){
 			if ($fwdfwsettings{'TGT_PROT'} eq 'TCP' || $fwdfwsettings{'TGT_PROT'} eq 'UDP'){
 				if ($fwdfwsettings{'TGT_PORT'} ne ''){
-					if ($fwdfwsettings{'TGT_PORT'} =~ "," && $fwdfwsettings{'USE_NAT'}) {
+					if ($fwdfwsettings{'TGT_PORT'} =~ "," && $fwdfwsettings{'USE_NAT'} && $fwdfwsettings{'nat'} eq 'dnat') {
 						$errormessage=$Lang::tr{'fwdfw dnat porterr'}."<br>";
 					}
 					my @parts=split(",",$fwdfwsettings{'TGT_PORT'});

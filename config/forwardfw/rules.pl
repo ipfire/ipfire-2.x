@@ -182,7 +182,7 @@ sub buildrules
 		next if ($$hash{$key}[6] eq 'RED' && $conexists eq 'off' );
 		if ($$hash{$key}[28] eq 'ON'){
 			$command='iptables -t nat -A';
-			$natip=&get_nat_ip($$hash{$key}[29]);
+			$natip=&get_nat_ip($$hash{$key}[29],$$hash{$key}[31]);
 			if($$hash{$key}[31] eq 'dnat'){
 				$nat='DNAT';
 				if ($$hash{$key}[30] =~ /\|/){
@@ -308,8 +308,8 @@ sub buildrules
 											}
 										}
 										print "iptables -A PORTFWACCESS $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
-									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[32] eq 'snat'){
-										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip$fireport\n";
+									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
+										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip\n";
 									}
 								}				
 							}
@@ -382,17 +382,22 @@ sub buildrules
 sub get_nat_ip
 {
 	my $val=shift;
+	my $type=shift;
 	my $result;
 	if($val eq 'RED' || $val eq 'GREEN' || $val eq 'ORANGE' || $val eq 'BLUE'){
 		$result=$defaultNetworks{$val.'_ADDRESS'};
 	}elsif($val eq 'ALL'){
 		$result='-i '.$con;
-	}elsif($val eq 'Default IP'){
+	}elsif($val eq 'Default IP' && $type eq 'dnat'){
 		$result='-d '.$redip;
+	}elsif($val eq 'Default IP' && $type eq 'snat'){
+		$result=$redip;
 	}else{
 		foreach my $al (sort keys %aliases){
-			if($val eq $al){
+			if($val eq $al && $type eq 'dnat'){
 				$result='-d '.$aliases{$al}{'IPT'};
+			}elsif($val eq $al && $type eq 'snat'){
+				$result=$aliases{$al}{'IPT'};
 			}
 		}
 	}
