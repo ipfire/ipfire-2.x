@@ -24,6 +24,16 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 restore_backup ${NAME}
+
+# Automatically add the GREEN network to svdrphosts.conf
+(
+	eval $(readhash /var/ipfire/ethernet/settings)
+
+	if [ -n "${GREEN_NETADDRESS}" ] && [ -n "${GREEN_BROADCAST}" ]; then
+		echo "${GREEN_NETADDRESS}/${GREEN_BROADCAST}" >> /etc/vdr/svdrphosts.conf
+	fi
+) || :
+
 start_service --background ${NAME}
 
 # Create video directory if it does not exist, yet.
