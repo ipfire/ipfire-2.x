@@ -591,7 +591,7 @@ sub addrule
 {
 	&error;
 	if (-f "${General::swroot}/forward/reread"){
-		print "<table border='0'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold; font-size: 14pt; text-decoration: blink;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div</td></tr></table></form><hr><br>";
+		print "<table border='0'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div</td></tr></table></form><hr><br>";
 	}
 	&Header::openbox('100%', 'left', "");
 	print "<form method='post'>";
@@ -771,7 +771,7 @@ sub checktarget
 	#check DNAT settings (has to be single Host and single Port or portrange)
 	if ($fwdfwsettings{'USE_NAT'} eq 'ON' && $fwdfwsettings{'nat'} eq 'dnat'){
 		if($fwdfwsettings{'grp2'} eq 'tgt_addr' || $fwdfwsettings{'grp2'} eq 'cust_host_tgt' || $fwdfwsettings{'grp2'} eq 'ovpn_host_tgt'){
-			if ($fwdfwsettings{'USESRV'} eq ''){
+			if ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'dnatport'} eq ''){
 				$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
 			}
 			#check if manual ip is a single Host (if set)
@@ -905,7 +905,6 @@ sub checktarget
 	if ($fwdfwsettings{'USESRV'} ne 'ON'){
 		$fwdfwsettings{'grp3'}='';
 		$fwdfwsettings{$fwdfwsettings{'grp3'}}='';
-		$fwdfwsettings{'TGT_PROT'}='';
 		$fwdfwsettings{'ICMP_TGT'}='';
 	}
 	#check timeframe
@@ -946,10 +945,9 @@ sub checkrule
 		#if no port is given in nat area, take target host port
 		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'grp3'} eq 'TGT_PORT' && $fwdfwsettings{'dnatport'} eq ''){$fwdfwsettings{'dnatport'}=$fwdfwsettings{'TGT_PORT'};}
 		#check if port given in nat area is a single valid port or portrange
-		if($fwdfwsettings{'nat'} eq 'dnat' && !&check_natport($fwdfwsettings{'dnatport'})){
+		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'TGT_PORT'} ne '' && !&check_natport($fwdfwsettings{'dnatport'})){
 			$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
-		}
-		elsif($fwdfwsettings{'USESRV'} eq 'ON' && $fwdfwsettings{'grp3'} eq 'cust_srv'){
+		}elsif($fwdfwsettings{'USESRV'} eq 'ON' && $fwdfwsettings{'grp3'} eq 'cust_srv'){
 			my $custsrvport;
 			#get servcie Protocol and Port
 			foreach my $key (sort keys %customservice){
@@ -961,6 +959,42 @@ sub checkrule
 				}
 			}
 			if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'dnatport'} eq ''){$fwdfwsettings{'dnatport'}=$custsrvport;}
+		}
+		#check if DNAT port is multiple
+		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'dnatport'} ne ''){
+			my @parts=split(",",$fwdfwsettings{'dnatport'});
+					my @values=();
+					foreach (@parts){
+						chomp($_);
+						if ($_ =~ /^(\d+)\-(\d+)$/ || $_ =~ /^(\d+)\:(\d+)$/) {
+							my $check;
+							#change dashes with :
+							$_=~ tr/-/:/;
+							if ($_ eq "*") {
+								push(@values,"1:65535");
+								$check='on';
+							}
+							if ($_ =~ /^(\D)\:(\d+)$/ || $_ =~ /^(\D)\-(\d+)$/) {
+								push(@values,"1:$2");
+								$check='on';
+							}
+							if ($_ =~ /^(\d+)\:(\D)$/ || $_ =~ /^(\d+)\-(\D)$/) {
+								push(@values,"$1:65535");
+								$check='on'
+							}
+							$errormessage .= &General::validportrange($_, 'destination');
+							if(!$check){
+								push (@values,$_);
+							}
+						}else{
+							if (&General::validport($_)){
+								push (@values,$_);
+							}else{
+								
+							}
+						}
+					}
+					$fwdfwsettings{'dnatport'}=join("|",@values);
 		}
 	}
 	#check valid remark
@@ -1764,6 +1798,7 @@ END
 			print "<option value='$alias' $selected{'dnat'}{$alias}>$alias</option>";
 		}
 		print"</td></tr>";
+		$fwdfwsettings{'dnatport'}=~ tr/|/,/;
 		print"<tr><td colspan='4'></td><td>Port: </td><td align='right'><input type='text' name='dnatport' style='width:130px;' value=$fwdfwsettings{'dnatport'}> </td></tr>";
 		print"<tr><td colspan='8'><br></td></tr>";
 		#SNAT
@@ -2371,6 +2406,7 @@ END
 			if ($$hash{$key}[31] eq 'dnat'){
 				print "IPFire ($$hash{$key}[29])";
 				if($$hash{$key}[30] ne ''){
+					$$hash{$key}[30]=~ tr/|/,/;
 					print": $$hash{$key}[30]";
 				}
 				print"<br> DNAT->";

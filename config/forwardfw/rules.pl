@@ -177,6 +177,7 @@ sub buildrules
 	my $snatport;
 	my $fireport;
 	my $nat;
+	my $fwaccessdport;
 	foreach my $key (sort {$a <=> $b} keys %$hash){
 		next if ($$hash{$key}[6] eq 'RED' && $conexists eq 'off' );
 		if ($$hash{$key}[28] eq 'ON'){
@@ -184,7 +185,12 @@ sub buildrules
 			$natip=&get_nat_ip($$hash{$key}[29]);
 			if($$hash{$key}[31] eq 'dnat'){
 				$nat='DNAT';
-				$fireport='--dport '.$$hash{$key}[30] if ($$hash{$key}[30]>0);
+				if ($$hash{$key}[30] =~ /\|/){
+					$$hash{$key}[30]=~ tr/|/,/;
+					$fireport='-m multiport --dport '.$$hash{$key}[30];
+				}else{
+					$fireport='--dport '.$$hash{$key}[30] if ($$hash{$key}[30]>0);
+				}
 			}else{
 				$nat='SNAT';
 			}
@@ -291,7 +297,16 @@ sub buildrules
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
 										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
 										$DPORT =~ s/\-/:/g;
-										my $fwaccessdport="--dport ".substr($DPORT,1,) if ($DPORT);
+										if ($DPORT){
+											$fwaccessdport="--dport ".substr($DPORT,1,);
+										}elsif(! $DPORT && $$hash{$key}[30] ne ''){
+											if ($$hash{$key}[30]=~m/|/i){
+												$$hash{$key}[30] =~ s/\|/,/g;
+												$fwaccessdport="-m multiport --dport $$hash{$key}[30]";
+											}else{
+												$fwaccessdport="--dport $$hash{$key}[30]";
+											}
+										}
 										print "iptables -A PORTFWACCESS $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[32] eq 'snat'){
 										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip$fireport\n";
@@ -332,9 +347,17 @@ sub buildrules
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
 										system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
 										$DPORT =~ s/\-/:/g;
-										my $fwaccessdport="--dport ".substr($DPORT,1,) if ($DPORT);
+										if ($DPORT){
+											$fwaccessdport="--dport ".substr($DPORT,1,);
+										}elsif(! $DPORT && $$hash{$key}[30] ne ''){
+											if ($$hash{$key}[30]=~m/|/i){
+												$$hash{$key}[30] =~ s/\|/,/g;
+												$fwaccessdport="-m multiport --dport $$hash{$key}[30]";
+											}else{
+												$fwaccessdport="--dport $$hash{$key}[30]";
+											}
+										}
 										system "iptables -A PORTFWACCESS $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
-										
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
 										if ($$hash{$key}[17] eq 'ON'){
 											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT '\n";
@@ -498,6 +521,10 @@ sub get_prot
 		}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
 			return &fwlib::get_srvgrp_prot($$hash{$key}[15]);
 		}
+	}
+	#DNAT
+	if ($SRC_TGT eq '' && $$hash{$key}[31] eq 'dnat' && $$hash{$key}[11] eq '' && $$hash{$key}[12] ne ''){
+		return "$$hash{$key}[12]";
 	}
 }
 sub get_port
