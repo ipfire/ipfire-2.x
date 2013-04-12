@@ -33,6 +33,11 @@ do
 done
 
 #
+# Remove meta's of packages that are now common...
+#
+rm -rf /opt/pakfire/db/*/meta-freefont
+
+#
 #Stop services
 
 #
