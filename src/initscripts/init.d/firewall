@@ -277,6 +277,9 @@ case "$1" in
 
 	/usr/sbin/firewall-policy
 	
+	#Only for firewall Hits statistik
+	/sbin/iptables -A POLICYFWD -j DROP  -m comment --comment "DROP_FORWARD"
+	/sbin/iptables -A POLICYOUT -j DROP  -m comment --comment "DROP_OUTPUT"
 	;;
   startovpn)  
 	# run openvpn

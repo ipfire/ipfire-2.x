@@ -216,7 +216,7 @@ sub updatecpugraph {
 			,"GPRINT:userpct:AVERAGE:%3.2lf%%"
 			,"GPRINT:userpct:MIN:%3.2lf%%"
 			,"GPRINT:userpct:LAST:%3.2lf%%\\j"
-			,"STACK:systempct".$color{"color13"}."A0:".sprintf("%-25s",$Lang::tr{'cpu system usage'})
+			,"STACK:systempct".$color{"color13"}."A0:".sprintf("%-26s",$Lang::tr{'cpu system usage'})
 			,"GPRINT:systempct:MAX:%3.2lf%%"
 			,"GPRINT:systempct:AVERAGE:%3.2lf%%"
 			,"GPRINT:systempct:MIN:%3.2lf%%"
@@ -602,26 +602,50 @@ sub updatefwhitsgraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"DEF:output=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-FORWARD/ipt_bytes-DROP_OUTPUT.rrd:value:AVERAGE",
-		"DEF:input=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-INPUT/ipt_bytes-DROP_INPUT.rrd:value:AVERAGE",
+		"DEF:output=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-POLICYOUT/ipt_bytes-DROP_OUTPUT.rrd:value:AVERAGE",
+		"DEF:input=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-POLICYIN/ipt_bytes-DROP_INPUT.rrd:value:AVERAGE",
+		"DEF:forward=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-POLICYFWD/ipt_bytes-DROP_FORWARD.rrd:value:AVERAGE",
 		"DEF:newnotsyn=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-NEWNOTSYN/ipt_bytes-DROP_NEWNOTSYN.rrd:value:AVERAGE",
 		"DEF:portscan=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-PSCAN/ipt_bytes-DROP_PScan.rrd:value:AVERAGE",
-		"CDEF:amount=output,input,newnotsyn,+,+",
-		"COMMENT:".sprintf("%-20s",$Lang::tr{'caption'}),
+		#"CDEF:amount=input",
+		"COMMENT:".sprintf("%-26s",$Lang::tr{'caption'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
-		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
+		"COMMENT:".sprintf("%14s",$Lang::tr{'minimal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j",
-		"AREA:amount".$color{"color24"}."A0:".sprintf("%-20s",$Lang::tr{'firewallhits'}),
-		"GPRINT:amount:MAX:%8.1lf %sBps",
-		"GPRINT:amount:AVERAGE:%8.1lf %sBps",
-		"GPRINT:amount:MIN:%8.1lf %sBps",
-		"GPRINT:amount:LAST:%8.1lf %sBps\\j",
-		"STACK:portscan".$color{"color25"}."A0:".sprintf("%-20s",$Lang::tr{'portscans'}),
+		"AREA:input".$color{"color24"}."A0:".sprintf("%-25s",$Lang::tr{'firewallhits'}."-INPUT"),
+		"GPRINT:input:MAX:%8.1lf %sBps",
+		"GPRINT:input:AVERAGE:%8.1lf %sBps",
+		"GPRINT:input:MIN:%8.1lf %sBps",
+		"GPRINT:input:LAST:%8.1lf %sBps\\j",
+		"AREA:output".$color{"color25"}."A0:".sprintf("%-25s",$Lang::tr{'firewallhits'}."-OUTPUT"),
+		"GPRINT:output:MAX:%8.1lf %sBps",
+		"GPRINT:output:AVERAGE:%8.1lf %sBps",
+		"GPRINT:output:MIN:%8.1lf %sBps",
+		"GPRINT:output:LAST:%8.1lf %sBps\\j",
+		"AREA:forward".$color{"color23"}."A0:".sprintf("%-25s",$Lang::tr{'firewallhits'}."-FORWARD"),
+		"GPRINT:forward:MAX:%8.1lf %sBps",
+		"GPRINT:forward:AVERAGE:%8.1lf %sBps",
+		"GPRINT:forward:MIN:%8.1lf %sBps",
+		"GPRINT:forward:LAST:%8.1lf %sBps\\j",
+		"AREA:newnotsyn".$color{"color14"}."A0:".sprintf("%-24s","NewNotSyn"),
+		"GPRINT:newnotsyn:MAX:%8.1lf %sBps",
+		"GPRINT:newnotsyn:MIN:%8.1lf %sBps",
+		"GPRINT:newnotsyn:AVERAGE:%8.1lf %sBps",
+		"GPRINT:newnotsyn:LAST:%8.1lf %sBps\\j",
+		"AREA:portscan".$color{"color16"}."A0:".sprintf("%-24s",$Lang::tr{'portscans'}),
 		"GPRINT:portscan:MAX:%8.1lf %sBps",
 		"GPRINT:portscan:MIN:%8.1lf %sBps",
 		"GPRINT:portscan:AVERAGE:%8.1lf %sBps",
 		"GPRINT:portscan:LAST:%8.1lf %sBps\\j",
+				
+		"LINE1:input".$color{"color24"},
+		"LINE1:output".$color{"color25"},
+		"LINE1:forward".$color{"color23"},
+		"LINE1:newnotsyn".$color{"color14"},
+		"LINE1:portscan".$color{"color16"},
+		
+		
 		);
 		$ERROR = RRDs::error;
 		print "Error in RRD::graph for firewallhits: ".$ERROR."\n" if $ERROR;
