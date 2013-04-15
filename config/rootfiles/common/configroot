@@ -120,7 +120,7 @@ var/ipfire/net-traffic
 #var/ipfire/nfs
 #var/ipfire/nfs/nfs-server
 var/ipfire/optionsfw
-#var/ipfire/optionsfw/settings
+var/ipfire/optionsfw/settings
 #var/ipfire/outgoing
 #var/ipfire/outgoing/bin
 #var/ipfire/outgoing/bin/outgoingfw.pl
