@@ -31,6 +31,7 @@ else
 		/sbin/iptables -A POLICYFWD -i blue0 ! -o $IFACE -j DROP 
 	fi
 	/sbin/iptables -A POLICYFWD -j ACCEPT 
+	/sbin/iptables -A POLICYFWD -m comment --comment "DROP_FORWARD" -j DROP
 fi
 
 #OUTGOINGFW
@@ -49,6 +50,7 @@ if [ "$POLICY1" == "MODE1" ]; then
 	fi
 else
 	/sbin/iptables -A POLICYOUT -j ACCEPT 
+	/sbin/iptables -A POLICYOUT -m comment --comment "DROP_OUTPUT" -j DROP
 fi
 #INPUT
 if [ "$FWPOLICY2" == "REJECT" ]; then
@@ -63,3 +65,5 @@ if [ "$FWPOLICY2" == "DROP" ]; then
 	fi
 	/sbin/iptables -A POLICYIN -j DROP -m comment --comment "DROP_INPUT"
 fi
+
+exit 0

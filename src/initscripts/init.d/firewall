@@ -276,10 +276,6 @@ case "$1" in
 	/sbin/iptables -A OUTPUT -j POLICYOUT
 
 	/usr/sbin/firewall-policy
-	
-	#Only for firewall Hits statistik
-	/sbin/iptables -A POLICYFWD -j DROP  -m comment --comment "DROP_FORWARD"
-	/sbin/iptables -A POLICYOUT -j DROP  -m comment --comment "DROP_OUTPUT"
 	;;
   startovpn)  
 	# run openvpn
@@ -316,12 +312,6 @@ case "$1" in
 		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
 	fi
 	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
-	
-	#Only for firewall Hits statistik
-	#/sbin/iptables -A POLICYFWD -j DROP  -m comment --comment "DROP_FORWARD"
-	#/sbin/iptables -A POLICYOUT -j DROP  -m comment --comment "DROP_OUTPUT"
-	
-	
 	
 	;;
   stopovpn)
