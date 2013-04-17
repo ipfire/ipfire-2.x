@@ -120,8 +120,8 @@ iptables_red() {
 		fi
 
 		# Outgoing masquerading (don't masqerade IPSEC (mark 50))
-		#/sbin/iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
-		#/sbin/iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
+		/sbin/iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
+		/sbin/iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
 
 	fi
 }
