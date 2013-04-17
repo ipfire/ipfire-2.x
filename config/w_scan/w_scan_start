@@ -105,17 +105,17 @@ clear
 rm -rf /tmp/channels.conf
 if [[ "$W_SCAN_TYPE" == *DVB-T* ]]; then
 	echo ":->W-SCAN DVB-T $(date +%Y%m%d%H%M)" >>/tmp/channels.conf
-	$WSCAN -f t -c $W_SCAN_COUNTRY -C UTF-8 >>/tmp/channels.conf
+	$WSCAN -f t -c $W_SCAN_COUNTRY -C UTF-8 -o 7 >>/tmp/channels.conf
 fi
 if [[ "$W_SCAN_TYPE" == *DVB-C* ]]; then
 	echo ":->W-SCAN DVB-C $(date +%Y%m%d%H%M)" >>/tmp/channels.conf
-	$WSCAN -f c -c $W_SCAN_COUNTRY -C UTF-8 >>/tmp/channels.conf
+	$WSCAN -f c -c $W_SCAN_COUNTRY -C UTF-8 -o 7 >>/tmp/channels.conf
 fi
 if [[ "$W_SCAN_TYPE" == *DVB-S* ]]; then
 	for SATELLITE in $W_SCAN_SATELLITE;
 	do
 		echo ":->W-SCAN DVB-S $SATELLITE $(date +%Y%m%d%H%M)" >>/tmp/channels.conf
-		$WSCAN -f s -s $SATELLITE -C UTF-8 >>/tmp/channels.conf
+		$WSCAN -f s -s $SATELLITE -C UTF-8 -o 7 >>/tmp/channels.conf
 	done
 fi
 
