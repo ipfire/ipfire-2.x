@@ -27,7 +27,7 @@ restore_backup ${NAME}
 
 # Automatically add the GREEN network to svdrphosts.conf
 (
-	eval $(readhash /var/ipfire/ethernet/settings)
+	eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 	if [ -n "${GREEN_NETADDRESS}" ] && [ -n "${GREEN_BROADCAST}" ]; then
 		echo "${GREEN_NETADDRESS}/${GREEN_BROADCAST}" >> /etc/vdr/svdrphosts.conf
