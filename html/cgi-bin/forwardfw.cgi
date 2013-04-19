@@ -77,7 +77,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.4a';
+my $VERSION='0.9.9.5';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -107,7 +107,9 @@ my @protocols;
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 &General::readhash($fwoptions, \%optionsfw); 
 &General::readhash($ifacesettings, \%ifaces);
-
+&General::readhash("$configovpn", \%ovpnsettings);
+&General::readhash("$configipsecrw", \%ipsecsettings);
+&General::readhasharray("$configipsec", \%ipsecconf);
 &Header::showhttpheaders();
 &Header::getcgihash(\%fwdfwsettings);
 &Header::openpage($Lang::tr{'fwdfw menu'}, 1, '');
@@ -656,7 +658,6 @@ sub changerule
 sub checksource
 {
 	my ($ip,$subnet);
-
 	#check ip-address if manual
 	if ($fwdfwsettings{'src_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'src_addr'} ne ''){
 		#check if ip with subnet
@@ -676,6 +677,11 @@ sub checksource
 			if (&General::validmac($fwdfwsettings{'src_addr'})){$fwdfwsettings{'ismac'}='on';}
 		}
 		if ($fwdfwsettings{'isip'} eq 'on'){
+			##check if ip is valid
+			if (! &General::validip($ip)){
+				$errormessage.=$Lang::tr{'fwdfw err src_addr'}."<br>";
+				return $errormessage;
+			}
 			#check and form valid IP
 			$ip=&General::ip2dec($ip);
 			$ip=&General::dec2ip($ip);
@@ -684,15 +690,24 @@ sub checksource
 			if (($tmp[3] eq "0") || ($tmp[3] eq "255"))
 			{
 				$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
+				return $errormessage;
 			}
-			$fwdfwsettings{'src_addr'}="$ip/$subnet";
-
+			#check if the ip is part of an existing openvpn client/net or ipsec network
+			#if this is the case, generate errormessage to make the user use the dropdowns instead of using manual ip's
+			if (! &checkvpn($ip)){
+				$errormessage=$Lang::tr{'fwdfw err srcovpn'};
+				return $errormessage;
+			}else{
+				$fwdfwsettings{'src_addr'}="$ip/$subnet";
+			}
 			if(!&General::validipandmask($fwdfwsettings{'src_addr'})){
 				$errormessage.=$Lang::tr{'fwdfw err src_addr'}."<br>";
+				return $errormessage;
 			}
 		}
 		if ($fwdfwsettings{'isip'} ne 'on' && $fwdfwsettings{'ismac'} ne 'on'){
 			$errormessage.=$Lang::tr{'fwdfw err src_addr'}."<br>";
+			return $errormessage;
 		}
 	}elsif($fwdfwsettings{'src_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'src_addr'} eq ''){
 		$errormessage.=$Lang::tr{'fwdfw err nosrcip'};
@@ -761,8 +776,8 @@ sub checksource
 			}
 		}
 		$fwdfwsettings{'SRC_PORT'}=join("|",@values);
-		return $errormessage;
 	}
+	return $errormessage;
 }
 sub checktarget
 {
@@ -773,6 +788,7 @@ sub checktarget
 		if($fwdfwsettings{'grp2'} eq 'tgt_addr' || $fwdfwsettings{'grp2'} eq 'cust_host_tgt' || $fwdfwsettings{'grp2'} eq 'ovpn_host_tgt'){
 			if ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'dnatport'} eq ''){
 				$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
+				return $errormessage;
 			}
 			#check if manual ip is a single Host (if set)
 			if ($fwdfwsettings{'grp2'} eq 'tgt_addr'){
@@ -781,19 +797,23 @@ sub checktarget
 				if (($tmp1[0] eq "0") || ($tmp1[0] eq "255"))
 				{
 					$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
+					return $errormessage;
 				}
 			}
 			#check if Port is a single Port or portrange
 			if ($fwdfwsettings{'nat'} eq 'dnat' &&  $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
 				if(($fwdfwsettings{'TGT_PROT'} ne 'TCP'|| $fwdfwsettings{'TGT_PROT'} ne 'UDP') && $fwdfwsettings{'TGT_PORT'} eq ''){
 					$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
+					return $errormessage;
 				}
 				if (($fwdfwsettings{'TGT_PROT'} eq 'TCP'|| $fwdfwsettings{'TGT_PROT'} eq 'UDP') && $fwdfwsettings{'TGT_PORT'} ne '' && !&check_natport($fwdfwsettings{'TGT_PORT'})){
 					$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
+					return $errormessage;
 				}
 			}
 		}else{
 			$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
+			return $errormessage;
 		}
 	}
 	if ($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} ne ''){
@@ -807,13 +827,25 @@ sub checktarget
 			$ip=$fwdfwsettings{'tgt_addr'};
 			$subnet='32';
 		}
+		#check if ip is valid
+		if (! &General::validip($ip)){
+			$errormessage.=$Lang::tr{'fwdfw err tgt_addr'}."<br>";
+			return $errormessage;
+		}
 		#check and form valid IP
 		$ip=&General::ip2dec($ip);
 		$ip=&General::dec2ip($ip);
-
-		$fwdfwsettings{'tgt_addr'}="$ip/$subnet";
+		#check if the ip is part of an existing openvpn client/net or ipsec network
+		#if this is the case, generate errormessage to make the user use the dropdowns instead of using manual ip's
+		if (! &checkvpn($ip)){
+			$errormessage=$Lang::tr{'fwdfw err tgtovpn'};
+			return $errormessage;
+		}else{
+			$fwdfwsettings{'tgt_addr'}="$ip/$subnet";
+		}
 		if(!&General::validipandmask($fwdfwsettings{'tgt_addr'})){
 			$errormessage.=$Lang::tr{'fwdfw err tgt_addr'}."<br>";
+			return $errormessage;
 		}
 	}elsif($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} eq ''){
 		$errormessage.=$Lang::tr{'fwdfw err notgtip'};
@@ -840,6 +872,7 @@ sub checktarget
 				if ($fwdfwsettings{'TGT_PORT'} ne ''){
 					if ($fwdfwsettings{'TGT_PORT'} =~ "," && $fwdfwsettings{'USE_NAT'} && $fwdfwsettings{'nat'} eq 'dnat') {
 						$errormessage=$Lang::tr{'fwdfw dnat porterr'}."<br>";
+						return $errormessage;
 					}
 					my @parts=split(",",$fwdfwsettings{'TGT_PORT'});
 					my @values=();
@@ -900,7 +933,6 @@ sub checktarget
 			}
 		}
 	}
-
 	#check targetport
 	if ($fwdfwsettings{'USESRV'} ne 'ON'){
 		$fwdfwsettings{'grp3'}='';
@@ -911,6 +943,7 @@ sub checktarget
 	if($fwdfwsettings{'TIME'} eq 'ON'){
 		if($fwdfwsettings{'TIME_MON'} eq '' && $fwdfwsettings{'TIME_TUE'} eq '' && $fwdfwsettings{'TIME_WED'} eq '' && $fwdfwsettings{'TIME_THU'} eq '' && $fwdfwsettings{'TIME_FRI'} eq '' && $fwdfwsettings{'TIME_SAT'} eq '' && $fwdfwsettings{'TIME_SUN'} eq ''){
 			$errormessage=$Lang::tr{'fwdfw err time'};
+			return $errormessage;
 		}
 	}
 	return $errormessage;
@@ -1076,6 +1109,32 @@ sub checkcounter
 	}elsif($base2 eq 'cust_srvgrp'){
 		&inc_counter($configsrvgrp,\%customservicegrp,$val2);	
 	}
+}
+sub checkvpn
+{
+	my $ip=shift;
+	#Test if manual IP is part of static OpenVPN networks
+	&General::readhasharray("$configccdnet", \%ccdnet);
+	foreach my $key (sort keys %ccdnet){
+		my ($vpnip,$vpnsubnet) = split ("/",$ccdnet{$key}[1]);
+		my $sub=&General::iporsubtodec($vpnsubnet);
+		if (&General::IpInSubnet($ip,$vpnip,$sub)){
+			return 0;
+		}
+	}
+	# A Test if manual ip is part of dynamic openvpn subnet is made in getcolor
+	# because if one creates a custom host with the ip, we need to check the color there!
+	# It does not make sense to check this here
+	
+	# Test if manual IP is part of an OpenVPN N2N subnet does also not make sense here
+	# Is also checked in getcolor
+	
+	# Test if manual ip is part of an IPsec Network is also checked in getcolor
+	return 1;
+}
+sub checkvpncolor
+{
+	
 }
 sub deleterule
 {
@@ -1432,6 +1491,33 @@ sub getcolor
 	my $val=shift;
 	my $hash=shift;
 	if($optionsfw{'SHOWCOLORS'} eq 'on'){
+		#Check if a manual IP is part of a VPN 
+		if ($nettype eq 'src_addr' || $nettype eq 'tgt_addr'){
+			#Check if IP is part of OpenVPN dynamic subnet
+			my ($a,$b) = split("/",$ovpnsettings{'DOVPN_SUBNET'});
+			my ($c,$d) = split("/",$val);
+			if (&General::IpInSubnet($c,$a,$b)){
+				$tdcolor="style='border: 1px solid $Header::colourovpn;'";
+				return;
+			}
+			#Check if IP is part of IPsec RW network
+			if ($ipsecsettings{'RW_NET'} ne ''){
+				my ($a,$b) = split("/",$ipsecsettings{'RW_NET'});
+				$b=&General::iporsubtodec($b);
+				if (&General::IpInSubnet($c,$a,$b)){
+					$tdcolor="style='border: 1px solid $Header::colourvpn;'";
+					return;
+				}
+			}
+			#Check if IP is part of a IPsec N2N network
+			foreach my $key (sort keys %ipsecconf){
+				my ($a,$b) = split("/",$ipsecconf{$key}[11]);
+				if (&General::IpInSubnet($c,$a,$b)){
+					$tdcolor="style='border: 1px solid $Header::colourvpn;'";
+					return;
+				}
+			}
+		}
 		#VPN networks
 		if ($nettype eq 'ovpn_n2n_src' || $nettype eq 'ovpn_n2n_tgt' || $nettype eq 'ovpn_net_src' || $nettype eq 'ovpn_net_tgt'|| $nettype eq 'ovpn_host_src' || $nettype eq 'ovpn_host_tgt'){
 			$tdcolor="style='border: 1px solid $Header::colourovpn;'";
@@ -1460,29 +1546,39 @@ sub getcolor
 		#standard networks
 		if ($val eq 'GREEN'){
 			$tdcolor="style='border: 1px solid $Header::colourgreen;'";
+			return;
 		}elsif ($val eq 'ORANGE'){
 			$tdcolor="style='border: 1px solid $Header::colourorange;'";
+			return;
 		}elsif ($val eq 'BLUE'){
 			$tdcolor="style='border: 1px solid $Header::colourblue;'";
+			return;
 		}elsif ($val eq 'RED'){
 			$tdcolor="style='border: 1px solid $Header::colourred;'";
+			return;
 		}elsif ($val eq 'IPFire' ){
 			$tdcolor="style='border: 1px solid $Header::colourred;'";
+			return;
 		}elsif($val =~ /^(.*?)\/(.*?)$/){
 			my ($sip,$scidr) = split ("/",$val);
 			if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
 				$tdcolor="style='border: 1px solid $Header::colourorange;'";
+				return;
 			}
 			if ( &General::IpInSubnet($sip,$netsettings{'GREEN_ADDRESS'},$netsettings{'GREEN_NETMASK'})){
 				$tdcolor="style='border: 1px solid $Header::colourgreen;'";
+				return;
 			}
 			if ( &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
 				$tdcolor="style='border: 1px solid $Header::colourblue;'";
+				return;
 			}
 		}elsif ($val eq 'Default IP'){
 			$tdcolor="style='border: 1px solid $Header::colourred;'";
+			return;
 		}else{
 			$tdcolor='';
+			return;
 		}
 	}
 }
