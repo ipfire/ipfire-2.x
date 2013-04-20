@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,6 +25,7 @@
 include Config
 
 VER        = 2.0.1
+VDRPLUGVER = 2.0.0
 THISAPP    = vdr-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 
@@ -109,7 +110,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install-bin install-dirs install-includes $(MAKE_OPTIONS)
 	mv -v /usr/bin/vdr /usr/sbin/vdr
 
-	sed -e "s/VDR_PLUGIN_VERSION/$(VER)/" \
+	sed -e "s/VDR_PLUGIN_VERSION/$(VDRPLUGVER)/" \
 		< $(DIR_SRC)/config/vdr/runvdr > /usr/sbin/runvdr
 	chmod 755 /usr/sbin/runvdr
 

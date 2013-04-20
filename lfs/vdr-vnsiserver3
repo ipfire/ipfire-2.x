@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -36,7 +36,7 @@ PAK_VER    = 1
 
 DEPS       = "vdr"
 
-VDR_VER    = 2.0.1
+VDRPLUGVER = 2.0.0
 
 EXTRA_FLAGS= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
 CFLAGS    += $(EXTRA_FLAGS)
@@ -90,7 +90,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	-mkdir -pv /etc/vdr/plugins/vnsiserver3
 	cd $(DIR_APP) && install -m 755 libvdr-vnsiserver3.so \
-		/usr/lib/vdr/libvdr-vnsiserver3.so.$(VDR_VER)
+		/usr/lib/vdr/libvdr-vnsiserver3.so.$(VDRPLUGVER)
 	ln -svf ../../svdrphosts.conf /etc/vdr/plugins/vnsiserver3/allowed_hosts.conf
 	install -m 644 $(DIR_SRC)/config/vdr/plugins.d/vnsiserver3.conf \
 		/etc/sysconfig/vdr-plugins.d
