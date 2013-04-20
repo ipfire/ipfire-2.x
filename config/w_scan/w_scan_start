@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,7 +19,8 @@
 #                                                                             #
 ###############################################################################
 ###############################################################################
-# w_scan_start for IPFire v 1.00 - 2012-11-15 Arne Fitzenreiter - inital vers.#
+# w_scan_start for IPFire v 1.01 - 2013-04-20 Arne Fitzenreiter - path vdr 2  #
+#                                - 2012-11-15 Arne Fitzenreiter - inital vers.#
 ###############################################################################
 
 err_msg ()
@@ -127,9 +128,9 @@ echo Results saved to w_scan-$(date +%Y%m%d%H%M).channels.conf
 if [ -e /opt/pakfire/db/installed/meta-vdr ]; then
 	yes_no "Install new channels-conf for VDR."
 	# Backup old channels conf...
-	cp -f /opt/vdr/etc/channels.conf \
-		/opt/vdr/etc/channels.conf.backup$(date +%Y%m%d%H%M)
-	cp -f /tmp/channels.conf /opt/vdr/etc/
+	cp -f /etc/vdr/channels.conf \
+		/etc/vdr/channels.conf.backup$(date +%Y%m%d%H%M)
+	cp -f /tmp/channels.conf /etc/vdr/
 	yes_no "Should i start the VDR?"
 	clear
 	/etc/init.d/vdr start
