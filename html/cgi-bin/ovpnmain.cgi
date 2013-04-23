@@ -173,10 +173,8 @@ sub checkportfw {
 	$DPROT= uc ($DPROT);
 	&General::readhasharray($confignat, \%natconfig);
 	foreach my $key (sort keys %natconfig){
-		$errormessage .= "uzlputz: $natconfig{$key}[30] und $natconfig{$key}[12]<br>";
 		my @portarray = split (/\|/,$natconfig{$key}[30]);
 		foreach my $value (@portarray){
-			$errormessage .= "uzlputz -split portaray: $value<br>";
 			if ($value =~ /:/i){
 				my ($a,$b) = split (":",$value);
 				if ($DPROT eq $natconfig{$key}[12] && $DPORT gt $a && $DPORT lt $b){
