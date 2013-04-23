@@ -35,7 +35,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr
 PAK_VER    = 6
 
-DEPS       = "vdr-streamdev"
+DEPS       = "vdr_streamdev"
 
 MAKE_OPTIONS = \
 	PREFIX=/usr \

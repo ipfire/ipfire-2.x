@@ -31,8 +31,8 @@ DL_FILE    = $(THISAPP).tgz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/epgsearch-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = vdr-epgsearch
-PAK_VER    = 1
+PROG       = vdr_epgsearch
+PAK_VER    = 6
 
 DEPS       = "vdr"
 
