@@ -125,11 +125,11 @@ END
 		$lines++;
 		if ($lines % 2){
 			print "<tr bgcolor='$color{'color22'}'>\n<td align='left'>";
-			print %link->{$key};
+			print $link{$key};
 			print "</td>\n";
 		}else{
 			print "<tr bgcolor='$color{'color20'}'>\n<td align='left'>";
-			print %link->{$key};
+			print $link{$key};
 			print "</td>\n";
 		}
 
