@@ -77,7 +77,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.5';
+my $VERSION='0.9.9.6';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -1491,6 +1491,40 @@ sub getcolor
 	my $val=shift;
 	my $hash=shift;
 	if($optionsfw{'SHOWCOLORS'} eq 'on'){
+		#standard networks
+		if ($val eq 'GREEN'){
+			$tdcolor="style='border: 1px solid $Header::colourgreen;'";
+			return;
+		}elsif ($val eq 'ORANGE'){
+			$tdcolor="style='border: 1px solid $Header::colourorange;'";
+			return;
+		}elsif ($val eq 'BLUE'){
+			$tdcolor="style='border: 1px solid $Header::colourblue;'";
+			return;
+		}elsif ($val eq 'RED'){
+			$tdcolor="style='border: 1px solid $Header::colourred;'";
+			return;
+		}elsif ($val eq 'IPFire' ){
+			$tdcolor="style='border: 1px solid $Header::colourred;'";
+			return;
+		}elsif($val =~ /^(.*?)\/(.*?)$/){
+			my ($sip,$scidr) = split ("/",$val);
+			if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
+				$tdcolor="style='border: 1px solid $Header::colourorange;'";
+				return;
+			}
+			if ( &General::IpInSubnet($sip,$netsettings{'GREEN_ADDRESS'},$netsettings{'GREEN_NETMASK'})){
+				$tdcolor="style='border: 1px solid $Header::colourgreen;'";
+				return;
+			}
+			if ( &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
+				$tdcolor="style='border: 1px solid $Header::colourblue;'";
+				return;
+			}
+		}elsif ($val eq 'Default IP'){
+			$tdcolor="style='border: 1px solid $Header::colourred;'";
+			return;
+		}
 		#Check if a manual IP is part of a VPN 
 		if ($nettype eq 'src_addr' || $nettype eq 'tgt_addr'){
 			#Check if IP is part of OpenVPN dynamic subnet
@@ -1543,44 +1577,9 @@ sub getcolor
 				return;
 			}
 		}
-		#standard networks
-		if ($val eq 'GREEN'){
-			$tdcolor="style='border: 1px solid $Header::colourgreen;'";
-			return;
-		}elsif ($val eq 'ORANGE'){
-			$tdcolor="style='border: 1px solid $Header::colourorange;'";
-			return;
-		}elsif ($val eq 'BLUE'){
-			$tdcolor="style='border: 1px solid $Header::colourblue;'";
-			return;
-		}elsif ($val eq 'RED'){
-			$tdcolor="style='border: 1px solid $Header::colourred;'";
-			return;
-		}elsif ($val eq 'IPFire' ){
-			$tdcolor="style='border: 1px solid $Header::colourred;'";
-			return;
-		}elsif($val =~ /^(.*?)\/(.*?)$/){
-			my ($sip,$scidr) = split ("/",$val);
-			if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
-				$tdcolor="style='border: 1px solid $Header::colourorange;'";
-				return;
-			}
-			if ( &General::IpInSubnet($sip,$netsettings{'GREEN_ADDRESS'},$netsettings{'GREEN_NETMASK'})){
-				$tdcolor="style='border: 1px solid $Header::colourgreen;'";
-				return;
-			}
-			if ( &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
-				$tdcolor="style='border: 1px solid $Header::colourblue;'";
-				return;
-			}
-		}elsif ($val eq 'Default IP'){
-			$tdcolor="style='border: 1px solid $Header::colourred;'";
-			return;
-		}else{
-			$tdcolor='';
-			return;
-		}
 	}
+	$tdcolor='';
+	return;
 }
 sub hint
 {
