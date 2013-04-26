@@ -31,6 +31,7 @@
 ###############################################################################
 
 use strict;
+use Sort::Naturally;
 no warnings 'uninitialized';
 # enable only the following on debugging purpose
 #use warnings;
@@ -1188,7 +1189,6 @@ sub dec_counter
 	my %hash=%{(shift)};
 	my $val=shift;
 	my $pos;
-	#$errormessage.="ALT:config: $config , verringert wird $val <br>";
 	&General::readhasharray($config, \%hash);
 	foreach my $key (sort { uc($hash{$a}[0]) cmp uc($hash{$b}[0]) }  keys %hash){
 		if($hash{$key}[0] eq $val){
@@ -1213,7 +1213,7 @@ sub fillselect
 	my %hash=%{(shift)};
 	my $val=shift;
 	my $key;
-	foreach my $key (sort { uc($hash{$a}[0]) cmp uc($hash{$b}[0]) }  keys %hash){
+	foreach my $key (sort { ncmp($hash{$a}[0],$hash{$b}[0]) }  keys %hash){
 		if($hash{$key}[0] eq $val){
 			print"<option value='$hash{$key}[0]' selected>$hash{$key}[0]</option>";
 		}else{
@@ -1275,7 +1275,7 @@ END
 	#custom groups
 	if (! -z $configgrp || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
 		print"<tr><td valign='top'><input type='radio' name='$grp' value='cust_grp_$srctgt' $checked{$grp}{'cust_grp_'.$srctgt}></td><td >$Lang::tr{'fwhost cust grp'}</td><td align='right'><select name='cust_grp_$srctgt' style='width:200px;'>";
-		foreach my $key (sort { uc($customgrp{$a}[0]) cmp uc($customgrp{$b}[0]) } keys %customgrp) {
+		foreach my $key (sort { ncmp($customgrp{$a}[0],$customgrp{$b}[0]) } keys %customgrp) {
 			if($helper ne $customgrp{$key}[0]){
 				print"<option ";
 				print "selected='selected' " if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $customgrp{$key}[0]);
@@ -1294,7 +1294,7 @@ END
 		print"</select></td></tr>";
 	}
 	#OVPN CCD Hosts
-	foreach my $key (sort { uc($ccdhost{$a}[0]) cmp uc($ccdhost{$b}[0]) } keys %ccdhost){
+	foreach my $key (sort { ncmp($ccdhost{$a}[0],$ccdhost{$b}[0]) } keys %ccdhost){
 		if ($ccdhost{$key}[33] ne '' ){
 			print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_host_$srctgt' $checked{$grp}{'ovpn_host_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_host_$srctgt' style='width:200px;'>" if ($show eq '');
 			$show='1';
@@ -1308,7 +1308,7 @@ END
 	}
 	if ($show eq '1'){$show='';print"</select></td></tr>";}
 	#OVPN N2N
-	foreach my $key (sort { uc($ccdhost{$a}[0]) cmp uc($ccdhost{$b}[0]) } keys %ccdhost){
+	foreach my $key (sort { ncmp($ccdhost{$a}[1],$ccdhost{$b}[1]) } keys %ccdhost){
 		if ($ccdhost{$key}[3] eq 'net'){
 			print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_n2n_$srctgt' $checked{$grp}{'ovpn_n2n_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ovpn_n2n'}:</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_n2n_$srctgt' style='width:200px;'>" if ($show eq '');
 			$show='1';
@@ -1322,7 +1322,7 @@ END
 	}
 	if ($show eq '1'){$show='';print"</select></td></tr>";}
 	#IPsec netze
-	foreach my $key (sort { uc($ipsecconf{$a}[1]) cmp uc($ipsecconf{$b}[1]) } keys %ipsecconf) {
+	foreach my $key (sort { ncmp($ipsecconf{$a}[1],$ipsecconf{$b}[1]) } keys %ipsecconf) {
 		if ($ipsecconf{$key}[3] eq 'net' || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
 			print"<tr><td valign='top'><input type='radio' name='$grp' value='ipsec_net_$srctgt' $checked{$grp}{'ipsec_net_'.$srctgt}></td><td >$Lang::tr{'fwhost ipsec net'}</td><td align='right'><select name='ipsec_net_$srctgt' style='width:200px;'>" if ($show eq '');
 			$show='1';
@@ -1448,15 +1448,15 @@ sub get_serviceports
 	my $icmp;
 	@protocols=();
 	if($type eq 'service'){
-		foreach my $key (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0]) } keys %customservice){
+		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
 			if ($customservice{$key}[0] eq $name){
 				push (@protocols,$customservice{$key}[2]);
 			}
 		}
 	}elsif($type eq 'group'){
-		foreach my $key (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0]) } keys %customservicegrp){
+		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } keys %customservicegrp){
 			if ($customservicegrp{$key}[0] eq $name){
-				foreach my $key1 (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0]) } keys %customservice){
+				foreach my $key1 (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
 					if ($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
 						if($customservice{$key1}[2] eq 'TCP'){
 							$tcp='TCP';
@@ -1784,7 +1784,7 @@ END
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 		print"<option>All ICMP-Types</option>";
-		foreach my $key (sort { uc($icmptypes{$a}[0]) cmp uc($icmptypes{$b}[0]) } keys %icmptypes){
+		foreach my $key (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) } keys %icmptypes){
 			if($fwdfwsettings{'ICMP_TYPES'} eq "$icmptypes{$key}[0]"){
 				print"<option selected>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
 			}else{
@@ -1826,7 +1826,7 @@ END
 		<tr><td width='1%'><input type='checkbox' name='USESRV' value='ON' $checked{'USESRV'}{'ON'} ></td><td width='48%'>$Lang::tr{'fwdfw use srv'}</td><td width='1%'><input type='radio' name='grp3' value='cust_srv' checked></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td width='1%' colspan='2'><select name='cust_srv'style='min-width:230px;' >
 END
 		&General::readhasharray("$configsrv", \%customservice);
-		foreach my $key (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0]) } keys %customservice){
+		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
 			print"<option ";
 			print"selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservice{$key}[0]);
 			print"value='$customservice{$key}[0]'>$customservice{$key}[0]</option>";
@@ -1837,7 +1837,7 @@ END
 END
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		my $helper;
-		foreach my $key (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0]) } keys %customservicegrp){
+		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } keys %customservicegrp){
 			if ($helper ne $customservicegrp{$key}[0]){
 				print"<option ";
 				print"selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservicegrp{$key}[0]);
@@ -1865,7 +1865,7 @@ END
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 		print"<option>All ICMP-Types</option>";
-		foreach my $key (sort { uc($icmptypes{$a}[0]) cmp uc($icmptypes{$b}[0]) }keys %icmptypes){
+		foreach my $key (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
 			if($fwdfwsettings{'ICMP_TGT'} eq "$icmptypes{$key}[0]"){
 				print"<option selected>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
 			}else{

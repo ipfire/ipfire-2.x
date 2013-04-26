@@ -30,6 +30,7 @@ use File::Copy;
 use File::Temp qw/ tempfile tempdir /;
 use strict;
 use Archive::Zip qw(:ERROR_CODES :CONSTANTS);
+use Sort::Naturally;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
@@ -4850,11 +4851,10 @@ END
 </tr>
 END
 	;
-        my $id = 0;
-        my $gif;
-	 foreach my $key (sort { uc($confighash{$a}[1]) cmp uc($confighash{$b}[1]) } keys %confighash) {
-    	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
-
+    my $id = 0;
+    my $gif;
+    foreach my $key (sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
+	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 	if ($id % 2) {
 	    print "<tr bgcolor='$color{'color20'}'>\n";
 	} else {

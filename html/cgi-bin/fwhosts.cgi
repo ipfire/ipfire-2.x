@@ -26,6 +26,7 @@ use strict;
 
 # enable only the following on debugging purpose
 use warnings;
+use Sort::Naturally;
 use CGI::Carp 'fatalsToBrowser';
 no warnings 'uninitialized';
 require '/var/ipfire/general-functions.pl';
@@ -1185,14 +1186,14 @@ END
 			print"</select></td></tr>";
 			if (! -z $confignet){
 				print"<tr><td><input type='radio' name='grp2' value='cust_net' $checked{'grp2'}{'cust_net'}></td><td>$Lang::tr{'fwhost cust net'}</td><td><select name='CUST_SRC_NET' style='min-width:185px;'>";
-				foreach my $key (sort { uc($customnetwork{$a}[0]) cmp uc($customnetwork{$b}[0]) } keys  %customnetwork) {
+				foreach my $key (sort { ncmp($customnetwork{$a}[0],$customnetwork{$b}[0]) } keys  %customnetwork) {
 					print"<option>$customnetwork{$key}[0]</option>";
 				}
 				print"</select></td></tr>";
 			}
 			if (! -z $confighost){
 				print"<tr><td valign='top'><input type='radio' name='grp2' value='cust_host' $checked{'grp2'}{'cust_host'}></td><td valign='top'>$Lang::tr{'fwhost cust addr'}</td><td><select name='CUST_SRC_HOST' style='min-width:185px;'>";
-				foreach my $key (sort { uc($customhost{$a}[0]) cmp uc($customhost{$b}[0]) } keys %customhost) {
+				foreach my $key (sort { ncmp($customhost{$a}[0],$customhost{$b}[0]) } keys %customhost) {
 					print"<option>$customhost{$key}[0]</option>";
 				}
 				print"</select></td></tr>";
@@ -1203,14 +1204,14 @@ END
 			#OVPN networks
 			if (! -z $configccdnet){
 				print"<td width='1%'><input type='radio' name='grp2' value='ovpn_net'  $checked{'grp2'}{'ovpn_net'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_NET' style='min-width:185px;'>";
-				foreach my $key (sort { uc($ccdnet{$a}[0]) cmp uc($ccdnet{$b}[0]) }  keys %ccdnet)
+				foreach my $key (sort { ncmp($ccdnet{$a}[0],$ccdnet{$b}[0]) }  keys %ccdnet)
 				{
 					print"<option value='$ccdnet{$key}[0]'>$ccdnet{$key}[0]</option>";
 				}
 				print"</select></td></tr>";
 			}
 			#OVPN clients
-			foreach my $key (sort { uc($ccdhost{$a}[0]) cmp uc($ccdhost{$b}[0]) } keys %ccdhost)
+			foreach my $key (sort { ncmp($ccdhost{$a}[0],$ccdhost{$b}[0]) } keys %ccdhost)
 			{
 				if ($ccdhost{$key}[33] ne ''){
 					print"<td width='1%'><input type='radio' name='grp2' value='ovpn_host' $checked{'grp2'}{'ovpn_host'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_HOST' style='min-width:185px;'>" if ($show eq '');
@@ -1220,7 +1221,7 @@ END
 			}
 			if ($show eq '1'){$show='';print"</select></td></tr>";}
 			#OVPN n2n networks
-			foreach my $key (sort { uc($ccdhost{$a}[0]) cmp uc($ccdhost{$b}[0]) } keys %ccdhost) {
+			foreach my $key (sort { ncmp($ccdhost{$a}[1],$ccdhost{$b}[1]) } keys %ccdhost) {
 				if($ccdhost{$key}[3] eq 'net'){
 					print"<td width='1%'><input type='radio' name='grp2' value='ovpn_n2n' $checked{'grp2'}{'ovpn_n2n'}></td><td valign='top'>$Lang::tr{'fwhost ovpn_n2n'}</td><td colspan='3'><select name='OVPN_N2N' style='min-width:185px;'>" if ($show eq '');
 					$show='1';
@@ -1229,7 +1230,7 @@ END
 			}
 			if ($show eq '1'){$show='';print"</select></td></tr>";}
 			#IPsec networks
-			foreach my $key (sort { uc($ipsecconf{$a}[0]) cmp uc($ipsecconf{$b}[0]) } keys %ipsecconf) {
+			foreach my $key (sort { ncmp($ipsecconf{$a}[0],$ipsecconf{$b}[0]) } keys %ipsecconf) {
 				if ($ipsecconf{$key}[3] eq 'net'){
 					print"<td valign='top'><input type='radio' name='grp2' value='ipsec_net' $checked{'grp2'}{'ipsec_net'}></td><td valign='top'>$Lang::tr{'fwhost ipsec net'}</td><td><select name='IPSEC_NET' style='min-width:185px;'>" if ($show eq '');
 					$show='1';
@@ -1276,7 +1277,7 @@ END
 END
 	&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 	print"<option>All ICMP-Types</option>";
-	foreach my $key (sort { uc($icmptypes{$a}[0]) cmp uc($icmptypes{$b}[0]) }keys %icmptypes){
+	foreach my $key (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
 		print"<option>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
 	}
 	
@@ -1338,7 +1339,7 @@ END
 	<tr><td width='1%' nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td><select name='CUST_SRV' style='min-width:185px;'>
 END
 	&General::readhasharray("$configsrv", \%customservice);
-	foreach my $key (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0])||  $a <=> $b } keys %customservice)
+	foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice)
 	{
 		print "<option>$customservice{$key}[0]</option>";
 	}
@@ -1372,7 +1373,7 @@ sub viewtablenet
 END
 		}
 		my $count=0;
-		foreach my $key (sort {$a <=> $b} keys %customnetwork) {
+		foreach my $key (sort {ncmp($a,$b)} keys %customnetwork) {
 			if ($fwhostsettings{'ACTION'} eq 'editnet' && $fwhostsettings{'HOSTNAME'} eq $customnetwork{$key}[0]) {
 				print" <tr bgcolor='${Header::colouryellow}'>";
 			}elsif ($count % 2)
@@ -1420,7 +1421,7 @@ sub viewtablehost
 END
 	}
 		my $count=0;
-		foreach my $key (sort { uc($customhost{$a}[0]) cmp uc($customhost{$b}[0])||  $a <=> $b } keys %customhost) {
+		foreach my $key (sort { ncmp ($customhost{$a}[0],$customhost{$b}[0])} keys %customhost) {
 			if ( ($fwhostsettings{'ACTION'} eq 'edithost' || $fwhostsettings{'error'}) && $fwhostsettings{'HOSTNAME'} eq $customhost{$key}[0]) {
 				print" <tr bgcolor='${Header::colouryellow}'>";
 			}elsif ($count % 2){ print" <tr bgcolor='$color{'color22'}'>";}
@@ -1470,11 +1471,11 @@ sub viewtablegrp
 	{ 
 		print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
 	}else{
-		foreach my $key (sort { uc($customgrp{$a}[0]) cmp uc($customgrp{$b}[0]) } sort { uc($customgrp{$a}[2]) cmp uc($customgrp{$b}[2]) } keys %customgrp){
+		foreach my $key (sort { ncmp($customgrp{$a}[0],$customgrp{$b}[0]) } sort { ncmp ($customgrp{$a}[2],$customgrp{$b}[2]) } keys %customgrp){
 			$count++;
 			if ($helper ne $customgrp{$key}[0]){
 				$delflag='0';
-				foreach my $key1 (sort { uc($customgrp{$a}[0]) cmp uc($customgrp{$b}[0]) } sort { uc($customgrp{$a}[2]) cmp uc($customgrp{$b}[2]) } keys %customgrp){
+				foreach my $key1 (sort { ncmp($customgrp{$a}[0],$customgrp{$b}[0]) } sort { ncmp($customgrp{$a}[2],$customgrp{$b}[2]) } keys %customgrp){
 					if ($customgrp{$key}[0] eq $customgrp{$key1}[0])
 					{
 						$delflag++;
@@ -1545,7 +1546,7 @@ sub viewtableservice
 			<table width='100%' border='0' cellspacing='0'>
 			<tr><td align='center'><b>$Lang::tr{'fwhost srv_name'}</td><td align='center'><b>$Lang::tr{'fwhost prot'}</td><td align='center'><b>$Lang::tr{'fwhost port'}</td><td align='center'><b>ICMP</td><td align='center'><b>$Lang::tr{'fwhost used'}</td><td></td><td width='3%'></td></tr>
 END
-		foreach my $key (sort { uc($customservice{$a}[0]) cmp uc($customservice{$b}[0])||  $a <=> $b } keys %customservice)
+		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0])} keys %customservice)
 		{
 			$count++;
 			if ( ($fwhostsettings{'updatesrv'} eq 'on' || $fwhostsettings{'error'}) && $fwhostsettings{'SRV_NAME'} eq $customservice{$key}[0]) {
@@ -1588,11 +1589,11 @@ sub viewtableservicegrp
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		&General::readhasharray("$configsrv", \%customservice);
 		my $number= keys %customservicegrp;
-		foreach my $key (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0])||  $a <=> $b } keys %customservicegrp){
+		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } keys %customservicegrp){
 			$count++;
 			if ($helper ne $customservicegrp{$key}[0]){
 				$delflag=0;
-				foreach my $key1 (sort { uc($customservicegrp{$a}[0]) cmp uc($customservicegrp{$b}[0]) } sort { uc($customservicegrp{$a}[2]) cmp uc($customservicegrp{$b}[2]) } keys %customservicegrp){
+				foreach my $key1 (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } sort { ncmp($customservicegrp{$a}[2],$customservicegrp{$b}[2]) } keys %customservicegrp){
 					if ($customservicegrp{$key}[0] eq $customservicegrp{$key1}[0])
 					{
 						$delflag++;
