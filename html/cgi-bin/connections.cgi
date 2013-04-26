@@ -34,6 +34,31 @@ require "${General::swroot}/header.pl";
 
 my $colour_multicast = "#A0A0A0";
 
+# sort arguments for connection tracking table
+# the sort field. eg. 1=src IP, 2=dst IP, 3=src port, 4=dst port
+my $SORT_FIELD = 0;
+# the sort order. (a)scending orr (d)escending
+my $SORT_ORDER = 0;
+# cgi query arguments
+my %cgiin;
+# debug mode
+my $debug = 0;
+
+# retrieve query arguments
+# note: let a-z A-Z and 0-9 pass as value only
+if (length ($ENV{'QUERY_STRING'}) > 0){
+	my $name;
+	my $value;
+	my $buffer = $ENV{'QUERY_STRING'};
+	my @pairs = split(/&/, $buffer);
+	foreach my $pair (@pairs){
+		($name, $value) = split(/=/, $pair);
+		$value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg; # e.g. "%20" => " "
+		$value =~ s/[^a-zA-Z0-9]*//g; # a-Z 0-9 will pass
+		$cgiin{$name} = $value; 
+	}
+}
+
 &Header::showhttpheaders();
 
 my @network=();
@@ -43,12 +68,40 @@ my @colour=();
 my %netsettings=();
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
+# output cgi query arrguments to browser on debug
+if ( $debug ){
+	&Header::openbox('100%', 'center', 'DEBUG');
+	my $debugCount = 0;
+	foreach my $line (sort keys %cgiin) {
+		print "$line = '$cgiin{$line}'<br />\n";
+		$debugCount++;
+	}
+	print "&nbsp;Count: $debugCount\n";
+	&Header::closebox();
+}
+
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::table1colour} );
 undef (@dummy);
 
-# Read the connection tracking table.
-open(CONNTRACK, "/usr/local/bin/getconntracktable | sort -k 5,5 --numeric-sort --reverse |") or die "Unable to read conntrack table";
+# check sorting arguments
+if ( $cgiin{'sort_field'} ~~ [ '1','2','3','4','5','6','7','8','9' ] ) {
+	$SORT_FIELD = $cgiin{'sort_field'};
+
+	if ( $cgiin{'sort_order'} ~~ [ 'a','d','A','D' ] ) {
+		$SORT_ORDER = lc($cgiin{'sort_order'});
+	}
+}
+
+# Read and sort the connection tracking table
+# do sorting 
+if ($SORT_FIELD and $SORT_ORDER) { 
+	# field sorting when sorting arguments are sane
+	open(CONNTRACK, "/usr/local/bin/getconntracktable | /usr/local/bin/consort.sh $SORT_FIELD $SORT_ORDER |") or die "Unable to read conntrack table";
+} else {
+	# default sorting with no query arguments
+	open(CONNTRACK, "/usr/local/bin/getconntracktable | sort -k 5,5 --numeric-sort --reverse |") or die "Unable to read conntrack table";
+}
 my @conntrack = <CONNTRACK>;
 close(CONNTRACK);
 
@@ -263,21 +316,81 @@ print <<END;
 	<br>
 END
 
+if ($SORT_FIELD and $SORT_ORDER) {
+	my @sort_field_name = (
+		$Lang::tr{'source ip'},
+		$Lang::tr{'destination ip'},
+		$Lang::tr{'source port'},
+		$Lang::tr{'destination port'},
+		$Lang::tr{'protocol'},
+		$Lang::tr{'connection'}.' '.$Lang::tr{'status'},
+		$Lang::tr{'expires'}.' ('.$Lang::tr{'seconds'}.')',
+		$Lang::tr{'download'},
+		$Lang::tr{'upload'}
+	);
+	my $sort_order_name;
+	if (lc($SORT_ORDER) eq "a") {
+		$sort_order_name = $Lang::tr{'sort ascending'};
+	} else {
+		$sort_order_name = $Lang::tr{'sort descending'};
+	}
+
+print <<END
+	<div style="font-weight:bold;margin:10px;font-size: 70%">
+		$sort_order_name: $sort_field_name[$SORT_FIELD-1]
+	</div>
+END
+;
+}
+
 # Print table header.
 print <<END;
 	<table width='100%'>
-		<tr>
+		<tr valign="top"">
+			<th align='center'>
+				<a href="?sort_field=5&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
+				<a href="?sort_field=5&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+			</th>
+			<th align='center' colspan="2">
+				<a href="?sort_field=1&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
+				<a href="?sort_field=1&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="?sort_field=3&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
+				<a href="?sort_field=3&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+			</th>
+			<th align='center' colspan="2">
+				<a href="?sort_field=2&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
+				<a href="?sort_field=2&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="?sort_field=4&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
+				<a href="?sort_field=4&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+			</th>
+			<th align='center'>
+				<a href="?sort_field=8&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
+				<a href="?sort_field=8&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="?sort_field=9&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
+				<a href="?sort_field=9&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+			</th>
+			<th align='center'>
+				<a href="?sort_field=6&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
+				<a href="?sort_field=6&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+			</th>
+			<th align='center'>
+				<a href="?sort_field=7&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
+				<a href="?sort_field=7&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+			</th>
+		</tr>
+		<tr valign="top"">
 			<th align='center'>
 				$Lang::tr{'protocol'}
 			</th>
-			<th align='center'>
+			<th align='center' colspan="2">
 				$Lang::tr{'source ip and port'}
 			</th>
-			<th>&nbsp;</th>
-			<th align='center'>
+			<th align='center' colspan="2">
 				$Lang::tr{'dest ip and port'}
 			</th>
-			<th>&nbsp;</th>
 			<th align='center'>
 				$Lang::tr{'download'} /
 				<br>$Lang::tr{'upload'}
