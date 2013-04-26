@@ -697,6 +697,7 @@ buildipfire() {
   ipfiremake mediatomb
   ipfiremake sslh
   ipfiremake perl-gettext
+  ipfiremake perl-Sort-Naturally
   ipfiremake vdradmin
   ipfiremake miau
   ipfiremake netsnmpd
