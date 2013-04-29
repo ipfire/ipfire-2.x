@@ -147,8 +147,7 @@ sub openpage {
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
 <html xmlns='http://www.w3.org/1999/xhtml'>
 <head>
-		<title>$title</title>
-    $extrahead
+	<title>$title</title>
 END
 ;
     if ($settings{'FX'} ne 'off') {
@@ -161,87 +160,84 @@ END
     print <<END
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="/themes/maniac/include/style.css" />
+    $extrahead
     <script language="javascript" type="text/javascript">
-      
-        function swapVisibility(id) {
-            el = document.getElementById(id);
-            if(el.style.display != 'block') {
-                el.style.display = 'block'
-            }
-            else {
-                el.style.display = 'none'
-            }
+		function swapVisibility(id) {
+			el = document.getElementById(id);
+			if(el.style.display != 'block') {
+				el.style.display = 'block'
+			}
+			else {
+				el.style.display = 'none'
+			}
         }
-    </script>
+	</script>
 END
 ;
 if ($settings{'SPEED'} ne 'off') {
 print <<END
-    <script type="text/javascript" src="/include/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript">
-        var t_current;
-        var t_last;
-        var rxb_current;
-        var rxb_last;
-        var txb_current;
-        var txb_last;
-				function refreshInetInfo() {
-						\$.ajax({
-								url: '/cgi-bin/speed.cgi',
-											success: function(xml){
-											t_current = new Date();
-											var t_diff = t_current - t_last;
-											t_last = t_current;
-				
-											rxb_current = \$("rxb",xml).text();
-											var rxb_diff = rxb_current - rxb_last;
-											rxb_last = rxb_current;
-				
-											var rx_kbs = rxb_diff/t_diff;
-											rx_kbs = Math.round(rx_kbs*10)/10;
-				
-											txb_current = \$("txb",xml).text();
-											var txb_diff = txb_current - txb_last;
-											txb_last = txb_current;
-				
-											var tx_kbs = txb_diff/t_diff;
-											tx_kbs = Math.round(tx_kbs*10)/10;
-				
-											\$("#rx_kbs").text(rx_kbs + ' kb/s');
-											\$("#tx_kbs").text(tx_kbs + ' kb/s');
-											}
-								});
-								window.setTimeout("refreshInetInfo()", 3000);
-						}
-						\$(document).ready(function(){
-						refreshInetInfo();
+	<script type="text/javascript" src="/include/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript">
+		var t_current;
+		var t_last;
+		var rxb_current;
+		var rxb_last;
+		var txb_current;
+		var txb_last;
+		function refreshInetInfo() {
+			\$.ajax({
+				url: '/cgi-bin/speed.cgi',
+				success: function(xml){
+				t_current = new Date();
+				var t_diff = t_current - t_last;
+				t_last = t_current;
+
+				rxb_current = \$("rxb",xml).text();
+				var rxb_diff = rxb_current - rxb_last;
+				rxb_last = rxb_current;
+
+				var rx_kbs = rxb_diff/t_diff;
+				rx_kbs = Math.round(rx_kbs*10)/10;
+
+				txb_current = \$("txb",xml).text();
+				var txb_diff = txb_current - txb_last;
+				txb_last = txb_current;
+
+				var tx_kbs = txb_diff/t_diff;
+				tx_kbs = Math.round(tx_kbs*10)/10;
+
+				\$("#rx_kbs").text(rx_kbs + ' kb/s');
+				\$("#tx_kbs").text(tx_kbs + ' kb/s');
+				}
 				});
-    </script>
-  </head>
-  <body>
+				window.setTimeout("refreshInetInfo()", 3000);
+			}
+			\$(document).ready(function(){
+			refreshInetInfo();
+		});
+	</script>
+</head>
+<body>
 END
 ;
 }
 else {
-print "</head>\n<body>";}
+	print "</head>\n<body>";}
 print <<END
 <!-- IPFIRE HEADER -->
-
-<div id="header">
-
-	<div id="header_inner" class="fixed">
-
-		<div id="logo">
+	<div id="header">
+		<div id="header_inner" class="fixed">
+			<div id="logo">
 END
 ;
-    if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
-        print "<h1><span>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</span></h1><br />"; 
-    } else {
-				print "<h1><span>-= IPFire =-</span></h1><br />";
-		}
-		print <<END
-			<h2>+ $h2 +</h2>
-		</div>
+if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
+	print "<h1><span>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</span></h1><br />"; 
+} else {
+	print "<h1><span>-= IPFire =-</span></h1><br />";
+}
+print <<END
+		<h2>+ $h2 +</h2>
+	</div>
 
 END
 ;
@@ -281,7 +277,6 @@ sub openpagewithoutmenu {
 <html xmlns='http://www.w3.org/1999/xhtml'>
 <head>
 		<title>$title</title>
-		$extrahead
 END
 ;
     if ($settings{'FX'} ne 'off') {
@@ -294,38 +289,34 @@ END
     print <<END
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="/include/style.css" />
+    $extrahead
     <script language="javascript" type="text/javascript">
-      
-        function swapVisibility(id) {
-            el = document.getElementById(id);
-  	    if(el.style.display != 'block') {
-  	        el.style.display = 'block'
-  	    }
-  	    else {
-  	        el.style.display = 'none'
-  	    }
-        }
+		function swapVisibility(id) {
+			el = document.getElementById(id);
+			if(el.style.display != 'block') {
+				el.style.display = 'block'
+			}
+			else {
+				el.style.display = 'none'
+			}
+		}
     </script>
 
-  </head>
-  <body>
+</head>
+<body>
 <!-- IPFIRE HEADER -->
-
-<div id="header">
-
-	<div id="header_inner" class="fixed">
-
-		<div id="logo">
-			<h1><span>-= IPFire =-</span></h1>
-			<h2>+ $h2 +</h2>
-		</div>	
+	<div id="header">
+		<div id="header_inner" class="fixed">
+			<div id="logo">
+				<h1><span>-= IPFire =-</span></h1>
+				<h2>+ $h2 +</h2>
+			</div>	
+		</div>
 	</div>
-</div>
-
-<div id="main">
-	<div id="main_inner" class="fixed">
-		<div id="primaryContent_2columns">
-			<div id="columnA_2columns">
+	<div id="main">
+		<div id="main_inner" class="fixed">
+			<div id="primaryContent_2columns">
+				<div id="columnA_2columns">
 END
 ;
 }
@@ -340,39 +331,35 @@ sub closepage () {
 	$uptime =~ s/load average/$Lang::tr{'uptime load average'}/;     
 				
     print <<END
+				</div>
 			</div>
-		</div>
-
-		<div id="secondaryContent_2columns">
-		
-			<div id="columnC_2columns">
+			<div id="secondaryContent_2columns">
+				<div id="columnC_2columns">
 END
 ;
     &showsubsection($menu);
     &showsubsubsection($menu);
 
 	print <<END			
+				</div>
 			</div>
-		</div>
-
-		<br class="clear" />	
-		<div id="footer" class="fixed">
-			<b>Status:</b> $status <b>Uptime:</b>$uptime
+			<br class="clear" />	
+			<div id="footer" class="fixed">
+				<b>Status:</b> $status <b>Uptime:</b>$uptime
 END
 ;
 if ($settings{'SPEED'} ne 'off') {
 print <<END                        
-                        <br />
-                                <b>$Lang::tr{'bandwidth usage'}:</b>
+				<br />
+				<b>$Lang::tr{'bandwidth usage'}:</b>
 				$Lang::tr{'incoming'}: <span id="rx_kbs"></span>&nbsp;$Lang::tr{'outgoing'}: <span id="tx_kbs"></span>
-
 END
 ;
 }
 print <<END
-                </div>
-        </div>
-</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
 END
@@ -395,10 +382,9 @@ sub openbox
 
 	print <<END
 <!-- openbox -->
-	<div class="post" align="$align">
+	<div class="post" style="text-align:$align">
 END
 ;
-
 	if ($caption) { print "<h3>$caption</h3>\n"; } else { print "&nbsp;"; }
 }
 
