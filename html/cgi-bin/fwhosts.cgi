@@ -669,7 +669,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		}elsif($updcounter eq 'host'){
 			foreach my $key (keys %customhost) {
 				if ($customhost{$key}[0] eq $fwhostsettings{'CUST_SRC_HOST'}){
-					$customhost{$key}[4]=$customhost{$key}[3]+1;
+					$customhost{$key}[4]=$customhost{$key}[4]+1;
 				}
 			}
 			&General::writehasharray("$confighost", \%customhost);
