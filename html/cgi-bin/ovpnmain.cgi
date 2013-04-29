@@ -2375,7 +2375,7 @@ ADV_ERROR:
     }
     &Header::openbox('100%', 'LEFT', $Lang::tr{'advanced server'});
     print <<END
-    <form method='post' enctype='multipart/form-data' disabled>
+    <form method='post' enctype='multipart/form-data'>
     <table width='100%' border=0>
     <tr>
 	<td colspan='4'><b>$Lang::tr{'dhcp-options'}</b></td>
