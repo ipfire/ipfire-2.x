@@ -19,7 +19,8 @@
 #                                                                             #
 ###############################################################################
 ###############################################################################
-# w_scan_start for IPFire v 1.01 - 2013-04-20 Arne Fitzenreiter - path vdr 2  #
+# w_scan_start for IPFire v 1.02 - 2013-04-30 Arne Fitzenreiter - add atsc    #
+#                                - 2013-04-20 Arne Fitzenreiter - path vdr 2  #
 #                                - 2012-11-15 Arne Fitzenreiter - inital vers.#
 ###############################################################################
 
@@ -65,17 +66,19 @@ if [ "$(ps -A | grep " runvdr$")" != "" ] ;then
 	/etc/init.d/vdr stop
 fi
 
-# Select DVB type
-whiptail --checklist "\nSelect DVB type" 12 40 3 \
+# Select system type
+whiptail --checklist "\nSelect system type" 12 40 5 \
                      DVB-T "Terrestrial" yes \
-                     DVB-C "Cable"       no \
-                     DVB-S "Satellite"   no \
+                     DVB-C  "Cable"       no \
+                     DVB-S  "Satellite"   no \
+                     ATSC-T "Terrestrial" no \
+                     ATSC-C "Cable"       no \
                      2>/tmp/w_scan_type
 chk_cancel
 W_SCAN_TYPE=$(cat /tmp/w_scan_type)
 rm /tmp/w_scan_type
 
-if [[ "$W_SCAN_TYPE" == *DVB-T* ]] || [[ "$W_SCAN_TYPE" == *DVB-C* ]]; then
+if [[ "$W_SCAN_TYPE" == *ATSC* ]] || [[ "$W_SCAN_TYPE" == *DVB-T* ]] || [[ "$W_SCAN_TYPE" == *DVB-C* ]]; then
 	# Generate and run separate country menubox and default germany
 	echo '#!/bin/bash' > /tmp/w_scan_countryselect.sh
 	echo 'whiptail --radiolist "\nSelect country" 19 70 10 \' >> /tmp/w_scan_countryselect.sh
@@ -118,6 +121,14 @@ if [[ "$W_SCAN_TYPE" == *DVB-S* ]]; then
 		echo ":->W-SCAN DVB-S $SATELLITE $(date +%Y%m%d%H%M)" >>/tmp/channels.conf
 		$WSCAN -f s -s $SATELLITE -C UTF-8 -o 7 >>/tmp/channels.conf
 	done
+fi
+if [[ "$W_SCAN_TYPE" == *ATSC-T* ]]; then
+	echo ":->W-SCAN ATSC-T $(date +%Y%m%d%H%M)" >>/tmp/channels.conf
+	$WSCAN -f a -A 1 -c $W_SCAN_COUNTRY -C UTF-8 -o 7 >>/tmp/channels.conf
+fi
+if [[ "$W_SCAN_TYPE" == *ATSC-C* ]]; then
+	echo ":->W-SCAN ATSC-C $(date +%Y%m%d%H%M)" >>/tmp/channels.conf
+	$WSCAN -f a -A 2 -c $W_SCAN_COUNTRY -C UTF-8 -o 7 >>/tmp/channels.conf
 fi
 
 # Save result to current dir.
