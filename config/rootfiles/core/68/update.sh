@@ -51,6 +51,9 @@ extract_files
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+# Regenerate font cache
+fc-cache -f &>/dev/null
+
 sync
 
 # This update need a reboot...
