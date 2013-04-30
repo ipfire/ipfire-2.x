@@ -29,8 +29,81 @@ restore_backup ${NAME}
 (
 	eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
-	if [ -n "${GREEN_NETADDRESS}" ] && [ -n "${GREEN_BROADCAST}" ]; then
-		echo "${GREEN_NETADDRESS}/${GREEN_BROADCAST}" >> /etc/vdr/svdrphosts.conf
+	GREEN_PREFIX=
+	case "${GREEN_NETMASK}" in
+		255.255.255.252)
+			GREEN_PREFIX=30
+			;;
+		255.255.255.248)
+			GREEN_PREFIX=29
+			;;
+		255.255.255.240)
+			GREEN_PREFIX=28
+			;;
+		255.255.255.224)
+			GREEN_PREFIX=27
+			;;
+		255.255.255.192)
+			GREEN_PREFIX=26
+			;;
+		255.255.255.128)
+			GREEN_PREFIX=25
+			;;
+		255.255.255.0)
+			GREEN_PREFIX=24
+			;;
+		255.255.254.0)
+			GREEN_PREFIX=23
+			;;
+		255.255.252.0)
+			GREEN_PREFIX=22
+			;;
+		255.255.248.0)
+			GREEN_PREFIX=21
+			;;
+		255.255.240.0)
+			GREEN_PREFIX=20
+			;;
+		255.255.224.0)
+			GREEN_PREFIX=19
+			;;
+		255.255.192.0)
+			GREEN_PREIFX=18
+			;;
+		255.255.128.0)
+			GREEN_PREFIX=17
+			;;
+		255.255.0.0)
+			GREEN_PREFIX=16
+			;;
+		255.254.0.0)
+			GREEN_PREFIX=15
+			;;
+		255.252.0.0)
+			GREEN_PREFIX=14
+			;;
+		255.248.0.0)
+			GREEN_PREFIX=13
+			;;
+		255.240.0.0)
+			GREEN_PREFIX=12
+			;;
+		255.224.0.0)
+			GREEN_PREFIX=11
+			;;
+		255.192.0.0)
+			GREEN_PREFIX=10
+			;;
+		255.128.0.0)
+			GREEN_PREFIX=9
+			;;
+		255.0.0.0)
+			GREEN_PREFIX=8
+			;;
+	esac
+
+	if [ -n "${GREEN_NETADDRESS}" ] && [ -n "${GREEN_PREFIX}" ]; then
+		echo "${GREEN_NETADDRESS}/${GREEN_PREFIX}" >> /etc/vdr/svdrphosts.conf
 	fi
 ) || :
 
