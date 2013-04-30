@@ -18,23 +18,13 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting Video Disk Recorder..."
-		if [ "$(ps -A | grep runvdr)" != "" ]; then
-		   boot_mesg "Error! Already running!"
-		   echo_failure
-		   exit 1;
-		fi
-		if [ ! -e /dev/dvb/adapter0/frontend0 ]; then
-		   boot_mesg "Error! No DVB tuner found."
-		   echo_failure
-		   exit 0;
-		fi	
-		loadproc screen -dmS vdr /opt/vdr/bin/runvdr
+		/usr/sbin/runvdr >/dev/null 2>&1 &
+		evaluate_retval
 		;;
 		
 	stop)
 		boot_mesg "Stopping Video Disk Recorder..."
-		killall -s KILL -w runvdr
-		killproc /opt/vdr/bin/vdr
+		killproc /usr/sbin/vdr
 		;;
 
 	restart)
@@ -44,8 +34,8 @@ case "${1}" in
 		;;
 
 	status)
-		statusproc /opt/vdr/bin/runvdr
-		statusproc /opt/vdr/bin/vdr
+		statusproc /usr/sbin/runvdr
+		statusproc /usr/sbin/vdr
 		;;
 
 	*)

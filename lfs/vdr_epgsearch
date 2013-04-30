@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,29 +24,86 @@
 
 include Config
 
-VER        = plugin
+VER        = 1.0.1.beta5
+THISAPP    = vdr-epgsearch-$(VER)
+DL_FILE    = $(THISAPP).tgz
 
-THISAPP    = vdr_epgsearch-$(VER)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/epgsearch-$(VER)
+TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr_epgsearch
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = "vdr"
+
+VDRPLUGVER = 2.0.0
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
 
-install : 
+$(DL_FILE)  = $(DL_FROM)/$(DL_FILE)
 
-check : 
+$(DL_FILE)_MD5  = 6e63cc29df02f48fabf6e12e1e71b2fc
 
-download :
+install : $(TARGET)
 
-md5 :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download : $(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	$(PAK)
+	@$(PAK)
 
 ###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/vdr-epgsearch-1.0.1.beta3-paths.patch
+
+	cd $(DIR_APP) && make $(MAKE_TUNING) LIBDIR=. VDRDIR=/usr/lib/vdr \
+		LOCALEDIR=$$(pwd)/locale all
+
+	cd $(DIR_APP) && install -m 755 libvdr-conflictcheckonly.so \
+		/usr/lib/vdr/libvdr-conflictcheckonly.so.$(VDRPLUGVER)
+	cd $(DIR_APP) && install -m 755 libvdr-epgsearchonly.so \
+		/usr/lib/vdr/libvdr-epgsearchonly.so.$(VDRPLUGVER)
+	cd $(DIR_APP) && install -m 755 libvdr-epgsearch.so \
+		/usr/lib/vdr/libvdr-epgsearch.so.$(VDRPLUGVER)
+	cd $(DIR_APP) && install -m 755 libvdr-quickepgsearch.so \
+		/usr/lib/vdr/libvdr-quickepgsearch.so.$(VDRPLUGVER)
+
+	install -m 644 \
+		$(DIR_SRC)/config/vdr/plugins.d/epgsearch.conf \
+		$(DIR_SRC)/config/vdr/plugins.d/epgsearchonly.conf \
+		$(DIR_SRC)/config/vdr/plugins.d/conflictcheckonly.conf \
+		$(DIR_SRC)/config/vdr/plugins.d/quickepgsearch.conf \
+		/etc/sysconfig/vdr-plugins.d
+
+	-mkdir -pv /etc/vdr/plugins/epgsearch/conf.d
+	-mkdir -pv /var/lib/vdr/data/epgsearch
+
+	cd $(DIR_APP) && install -m 755 createcats /usr/bin/createcats
+
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,7 +19,9 @@
 #                                                                             #
 ###############################################################################
 ###############################################################################
-# w_scan_start for IPFire v 1.00 - 2012-11-15 Arne Fitzenreiter - inital vers.#
+# w_scan_start for IPFire v 1.02 - 2013-04-30 Arne Fitzenreiter - add atsc    #
+#                                - 2013-04-20 Arne Fitzenreiter - path vdr 2  #
+#                                - 2012-11-15 Arne Fitzenreiter - inital vers.#
 ###############################################################################
 
 err_msg ()
@@ -64,17 +66,19 @@ if [ "$(ps -A | grep " runvdr$")" != "" ] ;then
 	/etc/init.d/vdr stop
 fi
 
-# Select DVB type
-whiptail --checklist "\nSelect DVB type" 12 40 3 \
+# Select system type
+whiptail --checklist "\nSelect system type" 12 40 5 \
                      DVB-T "Terrestrial" yes \
-                     DVB-C "Cable"       no \
-                     DVB-S "Satellite"   no \
+                     DVB-C  "Cable"       no \
+                     DVB-S  "Satellite"   no \
+                     ATSC-T "Terrestrial" no \
+                     ATSC-C "Cable"       no \
                      2>/tmp/w_scan_type
 chk_cancel
 W_SCAN_TYPE=$(cat /tmp/w_scan_type)
 rm /tmp/w_scan_type
 
-if [[ "$W_SCAN_TYPE" == *DVB-T* ]] || [[ "$W_SCAN_TYPE" == *DVB-C* ]]; then
+if [[ "$W_SCAN_TYPE" == *ATSC* ]] || [[ "$W_SCAN_TYPE" == *DVB-T* ]] || [[ "$W_SCAN_TYPE" == *DVB-C* ]]; then
 	# Generate and run separate country menubox and default germany
 	echo '#!/bin/bash' > /tmp/w_scan_countryselect.sh
 	echo 'whiptail --radiolist "\nSelect country" 19 70 10 \' >> /tmp/w_scan_countryselect.sh
@@ -105,18 +109,26 @@ clear
 rm -rf /tmp/channels.conf
 if [[ "$W_SCAN_TYPE" == *DVB-T* ]]; then
 	echo ":->W-SCAN DVB-T $(date +%Y%m%d%H%M)" >>/tmp/channels.conf
-	$WSCAN -f t -c $W_SCAN_COUNTRY -C UTF-8 >>/tmp/channels.conf
+	$WSCAN -f t -c $W_SCAN_COUNTRY -C UTF-8 -o 7 >>/tmp/channels.conf
 fi
 if [[ "$W_SCAN_TYPE" == *DVB-C* ]]; then
 	echo ":->W-SCAN DVB-C $(date +%Y%m%d%H%M)" >>/tmp/channels.conf
-	$WSCAN -f c -c $W_SCAN_COUNTRY -C UTF-8 >>/tmp/channels.conf
+	$WSCAN -f c -c $W_SCAN_COUNTRY -C UTF-8 -o 7 >>/tmp/channels.conf
 fi
 if [[ "$W_SCAN_TYPE" == *DVB-S* ]]; then
 	for SATELLITE in $W_SCAN_SATELLITE;
 	do
 		echo ":->W-SCAN DVB-S $SATELLITE $(date +%Y%m%d%H%M)" >>/tmp/channels.conf
-		$WSCAN -f s -s $SATELLITE -C UTF-8 >>/tmp/channels.conf
+		$WSCAN -f s -s $SATELLITE -C UTF-8 -o 7 >>/tmp/channels.conf
 	done
+fi
+if [[ "$W_SCAN_TYPE" == *ATSC-T* ]]; then
+	echo ":->W-SCAN ATSC-T $(date +%Y%m%d%H%M)" >>/tmp/channels.conf
+	$WSCAN -f a -A 1 -c $W_SCAN_COUNTRY -C UTF-8 -o 7 >>/tmp/channels.conf
+fi
+if [[ "$W_SCAN_TYPE" == *ATSC-C* ]]; then
+	echo ":->W-SCAN ATSC-C $(date +%Y%m%d%H%M)" >>/tmp/channels.conf
+	$WSCAN -f a -A 2 -c $W_SCAN_COUNTRY -C UTF-8 -o 7 >>/tmp/channels.conf
 fi
 
 # Save result to current dir.
@@ -127,9 +139,9 @@ echo Results saved to w_scan-$(date +%Y%m%d%H%M).channels.conf
 if [ -e /opt/pakfire/db/installed/meta-vdr ]; then
 	yes_no "Install new channels-conf for VDR."
 	# Backup old channels conf...
-	cp -f /opt/vdr/etc/channels.conf \
-		/opt/vdr/etc/channels.conf.backup$(date +%Y%m%d%H%M)
-	cp -f /tmp/channels.conf /opt/vdr/etc/
+	cp -f /etc/vdr/channels.conf \
+		/etc/vdr/channels.conf.backup$(date +%Y%m%d%H%M)
+	cp -f /tmp/channels.conf /etc/vdr/
 	yes_no "Should i start the VDR?"
 	clear
 	/etc/init.d/vdr start

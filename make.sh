@@ -664,6 +664,9 @@ buildipfire() {
   ipfiremake faad2
   ipfiremake ffmpeg
   ipfiremake vdr
+  ipfiremake vdr_streamdev
+  ipfiremake vdr_vnsiserver3
+  ipfiremake vdr_epgsearch
   ipfiremake w_scan
   ipfiremake icecast
   ipfiremake icegenerator
