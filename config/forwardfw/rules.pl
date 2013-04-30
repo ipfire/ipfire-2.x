@@ -494,7 +494,7 @@ sub get_address
 	}elsif($base eq 'ovpn_host_src' ||$base eq 'ovpn_host_tgt' || $base eq 'OpenVPN static host'){
 		$$hash{$key}[0]=&fwlib::get_ovpn_host_ip($base2,33);
 	}elsif($base eq 'ovpn_n2n_src' ||$base eq 'ovpn_n2n_tgt' || $base eq 'OpenVPN N-2-N'){
-		$$hash{$key}[0]=&fwlib::get_ovpn_n2n_ip($base2,27);
+		$$hash{$key}[0]=&fwlib::get_ovpn_n2n_ip($base2,11);
 	}elsif($base eq 'ipsec_net_src' || $base eq 'ipsec_net_tgt' || $base eq 'IpSec Network'){
 		$$hash{$key}[0]=&fwlib::get_ipsec_net_ip($base2,11);
 	}
