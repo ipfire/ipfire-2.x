@@ -399,8 +399,6 @@ WARNING: translation string unused: shutdown2
 WARNING: translation string unused: shutting down
 WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
-WARNING: translation string unused: sort ascending
-WARNING: translation string unused: sort descending
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
 WARNING: translation string unused: squid fix cache
@@ -468,9 +466,8 @@ WARNING: translation string unused: updates is old1
 WARNING: translation string unused: updates is old2
 WARNING: translation string unused: updxlrtr children
 WARNING: translation string unused: updxlrtr invalid num of children
+WARNING: translation string unused: updxlrtr to delete
 WARNING: translation string unused: updxlrtr unknown
-WARNING: translation string unused: updxlrtr update information
-WARNING: translation string unused: updxlrtr update notification
 WARNING: translation string unused: upload fcdsl.o
 WARNING: translation string unused: upload file
 WARNING: translation string unused: upload static key
@@ -480,6 +477,7 @@ WARNING: translation string unused: upload update file
 WARNING: translation string unused: upstream password
 WARNING: translation string unused: upstream proxy host:port
 WARNING: translation string unused: upstream username
+WARNING: translation string unused: uptime
 WARNING: translation string unused: uptime and users
 WARNING: translation string unused: urlfilter background image
 WARNING: translation string unused: urlfilter background text

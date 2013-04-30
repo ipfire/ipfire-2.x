@@ -389,8 +389,6 @@ WARNING: translation string unused: shutdown2
 WARNING: translation string unused: shutting down
 WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
-WARNING: translation string unused: sort ascending
-WARNING: translation string unused: sort descending
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
 WARNING: translation string unused: squid fix cache
@@ -500,6 +498,11 @@ WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
+WARNING: untranslated string: age second
+WARNING: untranslated string: age seconds
+WARNING: untranslated string: age shour
+WARNING: untranslated string: age sminute
+WARNING: untranslated string: age ssecond
 WARNING: untranslated string: attention
 WARNING: untranslated string: bytes
 WARNING: untranslated string: ccd add
@@ -580,6 +583,18 @@ WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: server restart
 WARNING: untranslated string: static routes
+WARNING: untranslated string: updxlrtr cache overview
+WARNING: untranslated string: updxlrtr cache settings
+WARNING: untranslated string: updxlrtr current view
+WARNING: untranslated string: updxlrtr no pending downloads attime
+WARNING: untranslated string: updxlrtr notice dlrate
+WARNING: untranslated string: updxlrtr overview
+WARNING: untranslated string: updxlrtr settings
+WARNING: untranslated string: updxlrtr sources
+WARNING: untranslated string: updxlrtr standard view
+WARNING: untranslated string: updxlrtr total used
+WARNING: untranslated string: updxlrtr used by
+WARNING: untranslated string: uptime load average
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: wlanap country

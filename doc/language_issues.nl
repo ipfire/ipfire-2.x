@@ -399,8 +399,6 @@ WARNING: translation string unused: shutdown2
 WARNING: translation string unused: shutting down
 WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
-WARNING: translation string unused: sort ascending
-WARNING: translation string unused: sort descending
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
 WARNING: translation string unused: squid fix cache
@@ -508,6 +506,11 @@ WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: advproxy cache-digest
+WARNING: untranslated string: age second
+WARNING: untranslated string: age seconds
+WARNING: untranslated string: age shour
+WARNING: untranslated string: age sminute
+WARNING: untranslated string: age ssecond
 WARNING: untranslated string: bytes
 WARNING: untranslated string: ccd iroute2
 WARNING: untranslated string: new
@@ -517,3 +520,15 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: updxlrtr cache overview
+WARNING: untranslated string: updxlrtr cache settings
+WARNING: untranslated string: updxlrtr current view
+WARNING: untranslated string: updxlrtr no pending downloads attime
+WARNING: untranslated string: updxlrtr notice dlrate
+WARNING: untranslated string: updxlrtr overview
+WARNING: untranslated string: updxlrtr settings
+WARNING: untranslated string: updxlrtr sources
+WARNING: untranslated string: updxlrtr standard view
+WARNING: untranslated string: updxlrtr total used
+WARNING: untranslated string: updxlrtr used by
+WARNING: untranslated string: uptime load average

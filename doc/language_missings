@@ -14,6 +14,11 @@
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< age second
+< age seconds
+< age shour
+< age sminute
+< age ssecond
 < attention
 < ccd add
 < ccd choose net
@@ -104,7 +109,19 @@
 < snort working
 < static routes
 < system information
+< updxlrtr current view
+< updxlrtr no pending downloads attime
+< updxlrtr notice dlrate
+< updxlrtr overview
+< updxlrtr settings
+< updxlrtr sources
+< updxlrtr standard view
+< updxlrtr to delete
+< updxlrtr total used
+< updxlrtr used by
 < upload new ruleset
+< uptime
+< uptime load average
 < urlfilter file ext block
 < urlfilter mode block
 < visit us at
@@ -138,6 +155,11 @@
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< age second
+< age seconds
+< age shour
+< age sminute
+< age ssecond
 < Async logging enabled
 < attention
 < ccd add
@@ -244,6 +266,18 @@
 < Set time on boot
 < static routes
 < system information
+< updxlrtr current view
+< updxlrtr no pending downloads attime
+< updxlrtr notice dlrate
+< updxlrtr overview
+< updxlrtr settings
+< updxlrtr sources
+< updxlrtr standard view
+< updxlrtr to delete
+< updxlrtr total used
+< updxlrtr used by
+< uptime
+< uptime load average
 < visit us at
 < vpn keyexchange
 ############################################################################
@@ -255,6 +289,11 @@
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< age second
+< age seconds
+< age shour
+< age sminute
+< age ssecond
 < attention
 < ccd add
 < ccd choose net
@@ -336,6 +375,18 @@
 < qos enter bandwidths
 < server restart
 < static routes
+< updxlrtr current view
+< updxlrtr no pending downloads attime
+< updxlrtr notice dlrate
+< updxlrtr overview
+< updxlrtr settings
+< updxlrtr sources
+< updxlrtr standard view
+< updxlrtr to delete
+< updxlrtr total used
+< updxlrtr used by
+< uptime
+< uptime load average
 < visit us at
 < vpn keyexchange
 ############################################################################
@@ -348,6 +399,11 @@
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< age second
+< age seconds
+< age shour
+< age sminute
+< age ssecond
 < attention
 < ccd add
 < ccd choose net
@@ -433,6 +489,18 @@
 < qos enter bandwidths
 < server restart
 < static routes
+< updxlrtr current view
+< updxlrtr no pending downloads attime
+< updxlrtr notice dlrate
+< updxlrtr overview
+< updxlrtr settings
+< updxlrtr sources
+< updxlrtr standard view
+< updxlrtr to delete
+< updxlrtr total used
+< updxlrtr used by
+< uptime
+< uptime load average
 < visit us at
 < vpn keyexchange
 < week-graph
