@@ -24,3 +24,13 @@
 . /opt/pakfire/lib/functions.sh
 ./uninstall.sh
 ./install.sh
+
+OLD_DIR="/opt/vdr/etc"
+NEW_DIR="/etc/vdr"
+
+for conf in ${OLD_DIR}/*.conf; do
+	[ -f "${conf}" ] && continue
+
+	conf="$(basename ${conf})"
+	mv -b "${OLD_DIR}/${conf}" "${NEW_DIR}/${conf}"
+done
