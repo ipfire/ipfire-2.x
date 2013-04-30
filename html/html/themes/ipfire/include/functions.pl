@@ -348,7 +348,7 @@ END
             </div>
             <br class="clear" />    
 			<div id="footer" class="fixed">
-				<b>Status:</b> $status <b>Uptime:</b>$uptime
+				<b>Status:</b> $status <b>Uptime:</b> $uptime
 END
 ;
 if ($settings{'SPEED'} ne 'off') {
