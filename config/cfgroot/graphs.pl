@@ -216,7 +216,7 @@ sub updatecpugraph {
 			,"GPRINT:userpct:AVERAGE:%3.2lf%%"
 			,"GPRINT:userpct:MIN:%3.2lf%%"
 			,"GPRINT:userpct:LAST:%3.2lf%%\\j"
-			,"STACK:systempct".$color{"color13"}."A0:".sprintf("%-26s",$Lang::tr{'cpu system usage'})
+			,"STACK:systempct".$color{"color13"}."A0:".sprintf("%-25s",$Lang::tr{'cpu system usage'})
 			,"GPRINT:systempct:MAX:%3.2lf%%"
 			,"GPRINT:systempct:AVERAGE:%3.2lf%%"
 			,"GPRINT:systempct:MIN:%3.2lf%%"
@@ -627,12 +627,12 @@ sub updatefwhitsgraph {
 		"GPRINT:input:AVERAGE:%8.1lf %sBps",
 		"GPRINT:input:MIN:%8.1lf %sBps",
 		"GPRINT:input:LAST:%8.1lf %sBps\\j",
-		"STACK:newnotsyn".$color{"color14"}."A0:".sprintf("%-24s","NewNotSyn"),
+		"STACK:newnotsyn".$color{"color14"}."A0:".sprintf("%-25s","NewNotSyn"),
 		"GPRINT:newnotsyn:MAX:%8.1lf %sBps",
 		"GPRINT:newnotsyn:MIN:%8.1lf %sBps",
 		"GPRINT:newnotsyn:AVERAGE:%8.1lf %sBps",
 		"GPRINT:newnotsyn:LAST:%8.1lf %sBps\\j",
-		"STACK:portscan".$color{"color16"}."A0:".sprintf("%-24s",$Lang::tr{'portscans'}),
+		"STACK:portscan".$color{"color16"}."A0:".sprintf("%-25s",$Lang::tr{'portscans'}),
 		"GPRINT:portscan:MAX:%8.1lf %sBps",
 		"GPRINT:portscan:MIN:%8.1lf %sBps",
 		"GPRINT:portscan:AVERAGE:%8.1lf %sBps",
