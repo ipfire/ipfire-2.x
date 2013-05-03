@@ -764,6 +764,7 @@ buildipfire() {
   ipfiremake avahi
   ipfiremake nginx
   ipfiremake sendEmail
+  ipfiremake sysbench
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
