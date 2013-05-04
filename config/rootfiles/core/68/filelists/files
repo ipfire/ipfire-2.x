@@ -44,3 +44,4 @@ var/ipfire/backup/include
 var/ipfire/header.pl
 var/ipfire/general-functions.pl
 var/ipfire/langs
+var/ipfire/ovpn/verify
