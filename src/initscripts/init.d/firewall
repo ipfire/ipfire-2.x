@@ -267,6 +267,16 @@ case "$1" in
 		/etc/sysconfig/firewall.local start
 	fi
 	
+	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT_a"
+
+	if [ "$DROPINPUT" == "on" ]; then
+		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT_b"
+	fi
+	if [ "$DROPFORWARD" == "on" ]; then
+		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
+	fi
+	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
+
 	#POLICY CHAIN
 	/sbin/iptables -N POLICYIN
 	/sbin/iptables -A INPUT -j POLICYIN
@@ -303,12 +313,14 @@ case "$1" in
  	if [ -x /etc/sysconfig/firewall.local ]; then
 		/etc/sysconfig/firewall.local stop
 	fi
+
 	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
+
 	if [ "$DROPINPUT" == "on" ]; then
-		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
+		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
 	fi
 	if [ "$DROPFORWARD" == "on" ]; then
-		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
+		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
 	fi
 	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
 	
