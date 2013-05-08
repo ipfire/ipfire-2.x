@@ -2516,10 +2516,10 @@ END
 			print"</td>";
 			#Get Protocol
 			my $prot;
-			if ($$hash{$key}[12]){			#target prot if manual
-				push (@protocols,$$hash{$key}[12]);
-			}elsif($$hash{$key}[8]){		#source prot if manual
+			if ($$hash{$key}[8] && $$hash{$key}[7] eq 'ON'){#source prot if manual
 				push (@protocols,$$hash{$key}[8]);
+			}elsif ($$hash{$key}[12]){			#target prot if manual
+				push (@protocols,$$hash{$key}[12]);
 			}elsif($$hash{$key}[14] eq 'cust_srv'){
 				&get_serviceports("service",$$hash{$key}[15]);
 			}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
