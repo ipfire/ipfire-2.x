@@ -39,6 +39,7 @@ rm -rf /opt/pakfire/db/*/meta-freefont
 
 #
 #Stop services
+/etc/init.d/ipsec stop
 
 #
 #Extract files
@@ -46,6 +47,9 @@ extract_files
 
 #
 #Start services
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	/etc/init.d/ipsec start
+fi
 
 #
 #Update Language cache
@@ -65,3 +69,4 @@ sync
 sendprofile
 #Don't report the exitcode last command
 exit 0
+
