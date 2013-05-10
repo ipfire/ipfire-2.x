@@ -2,13 +2,15 @@
 #usr/etc/rc.d/init.d
 #usr/etc/rc.d/init.d/smartd
 #usr/etc/smartd.conf
+#usr/etc/smartd_warning.sh
 usr/sbin/smartctl
 #usr/sbin/smartd
 usr/sbin/update-smart-drivedb
 #usr/share/doc/smartmontools
 #usr/share/doc/smartmontools/AUTHORS
-#usr/share/doc/smartmontools/CHANGELOG
 #usr/share/doc/smartmontools/COPYING
+#usr/share/doc/smartmontools/ChangeLog
+#usr/share/doc/smartmontools/ChangeLog-5.0-6.0
 #usr/share/doc/smartmontools/INSTALL
 #usr/share/doc/smartmontools/NEWS
 #usr/share/doc/smartmontools/README
