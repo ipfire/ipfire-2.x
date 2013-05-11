@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -2375,7 +2375,7 @@ ADV_ERROR:
     }
     &Header::openbox('100%', 'LEFT', $Lang::tr{'advanced server'});
     print <<END
-    <form method='post' enctype='multipart/form-data' disabled>
+    <form method='post' enctype='multipart/form-data'>
     <table width='100%' border=0>
     <tr>
 	<td colspan='4'><b>$Lang::tr{'dhcp-options'}</b></td>
@@ -3498,16 +3498,23 @@ if ($cgiparams{'TYPE'} eq 'host') {
 ###
 
 if ($cgiparams{'TYPE'} eq 'net') {
-		
-    if ($cgiparams{'DEST_PORT'} eq  $vpnsettings{'DDEST_PORT'}) {
+	if ($cgiparams{'DEST_PORT'} eq  $vpnsettings{'DDEST_PORT'}) {
 			$errormessage = $Lang::tr{'openvpn destination port used'};
 			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
       goto VPNCONF_ERROR;			
 		}
-    
-    if ($cgiparams{'DEST_PORT'} eq  '') {
+    #Bugfix 10357
+    foreach my $key (sort keys %confighash){
+		if ( ($confighash{$key}[22] eq $cgiparams{'DEST_PORT'} && $cgiparams{'NAME'} ne $confighash{$key}[1]) || ($confighash{$key}[29] eq $cgiparams{'DEST_PORT'} && $cgiparams{'NAME'} ne $confighash{$key}[1])){
 			$errormessage = $Lang::tr{'openvpn destination port used'};
+			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+      goto VPNCONF_ERROR;	
+		}
+	}
+    if ($cgiparams{'DEST_PORT'} eq  '') {
+			$errormessage = $Lang::tr{'invalid port'};
 			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
       goto VPNCONF_ERROR;			
@@ -3920,7 +3927,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 	}
 
-        # Save the config
+    # Save the config
 	my $key = $cgiparams{'KEY'};
 	
 	if (! $key) {

@@ -14,6 +14,11 @@
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< age second
+< age seconds
+< age shour
+< age sminute
+< age ssecond
 < attention
 < ccd add
 < ccd choose net
@@ -104,7 +109,11 @@
 < snort working
 < static routes
 < system information
+< updxlrtr sources
+< updxlrtr standard view
 < upload new ruleset
+< uptime
+< uptime load average
 < urlfilter file ext block
 < urlfilter mode block
 < visit us at
@@ -138,6 +147,11 @@
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< age second
+< age seconds
+< age shour
+< age sminute
+< age ssecond
 < Async logging enabled
 < attention
 < ccd add
@@ -244,6 +258,10 @@
 < Set time on boot
 < static routes
 < system information
+< updxlrtr sources
+< updxlrtr standard view
+< uptime
+< uptime load average
 < visit us at
 < vpn keyexchange
 ############################################################################
@@ -255,6 +273,11 @@
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< age second
+< age seconds
+< age shour
+< age sminute
+< age ssecond
 < attention
 < ccd add
 < ccd choose net
@@ -336,6 +359,10 @@
 < qos enter bandwidths
 < server restart
 < static routes
+< updxlrtr sources
+< updxlrtr standard view
+< uptime
+< uptime load average
 < visit us at
 < vpn keyexchange
 ############################################################################
@@ -348,6 +375,11 @@
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< age second
+< age seconds
+< age shour
+< age sminute
+< age ssecond
 < attention
 < ccd add
 < ccd choose net
@@ -433,6 +465,10 @@
 < qos enter bandwidths
 < server restart
 < static routes
+< updxlrtr sources
+< updxlrtr standard view
+< uptime
+< uptime load average
 < visit us at
 < vpn keyexchange
 < week-graph

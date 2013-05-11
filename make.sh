@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.13"							# Version number
-CORE="67"							# Core Level (Filename)
-PAKFIRE_CORE="67"						# Core Level (PAKFIRE)
+CORE="68"							# Core Level (Filename)
+PAKFIRE_CORE="68"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -664,6 +664,9 @@ buildipfire() {
   ipfiremake faad2
   ipfiremake ffmpeg
   ipfiremake vdr
+  ipfiremake vdr_streamdev
+  ipfiremake vdr_vnsiserver3
+  ipfiremake vdr_epgsearch
   ipfiremake w_scan
   ipfiremake icecast
   ipfiremake icegenerator
@@ -697,6 +700,7 @@ buildipfire() {
   ipfiremake mediatomb
   ipfiremake sslh
   ipfiremake perl-gettext
+  ipfiremake perl-Sort-Naturally
   ipfiremake vdradmin
   ipfiremake miau
   ipfiremake netsnmpd
@@ -760,6 +764,7 @@ buildipfire() {
   ipfiremake avahi
   ipfiremake nginx
   ipfiremake sendEmail
+  ipfiremake sysbench
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild

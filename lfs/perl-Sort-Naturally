@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2013  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -18,35 +18,61 @@
 #                                                                             #
 ###############################################################################
 
+
 ###############################################################################
 # Definitions
 ###############################################################################
 
 include Config
 
-VER        = plugin
+VER        = 1.03
 
-THISAPP    = vdr_softdevice-$(VER)
+THISAPP    = Sort-Naturally-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-PROG       = vdr_softdevice
-PAK_VER    = 5
-
-DEPS       = "vdr ffmpeg sdl alsa dfb++"
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
 
-install : 
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-check : 
+$(DL_FILE)_MD5 = fef2e36d1b1ea23ee79ec68b5872453f
 
-download :
+install : $(TARGET)
 
-md5 :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-dist: 
-	$(PAK)
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
 
 ###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && perl Makefile.PL
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

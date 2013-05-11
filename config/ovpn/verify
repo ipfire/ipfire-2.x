@@ -1,12 +1,58 @@
-#!/bin/sh
-if [ $1 -eq 0 ]; then
-    name2=`echo $2`
-    name3=${name2##*/}
-    name4=${name3##*CN=}
-    clientdisabled=`/bin/grep -iwc off,.*,$name4 /var/ipfire/ovpn/ovpnconfig`
-    if [ "$clientdisabled" = "1" ]; then
-    	exit 1
-    fi
-    exit 0
-fi
-exit 0
+#!/usr/bin/perl
+############################################################################
+#                                                                          #
+# This file is part of the IPFire Firewall.                                #
+#                                                                          #
+# IPFire is free software; you can redistribute it and/or modify           #
+# it under the terms of the GNU General Public License as published by     #
+# the Free Software Foundation; either version 2 of the License, or        #
+# (at your option) any later version.                                      #
+#                                                                          #
+# IPFire is distributed in the hope that it will be useful,                #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+# GNU General Public License for more details.                             #
+#                                                                          #
+# You should have received a copy of the GNU General Public License        #
+# along with IPFire; if not, write to the Free Software                    #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
+#                                                                          #
+# Copyright (C) 2013 IPFire Team <info@ipfire.org>.                        #
+#                                                                          #
+############################################################################
+
+require '/var/ipfire/general-functions.pl';
+
+my $DEPTH = $ARGV[0];
+my $CN    = $ARGV[1];
+
+# Exit immediately for every certificate depth other than 0.
+exit 0 unless ($DEPTH eq "0");
+
+# Strip the CN from the X509 identifier.
+$CN =~ /\/CN=(.*)$/i;
+$CN = $1;
+
+my %confighash = ();
+if (-f "${General::swroot}/ovpn/ovpnconfig"){
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+	foreach my $key (keys %confighash) {
+		my $cn = $confighash{$key}[2];
+
+		# Skip disabled connections.
+		next unless ($confighash{$key}[0] eq "on");
+
+		# Skip non-roadwarrior connections.
+		next unless ($confighash{$key}[3] eq "host");
+
+		# Search for a matching CN.
+		exit 0 if ($cn eq $CN);
+
+		# Compatibility code for incorrectly saved CNs.
+		$cn =~ s/\ /_/;
+		exit 0 if ($cn eq $CN);
+	}
+}
+
+# Return an error if ovpnconfig could not be found.
+exit 1;

@@ -8,10 +8,10 @@ usr/share/fonts/DejaVuSans.ttf
 #usr/share/fonts/DejaVuSansCondensed-BoldOblique.ttf
 #usr/share/fonts/DejaVuSansCondensed-Oblique.ttf
 #usr/share/fonts/DejaVuSansCondensed.ttf
-#usr/share/fonts/DejaVuSansMono-Bold.ttf
-#usr/share/fonts/DejaVuSansMono-BoldOblique.ttf
-#usr/share/fonts/DejaVuSansMono-Oblique.ttf
-#usr/share/fonts/DejaVuSansMono.ttf
+usr/share/fonts/DejaVuSansMono-Bold.ttf
+usr/share/fonts/DejaVuSansMono-BoldOblique.ttf
+usr/share/fonts/DejaVuSansMono-Oblique.ttf
+usr/share/fonts/DejaVuSansMono.ttf
 #usr/share/fonts/DejaVuSerif-Bold.ttf
 #usr/share/fonts/DejaVuSerif-BoldItalic.ttf
 #usr/share/fonts/DejaVuSerif-Italic.ttf

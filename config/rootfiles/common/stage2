@@ -71,6 +71,7 @@ usr/lib/libstdc++.so.6
 #usr/local/bin/archive.files
 usr/local/bin/backupiso
 usr/local/bin/connscheduler
+usr/local/bin/consort.sh
 usr/local/bin/dialctrl.pl
 usr/local/bin/hddshutdown
 usr/local/bin/httpscert

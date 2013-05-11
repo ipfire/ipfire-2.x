@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,39 +24,44 @@
 
 include Config
 
-VER        = 1.6.0
+VER        = 2.0.1
+VDRPLUGVER = 2.0.0
 THISAPP    = vdr-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FILE1   = vdr-streamdev-20080325-http-0_4.tgz
-DL_FILE2   = vdr-softdevice-0.5.0.tgz
-DL_FILE3   = vidix-1.0.0.tar.bz2
-DL_FILE4   = vdr-epgsearch-0.9.24.tgz
 
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr
-PAK_VER    = 5
+PAK_VER    = 6
 
-DEPS       = "freefont"
+DEPS       = "vdr_streamdev"
+
+MAKE_OPTIONS = \
+	PREFIX=/usr \
+	BINDIR=/usr/bin \
+	CACHEDIR=/var/cache/vdr \
+	CONFDIR=/etc/vdr \
+	INCDIR=/usr/include \
+	LIBDIR=/usr/lib/vdr \
+	LOCDIR=/usr/share/locale \
+	MANDIR=/usr/share/man \
+	RESDIR=/usr/share/vdr \
+	RUNDIR=/var/run \
+	VARDIR=/var \
+	VIDEODIR=/var/video \
+	CFLAGS="$(CFLAGS)" \
+	CXXFLAGS="$(CXXFLAGS)"
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) $(DL_FILE1) $(DL_FILE2) $(DL_FILE3) $(DL_FILE4)
+objects = $(DL_FILE)
 
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-$(DL_FILE1) = $(DL_FROM)/$(DL_FILE1)
-$(DL_FILE2) = $(DL_FROM)/$(DL_FILE2)
-$(DL_FILE3) = $(DL_FROM)/$(DL_FILE3)
-$(DL_FILE4) = $(DL_FROM)/$(DL_FILE4)
+$(DL_FILE)  = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 76f4ebe6525a35e33313d27a3f8e80c0
-$(DL_FILE1)_MD5 = 874026c643601692077c42ee7a70b720
-$(DL_FILE2)_MD5 = e106876497db478f3b9ba4da0e5532f8
-$(DL_FILE3)_MD5 = 3471d1f385871f7e00e6e178ccdfff0b
-$(DL_FILE4)_MD5 = 4f0b1d7bdc6f24478f2670769547d7db
+$(DL_FILE)_MD5  = e1b7a76c57c96300829dccd39eb20e7d
 
 install : $(TARGET)
 
@@ -90,42 +95,44 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 
-	# Install obsolete V4L1 videodev header.
-	cp $(DIR_SRC)/config/include/obsolete_videodev.h /usr/include/linux/videodev.h
+	# Compile main package.
+	cd $(DIR_APP) && make $(MAKE_OPTIONS) $(MAKETUNING) vdr include-dir
 
-	# Accept also DVB_API_VERSION 5
-	cd $(DIR_APP) && sed -i -e "s|DVB_API_VERSION != 3|& \&\& DVB_API_VERSION != 5|g" dvbdevice.h
-	
-	cd $(DIR_APP)/PLUGINS/src && tar zxf $(DIR_DL)/$(DL_FILE1)
-	cd $(DIR_APP)/PLUGINS/src && ln -s streamdev-0.3.3-20080325-http streamdev
-	cd $(DIR_APP)/PLUGINS/src && tar zxf $(DIR_DL)/$(DL_FILE2)
-	cd $(DIR_APP)/PLUGINS/src && ln -s softdevice-0.5.0 softdevice
-	cd $(DIR_APP)/PLUGINS/src/softdevice && ./configure
-	cd $(DIR_APP)/PLUGINS/src && tar jxf $(DIR_DL)/$(DL_FILE3)
-	cd $(DIR_APP)/PLUGINS/src && ln -s vidix-1.0.0 vidix
-	cd $(DIR_APP)/PLUGINS/src/vidix && ./configure
-	cd $(DIR_APP)/PLUGINS/src && tar xvf $(DIR_DL)/$(DL_FILE4)
-	cd $(DIR_APP)/PLUGINS/src && ln -s epgsearch-0.9.24 epgsearch
-	cd $(DIR_APP) && patch -Np1 -i PLUGINS/src/epgsearch/patches/MainMenuHooks-v1_0.patch 
-	cd $(DIR_APP)/PLUGINS/src/epgsearch && sed -i '/include/a #include <langinfo.h>/' \
-		epgsearch.c
-	cd $(DIR_APP)/PLUGINS/src/epgsearch && patch -Np1 < $(DIR_SRC)/src/patches/vdr-plugin-epgsearch-gcc44.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vdr-1.6.0-gcc44-fixes.patch
-	cd $(DIR_APP) && make VIDEODIR=/var/video plugins $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make VIDEODIR=/var/video vdr $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make DFB_SUPPORT=1  FB_SUPPORT=1  VIDIX_SUPPORT=1  $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make PREFIX=. DESTDIR=/opt/vdr/ install
-	-mkdir -p /opt/vdr/etc
-	cd $(DIR_APP) && install *.conf /opt/vdr/etc/
-	cp -Rvf $(DIR_SRC)/config/vdr /opt
+	# Compile bundled plugins.
+	#cd $(DIR_APP) && for plugin in ...; do \
+	#	make $(MAKETUNING) -C PLUGINS/src/$$plugin VDRDIR=$(DIR_APP) \
+	#		CFLAGS="$(CFLAGS) -I$(DIR_APP)/include" \
+	#		CXXFLAGS="$(CXXFLAGS) -I$(DIR_APP)/include" \
+	#		PLGCFG=$(DIR_APP)/plugins.mk all || exit 1; \
+	#done
+
+	# Install main package.
+	cd $(DIR_APP) && make install-bin install-dirs install-includes $(MAKE_OPTIONS)
+	mv -v /usr/bin/vdr /usr/sbin/vdr
+
+	sed -e "s/VDR_PLUGIN_VERSION/$(VDRPLUGVER)/" \
+		< $(DIR_SRC)/config/vdr/runvdr > /usr/sbin/runvdr
+	chmod 755 /usr/sbin/runvdr
+
+	# Install configuration.
+	mkdir -pv /etc/vdr
+	mkdir -pv /etc/sysconfig/vdr-plugins.d
+	cd $(DIR_APP) && install -m 644 $(DIR_SRC)/config/vdr/vdr.sysconfig \
+		/etc/sysconfig/vdr
+	cd $(DIR_APP) && install -m 644 *.conf /etc/vdr
+
+	# Link development files.
+	mkdir -pv /usr/lib/vdr
+	cd $(DIR_APP) && cp -vf Make.global /usr/lib/vdr
+	ln -svf ../../include/vdr/config.h /usr/lib/vdr/config.h
+	ln -svf ../../include/vdr/device.h /usr/lib/vdr/device.h
+
+	# Install start links and backup include file.
 	ln -sf ../init.d/vdr /etc/rc.d/rc3.d/S60vdr
 	ln -sf ../init.d/vdr /etc/rc.d/rc0.d/K40vdr
 	ln -sf ../init.d/vdr /etc/rc.d/rc6.d/K40vdr
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/vdr \
-	                 /var/ipfire/backup/addons/includes/vdr
-
-	# Remove obsolete V4L1 videodev header.
-	rm -f /usr/include/linux/videodev.h
+		/var/ipfire/backup/addons/includes/vdr
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

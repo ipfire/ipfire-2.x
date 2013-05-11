@@ -1,0 +1,106 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 0.6.1
+GIT_VER    = 10db11ac
+THISAPP    = vdr-streamdev-$(GIT_VER)
+DL_FILE    = $(THISAPP).tar.xz
+
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = vdr_streamdev
+PAK_VER    = 1
+
+DEPS       = "vdr"
+
+VDRPLUGVER = 2.0.0
+
+EXTRA_FLAGS= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
+CFLAGS    += $(EXTRA_FLAGS)
+CXXFLAGS  += $(EXTRA_FLAGS)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE)
+
+$(DL_FILE)  = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5  = e5011fd1a4b0624b192911f37c6040e3
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download : $(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vdr-streamdev_recordings-64.patch
+
+	cd $(DIR_APP) && sed -i 's@$(VDRDIR)/device.h@/usr/include/vdr/device.h@' Makefile
+	cd $(DIR_APP) && make $(MAKE_TUNING) LIBDIR=. VDRDIR=/usr/lib/vdr \
+		CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" \
+		LOCALEDIR=$$(pwd)/locale all
+
+	-mkdir -pv /etc/vdr/plugins/streamdev-server /usr/lib/vdr/bin
+	cd $(DIR_APP) && install -m 755 server/libvdr-streamdev-server.so \
+		/usr/lib/vdr/libvdr-streamdev-server.so.$(VDRPLUGVER)
+	ln -svf ../../svdrphosts.conf \
+		/etc/vdr/plugins/streamdev-server/streamdevhosts.conf
+	cd $(DIR_APP) && install -m 755 streamdev-server/externremux.sh \
+		/usr/lib/vdr/bin/externremux.sh
+	install -m 644 $(DIR_SRC)/config/vdr/plugins.d/streamdev-server.conf \
+		/etc/sysconfig/vdr-plugins.d
+
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)
