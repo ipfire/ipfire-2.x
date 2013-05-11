@@ -5,8 +5,9 @@ srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
-srv/web/ipfire/html/themes/ipfire/include/style.css
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
+srv/web/ipfire/html/themes/ipfire/include/style.css
+srv/web/ipfire/html/themes/maniac/include/functions.pl
 srv/web/ipfire/html/themes/maniac/include/style.css
 srv/web/ipfire/html/include/jquery-1.9.1.min.js
 usr/bin/locale
