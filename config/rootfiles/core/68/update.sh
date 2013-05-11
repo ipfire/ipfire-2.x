@@ -45,6 +45,9 @@ rm -rf /opt/pakfire/db/*/meta-freefont
 #Extract files
 extract_files
 
+# Regenerate ipsec configuration files.
+/srv/web/ipfire/cgi-bin/vpnmain.cgi
+
 #
 #Start services
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
