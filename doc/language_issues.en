@@ -466,8 +466,12 @@ WARNING: translation string unused: updates is old1
 WARNING: translation string unused: updates is old2
 WARNING: translation string unused: updxlrtr children
 WARNING: translation string unused: updxlrtr invalid num of children
-WARNING: translation string unused: updxlrtr to delete
+WARNING: translation string unused: updxlrtr sources
+WARNING: translation string unused: updxlrtr standard view
 WARNING: translation string unused: updxlrtr unknown
+WARNING: translation string unused: updxlrtr update information
+WARNING: translation string unused: updxlrtr update notification
+WARNING: translation string unused: updxlrtr used by
 WARNING: translation string unused: upload fcdsl.o
 WARNING: translation string unused: upload file
 WARNING: translation string unused: upload static key

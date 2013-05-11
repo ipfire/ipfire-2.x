@@ -520,15 +520,4 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
-WARNING: untranslated string: updxlrtr cache overview
-WARNING: untranslated string: updxlrtr cache settings
-WARNING: untranslated string: updxlrtr current view
-WARNING: untranslated string: updxlrtr no pending downloads attime
-WARNING: untranslated string: updxlrtr notice dlrate
-WARNING: untranslated string: updxlrtr overview
-WARNING: untranslated string: updxlrtr settings
-WARNING: untranslated string: updxlrtr sources
-WARNING: untranslated string: updxlrtr standard view
-WARNING: untranslated string: updxlrtr total used
-WARNING: untranslated string: updxlrtr used by
 WARNING: untranslated string: uptime load average

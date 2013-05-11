@@ -619,17 +619,6 @@ WARNING: untranslated string: routing table
 WARNING: untranslated string: server restart
 WARNING: untranslated string: static routes
 WARNING: untranslated string: system information
-WARNING: untranslated string: updxlrtr cache overview
-WARNING: untranslated string: updxlrtr cache settings
-WARNING: untranslated string: updxlrtr current view
-WARNING: untranslated string: updxlrtr no pending downloads attime
-WARNING: untranslated string: updxlrtr notice dlrate
-WARNING: untranslated string: updxlrtr overview
-WARNING: untranslated string: updxlrtr settings
-WARNING: untranslated string: updxlrtr sources
-WARNING: untranslated string: updxlrtr standard view
-WARNING: untranslated string: updxlrtr total used
-WARNING: untranslated string: updxlrtr used by
 WARNING: untranslated string: uptime load average
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange

@@ -109,16 +109,8 @@
 < snort working
 < static routes
 < system information
-< updxlrtr current view
-< updxlrtr no pending downloads attime
-< updxlrtr notice dlrate
-< updxlrtr overview
-< updxlrtr settings
 < updxlrtr sources
 < updxlrtr standard view
-< updxlrtr to delete
-< updxlrtr total used
-< updxlrtr used by
 < upload new ruleset
 < uptime
 < uptime load average
@@ -266,16 +258,8 @@
 < Set time on boot
 < static routes
 < system information
-< updxlrtr current view
-< updxlrtr no pending downloads attime
-< updxlrtr notice dlrate
-< updxlrtr overview
-< updxlrtr settings
 < updxlrtr sources
 < updxlrtr standard view
-< updxlrtr to delete
-< updxlrtr total used
-< updxlrtr used by
 < uptime
 < uptime load average
 < visit us at
@@ -375,16 +359,8 @@
 < qos enter bandwidths
 < server restart
 < static routes
-< updxlrtr current view
-< updxlrtr no pending downloads attime
-< updxlrtr notice dlrate
-< updxlrtr overview
-< updxlrtr settings
 < updxlrtr sources
 < updxlrtr standard view
-< updxlrtr to delete
-< updxlrtr total used
-< updxlrtr used by
 < uptime
 < uptime load average
 < visit us at
@@ -489,16 +465,8 @@
 < qos enter bandwidths
 < server restart
 < static routes
-< updxlrtr current view
-< updxlrtr no pending downloads attime
-< updxlrtr notice dlrate
-< updxlrtr overview
-< updxlrtr settings
 < updxlrtr sources
 < updxlrtr standard view
-< updxlrtr to delete
-< updxlrtr total used
-< updxlrtr used by
 < uptime
 < uptime load average
 < visit us at
