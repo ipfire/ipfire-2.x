@@ -351,7 +351,8 @@ END
     &showsubsection($menu);
     &showsubsubsection($menu);
 
-	print <<END			
+	print <<END
+				</div>
 			</div>
 			<br class="clear" />	
 			<div id="footer" class="fixed">
