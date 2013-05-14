@@ -561,7 +561,6 @@ WARNING: untranslated string: openvpn prefix openvpn subnet
 WARNING: untranslated string: openvpn prefix remote subnet
 WARNING: untranslated string: openvpn subnet is used
 WARNING: untranslated string: other
-WARNING: untranslated string: our donors
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: outgoing traffic in bytes per second
 WARNING: untranslated string: ovpn mtu-disc

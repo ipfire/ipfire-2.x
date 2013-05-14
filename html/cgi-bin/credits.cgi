@@ -45,12 +45,6 @@ print <<END
 		<strong>$Lang::tr{'donation'}</strong>
 	</a>
 </div>
-<br><br><hr><br>
-<p style="text-align: center;">
-	$Lang::tr{'our donors'}:
-
-	<a href="http://www.irrsinn.de" target="_blank">irrsinn.de gmbh</a>
-</p>
 END
 ;
 &Header::closebox();

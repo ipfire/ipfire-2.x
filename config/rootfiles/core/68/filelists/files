@@ -2,6 +2,7 @@ etc/system-release
 etc/issue
 etc/modprobe.d/blacklist
 srv/web/ipfire/cgi-bin/connections.cgi
+srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
