@@ -578,7 +578,6 @@ WARNING: untranslated string: openvpn prefix openvpn subnet
 WARNING: untranslated string: openvpn prefix remote subnet
 WARNING: untranslated string: openvpn subnet is used
 WARNING: untranslated string: other
-WARNING: untranslated string: our donors
 WARNING: untranslated string: outgoing firewall add ip group
 WARNING: untranslated string: outgoing firewall add mac group
 WARNING: untranslated string: outgoing firewall edit ip group

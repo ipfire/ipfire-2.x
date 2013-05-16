@@ -580,7 +580,6 @@ WARNING: untranslated string: openvpn prefix openvpn subnet
 WARNING: untranslated string: openvpn prefix remote subnet
 WARNING: untranslated string: openvpn subnet is used
 WARNING: untranslated string: other
-WARNING: untranslated string: our donors
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: ovpn mtu-disc
 WARNING: untranslated string: ovpn mtu-disc and mtu not 1500
