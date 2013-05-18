@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/epgsearch-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr_epgsearch
-PAK_VER    = 6
+PAK_VER    = 7
 
-DEPS       = "vdr"
+DEPS       = ""
 
 VDRPLUGVER = 2.0.0
 

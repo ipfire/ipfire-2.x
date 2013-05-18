@@ -33,9 +33,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr_streamdev
-PAK_VER    = 1
+PAK_VER    = 2
 
-DEPS       = "vdr"
+DEPS       = ""
 
 VDRPLUGVER = 2.0.0
 
