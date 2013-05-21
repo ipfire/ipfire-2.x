@@ -102,7 +102,7 @@ char *tr_tr[] = {
 /* TR_CONGRATULATIONS */
 "Tebrikler!",
 /* TR_CONGRATULATIONS_LONG */
-"%s başarıyla yüklendi. Şimdi bilgisayarınızdaki cdyi çıkartın. Kurulum ISDN, ağ kartları, sistem parolalarını yapılandırabileceğiniz programı çalıştıracaktır. Kurulum tamamlandıktan sonra bir internet tarayıcısı açıp adres satırına https://%s:444 (ya da %s sistem adınız) yazıp çevirmeli ağ (gerekliyse) ve uzaktan erişim yapılandırmalarınızı yapabilirsiniz.",
+"%s başarıyla yüklendi. Şimdi bilgisayarınızdaki cdyi çıkartın. Kurulum; ISDN, ağ kartları, sistem parolalarını yapılandırabileceğiniz programı çalıştıracaktır. Kurulum tamamlandıktan sonra bir internet tarayıcısı açıp adres satırına https://%s:444 (ya da %s sistem adınız) yazıp çevirmeli ağ (gerekliyse) ve uzaktan erişim yapılandırmalarınızı yapabilirsiniz.",
 /* TR_CONTINUE_NO_SWAP */
 "Sabit diskiniz çok küçük, ancak küçük bir takas alanı ile devam edebilirsiniz. (Dikkatli kullanın).",
 /* TR_CURRENT_CONFIG */
@@ -132,7 +132,7 @@ char *tr_tr[] = {
 /* TR_DNS_AND_GATEWAY_SETTINGS */
 "DNS ve Ağ Geçidi ayarları",
 /* TR_DNS_AND_GATEWAY_SETTINGS_LONG */
-"DNS ve Ağ Geçidi bilgilerini girin. Bu ayaralar KIRMIZI ara birim üzerinde sadece statik IP (eğer DNS ayarlarınız DHCP ise) ile kullanılır.",
+"DNS ve ağ geçidi bilgilerini girin. Bu ayarlar sadece KIRMIZI arabirim adres ayarlarında Sabit seçenği seçilmişse kullanılır. Eğer KIRMIZI arabirim adres ayarlarında DHCP seçeneğini seçtiyseniz bu alanı boş bırakabilirsiniz.",
 /* TR_DNS_GATEWAY_WITH_GREEN */
 "Yapılandırmanız KIRMIZI ara birim için ethernet adaptörünü kullanamaz. DNS ve Çevirmeli ağ kullanıcıları için ağ geçidi bilgisi çevirmeli ağda otomatik olarak yapılandırılır.",
 /* TR_DOMAINNAME */
@@ -174,7 +174,7 @@ char *tr_tr[] = {
 /* TR_ENTER_NETWORK_DRIVER */
 "Otomatik olarak bir ağ kartı algılanamadı. Ağ kartı için sürücü ve isteğe bağlı olan parametreleri girin.",
 /* TR_ENTER_ROOT_PASSWORD */
-"'root' kullanıcı parolasını girin. Komut satırı erişimi için bu kullanıcı ile oturum açın.",
+"IPFire 'root' kullanıcı parolasını girin. Komut satırı erişimi için bu kullanıcı ile oturum açın.",
 /* TR_ENTER_SETUP_PASSWORD */
 "KALDIRILACAK",
 /* TR_ENTER_THE_IP_ADDRESS_INFORMATION */
@@ -200,7 +200,7 @@ char *tr_tr[] = {
 /* TR_GERMAN_1TR6 */
 "Alman 1TR6",
 /* TR_HELPLINE */
-"              <Tab>/<Alt-Tab> öğeler arasında   |  <Space> seçim",
+"              <Tab>/<Alt-Tab> öğeler arasında geçiş   |  <Space> seçim",
 /* TR_HOSTNAME */
 "Ana bilgisayar adı",
 /* TR_HOSTNAME_CANNOT_BE_EMPTY */
@@ -228,7 +228,7 @@ char *tr_tr[] = {
 /* TR_INTERFACE_FAILED_TO_COME_UP */
 "Ara birim yükseltmesi başarısız oldu.",
 /* TR_INVALID_FIELDS */
-"Aşağıdaki alanlar geçersizdir:\n\n",
+"Aşağıdaki alan geçersizdir:\n\n",
 /* TR_INVALID_IO */
 "Girilen GÇ bağlantı noktası detayları geçersiz. ",
 /* TR_INVALID_IRQ */
@@ -378,9 +378,9 @@ char *tr_tr[] = {
 /* TR_PROTOCOL_COUNTRY */
 "Kural/Ülke",
 /* TR_PULLING_NETWORK_UP */
-"Ağ alınıyor...",
+"Ağ başlatılıyor...",
 /* TR_PUSHING_NETWORK_DOWN */
-"Ağ bırakılıyor...",
+"Ağ duruduruluyor...",
 /* TR_PUSHING_NON_LOCAL_NETWORK_DOWN */
 "Düşmeyen ağ bitirliyor...",
 /* TR_QUIT */
@@ -546,7 +546,7 @@ char *tr_tr[] = {
 /* TR_WARNING */
 "UYARI",
 /* TR_WARNING_LONG */
-"Bu IP adresini değiştiriseniz %s makinesi ile uzak oturum bağlantısı kopar ve yeniden IP girmeniz gerekir.Bu riskli bir işlemdir. Bu işlem sırasında bir şeyler ters giderse düzeltmek için makineye fiziksel erişimizin varsa denemelisiniz",
+"Bu IP adresini değiştiriseniz %s makinesi ile uzak oturum bağlantısı kopar ve yeniden IP girmeniz gerekir. Bu riskli bir işlemdir. Bu işlem sırasında bir şeyler ters giderse düzeltmek için makineye fiziksel erişimizin varsa denemelisiniz.",
 /* TR_WELCOME */
 "%s kurulum programına hoş geldiniz. Sonraki ekranların herhangi birinde İptal seçeneğini seçtiğinizde bilgisayar yeniden başlatılacaktır.",
 /* TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER */
