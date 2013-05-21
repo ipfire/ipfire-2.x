@@ -1,2 +1,4 @@
 etc/system-release
 etc/issue
+var/ipfire/langs/list
+var/ipfire/langs/tr.pl
