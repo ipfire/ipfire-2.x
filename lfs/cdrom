@@ -91,11 +91,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifneq "$(MACHINE_TYPE)" "arm"
 	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
 	cp /install/images/initrd                   /install/cdrom/boot/isolinux/instroot
-	cp $(DIR_SRC)/config/syslinux/syslinux.cfg  /install/cdrom/boot/isolinux/isolinux.cfg
-	cp $(DIR_SRC)/config/syslinux/boot.msg      /install/cdrom/boot/isolinux/boot.msg
-	cp $(DIR_SRC)/config/syslinux/splash.lss    /install/cdrom/boot/isolinux/splash.lss
+	cp $(DIR_SRC)/config/syslinux/boot.png      /install/cdrom/boot/isolinux/boot.png
 	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
 	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin
+	cp /usr/share/hwdata/pci.ids                /install/cdrom/boot/isolinux/pci.ids
+	cp -vf /usr/share/syslinux/*.c32            /install/cdrom/boot/isolinux/
+	sed -e "s/VERSION/$(VERSION) - Core $(CORE)/g" \
+		$(DIR_SRC)/config/syslinux/syslinux.cfg \
+		> /install/cdrom/boot/isolinux/isolinux.cfg
 endif
 	cd /install/cdrom && find -type f ! -name md5sum.txt | grep -v "./boot" | \
 						xargs md5sum > md5sum.txt
