@@ -90,7 +90,7 @@ char *tr_tr[] = {
 /* TR_CHOOSE_THE_ISDN_PROTOCOL */
 "İstediğiniz ISDN iletişim kuralını seçin.",
 /* TR_CONFIGURE_DHCP */
-"Ayar bilgilerini girerek DHCP sunucusu yapılandırın.",
+"DHCP ayar bilgilerini girerek DHCP sunucusunu yapılandırın.",
 /* TR_CONFIGURE_NETWORKING */
 "Ağ yapılandırması",
 /* TR_CONFIGURE_NETWORKING_LONG */
@@ -546,7 +546,7 @@ char *tr_tr[] = {
 /* TR_WARNING */
 "UYARI",
 /* TR_WARNING_LONG */
-"Bu IP adresini değiştiriseniz %s makinesi ile uzak oturum bağlantısı kopar ve yeniden IP girmeniz gerekir. Bu riskli bir işlemdir. Bu işlem sırasında bir şeyler ters giderse düzeltmek için makineye fiziksel erişimizin varsa denemelisiniz.",
+"Bu IP adresini değiştiriseniz %s makinesi ile uzak oturum bağlantısı kopar ve yeniden IP adresi girmeniz gerekir. Bu riskli bir işlemdir. Bu işlem sırasında bir şeyler ters giderse düzeltmek için makineye fiziksel erişiminiz varsa denemelisiniz.",
 /* TR_WELCOME */
 "%s kurulum programına hoş geldiniz. Sonraki ekranların herhangi birinde İptal seçeneğini seçtiğinizde bilgisayar yeniden başlatılacaktır.",
 /* TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER */

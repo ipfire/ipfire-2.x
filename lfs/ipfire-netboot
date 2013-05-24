@@ -24,11 +24,12 @@
 
 include Config
 
-VER        = 5.01
+VER        = v1.0
+PXE_VER    = c4bce43
 
-THISAPP    = syslinux-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
-DL_FROM    = $(URL_IPFIRE)
+THISAPP    = ipfire-netboot-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = http://source.ipfire.org/releases/ipfire-netboot/
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586
@@ -37,11 +38,13 @@ SUP_ARCH   = i586
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) ipxe-$(PXE_VER).tar.xz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+ipxe-$(PXE_VER).tar.xz = $(URL_IPFIRE)/ipxe-$(PXE_VER).tar.xz
 
-$(DL_FILE)_MD5 = 57489185863fd74be4e724ef9a2c422f
+$(DL_FILE)_MD5 = 257773a52ed5dda3053eb049bee38a60
+ipxe-$(PXE_VER).tar.xz_MD5 = 8aeb94330eb94f3f1e6170e23db0ba27
 
 install : $(TARGET)
 
@@ -71,6 +74,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make install
+
+	# Extract iPXE source
+	cd $(DIR_APP) && tar axf $(DIR_DL)/ipxe-$(PXE_VER).tar.xz
+	cd $(DIR_APP) && rm -rfv ipxe && ln -s ipxe-$(PXE_VER) ipxe
+	cd $(DIR_APP) && make bin/ipxe.lkrn
+
+	# Installation
+	-mkdir -pv /usr/share/ipfire-netboot
+	cd $(DIR_APP) && install -m 644 bin/ipxe.lkrn /usr/share/ipfire-netboot
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
