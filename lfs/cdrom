@@ -93,6 +93,7 @@ ifneq "$(MACHINE_TYPE)" "arm"
 	cp /install/images/initrd                   /install/cdrom/boot/isolinux/instroot
 	cp $(DIR_SRC)/config/syslinux/boot.png      /install/cdrom/boot/isolinux/boot.png
 	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
+	cp /usr/share/ipfire-netboot/ipxe.lkrn      /install/cdrom/boot/isolinux/netboot
 	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin
 	cp /usr/share/hwdata/pci.ids                /install/cdrom/boot/isolinux/pci.ids
 	cp -vf /usr/share/syslinux/*.c32            /install/cdrom/boot/isolinux/
