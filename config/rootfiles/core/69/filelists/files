@@ -3,3 +3,4 @@ etc/issue
 etc/rc.d/init.d/console
 var/ipfire/langs/list
 var/ipfire/langs/tr.pl
+var/ipfire/ovpn/verify
