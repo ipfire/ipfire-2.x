@@ -404,7 +404,6 @@ buildipfire() {
     ipfiremake r8101			KCFG="-pae"
     ipfiremake e1000e			KCFG="-pae"
     ipfiremake igb			KCFG="-pae"
-    ipfiremake ax88179			KCFG="-pae"
 
     # x86 kernel build
     ipfiremake linux			KCFG=""
@@ -418,7 +417,6 @@ buildipfire() {
     ipfiremake r8101			KCFG=""
     ipfiremake e1000e			KCFG=""
     ipfiremake igb			KCFG=""
-    ipfiremake ax88179			KCFG=""
 
   else
     # arm-rpi (Raspberry Pi) kernel build
@@ -446,7 +444,6 @@ buildipfire() {
     ipfiremake r8101			KCFG="-kirkwood"
     ipfiremake e1000e			KCFG="-kirkwood"
     ipfiremake igb			KCFG="-kirkwood"
-    ipfiremake ax88179			KCFG="-kirkwood"
 
   fi
   ipfiremake pkg-config
