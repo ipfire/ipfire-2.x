@@ -1,43 +1,23 @@
 #!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/pound
+#
+# Description : pound reverse-proxy
+#
+########################################################################
 
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-PATH=/bin:/usr/bin:/sbin:/usr/sbin
-
-test -x /usr/sbin/pound || exit 0
-
-# For configuration of the init script use the file
-# /etc/sysconfig/pound, do not edit this init script.
-
-# Set run_pound to 1 to start pound or 0 to disable it.
-run_pound=0
-
-# Specify additional pound options here (see manpage).
-pound_options=""
-
-# Specify module to load
-pound_module="none"
-
-[ -e /etc/sysconfig/pound ] && . /etc/sysconfig/pound
-
-DAEMON=/usr/sbin/pound
-
 case "${1}" in
 	start)
-		boot_mesg "Starting pound ..."
-    		if [ $run_pound = 1 ]
-    		then
-    			# do we have to load a module?
-			[ ${pound_module:-none} != "none" ] && /sbin/modprobe $pound_module
-
-			loadproc $DAEMON $pound_options
-    		fi
+		boot_mesg "Starting pound reverse-proxy..."
+		loadproc /usr/sbin/pound
 		;;
 
 	stop)
-		boot_mesg "Stopping pound ..."
-		killproc $DAEMON
+		boot_mesg "Stopping pound reverse-proxy..."
+		killproc /usr/sbin/pound
 		;;
 
 	restart)
@@ -47,7 +27,7 @@ case "${1}" in
 		;;
 
 	status)
-		statusproc $DAEMON
+		statusproc /usr/sbin/pound
 		;;
 
 	*)
@@ -56,3 +36,4 @@ case "${1}" in
 		;;
 esac
 
+# End $rc_base/init.d/pound

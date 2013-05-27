@@ -1,8 +1,10 @@
-#root/.rnd
+etc/rc.d/init.d/pound
+etc/rc.d/rc0.d/K40pound
+etc/rc.d/rc3.d/S60pound
+etc/rc.d/rc6.d/K40pound
 #etc/pound.cfg
 usr/sbin/pound
 usr/sbin/poundctl
 #usr/share/man/man8/pound.8
 #usr/share/man/man8/poundctl.8
 var/ipfire/backup/addons/includes/pound
-etc/rc.d/init.d/pound
