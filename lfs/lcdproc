@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.5.5
+VER        = 0.5.6
 
 THISAPP    = lcdproc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c92d4529d36eeec6d9d6fd0a4aa3ec82
+$(DL_FILE)_MD5 = df4f5c2c7285eaf6979b9c7768b4877f
 
 install : $(TARGET)
 
@@ -77,9 +77,22 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --enable-libusb --enable-drivers=all --enable-permissive-menu-goto --enable-lcdproc-menus --enable-stat-nfs --enable-stat-smbfs --with-lcdport=13666 --enable-seamless-hbars --prefix=/usr --sysconfdir=/etc
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/lcdproc-0.5.6-menuitem.patch
+	cd $(DIR_APP) && \
+		./configure \
+			--prefix=/usr \
+			--sysconfdir=/etc/lcdproc \
+			--enable-libusb \
+			--enable-drivers=all \
+			--enable-permissive-menu-goto \
+			--enable-lcdproc-menus \
+			--enable-stat-nfs \
+			--enable-stat-smbfs \
+			--with-lcdport=13666 \
+			--enable-seamless-hbars
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	install -v -m 644 $(DIR_SRC)/config/backup/includes/lcdproc /var/ipfire/backup/addons/includes/lcdproc
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/lcdproc \
+		/var/ipfire/backup/addons/includes/lcdproc
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
