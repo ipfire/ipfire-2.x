@@ -78,7 +78,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.6';
+my $VERSION='0.9.9.6a';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -596,7 +596,7 @@ sub addrule
 	if (-f "${General::swroot}/forward/reread"){
 		print "<table border='0'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div</td></tr></table></form><hr><br>";
 	}
-	&Header::openbox('100%', 'left', "");
+	&Header::openbox('100%', 'left',  $Lang::tr{'fwdfw menu'});
 	print "<form method='post'>";
 	print "<table border='0'>";
 	print "<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw newrule'}'></td>";
@@ -2151,7 +2151,7 @@ sub saverule
 			#print"6";
 		}
 		#check if we change a DMZ to a FORWARD/DMZ
-		elsif($fwdfwsettings{'oldruletype'} eq 'DMZ'  && $fwdfwsettings{'chain'} eq 'FORWARDFW' && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE'){
+		elsif($fwdfwsettings{'oldruletype'} eq 'DMZ'  && $fwdfwsettings{'chain'} eq 'FORWARDFW' && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE' && $checkorange ne 'on'){
 			&changerule($configdmz);
 			#print"7";
 		}
@@ -2194,7 +2194,7 @@ sub saverule
 			#print"14";
 		}
 		#check if we change a FORWARD rule to an DMZ
-		elsif($fwdfwsettings{'oldruletype'} eq 'FORWARDFW'  && $fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'ORANGE' || $checkorange eq 'on'){
+		elsif($fwdfwsettings{'oldruletype'} eq 'FORWARDFW'  && ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'ORANGE' || $checkorange eq 'on')){
 			&changerule($configfwdfw);
 			#print"15";
 		}

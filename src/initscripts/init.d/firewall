@@ -243,7 +243,7 @@ case "$1" in
 	/sbin/iptables -t nat -N NAT_DESTINATION
 	/sbin/iptables -t nat -N NAT_SOURCE
 	/sbin/iptables -t nat -A PREROUTING -j NAT_DESTINATION
-	/sbin/iptables -t nat -A POSTROUTING -j NAT_SOURCE
+	/sbin/iptables -t nat -I POSTROUTING 2 -j NAT_SOURCE
 	
 	
 	# upnp chain for our upnp daemon
