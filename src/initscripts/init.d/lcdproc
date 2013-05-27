@@ -1,0 +1,71 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/lcdproc
+#
+# Description :
+#
+# Authors     :
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+CLIENT="lcdproc"
+
+CONFIG_FILE="/etc/sysconfig/lcdproc"
+
+# Read the configuration file if any.
+[ -e "${CONFIG_FILE}" ] && . ${CONFIG_FILE}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting LCDd..."
+		loadproc /usr/sbin/LCDd -c /etc/lcdproc/LCDd.conf 2>/dev/null
+
+		case "${CLIENT}" in
+			lcdproc)
+				boot_mesg "Starting lcdproc..."
+				loadproc /usr/bin/lcdproc -c /etc/lcdproc/lcdproc.conf 2>/dev/null
+				;;
+			vc)
+				boot_mesg "Starting LCD virtual console..."
+				loadproc /usr/bin/lcdvc -c /etc/lcdproc/lcdvc.conf 2>/dev/null
+				;;
+		esac
+		;;
+
+	stop)
+		boot_mesg "Stopping LCDd..."
+		killproc /usr/sbin/LCDd
+
+		boot_mesg "Stopping lcdproc..."
+		killproc /usr/bin/lcdproc
+
+		boot_mesg "Stopping LCD virtual console..."
+		killproc /usr/bin/lcdvc
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/LCDd
+		statusproc /usr/bin/lcdproc
+		statusproc /usr/bin/lcdvc
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/lcdproc
