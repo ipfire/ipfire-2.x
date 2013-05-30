@@ -253,10 +253,6 @@ void setChainRules(char *chain, char *interface, char *protocol, char *port)
 
 	sprintf(str, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %s -j ACCEPT", chain, interface, protocol, port);
 	executeCommand(str);
-	sprintf(str, "/sbin/iptables -A %sINPUT -i tun+ -j ACCEPT", chain);
-	executeCommand(str);
-	//sprintf(str, "/sbin/iptables -A %sFORWARD -i tun+ -j ACCEPT", chain);
-	//executeCommand(str);
 }
 
 void flushChain(char *chain) {
@@ -264,9 +260,6 @@ void flushChain(char *chain) {
 
 	sprintf(str, "/sbin/iptables -F %sINPUT", chain);
 	executeCommand(str);
-	//sprintf(str, "/sbin/iptables -F %sFORWARD", chain);
-	//executeCommand(str);
-	safe_system(str);
 }
 
 void flushChainNAT(char *chain) {
@@ -281,10 +274,6 @@ void deleteChainReference(char *chain) {
 
 	sprintf(str, "/sbin/iptables -D INPUT -j %sINPUT", chain);
 	executeCommand(str);
-	safe_system(str);
-	//sprintf(str, "/sbin/iptables -D FORWARD -j %sFORWARD", chain);
-	//executeCommand(str);
-	safe_system(str);
 }
 
 void deleteChain(char *chain) {
@@ -292,8 +281,6 @@ void deleteChain(char *chain) {
 
 	sprintf(str, "/sbin/iptables -X %sINPUT", chain);
 	executeCommand(str);
-	//sprintf(str, "/sbin/iptables -X %sFORWARD", chain);
-	//executeCommand(str);
 }
 
 void deleteAllChains(void) {
@@ -313,16 +300,12 @@ void createChainReference(char *chain) {
 	char str[STRING_SIZE];
 	sprintf(str, "/sbin/iptables -I INPUT %s -j %sINPUT", "14", chain);
 	executeCommand(str);
-	//sprintf(str, "/sbin/iptables -I FORWARD %s -j %sFORWARD", "12", chain);
-	//executeCommand(str);
 }
 
 void createChain(char *chain) {
 	char str[STRING_SIZE];
 	sprintf(str, "/sbin/iptables -N %sINPUT", chain);
 	executeCommand(str);
-	//sprintf(str, "/sbin/iptables -N %sFORWARD", chain);
-	//executeCommand(str);
 }
 
 void createAllChains(void) {
