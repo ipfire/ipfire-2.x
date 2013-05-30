@@ -359,26 +359,29 @@ void createAllChains(void) {
 }
 
 char* calcTransferNetAddress(const connection* conn) {
-	char *address = strdup(conn->transfer_subnet);
-	address = strsep(&address, "/");
+	char *subnetmask = strdup(conn->transfer_subnet);
+	char *address = strsep(&subnetmask, "/");
 
-	struct in_addr address_info;
-	if (!inet_aton(address, &address_info)) {
-		goto ERROR;
-	}
+	in_addr_t _address    = inet_addr(address);
+	in_addr_t _subnetmask = inet_addr(subnetmask);
+	_address &= _subnetmask;
 
-	if (strcmp(conn->role, "server")) {
-		address_info.s_addr += 1 << 24;
-	} else if (strcmp(conn->role, "client")) {
-		address_info.s_addr += 2 << 24;
+	if (strcmp(conn->role, "server") == 0) {
+		_address += 1 << 24;
+	} else if (strcmp(conn->role, "client") == 0) {
+		_address += 2 << 24;
 	} else {
 		goto ERROR;
 	}
 
-	address = inet_ntoa(address_info);
-	return address;
+	struct in_addr address_info;
+	address_info.s_addr = _address;
+
+	return inet_ntoa(address_info);
 
 ERROR:
+	fprintf(stderr, "Could not determine transfer net address: %s\n", conn->name);
+
 	free(address);
 	return NULL;
 }
@@ -428,6 +431,8 @@ char* getLocalSubnetAddress(const connection* conn) {
 	}
 
 ERROR:
+	fprintf(stderr, "Could not determine local subnet address: %s\n", conn->name);
+
 	freekeyvalues(kv);
 	return NULL;
 }
@@ -490,6 +495,9 @@ void setFirewallRules(void) {
 
 			local_subnet_address = getLocalSubnetAddress(conn);
 			transfer_subnet_address = calcTransferNetAddress(conn);
+
+			if ((!local_subnet_address) || (!transfer_subnet_address))
+				continue;
 
 			snprintf(command, STRING_SIZE, "/sbin/iptables -t nat -A %s -s %s -j SNAT --to-source %s",
 				OVPNNAT, transfer_subnet_address, local_subnet_address);
