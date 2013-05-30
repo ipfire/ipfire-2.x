@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.01
+VER        = 4.06
 
 THISAPP    = syslinux-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 57489185863fd74be4e724ef9a2c422f
+$(DL_FILE)_MD5 = 77d33140860621cd850c3a7ab0ebb7d6
 
 install : $(TARGET)
 
