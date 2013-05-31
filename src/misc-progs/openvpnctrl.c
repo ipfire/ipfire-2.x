@@ -27,6 +27,7 @@ char enableorange[STRING_SIZE] = "off";
 char OVPNRED[STRING_SIZE] = "OVPN";
 char OVPNBLUE[STRING_SIZE] = "OVPN_BLUE_";
 char OVPNORANGE[STRING_SIZE] = "OVPN_ORANGE_";
+char OVPNBLOCK[STRING_SIZE] = "OVPNBLOCK";
 char OVPNNAT[STRING_SIZE] = "OVPNNAT";
 char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.3";
 
@@ -478,6 +479,11 @@ void setFirewallRules(void) {
 		if (strcmp(conn->type, "net") == 0) {
 			sprintf(command, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %d -j ACCEPT",
 				OVPNRED, redif, conn->proto, conn->port);
+			executeCommand(command);
+
+			/* Block all communication from the transfer nets. */
+			snprintf(command, STRING_SIZE, "/sbin/iptables -A %s -s %s -j DROP",
+				OVPNBLOCK, conn->transfer_subnet);
 			executeCommand(command);
 
 			local_subnet_address = getLocalSubnetAddress(conn);
