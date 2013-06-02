@@ -240,8 +240,15 @@ function wpa_supplicant_stop() {
 	boot_mesg "Stopping wireless event handler on ${RED_DEV}..."
 	killproc wpa_cli
 
+	# wpa_cli does not send a disconnect event when get stopped.
+	# So we manually have to send it to the wpa_supplicant.exe.
+	/etc/rc.d/init.d/networking/wpa_supplicant.exe "${RED_DEV}" DISCONNECTED
+
 	boot_mesg "Stopping wireless client on ${RED_DEV}..."
 	killproc wpa_supplicant
+	
+	# Tidy up /tmp directory.
+	rm -f /tmp/wpa_ctrl_*
 }
 
 case "${1}" in
