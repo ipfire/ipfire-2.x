@@ -24,78 +24,65 @@
 
 include Config
 
-VER = ipfire
+VER        = v1.0
+PXE_VER    = c4bce43
 
-THISAPP    = usb-stick
+THISAPP    = ipfire-netboot-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = http://source.ipfire.org/releases/ipfire-netboot/
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+SUP_ARCH   = i586
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE) ipxe-$(PXE_VER).tar.xz
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+ipxe-$(PXE_VER).tar.xz = $(URL_IPFIRE)/ipxe-$(PXE_VER).tar.xz
+
+$(DL_FILE)_MD5 = 257773a52ed5dda3053eb049bee38a60
+ipxe-$(PXE_VER).tar.xz_MD5 = 8aeb94330eb94f3f1e6170e23db0ba27
+
 install : $(TARGET)
 
-check :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download :
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 :
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
 ###############################################################################
-IMGfdd := /install/images/$(SNAME)-$(VERSION)-install-usb-fdd.$(MACHINE)-full-core$(CORE).img
-IMGhdd := /install/images/$(SNAME)-$(VERSION)-install-usb-hdd.$(MACHINE)-full-core$(CORE).img
-IMGfs  := /install/images/fs
-
-DISKSIZE=120000
-
-define COPY_TO_IMG
-	mkdosfs -n IPFIRE -F 16 -I $$IMAGE && \
-	for i in /0 `seq 0 7`; do \
-		[ -e /dev/loop$${i} ] || continue; \
-		if (! losetup /dev/loop$${i} >/dev/null 2>&1 ); then \
-			LOOPDEV="/dev/loop$${i}"; \
-			break; \
-		fi; \
-	done; \
-	losetup $$LOOPDEV $$IMAGE && \
-	mount -t vfat $$LOOPDEV /install/mnt && \
-	cp -fR /install/cdrom/* /install/mnt && \
-	mv /install/mnt/boot/isolinux /install/mnt/boot/syslinux && \
-	mv /install/mnt/boot/syslinux/isolinux.cfg \
-	   /install/mnt/boot/syslinux/syslinux.cfg && \
-	umount /install/mnt && \
-	losetup -d $$LOOPDEV && \
-	syslinux $$IMAGE
-endef
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-	# usb-fdd superfloppy (partitionless)
-	# compute size +32 blocks for bootsector/fat/etc...
-	dd bs=1024 count=$$((`du -k -s /install/cdrom | awk '{print $$1}'` + 2048 )) \
-		if=/dev/zero \
-		of=$(IMGfdd)
-	IMAGE=$(IMGfdd); $(COPY_TO_IMG)
+	# Extract iPXE source
+	cd $(DIR_APP) && tar axf $(DIR_DL)/ipxe-$(PXE_VER).tar.xz
+	cd $(DIR_APP) && rm -rfv ipxe && ln -s ipxe-$(PXE_VER) ipxe
+	cd $(DIR_APP) && make bin/ipxe.lkrn
 
-	# Partitionned images : make a file system bigger than iso size
-	# that fit on 128MB key to let free space available
-	# on the unique partition. Image will be compressed later
-	dd bs=1k if=/dev/zero of=$(IMGfs) count=$(DISKSIZE)
-	IMAGE=$(IMGfs); $(COPY_TO_IMG)
-	
-	# usb-hdd (64 heads, 32 sectors geometry, on a partition 1)
-	# use 64 heads as 256 does not work on Award bios (Asus A7V8X-X Gilles)
-	# use 32 sectors a minima or device is not recognised as hard disk (Frank)
-	# add 32 to IMGfs as first partition start at 32
-	COUNT=$$((`du -k -s $(IMGfs) | awk '{print $$1}'` + 32 )); \
-	dd bs=1k if=/dev/zero of=$(IMGhdd) count=$$COUNT
-	# write mbr before partitioning save a 'not msdos fs' warning from sfdisk
-	/usr/sbin/install-mbr -f $(IMGhdd)
-	echo -e "0,,6,*\n;\n;\n;" | sfdisk -qLD -H 64 -S 32 $(IMGhdd)
-	# copy the entire partition, make the fs and dd back
-	dd if=$(IMGfs) of=$(IMGhdd) bs=512 seek=32
+	# Installation
+	-mkdir -pv /usr/share/ipfire-netboot
+	cd $(DIR_APP) && install -m 644 bin/ipxe.lkrn /usr/share/ipfire-netboot
 
-	gzip -f9 $(IMGfdd) $(IMGhdd)
-	rm -rf $$LFS/tmp/* $(IMGfs)
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

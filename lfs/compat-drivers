@@ -26,14 +26,14 @@ include Config
 
 VERSUFIX=ipfire$(KCFG)
 
-VER        = 3.8-1-u
+VER        = 3.8.3-2-snpu
 
 ifeq "$(KCFG)" "-xen"
 	KVER = 2.6.32.60
 endif
 
 THISAPP    = compat-drivers-$(VER)
-DL_FILE    = compat-drivers-$(VER).tar.xz
+DL_FILE    = compat-drivers-$(VER).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
@@ -42,13 +42,15 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) asix-4.5.0a.tar.xz
+objects = $(DL_FILE) asix-4.5.0a.tar.xz asix_gb-1.4.0a.tar.xz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 asix-4.5.0a.tar.xz = $(DL_FROM)/asix-4.5.0a.tar.xz
+asix_gb-1.4.0a.tar.xz = $(DL_FROM)/asix_gb-1.4.0a.tar.xz
 
-$(DL_FILE)_MD5 = 557e3099c642455ec272d9ddf46de484
+$(DL_FILE)_MD5 = 5a1e27e5b694aa5022116a5a3220bfdc
 asix-4.5.0a.tar.xz_MD5=4219ce7c0cae4fdb580f30ea50cad8e0
+asix_gb-1.4.0a.tar.xz_MD5=9c9db731631abf00da2069d03253f9a7
 
 install : $(TARGET)
 
@@ -97,8 +99,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.34-usbnet_compile.patch
 
-	# Build Updated asix usb-lan driver
+	# Build Updated asix usb lan driver
 	cd $(DIR_APP)/drivers/net/usb && tar xvJf $(DIR_DL)/asix-4.5.0a.tar.xz
+
+	# Build Updated asix usb gigabit lan driver
+	cd $(DIR_APP)/drivers/net/usb && tar xvJf $(DIR_DL)/asix_gb-1.4.0a.tar.xz
+	echo 'obj-$$(CONFIG_USB_ASIX_GB) += asix_gb.o' >> $(DIR_APP)/drivers/net/usb/Makefile
+	cd $(DIR_APP) && echo export CONFIG_USB_ASIX_GB=m >> config.mk
 
 	# Add libartas uAP driver
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-3.5-libertas_uap.patch

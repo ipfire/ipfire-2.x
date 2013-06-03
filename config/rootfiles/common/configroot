@@ -62,6 +62,7 @@ var/ipfire/langs
 #var/ipfire/langs/nl.pl
 #var/ipfire/langs/pl.pl
 #var/ipfire/langs/ru.pl
+#var/ipfire/langs/tr.pl
 var/ipfire/logging
 #var/ipfire/logging/settings
 var/ipfire/mac
