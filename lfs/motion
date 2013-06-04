@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.11
+VER        = 3.2.12
 
 THISAPP    = motion-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3a26c00f3250eacf6fa93c7a7e0249d9
+$(DL_FILE)_MD5 = 1ba0065ed50509aaffb171594c689f46
 
 install : $(TARGET)
 
