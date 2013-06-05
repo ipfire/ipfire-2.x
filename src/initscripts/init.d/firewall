@@ -178,12 +178,12 @@ case "$1" in
 	/sbin/iptables -N IPSECFORWARD
 	/sbin/iptables -N IPSECOUTPUT
 	/sbin/iptables -N OPENSSLVIRTUAL
-	/sbin/iptables -N OVPNNAT
 	/sbin/iptables -A INPUT -j IPSECINPUT
 	/sbin/iptables -A INPUT -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL INPUT"
 	/sbin/iptables -A FORWARD -j IPSECFORWARD
 	/sbin/iptables -A FORWARD -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL FORWARD"
 	/sbin/iptables -A OUTPUT -j IPSECOUTPUT
+	/sbin/iptables -t nat -N OVPNNAT
 	/sbin/iptables -t nat -N IPSECNAT
 	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
 	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
