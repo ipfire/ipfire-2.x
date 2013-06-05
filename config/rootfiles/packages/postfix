@@ -17,6 +17,7 @@ etc/postfix/mysql-virtual.cf
 etc/postfix/relocated
 etc/postfix/transport
 etc/postfix/virtual
+etc/rc.d/init.d/postfix
 usr/bin/mailq
 usr/bin/newaliases
 #usr/lib/postfix
@@ -24,6 +25,7 @@ usr/lib/postfix/anvil
 usr/lib/postfix/bounce
 usr/lib/postfix/cleanup
 usr/lib/postfix/discard
+usr/lib/postfix/dnsblog
 usr/lib/postfix/error
 usr/lib/postfix/flush
 usr/lib/postfix/lmtp
@@ -40,6 +42,7 @@ usr/lib/postfix/postfix-files
 usr/lib/postfix/postfix-script
 usr/lib/postfix/postfix-wrapper
 usr/lib/postfix/postmulti-script
+usr/lib/postfix/postscreen
 usr/lib/postfix/proxymap
 usr/lib/postfix/qmgr
 usr/lib/postfix/qmqpd
@@ -49,6 +52,7 @@ usr/lib/postfix/smtp
 usr/lib/postfix/smtpd
 usr/lib/postfix/spawn
 usr/lib/postfix/tlsmgr
+usr/lib/postfix/tlsproxy
 usr/lib/postfix/trivial-rewrite
 usr/lib/postfix/verify
 usr/lib/postfix/virtual
@@ -90,6 +94,7 @@ usr/sbin/sendmail
 #usr/share/man/man5/header_checks.5
 #usr/share/man/man5/ldap_table.5
 #usr/share/man/man5/master.5
+#usr/share/man/man5/memcache_table.5
 #usr/share/man/man5/mysql_table.5
 #usr/share/man/man5/nisplus_table.5
 #usr/share/man/man5/pcre_table.5
@@ -98,6 +103,7 @@ usr/sbin/sendmail
 #usr/share/man/man5/postfix-wrapper.5
 #usr/share/man/man5/regexp_table.5
 #usr/share/man/man5/relocated.5
+#usr/share/man/man5/sqlite_table.5
 #usr/share/man/man5/tcp_table.5
 #usr/share/man/man5/transport.5
 #usr/share/man/man5/virtual.5
@@ -106,6 +112,7 @@ usr/sbin/sendmail
 #usr/share/man/man8/cleanup.8
 #usr/share/man/man8/defer.8
 #usr/share/man/man8/discard.8
+#usr/share/man/man8/dnsblog.8
 #usr/share/man/man8/error.8
 #usr/share/man/man8/flush.8
 #usr/share/man/man8/lmtp.8
@@ -114,6 +121,7 @@ usr/sbin/sendmail
 #usr/share/man/man8/oqmgr.8
 #usr/share/man/man8/pickup.8
 #usr/share/man/man8/pipe.8
+#usr/share/man/man8/postscreen.8
 #usr/share/man/man8/proxymap.8
 #usr/share/man/man8/qmgr.8
 #usr/share/man/man8/qmqpd.8
@@ -123,10 +131,12 @@ usr/sbin/sendmail
 #usr/share/man/man8/smtpd.8
 #usr/share/man/man8/spawn.8
 #usr/share/man/man8/tlsmgr.8
+#usr/share/man/man8/tlsproxy.8
 #usr/share/man/man8/trace.8
 #usr/share/man/man8/trivial-rewrite.8
 #usr/share/man/man8/verify.8
 #usr/share/man/man8/virtual.8
+var/ipfire/backup/addons/includes/postfix
 var/lib/postfix
 #var/spool/postfix
 var/spool/postfix/active
@@ -143,4 +153,3 @@ var/spool/postfix/private
 var/spool/postfix/public
 var/spool/postfix/saved
 var/spool/postfix/trace
-etc/rc.d/init.d/postfix
