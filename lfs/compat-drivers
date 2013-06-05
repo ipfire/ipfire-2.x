@@ -42,14 +42,14 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) asix-4.5.0a.tar.xz asix_gb-1.4.0a.tar.xz
+objects = $(DL_FILE) asix-4.7.0a.tar.xz asix_gb-1.4.0a.tar.xz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-asix-4.5.0a.tar.xz = $(DL_FROM)/asix-4.5.0a.tar.xz
+asix-4.7.0a.tar.xz = $(DL_FROM)/asix-4.7.0a.tar.xz
 asix_gb-1.4.0a.tar.xz = $(DL_FROM)/asix_gb-1.4.0a.tar.xz
 
 $(DL_FILE)_MD5 = 5a1e27e5b694aa5022116a5a3220bfdc
-asix-4.5.0a.tar.xz_MD5=4219ce7c0cae4fdb580f30ea50cad8e0
+asix-4.7.0a.tar.xz_MD5=491f7e8c3ee74433975812d86a0fa98b
 asix_gb-1.4.0a.tar.xz_MD5=9c9db731631abf00da2069d03253f9a7
 
 install : $(TARGET)
@@ -100,7 +100,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.34-usbnet_compile.patch
 
 	# Build Updated asix usb lan driver
-	cd $(DIR_APP)/drivers/net/usb && tar xvJf $(DIR_DL)/asix-4.5.0a.tar.xz
+	cd $(DIR_APP)/drivers/net/usb && tar xvJf $(DIR_DL)/asix-4.7.0a.tar.xz
 
 	# Build Updated asix usb gigabit lan driver
 	cd $(DIR_APP)/drivers/net/usb && tar xvJf $(DIR_DL)/asix_gb-1.4.0a.tar.xz
