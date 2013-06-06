@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <fcntl.h>
 #include "setuid.h"
 #include "libsmooth.h"
@@ -25,13 +27,17 @@ char enableorange[STRING_SIZE] = "off";
 char OVPNRED[STRING_SIZE] = "OVPN";
 char OVPNBLUE[STRING_SIZE] = "OVPN_BLUE_";
 char OVPNORANGE[STRING_SIZE] = "OVPN_ORANGE_";
-char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.2";
+char OVPNNAT[STRING_SIZE] = "OVPNNAT";
+char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.3";
 
 struct connection_struct {
 	char name[STRING_SIZE];
 	char type[STRING_SIZE];
 	char proto[STRING_SIZE];
 	char status[STRING_SIZE];
+	char local_subnet[STRING_SIZE];
+	char transfer_subnet[STRING_SIZE];
+	char role[STRING_SIZE];
 	int port;
 	struct connection_struct *next;
 };
@@ -132,6 +138,12 @@ connection *getConnections() {
 				strcpy(conn_curr->name, result);
 			} else if (count == 4) {
 				strcpy(conn_curr->type, result);
+			} else if (count == 7) {
+				strcpy(conn_curr->role, result);
+			} else if (count == 9) {
+				strcpy(conn_curr->local_subnet, result);
+			} else if (count == 28) {
+				strcpy(conn_curr->transfer_subnet, result);
 			} else if (count == 29) {
 				strcpy(conn_curr->proto, result);
 			} else if (count == 30) {
@@ -257,6 +269,13 @@ void flushChain(char *chain) {
 	safe_system(str);
 }
 
+void flushChainNAT(char *chain) {
+	char str[STRING_SIZE];
+
+	sprintf(str, "/sbin/iptables -t nat -F %s", chain);
+	executeCommand(str);
+}
+
 void deleteChainReference(char *chain) {
 	char str[STRING_SIZE];
 
@@ -339,6 +358,85 @@ void createAllChains(void) {
 	}
 }
 
+char* calcTransferNetAddress(const connection* conn) {
+	char *subnetmask = strdup(conn->transfer_subnet);
+	char *address = strsep(&subnetmask, "/");
+
+	in_addr_t _address    = inet_addr(address);
+	in_addr_t _subnetmask = inet_addr(subnetmask);
+	_address &= _subnetmask;
+
+	if (strcmp(conn->role, "server") == 0) {
+		_address += 1 << 24;
+	} else if (strcmp(conn->role, "client") == 0) {
+		_address += 2 << 24;
+	} else {
+		goto ERROR;
+	}
+
+	struct in_addr address_info;
+	address_info.s_addr = _address;
+
+	return inet_ntoa(address_info);
+
+ERROR:
+	fprintf(stderr, "Could not determine transfer net address: %s\n", conn->name);
+
+	free(address);
+	return NULL;
+}
+
+char* getLocalSubnetAddress(const connection* conn) {
+	kv = initkeyvalues();
+	if (!readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")) {
+		fprintf(stderr, "Cannot read ethernet settings\n");
+		exit(1);
+	}
+
+	const char *zones[] = {"GREEN", "BLUE", "ORANGE", NULL};
+	char *zone = NULL;
+
+	// Get net address of the local openvpn subnet.
+	char *subnetmask = strdup(conn->local_subnet);
+	char *address = strsep(&subnetmask, "/");
+
+	if ((address == NULL) || (subnetmask == NULL)) {
+		goto ERROR;
+	}
+
+	in_addr_t _address    = inet_addr(address);
+	in_addr_t _subnetmask = inet_addr(subnetmask);
+
+	in_addr_t _netaddr    = (_address &  _subnetmask);
+	in_addr_t _broadcast  = (_address | ~_subnetmask);
+
+	char zone_address_key[STRING_SIZE];
+	char zone_address[STRING_SIZE];
+	in_addr_t zone_addr;
+
+	int i = 0;
+	while (zones[i]) {
+		zone = zones[i++];
+		snprintf(zone_address_key, STRING_SIZE, "%s_ADDRESS", zone);
+
+		if (!findkey(kv, zone_address_key, zone_address))
+			continue;
+
+		zone_addr = inet_addr(zone_address);
+		if ((zone_addr > _netaddr) && (zone_addr < _broadcast)) {
+			freekeyvalues(kv);
+
+			return strdup(zone_address);
+		}
+	}
+
+ERROR:
+	fprintf(stderr, "Could not determine local subnet address: %s\n", conn->name);
+
+	freekeyvalues(kv);
+	return NULL;
+}
+
 void setFirewallRules(void) {
 	char protocol[STRING_SIZE] = "";
 	char dport[STRING_SIZE] = "";
@@ -372,6 +470,7 @@ void setFirewallRules(void) {
 	flushChain(OVPNRED);
 	flushChain(OVPNBLUE);
 	flushChain(OVPNORANGE);
+	flushChainNAT(OVPNNAT);
 
 	// set firewall rules
 	if (!strcmp(enablered, "on") && strlen(redif))
@@ -386,10 +485,22 @@ void setFirewallRules(void) {
 
 	// set firewall rules for n2n connections
 	char command[STRING_SIZE];
+	char *local_subnet_address = NULL;
+	char *transfer_subnet_address = NULL;
 	while (conn != NULL) {
 		if (strcmp(conn->type, "net") == 0) {
 			sprintf(command, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %d -j ACCEPT",
 				OVPNRED, redif, conn->proto, conn->port);
+			executeCommand(command);
+
+			local_subnet_address = getLocalSubnetAddress(conn);
+			transfer_subnet_address = calcTransferNetAddress(conn);
+
+			if ((!local_subnet_address) || (!transfer_subnet_address))
+				continue;
+
+			snprintf(command, STRING_SIZE, "/sbin/iptables -t nat -A %s -s %s -j SNAT --to-source %s",
+				OVPNNAT, transfer_subnet_address, local_subnet_address);
 			executeCommand(command);
 		}
 
