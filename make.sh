@@ -462,6 +462,7 @@ buildipfire() {
   ipfiremake libnet
   ipfiremake libnl
   ipfiremake libidn
+  ipfiremake nasm
   ipfiremake libjpeg
   ipfiremake libexif
   ipfiremake libpng
@@ -523,7 +524,6 @@ buildipfire() {
   ipfiremake logwatch
   ipfiremake misc-progs
   ipfiremake nano
-  ipfiremake nasm
   ipfiremake URI
   ipfiremake HTML-Tagset
   ipfiremake HTML-Parser
