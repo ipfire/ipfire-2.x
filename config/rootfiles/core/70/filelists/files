@@ -1,2 +1,4 @@
 etc/system-release
 etc/issue
+usr/local/bin/openvpnctrl
+etc/init.d/firewall
