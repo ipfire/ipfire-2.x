@@ -215,7 +215,16 @@ sub buildrules
 					}
 				}
 			}elsif($$hash{$key}[5] eq 'ipfire'){
-				if($$hash{$key}[6] eq 'Default IP'){
+				if($$hash{$key}[6] eq 'GREEN'){
+					$targethash{$key}[0]=$defaultNetworks{'GREEN_ADDRESS'};
+				}
+				if($$hash{$key}[6] eq 'BLUE'){
+					$targethash{$key}[0]=$defaultNetworks{'BLUE_ADDRESS'};
+				}
+				if($$hash{$key}[6] eq 'ORANGE'){
+					$targethash{$key}[0]=$defaultNetworks{'ORANGE_ADDRESS'};
+				}
+				if($$hash{$key}[6] eq 'RED'){
 					open(FILE, "/var/ipfire/red/local-ipaddress") or die 'Unable to open config file.';
 					$targethash{$key}[0]= <FILE>;
 					close(FILE);

@@ -1719,6 +1719,7 @@
 'reconnect' => 'Neu Verbinden',
 'reconnection' => 'Wiederverbindung',
 'red' => 'Internet',
+'red1' => 'ROT',
 'references' => 'Referenzen',
 'refresh' => 'Aktualisieren',
 'refresh index page while connected' => 'Aktualisere index.cgi Seite während der Verbindung',

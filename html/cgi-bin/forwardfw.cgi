@@ -78,7 +78,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.6a';
+my $VERSION='0.9.9.7';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -1501,7 +1501,7 @@ sub getcolor
 		}elsif ($val eq 'BLUE'){
 			$tdcolor="style='border: 1px solid $Header::colourblue;'";
 			return;
-		}elsif ($val eq 'RED'){
+		}elsif ($val eq 'RED' ||$val eq 'RED1' ){
 			$tdcolor="style='border: 1px solid $Header::colourred;'";
 			return;
 		}elsif ($val eq 'IPFire' ){
@@ -1802,17 +1802,18 @@ END
 		<table width='100%' border='0'>	
 		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='57%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='17'><td width='1%'><input type='radio' name='grp2' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>IPFire</b></td>
 END
-		if (! -z "${General::swroot}/ethernet/aliases"){
-			print"<td align='right'><select name='ipfire' style='width:200px;'>";
-			print "<option value='Default IP' $selected{'ipfire'}{'Default IP'}>Default IP</option>";
+		print"<td align='right'><select name='ipfire' style='width:200px;'>";
+		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'}</option>";
+		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
+		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if $ifaces{'ORANGE_ADDRESS'};
+		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if $ifaces{'BLUE_ADDRESS'};
+		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} (Default IP)</option>" if $ifaces{'RED_ADDRESS'};
 
+		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
 			{
 				print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias</option>";
 			}
-			
-		}else{
-			print"<td style='width:200px;'><input type='hidden' name ='ipfire' value='Default IP'>";
 		}
 		print<<END;
 		</td></tr>
@@ -2506,8 +2507,13 @@ END
 				}
 				print"<br> DNAT->";
 			}
-			if ($$hash{$key}[5] eq 'std_net_tgt'){
-				print &get_name($$hash{$key}[6]);
+			if ($$hash{$key}[5] eq 'std_net_tgt' || $$hash{$key}[5] eq 'ipfire' && $$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1' || $$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE' ){
+				if ($$hash{$key}[6] eq 'RED1')
+				{
+					print $Lang::tr{'red1'};
+				}else{
+					print &get_name($$hash{$key}[6]);
+				}
 			}else{
 				print $$hash{$key}[6];
 			}

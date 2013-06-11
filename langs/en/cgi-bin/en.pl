@@ -1750,6 +1750,7 @@
 'reconnect' => 'Reconnect',
 'reconnection' => 'Reconnection',
 'red' => 'Internet',
+'red1' => 'RED',
 'references' => 'References',
 'refresh' => 'Refresh',
 'refresh index page while connected' => 'Refresh index.cgi page while connected',
