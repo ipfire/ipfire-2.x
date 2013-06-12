@@ -259,7 +259,7 @@ void setChainRules(char *chain, char *interface, char *protocol, char *port)
 void flushChain(char *chain) {
 	char str[STRING_SIZE];
 
-	sprintf(str, "/sbin/iptables -F %sINPUT", chain);
+	sprintf(str, "/sbin/iptables -F %s", chain);
 	executeCommand(str);
 }
 
@@ -268,6 +268,13 @@ void flushChainNAT(char *chain) {
 
 	sprintf(str, "/sbin/iptables -t nat -F %s", chain);
 	executeCommand(str);
+}
+
+void flushChainINPUT(char *chain) {
+	char str[STRING_SIZE];
+
+	snprintf(str, STRING_SIZE, "%sINPUT", chain);
+	flushChain(str);
 }
 
 void deleteChainReference(char *chain) {
@@ -289,9 +296,9 @@ void deleteAllChains(void) {
 	deleteChainReference(OVPNRED);
 	deleteChainReference(OVPNBLUE);
 	deleteChainReference(OVPNORANGE);
-	flushChain(OVPNRED);
-	flushChain(OVPNBLUE);
-	flushChain(OVPNORANGE);
+	flushChainINPUT(OVPNRED);
+	flushChainINPUT(OVPNBLUE);
+	flushChainINPUT(OVPNORANGE);
 	deleteChain(OVPNRED);
 	deleteChain(OVPNBLUE);
 	deleteChain(OVPNORANGE);
@@ -459,9 +466,9 @@ void setFirewallRules(void) {
 	freekeyvalues(kv);
 
 	// Flush all chains.
-	flushChain(OVPNRED);
-	flushChain(OVPNBLUE);
-	flushChain(OVPNORANGE);
+	flushChainINPUT(OVPNRED);
+	flushChainINPUT(OVPNBLUE);
+	flushChainINPUT(OVPNORANGE);
 	flushChain(OVPNBLOCK);
 	flushChainNAT(OVPNNAT);
 
