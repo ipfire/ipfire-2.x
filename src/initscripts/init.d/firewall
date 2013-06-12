@@ -145,24 +145,32 @@ case "$1" in
 	/sbin/iptables -A INPUT -j CUSTOMINPUT
 	/sbin/iptables -N GUARDIAN
 	/sbin/iptables -A INPUT -j GUARDIAN
+	/sbin/iptables -N OVPNBLOCK
+	/sbin/iptables -A FORWARD -j OVPNBLOCK
 	/sbin/iptables -A FORWARD -j GUARDIAN
 	/sbin/iptables -N CUSTOMFORWARD
 	/sbin/iptables -A FORWARD -j CUSTOMFORWARD
 	/sbin/iptables -N CUSTOMOUTPUT
+	/sbin/iptables -A OUTPUT -j OVPNBLOCK
 	/sbin/iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 	/sbin/iptables -A OUTPUT -j CUSTOMOUTPUT
 	/sbin/iptables -N OUTGOINGFW
 	/sbin/iptables -A OUTPUT -j OUTGOINGFW
 	/sbin/iptables -t nat -N CUSTOMPREROUTING
+	/sbin/iptables -t nat -N OVPNNAT
 	/sbin/iptables -t nat -A PREROUTING -j CUSTOMPREROUTING
 	/sbin/iptables -t nat -N CUSTOMPOSTROUTING
 	/sbin/iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
+	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
 
 	# IPTV chains for IGMPPROXY
 	/sbin/iptables -N IPTVINPUT
 	/sbin/iptables -A INPUT -j IPTVINPUT
 	/sbin/iptables -N IPTVFORWARD
 	/sbin/iptables -A FORWARD -j IPTVFORWARD
+
+	# Filtering ovpn networks INPUT
+	/sbin/iptables -A INPUT -j OVPNBLOCK
 
 	# filtering from GUI
 	/sbin/iptables -N GUIINPUT
@@ -187,9 +195,7 @@ case "$1" in
 	/sbin/iptables -A FORWARD -j IPSECFORWARD
 	/sbin/iptables -A FORWARD -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL FORWARD"
 	/sbin/iptables -A OUTPUT -j IPSECOUTPUT
-	/sbin/iptables -t nat -N OVPNNAT
 	/sbin/iptables -t nat -N IPSECNAT
-	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
 	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
 
 	# Input Firewall
@@ -243,7 +249,8 @@ case "$1" in
 	/sbin/iptables -t nat -N NAT_DESTINATION
 	/sbin/iptables -t nat -N NAT_SOURCE
 	/sbin/iptables -t nat -A PREROUTING -j NAT_DESTINATION
-	/sbin/iptables -t nat -I POSTROUTING 2 -j NAT_SOURCE
+	/sbin/iptables -t nat -I POSTROUTING 3 -j NAT_SOURCE
+	
 	
 	
 	# upnp chain for our upnp daemon
@@ -253,8 +260,7 @@ case "$1" in
 	/sbin/iptables -A FORWARD -m state --state NEW -j UPNPFW
 
 	# Postrouting rules (for port forwarding)
-	/sbin/iptables -t nat -A POSTROUTING -m mark --mark 1 -j SNAT \
-	 --to-source $GREEN_ADDRESS
+	/sbin/iptables -t nat -A POSTROUTING -m mark --mark 1 -j SNAT --to-source $GREEN_ADDRESS
 	if [ "$BLUE_DEV" != "" ]; then
 		/sbin/iptables -t nat -A POSTROUTING -m mark --mark 2 -j SNAT --to-source $BLUE_ADDRESS
 	fi
@@ -266,11 +272,11 @@ case "$1" in
  	if [ -x /etc/sysconfig/firewall.local ]; then
 		/etc/sysconfig/firewall.local start
 	fi
-	
-	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT_a"
+
+	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
 
 	if [ "$DROPINPUT" == "on" ]; then
-		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT_b"
+		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
 	fi
 	if [ "$DROPFORWARD" == "on" ]; then
 		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
@@ -286,6 +292,16 @@ case "$1" in
 	/sbin/iptables -A OUTPUT -j POLICYOUT
 
 	/usr/sbin/firewall-policy
+
+	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
+
+	if [ "$DROPINPUT" == "on" ]; then
+		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
+	fi
+	if [ "$DROPFORWARD" == "on" ]; then
+		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
+	fi
+	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
 	;;
   startovpn)  
 	# run openvpn

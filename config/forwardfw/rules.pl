@@ -224,7 +224,7 @@ sub buildrules
 				if($$hash{$key}[6] eq 'ORANGE'){
 					$targethash{$key}[0]=$defaultNetworks{'ORANGE_ADDRESS'};
 				}
-				if($$hash{$key}[6] eq 'RED'){
+				if($$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1'){
 					open(FILE, "/var/ipfire/red/local-ipaddress") or die 'Unable to open config file.';
 					$targethash{$key}[0]= <FILE>;
 					close(FILE);
