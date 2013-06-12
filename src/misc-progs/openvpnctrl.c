@@ -295,6 +295,10 @@ void deleteAllChains(void) {
 	deleteChain(OVPNRED);
 	deleteChain(OVPNBLUE);
 	deleteChain(OVPNORANGE);
+
+	// Only flush chains that are created by the firewall
+	flushChain(OVPNBLOCK);
+	flushChainNAT(OVPNNAT);
 }
 
 void createChainReference(char *chain) {
@@ -458,6 +462,7 @@ void setFirewallRules(void) {
 	flushChain(OVPNRED);
 	flushChain(OVPNBLUE);
 	flushChain(OVPNORANGE);
+	flushChain(OVPNBLOCK);
 	flushChainNAT(OVPNNAT);
 
 	// set firewall rules
