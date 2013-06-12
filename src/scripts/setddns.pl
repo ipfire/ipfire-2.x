@@ -260,9 +260,10 @@ if ($ip ne $ipcache) {
 			        $authstring = "username=$settings{'LOGIN'}&password=$settings{'PASSWORD'}";
 			    }
 
+			    my $user_agent = &General::MakeUserAgent();
 			    my ($out, $response) = Net::SSLeay::get_https("dns.lightningwirelabs.com", 443,
 				"/update?hostname=$settings{'HOSTDOMAIN'}&address4=$ip&$authstring",
-				Net::SSLeay::make_headers('User-Agent' => 'IPFire')
+				Net::SSLeay::make_headers('User-Agent' => $user_agent)
 			    );
 
 			    # Valid response are 'ok'   'nochange'

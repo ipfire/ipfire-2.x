@@ -857,10 +857,11 @@ sub FetchPublicIp {
         my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
         Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
     }
+    my $user_agent = &MakeUserAgent();
     my ($out, $response) = Net::SSLeay::get_http(  'checkip.dns.lightningwirelabs.com',
                 				    80,
         					    "/",
-						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
+						    Net::SSLeay::make_headers('User-Agent' => $user_agent )
 						);
     if ($response =~ m%HTTP/1\.. 200 OK%) {
 	$out =~ /Your IP address is: (\d+.\d+.\d+.\d+)/;
@@ -980,4 +981,29 @@ sub GetIcmpDescription ($) {
     'Experimental');
     if ($index>41) {return 'unknown'} else {return @icmp_description[$index]};
 }
+
+sub GetCoreUpdateVersion() {
+	my $core_update;
+
+	open(FILE, "/opt/pakfire/db/core/mine");
+	while (<FILE>) {
+		$core_update = $_;
+		last;
+	}
+	close(FILE);
+
+	return $core_update;
+}
+
+sub MakeUserAgent() {
+	my $user_agent = "IPFire/$General::version";
+
+	my $core_update = &GetCoreUpdateVersion();
+	if ($core_update ne "") {
+		$user_agent .= "/$core_update";
+	}
+
+	return $user_agent;
+}
+
 1;
