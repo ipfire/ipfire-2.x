@@ -857,13 +857,13 @@ sub FetchPublicIp {
         my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
         Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
     }
-    my ($out, $response) = Net::SSLeay::get_http(  'checkip.dyndns.org',
+    my ($out, $response) = Net::SSLeay::get_http(  'checkip.dns.lightningwirelabs.com',
                 				    80,
         					    "/",
 						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
 						);
     if ($response =~ m%HTTP/1\.. 200 OK%) {
-	$out =~ /Current IP Address: (\d+.\d+.\d+.\d+)/;
+	$out =~ /Your IP address is: (\d+.\d+.\d+.\d+)/;
 	return $1;
     }
     return '';

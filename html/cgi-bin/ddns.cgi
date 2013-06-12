@@ -235,6 +235,7 @@ my %checked =();     # Checkbox manipulations
 $checked{'SERVICE'}{'cjb.net'} = '';
 $checked{'SERVICE'}{'dhs.org'} = '';
 $checked{'SERVICE'}{'dnspark.com'} = '';
+$checked{'SERVICE'}{'dns.lightningwirelabs.com'} = '';
 $checked{'SERVICE'}{'dtdns.com'} = '';
 $checked{'SERVICE'}{'dyndns.org'} = '';
 $checked{'SERVICE'}{'dyndns-custom'} = '';
@@ -329,6 +330,7 @@ print <<END
     <option $checked{'SERVICE'}{'cjb.net'}>cjb.net</option>
     <option $checked{'SERVICE'}{'dhs.org'}>dhs.org</option>
     <option $checked{'SERVICE'}{'dnspark.com'}>dnspark.com</option>
+    <option $checked{'SERVICE'}{'dns.lightningwirelabs.com'}>dns.lightningwirelabs.com</option>
     <option $checked{'SERVICE'}{'dtdns.com'}>dtdns.com</option>
     <option $checked{'SERVICE'}{'dyndns.org'}>dyndns.org</option>
     <option $checked{'SERVICE'}{'dyndns-custom'}>dyndns-custom</option>

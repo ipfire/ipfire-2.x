@@ -3,6 +3,7 @@ etc/issue
 etc/rc.d/init.d/squid
 usr/local/bin/openvpnctrl
 etc/init.d/firewall
+srv/web/ipfire/cgi-bin/ddns.cgi
 usr/lib/squid/errors/tr/ERR_ACCESS_DENIED
 usr/lib/squid/errors/tr/ERR_ACL_TIME_QUOTA_EXCEEDED
 usr/lib/squid/errors/tr/ERR_AGENT_CONFIGURE
@@ -44,3 +45,5 @@ usr/lib/squid/errors/tr/ERR_URN_RESOLVE
 usr/lib/squid/errors/tr/ERR_WRITE_ERROR
 usr/lib/squid/errors/tr/ERR_ZERO_SIZE_OBJECT
 usr/lib/squid/errors/tr/error-details.txt
+usr/local/bin/setddns.pl
+var/ipfire/general-functions.pl
