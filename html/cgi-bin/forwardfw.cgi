@@ -78,7 +78,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.7';
+my $VERSION='0.9.9.8';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -693,14 +693,15 @@ sub checksource
 				$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
 				return $errormessage;
 			}
-			#check if the ip is part of an existing openvpn client/net or ipsec network
-			#if this is the case, generate errormessage to make the user use the dropdowns instead of using manual ip's
-			if (! &checkvpn($ip)){
-				$errormessage=$Lang::tr{'fwdfw err srcovpn'};
-				return $errormessage;
-			}else{
-				$fwdfwsettings{'src_addr'}="$ip/$subnet";
-			}
+			##check if the ip is part of an existing openvpn client/net or ipsec network
+			##if this is the case, generate errormessage to make the user use the dropdowns instead of using manual ip's
+			#if (! &checkvpn($ip)){
+				#$errormessage=$Lang::tr{'fwdfw err srcovpn'};
+				#return $errormessage;
+			#}else{
+				#$fwdfwsettings{'src_addr'}="$ip/$subnet";
+			#}
+			$fwdfwsettings{'src_addr'}="$ip/$subnet";
 			if(!&General::validipandmask($fwdfwsettings{'src_addr'})){
 				$errormessage.=$Lang::tr{'fwdfw err src_addr'}."<br>";
 				return $errormessage;
@@ -836,14 +837,15 @@ sub checktarget
 		#check and form valid IP
 		$ip=&General::ip2dec($ip);
 		$ip=&General::dec2ip($ip);
-		#check if the ip is part of an existing openvpn client/net or ipsec network
-		#if this is the case, generate errormessage to make the user use the dropdowns instead of using manual ip's
-		if (! &checkvpn($ip)){
-			$errormessage=$Lang::tr{'fwdfw err tgtovpn'};
-			return $errormessage;
-		}else{
-			$fwdfwsettings{'tgt_addr'}="$ip/$subnet";
-		}
+		##check if the ip is part of an existing openvpn client/net or ipsec network
+		##if this is the case, generate errormessage to make the user use the dropdowns instead of using manual ip's
+		#if (! &checkvpn($ip)){
+			#$errormessage=$Lang::tr{'fwdfw err tgtovpn'};
+			#return $errormessage;
+		#}else{
+			#$fwdfwsettings{'tgt_addr'}="$ip/$subnet";
+		#}
+		$fwdfwsettings{'tgt_addr'}="$ip/$subnet";
 		if(!&General::validipandmask($fwdfwsettings{'tgt_addr'})){
 			$errormessage.=$Lang::tr{'fwdfw err tgt_addr'}."<br>";
 			return $errormessage;
@@ -1533,6 +1535,25 @@ sub getcolor
 			if (&General::IpInSubnet($c,$a,$b)){
 				$tdcolor="style='border: 1px solid $Header::colourovpn;'";
 				return;
+			}
+			#Check if IP is part of OpenVPN static subnet
+			foreach my $key (sort keys %ccdnet){
+				my ($a,$b) = split("/",$ccdnet{$key}[1]);
+				$b =&General::iporsubtodec($b);
+				if (&General::IpInSubnet($c,$a,$b)){
+					$tdcolor="style='border: 1px solid $Header::colourovpn;'";
+					return;
+				}
+			}
+			#Check if IP is part of OpenVPN N2N subnet
+			foreach my $key (sort keys %ccdhost){
+				if ($ccdhost{$key}[3] eq 'net'){
+					my ($a,$b) = split("/",$ccdhost{$key}[11]);
+					if (&General::IpInSubnet($c,$a,$b)){
+						$tdcolor="style='border: 1px solid $Header::colourovpn;'";
+						return;
+					}
+				}
 			}
 			#Check if IP is part of IPsec RW network
 			if ($ipsecsettings{'RW_NET'} ne ''){
@@ -2384,6 +2405,8 @@ sub viewtablenew
 	&General::get_aliases(\%aliases);
 	&General::readhasharray("$confighost", \%customhost);
 	&General::readhasharray("$config", $hash);
+	&General::readhasharray("$configccdnet", \%ccdnet);
+	&General::readhasharray("$configccdhost", \%ccdhost);
 	if( ! -z $config){
 		&Header::openbox('100%', 'left',$title);
 		my $count=0;
