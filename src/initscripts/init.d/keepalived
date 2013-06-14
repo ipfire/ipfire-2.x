@@ -1,0 +1,46 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/keepalived
+#
+# Description : keepalive daemon initscript
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+[ -r "/etc/sysconfig/keepalive" ] && . /etc/sysconfig/keepalive
+
+case "${1}" in
+	start)
+		boot_mesg "Starting keepalive daemon..."
+		loadproc /usr/sbin/keepalived ${KEEPALIVED_OPTIONS}
+		;;
+
+	stop)
+		boot_mesg "Stopping keepalive daemon..."
+		killproc /usr/sbin/keepalived
+		;;
+
+	reload)
+		boot_mesg "Reloading keepalive daemon..."
+		reloadproc /etc/sbin/keepalived
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/keepalived
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/keepalived
