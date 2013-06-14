@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/network-vlans
 etc/rc.d/init.d/squid
 usr/local/bin/openvpnctrl
 etc/init.d/firewall
