@@ -31,12 +31,17 @@ eval $(/usr/local/bin/readhash ${CONFIG_FILE})
 # This is start or stop.
 action=${1}
 
-for interface in green0 blue0 orange0; do
+for interface in green0 red0 blue0 orange0; do
 	case "${interface}" in
 		green*)
 			PARENT_DEV=${GREEN_PARENT_DEV}
 			VLAN_ID=${GREEN_VLAN_ID}
 			MAC_ADDRESS=${GREEN_MAC_ADDRESS}
+			;;
+		red*)
+			PARENT_DEV=${RED_PARENT_DEV}
+			VLAN_ID=${RED_VLAN_ID}
+			MAC_ADDRESS=${RED_MAC_ADDRESS}
 			;;
 		blue*)
 			PARENT_DEV=${BLUE_PARENT_DEV}
