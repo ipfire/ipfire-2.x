@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = multicat
 PAK_VER    = 1
 
-DEPS       = "bitstream"
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
