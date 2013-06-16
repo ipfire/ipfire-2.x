@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2013  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -28,8 +28,10 @@ VERSUFIX = ipfire$(KCFG)
 ifeq "$(KCFG)" "-xen"
 	KVER = 2.6.32.60
 	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net
+	MODNAME = r8169.ko
 else
 	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/ethernet/realtek
+	MODNAME = r8169.ko.vendor
 endif
 
 VER        = 6.017.00
@@ -81,11 +83,13 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	#Save original r8169 module
+ifeq "$(KCFG)" "-xen"
 	-mv $(MODPATH)/r8169.ko \
 	    $(MODPATH)/r8169.ko.org
+endif
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/r8169_add_missing_pciids.patch
 	cd $(DIR_APP) && make -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ SUBDIRS=$(DIR_APP)/src modules
-	cd $(DIR_APP)/src && install -m 644 r8169.ko $(MODPATH)
+	cd $(DIR_APP)/src && install -m 644 r8169.ko $(MODPATH)/$(MODNAME)
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

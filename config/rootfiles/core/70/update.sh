@@ -54,6 +54,28 @@ if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
 
+#Switch realtek lan from vendor to kernel original...
+	mv /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r81??.ko \
+	   /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r81??.ko.vendor
+	cp /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8169.ko.org \
+	   /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8169.ko
+	rm /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8101.ko
+	rm /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8168.ko
+	rm /var/cache/pakfire/linux-pae-*.ipfire
+
+#rebuild module dep's
+arch=`uname -m`
+
+if [ ${arch::3} == "arm" ]; then
+	depmod -a 3.2.46-ipfire-kirkwood >/dev/null 2>&1
+	depmod -a 3.2.46-ipfire-omap >/dev/null 2>&1
+	depmod -a 3.2.46-ipfire-rpi >/dev/null 2>&1
+else
+	depmod -a 3.2.46-ipfire     >/dev/null 2>&1
+	depmod -a 3.2.46-ipfire-pae >/dev/null 2>&1
+	depmod -a 2.6.32.60-ipfire-xen >/dev/null 2>&1
+fi
+
 #
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
@@ -72,4 +94,3 @@ touch /var/run/need_reboot
 sendprofile
 #Don't report the exitcode last command
 exit 0
-

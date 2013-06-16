@@ -28,8 +28,10 @@ VERSUFIX = ipfire$(KCFG)
 ifeq "$(KCFG)" "-xen"
 	KVER = 2.6.32.60
 	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net
+	MODNAME = r8168.ko
 else
 	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/ethernet/realtek
+	MODNAME = r8168.ko.vendor
 endif
 
 VER        = 8.035.00
@@ -82,6 +84,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ SUBDIRS=$(DIR_APP)/src modules
-	cd $(DIR_APP)/src && install -m 644 r8168.ko $(MODPATH)
+	cd $(DIR_APP)/src && install -m 644 r8168.ko $(MODPATH)/$(MODNAME)
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
