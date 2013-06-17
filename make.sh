@@ -768,6 +768,12 @@ buildipfire() {
   ipfiremake strace
   ipfiremake ipfire-netboot
   ipfiremake lcdproc
+  ipfiremake perl-Carp-Clan
+  ipfiremake perl-Date-Calc
+  ipfiremake perl-Date-Manip
+  ipfiremake perl-File-Tail
+  ipfiremake perl-TimeDate
+  ipfiremake swatch
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
