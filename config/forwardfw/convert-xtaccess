@@ -55,7 +55,7 @@ foreach my $line (@current){
 	}
 	#check ipfire address
 	if ($e eq '0.0.0.0'){ 
-		$field6 = 'Default IP';
+		$field6 = 'RED1';
 	}else{
 		foreach my $line (@alias){
 			my ($ip,$state,$aliasname) = split (",",$line);
@@ -75,8 +75,6 @@ foreach my $line (@current){
 		$c = "$1:65535";
 	}
 	$field15=$c;
-	#Ausgabe
-	#print  "0:$field0 1:$field1 2:$field2  3:$field3  4:$field4  5:$field5  6:$field6  11:$field11   12:$field12 13:$field13 14:$field14 15:$field15 16:$field16 26:$field26 27:$field27\n";
 	my $key = &General::findhasharraykey (\%configinputfw);
 	foreach my $i (0 .. 27) { $configinputfw{$key}[$i] = "";}
 	$configinputfw{$key}[0] = $field0;

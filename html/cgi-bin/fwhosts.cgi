@@ -971,7 +971,6 @@ if ($fwhostsettings{'ACTION'} eq 'delgrpservice')
 	&General::writehasharray("$configsrvgrp", \%customservicegrp);
 	&rules;
 	if ($fwhostsettings{'updatesrvgrp'} eq 'on'){
-	#$fwhostsettings{'updatesrvgrp'}='on';
 		$fwhostsettings{'SRVGRP_NAME'}=$grpname;
 		$fwhostsettings{'SRVGRP_REMARK'}=$grpremark;
 	}
@@ -1009,17 +1008,14 @@ if ($fwhostsettings{'ACTION'} eq 'changegrpremark')
 	if ($fwhostsettings{'oldrem'} ne $fwhostsettings{'newrem'} && (&validremark($fwhostsettings{'newrem'}) || $fwhostsettings{'newrem'} eq '')){
 		foreach my $key (sort keys %customgrp)
 			{
-				#$customgrp{$key}[1]=~ s/\|/,/g;
 				if($customgrp{$key}[0] eq $fwhostsettings{'grp'} && $customgrp{$key}[1] eq $fwhostsettings{'oldrem'})
 				{
-					#$fwhostsettings{'newrem'}=~ s/,/\|/g;
 					$customgrp{$key}[1]='';
 					$customgrp{$key}[1]=$fwhostsettings{'newrem'};
 				}	
 			}
 			&General::writehasharray("$configgrp", \%customgrp);
 			$fwhostsettings{'update'}='on';
-			#$fwhostsettings{'newrem'}=~ s/\|/,/g;
 			$fwhostsettings{'remark'}=$fwhostsettings{'newrem'};
 	}else{
 		$errormessage=$Lang::tr{'fwhost err remark'};
@@ -1037,17 +1033,14 @@ if ($fwhostsettings{'ACTION'} eq 'changesrvgrpremark')
 	if ($fwhostsettings{'oldsrvrem'} ne $fwhostsettings{'newsrvrem'} && (&validremark($fwhostsettings{'newsrvrem'}) || $fwhostsettings{'newsrvrem'} eq '')){
 		foreach my $key (sort keys %customservicegrp)
 			{
-				#$customservicegrp{$key}[1]=~ s/\|/,/g;
 				if($customservicegrp{$key}[0] eq $fwhostsettings{'srvgrp'} && $customservicegrp{$key}[1] eq $fwhostsettings{'oldsrvrem'})
 				{
-					#$fwhostsettings{'newsrvrem'}=~ s/,/|/g;
 					$customservicegrp{$key}[1]='';
 					$customservicegrp{$key}[1]=$fwhostsettings{'newsrvrem'};
 				}	
 			}
 			&General::writehasharray("$configsrvgrp", \%customservicegrp);
 			$fwhostsettings{'updatesrvgrp'}='on';
-			#$fwhostsettings{'newsrvrem'}=~ s/\|/,/g;
 			$fwhostsettings{'SRVGRP_REMARK'}=$fwhostsettings{'newsrvrem'};
 	}else{
 		$errormessage=$Lang::tr{'fwhost err remark'};

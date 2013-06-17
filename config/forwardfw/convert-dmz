@@ -111,9 +111,6 @@ sub process_rules{
 		$d =~ tr/-/:/;
 		$field15=$d;
 		$field16=$h;
-		##Ausgabe
-		#print "A: $a   B: $b   C: $c   D: $d   E: $e   F: $f   G: $g   H: $h\n";
-		#print "0:$field0 1:$field1 2:$field2  3:$field3  4:$field4  5:$field5  6:$field6  11:$field11   12:$field12 13:$field13 14:$field14 15:$field15 16:$field16 26:$field26 27:$field27\n\n\n";
 		my $key = &General::findhasharraykey (\%configfwdfw);
 		foreach my $i (0 .. 27) { $configfwdfw{$key}[$i] = "";}
 		$configfwdfw{$key}[0] = $field0;

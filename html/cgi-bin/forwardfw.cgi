@@ -183,8 +183,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
 			$fwdfwsettings{'oldrulenumber'}=$maxkey;
 			foreach my $key (sort keys %confignatfw){
-				#print"$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'snatport'},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}<br>";
-				#print"$confignatfw{$key}[0],$confignatfw{$key}[2],$confignatfw{$key}[3],$confignatfw{$key}[4],$confignatfw{$key}[5],$confignatfw{$key}[6],$confignatfw{$key}[7],$confignatfw{$key}[8],$confignatfw{$key}[9],$confignatfw{$key}[10],$confignatfw{$key}[11],$confignatfw{$key}[12],$confignatfw{$key}[13],$confignatfw{$key}[14],$confignatfw{$key}[15],$confignatfw{$key}[17],$confignatfw{$key}[19],$confignatfw{$key}[20],$confignatfw{$key}[21],$confignatfw{$key}[22],$confignatfw{$key}[23],$confignatfw{$key}[24],$confignatfw{$key}[25],$confignatfw{$key}[26],$confignatfw{$key}[27],$confignatfw{$key}[28],$confignatfw{$key}[29],$confignatfw{$key}[30],$confignatfw{$key}[31],$confignatfw{$key}[32]<br>";
 				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'snatport'},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}"
 					eq "$confignatfw{$key}[0],$confignatfw{$key}[2],$confignatfw{$key}[3],$confignatfw{$key}[4],$confignatfw{$key}[5],$confignatfw{$key}[6],$confignatfw{$key}[7],$confignatfw{$key}[8],$confignatfw{$key}[9],$confignatfw{$key}[10],$confignatfw{$key}[11],$confignatfw{$key}[12],$confignatfw{$key}[13],$confignatfw{$key}[14],$confignatfw{$key}[15],$confignatfw{$key}[17],$confignatfw{$key}[19],$confignatfw{$key}[20],$confignatfw{$key}[21],$confignatfw{$key}[22],$confignatfw{$key}[23],$confignatfw{$key}[24],$confignatfw{$key}[25],$confignatfw{$key}[26],$confignatfw{$key}[27],$confignatfw{$key}[28],$confignatfw{$key}[29],$confignatfw{$key}[30],$confignatfw{$key}[31],$confignatfw{$key}[32]"){
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
@@ -318,27 +316,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		if($fwdfwsettings{'nosave2'} ne 'on'){
 			&saverule(\%configinputfw,$configinput);
 		}
-		#print "Source: $fwdfwsettings{'grp1'} -> $fwdfwsettings{$fwdfwsettings{'grp1'}}<br>";
-		#print "Sourceport: $fwdfwsettings{'USE_SRC_PORT'}, $fwdfwsettings{'PROT'}, $fwdfwsettings{'ICMP_TYPES'}, $fwdfwsettings{'SRC_PORT'}<br>";
-		#print "Target: $fwdfwsettings{'grp2'} -> $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
-		#print "Dienst:  $fwdfwsettings{'USESRV'}, $fwdfwsettings{'grp3'} -> $fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
-		#print "BEMERKUNG: $fwdfwsettings{'ruleremark'}<br>";
-		#print " Regel AKTIV: $fwdfwsettings{'ACTIVE'}<br>";
-		#print " Regel LOG: $fwdfwsettings{'LOG'}<br>";
-		#print " ZEITRAHMEN: $fwdfwsettings{'TIME'}<br>";
-		#print " MO: $fwdfwsettings{'TIME_MON'}<br>";
-		#print " DI: $fwdfwsettings{'TIME_TUE'}<br>";
-		#print " MI: $fwdfwsettings{'TIME_WED'}<br>";
-		#print " DO: $fwdfwsettings{'TIME_THU'}<br>";
-		#print " FR: $fwdfwsettings{'TIME_FRI'}<br>";
-		#print " SA: $fwdfwsettings{'TIME_SAT'}<br>";
-		#print " SO: $fwdfwsettings{'TIME_SUN'}<br>";
-		#print " VON: $fwdfwsettings{'TIME_FROM'} bis $fwdfwsettings{'TIME_TO'}<br>";
-		#print "<br>";
-		#print"ALT: $fwdfwsettings{'oldgrp1a'} $fwdfwsettings{'oldgrp1b'}	NEU:	$fwdfwsettings{'grp1'} $fwdfwsettings{$fwdfwsettings{'grp1'}}<br>";
-		#print"ALT: $fwdfwsettings{'oldgrp2a'} $fwdfwsettings{'oldgrp2b'}	NEU:	$fwdfwsettings{'grp2'} $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
-		#print"ALT: $fwdfwsettings{'oldgrp3a'} $fwdfwsettings{'oldgrp3b'}	NEU:	$fwdfwsettings{'grp3'} $fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
-		#print"DIENSTE Checkalt:$fwdfwsettings{'oldusesrv'}  DIENSTE Checkneu:$fwdfwsettings{'USESRV'}    DIENST ALT:$fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'}   DIENST NEU:$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 	}elsif($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' ){
 		# OUTGOING PART
 		$fwdfwsettings{'config'}=$configoutgoing;
@@ -449,27 +426,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		if ($fwdfwsettings{'nosave2'} ne 'on'){
 			&saverule(\%configfwdfw,$configfwdfw);
 		}	
-		#print "Source: $fwdfwsettings{'grp1'} -> $fwdfwsettings{$fwdfwsettings{'grp1'}}<br>";
-		#print "Sourceport: $fwdfwsettings{'USE_SRC_PORT'}, $fwdfwsettings{'PROT'}, $fwdfwsettings{'ICMP_TYPES'}, $fwdfwsettings{'SRC_PORT'}<br>";
-		#print "Target: $fwdfwsettings{'grp2'} -> $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
-		#print "Dienst:  $fwdfwsettings{'USESRV'}, $fwdfwsettings{'grp3'} -> $fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
-		#print "BEMERKUNG: $fwdfwsettings{'ruleremark'}<br>";
-		#print " Regel AKTIV: $fwdfwsettings{'ACTIVE'}<br>";
-		#print " Regel LOG: $fwdfwsettings{'LOG'}<br>";
-		#print " ZEITRAHMEN: $fwdfwsettings{'TIME'}<br>";
-		#print " MO: $fwdfwsettings{'TIME_MON'}<br>";
-		#print " DI: $fwdfwsettings{'TIME_TUE'}<br>";
-		#print " MI: $fwdfwsettings{'TIME_WED'}<br>";
-		#print " DO: $fwdfwsettings{'TIME_THU'}<br>";
-		#print " FR: $fwdfwsettings{'TIME_FRI'}<br>";
-		#print " SA: $fwdfwsettings{'TIME_SAT'}<br>";
-		#print " SO: $fwdfwsettings{'TIME_SUN'}<br>";
-		#print " VON: $fwdfwsettings{'TIME_FROM'} bis $fwdfwsettings{'TIME_TO'}<br>";
-		#print "<br>";
-		#print"ALT: $fwdfwsettings{'oldgrp1a'} $fwdfwsettings{'oldgrp1b'}	NEU:	$fwdfwsettings{'grp1'} $fwdfwsettings{$fwdfwsettings{'grp1'}}<br>";
-		#print"ALT: $fwdfwsettings{'oldgrp2a'} $fwdfwsettings{'oldgrp2b'}	NEU:	$fwdfwsettings{'grp2'} $fwdfwsettings{$fwdfwsettings{'grp2'}}<br>";
-		#print"ALT: $fwdfwsettings{'oldgrp3a'} $fwdfwsettings{'oldgrp3b'}	NEU:	$fwdfwsettings{'grp3'} $fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
-		#print"DIENSTE Checkalt:$fwdfwsettings{'oldusesrv'}  DIENSTE Checkneu:$fwdfwsettings{'USESRV'}    DIENST ALT:$fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'}   DIENST NEU:$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}}<br>";
 	}
 	if ($errormessage){
 		&newrule;
@@ -489,18 +445,9 @@ if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'reset'})
 			&checkcounter($configfwdfw{$key}[5],$configfwdfw{$key}[6],,);
 			&checkcounter($configfwdfw{$key}[14],$configfwdfw{$key}[15],,);
 		}
-		#&General::readhasharray("$configinput", \%configinputfw);
-		#foreach my $key (sort keys %configinputfw){
-		#	&checkcounter($configinputfw{$key}[3],$configinputfw{$key}[4],,);
-		#	&checkcounter($configinputfw{$key}[5],$configinputfw{$key}[6],,);
-		#	&checkcounter($configinputfw{$key}[14],$configinputfw{$key}[15],,);
-		#}
-
 		system("rm ${General::swroot}/forward/config");
-		#system("rm ${General::swroot}/forward/input");
 		&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
 		unless (-e "${General::swroot}/forward/config")  	{ system("touch ${General::swroot}/forward/config"); }
-		#unless (-e "${General::swroot}/forward/input")  	{ system("touch ${General::swroot}/forward/input"); }
 		my $MODE1=$fwdfwsettings{'POLICY1'};
 		%fwdfwsettings = ();
 		$fwdfwsettings{'POLICY'}='MODE2';
@@ -582,7 +529,6 @@ if ($fwdfwsettings{'ACTION'} eq 'movedown')
 if ($fwdfwsettings{'ACTION'} eq 'copyrule')
 {
 	$fwdfwsettings{'copyfwrule'}='on';
-	#$fwdfwsettings{'updatefwrule'}='on';
 	&newrule;
 }
 if ($fwdfwsettings{'ACTION'} eq '')
@@ -693,14 +639,6 @@ sub checksource
 				$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
 				return $errormessage;
 			}
-			##check if the ip is part of an existing openvpn client/net or ipsec network
-			##if this is the case, generate errormessage to make the user use the dropdowns instead of using manual ip's
-			#if (! &checkvpn($ip)){
-				#$errormessage=$Lang::tr{'fwdfw err srcovpn'};
-				#return $errormessage;
-			#}else{
-				#$fwdfwsettings{'src_addr'}="$ip/$subnet";
-			#}
 			$fwdfwsettings{'src_addr'}="$ip/$subnet";
 			if(!&General::validipandmask($fwdfwsettings{'src_addr'})){
 				$errormessage.=$Lang::tr{'fwdfw err src_addr'}."<br>";
@@ -837,14 +775,6 @@ sub checktarget
 		#check and form valid IP
 		$ip=&General::ip2dec($ip);
 		$ip=&General::dec2ip($ip);
-		##check if the ip is part of an existing openvpn client/net or ipsec network
-		##if this is the case, generate errormessage to make the user use the dropdowns instead of using manual ip's
-		#if (! &checkvpn($ip)){
-			#$errormessage=$Lang::tr{'fwdfw err tgtovpn'};
-			#return $errormessage;
-		#}else{
-			#$fwdfwsettings{'tgt_addr'}="$ip/$subnet";
-		#}
 		$fwdfwsettings{'tgt_addr'}="$ip/$subnet";
 		if(!&General::validipandmask($fwdfwsettings{'tgt_addr'})){
 			$errormessage.=$Lang::tr{'fwdfw err tgt_addr'}."<br>";
