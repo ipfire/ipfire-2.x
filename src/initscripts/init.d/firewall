@@ -283,11 +283,10 @@ case "$1" in
 
 	/usr/sbin/firewall-policy
 
-	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
-
 	if [ "$DROPINPUT" == "on" ]; then
 		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
 	fi
+	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
 	if [ "$DROPFORWARD" == "on" ]; then
 		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
 	fi
