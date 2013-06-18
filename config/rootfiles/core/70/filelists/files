@@ -5,6 +5,7 @@ etc/rc.d/init.d/squid
 usr/local/bin/openvpnctrl
 etc/init.d/firewall
 srv/web/ipfire/cgi-bin/ddns.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
 usr/lib/squid/errors/tr/ERR_ACCESS_DENIED
 usr/lib/squid/errors/tr/ERR_ACL_TIME_QUOTA_EXCEEDED
 usr/lib/squid/errors/tr/ERR_AGENT_CONFIGURE
