@@ -55,9 +55,13 @@ if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 fi
 
 #Switch realtek lan from vendor to kernel original...
-	mv /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r81??.ko \
-	   /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r81??.ko.vendor
-	cp /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8169.ko.org \
+	cp /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8169.ko \
+	   /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8169.ko.vendor
+	mv /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8101.ko \
+	   /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8101.ko.vendor
+	mv /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8168.ko \
+	   /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8168.ko.vendor
+	cp -f /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8169.ko.org \
 	   /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8169.ko
 	rm /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8101.ko
 	rm /lib/modules/*-ipfire*/kernel/drivers/net/ethernet/realtek/r8168.ko
