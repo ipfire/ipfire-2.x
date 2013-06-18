@@ -36,6 +36,31 @@ PAK_VER    = 7
 
 DEPS       = "amavisd mysql"
 
+CCARGS     = -DNO_IPV6 `getconf LFS_CFLAGS` \
+	-DDEF_DAEMON_DIR="'\"/usr/lib/postfix\"'" \
+	-DDEF_MANPAGE_DIR="'\"/usr/share/man\"'"
+AUXLIBS    =
+
+# LDAP
+CCARGS    += -DHAS_LDAP -DLDAP_DEPRECATED=1
+AUXLIBS   += -lldap -llber
+
+# PCRE
+CCARGS    += -DHAS_PCRE -I/usr/include/pcre
+AUXLIBS   += -lpcre
+
+# MySQL
+CCARGS    += -DHAS_MYSQL -I/usr/include/mysql
+AUXLIBS   += -L/usr/lib/mysql -lmysqlclient -lm
+
+# SASL
+CCARGS    += -DUSE_SASL_AUTH -DUSE_CYRUS_SASL -I/usr/include/sasl
+AUXLIBS   += -L/usr/lib/sasl2 -lsasl2
+
+# SSL
+CCARGS    += -DUSE_TLS `pkg-config --cflags openssl`
+AUXLIBS   += `pkg-config --libs openssl`
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -78,8 +103,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make -f Makefile.init makefiles \
-				'CCARGS=-DDEF_DAEMON_DIR=\"/usr/lib/postfix\" -DDEF_MANPAGE_DIR=\"/usr/share/man\" -DUSE_TLS -I/usr/include/openssl -DUSE_SASL_AUTH -DUSE_CYRUS_SASL -I/usr/include/sasl -DHAS_MYSQL -I/usr/include/mysql' \
-				'AUXLIBS=-L/usr/lib -L/usr/lib/sasl2 -lz -lm  -lssl -lcrypto -lmysqlclient -L/usr/lib/mysql -lsasl2 -L/usr/lib'
+		DEBUG="" OPT="$(CFLAGS) -fno-strict-aliasing" CCARGS="$(CCARGS)" AUXLIBS="$(AUXLIBS)"
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && sh postfix-install -non-interactive
 	## Install configuration
