@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 3.2.35 Kernel Configuration
+# Linux/arm 3.2.47 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_HAVE_PWM=y

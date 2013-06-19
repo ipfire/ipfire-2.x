@@ -26,7 +26,7 @@ include Config
 
 VERSUFIX = ipfire$(KCFG)
 ifeq "$(KCFG)" "-xen"
-	KVER = 2.6.32.60
+	KVER = 2.6.32.61
 	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net
 	MODNAME = r8168.ko
 else

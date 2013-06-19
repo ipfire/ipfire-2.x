@@ -26,7 +26,7 @@ include Config
 
 VERSUFIX = ipfire$(KCFG)
 ifeq "$(KCFG)" "-xen"
-	KVER = 2.6.32.60
+	KVER = 2.6.32.61
 	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/e1000e
 else
 	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/ethernet/intel/e1000e

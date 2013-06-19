@@ -29,7 +29,7 @@ VERSUFIX = ipfire$(KCFG)
 # e1000 vendor modul is only for legacy xen kernel
 # The 3.2.x kernel has newer module.
 
-KVER = 2.6.32.60
+KVER = 2.6.32.61
 MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/e1000/
 
 VER        = 8.0.35
