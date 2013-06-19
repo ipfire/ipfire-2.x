@@ -179,7 +179,7 @@ sub buildrules
 	my $nat;
 	my $fwaccessdport;
 	foreach my $key (sort {$a <=> $b} keys %$hash){
-		next if ($$hash{$key}[6] eq 'RED' && $conexists eq 'off' );
+		next if (($$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1') && $conexists eq 'off' );
 		if ($$hash{$key}[28] eq 'ON'){
 			$command='iptables -t nat -A';
 			$natip=&get_nat_ip($$hash{$key}[29],$$hash{$key}[31]);
@@ -228,7 +228,7 @@ sub buildrules
 					$targethash{$key}[0]='0.0.0.0/0';
 				}
 				if($$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1'){
-					open(FILE, "/var/ipfire/red/local-ipaddress") or die 'Unable to open config file.';
+					open(FILE, "/var/ipfire/red/local-ipaddress")or die "Couldn't open local-ipaddress";
 					$targethash{$key}[0]= <FILE>;
 					close(FILE);
 				}else{

@@ -73,70 +73,6 @@ iptables_init() {
 	/sbin/iptables -A INPUT   -j BADTCP
 	/sbin/iptables -A FORWARD -j BADTCP
 
-}
-
-iptables_red() {
-	/sbin/iptables -F REDINPUT
-	/sbin/iptables -F REDFORWARD
-	/sbin/iptables -t nat -F REDNAT
-
-	# PPPoE / PPTP Device
-	if [ "$IFACE" != "" ]; then
-		# PPPoE / PPTP
-		if [ "$DEVICE" != "" ]; then
-			/sbin/iptables -A REDINPUT -i $DEVICE -j ACCEPT
-		fi
-		if [ "$RED_TYPE" == "PPTP" -o "$RED_TYPE" == "PPPOE" ]; then
-			if [ "$RED_DEV" != "" ]; then
-				/sbin/iptables -A REDINPUT -i $RED_DEV -j ACCEPT
-			fi
-		fi
-	fi
-
-	# PPTP over DHCP
-	if [ "$DEVICE" != "" -a "$TYPE" == "PPTP" -a "$METHOD" == "DHCP" ]; then
-		/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $DEVICE -j ACCEPT
-		/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $DEVICE -j ACCEPT
-	fi
-
-	# Orange pinholes
-	if [ "$ORANGE_DEV" != "" ]; then
-		# This rule enables a host on ORANGE network to connect to the outside
-		# (only if we have a red connection)
-		if [ "$IFACE" != "" ]; then
-			/sbin/iptables -A REDFORWARD -i $ORANGE_DEV -o $IFACE -j ACCEPT
-		fi
-	fi
-
-	if [ "$IFACE" != "" -a -f /var/ipfire/red/active ]; then
-		# DHCP
-		if [ "$RED_DEV" != "" -a "$RED_TYPE" == "DHCP" ]; then
-			/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-			/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-		fi
-		if [ "$METHOD" == "DHCP"  -a "$PROTOCOL" == "RFC1483" ]; then
-			/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-			/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-		fi
-
-		# Outgoing masquerading (don't masqerade IPSEC (mark 50))
-		/sbin/iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
-		/sbin/iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
-
-	fi
-}
-
-# See how we were called.
-case "$1" in
-  start)
-	iptables_init
-
-	# Limit Packets- helps reduce dos/syn attacks
-	# original do nothing line
-	#/sbin/iptables -A INPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -m limit --limit 10/sec
-	# the correct one, but the negative '!' do nothing...
-	#/sbin/iptables -A INPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN ! -m limit --limit 10/sec -j DROP
-
 	# Fix for braindead ISP's
 	/sbin/iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
@@ -273,6 +209,12 @@ case "$1" in
 		/etc/sysconfig/firewall.local start
 	fi
 
+	# run openvpn
+	/usr/local/bin/openvpnctrl --create-chains-and-rules
+
+	# run wirelessctrl
+	/usr/local/bin/wirelessctrl
+
 	#POLICY CHAIN
 	/sbin/iptables -N POLICYIN
 	/sbin/iptables -A INPUT -j POLICYIN
@@ -283,6 +225,9 @@ case "$1" in
 
 	/usr/sbin/firewall-policy
 
+	# read new firewall
+	/usr/local/bin/forwardfwctrl
+
 	if [ "$DROPINPUT" == "on" ]; then
 		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
 	fi
@@ -291,66 +236,80 @@ case "$1" in
 		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
 	fi
 	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
-	;;
-  startovpn)  
-	# run openvpn
-	/usr/local/bin/openvpnctrl --create-chains-and-rules
-        ;;
-  stop)
+}
+
+iptables_red() {
+	/sbin/iptables -F REDINPUT
+	/sbin/iptables -F REDFORWARD
+	/sbin/iptables -t nat -F REDNAT
+
+	# PPPoE / PPTP Device
+	if [ "$IFACE" != "" ]; then
+		# PPPoE / PPTP
+		if [ "$DEVICE" != "" ]; then
+			/sbin/iptables -A REDINPUT -i $DEVICE -j ACCEPT
+		fi
+		if [ "$RED_TYPE" == "PPTP" -o "$RED_TYPE" == "PPPOE" ]; then
+			if [ "$RED_DEV" != "" ]; then
+				/sbin/iptables -A REDINPUT -i $RED_DEV -j ACCEPT
+			fi
+		fi
+	fi
+
+	# PPTP over DHCP
+	if [ "$DEVICE" != "" -a "$TYPE" == "PPTP" -a "$METHOD" == "DHCP" ]; then
+		/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $DEVICE -j ACCEPT
+		/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $DEVICE -j ACCEPT
+	fi
+
+	# Orange pinholes
+	if [ "$ORANGE_DEV" != "" ]; then
+		# This rule enables a host on ORANGE network to connect to the outside
+		# (only if we have a red connection)
+		if [ "$IFACE" != "" ]; then
+			/sbin/iptables -A REDFORWARD -i $ORANGE_DEV -o $IFACE -j ACCEPT
+		fi
+	fi
+
+	if [ "$IFACE" != "" -a -f /var/ipfire/red/active ]; then
+		# DHCP
+		if [ "$RED_DEV" != "" -a "$RED_TYPE" == "DHCP" ]; then
+			/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
+			/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
+		fi
+		if [ "$METHOD" == "DHCP"  -a "$PROTOCOL" == "RFC1483" ]; then
+			/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
+			/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
+		fi
+
+		# Outgoing masquerading (don't masqerade IPSEC (mark 50))
+		/sbin/iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
+		/sbin/iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
+
+	fi
+}
+
+# See how we were called.
+case "$1" in
+  start)
 	iptables_init
-	# Accept everyting connected
-	/sbin/iptables -A INPUT   -m state --state ESTABLISHED,RELATED -j ACCEPT
-
-	# localhost and ethernet.
-	/sbin/iptables -A INPUT -i lo -j ACCEPT
-	/sbin/iptables -A INPUT -i $GREEN_DEV -m state --state NEW -j ACCEPT
-
-	if [ "$RED_DEV" != "" -a "$RED_TYPE" == "DHCP" ]; then
-		/sbin/iptables -A INPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-		/sbin/iptables -A INPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-	fi
-	if [ "$PROTOCOL" == "RFC1483" -a "$METHOD" == "DHCP" ]; then
-		/sbin/iptables -A INPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-		/sbin/iptables -A INPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-	fi
-
-	# run local firewall configuration, if present
- 	if [ -x /etc/sysconfig/firewall.local ]; then
-		/etc/sysconfig/firewall.local stop
-	fi
-
-	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
-
-	if [ "$DROPINPUT" == "on" ]; then
-		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
-	fi
-	if [ "$DROPFORWARD" == "on" ]; then
-		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
-	fi
-	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
-	
 	;;
-  stopovpn)
-	# stop openvpn
-	/usr/local/bin/openvpnctrl --delete-chains-and-rules
-        ;;
   reload)
 	iptables_red
-
 	# run local firewall configuration, if present
- 	if [ -x /etc/sysconfig/firewall.local ]; then
+	if [ -x /etc/sysconfig/firewall.local ]; then
 		/etc/sysconfig/firewall.local reload
 	fi
 	;;
   restart)
-	$0 stop
+	# run local firewall configuration, if present
+	if [ -x /etc/sysconfig/firewall.local ]; then
+		/etc/sysconfig/firewall.local stop
+	fi
 	$0 start
-	/usr/local/bin/forwardfwctrl
-	/usr/local/bin/openvpnctrl -s > /dev/null 2>&1
-	/usr/local/bin/openvpnctrl -sn2n > /dev/null 2>&1
 	;;
   *)
-        echo "Usage: $0 {start|stop|reload|restart}"
+        echo "Usage: $0 {start|reload|restart}"
         exit 1
 	;;
 esac
