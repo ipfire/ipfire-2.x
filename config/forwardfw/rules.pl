@@ -139,6 +139,7 @@ if($param eq 'flush'){
 			&p2pblock;
 			system ("iptables -A $CHAIN -m state --state NEW -j ACCEPT");
 			system ("/usr/sbin/firewall-policy");
+			system ("/etc/sysconfig/firewall.local reload");
 		}
 	}
 }
