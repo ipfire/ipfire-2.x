@@ -950,6 +950,7 @@ build)
 
 	cd $BASEDIR
 	tools/checknewlog.pl
+	tools/checkwronginitlinks
 	cd $PWD
 
 	beautify build_end

@@ -1,4 +1,4 @@
-etc/init.d/squid
+etc/rc.d/init.d/squid
 etc/sysctl.conf
 etc/squid/errors
 usr/bin/squidclient
@@ -32,7 +32,7 @@ srv/web/ipfire/cgi-bin/updatexlrator.cgi
 var/ipfire/langs
 lib/modules/KVER-ipfire/kernel/drivers/net/imq.ko
 var/ipfire/qos/bin/makeqosscripts.pl
-etc/init.d/network
+etc/rc.d/init.d/network
 bin/ntfs-3g
 lib/libntfs-3g.so
 lib/libntfs-3g.so.49
