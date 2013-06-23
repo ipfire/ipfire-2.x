@@ -858,7 +858,7 @@ sub FetchPublicIp {
         Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
     }
     my $user_agent = &MakeUserAgent();
-    my ($out, $response) = Net::SSLeay::get_http(  'checkip.dns.lightningwirelabs.com',
+    my ($out, $response) = Net::SSLeay::get_http(  'checkip4.dns.lightningwirelabs.com',
                 				    80,
         					    "/",
 						    Net::SSLeay::make_headers('User-Agent' => $user_agent )
