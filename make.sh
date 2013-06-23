@@ -442,7 +442,7 @@ buildipfire() {
     ipfiremake r8169			KCFG="-kirkwood"
     ipfiremake r8168			KCFG="-kirkwood"
     ipfiremake r8101			KCFG="-kirkwood"
-    ipfiremake e1000e			KCFG="-kirkwood"
+#    ipfiremake e1000e			KCFG="-kirkwood"
     ipfiremake igb			KCFG="-kirkwood"
 
   fi
