@@ -1008,4 +1008,27 @@ sub MakeUserAgent() {
 	return $user_agent;
 }
 
+# Function to read a file with UTF-8 charset.
+sub read_file_utf8 ($) {
+	my ($file) = @_;
+
+	open my $in, '<:encoding(UTF-8)', $file or die "Could not open '$file' for reading $!";
+	local $/ = undef;
+	my $all = <$in>;
+	close $in;
+
+	return $all;    
+}
+
+# Function to write a file with UTF-8 charset.
+sub write_file_utf8 ($) {
+	my ($file, $content) = @_;
+
+	open my $out, '>:encoding(UTF-8)', $file or die "Could not open '$file' for writing $!";;           
+	print $out $content;
+	close $out;
+
+	return; 
+}
+
 1;
