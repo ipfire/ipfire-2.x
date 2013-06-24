@@ -15,7 +15,7 @@ usr/lib/perl5/site_perl/5.12.3/Date/Calendar/Year.pm
 usr/lib/perl5/site_perl/5.12.3/Date/Calendar/Year.pod
 #usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Date
 #usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Date/Calc
-usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Date/Calc/.packlist
+#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Date/Calc/.packlist
 #usr/share/man/man3/Date::Calc.3
 #usr/share/man/man3/Date::Calc::Object.3
 #usr/share/man/man3/Date::Calc::PP.3

@@ -7,7 +7,7 @@ usr/lib/perl5/site_perl/5.12.3/Swatch/Throttle.pm
 #usr/lib/perl5/site_perl/5.12.3/auto/Swatch/Actions
 usr/lib/perl5/site_perl/5.12.3/auto/Swatch/Actions/autosplit.ix
 #usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/swatch
-usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/swatch/.packlist
+#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/swatch/.packlist
 #usr/share/man/man1/swatch.1
 #usr/share/man/man3/Swatch::Actions.3
 #usr/share/man/man3/Swatch::Threshold.3

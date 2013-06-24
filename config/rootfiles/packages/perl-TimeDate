@@ -37,7 +37,7 @@ usr/lib/perl5/site_perl/5.12.3/Date/Parse.pm
 #usr/lib/perl5/site_perl/5.12.3/Time
 usr/lib/perl5/site_perl/5.12.3/Time/Zone.pm
 #usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/TimeDate
-usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/TimeDate/.packlist
+#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/TimeDate/.packlist
 #usr/share/man/man3/Date::Format.3
 #usr/share/man/man3/Date::Language.3
 #usr/share/man/man3/Date::Language::Hungarian.3

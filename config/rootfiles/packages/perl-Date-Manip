@@ -1021,7 +1021,7 @@ usr/lib/perl5/site_perl/5.12.3/Date/Manip/TZdata.pod
 usr/lib/perl5/site_perl/5.12.3/Date/Manip/Zones.pm
 usr/lib/perl5/site_perl/5.12.3/Date/Manip/Zones.pod
 #usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Date/Manip
-usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Date/Manip/.packlist
+#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/Date/Manip/.packlist
 #usr/share/man/man1/dm_date.1
 #usr/share/man/man1/dm_zdump.1
 #usr/share/man/man3/Date::Manip.3
