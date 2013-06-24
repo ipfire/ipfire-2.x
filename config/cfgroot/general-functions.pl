@@ -920,9 +920,11 @@ sub GetDyndnsRedIP {
     close(IP);
     chomp $ip;
 
+    # 100.64.0.0/10 is reserved for dual-stack lite (http://tools.ietf.org/html/rfc6598).
     if (&General::IpInSubnet ($ip,'10.0.0.0','255.0.0.0') ||
         &General::IpInSubnet ($ip,'172.16.0.0.','255.240.0.0') ||
-        &General::IpInSubnet ($ip,'192.168.0.0','255.255.0.0'))
+        &General::IpInSubnet ($ip,'192.168.0.0','255.255.0.0') ||
+        &General::IpInSubnet ($ip,'100.64.0.0', '255.192.0.0'))
     {
 	if ($settings{'BEHINDROUTER'} eq 'FETCH_IP') {
     	    my $RealIP = &General::FetchPublicIp;
