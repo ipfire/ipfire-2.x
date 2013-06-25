@@ -916,7 +916,7 @@
 'fwdfw ACCEPT'			=> 'ACCEPT',
 'fwdfw additional'		=> 'Additional',
 'fwdfw action'			=> 'Action',
-'fwdfw menu' 			=> 'Firewall',
+'fwdfw menu' 			=> 'Firewall rules',
 'fwdfw addrule' 		=> 'Add/Edit rule:',
 'fwdfw addr grp' 		=> 'Adress groups:',
 'fwdfw change'			=> 'Update',

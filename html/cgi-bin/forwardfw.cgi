@@ -404,7 +404,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 			}
 		}
 		#check if we just close a rule
-		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'oldruletype'} eq $fwdfwsettings{'chain'} ) {
+		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'oldruletype'} eq $fwdfwsettings{'chain'}) {
 			if($fwdfwsettings{'nosave'} eq 'on' && $fwdfwsettings{'updatefwrule'} eq 'on'){
 				$fwdfwsettings{'nosave2'} = 'on';
 				$errormessage='';
@@ -552,14 +552,14 @@ sub addrule
 }
 sub base
 {
-	if ($fwdfwsettings{'POLICY'} eq 'MODE1'){ $selected{'POLICY'}{'MODE1'} = 'selected'; } else { $selected{'POLICY'}{'MODE1'} = ''; }
-	if ($fwdfwsettings{'POLICY'} eq 'MODE2'){ $selected{'POLICY'}{'MODE2'} = 'selected'; } else { $selected{'POLICY'}{'MODE2'} = ''; }
-	if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){ $selected{'POLICY1'}{'MODE1'} = 'selected'; } else { $selected{'POLICY1'}{'MODE1'} = ''; }
-	if ($fwdfwsettings{'POLICY1'} eq 'MODE2'){ $selected{'POLICY1'}{'MODE2'} = 'selected'; } else { $selected{'POLICY1'}{'MODE2'} = ''; }
 	&hint;
 	&addrule;
 	print "<br><br>";
 	&Header::openbox('100%', 'center', $Lang::tr{'fwdfw pol title'});
+	if ($fwdfwsettings{'POLICY'} eq 'MODE1'){ $selected{'POLICY'}{'MODE1'} = 'selected'; } else { $selected{'POLICY'}{'MODE1'} = ''; }
+	if ($fwdfwsettings{'POLICY'} eq 'MODE2'){ $selected{'POLICY'}{'MODE2'} = 'selected'; } else { $selected{'POLICY'}{'MODE2'} = ''; }
+	if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){ $selected{'POLICY1'}{'MODE1'} = 'selected'; } else { $selected{'POLICY1'}{'MODE1'} = ''; }
+	if ($fwdfwsettings{'POLICY1'} eq 'MODE2'){ $selected{'POLICY1'}{'MODE2'} = 'selected'; } else { $selected{'POLICY1'}{'MODE2'} = ''; }
 print <<END;
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%' border='0'>
@@ -2347,8 +2347,8 @@ sub viewtablenew
 		my @tmpsrc=();
 		my $coloryellow='';
 		print"<b>$title1</b><br>";
-		print"<table width='100%' cellspacing='0' cellpadding='0'>";
-		print"<tr><td align='center'><b>#</td><td ></td><td align='center'><b>$Lang::tr{'fwdfw source'}</td><td><b>Log</td><td align='center'><b>$Lang::tr{'fwdfw target'}</td><td align='center'><b>$Lang::tr{'protocol'}</b></td><td align='center'><b>$Lang::tr{'fwdfw time'}</td><td align='center' colspan='6'><b>$Lang::tr{'fwdfw action'}</td></tr>";
+		print"<table width='100%' cellspacing='0' cellpadding='0' border='0'>";
+		print"<tr><td align='center'><b>#</td><td ></td><td align='center'><b>$Lang::tr{'fwdfw source'}</td><td width='1%'><b>Log</td><td align='center'><b>$Lang::tr{'fwdfw target'}</td><td align='center' width='25'></td><td align='center' colspan='6' width='1%'><b>$Lang::tr{'fwdfw action'}</td></tr>";#<td align='center'><b>$Lang::tr{'fwdfw time'}</td><b>$Lang::tr{'protocol'}</b>
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
 			$tdcolor='';
 			@tmpsrc=();
@@ -2401,7 +2401,7 @@ sub viewtablenew
 			}
 			print"<tr bgcolor='$color' >";
 			print<<END;
-			<td align='right' width='15'><b>$key</b></td>
+			<td align='right' width='18'><b>$key &nbsp</b></td>
 END
 			if ($$hash{$key}[0] eq 'ACCEPT'){
 				$ruletype='A';
@@ -2416,7 +2416,7 @@ END
 				$tooltip='REJECT';
 				$rulecolor=$color{'color16'};
 			}
-			print"<td bgcolor='$rulecolor' align='center' width='20'><span title='$tooltip'><b>$ruletype</b></span></td>";
+			print"<td bgcolor='$rulecolor' align='center' width='10'><span title='$tooltip'><b>$ruletype</b></span></td>";
 			&getcolor($$hash{$key}[3],$$hash{$key}[4],\%customhost);
 			print"<td align='center' width='160' $tdcolor>";
 			if ($$hash{$key}[3] eq 'std_net_src'){
@@ -2428,7 +2428,7 @@ END
 			&getsrcport(\%$hash,$key);
 			#Is this a SNAT rule?
 			if ($$hash{$key}[31] eq 'snat'){
-				print"<br>SNAT -> $$hash{$key}[29]";
+				print"<br>-> $$hash{$key}[29]";
 				if ($$hash{$key}[30] ne ''){
 					print": $$hash{$key}[30]";
 				}
@@ -2458,7 +2458,7 @@ END
 					$$hash{$key}[30]=~ tr/|/,/;
 					print": $$hash{$key}[30]";
 				}
-				print"<br> DNAT->";
+				print"<br>->";
 			}
 			if ($$hash{$key}[5] eq 'std_net_tgt' || $$hash{$key}[5] eq 'ipfire' && $$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1' || $$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE' ){
 				if ($$hash{$key}[6] eq 'RED1')
@@ -2489,22 +2489,7 @@ END
 			my $protz=join(",",@protocols);
 			print"<td align='center'>$protz</td>";
 			@protocols=();
-			if ($$hash{$key}[18] eq 'ON'){
-				my @days=();
-				if($$hash{$key}[19] ne ''){push (@days,$Lang::tr{'fwdfw wd_mon'});}
-				if($$hash{$key}[20] ne ''){push (@days,$Lang::tr{'fwdfw wd_tue'});}
-				if($$hash{$key}[21] ne ''){push (@days,$Lang::tr{'fwdfw wd_wed'});}
-				if($$hash{$key}[22] ne ''){push (@days,$Lang::tr{'fwdfw wd_thu'});}
-				if($$hash{$key}[23] ne ''){push (@days,$Lang::tr{'fwdfw wd_fri'});}
-				if($$hash{$key}[24] ne ''){push (@days,$Lang::tr{'fwdfw wd_sat'});}
-				if($$hash{$key}[25] ne ''){push (@days,$Lang::tr{'fwdfw wd_sun'});}
-				my $weekdays=join(",",@days);
-				if (@days){
-					print"<td align='center' width='100'>$weekdays &nbsp $$hash{$key}[26] - $$hash{$key}[27] </td>";
-				}
-			}else{
-					print"<td align='center'>24/7</td>";
-				}
+
 			if($$hash{$key}[2] eq 'ON'){
 				$gif="/images/on.gif"
 				
@@ -2562,11 +2547,28 @@ END
 				print"<td width='25'><input type='image' img src='/images/down.gif' style='visibility:hidden;'></td></tr>";
 			}
 			#REMARK
-			if ($optionsfw{'SHOWREMARK'} eq 'on'){
+			if (($optionsfw{'SHOWREMARK'} eq 'on' && $$hash{$key}[16] ne '') || $$hash{$key}[18] eq 'ON'){
 				print"<tr bgcolor='$color'>";
-				print"<td>&nbsp</td><td bgcolor='$rulecolor'></td><td colspan='11'>&nbsp $$hash{$key}[16]</td></tr>";
+				print"<td>&nbsp</td><td bgcolor='$rulecolor'></td><td colspan='3'>&nbsp $$hash{$key}[16]</td>";
+				#TIMEFRAME
+				if ($$hash{$key}[18] eq 'ON'){
+					my @days=();
+					if($$hash{$key}[19] ne ''){push (@days,$Lang::tr{'fwdfw wd_mon'});}
+					if($$hash{$key}[20] ne ''){push (@days,$Lang::tr{'fwdfw wd_tue'});}
+					if($$hash{$key}[21] ne ''){push (@days,$Lang::tr{'fwdfw wd_wed'});}
+					if($$hash{$key}[22] ne ''){push (@days,$Lang::tr{'fwdfw wd_thu'});}
+					if($$hash{$key}[23] ne ''){push (@days,$Lang::tr{'fwdfw wd_fri'});}
+					if($$hash{$key}[24] ne ''){push (@days,$Lang::tr{'fwdfw wd_sat'});}
+					if($$hash{$key}[25] ne ''){push (@days,$Lang::tr{'fwdfw wd_sun'});}
+					my $weekdays=join(",",@days);
+					if (@days){
+						print"<td align='right' colspan='7'>$weekdays &nbsp $$hash{$key}[26] - $$hash{$key}[27] </td></tr>";
+					}
+				}else{
+						print"<td align='right' colspan='7'>24/7</td></tr>";
+					}
 			}
-			print"<tr bgcolor='$color'><td height='1'></td><td bgcolor='$rulecolor'></td><td colspan='11'></td></tr>";
+			print"<tr bgcolor='FFFFFF'><td colspan='13' height='1'></td></tr>";
 		}
 		print"</table>";
 		&Header::closebox();
