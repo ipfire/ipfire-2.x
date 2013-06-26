@@ -173,6 +173,7 @@ sub buildrules
 	my $fireport;
 	my $nat;
 	my $fwaccessdport;
+	my $natchain;
 	foreach my $key (sort {$a <=> $b} keys %$hash){
 		next if (($$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1') && $conexists eq 'off' );
 		if ($$hash{$key}[28] eq 'ON'){
@@ -292,17 +293,13 @@ sub buildrules
 											}
 											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] --icmp-type $_ $TIME -j $$hash{$key}[0]\n";
 										}
-									}elsif($$hash{$key}[28] ne 'ON'){
-										if ($$hash{$key}[17] eq 'ON'){
-											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
-										}
-										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat'){
+										$natchain='NAT_DESTINATION';
 										if ($$hash{$key}[17] eq 'ON'){
-											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
+											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
 										}
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
-										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
+										print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
 										$DPORT =~ s/\-/:/g;
 										if ($DPORT){
 											$fwaccessdport="--dport ".substr($DPORT,1,);
@@ -314,10 +311,16 @@ sub buildrules
 												$fwaccessdport="--dport $$hash{$key}[30]";
 											}
 										}
-										print "iptables -A PORTFWACCESS $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
+										print "iptables -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
+										next;
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
-										print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip\n";
+										$natchain='NAT_SOURCE';
+										print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip\n";
 									}
+									if ($$hash{$key}[17] eq 'ON'){
+											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+									}
+									print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 								}				
 							}
 						}
@@ -342,17 +345,13 @@ sub buildrules
 											}
 											system ("$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] --icmp-type $_ $TIME -j $$hash{$key}[0]");
 										}
-									}elsif($$hash{$key}[28] ne 'ON'){
-										if ($$hash{$key}[17] eq 'ON'){
-											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
-										}
-										system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat'){
+										$natchain='NAT_DESTINATION';
 										if ($$hash{$key}[17] eq 'ON'){
-											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
+											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
 										}
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
-										system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
+										system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
 										$DPORT =~ s/\-/:/g;
 										if ($DPORT){
 											$fwaccessdport="--dport ".substr($DPORT,1,);
@@ -364,13 +363,16 @@ sub buildrules
 												$fwaccessdport="--dport $$hash{$key}[30]";
 											}
 										}
-										system "iptables -A PORTFWACCESS $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
+										system "iptables -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
+										next;
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
-										if ($$hash{$key}[17] eq 'ON'){
-											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT '\n";
-										}
-										system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat  --to $natip$fireport\n";
+										$natchain='NAT_SOURCE';
+										system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip\n";
 									}
+									if ($$hash{$key}[17] eq 'ON'){
+										system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+									}
+									system "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 								}				
 							}
 						}

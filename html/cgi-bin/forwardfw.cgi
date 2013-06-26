@@ -64,7 +64,6 @@ my %ccdhost=();
 my %configfwdfw=();
 my %configinputfw=();
 my %configoutgoingfw=();
-my %confignatfw=();
 my %ipsecconf=();
 my %color=();
 my %mainsettings=();
@@ -90,7 +89,6 @@ my $configipsecrw	= "${General::swroot}/vpn/settings";
 my $configfwdfw		= "${General::swroot}/forward/config";
 my $configinput		= "${General::swroot}/forward/input";
 my $configoutgoing	= "${General::swroot}/forward/outgoing";
-my $confignat		= "${General::swroot}/forward/nat";
 my $configovpn		= "${General::swroot}/ovpn/settings";
 my $fwoptions 		= "${General::swroot}/optionsfw/settings";
 my $ifacesettings	= "${General::swroot}/ethernet/settings";
@@ -119,7 +117,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	&General::readhasharray("$configfwdfw", \%configfwdfw);
 	&General::readhasharray("$configinput", \%configinputfw);
 	&General::readhasharray("$configoutgoing", \%configoutgoingfw);
-	&General::readhasharray("$confignat", \%confignatfw);
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
@@ -139,66 +136,8 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' && $fwdfwsettings{'grp2'} eq 'ipfire'){
 		$errormessage.=$Lang::tr{'fwdfw err same'};
 	}
-	#NAT-Part
-	if ($fwdfwsettings{'USE_NAT'} eq 'ON'){
-		$fwdfwsettings{'config'}=$confignat;
-		if ($fwdfwsettings{'nat'} eq 'dnat'){
-			$fwdfwsettings{'chain'} = 'NAT_DESTINATION';
-		}else{
-			$fwdfwsettings{'chain'} = 'NAT_SOURCE';
-		}
-		my $maxkey=&General::findhasharraykey(\%confignatfw);
-		#check if we have an identical rule already
-		if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
-			foreach my $key (sort keys %confignatfw){
-				if ("$confignatfw{$key}[0],$confignatfw{$key}[1],$confignatfw{$key}[2],$confignatfw{$key}[3],$confignatfw{$key}[4],$confignatfw{$key}[5],$confignatfw{$key}[6],$confignatfw{$key}[11],$confignatfw{$key}[12],$confignatfw{$key}[14],$confignatfw{$key}[15],$confignatfw{$key}[28],$confignatfw{$key}[29],$confignatfw{$key}[30],$confignatfw{$key}[31]"
-				eq "$fwdfwsettings{'RULE_ACTION'},NAT_DESTINATION,$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}"){
-					$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-					if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' ){
-						$errormessage='';
-					}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
-						$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
-					}
-					if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
-						$fwdfwsettings{'nosave'} = 'on';
-					}
-				}
-			}
-		}
-		
-		#check Rulepos on new Rule
-		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
-			$fwdfwsettings{'oldrulenumber'}=$maxkey;
-			foreach my $key (sort keys %confignatfw){
-				if ("$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'snatport'},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}"
-					eq "$confignatfw{$key}[0],$confignatfw{$key}[2],$confignatfw{$key}[3],$confignatfw{$key}[4],$confignatfw{$key}[5],$confignatfw{$key}[6],$confignatfw{$key}[7],$confignatfw{$key}[8],$confignatfw{$key}[9],$confignatfw{$key}[10],$confignatfw{$key}[11],$confignatfw{$key}[12],$confignatfw{$key}[13],$confignatfw{$key}[14],$confignatfw{$key}[15],$confignatfw{$key}[17],$confignatfw{$key}[19],$confignatfw{$key}[20],$confignatfw{$key}[21],$confignatfw{$key}[22],$confignatfw{$key}[23],$confignatfw{$key}[24],$confignatfw{$key}[25],$confignatfw{$key}[26],$confignatfw{$key}[27],$confignatfw{$key}[28],$confignatfw{$key}[29],$confignatfw{$key}[30],$confignatfw{$key}[31],$confignatfw{$key}[32]"){
-						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-				}
-			}
-		}
-		#check if we just close a rule
-		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'oldruletype'} eq $fwdfwsettings{'chain'}) {
-			if($fwdfwsettings{'nosave'} eq 'on' && $fwdfwsettings{'updatefwrule'} eq 'on'){
-				$errormessage='';
-				$fwdfwsettings{'nosave2'} = 'on';
-			}
-		}
-		&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
-		if ($fwdfwsettings{'nobase'} ne 'on'){
-			&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
-		}
-		if($fwdfwsettings{'oldusesrv'} eq '' &&  $fwdfwsettings{'USESRV'} eq 'ON'){
-			&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-		}elsif ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'oldusesrv'} eq 'ON') {
-			&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},0,0);
-		}elsif ($fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldgrp3b'} ne $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'updatefwrule'} eq 'on'){
-			&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-		}
-		if($fwdfwsettings{'nosave2'} ne 'on'){
-			&saverule(\%confignatfw,$confignat);
-		}	
 	#INPUT part
-	}elsif($fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE'){
+	if($fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE'){
 		$fwdfwsettings{'config'}=$configinput;
 		$fwdfwsettings{'chain'} = 'INPUTFW';
 		my $maxkey=&General::findhasharraykey(\%configinputfw);
@@ -1933,69 +1872,39 @@ sub saverule
 	my $config=shift;
 	&General::readhasharray("$config", $hash);
 	if (!$errormessage){
-		#check if we change a NAT to a FORWARD
-		if(($fwdfwsettings{'oldruletype'} eq 'NAT_SOURCE' || $fwdfwsettings{'oldruletype'} eq 'NAT_DESTINATION') && $fwdfwsettings{'chain'} eq 'FORWARDFW'){
-			&changerule($confignat);
-			#print"1";
-		}
-		#check if we change a NAT to a INPUT (external access)
-		elsif(($fwdfwsettings{'oldruletype'} eq 'NAT_SOURCE' || $fwdfwsettings{'oldruletype'} eq 'NAT_DESTINATION') && $fwdfwsettings{'chain'} eq 'INPUTFW'){
-			&changerule($confignat);
-			#print"2";
-		}
-		#check if we change a NAT to a OUTGOING
-		elsif(($fwdfwsettings{'oldruletype'} eq 'NAT_SOURCE' || $fwdfwsettings{'oldruletype'} eq 'NAT_DESTINATION') && $fwdfwsettings{'chain'} eq 'OUTGOINGFW'){
-			&changerule($confignat);
-			#print"3";
-		}
 		################################################################
-		#check if we change an INPUT rule to a NAT
-		elsif($fwdfwsettings{'oldruletype'} eq 'INPUTFW'  && ($fwdfwsettings{'chain'} eq 'NAT_SOURCE' ||  $fwdfwsettings{'chain'} eq 'NAT_DESTINATION')){
-			&changerule($configinput);
-			#print"4";
-		}
 		#check if we change an INPUT rule to a OUTGOING
-		elsif($fwdfwsettings{'oldruletype'} eq 'INPUTFW'  && $fwdfwsettings{'chain'} eq 'OUTGOINGFW'  ){
+		if($fwdfwsettings{'oldruletype'} eq 'INPUTFW'  && $fwdfwsettings{'chain'} eq 'OUTGOINGFW'  ){
 			&changerule($configinput);
-			#print"5";
+			#print"1";
 		}
 		#check if we change an INPUT rule to a FORWARD
 		elsif($fwdfwsettings{'oldruletype'} eq 'INPUTFW'  && $fwdfwsettings{'chain'} eq 'FORWARDFW'  ){
 			&changerule($configinput);
-			#print"6";
+			#print"2";
 		}
 		################################################################
 		#check if we change an OUTGOING rule to an INPUT
 		elsif($fwdfwsettings{'oldruletype'} eq 'OUTGOINGFW'  && $fwdfwsettings{'chain'} eq 'INPUTFW'  ){
 			&changerule($configoutgoing);
-			#print"7";
+			#print"3";
 		}
 		#check if we change an OUTGOING rule to a FORWARD
 		elsif($fwdfwsettings{'oldruletype'} eq 'OUTGOINGFW'  && $fwdfwsettings{'chain'} eq 'FORWARDFW'  ){
 			&changerule($configoutgoing);
-			#print"8";
-		}
-		#check if we change an OUTGOING rule to a NAT
-		elsif($fwdfwsettings{'oldruletype'} eq 'OUTGOINGFW'  && ($fwdfwsettings{'chain'} eq 'NAT_SOURCE' ||  $fwdfwsettings{'chain'} eq 'NAT_DESTINATION')){
-			&changerule($configoutgoing);
-			#print"9";
+			#print"4";
 		}
 		################################################################
 		#check if we change a FORWARD rule to an INPUT
 		elsif($fwdfwsettings{'oldruletype'} eq 'FORWARDFW'  && $fwdfwsettings{'chain'} eq 'INPUTFW'){
 			&changerule($configfwdfw);
-			#print"10";
+			#print"5";
 		}
 		#check if we change a FORWARD rule to an OUTGOING
 		elsif($fwdfwsettings{'oldruletype'} eq 'FORWARDFW'  && $fwdfwsettings{'chain'} eq 'OUTGOINGFW'){
 			&changerule($configfwdfw);
-			#print"11";
+			#print"6";
 		}
-		#check if we change a FORWARD rule to an NAT
-		elsif($fwdfwsettings{'oldruletype'} eq 'FORWARDFW'  && ($fwdfwsettings{'chain'} eq 'NAT_SOURCE' ||  $fwdfwsettings{'chain'} eq 'NAT_DESTINATION')){
-			&changerule($configfwdfw);
-			#print"12";
-		}		
 		if ($fwdfwsettings{'updatefwrule'} ne 'on'){
 			my $key = &General::findhasharraykey ($hash);
 			$$hash{$key}[0]  = $fwdfwsettings{'RULE_ACTION'};
@@ -2026,12 +1935,10 @@ sub saverule
 			$$hash{$key}[25] = $fwdfwsettings{'TIME_SUN'};
 			$$hash{$key}[26] = $fwdfwsettings{'TIME_FROM'};
 			$$hash{$key}[27] = $fwdfwsettings{'TIME_TO'};
-			if($fwdfwsettings{'USE_NAT'} eq 'ON'){
-				$$hash{$key}[28] = $fwdfwsettings{'USE_NAT'};
-				$$hash{$key}[29] = $fwdfwsettings{$fwdfwsettings{'nat'}};
-				$$hash{$key}[30] = $fwdfwsettings{'dnatport'};
-				$$hash{$key}[31] = $fwdfwsettings{'nat'};
-			}
+			$$hash{$key}[28] = $fwdfwsettings{'USE_NAT'};
+			$$hash{$key}[29] = $fwdfwsettings{$fwdfwsettings{'nat'}};
+			$$hash{$key}[30] = $fwdfwsettings{'dnatport'};
+			$$hash{$key}[31] = $fwdfwsettings{'nat'};
 			&General::writehasharray("$config", $hash);
 		}else{
 			foreach my $key (sort {$a <=> $b} keys %$hash){
@@ -2064,12 +1971,10 @@ sub saverule
 					$$hash{$key}[25] = $fwdfwsettings{'TIME_SUN'};
 					$$hash{$key}[26] = $fwdfwsettings{'TIME_FROM'};
 					$$hash{$key}[27] = $fwdfwsettings{'TIME_TO'};
-					if($fwdfwsettings{'USE_NAT'} eq 'ON'){
-						$$hash{$key}[28] = $fwdfwsettings{'USE_NAT'};
-						$$hash{$key}[29] = $fwdfwsettings{$fwdfwsettings{'nat'}};
-						$$hash{$key}[30] = $fwdfwsettings{'dnatport'};
-						$$hash{$key}[31] = $fwdfwsettings{'nat'};
-					}
+					$$hash{$key}[28] = $fwdfwsettings{'USE_NAT'};
+					$$hash{$key}[29] = $fwdfwsettings{$fwdfwsettings{'nat'}};
+					$$hash{$key}[30] = $fwdfwsettings{'dnatport'};
+					$$hash{$key}[31] = $fwdfwsettings{'nat'};
 					last;
 				}
 			}
@@ -2155,7 +2060,6 @@ sub validremark
 sub viewtablerule
 {
 	&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
-	&viewtablenew(\%confignatfw,$confignat,"$Lang::tr{'fwdfw rules'}","Portforward / SNAT" );
 	&viewtablenew(\%configfwdfw,$configfwdfw,"","Forward" );
 	&viewtablenew(\%configinputfw,$configinput,"",$Lang::tr{'fwdfw xt access'} );
 	&viewtablenew(\%configoutgoingfw,$configoutgoing,"","Outgoing" );

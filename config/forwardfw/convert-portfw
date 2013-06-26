@@ -2,7 +2,7 @@
 
 ######################################################################## 
 # Script:	convert-portfw
-# Date:		19.03.2013
+# Date:		21.03.2013
 # Author:	Alexander Marx (amarx@ipfire.org)
 ########################################################################
 #
@@ -18,7 +18,7 @@ my @values=();
 my @built_rules=();
 my %nat=();
 my $portfwconfig 	= "${General::swroot}/portfw/config";
-my $confignat 		= "${General::swroot}/forward/nat";
+my $confignat 		= "${General::swroot}/forward/config";
 my ($key,$flag,$prot,$ipfireport,$target,$targetport,$active,$alias,$source,$remark);
 my ($key1,$flag1,$prot1,$ipfireport1,$target1,$targetport1,$active1,$alias1,$source1,$remark1);
 my $count=0;
@@ -94,9 +94,9 @@ sub build_rules
 		$active = uc $active;
 		$prot   = uc $prot;
 		chomp($remark);
-		push (@built_rules,"ACCEPT,NAT_DESTINATION,$active,$src,$src1,tgt_addr,$target/32,ON,$prot,,TGT_PORT,$targetport,$remark,00:00,00:00,ON,$alias,$ipfireport,dnat");
+		push (@built_rules,"ACCEPT,FORWARDFW,$active,$src,$src1,tgt_addr,$target/32,ON,$prot,,TGT_PORT,$targetport,$remark,00:00,00:00,ON,$alias,$ipfireport,dnat");
 		my $now=localtime;
-		print LOG "$now    Converted-> KEY: $count ACCEPT,NAT_DESTINATION,$active,$src,$src1,tgt_addr,$target/32,ON,$prot,,TGT_PORT,$targetport,$remark,00:00,00:00,ON,$alias,$ipfireport,dnat\n";
+		print LOG "$now    Converted-> KEY: $count ACCEPT,FORWARDFW,$active,$src,$src1,tgt_addr,$target/32,ON,$prot,,TGT_PORT,$targetport,$remark,00:00,00:00,ON,$alias,$ipfireport,dnat\n";
 	}
 }
 sub write_rules

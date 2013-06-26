@@ -161,10 +161,6 @@ iptables_init() {
 	/sbin/iptables -N FORWARDFW
 	/sbin/iptables -A FORWARD -j FORWARDFW
 		
-	# PORTFWACCESS chain, used for portforwarding
-	/sbin/iptables -N PORTFWACCESS
-	/sbin/iptables -A FORWARD -m state --state NEW -j PORTFWACCESS
-	
 	# OPenSSL
 	/sbin/iptables -N OPENSSLPHYSICAL
 	/sbin/iptables -A INPUT -j OPENSSLPHYSICAL
