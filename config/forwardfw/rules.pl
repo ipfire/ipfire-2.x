@@ -44,7 +44,6 @@ our %targethash=();
 my @timeframe=();
 my %configinputfw=();
 my %configoutgoingfw=();
-my %configdmzfw=();
 my %confignatfw=();
 my %aliases=();
 my @DPROT=();
@@ -53,7 +52,6 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/forward/bin/firewall-lib.pl";
 
-my $configdmz		= "${General::swroot}/forward/dmz";
 my $configfwdfw		= "${General::swroot}/forward/config";
 my $configinput	    = "${General::swroot}/forward/input";
 my $configoutgoing  = "${General::swroot}/forward/outgoing";
@@ -73,7 +71,6 @@ my $dnat='';
 my $snat='';
 &General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
 &General::readhash("$netsettings", \%defaultNetworks);
-&General::readhasharray($configdmz, \%configdmzfw);
 &General::readhasharray($configfwdfw, \%configfwdfw);
 &General::readhasharray($configinput, \%configinputfw);
 &General::readhasharray($configoutgoing, \%configoutgoingfw);
@@ -154,9 +151,6 @@ sub flush
 }			
 sub preparerules
 {
-	if (! -z  "${General::swroot}/forward/dmz"){
-		&buildrules(\%configdmzfw);
-	}
 	if (! -z  "${General::swroot}/forward/config"){
 		&buildrules(\%configfwdfw);
 	}
