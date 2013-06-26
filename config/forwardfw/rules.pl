@@ -145,7 +145,6 @@ sub flush
 	system ("iptables -F FORWARDFW");
 	system ("iptables -F INPUTFW");
 	system ("iptables -F OUTGOINGFW");
-	system ("iptables -F PORTFWACCESS");
 	system ("iptables -t nat -F NAT_DESTINATION");
 	system ("iptables -t nat -F NAT_SOURCE");
 }			
