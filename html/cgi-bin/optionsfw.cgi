@@ -27,6 +27,13 @@ my %checked =();     # Checkbox manipulations
 my $filename = "${General::swroot}/optionsfw/settings";
 
 our %settings=();
+my %fwdfwsettings=();
+my %configfwdfw=();
+my %configoutgoingfw=();
+
+my $configfwdfw		= "${General::swroot}/forward/config";
+my $configoutgoing	= "${General::swroot}/forward/outgoing";
+
 $settings{'DISABLEPING'} = 'NO';
 $settings{'DROPNEWNOTSYN'} = 'on';
 $settings{'DROPINPUT'} = 'on';
@@ -43,22 +50,43 @@ $settings{'SHOWDROPDOWN'} = 'off';
 my $errormessage = '';
 my $warnmessage = '';
 
+&General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
+
 &Header::showhttpheaders();
 
 #Get GUI values
 &Header::getcgihash(\%settings);
 
+
+
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
-	
-	 $errormessage = $Lang::tr{'new optionsfw later'};
-	 delete $settings{'__CGI__'};
-	 delete $settings{'x'};
-	 delete $settings{'y'};
-	 &General::writehash($filename, \%settings);             # Save good settings
+	if ($settings{'defpol'} ne '1'){
+		$errormessage = $Lang::tr{'new optionsfw later'};
+		delete $settings{'__CGI__'};
+		delete $settings{'x'};
+		delete $settings{'y'};
+		&General::writehash($filename, \%settings);             # Save good settings
+		system("/usr/local/bin/forwardfwctrl");
+	}else{
+		if ($settings{'POLICY'} ne ''){
+			$fwdfwsettings{'POLICY'} = $settings{'POLICY'};
+		}
+		if ($settings{'POLICY1'} ne ''){
+			$fwdfwsettings{'POLICY1'} = $settings{'POLICY1'};
+		}
+		my $MODE = $fwdfwsettings{'POLICY'};
+		my $MODE1 = $fwdfwsettings{'POLICY1'};
+		%fwdfwsettings = ();
+		$fwdfwsettings{'POLICY'} = "$MODE";
+		$fwdfwsettings{'POLICY1'} = "$MODE1";
+		&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
+		&General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
+		system("/usr/local/bin/forwardfwctrl");
+	}
    }else {
 		&General::readhash($filename, \%settings);                      # Get saved settings and reset to good if needed
-	}
-	system("/usr/local/bin/forwardfwctrl");
+}
+
 &Header::openpage($Lang::tr{'options fw'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -110,7 +138,6 @@ $checked{'SHOWDROPDOWN'}{$settings{'SHOWDROPDOWN'}} = "checked='checked'";
 $selected{'FWPOLICY'}{$settings{'FWPOLICY'}}= 'selected';
 $selected{'FWPOLICY1'}{$settings{'FWPOLICY1'}}= 'selected';
 $selected{'FWPOLICY2'}{$settings{'FWPOLICY2'}}= 'selected';
-
 
 &Header::openbox('100%', 'center', $Lang::tr{'options fw'});
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
@@ -182,5 +209,38 @@ print <<END
 END
 ;
 &Header::closebox();
+
+&Header::openbox('100%', 'center', $Lang::tr{'fwdfw pol title'});
+	if ($fwdfwsettings{'POLICY'} eq 'MODE1'){ $selected{'POLICY'}{'MODE1'} = 'selected'; } else { $selected{'POLICY'}{'MODE1'} = ''; }
+	if ($fwdfwsettings{'POLICY'} eq 'MODE2'){ $selected{'POLICY'}{'MODE2'} = 'selected'; } else { $selected{'POLICY'}{'MODE2'} = ''; }
+	if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){ $selected{'POLICY1'}{'MODE1'} = 'selected'; } else { $selected{'POLICY1'}{'MODE1'} = ''; }
+	if ($fwdfwsettings{'POLICY1'} eq 'MODE2'){ $selected{'POLICY1'}{'MODE2'} = 'selected'; } else { $selected{'POLICY1'}{'MODE2'} = ''; }
+print <<END;
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='100%' border='0'>
+		<tr><td colspan='3' style='font-weight:bold;color:red;' align='left'>FORWARD </td></tr>
+		<tr><td colspan='3' align='left'>$Lang::tr{'fwdfw pol text'}</td></tr>
+		<tr><td colspan='3'><hr /></td></tr>
+		<tr><td width='15%' align='left'>	<select name='POLICY' style="width: 100px">
+		<option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
+		<option value='MODE2' $selected{'POLICY'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
+	    <input type='submit' name='ACTION' value=$Lang::tr{'save'} /><input type='hidden' name='defpol' value='1'></td>
+END
+	print "</tr></table></form>";
+	print"<br><br>";
+	print <<END;
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='100%' border='0'>
+		<tr><td colspan='3' style='font-weight:bold;color:red;' align='left'>OUTGOING </td></tr>
+		<tr><td colspan='3' align='left'>$Lang::tr{'fwdfw pol text1'}</td></tr>
+		<tr><td colspan='3'><hr /></td></tr>
+		<tr><td width='15%' align='left'>	<select name='POLICY1' style="width: 100px">
+		<option value='MODE1' $selected{'POLICY1'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
+		<option value='MODE2' $selected{'POLICY1'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
+	    <input type='submit' name='ACTION' value='$Lang::tr{'save'}' /><input type='hidden' name='defpol' value='1'></td>
+END
+	print "</tr></table></form>";
+	&Header::closebox();
+
 &Header::closebigbox();
 &Header::closepage();

@@ -117,16 +117,6 @@ my @protocols;
 &Header::openbigbox('100%', 'center',$errormessage);
 ####  ACTION  #####
 
-if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'save'})
-{
-	my $MODE = $fwdfwsettings{'POLICY'};
-	my $MODE1 = $fwdfwsettings{'POLICY1'};
-	%fwdfwsettings = ();
-	$fwdfwsettings{'POLICY'} = "$MODE";
-	$fwdfwsettings{'POLICY1'} = "$MODE1";
-	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
-	&reread_rules;
-}
 if ($fwdfwsettings{'ACTION'} eq 'saverule')
 {
 	&General::readhasharray("$configfwdfw", \%configfwdfw);
@@ -436,42 +426,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		&base;
 	}
 }
-if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'reset'})
-{
-	if($fwdfwsettings{'poltype'} eq 'forward'){
-		&General::readhasharray("$configfwdfw", \%configfwdfw);
-		foreach my $key (sort keys %configfwdfw){
-			&checkcounter($configfwdfw{$key}[3],$configfwdfw{$key}[4],,);
-			&checkcounter($configfwdfw{$key}[5],$configfwdfw{$key}[6],,);
-			&checkcounter($configfwdfw{$key}[14],$configfwdfw{$key}[15],,);
-		}
-		system("rm ${General::swroot}/forward/config");
-		&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
-		unless (-e "${General::swroot}/forward/config")  	{ system("touch ${General::swroot}/forward/config"); }
-		my $MODE1=$fwdfwsettings{'POLICY1'};
-		%fwdfwsettings = ();
-		$fwdfwsettings{'POLICY'}='MODE2';
-		$fwdfwsettings{'POLICY1'}=$MODE1;
-		&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
-		&reread_rules;
-	}else{
-		&General::readhasharray("$configoutgoing", \%configoutgoingfw);
-	foreach my $key (sort keys %configoutgoingfw){
-		&checkcounter($configoutgoingfw{$key}[3],$configoutgoingfw{$key}[4],,);
-		&checkcounter($configoutgoingfw{$key}[5],$configoutgoingfw{$key}[6],,);
-		&checkcounter($configoutgoingfw{$key}[14],$configoutgoingfw{$key}[15],,);
-	}
-	system("rm ${General::swroot}/forward/outgoing");
-	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
-	unless (-e "${General::swroot}/forward/outgoing")  	{ system("touch ${General::swroot}/forward/outgoing"); }
-	my $MODE=$fwdfwsettings{'POLICY'};
-	%fwdfwsettings = ();
-	$fwdfwsettings{'POLICY'}=$MODE;
-	$fwdfwsettings{'POLICY1'}='MODE2';
-	&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
-	&reread_rules;
-	}
-}
 if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'fwdfw newrule'})
 {
 	&newrule;
@@ -555,41 +509,6 @@ sub base
 	&hint;
 	&addrule;
 	print "<br><br>";
-	&Header::openbox('100%', 'center', $Lang::tr{'fwdfw pol title'});
-	if ($fwdfwsettings{'POLICY'} eq 'MODE1'){ $selected{'POLICY'}{'MODE1'} = 'selected'; } else { $selected{'POLICY'}{'MODE1'} = ''; }
-	if ($fwdfwsettings{'POLICY'} eq 'MODE2'){ $selected{'POLICY'}{'MODE2'} = 'selected'; } else { $selected{'POLICY'}{'MODE2'} = ''; }
-	if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){ $selected{'POLICY1'}{'MODE1'} = 'selected'; } else { $selected{'POLICY1'}{'MODE1'} = ''; }
-	if ($fwdfwsettings{'POLICY1'} eq 'MODE2'){ $selected{'POLICY1'}{'MODE2'} = 'selected'; } else { $selected{'POLICY1'}{'MODE2'} = ''; }
-print <<END;
-	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	<table width='100%' border='0'>
-		<tr><td colspan='3' style='font-weight:bold;color:red;' align='left'>FORWARD </td></tr>
-		<tr><td colspan='3' align='left'>$Lang::tr{'fwdfw pol text'}</td></tr>
-		<tr><td colspan='3'><hr /></td></tr>
-		<tr><td width='15%' align='left'>	<select name='POLICY' style="width: 100px">
-		<option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
-		<option value='MODE2' $selected{'POLICY'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
-	    <input type='submit' name='ACTION' value=$Lang::tr{'save'} /></td><td width='45%' align='right'>
-	    
-END
-	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value='$Lang::tr{'reset'}' /><input type='hidden' name='poltype' value='forward' /></td></tr>";
-	print "</table></form>";
-	print"<br><br>";
-	print <<END;
-	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	<table width='100%' border='0'>
-		<tr><td colspan='3' style='font-weight:bold;color:red;' align='left'>OUTGOING </td></tr>
-		<tr><td colspan='3' align='left'>$Lang::tr{'fwdfw pol text1'}</td></tr>
-		<tr><td colspan='3'><hr /></td></tr>
-		<tr><td width='15%' align='left'>	<select name='POLICY1' style="width: 100px">
-		<option value='MODE1' $selected{'POLICY1'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
-		<option value='MODE2' $selected{'POLICY1'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
-	    <input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td><td width='45%' align='right'>
-	    
-END
-	print "$Lang::tr{'outgoing firewall reset'}: <input type='submit' name='ACTION' value='$Lang::tr{'reset'}' /><input type='hidden' name='poltype' value='outgoing' /></tr>";
-	print "</table></form>";
-	&Header::closebox();
 	print "<br><br><div align='right'><font size='1' color='grey'>Version: $VERSION</font></div>";
 }
 sub changerule
@@ -1189,7 +1108,10 @@ END
 			next if($defaultNetworks{$network}{'NAME'} eq "IPFire" && $srctgt eq 'tgt');
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
 			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $defaultNetworks{$network}{'NAME'});
-			print ">$network</option>";
+			my $defnet="$defaultNetworks{$network}{'NAME'}_NETADDRESS";
+			$ifaces{$defnet} = '0.0.0.0' if ($defaultNetworks{$network}{'NAME'} eq 'ALL');
+			$defnet =  "RED_ADDRESS" if ($defaultNetworks{$network}{'NAME'} eq 'IPFire');
+			print ">$network $ifaces{$defnet} </option>";
 		}
 	print"</select></td></tr>";
 	#custom networks
@@ -1751,14 +1673,14 @@ END
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
 		print<<END;
 		<table width='100%' border='0'>	
-		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='57%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='17'><td width='1%'><input type='radio' name='grp2' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>IPFire</b></td>
+		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='57%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='17'><td width='1%'><input type='radio' name='grp2' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>Firewall</b></td>
 END
 		print"<td align='right'><select name='ipfire' style='width:200px;'>";
-		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'}</option>";
-		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
-		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if $ifaces{'ORANGE_ADDRESS'};
-		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if $ifaces{'BLUE_ADDRESS'};
-		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} (Default IP)</option>" if $ifaces{'RED_ADDRESS'};
+		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'} 0.0.0.0</option>";
+		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} $ifaces{'GREEN_ADDRESS'}</option>" if $ifaces{'GREEN_ADDRESS'};
+		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} $ifaces{'ORANGE_ADDRESS'}</option>" if $ifaces{'ORANGE_ADDRESS'};
+		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} $ifaces{'BLUE_ADDRESS'}</option>" if $ifaces{'BLUE_ADDRESS'};
+		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} $ifaces{'RED_ADDRESS'}</option>" if $ifaces{'RED_ADDRESS'};
 
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
@@ -2547,9 +2469,11 @@ END
 				print"<td width='25'><input type='image' img src='/images/down.gif' style='visibility:hidden;'></td></tr>";
 			}
 			#REMARK
-			if (($optionsfw{'SHOWREMARK'} eq 'on' && $$hash{$key}[16] ne '') || $$hash{$key}[18] eq 'ON'){
+			if ($optionsfw{'SHOWREMARK'} eq 'on' && $$hash{$key}[16] ne ''){
 				print"<tr bgcolor='$color'>";
-				print"<td>&nbsp</td><td bgcolor='$rulecolor'></td><td colspan='3'>&nbsp $$hash{$key}[16]</td>";
+				print"<td>&nbsp</td><td bgcolor='$rulecolor'></td><td colspan='10'>&nbsp $$hash{$key}[16]</td></tr>";
+			}
+			if ($$hash{$key}[18] eq 'ON'){
 				#TIMEFRAME
 				if ($$hash{$key}[18] eq 'ON'){
 					my @days=();
@@ -2562,11 +2486,10 @@ END
 					if($$hash{$key}[25] ne ''){push (@days,$Lang::tr{'fwdfw wd_sun'});}
 					my $weekdays=join(",",@days);
 					if (@days){
-						print"<td align='right' colspan='7'>$weekdays &nbsp $$hash{$key}[26] - $$hash{$key}[27] </td></tr>";
+						print"<tr bgcolor='$color'>";
+						print"<td>&nbsp</td><td bgcolor='$rulecolor'></td><td align='left' colspan='10'>$weekdays &nbsp $$hash{$key}[26] - $$hash{$key}[27] </td></tr>";
 					}
-				}else{
-						print"<td align='right' colspan='7'>24/7</td></tr>";
-					}
+				}
 			}
 			print"<tr bgcolor='FFFFFF'><td colspan='13' height='1'></td></tr>";
 		}
@@ -2581,7 +2504,5 @@ END
 		}
 	}
 }
-
-
 &Header::closebigbox();
 &Header::closepage();
