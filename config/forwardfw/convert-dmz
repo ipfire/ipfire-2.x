@@ -36,6 +36,12 @@ my $field15	= ''; #Port Number
 my $field16	= ''; #remark
 my $field26	= '00:00';
 my $field27	= '00:00';
+my $field28 = '';
+my $field29 = 'ALL';
+my $field30 = '';
+my $field31 = 'dnat';
+
+
 open(FILE, $dmzconfig) or die 'Unable to open config file.';
 my @current = <FILE>;
 close(FILE);
@@ -141,6 +147,10 @@ sub process_rules{
 		$configfwdfw{$key}[25] = '';
 		$configfwdfw{$key}[26] = $field26;
 		$configfwdfw{$key}[27] = $field27;
+		$configfwdfw{$key}[28] = $field28;
+		$configfwdfw{$key}[29] = $field29;
+		$configfwdfw{$key}[30] = $field30;
+		$configfwdfw{$key}[31] = $field31;
 		print LOG "$Now -> Converted to $field0,$field1,$field2,$field3,$field4,$field5,$field6,,,,,$field11,$field12,$field13,$field14,$field15,$field16,,,,,,,,,,$field26,$field27\n";
 	}
 	&General::writehasharray($fwdfwconfig,\%configfwdfw);

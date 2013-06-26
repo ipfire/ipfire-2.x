@@ -21,6 +21,10 @@ my $field15=''; #Port Number
 my $field16=''; #remark
 my $field26='00:00';
 my $field27='00:00';
+my $field28 = '';
+my $field29 = 'ALL';
+my $field30 = '';
+my $field31 = 'dnat';
 open(FILE, $xtaccessconfig) or die 'Unable to open config file.';
 my @current = <FILE>;
 close(FILE);
@@ -76,7 +80,7 @@ foreach my $line (@current){
 	}
 	$field15=$c;
 	my $key = &General::findhasharraykey (\%configinputfw);
-	foreach my $i (0 .. 27) { $configinputfw{$key}[$i] = "";}
+	foreach my $i (0 .. 31) { $configinputfw{$key}[$i] = "";}
 	$configinputfw{$key}[0] = $field0;
 	$configinputfw{$key}[1] = $field1;
 	$configinputfw{$key}[2] = $field2;
@@ -105,5 +109,9 @@ foreach my $line (@current){
 	$configinputfw{$key}[25] = '';
 	$configinputfw{$key}[26] = $field26;
 	$configinputfw{$key}[27] = $field27;
+	$configinputfw{$key}[28] = $field28;
+	$configinputfw{$key}[29] = $field29;
+	$configinputfw{$key}[30] = $field30;
+	$configinputfw{$key}[31] = $field31;
 	&General::writehasharray($inputfwconfig,\%configinputfw);
 }

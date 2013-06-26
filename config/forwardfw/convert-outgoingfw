@@ -538,6 +538,10 @@ sub process_rules
 					$fwconfig{$key}[25] = $time_sun;
 					$fwconfig{$key}[26] = $time_from;
 					$fwconfig{$key}[27] = $time_to;
+					$fwconfig{$key}[28] = '';
+					$fwconfig{$key}[29] = 'ALL';
+					$fwconfig{$key}[30] = '';
+					$fwconfig{$key}[31] = 'dnat';
 				}else{
 					my $key = &General::findhasharraykey(\%fwconfigout);
 					$fwconfigout{$key}[0]	= $action;
@@ -563,6 +567,10 @@ sub process_rules
 					$fwconfigout{$key}[25] 	= $time_sun;
 					$fwconfigout{$key}[26] 	= $time_from;
 					$fwconfigout{$key}[27] 	= $time_to;
+					$fwconfigout{$key}[28]  = '';
+					$fwconfigout{$key}[29]  = 'ALL';
+					$fwconfigout{$key}[30]  = '';
+					$fwconfigout{$key}[31]  = 'dnat';
 				}
 				&General::writehasharray($fwdfwconfig,\%fwconfig);
 				&General::writehasharray($outfwconfig,\%fwconfigout);
