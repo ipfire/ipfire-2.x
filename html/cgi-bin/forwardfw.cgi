@@ -438,7 +438,7 @@ sub addrule
 {
 	&error;
 	if (-f "${General::swroot}/forward/reread"){
-		print "<table border='0'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div</td></tr></table></form><hr><br>";
+		print "<table border='1' rules='groups' bgcolor='lightgreen' width='100%'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: green; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div</td></tr></table></form><hr><br>";
 	}
 	&Header::openbox('100%', 'left',  $Lang::tr{'fwdfw menu'});
 	print "<form method='post'>";
@@ -2157,8 +2157,8 @@ sub viewtablerule
 	&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 	&viewtablenew(\%confignatfw,$confignat,"$Lang::tr{'fwdfw rules'}","Portforward / SNAT" );
 	&viewtablenew(\%configfwdfw,$configfwdfw,"","Forward" );
-	&viewtablenew(\%configoutgoingfw,$configoutgoing,"","Outgoing" );
 	&viewtablenew(\%configinputfw,$configinput,"",$Lang::tr{'fwdfw xt access'} );
+	&viewtablenew(\%configoutgoingfw,$configoutgoing,"","Outgoing" );
 }
 sub viewtablenew
 {
@@ -2256,6 +2256,13 @@ END
 			print"<td align='center' width='160' $tdcolor>";
 			if ($$hash{$key}[3] eq 'std_net_src'){
 				print &get_name($$hash{$key}[4]);
+			}elsif ($$hash{$key}[3] eq 'src_addr'){
+				my ($split1,$split2) = split("/",$$hash{$key}[4]);
+				if ($split2 eq '32'){
+					print $split1;
+				}else{
+					print $$hash{$key}[4];
+				}
 			}else{
 				print $$hash{$key}[4];
 			}
@@ -2301,6 +2308,13 @@ END
 					print $Lang::tr{'red1'};
 				}else{
 					print &get_name($$hash{$key}[6]);
+				}
+			}elsif ($$hash{$key}[5] eq 'tgt_addr'){
+				my ($split1,$split2) = split("/",$$hash{$key}[6]);
+				if ($split2 eq '32'){
+					print $split1;
+				}else{
+					print $$hash{$key}[6];
 				}
 			}else{
 				print $$hash{$key}[6];

@@ -1061,7 +1061,7 @@ if($fwhostsettings{'ACTION'} eq '')
 sub showmenu
 {
 	if (-f "${General::swroot}/forward/reread"){
-		print "<table border='0'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: red; font-weight: bold; font-size: 14pt;'>$Lang::tr{'fwhost reread'}</td></tr></table></form><hr><br>";
+		print "<table border='1' rules='groups' bgcolor='lightgreen' width='100%'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: green; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</td></tr></table></form><hr><br>";
 	}
 	&Header::openbox('100%', 'left',$Lang::tr{'fwhost menu'});
 	print<<END;
