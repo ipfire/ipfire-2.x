@@ -24,3 +24,11 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 restore_backup ${NAME}
+
+if [[ -x /usr/sbin/xinetd ]];
+then
+   if [[ -x /etc/init.d/xinetd ]]
+   then
+      /etc/init.d/xinetd restart
+   fi
+fi

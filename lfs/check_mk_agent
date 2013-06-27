@@ -78,7 +78,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && tar xzf agents.tar.gz
 	cd $(DIR_APP) && install -v -m 755 check_mk_agent.linux /usr/bin/check_mk_agent
-	cd $(DIR_APP) && install -v -m 755 xinetd.conf /etc/xinet.d/check_mk_agent
+	-mkdir /etc/xinetd.d
+	cd $(DIR_APP) && install -v -m 755 xinetd.conf /etc/xinetd.d/check_mk_agent
 	cd $(DIR_APP) && gcc $(CFLAGS) waitmax.c -o waitmax
 	cd $(DIR_APP) && install -v -m 755 waitmax /usr/bin/waitmax
 	@rm -rf $(DIR_APP)
