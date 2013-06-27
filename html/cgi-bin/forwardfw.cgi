@@ -75,7 +75,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.8';
+my $VERSION='0.9.9.9';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -2319,20 +2319,61 @@ END
 					my $weekdays=join(",",@days);
 					if (@days){
 						print"<tr bgcolor='$color'>";
-						print"<td>&nbsp</td><td bgcolor='$rulecolor'></td><td align='left' colspan='10'>$weekdays &nbsp $$hash{$key}[26] - $$hash{$key}[27] </td></tr>";
+						print"<td>&nbsp</td><td bgcolor='$rulecolor'></td><td align='left' colspan='10'>&nbsp $weekdays &nbsp $$hash{$key}[26] - $$hash{$key}[27] </td></tr>";
 					}
 				}
 			}
 			print"<tr bgcolor='FFFFFF'><td colspan='13' height='1'></td></tr>";
 		}
+		my $col;
+		if ($config eq '/var/ipfire/forward/config'){
+			my $pol='fwdfw '.$fwdfwsettings{'POLICY'};
+			if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
+				$col="bgcolor='darkred'";
+			}else{
+				$col="bgcolor='green'";
+			}
+			print"<tr><td colspan='13' $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} $Lang::tr{$pol}</font></td></tr>";
+		}elsif ($config eq '/var/ipfire/forward/outgoing'){
+			my $pol='fwdfw '.$fwdfwsettings{'POLICY1'};
+			if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){
+				$col="bgcolor='darkred'";
+			}else{
+				$col="bgcolor='green'";
+			}
+			print"<tr><td colspan='13' $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} $Lang::tr{$pol}</font></td></tr>";
+		}else{
+			print"<tr><td colspan='13' bgcolor='darkred' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} $Lang::tr{'fwdfw MODE1'}</font></td></tr>";
+		}
 		print"</table>";
-		&Header::closebox();
 		print "<hr>";
 		print "<br><br>";
+		&Header::closebox();
 	}else{
 		if ($optionsfw{'SHOWTABLES'} eq 'on'){
 			print "<b>$title1</b><br>";
-			print"<table width='100%' border='0' rules='none'><tr><td height='30' bgcolor=$color{'color22'} align='center'>$Lang::tr{'fwhost empty'}</td></tr></table><br><br>";
+			print"<table width='100%' border='0' rules='none'><tr><td height='30' bgcolor=$color{'color22'} align='center'>$Lang::tr{'fwhost empty'}</td></tr>";
+			my $col;
+			if ($config eq '/var/ipfire/forward/config'){
+				my $pol='fwdfw '.$fwdfwsettings{'POLICY'};
+				if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
+					$col="bgcolor='darkred'";
+				}else{
+					$col="bgcolor='green'";
+				}
+				print"<tr><td colspan='13' $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} $Lang::tr{$pol}</font></td></tr>";
+			}elsif ($config eq '/var/ipfire/forward/outgoing'){
+				my $pol='fwdfw '.$fwdfwsettings{'POLICY1'};
+				if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){
+					$col="bgcolor='darkred'";
+				}else{
+					$col="bgcolor='green'";
+				}
+				print"<tr><td colspan='13' $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} $Lang::tr{$pol}</font></td></tr>";
+			}else{
+				print"<tr><td colspan='13' bgcolor='darkred' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} $Lang::tr{'fwdfw MODE1'}</font></td></tr>";
+			}
+			print"</table><br><br>";
 		}
 	}
 }
