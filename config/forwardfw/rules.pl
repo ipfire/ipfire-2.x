@@ -209,7 +209,7 @@ sub buildrules
 						&get_address($customgrp{$grp}[3],$customgrp{$grp}[2],"tgt");
 					}
 				}
-			}elsif($$hash{$key}[5] eq 'ipfire'){
+			}elsif($$hash{$key}[5] eq 'ipfire' ){
 				if($$hash{$key}[6] eq 'GREEN'){
 					$targethash{$key}[0]=$defaultNetworks{'GREEN_ADDRESS'};
 				}
@@ -505,6 +505,30 @@ sub get_address
 		$$hash{$key}[0]=&fwlib::get_ovpn_n2n_ip($base2,11);
 	}elsif($base eq 'ipsec_net_src' || $base eq 'ipsec_net_tgt' || $base eq 'IpSec Network'){
 		$$hash{$key}[0]=&fwlib::get_ipsec_net_ip($base2,11);
+	}elsif($base eq 'ipfire_src' ){
+		if($base2 eq 'GREEN'){
+			$$hash{$key}[0]=$defaultNetworks{'GREEN_ADDRESS'};
+		}
+		if($base2 eq 'BLUE'){
+			$$hash{$key}[0]=$defaultNetworks{'BLUE_ADDRESS'};
+		}
+		if($base2 eq 'ORANGE'){
+			$$hash{$key}[0]=$defaultNetworks{'ORANGE_ADDRESS'};
+		}
+		if($base2 eq 'ALL'){
+			$$hash{$key}[0]='0.0.0.0/0';
+		}
+		if($base2 eq 'RED' || $base2 eq 'RED1'){
+			open(FILE, "/var/ipfire/red/local-ipaddress")or die "Couldn't open local-ipaddress";
+			$$hash{$key}[0]= <FILE>;
+			close(FILE);
+		}else{
+			foreach my $alias (sort keys %aliases){
+				if ($base2 eq $alias){
+					$$hash{$key}[0]=$aliases{$alias}{'IPT'};
+				}
+			}
+		}
 	}
 }
 sub get_prot

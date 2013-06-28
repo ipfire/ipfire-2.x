@@ -189,8 +189,8 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		if($fwdfwsettings{'nosave2'} ne 'on'){
 			&saverule(\%configinputfw,$configinput);
 		}
-	}elsif($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' ){
-		# OUTGOING PART
+	}elsif($fwdfwsettings{'grp1'} eq 'ipfire_src' ){
+	# OUTGOING PART
 		$fwdfwsettings{'config'}=$configoutgoing;
 		$fwdfwsettings{'chain'} = 'OUTGOINGFW';
 		my $maxkey=&General::findhasharraykey(\%configoutgoingfw);
@@ -378,7 +378,7 @@ sub addrule
 {
 	&error;
 	if (-f "${General::swroot}/forward/reread"){
-		print "<table border='1' rules='groups' bgcolor='lightgreen' width='100%'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: green; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div</td></tr></table></form><hr><br>";
+		print "<table border='1' rules='groups' bgcolor='lightgreen' width='100%'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: green; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div</td></tr></table></form><br>";
 	}
 	&Header::openbox('100%', 'left',  $Lang::tr{'fwdfw menu'});
 	print "<form method='post'>";
@@ -979,6 +979,7 @@ sub gen_dd_block
 	$checked{'TIME_SUN'}{$fwdfwsettings{'TIME_SUN'}} 		= 'CHECKED';
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
+	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
 	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
 print<<END;
 		<table width='100%' border='0'>
@@ -989,13 +990,16 @@ END
 	foreach my $network (sort keys %defaultNetworks)
 		{
 			next if($defaultNetworks{$network}{'NAME'} eq "RED" && $srctgt eq 'src');
-			next if($defaultNetworks{$network}{'NAME'} eq "IPFire" && $srctgt eq 'tgt');
+			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
 			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $defaultNetworks{$network}{'NAME'});
 			my $defnet="$defaultNetworks{$network}{'NAME'}_NETADDRESS";
-			$ifaces{$defnet} = '0.0.0.0' if ($defaultNetworks{$network}{'NAME'} eq 'ALL');
-			$defnet =  "RED_ADDRESS" if ($defaultNetworks{$network}{'NAME'} eq 'IPFire');
-			print ">$network $ifaces{$defnet} </option>";
+			$ifaces{$defnet}='0.0.0.0' if ($defaultNetworks{$network}{'NAME'} eq 'RED');
+			if ($ifaces{$defnet}){
+				print ">$network ($ifaces{$defnet})</option>";
+			}else{
+				print ">$network</option>";
+			}
 		}
 	print"</select></td></tr>";
 	#custom networks
@@ -1403,6 +1407,7 @@ sub newrule
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
+	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
 	#check if update and get values
 	if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on' && !$errormessage){
 		&General::readhasharray("$config", \%hash);
@@ -1462,6 +1467,7 @@ sub newrule
 				$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 				$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
+				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
 				$selected{'dnat'}{$fwdfwsettings{$fwdfwsettings{'nat'}}} ='selected';
 				$selected{'snat'}{$fwdfwsettings{$fwdfwsettings{'nat'}}} ='selected';
 			}
@@ -1510,9 +1516,24 @@ sub newrule
 	#------SOURCE-------------------------------------------------------
 	print<<END;
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td colspan='5'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' size='16' maxlength='17'></td></tr>
-		<tr><td colspan='7'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr>
-		</table>
+		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td width='60%'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' size='16' maxlength='17'></td><td width='1%'><input type='radio' name='grp1' value='ipfire_src'  $checked{'grp1'}{'ipfire'}></td><td><b>Firewall</b></td>
+END
+		print"<td align='right'><select name='ipfire_src' style='width:200px;'>";
+		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'}</option>";
+		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
+		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if $ifaces{'ORANGE_ADDRESS'};
+		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if $ifaces{'BLUE_ADDRESS'};
+		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} ($ifaces{'RED_ADDRESS'})</option>" if $ifaces{'RED_ADDRESS'};
+
+		if (! -z "${General::swroot}/ethernet/aliases"){
+			foreach my $alias (sort keys %aliases)
+			{
+				print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias</option>";
+			}
+		}
+		print<<END;
+		</td></tr>
+		<tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
 END
 	&gen_dd_block('src','grp1');
 		print<<END;
@@ -1553,14 +1574,14 @@ END
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
 		print<<END;
 		<table width='100%' border='0'>	
-		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='57%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='17'><td width='1%'><input type='radio' name='grp2' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>Firewall</b></td>
+		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='60%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='17'><td width='1%'><input type='radio' name='grp2' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>Firewall</b></td>
 END
 		print"<td align='right'><select name='ipfire' style='width:200px;'>";
-		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'} 0.0.0.0</option>";
-		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} $ifaces{'GREEN_ADDRESS'}</option>" if $ifaces{'GREEN_ADDRESS'};
-		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} $ifaces{'ORANGE_ADDRESS'}</option>" if $ifaces{'ORANGE_ADDRESS'};
-		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} $ifaces{'BLUE_ADDRESS'}</option>" if $ifaces{'BLUE_ADDRESS'};
-		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} $ifaces{'RED_ADDRESS'}</option>" if $ifaces{'RED_ADDRESS'};
+		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'}</option>";
+		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
+		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if $ifaces{'ORANGE_ADDRESS'};
+		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if $ifaces{'BLUE_ADDRESS'};
+		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} ($ifaces{'RED_ADDRESS'})</option>" if $ifaces{'RED_ADDRESS'};
 
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
@@ -1574,8 +1595,7 @@ END
 END
 		&gen_dd_block('tgt','grp2');
 		print<<END;
-		<b>$Lang::tr{'fwhost attention'}:</b><br>
-		$Lang::tr{'fwhost macwarn'}<br><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; '></hr><br>
+		<hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; '></hr><br>
 		<table width='100%' border='0'>
 		<tr><td width='1%'><input type='checkbox' name='USESRV' value='ON' $checked{'USESRV'}{'ON'} ></td><td width='48%'>$Lang::tr{'fwdfw use srv'}</td><td width='1%'><input type='radio' name='grp3' value='cust_srv' checked></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td width='1%' colspan='2'><select name='cust_srv'style='min-width:230px;' >
 END
@@ -1696,7 +1716,8 @@ END
 			}
 		}
 		print"</select></td></tr>";	
-		print"<tr><td width='12%'>$Lang::tr{'remark'}:</td><td align='left'><input type='text' name='ruleremark' size='40' maxlength='255' value='$fwdfwsettings{'ruleremark'}'></td></tr>";
+		print"<tr><td width='100%'>$Lang::tr{'remark'}:</td><td align='left'><input type='text' name='ruleremark' size='78' maxlength='255' value='$fwdfwsettings{'ruleremark'}'></td></tr>";
+		#print"<tr><td width='100%'>$Lang::tr{'remark'}:</td><td align='left'><textarea name='ruleremark' cols='70' rows='3' value='$fwdfwsettings{'ruleremark'}'></textarea></td></tr>";
 		if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on'){
 			print "<tr><td width='12%'>$Lang::tr{'fwdfw rulepos'}:</td><td><select name='rulepos' >";
 			for (my $count =1; $count <= $sum; $count++){ 
@@ -2088,7 +2109,7 @@ sub viewtablenew
 		my $coloryellow='';
 		print"<b>$title1</b><br>";
 		print"<table width='100%' cellspacing='0' cellpadding='0' border='0'>";
-		print"<tr><td align='center'><b>#</td><td ></td><td align='center'><b>$Lang::tr{'fwdfw source'}</td><td width='1%'><b>Log</td><td align='center'><b>$Lang::tr{'fwdfw target'}</td><td align='center' width='25'></td><td align='center' colspan='6' width='1%'><b>$Lang::tr{'fwdfw action'}</td></tr>";#<td align='center'><b>$Lang::tr{'fwdfw time'}</td><b>$Lang::tr{'protocol'}</b>
+		print"<tr><td align='center'><b>#</td><td></td><td align='center' width='25'></td><td align='center'><b>$Lang::tr{'fwdfw source'}</td><td width='1%'><b>Log</td><td align='center'><b>$Lang::tr{'fwdfw target'}</td><td align='center' colspan='6' width='1%'><b>$Lang::tr{'fwdfw action'}</td></tr>";
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
 			$tdcolor='';
 			@tmpsrc=();
@@ -2140,9 +2161,11 @@ sub viewtablenew
 				}
 			}
 			print"<tr bgcolor='$color' >";
+			#KEY
 			print<<END;
 			<td align='right' width='18'><b>$key &nbsp</b></td>
 END
+			#RULETYPE (A,R,D)
 			if ($$hash{$key}[0] eq 'ACCEPT'){
 				$ruletype='A';
 				$tooltip='ACCEPT';
@@ -2157,6 +2180,23 @@ END
 				$rulecolor=$color{'color16'};
 			}
 			print"<td bgcolor='$rulecolor' align='center' width='10'><span title='$tooltip'><b>$ruletype</b></span></td>";
+			#Get Protocol
+			my $prot;
+			if ($$hash{$key}[8] && $$hash{$key}[7] eq 'ON'){#source prot if manual
+				push (@protocols,$$hash{$key}[8]);
+			}elsif ($$hash{$key}[12]){			#target prot if manual
+				push (@protocols,$$hash{$key}[12]);
+			}elsif($$hash{$key}[14] eq 'cust_srv'){
+				&get_serviceports("service",$$hash{$key}[15]);
+			}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
+				&get_serviceports("group",$$hash{$key}[15]);
+			}else{
+				push (@protocols,$Lang::tr{'all'});
+			}
+			my $protz=join(",",@protocols);
+			print"<td align='center'>$protz</td>";
+			@protocols=();
+			#SOURCE
 			&getcolor($$hash{$key}[3],$$hash{$key}[4],\%customhost);
 			print"<td align='center' width='160' $tdcolor>";
 			if ($$hash{$key}[3] eq 'std_net_src'){
@@ -2172,10 +2212,11 @@ END
 				print $$hash{$key}[4];
 			}
 			$tdcolor='';
+			#SOURCEPORT
 			&getsrcport(\%$hash,$key);
 			#Is this a SNAT rule?
 			if ($$hash{$key}[31] eq 'snat' && $$hash{$key}[28] eq 'ON'){
-				print"<br>-> $$hash{$key}[29]";
+				print"<br>->$$hash{$key}[29]";
 				if ($$hash{$key}[30] ne ''){
 					print": $$hash{$key}[30]";
 				}
@@ -2185,6 +2226,7 @@ END
 			}else{
 				$log="/images/off.gif";
 			}
+			#LOGGING
 			print<<END;
 			</td>
 			<form method='post'>
@@ -2194,13 +2236,14 @@ END
 			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw togglelog'}' />
 			</td></form>
 END
+			#TARGET
 			&getcolor($$hash{$key}[5],$$hash{$key}[6],\%customhost);
 			print<<END;
 			<td align='center' width='160' $tdcolor>
 END
 			#Is this a DNAT rule?
 			if ($$hash{$key}[31] eq 'dnat' && $$hash{$key}[28] eq 'ON'){
-				print "IPFire ($$hash{$key}[29])";
+				print "Firewall ($$hash{$key}[29])";
 				if($$hash{$key}[30] ne ''){
 					$$hash{$key}[30]=~ tr/|/,/;
 					print": $$hash{$key}[30]";
@@ -2225,25 +2268,10 @@ END
 				print $$hash{$key}[6];
 			}
 			$tdcolor='';
+			#TARGETPORT
 			&gettgtport(\%$hash,$key);
 			print"</td>";
-			#Get Protocol
-			my $prot;
-			if ($$hash{$key}[8] && $$hash{$key}[7] eq 'ON'){#source prot if manual
-				push (@protocols,$$hash{$key}[8]);
-			}elsif ($$hash{$key}[12]){			#target prot if manual
-				push (@protocols,$$hash{$key}[12]);
-			}elsif($$hash{$key}[14] eq 'cust_srv'){
-				&get_serviceports("service",$$hash{$key}[15]);
-			}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
-				&get_serviceports("group",$$hash{$key}[15]);
-			}else{
-				push (@protocols,$Lang::tr{'all'});
-			}
-			my $protz=join(",",@protocols);
-			print"<td align='center'>$protz</td>";
-			@protocols=();
-
+			#RULE ACTIVE
 			if($$hash{$key}[2] eq 'ON'){
 				$gif="/images/on.gif"
 				
