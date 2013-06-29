@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.47
+VER        = 3.2.48
 
 RPI_PATCHES = linux-3.2.27-ada8b44
 
@@ -71,7 +71,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
-$(DL_FILE)_MD5				= 2fc39387136006be982aac90daaa4e3a
+$(DL_FILE)_MD5				= f560aa5fcf07e57ea0ca66fdfdb53ef1
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 966687ff27e450e04ff50e0da829dc00
 
 
