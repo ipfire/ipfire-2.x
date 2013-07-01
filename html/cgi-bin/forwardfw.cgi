@@ -994,9 +994,12 @@ END
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
 			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $defaultNetworks{$network}{'NAME'});
 			my $defnet="$defaultNetworks{$network}{'NAME'}_NETADDRESS";
+			my $defsub="$defaultNetworks{$network}{'NAME'}_NETMASK";
+			my $defsub1=&General::subtocidr($ifaces{$defsub});
 			$ifaces{$defnet}='0.0.0.0' if ($defaultNetworks{$network}{'NAME'} eq 'RED');
+			$defsub1 ='0' if ($defaultNetworks{$network}{'NAME'} eq 'RED');
 			if ($ifaces{$defnet}){
-				print ">$network ($ifaces{$defnet})</option>";
+				print ">$network ($ifaces{$defnet}/$defsub1)</option>";
 			}else{
 				print ">$network</option>";
 			}
@@ -1694,7 +1697,7 @@ END
 		#---Activate/logging/remark-------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
 		print<<END;
-		<table width='100%' border='0'>
+		<table width='100%' border='1'>
 		<tr><td nowrap>$Lang::tr{'fwdfw rule action'}</td><td><select name='RULE_ACTION'>
 END
 		foreach ("ACCEPT","DROP","REJECT")
@@ -1716,7 +1719,7 @@ END
 			}
 		}
 		print"</select></td></tr>";	
-		print"<tr><td width='100%'>$Lang::tr{'remark'}:</td><td align='left'><input type='text' name='ruleremark' size='78' maxlength='255' value='$fwdfwsettings{'ruleremark'}'></td></tr>";
+		print"<tr><td width='12%'>$Lang::tr{'remark'}:</td><td width='88%' align='left'><input type='text' name='ruleremark' maxlength='255' value='$fwdfwsettings{'ruleremark'}' style='width:99%':></td></tr>";
 		#print"<tr><td width='100%'>$Lang::tr{'remark'}:</td><td align='left'><textarea name='ruleremark' cols='70' rows='3' value='$fwdfwsettings{'ruleremark'}'></textarea></td></tr>";
 		if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on'){
 			print "<tr><td width='12%'>$Lang::tr{'fwdfw rulepos'}:</td><td><select name='rulepos' >";

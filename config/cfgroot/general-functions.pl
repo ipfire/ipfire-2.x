@@ -82,8 +82,8 @@ sub setup_default_networks
 			my ($ip,$sub) = split(/\//,$ovpnSettings{'DOVPN_SUBNET'});
 			$sub=&General::iporsubtocidr($sub);
 			my @tempovpnsubnet = split("\/", $ovpnSettings{'DOVPN_SUBNET'});
-			$defaultNetworks->{'OpenVPN ' .$ip."/".$sub}{'ADR'} = $tempovpnsubnet[0];
-			$defaultNetworks->{'OpenVPN ' .$ip."/".$sub}{'NAME'} = "OpenVPN-Dyn";
+			$defaultNetworks->{'OpenVPN ' ."($ip/$sub)"}{'ADR'} = $tempovpnsubnet[0];
+			$defaultNetworks->{'OpenVPN ' ."($ip/$sub)"}{'NAME'} = "OpenVPN-Dyn";
 		}
 	} # end OpenVPN
 	# IPsec RW NET

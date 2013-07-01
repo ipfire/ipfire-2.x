@@ -1083,9 +1083,9 @@ sub addnet
 	$fwhostsettings{'orgnetremark'}=$fwhostsettings{'NETREMARK'};
 	print<<END;
 	<table border='0' width='100%'><form method='post' style='display:inline'  >
-	<tr><td width='15%'>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='14'><script>document.getElementById('textbox1').focus()</script></td></tr>
-	<tr><td>$Lang::tr{'fwhost netaddress'}:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14' maxlength='15'></td></tr>
-	<tr><td>$Lang::tr{'netmask'}:</td><td><input type='TEXT' name='SUBNET' value='$fwhostsettings{'SUBNET'}' $fwhostsettings{'BLK_IP'} size='14' maxlength='15'></td></tr>
+	<tr><td width='15%'>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='20'><script>document.getElementById('textbox1').focus()</script></td></tr>
+	<tr><td>$Lang::tr{'fwhost netaddress'}:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='20' maxlength='15'></td></tr>
+	<tr><td>$Lang::tr{'netmask'}:</td><td><input type='TEXT' name='SUBNET' value='$fwhostsettings{'SUBNET'}' $fwhostsettings{'BLK_IP'} size='20' maxlength='15'></td></tr>
 	<tr><td>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='NETREMARK' value='$fwhostsettings{'NETREMARK'}' style='width: 98.5%;'></td></tr>
 	<tr><td colspan='6'><br><hr></hr></td></tr><tr>
 END
@@ -1107,8 +1107,8 @@ sub addhost
 	$fwhostsettings{'orgremark'}=$fwhostsettings{'HOSTREMARK'};
 	print<<END;
 	<table border='0' width='100%'><form method='post' style='display:inline'>
-	<tr><td>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='14'><script>document.getElementById('textbox1').focus()</script></td></tr>
-	<tr><td>IP/MAC:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='14' maxlength='17'></td></tr>
+	<tr><td>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='20'><script>document.getElementById('textbox1').focus()</script></td></tr>
+	<tr><td>IP/MAC:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='20' maxlength='17'></td></tr>
 	<tr><td width='10%'>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='HOSTREMARK' value='$fwhostsettings{'HOSTREMARK'}' style='width:98%;'></td></tr>
 	<tr><td colspan='5'><hr></hr></td></tr>
 END
@@ -1147,7 +1147,7 @@ sub addgrp
 		if ($fwhostsettings{'update'} eq ''){   
 			print<<END;
 			<table width='100%' border='0'><form method='post'>
-			<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='TEXT' name='grp_name' value='$fwhostsettings{'grp_name'}' size='14'></td></tr>
+			<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='TEXT' name='grp_name' value='$fwhostsettings{'grp_name'}' size='20'></td></tr>
 			<tr><td width='10%'>$Lang::tr{'remark'}:</td><td ><input type='TEXT' name='remark' value='$fwhostsettings{'remark'}' style='width: 98%;'></td></tr>
 			<tr><td colspan='2'><br><hr></td></tr></table>
 END
@@ -1242,7 +1242,7 @@ sub addservice
 {
 	&error;
 	&showmenu;
-	&Header::openbox('100%', 'left', $Lang::tr{'fwhost newservice'});
+	&Header::openbox('100%', 'left', $Lang::tr{'fwhost addservice'});
 	if ($fwhostsettings{'updatesrv'} eq 'on')
 	{
 		$fwhostsettings{'oldsrvname'} = $fwhostsettings{'SRV_NAME'};
@@ -1251,7 +1251,7 @@ sub addservice
 	}
 	print<<END;
 	<table width='100%' border='0'><form method='post'>
-	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost srv_name'}:</td><td><input type='text' name='SRV_NAME' id='textbox1' value='$fwhostsettings{'SRV_NAME'}' size='14'><script>document.getElementById('textbox1').focus()</script></td></tr>
+	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost srv_name'}:</td><td><input type='text' name='SRV_NAME' id='textbox1' value='$fwhostsettings{'SRV_NAME'}' size='24'><script>document.getElementById('textbox1').focus()</script></td></tr>
 	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT'>
 END
 	foreach ("TCP","UDP","ICMP")
@@ -1275,7 +1275,7 @@ END
 	
 	print<<END;
 	</select></td></tr>
-	<tr><td width='10%'>$Lang::tr{'fwhost port'}:</td><td><input type='text' name='SRV_PORT' value='$fwhostsettings{'SRV_PORT'}' maxlength='11' size='14'></td></tr>
+	<tr><td width='10%'>$Lang::tr{'fwhost port'}:</td><td><input type='text' name='SRV_PORT' value='$fwhostsettings{'SRV_PORT'}' maxlength='11' size='24'></td></tr>
 	<tr><td colspan='6'><br><hr></td></tr>
 	<tr><td colspan='6' align='right'>
 END
@@ -1306,12 +1306,12 @@ sub addservicegrp
 	&hint;
 	&error;
 	&showmenu;
-	&Header::openbox('100%', 'left', $Lang::tr{'fwhost newservicegrp'});
+	&Header::openbox('100%', 'left', $Lang::tr{'fwhost addservicegrp'});
 	$fwhostsettings{'oldsrvgrpremark'}=$fwhostsettings{'SRVGRP_REMARK'};
 	if ($fwhostsettings{'updatesrvgrp'} eq ''){
 		print<<END;
 		<table width='100%' border='0'><form method='post'>
-		<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='text' name='SRVGRP_NAME' value='$fwhostsettings{'SRVGRP_NAME'}' size='14'></td></tr>
+		<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='text' name='SRVGRP_NAME' value='$fwhostsettings{'SRVGRP_NAME'}' size='24'></td></tr>
 		<tr><td width='10%'>$Lang::tr{'remark'}:</td><td><input type='text' name='SRVGRP_REMARK' value='$fwhostsettings{'SRVGRP_REMARK'}' style='width: 98%;'></td></tr>
 		<tr><td colspan='2'><br><hr></tr>
 		</table>
