@@ -1614,7 +1614,7 @@ END
 		}	
 		print<<END;
 		</select></td></tr>
-		<tr><td colspan='2'></td><td><input type='radio' name='grp3' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust srvgrp'}:</td><td colspan='2'><select name='cust_srvgrp' style='min-width:230px;' >
+		<tr><td colspan='2'></td><td><input type='radio' name='grp3' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust srvgrp'}</td><td colspan='2'><select name='cust_srvgrp' style='min-width:230px;' >
 END
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		my $helper;
@@ -1680,14 +1680,12 @@ END
 		#SNAT
 		print"<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' value='snat'  $checked{'nat'}{'snat'}></td><td width='20%'>$Lang::tr{'fwdfw snat'}</td>";
 		print"<td width='8%'>IPFire: </td><td width='20%' align='right'><select name='snat' style='width:140px;'>";
-		print "<option value='Default IP' $selected{'snat'}{'Default IP'}>Default IP</option>";
 		foreach my $alias (sort keys %aliases)
 			{
 				print "<option value='$alias' $selected{'snat'}{$alias}>$alias</option>";
 			}
 		foreach my $network (sort keys %defaultNetworks)
 		{
-			next if($defaultNetworks{$network}{'NAME'} eq "RED");
 			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
 			next if($defaultNetworks{$network}{'NAME'} eq "ALL");
 			next if($defaultNetworks{$network}{'NAME'} =~ /OpenVPN/i);
@@ -2222,14 +2220,16 @@ END
 			}elsif ($$hash{$key}[4] eq 'RED1'){
 				print "$ipfireiface $Lang::tr{'fwdfw red'}";
 			}else{
-				print "ipfireiface $$hash{$key}[4]";
+				print "$$hash{$key}[4]";
 			}
 			$tdcolor='';
 			#SOURCEPORT
 			&getsrcport(\%$hash,$key);
 			#Is this a SNAT rule?
 			if ($$hash{$key}[31] eq 'snat' && $$hash{$key}[28] eq 'ON'){
-				print"<br>->$$hash{$key}[29]";
+				my $net=&get_name($$hash{$key}[29]);
+				if ( ! $net){ $net=$$hash{$key}[29];}
+					print"<br>->$net";
 				if ($$hash{$key}[30] ne ''){
 					print": $$hash{$key}[30]";
 				}
@@ -2271,9 +2271,9 @@ END
 					print "$ipfireiface $Lang::tr{'red1'}";
 				}elsif ($$hash{$key}[6] ne 'RED')
 				{
-					print "$ipfireiface $$hash{$key}[6]";
+					print "$ipfireiface ".&get_name($$hash{$key}[6]);
 				}else{
-					print "$$hash{$key}[6]";
+					print &get_name($$hash{$key}[6]);
 				}
 			}elsif ($$hash{$key}[5] eq 'tgt_addr'){
 				my ($split1,$split2) = split("/",$$hash{$key}[6]);

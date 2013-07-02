@@ -1073,7 +1073,7 @@
 'fwhost stdnet'			=> 'Standard networks:',
 'fwhost type'			=> 'Type',
 'fwhost used'			=> 'Used',
-'fwhost welcome'		=> 'Here you can define single Networks, Hosts or Services which can be grouped together. These Networks, Hosts and Groups can then be used in the firewall. You are able to use only a few rules for a big amount of Networks, Hosts or Groups.',
+'fwhost welcome'		=> 'Here you can define single networks, hosts or services which can be grouped together. These networks, hosts and groups can then be used in the firewall. You are able to use only a few rules for a big amount of networks, hosts or groups.',
 'fwhost wo subnet'		=> '(without subnet)',
 'free' => 'Free',
 'free memory' => 'Free Memory    ',

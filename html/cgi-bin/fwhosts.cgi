@@ -1376,8 +1376,8 @@ END
 			{
 				print" <tr bgcolor='$color{'color20'}'>";
 			}
+			print"<td width='20%'><form method='post'>$customnetwork{$key}[0]</td><td width=15%' align='center'>".&Header::colorize($customnetwork{$key}[1])."</td><td width='15%' align='center'>$customnetwork{$key}[2]</td><td width='40%'>$customnetwork{$key}[3]</td><td align='center'>$customnetwork{$key}[4]x</td>";
 			print<<END;
-			<td width='20%'><form method='post'>$customnetwork{$key}[0]</td><td width=15%' align='center'>$customnetwork{$key}[1]</td><td width='15%' align='center'>$customnetwork{$key}[2]</td><td width='40%'>$customnetwork{$key}[3]</td><td align='center'>$customnetwork{$key}[4]x</td>
 			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='editnet'>
 			<input type='hidden' name='HOSTNAME' value='$customnetwork{$key}[0]' />
@@ -1421,8 +1421,8 @@ END
 			else{            print" <tr bgcolor='$color{'color20'}'>";}
 			my ($ip,$sub)=split(/\//,$customhost{$key}[2]);
 			$customhost{$key}[4]=~s/\s+//g;
+			print"<td width='20%'><form method='post'>$customhost{$key}[0]</td><td width='20%' align='center'>".&Header::colorize($ip)."</td><td width='50%' align='left'>$customhost{$key}[3]</td><td align='center'>$customhost{$key}[4]x</td>";
 			print<<END;
-			<td width='20%'><form method='post'>$customhost{$key}[0]</td><td width='20%' align='center'>$ip</td><td width='50%' align='left'>$customhost{$key}[3]</td><td align='center'>$customhost{$key}[4]x</td>
 			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='edithost' />
 			<input type='hidden' name='HOSTNAME' value='$customhost{$key}[0]' />
@@ -1511,7 +1511,7 @@ sub viewtablegrp
 			if ($ip eq '' && $customgrp{$key}[2] ne $Lang::tr{'fwhost empty'}){
 				print "<td align='center'>$Lang::tr{'fwhost deleted'}</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";   
 			}else{
-				print"<td align='center'>$ip</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";
+				print"<td align='center'>".&Header::colorize($ip)."</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";
 			}
 			if ($delflag > '1' && $ip ne ''){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
@@ -1904,7 +1904,8 @@ sub getipforgroup
 	if ($type eq 'Custom Host'){
 		foreach my $key (keys %customhost) {
 			if ($customhost{$key}[0] eq $name){
-				return $customhost{$key}[2];
+				my ($ip,$sub) = split("/",$customhost{$key}[2]);
+				return $ip;
 			}
 		}
 	}
