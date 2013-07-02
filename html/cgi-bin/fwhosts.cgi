@@ -1362,7 +1362,7 @@ sub viewtablenet
 		}else{
 			print<<END;
 			<table border='0' width='100%' cellspacing='0'>
-			<tr><td align='center'><b>$Lang::tr{'name'}</td><td align='center'><b>$Lang::tr{'fwhost netaddress'}</td><td align='center'><b>$Lang::tr{'netmask'}</td><td align='center'><b>$Lang::tr{'remark'}</td><td align='center'><b>$Lang::tr{'used'}</td><td></td><td width='3%'></td></tr>
+			<tr><td align='center'><b>$Lang::tr{'name'}</td><td align='center'><b>$Lang::tr{'fwhost netaddress'}</td><td align='center'><b>$Lang::tr{'remark'}</td><td align='center'><b>$Lang::tr{'used'}</td><td></td><td width='3%'></td></tr>
 END
 		}
 		my $count=0;
@@ -1376,7 +1376,8 @@ END
 			{
 				print" <tr bgcolor='$color{'color20'}'>";
 			}
-			print"<td width='20%'><form method='post'>$customnetwork{$key}[0]</td><td width=15%' align='center'>".&Header::colorize($customnetwork{$key}[1])."</td><td width='15%' align='center'>$customnetwork{$key}[2]</td><td width='40%'>$customnetwork{$key}[3]</td><td align='center'>$customnetwork{$key}[4]x</td>";
+			my $colnet="$customnetwork{$key}[1]/".&General::subtocidr($customnetwork{$key}[2]);
+			print"<td width='20%'><form method='post'>$customnetwork{$key}[0]</td><td width=15%' align='center'>".&Header::colorize($colnet)."</td><td width='40%'>$customnetwork{$key}[3]</td><td align='center'>$customnetwork{$key}[4]x</td>";
 			print<<END;
 			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='editnet'>
@@ -1511,6 +1512,8 @@ sub viewtablegrp
 			if ($ip eq '' && $customgrp{$key}[2] ne $Lang::tr{'fwhost empty'}){
 				print "<td align='center'>$Lang::tr{'fwhost deleted'}</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";   
 			}else{
+				my ($colip,$colsub) = split("/",$ip);
+				$ip="$colip/".&General::subtocidr($colsub) if ($colsub);
 				print"<td align='center'>".&Header::colorize($ip)."</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";
 			}
 			if ($delflag > '1' && $ip ne ''){

@@ -817,6 +817,10 @@ sub checkrule
 			}
 		}
 	}
+	if( $fwdfwsettings{'USE_SRC_PORT'} ne 'ON' && $fwdfwsettings{'USESRV'} ne 'ON'){
+		$fwdfwsettings{'PROT'}='';
+		$fwdfwsettings{'TGT_PROT'}='';
+	}
 }
 sub checkcounter
 {
