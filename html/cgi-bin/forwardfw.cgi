@@ -75,7 +75,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.9';
+my $VERSION='0.9.9.9a';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -133,7 +133,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		$errormessage.=$Lang::tr{'fwdfw useless rule'}."<br>";
 	}
 	#check if we try to break rules
-	if(	$fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'IPFire' && $fwdfwsettings{'grp2'} eq 'ipfire'){
+	if(	$fwdfwsettings{'grp1'} eq 'ipfire_src' && $fwdfwsettings{'grp2'} eq 'ipfire'){
 		$errormessage.=$Lang::tr{'fwdfw err same'};
 	}
 	#INPUT part
@@ -2204,8 +2204,12 @@ END
 			print"<td align='center'>$protz</td>";
 			@protocols=();
 			#SOURCE
+			my $ipfireiface;
 			&getcolor($$hash{$key}[3],$$hash{$key}[4],\%customhost);
 			print"<td align='center' width='160' $tdcolor>";
+			if ($$hash{$key}[3] eq 'ipfire_src'){
+				$ipfireiface='Interface ';
+			}
 			if ($$hash{$key}[3] eq 'std_net_src'){
 				print &get_name($$hash{$key}[4]);
 			}elsif ($$hash{$key}[3] eq 'src_addr'){
@@ -2216,9 +2220,9 @@ END
 					print $$hash{$key}[4];
 				}
 			}elsif ($$hash{$key}[4] eq 'RED1'){
-				print "$Lang::tr{'fwdfw red'}";
+				print "$ipfireiface $Lang::tr{'fwdfw red'}";
 			}else{
-				print $$hash{$key}[4];
+				print "ipfireiface $$hash{$key}[4]";
 			}
 			$tdcolor='';
 			#SOURCEPORT
@@ -2259,10 +2263,13 @@ END
 				}
 				print"<br>->";
 			}
+			if ($$hash{$key}[5] eq 'ipfire'){
+				$ipfireiface='Interface';
+			}
 			if ($$hash{$key}[5] eq 'std_net_tgt' || $$hash{$key}[5] eq 'ipfire' && $$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1' || $$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE' ){
 				if ($$hash{$key}[6] eq 'RED1')
 				{
-					print $Lang::tr{'red1'};
+					print "$ipfireiface $Lang::tr{'red1'}";
 				}else{
 					print &get_name($$hash{$key}[6]);
 				}
@@ -2274,7 +2281,7 @@ END
 					print $$hash{$key}[6];
 				}
 			}else{
-				print $$hash{$key}[6];
+				print "$ipfireiface $$hash{$key}[6]";
 			}
 			$tdcolor='';
 			#TARGETPORT
