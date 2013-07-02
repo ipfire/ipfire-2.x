@@ -1064,8 +1064,9 @@ sub showmenu
 		print "<table border='1' rules='groups' bgcolor='lightgreen' width='100%'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: green; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</td></tr></table></form><br>";
 	}
 	&Header::openbox('100%', 'left',$Lang::tr{'fwhost menu'});
+	print "$Lang::tr{'fwhost welcome'}";
 	print<<END;
-	<table border='0' width='100%'><form method='post'>
+	<br><br><table border='0' width='100%'><form method='post'>
 	<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newnet'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newhost'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newgrp'}' /></td>
 	<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservice'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservicegrp'}' /></td></tr>
 	<tr><td colspan='6'><hr></hr></td></tr></table></form>

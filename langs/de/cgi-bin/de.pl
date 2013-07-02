@@ -1048,6 +1048,7 @@
 'fwhost stdnet'			=> 'Standard Netzwerke:',
 'fwhost type'			=> 'Typ',
 'fwhost used'			=> 'Benutzt',
+'fwhost welcome'		=> 'Hier können einzelne Netzwerke, Hosts oder Dienste definiert werden. Diese lassen sich zu Gruppen zusammenfassen und in der Firewall verwenden. Durch die Gruppen kann man Einzelne Firewallregeln auf mehrere Netzwerke und Hosts anwenden und so die Regeln übersichtlich halten.',
 'fwhost wo subnet'		=> '(Ohne Subnetz)',
 'free' => 'Frei',
 'free memory' => 'Freier Speicher   ',

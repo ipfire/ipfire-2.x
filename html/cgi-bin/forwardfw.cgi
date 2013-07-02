@@ -1391,6 +1391,10 @@ sub newrule
 	if($fwdfwsettings{'config'} eq ''){$fwdfwsettings{'config'}=$configfwdfw;}
 	my $config=$fwdfwsettings{'config'};
 	my %hash=();
+	#Get Red IP-ADDRESS
+	open (CONN1,"/var/ipfire/red/local-ipaddress");
+	my $redip = <CONN1>;
+	close(CONN1);
 	$checked{'grp1'}{$fwdfwsettings{'grp1'}} 				= 'CHECKED';
 	$checked{'grp2'}{$fwdfwsettings{'grp2'}} 				= 'CHECKED';
 	$checked{'grp3'}{$fwdfwsettings{'grp3'}} 				= 'CHECKED';
@@ -1410,7 +1414,7 @@ sub newrule
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
-	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
+	$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
 	#check if update and get values
 	if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on' && !$errormessage){
 		&General::readhasharray("$config", \%hash);
@@ -1519,14 +1523,14 @@ sub newrule
 	#------SOURCE-------------------------------------------------------
 	print<<END;
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td width='60%'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' size='16' maxlength='17'></td><td width='1%'><input type='radio' name='grp1' value='ipfire_src'  $checked{'grp1'}{'ipfire'}></td><td><b>Firewall</b></td>
+		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td width='60%'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' size='16' maxlength='17'></td><td width='1%'><input type='radio' name='grp1' value='ipfire_src'  $checked{'grp1'}{'ipfire_src'}></td><td><b>Firewall</b></td>
 END
 		print"<td align='right'><select name='ipfire_src' style='width:200px;'>";
 		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'}</option>";
 		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
 		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if $ifaces{'ORANGE_ADDRESS'};
 		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if $ifaces{'BLUE_ADDRESS'};
-		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} ($ifaces{'RED_ADDRESS'})</option>" if $ifaces{'RED_ADDRESS'};
+		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} ($redip)" if ($redip);
 
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
@@ -1697,7 +1701,7 @@ END
 		#---Activate/logging/remark-------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
 		print<<END;
-		<table width='100%' border='1'>
+		<table width='100%' border='0'>
 		<tr><td nowrap>$Lang::tr{'fwdfw rule action'}</td><td><select name='RULE_ACTION'>
 END
 		foreach ("ACCEPT","DROP","REJECT")
@@ -2211,6 +2215,8 @@ END
 				}else{
 					print $$hash{$key}[4];
 				}
+			}elsif ($$hash{$key}[4] eq 'RED1'){
+				print "$Lang::tr{'fwdfw red'}";
 			}else{
 				print $$hash{$key}[4];
 			}
