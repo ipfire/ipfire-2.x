@@ -996,7 +996,7 @@
 'fwdfw wd_fri'			=> 'Fri',
 'fwdfw wd_sat'			=> 'Sat',
 'fwdfw wd_sun'			=> 'Sun',
-'fwdfw xt access'		=> 'Access to firewall',
+'fwdfw xt access'		=> 'Input',
 'fwhost addgrp' 		=> 'Add Network / Host Group:',
 'fwhost addgrpname'		=> 'Groupname:',
 'fwhost addhost' 		=> 'Add Host:',

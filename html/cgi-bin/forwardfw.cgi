@@ -134,7 +134,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	}
 	#check if we try to break rules
 	if(	$fwdfwsettings{'grp1'} eq 'ipfire_src' && $fwdfwsettings{'grp2'} eq 'ipfire'){
-		$errormessage.=$Lang::tr{'fwdfw err same'};
+		$errormessage=$Lang::tr{'fwdfw err same'};
 	}
 	#INPUT part
 	if($fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE'){
@@ -772,7 +772,7 @@ sub checkrule
 	}
 	#check if source and target identical
 	if ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ALL'){
-		$errormessage.=$Lang::tr{'fwdfw err same'};
+		$errormessage=$Lang::tr{'fwdfw err same'};
 		return $errormessage;
 	}
 	#get source and targetip address if possible
@@ -2267,11 +2267,13 @@ END
 				$ipfireiface='Interface';
 			}
 			if ($$hash{$key}[5] eq 'std_net_tgt' || $$hash{$key}[5] eq 'ipfire' && $$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1' || $$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE' ){
-				if ($$hash{$key}[6] eq 'RED1')
-				{
+				if ($$hash{$key}[6] eq 'RED1'){
 					print "$ipfireiface $Lang::tr{'red1'}";
+				}elsif ($$hash{$key}[6] ne 'RED')
+				{
+					print "$ipfireiface $$hash{$key}[6]";
 				}else{
-					print &get_name($$hash{$key}[6]);
+					print "$$hash{$key}[6]";
 				}
 			}elsif ($$hash{$key}[5] eq 'tgt_addr'){
 				my ($split1,$split2) = split("/",$$hash{$key}[6]);
@@ -2281,7 +2283,7 @@ END
 					print $$hash{$key}[6];
 				}
 			}else{
-				print "$ipfireiface $$hash{$key}[6]";
+				print "$$hash{$key}[6]";
 			}
 			$tdcolor='';
 			#TARGETPORT
