@@ -55,7 +55,6 @@ require "${General::swroot}/forward/bin/firewall-lib.pl";
 my $configfwdfw		= "${General::swroot}/forward/config";
 my $configinput	    = "${General::swroot}/forward/input";
 my $configoutgoing  = "${General::swroot}/forward/outgoing";
-my $confignat		= "${General::swroot}/forward/nat";
 my $p2pfile			= "${General::swroot}/forward/p2protocols";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
@@ -74,7 +73,6 @@ my $snat='';
 &General::readhasharray($configfwdfw, \%configfwdfw);
 &General::readhasharray($configinput, \%configinputfw);
 &General::readhasharray($configoutgoing, \%configoutgoingfw);
-&General::readhasharray($confignat, \%confignatfw);
 &General::readhasharray($configgrp, \%customgrp);
 &General::get_aliases(\%aliases);
 
