@@ -1476,7 +1476,7 @@ sub newrule
 				$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 				$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
-				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
+				$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
 				$selected{'dnat'}{$fwdfwsettings{$fwdfwsettings{'nat'}}} ='selected';
 				$selected{'snat'}{$fwdfwsettings{$fwdfwsettings{'nat'}}} ='selected';
 			}
@@ -1528,11 +1528,11 @@ sub newrule
 		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td width='60%'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' size='16' maxlength='17'></td><td width='1%'><input type='radio' name='grp1' value='ipfire_src'  $checked{'grp1'}{'ipfire_src'}></td><td><b>Firewall</b></td>
 END
 		print"<td align='right'><select name='ipfire_src' style='width:200px;'>";
-		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'}</option>";
-		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
-		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if $ifaces{'ORANGE_ADDRESS'};
-		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if $ifaces{'BLUE_ADDRESS'};
-		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} ($redip)" if ($redip);
+		print "<option value='ALL' $selected{'ipfire_src'}{'ALL'}>$Lang::tr{'all'}</option>";
+		print "<option value='GREEN' $selected{'ipfire_src'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
+		print "<option value='ORANGE' $selected{'ipfire_src'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if $ifaces{'ORANGE_ADDRESS'};
+		print "<option value='BLUE' $selected{'ipfire_src'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if $ifaces{'BLUE_ADDRESS'};
+		print "<option value='RED1' $selected{'ipfire_src'}{'RED1'}>$Lang::tr{'red1'} ($redip)" if ($redip);
 
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
@@ -2270,11 +2270,11 @@ END
 			if ($$hash{$key}[5] eq 'std_net_tgt' || $$hash{$key}[5] eq 'ipfire'  || $$hash{$key}[6] eq 'RED1' || $$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE' ){
 				if ($$hash{$key}[6] eq 'RED1'){
 					print "$ipfireiface $Lang::tr{'red1'}";
-				}elsif ($$hash{$key}[6] ne 'RED')
+				}elsif ($$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE'|| $$hash{$key}[6] eq 'ALL')
 				{
 					print "$ipfireiface ".&get_name($$hash{$key}[6]);
 				}else{
-					print &get_name($$hash{$key}[6]);
+					print $$hash{$key}[6];
 				}
 			}elsif ($$hash{$key}[5] eq 'tgt_addr'){
 				my ($split1,$split2) = split("/",$$hash{$key}[6]);
