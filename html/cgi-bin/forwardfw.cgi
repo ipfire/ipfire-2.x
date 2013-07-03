@@ -47,7 +47,6 @@ unless (-e "${General::swroot}/forward/settings")   { system("touch ${General::s
 unless (-e "${General::swroot}/forward/config")  	{ system("touch ${General::swroot}/forward/config"); }
 unless (-e "${General::swroot}/forward/input")  	{ system("touch ${General::swroot}/forward/input"); }
 unless (-e "${General::swroot}/forward/outgoing")  	{ system("touch ${General::swroot}/forward/outgoing"); }
-unless (-e "${General::swroot}/forward/nat")  	{ system("touch ${General::swroot}/forward/nat"); }
 
 my %fwdfwsettings=();
 my %selected=() ;
@@ -75,7 +74,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.9a';
+my $VERSION='0.9.9.9';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -262,7 +261,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 						}
 						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
 							$fwdfwsettings{'nosave'} = 'on';
-							print "uzlputz neu time:$fwdfwsettings{'TIME'}  alt:$configfwdfw{$key}[18]";
 						}
 				}		
 			}
@@ -1592,8 +1590,7 @@ END
 		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
 		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if $ifaces{'ORANGE_ADDRESS'};
 		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if $ifaces{'BLUE_ADDRESS'};
-		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} ($ifaces{'RED_ADDRESS'})</option>" if $ifaces{'RED_ADDRESS'};
-
+		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} ($redip)" if ($redip);
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
 			{
@@ -2270,7 +2267,7 @@ END
 			if ($$hash{$key}[5] eq 'ipfire'){
 				$ipfireiface='Interface';
 			}
-			if ($$hash{$key}[5] eq 'std_net_tgt' || $$hash{$key}[5] eq 'ipfire' && $$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1' || $$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE' ){
+			if ($$hash{$key}[5] eq 'std_net_tgt' || $$hash{$key}[5] eq 'ipfire'  || $$hash{$key}[6] eq 'RED1' || $$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE' ){
 				if ($$hash{$key}[6] eq 'RED1'){
 					print "$ipfireiface $Lang::tr{'red1'}";
 				}elsif ($$hash{$key}[6] ne 'RED')
