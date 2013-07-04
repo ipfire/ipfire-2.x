@@ -140,9 +140,6 @@ sub preparerules
 	if (! -z  "${General::swroot}/forward/outgoing"){
 		&buildrules(\%configoutgoingfw);
 	}
-	if (! -z  "${General::swroot}/forward/nat"){
-		&buildrules(\%confignatfw);
-	}
 }
 sub buildrules
 {

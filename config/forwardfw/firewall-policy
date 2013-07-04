@@ -30,8 +30,7 @@ else
 	if [  "$BLUE_DEV" ] && [ "$IFACE" ]; then
 		/sbin/iptables -A POLICYFWD -i blue0 ! -o $IFACE -j DROP 
 	fi
-	/sbin/iptables -A POLICYFWD -s "$ORANGE_NETADDRESS"/"$ORANGE_NETMASK" -d "$BLUE_NETADDRESS"/"$BLUE_NETMASK" -j DROP
-	/sbin/iptables -A POLICYFWD -s "$ORANGE_NETADDRESS"/"$ORANGE_NETMASK" -d "$GREEN_NETADDRESS"/"$GREEN_NETMASK" -j DROP
+	/sbin/iptables -A POLICYFWD -i orange0 ! -o $IFACE -j DROP
 	/sbin/iptables -A POLICYFWD -j ACCEPT 
 	/sbin/iptables -A POLICYFWD -m comment --comment "DROP_FORWARD" -j DROP
 fi
