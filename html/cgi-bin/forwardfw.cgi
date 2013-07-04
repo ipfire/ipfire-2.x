@@ -2390,9 +2390,9 @@ END
 			}else{
 				$col="bgcolor='green'";
 			}
-			print"<tr><td $col width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
+			print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
 		}else{
-			print"<tr><td bgcolor='darkred' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td bgcolor='darkred'><font color='#FFFFFF'>$Lang::tr{'fwdfw MODE1'}</font></td></tr>";
+			print"<tr><td bgcolor='darkred' width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td bgcolor='darkred'><font color='#FFFFFF'>$Lang::tr{'fwdfw MODE1'}</font></td></tr>";
 		}
 		print"</table>";
 		print "<hr>";
@@ -2401,7 +2401,7 @@ END
 	}else{
 		if ($optionsfw{'SHOWTABLES'} eq 'on'){
 			print "<b>$title1</b><br>";
-			print"<table width='100%' border='0' rules='none'><tr><td height='30' bgcolor=$color{'color22'} align='center'>$Lang::tr{'fwhost empty'}</td></tr>";
+			print"<table width='100%' border='0' rules='none'><tr><td height='30' bgcolor=$color{'color22'} align='center'>$Lang::tr{'fwhost empty'}</td></tr></table>";
 			my $col;
 			if ($config eq '/var/ipfire/forward/config'){
 				my $pol='fwdfw '.$fwdfwsettings{'POLICY'};
@@ -2412,15 +2412,16 @@ END
 				}
 				&show_defaultrules($col,$pol);
 			}elsif ($config eq '/var/ipfire/forward/outgoing'){
+				print "<table width='100%' rules='cols' border='1'>";
 				my $pol='fwdfw '.$fwdfwsettings{'POLICY1'};
 				if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){
 					$col="bgcolor='darkred'";
 				}else{
 					$col="bgcolor='green'";
 				}
-				print"<tr><td colspan='13' $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} $Lang::tr{$pol}</font></td></tr>";
+				print"<tr><td $col align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
 			}else{
-				print"<tr><td colspan='13' bgcolor='darkred' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} $Lang::tr{'fwdfw MODE1'}</font></td></tr>";
+				print"<tr><td bgcolor='darkred' align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td>$Lang::tr{'fwdfw MODE1'}</font></td></tr>";
 			}
 			print"</table><br><br>";
 		}
@@ -2443,6 +2444,6 @@ sub show_defaultrules
 				print"<tr><td align='center'><font color='#000000'>$Lang::tr{'blue'}</td><td><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'}), <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})$orange</td></tr>" if $ifaces{'BLUE_DEV'};
 				print"<tr><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} </font></td><td $col><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
 			}elsif($col eq "bgcolor='darkred'"){
-				print"<tr><td $col width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
+				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
 			}
 }
