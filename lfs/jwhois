@@ -24,9 +24,9 @@
 
 include Config
 
-VER        = 1.4.2
+VER        = 4.0
 
-THISAPP    = inetutils-$(VER)
+THISAPP    = jwhois-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = df0909a586ddac2b7a0d62795eea4206
+$(DL_FILE)_MD5 = 977d0ba90ee058a7998c94d933fc9546
 
 install : $(TARGET)
 
@@ -69,20 +69,22 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-gcc4_fixes-3.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-daemon_fixes-1.patch
-	cd $(DIR_APP) && sed -i '/#include/a #include <stdlib.h>' libicmp/icmp_timestamp.c
-	cd $(DIR_APP) && ./configure --prefix=/usr --libexecdir=/usr/sbin \
-				--sysconfdir=/etc --localstatedir=/var \
-				--mandir=/usr/share/man --infodir=/usr/share/info \
-				--disable-logger --disable-syslogd --disable-telnet --disable-telnetd
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/jwhois-4.0-conf_update.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/jwhois-4.0-conf_update2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/jwhois-4.0-connect.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/jwhois-4.0-fclose.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/jwhois-4.0-idna.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/jwhois-4.0-ipv6match.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/jwhois-4.0-multi-homed.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/jwhois-4.0-select.patch
+
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	mv -v /usr/bin/ping /bin
 
-	# Don't use whois command from here.
-	rm -vf /usr/bin/whois
+	# Add alias for whois command.
+	ln -svf jwhois /usr/bin/whois
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

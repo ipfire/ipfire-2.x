@@ -336,6 +336,7 @@ buildbase() {
     lfsmake2 gzip
     lfsmake2 inetutils
     lfsmake2 iproute2
+    lfsmake2 jwhois
     lfsmake2 kbd
     lfsmake2 less
     lfsmake2 make
