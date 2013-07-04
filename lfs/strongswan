@@ -24,12 +24,13 @@
 
 include Config
 
-VER        = 5.0.4
+VER        = 5.1.0dr1
+GIT_VER    = 1d72875
 
 THISAPP    = strongswan-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/strongswan-$(GIT_VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ifeq "$(MACHINE)" "i586"
@@ -46,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7085ac1d28dcc250096553fa51c3a4ea
+$(DL_FILE)_MD5 = c5698c2c56f3ce08e5515f375fc99cef
 
 install : $(TARGET)
 
@@ -79,6 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-4.5.3_ipfire.patch
 
+	cd $(DIR_APP) && [ -x "configure" ] || ./autogen.sh
 	cd $(DIR_APP) && ./configure \
 		--prefix="/usr" \
 		--sysconfdir="/etc" \
