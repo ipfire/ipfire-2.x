@@ -51,12 +51,11 @@ my $errormessage = '';
 my $warnmessage = '';
 
 &General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
-
 &Header::showhttpheaders();
 
 #Get GUI values
 &Header::getcgihash(\%settings);
-
+&General::readhash("${General::swroot}/optionsfw/settings", \%settings);
 
 
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {

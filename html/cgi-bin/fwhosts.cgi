@@ -1171,10 +1171,18 @@ END
 			foreach my $network (sort keys %defaultNetworks)
 			{
 				next if($defaultNetworks{$network}{'LOCATION'} eq "IPCOP");
-				next if($defaultNetworks{$network}{'NAME'} eq "RED");
+				next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
 				print "<option value='$defaultNetworks{$network}{'NAME'}'";
 				print " selected='selected'" if ($fwhostsettings{'DEFAULT_SRC_ADR'} eq $defaultNetworks{$network}{'NAME'});
-				print ">$network</option>";
+				my $defnet="$defaultNetworks{$network}{'NAME'}_NETADDRESS";
+				my $defsub="$defaultNetworks{$network}{'NAME'}_NETMASK";
+				my $defsub1=&General::subtocidr($ownnet{$defsub});
+				$ownnet{$defnet}='' if ($defaultNetworks{$network}{'NAME'} eq 'RED');
+				if ($ownnet{$defnet}){
+					print ">$network ($ownnet{$defnet}/$defsub1)</option>";
+				}else{
+					print ">$network</option>";
+				}
 			}
 			print"</select></td></tr>";
 			if (! -z $confignet){

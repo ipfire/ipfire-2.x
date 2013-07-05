@@ -46,7 +46,11 @@ my %ccdconf=();
 my %fwconfig=();
 my %fwconfigout=();
 my %fwdsettings=();
+my %ownnet=();
+my %ovpnSettings = ();
+&General::readhash("${General::swroot}/ovpn/settings", \%ovpnSettings);
 &General::readhash($outfwsettings,\%outsettings);
+&General::readhash("${General::swroot}/ethernet/settings", \%ownnet);
 #ONLY RUN if /var/ipfire/outgoing exists
 if ( -d "/var/ipfire/outgoing"){
 	&process_groups;
@@ -179,16 +183,39 @@ sub new_hostgrp
 			}elsif($byte4 < '255'){
 				print LOG "Processing NETWORK $ippart/$subnet from Group $grp\n";
 				if(!&check_net($ippart,$subnet)){
-					my $netkey	=  &General::findhasharraykey(\%nets);
-					$name="net ";
-					$name2=$name.$ippart;
-					$name3="Custom Network";
-					$nets{$netkey}[0] = $name2;
-					$nets{$netkey}[1] = $ippart;
-					$nets{$netkey}[2] = $subnet;
-					$nets{$netkey}[3] = '';
-					$nets{$netkey}[4] = 1;
-					print LOG "->Network $ippart/$subnet added to custom networks\n";
+					#Check if this network is one one of IPFire internal networks
+					if (($ownnet{'GREEN_NETADDRESS'} 		ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &General::IpInSubnet($ippart,$ownnet{'GREEN_NETADDRESS'},$ownnet{'GREEN_NETMASK'}))
+					{
+						$name2='GREEN';
+						$name3='Standard Network';
+					}elsif (($ownnet{'ORANGE_NETADDRESS'} 	ne '' && $ownnet{'ORANGE_NETADDRESS'}	ne '0.0.0.0') && &General::IpInSubnet($ippart,$ownnet{'ORANGE_NETADDRESS'},$ownnet{'ORANGE_NETMASK'}))
+					{
+						$name2='ORANGE';
+						$name3='Standard Network';
+					}elsif (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &General::IpInSubnet($ippart,$ownnet{'BLUE_NETADDRESS'},$ownnet{'BLUE_NETMASK'}))
+					{
+						$name2='BLUE';
+						$name3='Standard Network';
+					}elsif ($ippart eq '0.0.0.0')
+					{
+						$name2='ALL';
+						$name3='Standard Network';
+					}elsif(defined($ovpnSettings{'DOVPN_SUBNET'}) && "$ippart/".&General::iporsubtodec($subnet) eq $ovpnSettings{'DOVPN_SUBNET'})
+					{
+						$name2='OpenVPN-Dyn';
+						$name3='Standard Network';
+					}else{
+						my $netkey	=  &General::findhasharraykey(\%nets);
+						$name="net ";
+						$name2=$name.$ippart;
+						$name3="Custom Network";
+						$nets{$netkey}[0] = $name2;
+						$nets{$netkey}[1] = $ippart;
+						$nets{$netkey}[2] = $subnet;
+						$nets{$netkey}[3] = '';
+						$nets{$netkey}[4] = 1;
+						print LOG "->Network $ippart/$subnet added to custom networks\n";
+					}
 				}else{
 					print LOG "Network $ippart already exists in custom networks\n";
 					$name="net ";

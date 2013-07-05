@@ -998,8 +998,7 @@ END
 			my $defnet="$defaultNetworks{$network}{'NAME'}_NETADDRESS";
 			my $defsub="$defaultNetworks{$network}{'NAME'}_NETMASK";
 			my $defsub1=&General::subtocidr($ifaces{$defsub});
-			$ifaces{$defnet}='0.0.0.0' if ($defaultNetworks{$network}{'NAME'} eq 'RED');
-			$defsub1 ='0' if ($defaultNetworks{$network}{'NAME'} eq 'RED');
+			$ifaces{$defnet}='' if ($defaultNetworks{$network}{'NAME'} eq 'RED');
 			if ($ifaces{$defnet}){
 				print ">$network ($ifaces{$defnet}/$defsub1)</option>";
 			}else{
@@ -2382,7 +2381,7 @@ END
 			}else{
 				$col="bgcolor='green'";
 			}
-			&show_default_rules($col,$pol);
+			&show_defaultrules($col,$pol);
 		}elsif ($config eq '/var/ipfire/forward/outgoing'){
 			my $pol='fwdfw '.$fwdfwsettings{'POLICY1'};
 			if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){
@@ -2390,9 +2389,9 @@ END
 			}else{
 				$col="bgcolor='green'";
 			}
-			print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
+			print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF' align='center'>$Lang::tr{$pol}</font></td></tr>";
 		}else{
-			print"<tr><td bgcolor='darkred' width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td bgcolor='darkred'><font color='#FFFFFF'>$Lang::tr{'fwdfw MODE1'}</font></td></tr>";
+			print"<tr><td bgcolor='darkred' width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td bgcolor='darkred' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw MODE1'}</font></td></tr>";
 		}
 		print"</table>";
 		print "<hr>";
@@ -2419,9 +2418,9 @@ END
 				}else{
 					$col="bgcolor='green'";
 				}
-				print"<tr><td $col align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
+				print"<tr><td $col align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
 			}else{
-				print"<tr><td bgcolor='darkred' align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td>$Lang::tr{'fwdfw MODE1'}</font></td></tr>";
+				print"<tr><td bgcolor='darkred' align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td align='center'>$Lang::tr{'fwdfw MODE1'}</font></td></tr>";
 			}
 			print"</table><br><br>";
 		}
@@ -2435,15 +2434,18 @@ sub show_defaultrules
 	my $col=shift;
 	my $pol=shift;
 	#STANDARD RULES (From WIKI)
-			print"</table>";
-			print "<table width='100%'rules='cols' border='1'>";
+			print"</table><br>";
+			print "<table width='100%' rules='cols' border='1' >";
 			if ($col eq "bgcolor='green'"){
-				my $blue   = ", <font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol block'})" if $ifaces{'BLUE_DEV'};
-				my $orange = ", <font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol block'})" if $ifaces{'ORANGE_DEV'};
-				print"<tr><td align='center' width='20%'><font color='#000000'>$Lang::tr{'orange'}</td><td><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'}), <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})$blue</td></tr>";
-				print"<tr><td align='center'><font color='#000000'>$Lang::tr{'blue'}</td><td><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'}), <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})$orange</td></tr>" if $ifaces{'BLUE_DEV'};
-				print"<tr><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} </font></td><td $col><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
+				my $blue   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol block'})" if $ifaces{'BLUE_DEV'};
+				my $orange = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol block'})" if $ifaces{'ORANGE_DEV'};
+				my $blue1   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol allow'})" if $ifaces{'BLUE_DEV'};
+				my $orange1 = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol allow'})" if $ifaces{'ORANGE_DEV'};
+				print"<tr><td align='center'><font color='#000000'>$Lang::tr{'green'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td><td align='center'>$orange1</td><td align='center'>$blue1</td></tr>";
+				print"<tr><td align='center' width='20%'><font color='#000000'>$Lang::tr{'orange'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td><td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td><td align='center'>$blue</td></tr>";
+				print"<tr><td align='center'><font color='#000000'>$Lang::tr{'blue'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td><td align='center'>$orange</td><td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td></tr>" if $ifaces{'BLUE_DEV'};
+				print"<tr><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} </font></td><td $col colspan='3' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
 			}elsif($col eq "bgcolor='darkred'"){
-				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
+				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
 			}
 }
