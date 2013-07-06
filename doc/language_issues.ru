@@ -449,7 +449,6 @@ WARNING: translation string unused: transparent on
 WARNING: translation string unused: umount
 WARNING: translation string unused: umount removable media before to unplug
 WARNING: translation string unused: unencrypted
-WARNING: translation string unused: unknown
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updates
 WARNING: translation string unused: updates is old1
@@ -481,7 +480,10 @@ WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn aggrmode
+<<<<<<< HEAD
 WARNING: translation string unused: vpn incompatible use of defaultroute
+=======
+>>>>>>> 1b23ab3... Implement wireless client on RED.
 WARNING: translation string unused: vpn mtu invalid
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: vpn on green
@@ -585,4 +587,34 @@ WARNING: untranslated string: static routes
 WARNING: untranslated string: uptime load average
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange
+WARNING: untranslated string: wlan client
+WARNING: untranslated string: wlan client advanced settings
+WARNING: untranslated string: wlan client and
+WARNING: untranslated string: wlan client bssid
+WARNING: untranslated string: wlan client ccmp
+WARNING: untranslated string: wlan client configuration
+WARNING: untranslated string: wlan client disconnected
+WARNING: untranslated string: wlan client duplicate ssid
+WARNING: untranslated string: wlan client edit entry
+WARNING: untranslated string: wlan client encryption
+WARNING: untranslated string: wlan client encryption none
+WARNING: untranslated string: wlan client encryption wep
+WARNING: untranslated string: wlan client encryption wpa
+WARNING: untranslated string: wlan client encryption wpa2
+WARNING: untranslated string: wlan client group cipher
+WARNING: untranslated string: wlan client group key algorithm
+WARNING: untranslated string: wlan client invalid key length
+WARNING: untranslated string: wlan client new entry
+WARNING: untranslated string: wlan client new network
+WARNING: untranslated string: wlan client pairwise cipher
+WARNING: untranslated string: wlan client pairwise key algorithm
+WARNING: untranslated string: wlan client pairwise key group key
+WARNING: untranslated string: wlan client psk
+WARNING: untranslated string: wlan client ssid
+WARNING: untranslated string: wlan client tkip
+WARNING: untranslated string: wlan client wpa mode
+WARNING: untranslated string: wlan client wpa mode all
+WARNING: untranslated string: wlan client wpa mode ccmp ccmp
+WARNING: untranslated string: wlan client wpa mode ccmp tkip
+WARNING: untranslated string: wlan client wpa mode tkip tkip
 WARNING: untranslated string: wlanap country

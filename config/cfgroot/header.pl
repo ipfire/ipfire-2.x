@@ -157,6 +157,10 @@ sub genmenu {
     if ( $ethsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
 	$menu->{'03.network'}{'subMenu'}->{'70.aliases'}{'enabled'} = 1;
     }
+
+    if (&General::RedIsWireless()) {
+        $menu->{'01.system'}{'subMenu'}->{'21.wlan'}{'enabled'} = 1;
+    }
 }
 
 sub showhttpheaders

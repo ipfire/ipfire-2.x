@@ -1008,4 +1008,26 @@ sub MakeUserAgent() {
 	return $user_agent;
 }
 
+sub RedIsWireless() {
+	# This function checks if a network device is a wireless device.
+
+	my %settings = ();
+	&readhash("${General::swroot}/ethernet/settings", \%settings);
+
+	# Find the name of the network device.
+	my $device = $settings{'RED_DEV'};
+
+	# Exit, if no device is configured.
+	return 0 if ($device eq "");
+
+	# Return 1 if the device is a wireless one.
+	my $path = "/sys/class/net/$device/wireless";
+	if (-d $path) {
+		return 1;
+	}
+
+	# Otherwise return zero.
+	return 0;
+}
+
 1;

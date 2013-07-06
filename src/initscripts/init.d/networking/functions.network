@@ -1,0 +1,154 @@
+#!/bin/sh
+#
+########################################################################
+# Begin
+#
+# Description : A collection of functions for the IPFire network scripts
+#
+# Authors     : IPFire Development Team <developers@ipfire.org>
+#
+# Version     : 01.00
+#
+# Notes       : 
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
+
+dhcpcd_get_pid() {
+		# This function returns the pid of a dhcpcd by a given
+		# network device, if a pidfile exists.
+
+		local device="$1"
+		local pidfile="/var/run/dhcpcd-${device}.pid"
+
+		# Check if a pid file exists.
+		if [ -f "${pidfile}" ] ; then
+
+			# Get the pid from the file.
+			local pid="$(<"${pidfile}")"
+
+			echo "${pid}"
+		fi
+}
+
+dhcpcd_is_running() {
+	# This functions checks if a dhcpcd is running by a given pid.
+
+	local pid="$1"
+
+	# Check if a dhcpcd is running.
+	if [ -n "${pid}" -a -d "/proc/${pid}" ]; then
+		# Return "0" (True) if a dhcpcd is running.
+		return 0
+	fi
+
+	# Return 1 (False) no dhcpcd is running.
+	return 1
+}
+
+dhcpcd_start() {
+	# This function will start a dhcpcd on a speciefied device.
+
+	local device="$1"
+	local dhcp_start=""
+
+	boot_mesg -n "Starting dhcpcd on the ${device} interface..."
+
+	# Check if a dhcpcd is already running.
+	local pid="$(dhcpcd_get_pid "${device}")"
+
+	if  dhcpcd_is_running "${pid}"; then
+		boot_mesg "dhcpcd already running!" ${WARNING}
+		echo_warning
+		exit 2
+	fi
+
+	# Check if a DHCP hostname has been set.
+	if [ -n "${RED_DHCP_HOSTNAME}" ]; then
+		dhcp_start+="-h ${RED_DHCP_HOSTNAME}"
+	fi
+
+	# Start dhcpcd.
+	/sbin/dhcpcd "${device}" "${dhcp_start}" >/dev/null 2>&1
+	ret="$?"
+
+	if [ "${ret}" -eq 0 ]; then
+		. /var/ipfire/dhcpc/dhcpcd-"${device}".info
+		echo ""
+		echo_ok
+		boot_mesg "           DHCP Assigned Settings for ${device}:"
+		boot_mesg_flush
+		boot_mesg "           IP Address:      $ip_address"
+		boot_mesg_flush
+
+		if [ -n "${RED_DHCP_HOSTNAME}" ]; then
+			boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
+			boot_mesg_flush
+		fi
+
+		boot_mesg "           Subnet Mask:     $subnet_mask"
+		boot_mesg_flush
+		boot_mesg "           Default Gateway: $routers"
+		boot_mesg_flush
+		boot_mesg "           DNS Server:      $domain_name_servers"
+		boot_mesg_flush
+	else
+		echo ""
+		$(exit "${ret}")
+ 		evaluate_retval
+	fi
+}
+
+dhcpcd_stop() {
+	# This function stops a previously started dhcpcd on a given device.
+
+	local device="$1"
+	local dhcp_stop="-k"
+	local leaseinfo="/var/ipfire/dhcpc/dhcpcd-${device}.info"
+
+	boot_mesg -n "Stopping dhcpcd on the ${device} interface..."
+
+	# Check if a dhcpcd is running.
+	local pid="$(dhcpcd_get_pid "${device}")"
+
+	if ! dhcpcd_is_running "${pid}"; then
+		boot_mesg "dhcpcd not running!" ${WARNING}
+		echo_warning
+		exit 1
+	fi
+
+	# Check if we got a valid lease.
+	if [ -e $leaseinfo ]; then
+		. $leaseinfo
+		if [ "$dchp_lease_time" = "4294967295" ]; then
+			# do nothing, just echo ok
+			echo_ok
+		else
+			# Stop dhcpcd.
+			/sbin/dhcpcd "${device}" "${dhcp_stop}" &> /dev/null
+			ret="$?"
+
+			# Wait until dhcpd has stopped.
+			while [ -d "/proc/${pid}" ]; do
+				sleep 1
+			done
+
+			# Display console message, depended on the exit code
+			# of the stopped dhcpcd.
+			if [ "${ret}" -eq 0 ]; then
+				echo_ok
+			elif [ "${ret}" -eq 1 ]; then
+				boot_mesg "failed to stop dhcpcd!" ${WARNING}
+				echo_warning
+			else
+				echo_failure
+			fi
+		fi
+	fi
+}

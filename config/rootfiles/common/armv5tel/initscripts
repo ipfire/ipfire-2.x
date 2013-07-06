@@ -132,6 +132,7 @@ etc/rc.d/init.d/upnpd
 #etc/rc.d/init.d/vsftpd
 #etc/rc.d/init.d/watchdog
 #etc/rc.d/init.d/winbind
+etc/rc.d/init.d/wlanclient
 #etc/rc.d/init.d/xinetd
 #etc/rc.d/rc0.d
 #etc/rc.d/rc0.d/K01imspetor
