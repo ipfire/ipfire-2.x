@@ -3,6 +3,7 @@ etc/issue
 var/ipfire/general-functions.pl
 var/ipfire/header.pl
 var/ipfire/menu.d/10-system.menu
+etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/wlanclient
 etc/rc.d/init.d/networking/functions.network
 etc/rc.d/init.d/networking/wpa_supplicant.exe
