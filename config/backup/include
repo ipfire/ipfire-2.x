@@ -39,3 +39,4 @@
 /root/.gitconfig
 /root/.bash_history
 /var/ipfire/ethernet/aliases
+/var/ipfire/ethernet/wireless

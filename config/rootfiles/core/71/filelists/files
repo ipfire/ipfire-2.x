@@ -13,3 +13,4 @@ etc/rc.d/rc6.d/K82wlanclient
 usr/local/bin/wirelessclient
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
 var/ipfire/langs
+var/ipfire/backup/include

@@ -36,6 +36,7 @@ var/ipfire/ethernet
 #var/ipfire/ethernet/scanned_nics
 #var/ipfire/ethernet/settings
 #var/ipfire/ethernet/vlans
+#var/ipfire/ethernet/wireless
 #var/ipfire/extrahd
 #var/ipfire/extrahd/bin
 var/ipfire/extrahd/bin/extrahd.pl

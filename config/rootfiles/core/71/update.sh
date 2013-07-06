@@ -40,6 +40,11 @@ done
 extract_files
 
 #
+#Create wireless config file...
+touch /var/ipfire/ethernet/wireless
+chown nobody:nobody /var/ipfire/ethernet/wireless
+
+#
 #Start services
 
 #
