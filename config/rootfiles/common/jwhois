@@ -10,6 +10,8 @@ usr/bin/whois
 #usr/share/locale/nl/LC_MESSAGES/jwhois.mo
 #usr/share/locale/pl/LC_MESSAGES/jwhois.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/jwhois.mo
+#usr/share/locale/ro
+#usr/share/locale/ro/LC_MESSAGES
 #usr/share/locale/ro/LC_MESSAGES/jwhois.mo
 #usr/share/locale/ru/LC_MESSAGES/jwhois.mo
 #usr/share/locale/rw/LC_MESSAGES/jwhois.mo
