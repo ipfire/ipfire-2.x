@@ -142,11 +142,13 @@ dhcpcd_stop() {
 			# Display console message, depended on the exit code
 			# of the stopped dhcpcd.
 			if [ "${ret}" -eq 0 ]; then
+				boot_mesg
 				echo_ok
 			elif [ "${ret}" -eq 1 ]; then
 				boot_mesg "failed to stop dhcpcd!" ${WARNING}
 				echo_warning
 			else
+				boot_mesg
 				echo_failure
 			fi
 		fi
