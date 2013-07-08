@@ -178,17 +178,19 @@ iptables_init() {
 	/sbin/iptables -t nat -A POSTROUTING -j REDNAT
 
 	iptables_red
-		
-	# Custom prerouting chains (for transparent proxy and port forwarding)
+
+	# Custom prerouting chains (for transparent proxy)
 	/sbin/iptables -t nat -N SQUID
 	/sbin/iptables -t nat -A PREROUTING -j SQUID
+
+	# DNAT rules
 	/sbin/iptables -t nat -N NAT_DESTINATION
-	/sbin/iptables -t nat -N NAT_SOURCE
 	/sbin/iptables -t nat -A PREROUTING -j NAT_DESTINATION
-	/sbin/iptables -t nat -I POSTROUTING 3 -j NAT_SOURCE
-	
-	
-	
+
+	# SNAT rules
+	/sbin/iptables -t nat -N NAT_SOURCE
+	/sbin/iptables -t nat -A POSTROUTING -j NAT_SOURCE
+
 	# upnp chain for our upnp daemon
 	/sbin/iptables -t nat -N UPNPFW
 	/sbin/iptables -t nat -A PREROUTING -j UPNPFW
