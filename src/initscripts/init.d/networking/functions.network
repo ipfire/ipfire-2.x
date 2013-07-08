@@ -123,34 +123,25 @@ dhcpcd_stop() {
 		exit 1
 	fi
 
-	# Check if we got a valid lease.
-	if [ -e $leaseinfo ]; then
-		. $leaseinfo
-		if [ "$dchp_lease_time" = "4294967295" ]; then
-			# do nothing, just echo ok
-			echo_ok
-		else
-			# Stop dhcpcd.
-			/sbin/dhcpcd "${device}" "${dhcp_stop}" &> /dev/null
-			ret="$?"
+	# Stop dhcpcd.
+	/sbin/dhcpcd "${device}" "${dhcp_stop}" &> /dev/null
+	ret="$?"
 
-			# Wait until dhcpd has stopped.
-			while [ -d "/proc/${pid}" ]; do
-				sleep 1
-			done
+	# Wait until dhcpd has stopped.
+	while [ -d "/proc/${pid}" ]; do
+		sleep 1
+	done
 
-			# Display console message, depended on the exit code
-			# of the stopped dhcpcd.
-			if [ "${ret}" -eq 0 ]; then
-				boot_mesg
-				echo_ok
-			elif [ "${ret}" -eq 1 ]; then
-				boot_mesg "failed to stop dhcpcd!" ${WARNING}
-				echo_warning
-			else
-				boot_mesg
-				echo_failure
-			fi
-		fi
+	# Display console message, depended on the exit code
+	# of the stopped dhcpcd.
+	if [ "${ret}" -eq 0 ]; then
+		boot_mesg
+		echo_ok
+	elif [ "${ret}" -eq 1 ]; then
+		boot_mesg "failed to stop dhcpcd!" ${WARNING}
+		echo_warning
+	else
+		boot_mesg
+		echo_failure
 	fi
 }
