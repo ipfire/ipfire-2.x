@@ -70,12 +70,12 @@ iptables_init() {
 	# NEW TCP without SYN
 	/sbin/iptables -A BADTCP -p tcp ! --syn -m conntrack --ctstate NEW -j NEWNOTSYN
 
+	/sbin/iptables -A INPUT   -p tcp -j BADTCP
+	/sbin/iptables -A FORWARD -p tcp -j BADTCP
+
 	# Connection tracking chain
 	/sbin/iptables -N CONNTRACK
 	/sbin/iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-
-	/sbin/iptables -A INPUT   -j BADTCP
-	/sbin/iptables -A FORWARD -j BADTCP
 
 	# Fix for braindead ISP's
 	/sbin/iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
