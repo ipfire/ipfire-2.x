@@ -115,7 +115,7 @@ if($param eq 'flush'){
 			system ("/usr/sbin/firewall-policy"); 
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
 			&p2pblock;
-			system ("iptables -A $CHAIN -m state --state NEW -j ACCEPT");
+			system ("iptables -A $CHAIN -m conntrack --ctstate NEW -j ACCEPT");
 			system ("/usr/sbin/firewall-policy");
 			system ("/etc/sysconfig/firewall.local reload");
 		}

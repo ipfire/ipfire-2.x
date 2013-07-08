@@ -68,7 +68,11 @@ iptables_init() {
 	# SYN/FIN (QueSO or nmap OS probe)
 	/sbin/iptables -A BADTCP -p tcp --tcp-flags SYN,FIN SYN,FIN -j PSCAN
 	# NEW TCP without SYN
-	/sbin/iptables -A BADTCP -p tcp ! --syn -m state --state NEW -j NEWNOTSYN
+	/sbin/iptables -A BADTCP -p tcp ! --syn -m conntrack --ctstate NEW -j NEWNOTSYN
+
+	# Connection tracking chain
+	/sbin/iptables -N CONNTRACK
+	/sbin/iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 	/sbin/iptables -A INPUT   -j BADTCP
 	/sbin/iptables -A FORWARD -j BADTCP
@@ -88,7 +92,6 @@ iptables_init() {
 	/sbin/iptables -A FORWARD -j CUSTOMFORWARD
 	/sbin/iptables -N CUSTOMOUTPUT
 	/sbin/iptables -A OUTPUT -j OVPNBLOCK
-	/sbin/iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 	/sbin/iptables -A OUTPUT -j CUSTOMOUTPUT
 	/sbin/iptables -N OUTGOINGFW
 	/sbin/iptables -A OUTPUT -j OUTGOINGFW
@@ -114,12 +117,13 @@ iptables_init() {
 	/sbin/iptables -A GUIINPUT -p icmp --icmp-type 8 -j ACCEPT
 
 	# Accept everything connected
-	/sbin/iptables -A INPUT   -m state --state ESTABLISHED,RELATED -j ACCEPT
-	/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
-	
+	for i in INPUT FORWARD OUTPUT; do
+		/sbin/iptables -A ${i} -j CONNTRACK
+	done
+
 	# Accept everything on lo
-	iptables -A INPUT  -i lo -m state --state NEW -j ACCEPT
-	iptables -A OUTPUT -o lo -m state --state NEW -j ACCEPT
+	iptables -A INPUT  -i lo -m conntrack --ctstate NEW -j ACCEPT
+	iptables -A OUTPUT -o lo -m conntrack --ctstate NEW -j ACCEPT
 	
 	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
 	/sbin/iptables -N IPSECINPUT
@@ -136,16 +140,16 @@ iptables_init() {
 
 	# Input Firewall
 	/sbin/iptables -N INPUTFW
-	/sbin/iptables -A INPUT -m state --state NEW -j INPUTFW
+	/sbin/iptables -A INPUT -m conntrack --ctstate NEW -j INPUTFW
 
 	# localhost and ethernet.
-	/sbin/iptables -A INPUT   -i lo -m state --state NEW -j ACCEPT
-	/sbin/iptables -A INPUT   -s 127.0.0.0/8 -m state --state NEW -j DROP   # Loopback not on lo
-	/sbin/iptables -A INPUT   -d 127.0.0.0/8 -m state --state NEW -j DROP
-	/sbin/iptables -A FORWARD -i lo -m state --state NEW -j ACCEPT
-	/sbin/iptables -A FORWARD -s 127.0.0.0/8 -m state --state NEW -j DROP
-	/sbin/iptables -A FORWARD -d 127.0.0.0/8 -m state --state NEW -j DROP
-	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m state --state NEW -j ACCEPT ! -p icmp
+	/sbin/iptables -A INPUT   -i lo -m conntrack --ctstate NEW -j ACCEPT
+	/sbin/iptables -A INPUT   -s 127.0.0.0/8 -m conntrack --ctstate NEW -j DROP   # Loopback not on lo
+	/sbin/iptables -A INPUT   -d 127.0.0.0/8 -m conntrack --ctstate NEW -j DROP
+	/sbin/iptables -A FORWARD -i lo -m conntrack --ctstate NEW -j ACCEPT
+	/sbin/iptables -A FORWARD -s 127.0.0.0/8 -m conntrack --ctstate NEW -j DROP
+	/sbin/iptables -A FORWARD -d 127.0.0.0/8 -m conntrack --ctstate NEW -j DROP
+	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m conntrack --ctstate NEW -j ACCEPT ! -p icmp
 	
 	# allow DHCP on BLUE to be turned on/off
 	/sbin/iptables -N DHCPBLUEINPUT 
@@ -153,9 +157,9 @@ iptables_init() {
 	
 	# WIRELESS chains
 	/sbin/iptables -N WIRELESSINPUT
-	/sbin/iptables -A INPUT -m state --state NEW -j WIRELESSINPUT
+	/sbin/iptables -A INPUT -m conntrack --ctstate NEW -j WIRELESSINPUT
 	/sbin/iptables -N WIRELESSFORWARD
-	/sbin/iptables -A FORWARD -m state --state NEW -j WIRELESSFORWARD
+	/sbin/iptables -A FORWARD -m conntrack --ctstate NEW -j WIRELESSFORWARD
 	
 	# Forward Firewall
 	/sbin/iptables -N FORWARDFW
@@ -189,7 +193,7 @@ iptables_init() {
 	/sbin/iptables -t nat -N UPNPFW
 	/sbin/iptables -t nat -A PREROUTING -j UPNPFW
 	/sbin/iptables -N UPNPFW
-	/sbin/iptables -A FORWARD -m state --state NEW -j UPNPFW
+	/sbin/iptables -A FORWARD -m conntrack --ctstate NEW -j UPNPFW
 
 	# Postrouting rules (for port forwarding)
 	/sbin/iptables -t nat -A POSTROUTING -m mark --mark 1 -j SNAT --to-source $GREEN_ADDRESS
