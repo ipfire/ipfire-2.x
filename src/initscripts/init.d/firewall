@@ -90,11 +90,9 @@ iptables_init() {
 	/sbin/iptables -N OUTGOINGFW
 	/sbin/iptables -A OUTPUT -j OUTGOINGFW
 	/sbin/iptables -t nat -N CUSTOMPREROUTING
-	/sbin/iptables -t nat -N OVPNNAT
 	/sbin/iptables -t nat -A PREROUTING -j CUSTOMPREROUTING
 	/sbin/iptables -t nat -N CUSTOMPOSTROUTING
 	/sbin/iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
-	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
 
 	# Guardian (IPS) chains
 	/sbin/iptables -N GUARDIAN
@@ -106,6 +104,10 @@ iptables_init() {
 	for i in INPUT FORWARD OUTPUT; do
 		/sbin/iptables -A ${i} -j OVPNBLOCK
 	done
+
+	# OpenVPN transfer network translation
+	/sbin/iptables -t nat -N OVPNNAT
+	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
 
 	# IPTV chains for IGMPPROXY
 	/sbin/iptables -N IPTVINPUT
