@@ -140,11 +140,8 @@ iptables_init() {
 	/sbin/iptables -N IPSECINPUT
 	/sbin/iptables -N IPSECFORWARD
 	/sbin/iptables -N IPSECOUTPUT
-	/sbin/iptables -N OPENSSLVIRTUAL
 	/sbin/iptables -A INPUT -j IPSECINPUT
-	/sbin/iptables -A INPUT -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL INPUT"
 	/sbin/iptables -A FORWARD -j IPSECFORWARD
-	/sbin/iptables -A FORWARD -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL FORWARD"
 	/sbin/iptables -A OUTPUT -j IPSECOUTPUT
 	/sbin/iptables -t nat -N IPSECNAT
 	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
@@ -171,10 +168,6 @@ iptables_init() {
 
 	/sbin/iptables -N FORWARDFW
 	/sbin/iptables -A FORWARD -j FORWARDFW
-
-	# OPenSSL
-	/sbin/iptables -N OPENSSLPHYSICAL
-	/sbin/iptables -A INPUT -j OPENSSLPHYSICAL
 
 	# RED chain, used for the red interface
 	/sbin/iptables -N REDINPUT
