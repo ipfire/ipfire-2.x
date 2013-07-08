@@ -83,9 +83,6 @@ iptables_init() {
 	# CUSTOM chains, can be used by the users themselves
 	/sbin/iptables -N CUSTOMINPUT
 	/sbin/iptables -A INPUT -j CUSTOMINPUT
-	/sbin/iptables -N GUARDIAN
-	/sbin/iptables -A INPUT -j GUARDIAN
-	/sbin/iptables -A FORWARD -j GUARDIAN
 	/sbin/iptables -N CUSTOMFORWARD
 	/sbin/iptables -A FORWARD -j CUSTOMFORWARD
 	/sbin/iptables -N CUSTOMOUTPUT
@@ -98,6 +95,11 @@ iptables_init() {
 	/sbin/iptables -t nat -N CUSTOMPOSTROUTING
 	/sbin/iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
 	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
+
+	# Guardian (IPS) chains
+	/sbin/iptables -N GUARDIAN
+	/sbin/iptables -A INPUT -j GUARDIAN
+	/sbin/iptables -A FORWARD -j GUARDIAN
 
 	# Block OpenVPN transfer networks
 	/sbin/iptables -N OVPNBLOCK
