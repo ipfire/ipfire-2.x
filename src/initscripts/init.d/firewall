@@ -87,8 +87,6 @@ iptables_init() {
 	/sbin/iptables -A FORWARD -j CUSTOMFORWARD
 	/sbin/iptables -N CUSTOMOUTPUT
 	/sbin/iptables -A OUTPUT -j CUSTOMOUTPUT
-	/sbin/iptables -N OUTGOINGFW
-	/sbin/iptables -A OUTPUT -j OUTGOINGFW
 	/sbin/iptables -t nat -N CUSTOMPREROUTING
 	/sbin/iptables -t nat -A PREROUTING -j CUSTOMPREROUTING
 	/sbin/iptables -t nat -N CUSTOMPOSTROUTING
@@ -151,10 +149,6 @@ iptables_init() {
 	/sbin/iptables -t nat -N IPSECNAT
 	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
 
-	# Input Firewall
-	/sbin/iptables -N INPUTFW
-	/sbin/iptables -A INPUT -m conntrack --ctstate NEW -j INPUTFW
-
 	# localhost and ethernet.
 	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m conntrack --ctstate NEW -j ACCEPT ! -p icmp
 	
@@ -168,10 +162,16 @@ iptables_init() {
 	/sbin/iptables -N WIRELESSFORWARD
 	/sbin/iptables -A FORWARD -m conntrack --ctstate NEW -j WIRELESSFORWARD
 	
-	# Forward Firewall
+	# Jump into the actual firewall ruleset.
+	/sbin/iptables -N INPUTFW
+	/sbin/iptables -A INPUT -j INPUTFW
+
+	/sbin/iptables -N OUTGOINGFW
+	/sbin/iptables -A OUTPUT -j OUTGOINGFW
+
 	/sbin/iptables -N FORWARDFW
 	/sbin/iptables -A FORWARD -j FORWARDFW
-		
+
 	# OPenSSL
 	/sbin/iptables -N OPENSSLPHYSICAL
 	/sbin/iptables -A INPUT -j OPENSSLPHYSICAL
