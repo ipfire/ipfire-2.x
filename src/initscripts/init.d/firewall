@@ -116,15 +116,19 @@ iptables_init() {
 	/sbin/iptables -A INPUT -j GUIINPUT
 	/sbin/iptables -A GUIINPUT -p icmp --icmp-type 8 -j ACCEPT
 
+	# Accept everything on loopback
+	/sbin/iptables -N LOOPBACK
+	/sbin/iptables -A LOOPBACK -i lo -j ACCEPT
+	/sbin/iptables -A LOOPBACK -o lo -j ACCEPT
+
+	/sbin/iptables -A INPUT  -j LOOPBACK
+	/sbin/iptables -A OUTPUT -j LOOPBACK
+
 	# Accept everything connected
 	for i in INPUT FORWARD OUTPUT; do
 		/sbin/iptables -A ${i} -j CONNTRACK
 	done
 
-	# Accept everything on lo
-	iptables -A INPUT  -i lo -m conntrack --ctstate NEW -j ACCEPT
-	iptables -A OUTPUT -o lo -m conntrack --ctstate NEW -j ACCEPT
-	
 	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
 	/sbin/iptables -N IPSECINPUT
 	/sbin/iptables -N IPSECFORWARD
