@@ -121,8 +121,13 @@ iptables_init() {
 	/sbin/iptables -A LOOPBACK -i lo -j ACCEPT
 	/sbin/iptables -A LOOPBACK -o lo -j ACCEPT
 
-	/sbin/iptables -A INPUT  -j LOOPBACK
-	/sbin/iptables -A OUTPUT -j LOOPBACK
+	# Filter all packets with loopback addresses on non-loopback interfaces.
+	/sbin/iptables -A LOOPBACK -s 127.0.0.0/8 -j DROP
+	/sbin/iptables -A LOOPBACK -d 127.0.0.0/8 -j DROP
+
+	for i in INPUT FORWARD OUTPUT; do
+		/sbin/iptables -A ${i} -j LOOPBACK
+	done
 
 	# Accept everything connected
 	for i in INPUT FORWARD OUTPUT; do
@@ -147,12 +152,6 @@ iptables_init() {
 	/sbin/iptables -A INPUT -m conntrack --ctstate NEW -j INPUTFW
 
 	# localhost and ethernet.
-	/sbin/iptables -A INPUT   -i lo -m conntrack --ctstate NEW -j ACCEPT
-	/sbin/iptables -A INPUT   -s 127.0.0.0/8 -m conntrack --ctstate NEW -j DROP   # Loopback not on lo
-	/sbin/iptables -A INPUT   -d 127.0.0.0/8 -m conntrack --ctstate NEW -j DROP
-	/sbin/iptables -A FORWARD -i lo -m conntrack --ctstate NEW -j ACCEPT
-	/sbin/iptables -A FORWARD -s 127.0.0.0/8 -m conntrack --ctstate NEW -j DROP
-	/sbin/iptables -A FORWARD -d 127.0.0.0/8 -m conntrack --ctstate NEW -j DROP
 	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m conntrack --ctstate NEW -j ACCEPT ! -p icmp
 	
 	# allow DHCP on BLUE to be turned on/off
