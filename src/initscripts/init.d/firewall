@@ -85,13 +85,10 @@ iptables_init() {
 	/sbin/iptables -A INPUT -j CUSTOMINPUT
 	/sbin/iptables -N GUARDIAN
 	/sbin/iptables -A INPUT -j GUARDIAN
-	/sbin/iptables -N OVPNBLOCK
-	/sbin/iptables -A FORWARD -j OVPNBLOCK
 	/sbin/iptables -A FORWARD -j GUARDIAN
 	/sbin/iptables -N CUSTOMFORWARD
 	/sbin/iptables -A FORWARD -j CUSTOMFORWARD
 	/sbin/iptables -N CUSTOMOUTPUT
-	/sbin/iptables -A OUTPUT -j OVPNBLOCK
 	/sbin/iptables -A OUTPUT -j CUSTOMOUTPUT
 	/sbin/iptables -N OUTGOINGFW
 	/sbin/iptables -A OUTPUT -j OUTGOINGFW
@@ -102,14 +99,17 @@ iptables_init() {
 	/sbin/iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
 	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
 
+	# Block OpenVPN transfer networks
+	/sbin/iptables -N OVPNBLOCK
+	for i in INPUT FORWARD OUTPUT; do
+		/sbin/iptables -A ${i} -j OVPNBLOCK
+	done
+
 	# IPTV chains for IGMPPROXY
 	/sbin/iptables -N IPTVINPUT
 	/sbin/iptables -A INPUT -j IPTVINPUT
 	/sbin/iptables -N IPTVFORWARD
 	/sbin/iptables -A FORWARD -j IPTVFORWARD
-
-	# Filtering ovpn networks INPUT
-	/sbin/iptables -A INPUT -j OVPNBLOCK
 
 	# filtering from GUI
 	/sbin/iptables -N GUIINPUT
