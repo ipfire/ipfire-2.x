@@ -818,11 +818,11 @@ print <<END
 </tr>
 <tr>
 <tr>
-        <td width='25%'>MTU</td>
+        <td width='25%'>MTU&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='25%'><input type='text' name='MTU' value='$pppsettings{'MTU'}' /></td>
 </tr>
 <tr>
-        <td width='25%'>MRU</td>
+        <td width='25%'>MRU&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='25%'><input type='text' name='MRU' value='$pppsettings{'MRU'}' /></td>
 </tr>
 END
@@ -943,8 +943,8 @@ sub initprofile
 	$pppsettings{'PPTP_NICCFG'} = '10.0.0.140/24 broadcast 10.0.0.255';
 	$pppsettings{'PPTP_ROUTE'} = '';
         $pppsettings{'PROTOCOL'} = 'RFC2364';
-        $pppsettings{'MTU'} = '1492';
-        $pppsettings{'MRU'} = '1492';
+        $pppsettings{'MTU'} = '';
+        $pppsettings{'MRU'} = '';
         $pppsettings{'DIALMODE'} = 'T';
         $pppsettings{'MAXRETRIES'} = 5;
         $pppsettings{'HOLDOFF'} = 30;
