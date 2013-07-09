@@ -388,10 +388,18 @@ case "${1}" in
 			### Standard PPP options we always use
 			#
 			PPP_STD_OPTIONS="$PLUGOPTS $DNS defaultroute noipdefault noauth"
-			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach mtu ${MTU}"
+			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach"
 			PPP_STD_OPTIONS+=" mru ${MRU} noaccomp nodeflate nopcomp novj novjccomp"
 			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME} lcp-echo-interval 20"
 			PPP_STD_OPTIONS+=" lcp-echo-failure 5 ${AUTH}"
+
+			if [ -n "${MTU}" ]; then
+				PPP_STD_OPTIONS="${PPP_STD_OPTIONS} mtu ${MTU}"
+			fi
+
+			if [ -n "${MRU}" ]; then
+				PPP_STD_OPTIONS="${PPP_STD_OPTIONS} mru ${MRU}"
+			fi
 				
 			### Debugging
 			#
