@@ -118,7 +118,7 @@ dhcpcd_stop() {
 	local pid="$(dhcpcd_get_pid "${device}")"
 
 	if ! dhcpcd_is_running "${pid}"; then
-		boot_mesg "dhcpcd not running!" ${WARNING}
+		boot_mesg "    Not running." ${WARNING}
 		echo_warning
 		exit 1
 	fi
