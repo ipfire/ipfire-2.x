@@ -197,15 +197,6 @@ iptables_init() {
 	/sbin/iptables -N UPNPFW
 	/sbin/iptables -A FORWARD -m conntrack --ctstate NEW -j UPNPFW
 
-	# Postrouting rules (for port forwarding)
-	/sbin/iptables -t nat -A POSTROUTING -m mark --mark 1 -j SNAT --to-source $GREEN_ADDRESS
-	if [ "$BLUE_DEV" != "" ]; then
-		/sbin/iptables -t nat -A POSTROUTING -m mark --mark 2 -j SNAT --to-source $BLUE_ADDRESS
-	fi
-	if [ "$ORANGE_DEV" != "" ]; then
-		/sbin/iptables -t nat -A POSTROUTING -m mark --mark 3 -j SNAT --to-source $ORANGE_ADDRESS
-	fi
-
 	# run local firewall configuration, if present
  	if [ -x /etc/sysconfig/firewall.local ]; then
 		/etc/sysconfig/firewall.local start
