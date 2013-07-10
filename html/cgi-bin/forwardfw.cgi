@@ -1519,8 +1519,8 @@ END
 		print"<td align='right'><select name='ipfire_src' style='width:200px;'>";
 		print "<option value='ALL' $selected{'ipfire_src'}{'ALL'}>$Lang::tr{'all'}</option>";
 		print "<option value='GREEN' $selected{'ipfire_src'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
-		print "<option value='ORANGE' $selected{'ipfire_src'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if $ifaces{'ORANGE_ADDRESS'};
-		print "<option value='BLUE' $selected{'ipfire_src'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if $ifaces{'BLUE_ADDRESS'};
+		print "<option value='ORANGE' $selected{'ipfire_src'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if (&Header::orange_used());
+		print "<option value='BLUE' $selected{'ipfire_src'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if (&Header::blue_used());
 		print "<option value='RED1' $selected{'ipfire_src'}{'RED1'}>$Lang::tr{'red1'} ($redip)" if ($redip);
 
 		if (! -z "${General::swroot}/ethernet/aliases"){
@@ -1577,8 +1577,8 @@ END
 		print"<td align='right'><select name='ipfire' style='width:200px;'>";
 		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'}</option>";
 		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
-		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if $ifaces{'ORANGE_ADDRESS'};
-		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if $ifaces{'BLUE_ADDRESS'};
+		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if (&Header::orange_used());
+		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>"if (&Header::blue_used());
 		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} ($redip)" if ($redip);
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
@@ -2427,13 +2427,25 @@ sub show_defaultrules
 			print"</table><br>";
 			print "<table width='100%' rules='cols' border='1' >";
 			if ($col eq "bgcolor='green'"){
-				my $blue   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol block'})" if $ifaces{'BLUE_DEV'};
-				my $orange = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol block'})" if $ifaces{'ORANGE_DEV'};
-				my $blue1   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol allow'})" if $ifaces{'BLUE_DEV'};
-				my $orange1 = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol allow'})" if $ifaces{'ORANGE_DEV'};
-				print"<tr><td align='center'><font color='#000000'>$Lang::tr{'green'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td><td align='center'>$orange1</td><td align='center'>$blue1</td></tr>";
-				print"<tr><td align='center' width='20%'><font color='#000000'>$Lang::tr{'orange'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td><td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td><td align='center'>$blue</td></tr>";
-				print"<tr><td align='center'><font color='#000000'>$Lang::tr{'blue'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td><td align='center'>$orange</td><td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td></tr>" if $ifaces{'BLUE_DEV'};
+				my $blue   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol block'})" if (&Header::blue_used());
+				my $orange = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol block'})" if (&Header::orange_used());
+				my $blue1   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol allow'})" if (&Header::blue_used());
+				my $orange1 = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol allow'})" if (&Header::orange_used());
+				print"<tr><td align='center'><font color='#000000'>$Lang::tr{'green'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td>";
+				print"<td align='center'>$orange1</td>" if (&Header::orange_used());
+				print"<td align='center'>$blue1</td>" if (&Header::blue_used());
+				print"</tr>";
+				if (&Header::orange_used()){
+					print"<tr><td align='center' width='20%'><font color='#000000'>$Lang::tr{'orange'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td><td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td>";
+					print"<td align='center'>$blue</td>" if (&Header::blue_used());
+					print"</tr>";
+				}
+				if (&Header::blue_used()){
+					print"<tr><td align='center'><font color='#000000'>$Lang::tr{'blue'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td>";
+					print"<td align='center'>$orange</td>" if (&Header::orange_used());
+					print"<td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td>";
+					print"</tr>";
+				}
 				print"<tr><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} </font></td><td $col colspan='3' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
 			}elsif($col eq "bgcolor='darkred'"){
 				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
