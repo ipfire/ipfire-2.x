@@ -170,7 +170,7 @@ sub checkportfw {
 	my $DPORT = shift;
 	my $DPROT = shift;
 	my %natconfig =();
-	my $confignat = "${General::swroot}/forward/nat";
+	my $confignat = "${General::swroot}/forward/config";
 	$DPROT= uc ($DPROT);
 	&General::readhasharray($confignat, \%natconfig);
 	foreach my $key (sort keys %natconfig){
