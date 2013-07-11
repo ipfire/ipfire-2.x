@@ -99,6 +99,27 @@ my @protocols;
 &Header::getcgihash(\%fwdfwsettings);
 &Header::openpage($Lang::tr{'fwdfw menu'}, 1, '');
 &Header::openbigbox('100%', 'center',$errormessage);
+#### JAVA SCRIPT ####
+print<<END;
+<script>
+	\$(document).ready(function() {
+		// Automatically select radio buttons when corresponding
+		// dropdown menu changes.
+		\$("select").change(function() {
+			var id = \$(this).attr("name");
+			//When using SNAT or DNAT, check "USE NAT" Checkbox
+			if ( id === 'snat' || id === 'dnat') {
+				\$('#USE_NAT').prop('checked', true);
+			}
+			\$('#' + id).prop("checked", true);
+		});
+	});
+function checkradio(a){
+	\$(a).attr('checked', true);
+}
+</script>
+END
+
 ####  ACTION  #####
 
 if ($fwdfwsettings{'ACTION'} eq 'saverule')
@@ -366,7 +387,7 @@ sub addrule
 {
 	&error;
 	if (-f "${General::swroot}/forward/reread"){
-		print "<table border='1' rules='groups' bgcolor='lightgreen' width='100%'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: green; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div</td></tr></table></form><br>";
+		print "<table border='1' rules='groups' bgcolor='lightgreen' width='100%'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: green; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div></td></tr></table></form><br>";
 	}
 	&Header::openbox('100%', 'left',  $Lang::tr{'fwdfw menu'});
 	print "<form method='post'>";
@@ -977,7 +998,7 @@ print<<END;
 		<table width='100%' border='0'>
 		<tr><td width='50%' valign='top'>
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='radio' name='$grp' value='std_net_$srctgt' $checked{$grp}{'std_net_'.$srctgt}></td><td>$Lang::tr{'fwhost stdnet'}</td><td align='right'><select name='std_net_$srctgt' style='width:200px;'>
+		<tr><td width='1%'><input type='radio' name='$grp' id='std_net_$srctgt' value='std_net_$srctgt' $checked{$grp}{'std_net_'.$srctgt}></td><td>$Lang::tr{'fwhost stdnet'}</td><td align='right'><select name='std_net_$srctgt' style='width:200px;'>
 END
 	foreach my $network (sort keys %defaultNetworks)
 		{
@@ -998,19 +1019,19 @@ END
 	print"</select></td></tr>";
 	#custom networks
 	if (! -z $confignet || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
-		print"<tr><td><input type='radio' name='$grp' value='cust_net_$srctgt' $checked{$grp}{'cust_net_'.$srctgt}></td><td>$Lang::tr{'fwhost cust net'}</td><td align='right'><select name='cust_net_$srctgt' style='width:200px;'>";
+		print"<tr><td><input type='radio' name='$grp' id='cust_net_$srctgt' value='cust_net_$srctgt' $checked{$grp}{'cust_net_'.$srctgt}></td><td>$Lang::tr{'fwhost cust net'}</td><td align='right'><select name='cust_net_$srctgt' style='width:200px;'>";
 		&fillselect(\%customnetwork,$fwdfwsettings{$fwdfwsettings{$grp}});
 		print"</select></td>";
 	}
 	#custom hosts
 	if (! -z $confighost || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
-		print"<tr><td><input type='radio' name='$grp' value='cust_host_$srctgt' $checked{$grp}{'cust_host_'.$srctgt}></td><td>$Lang::tr{'fwhost cust addr'}</td><td align='right'><select name='cust_host_$srctgt' style='width:200px;'>";
+		print"<tr><td><input type='radio' name='$grp' id='cust_host_$srctgt' value='cust_host_$srctgt' $checked{$grp}{'cust_host_'.$srctgt}></td><td>$Lang::tr{'fwhost cust addr'}</td><td align='right'><select name='cust_host_$srctgt' style='width:200px;'>";
 		&fillselect(\%customhost,$fwdfwsettings{$fwdfwsettings{$grp}});
 		print"</select></td>";
 	}
 	#custom groups
 	if (! -z $configgrp || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
-		print"<tr><td valign='top'><input type='radio' name='$grp' value='cust_grp_$srctgt' $checked{$grp}{'cust_grp_'.$srctgt}></td><td >$Lang::tr{'fwhost cust grp'}</td><td align='right'><select name='cust_grp_$srctgt' style='width:200px;'>";
+		print"<tr><td valign='top'><input type='radio' name='$grp' id='cust_grp_$srctgt' value='cust_grp_$srctgt' $checked{$grp}{'cust_grp_'.$srctgt}></td><td >$Lang::tr{'fwhost cust grp'}</td><td align='right'><select name='cust_grp_$srctgt' style='width:200px;'>";
 		foreach my $key (sort { ncmp($customgrp{$a}[0],$customgrp{$b}[0]) } keys %customgrp) {
 			if($helper ne $customgrp{$key}[0]){
 				print"<option ";
@@ -1025,14 +1046,14 @@ END
 	print"</tr></table></td><td valign='top'><table width='100%' border='0'><tr>";
 	# CCD networks
 	if( ! -z $configccdnet || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
-		print"<td width='1%'><input type='radio' name='$grp' value='ovpn_net_$srctgt'  $checked{$grp}{'ovpn_net_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_net_$srctgt' style='width:200px;'>";
+		print"<td width='1%'><input type='radio' name='$grp' id='ovpn_net_$srctgt' value='ovpn_net_$srctgt'  $checked{$grp}{'ovpn_net_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_net_$srctgt' style='width:200px;'>";
 		&fillselect(\%ccdnet,$fwdfwsettings{$fwdfwsettings{$grp}});
 		print"</select></td></tr>";
 	}
 	#OVPN CCD Hosts
 	foreach my $key (sort { ncmp($ccdhost{$a}[0],$ccdhost{$b}[0]) } keys %ccdhost){
 		if ($ccdhost{$key}[33] ne '' ){
-			print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_host_$srctgt' $checked{$grp}{'ovpn_host_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_host_$srctgt' style='width:200px;'>" if ($show eq '');
+			print"<tr><td width='1%'><input type='radio' name='$grp' id='ovpn_host_$srctgt' value='ovpn_host_$srctgt' $checked{$grp}{'ovpn_host_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_host_$srctgt' style='width:200px;'>" if ($show eq '');
 			$show='1';
 			print "<option value='$ccdhost{$key}[1]'";
 			print "selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $ccdhost{$key}[1]);
@@ -1040,13 +1061,13 @@ END
 		}
 	}
 	if($optionsfw{'SHOWDROPDOWN'} eq 'on' && $show eq ''){
-		print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_host_$srctgt' $checked{$grp}{'ovpn_host_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_host_$srctgt' style='width:200px;'></select></td></tr>" ;
+		print"<tr><td width='1%'><input type='radio' name='$grp' id='ovpn_host_$srctgt' value='ovpn_host_$srctgt' $checked{$grp}{'ovpn_host_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_host_$srctgt' style='width:200px;'></select></td></tr>" ;
 	}
 	if ($show eq '1'){$show='';print"</select></td></tr>";}
 	#OVPN N2N
 	foreach my $key (sort { ncmp($ccdhost{$a}[1],$ccdhost{$b}[1]) } keys %ccdhost){
 		if ($ccdhost{$key}[3] eq 'net'){
-			print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_n2n_$srctgt' $checked{$grp}{'ovpn_n2n_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ovpn_n2n'}:</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_n2n_$srctgt' style='width:200px;'>" if ($show eq '');
+			print"<tr><td width='1%'><input type='radio' name='$grp' id='ovpn_n2n_$srctgt' value='ovpn_n2n_$srctgt' $checked{$grp}{'ovpn_n2n_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ovpn_n2n'}:</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_n2n_$srctgt' style='width:200px;'>" if ($show eq '');
 			$show='1';
 			print "<option value='$ccdhost{$key}[1]'";
 			print "selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $ccdhost{$key}[1]);
@@ -1054,7 +1075,7 @@ END
 		}
 	}
 	if($optionsfw{'SHOWDROPDOWN'} eq 'on' && $show eq ''){
-		print"<tr><td width='1%'><input type='radio' name='$grp' value='ovpn_n2n_$srctgt' $checked{$grp}{'ovpn_n2n_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ovpn_n2n'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_n2n_$srctgt' style='width:200px;'></select></td></tr>" ;
+		print"<tr><td width='1%'><input type='radio' name='$grp' id='ovpn_n2n_$srctgt' value='ovpn_n2n_$srctgt' $checked{$grp}{'ovpn_n2n_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ovpn_n2n'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_n2n_$srctgt' style='width:200px;'></select></td></tr>" ;
 	}
 	if ($show eq '1'){$show='';print"</select></td></tr>";}
 	#IPsec netze
@@ -1068,11 +1089,11 @@ END
 		}
 	}
 	if($optionsfw{'SHOWDROPDOWN'} eq 'on' && $show eq ''){
-		print"<tr><td valign='top'><input type='radio' name='$grp' value='ipsec_net_$srctgt' $checked{$grp}{'ipsec_net_'.$srctgt}></td><td >$Lang::tr{'fwhost ipsec net'}</td><td align='right'><select name='ipsec_net_$srctgt' style='width:200px;'><select></td></tr>";
+		print"<tr><td valign='top'><input type='radio' name='$grp' id='ipsec_net_$srctgt' value='ipsec_net_$srctgt' $checked{$grp}{'ipsec_net_'.$srctgt}></td><td >$Lang::tr{'fwhost ipsec net'}</td><td align='right'><select name='ipsec_net_$srctgt' style='width:200px;'><select></td></tr>";
 	}
 	if ($show eq '1'){$show='';print"</select></td></tr>";}
 	
-	print"</tr></table>";
+	print"</table>";
 	print"</td></tr></table><br>";
 }
 sub get_ip
@@ -1514,7 +1535,7 @@ sub newrule
 	#------SOURCE-------------------------------------------------------
 	print<<END;
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td width='60%'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' size='16' maxlength='17'></td><td width='1%'><input type='radio' name='grp1' value='ipfire_src'  $checked{'grp1'}{'ipfire_src'}></td><td><b>Firewall</b></td>
+		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td width='60%'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' size='16' maxlength='17' ></td><td width='1%'><input type='radio' name='grp1' id='ipfire_src' value='ipfire_src'  $checked{'grp1'}{'ipfire_src'}></td><td><b>Firewall</b></td>
 END
 		print"<td align='right'><select name='ipfire_src' style='width:200px;'>";
 		print "<option value='ALL' $selected{'ipfire_src'}{'ALL'}>$Lang::tr{'all'}</option>";
@@ -1530,12 +1551,12 @@ END
 			}
 		}
 		print<<END;
-		</td></tr>
+		</select></td></tr>
 		<tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
 END
 	&gen_dd_block('src','grp1');
 		print<<END;
-		<tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
+		<table><tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
 		<table width='100%' border='0'>
 		<tr><td width='1%'><input type='checkbox' name='USE_SRC_PORT' value='ON' $checked{'USE_SRC_PORT'}{'ON'}></td><td width='51%' colspan='3'>$Lang::tr{'fwdfw use srcport'}</td>
 		<td width='15%' nowrap='nowrap'>$Lang::tr{'fwdfw man port'}</td><td><select name='PROT'>
@@ -1572,7 +1593,7 @@ END
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
 		print<<END;
 		<table width='100%' border='0'>	
-		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='60%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='17'><td width='1%'><input type='radio' name='grp2' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>Firewall</b></td>
+		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='60%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='17'><td width='1%'><input type='radio' name='grp2' id='ipfire' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>Firewall</b></td>
 END
 		print"<td align='right'><select name='ipfire' style='width:200px;'>";
 		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'}</option>";
@@ -1587,14 +1608,14 @@ END
 			}
 		}
 		print<<END;
-		</td></tr>
+		</select></td></tr>
 		<tr><td colspan='7'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
 END
 		&gen_dd_block('tgt','grp2');
 		print<<END;
-		<hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; '></hr><br>
+		<hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; '><br>
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USESRV' value='ON' $checked{'USESRV'}{'ON'} ></td><td width='48%'>$Lang::tr{'fwdfw use srv'}</td><td width='1%'><input type='radio' name='grp3' value='cust_srv' checked></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td width='1%' colspan='2'><select name='cust_srv'style='min-width:230px;' >
+		<tr><td width='1%'><input type='checkbox' name='USESRV' value='ON' $checked{'USESRV'}{'ON'} ></td><td width='48%'>$Lang::tr{'fwdfw use srv'}</td><td width='1%'><input type='radio' name='grp3' id='cust_srv' value='cust_srv' checked></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td width='1%' colspan='2'><select name='cust_srv' style='min-width:230px;' >
 END
 		&General::readhasharray("$configsrv", \%customservice);
 		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
@@ -1604,7 +1625,7 @@ END
 		}	
 		print<<END;
 		</select></td></tr>
-		<tr><td colspan='2'></td><td><input type='radio' name='grp3' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust srvgrp'}</td><td colspan='2'><select name='cust_srvgrp' style='min-width:230px;' >
+		<tr><td colspan='2'></td><td><input type='radio' name='grp3' id='cust_srvgrp' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust srvgrp'}</td><td colspan='2'><select name='cust_srvgrp' style='min-width:230px;' >
 END
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		my $helper;
@@ -1618,7 +1639,7 @@ END
 		}	
 		print<<END;
 		</select></td></tr>
-		<tr><td colspan='2'></td><td><input type='radio' name='grp3' value='TGT_PORT' $checked{'grp3'}{'TGT_PORT'}></td><td>$Lang::tr{'fwdfw man port'}</td><td><select name='TGT_PROT'>
+		<tr><td colspan='2'></td><td><input type='radio' name='grp3' id='TGT_PORT' value='TGT_PORT' $checked{'grp3'}{'TGT_PORT'}></td><td>$Lang::tr{'fwdfw man port'}</td><td><select name='TGT_PROT' onchange='checkradio(\"#TGT_PORT\")'>
 END
 		foreach ("TCP","UDP","GRE","ESP","AH","ICMP")
 		{
@@ -1631,7 +1652,7 @@ END
 		}
 		$fwdfwsettings{'TGT_PORT'} =~ s/\|/,/g;
 		print<<END;
-		</select></td><td align='right'><input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18' ></td></tr>
+		</select></td><td align='right'><input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18' onclick='checkradio(\"#TGT_PORT\")'></td></tr>
 		<tr><td colspan='2'></td><td></td><td>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TGT' style='min-width:230px;'>
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
@@ -1653,8 +1674,8 @@ END
 		&Header::openbox('100%', 'left', 'NAT');
 		print<<END;
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'}></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr>
-		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
+		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'}></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr>
+		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='dnat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
 END
 		print"<td width='8%'>IPFire: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
 		print "<option value='ALL' $selected{'dnat'}{$Lang::tr{'all'}}>$Lang::tr{'all'}</option>";
@@ -1663,12 +1684,12 @@ END
 		{
 			print "<option value='$alias' $selected{'dnat'}{$alias}>$alias</option>";
 		}
-		print"</td></tr>";
+		print"</select></td></tr>";
 		$fwdfwsettings{'dnatport'}=~ tr/|/,/;
-		print"<tr><td colspan='4'></td><td>Port: </td><td align='right'><input type='text' name='dnatport' style='width:130px;' value=$fwdfwsettings{'dnatport'}> </td></tr>";
+		print"<tr><td colspan='4'></td><td>Port: </td><td align='right'><input type='text' name='dnatport' style='width:130px;' value=\"$fwdfwsettings{'dnatport'}\"> </td></tr>";
 		print"<tr><td colspan='8'><br></td></tr>";
 		#SNAT
-		print"<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' value='snat'  $checked{'nat'}{'snat'}></td><td width='20%'>$Lang::tr{'fwdfw snat'}</td>";
+		print"<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='snat' value='snat'  $checked{'nat'}{'snat'}></td><td width='20%'>$Lang::tr{'fwdfw snat'}</td>";
 		print"<td width='8%'>IPFire: </td><td width='20%' align='right'><select name='snat' style='width:140px;'>";
 		foreach my $alias (sort keys %aliases)
 			{
@@ -1683,7 +1704,7 @@ END
 			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'nat'}} eq $defaultNetworks{$network}{'NAME'});
 			print ">$network</option>";
 		}
-		print"</table>";
+		print"</select></td></tr></table>";
 		print"<hr>";
 		&Header::closebox();
 		#---Activate/logging/remark-------------------------------------
@@ -1711,8 +1732,7 @@ END
 			}
 		}
 		print"</select></td></tr>";	
-		print"<tr><td width='12%'>$Lang::tr{'remark'}:</td><td width='88%' align='left'><input type='text' name='ruleremark' maxlength='255' value='$fwdfwsettings{'ruleremark'}' style='width:99%':></td></tr>";
-		#print"<tr><td width='100%'>$Lang::tr{'remark'}:</td><td align='left'><textarea name='ruleremark' cols='70' rows='3' value='$fwdfwsettings{'ruleremark'}'></textarea></td></tr>";
+		print"<tr><td width='12%'>$Lang::tr{'remark'}:</td><td width='88%' align='left'><input type='text' name='ruleremark' maxlength='255' value='$fwdfwsettings{'ruleremark'}' style='width:99%;'></td></tr>";
 		if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on'){
 			print "<tr><td width='12%'>$Lang::tr{'fwdfw rulepos'}:</td><td><select name='rulepos' >";
 			for (my $count =1; $count <= $sum; $count++){ 
@@ -1736,8 +1756,8 @@ END
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw timeframe'});
 		print<<END;
 		<table width='70%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='TIME' value='ON' $checked{'TIME'}{'ON'}></td><td colspan='4'>$Lang::tr{'fwdfw timeframe'}</td></tr>
-		<tr><td colspan='7'>&nbsp</td></tr>
+		<tr><td width='1%'><input type='checkbox' name='TIME' value='ON' $checked{'TIME'}{'ON'}></td><td colspan='9'>$Lang::tr{'fwdfw timeframe'}</td></tr>
+		<tr><td colspan='10'>&nbsp;</td></tr>
 		<tr>
 			<td  align='left'>$Lang::tr{'time'}:</td>
 			<td width='30%' align='left'>$Lang::tr{'advproxy monday'} $Lang::tr{'advproxy tuesday'} $Lang::tr{'advproxy wednesday'} $Lang::tr{'advproxy thursday'} $Lang::tr{'advproxy friday'} $Lang::tr{'advproxy saturday'} $Lang::tr{'advproxy sunday'}</td>
@@ -1746,15 +1766,13 @@ END
 		</tr>
 		<tr>
 			<td  align='right'></td>
-			<td width='30%' align='left'>
-				<input type='checkbox' name='TIME_MON' value='on' $checked{'TIME_MON'}{'on'} />
-				<input type='checkbox' name='TIME_TUE' value='on' $checked{'TIME_TUE'}{'on'} />
-				<input type='checkbox' name='TIME_WED' value='on' $checked{'TIME_WED'}{'on'} />
-				<input type='checkbox' name='TIME_THU' value='on' $checked{'TIME_THU'}{'on'} />
-				<input type='checkbox' name='TIME_FRI' value='on' $checked{'TIME_FRI'}{'on'} />
-				<input type='checkbox' name='TIME_SAT' value='on' $checked{'TIME_SAT'}{'on'} />
-				<input type='checkbox' name='TIME_SUN' value='on' $checked{'TIME_SUN'}{'on'} />
-			</td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_MON' value='on' $checked{'TIME_MON'}{'on'} /></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_TUE' value='on' $checked{'TIME_TUE'}{'on'} /></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_WED' value='on' $checked{'TIME_WED'}{'on'} /></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_THU' value='on' $checked{'TIME_THU'}{'on'} /></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_FRI' value='on' $checked{'TIME_FRI'}{'on'} /></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_SAT' value='on' $checked{'TIME_SAT'}{'on'} /></td>
+			<td width='15%' align='left'><input type='checkbox' name='TIME_SUN' value='on' $checked{'TIME_SUN'}{'on'} /></td>
 			<td><select name='TIME_FROM'>
 END
 		for (my $i=0;$i<=23;$i++) {
@@ -1778,8 +1796,7 @@ END
 			}
 		}
 		print<<END;
-		</select></td></tr>
-		</table><br><hr>
+		</select></td></tr></table><br><hr>
 END
 		#---ACTION------------------------------------------------------
 		if($fwdfwsettings{'updatefwrule'} ne 'on'){
@@ -1787,9 +1804,10 @@ END
 			<table border='0' width='100%'>
 			<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' />
 			<input type='hidden' name='config' value='$config' >
-			<input type='hidden' name='ACTION' value='saverule' >
-			</form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td>
-			</table></form>
+			<input type='hidden' name='ACTION' value='saverule' ></form>
+			<form method='post' style='display:inline;'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='reset'></form></td></tr>
+			</table>
+			<br>
 END
 		}else{
 			print<<END;
@@ -2104,7 +2122,7 @@ sub viewtablenew
 		my $coloryellow='';
 		print"<b>$title1</b><br>";
 		print"<table width='100%' cellspacing='0' cellpadding='0' border='0'>";
-		print"<tr><td align='center'><b>#</td><td></td><td align='center' width='25'></td><td align='center'><b>$Lang::tr{'fwdfw source'}</td><td width='1%'><b>Log</td><td align='center'><b>$Lang::tr{'fwdfw target'}</td><td align='center' colspan='6' width='1%'><b>$Lang::tr{'fwdfw action'}</td></tr>";
+		print"<tr><td align='center'><b>#</b></td><td></td><td align='center' width='25'></td><td align='center'><b>$Lang::tr{'fwdfw source'}</b></td><td width='1%'><b>Log</b></td><td align='center'><b>$Lang::tr{'fwdfw target'}</b></td><td align='center' colspan='6' width='1%'><b>$Lang::tr{'fwdfw action'}</b></td></tr>";
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
 			$tdcolor='';
 			@tmpsrc=();
@@ -2158,7 +2176,7 @@ sub viewtablenew
 			print"<tr bgcolor='$color' >";
 			#KEY
 			print<<END;
-			<td align='right' width='18'><b>$key &nbsp</b></td>
+			<td align='right' width='18'><b>$key &nbsp;</b></td>
 END
 			#RULETYPE (A,R,D)
 			if ($$hash{$key}[0] eq 'ACCEPT'){
@@ -2232,12 +2250,11 @@ END
 			#LOGGING
 			print<<END;
 			</td>
-			<form method='post'>
-			<td align='left' width='25'><input type='image' img src='$log' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw togglelog'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'/>
+			<td align='left' width='25'><form method='post'><input type='image' img src='$log' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw togglelog'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'/>
 			<input type='hidden' name='key' value='$key' />
 			<input type='hidden' name='config' value='$config' />
 			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw togglelog'}' />
-			</td></form>
+			</form></td>
 END
 			#TARGET
 			&getcolor($$hash{$key}[5],$$hash{$key}[6],\%customhost);
@@ -2287,51 +2304,45 @@ END
 				$gif="/images/off.gif"
 			}
 			print<<END;
-			<form method='post'>
-			<td width='25'><input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
+			<td width='25'><form method='post'><input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
 			<input type='hidden' name='key' value='$key' />
 			<input type='hidden' name='config' value='$config' />
 			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw toggle'}' />
-			</td></form>
-			<form method='post'>
-			<td  width='25' ><input type='image' img src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'fwdfw edit'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
+			</form></td>
+			<td  width='25' ><form method='post'><input type='image' img src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'fwdfw edit'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
 			<input type='hidden' name='key' value='$key' />
 			<input type='hidden' name='config' value='$config' />
 			<input type='hidden' name='ACTION' value='editrule' />
-			</td></form></td>
-			<form method='post'>
-			<td  width='25'><input type='image' img src='/images/addblue.gif' alt='$Lang::tr{'fwdfw copy'}' title='$Lang::tr{'fwdfw copy'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
+			</form></td>
+			<td  width='25'><form method='post'><input type='image' img src='/images/addblue.gif' alt='$Lang::tr{'fwdfw copy'}' title='$Lang::tr{'fwdfw copy'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
 			<input type='hidden' name='key' value='$key' />
 			<input type='hidden' name='config' value='$config' />
 			<input type='hidden' name='ACTION' value='copyrule' />
-			</td></form></td>
-			<form method='post'>
-			<td width='25' ><input type='image' img src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'fwdfw delete'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'   />
+			</form></td>
+			<td width='25' ><form method='post'><input type='image' img src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'fwdfw delete'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'   />
 			<input type='hidden' name='key' value='$key' />
 			<input type='hidden' name='config' value='$config' />
 			<input type='hidden' name='ACTION' value='deleterule' />
-			</td></form></td>
+			</form></td>
 END
 			if (exists $$hash{$key-1}){
 				print<<END;
-				<form method='post'>
-				<td width='25'><input type='image' img src='/images/up.gif' alt='$Lang::tr{'fwdfw moveup'}' title='$Lang::tr{'fwdfw moveup'}'  style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
+				<td width='25'><form method='post'><input type='image' img src='/images/up.gif' alt='$Lang::tr{'fwdfw moveup'}' title='$Lang::tr{'fwdfw moveup'}'  style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
 				<input type='hidden' name='key' value='$key' />
 				<input type='hidden' name='config' value='$config' />
 				<input type='hidden' name='ACTION' value='moveup' />
-				</td></form></td>
+				</form></td>
 END
 			}else{
 				print"<td width='25'><input type='image' img src='/images/up.gif' style='visibility:hidden;'></td>";
 			}
 			if (exists $$hash{$key+1}){
 				print<<END;
-				<form method='post'>
-				<td width='25' ><input type='image' img src='/images/down.gif' alt='$Lang::tr{'fwdfw movedown'}' title='$Lang::tr{'fwdfw movedown'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
+				<td width='25' ><form method='post'><input type='image' img src='/images/down.gif' alt='$Lang::tr{'fwdfw movedown'}' title='$Lang::tr{'fwdfw movedown'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
 				<input type='hidden' name='key' value='$key' />
 				<input type='hidden' name='config' value='$config' />
 				<input type='hidden' name='ACTION' value='movedown' />
-				</td></form></td></tr>
+				</form></td></tr>
 END
 			}else{
 				print"<td width='25'><input type='image' img src='/images/down.gif' style='visibility:hidden;'></td></tr>";
@@ -2339,7 +2350,7 @@ END
 			#REMARK
 			if ($optionsfw{'SHOWREMARK'} eq 'on' && $$hash{$key}[16] ne ''){
 				print"<tr bgcolor='$color'>";
-				print"<td>&nbsp</td><td bgcolor='$rulecolor'></td><td colspan='10'>&nbsp $$hash{$key}[16]</td></tr>";
+				print"<td>&nbsp;</td><td bgcolor='$rulecolor'></td><td colspan='10'>&nbsp; $$hash{$key}[16]</td></tr>";
 			}
 			if ($$hash{$key}[18] eq 'ON'){
 				#TIMEFRAME
@@ -2355,7 +2366,7 @@ END
 					my $weekdays=join(",",@days);
 					if (@days){
 						print"<tr bgcolor='$color'>";
-						print"<td>&nbsp</td><td bgcolor='$rulecolor'></td><td align='left' colspan='10'>&nbsp $weekdays &nbsp $$hash{$key}[26] - $$hash{$key}[27] </td></tr>";
+						print"<td>&nbsp;</td><td bgcolor='$rulecolor'></td><td align='left' colspan='10'>&nbsp; $weekdays &nbsp; $$hash{$key}[26] - $$hash{$key}[27] </td></tr>";
 					}
 				}
 			}
