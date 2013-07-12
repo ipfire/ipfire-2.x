@@ -22,10 +22,6 @@ require "${General::swroot}/header.pl";
 
 
 my %checked =();     # Checkbox manipulations
-
-# File used
-my $filename = "${General::swroot}/optionsfw/settings";
-
 our %settings=();
 my %fwdfwsettings=();
 my %configfwdfw=();
@@ -33,37 +29,18 @@ my %configoutgoingfw=();
 
 my $configfwdfw		= "${General::swroot}/forward/config";
 my $configoutgoing	= "${General::swroot}/forward/outgoing";
-
-$settings{'DISABLEPING'} = 'NO';
-$settings{'DROPNEWNOTSYN'} = 'on';
-$settings{'DROPINPUT'} = 'on';
-$settings{'DROPFORWARD'} = 'on';
-$settings{'DROPOUTGOING'} = 'on';
-$settings{'DROPPORTSCAN'} = 'on';
-$settings{'DROPWIRELESSINPUT'} = 'on';
-$settings{'DROPWIRELESSFORWARD'} = 'on';
-$settings{'SHOWCOLORS'} = 'off';
-$settings{'SHOWREMARK'} = 'on';
-$settings{'SHOWTABLES'} = 'on';
-$settings{'SHOWDROPDOWN'} = 'off';
-
 my $errormessage = '';
 my $warnmessage = '';
+my $filename = "${General::swroot}/optionsfw/settings";
 
 &General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
 &Header::showhttpheaders();
 
 #Get GUI values
 &Header::getcgihash(\%settings);
-&General::readhash("${General::swroot}/optionsfw/settings", \%settings);
-
-
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	if ($settings{'defpol'} ne '1'){
-		$errormessage = $Lang::tr{'new optionsfw later'};
-		delete $settings{'__CGI__'};
-		delete $settings{'x'};
-		delete $settings{'y'};
+		$errormessage .= $Lang::tr{'new optionsfw later'};
 		&General::writehash($filename, \%settings);             # Save good settings
 		system("/usr/local/bin/forwardfwctrl");
 	}else{
@@ -82,13 +59,12 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		&General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
 		system("/usr/local/bin/forwardfwctrl");
 	}
-   }else {
-		&General::readhash($filename, \%settings);                      # Get saved settings and reset to good if needed
+	&General::readhash($filename, \%settings);             # Load good settings
 }
 
 &Header::openpage($Lang::tr{'options fw'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
-
+&General::readhash($filename, \%settings);
 if ($errormessage) {
         &Header::openbox('100%', 'left', $Lang::tr{'warning messages'});
         print "<font color='red'>$errormessage&nbsp;</font>";
