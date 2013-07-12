@@ -80,6 +80,24 @@ unless (-e $configsrvgrp) { system("touch $configsrvgrp"); }
 &Header::openpage($Lang::tr{'fwhost hosts'}, 1, '');
 &Header::openbigbox('100%', 'center');
 
+#### JAVA SCRIPT ####
+print<<END;
+<script>
+	\$(document).ready(function() {
+		// Automatically select radio buttons when corresponding
+		// dropdown menu changes.
+		\$("select").change(function() {
+			var id = \$(this).attr("name");
+			//When using SNAT or DNAT, check "USE NAT" Checkbox
+			if ( id === 'snat' || id === 'dnat') {
+				\$('#USE_NAT').prop('checked', true);
+			}
+			\$('#' + id).prop("checked", true);
+		});
+	});
+</script>
+END
+
 ## ACTION ####
 if ($fwhostsettings{'ACTION'} eq $Lang::tr{'fwdfw reread'})
 {
@@ -373,8 +391,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			}
 			&addnet;
 			&viewtablenet;
-		}else
-		{
+		}else		{
 			&addnet;
 			&viewtablenet;
 		}
@@ -1066,10 +1083,10 @@ sub showmenu
 	&Header::openbox('100%', 'left',$Lang::tr{'fwhost menu'});
 	print "$Lang::tr{'fwhost welcome'}";
 	print<<END;
-	<br><br><table border='0' width='100%'><form method='post'>
-	<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newnet'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newhost'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newgrp'}' /></td>
-	<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservice'}' /><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservicegrp'}' /></td></tr>
-	<tr><td colspan='6'><hr></hr></td></tr></table></form>
+	<br><br><table border='0' width='100%'>
+	<tr><td><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newnet'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newhost'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newgrp'}' ></form></td>
+	<td align='right'><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservice'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservicegrp'}' ></form></td></tr>
+	<tr><td colspan='6'><hr></td></tr></table>
 END
 	&Header::closebox();
 	
@@ -1083,20 +1100,20 @@ sub addnet
 	$fwhostsettings{'orgname'}=$fwhostsettings{'HOSTNAME'};
 	$fwhostsettings{'orgnetremark'}=$fwhostsettings{'NETREMARK'};
 	print<<END;
-	<table border='0' width='100%'><form method='post' style='display:inline'  >
-	<tr><td width='15%'>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='20'><script>document.getElementById('textbox1').focus()</script></td></tr>
+	<table border='0' width='100%'>
+	<tr><td width='15%'>$Lang::tr{'name'}:</td><td><form method='post'><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='20'><script>document.getElementById('textbox1').focus()</script></td></tr>
 	<tr><td>$Lang::tr{'fwhost netaddress'}:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='20' maxlength='15'></td></tr>
 	<tr><td>$Lang::tr{'netmask'}:</td><td><input type='TEXT' name='SUBNET' value='$fwhostsettings{'SUBNET'}' $fwhostsettings{'BLK_IP'} size='20' maxlength='15'></td></tr>
 	<tr><td>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='NETREMARK' value='$fwhostsettings{'NETREMARK'}' style='width: 98.5%;'></td></tr>
-	<tr><td colspan='6'><br><hr></hr></td></tr><tr>
+	<tr><td colspan='6'><br><hr></td></tr><tr>
 END
 	if ($fwhostsettings{'ACTION'} eq 'editnet' || $fwhostsettings{'error'} eq 'on')
 	{
-		print "<td colspan='6' align='right' ><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='updatenet'><input type='hidden' name='orgnetremark' value='$fwhostsettings{'orgnetremark'}' ><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newnet' value='$fwhostsettings{'newnet'}'>";
+		print "<td colspan='6' align='right' ><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='updatenet'><input type='hidden' name='orgnetremark' value='$fwhostsettings{'orgnetremark'}' ><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newnet' value='$fwhostsettings{'newnet'}'></td>";
 	}else{
 		print "<td colspan='6' align='right'><input type='submit' value='$Lang::tr{'save'}' style='min-width:100px;'/><input type='hidden' name='ACTION' value='savenet'><input type='hidden' name='newnet' value='on'>";
 	}	
-	print "</form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;' ><input type='hidden' name='ACTION' value='resetnet'></td></tr></table></form>";
+	print "</form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;' ><input type='hidden' name='ACTION' value='resetnet'></form></td></tr></table>";
 	&Header::closebox();
 }
 sub addhost
@@ -1107,11 +1124,11 @@ sub addhost
 	$fwhostsettings{'orgname'}=$fwhostsettings{'HOSTNAME'};
 	$fwhostsettings{'orgremark'}=$fwhostsettings{'HOSTREMARK'};
 	print<<END;
-	<table border='0' width='100%'><form method='post' style='display:inline'>
-	<tr><td>$Lang::tr{'name'}:</td><td><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='20'><script>document.getElementById('textbox1').focus()</script></td></tr>
+	<table border='0' width='100%'>
+	<tr><td>$Lang::tr{'name'}:</td><td><form method='post' style='display:inline;'><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='20'><script>document.getElementById('textbox1').focus()</script></td></tr>
 	<tr><td>IP/MAC:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='20' maxlength='17'></td></tr>
 	<tr><td width='10%'>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='HOSTREMARK' value='$fwhostsettings{'HOSTREMARK'}' style='width:98%;'></td></tr>
-	<tr><td colspan='5'><hr></hr></td></tr>
+	<tr><td colspan='5'><hr></td></tr><tr>
 END
 
 	if ($fwhostsettings{'ACTION'} eq 'edithost' || $fwhostsettings{'error'} eq 'on')
@@ -1119,9 +1136,9 @@ END
 		
 		print "	<td colspan='4' align='right'><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'/><input type='hidden' name='ACTION' value='updatehost'><input type='hidden' name='orgremark' value='$fwhostsettings{'orgremark'}' ><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newhost' value='$fwhostsettings{'newhost'}'></form>";
 	}else{
-		print "	<td colspan='4' align='right'><input type='submit' name='savehost' value='$Lang::tr{'save'}'style='min-width:100px;' /><input type='hidden' name='ACTION' value='savehost' /><input type='hidden' name='newhost' value='on'>";
+		print "	<td colspan='4' align='right'><input type='submit' name='savehost' value='$Lang::tr{'save'}' style='min-width:100px;' /><input type='hidden' name='ACTION' value='savehost' /><input type='hidden' name='newhost' value='on'>";
 	}	
-	print "	</form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;' ><input type='hidden' name='ACTION' value='resethost'></td></tr></table></form>";
+	print "	</form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;' ><input type='hidden' name='ACTION' value='resethost'></form></td></tr></table>";
 	&Header::closebox();
 }
 sub addgrp
@@ -1147,8 +1164,8 @@ sub addgrp
 	my $rem=$fwhostsettings{'remark'};
 		if ($fwhostsettings{'update'} eq ''){   
 			print<<END;
-			<table width='100%' border='0'><form method='post'>
-			<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='TEXT' name='grp_name' value='$fwhostsettings{'grp_name'}' size='20'></td></tr>
+			<table width='100%' border='0'>
+			<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td><form method='post'><input type='TEXT' name='grp_name' value='$fwhostsettings{'grp_name'}' size='20'></td></tr>
 			<tr><td width='10%'>$Lang::tr{'remark'}:</td><td ><input type='TEXT' name='remark' value='$fwhostsettings{'remark'}' style='width: 98%;'></td></tr>
 			<tr><td colspan='2'><br><hr></td></tr></table>
 END
@@ -1166,7 +1183,7 @@ END
 			<table width='100%' border='0'>
 			<tr><td width=50% valign='top'>
 			<table width='100%' border='0'>
-			<tr><td width='1%'><input type='radio' name='grp2' value='std_net'  checked></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost stdnet'}</td><td><select name='DEFAULT_SRC_ADR' style='min-width:185px;'>
+			<tr><td width='1%'><input type='radio' name='grp2' value='std_net' id='DEFAULT_SRC_ADR' checked></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost stdnet'}</td><td><select name='DEFAULT_SRC_ADR' style='min-width:185px;'>
 END
 			foreach my $network (sort keys %defaultNetworks)
 			{
@@ -1186,14 +1203,14 @@ END
 			}
 			print"</select></td></tr>";
 			if (! -z $confignet){
-				print"<tr><td><input type='radio' name='grp2' value='cust_net' $checked{'grp2'}{'cust_net'}></td><td>$Lang::tr{'fwhost cust net'}</td><td><select name='CUST_SRC_NET' style='min-width:185px;'>";
+				print"<tr><td><input type='radio' name='grp2' id='CUST_SRC_NET' value='cust_net' $checked{'grp2'}{'cust_net'}></td><td>$Lang::tr{'fwhost cust net'}</td><td><select name='CUST_SRC_NET' style='min-width:185px;'>";
 				foreach my $key (sort { ncmp($customnetwork{$a}[0],$customnetwork{$b}[0]) } keys  %customnetwork) {
 					print"<option>$customnetwork{$key}[0]</option>";
 				}
 				print"</select></td></tr>";
 			}
 			if (! -z $confighost){
-				print"<tr><td valign='top'><input type='radio' name='grp2' value='cust_host' $checked{'grp2'}{'cust_host'}></td><td valign='top'>$Lang::tr{'fwhost cust addr'}</td><td><select name='CUST_SRC_HOST' style='min-width:185px;'>";
+				print"<tr><td valign='top'><input type='radio' name='grp2' id='CUST_SRC_HOST' value='cust_host' $checked{'grp2'}{'cust_host'}></td><td valign='top'>$Lang::tr{'fwhost cust addr'}</td><td><select name='CUST_SRC_HOST' style='min-width:185px;'>";
 				foreach my $key (sort { ncmp($customhost{$a}[0],$customhost{$b}[0]) } keys %customhost) {
 					print"<option>$customhost{$key}[0]</option>";
 				}
@@ -1204,7 +1221,7 @@ END
 			print"</td><td valign='top'><table width='100%' border='0'>";
 			#OVPN networks
 			if (! -z $configccdnet){
-				print"<td width='1%'><input type='radio' name='grp2' value='ovpn_net'  $checked{'grp2'}{'ovpn_net'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_NET' style='min-width:185px;'>";
+				print"<td width='1%'><input type='radio' name='grp2' id='OVPN_CCD_NET' value='ovpn_net'  $checked{'grp2'}{'ovpn_net'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_NET' style='min-width:185px;'>";
 				foreach my $key (sort { ncmp($ccdnet{$a}[0],$ccdnet{$b}[0]) }  keys %ccdnet)
 				{
 					print"<option value='$ccdnet{$key}[0]'>$ccdnet{$key}[0]</option>";
@@ -1224,7 +1241,7 @@ END
 			#OVPN n2n networks
 			foreach my $key (sort { ncmp($ccdhost{$a}[1],$ccdhost{$b}[1]) } keys %ccdhost) {
 				if($ccdhost{$key}[3] eq 'net'){
-					print"<td width='1%'><input type='radio' name='grp2' value='ovpn_n2n' $checked{'grp2'}{'ovpn_n2n'}></td><td valign='top'>$Lang::tr{'fwhost ovpn_n2n'}</td><td colspan='3'><select name='OVPN_N2N' style='min-width:185px;'>" if ($show eq '');
+					print"<td width='1%'><input type='radio' name='grp2' id='OVPN_N2N' value='ovpn_n2n' $checked{'grp2'}{'ovpn_n2n'}></td><td valign='top'>$Lang::tr{'fwhost ovpn_n2n'}</td><td colspan='3'><select name='OVPN_N2N' style='min-width:185px;'>" if ($show eq '');
 					$show='1';
 					print"<option>$ccdhost{$key}[1]</option>";
 				}
@@ -1233,7 +1250,7 @@ END
 			#IPsec networks
 			foreach my $key (sort { ncmp($ipsecconf{$a}[0],$ipsecconf{$b}[0]) } keys %ipsecconf) {
 				if ($ipsecconf{$key}[3] eq 'net'){
-					print"<td valign='top'><input type='radio' name='grp2' value='ipsec_net' $checked{'grp2'}{'ipsec_net'}></td><td valign='top'>$Lang::tr{'fwhost ipsec net'}</td><td><select name='IPSEC_NET' style='min-width:185px;'>" if ($show eq '');
+					print"<td valign='top'><input type='radio' name='grp2' id='IPSEC_NET' value='ipsec_net' $checked{'grp2'}{'ipsec_net'}></td><td valign='top'>$Lang::tr{'fwhost ipsec net'}</td><td><select name='IPSEC_NET' style='min-width:185px;'>" if ($show eq '');
 					$show='1';
 					print"<option value='$ipsecconf{$key}[1]'>$ipsecconf{$key}[1]</option>";
 				}
@@ -1244,7 +1261,7 @@ END
 			print"<br><br><b>$Lang::tr{'fwhost attention'}:</b><br>	$Lang::tr{'fwhost macwarn'}<br><hr>";
 		}
 		print"<table border='0' width='100%'>";
-		print"<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='update' value=$fwhostsettings{'update'} ><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td></table></form>";
+		print"<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='update' value=\"$fwhostsettings{'update'}\"><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='reset'></form></td></table>";
 	&Header::closebox();
 }
 sub addservice
@@ -1370,7 +1387,7 @@ sub viewtablenet
 		}else{
 			print<<END;
 			<table border='0' width='100%' cellspacing='0'>
-			<tr><td align='center'><b>$Lang::tr{'name'}</td><td align='center'><b>$Lang::tr{'fwhost netaddress'}</td><td align='center'><b>$Lang::tr{'remark'}</td><td align='center'><b>$Lang::tr{'used'}</td><td></td><td width='3%'></td></tr>
+			<tr><td align='center'><b>$Lang::tr{'name'}</b></td><td align='center'><b>$Lang::tr{'fwhost netaddress'}</b></td><td align='center'><b>$Lang::tr{'remark'}</b></td><td align='center'><b>$Lang::tr{'used'}</b></td><td></td><td width='3%'></td></tr>
 END
 		}
 		my $count=0;
@@ -1385,7 +1402,7 @@ END
 				print" <tr bgcolor='$color{'color20'}'>";
 			}
 			my $colnet="$customnetwork{$key}[1]/".&General::subtocidr($customnetwork{$key}[2]);
-			print"<td width='20%'><form method='post'>$customnetwork{$key}[0]</td><td width=15%' align='center'>".&Header::colorize($colnet)."</td><td width='40%'>$customnetwork{$key}[3]</td><td align='center'>$customnetwork{$key}[4]x</td>";
+			print"<td width='20%'><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center'>".&Header::colorize($colnet)."</td><td width='40%'>$customnetwork{$key}[3]</td><td align='center'>$customnetwork{$key}[4]x</td>";
 			print<<END;
 			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='editnet'>
@@ -1399,7 +1416,7 @@ END
 			{
 				print"<td width='1%'><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delnet' /><input type='hidden' name='key' value='$customnetwork{$key}[0]' /></td></form></tr>";
 			}else{
-				print"<td></td></form></tr>";
+				print"<td></td></tr>";
 			}
 			$count++;
 		}
@@ -1419,7 +1436,7 @@ sub viewtablehost
 		}else{
 		print<<END;
 		<table border='0' width='100%' cellspacing='0'>
-		<tr><td align='center'><b>$Lang::tr{'name'}</td><td align='center'><b>$Lang::tr{'fwhost ip_mac'}</td><td align='center'><b>$Lang::tr{'remark'}</td><td align='center'><b>$Lang::tr{'used'}</td><td></td><td width='3%'></td></tr>
+		<tr><td align='center'><b>$Lang::tr{'name'}</b></td><td align='center'><b>$Lang::tr{'fwhost ip_mac'}</b></td><td align='center'><b>$Lang::tr{'remark'}</b></td><td align='center'><b>$Lang::tr{'used'}</b></td><td></td><td width='3%'></td></tr>
 END
 	}
 		my $count=0;
@@ -1430,15 +1447,15 @@ END
 			else{            print" <tr bgcolor='$color{'color20'}'>";}
 			my ($ip,$sub)=split(/\//,$customhost{$key}[2]);
 			$customhost{$key}[4]=~s/\s+//g;
-			print"<td width='20%'><form method='post'>$customhost{$key}[0]</td><td width='20%' align='center'>".&Header::colorize($ip)."</td><td width='50%' align='left'>$customhost{$key}[3]</td><td align='center'>$customhost{$key}[4]x</td>";
+			print"<td width='20%'>$customhost{$key}[0]</td><td width='20%' align='center'>".&Header::colorize($ip)."</td><td width='50%' align='left'>$customhost{$key}[3]</td><td align='center'>$customhost{$key}[4]x</td>";
 			print<<END;
-			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
+			<td width='1%'><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='edithost' />
 			<input type='hidden' name='HOSTNAME' value='$customhost{$key}[0]' />
 			<input type='hidden' name='IP' value='$ip' />
 			<input type='hidden' name='type' value='$customhost{$key}[1]' />
 			<input type='hidden' name='HOSTREMARK' value='$customhost{$key}[3]' />
-			</td></form>
+			</form></td>
 END
 			if($customhost{$key}[4] == '0')
 			{
@@ -1490,8 +1507,8 @@ sub viewtablegrp
 				if ($customgrp{$key}[2] eq "none"){$customgrp{$key}[2]=$Lang::tr{'fwhost empty'};}
 				$grpname=$customgrp{$key}[0];
 				$remark="$customgrp{$key}[1]";
-				if($count >=2){print"</table>";}
-				print "<br><b><u>$grpname</u></b> &nbsp &nbsp";
+				if($count gt 2){ print"</table>";}
+				print "<br><b><u>$grpname</u></b>&nbsp; &nbsp;";
 				print " <b>$Lang::tr{'remark'}:</b>&nbsp $remark &nbsp " if ($remark ne '');
 				print "<b>$Lang::tr{'used'}:</b> $customgrp{$key}[4]x";
 				if($customgrp{$key}[4] == '0')
@@ -1548,7 +1565,7 @@ sub viewtableservice
 		&General::readhasharray("$configsrv", \%customservice);
 		print<<END;
 			<table width='100%' border='0' cellspacing='0'>
-			<tr><td align='center'><b>$Lang::tr{'fwhost srv_name'}</td><td align='center'><b>$Lang::tr{'fwhost prot'}</td><td align='center'><b>$Lang::tr{'fwhost port'}</td><td align='center'><b>ICMP</td><td align='center'><b>$Lang::tr{'fwhost used'}</td><td></td><td width='3%'></td></tr>
+			<tr><td align='center'><b>$Lang::tr{'fwhost srv_name'}</b></td><td align='center'><b>$Lang::tr{'fwhost prot'}</b></td><td align='center'><b>$Lang::tr{'fwhost port'}</b></td><td align='center'><b>ICMP</b></td><td align='center'><b>$Lang::tr{'fwhost used'}</b></td><td></td><td width='3%'></td></tr>
 END
 		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0])} keys %customservice)
 		{
@@ -1614,9 +1631,9 @@ sub viewtableservicegrp
 				}
 				$remark="$customservicegrp{$key}[1]";
 				if($count >=2){print"</table>";}
-				print "<br><b><u>$grpname</u></b> &nbsp &nbsp ";
-				print "<b>$Lang::tr{'remark'}:</b>&nbsp $remark " if ($remark ne '');
-				print "&nbsp <b>$Lang::tr{'used'}:</b> $customservicegrp{$key}[3]x";
+				print "<br><b><u>$grpname</u></b>&nbsp; &nbsp; ";
+				print "<b>$Lang::tr{'remark'}:</b>&nbsp; $remark " if ($remark ne '');
+				print "&nbsp; <b>$Lang::tr{'used'}:</b> $customservicegrp{$key}[3]x";
 				if($customservicegrp{$key}[3] == '0')
 				{
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='ACTION' value='delservicegrp'></form>";
@@ -1676,7 +1693,6 @@ sub checkip
 }
 sub checksubnet
 {
-	
 	my %hash=%{(shift)};
 	&General::readhasharray("$confignet", \%hash);
 	foreach my $key (keys %hash) {
