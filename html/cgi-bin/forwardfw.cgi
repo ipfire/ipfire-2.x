@@ -2387,12 +2387,13 @@ END
 			my $pol='fwdfw '.$fwdfwsettings{'POLICY1'};
 			if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){
 				$col="bgcolor='darkred'";
+				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF' align='center'>$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
 			}else{
 				$col="bgcolor='green'";
+				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF' align='center'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
 			}
-			print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF' align='center'>$Lang::tr{$pol}</font></td></tr>";
 		}else{
-			print"<tr><td bgcolor='darkred' width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td bgcolor='darkred' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw MODE1'}</font></td></tr>";
+			print"<tr><td bgcolor='darkred' width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td bgcolor='darkred' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
 		}
 		print"</table>";
 		print "<hr>";
@@ -2416,12 +2417,13 @@ END
 				my $pol='fwdfw '.$fwdfwsettings{'POLICY1'};
 				if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){
 					$col="bgcolor='darkred'";
+					print"<tr><td $col align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
 				}else{
 					$col="bgcolor='green'";
+					print"<tr><td $col align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
 				}
-				print"<tr><td $col align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
 			}else{
-				print"<tr><td bgcolor='darkred' align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td align='center'>$Lang::tr{'fwdfw MODE1'}</font></td></tr>";
+				print"<tr><td bgcolor='darkred' align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td align='center'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
 			}
 			print"</table><br><br>";
 		}
@@ -2435,30 +2437,31 @@ sub show_defaultrules
 	my $col=shift;
 	my $pol=shift;
 	#STANDARD RULES (From WIKI)
-			print"</table><br>";
-			print "<table width='100%' rules='cols' border='1' >";
-			if ($col eq "bgcolor='green'"){
-				my $blue   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol block'})" if (&Header::blue_used());
-				my $orange = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol block'})" if (&Header::orange_used());
-				my $blue1   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol allow'})" if (&Header::blue_used());
-				my $orange1 = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol allow'})" if (&Header::orange_used());
-				print"<tr><td align='center'><font color='#000000'>$Lang::tr{'green'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td>";
-				print"<td align='center'>$orange1</td>" if (&Header::orange_used());
-				print"<td align='center'>$blue1</td>" if (&Header::blue_used());
-				print"</tr>";
-				if (&Header::orange_used()){
-					print"<tr><td align='center' width='20%'><font color='#000000'>$Lang::tr{'orange'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td><td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td>";
-					print"<td align='center'>$blue</td>" if (&Header::blue_used());
-					print"</tr>";
-				}
-				if (&Header::blue_used()){
-					print"<tr><td align='center'><font color='#000000'>$Lang::tr{'blue'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td>";
-					print"<td align='center'>$orange</td>" if (&Header::orange_used());
-					print"<td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td>";
-					print"</tr>";
-				}
-				print"<tr><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} </font></td><td $col colspan='3' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
-			}elsif($col eq "bgcolor='darkred'"){
-				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{$pol}</font></td></tr>";
-			}
+	print"</table>";
+	if ($col eq "bgcolor='green'"){
+		print "<br><table width='100%' rules='cols' border='1' >";
+		my $blue   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol block'})" if (&Header::blue_used());
+		my $orange = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol block'})" if (&Header::orange_used());
+		my $blue1   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol allow'})" if (&Header::blue_used());
+		my $orange1 = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol allow'})" if (&Header::orange_used());
+		print"<tr><td align='center'><font color='#000000'>$Lang::tr{'green'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td>";
+		print"<td align='center'>$orange1</td>" if (&Header::orange_used());
+		print"<td align='center'>$blue1</td>" if (&Header::blue_used());
+		print"</tr>";
+		if (&Header::orange_used()){
+			print"<tr><td align='center' width='20%'><font color='#000000'>$Lang::tr{'orange'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td><td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td>";
+			print"<td align='center'>$blue</td>" if (&Header::blue_used());
+			print"</tr>";
+		}
+		if (&Header::blue_used()){
+			print"<tr><td align='center'><font color='#000000'>$Lang::tr{'blue'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td>";
+			print"<td align='center'>$orange</td>" if (&Header::orange_used());
+			print"<td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td>";
+			print"</tr>";
+		}
+		print"<tr><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} </font></td><td $col colspan='3' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
+	}elsif($col eq "bgcolor='darkred'"){
+		print "<table width='100%' rules='cols' border='1' >";
+		print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
+	}
 }
