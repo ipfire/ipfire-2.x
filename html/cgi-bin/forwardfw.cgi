@@ -64,7 +64,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.11';
+my $VERSION='0.9.9.12';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -2373,6 +2373,7 @@ END
 			print"<tr bgcolor='FFFFFF'><td colspan='13' height='1'></td></tr>";
 		}
 		print"</table>";
+		#SHOW FINAL RULE
 		print "<table width='100%'rules='cols' border='1'>";
 		my $col;
 		if ($config eq '/var/ipfire/forward/config'){
@@ -2423,7 +2424,8 @@ END
 					print"<tr><td $col align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
 				}
 			}else{
-				print"<tr><td bgcolor='darkred' align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td align='center'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
+				print "<table width='100%' rules='cols' border='1'>";
+				print"<tr><td bgcolor='darkred' align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td align='center' bgcolor='darkred'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
 			}
 			print"</table><br><br>";
 		}
