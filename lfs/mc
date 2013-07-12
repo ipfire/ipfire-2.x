@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.8.8
+VER        = 4.8.9
 
 THISAPP    = mc-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mc
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 14231665535fc80cc654b6ccfd070995
+$(DL_FILE)_MD5 = 0f8a05f9a9708241541ae177c8e2f209
 
 install : $(TARGET)
 
