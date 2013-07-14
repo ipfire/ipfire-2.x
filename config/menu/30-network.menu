@@ -41,31 +41,25 @@
 				 'title' => "$Lang::tr{'static routes'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'60.upload'} = {
-				  'caption' => $Lang::tr{'upload'},
-				  'uri' => '/cgi-bin/upload.cgi',
-				  'title' => "$Lang::tr{'upload'}",
-				  'enabled' => 0,
-				  };
-    $subnetwork->{'70.aliases'} = {
+    $subnetwork->{'60.aliases'} = {
 				  'caption' => $Lang::tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',
 				  'title' => "$Lang::tr{'aliases'}",
 				  'enabled' => `grep "RED_TYPE=STATIC" /var/ipfire/ethernet/settings`,
 				  };
-	$subnetwork->{'80.dnsmenu'} = {
+    $subnetwork->{'70.dnsmenu'} = {
 				  'caption' => $Lang::tr{'dns menu'},
 				  'uri' => '/cgi-bin/dns.cgi',
 				  'title' => "$Lang::tr{'dns menu'}",
 				  'enabled' => `grep "RED_TYPE=DHCP" /var/ipfire/ethernet/settings`,
 				  };
-	$subnetwork->{'90.macadressmenu'} = {
+    $subnetwork->{'80.macadressmenu'} = {
 				  'caption' => $Lang::tr{'mac address menu'},
 				  'uri' => '/cgi-bin/mac.cgi',
 				  'title' => "$Lang::tr{'mac address menu'}",
 				  'enabled' => 1,
 				  };
-	 $subnetwork->{'99.wakeonlan'} = {
+    $subnetwork->{'90.wakeonlan'} = {
 				  'caption' => $Lang::tr{'WakeOnLan'},
 				  'uri' => '/cgi-bin/wakeonlan.cgi',
 				  'title' => "$Lang::tr{'WakeOnLan'}",
