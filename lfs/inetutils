@@ -80,5 +80,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	mv -v /usr/bin/ping /bin
+
+	# Don't use whois command from here.
+	rm -vf /usr/bin/whois
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

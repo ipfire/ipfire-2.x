@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.13"							# Version number
-CORE="70"							# Core Level (Filename)
+CORE="71"							# Core Level (Filename)
 PAKFIRE_CORE="70"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -337,6 +337,7 @@ buildbase() {
     lfsmake2 gzip
     lfsmake2 inetutils
     lfsmake2 iproute2
+    lfsmake2 jwhois
     lfsmake2 kbd
     lfsmake2 less
     lfsmake2 make

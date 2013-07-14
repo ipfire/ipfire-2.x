@@ -5,7 +5,6 @@ bin/ping
 #usr/bin/rsh
 #usr/bin/talk
 #usr/bin/tftp
-usr/bin/whois
 #usr/sbin/ftpd
 #usr/sbin/inetd
 #usr/sbin/rexecd

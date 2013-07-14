@@ -1,0 +1,12 @@
+diff -up jwhois-4.0/src/init.c_old jwhois-4.0/src/init.c
+--- jwhois-4.0/src/init.c_old	2007-06-26 08:59:17.000000000 +0200
++++ jwhois-4.0/src/init.c	2009-01-27 15:49:35.000000000 +0100
+@@ -283,6 +283,8 @@ parse_args(int *argc, char ***argv)
+   if (in)
+     jconfig_parse_file(in);
+ 
++  fclose(in);
++
+   if (verbose>1)
+     {
+       printf("[Debug: Cache = %s]\n", cache?"On":"Off");

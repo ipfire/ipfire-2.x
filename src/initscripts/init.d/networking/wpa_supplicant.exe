@@ -1,0 +1,50 @@
+#!/bin/bash
+########################################################################
+# Begin
+#
+# Description : wpa_supplicant Script
+#
+# Authors     : IPFire Development Team <developers@ipfire.org>
+#
+# Version     : 01.00
+#
+# Notes       : This script starts/stops the dhclient if a WPA/WPA2
+#               connection to an AP successfull has been established
+#               or disconnected.
+#
+########################################################################
+ 
+. /etc/sysconfig/rc 
+. ${rc_functions}
+. /etc/init.d/networking/functions.network
+
+# Gather required information from wpa_cli.
+device="$1"
+wpa_state="$2"
+
+# Check if the RED device has been configured to use DHCP or exit immediately.
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+if [ ! "${RED_TYPE}" == "DHCP" ] ; then
+	exit 0
+fi
+
+case "${wpa_state}" in
+	CONNECTED)
+		# Start dhcpcd.
+		dhcpcd_start "${device}"
+
+		exit 0
+		;;
+
+	DISCONNECTED)
+		# Stop dhcpcd.
+		dhcpcd_stop "${device}"
+
+		exit 0
+		;;
+
+	*)
+		# When we ever got here, there is a really big problem.
+		exit 1
+		;;
+esac

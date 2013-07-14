@@ -24,6 +24,9 @@ SHOW_SRV=1
 
 case "${1}" in
 	start)
+		# kill already running copy of dnsmasq...
+		killproc /usr/sbin/dnsmasq 2>&1 > /dev/null
+
 		boot_mesg "Starting Domain Name Service Proxy..."
 		
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
