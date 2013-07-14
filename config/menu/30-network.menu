@@ -35,23 +35,29 @@
 				 'title' => "$Lang::tr{'edit hosts'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'51.routes'} = {
+    $subnetwork->{'51.dnsmenu'} = {
+                                  'caption' => $Lang::tr{'dns menu'},
+                                  'uri' => '/cgi-bin/dns.cgi',
+                                  'title' => "$Lang::tr{'dns menu'}",
+                                  'enabled' => `grep "RED_TYPE=DHCP" /var/ipfire/ethernet/settings`,
+                                  };
+    $subnetwork->{'52.dnsforward'} = {
+                                  'caption' => $Lang::tr{'dnsforward'},
+                                  'uri' => '/cgi-bin/dnsforward.cgi',
+                                  'title' => "$Lang::tr{'dnsforward'}",
+                                  'enabled' => 1
+                                  };
+    $subnetwork->{'60.routes'} = {
 				 'caption' => $Lang::tr{'static routes'},
 				 'uri' => '/cgi-bin/routing.cgi',
 				 'title' => "$Lang::tr{'static routes'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'60.aliases'} = {
+    $subnetwork->{'70.aliases'} = {
 				  'caption' => $Lang::tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',
 				  'title' => "$Lang::tr{'aliases'}",
 				  'enabled' => `grep "RED_TYPE=STATIC" /var/ipfire/ethernet/settings`,
-				  };
-    $subnetwork->{'70.dnsmenu'} = {
-				  'caption' => $Lang::tr{'dns menu'},
-				  'uri' => '/cgi-bin/dns.cgi',
-				  'title' => "$Lang::tr{'dns menu'}",
-				  'enabled' => `grep "RED_TYPE=DHCP" /var/ipfire/ethernet/settings`,
 				  };
     $subnetwork->{'80.macadressmenu'} = {
 				  'caption' => $Lang::tr{'mac address menu'},
