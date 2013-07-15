@@ -699,6 +699,16 @@ if (!$errormessage)
 	&read_acls;
 }
 
+# ------------------------------------------------------------------
+
+# Hook to regenerate the configuration files, if cgi got called from command line.
+if ($ENV{"REMOTE_ADDR"} eq "") {
+        writeconfig();
+        exit(0);
+}
+
+# -------------------------------------------------------------------
+
 $checked{'ENABLE'}{'off'} = '';
 $checked{'ENABLE'}{'on'} = '';
 $checked{'ENABLE'}{$proxysettings{'ENABLE'}} = "checked='checked'";
@@ -3061,12 +3071,6 @@ icp_port 0
 
 END
 	;
-
-	# Include file with user defined settings.
-	if (-e "/etc/squid/squid.conf.pre.local") {
-		print FILE "include /etc/squid/squid.conf.pre.local\n\n";
-	}
-
 	print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
 	if ($proxysettings{'TRANSPARENT'} eq 'on') { print FILE " transparent" }
 	if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
@@ -3448,6 +3452,19 @@ END
 		close (ACL);
 	}
 	if ((!-z $extgrp) && ($proxysettings{'AUTH_METHOD'} eq 'ncsa') && ($proxysettings{'NCSA_BYPASS_REDIR'} eq 'on')) { print FILE "\nredirector_access deny for_extended_users\n"; }
+
+	# Check if squidclamav is enabled.
+	if ($proxysettings{'ENABLE_CLAMAV'} eq 'on') {
+		print FILE "\n#Settings for squidclamav:\n";
+		print FILE "http_port 127.0.0.1:$proxysettings{'PROXY_PORT'} transparent\n";
+		print FILE "acl to_localhost dst 127.0.0.0/8\n";
+		print FILE "acl purge method PURGE\n";
+		print FILE "http_access deny to_localhost\n";
+		print FILE "http_access allow localhost\n";
+		print FILE "http_access allow purge localhost\n";
+		print FILE "http_access deny purge\n";
+		print FILE "url_rewrite_access deny localhost\n";
+	}
 	print FILE <<END
 
 #Access to squid:
@@ -3963,6 +3980,18 @@ END
 		print FILE "include /etc/squid/squid.conf.local\n";
 	}
 	close FILE;
+
+	# Proxy settings for squidclamav - if installed.
+	#
+	# Check if squidclamav is enabled.
+	if ($proxysettings{'ENABLE_CLAMAV'} eq 'on') {
+
+		my $configfile='/etc/squidclamav.conf';
+
+		my $data = &General::read_file_utf8($configfile);
+		$data =~ s/squid_port [0-9]+/squid_port $proxysettings{'PROXY_PORT'}/g;
+		&General::write_file_utf8($configfile, $data);
+	}
 }
 
 # -------------------------------------------------------------------

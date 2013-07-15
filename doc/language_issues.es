@@ -487,10 +487,7 @@ WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn aggrmode
-<<<<<<< HEAD
 WARNING: translation string unused: vpn incompatible use of defaultroute
-=======
->>>>>>> 1b23ab3... Implement wireless client on RED.
 WARNING: translation string unused: vpn mtu invalid
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: vpn on green
@@ -552,6 +549,7 @@ WARNING: untranslated string: ccd routes
 WARNING: untranslated string: ccd subnet
 WARNING: untranslated string: ccd used
 WARNING: untranslated string: deprecated fs warn
+WARNING: untranslated string: emerging rules
 WARNING: untranslated string: fireinfo ipfire version
 WARNING: untranslated string: fireinfo is disabled
 WARNING: untranslated string: fireinfo is enabled

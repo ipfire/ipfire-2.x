@@ -3,6 +3,7 @@ etc/issue
 var/ipfire/general-functions.pl
 var/ipfire/header.pl
 var/ipfire/menu.d/10-system.menu
+var/ipfire/menu.d/30-network.menu
 etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/wlanclient
 etc/rc.d/init.d/networking/functions.network
@@ -11,8 +12,13 @@ etc/rc.d/init.d/networking/red
 etc/rc.d/rc0.d/K82wlanclient
 etc/rc.d/rc3.d/S19wlanclient
 etc/rc.d/rc6.d/K82wlanclient
+usr/local/bin/dnsmasqctrl
 usr/local/bin/wirelessclient
+srv/web/ipfire/cgi-bin/dnsforward.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
+var/ipfire/general-functions.pl
 var/ipfire/langs
 var/ipfire/backup/include

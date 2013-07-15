@@ -549,6 +549,7 @@ WARNING: untranslated string: ccd subnet
 WARNING: untranslated string: ccd used
 WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: dns address deleted txt
+WARNING: untranslated string: emerging rules
 WARNING: untranslated string: fireinfo ipfire version
 WARNING: untranslated string: fireinfo is disabled
 WARNING: untranslated string: fireinfo is enabled
