@@ -499,7 +499,6 @@
 'clock last synchronized at' => 'Ostatnia synchronizacja zegara: ',
 'comment' => 'Opis:',
 'common name' => 'Common name',
-'community rules' => 'Emergingthreats.net Community Rules',
 'comp-lzo' => 'Kompresja LZO:',
 'compression' => 'Kompresja:',
 'computer to modem rate' => 'Szybkość połączenia z komputerem:',

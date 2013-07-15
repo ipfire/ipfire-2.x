@@ -12,6 +12,7 @@ etc/rc.d/rc0.d/K82wlanclient
 etc/rc.d/rc3.d/S19wlanclient
 etc/rc.d/rc6.d/K82wlanclient
 usr/local/bin/wirelessclient
+srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
 var/ipfire/langs

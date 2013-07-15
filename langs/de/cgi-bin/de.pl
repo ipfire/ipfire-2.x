@@ -526,7 +526,6 @@
 'clock last synchronized at' => 'Die Uhr wurde zuletzt synchronisiert um',
 'comment' => 'Kommentar',
 'common name' => 'Gemeinsamer Name',
-'community rules' => 'Emergingthreats.net Community Rules',
 'comp-lzo' => 'LZO-Kompression',
 'compression' => 'Kompression:',
 'computer to modem rate' => 'Übertragungsrate zwischen Computer und Modem:',

@@ -33,7 +33,12 @@ do
 done
 
 #
+# Backup snort.conf
+cp -f /etc/snort/snort.conf /etc/snort/snort.conf.backup
+
+#
 #Stop services
+/etc/init.d/snort stop
 
 #
 #Extract files
@@ -45,7 +50,12 @@ touch /var/ipfire/ethernet/wireless
 chown nobody:nobody /var/ipfire/ethernet/wireless
 
 #
+# Import active rules to new snort.conf
+grep "^include $RULE_PATH" /etc/snort/snort.conf.backup >> /etc/snort/snort.conf
+
+#
 #Start services
+/etc/init.d/snort start
 
 #
 #Update Language cache
