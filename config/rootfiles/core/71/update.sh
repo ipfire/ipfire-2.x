@@ -41,6 +41,10 @@ cp -f /etc/snort/snort.conf /etc/snort/snort.conf.backup
 /etc/init.d/snort stop
 
 #
+#Remove old usb-modeswitch file
+rm /usr/share/usb_modeswitch/0e8d:0002
+
+#
 #Extract files
 extract_files
 
