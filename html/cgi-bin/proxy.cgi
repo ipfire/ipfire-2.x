@@ -381,7 +381,7 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		}
 	}
 	if (!($proxysettings{'FILEDESCRIPTORS'} =~ /^\d+/) ||
-		($proxysettings{'FILEDESCRIPTORS'} < 1) || ($proxysettings{'FILEDESCRIPTORS'} > 16384))
+		($proxysettings{'FILEDESCRIPTORS'} < 1) || ($proxysettings{'FILEDESCRIPTORS'} > 65536))
 	{
 		$errormessage = $Lang::tr{'proxy errmsg filedescriptors'};
 		goto ERROR;
