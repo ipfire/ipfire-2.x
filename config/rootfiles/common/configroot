@@ -30,6 +30,8 @@ var/ipfire/dmzholes
 #var/ipfire/dmzholes/config
 var/ipfire/dns
 #var/ipfire/dns/settings
+var/ipfire/dnsforward
+#var/ipfire/dnsforward/config
 var/ipfire/ethernet
 #var/ipfire/ethernet/aliases
 #var/ipfire/ethernet/known_nics
