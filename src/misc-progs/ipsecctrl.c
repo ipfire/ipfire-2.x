@@ -144,8 +144,8 @@ void turn_connection_on(char *name, char *type) {
                 "/usr/sbin/ipsec down %s >/dev/null", name);
         safe_system(command);
 
-	// Reload the configuration into the daemon.
-	safe_system("/usr/sbin/ipsec reload >/dev/null 2>&1");
+	// Reload the configuration into the daemon (#10339).
+	ipsec_reload();
 
 	// Bring the connection up again.
 	snprintf(command, STRING_SIZE - 1,
@@ -169,7 +169,15 @@ void turn_connection_off (char *name) {
         safe_system(command);
 
 	// Reload, so the connection is dropped.
-        safe_system("/usr/sbin/ipsec reload >/dev/null 2>&1");
+	ipsec_reload();
+}
+
+void ipsec_reload() {
+	/* Re-read all configuration files and secrets and
+	 * reload the daemon (#10339).
+	 */
+	safe_system("/usr/sbin/ipsec rereadall >/dev/null 2>&1");
+	safe_system("/usr/sbin/ipsec reload >/dev/null 2>&1");
 }
 
 int main(int argc, char *argv[]) {
@@ -193,7 +201,7 @@ int main(int argc, char *argv[]) {
         }
 
         if (strcmp(argv[1], "R") == 0) {
-                safe_system("/usr/sbin/ipsec reload >/dev/null 2>&1");
+		ipsec_reload();
                 exit(0);
         }
 
