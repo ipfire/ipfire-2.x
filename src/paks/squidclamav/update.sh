@@ -35,4 +35,14 @@ if [ "$VERSION" -lt "11" ]; then
  sed -e "s|logfile.*|logfile /var/log/squid/squidclamav.log|g" /etc/squidclamav.conf
 fi
 
+if [ "$VERSION" -lt "16" ]; then
+ sed -e "s/proxy none//g" -i /etc/squidclamav.conf
+ sed -e "s/^#squid_ip 127\.0\.0\.1/squid_ip 127\.0\.0\.1/g" \
+     -e "s/^#squid_port 3128/squid_port 800/g" \
+     -e "s/^#trust_cache 1/trust_cache 1/g" -i /etc/squidclamav.conf
+
+ # Regenerate configuration files.
+ perl /srv/web/ipfire/cgi-bin/proxy.cgi
+fi
+ 
 /etc/init.d/squid restart

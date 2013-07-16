@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.9.4
+VER        = 2.9.5
 
 THISAPP    = snort-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e79ee6b4fbb32edc5dfed2d7dfcc6813
+$(DL_FILE)_MD5 = f5fc0e176afca5989d47509478758fc7
 
 install : $(TARGET)
 
@@ -86,6 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		etc/reference.config etc/classification.config /etc/snort/rules
 	cd $(DIR_APP) && install -m 0644 etc/unicode.map /etc/snort
 	install -m 0644 $(DIR_SRC)/config/snort/snort.conf /etc/snort
+	cp /etc/snort/snort.conf /etc/snort/snort.conf.template
 	chown -R nobody:nobody /etc/snort
 	-mkdir -p /var/log/snort
 	chown -R snort:snort /var/log/snort

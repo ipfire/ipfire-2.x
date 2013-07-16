@@ -87,8 +87,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --enable-referer-log \
 	      --enable-snmp \
 	   --with-pthreads --with-dl \
-	   --with-maxfd="16384" \
-	   --with-filedescriptors=16384 \
+	   --with-maxfd="65536" \
+	   --with-filedescriptors=65536 \
 	   --with-large-files \
 	   --with-aio \
 	   --enable-async-io=8 \
