@@ -84,7 +84,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--sysconfdir="/etc" \
 		--enable-curl \
 		--enable-openssl \
+		--enable-xauth-eap \
 		--enable-eap-radius \
+		--enable-eap-tls \
+		--enable-eap-ttls \
+		--enable-eap-peap \
+		--enable-eap-mschapv2 \
+		--enable-eap-identity \
 		$(PADLOCK)
 
 	cd $(DIR_APP) && make $(MAKETUNING)
