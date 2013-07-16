@@ -3071,6 +3071,12 @@ icp_port 0
 
 END
 	;
+
+	# Include file with user defined settings.
+	if (-e "/etc/squid/squid.conf.pre.local") {
+		print FILE "include /etc/squid/squid.conf.pre.local\n\n";
+	}
+
 	print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
 	if ($proxysettings{'TRANSPARENT'} eq 'on') { print FILE " transparent" }
 	if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }

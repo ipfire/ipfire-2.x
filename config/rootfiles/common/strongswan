@@ -31,6 +31,11 @@ usr/lib/ipsec/libradius.so.0.0.0
 usr/lib/ipsec/libstrongswan.so
 usr/lib/ipsec/libstrongswan.so.0
 usr/lib/ipsec/libstrongswan.so.0.0.0
+#usr/lib/ipsec/libtls.a
+#usr/lib/ipsec/libtls.la
+usr/lib/ipsec/libtls.so
+usr/lib/ipsec/libtls.so.0
+usr/lib/ipsec/libtls.so.0.0.0
 #usr/lib/ipsec/plugins
 usr/lib/ipsec/plugins/libstrongswan-aes.so
 usr/lib/ipsec/plugins/libstrongswan-attr.so
@@ -39,7 +44,12 @@ usr/lib/ipsec/plugins/libstrongswan-constraints.so
 usr/lib/ipsec/plugins/libstrongswan-curl.so
 usr/lib/ipsec/plugins/libstrongswan-des.so
 usr/lib/ipsec/plugins/libstrongswan-dnskey.so
+usr/lib/ipsec/plugins/libstrongswan-eap-identity.so
+usr/lib/ipsec/plugins/libstrongswan-eap-mschapv2.so
+usr/lib/ipsec/plugins/libstrongswan-eap-peap.so
 usr/lib/ipsec/plugins/libstrongswan-eap-radius.so
+usr/lib/ipsec/plugins/libstrongswan-eap-tls.so
+usr/lib/ipsec/plugins/libstrongswan-eap-ttls.so
 usr/lib/ipsec/plugins/libstrongswan-fips-prf.so
 usr/lib/ipsec/plugins/libstrongswan-gmp.so
 usr/lib/ipsec/plugins/libstrongswan-hmac.so
