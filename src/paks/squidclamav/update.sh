@@ -41,6 +41,10 @@ if [ "$VERSION" -lt "16" ]; then
      -e "s/^#squid_port 3128/squid_port 800/g" \
      -e "s/^#trust_cache 1/trust_cache 1/g" -i /etc/squidclamav.conf
 
+ # Fix permissions.
+ chmod 664 /etc/squidclamav.conf
+ chown root.nobody /etc/squidclamav.conf
+
  # Regenerate configuration files.
  perl /srv/web/ipfire/cgi-bin/proxy.cgi
 fi
