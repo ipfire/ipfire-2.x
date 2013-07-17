@@ -2339,6 +2339,9 @@ ADV_ERROR:
     if ($cgiparams{'LOG_VERB'} eq '') {
 	$cgiparams{'LOG_VERB'} =  '3';
     }
+    if ($cgiparams{'PMTU_DISCOVERY'} eq '') {
+	$cgiparams{'PMTU_DISCOVERY'} = 'off';
+    }
     $checked{'CLIENT2CLIENT'}{'off'} = '';
     $checked{'CLIENT2CLIENT'}{'on'} = '';
     $checked{'CLIENT2CLIENT'}{$cgiparams{'CLIENT2CLIENT'}} = 'CHECKED';
@@ -4155,6 +4158,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $checked{'MSSFIX'}{'on'} = '';
     $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
 
+    if ($cgiparams{'PMTU_DISCOVERY'} eq '') {
+	$cgiparams{'PMTU_DISCOVERY'} = 'off';
+    }
     $checked{'PMTU_DISCOVERY'}{$cgiparams{'PMTU_DISCOVERY'}} = 'checked=\'checked\'';
 
 
