@@ -19,6 +19,7 @@ srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
+var/ipfire/dnsforward/config
 var/ipfire/general-functions.pl
 var/ipfire/langs
 var/ipfire/backup/include
