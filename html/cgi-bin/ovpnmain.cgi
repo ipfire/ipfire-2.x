@@ -3520,6 +3520,14 @@ if ($cgiparams{'TYPE'} eq 'net') {
       goto VPNCONF_ERROR;			
 		}
 
+    # Check if the input for the transfer net is valid.
+    if (!&General::validipandmask($cgiparams{'OVPN_SUBNET'})){
+			$errormessage = $Lang::tr{'ccd err invalidnet'};
+			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+			goto VPNCONF_ERROR;
+		}
+
     if ($cgiparams{'OVPN_SUBNET'} eq  $vpnsettings{'DOVPN_SUBNET'}) {
 			$errormessage = $Lang::tr{'openvpn subnet is used'};
 			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
