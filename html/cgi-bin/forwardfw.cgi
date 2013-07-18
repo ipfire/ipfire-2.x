@@ -1677,7 +1677,7 @@ END
 		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'}></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr>
 		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='dnat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
 END
-		print"<td width='8%'>IPFire: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
+		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
 		print "<option value='ALL' $selected{'dnat'}{$Lang::tr{'all'}}>$Lang::tr{'all'}</option>";
 		print "<option value='Default IP' $selected{'dnat'}{'Default IP'}>Default IP</option>";
 		foreach my $alias (sort keys %aliases)
@@ -1690,7 +1690,7 @@ END
 		print"<tr><td colspan='8'><br></td></tr>";
 		#SNAT
 		print"<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='snat' value='snat'  $checked{'nat'}{'snat'}></td><td width='20%'>$Lang::tr{'fwdfw snat'}</td>";
-		print"<td width='8%'>IPFire: </td><td width='20%' align='right'><select name='snat' style='width:140px;'>";
+		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='snat' style='width:140px;'>";
 		foreach my $alias (sort keys %aliases)
 			{
 				print "<option value='$alias' $selected{'snat'}{$alias}>$alias</option>";
