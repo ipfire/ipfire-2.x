@@ -1,0 +1,3 @@
+DataDirectory /var/lib/tor
+User nobody
+Log notice syslog

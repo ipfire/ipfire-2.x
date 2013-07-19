@@ -1,0 +1,48 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/tor
+#
+# Description : Anonymizing overlay network for TCP
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting tor..."
+		loadproc /usr/bin/tor \
+			--runasdaemon 1 \
+			--defaults-torrc /usr/share/tor/defaults-torrc \
+			-f /etc/tor/torrc \
+			--quiet
+		;;
+
+	stop)
+		boot_mesg "Stopping tor..."
+		killproc /usr/bin/tor
+		;;
+
+	reload)
+		boot_mesg "Reloading tor..."
+		reloadproc /usr/bin/tor
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/tor
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/tor
