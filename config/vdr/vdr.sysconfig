@@ -3,7 +3,7 @@
 # The "master" options.  Some examples of options you may want to set
 # here are -r, -t, and --rcu.  See the vdr(1) man page for more info.
 #
-VDR_OPTIONS=(--vfat)
+VDR_OPTIONS=(--vfat --log=1)
 
 # VDR_PLUGIN_ORDER is a space separated list of plugins that should be
 # loaded in a specific order.  This affects eg. the order the plugins'
