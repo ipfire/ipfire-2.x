@@ -316,9 +316,16 @@ sub writeipsecfiles {
 	        foreach my $j (@ints) {
 	    	    foreach my $k (@groups) {
 		        if ($comma != 0) { print CONF ","; } else { $comma = 1; }
-		    print CONF "$i-$j-modp$k";
-		}
+
+		        my @l = split("", $k);
+		        if ($l[0] eq "e") {
+		            shift @l;
+		            print CONF "$i-$j-ecp".join("", @l);
+		        } else {
+		            print CONF "$i-$j-modp$k";
+		        }
 		    }
+	        }
 	    }
 	    if ($lconfighash{$key}[24] eq 'on') {	#only proposed algorythms?
 		print CONF "!\n";
@@ -339,7 +346,12 @@ sub writeipsecfiles {
 				foreach my $k (@groups) {
 				    if ($comma != 0) { print CONF ","; } else { $comma = 1; }
 				    if ($pfs eq "on") {
-					$modp = "-modp$k";
+					my @l = split("", $k);
+					if ($l[0] eq "e") {
+						$modp = "";
+					} else {
+						$modp = "-modp$k";
+					}
 				    } else {
 				        $modp = "";
 				    }
@@ -411,7 +423,7 @@ sub writeipsecfiles {
 
 # Hook to regenerate the configuration files.
 if ($ENV{"REMOTE_ADDR"} eq "") {
-	writeipsecfiles;
+	writeipsecfiles();
 	exit(0);
 }
 
@@ -2111,7 +2123,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(1024|1536|2048|3072|4096|6144|8192)$/) {
+	    if ($val !~ /^(e521|e384|e256|e224|e192|1024|1536|2048|3072|4096|6144|8192)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2147,6 +2159,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    }
 	}
 	if ($cgiparams{'ESP_GROUPTYPE'} ne '' &&
+	    $cgiparams{'ESP_GROUPTYPE'} !~  /^ecp(192|224|256|384|512)$/ &&
 	    $cgiparams{'ESP_GROUPTYPE'} !~  /^modp(1024|1536|2048|3072|4096|6144|8192)$/) {
 	    $errormessage = $Lang::tr{'invalid input'};
 	    goto ADVANCED_ERROR;
@@ -2305,6 +2318,11 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike grouptype'}</td><td class='boldbase' valign='top'>
 		<select name='IKE_GROUPTYPE' multiple='multiple' size='4'>
+		<option value='e521' $checked{'IKE_GROUPTYPE'}{'e521'}>ECP-521</option>
+		<option value='e384' $checked{'IKE_GROUPTYPE'}{'e384'}>ECP-384</option>
+		<option value='e256' $checked{'IKE_GROUPTYPE'}{'e256'}>ECP-256</option>
+		<option value='e224' $checked{'IKE_GROUPTYPE'}{'e224'}>ECP-224</option>
+		<option value='e192' $checked{'IKE_GROUPTYPE'}{'e192'}>ECP-192</option>
 		<option value='8192' $checked{'IKE_GROUPTYPE'}{'8192'}>MODP-8192</option>
 		<option value='6144' $checked{'IKE_GROUPTYPE'}{'6144'}>MODP-6144</option>
 		<option value='4096' $checked{'IKE_GROUPTYPE'}{'4096'}>MODP-4096</option>
