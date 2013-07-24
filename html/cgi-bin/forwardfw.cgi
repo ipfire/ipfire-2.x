@@ -2385,15 +2385,15 @@ END
 			}
 			&show_defaultrules($col,$pol);
 		}elsif ($config eq '/var/ipfire/forward/outgoing'){
-			my $pol='fwdfw '.$fwdfwsettings{'POLICY1'};
 			if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){
 				$col="bgcolor='darkred'";
-				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF' align='center'>$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
+				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF' >$Lang::tr{'fwdfw pol block'}</font></td></tr>";
 			}else{
 				$col="bgcolor='green'";
-				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col><font color='#FFFFFF' align='center'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
+				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF' >$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
 			}
 		}else{
+			print"uzlputz daneben";
 			print"<tr><td bgcolor='darkred' width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td bgcolor='darkred' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
 		}
 		print"</table>";
