@@ -378,7 +378,7 @@ if ($fwdfwsettings{'ACTION'} eq 'copyrule')
 	$fwdfwsettings{'copyfwrule'}='on';
 	&newrule;
 }
-if ($fwdfwsettings{'ACTION'} eq '')
+if ($fwdfwsettings{'ACTION'} eq '' or $fwdfwsettings{'ACTION'} eq 'reset')
 {
 	&base;
 }
@@ -2393,7 +2393,6 @@ END
 				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF' >$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
 			}
 		}else{
-			print"uzlputz daneben";
 			print"<tr><td bgcolor='darkred' width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td bgcolor='darkred' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
 		}
 		print"</table>";
