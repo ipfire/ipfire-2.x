@@ -897,7 +897,7 @@
 'firewall log' => 'Firewall log',
 'firewall log viewer' => 'Firewall Log Viewer',
 'firewall logs' => 'Firewall Logs',
-'firewall logs ip' => 'Fw-Logdgraphs (IP)',
+'firewall logs ip' => 'Fw-Loggraphs (IP)',
 'firewall logs port' => 'Fw-Loggraphs (Port)',
 'firewallhits' => 'firewallhits',
 'firmware' => 'Firmware',
