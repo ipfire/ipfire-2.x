@@ -88,11 +88,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
-	# Install configuration file.
-	mv /etc/tor/torrc{.sample,}
+	# Install configuration files.
+	mkdir -pv /var/ipfire/tor /var/lib/tor /var/log/tor
+	touch /var/ipfire/tor/settings
+	mv /etc/tor/torrc.sample /var/ipfire/tor/torrc
+	ln -svf /var/ipfire/tor/torrc /etc/tor/torrc
 
-	mkdir -pv /var/lib/tor /var/log/tor
-	chown nobody:nobody /var/lib/tor
+	# Adjust ownerships.
+	chown nobody:nobody /var/lib/tor /var/ipfire/tor
 
 	# Logrotate
 	mkdir -pv /etc/logrotate.d

@@ -1,1 +1,4 @@
 /etc/tor
+/var/ipfire/tor
+/var/lib/tor/fingerprint
+/var/lib/tor/keys

@@ -21,5 +21,8 @@ usr/share/tor
 usr/share/tor/defaults-torrc
 usr/share/tor/geoip
 var/ipfire/backup/addons/includes/tor
+var/ipfire/tor
+var/ipfire/tor/settings
+var/ipfire/tor/torrc
 var/lib/tor
 var/log/tor
