@@ -846,6 +846,12 @@ if ($fwhostsettings{'ACTION'} eq 'resethost')
 	$fwhostsettings{'type'} 	="";
 	&showmenu;
 }
+if ($fwhostsettings{'ACTION'} eq 'resetgrp')
+{
+	$fwhostsettings{'grp_name'} ="";
+	$fwhostsettings{'remark'} 	="";
+	&showmenu;
+}
 # delete
 if ($fwhostsettings{'ACTION'} eq 'delnet')
 {
@@ -1261,7 +1267,7 @@ END
 			print"<br><br><b>$Lang::tr{'fwhost attention'}:</b><br>	$Lang::tr{'fwhost macwarn'}<br><hr>";
 		}
 		print"<table border='0' width='100%'>";
-		print"<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='update' value=\"$fwhostsettings{'update'}\"><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='reset'></form></td></table>";
+		print"<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='update' value=\"$fwhostsettings{'update'}\"><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='resetgrp'></form></td></table>";
 	&Header::closebox();
 }
 sub addservice

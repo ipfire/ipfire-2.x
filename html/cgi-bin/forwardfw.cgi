@@ -64,7 +64,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.12';
+my $VERSION='0.9.9.13';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -1250,36 +1250,36 @@ sub getcolor
 	if($optionsfw{'SHOWCOLORS'} eq 'on'){
 		#standard networks
 		if ($val eq 'GREEN'){
-			$tdcolor="style='border: 1px solid $Header::colourgreen;'";
+			$tdcolor="style='background-color: $Header::colourgreen;color:white;'";
 			return;
 		}elsif ($val eq 'ORANGE'){
-			$tdcolor="style='border: 1px solid $Header::colourorange;'";
+			$tdcolor="style='background-color:  $Header::colourorange;color:white;'";
 			return;
 		}elsif ($val eq 'BLUE'){
-			$tdcolor="style='border: 1px solid $Header::colourblue;'";
+			$tdcolor="style='background-color: $Header::colourblue;color:white;'";
 			return;
 		}elsif ($val eq 'RED' ||$val eq 'RED1' ){
-			$tdcolor="style='border: 1px solid $Header::colourred;'";
+			$tdcolor="style='background-color: $Header::colourred;color:white;'";
 			return;
 		}elsif ($val eq 'IPFire' ){
-			$tdcolor="style='border: 1px solid $Header::colourred;'";
+			$tdcolor="style='background-color: $Header::colourred;color:white;'";
 			return;
 		}elsif($val =~ /^(.*?)\/(.*?)$/){
 			my ($sip,$scidr) = split ("/",$val);
 			if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
-				$tdcolor="style='border: 1px solid $Header::colourorange;'";
+				$tdcolor="style='background-color: $Header::colourorange;color:white;'";
 				return;
 			}
 			if ( &General::IpInSubnet($sip,$netsettings{'GREEN_ADDRESS'},$netsettings{'GREEN_NETMASK'})){
-				$tdcolor="style='border: 1px solid $Header::colourgreen;'";
+				$tdcolor="style='background-color: $Header::colourgreen;color:white;'";
 				return;
 			}
 			if ( &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
-				$tdcolor="style='border: 1px solid $Header::colourblue;'";
+				$tdcolor="style='background-color: $Header::colourblue;color:white;'";
 				return;
 			}
 		}elsif ($val eq 'Default IP'){
-			$tdcolor="style='border: 1px solid $Header::colourred;'";
+			$tdcolor="style='background-color: $Header::colourred;color:white;'";
 			return;
 		}
 		#Check if a manual IP is part of a VPN 
@@ -1288,7 +1288,7 @@ sub getcolor
 			my ($a,$b) = split("/",$ovpnsettings{'DOVPN_SUBNET'});
 			my ($c,$d) = split("/",$val);
 			if (&General::IpInSubnet($c,$a,$b)){
-				$tdcolor="style='border: 1px solid $Header::colourovpn;'";
+				$tdcolor="style='background-color: $Header::colourovpn;color:white;'";
 				return;
 			}
 			#Check if IP is part of OpenVPN static subnet
@@ -1296,7 +1296,7 @@ sub getcolor
 				my ($a,$b) = split("/",$ccdnet{$key}[1]);
 				$b =&General::iporsubtodec($b);
 				if (&General::IpInSubnet($c,$a,$b)){
-					$tdcolor="style='border: 1px solid $Header::colourovpn;'";
+					$tdcolor="style='background-color: $Header::colourovpn;color:white;'";
 					return;
 				}
 			}
@@ -1305,7 +1305,7 @@ sub getcolor
 				if ($ccdhost{$key}[3] eq 'net'){
 					my ($a,$b) = split("/",$ccdhost{$key}[11]);
 					if (&General::IpInSubnet($c,$a,$b)){
-						$tdcolor="style='border: 1px solid $Header::colourovpn;'";
+						$tdcolor="style='background-color: $Header::colourovpn;color:white;'";
 						return;
 					}
 				}
@@ -1315,7 +1315,7 @@ sub getcolor
 				my ($a,$b) = split("/",$ipsecsettings{'RW_NET'});
 				$b=&General::iporsubtodec($b);
 				if (&General::IpInSubnet($c,$a,$b)){
-					$tdcolor="style='border: 1px solid $Header::colourvpn;'";
+					$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
 					return;
 				}
 			}
@@ -1323,18 +1323,18 @@ sub getcolor
 			foreach my $key (sort keys %ipsecconf){
 				my ($a,$b) = split("/",$ipsecconf{$key}[11]);
 				if (&General::IpInSubnet($c,$a,$b)){
-					$tdcolor="style='border: 1px solid $Header::colourvpn;'";
+					$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
 					return;
 				}
 			}
 		}
 		#VPN networks
 		if ($nettype eq 'ovpn_n2n_src' || $nettype eq 'ovpn_n2n_tgt' || $nettype eq 'ovpn_net_src' || $nettype eq 'ovpn_net_tgt'|| $nettype eq 'ovpn_host_src' || $nettype eq 'ovpn_host_tgt'){
-			$tdcolor="style='border: 1px solid $Header::colourovpn;'";
+			$tdcolor="style='background-color: $Header::colourovpn;color:white;'";
 			return;
 		}
 		if ($nettype eq 'ipsec_net_src' || $nettype eq 'ipsec_net_tgt'){
-			$tdcolor="style='border: 1px solid $Header::colourvpn;'";
+			$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
 			return;
 		}
 		#custom Hosts
@@ -1349,7 +1349,7 @@ sub getcolor
 		foreach my $alias (sort keys %aliases)
 		{
 			if ($val eq $alias){
-				$tdcolor="style='border: 1px solid $Header::colourred;'";
+				$tdcolor="style='background-color:$Header::colourred;color:white;'";
 				return;
 			}
 		}
