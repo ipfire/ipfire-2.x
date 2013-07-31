@@ -4,6 +4,7 @@ etc/rc.d/init.d/tor
 #etc/tor
 etc/tor/tor-tsocks.conf
 etc/tor/torrc
+srv/web/ipfire/cgi-bin/tor.cgi
 usr/bin/tor
 usr/bin/tor-gencert
 usr/bin/tor-resolve
@@ -22,7 +23,7 @@ usr/share/tor
 usr/share/tor/defaults-torrc
 usr/share/tor/geoip
 var/ipfire/backup/addons/includes/tor
-srv/web/ipfire/cgi-bin/tor.cgi
+var/ipfire/menu.d/EX-tor.menu
 var/ipfire/tor
 var/ipfire/tor/settings
 var/ipfire/tor/torrc

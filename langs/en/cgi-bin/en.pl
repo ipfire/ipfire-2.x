@@ -1831,6 +1831,7 @@
 'tone' => 'Tone',
 'tone dial' => 'Tone dial:',
 'too long 80 char max' => ' is too long, maximum allowed is 80 characters',
+'tor' => 'Tor',
 'tor accounting' => 'Accounting',
 'tor accounting bytes' => 'Traffic (read/written)',
 'tor accounting bytes left' => 'left',

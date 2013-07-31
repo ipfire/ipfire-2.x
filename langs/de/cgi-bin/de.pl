@@ -1797,6 +1797,7 @@
 'tone' => 'Ton',
 'tone dial' => 'Tonwahl:',
 'too long 80 char max' => ' ist zu lang, es sind maximal 80 Zeichen erlaubt',
+'tor' => 'Tor',
 'tor accounting' => 'Accounting',
 'tor accounting bytes' => 'Traffic (empfangen/gesendet)',
 'tor accounting bytes left' => 'übrig',
