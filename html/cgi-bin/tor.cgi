@@ -88,9 +88,6 @@ my $warnmessage = '';
 
 &Header::showhttpheaders();
 
-# Load settings from file.
-&General::readhash("${General::swroot}/tor/settings", \%settings);
-
 # Get GUI values.
 &Header::getcgihash(\%settings);
 
@@ -132,6 +129,9 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	$settings{'ACTION'} = '';
 }
 
+# Load settings from file.
+&General::readhash("${General::swroot}/tor/settings", \%settings);
+
 &showMainBox();
 
 # Close Tor control connection.
@@ -171,20 +171,18 @@ sub showMainBox() {
 			</tr>
 			<tr>
 				<td width='25%' class='base'>$Lang::tr{'tor enabled'}:</td>
-				<td width='20%'><input type='checkbox' name='TOR_ENABLED' $checked{'TOR_ENABLED'}{'on'} /></td>
-				<td width='25%' class='base'></td>
-				<td width='30%'></td>
+				<td width='30%'><input type='checkbox' name='TOR_ENABLED' $checked{'TOR_ENABLED'}{'on'} /></td>
+				<td width='25%' class='base'>$Lang::tr{'tor socks port'}:</td>
+				<td width='20%'><input type='text' name='TOR_SOCKS_PORT' value='$settings{'TOR_SOCKS_PORT'}' size='5' /></td>
 			</tr>
 			<tr>
 				<td width='25%' class='base'>$Lang::tr{'tor relay enabled'}:</td>
-				<td width='20%'><input type='checkbox' name='TOR_RELAY_ENABLED' $checked{'TOR_RELAY_ENABLED'}{'on'} /></td>
+				<td width='30%'><input type='checkbox' name='TOR_RELAY_ENABLED' $checked{'TOR_RELAY_ENABLED'}{'on'} /></td>
 				<td width='25%' class='base'></td>
-				<td width='30%'></td>
+				<td width='20%'></td>
 			</tr>
 		</table>
 END
-
-	&Header::closebox();
 
 	if ($settings{'TOR_ENABLED'} eq 'on') {
 		my @temp = split(",", $settings{'TOR_ALLOWED_SUBNETS'});
@@ -193,18 +191,10 @@ END
 		@temp = split(",", $settings{'TOR_USE_EXIT_NODES'});
 		$settings{'TOR_USE_EXIT_NODES'} = join("\n", @temp);
 
-		&Header::openbox('100%', 'left', $Lang::tr{'tor configuration'});
-
 		print <<END;
-			<table width='100%'>
-				<tr>
-					<td width='25%' class='base'>$Lang::tr{'tor socks port'}:</td>
-					<td width='30%'><input type='text' name='TOR_SOCKS_PORT' value='$settings{'TOR_SOCKS_PORT'}' size='5' /></td>
-					<td width='50%' class='base' colspan='2'></td>
-				</tr>
-			</table>
-
+			<br>
 			<hr size='1'>
+			<br>
 
 			<table width='100%'>
 				<tr>
@@ -224,7 +214,9 @@ END
 				</tr>
 			</table>
 
+			<br>
 			<hr size='1'>
+			<br>
 
 			<table width='100%'>
 				<tr>
@@ -250,15 +242,16 @@ END
 		print <<END;
 						</select>
 					</td>
-					<td colspan='2'>
+					<td width='50%' colspan='2'>
 						<textarea name='TOR_USE_EXIT_NODES' cols='32' rows='3' wrap='off'>$settings{'TOR_USE_EXIT_NODES'}</textarea>
 					</td>
 				</tr>
 			</table>
+			<br><br>
 END
-
-		&Header::closebox();
 	}
+
+	&Header::closebox();
 
 	if ($settings{'TOR_RELAY_ENABLED'} eq 'on') {
 		$checked{'TOR_RELAY_NOADVERTISE'}{'on'} = '';
@@ -678,9 +671,9 @@ sub BuildConfiguration() {
 
 	# Restart the service.
 	if (($settings{'TOR_ENABLED'} eq 'on') || ($settings{'TOR_RELAY_ENABLED'} eq 'on')) {
-		system("/usr/local/bin/torctrl restart");
+		system("/usr/local/bin/torctrl restart &>/dev/null");
 	} else {
-		system("/usr/local/bin/torctrl stop");
+		system("/usr/local/bin/torctrl stop &>/dev/null");
 	}
 }
 
