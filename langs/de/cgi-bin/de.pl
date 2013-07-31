@@ -1005,7 +1005,6 @@
 'fwhost err net' 		=> 'Netzwerk IP Adresse existiert bereits',
 'fwhost err mac' 		=> 'MAC Adresse ungültig',
 'fwhost err hostexist'	=> 'Ein Host mit diesem Namen existiert bereits',
-'fwhost err hostip' 	=> 'Netz- oder Broadcastadressen sind nicht erlaubt',
 'fwhost err hostorip' 	=> 'Name oder IP Adresse ungültig',
 'fwhost err isccdhost'	=> 'Dieser Name wird bereits für einen Openvpn Host verwendet',
 'fwhost err isccdipnet'	=> 'Diese IP Adresse wird bereits für einen Openvpn Netzwerk verwendet',

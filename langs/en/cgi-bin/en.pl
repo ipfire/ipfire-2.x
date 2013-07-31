@@ -1030,7 +1030,6 @@
 'fwhost err net' 		=> 'Network IP address already exists',
 'fwhost err mac' 		=> 'MAC address invalid',
 'fwhost err hostexist'	=> 'A host with this name already exists',
-'fwhost err hostip' 	=> 'Network or broadcast addresses not allowed',
 'fwhost err hostorip' 	=> 'Name or IP address invalid',
 'fwhost err isccdhost'	=> 'This name is already used by an OpenVPN client',
 'fwhost err isccdipnet'	=> 'This IP address is already used by an OpenVPN network',

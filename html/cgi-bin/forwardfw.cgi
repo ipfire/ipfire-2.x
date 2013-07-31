@@ -433,7 +433,9 @@ sub checksource
 		}
 
 		if ($fwdfwsettings{'isip'} ne 'on'){
-			if (&General::validmac($fwdfwsettings{'src_addr'})){$fwdfwsettings{'ismac'}='on';}
+			if (&General::validmac($fwdfwsettings{'src_addr'})){
+				$fwdfwsettings{'ismac'}='on';
+			}
 		}
 		if ($fwdfwsettings{'isip'} eq 'on'){
 			##check if ip is valid
@@ -445,12 +447,6 @@ sub checksource
 			$ip=&General::ip2dec($ip);
 			$ip=&General::dec2ip($ip);
 			#check if net or broadcast
-			my @tmp= split (/\./,$ip);
-			if (($tmp[3] eq "0") || ($tmp[3] eq "255"))
-			{
-				$errormessage=$Lang::tr{'fwhost err hostip'}."<br>";
-				return $errormessage;
-			}
 			$fwdfwsettings{'src_addr'}="$ip/$subnet";
 			if(!&General::validipandmask($fwdfwsettings{'src_addr'})){
 				$errormessage.=$Lang::tr{'fwdfw err src_addr'}."<br>";
@@ -1535,7 +1531,7 @@ sub newrule
 	#------SOURCE-------------------------------------------------------
 	print<<END;
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td width='60%'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' size='16' maxlength='17' ></td><td width='1%'><input type='radio' name='grp1' id='ipfire_src' value='ipfire_src'  $checked{'grp1'}{'ipfire_src'}></td><td><b>Firewall</b></td>
+		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td width='60%'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' size='16' maxlength='18' ></td><td width='1%'><input type='radio' name='grp1' id='ipfire_src' value='ipfire_src'  $checked{'grp1'}{'ipfire_src'}></td><td><b>Firewall</b></td>
 END
 		print"<td align='right'><select name='ipfire_src' style='width:200px;'>";
 		print "<option value='ALL' $selected{'ipfire_src'}{'ALL'}>$Lang::tr{'all'}</option>";
@@ -1593,7 +1589,7 @@ END
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
 		print<<END;
 		<table width='100%' border='0'>	
-		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='60%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='17'><td width='1%'><input type='radio' name='grp2' id='ipfire' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>Firewall</b></td>
+		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='60%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='18'><td width='1%'><input type='radio' name='grp2' id='ipfire' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>Firewall</b></td>
 END
 		print"<td align='right'><select name='ipfire' style='width:200px;'>";
 		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'}</option>";
