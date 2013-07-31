@@ -509,10 +509,12 @@ END
 
 		my @nodes = &TorORConnStatus($torctrl);
 		if (@nodes) {
+			my $nodes_length = scalar @nodes;
 			print <<END;
 				<table width='100%'>
 					<tr>
-						<td colspan='3' class='base'><b>$Lang::tr{'tor connected relays'}</b></td>
+						<td width='40%' class='base'><b>$Lang::tr{'tor connected relays'}</b></td>
+						<td width='60%' colspan='2'>($nodes_length)</td>
 					</tr>
 END
 
