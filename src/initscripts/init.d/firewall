@@ -158,6 +158,10 @@ iptables_init() {
 	/sbin/iptables -A INPUT -m conntrack --ctstate NEW -j WIRELESSINPUT
 	/sbin/iptables -N WIRELESSFORWARD
 	/sbin/iptables -A FORWARD -m conntrack --ctstate NEW -j WIRELESSFORWARD
+
+	# TOR
+	/sbin/iptables -N TOR_INPUT
+	/sbin/iptables -A INPUT -j TOR_INPUT
 	
 	# Jump into the actual firewall ruleset.
 	/sbin/iptables -N INPUTFW
