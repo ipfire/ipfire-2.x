@@ -35,12 +35,21 @@ case "${1}" in
 		${0} start
 		;;
 
+	reload-or-restart)
+		# Reload the process if it is already running. Otherwise, restart.
+		if pidofproc -s /usr/bin/tor; then
+			$0 reload
+		else
+			$0 restart
+		fi
+		;;
+
 	status)
 		statusproc /usr/bin/tor
 		;;
 
 	*)
-		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		echo "Usage: ${0} {start|stop|reload|restart|reload-or-restart|status}"
 		exit 1
 		;;
 esac
