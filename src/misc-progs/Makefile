@@ -165,5 +165,5 @@ wirelessclient: wirelessclient.c setuid.o ../install+setup/libsmooth/varval.o
 dnsmasqctrl: dnsmasqctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ dnsmasqctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
-torctrl: toctrl.c setuid.o ../install+setup/libsmooth/varval.o
+torctrl: torctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ torctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@

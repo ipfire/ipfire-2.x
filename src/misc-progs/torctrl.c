@@ -17,14 +17,18 @@ int main(int argc, char *argv[]) {
 		exit(1);
 
 	if (argc < 2) {
-		fprintf(stderr, "\nNo argument given.\n\ntorctrl (restart)\n\n");
+		fprintf(stderr, "\nNo argument given.\n\ntorctrl (restart|stop)\n\n");
 		exit(1);
 	}
 
 	if (strcmp(argv[1], "restart") == 0) {
 		safe_system("/etc/rc.d/init.d/tor reload-or-restart");
+
+	} else if (strcmp(argv[1], "stop") == 0) {
+		safe_system("/etc/rc.d/init.d/tor stop");
+
 	} else {
-		fprintf(stderr, "\nBad argument given.\n\ntorctrl (restart)\n\n");
+		fprintf(stderr, "\nBad argument given.\n\ntorctrl (restart|stop)\n\n");
 		exit(1);
 	}
 
