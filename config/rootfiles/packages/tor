@@ -8,7 +8,7 @@ srv/web/ipfire/cgi-bin/tor.cgi
 usr/bin/tor
 usr/bin/tor-gencert
 usr/bin/tor-resolve
-usr/bin/torify
+#usr/bin/torify
 usr/local/bin/torctrl
 #usr/share/doc/tor
 #usr/share/doc/tor/tor-gencert.html
