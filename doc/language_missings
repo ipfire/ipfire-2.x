@@ -116,6 +116,7 @@
 < snort working
 < static routes
 < system information
+< tor
 < tor accounting
 < tor accounting bytes
 < tor accounting bytes left
@@ -346,6 +347,7 @@
 < Set time on boot
 < static routes
 < system information
+< tor
 < tor accounting
 < tor accounting bytes
 < tor accounting bytes left
@@ -528,6 +530,7 @@
 < qos enter bandwidths
 < server restart
 < static routes
+< tor
 < tor accounting
 < tor accounting bytes
 < tor accounting bytes left
@@ -715,6 +718,7 @@
 < qos enter bandwidths
 < server restart
 < static routes
+< tor
 < tor accounting
 < tor accounting bytes
 < tor accounting bytes left

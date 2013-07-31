@@ -590,6 +590,7 @@ WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: server restart
 WARNING: untranslated string: static routes
+WARNING: untranslated string: tor
 WARNING: untranslated string: tor accounting
 WARNING: untranslated string: tor accounting bytes
 WARNING: untranslated string: tor accounting bytes left
