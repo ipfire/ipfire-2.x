@@ -9,8 +9,27 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+function setup_firewall() {
+	eval $(readhash /var/ipfire/tor/settings)
+
+	# Flush all rules.
+	flush_firewall
+
+	if [ "${TOR_RELAY_ENABLED}" = "on" -a -n "${TOR_RELAY_PORT}" ]; then
+		iptables -A TOR_INPUT -p tcp --dport "${TOR_RELAY_PORT}" -j ACCEPT
+	fi
+}
+
+function flush_firewall() {
+	# Flush all rules.
+	iptables -F TOR_INPUT
+}
+
 case "${1}" in
 	start)
+		# Setup firewall.
+		setup_firewall
+
 		boot_mesg "Starting tor..."
 		loadproc /usr/bin/tor \
 			--runasdaemon 1 \
@@ -20,11 +39,17 @@ case "${1}" in
 		;;
 
 	stop)
+		# Flush firewall.
+		flush_firewall
+
 		boot_mesg "Stopping tor..."
 		killproc /usr/bin/tor
 		;;
 
 	reload)
+		# Setup firewall.
+		setup_firewall
+
 		boot_mesg "Reloading tor..."
 		reloadproc /usr/bin/tor
 		;;
