@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.1.0rc1
+VER        = 5.1.0
 
 THISAPP    = strongswan-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8f31789837dd9868c279aa0c38ba82d9
+$(DL_FILE)_MD5 = c1cd0a3ba9960f590cae28c8470800e8
 
 install : $(TARGET)
 
