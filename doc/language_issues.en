@@ -437,6 +437,12 @@ WARNING: translation string unused: to email adr
 WARNING: translation string unused: to install an update
 WARNING: translation string unused: to warn email bad
 WARNING: translation string unused: too long 80 char max
+WARNING: translation string unused: tor accounting period daily
+WARNING: translation string unused: tor accounting period monthly
+WARNING: translation string unused: tor accounting period weekly
+WARNING: translation string unused: tor bridge enabled
+WARNING: translation string unused: tor errmsg invalid node id
+WARNING: translation string unused: tor exit country
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad

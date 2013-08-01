@@ -1,0 +1,6 @@
+$subipfire->{'50.tor'} = {
+	'caption' => $Lang::tr{'tor'},
+	'uri' => '/cgi-bin/tor.cgi',
+	'title' => $Lang::tr{'tor'},
+	'enabled' => 1,
+};

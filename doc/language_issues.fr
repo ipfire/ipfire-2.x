@@ -549,6 +549,13 @@ WARNING: untranslated string: ccd subnet
 WARNING: untranslated string: ccd used
 WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: dns address deleted txt
+WARNING: untranslated string: dnsforward
+WARNING: untranslated string: dnsforward add a new entry
+WARNING: untranslated string: dnsforward configuration
+WARNING: untranslated string: dnsforward edit an entry
+WARNING: untranslated string: dnsforward entries
+WARNING: untranslated string: dnsforward forward_server
+WARNING: untranslated string: dnsforward zone
 WARNING: untranslated string: emerging rules
 WARNING: untranslated string: fireinfo ipfire version
 WARNING: untranslated string: fireinfo is disabled
@@ -603,6 +610,46 @@ WARNING: untranslated string: server restart
 WARNING: untranslated string: snort working
 WARNING: untranslated string: static routes
 WARNING: untranslated string: system information
+WARNING: untranslated string: tor
+WARNING: untranslated string: tor accounting
+WARNING: untranslated string: tor accounting bytes
+WARNING: untranslated string: tor accounting bytes left
+WARNING: untranslated string: tor accounting interval
+WARNING: untranslated string: tor accounting limit
+WARNING: untranslated string: tor accounting period
+WARNING: untranslated string: tor acls
+WARNING: untranslated string: tor allowed subnets
+WARNING: untranslated string: tor bandwidth burst
+WARNING: untranslated string: tor bandwidth rate
+WARNING: untranslated string: tor bandwidth settings
+WARNING: untranslated string: tor bandwidth unlimited
+WARNING: untranslated string: tor common settings
+WARNING: untranslated string: tor configuration
+WARNING: untranslated string: tor connected relays
+WARNING: untranslated string: tor contact info
+WARNING: untranslated string: tor do not advertise relay
+WARNING: untranslated string: tor enabled
+WARNING: untranslated string: tor errmsg invalid ip or mask
+WARNING: untranslated string: tor exit country any
+WARNING: untranslated string: tor exit nodes
+WARNING: untranslated string: tor relay address
+WARNING: untranslated string: tor relay configuration
+WARNING: untranslated string: tor relay enabled
+WARNING: untranslated string: tor relay external address
+WARNING: untranslated string: tor relay fingerprint
+WARNING: untranslated string: tor relay mode
+WARNING: untranslated string: tor relay mode bridge
+WARNING: untranslated string: tor relay mode exit
+WARNING: untranslated string: tor relay mode private bridge
+WARNING: untranslated string: tor relay mode relay
+WARNING: untranslated string: tor relay nickname
+WARNING: untranslated string: tor relay port
+WARNING: untranslated string: tor socks port
+WARNING: untranslated string: tor stats
+WARNING: untranslated string: tor traffic limit hard
+WARNING: untranslated string: tor traffic limit soft
+WARNING: untranslated string: tor traffic read written
+WARNING: untranslated string: tor use exit nodes
 WARNING: untranslated string: upload new ruleset
 WARNING: untranslated string: uptime load average
 WARNING: untranslated string: urlfilter file ext block

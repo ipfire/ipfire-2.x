@@ -1840,7 +1840,7 @@ END
 	#use default advanced value
 	$cgiparams{'IKE_ENCRYPTION'} = 'aes256|aes192|aes128|3des';	#[18];
 	$cgiparams{'IKE_INTEGRITY'}  = 'sha2_256|sha|md5';	#[19];
-	$cgiparams{'IKE_GROUPTYPE'}  = '8192|6144|4096|3072|2048|1536|1024';		#[20];
+	$cgiparams{'IKE_GROUPTYPE'}  = '4096|3072|2048|1536|1024';		#[20];
 	$cgiparams{'IKE_LIFETIME'}   = '3';		#[16];
 	$cgiparams{'ESP_ENCRYPTION'} = 'aes256|aes192|aes128|3des';	#[21];
 	$cgiparams{'ESP_INTEGRITY'}  = 'sha2_256|sha1|md5';	#[22];

@@ -60,6 +60,13 @@
 < ccd used
 < deprecated fs warn
 < dns address deleted txt
+< dnsforward
+< dnsforward add a new entry
+< dnsforward configuration
+< dnsforward edit an entry
+< dnsforward entries
+< dnsforward forward_server
+< dnsforward zone
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -109,6 +116,50 @@
 < snort working
 < static routes
 < system information
+< tor
+< tor accounting
+< tor accounting bytes
+< tor accounting bytes left
+< tor accounting interval
+< tor accounting limit
+< tor accounting period
+< tor accounting period daily
+< tor accounting period monthly
+< tor accounting period weekly
+< tor acls
+< tor allowed subnets
+< tor bandwidth burst
+< tor bandwidth rate
+< tor bandwidth settings
+< tor bandwidth unlimited
+< tor common settings
+< tor configuration
+< tor connected relays
+< tor contact info
+< tor do not advertise relay
+< tor enabled
+< tor errmsg invalid ip or mask
+< tor exit country
+< tor exit country any
+< tor exit nodes
+< tor relay address
+< tor relay configuration
+< tor relay enabled
+< tor relay external address
+< tor relay fingerprint
+< tor relay mode
+< tor relay mode bridge
+< tor relay mode exit
+< tor relay mode private bridge
+< tor relay mode relay
+< tor relay nickname
+< tor relay port
+< tor socks port
+< tor stats
+< tor traffic limit hard
+< tor traffic limit soft
+< tor traffic read written
+< tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
 < upload new ruleset
@@ -224,6 +275,13 @@
 < ccd subnet
 < ccd used
 < deprecated fs warn
+< dnsforward
+< dnsforward add a new entry
+< dnsforward configuration
+< dnsforward edit an entry
+< dnsforward entries
+< dnsforward forward_server
+< dnsforward zone
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -289,6 +347,50 @@
 < Set time on boot
 < static routes
 < system information
+< tor
+< tor accounting
+< tor accounting bytes
+< tor accounting bytes left
+< tor accounting interval
+< tor accounting limit
+< tor accounting period
+< tor accounting period daily
+< tor accounting period monthly
+< tor accounting period weekly
+< tor acls
+< tor allowed subnets
+< tor bandwidth burst
+< tor bandwidth rate
+< tor bandwidth settings
+< tor bandwidth unlimited
+< tor common settings
+< tor configuration
+< tor connected relays
+< tor contact info
+< tor do not advertise relay
+< tor enabled
+< tor errmsg invalid ip or mask
+< tor exit country
+< tor exit country any
+< tor exit nodes
+< tor relay address
+< tor relay configuration
+< tor relay enabled
+< tor relay external address
+< tor relay fingerprint
+< tor relay mode
+< tor relay mode bridge
+< tor relay mode exit
+< tor relay mode private bridge
+< tor relay mode relay
+< tor relay nickname
+< tor relay port
+< tor socks port
+< tor stats
+< tor traffic limit hard
+< tor traffic limit soft
+< tor traffic read written
+< tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
 < uptime
@@ -380,6 +482,13 @@
 < ccd subnet
 < ccd used
 < deprecated fs warn
+< dnsforward
+< dnsforward add a new entry
+< dnsforward configuration
+< dnsforward edit an entry
+< dnsforward entries
+< dnsforward forward_server
+< dnsforward zone
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -421,6 +530,50 @@
 < qos enter bandwidths
 < server restart
 < static routes
+< tor
+< tor accounting
+< tor accounting bytes
+< tor accounting bytes left
+< tor accounting interval
+< tor accounting limit
+< tor accounting period
+< tor accounting period daily
+< tor accounting period monthly
+< tor accounting period weekly
+< tor acls
+< tor allowed subnets
+< tor bandwidth burst
+< tor bandwidth rate
+< tor bandwidth settings
+< tor bandwidth unlimited
+< tor common settings
+< tor configuration
+< tor connected relays
+< tor contact info
+< tor do not advertise relay
+< tor enabled
+< tor errmsg invalid ip or mask
+< tor exit country
+< tor exit country any
+< tor exit nodes
+< tor relay address
+< tor relay configuration
+< tor relay enabled
+< tor relay external address
+< tor relay fingerprint
+< tor relay mode
+< tor relay mode bridge
+< tor relay mode exit
+< tor relay mode private bridge
+< tor relay mode relay
+< tor relay nickname
+< tor relay port
+< tor socks port
+< tor stats
+< tor traffic limit hard
+< tor traffic limit soft
+< tor traffic read written
+< tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
 < uptime
@@ -515,6 +668,13 @@
 < day-graph
 < deprecated fs warn
 < disk access per
+< dnsforward
+< dnsforward add a new entry
+< dnsforward configuration
+< dnsforward edit an entry
+< dnsforward entries
+< dnsforward forward_server
+< dnsforward zone
 < Edit an existing route
 < extrahd because there is already a device mounted
 < extrahd cant umount
@@ -558,6 +718,50 @@
 < qos enter bandwidths
 < server restart
 < static routes
+< tor
+< tor accounting
+< tor accounting bytes
+< tor accounting bytes left
+< tor accounting interval
+< tor accounting limit
+< tor accounting period
+< tor accounting period daily
+< tor accounting period monthly
+< tor accounting period weekly
+< tor acls
+< tor allowed subnets
+< tor bandwidth burst
+< tor bandwidth rate
+< tor bandwidth settings
+< tor bandwidth unlimited
+< tor common settings
+< tor configuration
+< tor connected relays
+< tor contact info
+< tor do not advertise relay
+< tor enabled
+< tor errmsg invalid ip or mask
+< tor exit country
+< tor exit country any
+< tor exit nodes
+< tor relay address
+< tor relay configuration
+< tor relay enabled
+< tor relay external address
+< tor relay fingerprint
+< tor relay mode
+< tor relay mode bridge
+< tor relay mode exit
+< tor relay mode private bridge
+< tor relay mode relay
+< tor relay nickname
+< tor relay port
+< tor socks port
+< tor stats
+< tor traffic limit hard
+< tor traffic limit soft
+< tor traffic read written
+< tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
 < uptime
