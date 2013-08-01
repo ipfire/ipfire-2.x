@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2013   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -95,7 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf /var/ipfire/tor/torrc /etc/tor/torrc
 
 	# Adjust ownerships.
-	chown nobody:nobody /var/lib/tor /var/ipfire/tor
+	chown -R nobody:nobody /var/lib/tor /var/ipfire/tor
 
 	# Logrotate
 	mkdir -pv /etc/logrotate.d
