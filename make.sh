@@ -333,6 +333,7 @@ buildbase() {
     lfsmake2 gettext
     lfsmake2 grep
     lfsmake2 groff
+    lfsmake2 gperf
     lfsmake2 gzip
     lfsmake2 inetutils
     lfsmake2 iproute2
