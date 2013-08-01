@@ -34,6 +34,7 @@ done
 
 #
 #Stop services
+ipsec stop
 
 
 #
@@ -43,6 +44,7 @@ extract_files
 
 #
 #Start services
+ipsec start
 
 #
 #Update Language cache
