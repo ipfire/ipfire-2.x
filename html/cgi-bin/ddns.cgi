@@ -232,6 +232,7 @@ if ($settings{'ACTION'} eq '')
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 my %checked =();     # Checkbox manipulations
+$checked{'SERVICE'}{'all-inkl.com'} = '';
 $checked{'SERVICE'}{'cjb.net'} = '';
 $checked{'SERVICE'}{'dhs.org'} = '';
 $checked{'SERVICE'}{'dnspark.com'} = '';
@@ -327,6 +328,7 @@ print <<END
 <tr>
     <td width='25%' class='base'>$Lang::tr{'service'}:</td>
     <td width='25%'><select size='1' name='SERVICE'>
+    <option $checked{'SERVICE'}{'all-inkl.com'}>all-inkl.com</option>
     <option $checked{'SERVICE'}{'cjb.net'}>cjb.net</option>
     <option $checked{'SERVICE'}{'dhs.org'}>dhs.org</option>
     <option $checked{'SERVICE'}{'dnspark.com'}>dnspark.com</option>
