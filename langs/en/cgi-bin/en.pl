@@ -1857,6 +1857,8 @@
 'tor errmsg invalid ip or mask' => 'Invalid IP subnet',
 'tor errmsg invalid node id' => 'Invalid node ID',
 'tor errmsg invalid relay name' => 'Invalid relay nickname',
+'tor errmsg invalid relay port' => 'Invalid relay port',
+'tor errmsg invalid socks port' => 'Invalid SOCKS port',
 'tor exit country' => 'Exit country',
 'tor exit country any' => 'Any country',
 'tor exit nodes' => 'Exit Nodes',

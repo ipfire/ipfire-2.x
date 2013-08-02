@@ -140,6 +140,8 @@
 < tor enabled
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay name
+< tor errmsg invalid relay port
+< tor errmsg invalid socks port
 < tor exit country
 < tor exit country any
 < tor exit nodes
@@ -372,6 +374,8 @@
 < tor enabled
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay name
+< tor errmsg invalid relay port
+< tor errmsg invalid socks port
 < tor exit country
 < tor exit country any
 < tor exit nodes
@@ -556,6 +560,8 @@
 < tor enabled
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay name
+< tor errmsg invalid relay port
+< tor errmsg invalid socks port
 < tor exit country
 < tor exit country any
 < tor exit nodes
@@ -745,6 +751,8 @@
 < tor enabled
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay name
+< tor errmsg invalid relay port
+< tor errmsg invalid socks port
 < tor exit country
 < tor exit country any
 < tor exit nodes

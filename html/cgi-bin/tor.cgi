@@ -101,6 +101,14 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		$errormessage = "$Lang::tr{'tor errmsg invalid relay name'}: $settings{'TOR_RELAY_NICKNAME'}";
 	}
 
+	if (!&General::validport($settings{'TOR_SOCKS_PORT'})) {
+		$errormessage = "$Lang::tr{'tor errmsg invalid socks port'}: $settings{'TOR_SOCKS_PORT'}";
+	}
+
+	if (!&General::validport($settings{'TOR_RELAY_PORT'})) {
+		$errormessage = "$Lang::tr{'tor errmsg invalid relay port'}: $settings{'TOR_RELAY_PORT'}";
+	}
+
 	my @temp = split(/[\n,]/,$settings{'TOR_ALLOWED_SUBNETS'});
 	$settings{'TOR_ALLOWED_SUBNETS'} = "";
 	foreach (@temp) {

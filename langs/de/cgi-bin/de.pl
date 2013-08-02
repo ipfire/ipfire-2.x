@@ -1821,6 +1821,8 @@
 'tor enabled' => 'Tor einschalten',
 'tor errmsg invalid ip or mask' => 'Ungültiges IP-Subnetz',
 'tor errmsg invalid relay name' => 'Ungültiger Relay-Nickname.',
+'tor errmsg invalid relay port' => 'Ungültiger Relay-Port',
+'tor errmsg invalid socks port' => 'Ungültiger SOCKS-Port',
 'tor exit country' => 'Exit-Land',
 'tor exit country any' => 'Beliebig',
 'tor exit nodes' => 'Exit-Nodes',

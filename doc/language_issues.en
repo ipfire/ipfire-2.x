@@ -442,7 +442,6 @@ WARNING: translation string unused: tor accounting period monthly
 WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor bridge enabled
 WARNING: translation string unused: tor errmsg invalid node id
-WARNING: translation string unused: tor errmsg invalid relay name
 WARNING: translation string unused: tor exit country
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
