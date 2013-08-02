@@ -98,8 +98,10 @@ our $torctrl = &TorConnect();
 
 # Toggle enable/disable field.
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
-	if ($settings{'TOR_RELAY_NICKNAME'} !~ /^[a-zA-Z0-9]+$/) {
-		$errormessage = "$Lang::tr{'tor errmsg invalid relay name'}: $settings{'TOR_RELAY_NICKNAME'}";
+	if ($settings{'TOR_RELAY_NICKNAME'} ne '') {
+		if ($settings{'TOR_RELAY_NICKNAME'} !~ /^[a-zA-Z0-9]+$/) {
+			$errormessage = "$Lang::tr{'tor errmsg invalid relay name'}: $settings{'TOR_RELAY_NICKNAME'}";
+		}
 	}
 
 	if (!&General::validport($settings{'TOR_SOCKS_PORT'})) {
@@ -213,211 +215,208 @@ sub showMainBox() {
 		</table>
 END
 
-	if ($settings{'TOR_ENABLED'} eq 'on') {
-		my @temp = split(",", $settings{'TOR_ALLOWED_SUBNETS'});
-		$settings{'TOR_ALLOWED_SUBNETS'} = join("\n", @temp);
+	my @temp = split(",", $settings{'TOR_ALLOWED_SUBNETS'});
+	$settings{'TOR_ALLOWED_SUBNETS'} = join("\n", @temp);
 
-		@temp = split(",", $settings{'TOR_USE_EXIT_NODES'});
-		$settings{'TOR_USE_EXIT_NODES'} = join("\n", @temp);
+	@temp = split(",", $settings{'TOR_USE_EXIT_NODES'});
+	$settings{'TOR_USE_EXIT_NODES'} = join("\n", @temp);
 
-		print <<END;
-			<br>
-			<hr size='1'>
-			<br>
+	print <<END;
+		<br>
+		<hr size='1'>
+		<br>
 
-			<table width='100%'>
-				<tr>
-					<td colspan='4' class='base'><b>$Lang::tr{'tor acls'}</b></td>
-				</tr>
-				<tr>
-					<td colspan='2' class='base' width='55%'>
-						$Lang::tr{'tor allowed subnets'}:
-					</td>
-					<td colspan='2' width='45%'></td>
-				</tr>
-				<tr>
-					<td colspan='2' class='base' width='55%'>
-						<textarea name='TOR_ALLOWED_SUBNETS' cols='32' rows='3' wrap='off'>$settings{'TOR_ALLOWED_SUBNETS'}</textarea>
-					</td>
-					<td colspan='2' width='45%'></td>
-				</tr>
-			</table>
+		<table width='100%'>
+			<tr>
+				<td colspan='4' class='base'><b>$Lang::tr{'tor acls'}</b></td>
+			</tr>
+			<tr>
+				<td colspan='2' class='base' width='55%'>
+					$Lang::tr{'tor allowed subnets'}:
+				</td>
+				<td colspan='2' width='45%'></td>
+			</tr>
+			<tr>
+				<td colspan='2' class='base' width='55%'>
+					<textarea name='TOR_ALLOWED_SUBNETS' cols='32' rows='3' wrap='off'>$settings{'TOR_ALLOWED_SUBNETS'}</textarea>
+				</td>
+				<td colspan='2' width='45%'></td>
+			</tr>
+		</table>
 
-			<br>
-			<hr size='1'>
-			<br>
+		<br>
+		<hr size='1'>
+		<br>
 
-			<table width='100%'>
-				<tr>
-					<td colspan='4' class='base'><b>$Lang::tr{'tor exit nodes'}</b></td>
-				</tr>
-				<tr>
-					<td colspan='2' class='base' width='55%'></td>
-					<td colspan='2' class='base' width='45%'>$Lang::tr{'tor use exit nodes'}:</td>
-				</tr>
-				<tr>
-					<td width='50%' colspan='2'>
-						<select name='TOR_EXIT_COUNTRY'>
-							<option value=''>- $Lang::tr{'tor exit country any'} -</option>
+		<table width='100%'>
+			<tr>
+				<td colspan='4' class='base'><b>$Lang::tr{'tor exit nodes'}</b></td>
+			</tr>
+			<tr>
+				<td colspan='2' class='base' width='55%'></td>
+				<td colspan='2' class='base' width='45%'>$Lang::tr{'tor use exit nodes'}:</td>
+			</tr>
+			<tr>
+				<td width='50%' colspan='2'>
+					<select name='TOR_EXIT_COUNTRY'>
+						<option value=''>- $Lang::tr{'tor exit country any'} -</option>
 END
 
-			my @country_names = Locale::Country::all_country_names();
-			foreach my $country_name (sort @country_names) {
-				my $country_code = Locale::Country::country2code($country_name);
-				$country_code = uc($country_code);
-				print "<option value='$country_code'>$country_name ($country_code)</option>\n";
-			}
+		my @country_names = Locale::Country::all_country_names();
+		foreach my $country_name (sort @country_names) {
+			my $country_code = Locale::Country::country2code($country_name);
+			$country_code = uc($country_code);
+			print "<option value='$country_code'>$country_name ($country_code)</option>\n";
+		}
 
-		print <<END;
-						</select>
-					</td>
-					<td width='50%' colspan='2'>
-						<textarea name='TOR_USE_EXIT_NODES' cols='32' rows='3' wrap='off'>$settings{'TOR_USE_EXIT_NODES'}</textarea>
-					</td>
-				</tr>
-			</table>
-			<br><br>
+	print <<END;
+					</select>
+				</td>
+				<td width='50%' colspan='2'>
+					<textarea name='TOR_USE_EXIT_NODES' cols='32' rows='3' wrap='off'>$settings{'TOR_USE_EXIT_NODES'}</textarea>
+				</td>
+			</tr>
+		</table>
+		<br><br>
 END
-	}
 
 	&Header::closebox();
 
-	if ($settings{'TOR_RELAY_ENABLED'} eq 'on') {
-		$checked{'TOR_RELAY_NOADVERTISE'}{'on'} = '';
-		$checked{'TOR_RELAY_NOADVERTISE'}{'off'} = '';
-		$checked{'TOR_RELAY_NOADVERTISE'}{$settings{'TOR_RELAY_NOADVERTISE'}} = 'checked';
+	# Tor relay box
+	$checked{'TOR_RELAY_NOADVERTISE'}{'on'} = '';
+	$checked{'TOR_RELAY_NOADVERTISE'}{'off'} = '';
+	$checked{'TOR_RELAY_NOADVERTISE'}{$settings{'TOR_RELAY_NOADVERTISE'}} = 'checked';
 
-		$selected{'TOR_RELAY_MODE'}{'bridge'} = '';
-		$selected{'TOR_RELAY_MODE'}{'exit'} = '';
-		$selected{'TOR_RELAY_MODE'}{'private-bridge'} = '';
-		$selected{'TOR_RELAY_MODE'}{'relay'} = '';
-		$selected{'TOR_RELAY_MODE'}{$settings{'TOR_RELAY_MODE'}} = 'selected';
+	$selected{'TOR_RELAY_MODE'}{'bridge'} = '';
+	$selected{'TOR_RELAY_MODE'}{'exit'} = '';
+	$selected{'TOR_RELAY_MODE'}{'private-bridge'} = '';
+	$selected{'TOR_RELAY_MODE'}{'relay'} = '';
+	$selected{'TOR_RELAY_MODE'}{$settings{'TOR_RELAY_MODE'}} = 'selected';
 
-		$selected{'TOR_RELAY_BANDWIDTH_RATE'}{'0'} = '';
-		foreach (@bandwidth_limits) {
-			$selected{'TOR_RELAY_BANDWIDTH_RATE'}{$_} = '';
-		}
-		$selected{'TOR_RELAY_BANDWIDTH_RATE'}{$settings{'TOR_RELAY_BANDWIDTH_RATE'}} = 'selected';
-
-		$selected{'TOR_RELAY_BANDWIDTH_BURST'}{'0'} = '';
-		foreach (@bandwidth_limits) {
-			$selected{'TOR_RELAY_BANDWIDTH_BURST'}{$_} = '';
-		}
-		$selected{'TOR_RELAY_BANDWIDTH_BURST'}{$settings{'TOR_RELAY_BANDWIDTH_BURST'}} = 'selected';
-
-		foreach (@accounting_periods) {
-			$selected{'TOR_RELAY_ACCOUNTING_PERIOD'}{$_} = '';
-		}
-		$selected{'TOR_RELAY_ACCOUNTING_PERIOD'}{$settings{'TOR_RELAY_ACCOUNTING_PERIOD'}} = 'selected';
-
-		&Header::openbox('100%', 'left', $Lang::tr{'tor relay configuration'});
-
-		print <<END;
-			<table width='100%'>
-				<tr>
-					<td width='25%' class='base'>$Lang::tr{'tor relay mode'}:</td>
-					<td width='30%'>
-						<select name='TOR_RELAY_MODE'>
-							<option value='exit' $selected{'TOR_RELAY_MODE'}{'exit'}>$Lang::tr{'tor relay mode exit'}</option>
-							<option value='relay' $selected{'TOR_RELAY_MODE'}{'relay'}>$Lang::tr{'tor relay mode relay'}</option>
-							<option value='bridge' $selected{'TOR_RELAY_MODE'}{'bridge'}>$Lang::tr{'tor relay mode bridge'}</option>
-							<option value='private-bridge' $selected{'TOR_RELAY_MODE'}{'private-bridge'}>$Lang::tr{'tor relay mode private bridge'}</option>
-						</select>
-					</td>
-					<td width='25%' class='base'>$Lang::tr{'tor relay port'}:</td>
-					<td width='20%'>
-						<input type='text' name='TOR_RELAY_PORT' value='$settings{'TOR_RELAY_PORT'}' size='5' />
-					</td>
-				</tr>
-				<tr>
-					<td width='25%' class='base'>$Lang::tr{'tor relay address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-					<td width='30%'>
-						<input type='text' name='TOR_RELAY_ADDRESS' value='$settings{'TOR_RELAY_ADDRESS'}' />
-					</td>
-					<td width='25%' class='base'>$Lang::tr{'tor do not advertise relay'}:</td>
-					<td width='20%'>
-						<input type='checkbox' name='TOR_RELAY_NOADVERTISE' $checked{'TOR_RELAY_NOADVERTISE'}{'on'} />
-					</td>
-				</tr>
-				<tr>
-					<td width='25%' class='base'>$Lang::tr{'tor relay nickname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-					<td width='30%'>
-						<input type='text' name='TOR_RELAY_NICKNAME' value='$settings{'TOR_RELAY_NICKNAME'}' />
-					</td>
-					<td colspan='2'></td>
-				</tr>
-				<tr>
-					<td width='25%' class='base'>$Lang::tr{'tor contact info'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-					<td width='75%' colspan='3'>
-						<input type='text' name='TOR_RELAY_CONTACT_INFO' value='$settings{'TOR_RELAY_CONTACT_INFO'}' size='60' />
-					</td>
-				</tr>
-			</table>
-
-			<hr size='1'>
-
-			<table width='100%'>
-				<tr>
-					<td colspan='4' class='base'><b>$Lang::tr{'tor bandwidth settings'}</b></td>
-				</tr>
-				<tr>
-					<td width='25%' class='base'>$Lang::tr{'tor bandwidth rate'}:</td>
-					<td width='30%' class='base'>
-						<select name='TOR_RELAY_BANDWIDTH_RATE'>
-END
-
-		foreach (@bandwidth_limits) {
-			if ($_ >= 1024) {
-				print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_RATE'}{$_}>". $_ / 1024 ." MBit/s</option>\n";
-			} else {
-				print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_RATE'}{$_}>$_ kBit/s</option>\n";
-			}
-		}
-
-		print <<END;
-							<option value='0' $selected{'TOR_RELAY_BANDWIDTH_RATE'}{'0'}>$Lang::tr{'tor bandwidth unlimited'}</option>
-						</select>
-					</td>
-					<td width='25%' class='base'>$Lang::tr{'tor accounting limit'}:</td>
-					<td width='20%'>
-						<input type='text' name='TOR_RELAY_ACCOUNTING_LIMIT' value='$settings{'TOR_RELAY_ACCOUNTING_LIMIT'}' size='12' />
-					</td>
-				</tr>
-				<tr>
-					<td width='25%' class='base'>$Lang::tr{'tor bandwidth burst'}:</td>
-					<td width='20%' class='base'>
-						<select name='TOR_RELAY_BANDWIDTH_BURST'>
-END
-
-		foreach (@bandwidth_limits) {
-			if ($_ >= 1024) {
-				print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_BURST'}{$_}>". $_ / 1024 ." MBit/s</option>\n";
-			} else {
-				print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_BURST'}{$_}>$_ kBit/s</option>\n";
-			}
-		}
-		print <<END;
-							<option value='0' $selected{'TOR_RELAY_BANDWIDTH_BURST'}{'0'}>$Lang::tr{'tor bandwidth unlimited'}</option>
-						</select>
-					</td>
-					<td width='25%' class='base'>$Lang::tr{'tor accounting period'}:</td>
-					<td width='20%'>
-						<select name='TOR_RELAY_ACCOUNTING_PERIOD'>
-END
-
-		foreach (@accounting_periods) {
-			print "<option value='$_' $selected{'TOR_RELAY_ACCOUNTING_PERIOD'}{$_}>$Lang::tr{'tor accounting period '.$_}</option>";
-		}
-
-		print <<END;
-						</select>
-					</td>
-				</tr>
-			</table>
-END
-
-		&Header::closebox();
+	$selected{'TOR_RELAY_BANDWIDTH_RATE'}{'0'} = '';
+	foreach (@bandwidth_limits) {
+		$selected{'TOR_RELAY_BANDWIDTH_RATE'}{$_} = '';
 	}
+	$selected{'TOR_RELAY_BANDWIDTH_RATE'}{$settings{'TOR_RELAY_BANDWIDTH_RATE'}} = 'selected';
+
+	$selected{'TOR_RELAY_BANDWIDTH_BURST'}{'0'} = '';
+	foreach (@bandwidth_limits) {
+		$selected{'TOR_RELAY_BANDWIDTH_BURST'}{$_} = '';
+	}
+	$selected{'TOR_RELAY_BANDWIDTH_BURST'}{$settings{'TOR_RELAY_BANDWIDTH_BURST'}} = 'selected';
+
+	foreach (@accounting_periods) {
+		$selected{'TOR_RELAY_ACCOUNTING_PERIOD'}{$_} = '';
+	}
+	$selected{'TOR_RELAY_ACCOUNTING_PERIOD'}{$settings{'TOR_RELAY_ACCOUNTING_PERIOD'}} = 'selected';
+
+	&Header::openbox('100%', 'left', $Lang::tr{'tor relay configuration'});
+
+	print <<END;
+		<table width='100%'>
+			<tr>
+				<td width='25%' class='base'>$Lang::tr{'tor relay mode'}:</td>
+				<td width='30%'>
+					<select name='TOR_RELAY_MODE'>
+						<option value='exit' $selected{'TOR_RELAY_MODE'}{'exit'}>$Lang::tr{'tor relay mode exit'}</option>
+						<option value='relay' $selected{'TOR_RELAY_MODE'}{'relay'}>$Lang::tr{'tor relay mode relay'}</option>
+						<option value='bridge' $selected{'TOR_RELAY_MODE'}{'bridge'}>$Lang::tr{'tor relay mode bridge'}</option>
+						<option value='private-bridge' $selected{'TOR_RELAY_MODE'}{'private-bridge'}>$Lang::tr{'tor relay mode private bridge'}</option>
+					</select>
+				</td>
+				<td width='25%' class='base'>$Lang::tr{'tor relay port'}:</td>
+				<td width='20%'>
+					<input type='text' name='TOR_RELAY_PORT' value='$settings{'TOR_RELAY_PORT'}' size='5' />
+				</td>
+			</tr>
+			<tr>
+				<td width='25%' class='base'>$Lang::tr{'tor relay address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+				<td width='30%'>
+					<input type='text' name='TOR_RELAY_ADDRESS' value='$settings{'TOR_RELAY_ADDRESS'}' />
+				</td>
+				<td width='25%' class='base'>$Lang::tr{'tor do not advertise relay'}:</td>
+				<td width='20%'>
+					<input type='checkbox' name='TOR_RELAY_NOADVERTISE' $checked{'TOR_RELAY_NOADVERTISE'}{'on'} />
+				</td>
+			</tr>
+			<tr>
+				<td width='25%' class='base'>$Lang::tr{'tor relay nickname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+				<td width='30%'>
+					<input type='text' name='TOR_RELAY_NICKNAME' value='$settings{'TOR_RELAY_NICKNAME'}' />
+				</td>
+				<td colspan='2'></td>
+			</tr>
+			<tr>
+				<td width='25%' class='base'>$Lang::tr{'tor contact info'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+				<td width='75%' colspan='3'>
+					<input type='text' name='TOR_RELAY_CONTACT_INFO' value='$settings{'TOR_RELAY_CONTACT_INFO'}' size='60' />
+				</td>
+			</tr>
+		</table>
+
+		<hr size='1'>
+
+		<table width='100%'>
+			<tr>
+				<td colspan='4' class='base'><b>$Lang::tr{'tor bandwidth settings'}</b></td>
+			</tr>
+			<tr>
+				<td width='25%' class='base'>$Lang::tr{'tor bandwidth rate'}:</td>
+				<td width='30%' class='base'>
+					<select name='TOR_RELAY_BANDWIDTH_RATE'>
+END
+
+	foreach (@bandwidth_limits) {
+		if ($_ >= 1024) {
+			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_RATE'}{$_}>". $_ / 1024 ." MBit/s</option>\n";
+		} else {
+			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_RATE'}{$_}>$_ kBit/s</option>\n";
+		}
+	}
+
+	print <<END;
+						<option value='0' $selected{'TOR_RELAY_BANDWIDTH_RATE'}{'0'}>$Lang::tr{'tor bandwidth unlimited'}</option>
+					</select>
+				</td>
+				<td width='25%' class='base'>$Lang::tr{'tor accounting limit'}:</td>
+				<td width='20%'>
+					<input type='text' name='TOR_RELAY_ACCOUNTING_LIMIT' value='$settings{'TOR_RELAY_ACCOUNTING_LIMIT'}' size='12' />
+				</td>
+			</tr>
+			<tr>
+				<td width='25%' class='base'>$Lang::tr{'tor bandwidth burst'}:</td>
+				<td width='20%' class='base'>
+					<select name='TOR_RELAY_BANDWIDTH_BURST'>
+END
+
+	foreach (@bandwidth_limits) {
+		if ($_ >= 1024) {
+			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_BURST'}{$_}>". $_ / 1024 ." MBit/s</option>\n";
+		} else {
+			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_BURST'}{$_}>$_ kBit/s</option>\n";
+		}
+	}
+	print <<END;
+						<option value='0' $selected{'TOR_RELAY_BANDWIDTH_BURST'}{'0'}>$Lang::tr{'tor bandwidth unlimited'}</option>
+					</select>
+				</td>
+				<td width='25%' class='base'>$Lang::tr{'tor accounting period'}:</td>
+				<td width='20%'>
+					<select name='TOR_RELAY_ACCOUNTING_PERIOD'>
+END
+
+	foreach (@accounting_periods) {
+		print "<option value='$_' $selected{'TOR_RELAY_ACCOUNTING_PERIOD'}{$_}>$Lang::tr{'tor accounting period '.$_}</option>";
+	}
+
+	print <<END;
+					</select>
+				</td>
+			</tr>
+		</table>
+END
+
+	&Header::closebox();
 
 	print <<END;
 		<table width='100%'>
