@@ -10,7 +10,7 @@
 . ${rc_functions}
 
 function setup_firewall() {
-	eval $(readhash /var/ipfire/tor/settings)
+	eval $(/usr/local/bin/readhash /var/ipfire/tor/settings)
 
 	# Flush all rules.
 	flush_firewall
