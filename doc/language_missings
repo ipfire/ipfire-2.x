@@ -138,6 +138,7 @@
 < tor contact info
 < tor do not advertise relay
 < tor enabled
+< tor errmsg invalid accounting limit
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay address
 < tor errmsg invalid relay name
@@ -373,6 +374,7 @@
 < tor contact info
 < tor do not advertise relay
 < tor enabled
+< tor errmsg invalid accounting limit
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay address
 < tor errmsg invalid relay name
@@ -560,6 +562,7 @@
 < tor contact info
 < tor do not advertise relay
 < tor enabled
+< tor errmsg invalid accounting limit
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay address
 < tor errmsg invalid relay name
@@ -752,6 +755,7 @@
 < tor contact info
 < tor do not advertise relay
 < tor enabled
+< tor errmsg invalid accounting limit
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay address
 < tor errmsg invalid relay name

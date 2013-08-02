@@ -609,6 +609,7 @@ WARNING: untranslated string: tor connected relays
 WARNING: untranslated string: tor contact info
 WARNING: untranslated string: tor do not advertise relay
 WARNING: untranslated string: tor enabled
+WARNING: untranslated string: tor errmsg invalid accounting limit
 WARNING: untranslated string: tor errmsg invalid ip or mask
 WARNING: untranslated string: tor errmsg invalid relay address
 WARNING: untranslated string: tor errmsg invalid relay name

@@ -1819,6 +1819,7 @@
 'tor contact info' => 'Kontaktinformationen',
 'tor do not advertise relay' => 'Relay nicht announcieren',
 'tor enabled' => 'Tor einschalten',
+'tor errmsg invalid accounting limit' => 'Ungültiges Accounting-Limit',
 'tor errmsg invalid ip or mask' => 'Ungültiges IP-Subnetz',
 'tor errmsg invalid relay address' => 'Ungültige Relay-Adresse',
 'tor errmsg invalid relay name' => 'Ungültiger Relay-Nickname.',

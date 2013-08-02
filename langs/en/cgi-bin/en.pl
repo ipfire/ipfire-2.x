@@ -1854,6 +1854,7 @@
 'tor contact info' => 'Contact Info',
 'tor do not advertise relay' => 'Do not advertise the relay',
 'tor enabled' => 'Enable Tor',
+'tor errmsg invalid accounting limit' => 'Invalid accounting limit',
 'tor errmsg invalid ip or mask' => 'Invalid IP subnet',
 'tor errmsg invalid node id' => 'Invalid node ID',
 'tor errmsg invalid relay address' => 'Invalid relay address',

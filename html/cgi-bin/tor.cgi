@@ -116,6 +116,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		}
 	}
 
+	if ($settings{'TOR_RELAY_ACCOUNTING_LIMIT'} !~ /^\d+$/) {
+		$errormessage = "$Lang::tr{'tor errmsg invalid accounting limit'}: $settings{'TOR_RELAY_ACCOUNTING_LIMIT'}";
+	}
+
 	my @temp = split(/[\n,]/,$settings{'TOR_ALLOWED_SUBNETS'});
 	$settings{'TOR_ALLOWED_SUBNETS'} = "";
 	foreach (@temp) {
