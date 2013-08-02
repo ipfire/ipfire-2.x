@@ -1820,6 +1820,7 @@
 'tor do not advertise relay' => 'Relay nicht announcieren',
 'tor enabled' => 'Tor einschalten',
 'tor errmsg invalid ip or mask' => 'Ungültiges IP-Subnetz',
+'tor errmsg invalid relay name' => 'Ungültiger Relay-Nickname.',
 'tor exit country' => 'Exit-Land',
 'tor exit country any' => 'Beliebig',
 'tor exit nodes' => 'Exit-Nodes',

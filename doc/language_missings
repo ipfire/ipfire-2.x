@@ -139,6 +139,7 @@
 < tor do not advertise relay
 < tor enabled
 < tor errmsg invalid ip or mask
+< tor errmsg invalid relay name
 < tor exit country
 < tor exit country any
 < tor exit nodes
@@ -370,6 +371,7 @@
 < tor do not advertise relay
 < tor enabled
 < tor errmsg invalid ip or mask
+< tor errmsg invalid relay name
 < tor exit country
 < tor exit country any
 < tor exit nodes
@@ -553,6 +555,7 @@
 < tor do not advertise relay
 < tor enabled
 < tor errmsg invalid ip or mask
+< tor errmsg invalid relay name
 < tor exit country
 < tor exit country any
 < tor exit nodes
@@ -741,6 +744,7 @@
 < tor do not advertise relay
 < tor enabled
 < tor errmsg invalid ip or mask
+< tor errmsg invalid relay name
 < tor exit country
 < tor exit country any
 < tor exit nodes

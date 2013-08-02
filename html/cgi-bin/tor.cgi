@@ -74,6 +74,8 @@ if (&Header::blue_used()) {
 $settings{'TOR_RELAY_ENABLED'} = 'off';
 $settings{'TOR_RELAY_MODE'} = 'exit';
 $settings{'TOR_RELAY_PORT'} = 9001;
+$settings{'TOR_RELAY_NICKNAME'} = '';
+$settings{'TOR_RELAY_CONTACT_INFO'} = '';
 $settings{'TOR_RELAY_NOADVERTISE'} = 'off';
 $settings{'TOR_RELAY_BANDWIDTH_RATE'} = 0;
 $settings{'TOR_RELAY_BANDWIDTH_BURST'} = 0;
@@ -95,6 +97,10 @@ our $torctrl = &TorConnect();
 
 # Toggle enable/disable field.
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
+	if ($settings{'TOR_RELAY_NICKNAME'} !~ /^[a-zA-Z0-9]+$/) {
+		$errormessage = "$Lang::tr{'tor errmsg invalid relay name'}: $settings{'TOR_RELAY_NICKNAME'}";
+	}
+
 	my @temp = split(/[\n,]/,$settings{'TOR_ALLOWED_SUBNETS'});
 	$settings{'TOR_ALLOWED_SUBNETS'} = "";
 	foreach (@temp) {
@@ -131,13 +137,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		# Update configuration files.
 		&BuildConfiguration();
 	}
-
-	# Reset ACTION.
-	$settings{'ACTION'} = '';
+} else {
+	# Load settings from file.
+	&General::readhash("${General::swroot}/tor/settings", \%settings);
 }
-
-# Load settings from file.
-&General::readhash("${General::swroot}/tor/settings", \%settings);
 
 &showMainBox();
 
