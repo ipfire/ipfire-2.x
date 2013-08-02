@@ -139,6 +139,7 @@
 < tor do not advertise relay
 < tor enabled
 < tor errmsg invalid ip or mask
+< tor errmsg invalid relay address
 < tor errmsg invalid relay name
 < tor errmsg invalid relay port
 < tor errmsg invalid socks port
@@ -373,6 +374,7 @@
 < tor do not advertise relay
 < tor enabled
 < tor errmsg invalid ip or mask
+< tor errmsg invalid relay address
 < tor errmsg invalid relay name
 < tor errmsg invalid relay port
 < tor errmsg invalid socks port
@@ -559,6 +561,7 @@
 < tor do not advertise relay
 < tor enabled
 < tor errmsg invalid ip or mask
+< tor errmsg invalid relay address
 < tor errmsg invalid relay name
 < tor errmsg invalid relay port
 < tor errmsg invalid socks port
@@ -750,6 +753,7 @@
 < tor do not advertise relay
 < tor enabled
 < tor errmsg invalid ip or mask
+< tor errmsg invalid relay address
 < tor errmsg invalid relay name
 < tor errmsg invalid relay port
 < tor errmsg invalid socks port

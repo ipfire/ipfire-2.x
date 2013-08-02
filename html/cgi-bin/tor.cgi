@@ -73,6 +73,7 @@ if (&Header::blue_used()) {
 
 $settings{'TOR_RELAY_ENABLED'} = 'off';
 $settings{'TOR_RELAY_MODE'} = 'exit';
+$settings{'TOR_RELAY_ADDRESS'} = '';
 $settings{'TOR_RELAY_PORT'} = 9001;
 $settings{'TOR_RELAY_NICKNAME'} = '';
 $settings{'TOR_RELAY_CONTACT_INFO'} = '';
@@ -107,6 +108,12 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 
 	if (!&General::validport($settings{'TOR_RELAY_PORT'})) {
 		$errormessage = "$Lang::tr{'tor errmsg invalid relay port'}: $settings{'TOR_RELAY_PORT'}";
+	}
+
+	if ($settings{'TOR_RELAY_ADDRESS'} ne '') {
+		if ((!&General::validfqdn($settings{'TOR_RELAY_ADDRESS'})) && (!&General::validip($settings{'TOR_RELAY_ADDRESS'}))) {
+			$errormessage = "$Lang::tr{'tor errmsg invalid relay address'}: $settings{'TOR_RELAY_ADDRESS'}";
+		}
 	}
 
 	my @temp = split(/[\n,]/,$settings{'TOR_ALLOWED_SUBNETS'});

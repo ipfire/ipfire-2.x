@@ -645,6 +645,7 @@ WARNING: untranslated string: tor contact info
 WARNING: untranslated string: tor do not advertise relay
 WARNING: untranslated string: tor enabled
 WARNING: untranslated string: tor errmsg invalid ip or mask
+WARNING: untranslated string: tor errmsg invalid relay address
 WARNING: untranslated string: tor errmsg invalid relay name
 WARNING: untranslated string: tor errmsg invalid relay port
 WARNING: untranslated string: tor errmsg invalid socks port

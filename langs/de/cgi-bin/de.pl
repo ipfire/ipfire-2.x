@@ -1820,6 +1820,7 @@
 'tor do not advertise relay' => 'Relay nicht announcieren',
 'tor enabled' => 'Tor einschalten',
 'tor errmsg invalid ip or mask' => 'Ungültiges IP-Subnetz',
+'tor errmsg invalid relay address' => 'Ungültige Relay-Adresse',
 'tor errmsg invalid relay name' => 'Ungültiger Relay-Nickname.',
 'tor errmsg invalid relay port' => 'Ungültiger Relay-Port',
 'tor errmsg invalid socks port' => 'Ungültiger SOCKS-Port',
