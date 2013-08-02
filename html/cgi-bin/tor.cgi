@@ -51,8 +51,7 @@ my @bandwidth_limits = (
 	       1024, # 1M
 	        512,
 	        256,
-	        128,
-	         64
+	        160
 );
 my @accounting_periods = ('daily', 'weekly', 'monthly');
 
