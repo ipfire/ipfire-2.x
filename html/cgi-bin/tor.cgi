@@ -116,6 +116,14 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		}
 	}
 
+	# Burst bandwidth must be less or equal to bandwidth rate.
+	if ($settings{'TOR_RELAY_BANDWIDTH_RATE'} == 0) {
+		$settings{'TOR_RELAY_BANDWIDTH_BURST'} = 0;
+
+	} elsif ($settings{'TOR_RELAY_BANDWIDTH_BURST'} < $settings{'TOR_RELAY_BANDWIDTH_RATE'}) {
+		$settings{'TOR_RELAY_BANDWIDTH_BURST'} = $settings{'TOR_RELAY_BANDWIDTH_RATE'};
+	}
+
 	if ($errormessage eq '') {
 		# Write configuration settings to file.
 		&General::writehash("${General::swroot}/tor/settings", \%settings);
