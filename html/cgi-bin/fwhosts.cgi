@@ -1264,7 +1264,7 @@ END
 			if ($show eq '1'){$show='';print"</select></td></tr>";}
 			print"</table>";
 			print"</td></tr></table>";
-			print"<br><br><b>$Lang::tr{'fwhost attention'}:</b><br>	$Lang::tr{'fwhost macwarn'}<br><hr>";
+			print"<br><br><hr>";
 		}
 		print"<table border='0' width='100%'>";
 		print"<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='update' value=\"$fwhostsettings{'update'}\"><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='resetgrp'></form></td></table>";
