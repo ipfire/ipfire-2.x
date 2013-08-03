@@ -158,7 +158,7 @@ if ($ip ne $ipcache) {
 				Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
 			    }
 
-			    my ($out, $response) = Net::SSLeay::get_http("dyndns.kasserver.com", 80, "/", Net::SSLeay::make_headers(
+			    my ($out, $response) = Net::SSLeay::get_https("dyndns.kasserver.com", 443, "/", Net::SSLeay::make_headers(
 					'User-Agent' => 'IPFire', 'Authorization' => 'Basic ' . encode_base64("$settings{'LOGIN'}:$settings{'PASSWORD'}")
 			    ));
 
