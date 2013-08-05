@@ -21,8 +21,8 @@ use Net::SSLeay;
 use Net::IPv4Addr qw(:all);
 $|=1; # line buffering
 
-$General::version = '2.11';
-$General::swroot = '/var/ipfire';
+$General::version = 'VERSION';
+$General::swroot = 'CONFIG_ROOT';
 $General::noipprefix = 'noipg-';
 $General::adminmanualurl = 'http://wiki.ipfire.org';
 
