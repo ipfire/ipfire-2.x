@@ -5,44 +5,7 @@
 # Checking cgi-bin translations for language: en                           #
 ############################################################################
 < ccd maxclients
-< dnsforward
-< dnsforward add a new entry
-< dnsforward configuration
-< dnsforward edit an entry
-< dnsforward entries
-< dnsforward forward_server
-< dnsforward zone
 < wlanap country
-< wlan client
-< wlan client advanced settings
-< wlan client and
-< wlan client bssid
-< wlan client ccmp
-< wlan client configuration
-< wlan client disconnected
-< wlan client duplicate ssid
-< wlan client edit entry
-< wlan client encryption
-< wlan client encryption none
-< wlan client encryption wep
-< wlan client encryption wpa
-< wlan client encryption wpa2
-< wlan client group cipher
-< wlan client group key algorithm
-< wlan client invalid key length
-< wlan client new entry
-< wlan client new network
-< wlan client pairwise cipher
-< wlan client pairwise key algorithm
-< wlan client pairwise key group key
-< wlan client psk
-< wlan client ssid
-< wlan client tkip
-< wlan client wpa mode
-< wlan client wpa mode all
-< wlan client wpa mode ccmp ccmp
-< wlan client wpa mode ccmp tkip
-< wlan client wpa mode tkip tkip
 ############################################################################
 # Checking install/setup translations for language: fr                     #
 ############################################################################

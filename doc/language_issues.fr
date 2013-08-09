@@ -702,7 +702,6 @@ WARNING: untranslated string: fwhost addnet
 WARNING: untranslated string: fwhost addservice
 WARNING: untranslated string: fwhost addservicegrp
 WARNING: untranslated string: fwhost any
-WARNING: untranslated string: fwhost attention
 WARNING: untranslated string: fwhost back
 WARNING: untranslated string: fwhost ccdhost
 WARNING: untranslated string: fwhost ccdnet
@@ -744,7 +743,6 @@ WARNING: untranslated string: fwhost hosts
 WARNING: untranslated string: fwhost icmptype
 WARNING: untranslated string: fwhost ip_mac
 WARNING: untranslated string: fwhost ipsec net
-WARNING: untranslated string: fwhost macwarn
 WARNING: untranslated string: fwhost menu
 WARNING: untranslated string: fwhost netaddress
 WARNING: untranslated string: fwhost newgrp

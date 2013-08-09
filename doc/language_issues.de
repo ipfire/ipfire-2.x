@@ -207,6 +207,7 @@ WARNING: translation string unused: fwdfw std network
 WARNING: translation string unused: fwdfw till
 WARNING: translation string unused: fwdfw time
 WARNING: translation string unused: fwhost addrule
+WARNING: translation string unused: fwhost attention
 WARNING: translation string unused: fwhost blue
 WARNING: translation string unused: fwhost changeremark
 WARNING: translation string unused: fwhost err addrgrp
@@ -563,7 +564,6 @@ WARNING: untranslated string: bytes
 WARNING: untranslated string: community rules
 WARNING: untranslated string: emerging rules
 WARNING: untranslated string: fwhost err hostip
-WARNING: untranslated string: fwhost macwarn
 WARNING: untranslated string: new
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: qos add subclass
