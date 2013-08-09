@@ -15,6 +15,8 @@
 /var/ipfire/auth/users
 /var/ipfire/dhcp/*
 /var/ipfire/dnsforward/*
+/var/ipfire/forward/*
+/var/ipfire/fwhosts/*
 /var/ipfire/main/*
 /var/ipfire/outgoing/groups
 /var/ipfire/outgoing/macgroups

@@ -21,8 +21,8 @@ use Net::SSLeay;
 use Net::IPv4Addr qw(:all);
 $|=1; # line buffering
 
-$General::version = 'VERSION';
-$General::swroot = 'CONFIG_ROOT';
+$General::version = '2.11';
+$General::swroot = '/var/ipfire';
 $General::noipprefix = 'noipg-';
 $General::adminmanualurl = 'http://wiki.ipfire.org';
 
@@ -38,6 +38,99 @@ sub log
 	$logmessage =~ /([\w\W]*)/;
 	$logmessage = $1;
 	system('logger', '-t', $tag, $logmessage);
+}
+sub setup_default_networks
+{
+	my %netsettings=();
+	my $defaultNetworks = shift;
+	
+	&readhash("/var/ipfire/ethernet/settings", \%netsettings);
+	
+	# Get current defined networks (Red, Green, Blue, Orange)
+	$defaultNetworks->{$Lang::tr{'fwhost any'}}{'IPT'} = "0.0.0.0/0.0.0.0";
+	$defaultNetworks->{$Lang::tr{'fwhost any'}}{'NAME'} = "ALL";
+		
+	$defaultNetworks->{$Lang::tr{'green'}}{'IPT'} = "$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
+	$defaultNetworks->{$Lang::tr{'green'}}{'NAME'} = "GREEN";
+
+	if ($netsettings{'ORANGE_DEV'} ne ''){
+		$defaultNetworks->{$Lang::tr{'orange'}}{'IPT'} = "$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}";
+		$defaultNetworks->{$Lang::tr{'orange'}}{'NAME'} = "ORANGE";
+	}
+
+	if ($netsettings{'BLUE_DEV'} ne ''){
+		$defaultNetworks->{$Lang::tr{'blue'}}{'IPT'} = "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
+		$defaultNetworks->{$Lang::tr{'blue'}}{'NAME'} = "BLUE";
+	}
+
+	# OpenVPN
+	if(-e "${General::swroot}/ovpn/settings")
+	{
+		my %ovpnSettings = ();
+		&readhash("${General::swroot}/ovpn/settings", \%ovpnSettings);
+
+		# OpenVPN on Red?
+		if(defined($ovpnSettings{'DOVPN_SUBNET'}))
+		{
+			my ($ip,$sub) = split(/\//,$ovpnSettings{'DOVPN_SUBNET'});
+			$sub=&General::iporsubtocidr($sub);
+			my @tempovpnsubnet = split("\/", $ovpnSettings{'DOVPN_SUBNET'});
+			$defaultNetworks->{'OpenVPN ' .$ip."/".$sub}{'ADR'} = $tempovpnsubnet[0];
+			$defaultNetworks->{'OpenVPN ' .$ip."/".$sub}{'NAME'} = "OpenVPN-Dyn";
+		}
+	} # end OpenVPN
+	# IPsec RW NET
+	if(-e "${General::swroot}/vpn/settings")
+	{
+		my %ipsecsettings = ();
+		&readhash("${General::swroot}/vpn/settings", \%ipsecsettings);
+		if($ipsecsettings{'RW_NET'} ne '')
+		{
+			my ($ip,$sub) = split(/\//,$ipsecsettings{'RW_NET'});
+			$sub=&General::iporsubtocidr($sub);
+			my @tempipsecsubnet = split("\/", $ipsecsettings{'RW_NET'});
+			$defaultNetworks->{'IPsec RW ' .$ip."/".$sub}{'ADR'} = $tempipsecsubnet[0];
+			$defaultNetworks->{'IPsec RW ' .$ip."/".$sub}{'NAME'} = "IPsec RW";
+		}
+	}
+	#open(FILE, "${General::swroot}/ethernet/aliases") or die 'Unable to open aliases file.';
+	#my @current = <FILE>;
+	#close(FILE);
+	#my $ctr = 0;
+	#foreach my $line (@current)
+	#{
+		#if ($line ne ''){
+			#chomp($line);
+			#my @temp = split(/\,/,$line);
+			#if ($temp[2] eq '') {
+				#$temp[2] = "Alias $ctr : $temp[0]";
+			#}
+			#$defaultNetworks->{$temp[2]}{'IPT'} = "$temp[0]";
+			#$ctr++;
+		#}
+	#}
+}
+sub get_aliases
+{
+	
+	my $defaultNetworks = shift;
+	open(FILE, "${General::swroot}/ethernet/aliases") or die 'Unable to open aliases file.';
+	my @current = <FILE>;
+	close(FILE);
+	my $ctr = 0;
+	foreach my $line (@current)
+	{
+		if ($line ne ''){
+			chomp($line);
+			my @temp = split(/\,/,$line);
+			if ($temp[2] eq '') {
+				$temp[2] = "Alias $ctr : $temp[0]";
+			}
+			$defaultNetworks->{$temp[2]}{'IPT'} = "$temp[0]";
+			
+			$ctr++;
+		}
+	}
 }
 
 sub readhash

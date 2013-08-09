@@ -24,11 +24,11 @@ CFLAGS=-O2 -Wall
 COMPILE=$(CC) $(CFLAGS)
 
 PROGS = iowrap
-SUID_PROGS = setdmzholes setportfw setxtaccess \
+SUID_PROGS = setportfw \
 	squidctrl sshctrl ipfirereboot \
 	ipsecctrl timectrl dhcpctrl snortctrl \
 	applejuicectrl rebuildhosts backupctrl \
-	logwatch openvpnctrl outgoingfwctrl \
+	logwatch openvpnctrl outgoingfwctrl forwardfwctrl \
 	wirelessctrl getipstat qosctrl launch-ether-wake \
 	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
@@ -90,14 +90,14 @@ clamavctrl: clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o
 outgoingfwctrl: outgoingfwctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ outgoingfwctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 	
+forwardfwctrl: forwardfwctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ forwardfwctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+	
 timectrl: timectrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ timectrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 launch-ether-wake: launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-setdmzholes: setdmzholes.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ setdmzholes.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 setportfw: setportfw.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ setportfw.c setuid.o ../install+setup/libsmooth/varval.o -o $@

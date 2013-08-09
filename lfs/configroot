@@ -50,59 +50,62 @@ $(TARGET) :
 	@$(PREBUILD)
 
 	# Create all directories
-	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dmzholes dns dnsforward \
-			ethernet extrahd/bin fwlogs isdn key langs logging mac main  menu.d modem net-traffic \
+	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dns dnsforward \
+			ethernet extrahd/bin fwlogs isdn key langs logging mac main menu.d modem net-traffic \
+			ethernet extrahd/bin fwlogs fwhosts forward forward/bin isdn key langs logging mac main  menu.d modem net-traffic \
 			net-traffic/templates nfs optionsfw outgoing/bin outgoing/groups outgoing/groups/ipgroups \
 			outgoing/groups/macgroups ovpn patches pakfire portfw ppp private proxy/advanced/cre \
 			proxy/calamaris/bin qos/bin red remote sensors snort time tripwire/report \
 			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin upnp vpn \
-			wakeonlan wireless xtaccess ; do \
+			wakeonlan wireless ; do \
 	        mkdir -p $(CONFIG_ROOT)/$$i; \
 	done
 
 	# Touch empty files
 	for i in auth/users backup/include.user backup/exclude.user \
 	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
-	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dmzholes/config dns/settings dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
+	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
 	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings fwlogs/ipsettings fwlogs/portsettings \
+	    forward/settings forward/config forward/input fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservices fwhosts/customservicegrp fwlogs/ipsettings fwlogs/portsettings \
 	    isdn/settings mac/settings main/disable_nf_sip main/hosts main/routing main/settings net-traffic/settings optionsfw/settings outgoing/settings outgoing/rules \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
-	    ppp/settings-5 ppp/settings proxy/settings proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
+		ppp/settings-5 ppp/settings proxy/settings proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
 	    qos/tosconfig snort/settings tripwire/settings upnp/settings vpn/config vpn/settings vpn/ipsec.conf \
 	    vpn/ipsec.secrets vpn/caconfig wakeonlan/clients.conf wireless/config wireless/settings; do \
-	        touch $(CONFIG_ROOT)/$$i; \
+	    touch $(CONFIG_ROOT)/$$i; \
 	done
 
 	# Copy initial configfiles
 	cp $(DIR_SRC)/config/cfgroot/header.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/general-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/lang.pl			$(CONFIG_ROOT)/
-	cp $(DIR_SRC)/config/cfgroot/countries.pl			$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/countries.pl		$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/graphs.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/advoptions-list		$(CONFIG_ROOT)/dhcp/advoptions-list
 	cp $(DIR_SRC)/config/cfgroot/connscheduler-lib.pl	$(CONFIG_ROOT)/connscheduler/lib.pl
 	cp $(DIR_SRC)/config/cfgroot/connscheduler.conf		$(CONFIG_ROOT)/connscheduler
 	cp $(DIR_SRC)/config/extrahd/*				$(CONFIG_ROOT)/extrahd/bin/
 	cp $(DIR_SRC)/config/cfgroot/sensors-settings		$(CONFIG_ROOT)/sensors/settings
-	cp $(DIR_SRC)/config/menu/*					$(CONFIG_ROOT)/menu.d/
+	cp $(DIR_SRC)/config/menu/*				$(CONFIG_ROOT)/menu.d/
 	cp $(DIR_SRC)/config/cfgroot/modem-defaults		$(CONFIG_ROOT)/modem/defaults
 	cp $(DIR_SRC)/config/cfgroot/modem-settings		$(CONFIG_ROOT)/modem/settings
 	cp $(DIR_SRC)/config/cfgroot/net-traffic-lib.pl		$(CONFIG_ROOT)/net-traffic/net-traffic-lib.pl
-	cp $(DIR_SRC)/config/cfgroot/net-traffic-admin.pl		$(CONFIG_ROOT)/net-traffic/net-traffic-admin.pl
+	cp $(DIR_SRC)/config/cfgroot/net-traffic-admin.pl	$(CONFIG_ROOT)/net-traffic/net-traffic-admin.pl
 	cp $(DIR_SRC)/config/cfgroot/nfs-server			$(CONFIG_ROOT)/nfs/nfs-server
-	cp $(DIR_SRC)/config/cfgroot/p2protocols			$(CONFIG_ROOT)/outgoing/p2protocols
-	cp $(DIR_SRC)/config/outgoingfw/outgoingfw.pl		$(CONFIG_ROOT)/outgoing/bin/
-	cp $(DIR_SRC)/config/outgoingfw/defaultservices		$(CONFIG_ROOT)/outgoing/
+	cp $(DIR_SRC)/config/cfgroot/p2protocols		$(CONFIG_ROOT)/outgoing/p2protocols
+	cp $(DIR_SRC)/config/outgoingfw/outgoingfw.pl	$(CONFIG_ROOT)/outgoing/bin/
+	cp $(DIR_SRC)/config/outgoingfw/defaultservices	$(CONFIG_ROOT)/outgoing/
 	cp $(DIR_SRC)/config/cfgroot/proxy-acl			$(CONFIG_ROOT)/proxy/acl-1.4
-	cp $(DIR_SRC)/config/qos/*					$(CONFIG_ROOT)/qos/bin/
-	cp $(DIR_SRC)/config/cfgroot/ssh-settings			$(CONFIG_ROOT)/remote/settings
-	cp $(DIR_SRC)/config/cfgroot/xtaccess-config		$(CONFIG_ROOT)/xtaccess/config
+	cp $(DIR_SRC)/config/qos/*						$(CONFIG_ROOT)/qos/bin/
+	cp $(DIR_SRC)/config/cfgroot/ssh-settings		$(CONFIG_ROOT)/remote/settings
 	cp $(DIR_SRC)/config/cfgroot/time-settings		$(CONFIG_ROOT)/time/settings
-	cp $(DIR_SRC)/config/cfgroot/logging-settings		$(CONFIG_ROOT)/logging/settings
+	cp $(DIR_SRC)/config/cfgroot/logging-settings	$(CONFIG_ROOT)/logging/settings
 	cp $(DIR_SRC)/config/cfgroot/useragents			$(CONFIG_ROOT)/proxy/advanced
 	cp $(DIR_SRC)/config/cfgroot/ethernet-vlans		$(CONFIG_ROOT)/ethernet/vlans
-	cp $(DIR_SRC)/langs/list					$(CONFIG_ROOT)/langs/
-
+	cp $(DIR_SRC)/langs/list						$(CONFIG_ROOT)/langs/
+	cp $(DIR_SRC)/config/forwardfw/rules.pl			$(CONFIG_ROOT)/forward/bin/rules.pl
+	cp $(DIR_SRC)/config/forwardfw/firewall-lib.pl	$(CONFIG_ROOT)/forward/bin/firewall-lib.pl
+	cp $(DIR_SRC)/config/fwhosts/icmp-types			$(CONFIG_ROOT)/fwhosts/icmp-types
 	# Oneliner configfiles
 	echo  "ENABLED=off"		> $(CONFIG_ROOT)/vpn/settings
 	echo  "VPN_DELAYED_START=0"	>>$(CONFIG_ROOT)/vpn/settings
@@ -114,6 +117,14 @@ $(TARGET) :
 	echo  "DROPINPUT=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPOUTPUT=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPPORTSCAN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+
+	# Set outgoingfw.pl executable
+	chmod 755 $(CONFIG_ROOT)/outgoing/bin/outgoingfw.pl
+	
+	# set rules.pl executable
+	chmod 755 $(CONFIG_ROOT)/forward/bin/rules.pl
+	
+
 
 	# Modify variables in header.pl
 	sed -i -e "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" \
@@ -140,7 +151,5 @@ $(TARGET) :
 	done
 	chown root:nobody $(CONFIG_ROOT)/dhcpc
 
-	# Set outgoingfw.pl executable
-	chmod 755 $(CONFIG_ROOT)/outgoing/bin/outgoingfw.pl
-
+		
 	@$(POSTBUILD)
