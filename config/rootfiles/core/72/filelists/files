@@ -5,3 +5,4 @@ srv/web/ipfire/cgi-bin/ddns.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/local/bin/openvpnctrl
 usr/local/bin/setddns.pl
+var/ipfire/ovpn/verify
