@@ -1817,7 +1817,6 @@
 'tor configuration' => 'Tor-Konfiguration',
 'tor connected relays' => 'Verbundene Relays',
 'tor contact info' => 'Kontaktinformationen',
-'tor do not advertise relay' => 'Relay nicht announcieren',
 'tor enabled' => 'Tor einschalten',
 'tor errmsg invalid accounting limit' => 'Ungültiges Accounting-Limit',
 'tor errmsg invalid ip or mask' => 'Ungültiges IP-Subnetz',

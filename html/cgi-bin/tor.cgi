@@ -77,7 +77,6 @@ $settings{'TOR_RELAY_ADDRESS'} = '';
 $settings{'TOR_RELAY_PORT'} = 9001;
 $settings{'TOR_RELAY_NICKNAME'} = '';
 $settings{'TOR_RELAY_CONTACT_INFO'} = '';
-$settings{'TOR_RELAY_NOADVERTISE'} = 'off';
 $settings{'TOR_RELAY_BANDWIDTH_RATE'} = 0;
 $settings{'TOR_RELAY_BANDWIDTH_BURST'} = 0;
 $settings{'TOR_RELAY_ACCOUNTING_LIMIT'} = 0;
@@ -283,10 +282,6 @@ END
 	&Header::closebox();
 
 	# Tor relay box
-	$checked{'TOR_RELAY_NOADVERTISE'}{'on'} = '';
-	$checked{'TOR_RELAY_NOADVERTISE'}{'off'} = '';
-	$checked{'TOR_RELAY_NOADVERTISE'}{$settings{'TOR_RELAY_NOADVERTISE'}} = 'checked';
-
 	$selected{'TOR_RELAY_MODE'}{'bridge'} = '';
 	$selected{'TOR_RELAY_MODE'}{'exit'} = '';
 	$selected{'TOR_RELAY_MODE'}{'private-bridge'} = '';
@@ -324,9 +319,9 @@ END
 						<option value='private-bridge' $selected{'TOR_RELAY_MODE'}{'private-bridge'}>$Lang::tr{'tor relay mode private bridge'}</option>
 					</select>
 				</td>
-				<td width='25%' class='base'>$Lang::tr{'tor relay port'}:</td>
+				<td width='25%' class='base'>$Lang::tr{'tor relay nickname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td width='20%'>
-					<input type='text' name='TOR_RELAY_PORT' value='$settings{'TOR_RELAY_PORT'}' size='5' />
+					<input type='text' name='TOR_RELAY_NICKNAME' value='$settings{'TOR_RELAY_NICKNAME'}' />
 				</td>
 			</tr>
 			<tr>
@@ -334,22 +329,15 @@ END
 				<td width='30%'>
 					<input type='text' name='TOR_RELAY_ADDRESS' value='$settings{'TOR_RELAY_ADDRESS'}' />
 				</td>
-				<td width='25%' class='base'>$Lang::tr{'tor do not advertise relay'}:</td>
+				<td width='25%' class='base'>$Lang::tr{'tor relay port'}:</td>
 				<td width='20%'>
-					<input type='checkbox' name='TOR_RELAY_NOADVERTISE' $checked{'TOR_RELAY_NOADVERTISE'}{'on'} />
+					<input type='text' name='TOR_RELAY_PORT' value='$settings{'TOR_RELAY_PORT'}' size='5' />
 				</td>
-			</tr>
-			<tr>
-				<td width='25%' class='base'>$Lang::tr{'tor relay nickname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-				<td width='30%'>
-					<input type='text' name='TOR_RELAY_NICKNAME' value='$settings{'TOR_RELAY_NICKNAME'}' />
-				</td>
-				<td colspan='2'></td>
 			</tr>
 			<tr>
 				<td width='25%' class='base'>$Lang::tr{'tor contact info'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td width='75%' colspan='3'>
-					<input type='text' name='TOR_RELAY_CONTACT_INFO' value='$settings{'TOR_RELAY_CONTACT_INFO'}' size='60' />
+					<input type='text' name='TOR_RELAY_CONTACT_INFO' value='$settings{'TOR_RELAY_CONTACT_INFO'}' style='width: 98%;' />
 				</td>
 			</tr>
 		</table>
@@ -628,11 +616,7 @@ sub BuildConfiguration() {
 		# Reject access to private networks.
 		print FILE "ExitPolicyRejectPrivate 1\n";
 
-		print FILE "ORPort $settings{'TOR_RELAY_PORT'}";
-		if ($settings{'TOR_RELAY_NOADVERTISE'} eq 'on') {
-			print FILE " NoAdvertise";
-		}
-		print FILE "\n";
+		print FILE "ORPort $settings{'TOR_RELAY_PORT'}\n";
 
 		if ($settings{'TOR_RELAY_ADDRESS'} ne '') {
 			print FILE "Address $settings{'TOR_RELAY_ADDRESS'}\n";

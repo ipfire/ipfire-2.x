@@ -1852,7 +1852,6 @@
 'tor configuration' => 'Tor Configuration',
 'tor connected relays' => 'Connected relays',
 'tor contact info' => 'Contact Info',
-'tor do not advertise relay' => 'Do not advertise the relay',
 'tor enabled' => 'Enable Tor',
 'tor errmsg invalid accounting limit' => 'Invalid accounting limit',
 'tor errmsg invalid ip or mask' => 'Invalid IP subnet',
