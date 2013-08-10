@@ -75,6 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-linux-smp-stats --enable-smb-alerts \
 		--enable-gre --enable-mpls --enable-targetbased \
 		--enable-decoder-preprocessor-rules --enable-ppm \
+		--enable-non-ether-decoders \
 		--enable-perfprofiling --enable-zlib --enable-active-response \
 		--enable-normalizer --enable-reload --enable-react --enable-flexresp3
 	cd $(DIR_APP) && make
