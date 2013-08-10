@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.9.5
+VER        = 2.9.5.3
 
 THISAPP    = snort-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f5fc0e176afca5989d47509478758fc7
+$(DL_FILE)_MD5 = f99465c0734a6173bfca899dcb72266b
 
 install : $(TARGET)
 
