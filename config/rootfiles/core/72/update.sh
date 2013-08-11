@@ -34,7 +34,7 @@ done
 
 #
 #Stop services
-ipsec stop
+/etc/init.d/ipsec stop
 /etc/init.d/snort stop
 /etc/init.d/squid stop
 
@@ -47,7 +47,10 @@ extract_files
 #Start services
 /etc/init.d/squid start
 /etc/init.d/snort start
-ipsec start
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	/etc/init.d/ipsec start
+fi
+
 
 #
 #Update Language cache
@@ -64,4 +67,3 @@ sync
 sendprofile
 #Don't report the exitcode last command
 exit 0
-
