@@ -36,6 +36,7 @@ done
 #Stop services
 ipsec stop
 /etc/init.d/snort stop
+/etc/init.d/squid stop
 
 #
 #Extract files
@@ -44,6 +45,7 @@ extract_files
 
 #
 #Start services
+/etc/init.d/squid start
 /etc/init.d/snort start
 ipsec start
 
