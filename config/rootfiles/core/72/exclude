@@ -10,7 +10,6 @@ etc/ipsec.user.secrets
 var/log/cache
 var/updatecache
 etc/localtime
-var/ipfire/ovpn
 etc/ssh/ssh_config
 etc/ssh/sshd_config
 etc/ssl/openssl.cnf
