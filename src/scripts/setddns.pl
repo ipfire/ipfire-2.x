@@ -150,6 +150,27 @@ if ($ip ne $ipcache) {
 				}
 			}
 
+			elsif ($settings{'SERVICE'} eq 'all-inkl') {
+			    my %proxysettings;
+			    &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+			    if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
+				my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+				Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
+			    }
+
+			    my ($out, $response) = Net::SSLeay::get_https("dyndns.kasserver.com", 443, "/", Net::SSLeay::make_headers(
+					'User-Agent' => 'IPFire', 'Authorization' => 'Basic ' . encode_base64("$settings{'LOGIN'}:$settings{'PASSWORD'}")
+			    ));
+
+			    # Valid response are 'ok'   'nochange'
+			    if ($response =~ m%HTTP/1\.. 200 OK%) {
+				&General::log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'} : success");
+				$success++;
+			    } else {
+			        &General::log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'} : failure (could not connect to server, check your credentials)");
+			    }
+			}
+
 			elsif ($settings{'SERVICE'} eq 'cjb') {
 			    # use proxy ?
 			    my %proxysettings;

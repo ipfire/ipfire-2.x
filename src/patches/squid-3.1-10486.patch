@@ -1,0 +1,54 @@
+------------------------------------------------------------
+revno: 10486
+revision-id: squid3@treenet.co.nz-20130222111325-zizr296kq3te4g7h
+parent: squid3@treenet.co.nz-20130109021503-hqg7ufldrudpzr9l
+fixes bug(s): http://bugs.squid-cache.org/show_bug.cgi?id=3790
+author: Reinhard Sojka <reinhard.sojka@parlament.gv.at>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: SQUID_3_1
+timestamp: Fri 2013-02-22 04:13:25 -0700
+message:
+  Bug 3790: cachemgr.cgi crash with authentication
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20130222111325-zizr296kq3te4g7h
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/branches\
+#   /SQUID_3_1
+# testament_sha1: 121adf68a9c3b2eca766cfb768256b6b57d9816b
+# timestamp: 2013-02-22 11:17:18 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/branches\
+#   /SQUID_3_1
+# base_revision_id: squid3@treenet.co.nz-20130109021503-\
+#   hqg7ufldrudpzr9l
+# 
+# Begin patch
+=== modified file 'tools/cachemgr.cc'
+--- tools/cachemgr.cc	2013-01-08 23:11:51 +0000
++++ tools/cachemgr.cc	2013-02-22 11:13:25 +0000
+@@ -1162,7 +1162,6 @@
+ {
+     static char buf[1024];
+     size_t stringLength = 0;
+-    const char *str64;
+ 
+     if (!req->passwd)
+         return "";
+@@ -1171,15 +1170,12 @@
+              req->user_name ? req->user_name : "",
+              req->passwd);
+ 
+-    str64 = base64_encode(buf);
+-
+-    stringLength += snprintf(buf, sizeof(buf), "Authorization: Basic %s\r\n", str64);
++    stringLength += snprintf(buf, sizeof(buf), "Authorization: Basic %s\r\n", base64_encode(buf));
+ 
+     assert(stringLength < sizeof(buf));
+ 
+-    snprintf(&buf[stringLength], sizeof(buf) - stringLength, "Proxy-Authorization: Basic %s\r\n", str64);
++    snprintf(&buf[stringLength], sizeof(buf) - stringLength, "Proxy-Authorization: Basic %s\r\n", base64_encode(buf));
+ 
+-    xxfree(str64);
+     return buf;
+ }
+ 
+

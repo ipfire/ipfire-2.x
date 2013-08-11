@@ -126,6 +126,7 @@ etc/rc.d/init.d/teamspeak
 etc/rc.d/init.d/template
 #etc/rc.d/init.d/tftpd
 etc/rc.d/init.d/tmpfs
+#etc/rc.d/init.d/tor
 etc/rc.d/init.d/udev
 etc/rc.d/init.d/udev_retry
 etc/rc.d/init.d/upnpd

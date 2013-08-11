@@ -188,6 +188,10 @@ case "$1" in
 	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
 	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
 
+	# TOR
+	/sbin/iptables -N TOR_INPUT
+	/sbin/iptables -A INPUT -j TOR_INPUT
+
 	# Outgoing Firewall
 	/sbin/iptables -A FORWARD -j OUTGOINGFWMAC
 

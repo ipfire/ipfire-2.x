@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.13"							# Version number
-CORE="71"							# Core Level (Filename)
-PAKFIRE_CORE="71"						# Core Level (PAKFIRE)
+CORE="72"							# Core Level (Filename)
+PAKFIRE_CORE="72"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -333,6 +333,7 @@ buildbase() {
     lfsmake2 gettext
     lfsmake2 grep
     lfsmake2 groff
+    lfsmake2 gperf
     lfsmake2 gzip
     lfsmake2 inetutils
     lfsmake2 iproute2
@@ -779,6 +780,8 @@ buildipfire() {
   ipfiremake perl-File-Tail
   ipfiremake perl-TimeDate
   ipfiremake swatch
+  ipfiremake tor
+  ipfiremake arm
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild

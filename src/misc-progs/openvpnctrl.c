@@ -362,6 +362,10 @@ char* calcTransferNetAddress(const connection* conn) {
 	char *subnetmask = strdup(conn->transfer_subnet);
 	char *address = strsep(&subnetmask, "/");
 
+	if ((address == NULL) || (subnetmask == NULL)) {
+		goto ERROR;
+	}
+
 	in_addr_t _address    = inet_addr(address);
 	in_addr_t _subnetmask = inet_addr(subnetmask);
 	_address &= _subnetmask;
@@ -496,12 +500,11 @@ void setFirewallRules(void) {
 			local_subnet_address = getLocalSubnetAddress(conn);
 			transfer_subnet_address = calcTransferNetAddress(conn);
 
-			if ((!local_subnet_address) || (!transfer_subnet_address))
-				continue;
-
-			snprintf(command, STRING_SIZE, "/sbin/iptables -t nat -A %s -s %s -j SNAT --to-source %s",
-				OVPNNAT, transfer_subnet_address, local_subnet_address);
-			executeCommand(command);
+			if ((local_subnet_address) && (transfer_subnet_address)) {
+				snprintf(command, STRING_SIZE, "/sbin/iptables -t nat -A %s -s %s -j SNAT --to-source %s",
+					OVPNNAT, transfer_subnet_address, local_subnet_address);
+				executeCommand(command);
+			}
 		}
 
 		conn = conn->next;
