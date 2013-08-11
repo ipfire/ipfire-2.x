@@ -1,3 +1,4 @@
 etc/system-release
 etc/issue
+var/ipfire/langs
 var/ipfire/proxy/advanced/useragents
