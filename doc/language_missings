@@ -5,13 +5,13 @@
 # Checking cgi-bin translations for language: en                           #
 ############################################################################
 < ccd maxclients
+< wlanap country
 ############################################################################
 # Checking install/setup translations for language: fr                     #
 ############################################################################
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
-< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < age second
@@ -67,6 +67,11 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< drop action
+< drop action1
+< drop action2
+< drop forward
+< drop outgoing
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -84,6 +89,174 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< forward firewall
+< fw default drop
+< fwdfw ACCEPT
+< fwdfw action
+< fwdfw additional
+< fwdfw addr grp
+< fwdfw addrule
+< fwdfw change
+< fwdfw copy
+< fwdfw cust addr
+< fwdfw cust net
+< fwdfw delete
+< fwdfw dnat
+< fwdfw dnat error
+< fwdfw dnat porterr
+< fwdfw DROP
+< fwdfw edit
+< fwdfw err nosrc
+< fwdfw err nosrcip
+< fwdfw err notgt
+< fwdfw err notgtip
+< fwdfw err prot
+< fwdfw err remark
+< fwdfw err ruleexists
+< fwdfw err same
+< fwdfw err samesub
+< fwdfw err src_addr
+< fwdfw err srcovpn
+< fwdfw err srcport
+< fwdfw err tgt_addr
+< fwdfw err tgt_grp
+< fwdfw err tgt_mac
+< fwdfw err tgtovpn
+< fwdfw err tgtport
+< fwdfw err tgt_port
+< fwdfw err time
+< fwdfw final_rule
+< fwdfw from
+< fwdfw hint ip1
+< fwdfw hint ip2
+< fwdfw ipsec network
+< fwdfw log rule
+< fwdfw man port
+< fwdfw menu
+< fwdfw MODE1
+< fwdfw MODE2
+< fwdfw movedown
+< fwdfw moveup
+< fwdfw natport used
+< fwdfw newrule
+< fwdfw p2p txt
+< fwdfw pol allow
+< fwdfw pol block
+< fwdfw pol text
+< fwdfw pol text1
+< fwdfw pol title
+< fwdfw red
+< fwdfw REJECT
+< fwdfw reread
+< fwdfw rule action
+< fwdfw rule activate
+< fwdfw rulepos
+< fwdfw rules
+< fwdfw snat
+< fwdfw source
+< fwdfw sourceip
+< fwdfw std network
+< fwdfw target
+< fwdfw targetip
+< fwdfw till
+< fwdfw time
+< fwdfw timeframe
+< fwdfw toggle
+< fwdfw togglelog
+< fwdfw useless rule
+< fwdfw use nat
+< fwdfw use srcport
+< fwdfw use srv
+< fwdfw wd_fri
+< fwdfw wd_mon
+< fwdfw wd_sat
+< fwdfw wd_sun
+< fwdfw wd_thu
+< fwdfw wd_tue
+< fwdfw wd_wed
+< fwdfw xt access
+< fwhost addgrp
+< fwhost addgrpname
+< fwhost addhost
+< fwhost addnet
+< fwhost addrule
+< fwhost addservice
+< fwhost addservicegrp
+< fwhost any
+< fwhost attention
+< fwhost back
+< fwhost blue
+< fwhost ccdhost
+< fwhost ccdnet
+< fwhost change
+< fwhost changeremark
+< fwhost cust addr
+< fwhost cust grp
+< fwhost cust net
+< fwhost cust service
+< fwhost cust srvgrp
+< fwhost deleted
+< fwhost empty
+< fwhost err addr
+< fwhost err addrgrp
+< fwhost err empty
+< fwhost err groupempty
+< fwhost err grpexist
+< fwhost err hostexist
+< fwhost err hostorip
+< fwhost err ip
+< fwhost err ipcheck
+< fwhost err ipmac
+< fwhost err ipwithsub
+< fwhost err isccdhost
+< fwhost err isccdiphost
+< fwhost err isccdipnet
+< fwhost err isccdnet
+< fwhost err isingrp
+< fwhost err mac
+< fwhost err name
+< fwhost err name1
+< fwhost err net
+< fwhost err netexist
+< fwhost err partofnet
+< fwhost err port
+< fwhost err remark
+< fwhost err srvexist
+< fwhost err srv exists
+< fwhost err sub32
+< fwhost green
+< fwhost hint
+< fwhost hosts
+< fwhost icmptype
+< fwhost ipadr
+< fwhost ip_mac
+< fwhost ipsec host
+< fwhost ipsec net
+< fwhost menu
+< fwhost netaddress
+< fwhost newgrp
+< fwhost newhost
+< fwhost newnet
+< fwhost newservice
+< fwhost newservicegrp
+< fwhost orange
+< fwhost ovpn_n2n
+< fwhost port
+< fwhost prot
+< fwhost reread
+< fwhost reset
+< fwhost services
+< fwhost srv_name
+< fwhost stdnet
+< fwhost type
+< fwhost used
+< fwhost welcome
+< fwhost wo subnet
+< fw settings
+< fw settings color
+< fw settings dropdown
+< fw settings remark
+< fw settings ruletable
 < minute
 < ntp common settings
 < ntp sync
@@ -112,6 +285,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< red1
 < server restart
 < snort working
 < static routes
@@ -230,7 +404,6 @@
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
-< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < age second
@@ -286,6 +459,11 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< drop action
+< drop action1
+< drop action2
+< drop forward
+< drop outgoing
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -303,6 +481,174 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< forward firewall
+< fw default drop
+< fwdfw ACCEPT
+< fwdfw action
+< fwdfw additional
+< fwdfw addr grp
+< fwdfw addrule
+< fwdfw change
+< fwdfw copy
+< fwdfw cust addr
+< fwdfw cust net
+< fwdfw delete
+< fwdfw dnat
+< fwdfw dnat error
+< fwdfw dnat porterr
+< fwdfw DROP
+< fwdfw edit
+< fwdfw err nosrc
+< fwdfw err nosrcip
+< fwdfw err notgt
+< fwdfw err notgtip
+< fwdfw err prot
+< fwdfw err remark
+< fwdfw err ruleexists
+< fwdfw err same
+< fwdfw err samesub
+< fwdfw err src_addr
+< fwdfw err srcovpn
+< fwdfw err srcport
+< fwdfw err tgt_addr
+< fwdfw err tgt_grp
+< fwdfw err tgt_mac
+< fwdfw err tgtovpn
+< fwdfw err tgtport
+< fwdfw err tgt_port
+< fwdfw err time
+< fwdfw final_rule
+< fwdfw from
+< fwdfw hint ip1
+< fwdfw hint ip2
+< fwdfw ipsec network
+< fwdfw log rule
+< fwdfw man port
+< fwdfw menu
+< fwdfw MODE1
+< fwdfw MODE2
+< fwdfw movedown
+< fwdfw moveup
+< fwdfw natport used
+< fwdfw newrule
+< fwdfw p2p txt
+< fwdfw pol allow
+< fwdfw pol block
+< fwdfw pol text
+< fwdfw pol text1
+< fwdfw pol title
+< fwdfw red
+< fwdfw REJECT
+< fwdfw reread
+< fwdfw rule action
+< fwdfw rule activate
+< fwdfw rulepos
+< fwdfw rules
+< fwdfw snat
+< fwdfw source
+< fwdfw sourceip
+< fwdfw std network
+< fwdfw target
+< fwdfw targetip
+< fwdfw till
+< fwdfw time
+< fwdfw timeframe
+< fwdfw toggle
+< fwdfw togglelog
+< fwdfw useless rule
+< fwdfw use nat
+< fwdfw use srcport
+< fwdfw use srv
+< fwdfw wd_fri
+< fwdfw wd_mon
+< fwdfw wd_sat
+< fwdfw wd_sun
+< fwdfw wd_thu
+< fwdfw wd_tue
+< fwdfw wd_wed
+< fwdfw xt access
+< fwhost addgrp
+< fwhost addgrpname
+< fwhost addhost
+< fwhost addnet
+< fwhost addrule
+< fwhost addservice
+< fwhost addservicegrp
+< fwhost any
+< fwhost attention
+< fwhost back
+< fwhost blue
+< fwhost ccdhost
+< fwhost ccdnet
+< fwhost change
+< fwhost changeremark
+< fwhost cust addr
+< fwhost cust grp
+< fwhost cust net
+< fwhost cust service
+< fwhost cust srvgrp
+< fwhost deleted
+< fwhost empty
+< fwhost err addr
+< fwhost err addrgrp
+< fwhost err empty
+< fwhost err groupempty
+< fwhost err grpexist
+< fwhost err hostexist
+< fwhost err hostorip
+< fwhost err ip
+< fwhost err ipcheck
+< fwhost err ipmac
+< fwhost err ipwithsub
+< fwhost err isccdhost
+< fwhost err isccdiphost
+< fwhost err isccdipnet
+< fwhost err isccdnet
+< fwhost err isingrp
+< fwhost err mac
+< fwhost err name
+< fwhost err name1
+< fwhost err net
+< fwhost err netexist
+< fwhost err partofnet
+< fwhost err port
+< fwhost err remark
+< fwhost err srvexist
+< fwhost err srv exists
+< fwhost err sub32
+< fwhost green
+< fwhost hint
+< fwhost hosts
+< fwhost icmptype
+< fwhost ipadr
+< fwhost ip_mac
+< fwhost ipsec host
+< fwhost ipsec net
+< fwhost menu
+< fwhost netaddress
+< fwhost newgrp
+< fwhost newhost
+< fwhost newnet
+< fwhost newservice
+< fwhost newservicegrp
+< fwhost orange
+< fwhost ovpn_n2n
+< fwhost port
+< fwhost prot
+< fwhost reread
+< fwhost reset
+< fwhost services
+< fwhost srv_name
+< fwhost stdnet
+< fwhost type
+< fwhost used
+< fwhost welcome
+< fwhost wo subnet
+< fw settings
+< fw settings color
+< fw settings dropdown
+< fw settings remark
+< fw settings ruletable
 < minute
 < openvpn default
 < openvpn destination port used
@@ -347,6 +693,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< red1
 < server restart
 < Set time on boot
 < static routes
@@ -442,7 +789,6 @@
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
-< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < age second
@@ -497,6 +843,11 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< drop action
+< drop action1
+< drop action2
+< drop forward
+< drop outgoing
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -506,6 +857,174 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< forward firewall
+< fw default drop
+< fwdfw ACCEPT
+< fwdfw action
+< fwdfw additional
+< fwdfw addr grp
+< fwdfw addrule
+< fwdfw change
+< fwdfw copy
+< fwdfw cust addr
+< fwdfw cust net
+< fwdfw delete
+< fwdfw dnat
+< fwdfw dnat error
+< fwdfw dnat porterr
+< fwdfw DROP
+< fwdfw edit
+< fwdfw err nosrc
+< fwdfw err nosrcip
+< fwdfw err notgt
+< fwdfw err notgtip
+< fwdfw err prot
+< fwdfw err remark
+< fwdfw err ruleexists
+< fwdfw err same
+< fwdfw err samesub
+< fwdfw err src_addr
+< fwdfw err srcovpn
+< fwdfw err srcport
+< fwdfw err tgt_addr
+< fwdfw err tgt_grp
+< fwdfw err tgt_mac
+< fwdfw err tgtovpn
+< fwdfw err tgtport
+< fwdfw err tgt_port
+< fwdfw err time
+< fwdfw final_rule
+< fwdfw from
+< fwdfw hint ip1
+< fwdfw hint ip2
+< fwdfw ipsec network
+< fwdfw log rule
+< fwdfw man port
+< fwdfw menu
+< fwdfw MODE1
+< fwdfw MODE2
+< fwdfw movedown
+< fwdfw moveup
+< fwdfw natport used
+< fwdfw newrule
+< fwdfw p2p txt
+< fwdfw pol allow
+< fwdfw pol block
+< fwdfw pol text
+< fwdfw pol text1
+< fwdfw pol title
+< fwdfw red
+< fwdfw REJECT
+< fwdfw reread
+< fwdfw rule action
+< fwdfw rule activate
+< fwdfw rulepos
+< fwdfw rules
+< fwdfw snat
+< fwdfw source
+< fwdfw sourceip
+< fwdfw std network
+< fwdfw target
+< fwdfw targetip
+< fwdfw till
+< fwdfw time
+< fwdfw timeframe
+< fwdfw toggle
+< fwdfw togglelog
+< fwdfw useless rule
+< fwdfw use nat
+< fwdfw use srcport
+< fwdfw use srv
+< fwdfw wd_fri
+< fwdfw wd_mon
+< fwdfw wd_sat
+< fwdfw wd_sun
+< fwdfw wd_thu
+< fwdfw wd_tue
+< fwdfw wd_wed
+< fwdfw xt access
+< fwhost addgrp
+< fwhost addgrpname
+< fwhost addhost
+< fwhost addnet
+< fwhost addrule
+< fwhost addservice
+< fwhost addservicegrp
+< fwhost any
+< fwhost attention
+< fwhost back
+< fwhost blue
+< fwhost ccdhost
+< fwhost ccdnet
+< fwhost change
+< fwhost changeremark
+< fwhost cust addr
+< fwhost cust grp
+< fwhost cust net
+< fwhost cust service
+< fwhost cust srvgrp
+< fwhost deleted
+< fwhost empty
+< fwhost err addr
+< fwhost err addrgrp
+< fwhost err empty
+< fwhost err groupempty
+< fwhost err grpexist
+< fwhost err hostexist
+< fwhost err hostorip
+< fwhost err ip
+< fwhost err ipcheck
+< fwhost err ipmac
+< fwhost err ipwithsub
+< fwhost err isccdhost
+< fwhost err isccdiphost
+< fwhost err isccdipnet
+< fwhost err isccdnet
+< fwhost err isingrp
+< fwhost err mac
+< fwhost err name
+< fwhost err name1
+< fwhost err net
+< fwhost err netexist
+< fwhost err partofnet
+< fwhost err port
+< fwhost err remark
+< fwhost err srvexist
+< fwhost err srv exists
+< fwhost err sub32
+< fwhost green
+< fwhost hint
+< fwhost hosts
+< fwhost icmptype
+< fwhost ipadr
+< fwhost ip_mac
+< fwhost ipsec host
+< fwhost ipsec net
+< fwhost menu
+< fwhost netaddress
+< fwhost newgrp
+< fwhost newhost
+< fwhost newnet
+< fwhost newservice
+< fwhost newservicegrp
+< fwhost orange
+< fwhost ovpn_n2n
+< fwhost port
+< fwhost prot
+< fwhost reread
+< fwhost reset
+< fwhost services
+< fwhost srv_name
+< fwhost stdnet
+< fwhost type
+< fwhost used
+< fwhost welcome
+< fwhost wo subnet
+< fw settings
+< fw settings color
+< fw settings dropdown
+< fw settings remark
+< fw settings ruletable
 < minute
 < openvpn default
 < openvpn destination port used
@@ -536,6 +1055,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< red1
 < server restart
 < static routes
 < tor
@@ -630,7 +1150,6 @@
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
 < Add a route
-< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < age second
@@ -687,6 +1206,11 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< drop action
+< drop action1
+< drop action2
+< drop forward
+< drop outgoing
 < Edit an existing route
 < extrahd because there is already a device mounted
 < extrahd cant umount
@@ -697,7 +1221,175 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< forward firewall
 < frequency
+< fw default drop
+< fwdfw ACCEPT
+< fwdfw action
+< fwdfw additional
+< fwdfw addr grp
+< fwdfw addrule
+< fwdfw change
+< fwdfw copy
+< fwdfw cust addr
+< fwdfw cust net
+< fwdfw delete
+< fwdfw dnat
+< fwdfw dnat error
+< fwdfw dnat porterr
+< fwdfw DROP
+< fwdfw edit
+< fwdfw err nosrc
+< fwdfw err nosrcip
+< fwdfw err notgt
+< fwdfw err notgtip
+< fwdfw err prot
+< fwdfw err remark
+< fwdfw err ruleexists
+< fwdfw err same
+< fwdfw err samesub
+< fwdfw err src_addr
+< fwdfw err srcovpn
+< fwdfw err srcport
+< fwdfw err tgt_addr
+< fwdfw err tgt_grp
+< fwdfw err tgt_mac
+< fwdfw err tgtovpn
+< fwdfw err tgtport
+< fwdfw err tgt_port
+< fwdfw err time
+< fwdfw final_rule
+< fwdfw from
+< fwdfw hint ip1
+< fwdfw hint ip2
+< fwdfw ipsec network
+< fwdfw log rule
+< fwdfw man port
+< fwdfw menu
+< fwdfw MODE1
+< fwdfw MODE2
+< fwdfw movedown
+< fwdfw moveup
+< fwdfw natport used
+< fwdfw newrule
+< fwdfw p2p txt
+< fwdfw pol allow
+< fwdfw pol block
+< fwdfw pol text
+< fwdfw pol text1
+< fwdfw pol title
+< fwdfw red
+< fwdfw REJECT
+< fwdfw reread
+< fwdfw rule action
+< fwdfw rule activate
+< fwdfw rulepos
+< fwdfw rules
+< fwdfw snat
+< fwdfw source
+< fwdfw sourceip
+< fwdfw std network
+< fwdfw target
+< fwdfw targetip
+< fwdfw till
+< fwdfw time
+< fwdfw timeframe
+< fwdfw toggle
+< fwdfw togglelog
+< fwdfw useless rule
+< fwdfw use nat
+< fwdfw use srcport
+< fwdfw use srv
+< fwdfw wd_fri
+< fwdfw wd_mon
+< fwdfw wd_sat
+< fwdfw wd_sun
+< fwdfw wd_thu
+< fwdfw wd_tue
+< fwdfw wd_wed
+< fwdfw xt access
+< fwhost addgrp
+< fwhost addgrpname
+< fwhost addhost
+< fwhost addnet
+< fwhost addrule
+< fwhost addservice
+< fwhost addservicegrp
+< fwhost any
+< fwhost attention
+< fwhost back
+< fwhost blue
+< fwhost ccdhost
+< fwhost ccdnet
+< fwhost change
+< fwhost changeremark
+< fwhost cust addr
+< fwhost cust grp
+< fwhost cust net
+< fwhost cust service
+< fwhost cust srvgrp
+< fwhost deleted
+< fwhost empty
+< fwhost err addr
+< fwhost err addrgrp
+< fwhost err empty
+< fwhost err groupempty
+< fwhost err grpexist
+< fwhost err hostexist
+< fwhost err hostorip
+< fwhost err ip
+< fwhost err ipcheck
+< fwhost err ipmac
+< fwhost err ipwithsub
+< fwhost err isccdhost
+< fwhost err isccdiphost
+< fwhost err isccdipnet
+< fwhost err isccdnet
+< fwhost err isingrp
+< fwhost err mac
+< fwhost err name
+< fwhost err name1
+< fwhost err net
+< fwhost err netexist
+< fwhost err partofnet
+< fwhost err port
+< fwhost err remark
+< fwhost err srvexist
+< fwhost err srv exists
+< fwhost err sub32
+< fwhost green
+< fwhost hint
+< fwhost hosts
+< fwhost icmptype
+< fwhost ipadr
+< fwhost ip_mac
+< fwhost ipsec host
+< fwhost ipsec net
+< fwhost menu
+< fwhost netaddress
+< fwhost newgrp
+< fwhost newhost
+< fwhost newnet
+< fwhost newservice
+< fwhost newservicegrp
+< fwhost orange
+< fwhost ovpn_n2n
+< fwhost port
+< fwhost prot
+< fwhost reread
+< fwhost reset
+< fwhost services
+< fwhost srv_name
+< fwhost stdnet
+< fwhost type
+< fwhost used
+< fwhost welcome
+< fwhost wo subnet
+< fw settings
+< fw settings color
+< fw settings dropdown
+< fw settings remark
+< fw settings ruletable
 < hour-graph
 < incoming traffic in bytes per second
 < minute
@@ -728,6 +1420,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< red1
 < server restart
 < static routes
 < tor

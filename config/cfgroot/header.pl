@@ -148,11 +148,8 @@ sub genmenu {
     eval `/bin/cat /var/ipfire/menu.d/*.menu`;
     eval `/bin/cat /var/ipfire/menu.d/*.main`;
 
-    if (! blue_used() && ! orange_used()) {
-	$menu->{'05.firewall'}{'subMenu'}->{'40.dmz'}{'enabled'} = 0;
-    }
     if (! blue_used()) {
-	$menu->{'05.firewall'}{'subMenu'}->{'30.wireless'}{'enabled'} = 0;
+	$menu->{'05.firewall'}{'subMenu'}->{'60.wireless'}{'enabled'} = 0;
     }
     if ( $ethsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
 	$menu->{'03.network'}{'subMenu'}->{'70.aliases'}{'enabled'} = 1;

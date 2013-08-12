@@ -11,10 +11,12 @@ WARNING: translation string unused: Remote VPN IP
 WARNING: translation string unused: Resolv
 WARNING: translation string unused: TOS Bits
 WARNING: translation string unused: Verbose
+WARNING: translation string unused: access allowed
 WARNING: translation string unused: access refused with this oinkcode
 WARNING: translation string unused: add network
 WARNING: translation string unused: add new ovpn
 WARNING: translation string unused: add service
+WARNING: translation string unused: add xtaccess
 WARNING: translation string unused: add-route
 WARNING: translation string unused: admin user password has been changed
 WARNING: translation string unused: administrator user password
@@ -46,6 +48,7 @@ WARNING: translation string unused: all updates installed
 WARNING: translation string unused: allmsg
 WARNING: translation string unused: alt information
 WARNING: translation string unused: alt ovpn
+WARNING: translation string unused: alt vpn
 WARNING: translation string unused: and
 WARNING: translation string unused: ansi t1.483
 WARNING: translation string unused: apply
@@ -87,6 +90,7 @@ WARNING: translation string unused: cache management
 WARNING: translation string unused: cache size
 WARNING: translation string unused: calamaris report interval (in minutes)
 WARNING: translation string unused: calc traffic all x minutes
+WARNING: translation string unused: cant enable xtaccess
 WARNING: translation string unused: capsinactive
 WARNING: translation string unused: cfg restart
 WARNING: translation string unused: check for net traffic update
@@ -126,6 +130,11 @@ WARNING: translation string unused: debugme
 WARNING: translation string unused: deep scan directories
 WARNING: translation string unused: default networks
 WARNING: translation string unused: default services
+WARNING: translation string unused: description
+WARNING: translation string unused: destination ip bad
+WARNING: translation string unused: destination ip or net
+WARNING: translation string unused: destination net
+WARNING: translation string unused: destination port overlaps
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -138,11 +147,18 @@ WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
 WARNING: translation string unused: disconnect
 WARNING: translation string unused: display traffic at home
+WARNING: translation string unused: dmz pinhole configuration
+WARNING: translation string unused: dmz pinhole rule added
+WARNING: translation string unused: dmz pinhole rule removed
+WARNING: translation string unused: dmzpinholes for same net not necessary
 WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
 WARNING: translation string unused: driver
+WARNING: translation string unused: drop output
+WARNING: translation string unused: dstprt range overlaps
+WARNING: translation string unused: dstprt within existing
 WARNING: translation string unused: dynamic dns client
 WARNING: translation string unused: eciadsl help
 WARNING: translation string unused: eciadsl upload
@@ -169,6 +185,7 @@ WARNING: translation string unused: error external access
 WARNING: translation string unused: expected
 WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
+WARNING: translation string unused: external access
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall graphs
@@ -176,6 +193,9 @@ WARNING: translation string unused: firewall log viewer
 WARNING: translation string unused: firmware
 WARNING: translation string unused: firmware upload
 WARNING: translation string unused: force update
+WARNING: translation string unused: forwarding rule added
+WARNING: translation string unused: forwarding rule removed
+WARNING: translation string unused: forwarding rule updated
 WARNING: translation string unused: fritzdsl help
 WARNING: translation string unused: fritzdsl upload
 WARNING: translation string unused: from email adr
@@ -239,6 +259,7 @@ WARNING: translation string unused: local hard disk
 WARNING: translation string unused: localkeyfile
 WARNING: translation string unused: log enabled
 WARNING: translation string unused: log viewer
+WARNING: translation string unused: logging
 WARNING: translation string unused: loosedirectorychecking
 WARNING: translation string unused: ls_dhcpd
 WARNING: translation string unused: ls_disk space
@@ -264,6 +285,7 @@ WARNING: translation string unused: mbmon value
 WARNING: translation string unused: min size
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
+WARNING: translation string unused: mode
 WARNING: translation string unused: modem on com1
 WARNING: translation string unused: modem on com2
 WARNING: translation string unused: modem on com3
@@ -279,6 +301,7 @@ WARNING: translation string unused: monthly volume start day short
 WARNING: translation string unused: mount
 WARNING: translation string unused: mtu QoS
 WARNING: translation string unused: nat-traversal
+WARNING: translation string unused: net
 WARNING: translation string unused: net address
 WARNING: translation string unused: net config type
 WARNING: translation string unused: net config type help
@@ -305,6 +328,7 @@ WARNING: translation string unused: o-no
 WARNING: translation string unused: o-yes
 WARNING: translation string unused: online help en
 WARNING: translation string unused: only red
+WARNING: translation string unused: open to all
 WARNING: translation string unused: optional data
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
@@ -312,7 +336,16 @@ WARNING: translation string unused: or
 WARNING: translation string unused: original
 WARNING: translation string unused: other countries
 WARNING: translation string unused: out
+WARNING: translation string unused: outgoing firewall
+WARNING: translation string unused: outgoing firewall mode0
+WARNING: translation string unused: outgoing firewall mode1
+WARNING: translation string unused: outgoing firewall mode2
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
+WARNING: translation string unused: outgoing firewall p2p description 1
+WARNING: translation string unused: outgoing firewall p2p description 2
+WARNING: translation string unused: outgoing firewall p2p description 3
+WARNING: translation string unused: outgoing firewall reset
+WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn
 WARNING: translation string unused: ovpn config
@@ -343,6 +376,8 @@ WARNING: translation string unused: passwords must be at least 6 characters in l
 WARNING: translation string unused: phonebook entry
 WARNING: translation string unused: ping disabled
 WARNING: translation string unused: polfile
+WARNING: translation string unused: policy
+WARNING: translation string unused: port forwarding configuration
 WARNING: translation string unused: ports
 WARNING: translation string unused: pots
 WARNING: translation string unused: pppoe
@@ -370,7 +405,9 @@ WARNING: translation string unused: router ip
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
+WARNING: translation string unused: select dest net
 WARNING: translation string unused: select media
+WARNING: translation string unused: select source net
 WARNING: translation string unused: selecttraffic
 WARNING: translation string unused: send email notification
 WARNING: translation string unused: send test mail
@@ -389,15 +426,23 @@ WARNING: translation string unused: shutdown2
 WARNING: translation string unused: shutting down
 WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
+WARNING: translation string unused: source ip in use
+WARNING: translation string unused: source ip or net
+WARNING: translation string unused: source net
+WARNING: translation string unused: source port overlaps
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
 WARNING: translation string unused: squid fix cache
+WARNING: translation string unused: srcprt range overlaps
+WARNING: translation string unused: srcprt within existing
+WARNING: translation string unused: ssdmz pinholes
 WARNING: translation string unused: ssh access tip
 WARNING: translation string unused: ssh1 disabled
 WARNING: translation string unused: ssh1 enabled
 WARNING: translation string unused: ssh1 support
 WARNING: translation string unused: ssnetwork status
 WARNING: translation string unused: sspasswords
+WARNING: translation string unused: ssport forwarding
 WARNING: translation string unused: ssproxy graphs
 WARNING: translation string unused: sssystem status
 WARNING: translation string unused: sstraffic graphs
@@ -489,6 +534,7 @@ WARNING: translation string unused: vpn watch
 WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: weekly firewallhits
+WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Add a route
@@ -549,6 +595,11 @@ WARNING: untranslated string: dnsforward edit an entry
 WARNING: untranslated string: dnsforward entries
 WARNING: untranslated string: dnsforward forward_server
 WARNING: untranslated string: dnsforward zone
+WARNING: untranslated string: drop action
+WARNING: untranslated string: drop action1
+WARNING: untranslated string: drop action2
+WARNING: untranslated string: drop forward
+WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: emerging rules
 WARNING: untranslated string: extrahd because there is already a device mounted
 WARNING: untranslated string: extrahd cant umount
@@ -557,6 +608,141 @@ WARNING: untranslated string: extrahd maybe the device is in use
 WARNING: untranslated string: extrahd to
 WARNING: untranslated string: extrahd to root
 WARNING: untranslated string: extrahd you cant mount
+WARNING: untranslated string: fw default drop
+WARNING: untranslated string: fw settings
+WARNING: untranslated string: fw settings color
+WARNING: untranslated string: fw settings dropdown
+WARNING: untranslated string: fw settings remark
+WARNING: untranslated string: fw settings ruletable
+WARNING: untranslated string: fwdfw action
+WARNING: untranslated string: fwdfw additional
+WARNING: untranslated string: fwdfw addrule
+WARNING: untranslated string: fwdfw change
+WARNING: untranslated string: fwdfw copy
+WARNING: untranslated string: fwdfw delete
+WARNING: untranslated string: fwdfw dnat
+WARNING: untranslated string: fwdfw dnat error
+WARNING: untranslated string: fwdfw dnat porterr
+WARNING: untranslated string: fwdfw edit
+WARNING: untranslated string: fwdfw err nosrc
+WARNING: untranslated string: fwdfw err nosrcip
+WARNING: untranslated string: fwdfw err notgt
+WARNING: untranslated string: fwdfw err notgtip
+WARNING: untranslated string: fwdfw err prot
+WARNING: untranslated string: fwdfw err remark
+WARNING: untranslated string: fwdfw err ruleexists
+WARNING: untranslated string: fwdfw err same
+WARNING: untranslated string: fwdfw err samesub
+WARNING: untranslated string: fwdfw err src_addr
+WARNING: untranslated string: fwdfw err tgt_addr
+WARNING: untranslated string: fwdfw err tgt_grp
+WARNING: untranslated string: fwdfw err tgt_mac
+WARNING: untranslated string: fwdfw err time
+WARNING: untranslated string: fwdfw final_rule
+WARNING: untranslated string: fwdfw hint ip1
+WARNING: untranslated string: fwdfw hint ip2
+WARNING: untranslated string: fwdfw log rule
+WARNING: untranslated string: fwdfw man port
+WARNING: untranslated string: fwdfw menu
+WARNING: untranslated string: fwdfw movedown
+WARNING: untranslated string: fwdfw moveup
+WARNING: untranslated string: fwdfw newrule
+WARNING: untranslated string: fwdfw p2p txt
+WARNING: untranslated string: fwdfw pol allow
+WARNING: untranslated string: fwdfw pol block
+WARNING: untranslated string: fwdfw pol text
+WARNING: untranslated string: fwdfw pol text1
+WARNING: untranslated string: fwdfw pol title
+WARNING: untranslated string: fwdfw red
+WARNING: untranslated string: fwdfw reread
+WARNING: untranslated string: fwdfw rule action
+WARNING: untranslated string: fwdfw rule activate
+WARNING: untranslated string: fwdfw rulepos
+WARNING: untranslated string: fwdfw snat
+WARNING: untranslated string: fwdfw source
+WARNING: untranslated string: fwdfw sourceip
+WARNING: untranslated string: fwdfw target
+WARNING: untranslated string: fwdfw targetip
+WARNING: untranslated string: fwdfw timeframe
+WARNING: untranslated string: fwdfw toggle
+WARNING: untranslated string: fwdfw togglelog
+WARNING: untranslated string: fwdfw use nat
+WARNING: untranslated string: fwdfw use srcport
+WARNING: untranslated string: fwdfw use srv
+WARNING: untranslated string: fwdfw useless rule
+WARNING: untranslated string: fwdfw wd_fri
+WARNING: untranslated string: fwdfw wd_mon
+WARNING: untranslated string: fwdfw wd_sat
+WARNING: untranslated string: fwdfw wd_sun
+WARNING: untranslated string: fwdfw wd_thu
+WARNING: untranslated string: fwdfw wd_tue
+WARNING: untranslated string: fwdfw wd_wed
+WARNING: untranslated string: fwdfw xt access
+WARNING: untranslated string: fwhost addgrp
+WARNING: untranslated string: fwhost addgrpname
+WARNING: untranslated string: fwhost addhost
+WARNING: untranslated string: fwhost addnet
+WARNING: untranslated string: fwhost addservice
+WARNING: untranslated string: fwhost addservicegrp
+WARNING: untranslated string: fwhost any
+WARNING: untranslated string: fwhost back
+WARNING: untranslated string: fwhost ccdhost
+WARNING: untranslated string: fwhost ccdnet
+WARNING: untranslated string: fwhost change
+WARNING: untranslated string: fwhost cust addr
+WARNING: untranslated string: fwhost cust grp
+WARNING: untranslated string: fwhost cust net
+WARNING: untranslated string: fwhost cust service
+WARNING: untranslated string: fwhost cust srvgrp
+WARNING: untranslated string: fwhost deleted
+WARNING: untranslated string: fwhost empty
+WARNING: untranslated string: fwhost err addr
+WARNING: untranslated string: fwhost err empty
+WARNING: untranslated string: fwhost err groupempty
+WARNING: untranslated string: fwhost err grpexist
+WARNING: untranslated string: fwhost err hostexist
+WARNING: untranslated string: fwhost err hostip
+WARNING: untranslated string: fwhost err ip
+WARNING: untranslated string: fwhost err ipcheck
+WARNING: untranslated string: fwhost err ipmac
+WARNING: untranslated string: fwhost err ipwithsub
+WARNING: untranslated string: fwhost err isccdhost
+WARNING: untranslated string: fwhost err isccdiphost
+WARNING: untranslated string: fwhost err isccdipnet
+WARNING: untranslated string: fwhost err isccdnet
+WARNING: untranslated string: fwhost err isingrp
+WARNING: untranslated string: fwhost err name
+WARNING: untranslated string: fwhost err name1
+WARNING: untranslated string: fwhost err net
+WARNING: untranslated string: fwhost err netexist
+WARNING: untranslated string: fwhost err partofnet
+WARNING: untranslated string: fwhost err port
+WARNING: untranslated string: fwhost err remark
+WARNING: untranslated string: fwhost err srv exists
+WARNING: untranslated string: fwhost err srvexist
+WARNING: untranslated string: fwhost err sub32
+WARNING: untranslated string: fwhost hint
+WARNING: untranslated string: fwhost hosts
+WARNING: untranslated string: fwhost icmptype
+WARNING: untranslated string: fwhost ip_mac
+WARNING: untranslated string: fwhost ipsec net
+WARNING: untranslated string: fwhost menu
+WARNING: untranslated string: fwhost netaddress
+WARNING: untranslated string: fwhost newgrp
+WARNING: untranslated string: fwhost newhost
+WARNING: untranslated string: fwhost newnet
+WARNING: untranslated string: fwhost newservice
+WARNING: untranslated string: fwhost newservicegrp
+WARNING: untranslated string: fwhost ovpn_n2n
+WARNING: untranslated string: fwhost port
+WARNING: untranslated string: fwhost prot
+WARNING: untranslated string: fwhost reread
+WARNING: untranslated string: fwhost services
+WARNING: untranslated string: fwhost srv_name
+WARNING: untranslated string: fwhost stdnet
+WARNING: untranslated string: fwhost type
+WARNING: untranslated string: fwhost used
+WARNING: untranslated string: fwhost welcome
 WARNING: untranslated string: incoming traffic in bytes per second
 WARNING: untranslated string: minute
 WARNING: untranslated string: new
@@ -584,6 +770,7 @@ WARNING: untranslated string: proxy reports monthly
 WARNING: untranslated string: proxy reports today
 WARNING: untranslated string: proxy reports weekly
 WARNING: untranslated string: qos enter bandwidths
+WARNING: untranslated string: red1
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed

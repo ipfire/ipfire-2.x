@@ -30,6 +30,7 @@ use File::Copy;
 use File::Temp qw/ tempfile tempdir /;
 use strict;
 use Archive::Zip qw(:ERROR_CODES :CONSTANTS);
+use Sort::Naturally;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
@@ -165,49 +166,29 @@ sub deletebackupcert
 		unlink ("${General::swroot}/ovpn/certs/$hexvalue.pem");
 	}
 }
-
 sub checkportfw {
-    my $KEY2 = $_[0]; # key2
-    my $SRC_PORT = $_[1]; # src_port
-    my $PROTOCOL = $_[2]; # protocol
-    my $SRC_IP = $_[3]; # sourceip
-
-    my $pfwfilename = "${General::swroot}/portfw/config";
-    open(FILE, $pfwfilename) or die 'Unable to open config file.';
-    my @pfwcurrent = <FILE>;
-    close(FILE);
-    my $pfwkey1 = 0; # used for finding last sequence number used 
-    foreach my $pfwline (@pfwcurrent)
-    {
-	my @pfwtemp = split(/\,/,$pfwline);
-
-	chomp ($pfwtemp[8]);
-	if ($KEY2 eq "0"){ # if key2 is 0 then it is a portfw addition
-		if ( $SRC_PORT eq $pfwtemp[3] &&
-			$PROTOCOL eq $pfwtemp[2] &&
-			$SRC_IP eq $pfwtemp[7])
-		{
-			 $errormessage = "$Lang::tr{'source port in use'} $SRC_PORT";
-		}
-		# Check if key2 = 0, if it is then it is a port forward entry and we want the sequence number
-		if ( $pfwtemp[1] eq "0") {
-			$pfwkey1=$pfwtemp[0];
-		}
-		# Darren Critchley - Duplicate or overlapping Port range check
-		if ($pfwtemp[1] eq "0" && 
-			$PROTOCOL eq $pfwtemp[2] &&
-			$SRC_IP eq $pfwtemp[7] &&
-			$errormessage eq '') 
-		{
-			&portchecks($SRC_PORT, $pfwtemp[5]);		
-#			&portchecks($pfwtemp[3], $pfwtemp[5]);
-#			&portchecks($pfwtemp[3], $SRC_IP);
+	my $DPORT = shift;
+	my $DPROT = shift;
+	my %natconfig =();
+	my $confignat = "${General::swroot}/forward/config";
+	$DPROT= uc ($DPROT);
+	&General::readhasharray($confignat, \%natconfig);
+	foreach my $key (sort keys %natconfig){
+		my @portarray = split (/\|/,$natconfig{$key}[30]);
+		foreach my $value (@portarray){
+			if ($value =~ /:/i){
+				my ($a,$b) = split (":",$value);
+				if ($DPROT eq $natconfig{$key}[12] && $DPORT gt $a && $DPORT lt $b){
+					$errormessage= "$Lang::tr{'source port in use'} $DPORT";
+				}
+			}else{
+				if ($DPROT eq $natconfig{$key}[12] && $DPORT eq $value){
+					$errormessage= "$Lang::tr{'source port in use'} $DPORT";
+				}
+			}
 		}
 	}
-    }
-#    $errormessage="$KEY2 $SRC_PORT $PROTOCOL $SRC_IP";
-
-    return;
+	return;
 }
 
 sub checkportoverlap
@@ -238,32 +219,6 @@ sub checkportinc
 	} else {
 		return 0; 
 	}
-}
-# Darren Critchley - Duplicate or overlapping Port range check
-sub portchecks
-{
-	my $p1 = $_[0]; # New port range
-	my $p2 = $_[1]; # existing port range
-#	$_ = $_[0];
-	our ($prtrange1, $prtrange2);
-	$prtrange1 = 0;
-#	if (m/:/ && $prtrange1 == 1) { # comparing two port ranges
-#		unless (&checkportoverlap($p1,$p2)) {
-#			$errormessage = "$Lang::tr{'source port overlaps'} $p1";
-#		}
-#	}
-	if (m/:/ && $prtrange1 == 0 && $errormessage eq '') { # compare one port to a range
-		unless (&checkportinc($p2,$p1)) {
-			$errormessage = "$Lang::tr{'srcprt within existing'} $p1";
-		}
-	}
-	$prtrange1 = 1;
-	if (! m/:/ && $prtrange1 == 1 && $errormessage eq '') { # compare one port to a range
-		unless (&checkportinc($p1,$p2)) {
-			$errormessage = "$Lang::tr{'srcprt range overlaps'} $p2";
-		}
-	}
-	return;
 }
 
 # Darren Critchley - certain ports are reserved for IPFire 
@@ -1144,7 +1099,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     
     
     if ($cgiparams{'ENABLED'} eq 'on'){
-	&checkportfw(0,$cgiparams{'DDEST_PORT'},$cgiparams{'DPROTOCOL'},'0.0.0.0');
+	&checkportfw($cgiparams{'DDEST_PORT'},$cgiparams{'DPROTOCOL'});
     }
     	
     if ($errormessage) { goto SETTINGS_ERROR; }
@@ -4896,11 +4851,10 @@ END
 </tr>
 END
 	;
-        my $id = 0;
-        my $gif;
-	 foreach my $key (sort { uc($confighash{$a}[1]) cmp uc($confighash{$b}[1]) } keys %confighash) {
-    	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
-
+    my $id = 0;
+    my $gif;
+    foreach my $key (sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
+	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 	if ($id % 2) {
 	    print "<tr bgcolor='$color{'color20'}'>\n";
 	} else {

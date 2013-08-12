@@ -47,9 +47,7 @@ init_networking() {
 #	(exit ${failed})
 #	evaluate_retval
 
-	boot_mesg "Setting up DMZ pinholes"
-	/usr/local/bin/setdmzholes; evaluate_retval
-
+	
 	if [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
 		boot_mesg "Setting up wireless firewall rules"
 		/usr/local/bin/wirelessctrl; evaluate_retval

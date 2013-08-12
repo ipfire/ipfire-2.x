@@ -1,52 +1,40 @@
-    $subfirewall->{'10.dnat'} = {
-				 'caption' => $Lang::tr{'ssport forwarding'},
-				 'uri' => '/cgi-bin/portfw.cgi',
-				 'title' => "$Lang::tr{'ssport forwarding'}",
-				 'enabled' => 1,
-				 };
-    $subfirewall->{'20.xtaccess'} = {
-				 'caption' => $Lang::tr{'external access'},
-				 'uri' => '/cgi-bin/xtaccess.cgi',
-				 'title' => "$Lang::tr{'external access'}",
-				 'enabled' => 1,
-				 };
-    $subfirewall->{'30.wireless'} = {
-				'caption' => $Lang::tr{'blue access'},
-				'uri' => '/cgi-bin/wireless.cgi',
-				'title' => "$Lang::tr{'blue access'}",
-				'enabled' => 1,
-				 };
-    $subfirewall->{'40.dmz'} = {
-				'caption' => $Lang::tr{'ssdmz pinholes'},
-				'uri' => '/cgi-bin/dmzholes.cgi',
-				'title' => "$Lang::tr{'dmz pinhole configuration'}",
-				'enabled' => 1,
-				 };
-    $subfirewall->{'50.outgoing'} = {
-				'caption' => $Lang::tr{'outgoing firewall'},
-				'uri' => '/cgi-bin/outgoingfw.cgi',
-				'title' => "$Lang::tr{'outgoing firewall'}",
+    $subfirewall->{'10.forward'} = {
+				'caption' => $Lang::tr{'fwdfw menu'},
+				'uri' => '/cgi-bin/forwardfw.cgi',
+				'title' => "$Lang::tr{'fwdfw menu'}",
 				'enabled' => 1,
 				};
-    $subfirewall->{'51.outgoinggrp'} = {
-				'caption' => $Lang::tr{'outgoing firewall groups'},
-				'uri' => '/cgi-bin/outgoinggrp.cgi',
-				'title' => "$Lang::tr{'outgoing firewall groups'}",
+	$subfirewall->{'20.fwhost'} = {
+				'caption' => $Lang::tr{'fwhost menu'},
+				'uri' => '/cgi-bin/fwhosts.cgi',
+				'title' => "$Lang::tr{'fwhost menu'}",
 				'enabled' => 1,
 				};
-    $subfirewall->{'60.upnp'} = {
-				'caption' => 'UPnP',
-				'uri' => '/cgi-bin/upnp.cgi',
-				'title' => "Universal Plug and Play",
-				'enabled' => 0,
-				};
-    $subfirewall->{'60.optingsfw'} = {
+    $subfirewall->{'30.optionsfw'} = {
 				'caption' => $Lang::tr{'options fw'},
 				'uri' => '/cgi-bin/optionsfw.cgi',
 				'title' => "$Lang::tr{'options fw'}",
 				'enabled' => 1,
 				};
-    $subfirewall->{'70.iptables'} = {
+	$subfirewall->{'40.p2p'} = {
+				'caption' => 'P2P-Block',
+				'uri' => '/cgi-bin/p2p-block.cgi',
+				'title' => "P2P-Block",
+				'enabled' => 1,
+				};
+    $subfirewall->{'60.wireless'} = {
+				'caption' => $Lang::tr{'blue access'},
+				'uri' => '/cgi-bin/wireless.cgi',
+				'title' => "$Lang::tr{'blue access'}",
+				'enabled' => 1,
+				 };			 
+    $subfirewall->{'70.upnp'} = {
+				'caption' => 'UPnP',
+				'uri' => '/cgi-bin/upnp.cgi',
+				'title' => "Universal Plug and Play",
+				'enabled' => 0,
+				};
+	$subfirewall->{'90.iptables'} = {
 				'caption' => $Lang::tr{'ipts'},
 				'uri' => '/cgi-bin/iptables.cgi',
 				'title' => "$Lang::tr{'ipts'}",

@@ -1,0 +1,690 @@
+#!/usr/bin/perl
+######################################################################## 
+# Script:	convert-outgoingfw
+# Date:		21.03.2013
+# Author:	Alexander Marx (amarx@ipfire.org)
+########################################################################
+#
+# This script converts old groups and firewallrules 
+# to the new one. This is a 3-step process.
+# STEP1: convert groups ->LOG /var/log/converters
+# STEP2: convert rules  ->LOG /var/log/converters
+# STEP3: convert P2P rules 
+#
+########################################################################
+
+require '/var/ipfire/general-functions.pl';
+
+use Socket;
+use File::Path;
+use File::Copy;
+
+my $ipgrouppath 	= "${General::swroot}/outgoing/groups/ipgroups/";
+my $macgrouppath	= "${General::swroot}/outgoing/groups/macgroups/";
+my $outgoingrules	= "${General::swroot}/outgoing/rules";
+my $outfwsettings	= "${General::swroot}/outgoing/settings";
+my $host			= "Converted ";
+my $confighosts		= "${General::swroot}/fwhosts/customhosts";
+my $confignets		= "${General::swroot}/fwhosts/customnetworks";
+my $configgroups	= "${General::swroot}/fwhosts/customgroups";
+my $ovpnsettings	= "${General::swroot}/ovpn/settings";
+my $ovpnconfig		= "${General::swroot}/ovpn/ovpnconfig";
+my $ccdconfig		= "${General::swroot}/ovpn/ccd.conf";
+my $fwdfwconfig		= "${General::swroot}/forward/config";
+my $outfwconfig		= "${General::swroot}/forward/outgoing";
+my $fwdfwsettings	= "${General::swroot}/forward/settings";
+my @ipgroups = qx(ls $ipgrouppath);
+my @macgroups = qx(ls $macgrouppath);
+my @hostarray=();
+my %outsettings=();
+my %hosts=();
+my %nets=();
+my %groups=();
+my %settingsovpn=();
+my %configovpn=();
+my %ccdconf=();
+my %fwconfig=();
+my %fwconfigout=();
+my %fwdsettings=();
+my %ownnet=();
+my %ovpnSettings = ();
+&General::readhash("${General::swroot}/ovpn/settings", \%ovpnSettings);
+&General::readhash($outfwsettings,\%outsettings);
+&General::readhash("${General::swroot}/ethernet/settings", \%ownnet);
+#ONLY RUN if /var/ipfire/outgoing exists
+if ( -d "/var/ipfire/outgoing"){
+	&process_groups;
+	&process_rules;
+	&process_p2p;
+}
+system("/usr/local/bin/forwardfwctrl");
+sub process_groups
+{
+	if(! -d "/var/log/converters"){ mkdir("/var/log/converters");}
+	if( -f "/var/log/converters/groups-convert.log"){rmtree("var/log/converters");}
+	open (LOG, ">/var/log/converters/groups-convert.log") or die $!;
+	#IP Group processing
+	foreach my $group (@ipgroups){
+		my $now=localtime;
+		chomp $group;
+		print LOG "\n$now Processing IP-GROUP: $group...\n";
+		open (DATEI, "<$ipgrouppath/$group");
+		my @zeilen = <DATEI>;
+		foreach my $ip (@zeilen){
+			chomp($ip);
+			$ip =~ s/\s//gi;
+			print LOG "$now Check IP $ip from Group $group ";
+			my $val=&check_ip($ip);
+			if($val){
+				push(@hostarray,$val.",ip");
+				print LOG "$now -> OK\n";
+			}
+			else{
+				print LOG "$now -> IP \"$ip\" from group $group not converted (invalid IP) \n";
+			}
+			$val='';
+		}
+		&new_hostgrp($group,'ip');
+		@hostarray=();
+	}
+	$group='';
+	@zeilen=();
+	@hostarray=();
+	#MAC Group processing
+	foreach my $group (@macgroups){
+		chomp $group;
+		print LOG "\nProcessing MAC-GROUP: $group...\n";
+		open (DATEI, "<$macgrouppath/$group");
+		my @zeilen = <DATEI>;
+		foreach my $mac (@zeilen){
+			chomp($mac);
+			$mac =~ s/\s//gi;
+			print LOG "$now Checking MAC $mac from group $group ";
+			#MAC checking
+			if(&General::validmac($mac)){
+				$val=$mac;
+			}
+			if($val){
+				push(@hostarray,$val.",mac");
+				print LOG "$now -> OK\n";
+			}
+			else{
+				print LOG "$now -> Mac $mac from group $group not converted (invalid MAC)\n";
+			}
+			$val='';
+		}
+		&new_hostgrp($group,'mac');
+		@hostarray=();
+		@zeilen=();
+	}
+	close (LOG);
+}
+sub check_ip
+{
+	my $adr=shift;
+	my $a;
+	#ip with subnet in decimal
+	if($adr =~ m/^(\d\d?\d?).(\d\d?\d?).(\d\d?\d?).(\d\d?\d?)\/(\d{1,2})$/){
+		$adr=int($1).".".int($2).".".int($3).".".int($4);
+		my $b = &General::iporsubtodec($5);
+		$a=$adr."/".$b;
+	}elsif($adr =~ /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/){
+		$adr=int($1).".".int($2).".".int($3).".".int($4);
+		if(&General::validip($adr)){
+			$a=$adr."/255.255.255.255";
+		}
+	}
+	if(&General::validipandmask($adr)){
+		$a=&General::iporsubtodec($adr);
+	}
+	return $a;
+}
+sub new_hostgrp
+{
+	&General::readhasharray($confighosts,\%hosts);
+	&General::readhasharray($confignets,\%nets);
+	&General::readhasharray($configgroups,\%groups);
+	my $grp=shift;
+	my $run=shift;
+	my $name; #"converted"
+	my $name2;
+	my $name3; #custom host/custom net
+	foreach my $adr (@hostarray){
+		if($run eq 'ip'){
+			my ($ip,$type) 			= split(",",$adr);
+			my ($ippart,$subnet) 	= split("/",$ip);
+			my ($byte1,$byte2,$byte3,$byte4) = split(/\./,$subnet);
+			if($byte4 eq '255'){
+				print LOG "Processing SINGLE HOST $ippart/$subnet from group $grp\n"; 
+				if(!&check_host($ip)){
+					my $key		= &General::findhasharraykey(\%hosts);
+					$name="host ";
+					$name2=$name.$ippart;
+					$name3="Custom Host";
+					$hosts{$key}[0]	= $name2;
+					$hosts{$key}[1]	= $type;
+					$hosts{$key}[2]	= $ip;
+					$hosts{$key}[3]	= '';
+					$hosts{$key}[4]	= 1;
+					print LOG "->Host (IP) $ip added to custom hosts\n"
+				}else{
+					print LOG "->Host (IP) $ip already exists in custom hosts\n";
+					$name="host ";
+					$name2=$name.$ippart;
+					foreach my $key (sort keys %hosts){
+						if($hosts{$key}[0] eq $name2){
+							$hosts{$key}[4]++;
+						}
+					}
+					$name="host ";
+					$name2=$name.$ippart;
+					$name3="Custom Host";
+				}
+			}elsif($byte4 < '255'){
+				print LOG "Processing NETWORK $ippart/$subnet from Group $grp\n";
+				if(!&check_net($ippart,$subnet)){
+					#Check if this network is one one of IPFire internal networks
+					if (($ownnet{'GREEN_NETADDRESS'} 		ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &General::IpInSubnet($ippart,$ownnet{'GREEN_NETADDRESS'},$ownnet{'GREEN_NETMASK'}))
+					{
+						$name2='GREEN';
+						$name3='Standard Network';
+					}elsif (($ownnet{'ORANGE_NETADDRESS'} 	ne '' && $ownnet{'ORANGE_NETADDRESS'}	ne '0.0.0.0') && &General::IpInSubnet($ippart,$ownnet{'ORANGE_NETADDRESS'},$ownnet{'ORANGE_NETMASK'}))
+					{
+						$name2='ORANGE';
+						$name3='Standard Network';
+					}elsif (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &General::IpInSubnet($ippart,$ownnet{'BLUE_NETADDRESS'},$ownnet{'BLUE_NETMASK'}))
+					{
+						$name2='BLUE';
+						$name3='Standard Network';
+					}elsif ($ippart eq '0.0.0.0')
+					{
+						$name2='ALL';
+						$name3='Standard Network';
+					}elsif(defined($ovpnSettings{'DOVPN_SUBNET'}) && "$ippart/".&General::iporsubtodec($subnet) eq $ovpnSettings{'DOVPN_SUBNET'})
+					{
+						$name2='OpenVPN-Dyn';
+						$name3='Standard Network';
+					}else{
+						my $netkey	=  &General::findhasharraykey(\%nets);
+						$name="net ";
+						$name2=$name.$ippart;
+						$name3="Custom Network";
+						$nets{$netkey}[0] = $name2;
+						$nets{$netkey}[1] = $ippart;
+						$nets{$netkey}[2] = $subnet;
+						$nets{$netkey}[3] = '';
+						$nets{$netkey}[4] = 1;
+						print LOG "->Network $ippart/$subnet added to custom networks\n";
+					}
+				}else{
+					print LOG "Network $ippart already exists in custom networks\n";
+					$name="net ";
+					$name2=$name.$ippart;
+					foreach my $key (sort keys %nets){
+						if($nets{$key}[0] eq $name2){
+							$nets{$key}[4]++;
+						}
+					}
+					$name="net ";
+					$name2=$name.$ippart;
+					$name3="Custom Network";
+				}
+			}
+			if($name2 && !&check_grp($grp,$name2)){
+				my $grpkey 	= &General::findhasharraykey(\%groups);
+				$groups{$grpkey}[0]	= $grp;
+				$groups{$grpkey}[1]	= '';
+				$groups{$grpkey}[2]	= $name2;
+				$groups{$grpkey}[3]	= $name3;
+				$groups{$grpkey}[4]	= 0;
+				print LOG "->$name2 added to group $grp\n";
+			}
+		}elsif($run eq 'mac'){
+			#MACRUN
+			my ($mac,$type) 			= split(",",$adr);
+			print LOG "Processing HOST (MAC) $mac\n";
+			if(!&check_host($mac)){
+				my $key		= &General::findhasharraykey(\%hosts);
+				$name="host ";
+				$name2=$name.$mac;
+				$name3="Custom Host";
+				$hosts{$key}[0]	= $name2;
+				$hosts{$key}[1]	= $type;
+				$hosts{$key}[2]	= $mac;
+				$hosts{$key}[3]	= '';
+				$hosts{$key}[4]	= 1;
+				print LOG "->Host (MAC) $mac added to custom hosts\n";
+			}else{
+				print LOG "->Host (MAC) $mac already exists in custom hosts \n";
+				$name="host ";
+				$name2=$name.$mac;
+				foreach my $key (sort keys %hosts){
+					if($hosts{$key}[0] eq $name2){
+						$hosts{$key}[4]++;
+					}
+				}
+				$name="host ";
+				$name2=$name.$mac;
+				$name3="Custom Host";
+			}
+			if($name2 && !&check_grp($grp,$name2)){
+				my $grpkey 	= &General::findhasharraykey(\%groups);
+				$groups{$grpkey}[0]	= $grp;
+				$groups{$grpkey}[1]	= '';
+				$groups{$grpkey}[2]	= $name2;
+				$groups{$grpkey}[3]	= $name3;
+				$groups{$grpkey}[4]	= 0;
+				print LOG "->$name2 added to group $grp\n";
+			}
+		}
+	}
+	@hostarray=();
+	&General::writehasharray($confighosts,\%hosts);
+	&General::writehasharray($configgroups,\%groups);
+	&General::writehasharray($confignets,\%nets);
+
+}
+sub check_host
+{
+	my $ip=shift;
+	foreach my $key (sort keys %hosts)
+	{
+		if($hosts{$key}[2] eq $ip)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+sub check_net
+{
+	my $ip=shift;
+	my $sub=shift;
+	foreach my $key (sort keys %nets)
+	{
+		if($nets{$key}[1] eq $ip && $nets{$key}[2] eq $sub)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+sub check_grp
+{
+	my $grp=shift;
+	my $value=shift;
+	foreach my $key (sort keys %groups)
+	{
+		if($groups{$key}[0] eq $grp && $groups{$key}[2] eq $value)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+sub process_rules
+{
+	my ($type,$action,$active,$grp1,$source,$grp2,$useport,$port,$prot,$grp3,$target,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to);
+	#open LOG
+	if( -f "/var/log/converters/outgoingfw-convert.log"){unlink ("/var/log/converters/outgoingfw-convert.log");}
+	open (LOG, ">/var/log/converters/outgoingfw-convert.log") or die $!;
+
+	&General::readhash($fwdfwsettings,\%fwdsettings);
+	if ($outsettings{'POLICY'} eq 'MODE1'){
+		$fwdsettings{'POLICY'}='MODE1';
+		$fwdsettings{'POLICY1'}='MODE2';
+		$type='ALLOW';
+		$action='ACCEPT';
+	}else{
+		$fwdsettings{'POLICY'}='MODE2';
+		$fwdsettings{'POLICY1'}='MODE2';
+		$type='DENY';
+		$action='DROP';
+	}
+	&General::writehash($fwdfwsettings,\%fwdsettings);
+	open (DATEI, "<$outgoingrules");
+	my @lines = <DATEI>;
+	foreach my $rule (@lines)
+	{
+		my $now=localtime;
+		chomp($rule);
+		$port='';
+		print LOG "$now processing: $rule\n";
+		my @configline=();
+		@configline = split( /\;/, $rule );
+		my @prot=();
+		if($configline[0] eq $type){
+			#some variables we can use from old config
+			if($configline[1] eq 'on'){ $active='ON';}else{$active='';}
+			if($configline[3] eq 'all' && $configline[8] ne ''){ 
+				push(@prot,"TCP");
+				push(@prot,"UDP");
+			}elsif($configline[3] eq 'all' && $configline[8] eq ''){
+				push(@prot,"");
+			}else{
+				push(@prot,$configline[3]);
+			}
+			if($configline[4] ne ''){ 
+				$configline[4] =~ s/,/;/g;
+				$remark = $configline[4];
+			}else{$remark = '';}
+			if($configline[9] eq 'Active'){ $log='ON';}else{$log='';}
+			if($configline[10] eq 'on' && $configline[11] eq 'on' && $configline[12] eq 'on' && $configline[13] eq 'on' && $configline[14] eq 'on' && $configline[15] eq 'on' && $configline[16] eq 'on'){
+				if($configline[17] eq '00:00' && $configline[18] eq '00:00'){
+					$time='';
+				}else{
+					$time='ON';					
+				}
+			}else{
+				$time='ON';	
+			} 
+			$time_mon=$configline[10];
+			$time_tue=$configline[11];
+			$time_wed=$configline[12];
+			$time_thu=$configline[13];
+			$time_fri=$configline[14];
+			$time_sat=$configline[15];
+			$time_sun=$configline[16];
+			$time_from=$configline[17];
+			$time_to=$configline[18];
+			############################################################
+			#sourcepart			
+			if ($configline[2] eq 'green') {
+				$grp1='std_net_src';
+				$source='GREEN';
+			}elsif ($configline[2] eq 'orange') {
+				$grp1='std_net_src';
+				$source='ORANGE';
+			}elsif ($configline[2] eq 'red') {
+				$grp1='std_net_src';
+				$source='IPFire';
+				&General::readhash($fwdfwsettings,\%fwdsettings);
+				$fwdsettings{'POLICY1'}=$outsettings{'POLICY'};
+				$fwdsettings{'POLICY'}=$outsettings{'POLICY'};
+				&General::writehash($fwdfwsettings,\%fwdsettings);
+			}elsif ($configline[2] eq 'blue') {
+				$grp1='std_net_src';
+				$source='BLUE';
+			}elsif ($configline[2] eq 'ipsec') {
+				print LOG "$now -> Rule not converted, ipsec+ interface is obsolet since IPFire 2.7 \n";
+				next;
+			}elsif ($configline[2] eq 'ovpn') {
+				print LOG "$now ->Creating networks/groups for OpenVPN...\n";
+				&build_ovpn_grp;		
+				$grp1='cust_grp_src';
+				$source='ovpn'		
+			}elsif ($configline[2] eq 'ip') {
+				my $z=&check_ip($configline[5]);
+				if($z){
+					my ($ipa,$subn) = split("/",$z);
+					$subn=&General::iporsubtocidr($subn);
+					$grp1='src_addr';
+					$source="$ipa/$subn";
+				}else{
+					print LOG "$now -> Rule not converted, missing/invalid source ip \"$configline[5]\"\n";
+					next;
+				}
+			}elsif ($configline[2] eq 'mac') {
+				if(&General::validmac($configline[6])){
+					$grp1='src_addr';
+					$source=$configline[6];
+				}else{
+					print LOG"$now -> Rule not converted, invalid MAC \"$configline[6]\" \n";
+					next;
+				}
+			}elsif ($configline[2] eq 'all') {
+				$grp1='std_net_src';
+				$source='ALL';
+			}else{
+				foreach my $key (sort keys %groups){
+					if($groups{$key}[0] eq $configline[2]){
+						$grp1='cust_grp_src';
+						$source=$configline[2];
+					}
+				}
+				if ($grp1 eq '' || $source eq ''){
+					print LOG "$now -> Rule not converted, no valid source recognised\n";
+				}
+			}
+			############################################################
+			#destinationpart
+			if($configline[7] ne ''){
+				my $address=&check_ip($configline[7]);
+				 if($address){
+					 my ($dip,$dsub) = split("/",$address);
+					 $dsub=&General::iporsubtocidr($dsub);
+					 $grp2='tgt_addr';
+					 $target="$dip/$dsub";
+				 }elsif(!$address){
+					my $getwebsiteip=&get_ip_from_domain($configline[7]);
+					if ($getwebsiteip){
+						$grp2='tgt_addr';
+						$target=$getwebsiteip;	
+						$remark.=" $configline[7]";
+					}else{
+						print LOG "$now -> Rule not converted, invalid domain \"$configline[7]\"\n";
+						next;
+					}
+				 }
+			}else{
+				$grp2='std_net_tgt';
+				$target='ALL';
+			}
+			if($configline[8] ne '' && $configline[3] ne 'gre' && $configline[3] ne 'esp'){
+				my @values=();
+				my @parts=split(",",$configline[8]);
+				foreach (@parts){
+					$_=~ tr/-/:/;
+					if (!($_ =~ /^(\d+)\:(\d+)$/)) {
+						if(&General::validport($_)){
+							$useport='ON';	
+							push (@values,$_);
+							$grp3='TGT_PORT';
+						}else{
+							print LOG "$now -> Rule not converted, invalid destination Port \"$configline[8]\"\n";
+							next;
+						}
+					 }else{
+						my ($a1,$a2) = split(/\:/,$_);
+						if (&General::validport($a1) && &General::validport($a2) && $a1 < $a2){
+							$useport='ON';	
+							push (@values,"$a1:$a2");
+							$grp3='TGT_PORT';
+						}else{
+							print LOG "$now -> Rule not converted, invalid destination Port \"$configline[8]\"\n"; 
+							next;
+						} 
+					 }
+				 }
+				$port=join("|",@values);
+				@values=();
+				@parts=();
+			}
+		}else{
+			print LOG "-> Rule not converted because not for Firewall mode $outsettings{'POLICY'} (we are only converting for actual mode)\n";
+		}
+		&General::readhasharray($fwdfwconfig,\%fwconfig);
+		&General::readhasharray($outfwconfig,\%fwconfigout);
+		my $check;
+		my $chain;
+		foreach my $protocol (@prot){
+			my $now=localtime;
+			if ($source eq 'IPFire'){
+				$chain='OUTGOINGFW';
+			}else{
+				$chain='FORWARDFW';
+			}
+			$protocol=uc($protocol);
+			print LOG "$now -> Converted: $action,$chain,$active,$grp1,$source,$grp2,$target,,,,,$useport,$protocol,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to\n";
+			#Put rules into system....
+			###########################
+			#check for double rules
+			foreach my $key (sort keys %fwconfig){
+				if("$action,$chain,$active,$grp1,$source,$grp2,$target,,,,,$useport,$protocol,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to"
+					eq "$fwconfig{$key}[0],$fwconfig{$key}[1],$fwconfig{$key}[2],$fwconfig{$key}[3],$fwconfig{$key}[4],$fwconfig{$key}[5],$fwconfig{$key}[6],,,,,$fwconfig{$key}[11],$fwconfig{$key}[12],,$fwconfig{$key}[14],$fwconfig{$key}[15],$fwconfig{$key}[16],$fwconfig{$key}[17],$fwconfig{$key}[18],$fwconfig{$key}[19],$fwconfig{$key}[20],$fwconfig{$key}[21],$fwconfig{$key}[22],$fwconfig{$key}[23],$fwconfig{$key}[24],$fwconfig{$key}[25],$fwconfig{$key}[26],$fwconfig{$key}[27]"){
+						$check='on';
+						next;
+				}
+			}
+			if($check ne 'on'){
+				#increase groupcounter
+				my $check1;
+				if($grp1 eq 'cust_grp_src'){
+					foreach my $key (sort keys %groups){
+						if($groups{$key}[0] eq $source){
+							$groups{$key}[4]++;
+							$check1='on'; 
+						}
+					}
+					if($check1 eq 'on'){
+						&General::writehasharray($configgroups,\%groups);
+					}
+				}
+				if ($chain eq 'FORWARDFW'){
+					my $key = &General::findhasharraykey(\%fwconfig);
+					$fwconfig{$key}[0]	= $action;
+					$fwconfig{$key}[1] 	= $chain;
+					$fwconfig{$key}[2] 	= $active;
+					$fwconfig{$key}[3] 	= $grp1;
+					$fwconfig{$key}[4] 	= $source;
+					$fwconfig{$key}[5] 	= $grp2;
+					$fwconfig{$key}[6] 	= $target;
+					$fwconfig{$key}[11] = $useport;
+					$fwconfig{$key}[12] = $protocol;
+					$fwconfig{$key}[14] = $grp3;
+					$fwconfig{$key}[15] = $port;
+					$fwconfig{$key}[16] = $remark;
+					$fwconfig{$key}[17] = $log;
+					$fwconfig{$key}[18] = $time;
+					$fwconfig{$key}[19] = $time_mon;
+					$fwconfig{$key}[20] = $time_tue;
+					$fwconfig{$key}[21] = $time_wed;
+					$fwconfig{$key}[22] = $time_thu;
+					$fwconfig{$key}[23] = $time_fri;
+					$fwconfig{$key}[24] = $time_sat;
+					$fwconfig{$key}[25] = $time_sun;
+					$fwconfig{$key}[26] = $time_from;
+					$fwconfig{$key}[27] = $time_to;
+					$fwconfig{$key}[28] = '';
+					$fwconfig{$key}[29] = 'ALL';
+					$fwconfig{$key}[30] = '';
+					$fwconfig{$key}[31] = 'dnat';
+				}else{
+					my $key = &General::findhasharraykey(\%fwconfigout);
+					$fwconfigout{$key}[0]	= $action;
+					$fwconfigout{$key}[1]	= $chain;
+					$fwconfigout{$key}[2]	= $active;
+					$fwconfigout{$key}[3] 	= $grp1;
+					$fwconfigout{$key}[4] 	= $source;
+					$fwconfigout{$key}[5] 	= $grp2;
+					$fwconfigout{$key}[6] 	= $target;
+					$fwconfigout{$key}[11] 	= $useport;
+					$fwconfigout{$key}[12] 	= $protocol;
+					$fwconfigout{$key}[14] 	= $grp3;
+					$fwconfigout{$key}[15] 	= $port;
+					$fwconfigout{$key}[16] 	= $remark;
+					$fwconfigout{$key}[17] 	= $log;
+					$fwconfigout{$key}[18] 	= $time;
+					$fwconfigout{$key}[19] 	= $time_mon;
+					$fwconfigout{$key}[20] 	= $time_tue;
+					$fwconfigout{$key}[21] 	= $time_wed;
+					$fwconfigout{$key}[22] 	= $time_thu;
+					$fwconfigout{$key}[23] 	= $time_fri;
+					$fwconfigout{$key}[24] 	= $time_sat;
+					$fwconfigout{$key}[25] 	= $time_sun;
+					$fwconfigout{$key}[26] 	= $time_from;
+					$fwconfigout{$key}[27] 	= $time_to;
+					$fwconfigout{$key}[28]  = '';
+					$fwconfigout{$key}[29]  = 'ALL';
+					$fwconfigout{$key}[30]  = '';
+					$fwconfigout{$key}[31]  = 'dnat';
+				}
+				&General::writehasharray($fwdfwconfig,\%fwconfig);
+				&General::writehasharray($outfwconfig,\%fwconfigout);
+			}
+		}
+		@prot=();
+	}
+	close(LOG);
+	@lines=();
+}
+sub get_ip_from_domain
+{
+	$web=shift;
+	my $resolvedip;
+	my $checked;
+	my ($name,$aliases,$addrtype,$length,@addrs) = gethostbyname($web);
+	if(@addrs){
+		$resolvedip=inet_ntoa($addrs[0]);
+		return $resolvedip;
+	}
+	return;
+}
+sub build_ovpn_grp
+{
+	my $now=localtime;
+	&General::readhasharray($confighosts,\%hosts);
+	&General::readhasharray($confignets,\%nets);
+	&General::readhasharray($configgroups,\%groups);
+	&General::readhasharray($ovpnconfig,\%configovpn);
+	&General::readhasharray($ccdconfig,\%ccdconf);
+	&General::readhash($ovpnsettings,\%settingsovpn);
+	#get ovpn nets
+	my @ovpnnets=();
+	if($settingsovpn{'DOVPN_SUBNET'}){
+		my ($net,$subnet)=split("/",$settingsovpn{'DOVPN_SUBNET'});
+		push (@ovpnnets,"$net,$subnet,dynamic");
+		print LOG "$now ->found dynamic OpenVPN net\n"; 
+	}
+	foreach my $key (sort keys %ccdconf){
+		my ($net,$subnet)=split("/",$ccdconf{$key}[1]);
+		$subnet=&General::iporsubtodec($subnet);
+		push (@ovpnnets,"$net,$subnet,$ccdconf{$key}[0]");
+		print LOG "$now ->found OpenVPN static net $net/$subnet\n";
+	}
+	foreach my $key (sort keys %configovpn){
+		if ($configovpn{$key}[3] eq 'net'){
+			my ($net,$subnet)=split("/",$configovpn{$key}[27]);
+			push (@ovpnnets,"$net,$subnet,$configovpn{$key}[2]");
+			print LOG "$now ->found OpenVPN $net/$subnet $configovpn{$key}[2]\n";
+		}
+	}
+	#add ovpn nets to customnetworks/groups
+	foreach my $line (@ovpnnets){
+		my $now=localtime;
+		my ($net,$subnet,$name) = split(",",$line);
+		if (!&check_net($net,$subnet)){
+			my $netkey	=  &General::findhasharraykey(\%nets);
+			$name2=$name."(ovpn)".$net;
+			$name3="Custom Network";
+			$nets{$netkey}[0] = $name2;
+			$nets{$netkey}[1] = $net;
+			$nets{$netkey}[2] = $subnet;
+			$nets{$netkey}[3] = '';
+			$nets{$netkey}[4] = 1;
+			print LOG "$now ->added $name2 $net/$subnet to customnetworks\n";
+		}else{
+			print LOG "-> Custom Network with same IP already exist \"$net/$subnet\" (you can ignore this, if this run was manual from shell)\n"; 
+		}
+		if($name2){
+			my $grpkey 	= &General::findhasharraykey(\%groups);
+			$groups{$grpkey}[0]	= "ovpn";
+			$groups{$grpkey}[1]	= '';
+			$groups{$grpkey}[2]	= $name2;
+			$groups{$grpkey}[3]	= "Custom Network";
+			$groups{$grpkey}[4]	= 0;
+			print LOG "$now ->added $name2 to customgroup ovpn\n";
+		}
+		$name2='';
+	}
+	@ovpnnets=();
+	&General::writehasharray($confighosts,\%hosts);
+	&General::writehasharray($configgroups,\%groups);
+	&General::writehasharray($confignets,\%nets);
+	print LOG "$now ->finished OVPN\n";
+}
+sub process_p2p
+{
+	copy("/var/ipfire/outgoing/p2protocols","/var/ipfire/forward/p2protocols");
+	chmod oct('0777'), '/var/ipfire/forward/p2protocols';
+}

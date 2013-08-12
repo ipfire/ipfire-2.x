@@ -1,0 +1,70 @@
+#!/bin/sh
+
+eval $(/usr/local/bin/readhash /var/ipfire/forward/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+iptables -F POLICYFWD
+iptables -F POLICYOUT
+iptables -F POLICYIN
+
+if [ -f "/var/ipfire/red/iface" ]; then
+	IFACE=`cat /var/ipfire/red/iface`
+fi
+
+#FORWARDFW
+if [ "$POLICY" == "MODE1" ]; then
+		if [ "$FWPOLICY" == "REJECT" ]; then
+			if [ "$DROPFORWARD" == "on" ]; then
+				/sbin/iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "REJECT_FORWARD"
+			fi
+			/sbin/iptables -A POLICYFWD -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_FORWARD"
+		fi
+		if [ "$FWPOLICY" == "DROP" ]; then
+			if [ "$DROPFORWARD" == "on" ]; then
+				/sbin/iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
+			fi
+			/sbin/iptables -A POLICYFWD -j DROP -m comment --comment "DROP_FORWARD"
+		fi
+else
+	if [  "$BLUE_DEV" ] && [ "$IFACE" ]; then
+		/sbin/iptables -A POLICYFWD -i blue0 ! -o $IFACE -j DROP 
+	fi
+	/sbin/iptables -A POLICYFWD -i orange0 ! -o $IFACE -j DROP
+	/sbin/iptables -A POLICYFWD -j ACCEPT 
+	/sbin/iptables -A POLICYFWD -m comment --comment "DROP_FORWARD" -j DROP
+fi
+
+#OUTGOINGFW
+if [ "$POLICY1" == "MODE1" ]; then
+	if [ "$FWPOLICY1" == "REJECT" ]; then
+		if [ "$DROPOUTGOING" == "on" ]; then
+			/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "REJECT_OUTPUT"
+		fi
+		/sbin/iptables -A POLICYOUT -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_OUTPUT"
+	fi
+	if [ "$FWPOLICY1" == "DROP" ]; then
+		if [ "$DROPOUTGOING" == "on" ]; then
+			/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT"
+		fi
+			/sbin/iptables -A POLICYOUT -j DROP -m comment --comment "DROP_OUTPUT"
+	fi
+else
+	/sbin/iptables -A POLICYOUT -j ACCEPT 
+	/sbin/iptables -A POLICYOUT -m comment --comment "DROP_OUTPUT" -j DROP
+fi
+#INPUT
+if [ "$FWPOLICY2" == "REJECT" ]; then
+	if [ "$DROPINPUT" == "on" ]; then
+		/sbin/iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "REJECT_INPUT"
+	fi
+	/sbin/iptables -A POLICYIN -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_INPUT"
+fi
+if [ "$FWPOLICY2" == "DROP" ]; then
+	if [ "$DROPINPUT" == "on" ]; then
+		/sbin/iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
+	fi
+	/sbin/iptables -A POLICYIN -j DROP -m comment --comment "DROP_INPUT"
+fi
+
+exit 0

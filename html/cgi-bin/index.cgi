@@ -341,7 +341,7 @@ END
 		}	else { print $Lang::tr{'advproxy off'};  }
 	}
 	if ( $netsettings{'ORANGE_DEV'} ) { print <<END;
-		<tr><td align='center' bgcolor='$Header::colourorange' width='25%'><a href="/cgi-bin/dmzholes.cgi"><font size='2' color='white'><b>$Lang::tr{'dmz'}</b></font></a><br>
+		<tr><td align='center' bgcolor='$Header::colourorange' width='25%'><a href="/cgi-bin/forwardfw.cgi"><font size='2' color='white'><b>$Lang::tr{'dmz'}</b></font></a><br>
 	  	<td width='30%' align='center'>$netsettings{'ORANGE_ADDRESS'}
   		<td width='45%' align='center'><font color=$Header::colourgreen>Online</font>
 END

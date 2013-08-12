@@ -22,7 +22,7 @@
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-
+use File::Path;
 my $debug = 1;
 my @include = "";
 my ($Sekunden, $Minuten, $Stunden, $Monatstag, $Monat, $Jahr, $Wochentag, $Jahrestag, $Sommerzeit) = localtime(time);
@@ -64,7 +64,72 @@ elsif ($ARGV[0] eq 'restore') {
   system("cd / && tar -xvz -p -f /tmp/restore.ipf");
   #Here some converter scripts to correct old Backups (before core 65)
   system("/usr/sbin/ovpn-ccd-convert");
-}
+  #OUTGOINGFW CONVERTER
+  if( -d "${General::swroot}/outgoing"){
+	  if( -f "${General::swroot}/forward/config" ){
+		  unlink("${General::swroot}/forward/config");
+		  system("touch ${General::swroot}/forward/config");
+		  chown 99,99,"${General::swroot}/forward/config";
+	  }
+	  if( -f "${General::swroot}/forward/outgoing" ){
+		  unlink("${General::swroot}/forward/outgoing");
+		  system("touch ${General::swroot}/forward/outgoing");
+		  chown 99,99,"${General::swroot}/forward/outgoing";
+	  }
+	  unlink("${General::swroot}/fwhosts/customgroups");
+	  unlink("${General::swroot}/fwhosts/customhosts");
+	  unlink("${General::swroot}/fwhosts/customgroups");
+	  unlink("${General::swroot}/fwhosts/customnetworks");
+	  unlink("${General::swroot}/fwhosts/customservicegrp");
+	  unlink("${General::swroot}/fwhosts/customnetworks");
+	  system("touch ${General::swroot}/fwhosts/customgroups");
+	  system("touch ${General::swroot}/fwhosts/customhosts");
+	  system("touch ${General::swroot}/fwhosts/customnetworks");
+	  system("touch ${General::swroot}/fwhosts/customservicegrp");
+	  #START CONVERTER "OUTGOINGFW"
+	  system("/usr/sbin/convert-outgoingfw");
+	  chown 99,99,"${General::swroot}/fwhosts/customgroups";
+	  chown 99,99,"${General::swroot}/fwhosts/customhosts";
+	  chown 99,99,"${General::swroot}/fwhosts/customnetworks";
+	  chown 99,99,"${General::swroot}/fwhosts/customservicegrp";
+	  #START CONVERTER "OUTGOINGFW"
+	  rmtree("${General::swroot}/outgoing");
+  }
+  #XTACCESS CONVERTER
+  if( -d "${General::swroot}/xtaccess"){
+	  if( -f "${General::swroot}/forward/input" ){
+		  unlink("${General::swroot}/forward/input");
+		  system("touch ${General::swroot}/forward/input");
+	  }
+	  #START CONVERTER "XTACCESS"
+	  system("/usr/sbin/convert-xtaccess");
+	  chown 99,99,"${General::swroot}/forward/input";
+	  rmtree("${General::swroot}/xtaccess");
+  }
+  #DMZ-HOLES CONVERTER
+  if( -d "${General::swroot}/dmzholes"){
+	  if( -f "${General::swroot}/forward/dmz" ){
+		  unlink("${General::swroot}/forward/dmz");
+		  system("touch ${General::swroot}/forward/dmz");
+	  }
+	  #START CONVERTER "DMZ-HOLES"
+	  system("/usr/sbin/convert-dmz");
+	  chown 99,99,"${General::swroot}/forward/dmz";
+	  rmtree("${General::swroot}/dmzholes");
+  }
+  #PORTFORWARD CONVERTER
+  if( -d "${General::swroot}/portfw"){
+	  if( -f "${General::swroot}/forward/nat" ){
+		  unlink("${General::swroot}/forward/nat");
+		  system("touch ${General::swroot}/forward/nat");
+	  }
+	  #START CONVERTER "PORTFW"
+	  system("/usr/sbin/convert-portfw");
+	  chown 99,99,"${General::swroot}/forward/nat";
+	  rmtree("${General::swroot}/portfw");
+  }
+  system("/usr/local/bin/forwardfwctrl");
+ }
 elsif ($ARGV[0] eq 'restoreaddon') {
   if ( -e "/tmp/$ARGV[1]" ){system("mv /tmp/$ARGV[1] /var/ipfire/backup/addons/backup/$ARGV[1]");}
   system("cd / && tar -xvz -p -f /var/ipfire/backup/addons/backup/$ARGV[1]");
