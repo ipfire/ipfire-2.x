@@ -76,8 +76,6 @@ dist:
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make tools $(MAKETUNING)
-	cd $(DIR_APP) && install tools/mkimage /usr/bin/
 	cd $(DIR_APP) && make omap4_panda_config
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && install MLO /boot/

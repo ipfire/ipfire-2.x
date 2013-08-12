@@ -1,6 +1,5 @@
 #boot/MLO
 #boot/u-boot.bin
-usr/bin/mkimage
 boot/boot.scr
 boot/boot.script
 boot/convert_bootscript
