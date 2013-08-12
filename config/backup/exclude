@@ -4,3 +4,4 @@
 /var/ipfire/proxy/calamaris/bin/*
 /var/ipfire/qos/bin/qos.pl
 /var/ipfire/urlfilter/blacklists/*/*.db
+/var/ipfire/forward/bin/*
