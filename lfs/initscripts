@@ -180,14 +180,14 @@ $(TARGET) :
 	ln -sf ../../dnsmasq /etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq
 	ln -sf ../../firewall /etc/rc.d/init.d/networking/red.up/20-RL-firewall
 	ln -sf ../../../../../usr/local/bin/forwardfwctrl \
-		/etc/rc.d/init.d/networking/red.up/23-forwardfwctrl
+		/etc/rc.d/init.d/networking/red.up/22-forwardfwctrl
 	ln -sf ../../../../../usr/local/bin/snortctrl \
-		/etc/rc.d/init.d/networking/red.up/24-RS-snort
+		/etc/rc.d/init.d/networking/red.up/23-RS-snort
 	ln -sf ../../../../../usr/local/bin/qosctrl \
-		/etc/rc.d/init.d/networking/red.up/25-RS-qos
+		/etc/rc.d/init.d/networking/red.up/24-RS-qos
 	ln -sf ../../../../../usr/local/bin/dialctrl.pl \
 		/etc/rc.d/init.d/networking/red.up/99-U-dialctrl.pl
-	ln -sf ../../squid /etc/rc.d/init.d/networking/red.up/28-RS-squid
+	ln -sf ../../squid /etc/rc.d/init.d/networking/red.up/27-RS-squid
 	ln -sf ../../dnsmasq /etc/rc.d/init.d/networking/red.down/05-RS-dnsmasq
 	ln -sf ../../firewall /etc/rc.d/init.d/networking/red.down/20-RL-firewall
 	ln -sf ../../../../../usr/local/bin/dialctrl.pl \
