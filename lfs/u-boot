@@ -24,12 +24,10 @@
 
 include Config
 
-VER        = 2011.12
-# Linare version: git clone git://git.linaro.org/boot/u-boot-linaro-stable.git
-# Branch: origin/Linaro-u-boot-2011.12
+VER        = 2013.07
 
-THISAPP    = uboot-panda-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
+THISAPP    = u-boot-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -43,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 19975e9bb4b10d8e67db84e51fcaa43b
+$(DL_FILE)_MD5 = 8445162690052e6afd4b8f87af2bb557
 
 install : $(TARGET)
 
@@ -75,13 +73,43 @@ dist:
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make tools $(MAKETUNING)
-	cd $(DIR_APP) && install tools/mkimage /usr/bin/
-	cd $(DIR_APP) && make omap4_panda_config
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && install MLO /boot/
-	cd $(DIR_APP) && install u-boot.bin /boot/
-	cp -vf $(DIR_SRC)/config/u-boot/* /boot/
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	# Pandaboard
+	-mkdir -pv /usr/share/u-boot/pandaboard
+	cd $(DIR_APP) && make CROSS_COMPILE="" omap4_panda_config
+	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && install -v -m 644 MLO u-boot.bin u-boot.img \
+		/usr/share/u-boot/pandaboard
+	cd $(DIR_APP) && make distclean
+
+	# Wandboard Quad
+	-mkdir -pv /usr/share/u-boot/wandboard_quad
+	cd $(DIR_APP) && make CROSS_COMPILE="" wandboard_quad_config
+	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && install -v -m 644 u-boot.imx \
+		/usr/share/u-boot/wandboard_quad
+	cd $(DIR_APP) && make distclean
+
+	# Wandboard Dual
+	-mkdir -pv /usr/share/u-boot/wandboard_dl
+	cd $(DIR_APP) && make CROSS_COMPILE="" wandboard_dl_config
+	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && install -v -m 644 u-boot.imx \
+		/usr/share/u-boot/wandboard_dl
+	cd $(DIR_APP) && make distclean
+
+	# Wandboard Solo
+	-mkdir -pv /usr/share/u-boot/wandboard_solo
+	cd $(DIR_APP) && make CROSS_COMPILE="" wandboard_solo_config
+	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && install -v -m 644 u-boot.imx \
+		/usr/share/u-boot/wandboard_solo
+	cd $(DIR_APP) && make distclean
+
+	# mkimage
+	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)" tools
+	cd $(DIR_APP) && install -v -m 755 tools/mkimage /usr/bin
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
