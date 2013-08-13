@@ -1,4 +1,4 @@
-%tr = ( 
+%tr = (
 %tr,
 
 'Act as' => 'Konfiguriert als',
@@ -1019,6 +1019,7 @@
 'fwhost err addr' => 'IP-Adresse oder Subnetzmaske ungültig',
 'fwhost err addrgrp' => 'Bitte Gruppennamen angeben',
 'fwhost err empty' => 'Bitte alle Felder ausfüllen',
+'fwhost err emptytable' => 'Keine Einträge in Gruppe',
 'fwhost err groupempty' => 'Die gewählte Gruppe ist leer',
 'fwhost err grpexist' => 'Die Gruppe existiert bereits',
 'fwhost err hostexist' => 'Ein Host mit diesem Namen existiert bereits',

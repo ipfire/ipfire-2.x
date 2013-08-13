@@ -543,6 +543,8 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 	&General::readhasharray("$confighost", \%customhost);
 	#check name
 	if (!&validhostname($grp)){$errormessage.=$Lang::tr{'fwhost err name'};}
+	#check existing name
+	if (!checkgroup(\%customgrp,$grp) && $fwhostsettings{'update'} ne 'on'){$errormessage.=$Lang::tr{'fwhost err grpexist'};}
 	#check remark
 	if ($rem ne '' && !&validremark($rem) && $fwhostsettings{'update'} ne 'on'){
 		$errormessage.=$Lang::tr{'fwhost err remark'};
@@ -1490,7 +1492,7 @@ sub viewtablegrp
 	my $delflag;
 	if (!keys %customgrp) 
 	{ 
-		print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
+		print "<center><b>$Lang::tr{'fwhost err emptytable'}</b>";
 	}else{
 		foreach my $key (sort { ncmp($customgrp{$a}[0],$customgrp{$b}[0]) } sort { ncmp ($customgrp{$a}[2],$customgrp{$b}[2]) } keys %customgrp){
 			$count++;
@@ -1506,7 +1508,7 @@ sub viewtablegrp
 					}
 				}
 				$number=1;
-				if ($customgrp{$key}[2] eq "none"){$customgrp{$key}[2]=$Lang::tr{'fwhost empty'};}
+				if ($customgrp{$key}[2] eq "none"){$customgrp{$key}[2]=$Lang::tr{'fwhost err emptytable'};}
 				$grpname=$customgrp{$key}[0];
 				$remark="$customgrp{$key}[1]";
 				if($count gt 2){ print"</table>";}
@@ -1536,7 +1538,7 @@ sub viewtablegrp
 			}else{
 				print "$customgrp{$key}[2]</td>";
 			}
-			if ($ip eq '' && $customgrp{$key}[2] ne $Lang::tr{'fwhost empty'}){
+			if ($ip eq '' && $customgrp{$key}[2] ne $Lang::tr{'fwhost err emptytable'}){
 				print "<td align='center'>$Lang::tr{'fwhost deleted'}</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";   
 			}else{
 				my ($colip,$colsub) = split("/",$ip);
@@ -1680,6 +1682,17 @@ sub checkname
 	}
 	return 1;
 	
+}
+sub checkgroup
+{
+	my %hash=%{(shift)};
+	my $name=shift;
+	foreach my $key (keys %hash) {
+		if($hash{$key}[0] eq $name){
+			return 0;
+		}
+	}
+	return 1;
 }
 sub checkip
 {

@@ -1,4 +1,4 @@
-%tr = ( 
+%tr = (
 %tr,
 
 'Act as' => 'Act as:',
@@ -1044,6 +1044,7 @@
 'fwhost err addr' => 'Invalid IP address or subnet',
 'fwhost err addrgrp' => 'Please provide a group name',
 'fwhost err empty' => 'Please fill in all input fields',
+'fwhost err emptytable' => 'No entries in this group',
 'fwhost err groupempty' => 'The selected group is empty',
 'fwhost err grpexist' => 'Group already exists',
 'fwhost err hostexist' => 'A host with the same name already exists',
