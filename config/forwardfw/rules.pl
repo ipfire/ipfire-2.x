@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2012														  #
+# Copyright (C) 2013                                                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -18,10 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-#																			  #
-# Hi folks! I hope this code is useful for all. I needed something to handle  #
-# my VPN Connections in a comfortable way. 				      				  #
-# This script builds firewallrules from the webinterface                      #
+# Author: Alexander Marx (amarx@ipfire.org)                                   #
 ###############################################################################
 
 use strict;
@@ -89,7 +86,7 @@ close(CONN1);
 ################################
 #    DEBUG/TEST                #
 ################################
-my $MODE=1;     # 0 - normal operation
+my $MODE=0;     # 0 - normal operation
 				# 1 - print configline and rules to console	
 				# 
 ################################		

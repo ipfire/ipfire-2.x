@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2013                                                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -18,9 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-# New function for forwarding firewall. To make it comfortable to create	  #
-# rules, we need "spelling names" for single Hosts. If you have any questions #
-# <amarx@ipfire.org>														  #
+# Author: Alexander Marx  (amarx@ipfire.org)                                  #
 ###############################################################################
 use strict;
 

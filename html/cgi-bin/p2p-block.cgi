@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2012  											              #
+# Copyright (C) 2013                                                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -18,16 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-#																			  #
-# Hi folks! I hope this code is useful for all. I needed something to handle  #
-# my VPN Connections in a comfortable way. As a prerequisite i needed 		  #
-# something that makes sure the vpn roadwarrior are able to have a fixed 	  #
-# ip-address. So i developed the ccd extension for the vpn server.			  #
-# 																			  #
-# Now that the ccd extension is ready i am able to develop the main request.  #
-# Any feedback is appreciated.												  #
-#																			  #
-#Copymaster																	  #
+# Author: Alexander Marx (Amarx@ipfire.org)                                   #
 ###############################################################################
 
 use strict;
