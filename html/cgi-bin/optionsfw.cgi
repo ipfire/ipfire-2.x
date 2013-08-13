@@ -11,10 +11,6 @@
 # $Id: optionsfw.cgi,v 1.1.2.10 2005/10/03 00:34:10 gespinasse Exp $
 #
 #
-########################################################################
-#  Modifications for new Firewall (C) 2013 by amarx@ipfire.org
-########################################################################
-
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
