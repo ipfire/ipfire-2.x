@@ -1494,7 +1494,7 @@ sub viewtablegrp
 	{ 
 		print "<center><b>$Lang::tr{'fwhost err emptytable'}</b>";
 	}else{
-		foreach my $key (sort { ncmp($customgrp{$a}[0],$customgrp{$b}[0]) } sort { ncmp ($customgrp{$a}[2],$customgrp{$b}[2]) } keys %customgrp){
+		foreach my $key (sort { ncmp($customgrp{$a}[0],$customgrp{$b}[0]) } sort { ncmp($customgrp{$a}[2],$customgrp{$b}[2]) } keys %customgrp){
 			$count++;
 			if ($helper ne $customgrp{$key}[0]){
 				$delflag='0';
@@ -1511,7 +1511,7 @@ sub viewtablegrp
 				if ($customgrp{$key}[2] eq "none"){$customgrp{$key}[2]=$Lang::tr{'fwhost err emptytable'};}
 				$grpname=$customgrp{$key}[0];
 				$remark="$customgrp{$key}[1]";
-				if($count gt 2){ print"</table>";}
+				if($count gt 1){ print"</table>";}
 				print "<br><b><u>$grpname</u></b>&nbsp; &nbsp;";
 				print " <b>$Lang::tr{'remark'}:</b>&nbsp $remark &nbsp " if ($remark ne '');
 				print "<b>$Lang::tr{'used'}:</b> $customgrp{$key}[4]x";
@@ -1554,7 +1554,6 @@ sub viewtablegrp
 			$number++;
 		}
 		print"</table>";
-		
 	}
 	&Header::closebox();
 }
