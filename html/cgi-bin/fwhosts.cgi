@@ -1604,7 +1604,7 @@ sub viewtablegrp
 			}else{
 				my ($colip,$colsub) = split("/",$ip);
 				$ip="$colip/".&General::subtocidr($colsub) if ($colsub);
-				print"<td align='center'>".&Header::colorize($ip)."</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";
+				print"<td align='center' ".&getcolor($colip).">".&Header::colorize($ip)."</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";
 			}
 			if ($delflag > '1' && $ip ne ''){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
