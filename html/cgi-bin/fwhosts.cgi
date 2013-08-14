@@ -46,6 +46,9 @@ my %ownnet=();
 my %ipsecsettings=();
 my %fwfwd=();
 my %fwinp=();
+my %ovpnsettings=();
+my %ipsecconf=();
+my %ipsecsettings=();
 
 my $errormessage;
 my $hint;
@@ -60,6 +63,10 @@ my $configsrv		= "${General::swroot}/fwhosts/customservices";
 my $configsrvgrp	= "${General::swroot}/fwhosts/customservicegrp";
 my $fwconfigfwd		= "${General::swroot}/forward/config";
 my $fwconfiginp		= "${General::swroot}/forward/input";
+my $configovpn		= "${General::swroot}/ovpn/settings";
+my $tdcolor='';
+my $configipsec		= "${General::swroot}/vpn/config";
+my $configipsecrw	= "${General::swroot}/vpn/settings";
 
 unless (-e $confignet)    { system("touch $confignet"); }
 unless (-e $confighost)   { system("touch $confighost"); }
@@ -70,6 +77,10 @@ unless (-e $configsrvgrp) { system("touch $configsrvgrp"); }
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 &General::readhash("${General::swroot}/ethernet/settings", \%ownnet);
+&General::readhash("$configovpn", \%ovpnsettings);
+&General::readhasharray("$configipsec", \%ipsecconf);
+&General::readhash("$configipsecrw", \%ipsecsettings);
+
 &Header::getcgihash(\%fwhostsettings);
 
 &Header::showhttpheaders();
@@ -1429,11 +1440,61 @@ END
 	}	
 
 }
+sub getcolor
+{
+		my $c=shift;
+		#Check if IP is part of OpenVPN N2N subnet
+		foreach my $key (sort keys %ccdhost){
+			if ($ccdhost{$key}[3] eq 'net'){
+				my ($a,$b) = split("/",$ccdhost{$key}[11]);
+				if (&General::IpInSubnet($c,$a,$b)){
+					$tdcolor="style='color:$Header::colourovpn ;'";
+					return $tdcolor;
+				}
+			}
+		}
+		#Check if IP is part of OpenVPN dynamic subnet
+		my ($a,$b) = split("/",$ovpnsettings{'DOVPN_SUBNET'});
+		if (&General::IpInSubnet($c,$a,$b)){
+			$tdcolor="style='color: $Header::colourovpn;'";
+			return $tdcolor;
+		}
+		#Check if IP is part of OpenVPN static subnet
+		foreach my $key (sort keys %ccdnet){
+			my ($a,$b) = split("/",$ccdnet{$key}[1]);
+			$b =&General::iporsubtodec($b);
+			if (&General::IpInSubnet($c,$a,$b)){
+				$tdcolor="style='color: $Header::colourovpn;'";
+				return $tdcolor;
+			}
+		}
+		#Check if IP is part of IPsec RW network
+		if ($ipsecsettings{'RW_NET'} ne ''){
+			my ($a,$b) = split("/",$ipsecsettings{'RW_NET'});
+			$b=&General::iporsubtodec($b);
+			if (&General::IpInSubnet($c,$a,$b)){
+				$tdcolor="style='color: $Header::colourvpn;'";
+				return $tdcolor;
+			}
+		}
+		#Check if IP is part of a IPsec N2N network
+		foreach my $key (sort keys %ipsecconf){
+			my ($a,$b) = split("/",$ipsecconf{$key}[11]);
+			if (&General::IpInSubnet($c,$a,$b)){
+				$tdcolor="style='color: $Header::colourvpn;'";
+				return $tdcolor;
+			}
+		}
+		$tdcolor='';
+		return $tdcolor;
+}
 sub viewtablehost
 {
 	if (! -z $confighost){
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust addr'});
 		&General::readhasharray("$confighost", \%customhost);
+		&General::readhasharray("$configccdnet", \%ccdnet);
+		&General::readhasharray("$configccdhost", \%ccdhost);
 		if (!keys %customhost) 
 		{ 
 			print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
@@ -1451,7 +1512,7 @@ END
 			else{            print" <tr bgcolor='$color{'color20'}'>";}
 			my ($ip,$sub)=split(/\//,$customhost{$key}[2]);
 			$customhost{$key}[4]=~s/\s+//g;
-			print"<td width='20%'>$customhost{$key}[0]</td><td width='20%' align='center'>".&Header::colorize($ip)."</td><td width='50%' align='left'>$customhost{$key}[3]</td><td align='center'>$customhost{$key}[4]x</td>";
+			print"<td width='20%'>$customhost{$key}[0]</td><td width='20%' align='center' ".&getcolor($ip).">".&Header::colorize($ip)."</td><td width='50%' align='left'>$customhost{$key}[3]</td><td align='center'>$customhost{$key}[4]x</td>";
 			print<<END;
 			<td width='1%'><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='edithost' />
@@ -1777,6 +1838,7 @@ sub get_name
 		return "$network" if ($val eq $defaultNetworks{$network}{'NAME'});
 	}	
 }
+
 sub deletefromgrp
 {
 	my $target=shift;

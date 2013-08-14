@@ -1243,6 +1243,14 @@ sub getcolor
 	my $val=shift;
 	my $hash=shift;
 	if($optionsfw{'SHOWCOLORS'} eq 'on'){
+		#custom Hosts
+		if ($nettype eq 'cust_host_src' || $nettype eq 'cust_host_tgt'){
+			foreach my $key (sort keys %$hash){
+				if ($$hash{$key}[0] eq $val){
+					$val=$$hash{$key}[2];
+				}
+			}
+		}
 		#standard networks
 		if ($val eq 'GREEN'){
 			$tdcolor="style='background-color: $Header::colourgreen;color:white;'";
@@ -1277,8 +1285,8 @@ sub getcolor
 			$tdcolor="style='background-color: $Header::colourred;color:white;'";
 			return;
 		}
-		#Check if a manual IP is part of a VPN 
-		if ($nettype eq 'src_addr' || $nettype eq 'tgt_addr'){
+		#Check if a manual IP or custom host is part of a VPN
+		if ($nettype eq 'src_addr' || $nettype eq 'tgt_addr' || $nettype eq 'cust_host_src' || $nettype eq 'cust_host_tgt'){
 			#Check if IP is part of OpenVPN dynamic subnet
 			my ($a,$b) = split("/",$ovpnsettings{'DOVPN_SUBNET'});
 			my ($c,$d) = split("/",$val);
@@ -1331,14 +1339,6 @@ sub getcolor
 		if ($nettype eq 'ipsec_net_src' || $nettype eq 'ipsec_net_tgt'){
 			$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
 			return;
-		}
-		#custom Hosts
-		if ($nettype eq 'cust_host_src' || $nettype eq 'cust_host_tgt'){
-			foreach my $key (sort keys %$hash){
-				if ($$hash{$key}[0] eq $val){
-					$val=$$hash{$key}[2];
-				}
-			}
 		}
 		#ALIASE
 		foreach my $alias (sort keys %aliases)
