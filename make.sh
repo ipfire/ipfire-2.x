@@ -752,6 +752,7 @@ buildipfire() {
   ipfiremake acpid
   ipfiremake fping
   ipfiremake telnet
+  ipfiremake xinetd
   ipfiremake libgpg-error
   ipfiremake libassuan
   ipfiremake gpgme
