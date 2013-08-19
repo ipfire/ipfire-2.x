@@ -2195,14 +2195,15 @@ else
 # m.a.d net2net
 ###
 
- if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
-
+if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 	my $conffile = glob("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]/$confighash{$cgiparams{'KEY'}}[1].conf");
-  my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
-  unlink ($certfile) or die "Removing $certfile fail: $!";
-  unlink ($conffile) or die "Removing $conffile fail: $!";
-  rmdir ("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") || die "Kann Verzeichnis nicht loeschen: $!";
-  
+	my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
+	unlink ($certfile);
+	unlink ($conffile);
+
+	if (-e "${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") {
+		rmdir ("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") || die "Kann Verzeichnis nicht loeschen: $!";
+	}
 }
 
   unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
