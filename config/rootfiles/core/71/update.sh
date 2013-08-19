@@ -39,7 +39,7 @@ cp -f /etc/snort/snort.conf /etc/snort/snort.conf.backup
 #
 #Stop services
 /etc/init.d/snort stop
-
+/etc/init.d/squid stop
 #
 #Remove old usb-modeswitch file
 rm /usr/share/usb_modeswitch/0e8d:0002
@@ -59,6 +59,7 @@ grep "^include $RULE_PATH" /etc/snort/snort.conf.backup >> /etc/snort/snort.conf
 
 #
 #Start services
+/etc/init.d/squid start
 /etc/init.d/snort start
 
 #

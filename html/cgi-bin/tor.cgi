@@ -57,8 +57,41 @@ my @accounting_periods = ('daily', 'weekly', 'monthly');
 
 my $TOR_CONTROL_PORT = 9051;
 
+my $string=();
+my $memory=();
+my @memory=();
+my @pid=();
+my @tor=();
+sub daemonstats
+{
+	$memory = 0;
+	# for pid and memory
+	open(FILE, '/usr/local/bin/addonctrl tor status | ');
+	@tor = <FILE>;
+	close(FILE);
+	$string = join("", @tor);
+	$string =~ s/[a-z_]//gi;
+	$string =~ s/\[[0-1]\;[0-9]+//gi;
+	$string =~ s/[\(\)\.]//gi;
+	$string =~ s/  //gi;
+	$string =~ s///gi;
+	@pid = split(/\s/,$string);
+	if (open(FILE, "/proc/$pid[0]/statm")){
+		my $temp = <FILE>;
+		@memory = split(/ /,$temp);
+		close(FILE);
+		}
+	$memory+=$memory[0];
+}
+daemonstats();
+
 our %netsettings = ();
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+
+our %color = ();
+our %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 our %settings = ();
 
@@ -192,12 +225,37 @@ sub showMainBox() {
 
 	print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
 
-	&Header::openbox('100%', 'left', $Lang::tr{'tor configuration'});
+	&Header::openbox('100%', 'center', $Lang::tr{'tor'});
+
+
+if ( ($memory != 0) && (@pid[0] ne "///") ){
+		print "<table width='95%' cellspacing='0'>";
+		print "<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'tor service'}</strong></td></tr>";
+		print "<tr><td class='base'>$Lang::tr{'tor daemon'}</td>";
+		print "<td align='center' colspan='2' width='75%' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td></tr>";
+		print "<tr><td class='base'></td>";
+		print "<td bgcolor='$color{'color20'}' align='center'><strong>PID</strong></td>";
+		print "<td bgcolor='$color{'color20'}' align='center'><strong>$Lang::tr{'memory'}</strong></td></tr>";
+		print "<tr><td class='base'></td>";
+		print "<td bgcolor='$color{'color22'}' align='center'>@pid[0]</td>";
+		print "<td bgcolor='$color{'color22'}' align='center'>$memory KB</td></tr>";
+		print "</table>";
+	} else {
+		print "<table width='95%' cellspacing='0'>";
+		print "<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'tor service'}</strong></td></tr>";
+		print "<tr><td class='base'>$Lang::tr{'tor daemon'}</td>";
+		print "<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td></tr>";
+		print "</table>";
+	}
+
+	&Header::closebox();
+
+	&Header::openbox('100%', 'center', $Lang::tr{'tor configuration'});
 
 	print <<END;
-		<table width='100%'>
+		<table width='95%'>
 			<tr>
-				<td colspan='4' class='base'><b>$Lang::tr{'tor common settings'}</b></td>
+				<td colspan='4' class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'tor common settings'}</b></td>
 			</tr>
 			<tr>
 				<td width='25%' class='base'>$Lang::tr{'tor enabled'}:</td>
@@ -222,12 +280,11 @@ END
 
 	print <<END;
 		<br>
-		<hr size='1'>
 		<br>
 
-		<table width='100%'>
+		<table width='95%'>
 			<tr>
-				<td colspan='4' class='base'><b>$Lang::tr{'tor acls'}</b></td>
+				<td colspan='4' class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'tor acls'}</b></td>
 			</tr>
 			<tr>
 				<td colspan='2' class='base' width='55%'>
@@ -244,12 +301,11 @@ END
 		</table>
 
 		<br>
-		<hr size='1'>
 		<br>
 
-		<table width='100%'>
+		<table width='95%'>
 			<tr>
-				<td colspan='4' class='base'><b>$Lang::tr{'tor exit nodes'}</b></td>
+				<td colspan='4' class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'tor exit nodes'}</b></td>
 			</tr>
 			<tr>
 				<td colspan='2' class='base' width='55%'></td>
@@ -276,7 +332,6 @@ END
 				</td>
 			</tr>
 		</table>
-		<br><br>
 END
 
 	&Header::closebox();
@@ -305,10 +360,10 @@ END
 	}
 	$selected{'TOR_RELAY_ACCOUNTING_PERIOD'}{$settings{'TOR_RELAY_ACCOUNTING_PERIOD'}} = 'selected';
 
-	&Header::openbox('100%', 'left', $Lang::tr{'tor relay configuration'});
+	&Header::openbox('100%', 'center', $Lang::tr{'tor relay configuration'});
 
 	print <<END;
-		<table width='100%'>
+		<table width='95%'>
 			<tr>
 				<td width='25%' class='base'>$Lang::tr{'tor relay mode'}:</td>
 				<td width='30%'>
@@ -342,11 +397,11 @@ END
 			</tr>
 		</table>
 
-		<hr size='1'>
+		<br>
 
-		<table width='100%'>
+		<table width='95%'>
 			<tr>
-				<td colspan='4' class='base'><b>$Lang::tr{'tor bandwidth settings'}</b></td>
+				<td colspan='4' class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'tor bandwidth settings'}</b></td>
 			</tr>
 			<tr>
 				<td width='25%' class='base'>$Lang::tr{'tor bandwidth rate'}:</td>
@@ -407,7 +462,7 @@ END
 	&Header::closebox();
 
 	print <<END;
-		<table width='100%'>
+		<table width='95%'>
 			<tr>
 				<td>
 					<img src='/blob.gif' align='top' alt='*' />&nbsp;<font class='base'>$Lang::tr{'this field may be blank'}</font>
@@ -418,7 +473,7 @@ END
 
 		<hr>
 
-		<table width='100%'>
+		<table width='95%'>
 			<tr>
 				<td>&nbsp;</td>
 				<td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
@@ -429,13 +484,13 @@ END
 
 	# If we have a control connection, show the stats.
 	if ($torctrl) {
-		&Header::openbox('100%', 'left', $Lang::tr{'tor stats'});
+		&Header::openbox('100%', 'center', $Lang::tr{'tor stats'});
 
 		my @traffic = &TorTrafficStats($torctrl);
 
 		if (@traffic) {
 			print <<END;
-				<table width='100%'>
+				<table width='95%'>
 END
 
 		if ($settings{'TOR_RELAY_ENABLED'} eq 'on') {
@@ -476,7 +531,7 @@ END
 		my $accounting = &TorAccountingStats($torctrl);
 		if ($accounting) {
 			print <<END;
-				<table width='100%'>
+				<table width='95%'>
 					<tr>
 						<td colspan='2' class='base'><b>$Lang::tr{'tor accounting'}</b></td>
 					</tr>
@@ -527,7 +582,7 @@ END
 		if (@nodes) {
 			my $nodes_length = scalar @nodes;
 			print <<END;
-				<table width='100%'>
+				<table width='95%'>
 					<tr>
 						<td width='40%' class='base'><b>$Lang::tr{'tor connected relays'}</b></td>
 						<td width='60%' colspan='2'>($nodes_length)</td>
@@ -546,7 +601,11 @@ END
 END
 
 				if (exists($node->{'country_code'})) {
+					if ($node->{'country_code'} eq '??') {
+						print "<img src='/images/flags/blank.png' border='0' align='absmiddle'/>";
+					} else {
 						print "<a href='country.cgi#$node->{'country_code'}'><img src='/images/flags/$node->{'country_code'}.png' border='0' align='absmiddle' alt='$node->{'country_code'}'></a>";
+					}
 				}
 
 				print <<END;
@@ -689,6 +748,8 @@ sub BuildConfiguration() {
 	} else {
 		system("/usr/local/bin/torctrl stop &>/dev/null");
 	}
+	# Update pid and memory
+	daemonstats();
 }
 
 sub TorConnect() {
