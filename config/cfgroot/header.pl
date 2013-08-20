@@ -12,6 +12,7 @@
 package Header;
 
 use CGI();
+use HTML::Entities();
 use Socket;
 use Time::Local;
 
@@ -305,16 +306,16 @@ sub IpInSubnet
     return (($ip >= $start) && ($ip <= $end));
 }
 
-sub cleanhtml
-{
+sub escape($) {
+	my $s = shift;
+	return HTML::Entities::encode_entities($s);
+}
+
+sub cleanhtml {
 	my $outstring =$_[0];
 	$outstring =~ tr/,/ / if not defined $_[1] or $_[1] ne 'y';
-	$outstring =~ s/&/&amp;/g;
-	$outstring =~ s/\'/&#039;/g;
-	$outstring =~ s/\"/&quot;/g; #" This is just a workaround for the syntax highlighter
-	$outstring =~ s/</&lt;/g;
-	$outstring =~ s/>/&gt;/g;
-	return $outstring;
+
+	return escape($outstring);
 }
 
 sub connectionstatus
