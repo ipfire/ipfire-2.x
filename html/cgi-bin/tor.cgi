@@ -321,7 +321,13 @@ END
 		foreach my $country_name (sort @country_names) {
 			my $country_code = Locale::Country::country2code($country_name);
 			$country_code = uc($country_code);
-			print "<option value='$country_code'>$country_name ($country_code)</option>\n";
+			print "<option value='$country_code'";
+
+			if ($settings{'TOR_EXIT_COUNTRY'} eq $country_code) {
+				print " selected";
+			}
+
+			print ">$country_name ($country_code)</option>\n";
 		}
 
 	print <<END;
