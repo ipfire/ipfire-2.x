@@ -529,6 +529,7 @@ buildipfire() {
   ipfiremake URI
   ipfiremake HTML-Tagset
   ipfiremake HTML-Parser
+  ipfiremake HTML-Template
   ipfiremake Compress-Zlib
   ipfiremake Digest
   ipfiremake Digest-SHA1
