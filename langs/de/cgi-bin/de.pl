@@ -2118,6 +2118,7 @@
 'urlfilter quota restart message' => 'Hinweis: Beim Neustart des URL-Filters werden die Zähler für alle Benutzer zurückgesetzt',
 'urlfilter quota time error' => 'Ungültiger Wert für Zeitkontingent',
 'urlfilter quota user error' => 'Mindestens ein Benutzername erforderlich',
+'urlfilter redirect template' => 'Sperrseitenvorlage',
 'urlfilter redirectpage' => 'Leite zu dieser URL um',
 'urlfilter remove file' => 'Datei aus der Ablage entfernen',
 'urlfilter renewal' => 'Erneuerung',

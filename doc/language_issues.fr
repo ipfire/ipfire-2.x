@@ -660,6 +660,7 @@ WARNING: untranslated string: upload new ruleset
 WARNING: untranslated string: uptime load average
 WARNING: untranslated string: urlfilter file ext block
 WARNING: untranslated string: urlfilter mode block
+WARNING: untranslated string: urlfilter redirect template
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: wlan client

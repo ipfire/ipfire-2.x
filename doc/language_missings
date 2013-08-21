@@ -173,6 +173,7 @@
 < uptime load average
 < urlfilter file ext block
 < urlfilter mode block
+< urlfilter redirect template
 < visit us at
 < vpn keyexchange
 < wlanap access point
@@ -407,6 +408,7 @@
 < updxlrtr standard view
 < uptime
 < uptime load average
+< urlfilter redirect template
 < visit us at
 < vpn keyexchange
 < wlanap country
@@ -596,6 +598,7 @@
 < updxlrtr standard view
 < uptime
 < uptime load average
+< urlfilter redirect template
 < visit us at
 < vpn keyexchange
 < wlanap country
@@ -790,6 +793,7 @@
 < updxlrtr standard view
 < uptime
 < uptime load average
+< urlfilter redirect template
 < visit us at
 < vpn keyexchange
 < week-graph

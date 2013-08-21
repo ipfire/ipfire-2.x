@@ -637,6 +637,7 @@ WARNING: untranslated string: tor traffic limit soft
 WARNING: untranslated string: tor traffic read written
 WARNING: untranslated string: tor use exit nodes
 WARNING: untranslated string: uptime load average
+WARNING: untranslated string: urlfilter redirect template
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: wlan client

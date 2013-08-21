@@ -59,6 +59,7 @@ my $tcfile = "${General::swroot}/urlfilter/timeconst";
 my $uqfile = "${General::swroot}/urlfilter/userquota";
 my $dbdir = "${General::swroot}/urlfilter/blacklists";
 my $editdir = "${General::swroot}/urlfilter/editor";
+my $templatedir = "/srv/web/ipfire/html/redirect-templates";
 my $repository = "/var/urlrepo";
 my $hintcolour = '#FFFFCC';
 
@@ -142,6 +143,7 @@ $filtersettings{'ENABLE_LOG'} = 'off';
 $filtersettings{'ENABLE_USERNAME_LOG'} = 'off';
 $filtersettings{'ENABLE_CATEGORY_LOG'} = 'off';
 $filtersettings{'ENABLE_AUTOUPDATE'} = 'off';
+$filtersettings{'REDIRECT_TEMPLATE'} = 'legacy';
 
 $filtersettings{'ACTION'} = '';
 $filtersettings{'VALID'} = '';
@@ -1074,6 +1076,8 @@ foreach $category (@filtergroups) {
 	$checked{$category}{$filtersettings{$category}} = "checked='checked'";
 }
 
+$selected{'REDIRECT_TEMPLATE'}{$filtersettings{'REDIRECT_TEMPLATE'}} = "selected='selected'";
+
 $selected{'DEFINITION'}{$tcsettings{'DEFINITION'}} = "selected='selected'";
 $selected{'FROM_HOUR'}{$tcsettings{'FROM_HOUR'}} = "selected='selected'";
 $selected{'FROM_MINUTE'}{$tcsettings{'FROM_MINUTE'}} = "selected='selected'";
@@ -1414,6 +1418,24 @@ print <<END
 <table width='100%'>
 <tr>
         <td colspan='4'><b>$Lang::tr{'urlfilter block settings'}</b></td>
+</tr>
+<tr>
+	<td width='25%' class='base'>$Lang::tr{'urlfilter redirect template'}</td>
+	<td width='75%' colspan='2'>
+		<select name='REDIRECT_TEMPLATE'>
+END
+;
+
+	foreach (<$templatedir/*>) {
+		if ((-d "$_") && (-e "$_/template.html")) {
+			my $template = substr($_,rindex($_,"/")+1);
+			print "<option value='$template' $selected{'REDIRECT_TEMPLATE'}{$template}>$template</option>\n";
+		}
+	}
+
+print <<END
+		</select>
+	</td>
 </tr>
 <tr>
 	<td width='25%' class='base'>$Lang::tr{'urlfilter show category'}:</td>

@@ -33,7 +33,7 @@ my %filtersettings;
 &readhash("$swroot/urlfilter/settings", \%filtersettings);
 
 # Read the template file.
-my $template = $filtersettings{'ERROR_TEMPLATE'};
+my $template = $filtersettings{'REDIRECT_TEMPLATE'};
 if (($template eq '') || (! -e "$templateroot/$template")) {
 	$template = "legacy";
 }

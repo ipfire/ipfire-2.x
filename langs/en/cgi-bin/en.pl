@@ -2156,6 +2156,7 @@
 'urlfilter quota restart message' => 'Note: The counters will be reset for all users when restarting the URL filter',
 'urlfilter quota time error' => 'Invalid value for time quota',
 'urlfilter quota user error' => 'At least one username is required',
+'urlfilter redirect template' => 'Redirect page template',
 'urlfilter redirectpage' => 'Redirect to this URL',
 'urlfilter remove file' => 'Remove file from repository',
 'urlfilter renewal' => 'Renewal',
