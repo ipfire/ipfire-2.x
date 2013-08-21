@@ -90,7 +90,7 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} ne $Lang::tr{'update'})
  	$cgiparams{'MONTH'} = $temp[1];
  	$cgiparams{'DAY'} = $temp[2];  
 	$cgiparams{'SOURCE_IP'} = $temp[3];
-	$cgiparams{'USERNAME'} = $temp[4];
+	$cgiparams{'USERNAME'} = &Header::escape($temp[4]);
 }
 
 if (!($cgiparams{'MONTH'} =~ /^(0|1|2|3|4|5|6|7|8|9|10|11)$/) ||
@@ -383,6 +383,7 @@ print <<END
 END
 ;
 foreach my $so (sort keys %users) {
+	$so = &Header::escape($so);
 	print "<option value='$so' $selected{'USERNAME'}{$so}>$so</option>\n"; }
 print <<END
 	</select>
