@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+		<title>ACCESS MESSAGE</title>
+	</head>
+	<body>
+		<table width="100%" height='100%' border="0">
+			<tr>
+				<td colspan='3' width='100%' height='130' align="center" background="<TMPL_VAR NAME="ADDRESS">/images/background.gif">
+			<tr>
+				<td width='10%'>
+				<td align='center' bgcolor='#CC000000' width='80%'>
+					<font face="verdana, arial, sans serif" color="#FFFFFF" size="5">
+						<b><TMPL_VAR NAME="MSG_TEXT_1"></b>
+					</font>
+				<td width='10%'>
+
+			<TMPL_IF NAME="CATEGORY">
+				<tr>
+					<td colspan='3' align='center'>
+						<font face="verdana, arial, sans serif" color="#CC000000" size="1">
+							<b>[<TMPL_VAR NAME="CATEGORY">]</b>
+						</font>
+			</TMPL_IF>
+
+			<tr>
+				<td colspan='3' align="center">
+					<font face="verdana, arial, sans serif" color="#000000" size="4">
+						<b><TMPL_VAR NAME="MSG_TEXT_2"></b>
+					</font>
+					<font face="verdana,arial,sans serif" color="#000000" size="2">
+						<TMPL_IF NAME="URL">
+							<p>URL: <a href="<TMPL_VAR NAME="URL">"><TMPL_VAR NAME="URL"></a>
+						</TMPL_IF>
+
+						<TMPL_IF NAME="IP_ADDRESS">
+							<p>Client IP address: <i><TMPL_VAR NAME="IP_ADDRESS"></i>
+						</TMPL_IF>
+
+						<br><p><TMPL_VAR NAME="MSG_TEXT_3">
+					</font>
+
+			<tr>
+				<td colspan='3' height='60%' valign="bottom" align="right">
+					<font face="verdana,arial,sans serif" color="#656565" size="1">
+						Web Filtering by
+					</font>
+					<a href="http://www.ipfire.org" target="_blank">
+						<font face="verdana,arial,sans serif" color="#656565" size="1"><b>IPFire</b></font>
+					</a>
+
+		</table>
+	</body>
+</html>

@@ -19,9 +19,12 @@
 #                                                                             #
 ###############################################################################
 
-use CGI qw(param);
+use CGI;
+use HTML::Entities;
+use HTML::Template;
 
-$swroot="/var/ipfire";
+my $swroot="/var/ipfire";
+my $templateroot = "/srv/web/ipfire/html/redirect-templates";
 
 my %netsettings;
 my %filtersettings;
@@ -29,117 +32,75 @@ my %filtersettings;
 &readhash("$swroot/ethernet/settings", \%netsettings);
 &readhash("$swroot/urlfilter/settings", \%filtersettings);
 
-$category=param("category");
-$url=param("url");
-$ip=param("ip");
+# Read the template file.
+my $template = $filtersettings{'ERROR_TEMPLATE'};
+if (($template eq '') || (! -e "$templateroot/$template")) {
+	$template = "legacy";
+}
+my $tmpl = HTML::Template->new(
+	filename => "$templateroot/$template/template.html",
+	die_on_bad_params => 0
+);
 
-if ($filtersettings{'MSG_TEXT_1'} eq '') {
+# Address where to load more resources from.
+$tmpl->param(ADDRESS => "http://$netsettings{'GREEN_ADDRESS'}:81");
+
+# Message text 1
+my $msgtext1 = $filtersettings{'MSG_TEXT_1'};
+if ($msgtext1 eq '') {
 	$msgtext1 = "A C C E S S &nbsp;&nbsp; D E N I E D";
-} else { $msgtext1 = $filtersettings{'MSG_TEXT_1'}; }
-if ($filtersettings{'MSG_TEXT_2'} eq '') {
+}
+$tmpl->param(MSG_TEXT_1 => $msgtext1);
+
+# Message text 2
+my $msgtext2 = $filtersettings{'MSG_TEXT_2'};
+if ($msgtext2 eq '') {
 	$msgtext2 = "Access to the requested page has been denied";
-} else { $msgtext2 = $filtersettings{'MSG_TEXT_2'}; }
-if ($filtersettings{'MSG_TEXT_3'} eq '') {
+}
+$tmpl->param(MSG_TEXT_2 => $msgtext2);
+
+# Message text 3
+my $msgtext3 = $filtersettings{'MSG_TEXT_3'};
+if ($msgtext3 eq '') {
 	$msgtext3 = "Please contact the Network Administrator if you think there has been an error";
-} else { $msgtext3 = $filtersettings{'MSG_TEXT_3'}; }
+}
+$tmpl->param(MSG_TEXT_3 => $msgtext3);
 
-if ($category eq '') { $category = '&nbsp;'; } else { $category = '['.$category.']'; }
+# Category
+my $category = CGI::param("category");
+$tmpl->param(CATEGORY => &escape($category));
 
+# URL
+my $url = CGI::param("url");
+$tmpl->param(URL => &escape($url));
+
+# IP address
+my $ip_address = CGI::param("ip");
+$tmpl->param(IP_ADDRESS => &escape($ip_address));
+
+# Print header
 print "Pragma: no-cache\n";
 print "Cache-control: no-cache\n";
 print "Connection: close\n";
 print "Content-type: text/html\n\n";
+print $tmpl->output;
 
-print <<END
-
-<html>
-<head>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
-<title>ACCESS MESSAGE</title>
-</head>
-
-<body>
-<table width="100%" height='100%' border="0">
-<tr>
-		<td colspan='3' width='100%' height='130' align="center" background="http://$netsettings{'GREEN_ADDRESS'}:81/images/background.gif">
-<tr>		<td width='10%'><td align='center' bgcolor='#CC000000' width='80%'><font face="verdana, arial, sans serif" color="#FFFFFF" size="5">
-					<b>$msgtext1</b>
-					</font>
-		<td width='10%'>
-END
-;
-
-if (!($category eq ""))
-{
-	print <<END
-	<tr>		<td colspan='3' align='center'>
-				<font face="verdana, arial, sans serif" color="#CC000000" size="1">
-					<b>$category</b>
-				</font>
-END
-;
-}
-print <<END
-<tr>
-			<td colspan='3' align="center">
-				<font face="verdana, arial, sans serif" color="#000000" size="4">
-				<b>$msgtext2</b>
-				</font>
-				<font face="verdana,arial,sans serif" color="#000000" size="2">
-END
-;
-
-if (!($url eq ""))
-{
-print <<END
-					<p>URL: <a href="$url">$url</a>
-END
-;
+sub escape($) {
+	my $s = shift;
+	return HTML::Entities::encode_entities($s);
 }
 
-if (!($ip eq ""))
-{
-print <<END
-					<p>Client IP address: <i>$ip</i>
-END
-;
-}
-
-print <<END
-					<br><p>$msgtext3
-					</font>
-
-<tr>
-	<td colspan='3' height='60%' valign="bottom" align="right">
-		<font face="verdana,arial,sans serif" color="#656565" size="1">Web Filtering by
-		</font>
-		<a href="http://www.ipfire.org" target="_blank"><b>
-		<font face="verdana,arial,sans serif" color="#656565" size="1">IPFire</b></a>
-		</font>
-
-</table>
-</body>
-
-</html>
-END
-;
-
-sub readhash
-{
+sub readhash {
 	my $filename = $_[0];
 	my $hash = $_[1];
 	my ($var, $val);
 
-	if (-e $filename)
-	{
+	if (-e $filename) {
 		open(FILE, $filename) or die "Unable to read file $filename";
-		while (<FILE>)
-		{
+		while (<FILE>) {
 			chop;
 			($var, $val) = split /=/, $_, 2;
-			if ($var)
-			{
+			if ($var) {
 				$val =~ s/^\'//g;
 				$val =~ s/\'$//g;
 	
@@ -149,6 +110,7 @@ sub readhash
 				$hash->{$var} = $val;
 			}
 		}
+
 		close FILE;
 	}
 }
