@@ -1,4 +1,6 @@
 etc/system-release
 etc/issue
+srv/web/ipfire/html/redirect.cgi
+srv/web/ipfire/html/redirect-templates/
 var/ipfire/langs
 var/ipfire/proxy/advanced/useragents
