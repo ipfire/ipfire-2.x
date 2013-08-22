@@ -1824,6 +1824,7 @@ usr/lib/squid/errors/tr/ERR_AGENT_WPAD
 usr/lib/squid/errors/tr/ERR_CACHE_ACCESS_DENIED
 usr/lib/squid/errors/tr/ERR_CACHE_MGR_ACCESS_DENIED
 usr/lib/squid/errors/tr/ERR_CANNOT_FORWARD
+usr/lib/squid/errors/tr/ERR_CONFLICT_HOST
 usr/lib/squid/errors/tr/ERR_CONNECT_FAIL
 usr/lib/squid/errors/tr/ERR_DIR_LISTING
 usr/lib/squid/errors/tr/ERR_DNS_FAIL
