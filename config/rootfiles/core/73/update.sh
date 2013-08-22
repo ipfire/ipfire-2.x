@@ -35,19 +35,23 @@ done
 
 #
 #Stop services
+/etc/init.d/squid stop
 
 
 #
 #Extract files
 extract_files
 
+# Regenerate squid configuration files.
+/srv/web/ipfire/cgi-bin/proxy.cgi
 
 #
 #Start services
+/etc/init.d/squid start
 
 #
 #Update Language cache
-#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 sync
 
