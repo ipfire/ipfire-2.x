@@ -81,6 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xaf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-drivers-3.8-1-u-kref_get_unless_zero.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-drivers-3.8.3-ath_ignore_eeprom_regdomain.patch
 
 	# kfifo has no license info and taints kernel
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-wireless-2.6.39_kfifo_module_info.patch
