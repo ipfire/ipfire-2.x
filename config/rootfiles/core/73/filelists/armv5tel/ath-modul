@@ -1,0 +1,3 @@
+lib/modules/3.2.48-ipfire-omap/kernel/drivers/net/wireless/ath/ath.ko
+lib/modules/3.2.48-ipfire-kirkwood/kernel/drivers/net/wireless/ath/ath.ko
+lib/modules/3.2.48-ipfire-rpi/kernel/drivers/net/wireless/ath/ath.ko

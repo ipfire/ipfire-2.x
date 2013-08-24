@@ -1,9 +1,6 @@
 etc/system-release
 etc/issue
 etc/rc.d/init.d/squid
-lib/modules/2.6.32.61-ipfire-xen/kernel/drivers/net/wireless/ath/ath.ko
-lib/modules/3.2.48-ipfire/kernel/drivers/net/wireless/ath/ath.ko
-lib/modules/3.2.48-ipfire-pae/kernel/drivers/net/wireless/ath/ath.ko
 srv/web/ipfire/cgi-bin/logs.cgi/proxylog.dat
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/html/redirect.cgi
