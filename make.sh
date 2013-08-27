@@ -378,6 +378,7 @@ buildipfire() {
   ipfiremake zd1211-firmware
   ipfiremake rpi-firmware
   ipfiremake u-boot
+  ipfiremake bc
 
   if [ "${MACHINE_TYPE}" != "arm" ]; then
 
@@ -396,29 +397,29 @@ buildipfire() {
 
     # x86-pae (Native and new XEN) kernel build
     ipfiremake linux			KCFG="-pae"
-    ipfiremake kvm-kmod			KCFG="-pae"
-    ipfiremake v4l-dvb			KCFG="-pae"
-    ipfiremake mISDN			KCFG="-pae"
+#    ipfiremake kvm-kmod			KCFG="-pae"
+#    ipfiremake v4l-dvb			KCFG="-pae"
+#    ipfiremake mISDN			KCFG="-pae"
     ipfiremake cryptodev		KCFG="-pae"
-    ipfiremake compat-drivers		KCFG="-pae"
-    ipfiremake r8169			KCFG="-pae"
-    ipfiremake r8168			KCFG="-pae"
-    ipfiremake r8101			KCFG="-pae"
-    ipfiremake e1000e			KCFG="-pae"
-    ipfiremake igb			KCFG="-pae"
+#    ipfiremake compat-drivers		KCFG="-pae"
+#    ipfiremake r8169			KCFG="-pae"
+#    ipfiremake r8168			KCFG="-pae"
+#    ipfiremake r8101			KCFG="-pae"
+#    ipfiremake e1000e			KCFG="-pae"
+#    ipfiremake igb			KCFG="-pae"
 
     # x86 kernel build
     ipfiremake linux			KCFG=""
-    ipfiremake kvm-kmod			KCFG=""
-    ipfiremake v4l-dvb			KCFG=""
-    ipfiremake mISDN			KCFG=""
+#    ipfiremake kvm-kmod			KCFG=""
+#    ipfiremake v4l-dvb			KCFG=""
+#    ipfiremake mISDN			KCFG=""
     ipfiremake cryptodev		KCFG=""
-    ipfiremake compat-drivers		KCFG=""
-    ipfiremake r8169			KCFG=""
-    ipfiremake r8168			KCFG=""
-    ipfiremake r8101			KCFG=""
-    ipfiremake e1000e			KCFG=""
-    ipfiremake igb			KCFG=""
+#    ipfiremake compat-drivers		KCFG=""
+#    ipfiremake r8169			KCFG=""
+#    ipfiremake r8168			KCFG=""
+#    ipfiremake r8101			KCFG=""
+#    ipfiremake e1000e			KCFG=""
+#    ipfiremake igb			KCFG=""
 
   else
     # arm-rpi (Raspberry Pi) kernel build
@@ -599,7 +600,7 @@ buildipfire() {
   ipfiremake sudo
   ipfiremake mc
   ipfiremake wget
-  ipfiremake bridge-utils
+#  ipfiremake bridge-utils
   ipfiremake screen
   ipfiremake smartmontools
   ipfiremake htop
@@ -678,7 +679,6 @@ buildipfire() {
   ipfiremake mpc
   ipfiremake git
   ipfiremake squidclamav
-  ipfiremake bc
   ipfiremake vnstat
   ipfiremake vnstati
   ipfiremake iw
@@ -730,7 +730,7 @@ buildipfire() {
   ipfiremake minicom
   ipfiremake ddrescue
   ipfiremake imspector
-  ipfiremake miniupnpd
+#  ipfiremake miniupnpd
   ipfiremake client175
   ipfiremake powertop
   ipfiremake parted
@@ -774,7 +774,7 @@ buildipfire() {
   ipfiremake lcdproc
   ipfiremake bitstream
   ipfiremake multicat
-  ipfiremake keepalived
+#  ipfiremake keepalived
   ipfiremake ipvsadm
   ipfiremake perl-Carp-Clan
   ipfiremake perl-Date-Calc

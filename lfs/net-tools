@@ -70,12 +70,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-gcc34-3.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-kernel_headers-2.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-kernel_headers-3.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-mii_ioctl-1.patch
 	cd $(DIR_APP) && yes "" | make config
 	cd $(DIR_APP) && sed -i	-e 's|HAVE_IP_TOOLS 0|HAVE_IP_TOOLS 1|g' \
+				-e 's|HAVE_HWSTRIP 1|HAVE_HWSTRIP 0|g' \
 					-e 's|HAVE_MII 0|HAVE_MII 1|g' config.h
 	cd $(DIR_APP) && sed -i	-e 's|# HAVE_IP_TOOLS=0|HAVE_IP_TOOLS=1|g' \
+				-e 's|HAVE_HWSTRIP 1|HAVE_HWSTRIP 0|g' \
 					-e 's|# HAVE_MII=0|HAVE_MII=1|g' config.make
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make update

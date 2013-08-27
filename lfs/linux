@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.48
+VER        = 3.10.9
 
 RPI_PATCHES = linux-3.2.27-ada8b44
 
@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 30
+PAK_VER    = 31
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -71,7 +71,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
-$(DL_FILE)_MD5				= f560aa5fcf07e57ea0ca66fdfdb53ef1
+$(DL_FILE)_MD5				= 28d1e1117c30fdd861f70ac0f9b677aa
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 966687ff27e450e04ff50e0da829dc00
 
 
@@ -109,16 +109,29 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 	# Linux Intermediate Queueing Device
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-imq.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/imq_kernel3.10.patch
 
 	# ipp2p 0.8.2-ipfire
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.0-ipp2p-0.8.2-ipfire.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-ipp2p-0.8.2-ipfire.patch
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/netfilter_layer7_2.22_kernel3.0.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/netfilter_layer7_2.22_kernel3.10-no_proc_interface.patch
+
+	# Grsecurity-patches
+ifneq "$(KCFG)" "-headers"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grsecurity-2.9.1-3.10.9-201308202015.patch
+	cd $(DIR_APP) && rm localversion-grsec
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
+endif
+
+	# Disable pcspeaker autoload
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.30-no-pcspkr-modalias.patch
+
+	# Remove ACPI Blacklist message
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6-silence-acpi-blacklist.patch
 
 	# Add LED trigger
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33-ledtrig-netdev-1.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33-ledtrig-netdev-1.patch
 
 	# Fix uevent PHYSDEVDRIVER
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33_ipg-fix-driver-name.patch
@@ -220,11 +233,9 @@ ifeq "$(LASTKERNEL)" "1"
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6
 endif
 
-ifneq "$(MACHINE_TYPE)" "arm"
-	# Disable geode_aes modul
-	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko \
+	# Disable geode_aes modul if exist
+	-mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko \
            /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko.off
-endif
 endif
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
