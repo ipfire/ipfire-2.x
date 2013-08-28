@@ -23,7 +23,7 @@ use Net::DNS;
 use File::Copy;
 use File::Temp qw/ tempfile tempdir /;
 use strict;
-
+use Sort::Naturally;
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -2491,7 +2491,7 @@ END
     ;
     my $id = 0;
     my $gif;
-    foreach my $key (keys %confighash) {
+    foreach my $key (sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
 	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 
 	if ($id % 2) {

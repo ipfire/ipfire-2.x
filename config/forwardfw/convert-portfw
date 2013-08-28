@@ -1,0 +1,158 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2013 Alexander Marx <amarx@ipfire.org>                        #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+#                                                                             #
+# This script converts old portforwarding rules from old Firewall             #
+# to the new one. This is a 3-step process.                                   #
+# STEP1: read old config and normalize settings                               #
+# STEP2: create new rules from old ones                                       #
+# STEP3: check if rule already exists, when not, put it into                  #
+#        /var/ipfire/forward/nat                                              #
+###############################################################################
+require '/var/ipfire/general-functions.pl';
+my @values=();
+my @built_rules=();
+my %nat=();
+my $portfwconfig 	= "${General::swroot}/portfw/config";
+my $confignat 		= "${General::swroot}/forward/config";
+my ($key,$flag,$prot,$ipfireport,$target,$targetport,$active,$alias,$source,$remark);
+my ($key1,$flag1,$prot1,$ipfireport1,$target1,$targetport1,$active1,$alias1,$source1,$remark1);
+my $count=0;
+my $jump;
+if(! -d "/var/log/converters"){ mkdir("/var/log/converters");}
+open(FILE, $portfwconfig) or die 'Unable to open config file.';
+my @current = <FILE>;
+close(FILE);
+open (LOG, ">/var/log/converters/portfw-convert.log") or die $!;
+open(ALIAS, "${General::swroot}/ethernet/aliases") or die 'Unable to open aliases file.';
+my @alias = <ALIAS>;
+close(ALIAS);
+&get_config;
+&build_rules;
+&write_rules;
+sub get_config
+{
+	print LOG "STEP 1:   Get config from old portforward\n#########################################\n";
+	foreach my $line (@current){
+		if($jump eq '1'){
+			$jump='';
+			$count++;
+			next;
+		}
+		my $u=$count+1;
+		($key,$flag,$prot,$ipfireport,$target,$targetport,$active,$alias,$source,$remark) = split(",",$line);
+		($key1,$flag1,$prot1,$ipfireport1,$target1,$targetport1,$active1,$alias1,$source1,$remark1) = split(",",$current[$u]);
+		if ($flag1 eq '1'){
+			$source=$source1;
+			$jump='1';
+		}
+		my $now=localtime;
+		chomp($remark);
+		print LOG "$now   processing-> KEY: $key FLAG: $flag PROT: $prot FIREPORT: $ipfireport TARGET: $target TGTPORT: $targetport ACTIVE: $active ALIAS: $alias SOURCE: $source REM: $remark Doublerule: $jump\n";
+		push (@values,$prot.",".$ipfireport.",".$target.",".$targetport.",".$active.",".$alias.",".$source.",".$remark);
+		$count++;
+	}
+}
+sub build_rules
+{
+	print LOG "\nSTEP 2: Convert old portforwardrules in a useable format\n########################################################\n";
+	my $src;
+	my $src1;
+	my $ipfireip;
+	my $count=0;
+	my $stop;
+	#build rules for new firewall
+	foreach my $line (@values){
+		chomp ($line);
+		($prot,$ipfireport,$target,$targetport,$active,$alias,$source,$remark)=split(",",$line);
+		$count++;
+		#get sourcepart
+		if($source eq '0.0.0.0/0'){
+			$src  = 'std_net_src';
+			$src1 = 'ALL';
+		}else{
+			$src  = 'src_addr';
+			my ($a,$b) = split("/",$source);
+			$src1 = $a."/32";
+		}
+		#get ipfire ip
+		if($alias eq '0.0.0.0'){
+			$alias='ALL';
+		}else{
+			foreach my $ali (@alias){
+				my ($alias_ip,$alias_active,$alias_name) = split (",",$ali);
+				if($alias eq $alias_ip){
+					chomp($alias_name);
+					$alias=$alias_name;
+				}
+			}
+		}
+		$active = uc $active;
+		$prot   = uc $prot;
+		chomp($remark);
+		push (@built_rules,"ACCEPT,FORWARDFW,$active,$src,$src1,tgt_addr,$target/32,ON,$prot,,TGT_PORT,$targetport,$remark,00:00,00:00,ON,$alias,$ipfireport,dnat");
+		my $now=localtime;
+		print LOG "$now    Converted-> KEY: $count ACCEPT,FORWARDFW,$active,$src,$src1,tgt_addr,$target/32,ON,$prot,,TGT_PORT,$targetport,$remark,00:00,00:00,ON,$alias,$ipfireport,dnat\n";
+	}
+}
+sub write_rules
+{
+	my $skip='';
+	my $id;
+	print LOG "\nSTEP 3: Create DNAT rules in new firewall\n#########################################\n";
+	&General::readhasharray($confignat,\%nat);
+	foreach my $line (@built_rules){
+		$skip='';
+		my ($action,$chain,$active,$src,$src1,$tgt,$tgt1,$use_prot,$prot,$dummy,$tgt_port,$tgt_port1,$remark,$from,$to,$use_port,$alias,$ipfireport,$dnat) = split (",",$line);
+		foreach my $key (sort keys %nat){
+			if ($line eq "$nat{$key}[0],$nat{$key}[1],$nat{$key}[2],$nat{$key}[3],$nat{$key}[4],$nat{$key}[5],$nat{$key}[6],$nat{$key}[11],$nat{$key}[12],$nat{$key}[13],$nat{$key}[14],$nat{$key}[15],$nat{$key}[16],$nat{$key}[26],$nat{$key}[27],$nat{$key}[28],$nat{$key}[29],$nat{$key}[30],$nat{$key}[31]"){
+				my $now=localtime;
+				print LOG "$now         SKIP->  Rule  $nat{$key}[0],$nat{$key}[1],$nat{$key}[2],$nat{$key}[3],$nat{$key}[4],$nat{$key}[5],$nat{$key}[6],$nat{$key}[11],$nat{$key}[12],$nat{$key}[13],$nat{$key}[14],$nat{$key}[15],$nat{$key}[16],$nat{$key}[26],$nat{$key}[27],$nat{$key}[28],$nat{$key}[29],$nat{$key}[30],$nat{$key}[31] ->EXISTS\n";
+				$skip='1';
+			}
+		}
+		if ($skip ne '1'){
+			$id = &General::findhasharraykey(\%nat);
+			$nat{$id}[0]  = $action;
+			$nat{$id}[1]  = $chain;
+			$nat{$id}[2]  = $active;
+			$nat{$id}[3]  = $src;
+			$nat{$id}[4]  = $src1;
+			$nat{$id}[5]  = $tgt;
+			$nat{$id}[6]  = $tgt1;
+			$nat{$id}[11] = $use_prot;
+			$nat{$id}[12] = $prot;
+			$nat{$id}[13] = $dummy;
+			$nat{$id}[14] = $tgt_port;
+			$nat{$id}[15] = $tgt_port1;
+			$nat{$id}[16] = $remark;
+			$nat{$id}[26] = $from;
+			$nat{$id}[27] = $to;
+			$nat{$id}[28] = $use_port;
+			$nat{$id}[29] = $alias;
+			$nat{$id}[30] = $ipfireport;
+			$nat{$id}[31] = $dnat;
+			my $now=localtime;
+			print LOG "$now     NEW RULE->  Rule  $nat{$id}[0],$nat{$id}[1],$nat{$id}[2],$nat{$id}[3],$nat{$id}[4],$nat{$id}[5],$nat{$id}[6],$nat{$id}[11],$nat{$id}[12],$nat{$id}[13],$nat{$id}[14],$nat{$id}[15],$nat{$id}[16],$nat{$id}[26],$nat{$id}[27],$nat{$id}[28],$nat{$id}[29],$nat{$id}[30],$nat{$id}[31]\n";
+		}
+	}
+	&General::writehasharray($confignat,\%nat);
+}
+close (LOG);

@@ -27,6 +27,7 @@ char enableorange[STRING_SIZE] = "off";
 char OVPNRED[STRING_SIZE] = "OVPN";
 char OVPNBLUE[STRING_SIZE] = "OVPN_BLUE_";
 char OVPNORANGE[STRING_SIZE] = "OVPN_ORANGE_";
+char OVPNBLOCK[STRING_SIZE] = "OVPNBLOCK";
 char OVPNNAT[STRING_SIZE] = "OVPNNAT";
 char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.3";
 
@@ -253,20 +254,13 @@ void setChainRules(char *chain, char *interface, char *protocol, char *port)
 
 	sprintf(str, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %s -j ACCEPT", chain, interface, protocol, port);
 	executeCommand(str);
-	sprintf(str, "/sbin/iptables -A %sINPUT -i tun+ -j ACCEPT", chain);
-	executeCommand(str);
-	sprintf(str, "/sbin/iptables -A %sFORWARD -i tun+ -j ACCEPT", chain);
-	executeCommand(str);
 }
 
 void flushChain(char *chain) {
 	char str[STRING_SIZE];
 
-	sprintf(str, "/sbin/iptables -F %sINPUT", chain);
+	sprintf(str, "/sbin/iptables -F %s", chain);
 	executeCommand(str);
-	sprintf(str, "/sbin/iptables -F %sFORWARD", chain);
-	executeCommand(str);
-	safe_system(str);
 }
 
 void flushChainNAT(char *chain) {
@@ -276,23 +270,24 @@ void flushChainNAT(char *chain) {
 	executeCommand(str);
 }
 
+void flushChainINPUT(char *chain) {
+	char str[STRING_SIZE];
+
+	snprintf(str, STRING_SIZE, "%sINPUT", chain);
+	flushChain(str);
+}
+
 void deleteChainReference(char *chain) {
 	char str[STRING_SIZE];
 
 	sprintf(str, "/sbin/iptables -D INPUT -j %sINPUT", chain);
 	executeCommand(str);
-	safe_system(str);
-	sprintf(str, "/sbin/iptables -D FORWARD -j %sFORWARD", chain);
-	executeCommand(str);
-	safe_system(str);
 }
 
 void deleteChain(char *chain) {
 	char str[STRING_SIZE];
 
 	sprintf(str, "/sbin/iptables -X %sINPUT", chain);
-	executeCommand(str);
-	sprintf(str, "/sbin/iptables -X %sFORWARD", chain);
 	executeCommand(str);
 }
 
@@ -301,27 +296,27 @@ void deleteAllChains(void) {
 	deleteChainReference(OVPNRED);
 	deleteChainReference(OVPNBLUE);
 	deleteChainReference(OVPNORANGE);
-	flushChain(OVPNRED);
-	flushChain(OVPNBLUE);
-	flushChain(OVPNORANGE);
+	flushChainINPUT(OVPNRED);
+	flushChainINPUT(OVPNBLUE);
+	flushChainINPUT(OVPNORANGE);
 	deleteChain(OVPNRED);
 	deleteChain(OVPNBLUE);
 	deleteChain(OVPNORANGE);
+
+	// Only flush chains that are created by the firewall
+	flushChain(OVPNBLOCK);
+	flushChainNAT(OVPNNAT);
 }
 
 void createChainReference(char *chain) {
 	char str[STRING_SIZE];
 	sprintf(str, "/sbin/iptables -I INPUT %s -j %sINPUT", "14", chain);
 	executeCommand(str);
-	sprintf(str, "/sbin/iptables -I FORWARD %s -j %sFORWARD", "12", chain);
-	executeCommand(str);
 }
 
 void createChain(char *chain) {
 	char str[STRING_SIZE];
 	sprintf(str, "/sbin/iptables -N %sINPUT", chain);
-	executeCommand(str);
-	sprintf(str, "/sbin/iptables -N %sFORWARD", chain);
 	executeCommand(str);
 }
 
@@ -471,9 +466,10 @@ void setFirewallRules(void) {
 	freekeyvalues(kv);
 
 	// Flush all chains.
-	flushChain(OVPNRED);
-	flushChain(OVPNBLUE);
-	flushChain(OVPNORANGE);
+	flushChainINPUT(OVPNRED);
+	flushChainINPUT(OVPNBLUE);
+	flushChainINPUT(OVPNORANGE);
+	flushChain(OVPNBLOCK);
 	flushChainNAT(OVPNNAT);
 
 	// set firewall rules
@@ -495,6 +491,11 @@ void setFirewallRules(void) {
 		if (strcmp(conn->type, "net") == 0) {
 			sprintf(command, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %d -j ACCEPT",
 				OVPNRED, redif, conn->proto, conn->port);
+			executeCommand(command);
+
+			/* Block all communication from the transfer nets. */
+			snprintf(command, STRING_SIZE, "/sbin/iptables -A %s -s %s -j DROP",
+				OVPNBLOCK, conn->transfer_subnet);
 			executeCommand(command);
 
 			local_subnet_address = getLocalSubnetAddress(conn);

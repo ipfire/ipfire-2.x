@@ -15,7 +15,8 @@ usr/local/bin/launch-ether-wake
 usr/local/bin/logwatch
 #usr/local/bin/mpfirectrl
 usr/local/bin/openvpnctrl
-usr/local/bin/outgoingfwctrl
+#usr/local/bin/outgoingfwctrl
+usr/local/bin/forwardfwctrl
 usr/local/bin/pakfire
 usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
@@ -23,9 +24,6 @@ usr/local/bin/rebuildroutes
 usr/local/bin/redctrl
 #usr/local/bin/sambactrl
 usr/local/bin/setaliases
-usr/local/bin/setdmzholes
-usr/local/bin/setportfw
-usr/local/bin/setxtaccess
 usr/local/bin/smartctrl
 usr/local/bin/snortctrl
 usr/local/bin/squidctrl
