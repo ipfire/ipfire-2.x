@@ -44,6 +44,14 @@ extract_files
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+# Remove old initscripts
+rm -f /etc/rc.d/init.d/networking/red.up/22-outgoingfwctrl
+rm -f /etc/rc.d/init.d/networking/red.up/25-portfw
+rm -f /etc/rc.d/init.d/networking/red.up/26-xtaccess
+
+# Remove old CGI files
+rm -f /srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
+
 # Convert firewall configuration
 /usr/bin/convert-xtaccess
 /usr/bin/convert-outgoingfw
