@@ -600,7 +600,7 @@ buildipfire() {
   ipfiremake sudo
   ipfiremake mc
   ipfiremake wget
-#  ipfiremake bridge-utils
+  ipfiremake bridge-utils
   ipfiremake screen
   ipfiremake smartmontools
   ipfiremake htop
