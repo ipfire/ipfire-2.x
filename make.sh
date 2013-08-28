@@ -730,7 +730,7 @@ buildipfire() {
   ipfiremake minicom
   ipfiremake ddrescue
   ipfiremake imspector
-#  ipfiremake miniupnpd
+  ipfiremake miniupnpd
   ipfiremake client175
   ipfiremake powertop
   ipfiremake parted
