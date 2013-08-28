@@ -377,8 +377,9 @@ buildipfire() {
   ipfiremake dvb-firmwares
   ipfiremake zd1211-firmware
   ipfiremake rpi-firmware
-  ipfiremake u-boot
   ipfiremake bc
+  ipfiremake u-boot
+  ipfiremake u-boot-panda
 
   if [ "${MACHINE_TYPE}" != "arm" ]; then
 
