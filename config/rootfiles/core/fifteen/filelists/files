@@ -1,0 +1,4 @@
+etc/system-release
+etc/issue
+var/ipfire/header.pl
+var/ipfire/langs
