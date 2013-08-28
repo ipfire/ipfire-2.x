@@ -44,6 +44,15 @@ extract_files
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+# Convert firewall configuration
+/usr/bin/convert-xtaccess
+/usr/bin/convert-outgoingfw
+/usr/bin/convert-portfw
+/usr/bin/convert-dmz
+
+# Remove old firewall configuration files
+rm -rf /var/ipfire/{dmzholes,portfw,outgoing,xtaccess}
+
 sync
 
 # This update need a reboot...
