@@ -774,7 +774,7 @@ buildipfire() {
   ipfiremake lcdproc
   ipfiremake bitstream
   ipfiremake multicat
-#  ipfiremake keepalived
+  ipfiremake keepalived
   ipfiremake ipvsadm
   ipfiremake perl-Carp-Clan
   ipfiremake perl-Date-Calc
