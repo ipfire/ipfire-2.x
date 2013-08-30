@@ -17,7 +17,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = iptraf-ng
-PAK_VER	   = 1
+PAK_VER	   = 2
 
 DEPS       = ""
 
@@ -63,6 +63,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xzf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptraf-ng-1.1.4-tcplog_flowrate_msg.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr
 
