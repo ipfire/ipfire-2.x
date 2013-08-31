@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.10.9
+VER        = 3.10.10
 
 RPI_PATCHES = linux-3.2.27-ada8b44
 
@@ -71,7 +71,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
-$(DL_FILE)_MD5				= 28d1e1117c30fdd861f70ac0f9b677aa
+$(DL_FILE)_MD5				= 647f76225dd6bc112369ba573ba3de18
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 966687ff27e450e04ff50e0da829dc00
 
 
@@ -119,7 +119,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Grsecurity-patches
 ifneq "$(KCFG)" "-headers"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grsecurity-2.9.1-3.10.9-201308202015.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grsecurity-2.9.1-3.10.10-201308292131.patch
 	cd $(DIR_APP) && rm localversion-grsec
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
 endif
@@ -130,8 +130,12 @@ endif
 	# Remove ACPI Blacklist message
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6-silence-acpi-blacklist.patch
 
+	# DVB Patches
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.9-dvbsky-wot2.patch
+	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
+
 	# Add LED trigger
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33-ledtrig-netdev-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.9-ledtrig-netdev-1.patch
 
 	# Fix uevent PHYSDEVDRIVER
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33_ipg-fix-driver-name.patch
