@@ -95,5 +95,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# generate default file
 	grub-set-default 0
 
+	# Disable PaX mprotect for grub
+	paxctl -m /usr/sbin/grub
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
