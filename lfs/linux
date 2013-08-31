@@ -134,6 +134,13 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.9-dvbsky-wot2.patch
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
 
+	# Wlan Patches
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-drivers-3.8.3-ath_ignore_eeprom_regdomain.patch
+
+	# mISDN Patches
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN_hfc-s_add_id.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb-reportl1down.patch
+
 	# Add LED trigger
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.9-ledtrig-netdev-1.patch
 
