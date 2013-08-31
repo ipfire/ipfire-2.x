@@ -356,6 +356,7 @@ buildbase() {
     lfsmake2 util-linux
     lfsmake2 vim
     lfsmake2 xz
+    lfsmake2 paxctl
     lfsmake2 grub
 }
 
