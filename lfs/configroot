@@ -51,9 +51,8 @@ $(TARGET) :
 
 	# Create all directories
 	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dns dnsforward \
-			ethernet extrahd/bin fwlogs isdn key langs logging mac main menu.d modem net-traffic \
-			ethernet extrahd/bin fwlogs fwhosts forward forward/bin isdn key langs logging mac main  menu.d modem net-traffic \
-			net-traffic/templates nfs optionsfw \
+			ethernet extrahd/bin fwlogs fwhosts forward forward/bin isdn key langs logging mac main \
+			menu.d modem net-traffic net-traffic/templates nfs optionsfw \
 			ovpn patches pakfire portfw ppp private proxy/advanced/cre \
 			proxy/calamaris/bin qos/bin red remote sensors snort time tripwire/report \
 			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin upnp vpn \
@@ -65,11 +64,11 @@ $(TARGET) :
 	for i in auth/users backup/include.user backup/exclude.user \
 	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
-	    extrahd/scan extrahd/devices extrahd/partitions extrahd/settings forward/settings forward/config forward/input forward/outgoing forward/dmz forward/nat \
+	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings forward/settings forward/config forward/input forward/outgoing forward/dmz forward/nat \
 	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwlogs/ipsettings fwlogs/portsettings \
 	    isdn/settings mac/settings main/disable_nf_sip main/hosts main/routing main/settings net-traffic/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
-		ppp/settings-5 ppp/settings proxy/settings proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
+	    ppp/settings-5 ppp/settings proxy/settings proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
 	    qos/tosconfig snort/settings tripwire/settings upnp/settings vpn/config vpn/settings vpn/ipsec.conf \
 	    vpn/ipsec.secrets vpn/caconfig wakeonlan/clients.conf wireless/config wireless/settings; do \
 	    touch $(CONFIG_ROOT)/$$i; \
