@@ -51,7 +51,7 @@ case "${1}" in
 		
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 		ARGS="$CUSTOM_ARGS"
-		[ "$DOMAIN_NAME_GREEN" != "" ] && ARGS="-s $DOMAIN_NAME_GREEN"
+		[ "$DOMAIN_NAME_GREEN" != "" ] && ARGS="$ARGS -s $DOMAIN_NAME_GREEN"
 		
 		echo > /var/ipfire/red/resolv.conf # Clear it
 		if [ -e "/var/ipfire/red/dns1" ]; then
