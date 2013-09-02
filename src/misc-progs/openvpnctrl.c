@@ -163,7 +163,6 @@ connection *getConnections() {
 int readPidFile(const char *pidfile) {
 	FILE *fp = fopen(pidfile, "r");
 	if (fp == NULL) {
-		fprintf(stderr, "PID file not found: '%s'\n", pidfile);
 		exit(1);
 	}
 
