@@ -50,7 +50,7 @@ case "${1}" in
 		boot_mesg "Starting Domain Name Service Proxy..."
 		
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
-		ARGS=
+		ARGS="$CUSTOM_ARGS"
 		[ "$DOMAIN_NAME_GREEN" != "" ] && ARGS="-s $DOMAIN_NAME_GREEN"
 		
 		echo > /var/ipfire/red/resolv.conf # Clear it
@@ -72,8 +72,6 @@ case "${1}" in
 
 		# Add custom forward dns zones.
 		ARGS="${ARGS} $(dns_forward_args /var/ipfire/dnsforward/config)"
-
-		ARGS="$ARGS $CUSTOM_ARGS"
 
 		loadproc /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $ARGS
 		
