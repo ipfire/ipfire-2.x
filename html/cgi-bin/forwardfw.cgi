@@ -63,7 +63,6 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my $VERSION='0.9.9.14';
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -400,8 +399,6 @@ sub base
 {
 	&hint;
 	&addrule;
-	print "<br><br>";
-	print "<br><br><div align='right'><font size='1' color='grey'>Version: $VERSION</font></div>";
 }
 sub changerule
 {
