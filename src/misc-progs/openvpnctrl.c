@@ -175,7 +175,6 @@ int readPidFile(const char *pidfile) {
 }
 
 void ovpnInit(void) {
-	
 	// Read OpenVPN configuration
 	kv = initkeyvalues();
 	if (!readkeyvalues(kv, CONFIG_ROOT "/ovpn/settings")) {
@@ -184,17 +183,14 @@ void ovpnInit(void) {
 	}
 
 	if (!findkey(kv, "ENABLED", enablered)) {
-		fprintf(stderr, "Cannot read ENABLED\n");
 		exit(1);
 	}
 
 	if (!findkey(kv, "ENABLED_BLUE", enableblue)){
-		fprintf(stderr, "Cannot read ENABLED_BLUE\n");
 		exit(1);
 	}
 
 	if (!findkey(kv, "ENABLED_ORANGE", enableorange)){
-		fprintf(stderr, "Cannot read ENABLED_ORANGE\n");
 		exit(1);
 	}
 	freekeyvalues(kv);
@@ -220,24 +216,22 @@ void ovpnInit(void) {
 	}
 
 	kv=initkeyvalues();
-	if (!readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings"))
-	{
+	if (!readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")) {
 		fprintf(stderr, "Cannot read ethernet settings\n");
 		exit(1);
 	}
 	
-	if (strcmp(enableblue, "on")==0){
-		if (!findkey(kv, "BLUE_DEV", blueif)){
-			fprintf(stderr, "Cannot read BLUE_DEV\n");
+	if (strcmp(enableblue, "on") == 0) {
+		if (!findkey(kv, "BLUE_DEV", blueif)) {
 			exit(1);
 		}
 	}
-	if (strcmp(enableorange, "on")==0){
-		if (!findkey(kv, "ORANGE_DEV", orangeif)){
-			fprintf(stderr, "Cannot read ORNAGE_DEV\n");
+
+	if (strcmp(enableorange, "on") == 0) {
+		if (!findkey(kv, "ORANGE_DEV", orangeif)) {
 			exit(1);
 		}
-	}		
+	}
 	freekeyvalues(kv);
 }
 
@@ -323,7 +317,7 @@ void createChain(char *chain) {
 void createAllChains(void) {
 	// create chain and chain references
 	if (!strcmp(enableorange, "on")) {
-		if (strlen(orangeif)) {
+		if (strlen(orangeif) > 0) {
 			createChain(OVPNORANGE);
 			createChainReference(OVPNORANGE);
 		} else {
@@ -333,7 +327,7 @@ void createAllChains(void) {
 	}
 
 	if (!strcmp(enableblue, "on")) {
-		if (strlen(blueif)) {
+		if (strlen(blueif) > 0) {
 			createChain(OVPNBLUE);
 			createChainReference(OVPNBLUE);
 		} else {
@@ -343,7 +337,7 @@ void createAllChains(void) {
 	}
 
 	if (!strcmp(enablered, "on")) {
-		if (strlen(redif)) {
+		if (strlen(redif) > 0) {
 			createChain(OVPNRED);
 			createChainReference(OVPNRED);
 		} else {
@@ -461,7 +455,6 @@ void setFirewallRules(void) {
 
 	if (!findkey(kv, "VPN_IP", dovpnip)){
 		fprintf(stderr, "Cannot read VPN_IP\n");
-//		exit(1); step further as we don't need an ip
 	}
 	freekeyvalues(kv);
 
@@ -530,7 +523,7 @@ void stopDaemon(void) {
 void startDaemon(void) {
 	char command[STRING_SIZE];
 	
-	if (!((strcmp(enablered, "on")==0) || (strcmp(enableblue, "on")==0) || (strcmp(enableorange, "on")==0))){
+	if (!((strcmp(enablered, "on") == 0) || (strcmp(enableblue, "on") == 0) || (strcmp(enableorange, "on") == 0))) {
 		fprintf(stderr, "OpenVPN is not enabled on any interface\n");
 		exit(1);
 	} else {
