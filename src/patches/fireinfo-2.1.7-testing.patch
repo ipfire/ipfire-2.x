@@ -1,0 +1,4358 @@
+diff --git a/.gitignore b/.gitignore
+index 0caee61..92aa5c5 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,2 +1,31 @@
+-build
++/Makefile
++/build-aux
++/libtool
++/missing
++/src/fireinfo/__init__.py
+ *.py[co]
++/*.tar.bz2
++/*.tar.gz
++/*.tar.xz
++*.log
++*.a
++*.cache
++*.gmo
++*.la
++*.lo
++*.o
++*.stamp
++*.trs
++*~
++.deps
++.dirstamp
++.libs
++Makefile.in
++aclocal.m4
++config.h
++config.h.in
++config.log
++config.status
++configure
++install-sh
++stamp-*
+diff --git a/COPYING b/COPYING
+new file mode 100644
+index 0000000..94a9ed0
+--- /dev/null
++++ b/COPYING
+@@ -0,0 +1,674 @@
++                    GNU GENERAL PUBLIC LICENSE
++                       Version 3, 29 June 2007
++
++ Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
++ Everyone is permitted to copy and distribute verbatim copies
++ of this license document, but changing it is not allowed.
++
++                            Preamble
++
++  The GNU General Public License is a free, copyleft license for
++software and other kinds of works.
++
++  The licenses for most software and other practical works are designed
++to take away your freedom to share and change the works.  By contrast,
++the GNU General Public License is intended to guarantee your freedom to
++share and change all versions of a program--to make sure it remains free
++software for all its users.  We, the Free Software Foundation, use the
++GNU General Public License for most of our software; it applies also to
++any other work released this way by its authors.  You can apply it to
++your programs, too.
++
++  When we speak of free software, we are referring to freedom, not
++price.  Our General Public Licenses are designed to make sure that you
++have the freedom to distribute copies of free software (and charge for
++them if you wish), that you receive source code or can get it if you
++want it, that you can change the software or use pieces of it in new
++free programs, and that you know you can do these things.
++
++  To protect your rights, we need to prevent others from denying you
++these rights or asking you to surrender the rights.  Therefore, you have
++certain responsibilities if you distribute copies of the software, or if
++you modify it: responsibilities to respect the freedom of others.
++
++  For example, if you distribute copies of such a program, whether
++gratis or for a fee, you must pass on to the recipients the same
++freedoms that you received.  You must make sure that they, too, receive
++or can get the source code.  And you must show them these terms so they
++know their rights.
++
++  Developers that use the GNU GPL protect your rights with two steps:
++(1) assert copyright on the software, and (2) offer you this License
++giving you legal permission to copy, distribute and/or modify it.
++
++  For the developers' and authors' protection, the GPL clearly explains
++that there is no warranty for this free software.  For both users' and
++authors' sake, the GPL requires that modified versions be marked as
++changed, so that their problems will not be attributed erroneously to
++authors of previous versions.
++
++  Some devices are designed to deny users access to install or run
++modified versions of the software inside them, although the manufacturer
++can do so.  This is fundamentally incompatible with the aim of
++protecting users' freedom to change the software.  The systematic
++pattern of such abuse occurs in the area of products for individuals to
++use, which is precisely where it is most unacceptable.  Therefore, we
++have designed this version of the GPL to prohibit the practice for those
++products.  If such problems arise substantially in other domains, we
++stand ready to extend this provision to those domains in future versions
++of the GPL, as needed to protect the freedom of users.
++
++  Finally, every program is threatened constantly by software patents.
++States should not allow patents to restrict development and use of
++software on general-purpose computers, but in those that do, we wish to
++avoid the special danger that patents applied to a free program could
++make it effectively proprietary.  To prevent this, the GPL assures that
++patents cannot be used to render the program non-free.
++
++  The precise terms and conditions for copying, distribution and
++modification follow.
++
++                       TERMS AND CONDITIONS
++
++  0. Definitions.
++
++  "This License" refers to version 3 of the GNU General Public License.
++
++  "Copyright" also means copyright-like laws that apply to other kinds of
++works, such as semiconductor masks.
++
++  "The Program" refers to any copyrightable work licensed under this
++License.  Each licensee is addressed as "you".  "Licensees" and
++"recipients" may be individuals or organizations.
++
++  To "modify" a work means to copy from or adapt all or part of the work
++in a fashion requiring copyright permission, other than the making of an
++exact copy.  The resulting work is called a "modified version" of the
++earlier work or a work "based on" the earlier work.
++
++  A "covered work" means either the unmodified Program or a work based
++on the Program.
++
++  To "propagate" a work means to do anything with it that, without
++permission, would make you directly or secondarily liable for
++infringement under applicable copyright law, except executing it on a
++computer or modifying a private copy.  Propagation includes copying,
++distribution (with or without modification), making available to the
++public, and in some countries other activities as well.
++
++  To "convey" a work means any kind of propagation that enables other
++parties to make or receive copies.  Mere interaction with a user through
++a computer network, with no transfer of a copy, is not conveying.
++
++  An interactive user interface displays "Appropriate Legal Notices"
++to the extent that it includes a convenient and prominently visible
++feature that (1) displays an appropriate copyright notice, and (2)
++tells the user that there is no warranty for the work (except to the
++extent that warranties are provided), that licensees may convey the
++work under this License, and how to view a copy of this License.  If
++the interface presents a list of user commands or options, such as a
++menu, a prominent item in the list meets this criterion.
++
++  1. Source Code.
++
++  The "source code" for a work means the preferred form of the work
++for making modifications to it.  "Object code" means any non-source
++form of a work.
++
++  A "Standard Interface" means an interface that either is an official
++standard defined by a recognized standards body, or, in the case of
++interfaces specified for a particular programming language, one that
++is widely used among developers working in that language.
++
++  The "System Libraries" of an executable work include anything, other
++than the work as a whole, that (a) is included in the normal form of
++packaging a Major Component, but which is not part of that Major
++Component, and (b) serves only to enable use of the work with that
++Major Component, or to implement a Standard Interface for which an
++implementation is available to the public in source code form.  A
++"Major Component", in this context, means a major essential component
++(kernel, window system, and so on) of the specific operating system
++(if any) on which the executable work runs, or a compiler used to
++produce the work, or an object code interpreter used to run it.
++
++  The "Corresponding Source" for a work in object code form means all
++the source code needed to generate, install, and (for an executable
++work) run the object code and to modify the work, including scripts to
++control those activities.  However, it does not include the work's
++System Libraries, or general-purpose tools or generally available free
++programs which are used unmodified in performing those activities but
++which are not part of the work.  For example, Corresponding Source
++includes interface definition files associated with source files for
++the work, and the source code for shared libraries and dynamically
++linked subprograms that the work is specifically designed to require,
++such as by intimate data communication or control flow between those
++subprograms and other parts of the work.
++
++  The Corresponding Source need not include anything that users
++can regenerate automatically from other parts of the Corresponding
++Source.
++
++  The Corresponding Source for a work in source code form is that
++same work.
++
++  2. Basic Permissions.
++
++  All rights granted under this License are granted for the term of
++copyright on the Program, and are irrevocable provided the stated
++conditions are met.  This License explicitly affirms your unlimited
++permission to run the unmodified Program.  The output from running a
++covered work is covered by this License only if the output, given its
++content, constitutes a covered work.  This License acknowledges your
++rights of fair use or other equivalent, as provided by copyright law.
++
++  You may make, run and propagate covered works that you do not
++convey, without conditions so long as your license otherwise remains
++in force.  You may convey covered works to others for the sole purpose
++of having them make modifications exclusively for you, or provide you
++with facilities for running those works, provided that you comply with
++the terms of this License in conveying all material for which you do
++not control copyright.  Those thus making or running the covered works
++for you must do so exclusively on your behalf, under your direction
++and control, on terms that prohibit them from making any copies of
++your copyrighted material outside their relationship with you.
++
++  Conveying under any other circumstances is permitted solely under
++the conditions stated below.  Sublicensing is not allowed; section 10
++makes it unnecessary.
++
++  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
++
++  No covered work shall be deemed part of an effective technological
++measure under any applicable law fulfilling obligations under article
++11 of the WIPO copyright treaty adopted on 20 December 1996, or
++similar laws prohibiting or restricting circumvention of such
++measures.
++
++  When you convey a covered work, you waive any legal power to forbid
++circumvention of technological measures to the extent such circumvention
++is effected by exercising rights under this License with respect to
++the covered work, and you disclaim any intention to limit operation or
++modification of the work as a means of enforcing, against the work's
++users, your or third parties' legal rights to forbid circumvention of
++technological measures.
++
++  4. Conveying Verbatim Copies.
++
++  You may convey verbatim copies of the Program's source code as you
++receive it, in any medium, provided that you conspicuously and
++appropriately publish on each copy an appropriate copyright notice;
++keep intact all notices stating that this License and any
++non-permissive terms added in accord with section 7 apply to the code;
++keep intact all notices of the absence of any warranty; and give all
++recipients a copy of this License along with the Program.
++
++  You may charge any price or no price for each copy that you convey,
++and you may offer support or warranty protection for a fee.
++
++  5. Conveying Modified Source Versions.
++
++  You may convey a work based on the Program, or the modifications to
++produce it from the Program, in the form of source code under the
++terms of section 4, provided that you also meet all of these conditions:
++
++    a) The work must carry prominent notices stating that you modified
++    it, and giving a relevant date.
++
++    b) The work must carry prominent notices stating that it is
++    released under this License and any conditions added under section
++    7.  This requirement modifies the requirement in section 4 to
++    "keep intact all notices".
++
++    c) You must license the entire work, as a whole, under this
++    License to anyone who comes into possession of a copy.  This
++    License will therefore apply, along with any applicable section 7
++    additional terms, to the whole of the work, and all its parts,
++    regardless of how they are packaged.  This License gives no
++    permission to license the work in any other way, but it does not
++    invalidate such permission if you have separately received it.
++
++    d) If the work has interactive user interfaces, each must display
++    Appropriate Legal Notices; however, if the Program has interactive
++    interfaces that do not display Appropriate Legal Notices, your
++    work need not make them do so.
++
++  A compilation of a covered work with other separate and independent
++works, which are not by their nature extensions of the covered work,
++and which are not combined with it such as to form a larger program,
++in or on a volume of a storage or distribution medium, is called an
++"aggregate" if the compilation and its resulting copyright are not
++used to limit the access or legal rights of the compilation's users
++beyond what the individual works permit.  Inclusion of a covered work
++in an aggregate does not cause this License to apply to the other
++parts of the aggregate.
++
++  6. Conveying Non-Source Forms.
++
++  You may convey a covered work in object code form under the terms
++of sections 4 and 5, provided that you also convey the
++machine-readable Corresponding Source under the terms of this License,
++in one of these ways:
++
++    a) Convey the object code in, or embodied in, a physical product
++    (including a physical distribution medium), accompanied by the
++    Corresponding Source fixed on a durable physical medium
++    customarily used for software interchange.
++
++    b) Convey the object code in, or embodied in, a physical product
++    (including a physical distribution medium), accompanied by a
++    written offer, valid for at least three years and valid for as
++    long as you offer spare parts or customer support for that product
++    model, to give anyone who possesses the object code either (1) a
++    copy of the Corresponding Source for all the software in the
++    product that is covered by this License, on a durable physical
++    medium customarily used for software interchange, for a price no
++    more than your reasonable cost of physically performing this
++    conveying of source, or (2) access to copy the
++    Corresponding Source from a network server at no charge.
++
++    c) Convey individual copies of the object code with a copy of the
++    written offer to provide the Corresponding Source.  This
++    alternative is allowed only occasionally and noncommercially, and
++    only if you received the object code with such an offer, in accord
++    with subsection 6b.
++
++    d) Convey the object code by offering access from a designated
++    place (gratis or for a charge), and offer equivalent access to the
++    Corresponding Source in the same way through the same place at no
++    further charge.  You need not require recipients to copy the
++    Corresponding Source along with the object code.  If the place to
++    copy the object code is a network server, the Corresponding Source
++    may be on a different server (operated by you or a third party)
++    that supports equivalent copying facilities, provided you maintain
++    clear directions next to the object code saying where to find the
++    Corresponding Source.  Regardless of what server hosts the
++    Corresponding Source, you remain obligated to ensure that it is
++    available for as long as needed to satisfy these requirements.
++
++    e) Convey the object code using peer-to-peer transmission, provided
++    you inform other peers where the object code and Corresponding
++    Source of the work are being offered to the general public at no
++    charge under subsection 6d.
++
++  A separable portion of the object code, whose source code is excluded
++from the Corresponding Source as a System Library, need not be
++included in conveying the object code work.
++
++  A "User Product" is either (1) a "consumer product", which means any
++tangible personal property which is normally used for personal, family,
++or household purposes, or (2) anything designed or sold for incorporation
++into a dwelling.  In determining whether a product is a consumer product,
++doubtful cases shall be resolved in favor of coverage.  For a particular
++product received by a particular user, "normally used" refers to a
++typical or common use of that class of product, regardless of the status
++of the particular user or of the way in which the particular user
++actually uses, or expects or is expected to use, the product.  A product
++is a consumer product regardless of whether the product has substantial
++commercial, industrial or non-consumer uses, unless such uses represent
++the only significant mode of use of the product.
++
++  "Installation Information" for a User Product means any methods,
++procedures, authorization keys, or other information required to install
++and execute modified versions of a covered work in that User Product from
++a modified version of its Corresponding Source.  The information must
++suffice to ensure that the continued functioning of the modified object
++code is in no case prevented or interfered with solely because
++modification has been made.
++
++  If you convey an object code work under this section in, or with, or
++specifically for use in, a User Product, and the conveying occurs as
++part of a transaction in which the right of possession and use of the
++User Product is transferred to the recipient in perpetuity or for a
++fixed term (regardless of how the transaction is characterized), the
++Corresponding Source conveyed under this section must be accompanied
++by the Installation Information.  But this requirement does not apply
++if neither you nor any third party retains the ability to install
++modified object code on the User Product (for example, the work has
++been installed in ROM).
++
++  The requirement to provide Installation Information does not include a
++requirement to continue to provide support service, warranty, or updates
++for a work that has been modified or installed by the recipient, or for
++the User Product in which it has been modified or installed.  Access to a
++network may be denied when the modification itself materially and
++adversely affects the operation of the network or violates the rules and
++protocols for communication across the network.
++
++  Corresponding Source conveyed, and Installation Information provided,
++in accord with this section must be in a format that is publicly
++documented (and with an implementation available to the public in
++source code form), and must require no special password or key for
++unpacking, reading or copying.
++
++  7. Additional Terms.
++
++  "Additional permissions" are terms that supplement the terms of this
++License by making exceptions from one or more of its conditions.
++Additional permissions that are applicable to the entire Program shall
++be treated as though they were included in this License, to the extent
++that they are valid under applicable law.  If additional permissions
++apply only to part of the Program, that part may be used separately
++under those permissions, but the entire Program remains governed by
++this License without regard to the additional permissions.
++
++  When you convey a copy of a covered work, you may at your option
++remove any additional permissions from that copy, or from any part of
++it.  (Additional permissions may be written to require their own
++removal in certain cases when you modify the work.)  You may place
++additional permissions on material, added by you to a covered work,
++for which you have or can give appropriate copyright permission.
++
++  Notwithstanding any other provision of this License, for material you
++add to a covered work, you may (if authorized by the copyright holders of
++that material) supplement the terms of this License with terms:
++
++    a) Disclaiming warranty or limiting liability differently from the
++    terms of sections 15 and 16 of this License; or
++
++    b) Requiring preservation of specified reasonable legal notices or
++    author attributions in that material or in the Appropriate Legal
++    Notices displayed by works containing it; or
++
++    c) Prohibiting misrepresentation of the origin of that material, or
++    requiring that modified versions of such material be marked in
++    reasonable ways as different from the original version; or
++
++    d) Limiting the use for publicity purposes of names of licensors or
++    authors of the material; or
++
++    e) Declining to grant rights under trademark law for use of some
++    trade names, trademarks, or service marks; or
++
++    f) Requiring indemnification of licensors and authors of that
++    material by anyone who conveys the material (or modified versions of
++    it) with contractual assumptions of liability to the recipient, for
++    any liability that these contractual assumptions directly impose on
++    those licensors and authors.
++
++  All other non-permissive additional terms are considered "further
++restrictions" within the meaning of section 10.  If the Program as you
++received it, or any part of it, contains a notice stating that it is
++governed by this License along with a term that is a further
++restriction, you may remove that term.  If a license document contains
++a further restriction but permits relicensing or conveying under this
++License, you may add to a covered work material governed by the terms
++of that license document, provided that the further restriction does
++not survive such relicensing or conveying.
++
++  If you add terms to a covered work in accord with this section, you
++must place, in the relevant source files, a statement of the
++additional terms that apply to those files, or a notice indicating
++where to find the applicable terms.
++
++  Additional terms, permissive or non-permissive, may be stated in the
++form of a separately written license, or stated as exceptions;
++the above requirements apply either way.
++
++  8. Termination.
++
++  You may not propagate or modify a covered work except as expressly
++provided under this License.  Any attempt otherwise to propagate or
++modify it is void, and will automatically terminate your rights under
++this License (including any patent licenses granted under the third
++paragraph of section 11).
++
++  However, if you cease all violation of this License, then your
++license from a particular copyright holder is reinstated (a)
++provisionally, unless and until the copyright holder explicitly and
++finally terminates your license, and (b) permanently, if the copyright
++holder fails to notify you of the violation by some reasonable means
++prior to 60 days after the cessation.
++
++  Moreover, your license from a particular copyright holder is
++reinstated permanently if the copyright holder notifies you of the
++violation by some reasonable means, this is the first time you have
++received notice of violation of this License (for any work) from that
++copyright holder, and you cure the violation prior to 30 days after
++your receipt of the notice.
++
++  Termination of your rights under this section does not terminate the
++licenses of parties who have received copies or rights from you under
++this License.  If your rights have been terminated and not permanently
++reinstated, you do not qualify to receive new licenses for the same
++material under section 10.
++
++  9. Acceptance Not Required for Having Copies.
++
++  You are not required to accept this License in order to receive or
++run a copy of the Program.  Ancillary propagation of a covered work
++occurring solely as a consequence of using peer-to-peer transmission
++to receive a copy likewise does not require acceptance.  However,
++nothing other than this License grants you permission to propagate or
++modify any covered work.  These actions infringe copyright if you do
++not accept this License.  Therefore, by modifying or propagating a
++covered work, you indicate your acceptance of this License to do so.
++
++  10. Automatic Licensing of Downstream Recipients.
++
++  Each time you convey a covered work, the recipient automatically
++receives a license from the original licensors, to run, modify and
++propagate that work, subject to this License.  You are not responsible
++for enforcing compliance by third parties with this License.
++
++  An "entity transaction" is a transaction transferring control of an
++organization, or substantially all assets of one, or subdividing an
++organization, or merging organizations.  If propagation of a covered
++work results from an entity transaction, each party to that
++transaction who receives a copy of the work also receives whatever
++licenses to the work the party's predecessor in interest had or could
++give under the previous paragraph, plus a right to possession of the
++Corresponding Source of the work from the predecessor in interest, if
++the predecessor has it or can get it with reasonable efforts.
++
++  You may not impose any further restrictions on the exercise of the
++rights granted or affirmed under this License.  For example, you may
++not impose a license fee, royalty, or other charge for exercise of
++rights granted under this License, and you may not initiate litigation
++(including a cross-claim or counterclaim in a lawsuit) alleging that
++any patent claim is infringed by making, using, selling, offering for
++sale, or importing the Program or any portion of it.
++
++  11. Patents.
++
++  A "contributor" is a copyright holder who authorizes use under this
++License of the Program or a work on which the Program is based.  The
++work thus licensed is called the contributor's "contributor version".
++
++  A contributor's "essential patent claims" are all patent claims
++owned or controlled by the contributor, whether already acquired or
++hereafter acquired, that would be infringed by some manner, permitted
++by this License, of making, using, or selling its contributor version,
++but do not include claims that would be infringed only as a
++consequence of further modification of the contributor version.  For
++purposes of this definition, "control" includes the right to grant
++patent sublicenses in a manner consistent with the requirements of
++this License.
++
++  Each contributor grants you a non-exclusive, worldwide, royalty-free
++patent license under the contributor's essential patent claims, to
++make, use, sell, offer for sale, import and otherwise run, modify and
++propagate the contents of its contributor version.
++
++  In the following three paragraphs, a "patent license" is any express
++agreement or commitment, however denominated, not to enforce a patent
++(such as an express permission to practice a patent or covenant not to
++sue for patent infringement).  To "grant" such a patent license to a
++party means to make such an agreement or commitment not to enforce a
++patent against the party.
++
++  If you convey a covered work, knowingly relying on a patent license,
++and the Corresponding Source of the work is not available for anyone
++to copy, free of charge and under the terms of this License, through a
++publicly available network server or other readily accessible means,
++then you must either (1) cause the Corresponding Source to be so
++available, or (2) arrange to deprive yourself of the benefit of the
++patent license for this particular work, or (3) arrange, in a manner
++consistent with the requirements of this License, to extend the patent
++license to downstream recipients.  "Knowingly relying" means you have
++actual knowledge that, but for the patent license, your conveying the
++covered work in a country, or your recipient's use of the covered work
++in a country, would infringe one or more identifiable patents in that
++country that you have reason to believe are valid.
++
++  If, pursuant to or in connection with a single transaction or
++arrangement, you convey, or propagate by procuring conveyance of, a
++covered work, and grant a patent license to some of the parties
++receiving the covered work authorizing them to use, propagate, modify
++or convey a specific copy of the covered work, then the patent license
++you grant is automatically extended to all recipients of the covered
++work and works based on it.
++
++  A patent license is "discriminatory" if it does not include within
++the scope of its coverage, prohibits the exercise of, or is
++conditioned on the non-exercise of one or more of the rights that are
++specifically granted under this License.  You may not convey a covered
++work if you are a party to an arrangement with a third party that is
++in the business of distributing software, under which you make payment
++to the third party based on the extent of your activity of conveying
++the work, and under which the third party grants, to any of the
++parties who would receive the covered work from you, a discriminatory
++patent license (a) in connection with copies of the covered work
++conveyed by you (or copies made from those copies), or (b) primarily
++for and in connection with specific products or compilations that
++contain the covered work, unless you entered into that arrangement,
++or that patent license was granted, prior to 28 March 2007.
++
++  Nothing in this License shall be construed as excluding or limiting
++any implied license or other defenses to infringement that may
++otherwise be available to you under applicable patent law.
++
++  12. No Surrender of Others' Freedom.
++
++  If conditions are imposed on you (whether by court order, agreement or
++otherwise) that contradict the conditions of this License, they do not
++excuse you from the conditions of this License.  If you cannot convey a
++covered work so as to satisfy simultaneously your obligations under this
++License and any other pertinent obligations, then as a consequence you may
++not convey it at all.  For example, if you agree to terms that obligate you
++to collect a royalty for further conveying from those to whom you convey
++the Program, the only way you could satisfy both those terms and this
++License would be to refrain entirely from conveying the Program.
++
++  13. Use with the GNU Affero General Public License.
++
++  Notwithstanding any other provision of this License, you have
++permission to link or combine any covered work with a work licensed
++under version 3 of the GNU Affero General Public License into a single
++combined work, and to convey the resulting work.  The terms of this
++License will continue to apply to the part which is the covered work,
++but the special requirements of the GNU Affero General Public License,
++section 13, concerning interaction through a network will apply to the
++combination as such.
++
++  14. Revised Versions of this License.
++
++  The Free Software Foundation may publish revised and/or new versions of
++the GNU General Public License from time to time.  Such new versions will
++be similar in spirit to the present version, but may differ in detail to
++address new problems or concerns.
++
++  Each version is given a distinguishing version number.  If the
++Program specifies that a certain numbered version of the GNU General
++Public License "or any later version" applies to it, you have the
++option of following the terms and conditions either of that numbered
++version or of any later version published by the Free Software
++Foundation.  If the Program does not specify a version number of the
++GNU General Public License, you may choose any version ever published
++by the Free Software Foundation.
++
++  If the Program specifies that a proxy can decide which future
++versions of the GNU General Public License can be used, that proxy's
++public statement of acceptance of a version permanently authorizes you
++to choose that version for the Program.
++
++  Later license versions may give you additional or different
++permissions.  However, no additional obligations are imposed on any
++author or copyright holder as a result of your choosing to follow a
++later version.
++
++  15. Disclaimer of Warranty.
++
++  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
++APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
++HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
++OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
++THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
++IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
++ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
++
++  16. Limitation of Liability.
++
++  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
++WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
++THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
++GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
++USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
++DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
++PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
++EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
++SUCH DAMAGES.
++
++  17. Interpretation of Sections 15 and 16.
++
++  If the disclaimer of warranty and limitation of liability provided
++above cannot be given local legal effect according to their terms,
++reviewing courts shall apply local law that most closely approximates
++an absolute waiver of all civil liability in connection with the
++Program, unless a warranty or assumption of liability accompanies a
++copy of the Program in return for a fee.
++
++                     END OF TERMS AND CONDITIONS
++
++            How to Apply These Terms to Your New Programs
++
++  If you develop a new program, and you want it to be of the greatest
++possible use to the public, the best way to achieve this is to make it
++free software which everyone can redistribute and change under these terms.
++
++  To do so, attach the following notices to the program.  It is safest
++to attach them to the start of each source file to most effectively
++state the exclusion of warranty; and each file should have at least
++the "copyright" line and a pointer to where the full notice is found.
++
++    <one line to give the program's name and a brief idea of what it does.>
++    Copyright (C) <year>  <name of author>
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU General Public License for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with this program.  If not, see <http://www.gnu.org/licenses/>.
++
++Also add information on how to contact you by electronic and paper mail.
++
++  If the program does terminal interaction, make it output a short
++notice like this when it starts in an interactive mode:
++
++    <program>  Copyright (C) <year>  <name of author>
++    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
++    This is free software, and you are welcome to redistribute it
++    under certain conditions; type `show c' for details.
++
++The hypothetical commands `show w' and `show c' should show the appropriate
++parts of the General Public License.  Of course, your program's commands
++might be different; for a GUI interface, you would use an "about box".
++
++  You should also get your employer (if you work as a programmer) or school,
++if any, to sign a "copyright disclaimer" for the program, if necessary.
++For more information on this, and how to apply and follow the GNU GPL, see
++<http://www.gnu.org/licenses/>.
++
++  The GNU General Public License does not permit incorporating your program
++into proprietary programs.  If your program is a subroutine library, you
++may consider it more useful to permit linking proprietary applications with
++the library.  If this is what you want to do, use the GNU Lesser General
++Public License instead of this License.  But first, please read
++<http://www.gnu.org/philosophy/why-not-lgpl.html>.
+diff --git a/MANIFEST b/MANIFEST
+deleted file mode 100644
+index 24ca115..0000000
+--- a/MANIFEST
++++ /dev/null
+@@ -1,9 +0,0 @@
+-sendprofile
+-setup.py
+-fireinfo/__init__.py
+-fireinfo/cpu.py
+-fireinfo/device.py
+-fireinfo/hypervisor.py
+-fireinfo/network.py
+-fireinfo/system.py
+-src/fireinfo.c
+diff --git a/Makefile.am b/Makefile.am
+new file mode 100644
+index 0000000..260f14f
+--- /dev/null
++++ b/Makefile.am
+@@ -0,0 +1,87 @@
++###############################################################################
++#                                                                             #
++# Pakfire - The IPFire package management system                              #
++# Copyright (C) 2013 Pakfire development team                                 #
++#                                                                             #
++# This program is free software: you can redistribute it and/or modify        #
++# it under the terms of the GNU General Public License as published by        #
++# the Free Software Foundation, either version 3 of the License, or           #
++# (at your option) any later version.                                         #
++#                                                                             #
++# This program is distributed in the hope that it will be useful,             #
++# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
++# GNU General Public License for more details.                                #
++#                                                                             #
++# You should have received a copy of the GNU General Public License           #
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
++#                                                                             #
++###############################################################################
++
++ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
++AM_MAKEFLAGS = --no-print-directory
++AUTOMAKE_OPTIONS = color-tests
++
++# remove target it the command fails
++.DELETE_ON_ERROR:
++
++# keep itermediate files
++.SECONDARY:
++
++CLEANFILES =
++DISTCLEANFILES =
++EXTRA_DIST =
++
++AM_CPPFLAGS = \
++	-include $(top_builddir)/config.h \
++	-I $(top_srcdir)/include \
++	$(OUR_CPPFLAGS)
++
++AM_CFLAGS = $(OUR_CFLAGS)
++AM_LDFLAGS = $(OUR_LDFLAGS)
++
++pkgpyexec_LTLIBRARIES =
++
++# ------------------------------------------------------------------------------
++
++dist_doc_DATA = \
++	COPYING
++
++# ------------------------------------------------------------------------------
++
++dist_bin_SCRIPTS = \
++	src/sendprofile
++
++# ------------------------------------------------------------------------------
++
++fireinfo_PYTHON = \
++	src/fireinfo/__init__.py \
++	src/fireinfo/bios.py \
++	src/fireinfo/cpu.py \
++	src/fireinfo/device.py \
++	src/fireinfo/hypervisor.py \
++	src/fireinfo/network.py \
++	src/fireinfo/system.py
++
++fireinfodir = $(pythondir)/fireinfo
++
++# ------------------------------------------------------------------------------
++
++pkgpyexec_LTLIBRARIES += \
++	_fireinfo.la
++
++_fireinfo_la_SOURCES = \
++	src/_fireinfo/fireinfo.c
++
++_fireinfo_la_CFLAGS = \
++	$(AM_CFLAGS) \
++	$(PYTHON_DEVEL_CFLAGS)
++
++_fireinfo_la_LDFLAGS = \
++	$(AM_LDFLAGS) \
++	-shared \
++	-module \
++	-avoid-version
++
++_fireinfo_la_LIBADD = \
++	$(PYTHON_DEVEL_LIBS)
+diff --git a/autogen.sh b/autogen.sh
+new file mode 100755
+index 0000000..c08fadf
+--- /dev/null
++++ b/autogen.sh
+@@ -0,0 +1,3 @@
++#!/bin/sh
++
++autoreconf --force --install --symlink
+diff --git a/configure.ac b/configure.ac
+new file mode 100644
+index 0000000..4d5efef
+--- /dev/null
++++ b/configure.ac
+@@ -0,0 +1,110 @@
++###############################################################################
++#                                                                             #
++# Pakfire - The IPFire package management system                              #
++# Copyright (C) 2013 Pakfire development team                                 #
++#                                                                             #
++# This program is free software: you can redistribute it and/or modify        #
++# it under the terms of the GNU General Public License as published by        #
++# the Free Software Foundation, either version 3 of the License, or           #
++# (at your option) any later version.                                         #
++#                                                                             #
++# This program is distributed in the hope that it will be useful,             #
++# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
++# GNU General Public License for more details.                                #
++#                                                                             #
++# You should have received a copy of the GNU General Public License           #
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
++#                                                                             #
++###############################################################################
++
++AC_PREREQ([2.64])
++
++AC_INIT([fireinfo],
++	[2.1.7],
++	[info@ipfire.org],
++	[fireinfo],
++	[http://git.ipfire.org/?p=oddments/fireinfo.git;a=summary])
++
++AC_CONFIG_MACRO_DIR([m4])
++AC_CONFIG_HEADERS([config.h])
++AC_CONFIG_AUX_DIR([build-aux])
++
++AC_USE_SYSTEM_EXTENSIONS
++AC_SYS_LARGEFILE
++AC_PREFIX_DEFAULT([/usr])
++
++AM_INIT_AUTOMAKE([
++	foreign
++	1.11
++	-Wall
++	-Wno-portability
++	silent-rules
++	tar-pax
++	subdir-objects
++])
++AM_SILENT_RULES([yes])
++LT_PREREQ(2.2)
++LT_INIT([disable-static])
++
++# pkg-config
++PKG_PROG_PKG_CONFIG
++# This makes sure pkg.m4 is available.
++m4_pattern_forbid([^_?PKG_[A-Z_]+$],[*** pkg.m4 missing, please install pkg-config])
++
++# C Compiler
++AC_PROG_CC
++AC_PROG_CC_C99
++AC_PROG_CC_C_O
++AC_PROG_GCC_TRADITIONAL
++AC_OPENMP
++
++CC_CHECK_FLAGS_APPEND([with_cflags], [CFLAGS], [\
++	-pipe \
++	-Wall \
++	-Wextra \
++	-Wno-inline \
++	-Wundef \
++	"-Wformat=2 -Wformat-security -Wformat-nonliteral" \
++	-Wno-unused-parameter \
++	-Wno-unused-result \
++	-fno-strict-aliasing \
++	-ffunction-sections \
++	-fdata-sections \
++	-fstack-protector-all \
++	--param=ssp-buffer-size=4])
++AC_SUBST([OUR_CFLAGS], $with_cflags)
++
++AS_CASE([$CFLAGS], [*-O[[12345g\ ]]*],
++	[CC_CHECK_FLAGS_APPEND([with_cppflags], [CPPFLAGS], [\
++		-Wp,-D_FORTIFY_SOURCE=2])],
++	[AC_MSG_RESULT([skipping -D_FORTIFY_SOURCE, optimization not enabled])])
++AC_SUBST([OUR_CPPFLAGS], $with_cppflags)
++
++CC_CHECK_FLAGS_APPEND([with_ldflags], [LDFLAGS], [\
++	-Wl,--as-needed \
++	-Wl,--no-undefined \
++	-Wl,--gc-sections \
++	-Wl,-z,relro \
++	-Wl,-z,now])
++AC_SUBST([OUR_LDFLAGS], $with_ldflags)
++
++# Python
++AM_PATH_PYTHON([2.7])
++PKG_CHECK_MODULES([PYTHON_DEVEL], [python-${PYTHON_VERSION}])
++
++AC_CONFIG_FILES([
++	Makefile
++	src/fireinfo/__init__.py
++])
++
++AC_OUTPUT
++AC_MSG_RESULT([
++	$PACKAGE_NAME $VERSION
++
++	CFLAGS:                 ${OUR_CFLAGS} ${CFLAGS}
++	CPPFLAGS:               ${OUR_CPPFLAGS} ${CPPFLAGS}
++	LDFLAGS:                ${OUR_LDFLAGS} ${LDFLAGS}
++	PYTHON_CFLAGS:          ${PYTHON_DEVEL_CFLAGS}
++	PYTHON_LIBS:            ${PYTHON_DEVEL_LIBS}
++])
+diff --git a/fireinfo/__init__.py b/fireinfo/__init__.py
+deleted file mode 100644
+index 86fcc66..0000000
+--- a/fireinfo/__init__.py
++++ /dev/null
+@@ -1,24 +0,0 @@
+-#!/usr/bin/python
+-###############################################################################
+-#                                                                             #
+-# Fireinfo                                                                    #
+-# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
+-#                                                                             #
+-# This program is free software: you can redistribute it and/or modify        #
+-# it under the terms of the GNU General Public License as published by        #
+-# the Free Software Foundation, either version 3 of the License, or           #
+-# (at your option) any later version.                                         #
+-#                                                                             #
+-# This program is distributed in the hope that it will be useful,             #
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+-# GNU General Public License for more details.                                #
+-#                                                                             #
+-# You should have received a copy of the GNU General Public License           #
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+-#                                                                             #
+-###############################################################################
+-
+-__version__ = "2.1.7"
+-
+-from system import System
+diff --git a/fireinfo/cpu.py b/fireinfo/cpu.py
+deleted file mode 100644
+index 32d885d..0000000
+--- a/fireinfo/cpu.py
++++ /dev/null
+@@ -1,194 +0,0 @@
+-#!/usr/bin/python
+-###############################################################################
+-#                                                                             #
+-# Fireinfo                                                                    #
+-# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
+-#                                                                             #
+-# This program is free software: you can redistribute it and/or modify        #
+-# it under the terms of the GNU General Public License as published by        #
+-# the Free Software Foundation, either version 3 of the License, or           #
+-# (at your option) any later version.                                         #
+-#                                                                             #
+-# This program is distributed in the hope that it will be useful,             #
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+-# GNU General Public License for more details.                                #
+-#                                                                             #
+-# You should have received a copy of the GNU General Public License           #
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+-#                                                                             #
+-###############################################################################
+-
+-import os
+-
+-import system
+-
+-PROC_CPUINFO = "/proc/cpuinfo"
+-
+-class CPU(object):
+-	"""
+-		A class that represents the first CPU in a system.
+-
+-		We get all information form the first CPU (or core) and assume that
+-		all other ones are equal.
+-	"""
+-
+-	__cpuinfo = {}
+-
+-	def __init__(self):
+-		"""
+-			Initialize this class by reading all data from /proc/cpuinfo.
+-		"""
+-		self.__cpuinfo = self.read_cpuinfo()
+-
+-	@property
+-	def system(self):
+-		return system.System()
+-
+-	@staticmethod
+-	def read_cpuinfo():
+-		"""
+-			Read information from PROC_CPUINFO and store
+-			it into a dictionary cpuinfo.
+-		"""
+-		cpuinfo = {}
+-
+-		f = open(PROC_CPUINFO)
+-		while True:
+-			line = f.readline()
+-
+-			if not line:
+-				break
+-
+-			try:
+-				key, val = line.split(":", 1)
+-			except ValueError:
+-				# We got a line without key, pass that.
+-				pass
+-
+-			key = key.strip().replace(" ", "_")
+-			val = val.strip()
+-
+-			cpuinfo[key] = val
+-
+-		f.close()
+-
+-		return cpuinfo
+-
+-	@property
+-	def bogomips(self):
+-		"""
+-			Return the bogomips of this CPU.
+-		"""
+-		try:
+-			bogomips = self.__cpuinfo["bogomips"]
+-		except KeyError:
+-			bogomips = self.__cpuinfo["BogoMIPS"]
+-
+-		return float(bogomips)
+-
+-	@property
+-	def model(self):
+-		"""
+-			Return the model id of this CPU.
+-		"""
+-		try:
+-			model = int(self.__cpuinfo["model"])
+-		except KeyError:
+-			model = None
+-
+-		return model
+-
+-	@property
+-	def model_string(self):
+-		"""
+-			Return the model string of this CPU.
+-		"""
+-		try:
+-			return self.__cpuinfo["model_name"]
+-		except KeyError:
+-			return self.__cpuinfo["Processor"]
+-
+-	@property
+-	def vendor(self):
+-		"""
+-			Return the vendor string of this CPU.
+-		"""
+-		try:
+-			vendor = self.__cpuinfo["vendor_id"]
+-		except KeyError:
+-			if self.system.arch.startswith("arm"):
+-				vendor = "ARM"
+-			else:
+-				vendor = ""
+-
+-		return vendor
+-
+-	@property
+-	def stepping(self):
+-		"""
+-			Return the stepping id of this CPU.
+-		"""
+-		try:
+-			stepping = int(self.__cpuinfo["stepping"])
+-		except KeyError:
+-			stepping = None
+-
+-		return stepping
+-
+-	@property
+-	def flags(self):
+-		"""
+-			Return all flags of this CPU.
+-		"""
+-		try:
+-			flags = self.__cpuinfo["flags"]
+-		except KeyError:
+-			flags = self.__cpuinfo["Features"]
+-
+-		return flags.split()
+-
+-	@property
+-	def speed(self):
+-		"""
+-			Return the speed (in MHz) of this CPU.
+-		"""
+-		try:
+-			speed = float(self.__cpuinfo["cpu_MHz"])
+-		except KeyError:
+-			speed = 0
+-
+-		return speed
+-
+-	@property
+-	def family(self):
+-		"""
+-			Return the family id of this CPU.
+-		"""
+-		try:
+-			family = int(self.__cpuinfo["cpu_family"])
+-		except KeyError:
+-			family = None
+-
+-		return family
+-	
+-	@property
+-	def count(self):
+-		"""
+-			Count number of CPUs (cores).
+-		"""
+-		return os.sysconf("SC_NPROCESSORS_ONLN")
+-
+-
+-if __name__ == "__main__":
+-	c = CPU()
+-
+-	print "Vendor:", c.vendor
+-	print "Model:", c.model
+-	print "Stepping:", c.stepping
+-	print "Flags:", c.flags
+-	print "Bogomips:", c.bogomips
+-	print "Speed:", c.speed
+-	print "Family:", c.family
+-	print "Count:", c.count
+-	print "Model string:", c.model_string
+diff --git a/fireinfo/device.py b/fireinfo/device.py
+deleted file mode 100644
+index 01338b2..0000000
+--- a/fireinfo/device.py
++++ /dev/null
+@@ -1,133 +0,0 @@
+-#!/usr/bin/python
+-###############################################################################
+-#                                                                             #
+-# Fireinfo                                                                    #
+-# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
+-#                                                                             #
+-# This program is free software: you can redistribute it and/or modify        #
+-# it under the terms of the GNU General Public License as published by        #
+-# the Free Software Foundation, either version 3 of the License, or           #
+-# (at your option) any later version.                                         #
+-#                                                                             #
+-# This program is distributed in the hope that it will be useful,             #
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+-# GNU General Public License for more details.                                #
+-#                                                                             #
+-# You should have received a copy of the GNU General Public License           #
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+-#                                                                             #
+-###############################################################################
+-
+-import os.path
+-
+-class Device(object):
+-	"""
+-		This is an abstract class that represents all devices in the system.
+-		Every single device has its own instance of this class.
+-	"""
+-
+-	def __init__(self, path):
+-		"""
+-			Collect all information about the device by reading the
+-			"uevent" file and parsing it.
+-		"""
+-
+-		# Save the path in /sys to the device.
+-		self.path = path
+-
+-		# Datastructure to store information we read.
+-		self._uevent = {}
+-
+-		# Open the uevent file and parse all lines.
+-		with open(os.path.join(path, "uevent")) as f:
+-			for line in f.readlines():
+-				key, val = line.split("=")
+-				self._uevent[key] = val.rstrip().lower()
+-
+-	@property
+-	def driver(self):
+-		"""
+-			Get the driver/kernel module that device is driven by or return None.
+-		"""
+-		return self._uevent.get("DRIVER", None)
+-
+-			
+-class PCIDevice(Device):
+-	"""
+-		A class that represents all PCI (and PCIe) devices in a system.
+-	"""
+-
+-	subsystem = "pci"
+-
+-	@property
+-	def model(self):
+-		"""
+-			Return the PCI model id of this device.
+-		"""
+-		return self._uevent['PCI_ID'].split(":")[1]
+-		
+-	@property
+-	def vendor(self):
+-		"""
+-			Return the PCI vendor id of this device.
+-		"""
+-		return self._uevent['PCI_ID'].split(":")[0]
+-
+-	@property
+-	def deviceclass(self):
+-		"""
+-			Return the PCI device class of this device.
+-		"""
+-		return self._uevent['PCI_CLASS']
+-
+-	@property
+-	def sub_vendor(self):
+-		"""
+-			Return the PCI vendor sub id of this device.
+-		"""
+-		return self._uevent["PCI_SUBSYS_ID"].split(":")[0]
+-
+-	@property
+-	def sub_model(self):
+-		"""
+-			Return the PCI model sub id of this device.
+-		"""
+-		return self._uevent["PCI_SUBSYS_ID"].split(":")[1]
+-
+-
+-class USBDevice(Device):
+-	"""
+-		A class that represents all USB devices in a system.
+-	"""
+-
+-	subsystem = "usb"
+-	
+-	def pad(self, s):
+-		"""
+-			A function to pad ids that have no leading zeroes.
+-		"""
+-		while len(s) < 4:
+-			s = "0"+s
+-		return s
+-
+-	@property
+-	def vendor(self):
+-		"""
+-			Return the USB vendor id of this device.
+-		"""
+-		return self.pad(self._uevent['PRODUCT'].split("/")[0])
+-
+-	@property
+-	def model(self):
+-		"""
+-			Return the USB model id of this device.
+-		"""
+-		return self.pad(self._uevent['PRODUCT'].split("/")[1])
+-
+-	@property
+-	def deviceclass(self):
+-		"""
+-			Return the USB device class of this device.
+-		"""
+-		return self._uevent.get("INTERFACE", None)
+diff --git a/fireinfo/hypervisor.py b/fireinfo/hypervisor.py
+deleted file mode 100644
+index 9a3fb09..0000000
+--- a/fireinfo/hypervisor.py
++++ /dev/null
+@@ -1,149 +0,0 @@
+-#!/usr/bin/python
+-###############################################################################
+-#                                                                             #
+-# Fireinfo                                                                    #
+-# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
+-#                                                                             #
+-# This program is free software: you can redistribute it and/or modify        #
+-# it under the terms of the GNU General Public License as published by        #
+-# the Free Software Foundation, either version 3 of the License, or           #
+-# (at your option) any later version.                                         #
+-#                                                                             #
+-# This program is distributed in the hope that it will be useful,             #
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+-# GNU General Public License for more details.                                #
+-#                                                                             #
+-# You should have received a copy of the GNU General Public License           #
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+-#                                                                             #
+-###############################################################################
+-
+-import _fireinfo
+-import system
+-
+-class Hypervisor(object):
+-	def __init__(self):
+-		self.__info = _fireinfo.get_hypervisor()
+-
+-	@property
+-	def system(self):
+-		"""
+-			Return the current instance of the System class.
+-
+-			We need to do that as a property because otherwise
+-			we get a recursion.
+-		"""
+-		return system.System()
+-
+-	@property
+-	def vendor(self):
+-		"""
+-			Returns the name of the hypervisor vendor.
+-		"""
+-		if not self.virtual:
+-			return None
+-
+-		# Some of the hypervisors can be detected in a right way.
+-		# We can return them at this place.
+-		if self.__info["hypervisor"] in ("Xen", "VMWare", "KVM"):
+-			return self.__info["hypervisor"]
+-
+-		# Citrix Xen says it is Microsoft Hv.
+-		if self.__info["hypervisor"] == "Microsoft" and \
+-				self.system.bios_vendor == "Xen":
+-			return "Xen"
+-
+-		if not self.__info["hypervisor"]:
+-			# On VMWare systems, the bios vendor string contains "VMWare".
+-			if self.__is_hypervisor_vmware():
+-				return "VMWare"
+-
+-			# VirtualBox got "innotek GmbH" as bios vendor.
+-			elif self.__is_hypervisor_virtualbox():
+-				return "VirtualBox"
+-
+-			# Check for qemu.
+-			elif self.__is_hypervisor_qemu():
+-				return "Qemu"
+-
+-			# Check for Microsoft.
+-			elif self.__is_hypervisor_microsoft():
+-				return "Microsoft"
+-
+-		return "unknown"
+-
+-	@property
+-	def type(self):
+-		"""
+-			Returns if the host is running in full virt mode or
+-			if it is running in a paravirtualized environment.
+-		"""
+-		if not self.virtual:
+-			return None
+-
+-		if self.__info["virtype"]:
+-			return self.__info["virtype"]
+-
+-		if self.vendor in ("Qemu", "KVM", "VirtualBox", "VMWare"):
+-			return "full"
+-
+-		return "unknown"
+-
+-	@property
+-	def virtual(self):
+-		"""
+-			Returns true if the host is running in a virtual environment.
+-			Otherwise: false.
+-		"""
+-		return _fireinfo.is_virtualized() or \
+-			"hypervisor" in self.system.cpu.flags or \
+-			self.__is_hypervisor_virtualbox() or \
+-			self.__is_hypervisor_vmware() or \
+-			self.__is_hypervisor_qemu() or \
+-			self.__is_hypervisor_microsoft()
+-
+-	def __is_hypervisor_virtualbox(self):
+-		"""
+-			Check for virtualbox hypervisor by comparing the bios vendor string
+-			to "innotek GmbH".
+-		"""
+-		return self.system.bios_vendor == "innotek GmbH"
+-
+-	def __is_hypervisor_vmware(self):
+-		"""
+-			Check for the VMWare hypervisor by the VMWare Hypervisor port check.
+-
+-			http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1009458
+-		"""
+-		if self.system.vendor:
+-			return self.system.vendor.startswith("VMware")
+-
+-			# XXX We should use _fireinfo.vmware_hypervisor_port_check() here, too.
+-			# This currently segfaults (and I have no clue why) on VMware player.
+-
+-	def __is_hypervisor_qemu(self):
+-		"""
+-			Check for old qemu emulator.
+-		"""
+-		if self.system.bios_vendor:
+-			return self.system.bios_vendor == "Bochs"
+-
+-		return False
+-
+-	def __is_hypervisor_microsoft(self):
+-		"""
+-			Check for Microsoft hypervisor.
+-		"""
+-		if self.system.vendor:
+-			return "Microsoft" in self.system.vendor
+-
+-		return False
+-
+-
+-if __name__ == "__main__":
+-	h = Hypervisor()
+-
+-	print "Vendor:", h.vendor
+-	print "Type:", h.type
+-	print "Virtual:", h.virtual
+diff --git a/fireinfo/network.py b/fireinfo/network.py
+deleted file mode 100644
+index 063e9ec..0000000
+--- a/fireinfo/network.py
++++ /dev/null
+@@ -1,53 +0,0 @@
+-#!/usr/bin/python
+-###############################################################################
+-#                                                                             #
+-# Fireinfo                                                                    #
+-# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
+-#                                                                             #
+-# This program is free software: you can redistribute it and/or modify        #
+-# it under the terms of the GNU General Public License as published by        #
+-# the Free Software Foundation, either version 3 of the License, or           #
+-# (at your option) any later version.                                         #
+-#                                                                             #
+-# This program is distributed in the hope that it will be useful,             #
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+-# GNU General Public License for more details.                                #
+-#                                                                             #
+-# You should have received a copy of the GNU General Public License           #
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+-#                                                                             #
+-###############################################################################
+-
+-import os
+-
+-SYS_CLASS_NET = "/sys/class/net"
+-
+-class Network(object):
+-	def __init__(self):
+-		self._devices = os.listdir(SYS_CLASS_NET)
+-
+-	def has_green(self):
+-		return "green0" in self._devices
+-
+-	def has_red(self):
+-		for i in ("red0", "ppp0"):
+-			if i in self._devices:
+-				return True
+-
+-		return False
+-
+-	def has_blue(self):
+-		return "blue0" in self._devices
+-
+-	def has_orange(self):
+-		return "orange0" in self._devices
+-
+-
+-if __name__ == "__main__":
+-	n = Network()
+-
+-	print "has_green", n.has_green()
+-	print "has_red", n.has_red()
+-	print "has_blue", n.has_blue()
+-	print "has_orange", n.has_orange()
+diff --git a/fireinfo/system.py b/fireinfo/system.py
+deleted file mode 100644
+index 6f02312..0000000
+--- a/fireinfo/system.py
++++ /dev/null
+@@ -1,449 +0,0 @@
+-#!/usr/bin/python
+-###############################################################################
+-#                                                                             #
+-# Fireinfo                                                                    #
+-# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
+-#                                                                             #
+-# This program is free software: you can redistribute it and/or modify        #
+-# it under the terms of the GNU General Public License as published by        #
+-# the Free Software Foundation, either version 3 of the License, or           #
+-# (at your option) any later version.                                         #
+-#                                                                             #
+-# This program is distributed in the hope that it will be useful,             #
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+-# GNU General Public License for more details.                                #
+-#                                                                             #
+-# You should have received a copy of the GNU General Public License           #
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+-#                                                                             #
+-###############################################################################
+-
+-import hashlib
+-import json
+-import os
+-import string
+-
+-import _fireinfo
+-
+-import cpu
+-import device
+-import hypervisor
+-import network
+-
+-PROFILE_VERSION = 0
+-
+-SYS_CLASS_DMI = "/sys/class/dmi/id"
+-SECRET_ID_FILE = "/etc/fireinfo-id"
+-
+-INVALID_ID_STRINGS = (
+-	"OEM", "O.E.M.", "o.e.m.",
+-	"N/A", "n/a",
+-	"12345", "54321", "202020",
+-	"Chassis", "chassis",
+-	"Not Applicable",
+-	"None", "empty",
+-	"01010101-0101-0101-0101-010101010101",
+-	"00020003-0004-0005-0006-000700080009",
+-	"03000200-0400-0500-0006-000700080009",
+-	"0000000", "00000000",
+-)
+-
+-class Singleton(type):
+-	def __init__(cls, name, bases, dict):
+-		super(Singleton, cls).__init__(name, bases, dict)
+-		cls.instance = None
+-
+-	def __call__(cls, *args, **kw):
+-		if cls.instance is None:
+-			cls.instance = super(Singleton, cls).__call__(*args, **kw)
+-
+-		return cls.instance
+-
+-
+-def read_from_file(filename):
+-	"""
+-		Read all data from filename.
+-	"""
+-	if not os.path.exists(filename):
+-		return
+-
+-	try:
+-		with open(filename) as f:
+-			return f.read().strip()
+-	except IOError:
+-		pass
+-
+-class System(object):
+-	__metaclass__ = Singleton
+-
+-	def __init__(self):
+-		# find all devices
+-		self.devices = []
+-		self.scan()
+-		self.cpu = cpu.CPU()
+-		self.hypervisor = hypervisor.Hypervisor()
+-
+-		# Read /proc/cpuinfo for vendor information.
+-		self.__cpuinfo = self.cpu.read_cpuinfo()
+-
+-	def profile(self):
+-		p = {}
+-		p["system"] = {
+-			# System information
+-			"model"  : self.model,
+-			"vendor" : self.vendor,
+-
+-			# Indicator if the system is running in a
+-			# virtual environment.
+-			"virtual" : self.virtual,
+-			
+-			# System language
+-			"language" : self.language,
+-
+-			# Release information
+-			"release" : self.release,
+-			"kernel_release" : self.kernel_release,
+-
+-			"memory" : self.memory,
+-			"root_size" : self.root_size,
+-		}
+-
+-		p["devices"] = []
+-		for device in self.devices:
+-			d = {
+-				"subsystem" : device.subsystem.lower(), 
+-				"vendor" : device.vendor.lower(), 
+-				"model" : device.model.lower(), 
+-				"deviceclass" : device.deviceclass,
+-				"driver" : device.driver,
+-			}
+-
+-			# PCI devices provide subsystem information, USB don't.
+-			if d["subsystem"] == "pci":
+-				d["sub_model"] = device.sub_model
+-				d["sub_vendor"] = device.sub_vendor
+-
+-			p["devices"].append(d)
+-
+-		p["cpu"] = {
+-			"arch" : self.arch,
+-			"vendor" : self.cpu.vendor,
+-			"model" : self.cpu.model,
+-			"model_string" : self.cpu.model_string,
+-			"stepping" : self.cpu.stepping,
+-			"flags" : self.cpu.flags,
+-			"bogomips" : self.cpu.bogomips,
+-			"speed" : self.cpu.speed,
+-			"family" : self.cpu.family,
+-			"count" : self.cpu.count				
+-		}
+-
+-		p["network"] = {
+-			"green" : self.network.has_green(),
+-			"blue" : self.network.has_blue(),
+-			"orange" : self.network.has_orange(),
+-			"red" : self.network.has_red(),
+-		 }
+-
+-		# Only append hypervisor information if we are virtualized.
+-		if self.virtual:
+-			p["hypervisor"] = {
+-				"type"   : self.hypervisor.type,
+-				"vendor" : self.hypervisor.vendor,
+-			}
+-
+-		return {
+-			# Profile version
+-			"profile_version" : PROFILE_VERSION,
+-
+-			# Identification and authorization codes
+-			"public_id" : self.public_id,
+-			"private_id" : self.private_id,
+-
+-			# Actual profile data
+-			"profile" : p,
+-		}
+-				
+-		
+-	@property
+-	def arch(self):
+-		return os.uname()[4]
+-
+-	@property
+-	def public_id(self):
+-		"""
+-			This returns a globally (hopefully) ID to identify the host
+-			later (by request) in the database.
+-		"""
+-		public_id = self.secret_id
+-		if not public_id:
+-			return "0" * 40
+-
+-		return hashlib.sha1(public_id).hexdigest()
+-
+-	@property
+-	def private_id(self):
+-		"""
+-			The private ID is built out of the _unique_id and used to
+-			permit a host to do changes on the database.
+-
+-			No one could ever guess this without access to the host.
+-		"""
+-		private_id = ""
+-		for i in reversed(self.secret_id):
+-			private_id += i
+-
+-		if not private_id:
+-			return "0" * 40
+-
+-		return hashlib.sha1(private_id).hexdigest()
+-
+-	@property
+-	def secret_id(self):
+-		"""
+-			Read a "secret" ID from a file if available
+-			or calculate it from the hardware.
+-		"""
+-		if os.path.exists(SECRET_ID_FILE):
+-			return read_from_file(SECRET_ID_FILE)
+-
+-		return hashlib.sha1(self._unique_id).hexdigest()
+-
+-	@property
+-	def _unique_id(self):
+-		"""
+-			This is a helper ID which is generated out of some hardware information
+-			that is considered to be constant over a PC's lifetime.
+-
+-			None of the data here is ever sent to the server.
+-		"""
+-		ids = []
+-
+-		# Virtual machines (for example) and some boards have a UUID
+-		# which is globally unique.
+-		for file in ("product_uuid", "product_serial", "chassis_serial"):
+-			id = read_from_file(os.path.join(SYS_CLASS_DMI, file))
+-			ids.append(id)
+-
+-		# Sort out all bogous or invalid strings from the list.
+-		_ids = []
+-		for id in ids:
+-			if id is None:
+-				continue
+-
+-			for i in INVALID_ID_STRINGS:
+-				if i in id:
+-					id = None
+-					break
+-
+-			if id:
+-				_ids.append(id)
+-
+-		ids = _ids
+-
+-		# Use serial number from root disk (if available) and if
+-		# no other ID was found, yet.
+-		if not ids:
+-			root_disk_serial = self.root_disk_serial
+-			if root_disk_serial and not root_disk_serial.startswith("QM000"):
+-				ids.append(root_disk_serial)
+-
+-		# As last resort, we use the UUID from pakfire.
+-		if not ids:
+-			id = read_from_file("/opt/pakfire/db/uuid")
+-			ids.append(id)
+-
+-		return "#".join(ids)
+-
+-	@property
+-	def language(self):
+-		"""
+-			Return the language code of IPFire or "unknown" if we cannot get it.
+-		"""
+-		# Return "unknown" if settings file does not exist.
+-		filename = "/var/ipfire/main/settings"
+-		if not os.path.exists(filename):
+-			return "unknown"
+-
+-		with open(filename, "r") as f:
+-			for line in f.readlines():
+-				key, val = line.split("=", 1)
+-				if key == "LANGUAGE":
+-					return val.strip()
+-
+-	@property
+-	def release(self):
+-		"""
+-			Return the system release string.
+-		"""
+-		return read_from_file("/etc/system-release") or "unknown"
+-
+-	@property
+-	def bios_vendor(self):
+-		"""
+-			Return the bios vendor name.
+-		"""
+-		return read_from_file("/sys/class/dmi/id/bios_vendor")
+-
+-	def vendor_model_tuple(self):
+-		try:
+-			s = self.__cpuinfo["Hardware"]
+-		except KeyError:
+-			return (None, None)
+-
+-		if s.startswith("ARM-Versatile"):
+-			return ("ARM", s)
+-
+-		try:
+-			v, m = s.split(" ", 1)
+-		except ValueError:
+-			if s.startswith("BCM"):
+-				v = "Broadcom"
+-				m = s
+-			else:
+-				v = None
+-				m = s
+-
+-		return v, m
+-
+-	@property
+-	def vendor(self):
+-		"""
+-			Return the vendor string of this system (if any).
+-		"""
+-		ret = None
+-		for file in ("sys_vendor", "board_vendor", "chassis_vendor",):
+-			ret = read_from_file(os.path.join(SYS_CLASS_DMI, file))
+-			if ret:
+-				break
+-
+-		if ret is None:
+-			v, m = self.vendor_model_tuple()
+-			ret = v
+-
+-		return ret
+-
+-	@property
+-	def model(self):
+-		"""
+-			Return the model string of this system (if any).
+-		"""
+-		ret = None
+-		for file in ("product_name", "board_model", "chassis_model",):
+-			ret = read_from_file(os.path.join(SYS_CLASS_DMI, file))
+-			if ret:
+-				break
+-
+-		if ret is None:
+-			v, m = self.vendor_model_tuple()
+-			ret = m
+-
+-		return ret
+-
+-	@property
+-	def memory(self):
+-		"""
+-			Return the amount of memory in kilobytes.
+-		"""
+-		with open("/proc/meminfo", "r") as f:
+-			firstline = f.readline().strip()
+-			return int(firstline.split()[1])
+-
+-	@property
+-	def kernel_release(self):
+-		"""
+-			Return the kernel release string.
+-		"""
+-		return os.uname()[2]
+-
+-	@property
+-	def root_disk(self):
+-		"""
+-			Return the dev node of the root disk.
+-		"""
+-		with open("/etc/mtab", "r") as f:
+-			dev, mountpoint, rest = f.readline().split(" ", 2)
+-			if mountpoint == "/":
+-				# Cut off /dev
+-				dev = dev[5:]
+-
+-				# Handle raids and MMC cards like (mmcblk0p3).
+-				if dev[-2] == "p":
+-					return dev[:-2]
+-
+-				# Otherwise cut off all digits at end of string
+-				while dev[-1] in string.digits:
+-					dev = dev[:-1]
+-
+-				return dev
+-
+-	@property
+-	def root_size(self):
+-		"""
+-			Return the size of the root disk in kilobytes.
+-		"""
+-		path = "/sys/block/%s/size" % self.root_disk
+-		if not os.path.exists(path):
+-			return
+-
+-		with open(path, "r") as f:
+-			return int(f.readline()) * 512 / 1024
+-
+-	@property
+-	def root_disk_serial(self):
+-		"""
+-			Return the serial number of the root disk (if any).
+-		"""
+-		serial = _fireinfo.get_harddisk_serial("/dev/%s" % self.root_disk)
+-
+-		if serial:
+-			# Strip all spaces
+-			return serial.strip()
+-
+-	def scan(self):
+-		"""
+-			Scan for all devices (PCI/USB) in the system and append them
+-			to our list.
+-		"""
+-		self.devices = []
+-
+-		toscan = (
+-			("/sys/bus/pci/devices", device.PCIDevice),
+-			("/sys/bus/usb/devices", device.USBDevice)
+-		)
+-		for path, cls in toscan:
+-			if not os.path.exists(path):
+-				continue
+-
+-			dirlist = os.listdir(path)
+-			for dir in dirlist:
+-				self.devices.append(cls(os.path.join(path, dir)))
+-
+-	@property
+-	def virtual(self):
+-		"""
+-			Say if the host is running in a virtual environment.
+-		"""
+-		return self.hypervisor.virtual
+-
+-	@property
+-	def network(self):
+-		"""
+-			Reference to the network class.
+-		"""
+-		return network.Network()
+-
+-
+-if __name__ == "__main__":
+-	s=System()
+-	print s.arch
+-	print s.language
+-	print s.release
+-	print s.bios_vendor
+-	print s.memory
+-	print s.kernel
+-	print s.root_disk
+-	print s.root_size
+-	print "------------\n", s.devices, "\n------------\n"
+-	print json.dumps(s.profile(), sort_keys=True, indent=4)
+diff --git a/m4/.gitignore b/m4/.gitignore
+new file mode 100644
+index 0000000..38066dd
+--- /dev/null
++++ b/m4/.gitignore
+@@ -0,0 +1,5 @@
++libtool.m4
++ltoptions.m4
++ltsugar.m4
++ltversion.m4
++lt~obsolete.m4
+diff --git a/m4/attributes.m4 b/m4/attributes.m4
+new file mode 100644
+index 0000000..7e080da
+--- /dev/null
++++ b/m4/attributes.m4
+@@ -0,0 +1,288 @@
++dnl Macros to check the presence of generic (non-typed) symbols.
++dnl Copyright (c) 2006-2008 Diego Pettenò <flameeyes@gmail.com>
++dnl Copyright (c) 2006-2008 xine project
++dnl Copyright (c) 2012 Lucas De Marchi <lucas.de.marchi@gmail.com>
++dnl
++dnl This program is free software; you can redistribute it and/or modify
++dnl it under the terms of the GNU General Public License as published by
++dnl the Free Software Foundation; either version 2, or (at your option)
++dnl any later version.
++dnl
++dnl This program is distributed in the hope that it will be useful,
++dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
++dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++dnl GNU General Public License for more details.
++dnl
++dnl You should have received a copy of the GNU General Public License
++dnl along with this program; if not, write to the Free Software
++dnl Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
++dnl 02110-1301, USA.
++dnl
++dnl As a special exception, the copyright owners of the
++dnl macro gives unlimited permission to copy, distribute and modify the
++dnl configure scripts that are the output of Autoconf when processing the
++dnl Macro. You need not follow the terms of the GNU General Public
++dnl License when using or distributing such scripts, even though portions
++dnl of the text of the Macro appear in them. The GNU General Public
++dnl License (GPL) does govern all other use of the material that
++dnl constitutes the Autoconf Macro.
++dnl
++dnl This special exception to the GPL applies to versions of the
++dnl Autoconf Macro released by this project. When you make and
++dnl distribute a modified version of the Autoconf Macro, you may extend
++dnl this special exception to the GPL to apply to your modified version as
++dnl well.
++
++dnl Check if FLAG in ENV-VAR is supported by compiler and append it
++dnl to WHERE-TO-APPEND variable
++dnl CC_CHECK_FLAG_APPEND([WHERE-TO-APPEND], [ENV-VAR], [FLAG])
++
++AC_DEFUN([CC_CHECK_FLAG_APPEND], [
++  AC_CACHE_CHECK([if $CC supports flag $3 in envvar $2],
++                 AS_TR_SH([cc_cv_$2_$3]),
++          [eval "AS_TR_SH([cc_save_$2])='${$2}'"
++           eval "AS_TR_SH([$2])='-Werror $3'"
++           AC_COMPILE_IFELSE([AC_LANG_SOURCE([int a = 0; int main(void) { return a; } ])],
++                                    [eval "AS_TR_SH([cc_cv_$2_$3])='yes'"],
++                                    [eval "AS_TR_SH([cc_cv_$2_$3])='no'"])
++           eval "AS_TR_SH([$2])='$cc_save_$2'"])
++
++  AS_IF([eval test x$]AS_TR_SH([cc_cv_$2_$3])[ = xyes],
++        [eval "$1='${$1} $3'"])
++])
++
++dnl CC_CHECK_FLAGS_APPEND([WHERE-TO-APPEND], [ENV-VAR], [FLAG1 FLAG2])
++AC_DEFUN([CC_CHECK_FLAGS_APPEND], [
++  for flag in $3; do
++    CC_CHECK_FLAG_APPEND($1, $2, $flag)
++  done
++])
++
++dnl Check if the flag is supported by linker (cacheable)
++dnl CC_CHECK_LDFLAGS([FLAG], [ACTION-IF-FOUND],[ACTION-IF-NOT-FOUND])
++
++AC_DEFUN([CC_CHECK_LDFLAGS], [
++  AC_CACHE_CHECK([if $CC supports $1 flag],
++    AS_TR_SH([cc_cv_ldflags_$1]),
++    [ac_save_LDFLAGS="$LDFLAGS"
++     LDFLAGS="$LDFLAGS $1"
++     AC_LINK_IFELSE([int main() { return 1; }],
++       [eval "AS_TR_SH([cc_cv_ldflags_$1])='yes'"],
++       [eval "AS_TR_SH([cc_cv_ldflags_$1])="])
++     LDFLAGS="$ac_save_LDFLAGS"
++    ])
++
++  AS_IF([eval test x$]AS_TR_SH([cc_cv_ldflags_$1])[ = xyes],
++    [$2], [$3])
++])
++
++dnl define the LDFLAGS_NOUNDEFINED variable with the correct value for
++dnl the current linker to avoid undefined references in a shared object.
++AC_DEFUN([CC_NOUNDEFINED], [
++  dnl We check $host for which systems to enable this for.
++  AC_REQUIRE([AC_CANONICAL_HOST])
++
++  case $host in
++     dnl FreeBSD (et al.) does not complete linking for shared objects when pthreads
++     dnl are requested, as different implementations are present; to avoid problems
++     dnl use -Wl,-z,defs only for those platform not behaving this way.
++     *-freebsd* | *-openbsd*) ;;
++     *)
++        dnl First of all check for the --no-undefined variant of GNU ld. This allows
++        dnl for a much more readable commandline, so that people can understand what
++        dnl it does without going to look for what the heck -z defs does.
++        for possible_flags in "-Wl,--no-undefined" "-Wl,-z,defs"; do
++           CC_CHECK_LDFLAGS([$possible_flags], [LDFLAGS_NOUNDEFINED="$possible_flags"])
++           break
++        done
++     ;;
++  esac
++
++  AC_SUBST([LDFLAGS_NOUNDEFINED])
++])
++
++dnl Check for a -Werror flag or equivalent. -Werror is the GCC
++dnl and ICC flag that tells the compiler to treat all the warnings
++dnl as fatal. We usually need this option to make sure that some
++dnl constructs (like attributes) are not simply ignored.
++dnl
++dnl Other compilers don't support -Werror per se, but they support
++dnl an equivalent flag:
++dnl  - Sun Studio compiler supports -errwarn=%all
++AC_DEFUN([CC_CHECK_WERROR], [
++  AC_CACHE_CHECK(
++    [for $CC way to treat warnings as errors],
++    [cc_cv_werror],
++    [CC_CHECK_CFLAGS_SILENT([-Werror], [cc_cv_werror=-Werror],
++      [CC_CHECK_CFLAGS_SILENT([-errwarn=%all], [cc_cv_werror=-errwarn=%all])])
++    ])
++])
++
++AC_DEFUN([CC_CHECK_ATTRIBUTE], [
++  AC_REQUIRE([CC_CHECK_WERROR])
++  AC_CACHE_CHECK([if $CC supports __attribute__(( ifelse([$2], , [$1], [$2]) ))],
++    AS_TR_SH([cc_cv_attribute_$1]),
++    [ac_save_CFLAGS="$CFLAGS"
++     CFLAGS="$CFLAGS $cc_cv_werror"
++     AC_COMPILE_IFELSE([AC_LANG_SOURCE([$3])],
++       [eval "AS_TR_SH([cc_cv_attribute_$1])='yes'"],
++       [eval "AS_TR_SH([cc_cv_attribute_$1])='no'"])
++     CFLAGS="$ac_save_CFLAGS"
++    ])
++
++  AS_IF([eval test x$]AS_TR_SH([cc_cv_attribute_$1])[ = xyes],
++    [AC_DEFINE(
++       AS_TR_CPP([SUPPORT_ATTRIBUTE_$1]), 1,
++         [Define this if the compiler supports __attribute__(( ifelse([$2], , [$1], [$2]) ))]
++         )
++     $4],
++    [$5])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_CONSTRUCTOR], [
++  CC_CHECK_ATTRIBUTE(
++    [constructor],,
++    [void __attribute__((constructor)) ctor() { int a; }],
++    [$1], [$2])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_FORMAT], [
++  CC_CHECK_ATTRIBUTE(
++    [format], [format(printf, n, n)],
++    [void __attribute__((format(printf, 1, 2))) printflike(const char *fmt, ...) { fmt = (void *)0; }],
++    [$1], [$2])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_FORMAT_ARG], [
++  CC_CHECK_ATTRIBUTE(
++    [format_arg], [format_arg(printf)],
++    [char *__attribute__((format_arg(1))) gettextlike(const char *fmt) { fmt = (void *)0; }],
++    [$1], [$2])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_VISIBILITY], [
++  CC_CHECK_ATTRIBUTE(
++    [visibility_$1], [visibility("$1")],
++    [void __attribute__((visibility("$1"))) $1_function() { }],
++    [$2], [$3])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_NONNULL], [
++  CC_CHECK_ATTRIBUTE(
++    [nonnull], [nonnull()],
++    [void __attribute__((nonnull())) some_function(void *foo, void *bar) { foo = (void*)0; bar = (void*)0; }],
++    [$1], [$2])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_UNUSED], [
++  CC_CHECK_ATTRIBUTE(
++    [unused], ,
++    [void some_function(void *foo, __attribute__((unused)) void *bar);],
++    [$1], [$2])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_SENTINEL], [
++  CC_CHECK_ATTRIBUTE(
++    [sentinel], ,
++    [void some_function(void *foo, ...) __attribute__((sentinel));],
++    [$1], [$2])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_DEPRECATED], [
++  CC_CHECK_ATTRIBUTE(
++    [deprecated], ,
++    [void some_function(void *foo, ...) __attribute__((deprecated));],
++    [$1], [$2])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_ALIAS], [
++  CC_CHECK_ATTRIBUTE(
++    [alias], [weak, alias],
++    [void other_function(void *foo) { }
++     void some_function(void *foo) __attribute__((weak, alias("other_function")));],
++    [$1], [$2])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_MALLOC], [
++  CC_CHECK_ATTRIBUTE(
++    [malloc], ,
++    [void * __attribute__((malloc)) my_alloc(int n);],
++    [$1], [$2])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_PACKED], [
++  CC_CHECK_ATTRIBUTE(
++    [packed], ,
++    [struct astructure { char a; int b; long c; void *d; } __attribute__((packed));],
++    [$1], [$2])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_CONST], [
++  CC_CHECK_ATTRIBUTE(
++    [const], ,
++    [int __attribute__((const)) twopow(int n) { return 1 << n; } ],
++    [$1], [$2])
++])
++
++AC_DEFUN([CC_FLAG_VISIBILITY], [
++  AC_REQUIRE([CC_CHECK_WERROR])
++  AC_CACHE_CHECK([if $CC supports -fvisibility=hidden],
++    [cc_cv_flag_visibility],
++    [cc_flag_visibility_save_CFLAGS="$CFLAGS"
++     CFLAGS="$CFLAGS $cc_cv_werror"
++     CC_CHECK_CFLAGS_SILENT([-fvisibility=hidden],
++     cc_cv_flag_visibility='yes',
++     cc_cv_flag_visibility='no')
++     CFLAGS="$cc_flag_visibility_save_CFLAGS"])
++
++  AS_IF([test "x$cc_cv_flag_visibility" = "xyes"],
++    [AC_DEFINE([SUPPORT_FLAG_VISIBILITY], 1,
++       [Define this if the compiler supports the -fvisibility flag])
++     $1],
++    [$2])
++])
++
++AC_DEFUN([CC_FUNC_EXPECT], [
++  AC_REQUIRE([CC_CHECK_WERROR])
++  AC_CACHE_CHECK([if compiler has __builtin_expect function],
++    [cc_cv_func_expect],
++    [ac_save_CFLAGS="$CFLAGS"
++     CFLAGS="$CFLAGS $cc_cv_werror"
++     AC_COMPILE_IFELSE([AC_LANG_SOURCE(
++       [int some_function() {
++        int a = 3;
++        return (int)__builtin_expect(a, 3);
++     }])],
++       [cc_cv_func_expect=yes],
++       [cc_cv_func_expect=no])
++     CFLAGS="$ac_save_CFLAGS"
++    ])
++
++  AS_IF([test "x$cc_cv_func_expect" = "xyes"],
++    [AC_DEFINE([SUPPORT__BUILTIN_EXPECT], 1,
++     [Define this if the compiler supports __builtin_expect() function])
++     $1],
++    [$2])
++])
++
++AC_DEFUN([CC_ATTRIBUTE_ALIGNED], [
++  AC_REQUIRE([CC_CHECK_WERROR])
++  AC_CACHE_CHECK([highest __attribute__ ((aligned ())) supported],
++    [cc_cv_attribute_aligned],
++    [ac_save_CFLAGS="$CFLAGS"
++     CFLAGS="$CFLAGS $cc_cv_werror"
++     for cc_attribute_align_try in 64 32 16 8 4 2; do
++        AC_COMPILE_IFELSE([AC_LANG_SOURCE([
++          int main() {
++            static char c __attribute__ ((aligned($cc_attribute_align_try))) = 0;
++            return c;
++          }])], [cc_cv_attribute_aligned=$cc_attribute_align_try; break])
++     done
++     CFLAGS="$ac_save_CFLAGS"
++  ])
++
++  if test "x$cc_cv_attribute_aligned" != "x"; then
++     AC_DEFINE_UNQUOTED([ATTRIBUTE_ALIGNED_MAX], [$cc_cv_attribute_aligned],
++       [Define the highest alignment supported])
++  fi
++])
+diff --git a/runpychecker.sh b/runpychecker.sh
+index 407b7d6..64366fd 100755
+--- a/runpychecker.sh
++++ b/runpychecker.sh
+@@ -5,4 +5,4 @@ pychecker --only --limit 1000 \
+ 	--no-callinit --no-local --no-shadow --no-shadowbuiltin \
+ 	--no-import --no-miximport --no-pkgimport --no-reimport \
+ 	--no-argsused --no-varargsused --no-override \
+-	fireinfo/*.py
++	src/fireinfo/*.py
+diff --git a/sendprofile b/sendprofile
+deleted file mode 100644
+index da480ce..0000000
+--- a/sendprofile
++++ /dev/null
+@@ -1,132 +0,0 @@
+-#!/usr/bin/python
+-###############################################################################
+-#                                                                             #
+-# Fireinfo                                                                    #
+-# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
+-#                                                                             #
+-# This program is free software: you can redistribute it and/or modify        #
+-# it under the terms of the GNU General Public License as published by        #
+-# the Free Software Foundation, either version 3 of the License, or           #
+-# (at your option) any later version.                                         #
+-#                                                                             #
+-# This program is distributed in the hope that it will be useful,             #
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+-# GNU General Public License for more details.                                #
+-#                                                                             #
+-# You should have received a copy of the GNU General Public License           #
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+-#                                                                             #
+-###############################################################################
+-
+-import json
+-import logging
+-import logging.handlers
+-import os
+-import sys
+-import urllib
+-import urllib2
+-
+-import fireinfo
+-
+-ENABLED_FILE = "/var/ipfire/main/send_profile"
+-PROXY_SETTINGS = "/var/ipfire/proxy/advanced/settings"
+-
+-log_level = logging.INFO
+-if "-d" in sys.argv:
+-	log_level = logging.DEBUG
+-
+-# Setup logging
+-log = logging.getLogger()
+-log.setLevel(log_level)
+-log.addHandler(logging.handlers.SysLogHandler("/dev/log"))
+-log.addHandler(logging.StreamHandler(sys.stderr))
+-for handler in log.handlers:
+-	handler.setLevel(log_level)
+-
+-PROFILE_URL = "http://fireinfo.ipfire.org/send/%(public_id)s"
+-
+-def get_upstream_proxy():
+-	if not os.path.exists(PROXY_SETTINGS):
+-		return {"host" : ""}
+-
+-	proxy_settings = {}
+-	with open(PROXY_SETTINGS) as f:
+-		for line in f.readlines():
+-			k, v = line.split("=", 1)
+-			proxy_settings[k] = v.strip()
+-
+-	return {
+-		"host" : proxy_settings.get("UPSTREAM_PROXY", ""),
+-		"user" : proxy_settings.get("UPSTREAM_USER", ""),
+-		"pass" : proxy_settings.get("UPSTREAM_PASSWORD", ""),
+-	}
+-
+-def send_profile(profile):
+-	logging.debug("Sending profile:")
+-	for line in json.dumps(profile, sort_keys=True, indent=4).splitlines():
+-		logging.debug(line)
+-
+-	request = urllib2.Request(PROFILE_URL % profile,
+-		data = urllib.urlencode({"profile" : json.dumps(profile)}),
+-	)
+-	request.add_header("User-Agent", "fireinfo/%s" % fireinfo.__version__)
+-
+-	# Set upstream proxy if we have one.
+-	# XXX this cannot handle authentication
+-	proxy = get_upstream_proxy()
+-	if proxy["host"]:
+-		request.set_proxy(proxy["host"], "http")
+-
+-	try:
+-		urllib2.urlopen(request, timeout=60)
+-	except (urllib2.HTTPError, urllib2.URLError), e:
+-		reason = "Unknown reason"
+-
+-		if isinstance(e, urllib2.HTTPError):
+-			reason = "%s" % e
+-		elif isinstance(e, urllib2.URLError):
+-			reason = e.reason
+-
+-		logging.error("Profile was not sent propertly: %s" % reason)
+-		return
+-
+-	logging.debug("Profile was sent successfully.")
+-
+-def main():
+-	# Collect system information
+-	system = fireinfo.System()
+-	profile = system.profile()
+-
+-	# If --dump is passed -> only dump the output.
+-	if "--dump" in sys.argv:
+-		# Remove the private id when dumping the profile because
+-		# it contains no information and may confuse people.
+-		del profile["private_id"]
+-
+-		print json.dumps(profile, sort_keys=True, indent=4)
+-		return 0
+-
+-	if "--secret-id" in sys.argv:
+-		print system.secret_id
+-		return 0
+-
+-	if "--hardware-string" in sys.argv:
+-		print system._unique_id
+-		return 0
+-
+-	if "--public-id" in sys.argv:
+-		print system.public_id
+-		return 0
+-
+-	if not os.path.exists(ENABLED_FILE):
+-		del profile["profile"]
+-
+-	try:
+-		send_profile(profile)
+-	except urllib2.URLError:
+-		return 1
+-
+-	return 0
+-
+-sys.exit(main())
+diff --git a/setup.py b/setup.py
+deleted file mode 100644
+index 8149f0a..0000000
+--- a/setup.py
++++ /dev/null
+@@ -1,37 +0,0 @@
+-#!/usr/bin/python
+-###############################################################################
+-#                                                                             #
+-# Fireinfo                                                                    #
+-# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
+-#                                                                             #
+-# This program is free software: you can redistribute it and/or modify        #
+-# it under the terms of the GNU General Public License as published by        #
+-# the Free Software Foundation, either version 3 of the License, or           #
+-# (at your option) any later version.                                         #
+-#                                                                             #
+-# This program is distributed in the hope that it will be useful,             #
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+-# GNU General Public License for more details.                                #
+-#                                                                             #
+-# You should have received a copy of the GNU General Public License           #
+-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+-#                                                                             #
+-###############################################################################
+-
+-from distutils.core import setup, Extension
+-
+-setup(
+-	name = "fireinfo",
+-	version = "2.1.7",
+-	description = "Hardware information gathering library.",
+-	license = "GPLv3",
+-	author = "IPFire.org Team",
+-	author_email = "info@ipfire.org",
+-	url = "https://bugzilla.ipfire.org/describecomponents.cgi?product=Fireinfo",
+-	ext_modules = [
+-		Extension("_fireinfo", ["src/fireinfo.c"])
+-	],
+-	packages = ["fireinfo"],
+-	scripts = ["sendprofile"],
+-)
+diff --git a/src/_fireinfo/fireinfo.c b/src/_fireinfo/fireinfo.c
+new file mode 100644
+index 0000000..08d714b
+--- /dev/null
++++ b/src/_fireinfo/fireinfo.c
+@@ -0,0 +1,231 @@
++/*
++ * Fireinfo
++ * Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <Python.h>
++
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/hdreg.h>
++#include <stdbool.h>
++#include <string.h>
++#include <sys/ioctl.h>
++
++/* hypervisor vendors */
++enum hypervisors {
++	HYPER_NONE       = 0,
++	HYPER_XEN,
++	HYPER_KVM,
++	HYPER_MSHV,
++	HYPER_VMWARE,
++	HYPER_OTHER,
++	HYPER_LAST /* for loop - must be last*/
++};
++
++const char *hypervisor_ids[] = {
++	[HYPER_NONE]    = NULL,
++	[HYPER_XEN]     = "XenVMMXenVMM",
++	[HYPER_KVM]     = "KVMKVMKVM",
++	/* http://msdn.microsoft.com/en-us/library/ff542428.aspx */
++	[HYPER_MSHV]    = "Microsoft Hv",
++	/* http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1009458 */
++	[HYPER_VMWARE]  = "VMwareVMware",
++	[HYPER_OTHER]   = NULL
++};
++
++const char *hypervisor_vendors[] = {
++	[HYPER_NONE]    = NULL,
++	[HYPER_XEN]     = "Xen",
++	[HYPER_KVM]     = "KVM",
++	[HYPER_MSHV]    = "Microsoft",
++	[HYPER_VMWARE]  = "VMWare",
++	[HYPER_OTHER]   = "other"
++};
++
++#define NEWLINE "\n\r"
++
++char *truncate_nl(char *s) {
++	assert(s);
++
++	s[strcspn(s, NEWLINE)] = 0;
++	return s;
++}
++
++int read_one_line_file(const char *filename, char **line) {
++	assert(filename);
++	assert(line);
++
++	FILE *f = NULL;
++	f = fopen(filename, "re");
++	if (!f)
++		return -errno;
++
++	char t[2048];
++	if (!fgets(t, sizeof(t), f)) {
++		if (ferror(f))
++			return errno ? -errno : -EIO;
++
++		t[0] = 0;
++	}
++
++	char *c = strdup(t);
++	if (!c)
++		return -ENOMEM;
++	truncate_nl(c);
++
++	*line = c;
++	return 0;
++}
++
++/*
++ * This CPUID leaf returns the information about the hypervisor.
++ * EAX : maximum input value for CPUID supported by the hypervisor.
++ * EBX, ECX, EDX : Hypervisor vendor ID signature. E.g. VMwareVMware.
++ */
++#define HYPERVISOR_INFO_LEAF   0x40000000
++
++int detect_hypervisor(int *hypervisor) {
++#if defined(__x86_64__) || defined(__i386__)
++	/* Try high-level hypervisor sysfs file first: */
++	char *hvtype = NULL;
++	int r = read_one_line_file("/sys/hypervisor/type", &hvtype);
++	if (r >= 0) {
++		if (strcmp(hvtype, "xen") == 0) {
++			*hypervisor = HYPER_XEN;
++			return 1;
++		}
++	} else if (r != -ENOENT)
++		return r;
++
++	/* http://lwn.net/Articles/301888/ */
++
++#if defined(__amd64__)
++#define REG_a "rax"
++#define REG_b "rbx"
++#elif defined(__i386__)
++#define REG_a "eax"
++#define REG_b "ebx"
++#endif
++
++	uint32_t eax = 1;
++	uint32_t ecx;
++	union {
++		uint32_t sig32[3];
++		char text[13];
++	} sig = {};
++
++	__asm__ __volatile__ (
++		/* ebx/rbx is being used for PIC! */
++		"  push %%"REG_b"       \n\t"
++		"  cpuid                \n\t"
++		"  pop %%"REG_b"        \n\t"
++
++		: "=a" (eax), "=c" (ecx)
++		: "0" (eax)
++	);
++
++	bool has_hypervisor = !!(ecx & 0x80000000U);
++
++	if (has_hypervisor) {
++		/* There is a hypervisor, see what it is... */
++		eax = 0x40000000U;
++		__asm__ __volatile__ (
++			"  push %%"REG_b"       \n\t"
++			"  cpuid                \n\t"
++			"  mov %%ebx, %1        \n\t"
++			"  pop %%"REG_b"        \n\t"
++
++			: "=a" (eax), "=r" (sig.sig32[0]), "=c" (sig.sig32[1]), "=d" (sig.sig32[2])
++			: "0" (eax)
++		);
++		sig.text[12] = '\0';
++
++		*hypervisor = HYPER_OTHER;
++
++		int id;
++		for (id = HYPER_NONE + 1; id < HYPER_LAST; id++) {
++			if (strcmp(hypervisor_ids[id], sig.text) == 0) {
++				*hypervisor = id;
++				break;
++			}
++		}
++
++		return 1;
++	}
++#endif
++	return 0;
++}
++
++
++static PyObject *
++do_detect_hypervisor() {
++	/*
++		Get hypervisor from the cpuid command.
++	*/
++	int hypervisor = HYPER_NONE;
++
++	int r = detect_hypervisor(&hypervisor);
++	if (r >= 1) {
++		const char* hypervisor_vendor = hypervisor_vendors[hypervisor];
++		if (!hypervisor_vendor)
++			Py_RETURN_NONE;
++
++		return PyString_FromString(hypervisor_vendor);
++	}
++
++	Py_RETURN_NONE;
++}
++
++static PyObject *
++do_get_harddisk_serial(PyObject *o, PyObject *args) {
++	/*
++		Python wrapper around read_harddisk_serial.
++	*/
++	static struct hd_driveid hd;
++	int fd;
++	char *device;
++
++	if (!PyArg_ParseTuple(args, "s", &device))
++		return NULL;
++
++	if ((fd = open(device, O_RDONLY | O_NONBLOCK)) < 0)
++		return NULL;
++
++	if (!ioctl(fd, HDIO_GET_IDENTITY, &hd)) {
++		char serial[21];
++		strncpy(serial, (const char *)hd.serial_no, sizeof(serial));
++
++		if (serial[0])
++			return PyString_FromString(serial);
++	}
++
++	Py_RETURN_NONE;
++}
++
++static PyMethodDef fireinfoModuleMethods[] = {
++	{ "detect_hypervisor", (PyCFunction) do_detect_hypervisor, METH_NOARGS, NULL },
++	{ "get_harddisk_serial", (PyCFunction) do_get_harddisk_serial, METH_VARARGS, NULL },
++	{ NULL, NULL, 0, NULL }
++};
++
++void init_fireinfo(void) {
++	PyObject *m;
++
++	m = Py_InitModule("_fireinfo", fireinfoModuleMethods);
++	if (m == NULL)
++		return;
++}
+diff --git a/src/fireinfo.c b/src/fireinfo.c
+deleted file mode 100644
+index 25b5333..0000000
+--- a/src/fireinfo.c
++++ /dev/null
+@@ -1,427 +0,0 @@
+-/*
+- * Fireinfo
+- * Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 3 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- */
+-
+-#include <Python.h>
+-
+-#include <fcntl.h>
+-#include <linux/hdreg.h>
+-#include <stdbool.h>
+-#include <sys/ioctl.h>
+-
+-/*
+-	Big parts of this were taken from
+-	http://git.kernel.org/?p=utils/util-linux-ng/util-linux-ng.git;a=blob;f=sys-utils/lscpu.c
+-*/
+-
+-/* /sys paths */
+-#define _PATH_PROC_XEN		"/proc/xen"
+-#define _PATH_PROC_XENCAP	_PATH_PROC_XEN "/capabilities"
+-#define _PATH_PROC_PCIDEVS	"/proc/bus/pci/devices"
+-
+-/* Used for the vmware hypervisor port detection */
+-#define VMWARE_HYPERVISOR_MAGIC 0x564D5868
+-#define VMWARE_HYPERVISOR_PORT  0x5658
+-
+-#define VMWARE_PORT_CMD_GETVERSION      10
+-
+-/* virtualization types */
+-enum {
+-	VIRT_NONE	= 0,
+-	VIRT_PARA,
+-	VIRT_FULL
+-};
+-const char *virt_types[] = {
+-	[VIRT_NONE]	= "none",
+-	[VIRT_PARA]	= "para",
+-	[VIRT_FULL]	= "full"
+-};
+-
+-/* hypervisor vendors */
+-enum {
+-	HYPER_NONE	= 0,
+-	HYPER_XEN,
+-	HYPER_KVM,
+-	HYPER_MSHV,
+-	HYPER_VMWARE
+-};
+-const char *hv_vendors[] = {
+-	[HYPER_NONE]	= NULL,
+-	[HYPER_XEN]	= "Xen",
+-	[HYPER_KVM]	= "KVM",
+-	[HYPER_MSHV]	= "Microsoft",
+-	[HYPER_VMWARE]  = "VMWare"
+-};
+-
+-struct hypervisor_desc {
+-	int hyper; 		/* hypervisor vendor ID */
+-	int virtype;	/* VIRT_PARA|FULL|NONE ? */
+-};
+-
+-static size_t sysrootlen;
+-static char pathbuf[PATH_MAX];
+-
+-static FILE *path_fopen(const char *mode, const char *path, ...)
+-		__attribute__ ((__format__ (__printf__, 2, 3)));
+-static int path_exist(const char *path, ...)
+-		__attribute__ ((__format__ (__printf__, 1, 2)));
+-
+-static const char *
+-path_vcreate(const char *path, va_list ap)
+-{
+-	if (sysrootlen)
+-		vsnprintf(pathbuf + sysrootlen,
+-			  sizeof(pathbuf) - sysrootlen, path, ap);
+-	else
+-		vsnprintf(pathbuf, sizeof(pathbuf), path, ap);
+-	return pathbuf;
+-}
+-
+-static FILE *
+-path_vfopen(const char *mode, const char *path, va_list ap)
+-{
+-	const char *p = path_vcreate(path, ap);
+-
+-	return fopen(p, mode);
+-}
+-
+-static FILE *
+-path_fopen(const char *mode, const char *path, ...)
+-{
+-	FILE *fd;
+-	va_list ap;
+-
+-	va_start(ap, path);
+-	fd = path_vfopen(mode, path, ap);
+-	va_end(ap);
+-
+-	return fd;
+-}
+-
+-static int
+-path_exist(const char *path, ...)
+-{
+-	va_list ap;
+-	const char *p;
+-
+-	va_start(ap, path);
+-	p = path_vcreate(path, ap);
+-	va_end(ap);
+-
+-	return access(p, F_OK) == 0;
+-}
+-
+-static int
+-has_pci_device(int vendor, int device)
+-{
+-	FILE *f;
+-	int num, fn, ven, dev;
+-	int res = 1;
+-
+-	f = path_fopen("r", _PATH_PROC_PCIDEVS);
+-	if (!f)
+-		return 0;
+-
+-	 /* for more details about bus/pci/devices format see
+-	  * drivers/pci/proc.c in linux kernel
+-	  */
+-	while(fscanf(f, "%02x%02x\t%04x%04x\t%*[^\n]",
+-			&num, &fn, &ven, &dev) == 4) {
+-
+-		if (ven == vendor && dev == device)
+-			goto found;
+-	}
+-
+-	res = 0;
+-found:
+-	fclose(f);
+-	return res;
+-}
+-
+-#if defined(__x86_64__) || defined(__i386__)
+-
+-/*
+- * This CPUID leaf returns the information about the hypervisor.
+- * EAX : maximum input value for CPUID supported by the hypervisor.
+- * EBX, ECX, EDX : Hypervisor vendor ID signature. E.g. VMwareVMware.
+- */
+-#define HYPERVISOR_INFO_LEAF   0x40000000
+-
+-static inline void
+-cpuid(unsigned int op, unsigned int *eax, unsigned int *ebx,
+-			 unsigned int *ecx, unsigned int *edx)
+-{
+-	__asm__(
+-#if defined(__PIC__) && defined(__i386__)
+-		/* x86 PIC cannot clobber ebx -- gcc bitches */
+-		"pushl %%ebx;"
+-		"cpuid;"
+-		"movl %%ebx, %%esi;"
+-		"popl %%ebx;"
+-		: "=S" (*ebx),
+-#else
+-		"cpuid;"
+-		: "=b" (*ebx),
+-#endif
+-		  "=a" (*eax),
+-		  "=c" (*ecx),
+-		  "=d" (*edx)
+-		: "1" (op), "c"(0));
+-}
+-
+-static void
+-read_hypervisor_cpuid(struct hypervisor_desc *desc)
+-{
+-	unsigned int eax = 0, ebx = 0, ecx = 0, edx = 0;
+-	char hyper_vendor_id[13];
+-
+-	memset(hyper_vendor_id, 0, sizeof(hyper_vendor_id));
+-
+-	cpuid(HYPERVISOR_INFO_LEAF, &eax, &ebx, &ecx, &edx);
+-	memcpy(hyper_vendor_id + 0, &ebx, 4);
+-	memcpy(hyper_vendor_id + 4, &ecx, 4);
+-	memcpy(hyper_vendor_id + 8, &edx, 4);
+-	hyper_vendor_id[12] = '\0';
+-
+-	if (!hyper_vendor_id[0])
+-		return;
+-
+-	if (!strncmp("XenVMMXenVMM", hyper_vendor_id, 12))
+-		desc->hyper = HYPER_XEN;
+-	else if (!strncmp("KVMKVMKVM", hyper_vendor_id, 9))
+-		desc->hyper = HYPER_KVM;
+-	else if (!strncmp("Microsoft Hv", hyper_vendor_id, 12))
+-		desc->hyper = HYPER_MSHV;
+-	else if (!strncmp("VMwareVMware", hyper_vendor_id, 12))
+-		desc->hyper = HYPER_VMWARE;
+-}
+-
+-#else	/* ! __x86_64__ */
+-static void
+-read_hypervisor_cpuid(struct hypervisor_desc *desc)
+-{
+-}
+-#endif
+-
+-static void
+-read_hypervisor(struct hypervisor_desc *desc)
+-{
+-	read_hypervisor_cpuid(desc);
+-
+-	if (desc->hyper)
+-		/* hvm */
+-		desc->virtype = VIRT_FULL;
+-
+-	else if (path_exist(_PATH_PROC_XEN)) {
+-		/* Xen para-virt or dom0 */
+-		FILE *fd = path_fopen("r", _PATH_PROC_XENCAP);
+-		int dom0 = 0;
+-
+-		if (fd) {
+-			char buf[256];
+-
+-			if (fscanf(fd, "%s", buf) == 1 &&
+-			    !strcmp(buf, "control_d"))
+-				dom0 = 1;
+-			fclose(fd);
+-		}
+-		desc->virtype = dom0 ? VIRT_NONE : VIRT_PARA;
+-		desc->hyper = HYPER_XEN;
+-
+-	} else if (has_pci_device(0x5853, 0x0001)) {
+-		/* Xen full-virt on non-x86_64 */
+-		desc->hyper = HYPER_XEN;
+-		desc->virtype = VIRT_FULL;
+-	}
+-}
+-
+-static void
+-read_harddisk_serial(char *device, char *serial) {
+-	static struct hd_driveid hd;
+-	int fd;
+-
+-	if ((fd = open(device, O_RDONLY | O_NONBLOCK)) < 0) {
+-	    return;
+-	}
+-
+-	if (!ioctl(fd, HDIO_GET_IDENTITY, &hd)) {
+-	    strncpy(serial, (const char *)hd.serial_no, 20);
+-	}
+-}
+-
+-#if defined(__x86_64__) || defined(__i386__)
+-static bool
+-is_virtualized() {
+-	unsigned int eax, ebx, ecx, edx;
+-
+-	cpuid(0x1, &eax, &ebx, &ecx, &edx);
+-
+-	/*
+-		Bitwise detection of the 31st bit.
+-		This indicates if a host runs in a virtual environment.
+-	*/
+-	if (ecx & (1<<31))
+-		return true;
+-
+-	return false;
+-}
+-
+-void
+-hypervisor_port(unsigned int cmd, unsigned int *eax, unsigned int *ebx,
+-		unsigned int *ecx, unsigned int *edx)
+-{
+-	__asm__(
+-#if defined(__PIC__) && defined(__i386__)
+-		/* x86 PIC really cannot clobber ebx */
+-		"pushl %%ebx;"
+-		"inl (%%dx);"
+-		"movl %%ebx, %%esi;"
+-		"popl %%ebx;"
+-		: "=S" (*ebx),
+-#else
+-		"inl (%%dx);"
+-		: "=b" (*ebx),
+-#endif
+-		  "=a" (*eax),
+-		  "=c" (*ecx),
+-		  "=d" (*edx)
+-		: "0" (VMWARE_HYPERVISOR_MAGIC),
+-		  "1" (cmd),
+-		  "2" (VMWARE_HYPERVISOR_PORT),
+-		  "3" (UINT_MAX)
+-		: "memory"
+-	);
+-}
+-#else
+-static bool
+-is_virtualized() {
+-	/*
+-		Always return false, because other architectures
+-		do not support the virtualization bit.
+-	*/
+-	return false;
+-}
+-
+-void
+-hypervisor_port(unsigned int cmd, unsigned int *eax, unsigned int *ebx,
+-		unsigned int *ecx, unsigned int *edx)
+-{
+-}
+-#endif
+-
+-int
+-hypervisor_port_check(void) {
+-		uint32_t eax, ebx, ecx, edx;
+-
+-		hypervisor_port(VMWARE_PORT_CMD_GETVERSION, &eax, &ebx, &ecx, &edx);
+-
+-		if (ebx == VMWARE_HYPERVISOR_MAGIC)
+-			return 1; // Success - running under VMware
+-		else
+-			return 0;
+-}
+-
+-static PyObject *
+-do_get_hypervisor() {
+-	/*
+-		Get hypervisor from the cpuid command.
+-	*/
+-	struct hypervisor_desc _desc, *desc = &_desc;
+-	memset(desc, 0, sizeof(*desc));
+-
+-	read_hypervisor(desc);
+-
+-	PyObject *d = PyDict_New();
+-	PyObject *o;
+-
+-	/* Hypervisor */
+-	if (desc->hyper == HYPER_NONE) {
+-		o = Py_None;
+-	} else {
+-		o = PyString_FromString((const char *)hv_vendors[desc->hyper]);
+-	}
+-	PyDict_SetItemString(d, "hypervisor", o);
+-
+-	/* Virtualization type */
+-	if (desc->virtype == VIRT_NONE) {
+-		o = Py_None;
+-	} else {
+-		o = PyString_FromString((const char *)virt_types[desc->virtype]);
+-	}
+-	PyDict_SetItemString(d, "virtype", o);
+-
+-	return d;
+-}
+-
+-static PyObject *
+-do_is_virtualized() {
+-	/*
+-		Python wrapper around is_virtualized().
+-	*/
+-
+-	if (is_virtualized())
+-		return Py_True;
+-
+-	return Py_False;
+-}
+-
+-static PyObject *
+-do_get_harddisk_serial(PyObject *o, PyObject *args) {
+-	/*
+-		Python wrapper around read_harddisk_serial.
+-	*/
+-
+-	char serial[21];
+-	memset(serial, 0, sizeof(serial));
+-
+-	char *device;
+-	if (!PyArg_ParseTuple(args, "s", &device))
+-		return NULL;
+-
+-	read_harddisk_serial(device, serial);
+-
+-	if (serial[0])
+-		return PyString_FromString(serial);
+-
+-	return Py_None;
+-}
+-
+-static PyObject *
+-do_hypervisor_port_check() {
+-	/*
+-		Python wrapper around hypervisor_port_check().
+-	*/
+-
+-	if (hypervisor_port_check())
+-		return Py_True;
+-
+-	return Py_False;
+-}
+-
+-static PyMethodDef fireinfoModuleMethods[] = {
+-	{ "get_hypervisor", (PyCFunction) do_get_hypervisor, METH_NOARGS, NULL },
+-	{ "is_virtualized", (PyCFunction) do_is_virtualized, METH_NOARGS, NULL },
+-	{ "get_harddisk_serial", (PyCFunction) do_get_harddisk_serial, METH_VARARGS, NULL },
+-	{ "vmware_hypervisor_port_check", (PyCFunction) do_hypervisor_port_check, METH_NOARGS, NULL },
+-	{ NULL, NULL, 0, NULL }
+-};
+-
+-void init_fireinfo(void) {
+-	PyObject *m;
+-
+-	m = Py_InitModule("_fireinfo", fireinfoModuleMethods);
+-}
+diff --git a/src/fireinfo/__init__.py.in b/src/fireinfo/__init__.py.in
+new file mode 100644
+index 0000000..05c520e
+--- /dev/null
++++ b/src/fireinfo/__init__.py.in
+@@ -0,0 +1,24 @@
++#!/usr/bin/python
++###############################################################################
++#                                                                             #
++# Fireinfo                                                                    #
++# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
++#                                                                             #
++# This program is free software: you can redistribute it and/or modify        #
++# it under the terms of the GNU General Public License as published by        #
++# the Free Software Foundation, either version 3 of the License, or           #
++# (at your option) any later version.                                         #
++#                                                                             #
++# This program is distributed in the hope that it will be useful,             #
++# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
++# GNU General Public License for more details.                                #
++#                                                                             #
++# You should have received a copy of the GNU General Public License           #
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
++#                                                                             #
++###############################################################################
++
++__version__ = "@PACKAGE_VERSION@"
++
++from system import System
+diff --git a/src/fireinfo/bios.py b/src/fireinfo/bios.py
+new file mode 100644
+index 0000000..56e3af0
+--- /dev/null
++++ b/src/fireinfo/bios.py
+@@ -0,0 +1,50 @@
++#!/usr/bin/python
++###############################################################################
++#                                                                             #
++# Fireinfo                                                                    #
++# Copyright (C) 2013 IPFire Team (www.ipfire.org)                             #
++#                                                                             #
++# This program is free software: you can redistribute it and/or modify        #
++# it under the terms of the GNU General Public License as published by        #
++# the Free Software Foundation, either version 3 of the License, or           #
++# (at your option) any later version.                                         #
++#                                                                             #
++# This program is distributed in the hope that it will be useful,             #
++# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
++# GNU General Public License for more details.                                #
++#                                                                             #
++# You should have received a copy of the GNU General Public License           #
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
++#                                                                             #
++###############################################################################
++
++import os.path
++
++DMI_VENDORS = [
++	"/sys/class/dmi/id/sys_vendor",
++	"/sys/class/dmi/id/board_vendor",
++	"/sys/class/dmi/id/bios_vendor",
++]
++
++class BIOS(object):
++	def __init__(self, system):
++		self.system = system
++
++	def check_vendor(self, vendor, startswith=True):
++		for file in DMI_VENDORS:
++			if not os.path.exists(file):
++				continue
++
++			with open(file, "r") as f:
++				v = f.read()
++
++			# Strip the vendor string.
++			v = v.strip()
++
++			if startswith and v.startswith(vendor):
++				return True
++			elif v == vendor:
++				return True
++
++		return False
+diff --git a/src/fireinfo/cpu.py b/src/fireinfo/cpu.py
+new file mode 100644
+index 0000000..32d885d
+--- /dev/null
++++ b/src/fireinfo/cpu.py
+@@ -0,0 +1,194 @@
++#!/usr/bin/python
++###############################################################################
++#                                                                             #
++# Fireinfo                                                                    #
++# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
++#                                                                             #
++# This program is free software: you can redistribute it and/or modify        #
++# it under the terms of the GNU General Public License as published by        #
++# the Free Software Foundation, either version 3 of the License, or           #
++# (at your option) any later version.                                         #
++#                                                                             #
++# This program is distributed in the hope that it will be useful,             #
++# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
++# GNU General Public License for more details.                                #
++#                                                                             #
++# You should have received a copy of the GNU General Public License           #
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
++#                                                                             #
++###############################################################################
++
++import os
++
++import system
++
++PROC_CPUINFO = "/proc/cpuinfo"
++
++class CPU(object):
++	"""
++		A class that represents the first CPU in a system.
++
++		We get all information form the first CPU (or core) and assume that
++		all other ones are equal.
++	"""
++
++	__cpuinfo = {}
++
++	def __init__(self):
++		"""
++			Initialize this class by reading all data from /proc/cpuinfo.
++		"""
++		self.__cpuinfo = self.read_cpuinfo()
++
++	@property
++	def system(self):
++		return system.System()
++
++	@staticmethod
++	def read_cpuinfo():
++		"""
++			Read information from PROC_CPUINFO and store
++			it into a dictionary cpuinfo.
++		"""
++		cpuinfo = {}
++
++		f = open(PROC_CPUINFO)
++		while True:
++			line = f.readline()
++
++			if not line:
++				break
++
++			try:
++				key, val = line.split(":", 1)
++			except ValueError:
++				# We got a line without key, pass that.
++				pass
++
++			key = key.strip().replace(" ", "_")
++			val = val.strip()
++
++			cpuinfo[key] = val
++
++		f.close()
++
++		return cpuinfo
++
++	@property
++	def bogomips(self):
++		"""
++			Return the bogomips of this CPU.
++		"""
++		try:
++			bogomips = self.__cpuinfo["bogomips"]
++		except KeyError:
++			bogomips = self.__cpuinfo["BogoMIPS"]
++
++		return float(bogomips)
++
++	@property
++	def model(self):
++		"""
++			Return the model id of this CPU.
++		"""
++		try:
++			model = int(self.__cpuinfo["model"])
++		except KeyError:
++			model = None
++
++		return model
++
++	@property
++	def model_string(self):
++		"""
++			Return the model string of this CPU.
++		"""
++		try:
++			return self.__cpuinfo["model_name"]
++		except KeyError:
++			return self.__cpuinfo["Processor"]
++
++	@property
++	def vendor(self):
++		"""
++			Return the vendor string of this CPU.
++		"""
++		try:
++			vendor = self.__cpuinfo["vendor_id"]
++		except KeyError:
++			if self.system.arch.startswith("arm"):
++				vendor = "ARM"
++			else:
++				vendor = ""
++
++		return vendor
++
++	@property
++	def stepping(self):
++		"""
++			Return the stepping id of this CPU.
++		"""
++		try:
++			stepping = int(self.__cpuinfo["stepping"])
++		except KeyError:
++			stepping = None
++
++		return stepping
++
++	@property
++	def flags(self):
++		"""
++			Return all flags of this CPU.
++		"""
++		try:
++			flags = self.__cpuinfo["flags"]
++		except KeyError:
++			flags = self.__cpuinfo["Features"]
++
++		return flags.split()
++
++	@property
++	def speed(self):
++		"""
++			Return the speed (in MHz) of this CPU.
++		"""
++		try:
++			speed = float(self.__cpuinfo["cpu_MHz"])
++		except KeyError:
++			speed = 0
++
++		return speed
++
++	@property
++	def family(self):
++		"""
++			Return the family id of this CPU.
++		"""
++		try:
++			family = int(self.__cpuinfo["cpu_family"])
++		except KeyError:
++			family = None
++
++		return family
++	
++	@property
++	def count(self):
++		"""
++			Count number of CPUs (cores).
++		"""
++		return os.sysconf("SC_NPROCESSORS_ONLN")
++
++
++if __name__ == "__main__":
++	c = CPU()
++
++	print "Vendor:", c.vendor
++	print "Model:", c.model
++	print "Stepping:", c.stepping
++	print "Flags:", c.flags
++	print "Bogomips:", c.bogomips
++	print "Speed:", c.speed
++	print "Family:", c.family
++	print "Count:", c.count
++	print "Model string:", c.model_string
+diff --git a/src/fireinfo/device.py b/src/fireinfo/device.py
+new file mode 100644
+index 0000000..01338b2
+--- /dev/null
++++ b/src/fireinfo/device.py
+@@ -0,0 +1,133 @@
++#!/usr/bin/python
++###############################################################################
++#                                                                             #
++# Fireinfo                                                                    #
++# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
++#                                                                             #
++# This program is free software: you can redistribute it and/or modify        #
++# it under the terms of the GNU General Public License as published by        #
++# the Free Software Foundation, either version 3 of the License, or           #
++# (at your option) any later version.                                         #
++#                                                                             #
++# This program is distributed in the hope that it will be useful,             #
++# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
++# GNU General Public License for more details.                                #
++#                                                                             #
++# You should have received a copy of the GNU General Public License           #
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
++#                                                                             #
++###############################################################################
++
++import os.path
++
++class Device(object):
++	"""
++		This is an abstract class that represents all devices in the system.
++		Every single device has its own instance of this class.
++	"""
++
++	def __init__(self, path):
++		"""
++			Collect all information about the device by reading the
++			"uevent" file and parsing it.
++		"""
++
++		# Save the path in /sys to the device.
++		self.path = path
++
++		# Datastructure to store information we read.
++		self._uevent = {}
++
++		# Open the uevent file and parse all lines.
++		with open(os.path.join(path, "uevent")) as f:
++			for line in f.readlines():
++				key, val = line.split("=")
++				self._uevent[key] = val.rstrip().lower()
++
++	@property
++	def driver(self):
++		"""
++			Get the driver/kernel module that device is driven by or return None.
++		"""
++		return self._uevent.get("DRIVER", None)
++
++			
++class PCIDevice(Device):
++	"""
++		A class that represents all PCI (and PCIe) devices in a system.
++	"""
++
++	subsystem = "pci"
++
++	@property
++	def model(self):
++		"""
++			Return the PCI model id of this device.
++		"""
++		return self._uevent['PCI_ID'].split(":")[1]
++		
++	@property
++	def vendor(self):
++		"""
++			Return the PCI vendor id of this device.
++		"""
++		return self._uevent['PCI_ID'].split(":")[0]
++
++	@property
++	def deviceclass(self):
++		"""
++			Return the PCI device class of this device.
++		"""
++		return self._uevent['PCI_CLASS']
++
++	@property
++	def sub_vendor(self):
++		"""
++			Return the PCI vendor sub id of this device.
++		"""
++		return self._uevent["PCI_SUBSYS_ID"].split(":")[0]
++
++	@property
++	def sub_model(self):
++		"""
++			Return the PCI model sub id of this device.
++		"""
++		return self._uevent["PCI_SUBSYS_ID"].split(":")[1]
++
++
++class USBDevice(Device):
++	"""
++		A class that represents all USB devices in a system.
++	"""
++
++	subsystem = "usb"
++	
++	def pad(self, s):
++		"""
++			A function to pad ids that have no leading zeroes.
++		"""
++		while len(s) < 4:
++			s = "0"+s
++		return s
++
++	@property
++	def vendor(self):
++		"""
++			Return the USB vendor id of this device.
++		"""
++		return self.pad(self._uevent['PRODUCT'].split("/")[0])
++
++	@property
++	def model(self):
++		"""
++			Return the USB model id of this device.
++		"""
++		return self.pad(self._uevent['PRODUCT'].split("/")[1])
++
++	@property
++	def deviceclass(self):
++		"""
++			Return the USB device class of this device.
++		"""
++		return self._uevent.get("INTERFACE", None)
+diff --git a/src/fireinfo/hypervisor.py b/src/fireinfo/hypervisor.py
+new file mode 100644
+index 0000000..0c07cfa
+--- /dev/null
++++ b/src/fireinfo/hypervisor.py
+@@ -0,0 +1,119 @@
++#!/usr/bin/python
++###############################################################################
++#                                                                             #
++# Fireinfo                                                                    #
++# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
++#                                                                             #
++# This program is free software: you can redistribute it and/or modify        #
++# it under the terms of the GNU General Public License as published by        #
++# the Free Software Foundation, either version 3 of the License, or           #
++# (at your option) any later version.                                         #
++#                                                                             #
++# This program is distributed in the hope that it will be useful,             #
++# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
++# GNU General Public License for more details.                                #
++#                                                                             #
++# You should have received a copy of the GNU General Public License           #
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
++#                                                                             #
++###############################################################################
++
++import _fireinfo
++import system
++
++class Hypervisor(object):
++	def __init__(self):
++		self.__hypervisor = _fireinfo.detect_hypervisor()
++
++	@property
++	def system(self):
++		"""
++			Return the current instance of the System class.
++
++			We need to do that as a property because otherwise
++			we get a recursion.
++		"""
++		return system.System()
++
++	@property
++	def vendor(self):
++		"""
++			Returns the name of the hypervisor vendor.
++		"""
++		# Citrix Xen says it is Microsoft Hv.
++		if self.__hypervisor == "Microsoft" and self.system.bios_vendor == "Xen":
++			return "Xen"
++
++		# Some of the hypervisors can be detected in a right way.
++		# We can return them at this place.
++		if self.__hypervisor:
++			return self.__hypervisor
++
++		# Check DMI and BIOS information...
++		if self.__bios_is_bochs():
++			return "Bochs"
++		elif self.__bios_is_microsoft():
++			return "Microsoft"
++		elif self.__bios_is_qemu():
++			return "Qemu"
++		elif self.__bios_is_virtualbox():
++			return "VirtualBox"
++		elif self.__bios_is_vmware():
++			return "VMWare"
++		elif self.__bios_is_xen():
++			return "Xen"
++
++	@property
++	def virtual(self):
++		"""
++			Returns true if the host is running in a virtual environment.
++			Otherwise: false.
++		"""
++		if self.vendor:
++			return True
++
++		return False
++
++	def __bios_is_bochs(self):
++		"""
++			Check for Bochs emulator.
++		"""
++		return self.system.bios.check_vendor("Bochs")
++
++	def __bios_is_microsoft(self):
++		"""
++			Check for Microsoft hypervisor.
++		"""
++		return self.system.bios.check_vendor("Microsoft Corporation")
++
++	def __bios_is_qemu(self):
++		"""
++			Check for qemu emulator.
++		"""
++		return self.system.bios.check_vendor("QEMU")
++
++	def __bios_is_virtualbox(self):
++		"""
++			Check for virtualbox hypervisor by comparing the bios vendor string
++			to "innotek GmbH".
++		"""
++		return self.system.bios.check_vendor("innotek GmbH")
++
++	def __bios_is_vmware(self):
++		if self.system.bios.check_vendor("VMware-"):
++			return True
++		elif self.system.bios.check_vendor("VMW"):
++			return True
++
++		return False
++
++	def __bios_is_xen(self):
++		return self.system.bios.check_vendor("Xen")
++
++
++if __name__ == "__main__":
++	h = Hypervisor()
++
++	print "Vendor:", h.vendor
++	print "Virtual:", h.virtual
+diff --git a/src/fireinfo/network.py b/src/fireinfo/network.py
+new file mode 100644
+index 0000000..063e9ec
+--- /dev/null
++++ b/src/fireinfo/network.py
+@@ -0,0 +1,53 @@
++#!/usr/bin/python
++###############################################################################
++#                                                                             #
++# Fireinfo                                                                    #
++# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
++#                                                                             #
++# This program is free software: you can redistribute it and/or modify        #
++# it under the terms of the GNU General Public License as published by        #
++# the Free Software Foundation, either version 3 of the License, or           #
++# (at your option) any later version.                                         #
++#                                                                             #
++# This program is distributed in the hope that it will be useful,             #
++# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
++# GNU General Public License for more details.                                #
++#                                                                             #
++# You should have received a copy of the GNU General Public License           #
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
++#                                                                             #
++###############################################################################
++
++import os
++
++SYS_CLASS_NET = "/sys/class/net"
++
++class Network(object):
++	def __init__(self):
++		self._devices = os.listdir(SYS_CLASS_NET)
++
++	def has_green(self):
++		return "green0" in self._devices
++
++	def has_red(self):
++		for i in ("red0", "ppp0"):
++			if i in self._devices:
++				return True
++
++		return False
++
++	def has_blue(self):
++		return "blue0" in self._devices
++
++	def has_orange(self):
++		return "orange0" in self._devices
++
++
++if __name__ == "__main__":
++	n = Network()
++
++	print "has_green", n.has_green()
++	print "has_red", n.has_red()
++	print "has_blue", n.has_blue()
++	print "has_orange", n.has_orange()
+diff --git a/src/fireinfo/system.py b/src/fireinfo/system.py
+new file mode 100644
+index 0000000..0a60bcc
+--- /dev/null
++++ b/src/fireinfo/system.py
+@@ -0,0 +1,451 @@
++#!/usr/bin/python
++###############################################################################
++#                                                                             #
++# Fireinfo                                                                    #
++# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
++#                                                                             #
++# This program is free software: you can redistribute it and/or modify        #
++# it under the terms of the GNU General Public License as published by        #
++# the Free Software Foundation, either version 3 of the License, or           #
++# (at your option) any later version.                                         #
++#                                                                             #
++# This program is distributed in the hope that it will be useful,             #
++# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
++# GNU General Public License for more details.                                #
++#                                                                             #
++# You should have received a copy of the GNU General Public License           #
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
++#                                                                             #
++###############################################################################
++
++import hashlib
++import json
++import os
++import string
++
++import _fireinfo
++
++import bios
++import cpu
++import device
++import hypervisor
++import network
++
++PROFILE_VERSION = 0
++
++SYS_CLASS_DMI = "/sys/class/dmi/id"
++SECRET_ID_FILE = "/etc/fireinfo-id"
++
++INVALID_ID_STRINGS = (
++	"OEM", "O.E.M.", "o.e.m.",
++	"N/A", "n/a",
++	"12345", "54321", "202020",
++	"Chassis", "chassis",
++	"Not Applicable",
++	"None", "empty",
++	"01010101-0101-0101-0101-010101010101",
++	"00020003-0004-0005-0006-000700080009",
++	"03000200-0400-0500-0006-000700080009",
++	"0000000", "00000000",
++)
++
++class Singleton(type):
++	def __init__(cls, name, bases, dict):
++		super(Singleton, cls).__init__(name, bases, dict)
++		cls.instance = None
++
++	def __call__(cls, *args, **kw):
++		if cls.instance is None:
++			cls.instance = super(Singleton, cls).__call__(*args, **kw)
++
++		return cls.instance
++
++
++def read_from_file(filename):
++	"""
++		Read all data from filename.
++	"""
++	if not os.path.exists(filename):
++		return
++
++	try:
++		with open(filename) as f:
++			return f.read().strip()
++	except IOError:
++		pass
++
++class System(object):
++	__metaclass__ = Singleton
++
++	def __init__(self):
++		self.bios = bios.BIOS(self)
++
++		# find all devices
++		self.devices = []
++		self.scan()
++		self.cpu = cpu.CPU()
++		self.hypervisor = hypervisor.Hypervisor()
++
++		# Read /proc/cpuinfo for vendor information.
++		self.__cpuinfo = self.cpu.read_cpuinfo()
++
++	def profile(self):
++		p = {}
++		p["system"] = {
++			# System information
++			"model"  : self.model,
++			"vendor" : self.vendor,
++
++			# Indicator if the system is running in a
++			# virtual environment.
++			"virtual" : self.virtual,
++			
++			# System language
++			"language" : self.language,
++
++			# Release information
++			"release" : self.release,
++			"kernel_release" : self.kernel_release,
++
++			"memory" : self.memory,
++			"root_size" : self.root_size,
++		}
++
++		p["devices"] = []
++		for device in self.devices:
++			d = {
++				"subsystem" : device.subsystem.lower(), 
++				"vendor" : device.vendor.lower(), 
++				"model" : device.model.lower(), 
++				"deviceclass" : device.deviceclass,
++				"driver" : device.driver,
++			}
++
++			# PCI devices provide subsystem information, USB don't.
++			if d["subsystem"] == "pci":
++				d["sub_model"] = device.sub_model
++				d["sub_vendor"] = device.sub_vendor
++
++			p["devices"].append(d)
++
++		p["cpu"] = {
++			"arch" : self.arch,
++			"vendor" : self.cpu.vendor,
++			"model" : self.cpu.model,
++			"model_string" : self.cpu.model_string,
++			"stepping" : self.cpu.stepping,
++			"flags" : self.cpu.flags,
++			"bogomips" : self.cpu.bogomips,
++			"speed" : self.cpu.speed,
++			"family" : self.cpu.family,
++			"count" : self.cpu.count				
++		}
++
++		p["network"] = {
++			"green" : self.network.has_green(),
++			"blue" : self.network.has_blue(),
++			"orange" : self.network.has_orange(),
++			"red" : self.network.has_red(),
++		 }
++
++		# Only append hypervisor information if we are virtualized.
++		if self.virtual:
++			p["hypervisor"] = {
++				"vendor" : self.hypervisor.vendor,
++			}
++
++		return {
++			# Profile version
++			"profile_version" : PROFILE_VERSION,
++
++			# Identification and authorization codes
++			"public_id" : self.public_id,
++			"private_id" : self.private_id,
++
++			# Actual profile data
++			"profile" : p,
++		}
++				
++		
++	@property
++	def arch(self):
++		return os.uname()[4]
++
++	@property
++	def public_id(self):
++		"""
++			This returns a globally (hopefully) ID to identify the host
++			later (by request) in the database.
++		"""
++		public_id = self.secret_id
++		if not public_id:
++			return "0" * 40
++
++		return hashlib.sha1(public_id).hexdigest()
++
++	@property
++	def private_id(self):
++		"""
++			The private ID is built out of the _unique_id and used to
++			permit a host to do changes on the database.
++
++			No one could ever guess this without access to the host.
++		"""
++		private_id = ""
++		for i in reversed(self.secret_id):
++			private_id += i
++
++		if not private_id:
++			return "0" * 40
++
++		return hashlib.sha1(private_id).hexdigest()
++
++	@property
++	def secret_id(self):
++		"""
++			Read a "secret" ID from a file if available
++			or calculate it from the hardware.
++		"""
++		if os.path.exists(SECRET_ID_FILE):
++			return read_from_file(SECRET_ID_FILE)
++
++		return hashlib.sha1(self._unique_id).hexdigest()
++
++	@property
++	def _unique_id(self):
++		"""
++			This is a helper ID which is generated out of some hardware information
++			that is considered to be constant over a PC's lifetime.
++
++			None of the data here is ever sent to the server.
++		"""
++		ids = []
++
++		# Virtual machines (for example) and some boards have a UUID
++		# which is globally unique.
++		for file in ("product_uuid", "product_serial", "chassis_serial"):
++			id = read_from_file(os.path.join(SYS_CLASS_DMI, file))
++			ids.append(id)
++
++		# Sort out all bogous or invalid strings from the list.
++		_ids = []
++		for id in ids:
++			if id is None:
++				continue
++
++			for i in INVALID_ID_STRINGS:
++				if i in id:
++					id = None
++					break
++
++			if id:
++				_ids.append(id)
++
++		ids = _ids
++
++		# Use serial number from root disk (if available) and if
++		# no other ID was found, yet.
++		if not ids:
++			root_disk_serial = self.root_disk_serial
++			if root_disk_serial and not root_disk_serial.startswith("QM000"):
++				ids.append(root_disk_serial)
++
++		# As last resort, we use the UUID from pakfire.
++		if not ids:
++			id = read_from_file("/opt/pakfire/db/uuid")
++			ids.append(id)
++
++		return "#".join(ids)
++
++	@property
++	def language(self):
++		"""
++			Return the language code of IPFire or "unknown" if we cannot get it.
++		"""
++		# Return "unknown" if settings file does not exist.
++		filename = "/var/ipfire/main/settings"
++		if not os.path.exists(filename):
++			return "unknown"
++
++		with open(filename, "r") as f:
++			for line in f.readlines():
++				key, val = line.split("=", 1)
++				if key == "LANGUAGE":
++					return val.strip()
++
++	@property
++	def release(self):
++		"""
++			Return the system release string.
++		"""
++		return read_from_file("/etc/system-release") or "unknown"
++
++	@property
++	def bios_vendor(self):
++		"""
++			Return the bios vendor name.
++		"""
++		return read_from_file("/sys/class/dmi/id/bios_vendor")
++
++	def vendor_model_tuple(self):
++		try:
++			s = self.__cpuinfo["Hardware"]
++		except KeyError:
++			return (None, None)
++
++		if s.startswith("ARM-Versatile"):
++			return ("ARM", s)
++
++		try:
++			v, m = s.split(" ", 1)
++		except ValueError:
++			if s.startswith("BCM"):
++				v = "Broadcom"
++				m = s
++			else:
++				v = None
++				m = s
++
++		return v, m
++
++	@property
++	def vendor(self):
++		"""
++			Return the vendor string of this system (if any).
++		"""
++		ret = None
++		for file in ("sys_vendor", "board_vendor", "chassis_vendor",):
++			ret = read_from_file(os.path.join(SYS_CLASS_DMI, file))
++			if ret:
++				break
++
++		if ret is None:
++			v, m = self.vendor_model_tuple()
++			ret = v
++
++		return ret
++
++	@property
++	def model(self):
++		"""
++			Return the model string of this system (if any).
++		"""
++		ret = None
++		for file in ("product_name", "board_model", "chassis_model",):
++			ret = read_from_file(os.path.join(SYS_CLASS_DMI, file))
++			if ret:
++				break
++
++		if ret is None:
++			v, m = self.vendor_model_tuple()
++			ret = m
++
++		return ret
++
++	@property
++	def memory(self):
++		"""
++			Return the amount of memory in kilobytes.
++		"""
++		with open("/proc/meminfo", "r") as f:
++			firstline = f.readline().strip()
++			return int(firstline.split()[1])
++
++	@property
++	def kernel_release(self):
++		"""
++			Return the kernel release string.
++		"""
++		return os.uname()[2]
++
++	@property
++	def root_disk(self):
++		"""
++			Return the dev node of the root disk.
++		"""
++		with open("/etc/mtab", "r") as f:
++			dev, mountpoint, fs, rest = f.readline().split(" ", 3)
++			if mountpoint == "/" and not fs == "rootfs":
++				# Cut off /dev
++				dev = dev[5:]
++
++				# Handle raids and MMC cards like (mmcblk0p3).
++				if dev[-2] == "p":
++					return dev[:-2]
++
++				# Otherwise cut off all digits at end of string
++				while dev[-1] in string.digits:
++					dev = dev[:-1]
++
++				return dev
++
++	@property
++	def root_size(self):
++		"""
++			Return the size of the root disk in kilobytes.
++		"""
++		path = "/sys/block/%s/size" % self.root_disk
++		if not os.path.exists(path):
++			return
++
++		with open(path, "r") as f:
++			return int(f.readline()) * 512 / 1024
++
++	@property
++	def root_disk_serial(self):
++		"""
++			Return the serial number of the root disk (if any).
++		"""
++		serial = _fireinfo.get_harddisk_serial("/dev/%s" % self.root_disk)
++
++		if serial:
++			# Strip all spaces
++			return serial.strip()
++
++	def scan(self):
++		"""
++			Scan for all devices (PCI/USB) in the system and append them
++			to our list.
++		"""
++		self.devices = []
++
++		toscan = (
++			("/sys/bus/pci/devices", device.PCIDevice),
++			("/sys/bus/usb/devices", device.USBDevice)
++		)
++		for path, cls in toscan:
++			if not os.path.exists(path):
++				continue
++
++			dirlist = os.listdir(path)
++			for dir in dirlist:
++				self.devices.append(cls(os.path.join(path, dir)))
++
++	@property
++	def virtual(self):
++		"""
++			Say if the host is running in a virtual environment.
++		"""
++		return self.hypervisor.virtual
++
++	@property
++	def network(self):
++		"""
++			Reference to the network class.
++		"""
++		return network.Network()
++
++
++if __name__ == "__main__":
++	s=System()
++	print s.arch
++	print s.language
++	print s.release
++	print s.bios_vendor
++	print s.memory
++	print s.kernel
++	print s.root_disk
++	print s.root_size
++	print "------------\n", s.devices, "\n------------\n"
++	print json.dumps(s.profile(), sort_keys=True, indent=4)
+diff --git a/src/sendprofile b/src/sendprofile
+new file mode 100644
+index 0000000..da480ce
+--- /dev/null
++++ b/src/sendprofile
+@@ -0,0 +1,132 @@
++#!/usr/bin/python
++###############################################################################
++#                                                                             #
++# Fireinfo                                                                    #
++# Copyright (C) 2010, 2011 IPFire Team (www.ipfire.org)                       #
++#                                                                             #
++# This program is free software: you can redistribute it and/or modify        #
++# it under the terms of the GNU General Public License as published by        #
++# the Free Software Foundation, either version 3 of the License, or           #
++# (at your option) any later version.                                         #
++#                                                                             #
++# This program is distributed in the hope that it will be useful,             #
++# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
++# GNU General Public License for more details.                                #
++#                                                                             #
++# You should have received a copy of the GNU General Public License           #
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
++#                                                                             #
++###############################################################################
++
++import json
++import logging
++import logging.handlers
++import os
++import sys
++import urllib
++import urllib2
++
++import fireinfo
++
++ENABLED_FILE = "/var/ipfire/main/send_profile"
++PROXY_SETTINGS = "/var/ipfire/proxy/advanced/settings"
++
++log_level = logging.INFO
++if "-d" in sys.argv:
++	log_level = logging.DEBUG
++
++# Setup logging
++log = logging.getLogger()
++log.setLevel(log_level)
++log.addHandler(logging.handlers.SysLogHandler("/dev/log"))
++log.addHandler(logging.StreamHandler(sys.stderr))
++for handler in log.handlers:
++	handler.setLevel(log_level)
++
++PROFILE_URL = "http://fireinfo.ipfire.org/send/%(public_id)s"
++
++def get_upstream_proxy():
++	if not os.path.exists(PROXY_SETTINGS):
++		return {"host" : ""}
++
++	proxy_settings = {}
++	with open(PROXY_SETTINGS) as f:
++		for line in f.readlines():
++			k, v = line.split("=", 1)
++			proxy_settings[k] = v.strip()
++
++	return {
++		"host" : proxy_settings.get("UPSTREAM_PROXY", ""),
++		"user" : proxy_settings.get("UPSTREAM_USER", ""),
++		"pass" : proxy_settings.get("UPSTREAM_PASSWORD", ""),
++	}
++
++def send_profile(profile):
++	logging.debug("Sending profile:")
++	for line in json.dumps(profile, sort_keys=True, indent=4).splitlines():
++		logging.debug(line)
++
++	request = urllib2.Request(PROFILE_URL % profile,
++		data = urllib.urlencode({"profile" : json.dumps(profile)}),
++	)
++	request.add_header("User-Agent", "fireinfo/%s" % fireinfo.__version__)
++
++	# Set upstream proxy if we have one.
++	# XXX this cannot handle authentication
++	proxy = get_upstream_proxy()
++	if proxy["host"]:
++		request.set_proxy(proxy["host"], "http")
++
++	try:
++		urllib2.urlopen(request, timeout=60)
++	except (urllib2.HTTPError, urllib2.URLError), e:
++		reason = "Unknown reason"
++
++		if isinstance(e, urllib2.HTTPError):
++			reason = "%s" % e
++		elif isinstance(e, urllib2.URLError):
++			reason = e.reason
++
++		logging.error("Profile was not sent propertly: %s" % reason)
++		return
++
++	logging.debug("Profile was sent successfully.")
++
++def main():
++	# Collect system information
++	system = fireinfo.System()
++	profile = system.profile()
++
++	# If --dump is passed -> only dump the output.
++	if "--dump" in sys.argv:
++		# Remove the private id when dumping the profile because
++		# it contains no information and may confuse people.
++		del profile["private_id"]
++
++		print json.dumps(profile, sort_keys=True, indent=4)
++		return 0
++
++	if "--secret-id" in sys.argv:
++		print system.secret_id
++		return 0
++
++	if "--hardware-string" in sys.argv:
++		print system._unique_id
++		return 0
++
++	if "--public-id" in sys.argv:
++		print system.public_id
++		return 0
++
++	if not os.path.exists(ENABLED_FILE):
++		del profile["profile"]
++
++	try:
++		send_profile(profile)
++	except urllib2.URLError:
++		return 1
++
++	return 0
++
++sys.exit(main())

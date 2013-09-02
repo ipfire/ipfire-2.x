@@ -70,11 +70,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && python setup.py build
-	cd $(DIR_APP) && python setup.py install
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo-2.1.7-testing.patch
 
-	# Remove egg-info
-	rm -rvf /usr/lib/python*/site-packages/fireinfo*.egg-info
+	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
+	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
