@@ -26,7 +26,7 @@ include Config
 
 VER        = 3.10.10
 
-RPI_PATCHES = linux-3.2.27-ada8b44
+RPI_PATCHES = linux-3.10.10-c1af7c6
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -72,7 +72,7 @@ $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
 $(DL_FILE)_MD5				= 647f76225dd6bc112369ba573ba3de18
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 966687ff27e450e04ff50e0da829dc00
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= ef9274b3ff5d05daaaa4bdbe86ad00fc
 
 
 install : $(TARGET)
@@ -119,9 +119,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Grsecurity-patches
 ifneq "$(KCFG)" "-headers"
+ifneq "$(KCFG)" "-rpi"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grsecurity-2.9.1-3.10.10-201308292131.patch
 	cd $(DIR_APP) && rm localversion-grsec
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
+endif
 endif
 
 	# Disable pcspeaker autoload
@@ -148,16 +150,18 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33_ipg-fix-driver-name.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
+
 ifeq "$(KCFG)" "-kirkwood"
 	# Add dreamplug,guruplug and icy 62x0  support on ARM-kirkwood
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.25-arm_kirkwood_setups.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-arm_kirkwood_setups.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-mv_cesa_disable_failing_hmac_sha1.patch
 endif
 
 ifeq "$(MACHINE_TYPE)" "arm"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45_align_ssb_modtable_32bit_boundary.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45_align_ssb_modtable_32bit_boundary.patch
 
 	# Reverse some asm optimizations that are incompatible with older gcc
-	cd $(DIR_APP) && patch -p1 -R < $(DIR_SRC)/src/patches/linux-2.6-arm-asm-constraint.patch
+#	cd $(DIR_APP) && patch -p1 -R < $(DIR_SRC)/src/patches/linux-2.6-arm-asm-constraint.patch
 endif
 
 ifeq "$(KCFG)" "-omap"
@@ -202,8 +206,8 @@ ifeq "$(KCFG)" "-omap"
 else
 ifeq "$(KCFG)" "-rpi"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage
-	cd /boot  && cat first32k.bin $(DIR_APP)/arch/arm/boot/Image > kernel.img
-	cd $(DIR_APP) && cp -v /boot/kernel.img /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/kernel.img
 else
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)

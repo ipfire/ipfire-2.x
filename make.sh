@@ -426,29 +426,29 @@ buildipfire() {
   else
     # arm-rpi (Raspberry Pi) kernel build
     ipfiremake linux			KCFG="-rpi"
-    ipfiremake v4l-dvb			KCFG="-rpi"
-    ipfiremake mISDN			KCFG="-rpi" NOPCI=1
+#    ipfiremake v4l-dvb			KCFG="-rpi"
+#    ipfiremake mISDN			KCFG="-rpi" NOPCI=1
     ipfiremake cryptodev		KCFG="-rpi"
-    ipfiremake compat-drivers		KCFG="-rpi"
+#    ipfiremake compat-drivers		KCFG="-rpi"
 
     # arm-omap (Panda Board) kernel build
-    ipfiremake linux			KCFG="-omap"
-    ipfiremake v4l-dvb			KCFG="-omap"
-    ipfiremake mISDN			KCFG="-omap" NOPCI=1
-    ipfiremake cryptodev		KCFG="-omap"
-    ipfiremake compat-drivers		KCFG="-omap"
+#    ipfiremake linux			KCFG="-omap"
+#    ipfiremake v4l-dvb			KCFG="-omap"
+#    ipfiremake mISDN			KCFG="-omap" NOPCI=1
+#    ipfiremake cryptodev		KCFG="-omap"
+#    ipfiremake compat-drivers		KCFG="-omap"
 
     # arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
     ipfiremake linux			KCFG="-kirkwood"
-    ipfiremake v4l-dvb			KCFG="-kirkwood"
-    ipfiremake mISDN			KCFG="-kirkwood"
+#    ipfiremake v4l-dvb			KCFG="-kirkwood"
+#    ipfiremake mISDN			KCFG="-kirkwood"
     ipfiremake cryptodev		KCFG="-kirkwood"
-    ipfiremake compat-drivers		KCFG="-kirkwood"
-    ipfiremake r8169			KCFG="-kirkwood"
-    ipfiremake r8168			KCFG="-kirkwood"
-    ipfiremake r8101			KCFG="-kirkwood"
-#    ipfiremake e1000e			KCFG="-kirkwood"
-    ipfiremake igb			KCFG="-kirkwood"
+#    ipfiremake compat-drivers		KCFG="-kirkwood"
+#    ipfiremake r8169			KCFG="-kirkwood"
+#    ipfiremake r8168			KCFG="-kirkwood"
+#    ipfiremake r8101			KCFG="-kirkwood"
+#   ipfiremake e1000e			KCFG="-kirkwood"
+#    ipfiremake igb			KCFG="-kirkwood"
 
   fi
   ipfiremake pkg-config
