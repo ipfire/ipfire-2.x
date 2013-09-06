@@ -607,7 +607,7 @@ END
 END
 
 				if (exists($node->{'country_code'})) {
-					if ($node->{'country_code'} eq '??') {
+					if (!$node->{'country_code'} or $node->{'country_code'} eq '??') {
 						print "<img src='/images/flags/blank.png' border='0' align='absmiddle'/>";
 					} else {
 						print "<a href='country.cgi#$node->{'country_code'}'><img src='/images/flags/$node->{'country_code'}.png' border='0' align='absmiddle' alt='$node->{'country_code'}'></a>";
