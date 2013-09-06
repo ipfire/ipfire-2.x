@@ -382,7 +382,7 @@ END
 				</td>
 				<td width='25%' class='base'>$Lang::tr{'tor relay nickname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td width='20%'>
-					<input type='text' name='TOR_RELAY_NICKNAME' value='$settings{'TOR_RELAY_NICKNAME'}' />
+					<input type='text' name='TOR_RELAY_NICKNAME' value='$settings{'TOR_RELAY_NICKNAME'}' maxlength='19' />
 				</td>
 			</tr>
 			<tr>
