@@ -1,6 +1,9 @@
 #etc/logrotate.d
 etc/logrotate.d/tor
 etc/rc.d/init.d/tor
+etc/rc.d/rc0.d/K40tor
+etc/rc.d/rc3.d/S60tor
+etc/rc.d/rc6.d/K40tor
 #etc/tor
 etc/tor/tor-tsocks.conf
 etc/tor/torrc

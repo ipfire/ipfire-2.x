@@ -544,6 +544,7 @@ WARNING: untranslated string: tor common settings
 WARNING: untranslated string: tor configuration
 WARNING: untranslated string: tor connected relays
 WARNING: untranslated string: tor contact info
+WARNING: untranslated string: tor daemon
 WARNING: untranslated string: tor enabled
 WARNING: untranslated string: tor errmsg invalid accounting limit
 WARNING: untranslated string: tor errmsg invalid ip or mask
@@ -565,6 +566,7 @@ WARNING: untranslated string: tor relay mode private bridge
 WARNING: untranslated string: tor relay mode relay
 WARNING: untranslated string: tor relay nickname
 WARNING: untranslated string: tor relay port
+WARNING: untranslated string: tor service
 WARNING: untranslated string: tor socks port
 WARNING: untranslated string: tor stats
 WARNING: untranslated string: tor traffic limit hard

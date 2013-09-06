@@ -2195,14 +2195,15 @@ else
 # m.a.d net2net
 ###
 
- if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
-
+if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 	my $conffile = glob("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]/$confighash{$cgiparams{'KEY'}}[1].conf");
-  my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
-  unlink ($certfile) or die "Removing $certfile fail: $!";
-  unlink ($conffile) or die "Removing $conffile fail: $!";
-  rmdir ("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") || die "Kann Verzeichnis nicht loeschen: $!";
-  
+	my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
+	unlink ($certfile);
+	unlink ($conffile);
+
+	if (-e "${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") {
+		rmdir ("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") || die "Kann Verzeichnis nicht loeschen: $!";
+	}
 }
 
   unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
@@ -3604,35 +3605,33 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	}
 
 	# Check if a remote host/IP has been set for the client.
-	if ($cgiparams{'REMOTE'} eq '' && $cgiparams{'SIDE'} ne 'server') {
-	    $errormessage = $Lang::tr{'invalid input for remote host/ip'};
+	if ($cgiparams{'TYPE'} eq 'net') {
+		if ($cgiparams{'SIDE'} ne 'server' && $cgiparams{'REMOTE'} eq '') {
+			$errormessage = $Lang::tr{'invalid input for remote host/ip'};
 
-	    # Check if this is a N2N connection and drop temporary config.
-	    if ($cgiparams{'TYPE'} eq 'net') {
-		unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-		rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
-	    }
-	    goto VPNCONF_ERROR;
-	}
-
-	# Check if a remote host/IP has been configured - the field can be empty on the server side.
-	if ($cgiparams{'REMOTE'} ne '') {
-
-	    # Check if the given IP is valid - otherwise check if it is a valid domain.
-	    if (! &General::validip($cgiparams{'REMOTE'})) {
-
-		# Check for a valid domain.
-		if (! &General::validfqdn ($cgiparams{'REMOTE'}))  {
-		    $errormessage = $Lang::tr{'invalid input for remote host/ip'};
-
-		    # Check if this is a N2N connection and drop temporary config.
-		    if ($cgiparams{'TYPE'} eq 'net') {
+			# Check if this is a N2N connection and drop temporary config.
 			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-	      		rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
-        	    }
-		    goto VPNCONF_ERROR;
+			rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+
+			goto VPNCONF_ERROR;
 		}
-	    }
+
+		# Check if a remote host/IP has been configured - the field can be empty on the server side.
+		if ($cgiparams{'REMOTE'} ne '') {
+			# Check if the given IP is valid - otherwise check if it is a valid domain.
+			if (! &General::validip($cgiparams{'REMOTE'})) {
+				# Check for a valid domain.
+				if (! &General::validfqdn ($cgiparams{'REMOTE'}))  {
+					$errormessage = $Lang::tr{'invalid input for remote host/ip'};
+
+					# Check if this is a N2N connection and drop temporary config.
+					unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+					rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+
+					goto VPNCONF_ERROR;
+				}
+			}
+		}
 	}
 
 	if ($cgiparams{'TYPE'} ne 'host') {

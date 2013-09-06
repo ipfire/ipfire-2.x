@@ -9,9 +9,13 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-function setup_firewall() {
-	eval $(/usr/local/bin/readhash /var/ipfire/tor/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/tor/settings)
 
+function tor_is_enabled() {
+	[ "${TOR_ENABLED}" = "on" ] || [ "${TOR_RELAY_ENABLED}" = "on" ]
+}
+
+function setup_firewall() {
 	# Flush all rules.
 	flush_firewall
 
@@ -27,6 +31,8 @@ function flush_firewall() {
 
 case "${1}" in
 	start)
+		tor_is_enabled || exit 0
+
 		# Setup firewall.
 		setup_firewall
 

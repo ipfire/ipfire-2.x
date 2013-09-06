@@ -1840,7 +1840,7 @@
 'tor relay mode relay' => 'Nur Relay',
 'tor relay nickname' => 'Relay-Nickname',
 'tor relay port' => 'Relay-Port',
-'tor service' => 'Tor Service',
+'tor service' => 'Tor-Service',
 'tor socks port' => 'SOCKS-Port',
 'tor stats' => 'Statistiken',
 'tor traffic limit hard' => 'Das Übertragungslimit wurde erreicht.',
