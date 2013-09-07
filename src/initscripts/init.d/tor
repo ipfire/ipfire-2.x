@@ -22,6 +22,10 @@ function setup_firewall() {
 	if [ "${TOR_RELAY_ENABLED}" = "on" -a -n "${TOR_RELAY_PORT}" ]; then
 		iptables -A TOR_INPUT -p tcp --dport "${TOR_RELAY_PORT}" -j ACCEPT
 	fi
+
+	if [ "${TOR_RELAY_ENABLED}" = "on" -a -n "${TOR_RELAY_DIRPORT}" ] && [ "${TOR_RELAY_DIRPORT}" -ne 0 ]; then
+		iptables -A TOR_INPUT -p tcp --dport "${TOR_RELAY_DIRPORT}" -j ACCEPT
+	fi
 }
 
 function flush_firewall() {
