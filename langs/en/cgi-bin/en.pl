@@ -1,4 +1,4 @@
-%tr = (
+%tr = ( 
 %tr,
 
 'Act as' => 'Act as:',
@@ -2512,6 +2512,7 @@
 'wlan client wpa mode tkip tkip' => 'TKIP-TKIP',
 'wlanap access point' => 'Access Point',
 'wlanap channel' => 'Channel',
+'wlanap country' => 'Country Code',
 'wlanap debugging' => 'Debugging',
 'wlanap del interface' => 'Remove selected interface?',
 'wlanap encryption' => 'Encryption',
