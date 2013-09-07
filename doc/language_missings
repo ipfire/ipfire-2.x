@@ -5,7 +5,6 @@
 # Checking cgi-bin translations for language: en                           #
 ############################################################################
 < ccd maxclients
-< wlanap country
 ############################################################################
 # Checking install/setup translations for language: fr                     #
 ############################################################################
@@ -200,6 +199,7 @@
 < fwhost err addr
 < fwhost err addrgrp
 < fwhost err empty
+< fwhost err emptytable
 < fwhost err groupempty
 < fwhost err grpexist
 < fwhost err hostexist
@@ -595,6 +595,7 @@
 < fwhost err addr
 < fwhost err addrgrp
 < fwhost err empty
+< fwhost err emptytable
 < fwhost err groupempty
 < fwhost err grpexist
 < fwhost err hostexist
@@ -974,6 +975,7 @@
 < fwhost err addr
 < fwhost err addrgrp
 < fwhost err empty
+< fwhost err emptytable
 < fwhost err groupempty
 < fwhost err grpexist
 < fwhost err hostexist
@@ -1342,6 +1344,7 @@
 < fwhost err addr
 < fwhost err addrgrp
 < fwhost err empty
+< fwhost err emptytable
 < fwhost err groupempty
 < fwhost err grpexist
 < fwhost err hostexist

@@ -1,4 +1,4 @@
-%tr = (
+%tr = ( 
 %tr,
 
 'Act as' => 'Konfiguriert als',

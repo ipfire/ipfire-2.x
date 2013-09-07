@@ -715,6 +715,7 @@ WARNING: untranslated string: fwhost deleted
 WARNING: untranslated string: fwhost empty
 WARNING: untranslated string: fwhost err addr
 WARNING: untranslated string: fwhost err empty
+WARNING: untranslated string: fwhost err emptytable
 WARNING: untranslated string: fwhost err groupempty
 WARNING: untranslated string: fwhost err grpexist
 WARNING: untranslated string: fwhost err hostexist
