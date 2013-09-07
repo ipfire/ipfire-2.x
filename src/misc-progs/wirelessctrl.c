@@ -67,29 +67,22 @@ int main(void) {
 	}
 
 	/* Get the GREEN interface details */
-	if (!findkey(kv, "GREEN_DEV", green_dev)) {
-		fprintf(stderr, "Cannot read GREEN_DEV\n");
-		exit(1);
-	}
-
-	if (!VALID_DEVICE(green_dev)) {
-		fprintf(stderr, "Bad GREEN_DEV: %s\n", green_dev);
-		exit(1);
+	if (findkey(kv, "GREEN_DEV", green_dev) > 0) {
+		if (!VALID_DEVICE(green_dev)) {
+			fprintf(stderr, "Bad GREEN_DEV: %s\n", green_dev);
+			exit(1);
+		}
 	}
 
 	/* Get the BLUE interface details */
-	if (!findkey(kv, "BLUE_DEV", blue_dev)) {
-		fprintf(stderr, "Cannot read BLUE_DEV\n");
-		exit(1);
+	if (findkey(kv, "BLUE_DEV", blue_dev) > 0) {
+		if ((strlen(blue_dev) > 0) && !VALID_DEVICE(blue_dev)) {
+			fprintf(stderr, "Bad BLUE_DEV: %s\n", blue_dev);
+			exit(1);
+		}
 	}
 
-	if ((strlen(blue_dev) > 0) && !VALID_DEVICE(blue_dev)) {
-		fprintf(stderr, "Bad BLUE_DEV: %s\n", blue_dev);
-		exit(1);
-	}
-
-	if (!strlen(blue_dev) > 0) {
-		fprintf(stderr, "No BLUE interface\n");
+	if (strlen(blue_dev) == 0) {
 		exit(0);
 	}
 
