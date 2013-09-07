@@ -122,8 +122,8 @@ $(TARGET) :
 	echo  "FWPOLICY2=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPPORTSCAN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPOUTGOING=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPSAMBA=on"		>> $(CONFIG_ROOT)/optionsfw/settings
-	echo  "DROPPROXY=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "DROPSAMBA=off"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "DROPPROXY=off"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "SHOWREMARK=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "SHOWCOLORS=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "SHOWTABLES=off"		>> $(CONFIG_ROOT)/optionsfw/settings
