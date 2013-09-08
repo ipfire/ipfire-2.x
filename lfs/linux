@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.10.10
+VER        = 3.10.11
 
 RPI_PATCHES = linux-3.10.10-c1af7c6
 
@@ -71,7 +71,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 
-$(DL_FILE)_MD5				= 647f76225dd6bc112369ba573ba3de18
+$(DL_FILE)_MD5				= 79e33380a4a74f35aabb6ae4713adab1
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= ef9274b3ff5d05daaaa4bdbe86ad00fc
 
 
