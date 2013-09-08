@@ -116,6 +116,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/binutils-2.22-pt-pax-flags-20111121.patch
 
+	# texinfo 5 syntax-fix.
+	cd $(DIR_APP) && sed -i -e "s/@colophon/@@colophon/" \
+				-e "s/doc@cygnus/doc@@cygnus/" bfd/doc/bfd.texinfo
+
 	@mkdir $(DIR_SRC)/binutils-build
 
 	# Prevent installing libiberty to lib64.
