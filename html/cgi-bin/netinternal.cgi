@@ -61,8 +61,8 @@ if ( $querry[0] =~ /wireless/ ){
 	&Header::openbigbox('100%', 'left');
 
 	push (@graphs, ($netsettings{'GREEN_DEV'}));
-	if ($netsettings{'BLUE_DEV'}) {push (@graphs, ($netsettings{'BLUE_DEV'})); }
-	if ($netsettings{'ORANGE_DEV'}) {push (@graphs, ($netsettings{'ORANGE_DEV'})); }
+	if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {push (@graphs, ($netsettings{'BLUE_DEV'})); }
+	if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {push (@graphs, ($netsettings{'ORANGE_DEV'})); }
 
 	my @wirelessgraphs = `ls -dA /var/log/rrd/collectd/localhost/wireless* 2>/dev/null`;
 	foreach (@wirelessgraphs){

@@ -2,8 +2,11 @@ etc/system-release
 etc/issue
 etc/rc.d/init.d/network
 srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/netinternal.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/upnp.cgi
+srv/web/ipfire/cgi-bin/speed.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/exclude

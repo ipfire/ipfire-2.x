@@ -61,11 +61,11 @@ my %mainsettings = ();
 
 my $green_cidr = &General::ipcidr("$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}");
 my $blue_cidr = "# Blue not defined";
-if ($netsettings{'BLUE_DEV'}) {
+if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {
 	$blue_cidr = &General::ipcidr("$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}");
 }
 my $orange_cidr = "# Orange not defined";
-if ($netsettings{'ORANGE_DEV'}) {
+if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {
 	$orange_cidr = &General::ipcidr("$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}");
 }
 
