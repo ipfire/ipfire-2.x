@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.2.3.25
+VER        = 0.2.4.17-rc
 
 THISAPP    = tor-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a1c364189a9a66ed9daa8e6436489daf
+$(DL_FILE)_MD5 = 2cdfb8dcc3306a43cf465a858bf97b2d
 
 install : $(TARGET)
 
