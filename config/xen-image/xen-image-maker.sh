@@ -42,6 +42,8 @@ SIZEboot=30
 SIZEswap=512
 SIZEroot=512
 SIZEvar=950
+# ct'server does not support ext4 so change this to ext3.
+FSTYPE=ext4
 
 ##############################################################################
 
@@ -86,11 +88,11 @@ mkswap $IMGswap
 
 #Create rootimage
 dd bs=1M if=/dev/zero of=$IMGroot count=$SIZEroot
-mkfs.ext4 -F $IMGroot
+mkfs.$FSTYPE -F $IMGroot
 
 #Create varimage
 dd bs=1M if=/dev/zero of=$IMGvar count=$SIZEvar
-mkfs.ext4 -F $IMGvar
+mkfs.$FSTYPE -F $IMGvar
 
 echo --------------------------------------------------------
 echo - Intall IPFire to the Images ...
@@ -152,7 +154,7 @@ sed -i -e "s|DEVICE2|/dev/xvda2|g" $MNThdd/etc/fstab
 sed -i -e "s|DEVICE3|/dev/xvda3|g" $MNThdd/etc/fstab
 sed -i -e "s|DEVICE4|/dev/xvda4|g" $MNThdd/etc/fstab
 
-sed -i -e "s|FSTYPE|ext4|g" $MNThdd/etc/fstab
+sed -i -e "s|FSTYPE|$FSTYPE|g" $MNThdd/etc/fstab
 
 #Remove root / fstab check
 rm -rf $MNThdd/etc/rc.d/rcsysinit.d/S19checkfstab
