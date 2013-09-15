@@ -113,4 +113,5 @@ else
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
     	    -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
     	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
+	isohybrid /install/images/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
 endif

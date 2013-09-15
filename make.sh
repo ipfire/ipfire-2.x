@@ -32,7 +32,7 @@ SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
 MAX_RETRIES=1							# prefetch/check loop
-BUILD_IMAGES=1							# Build USB, Flash and Xen Images
+BUILD_IMAGES=1							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
@@ -382,19 +382,6 @@ buildipfire() {
   ipfiremake u-boot
 
   if [ "${MACHINE_TYPE}" != "arm" ]; then
-
-    # x86-xen (Legacy XEN) kernel build
-    ipfiremake linux2			KCFG="-xen"
-    ipfiremake v4l-dvb			KCFG="-xen"
-    ipfiremake mISDN			KCFG="-xen"
-    ipfiremake cryptodev		KCFG="-xen"
-    ipfiremake compat-drivers		KCFG="-xen"
-    ipfiremake r8169			KCFG="-xen"
-    ipfiremake r8168			KCFG="-xen"
-    ipfiremake r8101			KCFG="-xen"
-    ipfiremake e1000			KCFG="-xen"
-    ipfiremake e1000e			KCFG="-xen"
-    ipfiremake igb			KCFG="-xen"
 
     # x86-pae (Native and new XEN) kernel build
     ipfiremake linux			KCFG="-pae"
@@ -852,9 +839,6 @@ buildpackages() {
 
   # Check if there is a loop device for building in virtual environments
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
-	if [ "${MACHINE_TYPE}" != "arm" ]; then
-		ipfiremake usb-stick
-	fi
 	ipfiremake flash-images
   fi
 
@@ -862,16 +846,7 @@ buildpackages() {
 
   ipfirepackages
 
-  # Check if there is a loop device for building in virtual environments
-  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]) && [ "${MACHINE_TYPE}" != "arm" ]; then
-        cp -f $BASEDIR/packages/linux-xen-*.ipfire $LFS/install/packages/
-        cp -f $BASEDIR/packages/meta-linux-xen $LFS/install/packages/
-        cp -f $BASEDIR/packages/linux-pae-*.ipfire $LFS/install/packages/
-        cp -f $BASEDIR/packages/meta-linux-pae $LFS/install/packages/
-	ipfiremake xen-image
-	rm -rf $LFS/install/packages/linux-xen-*.ipfire
-	rm -rf $LFS/install/packages/meta-linux-xen
-  fi
+  ipfiremake xen-image
   mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
 
   cd $BASEDIR
