@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 3.10.10 Kernel Configuration
+# Linux/arm 3.10.11 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -3419,7 +3419,7 @@ CONFIG_USBIP_HOST=m
 # CONFIG_USBIP_DEBUG is not set
 # CONFIG_W35UND is not set
 # CONFIG_PRISM2_USB is not set
-# CONFIG_ECHO is not set
+CONFIG_ECHO=m
 # CONFIG_COMEDI is not set
 # CONFIG_ASUS_OLED is not set
 # CONFIG_PANEL is not set
@@ -3542,7 +3542,7 @@ CONFIG_USBIP_HOST=m
 # Android
 #
 # CONFIG_ANDROID is not set
-CONFIG_USB_WPAN_HCD=m
+# CONFIG_USB_WPAN_HCD is not set
 # CONFIG_WIMAX_GDM72XX is not set
 # CONFIG_CSR_WIFI is not set
 # CONFIG_CED1401 is not set
@@ -3554,8 +3554,7 @@ CONFIG_CLKDEV_LOOKUP=y
 # Hardware Spinlock drivers
 #
 # CONFIG_MAILBOX is not set
-CONFIG_IOMMU_SUPPORT=y
-CONFIG_OF_IOMMU=y
+# CONFIG_IOMMU_SUPPORT is not set
 
 #
 # Remoteproc drivers
