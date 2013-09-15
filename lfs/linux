@@ -157,18 +157,11 @@ ifeq "$(KCFG)" "-kirkwood"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-mv_cesa_disable_failing_hmac_sha1.patch
 endif
 
-ifeq "$(MACHINE_TYPE)" "arm"
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45_align_ssb_modtable_32bit_boundary.patch
-
-	# Reverse some asm optimizations that are incompatible with older gcc
-#	cd $(DIR_APP) && patch -p1 -R < $(DIR_SRC)/src/patches/linux-2.6-arm-asm-constraint.patch
-endif
-
-ifeq "$(KCFG)" "-omap"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0001-panda-wlan-fix.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0002-panda-i2c.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-panda-reboot.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.x-smsc95xx-add_mac_addr_param.patch
+ifeq "$(KCFG)" "-multi"
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0001-panda-wlan-fix.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0002-panda-i2c.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-panda-reboot.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-smsc95xx-add_mac_addr_param.patch
 endif
 
 ifeq "$(KCFG)" "-rpi"
@@ -199,10 +192,10 @@ ifeq "$(KCFG)" "-kirkwood"
 	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
 else
-ifeq "$(KCFG)" "-omap"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage
-	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
+ifeq "$(KCFG)" "-multi"
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/zImage-$(VERSUFIX)
 else
 ifeq "$(KCFG)" "-rpi"
 	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage
@@ -221,6 +214,14 @@ endif
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
+
+ifeq "$(MACHINE_TYPE)" "arm"
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) dtbs
+	cd $(DIR_APP) && for f in $$(find arch/arm/boot/dts/ -name *.dtb); do \
+				mkdir -p /boot/dtb-$(VER)-$(VERSUFIX) ; \
+				install -m 644 $$f /boot/dtb-$(VER)-$(VERSUFIX)/ ; \
+			done
+endif
 
 ifeq "$(LASTKERNEL)" "1"
 	# Only do this once

@@ -1,6 +1,7 @@
 boot/System.map-KVER-ipfire-kirkwood
 #boot/System.map-ipfire-kirkwood
 boot/config-KVER-ipfire-kirkwood
+boot/dtb-KVER-ipfire-kirkwood
 boot/uImage-ipfire-kirkwood
 boot/vmlinuz-KVER-ipfire-kirkwood
 etc/modprobe.d/framebuffer

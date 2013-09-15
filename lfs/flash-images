@@ -86,7 +86,7 @@ endif
 	# Install MLO and uboot first
 ifeq "$(MACHINE_TYPE)" "arm"
 	cp -v /boot/MLO $(MNThdd)/boot/
-	cp -v /boot/u-boot.bin $(MNThdd)/boot/
+	cp -v /boot/u-boot.img $(MNThdd)/boot/
 	sync
 	umount $(MNThdd)/boot
 	mount -o loop $(IMGboot) $(MNThdd)/boot
@@ -182,7 +182,7 @@ ifneq "$(MACHINE_TYPE)" "arm"
 	sed -i -e "s| panic=10 | console=ttyS0,115200n8 panic=10 |g" $(MNThdd)/boot/grub/grub.conf
 else
 	sed -i -e "s| console=tty1 | console=ttyAMA0,115200n8 |g" $(MNThdd)/boot/cmdline.txt
-	sed -i -e "s| console=tty1 omapfb.mode=dvi:800x600MR-16@60 | console=ttyO2,115200n8 |g" $(MNThdd)/boot/boot.script
+	sed -i -e "s| console=tty1 | console=ttyO2,115200n8 |g" $(MNThdd)/boot/boot.script
 	cd $(MNThdd)/boot && ./convert_bootscript
 endif
 

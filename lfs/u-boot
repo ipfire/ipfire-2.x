@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -79,8 +79,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /usr/share/u-boot/pandaboard
 	cd $(DIR_APP) && make CROSS_COMPILE="" omap4_panda_config
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
-	cd $(DIR_APP) && install -v -m 644 MLO u-boot.bin u-boot.img \
+	cd $(DIR_APP) && install -v -m 644 MLO u-boot.img \
 		/usr/share/u-boot/pandaboard
+	# Install pandaboard uboot as default
+	cd $(DIR_APP) && install MLO /boot/
+	cd $(DIR_APP) && install u-boot.img /boot/
+	cp -vf $(DIR_SRC)/config/u-boot/* /boot/
 	cd $(DIR_APP) && make distclean
 
 	# Wandboard Quad

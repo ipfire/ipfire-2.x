@@ -1,4 +1,5 @@
-fatload mmc 0:1 0x80000000 uImage-ipfire-omap
-fatload mmc 0:1 0x81600000 uInit-ipfire-omap
+fatload mmc 0:1 0x82000000 zImage-ipfire-multi
+fatload mmc 0:1 0x83600000 uInit-ipfire-multi
+fatload mmc 0:1 ${ftdaddr} omap4-${board_name}.dtb
 setenv bootargs vram=32M console=tty1 rootwait smsc95xx.macaddr=$usbethaddr root=/dev/mmcblk0p3 ro
-bootm 0x80000000 0x81600000
+bootz 0x82000000 0x83600000 ${ftdaddr}

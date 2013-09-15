@@ -380,7 +380,6 @@ buildipfire() {
   ipfiremake rpi-firmware
   ipfiremake bc
   ipfiremake u-boot
-  ipfiremake u-boot-panda
 
   if [ "${MACHINE_TYPE}" != "arm" ]; then
 
@@ -431,12 +430,9 @@ buildipfire() {
     ipfiremake cryptodev		KCFG="-rpi"
 #    ipfiremake compat-drivers		KCFG="-rpi"
 
-    # arm-omap (Panda Board) kernel build
-#    ipfiremake linux			KCFG="-omap"
-#    ipfiremake v4l-dvb			KCFG="-omap"
-#    ipfiremake mISDN			KCFG="-omap" NOPCI=1
-#    ipfiremake cryptodev		KCFG="-omap"
-#    ipfiremake compat-drivers		KCFG="-omap"
+    # arm multi platform (Panda, Wandboard ...) kernel build
+    ipfiremake linux			KCFG="-multi"
+    ipfiremake cryptodev		KCFG="-multi"
 
     # arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
     ipfiremake linux			KCFG="-kirkwood"
