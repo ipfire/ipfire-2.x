@@ -27,6 +27,8 @@ postalias /etc/aliases
 # Set postfix's hostname
 postconf -e "myhostname=$(hostname -f)"
 /etc/init.d/postfix start
-ln -sf  ../init.d/fetchmail /etc/rc.d/rc0.d/K25fetchmail
-ln -sf  ../init.d/fetchmail /etc/rc.d/rc3.d/S35fetchmail
-ln -sf  ../init.d/fetchmail /etc/rc.d/rc6.d/K25fetchmail
+
+# Enable autostart for postfix
+ln -sf  ../init.d/postfix /etc/rc.d/rc0.d/K25postfix
+ln -sf  ../init.d/postfix /etc/rc.d/rc3.d/S35postfix
+ln -sf  ../init.d/postfix /etc/rc.d/rc6.d/K25postfix
