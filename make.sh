@@ -801,7 +801,6 @@ buildinstaller() {
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
   ipfiremake as86
-  ipfiremake mbr
   ipfiremake memtest
   ipfiremake installer
   installmake strip
