@@ -47,8 +47,7 @@ my %ipsecsettings=();
 my %fwfwd=();
 my %fwinp=();
 my %ovpnsettings=();
-my %ipsecconf=();
-my %ipsecsettings=();
+
 
 my $errormessage;
 my $hint;
@@ -65,7 +64,6 @@ my $fwconfigfwd		= "${General::swroot}/forward/config";
 my $fwconfiginp		= "${General::swroot}/forward/input";
 my $configovpn		= "${General::swroot}/ovpn/settings";
 my $tdcolor='';
-my $configipsec		= "${General::swroot}/vpn/config";
 my $configipsecrw	= "${General::swroot}/vpn/settings";
 
 unless (-e $confignet)    { system("touch $confignet"); }
