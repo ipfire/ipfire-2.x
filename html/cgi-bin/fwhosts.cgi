@@ -177,6 +177,13 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 			$fwhostsettings{'ICMP_TYPES'}='BLANK';
 		}
 		my $key1 = &General::findhasharraykey(\%customservice);
+		#find out short ICMP-TYPE
+		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
+		foreach my $key (keys %icmptypes){
+			if ("$icmptypes{$key}[0] ($icmptypes{$key}[1])" eq $fwhostsettings{'ICMP_TYPES'}){
+					$fwhostsettings{'ICMP_TYPES'}=$icmptypes{$key}[0];
+			}
+		}
 		foreach my $i (0 .. 4) { $customservice{$key1}[$i] = "";}
 		$customservice{$key1}[0] = $fwhostsettings{'SRV_NAME'};
 		$customservice{$key1}[1] = $fwhostsettings{'SRV_PORT'};
@@ -220,15 +227,22 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 		if($count gt 0 && $fwhostsettings{'oldsrvprot'} ne $fwhostsettings{'PROT'} ){
 			$needrules='on';
 		}
+		if($count gt 0 && $fwhostsettings{'oldsrvicmp'} ne $fwhostsettings{'ICMP'} ){
+			$needrules='on';
+		}
 		$fwhostsettings{'SRV_NAME'}	= '';
 		$fwhostsettings{'SRV_PORT'}	= '';
 		$fwhostsettings{'PROT'}		= '';
+		$fwhostsettings{'ICMP'}		= '';
+		$fwhostsettings{'oldsrvicmp'} = '';
 	}else{
 		$fwhostsettings{'SRV_NAME'}	= $fwhostsettings{'oldsrvname'};
 		$fwhostsettings{'SRV_PORT'}	= $fwhostsettings{'oldsrvport'};
 		$fwhostsettings{'PROT'}		= $fwhostsettings{'oldsrvprot'};
+		$fwhostsettings{'ICMP'}		= $fwhostsettings{'oldsrvicmp'};
 		$fwhostsettings{'updatesrv'}= 'on';
 	}
+	$fwhostsettings{'updatesrv'} = '';
 	if($needrules eq 'on'){
 		&rules;
 	}
@@ -1287,6 +1301,7 @@ sub addservice
 		$fwhostsettings{'oldsrvname'} = $fwhostsettings{'SRV_NAME'};
 		$fwhostsettings{'oldsrvport'} = $fwhostsettings{'SRV_PORT'};
 		$fwhostsettings{'oldsrvprot'} = $fwhostsettings{'PROT'};
+		$fwhostsettings{'oldsrvicmp'} = $fwhostsettings{'ICMP'};
 	}
 	print<<END;
 	<table width='100%' border='0'><form method='post'>
@@ -1309,9 +1324,12 @@ END
 	&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 	print"<option>All ICMP-Types</option>";
 	foreach my $key (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
-		print"<option>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
+		if ($icmptypes{$key}[0] eq $fwhostsettings{'oldsrvicmp'}){
+			print"<option selected>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
+		}else{
+			print"<option>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
+		}
 	}
-	
 	print<<END;
 	</select></td></tr>
 	<tr><td width='10%'>$Lang::tr{'fwhost port'}:</td><td><input type='text' name='SRV_PORT' value='$fwhostsettings{'SRV_PORT'}' maxlength='11' size='24'></td></tr>
@@ -1325,7 +1343,9 @@ END
 		<input type='hidden' name='ACTION' value='updateservice'>
 		<input type='hidden' name='oldsrvname' value='$fwhostsettings{'oldsrvname'}'>
 		<input type='hidden' name='oldsrvport' value='$fwhostsettings{'oldsrvport'}'>
-		<input type='hidden' name='oldsrvprot' value='$fwhostsettings{'oldsrvprot'}'></form>
+		<input type='hidden' name='oldsrvprot' value='$fwhostsettings{'oldsrvprot'}'>
+		<input type='hidden' name='oldsrvicmp' value='$fwhostsettings{'oldsrvicmp'}'>
+		</form>
 END
 		
 	}else{	
@@ -1645,7 +1665,8 @@ END
 			<td width='1%'><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} /><input type='hidden' name='ACTION' value='editservice' />
 			<input type='hidden' name='SRV_NAME' value='$customservice{$key}[0]' />
 			<input type='hidden' name='SRV_PORT' value='$customservice{$key}[1]' />
-			<input type='hidden' name='PROT' value='$customservice{$key}[2]' /></form></td>
+			<input type='hidden' name='PROT' value='$customservice{$key}[2]' />
+			<input type='hidden' name='ICMP' value='$customservice{$key}[3]' /></form></td>
 END
 			if ($customservice{$key}[4] eq '0')
 			{
