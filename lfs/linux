@@ -24,9 +24,10 @@
 
 include Config
 
-VER        = 3.10.11
+VER        = 3.10.12
 
 RPI_PATCHES = linux-3.10.10-c1af7c6
+GRS_PATCHES = grsecurity-2.9.1-3.10.12-ipfire1.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -65,15 +66,17 @@ endif
 # Top-level Rules
 ###############################################################################
 objects =$(DL_FILE) \
-	rpi-patches-$(RPI_PATCHES).patch.xz
+	rpi-patches-$(RPI_PATCHES).patch.xz \
+	$(GRS_PATCHES)
 
 
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
+$(GRS_PATCHES)				= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5				= 79e33380a4a74f35aabb6ae4713adab1
+$(DL_FILE)_MD5				= 16e43b3c9957cf5af44863d6809efe38
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= ef9274b3ff5d05daaaa4bdbe86ad00fc
-
+$(GRS_PATCHES)_MD5			= 563b6ff05687289cfebc07f2a66ded92
 
 install : $(TARGET)
 
@@ -120,7 +123,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Grsecurity-patches
 ifneq "$(KCFG)" "-headers"
 ifneq "$(KCFG)" "-rpi"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grsecurity-2.9.1-3.10.10-201308292131.patch
+	cd $(DIR_APP) && xz -c -d $(DIR_DL)/$(GRS_PATCHES) | patch -Np1
 	cd $(DIR_APP) && rm localversion-grsec
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
 endif
