@@ -36,6 +36,10 @@ PAK_VER    = 23
 
 DEPS       = ""
 
+ifeq "$(MACHINE_TYPE)" "arm"
+CONFIGURE_FLAGS = --disable-fanotify
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -77,7 +81,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire/clamav
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/var/ipfire/clamav \
+		$(CONFIGURE_FLAGS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	mkdir -p /usr/share/clamav/
