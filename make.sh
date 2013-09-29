@@ -179,11 +179,12 @@ prepareenv() {
     set +h
     LC_ALL=POSIX
     if [ -z $MAKETUNING ]; then
-        if [ "${MACHINE:0:3}" = "arm" ]; then
-            MAKETUNING="-j2"
-        else
-            MAKETUNING="-j6"
-        fi
+	CPU_COUNT="$(getconf _NPROCESSORS_ONLN 2>/dev/null)"
+	if [ -z "${CPU_COUNT}" ]; then
+		CPU_COUNT=1
+	fi
+
+	MAKETUNING="-j$(( ${CPU_COUNT} * 2 + 1 ))"
     fi
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
