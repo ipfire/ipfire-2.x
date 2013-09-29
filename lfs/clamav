@@ -93,5 +93,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rfv /usr/share/clamav/*.cvd
 	mkdir -p /var/run/clamav
 	chown clamav:clamav /var/run/clamav
+
+	# Disable PaX mprotect for clamd
+	paxctl -cm /usr/sbin/clamd
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
