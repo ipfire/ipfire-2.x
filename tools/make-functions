@@ -415,6 +415,7 @@ lfsmake2() {
 						TERM=$TERM PS1='\u:\w\$ ' \
 						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
 						VERSION=$VERSION PAKFIRE_CORE="${PAKFIRE_CORE}" \
+						SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
