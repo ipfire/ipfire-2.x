@@ -774,7 +774,6 @@ buildipfire() {
   ipfiremake iptraf-ng
   ipfiremake iotop
 
-  echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
   if [ "$(git status -s | wc -l)" == "0" ]; then
 	GIT_STATUS=""
   else
