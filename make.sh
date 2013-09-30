@@ -773,14 +773,7 @@ buildipfire() {
   ipfiremake wavemon
   ipfiremake iptraf-ng
   ipfiremake iotop
-  echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
-  cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
-  echo >> $BASEDIR/build/var/ipfire/firebuild
-  git log -1 >> $BASEDIR/build/var/ipfire/firebuild
-  echo >> $BASEDIR/build/var/ipfire/firebuild
-  git status >> $BASEDIR/build/var/ipfire/firebuild
-  echo >> $BASEDIR/build/var/ipfire/firebuild
-  cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
+
   echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
   if [ "$(git status -s | wc -l)" == "0" ]; then
 	GIT_STATUS=""
