@@ -222,24 +222,24 @@ if [ 'x86_64' = $MACHINE -o 'i686' = $MACHINE -o 'i586' = $MACHINE ]; then
 	MACHINE=i586
 	CROSSTARGET=${MACHINE}-cross-linux-gnu
 	BUILDTARGET=i586-pc-linux-gnu
-	CFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
-	CXXFLAGS="-O2 -march=i586 -pipe -fomit-frame-pointer"
-	C2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
-	CXX2FLAGS="-O2 -march=i586 -mtune=i586 -pipe -fomit-frame-pointer"
+	CFLAGS_ARCH="${GLOBAL_CFLAGS} -march=i586 -fomit-frame-pointer"
 elif [ 'armv5tejl' = $MACHINE -o 'armv5tel' = $MACHINE -o 'armv6l' = $MACHINE -o 'armv7l' = $MACHINE ]; then
 	echo "`date -u '+%b %e %T'`: Machine is ARM (or equivalent)" >> $LOGFILE
 	MACHINE=armv5tel
 	MACHINE_TYPE=arm
 	CROSSTARGET=${MACHINE}-cross-linux-gnueabi
 	BUILDTARGET=${MACHINE}-unknown-linux-gnueabi
-	CFLAGS="-O2 -march=armv5te -mfloat-abi=soft -fomit-frame-pointer -pipe"
-	CXXFLAGS="$CFLAGS"
-	C2FLAGS="$CFLAGS"
-	CXX2FLAGS="$CXXFLAGS"
+	CFLAGS_ARCH="-march=armv5te -mfloat-abi=soft -fomit-frame-pointer"
 else
 	echo "`date -u '+%b %e %T'`: Can't determine your architecture - $MACHINE"
 	exit 1
 fi
+
+CFLAGS="-O2 -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fPIC"
+CFLAGS="${CFLAGS} -fstack-protector-all --param=ssp-buffer-size=4 ${CFLAGS_ARCH}"
+CXXFLAGS="${CFLAGS}"
+C2FLAGS="${CFLAGS}"
+CXX2FLAGS="${CXXFLAGS}"
 
 # Define immediately
 stdumount() {
