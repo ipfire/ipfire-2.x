@@ -128,7 +128,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
-	
 	#check if manual ip (source) is orange network
 	if ($fwdfwsettings{'grp1'} eq 'src_addr'){
 		my ($sip,$scidr) = split("/",$fwdfwsettings{$fwdfwsettings{'grp1'}});
@@ -489,7 +488,6 @@ sub checksource
 		}else{
 			$fwdfwsettings{'ICMP_TYPES'}='';
 			$fwdfwsettings{'SRC_PORT'}='';
-			$fwdfwsettings{'PROT'}='';
 		}
 
 	if($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && ($fwdfwsettings{'PROT'} eq 'TCP' || $fwdfwsettings{'PROT'} eq 'UDP') && $fwdfwsettings{'SRC_PORT'} ne ''){
@@ -809,9 +807,9 @@ sub checkrule
 	}
 	#check source and destination protocol if manual
 	if( $fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'USESRV'} eq 'ON'){
-			if($fwdfwsettings{'PROT'} ne $fwdfwsettings{'TGT_PROT'} && $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
-			$errormessage.=$Lang::tr{'fwdfw err prot'};
-		}
+		#if($fwdfwsettings{'PROT'} ne $fwdfwsettings{'TGT_PROT'} && $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
+		#	$errormessage.=$Lang::tr{'fwdfw err prot'};
+		#}
 		#check source and destination protocol if source manual and dest servicegrp
 		if ($fwdfwsettings{'grp3'} eq 'cust_srv'){
 			foreach my $key (sort keys %customservice){
@@ -824,10 +822,12 @@ sub checkrule
 			}
 		}
 	}
-	if( $fwdfwsettings{'USE_SRC_PORT'} ne 'ON' && $fwdfwsettings{'USESRV'} ne 'ON'){
+	#ATTENTION: $fwdfwsetting{'TGT_PROT'} deprecated since 30.09.2013
+
+	if( $fwdfwsettings{'PROT'} eq $Lang::tr{'all'}){
 		$fwdfwsettings{'PROT'}='';
-		$fwdfwsettings{'TGT_PROT'}='';
 	}
+	$fwdfwsettings{'TGT_PROT'}=''; #Set field empty (deprecated)
 }
 sub checkcounter
 {
@@ -1541,7 +1541,6 @@ END
 		print "<option value='ORANGE' $selected{'ipfire_src'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if (&Header::orange_used());
 		print "<option value='BLUE' $selected{'ipfire_src'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if (&Header::blue_used());
 		print "<option value='RED1' $selected{'ipfire_src'}{'RED1'}>$Lang::tr{'red1'} ($redip)" if ($redip);
-
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
 			{
@@ -1557,20 +1556,11 @@ END
 		<table><tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
 		<table width='100%' border='0'>
 		<tr><td width='1%'><input type='checkbox' name='USE_SRC_PORT' value='ON' $checked{'USE_SRC_PORT'}{'ON'}></td><td width='51%' colspan='3'>$Lang::tr{'fwdfw use srcport'}</td>
-		<td width='15%' nowrap='nowrap'>$Lang::tr{'fwdfw man port'}</td><td><select name='PROT'>
+		<td width='15%' nowrap='nowrap'>$Lang::tr{'fwdfw man port'}</td><td>
 END
-		foreach ("TCP","UDP","GRE","ESP","AH","ICMP")
-		{
-			if ($_ eq $fwdfwsettings{'PROT'})
-			{
-				print"<option selected>$_</option>";
-			}else{
-				print"<option>$_</option>";
-			}
-		}
 		$fwdfwsettings{'SRC_PORT'}=~ s/\|/,/g;
 		print<<END;
-		</select></td><td align='right'><input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18' ></td></tr>
+		</td><td align='right'><input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18' ></td></tr>
 		<tr><td></td><td></td><td></td><td></td><td nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TYPES' style='width:230px;'>
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
@@ -1586,7 +1576,43 @@ END
 		</select></td></tr></table><br><hr>
 END
 		&Header::closebox();
-
+		#---SNAT / DNAT ------------------------------------------------
+		&Header::openbox('100%', 'left', 'NAT');
+		print<<END;
+		<table width='100%' border='0'>
+		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'}></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr>
+		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='dnat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
+END
+		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
+		print "<option value='ALL' $selected{'dnat'}{$Lang::tr{'all'}}>$Lang::tr{'all'}</option>";
+		print "<option value='Default IP' $selected{'dnat'}{'Default IP'}>Default IP</option>";
+		foreach my $alias (sort keys %aliases)
+		{
+			print "<option value='$alias' $selected{'dnat'}{$alias}>$alias</option>";
+		}
+		print"</select></td></tr>";
+		$fwdfwsettings{'dnatport'}=~ tr/|/,/;
+		print"<tr><td colspan='4'></td><td>Port: </td><td align='right'><input type='text' name='dnatport' style='width:130px;' value=\"$fwdfwsettings{'dnatport'}\"> </td></tr>";
+		print"<tr><td colspan='8'><br></td></tr>";
+		#SNAT
+		print"<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='snat' value='snat'  $checked{'nat'}{'snat'}></td><td width='20%'>$Lang::tr{'fwdfw snat'}</td>";
+		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='snat' style='width:140px;'>";
+		foreach my $alias (sort keys %aliases)
+			{
+				print "<option value='$alias' $selected{'snat'}{$alias}>$alias</option>";
+			}
+		foreach my $network (sort keys %defaultNetworks)
+		{
+			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
+			next if($defaultNetworks{$network}{'NAME'} eq "ALL");
+			next if($defaultNetworks{$network}{'NAME'} =~ /OpenVPN/i);
+			print "<option value='$defaultNetworks{$network}{'NAME'}'";
+			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'nat'}} eq $defaultNetworks{$network}{'NAME'});
+			print ">$network</option>";
+		}
+		print"</select></td></tr></table>";
+		print"<hr>";
+		&Header::closebox();
 		#---TARGET------------------------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
 		print<<END;
@@ -1637,20 +1663,11 @@ END
 		}	
 		print<<END;
 		</select></td></tr>
-		<tr><td colspan='2'></td><td><input type='radio' name='grp3' id='TGT_PORT' value='TGT_PORT' $checked{'grp3'}{'TGT_PORT'}></td><td>$Lang::tr{'fwdfw man port'}</td><td><select name='TGT_PROT' onchange='checkradio(\"#TGT_PORT\")'>
+		<tr><td colspan='2'></td><td><input type='radio' name='grp3' id='TGT_PORT' value='TGT_PORT' $checked{'grp3'}{'TGT_PORT'}></td><td>$Lang::tr{'fwdfw man port'}</td><td>
 END
-		foreach ("TCP","UDP","GRE","ESP","AH","ICMP")
-		{
-			if ($_ eq $fwdfwsettings{'TGT_PROT'})
-			{
-				print"<option selected>$_</option>";
-			}else{
-				print"<option>$_</option>";
-			}
-		}
 		$fwdfwsettings{'TGT_PORT'} =~ s/\|/,/g;
 		print<<END;
-		</select></td><td align='right'><input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18' onclick='checkradio(\"#TGT_PORT\")'></td></tr>
+		</td><td align='right'><input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18' onclick='checkradio(\"#TGT_PORT\")'></td></tr>
 		<tr><td colspan='2'></td><td></td><td>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TGT' style='min-width:230px;'>
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
@@ -1668,43 +1685,23 @@ END
 
 END
 		&Header::closebox;
-		#---SNAT / DNAT ------------------------------------------------
-		&Header::openbox('100%', 'left', 'NAT');
+		#---PROTOCOL------------------------------------------------------
+		&Header::openbox('100%', 'left', $Lang::tr{'fwhost prot'});
 		print<<END;
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'}></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr>
-		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='dnat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
+		<tr><td><select name='PROT'>
 END
-		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
-		print "<option value='ALL' $selected{'dnat'}{$Lang::tr{'all'}}>$Lang::tr{'all'}</option>";
-		print "<option value='Default IP' $selected{'dnat'}{'Default IP'}>Default IP</option>";
-		foreach my $alias (sort keys %aliases)
+		foreach ($Lang::tr{'all'},"TCP","UDP","GRE","ESP","AH","ICMP")
 		{
-			print "<option value='$alias' $selected{'dnat'}{$alias}>$alias</option>";
-		}
-		print"</select></td></tr>";
-		$fwdfwsettings{'dnatport'}=~ tr/|/,/;
-		print"<tr><td colspan='4'></td><td>Port: </td><td align='right'><input type='text' name='dnatport' style='width:130px;' value=\"$fwdfwsettings{'dnatport'}\"> </td></tr>";
-		print"<tr><td colspan='8'><br></td></tr>";
-		#SNAT
-		print"<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='snat' value='snat'  $checked{'nat'}{'snat'}></td><td width='20%'>$Lang::tr{'fwdfw snat'}</td>";
-		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='snat' style='width:140px;'>";
-		foreach my $alias (sort keys %aliases)
+			if ($_ eq $fwdfwsettings{'PROT'})
 			{
-				print "<option value='$alias' $selected{'snat'}{$alias}>$alias</option>";
+				print"<option selected>$_</option>";
+			}else{
+				print"<option>$_</option>";
 			}
-		foreach my $network (sort keys %defaultNetworks)
-		{
-			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
-			next if($defaultNetworks{$network}{'NAME'} eq "ALL");
-			next if($defaultNetworks{$network}{'NAME'} =~ /OpenVPN/i);
-			print "<option value='$defaultNetworks{$network}{'NAME'}'";
-			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'nat'}} eq $defaultNetworks{$network}{'NAME'});
-			print ">$network</option>";
 		}
-		print"</select></td></tr></table>";
-		print"<hr>";
-		&Header::closebox();
+		print"</select></td></tr></table><br><hr>";
+		&Header::closebox;
 		#---Activate/logging/remark-------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
 		print<<END;
@@ -1757,20 +1754,20 @@ END
 		<tr><td width='1%'><input type='checkbox' name='TIME' value='ON' $checked{'TIME'}{'ON'}></td><td colspan='9'>$Lang::tr{'fwdfw timeframe'}</td></tr>
 		<tr><td colspan='10'>&nbsp;</td></tr>
 		<tr>
-			<td  align='left'>$Lang::tr{'time'}:</td>
-			<td width='30%' align='left'>$Lang::tr{'advproxy monday'} $Lang::tr{'advproxy tuesday'} $Lang::tr{'advproxy wednesday'} $Lang::tr{'advproxy thursday'} $Lang::tr{'advproxy friday'} $Lang::tr{'advproxy saturday'} $Lang::tr{'advproxy sunday'}</td>
+			<td  align='left' >$Lang::tr{'time'}:&nbsp</td>
+			<td>$Lang::tr{'advproxy monday'}</td><td> $Lang::tr{'advproxy tuesday'} </td><td>$Lang::tr{'advproxy wednesday'}</td><td> $Lang::tr{'advproxy thursday'}</td><td> $Lang::tr{'advproxy friday'}</td><td> $Lang::tr{'advproxy saturday'}</td><td> $Lang::tr{'advproxy sunday'}</td>
 			<td width='15%' align='left'>$Lang::tr{'advproxy from'}</td>
 			<td width='15%' align='left'>$Lang::tr{'advproxy to'}</td>
 		</tr>
 		<tr>
 			<td  align='right'></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_MON' value='on' $checked{'TIME_MON'}{'on'} /></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_TUE' value='on' $checked{'TIME_TUE'}{'on'} /></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_WED' value='on' $checked{'TIME_WED'}{'on'} /></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_THU' value='on' $checked{'TIME_THU'}{'on'} /></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_FRI' value='on' $checked{'TIME_FRI'}{'on'} /></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_SAT' value='on' $checked{'TIME_SAT'}{'on'} /></td>
-			<td width='15%' align='left'><input type='checkbox' name='TIME_SUN' value='on' $checked{'TIME_SUN'}{'on'} /></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_MON' value='on' $checked{'TIME_MON'}{'on'} ></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_TUE' value='on' $checked{'TIME_TUE'}{'on'} ></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_WED' value='on' $checked{'TIME_WED'}{'on'} ></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_THU' value='on' $checked{'TIME_THU'}{'on'} ></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_FRI' value='on' $checked{'TIME_FRI'}{'on'} ></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_SAT' value='on' $checked{'TIME_SAT'}{'on'} ></td>
+			<td width='15%' align='left'><input type='checkbox' name='TIME_SUN' value='on' $checked{'TIME_SUN'}{'on'} ></td>
 			<td><select name='TIME_FROM'>
 END
 		for (my $i=0;$i<=23;$i++) {
@@ -2193,10 +2190,8 @@ END
 			print"<td bgcolor='$rulecolor' align='center' width='10'><span title='$tooltip'><b>$ruletype</b></span></td>";
 			#Get Protocol
 			my $prot;
-			if ($$hash{$key}[8] && $$hash{$key}[7] eq 'ON'){#source prot if manual
+			if ($$hash{$key}[8]){
 				push (@protocols,$$hash{$key}[8]);
-			}elsif ($$hash{$key}[12]){			#target prot if manual
-				push (@protocols,$$hash{$key}[12]);
 			}elsif($$hash{$key}[14] eq 'cust_srv'){
 				&get_serviceports("service",$$hash{$key}[15]);
 			}elsif($$hash{$key}[14] eq 'cust_srvgrp'){

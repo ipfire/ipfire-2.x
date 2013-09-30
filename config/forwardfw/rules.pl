@@ -539,11 +539,11 @@ sub get_prot
 	}elsif($$hash{$key}[11] eq 'ON' && $SRC_TGT eq ''){
 		if ($$hash{$key}[14] eq 'TGT_PORT'){
 			if ($$hash{$key}[15] ne ''){
-				return "$$hash{$key}[12]";
+				return "$$hash{$key}[8]";
 			}elsif($$hash{$key}[13] ne ''){
-				return "$$hash{$key}[12]";
+				return "$$hash{$key}[8]";
 			}else{
-				return "$$hash{$key}[12]";
+				return "$$hash{$key}[8]";
 			}
 		}elsif($$hash{$key}[14] eq 'cust_srv'){
 			return &fwlib::get_srv_prot($$hash{$key}[15]);
@@ -554,7 +554,7 @@ sub get_prot
 	}
 	#DNAT
 	if ($SRC_TGT eq '' && $$hash{$key}[31] eq 'dnat' && $$hash{$key}[11] eq '' && $$hash{$key}[12] ne ''){
-		return "$$hash{$key}[12]";
+		return "$$hash{$key}[8]";
 	}
 }
 sub get_port
