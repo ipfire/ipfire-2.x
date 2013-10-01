@@ -538,9 +538,11 @@ sub get_prot
 		}
 	}elsif($$hash{$key}[11] eq 'ON' && $SRC_TGT eq ''){
 		if ($$hash{$key}[14] eq 'TGT_PORT'){
-			if ($$hash{$key}[15] ne ''){
-				return "$$hash{$key}[8]";
+			if ($$hash{$key}[15] ne '' && $$hash{$key}[8] eq ''){
+				return "TCP,UDP";
 			}elsif($$hash{$key}[13] ne ''){
+				return "$$hash{$key}[8]";
+			}elsif($$hash{$key}[15] ne ''){
 				return "$$hash{$key}[8]";
 			}else{
 				return "$$hash{$key}[8]";
