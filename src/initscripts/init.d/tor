@@ -9,6 +9,8 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+FILEDESCRIPTORS="65535"
+
 eval $(/usr/local/bin/readhash /var/ipfire/tor/settings)
 
 function tor_is_enabled() {
@@ -35,6 +37,11 @@ case "${1}" in
 
 		# Setup firewall.
 		setup_firewall
+
+		# Increasing open file descriptors.
+		if [ -n "${FILEDESCRIPTORS}" ]; then
+			ulimit -n "${FILEDESCRIPTORS}"
+		fi
 
 		boot_mesg "Starting tor..."
 		loadproc /usr/bin/tor \

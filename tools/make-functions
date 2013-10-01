@@ -414,7 +414,8 @@ lfsmake2() {
 	chroot $LFS /tools/bin/env -i 	HOME=/root \
 						TERM=$TERM PS1='\u:\w\$ ' \
 						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
-						VERSION=$VERSION \
+						VERSION=$VERSION PAKFIRE_CORE="${PAKFIRE_CORE}" \
+						SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
@@ -521,6 +522,7 @@ installmake() {
 						TERM=$TERM PS1='\u:\w\$ ' \
 						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
 						VERSION=$VERSION \
+						SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						CFLAGS="-Os" CXXFLAGS="-Os" \
