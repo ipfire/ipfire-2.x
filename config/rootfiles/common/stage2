@@ -50,6 +50,10 @@ media/floppy
 media/usbkey
 mnt
 #opt
+#opt/pakfire
+#opt/pakfire/db
+#opt/pakfire/db/core
+opt/pakfire/db/core/mine
 #root
 root/.bash_logout
 root/.bash_profile

@@ -88,15 +88,6 @@ if ( -d "/var/ipfire/langs/${language}/" ) {
     };
 };
 
-### Read IPFire Buildversion
-$FIREBUILD = "File not found: firebuild\n";
-if (open(MYFile, "<${swroot}/firebuild")) {
-    $FIREBUILD = <MYFile>;
-    chomp($FIREBUILD);
-    $FIREBUILD = "(Build: $FIREBUILD)";
-    close(MYFile);
-};
-
 require "${swroot}/langs/en.pl";
 require "${swroot}/langs/${language}.pl";
 eval `/bin/cat /srv/web/ipfire/html/themes/$settings{'THEME'}/include/functions.pl`;

@@ -83,6 +83,22 @@ if [ -z $EDITOR ]; then
 	[ -z $EDITOR ] && exiterror "You should have installed an editor."
 fi
 
+# Prepare string for /etc/system-release.
+SYSTEM_RELEASE="${NAME} ${VERSION} (${MACHINE})"
+if [ "$(git status -s | wc -l)" == "0" ]; then
+	GIT_STATUS=""
+else
+	GIT_STATUS="-dirty"
+fi
+case "$GIT_BRANCH" in
+	core*|beta?|rc?)
+		SYSTEM_RELEASE="${SYSTEM_RELEASE} - $GIT_BRANCH$GIT_STATUS"
+		;;
+	*)
+		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS"
+		;;
+esac
+
 prepareenv() {
     ############################################################################
     #                                                                          #
@@ -773,35 +789,12 @@ buildipfire() {
   ipfiremake wavemon
   ipfiremake iptraf-ng
   ipfiremake iotop
-  echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
-  cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
-  echo >> $BASEDIR/build/var/ipfire/firebuild
-  git log -1 >> $BASEDIR/build/var/ipfire/firebuild
-  echo >> $BASEDIR/build/var/ipfire/firebuild
-  git status >> $BASEDIR/build/var/ipfire/firebuild
-  echo >> $BASEDIR/build/var/ipfire/firebuild
-  cat /proc/cpuinfo >> $BASEDIR/build/var/ipfire/firebuild
-  echo $PAKFIRE_CORE > $BASEDIR/build/opt/pakfire/db/core/mine
-  if [ "$(git status -s | wc -l)" == "0" ]; then
-	GIT_STATUS=""
-  else
-	GIT_STATUS="-dirty"
-  fi
-  case "$GIT_BRANCH" in
-	core*|beta?|rc?)
-	    echo "$NAME $VERSION ($MACHINE) - $GIT_BRANCH$GIT_STATUS" > $BASEDIR/build/etc/system-release
-	    ;;
-	*)
-	    echo "$NAME $VERSION ($MACHINE) - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS" > $BASEDIR/build/etc/system-release
-	    ;;
-  esac
 }
 
 buildinstaller() {
   # Run installer scripts one by one
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
-  ipfiremake as86
   ipfiremake memtest
   ipfiremake installer
   installmake strip

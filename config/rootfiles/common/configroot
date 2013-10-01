@@ -199,5 +199,3 @@ var/ipfire/wakeonlan
 var/ipfire/wireless
 #var/ipfire/wireless/config
 #var/ipfire/wireless/settings
-var/ipfire/firebuild
-etc/system-release

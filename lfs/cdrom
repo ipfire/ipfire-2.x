@@ -52,6 +52,10 @@ md5 :
 ###############################################################################
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	# Update /etc/system-release, because the string might have changed
+	# since stage2 has been executed..
+	echo "$(SYSTEM_RELEASE)" > /etc/system-release
+
 	rm -rf /install/cdrom /tmp/*
 	mkdir -p /install/cdrom/doc
 

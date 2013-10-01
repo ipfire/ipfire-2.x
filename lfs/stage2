@@ -121,4 +121,11 @@ $(TARGET) :
 	-mkdir -pv /usr/share/doc/licenses/
 	cp -vf $(DIR_SRC)/doc/COPYING /usr/share/doc/licenses/GPLv3
 
+	# System release
+	echo "$(SYSTEM_RELEASE)" > /etc/system-release
+
+	# Pakfire
+	-mkdir -pv /opt/pakfire/db/core
+	echo "$(PAKFIRE_CORE)" > /opt/pakfire/db/core/mine
+
 	@$(POSTBUILD)
