@@ -41,6 +41,7 @@ etc/resolv.conf
 etc/securetty
 etc/sysctl.conf
 etc/syslog.conf
+etc/system-release
 #home
 home/nobody
 #lib
