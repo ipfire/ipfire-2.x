@@ -115,20 +115,15 @@ print<<END;
 function checkradio(a){
 	\$(a).attr('checked', true);
 }
-function toggle_elements()
-{
-	var elementNames = toggle_elements.arguments;
-	for (var i=0; i<elementNames.length; i++)
+function toggle_elements( id ) {
+	if(document.getElementById(id).style.display== "none")
 	{
-		var elementName = elementNames[i];
-		if ( \$('input[name="USE_NAT"]').is(':checked') || \$('input[name="USE_SRC_PORT"]').is(':checked') || \$('input[name="USESRV"]').is(':checked'))
-		{
-			document.getElementById(elementName).style.display='block';
-		}
-		else{
-			document.getElementById(elementName).style.display='none';
-		}
+		document.getElementById(id).style.display='block';
 	}
+	else{
+		document.getElementById(id).style.display='none';
+	}
+	return true;
 }
 function hide_elements()
 {
@@ -275,8 +270,8 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		}
 		#increase counters
 		if (!$errormessage){
-			&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
-			&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
+		 &checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
+		 &checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
 			if($fwdfwsettings{'oldusesrv'} eq '' &&  $fwdfwsettings{'USESRV'} eq 'ON'){
 				&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 			}elsif ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'oldusesrv'} eq 'ON') {
