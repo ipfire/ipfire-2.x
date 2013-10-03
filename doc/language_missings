@@ -84,7 +84,9 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< least preferred
 < minute
+< most preferred
 < ntp common settings
 < ntp sync
 < openvpn default
@@ -117,6 +119,7 @@
 < static routes
 < system information
 < tor
+< tor 0 = disabled
 < tor accounting
 < tor accounting bytes
 < tor accounting bytes left
@@ -137,8 +140,10 @@
 < tor connected relays
 < tor contact info
 < tor daemon
+< tor directory port
 < tor enabled
 < tor errmsg invalid accounting limit
+< tor errmsg invalid directory port
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay address
 < tor errmsg invalid relay name
@@ -306,7 +311,9 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< least preferred
 < minute
+< most preferred
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -355,6 +362,7 @@
 < static routes
 < system information
 < tor
+< tor 0 = disabled
 < tor accounting
 < tor accounting bytes
 < tor accounting bytes left
@@ -375,8 +383,10 @@
 < tor connected relays
 < tor contact info
 < tor daemon
+< tor directory port
 < tor enabled
 < tor errmsg invalid accounting limit
+< tor errmsg invalid directory port
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay address
 < tor errmsg invalid relay name
@@ -512,7 +522,9 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< least preferred
 < minute
+< most preferred
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -545,6 +557,7 @@
 < server restart
 < static routes
 < tor
+< tor 0 = disabled
 < tor accounting
 < tor accounting bytes
 < tor accounting bytes left
@@ -565,8 +578,10 @@
 < tor connected relays
 < tor contact info
 < tor daemon
+< tor directory port
 < tor enabled
 < tor errmsg invalid accounting limit
+< tor errmsg invalid directory port
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay address
 < tor errmsg invalid relay name
@@ -709,8 +724,10 @@
 < frequency
 < hour-graph
 < incoming traffic in bytes per second
+< least preferred
 < minute
 < month-graph
+< most preferred
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -740,6 +757,7 @@
 < server restart
 < static routes
 < tor
+< tor 0 = disabled
 < tor accounting
 < tor accounting bytes
 < tor accounting bytes left
@@ -760,8 +778,10 @@
 < tor connected relays
 < tor contact info
 < tor daemon
+< tor directory port
 < tor enabled
 < tor errmsg invalid accounting limit
+< tor errmsg invalid directory port
 < tor errmsg invalid ip or mask
 < tor errmsg invalid relay address
 < tor errmsg invalid relay name

@@ -558,7 +558,9 @@ WARNING: untranslated string: extrahd to
 WARNING: untranslated string: extrahd to root
 WARNING: untranslated string: extrahd you cant mount
 WARNING: untranslated string: incoming traffic in bytes per second
+WARNING: untranslated string: least preferred
 WARNING: untranslated string: minute
+WARNING: untranslated string: most preferred
 WARNING: untranslated string: new
 WARNING: untranslated string: openvpn default
 WARNING: untranslated string: openvpn destination port used
@@ -608,8 +610,10 @@ WARNING: untranslated string: tor configuration
 WARNING: untranslated string: tor connected relays
 WARNING: untranslated string: tor contact info
 WARNING: untranslated string: tor daemon
+WARNING: untranslated string: tor directory port
 WARNING: untranslated string: tor enabled
 WARNING: untranslated string: tor errmsg invalid accounting limit
+WARNING: untranslated string: tor errmsg invalid directory port
 WARNING: untranslated string: tor errmsg invalid ip or mask
 WARNING: untranslated string: tor errmsg invalid relay address
 WARNING: untranslated string: tor errmsg invalid relay name
