@@ -114,7 +114,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 										            --with-mysql-sock=/var/run/mysql \
 										            --with-ncurses \
 										            --with-pdo-mysql \
-										            --without-pdo-sqlite \
+										            --with-pdo-sqlite \
 										            --with-readline \
 										            --enable-sockets \
 										            --with-xsl \
