@@ -5,6 +5,7 @@ etc/rc.d/init.d/squid
 srv/web/ipfire/cgi-bin/logs.cgi/proxylog.dat
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/routing.cgi
+srv/web/ipfire/cgi-bin/wirelessclient.cgi
 srv/web/ipfire/html/redirect.cgi
 srv/web/ipfire/html/redirect-templates/
 var/ipfire/header.pl
