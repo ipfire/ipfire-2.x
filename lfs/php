@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.3.16
+VER        = 5.3.27
 
 THISAPP    = php-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +46,7 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 idn-0.1.tgz = $(DL_FROM)/idn-0.1.tgz
 Log-1.9.11.tgz = $(DL_FROM)/Log-1.9.11.tgz
 
-$(DL_FILE)_MD5 = 99cfd78531643027f60c900e792d21be
+$(DL_FILE)_MD5 = 25ae23a5b9615fe8d33de5b63e1bb788
 idn-0.1.tgz_MD5 = ef8635ec22348325a76abd2abddca4a1
 Log-1.9.11.tgz_MD5 = fb7c648b212f12fdb5ce1ab687793513
 
@@ -114,11 +114,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 										            --with-mysql-sock=/var/run/mysql \
 										            --with-ncurses \
 										            --with-pdo-mysql \
-										            --without-pdo-sqlite \
+										            --with-pdo-sqlite \
 										            --with-readline \
 										            --enable-sockets \
 										            --with-xsl \
-										            --with-iconv
+										            --with-iconv \
+										            --enable-zip
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && install -v -m644 $(DIR_SRC)/config/php/php.ini /etc/php.ini
