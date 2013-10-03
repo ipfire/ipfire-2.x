@@ -118,7 +118,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 										            --with-readline \
 										            --enable-sockets \
 										            --with-xsl \
-										            --with-iconv
+										            --with-iconv \
+										            --enable-zip
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && install -v -m644 $(DIR_SRC)/config/php/php.ini /etc/php.ini
