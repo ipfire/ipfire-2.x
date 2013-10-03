@@ -126,7 +126,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 	$errormessage = $Lang::tr{'invalid ip'}." / ".$Lang::tr{'invalid netmask'};
 	}
 
-	if ($settings{'IP'} =~ /0.0.0.0/){
+	if ($settings{'IP'} =~ /^0\.0\.0\.0/){
 	$errormessage = $Lang::tr{'invalid ip'}." - 0.0.0.0";
 	}
 

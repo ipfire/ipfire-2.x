@@ -707,6 +707,8 @@ WARNING: untranslated string: fwhost stdnet
 WARNING: untranslated string: fwhost type
 WARNING: untranslated string: fwhost used
 WARNING: untranslated string: fwhost welcome
+WARNING: untranslated string: least preferred
+WARNING: untranslated string: most preferred
 WARNING: untranslated string: new
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: qos enter bandwidths
@@ -733,8 +735,10 @@ WARNING: untranslated string: tor configuration
 WARNING: untranslated string: tor connected relays
 WARNING: untranslated string: tor contact info
 WARNING: untranslated string: tor daemon
+WARNING: untranslated string: tor directory port
 WARNING: untranslated string: tor enabled
 WARNING: untranslated string: tor errmsg invalid accounting limit
+WARNING: untranslated string: tor errmsg invalid directory port
 WARNING: untranslated string: tor errmsg invalid ip or mask
 WARNING: untranslated string: tor errmsg invalid relay address
 WARNING: untranslated string: tor errmsg invalid relay name

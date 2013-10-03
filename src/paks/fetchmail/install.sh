@@ -25,3 +25,7 @@
 extract_files
 restore_backup ${NAME}
 start_service --background ${NAME}
+
+ln -sf  ../init.d/fetchmail /etc/rc.d/rc0.d/K25fetchmail
+ln -sf  ../init.d/fetchmail /etc/rc.d/rc3.d/S35fetchmail
+ln -sf  ../init.d/fetchmail /etc/rc.d/rc6.d/K25fetchmail
