@@ -213,14 +213,13 @@ sub buildrules
 			}
 			##get source prot and port
 			$SRC_TGT='SRC';
-			$SPROT = &get_prot($hash,$key);
 			$SPORT = &get_port($hash,$key);
 			$SRC_TGT='';
 
 			##get target prot and port
 			$DPROT=&get_prot($hash,$key);
 
-			if ($DPROT eq ''){$DPROT=' ';}				
+			if ($DPROT eq ''){$DPROT=' ';}
 			@DPROT=split(",",$DPROT);
 
 			#get time if defined
@@ -252,12 +251,13 @@ sub buildrules
 				#print rules to console
 				foreach my $DPROT (@DPROT){
 					$DPORT = &get_port($hash,$key,$DPROT);
-					if ($SPROT ne ''){$PROT=$SPROT;}else{$PROT=$DPROT;}
+					print "uzlputz DPROT= $DPROT $DPORT\n";
+					$PROT=$DPROT;
 					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
-								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
+								if($DPROT eq ' ' || $DPROT ne ''){
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}
 									if(substr($DPORT, 2, 4) eq 'icmp'){
 										my @icmprule= split(",",substr($DPORT, 12,));
@@ -311,12 +311,12 @@ sub buildrules
 			}elsif($MODE eq '0'){
 				foreach my $DPROT (@DPROT){
 					$DPORT = &get_port($hash,$key,$DPROT);
-					if ($SPROT ne ''){$PROT=$SPROT;}else{$PROT=$DPROT;}
+					$PROT=$DPROT;
 					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
-								if($SPROT eq '' || $SPROT eq $DPROT || $DPROT eq ' '){
+								if($DPROT ne '' || $DPROT eq ' '){
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}
 									#Process ICMP RULE
 									if(substr($DPORT, 2, 4) eq 'icmp'){
@@ -528,30 +528,24 @@ sub get_prot
 {
 	my $hash=shift;
 	my $key=shift;
-	if ($$hash{$key}[7] eq 'ON' && $SRC_TGT eq 'SRC'){
-		if ($$hash{$key}[10] ne ''){
-			return"$$hash{$key}[8]";
-		}elsif($$hash{$key}[9] ne ''){
-			return"$$hash{$key}[8]";
-		}else{
-			return "$$hash{$key}[8]";
-		}
-	}elsif($$hash{$key}[11] eq 'ON' && $SRC_TGT eq ''){
-		if ($$hash{$key}[14] eq 'TGT_PORT'){
-			if ($$hash{$key}[15] ne '' && $$hash{$key}[8] eq ''){
-				return "TCP,UDP";
-			}elsif($$hash{$key}[13] ne ''){
-				return "$$hash{$key}[8]";
-			}elsif($$hash{$key}[15] ne ''){
-				return "$$hash{$key}[8]";
-			}else{
-				return "$$hash{$key}[8]";
-			}
-		}elsif($$hash{$key}[14] eq 'cust_srv'){
+	#check AH,GRE,ESP or ICMP
+	if ($$hash{$key}[7] ne 'ON' && $$hash{$key}[11] ne 'ON'){
+		return "$$hash{$key}[8]";
+	}
+	if ($$hash{$key}[7] eq 'ON' || $$hash{$key}[11] eq 'ON'){
+		#check if servicegroup or service
+		if($$hash{$key}[14] eq 'cust_srv'){
 			return &fwlib::get_srv_prot($$hash{$key}[15]);
-			
 		}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
 			return &fwlib::get_srvgrp_prot($$hash{$key}[15]);
+		}elsif (($$hash{$key}[10] ne '' || $$hash{$key}[15] ne '') && $$hash{$key}[8] eq ''){ #when ports are used and prot set to "all"
+			return "TCP,UDP";
+		}elsif (($$hash{$key}[10] ne '' || $$hash{$key}[15] ne '') && ($$hash{$key}[8] eq 'TCP' || $$hash{$key}[8] eq 'UDP')){ #when ports are used and prot set to "tcp" or "udp"
+			return "$$hash{$key}[8]";
+		}elsif (($$hash{$key}[10] eq '' && $$hash{$key}[15] eq '') && $$hash{$key}[8] ne 'ICMP'){ #when ports are NOT used and prot NOT set to "ICMP"
+			return "$$hash{$key}[8]";
+		}else{
+			return "$$hash{$key}[8]";
 		}
 	}
 	#DNAT
@@ -576,10 +570,6 @@ sub get_port
 					return ":$$hash{$key}[10]";
 				}
 			}
-		}elsif($$hash{$key}[9] ne '' && $$hash{$key}[9] ne 'All ICMP-Types'){
-			return "--icmp-type $$hash{$key}[9] ";
-		}elsif($$hash{$key}[9] eq 'All ICMP-Types'){
-			return;
 		}
 	}elsif($$hash{$key}[11] eq 'ON' && $SRC_TGT eq ''){
 		if($$hash{$key}[14] eq 'TGT_PORT'){
@@ -595,10 +585,6 @@ sub get_port
 						 return ":$$hash{$key}[15]";
 					 }
 				}
-			}elsif($$hash{$key}[13] ne '' && $$hash{$key}[13] ne 'All ICMP-Types'){
-				return "--icmp-type $$hash{$key}[13] ";
-			}elsif($$hash{$key}[13] ne '' && $$hash{$key}[13] eq 'All ICMP-Types'){
-				return;
 			}
 		}elsif($$hash{$key}[14] eq 'cust_srv'){
 			if ($prot ne 'ICMP'){
@@ -607,10 +593,6 @@ sub get_port
 				}else{
 					return "--dport ".&fwlib::get_srv_port($$hash{$key}[15],1,$prot);
 				}
-			}elsif($prot eq 'ICMP' && $$hash{$key}[15] ne 'All ICMP-Types'){
-				return "--icmp-type ".&fwlib::get_srv_port($$hash{$key}[15],3,$prot);
-			}elsif($prot eq 'ICMP' && $$hash{$key}[15] eq 'All ICMP-Types'){
-				return;
 			}
 		}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
 			if 	($prot ne 'ICMP'){
@@ -619,6 +601,14 @@ sub get_port
 			elsif($prot eq 'ICMP'){
 				return &fwlib::get_srvgrp_port($$hash{$key}[15],$prot);
 			}
+		}
+	}
+	#CHECK ICMP
+	if ($$hash{$key}[7] ne 'ON' && $$hash{$key}[11] ne 'ON' && $SRC_TGT eq ''){
+		if($$hash{$key}[9] ne '' && $$hash{$key}[9] ne 'All ICMP-Types'){
+			return "--icmp-type $$hash{$key}[9] ";
+		}elsif($$hash{$key}[9] eq 'All ICMP-Types'){
+			return;
 		}
 	}
 }
