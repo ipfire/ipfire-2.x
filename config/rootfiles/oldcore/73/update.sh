@@ -53,6 +53,11 @@ extract_files
 #Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+# Remove invalid fetchmail symlinks when postfix is installed.
+if [ ! -e "/etc/rc.d/init.d/fetchmail" ]; then
+	rm -f /etc/rc.d/rc*.d/*fetchmail
+fi
+
 sync
 
 # This update need a reboot...

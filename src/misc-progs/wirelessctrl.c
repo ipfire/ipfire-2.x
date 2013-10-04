@@ -130,7 +130,7 @@ int main(void) {
 		macaddress = strtok(NULL, ",");
 		enabled = strtok(NULL, ",");
 
-		if (strncmp(enabled, "on", 2) != 0) {
+		if (strcmp(enabled, "on") == 0) {
 			/* both specified, added security */
 			if ((strlen(macaddress) == 17) && (VALID_IP_AND_MASK(ipaddress))) {
 				snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -m mac --mac-source %s -s %s -i %s -j ACCEPT", macaddress, ipaddress, blue_dev);
