@@ -108,6 +108,7 @@ $settings{'TOR_RELAY_ENABLED'} = 'off';
 $settings{'TOR_RELAY_MODE'} = 'exit';
 $settings{'TOR_RELAY_ADDRESS'} = '';
 $settings{'TOR_RELAY_PORT'} = 9001;
+$settings{'TOR_RELAY_DIRPORT'} = 0;
 $settings{'TOR_RELAY_NICKNAME'} = '';
 $settings{'TOR_RELAY_CONTACT_INFO'} = '';
 $settings{'TOR_RELAY_BANDWIDTH_RATE'} = 0;
@@ -142,6 +143,11 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 
 	if (!&General::validport($settings{'TOR_RELAY_PORT'})) {
 		$errormessage = "$Lang::tr{'tor errmsg invalid relay port'}: $settings{'TOR_RELAY_PORT'}";
+	}
+	if ($settings{'TOR_RELAY_DIRPORT'} ne '0') {
+		if (!&General::validport($settings{'TOR_RELAY_DIRPORT'})) {
+			$errormessage = "$Lang::tr{'tor errmsg invalid directory port'}: $settings{'TOR_RELAY_DIRPORT'}";
+		}
 	}
 
 	if ($settings{'TOR_RELAY_ADDRESS'} ne '') {
@@ -382,7 +388,7 @@ END
 				</td>
 				<td width='25%' class='base'>$Lang::tr{'tor relay nickname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td width='20%'>
-					<input type='text' name='TOR_RELAY_NICKNAME' value='$settings{'TOR_RELAY_NICKNAME'}' />
+					<input type='text' name='TOR_RELAY_NICKNAME' value='$settings{'TOR_RELAY_NICKNAME'}' maxlength='19' />
 				</td>
 			</tr>
 			<tr>
@@ -393,6 +399,14 @@ END
 				<td width='25%' class='base'>$Lang::tr{'tor relay port'}:</td>
 				<td width='20%'>
 					<input type='text' name='TOR_RELAY_PORT' value='$settings{'TOR_RELAY_PORT'}' size='5' />
+				</td>
+			</tr>
+			<tr>
+				<td width='25%'>&nbsp;</td>
+				<td width='30%'>&nbsp;</td>
+				<td width='25%' class='base'>$Lang::tr{'tor directory port'}:</td>
+				<td width='20%'>
+					<input type='text' name='TOR_RELAY_DIRPORT' value='$settings{'TOR_RELAY_DIRPORT'}' size='5' />&nbsp;$Lang::tr{'tor 0 = disabled'}
 				</td>
 			</tr>
 			<tr>
@@ -607,7 +621,7 @@ END
 END
 
 				if (exists($node->{'country_code'})) {
-					if ($node->{'country_code'} eq '??') {
+					if (!$node->{'country_code'} or $node->{'country_code'} eq '??') {
 						print "<img src='/images/flags/blank.png' border='0' align='absmiddle'/>";
 					} else {
 						print "<a href='country.cgi#$node->{'country_code'}'><img src='/images/flags/$node->{'country_code'}.png' border='0' align='absmiddle' alt='$node->{'country_code'}'></a>";
@@ -682,6 +696,10 @@ sub BuildConfiguration() {
 		print FILE "ExitPolicyRejectPrivate 1\n";
 
 		print FILE "ORPort $settings{'TOR_RELAY_PORT'}\n";
+
+		if ($settings{'TOR_RELAY_DIRPORT'} ne '0') {
+			print FILE "DirPort $settings{'TOR_RELAY_DIRPORT'}\n";
+		}
 
 		if ($settings{'TOR_RELAY_ADDRESS'} ne '') {
 			print FILE "Address $settings{'TOR_RELAY_ADDRESS'}\n";

@@ -71,9 +71,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-#	cd $(DIR_APP) && sed -i -e "s| -fno-stack-protector||g" Makefile
+	# Enable SMP as default
+	cd $(DIR_APP) && sed -i -e "s|CONSERVATIVE_SMP 1|CONSERVATIVE_SMP 0|g" config.h
 	cd $(DIR_APP) && sed -i -e "s|scp |echo |g" Makefile
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make $(EXTRA_MAKE)
 	-mkdir -p /usr/lib/memtest86+
 	cd $(DIR_APP) && cp -f memtest.bin /usr/lib/memtest86+
 	@rm -rf $(DIR_APP)
