@@ -251,7 +251,6 @@ sub buildrules
 				#print rules to console
 				foreach my $DPROT (@DPROT){
 					$DPORT = &get_port($hash,$key,$DPROT);
-					print "uzlputz DPROT= $DPROT $DPORT\n";
 					$PROT=$DPROT;
 					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
 					foreach my $a (sort keys %sourcehash){
@@ -593,6 +592,8 @@ sub get_port
 				}else{
 					return "--dport ".&fwlib::get_srv_port($$hash{$key}[15],1,$prot);
 				}
+			}elsif($prot eq 'ICMP' && $$hash{$key}[11] eq 'ON'){        #When PROT is ICMP and "use targetport is checked, this is an icmp-service
+				return "--icmp-type ".&fwlib::get_srv_port($$hash{$key}[15],3,$prot);
 			}
 		}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
 			if 	($prot ne 'ICMP'){
