@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2012-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2012  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -446,7 +446,7 @@ sub showEditBox() {
 			<table width='100%'>
 				<tr>
 					<td class='base' width='20%'>$Lang::tr{'wlan client ssid'}:</td>
-					<td width='40%'><input type='text' name='SSID' value=$settings{'SSID'} size='25'/></td>
+					<td width='40%'><input type='text' name='SSID' value='$settings{'SSID'}' size='25'/></td>
 					<td class='base' width='10%'>$Lang::tr{'enabled'}</td>
 					<td width='30%'><input type='checkbox' name='ENABLED' $checked{'ENABLED'} /></td>
 				</tr>
@@ -464,7 +464,7 @@ sub showEditBox() {
 				</tr>
 				<tr>
 					<td class='base' width='20%'>$Lang::tr{'wlan client psk'}:&nbsp;</td>
-					<td width='40%'><input type='password' name='PSK' value=$settings{'PSK'} size='25'/></td>
+					<td width='40%'><input type='password' name='PSK' value='$settings{'PSK'}' size='25'/></td>
 					<td colspan="2" width='40%'></td>
 				</tr>
 			</table>
