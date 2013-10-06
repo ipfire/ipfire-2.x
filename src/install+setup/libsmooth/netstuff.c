@@ -615,6 +615,7 @@ int nicmenu(int colour)
 	int rc, choise = 0, count = 0, kcount = 0, mcount = 0, i, j, nic_in_use;
 	int found_NIC_as_Card[4];
 	char message[STRING_SIZE];
+	char temp[STRING_SIZE];
 
 	char cMenuInhalt[STRING_SIZE];
 	char MenuInhalt[20][180];
@@ -657,8 +658,20 @@ int nicmenu(int colour)
 		pMenuInhalt[mcount] = NULL;
 
 		sprintf(message, ctr[TR_CHOOSE_NETCARD], ucolourcard[colour]);
-		rc = newtWinMenu( ctr[TR_NETCARDMENU2], message, 50, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_OK], ctr[TR_SELECT], ctr[TR_CANCEL], NULL);
-				
+		rc=2;
+		while ( rc == 2 ) {
+			rc = newtWinMenu( ctr[TR_NETCARDMENU2], message, 50, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_SELECT], ctr[TR_IDENTIFY], ctr[TR_CANCEL], NULL);
+			if ( rc == 2 ) {
+				sprintf(temp, "/sbin/ip link set %s up", nics[found_NIC_as_Card[choise]].nic);
+				mysystem(temp);
+				sprintf(temp, "/usr/sbin/ethtool -p %s 10", nics[found_NIC_as_Card[choise]].nic);
+				if (runcommandwithstatus(temp,ctr[TR_IDENTIFY_SHOULD_BLINK]) != 0) {      
+					errorbox(ctr[TR_IDENTIFY_NOT_SUPPORTED]);
+				sprintf(temp, "/sbin/ip link set %s down", nics[found_NIC_as_Card[choise]].nic);
+				mysystem(temp);
+				}
+			}
+		}
 		if ( rc == 0 || rc == 1) {
 			write_configs_netudev(found_NIC_as_Card[choise], colour);
 		}
