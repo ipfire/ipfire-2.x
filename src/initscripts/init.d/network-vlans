@@ -80,13 +80,15 @@ for interface in green0 red0 blue0 orange0; do
 				continue
 			fi
 
-			echo "Creating VLAN interface ${interface}..."
-			vconfig add ${PARENT_DEV} ${VLAN_ID}
-			ip link set ${PARENT_DEV}.${VLAN_ID} name ${interface}
-
+			# Build command line.
+			command="ip link add link ${PARENT_DEV} name ${interface}"
 			if [ -n "${MAC_ADDRESS}" ]; then
-				ip link set ${interface} address ${MAC_ADDRESS}
+				command="${command} address ${MAC_ADDRESS}"
 			fi
+			command="${command} type vlan id ${VLAN_ID}"
+
+			echo "Creating VLAN interface ${interface}..."
+			${command}
 
 			# Bring up the parent device.
 			ip link set ${PARENT_DEV} up
@@ -100,7 +102,7 @@ for interface in green0 red0 blue0 orange0; do
 
 			echo "Removing VLAN interface ${interface}..."
 			ip link set ${interface} down
-			vconfig rem ${interface}
+			ip link delete ${interface}
 			;;
 		
 		*)
