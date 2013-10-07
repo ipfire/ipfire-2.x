@@ -933,6 +933,8 @@
 'fwdfw err notgt' => 'Kein Ziel ausgewählt',
 'fwdfw err notgtip' => 'Bitte Ziel-IP-Adresse angeben',
 'fwdfw err prot' => 'Quell- und Zielprotokoll müssen identisch sein',
+'fwdfw err prot_port' => 'Bei dem gewählten Protokoll sind Quell- und Zielport nicht erlaubt',
+'fwdfw err prot_port1' => 'Bei Nutzung von Quell- oder Zielport muss als Protokoll TCP oder UDP gewählt werden.',
 'fwdfw err remark' => 'Die Bemerkung enthält ungültige Zeichen',
 'fwdfw err ruleexists' => 'Eine identische Regel existiert bereits',
 'fwdfw err same' => 'Quelle und Ziel sind identisch',

@@ -805,7 +805,17 @@ sub checkrule
 			}
 		}
 	}
-	#check source and destination protocol if source manual and dest single service
+	#When using source- or targetport, the protocol has to be TCP or UDP
+	if (($fwdfwsettings{'USESRV'} eq 'ON' || $fwdfwsettings{'USE_SRC_PORT'} eq 'ON') && ($fwdfwsettings{'SRC_PORT'} ne '' || $fwdfwsettings{'TGT_PORT'} ne '') && ($fwdfwsettings{'PROT'} ne 'TCP' && $fwdfwsettings{'PROT'} ne 'UDP')){
+		$errormessage.=$Lang::tr{'fwdfw err prot_port1'};
+		return;
+	}
+	#when icmp selected, no targetport allowed
+	if (($fwdfwsettings{'PROT'} ne '' && $fwdfwsettings{'PROT'} ne 'TCP' && $fwdfwsettings{'PROT'} ne 'UDP') && ($fwdfwsettings{'USESRV'} eq 'ON' || $fwdfwsettings{'USE_SRC_PORT'} eq 'ON')){
+		$errormessage.=$Lang::tr{'fwdfw err prot_port'};
+		return;
+	}
+	#change protocol if prot not equal dest single service
 	if ($fwdfwsettings{'grp3'} eq 'cust_srv'){
 		foreach my $key (sort keys %customservice){
 			if($customservice{$key}[0] eq $fwdfwsettings{$fwdfwsettings{'grp3'}}){
@@ -826,7 +836,7 @@ sub checkrule
 	if ($fwdfwsettings{'PROT'} eq 'ICMP'){
 		$fwdfwsettings{'USE_SRC_PORT'}='';
 		$fwdfwsettings{'SRC_PORT'}='';
-		$fwdfwsettings{'USESRV'}='';
+		#$fwdfwsettings{'USESRV'}='';
 		$fwdfwsettings{'TGT_PORT'}='';
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 		foreach my $key (keys %icmptypes){
@@ -1254,7 +1264,7 @@ sub get_serviceports
 		}
 	}
 	if($tcp && $udp && $icmp){
-		push (@protocols,"All");
+		push (@protocols,"TCP,UDP, <br>ICMP");
 		return @protocols;
 	}
 	if($tcp){
@@ -1656,7 +1666,7 @@ END
 		<tr><td><select name='PROT'  id='PROT' onchange="getdropdown()">
 END
 		if ($fwdfwsettings{'PROT'} eq ''){
-				print"<option selected>$Lang::tr{'all'}</option>";
+				print"<option value='' selected>$Lang::tr{'all'}</option>";
 		}else{
 			print"<option value=''>$Lang::tr{'all'}</option>";
 		}
@@ -2244,7 +2254,7 @@ END
 				push (@protocols,$Lang::tr{'all'});
 			}
 			my $protz=join(",",@protocols);
-			if($protz eq 'ICMP'){
+			if($protz eq 'ICMP' && $$hash{$key}[9] ne 'All ICMP-Types'){
 				&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 				foreach my $keyicmp (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
 					if($$hash{$key}[9] eq "$icmptypes{$keyicmp}[0]"){
