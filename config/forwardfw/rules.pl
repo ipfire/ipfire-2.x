@@ -256,7 +256,7 @@ sub buildrules
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
-								if($DPROT eq ' ' || $DPROT ne ''){
+								if($DPROT ne ''){
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}
 									if(substr($DPORT, 2, 4) eq 'icmp'){
 										my @icmprule= split(",",substr($DPORT, 12,));
@@ -315,7 +315,7 @@ sub buildrules
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
-								if($DPROT ne '' || $DPROT eq ' '){
+								if($DPROT ne ''){
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}
 									#Process ICMP RULE
 									if(substr($DPORT, 2, 4) eq 'icmp'){
