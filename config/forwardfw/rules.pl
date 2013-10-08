@@ -252,7 +252,7 @@ sub buildrules
 				foreach my $DPROT (@DPROT){
 					$DPORT = &get_port($hash,$key,$DPROT);
 					$PROT=$DPROT;
-					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
+					$PROT="-p $PROT" if ($PROT ne '');
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
@@ -311,7 +311,7 @@ sub buildrules
 				foreach my $DPROT (@DPROT){
 					$DPORT = &get_port($hash,$key,$DPROT);
 					$PROT=$DPROT;
-					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
+					$PROT="-p $PROT" if ($PROT ne '');
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){

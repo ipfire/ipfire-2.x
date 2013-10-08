@@ -2254,7 +2254,7 @@ END
 				push (@protocols,$Lang::tr{'all'});
 			}
 			my $protz=join(",",@protocols);
-			if($protz eq 'ICMP' && $$hash{$key}[9] ne 'All ICMP-Types'){
+			if($protz eq 'ICMP' && $$hash{$key}[9] ne 'All ICMP-Types' && $$hash{$key}[14] ne 'cust_srvgrp'){
 				&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 				foreach my $keyicmp (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
 					if($$hash{$key}[9] eq "$icmptypes{$keyicmp}[0]"){
