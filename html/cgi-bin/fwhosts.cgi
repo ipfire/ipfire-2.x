@@ -100,6 +100,43 @@ print<<END;
 			\$('#' + id).prop("checked", true);
 		});
 	});
+function toggle_elements( id ) {
+	if(document.getElementById(id).style.display== "none")
+	{
+		document.getElementById(id).style.display='block';
+	}
+	else{
+		document.getElementById(id).style.display='none';
+	}
+	return true;
+}
+function hide_elements(){
+	var elementNames = hide_elements.arguments;
+	for (var i=0; i<elementNames.length; i++)
+	{
+		var elementName = elementNames[i];
+		document.getElementById(elementName).style.display='none';
+	}
+}
+function getdropdown(){
+	d = document.getElementById("PROT").value;
+	if ( d == 'ICMP' )
+	{
+		document.getElementById('PROTOKOLL').style.display='block';
+	}
+	else
+	{
+		document.getElementById('PROTOKOLL').style.display='none';
+	}
+	if(document.getElementById('PROTOKOLL').style.display== "block" )
+	{
+		document.getElementById('PORT').style.display='none';
+	}
+	if(document.getElementById('PROTOKOLL').style.display== "none" )
+	{
+		document.getElementById('PORT').style.display='block';
+	}
+}
 </script>
 END
 
@@ -1306,7 +1343,7 @@ sub addservice
 	print<<END;
 	<table width='100%' border='0'><form method='post'>
 	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost srv_name'}:</td><td><input type='text' name='SRV_NAME' id='textbox1' value='$fwhostsettings{'SRV_NAME'}' size='24'><script>document.getElementById('textbox1').focus()</script></td></tr>
-	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT'>
+	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT' id='PROT' onchange="getdropdown()">
 END
 	foreach ("TCP","UDP","ICMP")
 	{
@@ -1318,8 +1355,8 @@ END
 		}
 	}
 	print<<END;
-	</select></td></tr>
-	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td><select name='ICMP_TYPES'>
+	</select></td></tr></table>
+	<div id='PROTOKOLL' class='noscript'><table width=100%' border='0'><tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td><select name='ICMP_TYPES'>
 END
 	&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 	print"<option>All ICMP-Types</option>";
@@ -1331,9 +1368,9 @@ END
 		}
 	}
 	print<<END;
-	</select></td></tr>
-	<tr><td width='10%'>$Lang::tr{'fwhost port'}:</td><td><input type='text' name='SRV_PORT' value='$fwhostsettings{'SRV_PORT'}' maxlength='11' size='24'></td></tr>
-	<tr><td colspan='6'><br><hr></td></tr>
+	</select></td></tr></table></div>
+	<div id='PORT' class='noscript'><table width='100%' border='0'><tr><td width='10%'>$Lang::tr{'fwhost port'}:</td><td><input type='text' name='SRV_PORT' value='$fwhostsettings{'SRV_PORT'}' maxlength='11' size='24'></td></tr></table></div>
+	<table width='100%' border='0'><tr><td colspan='6'><br><hr></td></tr>
 	<tr><td colspan='6' align='right'>
 END
 	if ($fwhostsettings{'updatesrv'} eq 'on')
@@ -1357,6 +1394,9 @@ END
 	
 	
 END
+	if ($fwhostsettings{'PROT'} ne 'ICMP'){
+			print"<script language='JavaScript'>hide_elements('PROTOKOLL');</script>";
+		}
 	&Header::closebox();
 	&viewtableservice;
 }
