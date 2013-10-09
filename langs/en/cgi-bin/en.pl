@@ -1024,7 +1024,7 @@
 'fwhost addgrp' => 'Add new network/host group:',
 'fwhost addgrpname' => 'Group name:',
 'fwhost addhost' => 'Add new host:',
-'fwhost addnet' => 'Add new hetwork:',
+'fwhost addnet' => 'Add new network:',
 'fwhost addrule' => 'Add/edit rule:',
 'fwhost addservice' => 'Add service:',
 'fwhost addservicegrp' => 'Add new service group:',
