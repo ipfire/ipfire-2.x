@@ -123,6 +123,14 @@ function toggle_elements( id ) {
 	else{
 		document.getElementById(id).style.display='none';
 	}
+	if(document.getElementById('targetport').style.display== "none" && document.getElementById('PROT').value === 'ICMP' )
+	{
+		document.getElementById('PROTOKOLL').style.display='block';
+	}
+	if(document.getElementById('targetport').style.display== "block" && document.getElementById('PROT').value === 'ICMP' )
+	{
+		document.getElementById('PROTOKOLL').style.display='none';
+	}
 	return true;
 }
 function hide_elements()
@@ -1754,6 +1762,9 @@ END
 END
 		if ($fwdfwsettings{'USESRV'} ne 'ON'){
 			print"<script language='JavaScript'>hide_elements('targetport');</script>";
+		}
+		if ($fwdfwsettings{'USESRV'} eq 'ON' && $fwdfwsettings{'PROT'} eq 'ICMP'){
+			print"<script language='JavaScript'>hide_elements('PROTOKOLL');</script>";
 		}
 		&Header::closebox;
 		#---Activate/logging/remark-------------------------------------
