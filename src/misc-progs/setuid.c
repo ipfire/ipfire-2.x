@@ -42,11 +42,12 @@
 #endif
 
 /* Trusted environment for executing commands */
-char * trusted_env[4]={
+char * trusted_env[4] = {
 	"PATH=/usr/bin:/usr/sbin:/sbin:/bin",
 	"SHELL=/bin/sh",
 	"TERM=dumb",
-	NULL};
+	NULL
+};
 
 /* Spawns a child process that uses /bin/sh to interpret a command.
  * This is much the same in use and purpose as system(), yet as it uses execve
