@@ -174,31 +174,3 @@ int initsetuid(void)
 
 	return 1;
 }
-
-/* check whether a file exists */
-int file_exists(const char *fname) {
-	struct stat st;
-	stat(fname, &st);
-	return S_ISREG(st.st_mode) ? 1 : 0;
-}
-
-/* check whether a file exists. fname is wildcard eg: file_exists (/tmp/foo*) */
-int file_exists_w(const char *fname)
-{
-	/* do a quick check first */
-	struct stat st;
-	stat(fname, &st);
-	if (S_ISREG(st.st_mode))
-		return 1;
-
-	/* check for possible wild cards in name */
-	glob_t globbuf;
-	int retval=0;
-	if (glob(fname, GLOB_ERR, NULL, &globbuf)==0) {
-		if (globbuf.gl_pathc>0) {
-			retval=1;
-		}
-	}
-	globfree(&globbuf);
-	return retval;
-}

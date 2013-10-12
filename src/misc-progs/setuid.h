@@ -67,8 +67,4 @@ int unpriv_system(char* command, uid_t uid, gid_t gid);
 size_t strlcat(char *dst, const char *src, size_t len);
 int initsetuid(void);
 
-/* check whether a file exists */
-int file_exists(const char *fname);	    
-int file_exists_w(const char *fname); //wildcard filename test
-
 #endif
