@@ -15,7 +15,7 @@
 /* As nothing in setuid.c uses STRING_SIZE specifically there's no real reason
  * to redefine it if it already is set */
 #ifndef STRING_SIZE
-#define STRING_SIZE 256
+#define STRING_SIZE 1024
 #endif
 
 extern char * trusted_env[4];
