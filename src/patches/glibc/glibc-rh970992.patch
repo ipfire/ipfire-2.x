@@ -1,0 +1,190 @@
+#
+# Patch provided by Ulrich Drepper in BZ#919562.
+#
+# Patch has not been sent upstream.
+#
+# 2013-03-08  Ulrich Drepper  <drepper@gmail.com>
+#
+#	* elf/rtld.c (dl_main): Correctly determine when the application
+#	required DSOs with TLS and bump the generation counter in that
+#	case.  The current condition does not account for an audit
+#	module using TLS.
+#	* elf/dl-tls.c (_dl_count_modids): New function.
+#	(_dl_allocate_tls_init): Add assertion to check TLS
+#	generation.
+#	* sysdeps/generic/ldsodefs.h: Declare _dl_count_modids.
+#	* elf/Makefile: Add rules to build and run tst-audit9.
+#	* elf/tst-audit9.c: New file.
+#	* elf/tst-auditmod9a.c: New file.
+#	* elf/tst-auditmod9b.c: New file.
+#
+diff -urN glibc-2.12-2-gc4ccff1.orig/elf/dl-tls.c glibc-2.12-2-gc4ccff1/elf/dl-tls.c
+--- glibc-2.12-2-gc4ccff1.orig/elf/dl-tls.c	2013-04-24 16:06:10.410756438 -0400
++++ glibc-2.12-2-gc4ccff1/elf/dl-tls.c	2013-04-24 16:06:49.092604707 -0400
+@@ -109,6 +109,28 @@
+ }
+ 
+ 
++size_t
++internal_function
++_dl_count_modids (void)
++{
++  if (! __builtin_expect (GL(dl_tls_dtv_gaps), true))
++    return GL(dl_tls_max_dtv_idx);
++
++  size_t n = 0;
++  struct dtv_slotinfo_list *runp = GL(dl_tls_dtv_slotinfo_list);
++  while (runp != NULL)
++    {
++      for (size_t i = 0; i < runp->len; ++i)
++	if (runp->slotinfo[i].map != NULL)
++	  ++n;
++
++      runp = runp->next;
++    }
++
++  return n;
++}
++
++
+ #ifdef SHARED
+ void
+ internal_function
+@@ -411,6 +433,7 @@
+ 
+ 	  /* Keep track of the maximum generation number.  This might
+ 	     not be the generation counter.  */
++	  assert (listp->slotinfo[cnt].gen <= GL(dl_tls_generation));
+ 	  maxgen = MAX (maxgen, listp->slotinfo[cnt].gen);
+ 
+ 	  if (map->l_tls_offset == NO_TLS_OFFSET
+diff -urN glibc-2.12-2-gc4ccff1.orig/elf/Makefile glibc-2.12-2-gc4ccff1/elf/Makefile
+--- glibc-2.12-2-gc4ccff1.orig/elf/Makefile	2013-04-24 16:06:10.408756448 -0400
++++ glibc-2.12-2-gc4ccff1/elf/Makefile	2013-04-24 16:07:29.475457962 -0400
+@@ -97,6 +97,8 @@
+ 		   tst-audit6.c tst-auditmod6a.c tst-auditmod6b.c \
+ 		   tst-auditmod6c.c \
+ 		   tst-audit7.c tst-auditmod7a.c tst-auditmod7b.c \
++		   tst-audit9.c \
++		   tst-auditmod9a.c tst-auditmod9b.c \
+ 		   order2mod1.c order2mod2.c order2mod3.c order2mod4.c \
+ 		   tst-stackguard1.c tst-stackguard1-static.c \
+ 		   tst-array5.c tst-array5-static.c tst-array5dep.c \
+@@ -198,7 +200,7 @@
+ 	 tst-dlmodcount tst-dlopenrpath tst-deep1 \
+ 	 tst-dlmopen1 tst-dlmopen2 tst-dlmopen3 \
+ 	 unload3 unload4 unload5 unload6 unload7 unload8 tst-global1 order2 \
+-	 tst-audit1 tst-audit2 \
++	 tst-audit1 tst-audit2 tst-audit9 \
+ 	 tst-stackguard1 tst-addr1 tst-thrlock \
+ 	 tst-unique1 tst-unique2
+ #	 reldep9
+@@ -251,7 +253,8 @@
+ 		unload8mod1 unload8mod1x unload8mod2 unload8mod3 \
+ 		order2mod1 order2mod2 order2mod3 order2mod4 \
+ 		tst-unique1mod1 tst-unique1mod2 \
+-		tst-unique2mod1 tst-unique2mod2
++		tst-unique2mod1 tst-unique2mod2 \
++		tst-auditmod9a tst-auditmod9b
+ ifeq (yes,$(have-initfini-array))
+ modules-names += tst-array2dep tst-array5dep
+ endif
+@@ -574,6 +577,8 @@
+ ifuncmod1.so-no-z-defs = yes
+ ifuncmod5.so-no-z-defs = yes
+ ifuncmod6.so-no-z-defs = yes
++tst-auditmod9a.so-no-z-defs = yes
++tst-auditmod9b.so-no-z-defs = yes
+ 
+ ifeq ($(build-shared),yes)
+ # Build all the modules even when not actually running test programs.
+@@ -1015,6 +1020,10 @@
+ $(objpfx)tst-audit7.out: $(objpfx)tst-auditmod7b.so
+ tst-audit7-ENV = LD_AUDIT=$(objpfx)tst-auditmod7b.so
+ 
++$(objpfx)tst-audit9: $(libdl)
++$(objpfx)tst-audit9.out: $(objpfx)tst-auditmod9a.so $(objpfx)tst-auditmod9b.so
++tst-audit9-ENV = LD_AUDIT=$(objpfx)tst-auditmod9a.so
++
+ $(objpfx)tst-global1: $(libdl)
+ $(objpfx)tst-global1.out: $(objpfx)testobj6.so $(objpfx)testobj2.so
+ 
+diff -urN glibc-2.12-2-gc4ccff1.orig/elf/rtld.c glibc-2.12-2-gc4ccff1/elf/rtld.c
+--- glibc-2.12-2-gc4ccff1.orig/elf/rtld.c	2013-04-24 16:06:10.410756438 -0400
++++ glibc-2.12-2-gc4ccff1/elf/rtld.c	2013-04-24 16:06:49.096604693 -0400
+@@ -1637,6 +1637,10 @@
+ 	}
+     }
+ 
++  /* Keep track of the currently loaded modules to count how many
++     non-audit modules which use TLS are loaded.  */
++  size_t count_modids = _dl_count_modids ();
++
+   /* Set up debugging before the debugger is notified for the first time.  */
+ #ifdef ELF_MACHINE_DEBUG_SETUP
+   /* Some machines (e.g. MIPS) don't use DT_DEBUG in this way.  */
+@@ -2281,7 +2285,8 @@
+ # define NONTLS_INIT_TP do { } while (0)
+ #endif
+ 
+-  if (!was_tls_init_tp_called && GL(dl_tls_max_dtv_idx) > 0)
++  if ((!was_tls_init_tp_called && GL(dl_tls_max_dtv_idx) > 0)
++      || count_modids != _dl_count_modids ())
+     ++GL(dl_tls_generation);
+ 
+   /* Now that we have completed relocation, the initializer data
+diff -urN glibc-2.12-2-gc4ccff1.orig/elf/tst-audit9.c glibc-2.12-2-gc4ccff1/elf/tst-audit9.c
+--- glibc-2.12-2-gc4ccff1.orig/elf/tst-audit9.c	1969-12-31 19:00:00.000000000 -0500
++++ glibc-2.12-2-gc4ccff1/elf/tst-audit9.c	2013-04-24 16:06:49.096604693 -0400
+@@ -0,0 +1,8 @@
++#include <dlfcn.h>
++
++int main(void)
++{
++  void *h = dlopen("$ORIGIN/tst-auditmod9b.so", RTLD_LAZY);
++  int (*fp)(void) = dlsym(h, "f");
++  return fp() - 1;
++}
+diff -urN glibc-2.12-2-gc4ccff1.orig/elf/tst-auditmod9a.c glibc-2.12-2-gc4ccff1/elf/tst-auditmod9a.c
+--- glibc-2.12-2-gc4ccff1.orig/elf/tst-auditmod9a.c	1969-12-31 19:00:00.000000000 -0500
++++ glibc-2.12-2-gc4ccff1/elf/tst-auditmod9a.c	2013-04-24 16:06:49.097604689 -0400
+@@ -0,0 +1,16 @@
++#include <stdint.h>
++
++__thread int var;
++
++unsigned int
++la_version (unsigned int v)
++{
++  return v;
++}
++
++void
++la_activity (uintptr_t *cookie, unsigned int flag)
++{
++  ++var;
++}
++
+diff -urN glibc-2.12-2-gc4ccff1.orig/elf/tst-auditmod9b.c glibc-2.12-2-gc4ccff1/elf/tst-auditmod9b.c
+--- glibc-2.12-2-gc4ccff1.orig/elf/tst-auditmod9b.c	1969-12-31 19:00:00.000000000 -0500
++++ glibc-2.12-2-gc4ccff1/elf/tst-auditmod9b.c	2013-04-24 16:06:49.097604689 -0400
+@@ -0,0 +1,6 @@
++__thread int a;
++
++int f(void)
++{
++  return ++a;
++}
+diff -urN glibc-2.12-2-gc4ccff1.orig/sysdeps/generic/ldsodefs.h glibc-2.12-2-gc4ccff1/sysdeps/generic/ldsodefs.h
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/generic/ldsodefs.h	2013-04-24 16:06:10.545755798 -0400
++++ glibc-2.12-2-gc4ccff1/sysdeps/generic/ldsodefs.h	2013-04-24 16:06:49.098604686 -0400
+@@ -1031,6 +1031,9 @@
+ /* Determine next available module ID.  */
+ extern size_t _dl_next_tls_modid (void) internal_function attribute_hidden;
+ 
++/* Count the modules with TLS segments.  */
++extern size_t _dl_count_modids (void) internal_function attribute_hidden;
++
+ /* Calculate offset of the TLS blocks in the static TLS block.  */
+ extern void _dl_determine_tlsoffset (void) internal_function attribute_hidden;
+ 

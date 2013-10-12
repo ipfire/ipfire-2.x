@@ -1,0 +1,181 @@
+#
+# Red Hat BZ:
+# https://bugzilla.redhat.com/show_bug.cgi?id=816647
+#
+# ChangeLog
+#
+#2013-04-30  Patsy Franklin  <pfrankli@redhat.com>
+#
+#	* iconv/gconv_cache.c (find_module): Demangle init_fct before 
+#	checking for NULL. Mangle __btowc_fct if init_fct is non-NULL.
+#	* iconv/gconv_db.c (free_derivation): Check that __shlib_handle 
+#	is non-NULL before demangling the end_fct.  Check for NULL
+#	end_fct after demangling.
+#	(__gconv_release_step): Demangle the end_fct before checking 
+#	it for NULL.   Remove assert on __shlibc_handle != NULL.
+#	(gen_steps): Don't check btowc_fct for NULL before mangling.  
+#	Demangle init_fct before checking for NULL.
+#	(increment_counter): Likewise
+#	* gconv_dl.c (__gconv_find_shlib): Don't check init_fct or
+#	end_fct for NULL before mangling.
+#	* wcsmbs/btowc.c (__btowc): Demangle btowc_fct before checking
+#	for NULL.
+#
+diff -Nrup a/iconv/gconv_cache.c b/iconv/gconv_cache.c
+--- a/iconv/gconv_cache.c	2012-12-24 22:02:13.000000000 -0500
++++ b/iconv/gconv_cache.c	2013-04-30 11:34:20.112389987 -0400
+@@ -207,17 +207,16 @@ find_module (const char *directory, cons
+       result->__data = NULL;
+ 
+       /* Call the init function.  */
+-      if (result->__init_fct != NULL)
+-	{
+-	  __gconv_init_fct init_fct = result->__init_fct;
++      __gconv_init_fct init_fct = result->__init_fct;
+ #ifdef PTR_DEMANGLE
+-	  PTR_DEMANGLE (init_fct);
++      PTR_DEMANGLE (init_fct);
+ #endif
++      if (init_fct != NULL)
++	{
+ 	  status = DL_CALL_FCT (init_fct, (result));
+ 
+ #ifdef PTR_MANGLE
+-	  if (result->__btowc_fct != NULL)
+-	    PTR_MANGLE (result->__btowc_fct);
++	  PTR_MANGLE (result->__btowc_fct);
+ #endif
+ 	}
+     }
+diff -Nrup a/iconv/gconv_db.c b/iconv/gconv_db.c
+--- a/iconv/gconv_db.c	2012-12-24 22:02:13.000000000 -0500
++++ b/iconv/gconv_db.c	2013-04-30 11:32:42.700592914 -0400
+@@ -179,16 +179,15 @@ free_derivation (void *p)
+   size_t cnt;
+ 
+   for (cnt = 0; cnt < deriv->nsteps; ++cnt)
+-    if (deriv->steps[cnt].__counter > 0
+-	&& deriv->steps[cnt].__end_fct != NULL)
++    if ((deriv->steps[cnt].__counter > 0)
++	&& (deriv->steps[cnt].__shlib_handle != NULL))
+       {
+-	assert (deriv->steps[cnt].__shlib_handle != NULL);
+-
+ 	__gconv_end_fct end_fct = deriv->steps[cnt].__end_fct;
+ #ifdef PTR_DEMANGLE
+ 	PTR_DEMANGLE (end_fct);
+ #endif
+-	DL_CALL_FCT (end_fct, (&deriv->steps[cnt]));
++	if (end_fct != NULL)
++	  DL_CALL_FCT (end_fct, (&deriv->steps[cnt]));
+       }
+ 
+   /* Free the name strings.  */
+@@ -212,16 +211,12 @@ __gconv_release_step (struct __gconv_ste
+   if (step->__shlib_handle != NULL && --step->__counter == 0)
+     {
+       /* Call the destructor.  */
+-      if (step->__end_fct != NULL)
+-	{
+-	  assert (step->__shlib_handle != NULL);
+-
+-	  __gconv_end_fct end_fct = step->__end_fct;
++	__gconv_end_fct end_fct = step->__end_fct;
+ #ifdef PTR_DEMANGLE
+-	  PTR_DEMANGLE (end_fct);
++	PTR_DEMANGLE (end_fct);
+ #endif
+-	  DL_CALL_FCT (end_fct, (step));
+-	}
++      if (end_fct != NULL)
++	DL_CALL_FCT (end_fct, (step));
+ 
+ #ifndef STATIC_GCONV
+       /* Release the loaded module.  */
+@@ -293,13 +288,11 @@ gen_steps (struct derivation_step *best,
+ 
+ 	      /* Call the init function.  */
+ 	      __gconv_init_fct init_fct = result[step_cnt].__init_fct;
+-	      if (init_fct != NULL)
+-		{
+-		  assert (result[step_cnt].__shlib_handle != NULL);
+-
+ # ifdef PTR_DEMANGLE
+-		  PTR_DEMANGLE (init_fct);
++	      PTR_DEMANGLE (init_fct);
+ # endif
++	      if (init_fct != NULL)
++		{
+ 		  status = DL_CALL_FCT (init_fct, (&result[step_cnt]));
+ 
+ 		  if (__builtin_expect (status, __GCONV_OK) != __GCONV_OK)
+@@ -312,8 +305,7 @@ gen_steps (struct derivation_step *best,
+ 		    }
+ 
+ # ifdef PTR_MANGLE
+-		  if (result[step_cnt].__btowc_fct != NULL)
+-		    PTR_MANGLE (result[step_cnt].__btowc_fct);
++		  PTR_MANGLE (result[step_cnt].__btowc_fct);
+ # endif
+ 		}
+ 	    }
+@@ -393,16 +385,15 @@ increment_counter (struct __gconv_step *
+ 
+ 	  /* Call the init function.  */
+ 	  __gconv_init_fct init_fct = step->__init_fct;
+-	  if (init_fct != NULL)
+-	    {
+ #ifdef PTR_DEMANGLE
+-	      PTR_DEMANGLE (init_fct);
++	  PTR_DEMANGLE (init_fct);
+ #endif
++	  if (init_fct != NULL)
++	    {
+ 	      DL_CALL_FCT (init_fct, (step));
+ 
+ #ifdef PTR_MANGLE
+-	      if (step->__btowc_fct != NULL)
+-		PTR_MANGLE (step->__btowc_fct);
++	      PTR_MANGLE (step->__btowc_fct);
+ #endif
+ 	    }
+ 	}
+diff -Nrup a/iconv/gconv_dl.c b/iconv/gconv_dl.c
+--- a/iconv/gconv_dl.c	2012-12-24 22:02:13.000000000 -0500
++++ b/iconv/gconv_dl.c	2013-04-30 11:32:42.701592922 -0400
+@@ -132,10 +132,8 @@ __gconv_find_shlib (const char *name)
+ 
+ #ifdef PTR_MANGLE
+ 		  PTR_MANGLE (found->fct);
+-		  if (found->init_fct != NULL)
+-		    PTR_MANGLE (found->init_fct);
+-		  if (found->end_fct !=  NULL)
+-		    PTR_MANGLE (found->end_fct);
++		  PTR_MANGLE (found->init_fct);
++		  PTR_MANGLE (found->end_fct);
+ #endif
+ 
+ 		  /* We have succeeded in loading the shared object.  */
+diff -Nrup a/wcsmbs/btowc.c b/wcsmbs/btowc.c
+--- a/wcsmbs/btowc.c	2012-12-24 22:02:13.000000000 -0500
++++ b/wcsmbs/btowc.c	2013-04-30 11:32:42.701592922 -0400
+@@ -47,15 +47,15 @@ __btowc (c)
+   /* Get the conversion functions.  */
+   fcts = get_gconv_fcts (_NL_CURRENT_DATA (LC_CTYPE));
+   __gconv_btowc_fct btowc_fct = fcts->towc->__btowc_fct;
++#ifdef PTR_DEMANGLE
++  if (fcts->towc->__shlib_handle != NULL)
++    PTR_DEMANGLE (btowc_fct);
++#endif
+ 
+   if (__builtin_expect (fcts->towc_nsteps == 1, 1)
+       && __builtin_expect (btowc_fct != NULL, 1))
+     {
+       /* Use the shortcut function.  */
+-#ifdef PTR_DEMANGLE
+-      if (fcts->towc->__shlib_handle != NULL)
+-	PTR_DEMANGLE (btowc_fct);
+-#endif
+       return DL_CALL_FCT (btowc_fct, (fcts->towc, (unsigned char) c));
+     }
+   else

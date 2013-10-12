@@ -1,0 +1,105 @@
+From libc-alpha-return-31329-listarch-libc-alpha=sources dot redhat dot com at sourceware dot org Wed Jul 11 11:36:39 2012
+Return-Path: <libc-alpha-return-31329-listarch-libc-alpha=sources dot redhat dot com at sourceware dot org>
+Delivered-To: listarch-libc-alpha at sources dot redhat dot com
+Received: (qmail 15677 invoked by alias); 11 Jul 2012 11:36:39 -0000
+Received: (qmail 15654 invoked by uid 22791); 11 Jul 2012 11:36:37 -0000
+X-SWARE-Spam-Status: No, hits=-4.3 required=5.0
+	tests=AWL,BAYES_00,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,KHOP_RCVD_TRUST,RCVD_IN_DNSWL_LOW,RCVD_IN_HOSTKARMA_YE
+X-Spam-Check-By: sourceware.org
+Date: Wed, 11 Jul 2012 21:06:06 +0930
+From: Alan Modra <amodra at gmail dot com>
+To: libc-alpha at sourceware dot org
+Cc: rsa at linux dot vnet dot ibm dot com
+Subject: powerpc pthread_once bug fix
+Message-ID: <20120711113606.GM3117@bubble.grove.modra.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Mailing-List: contact libc-alpha-help at sourceware dot org; run by ezmlm
+Precedence: bulk
+List-Id: <libc-alpha.sourceware.org>
+List-Subscribe: <mailto:libc-alpha-subscribe at sourceware dot org>
+List-Archive: <http://sourceware.org/ml/libc-alpha/>
+List-Post: <mailto:libc-alpha at sourceware dot org>
+List-Help: <mailto:libc-alpha-help at sourceware dot org>, <http://sourceware dot org/ml/#faqs>
+Sender: libc-alpha-owner at sourceware dot org
+Delivered-To: mailing list libc-alpha at sourceware dot org
+
+This fixes some bugs in the powerpc pthread_once code.  Ref
+gcc.gnu.org/bugzilla/show_bug.cgi?id=52839#c10
+
+Release barriers are needed to ensure any memory written by
+init_routine is seen by other threads before *once_control changes.
+In the case of clear_once_control we need to flush any partially
+written state.
+
+2012-06-28  Alan Modra  <amodra@gmail.com>
+
+	* sysdeps/unix/sysv/linux/powerpc/pthread_once.c (__pthread_once):
+	Add release barrier before setting once_control to say
+	initialisation is done.  Add hints on lwarx.  Use macro in
+	place of isync.
+	(clear_once_control): Add release barrier.
+
+[ This was slightly edited -- the constraint for operand 0 in the last asm was changed
+  from "=&r" to "=&b" as using r0 in that context results in a load immediate 1 into
+  the target rather than incrementing the target. ]
+
+diff --git a/nptl/sysdeps/unix/sysv/linux/powerpc/pthread_once.c b/nptl/sysdeps/unix/sysv/linux/powerpc/pthread_once.c
+index 4e3d7bd..bb1ebf2 100644
+--- a/nptl/sysdeps/unix/sysv/linux/powerpc/pthread_once.c
++++ b/nptl/sysdeps/unix/sysv/linux/powerpc/pthread_once.c
+@@ -28,6 +28,7 @@ clear_once_control (void *arg)
+ {
+   pthread_once_t *once_control = (pthread_once_t *) arg;
+ 
++  __asm __volatile (__lll_rel_instr);
+   *once_control = 0;
+   lll_futex_wake (once_control, INT_MAX, LLL_PRIVATE);
+ }
+@@ -47,15 +48,15 @@ __pthread_once (pthread_once_t *once_control, void (*init_routine) (void))
+ 	 oldval = *once_control;
+ 	 if ((oldval & 2) == 0)
+ 	   *once_control = newval;
+-	 Do this atomically.
++	 Do this atomically with an acquire barrier.
+       */
+       newval = __fork_generation | 1;
+-      __asm __volatile ("1:	lwarx	%0,0,%3\n"
++      __asm __volatile ("1:	lwarx	%0,0,%3" MUTEX_HINT_ACQ "\n"
+ 			"	andi.	%1,%0,2\n"
+ 			"	bne	2f\n"
+ 			"	stwcx.	%4,0,%3\n"
+ 			"	bne	1b\n"
+-			"2:	isync"
++			"2:	" __lll_acq_instr
+ 			: "=&r" (oldval), "=&r" (tmp), "=m" (*once_control)
+ 			: "r" (once_control), "r" (newval), "m" (*once_control)
+ 			: "cr0");
+@@ -87,8 +88,18 @@ __pthread_once (pthread_once_t *once_control, void (*init_routine) (void))
+   pthread_cleanup_pop (0);
+ 
+ 
+-  /* Add one to *once_control to take the bottom 2 bits from 01 to 10.  */
+-  atomic_increment (once_control);
++  /* Add one to *once_control to take the bottom 2 bits from 01 to 10.
++     A release barrier is needed to ensure memory written by init_routine
++     is seen in other threads before *once_control changes.  */
++  int tmp;
++  __asm __volatile (__lll_rel_instr "\n"
++		    "1:	lwarx	%0,0,%2" MUTEX_HINT_REL "\n"
++		    "	addi	%0,%0,1\n"
++		    "	stwcx.	%0,0,%2\n"
++		    "	bne-	1b"
++		    : "=&b" (tmp), "=m" (*once_control)
++		    : "r" (once_control), "m" (*once_control)
++		    : "cr0");
+ 
+   /* Wake up all other threads.  */
+   lll_futex_wake (once_control, INT_MAX, LLL_PRIVATE);
+
+-- 
+Alan Modra
+Australia Development Lab, IBM
+

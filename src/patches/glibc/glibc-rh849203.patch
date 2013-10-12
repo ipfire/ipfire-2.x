@@ -1,0 +1,195 @@
+diff -Nrup a/intl/Makefile b/intl/Makefile
+--- a/intl/Makefile	2010-05-04 05:27:23.000000000 -0600
++++ b/intl/Makefile	2012-08-17 14:40:00.457226629 -0600
+@@ -74,6 +74,16 @@ ifneq (no,$(PERL))
+ tests: $(objpfx)mtrace-tst-gettext
+ endif
+ endif
++
++# Multiple tests use this data.  Create it once to avoid racing and
++# spurious test failures.
++codeset_mo = $(objpfx)domaindir/de_DE/LC_MESSAGES/codeset.mo
++
++$(codeset_mo):
++	$(make-target-directory)
++	msgfmt -o $@T tstcodeset.po
++	mv -f $@T $@
++
+ $(objpfx)mtrace-tst-gettext: $(objpfx)tst-gettext.out
+ 	$(common-objpfx)malloc/mtrace $(objpfx)tst-gettext.mtrace > $@
+ $(objpfx)tst-gettext.out: tst-gettext.sh $(objpfx)tst-gettext
+@@ -83,16 +93,14 @@ $(objpfx)tst-translit.out: tst-translit.
+ 	$(SHELL) -e $< $(common-objpfx) $(common-objpfx)intl/
+ $(objpfx)tst-gettext2.out: tst-gettext2.sh $(objpfx)tst-gettext2
+ 	$(SHELL) -e $< $(common-objpfx) $(common-objpfx)intl/
+-$(objpfx)tst-codeset.out: tst-codeset.sh $(objpfx)tst-codeset
+-	$(SHELL) -e $< $(common-objpfx) $(common-objpfx)intl/
+-$(objpfx)tst-gettext3.out: tst-gettext3.sh $(objpfx)tst-gettext3
+-	$(SHELL) -e $< $(common-objpfx) $(common-objpfx)intl/
+ $(objpfx)tst-gettext4.out: tst-gettext4.sh $(objpfx)tst-gettext4
+ 	$(SHELL) -e $< $(common-objpfx) '$(run-program-prefix)' $(common-objpfx)intl/
+-$(objpfx)tst-gettext5.out: tst-gettext5.sh $(objpfx)tst-gettext5
+-	$(SHELL) -e $< $(common-objpfx) '$(run-program-prefix)' $(common-objpfx)intl/
+ $(objpfx)tst-gettext6.out: tst-gettext6.sh $(objpfx)tst-gettext6
+ 	$(SHELL) -e $< $(common-objpfx) '$(run-program-prefix)' $(common-objpfx)intl/
++
++$(objpfx)tst-codeset.out: $(codeset_mo)
++$(objpfx)tst-gettext3.out: $(codeset_mo)
++$(objpfx)tst-gettext5.out: $(codeset_mo)
+ endif
+ endif
+ 
+@@ -109,6 +117,11 @@ CFLAGS-tst-gettext4.c = -DOBJPFX=\"$(obj
+ CFLAGS-tst-gettext5.c = -DOBJPFX=\"$(objpfx)\"
+ CFLAGS-tst-gettext6.c = -DOBJPFX=\"$(objpfx)\"
+ 
++LOCPATH-ENV = LOCPATH=$(common-objpfx)localedata
++tst-codeset-ENV = $(LOCPATH-ENV)
++tst-gettext3-ENV = $(LOCPATH-ENV)
++tst-gettext5-ENV = $(LOCPATH-ENV)
++
+ ifeq ($(have-thread-library),yes)
+ ifeq (yes,$(build-shared))
+ $(addprefix $(objpfx),$(multithread-test-srcs)): $(shared-thread-library)
+diff -Nrup a/intl/tst-codeset.sh b/intl/tst-codeset.sh
+--- a/intl/tst-codeset.sh	2010-05-04 05:27:23.000000000 -0600
++++ b/intl/tst-codeset.sh	1969-12-31 17:00:00.000000000 -0700
+@@ -1,43 +0,0 @@
+-#! /bin/sh
+-# Test of bind_textdomain_codeset.
+-# Copyright (C) 2001, 2002, 2005 Free Software Foundation, Inc.
+-# This file is part of the GNU C Library.
+-#
+-
+-# The GNU C Library is free software; you can redistribute it and/or
+-# modify it under the terms of the GNU Lesser General Public
+-# License as published by the Free Software Foundation; either
+-# version 2.1 of the License, or (at your option) any later version.
+-
+-# The GNU C Library is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-# Lesser General Public License for more details.
+-
+-# You should have received a copy of the GNU Lesser General Public
+-# License along with the GNU C Library; if not, write to the Free
+-# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+-# 02111-1307 USA.
+-
+-common_objpfx=$1
+-objpfx=$2
+-
+-LC_ALL=C
+-export LC_ALL
+-
+-# Generate the test data.
+-msgfmt -o ${objpfx}codeset.mo.$$ tstcodeset.po || exit
+-# Create the domain directories.
+-mkdir -p ${objpfx}domaindir/de_DE/LC_MESSAGES
+-# Populate them.
+-mv -f ${objpfx}codeset.mo.$$ ${objpfx}domaindir/de_DE/LC_MESSAGES/codeset.mo
+-
+-GCONV_PATH=${common_objpfx}iconvdata
+-export GCONV_PATH
+-LOCPATH=${common_objpfx}localedata
+-export LOCPATH
+-
+-${common_objpfx}elf/ld.so --library-path $common_objpfx \
+-${objpfx}tst-codeset > ${objpfx}tst-codeset.out
+-
+-exit $?
+diff -Nrup a/intl/tst-gettext3.sh b/intl/tst-gettext3.sh
+--- a/intl/tst-gettext3.sh	2010-05-04 05:27:23.000000000 -0600
++++ b/intl/tst-gettext3.sh	1969-12-31 17:00:00.000000000 -0700
+@@ -1,44 +0,0 @@
+-#! /bin/sh
+-# Test that the gettext() results come out in the correct encoding for
+-# locales that differ only in their encoding.
+-# Copyright (C) 2001, 2002, 2005 Free Software Foundation, Inc.
+-# This file is part of the GNU C Library.
+-#
+-
+-# The GNU C Library is free software; you can redistribute it and/or
+-# modify it under the terms of the GNU Lesser General Public
+-# License as published by the Free Software Foundation; either
+-# version 2.1 of the License, or (at your option) any later version.
+-
+-# The GNU C Library is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-# Lesser General Public License for more details.
+-
+-# You should have received a copy of the GNU Lesser General Public
+-# License along with the GNU C Library; if not, write to the Free
+-# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+-# 02111-1307 USA.
+-
+-common_objpfx=$1
+-objpfx=$2
+-
+-LC_ALL=C
+-export LC_ALL
+-
+-# Generate the test data.
+-msgfmt -o ${objpfx}codeset.mo.$$ tstcodeset.po || exit
+-# Create the domain directories.
+-mkdir -p ${objpfx}domaindir/de_DE/LC_MESSAGES
+-# Populate them.
+-mv -f ${objpfx}codeset.mo.$$ ${objpfx}domaindir/de_DE/LC_MESSAGES/codeset.mo
+-
+-GCONV_PATH=${common_objpfx}iconvdata
+-export GCONV_PATH
+-LOCPATH=${common_objpfx}localedata
+-export LOCPATH
+-
+-${common_objpfx}elf/ld.so --library-path $common_objpfx \
+-${objpfx}tst-gettext3 > ${objpfx}tst-gettext3.out
+-
+-exit $?
+diff -Nrup a/intl/tst-gettext5.sh b/intl/tst-gettext5.sh
+--- a/intl/tst-gettext5.sh	2010-05-04 05:27:23.000000000 -0600
++++ b/intl/tst-gettext5.sh	1969-12-31 17:00:00.000000000 -0700
+@@ -1,43 +0,0 @@
+-#! /bin/sh
+-# Test that gettext() in multithreaded applications works correctly if
+-# different threads operate in different locales referring to the same
+-# catalog file but with different encodings.
+-# Copyright (C) 2001, 2002, 2005 Free Software Foundation, Inc.
+-# This file is part of the GNU C Library.
+-#
+-
+-# The GNU C Library is free software; you can redistribute it and/or
+-# modify it under the terms of the GNU Lesser General Public
+-# License as published by the Free Software Foundation; either
+-# version 2.1 of the License, or (at your option) any later version.
+-
+-# The GNU C Library is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-# Lesser General Public License for more details.
+-
+-# You should have received a copy of the GNU Lesser General Public
+-# License along with the GNU C Library; if not, write to the Free
+-# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+-# 02111-1307 USA.
+-
+-common_objpfx=$1
+-run_program_prefix=$2
+-objpfx=$3
+-
+-LC_ALL=C
+-export LC_ALL
+-
+-# Create the domain directories.
+-mkdir -p ${objpfx}domaindir/de_DE/LC_MESSAGES
+-# Populate them.
+-msgfmt -o ${objpfx}domaindir/de_DE/LC_MESSAGES/codeset.mo tstcodeset.po
+-
+-GCONV_PATH=${common_objpfx}iconvdata
+-export GCONV_PATH
+-LOCPATH=${common_objpfx}localedata
+-export LOCPATH
+-
+-${run_program_prefix} ${objpfx}tst-gettext5 > ${objpfx}tst-gettext5.out
+-
+-exit $?
