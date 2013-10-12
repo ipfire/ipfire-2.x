@@ -23,7 +23,10 @@ extern char * trusted_env[4];
 int system_core(char* command, uid_t uid, gid_t gid, char *error);
 int safe_system(char* command);
 int unpriv_system(char* command, uid_t uid, gid_t gid);
-size_t strlcat(char *dst, const char *src, size_t len);
 int initsetuid(void);
+
+/* Compatibility for the local copy of strlcat,
+ * which has been removed. */
+#define strlcat(src, dst, size) strncat(src, dst, size)
 
 #endif

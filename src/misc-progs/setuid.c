@@ -115,27 +115,6 @@ int system_core(char* command, uid_t uid, gid_t gid, char *error)
 
 }
 
-/* BSD style safe strcat; from the secure programming cookbook */
-size_t strlcat(char *dst, const char *src, size_t len) {
-	char       *dstptr = dst;
-	size_t     dstlen, tocopy = len;
-	const char *srcptr = src;
-
-	while (tocopy-- && *dstptr) dstptr++;
-	dstlen = dstptr - dst;
-	if (!(tocopy = len - dstlen)) return (dstlen + strlen(src));
-	while (*srcptr) {
-		if (tocopy != 1) {
-			*dstptr++ = *srcptr;
-			tocopy--;
-		}
-		srcptr++;
-	}
-	*dstptr = 0;
-
-	return (dstlen + (srcptr - src));
-}
-
 /* General routine to initialise a setuid root program, and put the
  * environment in a known state. Returns 1 on success, if initsetuid() returns
  * 0 then you should exit(1) immediately, DON'T attempt to recover from the
