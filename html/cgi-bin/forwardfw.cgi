@@ -115,6 +115,45 @@ print<<END;
 function checkradio(a){
 	\$(a).attr('checked', true);
 }
+function toggle_elements( id ) {
+	if(document.getElementById(id).style.display== "none")
+	{
+		document.getElementById(id).style.display='block';
+	}
+	else{
+		document.getElementById(id).style.display='none';
+	}
+	if(document.getElementById('targetport').style.display== "none" && document.getElementById('PROT').value === 'ICMP' )
+	{
+		document.getElementById('PROTOKOLL').style.display='block';
+	}
+	if(document.getElementById('targetport').style.display== "block" && document.getElementById('PROT').value === 'ICMP' )
+	{
+		document.getElementById('PROTOKOLL').style.display='none';
+	}
+	return true;
+}
+function hide_elements()
+{
+	var elementNames = hide_elements.arguments;
+	for (var i=0; i<elementNames.length; i++)
+	{
+		var elementName = elementNames[i];
+		document.getElementById(elementName).style.display='none';
+	}
+}
+function getdropdown()
+{
+	d = document.getElementById("PROT").value;
+	if ( d == 'ICMP' )
+	{
+		document.getElementById('PROTOKOLL').style.display='block';
+	}
+	else
+	{
+		document.getElementById('PROTOKOLL').style.display='none';
+	}
+}
 </script>
 END
 
@@ -128,7 +167,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
-	
 	#check if manual ip (source) is orange network
 	if ($fwdfwsettings{'grp1'} eq 'src_addr'){
 		my ($sip,$scidr) = split("/",$fwdfwsettings{$fwdfwsettings{'grp1'}});
@@ -466,32 +504,6 @@ sub checksource
 
 	#check empty fields
 	if ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq ''){ $errormessage.=$Lang::tr{'fwdfw err nosrc'}."<br>";}
-	#check icmp source
-		if ($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} eq 'ICMP'){
-			$fwdfwsettings{'SRC_PORT'}='';
-			&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
-			foreach my $key (keys %icmptypes){
-				if($fwdfwsettings{'ICMP_TYPES'} eq "$icmptypes{$key}[0] ($icmptypes{$key}[1])"){
-					$fwdfwsettings{'ICMP_TYPES'}="$icmptypes{$key}[0]";
-				}
-			}
-		}elsif($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} eq 'GRE'){
-			$fwdfwsettings{'SRC_PORT'}='';
-			$fwdfwsettings{'ICMP_TYPES'}='';
-		}elsif($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} eq 'ESP'){
-			$fwdfwsettings{'SRC_PORT'}='';
-			$fwdfwsettings{'ICMP_TYPES'}='';
-		}elsif($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} eq 'AH'){
-			$fwdfwsettings{'SRC_PORT'}='';
-			$fwdfwsettings{'ICMP_TYPES'}='';	
-		}elsif($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'PROT'} ne 'ICMP'){
-			$fwdfwsettings{'ICMP_TYPES'}='';
-		}else{
-			$fwdfwsettings{'ICMP_TYPES'}='';
-			$fwdfwsettings{'SRC_PORT'}='';
-			$fwdfwsettings{'PROT'}='';
-		}
-
 	if($fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && ($fwdfwsettings{'PROT'} eq 'TCP' || $fwdfwsettings{'PROT'} eq 'UDP') && $fwdfwsettings{'SRC_PORT'} ne ''){
 		my @parts=split(",",$fwdfwsettings{'SRC_PORT'});
 		my @values=();
@@ -552,11 +564,11 @@ sub checktarget
 			}
 			#check if Port is a single Port or portrange
 			if ($fwdfwsettings{'nat'} eq 'dnat' &&  $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
-				if(($fwdfwsettings{'TGT_PROT'} ne 'TCP'|| $fwdfwsettings{'TGT_PROT'} ne 'UDP') && $fwdfwsettings{'TGT_PORT'} eq ''){
+				if(($fwdfwsettings{'PROT'} ne 'TCP'|| $fwdfwsettings{'PROT'} ne 'UDP') && $fwdfwsettings{'TGT_PORT'} eq ''){
 					$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
 					return $errormessage;
 				}
-				if (($fwdfwsettings{'TGT_PROT'} eq 'TCP'|| $fwdfwsettings{'TGT_PROT'} eq 'UDP') && $fwdfwsettings{'TGT_PORT'} ne '' && !&check_natport($fwdfwsettings{'TGT_PORT'})){
+				if (($fwdfwsettings{'PROT'} eq 'TCP'|| $fwdfwsettings{'PROT'} eq 'UDP') && $fwdfwsettings{'TGT_PORT'} ne '' && !&check_natport($fwdfwsettings{'TGT_PORT'})){
 					$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
 					return $errormessage;
 				}
@@ -601,17 +613,19 @@ sub checktarget
 		if ($fwdfwsettings{'grp3'} eq 'cust_srv'){
 			$fwdfwsettings{'TGT_PROT'}='';
 			$fwdfwsettings{'ICMP_TGT'}='';
+			$fwdfwsettings{'TGT_PORT'}='';
 		}
 		if ($fwdfwsettings{'grp3'} eq 'cust_srvgrp'){
 			$fwdfwsettings{'TGT_PROT'}='';
 			$fwdfwsettings{'ICMP_TGT'}='';
+			$fwdfwsettings{'TGT_PORT'}='';
 			#check target service
 			if($fwdfwsettings{$fwdfwsettings{'grp3'}} eq ''){
 				$errormessage.=$Lang::tr{'fwdfw err tgt_grp'};
 			}
 		}
 		if ($fwdfwsettings{'grp3'} eq 'TGT_PORT'){
-			if ($fwdfwsettings{'TGT_PROT'} eq 'TCP' || $fwdfwsettings{'TGT_PROT'} eq 'UDP'){
+			if ($fwdfwsettings{'PROT'} eq 'TCP' || $fwdfwsettings{'PROT'} eq 'UDP'){
 				if ($fwdfwsettings{'TGT_PORT'} ne ''){
 					if ($fwdfwsettings{'TGT_PORT'} =~ "," && $fwdfwsettings{'USE_NAT'} && $fwdfwsettings{'nat'} eq 'dnat') {
 						$errormessage=$Lang::tr{'fwdfw dnat porterr'}."<br>";
@@ -645,34 +659,26 @@ sub checktarget
 							if (&General::validport($_)){
 								push (@values,$_);
 							}else{
-								
 							}
 						}
 					}
 					$fwdfwsettings{'TGT_PORT'}=join("|",@values);
 				}
-			}elsif ($fwdfwsettings{'TGT_PROT'} eq 'GRE'){
+			}elsif ($fwdfwsettings{'PROT'} eq 'GRE'){
 					$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
 					$fwdfwsettings{'TGT_PORT'} = '';
 					$fwdfwsettings{'ICMP_TGT'} = '';
-			}elsif($fwdfwsettings{'TGT_PROT'} eq 'ESP'){
+			}elsif ($fwdfwsettings{'PROT'} eq 'ESP'){
 					$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
 					$fwdfwsettings{'TGT_PORT'} = '';
 					$fwdfwsettings{'ICMP_TGT'}='';
-			}elsif($fwdfwsettings{'TGT_PROT'} eq 'AH'){
+			}elsif ($fwdfwsettings{'PROT'} eq 'AH'){
 					$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
 					$fwdfwsettings{'TGT_PORT'} = '';
 					$fwdfwsettings{'ICMP_TGT'}='';
-			}elsif ($fwdfwsettings{'TGT_PROT'} eq 'ICMP'){
+			}elsif ($fwdfwsettings{'PROT'} eq 'ICMP'){
 				$fwdfwsettings{$fwdfwsettings{'grp3'}} = '';
 				$fwdfwsettings{'TGT_PORT'} = '';
-				&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
-				foreach my $key (keys %icmptypes){
-					
-					if ("$icmptypes{$key}[0] ($icmptypes{$key}[1])" eq $fwdfwsettings{'ICMP_TGT'}){
-						$fwdfwsettings{'ICMP_TGT'}=$icmptypes{$key}[0];
-					}
-				}
 			}
 		}
 	}
@@ -807,26 +813,68 @@ sub checkrule
 			}
 		}
 	}
-	#check source and destination protocol if manual
-	if( $fwdfwsettings{'USE_SRC_PORT'} eq 'ON' && $fwdfwsettings{'USESRV'} eq 'ON'){
-			if($fwdfwsettings{'PROT'} ne $fwdfwsettings{'TGT_PROT'} && $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
-			$errormessage.=$Lang::tr{'fwdfw err prot'};
-		}
-		#check source and destination protocol if source manual and dest servicegrp
-		if ($fwdfwsettings{'grp3'} eq 'cust_srv'){
-			foreach my $key (sort keys %customservice){
-				if($customservice{$key}[0] eq $fwdfwsettings{$fwdfwsettings{'grp3'}}){
-					if ($customservice{$key}[2] ne $fwdfwsettings{'PROT'}){
-						$errormessage.=$Lang::tr{'fwdfw err prot'};
-						last;
-					}
+	#When using source- or targetport, the protocol has to be TCP or UDP
+	if (($fwdfwsettings{'USESRV'} eq 'ON' || $fwdfwsettings{'USE_SRC_PORT'} eq 'ON') && ($fwdfwsettings{'SRC_PORT'} ne '' || $fwdfwsettings{'TGT_PORT'} ne '') && ($fwdfwsettings{'PROT'} ne 'TCP' && $fwdfwsettings{'PROT'} ne 'UDP')){
+		$errormessage.=$Lang::tr{'fwdfw err prot_port1'};
+		return;
+	}
+	#when icmp selected, no targetport allowed
+	if (($fwdfwsettings{'PROT'} ne '' && $fwdfwsettings{'PROT'} ne 'TCP' && $fwdfwsettings{'PROT'} ne 'UDP') && ($fwdfwsettings{'USESRV'} eq 'ON' || $fwdfwsettings{'USE_SRC_PORT'} eq 'ON')){
+		$errormessage.=$Lang::tr{'fwdfw err prot_port'};
+		return;
+	}
+	#change protocol if prot not equal dest single service
+	if ($fwdfwsettings{'grp3'} eq 'cust_srv'){
+		foreach my $key (sort keys %customservice){
+			if($customservice{$key}[0] eq $fwdfwsettings{$fwdfwsettings{'grp3'}}){
+				if ($customservice{$key}[2] ne $fwdfwsettings{'PROT'}){
+					$fwdfwsettings{'PROT'} = $customservice{$key}[2];
+					last;
 				}
 			}
 		}
 	}
-	if( $fwdfwsettings{'USE_SRC_PORT'} ne 'ON' && $fwdfwsettings{'USESRV'} ne 'ON'){
-		$fwdfwsettings{'PROT'}='';
-		$fwdfwsettings{'TGT_PROT'}='';
+	#check source and destination protocol if source manual and dest servicegroup
+	if ($fwdfwsettings{'grp3'} eq 'cust_srvgrp'){
+		$fwdfwsettings{'PROT'} = '';
+	}
+	#ATTENTION: $fwdfwsetting{'TGT_PROT'} deprecated since 30.09.2013
+	$fwdfwsettings{'TGT_PROT'}=''; #Set field empty (deprecated)
+	#Check ICMP Types
+	if ($fwdfwsettings{'PROT'} eq 'ICMP'){
+		$fwdfwsettings{'USE_SRC_PORT'}='';
+		$fwdfwsettings{'SRC_PORT'}='';
+		#$fwdfwsettings{'USESRV'}='';
+		$fwdfwsettings{'TGT_PORT'}='';
+		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
+		foreach my $key (keys %icmptypes){
+			if($fwdfwsettings{'ICMP_TYPES'} eq "$icmptypes{$key}[0] ($icmptypes{$key}[1])"){
+				$fwdfwsettings{'ICMP_TYPES'}="$icmptypes{$key}[0]";
+			}
+		}
+	}elsif($fwdfwsettings{'PROT'} eq 'GRE'){
+		$fwdfwsettings{'USE_SRC_PORT'}='';
+		$fwdfwsettings{'SRC_PORT'}='';
+		$fwdfwsettings{'ICMP_TYPES'}='';
+		$fwdfwsettings{'USESRV'}='';
+		$fwdfwsettings{'TGT_PORT'}='';
+	}elsif($fwdfwsettings{'PROT'} eq 'ESP'){
+		$fwdfwsettings{'USE_SRC_PORT'}='';
+		$fwdfwsettings{'SRC_PORT'}='';
+		$fwdfwsettings{'ICMP_TYPES'}='';
+		$fwdfwsettings{'USESRV'}='';
+		$fwdfwsettings{'TGT_PORT'}='';
+	}elsif($fwdfwsettings{'PROT'} eq 'AH'){
+		$fwdfwsettings{'USE_SRC_PORT'}='';
+		$fwdfwsettings{'SRC_PORT'}='';
+		$fwdfwsettings{'ICMP_TYPES'}='';
+		$fwdfwsettings{'USESRV'}='';
+		$fwdfwsettings{'TGT_PORT'}='';
+	}elsif($fwdfwsettings{'PROT'} ne 'TCP' && $fwdfwsettings{'PROT'} ne 'UDP' && $fwdfwsettings{'PROT'} ne 'ICMP'){
+		$fwdfwsettings{'ICMP_TYPES'}='';
+		$fwdfwsettings{'PROT'} = '';
+	}elsif($fwdfwsettings{'PROT'} ne 'ICMP'){
+		$fwdfwsettings{'ICMP_TYPES'}='';
 	}
 }
 sub checkcounter
@@ -1158,7 +1206,7 @@ sub getsrcport
 {
 	my %hash=%{(shift)};
 	my $key=shift;
-	if($hash{$key}[7] eq 'ON' && $hash{$key}[8] ne '' && $hash{$key}[10]){
+	if($hash{$key}[7] eq 'ON' && $hash{$key}[10]){
 		$hash{$key}[10]=~ s/\|/,/g;
 		print": $hash{$key}[10]";
 	}elsif($hash{$key}[7] eq 'ON' && $hash{$key}[8] eq 'ICMP'){
@@ -1188,8 +1236,6 @@ sub gettgtport
 		if($service){
 			print": $service";
 		}
-	}elsif($hash{$key}[11] eq 'ON' && $hash{$key}[12] eq 'ICMP'){
-		print":<br>$hash{$key}[13]";
 	}
 }
 sub get_serviceports
@@ -1226,7 +1272,7 @@ sub get_serviceports
 		}
 	}
 	if($tcp && $udp && $icmp){
-		push (@protocols,"All");
+		push (@protocols,"TCP,UDP, <br>ICMP");
 		return @protocols;
 	}
 	if($tcp){
@@ -1541,7 +1587,6 @@ END
 		print "<option value='ORANGE' $selected{'ipfire_src'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if (&Header::orange_used());
 		print "<option value='BLUE' $selected{'ipfire_src'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>" if (&Header::blue_used());
 		print "<option value='RED1' $selected{'ipfire_src'}{'RED1'}>$Lang::tr{'red1'} ($redip)" if ($redip);
-
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
 			{
@@ -1552,127 +1597,16 @@ END
 		</select></td></tr>
 		<tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
 END
-	&gen_dd_block('src','grp1');
-		print<<END;
-		<table><tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
-		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USE_SRC_PORT' value='ON' $checked{'USE_SRC_PORT'}{'ON'}></td><td width='51%' colspan='3'>$Lang::tr{'fwdfw use srcport'}</td>
-		<td width='15%' nowrap='nowrap'>$Lang::tr{'fwdfw man port'}</td><td><select name='PROT'>
-END
-		foreach ("TCP","UDP","GRE","ESP","AH","ICMP")
-		{
-			if ($_ eq $fwdfwsettings{'PROT'})
-			{
-				print"<option selected>$_</option>";
-			}else{
-				print"<option>$_</option>";
-			}
-		}
-		$fwdfwsettings{'SRC_PORT'}=~ s/\|/,/g;
-		print<<END;
-		</select></td><td align='right'><input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18' ></td></tr>
-		<tr><td></td><td></td><td></td><td></td><td nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TYPES' style='width:230px;'>
-END
-		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
-		print"<option>All ICMP-Types</option>";
-		foreach my $key (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) } keys %icmptypes){
-			if($fwdfwsettings{'ICMP_TYPES'} eq "$icmptypes{$key}[0]"){
-				print"<option selected>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
-			}else{
-				print"<option>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
-			}
-		}
-		print<<END;
-		</select></td></tr></table><br><hr>
-END
+		&gen_dd_block('src','grp1');
+		print"<hr>";
 		&Header::closebox();
-
-		#---TARGET------------------------------------------------------
-		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
-		print<<END;
-		<table width='100%' border='0'>	
-		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='60%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='18'><td width='1%'><input type='radio' name='grp2' id='ipfire' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>Firewall</b></td>
-END
-		print"<td align='right'><select name='ipfire' style='width:200px;'>";
-		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'}</option>";
-		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
-		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if (&Header::orange_used());
-		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>"if (&Header::blue_used());
-		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} ($redip)" if ($redip);
-		if (! -z "${General::swroot}/ethernet/aliases"){
-			foreach my $alias (sort keys %aliases)
-			{
-				print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias</option>";
-			}
-		}
-		print<<END;
-		</select></td></tr>
-		<tr><td colspan='7'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
-END
-		&gen_dd_block('tgt','grp2');
-		print<<END;
-		<hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; '><br>
-		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USESRV' value='ON' $checked{'USESRV'}{'ON'} ></td><td width='48%'>$Lang::tr{'fwdfw use srv'}</td><td width='1%'><input type='radio' name='grp3' id='cust_srv' value='cust_srv' checked></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td width='1%' colspan='2'><select name='cust_srv' style='min-width:230px;' >
-END
-		&General::readhasharray("$configsrv", \%customservice);
-		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
-			print"<option ";
-			print"selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservice{$key}[0]);
-			print"value='$customservice{$key}[0]'>$customservice{$key}[0]</option>";
-		}	
-		print<<END;
-		</select></td></tr>
-		<tr><td colspan='2'></td><td><input type='radio' name='grp3' id='cust_srvgrp' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust srvgrp'}</td><td colspan='2'><select name='cust_srvgrp' style='min-width:230px;' >
-END
-		&General::readhasharray("$configsrvgrp", \%customservicegrp);
-		my $helper;
-		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } keys %customservicegrp){
-			if ($helper ne $customservicegrp{$key}[0]){
-				print"<option ";
-				print"selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservicegrp{$key}[0]);
-				print">$customservicegrp{$key}[0]</option>";
-			}
-			$helper=$customservicegrp{$key}[0];
-		}	
-		print<<END;
-		</select></td></tr>
-		<tr><td colspan='2'></td><td><input type='radio' name='grp3' id='TGT_PORT' value='TGT_PORT' $checked{'grp3'}{'TGT_PORT'}></td><td>$Lang::tr{'fwdfw man port'}</td><td><select name='TGT_PROT' onchange='checkradio(\"#TGT_PORT\")'>
-END
-		foreach ("TCP","UDP","GRE","ESP","AH","ICMP")
-		{
-			if ($_ eq $fwdfwsettings{'TGT_PROT'})
-			{
-				print"<option selected>$_</option>";
-			}else{
-				print"<option>$_</option>";
-			}
-		}
-		$fwdfwsettings{'TGT_PORT'} =~ s/\|/,/g;
-		print<<END;
-		</select></td><td align='right'><input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18' onclick='checkradio(\"#TGT_PORT\")'></td></tr>
-		<tr><td colspan='2'></td><td></td><td>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TGT' style='min-width:230px;'>
-END
-		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
-		print"<option>All ICMP-Types</option>";
-		foreach my $key (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
-			if($fwdfwsettings{'ICMP_TGT'} eq "$icmptypes{$key}[0]"){
-				print"<option selected>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
-			}else{
-				print"<option>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
-			}
-		}
-		print<<END;
-		</select></td></tr>
-		</table><br><hr>
-
-END
-		&Header::closebox;
 		#---SNAT / DNAT ------------------------------------------------
 		&Header::openbox('100%', 'left', 'NAT');
 		print<<END;
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'}></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr>
+		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'} onclick="toggle_elements('natpart')" ></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr></table>
+		<div id="natpart" class="noscript">
+		<table width=100%' border='0'><tr>
 		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='dnat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
 END
 		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
@@ -1703,8 +1637,136 @@ END
 			print ">$network</option>";
 		}
 		print"</select></td></tr></table>";
-		print"<hr>";
+		print"</div><br><hr>";
+		if ($fwdfwsettings{'USE_NAT'} ne 'ON'){
+			print"<script language='JavaScript'>hide_elements('natpart');</script>";
+		}
 		&Header::closebox();
+		#---TARGET------------------------------------------------------
+		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
+		print<<END;
+		<table width='100%' border='0'>	
+		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='60%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='18'><td width='1%'><input type='radio' name='grp2' id='ipfire' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>Firewall</b></td>
+END
+		print"<td align='right'><select name='ipfire' style='width:200px;'>";
+		print "<option value='ALL' $selected{'ipfire'}{'ALL'}>$Lang::tr{'all'}</option>";
+		print "<option value='GREEN' $selected{'ipfire'}{'GREEN'}>$Lang::tr{'green'} ($ifaces{'GREEN_ADDRESS'})</option>" if $ifaces{'GREEN_ADDRESS'};
+		print "<option value='ORANGE' $selected{'ipfire'}{'ORANGE'}>$Lang::tr{'orange'} ($ifaces{'ORANGE_ADDRESS'})</option>" if (&Header::orange_used());
+		print "<option value='BLUE' $selected{'ipfire'}{'BLUE'}>$Lang::tr{'blue'} ($ifaces{'BLUE_ADDRESS'})</option>"if (&Header::blue_used());
+		print "<option value='RED1' $selected{'ipfire'}{'RED1'}>$Lang::tr{'red1'} ($redip)" if ($redip);
+		if (! -z "${General::swroot}/ethernet/aliases"){
+			foreach my $alias (sort keys %aliases)
+			{
+				print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias</option>";
+			}
+		}
+		print<<END;
+		</select></td></tr>
+		<tr><td colspan='7'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
+END
+		&gen_dd_block('tgt','grp2');
+		print"<hr>";
+		&Header::closebox;
+		#---PROTOCOL------------------------------------------------------
+		&Header::openbox('100%', 'left', $Lang::tr{'fwhost prot'});
+		print<<END;
+		<table width='15%' border='0' style="float:left;">
+		<tr><td><select name='PROT'  id='PROT' onchange="getdropdown()">
+END
+		if ($fwdfwsettings{'PROT'} eq ''){
+				print"<option value='' selected>$Lang::tr{'all'}</option>";
+		}else{
+			print"<option value=''>$Lang::tr{'all'}</option>";
+		}
+		foreach ("TCP","UDP","GRE","ESP","AH","ICMP")
+		{
+			if ($_ eq $fwdfwsettings{'PROT'})
+			{
+				print"<option selected>$_</option>";
+			}else{
+				print"<option>$_</option>";
+			}
+		}
+		print"</select></td></tr></table>";
+		print<<END;
+		<div id="PROTOKOLL" class="noscript"><table width='30%' border='0' style="float:left;"><tr><td>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TYPES' style='min-width:230px;'>
+END
+		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
+		print"<option>All ICMP-Types</option>";
+		foreach my $key (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
+			if($fwdfwsettings{'ICMP_TYPES'} eq "$icmptypes{$key}[0]"){
+				print"<option selected>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
+			}else{
+				print"<option>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
+			}
+		}
+		print<<END;
+		</select></td></tr>
+		</table></div><br><br><br>
+END
+		if ($fwdfwsettings{'PROT'} ne 'ICMP'){
+			print"<script language='JavaScript'>hide_elements('PROTOKOLL');</script>";
+		}
+		#SOURCEPORT
+		print<<END;
+		<table width='100%'><tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></table>
+		<table width='100%' border='0'>
+		<tr><td width='1%'><input type='checkbox' name='USE_SRC_PORT' value='ON' $checked{'USE_SRC_PORT'}{'ON'} onclick="toggle_elements('srcport')"></td>
+		<td width='51%' colspan='3'>$Lang::tr{'fwdfw use srcport'}</td></tr></table>
+		<div id="srcport" class="noscript"><table width='100%' border='0'><tr>
+		<td width='70%' nowrap='nowrap' align='right'>$Lang::tr{'fwdfw man port'}</td>
+END
+		$fwdfwsettings{'SRC_PORT'}=~ s/\|/,/g;
+		print<<END;
+		<td align='right'><input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18' ></td></tr>
+		</table></div><br>
+END
+		if ($fwdfwsettings{'USE_SRC_PORT'} ne 'ON'){
+			print"<script language='JavaScript'>hide_elements('srcport');</script>";
+		}
+		#TARGETPORT
+		print<<END;
+		<hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; '><br>
+		<table width='100%' border='0'>
+		<tr><td width='1%'><input type='checkbox' name='USESRV' value='ON' $checked{'USESRV'}{'ON'} onclick="toggle_elements('targetport')"></td><td width='48%'>$Lang::tr{'fwdfw use srv'}</td></tr></table>
+		<div id="targetport" class="noscript"><table width='100%' border='0'><tr><td width='80%'></td><td width='1%'><input type='radio' name='grp3' id='cust_srv' value='cust_srv' checked></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td width='1%' colspan='2'><select name='cust_srv' style='min-width:230px;' >
+END
+		&General::readhasharray("$configsrv", \%customservice);
+		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
+			print"<option ";
+			print"selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservice{$key}[0]);
+			print"value='$customservice{$key}[0]'>$customservice{$key}[0]</option>";
+		}	
+		print<<END;
+		</select></td></tr>
+		<tr><td></td><td><input type='radio' name='grp3' id='cust_srvgrp' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust srvgrp'}</td><td colspan='2'><select name='cust_srvgrp' style='min-width:230px;' >
+END
+		&General::readhasharray("$configsrvgrp", \%customservicegrp);
+		my $helper;
+		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } keys %customservicegrp){
+			if ($helper ne $customservicegrp{$key}[0]){
+				print"<option ";
+				print"selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservicegrp{$key}[0]);
+				print">$customservicegrp{$key}[0]</option>";
+			}
+			$helper=$customservicegrp{$key}[0];
+		}	
+		print<<END;
+		</select></td></tr>
+		<tr><td></td><td><input type='radio' name='grp3' id='TGT_PORT' value='TGT_PORT' $checked{'grp3'}{'TGT_PORT'}></td><td>$Lang::tr{'fwdfw man port'}</td>
+END
+		$fwdfwsettings{'TGT_PORT'} =~ s/\|/,/g;
+		print<<END;
+		<td align='right'><input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18' onclick='checkradio(\"#TGT_PORT\")'></td></tr>
+		</table></div><br><hr>
+END
+		if ($fwdfwsettings{'USESRV'} ne 'ON'){
+			print"<script language='JavaScript'>hide_elements('targetport');</script>";
+		}
+		if ($fwdfwsettings{'USESRV'} eq 'ON' && $fwdfwsettings{'PROT'} eq 'ICMP'){
+			print"<script language='JavaScript'>hide_elements('PROTOKOLL');</script>";
+		}
+		&Header::closebox;
 		#---Activate/logging/remark-------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
 		print<<END;
@@ -1715,7 +1777,7 @@ END
 		{
 			if($fwdfwsettings{'updatefwrule'} eq 'on'){
 				print"<option value='$_'";
-				print "selected='selected'" if ($fwdfwsettings{'RULE_ACTION'} eq $_);
+				print " selected='selected'" if ($fwdfwsettings{'RULE_ACTION'} eq $_);
 				print">$Lang::tr{'fwdfw '.$_}</option>";
 			}else{
 				if($fwdfwsettings{'POLICY'} eq 'MODE2'){
@@ -1757,20 +1819,20 @@ END
 		<tr><td width='1%'><input type='checkbox' name='TIME' value='ON' $checked{'TIME'}{'ON'}></td><td colspan='9'>$Lang::tr{'fwdfw timeframe'}</td></tr>
 		<tr><td colspan='10'>&nbsp;</td></tr>
 		<tr>
-			<td  align='left'>$Lang::tr{'time'}:</td>
-			<td width='30%' align='left'>$Lang::tr{'advproxy monday'} $Lang::tr{'advproxy tuesday'} $Lang::tr{'advproxy wednesday'} $Lang::tr{'advproxy thursday'} $Lang::tr{'advproxy friday'} $Lang::tr{'advproxy saturday'} $Lang::tr{'advproxy sunday'}</td>
+			<td  align='left' >$Lang::tr{'time'}:&nbsp</td>
+			<td>$Lang::tr{'advproxy monday'}</td><td> $Lang::tr{'advproxy tuesday'} </td><td>$Lang::tr{'advproxy wednesday'}</td><td> $Lang::tr{'advproxy thursday'}</td><td> $Lang::tr{'advproxy friday'}</td><td> $Lang::tr{'advproxy saturday'}</td><td> $Lang::tr{'advproxy sunday'}</td>
 			<td width='15%' align='left'>$Lang::tr{'advproxy from'}</td>
 			<td width='15%' align='left'>$Lang::tr{'advproxy to'}</td>
 		</tr>
 		<tr>
 			<td  align='right'></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_MON' value='on' $checked{'TIME_MON'}{'on'} /></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_TUE' value='on' $checked{'TIME_TUE'}{'on'} /></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_WED' value='on' $checked{'TIME_WED'}{'on'} /></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_THU' value='on' $checked{'TIME_THU'}{'on'} /></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_FRI' value='on' $checked{'TIME_FRI'}{'on'} /></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_SAT' value='on' $checked{'TIME_SAT'}{'on'} /></td>
-			<td width='15%' align='left'><input type='checkbox' name='TIME_SUN' value='on' $checked{'TIME_SUN'}{'on'} /></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_MON' value='on' $checked{'TIME_MON'}{'on'} ></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_TUE' value='on' $checked{'TIME_TUE'}{'on'} ></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_WED' value='on' $checked{'TIME_WED'}{'on'} ></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_THU' value='on' $checked{'TIME_THU'}{'on'} ></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_FRI' value='on' $checked{'TIME_FRI'}{'on'} ></td>
+			<td width='1%' align='left'><input type='checkbox' name='TIME_SAT' value='on' $checked{'TIME_SAT'}{'on'} ></td>
+			<td width='15%' align='left'><input type='checkbox' name='TIME_SUN' value='on' $checked{'TIME_SUN'}{'on'} ></td>
 			<td><select name='TIME_FROM'>
 END
 		for (my $i=0;$i<=23;$i++) {
@@ -2193,10 +2255,8 @@ END
 			print"<td bgcolor='$rulecolor' align='center' width='10'><span title='$tooltip'><b>$ruletype</b></span></td>";
 			#Get Protocol
 			my $prot;
-			if ($$hash{$key}[8] && $$hash{$key}[7] eq 'ON'){#source prot if manual
+			if ($$hash{$key}[8]){
 				push (@protocols,$$hash{$key}[8]);
-			}elsif ($$hash{$key}[12]){			#target prot if manual
-				push (@protocols,$$hash{$key}[12]);
 			}elsif($$hash{$key}[14] eq 'cust_srv'){
 				&get_serviceports("service",$$hash{$key}[15]);
 			}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
@@ -2205,7 +2265,17 @@ END
 				push (@protocols,$Lang::tr{'all'});
 			}
 			my $protz=join(",",@protocols);
-			print"<td align='center'>$protz</td>";
+			if($protz eq 'ICMP' && $$hash{$key}[9] ne 'All ICMP-Types' && $$hash{$key}[14] ne 'cust_srvgrp'){
+				&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
+				foreach my $keyicmp (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
+					if($$hash{$key}[9] eq "$icmptypes{$keyicmp}[0]"){
+						print "<td align='center'><span title='$icmptypes{$keyicmp}[0]'><b>$protz ($icmptypes{$keyicmp}[1])</b></span></td>";
+						last;
+					}
+				}
+			}else{
+				print"<td align='center'>$protz</td>";
+			}
 			@protocols=();
 			#SOURCE
 			my $ipfireiface;

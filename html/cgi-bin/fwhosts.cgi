@@ -1740,7 +1740,7 @@ sub viewtableservicegrp
 				}
 			}
 			print"<td align='center'>$port</td><td align='center'>$protocol</td><td width='1%'><form method='post'>";
-			if ($number gt '1'){
+			if ($delflag gt '1'){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}
 			print"<input type='hidden' name='ACTION' value='delgrpservice'><input type='hidden' name='updatesrvgrp' value='$fwhostsettings{'updatesrvgrp'}'><input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2],$customservicegrp{$key}[3]'></form></td></tr>";
