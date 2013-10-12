@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <fcntl.h>
 #include "setuid.h"
+#include "netutil.h"
 #include "libsmooth.h"
 
 #define noovpndebug

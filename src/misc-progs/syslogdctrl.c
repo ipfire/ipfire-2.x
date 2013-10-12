@@ -19,8 +19,10 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <errno.h>
+
 #include "libsmooth.h"
 #include "setuid.h"
+#include "netutil.h"
 
 #define ERR_ANY 1
 #define ERR_SETTINGS 2    /* error in settings file */
