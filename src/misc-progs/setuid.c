@@ -57,44 +57,41 @@ char * trusted_env[4] = {
  * validate the command you are passing. If the command is formed from user
  * input be sure to check this input is what you expect. Nasty things can
  * happen if a user can inject ; or `` into your command for example */
-int safe_system(char* command)
-{
-	return system_core( command, 0, 0, "safe_system" );
+int safe_system(char* command) {
+	return system_core(command, 0, 0, "safe_system");
 }
 
 /* Much like safe_system but lets you specify a non-root uid and gid to run
  * the command as */
-int unpriv_system(char* command, uid_t uid, gid_t gid)
-{
-	return system_core(command, uid, gid, "unpriv_system" );
+int unpriv_system(char* command, uid_t uid, gid_t gid) {
+	return system_core(command, uid, gid, "unpriv_system");
 }
 
-int system_core(char* command, uid_t uid, gid_t gid, char *error)
-{
+int system_core(char* command, uid_t uid, gid_t gid, char *error) {
 	int pid, status;
 
 	if(!command)
 		return 1;
 
-	switch( pid = fork() )
-	{
+	switch(pid = fork()) {
 		case -1:
 			return -1;
-		case 0: /* child */
-		{
-			char * argv[4];
-			if (gid && setgid(gid))	
-			{
+
+		case 0: /* child */ {
+			char *argv[4];
+
+			if (gid && setgid(gid))	{
 				fprintf(stderr, "%s: ", error);
 				perror("Couldn't setgid");
 				exit(127);
 			}
-			if (uid && setuid(uid))
-			{
+
+			if (uid && setuid(uid)) {
 				fprintf(stderr, "%s: ", error);
 				perror("Couldn't setuid");
 				exit(127);
 			}
+
 			argv[0] = "sh";
 			argv[1] = "-c";
 			argv[2] = command;
@@ -104,13 +101,15 @@ int system_core(char* command, uid_t uid, gid_t gid, char *error)
 			perror("execve failed");
 			exit(127);
 		}
+
 		default: /* parent */
 			do {
-				if( waitpid(pid, &status, 0) == -1 ) {
-					if( errno != EINTR )
+				if (waitpid(pid, &status, 0) == -1) {
+					if (errno != EINTR)
 						return -1;
-					} else
+					} else {
 						return status;
+					}
 			} while (1);
 	}
 
@@ -120,37 +119,51 @@ int system_core(char* command, uid_t uid, gid_t gid, char *error)
  * environment in a known state. Returns 1 on success, if initsetuid() returns
  * 0 then you should exit(1) immediately, DON'T attempt to recover from the
  * error */
-int initsetuid(void)
-{
-	int fds,i;
+int initsetuid(void) {
+	int fds, i;
 	struct stat st;
 	struct rlimit rlim;
 
 	/* Prevent signal tricks by ignoring all except SIGKILL and SIGCHILD */
-		for( i = 0; i < NSIG; i++ ) {
-			if( i != SIGKILL && i != SIGCHLD )
-				signal(i, SIG_IGN);
+	for (i = 0; i < NSIG; i++) {
+		if (i != SIGKILL && i != SIGCHLD)
+			signal(i, SIG_IGN);
 	}
 
 	/* dump all non-standard file descriptors (a full descriptor table could
 	 * lead to DoS by preventing us opening files) */
-	if ((fds = getdtablesize()) == -1) fds = OPEN_MAX;
-	for( i = 3; i < fds; i++ ) close(i);
+	if ((fds = getdtablesize()) == -1)
+		fds = OPEN_MAX;
+	for (i = 3; i < fds; i++)
+		close(i);
 
 	/* check stdin, stdout & stderr are open before going any further */
-	for( i = 0; i < 3; i++ )
-		if( fstat(i, &st) == -1 && ((errno != EBADF) || (close(i), open("/dev/null", O_RDWR, 0)) != i ))
+	for (i = 0; i < 3; i++)
+		if( fstat(i, &st) == -1 && ((errno != EBADF) || (close(i), open("/dev/null", O_RDWR, 0)) != i))
 			return 0;
 
 	/* disable core dumps in case we're processing sensitive information */
 	rlim.rlim_cur = rlim.rlim_max = 0;
-	if(setrlimit(RLIMIT_CORE, &rlim))
-		{ perror("Couldn't disable core dumps"); return 0; }
+	if (setrlimit(RLIMIT_CORE, &rlim)) {
+		perror("Couldn't disable core dumps");
+		return 0;
+	}
 
 	/* drop any supplementary groups, set uid & gid to root */
-	if (setgroups(0, NULL)) { perror("Couldn't clear group list"); return 0; }
-	if (setgid(0))          { perror("Couldn't setgid(0)");        return 0; }
-	if (setuid(0))          { perror("Couldn't setuid(0)");        return 0; }
+	if (setgroups(0, NULL)) {
+		perror("Couldn't clear group list");
+		return 0;
+	}
+
+	if (setgid(0)) {
+		perror("Couldn't setgid(0)");
+		return 0;
+	}
+
+	if (setuid(0)) {
+		perror("Couldn't setuid(0)");
+		return 0;
+	}
 
 	return 1;
 }
