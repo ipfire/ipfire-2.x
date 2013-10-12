@@ -114,7 +114,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-cache-digests \
 		--enable-forw-via-db \
 		--enable-htcp \
-		--enable-ipf-transparent \
+		--enable-linux-netfilter \
 		--enable-kill-parent-hack \
 		--disable-wccpv2 \
 		--enable-icap-client \
