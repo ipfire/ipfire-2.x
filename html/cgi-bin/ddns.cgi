@@ -256,6 +256,7 @@ $checked{'SERVICE'}{'selfhost.de'} = '';
 $checked{'SERVICE'}{'strato.com'} = '';
 $checked{'SERVICE'}{'tzo.com'} = '';
 $checked{'SERVICE'}{'zoneedit.com'} = '';
+$checked{'SERVICE'}{'udmedia.de'} = '';
 $checked{'SERVICE'}{$settings{'SERVICE'}} = "selected='selected'";
 
 $checked{'BEHINDROUTER'}{'RED_IP'} = '';
@@ -352,6 +353,7 @@ print <<END
     <option $checked{'SERVICE'}{'strato.com'}>strato.com</option>
 <!--    <option $checked{'SERVICE'}{'tzo.com'}>tzo.com</option>        comment this service out until a working fix is developed -->
     <option $checked{'SERVICE'}{'zoneedit.com'}>zoneedit.com</option>
+    <option $checked{'SERVICE'}{'udmedia.de'}>udmedia.de</option>
     </select></td>
     <td width='20%' class='base'>$Lang::tr{'hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td width='30%'><input type='text' name='HOSTNAME' value='$settings{'HOSTNAME'}' /></td>
