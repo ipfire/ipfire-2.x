@@ -47,7 +47,7 @@ if [ -e "/var/ipfire/proxy/enable" ] || [ -e "/var/ipfire/proxy/enable_blue" ]; 
 		eval $(/usr/local/bin/readhash /var/ipfire/proxy/advanced/settings)
 
 		TRANSPARENT_PORT="$(( ${PROXY_PORT} + 1 ))"
-		echo "TRANSPORT_PORT=${TRANSPARENT_PORT}" >> /var/ipfire/proxy/advanced/settings
+		echo "TRANSPARENT_PORT=${TRANSPARENT_PORT}" >> /var/ipfire/proxy/advanced/settings
 	)
 fi
 
