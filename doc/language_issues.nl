@@ -552,6 +552,8 @@ WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: advproxy cache-digest
+WARNING: untranslated string: advproxy errmsg proxy ports equal
+WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: age second
 WARNING: untranslated string: age seconds
 WARNING: untranslated string: age shour

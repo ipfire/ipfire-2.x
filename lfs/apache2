@@ -98,6 +98,9 @@ ifeq "$(PASS)" "C"
 	chmod -R 755 /srv/web/ipfire/cgi-bin
 	chmod -R 644 /srv/web/ipfire/html
 	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include,themes,themes/*,themes/*/*}
+
+	# Reset permissions of redirect templates directories
+	find /srv/web/ipfire/html/redirect-templates -type d | xargs chmod -v 755
 else
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/httpd-2.2.2-config-1.patch
