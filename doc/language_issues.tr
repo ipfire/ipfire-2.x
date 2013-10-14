@@ -509,6 +509,8 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
+WARNING: untranslated string: advproxy errmsg proxy ports equal
+WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: bytes
 WARNING: untranslated string: dnsforward
 WARNING: untranslated string: dnsforward add a new entry

@@ -15,8 +15,8 @@ transparent() {
 		eval $(/usr/local/bin/readhash /var/ipfire/proxy/settings)
 
 		# If the proxy port is not set we set the default to 800.
-		if [ -z $PROXY_PORT ]; then
-			PROXY_PORT=800
+		if [ -z "${TRANSPARENT_PORT}" ]; then
+			TRANSPARENT_PORT=800
 		fi
 
 		LOCALIP=`cat /var/ipfire/red/local-ipaddress | tr -d \n`
@@ -43,7 +43,7 @@ transparent() {
 		
 		iptables -t nat -A SQUID -i $1 -p tcp -d $LOCALIP --dport 80 -j RETURN
 		
-		iptables -t nat -A SQUID -i $1 -p tcp --dport 80 -j REDIRECT --to-port $PROXY_PORT
+		iptables -t nat -A SQUID -i $1 -p tcp --dport 80 -j REDIRECT --to-port "${TRANSPARENT_PORT}"
 }
 
 case "$1" in

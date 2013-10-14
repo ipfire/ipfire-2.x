@@ -195,6 +195,7 @@ $proxysettings{'ENABLE_BLUE'} = 'off';
 $proxysettings{'TRANSPARENT'} = 'off';
 $proxysettings{'TRANSPARENT_BLUE'} = 'off';
 $proxysettings{'PROXY_PORT'} = '800';
+$proxysettings{'TRANSPARENT_PORT'} = '3128';
 $proxysettings{'VISIBLE_HOSTNAME'} = '';
 $proxysettings{'ADMIN_MAIL_ADDRESS'} = '';
 $proxysettings{'ADMIN_PASSWORD'} = '';
@@ -357,6 +358,15 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 	if (!(&General::validport($proxysettings{'PROXY_PORT'})))
 	{
 		$errormessage = $Lang::tr{'advproxy errmsg invalid proxy port'};
+		goto ERROR;
+	}
+	if (!(&General::validport($proxysettings{'TRANSPARENT_PORT'})))
+	{
+		$errormessage = $Lang::tr{'advproxy errmsg invalid proxy port'};
+		goto ERROR;
+	}
+	if ($proxysettings{'PROXY_PORT'} eq $proxysettings{'TRANSPARENT_PORT'}) {
+		$errormessage = $Lang::tr{'advproxy errmsg proxy ports equal'};
 		goto ERROR;
 	}
 	if (!($proxysettings{'UPSTREAM_PROXY'} eq ''))
@@ -956,8 +966,8 @@ print <<END
 <tr>
 	<td class='base'>$Lang::tr{'advproxy transparent on'} <font color="$Header::colourgreen">Green</font>:</td>
 	<td><input type='checkbox' name='TRANSPARENT' $checked{'TRANSPARENT'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'advproxy visible hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td><input type='text' name='VISIBLE_HOSTNAME' value='$proxysettings{'VISIBLE_HOSTNAME'}' /></td>
+	<td width='25%' class='base'>$Lang::tr{'advproxy proxy port transparent'}:</td>
+	<td width='30%'><input type='text' name='TRANSPARENT_PORT' value='$proxysettings{'TRANSPARENT_PORT'}' size='5' /></td>
 </tr>
 <tr>
 END
@@ -969,7 +979,8 @@ if ($netsettings{'BLUE_DEV'}) {
 	print "<td colspan='2'>&nbsp;</td>";
 }
 print <<END
-	<td colspan='2'>&nbsp;</td>
+	<td class='base'>$Lang::tr{'advproxy visible hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td><input type='text' name='VISIBLE_HOSTNAME' value='$proxysettings{'VISIBLE_HOSTNAME'}' /></td>
 </tr>
 <tr>
 END
@@ -3078,15 +3089,25 @@ END
 	}
 
 	print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
-	if ($proxysettings{'TRANSPARENT'} eq 'on') { print FILE " transparent" }
 	if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
 	print FILE "\n";
 
-	if ($netsettings{'BLUE_DEV'} && $proxysettings{'ENABLE_BLUE'} eq 'on') {
-		print FILE "http_port $netsettings{'BLUE_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
-		if ($proxysettings{'TRANSPARENT_BLUE'} eq 'on') { print FILE " transparent" }
+	if ($proxysettings{'TRANSPARENT'} eq 'on') {
+		print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'TRANSPARENT_PORT'} intercept";
 		if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
 		print FILE "\n";
+	}
+
+	if ($netsettings{'BLUE_DEV'} && $proxysettings{'ENABLE_BLUE'} eq 'on') {
+		print FILE "http_port $netsettings{'BLUE_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
+		if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
+		print FILE "\n";
+
+		if ($proxysettings{'TRANSPARENT_BLUE'} eq 'on') {
+			print FILE "http_port $netsettings{'BLUE_ADDRESS'}:$proxysettings{'TRANSPARENT_PORT'} intercept";
+			if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
+			print FILE "\n";
+		}
 	}
 
 	if ($proxysettings{'CACHE_SIZE'} > 0)
@@ -3457,7 +3478,7 @@ END
 	# Check if squidclamav is enabled.
 	if ($proxysettings{'ENABLE_CLAMAV'} eq 'on') {
 		print FILE "\n#Settings for squidclamav:\n";
-		print FILE "http_port 127.0.0.1:$proxysettings{'PROXY_PORT'} transparent\n";
+		print FILE "http_port 127.0.0.1:$proxysettings{'PROXY_PORT'}\n";
 		print FILE "acl purge method PURGE\n";
 		print FILE "http_access deny to_localhost\n";
 		print FILE "http_access allow localhost\n";

@@ -506,6 +506,8 @@ WARNING: untranslated string: Set time on boot
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
+WARNING: untranslated string: advproxy errmsg proxy ports equal
+WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: age second
 WARNING: untranslated string: age seconds
 WARNING: untranslated string: age shour
