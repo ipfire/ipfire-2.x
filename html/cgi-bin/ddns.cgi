@@ -352,8 +352,8 @@ print <<END
     <option $checked{'SERVICE'}{'selfhost.de'}>selfhost.de</option>
     <option $checked{'SERVICE'}{'strato.com'}>strato.com</option>
 <!--    <option $checked{'SERVICE'}{'tzo.com'}>tzo.com</option>        comment this service out until a working fix is developed -->
-    <option $checked{'SERVICE'}{'zoneedit.com'}>zoneedit.com</option>
     <option $checked{'SERVICE'}{'udmedia.de'}>udmedia.de</option>
+    <option $checked{'SERVICE'}{'zoneedit.com'}>zoneedit.com</option>
     </select></td>
     <td width='20%' class='base'>$Lang::tr{'hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td width='30%'><input type='text' name='HOSTNAME' value='$settings{'HOSTNAME'}' /></td>
