@@ -101,6 +101,39 @@ my @protocols;
 print<<END;
 <script>
 	\$(document).ready(function() {
+		// Hide sourceport area when no sourceport is used
+		if (! \$("#USE_SRC_PORT").attr("checked")) {
+			toggle_elements('srcport');
+		}
+		// Hide targetport area when no targetport is used
+		if (! \$("#USESRV").attr("checked")) {
+			toggle_elements('targetport');
+		}
+		// When nat not used, hide it
+		if (! \$("#USENAT").attr("checked")) {
+			toggle_elements('natpart');
+		}
+		// When Prot not icmp, hide icmp-types
+		if (! \$("#PROT option[value='ICMP']").attr('select')) {
+			document.getElementById('PROTOKOLL').style.display='none';
+		}
+		// When protocol dropdown is changed, check if we selected icmp - then show icmp-types
+		\$("#prt").change(function(){
+			if ( document.getElementById("PROT").value === 'ICMP' ){
+				document.getElementById('PROTOKOLL').style.display='block';
+			}
+			else{
+				document.getElementById('PROTOKOLL').style.display='none';
+			}
+		});
+		// Show Sourceport area when "use sourceport" checkbox is clicked
+		\$( "#spt" ).click(function() {
+			toggle_elements('srcport');
+		});
+		// Show Targetport area when "use Targetport" checkbox is clicked
+		\$( "#tpt" ).click(function() {
+			toggle_elements('targetport');
+		});
 		// Automatically select radio buttons when corresponding
 		// dropdown menu changes.
 		\$("select").change(function() {
@@ -140,18 +173,6 @@ function hide_elements()
 	{
 		var elementName = elementNames[i];
 		document.getElementById(elementName).style.display='none';
-	}
-}
-function getdropdown()
-{
-	d = document.getElementById("PROT").value;
-	if ( d == 'ICMP' )
-	{
-		document.getElementById('PROTOKOLL').style.display='block';
-	}
-	else
-	{
-		document.getElementById('PROTOKOLL').style.display='none';
 	}
 }
 </script>
@@ -1604,7 +1625,7 @@ END
 		&Header::openbox('100%', 'left', 'NAT');
 		print<<END;
 		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'} onclick="toggle_elements('natpart')" ></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr></table>
+		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'} onclick="toggle_elements('natpart')" ></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr></table>
 		<div id="natpart" class="noscript">
 		<table width=100%' border='0'><tr>
 		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='dnat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
@@ -1638,9 +1659,6 @@ END
 		}
 		print"</select></td></tr></table>";
 		print"</div><br><hr>";
-		if ($fwdfwsettings{'USE_NAT'} ne 'ON'){
-			print"<script language='JavaScript'>hide_elements('natpart');</script>";
-		}
 		&Header::closebox();
 		#---TARGET------------------------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
@@ -1670,8 +1688,8 @@ END
 		#---PROTOCOL------------------------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost prot'});
 		print<<END;
-		<table width='15%' border='0' style="float:left;">
-		<tr><td><select name='PROT'  id='PROT' onchange="getdropdown()">
+		<div id="prt"><table width='15%' border='0' style="float:left;">
+		<tr><td><select name='PROT'  id='PROT' >
 END
 		if ($fwdfwsettings{'PROT'} eq ''){
 				print"<option value='' selected>$Lang::tr{'all'}</option>";
@@ -1687,7 +1705,7 @@ END
 				print"<option>$_</option>";
 			}
 		}
-		print"</select></td></tr></table>";
+		print"</select></td></tr></table></div>";
 		print<<END;
 		<div id="PROTOKOLL" class="noscript"><table width='30%' border='0' style="float:left;"><tr><td>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TYPES' style='min-width:230px;'>
 END
@@ -1704,15 +1722,12 @@ END
 		</select></td></tr>
 		</table></div><br><br><br>
 END
-		if ($fwdfwsettings{'PROT'} ne 'ICMP'){
-			print"<script language='JavaScript'>hide_elements('PROTOKOLL');</script>";
-		}
 		#SOURCEPORT
 		print<<END;
 		<table width='100%'><tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></table>
-		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USE_SRC_PORT' value='ON' $checked{'USE_SRC_PORT'}{'ON'} onclick="toggle_elements('srcport')"></td>
-		<td width='51%' colspan='3'>$Lang::tr{'fwdfw use srcport'}</td></tr></table>
+		<div id="spt"><table width='100%' border='0'>
+		<tr><td width='1%'><input type='checkbox' name='USE_SRC_PORT' id='USE_SRC_PORT' value='ON' $checked{'USE_SRC_PORT'}{'ON'}></td>
+		<td width='51%' colspan='3'>$Lang::tr{'fwdfw use srcport'}</td></tr></table></div>
 		<div id="srcport" class="noscript"><table width='100%' border='0'><tr>
 		<td width='70%' nowrap='nowrap' align='right'>$Lang::tr{'fwdfw man port'}</td>
 END
@@ -1721,14 +1736,11 @@ END
 		<td align='right'><input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18' ></td></tr>
 		</table></div><br>
 END
-		if ($fwdfwsettings{'USE_SRC_PORT'} ne 'ON'){
-			print"<script language='JavaScript'>hide_elements('srcport');</script>";
-		}
 		#TARGETPORT
 		print<<END;
 		<hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; '><br>
-		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USESRV' value='ON' $checked{'USESRV'}{'ON'} onclick="toggle_elements('targetport')"></td><td width='48%'>$Lang::tr{'fwdfw use srv'}</td></tr></table>
+		<div id="tpt"><table width='100%' border='0'>
+		<tr><td width='1%'><input type='checkbox' name='USESRV' id='USESRV' value='ON' $checked{'USESRV'}{'ON'}></td><td width='48%'>$Lang::tr{'fwdfw use srv'}</td></tr></table></div>
 		<div id="targetport" class="noscript"><table width='100%' border='0'><tr><td width='80%'></td><td width='1%'><input type='radio' name='grp3' id='cust_srv' value='cust_srv' checked></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td width='1%' colspan='2'><select name='cust_srv' style='min-width:230px;' >
 END
 		&General::readhasharray("$configsrv", \%customservice);
@@ -1760,12 +1772,6 @@ END
 		<td align='right'><input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18' onclick='checkradio(\"#TGT_PORT\")'></td></tr>
 		</table></div><br><hr>
 END
-		if ($fwdfwsettings{'USESRV'} ne 'ON'){
-			print"<script language='JavaScript'>hide_elements('targetport');</script>";
-		}
-		if ($fwdfwsettings{'USESRV'} eq 'ON' && $fwdfwsettings{'PROT'} eq 'ICMP'){
-			print"<script language='JavaScript'>hide_elements('PROTOKOLL');</script>";
-		}
 		&Header::closebox;
 		#---Activate/logging/remark-------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
