@@ -8,6 +8,8 @@ srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/upnp.cgi
 srv/web/ipfire/cgi-bin/speed.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+srv/web/ipfire/html/themes/ipfire/include/functions.pl
+srv/web/ipfire/html/themes/maniac/include/functions.pl
 var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/exclude
 var/ipfire/backup/include
