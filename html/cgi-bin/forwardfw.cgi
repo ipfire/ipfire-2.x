@@ -63,6 +63,8 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
+my @PROTOCOLS = ("TCP", "UDP", "ICMP", "IGMP", "AH", "ESP", "GRE");
+
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -100,71 +102,62 @@ my @protocols;
 #### JAVA SCRIPT ####
 print<<END;
 <script>
+	var PROTOCOLS_WITH_PORTS = ["TCP", "UDP"];
+
+	var update_protocol = function() {
+		var protocol = \$("#protocol").val();
+
+		if (protocol === undefined)
+			return;
+
+		// Check if a template is/should be used.
+		if (protocol === "template") {
+			\$("#PROTOCOL_TEMPLATE").show();
+		} else {
+			\$("#PROTOCOL_TEMPLATE").hide();
+		}
+
+		// Check if we are dealing with a protocol, that knows ports.
+		if (\$.inArray(protocol, PROTOCOLS_WITH_PORTS) >= 0) {
+			\$("#PROTOCOL_PORTS").show();
+		} else {
+			\$("#PROTOCOL_PORTS").hide();
+		}
+
+		// Handle ICMP.
+		if (protocol === "ICMP") {
+			\$("#PROTOCOL_ICMP_TYPES").show();
+		} else {
+			\$("#PROTOCOL_ICMP_TYPES").hide();
+		}
+	};
+
 	\$(document).ready(function() {
-		// Hide sourceport area when no sourceport is used
-		if (! \$("#USE_SRC_PORT").attr("checked")) {
-			toggle_elements('#srcport');
-		}
-		// Hide targetport area when no targetport is used
-		if (! \$("#USESRV").attr("checked")) {
-			toggle_elements('#targetport');
-		}
+		\$("#protocol").change(update_protocol);
+		update_protocol();
+
 		// When nat not used, hide it
-		if (! \$("#nat").attr("checked")) {
-			toggle_elements('#natpart');
-		}
-		// When protocol dropdown is changed, check if we selected icmp - then show icmp-types
-		\$("#prt").change(function(){
-			if ( \$("#PROT").val() === 'ICMP' ){
-				\$('#PROTOKOLL').show();
-			}
-			else{
-				\$('#PROTOKOLL').hide();
-			}
-		});
-		// When Prot not icmp, hide icmp-types
-		if ( ! \$("#PROT").val() == 'ICMP') {
-			\$('#PROTOKOLL').hide();
+		if (\$("#nat").attr("checked")) {
+			\$("#natpart").show();
 		}
 
 		// Show NAT area when "use nat" checkbox is clicked
-		\$( "#nat" ).change(function() {
-			toggle_elements('#natpart');
+		\$("#nat").change(function() {
+			\$("#natpart").toggle();
 		});
-		// Show Sourceport area when "use sourceport" checkbox is clicked
-		\$( "#spt" ).change(function() {
-			toggle_elements('#srcport');
-		});
-		// Show Targetport area when "use Targetport" checkbox is clicked
-		\$( "#tpt" ).change(function() {
-			toggle_elements('#targetport');
-		});
+
 		// Automatically select radio buttons when corresponding
 		// dropdown menu changes.
 		\$("select").change(function() {
 			var id = \$(this).attr("name");
-			//When using SNAT or DNAT, check "USE NAT" Checkbox
-			if ( id === 'snat' || id === 'dnat') {
+
+			// When using SNAT or DNAT, check "USE NAT" Checkbox
+			if (id === 'snat' || id === 'dnat') {
 				\$('#USE_NAT').prop('checked', true);
 			}
 			\$('#' + id).prop("checked", true);
 		});
 	});
-function checkradio(a){
-	\$(a).attr('checked', true);
-}
-function toggle_elements( id ) {
-	\$(id).toggle();
-	if(! \$("targetport:visible") && \$("#PROT").val() === 'ICMP' )
-	{
-		\$('#PROTOKOLL').show();
-	}
-	if(\$("targetport:visible") && \$("#PROT").val() === 'ICMP' )
-	{
-		\$('#PROTOKOLL').hide();
-	}
-	return true;
-}
 </script>
 END
 
@@ -1678,26 +1671,42 @@ END
 		#---PROTOCOL------------------------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost prot'});
 		print<<END;
-		<div id="prt"><table width='15%' border='0' style="float:left;">
-		<tr><td><select name='PROT'  id='PROT' >
+		<div id="prt">
+			<table width='15%' border='0' style="float:left;">
+				<tr>
+					<td>
+						<select name='PROT' id='protocol'>
 END
-		if ($fwdfwsettings{'PROT'} eq ''){
-				print"<option value='' selected>$Lang::tr{'all'}</option>";
-		}else{
-			print"<option value=''>$Lang::tr{'all'}</option>";
+		print "<option value=\"\"";
+		if ($fwdfwsettings{'PROT'} eq '') {
+			print " selected=\"selected\"";
 		}
-		foreach ("TCP","UDP","GRE","ESP","AH","ICMP")
-		{
-			if ($_ eq $fwdfwsettings{'PROT'})
-			{
-				print"<option selected>$_</option>";
-			}else{
-				print"<option>$_</option>";
+		print ">$Lang::tr{'all'}</option>";
+
+		print "<option value=\"template\"";
+		# XXX set selected
+		print ">- $Lang::tr{'template'} -</option>";
+
+		foreach (@PROTOCOLS) {
+			print"<option value=\"$_\"";
+			if ($_ eq $fwdfwsettings{'PROT'}) {
+				print " selected=\"selected\"";
 			}
+			print ">$_</option>";
 		}
-		print"</select></td></tr></table></div>";
 		print<<END;
-		<div id="PROTOKOLL" class="noscript"><table width='30%' border='0' style="float:left;"><tr><td>$Lang::tr{'fwhost icmptype'}</td><td colspan='2'><select name='ICMP_TYPES' style='min-width:230px;'>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="PROTOCOL_ICMP_TYPES">
+			<table width='30%' border='0' style="float:left;">
+				<tr>
+					<td>$Lang::tr{'fwhost icmptype'}</td>
+					<td colspan='2'>
+						<select name='ICMP_TYPES' style='min-width:230px;'>
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 		print"<option>All ICMP-Types</option>";
@@ -1708,41 +1717,72 @@ END
 				print"<option>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
 			}
 		}
-		print<<END;
-		</select></td></tr>
-		</table></div><br><br><br>
+
+		print <<END;
+						</select>
+					</td>
+				</tr>
+			</table>
+		</div>
 END
-		#SOURCEPORT
-		print<<END;
-		<table width='100%'><tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></table>
-		<div id="spt"><table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USE_SRC_PORT' id='USE_SRC_PORT' value='ON' $checked{'USE_SRC_PORT'}{'ON'}></td>
-		<td width='51%' colspan='3'>$Lang::tr{'fwdfw use srcport'}</td></tr></table></div>
-		<div id="srcport" class="noscript"><table width='100%' border='0'><tr>
-		<td width='70%' nowrap='nowrap' align='right'>$Lang::tr{'fwdfw man port'}</td>
-END
-		$fwdfwsettings{'SRC_PORT'}=~ s/\|/,/g;
-		print<<END;
-		<td align='right'><input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18' ></td></tr>
-		</table></div><br>
-END
-		#TARGETPORT
-		print<<END;
-		<hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; '><br>
-		<div id="tpt"><table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USESRV' id='USESRV' value='ON' $checked{'USESRV'}{'ON'}></td><td width='48%'>$Lang::tr{'fwdfw use srv'}</td></tr></table></div>
-		<div id="targetport" class="noscript"><table width='100%' border='0'><tr><td width='80%'></td><td width='1%'><input type='radio' name='grp3' id='cust_srv' value='cust_srv' checked></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td width='1%' colspan='2'><select name='cust_srv' style='min-width:230px;' >
+
+		$fwdfwsettings{'SRC_PORT'} =~ s/\|/,/g;
+		$fwdfwsettings{'TGT_PORT'} =~ s/\|/,/g;
+
+		print <<END;
+
+		<div id="PROTOCOL_PORTS">
+			<table border="0">
+				<tr>
+					<!-- #SOURCEPORT -->
+					<td>
+						$Lang::tr{'fwdfw man port'}
+					</td>
+					<td>
+						<input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18'>
+					</td>
+
+					<!-- #TARGETPORT -->
+					<td>
+						$Lang::tr{'fwdfw man port'}
+					</td>
+					<td>
+						<input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18'>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="PROTOCOL_TEMPLATE">
+			<table border="0">
+				<tr>
+					<td>
+						<input type='radio' name='grp3' id='cust_srv' value='cust_srv' checked>
+						$Lang::tr{'fwhost cust service'}
+					</td>
+					<td>
+						<select name='cust_srv' style='min-width: 230px;'>
 END
 		&General::readhasharray("$configsrv", \%customservice);
 		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
 			print"<option ";
 			print"selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservice{$key}[0]);
 			print"value='$customservice{$key}[0]'>$customservice{$key}[0]</option>";
-		}	
+		}
+
 		print<<END;
-		</select></td></tr>
-		<tr><td></td><td><input type='radio' name='grp3' id='cust_srvgrp' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}></td><td nowrap='nowrap'>$Lang::tr{'fwhost cust srvgrp'}</td><td colspan='2'><select name='cust_srvgrp' style='min-width:230px;' >
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type='radio' name='grp3' id='cust_srvgrp' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}>
+						$Lang::tr{'fwhost cust srvgrp'}
+					</td>
+					<td>
+						<select name='cust_srvgrp' style='min-width:230px;'>
 END
+
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		my $helper;
 		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } keys %customservicegrp){
@@ -1754,14 +1794,15 @@ END
 			$helper=$customservicegrp{$key}[0];
 		}	
 		print<<END;
-		</select></td></tr>
-		<tr><td></td><td><input type='radio' name='grp3' id='TGT_PORT' value='TGT_PORT' $checked{'grp3'}{'TGT_PORT'}></td><td>$Lang::tr{'fwdfw man port'}</td>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<br><br><br>
 END
-		$fwdfwsettings{'TGT_PORT'} =~ s/\|/,/g;
-		print<<END;
-		<td align='right'><input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18' onclick='checkradio(\"#TGT_PORT\")'></td></tr>
-		</table></div><br><hr>
-END
+
 		&Header::closebox;
 		#---Activate/logging/remark-------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
