@@ -103,36 +103,41 @@ print<<END;
 	\$(document).ready(function() {
 		// Hide sourceport area when no sourceport is used
 		if (! \$("#USE_SRC_PORT").attr("checked")) {
-			toggle_elements('srcport');
+			toggle_elements('#srcport');
 		}
 		// Hide targetport area when no targetport is used
 		if (! \$("#USESRV").attr("checked")) {
-			toggle_elements('targetport');
+			toggle_elements('#targetport');
 		}
 		// When nat not used, hide it
-		if (! \$("#USENAT").attr("checked")) {
-			toggle_elements('natpart');
-		}
-		// When Prot not icmp, hide icmp-types
-		if (! \$("#PROT option[value='ICMP']").attr('select')) {
-			document.getElementById('PROTOKOLL').style.display='none';
+		if (! \$("#nat").attr("checked")) {
+			toggle_elements('#natpart');
 		}
 		// When protocol dropdown is changed, check if we selected icmp - then show icmp-types
 		\$("#prt").change(function(){
-			if ( document.getElementById("PROT").value === 'ICMP' ){
-				document.getElementById('PROTOKOLL').style.display='block';
+			if ( \$("#PROT").val() === 'ICMP' ){
+				\$('#PROTOKOLL').show();
 			}
 			else{
-				document.getElementById('PROTOKOLL').style.display='none';
+				\$('#PROTOKOLL').hide();
 			}
 		});
+		// When Prot not icmp, hide icmp-types
+		if ( ! \$("#PROT").val() == 'ICMP') {
+			\$('#PROTOKOLL').hide();
+		}
+
+		// Show NAT area when "use nat" checkbox is clicked
+		\$( "#nat" ).change(function() {
+			toggle_elements('#natpart');
+		});
 		// Show Sourceport area when "use sourceport" checkbox is clicked
-		\$( "#spt" ).click(function() {
-			toggle_elements('srcport');
+		\$( "#spt" ).change(function() {
+			toggle_elements('#srcport');
 		});
 		// Show Targetport area when "use Targetport" checkbox is clicked
-		\$( "#tpt" ).click(function() {
-			toggle_elements('targetport');
+		\$( "#tpt" ).change(function() {
+			toggle_elements('#targetport');
 		});
 		// Automatically select radio buttons when corresponding
 		// dropdown menu changes.
@@ -149,31 +154,16 @@ function checkradio(a){
 	\$(a).attr('checked', true);
 }
 function toggle_elements( id ) {
-	if(document.getElementById(id).style.display== "none")
+	\$(id).toggle();
+	if(! \$("targetport:visible") && \$("#PROT").val() === 'ICMP' )
 	{
-		document.getElementById(id).style.display='block';
+		\$('#PROTOKOLL').show();
 	}
-	else{
-		document.getElementById(id).style.display='none';
-	}
-	if(document.getElementById('targetport').style.display== "none" && document.getElementById('PROT').value === 'ICMP' )
+	if(\$("targetport:visible") && \$("#PROT").val() === 'ICMP' )
 	{
-		document.getElementById('PROTOKOLL').style.display='block';
-	}
-	if(document.getElementById('targetport').style.display== "block" && document.getElementById('PROT').value === 'ICMP' )
-	{
-		document.getElementById('PROTOKOLL').style.display='none';
+		\$('#PROTOKOLL').hide();
 	}
 	return true;
-}
-function hide_elements()
-{
-	var elementNames = hide_elements.arguments;
-	for (var i=0; i<elementNames.length; i++)
-	{
-		var elementName = elementNames[i];
-		document.getElementById(elementName).style.display='none';
-	}
 }
 </script>
 END
@@ -1594,10 +1584,10 @@ sub newrule
 		}	
 	}
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw addrule'});
-	print "<form method='post'>";
 	&Header::closebox();
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw source'});
 	#------SOURCE-------------------------------------------------------
+	print "<form method='post'>";
 	print<<END;
 		<table width='100%' border='0'>
 		<tr><td width='1%'><input type='radio' name='grp1' value='src_addr'  checked></td><td width='60%'>$Lang::tr{'fwdfw sourceip'}<input type='TEXT' name='src_addr' value='$fwdfwsettings{'src_addr'}' size='16' maxlength='18' ></td><td width='1%'><input type='radio' name='grp1' id='ipfire_src' value='ipfire_src'  $checked{'grp1'}{'ipfire_src'}></td><td><b>Firewall</b></td>
@@ -1624,8 +1614,8 @@ END
 		#---SNAT / DNAT ------------------------------------------------
 		&Header::openbox('100%', 'left', 'NAT');
 		print<<END;
-		<table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'} onclick="toggle_elements('natpart')" ></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr></table>
+		<div id="nat"><table width='100%' border='0'>
+		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'} ></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr></table></div>
 		<div id="natpart" class="noscript">
 		<table width=100%' border='0'><tr>
 		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='dnat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>

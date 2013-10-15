@@ -99,17 +99,20 @@ print<<END;
 			}
 			\$('#' + id).prop("checked", true);
 		});
+		// When protokol is not ICMP hide icmp-types
+		if ( \$("#PROT").val() === 'ICMP') {
+			\$('PROTOKOLL').hide();
+		}
+		// When protocol dropdown is changed, check if we selected icmp - then show icmp-types
+		\$("#prt").change(function(){
+			if ( \$("#PROT").val() === 'ICMP' ){
+				\$('PROTOKOLL').show();
+			}
+			else{
+				\$('PROTOKOLL').hide();
+			}
+		});
 	});
-function toggle_elements( id ) {
-	if(document.getElementById(id).style.display== "none")
-	{
-		document.getElementById(id).style.display='block';
-	}
-	else{
-		document.getElementById(id).style.display='none';
-	}
-	return true;
-}
 function hide_elements(){
 	var elementNames = hide_elements.arguments;
 	for (var i=0; i<elementNames.length; i++)
@@ -1341,9 +1344,9 @@ sub addservice
 		$fwhostsettings{'oldsrvicmp'} = $fwhostsettings{'ICMP'};
 	}
 	print<<END;
-	<table width='100%' border='0'><form method='post'>
+	<div id='prt'><table width='100%' border='0'><form method='post'>
 	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost srv_name'}:</td><td><input type='text' name='SRV_NAME' id='textbox1' value='$fwhostsettings{'SRV_NAME'}' size='24'><script>document.getElementById('textbox1').focus()</script></td></tr>
-	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT' id='PROT' onchange="getdropdown()">
+	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT' id='PROT' >
 END
 	foreach ("TCP","UDP","ICMP")
 	{
@@ -1355,7 +1358,7 @@ END
 		}
 	}
 	print<<END;
-	</select></td></tr></table>
+	</select></td></tr></table></div>
 	<div id='PROTOKOLL' class='noscript'><table width=100%' border='0'><tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td><select name='ICMP_TYPES'>
 END
 	&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
@@ -1394,9 +1397,9 @@ END
 	
 	
 END
-	if ($fwhostsettings{'PROT'} ne 'ICMP'){
-			print"<script language='JavaScript'>hide_elements('PROTOKOLL');</script>";
-		}
+	#if ($fwhostsettings{'PROT'} ne 'ICMP'){
+			#print"<script language='JavaScript'>hide_elements('PROTOKOLL');</script>";
+		#}
 	&Header::closebox();
 	&viewtableservice;
 }
