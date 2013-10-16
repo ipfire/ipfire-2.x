@@ -137,8 +137,8 @@ print<<END;
 		update_protocol();
 
 		// When nat not used, hide it
-		if (\$("#nat").attr("checked")) {
-			\$("#natpart").show();
+		if (! \$("#nat").attr("checked")) {
+			\$("#natpart").hide();
 		}
 
 		// Show NAT area when "use nat" checkbox is clicked
@@ -168,6 +168,23 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	&General::readhasharray("$configfwdfw", \%configfwdfw);
 	&General::readhasharray("$configinput", \%configinputfw);
 	&General::readhasharray("$configoutgoing", \%configoutgoingfw);
+	#Set Variables according to the JQuery code in protocol section
+	if ($fwdfwsettings{'PROT'} eq 'TCP' || $fwdfwsettings{'PROT'} eq 'UDP')
+	{
+		if ($fwdfwsettings{'SRC_PORT'} ne '')
+		{
+			$fwdfwsettings{'USE_SRC_PORT'} = 'ON';
+		}
+		if ($fwdfwsettings{'TGT_PORT'} ne '')
+		{
+			$fwdfwsettings{'USESRV'} = 'ON';
+			$fwdfwsettings{'grp3'} = 'TGT_PORT';
+		}
+	}
+	if ($fwdfwsettings{'PROT'} eq 'template')
+	{
+		$fwdfwsettings{'USESRV'} = 'ON';
+	}
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
@@ -823,7 +840,7 @@ sub checkrule
 		return;
 	}
 	#when icmp selected, no targetport allowed
-	if (($fwdfwsettings{'PROT'} ne '' && $fwdfwsettings{'PROT'} ne 'TCP' && $fwdfwsettings{'PROT'} ne 'UDP') && ($fwdfwsettings{'USESRV'} eq 'ON' || $fwdfwsettings{'USE_SRC_PORT'} eq 'ON')){
+	if (($fwdfwsettings{'PROT'} ne '' && $fwdfwsettings{'PROT'} ne 'TCP' && $fwdfwsettings{'PROT'} ne 'UDP' && $fwdfwsettings{'PROT'} ne 'template') && ($fwdfwsettings{'USESRV'} eq 'ON' || $fwdfwsettings{'USE_SRC_PORT'} eq 'ON')){
 		$errormessage.=$Lang::tr{'fwdfw err prot_port'};
 		return;
 	}
@@ -869,6 +886,12 @@ sub checkrule
 		$fwdfwsettings{'USESRV'}='';
 		$fwdfwsettings{'TGT_PORT'}='';
 	}elsif($fwdfwsettings{'PROT'} eq 'AH'){
+		$fwdfwsettings{'USE_SRC_PORT'}='';
+		$fwdfwsettings{'SRC_PORT'}='';
+		$fwdfwsettings{'ICMP_TYPES'}='';
+		$fwdfwsettings{'USESRV'}='';
+		$fwdfwsettings{'TGT_PORT'}='';
+	}elsif($fwdfwsettings{'PROT'} eq 'IGMP'){
 		$fwdfwsettings{'USE_SRC_PORT'}='';
 		$fwdfwsettings{'SRC_PORT'}='';
 		$fwdfwsettings{'ICMP_TYPES'}='';
@@ -1670,6 +1693,10 @@ END
 		&Header::closebox;
 		#---PROTOCOL------------------------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost prot'});
+		#Fix Protocol for JQuery
+		if ($fwdfwsettings{'grp3'} eq 'cust_srv' || $fwdfwsettings{'grp3'} eq 'cust_srvgrp'){
+			$fwdfwsettings{'PROT'} = 'template';
+		}
 		print<<END;
 		<div id="prt">
 			<table width='15%' border='0' style="float:left;">
@@ -1684,7 +1711,7 @@ END
 		print ">$Lang::tr{'all'}</option>";
 
 		print "<option value=\"template\"";
-		# XXX set selected
+		print " selected=\"selected\"" if ($fwdfwsettings{'grp3'} eq 'cust_srv' || $fwdfwsettings{'grp3'} eq 'cust_srvgrp');
 		print ">- $Lang::tr{'template'} -</option>";
 
 		foreach (@PROTOCOLS) {
@@ -1736,16 +1763,19 @@ END
 				<tr>
 					<!-- #SOURCEPORT -->
 					<td>
-						$Lang::tr{'fwdfw man port'}
+						$Lang::tr{'fwdfw use srcport'}
 					</td>
 					<td>
 						<input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18'>
 					</td>
+					<td width='10%'>
+					</td>
 
 					<!-- #TARGETPORT -->
 					<td>
-						$Lang::tr{'fwdfw man port'}
+						$Lang::tr{'fwdfw use srv'}
 					</td>
+
 					<td>
 						<input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18'>
 					</td>
