@@ -13,6 +13,8 @@
 ############################################################################
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< advproxy errmsg proxy ports equal
+< advproxy proxy port transparent
 < age second
 < age seconds
 < age shour
@@ -414,6 +416,8 @@
 ############################################################################
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< advproxy errmsg proxy ports equal
+< advproxy proxy port transparent
 < age second
 < age seconds
 < age shour
@@ -808,6 +812,8 @@
 ############################################################################
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< advproxy errmsg proxy ports equal
+< advproxy proxy port transparent
 < age second
 < age seconds
 < age shour
@@ -1178,6 +1184,8 @@
 < Add a route
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< advproxy errmsg proxy ports equal
+< advproxy proxy port transparent
 < age second
 < age seconds
 < age shour

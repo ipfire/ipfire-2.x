@@ -1,0 +1,403 @@
+diff -Nrup a/stdio-common/bug22.c b/stdio-common/bug22.c
+--- a/stdio-common/bug22.c	2010-05-04 05:27:23.000000000 -0600
++++ b/stdio-common/bug22.c	2012-08-03 13:56:40.887829210 -0600
+@@ -1,12 +1,22 @@
+ /* BZ #5424 */
+ #include <stdio.h>
++#include <errno.h>
+ 
++/* INT_MAX + 1 */
+ #define N 2147483648
+ 
++/* (INT_MAX / 2) + 2 */
++#define N2 1073741825
++
++/* INT_MAX - 3 */
++#define N3 2147483644
++
+ #define STRINGIFY(S) #S
+ #define MAKE_STR(S) STRINGIFY(S)
+ 
+ #define SN MAKE_STR(N)
++#define SN2 MAKE_STR(N2)
++#define SN3 MAKE_STR(N3)
+ 
+ static int
+ do_test (void)
+@@ -20,13 +30,27 @@ do_test (void)
+       return 1;
+     }
+ 
+-  ret = fprintf (fp, "%" SN "d%" SN "d", 1, 1);
++  ret = fprintf (fp, "%" SN "d", 1);
++  printf ("ret = %d\n", ret);
++  if (ret != -1 || errno != EOVERFLOW)
++	  return 1;
++
++  ret = fprintf (fp, "%." SN "d", 1);
++  printf ("ret = %d\n", ret);
++  if (ret != -1 || errno != EOVERFLOW)
++	  return 1;
++
++  ret = fprintf (fp, "%." SN3 "d", 1);
++  printf ("ret = %d\n", ret);
++  if (ret != -1 || errno != EOVERFLOW)
++	  return 1;
+ 
++  ret = fprintf (fp, "%" SN2 "d%" SN2 "d", 1, 1);
+   printf ("ret = %d\n", ret);
+ 
+-  return ret != -1;
++  return ret != -1 || errno != EOVERFLOW;
+ }
+ 
+-#define TIMEOUT 30
++#define TIMEOUT 60
+ #define TEST_FUNCTION do_test ()
+ #include "../test-skeleton.c"
+diff -Nrup a/stdio-common/printf-parse.h b/stdio-common/printf-parse.h
+--- a/stdio-common/printf-parse.h	2010-05-04 05:27:23.000000000 -0600
++++ b/stdio-common/printf-parse.h	2012-08-03 13:57:31.932638761 -0600
+@@ -14,9 +14,8 @@
+    Lesser General Public License for more details.
+ 
+    You should have received a copy of the GNU Lesser General Public
+-   License along with the GNU C Library; if not, write to the Free
+-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+-   02111-1307 USA.  */
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
+ 
+ #include <printf.h>
+ #include <stdint.h>
+@@ -69,16 +68,27 @@ union printf_arg
+ #ifndef DONT_NEED_READ_INT
+ /* Read a simple integer from a string and update the string pointer.
+    It is assumed that the first character is a digit.  */
+-static unsigned int
++static int
+ read_int (const UCHAR_T * *pstr)
+ {
+-  unsigned int retval = **pstr - L_('0');
++  int retval = **pstr - L_('0');
+ 
+   while (ISDIGIT (*++(*pstr)))
+-    {
+-      retval *= 10;
+-      retval += **pstr - L_('0');
+-    }
++    if (retval >= 0)
++      {
++	if (INT_MAX / 10 < retval)
++	  retval = -1;
++	else
++	  {
++	    int digit = **pstr - L_('0');
++
++	    retval *= 10;
++	    if (INT_MAX - digit < retval)
++	      retval = -1;
++	    else
++	      retval += digit;
++	  }
++      }
+ 
+   return retval;
+ }
+diff -Nrup a/stdio-common/printf-parsemb.c b/stdio-common/printf-parsemb.c
+--- a/stdio-common/printf-parsemb.c	2010-05-04 05:27:23.000000000 -0600
++++ b/stdio-common/printf-parsemb.c	2012-08-03 13:58:44.683366361 -0600
+@@ -13,9 +13,8 @@
+    Lesser General Public License for more details.
+ 
+    You should have received a copy of the GNU Lesser General Public
+-   License along with the GNU C Library; if not, write to the Free
+-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+-   02111-1307 USA.  */
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
+ 
+ #include <ctype.h>
+ #include <limits.h>
+@@ -88,12 +87,15 @@ __parse_one_specmb (const UCHAR_T *forma
+ 
+       n = read_int (&format);
+ 
+-      if (n > 0 && *format == L_('$'))
++      if (n != 0 && *format == L_('$'))
+ 	/* Is positional parameter.  */
+ 	{
+ 	  ++format;		/* Skip the '$'.  */
+-	  spec->data_arg = n - 1;
+-	  *max_ref_arg = MAX (*max_ref_arg, n);
++	  if (n != -1)
++	    {
++	      spec->data_arg = n - 1;
++	      *max_ref_arg = MAX (*max_ref_arg, n);
++	    }
+ 	}
+       else
+ 	/* Oops; that was actually the width and/or 0 padding flag.
+@@ -161,10 +163,13 @@ __parse_one_specmb (const UCHAR_T *forma
+ 	  /* The width argument might be found in a positional parameter.  */
+ 	  n = read_int (&format);
+ 
+-	  if (n > 0 && *format == L_('$'))
++	  if (n != 0 && *format == L_('$'))
+ 	    {
+-	      spec->width_arg = n - 1;
+-	      *max_ref_arg = MAX (*max_ref_arg, n);
++	      if (n != -1)
++		{
++		  spec->width_arg = n - 1;
++		  *max_ref_arg = MAX (*max_ref_arg, n);
++		}
+ 	      ++format;		/* Skip '$'.  */
+ 	    }
+ 	}
+@@ -178,9 +183,13 @@ __parse_one_specmb (const UCHAR_T *forma
+ 	}
+     }
+   else if (ISDIGIT (*format))
+-    /* Constant width specification.  */
+-    spec->info.width = read_int (&format);
++    {
++      int n = read_int (&format);
+ 
++      /* Constant width specification.  */
++      if (n != -1)
++	spec->info.width = n;
++    }
+   /* Get the precision.  */
+   spec->prec_arg = -1;
+   /* -1 means none given; 0 means explicit 0.  */
+@@ -197,10 +206,13 @@ __parse_one_specmb (const UCHAR_T *forma
+ 	    {
+ 	      n = read_int (&format);
+ 
+-	      if (n > 0 && *format == L_('$'))
++	      if (n != 0 && *format == L_('$'))
+ 		{
+-		  spec->prec_arg = n - 1;
+-		  *max_ref_arg = MAX (*max_ref_arg, n);
++		  if (n != -1)
++		    {
++		      spec->prec_arg = n - 1;
++		      *max_ref_arg = MAX (*max_ref_arg, n);
++		    }
+ 		  ++format;
+ 		}
+ 	    }
+@@ -214,7 +226,12 @@ __parse_one_specmb (const UCHAR_T *forma
+ 	    }
+ 	}
+       else if (ISDIGIT (*format))
+-	spec->info.prec = read_int (&format);
++	{
++	  int n = read_int (&format);
++
++	  if (n != -1)
++	    spec->info.prec = n;
++	}
+       else
+ 	/* "%.?" is treated like "%.0?".  */
+ 	spec->info.prec = 0;
+@@ -295,9 +312,9 @@ __parse_one_specmb (const UCHAR_T *forma
+       /* We don't try to get the types for all arguments if the format
+ 	 uses more than one.  The normal case is covered though.  If
+ 	 the call returns -1 we continue with the normal specifiers.  */
+-      || (spec->ndata_args = (*__printf_arginfo_table[spec->info.spec])
+-	  (&spec->info, 1, &spec->data_arg_type,
+-	   &spec->size)) < 0)
++      || (int) (spec->ndata_args = (*__printf_arginfo_table[spec->info.spec])
++				   (&spec->info, 1, &spec->data_arg_type,
++				    &spec->size)) < 0)
+     {
+       /* Find the data argument types of a built-in spec.  */
+       spec->ndata_args = 1;
+diff -Nrup a/stdio-common/vfprintf.c b/stdio-common/vfprintf.c
+--- a/stdio-common/vfprintf.c	2012-08-03 13:31:26.605168350 -0600
++++ b/stdio-common/vfprintf.c	2012-08-03 14:09:26.836725512 -0600
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 1991-2008, 2009   Free Software Foundation, Inc.
++/* Copyright (C) 1991-2012   Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -12,9 +12,8 @@
+    Lesser General Public License for more details.
+ 
+    You should have received a copy of the GNU Lesser General Public
+-   License along with the GNU C Library; if not, write to the Free
+-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+-   02111-1307 USA.  */
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
+ 
+ #include <ctype.h>
+ #include <limits.h>
+@@ -67,10 +66,10 @@
+   do {									      \
+     unsigned int _val = val;						      \
+     assert ((unsigned int) done < (unsigned int) INT_MAX);		      \
+-    if (__builtin_expect ((unsigned int) INT_MAX - (unsigned int) done	      \
+-			  < _val, 0))					      \
++    if (__builtin_expect (INT_MAX - done < _val, 0))			      \
+       {									      \
+ 	done = -1;							      \
++	 __set_errno (EOVERFLOW);					      \
+ 	goto all_done;							      \
+       }									      \
+     done += _val;							      \
+@@ -141,12 +140,17 @@
+   do									      \
+     {									      \
+       assert ((size_t) done <= (size_t) INT_MAX);			      \
+-      if ((size_t) PUT (s, (String), (Len)) != (size_t) (Len)		      \
+-	  || (size_t) INT_MAX - (size_t) done < (size_t) (Len))		      \
++      if ((size_t) PUT (s, (String), (Len)) != (size_t) (Len))		      \
+ 	{								      \
+ 	  done = -1;							      \
+ 	  goto all_done;						      \
+ 	}								      \
++      if (__builtin_expect (INT_MAX - done < (Len), 0))			      \
++      {									      \
++	done = -1;							      \
++	 __set_errno (EOVERFLOW);					      \
++	goto all_done;							      \
++      }									      \
+       done += (Len);							      \
+     }									      \
+   while (0)
+@@ -1435,10 +1439,21 @@ vfprintf (FILE *s, const CHAR_T *format,
+ 	const UCHAR_T *tmp;	/* Temporary value.  */
+ 
+ 	tmp = ++f;
+-	if (ISDIGIT (*tmp) && read_int (&tmp) && *tmp == L_('$'))
+-	  /* The width comes from a positional parameter.  */
+-	  goto do_positional;
++	if (ISDIGIT (*tmp))
++	  {
++	    int pos = read_int (&tmp);
+ 
++	    if (pos == -1)
++	      {
++		__set_errno (EOVERFLOW);
++		done = -1;
++		goto all_done;
++	      }
++
++	    if (pos && *tmp == L_('$'))
++	      /* The width comes from a positional parameter.  */
++	      goto do_positional;
++	  }
+ 	width = va_arg (ap, int);
+ 
+ 	/* Negative width means left justified.  */
+@@ -1449,9 +1464,9 @@ vfprintf (FILE *s, const CHAR_T *format,
+ 	    left = 1;
+ 	  }
+ 
+-	if (__builtin_expect (width >= (size_t) -1 / sizeof (CHAR_T) - 32, 0))
++	if (__builtin_expect (width >= INT_MAX / sizeof (CHAR_T) - 32, 0))
+ 	  {
+-	    __set_errno (ERANGE);
++	    __set_errno (EOVERFLOW);
+ 	    done = -1;
+ 	    goto all_done;
+ 	  }
+@@ -1481,9 +1496,10 @@ vfprintf (FILE *s, const CHAR_T *format,
+     LABEL (width):
+       width = read_int (&f);
+ 
+-      if (__builtin_expect (width >= (size_t) -1 / sizeof (CHAR_T) - 32, 0))
++      if (__builtin_expect (width == -1
++			    || width >= INT_MAX / sizeof (CHAR_T) - 32, 0))
+ 	{
+-	  __set_errno (ERANGE);
++	  __set_errno (EOVERFLOW);
+ 	  done = -1;
+ 	  goto all_done;
+ 	}
+@@ -1518,10 +1534,21 @@ vfprintf (FILE *s, const CHAR_T *format,
+ 	  const UCHAR_T *tmp;	/* Temporary value.  */
+ 
+ 	  tmp = ++f;
+-	  if (ISDIGIT (*tmp) && read_int (&tmp) > 0 && *tmp == L_('$'))
+-	    /* The precision comes from a positional parameter.  */
+-	    goto do_positional;
++	  if (ISDIGIT (*tmp))
++	    {
++	      int pos = read_int (&tmp);
++
++	      if (pos == -1)
++		{
++		  __set_errno (EOVERFLOW);
++		  done = -1;
++		  goto all_done;
++		}
+ 
++	      if (pos && *tmp == L_('$'))
++		/* The precision comes from a positional parameter.  */
++		goto do_positional;
++	    }
+ 	  prec = va_arg (ap, int);
+ 
+ 	  /* If the precision is negative the precision is omitted.  */
+@@ -1529,15 +1556,26 @@ vfprintf (FILE *s, const CHAR_T *format,
+ 	    prec = -1;
+ 	}
+       else if (ISDIGIT (*f))
+-	prec = read_int (&f);
++	{
++	  prec = read_int (&f);
++
++	  /* The precision was specified in this case as an extremely
++	     large positive value.  */
++	  if (prec == -1)
++	    {
++	      __set_errno (EOVERFLOW);
++	      done = -1;
++	      goto all_done;
++	    }
++	}
+       else
+ 	prec = 0;
+       if (prec > width
+ 	  && prec > sizeof (work_buffer) / sizeof (work_buffer[0]) - 32)
+ 	{
+-	  if (__builtin_expect (prec >= (size_t) -1 / sizeof (CHAR_T) - 32, 0))
++	  if (__builtin_expect (prec >= INT_MAX / sizeof (CHAR_T) - 32, 0))
+ 	    {
+-	      __set_errno (ERANGE);
++	      __set_errno (EOVERFLOW);
+ 	      done = -1;
+ 	      goto all_done;
+ 	    }
+@@ -1722,13 +1760,13 @@ do_positional:
+     nargs = MAX (nargs, max_ref_arg);
+     /* Calculate total size needed to represent a single argument across
+        all three argument-related arrays.  */
+-    bytes_per_arg = sizeof (*args_value) + sizeof (*args_size)
+-                    + sizeof (*args_type);
++    bytes_per_arg = (sizeof (*args_value) + sizeof (*args_size)
++		     + sizeof (*args_type));
+ 
+     /* Check for potential integer overflow.  */
+-    if (__builtin_expect (nargs > SIZE_MAX / bytes_per_arg, 0))
++    if (__builtin_expect (nargs > INT_MAX / bytes_per_arg, 0))
+       {
+-         __set_errno (ERANGE);
++	 __set_errno (EOVERFLOW);
+          done = -1;
+          goto all_done;
+       }
+@@ -1746,6 +1784,8 @@ do_positional:
+           }
+       }
+ 
++    /* Set up the remaining two arrays to each point past the end of the
++       prior array, since space for all three has been allocated now.  */
+     args_size = &args_value[nargs].pa_int;
+     args_type = &args_size[nargs];
+     memset (args_type, s->_flags2 & _IO_FLAGS2_FORTIFY ? '\xff' : '\0',

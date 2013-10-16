@@ -1,0 +1,54 @@
+diff -rup a/nss/nsswitch.h b/nss/nsswitch.h
+--- a/nss/nsswitch.h	2010-05-04 05:27:23.000000000 -0600
++++ b/nss/nsswitch.h	2012-07-05 11:28:15.316585117 -0600
+@@ -182,4 +182,8 @@ extern int __nss_hostname_digits_dots (c
+ 				       int *h_errnop);
+ libc_hidden_proto (__nss_hostname_digits_dots)
+ 
++/* Maximum number of aliases we allow.  */
++#define MAX_NR_ALIASES  48
++#define MAX_NR_ADDRS    48
++
+ #endif	/* nsswitch.h */
+Only in b/nss: nsswitch.h.orig
+diff -rup a/resolv/nss_dns/dns-host.c b/resolv/nss_dns/dns-host.c
+--- a/resolv/nss_dns/dns-host.c	2012-07-05 11:27:39.298760961 -0600
++++ b/resolv/nss_dns/dns-host.c	2012-07-05 11:28:15.317585112 -0600
+@@ -89,10 +89,6 @@
+ 
+ #define RESOLVSORT
+ 
+-/* Maximum number of aliases we allow.  */
+-#define MAX_NR_ALIASES	48
+-#define MAX_NR_ADDRS	48
+-
+ #if PACKETSZ > 65536
+ # define MAXPACKET	PACKETSZ
+ #else
+Only in b/resolv/nss_dns: dns-host.c.orig
+diff -rup a/sysdeps/posix/getaddrinfo.c b/sysdeps/posix/getaddrinfo.c
+--- a/sysdeps/posix/getaddrinfo.c	2012-07-05 11:27:39.284761028 -0600
++++ b/sysdeps/posix/getaddrinfo.c	2012-07-05 14:15:39.785546125 -0600
+@@ -565,7 +565,10 @@ gaih_inet (const char *name, const struc
+ 	     IPv6 scope ids. */
+ 	  if (req->ai_family == AF_INET)
+ 	    {
+-	      size_t tmpbuflen = 512;
++              /* Add room for struct host_data in resolv/nss_dns/dns-host.c */
++              size_t tmpbuflen = 512 + (MAX_NR_ALIASES+MAX_NR_ADDRS+1)*sizeof(char*)
++                                  + 16 * sizeof(char);
++
+ 	      assert (tmpbuf == NULL);
+ 	      tmpbuf = alloca_account (tmpbuflen, alloca_used);
+ 	      int rc;
+@@ -807,7 +810,7 @@ gaih_inet (const char *name, const struc
+ 	  old_res_options = _res.options;
+ 	  _res.options &= ~RES_USE_INET6;
+ 
+-	  size_t tmpbuflen = 1024;
++	  size_t tmpbuflen = 1024 + sizeof(struct gaih_addrtuple);
+ 	  malloc_tmpbuf = !__libc_use_alloca (alloca_used + tmpbuflen);
+ 	  assert (tmpbuf == NULL);
+ 	  if (!malloc_tmpbuf)
+Only in b/sysdeps/posix: getaddrinfo.c.orig
+Only in b/sysdeps/posix: getaddrinfo.c.rej

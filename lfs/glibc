@@ -227,13 +227,37 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh795498.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh797094-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh797094-2.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh804630.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh804686.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh804689.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh806404.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh808337.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh808545.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh809602.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh833716.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh837026.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh809726.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh823909.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh826149.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh827362.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh830127.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh832516.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh832694.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh833717.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh837695.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh837918.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh841787.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh843673.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh846342.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh847932.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh848082.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh849203.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh849651.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh852445.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh861167.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh863453.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh864322.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh929388.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh970992.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh989558.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh989558-2.patch
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-resolv-stack_chk_fail.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-remove-ctors-dtors-output-sections.patch
