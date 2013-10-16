@@ -88,58 +88,42 @@ unless (-e $configsrvgrp) { system("touch $configsrvgrp"); }
 #### JAVA SCRIPT ####
 print<<END;
 <script>
-	\$(document).ready(function() {
-		// Automatically select radio buttons when corresponding
-		// dropdown menu changes.
-		\$("select").change(function() {
-			var id = \$(this).attr("name");
-			//When using SNAT or DNAT, check "USE NAT" Checkbox
-			if ( id === 'snat' || id === 'dnat') {
-				\$('#USE_NAT').prop('checked', true);
-			}
-			\$('#' + id).prop("checked", true);
-		});
-		// When protokol is not ICMP hide icmp-types
-		if ( \$("#PROT").val() === 'ICMP') {
-			\$('PROTOKOLL').hide();
+	var PROTOCOLS_WITH_PORTS = ["TCP", "UDP"];
+	var update_protocol = function() {
+		var protocol = \$("#protocol").val();
+
+		if (protocol === undefined)
+			return;
+
+		// Check if we are dealing with a protocol, that knows ports.
+		if (\$.inArray(protocol, PROTOCOLS_WITH_PORTS) >= 0) {
+			\$("#PORT").show();
+		} else {
+			\$("#PORT").hide();
 		}
-		// When protocol dropdown is changed, check if we selected icmp - then show icmp-types
-		\$("#prt").change(function(){
-			if ( \$("#PROT").val() === 'ICMP' ){
-				\$('PROTOKOLL').show();
-			}
-			else{
-				\$('PROTOKOLL').hide();
-			}
-		});
+
+		// Handle ICMP.
+		if (protocol === "ICMP") {
+			\$("#PROTOKOLL").show();
+		} else {
+			\$("#PROTOKOLL").hide();
+		}
+	};
+
+	\$(document).ready(function() {
+		var protocol = \$("#protocol").val();
+
+		// Handle ICMP.
+		if (protocol === "ICMP") {
+			\$("#PROTOKOLL").show();
+			\$("#PORT").hide();
+		} else {
+			\$("#PROTOKOLL").hide();
+			\$("#PORT").show();
+		}
+		\$("#protocol").change(update_protocol);
+		update_protocol();
 	});
-function hide_elements(){
-	var elementNames = hide_elements.arguments;
-	for (var i=0; i<elementNames.length; i++)
-	{
-		var elementName = elementNames[i];
-		document.getElementById(elementName).style.display='none';
-	}
-}
-function getdropdown(){
-	d = document.getElementById("PROT").value;
-	if ( d == 'ICMP' )
-	{
-		document.getElementById('PROTOKOLL').style.display='block';
-	}
-	else
-	{
-		document.getElementById('PROTOKOLL').style.display='none';
-	}
-	if(document.getElementById('PROTOKOLL').style.display== "block" )
-	{
-		document.getElementById('PORT').style.display='none';
-	}
-	if(document.getElementById('PROTOKOLL').style.display== "none" )
-	{
-		document.getElementById('PORT').style.display='block';
-	}
-}
 </script>
 END
 
@@ -1344,9 +1328,9 @@ sub addservice
 		$fwhostsettings{'oldsrvicmp'} = $fwhostsettings{'ICMP'};
 	}
 	print<<END;
-	<div id='prt'><table width='100%' border='0'><form method='post'>
+	<table width='100%' border='0'><form method='post'>
 	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost srv_name'}:</td><td><input type='text' name='SRV_NAME' id='textbox1' value='$fwhostsettings{'SRV_NAME'}' size='24'><script>document.getElementById('textbox1').focus()</script></td></tr>
-	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT' id='PROT' >
+	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT' id='protocol' >
 END
 	foreach ("TCP","UDP","ICMP")
 	{
@@ -1358,7 +1342,7 @@ END
 		}
 	}
 	print<<END;
-	</select></td></tr></table></div>
+	</select></td></tr></table>
 	<div id='PROTOKOLL' class='noscript'><table width=100%' border='0'><tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td><select name='ICMP_TYPES'>
 END
 	&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
@@ -1387,19 +1371,13 @@ END
 		<input type='hidden' name='oldsrvicmp' value='$fwhostsettings{'oldsrvicmp'}'>
 		</form>
 END
-		
-	}else{	
+	}else{
 		print"<input type='submit' value='$Lang::tr{'save'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='saveservice'></form>";
 	}
 	print<<END;
 	<form style='display:inline;' method='post'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'></form></td></tr>
 	</table></form>
-	
-	
 END
-	#if ($fwhostsettings{'PROT'} ne 'ICMP'){
-			#print"<script language='JavaScript'>hide_elements('PROTOKOLL');</script>";
-		#}
 	&Header::closebox();
 	&viewtableservice;
 }
