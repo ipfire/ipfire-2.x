@@ -1917,9 +1917,34 @@ END
 		}
 
 		print<<END;
-		</table><table width='100%'>
-		<tr><td width='1%'><input type='checkbox' name='ACTIVE' value='ON' $checked{'ACTIVE'}{'ON'}></td><td>$Lang::tr{'fwdfw rule activate'}</td></tr>
-		<tr><td width='1%'><input type='checkbox' name='LOG' value='ON'  $checked{'LOG'}{'ON'}  ></td><td>$Lang::tr{'fwdfw log rule'}</td></tr>
+		</table>
+		<table width='100%'>
+			<tr>
+END
+
+		if ($fwdfwsettings{'updatefwrule'} eq 'on') {
+			print <<END;
+				<td>
+					<input type='checkbox' name='ACTIVE' $checked{'ACTIVE'}{'ON'}>
+				</td>
+				<td>$Lang::tr{'fwdfw rule activate'}</td>
+END
+		} else {
+			print <<END;
+				<td colspan="2">
+					<input type="hidden" name="ACTIVE" value="ON">
+				</td>
+END
+		}
+
+		print <<END;
+			</tr>
+			<tr>
+				<td>
+					<input type='checkbox' name='LOG' value='ON' $checked{'LOG'}{'ON'}>
+				</td>
+				<td>$Lang::tr{'fwdfw log rule'}</td>
+			</tr>
 			<tr>
 				<td width='1%'>
 					<input type='checkbox' name='TIME' id="USE_TIME_CONSTRAINTS" value='ON' $checked{'TIME'}{'ON'}>
