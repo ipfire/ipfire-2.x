@@ -1641,7 +1641,7 @@ END
 		<div id="nat"><table width='100%' border='0'>
 		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'} ></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr></table></div>
 		<div id="natpart" class="noscript">
-		<table width=100%' border='0'><tr>
+		<table width='100%' border='0'><tr>
 		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='dnat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
 END
 		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
