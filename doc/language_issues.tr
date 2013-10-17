@@ -579,6 +579,7 @@ WARNING: untranslated string: fw settings ruletable
 WARNING: untranslated string: fwdfw action
 WARNING: untranslated string: fwdfw additional
 WARNING: untranslated string: fwdfw addrule
+WARNING: untranslated string: fwdfw all icmp
 WARNING: untranslated string: fwdfw change
 WARNING: untranslated string: fwdfw copy
 WARNING: untranslated string: fwdfw delete
@@ -590,7 +591,8 @@ WARNING: untranslated string: fwdfw err nosrc
 WARNING: untranslated string: fwdfw err nosrcip
 WARNING: untranslated string: fwdfw err notgt
 WARNING: untranslated string: fwdfw err notgtip
-WARNING: untranslated string: fwdfw err prot
+WARNING: untranslated string: fwdfw err prot_port
+WARNING: untranslated string: fwdfw err prot_port1
 WARNING: untranslated string: fwdfw err remark
 WARNING: untranslated string: fwdfw err ruleexists
 WARNING: untranslated string: fwdfw err same
@@ -604,7 +606,6 @@ WARNING: untranslated string: fwdfw final_rule
 WARNING: untranslated string: fwdfw hint ip1
 WARNING: untranslated string: fwdfw hint ip2
 WARNING: untranslated string: fwdfw log rule
-WARNING: untranslated string: fwdfw man port
 WARNING: untranslated string: fwdfw menu
 WARNING: untranslated string: fwdfw movedown
 WARNING: untranslated string: fwdfw moveup
