@@ -1842,31 +1842,67 @@ END
 END
 
 		&Header::closebox;
+
+		$checked{"RULE_ACTION"} = ();
+		foreach ("ACCEPT", "DROP", "REJECT") {
+			$checked{"RULE_ACTION"}{$_} = "";
+		}
+
+		if($fwdfwsettings{'updatefwrule'} eq 'on') {
+			$checked{"RULE_ACTION"}{$fwdfwsettings{'RULE_ACTION'}} = "checked";
+		} elsif ($fwdfwsettings{'POLICY'} eq 'MODE1') {
+			$checked{"RULE_ACTION"}{"ACCEPT"} = "checked";
+		} elsif ($fwdfwsettings{'POLICY'} eq 'MODE2') {
+			$checked{"RULE_ACTION"}{"DROP"} = "checked";
+		}
+
+		print <<END;
+			<hr><br>
+
+			<center>
+				<table width="80%" border="0">
+					<tr>
+						<td width="33%" align="center" bgcolor="$color{'color17'}">
+							&nbsp;<br>&nbsp;
+						</td>
+						<td width="33%" align="center" bgcolor="$color{'color25'}">
+							&nbsp;<br>&nbsp;
+						</td>
+						<td width="33%" align="center" bgcolor="$color{'color16'}">
+							&nbsp;<br>&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td width="33%" align="center">
+							<label>
+								<input type="radio" name="RULE_ACTION" value="ACCEPT" $checked{"RULE_ACTION"}{"ACCEPT"}>
+								<strong>$Lang::tr{'fwdfw ACCEPT'}</strong>
+							</label>
+						</td>
+						<td width="33%" align="center">
+							<label>
+								<input type="radio" name="RULE_ACTION" value="DROP" $checked{"RULE_ACTION"}{"DROP"}>
+								<strong>$Lang::tr{'fwdfw DROP'}</strong>
+							</label>
+						</td>
+						<td width="33%" align="center">
+							<label>
+								<input type="radio" name="RULE_ACTION" value="REJECT" $checked{"RULE_ACTION"}{"REJECT"}>
+								<strong>$Lang::tr{'fwdfw REJECT'}</strong>
+							</label>
+						</td>
+					</tr>
+				</table>
+			</center>
+
+			<br>
+END
+
 		#---Activate/logging/remark-------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
 		print<<END;
 		<table width='100%' border='0'>
-		<tr><td nowrap>$Lang::tr{'fwdfw rule action'}</td><td><select name='RULE_ACTION'>
 END
-		foreach ("ACCEPT","DROP","REJECT")
-		{
-			if($fwdfwsettings{'updatefwrule'} eq 'on'){
-				print"<option value='$_'";
-				print " selected='selected'" if ($fwdfwsettings{'RULE_ACTION'} eq $_);
-				print">$Lang::tr{'fwdfw '.$_}</option>";
-			}else{
-				if($fwdfwsettings{'POLICY'} eq 'MODE2'){
-					$fwdfwsettings{'RULE_ACTION'} = 'DROP';
-				}
-				if ($_ eq $fwdfwsettings{'RULE_ACTION'})
-				{
-					print"<option value='$_' selected>$Lang::tr{'fwdfw '.$_}</option>";
-				}else{
-					print"<option value='$_'>$Lang::tr{'fwdfw '.$_}</option>";
-				}
-			}
-		}
-		print"</select></td></tr>";	
 		print"<tr><td width='12%'>$Lang::tr{'remark'}:</td><td width='88%' align='left'><input type='text' name='ruleremark' maxlength='255' value='$fwdfwsettings{'ruleremark'}' style='width:99%;'></td></tr>";
 		if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on'){
 			print "<tr><td width='12%'>$Lang::tr{'fwdfw rulepos'}:</td><td><select name='rulepos' >";
