@@ -53,16 +53,17 @@ my $configoutgoing  = "${General::swroot}/forward/outgoing";
 my $p2pfile			= "${General::swroot}/forward/p2protocols";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
-my $errormessage='';
-my $orange;
-my $green;
-my $blue;
+my $errormessage	= '';
+my $orange			= '';
+my $green			= '';
+my $blue			= '';
 my ($TYPE,$PROT,$SPROT,$DPROT,$SPORT,$DPORT,$TIME,$TIMEFROM,$TIMETILL,$SRC_TGT);
-my $CHAIN="FORWARDFW";
-my $conexists='off';
-my $command = 'iptables -A';
-my $dnat='';
-my $snat='';
+my $CHAIN			= "FORWARDFW";
+my $conexists		= 'off';
+my $command			= 'iptables -A';
+my $dnat			='';
+my $snat			='';
+
 &General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
 &General::readhash("$netsettings", \%defaultNetworks);
 &General::readhasharray($configfwdfw, \%configfwdfw);
@@ -81,13 +82,13 @@ if (-f "/var/ipfire/red/active"){
 open (CONN1,"/var/ipfire/red/local-ipaddress");
 my $redip = <CONN1>;
 close(CONN1);
-################################
-#    DEBUG/TEST                #
-################################
+#################
+#    DEBUG/TEST #
+#################
 my $MODE=0;     # 0 - normal operation
-				# 1 - print configline and rules to console	
-				# 
-################################		
+				# 1 - print configline and rules to console
+				#
+#################
 my $param=shift;
 
 if($param eq 'flush'){
@@ -107,7 +108,7 @@ if($param eq 'flush'){
 	if($MODE eq '0'){
 		if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
 			&p2pblock;
-			system ("/usr/sbin/firewall-policy"); 
+			system ("/usr/sbin/firewall-policy");
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
 			&p2pblock;
 			system ("iptables -A $CHAIN -m conntrack --ctstate NEW -j ACCEPT");
@@ -123,7 +124,7 @@ sub flush
 	system ("iptables -F OUTGOINGFW");
 	system ("iptables -t nat -F NAT_DESTINATION");
 	system ("iptables -t nat -F NAT_SOURCE");
-}			
+}
 sub preparerules
 {
 	if (! -z  "${General::swroot}/forward/config"){
@@ -236,12 +237,12 @@ sub buildrules
 				if($$hash{$key}[24] ne ''){push (@timeframe,"Sat");}
 				if($$hash{$key}[25] ne ''){push (@timeframe,"Sun");}
 				$TIME=join(",",@timeframe);
-				
+
 				$TIMEFROM="--timestart $time1 ";
 				$TIMETILL="--timestop $time2 ";
 				$TIME="-m time --weekdays $TIME $TIMEFROM $TIMETILL";
 			}
-			if ($MODE eq '1'){	
+			if ($MODE eq '1'){
 				print "NR:$key ";
 				foreach my $i (0 .. $#{$$hash{$key}}){
 					print "$i: $$hash{$key}[$i]  ";
@@ -301,7 +302,10 @@ sub buildrules
 									if ($PROT ne '-p ICMP'){
 										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}
-								}				
+									if ($PROT eq '-p ICMP' && $$hash{$key}[9] eq 'All ICMP-Types'){
+										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
+									}
+								}
 							}
 						}
 					}
@@ -364,7 +368,11 @@ sub buildrules
 									if ($PROT ne '-p ICMP'){
 										system "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}
-								}				
+									#PROCESS Prot ICMP and type = All ICMP-Types
+									if ($PROT eq '-p ICMP' && $$hash{$key}[9] eq 'All ICMP-Types'){
+										system "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
+									}
+								}
 							}
 						}
 					}
@@ -472,7 +480,7 @@ sub get_address
 	my $type=shift; #src or tgt
 	my $hash;
 	if ($type eq 'src'){
-		$hash=\%sourcehash;	
+		$hash=\%sourcehash;
 	}else{
 		$hash=\%targethash;
 	}

@@ -1736,7 +1736,7 @@ END
 						<select name='ICMP_TYPES' style='min-width:230px;'>
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
-		print"<option>All ICMP-Types</option>";
+		print"<option value='All ICMP-Types'>$Lang::tr{'fwdfw all icmp'}</option>";
 		foreach my $key (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
 			if($fwdfwsettings{'ICMP_TYPES'} eq "$icmptypes{$key}[0]"){
 				print"<option selected>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";

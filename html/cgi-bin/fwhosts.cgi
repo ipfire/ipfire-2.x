@@ -759,7 +759,7 @@ if ($fwhostsettings{'ACTION'} eq 'saveservice')
 			}
 		}
 	}
-	if($ICMP eq ''){$ICMP='BLANK';}
+	if($ICMP eq ''){$ICMP=$fwhostsettings{'ICMP_TYPES'};}
 	if (!$errormessage){
 		my $key = &General::findhasharraykey (\%customservice);
 		foreach my $i (0 .. 4) { $customservice{$key}[$i] = "";}
@@ -1346,7 +1346,7 @@ END
 	<div id='PROTOKOLL' class='noscript'><table width=100%' border='0'><tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td><select name='ICMP_TYPES'>
 END
 	&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
-	print"<option>All ICMP-Types</option>";
+	print"<option value='All ICMP-Types'>$Lang::tr{'fwdfw all icmp'}</option>";
 	foreach my $key (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
 		if ($icmptypes{$key}[0] eq $fwhostsettings{'oldsrvicmp'}){
 			print"<option selected>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
@@ -1679,8 +1679,8 @@ END
 			print<<END;
 			<td>$customservice{$key}[0]</td><td align='center'>$customservice{$key}[2]</td><td align='center'>$customservice{$key}[1]</td><td align='center'>
 END
-			if($customservice{$key}[3] ne 'BLANK'){print $customservice{$key}[3];}
-		
+			if($customservice{$key}[3] eq 'All ICMP-Types'){print $Lang::tr{'fwdfw all icmp'};}
+			elsif($customservice{$key}[3] ne 'BLANK'){print $customservice{$key}[3];}
 			print<<END;
 			</td><td align='center'>$customservice{$key}[4]x</td>
 			<td width='1%'><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} /><input type='hidden' name='ACTION' value='editservice' />
