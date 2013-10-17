@@ -103,7 +103,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/nagios-plugins* && ./configure --prefix=/usr \
 		--libexecdir=/usr/lib/nagios \
 		--with-nagios-user=nobody --with-nagios-group=nobody
-	cd $(DIR_SRC)/nagios-plugins* && make $(MAKETUNING)
+	cd $(DIR_SRC)/nagios-plugins* && make
 	cd $(DIR_SRC)/nagios-plugins* && make install
 	chown -R nobody:nobody /var/nagios
 	ln -s /etc/init.d/nagios /etc/rc.d/rc3.d/S67nagios
