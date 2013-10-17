@@ -146,6 +146,14 @@ print<<END;
 			\$("#natpart").toggle();
 		});
 
+		// Time constraints
+		if(!\$("#USE_TIME_CONSTRAINTS").attr("checked")) {
+			\$("#TIME_CONSTRAINTS").hide();
+		}
+		\$("#USE_TIME_CONSTRAINTS").change(function() {
+			\$("#TIME_CONSTRAINTS").toggle();
+		});
+
 		// Automatically select radio buttons when corresponding
 		// dropdown menu changes.
 		\$("select").change(function() {
@@ -1876,55 +1884,69 @@ END
 		</table><table width='100%'>
 		<tr><td width='1%'><input type='checkbox' name='ACTIVE' value='ON' $checked{'ACTIVE'}{'ON'}></td><td>$Lang::tr{'fwdfw rule activate'}</td></tr>
 		<tr><td width='1%'><input type='checkbox' name='LOG' value='ON'  $checked{'LOG'}{'ON'}  ></td><td>$Lang::tr{'fwdfw log rule'}</td></tr>
-		</table><br><hr>
-END
-		&Header::closebox();
-		#---ADD TIMEFRAME-----------------------------------------------
-		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw timeframe'});
-		print<<END;
-		<table width='70%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='TIME' value='ON' $checked{'TIME'}{'ON'}></td><td colspan='9'>$Lang::tr{'fwdfw timeframe'}</td></tr>
-		<tr><td colspan='10'>&nbsp;</td></tr>
-		<tr>
-			<td  align='left' >$Lang::tr{'time'}:&nbsp</td>
-			<td>$Lang::tr{'advproxy monday'}</td><td> $Lang::tr{'advproxy tuesday'} </td><td>$Lang::tr{'advproxy wednesday'}</td><td> $Lang::tr{'advproxy thursday'}</td><td> $Lang::tr{'advproxy friday'}</td><td> $Lang::tr{'advproxy saturday'}</td><td> $Lang::tr{'advproxy sunday'}</td>
-			<td width='15%' align='left'>$Lang::tr{'advproxy from'}</td>
-			<td width='15%' align='left'>$Lang::tr{'advproxy to'}</td>
-		</tr>
-		<tr>
-			<td  align='right'></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_MON' value='on' $checked{'TIME_MON'}{'on'} ></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_TUE' value='on' $checked{'TIME_TUE'}{'on'} ></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_WED' value='on' $checked{'TIME_WED'}{'on'} ></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_THU' value='on' $checked{'TIME_THU'}{'on'} ></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_FRI' value='on' $checked{'TIME_FRI'}{'on'} ></td>
-			<td width='1%' align='left'><input type='checkbox' name='TIME_SAT' value='on' $checked{'TIME_SAT'}{'on'} ></td>
-			<td width='15%' align='left'><input type='checkbox' name='TIME_SUN' value='on' $checked{'TIME_SUN'}{'on'} ></td>
-			<td><select name='TIME_FROM'>
+			<tr>
+				<td width='1%'>
+					<input type='checkbox' name='TIME' id="USE_TIME_CONSTRAINTS" value='ON' $checked{'TIME'}{'ON'}>
+				</td>
+				<td>$Lang::tr{'fwdfw timeframe'}</td>
+			</tr>
+			<tr id="TIME_CONSTRAINTS">
+				<td colspan="2">
+					<table width="66%" border="0">
+						<tr>
+							<td width="8em">&nbsp;</td>
+							<td align="center">$Lang::tr{'advproxy monday'}</td>
+							<td align="center">$Lang::tr{'advproxy tuesday'}</td>
+							<td align="center">$Lang::tr{'advproxy wednesday'}</td>
+							<td align="center">$Lang::tr{'advproxy thursday'}</td>
+							<td align="center">$Lang::tr{'advproxy friday'}</td>
+							<td align="center">$Lang::tr{'advproxy saturday'}</td>
+							<td align="center">$Lang::tr{'advproxy sunday'}</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td width="8em">&nbsp;</td>
+							<td align="center"><input type='checkbox' name='TIME_MON' value='on' $checked{'TIME_MON'}{'on'} ></td>
+							<td align="center"><input type='checkbox' name='TIME_TUE' value='on' $checked{'TIME_TUE'}{'on'} ></td>
+							<td align="center"><input type='checkbox' name='TIME_WED' value='on' $checked{'TIME_WED'}{'on'} ></td>
+							<td align="center"><input type='checkbox' name='TIME_THU' value='on' $checked{'TIME_THU'}{'on'} ></td>
+							<td align="center"><input type='checkbox' name='TIME_FRI' value='on' $checked{'TIME_FRI'}{'on'} ></td>
+							<td align="center"><input type='checkbox' name='TIME_SAT' value='on' $checked{'TIME_SAT'}{'on'} ></td>
+							<td align="center"><input type='checkbox' name='TIME_SUN' value='on' $checked{'TIME_SUN'}{'on'} ></td>
+							<td>
+								<select name='TIME_FROM'>
 END
 		for (my $i=0;$i<=23;$i++) {
 			$i = sprintf("%02s",$i);
 			for (my $j=0;$j<=45;$j+=15) {
 				$j = sprintf("%02s",$j);
 				my $time = $i.":".$j;
-				print "\t\t\t\t\t<option $selected{'TIME_FROM'}{$time}>$i:$j</option>\n";
+				print "<option $selected{'TIME_FROM'}{$time}>$i:$j</option>\n";
 			}
 		}
 		print<<END;	
-			</select></td>
-			<td><select name='TIME_TO'>
+								</select> &dash;
+								<select name='TIME_TO'>
 END
 		for (my $i=0;$i<=23;$i++) {
 			$i = sprintf("%02s",$i);
 			for (my $j=0;$j<=45;$j+=15) {
 				$j = sprintf("%02s",$j);
 				my $time = $i.":".$j;
-				print "\t\t\t\t\t<option $selected{'TIME_TO'}{$time}>$i:$j</option>\n";
+				print "<option $selected{'TIME_TO'}{$time}>$i:$j</option>\n";
 			}
 		}
 		print<<END;
-		</select></td></tr></table><br><hr>
+								</select>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<br><hr>
 END
+
 		#---ACTION------------------------------------------------------
 		if($fwdfwsettings{'updatefwrule'} ne 'on'){
 			print<<END;
