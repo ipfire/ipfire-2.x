@@ -1729,9 +1729,9 @@ END
 		</div>
 
 		<div id="PROTOCOL_ICMP_TYPES">
-			<table width='30%' border='0' style="float:left;">
+			<table width='50%' border='0' style="float:left;">
 				<tr>
-					<td>$Lang::tr{'fwhost icmptype'}</td>
+					<td width='20%'>$Lang::tr{'fwhost icmptype'}</td>
 					<td colspan='2'>
 						<select name='ICMP_TYPES' style='min-width:230px;'>
 END

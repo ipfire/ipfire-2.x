@@ -98,29 +98,15 @@ print<<END;
 		// Check if we are dealing with a protocol, that knows ports.
 		if (\$.inArray(protocol, PROTOCOLS_WITH_PORTS) >= 0) {
 			\$("#PORT").show();
+			\$("#PROTOKOLL").hide();
 		} else {
 			\$("#PORT").hide();
-		}
-
-		// Handle ICMP.
-		if (protocol === "ICMP") {
 			\$("#PROTOKOLL").show();
-		} else {
-			\$("#PROTOKOLL").hide();
 		}
 	};
 
 	\$(document).ready(function() {
 		var protocol = \$("#protocol").val();
-
-		// Handle ICMP.
-		if (protocol === "ICMP") {
-			\$("#PROTOKOLL").show();
-			\$("#PORT").hide();
-		} else {
-			\$("#PROTOKOLL").hide();
-			\$("#PORT").show();
-		}
 		\$("#protocol").change(update_protocol);
 		update_protocol();
 	});
