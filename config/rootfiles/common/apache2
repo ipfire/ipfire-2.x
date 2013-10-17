@@ -1393,7 +1393,7 @@ srv/web/ipfire/cgi-bin/dhcp.cgi
 #srv/web/ipfire/cgi-bin/dmzholes.cgi
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/fireinfo.cgi
-srv/web/ipfire/cgi-bin/forwardfw.cgi
+srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi

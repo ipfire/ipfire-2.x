@@ -1,6 +1,6 @@
     $subfirewall->{'10.forward'} = {
 				'caption' => $Lang::tr{'fwdfw menu'},
-				'uri' => '/cgi-bin/forwardfw.cgi',
+				'uri' => '/cgi-bin/firewall.cgi',
 				'title' => "$Lang::tr{'fwdfw menu'}",
 				'enabled' => 1,
 				};
