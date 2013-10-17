@@ -579,6 +579,9 @@ WARNING: untranslated string: fw settings color
 WARNING: untranslated string: fw settings dropdown
 WARNING: untranslated string: fw settings remark
 WARNING: untranslated string: fw settings ruletable
+WARNING: untranslated string: fwdfw ACCEPT
+WARNING: untranslated string: fwdfw DROP
+WARNING: untranslated string: fwdfw REJECT
 WARNING: untranslated string: fwdfw action
 WARNING: untranslated string: fwdfw additional
 WARNING: untranslated string: fwdfw addrule
@@ -621,7 +624,6 @@ WARNING: untranslated string: fwdfw pol text1
 WARNING: untranslated string: fwdfw pol title
 WARNING: untranslated string: fwdfw red
 WARNING: untranslated string: fwdfw reread
-WARNING: untranslated string: fwdfw rule action
 WARNING: untranslated string: fwdfw rule activate
 WARNING: untranslated string: fwdfw rulepos
 WARNING: untranslated string: fwdfw snat
