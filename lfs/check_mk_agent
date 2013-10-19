@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.2.0p3
+VER        = 1.2.2p2
 
 THISAPP    = check_mk_agent-$(VER)
 DL_FILE    = check_mk-${VER}.tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2c0f27fe8b6e3455557ecb30954d8a79
+$(DL_FILE)_MD5 = caa0f7662b4d170b2b6db2516bd41a89
 
 install : $(TARGET)
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
@@ -78,6 +78,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && tar xzf agents.tar.gz
 	cd $(DIR_APP) && install -v -m 755 check_mk_agent.linux /usr/bin/check_mk_agent
+	-mkdir /etc/xinetd.d
+	cd $(DIR_APP) && install -v -m 755 xinetd.conf /etc/xinetd.d/check_mk_agent
 	cd $(DIR_APP) && gcc $(CFLAGS) waitmax.c -o waitmax
 	cd $(DIR_APP) && install -v -m 755 waitmax /usr/bin/waitmax
 	@rm -rf $(DIR_APP)
