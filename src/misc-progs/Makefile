@@ -33,7 +33,8 @@ SUID_PROGS = setdmzholes setportfw setxtaccess \
 	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
 	setaliases urlfilterctrl updxlratorctrl fireinfoctrl rebuildroutes \
-	getconntracktable
+	getconntracktable wirelessclient dnsmasqctrl torctrl
+SUID_UPDX = updxsetperms
 
 install : all
 	install -m 755  $(PROGS) /usr/local/bin
@@ -157,3 +158,12 @@ rebuildroutes: rebuildroutes.c setuid.o ../install+setup/libsmooth/varval.o
 
 getconntracktable: getconntracktable.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ getconntracktable.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+wirelessclient: wirelessclient.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ wirelessclient.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+dnsmasqctrl: dnsmasqctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ dnsmasqctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
+torctrl: torctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ torctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@

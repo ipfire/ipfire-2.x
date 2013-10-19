@@ -29,6 +29,8 @@ usr/bin/wbinfo
 #usr/include/smb_share_modes.h
 #usr/include/talloc.h
 #usr/include/tdb.h
+#usr/include/tevent.h
+#usr/include/tevent_internal.h
 #usr/include/wbclient.h
 usr/lib/libnetapi.so
 usr/lib/libnetapi.so.0
@@ -42,6 +44,9 @@ usr/lib/libtalloc.so.2.0.5
 usr/lib/libtdb.so
 usr/lib/libtdb.so.1
 usr/lib/libtdb.so.1.2.9
+usr/lib/libtevent.so
+usr/lib/libtevent.so.0
+usr/lib/libtevent.so.0.9.11
 usr/lib/libwbclient.so
 usr/lib/libwbclient.so.0
 #usr/lib/samba

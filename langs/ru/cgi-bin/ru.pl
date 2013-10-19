@@ -497,7 +497,6 @@
 'clock last synchronized at' => 'В последний раз время синхронизировалось в',
 'comment' => 'Description:',
 'common name' => 'Короткое имя',
-'community rules' => 'Emergingthreats.net Community Rules',
 'comp-lzo' => 'LZO-Сжатие:',
 'compression' => 'Compression:',
 'computer to modem rate' => 'Computer to modem rate:',

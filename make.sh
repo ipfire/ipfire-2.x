@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2012 IPFire Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2013 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.13"							# Version number
-CORE="68"							# Core Level (Filename)
-PAKFIRE_CORE="68"						# Core Level (PAKFIRE)
+CORE="72"							# Core Level (Filename)
+PAKFIRE_CORE="72"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git status | head -n1 | cut -d" " -f4`		# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -333,9 +333,11 @@ buildbase() {
     lfsmake2 gettext
     lfsmake2 grep
     lfsmake2 groff
+    lfsmake2 gperf
     lfsmake2 gzip
     lfsmake2 inetutils
     lfsmake2 iproute2
+    lfsmake2 jwhois
     lfsmake2 kbd
     lfsmake2 less
     lfsmake2 make
@@ -442,7 +444,7 @@ buildipfire() {
     ipfiremake r8169			KCFG="-kirkwood"
     ipfiremake r8168			KCFG="-kirkwood"
     ipfiremake r8101			KCFG="-kirkwood"
-    ipfiremake e1000e			KCFG="-kirkwood"
+#    ipfiremake e1000e			KCFG="-kirkwood"
     ipfiremake igb			KCFG="-kirkwood"
 
   fi
@@ -462,6 +464,7 @@ buildipfire() {
   ipfiremake libnet
   ipfiremake libnl
   ipfiremake libidn
+  ipfiremake nasm
   ipfiremake libjpeg
   ipfiremake libexif
   ipfiremake libpng
@@ -523,7 +526,6 @@ buildipfire() {
   ipfiremake logwatch
   ipfiremake misc-progs
   ipfiremake nano
-  ipfiremake nasm
   ipfiremake URI
   ipfiremake HTML-Tagset
   ipfiremake HTML-Parser
@@ -765,6 +767,21 @@ buildipfire() {
   ipfiremake nginx
   ipfiremake sendEmail
   ipfiremake sysbench
+  ipfiremake strace
+  ipfiremake ipfire-netboot
+  ipfiremake lcdproc
+  ipfiremake bitstream
+  ipfiremake multicat
+  ipfiremake keepalived
+  ipfiremake ipvsadm
+  ipfiremake perl-Carp-Clan
+  ipfiremake perl-Date-Calc
+  ipfiremake perl-Date-Manip
+  ipfiremake perl-File-Tail
+  ipfiremake perl-TimeDate
+  ipfiremake swatch
+  ipfiremake tor
+  ipfiremake arm
   echo Build on $HOSTNAME > $BASEDIR/build/var/ipfire/firebuild
   cat /proc/version >> $BASEDIR/build/var/ipfire/firebuild
   echo >> $BASEDIR/build/var/ipfire/firebuild
@@ -943,6 +960,7 @@ build)
 
 	cd $BASEDIR
 	tools/checknewlog.pl
+	tools/checkwronginitlinks
 	cd $PWD
 
 	beautify build_end

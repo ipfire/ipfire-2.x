@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2013   IPFire Team  <info@ipfire.org>                    #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = igmpproxy
-PAK_VER    = 2
+PAK_VER    = 4
 
 DEPS       = ""
 
@@ -77,8 +77,16 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-001-Send-IGMP-packets-with-IP-Router-Alert-option-RFC-21.patch
+	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-002-Change-default-interface-state-to-disabled-wrt-29458.patch
+	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-003-Restrict-igmp-reports-for-downstream-interfaces-wrt-.patch
+	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-004-Restrict-igmp-reports-forwarding-to-upstream-interfa.patch
+	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-100-use-monotic-clock-instead-of-time-of-day.patch
+	cd $(DIR_APP) && autoreconf
 	cd $(DIR_APP) && ./configure --sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/igmpproxy \
+	                 /var/ipfire/backup/addons/includes/igmpproxy
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

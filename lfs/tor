@@ -1,0 +1,117 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2013   IPFire Team   <info@ipfire.org>                   #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 0.2.3.25
+
+THISAPP    = tor-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = tor
+PAK_VER    = 3
+
+DEPS       = "libevent2"
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = a1c364189a9a66ed9daa8e6436489daf
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+dist:
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && \
+		./configure \
+			--prefix=/usr \
+			--sysconfdir=/etc \
+			--localstatedir=/var \
+			--with-tor-user=nobody \
+			--with-tor-group=nobody
+
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+
+	# Install configuration files.
+	mkdir -pv /var/ipfire/tor /var/lib/tor /var/log/tor
+	touch /var/ipfire/tor/settings
+	mv /etc/tor/torrc.sample /var/ipfire/tor/torrc
+	ln -svf /var/ipfire/tor/torrc /etc/tor/torrc
+
+	# Adjust ownerships.
+	chown -R nobody:nobody /var/lib/tor /var/ipfire/tor
+
+	# Logrotate
+	mkdir -pv /etc/logrotate.d
+	install -v -m 644 $(DIR_SRC)/config/tor/tor.logrotate \
+		/etc/logrotate.d/tor
+
+	# Defaults
+	mkdir -pv /usr/share/tor
+	install -v -m 644 $(DIR_SRC)/config/tor/defaults-torrc \
+		/usr/share/tor/defaults-torrc
+
+	# Install start links and backup include file.
+	ln -sf ../init.d/tor /etc/rc.d/rc3.d/S60tor
+	ln -sf ../init.d/tor /etc/rc.d/rc0.d/K40tor
+	ln -sf ../init.d/tor /etc/rc.d/rc6.d/K40tor
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/tor \
+			 /var/ipfire/backup/addons/includes/tor
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

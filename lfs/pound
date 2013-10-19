@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = pound
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = ""
 
@@ -84,5 +84,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/pound \
 			 /var/ipfire/backup/addons/includes/pound
+	ln -sf ../init.d/pound /etc/rc.d/rc3.d/S60pound
+	ln -sf ../init.d/pound /etc/rc.d/rc0.d/K40pound
+	ln -sf ../init.d/pound /etc/rc.d/rc6.d/K40pound
+
+	# Remove temporary file.
+	rm -vf /root/.rnd
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

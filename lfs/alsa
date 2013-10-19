@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2013  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,9 +25,9 @@
 include Config
 
 
-VER        = 1.0.26
-UVER       = 1.0.26
-FVER       = 1.0.25
+VER        = 1.0.27.1
+UVER       = 1.0.27.1
+FVER       = 1.0.27
 
 VERSUFIX   = ipfire$(KCFG)
 
@@ -36,7 +36,7 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = alsa
-PAK_VER    = 11
+PAK_VER    = 12
 
 DEPS       = ""
 
@@ -52,9 +52,9 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 alsa-utils-$(UVER).tar.bz2 = $(DL_FROM)/alsa-utils-$(UVER).tar.bz2
 alsa-firmware-$(FVER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(FVER).tar.bz2
 
-$(DL_FILE)_MD5 = 2dfa35d28471d721e592b616beedf965
-alsa-utils-$(UVER).tar.bz2_MD5 = 4dcf1017fafc91603af96705c073eca9
-alsa-firmware-$(FVER).tar.bz2_MD5 = f1939da45b162c83a726c54a470ef139
+$(DL_FILE)_MD5 = 17102aaab10e9d4b19f6b02937bab015
+alsa-utils-$(UVER).tar.bz2_MD5 = 3d81357b997744a139881ef72bc6921a
+alsa-firmware-$(FVER).tar.bz2_MD5 = b373b350d5151dd7d64db2fc12936b04
 
 install : $(TARGET)
 

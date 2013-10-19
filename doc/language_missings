@@ -60,6 +60,13 @@
 < ccd used
 < deprecated fs warn
 < dns address deleted txt
+< dnsforward
+< dnsforward add a new entry
+< dnsforward configuration
+< dnsforward edit an entry
+< dnsforward entries
+< dnsforward forward_server
+< dnsforward zone
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -109,6 +116,56 @@
 < snort working
 < static routes
 < system information
+< tor
+< tor accounting
+< tor accounting bytes
+< tor accounting bytes left
+< tor accounting interval
+< tor accounting limit
+< tor accounting period
+< tor accounting period daily
+< tor accounting period monthly
+< tor accounting period weekly
+< tor acls
+< tor allowed subnets
+< tor bandwidth burst
+< tor bandwidth rate
+< tor bandwidth settings
+< tor bandwidth unlimited
+< tor common settings
+< tor configuration
+< tor connected relays
+< tor contact info
+< tor daemon
+< tor enabled
+< tor errmsg invalid accounting limit
+< tor errmsg invalid ip or mask
+< tor errmsg invalid relay address
+< tor errmsg invalid relay name
+< tor errmsg invalid relay port
+< tor errmsg invalid socks port
+< tor exit country
+< tor exit country any
+< tor exit nodes
+< tor relay address
+< tor relay configuration
+< tor relay enabled
+< tor relay external address
+< tor relay fingerprint
+< tor relay mode
+< tor relay mode bridge
+< tor relay mode exit
+< tor relay mode private bridge
+< tor relay mode relay
+< tor relay nickname
+< tor relay port
+< tor service
+< tor socks port
+< tor stats
+< tor traffic limit hard
+< tor traffic limit soft
+< tor traffic read written
+< tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
 < upload new ruleset
@@ -120,6 +177,7 @@
 < vpn keyexchange
 < wlanap access point
 < wlanap channel
+< wlanap country
 < wlanap debugging
 < wlanap del interface
 < wlanap encryption
@@ -138,6 +196,36 @@
 < wlanap wlan services
 < wlanap wlan settings
 < wlanap wlan status
+< wlan client
+< wlan client advanced settings
+< wlan client and
+< wlan client bssid
+< wlan client ccmp
+< wlan client configuration
+< wlan client disconnected
+< wlan client duplicate ssid
+< wlan client edit entry
+< wlan client encryption
+< wlan client encryption none
+< wlan client encryption wep
+< wlan client encryption wpa
+< wlan client encryption wpa2
+< wlan client group cipher
+< wlan client group key algorithm
+< wlan client invalid key length
+< wlan client new entry
+< wlan client new network
+< wlan client pairwise cipher
+< wlan client pairwise key algorithm
+< wlan client pairwise key group key
+< wlan client psk
+< wlan client ssid
+< wlan client tkip
+< wlan client wpa mode
+< wlan client wpa mode all
+< wlan client wpa mode ccmp ccmp
+< wlan client wpa mode ccmp tkip
+< wlan client wpa mode tkip tkip
 ############################################################################
 # Checking install/setup translations for language: es                     #
 ############################################################################
@@ -193,6 +281,13 @@
 < ccd subnet
 < ccd used
 < deprecated fs warn
+< dnsforward
+< dnsforward add a new entry
+< dnsforward configuration
+< dnsforward edit an entry
+< dnsforward entries
+< dnsforward forward_server
+< dnsforward zone
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -258,12 +353,93 @@
 < Set time on boot
 < static routes
 < system information
+< tor
+< tor accounting
+< tor accounting bytes
+< tor accounting bytes left
+< tor accounting interval
+< tor accounting limit
+< tor accounting period
+< tor accounting period daily
+< tor accounting period monthly
+< tor accounting period weekly
+< tor acls
+< tor allowed subnets
+< tor bandwidth burst
+< tor bandwidth rate
+< tor bandwidth settings
+< tor bandwidth unlimited
+< tor common settings
+< tor configuration
+< tor connected relays
+< tor contact info
+< tor daemon
+< tor enabled
+< tor errmsg invalid accounting limit
+< tor errmsg invalid ip or mask
+< tor errmsg invalid relay address
+< tor errmsg invalid relay name
+< tor errmsg invalid relay port
+< tor errmsg invalid socks port
+< tor exit country
+< tor exit country any
+< tor exit nodes
+< tor relay address
+< tor relay configuration
+< tor relay enabled
+< tor relay external address
+< tor relay fingerprint
+< tor relay mode
+< tor relay mode bridge
+< tor relay mode exit
+< tor relay mode private bridge
+< tor relay mode relay
+< tor relay nickname
+< tor relay port
+< tor service
+< tor socks port
+< tor stats
+< tor traffic limit hard
+< tor traffic limit soft
+< tor traffic read written
+< tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
 < uptime
 < uptime load average
 < visit us at
 < vpn keyexchange
+< wlanap country
+< wlan client
+< wlan client advanced settings
+< wlan client and
+< wlan client bssid
+< wlan client ccmp
+< wlan client configuration
+< wlan client disconnected
+< wlan client duplicate ssid
+< wlan client edit entry
+< wlan client encryption
+< wlan client encryption none
+< wlan client encryption wep
+< wlan client encryption wpa
+< wlan client encryption wpa2
+< wlan client group cipher
+< wlan client group key algorithm
+< wlan client invalid key length
+< wlan client new entry
+< wlan client new network
+< wlan client pairwise cipher
+< wlan client pairwise key algorithm
+< wlan client pairwise key group key
+< wlan client psk
+< wlan client ssid
+< wlan client tkip
+< wlan client wpa mode
+< wlan client wpa mode all
+< wlan client wpa mode ccmp ccmp
+< wlan client wpa mode ccmp tkip
+< wlan client wpa mode tkip tkip
 ############################################################################
 # Checking install/setup translations for language: pl                     #
 ############################################################################
@@ -318,6 +494,13 @@
 < ccd subnet
 < ccd used
 < deprecated fs warn
+< dnsforward
+< dnsforward add a new entry
+< dnsforward configuration
+< dnsforward edit an entry
+< dnsforward entries
+< dnsforward forward_server
+< dnsforward zone
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -359,12 +542,93 @@
 < qos enter bandwidths
 < server restart
 < static routes
+< tor
+< tor accounting
+< tor accounting bytes
+< tor accounting bytes left
+< tor accounting interval
+< tor accounting limit
+< tor accounting period
+< tor accounting period daily
+< tor accounting period monthly
+< tor accounting period weekly
+< tor acls
+< tor allowed subnets
+< tor bandwidth burst
+< tor bandwidth rate
+< tor bandwidth settings
+< tor bandwidth unlimited
+< tor common settings
+< tor configuration
+< tor connected relays
+< tor contact info
+< tor daemon
+< tor enabled
+< tor errmsg invalid accounting limit
+< tor errmsg invalid ip or mask
+< tor errmsg invalid relay address
+< tor errmsg invalid relay name
+< tor errmsg invalid relay port
+< tor errmsg invalid socks port
+< tor exit country
+< tor exit country any
+< tor exit nodes
+< tor relay address
+< tor relay configuration
+< tor relay enabled
+< tor relay external address
+< tor relay fingerprint
+< tor relay mode
+< tor relay mode bridge
+< tor relay mode exit
+< tor relay mode private bridge
+< tor relay mode relay
+< tor relay nickname
+< tor relay port
+< tor service
+< tor socks port
+< tor stats
+< tor traffic limit hard
+< tor traffic limit soft
+< tor traffic read written
+< tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
 < uptime
 < uptime load average
 < visit us at
 < vpn keyexchange
+< wlanap country
+< wlan client
+< wlan client advanced settings
+< wlan client and
+< wlan client bssid
+< wlan client ccmp
+< wlan client configuration
+< wlan client disconnected
+< wlan client duplicate ssid
+< wlan client edit entry
+< wlan client encryption
+< wlan client encryption none
+< wlan client encryption wep
+< wlan client encryption wpa
+< wlan client encryption wpa2
+< wlan client group cipher
+< wlan client group key algorithm
+< wlan client invalid key length
+< wlan client new entry
+< wlan client new network
+< wlan client pairwise cipher
+< wlan client pairwise key algorithm
+< wlan client pairwise key group key
+< wlan client psk
+< wlan client ssid
+< wlan client tkip
+< wlan client wpa mode
+< wlan client wpa mode all
+< wlan client wpa mode ccmp ccmp
+< wlan client wpa mode ccmp tkip
+< wlan client wpa mode tkip tkip
 ############################################################################
 # Checking install/setup translations for language: ru                     #
 ############################################################################
@@ -422,6 +686,13 @@
 < day-graph
 < deprecated fs warn
 < disk access per
+< dnsforward
+< dnsforward add a new entry
+< dnsforward configuration
+< dnsforward edit an entry
+< dnsforward entries
+< dnsforward forward_server
+< dnsforward zone
 < Edit an existing route
 < extrahd because there is already a device mounted
 < extrahd cant umount
@@ -465,6 +736,56 @@
 < qos enter bandwidths
 < server restart
 < static routes
+< tor
+< tor accounting
+< tor accounting bytes
+< tor accounting bytes left
+< tor accounting interval
+< tor accounting limit
+< tor accounting period
+< tor accounting period daily
+< tor accounting period monthly
+< tor accounting period weekly
+< tor acls
+< tor allowed subnets
+< tor bandwidth burst
+< tor bandwidth rate
+< tor bandwidth settings
+< tor bandwidth unlimited
+< tor common settings
+< tor configuration
+< tor connected relays
+< tor contact info
+< tor daemon
+< tor enabled
+< tor errmsg invalid accounting limit
+< tor errmsg invalid ip or mask
+< tor errmsg invalid relay address
+< tor errmsg invalid relay name
+< tor errmsg invalid relay port
+< tor errmsg invalid socks port
+< tor exit country
+< tor exit country any
+< tor exit nodes
+< tor relay address
+< tor relay configuration
+< tor relay enabled
+< tor relay external address
+< tor relay fingerprint
+< tor relay mode
+< tor relay mode bridge
+< tor relay mode exit
+< tor relay mode private bridge
+< tor relay mode relay
+< tor relay nickname
+< tor relay port
+< tor service
+< tor socks port
+< tor stats
+< tor traffic limit hard
+< tor traffic limit soft
+< tor traffic read written
+< tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
 < uptime
@@ -472,4 +793,35 @@
 < visit us at
 < vpn keyexchange
 < week-graph
+< wlanap country
+< wlan client
+< wlan client advanced settings
+< wlan client and
+< wlan client bssid
+< wlan client ccmp
+< wlan client configuration
+< wlan client disconnected
+< wlan client duplicate ssid
+< wlan client edit entry
+< wlan client encryption
+< wlan client encryption none
+< wlan client encryption wep
+< wlan client encryption wpa
+< wlan client encryption wpa2
+< wlan client group cipher
+< wlan client group key algorithm
+< wlan client invalid key length
+< wlan client new entry
+< wlan client new network
+< wlan client pairwise cipher
+< wlan client pairwise key algorithm
+< wlan client pairwise key group key
+< wlan client psk
+< wlan client ssid
+< wlan client tkip
+< wlan client wpa mode
+< wlan client wpa mode all
+< wlan client wpa mode ccmp ccmp
+< wlan client wpa mode ccmp tkip
+< wlan client wpa mode tkip tkip
 < year-graph

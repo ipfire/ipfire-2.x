@@ -14,6 +14,7 @@
 /etc/ssh/ssh_host*
 /var/ipfire/auth/users
 /var/ipfire/dhcp/*
+/var/ipfire/dnsforward/*
 /var/ipfire/main/*
 /var/ipfire/outgoing/groups
 /var/ipfire/outgoing/macgroups
@@ -39,3 +40,4 @@
 /root/.gitconfig
 /root/.bash_history
 /var/ipfire/ethernet/aliases
+/var/ipfire/ethernet/wireless

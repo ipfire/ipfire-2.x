@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 0.11.0-svn1158-dpf
+VER        = 0.11.0-svn1200-dpf
 
 THISAPP    = lcd4linux-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/lcd4linux
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = lcd4linux
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = "dpfhack libmpdclient"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0b7eba14a92ae5d51a3ab99948192b8d
+$(DL_FILE)_MD5 = 5b76a26879849dbd52a5bcfda4107ea4
 
 install : $(TARGET)
 
@@ -76,8 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/lcd4linux-scaletext-dpf.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure  --with-plugins=all,!qnaplog,!dbus --prefix=/usr
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install

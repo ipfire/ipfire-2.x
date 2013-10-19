@@ -1431,6 +1431,7 @@ srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/wakeonlan.cgi
 srv/web/ipfire/cgi-bin/webaccess.cgi
 srv/web/ipfire/cgi-bin/wireless.cgi
+srv/web/ipfire/cgi-bin/wirelessclient.cgi
 srv/web/ipfire/cgi-bin/xtaccess.cgi
 srv/web/ipfire/html
 var/updatecache

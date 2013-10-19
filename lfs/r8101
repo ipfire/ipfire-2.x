@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2013  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,10 +26,12 @@ include Config
 
 VERSUFIX = ipfire$(KCFG)
 ifeq "$(KCFG)" "-xen"
-	KVER = 2.6.32.60
+	KVER = 2.6.32.61
 	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net
+	MODNAME = r8101.ko
 else
 	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/ethernet/realtek
+	MODNAME = r8101.ko.vendor
 endif
 
 VER        = 1.023.00
@@ -83,6 +85,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/r8101_add_missing_pciids.patch
 	cd $(DIR_APP) && make -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ SUBDIRS=$(DIR_APP)/src modules
-	cd $(DIR_APP)/src && install -m 644 r8101.ko $(MODPATH)
+	cd $(DIR_APP)/src && install -m 644 r8101.ko $(MODPATH)/$(MODNAME)
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -263,9 +263,11 @@ if (-e "/etc/snort/snort.conf") {
 #######################  End added for snort rules control  #################################
 
 if ($snortsettings{'RULES'} eq 'subscripted') {
-	$url=" http://www.snort.org/sub-rules/snortrules-snapshot-2940.tar.gz/$snortsettings{'OINKCODE'}";
+	$url=" http://www.snort.org/sub-rules/snortrules-snapshot-2953.tar.gz/$snortsettings{'OINKCODE'}";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
-	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2940.tar.gz/$snortsettings{'OINKCODE'}";
+	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2950.tar.gz/$snortsettings{'OINKCODE'}";
+} elsif ($snortsettings{'RULES'} eq 'community') {
+	$url=" http://s3.amazonaws.com/snort-org/www/rules/community/community-rules.tar.gz";
 } else {
 	$url="http://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz";
 }
@@ -274,8 +276,9 @@ if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} e
 {
 	$errormessage = $Lang::tr{'invalid input for oink code'} unless (
 	    ($snortsettings{'OINKCODE'} =~ /^[a-z0-9]+$/)  ||
-	    ($snortsettings{'RULESTYPE'} eq 'nothing' ) ||
-	    ($snortsettings{'RULESTYPE'} eq 'community' ));
+	    ($snortsettings{'RULES'} eq 'nothing' ) ||
+	    ($snortsettings{'RULES'} eq 'emerging' ) ||
+	    ($snortsettings{'RULES'} eq 'community' ));
 
 	&General::writehash("${General::swroot}/snort/settings", \%snortsettings);
 	if ($snortsettings{'ENABLE_SNORT'} eq 'on')
@@ -402,6 +405,7 @@ $checked{'ENABLE_GUARDIAN'}{'on'} = '';
 $checked{'ENABLE_GUARDIAN'}{$snortsettings{'ENABLE_GUARDIAN'}} = "checked='checked'";
 $selected{'RULES'}{'nothing'} = '';
 $selected{'RULES'}{'community'} = '';
+$selected{'RULES'}{'emerging'} = '';
 $selected{'RULES'}{'registered'} = '';
 $selected{'RULES'}{'subscripted'} = '';
 $selected{'RULES'}{$snortsettings{'RULES'}} = "selected='selected'";
@@ -515,6 +519,7 @@ print <<END
 <tr>
 	<td><select name='RULES'>
 				<option value='nothing' $selected{'RULES'}{'nothing'} >$Lang::tr{'no'}</option>
+				<option value='emerging' $selected{'RULES'}{'emerging'} >$Lang::tr{'emerging rules'}</option>
 				<option value='community' $selected{'RULES'}{'community'} >$Lang::tr{'community rules'}</option>
 				<option value='registered' $selected{'RULES'}{'registered'} >$Lang::tr{'registered user rules'}</option>
 				<option value='subscripted' $selected{'RULES'}{'subscripted'} >$Lang::tr{'subscripted user rules'}</option>

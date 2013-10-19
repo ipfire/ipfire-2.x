@@ -27,6 +27,7 @@ extern char *es_tr[];
 extern char *pl_tr[];
 extern char *ru_tr[];
 extern char *nl_tr[];
+extern char *tr_tr[];
 
 int main(int argc, char *argv[])
 {
@@ -34,8 +35,8 @@ int main(int argc, char *argv[])
 	char *shortlangnames[] = { "en", NULL };
 	char **langtrs[] = { en_tr, NULL };
 #else
-	char *shortlangnames[] = { "de", "en", "fr", "es", "nl", "pl", "ru", NULL };
-	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, nl_tr, pl_tr, ru_tr, NULL };
+	char *shortlangnames[] = { "de", "en", "fr", "es", "nl", "pl", "ru", "tr", NULL };
+	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, nl_tr, pl_tr, ru_tr, tr_tr, NULL };
 #endif
 	int choice;
 	char *sections[11]; /* need to fill this out AFTER knowning lang */

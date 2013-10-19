@@ -460,7 +460,6 @@ WARNING: translation string unused: transparent on
 WARNING: translation string unused: umount
 WARNING: translation string unused: umount removable media before to unplug
 WARNING: translation string unused: unencrypted
-WARNING: translation string unused: unknown
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updates
 WARNING: translation string unused: updates is old1
@@ -514,6 +513,13 @@ WARNING: untranslated string: age sminute
 WARNING: untranslated string: age ssecond
 WARNING: untranslated string: bytes
 WARNING: untranslated string: ccd iroute2
+WARNING: untranslated string: dnsforward
+WARNING: untranslated string: dnsforward add a new entry
+WARNING: untranslated string: dnsforward configuration
+WARNING: untranslated string: dnsforward edit an entry
+WARNING: untranslated string: dnsforward entries
+WARNING: untranslated string: dnsforward forward_server
+WARNING: untranslated string: dnsforward zone
 WARNING: untranslated string: new
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: qos enter bandwidths
@@ -521,4 +527,80 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: tor
+WARNING: untranslated string: tor accounting
+WARNING: untranslated string: tor accounting bytes
+WARNING: untranslated string: tor accounting bytes left
+WARNING: untranslated string: tor accounting interval
+WARNING: untranslated string: tor accounting limit
+WARNING: untranslated string: tor accounting period
+WARNING: untranslated string: tor acls
+WARNING: untranslated string: tor allowed subnets
+WARNING: untranslated string: tor bandwidth burst
+WARNING: untranslated string: tor bandwidth rate
+WARNING: untranslated string: tor bandwidth settings
+WARNING: untranslated string: tor bandwidth unlimited
+WARNING: untranslated string: tor common settings
+WARNING: untranslated string: tor configuration
+WARNING: untranslated string: tor connected relays
+WARNING: untranslated string: tor contact info
+WARNING: untranslated string: tor daemon
+WARNING: untranslated string: tor enabled
+WARNING: untranslated string: tor errmsg invalid accounting limit
+WARNING: untranslated string: tor errmsg invalid ip or mask
+WARNING: untranslated string: tor errmsg invalid relay address
+WARNING: untranslated string: tor errmsg invalid relay name
+WARNING: untranslated string: tor errmsg invalid relay port
+WARNING: untranslated string: tor errmsg invalid socks port
+WARNING: untranslated string: tor exit country any
+WARNING: untranslated string: tor exit nodes
+WARNING: untranslated string: tor relay address
+WARNING: untranslated string: tor relay configuration
+WARNING: untranslated string: tor relay enabled
+WARNING: untranslated string: tor relay external address
+WARNING: untranslated string: tor relay fingerprint
+WARNING: untranslated string: tor relay mode
+WARNING: untranslated string: tor relay mode bridge
+WARNING: untranslated string: tor relay mode exit
+WARNING: untranslated string: tor relay mode private bridge
+WARNING: untranslated string: tor relay mode relay
+WARNING: untranslated string: tor relay nickname
+WARNING: untranslated string: tor relay port
+WARNING: untranslated string: tor service
+WARNING: untranslated string: tor socks port
+WARNING: untranslated string: tor stats
+WARNING: untranslated string: tor traffic limit hard
+WARNING: untranslated string: tor traffic limit soft
+WARNING: untranslated string: tor traffic read written
+WARNING: untranslated string: tor use exit nodes
 WARNING: untranslated string: uptime load average
+WARNING: untranslated string: wlan client
+WARNING: untranslated string: wlan client advanced settings
+WARNING: untranslated string: wlan client and
+WARNING: untranslated string: wlan client bssid
+WARNING: untranslated string: wlan client ccmp
+WARNING: untranslated string: wlan client configuration
+WARNING: untranslated string: wlan client disconnected
+WARNING: untranslated string: wlan client duplicate ssid
+WARNING: untranslated string: wlan client edit entry
+WARNING: untranslated string: wlan client encryption
+WARNING: untranslated string: wlan client encryption none
+WARNING: untranslated string: wlan client encryption wep
+WARNING: untranslated string: wlan client encryption wpa
+WARNING: untranslated string: wlan client encryption wpa2
+WARNING: untranslated string: wlan client group cipher
+WARNING: untranslated string: wlan client group key algorithm
+WARNING: untranslated string: wlan client invalid key length
+WARNING: untranslated string: wlan client new entry
+WARNING: untranslated string: wlan client new network
+WARNING: untranslated string: wlan client pairwise cipher
+WARNING: untranslated string: wlan client pairwise key algorithm
+WARNING: untranslated string: wlan client pairwise key group key
+WARNING: untranslated string: wlan client psk
+WARNING: untranslated string: wlan client ssid
+WARNING: untranslated string: wlan client tkip
+WARNING: untranslated string: wlan client wpa mode
+WARNING: untranslated string: wlan client wpa mode all
+WARNING: untranslated string: wlan client wpa mode ccmp ccmp
+WARNING: untranslated string: wlan client wpa mode ccmp tkip
+WARNING: untranslated string: wlan client wpa mode tkip tkip

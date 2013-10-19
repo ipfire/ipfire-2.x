@@ -22,8 +22,31 @@ fi
 
 SHOW_SRV=1
 
+function dns_forward_args() {
+	local file="${1}"
+
+	# Do nothing if file is empty.
+	[ -s "${file}" ] || return
+
+	local cmdline
+
+	local enabled zone server remark
+	while IFS="," read -r enabled zone server remark; do
+		# Line must be enabled.
+		[ "${enabled}" = "on" ] || continue
+
+		cmdline="${cmdline} --server=/${zone}/${server}"
+	done < ${file}
+
+	echo "${cmdline}"
+}
+
+
 case "${1}" in
 	start)
+		# kill already running copy of dnsmasq...
+		killproc /usr/sbin/dnsmasq 2>&1 > /dev/null
+
 		boot_mesg "Starting Domain Name Service Proxy..."
 		
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
@@ -44,8 +67,12 @@ case "${1}" in
 		    fi
 		fi
 		[ -e "/var/ipfire/red/active" ] && ARGS="$ARGS -r /var/ipfire/red/resolv.conf"
-		
+	
 		ARGS="$ARGS --domain=`cat /var/ipfire/main/settings |grep DOMAIN |cut -d = -f 2`"
+
+		# Add custom forward dns zones.
+		ARGS="${ARGS} $(dns_forward_args /var/ipfire/dnsforward/config)"
+
 		ARGS="$ARGS $CUSTOM_ARGS"
 
 		loadproc /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $ARGS

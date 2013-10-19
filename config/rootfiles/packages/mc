@@ -1,10 +1,10 @@
 #etc/mc
 etc/mc/edit.indent.rc
 etc/mc/filehighlight.ini
+etc/mc/mc.default.keymap
+etc/mc/mc.emacs.keymap
 etc/mc/mc.ext
 etc/mc/mc.keymap
-etc/mc/mc.keymap.default
-etc/mc/mc.keymap.emacs
 etc/mc/mc.menu
 etc/mc/mc.menu.sr
 etc/mc/mcedit.menu
@@ -110,6 +110,14 @@ usr/share/mc/skins/double-lines.ini
 usr/share/mc/skins/featured.ini
 usr/share/mc/skins/gotar.ini
 usr/share/mc/skins/mc46.ini
+usr/share/mc/skins/modarcon16-defbg.ini
+usr/share/mc/skins/modarcon16.ini
+usr/share/mc/skins/modarcon16root-defbg.ini
+usr/share/mc/skins/modarcon16root.ini
+usr/share/mc/skins/modarin256-defbg.ini
+usr/share/mc/skins/modarin256.ini
+usr/share/mc/skins/modarin256root-defbg.ini
+usr/share/mc/skins/modarin256root.ini
 usr/share/mc/skins/nicedark.ini
 usr/share/mc/skins/sand256.ini
 usr/share/mc/skins/xoria256.ini
@@ -124,6 +132,7 @@ usr/share/mc/syntax/awk.syntax
 usr/share/mc/syntax/c.syntax
 usr/share/mc/syntax/cabal.syntax
 usr/share/mc/syntax/changelog.syntax
+usr/share/mc/syntax/cmake.syntax
 usr/share/mc/syntax/cs.syntax
 usr/share/mc/syntax/css.syntax
 usr/share/mc/syntax/cxx.syntax
@@ -134,6 +143,7 @@ usr/share/mc/syntax/debian-control.syntax
 usr/share/mc/syntax/debian-description.syntax
 usr/share/mc/syntax/debian-sources-list.syntax
 usr/share/mc/syntax/diff.syntax
+usr/share/mc/syntax/dlink.syntax
 usr/share/mc/syntax/dos.syntax
 usr/share/mc/syntax/ebuild.syntax
 usr/share/mc/syntax/eiffel.syntax
@@ -146,10 +156,12 @@ usr/share/mc/syntax/html.syntax
 usr/share/mc/syntax/idl.syntax
 usr/share/mc/syntax/ini.syntax
 usr/share/mc/syntax/j.syntax
+usr/share/mc/syntax/jal.syntax
 usr/share/mc/syntax/java.syntax
 usr/share/mc/syntax/js.syntax
 usr/share/mc/syntax/latex.syntax
 usr/share/mc/syntax/lisp.syntax
+usr/share/mc/syntax/lkr.syntax
 usr/share/mc/syntax/lsm.syntax
 usr/share/mc/syntax/lua.syntax
 usr/share/mc/syntax/m4.syntax

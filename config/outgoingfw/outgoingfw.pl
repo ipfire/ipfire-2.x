@@ -105,6 +105,7 @@ system("/sbin/iptables --delete-chain OUTGOINGFWMAC >/dev/null 2>&1");
 system("/sbin/iptables -N OUTGOINGFWMAC >/dev/null 2>&1");
 
 if ( $outfwsettings{'POLICY'} eq 'MODE0' ) {
+	&firewall_local_reload();
 	exit 0
 }
 
@@ -264,6 +265,8 @@ if ( $outfwsettings{'POLICY'} eq 'MODE1' ) {
 	applyrule("-o $netsettings{'RED_DEV'} -j DROP -m comment --comment 'DROP_OUTGOINGFW '", 0);
 }
 
+&firewall_local_reload();
+
 sub applyrule($$) {
 	my $cmd = shift;
 	my $macrule = shift;
@@ -271,5 +274,13 @@ sub applyrule($$) {
 	system("/sbin/iptables -A OUTGOINGFWMAC $cmd");
 	if ($macrule == 0) {
 		system("/sbin/iptables -A OUTGOINGFW $cmd");
+	}
+}
+
+sub firewall_local_reload() {
+	my $script = "/etc/sysconfig/firewall.local";
+
+	if ( -x $script ) {
+		system("$script reload >/dev/null 2>&1");
 	}
 }

@@ -49,7 +49,7 @@ if (-f "${General::swroot}/ovpn/ovpnconfig"){
 		exit 0 if ($cn eq $CN);
 
 		# Compatibility code for incorrectly saved CNs.
-		$cn =~ s/\ /_/;
+		$cn =~ s/\ /_/g;
 		exit 0 if ($cn eq $CN);
 	}
 }

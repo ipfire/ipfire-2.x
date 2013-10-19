@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.29.0
+VER        = 7.31.0
 
 THISAPP    = curl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4f57d3b4a3963038bd5e04dbff385390
+$(DL_FILE)_MD5 = 6f26843f7e3a2fb06e02f68a55efe8c7
 
 install : $(TARGET)
 
@@ -70,7 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-ipv6
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	# Create symlink to new curl lib for old binaries

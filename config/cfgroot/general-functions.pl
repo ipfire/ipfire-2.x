@@ -857,13 +857,14 @@ sub FetchPublicIp {
         my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
         Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
     }
-    my ($out, $response) = Net::SSLeay::get_http(  'checkip.dyndns.org',
+    my $user_agent = &MakeUserAgent();
+    my ($out, $response) = Net::SSLeay::get_http(  'checkip4.dns.lightningwirelabs.com',
                 				    80,
         					    "/",
-						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
+						    Net::SSLeay::make_headers('User-Agent' => $user_agent )
 						);
     if ($response =~ m%HTTP/1\.. 200 OK%) {
-	$out =~ /Current IP Address: (\d+.\d+.\d+.\d+)/;
+	$out =~ /Your IP address is: (\d+.\d+.\d+.\d+)/;
 	return $1;
     }
     return '';
@@ -919,9 +920,11 @@ sub GetDyndnsRedIP {
     close(IP);
     chomp $ip;
 
+    # 100.64.0.0/10 is reserved for dual-stack lite (http://tools.ietf.org/html/rfc6598).
     if (&General::IpInSubnet ($ip,'10.0.0.0','255.0.0.0') ||
         &General::IpInSubnet ($ip,'172.16.0.0.','255.240.0.0') ||
-        &General::IpInSubnet ($ip,'192.168.0.0','255.255.0.0'))
+        &General::IpInSubnet ($ip,'192.168.0.0','255.255.0.0') ||
+        &General::IpInSubnet ($ip,'100.64.0.0', '255.192.0.0'))
     {
 	if ($settings{'BEHINDROUTER'} eq 'FETCH_IP') {
     	    my $RealIP = &General::FetchPublicIp;
@@ -980,4 +983,74 @@ sub GetIcmpDescription ($) {
     'Experimental');
     if ($index>41) {return 'unknown'} else {return @icmp_description[$index]};
 }
+
+sub GetCoreUpdateVersion() {
+	my $core_update;
+
+	open(FILE, "/opt/pakfire/db/core/mine");
+	while (<FILE>) {
+		$core_update = $_;
+		last;
+	}
+	close(FILE);
+
+	return $core_update;
+}
+
+sub MakeUserAgent() {
+	my $user_agent = "IPFire/$General::version";
+
+	my $core_update = &GetCoreUpdateVersion();
+	if ($core_update ne "") {
+		$user_agent .= "/$core_update";
+	}
+
+	return $user_agent;
+}
+
+sub RedIsWireless() {
+	# This function checks if a network device is a wireless device.
+
+	my %settings = ();
+	&readhash("${General::swroot}/ethernet/settings", \%settings);
+
+	# Find the name of the network device.
+	my $device = $settings{'RED_DEV'};
+
+	# Exit, if no device is configured.
+	return 0 if ($device eq "");
+
+	# Return 1 if the device is a wireless one.
+	my $path = "/sys/class/net/$device/wireless";
+	if (-d $path) {
+		return 1;
+	}
+
+	# Otherwise return zero.
+	return 0;
+}
+
+# Function to read a file with UTF-8 charset.
+sub read_file_utf8 ($) {
+	my ($file) = @_;
+
+	open my $in, '<:encoding(UTF-8)', $file or die "Could not open '$file' for reading $!";
+	local $/ = undef;
+	my $all = <$in>;
+	close $in;
+
+	return $all;
+}
+
+# Function to write a file with UTF-8 charset.
+sub write_file_utf8 ($) {
+	my ($file, $content) = @_;
+
+	open my $out, '>:encoding(UTF-8)', $file or die "Could not open '$file' for writing $!";;           
+	print $out $content;
+	close $out;
+
+	return; 
+}
+
 1;

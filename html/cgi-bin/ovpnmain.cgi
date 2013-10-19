@@ -127,21 +127,6 @@ sub sizeformat{
     return("$newsize $units[$i]");
 }
 
-sub valid_dns_host {
-	my $hostname = $_[0];
-	unless ($hostname) { return "No hostname"};
-	my $res = new Net::DNS::Resolver;
-	my $query = $res->search("$hostname");
-	if ($query) {
-		foreach my $rr ($query->answer) {
-			## Potential bug - we are only looking at A records:
-			return 0 if $rr->type eq "A";
-		}
-	} else {
-		return $res->errorstring;
-	}
-}
-
 sub cleanssldatabase
 {
     if (open(FILE, ">${General::swroot}/ovpn/certs/serial")) {
@@ -982,7 +967,11 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "persist-key\n";
   print SERVERCONF "script-security 2\n";
   print SERVERCONF "# IP/DNS for remote Server Gateway\n"; 
+
+  if ($cgiparams{'REMOTE'} ne '') {
   print SERVERCONF "remote $cgiparams{'REMOTE'}\n";
+  }
+
   print SERVERCONF "float\n";
   print SERVERCONF "# IP adresses of the VPN Subnet\n"; 
   print SERVERCONF "ifconfig $ovsubnet.1 $ovsubnet.2\n"; 
@@ -2206,14 +2195,15 @@ else
 # m.a.d net2net
 ###
 
- if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
-
+if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 	my $conffile = glob("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]/$confighash{$cgiparams{'KEY'}}[1].conf");
-  my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
-  unlink ($certfile) or die "Removing $certfile fail: $!";
-  unlink ($conffile) or die "Removing $conffile fail: $!";
-  rmdir ("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") || die "Kann Verzeichnis nicht loeschen: $!";
-  
+	my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
+	unlink ($certfile);
+	unlink ($conffile);
+
+	if (-e "${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") {
+		rmdir ("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") || die "Kann Verzeichnis nicht loeschen: $!";
+	}
 }
 
   unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
@@ -2338,6 +2328,9 @@ ADV_ERROR:
     }
     if ($cgiparams{'LOG_VERB'} eq '') {
 	$cgiparams{'LOG_VERB'} =  '3';
+    }
+    if ($cgiparams{'PMTU_DISCOVERY'} eq '') {
+	$cgiparams{'PMTU_DISCOVERY'} = 'off';
     }
     $checked{'CLIENT2CLIENT'}{'off'} = '';
     $checked{'CLIENT2CLIENT'}{'on'} = '';
@@ -3520,6 +3513,14 @@ if ($cgiparams{'TYPE'} eq 'net') {
       goto VPNCONF_ERROR;			
 		}
 
+    # Check if the input for the transfer net is valid.
+    if (!&General::validipandmask($cgiparams{'OVPN_SUBNET'})){
+			$errormessage = $Lang::tr{'ccd err invalidnet'};
+			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+			goto VPNCONF_ERROR;
+		}
+
     if ($cgiparams{'OVPN_SUBNET'} eq  $vpnsettings{'DOVPN_SUBNET'}) {
 			$errormessage = $Lang::tr{'openvpn subnet is used'};
 			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
@@ -3603,34 +3604,36 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 	}
 
-	if (($cgiparams{'TYPE'} eq 'net') && (! $cgiparams{'REMOTE'})) {
-	    $errormessage = $Lang::tr{'invalid input for remote host/ip'};
-	    if ($cgiparams{'TYPE'} eq 'net') {
-      unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
-      }
-	    goto VPNCONF_ERROR;
-	}
+	# Check if a remote host/IP has been set for the client.
+	if ($cgiparams{'TYPE'} eq 'net') {
+		if ($cgiparams{'SIDE'} ne 'server' && $cgiparams{'REMOTE'} eq '') {
+			$errormessage = $Lang::tr{'invalid input for remote host/ip'};
 
-	if ($cgiparams{'REMOTE'}) {
-	    if (! &General::validip($cgiparams{'REMOTE'})) {
-		if (! &General::validfqdn ($cgiparams{'REMOTE'}))  {
-		    $errormessage = $Lang::tr{'invalid input for remote host/ip'};
-		    if ($cgiparams{'TYPE'} eq 'net') {
-        unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-	      rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
-        }
-		    goto VPNCONF_ERROR;
-		} else {
-		    if (&valid_dns_host($cgiparams{'REMOTE'})) {
-			$warnmessage = "$Lang::tr{'check vpn lr'} $cgiparams{'REMOTE'}. $Lang::tr{'dns check failed'}";
-			if ($cgiparams{'TYPE'} eq 'net') {
+			# Check if this is a N2N connection and drop temporary config.
+			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+			rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 
-      }
-		    }
+			goto VPNCONF_ERROR;
 		}
-	    }
+
+		# Check if a remote host/IP has been configured - the field can be empty on the server side.
+		if ($cgiparams{'REMOTE'} ne '') {
+			# Check if the given IP is valid - otherwise check if it is a valid domain.
+			if (! &General::validip($cgiparams{'REMOTE'})) {
+				# Check for a valid domain.
+				if (! &General::validfqdn ($cgiparams{'REMOTE'}))  {
+					$errormessage = $Lang::tr{'invalid input for remote host/ip'};
+
+					# Check if this is a N2N connection and drop temporary config.
+					unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+					rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+
+					goto VPNCONF_ERROR;
+				}
+			}
+		}
 	}
+
 	if ($cgiparams{'TYPE'} ne 'host') {
             unless (&General::validipandmask($cgiparams{'LOCAL_SUBNET'})) {
 	            $errormessage = $Lang::tr{'local subnet is invalid'}; 
@@ -4147,6 +4150,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $checked{'MSSFIX'}{'on'} = '';
     $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
 
+    if ($cgiparams{'PMTU_DISCOVERY'} eq '') {
+	$cgiparams{'PMTU_DISCOVERY'} = 'off';
+    }
     $checked{'PMTU_DISCOVERY'}{$cgiparams{'PMTU_DISCOVERY'}} = 'checked=\'checked\'';
 
 

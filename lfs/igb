@@ -26,13 +26,13 @@ include Config
 
 VERSUFIX   = ipfire$(KCFG)
 ifeq "$(KCFG)" "-xen"
-	KVER = 2.6.32.60
+	KVER = 2.6.32.61
 	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/igb/
 else
 	MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/ethernet/intel/igb/
 endif
 
-VER        = 4.1.2
+VER        = 4.3.0
 
 THISAPP    = igb-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0a5462b76310b83a40c9023edae50d72
+$(DL_FILE)_MD5 = dcbf7271c016bdb71102eb623b807f83
 
 install : $(TARGET)
 

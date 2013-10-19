@@ -3,6 +3,7 @@ usr/local/bin/addonctrl
 usr/local/bin/backupctrl
 #usr/local/bin/clamavctrl
 usr/local/bin/dhcpctrl
+usr/local/bin/dnsmasqctrl
 usr/local/bin/extrahdctrl
 usr/local/bin/fireinfoctrl
 usr/local/bin/getconntracktable
@@ -31,9 +32,11 @@ usr/local/bin/squidctrl
 usr/local/bin/sshctrl
 usr/local/bin/syslogdctrl
 usr/local/bin/timectrl
+#usr/local/bin/torctrl
 #usr/local/bin/tripwirectrl
 usr/local/bin/updxlratorctrl
 usr/local/bin/upnpctrl
 usr/local/bin/urlfilterctrl
+usr/local/bin/wirelessclient
 usr/local/bin/wirelessctrl
 #usr/local/bin/wlanapctrl

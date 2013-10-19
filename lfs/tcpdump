@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.0.0
+VER        = 4.4.0
 
 THISAPP    = tcpdump-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tcpdump
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b22ca72890df2301d922c9f2d17867f9
+$(DL_FILE)_MD5 = 6f75aabcffd012f73bd7c331bb5d8232
 
 install : $(TARGET)
 
@@ -77,15 +77,18 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/tcpdump-3.8.2-rsvp-dos.patch	#CAN 2005-1280
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/tcpdump-3.8.2-bgp-dos.patch	#CAN 2005-1267
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/tcpdump-3.8.2-bgp-dos-2.patch	#CAN 2005-1279
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/tcpdump-3.8.2-isis-dos.patch	#CAN 2005-1278
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/tcpdump-3.8.2-ldp-dos.patch	#CAN 2005-1279
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/tcpdump-4.0.0-noINET.patch
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls --disable-ipv6
-	cd $(DIR_APP) && sed -i -e 's/#define\ HAVE_PCAP_DEBUG\ 1/#undef\ HAVE_PCAP_DEBUG/' config.h
-	cd $(DIR_APP) && make $(MAKETUNING) DEFS="-D_U_=\"\" -DHAVE_CONFIG_H"
+	cd $(DIR_APP) && \
+		./configure \
+			--prefix=/usr \
+			--disable-nls \
+			--with-crypto \
+			--without-smi
+
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	# Remove versioned binary
+	rm -vf /usr/sbin/tcpdump.$(VER)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

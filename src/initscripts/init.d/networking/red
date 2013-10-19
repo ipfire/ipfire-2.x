@@ -17,6 +17,7 @@
 
 . /etc/sysconfig/rc 
 . ${rc_functions}
+. /etc/init.d/networking/functions.network
 
 #Define some defaults
 INET_VLAN=7
@@ -77,11 +78,6 @@ if [ "${TYPE}" == "STATIC" ]; then
 	fi
 fi
 
-PIDFILE="/var/run/dhcpcd-${DEVICE}.pid"
-LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.info"
-DHCP_START=" "
-DHCP_STOP="-k "
-
 case "${1}" in
 	start)
 		if [ "${DEVICE}" != "${GREEN_DEV}" ] && [ "${DEVICE}" != "" ]; then
@@ -137,87 +133,24 @@ case "${1}" in
 			/usr/local/bin/setaliases
 
 		elif [ "${TYPE}" == "DHCP" ]; then
+			# Add firewall rules to allow comunication with the dhcp server on red.
+			iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
+			iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
 
-			if [ -e $LEASEINFO ]; then
-				boot_mesg -n "Stopping dhcpcd on the ${DEVICE} interface..."
-				. $LEASEINFO
-				if [ "$dhcp_lease_time" = "4294967295" ]; then
-					# do nothing, just echo ok
-					echo ""
-					echo_ok
-				else
-					if [ -n "$DHCP_STOP" ]; then
-						/sbin/dhcpcd ${DEVICE} $DHCP_STOP &> /dev/null
-						RET="$?"
-						if [ "$RET" -eq 0 ]; then
-							echo ""
-							echo_ok
-						elif [ "$RET" -eq 1 ]; then
-							boot_mesg "dhcpcd not running!" ${WARNING}
-							echo_warning
-						else
-							echo ""
-							echo_failure
-						fi
-					else
-						echo ""
-						killproc dhcpcd
-					fi
-				fi
-			fi
-
-			boot_mesg -n "Starting dhcpcd on the ${DEVICE} interface..."
 			echo -n "${DEVICE}" > /var/ipfire/red/iface
+
+			# Check if the wlan-client is used on red.
+			# To determine this we check if a wpa_supplicant is running.
+			pid="$(pidof wpa_supplicant)"
+
+			if [ -z "${pid}" ]; then
+				# No wpa_supplicant is running. So it's save to start dhcpcd.
+				dhcpcd_start "${DEVICE}"
+			fi
 
 			## Create & Enable vnstat
 			/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
 
-			# Test to see if there is a stale pid file
-			if [ -f "$PIDFILE" ]; then
-				ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
-				if [ $? != 0 ]; then
-					rm -f /var/run/dhcpcd-${DEVICE}.pid > /dev/null
-				else
-					boot_mesg "dhcpcd already running!" ${WARNING}
-					echo_warning
-					exit 2
-				fi
-			fi
-			
-			iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
-			iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
-			
-			if [ -n "${RED_DHCP_HOSTNAME}" ]; then
-				DHCP_START+="-h ${RED_DHCP_HOSTNAME} "
-	  	fi
-	  	
-	  	/sbin/dhcpcd ${DEVICE} ${DHCP_START} >/dev/null 2>&1
-	  	RET="$?"
-	  	
-	  	if [ "$RET" = "0" ]; then
-				. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.info
-				echo ""
-				echo_ok
-				boot_mesg "           DHCP Assigned Settings for ${DEVICE}:"
-				boot_mesg_flush
-				boot_mesg "           IP Address:      $ip_address"
-				boot_mesg_flush
-				if [ -n "${RED_DHCP_HOSTNAME}" ]; then
-					boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
-					boot_mesg_flush
-				fi
-				boot_mesg "           Subnet Mask:     $subnet_mask"
-				boot_mesg_flush
-				boot_mesg "           Default Gateway: $routers"
-				boot_mesg_flush
-				boot_mesg "           DNS Server:      $domain_name_servers"
-				boot_mesg_flush
-			else
-				echo ""
-				$(exit "$RET")
-				evaluate_retval
-			fi
-		
 		elif [ "$TYPE" == "PPPOE" ]; then
 
 			if ( ps ax | grep -q [p]ppd ); then 
@@ -455,10 +388,18 @@ case "${1}" in
 			### Standard PPP options we always use
 			#
 			PPP_STD_OPTIONS="$PLUGOPTS $DNS defaultroute noipdefault noauth"
-			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach mtu ${MTU}"
-			PPP_STD_OPTIONS+=" mru ${MRU} noaccomp nodeflate nopcomp novj novjccomp"
+			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach"
+			PPP_STD_OPTIONS+=" noaccomp nodeflate nopcomp novj novjccomp"
 			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME} lcp-echo-interval 20"
 			PPP_STD_OPTIONS+=" lcp-echo-failure 5 ${AUTH}"
+
+			if [ -n "${MTU}" ]; then
+				PPP_STD_OPTIONS="${PPP_STD_OPTIONS} mtu ${MTU}"
+			fi
+
+			if [ -n "${MRU}" ]; then
+				PPP_STD_OPTIONS="${PPP_STD_OPTIONS} mru ${MRU}"
+			fi
 				
 			### Debugging
 			#
@@ -525,33 +466,15 @@ case "${1}" in
 			# Add a NaN value to ppp0 rrd to supress spikes at reconnect
 			rrdtool update $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrd \
 				$(date +%s):: > /dev/null 2>&1
-		fi
 
-		if [ -e $LEASEINFO ]; then
-			boot_mesg -n "Stopping dhcpcd on the ${DEVICE} interface..."
-			. $LEASEINFO
-			if [ "$dchp_lease_time" = "4294967295" ]; then
-				# do nothing, just echo ok
-				echo ""
-				echo_ok
-			else
-				if [ -n "$DHCP_STOP" ]; then
-					/sbin/dhcpcd ${DEVICE} $DHCP_STOP &> /dev/null
-					RET="$?"
-					if [ "$RET" -eq 0 ]; then
-						echo ""
-						echo_ok
-					elif [ "$RET" -eq 1 ]; then
-						boot_mesg "dhcpcd not running!" ${WARNING}
-						echo_warning
-					else
-						echo ""
-						echo_failure
-					fi
-				else
-					echo ""
-					killproc dhcpcd
-				fi
+		elif [ "$TYPE" == "DHCP" ]; then
+			# Check if the wlan-client is used on red.
+                        # To determine this we check if a wpa_supplicant is running.
+                        pid="$(pidof wpa_supplicant)"
+
+                        if [ -z "${pid}" ]; then
+				# Stop dhcpcd.
+				dhcpcd_stop "${DEVICE}"
 			fi
 		fi
 

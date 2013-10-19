@@ -86,10 +86,31 @@ case "$1" in
 			boot_mesg "Stopping Squid Proxy Server..."
 			squid -k shutdown >/dev/null 2>&1
 			evaluate_retval
-			killproc /usr/bin/squidGuard >/dev/null
-			killproc /usr/sbin/updxlrator >/dev/null
-			killproc /usr/bin/squidclamav >/dev/null
+
+			# Stop squidGuard, updxlrator, squidclamav
+			# and redirect_wrappers.			
+			killproc /usr/bin/squidGuard >/dev/null &
+			killproc /usr/sbin/updxlrator >/dev/null &
+			killproc /usr/bin/squidclamav >/dev/null &
+			killproc /usr/sbin/redirect_wrapper >/dev/null &
+
+			# Wait until all redirectors have been stopped.
+			wait
+
+			# If squid is still running, wait up to 30 seconds
+			# before we go on to kill it.
+			counter=30
+
+			while [ ${counter} -gt 0 ]; do
+				statusproc /usr/sbin/squid >/dev/null && break;
+				sleep 1
+				counter=$(( ${counter} - 1))
+			done
+
+			# Kill squid service, if still running.
 			killproc /usr/sbin/squid >/dev/null
+
+			# Trash remain pid file from squid.
 			rm -rf /var/run/squid.pid	
 		fi
 		;;

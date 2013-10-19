@@ -71,6 +71,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xjf $(DIR_DL)/$(DL_FILE)
 
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.1-10486.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.1-10487.patch
+
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls \
 	   --datadir=/usr/lib/squid \
 	   --mandir=/usr/share/man --libexecdir=/usr/lib/squid \
@@ -87,8 +90,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	   --enable-referer-log \
 	      --enable-snmp \
 	   --with-pthreads --with-dl \
-	   --with-maxfd="16384" \
-	   --with-filedescriptors=16384 \
+	   --with-maxfd="65536" \
+	   --with-filedescriptors=65536 \
 	   --with-large-files \
 	   --with-aio \
 	   --enable-async-io=8 \

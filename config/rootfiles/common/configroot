@@ -30,12 +30,15 @@ var/ipfire/dmzholes
 #var/ipfire/dmzholes/config
 var/ipfire/dns
 #var/ipfire/dns/settings
+var/ipfire/dnsforward
+#var/ipfire/dnsforward/config
 var/ipfire/ethernet
 #var/ipfire/ethernet/aliases
 #var/ipfire/ethernet/known_nics
 #var/ipfire/ethernet/scanned_nics
 #var/ipfire/ethernet/settings
 #var/ipfire/ethernet/vlans
+#var/ipfire/ethernet/wireless
 #var/ipfire/extrahd
 #var/ipfire/extrahd/bin
 var/ipfire/extrahd/bin/extrahd.pl
@@ -62,6 +65,7 @@ var/ipfire/langs
 #var/ipfire/langs/nl.pl
 #var/ipfire/langs/pl.pl
 #var/ipfire/langs/ru.pl
+#var/ipfire/langs/tr.pl
 var/ipfire/logging
 #var/ipfire/logging/settings
 var/ipfire/mac
@@ -87,6 +91,7 @@ var/ipfire/menu.d/70-log.menu
 #var/ipfire/menu.d/EX-imspector.menu
 #var/ipfire/menu.d/EX-mpfire.menu
 #var/ipfire/menu.d/EX-samba.menu
+#var/ipfire/menu.d/EX-tor.menu
 #var/ipfire/menu.d/EX-tripwire.menu
 #var/ipfire/menu.d/EX-wlanap.menu
 var/ipfire/modem

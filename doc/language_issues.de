@@ -406,6 +406,10 @@ WARNING: translation string unused: to email adr
 WARNING: translation string unused: to install an update
 WARNING: translation string unused: to warn email bad
 WARNING: translation string unused: too long 80 char max
+WARNING: translation string unused: tor accounting period daily
+WARNING: translation string unused: tor accounting period monthly
+WARNING: translation string unused: tor accounting period weekly
+WARNING: translation string unused: tor exit country
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
@@ -429,7 +433,6 @@ WARNING: translation string unused: transparent on
 WARNING: translation string unused: umount
 WARNING: translation string unused: umount removable media before to unplug
 WARNING: translation string unused: unencrypted
-WARNING: translation string unused: unknown
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updates
 WARNING: translation string unused: updates is old1
@@ -478,6 +481,8 @@ WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
+WARNING: untranslated string: community rules
+WARNING: untranslated string: emerging rules
 WARNING: untranslated string: new
 WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: qos add subclass
@@ -485,4 +490,3 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
-WARNING: untranslated string: wlanap country
