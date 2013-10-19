@@ -25,6 +25,8 @@
 extract_files
 restore_backup ${NAME}
 
+mkdir -p /usr/lib/check_mk_agent/plugins
+
 if [[ -x /usr/sbin/xinetd ]];
 then
    if [[ -x /etc/init.d/xinetd ]]
