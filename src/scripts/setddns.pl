@@ -637,7 +637,42 @@ if ($ip ne $ipcache) {
 			    } else {
 			        &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure (could not connect to server)");
 			    }
-			} else {
+			}
+			elsif ($settings{'SERVICE'} eq 'udmedia.de') {
+			    # use proxy ?
+			    my %proxysettings;
+			    &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+			    if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
+				my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+				Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
+			    }
+
+			    if ($settings{'HOSTNAME'} eq '') {
+				$settings{'HOSTDOMAIN'} = $settings{'DOMAIN'};
+			    } else {
+				$settings{'HOSTDOMAIN'} = "$settings{'HOSTNAME'}.$settings{'DOMAIN'}";
+			    }
+
+			    my ($out, $response) = Net::SSLeay::get_https( 'www.udmedia.de',
+									    443,
+									    "/nic/update?myip=$ip&username=$settings{'HOSTDOMAIN'}&password=$settings{'PASSWORD'}",
+									    Net::SSLeay::make_headers('User-Agent' => 'IPFire',
+												      'Authorization' => 'Basic ' . encode_base64("$settings{'LOGIN'}:$settings{'PASSWORD'}")) );
+
+			    # Valid response are 'ok'   'nochange'
+			    if ($response =~ m%HTTP/1\.. 200 OK%) {
+				if ( $out !~ m/^(ok|nochg)/ ) {
+				    $out =~ s/\n/ /g;
+				    &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure ($out)");
+				} else {
+				    &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : success");
+				    $success++;
+				}
+			    } else {
+				&General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure (could not connect to server, check your credentials---$out-$response--)");
+			    }
+			}
+			else {
 				if ($settings{'WILDCARDS'} eq 'on') {
 				    $settings{'WILDCARDS'} = '-w';
 				} else {

@@ -493,6 +493,7 @@ buildipfire() {
   ipfiremake apache2
   ipfiremake php
   ipfiremake apache2			PASS=C
+  ipfiremake jquery
   ipfiremake arping
   ipfiremake beep
   ipfiremake dvdrtools
