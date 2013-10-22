@@ -1657,7 +1657,7 @@ END
 		&Header::openbox('100%', 'left', 'NAT');
 		print<<END;
 			<label>
-				<input type='checkbox' name='USE_NAT' id='USE_NAT' $checked{'USE_NAT'}{'ON'}>
+				<input type='checkbox' name='USE_NAT' id='USE_NAT' value="ON" $checked{'USE_NAT'}{'ON'}>
 				$Lang::tr{'fwdfw use nat'}
 			</label>
 			<div class="NAT">
@@ -1960,7 +1960,7 @@ END
 		if ($fwdfwsettings{'updatefwrule'} eq 'on') {
 			print <<END;
 				<td>
-					<input type='checkbox' name='ACTIVE' $checked{'ACTIVE'}{'ON'}>
+					<input type='checkbox' name='ACTIVE' value="ON" $checked{'ACTIVE'}{'ON'}>
 				</td>
 				<td>$Lang::tr{'fwdfw rule activate'}</td>
 END
