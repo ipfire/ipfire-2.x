@@ -944,6 +944,7 @@
 'fwdfw err tgt_mac' => 'MAC-Adressen können nicht als Ziel defininert werden',
 'fwdfw err tgt_port' => 'Ungültiger Zielport',
 'fwdfw err time' => 'Es muss mindestens ein Tag ausgewählt werden',
+'fwdfw external port nat' => 'Externer Port (NAT)',
 'fwdfw final_rule' => 'Letzte Regel: ',
 'fwdfw from' => 'Von:',
 'fwdfw hint ip1' => 'Die zuletzt erzeugte Regel mag eventuell niemals zutreffen, da sich Quelle und Ziel überlappen.',

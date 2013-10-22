@@ -969,6 +969,7 @@
 'fwdfw err tgt_mac' => 'A MAC addresses cannot be used as destination.',
 'fwdfw err tgt_port' => 'Invalid destination port.',
 'fwdfw err time' => 'You have to select at least one day.',
+'fwdfw external port nat' => 'External port (NAT)',
 'fwdfw final_rule' => 'Last rule: ',
 'fwdfw from' => 'From:',
 'fwdfw hint ip1' => 'The last generated rule may never match, because source and destination subnets may overlap.',

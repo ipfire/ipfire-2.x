@@ -121,6 +121,7 @@
 < fwdfw err tgt_mac
 < fwdfw err tgt_port
 < fwdfw err time
+< fwdfw external port nat
 < fwdfw final_rule
 < fwdfw from
 < fwdfw hint ip1
@@ -519,6 +520,7 @@
 < fwdfw err tgt_mac
 < fwdfw err tgt_port
 < fwdfw err time
+< fwdfw external port nat
 < fwdfw final_rule
 < fwdfw from
 < fwdfw hint ip1
@@ -901,6 +903,7 @@
 < fwdfw err tgt_mac
 < fwdfw err tgt_port
 < fwdfw err time
+< fwdfw external port nat
 < fwdfw final_rule
 < fwdfw from
 < fwdfw hint ip1
@@ -1272,6 +1275,7 @@
 < fwdfw err tgt_mac
 < fwdfw err tgt_port
 < fwdfw err time
+< fwdfw external port nat
 < fwdfw final_rule
 < fwdfw from
 < fwdfw hint ip1

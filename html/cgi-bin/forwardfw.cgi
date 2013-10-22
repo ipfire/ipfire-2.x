@@ -138,12 +138,12 @@ print<<END;
 
 		// When nat not used, hide it
 		if (! \$("#USE_NAT").attr("checked")) {
-			\$("#NAT").hide();
+			\$(".NAT").hide();
 		}
 
 		// Show NAT area when "use nat" checkbox is clicked
 		\$("#USE_NAT").change(function() {
-			\$("#NAT").toggle();
+			\$(".NAT").toggle();
 		});
 
 		// Time constraints
@@ -1660,7 +1660,7 @@ END
 				<input type='checkbox' name='USE_NAT' id='USE_NAT' $checked{'USE_NAT'}{'ON'}>
 				$Lang::tr{'fwdfw use nat'}
 			</label>
-			<div id="NAT">
+			<div class="NAT">
 				<table width='100%' border='0'>
 					<tr>
 						<td colspan='2'></td>
@@ -1677,9 +1677,6 @@ END
 			print "<option value='$alias' $selected{'dnat'}{$alias}>$alias</option>";
 		}
 		print"</select></td></tr>";
-		$fwdfwsettings{'dnatport'}=~ tr/|/,/;
-		print"<tr><td colspan='4'></td><td>Port: </td><td align='right'><input type='text' name='dnatport' style='width:130px;' value=\"$fwdfwsettings{'dnatport'}\"> </td></tr>";
-		print"<tr><td colspan='8'><br></td></tr>";
 		#SNAT
 		print"<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='snat' value='snat'  $checked{'nat'}{'snat'}></td><td width='20%'>$Lang::tr{'fwdfw snat'}</td>";
 		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='snat' style='width:140px;'>";
@@ -1788,6 +1785,12 @@ END
 
 		$fwdfwsettings{'SRC_PORT'} =~ s/\|/,/g;
 		$fwdfwsettings{'TGT_PORT'} =~ s/\|/,/g;
+		$fwdfwsettings{'dnatport'} =~ tr/|/,/;
+
+		# The dnatport may be empty, if it matches TGT_PORT
+		if ($fwdfwsettings{'dnatport'} eq $fwdfwsettings{'TGT_PORT'}) {
+			$fwdfwsettings{'dnatport'} = "";
+		}
 
 		print <<END;
 
@@ -1811,6 +1814,13 @@ END
 
 					<td>
 						<input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18'>
+					</td>
+				</tr>
+				<tr class="NAT">
+					<td colspan='3'></td>
+					<td>$Lang::tr{'fwdfw external port nat'}:</td>
+					<td>
+						<input type='text' name='dnatport' value=\"$fwdfwsettings{'dnatport'}\" maxlength='20' size='18'>
 					</td>
 				</tr>
 			</table>
