@@ -1606,6 +1606,7 @@
 'ovpn_processprioVH' => 'Sehr Hoch',
 'ovpnstatus log' => 'OVPN-Status-Log',
 'ovpnsys log' => 'OVPN-System-Log',
+'p2p block' => 'P2P-Block',
 'package failed to install' => 'Programmpaket konnte nicht installiert werden.',
 'pagerefresh' => 'Seite wird aktualisiert. Bitte warten.',
 'pakfire accept all' => 'Möchten Sie der Installation aller Pakete zustimmen?',
