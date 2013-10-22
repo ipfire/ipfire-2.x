@@ -137,13 +137,13 @@ print<<END;
 		update_protocol();
 
 		// When nat not used, hide it
-		if (! \$("#nat").attr("checked")) {
-			\$("#natpart").hide();
+		if (! \$("#USE_NAT").attr("checked")) {
+			\$("#NAT").hide();
 		}
 
 		// Show NAT area when "use nat" checkbox is clicked
-		\$("#nat").change(function() {
-			\$("#natpart").toggle();
+		\$("#USE_NAT").change(function() {
+			\$("#NAT").toggle();
 		});
 
 		// Time constraints
@@ -1656,11 +1656,18 @@ END
 		#---SNAT / DNAT ------------------------------------------------
 		&Header::openbox('100%', 'left', 'NAT');
 		print<<END;
-		<div id="nat"><table width='100%' border='0'>
-		<tr><td width='1%'><input type='checkbox' name='USE_NAT' id='USE_NAT' value='ON' $checked{'USE_NAT'}{'ON'} ></td><td width='15%'>$Lang::tr{'fwdfw use nat'}</td><td colspan='5'></td></tr></table></div>
-		<div id="natpart" class="noscript">
-		<table width='100%' border='0'><tr>
-		<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='dnat' value='dnat' checked ></td><td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
+			<label>
+				<input type='checkbox' name='USE_NAT' id='USE_NAT' $checked{'USE_NAT'}{'ON'}>
+				$Lang::tr{'fwdfw use nat'}
+			</label>
+			<div id="NAT">
+				<table width='100%' border='0'>
+					<tr>
+						<td colspan='2'></td>
+						<td width='1%'>
+							<input type='radio' name='nat' id='dnat' value='dnat' checked>
+						</td>
+						<td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
 END
 		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
 		print "<option value='ALL' $selected{'dnat'}{$Lang::tr{'all'}}>$Lang::tr{'all'}</option>";
@@ -1690,7 +1697,7 @@ END
 			print ">$network</option>";
 		}
 		print"</select></td></tr></table>";
-		print"</div><br><hr>";
+		print"</div>";
 		&Header::closebox();
 		#---TARGET------------------------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
