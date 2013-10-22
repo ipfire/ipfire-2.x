@@ -988,7 +988,7 @@
 'fwdfw pol text1' => 'Sets the default firewall behaviour for connections initiated by the firewall itself. Attention! You may lock yourself out.',
 'fwdfw pol title' => 'Default firewall behaviour',
 'fwdfw red' => 'RED',
-'fwdfw reread' => 'Apply',
+'fwdfw reread' => 'Apply changes',
 'fwdfw rule action' => 'Rule action:',
 'fwdfw rule activate' => 'Activate rule',
 'fwdfw rulepos' => 'Rule position',

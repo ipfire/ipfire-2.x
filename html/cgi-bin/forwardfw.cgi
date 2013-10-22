@@ -457,14 +457,32 @@ if ($fwdfwsettings{'ACTION'} eq '' or $fwdfwsettings{'ACTION'} eq 'reset')
 sub addrule
 {
 	&error;
-	if (-f "${General::swroot}/forward/reread"){
-		print "<table border='1' rules='groups' bgcolor='lightgreen' width='100%'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: green; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div></td></tr></table></form><br>";
-	}
+
 	&Header::openbox('100%', 'left',  $Lang::tr{'fwdfw menu'});
-	print "<form method='post'>";
-	print "<table border='0'>";
-	print "<tr><td><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw newrule'}'></td>";
-	print"</tr></table></form><hr>";	
+	print <<END;
+		<form method="POST" action="">
+			<table border='0' width="100%">
+				<tr>
+					<td>
+						<input type='submit' name='ACTION' value='$Lang::tr{'fwdfw newrule'}'>
+					</td>
+					<td align="right">
+END
+
+	if (-f "${General::swroot}/forward/reread") {
+		print <<END;
+			<input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-weight: bold; color: green;'>
+END
+	}
+
+	print <<END;
+					</td>
+				</tr>
+			</table>
+		</form>
+
+		<hr>
+END
 	&Header::closebox();
 	&viewtablerule;
 }

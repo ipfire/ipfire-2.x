@@ -963,7 +963,7 @@
 'fwdfw pol text1' => 'Firewall-Standardverhalten für von der Firewall selbst initiierte Verbindungen.',
 'fwdfw pol title' => 'Standardverhalten der Firewall',
 'fwdfw red' => 'ROT',
-'fwdfw reread' => 'Übernehmen',
+'fwdfw reread' => 'Änderungen übernehmen',
 'fwdfw rule action' => 'Regelaktion:',
 'fwdfw rule activate' => 'Regel aktivieren',
 'fwdfw rulepos' => 'Regelposition',
