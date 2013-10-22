@@ -385,7 +385,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		&newrule;
 	}else{
 		if($fwdfwsettings{'nosave2'} ne 'on'){
-			&rules;
+			&General::firewall_config_changed();
 		}
 		&base;
 	}
@@ -404,7 +404,7 @@ if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'fwdfw toggle'})
 		}
 	}
 	&General::writehasharray($fwdfwsettings{'config'}, \%togglehash);
-	&rules;
+	&General::firewall_config_changed();
 	&base;
 }
 if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'fwdfw togglelog'})
@@ -417,12 +417,12 @@ if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'fwdfw togglelog'})
 		}
 	}
 	&General::writehasharray($fwdfwsettings{'config'}, \%togglehash);
-	&rules;
+	&General::firewall_config_changed();
 	&base;
 }
 if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'fwdfw reread'})
 {
-	&reread_rules;
+	&General::firewall_reload();
 	&base;
 }
 if ($fwdfwsettings{'ACTION'} eq 'editrule')
@@ -469,7 +469,7 @@ sub addrule
 					<td align="right">
 END
 
-	if (-f "${General::swroot}/forward/reread") {
+	if (&General::firewall_needs_reload()) {
 		print <<END;
 			<input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-weight: bold; color: green;'>
 END
@@ -1012,7 +1012,7 @@ sub deleterule
 	delete $delhash{$last_key};
 
 	&General::writehasharray($fwdfwsettings{'config'}, \%delhash);
-	&rules;
+	&General::firewall_config_changed();
 
 	if($fwdfwsettings{'nobase'} ne 'on'){
 		&base;
@@ -1028,7 +1028,7 @@ sub disable_rule
 		}
 	}
 	&General::writehasharray("$configfwdfw", \%configfwdfw);
-	&rules;
+	&General::firewall_config_changed();
 }
 sub dec_counter
 {
@@ -2102,7 +2102,7 @@ sub pos_up
 		}
 	}
 	&General::writehasharray($fwdfwsettings{'config'}, \%uphash);
-	&rules;
+	&General::firewall_config_changed();
 }
 sub pos_down
 {
@@ -2129,22 +2129,7 @@ sub pos_down
 		}
 	}
 	&General::writehasharray($fwdfwsettings{'config'}, \%downhash);
-	&rules;
-}
-sub rules
-{
-	if (!-f "${General::swroot}/forward/reread"){
-		system("touch ${General::swroot}/forward/reread");
-		system("touch ${General::swroot}/fwhosts/reread");
-	}
-}
-sub reread_rules
-{
-	system("/usr/local/bin/forwardfwctrl");
-	if ( -f "${General::swroot}/forward/reread"){
-		system("rm ${General::swroot}/forward/reread");
-		system("rm ${General::swroot}/fwhosts/reread");
-	}
+	&General::firewall_config_changed();
 }
 sub saverule
 {
@@ -2286,7 +2271,7 @@ sub saverule
 				$fwdfwsettings{'oldrulenumber'}--;
 			}
 			&General::writehasharray("$config", $hash);
-			&rules;
+			&General::firewall_config_changed();
 		}elsif($fwdfwsettings{'rulepos'} > $fwdfwsettings{'oldrulenumber'}){
 			my %tmp=();
 			my $val=$fwdfwsettings{'rulepos'}-$fwdfwsettings{'oldrulenumber'};
@@ -2313,7 +2298,7 @@ sub saverule
 				$fwdfwsettings{'oldrulenumber'}++;
 			}
 			&General::writehasharray("$config", $hash);
-			&rules;
+			&General::firewall_config_changed();
 		}
 	}
 }

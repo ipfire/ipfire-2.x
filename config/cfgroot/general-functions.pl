@@ -1137,4 +1137,23 @@ sub write_file_utf8 ($) {
 	return; 
 }
 
+my $FIREWALL_RELOAD_INDICATOR = "${General::swroot}/forward/reread";
+
+sub firewall_config_changed() {
+	open FILE, ">$FIREWALL_RELOAD_INDICATOR" or die "Could not open $FIREWALL_RELOAD_INDICATOR";
+	close FILE;
+}
+
+sub firewall_needs_reload() {
+	if (-e "$FIREWALL_RELOAD_INDICATOR") {
+		return 1;
+	}
+
+	return 0;
+}
+
+sub firewall_reload() {
+	system("/usr/local/bin/forwardfwctrl");
+}
+
 1;

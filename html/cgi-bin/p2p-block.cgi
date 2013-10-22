@@ -43,18 +43,12 @@ my %mainsettings=();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
-
-
 &Header::showhttpheaders();
 &Header::getcgihash(\%fwdfwsettings);
 &Header::openpage($Lang::tr{'fwdfw menu'}, 1, '');
-&Header::openbigbox('100%', 'center',$errormessage);
+&Header::openbigbox('100%', 'center', $errormessage);
 
-if ($fwdfwsettings{'ACTION'} eq ''){
-&p2pblock;
-}
-if ($fwdfwsettings{'ACTION'} eq 'togglep2p')
-{
+if ($fwdfwsettings{'ACTION'} eq 'togglep2p') {
 	open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
 	@p2ps = <FILE>;
 	close FILE;
@@ -72,21 +66,15 @@ if ($fwdfwsettings{'ACTION'} eq 'togglep2p')
 		print FILE "$p2pline[0];$p2pline[1];$p2pline[2];\n";
 	}
 	close FILE;
-	&rules;
-	&p2pblock;
-}
-if ($fwdfwsettings{'ACTION'} eq $Lang::tr{'fwdfw reread'})
-{
-	&reread_rules;
-	&p2pblock;
-}
 
+	&General::firewall_config_changed();
+	&p2pblock();
+} else {
+	&p2pblock();
+}
 
 sub p2pblock
 {
-	if (-f "${General::swroot}/forward/reread"){
-		print "<table border='1' rules='groups' bgcolor='lightgreen' width='100%'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: green; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</div></td></tr></table></form><br>";
-	}
 	my $gif;
 	open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
 	@p2ps = <FILE>;
@@ -115,20 +103,6 @@ END
 	print"<br><br><br><table width='100%'><tr><td align='left'>$Lang::tr{'fwdfw p2p txt'}</td></tr></table>";
 	&Header::closebox();
 }
-sub rules
-{
-	if (!-f "${General::swroot}/forward/reread"){
-		system("touch ${General::swroot}/forward/reread");
-		system("touch ${General::swroot}/fwhosts/reread");
-	}
-}
-sub reread_rules
-{
-	system("/usr/local/bin/forwardfwctrl");
-	if ( -f "${General::swroot}/forward/reread"){
-		system("rm ${General::swroot}/forward/reread");
-		system("rm ${General::swroot}/fwhosts/reread");
-	}
-}
+
 &Header::closebigbox();
 &Header::closepage();

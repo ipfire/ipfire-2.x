@@ -114,11 +114,6 @@ print<<END;
 END
 
 ## ACTION ####
-if ($fwhostsettings{'ACTION'} eq $Lang::tr{'fwdfw reread'})
-{
-	&reread_rules;
-	&showmenu;
-}
 # Update
 if ($fwhostsettings{'ACTION'} eq 'updatenet' )
 {
@@ -254,7 +249,7 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 	}
 	$fwhostsettings{'updatesrv'} = '';
 	if($needrules eq 'on'){
-		&rules;
+		&General::firewall_config_changed();
 	}
 	&addservice;
 }
@@ -416,7 +411,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			$fwhostsettings{'NETREMARK'}='';
 			#check if an edited net affected groups and need to reload rules
 			if ($needrules eq 'on'){
-				&rules;
+				&General::firewall_config_changed();
 			}
 			&addnet;
 			&viewtablenet;
@@ -552,7 +547,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			 $fwhostsettings{'HOSTREMARK'}='';
 			#check if we need to update rules while host was edited
 			if($needrules eq 'on'){
-				&rules;
+				&General::firewall_config_changed();
 			}
 			&addhost;
 			&viewtablehost;
@@ -727,7 +722,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		#check if ruleupdate is needed
 		if($count > 0 )
 		{
-			&rules;
+			&General::firewall_config_changed();
 		}
 		&addgrp;
 		&viewtablegrp;
@@ -829,7 +824,7 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 		$fwhostsettings{'updatesrvgrp'}='on';
 	}
 	if ($count gt 0){
-		&rules;
+		&General::firewall_config_changed();
 	}
 	&addservicegrp;
 	&viewtableservicegrp;
@@ -944,7 +939,9 @@ if ($fwhostsettings{'ACTION'} eq 'deletegrphost')
 		}
 	}
 	&General::writehasharray("$configgrp", \%customgrp);
-	if ($fwhostsettings{'grpcnt'} > 0){&rules;}
+	if ($fwhostsettings{'grpcnt'} > 0){
+		&General::firewall_config_changed();
+	}
 	if ($fwhostsettings{'update'} eq 'on'){
 		$fwhostsettings{'remark'}= $grpremark;
 		$fwhostsettings{'grp_name'}=$grpname;
@@ -1023,7 +1020,7 @@ if ($fwhostsettings{'ACTION'} eq 'delgrpservice')
 		}
 	}
 	&General::writehasharray("$configsrvgrp", \%customservicegrp);
-	&rules;
+	&General::firewall_config_changed();
 	if ($fwhostsettings{'updatesrvgrp'} eq 'on'){
 		$fwhostsettings{'SRVGRP_NAME'}=$grpname;
 		$fwhostsettings{'SRVGRP_REMARK'}=$grpremark;
@@ -1112,11 +1109,7 @@ if($fwhostsettings{'ACTION'} eq '')
 	&showmenu;
 }
 ###  FUNCTIONS  ###
-sub showmenu
-{
-	if (-f "${General::swroot}/forward/reread"){
-		print "<table border='1' rules='groups' bgcolor='lightgreen' width='100%'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: green; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</td></tr></table></form><br>";
-	}
+sub showmenu {
 	&Header::openbox('100%', 'left',$Lang::tr{'fwhost menu'});
 	print "$Lang::tr{'fwhost welcome'}";
 	print<<END;
@@ -2080,24 +2073,8 @@ sub getipforgroup
 		}
 	}
 }
-sub rules
-{
-	if (!-f "${General::swroot}/fwhosts/reread"){
-		system("touch ${General::swroot}/fwhosts/reread");
-		system("touch ${General::swroot}/forward/reread");
-	}
-}
-sub reread_rules
-{
-	system ("/usr/local/bin/forwardfwctrl");
-	if ( -f "${General::swroot}/fwhosts/reread"){
-		system("rm ${General::swroot}/fwhosts/reread");
-		system("rm ${General::swroot}/forward/reread");
-	}
-	
-}
-sub decrease
-{
+
+sub decrease {
 	my $grp=$_[0];
 	&General::readhasharray("$confignet", \%customnetwork);
 	&General::readhasharray("$confighost", \%customhost);
