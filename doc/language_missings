@@ -95,12 +95,10 @@
 < fwdfw ACCEPT
 < fwdfw action
 < fwdfw additional
-< fwdfw addr grp
 < fwdfw addrule
+< fwdfw all icmp
 < fwdfw change
 < fwdfw copy
-< fwdfw cust addr
-< fwdfw cust net
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
@@ -111,21 +109,19 @@
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
-< fwdfw err prot
+< fwdfw err prot_port
+< fwdfw err prot_port1
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
 < fwdfw err samesub
 < fwdfw err src_addr
-< fwdfw err srcovpn
-< fwdfw err srcport
 < fwdfw err tgt_addr
 < fwdfw err tgt_grp
 < fwdfw err tgt_mac
-< fwdfw err tgtovpn
-< fwdfw err tgtport
 < fwdfw err tgt_port
 < fwdfw err time
+< fwdfw external port nat
 < fwdfw final_rule
 < fwdfw from
 < fwdfw hint ip1
@@ -498,12 +494,10 @@
 < fwdfw ACCEPT
 < fwdfw action
 < fwdfw additional
-< fwdfw addr grp
 < fwdfw addrule
+< fwdfw all icmp
 < fwdfw change
 < fwdfw copy
-< fwdfw cust addr
-< fwdfw cust net
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
@@ -514,21 +508,19 @@
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
-< fwdfw err prot
+< fwdfw err prot_port
+< fwdfw err prot_port1
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
 < fwdfw err samesub
 < fwdfw err src_addr
-< fwdfw err srcovpn
-< fwdfw err srcport
 < fwdfw err tgt_addr
 < fwdfw err tgt_grp
 < fwdfw err tgt_mac
-< fwdfw err tgtovpn
-< fwdfw err tgtport
 < fwdfw err tgt_port
 < fwdfw err time
+< fwdfw external port nat
 < fwdfw final_rule
 < fwdfw from
 < fwdfw hint ip1
@@ -885,12 +877,10 @@
 < fwdfw ACCEPT
 < fwdfw action
 < fwdfw additional
-< fwdfw addr grp
 < fwdfw addrule
+< fwdfw all icmp
 < fwdfw change
 < fwdfw copy
-< fwdfw cust addr
-< fwdfw cust net
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
@@ -901,21 +891,19 @@
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
-< fwdfw err prot
+< fwdfw err prot_port
+< fwdfw err prot_port1
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
 < fwdfw err samesub
 < fwdfw err src_addr
-< fwdfw err srcovpn
-< fwdfw err srcport
 < fwdfw err tgt_addr
 < fwdfw err tgt_grp
 < fwdfw err tgt_mac
-< fwdfw err tgtovpn
-< fwdfw err tgtport
 < fwdfw err tgt_port
 < fwdfw err time
+< fwdfw external port nat
 < fwdfw final_rule
 < fwdfw from
 < fwdfw hint ip1
@@ -1261,12 +1249,10 @@
 < fwdfw ACCEPT
 < fwdfw action
 < fwdfw additional
-< fwdfw addr grp
 < fwdfw addrule
+< fwdfw all icmp
 < fwdfw change
 < fwdfw copy
-< fwdfw cust addr
-< fwdfw cust net
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
@@ -1277,21 +1263,19 @@
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
-< fwdfw err prot
+< fwdfw err prot_port
+< fwdfw err prot_port1
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
 < fwdfw err samesub
 < fwdfw err src_addr
-< fwdfw err srcovpn
-< fwdfw err srcport
 < fwdfw err tgt_addr
 < fwdfw err tgt_grp
 < fwdfw err tgt_mac
-< fwdfw err tgtovpn
-< fwdfw err tgtport
 < fwdfw err tgt_port
 < fwdfw err time
+< fwdfw external port nat
 < fwdfw final_rule
 < fwdfw from
 < fwdfw hint ip1

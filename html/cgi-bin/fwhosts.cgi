@@ -88,27 +88,32 @@ unless (-e $configsrvgrp) { system("touch $configsrvgrp"); }
 #### JAVA SCRIPT ####
 print<<END;
 <script>
+	var PROTOCOLS_WITH_PORTS = ["TCP", "UDP"];
+	var update_protocol = function() {
+		var protocol = \$("#protocol").val();
+
+		if (protocol === undefined)
+			return;
+
+		// Check if we are dealing with a protocol, that knows ports.
+		if (\$.inArray(protocol, PROTOCOLS_WITH_PORTS) >= 0) {
+			\$("#PORT").show();
+			\$("#PROTOKOLL").hide();
+		} else {
+			\$("#PORT").hide();
+			\$("#PROTOKOLL").show();
+		}
+	};
+
 	\$(document).ready(function() {
-		// Automatically select radio buttons when corresponding
-		// dropdown menu changes.
-		\$("select").change(function() {
-			var id = \$(this).attr("name");
-			//When using SNAT or DNAT, check "USE NAT" Checkbox
-			if ( id === 'snat' || id === 'dnat') {
-				\$('#USE_NAT').prop('checked', true);
-			}
-			\$('#' + id).prop("checked", true);
-		});
+		var protocol = \$("#protocol").val();
+		\$("#protocol").change(update_protocol);
+		update_protocol();
 	});
 </script>
 END
 
 ## ACTION ####
-if ($fwhostsettings{'ACTION'} eq $Lang::tr{'fwdfw reread'})
-{
-	&reread_rules;
-	&showmenu;
-}
 # Update
 if ($fwhostsettings{'ACTION'} eq 'updatenet' )
 {
@@ -244,7 +249,7 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 	}
 	$fwhostsettings{'updatesrv'} = '';
 	if($needrules eq 'on'){
-		&rules;
+		&General::firewall_config_changed();
 	}
 	&addservice;
 }
@@ -406,7 +411,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			$fwhostsettings{'NETREMARK'}='';
 			#check if an edited net affected groups and need to reload rules
 			if ($needrules eq 'on'){
-				&rules;
+				&General::firewall_config_changed();
 			}
 			&addnet;
 			&viewtablenet;
@@ -542,7 +547,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			 $fwhostsettings{'HOSTREMARK'}='';
 			#check if we need to update rules while host was edited
 			if($needrules eq 'on'){
-				&rules;
+				&General::firewall_config_changed();
 			}
 			&addhost;
 			&viewtablehost;
@@ -717,7 +722,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		#check if ruleupdate is needed
 		if($count > 0 )
 		{
-			&rules;
+			&General::firewall_config_changed();
 		}
 		&addgrp;
 		&viewtablegrp;
@@ -735,7 +740,7 @@ if ($fwhostsettings{'ACTION'} eq 'saveservice')
 			}
 		}
 	}
-	if($ICMP eq ''){$ICMP='BLANK';}
+	if($ICMP eq ''){$ICMP=$fwhostsettings{'ICMP_TYPES'};}
 	if (!$errormessage){
 		my $key = &General::findhasharraykey (\%customservice);
 		foreach my $i (0 .. 4) { $customservice{$key}[$i] = "";}
@@ -819,7 +824,7 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 		$fwhostsettings{'updatesrvgrp'}='on';
 	}
 	if ($count gt 0){
-		&rules;
+		&General::firewall_config_changed();
 	}
 	&addservicegrp;
 	&viewtableservicegrp;
@@ -934,7 +939,9 @@ if ($fwhostsettings{'ACTION'} eq 'deletegrphost')
 		}
 	}
 	&General::writehasharray("$configgrp", \%customgrp);
-	if ($fwhostsettings{'grpcnt'} > 0){&rules;}
+	if ($fwhostsettings{'grpcnt'} > 0){
+		&General::firewall_config_changed();
+	}
 	if ($fwhostsettings{'update'} eq 'on'){
 		$fwhostsettings{'remark'}= $grpremark;
 		$fwhostsettings{'grp_name'}=$grpname;
@@ -1013,7 +1020,7 @@ if ($fwhostsettings{'ACTION'} eq 'delgrpservice')
 		}
 	}
 	&General::writehasharray("$configsrvgrp", \%customservicegrp);
-	&rules;
+	&General::firewall_config_changed();
 	if ($fwhostsettings{'updatesrvgrp'} eq 'on'){
 		$fwhostsettings{'SRVGRP_NAME'}=$grpname;
 		$fwhostsettings{'SRVGRP_REMARK'}=$grpremark;
@@ -1102,11 +1109,7 @@ if($fwhostsettings{'ACTION'} eq '')
 	&showmenu;
 }
 ###  FUNCTIONS  ###
-sub showmenu
-{
-	if (-f "${General::swroot}/forward/reread"){
-		print "<table border='1' rules='groups' bgcolor='lightgreen' width='100%'><form method='post'><td><div style='font-size:11pt; font-weight: bold;vertical-align: middle; '><input type='submit' name='ACTION' value='$Lang::tr{'fwdfw reread'}' style='font-face: Comic Sans MS; color: green; font-weight: bold; font-size: 14pt;'>&nbsp &nbsp $Lang::tr{'fwhost reread'}</td></tr></table></form><br>";
-	}
+sub showmenu {
 	&Header::openbox('100%', 'left',$Lang::tr{'fwhost menu'});
 	print "$Lang::tr{'fwhost welcome'}";
 	print<<END;
@@ -1306,7 +1309,7 @@ sub addservice
 	print<<END;
 	<table width='100%' border='0'><form method='post'>
 	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost srv_name'}:</td><td><input type='text' name='SRV_NAME' id='textbox1' value='$fwhostsettings{'SRV_NAME'}' size='24'><script>document.getElementById('textbox1').focus()</script></td></tr>
-	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT'>
+	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost prot'}:</td><td><select name='PROT' id='protocol' >
 END
 	foreach ("TCP","UDP","ICMP")
 	{
@@ -1318,11 +1321,11 @@ END
 		}
 	}
 	print<<END;
-	</select></td></tr>
-	<tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td><select name='ICMP_TYPES'>
+	</select></td></tr></table>
+	<div id='PROTOKOLL' class='noscript'><table width=100%' border='0'><tr><td width='10%' nowrap='nowrap'>$Lang::tr{'fwhost icmptype'}</td><td><select name='ICMP_TYPES'>
 END
 	&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
-	print"<option>All ICMP-Types</option>";
+	print"<option value='All ICMP-Types'>$Lang::tr{'fwdfw all icmp'}</option>";
 	foreach my $key (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
 		if ($icmptypes{$key}[0] eq $fwhostsettings{'oldsrvicmp'}){
 			print"<option selected>$icmptypes{$key}[0] ($icmptypes{$key}[1])</option>";
@@ -1331,9 +1334,9 @@ END
 		}
 	}
 	print<<END;
-	</select></td></tr>
-	<tr><td width='10%'>$Lang::tr{'fwhost port'}:</td><td><input type='text' name='SRV_PORT' value='$fwhostsettings{'SRV_PORT'}' maxlength='11' size='24'></td></tr>
-	<tr><td colspan='6'><br><hr></td></tr>
+	</select></td></tr></table></div>
+	<div id='PORT' class='noscript'><table width='100%' border='0'><tr><td width='10%'>$Lang::tr{'fwhost port'}:</td><td><input type='text' name='SRV_PORT' value='$fwhostsettings{'SRV_PORT'}' maxlength='11' size='24'></td></tr></table></div>
+	<table width='100%' border='0'><tr><td colspan='6'><br><hr></td></tr>
 	<tr><td colspan='6' align='right'>
 END
 	if ($fwhostsettings{'updatesrv'} eq 'on')
@@ -1347,15 +1350,12 @@ END
 		<input type='hidden' name='oldsrvicmp' value='$fwhostsettings{'oldsrvicmp'}'>
 		</form>
 END
-		
-	}else{	
+	}else{
 		print"<input type='submit' value='$Lang::tr{'save'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='saveservice'></form>";
 	}
 	print<<END;
 	<form style='display:inline;' method='post'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'></form></td></tr>
 	</table></form>
-	
-	
 END
 	&Header::closebox();
 	&viewtableservice;
@@ -1658,8 +1658,8 @@ END
 			print<<END;
 			<td>$customservice{$key}[0]</td><td align='center'>$customservice{$key}[2]</td><td align='center'>$customservice{$key}[1]</td><td align='center'>
 END
-			if($customservice{$key}[3] ne 'BLANK'){print $customservice{$key}[3];}
-		
+			if($customservice{$key}[3] eq 'All ICMP-Types'){print $Lang::tr{'fwdfw all icmp'};}
+			elsif($customservice{$key}[3] ne 'BLANK'){print $customservice{$key}[3];}
 			print<<END;
 			</td><td align='center'>$customservice{$key}[4]x</td>
 			<td width='1%'><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} /><input type='hidden' name='ACTION' value='editservice' />
@@ -2073,24 +2073,8 @@ sub getipforgroup
 		}
 	}
 }
-sub rules
-{
-	if (!-f "${General::swroot}/fwhosts/reread"){
-		system("touch ${General::swroot}/fwhosts/reread");
-		system("touch ${General::swroot}/forward/reread");
-	}
-}
-sub reread_rules
-{
-	system ("/usr/local/bin/forwardfwctrl");
-	if ( -f "${General::swroot}/fwhosts/reread"){
-		system("rm ${General::swroot}/fwhosts/reread");
-		system("rm ${General::swroot}/forward/reread");
-	}
-	
-}
-sub decrease
-{
+
+sub decrease {
 	my $grp=$_[0];
 	&General::readhasharray("$confignet", \%customnetwork);
 	&General::readhasharray("$confighost", \%customhost);

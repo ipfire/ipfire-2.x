@@ -209,22 +209,15 @@ WARNING: translation string unused: from email pw
 WARNING: translation string unused: from email server
 WARNING: translation string unused: from email user
 WARNING: translation string unused: from warn email bad
-WARNING: translation string unused: fwdfw ACCEPT
-WARNING: translation string unused: fwdfw DROP
 WARNING: translation string unused: fwdfw MODE1
 WARNING: translation string unused: fwdfw MODE2
-WARNING: translation string unused: fwdfw REJECT
-WARNING: translation string unused: fwdfw addr grp
-WARNING: translation string unused: fwdfw cust addr
-WARNING: translation string unused: fwdfw cust net
-WARNING: translation string unused: fwdfw err srcovpn
-WARNING: translation string unused: fwdfw err srcport
 WARNING: translation string unused: fwdfw err tgt_port
-WARNING: translation string unused: fwdfw err tgtovpn
-WARNING: translation string unused: fwdfw err tgtport
+WARNING: translation string unused: fwdfw external port nat
 WARNING: translation string unused: fwdfw from
 WARNING: translation string unused: fwdfw ipsec network
+WARNING: translation string unused: fwdfw man port
 WARNING: translation string unused: fwdfw natport used
+WARNING: translation string unused: fwdfw rule action
 WARNING: translation string unused: fwdfw rules
 WARNING: translation string unused: fwdfw std network
 WARNING: translation string unused: fwdfw till
