@@ -2350,9 +2350,34 @@ sub viewtablenew
 		my $tooltip;
 		my @tmpsrc=();
 		my $coloryellow='';
-		print"<b>$title1</b><br>";
-		print"<table width='100%' cellspacing='0' cellpadding='0' border='0'>";
-		print"<tr><td align='center'><b>#</b></td><td></td><td align='center' width='25'></td><td align='center'><b>$Lang::tr{'fwdfw source'}</b></td><td width='1%'><b>Log</b></td><td align='center'><b>$Lang::tr{'fwdfw target'}</b></td><td align='center' colspan='6' width='1%'><b>$Lang::tr{'fwdfw action'}</b></td></tr>";
+		print <<END;
+			<b>$title1</b>
+			<br>
+
+			<table width='100%' cellspacing='0' border='0'>
+				<tr>
+					<th align='right' width='3%'>
+						#
+					</th>
+					<th width='2%'></th>
+					<th align='center'>
+						<b>$Lang::tr{'protocol'}</b>
+					</th>
+					<th align='center' width='30%'>
+						<b>$Lang::tr{'fwdfw source'}</b>
+					</th>
+					<th align='center'>
+						Log <!-- XXX UNTRANSLATED STRING -->
+					</th>
+					<th align='center' width='30%'>
+						<b>$Lang::tr{'fwdfw target'}</b>
+					</th>
+					<th align='center' colspan='6' width='18%'>
+						<b>$Lang::tr{'fwdfw action'}</b>
+					</th>
+				</tr>
+END
+
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
 			$tdcolor='';
 			@tmpsrc=();
@@ -2403,11 +2428,13 @@ sub viewtablenew
 					$color="$color{'color20'}";
 				}
 			}
-			print"<tr bgcolor='$color' >";
-			#KEY
 			print<<END;
-			<td align='right' width='18'><b>$key &nbsp;</b></td>
+				<tr bgcolor='$color'>
+					<td align='right' width='3%'>
+						<b>$key&nbsp;</b>
+					</td>
 END
+
 			#RULETYPE (A,R,D)
 			if ($$hash{$key}[0] eq 'ACCEPT'){
 				$ruletype='A';
@@ -2422,7 +2449,13 @@ END
 				$tooltip='REJECT';
 				$rulecolor=$color{'color16'};
 			}
-			print"<td bgcolor='$rulecolor' align='center' width='10'><span title='$tooltip'><b>$ruletype</b></span></td>";
+
+			print <<END;
+					<td bgcolor='$rulecolor' align='center' width='2%'>
+						<span title='$tooltip'>&nbsp;&nbsp;</span>
+					</td>
+END
+
 			#Get Protocol
 			my $prot;
 			if ($$hash{$key}[8]){
@@ -2434,6 +2467,7 @@ END
 			}else{
 				push (@protocols,$Lang::tr{'all'});
 			}
+
 			my $protz=join(",",@protocols);
 			if($protz eq 'ICMP' && $$hash{$key}[9] ne 'All ICMP-Types' && $$hash{$key}[14] ne 'cust_srvgrp'){
 				&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
@@ -2487,17 +2521,20 @@ END
 			}
 			#LOGGING
 			print<<END;
-			</td>
-			<td align='left' width='25'><form method='post'><input type='image' img src='$log' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw togglelog'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'/>
-			<input type='hidden' name='key' value='$key' />
-			<input type='hidden' name='config' value='$config' />
-			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw togglelog'}' />
-			</form></td>
+					</td>
+					<td align='center'>
+						<form method='POST' action=''>
+							<input type='image' img src='$log' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw togglelog'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;'/>
+							<input type='hidden' name='key' value='$key' />
+							<input type='hidden' name='config' value='$config' />
+							<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw togglelog'}' />
+						</form>
+					</td>
 END
 			#TARGET
 			&getcolor($$hash{$key}[5],$$hash{$key}[6],\%customhost);
 			print<<END;
-			<td align='center' width='160' $tdcolor>
+					<td align='center' $tdcolor>
 END
 			#Is this a DNAT rule?
 			if ($$hash{$key}[31] eq 'dnat' && $$hash{$key}[28] eq 'ON'){
@@ -2506,7 +2543,7 @@ END
 					$$hash{$key}[30]=~ tr/|/,/;
 					print": $$hash{$key}[30]";
 				}
-				print"<br>->";
+				print"<br>-&gt;";
 			}
 			if ($$hash{$key}[5] eq 'ipfire'){
 				$ipfireiface='Interface';
@@ -2542,54 +2579,82 @@ END
 				$gif="/images/off.gif"
 			}
 			print<<END;
-			<td width='25'><form method='post'><input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
-			<input type='hidden' name='key' value='$key' />
-			<input type='hidden' name='config' value='$config' />
-			<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw toggle'}' />
-			</form></td>
-			<td  width='25' ><form method='post'><input type='image' img src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'fwdfw edit'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
-			<input type='hidden' name='key' value='$key' />
-			<input type='hidden' name='config' value='$config' />
-			<input type='hidden' name='ACTION' value='editrule' />
-			</form></td>
-			<td  width='25'><form method='post'><input type='image' img src='/images/addblue.gif' alt='$Lang::tr{'fwdfw copy'}' title='$Lang::tr{'fwdfw copy'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
-			<input type='hidden' name='key' value='$key' />
-			<input type='hidden' name='config' value='$config' />
-			<input type='hidden' name='ACTION' value='copyrule' />
-			</form></td>
-			<td width='25' ><form method='post'><input type='image' img src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'fwdfw delete'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'   />
-			<input type='hidden' name='key' value='$key' />
-			<input type='hidden' name='config' value='$config' />
-			<input type='hidden' name='ACTION' value='deleterule' />
-			</form></td>
+				<td width='3%' align='center'>
+					<form method='POST' action=''>
+						<input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
+						<input type='hidden' name='key' value='$key' />
+						<input type='hidden' name='config' value='$config' />
+						<input type='hidden' name='ACTION' value='$Lang::tr{'fwdfw toggle'}' />
+					</form>
+				</td>
+				<td width='3%' align='center'>
+					<form method='POST' action=''>
+						<input type='image' img src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'fwdfw edit'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
+						<input type='hidden' name='key' value='$key' />
+						<input type='hidden' name='config' value='$config' />
+						<input type='hidden' name='ACTION' value='editrule' />
+					</form>
+				</td>
+				<td width='3%' align='center'>
+					<form method='POST' action=''>
+						<input type='image' img src='/images/addblue.gif' alt='$Lang::tr{'fwdfw copy'}' title='$Lang::tr{'fwdfw copy'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;' />
+						<input type='hidden' name='key' value='$key' />
+						<input type='hidden' name='config' value='$config' />
+						<input type='hidden' name='ACTION' value='copyrule' />
+					</form>
+				</td>
+				<td width='3%' align='center'>
+					<form method='POST' action=''>
+						<input type='image' img src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'fwdfw delete'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'   />
+						<input type='hidden' name='key' value='$key' />
+						<input type='hidden' name='config' value='$config' />
+						<input type='hidden' name='ACTION' value='deleterule' />
+					</form>
+				</td>
 END
 			if (exists $$hash{$key-1}){
 				print<<END;
-				<td width='25'><form method='post'><input type='image' img src='/images/up.gif' alt='$Lang::tr{'fwdfw moveup'}' title='$Lang::tr{'fwdfw moveup'}'  style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
-				<input type='hidden' name='key' value='$key' />
-				<input type='hidden' name='config' value='$config' />
-				<input type='hidden' name='ACTION' value='moveup' />
-				</form></td>
+					<td width='3%' align='center'>
+						<form method='POST' action=''>
+							<input type='image' img src='/images/up.gif' alt='$Lang::tr{'fwdfw moveup'}' title='$Lang::tr{'fwdfw moveup'}'  style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
+							<input type='hidden' name='key' value='$key' />
+							<input type='hidden' name='config' value='$config' />
+							<input type='hidden' name='ACTION' value='moveup' />
+						</form>
+					</td>
 END
 			}else{
-				print"<td width='25'><input type='image' img src='/images/up.gif' style='visibility:hidden;'></td>";
+				print"<td width='3%'></td>";
 			}
+
 			if (exists $$hash{$key+1}){
 				print<<END;
-				<td width='25' ><form method='post'><input type='image' img src='/images/down.gif' alt='$Lang::tr{'fwdfw movedown'}' title='$Lang::tr{'fwdfw movedown'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
-				<input type='hidden' name='key' value='$key' />
-				<input type='hidden' name='config' value='$config' />
-				<input type='hidden' name='ACTION' value='movedown' />
-				</form></td></tr>
+					<td width='3%' align='center'>
+						<form method='POST' action=''>
+							<input type='image' img src='/images/down.gif' alt='$Lang::tr{'fwdfw movedown'}' title='$Lang::tr{'fwdfw movedown'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'  />
+							<input type='hidden' name='key' value='$key' />
+							<input type='hidden' name='config' value='$config' />
+							<input type='hidden' name='ACTION' value='movedown' />
+						</form>
+					</td>
+				</tr>
 END
 			}else{
-				print"<td width='25'><input type='image' img src='/images/down.gif' style='visibility:hidden;'></td></tr>";
+				print"<td width='3%'></td></tr>";
 			}
 			#REMARK
 			if ($optionsfw{'SHOWREMARK'} eq 'on' && $$hash{$key}[16] ne ''){
-				print"<tr bgcolor='$color'>";
-				print"<td>&nbsp;</td><td bgcolor='$rulecolor'></td><td colspan='10'>&nbsp; $$hash{$key}[16]</td></tr>";
+				print <<END;
+					<tr bgcolor='$color'>
+						<td>&nbsp;</td>
+						<td bgcolor='$rulecolor'></td>
+						<td colspan='10'>
+							&nbsp; <em>$$hash{$key}[16]</em>
+						</td>
+					</tr>
+END
 			}
+
 			if ($$hash{$key}[18] eq 'ON'){
 				#TIMEFRAME
 				if ($$hash{$key}[18] eq 'ON'){
@@ -2604,7 +2669,7 @@ END
 					my $weekdays=join(",",@days);
 					if (@days){
 						print"<tr bgcolor='$color'>";
-						print"<td>&nbsp;</td><td bgcolor='$rulecolor'></td><td align='left' colspan='10'>&nbsp; $weekdays &nbsp; $$hash{$key}[26] - $$hash{$key}[27] </td></tr>";
+						print"<td>&nbsp;</td><td bgcolor='$rulecolor'></td><td align='left' colspan='10'>&nbsp; $weekdays &nbsp; $$hash{$key}[26] - $$hash{$key}[27]</td></tr>";
 					}
 				}
 			}
