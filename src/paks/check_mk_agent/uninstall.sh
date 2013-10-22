@@ -24,3 +24,11 @@
 . /opt/pakfire/lib/functions.sh
 make_backup ${NAME}
 remove_files
+
+if [[ -x /usr/sbin/xinetd ]];
+then
+   if [[ -x /etc/init.d/xinetd ]]
+   then
+      /etc/init.d/xinetd restart
+   fi
+fi
