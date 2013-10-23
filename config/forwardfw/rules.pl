@@ -278,16 +278,22 @@ sub buildrules
 											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
 										}
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
-										print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
-										$DPORT =~ s/\-/:/g;
-										if ($DPORT){
-											$fwaccessdport="--dport ".substr($DPORT,1,);
-										}elsif(! $DPORT && $$hash{$key}[30] ne ''){
-											if ($$hash{$key}[30]=~m/|/i){
-												$$hash{$key}[30] =~ s/\|/,/g;
-												$fwaccessdport="-m multiport --dport $$hash{$key}[30]";
-											}else{
-												$fwaccessdport="--dport $$hash{$key}[30]";
+										#Process NAT with servicegroup used
+										if ($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat' && $$hash{$key}[14] eq 'cust_srvgrp'){
+											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip $DPORT\n";
+											$fwaccessdport=$DPORT;
+										}else{
+											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
+											$DPORT =~ s/\-/:/g;
+											if ($DPORT){
+												$fwaccessdport="--dport ".substr($DPORT,1,);
+											}elsif(! $DPORT && $$hash{$key}[30] ne ''){
+												if ($$hash{$key}[30]=~m/|/i){
+													$$hash{$key}[30] =~ s/\|/,/g;
+													$fwaccessdport="-m multiport --dport $$hash{$key}[30]";
+												}else{
+													$fwaccessdport="--dport $$hash{$key}[30]";
+												}
 											}
 										}
 										print "iptables -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
@@ -342,16 +348,22 @@ sub buildrules
 											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
 										}
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
-										system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
-										$DPORT =~ s/\-/:/g;
-										if ($DPORT){
-											$fwaccessdport="--dport ".substr($DPORT,1,);
-										}elsif(! $DPORT && $$hash{$key}[30] ne ''){
-											if ($$hash{$key}[30]=~m/|/i){
-												$$hash{$key}[30] =~ s/\|/,/g;
-												$fwaccessdport="-m multiport --dport $$hash{$key}[30]";
-											}else{
-												$fwaccessdport="--dport $$hash{$key}[30]";
+										#Process NAT with servicegroup used
+										if ($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat' && $$hash{$key}[14] eq 'cust_srvgrp'){
+											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip $DPORT\n";
+											$fwaccessdport=$DPORT;
+										}else{
+											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
+											$DPORT =~ s/\-/:/g;
+											if ($DPORT){
+												$fwaccessdport="--dport ".substr($DPORT,1,);
+											}elsif(! $DPORT && $$hash{$key}[30] ne ''){
+												if ($$hash{$key}[30]=~m/|/i){
+													$$hash{$key}[30] =~ s/\|/,/g;
+													$fwaccessdport="-m multiport --dport $$hash{$key}[30]";
+												}else{
+													$fwaccessdport="--dport $$hash{$key}[30]";
+												}
 											}
 										}
 										system "iptables -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
