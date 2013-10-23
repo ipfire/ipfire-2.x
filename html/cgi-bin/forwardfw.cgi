@@ -595,10 +595,6 @@ sub checktarget
 	#check DNAT settings (has to be single Host and single Port or portrange)
 	if ($fwdfwsettings{'USE_NAT'} eq 'ON' && $fwdfwsettings{'nat'} eq 'dnat'){
 		if($fwdfwsettings{'grp2'} eq 'tgt_addr' || $fwdfwsettings{'grp2'} eq 'cust_host_tgt' || $fwdfwsettings{'grp2'} eq 'ovpn_host_tgt'){
-			if ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'dnatport'} eq ''){
-				$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
-				return $errormessage;
-			}
 			#check if manual ip is a single Host (if set)
 			if ($fwdfwsettings{'grp2'} eq 'tgt_addr'){
 				my @tmp= split (/\./,$fwdfwsettings{$fwdfwsettings{'grp2'}});
