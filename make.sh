@@ -369,6 +369,7 @@ buildipfire() {
   ipfiremake dhcp
   ipfiremake dhcpcd
   ipfiremake libusb
+  ipfiremake libusbx
   ipfiremake libpcap
   ipfiremake ppp
   ipfiremake pptp
