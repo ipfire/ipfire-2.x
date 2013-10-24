@@ -63,7 +63,7 @@ my %aliases=();
 my %optionsfw=();
 my %ifaces=();
 
-my @PROTOCOLS = ("TCP", "UDP", "ICMP", "IGMP", "AH", "ESP", "GRE");
+my @PROTOCOLS = ("TCP", "UDP", "ICMP", "IGMP", "AH", "ESP", "GRE","IPv6","IPIP");
 
 my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
@@ -914,6 +914,18 @@ sub checkrule
 		$fwdfwsettings{'USESRV'}='';
 		$fwdfwsettings{'TGT_PORT'}='';
 	}elsif($fwdfwsettings{'PROT'} eq 'IGMP'){
+		$fwdfwsettings{'USE_SRC_PORT'}='';
+		$fwdfwsettings{'SRC_PORT'}='';
+		$fwdfwsettings{'ICMP_TYPES'}='';
+		$fwdfwsettings{'USESRV'}='';
+		$fwdfwsettings{'TGT_PORT'}='';
+	}elsif($fwdfwsettings{'PROT'} eq 'IPv6'){
+		$fwdfwsettings{'USE_SRC_PORT'}='';
+		$fwdfwsettings{'SRC_PORT'}='';
+		$fwdfwsettings{'ICMP_TYPES'}='';
+		$fwdfwsettings{'USESRV'}='';
+		$fwdfwsettings{'TGT_PORT'}='';
+	}elsif($fwdfwsettings{'PROT'} eq 'IPIP'){
 		$fwdfwsettings{'USE_SRC_PORT'}='';
 		$fwdfwsettings{'SRC_PORT'}='';
 		$fwdfwsettings{'ICMP_TYPES'}='';
