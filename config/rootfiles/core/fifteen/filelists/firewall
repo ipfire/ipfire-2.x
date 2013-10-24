@@ -13,9 +13,7 @@ var/ipfire/firewall
 var/ipfire/firewall/bin/firewall-lib.pl
 var/ipfire/firewall/bin/rules.pl
 var/ipfire/firewall/config
-var/ipfire/firewall/dmz
 var/ipfire/firewall/input
-var/ipfire/firewall/nat
 var/ipfire/firewall/outgoing
 var/ipfire/firewall/p2protocols
 var/ipfire/firewall/settings
