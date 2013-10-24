@@ -988,6 +988,7 @@
 'fwdfw pol text' => 'Sets the default firewall behaviour for connections from local networks. You may either allow all new connections or block them by default. Connections between the local networks are also blocked in the latter mode.',
 'fwdfw pol text1' => 'Sets the default firewall behaviour for connections initiated by the firewall itself. Attention! You may lock yourself out.',
 'fwdfw pol title' => 'Default firewall behaviour',
+'fwdfw prot41' => 'IPv6 Encapsulation (Protocol 41)',
 'fwdfw red' => 'RED',
 'fwdfw reread' => 'Apply changes',
 'fwdfw rule action' => 'Rule action:',

@@ -1757,7 +1757,11 @@ END
 			if ($_ eq $fwdfwsettings{'PROT'}) {
 				print " selected=\"selected\"";
 			}
-			print ">$_</option>";
+			if($_ eq "IPv6"){
+				print ">$Lang::tr{'fwdfw prot41'}</option>";
+			}else{
+				print ">$_</option>";
+			}
 		}
 		print<<END;
 						</select>
@@ -2467,7 +2471,11 @@ END
 			#Get Protocol
 			my $prot;
 			if ($$hash{$key}[8]){
-				push (@protocols,$$hash{$key}[8]);
+				if ($$hash{$key}[8] eq "IPv6"){
+					push (@protocols,"IPv6 Encap")
+				}else{
+					push (@protocols,$$hash{$key}[8]);
+				}
 			}elsif($$hash{$key}[14] eq 'cust_srv'){
 				&get_serviceports("service",$$hash{$key}[15]);
 			}elsif($$hash{$key}[14] eq 'cust_srvgrp'){

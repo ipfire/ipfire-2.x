@@ -963,6 +963,7 @@
 'fwdfw pol text' => 'Firewall-Standardverhalten für Verbindungen aus lokalen Netzwerken: Alle Verbindungen können entweder zugelassen oder geblockt werden, wenn keine Ausnahmeregel zutrifft. "Blockiert" trennt ebenfalls die Kommunikation zwischen den lokalen Netzwerken.',
 'fwdfw pol text1' => 'Firewall-Standardverhalten für von der Firewall selbst initiierte Verbindungen.',
 'fwdfw pol title' => 'Standardverhalten der Firewall',
+'fwdfw prot41' => 'IPv6 Encapsulation (Protokoll 41)',
 'fwdfw red' => 'ROT',
 'fwdfw reread' => 'Änderungen übernehmen',
 'fwdfw rule action' => 'Regelaktion:',
