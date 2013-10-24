@@ -123,7 +123,7 @@ elsif ($ARGV[0] eq 'restore') {
 	System("/usr/sbin/convert-portfw");
 	rmtree("${General::swroot}/portfw");
   }
-  system("/usr/local/bin/forwardfwctrl");
+  system("/usr/local/bin/firewallctrl");
  }
 elsif ($ARGV[0] eq 'restoreaddon') {
   if ( -e "/tmp/$ARGV[1]" ){system("mv /tmp/$ARGV[1] /var/ipfire/backup/addons/backup/$ARGV[1]");}

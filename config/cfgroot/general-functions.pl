@@ -1153,7 +1153,7 @@ sub firewall_needs_reload() {
 }
 
 sub firewall_reload() {
-	system("/usr/local/bin/forwardfwctrl");
+	system("/usr/local/bin/firewallctrl");
 }
 
 1;

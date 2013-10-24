@@ -16,7 +16,7 @@ usr/local/bin/logwatch
 #usr/local/bin/mpfirectrl
 usr/local/bin/openvpnctrl
 #usr/local/bin/outgoingfwctrl
-usr/local/bin/forwardfwctrl
+usr/local/bin/firewallctrl
 usr/local/bin/pakfire
 usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts

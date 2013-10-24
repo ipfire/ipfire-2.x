@@ -223,7 +223,7 @@ iptables_init() {
 	/usr/sbin/firewall-policy
 
 	# read new firewall
-	/usr/local/bin/forwardfwctrl
+	/usr/local/bin/firewallctrl
 
 	if [ "$DROPINPUT" == "on" ]; then
 		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"

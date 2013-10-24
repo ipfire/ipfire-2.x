@@ -71,7 +71,7 @@ if ( -d "/var/ipfire/outgoing"){
 	&process_rules;
 	&process_p2p;
 }
-system("/usr/local/bin/forwardfwctrl");
+system("/usr/local/bin/firewallctrl");
 sub process_groups
 {
 	if(! -d "/var/log/converters"){ mkdir("/var/log/converters");}
