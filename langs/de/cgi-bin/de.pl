@@ -964,6 +964,7 @@
 'fwdfw pol text1' => 'Firewall-Standardverhalten für von der Firewall selbst initiierte Verbindungen.',
 'fwdfw pol title' => 'Standardverhalten der Firewall',
 'fwdfw prot41' => 'IPv6 Encapsulation (Protokoll 41)',
+'fwdfw prot41 short' => 'IPv6 Encap',
 'fwdfw red' => 'ROT',
 'fwdfw reread' => 'Änderungen übernehmen',
 'fwdfw rule action' => 'Regelaktion:',

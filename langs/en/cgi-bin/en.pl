@@ -989,6 +989,7 @@
 'fwdfw pol text1' => 'Sets the default firewall behaviour for connections initiated by the firewall itself. Attention! You may lock yourself out.',
 'fwdfw pol title' => 'Default firewall behaviour',
 'fwdfw prot41' => 'IPv6 Encapsulation (Protocol 41)',
+'fwdfw prot41 short' => 'IPv6 Encap',
 'fwdfw red' => 'RED',
 'fwdfw reread' => 'Apply changes',
 'fwdfw rule action' => 'Rule action:',

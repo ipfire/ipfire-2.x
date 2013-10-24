@@ -2472,7 +2472,7 @@ END
 			my $prot;
 			if ($$hash{$key}[8]){
 				if ($$hash{$key}[8] eq "IPv6"){
-					push (@protocols,"IPv6 Encap")
+					push (@protocols,$Lang::tr{'fwdfw prot41 short'})
 				}else{
 					push (@protocols,$$hash{$key}[8]);
 				}
