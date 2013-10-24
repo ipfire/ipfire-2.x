@@ -592,6 +592,7 @@ buildipfire() {
   ipfiremake openvpn
   ipfiremake pammysql
   ipfiremake mpage
+  ipfiremake dbus
   ipfiremake cups
   ipfiremake ghostscript
   ipfiremake foomatic
@@ -691,7 +692,6 @@ buildipfire() {
   ipfiremake syslinux
   ipfiremake tftpd
   ipfiremake cpufrequtils
-  ipfiremake dbus
   ipfiremake bluetooth
   ipfiremake gutenprint
   ipfiremake apcupsd
