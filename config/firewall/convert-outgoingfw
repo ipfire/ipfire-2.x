@@ -44,9 +44,9 @@ my $configgroups	= "${General::swroot}/fwhosts/customgroups";
 my $ovpnsettings	= "${General::swroot}/ovpn/settings";
 my $ovpnconfig		= "${General::swroot}/ovpn/ovpnconfig";
 my $ccdconfig		= "${General::swroot}/ovpn/ccd.conf";
-my $fwdfwconfig		= "${General::swroot}/forward/config";
-my $outfwconfig		= "${General::swroot}/forward/outgoing";
-my $fwdfwsettings	= "${General::swroot}/forward/settings";
+my $fwdfwconfig		= "${General::swroot}/firewall/config";
+my $outfwconfig		= "${General::swroot}/firewall/outgoing";
+my $fwdfwsettings	= "${General::swroot}/firewall/settings";
 my @ipgroups = qx(ls $ipgrouppath);
 my @macgroups = qx(ls $macgrouppath);
 my @hostarray=();
@@ -699,6 +699,6 @@ sub build_ovpn_grp
 }
 sub process_p2p
 {
-	copy("/var/ipfire/outgoing/p2protocols","/var/ipfire/forward/p2protocols");
-	chmod oct('0777'), '/var/ipfire/forward/p2protocols';
+	copy("/var/ipfire/outgoing/p2protocols","/var/ipfire/firewall/p2protocols");
+	chmod oct('0777'), '/var/ipfire/firewall/p2protocols';
 }

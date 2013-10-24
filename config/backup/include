@@ -15,7 +15,7 @@
 /var/ipfire/auth/users
 /var/ipfire/dhcp/*
 /var/ipfire/dnsforward/*
-/var/ipfire/forward
+/var/ipfire/firewall
 /var/ipfire/fwhosts
 /var/ipfire/main/*
 /var/ipfire/ovpn

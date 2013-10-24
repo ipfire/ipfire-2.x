@@ -1137,7 +1137,7 @@ sub write_file_utf8 ($) {
 	return; 
 }
 
-my $FIREWALL_RELOAD_INDICATOR = "${General::swroot}/forward/reread";
+my $FIREWALL_RELOAD_INDICATOR = "${General::swroot}/firewall/reread";
 
 sub firewall_config_changed() {
 	open FILE, ">$FIREWALL_RELOAD_INDICATOR" or die "Could not open $FIREWALL_RELOAD_INDICATOR";

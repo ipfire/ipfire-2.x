@@ -26,13 +26,13 @@ my %fwdfwsettings=();
 my %configfwdfw=();
 my %configoutgoingfw=();
 
-my $configfwdfw		= "${General::swroot}/forward/config";
-my $configoutgoing	= "${General::swroot}/forward/outgoing";
+my $configfwdfw		= "${General::swroot}/firewall/config";
+my $configoutgoing	= "${General::swroot}/firewall/outgoing";
 my $errormessage = '';
 my $warnmessage = '';
 my $filename = "${General::swroot}/optionsfw/settings";
 
-&General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
+&General::readhash("${General::swroot}/firewall/settings", \%fwdfwsettings);
 &Header::showhttpheaders();
 
 #Get GUI values
@@ -54,8 +54,8 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		%fwdfwsettings = ();
 		$fwdfwsettings{'POLICY'} = "$MODE";
 		$fwdfwsettings{'POLICY1'} = "$MODE1";
-		&General::writehash("${General::swroot}/forward/settings", \%fwdfwsettings);
-		&General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
+		&General::writehash("${General::swroot}/firewall/settings", \%fwdfwsettings);
+		&General::readhash("${General::swroot}/firewall/settings", \%fwdfwsettings);
 		system("/usr/local/bin/forwardfwctrl");
 	}
 	&General::readhash($filename, \%settings);             # Load good settings

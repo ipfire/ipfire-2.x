@@ -24,14 +24,14 @@
 # STEP1: read old config and normalize settings                               #
 # STEP2: create new rules from old ones                                       #
 # STEP3: check if rule already exists, when not, put it into                  #
-#        /var/ipfire/forward/nat                                              #
+#        /var/ipfire/firewall/config                                          #
 ###############################################################################
 require '/var/ipfire/general-functions.pl';
 my @values=();
 my @built_rules=();
 my %nat=();
 my $portfwconfig 	= "${General::swroot}/portfw/config";
-my $confignat 		= "${General::swroot}/forward/config";
+my $confignat 		= "${General::swroot}/firewall/config";
 my ($key,$flag,$prot,$ipfireport,$target,$targetport,$active,$alias,$source,$remark);
 my ($key1,$flag1,$prot1,$ipfireport1,$target1,$targetport1,$active1,$alias1,$source1,$remark1);
 my $count=0;

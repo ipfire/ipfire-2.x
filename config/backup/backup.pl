@@ -66,15 +66,15 @@ elsif ($ARGV[0] eq 'restore') {
   system("/usr/sbin/ovpn-ccd-convert");
   #OUTGOINGFW CONVERTER
   if( -d "${General::swroot}/outgoing"){
-	  if( -f "${General::swroot}/forward/config" ){
-		  unlink("${General::swroot}/forward/config");
-		  system("touch ${General::swroot}/forward/config");
-		  chown 99,99,"${General::swroot}/forward/config";
+	  if( -f "${General::swroot}/firewall/config" ){
+		  unlink("${General::swroot}/firewall/config");
+		  system("touch ${General::swroot}/firewall/config");
+		  chown 99,99,"${General::swroot}/firewall/config";
 	  }
-	  if( -f "${General::swroot}/forward/outgoing" ){
-		  unlink("${General::swroot}/forward/outgoing");
-		  system("touch ${General::swroot}/forward/outgoing");
-		  chown 99,99,"${General::swroot}/forward/outgoing";
+	  if( -f "${General::swroot}/firewall/outgoing" ){
+		  unlink("${General::swroot}/firewall/outgoing");
+		  system("touch ${General::swroot}/firewall/outgoing");
+		  chown 99,99,"${General::swroot}/firewall/outgoing";
 	  }
 	  unlink("${General::swroot}/fwhosts/customgroups");
 	  unlink("${General::swroot}/fwhosts/customhosts");
@@ -97,36 +97,31 @@ elsif ($ARGV[0] eq 'restore') {
   }
   #XTACCESS CONVERTER
   if( -d "${General::swroot}/xtaccess"){
-	  if( -f "${General::swroot}/forward/input" ){
-		  unlink("${General::swroot}/forward/input");
-		  system("touch ${General::swroot}/forward/input");
+	  if( -f "${General::swroot}/firewall/input" ){
+		  unlink("${General::swroot}/firewall/input");
+		  system("touch ${General::swroot}/firewall/input");
 	  }
 	  #START CONVERTER "XTACCESS"
 	  system("/usr/sbin/convert-xtaccess");
-	  chown 99,99,"${General::swroot}/forward/input";
+	  chown 99,99,"${General::swroot}/firewall/input";
 	  rmtree("${General::swroot}/xtaccess");
   }
   #DMZ-HOLES CONVERTER
-  if( -d "${General::swroot}/dmzholes"){
-	  if( -f "${General::swroot}/forward/dmz" ){
-		  unlink("${General::swroot}/forward/dmz");
-		  system("touch ${General::swroot}/forward/dmz");
+  if( -d "${General::swroot}/dmzholes" || -d "${General::swroot}/portfw"){
+	  if( -f "${General::swroot}/firewall/config" ){
+		  unlink("${General::swroot}/firewall/config");
+		  system("touch ${General::swroot}/firewall/config");
 	  }
 	  #START CONVERTER "DMZ-HOLES"
 	  system("/usr/sbin/convert-dmz");
-	  chown 99,99,"${General::swroot}/forward/dmz";
+	  chown 99,99,"${General::swroot}/firewall/config";
 	  rmtree("${General::swroot}/dmzholes");
   }
   #PORTFORWARD CONVERTER
   if( -d "${General::swroot}/portfw"){
-	  if( -f "${General::swroot}/forward/nat" ){
-		  unlink("${General::swroot}/forward/nat");
-		  system("touch ${General::swroot}/forward/nat");
-	  }
-	  #START CONVERTER "PORTFW"
-	  system("/usr/sbin/convert-portfw");
-	  chown 99,99,"${General::swroot}/forward/nat";
-	  rmtree("${General::swroot}/portfw");
+	#START CONVERTER "PORTFW"
+	System("/usr/sbin/convert-portfw");
+	rmtree("${General::swroot}/portfw");
   }
   system("/usr/local/bin/forwardfwctrl");
  }

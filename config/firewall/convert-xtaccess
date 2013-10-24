@@ -28,7 +28,7 @@ my @alias=();
 my %configinputfw=();
 require '/var/ipfire/general-functions.pl';
 my $xtaccessconfig 	= "${General::swroot}/xtaccess/config";
-my $inputfwconfig = "${General::swroot}/forward/input";
+my $inputfwconfig = "${General::swroot}/firewall/input";
 my $aliasconfig 	= "${General::swroot}/ethernet/aliases";
 my $field0='ACCEPT';
 my $field1='INPUTFW';

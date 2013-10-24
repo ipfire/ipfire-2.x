@@ -29,13 +29,13 @@ no warnings 'uninitialized';
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-require "${General::swroot}/forward/bin/firewall-lib.pl";
+require "${General::swroot}/firewall/bin/firewall-lib.pl";
 
-unless (-d "${General::swroot}/forward") 			{ system("mkdir ${General::swroot}/forward"); }
-unless (-e "${General::swroot}/forward/settings")   { system("touch ${General::swroot}/forward/settings"); }
-unless (-e "${General::swroot}/forward/config")  	{ system("touch ${General::swroot}/forward/config"); }
-unless (-e "${General::swroot}/forward/input")  	{ system("touch ${General::swroot}/forward/input"); }
-unless (-e "${General::swroot}/forward/outgoing")  	{ system("touch ${General::swroot}/forward/outgoing"); }
+unless (-d "${General::swroot}/firewall")			{ system("mkdir ${General::swroot}/firewall"); }
+unless (-e "${General::swroot}/firewall/settings")	{ system("touch ${General::swroot}/firewall/settings"); }
+unless (-e "${General::swroot}/firewall/config")	{ system("touch ${General::swroot}/firewall/config"); }
+unless (-e "${General::swroot}/firewall/input")		{ system("touch ${General::swroot}/firewall/input"); }
+unless (-e "${General::swroot}/firewall/outgoing")	{ system("touch ${General::swroot}/firewall/outgoing"); }
 
 my %fwdfwsettings=();
 my %selected=() ;
@@ -75,9 +75,9 @@ my $configccdnet 	= "${General::swroot}/ovpn/ccd.conf";
 my $configccdhost	= "${General::swroot}/ovpn/ovpnconfig";
 my $configipsec		= "${General::swroot}/vpn/config";
 my $configipsecrw	= "${General::swroot}/vpn/settings";
-my $configfwdfw		= "${General::swroot}/forward/config";
-my $configinput		= "${General::swroot}/forward/input";
-my $configoutgoing	= "${General::swroot}/forward/outgoing";
+my $configfwdfw		= "${General::swroot}/firewall/config";
+my $configinput		= "${General::swroot}/firewall/input";
+my $configoutgoing	= "${General::swroot}/firewall/outgoing";
 my $configovpn		= "${General::swroot}/ovpn/settings";
 my $fwoptions 		= "${General::swroot}/optionsfw/settings";
 my $ifacesettings	= "${General::swroot}/ethernet/settings";
@@ -87,7 +87,7 @@ my $ipgrp="${General::swroot}/outgoing/groups";
 my $tdcolor='';
 my $checkorange='';
 my @protocols;
-&General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
+&General::readhash("${General::swroot}/firewall/settings", \%fwdfwsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 &General::readhash($fwoptions, \%optionsfw); 
@@ -2687,7 +2687,7 @@ END
 		#SHOW FINAL RULE
 		print "<table width='100%'rules='cols' border='1'>";
 		my $col;
-		if ($config eq '/var/ipfire/forward/config'){
+		if ($config eq '/var/ipfire/firewall/config'){
 			my $pol='fwdfw '.$fwdfwsettings{'POLICY'};
 			if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
 				$col="bgcolor='darkred'";
@@ -2695,7 +2695,7 @@ END
 				$col="bgcolor='green'";
 			}
 			&show_defaultrules($col,$pol);
-		}elsif ($config eq '/var/ipfire/forward/outgoing'){
+		}elsif ($config eq '/var/ipfire/firewall/outgoing'){
 			if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){
 				$col="bgcolor='darkred'";
 				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF' >$Lang::tr{'fwdfw pol block'}</font></td></tr>";
@@ -2715,7 +2715,7 @@ END
 			print "<b>$title1</b><br>";
 			print"<table width='100%' border='0' rules='none'><tr><td height='30' bgcolor=$color{'color22'} align='center'>$Lang::tr{'fwhost empty'}</td></tr></table>";
 			my $col;
-			if ($config eq '/var/ipfire/forward/config'){
+			if ($config eq '/var/ipfire/firewall/config'){
 				my $pol='fwdfw '.$fwdfwsettings{'POLICY'};
 				if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
 					$col="bgcolor='darkred'";
@@ -2723,7 +2723,7 @@ END
 					$col="bgcolor='green'";
 				}
 				&show_defaultrules($col,$pol);
-			}elsif ($config eq '/var/ipfire/forward/outgoing'){
+			}elsif ($config eq '/var/ipfire/firewall/outgoing'){
 				print "<table width='100%' rules='cols' border='1'>";
 				my $pol='fwdfw '.$fwdfwsettings{'POLICY1'};
 				if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){

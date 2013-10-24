@@ -32,7 +32,7 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 my $errormessage = '';
-my $p2pfile = "${General::swroot}/forward/p2protocols";
+my $p2pfile = "${General::swroot}/firewall/p2protocols";
 
 my @p2ps = ();
 my %fwdfwsettings = ();

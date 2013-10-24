@@ -45,12 +45,12 @@ my @DPROT=();
 my @p2ps=();
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
-require "${General::swroot}/forward/bin/firewall-lib.pl";
+require "${General::swroot}/firewall/bin/firewall-lib.pl";
 
-my $configfwdfw		= "${General::swroot}/forward/config";
-my $configinput	    = "${General::swroot}/forward/input";
-my $configoutgoing  = "${General::swroot}/forward/outgoing";
-my $p2pfile			= "${General::swroot}/forward/p2protocols";
+my $configfwdfw		= "${General::swroot}/firewall/config";
+my $configinput	    = "${General::swroot}/firewall/input";
+my $configoutgoing  = "${General::swroot}/firewall/outgoing";
+my $p2pfile			= "${General::swroot}/firewall/p2protocols";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
 my $errormessage	= '';
@@ -64,7 +64,7 @@ my $command			= 'iptables -A';
 my $dnat			='';
 my $snat			='';
 
-&General::readhash("${General::swroot}/forward/settings", \%fwdfwsettings);
+&General::readhash("${General::swroot}/firewall/settings", \%fwdfwsettings);
 &General::readhash("$netsettings", \%defaultNetworks);
 &General::readhasharray($configfwdfw, \%configfwdfw);
 &General::readhasharray($configinput, \%configinputfw);
@@ -127,13 +127,13 @@ sub flush
 }
 sub preparerules
 {
-	if (! -z  "${General::swroot}/forward/config"){
+	if (! -z  "${General::swroot}/firewall/config"){
 		&buildrules(\%configfwdfw);
 	}
-	if (! -z  "${General::swroot}/forward/input"){
+	if (! -z  "${General::swroot}/firewall/input"){
 		&buildrules(\%configinputfw);
 	}
-	if (! -z  "${General::swroot}/forward/outgoing"){
+	if (! -z  "${General::swroot}/firewall/outgoing"){
 		&buildrules(\%configoutgoingfw);
 	}
 }

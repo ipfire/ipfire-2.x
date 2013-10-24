@@ -20,7 +20,7 @@
 ###############################################################################
 
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
-eval $(/usr/local/bin/readhash /var/ipfire/forward/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/firewall/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
 
 iptables -F POLICYFWD

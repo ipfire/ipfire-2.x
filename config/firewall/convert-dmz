@@ -33,7 +33,7 @@ my %ifaces=();
 my %configfwdfw=();
 require '/var/ipfire/general-functions.pl';
 my $dmzconfig 	  = "${General::swroot}/dmzholes/config";
-my $fwdfwconfig   = "${General::swroot}/forward/config";
+my $fwdfwconfig   = "${General::swroot}/firewall/config";
 my $ifacesettings = "${General::swroot}/ethernet/settings";
 my $field0	= 'ACCEPT';
 my $field1	= 'FORWARDFW';
