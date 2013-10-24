@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.4.8
+VER        = 1.6.4
 
 THISAPP    = cups-$(VER)
 DL_FILE    = $(THISAPP)-source.tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       = "ghostscript"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0ec52d3f3c69bc2ab5ed70c594edbce6
+$(DL_FILE)_MD5 = 52c3df269709a4d25472cfe72ab5e856
 
 install : $(TARGET)
 
@@ -77,12 +77,20 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --disable-nls --sysconfdir=/var/ipfire \
-					--enable-libusb=no
+	cd $(DIR_APP) && \
+		./configure \
+			--prefix=/usr \
+			--sysconfdir=/var/ipfire \
+			--localstatedir=/var \
+			--disable-avahi
+
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
+
 	cd $(DIR_APP) && ln -v -sf /usr/bin/smbspool /usr/lib/cups/backend/smb
+
 	install -v -m 754 $(DIR_SRC)/src/initscripts/init.d/cups /etc/rc.d/init.d
 	cp -fv $(DIR_SRC)/config/cups/cupsd.conf /var/ipfire/cups/
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
