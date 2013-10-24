@@ -99,14 +99,14 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/useragents			$(CONFIG_ROOT)/proxy/advanced
 	cp $(DIR_SRC)/config/cfgroot/ethernet-vlans		$(CONFIG_ROOT)/ethernet/vlans
 	cp $(DIR_SRC)/langs/list						$(CONFIG_ROOT)/langs/
-	cp $(DIR_SRC)/config/forwardfw/rules.pl			$(CONFIG_ROOT)/forward/bin/rules.pl
-	cp $(DIR_SRC)/config/forwardfw/convert-xtaccess	/usr/sbin/convert-xtaccess
-	cp $(DIR_SRC)/config/forwardfw/convert-outgoingfw	/usr/sbin/convert-outgoingfw
-	cp $(DIR_SRC)/config/forwardfw/convert-dmz	/usr/sbin/convert-dmz
-	cp $(DIR_SRC)/config/forwardfw/convert-portfw	/usr/sbin/convert-portfw
-	cp $(DIR_SRC)/config/forwardfw/p2protocols		$(CONFIG_ROOT)/forward/p2protocols
-	cp $(DIR_SRC)/config/forwardfw/firewall-lib.pl	$(CONFIG_ROOT)/forward/bin/firewall-lib.pl
-	cp $(DIR_SRC)/config/forwardfw/firewall-policy	/usr/sbin/firewall-policy
+	cp $(DIR_SRC)/config/firewall/rules.pl			$(CONFIG_ROOT)/forward/bin/rules.pl
+	cp $(DIR_SRC)/config/firewall/convert-xtaccess	/usr/sbin/convert-xtaccess
+	cp $(DIR_SRC)/config/firewall/convert-outgoingfw	/usr/sbin/convert-outgoingfw
+	cp $(DIR_SRC)/config/firewall/convert-dmz	/usr/sbin/convert-dmz
+	cp $(DIR_SRC)/config/firewall/convert-portfw	/usr/sbin/convert-portfw
+	cp $(DIR_SRC)/config/firewall/p2protocols		$(CONFIG_ROOT)/forward/p2protocols
+	cp $(DIR_SRC)/config/firewall/firewall-lib.pl	$(CONFIG_ROOT)/forward/bin/firewall-lib.pl
+	cp $(DIR_SRC)/config/firewall/firewall-policy	/usr/sbin/firewall-policy
 	cp $(DIR_SRC)/config/fwhosts/icmp-types			$(CONFIG_ROOT)/fwhosts/icmp-types
 	cp $(DIR_SRC)/config/fwhosts/customservices		$(CONFIG_ROOT)/fwhosts/customservices
 	# Oneliner configfiles
