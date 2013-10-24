@@ -591,6 +591,7 @@ buildipfire() {
   ipfiremake lzo
   ipfiremake openvpn
   ipfiremake pammysql
+  ipfiremake mpage
   ipfiremake cups
   ipfiremake ghostscript
   ipfiremake foomatic
