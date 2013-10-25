@@ -1730,17 +1730,25 @@ END
 		print"<hr>";
 		&Header::closebox;
 		#---PROTOCOL------------------------------------------------------
+		$fwdfwsettings{'SRC_PORT'} =~ s/\|/,/g;
+		$fwdfwsettings{'TGT_PORT'} =~ s/\|/,/g;
+		$fwdfwsettings{'dnatport'} =~ tr/|/,/;
+
+		# The dnatport may be empty, if it matches TGT_PORT
+		if ($fwdfwsettings{'dnatport'} eq $fwdfwsettings{'TGT_PORT'}) {
+			$fwdfwsettings{'dnatport'} = "";
+		}
+
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost prot'});
 		#Fix Protocol for JQuery
 		if ($fwdfwsettings{'grp3'} eq 'cust_srv' || $fwdfwsettings{'grp3'} eq 'cust_srvgrp'){
 			$fwdfwsettings{'PROT'} = 'template';
 		}
 		print<<END;
-		<div id="prt">
-			<table width='15%' border='0' style="float:left;">
+			<table width='100%' border='0'>
 				<tr>
-					<td>
-						<select name='PROT' id='protocol'>
+					<td width="25%">
+						<select name='PROT' id='protocol' style="width: 95px;">
 END
 		print "<option value=\"\"";
 		if ($fwdfwsettings{'PROT'} eq '') {
@@ -1763,19 +1771,16 @@ END
 				print ">$_</option>";
 			}
 		}
+
 		print<<END;
 						</select>
 					</td>
-				</tr>
-			</table>
-		</div>
-
-		<div id="PROTOCOL_ICMP_TYPES">
-			<table width='50%' border='0' style="float:left;">
-				<tr>
-					<td width='20%'>$Lang::tr{'fwhost icmptype'}</td>
-					<td colspan='2'>
-						<select name='ICMP_TYPES' style='min-width:230px;'>
+					<td width="75%">
+						<table width='100%' border='0' id="PROTOCOL_ICMP_TYPES">
+							<tr>
+								<td width='20%'>$Lang::tr{'fwhost icmptype'}</td>
+								<td colspan='2'>
+									<select name='ICMP_TYPES' style='min-width:230px;'>
 END
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 		print"<option value='All ICMP-Types'>$Lang::tr{'fwdfw all icmp'}</option>";
@@ -1788,66 +1793,51 @@ END
 		}
 
 		print <<END;
-						</select>
-					</td>
-				</tr>
-			</table>
-		</div>
+									</select>
+								</td>
+							</tr>
+						</table>
+
+						<table width="100%" border="0" id="PROTOCOL_PORTS">
+							<tr>
+								<!-- #SOURCEPORT -->
+								<td>
+									$Lang::tr{'fwdfw use srcport'}
+								</td>
+								<td>
+									<input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18'>
+								</td>
+								<td width='10%'>
+								</td>
+
+								<!-- #TARGETPORT -->
+								<td>
+									$Lang::tr{'fwdfw use srv'}
+								</td>
+
+								<td>
+									<input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18'>
+								</td>
+							</tr>
+							<tr class="NAT">
+								<td colspan='3'></td>
+								<td>$Lang::tr{'fwdfw external port nat'}:</td>
+								<td>
+									<input type='text' name='dnatport' value=\"$fwdfwsettings{'dnatport'}\" maxlength='20' size='18'>
+								</td>
+							</tr>
+						</table>
+
+						<table width="100%" border="0" id="PROTOCOL_TEMPLATE">
+							<tr>
+								<td>
+									<input type='radio' name='grp3' id='cust_srv' value='cust_srv' checked>
+									$Lang::tr{'fwhost cust service'}
+								</td>
+								<td>
+									<select name='cust_srv' style='min-width: 230px;'>
 END
 
-		$fwdfwsettings{'SRC_PORT'} =~ s/\|/,/g;
-		$fwdfwsettings{'TGT_PORT'} =~ s/\|/,/g;
-		$fwdfwsettings{'dnatport'} =~ tr/|/,/;
-
-		# The dnatport may be empty, if it matches TGT_PORT
-		if ($fwdfwsettings{'dnatport'} eq $fwdfwsettings{'TGT_PORT'}) {
-			$fwdfwsettings{'dnatport'} = "";
-		}
-
-		print <<END;
-
-		<div id="PROTOCOL_PORTS">
-			<table border="0">
-				<tr>
-					<!-- #SOURCEPORT -->
-					<td>
-						$Lang::tr{'fwdfw use srcport'}
-					</td>
-					<td>
-						<input type='text' name='SRC_PORT' value='$fwdfwsettings{'SRC_PORT'}' maxlength='20' size='18'>
-					</td>
-					<td width='10%'>
-					</td>
-
-					<!-- #TARGETPORT -->
-					<td>
-						$Lang::tr{'fwdfw use srv'}
-					</td>
-
-					<td>
-						<input type='text' name='TGT_PORT' value='$fwdfwsettings{'TGT_PORT'}' maxlength='20' size='18'>
-					</td>
-				</tr>
-				<tr class="NAT">
-					<td colspan='3'></td>
-					<td>$Lang::tr{'fwdfw external port nat'}:</td>
-					<td>
-						<input type='text' name='dnatport' value=\"$fwdfwsettings{'dnatport'}\" maxlength='20' size='18'>
-					</td>
-				</tr>
-			</table>
-		</div>
-
-		<div id="PROTOCOL_TEMPLATE">
-			<table border="0">
-				<tr>
-					<td>
-						<input type='radio' name='grp3' id='cust_srv' value='cust_srv' checked>
-						$Lang::tr{'fwhost cust service'}
-					</td>
-					<td>
-						<select name='cust_srv' style='min-width: 230px;'>
-END
 		&General::readhasharray("$configsrv", \%customservice);
 		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
 			print"<option ";
@@ -1855,17 +1845,17 @@ END
 			print"value='$customservice{$key}[0]'>$customservice{$key}[0]</option>";
 		}
 
-		print<<END;
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<input type='radio' name='grp3' id='cust_srvgrp' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}>
-						$Lang::tr{'fwhost cust srvgrp'}
-					</td>
-					<td>
-						<select name='cust_srvgrp' style='min-width:230px;'>
+		print <<END;
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type='radio' name='grp3' id='cust_srvgrp' value='cust_srvgrp' $checked{'grp3'}{'cust_srvgrp'}>
+									$Lang::tr{'fwhost cust srvgrp'}
+								</td>
+								<td>
+									<select name='cust_srvgrp' style='min-width:230px;'>
 END
 
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
@@ -1877,15 +1867,16 @@ END
 				print">$customservicegrp{$key}[0]</option>";
 			}
 			$helper=$customservicegrp{$key}[0];
-		}	
+		}
+
 		print<<END;
-						</select>
+									</select>
+								</td>
+							</tr>
+						</table>
 					</td>
 				</tr>
 			</table>
-		</div>
-
-		<br><br><br>
 END
 
 		&Header::closebox;
