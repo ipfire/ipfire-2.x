@@ -2491,9 +2491,9 @@ END
 			#SOURCE
 			my $ipfireiface;
 			&getcolor($$hash{$key}[3],$$hash{$key}[4],\%customhost);
-			print"<td align='center' width='160' $tdcolor>";
+			print"<td align='center' width='30%' $tdcolor>";
 			if ($$hash{$key}[3] eq 'ipfire_src'){
-				$ipfireiface='Interface ';
+				$ipfireiface='Interface '; # XXX UNTRANSLATED STRING
 			}
 			if ($$hash{$key}[3] eq 'std_net_src'){
 				print &get_name($$hash{$key}[4]);
