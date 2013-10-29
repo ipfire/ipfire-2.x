@@ -92,6 +92,7 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< firewall rules
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -501,6 +502,7 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< firewall rules
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -894,6 +896,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< firewall rules
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -1275,6 +1278,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< firewall rules
 < forward firewall
 < frequency
 < fw default drop

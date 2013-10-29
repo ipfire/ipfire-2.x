@@ -164,7 +164,6 @@ WARNING: translation string unused: error external access
 WARNING: translation string unused: expected
 WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
-WARNING: translation string unused: external access
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
@@ -189,6 +188,7 @@ WARNING: translation string unused: from warn email bad
 WARNING: translation string unused: fwdfw MODE1
 WARNING: translation string unused: fwdfw MODE2
 WARNING: translation string unused: fwdfw err tgt_port
+WARNING: translation string unused: fwdfw final_rule
 WARNING: translation string unused: fwdfw from
 WARNING: translation string unused: fwdfw ipsec network
 WARNING: translation string unused: fwdfw man port
@@ -199,6 +199,7 @@ WARNING: translation string unused: fwdfw rules
 WARNING: translation string unused: fwdfw std network
 WARNING: translation string unused: fwdfw till
 WARNING: translation string unused: fwdfw time
+WARNING: translation string unused: fwdfw xt access
 WARNING: translation string unused: fwhost addrule
 WARNING: translation string unused: fwhost attention
 WARNING: translation string unused: fwhost blue
@@ -347,7 +348,6 @@ WARNING: translation string unused: original
 WARNING: translation string unused: other countries
 WARNING: translation string unused: our donors
 WARNING: translation string unused: out
-WARNING: translation string unused: outgoing firewall
 WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
@@ -387,7 +387,6 @@ WARNING: translation string unused: passwords must be at least 6 characters in l
 WARNING: translation string unused: phonebook entry
 WARNING: translation string unused: ping disabled
 WARNING: translation string unused: polfile
-WARNING: translation string unused: policy
 WARNING: translation string unused: port forwarding configuration
 WARNING: translation string unused: ports
 WARNING: translation string unused: pots

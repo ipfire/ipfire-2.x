@@ -906,6 +906,7 @@
 'firewall logs' => 'Firewall Logs',
 'firewall logs ip' => 'Fw-Loggraphs (IP)',
 'firewall logs port' => 'Fw-Loggraphs (Port)',
+'firewall rules' => 'Firewall Rules',
 'firewallhits' => 'firewallhits',
 'firmware' => 'Firmware',
 'firmware upload' => 'Upload Firmware/Drivers',

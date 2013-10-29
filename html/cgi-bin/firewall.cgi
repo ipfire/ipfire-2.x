@@ -458,15 +458,13 @@ sub addrule
 {
 	&error;
 
-	&Header::openbox('100%', 'left',  $Lang::tr{'fwdfw menu'});
+	&Header::openbox('100%', 'left', "");
 	print <<END;
 		<form method="POST" action="">
 			<table border='0' width="100%">
 				<tr>
-					<td>
+					<td align='center'>
 						<input type='submit' name='ACTION' value='$Lang::tr{'fwdfw newrule'}'>
-					</td>
-					<td align="right">
 END
 
 	if (&General::firewall_needs_reload()) {
@@ -481,8 +479,9 @@ END
 			</table>
 		</form>
 
-		<hr>
+		<br>
 END
+
 	&Header::closebox();
 	&viewtablerule;
 }
@@ -2362,27 +2361,35 @@ sub validremark
 		return 0;}
 	return 1;
 }
-sub viewtablerule
-{
+
+sub viewtablerule {
 	&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
-	&viewtablenew(\%configfwdfw,$configfwdfw,"","Forward" );
-	&viewtablenew(\%configinputfw,$configinput,"",$Lang::tr{'fwdfw xt access'} );
-	&viewtablenew(\%configoutgoingfw,$configoutgoing,"","Outgoing" );
+
+	&viewtablenew(\%configfwdfw, $configfwdfw, $Lang::tr{'firewall rules'});
+	&viewtablenew(\%configinputfw, $configinput, $Lang::tr{'external access'});
+	&viewtablenew(\%configoutgoingfw, $configoutgoing, $Lang::tr{'outgoing firewall'});
 }
+
 sub viewtablenew
 {
 	my $hash=shift;
 	my $config=shift;
 	my $title=shift;
-	my $title1=shift;
 	my $go='';
+
+	my $show_box = (! -z $config) || ($optionsfw{'SHOWTABLES'} eq 'on');
+	return if (!$show_box);
+
 	&General::get_aliases(\%aliases);
 	&General::readhasharray("$confighost", \%customhost);
 	&General::readhasharray("$config", $hash);
 	&General::readhasharray("$configccdnet", \%ccdnet);
 	&General::readhasharray("$configccdhost", \%ccdhost);
-	if( ! -z $config){
-		&Header::openbox('100%', 'left',$title);
+
+	&Header::openbox('100%', 'left', $title);
+	print "<table width='100%' cellspacing='0' border='0'>";
+
+	if (! -z $config) {
 		my $count=0;
 		my ($gif,$log);
 		my $ruletype;
@@ -2390,11 +2397,8 @@ sub viewtablenew
 		my $tooltip;
 		my @tmpsrc=();
 		my $coloryellow='';
-		print <<END;
-			<b>$title1</b>
-			<br>
 
-			<table width='100%' cellspacing='0' border='0'>
+		print <<END;
 				<tr>
 					<th align='right' width='3%'>
 						#
@@ -2719,97 +2723,152 @@ END
 			}
 			print"<tr bgcolor='FFFFFF'><td colspan='13' height='1'></td></tr>";
 		}
-		print"</table>";
-		#SHOW FINAL RULE
-		print "<table width='100%'rules='cols' border='1'>";
-		my $col;
-		if ($config eq '/var/ipfire/firewall/config'){
-			my $pol='fwdfw '.$fwdfwsettings{'POLICY'};
-			if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
-				$col="bgcolor='darkred'";
-			}else{
-				$col="bgcolor='green'";
-			}
-			&show_defaultrules($col,$pol);
-		}elsif ($config eq '/var/ipfire/firewall/outgoing'){
-			if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){
-				$col="bgcolor='darkred'";
-				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF' >$Lang::tr{'fwdfw pol block'}</font></td></tr>";
-			}else{
-				$col="bgcolor='green'";
-				print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF' >$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
-			}
-		}else{
-			print"<tr><td bgcolor='darkred' width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td bgcolor='darkred' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
-		}
-		print"</table>";
-		print "<hr>";
-		print "<br><br>";
-		&Header::closebox();
-	}else{
-		if ($optionsfw{'SHOWTABLES'} eq 'on'){
-			print "<b>$title1</b><br>";
-			print"<table width='100%' border='0' rules='none'><tr><td height='30' bgcolor=$color{'color22'} align='center'>$Lang::tr{'fwhost empty'}</td></tr></table>";
-			my $col;
-			if ($config eq '/var/ipfire/firewall/config'){
-				my $pol='fwdfw '.$fwdfwsettings{'POLICY'};
-				if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
-					$col="bgcolor='darkred'";
-				}else{
-					$col="bgcolor='green'";
-				}
-				&show_defaultrules($col,$pol);
-			}elsif ($config eq '/var/ipfire/firewall/outgoing'){
-				print "<table width='100%' rules='cols' border='1'>";
-				my $pol='fwdfw '.$fwdfwsettings{'POLICY1'};
-				if ($fwdfwsettings{'POLICY1'} eq 'MODE1'){
-					$col="bgcolor='darkred'";
-					print"<tr><td $col align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
-				}else{
-					$col="bgcolor='green'";
-					print"<tr><td $col align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
-				}
-			}else{
-				print "<table width='100%' rules='cols' border='1'>";
-				print"<tr><td bgcolor='darkred' align='center' width='20%'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td align='center' bgcolor='darkred'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
-			}
-			print"</table><br><br>";
-		}
+	} elsif ($optionsfw{'SHOWTABLES'} eq 'on') {
+		print <<END;
+			<tr>
+				<td colspan='7' height='30' bgcolor=$color{'color22'} align='center'>$Lang::tr{'fwhost empty'}</td>
+			</tr>
+END
 	}
+
+	#SHOW FINAL RULE
+	my $policy = 'fwdfw ' . $fwdfwsettings{'POLICY'};
+	my $colour = "bgcolor='green'";
+	if ($fwdfwsettings{'POLICY'} eq 'MODE1') {
+		$colour = "bgcolor='darkred'";
+	}
+
+	my $message;
+	if (($config eq '/var/ipfire/firewall/config') && ($fwdfwsettings{'POLICY'} ne 'MODE1')) {
+		print <<END;
+			<tr>
+				<td colspan='13'>&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan='13'>
+					<table width="100%" border='1' rules="cols" cellspacing='0'>
+END
+
+		# GREEN
+		print <<END;
+			<tr>
+				<td align='center'>
+					<font color="$Header::colourgreen">$Lang::tr{'green'}</font>
+				</td>
+				<td align='center'>
+					<font color="$Header::colourred">$Lang::tr{'red'}</font>
+					($Lang::tr{'fwdfw pol allow'})
+				</td>
+END
+
+		if (&Header::orange_used()) {
+			print <<END;
+				<td align='center'>
+					<font color="$Header::colourorange">$Lang::tr{'orange'}</font>
+					($Lang::tr{'fwdfw pol allow'})
+				</td>
+END
+		}
+
+		if (&Header::blue_used()) {
+			print <<END;
+				<td align='center'>
+					<font color="$Header::colourblue">$Lang::tr{'blue'}</font>
+					($Lang::tr{'fwdfw pol allow'})
+				</td>
+END
+		}
+
+		print"</tr>";
+
+		# ORANGE
+		if (&Header::orange_used()) {
+			print <<END;
+				<tr>
+					<td align='center' width='20%'>
+						<font color="$Header::colourorange">$Lang::tr{'orange'}</font>
+					</td>
+					<td align='center'>
+						<font color="$Header::colourred">$Lang::tr{'red'}</font>
+						($Lang::tr{'fwdfw pol allow'})
+					</td>
+					<td align='center'>
+						<font color="$Header::colourgreen">$Lang::tr{'green'}</font>
+						($Lang::tr{'fwdfw pol block'})
+					</td>
+END
+
+			if (&Header::blue_used()) {
+				print <<END;
+					<td align='center'>
+						<font color="$Header::colourblue">$Lang::tr{'blue'}</font>
+						($Lang::tr{'fwdfw pol block'})
+					</td>
+END
+			}
+
+			print"</tr>";
+		}
+
+		if (&Header::blue_used()) {
+			print <<END;
+				<tr>
+					<td align='center'>
+						<font color="&Header::colourblue">$Lang::tr{'blue'}</font>
+					</td>
+					<td align='center'>
+						<font color="$Header::colourred">$Lang::tr{'red'}</font>
+						($Lang::tr{'fwdfw pol allow'})
+					</td>
+END
+
+			if (&Header::orange_used()) {
+				print <<END;
+					<td align='center'>
+						<font color="$Header::colourorange">$Lang::tr{'orange'}</font>
+						($Lang::tr{'fwdfw pol block'})
+					</td>
+					<td align='center'>
+						<font color="$Header::colourgreen">$Lang::tr{'green'}</font>
+						($Lang::tr{'fwdfw pol block'})
+					</td>
+END
+			}
+
+			print"</tr>";
+		}
+
+		print <<END;
+					</table>
+				</td>
+			</tr>
+END
+
+		$message = $Lang::tr{'fwdfw pol allow'};
+
+	} elsif ($config eq '/var/ipfire/firewall/outgoing') {
+		$message = $Lang::tr{'fwdfw pol allow'};
+
+	} else {
+		$message = $Lang::tr{'fwdfw pol block'};
+		$colour = "bgcolor='darkred'";
+	}
+
+	if ($message) {
+		print <<END;
+			<tr>
+				<td $colour align='center' colspan='13'>
+					<font color='#FFFFFF'>$Lang::tr{'policy'}: $message</font>
+				</td>
+			</tr>
+END
+	}
+
+	print "</table>";
+	print "<br>";
+
+	&Header::closebox();
 }
+
 &Header::closebigbox();
 &Header::closepage();
-
-sub show_defaultrules
-{
-	my $col=shift;
-	my $pol=shift;
-	#STANDARD RULES (From WIKI)
-	print"</table>";
-	if ($col eq "bgcolor='green'"){
-		print "<br><table width='100%' rules='cols' border='1' >";
-		my $blue   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol block'})" if (&Header::blue_used());
-		my $orange = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol block'})" if (&Header::orange_used());
-		my $blue1   = "<font color=$Header::colourblue>    $Lang::tr{'blue'}</font> ($Lang::tr{'fwdfw pol allow'})" if (&Header::blue_used());
-		my $orange1 = "<font color=$Header::colourorange>  $Lang::tr{'orange'}</font> ($Lang::tr{'fwdfw pol allow'})" if (&Header::orange_used());
-		print"<tr><td align='center'><font color='#000000'>$Lang::tr{'green'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td>";
-		print"<td align='center'>$orange1</td>" if (&Header::orange_used());
-		print"<td align='center'>$blue1</td>" if (&Header::blue_used());
-		print"</tr>";
-		if (&Header::orange_used()){
-			print"<tr><td align='center' width='20%'><font color='#000000'>$Lang::tr{'orange'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td><td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td>";
-			print"<td align='center'>$blue</td>" if (&Header::blue_used());
-			print"</tr>";
-		}
-		if (&Header::blue_used()){
-			print"<tr><td align='center'><font color='#000000'>$Lang::tr{'blue'}</td><td align='center'> <font color=$Header::colourred>  $Lang::tr{'red'}</font> ($Lang::tr{'fwdfw pol allow'})</td>";
-			print"<td align='center'>$orange</td>" if (&Header::orange_used());
-			print"<td align='center'><font color=$Header::colourgreen>  $Lang::tr{'green'}</font> ($Lang::tr{'fwdfw pol block'})</td>";
-			print"</tr>";
-		}
-		print"<tr><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'} </font></td><td $col colspan='3' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol allow'}</font></td></tr>";
-	}elsif($col eq "bgcolor='darkred'"){
-		print "<table width='100%' rules='cols' border='1' >";
-		print"<tr><td $col width='20%' align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw final_rule'}</td><td $col align='center'><font color='#FFFFFF'>$Lang::tr{'fwdfw pol block'}</font></td></tr>";
-	}
-}

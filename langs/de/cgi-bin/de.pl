@@ -881,6 +881,7 @@
 'firewall logs' => 'Firewall-Logdateien',
 'firewall logs ip' => 'Fw-Logdiagramme (IP)',
 'firewall logs port' => 'Fw-Logdiagramme (Port)',
+'firewall rules' => 'Firewallregeln',
 'firewallhits' => 'Firewalltreffer',
 'firmware' => 'Firmware',
 'firmware upload' => 'Hochladen der Firmware/Treiber',

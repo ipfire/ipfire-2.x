@@ -185,7 +185,6 @@ WARNING: translation string unused: error external access
 WARNING: translation string unused: expected
 WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
-WARNING: translation string unused: external access
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall graphs
@@ -336,7 +335,6 @@ WARNING: translation string unused: or
 WARNING: translation string unused: original
 WARNING: translation string unused: other countries
 WARNING: translation string unused: out
-WARNING: translation string unused: outgoing firewall
 WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
@@ -376,7 +374,6 @@ WARNING: translation string unused: passwords must be at least 6 characters in l
 WARNING: translation string unused: phonebook entry
 WARNING: translation string unused: ping disabled
 WARNING: translation string unused: polfile
-WARNING: translation string unused: policy
 WARNING: translation string unused: port forwarding configuration
 WARNING: translation string unused: ports
 WARNING: translation string unused: pots
@@ -612,6 +609,7 @@ WARNING: untranslated string: extrahd maybe the device is in use
 WARNING: untranslated string: extrahd to
 WARNING: untranslated string: extrahd to root
 WARNING: untranslated string: extrahd you cant mount
+WARNING: untranslated string: firewall rules
 WARNING: untranslated string: fw default drop
 WARNING: untranslated string: fw settings
 WARNING: untranslated string: fw settings color
@@ -648,7 +646,6 @@ WARNING: untranslated string: fwdfw err tgt_grp
 WARNING: untranslated string: fwdfw err tgt_mac
 WARNING: untranslated string: fwdfw err time
 WARNING: untranslated string: fwdfw external port nat
-WARNING: untranslated string: fwdfw final_rule
 WARNING: untranslated string: fwdfw hint ip1
 WARNING: untranslated string: fwdfw hint ip2
 WARNING: untranslated string: fwdfw iface
@@ -688,7 +685,6 @@ WARNING: untranslated string: fwdfw wd_sun
 WARNING: untranslated string: fwdfw wd_thu
 WARNING: untranslated string: fwdfw wd_tue
 WARNING: untranslated string: fwdfw wd_wed
-WARNING: untranslated string: fwdfw xt access
 WARNING: untranslated string: fwhost addgrp
 WARNING: untranslated string: fwhost addgrpname
 WARNING: untranslated string: fwhost addhost
