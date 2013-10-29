@@ -561,6 +561,8 @@ WARNING: untranslated string: age sminute
 WARNING: untranslated string: age ssecond
 WARNING: untranslated string: bytes
 WARNING: untranslated string: ccd iroute2
+WARNING: untranslated string: default ip
+WARNING: untranslated string: dnat address
 WARNING: untranslated string: dnsforward
 WARNING: untranslated string: dnsforward add a new entry
 WARNING: untranslated string: dnsforward configuration
@@ -612,6 +614,8 @@ WARNING: untranslated string: fwdfw external port nat
 WARNING: untranslated string: fwdfw final_rule
 WARNING: untranslated string: fwdfw hint ip1
 WARNING: untranslated string: fwdfw hint ip2
+WARNING: untranslated string: fwdfw iface
+WARNING: untranslated string: fwdfw log
 WARNING: untranslated string: fwdfw log rule
 WARNING: untranslated string: fwdfw menu
 WARNING: untranslated string: fwdfw movedown
@@ -726,6 +730,7 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: snat new source ip address
 WARNING: untranslated string: tor
 WARNING: untranslated string: tor accounting
 WARNING: untranslated string: tor accounting bytes

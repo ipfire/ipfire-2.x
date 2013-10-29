@@ -1661,6 +1661,7 @@ END
 		&gen_dd_block('src','grp1');
 		print"<hr>";
 		&Header::closebox();
+
 		#---SNAT / DNAT ------------------------------------------------
 		&Header::openbox('100%', 'left', 'NAT');
 		print<<END;
@@ -1671,39 +1672,75 @@ END
 			<div class="NAT">
 				<table width='100%' border='0'>
 					<tr>
-						<td colspan='2'></td>
-						<td width='1%'>
-							<input type='radio' name='nat' id='dnat' value='dnat' checked>
+						<td width='5%'></td>
+						<td width='40%'>
+							<label>
+								<input type='radio' name='nat' id='dnat' value='dnat' checked>
+								$Lang::tr{'fwdfw dnat'}
+							</label>
 						</td>
-						<td width='50%'>$Lang::tr{'fwdfw dnat'}</td>
 END
-		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='dnat' style='width:140px;'>";
-		print "<option value='ALL' $selected{'dnat'}{$Lang::tr{'all'}}>$Lang::tr{'all'}</option>";
-		print "<option value='Default IP' $selected{'dnat'}{'Default IP'}>Default IP</option>";
-		foreach my $alias (sort keys %aliases)
-		{
-			print "<option value='$alias' $selected{'dnat'}{$alias}>$alias</option>";
-		}
-		print"</select></td></tr>";
-		#SNAT
-		print"<tr><td colspan='2'></td><td width='1%'><input type='radio' name='nat' id='snat' value='snat'  $checked{'nat'}{'snat'}></td><td width='20%'>$Lang::tr{'fwdfw snat'}</td>";
-		print"<td width='8%'>Firewall: </td><td width='20%' align='right'><select name='snat' style='width:140px;'>";
-		foreach my $alias (sort keys %aliases)
-			{
-				print "<option value='$alias' $selected{'snat'}{$alias}>$alias</option>";
+
+		if (%aliases) {
+			print <<END;
+						<td width='25%' align='right'>$Lang::tr{'dnat address'}:</td>
+						<td width='30%'>
+							<select name='dnat' style='width: 100%;'>
+								<option value='Default IP' $selected{'dnat'}{'Default IP'}>$Lang::tr{'default ip'}</option>
+END
+			foreach my $alias (sort keys %aliases) {
+				print "<option value='$alias' $selected{'dnat'}{$alias}>$alias</option>";
 			}
-		foreach my $network (sort keys %defaultNetworks)
-		{
+
+			print "</select>";
+		} else {
+			print <<END;
+						<td colspan="2" width='55%'>
+							<input type='hidden' name='dnat' value='Default IP'>
+						</td>
+END
+		}
+		print "</tr>";
+
+		#SNAT
+		print <<END;
+					<tr>
+						<td width='5%'></td>
+						<td width='40%'>
+							<label>
+								<input type='radio' name='nat' id='snat' value='snat' $checked{'nat'}{'snat'}>
+								$Lang::tr{'fwdfw snat'}
+							</label>
+						</td>
+						<td width='25%' align='right'>$Lang::tr{'snat new source ip address'}:</td>
+						<td width='30%'>
+							<select name='snat' style='width: 100%;'>
+END
+
+		foreach my $alias (sort keys %aliases) {
+			print "<option value='$alias' $selected{'snat'}{$alias}>$alias</option>";
+		}
+
+		# XXX this is composed in a very ugly fashion
+		foreach my $network (sort keys %defaultNetworks) {
 			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
 			next if($defaultNetworks{$network}{'NAME'} eq "ALL");
 			next if($defaultNetworks{$network}{'NAME'} =~ /OpenVPN/i);
+
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
 			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'nat'}} eq $defaultNetworks{$network}{'NAME'});
 			print ">$network</option>";
 		}
-		print"</select></td></tr></table>";
-		print"</div>";
+
+		print <<END;
+							</select>
+						</td>
+					</tr>
+				</table>
+			</div>
+END
 		&Header::closebox();
+
 		#---TARGET------------------------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
 		print<<END;

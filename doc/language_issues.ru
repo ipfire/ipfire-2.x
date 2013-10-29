@@ -588,8 +588,10 @@ WARNING: untranslated string: ccd routes
 WARNING: untranslated string: ccd subnet
 WARNING: untranslated string: ccd used
 WARNING: untranslated string: community rules
+WARNING: untranslated string: default ip
 WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: disk access per
+WARNING: untranslated string: dnat address
 WARNING: untranslated string: dnsforward
 WARNING: untranslated string: dnsforward add a new entry
 WARNING: untranslated string: dnsforward configuration
@@ -649,6 +651,8 @@ WARNING: untranslated string: fwdfw external port nat
 WARNING: untranslated string: fwdfw final_rule
 WARNING: untranslated string: fwdfw hint ip1
 WARNING: untranslated string: fwdfw hint ip2
+WARNING: untranslated string: fwdfw iface
+WARNING: untranslated string: fwdfw log
 WARNING: untranslated string: fwdfw log rule
 WARNING: untranslated string: fwdfw menu
 WARNING: untranslated string: fwdfw movedown
@@ -788,6 +792,7 @@ WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: server restart
+WARNING: untranslated string: snat new source ip address
 WARNING: untranslated string: static routes
 WARNING: untranslated string: tor
 WARNING: untranslated string: tor accounting

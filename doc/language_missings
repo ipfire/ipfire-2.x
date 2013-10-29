@@ -59,7 +59,9 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< default ip
 < deprecated fs warn
+< dnat address
 < dns address deleted txt
 < dnsforward
 < dnsforward add a new entry
@@ -126,7 +128,9 @@
 < fwdfw from
 < fwdfw hint ip1
 < fwdfw hint ip2
+< fwdfw iface
 < fwdfw ipsec network
+< fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw menu
@@ -292,6 +296,7 @@
 < qos enter bandwidths
 < red1
 < server restart
+< snat new source ip address
 < snort working
 < static routes
 < system information
@@ -464,7 +469,9 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< default ip
 < deprecated fs warn
+< dnat address
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -530,7 +537,9 @@
 < fwdfw from
 < fwdfw hint ip1
 < fwdfw hint ip2
+< fwdfw iface
 < fwdfw ipsec network
+< fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw menu
@@ -713,6 +722,7 @@
 < red1
 < server restart
 < Set time on boot
+< snat new source ip address
 < static routes
 < system information
 < tor
@@ -860,7 +870,9 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< default ip
 < deprecated fs warn
+< dnat address
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -918,7 +930,9 @@
 < fwdfw from
 < fwdfw hint ip1
 < fwdfw hint ip2
+< fwdfw iface
 < fwdfw ipsec network
+< fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw menu
@@ -1086,6 +1100,7 @@
 < qos enter bandwidths
 < red1
 < server restart
+< snat new source ip address
 < static routes
 < tor
 < tor 0 = disabled
@@ -1234,8 +1249,10 @@
 < ccd subnet
 < ccd used
 < day-graph
+< default ip
 < deprecated fs warn
 < disk access per
+< dnat address
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -1295,7 +1312,9 @@
 < fwdfw from
 < fwdfw hint ip1
 < fwdfw hint ip2
+< fwdfw iface
 < fwdfw ipsec network
+< fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw menu
@@ -1463,6 +1482,7 @@
 < qos enter bandwidths
 < red1
 < server restart
+< snat new source ip address
 < static routes
 < tor
 < tor 0 = disabled
