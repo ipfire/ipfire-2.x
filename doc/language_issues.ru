@@ -645,6 +645,7 @@ WARNING: untranslated string: fwdfw err tgt_addr
 WARNING: untranslated string: fwdfw err tgt_grp
 WARNING: untranslated string: fwdfw err tgt_mac
 WARNING: untranslated string: fwdfw err time
+WARNING: untranslated string: fwdfw external port nat
 WARNING: untranslated string: fwdfw final_rule
 WARNING: untranslated string: fwdfw hint ip1
 WARNING: untranslated string: fwdfw hint ip2
@@ -653,12 +654,13 @@ WARNING: untranslated string: fwdfw menu
 WARNING: untranslated string: fwdfw movedown
 WARNING: untranslated string: fwdfw moveup
 WARNING: untranslated string: fwdfw newrule
-WARNING: untranslated string: fwdfw p2p txt
 WARNING: untranslated string: fwdfw pol allow
 WARNING: untranslated string: fwdfw pol block
 WARNING: untranslated string: fwdfw pol text
 WARNING: untranslated string: fwdfw pol text1
 WARNING: untranslated string: fwdfw pol title
+WARNING: untranslated string: fwdfw prot41
+WARNING: untranslated string: fwdfw prot41 short
 WARNING: untranslated string: fwdfw red
 WARNING: untranslated string: fwdfw reread
 WARNING: untranslated string: fwdfw rule activate
@@ -742,7 +744,6 @@ WARNING: untranslated string: fwhost newservicegrp
 WARNING: untranslated string: fwhost ovpn_n2n
 WARNING: untranslated string: fwhost port
 WARNING: untranslated string: fwhost prot
-WARNING: untranslated string: fwhost reread
 WARNING: untranslated string: fwhost services
 WARNING: untranslated string: fwhost srv_name
 WARNING: untranslated string: fwhost stdnet
@@ -754,6 +755,7 @@ WARNING: untranslated string: least preferred
 WARNING: untranslated string: minute
 WARNING: untranslated string: most preferred
 WARNING: untranslated string: new
+WARNING: untranslated string: notice
 WARNING: untranslated string: openvpn default
 WARNING: untranslated string: openvpn destination port used
 WARNING: untranslated string: openvpn fragment allowed with udp
@@ -772,6 +774,8 @@ WARNING: untranslated string: ovpn mtu-disc no
 WARNING: untranslated string: ovpn mtu-disc off
 WARNING: untranslated string: ovpn mtu-disc with mssfix or fragment
 WARNING: untranslated string: ovpn mtu-disc yes
+WARNING: untranslated string: p2p block
+WARNING: untranslated string: p2p block save notice
 WARNING: untranslated string: proxy reports
 WARNING: untranslated string: proxy reports daily
 WARNING: untranslated string: proxy reports monthly

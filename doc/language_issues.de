@@ -189,11 +189,11 @@ WARNING: translation string unused: from warn email bad
 WARNING: translation string unused: fwdfw MODE1
 WARNING: translation string unused: fwdfw MODE2
 WARNING: translation string unused: fwdfw err tgt_port
-WARNING: translation string unused: fwdfw external port nat
 WARNING: translation string unused: fwdfw from
 WARNING: translation string unused: fwdfw ipsec network
 WARNING: translation string unused: fwdfw man port
 WARNING: translation string unused: fwdfw natport used
+WARNING: translation string unused: fwdfw p2p txt
 WARNING: translation string unused: fwdfw rule action
 WARNING: translation string unused: fwdfw rules
 WARNING: translation string unused: fwdfw std network
@@ -210,6 +210,7 @@ WARNING: translation string unused: fwhost green
 WARNING: translation string unused: fwhost ipadr
 WARNING: translation string unused: fwhost ipsec host
 WARNING: translation string unused: fwhost orange
+WARNING: translation string unused: fwhost reread
 WARNING: translation string unused: fwhost reset
 WARNING: translation string unused: fwhost wo subnet
 WARNING: translation string unused: gen static key
