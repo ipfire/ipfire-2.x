@@ -2370,7 +2370,7 @@ sub viewtablenew
 						<b>$Lang::tr{'fwdfw source'}</b>
 					</th>
 					<th align='center'>
-						Log <!-- XXX UNTRANSLATED STRING -->
+						<b>$Lang::tr{'fwdfw log'}</b>
 					</th>
 					<th align='center' width='30%'>
 						<b>$Lang::tr{'fwdfw target'}</b>
@@ -2493,7 +2493,7 @@ END
 			&getcolor($$hash{$key}[3],$$hash{$key}[4],\%customhost);
 			print"<td align='center' width='30%' $tdcolor>";
 			if ($$hash{$key}[3] eq 'ipfire_src'){
-				$ipfireiface='Interface '; # XXX UNTRANSLATED STRING
+				$ipfireiface=$Lang::tr{'fwdfw iface'};
 			}
 			if ($$hash{$key}[3] eq 'std_net_src'){
 				print &get_name($$hash{$key}[4]);
