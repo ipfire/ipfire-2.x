@@ -1685,10 +1685,10 @@ END
 						<td width='25%' align='right'>$Lang::tr{'dnat address'}:</td>
 						<td width='30%'>
 							<select name='dnat' style='width: 100%;'>
-								<option value='Default IP' $selected{'dnat'}{'Default IP'}>$Lang::tr{'default ip'}</option>
+								<option value='Default IP' $selected{'dnat'}{'Default IP'}>$Lang::tr{'default ip'} ($netsettings{'RED_ADDRESS'})</option>
 END
 			foreach my $alias (sort keys %aliases) {
-				print "<option value='$alias' $selected{'dnat'}{$alias}>$alias</option>";
+				print "<option value='$alias' $selected{'dnat'}{$alias}>$alias ($aliases{$alias}{'IPT'})</option>";
 			}
 
 			print "</select>";
@@ -1717,7 +1717,7 @@ END
 END
 
 		foreach my $alias (sort keys %aliases) {
-			print "<option value='$alias' $selected{'snat'}{$alias}>$alias</option>";
+			print "<option value='$alias' $selected{'snat'}{$alias}>$alias ($aliases{$alias}{'IPT'})</option>";
 		}
 
 		# XXX this is composed in a very ugly fashion
@@ -1725,10 +1725,11 @@ END
 			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
 			next if($defaultNetworks{$network}{'NAME'} eq "ALL");
 			next if($defaultNetworks{$network}{'NAME'} =~ /OpenVPN/i);
+			next if($defaultNetworks{$network}{'NAME'} =~ /IPsec/i);
 
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
 			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'nat'}} eq $defaultNetworks{$network}{'NAME'});
-			print ">$network</option>";
+			print ">$network ($defaultNetworks{$network}{'NET'})</option>";
 		}
 
 		print <<END;

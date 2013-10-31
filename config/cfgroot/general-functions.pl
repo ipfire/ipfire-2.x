@@ -51,19 +51,23 @@ sub setup_default_networks
 	$defaultNetworks->{$Lang::tr{'fwhost any'}}{'NAME'} = "ALL";
 		
 	$defaultNetworks->{$Lang::tr{'green'}}{'IPT'} = "$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
+	$defaultNetworks->{$Lang::tr{'green'}}{'NET'} = "$netsettings{'GREEN_ADDRESS'}";
 	$defaultNetworks->{$Lang::tr{'green'}}{'NAME'} = "GREEN";
 
 	if ($netsettings{'RED_DEV'} ne ''){
 		$defaultNetworks->{$Lang::tr{'fwdfw red'}}{'IPT'} = "$netsettings{'RED_NETADDRESS'}/$netsettings{'RED_NETMASK'}";
+		$defaultNetworks->{$Lang::tr{'fwdfw red'}}{'NET'} = "$netsettings{'RED_ADDRESS'}";
 		$defaultNetworks->{$Lang::tr{'fwdfw red'}}{'NAME'} = "RED";
 	}
 	if ($netsettings{'ORANGE_DEV'} ne ''){
 		$defaultNetworks->{$Lang::tr{'orange'}}{'IPT'} = "$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}";
+		$defaultNetworks->{$Lang::tr{'orange'}}{'NET'} = "$netsettings{'ORANGE_ADDRESS'}";
 		$defaultNetworks->{$Lang::tr{'orange'}}{'NAME'} = "ORANGE";
 	}
 
 	if ($netsettings{'BLUE_DEV'} ne ''){
 		$defaultNetworks->{$Lang::tr{'blue'}}{'IPT'} = "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
+		$defaultNetworks->{$Lang::tr{'blue'}}{'NET'} = "$netsettings{'BLUE_ADDRESS'}";
 		$defaultNetworks->{$Lang::tr{'blue'}}{'NAME'} = "BLUE";
 	}
 	
@@ -98,6 +102,7 @@ sub setup_default_networks
 			my @tempipsecsubnet = split("\/", $ipsecsettings{'RW_NET'});
 			$defaultNetworks->{'IPsec RW ' .$ip."/".$sub}{'ADR'} = $tempipsecsubnet[0];
 			$defaultNetworks->{'IPsec RW ' .$ip."/".$sub}{'NAME'} = "IPsec RW";
+			$defaultNetworks->{'IPsec RW ' .$ip."/".$sub}{'NET'} = &getnextip($ip);
 		}
 	}
 }
@@ -118,6 +123,7 @@ sub get_aliases
 				$temp[2] = "Alias $ctr : $temp[0]";
 			}
 			$defaultNetworks->{$temp[2]}{'IPT'} = "$temp[0]";
+			$defaultNetworks->{$temp[2]}{'NET'} = "$temp[0]";
 			
 			$ctr++;
 		}
