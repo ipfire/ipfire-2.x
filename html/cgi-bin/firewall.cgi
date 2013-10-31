@@ -2814,7 +2814,7 @@ END
 			print <<END;
 				<tr>
 					<td align='center'>
-						<font color="&Header::colourblue">$Lang::tr{'blue'}</font>
+						<font color="$Header::colourblue">$Lang::tr{'blue'}</font>
 					</td>
 					<td align='center'>
 						<font color="$Header::colourred">$Lang::tr{'red'}</font>
