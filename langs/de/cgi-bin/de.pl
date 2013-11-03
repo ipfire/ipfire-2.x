@@ -1702,7 +1702,7 @@
 'proxy admin password' => 'Cache Administrator Passwort',
 'proxy cachemgr' => 'Cachemanager aktivieren',
 'proxy errmsg filedescriptors' => 'Ungültiger Anzahl Filedescriptoren',
-'proxy filedescriptors' => 'Anzahl Fildescriptoren',
+'proxy filedescriptors' => 'Anzahl Filedescriptoren',
 'proxy log viewer' => 'Ansicht Proxy-Log',
 'proxy logs' => 'Proxy-Logdateien',
 'proxy no proxy extend' => 'oder geben Sie eine Liste von Zielen an, welche nicht über den Proxy angesprochen werden sollen',
