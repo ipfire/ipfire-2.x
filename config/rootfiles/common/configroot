@@ -134,7 +134,7 @@ var/ipfire/ovpn
 var/ipfire/pakfire
 #var/ipfire/pakfire/settings
 #var/ipfire/patches
-var/ipfire/portfw
+#var/ipfire/portfw
 #var/ipfire/portfw/config
 var/ipfire/ppp
 #var/ipfire/ppp/fake-resolv.conf
