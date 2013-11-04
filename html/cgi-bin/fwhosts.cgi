@@ -741,6 +741,7 @@ if ($fwhostsettings{'ACTION'} eq 'saveservice')
 		}
 	}
 	if($ICMP eq ''){$ICMP=$fwhostsettings{'ICMP_TYPES'};}
+	if ($fwhostsettings{'PROT'} ne 'ICMP'){$ICMP='';}
 	if (!$errormessage){
 		my $key = &General::findhasharraykey (\%customservice);
 		foreach my $i (0 .. 4) { $customservice{$key}[$i] = "";}
