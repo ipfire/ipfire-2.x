@@ -120,7 +120,7 @@ elsif ($ARGV[0] eq 'restore') {
   #PORTFORWARD CONVERTER
   if( -d "${General::swroot}/portfw"){
 	#START CONVERTER "PORTFW"
-	System("/usr/sbin/convert-portfw");
+	system("/usr/sbin/convert-portfw");
 	rmtree("${General::swroot}/portfw");
   }
   system("/usr/local/bin/firewallctrl");
