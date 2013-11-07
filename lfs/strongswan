@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.1.1rc1
+VER        = 5.1.1
 
 THISAPP    = strongswan-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -33,9 +33,13 @@ DIR_APP    = $(DIR_SRC)/strongswan-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ifeq "$(MACHINE)" "i586"
-	PADLOCK = --enable-padlock
+	CONFIGURE_OPTIONS = \
+		--enable-padlock \
+		--enable-rdrand
 else
-	PADLOCK = --disable-padlock
+	CONFIGURE_OPTIONS = \
+		--disable-padlock \
+		--disable-rdrand
 endif
 
 ###############################################################################
@@ -46,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 69826b6a6103ae705c48b3f33b4dd3d5
+$(DL_FILE)_MD5 = e3af3d493d22286be3cd794533a8966a
 
 install : $(TARGET)
 
@@ -92,7 +96,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-eap-peap \
 		--enable-eap-mschapv2 \
 		--enable-eap-identity \
-		$(PADLOCK)
+		--enable-unity \
+		$(CONFIGURE_OPTIONS)
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

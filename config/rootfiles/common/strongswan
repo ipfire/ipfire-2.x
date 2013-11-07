@@ -75,6 +75,7 @@ usr/lib/ipsec/plugins/libstrongswan-sha2.so
 usr/lib/ipsec/plugins/libstrongswan-socket-default.so
 usr/lib/ipsec/plugins/libstrongswan-sshkey.so
 usr/lib/ipsec/plugins/libstrongswan-stroke.so
+usr/lib/ipsec/plugins/libstrongswan-unity.so
 usr/lib/ipsec/plugins/libstrongswan-updown.so
 usr/lib/ipsec/plugins/libstrongswan-x509.so
 usr/lib/ipsec/plugins/libstrongswan-xauth-eap.so
