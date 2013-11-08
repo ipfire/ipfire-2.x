@@ -2355,7 +2355,7 @@ sub validremark
 	if ($remark !~ /^[a-zäöüA-ZÖÄÜ0-9-.:;\|_()\/\s]*$/) {
 		return 0;}
 	# First character can only be a letter or a digit
-	if (substr ($remark, 0, 1) !~ /^[a-zäöüA-ZÖÄÜ0-9]*$/) {
+	if (substr ($remark, 0, 1) !~ /^[a-zäöüA-ZÖÄÜ0-9(]*$/) {
 		return 0;}
 	# Last character can only be a letter or a digit
 	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9.:;_)]*$/) {
