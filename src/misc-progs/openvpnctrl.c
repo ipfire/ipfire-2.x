@@ -25,12 +25,10 @@ char enableblue[STRING_SIZE] = "off";
 char enableorange[STRING_SIZE] = "off";
 
 // consts
-char OVPNRED[STRING_SIZE] = "OVPN";
-char OVPNBLUE[STRING_SIZE] = "OVPN_BLUE_";
-char OVPNORANGE[STRING_SIZE] = "OVPN_ORANGE_";
+char OVPNINPUT[STRING_SIZE] = "OVPNINPUT";
 char OVPNBLOCK[STRING_SIZE] = "OVPNBLOCK";
 char OVPNNAT[STRING_SIZE] = "OVPNNAT";
-char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.3";
+char WRAPPERVERSION[STRING_SIZE] = "ipfire-2.2.4";
 
 struct connection_struct {
 	char name[STRING_SIZE];
@@ -40,7 +38,7 @@ struct connection_struct {
 	char local_subnet[STRING_SIZE];
 	char transfer_subnet[STRING_SIZE];
 	char role[STRING_SIZE];
-	int port;
+	char port[STRING_SIZE];
 	struct connection_struct *next;
 };
 
@@ -81,10 +79,6 @@ void usage(void)
 	printf("      removes current OpenVPN chains and rules and resets them according to the config\n");
 	printf(" -sdo --start-daemon-only\n");
 	printf("      starts OpenVPN daemon only\n");
-	printf(" -ccr --create-chains-and-rules\n");
-	printf("      creates chains and rules for OpenVPN\n");
-	printf(" -dcr --delete-chains-and-rules\n");
-	printf("      removes all chains for OpenVPN\n");
 	exit(1);
 }
 
@@ -149,7 +143,7 @@ connection *getConnections() {
 			} else if (count == 29) {
 				strcpy(conn_curr->proto, result);
 			} else if (count == 30) {
-				conn_curr->port = atoi(result);
+				strcpy(conn_curr->port, result);
 			}
 
 			count++;
@@ -242,109 +236,26 @@ void executeCommand(char *command) {
 	safe_system(strncat(command, " >/dev/null 2>&1", 17));
 }
 
-void setChainRules(char *chain, char *interface, char *protocol, char *port)
-{
-	char str[STRING_SIZE];
+void addRule(const char *chain, const char *interface, const char *protocol, const char *port) {
+	char command[STRING_SIZE];
 
-	sprintf(str, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %s -j ACCEPT", chain, interface, protocol, port);
-	executeCommand(str);
+	snprintf(command, STRING_SIZE - 1, "/sbin/iptables -A %s -i %s -p %s --dport %s -j ACCEPT",
+		chain, interface, protocol, port);
+	executeCommand(command);
 }
 
 void flushChain(char *chain) {
 	char str[STRING_SIZE];
 
-	sprintf(str, "/sbin/iptables -F %s", chain);
+	snprintf(str, STRING_SIZE - 1, "/sbin/iptables -F %s", chain);
 	executeCommand(str);
 }
 
 void flushChainNAT(char *chain) {
 	char str[STRING_SIZE];
 
-	sprintf(str, "/sbin/iptables -t nat -F %s", chain);
+	snprintf(str, STRING_SIZE - 1, "/sbin/iptables -t nat -F %s", chain);
 	executeCommand(str);
-}
-
-void flushChainINPUT(char *chain) {
-	char str[STRING_SIZE];
-
-	snprintf(str, STRING_SIZE, "%sINPUT", chain);
-	flushChain(str);
-}
-
-void deleteChainReference(char *chain) {
-	char str[STRING_SIZE];
-
-	sprintf(str, "/sbin/iptables -D INPUT -j %sINPUT", chain);
-	executeCommand(str);
-}
-
-void deleteChain(char *chain) {
-	char str[STRING_SIZE];
-
-	sprintf(str, "/sbin/iptables -X %sINPUT", chain);
-	executeCommand(str);
-}
-
-void deleteAllChains(void) {
-	// not an elegant solution, but to avoid timing problems with undeleted chain references
-	deleteChainReference(OVPNRED);
-	deleteChainReference(OVPNBLUE);
-	deleteChainReference(OVPNORANGE);
-	flushChainINPUT(OVPNRED);
-	flushChainINPUT(OVPNBLUE);
-	flushChainINPUT(OVPNORANGE);
-	deleteChain(OVPNRED);
-	deleteChain(OVPNBLUE);
-	deleteChain(OVPNORANGE);
-
-	// Only flush chains that are created by the firewall
-	flushChain(OVPNBLOCK);
-	flushChainNAT(OVPNNAT);
-}
-
-void createChainReference(char *chain) {
-	char str[STRING_SIZE];
-	sprintf(str, "/sbin/iptables -I INPUT %s -j %sINPUT", "14", chain);
-	executeCommand(str);
-}
-
-void createChain(char *chain) {
-	char str[STRING_SIZE];
-	sprintf(str, "/sbin/iptables -N %sINPUT", chain);
-	executeCommand(str);
-}
-
-void createAllChains(void) {
-	// create chain and chain references
-	if (!strcmp(enableorange, "on")) {
-		if (strlen(orangeif) > 0) {
-			createChain(OVPNORANGE);
-			createChainReference(OVPNORANGE);
-		} else {
-			fprintf(stderr, "OpenVPN enabled on orange but no orange interface found\n");
-			//exit(1);
-		}
-	}
-
-	if (!strcmp(enableblue, "on")) {
-		if (strlen(blueif) > 0) {
-			createChain(OVPNBLUE);
-			createChainReference(OVPNBLUE);
-		} else {
-			fprintf(stderr, "OpenVPN enabled on blue but no blue interface found\n");
-			//exit(1);
-		}
-	}
-
-	if (!strcmp(enablered, "on")) {
-		if (strlen(redif) > 0) {
-			createChain(OVPNRED);
-			createChainReference(OVPNRED);
-		} else {
-			fprintf(stderr, "OpenVPN enabled on red but no red interface found\n");
-			//exit(1);
-		}
-	}
 }
 
 char* calcTransferNetAddress(const connection* conn) {
@@ -459,19 +370,17 @@ void setFirewallRules(void) {
 	freekeyvalues(kv);
 
 	// Flush all chains.
-	flushChainINPUT(OVPNRED);
-	flushChainINPUT(OVPNBLUE);
-	flushChainINPUT(OVPNORANGE);
+	flushChain(OVPNINPUT);
 	flushChain(OVPNBLOCK);
 	flushChainNAT(OVPNNAT);
 
 	// set firewall rules
 	if (!strcmp(enablered, "on") && strlen(redif))
-		setChainRules(OVPNRED, redif, protocol, dport);
+		addRule(OVPNINPUT, redif, protocol, dport);
 	if (!strcmp(enableblue, "on") && strlen(blueif))
-		setChainRules(OVPNBLUE, blueif, protocol, dport);
+		addRule(OVPNINPUT, blueif, protocol, dport);
 	if (!strcmp(enableorange, "on") && strlen(orangeif))
-		setChainRules(OVPNORANGE, orangeif, protocol, dport);
+		addRule(OVPNINPUT, orangeif, protocol, dport);
 
 	// read connection configuration
 	connection *conn = getConnections();
@@ -482,12 +391,10 @@ void setFirewallRules(void) {
 	char *transfer_subnet_address = NULL;
 	while (conn != NULL) {
 		if (strcmp(conn->type, "net") == 0) {
-			sprintf(command, "/sbin/iptables -A %sINPUT -i %s -p %s --dport %d -j ACCEPT",
-				OVPNRED, redif, conn->proto, conn->port);
-			executeCommand(command);
+			addRule(OVPNINPUT, redif, conn->proto, conn->port);
 
 			/* Block all communication from the transfer nets. */
-			snprintf(command, STRING_SIZE, "/sbin/iptables -A %s -s %s -j DROP",
+			snprintf(command, STRING_SIZE - 1, "/sbin/iptables -A %s -s %s -j DROP",
 				OVPNBLOCK, conn->transfer_subnet);
 			executeCommand(command);
 
@@ -495,7 +402,7 @@ void setFirewallRules(void) {
 			transfer_subnet_address = calcTransferNetAddress(conn);
 
 			if ((local_subnet_address) && (transfer_subnet_address)) {
-				snprintf(command, STRING_SIZE, "/sbin/iptables -t nat -A %s -s %s -j SNAT --to-source %s",
+				snprintf(command, STRING_SIZE - 1, "/sbin/iptables -t nat -A %s -s %s -j SNAT --to-source %s",
 					OVPNNAT, transfer_subnet_address, local_subnet_address);
 				executeCommand(command);
 			}
@@ -705,16 +612,10 @@ int main(int argc, char *argv[]) {
 			displayopenvpn();
 			return 0;
 		}
-		else if( (strcmp(argv[1], "-dcr") == 0) || (strcmp(argv[1], "--delete-chains-and-rules") == 0) ) {
-			deleteAllChains();
-			return 0;
-		}
 		else {
 			ovpnInit();
 			
 			if( (strcmp(argv[1], "-s") == 0) || (strcmp(argv[1], "--start") == 0) ) {
-				deleteAllChains();
-				createAllChains();
 				setFirewallRules();
 				startDaemon();
 				return 0;
@@ -733,20 +634,11 @@ int main(int argc, char *argv[]) {
 			}
 			else if( (strcmp(argv[1], "-r") == 0) || (strcmp(argv[1], "--restart") == 0) ) {
 				stopDaemon();
-				deleteAllChains();
-				createAllChains();
 				setFirewallRules();
 				startDaemon();
 				return 0;
 			}
 			else if( (strcmp(argv[1], "-fwr") == 0) || (strcmp(argv[1], "--firewall-rules") == 0) ) {
-				deleteAllChains();
-				createAllChains();
-				setFirewallRules();
-				return 0;
-			}
-			else if( (strcmp(argv[1], "-ccr") == 0) || (strcmp(argv[1], "--create-chains-and-rules") == 0) ) {
-				createAllChains();
 				setFirewallRules();
 				return 0;
 			}

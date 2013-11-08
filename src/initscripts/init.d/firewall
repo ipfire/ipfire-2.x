@@ -159,6 +159,10 @@ iptables_init() {
 	/sbin/iptables -N WIRELESSFORWARD
 	/sbin/iptables -A FORWARD -m conntrack --ctstate NEW -j WIRELESSFORWARD
 
+	# OpenVPN
+	/sbin/iptables -N OVPNINPUT
+	/sbin/iptables -A INPUT -j OVPNINPUT
+
 	# TOR
 	/sbin/iptables -N TOR_INPUT
 	/sbin/iptables -A INPUT -j TOR_INPUT
@@ -206,8 +210,8 @@ iptables_init() {
 		/etc/sysconfig/firewall.local start
 	fi
 
-	# run openvpn
-	/usr/local/bin/openvpnctrl --create-chains-and-rules
+	# Apply OpenVPN firewall rules
+	/usr/local/bin/openvpnctrl --firewall-rules
 
 	# run wirelessctrl
 	/usr/local/bin/wirelessctrl
