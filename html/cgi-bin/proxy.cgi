@@ -180,8 +180,8 @@ close(FILE);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 
 my $green_cidr = &General::ipcidr("$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}");
-my $blue_cidr = "# Blue not defined";
-if ($netsettings{'BLUE_DEV'}) {
+my $blue_cidr = "";
+if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {
 	$blue_cidr = &General::ipcidr("$netsettings{'BLUE_NETADDRESS'}\/$netsettings{'BLUE_NETMASK'}");
 }
 
