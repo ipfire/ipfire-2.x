@@ -1376,6 +1376,12 @@ sub getcolor
 		}elsif ($val eq 'IPFire' ){
 			$tdcolor="style='background-color: $Header::colourred;color:white;'";
 			return;
+		}elsif ($val eq 'OpenVPN-Dyn' ){
+			$tdcolor="style='background-color: $Header::colourovpn;color:white;'";
+			return;
+		}elsif ($val eq 'IPsec RW' ){
+			$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
+			return;
 		}elsif($val =~ /^(.*?)\/(.*?)$/){
 			my ($sip,$scidr) = split ("/",$val);
 			if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
@@ -2600,7 +2606,7 @@ END
 			if ($$hash{$key}[5] eq 'std_net_tgt' || $$hash{$key}[5] eq 'ipfire'  || $$hash{$key}[6] eq 'RED1' || $$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE' ){
 				if ($$hash{$key}[6] eq 'RED1'){
 					print "$ipfireiface $Lang::tr{'red1'}";
-				}elsif ($$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE'|| $$hash{$key}[6] eq 'ALL')
+				}elsif ($$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE'|| $$hash{$key}[6] eq 'ALL' || $$hash{$key}[6] eq 'RED')
 				{
 					print "$ipfireiface ".&get_name($$hash{$key}[6]);
 				}else{
