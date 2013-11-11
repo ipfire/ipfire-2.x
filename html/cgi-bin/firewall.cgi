@@ -2403,6 +2403,7 @@ sub viewtablenew
 		my $rulecolor;
 		my $tooltip;
 		my @tmpsrc=();
+		my @tmptgt=();
 		my $coloryellow='';
 
 		print <<END;
@@ -2432,33 +2433,61 @@ END
 		foreach my $key (sort  {$a <=> $b} keys %$hash){
 			$tdcolor='';
 			@tmpsrc=();
+			@tmptgt=();
 			#check if vpn hosts/nets have been deleted
 			if($$hash{$key}[3] =~ /ipsec/i || $$hash{$key}[3] =~ /ovpn/i){
 				push (@tmpsrc,$$hash{$key}[4]);
 			}
 			if($$hash{$key}[5] =~ /ipsec/i || $$hash{$key}[5] =~ /ovpn/i){
-				push (@tmpsrc,$$hash{$key}[6]);
+				push (@tmptgt,$$hash{$key}[6]);
 			}
 			foreach my $host (@tmpsrc){
-				if($$hash{$key}[3] eq  'ipsec_net_src' || $$hash{$key}[5] eq 'ipsec_net_tgt'){
+				if($$hash{$key}[3] eq  'ipsec_net_src'){
 					if(&fwlib::get_ipsec_net_ip($host,11) eq ''){
 						$coloryellow='on';
 						&disable_rule($key);
 						$$hash{$key}[2]='';
 					}
-				}elsif($$hash{$key}[3] eq  'ovpn_net_src' || $$hash{$key}[5] eq 'ovpn_net_tgt'){
+				}elsif($$hash{$key}[3] eq  'ovpn_net_src'){
 					if(&fwlib::get_ovpn_net_ip($host,1) eq ''){
 						$coloryellow='on';
 						&disable_rule($key);
 						$$hash{$key}[2]='';
 					}
-				}elsif($$hash{$key}[3] eq  'ovpn_n2n_src' || $$hash{$key}[5] eq 'ovpn_n2n_tgt'){
+				}elsif($$hash{$key}[3] eq  'ovpn_n2n_src'){
 					if(&fwlib::get_ovpn_n2n_ip($host,27) eq ''){
 						$coloryellow='on';
 						&disable_rule($key);
 						$$hash{$key}[2]='';
 					}
-				}elsif($$hash{$key}[3] eq  'ovpn_host_src' || $$hash{$key}[5] eq 'ovpn_host_tgt'){
+				}elsif($$hash{$key}[3] eq  'ovpn_host_src'){
+					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
+						$coloryellow='on';
+						&disable_rule($key);
+						$$hash{$key}[2]='';
+					}
+				}
+			}
+			foreach my $host (@tmptgt){
+				if($$hash{$key}[5] eq 'ipsec_net_tgt'){
+					if(&fwlib::get_ipsec_net_ip($host,11) eq ''){
+						$coloryellow='on';
+						&disable_rule($key);
+						$$hash{$key}[2]='';
+					}
+				}elsif($$hash{$key}[5] eq 'ovpn_net_tgt'){
+					if(&fwlib::get_ovpn_net_ip($host,1) eq ''){
+						$coloryellow='on';
+						&disable_rule($key);
+						$$hash{$key}[2]='';
+					}
+				}elsif($$hash{$key}[5] eq 'ovpn_n2n_tgt'){
+					if(&fwlib::get_ovpn_n2n_ip($host,27) eq ''){
+						$coloryellow='on';
+						&disable_rule($key);
+						$$hash{$key}[2]='';
+					}
+				}elsif($$hash{$key}[5] eq 'ovpn_host_tgt'){
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
 						&disable_rule($key);
@@ -2469,7 +2498,7 @@ END
 			$$hash{'ACTIVE'}=$$hash{$key}[2];
 			$count++;
 			if($coloryellow eq 'on'){
-				print"<tr bgcolor='$color{'color14'}' >";
+				$color="$color{'color14'}";
 				$coloryellow='';
 			}elsif($coloryellow eq ''){
 				if ($count % 2){ 
