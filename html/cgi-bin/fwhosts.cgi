@@ -775,14 +775,16 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 		if($customservicegrp{$key}[0] eq $fwhostsettings{'SRVGRP_NAME'}){
 			foreach my $key1 (keys %customservice){
 				$tcpcounter++ if $customservice{$key1}[2] eq 'TCP' && $customservicegrp{$key}[2] eq $customservice{$key1}[0];
+				$tcpcounter++ if $customservice{$key1}[2] eq 'TCP' && $customservicegrp{$key}[2] eq $customservice{$key1}[0] && $customservice{$key1}[1] =~m/:/i;
 				$udpcounter++ if $customservice{$key1}[2] eq 'UDP' && $customservicegrp{$key}[2] eq $customservice{$key1}[0];
+				$udpcounter++ if $customservice{$key1}[2] eq 'UDP' && $customservicegrp{$key}[2] eq $customservice{$key1}[0] && $customservice{$key1}[1] =~m/:/i;
 			}
 		}
 	}
-	if ($tcpcounter > 13){
+	if ($tcpcounter > 15){
 		$errormessage=$Lang::tr{'fwhost err maxservicetcp'};
 	}
-	if ($udpcounter > 13){
+	if ($udpcounter > 15){
 		$errormessage=$Lang::tr{'fwhost err maxserviceudp'};
 	}
 	$tcpcounter=0;
