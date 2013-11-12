@@ -86,8 +86,8 @@ close(CONN1);
 #    DEBUG/TEST #
 #################
 my $MODE=0;     # 0 - normal operation
-				# 1 - print configline and rules to console
-				#
+                # 1 - print configline and rules to console
+                #
 #################
 my $param=shift;
 
@@ -577,6 +577,7 @@ sub get_port
 	my $hash=shift;
 	my $key=shift;
 	my $prot=shift;
+	#Get manual defined Ports from SOURCE
 	if ($$hash{$key}[7] eq 'ON' && $SRC_TGT eq 'SRC'){
 		if ($$hash{$key}[10] ne ''){
 			$$hash{$key}[10] =~ s/\|/,/g;
@@ -590,6 +591,7 @@ sub get_port
 				}
 			}
 		}
+		#Get manual ports from TARGET
 	}elsif($$hash{$key}[11] eq 'ON' && $SRC_TGT eq ''){
 		if($$hash{$key}[14] eq 'TGT_PORT'){
 			if ($$hash{$key}[15] ne ''){
@@ -605,16 +607,20 @@ sub get_port
 					 }
 				}
 			}
+		#Get ports defined in custom Service (firewall-groups)
 		}elsif($$hash{$key}[14] eq 'cust_srv'){
 			if ($prot ne 'ICMP'){
 				if($$hash{$key}[31] eq 'dnat' && $$hash{$key}[28] eq 'ON'){
-					return ":".&fwlib::get_srv_port($$hash{$key}[15],1,$prot);
+					my $ports =&fwlib::get_srv_port($$hash{$key}[15],1,$prot);
+					$ports =~ s/\:/-/g;
+					return ":".$ports
 				}else{
 					return "--dport ".&fwlib::get_srv_port($$hash{$key}[15],1,$prot);
 				}
 			}elsif($prot eq 'ICMP' && $$hash{$key}[11] eq 'ON'){        #When PROT is ICMP and "use targetport is checked, this is an icmp-service
 				return "--icmp-type ".&fwlib::get_srv_port($$hash{$key}[15],3,$prot);
 			}
+		#Get ports from services which are used in custom servicegroups (firewall-groups)
 		}elsif($$hash{$key}[14] eq 'cust_srvgrp'){
 			if 	($prot ne 'ICMP'){
 				return &fwlib::get_srvgrp_port($$hash{$key}[15],$prot);

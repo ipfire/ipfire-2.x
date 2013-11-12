@@ -108,10 +108,8 @@ sub get_srv_port
 	my $field=shift;
 	my $prot=shift;
 	foreach my $key (sort {$a <=> $b} keys %customservice){
-		if($customservice{$key}[0] eq $val){
-			if($customservice{$key}[2] eq $prot){
-				return $customservice{$key}[$field];
-			}
+		if($customservice{$key}[0] eq $val && $customservice{$key}[2] eq $prot){
+			return $customservice{$key}[$field];
 		}
 	}
 }
