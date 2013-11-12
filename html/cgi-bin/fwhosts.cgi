@@ -764,12 +764,32 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 	my $prot;
 	my $port;
 	my $count=0;
+	my $tcpcounter=0;
+	my $udpcounter=0;
 	&General::readhasharray("$configsrvgrp", \%customservicegrp );
 	&General::readhasharray("$configsrv", \%customservice );
 	$errormessage=&checkservicegroup;
+	#Check if we have more than 13 services from one Protocol in the group
+	#iptables can only handle 13 ports/portranges via multiport
+	foreach my $key (keys %customservicegrp){
+		if($customservicegrp{$key}[0] eq $fwhostsettings{'SRVGRP_NAME'}){
+			foreach my $key1 (keys %customservice){
+				$tcpcounter++ if $customservice{$key1}[2] eq 'TCP' && $customservicegrp{$key}[2] eq $customservice{$key1}[0];
+				$udpcounter++ if $customservice{$key1}[2] eq 'UDP' && $customservicegrp{$key}[2] eq $customservice{$key1}[0];
+			}
+		}
+	}
+	if ($tcpcounter > 13){
+		$errormessage=$Lang::tr{'fwhost err maxservicetcp'};
+	}
+	if ($udpcounter > 13){
+		$errormessage=$Lang::tr{'fwhost err maxserviceudp'};
+	}
+	$tcpcounter=0;
+	$udpcounter=0;
 	#check remark
 	if ($fwhostsettings{'SRVGRP_REMARK'} ne '' && !&validremark($fwhostsettings{'SRVGRP_REMARK'})){
-		$errormessage=$Lang::tr{'fwhost err remark'};
+		$errormessage .= $Lang::tr{'fwhost err remark'};
 	}
 	if (!$errormessage){
 		#on first save, we have to enter a dummy value

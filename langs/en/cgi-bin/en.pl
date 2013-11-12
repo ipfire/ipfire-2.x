@@ -1064,6 +1064,8 @@
 'fwhost err isccdnet' => 'This name is already used by an OpenVPN network',
 'fwhost err isingrp' => 'This entry already exists in the group',
 'fwhost err mac' => 'Invalid MAC address',
+'fwhost err maxservicetcp' => 'The maximal number of 13 TCP services has been reached in this group',
+'fwhost err maxserviceudp' => 'The maximal number of 13 UDP services has been reached in this group',
 'fwhost err name' => 'Invalid name. Allowed characters: Upper- and lowercase letters, digits, space and dash.',
 'fwhost err name1' => 'Empty name.',
 'fwhost err net' => 'Network/IP address already exists',
