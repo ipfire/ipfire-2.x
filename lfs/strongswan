@@ -82,6 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-4.5.3_ipfire.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-5.1.1-delay-dpd.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || ./autogen.sh
 	cd $(DIR_APP) && ./configure \
