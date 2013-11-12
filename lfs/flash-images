@@ -49,23 +49,38 @@ IMGinsts := /install/images/$(SNAME)-$(VERSION).1gb-ext4-scon.$(MACHINE)-full-co
 MNThdd   := /install/harddisk
 IMGpart  := /install/images/part_area
 IMGboot  := /install/images/bootfs
-# don't change SIZEboot this without checking Image size
-SIZEboot := 64
 IMGroot  := /install/images/rootfs
-SIZEroot := 600
+
+# All sizes in blocks
+ifeq "$(MACHINE_TYPE)" "arm"
+ S_OFFSET = 8192
+
+ # FAT32
+ PART_TYPE = c
+else
+ S_OFFSET = 32
+
+ # Logical
+ PART_TYPE = L
+endif
+
+# /boot:  64MB - OFFSET
+# /    : 600MB
+S_BOOT := $(shell echo $$(( 131072 - $(S_OFFSET) )))
+S_ROOT := 1228800
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf $(MNThdd) $(IMGinst) $(IMGpart) $(IMGboot) $(IMGroot) && mkdir -p $(MNThdd)
 
 	# Create first 32 sectors of image
-	dd bs=1k if=/dev/zero of=$(IMGpart) count=16
+	dd if=/dev/zero of=$(IMGpart) bs=512 count=$(S_OFFSET)
 
 	# Create images for filesystems
-	dd bs=1K if=/dev/zero of=$(IMGboot) count=65520  # 64MB-16K
-	dd bs=1M if=/dev/zero of=$(IMGroot) count=$(SIZEroot)
+	dd if=/dev/zero of=$(IMGboot) bs=512 count=$(S_BOOT)
+	dd if=/dev/zero of=$(IMGroot) bs=512 count=$(S_ROOT)
 
 	# Format them
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(PART_TYPE)" "c"
 	mkfs.vfat $(IMGboot)
 else
 	mkfs.ext2 -F $(IMGboot)
@@ -104,7 +119,7 @@ endif
 	mount --bind /sys  $(MNThdd)/sys
 	chroot $(MNThdd) /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 	sed -i -e "s|DEVICE1|UUID=$$(blkid -sUUID $(IMGboot) | cut -d'"' -f2)|g" $(MNThdd)/etc/fstab
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(PART_TYPE)" "c"
 	# ARM flash images have a VFAT partition for /boot.
 	sed -i -e "s|ext2|vfat|" $(MNThdd)/etc/fstab
 endif
@@ -136,7 +151,7 @@ endif
 	umount $(MNThdd)
 
 	# zerofree the ext2 images to get better compression
-ifneq "$(MACHINE_TYPE)" "arm"
+ifneq "$(PART_TYPE)" "c"
 	zerofree $(IMGboot)
 	-fsck.ext2 -f -y $(IMGboot)
 	fsck.ext2 -f -y $(IMGboot)
@@ -149,13 +164,8 @@ endif
 	cat $(IMGpart) $(IMGboot) $(IMGroot) > $(IMGinst)
 
 	# Write Partition table
-ifneq "$(MACHINE_TYPE)" "arm"
-	echo -e ",$(SIZEboot),L,*\n,0,0\n,$(SIZEroot),L\n,0,0\n" \
-		| sfdisk -D -uM -H 64 -S 32 $(IMGinst)
-else
-	echo -e ",$(SIZEboot),c,*\n,0,0\n,$(SIZEroot),L\n,0,0\n" \
-		| sfdisk -D -uM -H 64 -S 32 $(IMGinst)
-endif
+	echo -e "$(S_OFFSET),$(S_BOOT),$(PART_TYPE),*\n,0,0\n$$(( $(S_BOOT) + $(S_OFFSET) )),$(S_ROOT),L\n,0,0\n" \
+		| sfdisk -D -uS -H 64 -S 32 $(IMGinst)
 
 ifneq "$(MACHINE_TYPE)" "arm"
 	# Install grub
@@ -198,7 +208,7 @@ endif
 	umount $(MNThdd)
 
 	# zerofree the ext3 images to get better compression
-ifneq "$(MACHINE_TYPE)" "arm"
+ifneq "$(PART_TYPE)" "c"
 	zerofree $(IMGboot)
 	-fsck.ext2 -f -y  $(IMGboot)
 	fsck.ext2 -f -y  $(IMGboot)
@@ -212,13 +222,8 @@ endif
 	rm -vf $(IMGpart) $(IMGboot) $(IMGroot)
 
 	# Write Partition table
-ifneq "$(MACHINE_TYPE)" "arm"
-	echo -e ",$(SIZEboot),L,*\n,0,0\n,$(SIZEroot),L\n,0,0\n" \
-		| sfdisk -D -uM -H 64 -S 32 $(IMGinsts)
-else
-	echo -e ",$(SIZEboot),c,*\n,0,0\n,$(SIZEroot),L\n,0,0\n" \
-		| sfdisk -D -uM -H 64 -S 32 $(IMGinsts)
-endif
+	echo -e "$(S_OFFSET),$(S_BOOT),$(PART_TYPE),*\n,0,0\n$$(( $(S_BOOT) + $(S_OFFSET) )),$(S_ROOT),L\n,0,0\n" \
+		| sfdisk -D -uS -H 64 -S 32 $(IMGinsts)
 
 ifneq "$(MACHINE_TYPE)" "arm"
 	# Install grub
