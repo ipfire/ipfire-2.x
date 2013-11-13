@@ -100,9 +100,9 @@ sub setup_default_networks
 			my ($ip,$sub) = split(/\//,$ipsecsettings{'RW_NET'});
 			$sub=&General::iporsubtocidr($sub);
 			my @tempipsecsubnet = split("\/", $ipsecsettings{'RW_NET'});
-			$defaultNetworks->{'IPsec RW ' .$ip."/".$sub}{'ADR'} = $tempipsecsubnet[0];
-			$defaultNetworks->{'IPsec RW ' .$ip."/".$sub}{'NAME'} = "IPsec RW";
-			$defaultNetworks->{'IPsec RW ' .$ip."/".$sub}{'NET'} = &getnextip($ip);
+			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'ADR'} = $tempipsecsubnet[0];
+			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'NAME'} = "IPsec RW";
+			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'NET'} = &getnextip($ip);
 		}
 	}
 }
