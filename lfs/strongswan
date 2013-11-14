@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.1.1dr4
+VER        = 5.1.1
 
 THISAPP    = strongswan-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -33,9 +33,13 @@ DIR_APP    = $(DIR_SRC)/strongswan-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ifeq "$(MACHINE)" "i586"
-	PADLOCK = --enable-padlock
+	CONFIGURE_OPTIONS = \
+		--enable-padlock \
+		--enable-rdrand
 else
-	PADLOCK = --disable-padlock
+	CONFIGURE_OPTIONS = \
+		--disable-padlock \
+		--disable-rdrand
 endif
 
 ###############################################################################
@@ -46,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 05899faa9b8a8f253474af809b283ef9
+$(DL_FILE)_MD5 = e3af3d493d22286be3cd794533a8966a
 
 install : $(TARGET)
 
@@ -77,6 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-5.0.2_ipfire.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-5.1.1-delay-dpd.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || ./autogen.sh
 	cd $(DIR_APP) && ./configure \
@@ -91,9 +96,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-eap-peap \
 		--enable-eap-mschapv2 \
 		--enable-eap-identity \
-		$(PADLOCK)
+		--enable-unity \
+		$(CONFIGURE_OPTIONS)
 
-	cd $(DIR_APP) && make $(MAKETUNING) LDFLAGS="-lrt"
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
 	# Remove all library files we don't want or need.
