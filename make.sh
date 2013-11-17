@@ -369,8 +369,8 @@ buildbase() {
     lfsmake2 sysvinit
     lfsmake2 tar
     lfsmake2 texinfo
-    lfsmake2 udev
     lfsmake2 util-linux
+    lfsmake2 udev
     lfsmake2 vim
     lfsmake2 xz
     lfsmake2 paxctl

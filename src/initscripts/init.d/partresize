@@ -6,7 +6,7 @@
 #
 # Authors     : Arne Fitzenreiter - arne_f@ipfire.org
 #
-# Version     : 1.01
+# Version     : 1.02
 #
 # Notes       :
 #
@@ -20,6 +20,12 @@ case "${1}" in
 
 		boot_mesg "Mounting root file system in read/write mode ..."
 		mount -o remount,rw / > /dev/null
+		evaluate_retval
+
+		boot_mesg "Create /etc/mtab..."
+		> /etc/mtab
+		mount -f / || failed=1
+		(exit ${failed})
 		evaluate_retval
 
 		# Detect device
@@ -49,4 +55,3 @@ case "${1}" in
 esac
 
 # End $rc_base/init.d/partresize
-
