@@ -24,23 +24,26 @@
 
 include Config
 
-VER        = 141
+VER        = 208
 
 THISAPP    = udev-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = systemd-$(VER).tar.xz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/systemd-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) udev-lfs-208-1.tar.bz2
+
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+udev-lfs-$(VER)-1.tar.bz2 = $(DL_FROM)/udev-lfs-$(VER)-1.tar.bz2
 
-$(DL_FILE)_MD5 = 1670fe81cabf5161319c52084cf81134
+$(DL_FILE)_MD5 = df64550d92afbffb4f67a434193ee165
+udev-lfs-$(VER)-1.tar.bz2_MD5 = 67a5339e7ef1fa08f5db8315a5ea69e7
 
 install : $(TARGET)
 
@@ -70,23 +73,29 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-141_no_netif_rename.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-125-ext4_wo_journal.patch
+	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(VER)-1.tar.bz2
+
+#	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-141_no_netif_rename.patch
+
+	cd $(DIR_APP)/udev-lfs-$(VER)-1 && sed -i "s/HANDLE_AT 1/HANDLE_AT 0/g" cfg.h
+
 	rm -rf /lib/udev/devices
-	install -dv /lib/{firmware,udev/devices/{pts,shm}}
-	mknod -m0666 /lib/udev/devices/null c 1 3
-	ln -sv /proc/self/fd /lib/udev/devices/fd
-	ln -sv /proc/self/fd/0 /lib/udev/devices/stdin
-	ln -sv /proc/self/fd/1 /lib/udev/devices/stdout
-	ln -sv /proc/self/fd/2 /lib/udev/devices/stderr
-	ln -sv /proc/kcore /lib/udev/devices/core
-	cd $(DIR_APP) && ./configure --disable-introspection --sbindir=/sbin --sysconfdir=/etc --libexecdir=/lib/udev
-	cd $(DIR_APP) && make $(MAKETUNING) EXTRAS="extras/ata_id extras/cdrom_id extras/edd_id \
-					extras/firmware extras/floppy extras/path_id \
-					extras/scsi_id extras/usb_id extras/volume_id"
-	cd $(DIR_APP) && make DESTDIR=/ EXTRAS="extras/ata_id extras/cdrom_id extras/edd_id \
-					extras/firmware extras/floppy extras/path_id \
-					extras/scsi_id extras/usb_id extras/volume_id" install
+	install -dv /lib/firmware
+
+#	install -dv /lib/{firmware,udev/devices/{pts,shm}}
+#	mknod -m0666 /lib/udev/devices/null c 1 3
+#	ln -sv /proc/self/fd /lib/udev/devices/fd
+#	ln -sv /proc/self/fd/0 /lib/udev/devices/stdin
+#	ln -sv /proc/self/fd/1 /lib/udev/devices/stdout
+#	ln -sv /proc/self/fd/2 /lib/udev/devices/stderr
+#	ln -sv /proc/kcore /lib/udev/devices/core
+
+	cd $(DIR_APP) && make -f udev-lfs-$(VER)-1/Makefile.lfs $(MAKETUNING)
+	cd $(DIR_APP) && make -f udev-lfs-$(VER)-1/Makefile.lfs install
+
+	# Make some compat symlinks
+	ln -sf /lib/udev/udevd /sbin/udevd
+	ln -sf /sbin/udevadm /bin/udevadm
 
 	# Disable net generator rule. This does not work with the setup.
 	rm -f /lib/udev/rules.d/75-persistent-net-generator.rules
@@ -96,6 +105,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Blacklist some modules
 	cp -vf $(DIR_SRC)/config/udev/blacklist.conf /etc/modprobe.d/blacklist.conf
+
+	# Install config file
+	install -v -m 644 $(DIR_SRC)/config/udev/udev.conf \
+		/etc/udev/
 
 	# Install alsa rules.
 	install -v -m 644 $(DIR_SRC)/config/udev/25-alsa.rules \
