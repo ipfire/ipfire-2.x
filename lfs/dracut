@@ -73,6 +73,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_lzma.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_remove_cdrom_wait.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_add_run_symlink.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_remove_scsi_wait.patch
 
 	cd $(DIR_APP) && cp -vf $(DIR_SRC)/src/dracut/switch_root.c .
 
