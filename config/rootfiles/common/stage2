@@ -132,6 +132,7 @@ usr/share/doc/licenses/GPLv3
 #usr/share/misc
 #usr/share/terminfo
 #usr/share/zoneinfo
+run
 #var
 #var/cache
 var/empty

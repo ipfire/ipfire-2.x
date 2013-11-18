@@ -111,6 +111,9 @@ $(TARGET) :
 	chgrp -v utmp /var/run/utmp /var/log/lastlog
 	chmod -v 664 /var/run/utmp /var/log/lastlog
 
+	# Create /run symlink
+	ln -s /var/run /run
+
 	# Permissions
 	chmod 0711 /var/empty
 	
