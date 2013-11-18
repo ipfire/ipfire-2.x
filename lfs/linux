@@ -230,25 +230,25 @@ ifeq "$(LASTKERNEL)" "1"
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 
 	# Blacklist matroxfb_base
-	echo "blacklist matroxfb_base" >> /etc/modprobe.d/framebuffer
+	echo "blacklist matroxfb_base" >> /etc/modprobe.d/framebuffer.conf
 	# Blacklist old framebuffer modules
 	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/video -name *fb.ko); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer ; \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
 	done
 	# Blacklist new drm framebuffer modules
 	for f in $$(ls -1 /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/gpu/drm/*/*.ko); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer ; \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
 	done
-	sed -i -e "s|.ko||g" /etc/modprobe.d/framebuffer
+	sed -i -e "s|.ko||g" /etc/modprobe.d/framebuffer.conf
 
 	# Blacklist isdn modules
 	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn -name *.ko); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/isdn ; \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/isdn.conf ; \
 	done
-	sed -i -e "s|.ko||g" /etc/modprobe.d/isdn
+	sed -i -e "s|.ko||g" /etc/modprobe.d/isdn.conf
 
 	# Disable ipv6 at runtime
-	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6
+	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf
 endif
 
 	# Disable geode_aes modul if exist

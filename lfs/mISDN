@@ -106,9 +106,9 @@ endif
 ifneq "$(XEN)" "1"
 	# Blacklist misdn modules
 	for f in $$(find /lib/modules/$(KVER)-$(VERSUFIX)/mISDN -name *.ko); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/mISDN ; \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/mISDN.conf ; \
 	done
-	sed -i -e "s|.ko||g" /etc/modprobe.d/mISDN
+	sed -i -e "s|.ko||g" /etc/modprobe.d/mISDN.conf
 endif
 
 	# Remove mISDN modules that was shipped with the kernel

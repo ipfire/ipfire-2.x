@@ -1,4 +1,4 @@
-etc/modprobe.d/blacklist
+etc/modprobe.d/blacklist.conf
 etc/scsi_id.config
 etc/udev
 #etc/udev/rules.d

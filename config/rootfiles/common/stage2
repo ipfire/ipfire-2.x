@@ -20,8 +20,8 @@ etc/ld.so.conf
 etc/logrotate.conf
 etc/mime.types
 etc/modprobe.d
-etc/modprobe.d/cfg80211
-etc/modprobe.d/pcspeaker
+etc/modprobe.d/cfg80211.conf
+etc/modprobe.d/pcspeaker.conf
 etc/modules.conf
 etc/mtab
 etc/nsswitch.conf
