@@ -433,6 +433,7 @@ int main(int argc, char *argv[])
 	mkdir("/harddisk/boot", S_IRWXU|S_IRWXG|S_IRWXO);
 	mkdir("/harddisk/var", S_IRWXU|S_IRWXG|S_IRWXO);
 	mkdir("/harddisk/var/log", S_IRWXU|S_IRWXG|S_IRWXO);
+	mkdir("/harddisk/var/run", S_IRWXU|S_IRWXG|S_IRWXO);
 	
 	snprintf(commandstring, STRING_SIZE, "/bin/mount %s1 /harddisk/boot", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_BOOT_FILESYSTEM]))
