@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -75,20 +75,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(VER)-1.tar.bz2
 
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-208_remove_systemd_log.patch
 #	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-141_no_netif_rename.patch
 
 	cd $(DIR_APP)/udev-lfs-$(VER)-1 && sed -i "s/HANDLE_AT 1/HANDLE_AT 0/g" cfg.h
 
 	rm -rf /lib/udev/devices
 	install -dv /lib/firmware
-
-#	install -dv /lib/{firmware,udev/devices/{pts,shm}}
-#	mknod -m0666 /lib/udev/devices/null c 1 3
-#	ln -sv /proc/self/fd /lib/udev/devices/fd
-#	ln -sv /proc/self/fd/0 /lib/udev/devices/stdin
-#	ln -sv /proc/self/fd/1 /lib/udev/devices/stdout
-#	ln -sv /proc/self/fd/2 /lib/udev/devices/stderr
-#	ln -sv /proc/kcore /lib/udev/devices/core
 
 	cd $(DIR_APP) && make -f udev-lfs-$(VER)-1/Makefile.lfs $(MAKETUNING)
 	cd $(DIR_APP) && make -f udev-lfs-$(VER)-1/Makefile.lfs install
@@ -99,6 +92,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Disable net generator rule. This does not work with the setup.
 	rm -f /lib/udev/rules.d/75-persistent-net-generator.rules
+	rm -f /lib/udev/rules.d/80-net-name-slot.rules
 
 	# Create rule file for the setup
 	touch /etc/udev/rules.d/30-persistent-network.rules
