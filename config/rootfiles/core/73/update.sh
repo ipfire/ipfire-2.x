@@ -70,7 +70,7 @@ fi
 sync
 
 # This update need a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 #
 #Finish
