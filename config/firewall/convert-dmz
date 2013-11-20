@@ -141,12 +141,12 @@ sub process_rules{
 		$configfwdfw{$key}[5] = $field5;
 		$configfwdfw{$key}[6] = $field6;
 		$configfwdfw{$key}[7] = '';
-		$configfwdfw{$key}[8] = '';
+		$configfwdfw{$key}[8] = $field12;
 		$configfwdfw{$key}[9] = '';
 		$configfwdfw{$key}[10] = '';
 		$configfwdfw{$key}[11] = $field11;
-		$configfwdfw{$key}[12] = $field12;
-		$configfwdfw{$key}[13] = $field13;
+		$configfwdfw{$key}[12] = '';
+		$configfwdfw{$key}[13] = '';
 		$configfwdfw{$key}[14] = $field14;
 		$configfwdfw{$key}[15] = $field15;
 		$configfwdfw{$key}[16] = $field16;
@@ -165,7 +165,7 @@ sub process_rules{
 		$configfwdfw{$key}[29] = $field29;
 		$configfwdfw{$key}[30] = $field30;
 		$configfwdfw{$key}[31] = $field31;
-		print LOG "$Now -> Converted to $field0,$field1,$field2,$field3,$field4,$field5,$field6,,,,,$field11,$field12,$field13,$field14,$field15,$field16,,,,,,,,,,$field26,$field27\n";
+		print LOG "$Now -> Converted to $field0,$field1,$field2,$field3,$field4,$field5,$field6,,$field12,,,$field11,,,$field14,$field15,$field16,,,,,,,,,,$field26,$field27,$field28,$field29,$field30,$field31\n";
 	}
 	&General::writehasharray($fwdfwconfig,\%configfwdfw);
 close (LOG);
