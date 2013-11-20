@@ -113,12 +113,12 @@ foreach my $line (@current){
 	$configinputfw{$key}[5] = $field5;
 	$configinputfw{$key}[6] = $field6;
 	$configinputfw{$key}[7] = '';
-	$configinputfw{$key}[8] = '';
+	$configinputfw{$key}[8] = $field12;
 	$configinputfw{$key}[9] = '';
 	$configinputfw{$key}[10] = '';
 	$configinputfw{$key}[11] = $field11;
-	$configinputfw{$key}[12] = $field12;
-	$configinputfw{$key}[13] = $field13;
+	$configinputfw{$key}[12] = '';
+	$configinputfw{$key}[13] = '';
 	$configinputfw{$key}[14] = $field14;
 	$configinputfw{$key}[15] = $field15;
 	$configinputfw{$key}[16] = $field16;
