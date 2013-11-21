@@ -104,8 +104,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-eui \
 		--with-pthreads \
 		--with-dl \
-		--with-maxfd="65536" \
-		--with-filedescriptors=65536 \
+		--with-filedescriptors=$$(( 16384 * 64 )) \
 		--with-large-files \
 		--with-aio \
 		--enable-async-io=8 \
