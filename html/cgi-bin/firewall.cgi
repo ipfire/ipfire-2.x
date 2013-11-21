@@ -855,12 +855,7 @@ sub checkrule
 			}
 		}
 	}
-	#When using source- or targetport, the protocol has to be TCP or UDP
-	if (($fwdfwsettings{'USESRV'} eq 'ON' || $fwdfwsettings{'USE_SRC_PORT'} eq 'ON') && ($fwdfwsettings{'SRC_PORT'} ne '' || $fwdfwsettings{'TGT_PORT'} ne '') && ($fwdfwsettings{'PROT'} ne 'TCP' && $fwdfwsettings{'PROT'} ne 'UDP')){
-		$errormessage.=$Lang::tr{'fwdfw err prot_port1'};
-		return;
-	}
-	#when icmp selected, no targetport allowed
+	#when icmp selected, no source and targetport allowed
 	if (($fwdfwsettings{'PROT'} ne '' && $fwdfwsettings{'PROT'} ne 'TCP' && $fwdfwsettings{'PROT'} ne 'UDP' && $fwdfwsettings{'PROT'} ne 'template') && ($fwdfwsettings{'USESRV'} eq 'ON' || $fwdfwsettings{'USE_SRC_PORT'} eq 'ON')){
 		$errormessage.=$Lang::tr{'fwdfw err prot_port'};
 		return;
@@ -930,9 +925,10 @@ sub checkrule
 		$fwdfwsettings{'ICMP_TYPES'}='';
 		$fwdfwsettings{'USESRV'}='';
 		$fwdfwsettings{'TGT_PORT'}='';
-	}elsif($fwdfwsettings{'PROT'} ne 'TCP' && $fwdfwsettings{'PROT'} ne 'UDP' && $fwdfwsettings{'PROT'} ne 'ICMP'){
+	}elsif($fwdfwsettings{'PROT'} ne 'TCP' && $fwdfwsettings{'PROT'} ne 'UDP'){
 		$fwdfwsettings{'ICMP_TYPES'}='';
-		$fwdfwsettings{'PROT'} = '';
+		$fwdfwsettings{'SRC_PORT'}='';
+		$fwdfwsettings{'TGT_PORT'}='';
 	}elsif($fwdfwsettings{'PROT'} ne 'ICMP'){
 		$fwdfwsettings{'ICMP_TYPES'}='';
 	}
@@ -2882,9 +2878,9 @@ END
 
 		$message = $Lang::tr{'fwdfw pol allow'};
 
-	} elsif ($config eq '/var/ipfire/firewall/outgoing') {
+	} elsif ($config eq '/var/ipfire/firewall/outgoing' && ($fwdfwsettings{'POLICY1'} ne 'MODE1')) {
 		$message = $Lang::tr{'fwdfw pol allow'};
-
+		$colour = "bgcolor='green'";
 	} else {
 		$message = $Lang::tr{'fwdfw pol block'};
 		$colour = "bgcolor='darkred'";
