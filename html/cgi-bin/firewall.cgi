@@ -1182,7 +1182,7 @@ END
 	if ($show eq '1'){$show='';print"</select></td></tr>";}
 	#IPsec netze
 	foreach my $key (sort { ncmp($ipsecconf{$a}[1],$ipsecconf{$b}[1]) } keys %ipsecconf) {
-		if ($ipsecconf{$key}[3] eq 'net' || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
+		if ($ipsecconf{$key}[3] eq 'net' || ($optionsfw{'SHOWDROPDOWN'} eq 'on' && $ipsecconf{$key}[3] ne 'host')){
 			print"<tr><td valign='top'><input type='radio' name='$grp' value='ipsec_net_$srctgt' $checked{$grp}{'ipsec_net_'.$srctgt}></td><td >$Lang::tr{'fwhost ipsec net'}</td><td align='right'><select name='ipsec_net_$srctgt' style='width:200px;'>" if ($show eq '');
 			$show='1';
 			print "<option ";
