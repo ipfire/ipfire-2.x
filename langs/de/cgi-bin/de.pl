@@ -71,7 +71,7 @@
 'action' => 'Aktion',
 'activate' => 'aktivieren',
 'activate user' => 'Benutzer aktivieren',
-'active' => 'aktiv',
+'active' => 'Aktiv',
 'add' => 'Hinzufügen',
 'add a host' => 'Host hinzufügen:',
 'add a new rule' => 'Neue Regel hinzufügen:',
