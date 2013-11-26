@@ -259,7 +259,9 @@ sub buildrules
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
 								if($DPROT ne ''){
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}
+									#Process ICMP RULE
 									if(substr($DPORT, 2, 4) eq 'icmp'){
+										print"uzlputz ICMP Regel\n";
 										my @icmprule= split(",",substr($DPORT, 12,));
 										foreach (@icmprule){
 											$icmptype="--icmp-type ";
@@ -272,10 +274,11 @@ sub buildrules
 											}
 												print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $TIME -j $$hash{$key}[0]\n";
 										}
+									#PROCESS DNAT RULE (Portforward)
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat'){
 										$natchain='NAT_DESTINATION';
 										if ($$hash{$key}[17] eq 'ON'){
-											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
+											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
 										}
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
 										#Process NAT with servicegroup used
@@ -298,17 +301,26 @@ sub buildrules
 										}
 										print "iptables -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
 										next;
+									#PROCESS SNAT RULE
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
 										$natchain='NAT_SOURCE';
+										if ($$hash{$key}[17] eq 'ON' ){
+											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT' \n";
+										}
 										print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip\n";
 									}
-									if ($$hash{$key}[17] eq 'ON' ){
-											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
-									}
+									#PROCESS EVERY OTHER RULE (If NOT ICMP, else the rule would be applied double)
 									if ($PROT ne '-p ICMP'){
+										if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
+											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+										}
 										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}
+									#PROCESS Prot ICMP and type = All ICMP-Types
 									if ($PROT eq '-p ICMP' && $$hash{$key}[9] eq 'All ICMP-Types'){
+										if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
+											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+										}
 										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}
 								}
@@ -345,7 +357,7 @@ sub buildrules
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat'){
 										$natchain='NAT_DESTINATION';
 										if ($$hash{$key}[17] eq 'ON'){
-											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
+											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j LOG --log-prefix 'DNAT' \n";
 										}
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
 										#Process NAT with servicegroup used
@@ -371,17 +383,23 @@ sub buildrules
 									#PROCESS SNAT RULE
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
 										$natchain='NAT_SOURCE';
+										if ($$hash{$key}[17] eq 'ON' ){
+											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT' \n";
+										}
 										system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip\n";
-									}
-									if ($$hash{$key}[17] eq 'ON' && substr($DPORT, 2, 4) ne 'icmp'){
-										system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
 									}
 									#PROCESS EVERY OTHER RULE (If NOT ICMP, else the rule would be applied double)
 									if ($PROT ne '-p ICMP'){
+										if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
+											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+										}
 										system "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}
 									#PROCESS Prot ICMP and type = All ICMP-Types
 									if ($PROT eq '-p ICMP' && $$hash{$key}[9] eq 'All ICMP-Types'){
+										if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
+											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
+										}
 										system "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}
 								}
