@@ -2579,8 +2579,14 @@ END
 				}
 			}elsif ($$hash{$key}[4] eq 'RED1'){
 				print "$ipfireiface $Lang::tr{'fwdfw red'}";
+			}elsif ($$hash{$key}[4] eq 'ALL'){
+				print "$ipfireiface $Lang::tr{'all'}";
 			}else{
-				print "$$hash{$key}[4]";
+				if ($$hash{$key}[4] eq 'GREEN' || $$hash{$key}[4] eq 'ORANGE' || $$hash{$key}[4] eq 'BLUE' || $$hash{$key}[4] eq 'RED'){
+					print "$ipfireiface $Lang::tr{lc($$hash{$key}[4])}";
+				}else{
+					print "$ipfireiface $$hash{$key}[4]";
+				}
 			}
 			$tdcolor='';
 			#SOURCEPORT
