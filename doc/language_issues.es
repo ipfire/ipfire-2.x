@@ -649,7 +649,6 @@ WARNING: untranslated string: fwdfw err nosrcip
 WARNING: untranslated string: fwdfw err notgt
 WARNING: untranslated string: fwdfw err notgtip
 WARNING: untranslated string: fwdfw err prot_port
-WARNING: untranslated string: fwdfw err prot_port1
 WARNING: untranslated string: fwdfw err remark
 WARNING: untranslated string: fwdfw err ruleexists
 WARNING: untranslated string: fwdfw err same
@@ -733,6 +732,8 @@ WARNING: untranslated string: fwhost err isccdiphost
 WARNING: untranslated string: fwhost err isccdipnet
 WARNING: untranslated string: fwhost err isccdnet
 WARNING: untranslated string: fwhost err isingrp
+WARNING: untranslated string: fwhost err maxservicetcp
+WARNING: untranslated string: fwhost err maxserviceudp
 WARNING: untranslated string: fwhost err name
 WARNING: untranslated string: fwhost err name1
 WARNING: untranslated string: fwhost err net
