@@ -68,7 +68,7 @@ usr/lib/ipsec/plugins/libstrongswan-pkcs8.so
 usr/lib/ipsec/plugins/libstrongswan-pubkey.so
 usr/lib/ipsec/plugins/libstrongswan-random.so
 usr/lib/ipsec/plugins/libstrongswan-rc2.so
-usr/lib/ipsec/plugins/libstrongswan-rdrand.so
+#usr/lib/ipsec/plugins/libstrongswan-rdrand.so
 usr/lib/ipsec/plugins/libstrongswan-resolve.so
 usr/lib/ipsec/plugins/libstrongswan-revocation.so
 usr/lib/ipsec/plugins/libstrongswan-sha1.so
