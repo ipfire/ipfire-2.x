@@ -479,6 +479,12 @@ WARNING: translation string unused: to email adr
 WARNING: translation string unused: to install an update
 WARNING: translation string unused: to warn email bad
 WARNING: translation string unused: too long 80 char max
+WARNING: translation string unused: tor accounting period daily
+WARNING: translation string unused: tor accounting period monthly
+WARNING: translation string unused: tor accounting period weekly
+WARNING: translation string unused: tor bridge enabled
+WARNING: translation string unused: tor errmsg invalid node id
+WARNING: translation string unused: tor exit country
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
@@ -557,13 +563,6 @@ WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: bytes
 WARNING: untranslated string: default ip
 WARNING: untranslated string: dnat address
-WARNING: untranslated string: dnsforward
-WARNING: untranslated string: dnsforward add a new entry
-WARNING: untranslated string: dnsforward configuration
-WARNING: untranslated string: dnsforward edit an entry
-WARNING: untranslated string: dnsforward entries
-WARNING: untranslated string: dnsforward forward_server
-WARNING: untranslated string: dnsforward zone
 WARNING: untranslated string: drop action
 WARNING: untranslated string: drop action1
 WARNING: untranslated string: drop action2
@@ -595,7 +594,6 @@ WARNING: untranslated string: fwdfw err nosrcip
 WARNING: untranslated string: fwdfw err notgt
 WARNING: untranslated string: fwdfw err notgtip
 WARNING: untranslated string: fwdfw err prot_port
-WARNING: untranslated string: fwdfw err prot_port1
 WARNING: untranslated string: fwdfw err remark
 WARNING: untranslated string: fwdfw err ruleexists
 WARNING: untranslated string: fwdfw err same
@@ -679,6 +677,8 @@ WARNING: untranslated string: fwhost err isccdiphost
 WARNING: untranslated string: fwhost err isccdipnet
 WARNING: untranslated string: fwhost err isccdnet
 WARNING: untranslated string: fwhost err isingrp
+WARNING: untranslated string: fwhost err maxservicetcp
+WARNING: untranslated string: fwhost err maxserviceudp
 WARNING: untranslated string: fwhost err name
 WARNING: untranslated string: fwhost err name1
 WARNING: untranslated string: fwhost err net
@@ -723,82 +723,6 @@ WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: snat new source ip address
-WARNING: untranslated string: tor
-WARNING: untranslated string: tor accounting
-WARNING: untranslated string: tor accounting bytes
-WARNING: untranslated string: tor accounting bytes left
-WARNING: untranslated string: tor accounting interval
-WARNING: untranslated string: tor accounting limit
-WARNING: untranslated string: tor accounting period
-WARNING: untranslated string: tor acls
-WARNING: untranslated string: tor allowed subnets
-WARNING: untranslated string: tor bandwidth burst
-WARNING: untranslated string: tor bandwidth rate
-WARNING: untranslated string: tor bandwidth settings
-WARNING: untranslated string: tor bandwidth unlimited
-WARNING: untranslated string: tor common settings
-WARNING: untranslated string: tor configuration
-WARNING: untranslated string: tor connected relays
-WARNING: untranslated string: tor contact info
-WARNING: untranslated string: tor daemon
 WARNING: untranslated string: tor directory port
-WARNING: untranslated string: tor enabled
-WARNING: untranslated string: tor errmsg invalid accounting limit
 WARNING: untranslated string: tor errmsg invalid directory port
-WARNING: untranslated string: tor errmsg invalid ip or mask
-WARNING: untranslated string: tor errmsg invalid relay address
-WARNING: untranslated string: tor errmsg invalid relay name
-WARNING: untranslated string: tor errmsg invalid relay port
-WARNING: untranslated string: tor errmsg invalid socks port
-WARNING: untranslated string: tor exit country any
-WARNING: untranslated string: tor exit nodes
-WARNING: untranslated string: tor relay address
-WARNING: untranslated string: tor relay configuration
-WARNING: untranslated string: tor relay enabled
-WARNING: untranslated string: tor relay external address
-WARNING: untranslated string: tor relay fingerprint
-WARNING: untranslated string: tor relay mode
-WARNING: untranslated string: tor relay mode bridge
-WARNING: untranslated string: tor relay mode exit
-WARNING: untranslated string: tor relay mode private bridge
-WARNING: untranslated string: tor relay mode relay
-WARNING: untranslated string: tor relay nickname
-WARNING: untranslated string: tor relay port
-WARNING: untranslated string: tor service
-WARNING: untranslated string: tor socks port
-WARNING: untranslated string: tor stats
-WARNING: untranslated string: tor traffic limit hard
-WARNING: untranslated string: tor traffic limit soft
-WARNING: untranslated string: tor traffic read written
-WARNING: untranslated string: tor use exit nodes
 WARNING: untranslated string: urlfilter redirect template
-WARNING: untranslated string: wlan client
-WARNING: untranslated string: wlan client advanced settings
-WARNING: untranslated string: wlan client and
-WARNING: untranslated string: wlan client bssid
-WARNING: untranslated string: wlan client ccmp
-WARNING: untranslated string: wlan client configuration
-WARNING: untranslated string: wlan client disconnected
-WARNING: untranslated string: wlan client duplicate ssid
-WARNING: untranslated string: wlan client edit entry
-WARNING: untranslated string: wlan client encryption
-WARNING: untranslated string: wlan client encryption none
-WARNING: untranslated string: wlan client encryption wep
-WARNING: untranslated string: wlan client encryption wpa
-WARNING: untranslated string: wlan client encryption wpa2
-WARNING: untranslated string: wlan client group cipher
-WARNING: untranslated string: wlan client group key algorithm
-WARNING: untranslated string: wlan client invalid key length
-WARNING: untranslated string: wlan client new entry
-WARNING: untranslated string: wlan client new network
-WARNING: untranslated string: wlan client pairwise cipher
-WARNING: untranslated string: wlan client pairwise key algorithm
-WARNING: untranslated string: wlan client pairwise key group key
-WARNING: untranslated string: wlan client psk
-WARNING: untranslated string: wlan client ssid
-WARNING: untranslated string: wlan client tkip
-WARNING: untranslated string: wlan client wpa mode
-WARNING: untranslated string: wlan client wpa mode all
-WARNING: untranslated string: wlan client wpa mode ccmp ccmp
-WARNING: untranslated string: wlan client wpa mode ccmp tkip
-WARNING: untranslated string: wlan client wpa mode tkip tkip

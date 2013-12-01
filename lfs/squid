@@ -72,7 +72,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xaf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/squid-3.3.10-optional-ssl-options.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/squid-3.3.10-set-rlimit-fds.patch
 
+	cd $(DIR_APP) && ./bootstrap.sh
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc/squid \
@@ -104,8 +106,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-eui \
 		--with-pthreads \
 		--with-dl \
-		--with-maxfd="65536" \
-		--with-filedescriptors=65536 \
+		--with-filedescriptors=$$(( 16384 * 64 )) \
 		--with-large-files \
 		--with-aio \
 		--enable-async-io=8 \
