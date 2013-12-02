@@ -2631,15 +2631,12 @@ END
 				}
 				print"<br>-&gt;";
 			}
-			if ($$hash{$key}[5] eq 'ipfire'){
-				$ipfireiface='Interface';
-			}
-			if ($$hash{$key}[5] eq 'std_net_tgt' || $$hash{$key}[5] eq 'ipfire'  || $$hash{$key}[6] eq 'RED1' || $$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE' ){
+			if ($$hash{$key}[5] eq 'std_net_tgt' || $$hash{$key}[5] eq 'ipfire'){
 				if ($$hash{$key}[6] eq 'RED1'){
-					print "$ipfireiface $Lang::tr{'red1'}";
+					print "$Lang::tr{'red1'}";
 				}elsif ($$hash{$key}[6] eq 'GREEN' || $$hash{$key}[6] eq 'ORANGE' || $$hash{$key}[6] eq 'BLUE'|| $$hash{$key}[6] eq 'ALL' || $$hash{$key}[6] eq 'RED')
 				{
-					print "$ipfireiface ".&get_name($$hash{$key}[6]);
+					print &get_name($$hash{$key}[6]);
 				}else{
 					print $$hash{$key}[6];
 				}
