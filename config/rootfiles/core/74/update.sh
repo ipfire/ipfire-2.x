@@ -48,6 +48,7 @@ if [ -e "/var/ipfire/proxy/enable" ] || [ -e "/var/ipfire/proxy/enable_blue" ]; 
 		eval $(/usr/local/bin/readhash /var/ipfire/proxy/advanced/settings)
 
 		if [ "${TRANSPARENT_PORT}" = "81" ]; then
+			TRANSPARENT_PORT="$(( ${TRANSPARENT_PORT} + 1 ))"
 			sed -e "s/^TRANSPARENT_PORT=.*/TRANSPARENT_PORT=${TRANSPARENT_PORT}/" \
 				-i /var/ipfire/proxy/advanced/settings
 		fi
