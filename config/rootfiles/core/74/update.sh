@@ -35,6 +35,7 @@ done
 
 #
 #Stop services
+/etc/init.d/ipsec stop
 /etc/init.d/squid stop
 
 
@@ -60,6 +61,10 @@ chown nobody:nobody /var/ipfire/proxy/squid.conf
 #
 #Start services
 /etc/init.d/squid start
+
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec start
+fi
 
 #
 #Update Language cache
