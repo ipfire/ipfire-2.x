@@ -261,7 +261,6 @@ sub buildrules
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}
 									#Process ICMP RULE
 									if(substr($DPORT, 2, 4) eq 'icmp'){
-										print"uzlputz ICMP Regel\n";
 										my @icmprule= split(",",substr($DPORT, 12,));
 										foreach (@icmprule){
 											$icmptype="--icmp-type ";
