@@ -769,8 +769,8 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 	&General::readhasharray("$configsrvgrp", \%customservicegrp );
 	&General::readhasharray("$configsrv", \%customservice );
 	$errormessage=&checkservicegroup;
-	#Check if we have more than 13 services from one Protocol in the group
-	#iptables can only handle 13 ports/portranges via multiport
+	#Check if we have more than 15 services from one Protocol in the group
+	#iptables can only handle 15 ports/portranges via multiport
 	foreach my $key (keys %customservicegrp){
 		if($customservicegrp{$key}[0] eq $fwhostsettings{'SRVGRP_NAME'}){
 			foreach my $key1 (keys %customservice){
@@ -1030,13 +1030,15 @@ if ($fwhostsettings{'ACTION'} eq 'delgrpservice')
 		if($customservicegrp{$key}[0].",".$customservicegrp{$key}[1].",".$customservicegrp{$key}[2].",".$customservicegrp{$key}[3] eq $fwhostsettings{'delsrvfromgrp'})
 		{
 			#decrease count from source service
-			foreach my $key1 (sort keys %customservice){
-				if($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
-					$customservice{$key1}[4]--;
-					last;
+			if ($customservicegrp{$key}[2] eq 'TCP' || $customservicegrp{$key}[2] eq 'UDP'|| $customservicegrp{$key}[2] eq 'ICMP'){
+				foreach my $key1 (sort keys %customservice){
+					if($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
+						$customservice{$key1}[4]--;
+						last;
+					}
 				}
+				&General::writehasharray("$configsrv", \%customservice);
 			}
-			&General::writehasharray("$configsrv", \%customservice);
 			$grpname=$customservicegrp{$key}[0];
 			$grpremark=$customservicegrp{$key}[1];
 			delete $customservicegrp{$key};
@@ -1116,6 +1118,9 @@ if ($fwhostsettings{'ACTION'} eq 'changesrvgrpremark')
 			&General::writehasharray("$configsrvgrp", \%customservicegrp);
 			$fwhostsettings{'updatesrvgrp'}='on';
 			$fwhostsettings{'SRVGRP_REMARK'}=$fwhostsettings{'newsrvrem'};
+	}elsif($fwhostsettings{'oldsrvrem'} eq $fwhostsettings{'newsrvrem'}){
+		&addservicegrp;
+		&viewtableservicegrp;
 	}else{
 		$errormessage=$Lang::tr{'fwhost err remark'};
 		$fwhostsettings{'SRVGRP_REMARK'}=$fwhostsettings{'oldsrvrem'};
@@ -1410,13 +1415,24 @@ END
 	if($fwhostsettings{'updatesrvgrp'} eq 'on'){
 	print<<END;
 	<form method='post'><input type='hidden' name='SRVGRP_REMARK' value='$fwhostsettings{'SRVGRP_REMARK'}'><input type='hidden' name='SRVGRP_NAME' value='$fwhostsettings{'SRVGRP_NAME'}'><table border='0' width='100%'>
-	<tr><td width='1%' nowrap='nowrap'>$Lang::tr{'fwhost cust service'}</td><td><select name='CUST_SRV' style='min-width:185px;'>
+	<tr><td width='1%' nowrap='nowrap'>$Lang::tr{'add'}</td><td><select name='CUST_SRV' style='min-width:185px;'>
 END
 	&General::readhasharray("$configsrv", \%customservice);
+	#Protocols for use in servicegroups
+	print "<optgroup label='$Lang::tr{'fwhost cust service'}'>";
 	foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice)
 	{
 		print "<option>$customservice{$key}[0]</option>";
 	}
+	print "</optgroup>";
+	print "<optgroup label='$Lang::tr{'protocol'}'>";
+	print "<option>GRE</option>";
+	print "<option>AH</option>";
+	print "<option>ESP</option>";
+	print "<option>IGMP</option>";
+	print "<option>IPIP</option>";
+	print "<option value='IPV6'>IPv6 encap</option>";
+	print "</optgroup>";
 	print<<END;
 	</select></td></tr>
 	<tr><td colspan='4'><br><br></td></tr>
@@ -1754,6 +1770,16 @@ sub viewtableservicegrp
 			}else{
 				print"<tr bgcolor='$color{'color20'}'>";
 			}
+			#Set fields if we use protocols in servicegroups
+			if ($customservicegrp{$key}[2] ne 'TCP' || $customservicegrp{$key}[2] ne 'UDP' || $customservicegrp{$key}[2] ne 'ICMP'){
+				$port='-';
+			}
+			if ($customservicegrp{$key}[2] eq 'GRE'){$protocol='GRE';$customservicegrp{$key}[2]="$Lang::tr{'protocol'} GRE";}
+			if ($customservicegrp{$key}[2] eq 'ESP'){$protocol='ESP';$customservicegrp{$key}[2]="$Lang::tr{'protocol'} ESP";}
+			if ($customservicegrp{$key}[2] eq 'AH'){$protocol='AH';$customservicegrp{$key}[2]="$Lang::tr{'protocol'} AH";}
+			if ($customservicegrp{$key}[2] eq 'IGMP'){$protocol='IGMP';$customservicegrp{$key}[2]="$Lang::tr{'protocol'} IGMP";}
+			if ($customservicegrp{$key}[2] eq 'IPIP'){$protocol='IPIP';$customservicegrp{$key}[2]="$Lang::tr{'protocol'} IPIP";}
+			if ($customservicegrp{$key}[2] eq 'IPV6'){$protocol='IPV6';$customservicegrp{$key}[2]="$Lang::tr{'protocol'} IPv6 encapsulation";}
 			print "<td width='39%'>$customservicegrp{$key}[2]</td>";
 			foreach my $srv (sort keys %customservice){
 				if ($customservicegrp{$key}[2] eq $customservice{$srv}[0]){
@@ -1766,7 +1792,12 @@ sub viewtableservicegrp
 			if ($delflag gt '1'){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}
-			print"<input type='hidden' name='ACTION' value='delgrpservice'><input type='hidden' name='updatesrvgrp' value='$fwhostsettings{'updatesrvgrp'}'><input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2],$customservicegrp{$key}[3]'></form></td></tr>";
+			print"<input type='hidden' name='ACTION' value='delgrpservice'><input type='hidden' name='updatesrvgrp' value='$fwhostsettings{'updatesrvgrp'}'>";
+			if($customservicegrp{$key}[2] eq 'TCP' || $customservicegrp{$key}[2] eq 'UDP' || $customservicegrp{$key}[2] eq 'ICMP'){
+				print "<input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2],$customservicegrp{$key}[3],'></form></td></tr>";
+			}else{
+				print "<input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$protocol,$customservicegrp{$key}[3]'></form></td></tr>";
+			}
 			$helper=$customservicegrp{$key}[0];
 		}
 		print"</table>";
@@ -1888,11 +1919,8 @@ sub deletefromgrp
 	my %hash=();
 	&General::readhasharray("$config",\%hash);
 	foreach my $key (keys %hash) {
-		$errormessage.="lese $hash{$key}[2] und $target<br>";
 		if($hash{$key}[2] eq $target){
-			
 			delete $hash{$key};
-			$errormessage.="Habe $target aus Gruppe gelöscht!<br>";
 		}
 	}
 	&General::writehasharray("$config",\%hash);

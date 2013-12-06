@@ -252,6 +252,9 @@ sub buildrules
 				#print rules to console
 				foreach my $DPROT (@DPROT){
 					$DPORT = &get_port($hash,$key,$DPROT);
+					if ($DPROT ne 'TCP' && $DPROT ne 'UDP' && $DPROT ne 'ICMP' ){
+						$DPORT='';
+					}
 					$PROT=$DPROT;
 					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
 					foreach my $a (sort keys %sourcehash){
@@ -333,6 +336,9 @@ sub buildrules
 					$DPORT = &get_port($hash,$key,$DPROT);
 					$PROT=$DPROT;
 					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
+					if ($DPROT ne 'TCP' && $DPROT ne'UDP' && $DPROT ne 'ICMP' ){
+						$DPORT='';
+					}
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
