@@ -90,7 +90,10 @@ sub get_srvgrp_prot
 				$udp=1;
 			}elsif(&get_srv_prot($customservicegrp{$key}[2]) eq 'ICMP'){
 				$icmp=1;
-			} 
+			}else{
+				#Protocols used in servicegroups
+				push (@ips,$customservicegrp{$key}[2]);
+			}
 		}
 	}
 	if ($tcp eq '1'){push (@ips,'TCP');}
