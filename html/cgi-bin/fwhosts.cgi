@@ -1030,20 +1030,18 @@ if ($fwhostsettings{'ACTION'} eq 'delgrpservice')
 		if($customservicegrp{$key}[0].",".$customservicegrp{$key}[1].",".$customservicegrp{$key}[2].",".$customservicegrp{$key}[3] eq $fwhostsettings{'delsrvfromgrp'})
 		{
 			#decrease count from source service
-			if ($customservicegrp{$key}[2] eq 'TCP' || $customservicegrp{$key}[2] eq 'UDP'|| $customservicegrp{$key}[2] eq 'ICMP'){
-				foreach my $key1 (sort keys %customservice){
-					if($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
-						$customservice{$key1}[4]--;
-						last;
-					}
+			foreach my $key1 (sort keys %customservice){
+				if($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
+					$customservice{$key1}[4]--;
+					last;
 				}
-				&General::writehasharray("$configsrv", \%customservice);
 			}
 			$grpname=$customservicegrp{$key}[0];
 			$grpremark=$customservicegrp{$key}[1];
 			delete $customservicegrp{$key};
 		}
 	}
+	&General::writehasharray("$configsrv", \%customservice);
 	&General::writehasharray("$configsrvgrp", \%customservicegrp);
 	&General::firewall_config_changed();
 	if ($fwhostsettings{'updatesrvgrp'} eq 'on'){
@@ -1732,7 +1730,7 @@ sub viewtableservicegrp
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		&General::readhasharray("$configsrv", \%customservice);
 		my $number= keys %customservicegrp;
-		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } keys %customservicegrp){
+		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } sort { ncmp($customservicegrp{$a}[2],$customservicegrp{$b}[2]) }keys %customservicegrp){
 			$count++;
 			if ($helper ne $customservicegrp{$key}[0]){
 				$delflag=0;
@@ -1793,8 +1791,8 @@ sub viewtableservicegrp
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}
 			print"<input type='hidden' name='ACTION' value='delgrpservice'><input type='hidden' name='updatesrvgrp' value='$fwhostsettings{'updatesrvgrp'}'>";
-			if($customservicegrp{$key}[2] eq 'TCP' || $customservicegrp{$key}[2] eq 'UDP' || $customservicegrp{$key}[2] eq 'ICMP'){
-				print "<input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2],$customservicegrp{$key}[3],'></form></td></tr>";
+			if($protocol eq 'TCP' || $protocol eq 'UDP' || $protocol eq 'ICMP'){
+				print "<input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2],$customservicegrp{$key}[3]'></form></td></tr>";
 			}else{
 				print "<input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$protocol,$customservicegrp{$key}[3]'></form></td></tr>";
 			}
@@ -1854,8 +1852,6 @@ sub checksubnet
 sub checkservicegroup
 {
 	&General::readhasharray("$configsrvgrp", \%customservicegrp);
-	
-	
 	#check name
 	if ( ! &validhostname($fwhostsettings{'SRVGRP_NAME'}))
 	{
@@ -1911,7 +1907,6 @@ sub get_name
 		return "$network" if ($val eq $defaultNetworks{$network}{'NAME'});
 	}	
 }
-
 sub deletefromgrp
 {
 	my $target=shift;
@@ -2124,8 +2119,8 @@ sub getipforgroup
 		}
 	}
 }
-
-sub decrease {
+sub decrease
+{
 	my $grp=$_[0];
 	&General::readhasharray("$confignet", \%customnetwork);
 	&General::readhasharray("$confighost", \%customhost);
