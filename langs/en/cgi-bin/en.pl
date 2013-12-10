@@ -1051,7 +1051,7 @@
 'fwhost err empty' => 'Please fill in all input fields',
 'fwhost err emptytable' => 'No entries in this group',
 'fwhost err groupempty' => 'The selected group is empty',
-'fwhost err grpexist' => 'Group already exists',
+'fwhost err grpexist' => 'A group with the same name already exists',
 'fwhost err hostexist' => 'A host with the same name already exists',
 'fwhost err hostorip' => 'Invalid name or IP address',
 'fwhost err ip' => 'IP address invalid',
