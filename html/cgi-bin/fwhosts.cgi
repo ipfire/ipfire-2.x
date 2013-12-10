@@ -46,6 +46,7 @@ my %ownnet=();
 my %ipsecsettings=();
 my %fwfwd=();
 my %fwinp=();
+my %fwout=();
 my %ovpnsettings=();
 
 
@@ -62,6 +63,7 @@ my $configsrv		= "${General::swroot}/fwhosts/customservices";
 my $configsrvgrp	= "${General::swroot}/fwhosts/customservicegrp";
 my $fwconfigfwd		= "${General::swroot}/firewall/config";
 my $fwconfiginp		= "${General::swroot}/firewall/input";
+my $fwconfigout		= "${General::swroot}/firewall/outgoing";
 my $configovpn		= "${General::swroot}/ovpn/settings";
 my $tdcolor='';
 my $configipsecrw	= "${General::swroot}/vpn/settings";
@@ -166,13 +168,15 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 	my $count=0;
 	my $needrules=0;
 	$errormessage=&checkports(\%customservice);
+	if ($fwhostsettings{'oldsrvname'} ne $fwhostsettings{'SRV_NAME'} && !&checkgroup($fwhostsettings{'SRV_NAME'})){
+		$errormessage=$Lang::tr{'fwhost err grpexist'};
+	}
 	if (!$errormessage){
 		&General::readhasharray("$configsrv", \%customservice);
 		foreach my $key (keys %customservice)
 		{
 			if ($customservice{$key}[0] eq $fwhostsettings{'oldsrvname'})
 			{
-				$count=$customservice{$key}[4];
 				delete $customservice{$key};
 				&General::writehasharray("$configsrv", \%customservice);
 				last;
@@ -194,7 +198,6 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 		$customservice{$key1}[1] = $fwhostsettings{'SRV_PORT'};
 		$customservice{$key1}[2] = $fwhostsettings{'PROT'};
 		$customservice{$key1}[3] = $fwhostsettings{'ICMP_TYPES'};
-		$customservice{$key1}[4] = $count;
 		&General::writehasharray("$configsrv", \%customservice);
 		#check if we need to update firewallrules
 		if ($fwhostsettings{'SRV_NAME'} ne $fwhostsettings{'oldsrvname'}){
@@ -215,6 +218,15 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 					}
 				}
 				&General::writehasharray("$fwconfiginp", \%fwinp);
+			}
+			if ( ! -z $fwconfigout ){
+				&General::readhasharray("$fwconfigout", \%fwout);
+				foreach my $line (sort keys %fwout){
+					if ($fwout{$line}[15] eq $fwhostsettings{'oldsrvname'}){
+						$fwout{$line}[15] = $fwhostsettings{'SRV_NAME'};
+					}
+				}
+				&General::writehasharray("$fwconfigout", \%fwout);
 			}
 			#check if we need to update groups
 			&General::readhasharray("$configsrvgrp", \%customservicegrp);
@@ -240,6 +252,7 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 		$fwhostsettings{'PROT'}		= '';
 		$fwhostsettings{'ICMP'}		= '';
 		$fwhostsettings{'oldsrvicmp'} = '';
+		$fwhostsettings{'updatesrv'} = '';
 	}else{
 		$fwhostsettings{'SRV_NAME'}	= $fwhostsettings{'oldsrvname'};
 		$fwhostsettings{'SRV_PORT'}	= $fwhostsettings{'oldsrvport'};
@@ -247,7 +260,6 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 		$fwhostsettings{'ICMP'}		= $fwhostsettings{'oldsrvicmp'};
 		$fwhostsettings{'updatesrv'}= 'on';
 	}
-	$fwhostsettings{'updatesrv'} = '';
 	if($needrules eq 'on'){
 		&General::firewall_config_changed();
 	}
@@ -572,7 +584,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 	#check name
 	if (!&validhostname($grp)){$errormessage.=$Lang::tr{'fwhost err name'};}
 	#check existing name
-	if (!checkgroup(\%customgrp,$grp) && $fwhostsettings{'update'} ne 'on'){$errormessage.=$Lang::tr{'fwhost err grpexist'};}
+	if (!&checkgroup($grp) && $fwhostsettings{'update'} ne 'on'){$errormessage.=$Lang::tr{'fwhost err grpexist'};}
 	#check remark
 	if ($rem ne '' && !&validremark($rem) && $fwhostsettings{'update'} ne 'on'){
 		$errormessage.=$Lang::tr{'fwhost err remark'};
@@ -731,6 +743,7 @@ if ($fwhostsettings{'ACTION'} eq 'saveservice')
 {
 	my $ICMP;
 	&General::readhasharray("$configsrv", \%customservice );
+	&General::readhasharray("$configgrp", \%customgrp);
 	$errormessage=&checkports(\%customservice);
 	if ($fwhostsettings{'PROT'} eq 'ICMP'){
 		&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
@@ -741,7 +754,11 @@ if ($fwhostsettings{'ACTION'} eq 'saveservice')
 		}
 	}
 	if($ICMP eq ''){$ICMP=$fwhostsettings{'ICMP_TYPES'};}
-	if ($fwhostsettings{'PROT'} ne 'ICMP'){$ICMP='';}
+	if ($fwhostsettings{'PROT'} ne 'ICMP'){$ICMP='BLANK';}
+	#Check if a group with the same name already exists
+	if (!&checkgroup($fwhostsettings{'SRV_NAME'})){
+		$errormessage = $Lang::tr{'fwhost err grpexist'};
+	}
 	if (!$errormessage){
 		my $key = &General::findhasharraykey (\%customservice);
 		foreach my $i (0 .. 4) { $customservice{$key}[$i] = "";}
@@ -749,7 +766,6 @@ if ($fwhostsettings{'ACTION'} eq 'saveservice')
 		$customservice{$key}[1] = $fwhostsettings{'SRV_PORT'};
 		$customservice{$key}[2] = $fwhostsettings{'PROT'};
 		$customservice{$key}[3] = $ICMP;
-		$customservice{$key}[4] = 0;
 		&General::writehasharray("$configsrv", \%customservice );
 		#reset fields
 		$fwhostsettings{'SRV_NAME'}='';
@@ -793,6 +809,10 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 	if ($fwhostsettings{'SRVGRP_REMARK'} ne '' && !&validremark($fwhostsettings{'SRVGRP_REMARK'})){
 		$errormessage .= $Lang::tr{'fwhost err remark'};
 	}
+	#Check if there is already a service with the same name
+	if(!&checkservice($fwhostsettings{'SRVGRP_NAME'})){
+		$errormessage .= $Lang::tr{'fwhost err srv exists'};
+	}
 	if (!$errormessage){
 		#on first save, we have to enter a dummy value
 		if ($fwhostsettings{'CUST_SRV'} eq ''){
@@ -815,34 +835,14 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 				{
 					$customservicegrp{$key}[1]='';
 					$customservicegrp{$key}[1]=$fwhostsettings{'SRVGRP_REMARK'};
-				}	
+				}
 			}
 		}
-		#get count used
-		foreach my $key (keys %customservicegrp)
-		{
-			if($customservicegrp{$key}[0] eq $fwhostsettings{'SRVGRP_NAME'})
-			{
-				$count=$customservicegrp{$key}[3];
-				last;
-			}
-		}
-		if ($count eq '' ){$count='0';}
-			
-		foreach my $key (sort keys %customservice){
-			if($customservice{$key}[0] eq $fwhostsettings{'CUST_SRV'}){
-				$port=$customservice{$key}[1];
-				$prot=$customservice{$key}[2];
-				$customservice{$key}[4]++;
-			}
-		}
-		&General::writehasharray("$configsrv", \%customservice );
 		my $key = &General::findhasharraykey (\%customservicegrp);
-		foreach my $i (0 .. 3) { $customservice{$key}[$i] = "";}
+		foreach my $i (0 .. 2) { $customservice{$key}[$i] = "";}
 		$customservicegrp{$key}[0] = $fwhostsettings{'SRVGRP_NAME'};
 		$customservicegrp{$key}[1] = $fwhostsettings{'SRVGRP_REMARK'};
 		$customservicegrp{$key}[2] = $fwhostsettings{'CUST_SRV'};
-		$customservicegrp{$key}[3] = $count;
 		&General::writehasharray("$configsrvgrp", \%customservicegrp );
 		$fwhostsettings{'updatesrvgrp'}='on';
 	}
@@ -993,7 +993,6 @@ if ($fwhostsettings{'ACTION'} eq 'delservice')
 	&General::readhasharray("$configsrv", \%customservice);
 	foreach my $key (keys %customservice) {
 		if($customservice{$key}[0] eq $fwhostsettings{'SRV_NAME'}){
-			#&deletefromgrp($customhost{$key}[0],$configgrp);
 			delete $customservice{$key};
 			&General::writehasharray("$configsrv", \%customservice);
 			last;
@@ -1027,7 +1026,7 @@ if ($fwhostsettings{'ACTION'} eq 'delgrpservice')
 	&General::readhasharray("$configsrvgrp", \%customservicegrp);
 	&General::readhasharray("$configsrv", \%customservice);
 	foreach my $key (keys %customservicegrp){
-		if($customservicegrp{$key}[0].",".$customservicegrp{$key}[1].",".$customservicegrp{$key}[2].",".$customservicegrp{$key}[3] eq $fwhostsettings{'delsrvfromgrp'})
+		if($customservicegrp{$key}[0].",".$customservicegrp{$key}[1].",".$customservicegrp{$key}[2] eq $fwhostsettings{'delsrvfromgrp'})
 		{
 			#decrease count from source service
 			foreach my $key1 (sort keys %customservice){
@@ -1678,10 +1677,15 @@ sub viewtablegrp
 sub viewtableservice
 {
 	my $count=0;
+	my $srvcount;
 	if(! -z "$configsrv")
 	{
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost services'});
 		&General::readhasharray("$configsrv", \%customservice);
+		&General::readhasharray("$configsrvgrp", \%customservicegrp);
+		&General::readhasharray("$fwconfigfwd", \%fwfwd);
+		&General::readhasharray("$fwconfiginp", \%fwinp);
+		&General::readhasharray("$fwconfigout", \%fwout);
 		print<<END;
 			<table width='100%' border='0' cellspacing='0'>
 			<tr><td align='center'><b>$Lang::tr{'fwhost srv_name'}</b></td><td align='center'><b>$Lang::tr{'fwhost prot'}</b></td><td align='center'><b>$Lang::tr{'fwhost port'}</b></td><td align='center'><b>ICMP</b></td><td align='center'><b>$Lang::tr{'fwhost used'}</b></td><td></td><td width='3%'></td></tr>
@@ -1695,17 +1699,19 @@ END
 			print<<END;
 			<td>$customservice{$key}[0]</td><td align='center'>$customservice{$key}[2]</td><td align='center'>$customservice{$key}[1]</td><td align='center'>
 END
+			#Neuer count
+			$srvcount=&getsrvcount($customservice{$key}[0]);
 			if($customservice{$key}[3] eq 'All ICMP-Types'){print $Lang::tr{'fwdfw all icmp'};}
 			elsif($customservice{$key}[3] ne 'BLANK'){print $customservice{$key}[3];}
 			print<<END;
-			</td><td align='center'>$customservice{$key}[4]x</td>
+			</td><td align='center'>$srvcount x</td>
 			<td width='1%'><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} /><input type='hidden' name='ACTION' value='editservice' />
 			<input type='hidden' name='SRV_NAME' value='$customservice{$key}[0]' />
 			<input type='hidden' name='SRV_PORT' value='$customservice{$key}[1]' />
 			<input type='hidden' name='PROT' value='$customservice{$key}[2]' />
 			<input type='hidden' name='ICMP' value='$customservice{$key}[3]' /></form></td>
 END
-			if ($customservice{$key}[4] eq '0')
+			if ($srvcount eq '0')
 			{
 				print"<td width='1%'><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delservice' /><input type='hidden' name='SRV_NAME' value='$customservice{$key}[0]'></td></tr></form>";
 			}else{
@@ -1725,14 +1731,20 @@ sub viewtableservicegrp
 	my $port;
 	my $protocol;
 	my $delflag;
+	my $grpcount=0;
 	if (! -z $configsrvgrp){
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust srvgrp'});
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		&General::readhasharray("$configsrv", \%customservice);
+		&General::readhasharray("$fwconfigfwd", \%fwfwd);
+		&General::readhasharray("$fwconfiginp", \%fwinp);
+		&General::readhasharray("$fwconfigout", \%fwout);
 		my $number= keys %customservicegrp;
 		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } sort { ncmp($customservicegrp{$a}[2],$customservicegrp{$b}[2]) }keys %customservicegrp){
 			$count++;
 			if ($helper ne $customservicegrp{$key}[0]){
+				#Get used groupcounter
+				$grpcount=&getsrvcount($customservicegrp{$key}[0]);
 				$delflag=0;
 				foreach my $key1 (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } sort { ncmp($customservicegrp{$a}[2],$customservicegrp{$b}[2]) } keys %customservicegrp){
 					if ($customservicegrp{$key}[0] eq $customservicegrp{$key1}[0])
@@ -1753,8 +1765,8 @@ sub viewtableservicegrp
 				if($count >=2){print"</table>";}
 				print "<br><b><u>$grpname</u></b>&nbsp; &nbsp; ";
 				print "<b>$Lang::tr{'remark'}:</b>&nbsp; $remark " if ($remark ne '');
-				print "&nbsp; <b>$Lang::tr{'used'}:</b> $customservicegrp{$key}[3]x";
-				if($customservicegrp{$key}[3] == '0')
+				print "&nbsp; <b>$Lang::tr{'used'}:</b> $grpcount x";
+				if($grpcount == '0')
 				{
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='ACTION' value='delservicegrp'></form>";
 				}
@@ -1792,9 +1804,9 @@ sub viewtableservicegrp
 			}
 			print"<input type='hidden' name='ACTION' value='delgrpservice'><input type='hidden' name='updatesrvgrp' value='$fwhostsettings{'updatesrvgrp'}'>";
 			if($protocol eq 'TCP' || $protocol eq 'UDP' || $protocol eq 'ICMP'){
-				print "<input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2],$customservicegrp{$key}[3]'></form></td></tr>";
+				print "<input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$customservicegrp{$key}[2]'></form></td></tr>";
 			}else{
-				print "<input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$protocol,$customservicegrp{$key}[3]'></form></td></tr>";
+				print "<input type='hidden' name='delsrvfromgrp' value='$grpname,$remark,$protocol'></form></td></tr>";
 			}
 			$helper=$customservicegrp{$key}[0];
 		}
@@ -1816,10 +1828,21 @@ sub checkname
 }
 sub checkgroup
 {
-	my %hash=%{(shift)};
+	&General::readhasharray("$configsrvgrp", \%customservicegrp );
 	my $name=shift;
-	foreach my $key (keys %hash) {
-		if($hash{$key}[0] eq $name){
+	foreach my $key (keys %customservicegrp) {
+		if($customservicegrp{$key}[0] eq $name){
+			return 0;
+		}
+	}
+	return 1;
+}
+sub checkservice
+{
+	&General::readhasharray("$configsrv", \%customservice );
+	my $name=shift;
+	foreach my $key (keys %customservice) {
+		if($customservice{$key}[0] eq $name){
 			return 0;
 		}
 	}
@@ -1906,6 +1929,36 @@ sub get_name
 	{
 		return "$network" if ($val eq $defaultNetworks{$network}{'NAME'});
 	}	
+}
+sub getsrvcount
+{
+	my $searchstring=shift;
+	my $srvcounter=0;
+	#Count services used in servicegroups
+	foreach my $key (keys %customservicegrp) {
+		if($customservicegrp{$key}[2] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	#Count services used in firewall - config
+	foreach my $key1 (keys %fwfwd) {
+		if($fwfwd{$key1}[15] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	#Count services used in firewall - input
+	foreach my $key2 (keys %fwinp) {
+		if($fwinp{$key2}[15] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	#Count services used in firewall - outgoing
+	foreach my $key3 (keys %fwout) {
+		if($fwout{$key3}[15] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	return $srvcounter;
 }
 sub deletefromgrp
 {

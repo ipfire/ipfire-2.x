@@ -251,17 +251,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 			}
 		}
 		if (!$errormessage){
-			&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
-			if ($fwdfwsettings{'nobase'} ne 'on'){
-				&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
-			}
-			if($fwdfwsettings{'oldusesrv'} eq '' &&  $fwdfwsettings{'USESRV'} eq 'ON'){
-				&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-			}elsif ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'oldusesrv'} eq 'ON') {
-				&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},0,0);
-			}elsif ($fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldgrp3b'} ne $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'updatefwrule'} eq 'on'){
-				&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-			}
 			if($fwdfwsettings{'nosave2'} ne 'on'){
 				&saverule(\%configinputfw,$configinput);
 			}
@@ -307,18 +296,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		}
 		#increase counters
 		if (!$errormessage){
-		 &checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
-		 &checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
-			if($fwdfwsettings{'oldusesrv'} eq '' &&  $fwdfwsettings{'USESRV'} eq 'ON'){
-				&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-			}elsif ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'oldusesrv'} eq 'ON') {
-				&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},0,0);
-			}elsif ($fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldgrp3b'} ne $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'updatefwrule'} eq 'on'){
-				&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-			}
-			if ($fwdfwsettings{'nobase'} eq 'on'){
-				&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-			}
 			if ($fwdfwsettings{'nosave2'} ne 'on'){
 				&saverule(\%configoutgoingfw,$configoutgoing);
 			}
@@ -364,18 +341,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		}
 		#increase counters
 		if (!$errormessage){
-			&checkcounter($fwdfwsettings{'oldgrp1a'},$fwdfwsettings{'oldgrp1b'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
-			&checkcounter($fwdfwsettings{'oldgrp2a'},$fwdfwsettings{'oldgrp2b'},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}});
-			if($fwdfwsettings{'oldusesrv'} eq '' &&  $fwdfwsettings{'USESRV'} eq 'ON'){
-				&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-			}elsif ($fwdfwsettings{'USESRV'} eq '' && $fwdfwsettings{'oldusesrv'} eq 'ON') {
-				&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},0,0);
-			}elsif ($fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldgrp3b'} ne $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'updatefwrule'} eq 'on'){
-				&checkcounter($fwdfwsettings{'oldgrp3a'},$fwdfwsettings{'oldgrp3b'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-			}
-			if ($fwdfwsettings{'nobase'} eq 'on'){
-				&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
-			}
 			if ($fwdfwsettings{'nosave2'} ne 'on'){
 				&saverule(\%configfwdfw,$configfwdfw);
 			}
@@ -497,8 +462,6 @@ sub changerule
 	$fwdfwsettings{'config'}=$oldchain;
 	$fwdfwsettings{'nobase'}='on';
 	&deleterule;
-	&checkcounter(0,0,$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}});
-	&checkcounter(0,0,$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}});
 }
 sub checksource
 {
@@ -933,34 +896,6 @@ sub checkrule
 		$fwdfwsettings{'ICMP_TYPES'}='';
 	}
 }
-sub checkcounter
-{
-	my ($base1,$val1,$base2,$val2) = @_;
-		
-	if($base1 eq 'cust_net_src' || $base1 eq 'cust_net_tgt'){
-		&dec_counter($confignet,\%customnetwork,$val1);
-	}elsif($base1 eq 'cust_host_src' || $base1 eq 'cust_host_tgt'){
-		&dec_counter($confighost,\%customhost,$val1);
-	}elsif($base1 eq 'cust_grp_src' || $base1 eq 'cust_grp_tgt'){
-		&dec_counter($configgrp,\%customgrp,$val1);
-	}elsif($base1 eq 'cust_srv'){
-		&dec_counter($configsrv,\%customservice,$val1);
-	}elsif($base1 eq 'cust_srvgrp'){
-		&dec_counter($configsrvgrp,\%customservicegrp,$val1);	
-	}
-
-	if($base2 eq 'cust_net_src' || $base2 eq 'cust_net_tgt'){
-		&inc_counter($confignet,\%customnetwork,$val2);
-	}elsif($base2 eq 'cust_host_src' || $base2 eq 'cust_host_tgt'){
-		&inc_counter($confighost,\%customhost,$val2);
-	}elsif($base2 eq 'cust_grp_src' || $base2 eq 'cust_grp_tgt'){
-		&inc_counter($configgrp,\%customgrp,$val2);
-	}elsif($base2 eq 'cust_srv'){
-		&inc_counter($configsrv,\%customservice,$val2);
-	}elsif($base2 eq 'cust_srvgrp'){
-		&inc_counter($configsrvgrp,\%customservicegrp,$val2);	
-	}
-}
 sub checkvpn
 {
 	my $ip=shift;
@@ -992,15 +927,6 @@ sub deleterule
 	my %delhash=();
 	&General::readhasharray($fwdfwsettings{'config'}, \%delhash);
 	foreach my $key (sort {$a <=> $b} keys %delhash){
-		if ($key == $fwdfwsettings{'key'}){
-			#check hosts/net and groups
-			&checkcounter($delhash{$key}[3],$delhash{$key}[4],,);
-			&checkcounter($delhash{$key}[5],$delhash{$key}[6],,);
-			#check services and groups
-			if ($delhash{$key}[11] eq 'ON'){
-				&checkcounter($delhash{$key}[14],$delhash{$key}[15],,);
-			}
-		}
 		if ($key >= $fwdfwsettings{'key'}) {
 			my $next = $key + 1;
 			if (exists $delhash{$next}) {
@@ -1032,21 +958,6 @@ sub disable_rule
 	}
 	&General::writehasharray("$configfwdfw", \%configfwdfw);
 	&General::firewall_config_changed();
-}
-sub dec_counter
-{
-	my $config=shift;
-	my %hash=%{(shift)};
-	my $val=shift;
-	my $pos;
-	&General::readhasharray($config, \%hash);
-	foreach my $key (sort { uc($hash{$a}[0]) cmp uc($hash{$b}[0]) }  keys %hash){
-		if($hash{$key}[0] eq $val){
-			$pos=$#{$hash{$key}};
-			$hash{$key}[$pos] = $hash{$key}[$pos]-1;
-		}
-	}
-	&General::writehasharray($config, \%hash);
 }
 sub error
 {
@@ -2364,15 +2275,14 @@ sub validremark
 		return 0;}
 	return 1;
 }
-
-sub viewtablerule {
+sub viewtablerule
+{
 	&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 
 	&viewtablenew(\%configfwdfw, $configfwdfw, $Lang::tr{'firewall rules'});
 	&viewtablenew(\%configinputfw, $configinput, $Lang::tr{'external access'});
 	&viewtablenew(\%configoutgoingfw, $configoutgoing, $Lang::tr{'outgoing firewall'});
 }
-
 sub viewtablenew
 {
 	my $hash=shift;
