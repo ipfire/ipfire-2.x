@@ -67,7 +67,7 @@ $(TARGET) :
 	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings fwlogs/ipsettings fwlogs/portsettings \
 	    isdn/settings mac/settings main/disable_nf_sip main/hosts main/routing main/settings net-traffic/settings optionsfw/settings outgoing/settings outgoing/rules \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
-	    ppp/settings-5 ppp/settings proxy/settings proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
+	    ppp/settings-5 ppp/settings proxy/settings proxy/squid.conf proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
 	    qos/tosconfig snort/settings tripwire/settings upnp/settings vpn/config vpn/settings vpn/ipsec.conf \
 	    vpn/ipsec.secrets vpn/caconfig wakeonlan/clients.conf wireless/config wireless/settings; do \
 	        touch $(CONFIG_ROOT)/$$i; \

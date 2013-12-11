@@ -144,6 +144,7 @@ var/ipfire/proxy
 #var/ipfire/proxy/calamaris
 #var/ipfire/proxy/calamaris/bin
 #var/ipfire/proxy/settings
+#var/ipfire/proxy/squid.conf
 var/ipfire/qos
 #var/ipfire/qos/bin
 #var/ipfire/qos/bin/RRD-func.pl
