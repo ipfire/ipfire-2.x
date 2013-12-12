@@ -6,13 +6,9 @@
 # See how we were called.
 case "$1" in
   new)
-	# set temporary random file
-	export RANDFILE=/root/.rnd
 	if [ ! -f /etc/httpd/server.key ]; then
 		echo "Generating https server key."
-		/usr/bin/openssl genrsa -rand \
-			/boot/vmlinuz:CONFIG_ROOT/ethernet/settings -out \
-			/etc/httpd/server.key 1024
+		/usr/bin/openssl genrsa -out /etc/httpd/server.key 1024
 	fi
 	echo "Generating CSR"
 	/bin/cat /etc/certparams | sed "s/HOSTNAME/`hostname -f`/" | /usr/bin/openssl \
@@ -21,9 +17,6 @@ case "$1" in
 	/usr/bin/openssl x509 -req -days 999999 -in \
 		/etc/httpd/server.csr -signkey /etc/httpd/server.key -out \
 		/etc/httpd/server.crt
-	# unset and remove random file
-	export -n RANDFILE
-	rm -f /root/.rnd
  	;;
   read)
 	if [ -f /etc/httpd/server.key -a -f /etc/httpd/server.crt -a -f /etc/httpd/server.csr ]; then
