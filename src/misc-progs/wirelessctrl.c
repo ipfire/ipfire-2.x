@@ -28,9 +28,9 @@ char command[STRING_SIZE];
 void exithandler(void) {
 	/* added comment mark to the drop rules to be able to collect the bytes by the collectd */
 	if (strlen(blue_dev) > 0) {
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -i %s -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
 		safe_system(command);
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -i %s -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
 		safe_system(command);
 	}
 
@@ -48,8 +48,8 @@ int main(void) {
 		exit(1);
 
 	/* flush wireless iptables */
-	safe_system("/sbin/iptables -F WIRELESSINPUT > /dev/null 2> /dev/null");
-	safe_system("/sbin/iptables -F WIRELESSFORWARD > /dev/null 2> /dev/null");
+	safe_system("/sbin/iptables --wait -F WIRELESSINPUT > /dev/null 2> /dev/null");
+	safe_system("/sbin/iptables --wait -F WIRELESSFORWARD > /dev/null 2> /dev/null");
 
 	memset(buffer, 0, STRING_SIZE);
 
@@ -106,21 +106,21 @@ int main(void) {
 			exit(1);
 		}
 
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -p tcp  ! --dport %s -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev, buffer);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -i %s -p tcp  ! --dport %s -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev, buffer);
 		safe_system(command);
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -p tcp  ! --dport %s -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev, buffer);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -i %s -p tcp  ! --dport %s -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev, buffer);
 		safe_system(command);
 	}
 
 	/* not allow blue to acces a samba server running on local fire*/
 	if (findkey(kv, "DROPSAMBA", buffer) && strcmp(buffer, "on") == 0) {
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -p tcp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -i %s -p tcp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
 		safe_system(command);
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -p tcp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -i %s -p tcp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
 		safe_system(command);
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -p udp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -i %s -p udp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessforward'", blue_dev);
 		safe_system(command);
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -p udp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -i %s -p udp -m multiport --ports 135,137,138,139,445,1025 -j DROP -m comment --comment 'DROP_Wirelessinput'", blue_dev);
 		safe_system(command);
 	}
 
@@ -135,23 +135,23 @@ int main(void) {
 		if (strcmp(enabled, "on") == 0) {
 			/* both specified, added security */
 			if ((strlen(macaddress) == 17) && (VALID_IP_AND_MASK(ipaddress))) {
-				snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -m mac --mac-source %s -s %s -i %s -j ACCEPT", macaddress, ipaddress, blue_dev);
+				snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -m mac --mac-source %s -s %s -i %s -j ACCEPT", macaddress, ipaddress, blue_dev);
 				safe_system(command);
-				snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -s %s -i %s -j RETURN", macaddress, ipaddress, blue_dev);
+				snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -m mac --mac-source %s -s %s -i %s -j RETURN", macaddress, ipaddress, blue_dev);
 				safe_system(command);
 			} else {
 				/* correctly formed mac address is 17 chars */
 				if (strlen(macaddress) == 17) {
-					snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -m mac --mac-source %s -i %s -j ACCEPT", macaddress, blue_dev);
+					snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -m mac --mac-source %s -i %s -j ACCEPT", macaddress, blue_dev);
 					safe_system(command);
-					snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -m mac --mac-source %s -i %s -j RETURN", macaddress, blue_dev);
+					snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -m mac --mac-source %s -i %s -j RETURN", macaddress, blue_dev);
 					safe_system(command);
 				}
 
 				if (VALID_IP_AND_MASK(ipaddress)) {
-					snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -s %s -i %s -j ACCEPT", ipaddress, blue_dev);
+					snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -s %s -i %s -j ACCEPT", ipaddress, blue_dev);
 					safe_system(command);
-					snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -s %s -i %s -j RETURN", ipaddress, blue_dev);
+					snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -s %s -i %s -j RETURN", ipaddress, blue_dev);
 					safe_system(command);
 				}
 			}
@@ -160,13 +160,13 @@ int main(void) {
 
 	/* with this rule you can disable the logging of the dropped wireless input packets*/
 	if (findkey(kv, "DROPWIRELESSINPUT", buffer) && strcmp(buffer, "on") == 0) {
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSINPUT -i %s -j LOG --log-prefix 'DROP_Wirelessinput'", blue_dev);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -i %s -j LOG --log-prefix 'DROP_Wirelessinput'", blue_dev);
 		safe_system(command);
 	}
 
 	/* with this rule you can disable the logging of the dropped wireless forward packets*/
 	if (findkey(kv, "DROPWIRELESSFORWARD", buffer) && strcmp(buffer, "on") == 0) {
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables -A WIRELESSFORWARD -i %s -j LOG --log-prefix 'DROP_Wirelessforward'", blue_dev);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -i %s -j LOG --log-prefix 'DROP_Wirelessforward'", blue_dev);
 		safe_system(command);
 	}
 
