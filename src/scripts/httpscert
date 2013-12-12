@@ -8,7 +8,7 @@ case "$1" in
   new)
 	if [ ! -f /etc/httpd/server.key ]; then
 		echo "Generating https server key."
-		/usr/bin/openssl genrsa -out /etc/httpd/server.key 1024
+		/usr/bin/openssl genrsa -out /etc/httpd/server.key 4096
 	fi
 	echo "Generating CSR"
 	/bin/cat /etc/certparams | sed "s/HOSTNAME/`hostname -f`/" | /usr/bin/openssl \
