@@ -76,6 +76,7 @@ lib/xtables
 #lib/xtables/libxt_RATEEST.so
 #lib/xtables/libxt_SECMARK.so
 #lib/xtables/libxt_SET.so
+#lib/xtables/libxt_SYNPROXY.so
 #lib/xtables/libxt_TCPMSS.so
 #lib/xtables/libxt_TCPOPTSTRIP.so
 #lib/xtables/libxt_TEE.so
