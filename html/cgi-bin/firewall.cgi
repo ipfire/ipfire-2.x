@@ -783,6 +783,10 @@ sub checkrule
 					}
 					$fwdfwsettings{'dnatport'}=join("|",@values);
 		}
+		#check if a rule with prot tcp or udp and ports is edited and now prot is "all", then delete all ports
+		if($fwdfwsettings{'PROT'} eq ''){
+			$fwdfwsettings{'dnatport'}='';
+		}
 	}
 	#check valid remark
 	if ($fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
