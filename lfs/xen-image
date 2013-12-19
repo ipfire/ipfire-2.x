@@ -28,6 +28,7 @@ VER = ipfire
 
 THISAPP    = xen-image
 TARGET     = $(DIR_INFO)/$(THISAPP)
+SUP_ARCH   = i586
 
 KERN_PACK = `grep "^PAK_VER " $(DIR_SRC)/lfs/linux | sed "s| ||g" | cut -d"=" -f2`
 
