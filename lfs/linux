@@ -172,6 +172,7 @@ ifeq "$(KCFG)" "-multi"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0003-ARM-dts-imx6qdl-wandboard-Add-support-for-i2c1.patch
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0001-i2c-imx-retry-on-NAK.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0002-i.MX6-Wandboard-add-CKO1-clock-output.patch
 
 	# Patchset for Compulab Utilite.
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/utilite/linux-3.10-compulab-utilite-support.patch
