@@ -268,7 +268,6 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 # save
 if ($fwhostsettings{'ACTION'} eq 'savenet' )
 {
-	my $count=0;
 	my $needrules=0;
 	if ($fwhostsettings{'orgname'} eq ''){$fwhostsettings{'orgname'}=$fwhostsettings{'HOSTNAME'};}
 	#check if all fields are set
@@ -342,7 +341,6 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			$customnetwork{$key}[1] = $fwhostsettings{'orgip'} ;
 			$customnetwork{$key}[2] = $fwhostsettings{'orgsub'};
 			$customnetwork{$key}[3] = $fwhostsettings{'orgnetremark'};
-			$customnetwork{$key}[4] = $fwhostsettings{'count'};
 			&General::writehasharray("$confignet", \%customnetwork);
 			undef %customnetwork;
 		} 			
@@ -353,7 +351,6 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 				if ($fwhostsettings{'update'} == '0'){
 					foreach my $key (keys %customnetwork) {
 						if($customnetwork{$key}[0] eq $fwhostsettings{'orgname'}){
-							$count=$customnetwork{$key}[4];
 							delete $customnetwork{$key};
 							last;
 						}
@@ -363,9 +360,8 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			#get count if actualize is 'on'
 			if($fwhostsettings{'actualize'} eq 'on'){
 				$fwhostsettings{'actualize'} = '';
-				$count=$fwhostsettings{'count'};
 				#check if we need to reload rules
-				if($fwhostsettings{'orgip'}  ne $fwhostsettings{'IP'}  && $count gt '0'){
+				if($fwhostsettings{'orgip'}  ne $fwhostsettings{'IP'}){
 					$needrules='on';
 				}
 				if ($fwhostsettings{'orgname'} ne $fwhostsettings{'HOSTNAME'}){
@@ -403,7 +399,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 				}
 			}					
 			my $key = &General::findhasharraykey (\%customnetwork);
-			foreach my $i (0 .. 4) { $customnetwork{$key}[$i] = "";}
+			foreach my $i (0 .. 3) { $customnetwork{$key}[$i] = "";}
 			$fwhostsettings{'SUBNET'}	= &General::iporsubtocidr($fwhostsettings{'SUBNET'});
 			$customnetwork{$key}[0] 	= $fwhostsettings{'HOSTNAME'};
 			#convert ip when leading '0' in byte
@@ -411,9 +407,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			$fwhostsettings{'IP'}		=&General::dec2ip($fwhostsettings{'IP'});
 			$customnetwork{$key}[1] 	= &General::getnetworkip($fwhostsettings{'IP'},$fwhostsettings{'SUBNET'}) ;
 			$customnetwork{$key}[2] 	= &General::iporsubtodec($fwhostsettings{'SUBNET'}) ;
-			if($fwhostsettings{'newnet'} eq 'on'){$count=0;}
 			$customnetwork{$key}[3] 	= $fwhostsettings{'NETREMARK'};
-			$customnetwork{$key}[4] 	= $count;
 			&General::writehasharray("$confignet", \%customnetwork);
 			$fwhostsettings{'IP'}=$fwhostsettings{'IP'}."/".&General::iporsubtodec($fwhostsettings{'SUBNET'});
 			undef %customnetwork;
@@ -435,7 +429,6 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 }
 if ($fwhostsettings{'ACTION'} eq 'savehost')
 {
-	my $count=0;
 	my $needrules=0;
 	if ($fwhostsettings{'orgname'} eq ''){$fwhostsettings{'orgname'}=$fwhostsettings{'HOSTNAME'};}
 	$fwhostsettings{'SUBNET'}='32';
@@ -483,7 +476,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 		if($fwhostsettings{'actualize'} eq 'on' && $fwhostsettings{'newhost'} ne 'on' && $errormessage){
 			$fwhostsettings{'actualize'} = '';
 			my $key = &General::findhasharraykey (\%customhost);
-			foreach my $i (0 .. 4) { $customhost{$key}[$i] = "";}
+			foreach my $i (0 .. 3) { $customhost{$key}[$i] = "";}
 			$customhost{$key}[0] = $fwhostsettings{'orgname'} ;
 			$customhost{$key}[1] = $fwhostsettings{'type'} ;
 			if($customhost{$key}[1] eq 'ip'){
@@ -492,15 +485,13 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 				$customhost{$key}[2] = $fwhostsettings{'orgip'};
 			}
 			$customhost{$key}[3] = $fwhostsettings{'orgremark'};
-			$customhost{$key}[4] = $fwhostsettings{'count'};
 			&General::writehasharray("$confighost", \%customhost);
 			undef %customhost;
 		} 
 		if (!$errormessage){
 			#get count if host was edited
 			if($fwhostsettings{'actualize'} eq 'on'){
-				$count=$fwhostsettings{'count'};
-				if($fwhostsettings{'orgip'} ne $fwhostsettings{'IP'} && $count gt '0' ){
+				if($fwhostsettings{'orgip'} ne $fwhostsettings{'IP'}){
 					$needrules='on';
 				}
 				if($fwhostsettings{'orgname'} ne $fwhostsettings{'HOSTNAME'}){
@@ -537,7 +528,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 				}
 			}
 			my $key = &General::findhasharraykey (\%customhost);
-			foreach my $i (0 .. 4) { $customhost{$key}[$i] = "";}
+			foreach my $i (0 .. 3) { $customhost{$key}[$i] = "";}
 			$customhost{$key}[0] = $fwhostsettings{'HOSTNAME'} ;
 			$customhost{$key}[1] = $fwhostsettings{'type'} ;
 			if ($fwhostsettings{'type'} eq 'ip'){
@@ -548,9 +539,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			}else{
 				$customhost{$key}[2] = $fwhostsettings{'IP'};
 			}
-			if($fwhostsettings{'newhost'} eq 'on'){$count=0;}
 			$customhost{$key}[3] = $fwhostsettings{'HOSTREMARK'};
-			$customhost{$key}[4] =$count;
 			&General::writehasharray("$confighost", \%customhost);
 			undef %customhost;
 			$fwhostsettings{'HOSTNAME'}='';
@@ -571,7 +560,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 }
 if ($fwhostsettings{'ACTION'} eq 'savegrp')
 {
-	my $grp=$fwhostsettings{'grp_name'};;
+	my $grp=$fwhostsettings{'grp_name'};
 	my $rem=$fwhostsettings{'remark'};
 	my $count;
 	my $type;
@@ -581,6 +570,9 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 	&General::readhasharray("$configgrp", \%customgrp);
 	&General::readhasharray("$confignet", \%customnetwork);
 	&General::readhasharray("$confighost", \%customhost);
+	&General::readhasharray("$fwconfigfwd", \%fwfwd);
+	&General::readhasharray("$fwconfiginp", \%fwinp);
+	&General::readhasharray("$fwconfigout", \%fwout);
 	#check name
 	if (!&validhostname($grp)){$errormessage.=$Lang::tr{'fwhost err name'};}
 	#check existing name
@@ -685,17 +677,6 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		}
 		&General::writehasharray("$configgrp", \%customgrp);
 		&General::readhasharray("$configgrp", \%customgrp);
-		#get count used
-		foreach my $key (keys %customgrp)
-		{
-			if($customgrp{$key}[0] eq $grp)
-			{
-				$count=$customgrp{$key}[4];
-				last;
-			}
-		}
-		if ($count eq '' ){$count='0';}
-		
 		#create array with new lines
 		foreach my $line (@target){
 			push (@newgrp,"$grp,$rem,$line");
@@ -703,36 +684,21 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		#append new entries
 		my $key = &General::findhasharraykey (\%customgrp);
 		foreach my $line (@newgrp){
-			foreach my $i (0 .. 4) { $customgrp{$key}[$i] = "";}
+			foreach my $i (0 .. 3) { $customgrp{$key}[$i] = "";}
 			my ($a,$b,$c,$d) = split (",",$line);
 			$customgrp{$key}[0] = $a;
 			$customgrp{$key}[1] = $b;
 			$customgrp{$key}[2] = $c;
 			$customgrp{$key}[3] = $type;
-			$customgrp{$key}[4] = $count;
 		}
 		&General::writehasharray("$configgrp", \%customgrp);
 		#update counter in Host/Net
-		if($updcounter eq 'net'){
-			foreach my $key (keys %customnetwork) {
-				if($customnetwork{$key}[0] eq $fwhostsettings{'CUST_SRC_NET'}){
-					$customnetwork{$key}[4] = $customnetwork{$key}[4]+1;
-					last;
-				}
-			}
-			&General::writehasharray("$confignet", \%customnetwork);
-		}elsif($updcounter eq 'host'){
-			foreach my $key (keys %customhost) {
-				if ($customhost{$key}[0] eq $fwhostsettings{'CUST_SRC_HOST'}){
-					$customhost{$key}[4]=$customhost{$key}[4]+1;
-				}
-			}
-			&General::writehasharray("$confighost", \%customhost);
-		}
 		$fwhostsettings{'update'}='on';
 	}
 		#check if ruleupdate is needed
-		if($count > 0 )
+		my $netgrpcount=0;
+		$netgrpcount=&getnetcount($grp);
+		if($netgrpcount > 0 )
 		{
 			&General::firewall_config_changed();
 		}
@@ -1450,6 +1416,10 @@ sub viewtablenet
 	if(! -z $confignet){
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust net'});
 		&General::readhasharray("$confignet", \%customnetwork);
+		&General::readhasharray("$configgrp", \%customgrp);
+		&General::readhasharray("$fwconfigfwd", \%fwfwd);
+		&General::readhasharray("$fwconfiginp", \%fwinp);
+		&General::readhasharray("$fwconfigout", \%fwout);
 		if (!keys %customnetwork) 
 		{ 
 			print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
@@ -1471,7 +1441,8 @@ END
 				print" <tr bgcolor='$color{'color20'}'>";
 			}
 			my $colnet="$customnetwork{$key}[1]/".&General::subtocidr($customnetwork{$key}[2]);
-			print"<td width='20%'><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center'>".&Header::colorize($colnet)."</td><td width='40%'>$customnetwork{$key}[3]</td><td align='center'>$customnetwork{$key}[4]x</td>";
+			my $netcount=&getnetcount($customnetwork{$key}[0]);
+			print"<td width='20%'><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center'>".&Header::colorize($colnet)."</td><td width='40%'>$customnetwork{$key}[3]</td><td align='center'>$netcount x</td>";
 			print<<END;
 			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='editnet'>
@@ -1481,7 +1452,7 @@ END
 			<input type='hidden' name='NETREMARK' value='$customnetwork{$key}[3]' />
 			</td></form>
 END
-			if($customnetwork{$key}[4] == '0')
+			if($netcount == '0')
 			{
 				print"<td width='1%'><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delnet' /><input type='hidden' name='key' value='$customnetwork{$key}[0]' /></td></form></tr>";
 			}else{
@@ -1549,6 +1520,10 @@ sub viewtablehost
 		&General::readhasharray("$confighost", \%customhost);
 		&General::readhasharray("$configccdnet", \%ccdnet);
 		&General::readhasharray("$configccdhost", \%ccdhost);
+		&General::readhasharray("$fwconfigfwd", \%fwfwd);
+		&General::readhasharray("$fwconfiginp", \%fwinp);
+		&General::readhasharray("$fwconfigout", \%fwout);
+		&General::readhasharray("$configgrp", \%customgrp);
 		if (!keys %customhost) 
 		{ 
 			print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
@@ -1566,7 +1541,9 @@ END
 			else{            print" <tr bgcolor='$color{'color20'}'>";}
 			my ($ip,$sub)=split(/\//,$customhost{$key}[2]);
 			$customhost{$key}[4]=~s/\s+//g;
-			print"<td width='20%'>$customhost{$key}[0]</td><td width='20%' align='center' ".&getcolor($ip).">".&Header::colorize($ip)."</td><td width='50%' align='left'>$customhost{$key}[3]</td><td align='center'>$customhost{$key}[4]x</td>";
+			my $hostcount=0;
+			$hostcount=&gethostcount($customhost{$key}[0]);
+			print"<td width='20%'>$customhost{$key}[0]</td><td width='20%' align='center' ".&getcolor($ip).">".&Header::colorize($ip)."</td><td width='50%' align='left'>$customhost{$key}[3]</td><td align='center'>$hostcount x</td>";
 			print<<END;
 			<td width='1%'><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='edithost' />
@@ -1576,7 +1553,7 @@ END
 			<input type='hidden' name='HOSTREMARK' value='$customhost{$key}[3]' />
 			</form></td>
 END
-			if($customhost{$key}[4] == '0')
+			if($hostcount == '0')
 			{
 				print"<td width='1%'><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delhost' /><input type='hidden' name='key' value='$customhost{$key}[0]' /></td></form></tr>";
 			}else{
@@ -1598,6 +1575,9 @@ sub viewtablegrp
 	&General::readhasharray("$configccdnet", \%ccdnet);
 	&General::readhasharray("$confighost", \%customhost);
 	&General::readhasharray("$confignet", \%customnetwork);
+	&General::readhasharray("$fwconfigfwd", \%fwfwd);
+	&General::readhasharray("$fwconfiginp", \%fwinp);
+	&General::readhasharray("$fwconfigout", \%fwout);
 	my @grp=();
 	my $helper='';
 	my $count=1;
@@ -1606,7 +1586,7 @@ sub viewtablegrp
 	my $number;
 	my $delflag;
 	if (!keys %customgrp) 
-	{ 
+	{
 		print "<center><b>$Lang::tr{'fwhost err emptytable'}</b>";
 	}else{
 		foreach my $key (sort { ncmp($customgrp{$a}[0],$customgrp{$b}[0]) } sort { ncmp($customgrp{$a}[2],$customgrp{$b}[2]) } keys %customgrp){
@@ -1629,8 +1609,9 @@ sub viewtablegrp
 				if($count gt 1){ print"</table>";}
 				print "<br><b><u>$grpname</u></b>&nbsp; &nbsp;";
 				print " <b>$Lang::tr{'remark'}:</b>&nbsp $remark &nbsp " if ($remark ne '');
-				print "<b>$Lang::tr{'used'}:</b> $customgrp{$key}[4]x";
-				if($customgrp{$key}[4] == '0')
+				my $netgrpcount=&getnetcount($grpname);
+				print "<b>$Lang::tr{'used'}:</b> $netgrpcount x";
+				if($netgrpcount == '0')
 				{
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='ACTION' value='delgrp'></form>";
 				}
@@ -1660,7 +1641,7 @@ sub viewtablegrp
 				$ip="$colip/".&General::subtocidr($colsub) if ($colsub);
 				print"<td align='center' ".&getcolor($colip).">".&Header::colorize($ip)."</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";
 			}
-			if ($delflag > '1' && $ip ne ''){
+			if ($delflag > 1 && $ip ne ''){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}
 			print"<input type='hidden' name='ACTION' value='deletegrphost'><input type='hidden' name='grpcnt' value='$customgrp{$key}[4]'><input type='hidden' name='update' value='$fwhostsettings{'update'}'><input type='hidden' name='delhost' value='$grpname,$remark,$customgrp{$key}[2],$customgrp{$key}[3]'></form></td></tr>";
@@ -1929,6 +1910,84 @@ sub get_name
 	{
 		return "$network" if ($val eq $defaultNetworks{$network}{'NAME'});
 	}	
+}
+sub gethostcount
+{
+	my $searchstring=shift;
+	my $srvcounter=0;
+	#Count services used in servicegroups
+	foreach my $key (keys %customgrp) {
+		if($customgrp{$key}[2] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	#Count services used in firewall - config
+	foreach my $key1 (keys %fwfwd) {
+		if($fwfwd{$key1}[4] eq $searchstring){
+			$srvcounter++;
+		}
+		if($fwfwd{$key1}[6] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	#Count services used in firewall - input
+	foreach my $key2 (keys %fwinp) {
+		if($fwinp{$key2}[4] eq $searchstring){
+			$srvcounter++;
+		}
+		if($fwinp{$key2}[6] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	#Count services used in firewall - outgoing
+	foreach my $key3 (keys %fwout) {
+		if($fwout{$key3}[4] eq $searchstring){
+			$srvcounter++;
+		}
+		if($fwout{$key3}[6] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	return $srvcounter;
+}
+sub getnetcount
+{
+	my $searchstring=shift;
+	my $srvcounter=0;
+	#Count services used in servicegroups
+	foreach my $key (keys %customgrp) {
+		if($customgrp{$key}[2] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	#Count services used in firewall - config
+	foreach my $key1 (keys %fwfwd) {
+		if($fwfwd{$key1}[4] eq $searchstring){
+			$srvcounter++;
+		}
+		if($fwfwd{$key1}[6] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	#Count services used in firewall - input
+	foreach my $key2 (keys %fwinp) {
+		if($fwinp{$key2}[4] eq $searchstring){
+			$srvcounter++;
+		}
+		if($fwinp{$key2}[6] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	#Count services used in firewall - outgoing
+	foreach my $key3 (keys %fwout) {
+		if($fwout{$key3}[4] eq $searchstring){
+			$srvcounter++;
+		}
+		if($fwout{$key3}[6] eq $searchstring){
+			$srvcounter++;
+		}
+	}
+	return $srvcounter;
 }
 sub getsrvcount
 {
