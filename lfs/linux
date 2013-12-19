@@ -176,6 +176,12 @@ ifeq "$(KCFG)" "-multi"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0002-i.MX6-Wandboard-add-CKO1-clock-output.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0003-thermal-add-imx-thermal-driver-support.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0004-ARM-i.MX6-Wandboard-add-wifi-bt-rfkill-driver.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0005-Add-IMX6Q-AHCI-support.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0006-imx-Add-IMX53-AHCI-support.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0007-imx6-enable-sata-clk-if-SATA_AHCI_PLATFORM.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0008-ARM-imx6q-update-the-sata-bits-definitions-of-gpr13.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0009-ahci_imx-add-ahci-sata-support-on-imx-platforms.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0010-ahci_imx-depend-on-CONFIG_MFD_SYSCON.patch
 
 	# Patchset for Compulab Utilite.
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/utilite/linux-3.10-compulab-utilite-support.patch
