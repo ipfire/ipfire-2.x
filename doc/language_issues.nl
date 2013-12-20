@@ -592,6 +592,7 @@ WARNING: untranslated string: fwdfw delete
 WARNING: untranslated string: fwdfw dnat
 WARNING: untranslated string: fwdfw dnat error
 WARNING: untranslated string: fwdfw dnat porterr
+WARNING: untranslated string: fwdfw dnat porterr2
 WARNING: untranslated string: fwdfw edit
 WARNING: untranslated string: fwdfw err nosrc
 WARNING: untranslated string: fwdfw err nosrcip

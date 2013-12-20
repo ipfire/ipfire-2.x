@@ -930,6 +930,7 @@
 'fwdfw dnat' => 'Destination-NAT (Port-Weiterleitung)',
 'fwdfw dnat error' => 'Für Destination-NAT muss ein einzelner Host als Ziel ausgewählt werden. Gruppen oder Netzwerke sind nicht erlaubt',
 'fwdfw dnat porterr' => 'Für NAT-Regeln muss ein einzelner Port oder Portbereich angegeben werden',
+'fwdfw dnat porterr2' => 'Externer Port (NAT) darf nur angegeben werden, wenn ein Ziel-Port definiert ist.',
 'fwdfw edit' => 'Bearbeiten',
 'fwdfw err nosrc' => 'Keine Quelle ausgewählt',
 'fwdfw err nosrcip' => 'Bitte Quell-IP-Adresse angeben',

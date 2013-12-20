@@ -106,6 +106,7 @@
 < fwdfw dnat
 < fwdfw dnat error
 < fwdfw dnat porterr
+< fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
 < fwdfw err nosrc
@@ -518,6 +519,7 @@
 < fwdfw dnat
 < fwdfw dnat error
 < fwdfw dnat porterr
+< fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
 < fwdfw err nosrc
@@ -914,6 +916,7 @@
 < fwdfw dnat
 < fwdfw dnat error
 < fwdfw dnat porterr
+< fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
 < fwdfw err nosrc
@@ -1299,6 +1302,7 @@
 < fwdfw dnat
 < fwdfw dnat error
 < fwdfw dnat porterr
+< fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
 < fwdfw err nosrc

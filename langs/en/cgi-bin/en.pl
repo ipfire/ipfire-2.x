@@ -955,6 +955,7 @@
 'fwdfw dnat' => 'Destination NAT (Port forwarding)',
 'fwdfw dnat error' => 'You have to select a single host for DNAT. Groups or networks are not allowed.',
 'fwdfw dnat porterr' => 'You have to select a single port or portrange (tcp/udp) for NAT',
+'fwdfw dnat porterr2' => 'Cannot use external port (NAT) when no destination port is defined.',
 'fwdfw edit' => 'Edit',
 'fwdfw err nosrc' => 'No source selected.',
 'fwdfw err nosrcip' => 'Please provide a source IP address.',

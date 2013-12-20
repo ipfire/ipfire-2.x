@@ -729,8 +729,11 @@ sub checkrule
 {
 	#check valid port for NAT
 	if($fwdfwsettings{'USE_NAT'} eq 'ON'){
-		#if no port is given in nat area, take target host port
+		#if no dest port is given in nat area, take target host port
 		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'grp3'} eq 'TGT_PORT' && $fwdfwsettings{'dnatport'} eq ''){$fwdfwsettings{'dnatport'}=$fwdfwsettings{'TGT_PORT'};}
+		if($fwdfwsettings{'TGT_PORT'} eq ''){
+			$errormessage=$Lang::tr{'fwdfw dnat porterr2'};
+		}
 		#check if port given in nat area is a single valid port or portrange
 		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'TGT_PORT'} ne '' && !&check_natport($fwdfwsettings{'dnatport'})){
 			$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
