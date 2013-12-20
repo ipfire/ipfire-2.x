@@ -111,6 +111,12 @@ print<<END;
 		var protocol = \$("#protocol").val();
 		\$("#protocol").change(update_protocol);
 		update_protocol();
+		// Automatically select radio buttons when corresponding
+		// dropdown menu changes.
+		\$("select").change(function() {
+			var id = \$(this).attr("name");
+			\$('#' + id).prop("checked", true);
+		});
 	});
 </script>
 END
