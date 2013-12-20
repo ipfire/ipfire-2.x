@@ -1100,6 +1100,52 @@ if ($fwhostsettings{'ACTION'} eq 'changesrvgrpremark')
 	&addservicegrp;
 	&viewtableservicegrp;
 }
+if ($fwhostsettings{'ACTION'} eq 'changesrvgrpname')
+{
+	&General::readhasharray("$configsrvgrp", \%customservicegrp );
+	if ($fwhostsettings{'oldsrvgrpname'} ne $fwhostsettings{'srvgrp'}){
+		#Check new groupname
+		if (!&validhostname($fwhostsettings{'srvgrp'})){
+			$errormessage.=$Lang::tr{'fwhost err name'}."<br>";
+		}
+		if (!$errormessage){
+			#Rename group in customservicegroup
+			foreach my $key (keys %customservicegrp) {
+				if($customservicegrp{$key}[0] eq $fwhostsettings{'oldsrvgrpname'}){
+					$customservicegrp{$key}[0]=$fwhostsettings{'srvgrp'};
+				}
+			}
+			&General::writehasharray("$configsrvgrp", \%customservicegrp );
+			#change name in FW Rules
+			&changenameinfw($fwhostsettings{'oldsrvgrpname'},$fwhostsettings{'srvgrp'},15);
+		}
+	}
+	&addservicegrp;
+	&viewtableservicegrp;
+}
+if ($fwhostsettings{'ACTION'} eq 'changegrpname')
+{
+	&General::readhasharray("$configgrp", \%customgrp );
+	if ($fwhostsettings{'oldgrpname'} ne $fwhostsettings{'grp'}){
+		#Check new groupname
+		if (!&validhostname($fwhostsettings{'grp'})){
+			$errormessage.=$Lang::tr{'fwhost err name'}."<br>";
+		}
+		if (!$errormessage){
+			#Rename group in customservicegroup
+			foreach my $key (keys %customgrp) {
+				if($customgrp{$key}[0] eq $fwhostsettings{'oldgrpname'}){
+					$customgrp{$key}[0]=$fwhostsettings{'grp'};
+				}
+			}
+			&General::writehasharray("$configgrp", \%customgrp );
+			#change name in FW Rules
+			&changenameinfw($fwhostsettings{'oldgrpname'},$fwhostsettings{'grp'},6);
+		}
+	}
+	&addgrp;
+	&viewtablegrp;
+}
 ###  VIEW  ###
 if($fwhostsettings{'ACTION'} eq '')
 {
@@ -1187,6 +1233,7 @@ sub addgrp
 	$checked{'check1'}{'on'} = '';
 	$checked{'grp2'}{$fwhostsettings{'grp2'}} = 'CHECKED';
 	$fwhostsettings{'oldremark'}=$fwhostsettings{'remark'};
+	$fwhostsettings{'oldgrpname'}=$fwhostsettings{'grp_name'};
 	my $grp=$fwhostsettings{'grp_name'};
 	my $rem=$fwhostsettings{'remark'};
 		if ($fwhostsettings{'update'} eq ''){   
@@ -1199,8 +1246,8 @@ END
 		}else{
 			print<<END;
 			<table width='100%' border='0'><form method='post' style='display:inline'>
-			<tr><td nowrap='nowrap' width='12%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='TEXT' name='grp'  value='$fwhostsettings{'grp_name'}' readonly ></td><td></td></tr>
-			<tr><td>$Lang::tr{'remark'}:</td><td><input type='TEXT' name='newrem' size='45' value='$fwhostsettings{'remark'}' style='width:98%'></td><td align='right'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldrem' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='ACTION' value='changegrpremark' ></td></tr></table></form>
+			<tr><td nowrap='nowrap' width='12%'>$Lang::tr{'fwhost addgrpname'}</td><td width='20%'><input type='TEXT' name='grp'  value='$fwhostsettings{'grp_name'}' ></td><td><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldgrpname' value='$fwhostsettings{'oldgrpname'}'><input type='hidden' name='ACTION' value='changegrpname'></td><td></td></form></tr>
+			<tr><form method='post' style='display:inline'><td>$Lang::tr{'remark'}:</td><td colspan='2'><input type='TEXT' name='newrem' size='45' value='$fwhostsettings{'remark'}' style='width:98%'></td><td align='right'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldrem' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='ACTION' value='changegrpremark' ></td></tr></table></form>
 			<hr>
 END
 		}
@@ -1364,6 +1411,7 @@ sub addservicegrp
 	&showmenu;
 	&Header::openbox('100%', 'left', $Lang::tr{'fwhost addservicegrp'});
 	$fwhostsettings{'oldsrvgrpremark'}=$fwhostsettings{'SRVGRP_REMARK'};
+	$fwhostsettings{'oldsrvgrpname'}=$fwhostsettings{'SRVGRP_NAME'};
 	if ($fwhostsettings{'updatesrvgrp'} eq ''){
 		print<<END;
 		<table width='100%' border='0'><form method='post'>
@@ -1375,9 +1423,9 @@ END
 	}else{
 		print<<END;
 		<table width='100%' border='0'><form method='post' style='display:inline'>
-		<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td><input type='text' name='srvgrp' value='$fwhostsettings{'SRVGRP_NAME'}' readonly  size='14'></td><td width='3%'></td></tr>
-		<tr><td width='10%'>$Lang::tr{'remark'}:</td><td><input type='text' name='newsrvrem'  value='$fwhostsettings{'SRVGRP_REMARK'}' style='width:98%;'></td><td align='right'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldsrvrem' value='$fwhostsettings{'oldsrvgrpremark'}'><input type='hidden' name='ACTION' value='changesrvgrpremark' ></td></tr>
-		<tr><td colspan='3'><br><hr></td></td></tr>
+		<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td width='20%'><input type='text' name='srvgrp' value='$fwhostsettings{'SRVGRP_NAME'}' size='14'></td><td align='left'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldsrvgrpname' value='$fwhostsettings{'oldsrvgrpname'}'><input type='hidden' name='ACTION' value='changesrvgrpname'></td><td width='3%'></td></form></tr>
+		<tr><form method='post'><td width='10%'>$Lang::tr{'remark'}:</td><td colspan='2'><input type='text' name='newsrvrem'  value='$fwhostsettings{'SRVGRP_REMARK'}' style='width:98%;'></td><td align='right'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldsrvrem' value='$fwhostsettings{'oldsrvgrpremark'}'><input type='hidden' name='ACTION' value='changesrvgrpremark' ></td></tr>
+		<tr><td colspan='4'><br><hr></td></td></tr>
 		</table></form>
 END
 	}
@@ -2282,6 +2330,36 @@ sub decreaseservice
 	}
 	&General::writehasharray("$configsrv", \%customservice);
 	
+}
+sub changenameinfw
+{
+	my $old=shift;
+	my $new=shift;
+	my $fld=shift;
+	&General::readhasharray("$fwconfigfwd", \%fwfwd);
+	&General::readhasharray("$fwconfiginp", \%fwinp);
+	&General::readhasharray("$fwconfigout", \%fwout);
+	#Rename group in Firewall-CONFIG
+	foreach my $key1 (keys %fwfwd) {
+		if($fwfwd{$key1}[$fld] eq $old){
+			$fwfwd{$key1}[$fld]=$new;
+		}
+	}
+	&General::writehasharray("$fwconfigfwd", \%fwfwd );
+	#Rename group in Firewall-INPUT
+	foreach my $key2 (keys %fwinp) {
+		if($fwinp{$key2}[$fld] eq $old){
+			$fwinp{$key2}[$fld]=$new;
+		}
+	}
+	&General::writehasharray("$fwconfiginp", \%fwinp );
+	#Rename group in Firewall-OUTGOING
+	foreach my $key3 (keys %fwout) {
+		if($fwout{$key3}[$fld] eq $old){
+			$fwout{$key3}[$fld]=$new;
+		}
+	}
+	&General::writehasharray("$fwconfigout", \%fwout );
 }
 sub checkports
 {
