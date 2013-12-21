@@ -34,12 +34,10 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ifeq "$(MACHINE)" "i586"
 	CONFIGURE_OPTIONS = \
-		--enable-padlock \
-		--enable-rdrand
+		--enable-padlock
 else
 	CONFIGURE_OPTIONS = \
-		--disable-padlock \
-		--disable-rdrand
+		--disable-padlock
 endif
 
 ###############################################################################

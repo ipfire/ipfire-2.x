@@ -2,5 +2,6 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/dnsforward.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
+usr/local/bin/httpscert
 var/ipfire/header.pl
 var/ipfire/langs
