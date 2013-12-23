@@ -53,10 +53,10 @@ rm -f /etc/rc.d/init.d/networking/red.up/26-xtaccess
 rm -f /srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
 
 # Convert firewall configuration
-/usr/bin/convert-xtaccess
-/usr/bin/convert-outgoingfw
-/usr/bin/convert-portfw
-/usr/bin/convert-dmz
+/usr/sbin/convert-xtaccess
+/usr/sbin/convert-outgoingfw
+/usr/sbin/convert-portfw
+/usr/sbin/convert-dmz
 
 # Remove old firewall configuration files
 rm -rf /var/ipfire/{dmzholes,portfw,outgoing,xtaccess}
