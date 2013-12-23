@@ -1,6 +1,7 @@
 etc/system-release
 etc/issue
 etc/rc.d/init.d/network
+srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/netinternal.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
