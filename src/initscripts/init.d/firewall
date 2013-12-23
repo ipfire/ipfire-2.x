@@ -99,7 +99,7 @@ iptables_init() {
 
 	# Block OpenVPN transfer networks
 	/sbin/iptables -N OVPNBLOCK
-	for i in INPUT FORWARD OUTPUT; do
+	for i in INPUT FORWARD; do
 		/sbin/iptables -A ${i} -j OVPNBLOCK
 	done
 

@@ -1,0 +1,25 @@
+From 41cc1967181a833c3c5af30682ea85dd01c28ff4 Mon Sep 17 00:00:00 2001
+From: Robert Nelson <robertcnelson@gmail.com>
+Date: Tue, 22 Jan 2013 22:21:03 -0600
+Subject: [PATCH 3/5] imx: Add IMX53 AHCI support
+
+Adds ahci_platform bits to make AHCI work on mx53 qsb board.
+
+Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
+---
+
+diff --git a/drivers/ata/ahci_platform.c b/drivers/ata/ahci_platform.c
+index d324cdf..b01eeca 100644
+--- a/drivers/ata/ahci_platform.c
++++ b/drivers/ata/ahci_platform.c
+@@ -95,6 +95,7 @@ static struct scsi_host_template ahci_platform_sht = {
+ 
+ static const struct of_device_id ahci_of_match[] = {
+ 	{ .compatible = "calxeda,hb-ahci",  .data = &ahci_devtype[AHCI],},
++	{ .compatible = "fsl,imx53-ahci",   .data = &ahci_devtype[IMX53_AHCI],},
+ 	{ .compatible = "fsl,imx6q-ahci",   .data = &ahci_devtype[IMX6Q_AHCI],},
+ 	{ .compatible = "snps,spear-ahci", },
+ 	{},
+-- 
+1.7.10.4
+

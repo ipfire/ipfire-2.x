@@ -1,0 +1,33 @@
+From aefbac1e9377311240656ae5061346acb8612e1b Mon Sep 17 00:00:00 2001
+From: Michael Panetta <panetta.mike@gmail.com>
+Date: Tue, 6 Aug 2013 21:32:50 -0400
+Subject: [PATCH 3/5] ARM: dts: imx6qdl-wandboard: Add support for i2c1.
+
+This patch adds support for i2c1 to the wandboard common dtsi file.
+
+Signed-off-by: Michael Panetta <panetta.mike@gmail.com>
+---
+ arch/arm/boot/dts/imx6qdl-wandboard.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx6qdl-wandboard.dtsi b/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
+index a302e95..d429c0b 100644
+--- a/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
+@@ -58,6 +58,13 @@
+ 	status = "okay";
+ };
+ 
++&i2c1 {
++	clock-frequency = <100000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_i2c1_1>;
++	status = "okay";
++};
++
+ &i2c2 {
+ 	clock-frequency = <100000>;
+ 	pinctrl-names = "default";
+-- 
+1.8.4.rc3
+
