@@ -6,7 +6,7 @@
 #
 # Authors     : Arne Fitzenreiter - arne_f@ipfire.org
 #
-# Version     : 1.02
+# Version     : 1.03
 #
 # Notes       :
 #
@@ -37,7 +37,7 @@ case "${1}" in
 		fi
 
 		boot_mesg "Change Partition ${DRV}3 to all free space ..."
-		echo -e 'd\n3\nn\np\n3\n\n\nw\nq\n' | fdisk ${DRV}
+		echo -e ',+' | sfdisk --no-reread -N3 ${DRV} 2>/dev/null
 
 		# Erase symlink, it should run only once
 		rm -f /etc/rc.d/rcsysinit.d/S25partresize
