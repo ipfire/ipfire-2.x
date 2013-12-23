@@ -52,6 +52,11 @@ rm -f /etc/rc.d/init.d/networking/red.up/26-xtaccess
 # Remove old CGI files
 rm -f /srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
 
+# Generate chains for new firewall
+/sbin/iptables -N INPUTFW
+/sbin/iptables -N FORWARDFW
+/sbin/iptables -N OUTGOINGFW
+
 # Convert firewall configuration
 /usr/sbin/convert-xtaccess
 /usr/sbin/convert-outgoingfw
