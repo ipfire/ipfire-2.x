@@ -28,6 +28,7 @@
 ###############################################################################
 
 require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/lang.pl";
 
 use Socket;
 use File::Path;
@@ -66,6 +67,7 @@ my @active= ('Aktiv', 'aktiv', 'Active', 'Activo', 'Actif', 'Actief', 'Aktywne',
 &General::readhash("${General::swroot}/ovpn/settings", \%ovpnSettings);
 &General::readhash($outfwsettings,\%outsettings);
 &General::readhash("${General::swroot}/ethernet/settings", \%ownnet);
+
 #ONLY RUN if /var/ipfire/outgoing exists
 if ( -d "/var/ipfire/outgoing"){
 	&process_groups;
@@ -164,6 +166,7 @@ sub new_hostgrp
 	my $name; #"converted"
 	my $name2;
 	my $name3; #custom host/custom net
+	my $mac2;
 	foreach my $adr (@hostarray){
 		if($run eq 'ip'){
 			my ($ip,$type) 			= split(",",$adr);
@@ -180,17 +183,11 @@ sub new_hostgrp
 					$hosts{$key}[1]	= $type;
 					$hosts{$key}[2]	= $ip;
 					$hosts{$key}[3]	= '';
-					$hosts{$key}[4]	= 1;
 					print LOG "->Host (IP) $ip added to custom hosts\n"
 				}else{
 					print LOG "->Host (IP) $ip already exists in custom hosts\n";
 					$name="host ";
 					$name2=$name.$ippart;
-					foreach my $key (sort keys %hosts){
-						if($hosts{$key}[0] eq $name2){
-							$hosts{$key}[4]++;
-						}
-					}
 					$name="host ";
 					$name2=$name.$ippart;
 					$name3="Custom Host";
@@ -228,18 +225,12 @@ sub new_hostgrp
 						$nets{$netkey}[1] = $ippart;
 						$nets{$netkey}[2] = $subnet;
 						$nets{$netkey}[3] = '';
-						$nets{$netkey}[4] = 1;
 						print LOG "->Network $ippart/$subnet added to custom networks\n";
 					}
 				}else{
 					print LOG "Network $ippart already exists in custom networks\n";
 					$name="net ";
 					$name2=$name.$ippart;
-					foreach my $key (sort keys %nets){
-						if($nets{$key}[0] eq $name2){
-							$nets{$key}[4]++;
-						}
-					}
 					$name="net ";
 					$name2=$name.$ippart;
 					$name3="Custom Network";
@@ -251,35 +242,29 @@ sub new_hostgrp
 				$groups{$grpkey}[1]	= '';
 				$groups{$grpkey}[2]	= $name2;
 				$groups{$grpkey}[3]	= $name3;
-				$groups{$grpkey}[4]	= 0;
 				print LOG "->$name2 added to group $grp\n";
 			}
 		}elsif($run eq 'mac'){
 			#MACRUN
-			my ($mac,$type) 			= split(",",$adr);
+			my ($mac,$type) = split(",",$adr);
 			print LOG "Processing HOST (MAC) $mac\n";
 			if(!&check_host($mac)){
-				my $key		= &General::findhasharraykey(\%hosts);
+				my $key = &General::findhasharraykey(\%hosts);
 				$name="host ";
-				$name2=$name.$mac;
+				$mac2=$mac;
+				$mac2 =~ s/:/-/g;
+				$name2=$name.$mac2;
 				$name3="Custom Host";
 				$hosts{$key}[0]	= $name2;
 				$hosts{$key}[1]	= $type;
 				$hosts{$key}[2]	= $mac;
-				$hosts{$key}[3]	= '';
-				$hosts{$key}[4]	= 1;
 				print LOG "->Host (MAC) $mac added to custom hosts\n";
 			}else{
+				$mac2=mac;
+				$mac2 =~ s/:/-/g;
 				print LOG "->Host (MAC) $mac already exists in custom hosts \n";
 				$name="host ";
-				$name2=$name.$mac;
-				foreach my $key (sort keys %hosts){
-					if($hosts{$key}[0] eq $name2){
-						$hosts{$key}[4]++;
-					}
-				}
-				$name="host ";
-				$name2=$name.$mac;
+				$name2=$name.$mac2;
 				$name3="Custom Host";
 			}
 			if($name2 && !&check_grp($grp,$name2)){
@@ -288,7 +273,6 @@ sub new_hostgrp
 				$groups{$grpkey}[1]	= '';
 				$groups{$grpkey}[2]	= $name2;
 				$groups{$grpkey}[3]	= $name3;
-				$groups{$grpkey}[4]	= 0;
 				print LOG "->$name2 added to group $grp\n";
 			}
 		}
@@ -361,6 +345,8 @@ sub process_rules
 	my @lines = <DATEI>;
 	foreach my $rule (@lines)
 	{
+		&General::readhasharray($fwdfwconfig,\%fwconfig);
+		&General::readhasharray($outfwconfig,\%fwconfigout);
 		my $now=localtime;
 		chomp($rule);
 		$port='';
@@ -468,7 +454,7 @@ sub process_rules
 			}
 			############################################################
 			#destinationpart
-			if($configline[7] ne ''){
+			if($configline[7] ne '' && $configline[7] ne '0.0.0.0'){
 				my $address=&check_ip($configline[7]);
 				 if($address){
 					 my ($dip,$dsub) = split("/",$address);
@@ -523,8 +509,6 @@ sub process_rules
 		}else{
 			print LOG "-> Rule not converted because not for Firewall mode $outsettings{'POLICY'} (we are only converting for actual mode)\n";
 		}
-		&General::readhasharray($fwdfwconfig,\%fwconfig);
-		&General::readhasharray($outfwconfig,\%fwconfigout);
 		my $check;
 		my $chain;
 		foreach my $protocol (@prot){
@@ -535,31 +519,18 @@ sub process_rules
 				$chain='FORWARDFW';
 			}
 			$protocol=uc($protocol);
-			print LOG "$now -> Converted: $action,$chain,$active,$grp1,$source,$grp2,$target,,,,,$useport,$protocol,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to\n";
+			print LOG "$now -> Converted: $action,$chain,$active,$grp1,$source,$grp2,$target,,$protocol,,,$useport,,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to\n";
 			#Put rules into system....
 			###########################
 			#check for double rules
 			foreach my $key (sort keys %fwconfig){
-				if("$action,$chain,$active,$grp1,$source,$grp2,$target,,,,,$useport,$protocol,,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to"
-					eq "$fwconfig{$key}[0],$fwconfig{$key}[1],$fwconfig{$key}[2],$fwconfig{$key}[3],$fwconfig{$key}[4],$fwconfig{$key}[5],$fwconfig{$key}[6],,,,,$fwconfig{$key}[11],$fwconfig{$key}[12],,$fwconfig{$key}[14],$fwconfig{$key}[15],$fwconfig{$key}[16],$fwconfig{$key}[17],$fwconfig{$key}[18],$fwconfig{$key}[19],$fwconfig{$key}[20],$fwconfig{$key}[21],$fwconfig{$key}[22],$fwconfig{$key}[23],$fwconfig{$key}[24],$fwconfig{$key}[25],$fwconfig{$key}[26],$fwconfig{$key}[27]"){
+				if("$action,$chain,$active,$grp1,$source,$grp2,$target,$protocol,$useport,$grp3,$port,$remark,$log,$time,$time_mon,$time_tue,$time_wed,$time_thu,$time_fri,$time_sat,$time_sun,$time_from,$time_to"
+					eq "$fwconfig{$key}[0],$fwconfig{$key}[1],$fwconfig{$key}[2],$fwconfig{$key}[3],$fwconfig{$key}[4],$fwconfig{$key}[5],$fwconfig{$key}[6],$fwconfig{$key}[8],$fwconfig{$key}[11],$fwconfig{$key}[14],$fwconfig{$key}[15],$fwconfig{$key}[16],$fwconfig{$key}[17],$fwconfig{$key}[18],$fwconfig{$key}[19],$fwconfig{$key}[20],$fwconfig{$key}[21],$fwconfig{$key}[22],$fwconfig{$key}[23],$fwconfig{$key}[24],$fwconfig{$key}[25],$fwconfig{$key}[26],$fwconfig{$key}[27]"){
 						$check='on';
 						next;
 				}
 			}
 			if($check ne 'on'){
-				#increase groupcounter
-				my $check1;
-				if($grp1 eq 'cust_grp_src'){
-					foreach my $key (sort keys %groups){
-						if($groups{$key}[0] eq $source){
-							$groups{$key}[4]++;
-							$check1='on'; 
-						}
-					}
-					if($check1 eq 'on'){
-						&General::writehasharray($configgroups,\%groups);
-					}
-				}
 				if ($chain eq 'FORWARDFW'){
 					my $key = &General::findhasharraykey(\%fwconfig);
 					$fwconfig{$key}[0]	= $action;
@@ -569,8 +540,8 @@ sub process_rules
 					$fwconfig{$key}[4] 	= $source;
 					$fwconfig{$key}[5] 	= $grp2;
 					$fwconfig{$key}[6] 	= $target;
+					$fwconfig{$key}[8] = $protocol;
 					$fwconfig{$key}[11] = $useport;
-					$fwconfig{$key}[12] = $protocol;
 					$fwconfig{$key}[14] = $grp3;
 					$fwconfig{$key}[15] = $port;
 					$fwconfig{$key}[16] = $remark;
@@ -589,6 +560,7 @@ sub process_rules
 					$fwconfig{$key}[29] = 'ALL';
 					$fwconfig{$key}[30] = '';
 					$fwconfig{$key}[31] = 'dnat';
+					&General::writehasharray($fwdfwconfig,\%fwconfig);
 				}else{
 					my $key = &General::findhasharraykey(\%fwconfigout);
 					$fwconfigout{$key}[0]	= $action;
@@ -598,8 +570,8 @@ sub process_rules
 					$fwconfigout{$key}[4] 	= $source;
 					$fwconfigout{$key}[5] 	= $grp2;
 					$fwconfigout{$key}[6] 	= $target;
+					$fwconfigout{$key}[8] 	= $protocol;
 					$fwconfigout{$key}[11] 	= $useport;
-					$fwconfigout{$key}[12] 	= $protocol;
 					$fwconfigout{$key}[14] 	= $grp3;
 					$fwconfigout{$key}[15] 	= $port;
 					$fwconfigout{$key}[16] 	= $remark;
@@ -618,9 +590,8 @@ sub process_rules
 					$fwconfigout{$key}[29]  = 'ALL';
 					$fwconfigout{$key}[30]  = '';
 					$fwconfigout{$key}[31]  = 'dnat';
+					&General::writehasharray($outfwconfig,\%fwconfigout);
 				}
-				&General::writehasharray($fwdfwconfig,\%fwconfig);
-				&General::writehasharray($outfwconfig,\%fwconfigout);
 			}
 		}
 		@prot=();
@@ -681,7 +652,6 @@ sub build_ovpn_grp
 			$nets{$netkey}[1] = $net;
 			$nets{$netkey}[2] = $subnet;
 			$nets{$netkey}[3] = '';
-			$nets{$netkey}[4] = 1;
 			print LOG "$now ->added $name2 $net/$subnet to customnetworks\n";
 		}else{
 			print LOG "-> Custom Network with same IP already exist \"$net/$subnet\" (you can ignore this, if this run was manual from shell)\n"; 
@@ -692,7 +662,6 @@ sub build_ovpn_grp
 			$groups{$grpkey}[1]	= '';
 			$groups{$grpkey}[2]	= $name2;
 			$groups{$grpkey}[3]	= "Custom Network";
-			$groups{$grpkey}[4]	= 0;
 			print LOG "$now ->added $name2 to customgroup ovpn\n";
 		}
 		$name2='';
