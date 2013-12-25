@@ -56,6 +56,11 @@ rm -f /srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
 /sbin/iptables -N INPUTFW
 /sbin/iptables -N FORWARDFW
 /sbin/iptables -N OUTGOINGFW
+/sbin/iptables -N POLICYFWD
+/sbin/iptables -N POLICYIN
+/sbin/iptables -N POLICYOUT
+/sbin/iptables -t nat -N NAT_SOURCE
+/sbin/iptables -t nat -N NAT_DESTINATION
 
 # Convert firewall configuration
 /usr/sbin/convert-xtaccess
