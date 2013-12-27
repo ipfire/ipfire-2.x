@@ -4,24 +4,25 @@
 # Based on sysklogd script from LFS-3.1 and earlier.
 # Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
 
-#$LastChangedBy: bdubbs $
-#$Date: 2006-09-10 19:41:47 -0500 (Sun, 10 Sep 2006) $
-
 . /etc/sysconfig/rc
 . $rc_functions
 
 case "$1" in
 	start)
 		boot_mesg "Starting SSLH Deamon..."
-		loadproc /usr/local/bin/sslh -u nobody -p `cat /var/ipfire/red/local-ipaddress`:443 -s localhost:222 -l localhost:444
-		evaluate_retval
 
-		if ! grep -q "443:443" /var/ipfire/xtaccess/config ; then
-			echo "tcp,0.0.0.0/0,443:443,on,0.0.0.0,SSLH" >> /var/ipfire/xtaccess/config
-			/usr/local/bin/setxtaccess
+		LOCAL_IP_ADDRESS="$(</var/ipfire/red/local-ipaddress)"
+		if [ -z "${LOCAL_IP_ADDRESS}" ]; then
+			echo_failure
+			boot_mesg -n "FAILURE:\n\nCould not determine" ${FAILURE}
+			boot_mesg -n " your external IP address."
+			boot_mesg "" ${NORMAL}
+			exit 1
 		fi
 
-		
+		loadproc /usr/local/bin/sslh -u nobody \
+			-p "${LOCAL_IP_ADDRESS}:443" -s localhost:222 -l localhost:444
+		evaluate_retval
 		;;
 
 	stop)
