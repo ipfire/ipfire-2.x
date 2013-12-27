@@ -460,6 +460,7 @@ buildipfire() {
   ipfiremake gdbm
   ipfiremake pam
   ipfiremake openssl
+  ipfiremake openssl-compat
   ipfiremake curl
   ipfiremake tcl
   ipfiremake sqlite

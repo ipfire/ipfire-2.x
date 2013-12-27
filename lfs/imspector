@@ -29,10 +29,10 @@ VER        = 20101008
 THISAPP    = imspector-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/imspector
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = imspector
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -77,13 +77,19 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/imspector-20101008-ssl.patch
 	cd $(DIR_SRC)/imspector && sed -e "s/^SSL_LIBS.*/& -lcrypto/" -i Makefile
 	cd $(DIR_SRC)/imspector && make install
+
 	-mv /usr/etc/imspector /etc/imspector
 	-mv /etc/imspector/imspector /etc/imspector
+
 	install -v -m 755 $(DIR_CONF)/imspector/imspector.conf /etc/imspector.conf
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/imspector /var/ipfire/backup/addons/includes/imspector
+
 	chmod 755 /srv/web/ipfire/cgi-bin/imspector.cgi
 	chown nobody:nobody -R /var/log/imspector
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
