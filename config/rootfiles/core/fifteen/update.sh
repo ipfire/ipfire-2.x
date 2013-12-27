@@ -49,13 +49,18 @@ rm -f /etc/rc.d/init.d/networking/red.up/22-outgoingfwctrl
 rm -f /etc/rc.d/init.d/networking/red.up/25-portfw
 rm -f /etc/rc.d/init.d/networking/red.up/26-xtaccess
 
+# Remove old firewallscripts
+rm -f /usr/local/bin/setportfw
+rm -f /usr/local/bin/setdmzholes
+rm -f /usr/local/bin/setxtaccess
+rm -f /usr/local/bin/outgoingfwctrl
+
 # Remove old CGI files
 rm -f /srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
 
 # Generate chains for new firewall
 /sbin/iptables -N INPUTFW
 /sbin/iptables -N FORWARDFW
-/sbin/iptables -N OUTGOINGFW
 /sbin/iptables -N POLICYFWD
 /sbin/iptables -N POLICYIN
 /sbin/iptables -N POLICYOUT
