@@ -20,14 +20,14 @@ case "$1" in
 			exit 1
 		fi
 
-		loadproc /usr/local/bin/sslh -u nobody \
+		loadproc /usr/sbin/sslh -u nobody \
 			-p "${LOCAL_IP_ADDRESS}:443" -s localhost:222 -l localhost:444
 		evaluate_retval
 		;;
 
 	stop)
 		boot_mesg "Stopping SSLH Deamon..."
-		killproc /usr/local/bin/sslh
+		killproc /usr/sbin/sslh
 		evaluate_retval
 		;;
 
@@ -38,7 +38,7 @@ case "$1" in
 		;;
 
 	status)
-		statusproc /usr/local/bin/sslh
+		statusproc /usr/sbin/sslh
 		;;
 
 	*)
