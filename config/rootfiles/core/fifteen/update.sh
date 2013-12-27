@@ -44,6 +44,9 @@ extract_files
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+# Remove old openssl engines
+rm -rf /usr/lib/engines
+
 # Remove old initscripts
 rm -f /etc/rc.d/init.d/networking/red.up/22-outgoingfwctrl
 rm -f /etc/rc.d/init.d/networking/red.up/25-portfw
