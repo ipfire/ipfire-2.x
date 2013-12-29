@@ -305,7 +305,12 @@ sub selectmirror {
 		}
 	}
 	logger("MIRROR INFO: $scount servers found in list");
-	
+
+	if ($scount eq 0) {
+		logger("MIRROR INFO: Could not find any servers. Falling back to main server $Conf::mainserver");
+		return ("HTTP", $Conf::mainserver, "/$Conf::version");
+	}
+
 	### Choose a random server and test if it is online
 	#   If the check fails try a new server.
 	#   This will never give up.
