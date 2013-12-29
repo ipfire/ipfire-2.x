@@ -5,6 +5,7 @@
 usr/lib/openvpn/plugins/openvpn-plugin-auth-pam.so
 #usr/lib/openvpn/plugins/openvpn-plugin-down-root.la
 usr/lib/openvpn/plugins/openvpn-plugin-down-root.so
+usr/lib/openvpn/verify
 usr/sbin/openvpn
 #usr/share/doc/openvpn
 #usr/share/doc/openvpn/COPYING
@@ -31,4 +32,3 @@ var/ipfire/ovpn/ovpn-leases.db
 var/ipfire/ovpn/ovpnconfig
 var/ipfire/ovpn/scripts
 var/ipfire/ovpn/settings
-var/ipfire/ovpn/verify

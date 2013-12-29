@@ -93,8 +93,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown -R root:root /var/ipfire/ovpn/scripts
 	chown -R nobody:nobody /var/ipfire/ovpn
 	chown root.nobody /var/log/ovpnserver.log
-	chmod 755 /var/ipfire/ovpn/verify
 	chmod 660 /var/log/ovpnserver.log
 	chmod 700 /var/ipfire/ovpn/certs
+	mv -v /var/ipfire/ovpn/verify /usr/lib/openvpn/verify
+	chmod 755 /usr/lib/openvpn/verify
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

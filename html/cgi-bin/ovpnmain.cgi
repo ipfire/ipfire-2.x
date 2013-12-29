@@ -425,7 +425,7 @@ sub writeserverconf {
     if ($sovpnsettings{DHCP_WINS} ne '') {
 	print CONF "max-clients $sovpnsettings{MAX_CLIENTS}\n";
     }	
-    print CONF "tls-verify /var/ipfire/ovpn/verify\n";
+    print CONF "tls-verify /usr/lib/openvpn/verify\n";
     print CONF "crl-verify /var/ipfire/ovpn/crls/cacrl.pem\n";
     print CONF "user nobody\n";
     print CONF "group nobody\n";
