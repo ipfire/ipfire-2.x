@@ -45,6 +45,7 @@ fi
 
 echo Restarting udev...
 killall udevd
+/sbin/udevadm hwdb --update
 /sbin/udevd --daemon
 /sbin/udevadm trigger
 /sbin/udevadm settle
