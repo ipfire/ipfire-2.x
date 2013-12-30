@@ -1,0 +1,6 @@
+etc/system-release
+etc/issue
+opt/pakfire/lib/functions.pl
+usr/lib/openvpn/verify
+var/ipfire/header.pl
+var/ipfire/langs
