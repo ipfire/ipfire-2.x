@@ -96,6 +96,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 660 /var/log/ovpnserver.log
 	chmod 700 /var/ipfire/ovpn/certs
 	mv -v /var/ipfire/ovpn/verify /usr/lib/openvpn/verify
+	chown root:root /usr/lib/openvpn/verify
 	chmod 755 /usr/lib/openvpn/verify
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
