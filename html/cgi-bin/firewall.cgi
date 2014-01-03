@@ -731,7 +731,7 @@ sub checkrule
 	if($fwdfwsettings{'USE_NAT'} eq 'ON'){
 		#if no dest port is given in nat area, take target host port
 		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'grp3'} eq 'TGT_PORT' && $fwdfwsettings{'dnatport'} eq ''){$fwdfwsettings{'dnatport'}=$fwdfwsettings{'TGT_PORT'};}
-		if($fwdfwsettings{'TGT_PORT'} eq ''){
+		if($fwdfwsettings{'TGT_PORT'} eq '' && $fwdfwsettings{'dnatport'} ne '' && ($fwdfwsettings{'PROT'} eq 'TCP' || $fwdfwsettings{'PROT'} eq 'UDP')){
 			$errormessage=$Lang::tr{'fwdfw dnat porterr2'};
 		}
 		#check if port given in nat area is a single valid port or portrange
@@ -1447,6 +1447,7 @@ sub newrule
 	$checked{'TIME_SAT'}{$fwdfwsettings{'TIME_SAT'}} 		= 'CHECKED';
 	$checked{'TIME_SUN'}{$fwdfwsettings{'TIME_SUN'}} 		= 'CHECKED';
 	$checked{'USE_NAT'}{$fwdfwsettings{'USE_NAT'}} 			= 'CHECKED';
+	$checked{'nat'}{$fwdfwsettings{'nat'}} 		= 'CHECKED';
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
@@ -1594,7 +1595,7 @@ END
 						<td width='5%'></td>
 						<td width='40%'>
 							<label>
-								<input type='radio' name='nat' id='dnat' value='dnat' checked>
+								<input type='radio' name='nat' id='use_dnat' value='dnat' $checked{'nat'}{'dnat'}>
 								$Lang::tr{'fwdfw dnat'}
 							</label>
 						</td>
@@ -1627,7 +1628,7 @@ END
 						<td width='5%'></td>
 						<td width='40%'>
 							<label>
-								<input type='radio' name='nat' id='snat' value='snat' $checked{'nat'}{'snat'}>
+								<input type='radio' name='nat' id='use_snat' value='snat' $checked{'nat'}{'snat'}>
 								$Lang::tr{'fwdfw snat'}
 							</label>
 						</td>
