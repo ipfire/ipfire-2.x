@@ -177,7 +177,7 @@ END
 ;
 if ($settings{'SPEED'} ne 'off') {
 print <<END
-    <script type="text/javascript" src="/include/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/include/jquery.js"></script>
     <script type="text/javascript">
         var t_current;
         var t_last;
