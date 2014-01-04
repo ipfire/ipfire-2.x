@@ -4534,7 +4534,7 @@ END
     
 #default setzen
     if ($cgiparams{'DCIPHER'} eq '') {
-	$cgiparams{'DCIPHER'} =  'BF-CBC';     
+	$cgiparams{'DCIPHER'} =  'AES-256-CBC';
     }
     if ($cgiparams{'DDEST_PORT'} eq '') {
 	$cgiparams{'DDEST_PORT'} =  '1194';     
