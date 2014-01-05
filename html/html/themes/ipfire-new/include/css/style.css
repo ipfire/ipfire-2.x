@@ -365,20 +365,6 @@ color: #fff;
 font-size: 3.6em;
 }
 
-#logo h2
-{
-position: relative;
-width: 300px;
-height: 20px;
-top: 70px;
-left: 0px;
-display: block;
-padding-left: 0.5em;
-color: #880400;
-font-size: 14px;
-z-index: 1;
-}
-
 
 /* Main */
 
@@ -412,7 +398,11 @@ margin-bottom: 2.0em;
 position: relative;
 width: 910px;
 margin: 0 auto;
-padding-top: 3.5em;
+padding-top: 1.5em;
+}
+
+#main_inner h1 {
+	margin-bottom: 1em;
 }
 
 #main_inner h3,h4

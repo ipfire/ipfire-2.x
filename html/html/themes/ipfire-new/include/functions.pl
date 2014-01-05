@@ -160,7 +160,6 @@ END
 	}
 
 print <<END
-				<h2>$h2</h2>
 			</div>
 		</div>
 END
@@ -171,6 +170,8 @@ END
 print <<END
 <div id="main">
 	<div id="main_inner" class="fixed">
+		<h1>$h2</h1>
+
 		<div id="columnA_2columns">
 END
 ;
