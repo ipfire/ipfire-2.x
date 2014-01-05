@@ -1166,7 +1166,7 @@
 'hostname not set' => 'Hostname not set.',
 'hosts config added' => 'Hosts config added',
 'hosts config changed' => 'Hosts config changed',
-'hour' => 'hour',
+'hour' => 'Hour',
 'hour-graph' => 'Hour',
 'hours' => 'hours',
 'hours2' => 'Hours',

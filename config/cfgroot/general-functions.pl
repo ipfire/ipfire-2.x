@@ -229,68 +229,36 @@ sub writehashpart
 	close FILE;
 }
 
-sub age
-{
+sub age {
 	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
-	        $atime, $mtime, $ctime, $blksize, $blocks) = stat $_[0];
-	my $now = time;
-	my $timestring = '';
-	my $dset = 0;		# Day is set, when > 0
-	my $hset = 0;		# Hour is set, when > 0
-	my $mset = 0;		# Minute is set, when > 0
+		$atime, $mtime, $ctime, $blksize, $blocks) = stat $_[0];
+	my $totalsecs = time() - $mtime;
+	my @s = ();
 
-	my $totalsecs = $now - $mtime;
-	my $days = int($totalsecs / 86400);
-	my $totalhours = int($totalsecs / 3600);
-	my $hours = $totalhours % 24;
-	my $totalmins = int($totalsecs / 60);
-	my $mins = $totalmins % 60;
 	my $secs = $totalsecs % 60;
-
-	if	($days > 1) { 
-		${timestring} .= ${days}.' '.$Lang::tr{'days'}.', ';
-		$dset = 1; 
-	}
-	elsif	($days == 1) { 
-		${timestring} .= ${days}.' '.$Lang::tr{'day'}.', ';
-		$dset = 1; 
+	$totalsecs /= 60;
+	if ($secs > 0) {
+		push(@s, "${secs}s");
 	}
 
-	if	(($hours > 1) && !($dset)) { 
-		${timestring} .= ${hours}.' '.$Lang::tr{'hours'}.', ';
-		$hset = 1;
-	}
-	elsif	(($hours == 1) && !($dset)) { 
-		${timestring} .= ${hours}.' '.$Lang::tr{'hour'}.', ';
-		$hset = 1;
-	}
-	elsif ($dset) {
-		${timestring} .= ${hours}.' '.$Lang::tr{'age shour'}.', ';
-		$hset = 1;
+	my $min = $totalsecs % 60;
+	$totalsecs /= 60;
+	if ($min > 0) {
+		push(@s, "${min}m");
 	}
 
-	if	((($mins > 1) || ($mins == 0)) && !($dset || $hset)) { 
-		${timestring} .= ${mins}.' '.$Lang::tr{'minutes'}.', ';
-		$mset = 1;
-	}
-	elsif	(($mins == 1) && !($dset || $hset)) { 
-		${timestring} .= ${mins}.' '.$Lang::tr{'minute'}.', ';
-		$mset = 1;
-	}
-	else {
-		${timestring} .= ${mins}.' '.$Lang::tr{'age sminute'}.', '; 
-		$mset = 1;
+	my $hrs = $totalsecs % 24;
+	$totalsecs /= 24;
+	if ($hrs > 0) {
+		push(@s, "${hrs}h");
 	}
 
-	if	((($secs > 1) || ($secs == 0)) && !($dset || $hset || $mset)) { 
-		${timestring} .= ${secs}.' '.$Lang::tr{'age seconds'};
+	my $days = int($totalsecs);
+	if ($days > 0) {
+		push(@s, "${days}d");
 	}
-	elsif	(($secs == 1) && !($dset || $hset || $mset)) { 
-		${timestring} .= $secs.' '.$Lang::tr{'age second'};
-	}
-	else	{ ${timestring} .= $secs.' '.$Lang::tr{'age ssecond'}; }
 
-	return ${timestring};
+	return join(" ", reverse(@s));
 }
 
 sub validip
