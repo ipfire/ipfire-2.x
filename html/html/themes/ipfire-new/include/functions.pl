@@ -52,7 +52,7 @@ sub showsubmenu() {
 		} else {
 			print '<li>';
 		}
-		print '<a href="'.$link.'"><span>'.$submenus->{$item}->{'caption'}.'</span></a>';
+		print '<a href="'.$link.'">'.$submenus->{$item}->{'caption'}.'</a>';
 
 		&showsubmenu($subsubmenus) if ($subsubmenus);
 		print '</li>';
@@ -64,16 +64,7 @@ sub showsubmenu() {
 #
 # print menu html elements
 sub showmenu() {
-	print '<div id="cssmenu"><ul>';
-	foreach my $k1 ( sort keys %$menu ) {
-		$link = getlink($menu->{$k1});
-		next if (!is_menu_visible($link) or $link eq '');
-		print '<li class="has-sub "><a><span>'.$menu->{$k1}->{'caption'}.'</span></a>';
-		my $submenus = $menu->{$k1}->{'subMenu'};
-		&showsubmenu($submenus) if ($submenus);
-		print "</li>";
-	}
-	print "</ul>";
+	print '<div id="cssmenu" class="bigbox fixed">';
 
 	if ($settings{'SPEED'} ne 'off') {
 		print <<EOF;
@@ -85,7 +76,17 @@ sub showmenu() {
 EOF
 	}
 
-	print "</div>";
+	print "<ul>";
+	foreach my $k1 ( sort keys %$menu ) {
+		$link = getlink($menu->{$k1});
+		next if (!is_menu_visible($link) or $link eq '');
+		print '<li class="has-sub "><a><span>'.$menu->{$k1}->{'caption'}.'</span></a>';
+		my $submenus = $menu->{$k1}->{'subMenu'};
+		&showsubmenu($submenus) if ($submenus);
+		print "</li>";
+	}
+
+	print "</ul></div>";
 }
 
 ###############################################################################
@@ -103,22 +104,21 @@ sub openpage {
 	my $suppressMenu = shift;
 	my @tmp = split(/\./, basename($0));
 	my $scriptName = @tmp[0];
-	my $h2 = $title;
 
 	@URI=split ('\?',  $ENV{'REQUEST_URI'} );
 	&General::readhash("${swroot}/main/settings", \%settings);
 	&genmenu();
 
-	$title = "IPFire - $title";
+	my $headline = "IPFire";
 	if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
-		$title =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
+		$headline =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}";
 	}
 
 print <<END
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 	<head>
-	<title>$title</title>
+	<title>$headline - $title</title>
 	$extrahead
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<link rel="shortcut icon" href="/favicon.ico" />
@@ -142,21 +142,16 @@ END
 }
 
 print <<END
-		</head>
-		<body>
-END
-;
-
-print <<END
-<!-- IPFIRE HEADER -->
-		<div id="header_inner" class="fixed">
+	</head>
+	<body>
+		<div id="header" class="fixed">
 			<div id="logo">
 END
 ;
 	if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
-		print "<h1><span>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</span></h1><br />"; 
+		print "<h1>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</h1>";
 	} else {
-		print "<h1><span>IPFire</span></h1><br />";
+		print "<h1>IPFire</h1>";
 	}
 
 print <<END
@@ -168,11 +163,9 @@ END
 &showmenu() if ($suppressMenu != 1);
 
 print <<END
-<div id="main">
-	<div id="main_inner" class="fixed">
-		<h1>$h2</h1>
-
-		<div id="columnA_2columns">
+	<div class="bigbox fixed">
+		<div id="main_inner" class="fixed">
+			<h1>$title</h1>
 END
 ;
 }
@@ -188,7 +181,6 @@ sub openpagewithoutmenu {
 	return;
 }
 
-
 ###############################################################################
 #
 # print page closing html layout
@@ -202,27 +194,16 @@ sub closepage () {
 	$uptime =~ s/day /$Lang::tr{'day'}/;
 	$uptime =~ s/user(s|)/$Lang::tr{'user'}/;
 	$uptime =~ s/load average/$Lang::tr{'uptime load average'}/;  
-print <<END
-		<!-- closepage begin -->
-			</div>
-	</div>
-END
-;
 
-print "<div id='columnC_2columns'>";
-print <<END
-			<table cellspacing="5"  class="statusdisplay" border="0">
-			<tr><td align='center'>$status   Uptime: $uptime</td></tr>
-END
-;
-
-print <<END
-		</table>
+print <<END;
 		</div>
+	</div>
+
+	<div id="footer" class='bigbox fixed'>
+		$status   Uptime: $uptime
 	</div>
 </body>
 </html>
-<!-- closepage end -->
 END
 ;
 }
@@ -230,15 +211,13 @@ END
 ###############################################################################
 #
 # print big box opening html layout
-sub openbigbox
-{
+sub openbigbox {
 }
 
 ###############################################################################
 #
 # print big box closing html layout
-sub closebigbox
-{
+sub closebigbox {
 }
 
 ###############################################################################
@@ -247,31 +226,23 @@ sub closebigbox
 # @param page width
 # @param page align
 # @param page caption
-sub openbox
-{
+sub openbox {
 	$width = $_[0];
 	$align = $_[1];
 	$caption = $_[2];
 
-print <<END
-<!-- openbox -->
-		<div class="post" align="$align">
-END
-;
-if ($caption) { print "<h3>$caption</h3>\n"; } else { print "&nbsp;"; }
+	print "<div class='post' align='$align'>\n";
+
+	if ($caption) {
+		print "<h2>$caption</h2>\n";
+	}
 }
 
 ###############################################################################
 #
 # print box closing html layout
-sub closebox
-{
-	print <<END
-	</div>
-	<br class="clear" />
-	<!-- closebox -->
-END
-;
+sub closebox {
+	print "</div>";
 }
 
 1;
