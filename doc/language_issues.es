@@ -828,6 +828,7 @@ WARNING: untranslated string: routing table
 WARNING: untranslated string: server restart
 WARNING: untranslated string: snat new source ip address
 WARNING: untranslated string: static routes
+WARNING: untranslated string: support donation
 WARNING: untranslated string: system information
 WARNING: untranslated string: tor
 WARNING: untranslated string: tor accounting

@@ -186,21 +186,22 @@ sub openpagewithoutmenu {
 # print page closing html layout
 
 sub closepage () {
-	my $status = &connectionstatus();
-	my $uptime = `/usr/bin/uptime|cut -d \" \" -f 4-`;
-	$uptime =~ s/year(s|)/$Lang::tr{'year'}/;
-	$uptime =~ s/month(s|)/$Lang::tr{'month'}/;
-	$uptime =~ s/days/$Lang::tr{'days'}/;
-	$uptime =~ s/day /$Lang::tr{'day'}/;
-	$uptime =~ s/user(s|)/$Lang::tr{'user'}/;
-	$uptime =~ s/load average/$Lang::tr{'uptime load average'}/;  
+	open(FILE, "</etc/system-release");
+	my $system_release = <FILE>;
+	$system_release =~ s/core/Core Update/;
+	close(FILE);
 
 print <<END;
 		</div>
 	</div>
 
 	<div id="footer" class='bigbox fixed'>
-		$status   Uptime: $uptime
+		<span class="pull-right">
+			<a href="http://www.ipfire.org/" target="_blank"><strong>IPFire.org</strong></a> &bull;
+			<a href="http://www.ipfire.org/donate" target="_blank">$Lang::tr{'support donation'}</a>
+		</span>
+
+		<strong>$system_release</strong>
 	</div>
 </body>
 </html>
