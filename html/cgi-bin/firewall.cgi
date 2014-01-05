@@ -1426,9 +1426,9 @@ sub newrule
 	open (CONN1,"/var/ipfire/red/local-ipaddress");
 	my $redip = <CONN1>;
 	close(CONN1);
-	if ($fwdfwsettings{'RULE_ACTION'} eq '' && $fwdfwsettings{'POLICY'} eq 'MODE2'){
+	if (! $fwdfwsettings{'RULE_ACTION'} && $fwdfwsettings{'POLICY'} eq 'MODE2'){
 		$fwdfwsettings{'RULE_ACTION'}='DROP';
-	}elsif($fwdfwsettings{'RULE_ACTION'} eq '' && $fwdfwsettings{'POLICY'} eq 'MODE1'){
+	}elsif(! $fwdfwsettings{'RULE_ACTION'} && $fwdfwsettings{'POLICY'} eq 'MODE1'){
 		$fwdfwsettings{'RULE_ACTION'}='ACCEPT';
 	}
 	$checked{'grp1'}{$fwdfwsettings{'grp1'}} 				= 'CHECKED';
@@ -1448,7 +1448,6 @@ sub newrule
 	$checked{'TIME_SUN'}{$fwdfwsettings{'TIME_SUN'}} 		= 'CHECKED';
 	$checked{'USE_NAT'}{$fwdfwsettings{'USE_NAT'}} 			= 'CHECKED';
 	$checked{'nat'}{$fwdfwsettings{'nat'}} 		= 'CHECKED';
-	$checked{"RULE_ACTION"}{$fwdfwsettings{'RULE_ACTION'}}	= 'CHECKED';
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
@@ -1509,7 +1508,6 @@ sub newrule
 				$checked{'TIME_SUN'}{$fwdfwsettings{'TIME_SUN'}} 		= 'CHECKED';
 				$checked{'USE_NAT'}{$fwdfwsettings{'USE_NAT'}}	 		= 'CHECKED';
 				$checked{'nat'}{$fwdfwsettings{'nat'}}	 				= 'CHECKED';
-				$checked{"RULE_ACTION"}{$fwdfwsettings{'RULE_ACTION'}}	= 'CHECKED';
 				$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 				$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
@@ -1840,9 +1838,9 @@ END
 END
 
 		&Header::closebox;
+		$checked{"RULE_ACTION"}{$fwdfwsettings{'RULE_ACTION'}}	= 'CHECKED';
 		print <<END;
 			<hr><br>
-
 			<center>
 				<table width="80%" border="0">
 					<tr>
