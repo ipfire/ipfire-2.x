@@ -2123,7 +2123,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(e521|e384|e256|e224|e192|1024|1536|2048|3072|4096|6144|8192)$/) {
+	    if ($val !~ /^(e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|1024|1536|2048|3072|4096|6144|8192)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2159,7 +2159,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    }
 	}
 	if ($cgiparams{'ESP_GROUPTYPE'} ne '' &&
-	    $cgiparams{'ESP_GROUPTYPE'} !~  /^ecp(192|224|256|384|512)$/ &&
+	    $cgiparams{'ESP_GROUPTYPE'} !~  /^ecp(192|224|256|384|512)(bp)?$/ &&
 	    $cgiparams{'ESP_GROUPTYPE'} !~  /^modp(1024|1536|2048|3072|4096|6144|8192)$/) {
 	    $errormessage = $Lang::tr{'invalid input'};
 	    goto ADVANCED_ERROR;
@@ -2327,11 +2327,15 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike grouptype'}</td><td class='boldbase' valign='top'>
 		<select name='IKE_GROUPTYPE' multiple='multiple' size='4'>
-		<option value='e521' $checked{'IKE_GROUPTYPE'}{'e521'}>ECP-521</option>
-		<option value='e384' $checked{'IKE_GROUPTYPE'}{'e384'}>ECP-384</option>
-		<option value='e256' $checked{'IKE_GROUPTYPE'}{'e256'}>ECP-256</option>
-		<option value='e224' $checked{'IKE_GROUPTYPE'}{'e224'}>ECP-224</option>
-		<option value='e192' $checked{'IKE_GROUPTYPE'}{'e192'}>ECP-192</option>
+		<option value='e521' $checked{'IKE_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
+		<option value='e384' $checked{'IKE_GROUPTYPE'}{'e384'}>ECP-384 (NIST)</option>
+		<option value='e256' $checked{'IKE_GROUPTYPE'}{'e256'}>ECP-256 (NIST)</option>
+		<option value='e224' $checked{'IKE_GROUPTYPE'}{'e224'}>ECP-224 (NIST)</option>
+		<option value='e192' $checked{'IKE_GROUPTYPE'}{'e192'}>ECP-192 (NIST)</option>
+		<option value='e512bp' $checked{'IKE_GROUPTYPE'}{'e512bp'}>ECP-512 (Brainpool)</option>
+		<option value='e384bp' $checked{'IKE_GROUPTYPE'}{'e384bp'}>ECP-384 (Brainpool)</option>
+		<option value='e256bp' $checked{'IKE_GROUPTYPE'}{'e256bp'}>ECP-256 (Brainpool)</option>
+		<option value='e224bp' $checked{'IKE_GROUPTYPE'}{'e224bp'}>ECP-224 (Brainpool)</option>
 		<option value='8192' $checked{'IKE_GROUPTYPE'}{'8192'}>MODP-8192</option>
 		<option value='6144' $checked{'IKE_GROUPTYPE'}{'6144'}>MODP-6144</option>
 		<option value='4096' $checked{'IKE_GROUPTYPE'}{'4096'}>MODP-4096</option>
