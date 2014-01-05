@@ -158,11 +158,6 @@ print<<END;
 		// dropdown menu changes.
 		\$("select").change(function() {
 			var id = \$(this).attr("name");
-
-			// When using SNAT or DNAT, check "USE NAT" Checkbox
-			if (id === 'snat' || id === 'dnat') {
-				\$('#USE_NAT').prop('checked', true);
-			}
 			\$('#' + id).prop("checked", true);
 		});
 	});
@@ -1595,7 +1590,7 @@ END
 						<td width='5%'></td>
 						<td width='40%'>
 							<label>
-								<input type='radio' name='nat' id='use_dnat' value='dnat' $checked{'nat'}{'dnat'}>
+								<input type='radio' name='nat'  value='dnat' $checked{'nat'}{'dnat'}>
 								$Lang::tr{'fwdfw dnat'}
 							</label>
 						</td>
@@ -1628,7 +1623,7 @@ END
 						<td width='5%'></td>
 						<td width='40%'>
 							<label>
-								<input type='radio' name='nat' id='use_snat' value='snat' $checked{'nat'}{'snat'}>
+								<input type='radio' name='nat'  value='snat' $checked{'nat'}{'snat'}>
 								$Lang::tr{'fwdfw snat'}
 							</label>
 						</td>
