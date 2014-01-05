@@ -1426,6 +1426,11 @@ sub newrule
 	open (CONN1,"/var/ipfire/red/local-ipaddress");
 	my $redip = <CONN1>;
 	close(CONN1);
+	if ($fwdfwsettings{'RULE_ACTION'} eq '' && $fwdfwsettings{'POLICY'} eq 'MODE2'){
+		$fwdfwsettings{'RULE_ACTION'}='DROP';
+	}elsif($fwdfwsettings{'RULE_ACTION'} eq '' && $fwdfwsettings{'POLICY'} eq 'MODE1'){
+		$fwdfwsettings{'RULE_ACTION'}='ACCEPT';
+	}
 	$checked{'grp1'}{$fwdfwsettings{'grp1'}} 				= 'CHECKED';
 	$checked{'grp2'}{$fwdfwsettings{'grp2'}} 				= 'CHECKED';
 	$checked{'grp3'}{$fwdfwsettings{'grp3'}} 				= 'CHECKED';
@@ -1443,6 +1448,7 @@ sub newrule
 	$checked{'TIME_SUN'}{$fwdfwsettings{'TIME_SUN'}} 		= 'CHECKED';
 	$checked{'USE_NAT'}{$fwdfwsettings{'USE_NAT'}} 			= 'CHECKED';
 	$checked{'nat'}{$fwdfwsettings{'nat'}} 		= 'CHECKED';
+	$checked{"RULE_ACTION"}{$fwdfwsettings{'RULE_ACTION'}}	= 'CHECKED';
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
@@ -1503,6 +1509,7 @@ sub newrule
 				$checked{'TIME_SUN'}{$fwdfwsettings{'TIME_SUN'}} 		= 'CHECKED';
 				$checked{'USE_NAT'}{$fwdfwsettings{'USE_NAT'}}	 		= 'CHECKED';
 				$checked{'nat'}{$fwdfwsettings{'nat'}}	 				= 'CHECKED';
+				$checked{"RULE_ACTION"}{$fwdfwsettings{'RULE_ACTION'}}	= 'CHECKED';
 				$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 				$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
@@ -1833,20 +1840,6 @@ END
 END
 
 		&Header::closebox;
-
-		$checked{"RULE_ACTION"} = ();
-		foreach ("ACCEPT", "DROP", "REJECT") {
-			$checked{"RULE_ACTION"}{$_} = "";
-		}
-
-		if($fwdfwsettings{'updatefwrule'} eq 'on') {
-			$checked{"RULE_ACTION"}{$fwdfwsettings{'RULE_ACTION'}} = "checked";
-		} elsif ($fwdfwsettings{'POLICY'} eq 'MODE1') {
-			$checked{"RULE_ACTION"}{"ACCEPT"} = "checked";
-		} elsif ($fwdfwsettings{'POLICY'} eq 'MODE2') {
-			$checked{"RULE_ACTION"}{"DROP"} = "checked";
-		}
-
 		print <<END;
 			<hr><br>
 
@@ -2027,6 +2020,7 @@ END
 			<input type='hidden' name='oldorange' value='$fwdfwsettings{'oldorange'}' />
 			<input type='hidden' name='oldnat' value='$fwdfwsettings{'oldnat'}' />
 			<input type='hidden' name='oldruletype' value='$fwdfwsettings{'oldruletype'}' />
+			<input type='hidden' name='nat' value='$fwdfwsettings{'nat'}' />
 			<input type='hidden' name='ACTION' value='saverule' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td>
 			</table></form>
 END
