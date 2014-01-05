@@ -20,30 +20,27 @@ $(document).ready(function(){
 function refreshInetInfo() {
 	$.ajax({
 		url: '/cgi-bin/speed.cgi',
-		success: function(xml){
-
+		success: function(xml) {
 			t_current = new Date();
 			var t_diff = t_current - t_last;
 
-			rxb_current = $("rxb",xml).text();
+			rxb_current = $("rxb", xml).text();
 			var rxb_diff = rxb_current - rxb_last;
 			rxb_last = rxb_current;
 
-			var rx_kbs = rxb_diff/t_diff;
-			rx_kbs = Math.round(rx_kbs*10)/10;
+			var rx_bits = rxb_diff * 1024 / t_diff;
+			var rx_fmt = format_bytes(rx_bits);
 
-			txb_current = $("txb",xml).text();
+			txb_current = $("txb", xml).text();
 			var txb_diff = txb_current - txb_last;
 			txb_last = txb_current;
 
-			var tx_kbs = txb_diff/t_diff;
-			tx_kbs = Math.round(tx_kbs*10)/10;
+			var tx_bits = txb_diff * 1024 / t_diff;
+			var tx_fmt = format_bytes(tx_bits);
 
 			if (t_last != 0) {
-				$("#rx_kbs").text(rx_kbs + ' kb/s');
-				$("#tx_kbs").text(tx_kbs + ' kb/s');
-				if ($("#bandwidthCalculationContainer").css('display') == 'none')
-					$("#bandwidthCalculationContainer").css('display','block');
+				$("#rx_kbs").text(rx_fmt);
+				$("#tx_kbs").text(tx_fmt);
 			}
 
 			t_last = t_current;
@@ -51,4 +48,22 @@ function refreshInetInfo() {
 	});
 
 	window.setTimeout("refreshInetInfo()", 2000);
+}
+
+function format_bytes(bytes) {
+	var units = ["Bit/s", "kBit/s", "MBit/s", "GBit/s", "TBit/s"];
+
+	var unit = units[0];
+	for (var i = 1; i < units.length; i++) {
+		if (bytes < 1024)
+			break;
+
+		unit = units[i];
+		bytes /= 1024;
+	}
+
+	// Round the output.
+	bytes = bytes.toFixed(2);
+
+	return bytes + " " + unit;
 }

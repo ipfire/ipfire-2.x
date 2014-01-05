@@ -73,13 +73,19 @@ sub showmenu() {
 		&showsubmenu($submenus) if ($submenus);
 		print "</li>";
 	}
+	print "</ul>";
+
 	if ($settings{'SPEED'} ne 'off') {
-		print"<div id='traffic'>";
-		print"<table><tr><td style='font-weight: bold;'>Traffic: &nbsp;</td>";
-		print"<td id='bandwidthCalculationContainer'>In <span id='rx_kbs'></span> &nbsp; Out <span id='tx_kbs'></span></td>";
-		print"</tr></table>";
-		print '</ul></div></div>';
+		print <<EOF;
+			<div id='traffic'>
+				<strong>Traffic:</strong>
+				In  <span id='rx_kbs'>--.-- Bit/s</span> &nbsp;
+				Out <span id='tx_kbs'>--.-- Bit/s</span>
+			</div>
+EOF
 	}
+
+	print "</div>";
 }
 
 ###############################################################################
