@@ -89,9 +89,11 @@ if ( -d "/var/ipfire/langs/${language}/" ) {
     };
 };
 
+our $THEME_NAME = $settings{'THEME'};
+
 require "${swroot}/langs/en.pl";
 require "${swroot}/langs/${language}.pl";
-eval `/bin/cat /srv/web/ipfire/html/themes/$settings{'THEME'}/include/functions.pl`;
+eval `/bin/cat /srv/web/ipfire/html/themes/$THEME_NAME/include/functions.pl`;
 
 sub orange_used () {
     if ($ethsettings{'CONFIG_TYPE'} =~ /^[24]$/) {

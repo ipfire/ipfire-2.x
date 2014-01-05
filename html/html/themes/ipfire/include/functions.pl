@@ -32,6 +32,7 @@
 ###############################################################################
 
 require "${General::swroot}/lang.pl";
+
 ###############################################################################
 #
 # print menu html elements for submenu entries
@@ -113,7 +114,12 @@ sub openpage {
 		$headline =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}";
 	}
 
-print <<END
+	my @stylesheets = ("style.css");
+	if ($THEME_NAME eq "ipfire-rounded") {
+		push(@stylesheets, "style-rounded.css");
+	}
+
+print <<END;
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 	<head>
@@ -121,10 +127,13 @@ print <<END
 	$extrahead
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<link rel="shortcut icon" href="/favicon.ico" />
-	<link href="/themes/ipfire/include/css/style.css" rel="stylesheet" type="text/css"  />
 	<script type="text/javascript" src="/include/jquery.js"></script>
 END
-;
+
+	foreach my $stylesheet (@stylesheets) {
+		print "<link href=\"/themes/ipfire/include/css/$stylesheet\" rel=\"stylesheet\" type=\"text/css\" />\n";
+	}
+
 if ($settings{'SPEED'} ne 'off') {
 print <<END
 	<script type="text/javascript" src="/themes/ipfire/include/js/refreshInetInfo.js"></script>
