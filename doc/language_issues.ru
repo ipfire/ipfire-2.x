@@ -182,6 +182,10 @@ WARNING: translation string unused: err rs 7 untartst
 WARNING: translation string unused: err rs 8 untar
 WARNING: translation string unused: error config
 WARNING: translation string unused: error external access
+WARNING: translation string unused: esp encryption
+WARNING: translation string unused: esp grouptype
+WARNING: translation string unused: esp integrity
+WARNING: translation string unused: esp keylife
 WARNING: translation string unused: expected
 WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
@@ -219,6 +223,10 @@ WARNING: translation string unused: icmp selected but no type
 WARNING: translation string unused: icmp type
 WARNING: translation string unused: id
 WARNING: translation string unused: ids preprocessor
+WARNING: translation string unused: ike encryption
+WARNING: translation string unused: ike grouptype
+WARNING: translation string unused: ike integrity
+WARNING: translation string unused: ike lifetime
 WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
@@ -371,6 +379,7 @@ WARNING: translation string unused: pakfire updates
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
 WARNING: translation string unused: passwords must be at least 6 characters in length
+WARNING: translation string unused: phase1 group
 WARNING: translation string unused: phonebook entry
 WARNING: translation string unused: ping disabled
 WARNING: translation string unused: polfile
@@ -602,6 +611,7 @@ WARNING: untranslated string: drop action2
 WARNING: untranslated string: drop forward
 WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: emerging rules
+WARNING: untranslated string: encryption
 WARNING: untranslated string: extrahd because there is already a device mounted
 WARNING: untranslated string: extrahd cant umount
 WARNING: untranslated string: extrahd install or load driver
@@ -752,8 +762,11 @@ WARNING: untranslated string: fwhost stdnet
 WARNING: untranslated string: fwhost type
 WARNING: untranslated string: fwhost used
 WARNING: untranslated string: fwhost welcome
+WARNING: untranslated string: grouptype
 WARNING: untranslated string: incoming traffic in bytes per second
+WARNING: untranslated string: integrity
 WARNING: untranslated string: least preferred
+WARNING: untranslated string: lifetime
 WARNING: untranslated string: minute
 WARNING: untranslated string: most preferred
 WARNING: untranslated string: new

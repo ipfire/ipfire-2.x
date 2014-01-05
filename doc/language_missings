@@ -75,6 +75,7 @@
 < drop action2
 < drop forward
 < drop outgoing
+< encryption
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -265,7 +266,10 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
+< grouptype
+< integrity
 < least preferred
+< lifetime
 < minute
 < most preferred
 < notice
@@ -488,6 +492,7 @@
 < drop action2
 < drop forward
 < drop outgoing
+< encryption
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -678,7 +683,10 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
+< grouptype
+< integrity
 < least preferred
+< lifetime
 < minute
 < most preferred
 < notice
@@ -893,6 +901,7 @@
 < drop action2
 < drop forward
 < drop outgoing
+< encryption
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -1075,7 +1084,10 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
+< grouptype
+< integrity
 < least preferred
+< lifetime
 < minute
 < most preferred
 < notice
@@ -1278,6 +1290,7 @@
 < drop forward
 < drop outgoing
 < Edit an existing route
+< encryption
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -1461,9 +1474,12 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
+< grouptype
 < hour-graph
 < incoming traffic in bytes per second
+< integrity
 < least preferred
+< lifetime
 < minute
 < month-graph
 < most preferred

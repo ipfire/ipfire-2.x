@@ -2304,110 +2304,151 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     <input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />
 
     <table width='100%'>
-	<tr><td class='boldbase' align='right' valign='top'>$Lang::tr{'ike encryption'}</td><td class='boldbase' valign='top'>
-		<select name='IKE_ENCRYPTION' multiple='multiple' size='4'>
-		<option value='aes256' $checked{'IKE_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
-		<option value='aes192' $checked{'IKE_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
-		<option value='aes128' $checked{'IKE_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
-		<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>3DES</option>
-		<option value='camellia256' $checked{'IKE_ENCRYPTION'}{'camellia256'}>Camellia (256 bit)</option>
-		<option value='camellia192' $checked{'IKE_ENCRYPTION'}{'camellia192'}>Camellia (192 bit)</option>
-		<option value='camellia128' $checked{'IKE_ENCRYPTION'}{'camellia128'}>Camellia (128 bit)</option>
-		</select></td>
+	<thead>
+		<tr>
+			<th></th>
+			<th>IKE</th>
+			<th>ESP</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td class='boldbase'>$Lang::tr{'encryption'}</td>
+			<td class='boldbase'>
+				<select name='IKE_ENCRYPTION' multiple='multiple' size='6' style='width: 100%'>
+					<option value='aes256' $checked{'IKE_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
+					<option value='aes192' $checked{'IKE_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
+					<option value='aes128' $checked{'IKE_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
+					<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>3DES</option>
+					<option value='camellia256' $checked{'IKE_ENCRYPTION'}{'camellia256'}>Camellia (256 bit)</option>
+					<option value='camellia192' $checked{'IKE_ENCRYPTION'}{'camellia192'}>Camellia (192 bit)</option>
+					<option value='camellia128' $checked{'IKE_ENCRYPTION'}{'camellia128'}>Camellia (128 bit)</option>
+				</select>
+			</td>
+			<td class='boldbase'>
+				<select name='ESP_ENCRYPTION' multiple='multiple' size='6' style='width: 100%'>
+					<option value='aes256' $checked{'ESP_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
+					<option value='aes192' $checked{'ESP_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
+					<option value='aes128' $checked{'ESP_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
+					<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>3DES</option>
+					<option value='camellia256' $checked{'ESP_ENCRYPTION'}{'camellia256'}>Camellia (256 bit)</option>
+					<option value='camellia192' $checked{'ESP_ENCRYPTION'}{'camellia192'}>Camellia (192 bit)</option>
+					<option value='camellia128' $checked{'ESP_ENCRYPTION'}{'camellia128'}>Camellia (128 bit)</option>
+				</select>
+			</td>
+		</tr>
 
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike integrity'}</td><td class='boldbase' valign='top'>
-		<select name='IKE_INTEGRITY' multiple='multiple' size='4'>
-		<option value='sha2_512' $checked{'IKE_INTEGRITY'}{'sha2_512'}>SHA2 512 bit</option>
-		<option value='sha2_384' $checked{'IKE_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
-		<option value='sha2_256' $checked{'IKE_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
-		<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA1</option>
-		<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5</option>
-		<option value='aesxcbc' $checked{'IKE_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
-		</select></td>
-	
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike grouptype'}</td><td class='boldbase' valign='top'>
-		<select name='IKE_GROUPTYPE' multiple='multiple' size='4'>
-		<option value='e521' $checked{'IKE_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
-		<option value='e384' $checked{'IKE_GROUPTYPE'}{'e384'}>ECP-384 (NIST)</option>
-		<option value='e256' $checked{'IKE_GROUPTYPE'}{'e256'}>ECP-256 (NIST)</option>
-		<option value='e224' $checked{'IKE_GROUPTYPE'}{'e224'}>ECP-224 (NIST)</option>
-		<option value='e192' $checked{'IKE_GROUPTYPE'}{'e192'}>ECP-192 (NIST)</option>
-		<option value='e512bp' $checked{'IKE_GROUPTYPE'}{'e512bp'}>ECP-512 (Brainpool)</option>
-		<option value='e384bp' $checked{'IKE_GROUPTYPE'}{'e384bp'}>ECP-384 (Brainpool)</option>
-		<option value='e256bp' $checked{'IKE_GROUPTYPE'}{'e256bp'}>ECP-256 (Brainpool)</option>
-		<option value='e224bp' $checked{'IKE_GROUPTYPE'}{'e224bp'}>ECP-224 (Brainpool)</option>
-		<option value='8192' $checked{'IKE_GROUPTYPE'}{'8192'}>MODP-8192</option>
-		<option value='6144' $checked{'IKE_GROUPTYPE'}{'6144'}>MODP-6144</option>
-		<option value='4096' $checked{'IKE_GROUPTYPE'}{'4096'}>MODP-4096</option>
-		<option value='3072' $checked{'IKE_GROUPTYPE'}{'3072'}>MODP-3072</option>
-		<option value='2048s256' $checked{'IKE_GROUPTYPE'}{'2048s256'}>MODP-2048/256</option>
-		<option value='2048s224' $checked{'IKE_GROUPTYPE'}{'2048s224'}>MODP-2048/224</option>
-		<option value='2048s160' $checked{'IKE_GROUPTYPE'}{'2048s160'}>MODP-2048/160</option>
-		<option value='2048' $checked{'IKE_GROUPTYPE'}{'2048'}>MODP-2048</option>
-		<option value='1536' $checked{'IKE_GROUPTYPE'}{'1536'}>MODP-1536</option>
-		<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024</option>
-		</select></td>
-	</tr><tr>
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike lifetime'}</td><td class='boldbase' valign='top'>
-	    <input type='text' name='IKE_LIFETIME' value='$cgiparams{'IKE_LIFETIME'}' size='5' /> $Lang::tr{'hours'}</td>
+		<tr>
+			<td class='boldbase'>$Lang::tr{'integrity'}</td>
+			<td class='boldbase'>
+				<select name='IKE_INTEGRITY' multiple='multiple' size='6' style='width: 100%'>
+					<option value='sha2_512' $checked{'IKE_INTEGRITY'}{'sha2_512'}>SHA2 512 bit</option>
+					<option value='sha2_384' $checked{'IKE_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
+					<option value='sha2_256' $checked{'IKE_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
+					<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA1</option>
+					<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5</option>
+					<option value='aesxcbc' $checked{'IKE_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
+				</select>
+			</td>
+			<td class='boldbase'>
+				<select name='ESP_INTEGRITY' multiple='multiple' size='6' style='width: 100%'>
+					<option value='sha2_512' $checked{'ESP_INTEGRITY'}{'sha2_512'}>SHA2 512 bit</option>
+					<option value='sha2_384' $checked{'ESP_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
+					<option value='sha2_256' $checked{'ESP_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
+					<option value='sha1' $checked{'ESP_INTEGRITY'}{'sha1'}>SHA1</option>
+					<option value='md5' $checked{'ESP_INTEGRITY'}{'md5'}>MD5</option>
+					<option value='aesxcbc' $checked{'ESP_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class='boldbase'>$Lang::tr{'lifetime'}</td>
+			<td class='boldbase'>
+				<input type='text' name='IKE_LIFETIME' value='$cgiparams{'IKE_LIFETIME'}' size='5' /> $Lang::tr{'hours'}
+			</td>
+			<td class='boldbase'>
+				<input type='text' name='ESP_KEYLIFE' value='$cgiparams{'ESP_KEYLIFE'}' size='5' /> $Lang::tr{'hours'}
+			</td>
+		</tr>
+		<tr>
+			<td class='boldbase'>$Lang::tr{'grouptype'}</td>
+			<td class='boldbase'>
+				<select name='IKE_GROUPTYPE' multiple='multiple' size='6' style='width: 100%'>
+					<option value='e521' $checked{'IKE_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
+					<option value='e384' $checked{'IKE_GROUPTYPE'}{'e384'}>ECP-384 (NIST)</option>
+					<option value='e256' $checked{'IKE_GROUPTYPE'}{'e256'}>ECP-256 (NIST)</option>
+					<option value='e224' $checked{'IKE_GROUPTYPE'}{'e224'}>ECP-224 (NIST)</option>
+					<option value='e192' $checked{'IKE_GROUPTYPE'}{'e192'}>ECP-192 (NIST)</option>
+					<option value='e512bp' $checked{'IKE_GROUPTYPE'}{'e512bp'}>ECP-512 (Brainpool)</option>
+					<option value='e384bp' $checked{'IKE_GROUPTYPE'}{'e384bp'}>ECP-384 (Brainpool)</option>
+					<option value='e256bp' $checked{'IKE_GROUPTYPE'}{'e256bp'}>ECP-256 (Brainpool)</option>
+					<option value='e224bp' $checked{'IKE_GROUPTYPE'}{'e224bp'}>ECP-224 (Brainpool)</option>
+					<option value='8192' $checked{'IKE_GROUPTYPE'}{'8192'}>MODP-8192</option>
+					<option value='6144' $checked{'IKE_GROUPTYPE'}{'6144'}>MODP-6144</option>
+					<option value='4096' $checked{'IKE_GROUPTYPE'}{'4096'}>MODP-4096</option>
+					<option value='3072' $checked{'IKE_GROUPTYPE'}{'3072'}>MODP-3072</option>
+					<option value='2048s256' $checked{'IKE_GROUPTYPE'}{'2048s256'}>MODP-2048/256</option>
+					<option value='2048s224' $checked{'IKE_GROUPTYPE'}{'2048s224'}>MODP-2048/224</option>
+					<option value='2048s160' $checked{'IKE_GROUPTYPE'}{'2048s160'}>MODP-2048/160</option>
+					<option value='2048' $checked{'IKE_GROUPTYPE'}{'2048'}>MODP-2048</option>
+					<option value='1536' $checked{'IKE_GROUPTYPE'}{'1536'}>MODP-1536</option>
+					<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024</option>
+				</select>
+			</td>
+			<td></td>
+		</tr>
+	</tbody>
+    </table>
 
-	</tr><tr>
-	    <td colspan='1'><hr /></td>
-	</tr><tr>
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp encryption'}</td><td class='boldbase' valign='top'>
-		<select name='ESP_ENCRYPTION' multiple='multiple' size='4'>
-		<option value='aes256' $checked{'ESP_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
-		<option value='aes192' $checked{'ESP_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
-		<option value='aes128' $checked{'ESP_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
-		<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>3DES</option>
-		<option value='camellia256' $checked{'ESP_ENCRYPTION'}{'camellia256'}>Camellia (256 bit)</option>
-		<option value='camellia192' $checked{'ESP_ENCRYPTION'}{'camellia192'}>Camellia (192 bit)</option>
-		<option value='camellia128' $checked{'ESP_ENCRYPTION'}{'camellia128'}>Camellia (128 bit)</option>
-		</select></td>
+    <hr>
 
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp integrity'}</td><td class='boldbase' valign='top'>
-		<select name='ESP_INTEGRITY' multiple='multiple' size='4'>
-		<option value='sha2_512' $checked{'ESP_INTEGRITY'}{'sha2_512'}>SHA2 512 bit</option>
-		<option value='sha2_384' $checked{'ESP_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
-		<option value='sha2_256' $checked{'ESP_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
-		<option value='sha1' $checked{'ESP_INTEGRITY'}{'sha1'}>SHA1</option>
-		<option value='md5' $checked{'ESP_INTEGRITY'}{'md5'}>MD5</option>
-		<option value='aesxcbc' $checked{'ESP_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
-		</select></td>
-
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp grouptype'}</td><td class='boldbase' valign='top'>
-		<select name='ESP_GROUPTYPE'>
-		<option value=''>$Lang::tr{'phase1 group'}</option></select></td>
-	</tr><tr>
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp keylife'}</td><td class='boldbase' valign='top'>
-		<input type='text' name='ESP_KEYLIFE' value='$cgiparams{'ESP_KEYLIFE'}' size='5' /> $Lang::tr{'hours'}</td>
-	</tr><tr>
-	    <td colspan='1'><hr /></td>
-	</tr><tr>
-	    <td colspan='5'><input type='checkbox' name='ONLY_PROPOSED' $checked{'ONLY_PROPOSED'} />
-		IKE+ESP: $Lang::tr{'use only proposed settings'}</td>
-	</tr><tr>
-	    <td colspan='5'><input type='checkbox' name='PFS' $checked{'PFS'} />
-		$Lang::tr{'pfs yes no'}</td>
-		<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-	</tr><tr>
-	    <td colspan='5'><input type='checkbox' name='COMPRESSION' $checked{'COMPRESSION'} />
-		$Lang::tr{'vpn payload compression'}</td>
-		<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'cancel'}' /></td>
+    <table width="100%">
+	<tr>
+		<td>
+			<label>
+				<input type='checkbox' name='ONLY_PROPOSED' $checked{'ONLY_PROPOSED'} />
+				IKE+ESP: $Lang::tr{'use only proposed settings'}</td>
+			</label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<label>
+				<input type='checkbox' name='PFS' $checked{'PFS'} />
+				$Lang::tr{'pfs yes no'}
+			</label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<label>
+				<input type='checkbox' name='COMPRESSION' $checked{'COMPRESSION'} />
+				$Lang::tr{'vpn payload compression'}
+			</label>
+		</td>
 	</tr>
 EOF
     ;
     if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 	print "<tr><td><input type='hidden' name='VHOST' value='off' /></td></tr>";
     } elsif ($confighash{$cgiparams{'KEY'}}[10]) {
-	print "<tr><td colspan='5'><input type='checkbox' name='VHOST' $checked{'VHOST'} disabled='disabled' />";
-	print " $Lang::tr{'vpn vhost'}</td></tr>";
+	print "<tr><td><label><input type='checkbox' name='VHOST' $checked{'VHOST'} disabled='disabled' />";
+	print " $Lang::tr{'vpn vhost'}</label></td></tr>";
     } else {
-	print "<tr><td colspan='5'><input type='checkbox' name='VHOST' $checked{'VHOST'} />";
-	print " $Lang::tr{'vpn vhost'}</td></tr>";
+	print "<tr><td><label><input type='checkbox' name='VHOST' $checked{'VHOST'} />";
+	print " $Lang::tr{'vpn vhost'}</label></td></tr>";
     }
 
-    print "</table></form>";
+    print <<EOF;
+	<tr>
+		<td align='right'>
+			<input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+			<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}' />
+		</td>
+	</tr>
+    </table></form>
+EOF
+
     &Header::closebox();
     &Header::closebigbox();
     &Header::closepage();
