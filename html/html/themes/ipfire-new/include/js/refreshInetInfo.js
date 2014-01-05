@@ -1,8 +1,8 @@
-/* refreshInetInfo.js 
+/* refreshInetInfo.js
 * functions for retrieving status information via jQuery
 * Modified: March 6th, 2013 by michael@koehler.tk
 * Authors: 	IPFire Team (info@ipfire.org)
-			Kay-Michael Köhler (michael@koehler.tk)
+			Kay-Michael KÃ¶hler (michael@koehler.tk)
 * Visit http://www.ipfire.org/
 */
 
@@ -21,10 +21,10 @@ function refreshInetInfo() {
 	$.ajax({
 		url: '/cgi-bin/speed.cgi',
 		success: function(xml){
-			
+
 			t_current = new Date();
 			var t_diff = t_current - t_last;
-			
+
 			rxb_current = $("rxb",xml).text();
 			var rxb_diff = rxb_current - rxb_last;
 			rxb_last = rxb_current;
@@ -38,16 +38,17 @@ function refreshInetInfo() {
 
 			var tx_kbs = txb_diff/t_diff;
 			tx_kbs = Math.round(tx_kbs*10)/10;
-			
+
 			if (t_last != 0) {
 				$("#rx_kbs").text(rx_kbs + ' kb/s');
 				$("#tx_kbs").text(tx_kbs + ' kb/s');
 				if ($("#bandwidthCalculationContainer").css('display') == 'none')
 					$("#bandwidthCalculationContainer").css('display','block');
 			}
-			
+
 			t_last = t_current;
 		}
 	});
+
 	window.setTimeout("refreshInetInfo()", 2000);
 }
