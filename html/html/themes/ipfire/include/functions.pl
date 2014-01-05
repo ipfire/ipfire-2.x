@@ -121,13 +121,13 @@ print <<END
 	$extrahead
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<link rel="shortcut icon" href="/favicon.ico" />
-	<link href="/themes/ipfire-new/include/css/style.css" rel="stylesheet" type="text/css"  />
+	<link href="/themes/ipfire/include/css/style.css" rel="stylesheet" type="text/css"  />
 	<script type="text/javascript" src="/include/jquery-1.9.1.min.js"></script>
 END
 ;
 if ($settings{'SPEED'} ne 'off') {
 print <<END
-	<script type="text/javascript" src="/themes/ipfire-new/include/js/refreshInetInfo.js"></script>
+	<script type="text/javascript" src="/themes/ipfire/include/js/refreshInetInfo.js"></script>
 END
 ;
 }

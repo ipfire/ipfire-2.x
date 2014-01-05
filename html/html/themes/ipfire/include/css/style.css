@@ -114,7 +114,7 @@ iframe {
 #logo {
 	height: 65px;
 	margin-top: 1em;
-	background: url('/themes/ipfire-new/images/tux2.png') no-repeat;
+	background: url('../../images/tux2.png') no-repeat;
 }
 
 #logo h1 {
@@ -132,7 +132,7 @@ iframe {
 	padding: 1.5em 2em 0 2em;
 	border-radius: 8px 8px 8px 8px;
 	-webkit-border-radius: 8px 8px 8px 8px;
-	background: #fff url('/themes/ipfire-new/images/n2.gif') 0px 0px repeat-x;
+	background: #fff url('../../images/n2.gif') 0px 0px repeat-x;
 	border: 1px solid black;
 }
 
@@ -188,7 +188,7 @@ input {
 }
 
 input.button {
-	background: #ca2f2f url('/themes/ipfire-new/images/n3.gif') repeat-x;
+	background: #ca2f2f url('../../images/n3.gif') repeat-x;
 	color: #fff;
 	border: solid 1px #a94b4b;
 	font-weight: bold;
