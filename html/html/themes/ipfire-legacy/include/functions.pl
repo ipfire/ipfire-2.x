@@ -160,7 +160,7 @@ END
     }
     print <<END
     <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="/themes/ipfire/include/style.css" />
+    <link rel="stylesheet" type="text/css" href="/themes/ipfire-legacy/include/style.css" />
     <script language="javascript" type="text/javascript">
       
         function swapVisibility(id) {
