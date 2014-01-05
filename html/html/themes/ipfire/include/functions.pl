@@ -139,7 +139,7 @@ print <<END
 			<div id="logo">
 END
 ;
-	if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
+	if ($settings{'WINDOWWITHHOSTNAME'} ne 'off') {
 		print "<h1>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</h1>";
 	} else {
 		print "<h1>IPFire</h1>";

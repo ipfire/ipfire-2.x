@@ -99,7 +99,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 	if ($mainsettings{'WINDOWWITHHOSTNAME'}) {
 		$cgiparams{'WINDOWWITHHOSTNAME'} = $mainsettings{'WINDOWWITHHOSTNAME'};
 	} else {
-		$cgiparams{'WINDOWWITHHOSTNAME'} = 'off';
+		$cgiparams{'WINDOWWITHHOSTNAME'} = 'on';
 	}
 	
 	if ($mainsettings{'REBOOTQUESTION'}) {
@@ -138,7 +138,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 # Default settings
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'restore defaults'}")
 {
-	$cgiparams{'WINDOWWITHHOSTNAME'} = 'off';
+	$cgiparams{'WINDOWWITHHOSTNAME'} = 'on';
 	$cgiparams{'REBOOTQUESTION'} = 'on';
 	$cgiparams{'PPPUPDOWNBEEP'} = 'on';
 	$cgiparams{'REFRESHINDEX'} = 'off';
