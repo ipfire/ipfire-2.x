@@ -36,7 +36,6 @@ my %checked=();
 my $errormessage='';
 
 
-$cgiparams{'FX'} = 'off';
 $cgiparams{'SPEED'} = 'off';
 $cgiparams{'WINDOWWITHHOSTNAME'} = 'off';
 $cgiparams{'REBOOTQUESTION'} = 'off';
@@ -90,7 +89,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 	$mainsettings{'WINDOWWITHHOSTNAME'} = $cgiparams{'WINDOWWITHHOSTNAME'};
 	$mainsettings{'REBOOTQUESTION'} = $cgiparams{'REBOOTQUESTION'};
 	$mainsettings{'PPPUPDOWNBEEP'} = $cgiparams{'PPPUPDOWNBEEP'};
-	$mainsettings{'FX'} = $cgiparams{'FX'};
 	$mainsettings{'SPEED'} = $cgiparams{'SPEED'};
 	$mainsettings{'THEME'} = $cgiparams{'theme'};
 	$mainsettings{'REFRESHINDEX'} = $cgiparams{'REFRESHINDEX'};
@@ -114,12 +112,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 		$cgiparams{'PPPUPDOWNBEEP'} = $mainsettings{'PPPUPDOWNBEEP'};
 	} else {
 		$cgiparams{'PPPUPDOWNBEEP'} = 'on';
-	}
-
-	if ($mainsettings{'FX'}) {
-		$cgiparams{'FX'} = $mainsettings{'FX'};
-	} else {
-		$cgiparams{'FX'} = 'on';
 	}
 
 	if ($mainsettings{'THEME'}) {
@@ -150,7 +142,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'restore defaults'}")
 	$cgiparams{'REBOOTQUESTION'} = 'on';
 	$cgiparams{'PPPUPDOWNBEEP'} = 'on';
 	$cgiparams{'REFRESHINDEX'} = 'off';
-	$cgiparams{'FX'} = 'on';
 	$cgiparams{'SPEED'} = 'on';
 	$cgiparams{'THEME'} = 'ipfire';
 }
@@ -170,10 +161,6 @@ $checked{'PPPUPDOWNBEEP'}{$cgiparams{'PPPUPDOWNBEEP'}} = "checked='checked'";
 $checked{'REFRESHINDEX'}{'off'} = '';
 $checked{'REFRESHINDEX'}{'on'} = '';
 $checked{'REFRESHINDEX'}{$cgiparams{'REFRESHINDEX'}} = "checked='checked'";
-
-$checked{'FX'}{'off'} = '';
-$checked{'FX'}{'on'} = '';
-$checked{'FX'}{$cgiparams{'FX'}} = "checked='checked'";
 
 $checked{'SPEED'}{'off'} = '';
 $checked{'SPEED'}{'on'} = '';
@@ -195,10 +182,6 @@ print <<END
 <table width='100%'>
 <tr>
     <td colspan='2'><p><b>$Lang::tr{'display'}</b></td>
-</tr>
-<tr>
-    <td><input type='checkbox' name='FX' $checked{'FX'}{'on'} /></td>
-    <td>$Lang::tr{'display webinterface effects'}</td>
 </tr>
 <tr>
     <td><input type='checkbox' name='WINDOWWITHHOSTNAME' $checked{'WINDOWWITHHOSTNAME'}{'on'} /></td>

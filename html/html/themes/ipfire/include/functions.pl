@@ -132,14 +132,6 @@ END
 ;
 }
 
-if ($settings{'FX'} ne 'off') {
-print <<END
-	<meta http-equiv="Page-Enter" content="blendTrans(Duration=0.5,Transition=12)" />
-	<meta http-equiv="Page-Exit" content="blendTrans(Duration=0.5,Transition=12)" />
-END
-;
-}
-
 print <<END
 	</head>
 	<body>

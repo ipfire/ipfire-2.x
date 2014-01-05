@@ -149,16 +149,6 @@ sub openpage {
 <head>
 		<title>$title</title>
     $extrahead
-END
-;
-    if ($settings{'FX'} ne 'off') {
-    print <<END
-    <meta http-equiv="Page-Enter" content="blendTrans(Duration=0.5,Transition=12)" />
-    <meta http-equiv="Page-Exit" content="blendTrans(Duration=0.5,Transition=12)" />
-END
-;
-    }
-    print <<END
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="/themes/maniac/include/style.css" />
     <script language="javascript" type="text/javascript">
