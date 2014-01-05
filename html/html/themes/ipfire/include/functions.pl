@@ -122,7 +122,7 @@ print <<END
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<link rel="shortcut icon" href="/favicon.ico" />
 	<link href="/themes/ipfire/include/css/style.css" rel="stylesheet" type="text/css"  />
-	<script type="text/javascript" src="/include/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/include/jquery.js"></script>
 END
 ;
 if ($settings{'SPEED'} ne 'off') {
