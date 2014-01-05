@@ -21,30 +21,30 @@
 
 sub showmenu() {
     print <<EOF
-		<div id="menu">
-			<ul>
+                <div id="menu">
+                        <ul>
 EOF
 ;
     foreach my $k1 ( sort keys %$menu ) {
-	if (! $menu->{$k1}{'enabled'}) {
-	    next;
-	}
-	my $link = getlink($menu->{$k1});
-	if ($link eq '') {
-	    next;
-	}
-	if (! is_menu_visible($link)) {
-	    next;
-	}
-	if ($menu->{$k1}->{'selected'}) {
-	    print "<li><a href=\"$link\" class=\"active\">$menu->{$k1}{'caption'}</a></li>";
-	} else {
-	    print "<li><a href=\"$link\">$menu->{$k1}{'caption'}</a></li>";
-	}
+        if (! $menu->{$k1}{'enabled'}) {
+            next;
+        }
+        my $link = getlink($menu->{$k1});
+        if ($link eq '') {
+            next;
+        }
+        if (! is_menu_visible($link)) {
+            next;
+        }
+        if ($menu->{$k1}->{'selected'}) {
+            print "<li><a href=\"$link\" class=\"active\">$menu->{$k1}{'caption'}</a></li>";
+        } else {
+            print "<li><a href=\"$link\">$menu->{$k1}{'caption'}</a></li>";
+        }
     }
     print <<EOF
-			</ul>
-		</div>
+                        </ul>
+                </div>
 EOF
 ;    
 }
@@ -52,13 +52,13 @@ EOF
 sub getselected($) {
     my $root = shift;
     if (!$root) {
-	return 0;
+        return 0;
     }
 
     foreach my $item (%$root) {
-	if ($root->{$item}{'selected'}) {
-	    return $root->{$item};
-	}
+        if ($root->{$item}{'selected'}) {
+            return $root->{$item};
+        }
     }
 }
 
@@ -66,45 +66,45 @@ sub showsubsection($$) {
     my $root = shift;
 
     if (! $root) {
-	return;
+        return;
     }
     my $selected = getselected($root);
     if (! $selected) {
-	return;
+        return;
     }
     my $submenus = $selected->{'subMenu'};
     if (! $submenus) {
-	return;
+        return;
     }
 
     print <<EOF
-	<h4><span>Side</span>menu</h4>
-	<ul class="links">
+        <h4><span>Side</span>menu</h4>
+        <ul class="links">
 EOF
 ;
     foreach my $item (sort keys %$submenus) {
-	my $hash = $submenus->{$item};
-	if (! $hash->{'enabled'}) {
-	    next;
-	}
-	my $link = getlink($hash);
-	if ($link eq '') {
-	    next;
-	}
-	if (! is_menu_visible($link)) {
-	    next;
-	}
-	if ($hash->{'selected'}) {
-	    print '<li class="selected">';
-	} else {
-	    print '<li>';
-	}
+        my $hash = $submenus->{$item};
+        if (! $hash->{'enabled'}) {
+            next;
+        }
+        my $link = getlink($hash);
+        if ($link eq '') {
+            next;
+        }
+        if (! is_menu_visible($link)) {
+            next;
+        }
+        if ($hash->{'selected'}) {
+            print '<li class="selected">';
+        } else {
+            print '<li>';
+        }
 
-	print "<a href=\"$link\">$hash->{'caption'}</a></li>";
+        print "<a href=\"$link\">$hash->{'caption'}</a></li>";
     }
 
     print <<EOF
-	</ul>
+        </ul>
 EOF
 ;
 }
@@ -113,14 +113,14 @@ EOF
 sub showsubsubsection($) {
     my $root = shift;
     if (!$root) {
-	return;
+        return;
     }
     my $selected = getselected($root);
     if (! $selected) {
-	return
+        return
     }
     if (! $selected->{'subMenu'}) {
-	return
+        return
     }
 
     showsubsection($selected->{'subMenu'}, 'menu-subtop');
@@ -137,7 +137,7 @@ sub openpage {
 
     my $h2 = gettitle($menu);
 
-    $title = "-= IPFire - $title =-";
+    $title = "IPFire - $title";
     if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
         $title =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
     }
@@ -150,7 +150,7 @@ sub openpage {
 		<title>$title</title>
     $extrahead
     <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="/themes/maniac/include/style.css" />
+    <link rel="stylesheet" type="text/css" href="/themes/ipfire-legacy/include/style.css" />
     <script language="javascript" type="text/javascript">
       
         function swapVisibility(id) {
@@ -175,37 +175,37 @@ print <<END
         var rxb_last;
         var txb_current;
         var txb_last;
-				function refreshInetInfo() {
-						\$.ajax({
-								url: '/cgi-bin/speed.cgi',
-											success: function(xml){
-											t_current = new Date();
-											var t_diff = t_current - t_last;
-											t_last = t_current;
-				
-											rxb_current = \$("rxb",xml).text();
-											var rxb_diff = rxb_current - rxb_last;
-											rxb_last = rxb_current;
-				
-											var rx_kbs = rxb_diff/t_diff;
-											rx_kbs = Math.round(rx_kbs*10)/10;
-				
-											txb_current = \$("txb",xml).text();
-											var txb_diff = txb_current - txb_last;
-											txb_last = txb_current;
-				
-											var tx_kbs = txb_diff/t_diff;
-											tx_kbs = Math.round(tx_kbs*10)/10;
-				
-											\$("#rx_kbs").text(rx_kbs + ' kb/s');
-											\$("#tx_kbs").text(tx_kbs + ' kb/s');
-											}
-								});
-								window.setTimeout("refreshInetInfo()", 3000);
-						}
-						\$(document).ready(function(){
-						refreshInetInfo();
-				});
+	function refreshInetInfo() {
+		\$.ajax({
+                	url: '/cgi-bin/speed.cgi',
+                        success: function(xml){
+                        t_current = new Date();
+                        var t_diff = t_current - t_last;
+                        t_last = t_current;
+
+                        rxb_current = \$("rxb",xml).text();
+                        var rxb_diff = rxb_current - rxb_last;
+                        rxb_last = rxb_current;
+
+                        var rx_kbs = rxb_diff/t_diff;
+                        rx_kbs = Math.round(rx_kbs*10)/10;
+
+                        txb_current = \$("txb",xml).text();
+                        var txb_diff = txb_current - txb_last;
+                        txb_last = txb_current;
+
+                        var tx_kbs = txb_diff/t_diff;
+                        tx_kbs = Math.round(tx_kbs*10)/10;
+
+                        \$("#rx_kbs").text(rx_kbs + ' kb/s');
+                        \$("#tx_kbs").text(tx_kbs + ' kb/s');
+                        }
+        	});
+                window.setTimeout("refreshInetInfo()", 3000);
+	}
+	\$(document).ready(function(){
+		refreshInetInfo();
+	});
     </script>
   </head>
   <body>
@@ -213,38 +213,38 @@ END
 ;
 }
 else {
-print "</head>\n<body>";}
+print "</head><body>";}
 print <<END
 <!-- IPFIRE HEADER -->
 
 <div id="header">
 
-	<div id="header_inner" class="fixed">
+        <div id="header_inner" class="fixed">
 
-		<div id="logo">
+                <div id="logo">
 END
 ;
     if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
         print "<h1><span>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</span></h1><br />"; 
     } else {
-				print "<h1><span>-= IPFire =-</span></h1><br />";
-		}
-		print <<END
-			<h2>+ $h2 +</h2>
-		</div>
+                                print "<h1><span>IPFire</span></h1><br />";
+                }
+                print <<END
+                        <h2>$h2</h2>
+                </div>
 
 END
 ;
-	&showmenu();
+        &showmenu();
 
-print <<END	
-	</div>
+print <<END     
+        </div>
 </div>
 
 <div id="main">
-	<div id="main_inner" class="fixed">
-		<div id="primaryContent_2columns">
-			<div id="columnA_2columns">
+        <div id="main_inner" class="fixed">
+                <div id="primaryContent_2columns">
+                        <div id="columnA_2columns">
 END
 ;
 }
@@ -260,7 +260,7 @@ sub openpagewithoutmenu {
 
     my $h2 = gettitle($menu);
 
-    $title = "-= IPFire - $title =-";
+    $title = "IPFire - $title";
     if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
         $title =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
     }
@@ -288,12 +288,12 @@ END
       
         function swapVisibility(id) {
             el = document.getElementById(id);
-  	    if(el.style.display != 'block') {
-  	        el.style.display = 'block'
-  	    }
-  	    else {
-  	        el.style.display = 'none'
-  	    }
+            if(el.style.display != 'block') {
+                el.style.display = 'block'
+            }
+            else {
+                el.style.display = 'none'
+            }
         }
     </script>
 
@@ -303,19 +303,19 @@ END
 
 <div id="header">
 
-	<div id="header_inner" class="fixed">
+        <div id="header_inner" class="fixed">
 
-		<div id="logo">
-			<h1><span>-= IPFire =-</span></h1>
-			<h2>+ $h2 +</h2>
-		</div>	
-	</div>
+                <div id="logo">
+                        <h1><span>IPFire</span></h1>
+                        <h2>$h2</h2>
+                </div>  
+        </div>
 </div>
 
 <div id="main">
-	<div id="main_inner" class="fixed">
-		<div id="primaryContent_2columns">
-			<div id="columnA_2columns">
+        <div id="main_inner" class="fixed">
+                <div id="primaryContent_2columns">
+                        <div id="columnA_2columns">
 END
 ;
 }
@@ -330,21 +330,21 @@ sub closepage () {
 	$uptime =~ s/load average/$Lang::tr{'uptime load average'}/;     
 				
     print <<END
-			</div>
-		</div>
+                        </div>
+                </div>
 
-		<div id="secondaryContent_2columns">
-		
-			<div id="columnC_2columns">
+                <div id="secondaryContent_2columns">
+                
+                        <div id="columnC_2columns">
 END
 ;
     &showsubsection($menu);
     &showsubsubsection($menu);
 
-	print <<END
+        print <<END                     
 				</div>
-			</div>
-			<br class="clear" />	
+            </div>
+            <br class="clear" />    
 			<div id="footer" class="fixed">
 				<b>Status:</b> $status <b>Uptime:</b> $uptime
 END
@@ -378,25 +378,25 @@ sub closebigbox
 
 sub openbox
 {
-	$width = $_[0];
-	$align = $_[1];
-	$caption = $_[2];
+        $width = $_[0];
+        $align = $_[1];
+        $caption = $_[2];
 
-	print <<END
+        print <<END
 <!-- openbox -->
-	<div class="post" align="$align">
+        <div class="post" align="$align">
 END
 ;
 
-	if ($caption) { print "<h3>$caption</h3>\n"; } else { print "&nbsp;"; }
+        if ($caption) { print "<h3>$caption</h3>\n"; } else { print "&nbsp;"; }
 }
 
 sub closebox
 {
-	print <<END
-	</div>
-	<br class="clear" />
-	<!-- closebox -->
+        print <<END
+        </div>
+        <br class="clear" />
+        <!-- closebox -->
 END
 ;
 }

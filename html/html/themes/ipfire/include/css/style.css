@@ -1,0 +1,261 @@
+
+/* This controls the width of the fixed width layouts */
+
+.fixed {
+	width: 910px !important;
+}
+
+/* Basic Stuff */
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	height: 100%;
+}
+
+body {
+	/* SVG as background image (IE9/Chrome/Safari/Opera) */
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9Imc2ODQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMTAwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMDAwMDAwIiBvZmZzZXQ9IjAiLz48c3RvcCBzdG9wLWNvbG9yPSIjODgwNDAwIiBvZmZzZXQ9IjU3JSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2c2ODQpIiAvPgo8L3N2Zz4=);
+
+	background-image: linear-gradient(
+		bottom,
+		#000000 0%,
+		#880400 57%
+	);
+	background-image: -o-linear-gradient(
+		bottom,
+		#000000 0%,
+		#880400 57%
+	);
+	background-image: -moz-linear-gradient(
+		bottom,
+		#000000 0%,
+		#880400 57%
+	);
+	background-image: -webkit-linear-gradient(
+		bottom,
+		#000000 0%,
+		#880400 57
+	);
+	background-image: -ms-linear-gradient(
+		bottom,
+		#000000 0%,
+		#880400 57%
+	);
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, #000000),
+		color-stop(0.57, #880400)
+	);
+	background-attachment: fixed;
+
+	font-size: 9pt;
+	font-family: "trebuchet ms", helvetica, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-size: 20px;
+	font-weight: normal;
+	letter-spacing: -1px;
+	text-align: left;
+}
+
+h2, h3, h4, h5, h6 {
+	color: #66000F;
+}
+
+br.clear {
+	clear: both;
+}
+
+img {
+	padding: 3px;
+}
+
+a {
+	text-decoration: underline;
+	color: #d90000;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+p {
+	line-height: 1.8em;
+}
+
+hr {
+	margin: 0.3em 0 0.3em 0;
+}
+
+iframe {
+	border: 0;
+}
+
+.pull-right {
+	float: right !important;
+}
+
+/* Header */
+
+#header {
+	height: 70px;
+	margin: 0 auto;
+}
+
+/* Logo */
+
+#logo {
+	height: 65px;
+	margin-top: 1em;
+	background: url('../../images/tux2.png') no-repeat;
+}
+
+#logo h1 {
+	color: #fff;
+	font-size: 3.6em;
+	font-weight: bold;
+	padding-left: 1.7em;
+}
+
+/* Main */
+
+.bigbox {
+	margin: 0 auto;
+	margin-top: 0.5em;
+	padding: 1.5em 2em 0 2em;
+	background: #fff url('../../images/n2.gif') 0px 0px repeat-x;
+	border: 1px solid black;
+
+	border-radius: 3px 3px 3px 3px;
+	-webkit-border-radius: 3px 3px 3px 3px;
+}
+
+#main_inner {
+	padding-bottom: 1.5em;
+}
+
+#main_inner p {
+	text-align: justify;
+	margin-bottom: 2em;
+}
+
+#main_inner ul {
+	margin-bottom: 2em;
+}
+
+#main_inner h1 {
+	font-size: 1.8em;
+	margin-bottom: 1em;
+}
+
+#main_inner .post {
+	border: 1px solid silver;
+	padding: 1em 2em 1em 2em;
+	margin-bottom: 1em;
+	clear: both;
+}
+
+#main_inner .post h2 {
+	border-bottom: dotted 1px #e1e1e1;
+	font-size: 1.7em;
+	margin-bottom: 1em;
+}
+
+#footer {
+	height: 2.5em;
+	margin-bottom: 1em;
+}
+
+#footer a {
+	color: inherit;
+	text-decoration: none;
+}
+
+#footer a:hover {
+	text-decoration: underline;
+}
+
+input {
+	margin: 0.2em;
+}
+
+input.button {
+	background: #ca2f2f url('../../images/n3.gif') repeat-x;
+	color: #fff;
+	border: solid 1px #a94b4b;
+	font-weight: bold;
+	font-size: 0.8em;
+	height: 2.0em;
+}
+
+input.text {
+	border: solid 1px #f1f1f1;
+	padding: 0.25em;
+}
+
+#traffic {
+	float: right;
+	min-width: 20em;
+	line-height: 32px;
+}
+
+/* Menu */
+#cssmenu {
+	margin: 0 auto;
+	margin-top: 0;
+	padding-top: 0;
+	font-weight: 600;
+	height: 32px;
+	border: 1px solid black;
+}
+
+#cssmenu a {
+	color: #111111;
+	display: inline-block;
+	line-height: 32px;
+	padding: 0 1em;
+	text-decoration: none;
+}
+
+#cssmenu ul {
+	list-style: none;
+}
+
+#cssmenu > ul > li {
+	display: inline-block;
+}
+
+#cssmenu > ul > li.active a, #cssmenu > ul > li:hover > a {
+	color: white;
+	background: #aaaaaa;
+}
+
+#cssmenu .has-sub:hover > ul {
+	display: block;
+}
+
+#cssmenu .has-sub ul {
+	display: none;
+	position: absolute;
+}
+
+#cssmenu .has-sub ul li a {
+	min-width: 12em;
+	background: #ffffff;
+	color: grey;
+	display: block;
+	line-height: 40%;
+	padding: 12px 5px;
+	border: 1px solid black;
+}
+
+#cssmenu .has-sub ul li:hover a {
+	background: #dddddd;
+}
