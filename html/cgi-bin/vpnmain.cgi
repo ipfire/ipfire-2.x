@@ -2101,7 +2101,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(aes256|aes192|aes128|3des)$/) {
+	    if ($val !~ /^(aes256|aes192|aes128|3des|camellia256|camellia192|camellia128)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2142,7 +2142,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(aes256|aes192|aes128|3des)$/) {
+	    if ($val !~ /^(aes256|aes192|aes128|3des|camellia256|camellia192|camellia128)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2228,6 +2228,9 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'IKE_ENCRYPTION'}{'aes192'} = '';
     $checked{'IKE_ENCRYPTION'}{'aes128'} = '';
     $checked{'IKE_ENCRYPTION'}{'3des'} = '';
+    $checked{'IKE_ENCRYPTION'}{'camellia256'} = '';
+    $checked{'IKE_ENCRYPTION'}{'camellia192'} = '';
+    $checked{'IKE_ENCRYPTION'}{'camellia128'} = '';
     my @temp = split('\|', $cgiparams{'IKE_ENCRYPTION'});
     foreach my $key (@temp) {$checked{'IKE_ENCRYPTION'}{$key} = "selected='selected'"; }
     $checked{'IKE_INTEGRITY'}{'sha2_512'} = '';
@@ -2256,6 +2259,9 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'ESP_ENCRYPTION'}{'aes192'} = '';
     $checked{'ESP_ENCRYPTION'}{'aes128'} = '';
     $checked{'ESP_ENCRYPTION'}{'3des'} = '';
+    $checked{'ESP_ENCRYPTION'}{'camellia256'} = '';
+    $checked{'ESP_ENCRYPTION'}{'camellia192'} = '';
+    $checked{'ESP_ENCRYPTION'}{'camellia128'} = '';
     @temp = split('\|', $cgiparams{'ESP_ENCRYPTION'});
     foreach my $key (@temp) {$checked{'ESP_ENCRYPTION'}{$key} = "selected='selected'"; }
     $checked{'ESP_INTEGRITY'}{'sha2_512'} = '';
@@ -2304,6 +2310,9 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		<option value='aes192' $checked{'IKE_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
 		<option value='aes128' $checked{'IKE_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
 		<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>3DES</option>
+		<option value='camellia256' $checked{'IKE_ENCRYPTION'}{'camellia256'}>Camellia (256 bit)</option>
+		<option value='camellia192' $checked{'IKE_ENCRYPTION'}{'camellia192'}>Camellia (192 bit)</option>
+		<option value='camellia128' $checked{'IKE_ENCRYPTION'}{'camellia128'}>Camellia (128 bit)</option>
 		</select></td>
 
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike integrity'}</td><td class='boldbase' valign='top'>
@@ -2344,6 +2353,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		<option value='aes192' $checked{'ESP_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
 		<option value='aes128' $checked{'ESP_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
 		<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>3DES</option>
+		<option value='camellia256' $checked{'ESP_ENCRYPTION'}{'camellia256'}>Camellia (256 bit)</option>
+		<option value='camellia192' $checked{'ESP_ENCRYPTION'}{'camellia192'}>Camellia (192 bit)</option>
+		<option value='camellia128' $checked{'ESP_ENCRYPTION'}{'camellia128'}>Camellia (128 bit)</option>
+		</select></td>
 
 	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp integrity'}</td><td class='boldbase' valign='top'>
 		<select name='ESP_INTEGRITY' multiple='multiple' size='4'>
