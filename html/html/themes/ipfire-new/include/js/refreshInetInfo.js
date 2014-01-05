@@ -28,14 +28,14 @@ function refreshInetInfo() {
 			var rxb_diff = rxb_current - rxb_last;
 			rxb_last = rxb_current;
 
-			var rx_bits = rxb_diff * 1024 / t_diff;
+			var rx_bits = rxb_diff * 8192 / t_diff;
 			var rx_fmt = format_bytes(rx_bits);
 
 			txb_current = $("txb", xml).text();
 			var txb_diff = txb_current - txb_last;
 			txb_last = txb_current;
 
-			var tx_bits = txb_diff * 1024 / t_diff;
+			var tx_bits = txb_diff * 8192 / t_diff;
 			var tx_fmt = format_bytes(tx_bits);
 
 			if (t_last != 0) {
