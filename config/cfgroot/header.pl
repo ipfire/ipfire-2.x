@@ -12,6 +12,7 @@
 package Header;
 
 use CGI();
+use File::Basename;
 use HTML::Entities();
 use Socket;
 use Time::Local;
