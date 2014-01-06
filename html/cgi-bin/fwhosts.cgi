@@ -239,20 +239,12 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 			foreach my $key (sort keys %customservicegrp){
 				if($customservicegrp{$key}[2] eq $fwhostsettings{'oldsrvname'}){
 					$customservicegrp{$key}[2] = $fwhostsettings{'SRV_NAME'};
+					&checkrulereload($customservicegrp{$key}[0]);
 				}
 			}
 			&General::writehasharray("$configsrvgrp", \%customservicegrp);
-			$needrules='on';
 		}
-		if($count gt 0 && $fwhostsettings{'oldsrvport'} ne $fwhostsettings{'SRV_PORT'} ){
-			$needrules='on';
-		}
-		if($count gt 0 && $fwhostsettings{'oldsrvprot'} ne $fwhostsettings{'PROT'} ){
-			$needrules='on';
-		}
-		if($count gt 0 && $fwhostsettings{'oldsrvicmp'} ne $fwhostsettings{'ICMP'} ){
-			$needrules='on';
-		}
+		&checkrulereload($fwhostsettings{'SRV_NAME'});
 		$fwhostsettings{'SRV_NAME'}	= '';
 		$fwhostsettings{'SRV_PORT'}	= '';
 		$fwhostsettings{'PROT'}		= '';
@@ -265,9 +257,6 @@ if ($fwhostsettings{'ACTION'} eq 'updateservice')
 		$fwhostsettings{'PROT'}		= $fwhostsettings{'oldsrvprot'};
 		$fwhostsettings{'ICMP'}		= $fwhostsettings{'oldsrvicmp'};
 		$fwhostsettings{'updatesrv'}= 'on';
-	}
-	if($needrules eq 'on'){
-		&General::firewall_config_changed();
 	}
 	&addservice;
 }
@@ -751,7 +740,6 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 {
 	my $prot;
 	my $port;
-	my $count=0;
 	my $tcpcounter=0;
 	my $udpcounter=0;
 	&General::readhasharray("$configsrvgrp", \%customservicegrp );
@@ -818,9 +806,7 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 		&General::writehasharray("$configsrvgrp", \%customservicegrp );
 		$fwhostsettings{'updatesrvgrp'}='on';
 	}
-	if ($count gt 0){
-		&General::firewall_config_changed();
-	}
+	&checkrulereload($fwhostsettings{'SRVGRP_NAME'});
 	&addservicegrp;
 	&viewtableservicegrp;
 }
@@ -1937,6 +1923,33 @@ sub checkservicegroup
 		}
 	}
 	return $errormessage;
+}
+sub checkrulereload
+{
+	my $search=shift;
+	&General::readhasharray("$fwconfigfwd", \%fwfwd);
+	&General::readhasharray("$fwconfiginp", \%fwinp);
+	&General::readhasharray("$fwconfigout", \%fwout);
+
+	#check if service or servicegroup is used in rules
+	foreach my $key (keys %fwfwd){
+		if($search eq $fwfwd{$key}[15]){
+			&General::firewall_config_changed();
+			return;
+		}
+	}
+	foreach my $key (keys %fwinp){
+		if($search eq $fwinp{$key}[15]){
+			&General::firewall_config_changed();
+			return;
+		}
+	}
+	foreach my $key (keys %fwout){
+		if($search eq $fwout{$key}[15]){
+			&General::firewall_config_changed();
+			return;
+		}
+	}
 }
 sub error
 {
