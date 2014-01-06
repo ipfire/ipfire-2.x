@@ -1678,8 +1678,8 @@ print <<END
 	<td class='base'>$Lang::tr{'advproxy fake referer'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 </tr>
 <tr>
-	<td><input type='text' name='FAKE_USERAGENT' value='$proxysettings{'FAKE_USERAGENT'}' size='56' /></td>
-	<td><input type='text' name='FAKE_REFERER' value='$proxysettings{'FAKE_REFERER'}' size='56' /></td>
+	<td><input type='text' name='FAKE_USERAGENT' value='$proxysettings{'FAKE_USERAGENT'}' size='40%' /></td>
+	<td><input type='text' name='FAKE_REFERER' value='$proxysettings{'FAKE_REFERER'}' size='40%' /></td>
 </tr>
 </table>
 <hr size='1'>
