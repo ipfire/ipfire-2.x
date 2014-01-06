@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.1e
+VER        = 1.0.1f
 
 THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -51,7 +51,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 66bf6f10f060d561929de96f9dfe5b8c
+$(DL_FILE)_MD5 = f26b09c028a0541cab33da697d522b25
 
 install : $(TARGET)
 
@@ -85,7 +85,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1-beta2-build.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-cryptodev.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-fix_parallel_build-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-fix_pod_syntax-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-weak-ciphers.patch
 
 	cd $(DIR_APP) && find crypto/ -name Makefile -exec \
