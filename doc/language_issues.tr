@@ -155,6 +155,7 @@ WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
 WARNING: translation string unused: disconnect
 WARNING: translation string unused: display traffic at home
+WARNING: translation string unused: display webinterface effects
 WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
@@ -742,6 +743,7 @@ WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: snat new source ip address
+WARNING: untranslated string: support donation
 WARNING: untranslated string: tor directory port
 WARNING: untranslated string: tor errmsg invalid directory port
 WARNING: untranslated string: urlfilter redirect template

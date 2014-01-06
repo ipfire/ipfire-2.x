@@ -307,6 +307,7 @@
 < snat new source ip address
 < snort working
 < static routes
+< support donation
 < system information
 < tor
 < tor 0 = disabled
@@ -740,6 +741,7 @@
 < Set time on boot
 < snat new source ip address
 < static routes
+< support donation
 < system information
 < tor
 < tor 0 = disabled
@@ -1126,6 +1128,7 @@
 < server restart
 < snat new source ip address
 < static routes
+< support donation
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1516,6 +1519,7 @@
 < server restart
 < snat new source ip address
 < static routes
+< support donation
 < tor
 < tor 0 = disabled
 < tor accounting

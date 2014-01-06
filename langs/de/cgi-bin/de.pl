@@ -1946,6 +1946,7 @@
 'successfully refreshed updates list' => 'Update-Liste erfolgreich aktualisiert.',
 'summaries kept' => 'Zusammenfassungen aufheben für',
 'sunday' => 'Sonntag',
+'support donation' => 'Unterstützen Sie das IPFire-Projekt mit Ihrer Spende',
 'swap' => 'Swap',
 'swap usage per' => 'Nutzung von Auslagerungsspeicher (Swap) pro',
 'system' => 'System',

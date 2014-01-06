@@ -1980,6 +1980,7 @@
 'successfully refreshed updates list' => 'Successfully refreshed updates list.',
 'summaries kept' => 'Keep summaries for',
 'sunday' => 'Sunday',
+'support donation' => 'Support the IPFire project with your donation',
 'swap' => 'Swap',
 'swap usage per' => 'Swap usage per',
 'system' => 'System',

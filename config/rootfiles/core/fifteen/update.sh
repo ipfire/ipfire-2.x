@@ -32,6 +32,9 @@ do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Remove the old default theme
+rm -rf /srv/web/ipfire/html/themes/ipfire
+
 # Stop services
 
 
