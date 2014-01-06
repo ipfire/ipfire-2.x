@@ -749,6 +749,8 @@
 'download pkcs12 file' => 'PKCS12-Datei herunterladen',
 'download root certificate' => 'Root-Zertifikat herunterladen',
 'dpd action' => 'Aktion für Dead Peer Detection',
+'dpd timeout' => 'DPD Zeitüberschreitung',
+'dpd delay' => 'DPD Verzögerung',
 'driver' => 'Treiber',
 'drop action' => 'Standardverhalten der (Forward) Firewall in Modus "Blocked"',
 'drop action1' => 'Standardverhalten der (Outgoing) Firewall in Modus "Blocked"',

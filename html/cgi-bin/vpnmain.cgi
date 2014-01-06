@@ -104,7 +104,8 @@ $cgiparams{'ROOTCERT_OU'} = '';
 $cgiparams{'ROOTCERT_CITY'} = '';
 $cgiparams{'ROOTCERT_STATE'} = '';
 $cgiparams{'RW_NET'} = '';
-
+$cgiparams{'DPD_DELAY'} = '30';
+$cgiparams{'DPD_TIMEOUT'} = '120';
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -384,8 +385,8 @@ sub writeipsecfiles {
 	print CONF "\tcompress=yes\n" if ($lconfighash{$key}[13] eq 'on');
 
 	# Dead Peer Detection
-	print CONF "\tdpddelay=30\n";
-	print CONF "\tdpdtimeout=120\n";
+	print CONF "\tdpddelay=$lconfighash{$key}[30]\n";
+	print CONF "\tdpdtimeout=$lconfighash{$key}[31]\n";
 	print CONF "\tdpdaction=$lconfighash{$key}[27]\n";
 
 	# Build Authentication details:  LEFTid RIGHTid : PSK psk
@@ -1274,6 +1275,8 @@ END
 	$cgiparams{'ONLY_PROPOSED'}  	= $confighash{$cgiparams{'KEY'}}[24];
 	$cgiparams{'PFS'}		= $confighash{$cgiparams{'KEY'}}[28];
 	$cgiparams{'VHOST'}            	= $confighash{$cgiparams{'KEY'}}[14];
+	$cgiparams{'DPD_TIMEOUT'}		= $confighash{$cgiparams{'KEY'}}[30];
+	$cgiparams{'DPD_DELAY'}		= $confighash{$cgiparams{'KEY'}}[31];
 
     } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
@@ -1748,7 +1751,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 	    $key = &General::findhasharraykey (\%confighash);
-	    foreach my $i (0 .. 28) { $confighash{$key}[$i] = "";}
+	    foreach my $i (0 .. 31) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -1788,6 +1791,8 @@ END
 	$confighash{$key}[24] = $cgiparams{'ONLY_PROPOSED'};
 	$confighash{$key}[28] = $cgiparams{'PFS'};
 	$confighash{$key}[14] = $cgiparams{'VHOST'};
+	$confighash{$key}[30] = $cgiparams{'DPD_TIMEOUT'};
+	$confighash{$key}[31] = $cgiparams{'DPD_DELAY'};
 
 	#free unused fields!
 	$confighash{$key}[6] = 'off';
@@ -2197,6 +2202,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$confighash{$cgiparams{'KEY'}}[24] = $cgiparams{'ONLY_PROPOSED'};
 	$confighash{$cgiparams{'KEY'}}[28] = $cgiparams{'PFS'};
 	$confighash{$cgiparams{'KEY'}}[14] = $cgiparams{'VHOST'};
+	$confighash{$cgiparams{'KEY'}}[30] = $cgiparams{'DPD_TIMEOUT'};
+	$confighash{$cgiparams{'KEY'}}[31] = $cgiparams{'DPD_DELAY'};
 	&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 	&writeipsecfiles();
 	if (&vpnenabled) {
@@ -2217,6 +2224,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$cgiparams{'ONLY_PROPOSED'}  = $confighash{$cgiparams{'KEY'}}[24];
 	$cgiparams{'PFS'}  	     = $confighash{$cgiparams{'KEY'}}[28];
 	$cgiparams{'VHOST'}          = $confighash{$cgiparams{'KEY'}}[14];
+	$cgiparams{'DPD_TIMEOUT'}    = $confighash{$cgiparams{'KEY'}}[30];
+	$cgiparams{'DPD_DELAY'}      = $confighash{$cgiparams{'KEY'}}[31];
 
 	if ($confighash{$cgiparams{'KEY'}}[3] eq 'net' || $confighash{$cgiparams{'KEY'}}[10]) {
 	    $cgiparams{'VHOST'}            = 'off';
@@ -2404,7 +2413,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
     <table width="100%">
 	<tr>
-		<td>
+		<td colspan='2'>
 			<label>
 				<input type='checkbox' name='ONLY_PROPOSED' $checked{'ONLY_PROPOSED'} />
 				IKE+ESP: $Lang::tr{'use only proposed settings'}</td>
@@ -2412,7 +2421,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan='2'>
 			<label>
 				<input type='checkbox' name='PFS' $checked{'PFS'} />
 				$Lang::tr{'pfs yes no'}
@@ -2420,11 +2429,31 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan='2'>
 			<label>
 				<input type='checkbox' name='COMPRESSION' $checked{'COMPRESSION'} />
 				$Lang::tr{'vpn payload compression'}
 			</label>
+		</td>
+	</tr>
+	<tr>
+		<td width='20%'>
+			<label>
+				$Lang::tr{'dpd timeout'}
+			</label>
+		</td>
+		<td>
+			<input type='text' name='DPD_TIMEOUT' size='5' value='$cgiparams{'DPD_TIMEOUT'}' />
+		</td>
+	</tr>
+	<tr>
+		<td width='20%'>
+			<label>
+				$Lang::tr{'dpd delay'}
+			</label>
+		</td>
+		<td>
+			<input type='text' name='DPD_DELAY' size='5' value='$cgiparams{'DPD_DELAY'}' />
 		</td>
 	</tr>
 EOF
@@ -2441,7 +2470,7 @@ EOF
 
     print <<EOF;
 	<tr>
-		<td align='right'>
+		<td align='right' colspan='2'>
 			<input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
 			<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}' />
 		</td>

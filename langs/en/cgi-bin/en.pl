@@ -773,6 +773,8 @@
 'download pkcs12 file' => 'Download PKCS12 file',
 'download root certificate' => 'Download root certificate',
 'dpd action' => 'Dead Peer Detection action',
+'dpd timeout' => 'DPD timeout',
+'dpd delay' => 'DPD delay',
 'driver' => 'Driver',
 'drop action' => 'Default behaviour of (forward) firewall in mode "Blocked"',
 'drop action1' => 'Default behaviour of (outgoing) firewall in mode "Blocked"',
