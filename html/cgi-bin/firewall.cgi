@@ -659,6 +659,8 @@ sub checktarget
 							if (&General::validport($_)){
 								push (@values,$_);
 							}else{
+								$errormessage=$Lang::tr{'fwdfw err tgt_port'};
+								return $errormessage;
 							}
 						}
 					}
