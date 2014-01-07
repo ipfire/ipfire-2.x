@@ -590,6 +590,7 @@ WARNING: untranslated string: ccd routes
 WARNING: untranslated string: ccd subnet
 WARNING: untranslated string: ccd used
 WARNING: untranslated string: community rules
+WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: default ip
 WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: disk access per
@@ -601,6 +602,8 @@ WARNING: untranslated string: dnsforward edit an entry
 WARNING: untranslated string: dnsforward entries
 WARNING: untranslated string: dnsforward forward_server
 WARNING: untranslated string: dnsforward zone
+WARNING: untranslated string: dpd delay
+WARNING: untranslated string: dpd timeout
 WARNING: untranslated string: drop action
 WARNING: untranslated string: drop action1
 WARNING: untranslated string: drop action2
@@ -650,6 +653,7 @@ WARNING: untranslated string: fwdfw err src_addr
 WARNING: untranslated string: fwdfw err tgt_addr
 WARNING: untranslated string: fwdfw err tgt_grp
 WARNING: untranslated string: fwdfw err tgt_mac
+WARNING: untranslated string: fwdfw err tgt_port
 WARNING: untranslated string: fwdfw err time
 WARNING: untranslated string: fwdfw external port nat
 WARNING: untranslated string: fwdfw hint ip1
@@ -761,6 +765,8 @@ WARNING: untranslated string: fwhost welcome
 WARNING: untranslated string: grouptype
 WARNING: untranslated string: incoming traffic in bytes per second
 WARNING: untranslated string: integrity
+WARNING: untranslated string: invalid input for dpd delay
+WARNING: untranslated string: invalid input for dpd timeout
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: minute

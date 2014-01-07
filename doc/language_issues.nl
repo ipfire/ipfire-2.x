@@ -563,6 +563,7 @@ WARNING: untranslated string: advproxy errmsg proxy ports equal
 WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: bytes
 WARNING: untranslated string: ccd iroute2
+WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: default ip
 WARNING: untranslated string: dnat address
 WARNING: untranslated string: dnsforward
@@ -572,6 +573,8 @@ WARNING: untranslated string: dnsforward edit an entry
 WARNING: untranslated string: dnsforward entries
 WARNING: untranslated string: dnsforward forward_server
 WARNING: untranslated string: dnsforward zone
+WARNING: untranslated string: dpd delay
+WARNING: untranslated string: dpd timeout
 WARNING: untranslated string: drop action
 WARNING: untranslated string: drop action1
 WARNING: untranslated string: drop action2
@@ -613,6 +616,7 @@ WARNING: untranslated string: fwdfw err src_addr
 WARNING: untranslated string: fwdfw err tgt_addr
 WARNING: untranslated string: fwdfw err tgt_grp
 WARNING: untranslated string: fwdfw err tgt_mac
+WARNING: untranslated string: fwdfw err tgt_port
 WARNING: untranslated string: fwdfw err time
 WARNING: untranslated string: fwdfw external port nat
 WARNING: untranslated string: fwdfw hint ip1
@@ -723,6 +727,8 @@ WARNING: untranslated string: fwhost used
 WARNING: untranslated string: fwhost welcome
 WARNING: untranslated string: grouptype
 WARNING: untranslated string: integrity
+WARNING: untranslated string: invalid input for dpd delay
+WARNING: untranslated string: invalid input for dpd timeout
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: most preferred

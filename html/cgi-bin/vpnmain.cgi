@@ -385,9 +385,18 @@ sub writeipsecfiles {
 	print CONF "\tcompress=yes\n" if ($lconfighash{$key}[13] eq 'on');
 
 	# Dead Peer Detection
-	print CONF "\tdpddelay=$lconfighash{$key}[30]\n";
-	print CONF "\tdpdtimeout=$lconfighash{$key}[31]\n";
 	print CONF "\tdpdaction=$lconfighash{$key}[27]\n";
+
+	my $dpddelay = $lconfighash{$key}[30];
+	if (!$dpddelay) {
+		$dpddelay = 30;
+	}
+	print CONF "\tdpddelay=$dpddelay\n";
+	my $dpdtimeout = $lconfighash{$key}[31];
+	if (!$dpdtimeout) {
+		$dpdtimeout = 120;
+	}
+	print CONF "\tdpdtimeout=$dpdtimeout\n";
 
 	# Build Authentication details:  LEFTid RIGHTid : PSK psk
 	my $psk_line;
@@ -1278,6 +1287,14 @@ END
 	$cgiparams{'DPD_TIMEOUT'}		= $confighash{$cgiparams{'KEY'}}[30];
 	$cgiparams{'DPD_DELAY'}		= $confighash{$cgiparams{'KEY'}}[31];
 
+	if (!$cgiparams{'DPD_DELAY'}) {
+		$cgiparams{'DPD_DELAY'} = 30;
+	}
+
+	if (!$cgiparams{'DPD_TIMEOUT'}) {
+		$cgiparams{'DPD_TIMEOUT'} = 120;
+	}
+
     } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 	if ($cgiparams{'TYPE'} !~ /^(host|net)$/) {
@@ -1833,6 +1850,14 @@ END
 	    $cgiparams{'DPD_ACTION'} = 'restart';
 	}
 
+	if (!$cgiparams{'DPD_DELAY'}) {
+		$cgiparams{'DPD_DELAY'} = 30;
+	}
+
+	if (!$cgiparams{'DPD_TIMEOUT'}) {
+		$cgiparams{'DPD_TIMEOUT'} = 120;
+	}
+
 	# Default IKE Version to v2
 	if (!$cgiparams{'IKE_VERSION'}) {
 	    $cgiparams{'IKE_VERSION'} = 'ikev2';
@@ -1874,11 +1899,6 @@ END
     $checked{'AUTH'}{'auth-dn'} = '';
     $checked{'AUTH'}{$cgiparams{'AUTH'}} = "checked='checked'";
 
-    $selected{'DPD_ACTION'}{'clear'} = '';
-    $selected{'DPD_ACTION'}{'hold'} = '';
-    $selected{'DPD_ACTION'}{'restart'} = '';
-    $selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
-
     $selected{'IKE_VERSION'}{'ikev1'} = '';
     $selected{'IKE_VERSION'}{'ikev2'} = '';
     $selected{'IKE_VERSION'}{$cgiparams{'IKE_VERSION'}} = "selected='selected'";
@@ -1915,6 +1935,9 @@ END
 	<input type='hidden' name='ONLY_PROPOSED' value='$cgiparams{'ONLY_PROPOSED'}' />
 	<input type='hidden' name='PFS' value='$cgiparams{'PFS'}' />
 	<input type='hidden' name='VHOST' value='$cgiparams{'VHOST'}' />
+	<input type='hidden' name='DPD_ACTION' value='$cgiparams{'DPD_ACTION'}' />
+	<input type='hidden' name='DPD_DELAY' value='$cgiparams{'DPD_DELAY'}' />
+	<input type='hidden' name='DPD_TIMEOUT' value='$cgiparams{'DPD_TIMEOUT'}' />
 END
     ;
     if ($cgiparams{'KEY'}) {
@@ -1970,13 +1993,7 @@ END
     		<option value='ikev1' $selected{'IKE_VERSION'}{'ikev1'}>IKEv1</option>
     		</select>
 	    </td>
-	    <td>$Lang::tr{'dpd action'}:</td>
-	    <td><select name='DPD_ACTION'>
-    		<option value='clear' $selected{'DPD_ACTION'}{'clear'}>clear</option>
-    		<option value='hold' $selected{'DPD_ACTION'}{'hold'}>hold</option>
-    		<option value='restart' $selected{'DPD_ACTION'}{'restart'}>restart</option>
-		</select>
-	    </td>
+	    <td colspan="2"></td>
 	</tr><tr>
 	    <td class='boldbase'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 	    <td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td>
@@ -2189,6 +2206,16 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 
+	if ($cgiparams{'DPD_DELAY'} !~ /^\d+$/) {
+	    $errormessage = $Lang::tr{'invalid input for dpd delay'};
+	    goto ADVANCED_ERROR;
+	}
+
+	if ($cgiparams{'DPD_TIMEOUT'} !~ /^\d+$/) {
+	    $errormessage = $Lang::tr{'invalid input for dpd timeout'};
+	    goto ADVANCED_ERROR;
+	}
+
 	$confighash{$cgiparams{'KEY'}}[18] = $cgiparams{'IKE_ENCRYPTION'};
 	$confighash{$cgiparams{'KEY'}}[19] = $cgiparams{'IKE_INTEGRITY'};
 	$confighash{$cgiparams{'KEY'}}[20] = $cgiparams{'IKE_GROUPTYPE'};
@@ -2226,6 +2253,14 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$cgiparams{'VHOST'}          = $confighash{$cgiparams{'KEY'}}[14];
 	$cgiparams{'DPD_TIMEOUT'}    = $confighash{$cgiparams{'KEY'}}[30];
 	$cgiparams{'DPD_DELAY'}      = $confighash{$cgiparams{'KEY'}}[31];
+
+	if (!$cgiparams{'DPD_DELAY'}) {
+		$cgiparams{'DPD_DELAY'} = 30;
+	}
+
+	if (!$cgiparams{'DPD_TIMEOUT'}) {
+		$cgiparams{'DPD_TIMEOUT'} = 120;
+	}
 
 	if ($confighash{$cgiparams{'KEY'}}[3] eq 'net' || $confighash{$cgiparams{'KEY'}}[10]) {
 	    $cgiparams{'VHOST'}            = 'off';
@@ -2288,6 +2323,11 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'PFS'} = $cgiparams{'PFS'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'VHOST'} = $cgiparams{'VHOST'} eq 'on' ? "checked='checked'" : '' ;
 
+    $selected{'DPD_ACTION'}{'clear'} = '';
+    $selected{'DPD_ACTION'}{'hold'} = '';
+    $selected{'DPD_ACTION'}{'restart'} = '';
+    $selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
+
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
     &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -2315,14 +2355,14 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     <table width='100%'>
 	<thead>
 		<tr>
-			<th></th>
+			<th width="15%"></th>
 			<th>IKE</th>
 			<th>ESP</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td class='boldbase'>$Lang::tr{'encryption'}</td>
+			<td class='boldbase' width="15%">$Lang::tr{'encryption'}</td>
 			<td class='boldbase'>
 				<select name='IKE_ENCRYPTION' multiple='multiple' size='6' style='width: 100%'>
 					<option value='aes256' $checked{'IKE_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
@@ -2348,7 +2388,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</tr>
 
 		<tr>
-			<td class='boldbase'>$Lang::tr{'integrity'}</td>
+			<td class='boldbase' width="15%">$Lang::tr{'integrity'}</td>
 			<td class='boldbase'>
 				<select name='IKE_INTEGRITY' multiple='multiple' size='6' style='width: 100%'>
 					<option value='sha2_512' $checked{'IKE_INTEGRITY'}{'sha2_512'}>SHA2 512 bit</option>
@@ -2371,7 +2411,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			</td>
 		</tr>
 		<tr>
-			<td class='boldbase'>$Lang::tr{'lifetime'}</td>
+			<td class='boldbase' width="15%">$Lang::tr{'lifetime'}</td>
 			<td class='boldbase'>
 				<input type='text' name='IKE_LIFETIME' value='$cgiparams{'IKE_LIFETIME'}' size='5' /> $Lang::tr{'hours'}
 			</td>
@@ -2380,7 +2420,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			</td>
 		</tr>
 		<tr>
-			<td class='boldbase'>$Lang::tr{'grouptype'}</td>
+			<td class='boldbase' width="15%">$Lang::tr{'grouptype'}</td>
 			<td class='boldbase'>
 				<select name='IKE_GROUPTYPE' multiple='multiple' size='6' style='width: 100%'>
 					<option value='e521' $checked{'IKE_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
@@ -2409,11 +2449,40 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	</tbody>
     </table>
 
+	<br><br>
+
+	<h2>$Lang::tr{'dead peer detection'}</h2>
+
+    <table width="100%">
+    <tr>
+		<td width="15%">$Lang::tr{'dpd action'}:</td>
+		<td>
+			<select name='DPD_ACTION'>
+				<option value='clear' $selected{'DPD_ACTION'}{'clear'}>clear</option>
+				<option value='hold' $selected{'DPD_ACTION'}{'hold'}>hold</option>
+				<option value='restart' $selected{'DPD_ACTION'}{'restart'}>restart</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td width="15%">$Lang::tr{'dpd timeout'}:</td>
+		<td>
+			<input type='text' name='DPD_TIMEOUT' size='5' value='$cgiparams{'DPD_TIMEOUT'}' />
+		</td>
+	</tr>
+	<tr>
+		<td width="15%">$Lang::tr{'dpd delay'}:</td>
+		<td>
+			<input type='text' name='DPD_DELAY' size='5' value='$cgiparams{'DPD_DELAY'}' />
+		</td>
+	</tr>
+    </table>
+
     <hr>
 
     <table width="100%">
 	<tr>
-		<td colspan='2'>
+		<td>
 			<label>
 				<input type='checkbox' name='ONLY_PROPOSED' $checked{'ONLY_PROPOSED'} />
 				IKE+ESP: $Lang::tr{'use only proposed settings'}</td>
@@ -2421,7 +2490,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</td>
 	</tr>
 	<tr>
-		<td colspan='2'>
+		<td>
 			<label>
 				<input type='checkbox' name='PFS' $checked{'PFS'} />
 				$Lang::tr{'pfs yes no'}
@@ -2429,31 +2498,11 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</td>
 	</tr>
 	<tr>
-		<td colspan='2'>
+		<td>
 			<label>
 				<input type='checkbox' name='COMPRESSION' $checked{'COMPRESSION'} />
 				$Lang::tr{'vpn payload compression'}
 			</label>
-		</td>
-	</tr>
-	<tr>
-		<td width='20%'>
-			<label>
-				$Lang::tr{'dpd timeout'}
-			</label>
-		</td>
-		<td>
-			<input type='text' name='DPD_TIMEOUT' size='5' value='$cgiparams{'DPD_TIMEOUT'}' />
-		</td>
-	</tr>
-	<tr>
-		<td width='20%'>
-			<label>
-				$Lang::tr{'dpd delay'}
-			</label>
-		</td>
-		<td>
-			<input type='text' name='DPD_DELAY' size='5' value='$cgiparams{'DPD_DELAY'}' />
 		</td>
 	</tr>
 EOF
