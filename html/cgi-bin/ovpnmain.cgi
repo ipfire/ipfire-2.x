@@ -4748,8 +4748,8 @@ END
 	    <input type='image' name='$Lang::tr{'show host certificate'}' src='/images/info.gif' alt='$Lang::tr{'show host certificate'}' title='$Lang::tr{'show host certificate'}' width='20' height='20' border='0' />
 	</td></form>
 	<form method='post' name='frmhostcrtb'><td width='3%' align='center'>
-	    <input type='image' name='$Lang::tr{'download host certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download host certificate'}' title='$Lang::tr{'download host certificate'}' border='0' />
-	    <input type='hidden' name='ACTION' value='$Lang::tr{'download host certificate'}' />
+	    <input type='image' name="$Lang::tr{'download host certificate'}" src='/images/media-floppy.png' alt="$Lang::tr{'download host certificate'}" title="$Lang::tr{'download host certificate'}" border='0' />
+	    <input type='hidden' name='ACTION' value="$Lang::tr{'download host certificate'}" />
 	</td></form>
 	<td width='4%'>&nbsp;</td></tr>
 END

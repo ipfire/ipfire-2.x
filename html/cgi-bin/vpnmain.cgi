@@ -2870,8 +2870,8 @@ END
 	</td>
 	<td width='3%' align='center'>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	    <input type='image' name='$Lang::tr{'download host certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download host certificate'}' title='$Lang::tr{'download host certificate'}' />
-	    <input type='hidden' name='ACTION' value='$Lang::tr{'download host certificate'}' />
+	    <input type='image' name="$Lang::tr{'download host certificate'}" src='/images/floppy.gif' alt="$Lang::tr{'download host certificate'}" title="$Lang::tr{'download host certificate'}" />
+	    <input type='hidden' name='ACTION' value="$Lang::tr{'download host certificate'}" />
 	    </form>
 	</td>
 	<td width='4%'>&nbsp;</td></tr>
