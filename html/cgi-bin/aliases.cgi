@@ -320,11 +320,11 @@ if ($netsettings{'SORT_ALIASES'} eq 'NAMERev') {
 #
 &Header::openbox('100%', 'left', $Lang::tr{'current aliases'});
 print <<END
-<table width='100%'>
+<table width='100%' class='tbl'>
 <tr>
-    <td width='50%' align='center'><a href='$ENV{'SCRIPT_NAME'}?NAME'><b>$Lang::tr{'name'}</b></a> $sortarrow1</td>
-    <td width='45%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IP'><b>$Lang::tr{'alias ip'}</b></a> $sortarrow2</td>
-    <td width='5%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></td>
+    <th width='50%' align='center'><a href='$ENV{'SCRIPT_NAME'}?NAME'><b>$Lang::tr{'name'}</b></a> $sortarrow1</th>
+    <th width='45%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IP'><b>$Lang::tr{'alias ip'}</b></a> $sortarrow2</th>
+    <th width='5%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 ;
@@ -336,6 +336,7 @@ END
 #
 
 my $key = 0;
+my $col="";
 foreach my $line (@current) {
     chomp($line);
     my @temp = split(/\,/,$line);
@@ -353,18 +354,21 @@ foreach my $line (@current) {
 
     #Colorize each line
     if ($settings{'KEY1'} eq $key) {
-	print "<tr bgcolor='${Header::colouryellow}'>";
+	print "<tr>";
+	$col="bgcolor='${Header::colouryellow}'";
     } elsif ($key % 2) {
-	print "<tr bgcolor='${Header::table2colour}'>";
+	print "<tr>";
+	$col="bgcolor='${Header::table2colour}'";
     } else {
-	print "<tr bgcolor='${Header::table1colour}'>"; 
+	print "<tr>";
+	$col="bgcolor='${Header::table1colour}'";
     }
 
     print <<END
-<td align='center'>$temp[2]</td>
-<td align='center'>$temp[0]</td>
+<td align='center' $col>$temp[2]</td>
+<td align='center' $col>$temp[0]</td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
 <input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc' />
@@ -372,7 +376,7 @@ foreach my $line (@current) {
 </form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
 <input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
@@ -380,7 +384,7 @@ foreach my $line (@current) {
 </form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
 <input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
