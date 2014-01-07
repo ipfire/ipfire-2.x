@@ -173,6 +173,7 @@ WARNING: translation string unused: eciadsl upload
 WARNING: translation string unused: edit network
 WARNING: translation string unused: edit service
 WARNING: translation string unused: editor
+WARNING: translation string unused: eg
 WARNING: translation string unused: email server can not be empty
 WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enabled on
@@ -221,7 +222,6 @@ WARNING: translation string unused: from warn email bad
 WARNING: translation string unused: fwdfw MODE1
 WARNING: translation string unused: fwdfw MODE2
 WARNING: translation string unused: fwdfw err prot_port1
-WARNING: translation string unused: fwdfw err tgt_port
 WARNING: translation string unused: fwdfw final_rule
 WARNING: translation string unused: fwdfw from
 WARNING: translation string unused: fwdfw ipsec network
