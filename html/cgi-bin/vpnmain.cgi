@@ -1948,19 +1948,23 @@ END
     ;
     if ($cgiparams{'KEY'}) {
 	print "<input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />";
+	print "<input type='hidden' name='NAME' value='$cgiparams{'NAME'}' />";
 	print "<input type='hidden' name='AUTH' value='$cgiparams{'AUTH'}' />";
     }
 
-    &Header::openbox('100%', 'left', "$Lang::tr{'connection'}:");
+    &Header::openbox('100%', 'left', "$Lang::tr{'connection'}: $cgiparams{'NAME'}");
     print "<table width='100%'>";
-    print "<tr><td width='25%' class='boldbase'>$Lang::tr{'name'}:</td>";
-    if ($cgiparams{'KEY'}) {
-	print "<td width='25%' class='base'><input type='hidden' name='NAME' value='$cgiparams{'NAME'}' /><b>$cgiparams{'NAME'}</b></td>";
-    } else {
-	print "<td width='25%'><input type='text' name='NAME' value='$cgiparams{'NAME'}' size='30' /></td>";
+    if (!$cgiparams{'KEY'}) {
+    	print <<EOF;
+    		<tr>
+    			<td width='20%'>$Lang::tr{'name'}:</td>
+    			<td width='30%'>
+    				<input type='text' name='NAME' value='$cgiparams{'NAME'}' size='25' />
+    			</td>
+    			<td colspan="2"></td>
+    		</tr>
+EOF
     }
-    print "<td>$Lang::tr{'enabled'}</td><td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td></tr>";
-    print '</tr><td><br /></td><tr>';
 
     my $disabled;
     my $blob;
@@ -1971,29 +1975,41 @@ END
 
     print <<END
 	<tr>
-	    <td class='boldbase'>$Lang::tr{'remote host/ip'}:&nbsp;$blob</td>
-	    <td>
-	        <input type='text' name='REMOTE' value='$cgiparams{'REMOTE'}' size='30' />
-	    </td>
-	    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'remote subnet'}</td>
-	    <td>
-	        <input $disabled type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' size='30' />
+		<td width='20%'>$Lang::tr{'enabled'}</td>
+		<td width='30%'>
+			<input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} />
+		</td>
+	    <td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'local subnet'}</td>
+	    <td width='30%'>
+	        <input type='text' name='LOCAL_SUBNET' value='$cgiparams{'LOCAL_SUBNET'}' size="25" />
 	    </td>
 	</tr>
 	<tr>
-	    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'local subnet'}</td>
+	    <td class='boldbase' width='20%'>$Lang::tr{'remote host/ip'}:&nbsp;$blob</td>
+	    <td width='30%'>
+	        <input type='text' name='REMOTE' value='$cgiparams{'REMOTE'}' size="25" />
+	    </td>
+	    <td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'remote subnet'}</td>
+	    <td width='30%'>
+	        <input $disabled type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' size="25" />
+	    </td>
+	</tr>
+	<tr>
+	    <td class='boldbase' width='20%'>$Lang::tr{'vpn local id'}:</td>
+	    <td width='30%'>
+	    	<input type='text' name='LOCAL_ID' value='$cgiparams{'LOCAL_ID'}' size="25" />
+	    </td>
+	    <td class='boldbase' width='20%'>$Lang::tr{'vpn remote id'}:</td>
+	    <td width='30%'>
+	    	<input type='text' name='REMOTE_ID' value='$cgiparams{'REMOTE_ID'}' size="25" />
+	    </td>
+	</tr>
+	<tr><td colspan="4"><br /></td></tr>
+	<tr>
+	    <td class='boldbase' width='20%'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 	    <td colspan='3'>
-	        <input type='text' name='LOCAL_SUBNET' value='$cgiparams{'LOCAL_SUBNET'}' size='30' />
+	    	<input type='text' name='REMARK' value='$cgiparams{'REMARK'}' maxlength='50' size="73" />
 	    </td>
-	</tr>
-	<tr>
-	    <td class='boldbase'>$Lang::tr{'vpn local id'}:<br />($Lang::tr{'eg'} <tt>&#64;xy.example.com</tt>)</td>
-	    <td><input type='text' name='LOCAL_ID' value='$cgiparams{'LOCAL_ID'}' /></td>
-	    <td class='boldbase'>$Lang::tr{'vpn remote id'}:</td>
-	    <td><input type='text' name='REMOTE_ID' value='$cgiparams{'REMOTE_ID'}' /></td>
-	</tr><tr>
-	    <td class='boldbase'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' alt='*' /></td>
-	    <td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td>
 	</tr>
 END
     ;
