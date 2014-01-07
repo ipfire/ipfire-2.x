@@ -385,18 +385,27 @@ sub writeipsecfiles {
 	print CONF "\tcompress=yes\n" if ($lconfighash{$key}[13] eq 'on');
 
 	# Dead Peer Detection
-	print CONF "\tdpdaction=$lconfighash{$key}[27]\n";
+	my $dpdaction = $lconfighash{$key}[27];
+	print CONF "\tdpdaction=$dpdaction\n";
 
-	my $dpddelay = $lconfighash{$key}[30];
-	if (!$dpddelay) {
-		$dpddelay = 30;
+	# If the dead peer detection is disabled and IKEv2 is used,
+	# dpddelay must be set to zero, too.
+	if ($dpdaction eq "none") {
+		if ($lconfighash{$key}[29] eq "ikev2") {
+			print CONF "\tdpddelay=0\n";
+		}
+	} else {
+		my $dpddelay = $lconfighash{$key}[30];
+		if (!$dpddelay) {
+			$dpddelay = 30;
+		}
+		print CONF "\tdpddelay=$dpddelay\n";
+		my $dpdtimeout = $lconfighash{$key}[31];
+		if (!$dpdtimeout) {
+			$dpdtimeout = 120;
+		}
+		print CONF "\tdpdtimeout=$dpdtimeout\n";
 	}
-	print CONF "\tdpddelay=$dpddelay\n";
-	my $dpdtimeout = $lconfighash{$key}[31];
-	if (!$dpdtimeout) {
-		$dpdtimeout = 120;
-	}
-	print CONF "\tdpdtimeout=$dpdtimeout\n";
 
 	# Build Authentication details:  LEFTid RIGHTid : PSK psk
 	my $psk_line;
@@ -1845,9 +1854,9 @@ END
 
 	# choose appropriate dpd action	
 	if ($cgiparams{'TYPE'} eq 'host') {
-	    $cgiparams{'DPD_ACTION'} = 'clear';
+		$cgiparams{'DPD_ACTION'} = 'clear';
 	} else {
-	    $cgiparams{'DPD_ACTION'} = 'restart';
+		$cgiparams{'DPD_ACTION'} = 'restart';
 	}
 
 	if (!$cgiparams{'DPD_DELAY'}) {
@@ -2229,6 +2238,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$confighash{$cgiparams{'KEY'}}[24] = $cgiparams{'ONLY_PROPOSED'};
 	$confighash{$cgiparams{'KEY'}}[28] = $cgiparams{'PFS'};
 	$confighash{$cgiparams{'KEY'}}[14] = $cgiparams{'VHOST'};
+	$confighash{$cgiparams{'KEY'}}[27] = $cgiparams{'DPD_ACTION'};
 	$confighash{$cgiparams{'KEY'}}[30] = $cgiparams{'DPD_TIMEOUT'};
 	$confighash{$cgiparams{'KEY'}}[31] = $cgiparams{'DPD_DELAY'};
 	&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
@@ -2251,6 +2261,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$cgiparams{'ONLY_PROPOSED'}  = $confighash{$cgiparams{'KEY'}}[24];
 	$cgiparams{'PFS'}  	     = $confighash{$cgiparams{'KEY'}}[28];
 	$cgiparams{'VHOST'}          = $confighash{$cgiparams{'KEY'}}[14];
+	$cgiparams{'DPD_ACTION'}     = $confighash{$cgiparams{'KEY'}}[27];
 	$cgiparams{'DPD_TIMEOUT'}    = $confighash{$cgiparams{'KEY'}}[30];
 	$cgiparams{'DPD_DELAY'}      = $confighash{$cgiparams{'KEY'}}[31];
 
@@ -2326,6 +2337,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $selected{'DPD_ACTION'}{'clear'} = '';
     $selected{'DPD_ACTION'}{'hold'} = '';
     $selected{'DPD_ACTION'}{'restart'} = '';
+    $selected{'DPD_ACTION'}{'none'} = '';
     $selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
 
     &Header::showhttpheaders();
@@ -2458,6 +2470,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		<td width="15%">$Lang::tr{'dpd action'}:</td>
 		<td>
 			<select name='DPD_ACTION'>
+				<option value='none' $selected{'DPD_ACTION'}{'none'}>- $Lang::tr{'disabled'} -</option>
 				<option value='clear' $selected{'DPD_ACTION'}{'clear'}>clear</option>
 				<option value='hold' $selected{'DPD_ACTION'}{'hold'}>hold</option>
 				<option value='restart' $selected{'DPD_ACTION'}{'restart'}>restart</option>
