@@ -70,6 +70,8 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dpd delay
+< dpd timeout
 < drop action
 < drop action1
 < drop action2
@@ -268,6 +270,8 @@
 < fw settings ruletable
 < grouptype
 < integrity
+< invalid input for dpd delay
+< invalid input for dpd timeout
 < least preferred
 < lifetime
 < minute
@@ -488,6 +492,8 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dpd delay
+< dpd timeout
 < drop action
 < drop action1
 < drop action2
@@ -686,6 +692,8 @@
 < fw settings ruletable
 < grouptype
 < integrity
+< invalid input for dpd delay
+< invalid input for dpd timeout
 < least preferred
 < lifetime
 < minute
@@ -898,6 +906,8 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dpd delay
+< dpd timeout
 < drop action
 < drop action1
 < drop action2
@@ -1088,6 +1098,8 @@
 < fw settings ruletable
 < grouptype
 < integrity
+< invalid input for dpd delay
+< invalid input for dpd timeout
 < least preferred
 < lifetime
 < minute
@@ -1287,6 +1299,8 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dpd delay
+< dpd timeout
 < drop action
 < drop action1
 < drop action2
@@ -1481,6 +1495,8 @@
 < hour-graph
 < incoming traffic in bytes per second
 < integrity
+< invalid input for dpd delay
+< invalid input for dpd timeout
 < least preferred
 < lifetime
 < minute
