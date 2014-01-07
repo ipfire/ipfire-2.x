@@ -1908,10 +1908,6 @@ END
     $checked{'AUTH'}{'auth-dn'} = '';
     $checked{'AUTH'}{$cgiparams{'AUTH'}} = "checked='checked'";
 
-    $selected{'IKE_VERSION'}{'ikev1'} = '';
-    $selected{'IKE_VERSION'}{'ikev2'} = '';
-    $selected{'IKE_VERSION'}{$cgiparams{'IKE_VERSION'}} = "selected='selected'";
-
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
     &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -1932,6 +1928,7 @@ END
     print "<form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'>";
     print<<END
 	<input type='hidden' name='TYPE' value='$cgiparams{'TYPE'}' />
+	<input type='hidden' name='IKE_VERSION' value='$cgiparams{'IKE_VERSION'}' />
 	<input type='hidden' name='IKE_ENCRYPTION' value='$cgiparams{'IKE_ENCRYPTION'}' />
 	<input type='hidden' name='IKE_INTEGRITY' value='$cgiparams{'IKE_INTEGRITY'}' />
 	<input type='hidden' name='IKE_GROUPTYPE' value='$cgiparams{'IKE_GROUPTYPE'}' />
@@ -1994,15 +1991,6 @@ END
 	    <td><input type='text' name='LOCAL_ID' value='$cgiparams{'LOCAL_ID'}' /></td>
 	    <td class='boldbase'>$Lang::tr{'vpn remote id'}:</td>
 	    <td><input type='text' name='REMOTE_ID' value='$cgiparams{'REMOTE_ID'}' /></td>
-	</tr><tr>
-	</tr><td><br /></td><tr>
-	    <td>$Lang::tr{'vpn keyexchange'}:</td>
-	    <td><select name='IKE_VERSION'>
-    		<option value='ikev2' $selected{'IKE_VERSION'}{'ikev2'}>IKEv2</option>
-    		<option value='ikev1' $selected{'IKE_VERSION'}{'ikev1'}>IKEv1</option>
-    		</select>
-	    </td>
-	    <td colspan="2"></td>
 	</tr><tr>
 	    <td class='boldbase'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 	    <td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td>
@@ -2225,6 +2213,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 
+	$confighash{$cgiparams{'KEY'}}[29] = $cgiparams{'IKE_VERSION'};
 	$confighash{$cgiparams{'KEY'}}[18] = $cgiparams{'IKE_ENCRYPTION'};
 	$confighash{$cgiparams{'KEY'}}[19] = $cgiparams{'IKE_INTEGRITY'};
 	$confighash{$cgiparams{'KEY'}}[20] = $cgiparams{'IKE_GROUPTYPE'};
@@ -2249,6 +2238,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	}
 	goto ADVANCED_END;
     } else {
+    $cgiparams{'IKE_VERSION'}    = $confighash{$cgiparams{'KEY'}}[29];
 	$cgiparams{'IKE_ENCRYPTION'} = $confighash{$cgiparams{'KEY'}}[18];
 	$cgiparams{'IKE_INTEGRITY'}  = $confighash{$cgiparams{'KEY'}}[19];
 	$cgiparams{'IKE_GROUPTYPE'}  = $confighash{$cgiparams{'KEY'}}[20];
@@ -2334,6 +2324,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'PFS'} = $cgiparams{'PFS'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'VHOST'} = $cgiparams{'VHOST'} eq 'on' ? "checked='checked'" : '' ;
 
+    $selected{'IKE_VERSION'}{'ikev1'} = '';
+    $selected{'IKE_VERSION'}{'ikev2'} = '';
+    $selected{'IKE_VERSION'}{$cgiparams{'IKE_VERSION'}} = "selected='selected'";
+
     $selected{'DPD_ACTION'}{'clear'} = '';
     $selected{'DPD_ACTION'}{'hold'} = '';
     $selected{'DPD_ACTION'}{'restart'} = '';
@@ -2373,6 +2367,16 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</tr>
 	</thead>
 	<tbody>
+		<tr>
+			<td>$Lang::tr{'vpn keyexchange'}:</td>
+			<td>
+				<select name='IKE_VERSION'>
+					<option value='ikev2' $selected{'IKE_VERSION'}{'ikev2'}>IKEv2</option>
+					<option value='ikev1' $selected{'IKE_VERSION'}{'ikev1'}>IKEv1</option>
+				</select>
+			</td>
+			<td></td>
+		</tr>
 		<tr>
 			<td class='boldbase' width="15%">$Lang::tr{'encryption'}</td>
 			<td class='boldbase'>
