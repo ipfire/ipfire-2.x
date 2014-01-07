@@ -292,16 +292,17 @@ print "</form>\n";
 &Header::openbox('100%', 'left', "$Lang::tr{'current devices'}");
 
 print <<END
-<table width='100%'>
+<table width='100%' class='tbl'>
 <tr>
-<td align='center' width='20%'><b>$Lang::tr{'mac address'}</b></td>
-<td align='center' width='10%'><b>$Lang::tr{'interface'}</b></td>
-<td align='center' width='60%'><b>$Lang::tr{'remark'}</b></td>
-<td align='center' colspan='2'><b>$Lang::tr{'action'}</b></td>
+<th align='center' width='20%'><b>$Lang::tr{'mac address'}</b></th>
+<th align='center' width='10%'><b>$Lang::tr{'interface'}</b></th>
+<th align='center' width='60%'><b>$Lang::tr{'remark'}</b></th>
+<th align='center' colspan='2'><b>$Lang::tr{'action'}</b></th>
+<th></th>
 </tr>
 END
 ;
-
+my $col="";
 for $i ( 0 .. $#wol_devices )
 {
   my $wol_mac = $wol_devices[$i]{'MAC'};
@@ -310,22 +311,25 @@ for $i ( 0 .. $#wol_devices )
 
   if ( (($cgiparams{'ACTION'} eq 'edit') || ($cgiparams{'ACTION'} eq 'update')) && ($i == $cgiparams{'ID'}) ) 
   {
-    print "<tr bgcolor='${Header::colouryellow}'>";
+    print "<tr>";
+    $col="bgcolor='${Header::colouryellow}'";
   }
   elsif ( $i % 2) 
   {
-    print "<tr bgcolor='$color{'color22'}'>";
+    print "<tr>";
+    $col="bgcolor='$color{'color20'}'";
   }
-  else 
+  else
   {
-    print "<tr bgcolor='$color{'color20'}'>";
+    print "<tr>";
+    $col="bgcolor='$color{'color22'}'";
   }
 
   print <<END
-<td align='center'>$wol_mac</td>
-<td align='center'>$Lang::tr{"$wol_iface"}</td>
-<td align='left'>$wol_txt</td>
-<td align='center'>
+<td align='center' $col>$wol_mac</td>
+<td align='center' $col>$Lang::tr{"$wol_iface"}</td>
+<td align='left' $col>$wol_txt</td>
+<td align='center' $col>
 END
 ;
   if ( (($wol_iface eq 'blue') && ! &haveBlueNet()) 
@@ -347,14 +351,14 @@ END
   }
   print <<END
 </td>
-<td align='center'>
+<td align='center' $col>
   <form method='post' name='frmb$i' action='$ENV{'SCRIPT_NAME'}'>
   <input type='hidden' name='ACTION' value='edit' />
   <input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
   <input type='hidden' name='ID' value='$i' />
   </form>
 </td>
-<td align='center'>
+<td align='center' $col>
   <form method='post' name='frmc$i' action='$ENV{'SCRIPT_NAME'}'>
   <input type='hidden' name='ACTION' value='remove' />
   <input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
