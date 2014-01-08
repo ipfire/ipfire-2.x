@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2013 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2014 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -107,6 +107,8 @@ add_to_backup usr/local/bin/setxtaccess
 add_to_backup usr/local/bin/outgoingfwctrl
 add_to_backup srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
 add_to_backup var/ipfire/{dmzholes,portfw,outgoing,xtaccess}
+add_to_backup etc/inittab
+add_to_backup etc/fstab
 
 # Backup the files
 tar cJvf /var/ipfire/backup/core-upgrade$core_$KVER.tar.xz \
@@ -238,6 +240,15 @@ rm -f /srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
 # Remove old firewall configuration files
 rm -rf /var/ipfire/{dmzholes,portfw,outgoing,xtaccess}
 
+# Convert inittab and fstab
+sed -i -e "s/tty1 9600$/tty1 9600 --noclear/g" /etc/inittab
+sed -i -e "s/^proc/#proc/g" /etc/fstab
+sed -i -e "s/^sysfs/#sysfs/g" /etc/fstab
+sed -i -e "s/^devpts/#devpts/g" /etc/fstab
+
+# Convert udev persistent network rules
+sed -i -e "s/SYSFS{/ATTR{/g" /etc/udev/rules.d/30-persistent-network.rules
+
 #
 # Start services
 #
@@ -312,16 +323,16 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 			"core-update-$core: WARNING not enough space for pae kernel."
 	else
 		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
-		echo "ProgVersion: 3.10.24" >> /opt/pakfire/db/installed/meta-linux-pae
-		echo "Release: 30"     >> /opt/pakfire/db/installed/meta-linux-pae
+		echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
+		echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-pae
 	fi
 fi
 
 # Force reinstall xen kernel if it was installed
 if [ -e "/opt/pakfire/db/installed/meta-linux-xen" ]; then
 	echo "Name: linux-xen" > /opt/pakfire/db/installed/meta-linux-xen
-	echo "ProgVersion: 2.6.32.60" >> /opt/pakfire/db/installed/meta-linux-xen
-	echo "Release: 24"     >> /opt/pakfire/db/installed/meta-linux-xen
+	echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-xen
+	echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-xen
 	# Add xvc0 to /etc/securetty
 	echo "xvc0" >> /etc/securetty
 fi
