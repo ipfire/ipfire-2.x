@@ -86,17 +86,18 @@ close FILE;
 
 &Header::openbox('100%', 'center', $Lang::tr{'p2p block'});
 print <<END;
-	<table width='35%' border='0'>
-		<tr bgcolor='$color{'color22'}'>
-			<td align=center colspan='2' >
+	<table width='35%' class='tbl'>
+		<tr>
+			<th align=center colspan='2'bgcolor='$color{'color22'}' >
 				<b>$Lang::tr{'protocol'}</b>
-			</td>
-			<td align='center'>
+			</th>
+			<th align='center'bgcolor='$color{'color22'}' >
 				<b>$Lang::tr{'status'}</b>
-			</td>
+			</th>
 		</tr>
 END
-
+my $lines=0;
+my $col="";
 foreach my $p2pentry (sort @p2ps) {
 	my @p2pline = split( /\;/, $p2pentry);
 	if ($p2pline[2] eq 'on') {
@@ -104,13 +105,17 @@ foreach my $p2pentry (sort @p2ps) {
 	} else {
 		$gif = "/images/off.gif"
 	}
-
+	if ($lines % 2) {
+                print "<tr>";
+                $col="bgcolor='$color{'color20'}'"; }
+        else {
+                print "<tr>";
+                $col="bgcolor='$color{'color22'}'"; }
 	print <<END;
-		<tr bgcolor='$color{'color20'}'>
-			<td align='center' colspan='2'>
+			<td align='center' colspan='2' $col>
 				$p2pline[0]:
 			</td>
-			<td align='center'>
+			<td align='center' $col>
 				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='hidden' name='P2PROT' value='$p2pline[1]'>
 					<input type='image' img src='$gif' alt='$Lang::tr{'click to disable'}' title='$Lang::tr{'fwdfw toggle'}' style='padding-top: 0px; padding-left: 0px; padding-bottom: 0px ;padding-right: 0px ;display: block;'>
@@ -119,9 +124,11 @@ foreach my $p2pentry (sort @p2ps) {
 			</td>
 		</tr>
 END
+$lines++;
 }
 
 print <<END;
+</table><table>
 		<tr>
 			<td>
 				<img src='/images/on.gif'>

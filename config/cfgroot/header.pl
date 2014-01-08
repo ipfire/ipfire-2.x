@@ -367,16 +367,16 @@ sub PrintActualLeases
 {
     &openbox('100%', 'left', $tr{'current dynamic leases'});
     print <<END
-<table width='100%'>
+<table width='100%' class='tbl'>
 <tr>
-<td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IPADDR'><b>$tr{'ip address'}</b></a></td>
-<td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ETHER'><b>$tr{'mac address'}</b></a></td>
-<td width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOSTNAME'><b>$tr{'hostname'}</b></a></td>
-<td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ENDTIME'><b>$tr{'lease expires'} (local time d/m/y)</b></a></td>
-<td width='5%' align='center'><b>Add to fix leases<b></td>
+<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IPADDR'><b>$tr{'ip address'}</b></a></th>
+<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ETHER'><b>$tr{'mac address'}</b></a></th>
+<th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOSTNAME'><b>$tr{'hostname'}</b></a></th>
+<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ENDTIME'><b>$tr{'lease expires'} (local time d/m/y)</b></a></th>
+<th width='5%' align='center'><b>Add to fix leases<b></th>
 </tr>
 END
-    ;
+;
 
     open(LEASES,"/var/state/dhcp/dhcpd.leases") or die "Can't open dhcpd.leases";
     while ($line = <LEASES>) {
@@ -418,24 +418,27 @@ END
     close(LEASES);
 
     my $id = 0;
+    my $col="";
     foreach my $key (sort leasesort keys %entries) {
 	print "<form method='post' action='/cgi-bin/dhcp.cgi'>\n";
 	my $hostname = &cleanhtml($entries{$key}->{HOSTNAME},"y");
 
 	if ($id % 2) {
-	    print "<tr bgcolor='$table1colour'>"; 
+	    print "<tr>";
+	    $col="bgcolor='$table1colour'";
 	}
 	else {
-	    print "<tr bgcolor='$table2colour'>"; 
+	    print "<tr>";
+	    $col="bgcolor='$table2colour'";
 	}
 
 	print <<END
-<td align='center'><input type='hidden' name='FIX_ADDR' value='$entries{$key}->{IPADDR}' />$entries{$key}->{IPADDR}</td>
-<td align='center'><input type='hidden' name='FIX_MAC' value='$entries{$key}->{ETHER}' />$entries{$key}->{ETHER}</td>
-<td align='center'><input type='hidden' name='FIX_REMARK' value='$hostname' />&nbsp;$hostname</td>
-<td align='center'><input type='hidden' name='FIX_ENABLED' value='on' />
+<td align='center' $col><input type='hidden' name='FIX_ADDR' value='$entries{$key}->{IPADDR}' />$entries{$key}->{IPADDR}</td>
+<td align='center' $col><input type='hidden' name='FIX_MAC' value='$entries{$key}->{ETHER}' />$entries{$key}->{ETHER}</td>
+<td align='center' $col><input type='hidden' name='FIX_REMARK' value='$hostname' />&nbsp;$hostname</td>
+<td align='center' $col><input type='hidden' name='FIX_ENABLED' value='on' />
 END
-	;
+;
 
 	($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst) = localtime ($entries{$key}->{ENDTIME});
 	$enddate = sprintf ("%02d/%02d/%d %02d:%02d:%02d",$mday,$mon+1,$year+1900,$hour,$min,$sec);
@@ -446,10 +449,10 @@ END
 	    print "$enddate";
 	}
 	print <<END
-<td><input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' /><input type='submit' name='SUBMIT' value='$Lang::tr{'add'}' />
-</td></td></tr></form>
+</td><td $col><input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' /><input type='submit' name='SUBMIT' value='$Lang::tr{'add'}' />
+</td></tr></form>
 END
-	;
+;
 	$id++;
     }
 

@@ -272,6 +272,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< ipsec network
 < least preferred
 < lifetime
 < minute
@@ -285,6 +286,7 @@
 < openvpn enabled
 < openvpn fragment allowed with udp
 < openvpn mssfix allowed with udp
+< openvpn network
 < openvpn prefix local subnet
 < openvpn prefix openvpn subnet
 < openvpn prefix remote subnet
@@ -694,6 +696,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< ipsec network
 < least preferred
 < lifetime
 < minute
@@ -705,6 +708,7 @@
 < openvpn enabled
 < openvpn fragment allowed with udp
 < openvpn mssfix allowed with udp
+< openvpn network
 < openvpn prefix local subnet
 < openvpn prefix openvpn subnet
 < openvpn prefix remote subnet
@@ -1100,6 +1104,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< ipsec network
 < least preferred
 < lifetime
 < minute
@@ -1111,6 +1116,7 @@
 < openvpn enabled
 < openvpn fragment allowed with udp
 < openvpn mssfix allowed with udp
+< openvpn network
 < openvpn prefix local subnet
 < openvpn prefix openvpn subnet
 < openvpn prefix remote subnet
@@ -1497,6 +1503,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< ipsec network
 < least preferred
 < lifetime
 < minute
@@ -1509,6 +1516,7 @@
 < openvpn enabled
 < openvpn fragment allowed with udp
 < openvpn mssfix allowed with udp
+< openvpn network
 < openvpn prefix local subnet
 < openvpn prefix openvpn subnet
 < openvpn prefix remote subnet

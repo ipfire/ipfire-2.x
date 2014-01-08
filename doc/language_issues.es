@@ -13,6 +13,7 @@ WARNING: translation string unused: TOS Bits
 WARNING: translation string unused: Verbose
 WARNING: translation string unused: access allowed
 WARNING: translation string unused: access refused with this oinkcode
+WARNING: translation string unused: add a new rule
 WARNING: translation string unused: add network
 WARNING: translation string unused: add new ovpn
 WARNING: translation string unused: add service
@@ -164,6 +165,7 @@ WARNING: translation string unused: dstprt within existing
 WARNING: translation string unused: dynamic dns client
 WARNING: translation string unused: eciadsl help
 WARNING: translation string unused: eciadsl upload
+WARNING: translation string unused: edit a rule
 WARNING: translation string unused: edit network
 WARNING: translation string unused: edit service
 WARNING: translation string unused: editor
@@ -192,7 +194,10 @@ WARNING: translation string unused: esp keylife
 WARNING: translation string unused: expected
 WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
+WARNING: translation string unused: external access configuration
+WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
+WARNING: translation string unused: external access rule removed
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
@@ -401,8 +406,9 @@ WARNING: translation string unused: proxy no proxy local
 WARNING: translation string unused: proxy port
 WARNING: translation string unused: psk
 WARNING: translation string unused: quick control
+WARNING: translation string unused: reboot ask
 WARNING: translation string unused: reboot schedule
-WARNING: translation string unused: rebooting
+WARNING: translation string unused: reboot sure
 WARNING: translation string unused: refresh update list
 WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
@@ -433,14 +439,16 @@ WARNING: translation string unused: shaping add options
 WARNING: translation string unused: shaping list options
 WARNING: translation string unused: show areas
 WARNING: translation string unused: show lines
-WARNING: translation string unused: shutdown control
+WARNING: translation string unused: shutdown ask
+WARNING: translation string unused: shutdown sure
 WARNING: translation string unused: shutdown2
-WARNING: translation string unused: shutting down
 WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
+WARNING: translation string unused: source ip bad
 WARNING: translation string unused: source ip in use
 WARNING: translation string unused: source ip or net
 WARNING: translation string unused: source net
+WARNING: translation string unused: source network
 WARNING: translation string unused: source port overlaps
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
@@ -781,33 +789,24 @@ WARNING: untranslated string: grouptype
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
+WARNING: untranslated string: ipsec network
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: minute
 WARNING: untranslated string: most preferred
-WARNING: untranslated string: new
 WARNING: untranslated string: notice
 WARNING: untranslated string: openvpn default
 WARNING: untranslated string: openvpn destination port used
 WARNING: untranslated string: openvpn fragment allowed with udp
 WARNING: untranslated string: openvpn mssfix allowed with udp
+WARNING: untranslated string: openvpn network
 WARNING: untranslated string: openvpn prefix local subnet
 WARNING: untranslated string: openvpn prefix openvpn subnet
 WARNING: untranslated string: openvpn prefix remote subnet
 WARNING: untranslated string: openvpn subnet is used
 WARNING: untranslated string: other
-WARNING: untranslated string: outgoing firewall add ip group
-WARNING: untranslated string: outgoing firewall add mac group
-WARNING: untranslated string: outgoing firewall edit ip group
-WARNING: untranslated string: outgoing firewall edit mac group
-WARNING: untranslated string: outgoing firewall group error
-WARNING: untranslated string: outgoing firewall groups
-WARNING: untranslated string: outgoing firewall ip groups
-WARNING: untranslated string: outgoing firewall mac groups
 WARNING: untranslated string: outgoing firewall p2p allow
 WARNING: untranslated string: outgoing firewall p2p deny
-WARNING: untranslated string: outgoing firewall reserved groupname
-WARNING: untranslated string: outgoing firewall view group
 WARNING: untranslated string: ovpn errmsg green already pushed
 WARNING: untranslated string: ovpn errmsg invalid ip or mask
 WARNING: untranslated string: ovpn mtu-disc

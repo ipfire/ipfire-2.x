@@ -257,13 +257,13 @@ END
 
 &Header::openbox('100%', 'left', $Lang::tr{'routing table'});
 print <<END
-<hr />
-<table width='100%'>
+
+<table width='100%' class='tbl'>
 <tr>
-    <td width='30%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IP'><b>$Lang::tr{'host ip'} / $Lang::tr{'network'}</b></a></td>
-    <td width='30%' align='center'><a href='$ENV{'SCRIPT_NAME'}?GATEWAY'><b>$Lang::tr{'gateway'}</b></a></td>
-    <td width='30%' align='center'><a href='$ENV{'SCRIPT_NAME'}?REMARK'><b>$Lang::tr{'remark'}</b></a></td>
-    <td width='10%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></td>
+    <th width='30%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IP'><b>$Lang::tr{'host ip'} / $Lang::tr{'network'}</b></a></th>
+    <th width='30%' align='center'><a href='$ENV{'SCRIPT_NAME'}?GATEWAY'><b>$Lang::tr{'gateway'}</b></a></th>
+    <th width='30%' align='center'><a href='$ENV{'SCRIPT_NAME'}?REMARK'><b>$Lang::tr{'remark'}</b></a></th>
+    <th width='10%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 ;
@@ -273,6 +273,7 @@ END
 #
 
 my $key = 0;
+my $col="";
 foreach my $line (@current) {
     chomp($line);				# remove newline
     my @temp=split(/\,/,$line);
@@ -294,15 +295,17 @@ foreach my $line (@current) {
     if ($settings{'KEY1'} eq $key) {
 	print "<tr bgcolor='${Header::colouryellow}'>";
     } elsif ($key % 2) {
-	print "<tr bgcolor='$color{'color22'}'>";
+	print "<tr>";
+	$col="bgcolor='$color{'color20'}'";
     } else {
-	print "<tr bgcolor='$color{'color20'}'>"; 
+	print "<tr>";
+	$col="bgcolor='$color{'color22'}'";
     }
     print <<END
-<td align='center'>$temp[1]</td>
-<td align='center'>$temp[2]</td>
-<td align='center'>$temp[3]</td>
-<td align='center'>
+<td align='center' $col>$temp[1]</td>
+<td align='center' $col>$temp[2]</td>
+<td align='center' $col>$temp[3]</td>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
 <input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc' />
@@ -310,7 +313,7 @@ foreach my $line (@current) {
 </form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
 <input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
@@ -318,7 +321,7 @@ foreach my $line (@current) {
 </form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
 <input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
