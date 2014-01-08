@@ -2303,7 +2303,7 @@ sub viewtablenew
 	&General::readhasharray("$configccdhost", \%ccdhost);
 
 	&Header::openbox('100%', 'left', $title);
-	print "<table width='100%' cellspacing='0' border='0'>";
+	print "<table width='100%' cellspacing='0' class='tbl'>";
 
 	if (! -z $config) {
 		my $count=0;

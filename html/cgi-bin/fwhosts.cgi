@@ -1159,7 +1159,7 @@ sub addnet
 	$fwhostsettings{'orgname'}=$fwhostsettings{'HOSTNAME'};
 	$fwhostsettings{'orgnetremark'}=$fwhostsettings{'NETREMARK'};
 	print<<END;
-	<table border='0' width='100%'>
+	<table border='0' width='100%' >
 	<tr><td width='15%'>$Lang::tr{'name'}:</td><td><form method='post'><input type='TEXT' name='HOSTNAME' id='textbox1' value='$fwhostsettings{'HOSTNAME'}' $fwhostsettings{'BLK_HOST'} size='20'><script>document.getElementById('textbox1').focus()</script></td></tr>
 	<tr><td>$Lang::tr{'fwhost netaddress'}:</td><td><input type='TEXT' name='IP' value='$fwhostsettings{'IP'}' $fwhostsettings{'BLK_IP'} size='20' maxlength='15'></td></tr>
 	<tr><td>$Lang::tr{'netmask'}:</td><td><input type='TEXT' name='SUBNET' value='$fwhostsettings{'SUBNET'}' $fwhostsettings{'BLK_IP'} size='20' maxlength='15'></td></tr>
@@ -1168,10 +1168,10 @@ sub addnet
 END
 	if ($fwhostsettings{'ACTION'} eq 'editnet' || $fwhostsettings{'error'} eq 'on')
 	{
-		print "<td colspan='6' align='right' ><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='updatenet'><input type='hidden' name='orgnetremark' value='$fwhostsettings{'orgnetremark'}' ><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newnet' value='$fwhostsettings{'newnet'}'></td>";
+		print "<td colspan='6' align='right'><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='updatenet'><input type='hidden' name='orgnetremark' value='$fwhostsettings{'orgnetremark'}' ><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newnet' value='$fwhostsettings{'newnet'}'>";
 	}else{
-		print "<td colspan='6' align='right'><input type='submit' value='$Lang::tr{'save'}' style='min-width:100px;'/><input type='hidden' name='ACTION' value='savenet'><input type='hidden' name='newnet' value='on'>";
-	}	
+		print "<td colspan='6' align='right'><input type='submit' value='$Lang::tr{'save'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='savenet'><input type='hidden' name='newnet' value='on'>";
+	}
 	print "</form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;' ><input type='hidden' name='ACTION' value='resetnet'></form></td></tr></table>";
 	&Header::closebox();
 }
@@ -1465,26 +1465,30 @@ sub viewtablenet
 			print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
 		}else{
 			print<<END;
-			<table border='0' width='100%' cellspacing='0'>
-			<tr><td align='center'><b>$Lang::tr{'name'}</b></td><td align='center'><b>$Lang::tr{'fwhost netaddress'}</b></td><td align='center'><b>$Lang::tr{'remark'}</b></td><td align='center'><b>$Lang::tr{'used'}</b></td><td></td><td width='3%'></td></tr>
+			<table width='100%' cellspacing='0' class='tbl'>
+			<tr><th align='center'><b>$Lang::tr{'name'}</b></th><th align='center'><b>$Lang::tr{'fwhost netaddress'}</b></th><th align='center'><b>$Lang::tr{'remark'}</b></th><th align='center'><b>$Lang::tr{'used'}</b></th><th></th><th width='3%'></th></tr>
 END
 		}
 		my $count=0;
+		my $col='';
 		foreach my $key (sort {ncmp($a,$b)} keys %customnetwork) {
 			if ($fwhostsettings{'ACTION'} eq 'editnet' && $fwhostsettings{'HOSTNAME'} eq $customnetwork{$key}[0]) {
-				print" <tr bgcolor='${Header::colouryellow}'>";
+				print" <tr>";
+				$col="bgcolor='${Header::colouryellow}'";
 			}elsif ($count % 2)
 			{ 
-				print" <tr bgcolor='$color{'color22'}'>";
+				$col="bgcolor='$color{'color20'}'";
+				print" <tr>";# bgcolor='$color{'color20'}'>";
 			}else
 			{
-				print" <tr bgcolor='$color{'color20'}'>";
+				$col="bgcolor='$color{'color22'}'";
+				print" <tr>";# bgcolor='$color{'color22'}'>";
 			}
 			my $colnet="$customnetwork{$key}[1]/".&General::subtocidr($customnetwork{$key}[2]);
 			my $netcount=&getnetcount($customnetwork{$key}[0]);
-			print"<td width='20%'><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center'>".&Header::colorize($colnet)."</td><td width='40%'>$customnetwork{$key}[3]</td><td align='center'>$netcount x</td>";
+			print"<td width='20%' $col><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center' $col>".&Header::colorize($colnet)."</td><td width='40%' $col>$customnetwork{$key}[3]</td><td align='center' $col>$netcount x</td>";
 			print<<END;
-			<td width='1%'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
+			<td width='1%' $col><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='editnet'>
 			<input type='hidden' name='HOSTNAME' value='$customnetwork{$key}[0]' />
 			<input type='hidden' name='IP' value='$customnetwork{$key}[1]' />
@@ -1494,9 +1498,9 @@ END
 END
 			if($netcount == '0')
 			{
-				print"<td width='1%'><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delnet' /><input type='hidden' name='key' value='$customnetwork{$key}[0]' /></td></form></tr>";
+				print"<td width='1%' $col><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delnet' /><input type='hidden' name='key' value='$customnetwork{$key}[0]' /></td></form></tr>";
 			}else{
-				print"<td></td></tr>";
+				print"<td $col></td></tr>";
 			}
 			$count++;
 		}
@@ -1569,23 +1573,30 @@ sub viewtablehost
 			print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
 		}else{
 		print<<END;
-		<table border='0' width='100%' cellspacing='0'>
-		<tr><td align='center'><b>$Lang::tr{'name'}</b></td><td align='center'><b>$Lang::tr{'fwhost ip_mac'}</b></td><td align='center'><b>$Lang::tr{'remark'}</b></td><td align='center'><b>$Lang::tr{'used'}</b></td><td></td><td width='3%'></td></tr>
+		<table width='100%' cellspacing='0' class='tbl'>
+		<tr><th align='center'><b>$Lang::tr{'name'}</b></th><th align='center'><b>$Lang::tr{'fwhost ip_mac'}</b></th><th align='center'><b>$Lang::tr{'remark'}</b></th><th align='center'><b>$Lang::tr{'used'}</b></th><th></th><th width='3%'></th></tr>
 END
 	}
 		my $count=0;
+		my $col='';
 		foreach my $key (sort { ncmp ($customhost{$a}[0],$customhost{$b}[0])} keys %customhost) {
 			if ( ($fwhostsettings{'ACTION'} eq 'edithost' || $fwhostsettings{'error'}) && $fwhostsettings{'HOSTNAME'} eq $customhost{$key}[0]) {
-				print" <tr bgcolor='${Header::colouryellow}'>";
-			}elsif ($count % 2){ print" <tr bgcolor='$color{'color22'}'>";}
-			else{            print" <tr bgcolor='$color{'color20'}'>";}
+				print" <tr>";
+				$col="bgcolor='${Header::colouryellow}'";
+			}elsif ($count % 2){
+				print" <tr>";
+				$col="bgcolor='$color{'color20'}'";
+			}else{
+				$col="bgcolor='$color{'color22'}'";
+				print" <tr>";
+			}
 			my ($ip,$sub)=split(/\//,$customhost{$key}[2]);
 			$customhost{$key}[4]=~s/\s+//g;
 			my $hostcount=0;
 			$hostcount=&gethostcount($customhost{$key}[0]);
-			print"<td width='20%'>$customhost{$key}[0]</td><td width='20%' align='center' ".&getcolor($ip).">".&Header::colorize($ip)."</td><td width='50%' align='left'>$customhost{$key}[3]</td><td align='center'>$hostcount x</td>";
+			print"<td width='20%' $col>$customhost{$key}[0]</td><td width='20%' align='center' $col ".&getcolor($ip).">".&Header::colorize($ip)."</td><td width='50%' align='left' $col>$customhost{$key}[3]</td><td align='center' $col>$hostcount x</td>";
 			print<<END;
-			<td width='1%'><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
+			<td width='1%' $col><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
 			<input type='hidden' name='ACTION' value='edithost' />
 			<input type='hidden' name='HOSTNAME' value='$customhost{$key}[0]' />
 			<input type='hidden' name='IP' value='$ip' />
@@ -1595,9 +1606,9 @@ END
 END
 			if($hostcount == '0')
 			{
-				print"<td width='1%'><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delhost' /><input type='hidden' name='key' value='$customhost{$key}[0]' /></td></form></tr>";
+				print"<td width='1%' $col><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delhost' /><input type='hidden' name='key' value='$customhost{$key}[0]' /></td></form></tr>";
 			}else{
-				print"<td width='1%'></td></tr>";
+				print"<td width='1%' $col></td></tr>";
 			}
 			$count++;
 		}
@@ -1656,30 +1667,36 @@ sub viewtablegrp
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='ACTION' value='delgrp'></form>";
 				}
 				print"<form method='post' style='display:inline'><input type='image' src='/images/edit.gif' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='remark' value='$remark' ><input type='hidden' name='ACTION' value='editgrp'></form>";
-				print"<table width='100%' style='border: 1px solid  #CCCCCC;' rules='none' cellspacing='0'><tr><td align='center'><b>Name</b></td><td align='center'><b>$Lang::tr{'ip address'}</b></td><td align='center' width='25%'><b>$Lang::tr{'fwhost type'}</td><td></td></tr>";
+				print"<table width='100%' cellspacing='0' class='tbl'><tr><th align='center'><b>Name</b></th><th align='center'><b>$Lang::tr{'ip address'}</b></th><th align='center' width='25%'><b>$Lang::tr{'fwhost type'}</th><th></th></tr>";
 			}
-			
+			my $col='';
 			if ( ($fwhostsettings{'ACTION'} eq 'editgrp' || $fwhostsettings{'update'} ne '') && $fwhostsettings{'grp_name'} eq $customgrp{$key}[0]) {
-				print" <tr bgcolor='${Header::colouryellow}'>";
+				print" <tr>";
+				$col="bgcolor='${Header::colouryellow}'";
 			}elsif ($count %2 == 0){
-				print"<tr bgcolor='$color{'color22'}'>";
+				print"<tr>";
+				$col="bgcolor='$color{'color22'}'";
 			}else{
-				print"<tr bgcolor='$color{'color20'}'>";
+				print"<tr>";
+				$col="bgcolor='$color{'color20'}'";
 			}
 			my $ip=&getipforgroup($customgrp{$key}[2],$customgrp{$key}[3]);	
-			if ($ip eq ''){print"<tr bgcolor='${Header::colouryellow}'>";}
-			print "<td width='39%' align='left'>";
+			if ($ip eq ''){
+				print"<tr>";
+				$col="bgcolor='${Header::colouryellow}'";
+			}
+			print "<td width='39%' align='left' $col>";
 			if($customgrp{$key}[3] eq 'Standard Network'){
 				print &get_name($customgrp{$key}[2])."</td>";
 			}else{
 				print "$customgrp{$key}[2]</td>";
 			}
 			if ($ip eq '' && $customgrp{$key}[2] ne $Lang::tr{'fwhost err emptytable'}){
-				print "<td align='center'>$Lang::tr{'fwhost deleted'}</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";   
+				print "<td align='center' $col>$Lang::tr{'fwhost deleted'}</td><td align='center' $col>$customgrp{$key}[3]</td><td width='1%' $col><form method='post'>";
 			}else{
 				my ($colip,$colsub) = split("/",$ip);
 				$ip="$colip/".&General::subtocidr($colsub) if ($colsub);
-				print"<td align='center' ".&getcolor($colip).">".&Header::colorize($ip)."</td><td align='center'>$customgrp{$key}[3]</td><td width='1%'><form method='post'>";
+				print"<td align='center' $col ".&getcolor($colip).">".&Header::colorize($ip)."</td><td align='center' $col>$customgrp{$key}[3]</td><td width='1%' $col><form method='post'>";
 			}
 			if ($delflag > 1 && $ip ne ''){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
@@ -1708,25 +1725,33 @@ sub viewtableservice
 		&General::readhasharray("$fwconfiginp", \%fwinp);
 		&General::readhasharray("$fwconfigout", \%fwout);
 		print<<END;
-			<table width='100%' border='0' cellspacing='0'>
-			<tr><td align='center'><b>$Lang::tr{'fwhost srv_name'}</b></td><td align='center'><b>$Lang::tr{'fwhost prot'}</b></td><td align='center'><b>$Lang::tr{'fwhost port'}</b></td><td align='center'><b>ICMP</b></td><td align='center'><b>$Lang::tr{'fwhost used'}</b></td><td></td><td width='3%'></td></tr>
+			<table width='100%' cellspacing='0' class='tbl'>
+			<tr><th align='center'><b>$Lang::tr{'fwhost srv_name'}</b></th><th align='center'><b>$Lang::tr{'fwhost prot'}</b></th><th align='center'><b>$Lang::tr{'fwhost port'}</b></th><th align='center'><b>ICMP</b></th><th align='center'><b>$Lang::tr{'fwhost used'}</b></th><th></th><th width='3%'></th></tr>
 END
+		my $col='';
 		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0])} keys %customservice)
 		{
 			$count++;
 			if ( ($fwhostsettings{'updatesrv'} eq 'on' || $fwhostsettings{'error'}) && $fwhostsettings{'SRV_NAME'} eq $customservice{$key}[0]) {
-				print" <tr bgcolor='${Header::colouryellow}'>";
-			}elsif ($count % 2){ print" <tr bgcolor='$color{'color22'}'>";}else{ 	print" <tr bgcolor='$color{'color20'}'>";}
+				print" <tr>";
+				$col="bgcolor='${Header::colouryellow}'";
+			}elsif ($count % 2){
+				print" <tr>";
+				$col="bgcolor='$color{'color22'}'";
+			}else{
+				print" <tr>";
+				$col="bgcolor='$color{'color20'}'";
+			}
 			print<<END;
-			<td>$customservice{$key}[0]</td><td align='center'>$customservice{$key}[2]</td><td align='center'>$customservice{$key}[1]</td><td align='center'>
+			<td $col>$customservice{$key}[0]</td><td align='center' $col>$customservice{$key}[2]</td><td align='center' $col>$customservice{$key}[1]</td><td align='center' $col>
 END
 			#Neuer count
 			$srvcount=&getsrvcount($customservice{$key}[0]);
 			if($customservice{$key}[3] eq 'All ICMP-Types'){print $Lang::tr{'fwdfw all icmp'};}
 			elsif($customservice{$key}[3] ne 'BLANK'){print $customservice{$key}[3];}
 			print<<END;
-			</td><td align='center'>$srvcount x</td>
-			<td width='1%'><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} /><input type='hidden' name='ACTION' value='editservice' />
+			</td><td align='center' $col>$srvcount x</td>
+			<td width='1%' $col><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} /><input type='hidden' name='ACTION' value='editservice' />
 			<input type='hidden' name='SRV_NAME' value='$customservice{$key}[0]' />
 			<input type='hidden' name='SRV_PORT' value='$customservice{$key}[1]' />
 			<input type='hidden' name='PROT' value='$customservice{$key}[2]' />
@@ -1734,9 +1759,9 @@ END
 END
 			if ($srvcount eq '0')
 			{
-				print"<td width='1%'><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delservice' /><input type='hidden' name='SRV_NAME' value='$customservice{$key}[0]'></td></tr></form>";
+				print"<td width='1%' $col><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delservice' /><input type='hidden' name='SRV_NAME' value='$customservice{$key}[0]'></td></tr></form>";
 			}else{
-				print"<td></td></tr>";
+				print"<td $col></td></tr>";
 			}
 		}
 		print"</table>";
@@ -1753,6 +1778,7 @@ sub viewtableservicegrp
 	my $protocol;
 	my $delflag;
 	my $grpcount=0;
+	my $col='';
 	if (! -z $configsrvgrp){
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust srvgrp'});
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
@@ -1792,14 +1818,17 @@ sub viewtableservicegrp
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='ACTION' value='delservicegrp'></form>";
 				}
 				print"<form method='post' style='display:inline'><input type='image' src='/images/edit.gif' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='SRVGRP_REMARK' value='$remark' ><input type='hidden' name='ACTION' value='editservicegrp'></form>";
-				print"<table width='100%' style='border: 1px solid #CCCCCC;' rules='none' cellspacing='0'><tr><td align='center'><b>Name</b></td><td align='center'><b>$Lang::tr{'port'}</b></td><td align='center' width='25%'><b>$Lang::tr{'fwhost prot'}</td><td></td></tr>";
+				print"<table width='100%' cellspacing='0' class='tbl'><tr><th align='center'><b>Name</b></th><th align='center'><b>$Lang::tr{'port'}</b></th><th align='center' width='25%'><b>$Lang::tr{'fwhost prot'}</th><th></th></tr>";
 			}
 			if( $fwhostsettings{'SRVGRP_NAME'} eq $customservicegrp{$key}[0]) {
-				print" <tr bgcolor='${Header::colouryellow}'>";
+				print"<tr>";
+				$col="bgcolor='${Header::colouryellow}'";
 			}elsif ($count %2 == 0){
-				print"<tr bgcolor='$color{'color22'}'>";
+				print"<tr>";
+				$col="bgcolor='$color{'color20'}'";
 			}else{
-				print"<tr bgcolor='$color{'color20'}'>";
+				print"<tr>";
+				$col="bgcolor='$color{'color22'}'";
 			}
 			#Set fields if we use protocols in servicegroups
 			if ($customservicegrp{$key}[2] ne 'TCP' || $customservicegrp{$key}[2] ne 'UDP' || $customservicegrp{$key}[2] ne 'ICMP'){
@@ -1811,7 +1840,7 @@ sub viewtableservicegrp
 			if ($customservicegrp{$key}[2] eq 'IGMP'){$protocol='IGMP';$customservicegrp{$key}[2]="$Lang::tr{'protocol'} IGMP";}
 			if ($customservicegrp{$key}[2] eq 'IPIP'){$protocol='IPIP';$customservicegrp{$key}[2]="$Lang::tr{'protocol'} IPIP";}
 			if ($customservicegrp{$key}[2] eq 'IPV6'){$protocol='IPV6';$customservicegrp{$key}[2]="$Lang::tr{'protocol'} IPv6 encapsulation";}
-			print "<td width='39%'>$customservicegrp{$key}[2]</td>";
+			print "<td width='39%' $col>$customservicegrp{$key}[2]</td>";
 			foreach my $srv (sort keys %customservice){
 				if ($customservicegrp{$key}[2] eq $customservice{$srv}[0]){
 					$protocol=$customservice{$srv}[2];
@@ -1819,7 +1848,7 @@ sub viewtableservicegrp
 					last;
 				}
 			}
-			print"<td align='center'>$port</td><td align='center'>$protocol</td><td width='1%'><form method='post'>";
+			print"<td align='center' $col>$port</td><td align='center' $col>$protocol</td><td width='1%' $col><form method='post'>";
 			if ($delflag gt '1'){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
 			}

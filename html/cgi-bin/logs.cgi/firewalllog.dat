@@ -308,16 +308,16 @@ if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @log = reverse @log; }
 if ($lines != 0) { &oldernewer(); }
 
 print <<END
-<table width='100%'>
+<table width='100%' class='tbl'>
 <tr>
-        <td align='center' class='boldbase'><b>$Lang::tr{'time'}</b></td>
-        <td align='center' class='boldbase'><b>$Lang::tr{'chain'}</b></td>
-        <td align='center' class='boldbase'><b>$Lang::tr{'iface'}</b></td>
-        <td align='center' class='boldbase'><b>$Lang::tr{'proto'}</b></td>
-        <td align='center' class='boldbase'><b>$Lang::tr{'source'}<br/>$Lang::tr{'destination'}</b></td>
-        <td align='center' class='boldbase'><b>$Lang::tr{'src port'}<br />$Lang::tr{'dst port'}</b></td>
-        <td align='center' class='boldbase'><b>Flag</b></td>
-        <td align='center' class='boldbase'><b>$Lang::tr{'mac address'}</b></td>
+        <th align='center' class='boldbase'><b>$Lang::tr{'time'}</b></th>
+        <th align='center' class='boldbase'><b>$Lang::tr{'chain'}</b></th>
+        <th align='center' class='boldbase'><b>$Lang::tr{'iface'}</b></th>
+        <th align='center' class='boldbase'><b>$Lang::tr{'proto'}</b></th>
+        <th align='center' class='boldbase'><b>$Lang::tr{'source'}<br/>$Lang::tr{'destination'}</b></th>
+        <th align='center' class='boldbase'><b>$Lang::tr{'src port'}<br />$Lang::tr{'dst port'}</b></th>
+        <th align='center' class='boldbase'><b>Flag</b></th>
+        <th align='center' class='boldbase'><b>$Lang::tr{'mac address'}</b></th>
 </tr>
 END
 ;
@@ -353,26 +353,29 @@ foreach $_ (@log)
                 $dstport = "$dstport($servi)";}
         my @mactemp = split(/:/,$macaddr);
         $macaddr = "$mactemp[6]:$mactemp[7]:$mactemp[8]:$mactemp[9]:$mactemp[10]:$mactemp[11]";
+        my $col="";
         if ($lines % 2) {
-                print "<tr bgcolor='$color{'color20'}'>\n"; }
+                print "<tr>";
+                $col="bgcolor='$color{'color20'}'"; }
         else {
-                print "<tr bgcolor='$color{'color22'}'>\n"; }
+                print "<tr>";
+                $col="bgcolor='$color{'color22'}'"; }
         print <<END
 
-        <td align='center'>$time</td>
-        <td align='center'>$comment</td>
-        <td align='center'>$iface</td>
-        <td align='center'>$proto</td>
-        <td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a><br /><a href='/cgi-bin/ipinfo.cgi?ip=$dstaddr'>$dstaddr</a></td>
-        <td align='center'>$srcport<br/>$dstport</td>
+        <td align='center' $col>$time</td>
+        <td align='center' $col>$comment</td>
+        <td align='center' $col>$iface</td>
+        <td align='center' $col>$proto</td>
+        <td align='center' $col><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a><br /><a href='/cgi-bin/ipinfo.cgi?ip=$dstaddr'>$dstaddr</a></td>
+        <td align='center' $col>$srcport<br/>$dstport</td>
 END
 ;
         if ( $fcode ne "" ){
-        print "<td align='center'><a href='../country.cgi#$fcode'><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$ccode'></a></td>";} 
+        print "<td align='center' $col><a href='../country.cgi#$fcode'><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$ccode'></a></td>";}
         else {
-        print "<td align='center'></td>";}
+        print "<td align='center' $col></td>";}
         print <<END
-        <td align='center'>$macaddr</td>
+        <td align='center' $col>$macaddr</td>
 </tr>
 END
         ;
