@@ -69,6 +69,7 @@ my $confighost="${General::swroot}/fwhosts/customhosts";
 my $configgrp="${General::swroot}/fwhosts/customgroups";
 my $customnet="${General::swroot}/fwhosts/customnetworks";
 my $name;
+my $col="";
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'ENABLED_BLUE'} = 'off';
@@ -2571,7 +2572,7 @@ END
 	}
 	
 	print <<END
-    <table width='100%' border='0'  cellpadding='0' cellspacing='1'>
+    <table width='100%' cellpadding='0' cellspacing='1'>
     <tr>
 	<td class='boldbase' align='center' nowrap='nowrap' width='20%'><b>$Lang::tr{'ccd name'}</td><td class='boldbase' align='center' width='8%'><b>$Lang::tr{'network'}</td><td class='boldbase' width='8%' align='center' nowrap='nowrap'><b>$Lang::tr{'ccd used'}</td><td width='1%' align='center'></td><td width='1%' align='center'></td></tr>
 END
@@ -2625,15 +2626,15 @@ END
 #	<td><b>$Lang::tr{'protocol'}</b></td>
 # protocol temp removed 
     print <<END
-    <table width='100%' border='0' cellpadding='2' cellspacing='0'>
+    <table width='100%' cellpadding='2' cellspacing='0' class='tbl'>
     <tr>
-	<td><b>$Lang::tr{'common name'}</b></td>
-	<td><b>$Lang::tr{'real address'}</b></td>
-	<td><b>$Lang::tr{'virtual address'}</b></td>
-	<td><b>$Lang::tr{'loged in at'}</b></td>
-	<td><b>$Lang::tr{'bytes sent'}</b></td>
-	<td><b>$Lang::tr{'bytes received'}</b></td>
-	<td><b>$Lang::tr{'last activity'}</b></td>
+	<th><b>$Lang::tr{'common name'}</b></th>
+	<th><b>$Lang::tr{'real address'}</b></th>
+	<th><b>$Lang::tr{'virtual address'}</b></th>
+	<th><b>$Lang::tr{'loged in at'}</b></th>
+	<th><b>$Lang::tr{'bytes sent'}</b></th>
+	<th><b>$Lang::tr{'bytes received'}</b></th>
+	<th><b>$Lang::tr{'last activity'}</b></th>
     </tr>
 END
 ;
@@ -2684,22 +2685,23 @@ END
 	}
 	my $user2 = @users;
 	if ($user2 >= 1){
-    	    for (my $idx = 1; $idx <= $user2; $idx++){
+		for (my $idx = 1; $idx <= $user2; $idx++){
 						if ($idx % 2) {
-		    			print "<tr bgcolor='$color{'color20'}'>\n";
-	    			} else {
-		    			print "<tr bgcolor='$color{'color22'}'>\n";
+							print "<tr>";
+							$col="bgcolor='$color{'color22'}'";
+						} else {
+							print "<tr>";
+							$col="bgcolor='$color{'color20'}'";
 						}
-						print "<td align='left'>$users[$idx-1]{'CommonName'}</td>";
-						print "<td align='left'>$users[$idx-1]{'RealAddress'}</td>";
-						print "<td align='left'>$users[$idx-1]{'VirtualAddress'}</td>";
-						print "<td align='left'>$users[$idx-1]{'Since'}</td>";
-						print "<td align='left'>$users[$idx-1]{'BytesSent'}</td>";
-						print "<td align='left'>$users[$idx-1]{'BytesReceived'}</td>";
-						print "<td align='left'>$users[$idx-1]{'LastRef'}</td>";
-#		        print "<td align='left'>$users[$idx-1]{'Proto'}</td>";
-	    }
-	}        
+						print "<td align='left' $col>$users[$idx-1]{'CommonName'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'RealAddress'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'VirtualAddress'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'Since'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'BytesSent'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'BytesReceived'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'LastRef'}</td>";
+			}
+	}
 	
 	print "</table>";
 	print <<END
@@ -4691,43 +4693,44 @@ END
     &Header::closebox();
     &Header::openbox('100%', 'LEFT', "$Lang::tr{'certificate authorities'}:");
     print <<EOF#'
-    <table width='100%' border='0' cellspacing='1' cellpadding='0'>
+    <table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
     <tr>
-	<td width='25%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></td>
-	<td width='65%' class='boldbase' align='center'><b>$Lang::tr{'subject'}</b></td>
-	<td width='10%' class='boldbase' colspan='3' align='center'><b>$Lang::tr{'action'}</b></td>
+	<th width='25%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></th>
+	<th width='65%' class='boldbase' align='center'><b>$Lang::tr{'subject'}</b></th>
+	<th width='10%' class='boldbase' colspan='3' align='center'><b>$Lang::tr{'action'}</b></th>
     </tr>
 EOF
     ;
+    my $col1="bgcolor='$color{'color22'}'";
+	my $col2="bgcolor='$color{'color20'}'";
     if (-f "${General::swroot}/ovpn/ca/cacert.pem") {
 	my $casubject = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/ca/cacert.pem`;
 	$casubject    =~ /Subject: (.*)[\n]/;
 	$casubject    = $1;
 	$casubject    =~ s+/Email+, E+;
 	$casubject    =~ s/ ST=/ S=/;
-
 	print <<END
-	<tr bgcolor='$color{'color22'}'>
-	<td class='base'>$Lang::tr{'root certificate'}</td>
-	<td class='base'>$casubject</td>
-	<form method='post' name='frmrootcrta'><td width='3%' align='center'>
+	<tr>
+	<td class='base' $col1>$Lang::tr{'root certificate'}</td>
+	<td class='base' $col1>$casubject</td>
+	<form method='post' name='frmrootcrta'><td width='3%' align='center' $col1>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'show root certificate'}' />
 	    <input type='image' name='$Lang::tr{'edit'}' src='/images/info.gif' alt='$Lang::tr{'show root certificate'}' title='$Lang::tr{'show root certificate'}' width='20' height='20' border='0' />
 	</td></form>
-	<form method='post' name='frmrootcrtb'><td width='3%' align='center'>
+	<form method='post' name='frmrootcrtb'><td width='3%' align='center' $col1>
 	    <input type='image' name='$Lang::tr{'download root certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download root certificate'}' title='$Lang::tr{'download root certificate'}' border='0' />
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'download root certificate'}' />
 	</td></form>
-	<td width='4%'>&nbsp;</td></tr>
+	<td width='4%' $col1>&nbsp;</td></tr>
 END
 	;
     } else {
 	# display rootcert generation buttons
 	print <<END
-	<tr bgcolor='$color{'color22'}'>
-	<td class='base'>$Lang::tr{'root certificate'}:</td>
-	<td class='base'>$Lang::tr{'not present'}</td>
-	<td colspan='3'>&nbsp;</td></tr>
+	<tr>
+	<td class='base' $col1>$Lang::tr{'root certificate'}:</td>
+	<td class='base' $col1>$Lang::tr{'not present'}</td>
+	<td colspan='3' $col1>&nbsp;</td></tr>
 END
 	;
     }
@@ -4740,27 +4743,27 @@ END
 	$hostsubject    =~ s/ ST=/ S=/;
 
 	print <<END
-	<tr bgcolor='$color{'color20'}'>
-	<td class='base'>$Lang::tr{'host certificate'}</td>
-	<td class='base'>$hostsubject</td>
-	<form method='post' name='frmhostcrta'><td width='3%' align='center'>
+	<tr>
+	<td class='base' $col2>$Lang::tr{'host certificate'}</td>
+	<td class='base' $col2>$hostsubject</td>
+	<form method='post' name='frmhostcrta'><td width='3%' align='center' $col2>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'show host certificate'}' />
 	    <input type='image' name='$Lang::tr{'show host certificate'}' src='/images/info.gif' alt='$Lang::tr{'show host certificate'}' title='$Lang::tr{'show host certificate'}' width='20' height='20' border='0' />
 	</td></form>
-	<form method='post' name='frmhostcrtb'><td width='3%' align='center'>
+	<form method='post' name='frmhostcrtb'><td width='3%' align='center' $col2>
 	    <input type='image' name="$Lang::tr{'download host certificate'}" src='/images/media-floppy.png' alt="$Lang::tr{'download host certificate'}" title="$Lang::tr{'download host certificate'}" border='0' />
 	    <input type='hidden' name='ACTION' value="$Lang::tr{'download host certificate'}" />
 	</td></form>
-	<td width='4%'>&nbsp;</td></tr>
+	<td width='4%' $col2>&nbsp;</td></tr>
 END
 	;
     } else {
 	# Nothing
 	print <<END
-	<tr bgcolor='$color{'color20'}'>
-	<td width='25%' class='base'>$Lang::tr{'host certificate'}:</td>
-	<td class='base'>$Lang::tr{'not present'}</td>
-	</td><td colspan='3'>&nbsp;</td></tr>
+	<tr>
+	<td width='25%' class='base' $col2>$Lang::tr{'host certificate'}:</td>
+	<td class='base' $col2>$Lang::tr{'not present'}</td>
+	</td><td colspan='3' $col2>&nbsp;</td></tr>
 END
 	;
     }
@@ -4847,28 +4850,30 @@ END
     print <<END
 
 
-    <table width='100%' border='0' cellspacing='1' cellpadding='0'>
+    <table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
 <tr>
-    <td width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></td>
-    <td width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></td>
-    <td width='22%' class='boldbase' align='center'><b>$Lang::tr{'network'}</b></td>
-    <td width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></td>
-    <td width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></td>
-    <td width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></td>
+    <th width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></th>
+    <th width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
+    <th width='22%' class='boldbase' align='center'><b>$Lang::tr{'network'}</b></th>
+    <th width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
+    <th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
+    <th width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 	;
-    my $id = 0;
-    my $gif;
-    foreach my $key (sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
+	my $id = 0;
+	my $gif;
+	foreach my $key (sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
 	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 	if ($id % 2) {
-	    print "<tr bgcolor='$color{'color20'}'>\n";
+		print "<tr>";
+		$col="bgcolor='$color{'color20'}'";
 	} else {
-	    print "<tr bgcolor='$color{'color22'}'>\n";
+		print "<tr>";
+		$col="bgcolor='$color{'color22'}'";
 	}
-	print "<td align='center' nowrap='nowrap'>$confighash{$key}[1]</td>";
-	print "<td align='center' nowrap='nowrap'>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
+	print "<td align='center' nowrap='nowrap' $col>$confighash{$key}[1]</td>";
+	print "<td align='center' nowrap='nowrap' $col>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
 	#if ($confighash{$key}[4] eq 'cert') {
 	    #print "<td align='left' nowrap='nowrap'>$confighash{$key}[2]</td>";
 	#} else {
@@ -4879,8 +4884,8 @@ END
 	$cavalid    = $1;
 	if ($confighash{$key}[32] eq "" && $confighash{$key}[3] eq 'net' ){$confighash{$key}[32]="net-2-net";}
 	if ($confighash{$key}[32] eq "" && $confighash{$key}[3] eq 'host' ){$confighash{$key}[32]="dynamic";}
-	print "<td align='center'>$confighash{$key}[32]</td>";
-	print "<td align='center'>$confighash{$key}[25]</td>";
+	print "<td align='center' $col>$confighash{$key}[32]</td>";
+	print "<td align='center' $col>$confighash{$key}[25]</td>";
 
 	my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
 
@@ -4945,9 +4950,9 @@ END
 
 
 	print <<END
-	<td align='center'>$active</td>
+	<td align='center' $col>$active</td>
 		
-	<form method='post' name='frm${key}a'><td align='center'>
+	<form method='post' name='frm${key}a'><td align='center' $col>
 	    <input type='image'  name='$Lang::tr{'dl client arch'}' src='/images/openvpn.png' alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' border='0' />
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
 	    <input type='hidden' name='KEY' value='$key' />
@@ -4956,7 +4961,7 @@ END
 	;
 	if ($confighash{$key}[4] eq 'cert') {
 	    print <<END
-	    <form method='post' name='frm${key}b'><td align='center'>
+	    <form method='post' name='frm${key}b'><td align='center' $col>
 		<input type='image' name='$Lang::tr{'show certificate'}' src='/images/info.gif' alt='$Lang::tr{'show certificate'}' title='$Lang::tr{'show certificate'}' border='0' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'show certificate'}' />
 		<input type='hidden' name='KEY' value='$key' />
@@ -4967,7 +4972,7 @@ END
 	}
 	if ($confighash{$key}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$key}[1].p12") { 
 	    print <<END
-	    <form method='post' name='frm${key}c'><td align='center'>
+	    <form method='post' name='frm${key}c'><td align='center' $col>
 		<input type='image' name='$Lang::tr{'download pkcs12 file'}' src='/images/media-floppy.png' alt='$Lang::tr{'download pkcs12 file'}' title='$Lang::tr{'download pkcs12 file'}' border='0' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'download pkcs12 file'}' />
 		<input type='hidden' name='KEY' value='$key' />
@@ -4975,7 +4980,7 @@ END
 END
 	; } elsif ($confighash{$key}[4] eq 'cert') {
 	    print <<END
-	    <form method='post' name='frm${key}c'><td align='center'>
+	    <form method='post' name='frm${key}c'><td align='center' $col>
 		<input type='image' name='$Lang::tr{'download certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download certificate'}' title='$Lang::tr{'download certificate'}' border='0' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'download certificate'}' />
 		<input type='hidden' name='KEY' value='$key' />
@@ -4985,18 +4990,18 @@ END
 	    print "<td>&nbsp;</td>";
 	}
 	print <<END
-	<form method='post' name='frm${key}d'><td align='center'>
+	<form method='post' name='frm${key}d'><td align='center' $col>
 	    <input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' border='0' />
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
 	    <input type='hidden' name='KEY' value='$key' />
 	</td></form>
 
-	<form method='post' name='frm${key}e'><td align='center'>
+	<form method='post' name='frm${key}e'><td align='center' $col>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
 	    <input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' width='20' height='20' border='0'/>
 	    <input type='hidden' name='KEY' value='$key' />
 	</td></form>
-	<form method='post' name='frm${key}f'><td align='center'>
+	<form method='post' name='frm${key}f'><td align='center' $col>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
 	    <input type='image'  name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' width='20' height='20' border='0' />
 	    <input type='hidden' name='KEY' value='$key' />
