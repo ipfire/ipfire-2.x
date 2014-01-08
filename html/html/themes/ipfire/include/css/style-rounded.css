@@ -32,99 +32,56 @@ table {
 	border-spacing: 0;
 }
 
-.bordered th{
-	border-top: 1px solid grey;
-	border-bottom: 1px solid grey;
-	background: #cccccc;
-}
-
-.bordered th:first-child{
+.tbl th:first-child{
 	-moz-border-radius: 6px 0 0 0;
 	-webkit-border-radius: 6px 0 0 0;
 	border-radius: 6px 0 0 0;
-	border-left: 1px solid grey;
-	border-top: 1px solid grey;
-	border-bottom: 1px solid grey;
 }
 
-.bordered th:last-child {
+.tbl th:last-child {
 	-moz-border-radius: 0 6px 0 0;
 	-webkit-border-radius: 0 6px 0 0;
 	border-radius: 0 6px 0 0;
-	border-right: 1px solid grey;
-	border-top: 1px solid grey;
-	border-bottom: 1px solid grey;
 }
 
-.bordered th:only-child{
+.tbl th:only-child{
 	-moz-border-radius: 6px 6px 0 0;
 	-webkit-border-radius: 6px 6px 0 0;
 	border-radius: 6px 6px 0 0;
-	border: 1px solid grey;
 }
 
-.bordered tr:first-child td:first-child{
+.tbl tr:first-child td:first-child{
 	-moz-border-radius: 6px 0 0 0;
 	-webkit-border-radius: 6px 0 0 0;
 	border-radius: 6px 0 0 0;
-	border-left: 1px solid grey;
-	border-top: 1px solid grey;
 }
 
-.bordered tr:first-child td:last-child{
+.tbl tr:first-child td:last-child{
 	-moz-border-radius: 0 6px 0 0;
 	-webkit-border-radius: 0 6px 0 0;
 	border-radius: 0 6px 0 0;
-	border-top: 1px solid grey;
 }
 
-.bordered tr:first-child td:only-child{
+.tbl tr:first-child td:only-child{
 	-moz-border-radius: 6px 6px 0 0;
 	-webkit-border-radius: 6px 6px 0 0;
 	border-radius: 6px 6px 0 0;
-	border-left: 1px solid grey;
-	border-right: 1px solid grey;
-	border-top: 1px solid grey;
 }
 
-.bordered tr:first-child td{
-	border-top: 1px solid grey;
-}
-
-.bordered tr:last-child{
-	border-left: 1px solid grey;
-	border-right: 1px solid grey;
-}
-
-.bordered tr:last-child td:first-child {
+.tbl tr:last-child td:first-child {
 	-moz-border-radius: 0 0 0 6px;
 	-webkit-border-radius: 0 0 0 6px;
 	border-radius: 0 0 0 6px;
-	border-bottom: 1px solid grey;
 }
 
-.bordered tr:last-child td:last-child {
+.tbl tr:last-child td:last-child {
 	-moz-border-radius: 0 0 6px 0;
 	-webkit-border-radius: 0 0 6px 0;
 	border-radius: 0 0 6px 0;
-	border-bottom: 1px solid grey;
 }
 
-.bordered tr:last-child td:only-child {
+.tbl tr:last-child td:only-child {
 	-moz-border-radius: 0 0 6px 6px;
 	-webkit-border-radius: 0 0 6px 6px;
 	border-radius: 0 0 6px 6px;
-	border-bottom: 1px solid grey;
-}
-
-.bordered tr:last-child td {
-	border-bottom: 1px solid grey;
-}
-
-.bordered td:first-child {
-	border-left: 1px solid grey;
-}
-
-.bordered td:last-child {
-	border-right: 1px solid grey;
 }
