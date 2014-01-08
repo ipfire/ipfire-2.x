@@ -1,0 +1,4 @@
+opt/pakfire/etc/pakfire.conf
+opt/pakfire/lib/functions.pl
+opt/pakfire/lib/functions.sh
+opt/pakfire/pakfire
