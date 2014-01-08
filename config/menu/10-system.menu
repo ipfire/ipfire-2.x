@@ -40,6 +40,12 @@
 				'title' => "$Lang::tr{'system information'}",
 				'enabled' => 1,
 				};
+	$subsystem->{'42.fireinfo'} = {
+				'caption' => $Lang::tr{'shutdown'},
+				'uri' => '/cgi-bin/shutdown.cgi',
+				'title' => "$Lang::tr{'shutdown'}",
+				'enabled' => 1,
+				};
     $subsystem->{'99.credits'} = {
 				'caption' => $Lang::tr{'credits'},
 				'uri' => '/cgi-bin/credits.cgi',
