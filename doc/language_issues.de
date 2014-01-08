@@ -13,6 +13,7 @@ WARNING: translation string unused: TOS Bits
 WARNING: translation string unused: Verbose
 WARNING: translation string unused: access allowed
 WARNING: translation string unused: access refused with this oinkcode
+WARNING: translation string unused: add a new rule
 WARNING: translation string unused: add network
 WARNING: translation string unused: add new ovpn
 WARNING: translation string unused: add service
@@ -147,6 +148,7 @@ WARNING: translation string unused: dstprt within existing
 WARNING: translation string unused: dynamic dns client
 WARNING: translation string unused: eciadsl help
 WARNING: translation string unused: eciadsl upload
+WARNING: translation string unused: edit a rule
 WARNING: translation string unused: edit network
 WARNING: translation string unused: edit service
 WARNING: translation string unused: editor
@@ -175,7 +177,10 @@ WARNING: translation string unused: esp keylife
 WARNING: translation string unused: expected
 WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
+WARNING: translation string unused: external access configuration
+WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
+WARNING: translation string unused: external access rule removed
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
@@ -363,6 +368,14 @@ WARNING: translation string unused: original
 WARNING: translation string unused: other countries
 WARNING: translation string unused: our donors
 WARNING: translation string unused: out
+WARNING: translation string unused: outgoing firewall add ip group
+WARNING: translation string unused: outgoing firewall add mac group
+WARNING: translation string unused: outgoing firewall edit ip group
+WARNING: translation string unused: outgoing firewall edit mac group
+WARNING: translation string unused: outgoing firewall group error
+WARNING: translation string unused: outgoing firewall groups
+WARNING: translation string unused: outgoing firewall ip groups
+WARNING: translation string unused: outgoing firewall mac groups
 WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
@@ -371,6 +384,7 @@ WARNING: translation string unused: outgoing firewall p2p description 1
 WARNING: translation string unused: outgoing firewall p2p description 2
 WARNING: translation string unused: outgoing firewall p2p description 3
 WARNING: translation string unused: outgoing firewall reset
+WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn
@@ -414,8 +428,9 @@ WARNING: translation string unused: proxy no proxy extend
 WARNING: translation string unused: proxy no proxy local
 WARNING: translation string unused: proxy port
 WARNING: translation string unused: psk
+WARNING: translation string unused: reboot ask
 WARNING: translation string unused: reboot schedule
-WARNING: translation string unused: rebooting
+WARNING: translation string unused: reboot sure
 WARNING: translation string unused: refresh update list
 WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
@@ -443,14 +458,16 @@ WARNING: translation string unused: service updated
 WARNING: translation string unused: servicename
 WARNING: translation string unused: services settings
 WARNING: translation string unused: shaping list options
-WARNING: translation string unused: shutdown control
+WARNING: translation string unused: shutdown ask
+WARNING: translation string unused: shutdown sure
 WARNING: translation string unused: shutdown2
-WARNING: translation string unused: shutting down
 WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
+WARNING: translation string unused: source ip bad
 WARNING: translation string unused: source ip in use
 WARNING: translation string unused: source ip or net
 WARNING: translation string unused: source net
+WARNING: translation string unused: source network
 WARNING: translation string unused: source port overlaps
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
@@ -575,8 +592,6 @@ WARNING: untranslated string: community rules
 WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: emerging rules
 WARNING: untranslated string: fwhost err hostip
-WARNING: untranslated string: new
-WARNING: untranslated string: outgoing firewall reserved groupname
 WARNING: untranslated string: qos add subclass
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
