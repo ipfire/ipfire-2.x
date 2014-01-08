@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/collectd.conf
 etc/rc.d/init.d/network
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
@@ -15,9 +16,11 @@ srv/web/ipfire/html/themes/darkdos
 srv/web/ipfire/html/themes/ipfire
 srv/web/ipfire/html/themes/ipfire-legacy
 srv/web/ipfire/html/themes/maniac
+usr/local/bin/setddns.pl
 var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/exclude
 var/ipfire/backup/include
 var/ipfire/general-functions.pl
 var/ipfire/header.pl
+var/ipfire/graphs.pl
 var/ipfire/langs
