@@ -162,7 +162,7 @@ print <<END;
 <!-- Table of networks -->
 <table width=80% class='tbl'>
   <tr>  <th bgcolor='$color{'color20'}'>$Lang::tr{'network'}</th>
-        <th bgcolor='$color{'color20'}'>IP</th>
+        <th bgcolor='$color{'color20'}'>$Lang::tr{'ip address'}</th>
         <th bgcolor='$color{'color20'}'>$Lang::tr{'status'}</th></tr>
   <tr>  <td align='center' bgcolor='$Header::colourred' width='25%'><a href="/cgi-bin/pppsetup.cgi"><font size='2' color='white'><b>$Lang::tr{'internet'}</b></font></a><br></td>
         <td width='30%' align='center'>$ipaddr </td>
@@ -248,7 +248,7 @@ END
 		<table width='80%' class='tbl'>
 		<tr>
 			<th>$Lang::tr{'network'}</th>
-			<th>IP</th>
+			<th>$Lang::tr{'ip address'}</th>
 			<th>$Lang::tr{'status'}</th>
 		</tr>
 		<tr><td align='center' bgcolor='$Header::colourgreen' width='25%'><a href="/cgi-bin/dhcp.cgi"><font size='2' color='white'><b>$Lang::tr{'lan'}</b></font></a>
@@ -329,7 +329,7 @@ print"</td></tr></table>";
 		<table width='80%' class='tbl'>
 		<tr>
 			<th>$Lang::tr{'ipsec network'}</th>
-			<th>IP</th>
+			<th>$Lang::tr{'ip address'}</th>
 			<th>$Lang::tr{'status'}</th>
 		</tr>
 END
@@ -338,13 +338,15 @@ END
 		my $col="";
 		foreach my $key (sort { uc($confighash{$a}[1]) cmp uc($confighash{$b}[1]) } keys %confighash) {
 			if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
-
+			my ($vpnip,$vpnsub) = split("/",$confighash{$key}[11]);
+			$vpnsub=&General::iporsubtocidr($vpnsub);
+			$vpnip="$vpnip/$vpnsub";
 			if ($id % 2) {
 				$col="bgcolor='$color{'color20'}'";
-				print "<tr><td align='left' nowrap='nowrap' bgcolor='$Header::colourvpn' width='50%'><font color=white>$confighash{$key}[1] / " . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td><td align='center' $col>$confighash{$key}[11]</td>";
+				print "<tr><td align='left' nowrap='nowrap' bgcolor='$Header::colourvpn' width='50%'><font color=white>$confighash{$key}[1] / " . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td><td align='center' $col>$vpnip</td>";
 			} else {
 				$col="bgcolor='$color{'color22'}'";
-				print "<tr></td><td align='left' nowrap='nowrap' bgcolor='$Header::colourvpn' width='50%'><font color=white>$confighash{$key}[1] / " . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td><td align='center' $col>$confighash{$key}[11]</td>";
+				print "<tr></td><td align='left' nowrap='nowrap' bgcolor='$Header::colourvpn' width='50%'><font color=white>$confighash{$key}[1] / " . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td><td align='center' $col>$vpnip</td>";
 			}
 			
 			my $active = "<td bgcolor='${Header::colourred}' width='15%' align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td>";
@@ -375,7 +377,7 @@ if ( $haveovpn )
 	<table width='80%' class='tbl'>
 	<tr>
 		<th>$Lang::tr{'openvpn network'}</th>
-		<th>IP</th>
+		<th>$Lang::tr{'ip address'}</th>
 		<th>$Lang::tr{'status'}</th>
 END
 	# Check if the OpenVPN server for Road Warrior Connections is running and display status information.
@@ -413,13 +415,17 @@ END
 				}else{
 					$col="bgcolor='$color{'color22'}'";
 				}
+				#make cidr from ip
+				my ($vpnip,$vpnsub) = split("/",$confighash{$dkey}[11]);
+				my $vpnsub=&General::iporsubtocidr($vpnsub);
+				my $vpnip="$vpnip/$vpnsub";
 				print <<END;
 				<tr>
 					<td align='left' nowrap='nowrap' bgcolor='$Header::colourovpn' width='50%'><font color=white>
 						$confighash{$dkey}[1]
 					</td>
 					<td align='center' $col>
-						$confighash{$dkey}[11]
+						$vpnip
 					</td>
 					<td align='center' bgcolor='$display_colour' width='15%'>
 						<b>
