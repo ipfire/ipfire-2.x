@@ -49,14 +49,14 @@ END
 ;
 &Header::closebox();
 
-&Header::openbox('100%', 'left', $Lang::tr{'credits'});
+&Header::openbox('100%', 'left',);
 
 print <<END
 <br>
 <center>
 	$Lang::tr{'visit us at'}: <b><a href='http://www.ipfire.org/' target="_blank">http://www.ipfire.org/</a></b>
 </center>
-<br><hr><br>
+<br><br>
 
 <p><b>Development:</b><br />
 
