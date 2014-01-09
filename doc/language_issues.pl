@@ -198,6 +198,7 @@ WARNING: translation string unused: external access configuration
 WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
+WARNING: translation string unused: extrahd
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
@@ -249,6 +250,7 @@ WARNING: translation string unused: install new update
 WARNING: translation string unused: installed
 WARNING: translation string unused: installed updates
 WARNING: translation string unused: intrusion detection system log viewer
+WARNING: translation string unused: intrusion detection system2
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
@@ -330,6 +332,7 @@ WARNING: translation string unused: network added
 WARNING: translation string unused: network configuration
 WARNING: translation string unused: network removed
 WARNING: translation string unused: network status information
+WARNING: translation string unused: network time
 WARNING: translation string unused: network traffic graphs
 WARNING: translation string unused: network updated
 WARNING: translation string unused: networks settings
@@ -562,6 +565,7 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Async logging enabled
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: Set time on boot
+WARNING: untranslated string: addons
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
@@ -653,7 +657,6 @@ WARNING: untranslated string: fwdfw DROP
 WARNING: untranslated string: fwdfw REJECT
 WARNING: untranslated string: fwdfw action
 WARNING: untranslated string: fwdfw additional
-WARNING: untranslated string: fwdfw addrule
 WARNING: untranslated string: fwdfw all icmp
 WARNING: untranslated string: fwdfw change
 WARNING: untranslated string: fwdfw copy
@@ -765,7 +768,6 @@ WARNING: untranslated string: fwhost err srv exists
 WARNING: untranslated string: fwhost err srvexist
 WARNING: untranslated string: fwhost err sub32
 WARNING: untranslated string: fwhost hint
-WARNING: untranslated string: fwhost hosts
 WARNING: untranslated string: fwhost icmptype
 WARNING: untranslated string: fwhost ip_mac
 WARNING: untranslated string: fwhost ipsec net
@@ -834,6 +836,7 @@ WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: server restart
 WARNING: untranslated string: snat new source ip address
+WARNING: untranslated string: ssh
 WARNING: untranslated string: static routes
 WARNING: untranslated string: support donation
 WARNING: untranslated string: system information

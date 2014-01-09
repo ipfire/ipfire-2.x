@@ -204,6 +204,7 @@ WARNING: translation string unused: external access configuration
 WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
+WARNING: translation string unused: extrahd
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
@@ -226,6 +227,7 @@ WARNING: translation string unused: from email user
 WARNING: translation string unused: from warn email bad
 WARNING: translation string unused: fwdfw MODE1
 WARNING: translation string unused: fwdfw MODE2
+WARNING: translation string unused: fwdfw addrule
 WARNING: translation string unused: fwdfw err prot_port1
 WARNING: translation string unused: fwdfw final_rule
 WARNING: translation string unused: fwdfw from
@@ -239,7 +241,6 @@ WARNING: translation string unused: fwdfw std network
 WARNING: translation string unused: fwdfw till
 WARNING: translation string unused: fwdfw time
 WARNING: translation string unused: fwdfw xt access
-WARNING: translation string unused: fwhost addrule
 WARNING: translation string unused: fwhost attention
 WARNING: translation string unused: fwhost blue
 WARNING: translation string unused: fwhost changeremark
@@ -247,6 +248,7 @@ WARNING: translation string unused: fwhost err addrgrp
 WARNING: translation string unused: fwhost err hostorip
 WARNING: translation string unused: fwhost err mac
 WARNING: translation string unused: fwhost green
+WARNING: translation string unused: fwhost hosts
 WARNING: translation string unused: fwhost ipadr
 WARNING: translation string unused: fwhost ipsec host
 WARNING: translation string unused: fwhost orange
@@ -285,6 +287,7 @@ WARNING: translation string unused: install new update
 WARNING: translation string unused: installed
 WARNING: translation string unused: installed updates
 WARNING: translation string unused: intrusion detection system log viewer
+WARNING: translation string unused: intrusion detection system2
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
@@ -366,6 +369,7 @@ WARNING: translation string unused: network added
 WARNING: translation string unused: network configuration
 WARNING: translation string unused: network removed
 WARNING: translation string unused: network status information
+WARNING: translation string unused: network time
 WARNING: translation string unused: network traffic graphs
 WARNING: translation string unused: network updated
 WARNING: translation string unused: networks settings

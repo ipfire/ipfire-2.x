@@ -4,6 +4,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: en                           #
 ############################################################################
+< addon
 < ccd maxclients
 ############################################################################
 # Checking install/setup translations for language: fr                     #
@@ -11,6 +12,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< addon
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
@@ -187,7 +189,6 @@
 < fwhost addgrpname
 < fwhost addhost
 < fwhost addnet
-< fwhost addrule
 < fwhost addservice
 < fwhost addservicegrp
 < fwhost any
@@ -312,6 +313,7 @@
 < server restart
 < snat new source ip address
 < snort working
+< ssh
 < static routes
 < support donation
 < system information
@@ -435,6 +437,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
+< addon
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
@@ -611,7 +614,6 @@
 < fwhost addgrpname
 < fwhost addhost
 < fwhost addnet
-< fwhost addrule
 < fwhost addservice
 < fwhost addservicegrp
 < fwhost any
@@ -752,6 +754,7 @@
 < server restart
 < Set time on boot
 < snat new source ip address
+< ssh
 < static routes
 < support donation
 < system information
@@ -852,6 +855,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
+< addon
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
@@ -1019,7 +1023,6 @@
 < fwhost addgrpname
 < fwhost addhost
 < fwhost addnet
-< fwhost addrule
 < fwhost addservice
 < fwhost addservicegrp
 < fwhost any
@@ -1145,6 +1148,7 @@
 < red1
 < server restart
 < snat new source ip address
+< ssh
 < static routes
 < support donation
 < tor
@@ -1245,6 +1249,7 @@
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
 < Add a route
+< addon
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
@@ -1416,7 +1421,6 @@
 < fwhost addgrpname
 < fwhost addhost
 < fwhost addnet
-< fwhost addrule
 < fwhost addservice
 < fwhost addservicegrp
 < fwhost any
@@ -1542,6 +1546,7 @@
 < red1
 < server restart
 < snat new source ip address
+< ssh
 < static routes
 < support donation
 < tor
