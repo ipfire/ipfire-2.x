@@ -1170,7 +1170,7 @@ if (!($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter manage repository'})) {
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>\n";
 
-&Header::openbox('100%', 'left', "$Lang::tr{'urlfilter filter settings'}:");
+&Header::openbox('100%', 'left', "$Lang::tr{'urlfilter filter settings'}");
 print <<END
 <table width='100%'>
 <tr>
@@ -1524,7 +1524,7 @@ print "</form>\n";
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>\n";
 
-&Header::openbox('100%', 'left', "$Lang::tr{'urlfilter maintenance'}:");
+&Header::openbox('100%', 'left', "$Lang::tr{'urlfilter maintenance'}");
 
 print <<END
 <table width='100%'>
