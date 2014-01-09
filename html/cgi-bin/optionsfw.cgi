@@ -174,8 +174,8 @@ print <<END
 </table>
 
 <br />
-<table width='10%' cellspacing='0'>
-<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<table width='100%' cellspacing='0'>
+<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='submit' name='ACTION' value=$Lang::tr{'save'} />
 </form></td></tr>
 </table>
