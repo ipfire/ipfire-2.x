@@ -285,12 +285,12 @@ print <<END
 <td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
 </tr>
 </table>
+<br>
 <hr />
 <table width='100%'>
 <tr>
     <td class='base' width='55%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
-    <td width='40%' align='center'><input type='hidden' name='ACTION' value='$Lang::tr{'add'}' /><input type='submit' name='SUBMIT' value='$buttontext' /></td>
-    <td width='5%' align='right'> 
+    <td width='40%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'add'}' /><input type='submit' name='SUBMIT' value='$buttontext' /></td>
     </td>
 </tr>
 </table>
