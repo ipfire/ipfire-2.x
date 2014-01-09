@@ -84,7 +84,7 @@ unless (-e $configsrvgrp) { system("touch $configsrvgrp"); }
 &Header::getcgihash(\%fwhostsettings);
 
 &Header::showhttpheaders();
-&Header::openpage($Lang::tr{'fwhost hosts'}, 1, '');
+&Header::openpage($Lang::tr{'fwhost menu'}, 1, '');
 &Header::openbigbox('100%', 'center');
 
 #### JAVA SCRIPT ####
@@ -1139,7 +1139,7 @@ if($fwhostsettings{'ACTION'} eq '')
 }
 ###  FUNCTIONS  ###
 sub showmenu {
-	&Header::openbox('100%', 'left',$Lang::tr{'fwhost menu'});
+	&Header::openbox('100%', 'left',);
 	print "$Lang::tr{'fwhost welcome'}";
 	print<<END;
 	<br><br><table border='0' width='100%'>
