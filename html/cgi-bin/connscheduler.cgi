@@ -307,7 +307,7 @@ for ($minute = 0; $minute <= 55; $minute += 5)
 
 print <<END
 </select></td></tr>
-<tr><td colspan='2'><hr /></td></tr>
+<tr><td colspan='2'><br><br></td></tr>
 <tr><td width='15%' class='base'>$Lang::tr{'ConnSched action'}</td><td>
 <input type='radio' value='CONNECT' name='ACTION_ACTION' $checked_connect />&nbsp;<select name='ACTION_CONNECT'>
 <option value='reconnect' $selected{'reconnect'}>$Lang::tr{'ConnSched reconnect'}</option>
@@ -335,7 +335,7 @@ for ($i = 1; $i <= $CONNSCHED::maxprofiles; $i++)
 }
 print <<END
 </select></td></tr>
-<tr><td colspan='2'><hr /></td></tr>
+<tr><td colspan='2'><br><br></td></tr>
 <tr><td width='15%' class='base'>$Lang::tr{'ConnSched days'}</td>
 <td><input type='radio' value='DAYS' name='ACTION_DAYSTYPE' $checked_days />&nbsp;<select name='ACTION_DAYSTART'>
 END
@@ -375,14 +375,15 @@ print <<END
 &nbsp;&nbsp;<input type='checkbox' name='Sat' $checked_sat />$Lang::tr{'saturday'}<br />
 &nbsp;&nbsp;<input type='checkbox' name='Sun' $checked_sun />$Lang::tr{'sunday'}
 </td></tr>
-<tr><td colspan='2'><hr /></td></tr>
+<tr><td colspan='2'><br></td></tr>
 <tr><td width='15%' class='base'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 <td><input type='text' name='ACTION_COMMENT' size='40' value='$comment' /></td></tr></table>
-<hr />
+<br>
+<hr>
 <table width='100%'><tr>
   <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
   <td width='55%' class='base'>$Lang::tr{'this field may be blank'}</td>
-  <td width='40%' align='center'><input type='submit' name='SUBMIT' value='$buttontext' />
+  <td width='40%' align='right'><input type='submit' name='SUBMIT' value='$buttontext' />
   <input type='hidden' name='ACTION' value='$hiddenvalue' /></td>
   <input type='hidden' name='UPDATE_ID' value='$cgiparams{'ID'}' /></td>
 </tr></table>
