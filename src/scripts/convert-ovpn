@@ -27,25 +27,34 @@
 #                                                                             #
 ###############################################################################
 
+require '/var/ipfire/general-functions.pl';
+
 my %configovpn=();
 my $ccdpath="/var/ipfire/ovpn/ccd/";
 my $ovpnconfig="/var/ipfire/ovpn/ovpnconfig";
-require '/var/ipfire/general-functions.pl';
 
 &General::readhasharray ($ovpnconfig,\%configovpn);
 
-&check_config;
+&check_config();
 
+sub check_config {
+	print "Converting CCD files...\n";
+	chdir($ccdpath);
 
-sub check_config
-{
-	print "\n";
 	foreach my $key (sort keys %configovpn){
-		if ($configovpn{$key}[3] eq 'host' && $configovpn{$key}[2]=~" "){
-			my $ccdname=$configovpn{$key}[2];
-			$ccdname =~ tr/ /_/;
-			chdir($ccdpath);
-			rename($ccdname,$configovpn{$key}[2]);
+		# Skip everything else but roadwarrior connections.
+		next if ($configovpn{$key}[3] ne 'host');
+
+		# Skip all connections with no space in the CN name.
+		next if ($configovpn{$key}[2] !~ " ");
+
+		my $ccdname = $configovpn{$key}[2];
+		$ccdname =~ tr/ /_/;
+
+		# Rename the CCD file if one with the old format exists.
+		if (-e "$ccdname") {
+			print " Renaming $ccdname -> $configovpn{$key}[2]...\n";
+			rename($ccdname, $configovpn{$key}[2]);
 		}
 	}
 }
