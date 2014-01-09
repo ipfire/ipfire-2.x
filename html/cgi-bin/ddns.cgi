@@ -303,7 +303,7 @@ print <<END
 <tr>
     <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
     <td width='70%' class='base'>$Lang::tr{'avoid dod'}</td>
-    <td width='30%' align='center' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+    <td width='30%' align='right' valign='top' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 </form>
@@ -377,13 +377,14 @@ print <<END
     <td><input type='password' name='PASSWORD2' value='$settings{'PASSWORD2'}' /></td>
 </tr>
 </table>
+<br>
 <hr />
 <table width='100%'>
 <tr>
     <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
     <td width='70%' class='base'>$ddnsprefix</td>
     
-    <td width='30%' align='center' class='base'>
+    <td width='30%' align='right' class='base'>
 	<input type='hidden' name='ACTION' value='$Lang::tr{'add'}' />
 	<input type='submit' name='SUBMIT' value='$buttontext' />    </td>
 </tr>
@@ -542,7 +543,7 @@ print <<END
     <td><img src='/images/delete.gif' alt='$Lang::tr{'remove'}' /></td>
     <td class='base'>$Lang::tr{'remove'}</td>
     <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-        <td align='center' width='30%'><input type='submit' name='ACTION' value='$Lang::tr{'instant update'}' /></td>
+        <td align='right' width='30%'><input type='submit' name='ACTION' value='$Lang::tr{'instant update'}' /></td>
     </form>
 </tr>
 </table>
