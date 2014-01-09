@@ -4664,7 +4664,7 @@ END
 		<option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC</option>
 		<option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC</option>
 	</select></td></tr>
-    <tr><td colspan='4'><hr /></td></tr>
+    <tr><td colspan='4'><br><br></td></tr>
 END
 ;				   
     
@@ -4691,7 +4691,7 @@ END
     }
     print "</form></table>";
     &Header::closebox();
-    &Header::openbox('100%', 'LEFT', "$Lang::tr{'certificate authorities'}:");
+    &Header::openbox('100%', 'LEFT', "$Lang::tr{'certificate authorities'}");
     print <<EOF#'
     <table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
     <tr>
@@ -4826,7 +4826,7 @@ print <<END
 <form method='post' enctype='multipart/form-data'>
 <table width='100%' border='0'>
 <tr><td class='base' nowrap='nowrap'>$Lang::tr{'ca name'}:</td><td nowrap='nowrap' width='8%'><input type='text' name='CA_NAME' value='$cgiparams{'CA_NAME'}' size='15' align='left'/></td><td nowrap='nowrap' align='right'><input type='file' name='FH' size='25' /><input type='submit' name='ACTION' value='$Lang::tr{'upload ca certificate'}' /></td></tr>
-<tr><td colspan='4'><hr /></td></tr>
+<tr><td colspan='4'><br></td></tr>
 <tr align='right'><td colspan='4' align='right' width='80%'><input type='submit' name='ACTION' value='$Lang::tr{'show crl'}' /></td></tr>
 </table>
 END
@@ -4863,6 +4863,7 @@ END
 	;
 	my $id = 0;
 	my $gif;
+	my $col1="";
 	foreach my $key (sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
 	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 	if ($id % 2) {
@@ -4886,17 +4887,18 @@ END
 	if ($confighash{$key}[32] eq "" && $confighash{$key}[3] eq 'host' ){$confighash{$key}[32]="dynamic";}
 	print "<td align='center' $col>$confighash{$key}[32]</td>";
 	print "<td align='center' $col>$confighash{$key}[25]</td>";
-
-	my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+	$col1="bgcolor='${Header::colourred}'";
+	my $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
 
 	if ($confighash{$key}[0] eq 'off') {
-	 $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+		$col1="bgcolor='${Header::colourblue}'";
+		$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
 	} else {
 
 ###
 # m.a.d net2net
-###       
-       
+###
+
        if ($confighash{$key}[3] eq 'net') {
 
         if (-e "/var/run/$confighash{$key}[1]n2n.pid") {
@@ -4920,37 +4922,39 @@ END
 #EXITING       -- A graceful exit is in progress.
 ####
 
-        if ( $tustate[1] eq 'CONNECTED') {
-          $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></tr></td></table>";
-                          } else {
-          $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$tustate[1]</font></b></td></tr></table>";                          
+		if ( $tustate[1] eq 'CONNECTED') {
+			$col1="bgcolor='${Header::colourgreen}'";
+			$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+		}else {
+			$col1="bgcolor='${Header::colourred}'";
+			$active = "<b><font color='#FFFFFF'>$tustate[1]</font></b>";
+		}
            }
-           } 
            }
-        }	else {
+        }else {
 
-	        my $cn;
-    	    my @match = ();	
-	  foreach my $line (@status) {
-		chomp($line);
-		if ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
-		    @match = split(m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $line);
-		    if ($match[1] ne "Common Name") {
-	    		$cn = $match[1];
-		    }	    
-	    	$cn =~ s/[_]/ /g;
-		    if ($cn eq "$confighash{$key}[2]") {
-			$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
-		    }
-   }
-      
+				my $cn;
+				my @match = ();
+		foreach my $line (@status) {
+			chomp($line);
+			if ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
+				@match = split(m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $line);
+				if ($match[1] ne "Common Name") {
+					$cn = $match[1];
+				}
+				$cn =~ s/[_]/ /g;
+				if ($cn eq "$confighash{$key}[2]") {
+					$col1="bgcolor='${Header::colourgreen}'";
+					$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+				}
+			}
+		}
 	}
-}
 }
 
 
 	print <<END
-	<td align='center' $col>$active</td>
+	<td align='center' $col1>$active</td>
 		
 	<form method='post' name='frm${key}a'><td align='center' $col>
 	    <input type='image'  name='$Lang::tr{'dl client arch'}' src='/images/openvpn.png' alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' border='0' />
@@ -5037,7 +5041,7 @@ END
 	<td> <img src='/images/openvpn.png' alt='?RELOAD'/></td>
 	<td class='base'>$Lang::tr{'dl client arch'}</td>
     </tr>
-    </table><hr>
+    </table><br>
 END
     ;
     }
