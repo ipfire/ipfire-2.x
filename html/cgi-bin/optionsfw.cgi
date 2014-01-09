@@ -113,7 +113,7 @@ $selected{'FWPOLICY'}{$settings{'FWPOLICY'}}= 'selected';
 $selected{'FWPOLICY1'}{$settings{'FWPOLICY1'}}= 'selected';
 $selected{'FWPOLICY2'}{$settings{'FWPOLICY2'}}= 'selected';
 
-&Header::openbox('100%', 'center', $Lang::tr{'options fw'});
+&Header::openbox('100%', 'center',);
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
 
 print <<END
