@@ -3990,7 +3990,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 			if ( -e "${General::swroot}/ovpn/ccd/$confighash{$key}[2]"){
 				unlink "${General::swroot}/ovpn/ccd/$cgiparams{'CERT_NAME'}";
 			}
-			$confighash{$key}[2] =~ s/ /_/gi;
 			open ( CCDRWCONF,'>',"${General::swroot}/ovpn/ccd/$confighash{$key}[2]") or die "Unable to create clientconfigfile $!";
 			print CCDRWCONF "# OpenVPN clientconfig from ccd extension by Copymaster#\n\n";
 			if($cgiparams{'CHECK1'} eq 'dynamic'){
