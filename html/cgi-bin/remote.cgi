@@ -126,7 +126,7 @@ if ($errormessage) {
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
 
-&Header::openbox('100%', 'left', 'SSH:');
+&Header::openbox('100%', 'left', $Lang::tr{'ssh'});
 print <<END
 <table width='100%'>
 <tr>
@@ -154,7 +154,7 @@ print <<END
 	<td width='100%' class='base'>$Lang::tr{'ssh port'}</td>
 </tr>
 <tr>
-	<td align='center' colspan='3'><hr />
+	<td align='right' colspan='3'>
 	<input type='submit' name='ACTION' value='$Lang::tr{'ssh tempstart15'}' />
 	<input type='submit' name='ACTION' value='$Lang::tr{'ssh tempstart30'}' />
 	<input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
