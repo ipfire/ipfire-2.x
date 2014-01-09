@@ -222,7 +222,7 @@ if ($errormessage) {
         &Header::closebox();
 }
 
-&Header::openbox('100%', 'left', "$Lang::tr{'settings'}:");
+&Header::openbox('100%', 'left', "$Lang::tr{'settings'}");
 
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -267,15 +267,15 @@ print <<END
 </td>
 <td width='5%'  align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day before'}' value='&lt;&lt;' /></td>
 <td width='5%'  align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day after'}' value='&gt;&gt;' /></td>
-<td width='20%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
+<td width='20%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
+</tr>
+<tr>
+	<td colspan='3' align='left' valign="center">$Lang::tr{'Number of Ports for the pie chart'}:</td>
+	<td colspan='3' align='left' valign="center"><input type='text' name='pienumber' value='$pienumber' size='4'></td>
+	<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
-<table width='100%'>
-<tr><td width='20%' align='right' valign="center">$Lang::tr{'Number of Ports for the pie chart'}:</td>
-    <td width='10%' align='left' valign="center"><input type='text' name='pienumber' value='$pienumber' size='4'></td>
-    <td width='20%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td></tr>
-       </table>
-       </form>
+</form>
 END
 ;
 
