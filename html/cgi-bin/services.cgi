@@ -117,7 +117,7 @@ if ( $querry[0] =~ "processescpu"){
 	print <<END
 <div align='center'>
 <table width='80%' cellspacing='1' class='tbl'>
-<tr bgcolor='$color{'color20'}'>
+<tr>
 	<th align='left'><b>$Lang::tr{'services'}</b></th>
 	<th align='center' ><b>$Lang::tr{'status'}</b></th>
 	<th align='center'><b>PID</b></th>
@@ -161,7 +161,7 @@ END
 	print <<END
 <div align='center'>
 <table width='80%' cellspacing='1' class='tbl'>
-<tr bgcolor='$color{'color20'}'>
+<tr>
 	<th align='center'><b>Addon</b></th>
 	<th align='center'><b>Boot</b></th>
 	<th align='center' colspan=2><b>$Lang::tr{'action'}</b></th>
@@ -197,11 +197,11 @@ END
 					print "<tr>";
 					$col="bgcolor='$color{'color20'}'";
 				}
-				print "<td align='left' $col>$_</td> ";
+				print "<td align='left' $col width='31%'>$_</td> ";
 				my $status = isautorun($_,$col);
 				print "$status ";
-				print "<td align='center' $col><A HREF=services.cgi?$_!start><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></A></td>";
-				print "<td align='center' $col><A HREF=services.cgi?$_!stop><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></A></td> ";
+				print "<td align='center' $col width='8%'><A HREF=services.cgi?$_!start><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></A></td>";
+				print "<td align='center' $col width='8%'><A HREF=services.cgi?$_!stop><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></A></td> ";
 				my $status = &isrunningaddon($_,$col);
 		 		$status =~ s/\\[[0-1]\;[0-9]+m//g;
 
