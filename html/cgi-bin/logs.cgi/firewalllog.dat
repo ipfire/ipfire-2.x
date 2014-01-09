@@ -233,7 +233,7 @@ if ($errormessage) {
         &Header::closebox();
 }
 
-&Header::openbox('100%', 'left', "$Lang::tr{'settings'}:");
+&Header::openbox('100%', 'left', "$Lang::tr{'settings'}");
 
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
