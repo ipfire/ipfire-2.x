@@ -44,6 +44,9 @@ if [ -r "/var/ipfire/ovpn/server.conf" ]; then
 		-i /var/ipfire/ovpn/server.conf
 fi
 
+# Convert CCD files.
+/usr/local/bin/convert-ovpn
+
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
