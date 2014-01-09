@@ -166,7 +166,7 @@ if ( -e "/var/tmp/backupiso/" ){
 	@backupisos = `cd /var/tmp/backupiso/ && ls *.iso 2>/dev/null`;
 }
 
-&Header::openbox('100%', 'center', $Lang::tr{'backup'});
+&Header::openbox('100%', 'center', );
 
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
