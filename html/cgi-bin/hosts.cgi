@@ -4,7 +4,7 @@
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
-# This program is free software: you can redistribute it and/or modify        #
+# This program is free software you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
 # the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
@@ -264,11 +264,12 @@ print <<END
     <td><input type='checkbox' name='EN' $checked{'EN'}{'on'} /></td>
 </tr>
 </table>
+<br>
 <hr />
 <table width='100%'>
 <tr>
     <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
-    <td width='50%' align='center'><input type='hidden' name='ACTION' value='$Lang::tr{'add'}' /><input type='submit' name='SUBMIT' value='$buttontext' /></td>
+    <td width='50%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'add'}' /><input type='submit' name='SUBMIT' value='$buttontext' /></td>
 </tr>
 </table>
 </form>
