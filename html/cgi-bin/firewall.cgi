@@ -1561,8 +1561,6 @@ sub newrule
 	if ($scidr eq '32'){$fwdfwsettings{$fwdfwsettings{'grp1'}}=$sip;}
 	my ($dip,$dcidr) = split("/",$fwdfwsettings{$fwdfwsettings{'grp2'}});
 	if ($scidr eq '32'){$fwdfwsettings{$fwdfwsettings{'grp2'}}=$dip;}
-	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw addrule'});
-	&Header::closebox();
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw source'});
 	#------SOURCE-------------------------------------------------------
 	print "<form method='post'>";
@@ -1584,10 +1582,10 @@ END
 		}
 		print<<END;
 		</select></td></tr>
-		<tr><td colspan='8'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
+		<tr><td><br></td></tr>
+		</table>
 END
 		&gen_dd_block('src','grp1');
-		print"<hr>";
 		&Header::closebox();
 
 		#---SNAT / DNAT ------------------------------------------------
@@ -1690,10 +1688,9 @@ END
 		}
 		print<<END;
 		</select></td></tr>
-		<tr><td colspan='7'><hr style='border:dotted #BFBFBF; border-width:1px 0 0 0 ; ' /></td></tr></table>
+		<tr><td><br></td></tr></table>
 END
 		&gen_dd_block('tgt','grp2');
-		print"<hr>";
 		&Header::closebox;
 		#---PROTOCOL------------------------------------------------------
 		$fwdfwsettings{'SRC_PORT'} =~ s/\|/,/g;
@@ -1848,7 +1845,7 @@ END
 		&Header::closebox;
 		$checked{"RULE_ACTION"}{$fwdfwsettings{'RULE_ACTION'}}	= 'CHECKED';
 		print <<END;
-			<hr><br>
+			<br>
 			<center>
 				<table width="80%" border="0">
 					<tr>
@@ -1995,7 +1992,7 @@ END
 				</td>
 			</tr>
 		</table>
-		<br><hr>
+		<br>
 END
 
 		#---ACTION------------------------------------------------------
