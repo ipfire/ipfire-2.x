@@ -84,7 +84,7 @@ open(FILE, "<$p2pfile") or die "Unable to read $p2pfile";
 @p2ps = <FILE>;
 close FILE;
 
-&Header::openbox('100%', 'center', $Lang::tr{'p2p block'});
+&Header::openbox('100%', 'center',);
 print <<END;
 	<table width='35%' class='tbl'>
 		<tr>
