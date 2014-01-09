@@ -1269,6 +1269,7 @@
 'ipfire side is invalid' => 'IPFire Seite ist ungültig.',
 'ipfires hostname' => 'IPFire\'s Hostname',
 'ipinfo' => 'IP-Info',
+'ipsec network' => 'IPsec-Netzwerke',
 'iptable rules' => 'IPTable-Regeln',
 'iptmangles' => 'IPTable Mangles',
 'ipsec network' => 'IPsec-Netzwerke',
