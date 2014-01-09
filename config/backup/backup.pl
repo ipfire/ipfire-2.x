@@ -125,6 +125,10 @@ elsif ($ARGV[0] eq 'restore') {
   }
   system("/usr/local/bin/firewallctrl");
  }
+
+  # Convert old OpenVPN CCD files (CN change, core 75).
+  system("/usr/local/bin/convert-ovpn");
+}
 elsif ($ARGV[0] eq 'restoreaddon') {
   if ( -e "/tmp/$ARGV[1]" ){system("mv /tmp/$ARGV[1] /var/ipfire/backup/addons/backup/$ARGV[1]");}
   system("cd / && tar -xvz -p -f /var/ipfire/backup/addons/backup/$ARGV[1]");
