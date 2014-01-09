@@ -4,5 +4,6 @@ opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 usr/lib/openvpn/verify
 usr/local/bin/convert-ovpn
+var/ipfire/backup/bin/backup.pl
 var/ipfire/header.pl
 var/ipfire/langs
