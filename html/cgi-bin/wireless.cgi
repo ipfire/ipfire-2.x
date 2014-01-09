@@ -225,16 +225,15 @@ print <<END
 <td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='40' /></td>
 </tr>
 </table>
-<hr />
+<br>
+<hr>
 <table width='100%'>
 <tr>
-    <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
-    <td width='55%' class='base'>$Lang::tr{'this field may be blank'}</td>
-    <td width='40%' align='center'>
+    <td class='base' valign='top'><img src='/blob.gif' alt='*' /> $Lang::tr{'this field may be blank'}</td>
+    <td width='40%' align='right'>
       <input type='hidden' name='ACTION' value='add' />
       <input type='submit' name='SUBMIT' value='$buttontext' />
     </td>
-    <td width='5%' align='right'>&nbsp;</td>
 </tr>
 </table>
 END
