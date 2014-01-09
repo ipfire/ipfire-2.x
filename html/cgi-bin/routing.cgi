@@ -244,10 +244,10 @@ print <<END
     <td><input type='text' name='REMARK' value='$settings{'REMARK'}' size='25'/></td>
 </tr>
 </table>
-<hr />
+<br>
 <table width='100%'>
 <tr>
-    <td width='50%' align='center'><input type='hidden' name='ACTION' value='$Lang::tr{'add'}' /><input type='submit' name='SUBMIT' value='$buttontext' /></td>
+    <td width='50%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'add'}' /><input type='submit' name='SUBMIT' value='$buttontext' /></td>
 </tr>
 </table>
 </form>
