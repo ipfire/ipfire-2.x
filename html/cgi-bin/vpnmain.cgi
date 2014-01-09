@@ -1099,7 +1099,7 @@ END
         <b><font color='${Header::colourred}'>$Lang::tr{'capswarning'}</font></b>: 
         $Lang::tr{'generating the root and host certificates may take a long time. it can take up to several minutes on older hardware. please be patient'}
     </td></tr>
-    <tr><td colspan='2'><hr /></td></tr>
+    <tr><td colspan='2'><hr></td></tr>
     <tr><td class='base' nowrap='nowrap'>$Lang::tr{'upload p12 file'}:</td>
         <td nowrap='nowrap'><input type='file' name='FH' size='32' /></td></tr>
     <tr><td class='base'>$Lang::tr{'pkcs12 file password'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
@@ -2632,17 +2632,18 @@ print <<END
 	<td  class='base' nowrap='nowrap'>$Lang::tr{'host to net vpn'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td ><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
     </tr>
- </table>
+</table>
+<br>
 <hr />
 <table width='100%'>
 <tr>
     <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
-    <td width='70%' class='base' valign='top'>$Lang::tr{'this field may be blank'}</td>
+    <td width='70%' class='base' valign='top'>$Lang::tr{'this field may be blank'}</td><td width='30%' align='right' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 <tr>
     <td class='base' valign='top' nowrap='nowrap'><img src='/blob.gif' alt='*' /><img src='/blob.gif' alt='*' />&nbsp;</td>
     <td class='base'>	<font class='base'>$Lang::tr{'vpn delayed start help'}</font></td>
-    <td width='30%' align='center' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+    <td></td>
 </tr>
 </table>
 END
@@ -2685,21 +2686,24 @@ END
 	    print "<td align='left' $col>&nbsp;</td>";
 	}
 	print "<td align='center' $col>$confighash{$key}[25]</td>";
+	my $col1="bgcolor='${Header::colourred}'";
 	# get real state
-	my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+	my $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
 	foreach my $line (@status) {
 	    if (($line =~ /\"$confighash{$key}[1]\".*IPsec SA established/) ||
 	       ($line =~ /$confighash{$key}[1]\{.*INSTALLED/))
 	    {
-		$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
+		$col1="bgcolor='${Header::colourgreen}'";
+		$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
 	    }
 	}
 	# move to blueif really down
-	if ($confighash{$key}[0] eq 'off' && $active =~ /${Header::colourred}/ ) {
-	    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+	if ($confighash{$key}[0] eq 'off' && $col1 =~ /${Header::colourred}/ ) {
+		$col1="bgcolor='${Header::colourblue}'";
+	    $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
 	}
 	print <<END
-	<td align='center' $col>$active</td>
+	<td align='center' $col1>$active</td>
 	<td align='center' $col>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	    <input type='image'  name='$Lang::tr{'restart'}' src='/images/reload.gif' alt='$Lang::tr{'restart'}' title='$Lang::tr{'restart'}' />
@@ -2806,7 +2810,7 @@ END
 
     print <<END
     <table width='100%'>
-    <tr><td align='center' colspan='9'>
+    <tr><td align='right' colspan='9'>
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<input type='submit' name='ACTION' value='$Lang::tr{'add'}' />
 	</form>
@@ -2816,7 +2820,7 @@ END
     ;
     &Header::closebox();
 
-    &Header::openbox('100%', 'left', "$Lang::tr{'certificate authorities'}:");
+    &Header::openbox('100%', 'left', "$Lang::tr{'certificate authorities'}");
     print <<EOF
     <table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
     <tr>
@@ -2949,6 +2953,7 @@ END
     }
     my $createCA = -f "${General::swroot}/ca/cacert.pem" ? '' : "<tr><td colspan='3'></td><td><input type='submit' name='ACTION' value='$Lang::tr{'generate root/host certificates'}' /></td></tr>";
     print <<END
+    <br>
     <hr />
     <form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'>
     <table width='100%' border='0' cellspacing='1' cellpadding='0'>
@@ -2961,7 +2966,7 @@ END
     </tr>
     <tr>
 	<td colspan='3'>$Lang::tr{'resetting the vpn configuration will remove the root ca, the host certificate and all certificate based connections'}:</td>
-	<td><input type='submit' name='ACTION' value='$Lang::tr{'remove x509'}' /></td>
+	<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'remove x509'}' /></td>
     </tr>
     </table>
     </form>
