@@ -175,14 +175,11 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-&Header::openbox('100%','left',$Lang::tr{'gui settings'});
+&Header::openbox('100%','left',$Lang::tr{'display'});
 
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='100%'>
-<tr>
-    <td colspan='2'><p><b>$Lang::tr{'display'}</b></td>
-</tr>
 <tr>
     <td><input type='checkbox' name='WINDOWWITHHOSTNAME' $checked{'WINDOWWITHHOSTNAME'}{'on'} /></td>
     <td>$Lang::tr{'display hostname in window title'}</td>
@@ -232,9 +229,13 @@ END
 
 print <<END
 </select></td></tr>
-<tr>
-    <td colspan='2'><hr /><p><b>$Lang::tr{'theme'}</b></td>
-</tr>
+</table>
+END
+;
+&Header::closebox();
+&Header::openbox('100%','left',$Lang::tr{'theme'});
+print<<END;
+<table>
 <tr>
     <td>&nbsp;</td>
     <td><select name='theme'>
@@ -265,22 +266,26 @@ foreach $item (sort (@files)) {
 
 print <<END
 </select></td></tr>
-<tr>
-    <td colspan='2'><hr /><p><b>$Lang::tr{'sound'}</b></td>
-</tr>
+</table>
+END
+;
+&Header::closebox();
+&Header::openbox('100%','left',$Lang::tr{'sound'});
+print <<END
 <tr>
     <td><input type ='checkbox' name='PPPUPDOWNBEEP' $checked{'PPPUPDOWNBEEP'}{'on'} /></td>
     <td>$Lang::tr{'beep when ppp connects or disconnects'}</td>
 </tr>
 <tr>
-    <td colspan='2'><hr /></td>
+    <td colspan='2'></td>
 </tr>
 </table>
-<div align='center'>
-<table width='80%'>
+<div align='right'>
+<br>
+<table width='100%'>
 <tr>
-    <td width='50%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'restore defaults'}' /></td>
-    <td width='50%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+    <td width='90%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'restore defaults'}' /></td>
+    <td width='10%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 </div>
