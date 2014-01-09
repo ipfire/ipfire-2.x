@@ -27,12 +27,7 @@
 /* Table */
 /* when using class='bordered' after tabletag */
 
-table {
-	*border-collapse: collapse; /* IE7 and lower */
-	border-spacing: 0;
-}
-
-.tbl th:first-child{
+.tbl th:first-child {
 	-moz-border-radius: 6px 0 0 0;
 	-webkit-border-radius: 6px 0 0 0;
 	border-radius: 6px 0 0 0;
@@ -44,25 +39,25 @@ table {
 	border-radius: 0 6px 0 0;
 }
 
-.tbl th:only-child{
+.tbl th:only-child {
 	-moz-border-radius: 6px 6px 0 0;
 	-webkit-border-radius: 6px 6px 0 0;
 	border-radius: 6px 6px 0 0;
 }
 
-.tbl tr:first-child td:first-child{
+.tbl tr:first-child td:first-child {
 	-moz-border-radius: 6px 0 0 0;
 	-webkit-border-radius: 6px 0 0 0;
 	border-radius: 6px 0 0 0;
 }
 
-.tbl tr:first-child td:last-child{
+.tbl tr:first-child td:last-child {
 	-moz-border-radius: 0 6px 0 0;
 	-webkit-border-radius: 0 6px 0 0;
 	border-radius: 0 6px 0 0;
 }
 
-.tbl tr:first-child td:only-child{
+.tbl tr:first-child td:only-child {
 	-moz-border-radius: 6px 6px 0 0;
 	-webkit-border-radius: 6px 6px 0 0;
 	border-radius: 6px 6px 0 0;
