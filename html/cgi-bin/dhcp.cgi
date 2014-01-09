@@ -590,8 +590,7 @@ print <<END
 <tr>
     <td class='base' width='25%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
     <td class='base' width='30%'>$warnNTPmessage</td>
-    <td width='40%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-    <td width='5%' align='right'>&nbsp;</td>
+    <td width='40%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 </form>
@@ -651,7 +650,7 @@ print <<END
 <table width='100%'>
 <tr>
     <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'dhcp advopt scope help'}</td>
-    <td width='50%' align='center'>
+    <td width='50%' align='right'>
     <input type='hidden' name='ACTION' value='$Lang::tr{'add'}1' />
     <input type='submit' name='SUBMIT' value='$buttontext' />
     <input type='submit' name='SUBMIT' value='$Lang::tr{'dhcp advopt help'}' />
@@ -851,7 +850,7 @@ print <<END
 <table width='100%'>
 <tr>
     <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
-    <td width='50%' align='center'>
+    <td width='50%' align='right'>
 	<input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' />
 	<input type='submit' name='SUBMIT' value='$buttontext' />
 	<input type='hidden' name='KEY2' value='$dhcpsettings{'KEY2'}' /></td>
