@@ -233,7 +233,7 @@ END
 ############################################################################################################################
 ############################################# Backups von Addons erstellen #################################################
 
-&Header::openbox('100%', 'center', 'addons');
+&Header::openbox('100%', 'center', $Lang::tr{'addons'});
 
 my @addonincluds = `ls /var/ipfire/backup/addons/includes/ 2>/dev/null`;
 my @addons = `ls /var/ipfire/backup/addons/backup/ 2>/dev/null`;
