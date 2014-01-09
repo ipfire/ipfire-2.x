@@ -1120,7 +1120,7 @@
 'hangup' => 'Trennen',
 'hangup string' => 'Auflegen:',
 'harddisk temperature' => 'Festplattentemperatur',
-'harddisk temperature graphs' => 'HDD-Temperatur-Diagramme',
+'harddisk temperature graphs' => 'HDD-Diagramme',
 'hardware graphs' => 'Hardware-Diagramme',
 'hdd temperature in' => 'Festplattentemperatur in',
 'help' => 'Hilfe',
