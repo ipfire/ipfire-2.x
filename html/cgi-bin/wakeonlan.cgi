@@ -260,12 +260,12 @@ print <<END
   <td colspan='4' align='left'><input type='text' name='CLIENT_COMMENT' value='$cgiparams{'CLIENT_COMMENT'}' size='40' /></td>
 </tr>
 </table>
+<br>
 <hr />
 <table width='100%'>
 <tr>
-  <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
-  <td width='55%' class='base'>$Lang::tr{'this field may be blank'}</td>
-  <td width='40%' align='center'>
+  <td class='base' valign='top'><img src='/blob.gif' alt='*' />$Lang::tr{'this field may be blank'}</td>
+  <td width='40%' align='right'>
 END
 ;
 
