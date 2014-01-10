@@ -675,5 +675,5 @@ sub build_ovpn_grp
 sub process_p2p
 {
 	copy("/var/ipfire/outgoing/p2protocols","/var/ipfire/firewall/p2protocols");
-	chmod oct('0777'), '/var/ipfire/firewall/p2protocols';
+	chown 99, 99, '/var/ipfire/firewall/p2protocols';
 }
