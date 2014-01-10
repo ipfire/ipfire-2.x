@@ -106,6 +106,10 @@ for (;;) {
 					$temp = $array[11];
 				}
 				&checkssh ($temp, "possible SSH-Bruteforce Attack");}
+
+			# This should catch Bruteforce Attacks with enabled preauth
+			if ($_ =~ /.*sshd.*Received disconnect from (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):.*\[preauth\]/) {
+				&checkssh ($1, "possible SSH-Bruteforce Attack, failed preauth");}
 			}
 	}
 
