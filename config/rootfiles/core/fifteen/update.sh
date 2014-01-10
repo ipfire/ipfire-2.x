@@ -109,6 +109,7 @@ add_to_backup srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
 add_to_backup var/ipfire/{dmzholes,portfw,outgoing,xtaccess}
 add_to_backup etc/inittab
 add_to_backup etc/fstab
+add_to_backup usr/share/usb_modeswitch
 
 # Backup the files
 tar cJvf /var/ipfire/backup/core-upgrade$core_$KVER.tar.xz \
@@ -136,6 +137,9 @@ rm -rf /boot/vmlinuz-*
 rm -rf /boot/uImage-ipfire-*
 rm -rf /boot/uInit-ipfire-*
 rm -rf /lib/modules
+
+# Remove old usb_modeswitch_data
+rm -rf /usr/share/usb_modeswitch
 
 #
 # Remove old udev rules.
