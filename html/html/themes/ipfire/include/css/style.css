@@ -2,7 +2,7 @@
 /* This controls the width of the fixed width layouts */
 
 .fixed {
-	width: 910px !important;
+	width: 960px !important;
 }
 
 /* Basic Stuff */
@@ -14,64 +14,6 @@
 
 html {
 	height: 100%;
-}
-
-/* This decorates all tables with class="tbl" */
-
-table {
-	*border-collapse: collapse; /* IE7 and lower */
-	border-spacing: 0;
-}
-
-.tbl th {
-	color: #000000;
-	border-top: 1px solid grey;
-	border-bottom: 1px solid grey;
-	background: #cccccc;
-}
-
-.tbl th:first-child {
-	border-left: 1px solid grey;
-	border-top: 1px solid grey;
-	border-bottom: 1px solid grey;
-}
-
-.tbl th:last-child {
-	border-right: 1px solid grey;
-	border-top: 1px solid grey;
-	border-bottom: 1px solid grey;
-}
-
-.tbl th:only-child {
-	border: 1px solid grey;
-}
-
-.tbl tr td:first-child {
-	border-left: 1px solid grey;
-}
-
-.tbl tr td:last-child {
-	border-right: 1px solid grey;
-}
-
-.tbl tr:first-child td {
-	border-top: 1px solid grey;
-}
-
-.tbl tr:last-child td:only-child {
-	border-bottom: 1px solid grey;
-}
-
-.tbl tr:last-child td:first-child {
-	border-bottom: 1px solid grey;
-}
-
-.tbl tr:last-child td:last-child {
-	border-bottom: 1px solid grey;
-}
-
-.tbl tr:last-child td {
-	border-bottom: 1px solid grey;
 }
 
 body {
@@ -113,7 +55,7 @@ body {
 	background-attachment: fixed;
 
 	font-size: 9pt;
-	font-family: "trebuchet ms", helvetica, sans-serif;
+	font-family: "DejaVu Sans", Helvetica, sans-serif;
 }
 
 
@@ -180,6 +122,7 @@ iframe {
 	color: #fff;
 	font-size: 3.6em;
 	font-weight: bold;
+	padding-top: 0.2em;
 	padding-left: 1.7em;
 }
 
@@ -317,4 +260,62 @@ input.text {
 
 #cssmenu .has-sub ul li:hover a {
 	background: #dddddd;
+}
+
+/* This decorates all tables with class="tbl" */
+
+table {
+	*border-collapse: collapse; /* IE7 and lower */
+	border-spacing: 0;
+}
+
+.tbl th {
+	color: #000000;
+	border-top: 1px solid lightgrey;
+	border-bottom: 1px solid lightgrey;
+	background: #cccccc;
+}
+
+.tbl th:first-child {
+	border-left: 1px solid lightgrey;
+	border-top: 1px solid lightgrey;
+	border-bottom: 1px solid lightgrey;
+}
+
+.tbl th:last-child {
+	border-right: 1px solid lightgrey;
+	border-top: 1px solid lightgrey;
+	border-bottom: 1px solid lightgrey;
+}
+
+.tbl th:only-child {
+	border: 1px solid lightgrey;
+}
+
+.tbl tr td:first-child {
+	border-left: 1px solid lightgrey;
+}
+
+.tbl tr td:last-child {
+	border-right: 1px solid lightgrey;
+}
+
+.tbl tr:first-child td {
+	border-top: 1px solid lightgrey;
+}
+
+.tbl tr:last-child td:only-child {
+	border-bottom: 1px solid lightgrey;
+}
+
+.tbl tr:last-child td:first-child {
+	border-bottom: 1px solid lightgrey;
+}
+
+.tbl tr:last-child td:last-child {
+	border-bottom: 1px solid lightgrey;
+}
+
+.tbl tr:last-child td {
+	border-bottom: 1px solid lightgrey;
 }
