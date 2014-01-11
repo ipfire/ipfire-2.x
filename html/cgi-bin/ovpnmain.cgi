@@ -1163,6 +1163,12 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	$errormessage = $Lang::tr{'invalid port'};
 	goto SETTINGS_ERROR;
     }
+	
+	if ($cgiparams{'DDEST_PORT'} <= 1023) {
+		$errormessage = $Lang::tr{'ovpn port in root range'};
+		goto SETTINGS_ERROR;
+	}
+
     $vpnsettings{'ENABLED_BLUE'} = $cgiparams{'ENABLED_BLUE'};
     $vpnsettings{'ENABLED_ORANGE'} =$cgiparams{'ENABLED_ORANGE'};
     $vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
@@ -3534,10 +3540,24 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 		  goto VPNCONF_ERROR;
-		} 
+		}
+	
+	if ($cgiparams{'DEST_PORT'} <= 1023) {
+		$errormessage = $Lang::tr{'ovpn port in root range'};
+		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+		  goto VPNCONF_ERROR;
+		}
 
-    if ($cgiparams{'OVPN_MGMT'} eq  '') {
-			$cgiparams{'OVPN_MGMT'} = $cgiparams{'DEST_PORT'};		
+	if ($cgiparams{'OVPN_MGMT'} eq  '') {
+		$cgiparams{'OVPN_MGMT'} = $cgiparams{'DEST_PORT'};		
+		}
+	
+	if ($cgiparams{'OVPN_MGMT'} <= 1023) {
+		$errormessage = $Lang::tr{'ovpn mgmt in root range'};
+		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+		  goto VPNCONF_ERROR;
 		}
    
 }

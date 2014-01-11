@@ -1636,6 +1636,8 @@
 'ovpn on blue' => 'OpenVPN on BLUE',
 'ovpn on orange' => 'OpenVPN on ORANGE',
 'ovpn on red' => 'OpenVPN on RED',
+'ovpn mgmt in root range' => 'A port number of 1024 or higher is required.',
+'ovpn port in root range' => 'A port number of 1024 or higher is required.',
 'ovpn routes push' => 'Routes (one per line) e.g. 192.168.10.0/255.255.255.0 192.168.20.0/24',
 'ovpn routes push options' => 'Route push options',
 'ovpn server status' => 'Current OpenVPN server status:',
