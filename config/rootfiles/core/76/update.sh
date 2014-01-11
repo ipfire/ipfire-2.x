@@ -118,7 +118,7 @@ tar cJvf /var/ipfire/backup/core-upgrade$core_$KVER.tar.xz \
 # Check diskspace on root
 ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 
-if [ $ROOTSPACE -lt 70000 ]; then
+if [ $ROOTSPACE -lt 100000 ]; then
 	/usr/bin/logger -p syslog.emerg -t ipfire \
 		"core-update-$core: ERROR cannot update because not enough free space on root."
 	exit 2
@@ -327,7 +327,7 @@ rm -rf /opt/pakfire/db/*/meta-linux-pae
 if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 	ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 	BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
-	if [ $BOOTSPACE -lt 8000 -o $ROOTSPACE -lt 70000 ]; then
+	if [ $BOOTSPACE -lt 9000 -o $ROOTSPACE -lt 90000 ]; then
 		/usr/bin/logger -p syslog.emerg -t ipfire \
 			"core-update-$core: WARNING not enough space for pae kernel."
 	else
