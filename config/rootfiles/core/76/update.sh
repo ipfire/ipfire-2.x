@@ -175,7 +175,7 @@ esac
 rm -rf /srv/web/ipfire/html/themes/ipfire
 
 # rename /etc/modprobe.d files
-for i in $(find /etc/modprobe.d/* | grep -v ".conf")
+for i in $(find /etc/modprobe.d/* | grep -v ".conf"); do
 	mv $i $i.conf
 done
 
