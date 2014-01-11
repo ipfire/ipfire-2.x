@@ -1,5 +1,5 @@
     $subservices->{'10.ipsec'} = {
-				'caption' => 'IPSec',
+				'caption' => $Lang::tr{'ipsec'},
 			     	'uri' => '/cgi-bin/vpnmain.cgi',
 			     	'title' => "$Lang::tr{'virtual private networking'}",
 			     	'enabled' => 1,
