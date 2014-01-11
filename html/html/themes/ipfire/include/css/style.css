@@ -54,7 +54,7 @@ table {
 	border-right: 1px solid grey;
 }
 
-.tbl tr:first-child td:only-child {
+.tbl tr:first-child td {
 	border-top: 1px solid grey;
 }
 
