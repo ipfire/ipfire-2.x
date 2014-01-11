@@ -17,7 +17,7 @@
 				'enabled' => 1,
 				};
 	$subfirewall->{'40.p2p'} = {
-				'caption' => 'P2P-Block',
+				'caption' => $Lang::tr{'p2p block'},
 				'uri' => '/cgi-bin/p2p-block.cgi',
 				'title' => "P2P-Block",
 				'enabled' => 1,

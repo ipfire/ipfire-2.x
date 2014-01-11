@@ -286,7 +286,7 @@ if ( `cat /var/ipfire/vpn/settings | grep ^ENABLED=on` ||
 	$haveipsec=1;
 	my $ipsecip = `cat /var/ipfire/vpn/settings | grep ^VPN_IP= | cut -c 8-`;
 print<<END;
-		<tr><td align='center' bgcolor='$Header::colourvpn' width='25%'><a href="/cgi-bin/vpnmain.cgi"><font size='2' color='white'><b>$Lang::tr{'vpn'}</b></font></a><br>
+		<tr><td align='center' bgcolor='$Header::colourvpn' width='25%'><a href="/cgi-bin/vpnmain.cgi"><font size='2' color='white'><b>$Lang::tr{'ipsec'}</b></font></a><br>
 		<td width='30%' align='center'>$ipsecip
 		<td width='45%' align='center'><font color=$Header::colourgreen>Online</font>
 END

@@ -511,7 +511,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 ###
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'remove x509'}) {
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', '');
     &Header::openbox('100%', 'left', $Lang::tr{'are you sure'});
     print <<END
@@ -607,7 +607,7 @@ END
 
     if ( -f "${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem") {
 	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', '');
 	&Header::openbox('100%', 'left', "$Lang::tr{'ca certificate'}:");
 	my $output = `/usr/bin/openssl x509 -text -in ${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem`;
@@ -683,7 +683,7 @@ END
 	}
 	if ($assignedcerts) {
 	    &Header::showhttpheaders();
-	    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+	    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	    &Header::openbigbox('100%', 'left', '', '');
 	    &Header::openbox('100%', 'left', $Lang::tr{'are you sure'});
 	    print <<END
@@ -728,7 +728,7 @@ END
 	$cgiparams{'ACTION'} eq $Lang::tr{'show host certificate'}) {
     my $output;
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', '');
     if ($cgiparams{'ACTION'} eq $Lang::tr{'show root certificate'}) {
 	&Header::openbox('100%', 'left', "$Lang::tr{'root certificate'}:");
@@ -1054,7 +1054,7 @@ END
 
     ROOTCERT_ERROR:
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', $errormessage);
     if ($errormessage) {
         &Header::openbox('100%', 'left', $Lang::tr{'error messages'});
@@ -1141,7 +1141,7 @@ END
 
     if ( -f "${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem") {
 	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', '');
 	&Header::openbox('100%', 'left', "$Lang::tr{'cert'}:");
 	my $output = `/usr/bin/openssl x509 -text -in ${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem`;
@@ -1231,7 +1231,7 @@ END
 ###
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'add'} && $cgiparams{'TYPE'} eq '') {
 	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', '');
 	&Header::openbox('100%', 'left', $Lang::tr{'connection type'});
 	print <<END
@@ -1911,7 +1911,7 @@ END
     $checked{'AUTH'}{$cgiparams{'AUTH'}} = "checked='checked'";
 
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', $errormessage);
     if ($errormessage) {
 	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
@@ -2353,7 +2353,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
 
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', $errormessage);
 
     if ($errormessage) {
@@ -2602,7 +2602,7 @@ EOF
     $checked{'ENABLED'} = $cgiparams{'ENABLED'} eq 'on' ? "checked='checked'" : '';
 
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', $errormessage);
 
     if ($errormessage) {
