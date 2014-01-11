@@ -73,5 +73,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure
 	cd $(DIR_APP) && make $(MAKETUNING) HAVE_KILL=yes HAVE_SLN=yes
 	cd $(DIR_APP) && make HAVE_KILL=yes HAVE_SLN=yes install
+	# Install fstrim cronjob
+	mkdir -p /etc/fcron.daily
+	install -m 0755 $(DIR_SRC)/config/fstrim/trim /etc/fcron.daily/trim
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

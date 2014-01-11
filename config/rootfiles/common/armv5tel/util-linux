@@ -5,6 +5,8 @@ bin/more
 bin/mount
 bin/umount
 bin/wdctl
+#etc/fcron.daily
+etc/fcron.daily/trim
 lib/libblkid.so.1.1.0
 lib/libmount.so.1
 lib/libmount.so.1.1.0

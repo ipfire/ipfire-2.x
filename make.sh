@@ -731,7 +731,6 @@ buildipfire() {
   ipfiremake usb_modeswitch_data
   ipfiremake zerofree
   ipfiremake mdadm
-  ipfiremake eject
   ipfiremake pound
   ipfiremake minicom
   ipfiremake ddrescue
@@ -768,7 +767,6 @@ buildipfire() {
   ipfiremake stress
   ipfiremake libstatgrab
   ipfiremake sarg
-  ipfiremake fstrim
   ipfiremake check_mk_agent
   ipfiremake libdaemon
   ipfiremake avahi
