@@ -174,6 +174,11 @@ esac
 # Remove the old default theme
 rm -rf /srv/web/ipfire/html/themes/ipfire
 
+# rename /etc/modprobe.d files
+for i in $(find /etc/modprobe.d/* | grep -v ".conf")
+	mv $i $i.conf
+done
+
 #
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
