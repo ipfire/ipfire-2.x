@@ -1050,7 +1050,7 @@ END
 	if (! -z $configgrp || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
 		print"<tr><td valign='top'><input type='radio' name='$grp' id='cust_grp_$srctgt' value='cust_grp_$srctgt' $checked{$grp}{'cust_grp_'.$srctgt}></td><td >$Lang::tr{'fwhost cust grp'}</td><td align='right'><select name='cust_grp_$srctgt' style='width:200px;'>";
 		foreach my $key (sort { ncmp($customgrp{$a}[0],$customgrp{$b}[0]) } keys %customgrp) {
-			if($helper ne $customgrp{$key}[0]){
+			if($helper ne $customgrp{$key}[0] && $customgrp{$key}[2] ne 'none'){
 				print"<option ";
 				print "selected='selected' " if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $customgrp{$key}[0]);
 				print ">$customgrp{$key}[0]</option>";
@@ -1824,7 +1824,7 @@ END
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
 		my $helper;
 		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } keys %customservicegrp){
-			if ($helper ne $customservicegrp{$key}[0]){
+			if ($helper ne $customservicegrp{$key}[0] && $customservicegrp{$key}[2] ne 'none'){
 				print"<option ";
 				print"selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservicegrp{$key}[0]);
 				print">$customservicegrp{$key}[0]</option>";
@@ -1847,7 +1847,7 @@ END
 		print <<END;
 			<br>
 			<center>
-				<table width="80%" border="0">
+				<table width="80%" class='tbl'>
 					<tr>
 						<td width="33%" align="center" bgcolor="$color{'color17'}">
 							&nbsp;<br>&nbsp;
@@ -1884,7 +1884,6 @@ END
 
 			<br>
 END
-
 		#---Activate/logging/remark-------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw additional'});
 		print<<END;
@@ -2298,6 +2297,8 @@ sub viewtablenew
 	&General::readhasharray("$config", $hash);
 	&General::readhasharray("$configccdnet", \%ccdnet);
 	&General::readhasharray("$configccdhost", \%ccdhost);
+	&General::readhasharray("$configgrp", \%customgrp);
+	&General::readhasharray("$configsrvgrp", \%customservicegrp);
 
 	&Header::openbox('100%', 'left', $title);
 	print "<table width='100%' cellspacing='0' class='tbl'>";
@@ -2399,6 +2400,21 @@ END
 						&disable_rule($key);
 						$$hash{$key}[2]='';
 					}
+				}
+			}
+			#check if networkgroups or servicegroups are empty
+			foreach my $netgroup (sort keys %customgrp){
+				if(($$hash{$key}[4] eq $customgrp{$netgroup}[0] || $$hash{$key}[6] eq $customgrp{$netgroup}[0]) && $customgrp{$netgroup}[2] eq 'none'){
+					$coloryellow='on';
+					&disable_rule($key);
+					$$hash{$key}[2]='';
+				}
+			}
+			foreach my $srvgroup (sort keys %customservicegrp){
+				if($$hash{$key}[15] eq $customservicegrp{$srvgroup}[0] && $customservicegrp{$srvgroup}[2] eq 'none'){
+					$coloryellow='on';
+					&disable_rule($key);
+					$$hash{$key}[2]='';
 				}
 			}
 			$$hash{'ACTIVE'}=$$hash{$key}[2];

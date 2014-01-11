@@ -780,7 +780,7 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 		}
 		#on update, we have to delete the dummy entry
 		foreach my $key (keys %customservicegrp){
-			if ($customservicegrp{$key}[2] eq 'none'){
+			if ($customservicegrp{$key}[2] eq 'none' && $customservicegrp{$key}[0] eq $fwhostsettings{'SRVGRP_NAME'}){
 				delete $customservicegrp{$key};
 				last;
 			}
@@ -893,33 +893,22 @@ if ($fwhostsettings{'ACTION'} eq 'deletegrphost')
 	&General::readhasharray("$configgrp", \%customgrp);
 	foreach my $key (keys %customgrp){
 		if($customgrp{$key}[0].",".$customgrp{$key}[1].",".$customgrp{$key}[2].",".$customgrp{$key}[3] eq $fwhostsettings{'delhost'}){
-			#decrease count from source host/net
-			if ($customgrp{$key}[3] eq 'Custom Network'){
-				&General::readhasharray("$confignet", \%customnetwork);
-				foreach my $key1 (keys %customnetwork){
-						if ($customnetwork{$key1}[0] eq $customgrp{$key}[2]){
-						$customnetwork{$key1}[4] = $customnetwork{$key1}[4]-1;
-						last;
-					}
-				}
-				&General::writehasharray("$confignet", \%customnetwork);
-			}
-			if ($customgrp{$key}[3] eq 'Custom Host'){
-				&General::readhasharray("$confighost", \%customhost);
-				foreach my $key1 (keys %customhost){
-					if ($customhost{$key1}[0] eq $customgrp{$key}[2]){
-						$customhost{$key1}[4] = $customhost{$key1}[4]-1;
-						last;
-					}
-				}
-				&General::writehasharray("$confighost", \%customhost);
-			}
 			$grpname=$customgrp{$key}[0];
 			$grpremark=$customgrp{$key}[1];
-			delete $customgrp{$key};
+			#check if we delete the last entry, then generate dummy
+			if ($fwhostsettings{'last'} eq 'on'){
+				$customgrp{$key}[1] = '';
+				$customgrp{$key}[2] = 'none';
+				$customgrp{$key}[3] = '';
+				$fwhostsettings{'last'}='';
+				last;
+			}else{
+				delete $customgrp{$key};
+			}
 		}
 	}
 	&General::writehasharray("$configgrp", \%customgrp);
+	&General::firewall_config_changed();
 	if ($fwhostsettings{'grpcnt'} > 0){
 		&General::firewall_config_changed();
 	}
@@ -982,23 +971,20 @@ if ($fwhostsettings{'ACTION'} eq 'delgrpservice')
 	my $grpname;
 	my $grpremark;
 	&General::readhasharray("$configsrvgrp", \%customservicegrp);
-	&General::readhasharray("$configsrv", \%customservice);
 	foreach my $key (keys %customservicegrp){
 		if($customservicegrp{$key}[0].",".$customservicegrp{$key}[1].",".$customservicegrp{$key}[2] eq $fwhostsettings{'delsrvfromgrp'})
 		{
-			#decrease count from source service
-			foreach my $key1 (sort keys %customservice){
-				if($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
-					$customservice{$key1}[4]--;
-					last;
-				}
-			}
 			$grpname=$customservicegrp{$key}[0];
 			$grpremark=$customservicegrp{$key}[1];
-			delete $customservicegrp{$key};
+			if($fwhostsettings{'last'} eq 'on'){
+				$customservicegrp{$key}[2] = 'none';
+				$fwhostsettings{'last'} = '';
+				last;
+			}else{
+				delete $customservicegrp{$key};
+			}
 		}
 	}
-	&General::writehasharray("$configsrv", \%customservice);
 	&General::writehasharray("$configsrvgrp", \%customservicegrp);
 	&General::firewall_config_changed();
 	if ($fwhostsettings{'updatesrvgrp'} eq 'on'){
@@ -1007,7 +993,6 @@ if ($fwhostsettings{'ACTION'} eq 'delgrpservice')
 	}
 	&addservicegrp;
 	&viewtableservicegrp;
-	
 }
 if ($fwhostsettings{'ACTION'} eq $Lang::tr{'fwhost newnet'})
 {
@@ -1497,11 +1482,11 @@ END
 			}elsif ($count % 2)
 			{ 
 				$col="bgcolor='$color{'color20'}'";
-				print" <tr>";# bgcolor='$color{'color20'}'>";
+				print" <tr>";
 			}else
 			{
 				$col="bgcolor='$color{'color22'}'";
-				print" <tr>";# bgcolor='$color{'color22'}'>";
+				print" <tr>";
 			}
 			my $colnet="$customnetwork{$key}[1]/".&General::subtocidr($customnetwork{$key}[2]);
 			my $netcount=&getnetcount($customnetwork{$key}[0]);
@@ -1655,10 +1640,19 @@ sub viewtablegrp
 	my $remark;
 	my $number;
 	my $delflag;
+	my @counter;
+	my %hash;
 	if (!keys %customgrp) 
 	{
 		print "<center><b>$Lang::tr{'fwhost err emptytable'}</b>";
 	}else{
+		#get all groups in a hash
+		foreach my $key (sort { ncmp($customgrp{$a}[0],$customgrp{$b}[0]) } sort { ncmp($customgrp{$a}[2],$customgrp{$b}[2]) } keys %customgrp){
+			push (@counter,$customgrp{$key}[0]);
+		}
+		foreach my $key1 (@counter) {
+			$hash{$key1}++ ;
+		}
 		foreach my $key (sort { ncmp($customgrp{$a}[0],$customgrp{$b}[0]) } sort { ncmp($customgrp{$a}[2],$customgrp{$b}[2]) } keys %customgrp){
 			$count++;
 			if ($helper ne $customgrp{$key}[0]){
@@ -1676,7 +1670,7 @@ sub viewtablegrp
 				if ($customgrp{$key}[2] eq "none"){$customgrp{$key}[2]=$Lang::tr{'fwhost err emptytable'};}
 				$grpname=$customgrp{$key}[0];
 				$remark="$customgrp{$key}[1]";
-				if($count gt 1){ print"</table>";}
+				if($count gt 1){ print"</table>";$count=1;}
 				print "<br><b><u>$grpname</u></b>&nbsp; &nbsp;";
 				print " <b>$Lang::tr{'remark'}:</b>&nbsp $remark &nbsp " if ($remark ne '');
 				my $netgrpcount=&getnetcount($grpname);
@@ -1694,10 +1688,10 @@ sub viewtablegrp
 				$col="bgcolor='${Header::colouryellow}'";
 			}elsif ($count %2 == 0){
 				print"<tr>";
-				$col="bgcolor='$color{'color22'}'";
+				$col="bgcolor='$color{'color20'}'";
 			}else{
 				print"<tr>";
-				$col="bgcolor='$color{'color20'}'";
+				$col="bgcolor='$color{'color22'}'";
 			}
 			my $ip=&getipforgroup($customgrp{$key}[2],$customgrp{$key}[3]);	
 			if ($ip eq ''){
@@ -1717,8 +1711,14 @@ sub viewtablegrp
 				$ip="$colip/".&General::subtocidr($colsub) if ($colsub);
 				print"<td align='center' $col ".&getcolor($colip).">".&Header::colorize($ip)."</td><td align='center' $col>$customgrp{$key}[3]</td><td width='1%' $col><form method='post'>";
 			}
-			if ($delflag > 1 && $ip ne ''){
+			if ($delflag > 0 && $ip ne ''){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
+				#check if this group has only one entry
+				foreach my $key2 (keys %hash) {
+					if ($hash{$key2}<2 && $key2 eq $customgrp{$key}[0]){
+						print "<input type='hidden' name='last' value='on'>"  ;
+					}
+				}
 			}
 			print"<input type='hidden' name='ACTION' value='deletegrphost'><input type='hidden' name='grpcnt' value='$customgrp{$key}[4]'><input type='hidden' name='update' value='$fwhostsettings{'update'}'><input type='hidden' name='delhost' value='$grpname,$remark,$customgrp{$key}[2],$customgrp{$key}[3]'></form></td></tr>";
 			
@@ -1793,11 +1793,15 @@ sub viewtableservicegrp
 	my $grpname;
 	my $remark;
 	my $helper;
+	my $helper1;
 	my $port;
 	my $protocol;
 	my $delflag;
 	my $grpcount=0;
 	my $col='';
+	my $lastentry=0;
+	my @counter;
+	my %hash;
 	if (! -z $configsrvgrp){
 		&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust srvgrp'});
 		&General::readhasharray("$configsrvgrp", \%customservicegrp);
@@ -1806,6 +1810,12 @@ sub viewtableservicegrp
 		&General::readhasharray("$fwconfiginp", \%fwinp);
 		&General::readhasharray("$fwconfigout", \%fwout);
 		my $number= keys %customservicegrp;
+		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } sort { ncmp($customservicegrp{$a}[2],$customservicegrp{$b}[2]) }keys %customservicegrp){
+			push (@counter,$customservicegrp{$key}[0]);
+		}
+		foreach my $key1 (@counter) {
+			$hash{$key1}++ ;
+		}
 		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } sort { ncmp($customservicegrp{$a}[2],$customservicegrp{$b}[2]) }keys %customservicegrp){
 			$count++;
 			if ($helper ne $customservicegrp{$key}[0]){
@@ -1823,12 +1833,12 @@ sub viewtableservicegrp
 				}
 				$grpname=$customservicegrp{$key}[0];
 				if ($customservicegrp{$key}[2] eq "none"){
-					$customservicegrp{$key}[2]=$Lang::tr{'fwhost empty'};
+					$customservicegrp{$key}[2]=$Lang::tr{'fwhost err emptytable'};
 					$port='';
 					$protocol='';
 				}
 				$remark="$customservicegrp{$key}[1]";
-				if($count >=2){print"</table>";}
+				if($count >0){print"</table>";$count=1;}
 				print "<br><b><u>$grpname</u></b>&nbsp; &nbsp; ";
 				print "<b>$Lang::tr{'remark'}:</b>&nbsp; $remark " if ($remark ne '');
 				print "&nbsp; <b>$Lang::tr{'used'}:</b> $grpcount x";
@@ -1849,6 +1859,11 @@ sub viewtableservicegrp
 				print"<tr>";
 				$col="bgcolor='$color{'color22'}'";
 			}
+			#make lines yellow if it is a dummy entry
+			if ($customservicegrp{$key}[2] eq $Lang::tr{'fwhost err emptytable'}){
+				print"<tr>";
+				$col="bgcolor='${Header::colouryellow}'";
+			}
 			#Set fields if we use protocols in servicegroups
 			if ($customservicegrp{$key}[2] ne 'TCP' || $customservicegrp{$key}[2] ne 'UDP' || $customservicegrp{$key}[2] ne 'ICMP'){
 				$port='-';
@@ -1868,8 +1883,16 @@ sub viewtableservicegrp
 				}
 			}
 			print"<td align='center' $col>$port</td><td align='center' $col>$protocol</td><td width='1%' $col><form method='post'>";
-			if ($delflag gt '1'){
-				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
+			if ($delflag gt '0'){
+				if ($customservicegrp{$key}[2] ne $Lang::tr{'fwhost err emptytable'}){
+					print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
+				}
+				#check if this group has only one entry
+				foreach my $key2 (keys %hash) {
+					if ($hash{$key2}<2 && $key2 eq $customservicegrp{$key}[0]){
+						print "<input type='hidden' name='last' value='on'>"  ;
+					}
+				}
 			}
 			print"<input type='hidden' name='ACTION' value='delgrpservice'><input type='hidden' name='updatesrvgrp' value='$fwhostsettings{'updatesrvgrp'}'>";
 			if($protocol eq 'TCP' || $protocol eq 'UDP' || $protocol eq 'ICMP'){
