@@ -4941,7 +4941,7 @@ END
 #EXITING       -- A graceful exit is in progress.
 ####
 
-		if ( $tustate[1] eq 'CONNECTED') {
+		if (($tustate[1] eq 'CONNECTED') || ($tustate[1] eq 'WAIT')) {
 			$col1="bgcolor='${Header::colourgreen}'";
 			$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
 		}else {

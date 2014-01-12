@@ -404,7 +404,7 @@ END
 
 				my $display;
 				my $display_colour = $Header::colourred;
-				if ( $tustate[1] eq 'CONNECTED') {
+				if (($tustate[1] eq 'CONNECTED') || ($tustate[1] eq 'WAIT')) {
 					$display_colour = $Header::colourgreen;
 					$display = $Lang::tr{'capsopen'};
 				} else {
