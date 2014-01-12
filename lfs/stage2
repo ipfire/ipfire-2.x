@@ -49,7 +49,7 @@ $(TARGET) :
 	@$(PREBUILD)
 
 	# Create directories
-	-mkdir -pv /{bin,boot,etc/opt,etc/modprobe.d,home,lib,mnt,opt}
+	-mkdir -pv /{bin,boot,etc/opt,etc/modprobe.d,home,lib,mnt,opt,run}
 	-mkdir -pv /{media/{floppy,cdrom,usbkey},sbin,srv,var}
 	-install -dv -m 0750 /root
 	-install -dv -m 1777 /tmp /var/tmp
@@ -60,6 +60,9 @@ $(TARGET) :
 	#-for dir in /usr /usr/local; do \
 	#  ln -sv share/{man,doc,info} $$dir; \
 	#done
+
+	# Symlink /var/run -> /run.
+	ln -svf ../run /var/run
 	
 	# Symlinks
 	# for this reason, stage2 rebuild will broke the iso:perl, grubbatch
@@ -103,16 +106,13 @@ $(TARGET) :
 	chown -R nobody:nobody /home/nobody
 
 	# Create /var dirs and files
-	-mkdir -v /var/{lock,log,mail,run,spool,empty}
+	-mkdir -v /var/{lock,log,mail,spool,empty}
 	-mkdir -pv /var/{opt,cache,lib/{misc,locate},local}
 	-mkdir -pv /var/log/{counter,calamaris}
 	chown nobody.nobody /var/log/calamaris
-	touch /var/run/utmp /var/log/{btmp,lastlog,wtmp,net-traffic.log}
-	chgrp -v utmp /var/run/utmp /var/log/lastlog
-	chmod -v 664 /var/run/utmp /var/log/lastlog
-
-	# Create /run symlink
-	ln -s /var/run /run
+	touch /var/log/{btmp,lastlog,wtmp,net-traffic.log}
+	chgrp -v utmp /var/log/lastlog
+	chmod -v 664 /var/log/lastlog
 
 	# Permissions
 	chmod 0711 /var/empty

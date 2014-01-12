@@ -152,7 +152,6 @@ var/log/wtmp
 var/mail
 #var/opt
 var/run
-var/run/utmp
 #var/spool
 var/tmp
 dev/console

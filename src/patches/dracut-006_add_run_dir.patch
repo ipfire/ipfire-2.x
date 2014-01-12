@@ -5,8 +5,8 @@ diff -Naur dracut-006.org/modules.d/99base/init dracut-006/modules.d/99base/init
  
  ln -s /proc/self/fd /dev/fd >/dev/null 2>&1
  
-+# Add run symlink
-+ln -s /var/run /run
++# create run dir
++mkdir run
 +
  if getarg rdinitdebug; then
      getarg quiet && DRACUT_QUIET="yes"

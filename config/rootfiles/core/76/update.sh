@@ -179,6 +179,19 @@ for i in $(find /etc/modprobe.d/* | grep -v ".conf"); do
 	mv $i $i.conf
 done
 
+# Move /var/run to /run.
+if [ -L "/run" ]; then
+	rm -f /run
+fi
+
+mkdir -p /run
+if mountpoint /var/run; then
+	mount --move /var/run /run
+	rm -rf /var/run
+fi
+
+ln -svf ../run /var/run
+
 #
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /

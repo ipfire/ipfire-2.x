@@ -29,6 +29,11 @@ case "${1}" in
 			mount -n -t sysfs /sys /sys || failed=1
 		fi
 
+		if ! mountpoint /run &> /dev/null; then
+			boot_mesg -n " /run" ${NORMAL}
+			mount -n -t tmpfs,nosuid,nodev,mode=755 /run /run || failed=1
+		fi
+
 		boot_mesg "" ${NORMAL}
 
 		(exit ${failed})
