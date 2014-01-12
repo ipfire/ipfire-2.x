@@ -17,9 +17,6 @@
 
 case "${1}" in
 	start)
-		boot_mesg "Mount /var/run..."
-		mount -n -t tmpfs tmpfs /var/run -o size=2M
-
 		boot_mesg "Populating /dev with device nodes..."
 		if ! grep -q '[[:space:]]sysfs' /proc/mounts; then
 			echo_failure
