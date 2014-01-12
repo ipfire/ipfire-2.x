@@ -281,21 +281,8 @@ endif
 	cd $(DIR_SRC)/glibc-build && \
 		CFLAGS="$(CFLAGS) -fno-asynchronous-unwind-tables" \
 		$(DIR_APP)/configure $(EXTRA_CONFIG)
-
-	sed -i $(DIR_SRC)/glibc-build/config.make \
-		-e "s/^build-pic-default=.*/build-pic-default=yes/"
-
-	# Build the glibc libraries without stack protection (as this is not supported)
-	echo "build-programs=no" >> $(DIR_SRC)/glibc-build/configparms
-	cd $(DIR_SRC)/glibc-build && make PARALLELMFLAGS=$(MAKETUNING) \
-		CFLAGS="$(CFLAGS) -fno-stack-protector -U_FORTIFY_SOURCE" \
-		CXXFLAGS="$(CXXFLAGS) -fno-stack-protector -U_FORTIFY_SOURCE"
-
-	# Build the programs with hardening
-	: > $(DIR_SRC)/glibc-build/configparms
 	cd $(DIR_SRC)/glibc-build && make PARALLELMFLAGS=$(MAKETUNING) \
 		CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
-
 	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) install
 
 ifeq "$(ROOT)" ""
