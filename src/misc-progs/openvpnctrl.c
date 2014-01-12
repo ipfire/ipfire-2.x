@@ -168,6 +168,29 @@ int readPidFile(const char *pidfile) {
 	return pid;
 }
 
+int readExternalAddress(char* address) {
+	FILE *fp = fopen("/var/ipfire/red/local-ipaddress", "r");
+	if (!fp)
+		goto ERROR;
+
+	int r = fscanf(fp, "%s", address);
+	fclose(fp);
+
+	if (r < 0)
+		goto ERROR;
+
+	/* In case the read IP address is not valid, we empty
+	 * the content of address and return non-zero. */
+	if (!VALID_IP(address))
+		goto ERROR;
+
+	return 0;
+
+ERROR:
+	address = NULL;
+	return 1;
+}
+
 void ovpnInit(void) {
 	// Read OpenVPN configuration
 	kv = initkeyvalues();
@@ -482,10 +505,18 @@ int startNet2Net(char *name) {
 	// Make sure all firewall rules are up to date.
 	setFirewallRules();
 
+	// Get the external IP address.
+	char address[STRING_SIZE] = "";
+	int r = readExternalAddress(address);
+	if (r) {
+		fprintf(stderr, "Could not read the external address\n");
+		exit(1);
+	}
+
 	char command[STRING_SIZE];
 	snprintf(command, STRING_SIZE-1, "/sbin/modprobe tun");
 	executeCommand(command);
-	snprintf(command, STRING_SIZE-1, "/usr/sbin/openvpn --config %s", configfile);
+	snprintf(command, STRING_SIZE-1, "/usr/sbin/openvpn --local %s --config %s", address, configfile);
 	executeCommand(command);
 
 	return 0;
