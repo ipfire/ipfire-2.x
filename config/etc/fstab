@@ -7,4 +7,3 @@ DEVICE3	/	FSTYPE	defaults	1	1
 DEVICE4	/var	FSTYPE	defaults	1	1
 none	/var/log/rrd	tmpfs	defaults,size=64M	0	0
 none	/var/lock	tmpfs	defaults,size=8M	0	0
-none	/var/run	tmpfs	defaults,size=2M	0	0

@@ -267,6 +267,7 @@ sed -i -e "s/tty1 9600$/tty1 9600 --noclear/g" /etc/inittab
 sed -i -e "s/^proc/#proc/g" /etc/fstab
 sed -i -e "s/^sysfs/#sysfs/g" /etc/fstab
 sed -i -e "s/^devpts/#devpts/g" /etc/fstab
+sed -i -e "s|^none\s/var/run|#none	/var/run|/g" /etc/fstab
 
 # Convert udev persistent network rules
 sed -i -e "s/SYSFS{/ATTR{/g" /etc/udev/rules.d/30-persistent-network.rules
