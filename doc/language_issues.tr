@@ -161,7 +161,6 @@ WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
 WARNING: translation string unused: dmzpinholes for same net not necessary
-WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
@@ -755,12 +754,16 @@ WARNING: untranslated string: grouptype
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
+WARNING: untranslated string: ipsec
 WARNING: untranslated string: ipsec network
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: most preferred
 WARNING: untranslated string: notice
 WARNING: untranslated string: openvpn network
+WARNING: untranslated string: ovpn mgmt in root range
+WARNING: untranslated string: ovpn no connections
+WARNING: untranslated string: ovpn port in root range
 WARNING: untranslated string: p2p block
 WARNING: untranslated string: p2p block save notice
 WARNING: untranslated string: red1

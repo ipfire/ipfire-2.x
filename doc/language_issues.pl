@@ -154,7 +154,6 @@ WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
 WARNING: translation string unused: dmzpinholes for same net not necessary
-WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
@@ -791,6 +790,7 @@ WARNING: untranslated string: grouptype
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
+WARNING: untranslated string: ipsec
 WARNING: untranslated string: ipsec network
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
@@ -811,6 +811,7 @@ WARNING: untranslated string: outgoing firewall p2p allow
 WARNING: untranslated string: outgoing firewall p2p deny
 WARNING: untranslated string: ovpn errmsg green already pushed
 WARNING: untranslated string: ovpn errmsg invalid ip or mask
+WARNING: untranslated string: ovpn mgmt in root range
 WARNING: untranslated string: ovpn mtu-disc
 WARNING: untranslated string: ovpn mtu-disc and mtu not 1500
 WARNING: untranslated string: ovpn mtu-disc maybe
@@ -818,6 +819,8 @@ WARNING: untranslated string: ovpn mtu-disc no
 WARNING: untranslated string: ovpn mtu-disc off
 WARNING: untranslated string: ovpn mtu-disc with mssfix or fragment
 WARNING: untranslated string: ovpn mtu-disc yes
+WARNING: untranslated string: ovpn no connections
+WARNING: untranslated string: ovpn port in root range
 WARNING: untranslated string: ovpn routes push
 WARNING: untranslated string: ovpn routes push options
 WARNING: untranslated string: p2p block
