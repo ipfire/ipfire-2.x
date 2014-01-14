@@ -726,6 +726,9 @@ sub checkrule
 {
 	#check valid port for NAT
 	if($fwdfwsettings{'USE_NAT'} eq 'ON'){
+		#RULE_ACTION must be on if we use NAT
+		$fwdfwsettings{'RULE_ACTION'} = 'ACCEPT';
+
 		#if no dest port is given in nat area, take target host port
 		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'grp3'} eq 'TGT_PORT' && $fwdfwsettings{'dnatport'} eq ''){$fwdfwsettings{'dnatport'}=$fwdfwsettings{'TGT_PORT'};}
 		if($fwdfwsettings{'TGT_PORT'} eq '' && $fwdfwsettings{'dnatport'} ne '' && ($fwdfwsettings{'PROT'} eq 'TCP' || $fwdfwsettings{'PROT'} eq 'UDP')){
@@ -1847,7 +1850,7 @@ END
 		print <<END;
 			<br>
 			<center>
-				<table width="80%" class='tbl'>
+				<table width="80%" class='tbl' id='actions'>
 					<tr>
 						<td width="33%" align="center" bgcolor="$color{'color17'}">
 							&nbsp;<br>&nbsp;
