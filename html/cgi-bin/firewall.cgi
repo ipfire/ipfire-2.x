@@ -136,14 +136,17 @@ print<<END;
 		\$("#protocol").change(update_protocol);
 		update_protocol();
 
-		// When nat not used, hide it
-		if (! \$("#USE_NAT").attr("checked")) {
+		// Show/Hide elements when NAT checkbox is checked.
+		if (\$("#USE_NAT").attr("checked")) {
+			\$("#actions").hide();
+		} else {
 			\$(".NAT").hide();
 		}
 
 		// Show NAT area when "use nat" checkbox is clicked
 		\$("#USE_NAT").change(function() {
 			\$(".NAT").toggle();
+			\$("#actions").toggle();
 		});
 
 		// Time constraints
