@@ -110,6 +110,8 @@
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
+< fwdfw dnat extport
+< fwdfw dnat nochoice
 < fwdfw dnat porterr
 < fwdfw dnat porterr2
 < fwdfw DROP
@@ -540,6 +542,8 @@
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
+< fwdfw dnat extport
+< fwdfw dnat nochoice
 < fwdfw dnat porterr
 < fwdfw dnat porterr2
 < fwdfw DROP
@@ -954,6 +958,8 @@
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
+< fwdfw dnat extport
+< fwdfw dnat nochoice
 < fwdfw dnat porterr
 < fwdfw dnat porterr2
 < fwdfw DROP
@@ -1357,6 +1363,8 @@
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
+< fwdfw dnat extport
+< fwdfw dnat nochoice
 < fwdfw dnat porterr
 < fwdfw dnat porterr2
 < fwdfw DROP
