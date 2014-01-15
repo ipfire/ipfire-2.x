@@ -272,6 +272,9 @@ sed -i -e "s|^none\s/var/run|#none	/var/run|/g" /etc/fstab
 # Convert udev persistent network rules
 sed -i -e "s/SYSFS{/ATTR{/g" /etc/udev/rules.d/30-persistent-network.rules
 
+# Firstsetup was already run
+touch /var/ipfire/main/firstsetup_ok
+
 #
 # Start services
 #
