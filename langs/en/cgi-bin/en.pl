@@ -959,6 +959,8 @@
 'fwdfw delete' => 'Delete',
 'fwdfw dnat' => 'Destination NAT (Port forwarding)',
 'fwdfw dnat error' => 'You have to select a single host for DNAT. Groups or networks are not allowed.',
+'fwdfw dnat extport' => 'The external port has to be empty when using Source NAT rules.',
+'fwdfw dnat nochoice' => 'Please pick Source NAT or Destination NAT from the NAT section.',
 'fwdfw dnat porterr' => 'You have to select a single port or portrange (tcp/udp) for NAT',
 'fwdfw dnat porterr2' => 'Cannot use external port (NAT) when no destination port is defined.',
 'fwdfw edit' => 'Edit',

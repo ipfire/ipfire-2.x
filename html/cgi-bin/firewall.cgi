@@ -729,20 +729,32 @@ sub checkrule
 {
 	#check valid port for NAT
 	if($fwdfwsettings{'USE_NAT'} eq 'ON'){
-		#RULE_ACTION must be on if we use NAT
+		#RULE_ACTION must be ACCEPT if we use NAT
 		$fwdfwsettings{'RULE_ACTION'} = 'ACCEPT';
 
+		#if no dnat or snat selected errormessage
+		if ($fwdfwsettings{'nat'} eq ''){
+			$errormessage=$Lang::tr{'fwdfw dnat nochoice'};
+			return;
+		}
+
+		#if using snat, the external port has to be empty
+		if ($fwdfwsettings{'nat'} eq 'snat' && $fwdfwsettings{'dnatport'} ne ''){
+			$errormessage=$Lang::tr{'fwdfw dnat extport'};
+			return;
+		}
 		#if no dest port is given in nat area, take target host port
 		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'grp3'} eq 'TGT_PORT' && $fwdfwsettings{'dnatport'} eq ''){$fwdfwsettings{'dnatport'}=$fwdfwsettings{'TGT_PORT'};}
 		if($fwdfwsettings{'TGT_PORT'} eq '' && $fwdfwsettings{'dnatport'} ne '' && ($fwdfwsettings{'PROT'} eq 'TCP' || $fwdfwsettings{'PROT'} eq 'UDP')){
 			$errormessage=$Lang::tr{'fwdfw dnat porterr2'};
+			return;
 		}
 		#check if port given in nat area is a single valid port or portrange
 		if($fwdfwsettings{'nat'} eq 'dnat' && $fwdfwsettings{'TGT_PORT'} ne '' && !&check_natport($fwdfwsettings{'dnatport'})){
 			$errormessage=$Lang::tr{'fwdfw target'}.": ".$Lang::tr{'fwdfw dnat porterr'}."<br>";
 		}elsif($fwdfwsettings{'USESRV'} eq 'ON' && $fwdfwsettings{'grp3'} eq 'cust_srv'){
 			my $custsrvport;
-			#get servcie Protocol and Port
+			#get service Protocol and Port
 			foreach my $key (sort keys %customservice){
 				if($fwdfwsettings{$fwdfwsettings{'grp3'}} eq $customservice{$key}[0]){
 					if ($customservice{$key}[2] ne 'TCP' && $customservice{$key}[2] ne 'UDP'){
@@ -976,7 +988,6 @@ sub error
 		print "<class name='base'>$errormessage\n";
 		print "&nbsp;</class>\n";
 		&Header::closebox();
-		print"<hr>";
 	}
 }
 sub fillselect
@@ -1020,7 +1031,7 @@ sub gen_dd_block
 print<<END;
 		<table width='100%' border='0'>
 		<tr><td width='50%' valign='top'>
-		<table width='100%' border='0'>
+		<table width='95%' border='0'>
 		<tr><td width='1%'><input type='radio' name='$grp' id='std_net_$srctgt' value='std_net_$srctgt' $checked{$grp}{'std_net_'.$srctgt}></td><td>$Lang::tr{'fwhost stdnet'}</td><td align='right'><select name='std_net_$srctgt' style='width:200px;'>
 END
 	foreach my $network (sort keys %defaultNetworks)
@@ -1066,7 +1077,7 @@ END
 		print"</select></td>";
 	}
 	#End left table. start right table (vpn)
-	print"</tr></table></td><td valign='top'><table width='100%' border='0'><tr>";
+	print"</tr></table></td><td valign='top'><table width='95%' border='0' align='right'><tr>";
 	# CCD networks
 	if( ! -z $configccdnet || $optionsfw{'SHOWDROPDOWN'} eq 'on'){
 		print"<td width='1%'><input type='radio' name='$grp' id='ovpn_net_$srctgt' value='ovpn_net_$srctgt'  $checked{$grp}{'ovpn_net_'.$srctgt}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%' align='right'><select name='ovpn_net_$srctgt' style='width:200px;'>";
@@ -1456,7 +1467,6 @@ sub newrule
 	$checked{'TIME_SAT'}{$fwdfwsettings{'TIME_SAT'}} 		= 'CHECKED';
 	$checked{'TIME_SUN'}{$fwdfwsettings{'TIME_SUN'}} 		= 'CHECKED';
 	$checked{'USE_NAT'}{$fwdfwsettings{'USE_NAT'}} 			= 'CHECKED';
-	$checked{'nat'}{$fwdfwsettings{'nat'}} 		= 'CHECKED';
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
@@ -1516,13 +1526,11 @@ sub newrule
 				$checked{'TIME_SAT'}{$fwdfwsettings{'TIME_SAT'}} 		= 'CHECKED';
 				$checked{'TIME_SUN'}{$fwdfwsettings{'TIME_SUN'}} 		= 'CHECKED';
 				$checked{'USE_NAT'}{$fwdfwsettings{'USE_NAT'}}	 		= 'CHECKED';
-				$checked{'nat'}{$fwdfwsettings{'nat'}}	 				= 'CHECKED';
+				$checked{'nat'}{$fwdfwsettings{'nat'}}					= 'CHECKED';
 				$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 				$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
 				$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
-				$selected{'dnat'}{$fwdfwsettings{$fwdfwsettings{'nat'}}} ='selected';
-				$selected{'snat'}{$fwdfwsettings{$fwdfwsettings{'nat'}}} ='selected';
 			}
 		}
 		$fwdfwsettings{'oldgrp1a'}=$fwdfwsettings{'grp1'};
@@ -1544,7 +1552,9 @@ sub newrule
 		}
 	}else{
 		$fwdfwsettings{'ACTIVE'}='ON';
+		$fwdfwsettings{'nat'} = 'dnat';
 		$checked{'ACTIVE'}{$fwdfwsettings{'ACTIVE'}} = 'CHECKED';
+		$checked{'nat'}{$fwdfwsettings{'nat'}} = 'CHECKED';
 		$fwdfwsettings{'oldgrp1a'}=$fwdfwsettings{'grp1'};
 		$fwdfwsettings{'oldgrp1b'}=$fwdfwsettings{$fwdfwsettings{'grp1'}};
 		$fwdfwsettings{'oldgrp2a'}=$fwdfwsettings{'grp2'};
@@ -1851,7 +1861,6 @@ END
 		&Header::closebox;
 		$checked{"RULE_ACTION"}{$fwdfwsettings{'RULE_ACTION'}}	= 'CHECKED';
 		print <<END;
-			<br>
 			<center>
 				<table width="80%" class='tbl' id='actions'>
 					<tr>
@@ -2028,7 +2037,6 @@ END
 			<input type='hidden' name='oldorange' value='$fwdfwsettings{'oldorange'}' />
 			<input type='hidden' name='oldnat' value='$fwdfwsettings{'oldnat'}' />
 			<input type='hidden' name='oldruletype' value='$fwdfwsettings{'oldruletype'}' />
-			<input type='hidden' name='nat' value='$fwdfwsettings{'nat'}' />
 			<input type='hidden' name='ACTION' value='saverule' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value'reset'></td></td>
 			</table></form>
 END
