@@ -122,11 +122,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Grsecurity-patches
 ifneq "$(KCFG)" "-headers"
-#ifneq "$(KCFG)" "-rpi"
 	cd $(DIR_APP) && xz -c -d $(DIR_DL)/$(GRS_PATCHES) | patch -Np1
 	cd $(DIR_APP) && rm localversion-grsec
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
-#endif
 endif
 
 	# Disable pcspeaker autoload
@@ -161,6 +159,7 @@ ifeq "$(KCFG)" "-kirkwood"
 endif
 
 ifeq "$(KCFG)" "-multi"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.27-fs-exec-atomic64-operand-requires-impossible-reload.patch
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0001-panda-wlan-fix.patch
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0002-panda-i2c.patch
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-panda-reboot.patch
