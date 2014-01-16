@@ -36,7 +36,7 @@ function add_to_backup ()
 #
 # Remove old core updates from pakfire cache to save space...
 core=76
-for (( i=1; i<=$core; i++ ))
+for (( i=1; i<=${core}; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
@@ -46,7 +46,7 @@ done
 case $(uname -r) in
 	*-ipfire-versatile )
 		/usr/bin/logger -p syslog.emerg -t ipfire \
-			"core-update-$core: ERROR cannot update. versatile support is dropped."
+			"core-update-${core}: ERROR cannot update. versatile support is dropped."
 		# Report no error to pakfire. So it does not try to install it again.
 		exit 0
 		;;
@@ -54,7 +54,7 @@ case $(uname -r) in
 		BOOTSIZE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f2 | tail -n 1`
 		if [ $BOOTSIZE -lt 28000 ]; then
 			/usr/bin/logger -p syslog.emerg -t ipfire \
-				"core-update-$core: ERROR cannot update because not enough space on boot."
+				"core-update-${core}: ERROR cannot update because not enough space on boot."
 			exit 2
 		fi
 		;;
@@ -63,7 +63,7 @@ case $(uname -r) in
 		;;
 	* )
 		/usr/bin/logger -p syslog.emerg -t ipfire \
-			"core-update-$core: ERROR cannot update. No IPFire Kernel."
+			"core-update-${core}: ERROR cannot update. No IPFire Kernel."
 		exit 1
 	;;
 esac
@@ -82,10 +82,10 @@ fi
 
 #
 # check if we the backup file already exist
-if [ -e /var/ipfire/backup/core-upgrade$core_$KVER.tar.xz ]; then
+if [ -e /var/ipfire/backup/core-upgrade${core}_${KVER}.tar.xz ]; then
     echo Moving backup to backup-old ...
-    mv -f /var/ipfire/backup/core-upgrade$core_$KVER.tar.xz \
-       /var/ipfire/backup/core-upgrade$core_$KVER-old.tar.xz
+    mv -f /var/ipfire/backup/core-upgrade${core}_${KVER}.tar.xz \
+       /var/ipfire/backup/core-upgrade${core}_${KVER}-old.tar.xz
 fi
 echo First we made a backup of all files that was inside of the
 echo update archive. This may take a while ...
@@ -112,7 +112,7 @@ add_to_backup etc/fstab
 add_to_backup usr/share/usb_modeswitch
 
 # Backup the files
-tar cJvf /var/ipfire/backup/core-upgrade$core_$KVER.tar.xz \
+tar cJvf /var/ipfire/backup/core-upgrade${core}_${KVER}.tar.xz \
     -C / -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' --exclude='/var/cache' > /dev/null 2>&1
 
 # Check diskspace on root
@@ -120,7 +120,7 @@ ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 
 if [ $ROOTSPACE -lt 100000 ]; then
 	/usr/bin/logger -p syslog.emerg -t ipfire \
-		"core-update-$core: ERROR cannot update because not enough free space on root."
+		"core-update-${core}: ERROR cannot update because not enough free space on root."
 	exit 2
 fi
 
@@ -210,7 +210,7 @@ if [ $BOOTSPACE -lt 1000 ]; then
 			;;
 		* )
 			/usr/bin/logger -p syslog.emerg -t ipfire \
-				"core-update-$core: FATAL-ERROR space run out on boot. System is not bootable..."
+				"core-update-${core}: FATAL-ERROR space run out on boot. System is not bootable..."
 			/etc/init.d/apache start
 			exit 4
 			;;
@@ -346,7 +346,7 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 	BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 	if [ $BOOTSPACE -lt 12000 -o $ROOTSPACE -lt 90000 ]; then
 		/usr/bin/logger -p syslog.emerg -t ipfire \
-			"core-update-$core: WARNING not enough space for pae kernel."
+			"core-update-${core}: WARNING not enough space for pae kernel."
 	else
 		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
 		echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
@@ -393,6 +393,9 @@ sync
 	/etc/init.d/fireinfo start
 	sendprofile
 ) >/dev/null 2>&1 &
+
+# Update Package list for addon installation
+/opt/pakfire/pakfire update -y --force
 
 echo
 echo Please wait until pakfire has ended...
