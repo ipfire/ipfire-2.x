@@ -394,6 +394,9 @@ sync
 	sendprofile
 ) >/dev/null 2>&1 &
 
+# Update Package list for addon installation
+/opt/pakfire/pakfire update -y --force
+
 echo
 echo Please wait until pakfire has ended...
 echo
