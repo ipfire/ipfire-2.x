@@ -110,6 +110,8 @@
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
+< fwdfw dnat extport
+< fwdfw dnat nochoice
 < fwdfw dnat porterr
 < fwdfw dnat porterr2
 < fwdfw DROP
@@ -273,7 +275,9 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< ipsec
 < ipsec network
+< ipsec no connections
 < least preferred
 < lifetime
 < minute
@@ -294,6 +298,7 @@
 < openvpn subnet is used
 < other
 < our donors
+< ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
 < ovpn mtu-disc maybe
@@ -301,6 +306,8 @@
 < ovpn mtu-disc off
 < ovpn mtu-disc with mssfix or fragment
 < ovpn mtu-disc yes
+< ovpn no connections
+< ovpn port in root range
 < p2p block
 < p2p block save notice
 < proxy reports
@@ -535,6 +542,8 @@
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
+< fwdfw dnat extport
+< fwdfw dnat nochoice
 < fwdfw dnat porterr
 < fwdfw dnat porterr2
 < fwdfw DROP
@@ -698,7 +707,9 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< ipsec
 < ipsec network
+< ipsec no connections
 < least preferred
 < lifetime
 < minute
@@ -733,6 +744,7 @@
 < outgoing firewall view group
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
+< ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
 < ovpn mtu-disc maybe
@@ -740,6 +752,8 @@
 < ovpn mtu-disc off
 < ovpn mtu-disc with mssfix or fragment
 < ovpn mtu-disc yes
+< ovpn no connections
+< ovpn port in root range
 < ovpn routes push
 < ovpn routes push options
 < p2p block
@@ -944,6 +958,8 @@
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
+< fwdfw dnat extport
+< fwdfw dnat nochoice
 < fwdfw dnat porterr
 < fwdfw dnat porterr2
 < fwdfw DROP
@@ -1107,7 +1123,9 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< ipsec
 < ipsec network
+< ipsec no connections
 < least preferred
 < lifetime
 < minute
@@ -1128,6 +1146,7 @@
 < our donors
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
+< ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
 < ovpn mtu-disc maybe
@@ -1135,6 +1154,8 @@
 < ovpn mtu-disc off
 < ovpn mtu-disc with mssfix or fragment
 < ovpn mtu-disc yes
+< ovpn no connections
+< ovpn port in root range
 < ovpn routes push
 < ovpn routes push options
 < p2p block
@@ -1342,6 +1363,8 @@
 < fwdfw delete
 < fwdfw dnat
 < fwdfw dnat error
+< fwdfw dnat extport
+< fwdfw dnat nochoice
 < fwdfw dnat porterr
 < fwdfw dnat porterr2
 < fwdfw DROP
@@ -1507,7 +1530,9 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< ipsec
 < ipsec network
+< ipsec no connections
 < least preferred
 < lifetime
 < minute
@@ -1528,6 +1553,7 @@
 < other
 < our donors
 < outgoing traffic in bytes per second
+< ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
 < ovpn mtu-disc maybe
@@ -1535,6 +1561,8 @@
 < ovpn mtu-disc off
 < ovpn mtu-disc with mssfix or fragment
 < ovpn mtu-disc yes
+< ovpn no connections
+< ovpn port in root range
 < p2p block
 < p2p block save notice
 < proxy reports
