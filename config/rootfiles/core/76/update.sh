@@ -245,13 +245,13 @@ rm -f /usr/local/bin/outgoingfwctrl
 rm -f /srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
 
 # Generate chains for new firewall
-/sbin/iptables -N INPUTFW
-/sbin/iptables -N FORWARDFW
-/sbin/iptables -N POLICYFWD
-/sbin/iptables -N POLICYIN
-/sbin/iptables -N POLICYOUT
-/sbin/iptables -t nat -N NAT_SOURCE
-/sbin/iptables -t nat -N NAT_DESTINATION
+/sbin/iptables -N INPUTFW 2>/dev/null
+/sbin/iptables -N FORWARDFW 2>/dev/null
+/sbin/iptables -N POLICYFWD 2>/dev/null
+/sbin/iptables -N POLICYIN 2>/dev/null
+/sbin/iptables -N POLICYOUT 2>/dev/null
+/sbin/iptables -t nat -N NAT_SOURCE 2>/dev/null
+/sbin/iptables -t nat -N NAT_DESTINATION 2>/dev/null
 
 # Convert firewall configuration
 /usr/sbin/convert-xtaccess
