@@ -38,7 +38,6 @@ my $errormessage='';
 
 $cgiparams{'SPEED'} = 'off';
 $cgiparams{'WINDOWWITHHOSTNAME'} = 'off';
-$cgiparams{'REBOOTQUESTION'} = 'off';
 $cgiparams{'REFRESHINDEX'} = 'off';
 $cgiparams{'ACTION'} = '';
 &Header::getcgihash(\%cgiparams);
@@ -87,7 +86,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
         # write cgi vars to the file.
 	$mainsettings{'LANGUAGE'} = $cgiparams{'lang'};
 	$mainsettings{'WINDOWWITHHOSTNAME'} = $cgiparams{'WINDOWWITHHOSTNAME'};
-	$mainsettings{'REBOOTQUESTION'} = $cgiparams{'REBOOTQUESTION'};
 	$mainsettings{'PPPUPDOWNBEEP'} = $cgiparams{'PPPUPDOWNBEEP'};
 	$mainsettings{'SPEED'} = $cgiparams{'SPEED'};
 	$mainsettings{'THEME'} = $cgiparams{'theme'};
@@ -100,12 +98,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 		$cgiparams{'WINDOWWITHHOSTNAME'} = $mainsettings{'WINDOWWITHHOSTNAME'};
 	} else {
 		$cgiparams{'WINDOWWITHHOSTNAME'} = 'on';
-	}
-	
-	if ($mainsettings{'REBOOTQUESTION'}) {
-		$cgiparams{'REBOOTQUESTION'} = $mainsettings{'REBOOTQUESTION'};
-	} else {
-		$cgiparams{'REBOOTQUESTION'} = 'on';
 	}
 
 	if ($mainsettings{'PPPUPDOWNBEEP'}) {
@@ -139,7 +131,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'restore defaults'}")
 {
 	$cgiparams{'WINDOWWITHHOSTNAME'} = 'on';
-	$cgiparams{'REBOOTQUESTION'} = 'on';
 	$cgiparams{'PPPUPDOWNBEEP'} = 'on';
 	$cgiparams{'REFRESHINDEX'} = 'off';
 	$cgiparams{'SPEED'} = 'on';
@@ -149,10 +140,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'restore defaults'}")
 $checked{'WINDOWWITHHOSTNAME'}{'off'} = '';
 $checked{'WINDOWWITHHOSTNAME'}{'on'} = '';
 $checked{'WINDOWWITHHOSTNAME'}{$cgiparams{'WINDOWWITHHOSTNAME'}} = "checked='checked'";
-
-$checked{'REBOOTQUESTION'}{'off'} = '';
-$checked{'REBOOTQUESTION'}{'on'} = '';
-$checked{'REBOOTQUESTION'}{$cgiparams{'REBOOTQUESTION'}} = "checked='checked'";
 
 $checked{'PPPUPDOWNBEEP'}{'off'} = '';
 $checked{'PPPUPDOWNBEEP'}{'on'} = '';
@@ -183,10 +170,6 @@ print <<END
 <tr>
     <td><input type='checkbox' name='WINDOWWITHHOSTNAME' $checked{'WINDOWWITHHOSTNAME'}{'on'} /></td>
     <td>$Lang::tr{'display hostname in window title'}</td>
-</tr>
-<tr>
-    <td><input type='checkbox' name='REBOOTQUESTION' $checked{'REBOOTQUESTION'}{'on'} /></td>
-    <td>$Lang::tr{'reboot question'}</td>
 </tr>
 <tr>
     <td><input type='checkbox' name='REFRESHINDEX' $checked{'REFRESHINDEX'}{'on'} /></td>
