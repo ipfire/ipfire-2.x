@@ -36,6 +36,17 @@ my ($key,$flag,$prot,$ipfireport,$target,$targetport,$active,$alias,$source,$rem
 my ($key1,$flag1,$prot1,$ipfireport1,$target1,$targetport1,$active1,$alias1,$source1,$remark1);
 my $count=0;
 my $jump;
+
+if (! -e "$portfwconfig") {
+        print "Config file for portforward not found. Exiting!\n";
+        exit(1);
+}
+
+if (! -s "$portfwconfig") {
+        print "Empty portforward configuration file. Nothing to do. Exiting...\n";
+        exit(0);
+}
+
 if(! -d "/var/log/converters"){ mkdir("/var/log/converters");}
 open(FILE, $portfwconfig) or die 'Unable to open config file.';
 my @current = <FILE>;

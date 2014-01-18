@@ -55,6 +55,15 @@ my $field29 = 'ALL';
 my $field30 = '';
 my $field31 = 'dnat';
 
+if (! -e "$dmzconfig") {
+	print "DMZ config file not found. Exiting!\n";
+	exit(1);
+}
+
+if (! -s "$dmzconfig") {
+	print "Empty DMZ configuration file. Nothing to do. Exiting...\n";
+	exit(0);
+}
 
 open(FILE, $dmzconfig) or die 'Unable to open config file.';
 my @current = <FILE>;

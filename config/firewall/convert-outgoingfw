@@ -48,8 +48,8 @@ my $ccdconfig		= "${General::swroot}/ovpn/ccd.conf";
 my $fwdfwconfig		= "${General::swroot}/firewall/config";
 my $outfwconfig		= "${General::swroot}/firewall/outgoing";
 my $fwdfwsettings	= "${General::swroot}/firewall/settings";
-my @ipgroups = qx(ls $ipgrouppath);
-my @macgroups = qx(ls $macgrouppath);
+my @ipgroups = qx(ls $ipgrouppath 2>/dev/null);
+my @macgroups = qx(ls $macgrouppath 2>/dev/null);
 my @hostarray=();
 my %outsettings=();
 my %hosts=();
@@ -65,8 +65,21 @@ my %ownnet=();
 my %ovpnSettings = ();
 my @active= ('Aktiv', 'aktiv', 'Active', 'Activo', 'Actif', 'Actief', 'Aktywne', 'Активен', 'Aktif');
 &General::readhash("${General::swroot}/ovpn/settings", \%ovpnSettings);
-&General::readhash($outfwsettings,\%outsettings);
 &General::readhash("${General::swroot}/ethernet/settings", \%ownnet);
+
+if (-e "$outfwsettings") {
+	&General::readhash($outfwsettings,\%outsettings);
+}
+else
+{
+	print "Config file for outgoing-firewall not found. Exiting!\n";
+	exit(1);
+}
+
+if (! -s "$outfwsettings") {
+        print "Empty DMZ configuration file. Nothing to do. Exiting...\n";
+        exit(0);
+}
 
 #ONLY RUN if /var/ipfire/outgoing exists
 if ( -d "/var/ipfire/outgoing"){
@@ -74,7 +87,14 @@ if ( -d "/var/ipfire/outgoing"){
 	&process_rules;
 	&process_p2p;
 }
+else
+{
+	print "/var/ipfire/outgoing not found. Exiting!\n";
+	exit 1
+}
+
 system("/usr/local/bin/firewallctrl");
+
 sub process_groups
 {
 	if(! -d "/var/log/converters"){ mkdir("/var/log/converters");}
@@ -111,7 +131,7 @@ sub process_groups
 	foreach my $group (@macgroups){
 		chomp $group;
 		print LOG "\nProcessing MAC-GROUP: $group...\n";
-		open (DATEI, "<$macgrouppath/$group");
+		open (DATEI, "<$macgrouppath/$group") or die 'Unable to open config file.';
 		my @zeilen = <DATEI>;
 		foreach my $mac (@zeilen){
 			chomp($mac);

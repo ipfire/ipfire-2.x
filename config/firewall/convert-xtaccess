@@ -49,6 +49,17 @@ my $field28 = '';
 my $field29 = 'ALL';
 my $field30 = '';
 my $field31 = 'dnat';
+
+if (! -e "$xtaccessconfig") {
+        print "Config file for external access not found. Exiting!\n";
+        exit(1);
+}
+
+if (! -s "$xtaccessconfig") {
+        print "Empty external access configuration file. Nothing to do. Exiting...\n";
+        exit(0);
+}
+
 open(FILE, $xtaccessconfig) or die 'Unable to open config file.';
 my @current = <FILE>;
 close(FILE);
