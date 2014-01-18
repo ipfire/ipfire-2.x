@@ -18,7 +18,7 @@ case "$1" in
 
 	stop)
 		boot_mesg "Stopping avahi..."
-		killproc /usr/sbin/avahi-daemon -k
+		/usr/sbin/avahi-daemon -k
 		;;
 
 	reload)
