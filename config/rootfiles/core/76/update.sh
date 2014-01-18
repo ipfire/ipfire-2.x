@@ -192,6 +192,10 @@ fi
 
 ln -svf ../run /var/run
 
+# Creating directories for new firewall.
+mkdir -p /var/ipfire/firewall
+mkdir -p /var/ipfire/fwhosts
+
 #
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
@@ -252,6 +256,22 @@ rm -f /srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
 /sbin/iptables -N POLICYOUT 2>/dev/null
 /sbin/iptables -t nat -N NAT_SOURCE 2>/dev/null
 /sbin/iptables -t nat -N NAT_DESTINATION 2>/dev/null
+
+# Create config files for firewall and fix permissions.
+touch /var/ipfire/firewall/config
+touch /var/ipfire/firewall/input
+touch /var/ipfire/firewall/outgoing
+touch /var/ipfire/firewall/p2protocols
+touch /var/ipfire/firewall/settings
+touch /var/ipfire/fwhosts/customhosts
+touch /var/ipfire/fwhosts/customnetworks
+touch /var/ipfire/fwhosts/customgroups
+touch /var/ipfire/fwhosts/customservices
+touch /var/ipfire/fwhosts/customservicegrp
+
+# Fix ownership.
+chown -R nobody:nobody /var/ipfire/firewall
+chown -R nobody:nobody /var/ipfire/fwhosts
 
 # Convert firewall configuration
 /usr/sbin/convert-xtaccess
