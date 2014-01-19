@@ -158,7 +158,6 @@ sub genmenu {
 sub showhttpheaders
 {
 	print "Cache-control: private\n";
-	print "Connection: close\n";
 	print "Content-type: text/html; charset=UTF-8\n\n";
 }
 
