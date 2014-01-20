@@ -222,50 +222,6 @@ sub checkportinc
 	}
 }
 
-# Darren Critchley - certain ports are reserved for IPFire 
-# TCP 67,68,81,222,445
-# UDP 67,68
-# Params passed in -> port, rangeyn, protocol
-sub disallowreserved
-{
-	# port 67 and 68 same for tcp and udp, don't bother putting in an array
-	my $msg = "";
-	my @tcp_reserved = (81,222,445);
-	my $prt = $_[0]; # the port or range
-	my $ryn = $_[1]; # tells us whether or not it is a port range
-	my $prot = $_[2]; # protocol
-	my $srcdst = $_[3]; # source or destination
-	if ($ryn) { # disect port range
-		if ($srcdst eq "src") {
-			$msg = "$Lang::tr{'rsvd src port overlap'}";
-		} else {
-			$msg = "$Lang::tr{'rsvd dst port overlap'}";
-		}
-		my @tmprng = split(/\:/,$prt);
-		unless (67 < $tmprng[0] || 67 > $tmprng[1]) { $errormessage="$msg 67"; return; }
-		unless (68 < $tmprng[0] || 68 > $tmprng[1]) { $errormessage="$msg 68"; return; }
-		if ($prot eq "tcp") {
-			foreach my $prange (@tcp_reserved) {
-				unless ($prange < $tmprng[0] || $prange > $tmprng[1]) { $errormessage="$msg $prange"; return; }
-			}
-		}
-	} else {
-		if ($srcdst eq "src") {
-			$msg = "$Lang::tr{'reserved src port'}";
-		} else {
-			$msg = "$Lang::tr{'reserved dst port'}";
-		}
-		if ($prt == 67) { $errormessage="$msg 67"; return; }
-		if ($prt == 68) { $errormessage="$msg 68"; return; }
-		if ($prot eq "tcp") {
-			foreach my $prange (@tcp_reserved) {
-				if ($prange == $prt) { $errormessage="$msg $prange"; return; }
-			}
-		}
-	}
-	return;
-}
-
 sub writeserverconf {
     my %sovpnsettings = ();  
     my @temp = ();  
@@ -1093,16 +1049,11 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	goto SETTINGS_ERROR;
     	}
     }
-    if ($cgiparams{'ENABLED'} eq 'on'){
-	&disallowreserved($cgiparams{'DDEST_PORT'},0,$cgiparams{'DPROTOCOL'},"dest");
-    }	
     if ($errormessage) { goto SETTINGS_ERROR; }
-    
-    
+
     if ($cgiparams{'ENABLED'} eq 'on'){
 	&checkportfw($cgiparams{'DDEST_PORT'},$cgiparams{'DPROTOCOL'});
     }
-    	
     if ($errormessage) { goto SETTINGS_ERROR; }
     
     if (! &General::validipandmask($cgiparams{'DOVPN_SUBNET'})) {
