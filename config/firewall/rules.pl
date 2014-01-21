@@ -259,6 +259,8 @@ sub buildrules
 					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
+							next if ($targethash{$b}[0] eq 'none');
+							$STAG='';
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
 								if($DPROT ne ''){
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}
@@ -341,6 +343,8 @@ sub buildrules
 					}
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
+							next if ($targethash{$b}[0] eq 'none');
+							$STAG='';
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
 								if($DPROT ne ''){
 									if(substr($sourcehash{$a}[0], 3, 3) ne 'mac' && $sourcehash{$a}[0] ne ''){ $STAG="-s";}

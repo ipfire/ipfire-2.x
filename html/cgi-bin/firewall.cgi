@@ -609,6 +609,19 @@ sub checktarget
 		$errormessage.=$Lang::tr{'fwdfw err notgtip'};
 		return $errormessage;
 	}
+	#check for mac in targetgroup
+	if ($fwdfwsettings{'grp2'} eq 'cust_grp_tgt'){
+		&General::readhasharray("$configgrp", \%customgrp);
+		&General::readhasharray("$confighost", \%customhost);
+		foreach my $grpkey (sort keys %customgrp){
+			foreach my $hostkey (sort keys %customhost){
+				if ($customgrp{$grpkey}[2] eq $customhost{$hostkey}[0] && $customhost{$hostkey}[1] eq 'mac'){
+					$hint=$Lang::tr{'fwdfw hint mac'};
+					return $hint;
+				}
+			}
+		}
+	}
 	#check empty fields
 	if ($fwdfwsettings{$fwdfwsettings{'grp2'}} eq ''){ $errormessage.=$Lang::tr{'fwdfw err notgt'}."<br>";}
 	#check tgt services
@@ -1403,24 +1416,7 @@ sub hint
 		print "<class name='base'>$hint\n";
 		print "&nbsp;</class>\n";
 		&Header::closebox();
-		print"<hr>";
 	}
-}
-sub inc_counter
-{
-	my $config=shift;
-	my %hash=%{(shift)};
-	my $val=shift;
-	my $pos;
-
-	&General::readhasharray($config, \%hash);
-	foreach my $key (sort { uc($hash{$a}[0]) cmp uc($hash{$b}[0]) }  keys %hash){
-		if($hash{$key}[0] eq $val){
-			$pos=$#{$hash{$key}};
-			$hash{$key}[$pos] = $hash{$key}[$pos]+1;
-		}
-	}
-	&General::writehasharray($config, \%hash);
 }
 sub newrule
 {
