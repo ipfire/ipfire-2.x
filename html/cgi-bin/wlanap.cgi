@@ -521,6 +521,7 @@ if ($status){
 	$count++;
 }
 for (my $i=0;$i<$#txpower_cmd;$i=$i+4){
+	next if (@txpower_cmd[$i] =~ /mon/i);
 	if ($count % 2){
 		$col="bgcolor='$color{'color20'}'";
 	}else{

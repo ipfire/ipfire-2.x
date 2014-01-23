@@ -985,7 +985,7 @@
 'fwdfw from' => 'From:',
 'fwdfw hint ip1' => 'The last generated rule may never match, because source and destination subnets may overlap.',
 'fwdfw hint ip2' => 'Please double-check if this rule makes sense: ',
-'fwdfw hint mac' => 'The targetgroup contains MAC addresses which will be skipped during rulecreation.',
+'fwdfw hint mac' => 'The destination group contains MAC addresses, which will be skipped during rule creation.',
 'fwdfw iface' => 'Interface',
 'fwdfw ipsec network' => 'IPsec networks:',
 'fwdfw log' => 'Log',
