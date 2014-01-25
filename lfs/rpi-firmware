@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = d4f5315
+VER        = 940dc3b
 THISAPP    = rpi-firmware-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 65c0a859ab96cb563a80e3529c78f555
+$(DL_FILE)_MD5 = d8e02dc961aa8b5289912fe926a420de
 
 install : $(TARGET)
 
