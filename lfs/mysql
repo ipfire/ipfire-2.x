@@ -100,5 +100,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chgrp -v mysql /srv/mysql{,/test,/mysql}
 	chown mysql.mysql /srv/mysql/
 	install -v -m755 -o mysql -g mysql -d /var/run/mysql
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/mysql \
+		/var/ipfire/backup/addons/includes/mysql
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

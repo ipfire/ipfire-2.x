@@ -299,4 +299,5 @@ usr/share/mysql
 #usr/share/mysql/swedish/errmsg.sys
 #usr/share/mysql/ukrainian
 #usr/share/mysql/ukrainian/errmsg.sys
+var/ipfire/backup/addons/includes/mysql
 var/run/mysql
