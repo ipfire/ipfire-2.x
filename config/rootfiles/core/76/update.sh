@@ -71,7 +71,7 @@ esac
 
 #
 #
-KVER="3.10.27"
+KVER="3.10.28"
 MOUNT=`grep "kernel" /boot/grub/grub.conf 2>/dev/null | tail -n 1 `
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
@@ -382,6 +382,7 @@ echo '/usr/bin/logger -p syslog.emerg -t ipfire "Check it before reboot !!!"' >>
 echo '/usr/bin/logger -p syslog.emerg -t ipfire " *** Please reboot... *** "' >> /tmp/pak_update
 echo 'touch /var/run/need_reboot ' >> /tmp/pak_update
 #
+killall -KILL pak_update
 chmod +x /tmp/pak_update
 /tmp/pak_update &
 
