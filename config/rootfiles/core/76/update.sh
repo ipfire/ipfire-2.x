@@ -351,6 +351,9 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
 		echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
 		echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-pae
+		echo "Name: linux-pae" > /opt/pakfire/db/meta/meta-linux-pae
+		echo "ProgVersion: 0" >> /opt/pakfire/db/meta/meta-linux-pae
+		echo "Release: 0"     >> /opt/pakfire/db/meta/meta-linux-pae
 	fi
 fi
 
@@ -359,6 +362,9 @@ if [ -e "/opt/pakfire/db/installed/meta-linux-xen" ]; then
 	echo "Name: linux-xen" > /opt/pakfire/db/installed/meta-linux-xen
 	echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-xen
 	echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-xen
+	echo "Name: linux-xen" > /opt/pakfire/db/meta/meta-linux-xen
+	echo "ProgVersion: 0" >> /opt/pakfire/db/meta/meta-linux-xen
+	echo "Release: 0"     >> /opt/pakfire/db/meta/meta-linux-xen
 	# Add xvc0 to /etc/securetty
 	echo "xvc0" >> /etc/securetty
 fi
