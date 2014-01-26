@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  Arne Fitzenreiter  <arne_f@ipfire.org>             #
+# Copyright (C) 2007-2014  Arne Fitzenreiter  <arne_f@ipfire.org>             #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,14 +34,14 @@ KRNDOWN=http://mirror0.ipfire.org/pakfire2/$VERSION/paks
 ######################
 #KERN_TYPE=xen
 #KVER=2.6.32.61
-#KERN_PACK=27
-#KRNDOWN=http://mirror0.ipfire.org/pakfire2/2.13/paks
+#KERN_PACK=28
+#KRNDOWN=http://mirror0.ipfire.org/pakfire2/2.15/paks
 ###############################################################################
 
-SIZEboot=30
+SIZEboot=64
 SIZEswap=512
-SIZEroot=512
-SIZEvar=950
+SIZEroot=1024
+SIZEvar=1024
 # ct'server does not support ext4 so change this to ext3.
 FSTYPE=ext4
 
