@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.32.61-ipfire-xen
-# Wed Jun 19 10:32:43 2013
+# Linux kernel version: 2.6.32.61
+# Mon Jan 27 05:47:56 2014
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -89,8 +89,7 @@ CONFIG_RCU_FANOUT=32
 CONFIG_LOG_BUF_SHIFT=17
 CONFIG_HAVE_UNSTABLE_SCHED_CLOCK=y
 # CONFIG_CGROUPS is not set
-CONFIG_SYSFS_DEPRECATED=y
-CONFIG_SYSFS_DEPRECATED_V2=y
+# CONFIG_SYSFS_DEPRECATED_V2 is not set
 # CONFIG_RELAY is not set
 CONFIG_NAMESPACES=y
 CONFIG_UTS_NS=y
@@ -911,7 +910,8 @@ CONFIG_RFKILL_INPUT=y
 # Generic Driver Options
 #
 CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-# CONFIG_DEVTMPFS is not set
+CONFIG_DEVTMPFS=y
+CONFIG_DEVTMPFS_MOUNT=y
 # CONFIG_STANDALONE is not set
 # CONFIG_PREVENT_FIRMWARE_BUILD is not set
 CONFIG_FW_LOADER=y
