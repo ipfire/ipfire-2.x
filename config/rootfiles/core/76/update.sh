@@ -261,7 +261,6 @@ rm -f /srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
 touch /var/ipfire/firewall/config
 touch /var/ipfire/firewall/input
 touch /var/ipfire/firewall/outgoing
-touch /var/ipfire/firewall/p2protocols
 touch /var/ipfire/firewall/settings
 touch /var/ipfire/fwhosts/customhosts
 touch /var/ipfire/fwhosts/customnetworks
