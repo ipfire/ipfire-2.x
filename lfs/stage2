@@ -101,6 +101,13 @@ $(TARGET) :
 	# Move script to correct place.
 	mv -vf /usr/local/bin/ovpn-ccd-convert /usr/sbin/
 
+	# Install firewall scripts.
+	mkdir -pv /usr/lib/firewall
+	install -m 755 $(DIR_SRC)/config/firewall/rules.pl \
+		/usr/lib/firewall/rules.pl
+	install -m 644 $(DIR_SRC)/config/firewall/firewall-lib.pl \
+		/usr/lib/firewall/firewall-lib.pl
+
 	# Nobody user
 	-mkdir -p /home/nobody
 	chown -R nobody:nobody /home/nobody

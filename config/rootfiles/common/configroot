@@ -50,9 +50,6 @@ var/ipfire/extrahd
 #var/ipfire/extrahd/scan
 #var/ipfire/extrahd/settings
 var/ipfire/firewall
-#var/ipfire/firewall/bin
-#var/ipfire/firewall/bin/firewall-lib.pl
-#var/ipfire/firewall/bin/rules.pl
 #var/ipfire/firewall/config
 #var/ipfire/firewall/dmz
 #var/ipfire/firewall/input

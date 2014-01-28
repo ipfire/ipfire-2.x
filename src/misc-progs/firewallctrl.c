@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 	if (!(initsetuid()))
 		exit(1);
 
-	int retval = safe_system("/var/ipfire/firewall/bin/rules.pl");
+	int retval = safe_system("/usr/lib/firewall/rules.pl");
 
 	/* If rules.pl has been successfully executed, the indicator
 	 * file is removed. */

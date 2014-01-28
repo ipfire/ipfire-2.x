@@ -45,7 +45,7 @@ my @DPROT=();
 my @p2ps=();
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
-require "${General::swroot}/firewall/bin/firewall-lib.pl";
+require "/usr/lib/firewall/firewall-lib.pl";
 
 my $configfwdfw		= "${General::swroot}/firewall/config";
 my $configinput	    = "${General::swroot}/firewall/input";

@@ -51,7 +51,7 @@ $(TARGET) :
 
 	# Create all directories
 	for i in addon-lang auth backup ca certs connscheduler crls ddns dhcp dhcpc dns dnsforward \
-			ethernet extrahd/bin fwlogs fwhosts firewall firewall/bin isdn key langs logging mac main \
+			ethernet extrahd/bin fwlogs fwhosts firewall isdn key langs logging mac main \
 			menu.d modem net-traffic net-traffic/templates nfs optionsfw \
 			ovpn patches pakfire portfw ppp private proxy/advanced/cre \
 			proxy/calamaris/bin qos/bin red remote sensors snort time tripwire/report \
@@ -99,13 +99,11 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/useragents			$(CONFIG_ROOT)/proxy/advanced
 	cp $(DIR_SRC)/config/cfgroot/ethernet-vlans		$(CONFIG_ROOT)/ethernet/vlans
 	cp $(DIR_SRC)/langs/list						$(CONFIG_ROOT)/langs/
-	cp $(DIR_SRC)/config/firewall/rules.pl			$(CONFIG_ROOT)/firewall/bin/rules.pl
 	cp $(DIR_SRC)/config/firewall/convert-xtaccess	/usr/sbin/convert-xtaccess
 	cp $(DIR_SRC)/config/firewall/convert-outgoingfw	/usr/sbin/convert-outgoingfw
 	cp $(DIR_SRC)/config/firewall/convert-dmz	/usr/sbin/convert-dmz
 	cp $(DIR_SRC)/config/firewall/convert-portfw	/usr/sbin/convert-portfw
 	cp $(DIR_SRC)/config/firewall/p2protocols		$(CONFIG_ROOT)/firewall/p2protocols
-	cp $(DIR_SRC)/config/firewall/firewall-lib.pl	$(CONFIG_ROOT)/firewall/bin/firewall-lib.pl
 	cp $(DIR_SRC)/config/firewall/firewall-policy	/usr/sbin/firewall-policy
 	cp $(DIR_SRC)/config/fwhosts/icmp-types			$(CONFIG_ROOT)/fwhosts/icmp-types
 	cp $(DIR_SRC)/config/fwhosts/customservices		$(CONFIG_ROOT)/fwhosts/customservices
@@ -132,13 +130,10 @@ $(TARGET) :
 	echo  "DROPWIRELESSFORWARD=on"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "POLICY=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
-	
-	# set rules.pl executable
-	chmod 755 $(CONFIG_ROOT)/firewall/bin/rules.pl
-		
+
 	# set converters executable
 	chmod 755 /usr/sbin/convert-*
-	
+
 	# Modify variables in header.pl
 	sed -i -e "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" \
 	    -e "s+VERSION+$(VERSION)+g" \
