@@ -314,6 +314,15 @@ if [ -e /var/ipfire/qos/enable ]; then
 	/usr/local/bin/qosctrl start
 fi
 
+# Update crontab
+cat <<EOF >> /var/spool/cron/root.orig
+
+# Re-read firewall rules every Sunday in March, October and November to take care of daylight saving time
+00 3 * 3 0          /usr/local/bin/timezone-transition /usr/local/bin/firewallctrl
+00 2 * 10-11 0      /usr/local/bin/timezone-transition /usr/local/bin/firewallctrl
+EOF
+fcrontab -z &>/dev/null
+
 
 case $(uname -m) in
 	i?86 )
