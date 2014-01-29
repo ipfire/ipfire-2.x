@@ -651,6 +651,7 @@ buildipfire() {
   ipfiremake sysstat
   ipfiremake vsftpd
   ipfiremake strongswan
+  ipfiremake rng-tools
   ipfiremake lsof
   ipfiremake br2684ctl
   ipfiremake pcmciautils
