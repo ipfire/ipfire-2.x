@@ -94,7 +94,7 @@ usr/local/bin/scanhd
 usr/local/bin/setddns.pl
 usr/local/bin/settime
 usr/local/bin/timecheck
-use/local/bin/timezone-transition
+usr/local/bin/timezone-transition
 #usr/local/bin/uname
 usr/local/bin/update-lang-cache
 #usr/local/include
