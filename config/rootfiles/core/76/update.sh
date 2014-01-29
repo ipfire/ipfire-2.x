@@ -283,6 +283,7 @@ rm -rf /var/ipfire/{dmzholes,portfw,outgoing,xtaccess}
 
 # Convert inittab and fstab
 sed -i -e "s/tty1 9600$/tty1 9600 --noclear/g" /etc/inittab
+sed -i -e "s/xvc0 9600$/tty1 9600 --noclear/g" /etc/inittab
 sed -i -e "s/^proc/#proc/g" /etc/fstab
 sed -i -e "s/^sysfs/#sysfs/g" /etc/fstab
 sed -i -e "s/^devpts/#devpts/g" /etc/fstab
