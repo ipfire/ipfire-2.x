@@ -1680,7 +1680,7 @@ sub viewtablegrp
 					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='ACTION' value='delgrp'></form>";
 				}
 				print"<form method='post' style='display:inline'><input type='image' src='/images/edit.gif' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='remark' value='$remark' ><input type='hidden' name='ACTION' value='editgrp'></form>";
-				print"<table width='100%' cellspacing='0' class='tbl'><tr><th align='center'><b>Name</b></th><th align='center'><b>$Lang::tr{'ip address'}</b></th><th align='center' width='25%'><b>$Lang::tr{'fwhost type'}</th><th></th></tr>";
+				print"<table width='100%' cellspacing='0' class='tbl'><tr><th align='center'><b>Name</b></th><th align='center'><b>$Lang::tr{'fwhost ip_mac'}</b></th><th align='center' width='25%'><b>$Lang::tr{'fwhost type'}</th><th></th></tr>";
 			}
 			my $col='';
 			if ( ($fwhostsettings{'ACTION'} eq 'editgrp' || $fwhostsettings{'update'} ne '') && $fwhostsettings{'grp_name'} eq $customgrp{$key}[0]) {
