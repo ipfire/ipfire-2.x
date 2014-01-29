@@ -245,7 +245,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/cpufreq/cpufreq_powersave.ko
 #lib/modules/KVER-ipfire/kernel/drivers/cpufreq/cpufreq_stats.ko
 #lib/modules/KVER-ipfire/kernel/drivers/crypto
-#lib/modules/KVER-ipfire/kernel/drivers/crypto/geode-aes.ko.off
+#lib/modules/KVER-ipfire/kernel/drivers/crypto/geode-aes.ko
 #lib/modules/KVER-ipfire/kernel/drivers/crypto/hifn_795x.ko
 #lib/modules/KVER-ipfire/kernel/drivers/crypto/padlock-aes.ko
 #lib/modules/KVER-ipfire/kernel/drivers/crypto/padlock-sha.ko

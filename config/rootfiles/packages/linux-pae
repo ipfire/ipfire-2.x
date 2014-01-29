@@ -243,7 +243,7 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/cpufreq/cpufreq_powersave.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/cpufreq/cpufreq_stats.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/crypto
-#lib/modules/KVER-ipfire-pae/kernel/drivers/crypto/geode-aes.ko.off
+#lib/modules/KVER-ipfire-pae/kernel/drivers/crypto/geode-aes.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/crypto/padlock-aes.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/crypto/padlock-sha.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/dca
