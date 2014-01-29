@@ -414,6 +414,7 @@ WARNING: translation string unused: proxy port
 WARNING: translation string unused: psk
 WARNING: translation string unused: quick control
 WARNING: translation string unused: reboot ask
+WARNING: translation string unused: reboot question
 WARNING: translation string unused: reboot schedule
 WARNING: translation string unused: reboot sure
 WARNING: translation string unused: refresh update list
@@ -421,12 +422,16 @@ WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: requested data
+WARNING: translation string unused: reserved dst port
+WARNING: translation string unused: reserved src port
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
 WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: router ip
+WARNING: translation string unused: rsvd dst port overlap
+WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
@@ -680,6 +685,7 @@ WARNING: untranslated string: fwdfw err time
 WARNING: untranslated string: fwdfw external port nat
 WARNING: untranslated string: fwdfw hint ip1
 WARNING: untranslated string: fwdfw hint ip2
+WARNING: untranslated string: fwdfw hint mac
 WARNING: untranslated string: fwdfw iface
 WARNING: untranslated string: fwdfw log
 WARNING: untranslated string: fwdfw log rule

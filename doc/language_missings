@@ -137,6 +137,7 @@
 < fwdfw from
 < fwdfw hint ip1
 < fwdfw hint ip2
+< fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
 < fwdfw log
@@ -569,6 +570,7 @@
 < fwdfw from
 < fwdfw hint ip1
 < fwdfw hint ip2
+< fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
 < fwdfw log
@@ -985,6 +987,7 @@
 < fwdfw from
 < fwdfw hint ip1
 < fwdfw hint ip2
+< fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
 < fwdfw log
@@ -1390,6 +1393,7 @@
 < fwdfw from
 < fwdfw hint ip1
 < fwdfw hint ip2
+< fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
 < fwdfw log
