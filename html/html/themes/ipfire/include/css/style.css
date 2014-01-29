@@ -291,7 +291,9 @@ table {
 .tbl th:only-child {
 	border: 1px solid lightgrey;
 }
-
+.tbl td{
+	padding-left: 0.5em;
+}
 .tbl tr td:first-child {
 	border-left: 1px solid lightgrey;
 }
