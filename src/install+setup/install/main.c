@@ -372,7 +372,14 @@ int main(int argc, char *argv[])
 
 	fclose(handle);
 
-	snprintf(commandstring, STRING_SIZE, "/sbin/sfdisk -L -uM %s < /tmp/partitiontable", hdparams.devnode_disk);
+	if (disk < 2097150) {
+		// <2TB use sfdisk and normal mbr
+		snprintf(commandstring, STRING_SIZE, "/sbin/sfdisk -L -uM %s < /tmp/partitiontable", hdparams.devnode_disk);
+	} else {
+		// >2TB use parted with gpt
+		snprintf(commandstring, STRING_SIZE, "/usr/sbin/parted -s %s mklabel gpt mkpart boot ext2 1M 64M mkpart swap linux-swap 64M 1000M mkpart root ext4 1000M 5000M mkpart var ext4 5000M 100%% disk_set pmbr_boot on", hdparams.devnode_disk);
+	}
+
 	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_PARTITION]);
