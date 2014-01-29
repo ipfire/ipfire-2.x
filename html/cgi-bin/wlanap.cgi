@@ -35,9 +35,10 @@ require '/var/ipfire/header.pl';
 my $debug = 0;
 my $status = '';
 my $errormessage = '';
-my $status_started = "<td align='center' width='75%' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td></tr>";
-my $status_stopped = "<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td></tr>";
-
+my $status_started = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td>";
+my $status_stopped = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td>";
+my $count=0;
+my $col='';
 # get rid of used only once warnings
 my @onlyonce = ( $Header::colourgreen, $Header::colourred );
 undef @onlyonce;
@@ -151,12 +152,9 @@ if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'save'}" ){
 }elsif ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'stop'}" ){
 	system("/usr/local/bin/wlanapctrl stop >/dev/null 2>&1");
 	$memory=0;
-}elsif ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'restart'}" ){
-	system("/usr/local/bin/wlanapctrl restart >/dev/null 2>&1");
-	pid();
 }
 
-&Header::openpage('Wireless LAN', 1, '', '');
+&Header::openpage('', 1, '', '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 if ( $errormessage ){
@@ -260,7 +258,7 @@ if ( -d '/sys/class/net/mon.'.$wlanapsettings{'INTERFACE'} ) {
 	$monwlaninterface =  'mon.'.$wlanapsettings{'INTERFACE'};
 }
 
-my @channellist_cmd = `iwlist $monwlaninterface channel 2>/dev/null`;
+my @channellist_cmd = `iwlist $monwlaninterface channel|tail -n +2 2>/dev/null`;
 # get available channels
 
 my @temp;
@@ -306,62 +304,46 @@ $selected{'DEBUG'}{$wlanapsettings{'DEBUG'}} = "selected='selected'";
 #
 &Header::openbox('100%', 'center', "WLAN AP");
 print <<END
-<table width='95%' cellspacing='0'>
+<table width='80%' cellspacing='1' class='tbl'>
 END
 ;
 
 if ( $wlan_card_status ne '' ){
-	print "<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'wlanap wlan services'}</strong></td></tr>";
-	print "<tr><td colspan='1' class='base'>$Lang::tr{'wlanap wlan card'} ($wlanapsettings{'DRIVER'})</td>";
+	print "<tr><th align='left' width='50%'><strong>$Lang::tr{'service'}</strong></th><th width='22%'>Status</th><th width='10%'>PID</th><th width='15%'>$Lang::tr{'memory'}</th><th colspan='2'width='5%'>$Lang::tr{'action'}</th></tr>";
+	print "<tr><td class='base'>$Lang::tr{'wlanap wlan card'} ($wlanapsettings{'DRIVER'})</td>";
 	print $wlan_card_status eq 'up' ? $status_started : $status_stopped;
-	print "<tr><td colspan='1' class='base'>$Lang::tr{'wlanap access point'}</td>";
+	print"<td colspan='4'></td></tr>";
+	print "<tr><td class='base' bgcolor='$color{'color22'}'>$Lang::tr{'wlanap access point'}</td>";
 	print $wlan_ap_status eq 'up' ? $status_started : $status_stopped;
+	if ( ($memory != 0) && (@pid[0] ne "///") ){
+		print "<td bgcolor='$color{'color22'}' align='center'>@pid[0]</td>";
+		print "<td bgcolor='$color{'color22'}' align='center'>$memory KB</td>";
+		print "<td bgcolor='$color{'color22'}'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'start'}' /><input type='image' alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' /></form></td>";
+		print "<td bgcolor='$color{'color22'}'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'stop'}' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' /></form></td>";
+	}else{
+		print"<td colspan='2' bgcolor='$color{'color22'}'></td>";
+		print "<td bgcolor='$color{'color22'}'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'start'}' /><input type='image' alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' /></form></td>";
+		print "<td bgcolor='$color{'color22'}'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'stop'}' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' /></form></td>";
+	}
 
 }else{
-	print "<tr><td colspan='2' class='base'>$message";
+	print "<tr><td class='base'>$message";
 }
 	print "</table>";
 
-if ( ($memory != 0) && (@pid[0] ne "///") && ($wlan_card_status ne '') ){
-	print "<table width='95%' cellspacing='0' border='0'>";
-	print "<tr>";
-	print "<td align='center'></td>";
-	print "<td bgcolor='$color{'color20'}' align='center'><strong>PID</strong></td>";
-	print "<td bgcolor='$color{'color20'}' align='center'><strong>$Lang::tr{'memory'}</strong></td>";
+if ( $wlan_card_status eq '' ){
+	print "<br />";
+	print "<table width='80%' cellspacing='0' border='0'>";
+	print "<tr align='center'>";
+	print "<td colspan='4'></td>";
 	print "</tr>";
-	print "<tr>";
-	print "<td width='35%' align='right'><strong>hostapd</strong>&nbsp;&nbsp;&nbsp;&nbsp;</td>";
-	print "<td bgcolor='$color{'color22'}' align='center'>@pid[0]</td>";
-	print "<td bgcolor='$color{'color22'}' align='center'>$memory KB</td>";
+	print "<tr align='center'>";
+	print "<td width='40%'>&nbsp;</td>";
+	print "<td width='20%'><form method='post' action='/cgi-bin/wlanap.cgi'><input type='submit' name='ACTION' value='$Lang::tr{'wlanap del interface'}' /></form></td>";
+	print "<td width='20%'></td>";
+	print "<td width='20%'></td>";
 	print "</tr>";
 	print "</table>";
-}
-
-if ( $wlan_card_status ne '' ){
-print "<br />";
-print "<table width='95%' cellspacing='0' border='0'>";
-print "<tr align='center'>";
-print "</tr>";
-print "<tr align='center'>";
-print "<td width='40%'>&nbsp;</td>";
-print "<td width='20%'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'start'}' /><input type='image' alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' /></form></td>";
-print "<td width='20%'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'stop'}' /><input type='image' alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' /></form></td>";
-print "<td width='20%'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='$Lang::tr{'restart'}' /><input type='image' alt='$Lang::tr{'restart'}' title='$Lang::tr{'restart'}' src='/images/view-refresh.png' /></form></td>";
-print "</tr>";
-print "</table>";
-}else{
-print "<br />";
-print "<table width='95%' cellspacing='0' border='0'>";
-print "<tr align='center'>";
-print "<td colspan='4'><hr size='1'></td>";
-print "</tr>";
-print "<tr align='center'>";
-print "<td width='40%'>&nbsp;</td>";
-print "<td width='20%'><form method='post' action='/cgi-bin/wlanap.cgi'><input type='submit' name='ACTION' value='$Lang::tr{'wlanap del interface'}' /></form></td>";
-print "<td width='20%'></td>";
-print "<td width='20%'></td>";
-print "</tr>";
-print "</table>";
 }
 
 if ( $wlan_card_status eq '' ){
@@ -371,13 +353,25 @@ if ( $wlan_card_status eq '' ){
 	exit 0;
 }
 print <<END
-<br />
+<br><br>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<table width='95%' cellspacing='0'>
-<tr><td bgcolor='$color{'color20'}' colspan='4' align='left'><strong>$Lang::tr{'wlanap wlan settings'}</strong>
-<tr><td width='25%' class='base'>SSID:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='40' value='$wlanapsettings{'SSID'}' /></td></tr>
+<table width='80%' cellspacing='0' class='tbl' border='0'>
+<tr><th bgcolor='$color{'color20'}' colspan='4' align='left'><strong>$Lang::tr{'wlanap wlan settings'}</strong></th></tr>
+<tr><td colspan='4'><br></td></tr>
+<tr><td width='25%' class='base'>SSID:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='30' value='$wlanapsettings{'SSID'}' /></td></tr>
 <!--SSID Broadcast: on => HIDESSID: off -->
 <tr><td width='25%' class='base'>SSID Broadcast:&nbsp;</td><td class='base' colspan='3'>on <input type='radio' name='HIDESSID' value='off' $checked{'HIDESSID'}{'off'} /> | <input type='radio' name='HIDESSID' value='on' $checked{'HIDESSID'}{'on'} /> off</td></tr>
+
+
+<tr><td width='25%' class='base'>$Lang::tr{'wlanap country'}:&nbsp;</td><td class='base' colspan='3'>
+	<select name='COUNTRY'>
+END
+;
+foreach $country (@countrylist){
+	print "<option $selected{'COUNTRY'}{$country}>$country</option>";
+}
+print<<END
+</select></td></tr>
 <tr><td width='25%' class='base'>HW Mode:&nbsp;</td><td class='base' colspan='3'>
 	<select name='HW_MODE'>
 		<option value='a' $selected{'HW_MODE'}{'a'}>802.11a</option>
@@ -385,15 +379,6 @@ print <<END
 		<option value='g' $selected{'HW_MODE'}{'g'}>802.11g</option>
 		<option value='an' $selected{'HW_MODE'}{'an'}>802.11an</option>
 		<option value='gn' $selected{'HW_MODE'}{'gn'}>802.11gn</option>
-	</select>
-</td></tr>
-
-<tr><td width='25%' class='base'>$Lang::tr{'wlanap encryption'}:&nbsp;</td><td class='base' colspan='3'>
-	<select name='ENC'>
-		<option value='none' $selected{'ENC'}{'none'}>$Lang::tr{'wlanap none'}</option>
-		<option value='wpa1' $selected{'ENC'}{'wpa1'}>WPA1</option>
-		<option value='wpa2' $selected{'ENC'}{'wpa2'}>WPA2</option>
-		<option value='wpa1+2' $selected{'ENC'}{'wpa1+2'}>WPA1+2</option>
 	</select>
 </td></tr>
 END
@@ -417,18 +402,22 @@ END
 END
 ;
 }
-
-print <<END
-<tr><td width='25%' class='base'>$Lang::tr{'wlanap country'}:&nbsp;</td><td class='base' colspan='3'>
-	<select name='COUNTRY'>
+print<<END
+<tr><td colspan='4'><br></td></tr>
+<tr><td width='25%' class='base'>$Lang::tr{'wlanap encryption'}:&nbsp;</td><td class='base' colspan='3'>
+	<select name='ENC'>
+		<option value='none' $selected{'ENC'}{'none'}>$Lang::tr{'wlanap none'}</option>
+		<option value='wpa1' $selected{'ENC'}{'wpa1'}>WPA1</option>
+		<option value='wpa2' $selected{'ENC'}{'wpa2'}>WPA2</option>
+		<option value='wpa1+2' $selected{'ENC'}{'wpa1+2'}>WPA1+2</option>
+	</select>
+</td></tr>
+<tr><td width='25%' class='base'>Passphrase:&nbsp;</td><td class='base' colspan='3'><input type='text' name='PWD' size='30' value='$wlanapsettings{'PWD'}' /></td></tr>
+<tr><td colspan='4'><br></td></tr>
 END
 ;
-foreach $country (@countrylist){
-	print "<option $selected{'COUNTRY'}{$country}>$country</option>";
-}
-
 print <<END
-</select></td></tr>
+<tr><td width='25%' class='base'>HT Caps:&nbsp;</td><td class='base' colspan='3'><input type='text' name='HTCAPS' size='30' value='$wlanapsettings{'HTCAPS'}' /></td></tr>
 <tr><td width='25%' class='base'>Tx Power:&nbsp;</td><td class='base' colspan='3'>
 END
 ;
@@ -443,8 +432,6 @@ if ( $wlanapsettings{'DRIVER'} eq 'MADWIFI' ){
 	print "<input type='text' name='TXPOWER' size='10' value='$wlanapsettings{'TXPOWER'}' /></td></tr>"
 }
 print <<END
-<tr><td width='25%' class='base'>Passphrase:&nbsp;</td><td class='base' colspan='3'><input type='text' name='PWD' size='63' value='$wlanapsettings{'PWD'}' /></td></tr>
-<tr><td width='25%' class='base'>HT Caps:&nbsp;</td><td class='base' colspan='3'><input type='text' name='HTCAPS' size='63' value='$wlanapsettings{'HTCAPS'}' /></td></tr>
 <tr><td width='25%' class='base'>Loglevel (hostapd):&nbsp;</td><td class='base' width='25%'>
 	<select name='SYSLOGLEVEL'>
 		<option value='0' $selected{'SYSLOGLEVEL'}{'0'}>0 ($Lang::tr{'wlanap verbose'})</option>
@@ -463,13 +450,17 @@ print <<END
 		<option value='4' $selected{'DEBUG'}{'4'}>4 ($Lang::tr{'wlanap warnings'})</option>
 	</select>
 </td></tr>
+<tr><td colspan='4'><br></td></tr>
 </table>
 END
 ;
 if ( $wlanapsettings{'INTERFACE'} =~ /green0/ ){
 	print <<END
 <br />
-<table width='95%' cellspacing='0'>
+<table width='80%' cellspacing='0' class='tbl' border='1'>
+<tr>
+	<th colspan='3' align='left'>$Lang::tr{'mac filter'}</th>
+</tr>
 <td width='25%' class='base'>Mac Filter:&nbsp;</td><td class='base' width='25%'>
 	<select name='MACMODE'>
 		<option value='0' $selected{'MACMODE'}{'0'}>0 (off)</option>
@@ -488,7 +479,7 @@ END
 }
 print <<END
 <br />
-<table width='95%' cellspacing='0'>
+<table width='80%' cellspacing='0'>
 <tr><td align='center'>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
        <input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
@@ -506,16 +497,47 @@ if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
 }
 print <<END
 <br />
-<table width='95%' cellspacing='0'>
-<tr><td bgcolor='$color{'color20'}' colspan='2' align='left'><strong>$Lang::tr{'wlanap wlan status'}</strong></td></tr>
-<tr><td><pre>@channellist_cmd</pre></td><td><pre>@txpower_cmd</pre></td></tr>
-<tr><td colspan='2'><pre>$status</pre></td></tr>
-</table>
+<table width='80%' cellspacing='0' class='tbl'>
+<tr><th colspan='3' bgcolor='$color{'color20'}' align='left'><strong>$Lang::tr{'wlanap wlan status'}</strong></th></tr>
+END
+;
+foreach my $nr (@channellist_cmd){
+	my ($chan,$freq) = split(':',$nr);
+	if ($count % 2){
+		$col="bgcolor='$color{'color20'}'";
+	}else{
+		$col="bgcolor='$color{'color22'}'";
+	}
+	print"<tr><td $col>$chan</td><td $col>:</td><td $col>$freq</td></tr>";
+	$count++;
+}
+if ($count % 2){
+		$col="bgcolor='$color{'color20'}'";
+	}else{
+		$col="bgcolor='$color{'color22'}'";
+	}
+if ($status){
+	print"<tr><td colspan='3' $col><pre>$status</pre></td></tr>";
+	$count++;
+}
+for (my $i=0;$i<$#txpower_cmd;$i=$i+4){
+	next if (@txpower_cmd[$i] =~ /mon/i);
+	if ($count % 2){
+		$col="bgcolor='$color{'color20'}'";
+	}else{
+		$col="bgcolor='$color{'color22'}'";
+	}
+	print "<tr><td $col>@txpower_cmd[$i]</td><td $col>@txpower_cmd[$i+1]</td><td $col>@txpower_cmd[$i+2]</td></tr>";
+	$count++;
+}
+print "</table><br>";
+print <<END
 <br />
-<table width='95%' cellspacing='0'>
-<tr><td bgcolor='$color{'color20'}' align='left'><strong>WLan Clients</strong></td></tr>
+<table width='80%' cellspacing='0' class='tbl' border='0'>
+<tr><td bgcolor='$color{'color20'}' align='left'><strong>$Lang::tr{'wlan clients'}</strong></td></tr>
 <tr><td>&nbsp;<a href="/cgi-bin/wireless.cgi">$Lang::tr{'wlanap link wireless'}</a></td></tr>
 <tr><td>&nbsp;<a href="/cgi-bin/dhcp.cgi">$Lang::tr{'wlanap link dhcp'}</a></td></tr>
+<tr><td><br></td></tr>
 </table>
 END
 ;
