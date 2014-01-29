@@ -578,6 +578,7 @@ WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: week-graph
 WARNING: translation string unused: weekly firewallhits
+WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
@@ -760,6 +761,7 @@ WARNING: untranslated string: ipsec
 WARNING: untranslated string: ipsec network
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
+WARNING: untranslated string: mac filter
 WARNING: untranslated string: most preferred
 WARNING: untranslated string: notice
 WARNING: untranslated string: openvpn network
@@ -857,3 +859,4 @@ WARNING: untranslated string: wlan client wpa mode all
 WARNING: untranslated string: wlan client wpa mode ccmp ccmp
 WARNING: untranslated string: wlan client wpa mode ccmp tkip
 WARNING: untranslated string: wlan client wpa mode tkip tkip
+WARNING: untranslated string: wlan clients

@@ -281,6 +281,7 @@
 < ipsec no connections
 < least preferred
 < lifetime
+< mac filter
 < minute
 < most preferred
 < notice
@@ -432,6 +433,7 @@
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
 < wlan client psk
+< wlan clients
 < wlan client ssid
 < wlan client tkip
 < wlan client wpa mode
@@ -714,6 +716,7 @@
 < ipsec no connections
 < least preferred
 < lifetime
+< mac filter
 < minute
 < most preferred
 < notice
@@ -858,6 +861,7 @@
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
 < wlan client psk
+< wlan clients
 < wlan client ssid
 < wlan client tkip
 < wlan client wpa mode
@@ -1131,6 +1135,7 @@
 < ipsec no connections
 < least preferred
 < lifetime
+< mac filter
 < minute
 < most preferred
 < notice
@@ -1259,6 +1264,7 @@
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
 < wlan client psk
+< wlan clients
 < wlan client ssid
 < wlan client tkip
 < wlan client wpa mode
@@ -1539,6 +1545,7 @@
 < ipsec no connections
 < least preferred
 < lifetime
+< mac filter
 < minute
 < month-graph
 < most preferred
@@ -1666,6 +1673,7 @@
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
 < wlan client psk
+< wlan clients
 < wlan client ssid
 < wlan client tkip
 < wlan client wpa mode
