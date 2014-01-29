@@ -86,6 +86,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--prefix="/usr" \
 		--sysconfdir="/etc" \
 		--enable-curl \
+		--enable-dhcp \
+		--enable-farp \
 		--enable-openssl \
 		--enable-xauth-eap \
 		--enable-eap-radius \

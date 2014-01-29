@@ -43,6 +43,7 @@ usr/lib/ipsec/plugins/libstrongswan-attr.so
 usr/lib/ipsec/plugins/libstrongswan-cmac.so
 usr/lib/ipsec/plugins/libstrongswan-constraints.so
 usr/lib/ipsec/plugins/libstrongswan-curl.so
+usr/lib/ipsec/plugins/libstrongswan-dhcp.so
 usr/lib/ipsec/plugins/libstrongswan-des.so
 usr/lib/ipsec/plugins/libstrongswan-dnskey.so
 usr/lib/ipsec/plugins/libstrongswan-eap-identity.so
@@ -51,6 +52,7 @@ usr/lib/ipsec/plugins/libstrongswan-eap-peap.so
 usr/lib/ipsec/plugins/libstrongswan-eap-radius.so
 usr/lib/ipsec/plugins/libstrongswan-eap-tls.so
 usr/lib/ipsec/plugins/libstrongswan-eap-ttls.so
+usr/lib/ipsec/plugins/libstrongswan-farp.so
 usr/lib/ipsec/plugins/libstrongswan-fips-prf.so
 usr/lib/ipsec/plugins/libstrongswan-gmp.so
 usr/lib/ipsec/plugins/libstrongswan-hmac.so
