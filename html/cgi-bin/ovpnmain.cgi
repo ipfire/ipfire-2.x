@@ -567,7 +567,7 @@ sub getccdadresses
 	my @iprange=();
 	my %ccdhash=();
 	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ccdhash);
-	$iprange[0]=$ip1.".".$ip2.".".$ip3.".".2;
+	$iprange[0]=$ip1.".".$ip2.".".$ip3.".".($ip4+2);
 	for (my $i=1;$i<=$count;$i++) {
 		my $tmpip=$iprange[$i-1];
 		my $stepper=$i*4;
