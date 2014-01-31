@@ -716,6 +716,7 @@ buildipfire() {
   ipfiremake netsnmpd
   ipfiremake perl-DBI
   ipfiremake perl-DBD-mysql
+  ipfiremake perl-DBD-SQLite
   ipfiremake cacti
   ipfiremake icecc
   ipfiremake openvmtools
