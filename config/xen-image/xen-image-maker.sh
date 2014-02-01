@@ -166,7 +166,7 @@ echo xvc0 >> $MNThdd/etc/securetty
 
 #Add getty for xvc0
 echo "#Enable login for XEN" >> $MNThdd/etc/inittab
-echo "8:2345:respawn:/sbin/agetty xvc0 9600 -noclear" >> $MNThdd/etc/inittab
+echo "8:2345:respawn:/sbin/agetty xvc0 9600 --noclear" >> $MNThdd/etc/inittab
 
 #Disable some initskripts
 echo "#!/bin/sh" > $MNThdd/etc/rc.d/init.d/setclock
