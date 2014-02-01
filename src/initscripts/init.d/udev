@@ -41,6 +41,16 @@ case "${1}" in
 			/etc/rc.d/init.d/halt stop
 		fi
 
+		if ! grep -q '[[:space:]]/dev/shm' /proc/mounts; then
+			mkdir -p /dev/shm
+			mount -t tmpfs tmpfs /dev/shm
+		fi
+
+		if ! grep -q '[[:space:]]/dev/pts' /proc/mounts; then
+			mkdir -p /dev/pts
+			mount -t devpts devpts -o gid=5,mode=620 /dev/pts
+		fi
+
 		# Udev handles uevents itself, so we don't need to have
 		# the kernel call out to any binary in response to them
 		echo > /proc/sys/kernel/hotplug
