@@ -12,10 +12,12 @@ case "$1" in
 		if [ -f /etc/httpd/server.key -a -f /etc/httpd/server.crt -a -f /etc/httpd/server.csr ]; then
 			/usr/local/bin/httpscert read >/dev/null 2>&1
 		else
-			boot_mesg "Generating https host certificate... this may take some minutes..."
+			boot_mesg "Generating HTTPS host certificate (may take a couple of minutes)..."
 			/usr/local/bin/httpscert new  >/dev/null 2>&1
-			sync
 			evaluate_retval
+
+			# Make sure that the key is written to disk.
+			sync
 		fi
 		boot_mesg "Starting Apache daemon..."
 		/usr/sbin/apachectl -k start
