@@ -14,6 +14,7 @@ case "$1" in
 		else
 			boot_mesg "Generating https host certificate... this may take some minutes..."
 			/usr/local/bin/httpscert new  >/dev/null 2>&1
+			sync
 			evaluate_retval
 		fi
 		boot_mesg "Starting Apache daemon..."
