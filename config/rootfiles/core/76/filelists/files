@@ -17,6 +17,7 @@ srv/web/ipfire/html/themes/darkdos
 srv/web/ipfire/html/themes/ipfire
 srv/web/ipfire/html/themes/ipfire-legacy
 srv/web/ipfire/html/themes/maniac
+usr/lib/firewall
 usr/local/bin/timezone-transition
 usr/local/bin/setddns.pl
 var/ipfire/backup/bin/backup.pl
