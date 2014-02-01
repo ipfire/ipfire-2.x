@@ -1,0 +1,1 @@
+ACTION=="add|remove", KERNEL=="hw_random", RUN+="/etc/rc.d/init.d/rngd udev-event"
