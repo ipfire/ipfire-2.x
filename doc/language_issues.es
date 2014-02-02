@@ -577,6 +577,7 @@ WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: advproxy errmsg proxy ports equal
 WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: attention
+WARNING: untranslated string: bit
 WARNING: untranslated string: bytes
 WARNING: untranslated string: ccd add
 WARNING: untranslated string: ccd choose net
@@ -633,6 +634,7 @@ WARNING: untranslated string: drop forward
 WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: emerging rules
 WARNING: untranslated string: encryption
+WARNING: untranslated string: entropy
 WARNING: untranslated string: fireinfo ipfire version
 WARNING: untranslated string: fireinfo is disabled
 WARNING: untranslated string: fireinfo is enabled
@@ -804,6 +806,8 @@ WARNING: untranslated string: ipsec network
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: mac filter
+WARNING: untranslated string: maximum
+WARNING: untranslated string: minimum
 WARNING: untranslated string: minute
 WARNING: untranslated string: most preferred
 WARNING: untranslated string: notice

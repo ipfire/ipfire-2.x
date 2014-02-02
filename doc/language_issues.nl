@@ -588,6 +588,7 @@ WARNING: untranslated string: addons
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg proxy ports equal
 WARNING: untranslated string: advproxy proxy port transparent
+WARNING: untranslated string: bit
 WARNING: untranslated string: bytes
 WARNING: untranslated string: ccd iroute2
 WARNING: untranslated string: dead peer detection
@@ -608,6 +609,7 @@ WARNING: untranslated string: drop action2
 WARNING: untranslated string: drop forward
 WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: encryption
+WARNING: untranslated string: entropy
 WARNING: untranslated string: firewall rules
 WARNING: untranslated string: fw default drop
 WARNING: untranslated string: fw settings
@@ -762,6 +764,8 @@ WARNING: untranslated string: ipsec network
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: mac filter
+WARNING: untranslated string: maximum
+WARNING: untranslated string: minimum
 WARNING: untranslated string: most preferred
 WARNING: untranslated string: notice
 WARNING: untranslated string: openvpn network
