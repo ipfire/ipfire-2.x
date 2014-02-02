@@ -5,6 +5,7 @@ etc/rc.d/init.d/network
 run
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
+srv/web/ipfire/cgi-bin/entropy.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/netinternal.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi

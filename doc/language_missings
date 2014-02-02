@@ -23,6 +23,7 @@
 < age sminute
 < age ssecond
 < attention
+< bit
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -80,6 +81,7 @@
 < drop forward
 < drop outgoing
 < encryption
+< entropy
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -282,6 +284,8 @@
 < least preferred
 < lifetime
 < mac filter
+< maximum
+< minimum
 < minute
 < most preferred
 < notice
@@ -459,6 +463,7 @@
 < age ssecond
 < Async logging enabled
 < attention
+< bit
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -515,6 +520,7 @@
 < drop forward
 < drop outgoing
 < encryption
+< entropy
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -717,6 +723,8 @@
 < least preferred
 < lifetime
 < mac filter
+< maximum
+< minimum
 < minute
 < most preferred
 < notice
@@ -886,6 +894,7 @@
 < age sminute
 < age ssecond
 < attention
+< bit
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -942,6 +951,7 @@
 < drop forward
 < drop outgoing
 < encryption
+< entropy
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -1136,6 +1146,8 @@
 < least preferred
 < lifetime
 < mac filter
+< maximum
+< minimum
 < minute
 < most preferred
 < notice
@@ -1290,6 +1302,7 @@
 < age sminute
 < age ssecond
 < attention
+< bit
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -1349,6 +1362,7 @@
 < drop outgoing
 < Edit an existing route
 < encryption
+< entropy
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -1546,6 +1560,8 @@
 < least preferred
 < lifetime
 < mac filter
+< maximum
+< minimum
 < minute
 < month-graph
 < most preferred
