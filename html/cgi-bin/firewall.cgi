@@ -29,7 +29,7 @@ no warnings 'uninitialized';
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-require "${General::swroot}/firewall/bin/firewall-lib.pl";
+require "/usr/lib/firewall/firewall-lib.pl";
 
 unless (-d "${General::swroot}/firewall")			{ system("mkdir ${General::swroot}/firewall"); }
 unless (-e "${General::swroot}/firewall/settings")	{ system("touch ${General::swroot}/firewall/settings"); }
