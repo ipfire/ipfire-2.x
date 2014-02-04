@@ -13,9 +13,6 @@ case "$1" in
 		boot_mesg "Initializing kernel random number generator..."
 		if [ -f /var/tmp/random-seed ]; then
 			/bin/cat /var/tmp/random-seed >/dev/urandom
-		else
-		/bin/dd if=/dev/random of=/dev/urandom \
-			count=1 &>/dev/null
 		fi
 		/bin/dd if=/dev/urandom of=/var/tmp/random-seed \
 			count=1 &>/dev/null
