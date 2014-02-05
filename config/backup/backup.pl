@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -124,7 +124,6 @@ elsif ($ARGV[0] eq 'restore') {
 	rmtree("${General::swroot}/portfw");
   }
   system("/usr/local/bin/firewallctrl");
- }
 
   # Convert old OpenVPN CCD files (CN change, core 75).
   system("/usr/local/bin/convert-ovpn");

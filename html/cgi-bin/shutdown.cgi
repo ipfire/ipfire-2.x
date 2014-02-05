@@ -73,7 +73,7 @@ END
 <div align='center'>
 <table width='100%' bgcolor='#ffffff'>
 <tr><td align='center'>
-<br /><br /><img src='/ipfire_big.gif' /><br /><br /><br />
+<br /><br /><img src='/images/IPFire.png' /><br /><br /><br />
 </td></tr>
 </table>
 <br />
