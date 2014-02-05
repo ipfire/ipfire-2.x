@@ -6,7 +6,7 @@
 #
 # Authors     : Arne Fitzenreiter - arne_f@ipfire.org
 #
-# Version     : 1.03
+# Version     : 1.04
 #
 # Notes       :
 #
@@ -36,6 +36,10 @@ case "${1}" in
 			DRV=${ROOT::`expr length $ROOT`-1}
 		fi
 
+		boot_mesg "Update c,h,s values of ${DRV} ..."
+		echo -e ',' | sfdisk --no-reread -f -N1 ${DRV} 2>&1 > /dev/null
+		echo -e ',' | sfdisk --no-reread -f -N3 ${DRV} 2>&1 > /dev/null
+
 		boot_mesg "Change Partition ${DRV}3 to all free space ..."
 		echo -e ',+' | sfdisk --no-reread -N3 ${DRV} 2>/dev/null
 
@@ -44,7 +48,8 @@ case "${1}" in
 
 		boot_mesg "Rebooting ..."
 		sync
-		mount -o remount,ro / > /dev/null
+		mount -o remount,ro / 2>&1 > /dev/null
+		sleep 15
 		reboot -f
 
 		;;
