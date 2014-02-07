@@ -1,0 +1,30 @@
+From 758f624a9862b214f39c9106137a61e2d6b14544 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 7 Feb 2014 14:56:14 +0100
+Subject: [PATCH] Revert "Read mounted filesystems from /proc/mounts instead of
+ /etc/mtab."
+
+This reverts commit c916f644c57b638b3128d0e882c32bf50ea29631.
+
+For some reason, the output of /etc/mtab and /proc/mounts is not
+identical and the root device is missing in /proc/mounts on IPFire.
+---
+ src/fireinfo/system.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/fireinfo/system.py b/src/fireinfo/system.py
+index 800032e..40ff7b0 100644
+--- a/src/fireinfo/system.py
++++ b/src/fireinfo/system.py
+@@ -364,7 +364,7 @@ class System(object):
+ 		"""
+ 			Return the dev node of the root disk.
+ 		"""
+-		with open("/proc/mounts", "r") as f:
++		with open("/etc/mtab", "r") as f:
+ 			dev, mountpoint, fs, rest = f.readline().split(" ", 3)
+ 			if mountpoint == "/" and not fs == "rootfs":
+ 				# Cut off /dev
+-- 
+1.8.3.1
+
