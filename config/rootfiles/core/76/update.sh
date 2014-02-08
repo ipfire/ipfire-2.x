@@ -71,7 +71,7 @@ esac
 
 #
 #
-KVER="3.10.28"
+KVER="xxxKVERxxx"
 MOUNT=`grep "kernel" /boot/grub/grub.conf 2>/dev/null | tail -n 1 `
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
