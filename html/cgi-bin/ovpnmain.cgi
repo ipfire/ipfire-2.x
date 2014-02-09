@@ -2350,12 +2350,12 @@ print <<END;
      	<tr>
      	  <td class='base'>fragment <br></td>
      	  <td><input type='TEXT' name='FRAGMENT' value='$cgiparams{'FRAGMENT'}' size='10' /></td>
-        <td>Default: <span class="base">1300</span></td>
+        <td>$Lang::tr{'openvpn default'}: <span class="base">1300</span></td>
       </tr>
      	<tr>
      	  <td class='base'>mssfix</td>
      	  <td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
-     	  <td>Default: on</td>
+     	  <td>$Lang::tr{'openvpn default'}: on</td>
    	  </tr>
 
 	<tr>
@@ -2787,7 +2787,7 @@ if ( -s "${General::swroot}/ovpn/settings") {
 		<td class='base'>$Lang::tr{'net to net vpn'} (Upload Client Package)</td></tr>
 	  <tr><td>&nbsp;</td><td class='base'><input type='file' name='FH' size='30'></td></tr>
 	  <tr><td>&nbsp;</td><td>Import Connection Name <img src='/blob.gif' /></td></tr>
-    <tr><td>&nbsp;</td><td class='base'><input type='text' name='n2nname' size='30'>Default : Client Packagename</td></tr>
+    <tr><td>&nbsp;</td><td class='base'><input type='text' name='n2nname' size='30'>$Lang::tr{'openvpn default'}: Client Packagename</td></tr>
 	  <tr><td colspan='3'><hr /></td></tr>
     <tr><td align='right' colspan='3'><input type='submit' name='ACTION' value='$Lang::tr{'add'}' /></td></tr>
 	  <tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
