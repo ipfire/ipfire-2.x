@@ -530,7 +530,7 @@ END
 ;
         if ($pppsettings{'TYPE'} =~ /^(modem)$/) {
         print <<END
-            <td colspan='1' width='25%'><A HREF=modem.cgi>$Lang::tr{'modem configuration'}</A></td>
+            <td colspan='1' width='25%'><a href='modem.cgi'>$Lang::tr{'modem configuration'}</a></td>
 END
 ;
 }
