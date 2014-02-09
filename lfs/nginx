@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-14  IPFire Team  <info@ipfire.org>                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = nginx
-PAK_VER	   = 1
+PAK_VER	   = 2
 
 ###############################################################################
 # Top-level Rules
@@ -76,7 +76,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && tar xvf $(DIR_SRC)/cache/nginx_tcp_proxy_module.tar.bz2 -C $(DIR_APP)	
-	cd $(DIR_APP) && patch -p1 < nginx_tcp_proxy_module/tcp.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr/share/nginx/ \
 		--conf-path=/etc/nginx/nginx.conf \
