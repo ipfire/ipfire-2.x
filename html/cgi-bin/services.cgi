@@ -200,8 +200,8 @@ END
 				print "<td align='left' $col width='31%'>$_</td> ";
 				my $status = isautorun($_,$col);
 				print "$status ";
-				print "<td align='center' $col width='8%'><A HREF=services.cgi?$_!start><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></A></td>";
-				print "<td align='center' $col width='8%'><A HREF=services.cgi?$_!stop><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></A></td> ";
+				print "<td align='center' $col width='8%'><a href='services.cgi?$_!start'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
+				print "<td align='center' $col width='8%'><a href='services.cgi?$_!stop'><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></a></td> ";
 				my $status = &isrunningaddon($_,$col);
 		 		$status =~ s/\\[[0-1]\;[0-9]+m//g;
 
@@ -234,12 +234,12 @@ sub isautorun{
 	my $init = `find /etc/rc.d/rc3.d/S??${cmd} 2>/dev/null`;
 	chomp ($init);
 	if ($init ne ''){
-		$status = "<td align='center' $col><A HREF=services.cgi?$_!disable><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></A></td>";
+		$status = "<td align='center' $col><a href='services.cgi?$_!disable'><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></a></td>";
 	}
 	$init = `find /etc/rc.d/rc3.d/off/S??${cmd} 2>/dev/null`;
 	chomp ($init);
 	if ($init ne ''){
-		$status = "<td align='center' $col><A HREF=services.cgi?$_!enable><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></A></td>";
+		$status = "<td align='center' $col><a href='services.cgi?$_!enable'><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></a></td>";
 	}
 
 	return $status;
