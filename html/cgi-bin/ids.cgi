@@ -413,9 +413,9 @@ $selected{'RULES'}{$snortsettings{'RULES'}} = "selected='selected'";
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
 
 ####################### Added for snort rules control #################################
-print "<SCRIPT LANGUAGE='JavaScript' SRC='/include/snortupdateutility.js'></SCRIPT>";
+print "<script language='JavaScript' src='/include/snortupdateutility.js'></script>";
 print <<END
-<STYLE TYPE="text/css">
+<style type="text/css">
 <!--
 .section {
 	border: groove;
@@ -433,7 +433,7 @@ print <<END
 	background-color: #DCDCDC;
 }
 -->
-</STYLE>
+</style>
 END
 ;
 #######################  End added for snort rules control  #################################
@@ -594,7 +594,7 @@ END
 if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable_green" || -e "${General::swroot}/snort/enable_blue" || -e "${General::swroot}/snort/enable_orange" ) {
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
 		# Output display table for rule files
-		print "<TABLE width='100%'><TR><TD VALIGN='TOP'><TABLE>";
+		print "<table width='100%'><tr><td valign='TOP'><table>";
 
 		print "<form method='post'>";
 
@@ -615,7 +615,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 
 			# Check if reached half-way through rule file rules to start new column
  		if ($ruledisplaycnt > $rulecnt) {
-				print "</TABLE></TD><TD VALIGN='TOP'><TABLE>";
+				print "</table></td><td valign='TOP'><table>";
 				$ruledisplaycnt = 0;
 			}
 
@@ -666,21 +666,21 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 			}
 
 			# Output rule file name and checkbox
-			print "<TR><TD CLASS='base' VALIGN='TOP'><INPUT TYPE='checkbox' NAME='SNORT_RULE_$rulefile' $rulechecked> <A HREF='$rulefilelink'>$rulefile</A></TD></TR>";
-			print "<TR><TD CLASS='base' VALIGN='TOP'>";
+			print "<tr><td class='base' valign='TOP'><input type='checkbox' NAME='SNORT_RULE_$rulefile' $rulechecked> <a href='$rulefilelink'>$rulefile</a></td></tr>";
+			print "<tr><td class='base' valign='TOP'>";
 
 			# Check for empty 'Description'
 			if ($snortrules{$rulefile}{'Description'} eq '') {
-				print "<TABLE WIDTH='100%'><TR><TD CLASS='base'>No description available</TD></TR>";
+				print "<table width='100%'><tr><td class='base'>No description available</td></tr>";
 			} else {
 				# Output rule file 'Description'
-				print "<TABLE WIDTH='100%'><TR><TD CLASS='base'>$snortrules{$rulefile}{'Description'}</TD></TR>";
+				print "<table width='100%'><tr><td class='base'>$snortrules{$rulefile}{'Description'}</td></tr>";
 			}
 
 			# Check for display flag
 			if ($displayrulefilerules) {
 				# Rule file definition rule display
-				print "<TR><TD CLASS='base' VALIGN='TOP'><TABLE border=0><TR>";
+				print "<tr><td class='base' valign='TOP'><table border='0'><tr>";
 
 				# Local vars
 			 	my $ruledefdisplaycnt = 0;
@@ -695,7 +695,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 
 					# If have display 2 rules, start new row
 					if (($ruledefdisplaycnt % 2) == 0) {
-						print "</TR><TR>";
+						print "</tr><tr>";
 						$ruledefdisplaycnt = 0;
 					}
 
@@ -707,7 +707,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 					# Create rule file rule's checkbox
 					$checkboxname = "SNORT_RULE_$rulefile";
 					$checkboxname .= "_$ruledef";
-					print "<TD CLASS='base'><INPUT TYPE='checkbox' NAME='$checkboxname' $ruledefchecked> $snortrules{$rulefile}{'Definition'}{$ruledef}{'Description'}</TD>";
+					print "<td class='base'><input type='checkbox' NAME='$checkboxname' $ruledefchecked> $snortrules{$rulefile}{'Definition'}{$ruledef}{'Description'}</td>";
 
 					# Increment count
 					$ruledefdisplaycnt++;
@@ -715,20 +715,20 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 
 				# If do not have second rule for row, create empty cell
 				if (($ruledefdisplaycnt % 2) != 0) {
-					print "<TD CLASS='base'></TD>";
+					print "<td class='base'></td>";
 				}
 
 				# Close display table
-				print "</TR></TABLE></TD></TR>";
+				print "</tr></table></td></tr>";
 		}
 
 			# Close display table
-			print "</TABLE>";
+			print "</table>";
 
 			# Increment ruledisplaycnt
 		$ruledisplaycnt++;
 		}
-	print "</TD></TR></TABLE></TD></TR></TABLE>";
+	print "</td></tr></table></td></tr></table>";
 	print <<END
 <table width='100%'>
 <tr>
