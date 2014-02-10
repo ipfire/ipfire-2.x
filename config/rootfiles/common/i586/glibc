@@ -48,7 +48,7 @@ sbin/ldconfig
 #sbin/sln
 #usr/bin/catchsegv
 #usr/bin/gencat
-#usr/bin/getconf
+usr/bin/getconf
 usr/bin/getent
 #usr/bin/iconv
 usr/bin/ldd
