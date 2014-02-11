@@ -413,7 +413,7 @@ $selected{'RULES'}{$snortsettings{'RULES'}} = "selected='selected'";
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
 
 ####################### Added for snort rules control #################################
-print "<script language='JavaScript' src='/include/snortupdateutility.js'></script>";
+print "<script type='text/javascript' src='/include/snortupdateutility.js'></script>";
 print <<END
 <style type="text/css">
 <!--
