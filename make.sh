@@ -718,6 +718,7 @@ buildipfire() {
   ipfiremake perl-DBD-mysql
   ipfiremake perl-DBD-SQLite
   ipfiremake perl-File-ReadBackwards
+  ipfiremake perl-PDF-Create
   ipfiremake cacti
   ipfiremake icecc
   ipfiremake openvmtools
