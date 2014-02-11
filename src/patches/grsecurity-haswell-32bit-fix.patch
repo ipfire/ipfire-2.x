@@ -1,0 +1,53 @@
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 7430027..2124e35 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -80,7 +80,7 @@ static inline void switch_mm(struct mm_struct *prev, struct mm_struct *next,
+ #if defined(CONFIG_X86_64) && defined(CONFIG_PAX_MEMORY_UDEREF)
+ 		if (static_cpu_has(X86_FEATURE_PCID)) {
+ 			if (static_cpu_has(X86_FEATURE_INVPCID)) {
+-				unsigned long descriptor[2];
++				u64 descriptor[2];
+ 				descriptor[0] = PCID_USER;
+ 				asm volatile(__ASM_INVPCID : : "d"(&descriptor), "a"(INVPCID_SINGLE_CONTEXT) : "memory");
+ 			} else {
+@@ -144,7 +144,7 @@ static inline void switch_mm(struct mm_struct *prev, struct mm_struct *next,
+ #if defined(CONFIG_X86_64) && defined(CONFIG_PAX_MEMORY_UDEREF)
+ 		if (static_cpu_has(X86_FEATURE_PCID)) {
+ 			if (static_cpu_has(X86_FEATURE_INVPCID)) {
+-				unsigned long descriptor[2];
++				u64 descriptor[2];
+ 				descriptor[0] = PCID_USER;
+ 				asm volatile(__ASM_INVPCID : : "d"(&descriptor), "a"(INVPCID_SINGLE_CONTEXT) : "memory");
+ 			} else {
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 45844c0..ada2172 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -18,7 +18,7 @@
+ static inline void __native_flush_tlb(void)
+ {
+ 	if (static_cpu_has(X86_FEATURE_INVPCID)) {
+-		unsigned long descriptor[2];
++		u64 descriptor[2];
+ 
+ 		descriptor[0] = PCID_KERNEL;
+ 		asm volatile(__ASM_INVPCID : : "d"(&descriptor), "a"(INVPCID_ALL_MONGLOBAL) : "memory");
+@@ -42,7 +42,7 @@ static inline void __native_flush_tlb(void)
+ static inline void __native_flush_tlb_global_irq_disabled(void)
+ {
+ 	if (static_cpu_has(X86_FEATURE_INVPCID)) {
+-		unsigned long descriptor[2];
++		u64 descriptor[2];
+ 
+ 		descriptor[0] = PCID_KERNEL;
+ 		asm volatile(__ASM_INVPCID : : "d"(&descriptor), "a"(INVPCID_ALL_GLOBAL) : "memory");
+@@ -77,7 +77,7 @@ static inline void __native_flush_tlb_single(unsigned long addr)
+ {
+ 
+ 	if (static_cpu_has(X86_FEATURE_INVPCID)) {
+-		unsigned long descriptor[2];
++		u64 descriptor[2];
+ 
+ 		descriptor[0] = PCID_KERNEL;
+ 		descriptor[1] = addr;
