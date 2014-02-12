@@ -64,13 +64,13 @@ echo "  kernel /vmlinuz-$KVER-ipfire-pae root=$ROOT panic=10$console $MOUNT" >> 
 echo "  initrd /ipfirerd-$KVER-pae.img" >> /boot/grub/grub.conf
 echo "  savedefault $ENTRY" >> /boot/grub/grub.conf
 #
-# Made initramdisk
-#
-/sbin/dracut --force --verbose /boot/ipfirerd-$KVER-pae.img $KVER-ipfire-pae
-#
 # Create new module depency
 #
 depmod -a $KVER-ipfire-pae
+#
+# Made initramdisk
+#
+/sbin/dracut --force --verbose /boot/ipfirerd-$KVER-pae.img $KVER-ipfire-pae
 
 # Default pae and request a reboot if pae is supported
 if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then

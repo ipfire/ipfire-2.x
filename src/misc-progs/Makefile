@@ -24,11 +24,10 @@ CFLAGS=-O2 -Wall
 COMPILE=$(CC) $(CFLAGS)
 
 PROGS = iowrap
-SUID_PROGS = setdmzholes setportfw setxtaccess \
-	squidctrl sshctrl ipfirereboot \
+SUID_PROGS = squidctrl sshctrl ipfirereboot \
 	ipsecctrl timectrl dhcpctrl snortctrl \
 	applejuicectrl rebuildhosts backupctrl \
-	logwatch openvpnctrl outgoingfwctrl \
+	logwatch openvpnctrl firewallctrl \
 	wirelessctrl getipstat qosctrl launch-ether-wake \
 	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \
 	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
@@ -86,21 +85,15 @@ smartctrl: smartctrl.c setuid.o ../install+setup/libsmooth/varval.o
 
 clamavctrl: clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-	
-outgoingfwctrl: outgoingfwctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ outgoingfwctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-	
+
+firewallctrl: firewallctrl.c setuid.o ../install+setup/libsmooth/varval.o
+	$(COMPILE) -I../install+setup/libsmooth/ firewallctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+
 timectrl: timectrl.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ timectrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 launch-ether-wake: launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-setdmzholes: setdmzholes.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ setdmzholes.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-setportfw: setportfw.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ setportfw.c setuid.o ../install+setup/libsmooth/varval.o -o $@
 
 rebuildhosts: rebuildhosts.c setuid.o ../install+setup/libsmooth/varval.o
 	$(COMPILE) -I../install+setup/libsmooth/ rebuildhosts.c setuid.o ../install+setup/libsmooth/varval.o -o $@

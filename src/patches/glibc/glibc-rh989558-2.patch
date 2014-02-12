@@ -1,0 +1,107 @@
+2013-05-03  Carlos O'Donell  <carlos at redhat.com>
+
+        * intl/dcigettext.c (DCIGETTEXT): Skip translating if _nl_find_msg returns -1.
+        (_nl_find_msg): Return -1 if recursive call returned -1. If newmem is null
+        return -1.
+        * intl/loadmsgcat.c (_nl_load_domain): If _nl_find_msg returns -1 abort
+        loading the domain.
+
+diff -Nrup a/intl/dcigettext.c b/intl/dcigettext.c
+--- a/intl/dcigettext.c	2010-05-04 07:27:23.000000000 -0400
++++ b/intl/dcigettext.c	2013-08-01 00:11:54.616363264 -0400
+@@ -640,6 +640,11 @@ DCIGETTEXT (domainname, msgid1, msgid2, 
+ 		  retval = _nl_find_msg (domain->successor[cnt], binding,
+ 					 msgid1, 1, &retlen);
+ 
++		  /* Resource problems are not fatal, instead we return no
++		    translation.  */
++		  if (__builtin_expect (retval == (char *) -1, 0))
++		    goto no_translation;
++
+ 		  if (retval != NULL)
+ 		    {
+ 		      domain = domain->successor[cnt];
+@@ -943,6 +948,11 @@ _nl_find_msg (domain_file, domainbinding
+ 	    nullentry =
+ 	      _nl_find_msg (domain_file, domainbinding, "", 0, &nullentrylen);
+ 
++	    /* Resource problems are fatal.  If we continue onwards we will
++	       only attempt to calloc a new conv_tab and fail later.  */
++	    if (__builtin_expect (nullentry == (char *) -1, 0))
++	       return (char *) -1;
++
+ 	    if (nullentry != NULL)
+ 	      {
+ 		const char *charsetstr;
+@@ -1156,7 +1166,7 @@ _nl_find_msg (domain_file, domainbinding
+ 							     freemem_size);
+ # ifdef _LIBC
+ 		      if (newmem != NULL)
+-			transmem_list = transmem_list->next;
++			transmem_list = newmem;
+ 		      else
+ 			{
+ 			  struct transmem_list *old = transmem_list;
+@@ -1171,6 +1181,16 @@ _nl_find_msg (domain_file, domainbinding
+ 		      malloc_count = 1;
+ 		      freemem_size = INITIAL_BLOCK_SIZE;
+ 		      newmem = (transmem_block_t *) malloc (freemem_size);
++# ifdef _LIBC
++		      if (newmem != NULL)
++			{
++			  /* Add the block to the list of blocks we have to free
++			     at some point.  */
++			  newmem->next = transmem_list;
++			  transmem_list = newmem;
++			}
++		      /* Fall through and return -1.  */
++# endif
+ 		    }
+ 		  if (__builtin_expect (newmem == NULL, 0))
+ 		    {
+@@ -1181,11 +1201,6 @@ _nl_find_msg (domain_file, domainbinding
+ 		    }
+ 
+ # ifdef _LIBC
+-		  /* Add the block to the list of blocks we have to free
+-		     at some point.  */
+-		  newmem->next = transmem_list;
+-		  transmem_list = newmem;
+-
+ 		  freemem = (unsigned char *) newmem->data;
+ 		  freemem_size -= offsetof (struct transmem_list, data);
+ # else
+@@ -1402,7 +1417,7 @@ get_output_charset (domainbinding)
+ 	  return _NL_CURRENT (LC_CTYPE, CODESET);
+ # else
+ #  if HAVE_ICONV
+-	  extern const char *locale_charset PARAMS ((void);
++	  extern const char *locale_charset PARAMS ((void));
+ 	  return locale_charset ();
+ #  endif
+ # endif
+diff -Nrup a/intl/loadmsgcat.c b/intl/loadmsgcat.c
+--- a/intl/loadmsgcat.c	2010-05-04 07:27:23.000000000 -0400
++++ b/intl/loadmsgcat.c	2013-08-01 00:12:48.448237849 -0400
+@@ -1235,7 +1235,7 @@ _nl_load_domain (domain_file, domainbind
+     default:
+       /* This is an invalid revision.  */
+     invalid:
+-      /* This is an invalid .mo file.  */
++      /* This is an invalid .mo file or we ran out of resources.  */
+       free (domain->malloced);
+ #ifdef HAVE_MMAP
+       if (use_mmap)
+@@ -1255,6 +1255,12 @@ _nl_load_domain (domain_file, domainbind
+ 
+   /* Get the header entry and look for a plural specification.  */
+   nullentry = _nl_find_msg (domain_file, domainbinding, "", 0, &nullentrylen);
++  if (__builtin_expect (nullentry == (char *) -1, 0))
++    {
++      __libc_rwlock_fini (domain->conversions_lock);
++      goto invalid;
++    }
++
+   EXTRACT_PLURAL_EXPRESSION (nullentry, &domain->plural, &domain->nplurals);
+ 
+  out:

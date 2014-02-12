@@ -1,7 +1,7 @@
 #boot/ipfirerd-KVER-kirkwood.img
-#boot/ipfirerd-KVER-omap.img
+#boot/ipfirerd-KVER-multi.img
 #boot/uInit-ipfire-kirkwood
-#boot/uInit-ipfire-omap
+#boot/uInit-ipfire-multi
 etc/dracut.conf
 etc/dracut.conf.d
 #etc/dracut.conf.d/dracut.conf

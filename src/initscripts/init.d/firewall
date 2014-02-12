@@ -68,11 +68,175 @@ iptables_init() {
 	# SYN/FIN (QueSO or nmap OS probe)
 	/sbin/iptables -A BADTCP -p tcp --tcp-flags SYN,FIN SYN,FIN -j PSCAN
 	# NEW TCP without SYN
-	/sbin/iptables -A BADTCP -p tcp ! --syn -m state --state NEW -j NEWNOTSYN
+	/sbin/iptables -A BADTCP -p tcp ! --syn -m conntrack --ctstate NEW -j NEWNOTSYN
 
-	/sbin/iptables -A INPUT   -j BADTCP
-	/sbin/iptables -A FORWARD -j BADTCP
+	/sbin/iptables -A INPUT   -p tcp -j BADTCP
+	/sbin/iptables -A FORWARD -p tcp -j BADTCP
 
+	# Connection tracking chain
+	/sbin/iptables -N CONNTRACK
+	/sbin/iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+	# Fix for braindead ISP's
+	/sbin/iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+
+	# CUSTOM chains, can be used by the users themselves
+	/sbin/iptables -N CUSTOMINPUT
+	/sbin/iptables -A INPUT -j CUSTOMINPUT
+	/sbin/iptables -N CUSTOMFORWARD
+	/sbin/iptables -A FORWARD -j CUSTOMFORWARD
+	/sbin/iptables -N CUSTOMOUTPUT
+	/sbin/iptables -A OUTPUT -j CUSTOMOUTPUT
+	/sbin/iptables -t nat -N CUSTOMPREROUTING
+	/sbin/iptables -t nat -A PREROUTING -j CUSTOMPREROUTING
+	/sbin/iptables -t nat -N CUSTOMPOSTROUTING
+	/sbin/iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
+
+	# Guardian (IPS) chains
+	/sbin/iptables -N GUARDIAN
+	/sbin/iptables -A INPUT -j GUARDIAN
+	/sbin/iptables -A FORWARD -j GUARDIAN
+
+	# Block OpenVPN transfer networks
+	/sbin/iptables -N OVPNBLOCK
+	for i in INPUT FORWARD; do
+		/sbin/iptables -A ${i} -j OVPNBLOCK
+	done
+
+	# OpenVPN transfer network translation
+	/sbin/iptables -t nat -N OVPNNAT
+	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
+
+	# IPTV chains for IGMPPROXY
+	/sbin/iptables -N IPTVINPUT
+	/sbin/iptables -A INPUT -j IPTVINPUT
+	/sbin/iptables -N IPTVFORWARD
+	/sbin/iptables -A FORWARD -j IPTVFORWARD
+
+	# filtering from GUI
+	/sbin/iptables -N GUIINPUT
+	/sbin/iptables -A INPUT -j GUIINPUT
+	/sbin/iptables -A GUIINPUT -p icmp --icmp-type 8 -j ACCEPT
+
+	# Accept everything on loopback
+	/sbin/iptables -N LOOPBACK
+	/sbin/iptables -A LOOPBACK -i lo -j ACCEPT
+	/sbin/iptables -A LOOPBACK -o lo -j ACCEPT
+
+	# Filter all packets with loopback addresses on non-loopback interfaces.
+	/sbin/iptables -A LOOPBACK -s 127.0.0.0/8 -j DROP
+	/sbin/iptables -A LOOPBACK -d 127.0.0.0/8 -j DROP
+
+	for i in INPUT FORWARD OUTPUT; do
+		/sbin/iptables -A ${i} -j LOOPBACK
+	done
+
+	# Accept everything connected
+	for i in INPUT FORWARD OUTPUT; do
+		/sbin/iptables -A ${i} -j CONNTRACK
+	done
+
+	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
+	/sbin/iptables -N IPSECINPUT
+	/sbin/iptables -N IPSECFORWARD
+	/sbin/iptables -N IPSECOUTPUT
+	/sbin/iptables -A INPUT -j IPSECINPUT
+	/sbin/iptables -A FORWARD -j IPSECFORWARD
+	/sbin/iptables -A OUTPUT -j IPSECOUTPUT
+	/sbin/iptables -t nat -N IPSECNAT
+	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
+
+	# localhost and ethernet.
+	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m conntrack --ctstate NEW -j ACCEPT ! -p icmp
+	
+	# allow DHCP on BLUE to be turned on/off
+	/sbin/iptables -N DHCPBLUEINPUT 
+	/sbin/iptables -A INPUT -j DHCPBLUEINPUT
+	
+	# WIRELESS chains
+	/sbin/iptables -N WIRELESSINPUT
+	/sbin/iptables -A INPUT -m conntrack --ctstate NEW -j WIRELESSINPUT
+	/sbin/iptables -N WIRELESSFORWARD
+	/sbin/iptables -A FORWARD -m conntrack --ctstate NEW -j WIRELESSFORWARD
+
+	# OpenVPN
+	/sbin/iptables -N OVPNINPUT
+	/sbin/iptables -A INPUT -j OVPNINPUT
+
+	# TOR
+	/sbin/iptables -N TOR_INPUT
+	/sbin/iptables -A INPUT -j TOR_INPUT
+	
+	# Jump into the actual firewall ruleset.
+	/sbin/iptables -N INPUTFW
+	/sbin/iptables -A INPUT -j INPUTFW
+
+	/sbin/iptables -N OUTGOINGFW
+	/sbin/iptables -A OUTPUT -j OUTGOINGFW
+
+	/sbin/iptables -N FORWARDFW
+	/sbin/iptables -A FORWARD -j FORWARDFW
+
+	# SNAT rules
+	/sbin/iptables -t nat -N NAT_SOURCE
+	/sbin/iptables -t nat -A POSTROUTING -j NAT_SOURCE
+
+	# RED chain, used for the red interface
+	/sbin/iptables -N REDINPUT
+	/sbin/iptables -A INPUT -j REDINPUT
+	/sbin/iptables -N REDFORWARD
+	/sbin/iptables -A FORWARD -j REDFORWARD
+	/sbin/iptables -t nat -N REDNAT
+	/sbin/iptables -t nat -A POSTROUTING -j REDNAT
+
+	iptables_red
+
+	# Custom prerouting chains (for transparent proxy)
+	/sbin/iptables -t nat -N SQUID
+	/sbin/iptables -t nat -A PREROUTING -j SQUID
+
+	# DNAT rules
+	/sbin/iptables -t nat -N NAT_DESTINATION
+	/sbin/iptables -t nat -A PREROUTING -j NAT_DESTINATION
+
+	# upnp chain for our upnp daemon
+	/sbin/iptables -t nat -N UPNPFW
+	/sbin/iptables -t nat -A PREROUTING -j UPNPFW
+	/sbin/iptables -N UPNPFW
+	/sbin/iptables -A FORWARD -m conntrack --ctstate NEW -j UPNPFW
+
+	# run local firewall configuration, if present
+ 	if [ -x /etc/sysconfig/firewall.local ]; then
+		/etc/sysconfig/firewall.local start
+	fi
+
+	# Apply OpenVPN firewall rules
+	/usr/local/bin/openvpnctrl --firewall-rules
+
+	# run wirelessctrl
+	/usr/local/bin/wirelessctrl
+
+	#POLICY CHAIN
+	/sbin/iptables -N POLICYIN
+	/sbin/iptables -A INPUT -j POLICYIN
+	/sbin/iptables -N POLICYFWD
+	/sbin/iptables -A FORWARD -j POLICYFWD
+	/sbin/iptables -N POLICYOUT
+	/sbin/iptables -A OUTPUT -j POLICYOUT
+
+	/usr/sbin/firewall-policy
+
+	# read new firewall
+	/usr/local/bin/firewallctrl
+
+	if [ "$DROPINPUT" == "on" ]; then
+		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
+	fi
+	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
+	if [ "$DROPFORWARD" == "on" ]; then
+		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
+	fi
+	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
 }
 
 iptables_red() {
@@ -130,223 +294,23 @@ iptables_red() {
 case "$1" in
   start)
 	iptables_init
-
-	# Limit Packets- helps reduce dos/syn attacks
-	# original do nothing line
-	#/sbin/iptables -A INPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN -m limit --limit 10/sec
-	# the correct one, but the negative '!' do nothing...
-	#/sbin/iptables -A INPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK SYN ! -m limit --limit 10/sec -j DROP
-
-	# Fix for braindead ISP's
-	/sbin/iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
-
-	# CUSTOM chains, can be used by the users themselves
-	/sbin/iptables -N CUSTOMINPUT
-	/sbin/iptables -A INPUT -j CUSTOMINPUT
-	/sbin/iptables -N GUARDIAN
-	/sbin/iptables -A INPUT -j GUARDIAN
-	/sbin/iptables -A FORWARD -j GUARDIAN
-	/sbin/iptables -N CUSTOMFORWARD
-	/sbin/iptables -A FORWARD -j CUSTOMFORWARD
-	/sbin/iptables -N CUSTOMOUTPUT
-	/sbin/iptables -A OUTPUT -j CUSTOMOUTPUT
-	/sbin/iptables -N OUTGOINGFW
-	/sbin/iptables -N OUTGOINGFWMAC
-	/sbin/iptables -A OUTPUT -j OUTGOINGFW
-	/sbin/iptables -t nat -N CUSTOMPREROUTING
-	/sbin/iptables -t nat -A PREROUTING -j CUSTOMPREROUTING
-	/sbin/iptables -t nat -N CUSTOMPOSTROUTING
-	/sbin/iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
-
-	# IPTV chains for IGMPPROXY
-	/sbin/iptables -N IPTVINPUT
-	/sbin/iptables -A INPUT -j IPTVINPUT
-	/sbin/iptables -N IPTVFORWARD
-	/sbin/iptables -A FORWARD -j IPTVFORWARD
-
-	# filtering from GUI
-	/sbin/iptables -N GUIINPUT
-	/sbin/iptables -A INPUT -j GUIINPUT
-	/sbin/iptables -A GUIINPUT -p icmp --icmp-type 8 -j ACCEPT
-
-	# Accept everything connected
-	/sbin/iptables -A INPUT   -m state --state ESTABLISHED,RELATED -j ACCEPT
-	/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
-	
-	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
-	/sbin/iptables -N IPSECINPUT
-	/sbin/iptables -N IPSECFORWARD
-	/sbin/iptables -N IPSECOUTPUT
-	/sbin/iptables -N OPENSSLVIRTUAL
-	/sbin/iptables -A INPUT -j IPSECINPUT
-	/sbin/iptables -A INPUT -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL INPUT"
-	/sbin/iptables -A FORWARD -j IPSECFORWARD
-	/sbin/iptables -A FORWARD -j OPENSSLVIRTUAL -m comment --comment "OPENSSLVIRTUAL FORWARD"
-	/sbin/iptables -A OUTPUT -j IPSECOUTPUT
-	/sbin/iptables -t nat -N OVPNNAT
-	/sbin/iptables -t nat -N IPSECNAT
-	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
-	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
-
-	# TOR
-	/sbin/iptables -N TOR_INPUT
-	/sbin/iptables -A INPUT -j TOR_INPUT
-
-	# Outgoing Firewall
-	/sbin/iptables -A FORWARD -j OUTGOINGFWMAC
-
-	# localhost and ethernet.
-	/sbin/iptables -A INPUT   -i lo -m state --state NEW -j ACCEPT
-	/sbin/iptables -A INPUT   -s 127.0.0.0/8 -m state --state NEW -j DROP   # Loopback not on lo
-	/sbin/iptables -A INPUT   -d 127.0.0.0/8 -m state --state NEW -j DROP
-	/sbin/iptables -A FORWARD -i lo -m state --state NEW -j ACCEPT
-	/sbin/iptables -A FORWARD -s 127.0.0.0/8 -m state --state NEW -j DROP
-	/sbin/iptables -A FORWARD -d 127.0.0.0/8 -m state --state NEW -j DROP
-	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m state --state NEW -j ACCEPT ! -p icmp
-	/sbin/iptables -A FORWARD -i $GREEN_DEV  -m state --state NEW -j ACCEPT
-
-	# If a host on orange tries to initiate a connection to IPFire's red IP and
-	# the connection gets DNATed back through a port forward to a server on orange
-	# we end up with orange -> orange traffic passing through IPFire
-	[ "$ORANGE_DEV" != "" ] && /sbin/iptables -A FORWARD -i $ORANGE_DEV -o $ORANGE_DEV -m state --state NEW -j ACCEPT
-
-	# allow DHCP on BLUE to be turned on/off
-	/sbin/iptables -N DHCPBLUEINPUT 
-	/sbin/iptables -A INPUT -j DHCPBLUEINPUT
-
-	# OPenSSL
-	/sbin/iptables -N OPENSSLPHYSICAL
-	/sbin/iptables -A INPUT -j OPENSSLPHYSICAL
-
-	# WIRELESS chains
-	/sbin/iptables -N WIRELESSINPUT
-	/sbin/iptables -A INPUT -m state --state NEW -j WIRELESSINPUT
-	/sbin/iptables -N WIRELESSFORWARD
-	/sbin/iptables -A FORWARD -m state --state NEW -j WIRELESSFORWARD
-
-	# RED chain, used for the red interface
-	/sbin/iptables -N REDINPUT
-	/sbin/iptables -A INPUT -j REDINPUT
-	/sbin/iptables -N REDFORWARD
-	/sbin/iptables -A FORWARD -j REDFORWARD
-	/sbin/iptables -t nat -N REDNAT
-	/sbin/iptables -t nat -A POSTROUTING -j REDNAT
-
-	iptables_red
-
-	# DMZ pinhole chain.  setdmzholes setuid prog adds rules here to allow
-	# ORANGE to talk to GREEN / BLUE.
-	/sbin/iptables -N DMZHOLES
-	if [ "$ORANGE_DEV" != "" ]; then
-		/sbin/iptables -A FORWARD -i $ORANGE_DEV -m state --state NEW -j DMZHOLES
-	fi
-
-	# XTACCESS chain, used for external access
-	/sbin/iptables -N XTACCESS
-	/sbin/iptables -A INPUT -m state --state NEW -j XTACCESS
-
-	# PORTFWACCESS chain, used for portforwarding
-	/sbin/iptables -N PORTFWACCESS
-	/sbin/iptables -A FORWARD -m state --state NEW -j PORTFWACCESS
-
-	# Custom prerouting chains (for transparent proxy and port forwarding)
-	/sbin/iptables -t nat -N SQUID
-	/sbin/iptables -t nat -A PREROUTING -j SQUID
-	/sbin/iptables -t nat -N PORTFW
-	/sbin/iptables -t nat -A PREROUTING -j PORTFW
-
-	# upnp chain for our upnp daemon
-	/sbin/iptables -t nat -N UPNPFW
-	/sbin/iptables -t nat -A PREROUTING -j UPNPFW
-	/sbin/iptables -N UPNPFW
-	/sbin/iptables -A FORWARD -m state --state NEW -j UPNPFW
-
-	# Custom mangle chain (for port fowarding)
-	/sbin/iptables -t mangle -N PORTFWMANGLE
-	/sbin/iptables -t mangle -A PREROUTING -j PORTFWMANGLE
-
-	# Postrouting rules (for port forwarding)
-	/sbin/iptables -t nat -A POSTROUTING -m mark --mark 1 -j SNAT \
-	 --to-source $GREEN_ADDRESS
-	if [ "$BLUE_DEV" != "" ]; then
-		/sbin/iptables -t nat -A POSTROUTING -m mark --mark 2 -j SNAT --to-source $BLUE_ADDRESS
-	fi
-	if [ "$ORANGE_DEV" != "" ]; then
-		/sbin/iptables -t nat -A POSTROUTING -m mark --mark 3 -j SNAT --to-source $ORANGE_ADDRESS
-	fi
-
-	# run local firewall configuration, if present
- 	if [ -x /etc/sysconfig/firewall.local ]; then
-		/etc/sysconfig/firewall.local start
-	fi
-	
-	# last rule in input and forward chain is for logging.
-
-	if [ "$DROPINPUT" == "on" ]; then
-		/sbin/iptables -A INPUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
-	fi
-	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
-	if [ "$DROPOUTPUT" == "on" ]; then
-		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT "
-	fi
-	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_OUTPUT"
-        ;;
-  startovpn)  
-	# run openvpn
-	/usr/local/bin/openvpnctrl --create-chains-and-rules
-        ;;
-  stop)
-	iptables_init
-	# Accept everyting connected
-	/sbin/iptables -A INPUT   -m state --state ESTABLISHED,RELATED -j ACCEPT
-
-	# localhost and ethernet.
-	/sbin/iptables -A INPUT -i lo -j ACCEPT
-	/sbin/iptables -A INPUT -i $GREEN_DEV -m state --state NEW -j ACCEPT
-
-	if [ "$RED_DEV" != "" -a "$RED_TYPE" == "DHCP" ]; then
-		/sbin/iptables -A INPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-		/sbin/iptables -A INPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-	fi
-	if [ "$PROTOCOL" == "RFC1483" -a "$METHOD" == "DHCP" ]; then
-		/sbin/iptables -A INPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-		/sbin/iptables -A INPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-	fi
-
-	# run local firewall configuration, if present
- 	if [ -x /etc/sysconfig/firewall.local ]; then
-		/etc/sysconfig/firewall.local stop
-	fi
-
-	if [ "$DROPINPUT" == "on" ]; then
-		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
-	fi
-	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
-	if [ "$DROPOUTPUT" == "on" ]; then
-		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT "
-	fi
-	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_OUTPUT"
-        ;;
-  stopovpn)
-	# stop openvpn
-	/usr/local/bin/openvpnctrl --delete-chains-and-rules
-        ;;
+	;;
   reload)
 	iptables_red
-
 	# run local firewall configuration, if present
- 	if [ -x /etc/sysconfig/firewall.local ]; then
+	if [ -x /etc/sysconfig/firewall.local ]; then
 		/etc/sysconfig/firewall.local reload
 	fi
 	;;
   restart)
-	$0 stop
-	$0 stopovpn
+	# run local firewall configuration, if present
+	if [ -x /etc/sysconfig/firewall.local ]; then
+		/etc/sysconfig/firewall.local stop
+	fi
 	$0 start
-	$0 startovpn
 	;;
   *)
-        echo "Usage: $0 {start|stop|reload|restart}"
+        echo "Usage: $0 {start|reload|restart}"
         exit 1
 	;;
 esac

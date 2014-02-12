@@ -34,8 +34,10 @@ case "$1" in
 			# pre scan and try to load modules
 			"yes" | /usr/sbin/sensors-detect > /dev/null
 			if [ -e /etc/sysconfig/lm_sensors ]; then
+
 				# Module load
-				for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
+				. /etc/sysconfig/lm_sensors
+				for modul in $BUS_MODULES $HWMON_MODULES ; do
 					modprobe $modul > /dev/null 2>&1;
 				done
 			fi
@@ -52,8 +54,10 @@ case "$1" in
 		# Load sensor modules only first start
 		if [ ! -e /var/lock/sensors_modules ]; then
 			touch /var/lock/sensors_modules
+
 			boot_mesg -n "Loading Sensor Modules: "
-			for modul in `cat /etc/sysconfig/lm_sensors | grep '^MODULE_' | cut -d"=" -s -f2`; do
+			. /etc/sysconfig/lm_sensors
+			for modul in $BUS_MODULES $HWMON_MODULES ; do
 			modprobe $modul > /dev/null 2>&1;
 				if [ ${?} = 0 ]; then
 					boot_mesg -n "$SUCCESS$modul$NORMAL ";

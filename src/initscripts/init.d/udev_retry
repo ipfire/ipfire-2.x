@@ -26,7 +26,7 @@ case "${1}" in
 		done 2>/dev/null
 		
 		# Now wait for udevd to process the uevents we triggered
-		/sbin/udevadm settle
+		/bin/udevadm settle
 		evaluate_retval
 		;;
 

@@ -583,4 +583,10 @@ char *fr_tr[] = {
 "Erreur pendant le téléchargement!",
 /* TR_DHCP_FORCE_MTU */
 "Force DHCP mtu:",
+/* TR_IDENTIFY */
+"Identify",
+/* TR_IDENTIFY_SHOULD_BLINK */
+"Selected port should blink now ...",
+/* TR_IDENTIFY_NOT_SUPPORTED */
+"Function is not supported by this port.",
 };

@@ -24,11 +24,9 @@ case "${1}" in
 		# Remove fsck-related file system watermarks.
 		rm -f /fastboot /forcefsck
 
-		boot_mesg "Recording existing mounts in /etc/mtab..."
+		boot_mesg "Create /etc/mtab..."
 		> /etc/mtab
 		mount -f / || failed=1
-		mount -f /proc || failed=1
-		mount -f /sys || failed=1
 		(exit ${failed})
 		evaluate_retval
 
@@ -49,9 +47,6 @@ case "${1}" in
 		boot_mesg "Unmounting all other currently mounted file systems..."
 		umount -a -d -r &>/dev/null
 		evaluate_retval
-
-		# mount /sys again for led control at halt
-		mount /sys 2>&1 >/dev/null
 		;;
 	*)
 		echo "Usage: ${0} {start|stop}"

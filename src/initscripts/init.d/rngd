@@ -1,0 +1,59 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/rngd
+#
+# Description : Random Number Generator Daemon
+#
+# Authors     : Michael Tremer <michael.tremer@ipfire.org>
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+function has_rdrand() {
+	grep -q "rdrand" /proc/cpuinfo
+}
+
+function has_hwrng() {
+	[ -e "/dev/hwrng" ]
+}
+
+case "${1}" in
+	start)
+		if ! has_hwrng && ! has_rdrand; then
+			boot_mesg "No Hardware Random Number Generator found..."
+			echo_warning
+			exit 0
+		fi
+
+		boot_mesg "Starting Random Number Generator Daemon..."
+		loadproc /usr/sbin/rngd --no-tpm=1
+		;;
+
+	stop)
+		boot_mesg "Stopping Random Number Generator Daemon..."
+		killproc /usr/sbin/rngd
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/rngd
+		;;
+
+	udev-event)
+		$0 restart &>/dev/null
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/rngd

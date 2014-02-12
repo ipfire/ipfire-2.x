@@ -12,7 +12,7 @@
 #include "install.h"
 #define _GNU_SOURCE
  
-#define INST_FILECOUNT 14400
+#define INST_FILECOUNT 15000
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 #define LICENSE_FILE	"/cdrom/COPYING"
 
@@ -372,7 +372,14 @@ int main(int argc, char *argv[])
 
 	fclose(handle);
 
-	snprintf(commandstring, STRING_SIZE, "/sbin/sfdisk -L -uM %s < /tmp/partitiontable", hdparams.devnode_disk);
+	if (disk < 2097150) {
+		// <2TB use sfdisk and normal mbr
+		snprintf(commandstring, STRING_SIZE, "/sbin/sfdisk -L -uM %s < /tmp/partitiontable", hdparams.devnode_disk);
+	} else {
+		// >2TB use parted with gpt
+		snprintf(commandstring, STRING_SIZE, "/usr/sbin/parted -s %s mklabel gpt mkpart boot ext2 1M 64M mkpart swap linux-swap 64M 1000M mkpart root ext4 1000M 5000M mkpart var ext4 5000M 100%% disk_set pmbr_boot on", hdparams.devnode_disk);
+	}
+
 	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_PARTITION]);
@@ -433,7 +440,7 @@ int main(int argc, char *argv[])
 	mkdir("/harddisk/boot", S_IRWXU|S_IRWXG|S_IRWXO);
 	mkdir("/harddisk/var", S_IRWXU|S_IRWXG|S_IRWXO);
 	mkdir("/harddisk/var/log", S_IRWXU|S_IRWXG|S_IRWXO);
-	
+
 	snprintf(commandstring, STRING_SIZE, "/bin/mount %s1 /harddisk/boot", hdparams.devnode_part);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_BOOT_FILESYSTEM]))
 	{

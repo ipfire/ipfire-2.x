@@ -35,6 +35,9 @@ PAK_VER    = 4
 
 DEPS       = "ffmpeg-libs sdl lame libvorbis xvid"
 
+# Don't use PIC for libavcodec
+CFLAGS    += -fno-PIC -fno-strict-aliasing
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################

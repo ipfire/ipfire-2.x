@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,5 +19,11 @@
 #                                                                             #
 ###############################################################################
 
-print "Status: 302 Moved\n";
+if (! -e "/var/ipfire/main/gpl_accepted" ) {
+	print "Status: 302 Moved Temporarily\n";
+	print "Location: /cgi-bin/gpl.cgi\n\n";
+	exit (0);
+}
+
+print "Status: 302 Moved Temporarily\n";
 print "Location: /cgi-bin/index.cgi\n\n";

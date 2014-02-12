@@ -1,0 +1,124 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2013 Alexander Marx <amarx@ipfire.org>                        #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/firewall/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
+
+iptables -F POLICYFWD
+iptables -F POLICYOUT
+iptables -F POLICYIN
+
+if [ -f "/var/ipfire/red/iface" ]; then
+	IFACE="$(</var/ipfire/red/iface)"
+fi
+
+# Figure out what devices are configured.
+HAVE_BLUE="false"
+HAVE_ORANGE="false"
+
+case "${CONFIG_TYPE}" in
+	2)
+		HAVE_BLUE="true"
+		;;
+	3)
+		HAVE_ORANGE="true"
+		;;
+	4)
+		HAVE_BLUE="true"
+		HAVE_ORANGE="true"
+		;;
+esac
+
+# INPUT
+case "${FWPOLICY2}" in
+	REJECT)
+		if [ "${DROPINPUT}" = "on" ]; then
+			/sbin/iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "REJECT_INPUT"
+		fi
+		/sbin/iptables -A POLICYIN -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_INPUT"
+		;;
+	*) # DROP
+		if [ "${DROPINPUT}" = "on" ]; then
+			/sbin/iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
+		fi
+		/sbin/iptables -A POLICYIN -j DROP -m comment --comment "DROP_INPUT"
+		;;
+esac
+
+# FORWARD
+case "${POLICY}" in
+	MODE1)
+		case "${FWPOLICY}" in
+			REJECT)
+				if [ "${DROPFORWARD}" = "on" ]; then
+					/sbin/iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "REJECT_FORWARD"
+				fi
+				/sbin/iptables -A POLICYFWD -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_FORWARD"
+				;;
+			*) # DROP
+				if [ "${DROPFORWARD}" = "on" ]; then
+					/sbin/iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
+				fi
+				/sbin/iptables -A POLICYFWD -j DROP -m comment --comment "DROP_FORWARD"
+				;;
+		esac
+		;;
+
+	*)
+		if [ -n "${IFACE}" ]; then
+			if [ "${HAVE_BLUE}" = "true" ] && [ -n "${BLUE_DEV}" ]; then
+				/sbin/iptables -A POLICYFWD -i "${BLUE_DEV}" ! -o "${IFACE}" -j DROP
+			fi
+			if [ "${HAVE_ORANGE}" = "true" ] && [ -n "${ORANGE_DEV}" ]; then
+				/sbin/iptables -A POLICYFWD -i "${ORANGE_DEV}" ! -o "${IFACE}" -j DROP
+			fi
+		fi
+		/sbin/iptables -A POLICYFWD -j ACCEPT
+		/sbin/iptables -A POLICYFWD -m comment --comment "DROP_FORWARD" -j DROP
+		;;
+esac
+
+# OUTGOING
+case "${POLICY1}" in
+	MODE1)
+		case "${FWPOLICY1}" in
+			REJECT)
+				if [ "${DROPOUTGOING}" = "on" ]; then
+					/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "REJECT_OUTPUT"
+				fi
+				/sbin/iptables -A POLICYOUT -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_OUTPUT"
+				;;
+			*) # DROP
+				if [ "${DROPOUTGOING}" == "on" ]; then
+					/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT"
+				fi
+				/sbin/iptables -A POLICYOUT -j DROP -m comment --comment "DROP_OUTPUT"
+				;;
+		esac
+		;;
+	*)
+		/sbin/iptables -A POLICYOUT -j ACCEPT
+		/sbin/iptables -A POLICYOUT -m comment --comment "DROP_OUTPUT" -j DROP
+		;;
+esac
+
+exit 0

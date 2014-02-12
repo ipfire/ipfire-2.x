@@ -12,13 +12,28 @@
 
 case "$1" in
     start)
-    if [ ! -e /etc/ssh/ssh_host_rsa_key ]; then
-       echo "Generating SSH Keys"
-       ssh-keygen -qf /etc/ssh/ssh_host_rsa_key -N ''
-       ssh-keygen -qf /etc/ssh/ssh_host_key -N '' -t rsa1
-       ssh-keygen -qf /etc/ssh/ssh_host_dsa_key -N '' -t dsa
-       ssh-keygen -qf /etc/ssh/ssh_host_ecdsa_key -N '' -t ecdsa
-    fi
+	if [ ! -e "/etc/ssh/ssh_host_key" ]; then
+		boot_mesg "Generating SSH host key..."
+		ssh-keygen -qf /etc/ssh/ssh_host_key -N '' -t rsa1
+		evaluate_retval
+	fi
+
+	for algo in rsa dsa ecdsa ed25519; do
+		keyfile="/etc/ssh/ssh_host_${algo}_key"
+
+		# If the key already exists, there is nothing to do.
+		[ -e "${keyfile}" ] && continue
+
+		case "${algo}" in
+			rsa)
+				algo="rsa1"
+				;;
+		esac
+
+		boot_mesg "Generating SSH key (${algo})..."
+		ssh-keygen -qf "${keyfile}" -N '' -t ${algo}
+		evaluate_retval
+	done
 
         [ -e "/var/ipfire/remote/enablessh" ] || exit 0 # SSH is not enabled
         boot_mesg "Starting SSH Server..."

@@ -22,5 +22,29 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-./uninstall.sh
-./install.sh
+
+# Create backup include file if it is missing.
+if [ ! -e "/var/ipfire/backup/addons/includes/mysql" ]; then
+	cat <<EOF > /var/ipfire/backup/addons/includes/mysql
+/etc/my.cnf
+/srv/mysql
+EOF
+fi
+
+# Stop the mysql service
+stop_service "${NAME}"
+
+# Make backup
+make_backup "${NAME}"
+
+# Update files
+remove_files
+extract_files
+
+# Restore backup
+restore_backup "${NAME}"
+
+# Restart the service
+start_service "${NAME}"
+
+exit 0

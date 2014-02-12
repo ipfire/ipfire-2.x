@@ -1,0 +1,12 @@
+#usr/lib/perl5/site_perl/5.12.3/PDF
+#usr/lib/perl5/site_perl/5.12.3/PDF/Create
+usr/lib/perl5/site_perl/5.12.3/PDF/Create.pm
+usr/lib/perl5/site_perl/5.12.3/PDF/Create/Outline.pm
+usr/lib/perl5/site_perl/5.12.3/PDF/Create/Page.pm
+#usr/lib/perl5/site_perl/5.12.3/PDF/Image
+usr/lib/perl5/site_perl/5.12.3/PDF/Image/GIF.pm
+usr/lib/perl5/site_perl/5.12.3/PDF/Image/JPEG.pm
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/PDF
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/PDF/Create
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/PDF/Create/.packlist
+#usr/share/man/man3/PDF::Create.3

@@ -587,4 +587,10 @@ char *nl_tr[] = {
 "Fout tijdens downloaden!",
 /* TR_DHCP_FORCE_MTU */
 "Forceer DHCP mtu:",
+/* TR_IDENTIFY */
+"Identify",
+/* TR_IDENTIFY_SHOULD_BLINK */
+"Selected port should blink now ...",
+/* TR_IDENTIFY_NOT_SUPPORTED */
+"Function is not supported by this port.",
 };
