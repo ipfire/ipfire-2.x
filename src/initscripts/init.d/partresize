@@ -40,14 +40,14 @@ case "${1}" in
 		echo -e ',+' | sfdisk --no-reread -f -N3 ${DRV} 2>/dev/null
 
 		boot_mesg "Update c,h,s values of ${DRV}1 ..."
-		echo -e ',' | sfdisk --no-reread -f -N1 ${DRV} 2>&1 > /dev/null
+		echo -e ',' | sfdisk --no-reread -f -N1 ${DRV} &> /dev/null
 
 		# Erase symlink, it should run only once
 		rm -f /etc/rc.d/rcsysinit.d/S25partresize
 
 		boot_mesg "Rebooting ..."
 		sync
-		mount -o remount,ro / 2>&1 > /dev/null
+		mount -o remount,ro / &> /dev/null
 		sleep 15
 		reboot -f
 
