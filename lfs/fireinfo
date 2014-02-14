@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.1.8
+VER        = 2.1.9
 
 THISAPP    = fireinfo-v$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 594702e88a729ae0f35ef35d0786e22f
+$(DL_FILE)_MD5 = a4dbb3a4111f263b5059b2f76b14b32c
 
 install : $(TARGET)
 
