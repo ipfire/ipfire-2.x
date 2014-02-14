@@ -201,21 +201,20 @@ END
 	chomp($DNS2);
 	close DNS2;
 
-	if ( $DNS1 ) { print <<END;
-	<tr><td><b>$Lang::tr{'dns server'}1:</b></td><td align='center'>$DNS1</td><td></td></tr>
-END
-	}
-	if ( $DNS2 ) { print <<END;
-	<tr><td><b>$Lang::tr{'dns server'}2:</b></td><td align='center'>$DNS2</td><td></td></tr>
+	print <<END;
+		<tr>
+			<td>
+				<b>$Lang::tr{'dns server'}</b>
+			</td>
+			<td align="center">
+				$DNS1
+			</td>
+			<td align="center">
+				$DNS2
+			</td>
+		</tr>
 	</table>
 END
-	} else { print <<END;
-	<td></td>
-	</tr>
-	</table>
-
-END
-	}
 
 #Dial profiles
 if ( $netsettings{'RED_TYPE'} ne "STATIC" && $netsettings{'RED_TYPE'} ne "DHCP" ){
