@@ -231,6 +231,7 @@ etc/rc.d/rcsysinit.d/S60setclock
 etc/rc.d/rcsysinit.d/S70console
 etc/rc.d/rcsysinit.d/S75firstsetup
 etc/rc.d/rcsysinit.d/S80localnet
+etc/rc.d/rcsysinit.d/S85firewall
 etc/rc.d/rcsysinit.d/S90sysctl
 etc/rc.d/rcsysinit.d/S91network-vlans
 etc/rc.d/rcsysinit.d/S92rngd

@@ -171,6 +171,7 @@ $(TARGET) :
 	ln -sf ../init.d/console     /etc/rc.d/rcsysinit.d/S70console
 	ln -sf ../init.d/firstsetup  /etc/rc.d/rcsysinit.d/S75firstsetup
 	ln -sf ../init.d/localnet    /etc/rc.d/rcsysinit.d/S80localnet
+	ln -sf ../init.d/firewall    /etc/rc.d/rcsysinit.d/S85firewall
 	ln -sf ../init.d/sysctl      /etc/rc.d/rcsysinit.d/S90sysctl
 	ln -sf ../init.d/network-vlans /etc/rc.d/rcsysinit.d/S91network-vlans
 	ln -sf ../init.d/rngd        /etc/rc.d/rcsysinit.d/S92rngd

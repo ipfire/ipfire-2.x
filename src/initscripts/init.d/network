@@ -38,9 +38,6 @@ init_networking() {
 		rmmod nf_conntrack_h323
 	fi
 
-	boot_mesg "Setting up firewall"
-	/etc/rc.d/init.d/firewall start; evaluate_retval
-
 	/etc/rc.d/init.d/dnsmasq start
 	/etc/rc.d/init.d/static-routes start
 }
