@@ -17,42 +17,6 @@
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 init_networking() {
-	boot_mesg "Loading firewall modules into the kernel"
-	modprobe iptable_nat || failed=1
-	for i in $(find /lib/modules/$(uname -r) -name nf_conntrack*); do
-		modprobe $(basename $i | cut -d. -f1) || failed=1
-	done
-	for i in $(find /lib/modules/$(uname -r) -name nf_nat*); do
-		modprobe $(basename $i | cut -d. -f1) || failed=1
-	done
-	(exit ${failed})
-	evaluate_retval
-
-	# Enable netfilter accounting
-	sysctl net.netfilter.nf_conntrack_acct=1 > /dev/null
-
-	if [ -e /var/ipfire/main/disable_nf_sip ]; then
-		rmmod nf_nat_sip
-		rmmod nf_conntrack_sip
-		rmmod nf_nat_h323
-		rmmod nf_conntrack_h323
-	fi
-
-	boot_mesg "Setting up firewall"
-	/etc/rc.d/init.d/firewall start; evaluate_retval
-
-#	boot_mesg "Setting up traffic accounting"
-#	/etc/rc.d/helper/writeipac.pl || failed=1
-#	/usr/sbin/fetchipac -S || failed=1
-#	(exit ${failed})
-#	evaluate_retval
-
-	
-	if [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
-		boot_mesg "Setting up wireless firewall rules"
-		/usr/local/bin/wirelessctrl; evaluate_retval
-	fi
-
 	/etc/rc.d/init.d/dnsmasq start
 	/etc/rc.d/init.d/static-routes start
 }

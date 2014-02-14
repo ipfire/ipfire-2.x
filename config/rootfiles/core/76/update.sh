@@ -238,6 +238,7 @@ rm -rf /usr/lib/engines
 rm -f /etc/rc.d/init.d/networking/red.up/22-outgoingfwctrl
 rm -f /etc/rc.d/init.d/networking/red.up/25-portfw
 rm -f /etc/rc.d/init.d/networking/red.up/26-xtaccess
+rm -f /etc/rc.d/rcsysinit.d/S90sysctl
 
 # Remove old firewallscripts
 rm -f /usr/local/bin/setportfw

@@ -13,6 +13,7 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < addon
+< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
@@ -452,6 +453,7 @@
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
 < addon
+< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
@@ -884,6 +886,7 @@
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
 < addon
+< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
@@ -1292,6 +1295,7 @@
 ############################################################################
 < Add a route
 < addon
+< advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
