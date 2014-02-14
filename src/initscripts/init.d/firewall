@@ -209,11 +209,6 @@ iptables_init() {
 	iptables -N UPNPFW
 	iptables -A FORWARD -m conntrack --ctstate NEW -j UPNPFW
 
-	# run local firewall configuration, if present
- 	if [ -x /etc/sysconfig/firewall.local ]; then
-		/etc/sysconfig/firewall.local start
-	fi
-
 	# Apply OpenVPN firewall rules
 	/usr/local/bin/openvpnctrl --firewall-rules
 
@@ -298,6 +293,10 @@ iptables_red() {
 case "$1" in
   start)
 	iptables_init
+	# run local firewall configuration, if present
+	if [ -x /etc/sysconfig/firewall.local ]; then
+		/etc/sysconfig/firewall.local start
+	fi
 	;;
   reload)
 	iptables_red
