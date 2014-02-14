@@ -1,0 +1,78 @@
+From 6bce72b21600d9f52ae60d5bf80d00152eb75b50 Mon Sep 17 00:00:00 2001
+From: Steve Sakoman <steve@sakoman.com>
+Date: Tue, 19 Jan 2010 21:19:15 -0800
+Subject: [PATCH 1/2] OMAP: DSS2: add bootarg for selecting svideo
+
+ OMAP: DSS2: add bootarg for selecting svideo or composite for tv output
+ also add pal-16 and ntsc-16 omapfb.mode settings for 16bpp
+
+Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
+---
+ drivers/video/omap2/dss/venc.c           |   22 ++++++++++++++++++++++
+ drivers/video/omap2/omapfb/omapfb-main.c |   10 +++++++++-
+ 2 files changed, 31 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/video/omap2/dss/venc.c b/drivers/video/omap2/dss/venc.c
+index 56efa3b..d46f7f8 100644
+--- a/drivers/video/omap2/dss/venc.c
++++ b/drivers/video/omap2/dss/venc.c
+@@ -86,6 +86,11 @@
+ #define VENC_OUTPUT_TEST			0xC8
+ #define VENC_DAC_B__DAC_C			0xC8
+ 
++static char *tv_connection;
++
++module_param_named(tvcable, tv_connection, charp, 0);
++MODULE_PARM_DESC(tvcable, "TV connection type (svideo, composite)");
++
+ struct venc_config {
+ 	u32 f_control;
+ 	u32 vidout_ctrl;
+@@ -465,6 +470,23 @@ static int venc_power_on(struct omap_dss_device *dssdev)
+ 	if (r)
+ 		goto err2;
+ 
++	/* Allow the TV output to be overriden */
++	if (tv_connection) {
++		if (strcmp(tv_connection, "svideo") == 0) {
++			printk(KERN_INFO
++				"omapdss: tv output is svideo.\n");
++			dssdev->phy.venc.type = OMAP_DSS_VENC_TYPE_SVIDEO;
++		} else if (strcmp(tv_connection, "composite") == 0) {
++			printk(KERN_INFO
++				"omapdss: tv output is composite.\n");
++			dssdev->phy.venc.type = OMAP_DSS_VENC_TYPE_COMPOSITE;
++		} else {
++			printk(KERN_INFO
++				"omapdss: unsupported output type'%s'.\n",
++				tv_connection);
++		}
++	}
++
+ 	return 0;
+ 
+ err2:
+diff --git a/drivers/video/omap2/omapfb/omapfb-main.c b/drivers/video/omap2/omapfb/omapfb-main.c
+index bc225e4..34d6679 100644
+--- a/drivers/video/omap2/omapfb/omapfb-main.c
++++ b/drivers/video/omap2/omapfb/omapfb-main.c
+@@ -2032,7 +2032,15 @@ static int omapfb_mode_to_timings(const char *mode_str,
+ 	int r;
+ 
+ #ifdef CONFIG_OMAP2_DSS_VENC
+-	if (strcmp(mode_str, "pal") == 0) {
++	if (strcmp(mode_str, "pal-16") == 0) {
++		*timings = omap_dss_pal_timings;
++		*bpp = 16;
++		return 0;
++	} else if (strcmp(mode_str, "ntsc-16") == 0) {
++		*timings = omap_dss_ntsc_timings;
++		*bpp = 16;
++		return 0;
++	} else if (strcmp(mode_str, "pal") == 0) {
+ 		*timings = omap_dss_pal_timings;
+ 		*bpp = 24;
+ 		return 0;
+-- 
+1.7.7.6
+

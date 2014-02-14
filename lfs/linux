@@ -161,10 +161,40 @@ endif
 
 ifeq "$(KCFG)" "-multi"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.27-fs-exec-atomic64-operand-requires-impossible-reload.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0001-panda-wlan-fix.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0002-panda-i2c.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-panda-reboot.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-smsc95xx-add_mac_addr_param.patch
+
+	# Patchset for Omap (beagle/panda).
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/0002-omap2-twl-common-Add-default-power-configuration.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/sakoman/0001-OMAP-DSS2-add-bootarg-for-selecting-svideo.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/sakoman/0002-video-add-timings-for-hd720.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0001-Beagle-expansion-add-buddy-param-for-expansionboard-.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0002-Beagle-expansion-add-zippy.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0003-Beagle-expansion-add-zippy2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0004-Beagle-expansion-add-trainer.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0005-Beagle-expansion-add-CircuitCo-ulcd-Support.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0006-Beagle-expansion-add-wifi.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0007-Beagle-expansion-add-beaglefpga.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0008-Beagle-expansion-add-spidev.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0009-Beagle-expansion-add-Aptina-li5m03-camera.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0010-Beagle-expansion-add-LSR-COM6L-Adapter-Board.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0011-Beagle-expansion-LSR-COM6L-Adapter-Board-also-initia.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0001-meego-modedb-add-Toshiba-LTA070B220F-800x480-support.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0002-backlight-Add-TLC59108-backlight-control-driver.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0003-tlc59108-adjust-for-beagleboard-uLCD7.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0004-zeroMAP-Open-your-eyes.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0005-ARM-OMAP-Beagle-use-TWL4030-generic-reset-script.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0006-DSS2-use-DSI-PLL-for-DPI-with-OMAP3.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0001-panda-fix-wl12xx-regulator.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0002-ti-st-st-kim-fixing-firmware-path.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0003-Panda-expansion-add-spidev.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0004-HACK-PandaES-disable-cpufreq-so-board-will-boot.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0006-ARM-hw_breakpoint-Enable-debug-powerdown-only-if-sys.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0007-Revert-regulator-twl-Remove-TWL6030_FIXED_RESOURCE.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0008-Revert-regulator-twl-Remove-another-unused-variable-.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0009-Revert-regulator-twl-Remove-references-to-the-twl403.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0010-Revert-regulator-twl-Remove-references-to-32kHz-cloc.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0011-panda-spidev-setup-pinmux.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/sgx/0001-arm-Export-cache-flush-management-symbols-when-MULTI.patch
 
 	# Patchset for Wandboard.
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0001-imx6qdl-wandboard-dts-backport.patch
