@@ -188,6 +188,7 @@
 'advproxy banned mac clients' => 'Gesperrte MAC-Adressen (eine pro Zeile)',
 'advproxy cache management' => 'Cacheverwaltung',
 'advproxy cache replacement policy' => 'Cache Ersetzungsrichtlinie',
+'advproxy cache-digest' => 'Cache-Digest-Erstellung aktivieren',
 'advproxy chgwebpwd ERROR' => 'F E H L E R :',
 'advproxy chgwebpwd SUCCESS' => 'E R F O L G :',
 'advproxy chgwebpwd change password' => 'Passwort ändern',
