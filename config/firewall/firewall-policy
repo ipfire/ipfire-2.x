@@ -23,6 +23,10 @@ eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/firewall/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
 
+function iptables() {
+	/sbin/iptables --wait "$@"
+}
+
 iptables -F POLICYFWD
 iptables -F POLICYOUT
 iptables -F POLICYIN
@@ -52,15 +56,15 @@ esac
 case "${FWPOLICY2}" in
 	REJECT)
 		if [ "${DROPINPUT}" = "on" ]; then
-			/sbin/iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "REJECT_INPUT"
+			iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "REJECT_INPUT"
 		fi
-		/sbin/iptables -A POLICYIN -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_INPUT"
+		iptables -A POLICYIN -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_INPUT"
 		;;
 	*) # DROP
 		if [ "${DROPINPUT}" = "on" ]; then
-			/sbin/iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
+			iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
 		fi
-		/sbin/iptables -A POLICYIN -j DROP -m comment --comment "DROP_INPUT"
+		iptables -A POLICYIN -j DROP -m comment --comment "DROP_INPUT"
 		;;
 esac
 
@@ -70,15 +74,15 @@ case "${POLICY}" in
 		case "${FWPOLICY}" in
 			REJECT)
 				if [ "${DROPFORWARD}" = "on" ]; then
-					/sbin/iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "REJECT_FORWARD"
+					iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "REJECT_FORWARD"
 				fi
-				/sbin/iptables -A POLICYFWD -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_FORWARD"
+				iptables -A POLICYFWD -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_FORWARD"
 				;;
 			*) # DROP
 				if [ "${DROPFORWARD}" = "on" ]; then
-					/sbin/iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
+					iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
 				fi
-				/sbin/iptables -A POLICYFWD -j DROP -m comment --comment "DROP_FORWARD"
+				iptables -A POLICYFWD -j DROP -m comment --comment "DROP_FORWARD"
 				;;
 		esac
 		;;
@@ -86,14 +90,14 @@ case "${POLICY}" in
 	*)
 		if [ -n "${IFACE}" ]; then
 			if [ "${HAVE_BLUE}" = "true" ] && [ -n "${BLUE_DEV}" ]; then
-				/sbin/iptables -A POLICYFWD -i "${BLUE_DEV}" ! -o "${IFACE}" -j DROP
+				iptables -A POLICYFWD -i "${BLUE_DEV}" ! -o "${IFACE}" -j DROP
 			fi
 			if [ "${HAVE_ORANGE}" = "true" ] && [ -n "${ORANGE_DEV}" ]; then
-				/sbin/iptables -A POLICYFWD -i "${ORANGE_DEV}" ! -o "${IFACE}" -j DROP
+				iptables -A POLICYFWD -i "${ORANGE_DEV}" ! -o "${IFACE}" -j DROP
 			fi
 		fi
-		/sbin/iptables -A POLICYFWD -j ACCEPT
-		/sbin/iptables -A POLICYFWD -m comment --comment "DROP_FORWARD" -j DROP
+		iptables -A POLICYFWD -j ACCEPT
+		iptables -A POLICYFWD -m comment --comment "DROP_FORWARD" -j DROP
 		;;
 esac
 
@@ -103,21 +107,21 @@ case "${POLICY1}" in
 		case "${FWPOLICY1}" in
 			REJECT)
 				if [ "${DROPOUTGOING}" = "on" ]; then
-					/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "REJECT_OUTPUT"
+					iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "REJECT_OUTPUT"
 				fi
-				/sbin/iptables -A POLICYOUT -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_OUTPUT"
+				iptables -A POLICYOUT -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_OUTPUT"
 				;;
 			*) # DROP
 				if [ "${DROPOUTGOING}" == "on" ]; then
-					/sbin/iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT"
+					iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT"
 				fi
-				/sbin/iptables -A POLICYOUT -j DROP -m comment --comment "DROP_OUTPUT"
+				iptables -A POLICYOUT -j DROP -m comment --comment "DROP_OUTPUT"
 				;;
 		esac
 		;;
 	*)
-		/sbin/iptables -A POLICYOUT -j ACCEPT
-		/sbin/iptables -A POLICYOUT -m comment --comment "DROP_OUTPUT" -j DROP
+		iptables -A POLICYOUT -j ACCEPT
+		iptables -A POLICYOUT -m comment --comment "DROP_OUTPUT" -j DROP
 		;;
 esac
 

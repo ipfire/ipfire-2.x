@@ -60,7 +60,7 @@ my $blue			= '';
 my ($TYPE,$PROT,$SPROT,$DPROT,$SPORT,$DPORT,$TIME,$TIMEFROM,$TIMETILL,$SRC_TGT);
 my $CHAIN			= "FORWARDFW";
 my $conexists		= 'off';
-my $command			= 'iptables -A';
+my $command			= 'iptables --wait -A';
 my $dnat			='';
 my $snat			='';
 
@@ -111,7 +111,7 @@ if($param eq 'flush'){
 			system ("/usr/sbin/firewall-policy");
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
 			&p2pblock;
-			system ("iptables -A $CHAIN -m conntrack --ctstate NEW -j ACCEPT");
+			system ("iptables --wait -A $CHAIN -m conntrack --ctstate NEW -j ACCEPT");
 			system ("/usr/sbin/firewall-policy");
 			system ("/etc/sysconfig/firewall.local reload");
 		}
@@ -119,11 +119,11 @@ if($param eq 'flush'){
 }
 sub flush
 {
-	system ("iptables -F FORWARDFW");
-	system ("iptables -F INPUTFW");
-	system ("iptables -F OUTGOINGFW");
-	system ("iptables -t nat -F NAT_DESTINATION");
-	system ("iptables -t nat -F NAT_SOURCE");
+	system ("iptables --wait -F FORWARDFW");
+	system ("iptables --wait -F INPUTFW");
+	system ("iptables --wait -F OUTGOINGFW");
+	system ("iptables --wait -t nat -F NAT_DESTINATION");
+	system ("iptables --wait -t nat -F NAT_SOURCE");
 }
 sub preparerules
 {
@@ -150,9 +150,9 @@ sub buildrules
 	my $icmptype;
 	foreach my $key (sort {$a <=> $b} keys %$hash){
 		next if (($$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1') && $conexists eq 'off' );
-		$command="iptables -A";
+		$command="iptables --wait -A";
 		if ($$hash{$key}[28] eq 'ON'){
-			$command='iptables -t nat -A';
+			$command='iptables --wait -t nat -A';
 			$natip=&get_nat_ip($$hash{$key}[29],$$hash{$key}[31]);
 			if($$hash{$key}[31] eq 'dnat'){
 				$nat='DNAT';
@@ -303,7 +303,7 @@ sub buildrules
 												}
 											}
 										}
-										print "iptables -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
+										print "iptables --wait -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
 										next;
 									#PROCESS SNAT RULE
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
@@ -318,14 +318,14 @@ sub buildrules
 										if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
 											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
 										}
-										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
+										print "iptables --wait -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}
 									#PROCESS Prot ICMP and type = All ICMP-Types
 									if ($PROT eq '-p ICMP' && $$hash{$key}[9] eq 'All ICMP-Types'){
 										if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
 											print "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
 										}
-										print "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
+										print "iptables --wait -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}
 								}
 							}
@@ -387,7 +387,7 @@ sub buildrules
 												}
 											}
 										}
-										system "iptables -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
+										system "iptables --wait -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
 										next;
 									#PROCESS SNAT RULE
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
@@ -402,14 +402,14 @@ sub buildrules
 										if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
 											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
 										}
-										system "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
+										system "iptables --wait -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}
 									#PROCESS Prot ICMP and type = All ICMP-Types
 									if ($PROT eq '-p ICMP' && $$hash{$key}[9] eq 'All ICMP-Types'){
 										if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
 											system "$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG\n";
 										}
-										system "iptables -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
+										system "iptables --wait -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]\n";
 									}
 								}
 							}
@@ -504,11 +504,11 @@ sub p2pblock
 	}
 	if ($MODE eq 1){
 		if($P2PSTRING){
-			print"/sbin/iptables -A FORWARDFW $CMD $P2PSTRING -j $DO\n";
+			print"/sbin/iptables --wait -A FORWARDFW $CMD $P2PSTRING -j $DO\n";
 		}
 	}else{
 		if($P2PSTRING){
-			system("/sbin/iptables -A FORWARDFW $CMD $P2PSTRING -j $DO");
+			system("/sbin/iptables --wait -A FORWARDFW $CMD $P2PSTRING -j $DO");
 		}
 	}
 }
