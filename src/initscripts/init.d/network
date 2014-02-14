@@ -28,9 +28,6 @@ init_networking() {
 	(exit ${failed})
 	evaluate_retval
 
-	# Enable netfilter accounting
-	sysctl net.netfilter.nf_conntrack_acct=1 > /dev/null
-
 	if [ -e /var/ipfire/main/disable_nf_sip ]; then
 		rmmod nf_nat_sip
 		rmmod nf_conntrack_sip
