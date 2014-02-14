@@ -41,13 +41,6 @@ init_networking() {
 	boot_mesg "Setting up firewall"
 	/etc/rc.d/init.d/firewall start; evaluate_retval
 
-#	boot_mesg "Setting up traffic accounting"
-#	/etc/rc.d/helper/writeipac.pl || failed=1
-#	/usr/sbin/fetchipac -S || failed=1
-#	(exit ${failed})
-#	evaluate_retval
-
-	
 	if [ "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "4" ]; then
 		boot_mesg "Setting up wireless firewall rules"
 		/usr/local/bin/wirelessctrl; evaluate_retval
