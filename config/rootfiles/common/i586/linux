@@ -368,6 +368,10 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/hsi/clients
 #lib/modules/KVER-ipfire/kernel/drivers/hsi/clients/hsi_char.ko
 #lib/modules/KVER-ipfire/kernel/drivers/hsi/hsi.ko
+#lib/modules/KVER-ipfire/kernel/drivers/hv
+#lib/modules/KVER-ipfire/kernel/drivers/hv/hv_balloon.ko
+#lib/modules/KVER-ipfire/kernel/drivers/hv/hv_utils.ko
+#lib/modules/KVER-ipfire/kernel/drivers/hv/hv_vmbus.ko
 #lib/modules/KVER-ipfire/kernel/drivers/hwmon
 #lib/modules/KVER-ipfire/kernel/drivers/hwmon/abituguru.ko
 #lib/modules/KVER-ipfire/kernel/drivers/hwmon/abituguru3.ko
@@ -1510,6 +1514,8 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/wiznet/w5300.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/xircom
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/xircom/xirc2ps_cs.ko
+#lib/modules/KVER-ipfire/kernel/drivers/net/hyperv
+#lib/modules/KVER-ipfire/kernel/drivers/net/hyperv/hv_netvsc.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/ifb.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/imq.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/macvlan.ko
@@ -1872,7 +1878,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/gdth.ko
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/hpsa.ko
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/hptiop.ko
-#lib/modules/KVER-ipfire/kernel/drivers/scsi/imm.ko
+#lib/modules/KVER-ipfire/kernel/drivers/scsi/hv_storvsc.ko
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/in2000.ko
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/initio.ko
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/ipr.ko
@@ -2123,6 +2129,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/video/geode/gxfb.ko
 #lib/modules/KVER-ipfire/kernel/drivers/video/geode/lxfb.ko
 #lib/modules/KVER-ipfire/kernel/drivers/video/hgafb.ko
+#lib/modules/KVER-ipfire/kernel/drivers/video/hyperv_fb.ko
 #lib/modules/KVER-ipfire/kernel/drivers/video/i740fb.ko
 #lib/modules/KVER-ipfire/kernel/drivers/video/kyro
 #lib/modules/KVER-ipfire/kernel/drivers/video/kyro/kyrofb.ko
