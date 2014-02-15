@@ -616,8 +616,10 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/isdn/mISDN/mISDN_dsp.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/dell-led.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-bd2802.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-blinkm.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-clevo-mail.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-gpio.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-lm3530.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-lm3533.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-lm355x.ko
@@ -629,6 +631,8 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-lp55xx-common.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-lt3593.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-ot200.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-pca9532.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-pca955x.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-pca9633.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-ss4200.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-tca6507.ko
