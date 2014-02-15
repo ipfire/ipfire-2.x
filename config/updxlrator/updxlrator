@@ -109,7 +109,7 @@ while (<>) {
 
 	if (
 		($source_url =~ m@^[h|f]t?tp://[^?]+\.(pkg\.tar\.xz|deb|rpm)$@i) ||
-		($source_url =~ m@^[h|f]t?tp://[^?]+/distfiles/[^?]+\.(tar\.gz|tar\.bz2|tgz|zip|patch\.bz2|gz|docx|patch|pdf|exe)$@i)
+		($source_url =~ m@^[h|f]t?tp://[^?]+/distfiles/[^?]+\.(tar\.gz|tar\.bz2|tar\.xz|tgz|zip|patch\.bz2|gz|docx|patch|pdf|exe)$@i)
 	)
 	{
 		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"Linux",$mirror);
