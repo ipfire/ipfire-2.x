@@ -699,7 +699,7 @@ if ($errormessage) {
 ############################################################################################################################
 ############################################################################################################################
 
-&Header::openbox('100%', 'center', 'Quality of Service');
+&Header::openbox('100%', 'center', );
 
 print <<END
   <form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -707,15 +707,18 @@ print <<END
 END
 ;
 	if ( $message ne "" ) {
-		print "<tr><td colspan='2' align='center'><font color='red'>$message</font>";
+		print "<tr><td colspan='2' align='center'><font color='red'>$message</font></tr>";
 	}
 	print <<END
-		<tr><td width='50%' align='left'><b>Quality of Service:</b>
-		    <td width='50%' align='center' bgcolor='$statuscolor'><font color='white'>$status</font>
-		<tr><td width='100%' align='center' colspan='2'>
-		<input type='submit' name='ACTION' value="$Lang::tr{'start'}" />
-		<input type='submit' name='ACTION' value="$Lang::tr{'stop'}" />
-		<input type='submit' name='ACTION' value="$Lang::tr{'restart'}" /></table></form>
+		<tr><td width='50%' align='left'><b>Quality of Service:</b></td>
+		    <td width='50%' align='center' bgcolor='$statuscolor'><font color='white'>$status</font></td></tr>
+		    <tr>
+				<td colspan='2'><br></td>
+			</tr>
+		<tr><td width='100%' align='right' colspan='2'>
+		<input type='submit' name='ACTION' value="$Lang::tr{'start'}">
+		<input type='submit' name='ACTION' value="$Lang::tr{'stop'}">
+		<input type='submit' name='ACTION' value="$Lang::tr{'restart'}" ></td></tr></table></form>
 END
 ;
 	if (($qossettings{'OUT_SPD'} ne '') && ($qossettings{'INC_SPD'} ne '')) {
@@ -793,7 +796,7 @@ sub changedefclasses {
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
 		<tr><td width='100%' colspan='3'>$Lang::tr{'no filter pass'}
-		<tr><td width='33%' align='right'>Download:<td width='33%' align='left'><select name='DEFCLASS_INC'>
+		<tr><td width='33%' align='right'>$Lang::tr{'download'}:<td width='33%' align='left'><select name='DEFCLASS_INC'>
 END
 ;
 		for ( $c = 200 ; $c <= 220 ; $c++ )
@@ -804,7 +807,7 @@ END
 		}
 		print <<END
 		</select><td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Upload:<td width='33%' align='left'><select name='DEFCLASS_OUT'>
+		<tr><td width='33%' align='right'>$Lang::tr{'upload'}:<td width='33%' align='left'><select name='DEFCLASS_OUT'>
 END
 ;
 		for ( $c = 100 ; $c <= 120 ; $c++ )

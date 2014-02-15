@@ -1,0 +1,152 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2013 Alexander Marx <amarx@ipfire.org>                        #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+#                                                                             #
+#This script converts old xtaccess rules to new firewall                      #
+#Logfiles are created under /var/log/converters                               #
+#                                                                             #
+###############################################################################
+my @current=();
+my @alias=();
+my %configinputfw=();
+require '/var/ipfire/general-functions.pl';
+my $xtaccessconfig 	= "${General::swroot}/xtaccess/config";
+my $inputfwconfig = "${General::swroot}/firewall/input";
+my $aliasconfig 	= "${General::swroot}/ethernet/aliases";
+my $field0='ACCEPT';
+my $field1='INPUTFW';
+my $field2=''; #ON or emtpy
+my $field3=''; #std_net_src or src_addr
+my $field4=''; #ALL or IP-Address with /32
+my $field5='ipfire';
+my $field6=''; #Default IP or alias name
+my $field11='ON'; #use target port 
+my $field12=''; #TCP or UDP
+my $field13='All ICMP-Types';
+my $field14='TGT_PORT';
+my $field15=''; #Port Number
+my $field16=''; #remark
+my $field26='00:00';
+my $field27='00:00';
+my $field28 = '';
+my $field29 = 'ALL';
+my $field30 = '';
+my $field31 = 'dnat';
+
+if (! -e "$xtaccessconfig") {
+        print "Config file for external access not found. Exiting!\n";
+        exit(1);
+}
+
+if (! -s "$xtaccessconfig") {
+        print "Empty external access configuration file. Nothing to do. Exiting...\n";
+        exit(0);
+}
+
+open(FILE, $xtaccessconfig) or die 'Unable to open config file.';
+my @current = <FILE>;
+close(FILE);
+open(FILE1, $aliasconfig) or die 'Unable to open config file.';
+my @alias = <FILE1>;
+close(FILE1);
+&General::readhasharray($inputfwconfig,\%configinputfw);
+
+foreach my $line (@current){
+	my ($a,$b,$c,$d,$e,$f) = split (",",$line);
+	$e =~ s/\R//g;
+	if ($f gt ''){
+		$f =~ s/\R//g;
+		$field16=$f;
+	}
+	#active or not
+	$field2=uc($d);
+	#get protocol
+	if ($a eq 'tcp'){ $field12 ='TCP';}else{$field12='UDP';}
+	#check source address
+	if ($b eq '0.0.0.0/0'){
+		$field3='std_net_src';
+		$field4='ALL';
+	}elsif($b =~/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/){
+		$field3='src_addr';
+		$field4=$b."/32";
+	}elsif ($b =~ /^(.*?)\/(.*?)$/) {
+		$field3='src_addr';
+		$field4=$b;
+	}else{
+		print "Regel konnte nicht konvertiert werden!\n";
+	}
+	#check ipfire address
+	if ($e eq '0.0.0.0'){ 
+		$field6 = 'RED1';
+	}else{
+		foreach my $line (@alias){
+			my ($ip,$state,$aliasname) = split (",",$line);
+			if ($ip eq $e){
+				$aliasname =~ s/\R//g; 
+				$field6 = $aliasname;
+			}
+		}
+	}
+	#get target port
+	$c=~ s/\R//g;
+	$c=~ tr/-/:/;
+	if ($c =~ /^(\D)\:(\d+)$/) {
+		$c = "1:$2";
+	}
+	if ($c =~ /^(\d+)\:(\D)$/) {
+		$c = "$1:65535";
+	}
+	$field15=$c;
+	my $key = &General::findhasharraykey (\%configinputfw);
+	foreach my $i (0 .. 31) { $configinputfw{$key}[$i] = "";}
+	$configinputfw{$key}[0] = $field0;
+	$configinputfw{$key}[1] = $field1;
+	$configinputfw{$key}[2] = $field2;
+	$configinputfw{$key}[3] = $field3;
+	$configinputfw{$key}[4] = $field4;
+	$configinputfw{$key}[5] = $field5;
+	$configinputfw{$key}[6] = $field6;
+	$configinputfw{$key}[7] = '';
+	$configinputfw{$key}[8] = $field12;
+	$configinputfw{$key}[9] = '';
+	$configinputfw{$key}[10] = '';
+	$configinputfw{$key}[11] = $field11;
+	$configinputfw{$key}[12] = '';
+	$configinputfw{$key}[13] = '';
+	$configinputfw{$key}[14] = $field14;
+	$configinputfw{$key}[15] = $field15;
+	$configinputfw{$key}[16] = $field16;
+	$configinputfw{$key}[17] = '';
+	$configinputfw{$key}[18] = '';
+	$configinputfw{$key}[19] = '';
+	$configinputfw{$key}[20] = '';
+	$configinputfw{$key}[21] = '';
+	$configinputfw{$key}[22] = '';
+	$configinputfw{$key}[23] = '';
+	$configinputfw{$key}[24] = '';
+	$configinputfw{$key}[25] = '';
+	$configinputfw{$key}[26] = $field26;
+	$configinputfw{$key}[27] = $field27;
+	$configinputfw{$key}[28] = $field28;
+	$configinputfw{$key}[29] = $field29;
+	$configinputfw{$key}[30] = $field30;
+	$configinputfw{$key}[31] = $field31;
+	&General::writehasharray($inputfwconfig,\%configinputfw);
+}

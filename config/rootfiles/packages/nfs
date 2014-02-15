@@ -1,4 +1,3 @@
-etc/rc.d/init.d/nfs-server
 sbin/mount.nfs
 sbin/mount.nfs4
 sbin/osd_login
@@ -37,6 +36,7 @@ usr/sbin/start-statd
 #usr/share/man/man3/nfs4_uid_to_name.3
 #usr/share/man/man5/exports.5
 #usr/share/man/man5/idmapd.conf.5
+#usr/share/man/man5/nfs.5
 #usr/share/man/man7/nfsd.7
 #usr/share/man/man8/exportfs.8
 #usr/share/man/man8/idmapd.8
@@ -64,4 +64,5 @@ var/lib/nfs/sm
 #var/lib/nfs/sm.bak
 var/lib/nfs/state
 var/lib/nfs/xtab
+etc/rc.d/init.d/nfs-server
 var/ipfire/nfs/nfs-server

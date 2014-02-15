@@ -587,4 +587,10 @@ char *tr_tr[] = {
 "İndirirken hata!",
 /* TR_DHCP_FORCE_MTU */
 "DHCP mtu zorla:",
+/* TR_IDENTIFY */
+"Identify",
+/* TR_IDENTIFY_SHOULD_BLINK */
+"Selected port should blink now ...",
+/* TR_IDENTIFY_NOT_SUPPORTED */
+"Function is not supported by this port.",
 };

@@ -22,5 +22,14 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+
+# Stop the mysql service
+stop_service "${NAME}"
+
+# Make backup
+make_backup "${NAME}"
+
 remove_files
+
+# Remove start links.
 rm -rvf /etc/rc.d/rc*.d/*mysql

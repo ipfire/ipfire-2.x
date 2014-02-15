@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -126,7 +126,7 @@ if ($errormessage) {
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
 
-&Header::openbox('100%', 'left', 'SSH:');
+&Header::openbox('100%', 'left', $Lang::tr{'ssh'});
 print <<END
 <table width='100%'>
 <tr>
@@ -154,7 +154,7 @@ print <<END
 	<td width='100%' class='base'>$Lang::tr{'ssh port'}</td>
 </tr>
 <tr>
-	<td align='center' colspan='3'><hr />
+	<td align='right' colspan='3'>
 	<input type='submit' name='ACTION' value='$Lang::tr{'ssh tempstart15'}' />
 	<input type='submit' name='ACTION' value='$Lang::tr{'ssh tempstart30'}' />
 	<input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
@@ -181,6 +181,7 @@ END
 &viewkey("/etc/ssh/ssh_host_rsa_key.pub","RSA2");
 &viewkey("/etc/ssh/ssh_host_dsa_key.pub","DSA");
 &viewkey("/etc/ssh/ssh_host_ecdsa_key.pub","ECDSA");
+&viewkey("/etc/ssh/ssh_host_ed25519_key.pub","ED25519");
 
 print "</table>\n";
 

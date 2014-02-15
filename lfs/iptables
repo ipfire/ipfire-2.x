@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.4.14
+VER        = 1.4.21
 
 THISAPP    = iptables-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -38,21 +38,21 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 objects = 	$(DL_FILE) \
 			netfilter-layer7-v2.22.tar.gz \
 			libnfnetlink-1.0.0.tar.bz2 \
-			libnetfilter_queue-0.0.17.tar.bz2 \
+			libnetfilter_queue-1.0.1.tar.bz2 \
 			libnetfilter_conntrack-1.0.2.tar.bz2 \
 			libnetfilter_cttimeout-1.0.0.tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 netfilter-layer7-v2.22.tar.gz 		= $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
 libnfnetlink-1.0.0.tar.bz2		= $(URL_IPFIRE)/libnfnetlink-1.0.0.tar.bz2
-libnetfilter_queue-0.0.17.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-0.0.17.tar.bz2
+libnetfilter_queue-1.0.1.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-1.0.1.tar.bz2
 libnetfilter_conntrack-1.0.2.tar.bz2	= $(URL_IPFIRE)/libnetfilter_conntrack-1.0.2.tar.bz2
 libnetfilter_cttimeout-1.0.0.tar.bz2	= $(URL_IPFIRE)/libnetfilter_cttimeout-1.0.0.tar.bz2
 
-$(DL_FILE)_MD5 = 5ab24ad683f76689cfe7e0c73f44855d
+$(DL_FILE)_MD5 = 536d048c8e8eeebcd9757d0863ebb0c0
 netfilter-layer7-v2.22.tar.gz_MD5 = 98dff8a3d5a31885b73341633f69501f
 libnfnetlink-1.0.0.tar.bz2_MD5 = 016fdec8389242615024c529acc1adb8
-libnetfilter_queue-0.0.17.tar.bz2_MD5 = 2cde35e678ead3a8f9eb896bf807a159
+libnetfilter_queue-1.0.1.tar.bz2_MD5 = 08b968cb2d36c24deb7f26a69f5d8602
 libnetfilter_conntrack-1.0.2.tar.bz2_MD5 = 447114b5d61bb9a9617ead3217c3d3ff
 libnetfilter_cttimeout-1.0.0.tar.bz2_MD5 = 7697437fc9ebb6f6b83df56a633db7f9
 
@@ -86,8 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-1.0.0 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.17
 
 	@cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	-cd /usr/include && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.6-errorno_includes.patch
-	cp -rf /usr/src/linux/include/linux/netfilter /usr/include/linux
+#	cp -rf /usr/src/linux/include/linux/netfilter /usr/include/linux
 
 	# Layer7
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.22.tar.gz
@@ -99,7 +98,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# imq
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.12-IMQ-test4.diff
-#	chmod +x $(DIR_APP)/extensions/.IMQ-test*
 
 	cd $(DIR_APP) && ./configure  --prefix=/usr --with-ksource=/usr/src/linux \
 				    --libdir=/lib --includedir=/usr/include --enable-libipq \
@@ -110,25 +108,25 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	# Iptables doesn't install all headers
-	mkdir -p /usr/include/net/netfilter
-	cp -f $(DIR_APP)/include/net/netfilter/*.h /usr/include/net/netfilter/
-	mkdir -p /usr/include/iptables
-	cp -f $(DIR_APP)/include/iptables/*.h /usr/include/iptables/
-	cp -f $(DIR_APP)/include/iptables.h /usr/include/
-	mkdir -p /usr/include/libipulog
-	cp -f $(DIR_APP)/include/libipulog/*.h /usr/include/libipulog/
-	mkdir -p /usr/include/libiptc
-	cp -f $(DIR_APP)/include/libiptc/*.h /usr/include/libiptc/
+#	mkdir -p /usr/include/net/netfilter
+#	cp -f $(DIR_APP)/include/net/netfilter/*.h /usr/include/net/netfilter/
+#	mkdir -p /usr/include/iptables
+#	cp -f $(DIR_APP)/include/iptables/*.h /usr/include/iptables/
+#	cp -f $(DIR_APP)/include/iptables.h /usr/include/
+#	mkdir -p /usr/include/libipulog
+#	cp -f $(DIR_APP)/include/libipulog/*.h /usr/include/libipulog/
+#	mkdir -p /usr/include/libiptc
+#	cp -f $(DIR_APP)/include/libiptc/*.h /usr/include/libiptc/
 
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnfnetlink-1.0.0.tar.bz2
 	cd $(DIR_SRC)/libnfnetlink-1.0.0 && ./configure --prefix=/usr
 	cd $(DIR_SRC)/libnfnetlink-1.0.0 && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/libnfnetlink-1.0.0 && make install
 
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnetfilter_queue-0.0.17.tar.bz2
-	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && ./configure --prefix=/usr
-	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/libnetfilter_queue-0.0.17 && make install
+	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnetfilter_queue-1.0.1.tar.bz2
+	cd $(DIR_SRC)/libnetfilter_queue-1.0.1 && ./configure --prefix=/usr
+	cd $(DIR_SRC)/libnetfilter_queue-1.0.1 && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/libnetfilter_queue-1.0.1 && make install
 
 	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnetfilter_conntrack-1.0.2.tar.bz2
 	cd $(DIR_SRC)/libnetfilter_conntrack-1.0.2 && ./configure --prefix=/usr

@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sslh
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = ""
 
@@ -77,7 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make install
-	cp $(DIR_APP)/sslh /usr/local/bin
+	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" $(MAKETUNING)
+	cd $(DIR_APP) && install -v -m 755 sslh /usr/sbin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

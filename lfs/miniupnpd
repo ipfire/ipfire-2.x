@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.7
+VER        = 1.8
 
 THISAPP    = miniupnpd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 5af9e8332d34a7b490d0d2ed3e674196
+$(DL_FILE)_MD5 = 0d8a8e936d5a0012cb260a3b972acbf3
 
 install : $(TARGET)
 
@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make -f Makefile.linux \
-		CFLAGS="$(CFLAGS) -DIPTABLES_143 -I/usr/src/linux/include"
+		CFLAGS="$(CFLAGS) -DIPTABLES_143" LIBS="-lip4tc -lnfnetlink"
 	cd $(DIR_APP) && install -m 755 miniupnpd /usr/sbin
 	-mkdir -pv /etc/miniupnpd
 	cp -vf $(DIR_SRC)/config/miniupnpd/miniupnpd.conf /etc/miniupnpd/miniupnpd.conf

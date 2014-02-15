@@ -3,4 +3,5 @@ lib/udev/usb_modeswitch
 usr/sbin/usb_modeswitch
 usr/sbin/usb_modeswitch_dispatcher
 #usr/share/man/man1/usb_modeswitch.1
+#usr/share/man/man1/usb_modeswitch_dispatcher.1
 var/lib/usb_modeswitch

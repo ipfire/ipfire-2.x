@@ -591,4 +591,10 @@ char *de_tr[] = {
 "Beim Herunterladen ist ein Fehler aufgetreten!",
 /* TR_DHCP_FORCE_MTU */
 "DHCP MTU setzen:",
+/* TR_IDENTIFY */
+"Identifizieren",
+/* TR_IDENTIFY_SHOULD_BLINK */
+"Die Leds dieses Netzwerkports sollten jetzt blinken ...",
+/* TR_IDENTIFY_NOT_SUPPORTED */
+"Dieser Netzwerkport untestützt die Funktion leider nicht.",
 };

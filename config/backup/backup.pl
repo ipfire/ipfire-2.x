@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -22,7 +22,7 @@
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-
+use File::Path;
 my $debug = 1;
 my @include = "";
 my ($Sekunden, $Minuten, $Stunden, $Monatstag, $Monat, $Jahr, $Wochentag, $Jahrestag, $Sommerzeit) = localtime(time);
@@ -64,6 +64,66 @@ elsif ($ARGV[0] eq 'restore') {
   system("cd / && tar -xvz -p -f /tmp/restore.ipf");
   #Here some converter scripts to correct old Backups (before core 65)
   system("/usr/sbin/ovpn-ccd-convert");
+  #OUTGOINGFW CONVERTER
+  if( -d "${General::swroot}/outgoing"){
+	  if( -f "${General::swroot}/firewall/config" ){
+		  unlink("${General::swroot}/firewall/config");
+		  system("touch ${General::swroot}/firewall/config");
+		  chown 99,99,"${General::swroot}/firewall/config";
+	  }
+	  if( -f "${General::swroot}/firewall/outgoing" ){
+		  unlink("${General::swroot}/firewall/outgoing");
+		  system("touch ${General::swroot}/firewall/outgoing");
+		  chown 99,99,"${General::swroot}/firewall/outgoing";
+	  }
+	  unlink("${General::swroot}/fwhosts/customgroups");
+	  unlink("${General::swroot}/fwhosts/customhosts");
+	  unlink("${General::swroot}/fwhosts/customgroups");
+	  unlink("${General::swroot}/fwhosts/customnetworks");
+	  unlink("${General::swroot}/fwhosts/customservicegrp");
+	  unlink("${General::swroot}/fwhosts/customnetworks");
+	  system("touch ${General::swroot}/fwhosts/customgroups");
+	  system("touch ${General::swroot}/fwhosts/customhosts");
+	  system("touch ${General::swroot}/fwhosts/customnetworks");
+	  system("touch ${General::swroot}/fwhosts/customservicegrp");
+	  #START CONVERTER "OUTGOINGFW"
+	  system("/usr/sbin/convert-outgoingfw");
+	  chown 99,99,"${General::swroot}/fwhosts/customgroups";
+	  chown 99,99,"${General::swroot}/fwhosts/customhosts";
+	  chown 99,99,"${General::swroot}/fwhosts/customnetworks";
+	  chown 99,99,"${General::swroot}/fwhosts/customservicegrp";
+	  #START CONVERTER "OUTGOINGFW"
+	  rmtree("${General::swroot}/outgoing");
+  }
+  #XTACCESS CONVERTER
+  if( -d "${General::swroot}/xtaccess"){
+	  if( -f "${General::swroot}/firewall/input" ){
+		  unlink("${General::swroot}/firewall/input");
+		  system("touch ${General::swroot}/firewall/input");
+	  }
+	  #START CONVERTER "XTACCESS"
+	  system("/usr/sbin/convert-xtaccess");
+	  chown 99,99,"${General::swroot}/firewall/input";
+	  rmtree("${General::swroot}/xtaccess");
+  }
+  #DMZ-HOLES CONVERTER
+  if( -d "${General::swroot}/dmzholes" || -d "${General::swroot}/portfw"){
+	  if( -f "${General::swroot}/firewall/config" ){
+		  unlink("${General::swroot}/firewall/config");
+		  system("touch ${General::swroot}/firewall/config");
+	  }
+	  #START CONVERTER "DMZ-HOLES"
+	  system("/usr/sbin/convert-dmz");
+	  chown 99,99,"${General::swroot}/firewall/config";
+	  rmtree("${General::swroot}/dmzholes");
+  }
+  #PORTFORWARD CONVERTER
+  if( -d "${General::swroot}/portfw"){
+	#START CONVERTER "PORTFW"
+	system("/usr/sbin/convert-portfw");
+	rmtree("${General::swroot}/portfw");
+  }
+  system("/usr/local/bin/firewallctrl");
 
   # Convert old OpenVPN CCD files (CN change, core 75).
   system("/usr/local/bin/convert-ovpn");

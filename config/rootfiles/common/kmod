@@ -1,0 +1,13 @@
+bin/kmod
+sbin/depmod
+sbin/insmod
+sbin/lsmod
+sbin/modinfo
+sbin/modprobe
+sbin/rmmod
+#usr/include/libkmod.h
+#usr/lib/libkmod.la
+usr/lib/libkmod.so
+usr/lib/libkmod.so.2
+usr/lib/libkmod.so.2.2.3
+#usr/lib/pkgconfig/libkmod.pc

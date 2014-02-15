@@ -82,7 +82,7 @@ if ($upnpsettings{'ACTION'} eq $Lang::tr{'save'})
 debug_mode = $upnpsettings{'DEBUGMODE'}
 insert_forward_rules = $upnpsettings{'FORWARDRULES'}
 forward_chain_name = FORWARD
-prerouting_chain_name = PORTFW
+prerouting_chain_name = UPNPFW
 upstream_bitrate = $upnpsettings{'DOWNSTREAM'}
 downstream_bitrate = $upnpsettings{'UPSTREAM'}
 description_document_name = $upnpsettings{'DESCRIPTION'}

@@ -58,3 +58,7 @@ HOME=/
 
 # pakfire
 %nightly,random * 23-4	/usr/local/bin/pakfire update >/dev/null 2>&1
+
+# Re-read firewall rules every Sunday in March, October and November to take care of daylight saving time
+00 3 * 3 0          /usr/local/bin/timezone-transition /usr/local/bin/firewallctrl
+00 2 * 10-11 0      /usr/local/bin/timezone-transition /usr/local/bin/firewallctrl

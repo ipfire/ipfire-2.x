@@ -1,11 +1,12 @@
 boot/System.map-KVER-ipfire-kirkwood
 #boot/System.map-ipfire-kirkwood
 boot/config-KVER-ipfire-kirkwood
+boot/dtb-KVER-ipfire-kirkwood
 boot/uImage-ipfire-kirkwood
 boot/vmlinuz-KVER-ipfire-kirkwood
-etc/modprobe.d/framebuffer
-etc/modprobe.d/ipv6
-etc/modprobe.d/isdn
+etc/modprobe.d/framebuffer.conf
+etc/modprobe.d/ipv6.conf
+etc/modprobe.d/isdn.conf
 lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/build
 #lib/modules/KVER-ipfire-kirkwood/kernel

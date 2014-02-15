@@ -30,6 +30,7 @@ use File::Copy;
 use File::Temp qw/ tempfile tempdir /;
 use strict;
 use Archive::Zip qw(:ERROR_CODES :CONSTANTS);
+use Sort::Naturally;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
@@ -68,6 +69,7 @@ my $confighost="${General::swroot}/fwhosts/customhosts";
 my $configgrp="${General::swroot}/fwhosts/customgroups";
 my $customnet="${General::swroot}/fwhosts/customnetworks";
 my $name;
+my $col="";
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'ENABLED_BLUE'} = 'off';
@@ -165,49 +167,29 @@ sub deletebackupcert
 		unlink ("${General::swroot}/ovpn/certs/$hexvalue.pem");
 	}
 }
-
 sub checkportfw {
-    my $KEY2 = $_[0]; # key2
-    my $SRC_PORT = $_[1]; # src_port
-    my $PROTOCOL = $_[2]; # protocol
-    my $SRC_IP = $_[3]; # sourceip
-
-    my $pfwfilename = "${General::swroot}/portfw/config";
-    open(FILE, $pfwfilename) or die 'Unable to open config file.';
-    my @pfwcurrent = <FILE>;
-    close(FILE);
-    my $pfwkey1 = 0; # used for finding last sequence number used 
-    foreach my $pfwline (@pfwcurrent)
-    {
-	my @pfwtemp = split(/\,/,$pfwline);
-
-	chomp ($pfwtemp[8]);
-	if ($KEY2 eq "0"){ # if key2 is 0 then it is a portfw addition
-		if ( $SRC_PORT eq $pfwtemp[3] &&
-			$PROTOCOL eq $pfwtemp[2] &&
-			$SRC_IP eq $pfwtemp[7])
-		{
-			 $errormessage = "$Lang::tr{'source port in use'} $SRC_PORT";
-		}
-		# Check if key2 = 0, if it is then it is a port forward entry and we want the sequence number
-		if ( $pfwtemp[1] eq "0") {
-			$pfwkey1=$pfwtemp[0];
-		}
-		# Darren Critchley - Duplicate or overlapping Port range check
-		if ($pfwtemp[1] eq "0" && 
-			$PROTOCOL eq $pfwtemp[2] &&
-			$SRC_IP eq $pfwtemp[7] &&
-			$errormessage eq '') 
-		{
-			&portchecks($SRC_PORT, $pfwtemp[5]);		
-#			&portchecks($pfwtemp[3], $pfwtemp[5]);
-#			&portchecks($pfwtemp[3], $SRC_IP);
+	my $DPORT = shift;
+	my $DPROT = shift;
+	my %natconfig =();
+	my $confignat = "${General::swroot}/firewall/config";
+	$DPROT= uc ($DPROT);
+	&General::readhasharray($confignat, \%natconfig);
+	foreach my $key (sort keys %natconfig){
+		my @portarray = split (/\|/,$natconfig{$key}[30]);
+		foreach my $value (@portarray){
+			if ($value =~ /:/i){
+				my ($a,$b) = split (":",$value);
+				if ($DPROT eq $natconfig{$key}[12] && $DPORT gt $a && $DPORT lt $b){
+					$errormessage= "$Lang::tr{'source port in use'} $DPORT";
+				}
+			}else{
+				if ($DPROT eq $natconfig{$key}[12] && $DPORT eq $value){
+					$errormessage= "$Lang::tr{'source port in use'} $DPORT";
+				}
+			}
 		}
 	}
-    }
-#    $errormessage="$KEY2 $SRC_PORT $PROTOCOL $SRC_IP";
-
-    return;
+	return;
 }
 
 sub checkportoverlap
@@ -238,76 +220,6 @@ sub checkportinc
 	} else {
 		return 0; 
 	}
-}
-# Darren Critchley - Duplicate or overlapping Port range check
-sub portchecks
-{
-	my $p1 = $_[0]; # New port range
-	my $p2 = $_[1]; # existing port range
-#	$_ = $_[0];
-	our ($prtrange1, $prtrange2);
-	$prtrange1 = 0;
-#	if (m/:/ && $prtrange1 == 1) { # comparing two port ranges
-#		unless (&checkportoverlap($p1,$p2)) {
-#			$errormessage = "$Lang::tr{'source port overlaps'} $p1";
-#		}
-#	}
-	if (m/:/ && $prtrange1 == 0 && $errormessage eq '') { # compare one port to a range
-		unless (&checkportinc($p2,$p1)) {
-			$errormessage = "$Lang::tr{'srcprt within existing'} $p1";
-		}
-	}
-	$prtrange1 = 1;
-	if (! m/:/ && $prtrange1 == 1 && $errormessage eq '') { # compare one port to a range
-		unless (&checkportinc($p1,$p2)) {
-			$errormessage = "$Lang::tr{'srcprt range overlaps'} $p2";
-		}
-	}
-	return;
-}
-
-# Darren Critchley - certain ports are reserved for IPFire 
-# TCP 67,68,81,222,445
-# UDP 67,68
-# Params passed in -> port, rangeyn, protocol
-sub disallowreserved
-{
-	# port 67 and 68 same for tcp and udp, don't bother putting in an array
-	my $msg = "";
-	my @tcp_reserved = (81,222,445);
-	my $prt = $_[0]; # the port or range
-	my $ryn = $_[1]; # tells us whether or not it is a port range
-	my $prot = $_[2]; # protocol
-	my $srcdst = $_[3]; # source or destination
-	if ($ryn) { # disect port range
-		if ($srcdst eq "src") {
-			$msg = "$Lang::tr{'rsvd src port overlap'}";
-		} else {
-			$msg = "$Lang::tr{'rsvd dst port overlap'}";
-		}
-		my @tmprng = split(/\:/,$prt);
-		unless (67 < $tmprng[0] || 67 > $tmprng[1]) { $errormessage="$msg 67"; return; }
-		unless (68 < $tmprng[0] || 68 > $tmprng[1]) { $errormessage="$msg 68"; return; }
-		if ($prot eq "tcp") {
-			foreach my $prange (@tcp_reserved) {
-				unless ($prange < $tmprng[0] || $prange > $tmprng[1]) { $errormessage="$msg $prange"; return; }
-			}
-		}
-	} else {
-		if ($srcdst eq "src") {
-			$msg = "$Lang::tr{'reserved src port'}";
-		} else {
-			$msg = "$Lang::tr{'reserved dst port'}";
-		}
-		if ($prt == 67) { $errormessage="$msg 67"; return; }
-		if ($prt == 68) { $errormessage="$msg 68"; return; }
-		if ($prot eq "tcp") {
-			foreach my $prange (@tcp_reserved) {
-				if ($prange == $prt) { $errormessage="$msg $prange"; return; }
-			}
-		}
-	}
-	return;
 }
 
 sub writeserverconf {
@@ -597,7 +509,7 @@ sub getccdadresses
 	my @iprange=();
 	my %ccdhash=();
 	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ccdhash);
-	$iprange[0]=$ip1.".".$ip2.".".$ip3.".".2;
+	$iprange[0]=$ip1.".".$ip2.".".$ip3.".".($ip4+2);
 	for (my $i=1;$i<=$count;$i++) {
 		my $tmpip=$iprange[$i-1];
 		my $stepper=$i*4;
@@ -1137,16 +1049,11 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	goto SETTINGS_ERROR;
     	}
     }
-    if ($cgiparams{'ENABLED'} eq 'on'){
-	&disallowreserved($cgiparams{'DDEST_PORT'},0,$cgiparams{'DPROTOCOL'},"dest");
-    }	
     if ($errormessage) { goto SETTINGS_ERROR; }
-    
-    
+
     if ($cgiparams{'ENABLED'} eq 'on'){
-	&checkportfw(0,$cgiparams{'DDEST_PORT'},$cgiparams{'DPROTOCOL'},'0.0.0.0');
+	&checkportfw($cgiparams{'DDEST_PORT'},$cgiparams{'DPROTOCOL'});
     }
-    	
     if ($errormessage) { goto SETTINGS_ERROR; }
     
     if (! &General::validipandmask($cgiparams{'DOVPN_SUBNET'})) {
@@ -1207,6 +1114,12 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	$errormessage = $Lang::tr{'invalid port'};
 	goto SETTINGS_ERROR;
     }
+	
+	if ($cgiparams{'DDEST_PORT'} <= 1023) {
+		$errormessage = $Lang::tr{'ovpn port in root range'};
+		goto SETTINGS_ERROR;
+	}
+
     $vpnsettings{'ENABLED_BLUE'} = $cgiparams{'ENABLED_BLUE'};
     $vpnsettings{'ENABLED_ORANGE'} =$cgiparams{'ENABLED_ORANGE'};
     $vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
@@ -2437,12 +2350,12 @@ print <<END;
      	<tr>
      	  <td class='base'>fragment <br></td>
      	  <td><input type='TEXT' name='FRAGMENT' value='$cgiparams{'FRAGMENT'}' size='10' /></td>
-        <td>Default: <span class="base">1300</span></td>
+        <td>$Lang::tr{'openvpn default'}: <span class="base">1300</span></td>
       </tr>
      	<tr>
      	  <td class='base'>mssfix</td>
      	  <td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
-     	  <td>Default: on</td>
+     	  <td>$Lang::tr{'openvpn default'}: on</td>
    	  </tr>
 
 	<tr>
@@ -2616,7 +2529,7 @@ END
 	}
 	
 	print <<END
-    <table width='100%' border='0'  cellpadding='0' cellspacing='1'>
+    <table width='100%' cellpadding='0' cellspacing='1'>
     <tr>
 	<td class='boldbase' align='center' nowrap='nowrap' width='20%'><b>$Lang::tr{'ccd name'}</td><td class='boldbase' align='center' width='8%'><b>$Lang::tr{'network'}</td><td class='boldbase' width='8%' align='center' nowrap='nowrap'><b>$Lang::tr{'ccd used'}</td><td width='1%' align='center'></td><td width='1%' align='center'></td></tr>
 END
@@ -2670,15 +2583,15 @@ END
 #	<td><b>$Lang::tr{'protocol'}</b></td>
 # protocol temp removed 
     print <<END
-    <table width='100%' border='0' cellpadding='2' cellspacing='0'>
+    <table width='100%' cellpadding='2' cellspacing='0' class='tbl'>
     <tr>
-	<td><b>$Lang::tr{'common name'}</b></td>
-	<td><b>$Lang::tr{'real address'}</b></td>
-	<td><b>$Lang::tr{'virtual address'}</b></td>
-	<td><b>$Lang::tr{'loged in at'}</b></td>
-	<td><b>$Lang::tr{'bytes sent'}</b></td>
-	<td><b>$Lang::tr{'bytes received'}</b></td>
-	<td><b>$Lang::tr{'last activity'}</b></td>
+	<th><b>$Lang::tr{'common name'}</b></th>
+	<th><b>$Lang::tr{'real address'}</b></th>
+	<th><b>$Lang::tr{'virtual address'}</b></th>
+	<th><b>$Lang::tr{'loged in at'}</b></th>
+	<th><b>$Lang::tr{'bytes sent'}</b></th>
+	<th><b>$Lang::tr{'bytes received'}</b></th>
+	<th><b>$Lang::tr{'last activity'}</b></th>
     </tr>
 END
 ;
@@ -2729,22 +2642,23 @@ END
 	}
 	my $user2 = @users;
 	if ($user2 >= 1){
-    	    for (my $idx = 1; $idx <= $user2; $idx++){
+		for (my $idx = 1; $idx <= $user2; $idx++){
 						if ($idx % 2) {
-		    			print "<tr bgcolor='$color{'color20'}'>\n";
-	    			} else {
-		    			print "<tr bgcolor='$color{'color22'}'>\n";
+							print "<tr>";
+							$col="bgcolor='$color{'color22'}'";
+						} else {
+							print "<tr>";
+							$col="bgcolor='$color{'color20'}'";
 						}
-						print "<td align='left'>$users[$idx-1]{'CommonName'}</td>";
-						print "<td align='left'>$users[$idx-1]{'RealAddress'}</td>";
-						print "<td align='left'>$users[$idx-1]{'VirtualAddress'}</td>";
-						print "<td align='left'>$users[$idx-1]{'Since'}</td>";
-						print "<td align='left'>$users[$idx-1]{'BytesSent'}</td>";
-						print "<td align='left'>$users[$idx-1]{'BytesReceived'}</td>";
-						print "<td align='left'>$users[$idx-1]{'LastRef'}</td>";
-#		        print "<td align='left'>$users[$idx-1]{'Proto'}</td>";
-	    }
-	}        
+						print "<td align='left' $col>$users[$idx-1]{'CommonName'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'RealAddress'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'VirtualAddress'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'Since'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'BytesSent'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'BytesReceived'}</td>";
+						print "<td align='left' $col>$users[$idx-1]{'LastRef'}</td>";
+			}
+	}
 	
 	print "</table>";
 	print <<END
@@ -2873,7 +2787,7 @@ if ( -s "${General::swroot}/ovpn/settings") {
 		<td class='base'>$Lang::tr{'net to net vpn'} (Upload Client Package)</td></tr>
 	  <tr><td>&nbsp;</td><td class='base'><input type='file' name='FH' size='30'></td></tr>
 	  <tr><td>&nbsp;</td><td>Import Connection Name <img src='/blob.gif' /></td></tr>
-    <tr><td>&nbsp;</td><td class='base'><input type='text' name='n2nname' size='30'>Default : Client Packagename</td></tr>
+    <tr><td>&nbsp;</td><td class='base'><input type='text' name='n2nname' size='30'>$Lang::tr{'openvpn default'}: Client Packagename</td></tr>
 	  <tr><td colspan='3'><hr /></td></tr>
     <tr><td align='right' colspan='3'><input type='submit' name='ACTION' value='$Lang::tr{'add'}' /></td></tr>
 	  <tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
@@ -3577,10 +3491,24 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 		  goto VPNCONF_ERROR;
-		} 
+		}
+	
+	if ($cgiparams{'DEST_PORT'} <= 1023) {
+		$errormessage = $Lang::tr{'ovpn port in root range'};
+		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+		  goto VPNCONF_ERROR;
+		}
 
-    if ($cgiparams{'OVPN_MGMT'} eq  '') {
-			$cgiparams{'OVPN_MGMT'} = $cgiparams{'DEST_PORT'};		
+	if ($cgiparams{'OVPN_MGMT'} eq  '') {
+		$cgiparams{'OVPN_MGMT'} = $cgiparams{'DEST_PORT'};		
+		}
+	
+	if ($cgiparams{'OVPN_MGMT'} <= 1023) {
+		$errormessage = $Lang::tr{'ovpn mgmt in root range'};
+		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+		  goto VPNCONF_ERROR;
 		}
    
 }
@@ -4578,7 +4506,7 @@ END
     
 #default setzen
     if ($cgiparams{'DCIPHER'} eq '') {
-	$cgiparams{'DCIPHER'} =  'BF-CBC';     
+	$cgiparams{'DCIPHER'} =  'AES-256-CBC';
     }
     if ($cgiparams{'DDEST_PORT'} eq '') {
 	$cgiparams{'DDEST_PORT'} =  '1194';     
@@ -4618,6 +4546,9 @@ END
     $selected{'DCIPHER'}{'AES-128-CBC'} = '';
     $selected{'DCIPHER'}{'AES-192-CBC'} = '';
     $selected{'DCIPHER'}{'AES-256-CBC'} = '';
+    $selected{'DCIPHER'}{'CAMELLIA-128-CBC'} = '';
+    $selected{'DCIPHER'}{'CAMELLIA-192-CBC'} = '';
+    $selected{'DCIPHER'}{'CAMELLIA-256-CBC'} = '';
     $selected{'DCIPHER'}{$cgiparams{'DCIPHER'}} = 'SELECTED';
     $checked{'DCOMPLZO'}{'off'} = '';
     $checked{'DCOMPLZO'}{'on'} = '';
@@ -4686,19 +4617,24 @@ END
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
         <td><input type='checkbox' name='DCOMPLZO' $checked{'DCOMPLZO'}{'on'} /></td>
         <td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td>
-        <td><select name='DCIPHER'><option value='DES-CBC' $selected{'DCIPHER'}{'DES-CBC'}>DES-CBC</option>
-				   <option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC</option>
-				   <option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC</option>
-				   <option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC</option>
-				   <option value='RC2-CBC' $selected{'DCIPHER'}{'RC2-CBC'}>RC2-CBC</option>				  				    
-				   <option value='RC2-40-CBC' $selected{'DCIPHER'}{'RC2-40-CBC'}>RC2-40-CBC</option>
-				   <option value='RC2-64-CBC' $selected{'DCIPHER'}{'RC2-64-CBC'}>RC2-64-CBC</option>
-				   <option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC</option>
-				   <option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC</option>
-				   <option value='AES-128-CBC' $selected{'DCIPHER'}{'AES-128-CBC'}>AES-128-CBC</option>
-				   <option value='AES-192-CBC' $selected{'DCIPHER'}{'AES-192-CBC'}>AES-192-CBC</option>
-				   <option value='AES-256-CBC' $selected{'DCIPHER'}{'AES-256-CBC'}>AES-256-CBC</option></select></td></tr>
-				   <tr><td colspan='4'><hr /></td></tr>
+        <td><select name='DCIPHER'>
+		<option value='CAMELLIA-256-CBC' $selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-256-CBC</option>
+		<option value='CAMELLIA-192-CBC' $selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-192-CBC</option>
+		<option value='CAMELLIA-128-CBC' $selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-128-CBC</option>
+		<option value='AES-256-CBC' $selected{'DCIPHER'}{'AES-256-CBC'}>AES-256-CBC</option>
+		<option value='AES-192-CBC' $selected{'DCIPHER'}{'AES-192-CBC'}>AES-192-CBC</option>
+		<option value='AES-128-CBC' $selected{'DCIPHER'}{'AES-128-CBC'}>AES-128-CBC</option>
+		<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC</option>
+		<option value='RC2-64-CBC' $selected{'DCIPHER'}{'RC2-64-CBC'}>RC2-64-CBC</option>
+		<option value='RC2-40-CBC' $selected{'DCIPHER'}{'RC2-40-CBC'}>RC2-40-CBC</option>
+		<option value='RC2-CBC' $selected{'DCIPHER'}{'RC2-CBC'}>RC2-CBC</option>
+		<option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC</option>
+		<option value='DES-CBC' $selected{'DCIPHER'}{'DES-CBC'}>DES-CBC</option>
+		<option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC</option>
+		<option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC</option>
+		<option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC</option>
+	</select></td></tr>
+    <tr><td colspan='4'><br><br></td></tr>
 END
 ;				   
     
@@ -4725,45 +4661,46 @@ END
     }
     print "</form></table>";
     &Header::closebox();
-    &Header::openbox('100%', 'LEFT', "$Lang::tr{'certificate authorities'}:");
+    &Header::openbox('100%', 'LEFT', "$Lang::tr{'certificate authorities'}");
     print <<EOF#'
-    <table width='100%' border='0' cellspacing='1' cellpadding='0'>
+    <table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
     <tr>
-	<td width='25%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></td>
-	<td width='65%' class='boldbase' align='center'><b>$Lang::tr{'subject'}</b></td>
-	<td width='10%' class='boldbase' colspan='3' align='center'><b>$Lang::tr{'action'}</b></td>
+	<th width='25%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></th>
+	<th width='65%' class='boldbase' align='center'><b>$Lang::tr{'subject'}</b></th>
+	<th width='10%' class='boldbase' colspan='3' align='center'><b>$Lang::tr{'action'}</b></th>
     </tr>
 EOF
     ;
+    my $col1="bgcolor='$color{'color22'}'";
+	my $col2="bgcolor='$color{'color20'}'";
     if (-f "${General::swroot}/ovpn/ca/cacert.pem") {
 	my $casubject = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/ca/cacert.pem`;
 	$casubject    =~ /Subject: (.*)[\n]/;
 	$casubject    = $1;
 	$casubject    =~ s+/Email+, E+;
 	$casubject    =~ s/ ST=/ S=/;
-
 	print <<END
-	<tr bgcolor='$color{'color22'}'>
-	<td class='base'>$Lang::tr{'root certificate'}</td>
-	<td class='base'>$casubject</td>
-	<form method='post' name='frmrootcrta'><td width='3%' align='center'>
+	<tr>
+	<td class='base' $col1>$Lang::tr{'root certificate'}</td>
+	<td class='base' $col1>$casubject</td>
+	<form method='post' name='frmrootcrta'><td width='3%' align='center' $col1>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'show root certificate'}' />
 	    <input type='image' name='$Lang::tr{'edit'}' src='/images/info.gif' alt='$Lang::tr{'show root certificate'}' title='$Lang::tr{'show root certificate'}' width='20' height='20' border='0' />
 	</td></form>
-	<form method='post' name='frmrootcrtb'><td width='3%' align='center'>
+	<form method='post' name='frmrootcrtb'><td width='3%' align='center' $col1>
 	    <input type='image' name='$Lang::tr{'download root certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download root certificate'}' title='$Lang::tr{'download root certificate'}' border='0' />
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'download root certificate'}' />
 	</td></form>
-	<td width='4%'>&nbsp;</td></tr>
+	<td width='4%' $col1>&nbsp;</td></tr>
 END
 	;
     } else {
 	# display rootcert generation buttons
 	print <<END
-	<tr bgcolor='$color{'color22'}'>
-	<td class='base'>$Lang::tr{'root certificate'}:</td>
-	<td class='base'>$Lang::tr{'not present'}</td>
-	<td colspan='3'>&nbsp;</td></tr>
+	<tr>
+	<td class='base' $col1>$Lang::tr{'root certificate'}:</td>
+	<td class='base' $col1>$Lang::tr{'not present'}</td>
+	<td colspan='3' $col1>&nbsp;</td></tr>
 END
 	;
     }
@@ -4776,27 +4713,27 @@ END
 	$hostsubject    =~ s/ ST=/ S=/;
 
 	print <<END
-	<tr bgcolor='$color{'color20'}'>
-	<td class='base'>$Lang::tr{'host certificate'}</td>
-	<td class='base'>$hostsubject</td>
-	<form method='post' name='frmhostcrta'><td width='3%' align='center'>
+	<tr>
+	<td class='base' $col2>$Lang::tr{'host certificate'}</td>
+	<td class='base' $col2>$hostsubject</td>
+	<form method='post' name='frmhostcrta'><td width='3%' align='center' $col2>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'show host certificate'}' />
 	    <input type='image' name='$Lang::tr{'show host certificate'}' src='/images/info.gif' alt='$Lang::tr{'show host certificate'}' title='$Lang::tr{'show host certificate'}' width='20' height='20' border='0' />
 	</td></form>
-	<form method='post' name='frmhostcrtb'><td width='3%' align='center'>
-	    <input type='image' name='$Lang::tr{'download host certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download host certificate'}' title='$Lang::tr{'download host certificate'}' border='0' />
-	    <input type='hidden' name='ACTION' value='$Lang::tr{'download host certificate'}' />
+	<form method='post' name='frmhostcrtb'><td width='3%' align='center' $col2>
+	    <input type='image' name="$Lang::tr{'download host certificate'}" src='/images/media-floppy.png' alt="$Lang::tr{'download host certificate'}" title="$Lang::tr{'download host certificate'}" border='0' />
+	    <input type='hidden' name='ACTION' value="$Lang::tr{'download host certificate'}" />
 	</td></form>
-	<td width='4%'>&nbsp;</td></tr>
+	<td width='4%' $col2>&nbsp;</td></tr>
 END
 	;
     } else {
 	# Nothing
 	print <<END
-	<tr bgcolor='$color{'color20'}'>
-	<td width='25%' class='base'>$Lang::tr{'host certificate'}:</td>
-	<td class='base'>$Lang::tr{'not present'}</td>
-	</td><td colspan='3'>&nbsp;</td></tr>
+	<tr>
+	<td width='25%' class='base' $col2>$Lang::tr{'host certificate'}:</td>
+	<td class='base' $col2>$Lang::tr{'not present'}</td>
+	</td><td colspan='3' $col2>&nbsp;</td></tr>
 END
 	;
     }
@@ -4859,7 +4796,7 @@ print <<END
 <form method='post' enctype='multipart/form-data'>
 <table width='100%' border='0'>
 <tr><td class='base' nowrap='nowrap'>$Lang::tr{'ca name'}:</td><td nowrap='nowrap' width='8%'><input type='text' name='CA_NAME' value='$cgiparams{'CA_NAME'}' size='15' align='left'/></td><td nowrap='nowrap' align='right'><input type='file' name='FH' size='25' /><input type='submit' name='ACTION' value='$Lang::tr{'upload ca certificate'}' /></td></tr>
-<tr><td colspan='4'><hr /></td></tr>
+<tr><td colspan='4'><br></td></tr>
 <tr align='right'><td colspan='4' align='right' width='80%'><input type='submit' name='ACTION' value='$Lang::tr{'show crl'}' /></td></tr>
 </table>
 END
@@ -4883,29 +4820,31 @@ END
     print <<END
 
 
-    <table width='100%' border='0' cellspacing='1' cellpadding='0'>
+    <table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
 <tr>
-    <td width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></td>
-    <td width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></td>
-    <td width='22%' class='boldbase' align='center'><b>$Lang::tr{'network'}</b></td>
-    <td width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></td>
-    <td width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></td>
-    <td width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></td>
+    <th width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></th>
+    <th width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
+    <th width='22%' class='boldbase' align='center'><b>$Lang::tr{'network'}</b></th>
+    <th width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
+    <th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
+    <th width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 	;
-        my $id = 0;
-        my $gif;
-	 foreach my $key (sort { uc($confighash{$a}[1]) cmp uc($confighash{$b}[1]) } keys %confighash) {
-    	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
-
+	my $id = 0;
+	my $gif;
+	my $col1="";
+	foreach my $key (sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
+	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 	if ($id % 2) {
-	    print "<tr bgcolor='$color{'color20'}'>\n";
+		print "<tr>";
+		$col="bgcolor='$color{'color20'}'";
 	} else {
-	    print "<tr bgcolor='$color{'color22'}'>\n";
+		print "<tr>";
+		$col="bgcolor='$color{'color22'}'";
 	}
-	print "<td align='center' nowrap='nowrap'>$confighash{$key}[1]</td>";
-	print "<td align='center' nowrap='nowrap'>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
+	print "<td align='center' nowrap='nowrap' $col>$confighash{$key}[1]</td>";
+	print "<td align='center' nowrap='nowrap' $col>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
 	#if ($confighash{$key}[4] eq 'cert') {
 	    #print "<td align='left' nowrap='nowrap'>$confighash{$key}[2]</td>";
 	#} else {
@@ -4916,19 +4855,20 @@ END
 	$cavalid    = $1;
 	if ($confighash{$key}[32] eq "" && $confighash{$key}[3] eq 'net' ){$confighash{$key}[32]="net-2-net";}
 	if ($confighash{$key}[32] eq "" && $confighash{$key}[3] eq 'host' ){$confighash{$key}[32]="dynamic";}
-	print "<td align='center'>$confighash{$key}[32]</td>";
-	print "<td align='center'>$confighash{$key}[25]</td>";
-
-	my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+	print "<td align='center' $col>$confighash{$key}[32]</td>";
+	print "<td align='center' $col>$confighash{$key}[25]</td>";
+	$col1="bgcolor='${Header::colourred}'";
+	my $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
 
 	if ($confighash{$key}[0] eq 'off') {
-	 $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+		$col1="bgcolor='${Header::colourblue}'";
+		$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
 	} else {
 
 ###
 # m.a.d net2net
-###       
-       
+###
+
        if ($confighash{$key}[3] eq 'net') {
 
         if (-e "/var/run/$confighash{$key}[1]n2n.pid") {
@@ -4952,39 +4892,41 @@ END
 #EXITING       -- A graceful exit is in progress.
 ####
 
-        if ( $tustate[1] eq 'CONNECTED') {
-          $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></tr></td></table>";
-                          } else {
-          $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$tustate[1]</font></b></td></tr></table>";                          
+		if (($tustate[1] eq 'CONNECTED') || ($tustate[1] eq 'WAIT')) {
+			$col1="bgcolor='${Header::colourgreen}'";
+			$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+		}else {
+			$col1="bgcolor='${Header::colourred}'";
+			$active = "<b><font color='#FFFFFF'>$tustate[1]</font></b>";
+		}
            }
-           } 
            }
-        }	else {
+        }else {
 
-	        my $cn;
-    	    my @match = ();	
-	  foreach my $line (@status) {
-		chomp($line);
-		if ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
-		    @match = split(m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $line);
-		    if ($match[1] ne "Common Name") {
-	    		$cn = $match[1];
-		    }	    
-	    	$cn =~ s/[_]/ /g;
-		    if ($cn eq "$confighash{$key}[2]") {
-			$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
-		    }
-   }
-      
+				my $cn;
+				my @match = ();
+		foreach my $line (@status) {
+			chomp($line);
+			if ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
+				@match = split(m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $line);
+				if ($match[1] ne "Common Name") {
+					$cn = $match[1];
+				}
+				$cn =~ s/[_]/ /g;
+				if ($cn eq "$confighash{$key}[2]") {
+					$col1="bgcolor='${Header::colourgreen}'";
+					$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+				}
+			}
+		}
 	}
-}
 }
 
 
 	print <<END
-	<td align='center'>$active</td>
+	<td align='center' $col1>$active</td>
 		
-	<form method='post' name='frm${key}a'><td align='center'>
+	<form method='post' name='frm${key}a'><td align='center' $col>
 	    <input type='image'  name='$Lang::tr{'dl client arch'}' src='/images/openvpn.png' alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' border='0' />
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
 	    <input type='hidden' name='KEY' value='$key' />
@@ -4993,7 +4935,7 @@ END
 	;
 	if ($confighash{$key}[4] eq 'cert') {
 	    print <<END
-	    <form method='post' name='frm${key}b'><td align='center'>
+	    <form method='post' name='frm${key}b'><td align='center' $col>
 		<input type='image' name='$Lang::tr{'show certificate'}' src='/images/info.gif' alt='$Lang::tr{'show certificate'}' title='$Lang::tr{'show certificate'}' border='0' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'show certificate'}' />
 		<input type='hidden' name='KEY' value='$key' />
@@ -5004,7 +4946,7 @@ END
 	}
 	if ($confighash{$key}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$key}[1].p12") { 
 	    print <<END
-	    <form method='post' name='frm${key}c'><td align='center'>
+	    <form method='post' name='frm${key}c'><td align='center' $col>
 		<input type='image' name='$Lang::tr{'download pkcs12 file'}' src='/images/media-floppy.png' alt='$Lang::tr{'download pkcs12 file'}' title='$Lang::tr{'download pkcs12 file'}' border='0' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'download pkcs12 file'}' />
 		<input type='hidden' name='KEY' value='$key' />
@@ -5012,7 +4954,7 @@ END
 END
 	; } elsif ($confighash{$key}[4] eq 'cert') {
 	    print <<END
-	    <form method='post' name='frm${key}c'><td align='center'>
+	    <form method='post' name='frm${key}c'><td align='center' $col>
 		<input type='image' name='$Lang::tr{'download certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download certificate'}' title='$Lang::tr{'download certificate'}' border='0' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'download certificate'}' />
 		<input type='hidden' name='KEY' value='$key' />
@@ -5022,18 +4964,18 @@ END
 	    print "<td>&nbsp;</td>";
 	}
 	print <<END
-	<form method='post' name='frm${key}d'><td align='center'>
+	<form method='post' name='frm${key}d'><td align='center' $col>
 	    <input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' border='0' />
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
 	    <input type='hidden' name='KEY' value='$key' />
 	</td></form>
 
-	<form method='post' name='frm${key}e'><td align='center'>
+	<form method='post' name='frm${key}e'><td align='center' $col>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
 	    <input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' width='20' height='20' border='0'/>
 	    <input type='hidden' name='KEY' value='$key' />
 	</td></form>
-	<form method='post' name='frm${key}f'><td align='center'>
+	<form method='post' name='frm${key}f'><td align='center' $col>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
 	    <input type='image'  name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' width='20' height='20' border='0' />
 	    <input type='hidden' name='KEY' value='$key' />
@@ -5069,7 +5011,7 @@ END
 	<td> <img src='/images/openvpn.png' alt='?RELOAD'/></td>
 	<td class='base'>$Lang::tr{'dl client arch'}</td>
     </tr>
-    </table><hr>
+    </table><br>
 END
     ;
     }

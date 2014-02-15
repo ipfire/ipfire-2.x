@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -28,8 +28,9 @@ VER = ipfire
 
 THISAPP    = xen-image
 TARGET     = $(DIR_INFO)/$(THISAPP)
+SUP_ARCH   = i586
 
-KVER2 = `grep "^VER " $(DIR_SRC)/lfs/linux2 | sed "s| ||g" | cut -d"=" -f2`
+KERN_PACK = `grep "^PAK_VER " $(DIR_SRC)/lfs/linux | sed "s| ||g" | cut -d"=" -f2`
 
 ###############################################################################
 # Top-level Rules
@@ -46,145 +47,21 @@ md5 :
 ###############################################################################
 # Installation Details
 ###############################################################################
-IMGinst  := /install/images/$(SNAME)-$(VERSION).xen.$(MACHINE)-full-core$(CORE).tar.bz2
-MNThdd   := /install/harddisk
-
-IMGboot  := /install/images/$(SNAME)/$(SNAME)-boot.img
-IMGswap  := /install/images/$(SNAME)/$(SNAME)-swap.img
-IMGroot  := /install/images/$(SNAME)/$(SNAME)-root.img
-IMGvar   := /install/images/$(SNAME)/$(SNAME)-var.img
-
-SIZEboot := 30
-SIZEswap := 512
-SIZEroot := 512
-SIZEvar  := 950
+IMGinst  := /install/images/$(SNAME)-$(VERSION).xen.$(MACHINE)-downloader-core$(CORE).tar.bz2
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	rm -rf $(MNThdd) $(IMGinst) $(IMGroot) && mkdir -p $(MNThdd)
-	mkdir -p /install/images/$(SNAME)   # /boot
-
-	#Create bootimage
-	dd bs=1M if=/dev/zero of=$(IMGboot) count=$(SIZEboot)
-	mkfs.ext2 -F $(IMGboot)
-
-	#Create swapimage
-	dd bs=1M if=/dev/zero of=$(IMGswap) count=$(SIZEswap)
-	mkswap $(IMGswap)
-
-	#Create rootimage
-	dd bs=1M if=/dev/zero of=$(IMGroot) count=$(SIZEroot)
-	mkfs.ext3 -F $(IMGroot)
-
-	#Create varimage
-	dd bs=1M if=/dev/zero of=$(IMGvar) count=$(SIZEvar)
-	mkfs.ext3 -F $(IMGvar)
-
-	# Mount Images
-	mount -o loop $(IMGroot) $(MNThdd)
-	mkdir $(MNThdd)/boot
-	mkdir $(MNThdd)/var
-	mkdir $(MNThdd)/var/log
-	mount -o loop $(IMGboot) $(MNThdd)/boot
-	mount -o loop $(IMGvar) $(MNThdd)/var
-
-	# Install IPFire without kernel modules
-	tar -C $(MNThdd)/ -xvf /install/cdrom/$(SNAME)-$(VERSION).tlz --lzma \
-		--exclude=lib/modules* --exclude=boot*
-
-	#Install legacy Xen Kernel
-	tar -C $(MNThdd)/opt/pakfire/tmp -xvf /install/packages/linux-xen-$(KVER2)-*.ipfire
-	chroot $(MNThdd) /opt/pakfire/tmp/install.sh
-	rm -rf $(MNThdd)/opt/pakfire/tmp/*
-
-	#Install pae Kernel
-	tar -C $(MNThdd)/opt/pakfire/tmp -xvf /install/packages/linux-pae-$(KVER)-*.ipfire
-	chroot $(MNThdd) /opt/pakfire/tmp/install.sh
-	rm -rf $(MNThdd)/opt/pakfire/tmp/*
-
-	#Create grub menuentry for pygrub
-	mkdir $(MNThdd)/boot/grub
-	echo "timeout 10"                          > $(MNThdd)/boot/grub/grub.conf
-	echo "default 0"                          >> $(MNThdd)/boot/grub/grub.conf
-	echo "title IPFire (legacy XEN-Kernel)"   >> $(MNThdd)/boot/grub/grub.conf
-	echo "  kernel /vmlinuz-$(KVER2)-ipfire-xen root=/dev/xvda3 rootdelay=10 panic=10 console=xvc0 ro" \
-						  >> $(MNThdd)/boot/grub/grub.conf
-	echo "  initrd /ipfirerd-$(KVER2)-xen.img" >> $(MNThdd)/boot/grub/grub.conf
-	echo "# savedefault 0" >> $(MNThdd)/boot/grub/grub.conf
-	echo "title IPFire (PAE-Kernel)"   >> $(MNThdd)/boot/grub/grub.conf
-	echo "  kernel /vmlinuz-$(KVER)-ipfire-pae root=/dev/xvda3 rootdelay=10 panic=10 console=xvc0 ro" \
-						  >> $(MNThdd)/boot/grub/grub.conf
-	echo "  initrd /ipfirerd-$(KVER)-xen.img" >> $(MNThdd)/boot/grub/grub.conf
-	echo "# savedefault 1" >> $(MNThdd)/boot/grub/grub.conf
-
-	ln -s grub.conf $(MNThdd)/boot/grub/menu.lst
-
-	#Copy the meta-info of linux-xen package
-	cp -f /install/packages/meta-linux-xen $(MNThdd)/opt/pakfire/db/installed
-	cp -f /install/packages/meta-linux-xen $(MNThdd)/opt/pakfire/db/meta
-	cp -f /install/packages/meta-linux-pae $(MNThdd)/opt/pakfire/db/installed
-	cp -f /install/packages/meta-linux-pae $(MNThdd)/opt/pakfire/db/meta
-
-	#Set default configuration
-	echo "LANGUAGE=en" >> $(MNThdd)/var/ipfire/main/settings
-	echo "HOSTNAME=$(SNAME)" >> $(MNThdd)/var/ipfire/main/settings
-	echo "THEME=ipfire" >> $(MNThdd)/var/ipfire/main/settings
-	touch $(MNThdd)/lib/modules/$(KVER2)-ipfire-xen/modules.dep
-	mkdir $(MNThdd)/proc
-	mount --bind /proc $(MNThdd)/proc
-	mount --bind /dev  $(MNThdd)/dev
-	mount --bind /sys  $(MNThdd)/sys
-	chroot $(MNThdd) /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
-	sed -i -e "s|DEVICE1|/dev/xvda1|g" $(MNThdd)/etc/fstab
-	sed -i -e "s|DEVICE2|/dev/xvda2|g" $(MNThdd)/etc/fstab
-	sed -i -e "s|DEVICE3|/dev/xvda3|g" $(MNThdd)/etc/fstab
-	sed -i -e "s|DEVICE4|/dev/xvda4|g" $(MNThdd)/etc/fstab
-
-	sed -i -e "s|FSTYPE|ext3|g" $(MNThdd)/etc/fstab
-
-	chroot $(MNThdd) /sbin/dracut --force --verbose /boot/ipfirerd-$(KVER2)-xen.img $(KVER2)-ipfire-xen
-	chroot $(MNThdd) /sbin/dracut --force --verbose /boot/ipfirerd-$(KVER)-pae.img $(KVER)-ipfire-pae
-
-	#Remove root / fstab check
-	rm -rf $(MNThdd)/etc/rc.d/rcsysinit.d/S19checkfstab
-	#Remove console init
-	rm -rf $(MNThdd)/etc/rc.d/rcsysinit.d/S70console
-
-	#Add xvc0 to securetty
-	echo xvc0 >> $(MNThdd)/etc/securetty
-
-	#Add getty for xvc0
-	echo "#Enable login for XEN" >> $(MNThdd)/etc/inittab
-	echo "8:2345:respawn:/sbin/agetty xvc0 9600" >> $(MNThdd)/etc/inittab
-
-	#Disable some initskripts
-	echo "#!/bin/sh" > $(MNThdd)/etc/rc.d/init.d/setclock
-	echo "#!/bin/sh" > $(MNThdd)/etc/rc.d/init.d/keymap
-
-	#Remove autoload of acpi modules
-	sed -i -e "s|^ac|#ac|g" $(MNThdd)/etc/sysconfig/modules
-	sed -i -e "s|^battery|#battery|g" $(MNThdd)/etc/sysconfig/modules
-	sed -i -e "s|^button|#button|g" $(MNThdd)/etc/sysconfig/modules
-	sed -i -e "s|^fan|#fan|g" $(MNThdd)/etc/sysconfig/modules
-	sed -i -e "s|^processor|#processor|g" $(MNThdd)/etc/sysconfig/modules
-	sed -i -e "s|^thermal|#thermal|g" $(MNThdd)/etc/sysconfig/modules
-	sed -i -e "s|^video|#video|g" $(MNThdd)/etc/sysconfig/modules
-
+	rm -rf /install/images/$(SNAME) $(IMGinst) && mkdir -p /install/images/$(SNAME)
+	
 	# Copy readme and config
 	cp $(DIR_SRC)/config/xen-image/* \
 		/install/images/$(SNAME)
 
-	# Unmount
-	umount $(MNThdd)/proc
-	umount $(MNThdd)/dev
-	umount $(MNThdd)/sys
-	umount $(MNThdd)/var
-	umount $(MNThdd)/boot
-	umount $(MNThdd)
-
-	# Zerofree ext3 images to get better compression
-	zerofree $(IMGboot)
-	zerofree $(IMGroot)
-	zerofree $(IMGvar)
+	# configure image downloader
+	sed -i -e "s/xxxSNAMExxx/$(SNAME)/" /install/images/$(SNAME)/xen-image-maker.sh
+	sed -i -e "s/xxxVERSIONxxx/$(VERSION)/" /install/images/$(SNAME)/xen-image-maker.sh
+	sed -i -e "s/xxxCORExxx/$(CORE)/" /install/images/$(SNAME)/xen-image-maker.sh
+	sed -i -e "s/xxxKVERxxx/$(KVER)/" /install/images/$(SNAME)/xen-image-maker.sh
+	sed -i -e "s/xxxKERN_PACKxxx/$(KERN_PACK)/" /install/images/$(SNAME)/xen-image-maker.sh
 
 	# Compress Image
 	cd /install/images/ && tar -cvjf $(IMGinst) $(SNAME)

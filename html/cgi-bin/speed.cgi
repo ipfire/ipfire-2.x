@@ -36,9 +36,8 @@ foreach $field (@fields) {
 	}
 }
 
-
-my $interface = `cat /var/ipfire/red/iface`;
-my @data_now = `ip -s link show $interface`;
+my $interface = `cat /var/ipfire/red/iface 2>/dev/null`;
+my @data_now = `ip -s link show $interface 2>/dev/null`;
 
 my $lastline;
 my $rxb_now = 0;

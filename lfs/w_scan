@@ -25,7 +25,7 @@
 include Config
 
 
-VER        = 20121111
+VER        = 20130331
 
 THISAPP    = w_scan-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = w_scan
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = ""
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 30da05747fed9988e11ebc7745f5e71f
+$(DL_FILE)_MD5 = dfc14a4707321e068a594d6899398df8
 
 install : $(TARGET)
 

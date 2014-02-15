@@ -54,7 +54,6 @@ md5 :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP)
 	-mkdir -p /opt/pakfire/{db/{meta,lists,rootfiles,installed,core},etc,lib,tmp} \
 		/var/log/pakfire /var/cache/pakfire
 	cp -fRv $(DIR_SRC)/src/pakfire/* $(DIR_APP)

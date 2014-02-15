@@ -258,11 +258,14 @@ sub showMainBox() {
 
 		<br><hr><br>
 
-		<table width="100%">
+		<table width="100%" class='tbl'>
 			<tr>
 				<th align='center'>$Lang::tr{'wlan client ssid'}</th>
 				<th align='center'>$Lang::tr{'wlan client encryption'}</th>
 				<th align='center'>$Lang::tr{'priority'}</th>
+				<th></th>
+				<th></th>
+				<th></th>
 			</tr>
 END
 
@@ -271,6 +274,7 @@ END
 	#
 
 	my $key = 0;
+	my $col="";
 	foreach my $line (@configs) {
 		# Skip commented lines.
 		my $firstchar = substr($line, 0, 1);
@@ -292,9 +296,11 @@ END
 
 		# Colorize each line
 		if ($key % 2) {
-			print "<tr bgcolor='$color{'color22'}'>";
+			print "<tr>";
+			$col="bgcolor='$color{'color20'}'";
 		} else {
-			print "<tr bgcolor='$color{'color20'}'>"; 
+			print "<tr>";
+			$col="bgcolor='$color{'color22'}'";
 		}
 
 		my $encryption_mode = $Lang::tr{'unknown'};
@@ -332,24 +338,24 @@ END
 		}
 
 		print <<END;
-				<td align='center'>$config[5]</td>
-				<td align='center'>$encryption_mode</td>
-				<td align='center'>$config[7]</td>
-				<td align='center' width='5%'>
+				<td align='center' $col>$config[5]</td>
+				<td align='center' $col>$encryption_mode</td>
+				<td align='center' $col>$config[7]</td>
+				<td align='center' width='5%' $col>
 					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
 						<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc' />
 						<input type='hidden' name='ID' value='$config[0]' />
 					</form>
 				</td>
-				<td align='center' width='5%'>
+				<td align='center' width='5%' $col>
 					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
 						<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 						<input type='hidden' name='ID' value='$config[0]' />
 					</form>
 				</td>
-				<td align='center' width='5%'>
+				<td align='center' width='5%' $col>
 					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
 						<input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />

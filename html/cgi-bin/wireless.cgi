@@ -225,16 +225,15 @@ print <<END
 <td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='40' /></td>
 </tr>
 </table>
-<hr />
+<br>
+<hr>
 <table width='100%'>
 <tr>
-    <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
-    <td width='55%' class='base'>$Lang::tr{'this field may be blank'}</td>
-    <td width='40%' align='center'>
+    <td class='base' valign='top'><img src='/blob.gif' alt='*' /> $Lang::tr{'this field may be blank'}</td>
+    <td width='40%' align='right'>
       <input type='hidden' name='ACTION' value='add' />
       <input type='submit' name='SUBMIT' value='$buttontext' />
     </td>
-    <td width='5%' align='right'>&nbsp;</td>
 </tr>
 </table>
 END
@@ -260,13 +259,13 @@ my @current = <FILE>;
 close (FILE);
 
 print <<END
-<table width='100%'>
+<table width='100%' class='tbl'>
 <tr>
-<td align='center' width='20%'><b>$Lang::tr{'hostname'}</b></td>
-<td align='center' width='20%'><b>$Lang::tr{'source ip'}</b></td>
-<td align='center' width='20%'><b>$Lang::tr{'mac address'}</b></td>
-<td align='center' width='35%'><b>$Lang::tr{'remark'}</b></td>
-<td align='center' colspan='3'><b>$Lang::tr{'action'}</b></td>
+<th align='center' width='20%'><b>$Lang::tr{'hostname'}</b></th>
+<th align='center' width='20%'><b>$Lang::tr{'source ip'}</b></th>
+<th align='center' width='20%'><b>$Lang::tr{'mac address'}</b></t>
+<th align='center' width='35%'><b>$Lang::tr{'remark'}</b></th>
+<th align='center' colspan='3'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 ;
@@ -333,20 +332,24 @@ foreach my $line (@current)
 		else { $gif = 'off.gif'; $toggle='on'; $gdesc=$Lang::tr{'click to enable'};}
 
 	my $remark    = &Header::cleanhtml($temp[4]);
+	my $col="";
 
 	if ($cgiparams{'ACTION'} eq 'edit' && $cgiparams{'ID'} eq $id) {
-		print "<tr bgcolor='${Header::colouryellow}'>\n";
+		print "<tr>";
+		$col="bgcolor='${Header::colouryellow}'";
 	} elsif ($id % 2) {
-		print "<tr bgcolor='${Header::table1colour}'>\n";
+		print "<tr>";
+		$col="bgcolor='${Header::table1colour}'";
 	} else {
-		print "<tr bgcolor='${Header::table2colour}'>\n";
+		print "<tr>";
+		$col="bgcolor='${Header::table2colour}'";
 	}
-	print "<td align='center'>$hname</td>\n";
-	print "<td align='center'>$sourceip</td>\n";
-	print "<td align='center'>$sourcemac</td>\n";
-	print "<td align='center'>$remark</td>\n";
+	print "<td align='center' $col>$hname</td>\n";
+	print "<td align='center' $col>$sourceip</td>\n";
+	print "<td align='center' $col>$sourcemac</td>\n";
+	print "<td align='center' $col>$remark</td>\n";
 print<<END
-<td align='center'>
+<td align='center' $col>
 	<form method='post' name='frma$id' action='$ENV{'SCRIPT_NAME'}'>
 	<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc' />
 	<input type='hidden' name='ACTION' value='toggle'}' />
@@ -355,7 +358,7 @@ print<<END
 	</form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 	<form method='post' name='frmb$id' action='$ENV{'SCRIPT_NAME'}'>
 	<input type='hidden' name='ACTION' value='edit' />
 	<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
@@ -363,7 +366,7 @@ print<<END
 	</form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 	<form method='post' name='frmc$id' action='$ENV{'SCRIPT_NAME'}'>
 	<input type='hidden' name='ACTION' value='remove' />
 	<input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
@@ -405,12 +408,13 @@ sub printblueleases
 
 	&Header::openbox('100%', 'left', "$Lang::tr{'current dhcp leases on blue'}");
 	print <<END
-<table width='100%'>
+<table width='100%' class='tbl'>
 <tr>
-<td width='25%' align='center'><b>$Lang::tr{'ip address'}</b></td>
-<td width='25%' align='center'><b>$Lang::tr{'mac address'}</b></td>
-<td width='20%' align='center'><b>$Lang::tr{'hostname'}</b></td>
-<td width='30%' align='center'><b>$Lang::tr{'lease expires'} (local time d/m/y)</b></td>
+<th width='25%' align='center'><b>$Lang::tr{'ip address'}</b></th>
+<th width='25%' align='center'><b>$Lang::tr{'mac address'}</b></th>
+<th width='20%' align='center'><b>$Lang::tr{'hostname'}</b></th>
+<th width='30%' align='center'><b>$Lang::tr{'lease expires'} (local time d/m/y)</b></th>
+<th></th>
 </tr>
 END
 	;
@@ -459,18 +463,21 @@ END
 	foreach my $key (sort blueleasesort keys %entries) {
 
 		my $hostname = &Header::cleanhtml($entries{$key}->{HOSTNAME},"y");
+		my $col="";
 
 		if ($id % 2) {
-			print "<tr bgcolor='$Header::table2colour'>";
+			print "<tr>";
+			$col="bgcolor='$Header::table2colour'";
 		} else {
-			print "<tr bgcolor='$Header::table1colour'>";
+			print "<tr>";
+			$col="bgcolor='$Header::table1colour'";
 		}
 
 		print <<END
-<td align='center'>$entries{$key}->{IPADDR}</td>
-<td align='center'>$entries{$key}->{ETHER}</td>
-<td align='center'>&nbsp;$hostname </td>
-<td align='center'>
+<td align='center' $col>$entries{$key}->{IPADDR}</td>
+<td align='center' $col>$entries{$key}->{ETHER}</td>
+<td align='center' $col>&nbsp;$hostname </td>
+<td align='center' $col>
 END
 		;
 
@@ -493,7 +500,7 @@ END
 		}
 
 		print <<END
-<td align='center'>
+<td align='center' $col>
 	<form method='post' name='frmd$id' action='$ENV{'SCRIPT_NAME'}'>
 	<input type='hidden' name='ACTION' value='add' />
 	<input type='hidden' name='SOURCE_IP' value='' />

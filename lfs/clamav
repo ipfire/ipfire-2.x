@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.97.8
+VER        = 0.98.1
 
 THISAPP    = clamav-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,9 +32,13 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = clamav
-PAK_VER    = 22
+PAK_VER    = 24
 
 DEPS       = ""
+
+ifeq "$(MACHINE_TYPE)" "arm"
+CONFIGURE_FLAGS = --disable-fanotify
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ac52bcbad3ea72eac08fedb9772f648b
+$(DL_FILE)_MD5 = b1ec7b19dea8385954515ef1d63576d8
 
 install : $(TARGET)
 
@@ -77,7 +81,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire/clamav
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/var/ipfire/clamav \
+		$(CONFIGURE_FLAGS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	mkdir -p /usr/share/clamav/
@@ -86,5 +93,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rfv /usr/share/clamav/*.cvd
 	mkdir -p /var/run/clamav
 	chown clamav:clamav /var/run/clamav
+
+	# Disable PaX mprotect for clamd and freshclam
+	paxctl -cm /usr/sbin/clamd
+	paxctl -cm /usr/bin/freshclam
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

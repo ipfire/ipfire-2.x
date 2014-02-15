@@ -77,10 +77,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/hostapd-usb_hw_did_not_ack.patch
-	-cp /usr/src/linux/include/linux/genetlink.h /usr/include/linux/
-	-cp /usr/src/linux/include/linux/netfilter/nfnetlink.h /usr/include/linux/netfilter/
-	-cp /usr/src/linux/include/linux/netfilter/nfnetlink_compat.h /usr/include/linux/netfilter/
 	cd $(DIR_APP)/hostapd && cp $(DIR_SRC)/config/hostapd/config ./.config
 	cd $(DIR_APP)/hostapd && sed -e "s@/usr/local@/usr@g" -i Makefile
 	cd $(DIR_APP)/hostapd && make $(MAKETUNING) $(EXTRA_MAKE)

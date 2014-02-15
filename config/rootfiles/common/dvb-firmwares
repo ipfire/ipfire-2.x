@@ -21,3 +21,4 @@ lib/firmware/dvb-usb-vp702x-01.fw
 lib/firmware/dvb-usb-vp7045-01.fw
 lib/firmware/dvb-usb-wt220u-01.fw
 lib/firmware/dvb-usb-wt220u-02.fw
+lib/firmware/v4l-cx23885-enc.fw

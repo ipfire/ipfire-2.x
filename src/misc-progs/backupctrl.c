@@ -15,31 +15,30 @@
 
 int main(int argc, char *argv[]) {
 	int i;
-	char command[1024];
-	char add[STRING_SIZE];
-	
+	char command[STRING_SIZE] = "/var/ipfire/backup/bin/backup.pl";
+	char temp[STRING_SIZE];
+
 	if (!(initsetuid()))
 		exit(1);
 
-	snprintf(command, STRING_SIZE, "/var/ipfire/backup/bin/backup.pl");
-
 	for (i = 1; i < argc; i++) {
-    if (strstr(argv[i], "&&")){
-	      fprintf (stderr, "Bad Argument!\n");
-        exit (1);
-    }
-		else if (strstr(argv[i], "|")){
-		    fprintf (stderr, "Bad Argument!\n");
-		    exit (1);
+		if (strstr(argv[i], "&&")){
+			fprintf (stderr, "Bad Argument!\n");
+			exit (1);
+
+		} else if (strstr(argv[i], "|")) {
+			fprintf (stderr, "Bad Argument!\n");
+			exit (1);
+
+		} else if (argc > 3) {
+			fprintf (stderr, "Too Many Arguments!\n");
+			exit (1);
+
+		} else {
+			snprintf(temp, STRING_SIZE, "%s %s", command, argv[i]);
+			snprintf(command, STRING_SIZE, "%s", temp);
 		}
-		else if (argc > 3){
-		    fprintf (stderr, "Too Many Arguments!\n");
-		    exit (1);
-		}
-		else{
-    		sprintf(add, " %s", argv[i]);
-		    strcat(command, add);
-    }
 	}
+
 	return safe_system(command);
 }

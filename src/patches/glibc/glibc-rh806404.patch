@@ -1,0 +1,12 @@
+diff -rup a/nss/getnssent.c b/nss/getnssent.c
+--- a/nss/getnssent.c	2004-12-13 14:48:34.000000000 -0700
++++ b/nss/getnssent.c	2012-03-23 13:46:54.639095121 -0600
+@@ -33,7 +33,7 @@ __nss_getent (getent_r_function func, vo
+       *buffer = malloc (*buffer_size);
+     }
+ 
+-  while (buffer != NULL
++  while (*buffer != NULL
+ 	 && func (resbuf, *buffer, *buffer_size, &result, h_errnop) == ERANGE
+ 	 && (h_errnop == NULL || *h_errnop == NETDB_INTERNAL))
+     {

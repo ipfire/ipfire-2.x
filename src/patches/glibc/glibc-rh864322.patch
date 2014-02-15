@@ -1,0 +1,12 @@
+diff -rup a/sysdeps/generic/netinet/ip.h b/sysdeps/generic/netinet/ip.h
+--- a/sysdeps/generic/netinet/ip.h	2010-05-04 05:27:23.000000000 -0600
++++ b/sysdeps/generic/netinet/ip.h	2012-10-11 09:22:12.620160387 -0600
+@@ -194,7 +194,7 @@ struct ip_timestamp
+  */
+ 
+ #define	IPTOS_CLASS_MASK		0xe0
+-#define	IPTOS_CLASS(class)		((tos) & IPTOS_CLASS_MASK)
++#define	IPTOS_CLASS(class)		((class) & IPTOS_CLASS_MASK)
+ #define	IPTOS_CLASS_CS0			0x00
+ #define	IPTOS_CLASS_CS1			0x20
+ #define	IPTOS_CLASS_CS2			0x40

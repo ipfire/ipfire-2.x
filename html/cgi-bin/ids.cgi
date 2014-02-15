@@ -491,7 +491,7 @@ END
 	refreshpage();
 }
 
-&Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system2'});
+&Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'><table width='100%'>
 <tr><td class='base'><input type='checkbox' name='ENABLE_SNORT_GREEN' $checked{'ENABLE_SNORT_GREEN'}{'on'} />GREEN Snort
@@ -511,7 +511,7 @@ if ( -e "/var/ipfire/guardian/guardian.conf" ) {
 print <<END
 </td></tr>
 <tr>
-	<td><hr /></td>
+	<td><br><br></td>
 </tr>
 <tr>
 	<td><b>$Lang::tr{'ids rules update'}</b></td>
@@ -536,7 +536,7 @@ print <<END
 	<td nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$snortsettings{'OINKCODE'}' /></td>
 </tr>
 <tr>
-	<td width='30%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'download new ruleset'}' />
+	<td width='30%' align='left'><br><input type='submit' name='ACTION' value='$Lang::tr{'download new ruleset'}' />
 END
 ;
 if ( -e "/var/tmp/snortrules.tar.gz"){
@@ -548,10 +548,10 @@ print "&nbsp;$Lang::tr{'updates installed'}: $snortsettings{'INSTALLDATE'}</td>"
 print <<END
 </tr>
 </table>
-<hr />
+<br><br>
 <table width='100%'>
 <tr>
-	<td align='center'><input type='hidden' name='ACTION2' value='snort' /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+	<td align='right'><input type='hidden' name='ACTION2' value='snort' /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 </form>
@@ -579,7 +579,7 @@ END
 	print `cat /var/ipfire/guardian/guardian.ignore`;
 print <<END
 </textarea></td></tr>
-<tr><td align='center' colspan='2'><input type='hidden' name='ACTION2' value='guardian' /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td></tr>
+<tr><td align='right' colspan='2'><input type='hidden' name='ACTION2' value='guardian' /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td></tr>
 </table>
 </form>
 END
@@ -680,7 +680,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 			# Check for display flag
 			if ($displayrulefilerules) {
 				# Rule file definition rule display
-				print "<TR><TD CLASS='base' VALIGN='TOP'><TABLE border=1><TR>";
+				print "<TR><TD CLASS='base' VALIGN='TOP'><TABLE border=0><TR>";
 
 				# Local vars
 			 	my $ruledefdisplaycnt = 0;
@@ -732,9 +732,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 	print <<END
 <table width='100%'>
 <tr>
-	<td width='33%'>&nbsp;</td>
-	<td width='33%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
-	<td width='33%'>
+	<td width='100%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
 		&nbsp; <!-- space for future online help link -->
 	</td>
 </tr>

@@ -30,7 +30,7 @@ THISAPP    = guardian-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = guardian
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       = ""
 

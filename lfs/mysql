@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.0.24a
+VER        = 5.0.96
 
 THISAPP    = mysql-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mysql
-PAK_VER    = 1
+PAK_VER    = 3
+
+CFLAGS += -fno-strict-aliasing
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6b07546389f75c52611adb7af38c3667
+$(DL_FILE)_MD5 = bf280949049161aa68cf29e600d9ec79
 
 install : $(TARGET)
 
@@ -75,7 +77,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && C_EXTRA_FLAGS=-fno-strict-aliasing
 	cd $(DIR_APP) && ./configure --prefix=/usr \
 		            --sysconfdir=/etc \
 		            --libexecdir=/usr/sbin \
@@ -99,5 +100,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chgrp -v mysql /srv/mysql{,/test,/mysql}
 	chown mysql.mysql /srv/mysql/
 	install -v -m755 -o mysql -g mysql -d /var/run/mysql
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/mysql \
+		/var/ipfire/backup/addons/includes/mysql
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

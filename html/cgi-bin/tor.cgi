@@ -235,8 +235,8 @@ sub showMainBox() {
 
 
 if ( ($memory != 0) && (@pid[0] ne "///") ){
-		print "<table width='95%' cellspacing='0'>";
-		print "<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'tor service'}</strong></td></tr>";
+		print "<table width='95%' cellspacing='0' class='tbl'>";
+		print "<tr><th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'tor service'}</strong></th></tr>";
 		print "<tr><td class='base'>$Lang::tr{'tor daemon'}</td>";
 		print "<td align='center' colspan='2' width='75%' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td></tr>";
 		print "<tr><td class='base'></td>";
@@ -247,8 +247,8 @@ if ( ($memory != 0) && (@pid[0] ne "///") ){
 		print "<td bgcolor='$color{'color22'}' align='center'>$memory KB</td></tr>";
 		print "</table>";
 	} else {
-		print "<table width='95%' cellspacing='0'>";
-		print "<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'tor service'}</strong></td></tr>";
+		print "<table width='95%' cellspacing='0' class='tbl'>";
+		print "<tr><th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'tor service'}</strong></th></tr>";
 		print "<tr><td class='base'>$Lang::tr{'tor daemon'}</td>";
 		print "<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td></tr>";
 		print "</table>";

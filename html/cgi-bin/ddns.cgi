@@ -303,7 +303,7 @@ print <<END
 <tr>
     <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
     <td width='70%' class='base'>$Lang::tr{'avoid dod'}</td>
-    <td width='30%' align='center' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+    <td width='30%' align='right' valign='top' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 </form>
@@ -377,13 +377,14 @@ print <<END
     <td><input type='password' name='PASSWORD2' value='$settings{'PASSWORD2'}' /></td>
 </tr>
 </table>
+<br>
 <hr />
 <table width='100%'>
 <tr>
     <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
     <td width='70%' class='base'>$ddnsprefix</td>
     
-    <td width='30%' align='center' class='base'>
+    <td width='30%' align='right' class='base'>
 	<input type='hidden' name='ACTION' value='$Lang::tr{'add'}' />
 	<input type='submit' name='SUBMIT' value='$buttontext' />    </td>
 </tr>
@@ -398,14 +399,14 @@ END
 #
 &Header::openbox('100%', 'left', $Lang::tr{'current hosts'});
 print <<END
-<table width='100%'>
+<table width='100%' class='tbl'>
 <tr>
-    <td width='15%' align='center' class='boldbase'><b>$Lang::tr{'service'}</b></td>
-    <td width='25%' align='center' class='boldbase'><b>$Lang::tr{'hostname'}</b></td>
-    <td width='30%' align='center' class='boldbase'><b>$Lang::tr{'domain'}</b></td>
-    <td width='10%' align='center' class='boldbase'><b>$Lang::tr{'proxy'}</b></td>
-    <td width='10%' align='center' class='boldbase'><b>$Lang::tr{'wildcards'}</b></td>
-    <td width='10%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></td>
+    <th width='15%' align='center' class='boldbase'><b>$Lang::tr{'service'}</b></th>
+    <th width='25%' align='center' class='boldbase'><b>$Lang::tr{'hostname'}</b></th>
+    <th width='30%' align='center' class='boldbase'><b>$Lang::tr{'domain'}</b></th>
+    <th width='10%' align='center' class='boldbase'><b>$Lang::tr{'proxy'}</b></th>
+    <th width='10%' align='center' class='boldbase'><b>$Lang::tr{'wildcards'}</b></th>
+    <th width='10%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 ;
@@ -428,7 +429,7 @@ foreach my $line (@current) {
 	$descproxy = $Lang::tr{'click to disable'};
     } else {
 	$gifproxy = 'off.gif';
-	$descproxy = $Lang::tr{'click to enable'}; 
+	$descproxy = $Lang::tr{'click to enable'};
     }
 
     my $gifwildcard='';
@@ -452,26 +453,30 @@ foreach my $line (@current) {
 	$gif = 'off.gif';
 	$gdesc = $Lang::tr{'click to enable'};
     }
-				
+
+	my $col="";
     #Colorize each line
     if ($settings{'KEY1'} eq $key) {
-	print "<tr bgcolor='${Header::colouryellow}'>";
+	print "<tr>";
+	$col="bgcolor='${Header::colouryellow}'";
     } elsif ($key % 2) {
-	print "<tr bgcolor='$color{'color22'}'>";
+	print "<tr>";
+	$col="bgcolor='$color{'color20'}'";
     } else {
-	print "<tr bgcolor='$color{'color20'}'>"; 
+	print "<tr>";
+	$col="bgcolor='$color{'color22'}'";
     }
-    
+
     #if a field is empty, replace it with a '---' to see colorized info!
     $temp[1] = '---' if (!$temp[1]);
     $temp[2] = '---' if (!$temp[2]);
 
     print <<END
-<td align='center'><a href='http://$temp[0]'>$temp[0]</a></td>
-<td align='center'>$sync$temp[1]</td>
-<td align='center'>$sync$temp[2]</td>
+<td align='center' $col><a href='http://$temp[0]'>$temp[0]</a></td>
+<td align='center' $col>$sync$temp[1]</td>
+<td align='center' $col>$sync$temp[2]</td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
 <input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gifproxy' alt='$descproxy' title='$descproxy' />
@@ -480,7 +485,7 @@ foreach my $line (@current) {
 </form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
 <input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gifwildcard' alt='$descwildcard' title='$descwildcard' />
@@ -489,7 +494,7 @@ foreach my $line (@current) {
 </form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
 <input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc' />
@@ -498,7 +503,7 @@ foreach my $line (@current) {
 </form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
 <input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
@@ -506,7 +511,7 @@ foreach my $line (@current) {
 </form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
 <input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
@@ -538,7 +543,7 @@ print <<END
     <td><img src='/images/delete.gif' alt='$Lang::tr{'remove'}' /></td>
     <td class='base'>$Lang::tr{'remove'}</td>
     <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-        <td align='center' width='30%'><input type='submit' name='ACTION' value='$Lang::tr{'instant update'}' /></td>
+        <td align='right' width='30%'><input type='submit' name='ACTION' value='$Lang::tr{'instant update'}' /></td>
     </form>
 </tr>
 </table>
