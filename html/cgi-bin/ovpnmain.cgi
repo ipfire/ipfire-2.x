@@ -2282,7 +2282,7 @@ ADV_ERROR:
     &Header::openbox('100%', 'LEFT', $Lang::tr{'advanced server'});
     print <<END
     <form method='post' enctype='multipart/form-data'>
-    <table width='100%' border=0>
+    <table width='100%' border='0'>
     <tr>
 	<td colspan='4'><b>$Lang::tr{'dhcp-options'}</b></td>
     </tr>
@@ -2485,7 +2485,7 @@ if ($cgiparams{'ACTION'} eq "edit"){
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'ccd modify'});
 
 	print <<END
-    <table width='100%' border=0>
+    <table width='100%' border='0'>
     <tr><form method='post'>
 	<td width='10%' nowrap='nowrap'>$Lang::tr{'ccd name'}:</td><td><input type='TEXT' name='ccdname' value='$cgiparams{'ccdname'}' /></td>
 	<td width='8%'>$Lang::tr{'ccd subnet'}:</td><td><input type='TEXT' name='ccdsubnet' value='$cgiparams{'ccdsubnet'}' readonly /></td></tr>
@@ -4322,7 +4322,7 @@ if ($cgiparams{'TYPE'} eq 'host') {
    <tr><td>&nbsp;</td>
 		<td class='base'>$Lang::tr{'pkcs12 file password'}:</td>
 		<td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS1' value='$cgiparams{'CERT_PASS1'}' size='32' $cakeydisabled /></td></tr>
-	    <tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:<BR>($Lang::tr{'confirmation'})</td>
+	    <tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:<br>($Lang::tr{'confirmation'})</td>
 		<td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS2' value='$cgiparams{'CERT_PASS2'}' size='32' $cakeydisabled /></td></tr>
      <tr><td colspan='3'>&nbsp;</td></tr>
      <tr><td colspan='3'><hr /></td></tr>
@@ -4581,7 +4581,7 @@ END
     }	
     &Header::openbox('100%', 'LEFT', $Lang::tr{'global settings'});	
 	print <<END	
-    <table width='100%' border=0>
+    <table width='100%' border='0'>
     <form method='post'>
     <td width='25%'>&nbsp;</td>
     <td width='25%'>&nbsp;</td>
@@ -4613,7 +4613,7 @@ END
         <td class='boldbase'>$Lang::tr{'destination port'}:</td>
         <td><input type='TEXT' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' size='5' /></td></tr>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;</td>
-        <td> <input type='TEXT' name='DMTU' VALUE='$cgiparams{'DMTU'}'size='5' /></TD>
+        <td> <input type='TEXT' name='DMTU' VALUE='$cgiparams{'DMTU'}'size='5' /></td>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
         <td><input type='checkbox' name='DCOMPLZO' $checked{'DCOMPLZO'}{'on'} /></td>
         <td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td>

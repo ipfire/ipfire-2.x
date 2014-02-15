@@ -487,7 +487,7 @@ print <<END
 <tr><td><br /></td></tr>
 <tr><td><pre>$Log</pre></td></tr>
 <tr><td><br /></td></tr>
-<tr><td align=center>$tripwiresettings{'LOG'}</td></tr>
+<tr><td align='center'>$tripwiresettings{'LOG'}</td></tr>
 </table>
 END
 ;

@@ -206,9 +206,9 @@ sub diskbox {
 
 		if ( $status[1]=~/standby/){
 			my $ftime = localtime((stat("/var/run/hddshutdown-$disk"))[9]);
-			print"<B>Disk $disk status:<font color=#FF0000>".$status[1]."</font></B> (since $ftime)";
+			print"<b>Disk $disk status:<font color='#FF0000'>".$status[1]."</font></b> (since $ftime)";
 		}else{
-			print"<B>Disk $disk status:<font color=#00FF00>".$status[1]."</font></B>";
+			print"<b>Disk $disk status:<font color='#00FF00'>".$status[1]."</font></b>";
 		}
 	}
 
@@ -217,7 +217,7 @@ sub diskbox {
 	print <<END
 <br /><input type="button" onClick="swapVisibility('smart_$disk')" value="$Lang::tr{'smart information'}" />
 <div id='smart_$disk' style='display: none'>
-	<hr /><table border=0><tr><td align=left><pre>$smart</pre></table>
+	<hr /><table border='0'><tr><td align='left'><pre>$smart</pre></table>
 </div>
 END
 ;

@@ -182,7 +182,7 @@ my $thiscode = '$temp =~ /$filter/;';
 eval($thiscode);
 if ($@ ne '')
 {
-    $errormessage = "$Lang::tr{'bad ignore filter'}.$@<P>";
+    $errormessage = "$Lang::tr{'bad ignore filter'}.$@<p>";
     $filter = '';
 } else {
     my $loop = 1;

@@ -432,8 +432,8 @@ if ($pppsettings{'IPTV_VLAN'} eq '') { $pppsettings{'IPTV_VLAN'}='8'; }
 if ($netsettings{'RED_TYPE'} ne 'PPPOE') {
 	$errormessage = $Lang::tr{'dialup red not ppp'};
 	&Header::openbox('100%', 'center', $Lang::tr{'error messages'});
-        print "<CLASS name='base'>$errormessage\n";
-        print "&nbsp;</CLASS>\n";
+        print "<class name='base'>$errormessage\n";
+        print "&nbsp;</class>\n";
         &Header::closebox();
 	&Header::closebigbox();
 
@@ -443,8 +443,8 @@ if ($netsettings{'RED_TYPE'} ne 'PPPOE') {
 
 if ($errormessage) {
         &Header::openbox('100%', 'center', $Lang::tr{'error messages'});
-        print "<CLASS name='base'>$errormessage\n";
-        print "&nbsp;</CLASS>\n";
+        print "<class name='base'>$errormessage\n";
+        print "&nbsp;</class>\n";
         &Header::closebox();
 }
 
@@ -530,7 +530,7 @@ END
 ;
         if ($pppsettings{'TYPE'} =~ /^(modem)$/) {
         print <<END
-            <td colspan='1' width='25%'><A HREF=modem.cgi>$Lang::tr{'modem configuration'}</A></td>
+            <td colspan='1' width='25%'><a href='modem.cgi'>$Lang::tr{'modem configuration'}</a></td>
 END
 ;
 }
