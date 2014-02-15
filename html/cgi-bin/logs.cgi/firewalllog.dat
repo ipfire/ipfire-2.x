@@ -406,7 +406,7 @@ if ($prev != -1) {
         print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?0,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$Lang::tr{'first'}</a> "; 
         print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$Lang::tr{'older'}</a>"; }
 else {
-        print "First $Lang::tr{'older'}"; }
+        print "$Lang::tr{'first'} $Lang::tr{'older'}"; }
 print "</td>\n";
 
 print "<td align='center' width='50%'>";
@@ -414,7 +414,7 @@ if ($next >= 0) {
         print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$Lang::tr{'newer'}</a> ";
         print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?$lastPageIndex,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$Lang::tr{'last'}</a>"; }      
 else {
-        print "$Lang::tr{'newer'} Last"; }
+        print "$Lang::tr{'newer'} $Lang::tr{'last'} "; }
 print "</td>\n";
 
 print <<END
