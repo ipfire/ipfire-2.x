@@ -364,6 +364,10 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/hsi/clients
 #lib/modules/KVER-ipfire-pae/kernel/drivers/hsi/clients/hsi_char.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/hsi/hsi.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/hv
+#lib/modules/KVER-ipfire-pae/kernel/drivers/hv/hv_balloon.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/hv/hv_utils.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/hv/hv_vmbus.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/hwmon
 #lib/modules/KVER-ipfire-pae/kernel/drivers/hwmon/abituguru.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/hwmon/abituguru3.ko
@@ -616,8 +620,10 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/isdn/mISDN/mISDN_dsp.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/dell-led.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-bd2802.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-blinkm.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-clevo-mail.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-gpio.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-lm3530.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-lm3533.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-lm355x.ko
@@ -629,6 +635,8 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-lp55xx-common.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-lt3593.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-ot200.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-pca9532.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-pca955x.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-pca9633.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-ss4200.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/leds/leds-tca6507.ko
@@ -1502,6 +1510,8 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/wiznet/w5300.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/xircom
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/xircom/xirc2ps_cs.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/net/hyperv
+#lib/modules/KVER-ipfire-pae/kernel/drivers/net/hyperv/hv_netvsc.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/ifb.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/imq.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/macvlan.ko
@@ -1868,6 +1878,7 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/scsi/gdth.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/scsi/hpsa.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/scsi/hptiop.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/scsi/hv_storvsc.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/scsi/imm.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/scsi/in2000.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/scsi/initio.ko
@@ -2119,6 +2130,7 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/video/geode/gxfb.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/video/geode/lxfb.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/video/hgafb.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/video/hyperv_fb.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/video/i740fb.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/video/kyro
 #lib/modules/KVER-ipfire-pae/kernel/drivers/video/kyro/kyrofb.ko

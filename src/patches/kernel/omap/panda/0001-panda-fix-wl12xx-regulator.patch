@@ -1,0 +1,27 @@
+From a3abd1593e381deb4b1f358a55069988996eeae4 Mon Sep 17 00:00:00 2001
+From: Robert Nelson <robertcnelson@gmail.com>
+Date: Tue, 2 Aug 2011 21:55:34 -0500
+Subject: [PATCH 1/2] panda: fix wl12xx regulator
+
+pulled from: http://elinux.org/Panda_How_to_kernel_3_0_rel
+
+Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
+---
+ arch/arm/mach-omap2/twl-common.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/twl-common.c b/arch/arm/mach-omap2/twl-common.c
+index e49b40b..0fd1a70 100644
+--- a/arch/arm/mach-omap2/twl-common.c
++++ b/arch/arm/mach-omap2/twl-common.c
+@@ -360,6 +360,7 @@ static struct regulator_init_data omap4_vusb_idata = {
+ static struct regulator_init_data omap4_clk32kg_idata = {
+ 	.constraints = {
+ 		.valid_ops_mask		= REGULATOR_CHANGE_STATUS,
++		.always_on		= true,
+ 	},
+ };
+ 
+-- 
+1.7.7.6
+

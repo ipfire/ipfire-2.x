@@ -1,0 +1,122 @@
+From 76c1d8cdfa0967b04ca8168a77bb101d4ea71150 Mon Sep 17 00:00:00 2001
+From: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Date: Mon, 18 Mar 2013 06:51:30 +0000
+Subject: [PATCH 6/6] ARM: hw_breakpoint: Enable debug powerdown only if
+ system supports 'has_ossr'
+
+On Friday 15 March 2013 10:30 AM, Will Deacon wrote:
+> On Thu, Mar 14, 2013 at 01:08:00PM +0530, Santosh Shilimkar wrote:
+>> Will,
+>
+> Hi guys,
+>
+> I'm out of the office at the moment and have really terrible connectivity,
+> so I can't do too much until next week. However, I don't think adding the
+> has_ossr check is the right fix for this problem.
+>
+>> On Wednesday 13 March 2013 05:59 PM, Lokesh Vutla wrote:
+>>> Hi Dietmar,
+>>> On Wednesday 13 March 2013 05:35 PM, Dietmar Eggemann wrote:
+>>>> On 13/03/13 06:52, Lokesh Vutla wrote:
+>>>>> Commit {9a6eb31 ARM: hw_breakpoint: Debug powerdown support for
+>>>>> self-hosted
+>>>>> debug} introduces debug powerdown support for self-hosted debug.
+>>>>> While merging the patch 'has_ossr' check was removed which
+>>>>> was needed for hardwares which doesn't support self-hosted debug.
+>>>>> Pandaboard (A9) is one such hardware and Dietmar's orginial
+>>>>> patch did mention this issue.
+>>>>> Without that check on Panda with CPUIDLE enabled, a flood of
+>>>>> below messages thrown.
+>>>>>
+>>>>> [ 3.597930] hw-breakpoint: CPU 0 failed to disable vector catch
+>>>>> [ 3.597991] hw-breakpoint: CPU 1 failed to disable vector catch
+>
+> Ok, so this means that we've taken an undefined instruction exception while
+> trying to reset the debug registers on the PM_EXIT path. Now, the code there
+> deals with CPUs that don't have the save/restore registers just fine, so
+> that shouldn't have anything to do with this problem, particularly if the
+> bit that is tripping us up is related to clearing vector catch.
+>
+Agree.
+
+> Furthermore, I was under the impression that hw_breakpoint did actually
+> work on panda, which implies that a cold boot *does* manage to reset the
+> registers (can you please confirm this by looking in your dmesg during
+> boot?). In that case, it seems as though a PM cycle is powering down a
+> bunch of debug logic that was powered up during boot, and then we trip over
+> because we can't access the register bank.
+>
+Actually it seems to be without PM. Thanks to analysis from Lokesh, the issue
+can be seen even with just suspend or cpu hotplug. So cold boot as such is
+fine.
+
+> The proper solution to this problem requires us to establish exactly what is
+> turning off the debug registers, and then having an OMAP PM notifier to
+> enable it again. Assuming this has always been the case, I expect hardware
+> debug across PM fails silently with older kernels.
+>
+This has been always the case it seems with CPU power cycle.
+After the CPU is power cycled, 'DBGAUTHSTATUS' reads '0xaa' rather
+than '0xaf' which means 'DBGEN = 0' and hence code fails to enable
+monitor mode. This happens on both secure and GP devices and it can not
+be patched since the secure code is ROM'ed. We didn't notice so far
+because hw_breakpoint support was not default enabled on OMAP till the
+multi-platform build.
+
+>> I was also wondering whether we should just warn once rather
+>> than continuous warnings in the notifier. Patch is end of the
+>> email.
+>
+> Could do, but I'd like to see a fix for the real issue before we simply hide
+> the warnings :)
+>
+Agree here too. As evident above, the feature won't work on OMAP4
+devices with PM and hence some solution is needed.
+
+What you think of below ?
+
+>From d74b4264f6a5967b0f7ada96aad77ab0ac30dbed Mon Sep 17 00:00:00 2001
+From: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Date: Mon, 18 Mar 2013 11:59:04 +0530
+Subject: [PATCH] ARM: hw_breakpoints: Check for CPU debug availability before
+ enabling it
+
+CPU debug features like hardware break, watchpoints can be used only when
+the debug mode is enabled and available for non-secure mode.
+
+Hence check 'DBGAUTHSTATUS.DBGEN' before proceeding to enable the
+features.
+
+Thanks to Will for pointers and Lokesh for the analysis of the issue on
+OMAP4 where after a CPU power cycle, debug mode gets disabled.
+
+Cc: Will Deacon <Will.Deacon@arm.com>
+
+Tested-by: Lokesh Vutla <lokeshvutla@ti.com>
+Signed-off-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
+---
+ arch/arm/kernel/hw_breakpoint.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/kernel/hw_breakpoint.c b/arch/arm/kernel/hw_breakpoint.c
+index 96093b7..683a7cf 100644
+--- a/arch/arm/kernel/hw_breakpoint.c
++++ b/arch/arm/kernel/hw_breakpoint.c
+@@ -930,6 +930,14 @@ static void reset_ctrl_regs(void *unused)
+ 	int i, raw_num_brps, err = 0, cpu = smp_processor_id();
+ 	u32 val;
+ 
++	/* Check if we have access to CPU debug features */
++	ARM_DBG_READ(c7, c14, 6, val);
++	if ((val & 0x1) == 0) {
++		pr_warn_once("CPU %d debug is unavailable\n", cpu);
++		cpumask_or(&debug_err_mask, &debug_err_mask, cpumask_of(cpu));
++		return;
++	}
++
+ 	/*
+ 	 * v7 debug contains save and restore registers so that debug state
+ 	 * can be maintained across low-power modes without leaving the debug
+-- 
+1.7.10.4
+

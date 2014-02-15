@@ -1,0 +1,39 @@
+From 42d8b74383b670412107c943efd2fec46aa04158 Mon Sep 17 00:00:00 2001
+From: Robert Nelson <robertcnelson@gmail.com>
+Date: Sat, 1 Jun 2013 16:32:46 -0500
+Subject: [PATCH 07/10] Revert "regulator: twl: Remove TWL6030_FIXED_RESOURCE"
+
+This reverts commit d1924519fe1dada0cfd9a228bf2ff1ea15840c84.
+
+Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
+---
+ drivers/regulator/twl-regulator.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regulator.c
+index fb6e67d..7ce7edf 100644
+--- a/drivers/regulator/twl-regulator.c
++++ b/drivers/regulator/twl-regulator.c
+@@ -933,6 +933,19 @@ static const struct twlreg_info TWLFIXED_INFO_##label = { \
+ 		}, \
+ 	}
+ 
++#define TWL6030_FIXED_RESOURCE(label, offset, turnon_delay) \
++static struct twlreg_info TWLRES_INFO_##label = { \
++	.base = offset, \
++	.desc = { \
++		.name = #label, \
++		.id = TWL6030_REG_##label, \
++		.ops = &twl6030_fixed_resource, \
++		.type = REGULATOR_VOLTAGE, \
++		.owner = THIS_MODULE, \
++		.enable_time = turnon_delay, \
++		}, \
++	}
++
+ #define TWL6025_ADJUSTABLE_SMPS(label, offset) \
+ static const struct twlreg_info TWLSMPS_INFO_##label = { \
+ 	.base = offset, \
+-- 
+1.7.10.4
+
