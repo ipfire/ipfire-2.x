@@ -1,5 +1,8 @@
 #!/bin/sh
 
+. /etc/sysconfig/rc
+. ${rc_functions}
+
 eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
@@ -9,206 +12,205 @@ if [ -f /var/ipfire/red/device ]; then
 	DEVICE=`/bin/cat /var/ipfire/red/device 2> /dev/null | /usr/bin/tr -d '\012'`
 fi
 
+function iptables() {
+	/sbin/iptables --wait "$@"
+}
+
 iptables_init() {
 	# Flush all rules and delete all custom chains
-	/sbin/iptables -F
-	/sbin/iptables -t nat -F
-	/sbin/iptables -t mangle -F
-	/sbin/iptables -X
-	/sbin/iptables -t nat -X
-	/sbin/iptables -t mangle -X
+	iptables -F
+	iptables -t nat -F
+	iptables -t mangle -F
+	iptables -X
+	iptables -t nat -X
+	iptables -t mangle -X
 
 	# Set up policies
-	/sbin/iptables -P INPUT DROP
-	/sbin/iptables -P FORWARD DROP
-	/sbin/iptables -P OUTPUT ACCEPT
+	iptables -P INPUT DROP
+	iptables -P FORWARD DROP
+	iptables -P OUTPUT ACCEPT
 
 	# Empty LOG_DROP and LOG_REJECT chains
-	/sbin/iptables -N LOG_DROP
-	/sbin/iptables -A LOG_DROP   -m limit --limit 10/minute -j LOG
-	/sbin/iptables -A LOG_DROP   -j DROP
-	/sbin/iptables -N LOG_REJECT
-	/sbin/iptables -A LOG_REJECT -m limit --limit 10/minute -j LOG
-	/sbin/iptables -A LOG_REJECT -j REJECT
+	iptables -N LOG_DROP
+	iptables -A LOG_DROP   -m limit --limit 10/minute -j LOG
+	iptables -A LOG_DROP   -j DROP
+	iptables -N LOG_REJECT
+	iptables -A LOG_REJECT -m limit --limit 10/minute -j LOG
+	iptables -A LOG_REJECT -j REJECT
 
 	# This chain will log, then DROPs packets with certain bad combinations
 	# of flags might indicate a port-scan attempt (xmas, null, etc)
-	/sbin/iptables -N PSCAN
+	iptables -N PSCAN
 	if [ "$DROPPORTSCAN" == "on" ]; then
-		/sbin/iptables -A PSCAN -p tcp  -m limit --limit 10/minute -j LOG --log-prefix "DROP_TCP Scan " -m comment --comment "DROP_TCP PScan"
-		/sbin/iptables -A PSCAN -p udp  -m limit --limit 10/minute -j LOG --log-prefix "DROP_UDP Scan " -m comment --comment "DROP_UDP PScan"
-		/sbin/iptables -A PSCAN -p icmp -m limit --limit 10/minute -j LOG --log-prefix "DROP_ICMP Scan " -m comment --comment "DROP_ICMP PScan"
-		/sbin/iptables -A PSCAN -f      -m limit --limit 10/minute -j LOG --log-prefix "DROP_FRAG Scan " -m comment --comment "DROP_FRAG PScan"
+		iptables -A PSCAN -p tcp  -m limit --limit 10/minute -j LOG --log-prefix "DROP_TCP Scan " -m comment --comment "DROP_TCP PScan"
+		iptables -A PSCAN -p udp  -m limit --limit 10/minute -j LOG --log-prefix "DROP_UDP Scan " -m comment --comment "DROP_UDP PScan"
+		iptables -A PSCAN -p icmp -m limit --limit 10/minute -j LOG --log-prefix "DROP_ICMP Scan " -m comment --comment "DROP_ICMP PScan"
+		iptables -A PSCAN -f      -m limit --limit 10/minute -j LOG --log-prefix "DROP_FRAG Scan " -m comment --comment "DROP_FRAG PScan"
 	fi
-	/sbin/iptables -A PSCAN -j DROP -m comment --comment "DROP_PScan"
+	iptables -A PSCAN -j DROP -m comment --comment "DROP_PScan"
 
 	# New tcp packets without SYN set - could well be an obscure type of port scan
 	# that's not covered above, may just be a broken windows machine
-	/sbin/iptables -N NEWNOTSYN
+	iptables -N NEWNOTSYN
 	if [ "$DROPNEWNOTSYN" == "on" ]; then
-		/sbin/iptables -A NEWNOTSYN  -m limit --limit 10/minute -j LOG  --log-prefix "DROP_NEWNOTSYN "
+		iptables -A NEWNOTSYN  -m limit --limit 10/minute -j LOG  --log-prefix "DROP_NEWNOTSYN "
 	fi
-	/sbin/iptables -A NEWNOTSYN  -j DROP -m comment --comment "DROP_NEWNOTSYN"
+	iptables -A NEWNOTSYN  -j DROP -m comment --comment "DROP_NEWNOTSYN"
 
 	# Chain to contain all the rules relating to bad TCP flags
-	/sbin/iptables -N BADTCP
+	iptables -N BADTCP
 
-	#Don't check loopback
-	/sbin/iptables -A BADTCP -i lo -j RETURN
+	# Don't check loopback
+	iptables -A BADTCP -i lo -j RETURN
 
 	# Disallow packets frequently used by port-scanners
 	# nmap xmas
-	/sbin/iptables -A BADTCP -p tcp --tcp-flags ALL FIN,URG,PSH  -j PSCAN
+	iptables -A BADTCP -p tcp --tcp-flags ALL FIN,URG,PSH  -j PSCAN
 	# Null
-	/sbin/iptables -A BADTCP -p tcp --tcp-flags ALL NONE -j PSCAN
+	iptables -A BADTCP -p tcp --tcp-flags ALL NONE -j PSCAN
 	# FIN
-	/sbin/iptables -A BADTCP -p tcp --tcp-flags ALL FIN -j PSCAN
+	iptables -A BADTCP -p tcp --tcp-flags ALL FIN -j PSCAN
 	# SYN/RST (also catches xmas variants that set SYN+RST+...)
-	/sbin/iptables -A BADTCP -p tcp --tcp-flags SYN,RST SYN,RST -j PSCAN
+	iptables -A BADTCP -p tcp --tcp-flags SYN,RST SYN,RST -j PSCAN
 	# SYN/FIN (QueSO or nmap OS probe)
-	/sbin/iptables -A BADTCP -p tcp --tcp-flags SYN,FIN SYN,FIN -j PSCAN
+	iptables -A BADTCP -p tcp --tcp-flags SYN,FIN SYN,FIN -j PSCAN
 	# NEW TCP without SYN
-	/sbin/iptables -A BADTCP -p tcp ! --syn -m conntrack --ctstate NEW -j NEWNOTSYN
+	iptables -A BADTCP -p tcp ! --syn -m conntrack --ctstate NEW -j NEWNOTSYN
 
-	/sbin/iptables -A INPUT   -p tcp -j BADTCP
-	/sbin/iptables -A FORWARD -p tcp -j BADTCP
+	iptables -A INPUT   -p tcp -j BADTCP
+	iptables -A FORWARD -p tcp -j BADTCP
 
 	# Connection tracking chain
-	/sbin/iptables -N CONNTRACK
-	/sbin/iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+	iptables -N CONNTRACK
+	iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 	# Fix for braindead ISP's
-	/sbin/iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
 	# CUSTOM chains, can be used by the users themselves
-	/sbin/iptables -N CUSTOMINPUT
-	/sbin/iptables -A INPUT -j CUSTOMINPUT
-	/sbin/iptables -N CUSTOMFORWARD
-	/sbin/iptables -A FORWARD -j CUSTOMFORWARD
-	/sbin/iptables -N CUSTOMOUTPUT
-	/sbin/iptables -A OUTPUT -j CUSTOMOUTPUT
-	/sbin/iptables -t nat -N CUSTOMPREROUTING
-	/sbin/iptables -t nat -A PREROUTING -j CUSTOMPREROUTING
-	/sbin/iptables -t nat -N CUSTOMPOSTROUTING
-	/sbin/iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
+	iptables -N CUSTOMINPUT
+	iptables -A INPUT -j CUSTOMINPUT
+	iptables -N CUSTOMFORWARD
+	iptables -A FORWARD -j CUSTOMFORWARD
+	iptables -N CUSTOMOUTPUT
+	iptables -A OUTPUT -j CUSTOMOUTPUT
+	iptables -t nat -N CUSTOMPREROUTING
+	iptables -t nat -A PREROUTING -j CUSTOMPREROUTING
+	iptables -t nat -N CUSTOMPOSTROUTING
+	iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
 
 	# Guardian (IPS) chains
-	/sbin/iptables -N GUARDIAN
-	/sbin/iptables -A INPUT -j GUARDIAN
-	/sbin/iptables -A FORWARD -j GUARDIAN
+	iptables -N GUARDIAN
+	iptables -A INPUT -j GUARDIAN
+	iptables -A FORWARD -j GUARDIAN
 
 	# Block OpenVPN transfer networks
-	/sbin/iptables -N OVPNBLOCK
+	iptables -N OVPNBLOCK
 	for i in INPUT FORWARD; do
-		/sbin/iptables -A ${i} -j OVPNBLOCK
+		iptables -A ${i} -j OVPNBLOCK
 	done
 
 	# OpenVPN transfer network translation
-	/sbin/iptables -t nat -N OVPNNAT
-	/sbin/iptables -t nat -A POSTROUTING -j OVPNNAT
+	iptables -t nat -N OVPNNAT
+	iptables -t nat -A POSTROUTING -j OVPNNAT
 
 	# IPTV chains for IGMPPROXY
-	/sbin/iptables -N IPTVINPUT
-	/sbin/iptables -A INPUT -j IPTVINPUT
-	/sbin/iptables -N IPTVFORWARD
-	/sbin/iptables -A FORWARD -j IPTVFORWARD
+	iptables -N IPTVINPUT
+	iptables -A INPUT -j IPTVINPUT
+	iptables -N IPTVFORWARD
+	iptables -A FORWARD -j IPTVFORWARD
 
 	# filtering from GUI
-	/sbin/iptables -N GUIINPUT
-	/sbin/iptables -A INPUT -j GUIINPUT
-	/sbin/iptables -A GUIINPUT -p icmp --icmp-type 8 -j ACCEPT
+	iptables -N GUIINPUT
+	iptables -A INPUT -j GUIINPUT
+	iptables -A GUIINPUT -p icmp --icmp-type 8 -j ACCEPT
 
 	# Accept everything on loopback
-	/sbin/iptables -N LOOPBACK
-	/sbin/iptables -A LOOPBACK -i lo -j ACCEPT
-	/sbin/iptables -A LOOPBACK -o lo -j ACCEPT
+	iptables -N LOOPBACK
+	iptables -A LOOPBACK -i lo -j ACCEPT
+	iptables -A LOOPBACK -o lo -j ACCEPT
 
 	# Filter all packets with loopback addresses on non-loopback interfaces.
-	/sbin/iptables -A LOOPBACK -s 127.0.0.0/8 -j DROP
-	/sbin/iptables -A LOOPBACK -d 127.0.0.0/8 -j DROP
+	iptables -A LOOPBACK -s 127.0.0.0/8 -j DROP
+	iptables -A LOOPBACK -d 127.0.0.0/8 -j DROP
 
 	for i in INPUT FORWARD OUTPUT; do
-		/sbin/iptables -A ${i} -j LOOPBACK
+		iptables -A ${i} -j LOOPBACK
 	done
 
 	# Accept everything connected
 	for i in INPUT FORWARD OUTPUT; do
-		/sbin/iptables -A ${i} -j CONNTRACK
+		iptables -A ${i} -j CONNTRACK
 	done
 
 	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
-	/sbin/iptables -N IPSECINPUT
-	/sbin/iptables -N IPSECFORWARD
-	/sbin/iptables -N IPSECOUTPUT
-	/sbin/iptables -A INPUT -j IPSECINPUT
-	/sbin/iptables -A FORWARD -j IPSECFORWARD
-	/sbin/iptables -A OUTPUT -j IPSECOUTPUT
-	/sbin/iptables -t nat -N IPSECNAT
-	/sbin/iptables -t nat -A POSTROUTING -j IPSECNAT
+	iptables -N IPSECINPUT
+	iptables -N IPSECFORWARD
+	iptables -N IPSECOUTPUT
+	iptables -A INPUT -j IPSECINPUT
+	iptables -A FORWARD -j IPSECFORWARD
+	iptables -A OUTPUT -j IPSECOUTPUT
+	iptables -t nat -N IPSECNAT
+	iptables -t nat -A POSTROUTING -j IPSECNAT
 
 	# localhost and ethernet.
-	/sbin/iptables -A INPUT   -i $GREEN_DEV  -m conntrack --ctstate NEW -j ACCEPT ! -p icmp
+	iptables -A INPUT   -i $GREEN_DEV  -m conntrack --ctstate NEW -j ACCEPT ! -p icmp
 	
 	# allow DHCP on BLUE to be turned on/off
-	/sbin/iptables -N DHCPBLUEINPUT 
-	/sbin/iptables -A INPUT -j DHCPBLUEINPUT
+	iptables -N DHCPBLUEINPUT 
+	iptables -A INPUT -j DHCPBLUEINPUT
 	
 	# WIRELESS chains
-	/sbin/iptables -N WIRELESSINPUT
-	/sbin/iptables -A INPUT -m conntrack --ctstate NEW -j WIRELESSINPUT
-	/sbin/iptables -N WIRELESSFORWARD
-	/sbin/iptables -A FORWARD -m conntrack --ctstate NEW -j WIRELESSFORWARD
+	iptables -N WIRELESSINPUT
+	iptables -A INPUT -m conntrack --ctstate NEW -j WIRELESSINPUT
+	iptables -N WIRELESSFORWARD
+	iptables -A FORWARD -m conntrack --ctstate NEW -j WIRELESSFORWARD
 
 	# OpenVPN
-	/sbin/iptables -N OVPNINPUT
-	/sbin/iptables -A INPUT -j OVPNINPUT
+	iptables -N OVPNINPUT
+	iptables -A INPUT -j OVPNINPUT
 
 	# TOR
-	/sbin/iptables -N TOR_INPUT
-	/sbin/iptables -A INPUT -j TOR_INPUT
+	iptables -N TOR_INPUT
+	iptables -A INPUT -j TOR_INPUT
 	
 	# Jump into the actual firewall ruleset.
-	/sbin/iptables -N INPUTFW
-	/sbin/iptables -A INPUT -j INPUTFW
+	iptables -N INPUTFW
+	iptables -A INPUT -j INPUTFW
 
-	/sbin/iptables -N OUTGOINGFW
-	/sbin/iptables -A OUTPUT -j OUTGOINGFW
+	iptables -N OUTGOINGFW
+	iptables -A OUTPUT -j OUTGOINGFW
 
-	/sbin/iptables -N FORWARDFW
-	/sbin/iptables -A FORWARD -j FORWARDFW
+	iptables -N FORWARDFW
+	iptables -A FORWARD -j FORWARDFW
 
 	# SNAT rules
-	/sbin/iptables -t nat -N NAT_SOURCE
-	/sbin/iptables -t nat -A POSTROUTING -j NAT_SOURCE
+	iptables -t nat -N NAT_SOURCE
+	iptables -t nat -A POSTROUTING -j NAT_SOURCE
 
 	# RED chain, used for the red interface
-	/sbin/iptables -N REDINPUT
-	/sbin/iptables -A INPUT -j REDINPUT
-	/sbin/iptables -N REDFORWARD
-	/sbin/iptables -A FORWARD -j REDFORWARD
-	/sbin/iptables -t nat -N REDNAT
-	/sbin/iptables -t nat -A POSTROUTING -j REDNAT
+	iptables -N REDINPUT
+	iptables -A INPUT -j REDINPUT
+	iptables -N REDFORWARD
+	iptables -A FORWARD -j REDFORWARD
+	iptables -t nat -N REDNAT
+	iptables -t nat -A POSTROUTING -j REDNAT
 
 	iptables_red
 
 	# Custom prerouting chains (for transparent proxy)
-	/sbin/iptables -t nat -N SQUID
-	/sbin/iptables -t nat -A PREROUTING -j SQUID
+	iptables -t nat -N SQUID
+	iptables -t nat -A PREROUTING -j SQUID
 
 	# DNAT rules
-	/sbin/iptables -t nat -N NAT_DESTINATION
-	/sbin/iptables -t nat -A PREROUTING -j NAT_DESTINATION
+	iptables -t nat -N NAT_DESTINATION
+	iptables -t nat -A PREROUTING -j NAT_DESTINATION
 
 	# upnp chain for our upnp daemon
-	/sbin/iptables -t nat -N UPNPFW
-	/sbin/iptables -t nat -A PREROUTING -j UPNPFW
-	/sbin/iptables -N UPNPFW
-	/sbin/iptables -A FORWARD -m conntrack --ctstate NEW -j UPNPFW
-
-	# run local firewall configuration, if present
- 	if [ -x /etc/sysconfig/firewall.local ]; then
-		/etc/sysconfig/firewall.local start
-	fi
+	iptables -t nat -N UPNPFW
+	iptables -t nat -A PREROUTING -j UPNPFW
+	iptables -N UPNPFW
+	iptables -A FORWARD -m conntrack --ctstate NEW -j UPNPFW
 
 	# Apply OpenVPN firewall rules
 	/usr/local/bin/openvpnctrl --firewall-rules
@@ -216,13 +218,13 @@ iptables_init() {
 	# run wirelessctrl
 	/usr/local/bin/wirelessctrl
 
-	#POLICY CHAIN
-	/sbin/iptables -N POLICYIN
-	/sbin/iptables -A INPUT -j POLICYIN
-	/sbin/iptables -N POLICYFWD
-	/sbin/iptables -A FORWARD -j POLICYFWD
-	/sbin/iptables -N POLICYOUT
-	/sbin/iptables -A OUTPUT -j POLICYOUT
+	# POLICY CHAIN
+	iptables -N POLICYIN
+	iptables -A INPUT -j POLICYIN
+	iptables -N POLICYFWD
+	iptables -A FORWARD -j POLICYFWD
+	iptables -N POLICYOUT
+	iptables -A OUTPUT -j POLICYOUT
 
 	/usr/sbin/firewall-policy
 
@@ -230,37 +232,37 @@ iptables_init() {
 	/usr/local/bin/firewallctrl
 
 	if [ "$DROPINPUT" == "on" ]; then
-		/sbin/iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
+		iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
 	fi
-	/sbin/iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
+	iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
 	if [ "$DROPFORWARD" == "on" ]; then
-		/sbin/iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
+		iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
 	fi
-	/sbin/iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
+	iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
 }
 
 iptables_red() {
-	/sbin/iptables -F REDINPUT
-	/sbin/iptables -F REDFORWARD
-	/sbin/iptables -t nat -F REDNAT
+	iptables -F REDINPUT
+	iptables -F REDFORWARD
+	iptables -t nat -F REDNAT
 
 	# PPPoE / PPTP Device
 	if [ "$IFACE" != "" ]; then
 		# PPPoE / PPTP
 		if [ "$DEVICE" != "" ]; then
-			/sbin/iptables -A REDINPUT -i $DEVICE -j ACCEPT
+			iptables -A REDINPUT -i $DEVICE -j ACCEPT
 		fi
 		if [ "$RED_TYPE" == "PPTP" -o "$RED_TYPE" == "PPPOE" ]; then
 			if [ "$RED_DEV" != "" ]; then
-				/sbin/iptables -A REDINPUT -i $RED_DEV -j ACCEPT
+				iptables -A REDINPUT -i $RED_DEV -j ACCEPT
 			fi
 		fi
 	fi
 
 	# PPTP over DHCP
 	if [ "$DEVICE" != "" -a "$TYPE" == "PPTP" -a "$METHOD" == "DHCP" ]; then
-		/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $DEVICE -j ACCEPT
-		/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $DEVICE -j ACCEPT
+		iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $DEVICE -j ACCEPT
+		iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $DEVICE -j ACCEPT
 	fi
 
 	# Orange pinholes
@@ -268,24 +270,24 @@ iptables_red() {
 		# This rule enables a host on ORANGE network to connect to the outside
 		# (only if we have a red connection)
 		if [ "$IFACE" != "" ]; then
-			/sbin/iptables -A REDFORWARD -i $ORANGE_DEV -o $IFACE -j ACCEPT
+			iptables -A REDFORWARD -i $ORANGE_DEV -o $IFACE -j ACCEPT
 		fi
 	fi
 
 	if [ "$IFACE" != "" -a -f /var/ipfire/red/active ]; then
 		# DHCP
 		if [ "$RED_DEV" != "" -a "$RED_TYPE" == "DHCP" ]; then
-			/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-			/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
+			iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
+			iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
 		fi
 		if [ "$METHOD" == "DHCP"  -a "$PROTOCOL" == "RFC1483" ]; then
-			/sbin/iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
-			/sbin/iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
+			iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
+			iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
 		fi
 
 		# Outgoing masquerading (don't masqerade IPSEC (mark 50))
-		/sbin/iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
-		/sbin/iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
+		iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
+		iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
 
 	fi
 }
@@ -293,10 +295,38 @@ iptables_red() {
 # See how we were called.
 case "$1" in
   start)
+	boot_mesg "Loading firewall modules into the kernel"
+	modprobe iptable_nat || failed=1
+	for i in $(find /lib/modules/$(uname -r) -name nf_conntrack*); do
+		modprobe $(basename $i | cut -d. -f1) || failed=1
+	done
+	for i in $(find /lib/modules/$(uname -r) -name nf_nat*); do
+		modprobe $(basename $i | cut -d. -f1) || failed=1
+	done
+	(exit ${failed})
+	evaluate_retval
+
+	if [ -e /var/ipfire/main/disable_nf_sip ]; then
+		rmmod nf_nat_sip
+		rmmod nf_conntrack_sip
+		rmmod nf_nat_h323
+		rmmod nf_conntrack_h323
+	fi
+
+	boot_mesg "Setting up firewall"
 	iptables_init
+	evaluate_retval
+
+	# run local firewall configuration, if present
+	if [ -x /etc/sysconfig/firewall.local ]; then
+		/etc/sysconfig/firewall.local start
+	fi
 	;;
   reload)
+	boot_mesg "Reloading firewall"
 	iptables_red
+	evaluate_retval
+
 	# run local firewall configuration, if present
 	if [ -x /etc/sysconfig/firewall.local ]; then
 		/etc/sysconfig/firewall.local reload

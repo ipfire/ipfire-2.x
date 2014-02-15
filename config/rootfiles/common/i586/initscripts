@@ -218,6 +218,7 @@ etc/rc.d/rc6.d/S90localnet
 etc/rc.d/rc6.d/S99reboot
 #etc/rc.d/rcsysinit.d
 etc/rc.d/rcsysinit.d/S00mountkernfs
+etc/rc.d/rcsysinit.d/S01sysctl
 etc/rc.d/rcsysinit.d/S05modules
 etc/rc.d/rcsysinit.d/S10udev
 etc/rc.d/rcsysinit.d/S19checkfstab
@@ -231,7 +232,7 @@ etc/rc.d/rcsysinit.d/S60setclock
 etc/rc.d/rcsysinit.d/S70console
 etc/rc.d/rcsysinit.d/S75firstsetup
 etc/rc.d/rcsysinit.d/S80localnet
-etc/rc.d/rcsysinit.d/S90sysctl
+etc/rc.d/rcsysinit.d/S85firewall
 etc/rc.d/rcsysinit.d/S91network-vlans
 etc/rc.d/rcsysinit.d/S92rngd
 etc/rc.d/rc3.d/S15fireinfo
