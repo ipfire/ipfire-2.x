@@ -406,10 +406,10 @@ print <<END
 <TABLE WIDTH='100%' class='tbl'>
 <TR>
 <TH WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'></TH>
-<TH WIDTH='30%' ALIGN='CENTER' CLASS='boldbase'><B>IP</B></TH>
-<TH WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>Flag</B></TH>
+<TH WIDTH='30%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'ip address'}</B></TH>
+<TH WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'country'}</B></TH>
 <TH WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>Count</B></TH>
-<TH WIDTH='30%' ALIGN='CENTER' CLASS='boldbase'><B>Percent</B></TH>
+<TH WIDTH='30%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'percentage'}</B></TH>
 </TR>
 END
 ;

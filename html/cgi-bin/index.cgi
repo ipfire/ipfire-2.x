@@ -177,7 +177,7 @@ END
 	my $HOSTNAME = (gethostbyaddr(pack("C4", split(/\./, $ipaddr)), 2))[0];
 	if ( "$HOSTNAME" ne "" ) {
 		print <<END;
-	<tr><td><b>Hostname:</b><td align='center'>$HOSTNAME</td><td></td>
+	<tr><td><b>$Lang::tr{'hostname'}:</b><td align='center'>$HOSTNAME</td><td></td>
 END
 	}
 
@@ -187,7 +187,7 @@ END
 		chomp($GATEWAY);
 		close TMP;
 		print <<END;
-	<tr><td><b>Gateway:</b><td align='center'>$GATEWAY</td><td></td></tr>
+	<tr><td><b>$Lang::tr{'gateway'}:</b><td align='center'>$GATEWAY</td><td></td></tr>
 END
 	}
 	#Read DNS server 1

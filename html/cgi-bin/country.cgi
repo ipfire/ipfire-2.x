@@ -43,11 +43,11 @@ require "${General::swroot}/header.pl";
 print "<TABLE WIDTH='100%' border='0' class='tbl'>";
 print "<tr><th width='5%'><b>Flag</b></th>";
 print "<th width='5%'><b>Code</b></th>";
-print "<th width='40%'><b>Country</b></th>";
+print "<th width='40%'><b>$Lang::tr{'country'}</b></th>";
 print "<th><b>&nbsp;</b></th>";
 print "<th width='5%'><b>Flag</b></th>";
 print "<th width='5%'><b>Code</b></th>";
-print "<th width='40%'><b>Country</b></th></tr>";
+print "<th width='40%'><b>$Lang::tr{'country'}</b></th></tr>";
 
 @flaglist = <$flagdir/*>;
 
