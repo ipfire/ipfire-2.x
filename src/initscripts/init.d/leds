@@ -50,12 +50,25 @@ disable_led_trigger ()
 	fi
 }
 
+# enable LED
+enable_led ()
+{
+	if [ -d "/sys/class/leds/$1" ]; then
+		echo "1" >        /sys/class/leds/$1/brightness
+	fi
+}
+
 case "${1}" in
 	start)
 		# Alix LED start
 		setup_heartbeat_trigger alix:1
 		setup_netdev_trigger alix:2 ${RED_DEV} rx
 		setup_netdev_trigger alix:3 ${RED_DEV} tx
+
+		# Geos LED start
+		setup_heartbeat_trigger geos:1
+		setup_netdev_trigger geos:2 ${RED_DEV} rx
+		setup_netdev_trigger geos:3 ${RED_DEV} tx
 
 		# Dreamplug
 		setup_netdev_trigger dreamplug:green:wlan ${GREEN_DEV} tx rx
@@ -80,8 +93,15 @@ case "${1}" in
 	stop)
 		# Alix LED stop
 		disable_led_trigger alix:1
+		enable_led alix:1
 		disable_led_trigger alix:2
 		disable_led_trigger alix:3
+
+		# Geos LED stop
+		disable_led_trigger geos:1
+		enable_led geos:1
+		disable_led_trigger geos:2
+		disable_led_trigger geos:3
 
 		# Dreamplug
 		disable_led_trigger dreamplug:green:wlan
