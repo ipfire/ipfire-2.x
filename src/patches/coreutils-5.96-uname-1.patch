@@ -1,34 +1,53 @@
-Submitted By: Matthew Burgess <matthew at linuxfromscratch dot org>
-Date: 2005-10-23
-Initial Package Version: 5.92
+Submitted By: Robert Connolly <robert@linuxfromscratch.org> (ashes)
+Date: 2005-11-13
+Initial Package Version: 5.93
 Upstream Status: pending
-Origin: Scot McPherson
-Description: Fix the output of uname once and for all.
+Origin: Scot McPherson and Zack Winkles
+Description: Fix the output of uname once and for all. This is the position independent
+version.
 
-	$ uname -m	# This always worked.
+	$ uname -m      # This always worked.
 	i686
-	$ uname -i	# Used to report 'unknown'.
+	$ uname -i      # Used to report 'unknown'.
 	i386
-	$ uname -p	# Likewise.
+	$ uname -p      # Likewise.
 	athlon-4
 
-diff -Naur coreutils-5.92.orig/src/uname.c coreutils-5.92/src/uname.c
---- coreutils-5.92.orig/src/uname.c	2005-09-15 20:34:42.000000000 +0000
-+++ coreutils-5.92/src/uname.c	2005-10-23 10:14:06.000000000 +0000
-@@ -29,6 +29,12 @@
+Now 'uname -p' can be used by GCC's mtune/mcpu and march options. For example:
+
+	CFLAGS="-march=$(uname -m) -mtune=$(uname -p)"
+
+diff -Naur coreutils-5.93.orig/src/uname.c coreutils-5.93/src/uname.c
+--- coreutils-5.93.orig/src/uname.c	2005-09-15 19:57:04.000000000 +0000
++++ coreutils-5.93/src/uname.c	2005-11-13 19:18:35.000000000 +0000
+@@ -29,6 +29,26 @@
  # include <sys/systeminfo.h>
  #endif
  
 +#ifdef linux
-+#define cpuid(in,a,b,c,d)\
-+  asm("cpuid": "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (in));
++/* Thanks to the ffmpeg team for this PIC version of cpuid() */
++#ifdef ARCH_X86_64
++#  define REG_b "rbx"
++#  define REG_S "rsi"
++#else
++#  define REG_b "ebx"
++#  define REG_S "esi"
++#endif
++#define cpuid(index,eax,ebx,ecx,edx)\
++	__asm __volatile\
++	  ("mov %%"REG_b", %%"REG_S"\n\t"\
++	  "cpuid\n\t"\
++	  "xchg %%"REG_b", %%"REG_S\
++	  : "=a" (eax), "=S" (ebx),\
++	  "=c" (ecx), "=d" (edx)\
++	  : "0" (index));
 +int has_sse( void );
 +#endif
 +
  #if HAVE_SYS_SYSCTL_H
  # if HAVE_SYS_PARAM_H
  #  include <sys/param.h> /* needed for OpenBSD 3.0 */
-@@ -256,6 +262,96 @@
+@@ -256,6 +276,99 @@
  	if (0 <= sysinfo (SI_ARCHITECTURE, processor, sizeof processor))
  	  element = processor;
        }
@@ -75,6 +94,9 @@ diff -Naur coreutils-5.92.orig/src/uname.c coreutils-5.92/src/uname.c
 +		element="pentium3";
 +	      break;
 +	    case 15: // Pentium4
++	      if( model == 3 ) // Prescott
++                element="prescott";
++	      else
 +	      element="pentium4";
 +	      break;
 +	    default:
@@ -125,7 +147,7 @@ diff -Naur coreutils-5.92.orig/src/uname.c coreutils-5.92/src/uname.c
  #endif
  #ifdef UNAME_PROCESSOR
        if (element == unknown)
-@@ -293,7 +389,7 @@
+@@ -293,7 +406,7 @@
  
    if (toprint & PRINT_HARDWARE_PLATFORM)
      {
@@ -134,7 +156,7 @@ diff -Naur coreutils-5.92.orig/src/uname.c coreutils-5.92/src/uname.c
  #if HAVE_SYSINFO && defined SI_PLATFORM
        {
  	static char hardware_platform[257];
-@@ -301,6 +397,15 @@
+@@ -301,6 +414,15 @@
  			  hardware_platform, sizeof hardware_platform))
  	  element = hardware_platform;
        }
@@ -150,7 +172,7 @@ diff -Naur coreutils-5.92.orig/src/uname.c coreutils-5.92/src/uname.c
  #endif
  #ifdef UNAME_HARDWARE_PLATFORM
        if (element == unknown)
-@@ -323,3 +428,29 @@
+@@ -323,3 +445,29 @@
  
    exit (EXIT_SUCCESS);
  }

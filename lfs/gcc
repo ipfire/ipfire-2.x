@@ -177,6 +177,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-rh610785.patch
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-unwind-debug-hook.patch
 
+	# texinfo 5 syntax-fixes
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-4.4.7-texinfo-5.patch
+
 ifneq "$(ROOT)" ""
 	# Build gmp and mpfr internally in toolchain.
 	cd $(DIR_APP) && tar xfa $(DIR_DL)/gmp-$(GMP_VER).tar.bz2

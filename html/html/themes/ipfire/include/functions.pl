@@ -18,397 +18,232 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
+#                                                                             #
+# Theme file for IPfire (based on ipfire theme)                               #
+# Author kay-michael köhler kmk <michael@koehler.tk>                          #
+#                                                                             #
+# Version 1.0	March, 6th 2013                                               #
+###############################################################################
+#                                                                             #
+# Modyfied theme by a.marx@ipfire.org January 2014                            #
+#                                                                             #
+# Cleanup code, deleted unused code and rewrote the rest to get a new working #
+# IPFire default theme.                                                       #
+###############################################################################
 
+require "${General::swroot}/lang.pl";
+
+###############################################################################
+#
+# print menu html elements for submenu entries
+# @param submenu entries
+sub showsubmenu() {
+	my $submenus = shift;
+	
+	print "<ul>";
+	foreach my $item (sort keys %$submenus) {
+		$link = getlink($submenus->{$item});
+		next if (!is_menu_visible($link) or $link eq '');
+
+		my $subsubmenus = $submenus->{$item}->{'subMenu'};
+
+		if ($subsubmenus) {
+			print '<li class="has-sub ">';
+		} else {
+			print '<li>';
+		}
+		print '<a href="'.$link.'">'.$submenus->{$item}->{'caption'}.'</a>';
+
+		&showsubmenu($subsubmenus) if ($subsubmenus);
+		print '</li>';
+	}
+	print "</ul>"
+}
+
+###############################################################################
+#
+# print menu html elements
 sub showmenu() {
-    print <<EOF
-                <div id="menu">
-                        <ul>
+	print '<div id="cssmenu" class="bigbox fixed">';
+
+	if ($settings{'SPEED'} ne 'off') {
+		print <<EOF;
+			<div id='traffic'>
+				<strong>Traffic:</strong>
+				In  <span id='rx_kbs'>--.-- Bit/s</span> &nbsp;
+				Out <span id='tx_kbs'>--.-- Bit/s</span>
+			</div>
 EOF
-;
-    foreach my $k1 ( sort keys %$menu ) {
-        if (! $menu->{$k1}{'enabled'}) {
-            next;
-        }
-        my $link = getlink($menu->{$k1});
-        if ($link eq '') {
-            next;
-        }
-        if (! is_menu_visible($link)) {
-            next;
-        }
-        if ($menu->{$k1}->{'selected'}) {
-            print "<li><a href=\"$link\" class=\"active\">$menu->{$k1}{'caption'}</a></li>";
-        } else {
-            print "<li><a href=\"$link\">$menu->{$k1}{'caption'}</a></li>";
-        }
-    }
-    print <<EOF
-                        </ul>
-                </div>
-EOF
-;    
+	}
+
+	print "<ul>";
+	foreach my $k1 ( sort keys %$menu ) {
+		$link = getlink($menu->{$k1});
+		next if (!is_menu_visible($link) or $link eq '');
+		print '<li class="has-sub "><a><span>'.$menu->{$k1}->{'caption'}.'</span></a>';
+		my $submenus = $menu->{$k1}->{'subMenu'};
+		&showsubmenu($submenus) if ($submenus);
+		print "</li>";
+	}
+
+	print "</ul></div>";
 }
 
-sub getselected($) {
-    my $root = shift;
-    if (!$root) {
-        return 0;
-    }
-
-    foreach my $item (%$root) {
-        if ($root->{$item}{'selected'}) {
-            return $root->{$item};
-        }
-    }
-}
-
-sub showsubsection($$) {
-    my $root = shift;
-
-    if (! $root) {
-        return;
-    }
-    my $selected = getselected($root);
-    if (! $selected) {
-        return;
-    }
-    my $submenus = $selected->{'subMenu'};
-    if (! $submenus) {
-        return;
-    }
-
-    print <<EOF
-        <h4><span>Side</span>menu</h4>
-        <ul class="links">
-EOF
-;
-    foreach my $item (sort keys %$submenus) {
-        my $hash = $submenus->{$item};
-        if (! $hash->{'enabled'}) {
-            next;
-        }
-        my $link = getlink($hash);
-        if ($link eq '') {
-            next;
-        }
-        if (! is_menu_visible($link)) {
-            next;
-        }
-        if ($hash->{'selected'}) {
-            print '<li class="selected">';
-        } else {
-            print '<li>';
-        }
-
-        print "<a href=\"$link\">$hash->{'caption'}</a></li>";
-    }
-
-    print <<EOF
-        </ul>
-EOF
-;
-}
-
-
-sub showsubsubsection($) {
-    my $root = shift;
-    if (!$root) {
-        return;
-    }
-    my $selected = getselected($root);
-    if (! $selected) {
-        return
-    }
-    if (! $selected->{'subMenu'}) {
-        return
-    }
-
-    showsubsection($selected->{'subMenu'}, 'menu-subtop');
-}
-
+###############################################################################
+#
+# print page opening html layout
+# @param page title
+# @param boh
+# @param extra html code for html head section
+# @param suppress menu option, can be numeric 1 or nothing.
+#		 menu will be suppressed if param is 1
 sub openpage {
-    my $title = shift;
-    my $boh = shift;
-    my $extrahead = shift;
+	my $title = shift;
+	my $boh = shift;
+	my $extrahead = shift;
+	my $suppressMenu = shift;
+	my @tmp = split(/\./, basename($0));
+	my $scriptName = @tmp[0];
 
-    @URI=split ('\?',  $ENV{'REQUEST_URI'} );
-    &General::readhash("${swroot}/main/settings", \%settings);
-    &genmenu();
+	@URI=split ('\?',  $ENV{'REQUEST_URI'} );
+	&General::readhash("${swroot}/main/settings", \%settings);
+	&genmenu();
 
-    my $h2 = gettitle($menu);
+	my $headline = "IPFire";
+	if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
+		$headline =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}";
+	}
 
-    $title = "IPFire - $title";
-    if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
-        $title =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
-    }
+	my @stylesheets = ("style.css");
+	if ($THEME_NAME eq "ipfire-rounded") {
+		push(@stylesheets, "style-rounded.css");
+	}
 
-    print <<END
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
-<html xmlns='http://www.w3.org/1999/xhtml'>
-<head>
-		<title>$title</title>
-    $extrahead
+print <<END;
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>$headline - $title</title>
+	$extrahead
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<link rel="shortcut icon" href="/favicon.ico" />
+	<script type="text/javascript" src="/include/jquery.js"></script>
 END
-;
-    if ($settings{'FX'} ne 'off') {
-    print <<END
-    <meta http-equiv="Page-Enter" content="blendTrans(Duration=0.5,Transition=12)" />
-    <meta http-equiv="Page-Exit" content="blendTrans(Duration=0.5,Transition=12)" />
-END
-;
-    }
-    print <<END
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="/themes/ipfire/include/style.css" />
-    <script language="javascript" type="text/javascript">
-      
-        function swapVisibility(id) {
-            el = document.getElementById(id);
-            if(el.style.display != 'block') {
-                el.style.display = 'block'
-            }
-            else {
-                el.style.display = 'none'
-            }
-        }
-    </script>
-END
-;
+
+	foreach my $stylesheet (@stylesheets) {
+		print "<link href=\"/themes/ipfire/include/css/$stylesheet\" rel=\"stylesheet\" type=\"text/css\" />\n";
+	}
+
 if ($settings{'SPEED'} ne 'off') {
 print <<END
-    <script type="text/javascript" src="/include/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript">
-        var t_current;
-        var t_last;
-        var rxb_current;
-        var rxb_last;
-        var txb_current;
-        var txb_last;
-	function refreshInetInfo() {
-		\$.ajax({
-                	url: '/cgi-bin/speed.cgi',
-                        success: function(xml){
-                        t_current = new Date();
-                        var t_diff = t_current - t_last;
-                        t_last = t_current;
-
-                        rxb_current = \$("rxb",xml).text();
-                        var rxb_diff = rxb_current - rxb_last;
-                        rxb_last = rxb_current;
-
-                        var rx_kbs = rxb_diff/t_diff;
-                        rx_kbs = Math.round(rx_kbs*10)/10;
-
-                        txb_current = \$("txb",xml).text();
-                        var txb_diff = txb_current - txb_last;
-                        txb_last = txb_current;
-
-                        var tx_kbs = txb_diff/t_diff;
-                        tx_kbs = Math.round(tx_kbs*10)/10;
-
-                        \$("#rx_kbs").text(rx_kbs + ' kb/s');
-                        \$("#tx_kbs").text(tx_kbs + ' kb/s');
-                        }
-        	});
-                window.setTimeout("refreshInetInfo()", 3000);
-	}
-	\$(document).ready(function(){
-		refreshInetInfo();
-	});
-    </script>
-  </head>
-  <body>
+	<script type="text/javascript" src="/themes/ipfire/include/js/refreshInetInfo.js"></script>
 END
 ;
 }
-else {
-print "</head><body>";}
+
 print <<END
-<!-- IPFIRE HEADER -->
-
-<div id="header">
-
-        <div id="header_inner" class="fixed">
-
-                <div id="logo">
+	</head>
+	<body>
+		<div id="header" class="fixed">
+			<div id="logo">
 END
 ;
-    if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
-        print "<h1><span>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</span></h1><br />"; 
-    } else {
-                                print "<h1><span>IPFire</span></h1><br />";
-                }
-                print <<END
-                        <h2>$h2</h2>
-                </div>
+	if ($settings{'WINDOWWITHHOSTNAME'} ne 'off') {
+		print "<h1>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</h1>";
+	} else {
+		print "<h1>IPFire</h1>";
+	}
 
+print <<END
+			</div>
+		</div>
 END
 ;
-        &showmenu();
 
-print <<END     
-        </div>
-</div>
+&showmenu() if ($suppressMenu != 1);
 
-<div id="main">
-        <div id="main_inner" class="fixed">
-                <div id="primaryContent_2columns">
-                        <div id="columnA_2columns">
+print <<END
+	<div class="bigbox fixed">
+		<div id="main_inner" class="fixed">
+			<h1>$title</h1>
 END
 ;
 }
 
+###############################################################################
+#
+# print page opening html layout without menu
+# @param page title
+# @param boh
+# @param extra html code for html head section
 sub openpagewithoutmenu {
-    my $title = shift;
-    my $boh = shift;
-    my $extrahead = shift;
-
-    @URI=split ('\?',  $ENV{'REQUEST_URI'} );
-    &General::readhash("${swroot}/main/settings", \%settings);
-    &genmenu();
-
-    my $h2 = gettitle($menu);
-
-    $title = "IPFire - $title";
-    if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
-        $title =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'} - $title"; 
-    }
-
-    print <<END
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
-<html xmlns='http://www.w3.org/1999/xhtml'>
-<head>
-		<title>$title</title>
-		$extrahead
-END
-;
-    if ($settings{'FX'} ne 'off') {
-    print <<END
-    <meta http-equiv="Page-Enter" content="blendTrans(Duration=0.5,Transition=12)" />
-    <meta http-equiv="Page-Exit" content="blendTrans(Duration=0.5,Transition=12)" />
-END
-;
-    }
-    print <<END
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="/include/style.css" />
-    <script language="javascript" type="text/javascript">
-      
-        function swapVisibility(id) {
-            el = document.getElementById(id);
-            if(el.style.display != 'block') {
-                el.style.display = 'block'
-            }
-            else {
-                el.style.display = 'none'
-            }
-        }
-    </script>
-
-  </head>
-  <body>
-<!-- IPFIRE HEADER -->
-
-<div id="header">
-
-        <div id="header_inner" class="fixed">
-
-                <div id="logo">
-                        <h1><span>IPFire</span></h1>
-                        <h2>$h2</h2>
-                </div>  
-        </div>
-</div>
-
-<div id="main">
-        <div id="main_inner" class="fixed">
-                <div id="primaryContent_2columns">
-                        <div id="columnA_2columns">
-END
-;
+	openpage(shift,shift,shift,1);
+	return;
 }
+
+###############################################################################
+#
+# print page closing html layout
 
 sub closepage () {
-	my $status = &connectionstatus();
-	my $uptime = `/usr/bin/uptime|cut -d \" \" -f 4-`;
-	$uptime =~ s/year(s|)/$Lang::tr{'year'}/;
-	$uptime =~ s/month(s|)/$Lang::tr{'month'}/;
-	$uptime =~ s/day(s|)/$Lang::tr{'day'}/;
-	$uptime =~ s/user(s|)/$Lang::tr{'user'}/;
-	$uptime =~ s/load average/$Lang::tr{'uptime load average'}/;     
-				
-    print <<END
-                        </div>
-                </div>
+	open(FILE, "</etc/system-release");
+	my $system_release = <FILE>;
+	$system_release =~ s/core/Core Update/;
+	close(FILE);
 
-                <div id="secondaryContent_2columns">
-                
-                        <div id="columnC_2columns">
-END
-;
-    &showsubsection($menu);
-    &showsubsubsection($menu);
+print <<END;
+		</div>
+	</div>
 
-        print <<END                     
-				</div>
-            </div>
-            <br class="clear" />    
-			<div id="footer" class="fixed">
-				<b>Status:</b> $status <b>Uptime:</b> $uptime
-END
-;
-if ($settings{'SPEED'} ne 'off') {
-print <<END                        
-                        <br />
-                                <b>$Lang::tr{'bandwidth usage'}:</b>
-				$Lang::tr{'incoming'}: <span id="rx_kbs"></span>&nbsp;$Lang::tr{'outgoing'}: <span id="tx_kbs"></span>
+	<div id="footer" class='bigbox fixed'>
+		<span class="pull-right">
+			<a href="http://www.ipfire.org/" target="_blank"><strong>IPFire.org</strong></a> &bull;
+			<a href="http://www.ipfire.org/donate" target="_blank">$Lang::tr{'support donation'}</a>
+		</span>
 
-END
-;
-}
-print <<END
-                </div>
-        </div>
-</div>
+		<strong>$system_release</strong>
+	</div>
 </body>
 </html>
 END
 ;
 }
 
-sub openbigbox
-{
+###############################################################################
+#
+# print big box opening html layout
+sub openbigbox {
 }
 
-sub closebigbox
-{
+###############################################################################
+#
+# print big box closing html layout
+sub closebigbox {
 }
 
-sub openbox
-{
-        $width = $_[0];
-        $align = $_[1];
-        $caption = $_[2];
+###############################################################################
+#
+# print box opening html layout
+# @param page width
+# @param page align
+# @param page caption
+sub openbox {
+	$width = $_[0];
+	$align = $_[1];
+	$caption = $_[2];
 
-        print <<END
-<!-- openbox -->
-        <div class="post" align="$align">
-END
-;
+	print "<div class='post' align='$align'>\n";
 
-        if ($caption) { print "<h3>$caption</h3>\n"; } else { print "&nbsp;"; }
+	if ($caption) {
+		print "<h2>$caption</h2>\n";
+	}
 }
 
-sub closebox
-{
-        print <<END
-        </div>
-        <br class="clear" />
-        <!-- closebox -->
-END
-;
+###############################################################################
+#
+# print box closing html layout
+sub closebox {
+	print "</div>";
 }
 
 1;

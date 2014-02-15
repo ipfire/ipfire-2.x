@@ -6,7 +6,7 @@
 #
 # Authors     : Arne Fitzenreiter - arne_f@ipfire.org
 #
-# Version     : 1.01
+# Version     : 1.04
 #
 # Notes       :
 #
@@ -22,6 +22,12 @@ case "${1}" in
 		mount -o remount,rw / > /dev/null
 		evaluate_retval
 
+		boot_mesg "Create /etc/mtab..."
+		> /etc/mtab
+		mount -f / || failed=1
+		(exit ${failed})
+		evaluate_retval
+
 		# Detect device
 		ROOT=`mount | grep -m1 " / " | cut -d" " -f1`;
 		if [ "${ROOT:`expr length $ROOT`-2:1}" == "p" ]; then
@@ -31,14 +37,18 @@ case "${1}" in
 		fi
 
 		boot_mesg "Change Partition ${DRV}3 to all free space ..."
-		echo -e 'd\n3\nn\np\n3\n\n\nw\nq\n' | fdisk ${DRV}
+		echo -e ',+' | sfdisk --no-reread -f -N3 ${DRV} 2>/dev/null
+
+		boot_mesg "Update c,h,s values of ${DRV}1 ..."
+		echo -e ',' | sfdisk --no-reread -f -N1 ${DRV} &> /dev/null
 
 		# Erase symlink, it should run only once
 		rm -f /etc/rc.d/rcsysinit.d/S25partresize
 
 		boot_mesg "Rebooting ..."
 		sync
-		mount -o remount,ro / > /dev/null
+		mount -o remount,ro / &> /dev/null
+		sleep 15
 		reboot -f
 
 		;;
@@ -49,4 +59,3 @@ case "${1}" in
 esac
 
 # End $rc_base/init.d/partresize
-

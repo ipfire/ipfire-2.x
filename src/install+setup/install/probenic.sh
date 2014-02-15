@@ -65,6 +65,12 @@ for card in `ls /sys/class/net`; do
 						let bus=`echo 1$bus`-1000
 						let dev=`echo 1$dev`-1000
 						name=`lsusb -s $bus:$dev | cut -d':' -f3 | cut -c 6-`
+						#kernel higher 3.2 changes
+						if [ "$name" == "" ]; then
+							vid=`grep PRODUCT= /sys/class/net/$card/device/uevent | cut -d"=" -f2 | cut -d"/" -f1`
+							pid=`grep PRODUCT= /sys/class/net/$card/device/uevent | cut -d"=" -f2 | cut -d"/" -f2`
+							name=`lsusb -d $vid:$pid | cut -d':' -f3 | cut -c 6-`
+						fi
 						description=`echo $type: $name`
 					fi
 

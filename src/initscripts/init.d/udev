@@ -29,22 +29,26 @@ case "${1}" in
 			read ENTER
 			/etc/rc.d/init.d/halt stop
 		fi
-
-		# Mount a temporary file system over /dev, so that any devices
-		# made or removed during this boot don't affect the next one.
-		# The reason we don't write to mtab is because we don't ever
-		# want /dev to be unavailable (such as by `umount -a').
-		mount -n -t tmpfs tmpfs /dev -o mode=755
-		if [ ${?} != 0 ]; then
+		if ! grep -q '[[:space:]]/dev' /proc/mounts; then
 			echo_failure
-			boot_mesg -n "FAILURE:\n\nCannot mount a tmpfs" ${FAILURE}
-			boot_mesg -n " onto /dev, this system will be halted."
+			boot_mesg -n "FAILURE:\n\nKernel has no devtmpfs/mount" ${FAILURE}
+			boot_mesg -n " support but this is needed for udev."
 			boot_mesg -n "\n\nAfter you press Enter, this system"
 			boot_mesg -n " will be halted and powered off."
 			boot_mesg -n "\n\nPress Enter to continue..." ${INFO}
 			boot_mesg "" ${NORMAL}
 			read ENTER
 			/etc/rc.d/init.d/halt stop
+		fi
+
+		if ! grep -q '[[:space:]]/dev/shm' /proc/mounts; then
+			mkdir -p /dev/shm
+			mount -t tmpfs tmpfs /dev/shm
+		fi
+
+		if ! grep -q '[[:space:]]/dev/pts' /proc/mounts; then
+			mkdir -p /dev/pts
+			mount -t devpts devpts -o gid=5,mode=620 /dev/pts
 		fi
 
 		# Udev handles uevents itself, so we don't need to have
@@ -60,10 +64,10 @@ case "${1}" in
 
 		# Now traverse /sys in order to "coldplug" devices that have
 		# already been discovered
-		/sbin/udevadm trigger
+		/bin/udevadm trigger
 
 		# Now wait for udevd to process the uevents we triggered
-		/sbin/udevadm settle
+		/bin/udevadm settle
 		evaluate_retval
 
 		;;

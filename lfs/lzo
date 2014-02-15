@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.02
+VER        = 2.06
 
 THISAPP    = lzo-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6760e5819f4238328709bf93bf10071c
+$(DL_FILE)_MD5 = 95380bd4081f85ef08c5209f4107e9f8
 
 install : $(TARGET)
 

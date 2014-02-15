@@ -699,7 +699,7 @@ if ($errormessage) {
 ############################################################################################################################
 ############################################################################################################################
 
-&Header::openbox('100%', 'center', 'Quality of Service');
+&Header::openbox('100%', 'center', );
 
 print <<END
   <form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -707,15 +707,18 @@ print <<END
 END
 ;
 	if ( $message ne "" ) {
-		print "<tr><td colspan='2' align='center'><font color='red'>$message</font>";
+		print "<tr><td colspan='2' align='center'><font color='red'>$message</font></tr>";
 	}
 	print <<END
-		<tr><td width='50%' align='left'><b>Quality of Service:</b>
-		    <td width='50%' align='center' bgcolor='$statuscolor'><font color='white'>$status</font>
-		<tr><td width='100%' align='center' colspan='2'>
-		<input type='submit' name='ACTION' value="$Lang::tr{'start'}" />
-		<input type='submit' name='ACTION' value="$Lang::tr{'stop'}" />
-		<input type='submit' name='ACTION' value="$Lang::tr{'restart'}" /></table></form>
+		<tr><td width='50%' align='left'><b>Quality of Service:</b></td>
+		    <td width='50%' align='center' bgcolor='$statuscolor'><font color='white'>$status</font></td></tr>
+		    <tr>
+				<td colspan='2'><br></td>
+			</tr>
+		<tr><td width='100%' align='right' colspan='2'>
+		<input type='submit' name='ACTION' value="$Lang::tr{'start'}">
+		<input type='submit' name='ACTION' value="$Lang::tr{'stop'}">
+		<input type='submit' name='ACTION' value="$Lang::tr{'restart'}" ></td></tr></table></form>
 END
 ;
 	if (($qossettings{'OUT_SPD'} ne '') && ($qossettings{'INC_SPD'} ne '')) {

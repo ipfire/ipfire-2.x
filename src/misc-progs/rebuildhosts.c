@@ -19,7 +19,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
+
 #include "setuid.h"
+#include "netutil.h"
 
 FILE *fd = NULL;
 FILE *hosts = NULL;

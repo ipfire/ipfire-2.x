@@ -84,7 +84,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-sasl-2.1.22-bad-elif.patch
 	cd $(DIR_APP) && sed -i '/sasl_global/s/^static //' lib/client.c
-	cd $(DIR_APP) && sed -i 's/cat8/man8/' saslauthd/Makefile.in
+	cd $(DIR_APP) && sed -i 's/cat8/man8/' saslauthd/Makefile.am
+	cd $(DIR_APP) && autoconf
 
 ifeq "$(PASS)" ""
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \

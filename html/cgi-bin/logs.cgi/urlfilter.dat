@@ -309,18 +309,19 @@ if ($lines)
 
 	$lines = 0;
 
-	print "<table width='100%'>\n";
+	print "<table width='100%' class='tbl'>";
 	unless ($cgiparams{'LOGTYPE'} eq 'squidGuard')
 	{
 		print "<tr>\n";
-		print "<td align='center'><b>$Lang::tr{'urlfilter time'}</b></td>\n";
-		print "<td align='center'><b>$Lang::tr{'urlfilter category'}</b></td>\n";
-		print "<td align='center'><b>$Lang::tr{'urlfilter client'}</b></td>\n";
-		if ($filtersettings{'ENABLE_USERNAME_LOG'} eq 'on') { print "<td align='center'><b>$Lang::tr{'urlfilter username'}</b></td>\n"; }
-		print "<td align='center'><b>$Lang::tr{'urlfilter dst'}</b></td>\n";
+		print "<th align='center'><b>$Lang::tr{'urlfilter time'}</b></th>\n";
+		print "<th align='center'><b>$Lang::tr{'urlfilter category'}</b></th>\n";
+		print "<th align='center'><b>$Lang::tr{'urlfilter client'}</b></th>\n";
+		if ($filtersettings{'ENABLE_USERNAME_LOG'} eq 'on') { print "<th align='center'><b>$Lang::tr{'urlfilter username'}</b></th>\n"; }
+		print "<th align='center'><b>$Lang::tr{'urlfilter dst'}</b></th>\n";
 		print "</tr>\n";
 	}
 
+	my $col="";
 	foreach (@slice)
 	{
 		undef $attr1; undef $attr2;
@@ -336,17 +337,23 @@ if ($lines)
 			if (@loginfo[2] =~ /emergency/) { $attr1 .= "<b><font color='$Header::colourerr'>"; $attr2 .= "</font></b>"; }
 			print "<tr>\n";
 		} else {
-			if ($lines % 2) { print "<tr bgcolor='$color{'color20'}'>\n"; } else { print "<tr bgcolor='$color{'color22'}'>\n"; } 
+			if ($lines % 2) {
+				print "<tr>";
+				$col="bgcolor='$color{'color22'}'";
+			}else {
+				print "<tr>";
+				$col="bgcolor='$color{'color20'}'";
+			}
 		}
 		if ($cgiparams{'LOGTYPE'} eq 'squidGuard') {
-			print "<td nowrap>$time &nbsp; $pid &nbsp; $attr1@loginfo$attr2</td>\n";
+			print "<td nowrap $col>$time &nbsp; $pid &nbsp; $attr1@loginfo$attr2</td>\n";
 		} else {
-			print "<td width='10%' align='center' nowrap>$time</td>\n";
-			print "<td width='11%' align='center' nowrap>$category[1]</td>\n";
-			print "<td width='15%' align='center' nowrap>$ip[0]</td>\n";
+			print "<td width='10%' align='center' nowrap $col>$time</td>\n";
+			print "<td width='11%' align='center' nowrap $col>$category[1]</td>\n";
+			print "<td width='15%' align='center' nowrap $col>$ip[0]</td>\n";
 			if ($filtersettings{'ENABLE_USERNAME_LOG'} eq 'on')
 			{
-				print "<td width='12%' align='center' nowrap>$loginfo[3]</td>\n";
+				print "<td width='12%' align='center' nowrap $col>$loginfo[3]</td>\n";
 				$site = substr($dsturl,0,55);
 				if (length($dsturl) > 55) { $site .= "..."; }
 			} else {
@@ -354,7 +361,7 @@ if ($lines)
 				if (length($dsturl) > 69) { $site .= "..."; }
 			}
 			#print "<td>$site</td>\n";
-			print "<td><a href='$dsturl' title='$dsturl' target='_blank'>$site</a></td>\n";
+			print "<td $col><a href='$dsturl' title='$dsturl' target='_blank'>$site</a></td>\n";
 		}
 		print "</tr>\n";
 	}

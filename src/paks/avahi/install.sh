@@ -22,6 +22,13 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+
+# Create Username and group.
+getent group avahi >/dev/null || groupadd -r avahi
+getent passwd avahi >/dev/null || \
+      useradd -r -g avahi -d /var/run/avahi-daemon -s /sbin/nologin \
+      -c "Avahi mDNS daemon" avahi
+
 extract_files
 ln -svf  ../init.d/avahi /etc/rc.d/rc3.d/S65avahi
 ln -svf  ../init.d/avahi /etc/rc.d/rc0.d/K35avahi

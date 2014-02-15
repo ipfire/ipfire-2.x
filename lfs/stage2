@@ -49,7 +49,7 @@ $(TARGET) :
 	@$(PREBUILD)
 
 	# Create directories
-	-mkdir -pv /{bin,boot,etc/opt,etc/modprobe.d,home,lib,mnt,opt}
+	-mkdir -pv /{bin,boot,etc/opt,etc/modprobe.d,home,lib,mnt,opt,run}
 	-mkdir -pv /{media/{floppy,cdrom,usbkey},sbin,srv,var}
 	-install -dv -m 0750 /root
 	-install -dv -m 1777 /tmp /var/tmp
@@ -60,6 +60,9 @@ $(TARGET) :
 	#-for dir in /usr /usr/local; do \
 	#  ln -sv share/{man,doc,info} $$dir; \
 	#done
+
+	# Symlink /var/run -> /run.
+	ln -svf ../run /var/run
 	
 	# Symlinks
 	# for this reason, stage2 rebuild will broke the iso:perl, grubbatch
@@ -98,18 +101,25 @@ $(TARGET) :
 	# Move script to correct place.
 	mv -vf /usr/local/bin/ovpn-ccd-convert /usr/sbin/
 
+	# Install firewall scripts.
+	mkdir -pv /usr/lib/firewall
+	install -m 755 $(DIR_SRC)/config/firewall/rules.pl \
+		/usr/lib/firewall/rules.pl
+	install -m 644 $(DIR_SRC)/config/firewall/firewall-lib.pl \
+		/usr/lib/firewall/firewall-lib.pl
+
 	# Nobody user
 	-mkdir -p /home/nobody
 	chown -R nobody:nobody /home/nobody
 
 	# Create /var dirs and files
-	-mkdir -v /var/{lock,log,mail,run,spool,empty}
+	-mkdir -v /var/{lock,log,mail,spool,empty}
 	-mkdir -pv /var/{opt,cache,lib/{misc,locate},local}
 	-mkdir -pv /var/log/{counter,calamaris}
 	chown nobody.nobody /var/log/calamaris
-	touch /var/run/utmp /var/log/{btmp,lastlog,wtmp,net-traffic.log}
-	chgrp -v utmp /var/run/utmp /var/log/lastlog
-	chmod -v 664 /var/run/utmp /var/log/lastlog
+	touch /var/log/{btmp,lastlog,wtmp,net-traffic.log}
+	chgrp -v utmp /var/log/lastlog
+	chmod -v 664 /var/log/lastlog
 
 	# Permissions
 	chmod 0711 /var/empty
@@ -120,5 +130,12 @@ $(TARGET) :
 	# License agreement
 	-mkdir -pv /usr/share/doc/licenses/
 	cp -vf $(DIR_SRC)/doc/COPYING /usr/share/doc/licenses/GPLv3
+
+	# System release
+	echo "$(SYSTEM_RELEASE)" > /etc/system-release
+
+	# Pakfire
+	-mkdir -pv /opt/pakfire/db/core
+	echo "$(PAKFIRE_CORE)" > /opt/pakfire/db/core/mine
 
 	@$(POSTBUILD)

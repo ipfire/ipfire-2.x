@@ -12,6 +12,7 @@
 package Header;
 
 use CGI();
+use File::Basename;
 use HTML::Entities();
 use Socket;
 use Time::Local;
@@ -88,18 +89,11 @@ if ( -d "/var/ipfire/langs/${language}/" ) {
     };
 };
 
-### Read IPFire Buildversion
-$FIREBUILD = "File not found: firebuild\n";
-if (open(MYFile, "<${swroot}/firebuild")) {
-    $FIREBUILD = <MYFile>;
-    chomp($FIREBUILD);
-    $FIREBUILD = "(Build: $FIREBUILD)";
-    close(MYFile);
-};
+our $THEME_NAME = $settings{'THEME'};
 
 require "${swroot}/langs/en.pl";
 require "${swroot}/langs/${language}.pl";
-eval `/bin/cat /srv/web/ipfire/html/themes/$settings{'THEME'}/include/functions.pl`;
+eval `/bin/cat /srv/web/ipfire/html/themes/$THEME_NAME/include/functions.pl`;
 
 sub orange_used () {
     if ($ethsettings{'CONFIG_TYPE'} =~ /^[24]$/) {
@@ -149,11 +143,8 @@ sub genmenu {
     eval `/bin/cat /var/ipfire/menu.d/*.menu`;
     eval `/bin/cat /var/ipfire/menu.d/*.main`;
 
-    if (! blue_used() && ! orange_used()) {
-	$menu->{'05.firewall'}{'subMenu'}->{'40.dmz'}{'enabled'} = 0;
-    }
     if (! blue_used()) {
-	$menu->{'05.firewall'}{'subMenu'}->{'30.wireless'}{'enabled'} = 0;
+	$menu->{'05.firewall'}{'subMenu'}->{'60.wireless'}{'enabled'} = 0;
     }
     if ( $ethsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
 	$menu->{'03.network'}{'subMenu'}->{'70.aliases'}{'enabled'} = 1;
@@ -167,7 +158,6 @@ sub genmenu {
 sub showhttpheaders
 {
 	print "Cache-control: private\n";
-	print "Connection: close\n";
 	print "Content-type: text/html; charset=UTF-8\n\n";
 }
 
@@ -376,16 +366,16 @@ sub PrintActualLeases
 {
     &openbox('100%', 'left', $tr{'current dynamic leases'});
     print <<END
-<table width='100%'>
+<table width='100%' class='tbl'>
 <tr>
-<td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IPADDR'><b>$tr{'ip address'}</b></a></td>
-<td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ETHER'><b>$tr{'mac address'}</b></a></td>
-<td width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOSTNAME'><b>$tr{'hostname'}</b></a></td>
-<td width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ENDTIME'><b>$tr{'lease expires'} (local time d/m/y)</b></a></td>
-<td width='5%' align='center'><b>Add to fix leases<b></td>
+<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IPADDR'><b>$tr{'ip address'}</b></a></th>
+<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ETHER'><b>$tr{'mac address'}</b></a></th>
+<th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOSTNAME'><b>$tr{'hostname'}</b></a></th>
+<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ENDTIME'><b>$tr{'lease expires'} (local time d/m/y)</b></a></th>
+<th width='5%' align='center'><b>Add to fix leases<b></th>
 </tr>
 END
-    ;
+;
 
     open(LEASES,"/var/state/dhcp/dhcpd.leases") or die "Can't open dhcpd.leases";
     while ($line = <LEASES>) {
@@ -427,24 +417,27 @@ END
     close(LEASES);
 
     my $id = 0;
+    my $col="";
     foreach my $key (sort leasesort keys %entries) {
 	print "<form method='post' action='/cgi-bin/dhcp.cgi'>\n";
 	my $hostname = &cleanhtml($entries{$key}->{HOSTNAME},"y");
 
 	if ($id % 2) {
-	    print "<tr bgcolor='$table1colour'>"; 
+	    print "<tr>";
+	    $col="bgcolor='$table1colour'";
 	}
 	else {
-	    print "<tr bgcolor='$table2colour'>"; 
+	    print "<tr>";
+	    $col="bgcolor='$table2colour'";
 	}
 
 	print <<END
-<td align='center'><input type='hidden' name='FIX_ADDR' value='$entries{$key}->{IPADDR}' />$entries{$key}->{IPADDR}</td>
-<td align='center'><input type='hidden' name='FIX_MAC' value='$entries{$key}->{ETHER}' />$entries{$key}->{ETHER}</td>
-<td align='center'><input type='hidden' name='FIX_REMARK' value='$hostname' />&nbsp;$hostname</td>
-<td align='center'><input type='hidden' name='FIX_ENABLED' value='on' />
+<td align='center' $col><input type='hidden' name='FIX_ADDR' value='$entries{$key}->{IPADDR}' />$entries{$key}->{IPADDR}</td>
+<td align='center' $col><input type='hidden' name='FIX_MAC' value='$entries{$key}->{ETHER}' />$entries{$key}->{ETHER}</td>
+<td align='center' $col><input type='hidden' name='FIX_REMARK' value='$hostname' />&nbsp;$hostname</td>
+<td align='center' $col><input type='hidden' name='FIX_ENABLED' value='on' />
 END
-	;
+;
 
 	($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst) = localtime ($entries{$key}->{ENDTIME});
 	$enddate = sprintf ("%02d/%02d/%d %02d:%02d:%02d",$mday,$mon+1,$year+1900,$hour,$min,$sec);
@@ -455,10 +448,10 @@ END
 	    print "$enddate";
 	}
 	print <<END
-<td><input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' /><input type='submit' name='SUBMIT' value='$Lang::tr{'add'}' />
-</td></td></tr></form>
+</td><td $col><input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' /><input type='submit' name='SUBMIT' value='$Lang::tr{'add'}' />
+</td></tr></form>
 END
-	;
+;
 	$id++;
     }
 

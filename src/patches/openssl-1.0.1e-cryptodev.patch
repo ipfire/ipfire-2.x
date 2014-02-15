@@ -1,0 +1,712 @@
+Patch created by Michael Tremer <michael.tremer@ipfire.org> from
+  http://download.gna.org/cryptodev-linux/cryptodev-linux-1.6.tar.gz
+
+diff -Nur openssl-1.0.1e-vanilla/crypto/cryptodev.h openssl-1.0.1e/crypto/cryptodev.h
+--- openssl-1.0.1e-vanilla/crypto/cryptodev.h	1970-01-01 00:00:00.000000000 +0000
++++ openssl-1.0.1e/crypto/cryptodev.h	2013-12-25 14:27:20.907326820 +0000
+@@ -0,0 +1,292 @@
++/* This is a source compatible implementation with the original API of
++ * cryptodev by Angelos D. Keromytis, found at openbsd cryptodev.h.
++ * Placed under public domain */
++
++#ifndef L_CRYPTODEV_H
++#define L_CRYPTODEV_H
++
++#include <linux/types.h>
++#ifndef __KERNEL__
++#define __user
++#endif
++
++/* API extensions for linux */
++#define CRYPTO_HMAC_MAX_KEY_LEN		512
++#define CRYPTO_CIPHER_MAX_KEY_LEN	64
++
++/* All the supported algorithms
++ */
++enum cryptodev_crypto_op_t {
++	CRYPTO_DES_CBC = 1,
++	CRYPTO_3DES_CBC = 2,
++	CRYPTO_BLF_CBC = 3,
++	CRYPTO_CAST_CBC = 4,
++	CRYPTO_SKIPJACK_CBC = 5,
++	CRYPTO_MD5_HMAC = 6,
++	CRYPTO_SHA1_HMAC = 7,
++	CRYPTO_RIPEMD160_HMAC = 8,
++	CRYPTO_MD5_KPDK = 9,
++	CRYPTO_SHA1_KPDK = 10,
++	CRYPTO_RIJNDAEL128_CBC = 11,
++	CRYPTO_AES_CBC = CRYPTO_RIJNDAEL128_CBC,
++	CRYPTO_ARC4 = 12,
++	CRYPTO_MD5 = 13,
++	CRYPTO_SHA1 = 14,
++	CRYPTO_DEFLATE_COMP = 15,
++	CRYPTO_NULL = 16,
++	CRYPTO_LZS_COMP = 17,
++	CRYPTO_SHA2_256_HMAC = 18,
++	CRYPTO_SHA2_384_HMAC = 19,
++	CRYPTO_SHA2_512_HMAC = 20,
++	CRYPTO_AES_CTR = 21,
++	CRYPTO_AES_XTS = 22,
++	CRYPTO_AES_ECB = 23,
++	CRYPTO_AES_GCM = 50,
++
++	CRYPTO_CAMELLIA_CBC = 101,
++	CRYPTO_RIPEMD160,
++	CRYPTO_SHA2_224,
++	CRYPTO_SHA2_256,
++	CRYPTO_SHA2_384,
++	CRYPTO_SHA2_512,
++	CRYPTO_SHA2_224_HMAC,
++	CRYPTO_ALGORITHM_ALL, /* Keep updated - see below */
++};
++
++#define	CRYPTO_ALGORITHM_MAX	(CRYPTO_ALGORITHM_ALL - 1)
++
++/* Values for ciphers */
++#define DES_BLOCK_LEN		8
++#define DES3_BLOCK_LEN		8
++#define RIJNDAEL128_BLOCK_LEN	16
++#define AES_BLOCK_LEN		RIJNDAEL128_BLOCK_LEN
++#define CAMELLIA_BLOCK_LEN      16
++#define BLOWFISH_BLOCK_LEN	8
++#define SKIPJACK_BLOCK_LEN	8
++#define CAST128_BLOCK_LEN	8
++
++/* the maximum of the above */
++#define EALG_MAX_BLOCK_LEN	16
++
++/* Values for hashes/MAC */
++#define AALG_MAX_RESULT_LEN		64
++
++/* maximum length of verbose alg names (depends on CRYPTO_MAX_ALG_NAME) */
++#define CRYPTODEV_MAX_ALG_NAME		64
++
++#define HASH_MAX_LEN 64
++
++/* input of CIOCGSESSION */
++struct session_op {
++	/* Specify either cipher or mac
++	 */
++	__u32	cipher;		/* cryptodev_crypto_op_t */
++	__u32	mac;		/* cryptodev_crypto_op_t */
++
++	__u32	keylen;
++	__u8	__user *key;
++	__u32	mackeylen;
++	__u8	__user *mackey;
++
++	__u32	ses;		/* session identifier */
++};
++
++struct session_info_op {
++	__u32 ses;		/* session identifier */
++
++	/* verbose names for the requested ciphers */
++	struct alg_info {
++		char cra_name[CRYPTODEV_MAX_ALG_NAME];
++		char cra_driver_name[CRYPTODEV_MAX_ALG_NAME];
++	} cipher_info, hash_info;
++
++	__u16	alignmask;	/* alignment constraints */
++	__u32   flags;          /* SIOP_FLAGS_* */
++};
++
++/* If this flag is set then this algorithm uses
++ * a driver only available in kernel (software drivers,
++ * or drivers based on instruction sets do not set this flag).
++ *
++ * If multiple algorithms are involved (as in AEAD case), then
++ * if one of them is kernel-driver-only this flag will be set.
++ */
++#define SIOP_FLAG_KERNEL_DRIVER_ONLY 1
++
++#define	COP_ENCRYPT	0
++#define COP_DECRYPT	1
++
++/* input of CIOCCRYPT */
++struct crypt_op {
++	__u32	ses;		/* session identifier */
++	__u16	op;		/* COP_ENCRYPT or COP_DECRYPT */
++	__u16	flags;		/* see COP_FLAG_* */
++	__u32	len;		/* length of source data */
++	__u8	__user *src;	/* source data */
++	__u8	__user *dst;	/* pointer to output data */
++	/* pointer to output data for hash/MAC operations */
++	__u8	__user *mac;
++	/* initialization vector for encryption operations */
++	__u8	__user *iv;
++};
++
++/* input of CIOCAUTHCRYPT */
++struct crypt_auth_op {
++	__u32	ses;		/* session identifier */
++	__u16	op;		/* COP_ENCRYPT or COP_DECRYPT */
++	__u16	flags;		/* see COP_FLAG_AEAD_* */
++	__u32	len;		/* length of source data */
++	__u32	auth_len;	/* length of auth data */
++	__u8	__user *auth_src;	/* authenticated-only data */
++
++	/* The current implementation is more efficient if data are
++	 * encrypted in-place (src==dst). */
++	__u8	__user *src;	/* data to be encrypted and authenticated */
++	__u8	__user *dst;	/* pointer to output data. Must have
++	                         * space for tag. For TLS this should be at least 
++	                         * len + tag_size + block_size for padding */
++
++	__u8    __user *tag;    /* where the tag will be copied to. TLS mode
++                                 * doesn't use that as tag is copied to dst.
++                                 * SRTP mode copies tag there. */
++	__u32	tag_len;	/* the length of the tag. Use zero for digest size or max tag. */
++
++	/* initialization vector for encryption operations */
++	__u8	__user *iv;
++	__u32   iv_len;
++};
++
++/* In plain AEAD mode the following are required:
++ *  flags   : 0
++ *  iv      : the initialization vector (12 bytes)
++ *  auth_len: the length of the data to be authenticated
++ *  auth_src: the data to be authenticated
++ *  len     : length of data to be encrypted
++ *  src     : the data to be encrypted
++ *  dst     : space to hold encrypted data. It must have
++ *            at least a size of len + tag_size.
++ *  tag_size: the size of the desired authentication tag or zero to use
++ *            the maximum tag output.
++ *
++ * Note tag isn't being used because the Linux AEAD interface
++ * copies the tag just after data.
++ */
++
++/* In TLS mode (used for CBC ciphers that required padding) 
++ * the following are required:
++ *  flags   : COP_FLAG_AEAD_TLS_TYPE
++ *  iv      : the initialization vector
++ *  auth_len: the length of the data to be authenticated only
++ *  len     : length of data to be encrypted
++ *  auth_src: the data to be authenticated
++ *  src     : the data to be encrypted
++ *  dst     : space to hold encrypted data (preferably in-place). It must have
++ *            at least a size of len + tag_size + blocksize.
++ *  tag_size: the size of the desired authentication tag or zero to use
++ *            the default mac output.
++ *
++ * Note that the padding used is the minimum padding.
++ */
++
++/* In SRTP mode the following are required:
++ *  flags   : COP_FLAG_AEAD_SRTP_TYPE
++ *  iv      : the initialization vector
++ *  auth_len: the length of the data to be authenticated. This must
++ *            include the SRTP header + SRTP payload (data to be encrypted) + rest
++ *            
++ *  len     : length of data to be encrypted
++ *  auth_src: pointer the data to be authenticated. Should point at the same buffer as src.
++ *  src     : pointer to the data to be encrypted.
++ *  dst     : This is mandatory to be the same as src (in-place only).
++ *  tag_size: the size of the desired authentication tag or zero to use
++ *            the default mac output.
++ *  tag     : Pointer to an address where the authentication tag will be copied.
++ */
++
++
++/* struct crypt_op flags */
++
++#define COP_FLAG_NONE		(0 << 0) /* totally no flag */
++#define COP_FLAG_UPDATE		(1 << 0) /* multi-update hash mode */
++#define COP_FLAG_FINAL		(1 << 1) /* multi-update final hash mode */
++#define COP_FLAG_WRITE_IV	(1 << 2) /* update the IV during operation */
++#define COP_FLAG_NO_ZC		(1 << 3) /* do not zero-copy */
++#define COP_FLAG_AEAD_TLS_TYPE  (1 << 4) /* authenticate and encrypt using the 
++                                          * TLS protocol rules */
++#define COP_FLAG_AEAD_SRTP_TYPE  (1 << 5) /* authenticate and encrypt using the 
++                                           * SRTP protocol rules */
++#define COP_FLAG_RESET		(1 << 6) /* multi-update reset the state.
++                                          * should be used in combination
++                                          * with COP_FLAG_UPDATE */
++
++
++/* Stuff for bignum arithmetic and public key
++ * cryptography - not supported yet by linux
++ * cryptodev.
++ */
++
++#define	CRYPTO_ALG_FLAG_SUPPORTED	1
++#define	CRYPTO_ALG_FLAG_RNG_ENABLE	2
++#define	CRYPTO_ALG_FLAG_DSA_SHA		4
++
++struct crparam {
++	__u8	*crp_p;
++	__u32	crp_nbits;
++};
++
++#define CRK_MAXPARAM	8
++
++/* input of CIOCKEY */
++struct crypt_kop {
++	__u32	crk_op;		/* cryptodev_crk_ot_t */
++	__u32	crk_status;
++	__u16	crk_iparams;
++	__u16	crk_oparams;
++	__u32	crk_pad1;
++	struct crparam	crk_param[CRK_MAXPARAM];
++};
++
++enum cryptodev_crk_op_t {
++	CRK_MOD_EXP = 0,
++	CRK_MOD_EXP_CRT = 1,
++	CRK_DSA_SIGN = 2,
++	CRK_DSA_VERIFY = 3,
++	CRK_DH_COMPUTE_KEY = 4,
++	CRK_ALGORITHM_ALL
++};
++
++#define CRK_ALGORITHM_MAX	(CRK_ALGORITHM_ALL-1)
++
++/* features to be queried with CIOCASYMFEAT ioctl
++ */
++#define CRF_MOD_EXP		(1 << CRK_MOD_EXP)
++#define CRF_MOD_EXP_CRT		(1 << CRK_MOD_EXP_CRT)
++#define CRF_DSA_SIGN		(1 << CRK_DSA_SIGN)
++#define CRF_DSA_VERIFY		(1 << CRK_DSA_VERIFY)
++#define CRF_DH_COMPUTE_KEY	(1 << CRK_DH_COMPUTE_KEY)
++
++
++/* ioctl's. Compatible with old linux cryptodev.h
++ */
++#define CRIOGET         _IOWR('c', 101, __u32)
++#define CIOCGSESSION    _IOWR('c', 102, struct session_op)
++#define CIOCFSESSION    _IOW('c', 103, __u32)
++#define CIOCCRYPT       _IOWR('c', 104, struct crypt_op)
++#define CIOCKEY         _IOWR('c', 105, struct crypt_kop)
++#define CIOCASYMFEAT    _IOR('c', 106, __u32)
++#define CIOCGSESSINFO	_IOWR('c', 107, struct session_info_op)
++
++/* to indicate that CRIOGET is not required in linux
++ */
++#define CRIOGET_NOT_NEEDED 1
++
++/* additional ioctls for AEAD */
++#define CIOCAUTHCRYPT   _IOWR('c', 109, struct crypt_auth_op)
++
++/* additional ioctls for asynchronous operation.
++ * These are conditionally enabled since version 1.6.
++ */
++#define CIOCASYNCCRYPT    _IOW('c', 110, struct crypt_op)
++#define CIOCASYNCFETCH    _IOR('c', 111, struct crypt_op)
++
++#endif /* L_CRYPTODEV_H */
+diff -Nur openssl-1.0.1e-vanilla/crypto/engine/eng_cryptodev.c openssl-1.0.1e/crypto/engine/eng_cryptodev.c
+--- openssl-1.0.1e-vanilla/crypto/engine/eng_cryptodev.c	2013-02-11 15:26:04.000000000 +0000
++++ openssl-1.0.1e/crypto/engine/eng_cryptodev.c	2013-12-25 14:27:06.968877039 +0000
+@@ -2,6 +2,7 @@
+  * Copyright (c) 2002 Bob Beck <beck@openbsd.org>
+  * Copyright (c) 2002 Theo de Raadt
+  * Copyright (c) 2002 Markus Friedl
++ * Copyright (c) 2012 Nikos Mavrogiannopoulos
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+@@ -74,8 +75,6 @@
+ 	int d_fd;
+ 
+ #ifdef USE_CRYPTODEV_DIGESTS
+-	char dummy_mac_key[HASH_MAX_LEN];
+-
+ 	unsigned char digest_res[HASH_MAX_LEN];
+ 	char *mac_data;
+ 	int mac_len;
+@@ -157,15 +156,21 @@
+ static struct {
+ 	int	id;
+ 	int	nid;
+-	int 	keylen;
++	int 	digestlen;
+ } digests[] = {
++#if 0
++        /* HMAC is not supported */
+ 	{ CRYPTO_MD5_HMAC,		NID_hmacWithMD5,	16},
+ 	{ CRYPTO_SHA1_HMAC,		NID_hmacWithSHA1,	20},
+-	{ CRYPTO_RIPEMD160_HMAC,	NID_ripemd160,		16/*?*/},
+-	{ CRYPTO_MD5_KPDK,		NID_undef,		0},
+-	{ CRYPTO_SHA1_KPDK,		NID_undef,		0},
++	{ CRYPTO_SHA2_256_HMAC,		NID_hmacWithSHA256,	32},
++	{ CRYPTO_SHA2_384_HMAC,		NID_hmacWithSHA384,	48},
++	{ CRYPTO_SHA2_512_HMAC,		NID_hmacWithSHA512,	64},
++#endif
+ 	{ CRYPTO_MD5,			NID_md5,		16},
+ 	{ CRYPTO_SHA1,			NID_sha1,		20},
++	{ CRYPTO_SHA2_256,		NID_sha256,		32},
++	{ CRYPTO_SHA2_384,		NID_sha384,		48},
++	{ CRYPTO_SHA2_512,		NID_sha512,		64},
+ 	{ 0,				NID_undef,		0},
+ };
+ #endif
+@@ -243,13 +248,14 @@
+ 	static int nids[CRYPTO_ALGORITHM_MAX];
+ 	struct session_op sess;
+ 	int fd, i, count = 0;
++	unsigned char fake_key[CRYPTO_CIPHER_MAX_KEY_LEN];
+ 
+ 	if ((fd = get_dev_crypto()) < 0) {
+ 		*cnids = NULL;
+ 		return (0);
+ 	}
+ 	memset(&sess, 0, sizeof(sess));
+-	sess.key = (caddr_t)"123456789abcdefghijklmno";
++	sess.key = (void*)fake_key;
+ 
+ 	for (i = 0; ciphers[i].id && count < CRYPTO_ALGORITHM_MAX; i++) {
+ 		if (ciphers[i].nid == NID_undef)
+@@ -281,6 +287,7 @@
+ get_cryptodev_digests(const int **cnids)
+ {
+ 	static int nids[CRYPTO_ALGORITHM_MAX];
++	unsigned char fake_key[CRYPTO_CIPHER_MAX_KEY_LEN];
+ 	struct session_op sess;
+ 	int fd, i, count = 0;
+ 
+@@ -289,12 +296,12 @@
+ 		return (0);
+ 	}
+ 	memset(&sess, 0, sizeof(sess));
+-	sess.mackey = (caddr_t)"123456789abcdefghijklmno";
++	sess.mackey = fake_key;
+ 	for (i = 0; digests[i].id && count < CRYPTO_ALGORITHM_MAX; i++) {
+ 		if (digests[i].nid == NID_undef)
+ 			continue;
+ 		sess.mac = digests[i].id;
+-		sess.mackeylen = digests[i].keylen;
++		sess.mackeylen = 8;
+ 		sess.cipher = 0;
+ 		if (ioctl(fd, CIOCGSESSION, &sess) != -1 &&
+ 		    ioctl(fd, CIOCFSESSION, &sess.ses) != -1)
+@@ -382,14 +389,14 @@
+ 	cryp.ses = sess->ses;
+ 	cryp.flags = 0;
+ 	cryp.len = inl;
+-	cryp.src = (caddr_t) in;
+-	cryp.dst = (caddr_t) out;
++	cryp.src = (void*) in;
++	cryp.dst = (void*) out;
+ 	cryp.mac = 0;
+ 
+ 	cryp.op = ctx->encrypt ? COP_ENCRYPT : COP_DECRYPT;
+ 
+ 	if (ctx->cipher->iv_len) {
+-		cryp.iv = (caddr_t) ctx->iv;
++		cryp.iv = (void*) ctx->iv;
+ 		if (!ctx->encrypt) {
+ 			iiv = in + inl - ctx->cipher->iv_len;
+ 			memcpy(save_iv, iiv, ctx->cipher->iv_len);
+@@ -440,7 +447,7 @@
+ 	if ((state->d_fd = get_dev_crypto()) < 0)
+ 		return (0);
+ 
+-	sess->key = (caddr_t)key;
++	sess->key = (void*)key;
+ 	sess->keylen = ctx->key_len;
+ 	sess->cipher = cipher;
+ 
+@@ -660,18 +667,6 @@
+ }
+ 
+ 
+-static int
+-digest_key_length(int nid)
+-{
+-	int i;
+-
+-	for (i = 0; digests[i].id; i++)
+-		if (digests[i].nid == nid)
+-			return digests[i].keylen;
+-	return (0);
+-}
+-
+-
+ static int cryptodev_digest_init(EVP_MD_CTX *ctx)
+ {
+ 	struct dev_crypto_state *state = ctx->md_data;
+@@ -682,7 +677,6 @@
+ 		printf("cryptodev_digest_init: Can't get digest \n");
+ 		return (0);
+ 	}
+-
+ 	memset(state, 0, sizeof(struct dev_crypto_state));
+ 
+ 	if ((state->d_fd = get_dev_crypto()) < 0) {
+@@ -690,8 +684,8 @@
+ 		return (0);
+ 	}
+ 
+-	sess->mackey = state->dummy_mac_key;
+-	sess->mackeylen = digest_key_length(ctx->digest->type);
++	sess->mackey = NULL;
++	sess->mackeylen = 0;
+ 	sess->mac = digest;
+ 
+ 	if (ioctl(state->d_fd, CIOCGSESSION, sess) < 0) {
+@@ -707,8 +701,8 @@
+ static int cryptodev_digest_update(EVP_MD_CTX *ctx, const void *data,
+ 		size_t count)
+ {
+-	struct crypt_op cryp;
+ 	struct dev_crypto_state *state = ctx->md_data;
++	struct crypt_op cryp;
+ 	struct session_op *sess = &state->d_sess;
+ 
+ 	if (!data || state->d_fd < 0) {
+@@ -717,7 +711,7 @@
+ 	}
+ 
+ 	if (!count) {
+-		return (0);
++		return (1);
+ 	}
+ 
+ 	if (!(ctx->flags & EVP_MD_CTX_FLAG_ONESHOT)) {
+@@ -740,9 +734,9 @@
+ 	cryp.ses = sess->ses;
+ 	cryp.flags = 0;
+ 	cryp.len = count;
+-	cryp.src = (caddr_t) data;
++	cryp.src = (void*) data;
+ 	cryp.dst = NULL;
+-	cryp.mac = (caddr_t) state->digest_res;
++	cryp.mac = (void*) state->digest_res;
+ 	if (ioctl(state->d_fd, CIOCCRYPT, &cryp) < 0) {
+ 		printf("cryptodev_digest_update: digest failed\n");
+ 		return (0);
+@@ -757,8 +751,6 @@
+ 	struct dev_crypto_state *state = ctx->md_data;
+ 	struct session_op *sess = &state->d_sess;
+ 
+-	int ret = 1;
+-
+ 	if (!md || state->d_fd < 0) {
+ 		printf("cryptodev_digest_final: illegal input\n");
+ 		return(0);
+@@ -772,7 +764,7 @@
+ 		cryp.len = state->mac_len;
+ 		cryp.src = state->mac_data;
+ 		cryp.dst = NULL;
+-		cryp.mac = (caddr_t)md;
++		cryp.mac = (void*)md;
+ 		if (ioctl(state->d_fd, CIOCCRYPT, &cryp) < 0) {
+ 			printf("cryptodev_digest_final: digest failed\n");
+ 			return (0);
+@@ -783,7 +775,7 @@
+ 
+ 	memcpy(md, state->digest_res, ctx->digest->md_size);
+ 
+-	return (ret);
++	return 1;
+ }
+ 
+ 
+@@ -835,8 +827,8 @@
+ 
+ 	digest = digest_nid_to_cryptodev(to->digest->type);
+ 
+-	sess->mackey = dstate->dummy_mac_key;
+-	sess->mackeylen = digest_key_length(to->digest->type);
++	sess->mackey = NULL;
++	sess->mackeylen = 0;
+ 	sess->mac = digest;
+ 
+ 	dstate->d_fd = get_dev_crypto();
+@@ -861,34 +853,117 @@
+ }
+ 
+ 
+-const EVP_MD cryptodev_sha1 = {
++static const EVP_MD cryptodev_sha1 = {
+ 	NID_sha1,
+-	NID_undef, 
++	NID_sha1WithRSAEncryption,
+ 	SHA_DIGEST_LENGTH, 
++#if defined(EVP_MD_FLAG_PKEY_METHOD_SIGNATURE) && defined(EVP_MD_FLAG_DIGALGID_ABSENT)
++	EVP_MD_FLAG_PKEY_METHOD_SIGNATURE|
++	EVP_MD_FLAG_DIGALGID_ABSENT|
++#endif
+ 	EVP_MD_FLAG_ONESHOT,
+ 	cryptodev_digest_init,
+ 	cryptodev_digest_update,
+ 	cryptodev_digest_final,
+ 	cryptodev_digest_copy,
+ 	cryptodev_digest_cleanup,
+-	EVP_PKEY_NULL_method,
++	EVP_PKEY_RSA_method,
+ 	SHA_CBLOCK,
+-	sizeof(struct dev_crypto_state),
++	sizeof(EVP_MD *)+sizeof(struct dev_crypto_state),
++};
++
++static const EVP_MD cryptodev_sha256 = {
++	NID_sha256,
++	NID_sha256WithRSAEncryption,
++	SHA256_DIGEST_LENGTH, 
++#if defined(EVP_MD_FLAG_PKEY_METHOD_SIGNATURE) && defined(EVP_MD_FLAG_DIGALGID_ABSENT)
++	EVP_MD_FLAG_PKEY_METHOD_SIGNATURE|
++	EVP_MD_FLAG_DIGALGID_ABSENT|
++#endif
++	EVP_MD_FLAG_ONESHOT,
++	cryptodev_digest_init,
++	cryptodev_digest_update,
++	cryptodev_digest_final,
++	cryptodev_digest_copy,
++	cryptodev_digest_cleanup,
++	EVP_PKEY_RSA_method,
++	SHA256_CBLOCK,
++	sizeof(EVP_MD *)+sizeof(struct dev_crypto_state),
++};
++static const EVP_MD cryptodev_sha224 = {
++	NID_sha224,
++	NID_sha224WithRSAEncryption, 
++	SHA224_DIGEST_LENGTH, 
++#if defined(EVP_MD_FLAG_PKEY_METHOD_SIGNATURE) && defined(EVP_MD_FLAG_DIGALGID_ABSENT)
++	EVP_MD_FLAG_PKEY_METHOD_SIGNATURE|
++	EVP_MD_FLAG_DIGALGID_ABSENT|
++#endif
++	EVP_MD_FLAG_ONESHOT,
++	cryptodev_digest_init,
++	cryptodev_digest_update,
++	cryptodev_digest_final,
++	cryptodev_digest_copy,
++	cryptodev_digest_cleanup,
++	EVP_PKEY_RSA_method,
++	SHA256_CBLOCK,
++	sizeof(EVP_MD *)+sizeof(struct dev_crypto_state),
++};
++
++static const EVP_MD cryptodev_sha384 = {
++	NID_sha384,
++	NID_sha384WithRSAEncryption, 
++	SHA384_DIGEST_LENGTH, 
++#if defined(EVP_MD_FLAG_PKEY_METHOD_SIGNATURE) && defined(EVP_MD_FLAG_DIGALGID_ABSENT)
++	EVP_MD_FLAG_PKEY_METHOD_SIGNATURE|
++	EVP_MD_FLAG_DIGALGID_ABSENT|
++#endif
++	EVP_MD_FLAG_ONESHOT,
++	cryptodev_digest_init,
++	cryptodev_digest_update,
++	cryptodev_digest_final,
++	cryptodev_digest_copy,
++	cryptodev_digest_cleanup,
++	EVP_PKEY_RSA_method,
++	SHA512_CBLOCK,
++	sizeof(EVP_MD *)+sizeof(struct dev_crypto_state),
++};
++
++static const EVP_MD cryptodev_sha512 = {
++	NID_sha512,
++	NID_sha512WithRSAEncryption, 
++	SHA512_DIGEST_LENGTH, 
++#if defined(EVP_MD_FLAG_PKEY_METHOD_SIGNATURE) && defined(EVP_MD_FLAG_DIGALGID_ABSENT)
++	EVP_MD_FLAG_PKEY_METHOD_SIGNATURE|
++	EVP_MD_FLAG_DIGALGID_ABSENT|
++#endif
++	EVP_MD_FLAG_ONESHOT,
++	cryptodev_digest_init,
++	cryptodev_digest_update,
++	cryptodev_digest_final,
++	cryptodev_digest_copy,
++	cryptodev_digest_cleanup,
++	EVP_PKEY_RSA_method,
++	SHA512_CBLOCK,
++	sizeof(EVP_MD *)+sizeof(struct dev_crypto_state),
+ };
+ 
+-const EVP_MD cryptodev_md5 = {
++static const EVP_MD cryptodev_md5 = {
+ 	NID_md5,
+-	NID_undef, 
++	NID_md5WithRSAEncryption, 
+ 	16 /* MD5_DIGEST_LENGTH */, 
++#if defined(EVP_MD_FLAG_PKEY_METHOD_SIGNATURE) && defined(EVP_MD_FLAG_DIGALGID_ABSENT)
++	EVP_MD_FLAG_PKEY_METHOD_SIGNATURE|
++	EVP_MD_FLAG_DIGALGID_ABSENT|
++#endif
+ 	EVP_MD_FLAG_ONESHOT,
+ 	cryptodev_digest_init,
+ 	cryptodev_digest_update,
+ 	cryptodev_digest_final,
+ 	cryptodev_digest_copy,
+ 	cryptodev_digest_cleanup,
+-	EVP_PKEY_NULL_method,
++	EVP_PKEY_RSA_method,
+ 	64 /* MD5_CBLOCK */,
+-	sizeof(struct dev_crypto_state),
++	sizeof(EVP_MD *)+sizeof(struct dev_crypto_state),
+ };
+ 
+ #endif /* USE_CRYPTODEV_DIGESTS */
+@@ -909,6 +984,18 @@
+ 	case NID_sha1:
+ 		*digest = &cryptodev_sha1;
+  		break;
++	case NID_sha224:
++		*digest = &cryptodev_sha224;
++ 		break;
++	case NID_sha256:
++		*digest = &cryptodev_sha256;
++ 		break;
++	case NID_sha384:
++		*digest = &cryptodev_sha384;
++ 		break;
++	case NID_sha512:
++		*digest = &cryptodev_sha512;
++ 		break;
+ 	default:
+ #endif /* USE_CRYPTODEV_DIGESTS */
+ 		*digest = NULL;
+@@ -940,7 +1027,7 @@
+ 		return (1);
+ 	memset(b, 0, bytes);
+ 
+-	crp->crp_p = (caddr_t) b;
++	crp->crp_p = (void*) b;
+ 	crp->crp_nbits = bits;
+ 
+ 	for (i = 0, j = 0; i < a->top; i++) {
+@@ -1193,7 +1280,7 @@
+ 	kop.crk_op = CRK_DSA_SIGN;
+ 
+ 	/* inputs: dgst dsa->p dsa->q dsa->g dsa->priv_key */
+-	kop.crk_param[0].crp_p = (caddr_t)dgst;
++	kop.crk_param[0].crp_p = (void*)dgst;
+ 	kop.crk_param[0].crp_nbits = dlen * 8;
+ 	if (bn2crparam(dsa->p, &kop.crk_param[1]))
+ 		goto err;
+@@ -1233,7 +1320,7 @@
+ 	kop.crk_op = CRK_DSA_VERIFY;
+ 
+ 	/* inputs: dgst dsa->p dsa->q dsa->g dsa->pub_key sig->r sig->s */
+-	kop.crk_param[0].crp_p = (caddr_t)dgst;
++	kop.crk_param[0].crp_p = (void*)dgst;
+ 	kop.crk_param[0].crp_nbits = dlen * 8;
+ 	if (bn2crparam(dsa->p, &kop.crk_param[1]))
+ 		goto err;
+@@ -1311,9 +1398,10 @@
+ 		goto err;
+ 	kop.crk_iparams = 3;
+ 
+-	kop.crk_param[3].crp_p = (caddr_t) key;
+-	kop.crk_param[3].crp_nbits = keylen * 8;
++	kop.crk_param[3].crp_p = (void*) key;
++	kop.crk_param[3].crp_nbits = keylen;
+ 	kop.crk_oparams = 1;
++	dhret = keylen/8;
+ 
+ 	if (ioctl(fd, CIOCKEY, &kop) == -1) {
+ 		const DH_METHOD *meth = DH_OpenSSL();
+@@ -1385,7 +1473,7 @@
+ 	put_dev_crypto(fd);
+ 
+ 	if (!ENGINE_set_id(engine, "cryptodev") ||
+-	    !ENGINE_set_name(engine, "BSD cryptodev engine") ||
++	    !ENGINE_set_name(engine, "cryptodev engine") ||
+ 	    !ENGINE_set_ciphers(engine, cryptodev_engine_ciphers) ||
+ 	    !ENGINE_set_digests(engine, cryptodev_engine_digests) ||
+ 	    !ENGINE_set_ctrl_function(engine, cryptodev_ctrl) ||

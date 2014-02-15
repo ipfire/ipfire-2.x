@@ -5,6 +5,7 @@ sbin/fsck.vfat
 sbin/mkdosfs
 sbin/mkfs.msdos
 sbin/mkfs.vfat
+#share
 #share/doc
 #share/doc/dosfstools
 #share/doc/dosfstools/ANNOUNCE.mkdosfs
@@ -16,6 +17,8 @@ sbin/mkfs.vfat
 #share/doc/dosfstools/README.dosfstools-2.x
 #share/doc/dosfstools/README.mkdosfs
 #share/doc/dosfstools/TODO.dosfstools-2.x
+#share/man
+#share/man/man8
 #share/man/man8/dosfsck.8
 #share/man/man8/dosfslabel.8
 #share/man/man8/fsck.msdos.8

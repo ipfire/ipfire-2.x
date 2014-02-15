@@ -1,0 +1,25 @@
+diff --git a/iconvdata/ibm930.c b/iconvdata/ibm930.c
+index 25a9be0..6f758eb 100644
+--- a/iconvdata/ibm930.c
++++ b/iconvdata/ibm930.c
+@@ -162,7 +162,8 @@ enum
+ 	while (ch > rp2->end)						      \
+ 	  ++rp2;							      \
+ 									      \
+-	if (__builtin_expect (ch < rp2->start, 0)			      \
++	if (__builtin_expect (rp2->start == 0xffff, 0)			      \
++	    || __builtin_expect (ch < rp2->start, 0)			      \
+ 	    || (res = __ibm930db_to_ucs4[ch + rp2->idx],		      \
+ 		__builtin_expect (res, L'\1') == L'\0' && ch != '\0'))	      \
+ 	  {								      \
+@@ -215,7 +216,8 @@ enum
+ 	while (ch > rp2->end)						      \
+ 	  ++rp2;							      \
+ 									      \
+-	if (__builtin_expect (ch < rp2->start, 0)			      \
++	if (__builtin_expect (rp2->start == 0xffff, 0)			      \
++	    || __builtin_expect (ch < rp2->start, 0)			      \
+ 	    || (cp = __ucs4_to_ibm930db[ch + rp2->idx],			      \
+ 		__builtin_expect (cp[0], L'\1')== L'\0' && ch != '\0'))	      \
+ 	  {								      \
+

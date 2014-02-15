@@ -40,14 +40,14 @@ require "${General::swroot}/header.pl";
 &Header::openbigbox('100%', 'LEFT');
 
 &Header::openbox('100%', 'LEFT', 'Flags & Country Codes:');
-print "<TABLE WIDTH='100%'>";
-print "<tr><td width='5%'><b>Flag</b></td>";
-print "<td width='5%'><b>Code</b></td>";
-print "<td width='40%'><b>Country</b></td>";
-print "<td><b>&nbsp;</b></td>";
-print "<td width='5%'><b>Flag</b></td>";
-print "<td width='5%'><b>Code</b></td>";
-print "<td width='40%'><b>Country</b></td></tr>";
+print "<TABLE WIDTH='100%' border='0' class='tbl'>";
+print "<tr><th width='5%'><b>Flag</b></th>";
+print "<th width='5%'><b>Code</b></th>";
+print "<th width='40%'><b>Country</b></th>";
+print "<th><b>&nbsp;</b></th>";
+print "<th width='5%'><b>Flag</b></th>";
+print "<th width='5%'><b>Code</b></th>";
+print "<th width='40%'><b>Country</b></th></tr>";
 
 @flaglist = <$flagdir/*>;
 
@@ -57,35 +57,36 @@ foreach (@flaglist)
 {
 	if (!-d) { push(@flaglistfiles,substr($_,rindex($_,"/")+1));	}
 }
-
+my $col="";
 foreach $flag (@flaglistfiles)
 {
 	$lines++;
-      
-  my $flagcode = uc(substr($flag, 0, 2));
-  my $fcode = lc($flagcode);
+
+	my $flagcode = uc(substr($flag, 0, 2));
+	my $fcode = lc($flagcode);
 	my $country = Locale::Country::code2country($fcode);
-  if($fcode eq 'eu') { $country = 'Europe'; }
-  if($fcode eq 'tp') { $country = 'East Timor'; }
-  if($fcode eq 'yu') { $country = 'Yugoslavia'; }
-  if ($lines % 2) {
-  	print "<td><a name='$fcode'/><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$flagcode'</td>";
-   	print "<td>$flagcode</td>";
-   	print "<td>$country</td></tr>\n";
-  }
-  else {
+	if($fcode eq 'eu') { $country = 'Europe'; }
+	if($fcode eq 'tp') { $country = 'East Timor'; }
+	if($fcode eq 'yu') { $country = 'Yugoslavia'; }
+	if ($lines % 2) {
+		print "<td $col><a name='$fcode'/><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$flagcode'</td>";
+		print "<td $col>$flagcode</td>";
+		print "<td $col>$country</td></tr>\n";
+}
+else {
 	$lines2++;
 	if($lines2 % 2) {
-	   	print "<tr bgcolor='${Header::table1colour}'>";
+		print "<tr>";
+		$col="bgcolor='${Header::table2colour}'";
 	} else {
-	   	print "<tr bgcolor='${Header::table2colour}'>";
+		print "<tr>";
+		$col="bgcolor='${Header::table1colour}'";
 	}
-	print "<td><a name='$fcode'/><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$flagcode'</td>";
-   	print "<td>$flagcode</td>";
-   	print "<td>$country</td>";
-   	#print "<td><img src='/blob.gif' alt='*' /></td>";
-   	print "<td>&nbsp;</td>";
-  }	
+	print "<td $col><a name='$fcode'/><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$flagcode'</td>";
+	print "<td $col>$flagcode</td>";
+	print "<td $col>$country</td>";
+	print "<td $col>&nbsp;</td>";
+	}
 }
 
 

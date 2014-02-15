@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2014  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,9 +24,10 @@
 
 include Config
 
-VER        = 3.2.48
+VER        = 3.10.30
 
-RPI_PATCHES = linux-3.2.27-ada8b44
+RPI_PATCHES = linux-3.10.27-grsec-943b563
+GRS_PATCHES = grsecurity-2.9.1-3.10.30-ipfire1.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -35,7 +36,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 30
+PAK_VER    = 35
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -65,15 +66,17 @@ endif
 # Top-level Rules
 ###############################################################################
 objects =$(DL_FILE) \
-	rpi-patches-$(RPI_PATCHES).patch.xz
+	rpi-patches-$(RPI_PATCHES).patch.xz \
+	$(GRS_PATCHES)
 
 
 $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
+$(GRS_PATCHES)				= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5				= f560aa5fcf07e57ea0ca66fdfdb53ef1
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 966687ff27e450e04ff50e0da829dc00
-
+$(DL_FILE)_MD5				= f48ca7dd9f2eb14a2903cb6a4fbe07ed
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 8cf81f48408306d93ccee59b58af2e92
+$(GRS_PATCHES)_MD5			= 044e29280d4717441e89e8d80abba563
 
 install : $(TARGET)
 
@@ -109,38 +112,87 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 	# Linux Intermediate Queueing Device
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-imq.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.30-imq.patch
 
 	# ipp2p 0.8.2-ipfire
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.0-ipp2p-0.8.2-ipfire.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-ipp2p-0.8.2-ipfire.patch
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/netfilter_layer7_2.22_kernel3.0.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/netfilter_layer7_2.22_kernel3.10-no_proc_interface.patch
+
+	# Grsecurity-patches
+ifneq "$(KCFG)" "-headers"
+	cd $(DIR_APP) && xz -c -d $(DIR_DL)/$(GRS_PATCHES) | patch -Np1
+	cd $(DIR_APP) && rm localversion-grsec
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
+endif
+
+	# Disable pcspeaker autoload
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.30-no-pcspkr-modalias.patch
+
+	# Remove ACPI Blacklist message
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6-silence-acpi-blacklist.patch
+
+	# DVB Patches
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.9-dvbsky-wot2.patch
+	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
+
+	# Wlan Patches
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-drivers-3.8.3-ath_ignore_eeprom_regdomain.patch
+
+	# mISDN Patches
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN_hfc-s_add_id.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb-reportl1down.patch
 
 	# Add LED trigger
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33-ledtrig-netdev-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.9-ledtrig-netdev-1.patch
 
 	# Fix uevent PHYSDEVDRIVER
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33_ipg-fix-driver-name.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
+
 ifeq "$(KCFG)" "-kirkwood"
 	# Add dreamplug,guruplug and icy 62x0  support on ARM-kirkwood
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.25-arm_kirkwood_setups.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-arm_kirkwood_setups.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-mv_cesa_disable_failing_hmac_sha1.patch
 endif
 
-ifeq "$(MACHINE_TYPE)" "arm"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.45_align_ssb_modtable_32bit_boundary.patch
+ifeq "$(KCFG)" "-multi"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.27-fs-exec-atomic64-operand-requires-impossible-reload.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0001-panda-wlan-fix.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0002-panda-i2c.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-panda-reboot.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-smsc95xx-add_mac_addr_param.patch
 
-	# Reverse some asm optimizations that are incompatible with older gcc
-	cd $(DIR_APP) && patch -p1 -R < $(DIR_SRC)/src/patches/linux-2.6-arm-asm-constraint.patch
-endif
+	# Patchset for Wandboard.
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0001-imx6qdl-wandboard-dts-backport.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0002-ARM-dts-imx6qdl-wandboard-add-gpio-lines-to-wandboar.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0003-ARM-dts-imx6qdl-wandboard-Add-support-for-i2c1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0004-ARM-dts-wandboard-add-binding-for-wand-rfkill-driver.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0005-ARM-dts-imx6qdl-add-pcie-device-node.patch
 
-ifeq "$(KCFG)" "-omap"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0001-panda-wlan-fix.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-0002-panda-i2c.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2-panda-reboot.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.x-smsc95xx-add_mac_addr_param.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0001-i2c-imx-retry-on-NAK.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0002-i.MX6-Wandboard-add-CKO1-clock-output.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0003-thermal-add-imx-thermal-driver-support.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0004-ARM-i.MX6-Wandboard-add-wifi-bt-rfkill-driver.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0005-Add-IMX6Q-AHCI-support.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0006-imx-Add-IMX53-AHCI-support.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0007-imx6-enable-sata-clk-if-SATA_AHCI_PLATFORM.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0008-ARM-imx6q-update-the-sata-bits-definitions-of-gpr13.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0009-ahci_imx-add-ahci-sata-support-on-imx-platforms.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0010-ahci_imx-depend-on-CONFIG_MFD_SYSCON.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0011-add-pcie-designware.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0012-pcie-backport-fixes.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0013-of-pci-Provide-support-for-parsing-PCI-DT-ranges-pro.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0014-ARM-imx6q-Add-PCIe-bits-to-GPR-syscon-definition.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0015-PCI-imx6-Add-support-for-i.MX6-PCIe-controller.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0016-imx6-pci-tweaks.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0017-ARM-imx-Add-LVDS-general-purpose-clocks-to-i.MX6Q.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0018-ARM-imx6q-clock-and-Kconfig-update-for-PCIe-support.patch
+
+	# Patchset for Compulab Utilite.
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/utilite/linux-3.10-compulab-utilite-support.patch
 endif
 
 ifeq "$(KCFG)" "-rpi"
@@ -167,21 +219,21 @@ else
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
 
 ifeq "$(KCFG)" "-kirkwood"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage modules
 	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
 else
-ifeq "$(KCFG)" "-omap"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage
-	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
+ifeq "$(KCFG)" "-multi"
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage modules
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/zImage-$(VERSUFIX)
 else
 ifeq "$(KCFG)" "-rpi"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage
-	cd /boot  && cat first32k.bin $(DIR_APP)/arch/arm/boot/Image > kernel.img
-	cd $(DIR_APP) && cp -v /boot/kernel.img /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage modules
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/kernel.img
 else
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage
+	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage modules
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
 endif
@@ -190,40 +242,41 @@ endif
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
 	ln -sf System.map-$(VER)-$(VERSUFIX) /boot/System.map-$(VERSUFIX)
-	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
+
+ifeq "$(MACHINE_TYPE)" "arm"
+	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) dtbs
+	cd $(DIR_APP) && for f in $$(find arch/arm/boot/dts/ -name *.dtb); do \
+				mkdir -p /boot/dtb-$(VER)-$(VERSUFIX) ; \
+				install -m 644 $$f /boot/dtb-$(VER)-$(VERSUFIX)/ ; \
+			done
+endif
 
 ifeq "$(LASTKERNEL)" "1"
 	# Only do this once
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 
 	# Blacklist matroxfb_base
-	echo "blacklist matroxfb_base" >> /etc/modprobe.d/framebuffer
+	echo "blacklist matroxfb_base" >> /etc/modprobe.d/framebuffer.conf
 	# Blacklist old framebuffer modules
 	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/video -name *fb.ko); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer ; \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
 	done
 	# Blacklist new drm framebuffer modules
 	for f in $$(ls -1 /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/gpu/drm/*/*.ko); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer ; \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
 	done
-	sed -i -e "s|.ko||g" /etc/modprobe.d/framebuffer
+	sed -i -e "s|.ko||g" /etc/modprobe.d/framebuffer.conf
 
 	# Blacklist isdn modules
 	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn -name *.ko); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/isdn ; \
+		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/isdn.conf ; \
 	done
-	sed -i -e "s|.ko||g" /etc/modprobe.d/isdn
+	sed -i -e "s|.ko||g" /etc/modprobe.d/isdn.conf
 
 	# Disable ipv6 at runtime
-	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6
-endif
-
-ifneq "$(MACHINE_TYPE)" "arm"
-	# Disable geode_aes modul
-	mv /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko \
-           /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/crypto/geode-aes.ko.off
+	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf
 endif
 endif
 

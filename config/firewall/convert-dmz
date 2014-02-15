@@ -1,0 +1,202 @@
+#!/usr/bin/perl
+
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2013 Alexander Marx <amarx@ipfire.org>                        #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+#                                                                             #
+# This script converts old dmz holes rules from old firewall                  #
+# to the new one. This is a 2-step process.                                   #
+# STEP1: read old config and normalize settings                               #
+# STEP2: check valid ip and save valid rules to new firewall                  #
+#                                                                             #
+###############################################################################
+my @current=();
+my @alias=();
+my %configdmz=();
+my %ifaces=();
+my %configfwdfw=();
+require '/var/ipfire/general-functions.pl';
+my $dmzconfig 	  = "${General::swroot}/dmzholes/config";
+my $fwdfwconfig   = "${General::swroot}/firewall/config";
+my $ifacesettings = "${General::swroot}/ethernet/settings";
+my $field0	= 'ACCEPT';
+my $field1	= 'FORWARDFW';
+my $field2	= ''; #ON or emtpy
+my $field3	= ''; #std_net_src or src_addr
+my $field4	= ''; #ALL or IP-Address with /32
+my $field5	= ''; #std_net_tgt or tgt_addr
+my $field6	= ''; #IP or network name
+my $field11	= 'ON'; #use target port 
+my $field12	= ''; #TCP or UDP
+my $field13	= 'All ICMP-Types';
+my $field14	= 'TGT_PORT';
+my $field15	= ''; #Port Number
+my $field16	= ''; #remark
+my $field26	= '00:00';
+my $field27	= '00:00';
+my $field28 = '';
+my $field29 = 'ALL';
+my $field30 = '';
+my $field31 = 'dnat';
+
+if (! -e "$dmzconfig") {
+	print "DMZ config file not found. Exiting!\n";
+	exit(1);
+}
+
+if (! -s "$dmzconfig") {
+	print "Empty DMZ configuration file. Nothing to do. Exiting...\n";
+	exit(0);
+}
+
+open(FILE, $dmzconfig) or die 'Unable to open config file.';
+my @current = <FILE>;
+close(FILE);
+#open LOGFILE
+open (LOG, ">/var/log/converters/dmz-convert.log") or die $!;
+&General::readhash($ifacesettings, \%ifaces);
+&General::readhasharray($fwdfwconfig,\%configfwdfw);
+&process_rules;
+sub process_rules{
+	foreach my $line (@current){
+		my $now=localtime;
+		#get values from old configfile
+		my ($a,$b,$c,$d,$e,$f,$g,$h) = split (",",$line);
+		$h =~ s/\s*\n//gi;
+		print LOG "$now Processing A: $a   B: $b   C: $c   D: $d   E: $e   F: $f   G: $g   H: $h\n";
+		#Now convert values and check ip addresses
+		$a=uc($a);
+		$e=uc($e);
+		$field2=$e if($e eq 'ON');
+		#SOURCE IP-check
+		$b=&check_ip($b);
+		if (&General::validipandmask($b)){
+			#When ip valid, check if we have a network
+			my ($ip,$subnet) = split ("/",$b);
+			if ($f eq 'orange' && $ip eq $ifaces{'ORANGE_NETADDRESS'}){
+				$field3='std_net_src';
+				$field4='ORANGE';
+			}elsif($f eq 'blue' && $ip eq $ifaces{'BLUE_NETADDRESS'}){
+				$field3='std_net_src';
+				$field4='BLUE';
+			}elsif($f eq 'orange' && &General::IpInSubnet($ip,$ifaces{'ORANGE_NETADDRESS'},$ifaces{'ORANGE_NETMASK'})){
+				$field3='src_addr';
+				$field4=$b;
+			}elsif($f eq 'blue' && &General::IpInSubnet($ip,$ifaces{'BLUE_NETADDRESS'},$ifaces{'BLUE_NETMASK'})){
+				$field3='src_addr';
+				$field4=$b;
+			}else{
+				print LOG "$now ->NOT Converted, source ip $b not part of source network $f \n\n";
+				next;
+			}
+		}else{
+			print LOG "$now -> SOURCE IP INVALID. \n\n";
+			next;
+		}
+		#TARGET IP-check
+		$c=&check_ip($c);
+		if (&General::validipandmask($c)){
+			my $now=localtime;
+			#When ip valid, check if we have a network
+			my ($ip,$subnet) = split ("/",$c);
+			if ($g eq 'green' && $ip eq $ifaces{'GREEN_NETADDRESS'}){
+				$field5='std_net_tgt';
+				$field6='GREEN';
+			}elsif($g eq 'blue' && $ip eq $ifaces{'BLUE_NETADDRESS'}){
+				$field5='std_net_tgt';
+				$field6='BLUE';
+			}elsif($g eq 'green' && &General::IpInSubnet($ip,$ifaces{'GREEN_NETADDRESS'},$ifaces{'GREEN_NETMASK'})){
+				$field5='tgt_addr';
+				$field6=$c;
+			}elsif($g eq 'blue' && &General::IpInSubnet($ip,$ifaces{'BLUE_NETADDRESS'},$ifaces{'BLUE_NETMASK'})){
+				$field5='tgt_addr';
+				$field6=$c;
+			}else{
+				print LOG "$now ->NOT Converted, target ip $c not part of target network $g \n\n";
+				next;
+			}
+		}else{
+			print LOG "$now -> TARGET IP INVALID. \n\n";
+			next;
+		}
+		$field12=$a;
+		#convert portrange
+		$d =~ tr/-/:/;
+		$field15=$d;
+		$field16=$h;
+		my $key = &General::findhasharraykey (\%configfwdfw);
+		foreach my $i (0 .. 27) { $configfwdfw{$key}[$i] = "";}
+		$configfwdfw{$key}[0] = $field0;
+		$configfwdfw{$key}[1] = $field1;
+		$configfwdfw{$key}[2] = $field2;
+		$configfwdfw{$key}[3] = $field3;
+		$configfwdfw{$key}[4] = $field4;
+		$configfwdfw{$key}[5] = $field5;
+		$configfwdfw{$key}[6] = $field6;
+		$configfwdfw{$key}[7] = '';
+		$configfwdfw{$key}[8] = $field12;
+		$configfwdfw{$key}[9] = '';
+		$configfwdfw{$key}[10] = '';
+		$configfwdfw{$key}[11] = $field11;
+		$configfwdfw{$key}[12] = '';
+		$configfwdfw{$key}[13] = '';
+		$configfwdfw{$key}[14] = $field14;
+		$configfwdfw{$key}[15] = $field15;
+		$configfwdfw{$key}[16] = $field16;
+		$configfwdfw{$key}[17] = '';
+		$configfwdfw{$key}[18] = '';
+		$configfwdfw{$key}[19] = '';
+		$configfwdfw{$key}[20] = '';
+		$configfwdfw{$key}[21] = '';
+		$configfwdfw{$key}[22] = '';
+		$configfwdfw{$key}[23] = '';
+		$configfwdfw{$key}[24] = '';
+		$configfwdfw{$key}[25] = '';
+		$configfwdfw{$key}[26] = $field26;
+		$configfwdfw{$key}[27] = $field27;
+		$configfwdfw{$key}[28] = $field28;
+		$configfwdfw{$key}[29] = $field29;
+		$configfwdfw{$key}[30] = $field30;
+		$configfwdfw{$key}[31] = $field31;
+		print LOG "$Now -> Converted to $field0,$field1,$field2,$field3,$field4,$field5,$field6,,$field12,,,$field11,,,$field14,$field15,$field16,,,,,,,,,,$field26,$field27,$field28,$field29,$field30,$field31\n";
+	}
+	&General::writehasharray($fwdfwconfig,\%configfwdfw);
+close (LOG);
+}
+
+sub check_ip
+{
+	my $adr=shift;
+	my $a;
+	#ip with subnet in decimal
+	if($adr =~ m/^(\d\d?\d?).(\d\d?\d?).(\d\d?\d?).(\d\d?\d?)\/(\d{1,2})$/){
+		$adr=int($1).".".int($2).".".int($3).".".int($4);
+		my $b = &General::iporsubtodec($5);
+		$a=$adr."/".$b;
+	}elsif($adr =~ /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/){
+		$adr=int($1).".".int($2).".".int($3).".".int($4);
+		if(&General::validip($adr)){
+			$a=$adr."/32";
+		}
+	}
+	if(&General::validipandmask($adr)){
+		$a=&General::iporsubtodec($adr);
+	}
+	return $a;
+}

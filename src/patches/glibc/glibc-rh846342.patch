@@ -1,0 +1,48 @@
+This is a workaround for broken code which issues memcpy requests with
+overlapping arguments.  With this patch installed, if the file
+/etc/sysconfig/32bit_ssse3_memcpy_via_32bit_ssse3_memmove exists then a
+32bit memcpy call which normally would be handled by the SSSE3 memcpy
+implementation would instead be handled by the 32bit SSSE3 memmove
+implementation which is more tolerant of overlaps.
+
+diff -Nrup a/sysdeps/i386/i686/multiarch/memcpy.S b/sysdeps/i386/i686/multiarch/memcpy.S
+--- a/sysdeps/i386/i686/multiarch/memcpy.S	2010-05-04 05:27:23.000000000 -0600
++++ b/sysdeps/i386/i686/multiarch/memcpy.S	2012-11-20 14:19:52.890780415 -0700
+@@ -21,6 +21,10 @@
+ #include <sysdep.h>
+ #include <init-arch.h>
+ 
++        .section .rodata
++L(magicfile):
++	.ascii "/etc/sysconfig/32bit_ssse3_memcpy_via_32bit_ssse3_memmove"
++
+ /* Define multiple versions only for the definition in lib and for
+    DSO.  In static binaries we need memcpy before the initialization
+    happened.  */
+@@ -48,6 +52,26 @@ ENTRY(memcpy)
+ 1:	leal	__memcpy_ia32@GOTOFF(%ebx), %eax
+ 	testl	$bit_SSSE3, CPUID_OFFSET+index_SSSE3+__cpu_features@GOTOFF(%ebx)
+ 	jz	2f
++
++	/* This is an inlined access (magicfile, 0) syscall.  
++
++	   Note that it clobbers %ebx, so we have to save/restore
++	   it around the syscall.  */
++	mov	%ebx, %edx
++	leal 	L(magicfile)@GOTOFF(%ebx), %ebx
++	xor	%ecx, %ecx
++	movl	$33, %eax
++	int	$0x80
++	mov	%edx, %ebx
++
++	/* If the file did not exist, then %eax will be -1..-4095 and we
++	   do nothing special.  */
++	cmpl	$-4095, %eax
++	jae	4f
++
++	leal	__memmove_ssse3@GOTOFF(%ebx), %eax
++	jmp	2f
++4:
+ 	leal	__memcpy_ssse3@GOTOFF(%ebx), %eax
+ 	testl	$bit_Fast_Rep_String, FEATURE_OFFSET+index_Fast_Rep_String+__cpu_features@GOTOFF(%ebx)
+ 	jz	2f

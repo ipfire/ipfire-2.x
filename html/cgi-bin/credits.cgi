@@ -49,14 +49,14 @@ END
 ;
 &Header::closebox();
 
-&Header::openbox('100%', 'left', $Lang::tr{'credits'});
+&Header::openbox('100%', 'left',);
 
 print <<END
 <br>
 <center>
 	$Lang::tr{'visit us at'}: <b><a href='http://www.ipfire.org/' target="_blank">http://www.ipfire.org/</a></b>
 </center>
-<br><hr><br>
+<br><br>
 
 <p><b>Development:</b><br />
 
@@ -68,6 +68,8 @@ Christian Schmidt
 (<a href='mailto:christian.schmidt\@ipfire.org'>christian.schmidt\@ipfire.org</a>) - Vice Project Leader <br />
 Stefan Schantl
 (<a href='mailto:stefan.schantl\@ipfire.org'>stefan.schantl\@ipfire.org</a>)<br />
+Alexander Marx
+(<a href='mailto:alexander.marx\@ipfire.org'>alexander.marx\@ipfire.org</a>)<br />
 Heiner Schmeling
 (<a href='mailto:heiner.schmeling\@ipfire.org'>heiner.schmeling\@ipfire.org</a>)<br />
 Ronald Wiesinger

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -73,6 +73,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_lzma.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_remove_cdrom_wait.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_add_run_dir.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_remove_scsi_wait.patch
 
 	cd $(DIR_APP) && cp -vf $(DIR_SRC)/src/dracut/switch_root.c .
 
@@ -95,9 +97,10 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	# kirkwood kernel
 	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-kirkwood.img $(KVER)-ipfire-kirkwood
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-kirkwood.img uInit-ipfire-kirkwood
-	# omap kernel
-	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-omap.img $(KVER)-ipfire-omap
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-omap.img uInit-ipfire-omap
+	# arm7 multi kernel
+	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-multi.img $(KVER)-ipfire-multi
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-multi.img uInit-ipfire-multi
+#	cd /boot && cp -f ipfirerd-$(KVER)-multi.img zInit-ipfire-multi
 else
 	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER).img $(KVER)-ipfire
 endif

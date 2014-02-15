@@ -24,37 +24,41 @@
 
 include Config
 
-DATE       = 20070813
-VER        = 3.0-20070813
+VER         = 4.0.9
+VER_DB      = 4.0-$(DATE)
+VER_FILTERS = 4.0.17
+DATE        = 20131023
 
 THISAPP    = foomatic-$(VER)
-DL_FILE    = foomatic-filters-$(VER).tar.gz
+DL_FILE    = foomatic-filters-$(VER_FILTERS).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/foomatic-filters-$(VER)
+DIR_APP    = $(DIR_SRC)/foomatic-filters-$(VER_FILTERS)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = foomatic
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "cups ghostscript libtiff hplip"
+
+export LIB_CUPS=/usr/lib/cups
+export CUPS_BACKENDS=/usr/lib/cups/backends
+export CUPS_FILTERS=/usr/lib/cups/filters
+export CUPS_PPDS=/usr/share/cups/model
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
 objects = $(DL_FILE) \
-	foomatic-db-$(DATE).tar.gz \
-	foomatic-db-engine-$(VER).tar.gz \
-	foomatic-db-hpijs-$(DATE).tar.gz
+	foomatic-db-$(VER_DB).tar.gz \
+	foomatic-db-engine-$(VER).tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-foomatic-db-$(DATE).tar.gz = $(DL_FROM)/foomatic-db-$(DATE).tar.gz
+foomatic-db-$(VER_DB).tar.gz = $(DL_FROM)/foomatic-db-$(VER_DB).tar.gz
 foomatic-db-engine-$(VER).tar.gz = $(DL_FROM)/foomatic-db-engine-$(VER).tar.gz
-foomatic-db-hpijs-$(DATE).tar.gz = $(DL_FROM)/foomatic-db-hpijs-$(DATE).tar.gz
 
-$(DL_FILE)_MD5 = 41de0f45866ab4c19c1d5e3e2cdab42f
-foomatic-db-$(DATE).tar.gz_MD5 = a3ab04b7cc5d870b040ffce19e664698
-foomatic-db-engine-$(VER).tar.gz_MD5 = ec9639719a9c1d4095248e534c3f2d0d
-foomatic-db-hpijs-$(DATE).tar.gz_MD5 = e59fa189336e96a9d43cfcfb6222a9c2
+$(DL_FILE)_MD5 = b05f5dcbfe359f198eef3df5b283d896
+foomatic-db-$(VER_DB).tar.gz_MD5 = ffe38b354cb06a1f3d5e3b01b7e58b0e
+foomatic-db-engine-$(VER).tar.gz_MD5 = 5b33c1adb21e7b6f3652e9a18d0e6f4e
 
 install : $(TARGET)
 
@@ -86,11 +90,10 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_SRC)/foomatic-* /usr/share/foomatic && cd $(DIR_SRC) && \
+	@rm -rf $(DIR_SRC)/foomatic-* && cd $(DIR_SRC) && \
 		tar zxf $(DIR_DL)/$(DL_FILE) && \
-		tar zxf $(DIR_DL)/foomatic-db-$(DATE).tar.gz && \
-		tar zxf $(DIR_DL)/foomatic-db-engine-$(VER).tar.gz && \
-		tar zxf $(DIR_DL)/foomatic-db-hpijs-$(DATE).tar.gz
+		tar zxf $(DIR_DL)/foomatic-db-$(VER_DB).tar.gz && \
+		tar zxf $(DIR_DL)/foomatic-db-engine-$(VER).tar.gz
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
@@ -100,8 +103,20 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/foomatic-db-engine-$(VER) && ./configure --prefix=/usr --sysconfdir=/etc
 	cd $(DIR_SRC)/foomatic-db-engine-$(VER) && make $(MAKETUNING)
 	cd $(DIR_SRC)/foomatic-db-engine-$(VER) && make install
-	cd $(DIR_SRC)/foomatic-db-hpijs-$(DATE) && ./configure --prefix=/usr --sysconfdir=/etc
-	cd $(DIR_SRC)/foomatic-db-hpijs-$(DATE) && make $(MAKETUNING)
-	cd $(DIR_SRC)/foomatic-db-hpijs-$(DATE) && make install
+
+	# Remove unwanted files
+	rm -rfv /usr/lib/ppr \
+		/etc/foomatic/filter.conf.sample \
+		/usr/share/foomatic/templates
+
+	-mkdir -pv /var/cache/foomatic
+
+	-mkdir -pv /etc/foomatic
+	echo "cups" > /etc/foomatic/defaultspooler
+
+	-mkdir -pv /usr/lib/cups/filter
+	ln -svf ../../../bin/foomatic-rip /usr/lib/cups/filter/foomatic-rip
+	ln -svf ../../../bin/foomatic-ppdfile /usr/lib/cups/filter/foomatic-ppdfile
+
 	@rm -rf $(DIR_SRC)/foomatic-*
 	@$(POSTBUILD)

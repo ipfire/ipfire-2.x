@@ -886,27 +886,33 @@ my %shares =  config("${General::swroot}/samba/shares");
 print <<END
 <a name="$Lang::tr{'manage shares'}"></a>
 <br />
-<table width='95%' cellspacing='0'>
-<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage shares'}</b>
-<tr><td align='left'><u>$Lang::tr{'sharename'}</u></td><td colspan='2' width="5%" align='center'><u>$Lang::tr{'options'}</u></td></tr>
+<table width='95%' cellspacing='0' class='tbl'>
+<tr><th bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage shares'}</b></th></tr>
+<tr><th align='left'><u>$Lang::tr{'sharename'}</u></th><th colspan='2' width="5%" align='center'><u>$Lang::tr{'options'}</u></th></tr>
 END
 ;
 
 my @Shares = keys(%shares);
 my $lines = 0;
-
+my $col="";
 foreach my $shareentry (sort @Shares)
 	{
 	chomp $shareentry;
-	if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
+	if ($lines % 2) {
+		print "<tr>";
+		$col="bgcolor='$color{'color20'}'";
+	} else {
+		print "<tr>";
+		$col="bgcolor='$color{'color22'}'";
+	}
 	print <<END
-	<td align='left'>$shareentry</td>
-	<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
+	<td align='left' $col>$shareentry</td>
+	<td $col><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
 			<input type='hidden' name='NAME' value='$shareentry' />
 			<input type='hidden' name='ACTION' value='sharechange' />
 			<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
 	</form></td>
-	<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
+	<td $col><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
 			<input type='hidden' name='NAME' value='$shareentry' />
 			<input type='hidden' name='ACTION' value='smbsharedel' />
 			<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />

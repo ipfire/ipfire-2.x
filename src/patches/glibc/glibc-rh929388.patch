@@ -1,0 +1,21 @@
+diff -pruN glibc-2.5-20061008T1257/sysdeps/x86_64/fpu/math_private.h glibc-2.5-20061008T1257.patched/sysdeps/x86_64/fpu/math_private.h
+--- glibc-2.5-20061008T1257/sysdeps/x86_64/fpu/math_private.h	2013-02-12 07:05:08.000000000 -0500
++++ glibc-2.5-20061008T1257.patched/sysdeps/x86_64/fpu/math_private.h	2013-02-12 06:59:08.000000000 -0500
+@@ -90,10 +90,14 @@ while (0)
+ #undef libc_feupdateenv
+ #define libc_feupdateenv(e) \
+   do {									      \
+-    unsigned int mxcsr;							      \
++    unsigned int mxcsr, new_mxcsr;					      \
+     asm volatile ("stmxcsr %0" : "=m" (*&mxcsr));			      \
+-    asm volatile ("ldmxcsr %0" : : "m" ((e)->__mxcsr));			      \
+-    feraiseexcept (mxcsr & FE_ALL_EXCEPT);				      \
++    /* Merge in the old exceptions.  */					      \
++    new_mxcsr = mxcsr & FE_ALL_EXCEPT | (e)->__mxcsr;			      \
++    asm volatile ("ldmxcsr %0" : : "m" (*&new_mxcsr));			      \
++    /* Only raise exception if there are any that are not masked.  */	      \
++    if (~(mxcsr >> 7) & mxcsr & FE_ALL_EXCEPT)				      \
++      feraiseexcept (mxcsr & FE_ALL_EXCEPT);				      \
+   } while (0)
+ #undef libc_feupdateenvf
+ #define libc_feupdateenvf(e) libc_feupdateenv (e)

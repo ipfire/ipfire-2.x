@@ -35,7 +35,7 @@
 
 #include "langs.h"
 
-#define STRING_SIZE 1023
+#define STRING_SIZE 1024
 
 #define ADDRESS 0
 #define NETADDRESS 1

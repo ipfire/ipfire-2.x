@@ -112,6 +112,8 @@ int handlenetworking(void)
 			runcommandwithstatus("/etc/rc.d/init.d/network start",
 				ctr[TR_PULLING_NETWORK_UP]);
 		}
+	} else {
+		rename_nics();
 	}
 	create_udev();
 	return 1;

@@ -224,13 +224,13 @@ print <<END
 		<td><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='40' maxlength='50' /></td>
 	</tr>
 </table>
-
+<br>
 <hr>
 
 <table width='100%'>
 	<tr>
 		<td class='base' width='55%'><img src='/blob.gif' alt ='*' align='top' />&nbsp;<font class='base'>$Lang::tr{'this field may be blank'}</font></td>
-		<td width='40%' align='center'>
+		<td width='40%' align='right'>
 			<input type='hidden' name='ACTION' value='$Lang::tr{'add'}' />
 			<input type='submit' name='SUBMIT' value='$buttontext' />
 		</td>
@@ -252,12 +252,12 @@ print "</form>\n";
 #
 &Header::openbox('100%', 'left', $Lang::tr{'dnsforward entries'});
 print <<END
-<table width='100%'>
+<table width='100%' class='tbl'>
 	<tr>
-		<td width='35%' class='boldbase' align='center'><b>$Lang::tr{'dnsforward zone'}</b></td>
-		<td width='30%' class='boldbase' align='center'><b>$Lang::tr{'dnsforward forward_server'}</b></td>
-		<td width='30%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></td>
-		<td width='5%' class='boldbase' colspan='3' align='center'><b>$Lang::tr{'action'}</b></td>
+		<th width='35%' class='boldbase' align='center'><b>$Lang::tr{'dnsforward zone'}</b></th>
+		<th width='30%' class='boldbase' align='center'><b>$Lang::tr{'dnsforward forward_server'}</b></th>
+		<th width='30%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
+		<th width='5%' class='boldbase' colspan='3' align='center'><b>$Lang::tr{'action'}</b></th>
 	</tr>
 END
 ;
@@ -274,6 +274,7 @@ if($cgiparams{'ACTION'} ne '' or $changed ne 'no')
 # Re-read entries and highlight selected item for editing.
 #
 my $id = 0;
+my $col="";
 foreach my $line (@current)
 {
 	$id++;
@@ -285,11 +286,14 @@ foreach my $line (@current)
 	my $toggle = '';
 	
 	if($cgiparams{'ACTION'} eq $Lang::tr{'edit'} && $cgiparams{'ID'} eq $id) {
-		print "<tr bgcolor='${Header::colouryellow}'>\n"; }
+		print "<tr>";
+		$col="bgcolor='${Header::colouryellow}'"; }
 	elsif ($id % 2) {
-		print "<tr bgcolor='$color{'color22'}'>\n"; }
+		print "<tr>";
+		$col="bgcolor='$color{'color22'}'"; }
 	else {
-		print "<tr bgcolor='$color{'color20'}'>\n"; }
+		print "<tr>";
+		$col="bgcolor='$color{'color20'}'"; }
 
 	if ($temp[0] eq 'on') { $gif='on.gif'; $toggle='off'; $gdesc=$Lang::tr{'click to disable'};}
 	else { $gif='off.gif'; $toggle='on'; $gdesc=$Lang::tr{'click to enable'}; }
@@ -298,10 +302,10 @@ foreach my $line (@current)
 # Display edit page.
 #
 print <<END
-	<td align='center'>$temp[1]</td>
-	<td align='center'>$temp[2]</td>
-	<td align='center'>$temp[3]</td>
-	<td align='center'>
+	<td align='center' $col>$temp[1]</td>
+	<td align='center' $col>$temp[2]</td>
+	<td align='center' $col>$temp[3]</td>
+	<td align='center' $col>
 		<form method='post' name='frma$id' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' title='$gdesc' alt='$gdesc' />
 			<input type='hidden' name='ID' value='$id' />
@@ -309,14 +313,14 @@ print <<END
 			<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
 		</form>
 	</td>
-	<td align='center'>
+	<td align='center' $col>
 		<form method='post' name='frmb$id' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' title='$Lang::tr{'edit'}' alt='$Lang::tr{'edit'}' />
 			<input type='hidden' name='ID' value='$id' />
 			<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
 		</form>
 	</td>
-	<td align='center'>
+	<td align='center' $col>
 		<form method='post' name='frmc$id' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' title='$Lang::tr{'remove'}' alt='$Lang::tr{'remove'}' />
 			<input type='hidden' name='ID' value='$id' />

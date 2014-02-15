@@ -590,8 +590,7 @@ print <<END
 <tr>
     <td class='base' width='25%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
     <td class='base' width='30%'>$warnNTPmessage</td>
-    <td width='40%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-    <td width='5%' align='right'>&nbsp;</td>
+    <td width='40%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 </form>
@@ -651,7 +650,7 @@ print <<END
 <table width='100%'>
 <tr>
     <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'dhcp advopt scope help'}</td>
-    <td width='50%' align='center'>
+    <td width='50%' align='right'>
     <input type='hidden' name='ACTION' value='$Lang::tr{'add'}1' />
     <input type='submit' name='SUBMIT' value='$buttontext' />
     <input type='submit' name='SUBMIT' value='$Lang::tr{'dhcp advopt help'}' />
@@ -851,7 +850,7 @@ print <<END
 <table width='100%'>
 <tr>
     <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
-    <td width='50%' align='center'>
+    <td width='50%' align='right'>
 	<input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' />
 	<input type='submit' name='SUBMIT' value='$buttontext' />
 	<input type='hidden' name='KEY2' value='$dhcpsettings{'KEY2'}' /></td>
@@ -864,15 +863,15 @@ END
 
 print <<END
 <hr />
-<table width='100%'>
+<table width='100%' class='tbl'>
 <tr>
-    <td width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?FETHER'><b>$Lang::tr{'mac address'}</b></a></td>
-    <td width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?FIPADDR'><b>$Lang::tr{'ip address'}</b></a></td>
-    <td width='15%' align='center'><b>$Lang::tr{'remark'}</b></td>
-    <td width='15%' class='boldbase' align='center'><b>next-server</b></td>
-    <td width='15%' class='boldbase' align='center'><b>filename</b></td>
-    <td width='15%' class='boldbase' align='center'><b>root path</b></td>
-    <td colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></td>
+    <th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?FETHER'><b>$Lang::tr{'mac address'}</b></a></th>
+    <th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?FIPADDR'><b>$Lang::tr{'ip address'}</b></a></th>
+    <th width='15%' align='center'><b>$Lang::tr{'remark'}</b></th>
+    <th width='15%' class='boldbase' align='center'><b>next-server</b></th>
+    <th width='15%' class='boldbase' align='center'><b>filename</b></th>
+    <th width='15%' class='boldbase' align='center'><b>root path</b></th>
+    <th colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 ;
@@ -904,6 +903,7 @@ foreach my $line (@current2) {
 }
 
 $key = 0;
+my $col="";
 foreach my $line (@current2) {
     my $gif = '';
     my $gdesc = '';
@@ -919,11 +919,14 @@ foreach my $line (@current2) {
     }
 
     if ($dhcpsettings{'KEY2'} eq $key) {
-	print "<tr bgcolor='${Header::colouryellow}'>";
+	print "<tr>";
+	$col="bgcolor='${Header::colouryellow}'";
     } elsif ($key % 2) {
-	print "<tr bgcolor='$color{'color22'}'>";
+	print "<tr>";
+	$col="bgcolor='$color{'color20'}'";
     } else {
-	print "<tr bgcolor='$color{'color20'}'>"; 
+	print "<tr>";
+	$col="bgcolor='$color{'color22'}'";
     }
     my $TAG0 = '';
     my $TAG1 = '';
@@ -943,14 +946,14 @@ foreach my $line (@current2) {
     }
 
     print <<END
-<td align='center'>$TAG2$temp[0]$TAG3</td>
-<td align='center' $TAG4>$TAG0$temp[1]$TAG1</td>
-<td align='center'>$temp[6]&nbsp;</td>
-<td align='center'>$temp[3]&nbsp;</td>
-<td align='center'>$temp[4]&nbsp;</td>
-<td align='center'>$temp[5]&nbsp;</td>
+<td align='center' $col>$TAG2$temp[0]$TAG3</td>
+<td align='center' $col $TAG4>$TAG0$temp[1]$TAG1</td>
+<td align='center' $col>$temp[6]&nbsp;</td>
+<td align='center' $col>$temp[3]&nbsp;</td>
+<td align='center' $col>$temp[4]&nbsp;</td>
+<td align='center' $col>$temp[5]&nbsp;</td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}2' />
 <input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc' />
@@ -958,7 +961,7 @@ foreach my $line (@current2) {
 </form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'edit'}2' />
 <input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
@@ -966,7 +969,7 @@ foreach my $line (@current2) {
 </form>
 </td>
 
-<td align='center'>
+<td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'remove'}2' />
 <input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />

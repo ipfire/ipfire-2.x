@@ -192,10 +192,11 @@ END
 print <<END    
   </tr>
     <tr>
-    <td colspan="2"><hr /></td>
+    <td colspan="2"><br><hr /></td>
   </tr>
   <tr>
-    <td colspan="2"><div align="center">
+    <td align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td><div align="right"></td>
+    <td align='right'>
 END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
@@ -232,11 +233,6 @@ END
 print <<END
     </div></td>
   </tr>
-  <tr>
-    <td colspan="2"align='left'>
-        <img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
-  </tr>
-
 </table>
 
 END
