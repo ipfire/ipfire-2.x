@@ -1,0 +1,55 @@
+From 220ffe76a48c72171d7724f7f602a2fdd8bbca6a Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Sat, 15 Feb 2014 18:37:54 +0100
+Subject: [PATCH] Exclude some more invalid patterns.
+
+---
+ src/fireinfo/system.py | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/src/fireinfo/system.py b/src/fireinfo/system.py
+index 40ff7b0..c875f96 100644
+--- a/src/fireinfo/system.py
++++ b/src/fireinfo/system.py
+@@ -44,12 +44,17 @@ INVALID_ID_STRINGS = (
+ 	"Chassis", "chassis",
+ 	"Not Applicable",
+ 	"None", "empty",
++	"XXXXX",
+ 	"01010101-0101-0101-0101-010101010101",
+ 	"00020003-0004-0005-0006-000700080009",
+ 	"03000200-0400-0500-0006-000700080009",
+ 	"0000000", "00000000",
+ )
+ 
++INVALID_ID_STRINGS_EXACT_MATCH = (
++	"NA",
++)
++
+ class Singleton(type):
+ 	def __init__(cls, name, bases, dict):
+ 		super(Singleton, cls).__init__(name, bases, dict)
+@@ -234,12 +239,18 @@ class System(object):
+ 			if id is None:
+ 				continue
+ 
+-			for i in INVALID_ID_STRINGS:
+-				if i in id:
++			for i in INVALID_ID_STRINGS_EXACT_MATCH:
++				if id == i:
+ 					id = None
+ 					break
+ 
+ 			if id:
++				for i in INVALID_ID_STRINGS:
++					if i in id:
++						id = None
++						break
++
++			if id:
+ 				_ids.append(id)
+ 
+ 		ids = _ids
+-- 
+1.8.3.1
+
