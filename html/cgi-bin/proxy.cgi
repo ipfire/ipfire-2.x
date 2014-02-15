@@ -1206,7 +1206,7 @@ print <<END
 	<td colspan='4'><b>$Lang::tr{'advproxy destination ports'}</b></td>
 </tr>
 <tr>
-	<td width='25%' align=center></td> <td width='20%' align=center></td><td width='25%' align=center></td><td width='30%' align=center></td>
+	<td width='25%' align='center'></td> <td width='20%' align='center'></td><td width='25%' align='center'></td><td width='30%' align='center'></td>
 </tr>
 <tr>
 	<td colspan='2' class='base'>$Lang::tr{'advproxy standard ports'}:</td>

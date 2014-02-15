@@ -594,7 +594,7 @@ END
 if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable_green" || -e "${General::swroot}/snort/enable_blue" || -e "${General::swroot}/snort/enable_orange" ) {
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
 		# Output display table for rule files
-		print "<table width='100%'><tr><td valign='TOP'><table>";
+		print "<table width='100%'><tr><td valign='top'><table>";
 
 		print "<form method='post'>";
 
@@ -615,7 +615,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 
 			# Check if reached half-way through rule file rules to start new column
  		if ($ruledisplaycnt > $rulecnt) {
-				print "</table></td><td valign='TOP'><table>";
+				print "</table></td><td valign='top'><table>";
 				$ruledisplaycnt = 0;
 			}
 
@@ -666,8 +666,8 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 			}
 
 			# Output rule file name and checkbox
-			print "<tr><td class='base' valign='TOP'><input type='checkbox' NAME='SNORT_RULE_$rulefile' $rulechecked> <a href='$rulefilelink'>$rulefile</a></td></tr>";
-			print "<tr><td class='base' valign='TOP'>";
+			print "<tr><td class='base' valign='top'><input type='checkbox' NAME='SNORT_RULE_$rulefile' $rulechecked> <a href='$rulefilelink'>$rulefile</a></td></tr>";
+			print "<tr><td class='base' valign='top'>";
 
 			# Check for empty 'Description'
 			if ($snortrules{$rulefile}{'Description'} eq '') {
@@ -680,7 +680,7 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 			# Check for display flag
 			if ($displayrulefilerules) {
 				# Rule file definition rule display
-				print "<tr><td class='base' valign='TOP'><table border='0'><tr>";
+				print "<tr><td class='base' valign='top'><table border='0'><tr>";
 
 				# Local vars
 			 	my $ruledefdisplaycnt = 0;

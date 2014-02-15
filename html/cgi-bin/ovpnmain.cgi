@@ -2282,7 +2282,7 @@ ADV_ERROR:
     &Header::openbox('100%', 'LEFT', $Lang::tr{'advanced server'});
     print <<END
     <form method='post' enctype='multipart/form-data'>
-    <table width='100%' border=0>
+    <table width='100%' border='0'>
     <tr>
 	<td colspan='4'><b>$Lang::tr{'dhcp-options'}</b></td>
     </tr>
@@ -2485,7 +2485,7 @@ if ($cgiparams{'ACTION'} eq "edit"){
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'ccd modify'});
 
 	print <<END
-    <table width='100%' border=0>
+    <table width='100%' border='0'>
     <tr><form method='post'>
 	<td width='10%' nowrap='nowrap'>$Lang::tr{'ccd name'}:</td><td><input type='TEXT' name='ccdname' value='$cgiparams{'ccdname'}' /></td>
 	<td width='8%'>$Lang::tr{'ccd subnet'}:</td><td><input type='TEXT' name='ccdsubnet' value='$cgiparams{'ccdsubnet'}' readonly /></td></tr>
@@ -4581,7 +4581,7 @@ END
     }	
     &Header::openbox('100%', 'LEFT', $Lang::tr{'global settings'});	
 	print <<END	
-    <table width='100%' border=0>
+    <table width='100%' border='0'>
     <form method='post'>
     <td width='25%'>&nbsp;</td>
     <td width='25%'>&nbsp;</td>
