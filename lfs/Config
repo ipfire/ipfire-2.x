@@ -68,7 +68,7 @@ KGCC = gcc
 #
 define FIND_FILES
 	cd $(ROOT)/ && find -mount \
-	-not -path './tools*' -not -path './tmp*' -not -path './usr/src*' \
+	-not -path './tools*' -not -path './tmp*' -not -path './usr/src*' -not -path './run/*' \
 	-not -path './dev*' -not -path './proc*' -not -path './install*' | sort
 endef
 

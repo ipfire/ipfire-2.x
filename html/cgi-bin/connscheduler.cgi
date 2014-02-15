@@ -307,7 +307,7 @@ for ($minute = 0; $minute <= 55; $minute += 5)
 
 print <<END
 </select></td></tr>
-<tr><td colspan='2'><hr /></td></tr>
+<tr><td colspan='2'><br><br></td></tr>
 <tr><td width='15%' class='base'>$Lang::tr{'ConnSched action'}</td><td>
 <input type='radio' value='CONNECT' name='ACTION_ACTION' $checked_connect />&nbsp;<select name='ACTION_CONNECT'>
 <option value='reconnect' $selected{'reconnect'}>$Lang::tr{'ConnSched reconnect'}</option>
@@ -335,7 +335,7 @@ for ($i = 1; $i <= $CONNSCHED::maxprofiles; $i++)
 }
 print <<END
 </select></td></tr>
-<tr><td colspan='2'><hr /></td></tr>
+<tr><td colspan='2'><br><br></td></tr>
 <tr><td width='15%' class='base'>$Lang::tr{'ConnSched days'}</td>
 <td><input type='radio' value='DAYS' name='ACTION_DAYSTYPE' $checked_days />&nbsp;<select name='ACTION_DAYSTART'>
 END
@@ -375,14 +375,15 @@ print <<END
 &nbsp;&nbsp;<input type='checkbox' name='Sat' $checked_sat />$Lang::tr{'saturday'}<br />
 &nbsp;&nbsp;<input type='checkbox' name='Sun' $checked_sun />$Lang::tr{'sunday'}
 </td></tr>
-<tr><td colspan='2'><hr /></td></tr>
+<tr><td colspan='2'><br></td></tr>
 <tr><td width='15%' class='base'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 <td><input type='text' name='ACTION_COMMENT' size='40' value='$comment' /></td></tr></table>
-<hr />
+<br>
+<hr>
 <table width='100%'><tr>
   <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
   <td width='55%' class='base'>$Lang::tr{'this field may be blank'}</td>
-  <td width='40%' align='center'><input type='submit' name='SUBMIT' value='$buttontext' />
+  <td width='40%' align='right'><input type='submit' name='SUBMIT' value='$buttontext' />
   <input type='hidden' name='ACTION' value='$hiddenvalue' /></td>
   <input type='hidden' name='UPDATE_ID' value='$cgiparams{'ID'}' /></td>
 </tr></table>
@@ -399,67 +400,67 @@ END
 
 &Header::openbox('100%', 'left', $Lang::tr{'ConnSched scheduled actions'});
 print <<END
-<table width='100%' border='0' cellspacing='1' cellpadding='0'>
+<table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
 <tr>
-<td align='center' width='10%'><b>$Lang::tr{'time'}</b></td>
-<td width='15%'>&nbsp;</td>
-<td align='center' width='60%'><b>$Lang::tr{'remark'}</b></td>
-<td align='center' colspan='5' width='5%'><b>$Lang::tr{'action'}</b></td>
+<th align='center' width='10%'><b>$Lang::tr{'time'}</b></th>
+<th width='15%'>&nbsp;</th>
+<th align='center' width='60%'><b>$Lang::tr{'remark'}</b></th>
+<th align='center' colspan='5' width='5%'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 ;
-
+my $col="";
 for my $id ( 0 .. $#CONNSCHED::config )
 {
-  my $trcolor;
-
   if ( ($cgiparams{'ACTION'} eq 'edit') && ($id == $cgiparams{'ID'}) ) 
   {
-    $trcolor = "<tr bgcolor='${Header::colouryellow}'>";
+    print "<tr>";
+    $col="bgcolor='${Header::colouryellow}'";
   }
   elsif ( $id % 2 )
   {
-    $trcolor = "<tr bgcolor='$color{'color20'}'>";
+    print "<tr>";
+    $col="bgcolor='$color{'color20'}'";
   }
   else 
   {
-    $trcolor = "<tr bgcolor='$color{'color22'}'>";
+    print "<tr>";
+    $col="bgcolor='$color{'color22'}'";
   }
 
 print <<END
-$trcolor
-<td align='center'>$CONNSCHED::config[$id]{'TIME'}</td>
-<td>$Lang::tr{"ConnSched $CONNSCHED::config[$id]{'ACTION'}"}&nbsp;$CONNSCHED::config[$id]{'PROFILENR'}</td>
-<td>$CONNSCHED::config[$id]{'COMMENT'}</td>
-<td align='center'>
+<td align='center' $col>$CONNSCHED::config[$id]{'TIME'}</td>
+<td $col>$Lang::tr{"ConnSched $CONNSCHED::config[$id]{'ACTION'}"}&nbsp;$CONNSCHED::config[$id]{'PROFILENR'}</td>
+<td $col>$CONNSCHED::config[$id]{'COMMENT'}</td>
+<td align='center' $col>
   <form method='post' name='frm$id' action='$ENV{'SCRIPT_NAME'}'>
   <input type='hidden' name='ACTION' value='toggle' />
   <input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$CONNSCHED::config[$id]{'ACTIVE'}.gif' alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' />
   <input type='hidden' name='ID' value='$id' />
   </form>
 </td>
-<td align='center'>
+<td align='center' $col>
   <form method='post' name='frm$id' action='$ENV{'SCRIPT_NAME'}'>
   <input type='hidden' name='ACTION' value='edit' />
   <input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
   <input type='hidden' name='ID' value='$id' />
   </form>
 </td>
-<td align='center'>
+<td align='center' $col>
   <form method='post' name='frm$id' action='$ENV{'SCRIPT_NAME'}'>
   <input type='hidden' name='ACTION' value='remove' />
   <input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
   <input type='hidden' name='ID' value='$id' />
   </form>
 </td>
-<td align='center'>
+<td align='center' $col>
   <form method='post' name='frm$id' action='$ENV{'SCRIPT_NAME'}'>
   <input type='hidden' name='ACTION' value='up' />
   <input type='image' name='$Lang::tr{'ConnSched up'}' src='/images/up.gif' alt='$Lang::tr{'ConnSched up'}' title='$Lang::tr{'ConnSched up'}' />
   <input type='hidden' name='ID' value='$id' />
   </form>
 </td>
-<td align='center'>
+<td align='center' $col>
   <form method='post' name='frm$id' action='$ENV{'SCRIPT_NAME'}'>
   <input type='hidden' name='ACTION' value='down' />
   <input type='image' name='$Lang::tr{'ConnSched down'}' src='/images/down.gif' alt='$Lang::tr{'ConnSched down'}' title='$Lang::tr{'ConnSched down'}' />
@@ -467,9 +468,9 @@ $trcolor
   </form>
 </td>
 </tr>
-$trcolor
-<td>&nbsp;</td>
-<td colspan='7'>$CONNSCHED::config[$id]{'DAYS'}$CONNSCHED::config[$id]{'WEEKDAYS_PR'}&nbsp;</td>
+<tr>
+<td $col>&nbsp;</td>
+<td colspan='7' $col>$CONNSCHED::config[$id]{'DAYS'}$CONNSCHED::config[$id]{'WEEKDAYS_PR'}&nbsp;</td>
 </tr>
 END
 ;

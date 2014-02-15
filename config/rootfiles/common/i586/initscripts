@@ -83,11 +83,9 @@ etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq
 etc/rc.d/init.d/networking/red.up/10-miniupnpd
 etc/rc.d/init.d/networking/red.up/10-multicast
 etc/rc.d/init.d/networking/red.up/20-RL-firewall
-etc/rc.d/init.d/networking/red.up/22-outgoingfwctrl
+etc/rc.d/init.d/networking/red.up/22-forwardfwctrl
 etc/rc.d/init.d/networking/red.up/23-RS-snort
 etc/rc.d/init.d/networking/red.up/24-RS-qos
-etc/rc.d/init.d/networking/red.up/25-portfw
-etc/rc.d/init.d/networking/red.up/26-xtaccess
 etc/rc.d/init.d/networking/red.up/27-RS-squid
 etc/rc.d/init.d/networking/red.up/30-ddns
 etc/rc.d/init.d/networking/red.up/40-ipac
@@ -110,6 +108,7 @@ etc/rc.d/init.d/fsresize
 etc/rc.d/init.d/random
 etc/rc.d/init.d/rc
 etc/rc.d/init.d/reboot
+etc/rc.d/init.d/rngd
 #etc/rc.d/init.d/samba
 #etc/rc.d/init.d/sane
 etc/rc.d/init.d/sendsignals
@@ -219,6 +218,7 @@ etc/rc.d/rc6.d/S90localnet
 etc/rc.d/rc6.d/S99reboot
 #etc/rc.d/rcsysinit.d
 etc/rc.d/rcsysinit.d/S00mountkernfs
+etc/rc.d/rcsysinit.d/S01sysctl
 etc/rc.d/rcsysinit.d/S05modules
 etc/rc.d/rcsysinit.d/S10udev
 etc/rc.d/rcsysinit.d/S19checkfstab
@@ -232,8 +232,9 @@ etc/rc.d/rcsysinit.d/S60setclock
 etc/rc.d/rcsysinit.d/S70console
 etc/rc.d/rcsysinit.d/S75firstsetup
 etc/rc.d/rcsysinit.d/S80localnet
-etc/rc.d/rcsysinit.d/S90sysctl
+etc/rc.d/rcsysinit.d/S85firewall
 etc/rc.d/rcsysinit.d/S91network-vlans
+etc/rc.d/rcsysinit.d/S92rngd
 etc/rc.d/rc3.d/S15fireinfo
 #etc/sysconfig
 etc/sysconfig/createfiles

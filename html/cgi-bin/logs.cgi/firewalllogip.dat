@@ -221,7 +221,7 @@ if ($errormessage) {
         &Header::closebox();
 }
 
-&Header::openbox('100%', 'left', "$Lang::tr{'settings'}:");
+&Header::openbox('100%', 'left', "$Lang::tr{'settings'}");
 
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -266,15 +266,15 @@ print <<END
 </td>
 <td width='5%'  align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day before'}' value='&lt;&lt;' /></td>
 <td width='5%'  align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day after'}' value='&gt;&gt;' /></td>
-<td width='20%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
+<td width='20%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
+</tr>
+<tr>
+	<td colspan='3' align='left' valign="left">$Lang::tr{'Number of IPs for the pie chart'}:</td>
+	<td colspan='3' align='left' valign="center"><input type='text' name='pienumber' value='$pienumber' size='4'></td>
+	<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
-<table width='100%'>
-<tr><td width='20%' align='right' valign="center">$Lang::tr{'Number of IPs for the pie chart'}:</td>
-          <td width='10%' align='left' valign="center"><input type='text' name='pienumber' value='$pienumber' size='4'></td>
-          <td width='20%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td></tr>
-       </table>
-       </form>
+</form>
 END
 ;
 
@@ -403,14 +403,14 @@ if ($showpie != 2 && $pienumber <= 50 && $pienumber != 0) {
 }
 
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'></TD>
-<TD WIDTH='30%' ALIGN='CENTER' CLASS='boldbase'><B>IP</B></TD>
-<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>Flag</B></TD>
-<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>Count</B></TD>
-<TD WIDTH='30%' ALIGN='CENTER' CLASS='boldbase'><B>Percent</B></TD>
-</TR>
+<table width='100%' class='tbl'>
+<tr>
+<th width='10%' align='center' class='boldbase'></th>
+<th width='30%' align='center' class='boldbase'><b>IP</b></th>
+<th width='10%' align='center' class='boldbase'><b>Flag</b></th>
+<th width='10%' align='center' class='boldbase'><b>Count</b></th>
+<th width='30%' align='center' class='boldbase'><b>Percent</b></th>
+</tr>
 END
 ;
 
@@ -419,6 +419,7 @@ my $show=0;
 
 my $s;
 my $percent;
+my $col="";
 
 for($s=0;$s<$lines;$s++)
 {
@@ -426,45 +427,45 @@ for($s=0;$s<$lines;$s++)
   $percent = $value[$s] * 100 / $linesjc;
   $percent = sprintf("%.f", $percent);
   $total = $total + $value[$s];
-  if ( ($color % 10) == 1 ){print "<TR BGCOLOR='$color{'color1'}'>\n";}
-  if ( ($color % 10) == 2 ){print "<TR BGCOLOR='$color{'color2'}'>\n";}
-  if ( ($color % 10) == 3 ){print "<TR BGCOLOR='$color{'color3'}'>\n";}
-  if ( ($color % 10) == 4 ){print "<TR BGCOLOR='$color{'color4'}'>\n";}
-  if ( ($color % 10) == 5 ){print "<TR BGCOLOR='$color{'color5'}'>\n";}
-  if ( ($color % 10) == 6 ){print "<TR BGCOLOR='$color{'color6'}'>\n";}
-  if ( ($color % 10) == 7 ){print "<TR BGCOLOR='$color{'color7'}'>\n";}
-  if ( ($color % 10) == 8 ){print "<TR BGCOLOR='$color{'color8'}'>\n";}
-  if ( ($color % 10) == 9 ){print "<TR BGCOLOR='$color{'color9'}'>\n";}
-  if ( ($color % 10) == 0 ){print "<TR BGCOLOR='$color{'color10'}'>\n";}
+  if ( ($color % 10) == 1 ){print "<tr>"; $col="bcolor='$color{'color1'}'";}
+  if ( ($color % 10) == 2 ){print "<tr>"; $col="bcolor='$color{'color2'}'";}
+  if ( ($color % 10) == 3 ){print "<tr>"; $col="bcolor='$color{'color3'}'";}
+  if ( ($color % 10) == 4 ){print "<tr>"; $col="bcolor='$color{'color4'}'";}
+  if ( ($color % 10) == 5 ){print "<tr>"; $col="bcolor='$color{'color5'}'";}
+  if ( ($color % 10) == 6 ){print "<tr>"; $col="bcolor='$color{'color6'}'";}
+  if ( ($color % 10) == 7 ){print "<tr>"; $col="bcolor='$color{'color7'}'";}
+  if ( ($color % 10) == 8 ){print "<tr>"; $col="bcolor='$color{'color8'}'";}
+  if ( ($color % 10) == 9 ){print "<tr>"; $col="bcolor='$color{'color9'}'";}
+  if ( ($color % 10) == 0 ){print "<tr>"; $col="bcolor='$color{'color10'}'";}
   
   my $gi = Geo::IP::PurePerl->new();
   my $ccode = $gi->country_code_by_name($key[$s]);
   my $fcode = lc($ccode);
   
   $color++;
-  print "<TD ALIGN='CENTER'><form method='post' action='showrequestfromip.dat'><input type='hidden' name='MONTH' value='$cgiparams{'MONTH'}'> <input type='hidden' name='DAY' value='$cgiparams{'DAY'}'> <input type='hidden' name='ip' value='$key[$s]'> <input type='submit' value='details'></form></TD>";
-  print "<TD ALIGN='CENTER'><a href='/cgi-bin/ipinfo.cgi?ip=$key[$s]'>$key[$s]</a></TD>";
+  print "<td align='center' $col><form method='post' action='showrequestfromip.dat'><input type='hidden' name='MONTH' value='$cgiparams{'MONTH'}'> <input type='hidden' name='DAY' value='$cgiparams{'DAY'}'> <input type='hidden' name='ip' value='$key[$s]'> <input type='submit' value='details'></form></td>";
+  print "<td align='center' $col><a href='/cgi-bin/ipinfo.cgi?ip=$key[$s]'>$key[$s]</a></td>";
   if ( $fcode ne "" ){
-  print "<TD ALIGN='CENTER'><a href='/cgi-bin/country.cgi#$fcode'><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$ccode'></a></TD>";} 
+    print "<td align='center' $col><a href='/cgi-bin/country.cgi#$fcode'><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$ccode'></a></td>";}
   else {
-  print "<TD ALIGN='CENTER'></TD>";}
-  print "<TD ALIGN='CENTER'>$value[$s]</TD>";
-  print "<TD ALIGN='CENTER'>$percent</TD>";
-  print "</TR>";
-}
+    print "<td align='center' $col></td>";}
+    print "<td align='center' $col>$value[$s]</td>";
+    print "<td align='center' $col>$percent</td>";
+    print "</tr>";
+  }
 
 if($cgiparams{'otherspie'} == 2 ){}
 else{
-if ( ($color % 10) == 1 ){print "<TR BGCOLOR='$color{'color1'}'>\n";}
-if ( ($color % 10) == 2 ){print "<TR BGCOLOR='$color{'color2'}'>\n";}
-if ( ($color % 10) == 3 ){print "<TR BGCOLOR='$color{'color3'}'>\n";}
-if ( ($color % 10) == 4 ){print "<TR BGCOLOR='$color{'color4'}'>\n";}
-if ( ($color % 10) == 5 ){print "<TR BGCOLOR='$color{'color5'}'>\n";}
-if ( ($color % 10) == 6 ){print "<TR BGCOLOR='$color{'color6'}'>\n";}
-if ( ($color % 10) == 7 ){print "<TR BGCOLOR='$color{'color7'}'>\n";}
-if ( ($color % 10) == 8 ){print "<TR BGCOLOR='$color{'color8'}'>\n";}
-if ( ($color % 10) == 9 ){print "<TR BGCOLOR='$color{'color9'}'>\n";}
-if ( ($color % 10) == 0 ){print "<TR BGCOLOR='$color{'color10'}'>\n";}
+if ( ($color % 10) == 1 ){print "<tr>"; $col="bcolor='$color{'color1'}'";}
+if ( ($color % 10) == 2 ){print "<tr>"; $col="bcolor='$color{'color2'}'";}
+if ( ($color % 10) == 3 ){print "<tr>"; $col="bcolor='$color{'color3'}'";}
+if ( ($color % 10) == 4 ){print "<tr>"; $col="bcolor='$color{'color4'}'";}
+if ( ($color % 10) == 5 ){print "<tr>"; $col="bcolor='$color{'color5'}'";}
+if ( ($color % 10) == 6 ){print "<tr>"; $col="bcolor='$color{'color6'}'";}
+if ( ($color % 10) == 7 ){print "<tr>"; $col="bcolor='$color{'color7'}'";}
+if ( ($color % 10) == 8 ){print "<tr>"; $col="bcolor='$color{'color8'}'";}
+if ( ($color % 10) == 9 ){print "<tr>"; $col="bcolor='$color{'color9'}'";}
+if ( ($color % 10) == 0 ){print "<tr>"; $col="bcolor='$color{'color10'}'";}
 
 if ( $linesjc ne "0")
 {
@@ -473,18 +474,18 @@ $dif = $linesjc - $total;
 $percent = $dif * 100 / $linesjc;
 $percent = sprintf("%.f", $percent);
 print <<END
-<TD ALIGN='CENTER'></TD>
-<TD ALIGN='CENTER'>$Lang::tr{'otherip'}</TD>
-<TD ALIGN='CENTER'></TD>
-<TD ALIGN='CENTER'>$dif</TD>
-<TD ALIGN='CENTER'>$percent</TD> 
-</TR>
+<td align='center' $col></td>
+<td align='center' $col>$Lang::tr{'otherip'}</td>
+<td align='center' $col></td>
+<td align='center' $col>$dif</td>
+<td align='center' $col>$percent</td>
+</tr>
 END
 ;
 }
 }
 print <<END
-</TABLE>
+</table>
 END
 ;
 

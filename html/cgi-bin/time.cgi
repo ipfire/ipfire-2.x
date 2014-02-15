@@ -233,13 +233,9 @@ if ($errormessage) {
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
 
-&Header::openbox('100%', 'left', $Lang::tr{'network time'});
+&Header::openbox('100%', 'left', $Lang::tr{'ntp common settings'});
 print <<END
 <table width='100%'>
-<tr>
-	<td colspan='2'><strong>$Lang::tr{'ntp common settings'}</strong></td>
-</tr>
-
 <tr>
 	<td><input type='checkbox' name='ENABLENTP' $checked{'ENABLENTP'}{'on'} /></td>
 	<td width='100%' colspan='4' class='base'>$Lang::tr{'network time from'}</td>
@@ -281,10 +277,12 @@ print <<END
 	<td class='base' colspan='4'><input type='checkbox' name='ENABLESETONBOOT' $checked{'ENABLESETONBOOT'}{'on'} /> $Lang::tr{'Set time on boot'}</td>
 </tr>
 </table>
+END
+;
+&Header::closebox();
+&Header::openbox('100%',1,$Lang::tr{'ntp sync'});
+print <<END
 <table width='100%'>
-<tr>
-	<td colspan='4'><hr /><strong>$Lang::tr{'ntp sync'}</strong></td>
-</tr>
 <tr>
 	<td class='base'><input type='radio' name='UPDATE_METHOD' value='periodically' $checked{'UPDATE_METHOD'}{'periodically'} /></td>
 	<td width='10%'>$Lang::tr{'every'}</td>
@@ -302,7 +300,7 @@ print <<END
 	<td colspan='2'>$Lang::tr{'manually'}</td>
 </tr>
 <tr>
-	<td colspan='4'><hr /><strong>$Lang::tr{'update time'}</strong></td>
+	<td colspan='4'><br><br><strong>$Lang::tr{'update time'}</strong></td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
@@ -322,9 +320,8 @@ print <<END
 <table width='100%'>
 <tr>
 	<td width='30%'><img src='/blob.gif' alt='*' /> $Lang::tr{'this field may be blank'}</td>
-	<td width='40%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'set time now'}' /></td>
-	<td width='25%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-	<td width='5%' align='right'>&nbsp;</td>
+	<td width='65%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'set time now'}' /></td>
+	<td width='5%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 END

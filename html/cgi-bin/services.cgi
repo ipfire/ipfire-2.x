@@ -116,25 +116,33 @@ if ( $querry[0] =~ "processescpu"){
 	&Header::openbox('100%', 'left', $Lang::tr{'services'});
 	print <<END
 <div align='center'>
-<table width='80%' cellspacing='1' border='0'>
-<tr bgcolor='$color{'color20'}'><td align='left'><b>$Lang::tr{'services'}</b></td><td align='center' ><b>$Lang::tr{'status'}</b></td><td align='center'><b>PID</b></td><td align='center'><b>$Lang::tr{'memory'}</b></td></tr>
+<table width='80%' cellspacing='1' class='tbl'>
+<tr>
+	<th align='left'><b>$Lang::tr{'services'}</b></th>
+	<th align='center' ><b>$Lang::tr{'status'}</b></th>
+	<th align='center'><b>PID</b></th>
+	<th align='center'><b>$Lang::tr{'memory'}</b></th>
+</tr>
 END
 ;
 	my $key = '';
+	my $col="";
 	foreach $key (sort keys %servicenames){
 		$lines++;
 		if ($lines % 2){
-			print "<tr bgcolor='$color{'color22'}'>\n<td align='left'>";
+			$col="bgcolor='$color{'color22'}'";
+			print "<tr><td align='left' $col>";
 			print $link{$key};
-			print "</td>\n";
+			print "</td>";
 		}else{
-			print "<tr bgcolor='$color{'color20'}'>\n<td align='left'>";
+			$col="bgcolor='$color{'color20'}'";
+			print "<tr><td align='left' $col>";
 			print $link{$key};
-			print "</td>\n";
+			print "</td>";
 		}
 
 		my $shortname = $servicenames{$key};
-		my $status = &isrunning($shortname);
+		my $status = &isrunning($shortname,$col);
 
 	 	print "$status\n";
 		print "</tr>\n";
@@ -152,14 +160,14 @@ END
 
 	print <<END
 <div align='center'>
-<table width='80%' cellspacing='1' border='0'>
-<tr bgcolor='$color{'color20'}'>
-<td align='center'><b>Addon</b></td>
-<td align='center'><b>Boot</b></td>
-<td align='center' colspan=2><b>$Lang::tr{'action'}</b></td>
-<td align='center'><b>$Lang::tr{'status'}</b></td>
-<td align='center'><b>PID</b></td>
-<td align='center'><b>$Lang::tr{'memory'}</b></td>
+<table width='80%' cellspacing='1' class='tbl'>
+<tr>
+	<th align='center'><b>Addon</b></th>
+	<th align='center'><b>Boot</b></th>
+	<th align='center' colspan=2><b>$Lang::tr{'action'}</b></th>
+	<th align='center'><b>$Lang::tr{'status'}</b></th>
+	<th align='center'><b>PID</b></th>
+	<th align='center'><b>$Lang::tr{'memory'}</b></th>
 </tr>
 END
 ;
@@ -183,16 +191,18 @@ END
 			if ( ($_ ne "alsa") && ($_ ne "mdadm") ) {
 				$lines++;
 				if ($lines % 2){
-					print "<tr bgcolor='$color{'color22'}'>";
+					print "<tr>";
+					$col="bgcolor='$color{'color22'}'";
 				}else{
-					print "<tr bgcolor='$color{'color20'}'>";
+					print "<tr>";
+					$col="bgcolor='$color{'color20'}'";
 				}
-				print "<td align='left'>$_</td> ";
-				my $status = isautorun($_);
+				print "<td align='left' $col width='31%'>$_</td> ";
+				my $status = isautorun($_,$col);
 				print "$status ";
-				print "<td align='center'><A HREF=services.cgi?$_!start><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></A></td>";
-				print "<td align='center'><A HREF=services.cgi?$_!stop><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></A></td> ";
-				my $status = &isrunningaddon($_);
+				print "<td align='center' $col width='8%'><a href='services.cgi?$_!start'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
+				print "<td align='center' $col width='8%'><a href='services.cgi?$_!stop'><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></a></td> ";
+				my $status = &isrunningaddon($_,$col);
 		 		$status =~ s/\\[[0-1]\;[0-9]+m//g;
 
 				chomp($status);
@@ -219,16 +229,17 @@ END
 
 sub isautorun{
 	my $cmd = $_[0];
-	my $status = "<td align='center'></td>";
+	my $col = $_[1];
+	my $status = "<td align='center' $col></td>";
 	my $init = `find /etc/rc.d/rc3.d/S??${cmd} 2>/dev/null`;
 	chomp ($init);
 	if ($init ne ''){
-		$status = "<td align='center'><A HREF=services.cgi?$_!disable><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></A></td>";
+		$status = "<td align='center' $col><a href='services.cgi?$_!disable'><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></a></td>";
 	}
 	$init = `find /etc/rc.d/rc3.d/off/S??${cmd} 2>/dev/null`;
 	chomp ($init);
 	if ($init ne ''){
-		$status = "<td align='center'><A HREF=services.cgi?$_!enable><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></A></td>";
+		$status = "<td align='center' $col><a href='services.cgi?$_!enable'><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></a></td>";
 	}
 
 	return $status;
@@ -236,7 +247,8 @@ sub isautorun{
 
 sub isrunning{
 	my $cmd = $_[0];
-	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2'></td>";
+	my $col = $_[1];
+	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2' $col></td>";
 	my $pid = '';
 	my $testcmd = '';
 	my $exename;
@@ -267,7 +279,7 @@ sub isrunning{
 			close(FILE);
 		}
 		if ($testcmd =~ /$exename/){
-			$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td><td align='center'>$pid</td><td align='center'>$memory</td>";
+			$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td><td align='center' $col>$pid</td><td align='center' $col>$memory</td>";
 		}
 	}
 	return $status;
@@ -275,7 +287,8 @@ sub isrunning{
 
 sub isrunningaddon{
 	my $cmd = $_[0];
-	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2'></td>";
+	my $col = $_[1];
+	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2' $col></td>";
 	my $pid = '';
 	my $testcmd = '';
 	my $exename;
@@ -293,7 +306,7 @@ sub isrunningaddon{
 		$testcmd =~ s///gi;
 
 		my @pid = split(/\s/,$testcmd);
-		$status .="<td align='center'>$pid[0]</td>";
+		$status .="<td align='center' $col>$pid[0]</td>";
 
 		my $memory = 0;
 
@@ -305,9 +318,9 @@ sub isrunningaddon{
 			}
 			$memory+=$memory[0];
 		}
-		$status .="<td align='center'>$memory KB</td>";
+		$status .="<td align='center' $col>$memory KB</td>";
 	}else{
-		$status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2'></td>";
+		$status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2' $col></td>";
 	}
 	return $status;
 }

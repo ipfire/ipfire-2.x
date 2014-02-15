@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,13 +24,24 @@
 
 include Config
 
-VER        = 0.9.8y
+VER        = 1.0.1f
 
 THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+
+ifeq "$(MACHINE)" "i586"
+	CONFIGURE_ARGS = linux-elf no-asm 386
+endif
+
+ifeq "$(MACHINE)" "armv5tel"
+	CONFIGURE_ARGS = linux-generic32
+endif
+
+CFLAGS += -DPURIFY
+export RPM_OPT_FLAGS = $(CFLAGS)
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +51,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 47c7fb37f78c970f1d30aa2f9e9e26d8
+$(DL_FILE)_MD5 = f26b09c028a0541cab33da697d522b25
 
 install : $(TARGET)
 
@@ -70,15 +81,49 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-0.9.8u-cryptodev.patch
-	@rm -rf /etc/ssl
-	cd $(DIR_APP) && sed -i -e 's/mcpu/march/' config
-	cd $(DIR_APP) && sed -i -e 's/-O3/-O2/' -e 's/-march=i486/-march=i586/' Configure
-	cd $(DIR_APP) && ./Configure --openssldir=/etc/ssl --prefix=/usr shared linux-elf \
-		zlib-dynamic no-asm 386 -DHAVE_CRYPTODEV -DUSE_CRYPTODEV_DIGEST
-	cd $(DIR_APP) && make MANDIR=/usr/share/man
-	cd $(DIR_APP) && make MANDIR=/usr/share/man install
-	rm -rf /etc/ssl/lib
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.0-beta5-enginesdir.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1-beta2-build.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-cryptodev.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-fix_parallel_build-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-weak-ciphers.patch
+
+	cd $(DIR_APP) && find crypto/ -name Makefile -exec \
+		sed 's/^ASFLAGS=/&-Wa,--noexecstack /' -i {} \;
+
+	cd $(DIR_APP) && ./Configure \
+		--prefix=/usr \
+		--openssldir=/etc/ssl \
+		--enginesdir=/usr/lib/openssl/engines \
+		shared \
+		zlib-dynamic \
+		enable-camellia \
+		enable-md2 \
+		enable-seed \
+		enable-tlsext \
+		enable-rfc3779 \
+		no-idea \
+		no-mdc2 \
+		no-rc5 \
+		no-srp \
+		$(CONFIGURE_ARGS) \
+		-DSSL_FORBID_ENULL \
+		-DHAVE_CRYPTODEV \
+		-DUSE_CRYPTODEV_DIGEST
+
+	cd $(DIR_APP) && make depend
+	cd $(DIR_APP) && make
+
+	# Install everything.
+	cd $(DIR_APP) && make install
 	install -m 0644 $(DIR_SRC)/config/ssl/openssl.cnf /etc/ssl
+
+	# Remove man pages.
+	-rm -vfr /etc/ssl/man
+
+	# Move engines to the right place.
+	-mkdir -pv /usr/lib/openssl
+	rm -vfr /usr/lib/openssl/engines
+	mv -v /usr/lib/engines /usr/lib/openssl
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

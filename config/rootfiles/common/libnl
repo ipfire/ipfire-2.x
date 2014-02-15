@@ -53,7 +53,8 @@
 #usr/include/netlink/socket.h
 #usr/include/netlink/types.h
 #usr/include/netlink/utils.h
+#usr/lib/libnl.a
 usr/lib/libnl.so
 usr/lib/libnl.so.1
-usr/lib/libnl.so.1.1
+usr/lib/libnl.so.1.1.4
 #usr/lib/pkgconfig/libnl-1.pc

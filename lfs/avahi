@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET = $(DIR_INFO)/$(THISAPP)
 PROG       = avahi
-PAK_VER    = 3
+PAK_VER    = 4
 
-DEPS	   = "libdaemon"
+DEPS	   = "dbus libdaemon"
 
 ###############################################################################
 # Top-level Rules
@@ -77,10 +77,20 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --with-avahi-user=avahi \
-	--disable-qt3 --disable-qt4 --disable-gtk --disable-gtk3 \
-	--disable-pygtk --disable-python-dbus --disable-mono \
-	--disable-monodoc --with-distro=none --sysconfdir=/etc
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--localstatedir=/var \
+		--with-avahi-user=avahi \
+		--disable-qt3 \
+		--disable-qt4 \
+		--disable-gtk \
+		--disable-gtk3 \
+		--disable-pygtk \
+		--disable-python-dbus \
+		--disable-mono \
+		--disable-monodoc \
+		--with-distro=none
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cp -avf $(DIR_SRC)/config/avahi/avahi /etc/init.d/

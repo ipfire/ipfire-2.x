@@ -23,7 +23,7 @@ use Net::DNS;
 use File::Copy;
 use File::Temp qw/ tempfile tempdir /;
 use strict;
-
+use Sort::Naturally;
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -69,6 +69,8 @@ if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {
 	$orange_cidr = &General::ipcidr("$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}");
 }
 
+my $col="";
+
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'EDIT_ADVANCED'} = 'off';
 $cgiparams{'ACTION'} = '';
@@ -104,7 +106,8 @@ $cgiparams{'ROOTCERT_OU'} = '';
 $cgiparams{'ROOTCERT_CITY'} = '';
 $cgiparams{'ROOTCERT_STATE'} = '';
 $cgiparams{'RW_NET'} = '';
-
+$cgiparams{'DPD_DELAY'} = '30';
+$cgiparams{'DPD_TIMEOUT'} = '120';
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -384,9 +387,27 @@ sub writeipsecfiles {
 	print CONF "\tcompress=yes\n" if ($lconfighash{$key}[13] eq 'on');
 
 	# Dead Peer Detection
-	print CONF "\tdpddelay=30\n";
-	print CONF "\tdpdtimeout=120\n";
-	print CONF "\tdpdaction=$lconfighash{$key}[27]\n";
+	my $dpdaction = $lconfighash{$key}[27];
+	print CONF "\tdpdaction=$dpdaction\n";
+
+	# If the dead peer detection is disabled and IKEv2 is used,
+	# dpddelay must be set to zero, too.
+	if ($dpdaction eq "none") {
+		if ($lconfighash{$key}[29] eq "ikev2") {
+			print CONF "\tdpddelay=0\n";
+		}
+	} else {
+		my $dpddelay = $lconfighash{$key}[30];
+		if (!$dpddelay) {
+			$dpddelay = 30;
+		}
+		print CONF "\tdpddelay=$dpddelay\n";
+		my $dpdtimeout = $lconfighash{$key}[31];
+		if (!$dpdtimeout) {
+			$dpdtimeout = 120;
+		}
+		print CONF "\tdpdtimeout=$dpdtimeout\n";
+	}
 
 	# Build Authentication details:  LEFTid RIGHTid : PSK psk
 	my $psk_line;
@@ -490,7 +511,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 ###
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'remove x509'}) {
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', '');
     &Header::openbox('100%', 'left', $Lang::tr{'are you sure'});
     print <<END
@@ -586,7 +607,7 @@ END
 
     if ( -f "${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem") {
 	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', '');
 	&Header::openbox('100%', 'left', "$Lang::tr{'ca certificate'}:");
 	my $output = `/usr/bin/openssl x509 -text -in ${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem`;
@@ -662,7 +683,7 @@ END
 	}
 	if ($assignedcerts) {
 	    &Header::showhttpheaders();
-	    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+	    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	    &Header::openbigbox('100%', 'left', '', '');
 	    &Header::openbox('100%', 'left', $Lang::tr{'are you sure'});
 	    print <<END
@@ -707,7 +728,7 @@ END
 	$cgiparams{'ACTION'} eq $Lang::tr{'show host certificate'}) {
     my $output;
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', '');
     if ($cgiparams{'ACTION'} eq $Lang::tr{'show root certificate'}) {
 	&Header::openbox('100%', 'left', "$Lang::tr{'root certificate'}:");
@@ -1033,7 +1054,7 @@ END
 
     ROOTCERT_ERROR:
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', $errormessage);
     if ($errormessage) {
         &Header::openbox('100%', 'left', $Lang::tr{'error messages'});
@@ -1078,7 +1099,7 @@ END
         <b><font color='${Header::colourred}'>$Lang::tr{'capswarning'}</font></b>: 
         $Lang::tr{'generating the root and host certificates may take a long time. it can take up to several minutes on older hardware. please be patient'}
     </td></tr>
-    <tr><td colspan='2'><hr /></td></tr>
+    <tr><td colspan='2'><hr></td></tr>
     <tr><td class='base' nowrap='nowrap'>$Lang::tr{'upload p12 file'}:</td>
         <td nowrap='nowrap'><input type='file' name='FH' size='32' /></td></tr>
     <tr><td class='base'>$Lang::tr{'pkcs12 file password'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
@@ -1120,7 +1141,7 @@ END
 
     if ( -f "${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem") {
 	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', '');
 	&Header::openbox('100%', 'left', "$Lang::tr{'cert'}:");
 	my $output = `/usr/bin/openssl x509 -text -in ${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem`;
@@ -1210,7 +1231,7 @@ END
 ###
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'add'} && $cgiparams{'TYPE'} eq '') {
 	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', '');
 	&Header::openbox('100%', 'left', $Lang::tr{'connection type'});
 	print <<END
@@ -1274,6 +1295,16 @@ END
 	$cgiparams{'ONLY_PROPOSED'}  	= $confighash{$cgiparams{'KEY'}}[24];
 	$cgiparams{'PFS'}		= $confighash{$cgiparams{'KEY'}}[28];
 	$cgiparams{'VHOST'}            	= $confighash{$cgiparams{'KEY'}}[14];
+	$cgiparams{'DPD_TIMEOUT'}		= $confighash{$cgiparams{'KEY'}}[30];
+	$cgiparams{'DPD_DELAY'}		= $confighash{$cgiparams{'KEY'}}[31];
+
+	if (!$cgiparams{'DPD_DELAY'}) {
+		$cgiparams{'DPD_DELAY'} = 30;
+	}
+
+	if (!$cgiparams{'DPD_TIMEOUT'}) {
+		$cgiparams{'DPD_TIMEOUT'} = 120;
+	}
 
     } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
@@ -1748,7 +1779,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 	    $key = &General::findhasharraykey (\%confighash);
-	    foreach my $i (0 .. 28) { $confighash{$key}[$i] = "";}
+	    foreach my $i (0 .. 31) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -1788,6 +1819,8 @@ END
 	$confighash{$key}[24] = $cgiparams{'ONLY_PROPOSED'};
 	$confighash{$key}[28] = $cgiparams{'PFS'};
 	$confighash{$key}[14] = $cgiparams{'VHOST'};
+	$confighash{$key}[30] = $cgiparams{'DPD_TIMEOUT'};
+	$confighash{$key}[31] = $cgiparams{'DPD_DELAY'};
 
 	#free unused fields!
 	$confighash{$key}[6] = 'off';
@@ -1823,9 +1856,17 @@ END
 
 	# choose appropriate dpd action	
 	if ($cgiparams{'TYPE'} eq 'host') {
-	    $cgiparams{'DPD_ACTION'} = 'clear';
+		$cgiparams{'DPD_ACTION'} = 'clear';
 	} else {
-	    $cgiparams{'DPD_ACTION'} = 'restart';
+		$cgiparams{'DPD_ACTION'} = 'restart';
+	}
+
+	if (!$cgiparams{'DPD_DELAY'}) {
+		$cgiparams{'DPD_DELAY'} = 30;
+	}
+
+	if (!$cgiparams{'DPD_TIMEOUT'}) {
+		$cgiparams{'DPD_TIMEOUT'} = 120;
 	}
 
 	# Default IKE Version to v2
@@ -1869,17 +1910,8 @@ END
     $checked{'AUTH'}{'auth-dn'} = '';
     $checked{'AUTH'}{$cgiparams{'AUTH'}} = "checked='checked'";
 
-    $selected{'DPD_ACTION'}{'clear'} = '';
-    $selected{'DPD_ACTION'}{'hold'} = '';
-    $selected{'DPD_ACTION'}{'restart'} = '';
-    $selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
-
-    $selected{'IKE_VERSION'}{'ikev1'} = '';
-    $selected{'IKE_VERSION'}{'ikev2'} = '';
-    $selected{'IKE_VERSION'}{$cgiparams{'IKE_VERSION'}} = "selected='selected'";
-
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', $errormessage);
     if ($errormessage) {
 	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
@@ -1898,6 +1930,7 @@ END
     print "<form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'>";
     print<<END
 	<input type='hidden' name='TYPE' value='$cgiparams{'TYPE'}' />
+	<input type='hidden' name='IKE_VERSION' value='$cgiparams{'IKE_VERSION'}' />
 	<input type='hidden' name='IKE_ENCRYPTION' value='$cgiparams{'IKE_ENCRYPTION'}' />
 	<input type='hidden' name='IKE_INTEGRITY' value='$cgiparams{'IKE_INTEGRITY'}' />
 	<input type='hidden' name='IKE_GROUPTYPE' value='$cgiparams{'IKE_GROUPTYPE'}' />
@@ -1910,23 +1943,30 @@ END
 	<input type='hidden' name='ONLY_PROPOSED' value='$cgiparams{'ONLY_PROPOSED'}' />
 	<input type='hidden' name='PFS' value='$cgiparams{'PFS'}' />
 	<input type='hidden' name='VHOST' value='$cgiparams{'VHOST'}' />
+	<input type='hidden' name='DPD_ACTION' value='$cgiparams{'DPD_ACTION'}' />
+	<input type='hidden' name='DPD_DELAY' value='$cgiparams{'DPD_DELAY'}' />
+	<input type='hidden' name='DPD_TIMEOUT' value='$cgiparams{'DPD_TIMEOUT'}' />
 END
     ;
     if ($cgiparams{'KEY'}) {
 	print "<input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />";
+	print "<input type='hidden' name='NAME' value='$cgiparams{'NAME'}' />";
 	print "<input type='hidden' name='AUTH' value='$cgiparams{'AUTH'}' />";
     }
 
-    &Header::openbox('100%', 'left', "$Lang::tr{'connection'}:");
+    &Header::openbox('100%', 'left', "$Lang::tr{'connection'}: $cgiparams{'NAME'}");
     print "<table width='100%'>";
-    print "<tr><td width='25%' class='boldbase'>$Lang::tr{'name'}:</td>";
-    if ($cgiparams{'KEY'}) {
-	print "<td width='25%' class='base'><input type='hidden' name='NAME' value='$cgiparams{'NAME'}' /><b>$cgiparams{'NAME'}</b></td>";
-    } else {
-	print "<td width='25%'><input type='text' name='NAME' value='$cgiparams{'NAME'}' size='30' /></td>";
+    if (!$cgiparams{'KEY'}) {
+    	print <<EOF;
+    		<tr>
+    			<td width='20%'>$Lang::tr{'name'}:</td>
+    			<td width='30%'>
+    				<input type='text' name='NAME' value='$cgiparams{'NAME'}' size='25' />
+    			</td>
+    			<td colspan="2"></td>
+    		</tr>
+EOF
     }
-    print "<td>$Lang::tr{'enabled'}</td><td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td></tr>";
-    print '</tr><td><br /></td><tr>';
 
     my $disabled;
     my $blob;
@@ -1937,44 +1977,41 @@ END
 
     print <<END
 	<tr>
-	    <td class='boldbase'>$Lang::tr{'remote host/ip'}:&nbsp;$blob</td>
-	    <td>
-	        <input type='text' name='REMOTE' value='$cgiparams{'REMOTE'}' size='30' />
-	    </td>
-	    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'remote subnet'}</td>
-	    <td>
-	        <input $disabled type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' size='30' />
+		<td width='20%'>$Lang::tr{'enabled'}</td>
+		<td width='30%'>
+			<input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} />
+		</td>
+	    <td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'local subnet'}</td>
+	    <td width='30%'>
+	        <input type='text' name='LOCAL_SUBNET' value='$cgiparams{'LOCAL_SUBNET'}' size="25" />
 	    </td>
 	</tr>
 	<tr>
-	    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'local subnet'}</td>
+	    <td class='boldbase' width='20%'>$Lang::tr{'remote host/ip'}:&nbsp;$blob</td>
+	    <td width='30%'>
+	        <input type='text' name='REMOTE' value='$cgiparams{'REMOTE'}' size="25" />
+	    </td>
+	    <td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'remote subnet'}</td>
+	    <td width='30%'>
+	        <input $disabled type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' size="25" />
+	    </td>
+	</tr>
+	<tr>
+	    <td class='boldbase' width='20%'>$Lang::tr{'vpn local id'}:</td>
+	    <td width='30%'>
+	    	<input type='text' name='LOCAL_ID' value='$cgiparams{'LOCAL_ID'}' size="25" />
+	    </td>
+	    <td class='boldbase' width='20%'>$Lang::tr{'vpn remote id'}:</td>
+	    <td width='30%'>
+	    	<input type='text' name='REMOTE_ID' value='$cgiparams{'REMOTE_ID'}' size="25" />
+	    </td>
+	</tr>
+	<tr><td colspan="4"><br /></td></tr>
+	<tr>
+	    <td class='boldbase' width='20%'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 	    <td colspan='3'>
-	        <input type='text' name='LOCAL_SUBNET' value='$cgiparams{'LOCAL_SUBNET'}' size='30' />
+	    	<input type='text' name='REMARK' value='$cgiparams{'REMARK'}' maxlength='50' size="73" />
 	    </td>
-	</tr>
-	<tr>
-	    <td class='boldbase'>$Lang::tr{'vpn local id'}:<br />($Lang::tr{'eg'} <tt>&#64;xy.example.com</tt>)</td>
-	    <td><input type='text' name='LOCAL_ID' value='$cgiparams{'LOCAL_ID'}' /></td>
-	    <td class='boldbase'>$Lang::tr{'vpn remote id'}:</td>
-	    <td><input type='text' name='REMOTE_ID' value='$cgiparams{'REMOTE_ID'}' /></td>
-	</tr><tr>
-	</tr><td><br /></td><tr>
-	    <td>$Lang::tr{'vpn keyexchange'}:</td>
-	    <td><select name='IKE_VERSION'>
-    		<option value='ikev2' $selected{'IKE_VERSION'}{'ikev2'}>IKEv2</option>
-    		<option value='ikev1' $selected{'IKE_VERSION'}{'ikev1'}>IKEv1</option>
-    		</select>
-	    </td>
-	    <td>$Lang::tr{'dpd action'}:</td>
-	    <td><select name='DPD_ACTION'>
-    		<option value='clear' $selected{'DPD_ACTION'}{'clear'}>clear</option>
-    		<option value='hold' $selected{'DPD_ACTION'}{'hold'}>hold</option>
-    		<option value='restart' $selected{'DPD_ACTION'}{'restart'}>restart</option>
-		</select>
-	    </td>
-	</tr><tr>
-	    <td class='boldbase'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' alt='*' /></td>
-	    <td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td>
 	</tr>
 END
     ;
@@ -2101,7 +2138,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(aes256|aes192|aes128|3des)$/) {
+	    if ($val !~ /^(aes256|aes192|aes128|3des|camellia256|camellia192|camellia128)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2123,7 +2160,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(e521|e384|e256|e224|e192|1024|1536|2048|3072|4096|6144|8192)$/) {
+	    if ($val !~ /^(e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2142,7 +2179,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(aes256|aes192|aes128|3des)$/) {
+	    if ($val !~ /^(aes256|aes192|aes128|3des|camellia256|camellia192|camellia128)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2159,8 +2196,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    }
 	}
 	if ($cgiparams{'ESP_GROUPTYPE'} ne '' &&
-	    $cgiparams{'ESP_GROUPTYPE'} !~  /^ecp(192|224|256|384|512)$/ &&
-	    $cgiparams{'ESP_GROUPTYPE'} !~  /^modp(1024|1536|2048|3072|4096|6144|8192)$/) {
+	    $cgiparams{'ESP_GROUPTYPE'} !~  /^ecp(192|224|256|384|512)(bp)?$/ &&
+	    $cgiparams{'ESP_GROUPTYPE'} !~  /^modp(1024|1536|2048|2048s(256|224|160)|3072|4096|6144|8192)$/) {
 	    $errormessage = $Lang::tr{'invalid input'};
 	    goto ADVANCED_ERROR;
 	}
@@ -2184,6 +2221,17 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 
+	if ($cgiparams{'DPD_DELAY'} !~ /^\d+$/) {
+	    $errormessage = $Lang::tr{'invalid input for dpd delay'};
+	    goto ADVANCED_ERROR;
+	}
+
+	if ($cgiparams{'DPD_TIMEOUT'} !~ /^\d+$/) {
+	    $errormessage = $Lang::tr{'invalid input for dpd timeout'};
+	    goto ADVANCED_ERROR;
+	}
+
+	$confighash{$cgiparams{'KEY'}}[29] = $cgiparams{'IKE_VERSION'};
 	$confighash{$cgiparams{'KEY'}}[18] = $cgiparams{'IKE_ENCRYPTION'};
 	$confighash{$cgiparams{'KEY'}}[19] = $cgiparams{'IKE_INTEGRITY'};
 	$confighash{$cgiparams{'KEY'}}[20] = $cgiparams{'IKE_GROUPTYPE'};
@@ -2197,6 +2245,9 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$confighash{$cgiparams{'KEY'}}[24] = $cgiparams{'ONLY_PROPOSED'};
 	$confighash{$cgiparams{'KEY'}}[28] = $cgiparams{'PFS'};
 	$confighash{$cgiparams{'KEY'}}[14] = $cgiparams{'VHOST'};
+	$confighash{$cgiparams{'KEY'}}[27] = $cgiparams{'DPD_ACTION'};
+	$confighash{$cgiparams{'KEY'}}[30] = $cgiparams{'DPD_TIMEOUT'};
+	$confighash{$cgiparams{'KEY'}}[31] = $cgiparams{'DPD_DELAY'};
 	&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 	&writeipsecfiles();
 	if (&vpnenabled) {
@@ -2205,6 +2256,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	}
 	goto ADVANCED_END;
     } else {
+    $cgiparams{'IKE_VERSION'}    = $confighash{$cgiparams{'KEY'}}[29];
 	$cgiparams{'IKE_ENCRYPTION'} = $confighash{$cgiparams{'KEY'}}[18];
 	$cgiparams{'IKE_INTEGRITY'}  = $confighash{$cgiparams{'KEY'}}[19];
 	$cgiparams{'IKE_GROUPTYPE'}  = $confighash{$cgiparams{'KEY'}}[20];
@@ -2217,6 +2269,17 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$cgiparams{'ONLY_PROPOSED'}  = $confighash{$cgiparams{'KEY'}}[24];
 	$cgiparams{'PFS'}  	     = $confighash{$cgiparams{'KEY'}}[28];
 	$cgiparams{'VHOST'}          = $confighash{$cgiparams{'KEY'}}[14];
+	$cgiparams{'DPD_ACTION'}     = $confighash{$cgiparams{'KEY'}}[27];
+	$cgiparams{'DPD_TIMEOUT'}    = $confighash{$cgiparams{'KEY'}}[30];
+	$cgiparams{'DPD_DELAY'}      = $confighash{$cgiparams{'KEY'}}[31];
+
+	if (!$cgiparams{'DPD_DELAY'}) {
+		$cgiparams{'DPD_DELAY'} = 30;
+	}
+
+	if (!$cgiparams{'DPD_TIMEOUT'}) {
+		$cgiparams{'DPD_TIMEOUT'} = 120;
+	}
 
 	if ($confighash{$cgiparams{'KEY'}}[3] eq 'net' || $confighash{$cgiparams{'KEY'}}[10]) {
 	    $cgiparams{'VHOST'}            = 'off';
@@ -2228,6 +2291,9 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'IKE_ENCRYPTION'}{'aes192'} = '';
     $checked{'IKE_ENCRYPTION'}{'aes128'} = '';
     $checked{'IKE_ENCRYPTION'}{'3des'} = '';
+    $checked{'IKE_ENCRYPTION'}{'camellia256'} = '';
+    $checked{'IKE_ENCRYPTION'}{'camellia192'} = '';
+    $checked{'IKE_ENCRYPTION'}{'camellia128'} = '';
     my @temp = split('\|', $cgiparams{'IKE_ENCRYPTION'});
     foreach my $key (@temp) {$checked{'IKE_ENCRYPTION'}{$key} = "selected='selected'"; }
     $checked{'IKE_INTEGRITY'}{'sha2_512'} = '';
@@ -2256,6 +2322,9 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'ESP_ENCRYPTION'}{'aes192'} = '';
     $checked{'ESP_ENCRYPTION'}{'aes128'} = '';
     $checked{'ESP_ENCRYPTION'}{'3des'} = '';
+    $checked{'ESP_ENCRYPTION'}{'camellia256'} = '';
+    $checked{'ESP_ENCRYPTION'}{'camellia192'} = '';
+    $checked{'ESP_ENCRYPTION'}{'camellia128'} = '';
     @temp = split('\|', $cgiparams{'ESP_ENCRYPTION'});
     foreach my $key (@temp) {$checked{'ESP_ENCRYPTION'}{$key} = "selected='selected'"; }
     $checked{'ESP_INTEGRITY'}{'sha2_512'} = '';
@@ -2273,8 +2342,18 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'PFS'} = $cgiparams{'PFS'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'VHOST'} = $cgiparams{'VHOST'} eq 'on' ? "checked='checked'" : '' ;
 
+    $selected{'IKE_VERSION'}{'ikev1'} = '';
+    $selected{'IKE_VERSION'}{'ikev2'} = '';
+    $selected{'IKE_VERSION'}{$cgiparams{'IKE_VERSION'}} = "selected='selected'";
+
+    $selected{'DPD_ACTION'}{'clear'} = '';
+    $selected{'DPD_ACTION'}{'hold'} = '';
+    $selected{'DPD_ACTION'}{'restart'} = '';
+    $selected{'DPD_ACTION'}{'none'} = '';
+    $selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
+
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', $errormessage);
 
     if ($errormessage) {
@@ -2298,96 +2377,191 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     <input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />
 
     <table width='100%'>
-	<tr><td class='boldbase' align='right' valign='top'>$Lang::tr{'ike encryption'}</td><td class='boldbase' valign='top'>
-		<select name='IKE_ENCRYPTION' multiple='multiple' size='4'>
-		<option value='aes256' $checked{'IKE_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
-		<option value='aes192' $checked{'IKE_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
-		<option value='aes128' $checked{'IKE_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
-		<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>3DES</option>
-		</select></td>
+	<thead>
+		<tr>
+			<th width="15%"></th>
+			<th>IKE</th>
+			<th>ESP</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>$Lang::tr{'vpn keyexchange'}:</td>
+			<td>
+				<select name='IKE_VERSION'>
+					<option value='ikev2' $selected{'IKE_VERSION'}{'ikev2'}>IKEv2</option>
+					<option value='ikev1' $selected{'IKE_VERSION'}{'ikev1'}>IKEv1</option>
+				</select>
+			</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td class='boldbase' width="15%">$Lang::tr{'encryption'}</td>
+			<td class='boldbase'>
+				<select name='IKE_ENCRYPTION' multiple='multiple' size='6' style='width: 100%'>
+					<option value='aes256' $checked{'IKE_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
+					<option value='aes192' $checked{'IKE_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
+					<option value='aes128' $checked{'IKE_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
+					<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>3DES</option>
+					<option value='camellia256' $checked{'IKE_ENCRYPTION'}{'camellia256'}>Camellia (256 bit)</option>
+					<option value='camellia192' $checked{'IKE_ENCRYPTION'}{'camellia192'}>Camellia (192 bit)</option>
+					<option value='camellia128' $checked{'IKE_ENCRYPTION'}{'camellia128'}>Camellia (128 bit)</option>
+				</select>
+			</td>
+			<td class='boldbase'>
+				<select name='ESP_ENCRYPTION' multiple='multiple' size='6' style='width: 100%'>
+					<option value='aes256' $checked{'ESP_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
+					<option value='aes192' $checked{'ESP_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
+					<option value='aes128' $checked{'ESP_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
+					<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>3DES</option>
+					<option value='camellia256' $checked{'ESP_ENCRYPTION'}{'camellia256'}>Camellia (256 bit)</option>
+					<option value='camellia192' $checked{'ESP_ENCRYPTION'}{'camellia192'}>Camellia (192 bit)</option>
+					<option value='camellia128' $checked{'ESP_ENCRYPTION'}{'camellia128'}>Camellia (128 bit)</option>
+				</select>
+			</td>
+		</tr>
 
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike integrity'}</td><td class='boldbase' valign='top'>
-		<select name='IKE_INTEGRITY' multiple='multiple' size='4'>
-		<option value='sha2_512' $checked{'IKE_INTEGRITY'}{'sha2_512'}>SHA2 512 bit</option>
-		<option value='sha2_384' $checked{'IKE_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
-		<option value='sha2_256' $checked{'IKE_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
-		<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA1</option>
-		<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5</option>
-		<option value='aesxcbc' $checked{'IKE_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
-		</select></td>
-	
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike grouptype'}</td><td class='boldbase' valign='top'>
-		<select name='IKE_GROUPTYPE' multiple='multiple' size='4'>
-		<option value='e521' $checked{'IKE_GROUPTYPE'}{'e521'}>ECP-521</option>
-		<option value='e384' $checked{'IKE_GROUPTYPE'}{'e384'}>ECP-384</option>
-		<option value='e256' $checked{'IKE_GROUPTYPE'}{'e256'}>ECP-256</option>
-		<option value='e224' $checked{'IKE_GROUPTYPE'}{'e224'}>ECP-224</option>
-		<option value='e192' $checked{'IKE_GROUPTYPE'}{'e192'}>ECP-192</option>
-		<option value='8192' $checked{'IKE_GROUPTYPE'}{'8192'}>MODP-8192</option>
-		<option value='6144' $checked{'IKE_GROUPTYPE'}{'6144'}>MODP-6144</option>
-		<option value='4096' $checked{'IKE_GROUPTYPE'}{'4096'}>MODP-4096</option>
-		<option value='3072' $checked{'IKE_GROUPTYPE'}{'3072'}>MODP-3072</option>
-		<option value='2048' $checked{'IKE_GROUPTYPE'}{'2048'}>MODP-2048</option>
-		<option value='1536' $checked{'IKE_GROUPTYPE'}{'1536'}>MODP-1536</option>
-		<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024</option>
-		</select></td>
-	</tr><tr>
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'ike lifetime'}</td><td class='boldbase' valign='top'>
-	    <input type='text' name='IKE_LIFETIME' value='$cgiparams{'IKE_LIFETIME'}' size='5' /> $Lang::tr{'hours'}</td>
+		<tr>
+			<td class='boldbase' width="15%">$Lang::tr{'integrity'}</td>
+			<td class='boldbase'>
+				<select name='IKE_INTEGRITY' multiple='multiple' size='6' style='width: 100%'>
+					<option value='sha2_512' $checked{'IKE_INTEGRITY'}{'sha2_512'}>SHA2 512 bit</option>
+					<option value='sha2_384' $checked{'IKE_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
+					<option value='sha2_256' $checked{'IKE_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
+					<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA1</option>
+					<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5</option>
+					<option value='aesxcbc' $checked{'IKE_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
+				</select>
+			</td>
+			<td class='boldbase'>
+				<select name='ESP_INTEGRITY' multiple='multiple' size='6' style='width: 100%'>
+					<option value='sha2_512' $checked{'ESP_INTEGRITY'}{'sha2_512'}>SHA2 512 bit</option>
+					<option value='sha2_384' $checked{'ESP_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
+					<option value='sha2_256' $checked{'ESP_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
+					<option value='sha1' $checked{'ESP_INTEGRITY'}{'sha1'}>SHA1</option>
+					<option value='md5' $checked{'ESP_INTEGRITY'}{'md5'}>MD5</option>
+					<option value='aesxcbc' $checked{'ESP_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class='boldbase' width="15%">$Lang::tr{'lifetime'}</td>
+			<td class='boldbase'>
+				<input type='text' name='IKE_LIFETIME' value='$cgiparams{'IKE_LIFETIME'}' size='5' /> $Lang::tr{'hours'}
+			</td>
+			<td class='boldbase'>
+				<input type='text' name='ESP_KEYLIFE' value='$cgiparams{'ESP_KEYLIFE'}' size='5' /> $Lang::tr{'hours'}
+			</td>
+		</tr>
+		<tr>
+			<td class='boldbase' width="15%">$Lang::tr{'grouptype'}</td>
+			<td class='boldbase'>
+				<select name='IKE_GROUPTYPE' multiple='multiple' size='6' style='width: 100%'>
+					<option value='e521' $checked{'IKE_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
+					<option value='e384' $checked{'IKE_GROUPTYPE'}{'e384'}>ECP-384 (NIST)</option>
+					<option value='e256' $checked{'IKE_GROUPTYPE'}{'e256'}>ECP-256 (NIST)</option>
+					<option value='e224' $checked{'IKE_GROUPTYPE'}{'e224'}>ECP-224 (NIST)</option>
+					<option value='e192' $checked{'IKE_GROUPTYPE'}{'e192'}>ECP-192 (NIST)</option>
+					<option value='e512bp' $checked{'IKE_GROUPTYPE'}{'e512bp'}>ECP-512 (Brainpool)</option>
+					<option value='e384bp' $checked{'IKE_GROUPTYPE'}{'e384bp'}>ECP-384 (Brainpool)</option>
+					<option value='e256bp' $checked{'IKE_GROUPTYPE'}{'e256bp'}>ECP-256 (Brainpool)</option>
+					<option value='e224bp' $checked{'IKE_GROUPTYPE'}{'e224bp'}>ECP-224 (Brainpool)</option>
+					<option value='8192' $checked{'IKE_GROUPTYPE'}{'8192'}>MODP-8192</option>
+					<option value='6144' $checked{'IKE_GROUPTYPE'}{'6144'}>MODP-6144</option>
+					<option value='4096' $checked{'IKE_GROUPTYPE'}{'4096'}>MODP-4096</option>
+					<option value='3072' $checked{'IKE_GROUPTYPE'}{'3072'}>MODP-3072</option>
+					<option value='2048s256' $checked{'IKE_GROUPTYPE'}{'2048s256'}>MODP-2048/256</option>
+					<option value='2048s224' $checked{'IKE_GROUPTYPE'}{'2048s224'}>MODP-2048/224</option>
+					<option value='2048s160' $checked{'IKE_GROUPTYPE'}{'2048s160'}>MODP-2048/160</option>
+					<option value='2048' $checked{'IKE_GROUPTYPE'}{'2048'}>MODP-2048</option>
+					<option value='1536' $checked{'IKE_GROUPTYPE'}{'1536'}>MODP-1536</option>
+					<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024</option>
+				</select>
+			</td>
+			<td></td>
+		</tr>
+	</tbody>
+    </table>
 
-	</tr><tr>
-	    <td colspan='1'><hr /></td>
-	</tr><tr>
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp encryption'}</td><td class='boldbase' valign='top'>
-		<select name='ESP_ENCRYPTION' multiple='multiple' size='4'>
-		<option value='aes256' $checked{'ESP_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
-		<option value='aes192' $checked{'ESP_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
-		<option value='aes128' $checked{'ESP_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
-		<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>3DES</option>
+	<br><br>
 
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp integrity'}</td><td class='boldbase' valign='top'>
-		<select name='ESP_INTEGRITY' multiple='multiple' size='4'>
-		<option value='sha2_512' $checked{'ESP_INTEGRITY'}{'sha2_512'}>SHA2 512 bit</option>
-		<option value='sha2_384' $checked{'ESP_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
-		<option value='sha2_256' $checked{'ESP_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
-		<option value='sha1' $checked{'ESP_INTEGRITY'}{'sha1'}>SHA1</option>
-		<option value='md5' $checked{'ESP_INTEGRITY'}{'md5'}>MD5</option>
-		<option value='aesxcbc' $checked{'ESP_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
-		</select></td>
+	<h2>$Lang::tr{'dead peer detection'}</h2>
 
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp grouptype'}</td><td class='boldbase' valign='top'>
-		<select name='ESP_GROUPTYPE'>
-		<option value=''>$Lang::tr{'phase1 group'}</option></select></td>
-	</tr><tr>
-	    <td class='boldbase' align='right' valign='top'>$Lang::tr{'esp keylife'}</td><td class='boldbase' valign='top'>
-		<input type='text' name='ESP_KEYLIFE' value='$cgiparams{'ESP_KEYLIFE'}' size='5' /> $Lang::tr{'hours'}</td>
-	</tr><tr>
-	    <td colspan='1'><hr /></td>
-	</tr><tr>
-	    <td colspan='5'><input type='checkbox' name='ONLY_PROPOSED' $checked{'ONLY_PROPOSED'} />
-		IKE+ESP: $Lang::tr{'use only proposed settings'}</td>
-	</tr><tr>
-	    <td colspan='5'><input type='checkbox' name='PFS' $checked{'PFS'} />
-		$Lang::tr{'pfs yes no'}</td>
-		<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-	</tr><tr>
-	    <td colspan='5'><input type='checkbox' name='COMPRESSION' $checked{'COMPRESSION'} />
-		$Lang::tr{'vpn payload compression'}</td>
-		<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'cancel'}' /></td>
+    <table width="100%">
+    <tr>
+		<td width="15%">$Lang::tr{'dpd action'}:</td>
+		<td>
+			<select name='DPD_ACTION'>
+				<option value='none' $selected{'DPD_ACTION'}{'none'}>- $Lang::tr{'disabled'} -</option>
+				<option value='clear' $selected{'DPD_ACTION'}{'clear'}>clear</option>
+				<option value='hold' $selected{'DPD_ACTION'}{'hold'}>hold</option>
+				<option value='restart' $selected{'DPD_ACTION'}{'restart'}>restart</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td width="15%">$Lang::tr{'dpd timeout'}:</td>
+		<td>
+			<input type='text' name='DPD_TIMEOUT' size='5' value='$cgiparams{'DPD_TIMEOUT'}' />
+		</td>
+	</tr>
+	<tr>
+		<td width="15%">$Lang::tr{'dpd delay'}:</td>
+		<td>
+			<input type='text' name='DPD_DELAY' size='5' value='$cgiparams{'DPD_DELAY'}' />
+		</td>
+	</tr>
+    </table>
+
+    <hr>
+
+    <table width="100%">
+	<tr>
+		<td>
+			<label>
+				<input type='checkbox' name='ONLY_PROPOSED' $checked{'ONLY_PROPOSED'} />
+				IKE+ESP: $Lang::tr{'use only proposed settings'}</td>
+			</label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<label>
+				<input type='checkbox' name='PFS' $checked{'PFS'} />
+				$Lang::tr{'pfs yes no'}
+			</label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<label>
+				<input type='checkbox' name='COMPRESSION' $checked{'COMPRESSION'} />
+				$Lang::tr{'vpn payload compression'}
+			</label>
+		</td>
 	</tr>
 EOF
     ;
     if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 	print "<tr><td><input type='hidden' name='VHOST' value='off' /></td></tr>";
     } elsif ($confighash{$cgiparams{'KEY'}}[10]) {
-	print "<tr><td colspan='5'><input type='checkbox' name='VHOST' $checked{'VHOST'} disabled='disabled' />";
-	print " $Lang::tr{'vpn vhost'}</td></tr>";
+	print "<tr><td><label><input type='checkbox' name='VHOST' $checked{'VHOST'} disabled='disabled' />";
+	print " $Lang::tr{'vpn vhost'}</label></td></tr>";
     } else {
-	print "<tr><td colspan='5'><input type='checkbox' name='VHOST' $checked{'VHOST'} />";
-	print " $Lang::tr{'vpn vhost'}</td></tr>";
+	print "<tr><td><label><input type='checkbox' name='VHOST' $checked{'VHOST'} />";
+	print " $Lang::tr{'vpn vhost'}</label></td></tr>";
     }
 
-    print "</table></form>";
+    print <<EOF;
+	<tr>
+		<td align='right' colspan='2'>
+			<input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
+			<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}' />
+		</td>
+	</tr>
+    </table></form>
+EOF
+
     &Header::closebox();
     &Header::closebigbox();
     &Header::closepage();
@@ -2428,7 +2602,7 @@ EOF
     $checked{'ENABLED'} = $cgiparams{'ENABLED'} eq 'on' ? "checked='checked'" : '';
 
     &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'vpn configuration main'}, 1, '');
+    &Header::openpage($Lang::tr{'ipsec'}, 1, '');
     &Header::openbigbox('100%', 'left', '', $errormessage);
 
     if ($errormessage) {
@@ -2458,17 +2632,18 @@ print <<END
 	<td  class='base' nowrap='nowrap'>$Lang::tr{'host to net vpn'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td ><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
     </tr>
- </table>
+</table>
+<br>
 <hr />
 <table width='100%'>
 <tr>
     <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
-    <td width='70%' class='base' valign='top'>$Lang::tr{'this field may be blank'}</td>
+    <td width='70%' class='base' valign='top'>$Lang::tr{'this field may be blank'}</td><td width='30%' align='right' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 <tr>
     <td class='base' valign='top' nowrap='nowrap'><img src='/blob.gif' alt='*' /><img src='/blob.gif' alt='*' />&nbsp;</td>
     <td class='base'>	<font class='base'>$Lang::tr{'vpn delayed start help'}</font></td>
-    <td width='30%' align='center' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+    <td></td>
 </tr>
 </table>
 END
@@ -2478,53 +2653,58 @@ END
 
     &Header::openbox('100%', 'left', $Lang::tr{'connection status and controlc'});
     print <<END
-    <table width='100%' border='0' cellspacing='1' cellpadding='0'>
+    <table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
     <tr>
-	<td width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></td>
-	<td width='22%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></td>
-	<td width='23%' class='boldbase' align='center'><b>$Lang::tr{'common name'}</b></td>
-	<td width='30%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></td>
-	<td width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></td>
-	<td class='boldbase' align='center' colspan='6'><b>$Lang::tr{'action'}</b></td>
+	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></th>
+	<th width='22%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
+	<th width='23%' class='boldbase' align='center'><b>$Lang::tr{'common name'}</b></th>
+	<th width='30%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
+	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
+	<th class='boldbase' align='center' colspan='6'><b>$Lang::tr{'action'}</b></th>
     </tr>
 END
     ;
     my $id = 0;
     my $gif;
-    foreach my $key (keys %confighash) {
+    foreach my $key (sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
 	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 
 	if ($id % 2) {
-	    print "<tr bgcolor='$color{'color20'}'>\n";
+		print "<tr>";
+		$col="bgcolor='$color{'color20'}'";
 	} else {
-	    print "<tr bgcolor='$color{'color22'}'>\n";
+		print "<tr>";
+		$col="bgcolor='$color{'color22'}'";
 	}
-	print "<td align='center' nowrap='nowrap'>$confighash{$key}[1]</td>";
-	print "<td align='center' nowrap='nowrap'>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ") $confighash{$key}[29]</td>";
+	print "<td align='center' nowrap='nowrap' $col>$confighash{$key}[1]</td>";
+	print "<td align='center' nowrap='nowrap' $col>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ") $confighash{$key}[29]</td>";
 	if ($confighash{$key}[2] eq '%auth-dn') {
-	    print "<td align='left' nowrap='nowrap'>$confighash{$key}[9]</td>";
+	    print "<td align='left' nowrap='nowrap' $col>$confighash{$key}[9]</td>";
 	} elsif ($confighash{$key}[4] eq 'cert') {
-	    print "<td align='left' nowrap='nowrap'>$confighash{$key}[2]</td>";
+	    print "<td align='left' nowrap='nowrap' $col>$confighash{$key}[2]</td>";
 	} else {
-	    print "<td align='left'>&nbsp;</td>";
+	    print "<td align='left' $col>&nbsp;</td>";
 	}
-	print "<td align='center'>$confighash{$key}[25]</td>";
+	print "<td align='center' $col>$confighash{$key}[25]</td>";
+	my $col1="bgcolor='${Header::colourred}'";
 	# get real state
-	my $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+	my $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
 	foreach my $line (@status) {
 	    if (($line =~ /\"$confighash{$key}[1]\".*IPsec SA established/) ||
 	       ($line =~ /$confighash{$key}[1]\{.*INSTALLED/))
 	    {
-		$active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourgreen}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b></td></tr></table>";
+		$col1="bgcolor='${Header::colourgreen}'";
+		$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
 	    }
 	}
 	# move to blueif really down
-	if ($confighash{$key}[0] eq 'off' && $active =~ /${Header::colourred}/ ) {
-	    $active = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourblue}' width='100%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b></td></tr></table>";
+	if ($confighash{$key}[0] eq 'off' && $col1 =~ /${Header::colourred}/ ) {
+		$col1="bgcolor='${Header::colourblue}'";
+	    $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
 	}
 	print <<END
-	<td align='center'>$active</td>
-	<td align='center'>
+	<td align='center' $col1>$active</td>
+	<td align='center' $col>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	    <input type='image'  name='$Lang::tr{'restart'}' src='/images/reload.gif' alt='$Lang::tr{'restart'}' title='$Lang::tr{'restart'}' />
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'restart'}' />
@@ -2535,7 +2715,7 @@ END
 	;
 	if (($confighash{$key}[4] eq 'cert') && ($confighash{$key}[2] ne '%auth-dn')) {
 	    print <<END
-	    <td align='center'>
+	    <td align='center' $col>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='image' name='$Lang::tr{'show certificate'}' src='/images/info.gif' alt='$Lang::tr{'show certificate'}' title='$Lang::tr{'show certificate'}' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'show certificate'}' />
@@ -2544,11 +2724,11 @@ END
 	    </td>
 END
 	; } else {
-	    print "<td width='2%'>&nbsp;</td>";
+	    print "<td width='2%' $col>&nbsp;</td>";
 	}
 	if ($confighash{$key}[4] eq 'cert' && -f "${General::swroot}/certs/$confighash{$key}[1].p12") { 
 	    print <<END
-	    <td align='center'>
+	    <td align='center' $col>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='image' name='$Lang::tr{'download pkcs12 file'}' src='/images/floppy.gif' alt='$Lang::tr{'download pkcs12 file'}' title='$Lang::tr{'download pkcs12 file'}' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'download pkcs12 file'}' />
@@ -2558,7 +2738,7 @@ END
 END
 	; } elsif (($confighash{$key}[4] eq 'cert') && ($confighash{$key}[2] ne '%auth-dn')) {
 	    print <<END
-	    <td align='center'>
+	    <td align='center' $col>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='image' name='$Lang::tr{'download certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download certificate'}' title='$Lang::tr{'download certificate'}' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'download certificate'}' />
@@ -2567,10 +2747,10 @@ END
 	</td>
 END
 	; } else {
-	    print "<td width='2%'>&nbsp;</td>";
+	    print "<td width='2%' $col>&nbsp;</td>";
 	}
 	print <<END
-	<td align='center'>
+	<td align='center' $col>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	    <input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$Lang::tr{'toggle enable disable'}' title='$Lang::tr{'toggle enable disable'}' />
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
@@ -2578,14 +2758,14 @@ END
 	    </form>
 	</td>
 
-	<td align='center'>
+	<td align='center' $col>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
 	    <input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 	    <input type='hidden' name='KEY' value='$key' />
 	    </form>
 	</td>
-	<td align='center' >
+	<td align='center' $col>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
 	    <input type='image'  name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
@@ -2630,7 +2810,7 @@ END
 
     print <<END
     <table width='100%'>
-    <tr><td align='center' colspan='9'>
+    <tr><td align='right' colspan='9'>
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<input type='submit' name='ACTION' value='$Lang::tr{'add'}' />
 	</form>
@@ -2640,45 +2820,46 @@ END
     ;
     &Header::closebox();
 
-    &Header::openbox('100%', 'left', "$Lang::tr{'certificate authorities'}:");
+    &Header::openbox('100%', 'left', "$Lang::tr{'certificate authorities'}");
     print <<EOF
-    <table width='100%' border='0' cellspacing='1' cellpadding='0'>
+    <table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
     <tr>
-	<td width='25%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></td>
-	<td width='65%' class='boldbase' align='center'><b>$Lang::tr{'subject'}</b></td>
-	<td width='10%' class='boldbase' colspan='3' align='center'><b>$Lang::tr{'action'}</b></td>
+	<th width='25%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></th>
+	<th width='65%' class='boldbase' align='center'><b>$Lang::tr{'subject'}</b></th>
+	<th width='10%' class='boldbase' colspan='3' align='center'><b>$Lang::tr{'action'}</b></th>
     </tr>
 EOF
     ;
+    my $col1="bgcolor='$color{'color22'}'";
+	my $col2="bgcolor='$color{'color20'}'";
     if (-f "${General::swroot}/ca/cacert.pem") {
 	my $casubject = &Header::cleanhtml(getsubjectfromcert ("${General::swroot}/ca/cacert.pem"));
-
 	print <<END
-	<tr bgcolor='$color{'color22'}'>
-	<td class='base'>$Lang::tr{'root certificate'}</td>
-	<td class='base'>$casubject</td>
-	<td width='3%' align='center'>
+	<tr>
+	<td class='base' $col1>$Lang::tr{'root certificate'}</td>
+	<td class='base' $col1>$casubject</td>
+	<td width='3%' align='center' $col1>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'show root certificate'}' />
 	    <input type='image' name='$Lang::tr{'edit'}' src='/images/info.gif' alt='$Lang::tr{'show root certificate'}' title='$Lang::tr{'show root certificate'}' />
 	    </form>
 	</td>
-	<td width='3%' align='center'>
+	<td width='3%' align='center' $col1>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	    <input type='image' name='$Lang::tr{'download root certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download root certificate'}' title='$Lang::tr{'download root certificate'}' />
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'download root certificate'}' />
 	    </form>
 	</td>
-	<td width='4%'>&nbsp;</td></tr>
+	<td width='4%' $col1>&nbsp;</td></tr>
 END
 	;
     } else {
 	# display rootcert generation buttons
 	print <<END
-	<tr bgcolor='$color{'color22'}'>
-	<td class='base'>$Lang::tr{'root certificate'}:</td>
-	<td class='base'>$Lang::tr{'not present'}</td>
-	<td colspan='3'>&nbsp;</td></tr>
+	<tr>
+	<td class='base' $col1>$Lang::tr{'root certificate'}:</td>
+	<td class='base' $col1>$Lang::tr{'not present'}</td>
+	<td colspan='3' $col1>&nbsp;</td></tr>
 END
 	;
     }
@@ -2687,61 +2868,63 @@ END
 	my $hostsubject = &Header::cleanhtml(getsubjectfromcert ("${General::swroot}/certs/hostcert.pem"));
 
 	print <<END
-	<tr bgcolor='$color{'color20'}'>
-	<td class='base'>$Lang::tr{'host certificate'}</td>
-	<td class='base'>$hostsubject</td>
-	<td width='3%' align='center'>
+	<tr>
+	<td class='base' $col2>$Lang::tr{'host certificate'}</td>
+	<td class='base' $col2>$hostsubject</td>
+	<td width='3%' align='center' $col2>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	    <input type='hidden' name='ACTION' value='$Lang::tr{'show host certificate'}' />
 	    <input type='image' name='$Lang::tr{'show host certificate'}' src='/images/info.gif' alt='$Lang::tr{'show host certificate'}' title='$Lang::tr{'show host certificate'}' />
 	    </form>
 	</td>
-	<td width='3%' align='center'>
+	<td width='3%' align='center' $col2>
 	    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	    <input type='image' name='$Lang::tr{'download host certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download host certificate'}' title='$Lang::tr{'download host certificate'}' />
-	    <input type='hidden' name='ACTION' value='$Lang::tr{'download host certificate'}' />
+	    <input type='image' name="$Lang::tr{'download host certificate'}" src='/images/floppy.gif' alt="$Lang::tr{'download host certificate'}" title="$Lang::tr{'download host certificate'}" />
+	    <input type='hidden' name='ACTION' value="$Lang::tr{'download host certificate'}" />
 	    </form>
 	</td>
-	<td width='4%'>&nbsp;</td></tr>
+	<td width='4%' $col2>&nbsp;</td></tr>
 END
 	;
     } else {
 	# Nothing
 	print <<END
-	<tr bgcolor='$color{'color20'}'>
-	<td width='25%' class='base'>$Lang::tr{'host certificate'}:</td>
-	<td class='base'>$Lang::tr{'not present'}</td>
-	<td colspan='3'>&nbsp;</td></tr>
+	<tr>
+	<td width='25%' class='base' $col2>$Lang::tr{'host certificate'}:</td>
+	<td class='base' $col2>$Lang::tr{'not present'}</td>
+	<td colspan='3' $col2>&nbsp;</td></tr>
 END
 	;
     }
  
-    my $rowcolor = 0;
-    if (keys %cahash > 0) {
-   foreach my $key (keys %cahash) {
-       if ($rowcolor++ % 2) {
-      print "<tr bgcolor='$color{'color20'}'>\n";
-       } else {
-      print "<tr bgcolor='$color{'color22'}'>\n";
-       }
-	    print "<td class='base'>$cahash{$key}[0]</td>\n";
-	    print "<td class='base'>$cahash{$key}[1]</td>\n";
+	my $rowcolor = 0;
+	if (keys %cahash > 0) {
+		foreach my $key (keys %cahash) {
+			if ($rowcolor++ % 2) {
+				print "<tr>";
+				$col="bgcolor='$color{'color20'}'";
+			} else {
+				print "<tr>";
+				$col="bgcolor='$color{'color22'}'";
+			}
+	    print "<td class='base' $col>$cahash{$key}[0]</td>\n";
+	    print "<td class='base' $col>$cahash{$key}[1]</td>\n";
 	    print <<END
-	    <td align='center'>
+	    <td align='center' $col>
 		<form method='post' name='cafrm${key}a' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='image' name='$Lang::tr{'show ca certificate'}' src='/images/info.gif' alt='$Lang::tr{'show ca certificate'}' title='$Lang::tr{'show ca certificate'}' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'show ca certificate'}' />
 		<input type='hidden' name='KEY' value='$key' />
 		</form>
 	    </td>
-	    <td align='center'>
+	    <td align='center' $col>
 		<form method='post' name='cafrm${key}b' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='image' name='$Lang::tr{'download ca certificate'}' src='/images/floppy.gif' alt='$Lang::tr{'download ca certificate'}' title='$Lang::tr{'download ca certificate'}' />
 		<input type='hidden' name='ACTION' value='$Lang::tr{'download ca certificate'}' />
 		<input type='hidden' name='KEY' value='$key' />
 		</form>
 	    </td>
-	    <td align='center'>
+	    <td align='center' $col>
 		<form method='post' name='cafrm${key}c' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='hidden' name='ACTION' value='$Lang::tr{'remove ca certificate'}' />
 		<input type='image'  name='$Lang::tr{'remove ca certificate'}' src='/images/delete.gif' alt='$Lang::tr{'remove ca certificate'}' title='$Lang::tr{'remove ca certificate'}' />
@@ -2770,6 +2953,7 @@ END
     }
     my $createCA = -f "${General::swroot}/ca/cacert.pem" ? '' : "<tr><td colspan='3'></td><td><input type='submit' name='ACTION' value='$Lang::tr{'generate root/host certificates'}' /></td></tr>";
     print <<END
+    <br>
     <hr />
     <form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'>
     <table width='100%' border='0' cellspacing='1' cellpadding='0'>
@@ -2782,7 +2966,7 @@ END
     </tr>
     <tr>
 	<td colspan='3'>$Lang::tr{'resetting the vpn configuration will remove the root ca, the host certificate and all certificate based connections'}:</td>
-	<td><input type='submit' name='ACTION' value='$Lang::tr{'remove x509'}' /></td>
+	<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'remove x509'}' /></td>
     </tr>
     </table>
     </form>

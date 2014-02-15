@@ -1,0 +1,42 @@
+diff -rup a/resolv/res_init.c b/resolv/res_init.c
+--- a/resolv/res_init.c	2012-07-26 15:10:45.655638776 -0600
++++ b/resolv/res_init.c	2012-07-26 15:11:27.731423002 -0600
+@@ -314,9 +314,9 @@ __res_vinit(res_state statp, int preinit
+ 			cp++;
+ 		    if ((*cp != '\0') && (*cp != '\n')
+ 			&& __inet_aton(cp, &a)) {
+-			statp->nsaddr_list[nservall].sin_addr = a;
+-			statp->nsaddr_list[nservall].sin_family = AF_INET;
+-			statp->nsaddr_list[nservall].sin_port =
++			statp->nsaddr_list[nserv].sin_addr = a;
++			statp->nsaddr_list[nserv].sin_family = AF_INET;
++			statp->nsaddr_list[nserv].sin_port =
+ 				htons(NAMESERVER_PORT);
+ 			nserv++;
+ #ifdef _LIBC
+diff -rup a/resolv/res_send.c b/resolv/res_send.c
+--- a/resolv/res_send.c	2010-05-04 05:27:23.000000000 -0600
++++ b/resolv/res_send.c	2012-07-26 15:34:58.398261659 -0600
+@@ -421,10 +421,10 @@ __libc_res_nsend(res_state statp, const
+ 				EXT(statp).nsmap[n] = MAXNS;
+ 			}
+ 		}
+-		n = statp->nscount;
+-		if (statp->nscount > EXT(statp).nscount)
++		n = statp->nscount - EXT(statp).nscount6;
++		if (n > EXT(statp).nscount)
+ 			for (n = EXT(statp).nscount, ns = 0;
+-			     n < statp->nscount; n++) {
++			     n < statp->nscount - EXT(statp).nscount6; n++) {
+ 				while (ns < MAXNS
+ 				       && EXT(statp).nsmap[ns] != MAXNS)
+ 					ns++;
+@@ -441,7 +441,7 @@ __libc_res_nsend(res_state statp, const
+ 				    malloc(sizeof (struct sockaddr_in6));
+ 			if (EXT(statp).nsaddrs[n] != NULL) {
+ 				memset (mempcpy(EXT(statp).nsaddrs[n],
+-						&statp->nsaddr_list[n],
++						&statp->nsaddr_list[ns],
+ 						sizeof (struct sockaddr_in)),
+ 					'\0',
+ 					sizeof (struct sockaddr_in6)

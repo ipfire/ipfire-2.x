@@ -13,31 +13,28 @@
 #include <fcntl.h>
 #include "setuid.h"
 
-#define BUFFER_SIZE 1024
-
-char command[BUFFER_SIZE]; 
-
 int main(int argc, char *argv[]) {
-
         if (!(initsetuid()))
-                exit(1);
+		exit(1);
 
-        if (argc < 2) {
-                fprintf(stderr, "\nNo argument given.\n\nsmartctrl <device>\n\n");
-                exit(1);
-        }
-
-
-        sprintf(command, "/var/run/hddshutdown-%s", argv[1]);
-        FILE *fp = fopen(command,"r");
-	if( fp ) {
-		fclose(fp);
-		printf("\nDisk %s is in Standby. Do nothing because we won't wakeup\n",argv[1]);
-                exit(1);
+	if (argc < 2) {
+		fprintf(stderr, "\nNo argument given.\n\nsmartctrl <device>\n\n");
+		exit(1);
 	}
 
-        sprintf(command, "smartctl -iHA /dev/%s", argv[1]);
-        safe_system(command);
+	char command[STRING_SIZE];
+	snprintf(command, STRING_SIZE, "/var/run/hddshutdown-%s", argv[1]);
+
+        FILE *fp = fopen(command, "r");
+	if (fp != NULL) {
+		fclose(fp);
+
+		printf("\nDisk %s is in Standby. Do nothing because we won't wakeup\n",argv[1]);
+		exit(1);
+	}
+
+	snprintf(command, STRING_SIZE, "smartctl -iHA /dev/%s", argv[1]);
+	safe_system(command);
 
         return 0;
 }

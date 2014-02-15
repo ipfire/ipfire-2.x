@@ -7,7 +7,6 @@ sbin/dracut-catimages
 sbin/dracut-gencmdline
 sbin/lsinitrd
 sbin/mkinitrd
-sbin/switch_root
 usr/share/dracut
 usr/share/dracut/dracut-functions
 usr/share/dracut/modules.d
@@ -52,6 +51,7 @@ usr/share/dracut/modules.d/99base/check
 usr/share/dracut/modules.d/99base/dracut-lib.sh
 usr/share/dracut/modules.d/99base/init
 usr/share/dracut/modules.d/99base/initqueue
+#usr/share/dracut/modules.d/99base/init~
 usr/share/dracut/modules.d/99base/install
 usr/share/dracut/modules.d/99base/loginit
 usr/share/dracut/modules.d/99base/parse-blacklist.sh
@@ -60,3 +60,4 @@ usr/share/dracut/modules.d/99base/parse-root-opts.sh
 #usr/share/man/man8/dracut-catimages.8
 #usr/share/man/man8/dracut-gencmdline.8
 #usr/share/man/man8/dracut.8
+sbin/switch_root

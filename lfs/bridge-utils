@@ -70,6 +70,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bridge-utils-1.5-compile-fix-1.patch
+	cd $(DIR_APP) && find . -name Makefile.in | xargs sed -i -e "s/^KERNEL_HEADERS/#&/g"
 	cd $(DIR_APP) && autoreconf -vfi
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)

@@ -1,0 +1,4 @@
+usr/bin/rngtest
+usr/sbin/rngd
+#usr/share/man/man1/rngtest.1
+#usr/share/man/man8/rngd.8

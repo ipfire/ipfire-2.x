@@ -1,0 +1,14 @@
+etc/rc.d/init.d/firewall
+etc/rc.d/init.d/networking/red.up/22-forwardfwctrl
+srv/web/ipfire/cgi-bin/firewall.cgi
+srv/web/ipfire/cgi-bin/fwhosts.cgi
+srv/web/ipfire/cgi-bin/optionsfw.cgi
+srv/web/ipfire/cgi-bin/p2p-block.cgi
+usr/sbin/convert-dmz
+usr/sbin/convert-outgoingfw
+usr/sbin/convert-portfw
+usr/sbin/convert-xtaccess
+usr/sbin/firewall-policy
+var/ipfire/firewall/p2protocols
+var/ipfire/fwhosts/icmp-types
+var/ipfire/menu.d/50-firewall.menu

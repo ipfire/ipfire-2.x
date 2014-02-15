@@ -39,6 +39,96 @@ sub log
 	$logmessage = $1;
 	system('logger', '-t', $tag, $logmessage);
 }
+sub setup_default_networks
+{
+	my %netsettings=();
+	my $defaultNetworks = shift;
+	
+	&readhash("/var/ipfire/ethernet/settings", \%netsettings);
+	
+	# Get current defined networks (Red, Green, Blue, Orange)
+	$defaultNetworks->{$Lang::tr{'fwhost any'}}{'IPT'} = "0.0.0.0/0.0.0.0";
+	$defaultNetworks->{$Lang::tr{'fwhost any'}}{'NAME'} = "ALL";
+		
+	$defaultNetworks->{$Lang::tr{'green'}}{'IPT'} = "$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
+	$defaultNetworks->{$Lang::tr{'green'}}{'NET'} = "$netsettings{'GREEN_ADDRESS'}";
+	$defaultNetworks->{$Lang::tr{'green'}}{'NAME'} = "GREEN";
+
+	if ($netsettings{'RED_DEV'} ne ''){
+		$defaultNetworks->{$Lang::tr{'fwdfw red'}}{'IPT'} = "$netsettings{'RED_NETADDRESS'}/$netsettings{'RED_NETMASK'}";
+		$defaultNetworks->{$Lang::tr{'fwdfw red'}}{'NET'} = "$netsettings{'RED_ADDRESS'}";
+		$defaultNetworks->{$Lang::tr{'fwdfw red'}}{'NAME'} = "RED";
+	}
+	if ($netsettings{'ORANGE_DEV'} ne ''){
+		$defaultNetworks->{$Lang::tr{'orange'}}{'IPT'} = "$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}";
+		$defaultNetworks->{$Lang::tr{'orange'}}{'NET'} = "$netsettings{'ORANGE_ADDRESS'}";
+		$defaultNetworks->{$Lang::tr{'orange'}}{'NAME'} = "ORANGE";
+	}
+
+	if ($netsettings{'BLUE_DEV'} ne ''){
+		$defaultNetworks->{$Lang::tr{'blue'}}{'IPT'} = "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
+		$defaultNetworks->{$Lang::tr{'blue'}}{'NET'} = "$netsettings{'BLUE_ADDRESS'}";
+		$defaultNetworks->{$Lang::tr{'blue'}}{'NAME'} = "BLUE";
+	}
+	
+	#IPFire himself
+	$defaultNetworks->{'IPFire'}{'NAME'} = "IPFire";
+
+	# OpenVPN
+	if(-e "${General::swroot}/ovpn/settings")
+	{
+		my %ovpnSettings = ();
+		&readhash("${General::swroot}/ovpn/settings", \%ovpnSettings);
+
+		# OpenVPN on Red?
+		if(defined($ovpnSettings{'DOVPN_SUBNET'}))
+		{
+			my ($ip,$sub) = split(/\//,$ovpnSettings{'DOVPN_SUBNET'});
+			$sub=&General::iporsubtocidr($sub);
+			my @tempovpnsubnet = split("\/", $ovpnSettings{'DOVPN_SUBNET'});
+			$defaultNetworks->{'OpenVPN ' ."($ip/$sub)"}{'ADR'} = $tempovpnsubnet[0];
+			$defaultNetworks->{'OpenVPN ' ."($ip/$sub)"}{'NAME'} = "OpenVPN-Dyn";
+		}
+	} # end OpenVPN
+	# IPsec RW NET
+	if(-e "${General::swroot}/vpn/settings")
+	{
+		my %ipsecsettings = ();
+		&readhash("${General::swroot}/vpn/settings", \%ipsecsettings);
+		if($ipsecsettings{'RW_NET'} ne '')
+		{
+			my ($ip,$sub) = split(/\//,$ipsecsettings{'RW_NET'});
+			$sub=&General::iporsubtocidr($sub);
+			my @tempipsecsubnet = split("\/", $ipsecsettings{'RW_NET'});
+			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'ADR'} = $tempipsecsubnet[0];
+			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'NAME'} = "IPsec RW";
+			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'NET'} = &getnextip($ip);
+		}
+	}
+}
+sub get_aliases
+{
+	
+	my $defaultNetworks = shift;
+	open(FILE, "${General::swroot}/ethernet/aliases") or die 'Unable to open aliases file.';
+	my @current = <FILE>;
+	close(FILE);
+	my $ctr = 0;
+	foreach my $line (@current)
+	{
+		if ($line ne ''){
+			chomp($line);
+			my @temp = split(/\,/,$line);
+			if ($temp[2] eq '') {
+				$temp[2] = "Alias $ctr : $temp[0]";
+			}
+			$defaultNetworks->{$temp[2]}{'IPT'} = "$temp[0]";
+			$defaultNetworks->{$temp[2]}{'NET'} = "$temp[0]";
+			
+			$ctr++;
+		}
+	}
+}
 
 sub readhash
 {
@@ -139,68 +229,36 @@ sub writehashpart
 	close FILE;
 }
 
-sub age
-{
+sub age {
 	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
-	        $atime, $mtime, $ctime, $blksize, $blocks) = stat $_[0];
-	my $now = time;
-	my $timestring = '';
-	my $dset = 0;		# Day is set, when > 0
-	my $hset = 0;		# Hour is set, when > 0
-	my $mset = 0;		# Minute is set, when > 0
+		$atime, $mtime, $ctime, $blksize, $blocks) = stat $_[0];
+	my $totalsecs = time() - $mtime;
+	my @s = ();
 
-	my $totalsecs = $now - $mtime;
-	my $days = int($totalsecs / 86400);
-	my $totalhours = int($totalsecs / 3600);
-	my $hours = $totalhours % 24;
-	my $totalmins = int($totalsecs / 60);
-	my $mins = $totalmins % 60;
 	my $secs = $totalsecs % 60;
-
-	if	($days > 1) { 
-		${timestring} .= ${days}.' '.$Lang::tr{'days'}.', ';
-		$dset = 1; 
-	}
-	elsif	($days == 1) { 
-		${timestring} .= ${days}.' '.$Lang::tr{'day'}.', ';
-		$dset = 1; 
+	$totalsecs /= 60;
+	if ($secs > 0) {
+		push(@s, "${secs}s");
 	}
 
-	if	(($hours > 1) && !($dset)) { 
-		${timestring} .= ${hours}.' '.$Lang::tr{'hours'}.', ';
-		$hset = 1;
-	}
-	elsif	(($hours == 1) && !($dset)) { 
-		${timestring} .= ${hours}.' '.$Lang::tr{'hour'}.', ';
-		$hset = 1;
-	}
-	elsif ($dset) {
-		${timestring} .= ${hours}.' '.$Lang::tr{'age shour'}.', ';
-		$hset = 1;
+	my $min = $totalsecs % 60;
+	$totalsecs /= 60;
+	if ($min > 0) {
+		push(@s, "${min}m");
 	}
 
-	if	((($mins > 1) || ($mins == 0)) && !($dset || $hset)) { 
-		${timestring} .= ${mins}.' '.$Lang::tr{'minutes'}.', ';
-		$mset = 1;
-	}
-	elsif	(($mins == 1) && !($dset || $hset)) { 
-		${timestring} .= ${mins}.' '.$Lang::tr{'minute'}.', ';
-		$mset = 1;
-	}
-	else {
-		${timestring} .= ${mins}.' '.$Lang::tr{'age sminute'}.', '; 
-		$mset = 1;
+	my $hrs = $totalsecs % 24;
+	$totalsecs /= 24;
+	if ($hrs > 0) {
+		push(@s, "${hrs}h");
 	}
 
-	if	((($secs > 1) || ($secs == 0)) && !($dset || $hset || $mset)) { 
-		${timestring} .= ${secs}.' '.$Lang::tr{'age seconds'};
+	my $days = int($totalsecs);
+	if ($days > 0) {
+		push(@s, "${days}d");
 	}
-	elsif	(($secs == 1) && !($dset || $hset || $mset)) { 
-		${timestring} .= $secs.' '.$Lang::tr{'age second'};
-	}
-	else	{ ${timestring} .= $secs.' '.$Lang::tr{'age ssecond'}; }
 
-	return ${timestring};
+	return join(" ", reverse(@s));
 }
 
 sub validip
@@ -1051,6 +1109,25 @@ sub write_file_utf8 ($) {
 	close $out;
 
 	return; 
+}
+
+my $FIREWALL_RELOAD_INDICATOR = "${General::swroot}/firewall/reread";
+
+sub firewall_config_changed() {
+	open FILE, ">$FIREWALL_RELOAD_INDICATOR" or die "Could not open $FIREWALL_RELOAD_INDICATOR";
+	close FILE;
+}
+
+sub firewall_needs_reload() {
+	if (-e "$FIREWALL_RELOAD_INDICATOR") {
+		return 1;
+	}
+
+	return 0;
+}
+
+sub firewall_reload() {
+	system("/usr/local/bin/firewallctrl");
 }
 
 1;

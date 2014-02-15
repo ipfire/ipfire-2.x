@@ -1,0 +1,250 @@
+diff -pruN glibc-2.12-2-gc4ccff1/libio/Makefile glibc-2.12-2-gc4ccff1.fseek/libio/Makefile
+--- glibc-2.12-2-gc4ccff1/libio/Makefile	2010-05-04 16:57:23.000000000 +0530
++++ glibc-2.12-2-gc4ccff1.fseek/libio/Makefile	2012-09-05 17:28:08.699360413 +0530
+@@ -58,7 +58,7 @@ tests = tst_swprintf tst_wprintf tst_sws
+ 	tst-memstream1 tst-memstream2 \
+ 	tst-wmemstream1 tst-wmemstream2 \
+ 	bug-memstream1 bug-wmemstream1 \
+-	tst-setvbuf1 tst-popen1 tst-fgetwc bug-wsetpos
++	tst-setvbuf1 tst-popen1 tst-fgetwc bug-wsetpos tst-fseek
+ test-srcs = test-freopen
+ 
+ all: # Make this the default target; it will be defined in Rules.
+diff -pruN glibc-2.12-2-gc4ccff1/libio/tst-fseek.c glibc-2.12-2-gc4ccff1.fseek/libio/tst-fseek.c
+--- glibc-2.12-2-gc4ccff1/libio/tst-fseek.c	1970-01-01 05:30:00.000000000 +0530
++++ glibc-2.12-2-gc4ccff1.fseek/libio/tst-fseek.c	2012-09-05 17:27:33.606359692 +0530
+@@ -0,0 +1,153 @@
++/* Verify that fseek/ftell combination works for wide chars.
++
++   Copyright (C) 2012 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <locale.h>
++#include <errno.h>
++#include <wchar.h>
++#include <unistd.h>
++#include <string.h>
++
++/* Defined in test-skeleton.c.  */
++static int create_temp_file (const char *base, char **filename);
++
++
++static int
++do_seek_end (FILE *fp)
++{
++  long save;
++
++  if (fp == NULL)
++    {
++      printf ("do_seek_end: fopen: %s\n", strerror (errno));
++      return 1;
++    }
++
++  if (fputws (L"abc\n", fp) == -1)
++    {
++      printf ("do_seek_end: fputws: %s\n", strerror (errno));
++      return 1;
++    }
++
++  save = ftell (fp);
++  rewind (fp);
++
++  if (fseek (fp, 0, SEEK_END) == -1)
++    {
++      printf ("do_seek_end: fseek: %s\n", strerror (errno));
++      return 1;
++    }
++
++  if (save != ftell (fp))
++    {
++      printf ("save = %ld, ftell = %ld\n", save, ftell (fp));
++      return 1;
++    }
++
++  return 0;
++}
++
++int
++do_seek_set (FILE *fp)
++{
++  long save;
++
++  if (fputws (L"abc\n", fp) == -1)
++    {
++      printf ("seek_set: fputws: %s\n", strerror (errno));
++      return 1;
++    }
++
++  save = ftell (fp);
++
++  if (fputws (L"xyz\n", fp) == -1)
++    {
++      printf ("seek_set: fputws: %s\n", strerror (errno));
++      return 1;
++    }
++
++  if (fseek (fp, save, SEEK_SET) == -1)
++    {
++      printf ("seek_set: fseek: %s\n", strerror (errno));
++      return 1;
++    }
++
++  if (save != ftell (fp))
++    {
++      printf ("save = %ld, ftell = %ld\n", save, ftell (fp));
++      return 1;
++    }
++
++  return 0;
++}
++
++static int
++do_test (void)
++{
++  if (setlocale (LC_ALL, "en_US.utf8") == NULL)
++    {
++      printf ("Cannot set en_US.utf8 locale.\n");
++      exit (1);
++    }
++
++  int ret = 0;
++  char *filename;
++  int fd = create_temp_file ("tst-fseek.out", &filename);
++
++  if (fd == -1)
++    return 1;
++
++  FILE *fp = fdopen (fd, "w+");
++  if (fp == NULL)
++    {
++      printf ("seek_set: fopen: %s\n", strerror (errno));
++      close (fd);
++      return 1;
++    }
++
++  if (do_seek_set (fp))
++    {
++      printf ("SEEK_SET test failed\n");
++      ret = 1;
++    }
++
++  /* Reopen the file.  */
++  fclose (fp);
++  fp = fopen (filename, "w+");
++  if (fp == NULL)
++    {
++      printf ("seek_end: fopen: %s\n", strerror (errno));
++      return 1;
++    }
++
++  if (do_seek_end (fp))
++    {
++      printf ("SEEK_END test failed\n");
++      ret = 1;
++    }
++
++  fclose (fp);
++
++  return ret;
++}
++
++
++#define TEST_FUNCTION do_test ()
++#include "../test-skeleton.c"
+diff -pruN glibc-2.12-2-gc4ccff1/libio/wfileops.c glibc-2.12-2-gc4ccff1.fseek/libio/wfileops.c
+--- glibc-2.12-2-gc4ccff1/libio/wfileops.c	2010-05-04 16:57:23.000000000 +0530
++++ glibc-2.12-2-gc4ccff1.fseek/libio/wfileops.c	2012-09-05 17:27:33.608359685 +0530
+@@ -547,6 +547,55 @@ _IO_wfile_sync (fp)
+ }
+ INTDEF(_IO_wfile_sync)
+ 
++/* Adjust the internal buffer pointers to reflect the state in the external
++   buffer.  The content between fp->_IO_read_base and fp->_IO_read_ptr is
++   assumed to be converted and available in the range
++   fp->_wide_data->_IO_read_base and fp->_wide_data->_IO_read_end.  */
++static inline int
++adjust_wide_data (_IO_FILE *fp, bool do_convert)
++{
++  struct _IO_codecvt *cv = fp->_codecvt;
++
++  int clen = (*cv->__codecvt_do_encoding) (cv);
++
++  /* Take the easy way out for constant length encodings if we don't need to
++     convert.  */
++  if (!do_convert && clen > 0)
++    {
++      fp->_wide_data->_IO_read_end += ((fp->_IO_read_ptr - fp->_IO_read_base)
++				       / clen);
++      goto done;
++    }
++
++  enum __codecvt_result status;
++  const char *read_stop = (const char *) fp->_IO_read_base;
++  do
++    {
++
++      fp->_wide_data->_IO_last_state = fp->_wide_data->_IO_state;
++      status = (*cv->__codecvt_do_in) (cv, &fp->_wide_data->_IO_state,
++				       fp->_IO_read_base, fp->_IO_read_ptr,
++				       &read_stop,
++				       fp->_wide_data->_IO_read_base,
++				       fp->_wide_data->_IO_buf_end,
++				       &fp->_wide_data->_IO_read_end);
++
++      /* Should we return EILSEQ?  */
++      if (__builtin_expect (status == __codecvt_error, 0))
++	{
++	  fp->_flags |= _IO_ERR_SEEN;
++	  return -1;
++	}
++    }
++  while (__builtin_expect (status == __codecvt_partial, 0));
++
++done:
++  /* Now seek to the end of the read buffer.  */
++  fp->_wide_data->_IO_read_ptr = fp->_wide_data->_IO_read_end;
++
++  return 0;
++}
++
+ _IO_off64_t
+ _IO_wfile_seekoff (fp, offset, dir, mode)
+      _IO_FILE *fp;
+@@ -695,6 +744,10 @@ _IO_wfile_seekoff (fp, offset, dir, mode
+ 		     fp->_wide_data->_IO_buf_base);
+ 	  _IO_wsetp (fp, fp->_wide_data->_IO_buf_base,
+ 		     fp->_wide_data->_IO_buf_base);
++
++	  if (adjust_wide_data (fp, false))
++	    goto dumb;
++
+ 	  _IO_mask_flags (fp, 0, _IO_EOF_SEEN);
+ 	  goto resync;
+ 	}
+@@ -735,6 +788,10 @@ _IO_wfile_seekoff (fp, offset, dir, mode
+   _IO_wsetg (fp, fp->_wide_data->_IO_buf_base,
+ 	     fp->_wide_data->_IO_buf_base, fp->_wide_data->_IO_buf_base);
+   _IO_wsetp (fp, fp->_wide_data->_IO_buf_base, fp->_wide_data->_IO_buf_base);
++
++  if (adjust_wide_data (fp, true))
++    goto dumb;
++
+   fp->_offset = result + count;
+   _IO_mask_flags (fp, 0, _IO_EOF_SEEN);
+   return offset;

@@ -1,0 +1,41 @@
+From df41a18b5ac1401c96dcbce99baa50e339494eba Mon Sep 17 00:00:00 2001
+From: Mike Panetta <panetta.mike@gmail.com>
+Date: Tue, 30 Jul 2013 20:33:26 -0400
+Subject: [PATCH 2/5] ARM: dts: imx6qdl-wandboard: add gpio lines to wandboard
+
+Signed-off-by: Mike Panetta <panetta.mike@gmail.com>
+---
+ arch/arm/boot/dts/imx6qdl-wandboard.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx6qdl-wandboard.dtsi b/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
+index 35f5479..a302e95 100644
+--- a/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
+@@ -92,6 +92,23 @@
+ 			>;
+ 		};
+ 	};
++
++	gpio {
++		pinctrl_gpio: gpiogrp {
++			fsl,pins = <
++				MX6QDL_PAD_EIM_DA12__GPIO3_IO12   0x80000000 /* GPIO3_12 EDM pin 255 */
++				MX6QDL_PAD_EIM_DA11__GPIO3_IO11   0x80000000 /* GPIO3_11 EDM pin 256 */
++				MX6QDL_PAD_EIM_DA10__GPIO3_IO10   0x80000000 /* GPIO3_10 EDM pin 257 */
++				MX6QDL_PAD_EIM_D27__GPIO3_IO27    0x80000000 /* GPIO3_27 EDM pin 258 */
++				MX6QDL_PAD_EIM_D26__GPIO3_IO26    0x80000000 /* GPIO3_26 EDM pin 259 */
++				MX6QDL_PAD_EIM_BCLK__GPIO6_IO31   0x80000000 /* GPIO6_31 EDM pin 260 */
++				MX6QDL_PAD_EIM_DA8__GPIO3_IO08    0x80000000 /* GPIO3_8  EDM pin 261 */
++				MX6QDL_PAD_ENET_RX_ER__GPIO1_IO24 0x80000000 /* GPIO1_24 EDM pin 262 */
++				MX6QDL_PAD_GPIO_19__GPIO4_IO05    0x80000000 /* GPIO4_5  EDM pin 263 */
++				MX6QDL_PAD_SD3_RST__GPIO7_IO08    0x80000000 /* GPIO7_8  EDM pin 264 */
++			>;
++		};
++	};
+ };
+ 
+ &fec {
+-- 
+1.8.4.rc3
+

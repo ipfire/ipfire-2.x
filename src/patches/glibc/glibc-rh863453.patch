@@ -1,0 +1,81 @@
+--- glibc-2.12-2-gc4ccff1/nscd/grpcache.c.lrgrpissue	2002-03-19 01:06:04.905969517 +0530
++++ glibc-2.12-2-gc4ccff1/nscd/grpcache.c	2002-03-19 01:09:46.495970850 +0530
+@@ -207,10 +207,11 @@ cache_addgr (struct database_dyn *db, in
+ 	 change.  Allocate memory on the cache since it is likely
+ 	 discarded anyway.  If it turns out to be necessary to have a
+ 	 new record we can still allocate real memory.  */
+-      bool dataset_in_stack_or_freed = false;
++      bool dataset_temporary = false;
++      bool dataset_malloced = false; 
+       dataset = NULL;
+ 
+-      if (he == NULL || ! __libc_use_alloca (alloca_used + total + n))
++      if (he == NULL)
+ 	dataset = (struct dataset *) mempool_alloc (db, total + n, 1);
+ 
+       if (dataset == NULL)
+@@ -218,10 +219,16 @@ cache_addgr (struct database_dyn *db, in
+ 	  /* We cannot permanently add the result in the moment.  But
+ 	     we can provide the result as is.  Store the data in some
+ 	     temporary memory.  */
+-	  dataset = (struct dataset *) alloca_account (total + n, alloca_used);
+-
++	  if (! __libc_use_alloca (alloca_used + total + n))
++	  {
++		/* XXX What to do if malloc fails?  */
++		dataset = (struct dataset *) malloc (total + n);
++		dataset_malloced = true;
++	  }
++	  else
++	        dataset = (struct dataset *) alloca_account (total + n, alloca_used); 
+ 	  /* We cannot add this record to the permanent database.  */
+-	  dataset_in_stack_or_freed = true;
++	  dataset_temporary = true; 
+ 	}
+ 
+       dataset->head.allocsize = total + n;
+@@ -276,13 +283,10 @@ cache_addgr (struct database_dyn *db, in
+ 	      dh->timeout = dataset->head.timeout;
+ 	      ++dh->nreloads;
+ 
+-	      /* If the new record was not allocated on the stack, then it must
+-		 be freed.  Note that it can no longer be used.  */
+-	      if (! dataset_in_stack_or_freed)
+-		{
+-		  free (dataset);
+-		  dataset_in_stack_or_freed = true;
+-		}
++	      /* If the new record was allocated via malloc, then we
++	         must free it here.  */
++	      if (dataset_malloced)
++		  free (dataset); 
+ 	    }
+ 	  else
+ 	    {
+@@ -298,7 +302,7 @@ cache_addgr (struct database_dyn *db, in
+ 		  key_copy = (char *) newp + (key_copy - (char *) dataset);
+ 
+ 		  dataset = memcpy (newp, dataset, total + n);
+-		  dataset_in_stack_or_freed = false;
++		  dataset_temporary = false;
+ 		}
+ 
+ 	      /* Mark the old record as obsolete.  */
+@@ -313,7 +317,7 @@ cache_addgr (struct database_dyn *db, in
+ 	  assert (fd != -1);
+ 
+ #ifdef HAVE_SENDFILE
+-	  if (__builtin_expect (db->mmap_used, 1) && !dataset_in_stack_or_freed)
++	  if (__builtin_expect (db->mmap_used, 1) && ! dataset_temporary) 
+ 	    {
+ 	      assert (db->wr_fd != -1);
+ 	      assert ((char *) &dataset->resp > (char *) db->data);
+@@ -340,7 +344,7 @@ cache_addgr (struct database_dyn *db, in
+ 
+       /* Add the record to the database.  But only if it has not been
+ 	 stored on the stack.  */
+-      if (! dataset_in_stack_or_freed)
++       if (! dataset_temporary) 
+ 	{
+ 	  /* If necessary, we also propagate the data to disk.  */
+ 	  if (db->persistent)

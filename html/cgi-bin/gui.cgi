@@ -36,10 +36,8 @@ my %checked=();
 my $errormessage='';
 
 
-$cgiparams{'FX'} = 'off';
 $cgiparams{'SPEED'} = 'off';
 $cgiparams{'WINDOWWITHHOSTNAME'} = 'off';
-$cgiparams{'REBOOTQUESTION'} = 'off';
 $cgiparams{'REFRESHINDEX'} = 'off';
 $cgiparams{'ACTION'} = '';
 &Header::getcgihash(\%cgiparams);
@@ -65,7 +63,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 	close (FILE);
 	if ( $found == 0 )
 	{
-		$errormessage="$errormessage<P>$Lang::tr{'invalid input'}";
+		$errormessage="$errormessage<p>$Lang::tr{'invalid input'}</p>";
 		goto SAVE_ERROR;
 	}
 
@@ -88,9 +86,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
         # write cgi vars to the file.
 	$mainsettings{'LANGUAGE'} = $cgiparams{'lang'};
 	$mainsettings{'WINDOWWITHHOSTNAME'} = $cgiparams{'WINDOWWITHHOSTNAME'};
-	$mainsettings{'REBOOTQUESTION'} = $cgiparams{'REBOOTQUESTION'};
 	$mainsettings{'PPPUPDOWNBEEP'} = $cgiparams{'PPPUPDOWNBEEP'};
-	$mainsettings{'FX'} = $cgiparams{'FX'};
 	$mainsettings{'SPEED'} = $cgiparams{'SPEED'};
 	$mainsettings{'THEME'} = $cgiparams{'theme'};
 	$mainsettings{'REFRESHINDEX'} = $cgiparams{'REFRESHINDEX'};
@@ -101,25 +97,13 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 	if ($mainsettings{'WINDOWWITHHOSTNAME'}) {
 		$cgiparams{'WINDOWWITHHOSTNAME'} = $mainsettings{'WINDOWWITHHOSTNAME'};
 	} else {
-		$cgiparams{'WINDOWWITHHOSTNAME'} = 'off';
-	}
-	
-	if ($mainsettings{'REBOOTQUESTION'}) {
-		$cgiparams{'REBOOTQUESTION'} = $mainsettings{'REBOOTQUESTION'};
-	} else {
-		$cgiparams{'REBOOTQUESTION'} = 'on';
+		$cgiparams{'WINDOWWITHHOSTNAME'} = 'on';
 	}
 
 	if ($mainsettings{'PPPUPDOWNBEEP'}) {
 		$cgiparams{'PPPUPDOWNBEEP'} = $mainsettings{'PPPUPDOWNBEEP'};
 	} else {
 		$cgiparams{'PPPUPDOWNBEEP'} = 'on';
-	}
-
-	if ($mainsettings{'FX'}) {
-		$cgiparams{'FX'} = $mainsettings{'FX'};
-	} else {
-		$cgiparams{'FX'} = 'on';
 	}
 
 	if ($mainsettings{'THEME'}) {
@@ -146,11 +130,9 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 # Default settings
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'restore defaults'}")
 {
-	$cgiparams{'WINDOWWITHHOSTNAME'} = 'off';
-	$cgiparams{'REBOOTQUESTION'} = 'on';
+	$cgiparams{'WINDOWWITHHOSTNAME'} = 'on';
 	$cgiparams{'PPPUPDOWNBEEP'} = 'on';
 	$cgiparams{'REFRESHINDEX'} = 'off';
-	$cgiparams{'FX'} = 'on';
 	$cgiparams{'SPEED'} = 'on';
 	$cgiparams{'THEME'} = 'ipfire';
 }
@@ -159,10 +141,6 @@ $checked{'WINDOWWITHHOSTNAME'}{'off'} = '';
 $checked{'WINDOWWITHHOSTNAME'}{'on'} = '';
 $checked{'WINDOWWITHHOSTNAME'}{$cgiparams{'WINDOWWITHHOSTNAME'}} = "checked='checked'";
 
-$checked{'REBOOTQUESTION'}{'off'} = '';
-$checked{'REBOOTQUESTION'}{'on'} = '';
-$checked{'REBOOTQUESTION'}{$cgiparams{'REBOOTQUESTION'}} = "checked='checked'";
-
 $checked{'PPPUPDOWNBEEP'}{'off'} = '';
 $checked{'PPPUPDOWNBEEP'}{'on'} = '';
 $checked{'PPPUPDOWNBEEP'}{$cgiparams{'PPPUPDOWNBEEP'}} = "checked='checked'";
@@ -170,10 +148,6 @@ $checked{'PPPUPDOWNBEEP'}{$cgiparams{'PPPUPDOWNBEEP'}} = "checked='checked'";
 $checked{'REFRESHINDEX'}{'off'} = '';
 $checked{'REFRESHINDEX'}{'on'} = '';
 $checked{'REFRESHINDEX'}{$cgiparams{'REFRESHINDEX'}} = "checked='checked'";
-
-$checked{'FX'}{'off'} = '';
-$checked{'FX'}{'on'} = '';
-$checked{'FX'}{$cgiparams{'FX'}} = "checked='checked'";
 
 $checked{'SPEED'}{'off'} = '';
 $checked{'SPEED'}{'on'} = '';
@@ -188,25 +162,14 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-&Header::openbox('100%','left',$Lang::tr{'gui settings'});
+&Header::openbox('100%','left',$Lang::tr{'display'});
 
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='100%'>
 <tr>
-    <td colspan='2'><p><b>$Lang::tr{'display'}</b></td>
-</tr>
-<tr>
-    <td><input type='checkbox' name='FX' $checked{'FX'}{'on'} /></td>
-    <td>$Lang::tr{'display webinterface effects'}</td>
-</tr>
-<tr>
     <td><input type='checkbox' name='WINDOWWITHHOSTNAME' $checked{'WINDOWWITHHOSTNAME'}{'on'} /></td>
     <td>$Lang::tr{'display hostname in window title'}</td>
-</tr>
-<tr>
-    <td><input type='checkbox' name='REBOOTQUESTION' $checked{'REBOOTQUESTION'}{'on'} /></td>
-    <td>$Lang::tr{'reboot question'}</td>
 </tr>
 <tr>
     <td><input type='checkbox' name='REFRESHINDEX' $checked{'REFRESHINDEX'}{'on'} /></td>
@@ -249,9 +212,13 @@ END
 
 print <<END
 </select></td></tr>
-<tr>
-    <td colspan='2'><hr /><p><b>$Lang::tr{'theme'}</b></td>
-</tr>
+</table>
+END
+;
+&Header::closebox();
+&Header::openbox('100%','left',$Lang::tr{'theme'});
+print<<END;
+<table>
 <tr>
     <td>&nbsp;</td>
     <td><select name='theme'>
@@ -282,22 +249,26 @@ foreach $item (sort (@files)) {
 
 print <<END
 </select></td></tr>
-<tr>
-    <td colspan='2'><hr /><p><b>$Lang::tr{'sound'}</b></td>
-</tr>
+</table>
+END
+;
+&Header::closebox();
+&Header::openbox('100%','left',$Lang::tr{'sound'});
+print <<END
 <tr>
     <td><input type ='checkbox' name='PPPUPDOWNBEEP' $checked{'PPPUPDOWNBEEP'}{'on'} /></td>
     <td>$Lang::tr{'beep when ppp connects or disconnects'}</td>
 </tr>
 <tr>
-    <td colspan='2'><hr /></td>
+    <td colspan='2'></td>
 </tr>
 </table>
-<div align='center'>
-<table width='80%'>
+<div align='right'>
+<br>
+<table width='100%'>
 <tr>
-    <td width='50%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'restore defaults'}' /></td>
-    <td width='50%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+    <td width='90%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'restore defaults'}' /></td>
+    <td width='10%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 </div>

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-14  IPFire Team  <info@ipfire.org>                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.3.11
+VER        = 1.4.4
 
 THISAPP    = nginx-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = nginx
-PAK_VER	   = 1
+PAK_VER	   = 2
 
 ###############################################################################
 # Top-level Rules
@@ -42,11 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4d299999bca4d2cecfbe48e51684a345
-
-objects += nginx_tcp_proxy_module.tar.bz2
-nginx_tcp_proxy_module.tar.bz2 = $(DL_FROM)/nginx_tcp_proxy_module.tar.bz2
-nginx_tcp_proxy_module.tar.bz2_MD5 = f07898b5b783ef65d416019b51cb1de8
+$(DL_FILE)_MD5 = 5dfaba1cbeae9087f3949860a02caa9f
 
 install : $(TARGET)
 
@@ -80,7 +76,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && tar xvf $(DIR_SRC)/cache/nginx_tcp_proxy_module.tar.bz2 -C $(DIR_APP)	
-	cd $(DIR_APP) && patch -p1 < nginx_tcp_proxy_module/tcp.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr/share/nginx/ \
 		--conf-path=/etc/nginx/nginx.conf \
@@ -97,12 +92,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-imap --with-imap_ssl_module --with-http_ssl_module \
 		--with-http_stub_status_module \
 		--with-http_dav_module \
-		--with-http_sub_module \
-		--add-module=nginx_tcp_proxy_module/
+		--with-http_sub_module 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	mkdir -p /var/log/nginx /var/spool/nginx
 	cp /usr/src/config/nginx/nginx /etc/init.d/
 #	chown http:http /var/log/nginx
-#	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

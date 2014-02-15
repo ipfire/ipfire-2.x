@@ -20,8 +20,8 @@ etc/ld.so.conf
 etc/logrotate.conf
 etc/mime.types
 etc/modprobe.d
-etc/modprobe.d/cfg80211
-etc/modprobe.d/pcspeaker
+etc/modprobe.d/cfg80211.conf
+etc/modprobe.d/pcspeaker.conf
 etc/modules.conf
 etc/mtab
 etc/nsswitch.conf
@@ -41,6 +41,7 @@ etc/resolv.conf
 etc/securetty
 etc/sysctl.conf
 etc/syslog.conf
+etc/system-release
 #home
 home/nobody
 #lib
@@ -50,6 +51,10 @@ media/floppy
 media/usbkey
 mnt
 #opt
+#opt/pakfire
+#opt/pakfire/db
+#opt/pakfire/db/core
+opt/pakfire/db/core/mine
 #root
 root/.bash_logout
 root/.bash_profile
@@ -61,6 +66,9 @@ root/ipfire
 #usr/bin/perl
 #usr/include
 #usr/lib
+usr/lib/firewall
+usr/lib/firewall/firewall-lib.pl
+usr/lib/firewall/rules.pl
 #usr/lib/libgcc_s.so
 usr/lib/libgcc_s.so.1
 #usr/lib/libstdc++.la
@@ -86,6 +94,7 @@ usr/local/bin/scanhd
 usr/local/bin/setddns.pl
 usr/local/bin/settime
 usr/local/bin/timecheck
+usr/local/bin/timezone-transition
 #usr/local/bin/uname
 usr/local/bin/update-lang-cache
 #usr/local/include
@@ -128,6 +137,7 @@ usr/share/doc/licenses/GPLv3
 #usr/share/misc
 #usr/share/terminfo
 #usr/share/zoneinfo
+run
 #var
 #var/cache
 var/empty
@@ -146,7 +156,6 @@ var/log/wtmp
 var/mail
 #var/opt
 var/run
-var/run/utmp
 #var/spool
 var/tmp
 dev/console

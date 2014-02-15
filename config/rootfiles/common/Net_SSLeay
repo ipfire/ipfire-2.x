@@ -1,5 +1,6 @@
 #usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/Net/SSLeay
 usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/Net/SSLeay.pm
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/Net/SSLeay.pod
 usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/Net/SSLeay/Handle.pm
 #usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/SSLeay
 #usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/SSLeay/.packlist
@@ -36,6 +37,7 @@ usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/SSLeay/head_h
 usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/SSLeay/http_cat.al
 usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/SSLeay/https_cat.al
 usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/SSLeay/httpx_cat.al
+usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/SSLeay/initialize.al
 usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/SSLeay/make_form.al
 usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/SSLeay/make_headers.al
 usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/SSLeay/new_x_ctx.al

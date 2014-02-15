@@ -109,6 +109,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/bluez-hcidump-1.42 && make $(MAKETUNING)
 	cd $(DIR_SRC)/bluez-hcidump-1.42 && make install
 	mv -f /etc/udev/bluetooth.rules /lib/udev/rules.d/24-bluetooth.rules
+	# Patch udev rules for new udev version
+	sed -i -e "s/SYSFS{/ATTRS{/g" /lib/udev/rules.d/24-bluetooth.rules
+	sed -i -e "s/BUS==/SUBSYSTEMS==/g" /lib/udev/rules.d/24-bluetooth.rules
 	# Change bluetooth peername to Hostname-devicenumber
 	sed -i -e 's|name "BlueZ (%d)";|name "%h-%d";|g' /etc/bluetooth/hcid.conf
 	# Create empty config files

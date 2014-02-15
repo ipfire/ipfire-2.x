@@ -1,0 +1,31 @@
+diff -Brup a/stdlib/msort.c b/stdlib/msort.c
+--- a/stdlib/msort.c	2010-05-04 07:27:23.000000000 -0400
++++ b/stdlib/msort.c	2012-08-07 13:30:14.131765346 -0400
+@@ -25,6 +25,8 @@
+ #include <unistd.h>
+ #include <memcopy.h>
+ #include <errno.h>
++#include <atomic.h>
++
+ 
+ struct msort_param
+ {
+@@ -182,7 +184,7 @@ qsort_r (void *b, size_t n, size_t s, __
+       static long int phys_pages;
+       static int pagesize;
+ 
+-      if (phys_pages == 0)
++      if (pagesize == 0)
+ 	{
+ 	  phys_pages = __sysconf (_SC_PHYS_PAGES);
+ 
+@@ -197,6 +199,9 @@ qsort_r (void *b, size_t n, size_t s, __
+ 	     a quarter of the physical memory.  */
+ 	  phys_pages /= 4;
+ 
++          /* Make sure phys_pages is written to memory.  */
++          atomic_write_barrier ();
++
+ 	  pagesize = __sysconf (_SC_PAGESIZE);
+ 	}
+ 

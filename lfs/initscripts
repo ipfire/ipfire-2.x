@@ -157,6 +157,7 @@ $(TARGET) :
 	ln -sf ../init.d/leds        /etc/rc.d/rc6.d/K79leds
 	ln -sf ../init.d/fireinfo    /etc/rc.d/rc3.d/S15fireinfo
 	ln -sf ../init.d/mountkernfs /etc/rc.d/rcsysinit.d/S00mountkernfs
+	ln -sf ../init.d/sysctl      /etc/rc.d/rcsysinit.d/S01sysctl
 	ln -sf ../init.d/modules     /etc/rc.d/rcsysinit.d/S05modules
 	ln -sf ../init.d/udev        /etc/rc.d/rcsysinit.d/S10udev
 	ln -sf ../init.d/waitdrives  /etc/rc.d/rcsysinit.d/S19waitdrives
@@ -171,28 +172,24 @@ $(TARGET) :
 	ln -sf ../init.d/console     /etc/rc.d/rcsysinit.d/S70console
 	ln -sf ../init.d/firstsetup  /etc/rc.d/rcsysinit.d/S75firstsetup
 	ln -sf ../init.d/localnet    /etc/rc.d/rcsysinit.d/S80localnet
-	ln -sf ../init.d/sysctl      /etc/rc.d/rcsysinit.d/S90sysctl
+	ln -sf ../init.d/firewall    /etc/rc.d/rcsysinit.d/S85firewall
 	ln -sf ../init.d/network-vlans /etc/rc.d/rcsysinit.d/S91network-vlans
+	ln -sf ../init.d/rngd        /etc/rc.d/rcsysinit.d/S92rngd
 	ln -sf ../init.d/wlanclient  /etc/rc.d/rc0.d/K82wlanclient
 	ln -sf ../init.d/wlanclient  /etc/rc.d/rc3.d/S19wlanclient
 	ln -sf ../init.d/wlanclient  /etc/rc.d/rc6.d/K82wlanclient
 
 	ln -sf ../../dnsmasq /etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq
 	ln -sf ../../firewall /etc/rc.d/init.d/networking/red.up/20-RL-firewall
-	ln -sf ../../../../../usr/local/bin/outgoingfwctrl \
-		/etc/rc.d/init.d/networking/red.up/22-outgoingfwctrl
+	ln -sf ../../../../../usr/local/bin/firewallctrl \
+		/etc/rc.d/init.d/networking/red.up/22-forwardfwctrl
 	ln -sf ../../../../../usr/local/bin/snortctrl \
 		/etc/rc.d/init.d/networking/red.up/23-RS-snort
 	ln -sf ../../../../../usr/local/bin/qosctrl \
 		/etc/rc.d/init.d/networking/red.up/24-RS-qos
-	ln -sf ../../../../../usr/local/bin/setportfw \
-		/etc/rc.d/init.d/networking/red.up/25-portfw
-	ln -sf ../../../../../usr/local/bin/setxtaccess \
-		/etc/rc.d/init.d/networking/red.up/26-xtaccess
 	ln -sf ../../../../../usr/local/bin/dialctrl.pl \
 		/etc/rc.d/init.d/networking/red.up/99-U-dialctrl.pl
 	ln -sf ../../squid /etc/rc.d/init.d/networking/red.up/27-RS-squid
-	
 	ln -sf ../../dnsmasq /etc/rc.d/init.d/networking/red.down/05-RS-dnsmasq
 	ln -sf ../../firewall /etc/rc.d/init.d/networking/red.down/20-RL-firewall
 	ln -sf ../../../../../usr/local/bin/dialctrl.pl \

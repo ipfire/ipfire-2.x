@@ -182,7 +182,7 @@ my $thiscode = '$temp =~ /$filter/;';
 eval($thiscode);
 if ($@ ne '')
 {
-    $errormessage = "$Lang::tr{'bad ignore filter'}.$@<P>";
+    $errormessage = "$Lang::tr{'bad ignore filter'}.$@<p>";
     $filter = '';
 } else {
     my $loop = 1;
@@ -437,22 +437,25 @@ if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @log = reverse @log; }
 print "<p><b>$Lang::tr{'web hits'} $daystr: $lines</b></p>";
 if ($lines != 0) { &oldernewer(); }
 print <<END
-<table width='100%'>
+<table width='100%' class='tbl'>
 <tr>
-<td width='10%' align='center' class='boldbase'><b>$Lang::tr{'time'}</b></td>
-<td width='15%' align='center' class='boldbase'><b>$Lang::tr{'source ip'}</b></td>
-<td width='12%' align='center' class='boldbase'><b>$Lang::tr{'advproxy NCSA username'}</b></td>
-<td width='63%' align='center' class='boldbase'><b>$Lang::tr{'website'}</b></td>
+<th width='10%' align='center' class='boldbase'><b>$Lang::tr{'time'}</b></th>
+<th width='15%' align='center' class='boldbase'><b>$Lang::tr{'source ip'}</b></th>
+<th width='12%' align='center' class='boldbase'><b>$Lang::tr{'advproxy NCSA username'}</b></th>
+<th width='63%' align='center' class='boldbase'><b>$Lang::tr{'website'}</b></th>
 </tr>
 END
 ;
 my $ll = 0;
+my $col='';
 foreach $_ (@log)
 {
 	if ($ll % 2) {
-		print "<tr bgcolor='$color{'color20'}'>\n"; }
+		print "<tr>";
+		$col="bgcolor='$color{'color20'}'"; }
 	else {
-		print "<tr bgcolor='$color{'color20'}'>\n"; }
+		print "<tr>";
+		$col="bgcolor='$color{'color22'}'"; }
 	my ($datetime,$ip,$so,$url) = split;
         my ($SECdt, $MINdt, $HOURdt, $DAYdt, $MONTHdt, $YEARdt) = localtime($datetime);
 	$SECdt = sprintf ("%.02d",$SECdt);
@@ -470,10 +473,10 @@ foreach $_ (@log)
 	    $DAYdt='';
 	}
 	print <<END
-	<td align='center'>$DAYdt$HOURdt:$MINdt:$SECdt</td>
-	<td align='center'>$ip</td>
-	<td align='center'>$so</td>
-	<td align='left'><a href='$url' title='$url' target='_new'>$part</a></td>
+	<td align='center' $col>$DAYdt$HOURdt:$MINdt:$SECdt</td>
+	<td align='center' $col>$ip</td>
+	<td align='center' $col>$so</td>
+	<td align='left' $col><a href='$url' title='$url' target='_new'>$part</a></td>
 </tr>
 END
 	;

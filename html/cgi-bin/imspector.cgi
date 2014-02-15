@@ -92,7 +92,7 @@ sub scriptheader
 	my $conversation = sprintf( "%.4d-%.2d-%.2d", $year, $mon, $mday );
 
 	my $script = qq {
-<script language="Javascript">
+<script type="text/javascript">
 var section	     ='none';
 var moveit   	     = 1;
 var skimhtml 	     = 1;
