@@ -1,0 +1,54 @@
+commit 3056dcdb783a177158a5617657d1a33f872358d6
+Author: Ulrich Drepper <drepper@redhat.com>
+Date:   Mon Nov 22 11:11:24 2010 -0500
+
+    Fix multiple nss_compat initgroups() bugs
+    
+    Compat initgroups() is completely broken; the code will always set
+    skip_initgroups_dyn to true, so initgroups() will never be actually
+    called, but due to the nature of the code, setgrent() won't be called
+    either - thus, subsequent invocations of initgroups() will not return
+    the NIS group list anymore.
+    
+    This is a simple patch that makes sure skip_initgroups_dyn is set only
+    in case initgroups is not available; it also attempts to handle the
+    unavailability of other NSS interfaces better.
+    
+    Conflicts:
+    
+    	ChangeLog
+
+diff --git a/nis/nss_compat/compat-initgroups.c b/nis/nss_compat/compat-initgroups.c
+index 07a3b92..de8d95c 100644
+--- a/nis/nss_compat/compat-initgroups.c
++++ b/nis/nss_compat/compat-initgroups.c
+@@ -474,18 +474,21 @@ internal_getgrent_r (ent_t *ent, char *buffer, size_t buflen, const char *user,
+ 	  /* If the selected module does not support getgrent_r or
+ 	     initgroups_dyn, abort. We cannot find the needed group
+ 	     entries.  */
+-	  if (nss_getgrent_r == NULL && nss_initgroups_dyn == NULL)
++	  if (nss_initgroups_dyn == NULL || nss_getgrgid_r == NULL)
++	    {
++	      if (nss_setgrent != NULL)
++	        {
++		  nss_setgrent (1);
++		  ent->need_endgrent = true;
++		}
++	      ent->skip_initgroups_dyn = true;
++	    }
++
++	  if (ent->skip_initgroups_dyn && nss_getgrent_r == NULL)
+ 	    return NSS_STATUS_UNAVAIL;
+ 
+ 	  ent->files = false;
+ 
+-	  if (nss_initgroups_dyn == NULL && nss_setgrent != NULL)
+-	    {
+-	      nss_setgrent (1);
+-	      ent->need_endgrent = true;
+-	    }
+-	  ent->skip_initgroups_dyn = true;
+-
+ 	  return getgrent_next_nss (ent, buffer, buflen, user, group,
+ 				    start, size, groupsp, limit, errnop);
+ 	}

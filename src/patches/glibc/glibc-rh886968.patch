@@ -1,0 +1,33 @@
+diff -Nrup a/elf/dl-load.c b/elf/dl-load.c
+--- a/elf/dl-load.c	2013-01-10 08:57:20.098898830 -0500
++++ b/elf/dl-load.c	2013-01-10 12:04:48.155962895 -0500
+@@ -819,7 +819,7 @@ lose (int code, int fd, const char *name
+     {
+       r->r_state = RT_CONSISTENT;
+       _dl_debug_state ();
+-      LIBC_PROBE (rtld_map_complete, 2, nsid, r);
++      LIBC_PROBE (rtld_map_complete, 3, nsid, r, NULL);
+     }
+ 
+   _dl_signal_error (code, name, NULL, msg);
+diff -Nrup a/elf/dl-open.c b/elf/dl-open.c
+--- a/elf/dl-open.c	2013-01-10 08:57:19.917897417 -0500
++++ b/elf/dl-open.c	2013-01-10 12:06:04.644775710 -0500
+@@ -298,7 +298,7 @@ dl_open_worker (void *a)
+   struct r_debug *r = _dl_debug_initialize (0, args->nsid);
+   r->r_state = RT_CONSISTENT;
+   _dl_debug_state ();
+-  LIBC_PROBE (rtld_map_complete, 2, args->nsid, r);
++  LIBC_PROBE (rtld_map_complete, 3, args->nsid, r, new);
+ 
+   /* Only do lazy relocation if `LD_BIND_NOW' is not set.  */
+   int reloc_mode = mode & __RTLD_AUDIT;
+@@ -472,7 +472,7 @@ TLS generation counter wrapped!  Please 
+ 
+   /* Notify the debugger all new objects have been relocated.  */
+   if (relocation_in_progress)
+-    LIBC_PROBE (rtld_reloc_complete, 2, args->nsid, r);
++    LIBC_PROBE (rtld_reloc_complete, 3, args->nsid, r, new);
+ 
+   /* Run the initializer functions of new objects.  */
+   _dl_init (new, args->argc, args->argv, args->env);

@@ -1,0 +1,72 @@
+diff -rup a/sysdeps/ieee754/dbl-64/slowexp.c b/sysdeps/ieee754/dbl-64/slowexp.c
+--- a/sysdeps/ieee754/dbl-64/slowexp.c	2012-01-01 05:16:32.000000000 -0700
++++ b/sysdeps/ieee754/dbl-64/slowexp.c	2012-03-13 11:57:51.225330782 -0600
+@@ -31,6 +31,8 @@
+ #include "mpa.h"
+ #include "math_private.h"
+ 
++#include <stap-probe.h>
++
+ void __mpexp(mp_no *x, mp_no *y, int p);
+ 
+ /*Converting from double precision to Multi-precision and calculating  e^x */
+@@ -61,12 +63,21 @@ __slowexp(double x) {
+   __sub(&mpy,&mpcor,&mpz,p);
+   __mp_dbl(&mpw, &w, p);
+   __mp_dbl(&mpz, &z, p);
+-  if (w == z) return w;
++  if (w == z) {
++    /* Track how often we get to the slow exp code plus
++       its input/output values.  */
++    LIBC_PROBE (slowexp_p6, 2, &x, &w);
++    return w;
++  }
+   else  {                   /* if calculating is not exactly   */
+     p = 32;
+     __dbl_mp(x,&mpx,p);
+     __mpexp(&mpx, &mpy, p);
+     __mp_dbl(&mpy, &res, p);
++ 
++    /* Track how often we get to the uber-slow exp code plus
++       its input/output values.  */
++    LIBC_PROBE (slowexp_p32, 2, &x, &res);
+     return res;
+   }
+ }
+diff -rup a/sysdeps/ieee754/dbl-64/slowpow.c b/sysdeps/ieee754/dbl-64/slowpow.c
+--- a/sysdeps/ieee754/dbl-64/slowpow.c	2012-01-01 05:16:32.000000000 -0700
++++ b/sysdeps/ieee754/dbl-64/slowpow.c	2012-03-13 11:57:59.865284437 -0600
+@@ -35,6 +35,8 @@
+ #include "mpa.h"
+ #include "math_private.h"
+ 
++#include <stap-probe.h>
++
+ void __mpexp(mp_no *x, mp_no *y, int p);
+ void __mplog(mp_no *x, mp_no *y, int p);
+ double ulog(double);
+@@ -66,7 +68,12 @@ __slowpow(double x, double y, double z)
+   __mp_dbl(&mpr, &res, p);
+   __sub(&mpp,&eps,&mpr1,p);   /*  pp -eps =r1 */
+   __mp_dbl(&mpr1, &res1, p);  /*  converting into double precision */
+-  if (res == res1) return res;
++  if (res == res1) {
++    /* Track how often we get to the slow pow code plus
++       its input/output values.  */
++    LIBC_PROBE (slowpow_p10, 4, &x, &y, &z, &res);
++    return res;
++  }
+ 
+   p = 32;     /* if we get here result wasn't calculated exactly, continue */
+   __dbl_mp(x,&mpx,p);                          /* for more exact calculation */
+@@ -76,5 +83,10 @@ __slowpow(double x, double y, double z)
+   __mul(&mpy,&mpz,&mpw,p);  /* y*z =w    */
+   __mpexp(&mpw, &mpp, p);   /* e^w=pp    */
+   __mp_dbl(&mpp, &res, p);  /* converting into double precision */
++
++  /* Track how often we get to the uber-slow pow code plus
++     its input/output values.  */
++    LIBC_PROBE (slowpow_p32, 4, &x, &y, &z, &res);
++
+   return res;
+ }

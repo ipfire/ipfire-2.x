@@ -1,0 +1,24 @@
+diff -pruN glibc-2.18/nscd/aicache.c glibc-2.18.new/nscd/aicache.c
+--- glibc-2.18/nscd/aicache.c	2013-08-11 04:22:55.000000000 +0530
++++ glibc-2.18.new/nscd/aicache.c	2013-08-26 11:10:25.843470413 +0530
+@@ -25,6 +25,7 @@
+ #include <time.h>
+ #include <unistd.h>
+ #include <sys/mman.h>
++#include <resolv/res_hconf.h>
+ 
+ #include "dbg_log.h"
+ #include "nscd.h"
+@@ -100,8 +101,11 @@ addhstaiX (struct database_dyn *db, int
+     no_more = __nss_database_lookup ("hosts", NULL,
+ 				     "dns [!UNAVAIL=return] files", &nip);
+ 
++  /* Initialize configurations.  */
++  if (__builtin_expect (!_res_hconf.initialized, 0))
++    _res_hconf_init ();
+   if (__res_maybe_init (&_res, 0) == -1)
+-	    no_more = 1;
++    no_more = 1;
+ 
+   /* If we are looking for both IPv4 and IPv6 address we don't want
+      the lookup functions to automatically promote IPv4 addresses to

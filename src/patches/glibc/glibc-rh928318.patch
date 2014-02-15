@@ -1,0 +1,31 @@
+diff --git a/resolv/res_init.c b/resolv/res_init.c
+index 40dbe7d..202569d 100644
+--- a/resolv/res_init.c
++++ b/resolv/res_init.c
+@@ -176,13 +176,6 @@ __res_vinit(res_state statp, int preinit) {
+ 		statp->id = res_randomid();
+ 	}
+ 
+-#ifdef USELOOPBACK
+-	statp->nsaddr.sin_addr = inet_makeaddr(IN_LOOPBACKNET, 1);
+-#else
+-	statp->nsaddr.sin_addr.s_addr = INADDR_ANY;
+-#endif
+-	statp->nsaddr.sin_family = AF_INET;
+-	statp->nsaddr.sin_port = htons(NAMESERVER_PORT);
+ 	statp->nscount = 0;
+ 	statp->ndots = 1;
+ 	statp->pfcode = 0;
+@@ -433,6 +426,12 @@ __res_vinit(res_state statp, int preinit) {
+ #endif
+ 	    (void) fclose(fp);
+ 	}
++	if (__builtin_expect(statp->nscount == 0, 0)) {
++	    statp->nsaddr.sin_addr = inet_makeaddr(IN_LOOPBACKNET, 1);
++	    statp->nsaddr.sin_family = AF_INET;
++	    statp->nsaddr.sin_port = htons(NAMESERVER_PORT);
++	    statp->nscount = 1;
++	}
+ 	if (statp->defdname[0] == 0 &&
+ 	    __gethostname(buf, sizeof(statp->defdname) - 1) == 0 &&
+ 	    (cp = strchr(buf, '.')) != NULL)

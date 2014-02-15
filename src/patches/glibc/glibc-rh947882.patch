@@ -1,0 +1,63 @@
+#
+# Backport from upstream:
+#
+# From 1cef1b19089528db11f221e938f60b9b048945d7 Mon Sep 17 00:00:00 2001
+# From: Andreas Schwab <schwab@suse.de>
+# Date: Thu, 21 Mar 2013 15:50:27 +0100
+# Subject: [PATCH] Fix stack overflow in getaddrinfo with many results
+#
+# ---
+# ChangeLog                   |    6 ++++++
+# NEWS                        |    5 ++++-
+# sysdeps/posix/getaddrinfo.c |   23 +++++++++++++++++++++--
+# 3 files changed, 31 insertions(+), 3 deletions(-)
+#
+# 2013-04-03  Andreas Schwab  <schwab@suse.de>
+#
+#	[BZ #15330]
+#	* sysdeps/posix/getaddrinfo.c (getaddrinfo): Allocate results and
+#	order arrays from heap if bigger than alloca cutoff.
+#
+diff -urN glibc-2.12-2-gc4ccff1.orig/sysdeps/posix/getaddrinfo.c glibc-2.12-2-gc4ccff1/sysdeps/posix/getaddrinfo.c
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/posix/getaddrinfo.c	2013-07-24 20:40:37.601887975 -0400
++++ glibc-2.12-2-gc4ccff1/sysdeps/posix/getaddrinfo.c	2013-07-24 20:54:32.722447705 -0400
+@@ -2386,11 +2386,27 @@
+       __typeof (once) old_once = once;
+       __libc_once (once, gaiconf_init);
+       /* Sort results according to RFC 3484.  */
+-      struct sort_result results[nresults];
+-      size_t order[nresults];
++      struct sort_result *results;
++      size_t *order;
+       struct addrinfo *q;
+       struct addrinfo *last = NULL;
+       char *canonname = NULL;
++      bool malloc_results;
++
++      malloc_results
++	= !__libc_use_alloca (nresults * (sizeof (*results) + sizeof (*order)));
++      if (malloc_results)
++	{
++	  results = malloc (nresults * (sizeof (*results) + sizeof (*order)));
++	  if (results == NULL)
++	    {
++	      free (in6ai);
++	      return EAI_MEMORY;
++	    }
++	}
++      else
++	results = alloca (nresults * (sizeof (*results) + sizeof (*order)));
++      order = (size_t *) (results + nresults);
+ 
+       /* If we have information about deprecated and temporary addresses
+ 	 sort the array now.  */
+@@ -2557,6 +2573,9 @@
+ 
+       /* Fill in the canonical name into the new first entry.  */
+       p->ai_canonname = canonname;
++
++      if (malloc_results)
++	free (results);
+     }
+ 
+   free (in6ai);
