@@ -46,6 +46,27 @@ foreach (@modems){
 	my $lines=0;
 	print "<center><table>";
 	my $modem=$_;
+	my @pfile = `grep . /sys/class/atm/$modem/parameters/* 2>/dev/null`;
+	foreach (@pfile){
+		chomp($_);
+		my $param= `echo $_ | cut -d'/' -f7 | cut -d':' -f1`;
+		my $value= `cat /sys/class/atm/$modem/parameters/$param`;
+		chomp($param);
+		chomp($value);
+		if (!($param =~"uevent") 
+		  && !($param =~"resource")
+		  && !($param eq "")
+ 		) {
+				
+			$lines++;
+			if ($lines % 2){
+		    		print "<tr bgcolor='$color{'color22'}'>";
+			}else{
+				print "<tr bgcolor='$color{'color20'}'>";
+			}
+			print "<td align='left'>$param</td><td align='left'>$value</td> ";		
+		}
+	}
 	my @pfile = `grep . /sys/class/atm/$modem/device/* 2>/dev/null`;
 	foreach (@pfile){
 		chomp($_);
@@ -58,6 +79,8 @@ foreach (@modems){
 		  && !($param =~"bInterface")
 		  && !($param =~"bAlternateSetting")
 		  && !($param =~"bNumEndpoints")
+		  && !($param =~"config matches")
+		  && !($param =~"resource")
 		  && !($param eq "")
  		) {
 				
