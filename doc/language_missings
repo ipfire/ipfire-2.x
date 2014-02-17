@@ -101,6 +101,7 @@
 < fireinfo why read more
 < fireinfo your profile id
 < firewall rules
+< first
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -282,6 +283,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -541,6 +543,7 @@
 < fireinfo why read more
 < fireinfo your profile id
 < firewall rules
+< first
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -722,6 +725,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -965,6 +969,7 @@
 < extrahd unable to write
 < extrahd you cant mount
 < firewall rules
+< first
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -1146,6 +1151,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -1377,6 +1383,7 @@
 < extrahd unable to write
 < extrahd you cant mount
 < firewall rules
+< first
 < forward firewall
 < frequency
 < fw default drop
@@ -1561,6 +1568,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter

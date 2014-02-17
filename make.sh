@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2013 IPFire Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2014 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.15"							# Version number
-CORE="76-beta1"							# Core Level (Filename)
+CORE="76-beta2"							# Core Level (Filename)
 PAKFIRE_CORE="76"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -718,7 +718,6 @@ buildipfire() {
   ipfiremake perl-DBD-mysql
   ipfiremake perl-DBD-SQLite
   ipfiremake perl-File-ReadBackwards
-  ipfiremake perl-PDF-Create
   ipfiremake cacti
   ipfiremake icecc
   ipfiremake openvmtools

@@ -990,9 +990,9 @@ sub updateqosgraph {
 				push(@command, "DEF:$classline[1]=$mainsettings{'RRDLOG'}/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bytes:AVERAGE");
 
 				if ($count eq "1") {
-					push(@command, "AREA:$classline[1]$color:Klasse $classline[1] -".sprintf("%15s",$classline[8]));
+					push(@command, "AREA:$classline[1]$color:$Lang::tr{'Class'} $classline[1] -".sprintf("%15s",$classline[8]));
 				} else {
-					push(@command, "STACK:$classline[1]$color:Klasse $classline[1] -".sprintf("%15s",$classline[8]));
+					push(@command, "STACK:$classline[1]$color:$Lang::tr{'Class'} $classline[1] -".sprintf("%15s",$classline[8]));
 
 				}
 

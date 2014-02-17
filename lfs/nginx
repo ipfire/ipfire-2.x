@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = nginx
-PAK_VER	   = 2
+PAK_VER	   = 3
 
 ###############################################################################
 # Top-level Rules
@@ -75,7 +75,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && tar xvf $(DIR_SRC)/cache/nginx_tcp_proxy_module.tar.bz2 -C $(DIR_APP)	
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr/share/nginx/ \
 		--conf-path=/etc/nginx/nginx.conf \
@@ -97,6 +96,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	mkdir -p /var/log/nginx /var/spool/nginx
 	cp /usr/src/config/nginx/nginx /etc/init.d/
-#	chown http:http /var/log/nginx
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

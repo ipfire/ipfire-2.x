@@ -796,7 +796,7 @@ sub changedefclasses {
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
 		<tr><td width='100%' colspan='3'>$Lang::tr{'no filter pass'}
-		<tr><td width='33%' align='right'>Download:<td width='33%' align='left'><select name='DEFCLASS_INC'>
+		<tr><td width='33%' align='right'>$Lang::tr{'download'}:<td width='33%' align='left'><select name='DEFCLASS_INC'>
 END
 ;
 		for ( $c = 200 ; $c <= 220 ; $c++ )
@@ -807,7 +807,7 @@ END
 		}
 		print <<END
 		</select><td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Upload:<td width='33%' align='left'><select name='DEFCLASS_OUT'>
+		<tr><td width='33%' align='right'>$Lang::tr{'upload'}:<td width='33%' align='left'><select name='DEFCLASS_OUT'>
 END
 ;
 		for ( $c = 100 ; $c <= 120 ; $c++ )
