@@ -63,7 +63,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
 	close (FILE);
 	if ( $found == 0 )
 	{
-		$errormessage="$errormessage<P>$Lang::tr{'invalid input'}";
+		$errormessage="$errormessage<p>$Lang::tr{'invalid input'}</p>";
 		goto SAVE_ERROR;
 	}
 

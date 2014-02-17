@@ -151,7 +151,7 @@ sub openpage {
     $extrahead
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="/themes/maniac/include/style.css" />
-    <script language="javascript" type="text/javascript">
+    <script type="text/javascript">
       
         function swapVisibility(id) {
             el = document.getElementById(id);
@@ -284,7 +284,7 @@ END
     print <<END
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="/include/style.css" />
-    <script language="javascript" type="text/javascript">
+    <script type="text/javascript">
       
         function swapVisibility(id) {
             el = document.getElementById(id);

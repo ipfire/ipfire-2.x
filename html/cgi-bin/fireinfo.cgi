@@ -79,7 +79,7 @@ END
 
 if ($errormessage) {
 	&Header::openbox('100%', 'left', "$Lang::tr{'error messages'}");
-	print "<FONT CLASS='base'>$errormessage&nbsp;</FONT>\n";
+	print "<font class='base'>$errormessage&nbsp;</font>\n";
 	&Header::closebox();
 }
 
