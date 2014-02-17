@@ -409,9 +409,9 @@ print <<END
 <TABLE WIDTH='100%' CLASS='tbl'>
 <TR>
 <TH WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'></TH>
-<TH WIDTH='33%' ALIGN='CENTER' CLASS='boldbase'><B>Port</B></TH>
+<TH WIDTH='33%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'port'}</B></TH>
 <TH WIDTH='33%' ALIGN='CENTER' CLASS='boldbase'><B>Count</B></TH>
-<TH WIDTH='33%' ALIGN='CENTER' CLASS='boldbase'><B>Percent</B></TH>
+<TH WIDTH='33%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'percentage'}</B></TH>
 </TR>
 END
 ;

@@ -152,7 +152,7 @@ END
 
 	for(my $i = 1; $i <= $#iostat1; $i++){
 		if ( $i eq '1' ){
-			print "<tr><td align='center' class='boldbase'><b>Device</b></td><td align='center' class='boldbase'><b>MB read</b></td><td align='center' class='boldbase'><b>MB writen</b></td></tr>";
+			print "<tr><td align='center' class='boldbase'><b>$Lang::tr{'device'}</b></td><td align='center' class='boldbase'><b>MB read</b></td><td align='center' class='boldbase'><b>MB writen</b></td></tr>";
 		}else{
 			print "<tr><td align='center'>$iostat1[$i]</td><td align='center'>$iostat2[$i]</td><td align='center'>$iostat3[$i]</td></tr>";
 		}
@@ -206,7 +206,7 @@ sub diskbox {
 
 		if ( $status[1]=~/standby/){
 			my $ftime = localtime((stat("/var/run/hddshutdown-$disk"))[9]);
-			print"<B>Disk $disk status:<font color=#FF0000>".$status[1]."</font></B> (since $ftime)";
+			print"<B>Disk $disk status:<font color=#FF0000>".$status[1]."</font></B> ($Lang::tr{'since'} $ftime)";
 		}else{
 			print"<B>Disk $disk status:<font color=#00FF00>".$status[1]."</font></B>";
 		}

@@ -317,7 +317,7 @@ print <<END
         <th align='center' class='boldbase'><b>$Lang::tr{'proto'}</b></th>
         <th align='center' class='boldbase'><b>$Lang::tr{'source'}<br/>$Lang::tr{'destination'}</b></th>
         <th align='center' class='boldbase'><b>$Lang::tr{'src port'}<br />$Lang::tr{'dst port'}</b></th>
-        <th align='center' class='boldbase'><b>Flag</b></th>
+        <th align='center' class='boldbase'><b>$Lang::tr{'country'}</b></th>
         <th align='center' class='boldbase'><b>$Lang::tr{'mac address'}</b></th>
 </tr>
 END
