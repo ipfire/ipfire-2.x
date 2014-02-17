@@ -58,7 +58,7 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} ne $Lang::tr{'update'})
 	$start = $temp[0];
 	$cgiparams{'MONTH'} = $temp[1];
 	$cgiparams{'DAY'} = $temp[2];
-	$cgiparams{ip} = $temp[3];
+	$cgiparams{country} = $temp[3];
 }
 
 if (!($cgiparams{'MONTH'} =~ /^(0|1|2|3|4|5|6|7|8|9|10|11)$/) ||
@@ -156,8 +156,8 @@ my $gi = Geo::IP::PurePerl->new();
 
 if (!$skip)
 {
-        while (<FILE>)
-        {
+    while (<FILE>)
+    {
 	 	if (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {
             if($_ =~  /SRC\=([\d\.]+)/){
                 my $srcaddr=$1;
@@ -252,7 +252,7 @@ print <<END
 <td width='5%'  align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day before'}' value='&lt;&lt;' /></td>
 <td width='5%'  align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day after'}' value='&gt;&gt;' /></td>
 <td width='10%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
-<tr><td width='15%'>$Lang::tr{'source ip'}</td><td><input type='text' name='ip' value='$cgiparams{ip}'size='15'></td></tr>
+<tr><td width='15%'>$Lang::tr{'source ip country'}</td><td><input type='text' name='country' value='$cgiparams{country}'size='15'></td></tr>
 </tr>
 </table>
 </form>
@@ -279,17 +279,17 @@ if ($start == 0) { $prev = -1; }
 if ($lines != 0) { &oldernewer(); }
 
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'time'}</B></TD>
-<TD WIDTH='13%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'chain'}</B></TD>
-<TD WIDTH='5%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'iface'}</B></TD>
-<TD WIDTH='5%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'proto'}</B></TD>
-<TD WIDTH='16%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'source'}</B></TD>
-<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'src port'}</B></TD>
-<TD WIDTH='16%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'destination'}</B></TD>
-<TD WIDTH='16%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'dst port'}</B></TD>
-</TR>
+<table width='100%'>
+<tr>
+<td width='10%' align='center' class='boldbase'><b>$Lang::tr{'time'}</b></td>
+<td width='13%' align='center' class='boldbase'><b>$Lang::tr{'chain'}</b></td>
+<td width='5%' align='center' class='boldbase'><b>$Lang::tr{'iface'}</b></td>
+<td width='5%' align='center' class='boldbase'><b>$Lang::tr{'proto'}</b></td>
+<td width='16%' align='center' class='boldbase'><b>$Lang::tr{'source'}</b></td>
+<td width='10%' align='center' class='boldbase'><b>$Lang::tr{'src port'}</b></td>
+<td width='16%' align='center' class='boldbase'><b>$Lang::tr{'destination'}</b></td>
+<td width='16%' align='center' class='boldbase'><b>$Lang::tr{'dst port'}</b></td>
+</tr>
 END
 ;
 
@@ -305,57 +305,57 @@ foreach $_ (@slice)
     my $srcaddr=$1;
     my $ccode = $gi->country_code_by_name($srcaddr);
     if($ccode eq $country){
-	my $chain = '';
-      	my $in = '-'; my $out = '-';
-	my $srcaddr = ''; my $dstaddr = '';
-	my $protostr = '';
-	my $srcport = ''; my $dstport = '';
+	  my $chain = '';
+      my $in = '-'; my $out = '-';
+      my $srcaddr = ''; my $dstaddr = '';
+      my $protostr = '';
+      my $srcport = ''; my $dstport = '';
 
-	$_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/;
-	my $timestamp = $1; my $chain = $2; my $packet = $3;
-	$timestamp =~ /(...) (..) (..:..:..)/;
-	my $month = $1; my $day = $2; my $time = $3;
+      $_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/;
+      my $timestamp = $1; my $chain = $2; my $packet = $3;
+      $timestamp =~ /(...) (..) (..:..:..)/;
+      my $month = $1; my $day = $2; my $time = $3;
 
-	if ($a =~ /IN\=(\w+)/) { $iface = $1; }
-	if ($a =~ /OUT\=(\w+)/) { $out = $1; }
-	if ($a =~ /SRC\=([\d\.]+)/) { $srcaddr = $1; }
-	if ($a =~ /DST\=([\d\.]+)/) { $dstaddr = $1; }
-	if ($a =~ /PROTO\=(\w+)/) { $protostr = $1; }
-	my $protostrlc = lc($protostr);
-	if ($a =~  /SPT\=([\d\.]+)/){ $srcport = $1; }
-	if ($a =~  /DPT\=([\d\.]+)/){ $dstport = $1; }
+      if ($a =~ /IN\=(\w+)/) { $iface = $1; }
+      if ($a =~ /OUT\=(\w+)/) { $out = $1; }
+      if ($a =~ /SRC\=([\d\.]+)/) { $srcaddr = $1; }
+      if ($a =~ /DST\=([\d\.]+)/) { $dstaddr = $1; }
+      if ($a =~ /PROTO\=(\w+)/) { $protostr = $1; }
+      my $protostrlc = lc($protostr);
+      if ($a =~  /SPT\=([\d\.]+)/){ $srcport = $1; }
+      if ($a =~  /DPT\=([\d\.]+)/){ $dstport = $1; }
 
-	if ($lines % 2) {
-		print "<tr bgcolor='${Header::table1colour}'>\n"; }
-	else {
-		print "<tr bgcolor='${Header::table2colour}'>\n"; }
-	print <<END
-	<TD ALIGN='CENTER'>$time</TD>
-	<TD ALIGN='CENTER'>$chain</TD>
-	<TD ALIGN='CENTER'>$iface</TD>
-	<TD ALIGN='CENTER'>$protostr</TD>
-	<td align='center'>
-	<table width='100%' cellpadding='0' cellspacing='0'><tr>
-	<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a></td>
-	</tr></table>
-	</td>
-	<TD ALIGN='CENTER'>$srcport</TD>
-	<td align='center'>
-	<table width='100%' cellpadding='0' cellspacing='0'><tr>
-	<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$dstaddr'>$dstaddr</a></td>
-	</tr></table>
-	</td>
-	<TD ALIGN='CENTER'>$dstport</TD>
-</TR>
+      if ($lines % 2) {
+        print "<tr bgcolor='${Header::table1colour}'>\n"; }
+      else {
+        print "<tr bgcolor='${Header::table2colour}'>\n"; }
+      print <<END
+      <td align='center'>$time</td>
+      <td align='center'>$chain</td>
+      <td align='center'>$iface</td>
+      <td align='center'>$protostr</td>
+      <td align='center'>
+      <table width='100%' cellpadding='0' cellspacing='0'><tr>
+      <td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a></td>
+      </tr></table>
+      </td>
+      <td align='center'>$srcport</td>
+      <td align='center'>
+      <table width='100%' cellpadding='0' cellspacing='0'><tr>
+      <td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$dstaddr'>$dstaddr</a></td>
+      </tr></table>
+      </td>
+      <td align='center'>$dstport</td>
+      </tr>
 END
 	;
-       $lines++;
+      $lines++;
     }
   }
 }
 
 print <<END
-</TABLE>
+</table>
 END
 ;
 
@@ -369,29 +369,30 @@ END
 
 sub oldernewer
 {
-print <<END
-<table width='100%'>
-<tr>
+  print <<END
+  <table width='100%'>
+  <tr>
 END
 ;
 
-print "<td align='center' width='50%'>";
-if ($prev != -1) {
-	print "<a href='/cgi-bin/logs.cgi/showrequestfromip.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{ip}'>$Lang::tr{'older'}</a>"; }
-else {
-	print "$Lang::tr{'older'}"; }
-print "</td>\n";
+  print "<td align='center' width='50%'>";
+  if ($prev != -1) {
+    print "<a href='/cgi-bin/logs.cgi/showrequestfromcountry.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{country}'>$Lang::tr{'older'}</a>"; }
+  else {
+    print "$Lang::tr{'older'}"; }
+  print "</td>\n";
 
-print "<td align='center' width='50%'>";
-if ($next != -1) {
-	print "<a href='/cgi-bin/logs.cgi/showrequestfromip.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{ip}'>$Lang::tr{'newer'}</a>"; }
-else {
-	print "$Lang::tr{'newer'}"; }
-print "</td>\n";
+  print "<td align='center' width='50%'>";
+  if ($next != -1) {
+    print "<a href='/cgi-bin/logs.cgi/showrequestfromcountry.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{country}'>$Lang::tr{'newer'}</a>"; }
+  else {
+   print "$Lang::tr{'newer'}"; }
+  print "</td>\n";
 
 print <<END
-</tr>
-</table>
+  </tr>
+  </table>
 END
 ;
 }
+

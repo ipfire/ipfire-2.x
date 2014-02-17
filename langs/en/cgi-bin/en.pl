@@ -1942,6 +1942,7 @@
 'source ip' => 'Source IP',
 'source ip and port' => 'Source IP: Port',
 'source ip bad' => 'Not a valid IP address or a network address.',
+'source ip country' => 'Source IP Country',
 'source ip in use' => 'Source IP in use:',
 'source ip or net' => 'Source IP or Net',
 'source net' => 'Source Net',

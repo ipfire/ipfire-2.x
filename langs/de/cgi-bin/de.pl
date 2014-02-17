@@ -1907,6 +1907,7 @@
 'source ip' => 'Quell-IP-Adresse',
 'source ip and port' => 'Quell-IP:Port',
 'source ip bad' => 'Ungültige Quell-IP-Adresse.',
+'source ip country' => 'Quell-IP-Adresse Land',
 'source ip in use' => 'Benutzte Quell-IP:',
 'source ip or net' => 'Quellen-IP oder Netz',
 'source net' => 'Quell-Netz',
