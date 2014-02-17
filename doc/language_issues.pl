@@ -653,6 +653,7 @@ WARNING: untranslated string: fireinfo why enable
 WARNING: untranslated string: fireinfo why read more
 WARNING: untranslated string: fireinfo your profile id
 WARNING: untranslated string: firewall rules
+WARNING: untranslated string: first
 WARNING: untranslated string: fw default drop
 WARNING: untranslated string: fw settings
 WARNING: untranslated string: fw settings color
@@ -803,6 +804,7 @@ WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
 WARNING: untranslated string: ipsec
 WARNING: untranslated string: ipsec network
+WARNING: untranslated string: last
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: mac filter
