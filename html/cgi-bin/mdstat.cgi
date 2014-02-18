@@ -41,7 +41,7 @@ my %mainsettings = ();
 
 &Header::openbox('100%', 'left',"MD Raid State");
 
-print '<textarea rows="25" cols="80" readonly="true">';
+print '<textarea rows="25" cols="80" readonly="readonly">';
 print `cat "/proc/mdstat"`;
 print '</textarea>';
 
