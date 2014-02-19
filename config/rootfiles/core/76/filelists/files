@@ -21,6 +21,7 @@ srv/web/ipfire/html/themes/maniac
 usr/lib/firewall
 usr/local/bin/timezone-transition
 usr/local/bin/setddns.pl
+usr/sbin/updxlrator
 var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/exclude
 var/ipfire/backup/include
