@@ -167,7 +167,7 @@ if ($tripwiresettings{'ACTION'} eq 'generatepolicypw')
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'sitekey'}</td><td align='left'><input type='password' name='SITEKEY' value='$tripwiresettings{'SITEKEY'}' size="30" /></td></tr>
 	<tr><td align='left' width='40%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'localkey'}</td><td align='left'><input type='password' name='LOCALKEY' value='$tripwiresettings{'LOCALKEY'}' size="30" /><br /><br /></td></tr>
 	<tr><td align='right' width='50%'>
-					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' tilte='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
+					 $Lang::tr{'ok'} <input type='image' alt='$Lang::tr{'ok'}' title='$Lang::tr{'ok'}' src='/images/edit-redo.png' />
 					<input type='hidden' name='ACTION' value='generatepolicyyes' /></form></td>
 			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='image' alt='$Lang::tr{'cancel'}' title='$Lang::tr{'cancel'}' src='/images/dialog-error.png' /> $Lang::tr{'cancel'} 
@@ -506,17 +506,17 @@ END
 #<tr><td colspan='3'  align='left'><br /></td></tr>
 #END
 #;
-#foreach my $cronjob (@cronjobs) {chomp $cronjob;my $time=$cronjob; $time=~s/\/etc\/fcron.daily\/tripwire//g;print"<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td  align='left' colspan='2'>$cronjob at $time daily</td><td><input type='hidden' name='ACTION' value='deletecron' /><input type='hidden' name='CRON' value='$time' /><input type='image' alt='delete cron' src='/images/user-trash.png' /></td></tr></form>";}
+#foreach my $cronjob (@cronjobs) {chomp $cronjob;my $time=$cronjob; $time=~s/\/etc\/fcron.daily\/tripwire//g;print"<form method='post' action='$ENV{'SCRIPT_NAME'}'><tr><td  align='left' colspan='2'>$cronjob at $time daily</td><td><input type='hidden' name='ACTION' value='deletecron' /><input type='hidden' name='CRON' value='$time' /><input type='image' alt='delete cron' title='delete cron' src='/images/user-trash.png' /></td></tr></form>";}
 #print <<END
 #</table>
 #<br />
 #<table width='10%' cellspacing='0'>
 #<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 #												<input type='hidden' name='ACTION' value='addcron'/>
-#												<input type='image' alt='$Lang::tr{'add cron'}' src='/images/appointment-new.png' /></form></td>
+#												<input type='image' alt='$Lang::tr{'add cron'}' title='$Lang::tr{'add cron'}' src='/images/appointment-new.png' /></form></td>
 #<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 #										<input type='hidden' name='ACTION' value='croncaption' />
-#										<input type='image' alt='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
+#										<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
 #</table>
 #END
 #;

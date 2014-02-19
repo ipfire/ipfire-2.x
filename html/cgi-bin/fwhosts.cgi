@@ -1492,7 +1492,7 @@ END
 			my $netcount=&getnetcount($customnetwork{$key}[0]);
 			print"<td width='20%' $col><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center' $col>".&Header::colorize($colnet)."</td><td width='40%' $col>$customnetwork{$key}[3]</td><td align='center' $col>$netcount x</td>";
 			print<<END;
-			<td width='1%' $col><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
+			<td width='1%' $col><input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 			<input type='hidden' name='ACTION' value='editnet'>
 			<input type='hidden' name='HOSTNAME' value='$customnetwork{$key}[0]' />
 			<input type='hidden' name='IP' value='$customnetwork{$key}[1]' />
@@ -1502,7 +1502,7 @@ END
 END
 			if($netcount == '0')
 			{
-				print"<td width='1%' $col><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delnet' /><input type='hidden' name='key' value='$customnetwork{$key}[0]' /></td></form></tr>";
+				print"<td width='1%' $col><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><input type='hidden' name='ACTION' value='delnet' /><input type='hidden' name='key' value='$customnetwork{$key}[0]' /></td></form></tr>";
 			}else{
 				print"<td $col></td></tr>";
 			}
@@ -1600,7 +1600,7 @@ END
 			$hostcount=&gethostcount($customhost{$key}[0]);
 			print"<td width='20%' $col>$customhost{$key}[0]</td><td width='20%' align='center' $col ".&getcolor($ip).">".&Header::colorize($ip)."</td><td width='50%' align='left' $col>$customhost{$key}[3]</td><td align='center' $col>$hostcount x</td>";
 			print<<END;
-			<td width='1%' $col><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
+			<td width='1%' $col><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 			<input type='hidden' name='ACTION' value='edithost' />
 			<input type='hidden' name='HOSTNAME' value='$customhost{$key}[0]' />
 			<input type='hidden' name='IP' value='$ip' />
@@ -1610,7 +1610,7 @@ END
 END
 			if($hostcount == '0')
 			{
-				print"<td width='1%' $col><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delhost' /><input type='hidden' name='key' value='$customhost{$key}[0]' /></td></form></tr>";
+				print"<td width='1%' $col><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><input type='hidden' name='ACTION' value='delhost' /><input type='hidden' name='key' value='$customhost{$key}[0]' /></td></form></tr>";
 			}else{
 				print"<td width='1%' $col></td></tr>";
 			}
@@ -1677,9 +1677,9 @@ sub viewtablegrp
 				print "<b>$Lang::tr{'used'}:</b> $netgrpcount x";
 				if($netgrpcount == '0')
 				{
-					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='ACTION' value='delgrp'></form>";
+					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='ACTION' value='delgrp'></form>";
 				}
-				print"<form method='post' style='display:inline'><input type='image' src='/images/edit.gif' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='remark' value='$remark' ><input type='hidden' name='ACTION' value='editgrp'></form>";
+				print"<form method='post' style='display:inline'><input type='image' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' align='right' /><input type='hidden' name='grp_name' value='$grpname' ><input type='hidden' name='remark' value='$remark' ><input type='hidden' name='ACTION' value='editgrp'></form>";
 				print"<table width='100%' cellspacing='0' class='tbl'><tr><th align='center'><b>$Lang::tr{'name'}</b></th><th align='center'><b>$Lang::tr{'fwhost ip_mac'}</b></th><th align='center' width='25%'><b>$Lang::tr{'fwhost type'}</th><th></th></tr>";
 			}
 			my $col='';
@@ -1712,7 +1712,7 @@ sub viewtablegrp
 				print"<td align='center' $col ".&getcolor($colip).">".&Header::colorize($ip)."</td><td align='center' $col>$customgrp{$key}[3]</td><td width='1%' $col><form method='post'>";
 			}
 			if ($delflag > 0 && $ip ne ''){
-				print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
+				print"<input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' />";
 				#check if this group has only one entry
 				foreach my $key2 (keys %hash) {
 					if ($hash{$key2}<2 && $key2 eq $customgrp{$key}[0]){
@@ -1770,7 +1770,7 @@ END
 			elsif($customservice{$key}[3] ne 'BLANK'){print $customservice{$key}[3];}
 			print<<END;
 			</td><td align='center' $col>$srvcount x</td>
-			<td width='1%' $col><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} /><input type='hidden' name='ACTION' value='editservice' />
+			<td width='1%' $col><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' /><input type='hidden' name='ACTION' value='editservice' />
 			<input type='hidden' name='SRV_NAME' value='$customservice{$key}[0]' />
 			<input type='hidden' name='SRV_PORT' value='$customservice{$key}[1]' />
 			<input type='hidden' name='PROT' value='$customservice{$key}[2]' />
@@ -1778,7 +1778,7 @@ END
 END
 			if ($srvcount eq '0')
 			{
-				print"<td width='1%' $col><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} /><input type='hidden' name='ACTION' value='delservice' /><input type='hidden' name='SRV_NAME' value='$customservice{$key}[0]'></td></tr></form>";
+				print"<td width='1%' $col><form method='post'><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><input type='hidden' name='ACTION' value='delservice' /><input type='hidden' name='SRV_NAME' value='$customservice{$key}[0]'></td></tr></form>";
 			}else{
 				print"<td $col></td></tr>";
 			}
@@ -1844,9 +1844,9 @@ sub viewtableservicegrp
 				print "&nbsp; <b>$Lang::tr{'used'}:</b> $grpcount x";
 				if($grpcount == '0')
 				{
-					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='ACTION' value='delservicegrp'></form>";
+					print"<form method='post' style='display:inline'><input type='image' src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='ACTION' value='delservicegrp'></form>";
 				}
-				print"<form method='post' style='display:inline'><input type='image' src='/images/edit.gif' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='SRVGRP_REMARK' value='$remark' ><input type='hidden' name='ACTION' value='editservicegrp'></form>";
+				print"<form method='post' style='display:inline'><input type='image' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' align='right' /><input type='hidden' name='SRVGRP_NAME' value='$grpname' ><input type='hidden' name='SRVGRP_REMARK' value='$remark' ><input type='hidden' name='ACTION' value='editservicegrp'></form>";
 				print"<table width='100%' cellspacing='0' class='tbl'><tr><th align='center'><b>Name</b></th><th align='center'><b>$Lang::tr{'port'}</b></th><th align='center' width='25%'><b>$Lang::tr{'fwhost prot'}</th><th></th></tr>";
 			}
 			if( $fwhostsettings{'SRVGRP_NAME'} eq $customservicegrp{$key}[0]) {
@@ -1885,7 +1885,7 @@ sub viewtableservicegrp
 			print"<td align='center' $col>$port</td><td align='center' $col>$protocol</td><td width='1%' $col><form method='post'>";
 			if ($delflag gt '0'){
 				if ($customservicegrp{$key}[2] ne $Lang::tr{'fwhost err emptytable'}){
-					print"<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'delete'} title=$Lang::tr{'delete'} />";
+					print"<input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title=$Lang::tr{'delete'} />";
 				}
 				#check if this group has only one entry
 				foreach my $key2 (keys %hash) {
