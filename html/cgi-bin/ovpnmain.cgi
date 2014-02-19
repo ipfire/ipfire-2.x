@@ -2548,7 +2548,7 @@ END
 		print"<td>$ccdconf[0]</td><td align='center'>$ccdconf[1]</td><td align='center'>$ccdhosts/".(&ccdmaxclients($ccdconf[1])+1)."</td><td>";
 print <<END
 		<form method='post' />
-		<input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
+		<input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 		<input type='hidden' name='ACTION' value='edit'/>
 		<input type='hidden' name='ccdname' value='$ccdconf[0]' />
 		<input type='hidden' name='ccdsubnet' value='$ccdconf[1]' />
@@ -2557,7 +2557,7 @@ print <<END
 		<td><input type='hidden' name='ACTION' value='kill'/>
 		<input type='hidden' name='number' value='$count' />
 		<input type='hidden' name='net' value='$ccdconf[0]' />
-		<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'remove'} title=$Lang::tr{'remove'} /></form></td></tr>
+		<input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' /></form></td></tr>
 END
 ;
 	}	

@@ -472,7 +472,7 @@ if ($return) {
 				$Lang::tr{'snort working'}
 		<tr><td colspan='2' align='center'>
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<input type='image' alt='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
+				<input type='image' alt='$Lang::tr{'reload'}' title='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
 			</form>
 		<tr><td colspan='2' align='left'><pre>
 END
