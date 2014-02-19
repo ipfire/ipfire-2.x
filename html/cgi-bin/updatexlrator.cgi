@@ -517,7 +517,7 @@ END
 		$id = 0;
 		foreach $updatefile (@downloadfiles)
 		{
-			$updatefile =~ s/.*://;
+			$updatefile =~ s/.*:download/download/;
 			my $size_updatefile = 0;
 			my $mtime = 0;
 			if(-e "$repository/$updatefile") {
@@ -971,7 +971,8 @@ foreach (@sources)
 		{
 			next if(/\.info$/);
 			$updatefile = substr($_,rindex($_,"/")+1);
-			$updatefile .= ":download/$vendorid/$updatefile";
+			$_ = $updatefile; tr/[A-Z]/[a-z]/;
+			$updatefile = "$_:separator:download/$vendorid/$updatefile";
 			$updatefile = " ".$updatefile;
 			push(@repositoryfiles,$updatefile);
 		}
@@ -1002,7 +1003,7 @@ foreach (@sources)
 			chomp($sourceurl);
 			$updatefile = substr($sourceurl,rindex($sourceurl,'/')+1,length($sourceurl));
 			$_ = $updatefile; tr/[A-Z]/[a-z]/;
-			$updatefile = "$_:$vendorid/$uuid/$updatefile";
+			$updatefile = "$_:separator:$vendorid/$uuid/$updatefile";
 			push(@repositoryfiles,$updatefile);
 		}
 	}
@@ -1145,7 +1146,7 @@ END
 	$id = 0;
 	foreach $updatefile (@files)
 	{
-		$updatefile =~ s/.*://;
+		$updatefile =~ s/.*:separator://;
 		my $size_updatefile = 0;
 		my $mtime = 0;
 		if(-e "$repository/$updatefile") {
