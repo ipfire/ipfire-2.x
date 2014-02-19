@@ -152,7 +152,7 @@ END
 						<input type='hidden' name='FS' value='$deviceline[1]' />
 						<input type='hidden' name='PATH' value='$deviceline[2]' />
 						<input type='hidden' name='ACTION' value=$Lang::tr{'delete'} />
-						<input type='image' alt=$Lang::tr{'delete'} src='/images/delete.gif' />
+						<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/delete.gif' />
 					</form></td></tr>
 END
 ;
@@ -224,7 +224,7 @@ END
 					<input type='hidden' name='DEVICE' value='$partitionline[0]' />
 					<input type='hidden' name='UUID' value='$partitionline[2]' />
 					<input type='hidden' name='ACTION' value=$Lang::tr{'add'} />
-					<input type='image' alt=$Lang::tr{'add'} src='/images/add.gif' />
+					<input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/add.gif' />
 				</form></td></tr>
 END
 ;

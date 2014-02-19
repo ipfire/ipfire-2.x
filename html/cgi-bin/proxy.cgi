@@ -2236,7 +2236,7 @@ print <<END
 	<td width='25%'><input type='text' name='NCSA_USERNAME' value='$proxysettings{'NCSA_USERNAME'}' size='12'
 END
 ;
-	if ($proxysettings{'ACTION'} eq $Lang::tr{'edit'}) { print " readonly "; }
+	if ($proxysettings{'ACTION'} eq $Lang::tr{'edit'}) { print " readonly='readonly' "; }
 	print <<END
 	 /></td>
 	<td width='25%' class='base'>$Lang::tr{'advproxy NCSA group'}:</td>

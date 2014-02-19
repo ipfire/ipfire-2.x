@@ -2488,7 +2488,7 @@ if ($cgiparams{'ACTION'} eq "edit"){
     <table width='100%' border='0'>
     <tr><form method='post'>
 	<td width='10%' nowrap='nowrap'>$Lang::tr{'ccd name'}:</td><td><input type='TEXT' name='ccdname' value='$cgiparams{'ccdname'}' /></td>
-	<td width='8%'>$Lang::tr{'ccd subnet'}:</td><td><input type='TEXT' name='ccdsubnet' value='$cgiparams{'ccdsubnet'}' readonly /></td></tr>
+	<td width='8%'>$Lang::tr{'ccd subnet'}:</td><td><input type='TEXT' name='ccdsubnet' value='$cgiparams{'ccdsubnet'}' readonly='readonly' /></td></tr>
 	<tr><td colspan='4' align='right'><hr><input type='submit' value='$Lang::tr{'save'}' /><input type='hidden' name='ACTION' value='editsave'/>
 	<input type='hidden' name='ccdname' value='$cgiparams{'ccdname'}'/><input type='submit' value='$Lang::tr{'cancel'}' />
 	</td></tr>
@@ -2548,7 +2548,7 @@ END
 		print"<td>$ccdconf[0]</td><td align='center'>$ccdconf[1]</td><td align='center'>$ccdhosts/".(&ccdmaxclients($ccdconf[1])+1)."</td><td>";
 print <<END
 		<form method='post' />
-		<input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
+		<input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 		<input type='hidden' name='ACTION' value='edit'/>
 		<input type='hidden' name='ccdname' value='$ccdconf[0]' />
 		<input type='hidden' name='ccdsubnet' value='$ccdconf[1]' />
@@ -2557,7 +2557,7 @@ print <<END
 		<td><input type='hidden' name='ACTION' value='kill'/>
 		<input type='hidden' name='number' value='$count' />
 		<input type='hidden' name='net' value='$ccdconf[0]' />
-		<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'remove'} title=$Lang::tr{'remove'} /></form></td></tr>
+		<input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' /></form></td></tr>
 END
 ;
 	}	

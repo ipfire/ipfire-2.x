@@ -81,12 +81,12 @@ END
 							<input type='hidden' name='INSPAKS' value='$pakfiresettings{'INSPAKS'}' />
 							<input type='hidden' name='FORCE' value='on' />
 							<input type='hidden' name='ACTION' value='install' />
-							<input type='image' alt='$Lang::tr{'install'}' src='/images/go-next.png' />
+							<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/go-next.png' />
 						</form>
 				<td align='left'>
 						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='ACTION' value='' />
-							<input type='image' alt='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
+							<input type='image' alt='$Lang::tr{'abort'}' title='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
 						</form>
 		</table>
 END
@@ -121,12 +121,12 @@ END
 							<input type='hidden' name='DELPAKS' value='$pakfiresettings{'DELPAKS'}' />
 							<input type='hidden' name='FORCE' value='on' />
 							<input type='hidden' name='ACTION' value='remove' />
-							<input type='image' alt='$Lang::tr{'uninstall'}' src='/images/go-next.png' />
+							<input type='image' alt='$Lang::tr{'uninstall'}' title='$Lang::tr{'uninstall'}' src='/images/go-next.png' />
 						</form>
 				<td align='left'>
 						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='ACTION' value='' />
-							<input type='image' alt='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
+							<input type='image' alt='$Lang::tr{'abort'}' title='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
 						</form>
 		</table>
 END
@@ -184,12 +184,12 @@ if ($return) {
 	print <<END;
 	<table>
 		<tr><td>
-				<img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' />&nbsp;
+				<img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' title='$Lang::tr{'aktiv'}' />&nbsp;
 			<td>
 				$Lang::tr{'pakfire working'}
 		<tr><td colspan='2' align='center'>
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<input type='image' alt='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
+				<input type='image' alt='$Lang::tr{'reload'}' title='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
 			</form>
 		<tr><td colspan='2' align='left'><pre>
 END
@@ -245,7 +245,7 @@ END
 					</select>
 					<br />
 					<input type='hidden' name='ACTION' value='upgrade' />
-					<input type='image' alt='$Lang::tr{'upgrade'}' src='/images/document-save.png' />
+					<input type='image' alt='$Lang::tr{'upgrade'}' title='$Lang::tr{'upgrade'}' src='/images/document-save.png' />
 				 </form>
 
 		<tr><td colspan="2"><!-- Just an empty line -->&nbsp;
@@ -262,7 +262,7 @@ print <<END;
 				</select>
 				<br />
 				<input type='hidden' name='ACTION' value='install' />
-				<input type='image' alt='$Lang::tr{'install'}' src='/images/list-add.png' />
+				<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/list-add.png' />
 			</form>
 
 		<td align="center">
@@ -277,7 +277,7 @@ print <<END;
 			</select>
 			<br />
 			<input type='hidden' name='ACTION' value='remove' />
-			<input type='image' alt='$Lang::tr{'remove'}' src='/images/list-remove.png' />
+			<input type='image' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' src='/images/list-remove.png' />
 		</form>
 	</table>
 END
