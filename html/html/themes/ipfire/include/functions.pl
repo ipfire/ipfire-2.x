@@ -80,7 +80,7 @@ EOF
 	foreach my $k1 ( sort keys %$menu ) {
 		$link = getlink($menu->{$k1});
 		next if (!is_menu_visible($link) or $link eq '');
-		print '<li class="has-sub "><a><span>'.$menu->{$k1}->{'caption'}.'</span></a>';
+		print '<li class="has-sub "><a href="#"><span>'.$menu->{$k1}->{'caption'}.'</span></a>';
 		my $submenus = $menu->{$k1}->{'subMenu'};
 		&showsubmenu($submenus) if ($submenus);
 		print "</li>";
