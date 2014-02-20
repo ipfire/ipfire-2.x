@@ -140,6 +140,7 @@ WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
 WARNING: translation string unused: dmzpinholes for same net not necessary
+WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: driver

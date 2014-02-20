@@ -156,6 +156,7 @@ WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
 WARNING: translation string unused: dmzpinholes for same net not necessary
+WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
@@ -594,6 +595,7 @@ WARNING: untranslated string: ccd iroute2
 WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: default ip
 WARNING: untranslated string: dnat address
+WARNING: untranslated string: dns servers
 WARNING: untranslated string: dnsforward
 WARNING: untranslated string: dnsforward add a new entry
 WARNING: untranslated string: dnsforward configuration
