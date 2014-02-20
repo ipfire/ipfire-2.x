@@ -238,7 +238,6 @@ iptables_init() {
 	if [ "$DROPFORWARD" == "on" ]; then
 		iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
 	fi
-	iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
 }
 
 iptables_red() {
