@@ -190,28 +190,29 @@ END
 	<tr><td><b>$Lang::tr{'gateway'}:</b><td align='center'>$GATEWAY</td><td></td></tr>
 END
 	}
-	#Read DNS server 1
-	open (DNS1, "<${General::swroot}/red/dns1");
-	my $DNS1 = <DNS1>;
-	chomp($DNS1);
-	close DNS1;
-	#Read DNS server 2
-	open (DNS2, "<${General::swroot}/red/dns2");
-	my $DNS2 = <DNS2>;
-	chomp($DNS2);
-	close DNS2;
+
+	my @dns_servers = ();
+	foreach my $f ("${General::swroot}/red/dns1", "${General::swroot}/red/dns2") {
+		open(DNS, "<$f");
+		my $dns_server = <DNS>;
+		close(DNS);
+
+		chomp($dns_server);
+		if ($dns_server) {
+			push(@dns_servers, $dns_server);
+		}
+	}
+	my $dns_servers_str = join(", ", @dns_servers);
 
 	print <<END;
 		<tr>
 			<td>
-				<b>$Lang::tr{'dns server'}</b>
+				<b>$Lang::tr{'dns servers'}:</b>
 			</td>
 			<td align="center">
-				$DNS1
+				$dns_servers_str
 			</td>
-			<td align="center">
-				$DNS2
-			</td>
+			<td align="center"></td>
 		</tr>
 	</table>
 END
