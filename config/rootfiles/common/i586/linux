@@ -1879,6 +1879,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/hpsa.ko
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/hptiop.ko
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/hv_storvsc.ko
+#lib/modules/KVER-ipfire/kernel/drivers/scsi/imm.ko
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/in2000.ko
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/initio.ko
 #lib/modules/KVER-ipfire/kernel/drivers/scsi/ipr.ko
