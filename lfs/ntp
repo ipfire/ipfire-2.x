@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.2.4p7
+VER        = 4.2.6p5
 
 THISAPP    = ntp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8c19ff62ed4f7d64f8e2aa59cb11f364
+$(DL_FILE)_MD5 = 00df80a84ec9528fcfb09498075525bc
 
 install : $(TARGET)
 
@@ -70,14 +70,22 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --bindir=/usr/sbin \
-					    --sysconfdir=/etc --disable-nls \
-					    -enable-all-clocks --enable-parse-clocks
+	cd $(DIR_APP) && \
+		./configure \
+			--prefix=/usr \
+			--bindir=/usr/sbin \
+			--sysconfdir=/etc \
+			--disable-nls \
+			--enable-all-clocks \
+			--enable-parse-clocks
+
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
 	-mkdir /etc/ntp
 	chown -R ntp:ntp /etc/ntp
-	echo "restrict default nomodify noquery" >  /etc/ntp.conf
+	echo "disable monitor" > /etc/ntp.conf
+	echo "restrict default nomodify noquery" >>  /etc/ntp.conf
 	echo "server  127.127.1.0"			>> /etc/ntp.conf
 	echo "fudge   127.127.1.0 stratum 10"	>> /etc/ntp.conf
 	echo "driftfile /etc/ntp/drift"		>> /etc/ntp.conf
@@ -86,9 +94,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -vf $(DIR_SRC)/config/time/* /var/ipfire/time/
 	chmod 644 /var/ipfire/time/*
 	chown nobody:nobody /var/ipfire/time/*
-	ln -s ../init.d/ntp /etc/rc.d/rc0.d/K46ntpd
-	ln -s ../init.d/ntp /etc/rc.d/rc6.d/K46ntpd
-	ln -s ../init.d/ntp /etc/rc.d/rc3.d/S26ntpd
+	ln -svf ../init.d/ntp /etc/rc.d/rc0.d/K46ntpd
+	ln -svf ../init.d/ntp /etc/rc.d/rc6.d/K46ntpd
+	ln -svf ../init.d/ntp /etc/rc.d/rc3.d/S26ntpd
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

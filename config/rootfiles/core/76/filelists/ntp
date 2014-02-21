@@ -1,0 +1,11 @@
+etc/ntp.conf
+usr/bin/ntpd
+usr/bin/ntpdate
+usr/bin/ntpdc
+usr/bin/sntp
+usr/sbin/ntp-keygen
+usr/sbin/ntp-wait
+usr/sbin/ntpq
+usr/sbin/ntptime
+usr/sbin/ntptrace
+usr/sbin/tickadj
