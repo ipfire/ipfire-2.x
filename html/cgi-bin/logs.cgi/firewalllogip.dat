@@ -427,16 +427,12 @@ for($s=0;$s<$lines;$s++)
   $percent = $value[$s] * 100 / $linesjc;
   $percent = sprintf("%.f", $percent);
   $total = $total + $value[$s];
-  if ( ($color % 10) == 1 ){print "<tr>"; $col="bcolor='$color{'color1'}'";}
-  if ( ($color % 10) == 2 ){print "<tr>"; $col="bcolor='$color{'color2'}'";}
-  if ( ($color % 10) == 3 ){print "<tr>"; $col="bcolor='$color{'color3'}'";}
-  if ( ($color % 10) == 4 ){print "<tr>"; $col="bcolor='$color{'color4'}'";}
-  if ( ($color % 10) == 5 ){print "<tr>"; $col="bcolor='$color{'color5'}'";}
-  if ( ($color % 10) == 6 ){print "<tr>"; $col="bcolor='$color{'color6'}'";}
-  if ( ($color % 10) == 7 ){print "<tr>"; $col="bcolor='$color{'color7'}'";}
-  if ( ($color % 10) == 8 ){print "<tr>"; $col="bcolor='$color{'color8'}'";}
-  if ( ($color % 10) == 9 ){print "<tr>"; $col="bcolor='$color{'color9'}'";}
-  if ( ($color % 10) == 0 ){print "<tr>"; $col="bcolor='$color{'color10'}'";}
+  my $colorIndex = $color % 10;
+  if($colorIndex == 0) {
+    $colorIndex = 10;
+  }
+  $col="bgcolor='$color{\"color$colorIndex\"}'";
+  print "<tr>";
   
   my $gi = Geo::IP::PurePerl->new();
   my $ccode = $gi->country_code_by_name($key[$s]);
@@ -456,16 +452,12 @@ for($s=0;$s<$lines;$s++)
 
 if($cgiparams{'otherspie'} == 2 ){}
 else{
-if ( ($color % 10) == 1 ){print "<tr>"; $col="bcolor='$color{'color1'}'";}
-if ( ($color % 10) == 2 ){print "<tr>"; $col="bcolor='$color{'color2'}'";}
-if ( ($color % 10) == 3 ){print "<tr>"; $col="bcolor='$color{'color3'}'";}
-if ( ($color % 10) == 4 ){print "<tr>"; $col="bcolor='$color{'color4'}'";}
-if ( ($color % 10) == 5 ){print "<tr>"; $col="bcolor='$color{'color5'}'";}
-if ( ($color % 10) == 6 ){print "<tr>"; $col="bcolor='$color{'color6'}'";}
-if ( ($color % 10) == 7 ){print "<tr>"; $col="bcolor='$color{'color7'}'";}
-if ( ($color % 10) == 8 ){print "<tr>"; $col="bcolor='$color{'color8'}'";}
-if ( ($color % 10) == 9 ){print "<tr>"; $col="bcolor='$color{'color9'}'";}
-if ( ($color % 10) == 0 ){print "<tr>"; $col="bcolor='$color{'color10'}'";}
+  my $colorIndex = $color % 10;
+  if($colorIndex == 0) {
+    $colorIndex = 10;
+  }
+  $col="bgcolor='$color{\"color$colorIndex\"}'";
+  print "<tr>";
 
 if ( $linesjc ne "0")
 {
@@ -504,7 +496,10 @@ sub findkey {
       last;
     }
   }
-}sub checkversion {
-        #Automatic Updates is disabled
-        return "0","0";
-        }
+}
+
+sub checkversion {
+    #Automatic Updates is disabled
+    return "0","0";
+}
+
