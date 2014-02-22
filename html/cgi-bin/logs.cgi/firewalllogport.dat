@@ -433,7 +433,7 @@ for($s=0;$s<$lines;$s++)
   if($colorIndex == 0) {
     $colorIndex = 10;
   }
-  $col="bgcolor='$color{'$color{\"color$colorIndex\"}'";
+  $col="bgcolor='$color{\"color$colorIndex\"}'";
   print "<tr>";
 
   $color++;
@@ -450,7 +450,7 @@ else{
   if($colorIndex == 0) {
     $colorIndex = 10;
   }
-  $col="bgcolor='$color{'$color{\"color$colorIndex\"}'";
+  $col="bgcolor='$color{\"color$colorIndex\"}'";
   print "<tr>";
 
 if ( $linesjc ne "0")
