@@ -158,6 +158,11 @@ if ( ( $pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes' ) || (
     	    close IPADDR;
     	    chomp ($ipaddr);
 	}
+	if (open(IPADDR,"${General::swroot}/red/local-ipaddress")) {
+	    $ipaddr = <IPADDR>;
+	    close IPADDR;
+	    chomp ($ipaddr);
+	}
 } elsif ($modemsettings{'VALID'} eq 'no') {
 	print "$Lang::tr{'modem settings have errors'}\n </b></font>\n";
 } else {
