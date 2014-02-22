@@ -772,10 +772,10 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 	exit
 }
 
-	&Header::openbox('100%', 'center', "$qossettings{'RED_DEV'} $Lang::tr{'graph'}");
+	&Header::openbox('100%', 'center', "$qossettings{'RED_DEV'} $Lang::tr{'graph'}, $Lang::tr{'uplink'}");
 	&Graphs::makegraphbox("qos.cgi",$qossettings{'RED_DEV'},"hour","325");
 	&Header::closebox();
-	&Header::openbox('100%', 'center', "$qossettings{'IMQ_DEV'} $Lang::tr{'graph'}");
+	&Header::openbox('100%', 'center', "$qossettings{'IMQ_DEV'} $Lang::tr{'graph'}, $Lang::tr{'downlink'}");
 	&Graphs::makegraphbox("qos.cgi",$qossettings{'IMQ_DEV'},"hour","325");
 	&Header::closebox();
 
@@ -1184,7 +1184,7 @@ sub showclasses {
 	  		@classline = split( /\;/, $classentry );
 	  		if ( $classline[0] eq $qossettings{'DEV'} )
 	  		{
-	  		  &Header::openbox('100%', 'center', "$Lang::tr{'Class'}: $classline[1]");
+	  		  &Header::openbox('100%', 'center', "$Lang::tr{'Class'}: $classline[1] $classline[8]");
 	  			print <<END
 				<table border='0' width='100%' cellspacing='0'>
 				<tr><td bgcolor='$color{'color20'}' width='10%' align='center'><b>$Lang::tr{'interface'}</b>
