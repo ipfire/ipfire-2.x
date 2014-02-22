@@ -159,8 +159,15 @@ if (!$skip)
     while (<FILE>)
     {
 	 	if (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {
-            if($_ =~  /SRC\=([\d\.]+)/){
-                my $srcaddr=$1;
+            my $packet = $2;
+            $packet =~ /IN=(\w+)/;       my $iface=$1; if ( $1 =~ /2./ ){ $iface="";}
+            $packet =~ /SRC=([\d\.]+)/;  my $srcaddr=$1;
+
+            if($iface eq $country) {
+                $log[$lines] = $_;
+                $lines++;
+            }
+            elsif($srcaddr ne '') {
                 my $ccode = $gi->country_code_by_name($srcaddr);
                 if($ccode eq $country){
                     $log[$lines] = $_;
@@ -301,10 +308,17 @@ $lines = 0;
 foreach $_ (@slice)
 {
   $a = $_;
-  if($_ =~  /SRC\=([\d\.]+)/){
-    my $srcaddr=$1;
-    my $ccode = $gi->country_code_by_name($srcaddr);
-    if($ccode eq $country){
+  /^... (..) (..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/;
+  my $packet = $4;
+  $packet =~ /IN=(\w+)/;       my $iface=$1; if ( $1 =~ /2./ ){ $iface="";}
+  $packet =~ /SRC=([\d\.]+)/;  my $srcaddr=$1;
+
+  if($iface eq $country || $srcaddr ne '') {
+    my $ccode;
+    if($iface ne $country) {
+      $ccode = $gi->country_code_by_name($srcaddr);
+    }
+    if($iface eq $country || $ccode eq $country) {
 	  my $chain = '';
       my $in = '-'; my $out = '-';
       my $srcaddr = ''; my $dstaddr = '';
