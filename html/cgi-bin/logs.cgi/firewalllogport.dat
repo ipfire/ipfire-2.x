@@ -429,16 +429,12 @@ for($s=0;$s<$lines;$s++)
   $percent = $value[$s] * 100 / $linesjc;
   $percent = sprintf("%.f", $percent);
   $total = $total + $value[$s];
-  if ( ($color % 10) == 1 ){print "<tr>"; $col="bgcolor='$color{'color1'}'";}
-  if ( ($color % 10) == 2 ){print "<tr>"; $col="bgcolor='$color{'color2'}'";}
-  if ( ($color % 10) == 3 ){print "<tr>"; $col="bgcolor='$color{'color3'}'";}
-  if ( ($color % 10) == 4 ){print "<tr>"; $col="bgcolor='$color{'color4'}'";}
-  if ( ($color % 10) == 5 ){print "<tr>"; $col="bgcolor='$color{'color5'}'";}
-  if ( ($color % 10) == 6 ){print "<tr>"; $col="bgcolor='$color{'color6'}'";}
-  if ( ($color % 10) == 7 ){print "<tr>"; $col="bgcolor='$color{'color7'}'";}
-  if ( ($color % 10) == 8 ){print "<tr>"; $col="bgcolor='$color{'color8'}'";}
-  if ( ($color % 10) == 9 ){print "<tr>"; $col="bgcolor='$color{'color9'}'";}
-  if ( ($color % 10) == 0 ){print "<tr>"; $col="bgcolor='$color{'color10'}'";}
+  my $colorIndex = $color % 10;
+  if($colorIndex == 0) {
+    $colorIndex = 10;
+  }
+  $col="bgcolor='$color{\"color$colorIndex\"}'";
+  print "<tr>";
 
   $color++;
   print "<td align='center' $col><form method='post' action='showrequestfromport.dat'><input type='hidden' name='MONTH' value='$cgiparams{'MONTH'}'> <input type='hidden' name='DAY' value='$cgiparams{'DAY'}'> <input type='hidden' name='port' value='$key[$s]'> <input type='submit' value='details'></form></td>";
@@ -450,16 +446,12 @@ for($s=0;$s<$lines;$s++)
 
 if($cgiparams{'otherspie'} == 2 ){}
 else{
-if ( ($color % 10) == 1 ){print "<tr>"; $col="bgcolor='$color{'color1'}'";}
-if ( ($color % 10) == 2 ){print "<tr>"; $col="bgcolor='$color{'color2'}'";}
-if ( ($color % 10) == 3 ){print "<tr>"; $col="bgcolor='$color{'color3'}'";}
-if ( ($color % 10) == 4 ){print "<tr>"; $col="bgcolor='$color{'color4'}'";}
-if ( ($color % 10) == 5 ){print "<tr>"; $col="bgcolor='$color{'color5'}'";}
-if ( ($color % 10) == 6 ){print "<tr>"; $col="bgcolor='$color{'color6'}'";}
-if ( ($color % 10) == 7 ){print "<tr>"; $col="bgcolor='$color{'color7'}'";}
-if ( ($color % 10) == 8 ){print "<tr>"; $col="bgcolor='$color{'color8'}'";}
-if ( ($color % 10) == 9 ){print "<tr>"; $col="bgcolor='$color{'color9'}'";}
-if ( ($color % 10) == 0 ){print "<tr>"; $col="bgcolor='$color{'color10'}'";}
+  my $colorIndex = $color % 10;
+  if($colorIndex == 0) {
+    $colorIndex = 10;
+  }
+  $col="bgcolor='$color{\"color$colorIndex\"}'";
+  print "<tr>";
 
 if ( $linesjc ne "0")
 {
@@ -487,6 +479,7 @@ END
 &Header::closepage();
 
 sub findkey {
+  my $v;
   foreach $v (@keytabjc) {
     if ($tabjc{$v} eq $_[0]) {
       delete $tabjc{$v};
@@ -497,7 +490,9 @@ sub findkey {
     }
   }
 }
+
 sub checkversion {
-        #Automatic Updates is disabled
-        return "0","0";
-        }
+    #Automatic Updates is disabled
+    return "0","0";
+}
+
