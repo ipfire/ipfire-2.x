@@ -422,12 +422,15 @@ sub updateprocessescpugraph {
 
 		push(@command,"COMMENT:".$Lang::tr{'caption'}."\\j");
 
+		my $colorIndex = 0;
 		foreach(@processesgraph){
+			my $colorIndex = 10 + $count % 15;
+			my $color="$color{\"color$colorIndex\"}";
 			chomp($_);my @name=split(/\-/,$_);chop($name[1]);
 			if ($count eq "0"){
-				push(@command,"AREA:".$name[1].random_hex_color(6)."A0:".$name[1]);
+				push(@command,"AREA:".$name[1].$color."A0:".$name[1]);
 			}else{
-				push(@command,"STACK:".$name[1].random_hex_color(6)."A0:".$name[1]);
+				push(@command,"STACK:".$name[1].$color."A0:".$name[1]);
 			}
 			$count++;
 		}
@@ -471,12 +474,15 @@ sub updateprocessesmemorygraph {
 
 		push(@command,"COMMENT:".$Lang::tr{'caption'}."\\j");
 
+		my $colorIndex = 0;
 		foreach(@processesgraph){
 			chomp($_);my @name=split(/\-/,$_);chop($name[1]);
+			my $colorIndex = 10 + $count % 15;
+			my $color="$color{\"color$colorIndex\"}";
 			if ($count eq "0"){
-				push(@command,"AREA:".$name[1].random_hex_color(6)."A0:".$name[1]);
+				push(@command,"AREA:".$name[1].$color."A0:".$name[1]);
 			}else{
-				push(@command,"STACK:".$name[1].random_hex_color(6)."A0:".$name[1]);
+				push(@command,"STACK:".$name[1].$color."A0:".$name[1]);
 			}
 			$count++;
 		}
@@ -983,17 +989,18 @@ sub updateqosgraph {
 		@classes = <FILE>;
 		close FILE;
 
+		my $colorIndex = 0;
 		foreach $classentry (sort @classes){
 			@classline = split( /\;/, $classentry );
 			if ( $classline[0] eq $qossettings{'DEV'} ){
-				$color=random_hex_color(6);
+				my $colorIndex = 10 + $count % 15;
+				$color="$color{\"color$colorIndex\"}";
 				push(@command, "DEF:$classline[1]=$mainsettings{'RRDLOG'}/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bytes:AVERAGE");
 
 				if ($count eq "1") {
 					push(@command, "AREA:$classline[1]$color:$Lang::tr{'Class'} $classline[1] -".sprintf("%15s",$classline[8]));
 				} else {
 					push(@command, "STACK:$classline[1]$color:$Lang::tr{'Class'} $classline[1] -".sprintf("%15s",$classline[8]));
-
 				}
 
 				push(@command, "GPRINT:$classline[1]:MAX:%8.1lf %sBps"
