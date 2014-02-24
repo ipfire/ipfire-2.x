@@ -2716,7 +2716,7 @@ END
 				<td colspan='13'>&nbsp;</td>
 			</tr>
 			<tr>
-				<td colspan='13' style="padding-left:0px;">
+				<td colspan='13' style="padding-left:0px;padding-right:0px">
 					<table width="100%" border='1' rules="cols" cellspacing='0'>
 END
 
