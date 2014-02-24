@@ -196,6 +196,14 @@ ln -svf ../run /var/run
 mkdir -p /var/ipfire/firewall
 mkdir -p /var/ipfire/fwhosts
 
+# Remove old ntp binaries
+rm -f /usr/sbin/ntp-keygen
+rm -f /usr/sbin/ntp-wait
+rm -f /usr/sbin/ntpq
+rm -f /usr/sbin/ntptime
+rm -f /usr/sbin/ntptrace
+rm -f /usr/sbin/tickadj
+
 #
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /

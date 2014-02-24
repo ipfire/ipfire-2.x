@@ -73,7 +73,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && \
 		./configure \
 			--prefix=/usr \
-			--bindir=/usr/sbin \
 			--sysconfdir=/etc \
 			--disable-nls \
 			--enable-all-clocks \
