@@ -302,7 +302,7 @@ sub buildrules
 												}
 											}
 										}
-										print "iptables --wait -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
+										print "iptables --wait -A FORWARDFW $PROT $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
 										next;
 									#PROCESS SNAT RULE
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
@@ -386,7 +386,7 @@ sub buildrules
 												}
 											}
 										}
-										system "iptables --wait -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
+										system "iptables --wait -A FORWARDFW $PROT $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
 										next;
 									#PROCESS SNAT RULE
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
