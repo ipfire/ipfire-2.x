@@ -286,10 +286,10 @@ sub buildrules
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
 										#Process NAT with servicegroup used
 										if ($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat' && $$hash{$key}[14] eq 'cust_srvgrp'){
-											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip $DPORT\n";
+											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip $DPORT\n";
 											$fwaccessdport=$DPORT;
 										}else{
-											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
+											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip$DPORT\n";
 											$DPORT =~ s/\-/:/g;
 											if ($DPORT){
 												$fwaccessdport="--dport ".substr($DPORT,1,);
@@ -310,7 +310,7 @@ sub buildrules
 										if ($$hash{$key}[17] eq 'ON' ){
 											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT' \n";
 										}
-										print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip\n";
+										print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to-source $natip\n";
 									}
 									#PROCESS EVERY OTHER RULE (If NOT ICMP, else the rule would be applied double)
 									if ($PROT ne '-p ICMP'){
@@ -370,10 +370,10 @@ sub buildrules
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
 										#Process NAT with servicegroup used
 										if ($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat' && $$hash{$key}[14] eq 'cust_srvgrp'){
-											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip $DPORT\n";
+											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip $DPORT\n";
 											$fwaccessdport=$DPORT;
 										}else{
-											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
+											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip$DPORT\n";
 											$DPORT =~ s/\-/:/g;
 											if ($DPORT){
 												$fwaccessdport="--dport ".substr($DPORT,1,);
@@ -394,7 +394,7 @@ sub buildrules
 										if ($$hash{$key}[17] eq 'ON' ){
 											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT' \n";
 										}
-										system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip\n";
+										system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to-source $natip\n";
 									}
 									#PROCESS EVERY OTHER RULE (If NOT ICMP, else the rule would be applied double)
 									if ($PROT ne '-p ICMP'){
