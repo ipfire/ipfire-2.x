@@ -282,34 +282,34 @@ if (-e "${General::swroot}/ovpn/n2nconf") {
 
 # Print legend.
 print <<END;
-	<table width='100%'>
+	<table style='width:100%'>
 		<tr>
-			<td align='center'>
-				<b>$Lang::tr{'legend'} : </b>
+			<td style='text-align:center;'>
+				<b>$Lang::tr{'legend'} :</b>
 			</td>
-			<td align='center' bgcolor='${Header::colourgreen}'>
-				<b><font color='#FFFFFF'>$Lang::tr{'lan'}</font></b>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourgreen}; font-weight:bold;'>
+				<b>$Lang::tr{'lan'}</b>
 			</td>
-			<td align='center' bgcolor='${Header::colourred}'>
-				<b><font color='#FFFFFF'>$Lang::tr{'internet'}</font></b>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourred};'>
+				<b>$Lang::tr{'internet'}</b>
 			</td>
-			<td align='center' bgcolor='${Header::colourorange}'>
-				<b><font color='#FFFFFF'>$Lang::tr{'dmz'}</font></b>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourorange};'>
+				<b>$Lang::tr{'dmz'}</b>
 			</td>
-			<td align='center' bgcolor='${Header::colourblue}'>
-				<b><font color='#FFFFFF'>$Lang::tr{'wireless'}</font></b>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourblue};'>
+				<b>$Lang::tr{'wireless'}</b>
 			</td>
-			<td align='center' bgcolor='${Header::colourfw}'>
-				<b><font color='#FFFFFF'>IPFire</font></b>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourfw};'>
+				<b>IPFire</b>
 			</td>
-			<td align='center' bgcolor='${Header::colourvpn}'>
-				<b><font color='#FFFFFF'>$Lang::tr{'vpn'}</font></b>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourvpn};'>
+				<b>$Lang::tr{'vpn'}</b>
 			</td>
-			<td align='center' bgcolor='${Header::colourovpn}'>
-				<b><font color='#FFFFFF'>$Lang::tr{'OpenVPN'}</font></b>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourovpn};'>
+				<b>$Lang::tr{'OpenVPN'}</b>
 			</td>
-			<td align='center' bgcolor='$colour_multicast'>
-				<b><font color='#FFFFFF'>Multicast</font></b>
+			<td style='text-align:center; color:#FFFFFF; background-color:$colour_multicast;'>
+				<b>Multicast</b>
 			</td>
 		</tr>
 	</table>
@@ -345,60 +345,60 @@ END
 
 # Print table header.
 print <<END;
-	<table width='100%'>
-		<tr valign="top"">
-			<th align='center'>
-				<a href="?sort_field=5&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
-				<a href="?sort_field=5&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+	<table style='width:100%'>
+		<tr>
+			<th style='text-align:center'>
+				<a href="?sort_field=5&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
+				<a href="?sort_field=5&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
 			</th>
-			<th align='center' colspan="2">
-				<a href="?sort_field=1&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
-				<a href="?sort_field=1&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+			<th style='text-align:center' colspan='2'>
+				<a href="?sort_field=1&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
+				<a href="?sort_field=1&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href="?sort_field=3&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
-				<a href="?sort_field=3&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+				<a href="?sort_field=3&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
+				<a href="?sort_field=3&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
 			</th>
-			<th align='center' colspan="2">
-				<a href="?sort_field=2&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
-				<a href="?sort_field=2&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+			<th style='text-align:center' colspan='2'>
+				<a href="?sort_field=2&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
+				<a href="?sort_field=2&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href="?sort_field=4&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
-				<a href="?sort_field=4&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+				<a href="?sort_field=4&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
+				<a href="?sort_field=4&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
 			</th>
-			<th align='center'>
-				<a href="?sort_field=8&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
-				<a href="?sort_field=8&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+			<th style='text-align:center'>
+				<a href="?sort_field=8&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
+				<a href="?sort_field=8&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
 				&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href="?sort_field=9&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
-				<a href="?sort_field=9&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+				<a href="?sort_field=9&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
+				<a href="?sort_field=9&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
 			</th>
-			<th align='center'>
-				<a href="?sort_field=6&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
-				<a href="?sort_field=6&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+			<th style='text-align:center'>
+				<a href="?sort_field=6&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
+				<a href="?sort_field=6&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
 			</th>
-			<th align='center'>
-				<a href="?sort_field=7&sort_order=d"><img style="width:10px" src="/images/up.gif"></a>
-				<a href="?sort_field=7&sort_order=a"><img style="width:10px" src="/images/down.gif"></a>
+			<th style='text-align:center'>
+				<a href="?sort_field=7&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
+				<a href="?sort_field=7&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
 			</th>
 		</tr>
-		<tr valign="top"">
-			<th align='center'>
+		<tr>
+			<th style='text-align:center'>
 				$Lang::tr{'protocol'}
 			</th>
-			<th align='center' colspan="2">
+			<th style='text-align:center' colspan='2'>
 				$Lang::tr{'source ip and port'}
 			</th>
-			<th align='center' colspan="2">
+			<th style='text-align:center' colspan='2'>
 				$Lang::tr{'dest ip and port'}
 			</th>
-			<th align='center'>
+			<th style='text-align:center'>
 				$Lang::tr{'download'} /
 				<br>$Lang::tr{'upload'}
 			</th>
-			<th align='center'>
+			<th style='text-align:center'>
 				$Lang::tr{'connection'}<br>$Lang::tr{'status'}
 			</th>
-			<th align='center'>
+			<th style='text-align:center'>
 				$Lang::tr{'expires'}<br>($Lang::tr{'seconds'})
 			</th>
 		</tr>
@@ -523,17 +523,17 @@ foreach my $line (@conntrack) {
 
 	my $sip_extra;
 	if ($sip ne $sip_ret) {
-		$sip_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$sip_extra = "<span style='color:#FFFFFF;'>&gt;</span> ";
 		$sip_extra .= "<a href='/cgi-bin/ipinfo.cgi?ip=$sip_ret'>";
-		$sip_extra .= "	<font color='#FFFFFF'>$sip_ret</font>";
+		$sip_extra .= "	<span style='color:#FFFFFF;'>$sip_ret</span>";
 		$sip_extra .= "</a>";
 	}
 
 	my $dip_extra;
 	if ($dip ne $dip_ret) {
-		$dip_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$dip_extra = "<span style='color:#FFFFFF;'>&gt;</span> ";
 		$dip_extra .= "<a href='/cgi-bin/ipinfo.cgi?ip=$dip_ret'>";
-		$dip_extra .= " <font color='#FFFFFF'>$dip_ret</font>";
+		$dip_extra .= " <span style='color:#FFFFFF;'>$dip_ret</span>";
 		$dip_extra .= "</a>";
 	}
 
@@ -545,9 +545,9 @@ foreach my $line (@conntrack) {
 			$sserv_ret = uc(getservbyport($sport_ret, lc($l4proto)));
 		}
 
-		$sport_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$sport_extra = "<span style='color:#FFFFFF;'>&gt;</span> ";
 		$sport_extra .= "<a href='http://isc.sans.org/port_details.php?port=$sport_ret' target='top' title='$sserv_ret'>";
-		$sport_extra .= " <font color='#FFFFFF'>$sport_ret</font>";
+		$sport_extra .= " <span style='color:#FFFFFF;'>$sport_ret</span>";
 		$sport_extra .= "</a>";
 	}
 
@@ -558,44 +558,44 @@ foreach my $line (@conntrack) {
 			$dserv_ret = uc(getservbyport($dport_ret, lc($l4proto)));
 		}
 
-		$dport_extra = "<font color='#FFFFFF'>&gt;</font> ";
+		$dport_extra = "<span style='color:#FFFFFF;'>&gt;</span> ";
 		$dport_extra .= "<a href='http://isc.sans.org/port_details.php?port=$dport_ret' target='top' title='$dserv_ret'>";
-		$dport_extra .= " <font color='#FFFFFF'>$dport_ret</font>";
+		$dport_extra .= " <span style='color:#FFFFFF;'>$dport_ret</span>";
 		$dport_extra .= "</a>";
 	}
 
 	print <<END;
 	<tr>
-		<td align='center'>$l4proto</td>
-		<td align='center' bgcolor='$sip_colour'>
+		<td style='text-align:center'>$l4proto</td>
+		<td style='text-align:center; background-color:$sip_colour;'>
 			<a href='/cgi-bin/ipinfo.cgi?ip=$sip'>
-				<font color='#FFFFFF'>$sip</font>
+				<span style='color:#FFFFFF;'>$sip</span>
 			</a>
 			$sip_extra
 		</td>
-		<td align='center' bgcolor='$sip_colour'>
+		<td style='text-align:center; background-color:$sip_colour;'>
 			<a href='http://isc.sans.org/port_details.php?port=$sport' target='top' title='$sserv'>
-				<font color='#FFFFFF'>$sport</font>
+				<span style='color:#FFFFFF;'>$sport</span>
 			</a>
 			$sport_extra
 		</td>
-		<td align='center' bgcolor='$dip_colour'>
+		<td style='text-align:center; background-color:$dip_colour;'>
 			<a href='/cgi-bin/ipinfo.cgi?ip=$dip'>
-				<font color='#FFFFFF'>$dip</font>
+				<span style='color:#FFFFFF;'>$dip</span>
 			</a>
 			$dip_extra
 		</td>
-		<td align='center' bgcolor='$dip_colour'>
+		<td style='text-align:center; background-color:$dip_colour;'>
 			<a href='http://isc.sans.org/port_details.php?port=$dport' target='top' title='$dserv'>
-				<font color='#FFFFFF'>$dport</font>
+				<span style='color:#FFFFFF;'>$dport</span>
 			</a>
 			$dport_extra
 		</td>
-		<td align='center'>
+		<td style='text-align:center'>
 			$bytes_in / $bytes_out
 		</td>
-		<td align='center'>$state</td>
-		<td align='center'>$ttl</td>
+		<td style='text-align:center'>$state</td>
+		<td style='text-align:center'>$ttl</td>
 	</tr>
 END
 }
