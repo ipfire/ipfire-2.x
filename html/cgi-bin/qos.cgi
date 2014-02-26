@@ -251,15 +251,29 @@ END
 if ($qossettings{'DOLEVEL7'} eq $Lang::tr{'save'})
 {
 	if ( $qossettings{'QIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'QIP'}) ) {
-			$qossettings{'VALID'} = 'no';
-			$message = $Lang::tr{'The source IP address is invalid.'};
+		if ($qossettings{'QIP'} =~ /^(.*?)\/(.*?)$/){
+			if (! &General::validipandmask($qossettings{'QIP'}) ) {
+				$qossettings{'VALID'} = 'no';
+				$message = $Lang::tr{'The source IP address is invalid.'};
+			}
+		}else{
+			if ( &General::validip($qossettings{'QIP'}) ) {
+				$qossettings{'VALID'} = 'no';
+				$message = $Lang::tr{'The source IP address is invalid.'};
+			}
 		}
 	}
 	if ( $qossettings{'DIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'DIP'}) ) {
-			$qossettings{'VALID'} = 'no';
-			$message = $Lang::tr{'The destination IP address is invalid.'};
+		if ($qossettings{'QIP'} =~ /^(.*?)\/(.*?)$/){
+			if ( &General::validipandmask($qossettings{'DIP'}) ) {
+				$qossettings{'VALID'} = 'no';
+				$message = $Lang::tr{'The destination IP address is invalid.'};
+			}
+		}else{
+			if ( &General::validip($qossettings{'DIP'}) ) {
+				$qossettings{'VALID'} = 'no';
+				$message = $Lang::tr{'The destination IP address is invalid.'};
+			}
 		}
 	}
 	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
@@ -1079,10 +1093,10 @@ END
 	print <<END
 		    </select><td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'source ip'}:
-		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value='$qossettings{'QIP'}' />
+		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='31' value='$qossettings{'QIP'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'destination ip'}:
-		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value='$qossettings{'DIP'}' />
+		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='31' value='$qossettings{'DIP'}' />
 		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOLEVEL7' value='$Lang::tr{'save'}' />
 		<tr><td colspan="3" align='center'><font color="red"><em>$Lang::tr{'qos warning'}</em></font>
 		</table></form>
@@ -1123,10 +1137,10 @@ END
 		    <td width='33%' align='left'><input type='text' name='DPORT' maxlength='11' value='$qossettings{'DPORT'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'source ip'}:
-		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value='$qossettings{'QIP'}' />
+		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='31' value='$qossettings{'QIP'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'destination ip'}:
-		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value='$qossettings{'DIP'}' />
+		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='31' value='$qossettings{'DIP'}' />
 		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOPORT' value='$Lang::tr{'save'}' />
 		</table></form>
 END
