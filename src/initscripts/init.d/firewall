@@ -283,7 +283,7 @@ iptables_red() {
 	fi
 
 	# Reload all rules.
-	firewallctrl
+	/usr/local/bin/firewallctrl
 }
 
 # See how we were called.
