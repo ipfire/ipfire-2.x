@@ -129,7 +129,7 @@ print <<END;
 	<link rel="shortcut icon" href="/favicon.ico" />
 	<script type="text/javascript" src="/include/jquery.js"></script>
 
-	<script language="javascript" type="text/javascript">
+	<script type="text/javascript">
 		function swapVisibility(id) {
 			\$('#' + id).toggle();
 		}
@@ -238,7 +238,7 @@ sub openbox {
 	$align = $_[1];
 	$caption = $_[2];
 
-	print "<div class='post' align='$align'>\n";
+	print "<div class='post' style='text-align:$align;'>\n";
 
 	if ($caption) {
 		print "<h2>$caption</h2>\n";

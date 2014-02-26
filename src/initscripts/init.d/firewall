@@ -281,6 +281,9 @@ iptables_red() {
 		iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
 
 	fi
+
+	# Reload all rules.
+	firewallctrl
 }
 
 # See how we were called.

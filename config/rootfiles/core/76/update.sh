@@ -204,6 +204,9 @@ rm -f /usr/sbin/ntptime
 rm -f /usr/sbin/ntptrace
 rm -f /usr/sbin/tickadj
 
+# Remove old firewall helper link
+rm -f /etc/rc.d/init.d/networking/red.up/22-forwardfwctrl
+
 #
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /

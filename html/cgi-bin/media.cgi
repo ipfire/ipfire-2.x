@@ -206,9 +206,9 @@ sub diskbox {
 
 		if ( $status[1]=~/standby/){
 			my $ftime = localtime((stat("/var/run/hddshutdown-$disk"))[9]);
-			print"<b>Disk $disk status:<font color='#FF0000'>".$status[1]."</font></b> ($Lang::tr{'since'} $ftime)";
+			print"<b>Disk $disk status:<span style='color:#FF0000'>".$status[1]."</b> ($Lang::tr{'since'} $ftime)";
 		}else{
-			print"<b>Disk $disk status:<font color='#00FF00'>".$status[1]."</font></b>";
+			print"<b>Disk $disk status:<span style='color:#00FF00'>".$status[1]."</b>";
 		}
 	}
 
