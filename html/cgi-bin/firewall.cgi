@@ -2792,14 +2792,16 @@ END
 						<font color="$Header::colourorange">$Lang::tr{'orange'}</font>
 						($Lang::tr{'fwdfw pol block'})
 					</td>
+END
+			}
+
+			print <<END;
 					<td align='center'>
 						<font color="$Header::colourgreen">$Lang::tr{'green'}</font>
 						($Lang::tr{'fwdfw pol block'})
 					</td>
+				</tr>
 END
-			}
-
-			print"</tr>";
 		}
 
 		print <<END;
