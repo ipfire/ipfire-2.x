@@ -251,29 +251,15 @@ END
 if ($qossettings{'DOLEVEL7'} eq $Lang::tr{'save'})
 {
 	if ( $qossettings{'QIP'} ne '' ) {
-		if ($qossettings{'QIP'} =~ /^(.*?)\/(.*?)$/){
-			if (! &General::validipandmask($qossettings{'QIP'}) ) {
-				$qossettings{'VALID'} = 'no';
-				$message = $Lang::tr{'The source IP address is invalid.'};
-			}
-		}else{
-			if ( &General::validip($qossettings{'QIP'}) ) {
-				$qossettings{'VALID'} = 'no';
-				$message = $Lang::tr{'The source IP address is invalid.'};
-			}
+		if ((!&General::validipandmask($qossettings{'QIP'})) && (!&General::validip($qossettings{'QIP'}))) {
+			$qossettings{'VALID'} = 'no';
+			$message = $Lang::tr{'The source IP address is invalid.'};
 		}
 	}
 	if ( $qossettings{'DIP'} ne '' ) {
-		if ($qossettings{'QIP'} =~ /^(.*?)\/(.*?)$/){
-			if ( &General::validipandmask($qossettings{'DIP'}) ) {
-				$qossettings{'VALID'} = 'no';
-				$message = $Lang::tr{'The destination IP address is invalid.'};
-			}
-		}else{
-			if ( &General::validip($qossettings{'DIP'}) ) {
-				$qossettings{'VALID'} = 'no';
-				$message = $Lang::tr{'The destination IP address is invalid.'};
-			}
+		if ((!&General::validipandmask($qossettings{'DIP'})) && (!&General::validip($qossettings{'DIP'}))) {
+			$qossettings{'VALID'} = 'no';
+			$message = $Lang::tr{'The destination IP address is invalid.'};
 		}
 	}
 	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
@@ -340,15 +326,15 @@ END
 if ($qossettings{'DOPORT'} eq $Lang::tr{'save'})
 {
 	if ( $qossettings{'QIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'QIP'}) ) {
+		if ((!&General::validipandmask($qossettings{'QIP'})) && (!&General::validip($qossettings{'QIP'}))) {
 			$qossettings{'VALID'} = 'no';
-			$message = "$Lang::tr{'The source IP address is invalid.'}";
+			$message = $Lang::tr{'The source IP address is invalid.'};
 		}
 	}
 	if ( $qossettings{'DIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'DIP'}) ) {
+		if ((!&General::validipandmask($qossettings{'DIP'})) && (!&General::validip($qossettings{'DIP'}))) {
 			$qossettings{'VALID'} = 'no';
-			$message = "$Lang::tr{'The destination IP address is invalid.'}";
+			$message = $Lang::tr{'The destination IP address is invalid.'};
 		}
 	}
 	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
