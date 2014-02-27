@@ -102,6 +102,7 @@ endif
 ifeq "$(MACHINE_TYPE)" "arm"
 	cp -v /boot/MLO $(MNThdd)/boot/
 	cp -v /boot/u-boot.img $(MNThdd)/boot/
+	cp -v /boot/zImage-ipfire-multi $(MNThdd)/boot/
 	sync
 	umount $(MNThdd)/boot
 	mount -o loop $(IMGboot) $(MNThdd)/boot

@@ -438,6 +438,8 @@ buildipfire() {
     # arm multi platform (Panda, Wandboard ...) kernel build
     ipfiremake linux			KCFG="-multi"
     ipfiremake cryptodev		KCFG="-multi"
+    ipfiremake e1000e			KCFG="-multi"
+    ipfiremake igb			KCFG="-multi"
 
     # arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
     ipfiremake linux			KCFG="-kirkwood"
@@ -448,8 +450,8 @@ buildipfire() {
 #    ipfiremake r8169			KCFG="-kirkwood"
 #    ipfiremake r8168			KCFG="-kirkwood"
 #    ipfiremake r8101			KCFG="-kirkwood"
-#   ipfiremake e1000e			KCFG="-kirkwood"
-#    ipfiremake igb			KCFG="-kirkwood"
+#    ipfiremake e1000e			KCFG="-kirkwood"
+    ipfiremake igb			KCFG="-kirkwood"
 
   fi
   ipfiremake pkg-config
