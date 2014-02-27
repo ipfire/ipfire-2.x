@@ -238,7 +238,12 @@ sub openbox {
 	$align = $_[1];
 	$caption = $_[2];
 
-	print "<div class='post' style='text-align:$align;'>\n";
+	if($align eq 'center') {
+		print "<div class='post' align='center'>\n"
+	}
+	else {
+		print "<div class='post'>\n";
+	}
 
 	if ($caption) {
 		print "<h2>$caption</h2>\n";
