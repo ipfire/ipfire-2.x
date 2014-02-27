@@ -258,6 +258,10 @@ sub buildrules
 					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
+							if(! $sourcehash{$a}[0] || ! $targethash{$b}[0] || ($natip eq '-d ' && $$hash{$key}[28] eq 'ON') || (!$natip && $$hash{$key}[28] eq 'ON')){
+								#Skip rules when no RED IP is set (DHCP,DSL)
+								next;
+							}
 							next if ($targethash{$b}[0] eq 'none');
 							$STAG='';
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
@@ -342,6 +346,10 @@ sub buildrules
 					}
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
+							if(! $sourcehash{$a}[0] || ! $targethash{$b}[0] || ($natip eq '-d ' && $$hash{$key}[28] eq 'ON') || (!$natip && $$hash{$key}[28] eq 'ON')){
+								#Skip rules when no RED IP is set (DHCP,DSL)
+								next;
+							}
 							next if ($targethash{$b}[0] eq 'none');
 							$STAG='';
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
@@ -557,7 +565,7 @@ sub get_address
 			$$hash{$key}[0]='0.0.0.0/0';
 		}
 		if($base2 eq 'RED' || $base2 eq 'RED1'){
-			open(FILE, "/var/ipfire/red/local-ipaddress")or die "Couldn't open local-ipaddress";
+			open(FILE, "/var/ipfire/red/local-ipaddress");
 			$$hash{$key}[0]= <FILE>;
 			close(FILE);
 		}else{
