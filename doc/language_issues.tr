@@ -161,6 +161,7 @@ WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
 WARNING: translation string unused: dmzpinholes for same net not necessary
+WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
@@ -224,6 +225,37 @@ WARNING: translation string unused: from email pw
 WARNING: translation string unused: from email server
 WARNING: translation string unused: from email user
 WARNING: translation string unused: from warn email bad
+WARNING: translation string unused: fwdfw MODE1
+WARNING: translation string unused: fwdfw MODE2
+WARNING: translation string unused: fwdfw addrule
+WARNING: translation string unused: fwdfw err prot_port1
+WARNING: translation string unused: fwdfw final_rule
+WARNING: translation string unused: fwdfw from
+WARNING: translation string unused: fwdfw ipsec network
+WARNING: translation string unused: fwdfw man port
+WARNING: translation string unused: fwdfw natport used
+WARNING: translation string unused: fwdfw p2p txt
+WARNING: translation string unused: fwdfw rule action
+WARNING: translation string unused: fwdfw rules
+WARNING: translation string unused: fwdfw std network
+WARNING: translation string unused: fwdfw till
+WARNING: translation string unused: fwdfw time
+WARNING: translation string unused: fwdfw xt access
+WARNING: translation string unused: fwhost addrule
+WARNING: translation string unused: fwhost attention
+WARNING: translation string unused: fwhost blue
+WARNING: translation string unused: fwhost changeremark
+WARNING: translation string unused: fwhost err addrgrp
+WARNING: translation string unused: fwhost err hostorip
+WARNING: translation string unused: fwhost err mac
+WARNING: translation string unused: fwhost green
+WARNING: translation string unused: fwhost hosts
+WARNING: translation string unused: fwhost ipadr
+WARNING: translation string unused: fwhost ipsec host
+WARNING: translation string unused: fwhost orange
+WARNING: translation string unused: fwhost reread
+WARNING: translation string unused: fwhost reset
+WARNING: translation string unused: fwhost wo subnet
 WARNING: translation string unused: g.dtm
 WARNING: translation string unused: g.lite
 WARNING: translation string unused: gen static key
@@ -607,6 +639,7 @@ WARNING: untranslated string: bytes
 WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: default ip
 WARNING: untranslated string: dnat address
+WARNING: untranslated string: dns servers
 WARNING: untranslated string: dpd delay
 WARNING: untranslated string: dpd timeout
 WARNING: untranslated string: drop action
@@ -617,156 +650,19 @@ WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: encryption
 WARNING: untranslated string: entropy
 WARNING: untranslated string: firewall rules
-WARNING: untranslated string: fw default drop
-WARNING: untranslated string: fw settings
-WARNING: untranslated string: fw settings color
-WARNING: untranslated string: fw settings dropdown
-WARNING: untranslated string: fw settings remark
-WARNING: untranslated string: fw settings ruletable
-WARNING: untranslated string: fwdfw ACCEPT
-WARNING: untranslated string: fwdfw DROP
-WARNING: untranslated string: fwdfw REJECT
-WARNING: untranslated string: fwdfw action
-WARNING: untranslated string: fwdfw additional
-WARNING: untranslated string: fwdfw all icmp
-WARNING: untranslated string: fwdfw change
-WARNING: untranslated string: fwdfw copy
-WARNING: untranslated string: fwdfw delete
-WARNING: untranslated string: fwdfw dnat
-WARNING: untranslated string: fwdfw dnat error
+WARNING: untranslated string: first
 WARNING: untranslated string: fwdfw dnat extport
 WARNING: untranslated string: fwdfw dnat nochoice
-WARNING: untranslated string: fwdfw dnat porterr
 WARNING: untranslated string: fwdfw dnat porterr2
-WARNING: untranslated string: fwdfw edit
-WARNING: untranslated string: fwdfw err nosrc
-WARNING: untranslated string: fwdfw err nosrcip
-WARNING: untranslated string: fwdfw err notgt
-WARNING: untranslated string: fwdfw err notgtip
-WARNING: untranslated string: fwdfw err prot_port
-WARNING: untranslated string: fwdfw err remark
-WARNING: untranslated string: fwdfw err ruleexists
-WARNING: untranslated string: fwdfw err same
-WARNING: untranslated string: fwdfw err samesub
-WARNING: untranslated string: fwdfw err src_addr
-WARNING: untranslated string: fwdfw err tgt_addr
-WARNING: untranslated string: fwdfw err tgt_grp
-WARNING: untranslated string: fwdfw err tgt_mac
-WARNING: untranslated string: fwdfw err tgt_port
-WARNING: untranslated string: fwdfw err time
-WARNING: untranslated string: fwdfw external port nat
-WARNING: untranslated string: fwdfw hint ip1
-WARNING: untranslated string: fwdfw hint ip2
 WARNING: untranslated string: fwdfw hint mac
-WARNING: untranslated string: fwdfw iface
-WARNING: untranslated string: fwdfw log
-WARNING: untranslated string: fwdfw log rule
-WARNING: untranslated string: fwdfw menu
-WARNING: untranslated string: fwdfw movedown
-WARNING: untranslated string: fwdfw moveup
-WARNING: untranslated string: fwdfw newrule
-WARNING: untranslated string: fwdfw pol allow
-WARNING: untranslated string: fwdfw pol block
-WARNING: untranslated string: fwdfw pol text
-WARNING: untranslated string: fwdfw pol text1
-WARNING: untranslated string: fwdfw pol title
-WARNING: untranslated string: fwdfw prot41
-WARNING: untranslated string: fwdfw prot41 short
-WARNING: untranslated string: fwdfw red
-WARNING: untranslated string: fwdfw reread
-WARNING: untranslated string: fwdfw rule activate
-WARNING: untranslated string: fwdfw rulepos
-WARNING: untranslated string: fwdfw snat
-WARNING: untranslated string: fwdfw source
-WARNING: untranslated string: fwdfw sourceip
-WARNING: untranslated string: fwdfw target
-WARNING: untranslated string: fwdfw targetip
-WARNING: untranslated string: fwdfw timeframe
-WARNING: untranslated string: fwdfw toggle
-WARNING: untranslated string: fwdfw togglelog
-WARNING: untranslated string: fwdfw use nat
-WARNING: untranslated string: fwdfw use srcport
-WARNING: untranslated string: fwdfw use srv
-WARNING: untranslated string: fwdfw useless rule
-WARNING: untranslated string: fwdfw wd_fri
-WARNING: untranslated string: fwdfw wd_mon
-WARNING: untranslated string: fwdfw wd_sat
-WARNING: untranslated string: fwdfw wd_sun
-WARNING: untranslated string: fwdfw wd_thu
-WARNING: untranslated string: fwdfw wd_tue
-WARNING: untranslated string: fwdfw wd_wed
-WARNING: untranslated string: fwhost addgrp
-WARNING: untranslated string: fwhost addgrpname
-WARNING: untranslated string: fwhost addhost
-WARNING: untranslated string: fwhost addnet
-WARNING: untranslated string: fwhost addservice
-WARNING: untranslated string: fwhost addservicegrp
-WARNING: untranslated string: fwhost any
-WARNING: untranslated string: fwhost back
-WARNING: untranslated string: fwhost ccdhost
-WARNING: untranslated string: fwhost ccdnet
-WARNING: untranslated string: fwhost change
-WARNING: untranslated string: fwhost cust addr
-WARNING: untranslated string: fwhost cust grp
-WARNING: untranslated string: fwhost cust net
-WARNING: untranslated string: fwhost cust service
-WARNING: untranslated string: fwhost cust srvgrp
-WARNING: untranslated string: fwhost deleted
-WARNING: untranslated string: fwhost empty
-WARNING: untranslated string: fwhost err addr
-WARNING: untranslated string: fwhost err empty
-WARNING: untranslated string: fwhost err emptytable
-WARNING: untranslated string: fwhost err groupempty
-WARNING: untranslated string: fwhost err grpexist
-WARNING: untranslated string: fwhost err hostexist
 WARNING: untranslated string: fwhost err hostip
-WARNING: untranslated string: fwhost err ip
-WARNING: untranslated string: fwhost err ipcheck
-WARNING: untranslated string: fwhost err ipmac
-WARNING: untranslated string: fwhost err ipwithsub
-WARNING: untranslated string: fwhost err isccdhost
-WARNING: untranslated string: fwhost err isccdiphost
-WARNING: untranslated string: fwhost err isccdipnet
-WARNING: untranslated string: fwhost err isccdnet
-WARNING: untranslated string: fwhost err isingrp
-WARNING: untranslated string: fwhost err maxservicetcp
-WARNING: untranslated string: fwhost err maxserviceudp
-WARNING: untranslated string: fwhost err name
-WARNING: untranslated string: fwhost err name1
-WARNING: untranslated string: fwhost err net
-WARNING: untranslated string: fwhost err netexist
-WARNING: untranslated string: fwhost err partofnet
-WARNING: untranslated string: fwhost err port
-WARNING: untranslated string: fwhost err remark
-WARNING: untranslated string: fwhost err srv exists
-WARNING: untranslated string: fwhost err srvexist
-WARNING: untranslated string: fwhost err sub32
-WARNING: untranslated string: fwhost hint
-WARNING: untranslated string: fwhost icmptype
-WARNING: untranslated string: fwhost ip_mac
-WARNING: untranslated string: fwhost ipsec net
-WARNING: untranslated string: fwhost menu
-WARNING: untranslated string: fwhost netaddress
-WARNING: untranslated string: fwhost newgrp
-WARNING: untranslated string: fwhost newhost
-WARNING: untranslated string: fwhost newnet
-WARNING: untranslated string: fwhost newservice
-WARNING: untranslated string: fwhost newservicegrp
-WARNING: untranslated string: fwhost ovpn_n2n
-WARNING: untranslated string: fwhost port
-WARNING: untranslated string: fwhost prot
-WARNING: untranslated string: fwhost services
-WARNING: untranslated string: fwhost srv_name
-WARNING: untranslated string: fwhost stdnet
-WARNING: untranslated string: fwhost type
-WARNING: untranslated string: fwhost used
-WARNING: untranslated string: fwhost welcome
 WARNING: untranslated string: grouptype
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
 WARNING: untranslated string: ipsec
 WARNING: untranslated string: ipsec network
+WARNING: untranslated string: last
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: mac filter

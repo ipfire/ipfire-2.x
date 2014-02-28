@@ -37,10 +37,14 @@ case "$1" in
 
         [ -e "/var/ipfire/remote/enablessh" ] || exit 0 # SSH is not enabled
         boot_mesg "Starting SSH Server..."
-        # Also prevent ssh from being killed by out of memory conditions
         loadproc /usr/sbin/sshd 
-        sleep 3
-        echo "-16" >/proc/`cat /var/run/sshd.pid`/oom_adj
+
+        # Also prevent ssh from being killed by out of memory conditions
+	(
+		sleep 3
+		pid=$(cat /var/run/sshd.pid 2>/dev/null)
+		[ -n "${pid}" ] && echo "-16" > "/proc/${pid}/oom_score_adj"
+	) &
         ;;
 
     stop)

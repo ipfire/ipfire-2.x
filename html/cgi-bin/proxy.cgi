@@ -1206,7 +1206,7 @@ print <<END
 	<td colspan='4'><b>$Lang::tr{'advproxy destination ports'}</b></td>
 </tr>
 <tr>
-	<td width='25%' align=center></td> <td width='20%' align=center></td><td width='25%' align=center></td><td width='30%' align=center></td>
+	<td width='25%' align='center'></td> <td width='20%' align='center'></td><td width='25%' align='center'></td><td width='30%' align='center'></td>
 </tr>
 <tr>
 	<td colspan='2' class='base'>$Lang::tr{'advproxy standard ports'}:</td>
@@ -2236,7 +2236,7 @@ print <<END
 	<td width='25%'><input type='text' name='NCSA_USERNAME' value='$proxysettings{'NCSA_USERNAME'}' size='12'
 END
 ;
-	if ($proxysettings{'ACTION'} eq $Lang::tr{'edit'}) { print " readonly "; }
+	if ($proxysettings{'ACTION'} eq $Lang::tr{'edit'}) { print " readonly='readonly' "; }
 	print <<END
 	 /></td>
 	<td width='25%' class='base'>$Lang::tr{'advproxy NCSA group'}:</td>

@@ -230,15 +230,6 @@ iptables_init() {
 
 	# read new firewall
 	/usr/local/bin/firewallctrl
-
-	if [ "$DROPINPUT" == "on" ]; then
-		iptables -A INPUT   -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
-	fi
-	iptables -A INPUT -j DROP -m comment --comment "DROP_INPUT"
-	if [ "$DROPFORWARD" == "on" ]; then
-		iptables -A FORWARD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
-	fi
-	iptables -A FORWARD -j DROP -m comment --comment "DROP_FORWARD"
 }
 
 iptables_red() {
@@ -290,6 +281,9 @@ iptables_red() {
 		iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
 
 	fi
+
+	# Reload all rules.
+	/usr/local/bin/firewallctrl
 }
 
 # See how we were called.

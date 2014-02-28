@@ -88,10 +88,10 @@ close FILE;
 print <<END;
 	<table width='35%' class='tbl'>
 		<tr>
-			<th align=center colspan='2'bgcolor='$color{'color22'}' >
+			<th align='center' colspan='2' bgcolor='$color{'color22'}' >
 				<b>$Lang::tr{'protocol'}</b>
 			</th>
-			<th align='center'bgcolor='$color{'color22'}' >
+			<th align='center' bgcolor='$color{'color22'}' >
 				<b>$Lang::tr{'status'}</b>
 			</th>
 		</tr>

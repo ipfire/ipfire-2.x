@@ -271,17 +271,17 @@ if ($start == 0) { $prev = -1; }
 if ($lines != 0) { &oldernewer(); }
 
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'time'}</B></TD>
-<TD WIDTH='13%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'chain'}</B></TD>
-<TD WIDTH='5%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'iface'}</B></TD>
-<TD WIDTH='5%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'proto'}</B></TD>
-<TD WIDTH='16%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'source'}</B></TD>
-<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'src port'}</B></TD>
-<TD WIDTH='16%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'destination'}</B></TD>
-<TD WIDTH='16%' ALIGN='CENTER' CLASS='boldbase'><B>$Lang::tr{'dst port'}</B></TD>
-</TR>
+<table width='100%'>
+<tr>
+<td width='10%' align='center' class='boldbase'><b>$Lang::tr{'time'}</b></td>
+<td width='13%' align='center' class='boldbase'><b>$Lang::tr{'chain'}</b></td>
+<td width='5%' align='center' class='boldbase'><b>$Lang::tr{'iface'}</b></td>
+<td width='5%' align='center' class='boldbase'><b>$Lang::tr{'proto'}</b></td>
+<td width='16%' align='center' class='boldbase'><b>$Lang::tr{'source'}</b></td>
+<td width='10%' align='center' class='boldbase'><b>$Lang::tr{'src port'}</b></td>
+<td width='16%' align='center' class='boldbase'><b>$Lang::tr{'destination'}</b></td>
+<td width='16%' align='center' class='boldbase'><b>$Lang::tr{'dst port'}</b></td>
+</tr>
 END
 ;
 
@@ -320,23 +320,23 @@ foreach $_ (@slice)
 	else {
 		print "<tr bgcolor='${Header::table2colour}'>\n"; }
 	print <<END
-	<TD ALIGN='CENTER'>$time</TD>
-	<TD ALIGN='CENTER'>$chain</TD>
-	<TD ALIGN='CENTER'>$iface</TD>
-	<TD ALIGN='CENTER'>$protostr</TD>
+	<td align='center'>$time</td>
+	<td align='center'>$chain</td>
+	<td align='center'>$iface</td>
+	<td align='center'>$protostr</td>
 	<td align='center'>
 	<table width='100%' cellpadding='0' cellspacing='0'><tr>
 	<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a></td>
 	</tr></table>
 	</td>
-	<TD ALIGN='CENTER'>$srcport</TD>
+	<td align='center'>$srcport</td>
 	<td align='center'>
 	<table width='100%' cellpadding='0' cellspacing='0'><tr>
 	<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$dstaddr'>$dstaddr</a></td>
 	</tr></table>
 	</td>
-	<TD ALIGN='CENTER'>$dstport</TD>
-</TR>
+	<td align='center'>$dstport</td>
+</tr>
 END
 	;
        $lines++;
@@ -345,7 +345,7 @@ END
 }
 
 print <<END
-</TABLE>
+</table>
 END
 ;
 

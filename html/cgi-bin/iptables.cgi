@@ -80,7 +80,7 @@ if ( $cgiparams{'selectedchain'} ne "" ){
 
 print <<END
 
-<DIV align='left'>
+<div align='left'>
 END
 ;
 
@@ -182,7 +182,7 @@ END
 		}
 		print "</td>\n</tr>\n";
 	}
-print "</table></DIV><br />";
+print "</table></div><br />";
 &Header::closebox();
 
 ## MANGLE
@@ -202,7 +202,7 @@ if ( $cgiparams{'selectedchain'} ne "" ){
 
 print <<END
 
-<DIV align='left'>
+<div align='left'>
 END
 ;
 
@@ -309,7 +309,7 @@ END
 		}
 		print "</td>\n</tr>\n";
 	}
-print "</table></DIV><br />";
+print "</table></div><br />";
 &Header::closebox();
 
 ## NAT
@@ -329,7 +329,7 @@ if ( $cgiparams{'selectedchain'} ne "" ){
 
 print <<END
 
-<DIV align='left'>
+<div align='left'>
 END
 ;
 
@@ -429,7 +429,7 @@ END
 		}
 		print "</td>\n</tr>\n";
 	}
-print "</table></DIV><br />";
+print "</table></div><br />";
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();

@@ -2282,7 +2282,7 @@ ADV_ERROR:
     &Header::openbox('100%', 'LEFT', $Lang::tr{'advanced server'});
     print <<END
     <form method='post' enctype='multipart/form-data'>
-    <table width='100%' border=0>
+    <table width='100%' border='0'>
     <tr>
 	<td colspan='4'><b>$Lang::tr{'dhcp-options'}</b></td>
     </tr>
@@ -2350,12 +2350,12 @@ print <<END;
      	<tr>
      	  <td class='base'>fragment <br></td>
      	  <td><input type='TEXT' name='FRAGMENT' value='$cgiparams{'FRAGMENT'}' size='10' /></td>
-        <td>Default: <span class="base">1300</span></td>
+        <td>$Lang::tr{'openvpn default'}: <span class="base">1300</span></td>
       </tr>
      	<tr>
      	  <td class='base'>mssfix</td>
      	  <td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
-     	  <td>Default: on</td>
+     	  <td>$Lang::tr{'openvpn default'}: on</td>
    	  </tr>
 
 	<tr>
@@ -2485,10 +2485,10 @@ if ($cgiparams{'ACTION'} eq "edit"){
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'ccd modify'});
 
 	print <<END
-    <table width='100%' border=0>
+    <table width='100%' border='0'>
     <tr><form method='post'>
 	<td width='10%' nowrap='nowrap'>$Lang::tr{'ccd name'}:</td><td><input type='TEXT' name='ccdname' value='$cgiparams{'ccdname'}' /></td>
-	<td width='8%'>$Lang::tr{'ccd subnet'}:</td><td><input type='TEXT' name='ccdsubnet' value='$cgiparams{'ccdsubnet'}' readonly /></td></tr>
+	<td width='8%'>$Lang::tr{'ccd subnet'}:</td><td><input type='TEXT' name='ccdsubnet' value='$cgiparams{'ccdsubnet'}' readonly='readonly' /></td></tr>
 	<tr><td colspan='4' align='right'><hr><input type='submit' value='$Lang::tr{'save'}' /><input type='hidden' name='ACTION' value='editsave'/>
 	<input type='hidden' name='ccdname' value='$cgiparams{'ccdname'}'/><input type='submit' value='$Lang::tr{'cancel'}' />
 	</td></tr>
@@ -2548,7 +2548,7 @@ END
 		print"<td>$ccdconf[0]</td><td align='center'>$ccdconf[1]</td><td align='center'>$ccdhosts/".(&ccdmaxclients($ccdconf[1])+1)."</td><td>";
 print <<END
 		<form method='post' />
-		<input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
+		<input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 		<input type='hidden' name='ACTION' value='edit'/>
 		<input type='hidden' name='ccdname' value='$ccdconf[0]' />
 		<input type='hidden' name='ccdsubnet' value='$ccdconf[1]' />
@@ -2557,7 +2557,7 @@ print <<END
 		<td><input type='hidden' name='ACTION' value='kill'/>
 		<input type='hidden' name='number' value='$count' />
 		<input type='hidden' name='net' value='$ccdconf[0]' />
-		<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'remove'} title=$Lang::tr{'remove'} /></form></td></tr>
+		<input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' /></form></td></tr>
 END
 ;
 	}	
@@ -2787,7 +2787,7 @@ if ( -s "${General::swroot}/ovpn/settings") {
 		<td class='base'>$Lang::tr{'net to net vpn'} (Upload Client Package)</td></tr>
 	  <tr><td>&nbsp;</td><td class='base'><input type='file' name='FH' size='30'></td></tr>
 	  <tr><td>&nbsp;</td><td>Import Connection Name <img src='/blob.gif' /></td></tr>
-    <tr><td>&nbsp;</td><td class='base'><input type='text' name='n2nname' size='30'>Default : Client Packagename</td></tr>
+    <tr><td>&nbsp;</td><td class='base'><input type='text' name='n2nname' size='30'>$Lang::tr{'openvpn default'}: Client Packagename</td></tr>
 	  <tr><td colspan='3'><hr /></td></tr>
     <tr><td align='right' colspan='3'><input type='submit' name='ACTION' value='$Lang::tr{'add'}' /></td></tr>
 	  <tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
@@ -4322,7 +4322,7 @@ if ($cgiparams{'TYPE'} eq 'host') {
    <tr><td>&nbsp;</td>
 		<td class='base'>$Lang::tr{'pkcs12 file password'}:</td>
 		<td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS1' value='$cgiparams{'CERT_PASS1'}' size='32' $cakeydisabled /></td></tr>
-	    <tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:<BR>($Lang::tr{'confirmation'})</td>
+	    <tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:<br>($Lang::tr{'confirmation'})</td>
 		<td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS2' value='$cgiparams{'CERT_PASS2'}' size='32' $cakeydisabled /></td></tr>
      <tr><td colspan='3'>&nbsp;</td></tr>
      <tr><td colspan='3'><hr /></td></tr>
@@ -4581,7 +4581,7 @@ END
     }	
     &Header::openbox('100%', 'LEFT', $Lang::tr{'global settings'});	
 	print <<END	
-    <table width='100%' border=0>
+    <table width='100%' border='0'>
     <form method='post'>
     <td width='25%'>&nbsp;</td>
     <td width='25%'>&nbsp;</td>
@@ -4613,7 +4613,7 @@ END
         <td class='boldbase'>$Lang::tr{'destination port'}:</td>
         <td><input type='TEXT' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' size='5' /></td></tr>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;</td>
-        <td> <input type='TEXT' name='DMTU' VALUE='$cgiparams{'DMTU'}'size='5' /></TD>
+        <td> <input type='TEXT' name='DMTU' VALUE='$cgiparams{'DMTU'}'size='5' /></td>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
         <td><input type='checkbox' name='DCOMPLZO' $checked{'DCOMPLZO'}{'on'} /></td>
         <td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td>

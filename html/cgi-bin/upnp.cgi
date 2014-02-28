@@ -133,7 +133,7 @@ print <<END
 <table width='95%' cellspacing='0'>
 END
 ;
-if ( $message ne "" ) {print "<tr><td colspan='3' align='center'><font color='red'>$message</font>";}
+if ( $message ne "" ) {print "<tr><td colspan='3' style='text-align:center; color:red;'>$message</td></tr>";}
 
 my $lines = 0;
 my $key = '';
@@ -164,7 +164,7 @@ print <<END
 <tr><td align='left'>Upstream in KB:</td><td><input type='text' name='UPSTREAM' value='$upnpsettings{'UPSTREAM'}' size="30" /></td></tr>
 <tr><td align='left' colspan='2'><br /></td></tr>
 <tr><td colspan='2' align='center'>	<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
-																		<input type='image' alt=$Lang::tr{'save'} src='/images/floppy.gif' /></td></tr>
+<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/floppy.gif' /></td></tr>
 </table></form>
 END
 ;
@@ -199,9 +199,9 @@ print "</table>";
 ############################################################################################################################
 
 sub isrunning
-	{
+{
 	my $cmd = $_[0];
-	my $status = "<td bgcolor='${Header::colourred}' align='center'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
+	my $status = "<td bgcolor='${Header::colourred}' style='text-align:center; color:white;'><b>$Lang::tr{'stopped'}</b></td>";
 	my $pid = '';
 	my $testcmd = '';
 	my $exename;
@@ -219,9 +219,10 @@ sub isrunning
 				{if (/^Name:\W+(.*)/) {$testcmd = $1; }}
 			close FILE;
 			if ($testcmd =~ /$exename/)
-				{$status = "<td bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";}
+				{$status = "<td style='color:white; background-color:${Header::colourgreen};'><b>$Lang::tr{'running'}</b></td>";}
 			}
 		}
 
 		return $status;
-	}
+}
+

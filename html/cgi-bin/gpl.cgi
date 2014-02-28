@@ -58,7 +58,7 @@ print <<END;
 END
 ;	
 if ( -e "/usr/share/doc/licenses/GPLv3" ) {
-	print '<textarea rows=\'25\' cols=\'75\' readonly=\'true\'>';
+	print '<textarea rows=\'25\' cols=\'75\' readonly=\'readonly\'>';
 	print `cat /usr/share/doc/licenses/GPLv3`;
 	print '</textarea>';
 }

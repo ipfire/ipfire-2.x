@@ -79,7 +79,7 @@ END
 
 if ($errormessage) {
 	&Header::openbox('100%', 'left', "$Lang::tr{'error messages'}");
-	print "<FONT CLASS='base'>$errormessage&nbsp;</FONT>\n";
+	print "<font class='base'>$errormessage&nbsp;</font>\n";
 	&Header::closebox();
 }
 
@@ -156,7 +156,7 @@ print <<END;
 	</tr>
 	<tr>
 		<td colspan='2'>
-			<textarea rows="25" cols="75" readonly="true">$profile</textarea>
+			<textarea rows="25" cols="75" readonly="readonly">$profile</textarea>
 		</td>
 	</tr>
 </table>

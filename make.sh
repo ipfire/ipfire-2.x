@@ -411,8 +411,8 @@ buildipfire() {
 #    ipfiremake r8169			KCFG="-pae"
 #    ipfiremake r8168			KCFG="-pae"
 #    ipfiremake r8101			KCFG="-pae"
-#    ipfiremake e1000e			KCFG="-pae"
-#    ipfiremake igb			KCFG="-pae"
+    ipfiremake e1000e			KCFG="-pae"
+    ipfiremake igb			KCFG="-pae"
 
     # x86 kernel build
     ipfiremake linux			KCFG=""
@@ -424,8 +424,8 @@ buildipfire() {
 #    ipfiremake r8169			KCFG=""
 #    ipfiremake r8168			KCFG=""
 #    ipfiremake r8101			KCFG=""
-#    ipfiremake e1000e			KCFG=""
-#    ipfiremake igb			KCFG=""
+    ipfiremake e1000e			KCFG=""
+    ipfiremake igb			KCFG=""
 
   else
     # arm-rpi (Raspberry Pi) kernel build
@@ -438,6 +438,8 @@ buildipfire() {
     # arm multi platform (Panda, Wandboard ...) kernel build
     ipfiremake linux			KCFG="-multi"
     ipfiremake cryptodev		KCFG="-multi"
+    ipfiremake e1000e			KCFG="-multi"
+    ipfiremake igb			KCFG="-multi"
 
     # arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
     ipfiremake linux			KCFG="-kirkwood"
@@ -448,8 +450,8 @@ buildipfire() {
 #    ipfiremake r8169			KCFG="-kirkwood"
 #    ipfiremake r8168			KCFG="-kirkwood"
 #    ipfiremake r8101			KCFG="-kirkwood"
-#   ipfiremake e1000e			KCFG="-kirkwood"
-#    ipfiremake igb			KCFG="-kirkwood"
+#    ipfiremake e1000e			KCFG="-kirkwood"
+    ipfiremake igb			KCFG="-kirkwood"
 
   fi
   ipfiremake pkg-config
@@ -718,7 +720,6 @@ buildipfire() {
   ipfiremake perl-DBD-mysql
   ipfiremake perl-DBD-SQLite
   ipfiremake perl-File-ReadBackwards
-  ipfiremake perl-PDF-Create
   ipfiremake cacti
   ipfiremake icecc
   ipfiremake openvmtools

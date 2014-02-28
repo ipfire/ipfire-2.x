@@ -816,10 +816,10 @@ END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 		<table width='95%' cellspacing='0'>
 		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'change passwords'}</b></td></tr>
-		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' readonly /></td></tr>
+		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' readonly='readonly' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'password'}</td><td><input type='password' name='PASSWORD' value='$password' size='30' /></td></tr>
 		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbchangepw' />
-																				<input type='image' alt=$Lang::tr{'save'} title=$Lang::tr{'save'} src='/images/media-floppy.png' /></td></tr>
+			<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></td></tr>
 		</table>
 		</form>
 END
@@ -844,7 +844,7 @@ END
 		<tr><td align='left'>$Lang::tr{'unix group'}</td><td><input type='text' name='GROUP' value='sambauser' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'unix shell'}</td><td><input type='text' name='SHELL' value='/bin/false' size='30' /></td></tr>
 		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbuseradd' />
-																				<input type='image' alt=$Lang::tr{'save'} title=$Lang::tr{'save'} src='/images/media-floppy.png' /></td></tr>
+			<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></td></tr>
 		</table>
 		</form>
 END
@@ -865,7 +865,7 @@ END
 		<tr><td align='left'>$Lang::tr{'unix group'}</td><td><input type='text' name='GROUP' value='sambawks' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'unix shell'}</td><td><input type='text' name='SHELL' value='/bin/false' size='30' /></td></tr>
 		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbpcadd' />
-																				<input type='image' title=$Lang::tr{'save'} alt=$Lang::tr{'save'} src='/images/media-floppy.png' /></td></tr>
+			<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></td></tr>
 		</table>
 		</form>
 END

@@ -406,13 +406,13 @@ if ($showpie != 2 && $pienumber <= 50 && $pienumber != 0) {
 }
 
 print <<END
-<TABLE WIDTH='100%' CLASS='tbl'>
-<TR>
-<TH WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'></TH>
-<TH WIDTH='33%' ALIGN='CENTER' CLASS='boldbase'><B>Port</B></TH>
-<TH WIDTH='33%' ALIGN='CENTER' CLASS='boldbase'><B>Count</B></TH>
-<TH WIDTH='33%' ALIGN='CENTER' CLASS='boldbase'><B>Percent</B></TH>
-</TR>
+<table width='100%' CLASS='tbl'>
+<tr>
+<th width='10%' align='center' class='boldbase'></th>
+<th width='33%' align='center' class='boldbase'><b>$Lang::tr{'port'}</b></th>
+<th width='33%' align='center' class='boldbase'><b>count</b></th>
+<th width='33%' align='center' class='boldbase'><b>$Lang::tr{'percentage'}</b></th>
+</tr>
 END
 ;
 
@@ -429,37 +429,29 @@ for($s=0;$s<$lines;$s++)
   $percent = $value[$s] * 100 / $linesjc;
   $percent = sprintf("%.f", $percent);
   $total = $total + $value[$s];
-  if ( ($color % 10) == 1 ){print "<TR>"; $col="BGCOLOR='$color{'color1'}'";}
-  if ( ($color % 10) == 2 ){print "<TR>"; $col="BGCOLOR='$color{'color2'}'";}
-  if ( ($color % 10) == 3 ){print "<TR>"; $col="BGCOLOR='$color{'color3'}'";}
-  if ( ($color % 10) == 4 ){print "<TR>"; $col="BGCOLOR='$color{'color4'}'";}
-  if ( ($color % 10) == 5 ){print "<TR>"; $col="BGCOLOR='$color{'color5'}'";}
-  if ( ($color % 10) == 6 ){print "<TR>"; $col="BGCOLOR='$color{'color6'}'";}
-  if ( ($color % 10) == 7 ){print "<TR>"; $col="BGCOLOR='$color{'color7'}'";}
-  if ( ($color % 10) == 8 ){print "<TR>"; $col="BGCOLOR='$color{'color8'}'";}
-  if ( ($color % 10) == 9 ){print "<TR>"; $col="BGCOLOR='$color{'color9'}'";}
-  if ( ($color % 10) == 0 ){print "<TR>"; $col="BGCOLOR='$color{'color10'}'";}
+  my $colorIndex = $color % 10;
+  if($colorIndex == 0) {
+    $colorIndex = 10;
+  }
+  $col="bgcolor='$color{\"color$colorIndex\"}'";
+  print "<tr>";
 
   $color++;
-  print "<TD ALIGN='CENTER' $col><form method='post' action='showrequestfromport.dat'><input type='hidden' name='MONTH' value='$cgiparams{'MONTH'}'> <input type='hidden' name='DAY' value='$cgiparams{'DAY'}'> <input type='hidden' name='port' value='$key[$s]'> <input type='submit' value='details'></form></TD>";
-  print "<TD ALIGN='CENTER' $col>$key[$s]</TD>";
-  print "<TD ALIGN='CENTER' $col>$value[$s]</TD>";
-  print "<TD ALIGN='CENTER' $col>$percent</TD>";
-  print "</TR>";
+  print "<td align='center' $col><form method='post' action='showrequestfromport.dat'><input type='hidden' name='MONTH' value='$cgiparams{'MONTH'}'> <input type='hidden' name='DAY' value='$cgiparams{'DAY'}'> <input type='hidden' name='port' value='$key[$s]'> <input type='submit' value='details'></form></td>";
+  print "<td align='center' $col>$key[$s]</td>";
+  print "<td align='center' $col>$value[$s]</td>";
+  print "<td align='center' $col>$percent</td>";
+  print "</tr>";
 }
 
 if($cgiparams{'otherspie'} == 2 ){}
 else{
-if ( ($color % 10) == 1 ){print "<TR>"; $col="BGCOLOR='$color{'color1'}'";}
-if ( ($color % 10) == 2 ){print "<TR>"; $col="BGCOLOR='$color{'color2'}'";}
-if ( ($color % 10) == 3 ){print "<TR>"; $col="BGCOLOR='$color{'color3'}'";}
-if ( ($color % 10) == 4 ){print "<TR>"; $col="BGCOLOR='$color{'color4'}'";}
-if ( ($color % 10) == 5 ){print "<TR>"; $col="BGCOLOR='$color{'color5'}'";}
-if ( ($color % 10) == 6 ){print "<TR>"; $col="BGCOLOR='$color{'color6'}'";}
-if ( ($color % 10) == 7 ){print "<TR>"; $col="BGCOLOR='$color{'color7'}'";}
-if ( ($color % 10) == 8 ){print "<TR>"; $col="BGCOLOR='$color{'color8'}'";}
-if ( ($color % 10) == 9 ){print "<TR>"; $col="BGCOLOR='$color{'color9'}'";}
-if ( ($color % 10) == 0 ){print "<TR>"; $col="BGCOLOR='$color{'color10'}'";}
+  my $colorIndex = $color % 10;
+  if($colorIndex == 0) {
+    $colorIndex = 10;
+  }
+  $col="bgcolor='$color{\"color$colorIndex\"}'";
+  print "<tr>";
 
 if ( $linesjc ne "0")
 {
@@ -468,17 +460,17 @@ $dif = $linesjc - $total;
 $percent = $dif * 100 / $linesjc;
 $percent = sprintf("%.f", $percent);
 print <<END
-<TD ALIGN='CENTER' $col></TD>
-<TD ALIGN='CENTER' $col>$Lang::tr{'otherport'}</TD>
-<TD ALIGN='CENTER' $col>$dif</TD>
-<TD ALIGN='CENTER' $col>$percent</TD>
-</TR>
+<td align='center' $col></td>
+<td align='center' $col>$Lang::tr{'otherport'}</td>
+<td align='center' $col>$dif</td>
+<td align='center' $col>$percent</td>
+</tr>
 END
 ;
 }
 }
 print <<END
-</TABLE>
+</table>
 END
 ;
 
@@ -487,6 +479,7 @@ END
 &Header::closepage();
 
 sub findkey {
+  my $v;
   foreach $v (@keytabjc) {
     if ($tabjc{$v} eq $_[0]) {
       delete $tabjc{$v};
@@ -497,7 +490,9 @@ sub findkey {
     }
   }
 }
+
 sub checkversion {
-        #Automatic Updates is disabled
-        return "0","0";
-        }
+    #Automatic Updates is disabled
+    return "0","0";
+}
+

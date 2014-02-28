@@ -154,6 +154,7 @@ WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
 WARNING: translation string unused: dmzpinholes for same net not necessary
+WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
@@ -618,6 +619,7 @@ WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: default ip
 WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: dnat address
+WARNING: untranslated string: dns servers
 WARNING: untranslated string: dnsforward
 WARNING: untranslated string: dnsforward add a new entry
 WARNING: untranslated string: dnsforward configuration
@@ -653,6 +655,7 @@ WARNING: untranslated string: fireinfo why enable
 WARNING: untranslated string: fireinfo why read more
 WARNING: untranslated string: fireinfo your profile id
 WARNING: untranslated string: firewall rules
+WARNING: untranslated string: first
 WARNING: untranslated string: fw default drop
 WARNING: untranslated string: fw settings
 WARNING: untranslated string: fw settings color
@@ -803,6 +806,7 @@ WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
 WARNING: untranslated string: ipsec
 WARNING: untranslated string: ipsec network
+WARNING: untranslated string: last
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: mac filter

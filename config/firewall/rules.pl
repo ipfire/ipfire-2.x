@@ -111,7 +111,6 @@ if($param eq 'flush'){
 			system ("/usr/sbin/firewall-policy");
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
 			&p2pblock;
-			system ("iptables --wait -A $CHAIN -m conntrack --ctstate NEW -j ACCEPT");
 			system ("/usr/sbin/firewall-policy");
 			system ("/etc/sysconfig/firewall.local reload");
 		}
@@ -259,6 +258,10 @@ sub buildrules
 					$PROT="-p $PROT" if ($PROT ne '' && $PROT ne ' ');
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
+							if(! $sourcehash{$a}[0] || ! $targethash{$b}[0] || ($natip eq '-d ' && $$hash{$key}[28] eq 'ON') || (!$natip && $$hash{$key}[28] eq 'ON')){
+								#Skip rules when no RED IP is set (DHCP,DSL)
+								next;
+							}
 							next if ($targethash{$b}[0] eq 'none');
 							$STAG='';
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
@@ -287,10 +290,10 @@ sub buildrules
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
 										#Process NAT with servicegroup used
 										if ($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat' && $$hash{$key}[14] eq 'cust_srvgrp'){
-											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip $DPORT\n";
+											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip $DPORT\n";
 											$fwaccessdport=$DPORT;
 										}else{
-											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
+											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip$DPORT\n";
 											$DPORT =~ s/\-/:/g;
 											if ($DPORT){
 												$fwaccessdport="--dport ".substr($DPORT,1,);
@@ -303,7 +306,7 @@ sub buildrules
 												}
 											}
 										}
-										print "iptables --wait -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
+										print "iptables --wait -A FORWARDFW $PROT $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
 										next;
 									#PROCESS SNAT RULE
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
@@ -311,7 +314,7 @@ sub buildrules
 										if ($$hash{$key}[17] eq 'ON' ){
 											print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT' \n";
 										}
-										print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip\n";
+										print "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to-source $natip\n";
 									}
 									#PROCESS EVERY OTHER RULE (If NOT ICMP, else the rule would be applied double)
 									if ($PROT ne '-p ICMP'){
@@ -343,6 +346,10 @@ sub buildrules
 					}
 					foreach my $a (sort keys %sourcehash){
 						foreach my $b (sort keys %targethash){
+							if(! $sourcehash{$a}[0] || ! $targethash{$b}[0] || ($natip eq '-d ' && $$hash{$key}[28] eq 'ON') || (!$natip && $$hash{$key}[28] eq 'ON')){
+								#Skip rules when no RED IP is set (DHCP,DSL)
+								next;
+							}
 							next if ($targethash{$b}[0] eq 'none');
 							$STAG='';
 							if ($sourcehash{$a}[0] ne $targethash{$b}[0] && $targethash{$b}[0] ne 'none' || $sourcehash{$a}[0] eq '0.0.0.0/0.0.0.0'){
@@ -371,10 +378,10 @@ sub buildrules
 										my ($ip,$sub) =split("/",$targethash{$b}[0]);
 										#Process NAT with servicegroup used
 										if ($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat' && $$hash{$key}[14] eq 'cust_srvgrp'){
-											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip $DPORT\n";
+											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip $DPORT\n";
 											$fwaccessdport=$DPORT;
 										}else{
-											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to $ip$DPORT\n";
+											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip$DPORT\n";
 											$DPORT =~ s/\-/:/g;
 											if ($DPORT){
 												$fwaccessdport="--dport ".substr($DPORT,1,);
@@ -387,7 +394,7 @@ sub buildrules
 												}
 											}
 										}
-										system "iptables --wait -A FORWARDFW $PROT -i $con $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
+										system "iptables --wait -A FORWARDFW $PROT $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]\n";
 										next;
 									#PROCESS SNAT RULE
 									}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
@@ -395,7 +402,7 @@ sub buildrules
 										if ($$hash{$key}[17] eq 'ON' ){
 											system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT' \n";
 										}
-										system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to $natip\n";
+										system "$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to-source $natip\n";
 									}
 									#PROCESS EVERY OTHER RULE (If NOT ICMP, else the rule would be applied double)
 									if ($PROT ne '-p ICMP'){
@@ -558,7 +565,7 @@ sub get_address
 			$$hash{$key}[0]='0.0.0.0/0';
 		}
 		if($base2 eq 'RED' || $base2 eq 'RED1'){
-			open(FILE, "/var/ipfire/red/local-ipaddress")or die "Couldn't open local-ipaddress";
+			open(FILE, "/var/ipfire/red/local-ipaddress");
 			$$hash{$key}[0]= <FILE>;
 			close(FILE);
 		}else{

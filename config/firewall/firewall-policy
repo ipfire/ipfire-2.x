@@ -41,10 +41,10 @@ HAVE_ORANGE="false"
 
 case "${CONFIG_TYPE}" in
 	2)
-		HAVE_BLUE="true"
+		HAVE_ORANGE="true"
 		;;
 	3)
-		HAVE_ORANGE="true"
+		HAVE_BLUE="true"
 		;;
 	4)
 		HAVE_BLUE="true"

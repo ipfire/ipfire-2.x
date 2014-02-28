@@ -80,7 +80,7 @@ EOF
 	foreach my $k1 ( sort keys %$menu ) {
 		$link = getlink($menu->{$k1});
 		next if (!is_menu_visible($link) or $link eq '');
-		print '<li class="has-sub "><a><span>'.$menu->{$k1}->{'caption'}.'</span></a>';
+		print '<li class="has-sub "><a href="#"><span>'.$menu->{$k1}->{'caption'}.'</span></a>';
 		my $submenus = $menu->{$k1}->{'subMenu'};
 		&showsubmenu($submenus) if ($submenus);
 		print "</li>";
@@ -128,6 +128,12 @@ print <<END;
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<link rel="shortcut icon" href="/favicon.ico" />
 	<script type="text/javascript" src="/include/jquery.js"></script>
+
+	<script type="text/javascript">
+		function swapVisibility(id) {
+			\$('#' + id).toggle();
+		}
+	</script>
 END
 
 	foreach my $stylesheet (@stylesheets) {
@@ -232,7 +238,12 @@ sub openbox {
 	$align = $_[1];
 	$caption = $_[2];
 
-	print "<div class='post' align='$align'>\n";
+	if($align eq 'center') {
+		print "<div class='post' align='center'>\n"
+	}
+	else {
+		print "<div class='post'>\n";
+	}
 
 	if ($caption) {
 		print "<h2>$caption</h2>\n";

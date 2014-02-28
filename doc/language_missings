@@ -74,6 +74,7 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dns servers
 < dpd delay
 < dpd timeout
 < drop action
@@ -101,6 +102,7 @@
 < fireinfo why read more
 < fireinfo your profile id
 < firewall rules
+< first
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -282,6 +284,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -514,6 +517,7 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dns servers
 < dpd delay
 < dpd timeout
 < drop action
@@ -541,6 +545,7 @@
 < fireinfo why read more
 < fireinfo your profile id
 < firewall rules
+< first
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -722,6 +727,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -946,6 +952,7 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dns servers
 < dpd delay
 < dpd timeout
 < drop action
@@ -965,6 +972,7 @@
 < extrahd unable to write
 < extrahd you cant mount
 < firewall rules
+< first
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -1146,6 +1154,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -1357,6 +1366,7 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dns servers
 < dpd delay
 < dpd timeout
 < drop action
@@ -1377,6 +1387,7 @@
 < extrahd unable to write
 < extrahd you cant mount
 < firewall rules
+< first
 < forward firewall
 < frequency
 < fw default drop
@@ -1561,6 +1572,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
