@@ -31,12 +31,12 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ffmpeg
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = "ffmpeg-libs sdl lame libvorbis xvid"
 
 # Don't use PIC for libavcodec
-CFLAGS    += -fno-PIC -fno-strict-aliasing
+CFLAGS    += -fno-PIC -fno-strict-aliasing -Wa,--noexecstack
 
 ###############################################################################
 # Top-level Rules
