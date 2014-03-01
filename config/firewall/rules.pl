@@ -85,38 +85,21 @@ open (CONN1,"/var/ipfire/red/local-ipaddress");
 my $redip = <CONN1>;
 close(CONN1);
 
-#################
-#    DEBUG/TEST #
-#################
-my $MODE=!$DEBUG;     # 0 - normal operation
-                # 1 - print configline and rules to console
-                #
-#################
-my $param=shift;
+# MAIN
+&main();
 
-if($param eq 'flush'){
-	if ($MODE eq '1'){
-		print " Flushing chains...\n";
-	}
-	&flush;
-}else{
-	if ($MODE eq '1'){
-		print " Flushing chains...\n";
-	}
-	&flush;
-	if ($MODE eq '1'){
-		print " Preparing rules...\n";
-	}
-	&preparerules;
-	if($MODE eq '0'){
-		if ($fwdfwsettings{'POLICY'} eq 'MODE1'){
-			&p2pblock;
-			run("/usr/sbin/firewall-policy");
-		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
-			&p2pblock;
-			run("/usr/sbin/firewall-policy");
-		}
-	}
+sub main {
+	# Flush all chains.
+	&flush();
+
+	# Reload firewall rules.
+	&preparerules();
+
+	# Load P2P block rules.
+	&p2pblock();
+
+	# Reload firewall policy.
+	run("/usr/sbin/firewall-policy");
 }
 
 sub run {
