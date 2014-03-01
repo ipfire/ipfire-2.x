@@ -112,7 +112,6 @@ if($param eq 'flush'){
 		}elsif($fwdfwsettings{'POLICY'} eq 'MODE2'){
 			&p2pblock;
 			system ("/usr/sbin/firewall-policy");
-			system ("/etc/sysconfig/firewall.local reload");
 		}
 	}
 }
