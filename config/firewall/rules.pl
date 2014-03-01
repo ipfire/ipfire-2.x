@@ -23,9 +23,9 @@ use strict;
 use Time::Local;
 no warnings 'uninitialized';
 
-# enable only the following on debugging purpose
-#use warnings;
-#use CGI::Carp 'fatalsToBrowser';
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/lang.pl";
+require "/usr/lib/firewall/firewall-lib.pl";
 
 my %fwdfwsettings=();
 my %defaultNetworks=();
@@ -43,9 +43,6 @@ my %confignatfw=();
 my %aliases=();
 my @DPROT=();
 my @p2ps=();
-require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/lang.pl";
-require "/usr/lib/firewall/firewall-lib.pl";
 
 my $configfwdfw		= "${General::swroot}/firewall/config";
 my $configinput	    = "${General::swroot}/firewall/input";
@@ -76,12 +73,15 @@ my $snat			='';
 open (CONN,"/var/ipfire/red/iface");
 my $con = <CONN>;
 close(CONN);
+
 if (-f "/var/ipfire/red/active"){
 	$conexists='on';
 }
+
 open (CONN1,"/var/ipfire/red/local-ipaddress");
 my $redip = <CONN1>;
 close(CONN1);
+
 #################
 #    DEBUG/TEST #
 #################
@@ -115,16 +115,16 @@ if($param eq 'flush'){
 		}
 	}
 }
-sub flush
-{
+
+sub flush {
 	system ("iptables --wait -F FORWARDFW");
 	system ("iptables --wait -F INPUTFW");
 	system ("iptables --wait -F OUTGOINGFW");
 	system ("iptables --wait -t nat -F NAT_DESTINATION");
 	system ("iptables --wait -t nat -F NAT_SOURCE");
 }
-sub preparerules
-{
+
+sub preparerules {
 	if (! -z  "${General::swroot}/firewall/config"){
 		&buildrules(\%configfwdfw);
 	}
@@ -135,8 +135,8 @@ sub preparerules
 		&buildrules(\%configoutgoingfw);
 	}
 }
-sub buildrules
-{
+
+sub buildrules {
 	my $hash=shift;
 	my $STAG;
 	my $natip;
@@ -335,8 +335,8 @@ sub buildrules
 		undef $fireport;
 	}
 }
-sub get_nat_ip
-{
+
+sub get_nat_ip {
 	my $val=shift;
 	my $type=shift;
 	my $result;
@@ -359,8 +359,8 @@ sub get_nat_ip
 	}
 	return $result;
 }
-sub get_time
-{
+
+sub get_time {
 	my $val=shift;
 	my $val1=shift;
 	my $time;
@@ -373,8 +373,8 @@ sub get_time
 	$time=sprintf "%02d:%02d", $ruletime / 60, $ruletime % 60;
 	return $time;
 }
-sub time_get_utc
-{
+
+sub time_get_utc {
 	# Calculates the UTCtime from a given time
 	my $val=shift;
 	my @localtime=localtime(time);
@@ -382,15 +382,15 @@ sub time_get_utc
 	my $diff = ($gmtime[2]*60+$gmtime[1]%60)-($localtime[2]*60+$localtime[1]%60);
 	return $diff;
 }
-sub utcmin
-{
+
+sub utcmin {
 	my $ruletime=shift;
 	my ($hrs,$min) = split(":",$ruletime);
 	my $newtime = $hrs*60+$min;
 	return $newtime;
 }
-sub p2pblock
-{
+
+sub p2pblock {
 	my $P2PSTRING;
 	my $DO;
 	open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
@@ -421,8 +421,8 @@ sub p2pblock
 		}
 	}
 }
-sub get_address
-{
+
+sub get_address {
 	my $base=shift; #source of checking ($configfwdfw{$key}[x] or groupkey
 	my $base2=shift;
 	my $type=shift; #src or tgt
@@ -479,8 +479,8 @@ sub get_address
 		}
 	}
 }
-sub get_prot
-{
+
+sub get_prot {
 	my $hash=shift;
 	my $key=shift;
 	#check AH,GRE,ESP or ICMP
@@ -508,8 +508,8 @@ sub get_prot
 		return "$$hash{$key}[8]";
 	}
 }
-sub get_port
-{
+
+sub get_port {
 	my $hash=shift;
 	my $key=shift;
 	my $prot=shift;
