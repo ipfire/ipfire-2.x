@@ -175,6 +175,14 @@ case "${1}" in
 				boot_mesg "Createing ATM-Bridge as $PPP_NIC ..."
 				br2684ctl -c0 -e${ENCAP} -a0.${VPI}.${VCI} >/dev/null 2>&1 &
 				sleep 1
+
+				# use user-defined or green mac address for nas0
+				if [ -n "$MAC" ]; then
+					ip link set dev nas0 address ${MAC}
+				else
+					ip link set dev nas0 address $(cat /sys/class/net/green0/address)
+				fi
+
 				if [ "$TYPE" == "pppoeatm" ]; then
 					TYPE="pppoe"
 				fi
