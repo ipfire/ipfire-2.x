@@ -1039,7 +1039,7 @@ sub GetIcmpDescription ($) {
     'SKIP',
     'Photur',				#40
     'Experimental');
-    if ($index>41) {return 'unknown'} else {return @icmp_description[$index]};
+    if ($index>41) {return 'unknown'} else {return $icmp_description[$index]};
 }
 
 sub GetCoreUpdateVersion() {
