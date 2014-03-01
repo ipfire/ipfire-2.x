@@ -408,16 +408,16 @@ if ($showpie != 2 && $pienumber <= 50 && $pienumber != 0) {
         $mygraph->set( dclrs => [ "$color{'color1'}" , "$color{'color2'}" , "$color{'color3'}" , "$color{'color4'}" , "$color{'color5'}" , "$color{'color6'}" , "$color{'color7'}" , "$color{'color8'}" , "$color{'color9'}" , "$color{'color10'}" ] );
         my $myimage = $mygraph->plot(\@data) or die $mygraph->error;
 
-        my @filenames = glob("/srv/web/ipfire/html/graphs/fwlog-ip*.png");
+        my @filenames = glob("/srv/web/ipfire/html/graphs/fwlog-country*.png");
         unlink(@filenames);
         my $imagerandom = rand(1000000);
-        my $imagename = "/srv/web/ipfire/html/graphs/fwlog-ip$imagerandom.png";
+        my $imagename = "/srv/web/ipfire/html/graphs/fwlog-country$imagerandom.png";
         open(FILE,">$imagename");
         print FILE $myimage->png;
         close(FILE);
         #####################################################
         print "<div style='text-align:center;'>";
-        print "<img src='/graphs/fwlog-ip$imagerandom.png'>";
+        print "<img src='/graphs/fwlog-country$imagerandom.png'>";
         print "</div>";
 }
 
