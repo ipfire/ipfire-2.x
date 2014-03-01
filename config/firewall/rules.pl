@@ -20,7 +20,6 @@
 ###############################################################################
 
 use strict;
-use Time::Local;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -154,9 +153,7 @@ sub buildrules {
 	foreach my $key (sort {$a <=> $b} keys %$hash){
 		next if (($$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1') && $conexists eq 'off' );
 
-		my $TIME = "";
-		my $TIMEFROM;
-		my $TIMETILL;
+		my $time_constraints = "";
 		my $natip = "";
 
 		# Check if logging should be enabled.
@@ -252,25 +249,53 @@ sub buildrules {
 			if ($DPROT eq ''){$DPROT=' ';}
 			@DPROT=split(",",$DPROT);
 
-			#get time if defined
-			if($$hash{$key}[18] eq 'ON'){
-				my ($time1,$time2,$daylight);
-				$daylight=$$hash{$key}[28];
-				$time1=&get_time($$hash{$key}[26],$daylight);
-				$time2=&get_time($$hash{$key}[27],$daylight);
-				if($$hash{$key}[19] ne ''){push (@timeframe,"Mon");}
-				if($$hash{$key}[20] ne ''){push (@timeframe,"Tue");}
-				if($$hash{$key}[21] ne ''){push (@timeframe,"Wed");}
-				if($$hash{$key}[22] ne ''){push (@timeframe,"Thu");}
-				if($$hash{$key}[23] ne ''){push (@timeframe,"Fri");}
-				if($$hash{$key}[24] ne ''){push (@timeframe,"Sat");}
-				if($$hash{$key}[25] ne ''){push (@timeframe,"Sun");}
-				$TIME=join(",",@timeframe);
+			# Set up time constraints.
+			if ($$hash{$key}[18] eq 'ON') {
+				my @time_args = ("-m", "time");
 
-				$TIMEFROM="--timestart $time1 ";
-				$TIMETILL="--timestop $time2 ";
-				$TIME="-m time --weekdays $TIME $TIMEFROM $TIMETILL";
+				# Select all days of the week this match is active.
+				my @weekdays = ();
+				if ($$hash{$key}[19] ne '') {
+					push (@weekdays, "Mon");
+				}
+				if ($$hash{$key}[20] ne '') {
+					push (@weekdays, "Tue");
+				}
+				if ($$hash{$key}[21] ne '') {
+					push (@weekdays, "Wed");
+				}
+				if ($$hash{$key}[22] ne '') {
+					push (@weekdays, "Thu");
+				}
+				if ($$hash{$key}[23] ne '') {
+					push (@weekdays, "Fri");
+				}
+				if ($$hash{$key}[24] ne '') {
+					push (@weekdays, "Sat");
+				}
+				if ($$hash{$key}[25] ne '') {
+					push (@weekdays, "Sun");
+				}
+				if (@weekdays) {
+					push(@time_args, ("--weekdays", join(",", @weekdays)));
+				}
+
+				# Convert start time.
+				my $time_start = &format_time($$hash{$key}[26]);
+				if ($time_start) {
+					push(@time_args, ("--timestart", $time_start));
+				}
+
+				# Convert end time.
+				my $time_stop = &format_time($$hash{$key}[27]);
+				if ($time_stop) {
+					push(@time_args, ("--timestop", $time_stop));
+				}
+
+				# Format command line.
+				$time_constraints = join(" ", @time_args);
 			}
+
 			foreach my $DPROT (@DPROT){
 				$DPORT = &get_port($hash,$key,$DPROT);
 				$PROT=$DPROT;
@@ -299,22 +324,22 @@ sub buildrules {
 												$_="";
 										}
 										if ($LOG) {
-											run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $TIME -j LOG");
+											run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $time_constraints -j LOG");
 										}
-										run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $TIME -j $$hash{$key}[0]");
+										run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $time_constraints -j $$hash{$key}[0]");
 									}
 								#PROCESS DNAT RULE (Portforward)
 								} elsif ($NAT && $NAT_MODE eq "DNAT") {
 									if ($LOG) {
-										run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j LOG --log-prefix 'DNAT'");
+										run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $time_constraints -j LOG --log-prefix 'DNAT'");
 									}
 									my ($ip,$sub) =split("/",$targethash{$b}[0]);
 									#Process NAT with servicegroup used
 									if ($$hash{$key}[14] eq 'cust_srvgrp') {
-										run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j DNAT --to-destination $ip $DPORT");
+										run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $time_constraints -j DNAT --to-destination $ip $DPORT");
 										$fwaccessdport=$DPORT;
 									} else {
-										run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j DNAT --to-destination $ip$DPORT");
+										run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $time_constraints -j DNAT --to-destination $ip$DPORT");
 										$DPORT =~ s/\-/:/g;
 										if ($DPORT){
 											$fwaccessdport="--dport ".substr($DPORT,1,);
@@ -327,28 +352,28 @@ sub buildrules {
 											}
 										}
 									}
-									run("$IPTABLES -A FORWARDFW $PROT $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]");
+									run("$IPTABLES -A FORWARDFW $PROT $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $time_constraints -j $$hash{$key}[0]");
 									next;
 								#PROCESS SNAT RULE
 								} elsif ($NAT && $NAT_MODE eq "SNAT") {
 									if ($LOG) {
-										run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT'");
+										run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $time_constraints -j LOG --log-prefix 'SNAT'");
 									}
-									run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j SNAT --to-source $natip");
+									run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $time_constraints -j SNAT --to-source $natip");
 								}
 								#PROCESS EVERY OTHER RULE (If NOT ICMP, else the rule would be applied double)
 								if ($PROT ne '-p ICMP'){
 									if ($LOG && !$NAT) {
-										run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
+										run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $time_constraints -j LOG");
 									}
-									run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]");
+									run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $time_constraints -j $$hash{$key}[0]");
 								}
 								#PROCESS Prot ICMP and type = All ICMP-Types
 								if ($PROT eq '-p ICMP' && $$hash{$key}[9] eq 'All ICMP-Types'){
 									if ($LOG && !$NAT) {
-										run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
+										run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $time_constraints -j LOG");
 									}
-									run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]");
+									run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $time_constraints -j $$hash{$key}[0]");
 								}
 							}
 						}
@@ -386,34 +411,42 @@ sub get_nat_ip {
 	return $result;
 }
 
-sub get_time {
-	my $val=shift;
-	my $val1=shift;
-	my $time;
-	my $minutes;
-	my $ruletime;
-	$minutes = &utcmin($val);
-	$ruletime = $minutes + &time_get_utc($val);
-	if ($ruletime < 0){$ruletime +=1440;}
-	if ($ruletime > 1440){$ruletime -=1440;}
-	$time=sprintf "%02d:%02d", $ruletime / 60, $ruletime % 60;
-	return $time;
+# Formats the given timestamp into the iptables format which is "hh:mm" UTC.
+sub format_time {
+	my $val = shift;
+
+	# Convert the given time into minutes.
+	my $minutes = &time_convert_to_minutes($val);
+
+	# Move the timestamp into UTC.
+	$minutes += &time_utc_offset();
+
+	# Make sure $minutes is between 00:00 and 23:59.
+	if ($minutes < 0) {
+		$minutes += 1440;
+	}
+
+	if ($minutes > 1440) {
+		$minutes -= 1440;
+	}
+
+	# Format as hh:mm.
+	return sprintf("%02d:%02d", $minutes / 60, $minutes % 60);
 }
 
-sub time_get_utc {
-	# Calculates the UTCtime from a given time
-	my $val=shift;
-	my @localtime=localtime(time);
-	my @gmtime=gmtime(time);
-	my $diff = ($gmtime[2]*60+$gmtime[1]%60)-($localtime[2]*60+$localtime[1]%60);
-	return $diff;
+# Calculates the offsets in minutes from the local timezone to UTC.
+sub time_utc_offset {
+	my @localtime = localtime(time);
+	my @gmtime = gmtime(time);
+
+	return ($gmtime[2] * 60 + $gmtime[1] % 60) - ($localtime[2] * 60 + $localtime[1] % 60);
 }
 
-sub utcmin {
-	my $ruletime=shift;
-	my ($hrs,$min) = split(":",$ruletime);
-	my $newtime = $hrs*60+$min;
-	return $newtime;
+# Takes a timestamp like "14:00" and converts it into minutes since midnight.
+sub time_convert_to_minutes {
+	my ($hrs, $min) = split(":", shift);
+
+	return ($hrs * 60) + $min;
 }
 
 sub p2pblock {
