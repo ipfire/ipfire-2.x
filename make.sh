@@ -688,7 +688,6 @@ buildipfire() {
   ipfiremake git
   ipfiremake squidclamav
   ipfiremake vnstat
-  ipfiremake vnstati
   ipfiremake iw
   ipfiremake wpa_supplicant
   ipfiremake hostapd
