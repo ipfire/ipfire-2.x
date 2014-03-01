@@ -27,7 +27,7 @@ include Config
 VER        = 2008-04-13
 THISAPP    = ffmpeg-export-$(VER)
 PROG       = ffmpeg-libs
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = ""
 
