@@ -52,6 +52,8 @@ case "${CONFIG_TYPE}" in
 		;;
 esac
 
+HAVE_OPENVPN="true"
+
 # INPUT
 case "${FWPOLICY2}" in
 	REJECT)
@@ -61,6 +63,16 @@ case "${FWPOLICY2}" in
 		iptables -A POLICYIN -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_INPUT"
 		;;
 	*) # DROP
+		# OpenVPN
+		# Allow direct access to the internal IP addresses of the firewall
+		# from remote subnets if forward policy is allowed.
+		case "${HAVE_OPENVPN},${POLICY}" in
+			true,MODE1) ;;
+			true,*)
+				iptables -A POLICYIN -i tun+ -j ACCEPT
+				;;
+		esac
+
 		if [ "${DROPINPUT}" = "on" ]; then
 			iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
 		fi
