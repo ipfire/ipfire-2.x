@@ -196,8 +196,6 @@ iptables_init() {
 	iptables -t nat -N REDNAT
 	iptables -t nat -A POSTROUTING -j REDNAT
 
-	iptables_red
-
 	# Custom prerouting chains (for transparent proxy)
 	iptables -t nat -N SQUID
 	iptables -t nat -A PREROUTING -j SQUID
@@ -226,10 +224,11 @@ iptables_init() {
 	iptables -N POLICYOUT
 	iptables -A OUTPUT -j POLICYOUT
 
+	# Initialize firewall policies.
 	/usr/sbin/firewall-policy
 
-	# read new firewall
-	/usr/local/bin/firewallctrl
+	# Install firewall rules for the red interface.
+	iptables_red
 }
 
 iptables_red() {
