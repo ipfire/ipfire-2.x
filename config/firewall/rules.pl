@@ -30,6 +30,8 @@ require "/usr/lib/firewall/firewall-lib.pl";
 # Set to one to enable debugging mode.
 my $DEBUG = 0;
 
+my $IPTABLES = "iptables --wait";
+
 my %fwdfwsettings=();
 my %defaultNetworks=();
 my %configfwdfw=();
@@ -60,7 +62,6 @@ my $blue			= '';
 my ($TYPE,$PROT,$SPROT,$DPROT,$SPORT,$DPORT,$TIME,$TIMEFROM,$TIMETILL,$SRC_TGT);
 my $CHAIN			= "FORWARDFW";
 my $conexists		= 'off';
-my $command			= 'iptables --wait -A';
 my $dnat			='';
 my $snat			='';
 
@@ -114,11 +115,11 @@ sub run {
 }
 
 sub flush {
-	run("iptables --wait -F FORWARDFW");
-	run("iptables --wait -F INPUTFW");
-	run("iptables --wait -F OUTGOINGFW");
-	run("iptables --wait -t nat -F NAT_DESTINATION");
-	run("iptables --wait -t nat -F NAT_SOURCE");
+	run("$IPTABLES -F FORWARDFW");
+	run("$IPTABLES -F INPUTFW");
+	run("$IPTABLES -F OUTGOINGFW");
+	run("$IPTABLES -t nat -F NAT_DESTINATION");
+	run("$IPTABLES -t nat -F NAT_SOURCE");
 }
 
 sub preparerules {
@@ -145,9 +146,7 @@ sub buildrules {
 	my $icmptype;
 	foreach my $key (sort {$a <=> $b} keys %$hash){
 		next if (($$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1') && $conexists eq 'off' );
-		$command="iptables --wait -A";
 		if ($$hash{$key}[28] eq 'ON'){
-			$command='iptables --wait -t nat -A';
 			$natip=&get_nat_ip($$hash{$key}[29],$$hash{$key}[31]);
 			if($$hash{$key}[31] eq 'dnat'){
 				$nat='DNAT';
@@ -265,23 +264,23 @@ sub buildrules {
 												$_="";
 										}
 										if ($$hash{$key}[17] eq 'ON'){
-											run("$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $TIME -j LOG");
+											run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $TIME -j LOG");
 										}
-											run("$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $TIME -j $$hash{$key}[0]");
+											run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $TIME -j $$hash{$key}[0]");
 									}
 								#PROCESS DNAT RULE (Portforward)
 								}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat'){
 									$natchain='NAT_DESTINATION';
 									if ($$hash{$key}[17] eq 'ON'){
-										run("$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j LOG --log-prefix 'DNAT'");
+										run("$IPTABLES -t nat -A $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j LOG --log-prefix 'DNAT'");
 									}
 									my ($ip,$sub) =split("/",$targethash{$b}[0]);
 									#Process NAT with servicegroup used
 									if ($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat' && $$hash{$key}[14] eq 'cust_srvgrp'){
-										run("$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip $DPORT");
+										run("$IPTABLES -t nat -A $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip $DPORT");
 										$fwaccessdport=$DPORT;
 									}else{
-										run("$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip$DPORT");
+										run("$IPTABLES -t nat -A $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip$DPORT");
 										$DPORT =~ s/\-/:/g;
 										if ($DPORT){
 											$fwaccessdport="--dport ".substr($DPORT,1,);
@@ -294,29 +293,29 @@ sub buildrules {
 											}
 										}
 									}
-									run("iptables --wait -A FORWARDFW $PROT $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]");
+									run("$IPTABLES -A FORWARDFW $PROT $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]");
 									next;
 								#PROCESS SNAT RULE
 								}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
 									$natchain='NAT_SOURCE';
 									if ($$hash{$key}[17] eq 'ON' ){
-										run("$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT'");
+										run("$IPTABLES -t nat -A $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT'");
 									}
-									run("$command $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to-source $natip");
+									run("$IPTABLES -t nat -A $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to-source $natip");
 								}
 								#PROCESS EVERY OTHER RULE (If NOT ICMP, else the rule would be applied double)
 								if ($PROT ne '-p ICMP'){
 									if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
-										run("$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
+										run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
 									}
-									run("iptables --wait -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]");
+									run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]");
 								}
 								#PROCESS Prot ICMP and type = All ICMP-Types
 								if ($PROT eq '-p ICMP' && $$hash{$key}[9] eq 'All ICMP-Types'){
 									if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
-										run("$command $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
+										run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
 									}
-									run("iptables --wait -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]");
+									run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]");
 								}
 							}
 						}
@@ -410,7 +409,7 @@ sub p2pblock {
 	}
 
 	if($P2PSTRING) {
-		run("/sbin/iptables --wait -A FORWARDFW $CMD $P2PSTRING -j $DO");
+		run("$IPTABLES -A FORWARDFW $CMD $P2PSTRING -j $DO");
 	}
 }
 
