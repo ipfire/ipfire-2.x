@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
@@ -21,7 +21,6 @@
 
 use strict;
 use Time::Local;
-no warnings 'uninitialized';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -31,6 +30,11 @@ require "/usr/lib/firewall/firewall-lib.pl";
 my $DEBUG = 0;
 
 my $IPTABLES = "iptables --wait";
+
+# iptables chains
+my $CHAIN                 = "FORWARDFW";
+my $CHAIN_NAT_SOURCE      = "NAT_SOURCE";
+my $CHAIN_NAT_DESTINATION = "NAT_DESTINATION";
 
 my %fwdfwsettings=();
 my %defaultNetworks=();
@@ -59,8 +63,7 @@ my $errormessage	= '';
 my $orange			= '';
 my $green			= '';
 my $blue			= '';
-my ($TYPE,$PROT,$SPROT,$DPROT,$SPORT,$DPORT,$TIME,$TIMEFROM,$TIMETILL,$SRC_TGT);
-my $CHAIN			= "FORWARDFW";
+my ($TYPE,$PROT,$SPROT,$DPROT,$SPORT,$DPORT,$SRC_TGT);
 my $conexists		= 'off';
 my $dnat			='';
 my $snat			='';
@@ -114,6 +117,12 @@ sub run {
 	}
 }
 
+sub print_error {
+	my $message = shift;
+
+	print STDERR "$message\n";
+}
+
 sub flush {
 	run("$IPTABLES -F FORWARDFW");
 	run("$IPTABLES -F INPUTFW");
@@ -137,29 +146,55 @@ sub preparerules {
 sub buildrules {
 	my $hash=shift;
 	my $STAG;
-	my $natip;
 	my $snatport;
 	my $fireport;
-	my $nat;
 	my $fwaccessdport;
 	my $natchain;
 	my $icmptype;
 	foreach my $key (sort {$a <=> $b} keys %$hash){
 		next if (($$hash{$key}[6] eq 'RED' || $$hash{$key}[6] eq 'RED1') && $conexists eq 'off' );
-		if ($$hash{$key}[28] eq 'ON'){
-			$natip=&get_nat_ip($$hash{$key}[29],$$hash{$key}[31]);
-			if($$hash{$key}[31] eq 'dnat'){
-				$nat='DNAT';
-				if ($$hash{$key}[30] =~ /\|/){
+
+		my $TIME = "";
+		my $TIMEFROM;
+		my $TIMETILL;
+		my $natip = "";
+
+		# Check if logging should be enabled.
+		my $LOG = 0;
+		if ($$hash{$key}[17] eq 'ON') {
+			$LOG = 1;
+		}
+
+		my $NAT = 0;
+		my $NAT_MODE;
+
+		# Check if NAT is enabled and initialize variables, that we use for that.
+		if ($$hash{$key}[28] eq 'ON') {
+			$NAT = 1;
+
+			# Destination NAT
+			if ($$hash{$key}[31] eq 'dnat') {
+				$NAT_MODE = "DNAT";
+
+				if ($$hash{$key}[30] =~ /\|/) {
 					$$hash{$key}[30]=~ tr/|/,/;
 					$fireport='-m multiport --dport '.$$hash{$key}[30];
-				}else{
+				} else {
 					$fireport='--dport '.$$hash{$key}[30] if ($$hash{$key}[30]>0);
 				}
-			}else{
-				$nat='SNAT';
+
+			# Source NAT
+			} elsif ($$hash{$key}[31] eq 'snat') {
+				$NAT_MODE = "SNAT";
+
+			} else {
+				print_error("Invalid NAT mode: $$hash{$key}[31]");
+				next;
 			}
+
+			$natip = &get_nat_ip($$hash{$key}[29], $NAT_MODE);
 		}
+
 		$STAG='';
 		if($$hash{$key}[2] eq 'ON'){
 			#get source ip's
@@ -220,7 +255,7 @@ sub buildrules {
 			#get time if defined
 			if($$hash{$key}[18] eq 'ON'){
 				my ($time1,$time2,$daylight);
-				my $daylight=$$hash{$key}[28];
+				$daylight=$$hash{$key}[28];
 				$time1=&get_time($$hash{$key}[26],$daylight);
 				$time2=&get_time($$hash{$key}[27],$daylight);
 				if($$hash{$key}[19] ne ''){push (@timeframe,"Mon");}
@@ -245,7 +280,7 @@ sub buildrules {
 				}
 				foreach my $a (sort keys %sourcehash){
 					foreach my $b (sort keys %targethash){
-						if(! $sourcehash{$a}[0] || ! $targethash{$b}[0] || ($natip eq '-d ' && $$hash{$key}[28] eq 'ON') || (!$natip && $$hash{$key}[28] eq 'ON')){
+						if(! $sourcehash{$a}[0] || ! $targethash{$b}[0] || ($natip eq '-d ' && $NAT) || (!$natip && $NAT)){
 							#Skip rules when no RED IP is set (DHCP,DSL)
 							next;
 						}
@@ -263,24 +298,23 @@ sub buildrules {
 												$icmptype="";
 												$_="";
 										}
-										if ($$hash{$key}[17] eq 'ON'){
+										if ($LOG) {
 											run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $TIME -j LOG");
 										}
-											run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $TIME -j $$hash{$key}[0]");
+										run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $icmptype $_ $TIME -j $$hash{$key}[0]");
 									}
 								#PROCESS DNAT RULE (Portforward)
-								}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat'){
-									$natchain='NAT_DESTINATION';
-									if ($$hash{$key}[17] eq 'ON'){
-										run("$IPTABLES -t nat -A $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j LOG --log-prefix 'DNAT'");
+								} elsif ($NAT && $NAT_MODE eq "DNAT") {
+									if ($LOG) {
+										run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j LOG --log-prefix 'DNAT'");
 									}
 									my ($ip,$sub) =split("/",$targethash{$b}[0]);
 									#Process NAT with servicegroup used
-									if ($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'dnat' && $$hash{$key}[14] eq 'cust_srvgrp'){
-										run("$IPTABLES -t nat -A $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip $DPORT");
+									if ($$hash{$key}[14] eq 'cust_srvgrp') {
+										run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j DNAT --to-destination $ip $DPORT");
 										$fwaccessdport=$DPORT;
-									}else{
-										run("$IPTABLES -t nat -A $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j $nat --to-destination $ip$DPORT");
+									} else {
+										run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION $PROT $STAG $sourcehash{$a}[0] $SPORT $natip $fireport $TIME -j DNAT --to-destination $ip$DPORT");
 										$DPORT =~ s/\-/:/g;
 										if ($DPORT){
 											$fwaccessdport="--dport ".substr($DPORT,1,);
@@ -296,23 +330,22 @@ sub buildrules {
 									run("$IPTABLES -A FORWARDFW $PROT $STAG $sourcehash{$a}[0] -d $ip $fwaccessdport $TIME -j $$hash{$key}[0]");
 									next;
 								#PROCESS SNAT RULE
-								}elsif($$hash{$key}[28] eq 'ON' && $$hash{$key}[31] eq 'snat'){
-									$natchain='NAT_SOURCE';
-									if ($$hash{$key}[17] eq 'ON' ){
-										run("$IPTABLES -t nat -A $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT'");
+								} elsif ($NAT && $NAT_MODE eq "SNAT") {
+									if ($LOG) {
+										run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG --log-prefix 'SNAT'");
 									}
-									run("$IPTABLES -t nat -A $natchain $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $nat --to-source $natip");
+									run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j SNAT --to-source $natip");
 								}
 								#PROCESS EVERY OTHER RULE (If NOT ICMP, else the rule would be applied double)
 								if ($PROT ne '-p ICMP'){
-									if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
+									if ($LOG && !$NAT) {
 										run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
 									}
 									run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]");
 								}
 								#PROCESS Prot ICMP and type = All ICMP-Types
 								if ($PROT eq '-p ICMP' && $$hash{$key}[9] eq 'All ICMP-Types'){
-									if ($$hash{$key}[17] eq 'ON' && $$hash{$key}[28] ne 'ON'){
+									if ($LOG && !$NAT) {
 										run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j LOG");
 									}
 									run("$IPTABLES -A $$hash{$key}[1] $PROT $STAG $sourcehash{$a}[0] $SPORT -d $targethash{$b}[0] $DPORT $TIME -j $$hash{$key}[0]");
@@ -325,9 +358,6 @@ sub buildrules {
 		}
 		%sourcehash=();
 		%targethash=();
-		undef $TIME;
-		undef $TIMEFROM;
-		undef $TIMETILL;
 		undef $fireport;
 	}
 }
@@ -340,15 +370,15 @@ sub get_nat_ip {
 		$result=$defaultNetworks{$val.'_ADDRESS'};
 	}elsif($val eq 'ALL'){
 		$result='-i '.$con;
-	}elsif($val eq 'Default IP' && $type eq 'dnat'){
+	}elsif($val eq 'Default IP' && $type eq "DNAT"){
 		$result='-d '.$redip;
-	}elsif($val eq 'Default IP' && $type eq 'snat'){
+	}elsif($val eq 'Default IP' && $type eq "SNAT"){
 		$result=$redip;
 	}else{
 		foreach my $al (sort keys %aliases){
-			if($val eq $al && $type eq 'dnat'){
+			if($val eq $al && $type eq "DNAT"){
 				$result='-d '.$aliases{$al}{'IPT'};
-			}elsif($val eq $al && $type eq 'snat'){
+			}elsif($val eq $al && $type eq "SNAT"){
 				$result=$aliases{$al}{'IPT'};
 			}
 		}
@@ -387,7 +417,7 @@ sub utcmin {
 }
 
 sub p2pblock {
-	my $P2PSTRING;
+	my $P2PSTRING = "";
 	my $DO;
 	open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
 	@p2ps = <FILE>;
