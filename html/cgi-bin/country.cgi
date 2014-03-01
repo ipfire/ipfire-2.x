@@ -36,18 +36,18 @@ require "${General::swroot}/header.pl";
 
 &Header::showhttpheaders();
 
-&Header::openpage('Country Codes', 1, '');
-&Header::openbigbox('100%', 'LEFT');
+&Header::openpage($Lang::tr{'countries'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-&Header::openbox('100%', 'LEFT', 'Flags & Country Codes:');
-print "<TABLE WIDTH='100%' border='0' class='tbl'>";
-print "<tr><th width='5%'><b>Flag</b></th>";
-print "<th width='5%'><b>Code</b></th>";
-print "<th width='40%'><b>$Lang::tr{'country'}</b></th>";
-print "<th><b>&nbsp;</b></th>";
-print "<th width='5%'><b>Flag</b></th>";
-print "<th width='5%'><b>Code</b></th>";
-print "<th width='40%'><b>$Lang::tr{'country'}</b></th></tr>";
+&Header::openbox('100%', 'left', $Lang::tr{'country codes and flags'});
+print "<table class='tbl'>";
+print "<tr><th style='width=5%;'><b>$Lang::tr{'flag'}</b></th>";
+print "<th style='width=5%;'><b>$Lang::tr{'countrycode'}</b></th>";
+print "<th style='width=40%; text-align:left;'><b>$Lang::tr{'country'}</b></th>";
+print "<th>&nbsp;</th>";
+print "<th style='width=5%;'><b>$Lang::tr{'flag'}</b></th>";
+print "<th style='width=5%;'><b>$Lang::tr{'countrycode'}</b></th>";
+print "<th style='width=40%; text-align:left;'><b>$Lang::tr{'country'}</b></th></tr>";
 
 @flaglist = <$flagdir/*>;
 
@@ -69,39 +69,34 @@ foreach $flag (@flaglistfiles)
 	if($fcode eq 'tp') { $country = 'East Timor'; }
 	if($fcode eq 'yu') { $country = 'Yugoslavia'; }
 	if ($lines % 2) {
-		print "<td $col><a name='$fcode'/><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$flagcode'</td>";
+		print "<td $col><a id='$fcode'><img src='/images/flags/$fcode.png' alt='$flagcode' title='$flagcode'/></a></td>";
 		print "<td $col>$flagcode</td>";
 		print "<td $col>$country</td></tr>\n";
-}
-else {
-	$lines2++;
-	if($lines2 % 2) {
-		print "<tr>";
-		$col="bgcolor='${Header::table2colour}'";
-	} else {
-		print "<tr>";
-		$col="bgcolor='${Header::table1colour}'";
 	}
-	print "<td $col><a name='$fcode'/><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$flagcode'</td>";
-	print "<td $col>$flagcode</td>";
-	print "<td $col>$country</td>";
-	print "<td $col>&nbsp;</td>";
+	else {
+		$lines2++;
+		if($lines2 % 2) {
+			$col="style='background-color:${Header::table2colour};'";
+		} else {
+			$col="style='background-color:${Header::table1colour};'";
+		}
+		print "<tr>";
+		print "<td $col><a id='$fcode'><img src='/images/flags/$fcode.png' alt='$flagcode' title='$flagcode'/></a></td>";
+		print "<td $col>$flagcode</td>";
+		print "<td $col>$country</td>";
+		print "<td $col>&nbsp;</td>";
 	}
 }
 
 
-print "</TABLE>";
+print "</table>";
 &Header::closebox();
 
 &Header::closebigbox();
 
 print <<END
-<div align='center'>
-<table width='80%'>
-<tr>
-<td align='center'><a href='$ENV{'HTTP_REFERER'}'>$Lang::tr{'back'}</a></td>
-</tr>
-</table>
+<div style='text-align:center'>
+<a href='$ENV{'HTTP_REFERER'}'>$Lang::tr{'back'}</a>
 </div>
 END
 ; 
