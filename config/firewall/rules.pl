@@ -172,8 +172,6 @@ sub buildrules {
 		# Collect all destinations.
 		my @destinations = &get_addresses($hash, $key, "tgt");
 
-		my $time_constraints = "";
-
 		# Check if logging should be enabled.
 		my $LOG = ($$hash{$key}[17] eq 'ON');
 
