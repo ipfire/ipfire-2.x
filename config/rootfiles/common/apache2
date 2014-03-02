@@ -606,6 +606,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/mod/mod_authz_groupfile.html.ko.euc-kr
 #srv/web/ipfire/manual/mod/mod_authz_host.html
 #srv/web/ipfire/manual/mod/mod_authz_host.html.en
+#srv/web/ipfire/manual/mod/mod_authz_host.html.fr
 #srv/web/ipfire/manual/mod/mod_authz_host.html.ja.utf8
 #srv/web/ipfire/manual/mod/mod_authz_host.html.ko.euc-kr
 #srv/web/ipfire/manual/mod/mod_authz_owner.html
@@ -1330,12 +1331,12 @@ usr/lib/apr-util-1/apr_dbd_sqlite3.so
 #usr/lib/libapr-1.la
 usr/lib/libapr-1.so
 usr/lib/libapr-1.so.0
-usr/lib/libapr-1.so.0.4.6
+usr/lib/libapr-1.so.0.4.8
 #usr/lib/libaprutil-1.a
 #usr/lib/libaprutil-1.la
 usr/lib/libaprutil-1.so
 usr/lib/libaprutil-1.so.0
-usr/lib/libaprutil-1.so.0.4.1
+usr/lib/libaprutil-1.so.0.5.2
 #usr/lib/pkgconfig/apr-1.pc
 #usr/lib/pkgconfig/apr-util-1.pc
 #usr/sbin/ab
