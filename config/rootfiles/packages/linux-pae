@@ -1963,6 +1963,8 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/staging/echo/echo.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/staging/et131x
 #lib/modules/KVER-ipfire-pae/kernel/drivers/staging/et131x/et131x.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/staging/rts5139
+#lib/modules/KVER-ipfire-pae/kernel/drivers/staging/rts5139/rts5139.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/staging/slicoss
 #lib/modules/KVER-ipfire-pae/kernel/drivers/staging/slicoss/slicoss.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/staging/usbip
