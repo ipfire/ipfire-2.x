@@ -305,7 +305,7 @@ sub buildrules {
 							}
 
 							if ($LOG) {
-								run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options -j LOG --log-prefix 'DNAT'");
+								run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options -j LOG --log-prefix 'DNAT '");
 							}
 							run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options -j DNAT --to-destination $dnat_address");
 
@@ -317,7 +317,7 @@ sub buildrules {
 							push(@nat_options, @destination_options);
 
 							if ($LOG) {
-								run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options -j LOG --log-prefix 'SNAT'");
+								run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options -j LOG --log-prefix 'SNAT '");
 							}
 							run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options -j SNAT --to-source $nat_address");
 						}
