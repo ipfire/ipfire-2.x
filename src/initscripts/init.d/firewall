@@ -189,14 +189,6 @@ iptables_init() {
 	iptables -t nat -N NAT_SOURCE
 	iptables -t nat -A POSTROUTING -j NAT_SOURCE
 
-	# RED chain, used for the red interface
-	iptables -N REDINPUT
-	iptables -A INPUT -j REDINPUT
-	iptables -N REDFORWARD
-	iptables -A FORWARD -j REDFORWARD
-	iptables -t nat -N REDNAT
-	iptables -t nat -A POSTROUTING -j REDNAT
-
 	# Custom prerouting chains (for transparent proxy)
 	iptables -t nat -N SQUID
 	iptables -t nat -A PREROUTING -j SQUID
@@ -205,11 +197,38 @@ iptables_init() {
 	iptables -t nat -N NAT_DESTINATION
 	iptables -t nat -A PREROUTING -j NAT_DESTINATION
 
+	iptables -t mangle -N NAT_DESTINATION
+	iptables -t mangle -A PREROUTING -j NAT_DESTINATION
+
+	iptables -t nat -N NAT_DESTINATION_FIX
+	iptables -t nat -A POSTROUTING -j NAT_DESTINATION_FIX
+
+	iptables -t nat -A NAT_DESTINATION_FIX \
+		-m mark --mark 1 -j SNAT --to-source "${GREEN_ADDRESS}"
+
+	if [ -n "${BLUE_ADDRESS}" ]; then
+		iptables -t nat -A NAT_DESTINATION_FIX \
+			-m mark --mark 2 -j SNAT --to-source "${BLUE_ADDRESS}"
+	fi
+
+	if [ -n "${ORANGE_ADDRESS}" ]; then
+		iptables -t nat -A NAT_DESTINATION_FIX \
+			-m mark --mark 3 -j SNAT --to-source "${ORANGE_ADDRESS}"
+	fi
+
 	# upnp chain for our upnp daemon
 	iptables -t nat -N UPNPFW
 	iptables -t nat -A PREROUTING -j UPNPFW
 	iptables -N UPNPFW
 	iptables -A FORWARD -m conntrack --ctstate NEW -j UPNPFW
+
+	# RED chain, used for the red interface
+	iptables -N REDINPUT
+	iptables -A INPUT -j REDINPUT
+	iptables -N REDFORWARD
+	iptables -A FORWARD -j REDFORWARD
+	iptables -t nat -N REDNAT
+	iptables -t nat -A POSTROUTING -j REDNAT
 
 	# Apply OpenVPN firewall rules
 	/usr/local/bin/openvpnctrl --firewall-rules

@@ -37,6 +37,7 @@ my $CHAIN_OUTPUT          = "OUTPUTFW";
 my $CHAIN                 = $CHAIN_FORWARD;
 my $CHAIN_NAT_SOURCE      = "NAT_SOURCE";
 my $CHAIN_NAT_DESTINATION = "NAT_DESTINATION";
+my $CHAIN_MANGLE_NAT_DESTINATION_FIX = "NAT_DESTINATION";
 my @VALID_CHAINS          = ($CHAIN_INPUT, $CHAIN_FORWARD, $CHAIN_OUTPUT);
 
 my @PROTOCOLS = ("tcp", "udp", "icmp", "igmp", "ah", "esp", "gre", "ipv6", "ipip");
@@ -94,6 +95,10 @@ sub run {
 		print "$command\n";
 	} else {
 		system "$command";
+
+		if ($?) {
+			print_error("ERROR: $command");
+		}
 	}
 }
 
@@ -121,6 +126,7 @@ sub flush {
 	run("$IPTABLES -F OUTGOINGFW");
 	run("$IPTABLES -t nat -F NAT_DESTINATION");
 	run("$IPTABLES -t nat -F NAT_SOURCE");
+	run("$IPTABLES -t mangle -F $CHAIN_MANGLE_NAT_DESTINATION_FIX");
 }
 
 sub preparerules {
@@ -258,17 +264,16 @@ sub buildrules {
 						push(@options, @protocol_options);
 					}
 
-					# Append source.
+					# Prepare source options.
+					my @source_options = ();
 					if ($source =~ /mac/) {
-						push(@options, $source);
+						push(@source_options, $source);
 					} else {
-						push(@options, ("-s", $source));
+						push(@source_options, ("-s", $source));
 					}
 
-					# Append destination for non-DNAT rules.
-					unless ($NAT && ($NAT_MODE eq "DNAT")) {
-						push(@options, ("-d", $destination));
-					}
+					# Prepare destination options.
+					my @destination_options = ("-d", $destination);
 
 					# Add time constraint options.
 					push(@options, @time_options);
@@ -283,11 +288,15 @@ sub buildrules {
 
 						# Destination NAT
 						if ($NAT_MODE eq "DNAT") {
-							my ($dnat_address, $dnat_mask) = split("/", $destination);
+							# Make port-forwardings useable from the internal networks.
+							&add_dnat_mangle_rules($nat_address, @options);
 
 							my @nat_options = @options;
+							push(@nat_options, @source_options);
 							push(@nat_options, ("-d", $nat_address));
-							push(@options,     ("-d", $dnat_address));
+
+							my ($dnat_address, $dnat_mask) = split("/", $destination);
+							@destination_options = ("-d", $dnat_address);
 
 							if ($protocol_has_ports) {
 								my $dnat_port = &get_dnat_target_port($hash, $key);
@@ -296,20 +305,20 @@ sub buildrules {
 									$dnat_address .= ":$dnat_port";
 
 									# Replace --dport with the translated one.
-									my @new_options = ();
+									my @new_nat_options = ();
 									my $skip_count = 0;
-									foreach my $option (@options) {
+									foreach my $option (@nat_options) {
 										next if ($skip_count-- > 0);
 
 										if ($option eq "--dport") {
-											push(@new_options, ("--dport", $dnat_port));
+											push(@new_nat_options, ("--dport", $dnat_port));
 											$skip_count = 1;
 											next;
 										}
 
-										push(@new_options, $option);
+										push(@new_nat_options, $option);
 									}
-									@options = @new_options;
+									@nat_options = @new_nat_options;
 								}
 							}
 
@@ -320,12 +329,20 @@ sub buildrules {
 
 						# Source NAT
 						} elsif ($NAT_MODE eq "SNAT") {
+							my @nat_options = @options;
+
+							push(@nat_options, @source_options);
+							push(@nat_options, @destination_options);
+
 							if ($LOG) {
-								run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @options -j LOG --log-prefix 'SNAT'");
+								run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options -j LOG --log-prefix 'SNAT'");
 							}
-							run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @options -j SNAT --to-source $nat_address");
+							run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options -j SNAT --to-source $nat_address");
 						}
 					}
+
+					push(@options, @source_options);
+					push(@options, @destination_options);
 
 					# Insert firewall rule.
 					if ($LOG && !$NAT) {
@@ -732,5 +749,29 @@ sub get_dnat_target_port {
 
 	if ($$hash{$key}[14] eq "TGT_PORT") {
 		return $$hash{$key}[15];
+	}
+}
+
+sub add_dnat_mangle_rules {
+	my $nat_address = shift;
+	my @options = @_;
+
+	my $mark = 0;
+	foreach my $zone ("GREEN", "BLUE", "ORANGE") {
+		$mark++;
+
+		# Skip rule if not all required information exists.
+		next unless (exists $defaultNetworks{$zone . "_NETADDRESS"});
+		next unless (exists $defaultNetworks{$zone . "_NETMASK"});
+
+		my @mangle_options = @options;
+
+		my $netaddress = $defaultNetworks{$zone . "_NETADDRESS"};
+		$netaddress .= "/" . $defaultNetworks{$zone . "_NETMASK"};
+
+		push(@mangle_options, ("-s", $netaddress, "-d", $nat_address));
+		push(@mangle_options, ("-j", "MARK", "--set-mark", $mark));
+
+		run("$IPTABLES -t mangle -A $CHAIN_MANGLE_NAT_DESTINATION_FIX @mangle_options");
 	}
 }
