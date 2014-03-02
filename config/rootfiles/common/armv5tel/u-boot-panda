@@ -1,5 +1,0 @@
-#boot/MLO
-#boot/u-boot.bin
-boot/boot.scr
-boot/boot.script
-boot/convert_bootscript
