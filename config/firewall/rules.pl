@@ -303,22 +303,6 @@ sub buildrules {
 
 								if ($dnat_port) {
 									$dnat_address .= ":$dnat_port";
-
-									# Replace --dport with the translated one.
-									my @new_nat_options = ();
-									my $skip_count = 0;
-									foreach my $option (@nat_options) {
-										next if ($skip_count-- > 0);
-
-										if ($option eq "--dport") {
-											push(@new_nat_options, ("--dport", $dnat_port));
-											$skip_count = 1;
-											next;
-										}
-
-										push(@new_nat_options, $option);
-									}
-									@nat_options = @new_nat_options;
 								}
 							}
 
@@ -688,11 +672,11 @@ sub get_protocol_options {
 	if ($use_dst_ports) {
 		my $dst_ports_mode = $$hash{$key}[14];
 		my $dst_ports      = $$hash{$key}[15];
-		if ($use_dnat && $$hash{$key}[30]) {
-			$dst_ports = $$hash{$key}[30];
-		}
 
 		if (($dst_ports_mode eq "TGT_PORT") && $dst_ports) {
+			if ($use_dnat && $$hash{$key}[30]) {
+				$dst_ports = $$hash{$key}[30];
+			}
 			push(@options, &format_ports($dst_ports, "dst"));
 
 		} elsif ($dst_ports_mode eq "cust_srv") {
@@ -738,7 +722,9 @@ sub format_ports {
 		push(@options, ("-m", "multiport"));
 	}
 
-	push(@options, ($arg, $ports));
+	if ($ports) {
+		push(@options, ($arg, $ports));
+	}
 
 	return @options;
 }
@@ -748,7 +734,12 @@ sub get_dnat_target_port {
 	my $key  = shift;
 
 	if ($$hash{$key}[14] eq "TGT_PORT") {
-		return $$hash{$key}[15];
+		my $port = $$hash{$key}[15];
+		my $external_port = $$hash{$key}[30];
+
+		if ($external_port && ($port ne $external_port)) {
+			return $$hash{$key}[15];
+		}
 	}
 }
 
