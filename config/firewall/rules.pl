@@ -33,7 +33,7 @@ my $IPTABLES = "iptables --wait";
 # iptables chains
 my $CHAIN_INPUT           = "INPUTFW";
 my $CHAIN_FORWARD         = "FORWARDFW";
-my $CHAIN_OUTPUT          = "OUTPUTFW";
+my $CHAIN_OUTPUT          = "OUTGOINGFW";
 my $CHAIN                 = $CHAIN_FORWARD;
 my $CHAIN_NAT_SOURCE      = "NAT_SOURCE";
 my $CHAIN_NAT_DESTINATION = "NAT_DESTINATION";
@@ -121,11 +121,11 @@ sub print_rule {
 }
 
 sub flush {
-	run("$IPTABLES -F FORWARDFW");
-	run("$IPTABLES -F INPUTFW");
-	run("$IPTABLES -F OUTGOINGFW");
-	run("$IPTABLES -t nat -F NAT_DESTINATION");
-	run("$IPTABLES -t nat -F NAT_SOURCE");
+	run("$IPTABLES -F $CHAIN_INPUT");
+	run("$IPTABLES -F $CHAIN_FORWARD");
+	run("$IPTABLES -F $CHAIN_OUTPUT");
+	run("$IPTABLES -t nat -F $CHAIN_NAT_SOURCE");
+	run("$IPTABLES -t nat -F $CHAIN_NAT_DESTINATION");
 	run("$IPTABLES -t mangle -F $CHAIN_MANGLE_NAT_DESTINATION_FIX");
 }
 
