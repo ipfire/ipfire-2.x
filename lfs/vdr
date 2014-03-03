@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.4
+VER        = 2.0.5
 
 # VDRPLUGVER must match with APIVERSION in config.h
 # after change this update also all vdr plugins
@@ -63,9 +63,9 @@ MAKE_OPTIONS = \
 
 objects = $(DL_FILE)
 
-$(DL_FILE)  = $(DL_FROM)/$(DL_FILE)
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5  = 8effb19fe09eb6c057ce354fe8f6be9f
+$(DL_FILE)_MD5 = f58b9836a60440fde84480a2e37ee91d
 
 install : $(TARGET)
 
