@@ -682,6 +682,7 @@ buildipfire() {
   ipfiremake vdr_vnsiserver3
   ipfiremake vdr_epgsearch
   ipfiremake vdr_dvbapi
+  ipfiremake vdr_eepg
   ipfiremake w_scan
   ipfiremake icecast
   ipfiremake icegenerator
