@@ -508,8 +508,7 @@ sub checksource
 			return $errormessage;
 		}
 	}elsif($fwdfwsettings{'src_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'src_addr'} eq ''){
-		$errormessage.=$Lang::tr{'fwdfw err nosrcip'};
-		return $errormessage;
+		$fwdfwsettings{$fwdfwsettings{'grp1'}} = 'ALL';
 	}
 
 	#check empty fields
@@ -609,8 +608,7 @@ sub checktarget
 			return $errormessage;
 		}
 	}elsif($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} eq ''){
-		$errormessage.=$Lang::tr{'fwdfw err notgtip'};
-		return $errormessage;
+		$fwdfwsettings{$fwdfwsettings{'grp2'}} = 'ALL';
 	}
 	#check for mac in targetgroup
 	if ($fwdfwsettings{'grp2'} eq 'cust_grp_tgt'){
