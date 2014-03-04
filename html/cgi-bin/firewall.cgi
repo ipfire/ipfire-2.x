@@ -1565,7 +1565,7 @@ sub newrule
 	my ($sip,$scidr) = split("/",$fwdfwsettings{$fwdfwsettings{'grp1'}});
 	if ($scidr eq '32'){$fwdfwsettings{$fwdfwsettings{'grp1'}}=$sip;}
 	my ($dip,$dcidr) = split("/",$fwdfwsettings{$fwdfwsettings{'grp2'}});
-	if ($scidr eq '32'){$fwdfwsettings{$fwdfwsettings{'grp2'}}=$dip;}
+	if ($dcidr eq '32'){$fwdfwsettings{$fwdfwsettings{'grp2'}}=$dip;}
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw source'});
 	#------SOURCE-------------------------------------------------------
 	print "<form method='post'>";
