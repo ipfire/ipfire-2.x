@@ -223,6 +223,9 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
 							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
 						}
+						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && &validremark($fwdfwsettings{'ruleremark'})){
+							$errormessage='';
+						}
 						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
 							$fwdfwsettings{'nosave'} = 'on';
 						}
@@ -263,6 +266,9 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
 						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
 							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
+						}
+						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && &validremark($fwdfwsettings{'ruleremark'})){
+							$errormessage='';
 						}
 						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
 							$fwdfwsettings{'nosave'} = 'on';
