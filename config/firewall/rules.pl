@@ -330,7 +330,7 @@ sub buildrules {
 
 					# Insert firewall rule.
 					if ($LOG && !$NAT) {
-						run("$IPTABLES -A $chain @options @log_limit_options -j LOG");
+						run("$IPTABLES -A $chain @options @log_limit_options -j LOG --log-prefix '$chain '");
 					}
 					run("$IPTABLES -A $chain @options -j $target");
 				}
