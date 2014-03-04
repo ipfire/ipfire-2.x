@@ -48,7 +48,7 @@ my %fwfwd=();
 my %fwinp=();
 my %fwout=();
 my %ovpnsettings=();
-
+my %netsettings=();
 
 my $errormessage;
 my $hint;
@@ -80,7 +80,7 @@ unless (-e $configsrvgrp) { system("touch $configsrvgrp"); }
 &General::readhash("$configovpn", \%ovpnsettings);
 &General::readhasharray("$configipsec", \%ipsecconf);
 &General::readhash("$configipsecrw", \%ipsecsettings);
-
+&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 &Header::getcgihash(\%fwhostsettings);
 
 &Header::showhttpheaders();
@@ -1211,12 +1211,12 @@ sub addgrp
 			print<<END;
 		<table width='100%' border='0'>
 			<tr>
-				<td width='10%'>$Lang::tr{'fwhost addgrpname'}</td>
+				<td style='width:10em;'>$Lang::tr{'fwhost addgrpname'}</td>
 				<td><form method='post'><input type='TEXT' name='grp_name' value='$fwhostsettings{'grp_name'}' size='20'></td>
 			</tr>
 			<tr>
-				<td width='10%'>$Lang::tr{'remark'}:</td>
-				<td ><input type='TEXT' name='remark' value='$fwhostsettings{'remark'}' style='width: 98%;'></td>
+				<td>$Lang::tr{'remark'}:</td>
+				<td ><input type='TEXT' name='remark' value='$fwhostsettings{'remark'}' style='width: 65em;'></td>
 			</tr>
 			<tr>
 				<td colspan='2'><br></td>
@@ -1225,16 +1225,16 @@ sub addgrp
 END
 		}else{
 			print<<END;
-			<table width='100%' border='0'><form method='post' style='display:inline'>
+			<table width='100%' border='1'><form method='post'>
 				<tr>
-					<td nowrap='nowrap' width='12%'>$Lang::tr{'fwhost addgrpname'}</td>
-					<td width='20%'><input type='TEXT' name='grp'  value='$fwhostsettings{'grp_name'}' ></td>
+					<td style='width:10em;'>$Lang::tr{'fwhost addgrpname'}</td>
+					<td style='width:10em;'><input type='TEXT' name='grp'  value='$fwhostsettings{'grp_name'}' ></td>
 					<td><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldgrpname' value='$fwhostsettings{'oldgrpname'}'><input type='hidden' name='ACTION' value='changegrpname'></td>
 					<td></td></form>
 				</tr>
 				<tr><form method='post' style='display:inline'>
 					<td>$Lang::tr{'remark'}:</td>
-					<td colspan='2'><input type='TEXT' name='newrem' size='45' value='$fwhostsettings{'remark'}' style='width:98%'></td>
+					<td colspan='2'><input type='TEXT' name='newrem' value='$fwhostsettings{'remark'}' style='width:60em;'></td>
 					<td align='right'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldrem' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='ACTION' value='changegrpremark' ></td>
 				</tr>
 			</table></form>
@@ -1246,8 +1246,16 @@ END
 			<form method='post'><input type='hidden' name='remark' value='$rem'><input type='hidden' name='grp_name' value='$grp'>
 			<table width='100%' border='0'>
 			<tr><td width=50% valign='top'>
-			<table width='100%' border='0'>
-			<tr><td width='1%'><input type='radio' name='grp2' value='std_net' id='DEFAULT_SRC_ADR' checked></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost stdnet'}</td><td><select name='DEFAULT_SRC_ADR' style='min-width:185px;'>
+			<table width='90%' border='0'>
+			<tr>
+				<td style='width:15em;'>
+					<label>
+						<input type='radio' name='grp2' value='std_net' id='DEFAULT_SRC_ADR' checked>
+						$Lang::tr{'fwhost stdnet'}
+					</label>
+				</td>
+				<td style='text-align:right;'>
+					<select name='DEFAULT_SRC_ADR' style='min-width:16em;'>
 END
 			foreach my $network (sort keys %defaultNetworks)
 			{
@@ -1267,14 +1275,34 @@ END
 			}
 			print"</select></td></tr>";
 			if (! -z $confignet){
-				print"<tr><td><input type='radio' name='grp2' id='CUST_SRC_NET' value='cust_net' $checked{'grp2'}{'cust_net'}></td><td>$Lang::tr{'fwhost cust net'}:</td><td><select name='CUST_SRC_NET' style='min-width:185px;'>";
+				print<<END;
+				<tr>
+					<td>
+						<label>
+							<input type='radio' name='grp2' id='CUST_SRC_NET' value='cust_net' $checked{'grp2'}{'cust_net'}>
+							$Lang::tr{'fwhost cust net'}:
+						</label>
+					</td>
+					<td style='text-align:right;'>
+						<select name='CUST_SRC_NET' style='min-width:16em;'>";
+END
 				foreach my $key (sort { ncmp($customnetwork{$a}[0],$customnetwork{$b}[0]) } keys  %customnetwork) {
 					print"<option>$customnetwork{$key}[0]</option>";
 				}
 				print"</select></td></tr>";
 			}
 			if (! -z $confighost){
-				print"<tr><td valign='top'><input type='radio' name='grp2' id='CUST_SRC_HOST' value='cust_host' $checked{'grp2'}{'cust_host'}></td><td valign='top'>$Lang::tr{'fwhost cust addr'}:</td><td><select name='CUST_SRC_HOST' style='min-width:185px;'>";
+				print<<END;
+				<tr>
+					<td valign='top'>
+						<label>
+							<input type='radio' name='grp2' id='CUST_SRC_HOST' value='cust_host' $checked{'grp2'}{'cust_host'}>
+							$Lang::tr{'fwhost cust addr'}:
+						</label>
+					</td>
+					<td style='text-align:right;'>
+						<select name='CUST_SRC_HOST' style='min-width:16em;'>";
+END
 				foreach my $key (sort { ncmp($customhost{$a}[0],$customhost{$b}[0]) } keys %customhost) {
 					print"<option>$customhost{$key}[0]</option>";
 				}
@@ -1282,10 +1310,19 @@ END
 			}
 			print"</table>";
 			#Inner table right
-			print"</td><td valign='top'><table width='100%' border='0'>";
+			print"</td><td align='right' style='vertical-align:top;'><table width='90%' border='0'>";
 			#OVPN networks
 			if (! -z $configccdnet){
-				print"<td width='1%'><input type='radio' name='grp2' id='OVPN_CCD_NET' value='ovpn_net'  $checked{'grp2'}{'ovpn_net'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdnet'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_NET' style='min-width:185px;'>";
+				print<<END;
+				<td style='width:15em;'>
+					<label>
+						<input type='radio' name='grp2' id='OVPN_CCD_NET' value='ovpn_net'  $checked{'grp2'}{'ovpn_net'}>
+						$Lang::tr{'fwhost ccdnet'}
+					</label>
+				</td>
+				<td style='text-align:right;'>
+					<select name='OVPN_CCD_NET' style='min-width:16em;'>";
+END
 				foreach my $key (sort { ncmp($ccdnet{$a}[0],$ccdnet{$b}[0]) }  keys %ccdnet)
 				{
 					print"<option value='$ccdnet{$key}[0]'>$ccdnet{$key}[0]</option>";
@@ -1296,7 +1333,16 @@ END
 			foreach my $key (sort { ncmp($ccdhost{$a}[0],$ccdhost{$b}[0]) } keys %ccdhost)
 			{
 				if ($ccdhost{$key}[33] ne ''){
-					print"<td width='1%'><input type='radio' name='grp2' value='ovpn_host' $checked{'grp2'}{'ovpn_host'}></td><td nowrap='nowrap' width='16%'>$Lang::tr{'fwhost ccdhost'}</td><td nowrap='nowrap' width='1%'><select name='OVPN_CCD_HOST' style='min-width:185px;'>" if ($show eq '');
+					print<<END;
+					<td style='width:15em;'>
+						<label>
+							<input type='radio' name='grp2' value='ovpn_host' $checked{'grp2'}{'ovpn_host'}>
+							$Lang::tr{'fwhost ccdhost'}
+						</label>
+					</td>
+					<td style='text-align:right;'>
+						<select name='OVPN_CCD_HOST' style='min-width:16em;'>" if ($show eq '');
+END
 					$show='1';
 					print"<option value='$ccdhost{$key}[1]'>$ccdhost{$key}[1]</option>";
 				}
@@ -1305,7 +1351,16 @@ END
 			#OVPN n2n networks
 			foreach my $key (sort { ncmp($ccdhost{$a}[1],$ccdhost{$b}[1]) } keys %ccdhost) {
 				if($ccdhost{$key}[3] eq 'net'){
-					print"<td width='1%'><input type='radio' name='grp2' id='OVPN_N2N' value='ovpn_n2n' $checked{'grp2'}{'ovpn_n2n'}></td><td valign='top'>$Lang::tr{'fwhost ovpn_n2n'}:</td><td colspan='3'><select name='OVPN_N2N' style='min-width:185px;'>" if ($show eq '');
+					print<<END;
+					<td style='width:15em;'>
+						<label>
+							<input type='radio' name='grp2' id='OVPN_N2N' value='ovpn_n2n' $checked{'grp2'}{'ovpn_n2n'}>
+							$Lang::tr{'fwhost ovpn_n2n'}:
+						</label>
+					</td>
+					<td style='text-align:right;'>
+						<select name='OVPN_N2N' style='min-width:16em;'>"
+END
 					$show='1';
 					print"<option>$ccdhost{$key}[1]</option>";
 				}
@@ -1314,7 +1369,16 @@ END
 			#IPsec networks
 			foreach my $key (sort { ncmp($ipsecconf{$a}[0],$ipsecconf{$b}[0]) } keys %ipsecconf) {
 				if ($ipsecconf{$key}[3] eq 'net'){
-					print"<td valign='top'><input type='radio' name='grp2' id='IPSEC_NET' value='ipsec_net' $checked{'grp2'}{'ipsec_net'}></td><td valign='top'>$Lang::tr{'fwhost ipsec net'}</td><td><select name='IPSEC_NET' style='min-width:185px;'>" if ($show eq '');
+					print<<END;
+					<td style='width:15em;'>
+						<label>
+							<input type='radio' name='grp2' id='IPSEC_NET' value='ipsec_net' $checked{'grp2'}{'ipsec_net'}>
+							$Lang::tr{'fwhost ipsec net'}
+						</label>
+					</td>
+					<td style='text-align:right;'>
+					<select name='IPSEC_NET' style='min-width:16em;'>"
+END
 					$show='1';
 					print"<option value='$ipsecconf{$key}[1]'>$ipsecconf{$key}[1]</option>";
 				}
@@ -1325,7 +1389,7 @@ END
 			print"<br><br>";
 		}
 		print"<table width='100%'>";
-		print"<tr><td align='right'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='update' value=\"$fwhostsettings{'update'}\"><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='resetgrp'></form></td></table>";
+		print"<tr><td style='text-align:right;'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='update' value=\"$fwhostsettings{'update'}\"><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='resetgrp'></form></td></table>";
 	&Header::closebox();
 }
 sub addservice
@@ -1464,6 +1528,7 @@ sub viewtablenet
 		&General::readhasharray("$fwconfigfwd", \%fwfwd);
 		&General::readhasharray("$fwconfiginp", \%fwinp);
 		&General::readhasharray("$fwconfigout", \%fwout);
+
 		if (!keys %customnetwork) 
 		{ 
 			print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
@@ -1490,7 +1555,7 @@ END
 			}
 			my $colnet="$customnetwork{$key}[1]/".&General::subtocidr($customnetwork{$key}[2]);
 			my $netcount=&getnetcount($customnetwork{$key}[0]);
-			print"<td width='20%' $col><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center' $col>".&Header::colorize($colnet)."</td><td width='40%' $col>$customnetwork{$key}[3]</td><td align='center' $col>$netcount x</td>";
+			print"<td width='20%' $col><form method='post'>$customnetwork{$key}[0]</td><td width='15%' align='center' $col>".&getcolor($colnet)."</td><td width='40%' $col>$customnetwork{$key}[3]</td><td align='center' $col>$netcount x</td>";
 			print<<END;
 			<td width='1%' $col><input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 			<input type='hidden' name='ACTION' value='editnet'>
@@ -1516,50 +1581,79 @@ END
 sub getcolor
 {
 		my $c=shift;
+		my $sip;
+		my $scidr;
+		#Check if MAC
+		if (&General::validmac($c)){ return $c;}
+
+		#Check if we got a full IP with subnet then split it
+		if($c =~ /^(.*?)\/(.*?)$/){
+			($sip,$scidr) = split ("/",$c);
+		}else{
+			$sip=$c;
+		}
+
+		#Now check if IP is part of ORANGE,BLUE or GREEN
+		if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
+			$tdcolor="<font style='color: $Header::colourorange;'>$c</font>";
+			return $tdcolor;
+		}
+		if ( &General::IpInSubnet($sip,$netsettings{'GREEN_ADDRESS'},$netsettings{'GREEN_NETMASK'})){
+			$tdcolor="<font style='color: $Header::colourgreen;'>$c</font>";
+			return $tdcolor;
+		}
+		if ( &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
+			$tdcolor="<font style='color: $Header::colourblue;'>$c</font>";
+			return $tdcolor;
+		}
+
 		#Check if IP is part of OpenVPN N2N subnet
 		foreach my $key (sort keys %ccdhost){
 			if ($ccdhost{$key}[3] eq 'net'){
 				my ($a,$b) = split("/",$ccdhost{$key}[11]);
-				if (&General::IpInSubnet($c,$a,$b)){
-					$tdcolor="style='color:$Header::colourovpn ;'";
+				if (&General::IpInSubnet($sip,$a,$b)){
+					$tdcolor="<font style='color:$Header::colourovpn ;'>$c</font>";
 					return $tdcolor;
 				}
 			}
 		}
+
 		#Check if IP is part of OpenVPN dynamic subnet
 		my ($a,$b) = split("/",$ovpnsettings{'DOVPN_SUBNET'});
-		if (&General::IpInSubnet($c,$a,$b)){
-			$tdcolor="style='color: $Header::colourovpn;'";
+		if (&General::IpInSubnet($sip,$a,$b)){
+			$tdcolor="<font style='color: $Header::colourovpn;'>$c</font>";
 			return $tdcolor;
 		}
+
 		#Check if IP is part of OpenVPN static subnet
 		foreach my $key (sort keys %ccdnet){
 			my ($a,$b) = split("/",$ccdnet{$key}[1]);
 			$b =&General::iporsubtodec($b);
-			if (&General::IpInSubnet($c,$a,$b)){
-				$tdcolor="style='color: $Header::colourovpn;'";
+			if (&General::IpInSubnet($sip,$a,$b)){
+				$tdcolor="<font style='color: $Header::colourovpn;'>$c</font>";
 				return $tdcolor;
 			}
 		}
+
 		#Check if IP is part of IPsec RW network
 		if ($ipsecsettings{'RW_NET'} ne ''){
 			my ($a,$b) = split("/",$ipsecsettings{'RW_NET'});
 			$b=&General::iporsubtodec($b);
-			if (&General::IpInSubnet($c,$a,$b)){
-				$tdcolor="style='color: $Header::colourvpn;'";
+			if (&General::IpInSubnet($sip,$a,$b)){
+				$tdcolor="<font style='color: $Header::colourvpn;'>$c</font>";
 				return $tdcolor;
 			}
 		}
+
 		#Check if IP is part of a IPsec N2N network
 		foreach my $key (sort keys %ipsecconf){
 			my ($a,$b) = split("/",$ipsecconf{$key}[11]);
-			if (&General::IpInSubnet($c,$a,$b)){
-				$tdcolor="style='color: $Header::colourvpn;'";
+			if (&General::IpInSubnet($sip,$a,$b)){
+				$tdcolor="<font style='color: $Header::colourvpn;'>$c</font>";
 				return $tdcolor;
 			}
 		}
-		$tdcolor='';
-		return $tdcolor;
+		return "$c";
 }
 sub viewtablehost
 {
@@ -1598,7 +1692,7 @@ END
 			$customhost{$key}[4]=~s/\s+//g;
 			my $hostcount=0;
 			$hostcount=&gethostcount($customhost{$key}[0]);
-			print"<td width='20%' $col>$customhost{$key}[0]</td><td width='20%' align='center' $col ".&getcolor($ip).">".&Header::colorize($ip)."</td><td width='50%' align='left' $col>$customhost{$key}[3]</td><td align='center' $col>$hostcount x</td>";
+			print"<td width='20%' $col>$customhost{$key}[0]</td><td width='20%' align='center' $col >".&getcolor($ip)."</td><td width='50%' align='left' $col>$customhost{$key}[3]</td><td align='center' $col>$hostcount x</td>";
 			print<<END;
 			<td width='1%' $col><form method='post'><input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 			<input type='hidden' name='ACTION' value='edithost' />
@@ -1709,7 +1803,7 @@ sub viewtablegrp
 			}else{
 				my ($colip,$colsub) = split("/",$ip);
 				$ip="$colip/".&General::subtocidr($colsub) if ($colsub);
-				print"<td align='center' $col ".&getcolor($colip).">".&Header::colorize($ip)."</td><td align='center' $col>$customgrp{$key}[3]</td><td width='1%' $col><form method='post'>";
+				print"<td align='center' $col>".&getcolor($ip)."</td><td align='center' $col>$customgrp{$key}[3]</td><td width='1%' $col><form method='post'>";
 			}
 			if ($delflag > 0 && $ip ne ''){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' />";
