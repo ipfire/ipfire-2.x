@@ -2014,7 +2014,7 @@ sub checkname
 }
 sub checkgroup
 {
-	&General::readhasharray("$configsrvgrp", \%customservicegrp );
+	&General::readhasharray("$configgrp", \%customgrp );
 	my $name=shift;
 	foreach my $key (keys %customservicegrp) {
 		if($customservicegrp{$key}[0] eq $name){
