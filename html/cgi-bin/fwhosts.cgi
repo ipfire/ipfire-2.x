@@ -1211,12 +1211,12 @@ sub addgrp
 			print<<END;
 		<table width='100%' border='0'>
 			<tr>
-				<td style='width:10em;'>$Lang::tr{'fwhost addgrpname'}</td>
-				<td><form method='post'><input type='TEXT' name='grp_name' value='$fwhostsettings{'grp_name'}' size='20'></td>
+				<td style='width:15%;'>$Lang::tr{'fwhost addgrpname'}</td>
+				<td><form method='post'><input type='TEXT' name='grp_name' value='$fwhostsettings{'grp_name'}' size='30'></td>
 			</tr>
 			<tr>
 				<td>$Lang::tr{'remark'}:</td>
-				<td ><input type='TEXT' name='remark' value='$fwhostsettings{'remark'}' style='width: 65em;'></td>
+				<td ><input type='TEXT' name='remark' value='$fwhostsettings{'remark'}' style='width: 99%;'></td>
 			</tr>
 			<tr>
 				<td colspan='2'><br></td>
@@ -1225,16 +1225,16 @@ sub addgrp
 END
 		}else{
 			print<<END;
-			<table width='100%' border='1'><form method='post'>
+			<table width='100%' border='0'><form method='post'>
 				<tr>
-					<td style='width:10em;'>$Lang::tr{'fwhost addgrpname'}</td>
-					<td style='width:10em;'><input type='TEXT' name='grp'  value='$fwhostsettings{'grp_name'}' ></td>
+					<td style='width:15%;'>$Lang::tr{'fwhost addgrpname'}</td>
+					<td style='width:30%;'><input type='TEXT' name='grp'  value='$fwhostsettings{'grp_name'}' size='30'></td>
 					<td><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldgrpname' value='$fwhostsettings{'oldgrpname'}'><input type='hidden' name='ACTION' value='changegrpname'></td>
 					<td></td></form>
 				</tr>
 				<tr><form method='post' style='display:inline'>
 					<td>$Lang::tr{'remark'}:</td>
-					<td colspan='2'><input type='TEXT' name='newrem' value='$fwhostsettings{'remark'}' style='width:60em;'></td>
+					<td colspan='2' style='width:98%;'><input type='TEXT' name='newrem' value='$fwhostsettings{'remark'}' style='width:98%;'></td>
 					<td align='right'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldrem' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='ACTION' value='changegrpremark' ></td>
 				</tr>
 			</table></form>
