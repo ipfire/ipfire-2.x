@@ -1286,6 +1286,12 @@ sub getcolor
 	my $val=shift;
 	my $hash=shift;
 	if($optionsfw{'SHOWCOLORS'} eq 'on'){
+		# Don't colourise MAC addresses
+		if (&General::validmac($val)) {
+			$tdcolor = "";
+			return;
+		}
+
 		#custom Hosts
 		if ($nettype eq 'cust_host_src' || $nettype eq 'cust_host_tgt'){
 			foreach my $key (sort keys %$hash){
