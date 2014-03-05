@@ -2141,6 +2141,7 @@ sub saverule
 			&changerule($configfwdfw);
 			#print"6";
 		}
+		$fwdfwsettings{'ruleremark'}=~ s/,/;/g;
 		$fwdfwsettings{'ruleremark'}=&Header::escape($fwdfwsettings{'ruleremark'});
 		if ($fwdfwsettings{'updatefwrule'} ne 'on'){
 			my $key = &General::findhasharraykey ($hash);
@@ -2278,7 +2279,6 @@ sub validremark
 {
 	# Checks a hostname against RFC1035
 	my $remark = $_[0];
-	$remark =~ s/,/;/g;
 	if ($remark =~ /^[[:print:]]*$/) {
 		return 1;
 	}
