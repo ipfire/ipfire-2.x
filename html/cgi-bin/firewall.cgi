@@ -21,7 +21,11 @@
 
 use strict;
 use Sort::Naturally;
+use utf8;
+use feature 'unicode_strings';
+
 no warnings 'uninitialized';
+
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -2142,6 +2146,7 @@ sub saverule
 			#print"6";
 		}
 		$fwdfwsettings{'ruleremark'}=~ s/,/;/g;
+		utf8::decode($fwdfwsettings{'ruleremark'});
 		$fwdfwsettings{'ruleremark'}=&Header::escape($fwdfwsettings{'ruleremark'});
 		if ($fwdfwsettings{'updatefwrule'} ne 'on'){
 			my $key = &General::findhasharraykey ($hash);
@@ -2279,6 +2284,14 @@ sub validremark
 {
 	# Checks a hostname against RFC1035
 	my $remark = $_[0];
+
+	# Try to decode $remark into UTF-8. If this doesn't work,
+	# we assume that the string it not sane.
+	if (!utf8::decode($remark)) {
+		return 0;
+	}
+
+	# Check if the string only contains of printable characters.
 	if ($remark =~ /^[[:print:]]*$/) {
 		return 1;
 	}
