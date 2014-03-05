@@ -508,6 +508,7 @@ sub checksource
 			return $errormessage;
 		}
 	}elsif($fwdfwsettings{'src_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'src_addr'} eq ''){
+		$fwdfwsettings{'grp1'}='std_net_src';
 		$fwdfwsettings{$fwdfwsettings{'grp1'}} = 'ALL';
 	}
 
@@ -608,6 +609,7 @@ sub checktarget
 			return $errormessage;
 		}
 	}elsif($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} eq ''){
+		$fwdfwsettings{'grp2'}='std_net_tgt';
 		$fwdfwsettings{$fwdfwsettings{'grp2'}} = 'ALL';
 	}
 	#check for mac in targetgroup
