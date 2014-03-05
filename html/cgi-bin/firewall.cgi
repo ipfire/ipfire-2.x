@@ -194,6 +194,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
+
 	#check if manual ip (source) is orange network
 	if ($fwdfwsettings{'grp1'} eq 'src_addr'){
 		my ($sip,$scidr) = split("/",$fwdfwsettings{$fwdfwsettings{'grp1'}});
@@ -312,6 +313,9 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
 						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
 							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
+						}
+						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && &validremark($fwdfwsettings{'ruleremark'})){
+							$errormessage='';
 						}
 						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
 							$fwdfwsettings{'nosave'} = 'on';
@@ -504,8 +508,8 @@ sub checksource
 			return $errormessage;
 		}
 	}elsif($fwdfwsettings{'src_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'src_addr'} eq ''){
-		$errormessage.=$Lang::tr{'fwdfw err nosrcip'};
-		return $errormessage;
+		$fwdfwsettings{'grp1'}='std_net_src';
+		$fwdfwsettings{$fwdfwsettings{'grp1'}} = 'ALL';
 	}
 
 	#check empty fields
@@ -605,8 +609,8 @@ sub checktarget
 			return $errormessage;
 		}
 	}elsif($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} eq ''){
-		$errormessage.=$Lang::tr{'fwdfw err notgtip'};
-		return $errormessage;
+		$fwdfwsettings{'grp2'}='std_net_tgt';
+		$fwdfwsettings{$fwdfwsettings{'grp2'}} = 'ALL';
 	}
 	#check for mac in targetgroup
 	if ($fwdfwsettings{'grp2'} eq 'cust_grp_tgt'){
@@ -2137,6 +2141,8 @@ sub saverule
 			&changerule($configfwdfw);
 			#print"6";
 		}
+		$fwdfwsettings{'ruleremark'}=~ s/,/;/g;
+		$fwdfwsettings{'ruleremark'}=&Header::escape($fwdfwsettings{'ruleremark'});
 		if ($fwdfwsettings{'updatefwrule'} ne 'on'){
 			my $key = &General::findhasharraykey ($hash);
 			$$hash{$key}[0]  = $fwdfwsettings{'RULE_ACTION'};
@@ -2272,22 +2278,11 @@ sub saverule
 sub validremark
 {
 	# Checks a hostname against RFC1035
-        my $remark = $_[0];
-
-	# Each part should be at least two characters in length
-	# but no more than 63 characters
-	if (length ($remark) < 1 || length ($remark) > 255) {
-		return 0;}
-	# Only valid characters are a-z, A-Z, 0-9 and -
-	if ($remark !~ /^[a-zäöüA-ZÖÄÜ0-9-.:;\|_()\/\s]*$/) {
-		return 0;}
-	# First character can only be a letter or a digit
-	if (substr ($remark, 0, 1) !~ /^[a-zäöüA-ZÖÄÜ0-9(]*$/) {
-		return 0;}
-	# Last character can only be a letter or a digit
-	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9.:;_)]*$/) {
-		return 0;}
-	return 1;
+	my $remark = $_[0];
+	if ($remark =~ /^[[:print:]]*$/) {
+		return 1;
+	}
+	return 0;
 }
 sub viewtablerule
 {
