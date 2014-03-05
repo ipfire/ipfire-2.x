@@ -230,6 +230,20 @@ iptables_init() {
 	iptables -t nat -N REDNAT
 	iptables -t nat -A POSTROUTING -j REDNAT
 
+	# Filter logging of incoming broadcasts.
+	iptables -N BROADCAST_FILTER
+	iptables -A INPUT -j BROADCAST_FILTER
+
+	iptables -A BROADCAST_FILTER -i "${GREEN_DEV}" -d "${GREEN_BROADCAST}" -j DROP
+
+	if [ -n "${BLUE_DEV}" -a -n "${BLUE_BROADCAST}" ]; then
+		iptables -A BROADCAST_FILTER -i "${BLUE_DEV}" -d "${BLUE_BROADCAST}" -j DROP
+	fi
+
+	if [ -n "${ORANGE_DEV}" -a -n "${ORANGE_BROADCAST}" ]; then
+		iptables -A BROADCAST_FILTER -i "${ORANGE_DEV}" -d "${ORANGE_BROADCAST}" -j DROP
+	fi
+
 	# Apply OpenVPN firewall rules
 	/usr/local/bin/openvpnctrl --firewall-rules
 
