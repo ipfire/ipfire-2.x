@@ -5,6 +5,12 @@ boot/dtb-KVER-ipfire-multi
 #boot/dtb-KVER-ipfire-multi/am335x-bone.dtb
 #boot/dtb-KVER-ipfire-multi/am335x-evm.dtb
 #boot/dtb-KVER-ipfire-multi/am335x-evmsk.dtb
+#boot/dtb-KVER-ipfire-multi/armada-370-db.dtb
+#boot/dtb-KVER-ipfire-multi/armada-370-mirabox.dtb
+#boot/dtb-KVER-ipfire-multi/armada-370-rd.dtb
+#boot/dtb-KVER-ipfire-multi/armada-xp-db.dtb
+#boot/dtb-KVER-ipfire-multi/armada-xp-gp.dtb
+#boot/dtb-KVER-ipfire-multi/armada-xp-openblocks-ax3-4.dtb
 #boot/dtb-KVER-ipfire-multi/imx25-karo-tx25.dtb
 #boot/dtb-KVER-ipfire-multi/imx25-pdk.dtb
 #boot/dtb-KVER-ipfire-multi/imx27-apf27.dtb
@@ -45,6 +51,10 @@ boot/dtb-KVER-ipfire-multi
 #boot/dtb-KVER-ipfire-multi/omap4-sdp.dtb
 #boot/dtb-KVER-ipfire-multi/omap4-var-som.dtb
 #boot/dtb-KVER-ipfire-multi/omap5-evm.dtb
+#boot/dtb-KVER-ipfire-multi/sun4i-a10-cubieboard.dtb
+#boot/dtb-KVER-ipfire-multi/sun4i-a10-hackberry.dtb
+#boot/dtb-KVER-ipfire-multi/sun4i-a10-mini-xplus.dtb
+#boot/dtb-KVER-ipfire-multi/sun5i-a13-olinuxino.dtb
 #boot/dtb-KVER-ipfire-multi/vexpress-v2p-ca15-tc1.dtb
 #boot/dtb-KVER-ipfire-multi/vexpress-v2p-ca15_a7.dtb
 #boot/dtb-KVER-ipfire-multi/vexpress-v2p-ca5s.dtb
@@ -181,6 +191,9 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/clk/clk-si5351.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/cpufreq
 #lib/modules/KVER-ipfire-multi/kernel/drivers/cpufreq/imx6q-cpufreq.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/crypto
+#lib/modules/KVER-ipfire-multi/kernel/drivers/crypto/hifn_795x.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/crypto/mv_cesa.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/dma
 #lib/modules/KVER-ipfire-multi/kernel/drivers/dma/timb_dma.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/firewire
@@ -1135,7 +1148,9 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/intel/ixgbe/ixgbe.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/jme.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell
+#lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell/mv643xx_eth.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell/mvmdio.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell/mvneta.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell/skge.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell/sky2.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/mellanox
@@ -1448,6 +1463,7 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-m48t59.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-max6900.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-msm6242.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-mv.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-mxc.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-pcf8523.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-pcf8563.ko
@@ -1579,14 +1595,13 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/staging/usbip/usbip-host.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/staging/usbip/vhci-hcd.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/thermal
+#lib/modules/KVER-ipfire-multi/kernel/drivers/thermal/armada_thermal.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/thermal/imx_thermal.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/tty
 #lib/modules/KVER-ipfire-multi/kernel/drivers/tty/n_gsm.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/tty/n_hdlc.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/tty/n_r3964.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/tty/serial
-#lib/modules/KVER-ipfire-multi/kernel/drivers/tty/serial/amba-pl010.ko
-#lib/modules/KVER-ipfire-multi/kernel/drivers/tty/serial/amba-pl011.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/tty/serial/arc_uart.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/tty/serial/sccnxp.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/uio

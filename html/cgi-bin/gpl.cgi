@@ -29,27 +29,28 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "/opt/pakfire/lib/functions.pl";
 
+# If the license has already been accepted.
+if ( -e "/var/ipfire/main/gpl_accepted" ) {
+	&redirect();
+}
 
 my %cgiparams;
-my $refresh;
-
-if ( -e "/var/ipfire/main/gpl_accepted" ) {
-	print "Status: 302 Moved Temporarily\n";
-	print "Location: index.cgi\n\n";
-	exit (0);
-}
-&Header::showhttpheaders();
-
 $cgiparams{'ACTION'} = '';
+
 &Header::getcgihash(\%cgiparams);
 
-&Header::openpage($Lang::tr{'main page'}, 1, $refresh);
-&Header::openbigbox('', 'center');
+# Check if the license agreement has been accepted.
+if ($cgiparams{'ACTION'} eq "$Lang::tr{'yes'}" && $cgiparams{'gpl_accepted'} eq '1') {
+	open(FILE, ">/var/ipfire/main/gpl_accepted");
+	close(FILE);
 
-# licence agreement
-if ($cgiparams{'ACTION'} eq $Lang::tr{'yes'} && $cgiparams{'gpl_accepted'} eq '1') {
-	system('touch /var/ipfire/main/gpl_accepted');
+	&redirect();
 }
+
+&Header::showhttpheaders();
+
+&Header::openpage($Lang::tr{'main page'}, 1);
+&Header::openbigbox('', 'center');
 
 &Header::openbox('100%', 'left', $Lang::tr{'gpl license agreement'});
 print <<END;
@@ -80,3 +81,9 @@ END
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
+
+sub redirect {
+	print "Status: 302 Moved Temporarily\n";
+	print "Location: index.cgi\n\n";
+	exit (0);
+}

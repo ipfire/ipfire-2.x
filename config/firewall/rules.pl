@@ -70,6 +70,8 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhasharray($configgrp, \%customgrp);
 &General::get_aliases(\%aliases);
 
+my @log_limit_options = &make_log_limit_options();
+
 # MAIN
 &main();
 
@@ -305,7 +307,7 @@ sub buildrules {
 							}
 
 							if ($LOG) {
-								run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options -j LOG --log-prefix 'DNAT '");
+								run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options @log_limit_options -j LOG --log-prefix 'DNAT '");
 							}
 							run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options -j DNAT --to-destination $dnat_address");
 
@@ -317,7 +319,7 @@ sub buildrules {
 							push(@nat_options, @destination_options);
 
 							if ($LOG) {
-								run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options -j LOG --log-prefix 'SNAT '");
+								run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options @log_limit_options -j LOG --log-prefix 'SNAT '");
 							}
 							run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options -j SNAT --to-source $nat_address");
 						}
@@ -328,7 +330,7 @@ sub buildrules {
 
 					# Insert firewall rule.
 					if ($LOG && !$NAT) {
-						run("$IPTABLES -A $chain @options -j LOG");
+						run("$IPTABLES -A $chain @options @log_limit_options -j LOG --log-prefix '$chain '");
 					}
 					run("$IPTABLES -A $chain @options -j $target");
 				}
@@ -763,4 +765,19 @@ sub add_dnat_mangle_rules {
 
 		run("$IPTABLES -t mangle -A $CHAIN_MANGLE_NAT_DESTINATION_FIX @mangle_options");
 	}
+}
+
+sub make_log_limit_options {
+	my @options = ("-m", "limit");
+
+	# Maybe we should get this from the configuration.
+	my $limit = 10;
+
+	# We limit log messages to $limit messages per minute.
+	push(@options, ("--limit", "$limit/min"));
+
+	# And we allow bursts of 2x $limit.
+	push(@options, ("--limit-burst", $limit * 2));
+
+	return @options;
 }
