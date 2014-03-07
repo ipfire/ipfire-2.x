@@ -44,36 +44,14 @@ if (open(FILE, "$filename")) {
 # ignore monthly update if not in minimize update mode
 exit 0 if (($settings{'MINIMIZEUPDATES'} ne 'on') && ($ARGV[1] eq '-m'));
 
-my $ip;
-if (open(IP, "${General::swroot}/red/local-ipaddress")) {
-    $ip = <IP>;
-    close(IP);
-    chomp $ip;
-} else {
-    &General::log('Dynamic DNS failure : unable to open local-ipaddress file.');
-    exit 0;
+my $ip = &General::GetDyndnsRedIP();
+
+if ($ip eq "unavailable") {
+	&General::log("Dynamic DNS error: RED/Public IP is unavailable");
+	exit(0);
 }
 
-#If IP is reserved network, we are behind a router. May we ask for our real public IP ?
-if ( &General::IpInSubnet ($ip,'10.0.0.0','255.0.0.0') ||
-     &General::IpInSubnet ($ip,'172.16.0.0','255.240.0.0') ||
-     &General::IpInSubnet ($ip,'192.168.0.0','255.255.0.0')) {
-    # We can, but are we authorized by GUI ?
-    if ($settings{'BEHINDROUTER'} eq 'FETCH_IP') {
-	if ($ARGV[0] eq '-f'){
-	    $settings{'BEHINDROUTERWAITLOOP'} = -1; # When forced option, fectch PublicIP now
-	}
-
-	# Increment counter modulo 4. When it is zero, fetch ip else exit
-	# This divides by 4 the requests to the dyndns server.
-	$settings{'BEHINDROUTERWAITLOOP'} = ($settings{'BEHINDROUTERWAITLOOP'}+1) %4;
-	&General::writehash("${General::swroot}/ddns/settings", \%settings);
-	exit 0 if ( $settings{'BEHINDROUTERWAITLOOP'} ne 0 );
-	my $RealIP = &General::FetchPublicIp;
-	$ip = (&General::validip ($RealIP) ?  $RealIP : 'unavailable');
-	&General::log ("Dynamic DNS public router IP is:$ip");
-    }
-}
+&General::log("Dynamic DNS public router IP is: $ip");
 
 if ($ARGV[0] eq '-f') {
 	unlink ($cachefile);	# next regular calls will try again if this force update fails.
