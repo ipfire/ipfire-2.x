@@ -278,6 +278,11 @@ sub buildrules {
 					# Add time constraint options.
 					push(@options, @time_options);
 
+					my $firewall_is_in_source_subnet = 0;
+					if ($source) {
+						$firewall_is_in_source_subnet = &firewall_is_in_subnet($source);
+					}
+
 					# Process NAT rules.
 					if ($NAT) {
 						my $nat_address = &get_nat_address($$hash{$key}[29]);
@@ -326,6 +331,14 @@ sub buildrules {
 					}
 
 					push(@options, @source_options);
+
+					if ($firewall_is_in_source_subnet && ($fwdfwsettings{"POLICY"} eq "MODE1") && ($chain eq $CHAIN_FORWARD)) {
+						if ($LOG && !$NAT) {
+							run("$IPTABLES -A $CHAIN_INPUT @options @log_limit_options -j LOG --log-prefix '$CHAIN_INPUT '");
+						}
+						run("$IPTABLES -A $CHAIN_INPUT @options -j $target");
+					}
+
 					push(@options, @destination_options);
 
 					# Insert firewall rule.
@@ -780,4 +793,27 @@ sub make_log_limit_options {
 	push(@options, ("--limit-burst", $limit * 2));
 
 	return @options;
+}
+
+sub firewall_is_in_subnet {
+	my $subnet = shift;
+
+	my ($net_address, $net_mask) = split("/", $subnet);
+	if (!$net_mask) {
+		return 0;
+	}
+
+	# ORANGE is missing here, because nothing may ever access
+	# the firewall from this network.
+	foreach my $zone ("GREEN", "BLUE") {
+		next unless (exists $defaultNetworks{$zone . "_ADDRESS"});
+
+		my $zone_address = $defaultNetworks{$zone . "_ADDRESS"};
+
+		if (&General::IpInSubnet($zone_address, $net_address, $net_mask)) {
+			return 1;
+		}
+	}
+
+	return 0;
 }
