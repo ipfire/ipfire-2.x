@@ -2520,7 +2520,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		<td>
 			<label>
 				<input type='checkbox' name='ONLY_PROPOSED' $checked{'ONLY_PROPOSED'} />
-				IKE+ESP: $Lang::tr{'use only proposed settings'}</td>
+				IKE+ESP: $Lang::tr{'use only proposed settings'}
 			</label>
 		</td>
 	</tr>
