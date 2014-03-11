@@ -65,6 +65,9 @@
 < ccd used
 < default ip
 < deprecated fs warn
+< dh
+< dh key warn
+< dh name is invalid
 < dnat address
 < dns address deleted txt
 < dnsforward
@@ -74,7 +77,6 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
-< dns servers
 < dpd delay
 < dpd timeout
 < drop action
@@ -102,7 +104,6 @@
 < fireinfo why read more
 < fireinfo your profile id
 < firewall rules
-< first
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -277,6 +278,8 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
+< gen dh
+< generate dh key
 < grouptype
 < integrity
 < invalid input for dpd delay
@@ -284,7 +287,6 @@
 < ipsec
 < ipsec network
 < ipsec no connections
-< last
 < least preferred
 < lifetime
 < mac filter
@@ -292,6 +294,8 @@
 < minimum
 < minute
 < most preferred
+< never
+< not a valid dh key
 < notice
 < ntp common settings
 < ntp sync
@@ -308,6 +312,13 @@
 < openvpn subnet is used
 < other
 < our donors
+< ovpn crypt options
+< ovpn dh
+< ovpn dh name
+< ovpn engines
+< ovpn generating the root and host certificates
+< ovpn ha
+< ovpn hmac
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -318,6 +329,7 @@
 < ovpn mtu-disc yes
 < ovpn no connections
 < ovpn port in root range
+< ovpn reneg sec
 < p2p block
 < p2p block save notice
 < proxy reports
@@ -328,6 +340,7 @@
 < qos enter bandwidths
 < red1
 < server restart
+< show dh
 < snat new source ip address
 < snort working
 < ssh
@@ -389,6 +402,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< upload dh key
 < upload new ruleset
 < uptime
 < uptime load average
@@ -509,6 +523,9 @@
 < ccd used
 < default ip
 < deprecated fs warn
+< dh
+< dh key warn
+< dh name is invalid
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -517,7 +534,6 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
-< dns servers
 < dpd delay
 < dpd timeout
 < drop action
@@ -545,7 +561,6 @@
 < fireinfo why read more
 < fireinfo your profile id
 < firewall rules
-< first
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -720,6 +735,8 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
+< gen dh
+< generate dh key
 < grouptype
 < integrity
 < invalid input for dpd delay
@@ -727,7 +744,6 @@
 < ipsec
 < ipsec network
 < ipsec no connections
-< last
 < least preferred
 < lifetime
 < mac filter
@@ -735,6 +751,8 @@
 < minimum
 < minute
 < most preferred
+< never
+< not a valid dh key
 < notice
 < openvpn default
 < openvpn destination port used
@@ -763,8 +781,15 @@
 < outgoing firewall p2p description 2
 < outgoing firewall p2p description 3
 < outgoing firewall view group
+< ovpn crypt options
+< ovpn dh
+< ovpn dh name
+< ovpn engines
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
+< ovpn generating the root and host certificates
+< ovpn ha
+< ovpn hmac
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -775,6 +800,7 @@
 < ovpn mtu-disc yes
 < ovpn no connections
 < ovpn port in root range
+< ovpn reneg sec
 < ovpn routes push
 < ovpn routes push options
 < p2p block
@@ -788,6 +814,7 @@
 < red1
 < server restart
 < Set time on boot
+< show dh
 < snat new source ip address
 < ssh
 < static routes
@@ -848,6 +875,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< upload dh key
 < uptime
 < uptime load average
 < urlfilter redirect template
@@ -944,6 +972,9 @@
 < ccd used
 < default ip
 < deprecated fs warn
+< dh
+< dh key warn
+< dh name is invalid
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -952,7 +983,6 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
-< dns servers
 < dpd delay
 < dpd timeout
 < drop action
@@ -972,7 +1002,6 @@
 < extrahd unable to write
 < extrahd you cant mount
 < firewall rules
-< first
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -1147,6 +1176,8 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
+< gen dh
+< generate dh key
 < grouptype
 < integrity
 < invalid input for dpd delay
@@ -1154,7 +1185,6 @@
 < ipsec
 < ipsec network
 < ipsec no connections
-< last
 < least preferred
 < lifetime
 < mac filter
@@ -1162,6 +1192,8 @@
 < minimum
 < minute
 < most preferred
+< never
+< not a valid dh key
 < notice
 < openvpn default
 < openvpn destination port used
@@ -1176,8 +1208,15 @@
 < openvpn subnet is used
 < other
 < our donors
+< ovpn crypt options
+< ovpn dh
+< ovpn dh name
+< ovpn engines
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
+< ovpn generating the root and host certificates
+< ovpn ha
+< ovpn hmac
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -1188,6 +1227,7 @@
 < ovpn mtu-disc yes
 < ovpn no connections
 < ovpn port in root range
+< ovpn reneg sec
 < ovpn routes push
 < ovpn routes push options
 < p2p block
@@ -1200,6 +1240,7 @@
 < qos enter bandwidths
 < red1
 < server restart
+< show dh
 < snat new source ip address
 < ssh
 < static routes
@@ -1259,6 +1300,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< upload dh key
 < uptime
 < uptime load average
 < urlfilter redirect template
@@ -1357,6 +1399,9 @@
 < day-graph
 < default ip
 < deprecated fs warn
+< dh
+< dh key warn
+< dh name is invalid
 < disk access per
 < dnat address
 < dnsforward
@@ -1366,7 +1411,6 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
-< dns servers
 < dpd delay
 < dpd timeout
 < drop action
@@ -1387,7 +1431,6 @@
 < extrahd unable to write
 < extrahd you cant mount
 < firewall rules
-< first
 < forward firewall
 < frequency
 < fw default drop
@@ -1563,6 +1606,8 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
+< gen dh
+< generate dh key
 < grouptype
 < hour-graph
 < incoming traffic in bytes per second
@@ -1572,7 +1617,6 @@
 < ipsec
 < ipsec network
 < ipsec no connections
-< last
 < least preferred
 < lifetime
 < mac filter
@@ -1581,6 +1625,8 @@
 < minute
 < month-graph
 < most preferred
+< never
+< not a valid dh key
 < notice
 < openvpn default
 < openvpn destination port used
@@ -1596,6 +1642,13 @@
 < other
 < our donors
 < outgoing traffic in bytes per second
+< ovpn crypt options
+< ovpn dh
+< ovpn dh name
+< ovpn engines
+< ovpn generating the root and host certificates
+< ovpn ha
+< ovpn hmac
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -1606,6 +1659,7 @@
 < ovpn mtu-disc yes
 < ovpn no connections
 < ovpn port in root range
+< ovpn reneg sec
 < p2p block
 < p2p block save notice
 < proxy reports
@@ -1616,6 +1670,7 @@
 < qos enter bandwidths
 < red1
 < server restart
+< show dh
 < snat new source ip address
 < ssh
 < static routes
@@ -1675,6 +1730,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< upload dh key
 < uptime
 < uptime load average
 < urlfilter redirect template

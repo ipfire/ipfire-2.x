@@ -378,7 +378,6 @@ WARNING: translation string unused: outgoing firewall reset
 WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
-WARNING: translation string unused: ovpn
 WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
@@ -429,16 +428,12 @@ WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: requested data
-WARNING: translation string unused: reserved dst port
-WARNING: translation string unused: reserved src port
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
 WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: router ip
-WARNING: translation string unused: rsvd dst port overlap
-WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
@@ -566,6 +561,7 @@ WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn aggrmode
+WARNING: translation string unused: vpn configuration main
 WARNING: translation string unused: vpn incompatible use of defaultroute
 WARNING: translation string unused: vpn mtu invalid
 WARNING: translation string unused: vpn on blue
@@ -628,6 +624,9 @@ WARNING: untranslated string: ccd used
 WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: default ip
 WARNING: untranslated string: deprecated fs warn
+WARNING: untranslated string: dh
+WARNING: untranslated string: dh key warn
+WARNING: untranslated string: dh name is invalid
 WARNING: untranslated string: dnat address
 WARNING: untranslated string: dns address deleted txt
 WARNING: untranslated string: dns servers
@@ -638,6 +637,7 @@ WARNING: untranslated string: dnsforward edit an entry
 WARNING: untranslated string: dnsforward entries
 WARNING: untranslated string: dnsforward forward_server
 WARNING: untranslated string: dnsforward zone
+WARNING: untranslated string: downlink
 WARNING: untranslated string: dpd delay
 WARNING: untranslated string: dpd timeout
 WARNING: untranslated string: drop action
@@ -690,9 +690,7 @@ WARNING: untranslated string: fwdfw dnat porterr
 WARNING: untranslated string: fwdfw dnat porterr2
 WARNING: untranslated string: fwdfw edit
 WARNING: untranslated string: fwdfw err nosrc
-WARNING: untranslated string: fwdfw err nosrcip
 WARNING: untranslated string: fwdfw err notgt
-WARNING: untranslated string: fwdfw err notgtip
 WARNING: untranslated string: fwdfw err prot_port
 WARNING: untranslated string: fwdfw err remark
 WARNING: untranslated string: fwdfw err ruleexists
@@ -811,6 +809,8 @@ WARNING: untranslated string: fwhost stdnet
 WARNING: untranslated string: fwhost type
 WARNING: untranslated string: fwhost used
 WARNING: untranslated string: fwhost welcome
+WARNING: untranslated string: gen dh
+WARNING: untranslated string: generate dh key
 WARNING: untranslated string: grouptype
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
@@ -825,6 +825,7 @@ WARNING: untranslated string: maximum
 WARNING: untranslated string: minimum
 WARNING: untranslated string: minute
 WARNING: untranslated string: most preferred
+WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: notice
 WARNING: untranslated string: ntp common settings
 WARNING: untranslated string: ntp sync
@@ -838,6 +839,12 @@ WARNING: untranslated string: openvpn prefix openvpn subnet
 WARNING: untranslated string: openvpn prefix remote subnet
 WARNING: untranslated string: openvpn subnet is used
 WARNING: untranslated string: other
+WARNING: untranslated string: ovpn crypt options
+WARNING: untranslated string: ovpn dh
+WARNING: untranslated string: ovpn dh name
+WARNING: untranslated string: ovpn generating the root and host certificates
+WARNING: untranslated string: ovpn ha
+WARNING: untranslated string: ovpn hmac
 WARNING: untranslated string: ovpn mgmt in root range
 WARNING: untranslated string: ovpn mtu-disc
 WARNING: untranslated string: ovpn mtu-disc and mtu not 1500
@@ -863,6 +870,7 @@ WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: server restart
+WARNING: untranslated string: show dh
 WARNING: untranslated string: snat new source ip address
 WARNING: untranslated string: snort working
 WARNING: untranslated string: ssh
@@ -917,6 +925,8 @@ WARNING: untranslated string: tor traffic limit hard
 WARNING: untranslated string: tor traffic limit soft
 WARNING: untranslated string: tor traffic read written
 WARNING: untranslated string: tor use exit nodes
+WARNING: untranslated string: uplink
+WARNING: untranslated string: upload dh key
 WARNING: untranslated string: upload new ruleset
 WARNING: untranslated string: uptime load average
 WARNING: untranslated string: urlfilter file ext block
