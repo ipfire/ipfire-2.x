@@ -806,6 +806,7 @@ buildipfire() {
   ipfiremake iotop
   ipfiremake stunnel
   ipfiremake sslscan
+  ipfiremake owncloud
 }
 
 buildinstaller() {
