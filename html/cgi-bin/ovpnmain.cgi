@@ -4579,7 +4579,7 @@ END
 		print "$warnmessage<br>";
 		print "$Lang::tr{'fwdfw warn1'}<br>";
 		&Header::closebox();
-		print"<center><form method='post'><input type='submit' name='ACTION' value='ok' style='width: 5em;'></form>";
+		print"<center><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'ok'}' style='width: 5em;'></form>";
 		&Header::closepage();
 		exit 0;
 	}
