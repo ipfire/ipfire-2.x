@@ -2159,7 +2159,7 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
     }
-
+	&General::firewall_reload();
 
 ###
 ### Download PKCS12 file
