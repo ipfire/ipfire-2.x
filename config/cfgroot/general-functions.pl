@@ -506,24 +506,46 @@ sub validipandmask
 
 sub checksubnets
 {
-	my %ccdconfhash=();			
-	my @ccdconf=();				
-	my $ccdname=$_[0];			
-	my $ccdnet=$_[1];			
+	my %ccdconfhash=();
+	my %ovpnconfhash=();
+	my %vpnconf=();
+	my %ipsecconf=();
+	my %ownnet=();
+	my %ovpnconf=();
+	my @ccdconf=();
+	my $ccdname=$_[0];
+	my $ccdnet=$_[1];
+	my $ownnet=$_[2];
 	my $errormessage;
 	my ($ip,$cidr)=split(/\//,$ccdnet);
 	$cidr=&iporsubtocidr($cidr);
+
 	#get OVPN-Subnet (dynamic range)
-	my %ovpnconf=();
 	&readhash("${General::swroot}/ovpn/settings", \%ovpnconf);
 	my ($ovpnip,$ovpncidr)= split (/\//,$ovpnconf{'DOVPN_SUBNET'});
 	$ovpncidr=&iporsubtocidr($ovpncidr);
+
 	#check if we try to use same network as ovpn server
 	if ("$ip/$cidr" eq "$ovpnip/$ovpncidr") {
 			$errormessage=$errormessage.$Lang::tr{'ccd err isovpnnet'}."<br>";
 			return $errormessage;
 	}
-	#check if we use a network-name/subnet that already exists
+
+	#check if we try to use same network as another ovpn N2N
+	if($ownnet ne 'ovpn'){
+		&readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ovpnconfhash);
+		foreach my $key (keys %ovpnconfhash) {
+			if ($ovpnconfhash{$key}[3] eq 'net'){
+				my @ovpnnet=split (/\//,$ovpnconfhash{$key}[11]);
+				if (&IpInSubnet($ip,$ovpnnet[0],&iporsubtodec($ovpnnet[1]))){
+					$errormessage=$errormessage.$Lang::tr{'ccd err isovpnn2n'}." $ovpnconfhash{$key}[1] <br>";
+					return $errormessage;
+				}
+			}
+		}
+	}
+
+	#check if we use a network-name/subnet (static-ovpn) that already exists
 	&readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
 	foreach my $key (keys %ccdconfhash) {
 		@ccdconf=split(/\//,$ccdconfhash{$key}[1]);
@@ -535,32 +557,45 @@ sub checksubnets
 		my ($newip,$newsub) = split(/\//,$ccdnet);
 		if (&IpInSubnet($newip,$ccdconf[0],&iporsubtodec($ccdconf[1]))) 
 		{
-			$errormessage=$errormessage.$Lang::tr{'ccd err issubnet'}."<br>";
+			$errormessage=$errormessage.$Lang::tr{'ccd err issubnet'}." $ccdconfhash{$key}[0]<br>";
 			return $errormessage;
 		}
 	}
+
 	#check if we use a ipsec right network which is already defined
-	my %ipsecconf=();
-	&General::readhasharray("${General::swroot}/vpn/config", \%ipsecconf);
-	foreach my $key (keys %ipsecconf){
-		if ($ipsecconf{$key}[11] ne ''){
-			my ($ipsecip,$ipsecsub) = split (/\//, $ipsecconf{$key}[11]);
-			$ipsecsub=&iporsubtodec($ipsecsub);
-			if($ipsecconf{$key}[1] ne $ccdname){
-				if ( &IpInSubnet ($ip,$ipsecip,$ipsecsub) ){
-					$errormessage=$Lang::tr{'ccd err isipsecnet'}." Name:  $ipsecconf{$key}[1]";
-					return $errormessage;
+	if($ownnet ne 'ipsec'){
+		&General::readhasharray("${General::swroot}/vpn/config", \%ipsecconf);
+		foreach my $key (keys %ipsecconf){
+			if ($ipsecconf{$key}[11] ne ''){
+				my ($ipsecip,$ipsecsub) = split (/\//, $ipsecconf{$key}[11]);
+				$ipsecsub=&iporsubtodec($ipsecsub);
+				if($ipsecconf{$key}[1] ne $ccdname){
+					if ( &IpInSubnet ($ip,$ipsecip,$ipsecsub) ){
+						$errormessage=$Lang::tr{'ccd err isipsecnet'}." Name:  $ipsecconf{$key}[1]";
+						return $errormessage;
+					}
 				}
 			}
 		}
 	}
+
+	#check if we use the ipsec RW Network (if defined)
+	&readhash("${General::swroot}/vpn/settings", \%vpnconf);
+	if ($vpnconf{'RW_NET'} ne ''){
+		my ($ipsecrwnet,$ipsecrwsub)=split (/\//, $vpnconf{'RW_NET'});
+		if (&IpInSubnet($ip,$ipsecrwnet,&iporsubtodec($ipsecrwsub)))
+		{
+			$errormessage=$errormessage.$Lang::tr{'ccd err isipsecrw'}."<br>";
+			return $errormessage;
+		}
+	}
+
 	#check if we use one of ipfire's networks (green,orange,blue)
-	my %ownnet=();
 	&readhash("${General::swroot}/ethernet/settings", \%ownnet);
-	if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ownnet{'GREEN_NETADDRESS'},$ip,&iporsubtodec($cidr))){ $errormessage=$Lang::tr{'ccd err green'};return $errormessage;}
-	if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ownnet{'ORANGE_NETADDRESS'},$ip,&iporsubtodec($cidr))){ $errormessage=$Lang::tr{'ccd err orange'};return $errormessage;}
-	if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ownnet{'BLUE_NETADDRESS'},$ip,&iporsubtodec($cidr))){ $errormessage=$Lang::tr{'ccd err blue'};return $errormessage;}
-	if (($ownnet{'RED_NETADDRESS'} 		ne '' && $ownnet{'RED_NETADDRESS'} 		ne '0.0.0.0') && &IpInSubnet($ownnet{'RED_NETADDRESS'},$ip,&iporsubtodec($cidr))){ $errormessage=$Lang::tr{'ccd err red'};return $errormessage;}
+	if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'GREEN_NETADDRESS'},&iporsubtodec($ownnet{'GREEN_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err green'};return $errormessage;}
+	if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'ORANGE_NETADDRESS'},&iporsubtodec($ownnet{'ORANGE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err orange'};return $errormessage;}
+	if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'BLUE_NETADDRESS'},&iporsubtodec($ownnet{'BLUE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err blue'};return $errormessage;}
+	if (($ownnet{'RED_NETADDRESS'} 		ne '' && $ownnet{'RED_NETADDRESS'} 		ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'RED_NETADDRESS'},&iporsubtodec($ownnet{'RED_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err red'};return $errormessage;}
 }
 
 
