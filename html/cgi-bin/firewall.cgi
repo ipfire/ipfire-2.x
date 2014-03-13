@@ -2375,26 +2375,18 @@ END
 				if($$hash{$key}[3] eq  'ipsec_net_src'){
 					if(&fwlib::get_ipsec_net_ip($host,11) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[3] eq  'ovpn_net_src'){
 					if(&fwlib::get_ovpn_net_ip($host,1) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[3] eq  'ovpn_n2n_src'){
 					if(&fwlib::get_ovpn_n2n_ip($host,27) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[3] eq  'ovpn_host_src'){
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}
 			}
@@ -2402,26 +2394,18 @@ END
 				if($$hash{$key}[5] eq 'ipsec_net_tgt'){
 					if(&fwlib::get_ipsec_net_ip($host,11) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[5] eq 'ovpn_net_tgt'){
 					if(&fwlib::get_ovpn_net_ip($host,1) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[5] eq 'ovpn_n2n_tgt'){
 					if(&fwlib::get_ovpn_n2n_ip($host,27) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[5] eq 'ovpn_host_tgt'){
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}
 			}
@@ -2429,15 +2413,11 @@ END
 			foreach my $netgroup (sort keys %customgrp){
 				if(($$hash{$key}[4] eq $customgrp{$netgroup}[0] || $$hash{$key}[6] eq $customgrp{$netgroup}[0]) && $customgrp{$netgroup}[2] eq 'none'){
 					$coloryellow='on';
-					&disable_rule($key);
-					$$hash{$key}[2]='';
 				}
 			}
 			foreach my $srvgroup (sort keys %customservicegrp){
 				if($$hash{$key}[15] eq $customservicegrp{$srvgroup}[0] && $customservicegrp{$srvgroup}[2] eq 'none'){
 					$coloryellow='on';
-					&disable_rule($key);
-					$$hash{$key}[2]='';
 				}
 			}
 			$$hash{'ACTIVE'}=$$hash{$key}[2];

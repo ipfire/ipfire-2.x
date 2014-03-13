@@ -1225,7 +1225,7 @@ END
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
     }
-
+	&General::firewall_reload();
 ###
 ### Choose between adding a host-net or net-net connection
 ###
