@@ -3509,8 +3509,13 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 		  goto VPNCONF_ERROR;
-		}
-   
+	}
+	#Check if remote subnet is used elsewhere
+	my ($n2nip,$n2nsub)=split("/",$cgiparams{'REMOTE_SUBNET'});
+	$warnmessage=&General::checksubnets('',$n2nip,'ovpn');
+	if ($warnmessage){
+		$warnmessage=$Lang::tr{'remote subnet'}." ($cgiparams{'REMOTE_SUBNET'}) <br>".$warnmessage;
+	}
 }
 
 #	if (($cgiparams{'TYPE'} eq 'net') && ($cgiparams{'SIDE'} !~ /^(left|right)$/)) {
@@ -4568,6 +4573,16 @@ END
 	print "&nbsp;</class>\n";
 	&Header::closebox();
     }
+
+	if ($warnmessage) {
+		&Header::openbox('100%', 'LEFT', $Lang::tr{'warning messages'});
+		print "$warnmessage<br>";
+		print "$Lang::tr{'fwdfw warn1'}<br>";
+		&Header::closebox();
+		print"<center><form method='post'><input type='submit' name='ACTION' value='ok' style='width: 5em;'></form>";
+		&Header::closepage();
+		exit 0;
+	}
 
     my $sactive = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='50%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'stopped'}</font></b></td></tr></table>";
     my $srunning = "no";

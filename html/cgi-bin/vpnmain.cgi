@@ -1225,7 +1225,7 @@ END
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
     }
-	&General::firewall_reload();
+
 ###
 ### Choose between adding a host-net or net-net connection
 ###
@@ -1407,14 +1407,13 @@ END
 	    goto VPNCONF_ERROR;
 	}
 
-#temporary disabled (BUG 10294)
-#	if ($cgiparams{'TYPE'} eq 'net'){
-#		$errormessage=&General::checksubnets($cgiparams{'NAME'},$cgiparams{'REMOTE_SUBNET'});
-#		if ($errormessage ne ''){
-#			goto VPNCONF_ERROR;
-#		}
-#		
-#	}
+	if ($cgiparams{'TYPE'} eq 'net'){
+		$warnmessage=&General::checksubnets('',$cgiparams{'REMOTE_SUBNET'},'ipsec');
+		if ($warnmessage ne ''){
+			$warnmessage=$Lang::tr{'remote subnet'}." ($cgiparams{'REMOTE_SUBNET'}) ".$warnmessage;
+		}
+	}
+
 	if ($cgiparams{'AUTH'} eq 'psk') {
 	    if (! length($cgiparams{'PSK'}) ) {
 		$errormessage = $Lang::tr{'pre-shared key is too short'};
@@ -2611,6 +2610,16 @@ EOF
 	print "&nbsp;</class>\n";
 	&Header::closebox();
     }
+
+	if ($warnmessage) {
+		&Header::openbox('100%', 'left', $Lang::tr{'warning messages'});
+		print "$warnmessage<br>";
+		print "$Lang::tr{'fwdfw warn1'}<br>";
+		&Header::closebox();
+		print"<center><form method='post'><input type='submit' name='ACTION' value='ok' style='width: 5em;'></form>";
+		&Header::closepage();
+		exit 0;
+	}
 
     &Header::openbox('100%', 'left', $Lang::tr{'global settings'});
     print <<END
