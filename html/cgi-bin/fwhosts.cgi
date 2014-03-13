@@ -21,7 +21,8 @@
 use strict;
 
 # enable only the following on debugging purpose
-use warnings;
+#use warnings;
+
 use Sort::Naturally;
 use CGI::Carp 'fatalsToBrowser';
 no warnings 'uninitialized';
