@@ -593,6 +593,8 @@ WARNING: untranslated string: ccd err invalidname
 WARNING: untranslated string: ccd err invalidnet
 WARNING: untranslated string: ccd err irouteexist
 WARNING: untranslated string: ccd err isipsecnet
+WARNING: untranslated string: ccd err isipsecrw
+WARNING: untranslated string: ccd err isovpnn2n
 WARNING: untranslated string: ccd err isovpnnet
 WARNING: untranslated string: ccd err issubnet
 WARNING: untranslated string: ccd err name
@@ -627,6 +629,7 @@ WARNING: untranslated string: dnsforward edit an entry
 WARNING: untranslated string: dnsforward entries
 WARNING: untranslated string: dnsforward forward_server
 WARNING: untranslated string: dnsforward zone
+WARNING: untranslated string: downlink
 WARNING: untranslated string: dpd delay
 WARNING: untranslated string: dpd timeout
 WARNING: untranslated string: drop action
@@ -637,6 +640,7 @@ WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: emerging rules
 WARNING: untranslated string: encryption
 WARNING: untranslated string: entropy
+WARNING: untranslated string: entropy graphs
 WARNING: untranslated string: fireinfo ipfire version
 WARNING: untranslated string: fireinfo is disabled
 WARNING: untranslated string: fireinfo is enabled
@@ -679,9 +683,7 @@ WARNING: untranslated string: fwdfw dnat porterr
 WARNING: untranslated string: fwdfw dnat porterr2
 WARNING: untranslated string: fwdfw edit
 WARNING: untranslated string: fwdfw err nosrc
-WARNING: untranslated string: fwdfw err nosrcip
 WARNING: untranslated string: fwdfw err notgt
-WARNING: untranslated string: fwdfw err notgtip
 WARNING: untranslated string: fwdfw err prot_port
 WARNING: untranslated string: fwdfw err remark
 WARNING: untranslated string: fwdfw err ruleexists
@@ -727,6 +729,7 @@ WARNING: untranslated string: fwdfw use nat
 WARNING: untranslated string: fwdfw use srcport
 WARNING: untranslated string: fwdfw use srv
 WARNING: untranslated string: fwdfw useless rule
+WARNING: untranslated string: fwdfw warn1
 WARNING: untranslated string: fwdfw wd_fri
 WARNING: untranslated string: fwdfw wd_mon
 WARNING: untranslated string: fwdfw wd_sat
@@ -801,6 +804,7 @@ WARNING: untranslated string: fwhost type
 WARNING: untranslated string: fwhost used
 WARNING: untranslated string: fwhost welcome
 WARNING: untranslated string: grouptype
+WARNING: untranslated string: hardware support
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
@@ -814,6 +818,7 @@ WARNING: untranslated string: maximum
 WARNING: untranslated string: minimum
 WARNING: untranslated string: minute
 WARNING: untranslated string: most preferred
+WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: notice
 WARNING: untranslated string: openvpn default
 WARNING: untranslated string: openvpn destination port used
@@ -860,6 +865,8 @@ WARNING: untranslated string: snat new source ip address
 WARNING: untranslated string: ssh
 WARNING: untranslated string: static routes
 WARNING: untranslated string: support donation
+WARNING: untranslated string: system has hwrng
+WARNING: untranslated string: system has rdrand
 WARNING: untranslated string: system information
 WARNING: untranslated string: tor
 WARNING: untranslated string: tor accounting
@@ -909,6 +916,7 @@ WARNING: untranslated string: tor traffic limit hard
 WARNING: untranslated string: tor traffic limit soft
 WARNING: untranslated string: tor traffic read written
 WARNING: untranslated string: tor use exit nodes
+WARNING: untranslated string: uplink
 WARNING: untranslated string: uptime load average
 WARNING: untranslated string: urlfilter redirect template
 WARNING: untranslated string: visit us at

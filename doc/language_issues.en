@@ -228,6 +228,8 @@ WARNING: translation string unused: from warn email bad
 WARNING: translation string unused: fwdfw MODE1
 WARNING: translation string unused: fwdfw MODE2
 WARNING: translation string unused: fwdfw addrule
+WARNING: translation string unused: fwdfw err nosrcip
+WARNING: translation string unused: fwdfw err notgtip
 WARNING: translation string unused: fwdfw err prot_port1
 WARNING: translation string unused: fwdfw final_rule
 WARNING: translation string unused: fwdfw from
