@@ -48,6 +48,42 @@ if ( $querry[0] ne~ "") {
 	&Graphs::makegraphbox("entropy.cgi", "day", '', 350);
 	&Header::closebox();
 
+	# Check for hardware support.
+	my $message;
+	my $message_colour = $Header::colourred;
+	if (&has_hwrng()) {
+		$message = $Lang::tr{'system has hwrng'};
+		$message_colour = $Header::colourgreen;
+	} elsif (&has_rdrand()) {
+		$message = $Lang::tr{'system has rdrand'};
+		$message_colour = $Header::colourgreen;
+	} else {
+		$message = $Lang::tr{'no hardware random number generator'};
+	}
+
+	&Header::openbox('100%', 'center', $Lang::tr{'hardware support'});
+	print <<EOF;
+		<p style="color: $message_colour; text-align: center;">$message</p>
+EOF
+	&Header::closebox();
+
 	&Header::closebigbox();
 	&Header::closepage();
+}
+
+sub has_hwrng() {
+	return (-c "/dev/hwrng");
+}
+
+sub has_rdrand() {
+	open(FILE, "/proc/cpuinfo") or return 0;
+	my @cpuinfo = <FILE>;
+	close(FILE);
+
+	my @result = grep(/rdrand/, @cpuinfo);
+	if (@result) {
+		return 1;
+	}
+
+	return 0;
 }
