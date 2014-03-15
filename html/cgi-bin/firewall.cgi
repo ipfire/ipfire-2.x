@@ -21,7 +21,11 @@
 
 use strict;
 use Sort::Naturally;
+use utf8;
+use feature 'unicode_strings';
+
 no warnings 'uninitialized';
+
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -194,6 +198,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
+
 	#check if manual ip (source) is orange network
 	if ($fwdfwsettings{'grp1'} eq 'src_addr'){
 		my ($sip,$scidr) = split("/",$fwdfwsettings{$fwdfwsettings{'grp1'}});
@@ -220,16 +225,17 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 				if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}"
 					eq "$configinputfw{$key}[0],$configinputfw{$key}[2],$configinputfw{$key}[3],$configinputfw{$key}[4],$configinputfw{$key}[5],$configinputfw{$key}[6],$configinputfw{$key}[7],$configinputfw{$key}[8],$configinputfw{$key}[9],$configinputfw{$key}[10],$configinputfw{$key}[11],$configinputfw{$key}[12],$configinputfw{$key}[13],$configinputfw{$key}[14],$configinputfw{$key}[15],$configinputfw{$key}[17],$configinputfw{$key}[18],$configinputfw{$key}[19],$configinputfw{$key}[20],$configinputfw{$key}[21],$configinputfw{$key}[22],$configinputfw{$key}[23],$configinputfw{$key}[24],$configinputfw{$key}[25],$configinputfw{$key}[26],$configinputfw{$key}[27],$configinputfw{$key}[28],$configinputfw{$key}[29],$configinputfw{$key}[30],$configinputfw{$key}[31]"){
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-						if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on'){
-							$errormessage='';
-						}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
+						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
 							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
+						}
+						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && &validremark($fwdfwsettings{'ruleremark'})){
+							$errormessage='';
 						}
 						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
 							$fwdfwsettings{'nosave'} = 'on';
 						}
-				}	
-			}	
+				}
+			}
 		}
 		#check Rulepos on new Rule
 		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
@@ -263,10 +269,11 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 				if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}"
 					eq "$configoutgoingfw{$key}[0],$configoutgoingfw{$key}[2],$configoutgoingfw{$key}[3],$configoutgoingfw{$key}[4],$configoutgoingfw{$key}[5],$configoutgoingfw{$key}[6],$configoutgoingfw{$key}[7],$configoutgoingfw{$key}[8],$configoutgoingfw{$key}[9],$configoutgoingfw{$key}[10],$configoutgoingfw{$key}[11],$configoutgoingfw{$key}[12],$configoutgoingfw{$key}[13],$configoutgoingfw{$key}[14],$configoutgoingfw{$key}[15],$configoutgoingfw{$key}[17],$configoutgoingfw{$key}[18],$configoutgoingfw{$key}[19],$configoutgoingfw{$key}[20],$configoutgoingfw{$key}[21],$configoutgoingfw{$key}[22],$configoutgoingfw{$key}[23],$configoutgoingfw{$key}[24],$configoutgoingfw{$key}[25],$configoutgoingfw{$key}[26],$configoutgoingfw{$key}[27],$configoutgoingfw{$key}[28],$configoutgoingfw{$key}[29],$configoutgoingfw{$key}[30],$configoutgoingfw{$key}[31]"){
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-						if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on'){
-							$errormessage='';
-						}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
+						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
 							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
+						}
+						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && &validremark($fwdfwsettings{'ruleremark'})){
+							$errormessage='';
 						}
 						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
 							$fwdfwsettings{'nosave'} = 'on';
@@ -276,7 +283,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		}
 		#check Rulepos on new Rule
 		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
-			print"CHECK OUTGOING DOPPELTE REGEL<br>";
 			$fwdfwsettings{'oldrulenumber'}=$maxkey;
 			foreach my $key (sort keys %configoutgoingfw){
 				if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}"
@@ -309,17 +315,18 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 				if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}"
 					eq "$configfwdfw{$key}[0],$configfwdfw{$key}[2],$configfwdfw{$key}[3],$configfwdfw{$key}[4],$configfwdfw{$key}[5],$configfwdfw{$key}[6],$configfwdfw{$key}[7],$configfwdfw{$key}[8],$configfwdfw{$key}[9],$configfwdfw{$key}[10],$configfwdfw{$key}[11],$configfwdfw{$key}[12],$configfwdfw{$key}[13],$configfwdfw{$key}[14],$configfwdfw{$key}[15],$configfwdfw{$key}[18],$configfwdfw{$key}[19],$configfwdfw{$key}[20],$configfwdfw{$key}[21],$configfwdfw{$key}[22],$configfwdfw{$key}[23],$configfwdfw{$key}[24],$configfwdfw{$key}[25],$configfwdfw{$key}[26],$configfwdfw{$key}[27],$configfwdfw{$key}[28],$configfwdfw{$key}[29],$configfwdfw{$key}[30],$configfwdfw{$key}[31]"){
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-						if ($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' ){
-							$errormessage='';
-						}elsif($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
+						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
 							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
+						}
+						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && &validremark($fwdfwsettings{'ruleremark'})){
+							$errormessage='';
 						}
 						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
 							$fwdfwsettings{'nosave'} = 'on';
 						}
-				}		
+				}
 			}
-		}	
+		}
 		#check Rulepos on new Rule
 		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
 			$fwdfwsettings{'oldrulenumber'}=$maxkey;
@@ -327,7 +334,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 				if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'}"
 					eq "$configfwdfw{$key}[0],$configfwdfw{$key}[2],$configfwdfw{$key}[3],$configfwdfw{$key}[4],$configfwdfw{$key}[5],$configfwdfw{$key}[6],$configfwdfw{$key}[7],$configfwdfw{$key}[8],$configfwdfw{$key}[9],$configfwdfw{$key}[10],$configfwdfw{$key}[11],$configfwdfw{$key}[12],$configfwdfw{$key}[13],$configfwdfw{$key}[14],$configfwdfw{$key}[15],$configfwdfw{$key}[18],$configfwdfw{$key}[19],$configfwdfw{$key}[20],$configfwdfw{$key}[21],$configfwdfw{$key}[22],$configfwdfw{$key}[23],$configfwdfw{$key}[24],$configfwdfw{$key}[25],$configfwdfw{$key}[26],$configfwdfw{$key}[27],$configfwdfw{$key}[28],$configfwdfw{$key}[29],$configfwdfw{$key}[30],$configfwdfw{$key}[31]"){
 						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-				}		
+				}
 			}
 		}
 		#check if we just close a rule
@@ -505,8 +512,8 @@ sub checksource
 			return $errormessage;
 		}
 	}elsif($fwdfwsettings{'src_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'src_addr'} eq ''){
-		$errormessage.=$Lang::tr{'fwdfw err nosrcip'};
-		return $errormessage;
+		$fwdfwsettings{'grp1'}='std_net_src';
+		$fwdfwsettings{$fwdfwsettings{'grp1'}} = 'ALL';
 	}
 
 	#check empty fields
@@ -606,8 +613,8 @@ sub checktarget
 			return $errormessage;
 		}
 	}elsif($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} eq ''){
-		$errormessage.=$Lang::tr{'fwdfw err notgtip'};
-		return $errormessage;
+		$fwdfwsettings{'grp2'}='std_net_tgt';
+		$fwdfwsettings{$fwdfwsettings{'grp2'}} = 'ALL';
 	}
 	#check for mac in targetgroup
 	if ($fwdfwsettings{'grp2'} eq 'cust_grp_tgt'){
@@ -1293,6 +1300,12 @@ sub getcolor
 	my $val=shift;
 	my $hash=shift;
 	if($optionsfw{'SHOWCOLORS'} eq 'on'){
+		# Don't colourise MAC addresses
+		if (&General::validmac($val)) {
+			$tdcolor = "";
+			return;
+		}
+
 		#custom Hosts
 		if ($nettype eq 'cust_host_src' || $nettype eq 'cust_host_tgt'){
 			foreach my $key (sort keys %$hash){
@@ -1572,7 +1585,7 @@ sub newrule
 	my ($sip,$scidr) = split("/",$fwdfwsettings{$fwdfwsettings{'grp1'}});
 	if ($scidr eq '32'){$fwdfwsettings{$fwdfwsettings{'grp1'}}=$sip;}
 	my ($dip,$dcidr) = split("/",$fwdfwsettings{$fwdfwsettings{'grp2'}});
-	if ($scidr eq '32'){$fwdfwsettings{$fwdfwsettings{'grp2'}}=$dip;}
+	if ($dcidr eq '32'){$fwdfwsettings{$fwdfwsettings{'grp2'}}=$dip;}
 	&Header::openbox('100%', 'left', $Lang::tr{'fwdfw source'});
 	#------SOURCE-------------------------------------------------------
 	print "<form method='post'>";
@@ -2132,6 +2145,9 @@ sub saverule
 			&changerule($configfwdfw);
 			#print"6";
 		}
+		$fwdfwsettings{'ruleremark'}=~ s/,/;/g;
+		utf8::decode($fwdfwsettings{'ruleremark'});
+		$fwdfwsettings{'ruleremark'}=&Header::escape($fwdfwsettings{'ruleremark'});
 		if ($fwdfwsettings{'updatefwrule'} ne 'on'){
 			my $key = &General::findhasharraykey ($hash);
 			$$hash{$key}[0]  = $fwdfwsettings{'RULE_ACTION'};
@@ -2267,22 +2283,19 @@ sub saverule
 sub validremark
 {
 	# Checks a hostname against RFC1035
-        my $remark = $_[0];
+	my $remark = $_[0];
 
-	# Each part should be at least two characters in length
-	# but no more than 63 characters
-	if (length ($remark) < 1 || length ($remark) > 255) {
-		return 0;}
-	# Only valid characters are a-z, A-Z, 0-9 and -
-	if ($remark !~ /^[a-zäöüA-ZÖÄÜ0-9-.:;\|_()\/\s]*$/) {
-		return 0;}
-	# First character can only be a letter or a digit
-	if (substr ($remark, 0, 1) !~ /^[a-zäöüA-ZÖÄÜ0-9(]*$/) {
-		return 0;}
-	# Last character can only be a letter or a digit
-	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9.:;_)]*$/) {
-		return 0;}
-	return 1;
+	# Try to decode $remark into UTF-8. If this doesn't work,
+	# we assume that the string it not sane.
+	if (!utf8::decode($remark)) {
+		return 0;
+	}
+
+	# Check if the string only contains of printable characters.
+	if ($remark =~ /^[[:print:]]*$/) {
+		return 1;
+	}
+	return 0;
 }
 sub viewtablerule
 {
@@ -2362,26 +2375,18 @@ END
 				if($$hash{$key}[3] eq  'ipsec_net_src'){
 					if(&fwlib::get_ipsec_net_ip($host,11) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[3] eq  'ovpn_net_src'){
 					if(&fwlib::get_ovpn_net_ip($host,1) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[3] eq  'ovpn_n2n_src'){
 					if(&fwlib::get_ovpn_n2n_ip($host,27) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[3] eq  'ovpn_host_src'){
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}
 			}
@@ -2389,26 +2394,18 @@ END
 				if($$hash{$key}[5] eq 'ipsec_net_tgt'){
 					if(&fwlib::get_ipsec_net_ip($host,11) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[5] eq 'ovpn_net_tgt'){
 					if(&fwlib::get_ovpn_net_ip($host,1) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[5] eq 'ovpn_n2n_tgt'){
 					if(&fwlib::get_ovpn_n2n_ip($host,27) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[5] eq 'ovpn_host_tgt'){
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}
 			}
@@ -2416,15 +2413,11 @@ END
 			foreach my $netgroup (sort keys %customgrp){
 				if(($$hash{$key}[4] eq $customgrp{$netgroup}[0] || $$hash{$key}[6] eq $customgrp{$netgroup}[0]) && $customgrp{$netgroup}[2] eq 'none'){
 					$coloryellow='on';
-					&disable_rule($key);
-					$$hash{$key}[2]='';
 				}
 			}
 			foreach my $srvgroup (sort keys %customservicegrp){
 				if($$hash{$key}[15] eq $customservicegrp{$srvgroup}[0] && $customservicegrp{$srvgroup}[2] eq 'none'){
 					$coloryellow='on';
-					&disable_rule($key);
-					$$hash{$key}[2]='';
 				}
 			}
 			$$hash{'ACTIVE'}=$$hash{$key}[2];
@@ -2716,7 +2709,7 @@ END
 				<td colspan='13'>&nbsp;</td>
 			</tr>
 			<tr>
-				<td colspan='13' style="padding-left:0px;">
+				<td colspan='13' style="padding-left:0px;padding-right:0px">
 					<table width="100%" border='1' rules="cols" cellspacing='0'>
 END
 
@@ -2799,14 +2792,16 @@ END
 						<font color="$Header::colourorange">$Lang::tr{'orange'}</font>
 						($Lang::tr{'fwdfw pol block'})
 					</td>
+END
+			}
+
+			print <<END;
 					<td align='center'>
 						<font color="$Header::colourgreen">$Lang::tr{'green'}</font>
 						($Lang::tr{'fwdfw pol block'})
 					</td>
+				</tr>
 END
-			}
-
-			print"</tr>";
 		}
 
 		print <<END;

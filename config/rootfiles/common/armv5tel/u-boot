@@ -1,8 +1,12 @@
+#boot/MLO
+boot/boot.scr
+boot/boot.script
+boot/convert_bootscript
+#boot/u-boot.img
 usr/bin/mkimage
 #usr/share/u-boot
 #usr/share/u-boot/pandaboard
 #usr/share/u-boot/pandaboard/MLO
-#usr/share/u-boot/pandaboard/u-boot.bin
 #usr/share/u-boot/pandaboard/u-boot.img
 #usr/share/u-boot/wandboard_dl
 #usr/share/u-boot/wandboard_dl/u-boot.imx

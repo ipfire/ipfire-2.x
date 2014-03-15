@@ -106,9 +106,10 @@ iptables_init() {
 
 	# Block OpenVPN transfer networks
 	iptables -N OVPNBLOCK
-	for i in INPUT FORWARD; do
-		iptables -A ${i} -j OVPNBLOCK
-	done
+	iptables -A INPUT   -i tun+ -j OVPNBLOCK
+	iptables -A OUTPUT  -o tun+ -j OVPNBLOCK
+	iptables -A FORWARD -i tun+ -j OVPNBLOCK
+	iptables -A FORWARD -o tun+ -j OVPNBLOCK
 
 	# OpenVPN transfer network translation
 	iptables -t nat -N OVPNNAT
@@ -188,16 +189,6 @@ iptables_init() {
 	iptables -t nat -N NAT_SOURCE
 	iptables -t nat -A POSTROUTING -j NAT_SOURCE
 
-	# RED chain, used for the red interface
-	iptables -N REDINPUT
-	iptables -A INPUT -j REDINPUT
-	iptables -N REDFORWARD
-	iptables -A FORWARD -j REDFORWARD
-	iptables -t nat -N REDNAT
-	iptables -t nat -A POSTROUTING -j REDNAT
-
-	iptables_red
-
 	# Custom prerouting chains (for transparent proxy)
 	iptables -t nat -N SQUID
 	iptables -t nat -A PREROUTING -j SQUID
@@ -206,11 +197,52 @@ iptables_init() {
 	iptables -t nat -N NAT_DESTINATION
 	iptables -t nat -A PREROUTING -j NAT_DESTINATION
 
+	iptables -t mangle -N NAT_DESTINATION
+	iptables -t mangle -A PREROUTING -j NAT_DESTINATION
+
+	iptables -t nat -N NAT_DESTINATION_FIX
+	iptables -t nat -A POSTROUTING -j NAT_DESTINATION_FIX
+
+	iptables -t nat -A NAT_DESTINATION_FIX \
+		-m mark --mark 1 -j SNAT --to-source "${GREEN_ADDRESS}"
+
+	if [ -n "${BLUE_ADDRESS}" ]; then
+		iptables -t nat -A NAT_DESTINATION_FIX \
+			-m mark --mark 2 -j SNAT --to-source "${BLUE_ADDRESS}"
+	fi
+
+	if [ -n "${ORANGE_ADDRESS}" ]; then
+		iptables -t nat -A NAT_DESTINATION_FIX \
+			-m mark --mark 3 -j SNAT --to-source "${ORANGE_ADDRESS}"
+	fi
+
 	# upnp chain for our upnp daemon
 	iptables -t nat -N UPNPFW
 	iptables -t nat -A PREROUTING -j UPNPFW
 	iptables -N UPNPFW
 	iptables -A FORWARD -m conntrack --ctstate NEW -j UPNPFW
+
+	# RED chain, used for the red interface
+	iptables -N REDINPUT
+	iptables -A INPUT -j REDINPUT
+	iptables -N REDFORWARD
+	iptables -A FORWARD -j REDFORWARD
+	iptables -t nat -N REDNAT
+	iptables -t nat -A POSTROUTING -j REDNAT
+
+	# Filter logging of incoming broadcasts.
+	iptables -N BROADCAST_FILTER
+	iptables -A INPUT -j BROADCAST_FILTER
+
+	iptables -A BROADCAST_FILTER -i "${GREEN_DEV}" -d "${GREEN_BROADCAST}" -j DROP
+
+	if [ -n "${BLUE_DEV}" -a -n "${BLUE_BROADCAST}" ]; then
+		iptables -A BROADCAST_FILTER -i "${BLUE_DEV}" -d "${BLUE_BROADCAST}" -j DROP
+	fi
+
+	if [ -n "${ORANGE_DEV}" -a -n "${ORANGE_BROADCAST}" ]; then
+		iptables -A BROADCAST_FILTER -i "${ORANGE_DEV}" -d "${ORANGE_BROADCAST}" -j DROP
+	fi
 
 	# Apply OpenVPN firewall rules
 	/usr/local/bin/openvpnctrl --firewall-rules
@@ -226,10 +258,11 @@ iptables_init() {
 	iptables -N POLICYOUT
 	iptables -A OUTPUT -j POLICYOUT
 
+	# Initialize firewall policies.
 	/usr/sbin/firewall-policy
 
-	# read new firewall
-	/usr/local/bin/firewallctrl
+	# Install firewall rules for the red interface.
+	iptables_red
 }
 
 iptables_red() {
@@ -281,6 +314,9 @@ iptables_red() {
 		iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
 
 	fi
+
+	# Reload all rules.
+	/usr/local/bin/firewallctrl
 }
 
 # See how we were called.

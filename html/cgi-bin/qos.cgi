@@ -251,13 +251,13 @@ END
 if ($qossettings{'DOLEVEL7'} eq $Lang::tr{'save'})
 {
 	if ( $qossettings{'QIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'QIP'}) ) {
+		if ((!&General::validipandmask($qossettings{'QIP'})) && (!&General::validip($qossettings{'QIP'}))) {
 			$qossettings{'VALID'} = 'no';
 			$message = $Lang::tr{'The source IP address is invalid.'};
 		}
 	}
 	if ( $qossettings{'DIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'DIP'}) ) {
+		if ((!&General::validipandmask($qossettings{'DIP'})) && (!&General::validip($qossettings{'DIP'}))) {
 			$qossettings{'VALID'} = 'no';
 			$message = $Lang::tr{'The destination IP address is invalid.'};
 		}
@@ -326,15 +326,15 @@ END
 if ($qossettings{'DOPORT'} eq $Lang::tr{'save'})
 {
 	if ( $qossettings{'QIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'QIP'}) ) {
+		if ((!&General::validipandmask($qossettings{'QIP'})) && (!&General::validip($qossettings{'QIP'}))) {
 			$qossettings{'VALID'} = 'no';
-			$message = "$Lang::tr{'The source IP address is invalid.'}";
+			$message = $Lang::tr{'The source IP address is invalid.'};
 		}
 	}
 	if ( $qossettings{'DIP'} ne '' ) {
-		unless ( &General::validip($qossettings{'DIP'}) ) {
+		if ((!&General::validipandmask($qossettings{'DIP'})) && (!&General::validip($qossettings{'DIP'}))) {
 			$qossettings{'VALID'} = 'no';
-			$message = "$Lang::tr{'The destination IP address is invalid.'}";
+			$message = $Lang::tr{'The destination IP address is invalid.'};
 		}
 	}
 	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
@@ -772,10 +772,10 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 	exit
 }
 
-	&Header::openbox('100%', 'center', "$qossettings{'RED_DEV'} $Lang::tr{'graph'}");
+	&Header::openbox('100%', 'center', "$qossettings{'RED_DEV'} $Lang::tr{'graph'}, $Lang::tr{'uplink'}");
 	&Graphs::makegraphbox("qos.cgi",$qossettings{'RED_DEV'},"hour","325");
 	&Header::closebox();
-	&Header::openbox('100%', 'center', "$qossettings{'IMQ_DEV'} $Lang::tr{'graph'}");
+	&Header::openbox('100%', 'center', "$qossettings{'IMQ_DEV'} $Lang::tr{'graph'}, $Lang::tr{'downlink'}");
 	&Graphs::makegraphbox("qos.cgi",$qossettings{'IMQ_DEV'},"hour","325");
 	&Header::closebox();
 
@@ -1079,10 +1079,10 @@ END
 	print <<END
 		    </select><td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'source ip'}:
-		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value='$qossettings{'QIP'}' />
+		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='31' value='$qossettings{'QIP'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'destination ip'}:
-		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value='$qossettings{'DIP'}' />
+		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='31' value='$qossettings{'DIP'}' />
 		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOLEVEL7' value='$Lang::tr{'save'}' />
 		<tr><td colspan="3" align='center'><font color="red"><em>$Lang::tr{'qos warning'}</em></font>
 		</table></form>
@@ -1123,10 +1123,10 @@ END
 		    <td width='33%' align='left'><input type='text' name='DPORT' maxlength='11' value='$qossettings{'DPORT'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'source ip'}:
-		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='15' value='$qossettings{'QIP'}' />
+		    <td width='33%' align='left'><input type='text' name='QIP' maxlength='31' value='$qossettings{'QIP'}' />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'destination ip'}:
-		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='15' value='$qossettings{'DIP'}' />
+		    <td width='33%' align='left'><input type='text' name='DIP' maxlength='31' value='$qossettings{'DIP'}' />
 		    <td width='33%' align='center'><input type='hidden' name='CLASS' value='$qossettings{'CLASS'}' /><input type='submit' name='DOPORT' value='$Lang::tr{'save'}' />
 		</table></form>
 END
@@ -1184,7 +1184,7 @@ sub showclasses {
 	  		@classline = split( /\;/, $classentry );
 	  		if ( $classline[0] eq $qossettings{'DEV'} )
 	  		{
-	  		  &Header::openbox('100%', 'center', "$Lang::tr{'Class'}: $classline[1]");
+	  		  &Header::openbox('100%', 'center', "$Lang::tr{'Class'}: $classline[1] $classline[8]");
 	  			print <<END
 				<table border='0' width='100%' cellspacing='0'>
 				<tr><td bgcolor='$color{'color20'}' width='10%' align='center'><b>$Lang::tr{'interface'}</b>

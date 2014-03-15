@@ -196,6 +196,17 @@ ln -svf ../run /var/run
 mkdir -p /var/ipfire/firewall
 mkdir -p /var/ipfire/fwhosts
 
+# Remove old ntp binaries
+rm -f /usr/sbin/ntp-keygen
+rm -f /usr/sbin/ntp-wait
+rm -f /usr/sbin/ntpq
+rm -f /usr/sbin/ntptime
+rm -f /usr/sbin/ntptrace
+rm -f /usr/sbin/tickadj
+
+# Remove old firewall helper link
+rm -f /etc/rc.d/init.d/networking/red.up/22-forwardfwctrl
+
 #
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
@@ -281,6 +292,59 @@ chown -R nobody:nobody /var/ipfire/fwhosts
 
 # Remove old firewall configuration files
 rm -rf /var/ipfire/{dmzholes,portfw,outgoing,xtaccess}
+
+# In previously released IPFire versions the DROPOUTPUT and DROPINPUT
+# option have two identical lines in the optionsfw/settings file as long as
+# the user hasn't done any changes on the WUI.
+#
+# To prevent from any kind of side effects we are going to solve this issue now.
+
+# Fix doubble enties of DROPOUTPUT when the default settings are still in use
+# (the save button on the WUI page never has been clicked) or convert to the
+# new option name required by the firewall of IPFire 2.15.
+
+optionsfw_file="/var/ipfire/optionsfw/settings"
+
+if [ $(grep -c "DROPOUTPUT" ${optionsfw_file}) -gt 1 ] ; then
+
+        # Drop all DROPUTPUT entries.
+        sed -e "/DROPOUTPUT/d" -i ${optionsfw_file}
+
+        # Add default line for new option.
+        echo "DROPOUTGOING=on" >> ${optionsfw_file}
+else
+
+        # Convert option name to new format.
+        sed -e "s/DROPOUTPUT/DROPOUTGOING/g" -i ${optionsfw_file}
+fi
+
+# Fix doubble enties of DROPINPUT when the default settings are still in use
+# (the save button on the WUI page never has been clicked).
+if [ $(grep -c "DROPINPUT" ${optionsfw_file}) -gt 1 ] ; then
+
+        # We only can remove all entries with an defined string.
+        sed -e "/DROPINPUT/d" -i ${optionsfw_file}
+
+        # Afterwards we have to add the required string with the default
+        # value again.
+        echo "DROPINPUT=on" >> ${optionsfw_file}
+fi
+
+# Add strings and default values for new options of the firewall.
+echo "DROPFORWARD=on" >> ${optionsfw_file}
+echo "FWPOLICY=DROP" >> ${optionsfw_file}
+echo "FWPOLICY1=DROP" >> ${optionsfw_file}
+echo "FWPOLICY2=DROP" >> ${optionsfw_file}
+echo "DROPSAMBA=off" >> ${optionsfw_file}
+echo "DROPPROXY=off" >> ${optionsfw_file}
+echo "SHOWREMARK=on" >> ${optionsfw_file}
+echo "SHOWCOLORS=on" >> ${optionsfw_file}
+echo "SHOWTABLES=off" >> ${optionsfw_file}
+echo "SHOWDROPDOWN=off" >> ${optionsfw_file}
+echo "DROPWIRELESSINPUT=on" >> ${optionsfw_file}
+echo "DROPWIRELESSFORWARD=on" >> ${optionsfw_file}
+
+unset optionsfw_file
 
 # Convert inittab and fstab
 sed -i -e "s/tty1 9600$/tty1 9600 --noclear/g" /etc/inittab

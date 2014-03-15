@@ -110,7 +110,7 @@ sub openpage {
 	&genmenu();
 
 	my $headline = "IPFire";
-	if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
+	if (($settings{'WINDOWWITHHOSTNAME'} eq 'on') || ($settings{'WINDOWWITHHOSTNAME'} eq '')) {
 		$headline =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}";
 	}
 
@@ -129,7 +129,7 @@ print <<END;
 	<link rel="shortcut icon" href="/favicon.ico" />
 	<script type="text/javascript" src="/include/jquery.js"></script>
 
-	<script language="javascript" type="text/javascript">
+	<script type="text/javascript">
 		function swapVisibility(id) {
 			\$('#' + id).toggle();
 		}
@@ -238,7 +238,12 @@ sub openbox {
 	$align = $_[1];
 	$caption = $_[2];
 
-	print "<div class='post' align='$align'>\n";
+	if($align eq 'center') {
+		print "<div class='post' align='center'>\n"
+	}
+	else {
+		print "<div class='post'>\n";
+	}
 
 	if ($caption) {
 		print "<h2>$caption</h2>\n";

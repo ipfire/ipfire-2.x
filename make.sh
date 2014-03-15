@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.15"							# Version number
-CORE="76-beta2"							# Core Level (Filename)
+CORE="76-beta3"							# Core Level (Filename)
 PAKFIRE_CORE="76"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -438,6 +438,8 @@ buildipfire() {
     # arm multi platform (Panda, Wandboard ...) kernel build
     ipfiremake linux			KCFG="-multi"
     ipfiremake cryptodev		KCFG="-multi"
+    ipfiremake e1000e			KCFG="-multi"
+    ipfiremake igb			KCFG="-multi"
 
     # arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
     ipfiremake linux			KCFG="-kirkwood"
@@ -448,8 +450,8 @@ buildipfire() {
 #    ipfiremake r8169			KCFG="-kirkwood"
 #    ipfiremake r8168			KCFG="-kirkwood"
 #    ipfiremake r8101			KCFG="-kirkwood"
-#   ipfiremake e1000e			KCFG="-kirkwood"
-#    ipfiremake igb			KCFG="-kirkwood"
+#    ipfiremake e1000e			KCFG="-kirkwood"
+    ipfiremake igb			KCFG="-kirkwood"
 
   fi
   ipfiremake pkg-config
@@ -679,6 +681,8 @@ buildipfire() {
   ipfiremake vdr_streamdev
   ipfiremake vdr_vnsiserver3
   ipfiremake vdr_epgsearch
+  ipfiremake vdr_dvbapi
+  ipfiremake vdr_eepg
   ipfiremake w_scan
   ipfiremake icecast
   ipfiremake icegenerator

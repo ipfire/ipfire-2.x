@@ -92,8 +92,8 @@ sub makegraphbox {
 	print "<a href='".$_[0]."?".$_[1]."?month' target='".$_[1]."box'><b>".$Lang::tr{'month'}."</b></a>";
 	print " - ";
 	print "<a href='".$_[0]."?".$_[1]."?year' target='".$_[1]."box'><b>".$Lang::tr{'year'}."</b></a>";
-	print "<iframe src='".$_[0]."?".$_[1]."?".$_[2]."' width='".$width."' height='".$height."' scrolling='no' frameborder='no' marginheight='0' name='".$_[1]."box'></iframe>";
 	print "</center>";
+	print "<iframe src='".$_[0]."?".$_[1]."?".$_[2]."' width='".$width."' height='".$height."' scrolling='no' frameborder='no' marginheight='0' name='".$_[1]."box'></iframe>";
 }
 
 # Generate the CPU Graph for the current period of time for values given by
@@ -422,12 +422,15 @@ sub updateprocessescpugraph {
 
 		push(@command,"COMMENT:".$Lang::tr{'caption'}."\\j");
 
+		my $colorIndex = 0;
 		foreach(@processesgraph){
+			my $colorIndex = 10 + $count % 15;
+			my $color="$color{\"color$colorIndex\"}";
 			chomp($_);my @name=split(/\-/,$_);chop($name[1]);
 			if ($count eq "0"){
-				push(@command,"AREA:".$name[1].random_hex_color(6)."A0:".$name[1]);
+				push(@command,"AREA:".$name[1].$color."A0:".$name[1]);
 			}else{
-				push(@command,"STACK:".$name[1].random_hex_color(6)."A0:".$name[1]);
+				push(@command,"STACK:".$name[1].$color."A0:".$name[1]);
 			}
 			$count++;
 		}
@@ -471,12 +474,15 @@ sub updateprocessesmemorygraph {
 
 		push(@command,"COMMENT:".$Lang::tr{'caption'}."\\j");
 
+		my $colorIndex = 0;
 		foreach(@processesgraph){
 			chomp($_);my @name=split(/\-/,$_);chop($name[1]);
+			my $colorIndex = 10 + $count % 15;
+			my $color="$color{\"color$colorIndex\"}";
 			if ($count eq "0"){
-				push(@command,"AREA:".$name[1].random_hex_color(6)."A0:".$name[1]);
+				push(@command,"AREA:".$name[1].$color."A0:".$name[1]);
 			}else{
-				push(@command,"STACK:".$name[1].random_hex_color(6)."A0:".$name[1]);
+				push(@command,"STACK:".$name[1].$color."A0:".$name[1]);
 			}
 			$count++;
 		}
@@ -983,17 +989,18 @@ sub updateqosgraph {
 		@classes = <FILE>;
 		close FILE;
 
+		my $colorIndex = 0;
 		foreach $classentry (sort @classes){
 			@classline = split( /\;/, $classentry );
 			if ( $classline[0] eq $qossettings{'DEV'} ){
-				$color=random_hex_color(6);
+				my $colorIndex = 10 + $count % 15;
+				$color="$color{\"color$colorIndex\"}";
 				push(@command, "DEF:$classline[1]=$mainsettings{'RRDLOG'}/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bytes:AVERAGE");
 
 				if ($count eq "1") {
 					push(@command, "AREA:$classline[1]$color:$Lang::tr{'Class'} $classline[1] -".sprintf("%15s",$classline[8]));
 				} else {
 					push(@command, "STACK:$classline[1]$color:$Lang::tr{'Class'} $classline[1] -".sprintf("%15s",$classline[8]));
-
 				}
 
 				push(@command, "GPRINT:$classline[1]:MAX:%8.1lf %sBps"
@@ -1133,7 +1140,6 @@ sub updateentropygraph {
 		"-t $Lang::tr{'entropy'}",
 		"-v $Lang::tr{'bit'}",
 		"DEF:entropy=$mainsettings{'RRDLOG'}/collectd/localhost/entropy/entropy.rrd:entropy:AVERAGE",
-		"CDEF:entropytrend=entropy,43200,TREND",
 		"LINE3:entropy#ff0000:" . sprintf("%-15s", $Lang::tr{'entropy'}),
 		"VDEF:entrmin=entropy,MINIMUM",
 		"VDEF:entrmax=entropy,MAXIMUM",
@@ -1141,7 +1147,6 @@ sub updateentropygraph {
 		"GPRINT:entrmax:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'maximum'}),
 		"GPRINT:entrmin:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'minimum'}),
 		"GPRINT:entravg:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'average'}) . "\\n",
-		"LINE3:entropytrend#000000",
 	);
 
 	RRDs::graph (@command);

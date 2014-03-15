@@ -162,8 +162,10 @@ else {
 
 print <<END
 <br />$Lang::tr{'since'} $update
-<tr><td colspan='3' align='center'>$Lang::tr{'connections'}: $up | $Lang::tr{'disconnects'}: $down | $Lang::tr{'attemps'}: $rec
-<tr><td><b>$Lang::tr{'total connection time'}:</b><td align='right'>$current<td align='left'> ~ $ontime%
+<table style='width:60%'>
+<tr><td>$Lang::tr{'connections'}: $up</td><td>$Lang::tr{'disconnects'}: $down</td><td>$Lang::tr{'attemps'}: $rec</td></tr>
+<tr><td><b>$Lang::tr{'total connection time'}:</b><td>$current</td><td> ~ $ontime%</td></tr>
+</table>
 END
 ;
 	}

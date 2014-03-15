@@ -9,9 +9,29 @@ eval $(/usr/local/bin/readhash /var/ipfire/time/settings)
 case "$1" in
 	start)
 		if [ "$ENABLESETONBOOT" == "on" ]; then
-			boot_mesg "Setting time on boot..."
-			loadproc /usr/local/bin/settime $(cat /var/ipfire/time/settime.conf)
-		fi  
+			boot_mesg -n "Setting time on boot..."
+			if [ $(pidof wpa_supplicant) ]; then
+				if [ ! -e /var/ipfire/red/active ]; then
+					boot_mesg ""
+					boot_mesg -n "Wait for wlan"
+					for (( i=30; i>1; i-- )) do
+						if [ -e /var/ipfire/red/active ]; then
+							break;
+						fi
+						boot_mesg -n "."
+						sleep 2
+					done
+					sleep 5
+				fi
+			fi
+			if [ -e /var/ipfire/red/active ]; then
+				boot_mesg ""
+				loadproc /usr/local/bin/settime $(cat /var/ipfire/time/settime.conf)
+			else
+				boot_mesg " ERROR! Not online!"
+				echo_warning
+			fi
+		fi
 
 		boot_mesg "Starting ntpd..."
 		loadproc /usr/bin/ntpd -Ap /var/run/ntpd.pid

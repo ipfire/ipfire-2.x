@@ -36,7 +36,7 @@ etc/strongswan.d/charon/kernel-netlink.conf
 etc/strongswan.d/charon/md5.conf
 etc/strongswan.d/charon/nonce.conf
 etc/strongswan.d/charon/openssl.conf
-etc/strongswan.d/charon/padlock.conf
+#etc/strongswan.d/charon/padlock.conf
 etc/strongswan.d/charon/pem.conf
 etc/strongswan.d/charon/pgp.conf
 etc/strongswan.d/charon/pkcs1.conf
