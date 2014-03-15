@@ -358,7 +358,7 @@ if (($confighash{'ENABLED'} eq "on") ||
 	$ovpnip="$ovpnip/$sub";
 print <<END;
 	<tr>
-		<td style='width:25%; text-align:center; background-color:$Header::colourvpn;'>
+		<td style='width:25%; text-align:center; background-color:$Header::colourovpn;'>
 			<a href='/cgi-bin/ovpnmain.cgi' style='color:white'><b>OpenVPN</b></a>
 		</td>
 		<td style='width:30%; text-align:center;'>$ovpnip</td>
@@ -372,7 +372,7 @@ print"</table>";
 #Check if there are any vpns configured (ipsec and openvpn)
 &General::readhasharray("${General::swroot}/vpn/config", \%vpnconfig);
 foreach my $key (sort { ncmp($vpnconfig{$a}[1],$vpnconfig{$b}[1]) } keys %vpnconfig) {
-	if ($vpnconfig{$key}[0] eq 'on'){
+	if ($vpnconfig{$key}[0] eq 'on' && $vpnconfig{$key}[3] ne 'host'){
 		$showipsec=1;
 		$showbox=1;
 		last;
@@ -409,7 +409,7 @@ if ($showbox){
 		</tr>
 END
 		foreach my $key (sort { uc($vpnconfig{$a}[1]) cmp uc($vpnconfig{$b}[1]) } keys %vpnconfig) {
-			if ($vpnconfig{$key}[0] eq 'on') {
+			if ($vpnconfig{$key}[0] eq 'on' && $vpnconfig{$key}[3] ne 'host') {
 				$count++;
 				my ($vpnip,$vpnsub) = split("/",$vpnconfig{$key}[11]);
 				$vpnsub=&General::iporsubtocidr($vpnsub);
@@ -420,8 +420,8 @@ END
 					$col = $color{'color20'};
 				}
 				print "<tr>";
-				print "<td style='text-align:left; color:white; background-color:$Header::colourovpn;'>$vpnconfig{$key}[1]</td>";
-				print "<td style='text-align:left; background-color:$col'>$vpnip</td>";
+				print "<td style='text-align:left; color:white; background-color:$Header::colourvpn;'>$vpnconfig{$key}[1]</td>";
+				print "<td style='text-align:center; background-color:$col'>$vpnip</td>";
 
 				my $activecolor = $Header::colourred;
 				my $activestatus = $Lang::tr{'capsclosed'};

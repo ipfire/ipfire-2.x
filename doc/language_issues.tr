@@ -228,6 +228,8 @@ WARNING: translation string unused: from warn email bad
 WARNING: translation string unused: fwdfw MODE1
 WARNING: translation string unused: fwdfw MODE2
 WARNING: translation string unused: fwdfw addrule
+WARNING: translation string unused: fwdfw err nosrcip
+WARNING: translation string unused: fwdfw err notgtip
 WARNING: translation string unused: fwdfw err prot_port1
 WARNING: translation string unused: fwdfw final_rule
 WARNING: translation string unused: fwdfw from
@@ -636,10 +638,13 @@ WARNING: untranslated string: advproxy errmsg proxy ports equal
 WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: bit
 WARNING: untranslated string: bytes
+WARNING: untranslated string: ccd err isipsecrw
+WARNING: untranslated string: ccd err isovpnn2n
 WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: default ip
 WARNING: untranslated string: dnat address
 WARNING: untranslated string: dns servers
+WARNING: untranslated string: downlink
 WARNING: untranslated string: dpd delay
 WARNING: untranslated string: dpd timeout
 WARNING: untranslated string: drop action
@@ -649,14 +654,17 @@ WARNING: untranslated string: drop forward
 WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: encryption
 WARNING: untranslated string: entropy
+WARNING: untranslated string: entropy graphs
 WARNING: untranslated string: firewall rules
 WARNING: untranslated string: first
 WARNING: untranslated string: fwdfw dnat extport
 WARNING: untranslated string: fwdfw dnat nochoice
 WARNING: untranslated string: fwdfw dnat porterr2
 WARNING: untranslated string: fwdfw hint mac
+WARNING: untranslated string: fwdfw warn1
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: grouptype
+WARNING: untranslated string: hardware support
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
@@ -669,6 +677,7 @@ WARNING: untranslated string: mac filter
 WARNING: untranslated string: maximum
 WARNING: untranslated string: minimum
 WARNING: untranslated string: most preferred
+WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: notice
 WARNING: untranslated string: openvpn network
 WARNING: untranslated string: ovpn mgmt in root range
@@ -684,7 +693,10 @@ WARNING: untranslated string: routing table
 WARNING: untranslated string: snat new source ip address
 WARNING: untranslated string: ssh
 WARNING: untranslated string: support donation
+WARNING: untranslated string: system has hwrng
+WARNING: untranslated string: system has rdrand
 WARNING: untranslated string: tor directory port
 WARNING: untranslated string: tor errmsg invalid directory port
+WARNING: untranslated string: uplink
 WARNING: untranslated string: urlfilter redirect template
 WARNING: untranslated string: wlan clients

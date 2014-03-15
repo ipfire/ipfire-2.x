@@ -52,17 +52,39 @@ case "${CONFIG_TYPE}" in
 		;;
 esac
 
+HAVE_IPSEC="true"
+HAVE_OPENVPN="true"
+
 # INPUT
+
+# IPsec INPUT
+case "${HAVE_IPSEC},${POLICY}" in
+	true,MODE1) ;;
+	true,*)
+		iptables -A POLICYIN -m policy --pol ipsec --dir in -j ACCEPT
+		;;
+esac
+
+# OpenVPN INPUT
+# Allow direct access to the internal IP addresses of the firewall
+# from remote subnets if forward policy is allowed.
+case "${HAVE_OPENVPN},${POLICY}" in
+	true,MODE1) ;;
+	true,*)
+		iptables -A POLICYIN -i tun+ -j ACCEPT
+		;;
+esac
+
 case "${FWPOLICY2}" in
 	REJECT)
 		if [ "${DROPINPUT}" = "on" ]; then
-			iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "REJECT_INPUT"
+			iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "REJECT_INPUT "
 		fi
 		iptables -A POLICYIN -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_INPUT"
 		;;
 	*) # DROP
 		if [ "${DROPINPUT}" = "on" ]; then
-			iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT"
+			iptables -A POLICYIN -m limit --limit 10/minute -j LOG --log-prefix "DROP_INPUT "
 		fi
 		iptables -A POLICYIN -j DROP -m comment --comment "DROP_INPUT"
 		;;
@@ -74,13 +96,13 @@ case "${POLICY}" in
 		case "${FWPOLICY}" in
 			REJECT)
 				if [ "${DROPFORWARD}" = "on" ]; then
-					iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "REJECT_FORWARD"
+					iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "REJECT_FORWARD "
 				fi
 				iptables -A POLICYFWD -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_FORWARD"
 				;;
 			*) # DROP
 				if [ "${DROPFORWARD}" = "on" ]; then
-					iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD"
+					iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
 				fi
 				iptables -A POLICYFWD -j DROP -m comment --comment "DROP_FORWARD"
 				;;
@@ -107,13 +129,13 @@ case "${POLICY1}" in
 		case "${FWPOLICY1}" in
 			REJECT)
 				if [ "${DROPOUTGOING}" = "on" ]; then
-					iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "REJECT_OUTPUT"
+					iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "REJECT_OUTPUT "
 				fi
 				iptables -A POLICYOUT -j REJECT --reject-with icmp-host-unreachable -m comment --comment "DROP_OUTPUT"
 				;;
 			*) # DROP
 				if [ "${DROPOUTGOING}" == "on" ]; then
-					iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT"
+					iptables -A POLICYOUT -m limit --limit 10/minute -j LOG --log-prefix "DROP_OUTPUT "
 				fi
 				iptables -A POLICYOUT -j DROP -m comment --comment "DROP_OUTPUT"
 				;;

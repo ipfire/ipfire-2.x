@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 3.10.32
+VER        = 3.10.33
 
 RPI_PATCHES = linux-3.10.27-grsec-943b563
-GRS_PATCHES = grsecurity-2.9.1-3.10.32-ipfire1.patch.xz
+GRS_PATCHES = grsecurity-2.9.1-3.10.33-ipfire1.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -36,7 +36,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 37
+PAK_VER    = 38
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -74,9 +74,9 @@ $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 $(GRS_PATCHES)				= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5				= 58bfaf95f4e23be2d658dab0a7fb9615
+$(DL_FILE)_MD5				= 01865f9c129f3c7eee51e25b3781a364
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 8cf81f48408306d93ccee59b58af2e92
-$(GRS_PATCHES)_MD5			= b67dbf569e3f3657dad0e64ec951e1cc
+$(GRS_PATCHES)_MD5			= c99be0018e8bc55fb2e2b8f0ea9783d5
 
 install : $(TARGET)
 
@@ -126,9 +126,6 @@ ifneq "$(KCFG)" "-headers"
 	cd $(DIR_APP) && rm localversion-grsec
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
 endif
-
-	# Disable pcspeaker autoload
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.30-no-pcspkr-modalias.patch
 
 	# Remove ACPI Blacklist message
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6-silence-acpi-blacklist.patch

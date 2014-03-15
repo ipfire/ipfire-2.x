@@ -365,6 +365,7 @@ ERROR:
 }
 
 void setFirewallRules(void) {
+	char command[STRING_SIZE];
 	char protocol[STRING_SIZE] = "";
 	char dport[STRING_SIZE] = "";
 	char dovpnip[STRING_SIZE] = "";
@@ -405,11 +406,15 @@ void setFirewallRules(void) {
 	if (!strcmp(enableorange, "on") && strlen(orangeif))
 		addRule(OVPNINPUT, orangeif, protocol, dport);
 
+	/* Allow ICMP error messages to pass. */
+	snprintf(command, STRING_SIZE - 1, "/sbin/iptables -A %s -p icmp"
+		" -m conntrack --ctstate RELATED -j RETURN", OVPNBLOCK);
+	executeCommand(command);
+
 	// read connection configuration
 	connection *conn = getConnections();
 
 	// set firewall rules for n2n connections
-	char command[STRING_SIZE];
 	char *local_subnet_address = NULL;
 	char *transfer_subnet_address = NULL;
 	while (conn != NULL) {

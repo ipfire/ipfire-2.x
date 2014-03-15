@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.15"							# Version number
-CORE="76-beta2"							# Core Level (Filename)
+CORE="76-beta3"							# Core Level (Filename)
 PAKFIRE_CORE="76"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -681,6 +681,8 @@ buildipfire() {
   ipfiremake vdr_streamdev
   ipfiremake vdr_vnsiserver3
   ipfiremake vdr_epgsearch
+  ipfiremake vdr_dvbapi
+  ipfiremake vdr_eepg
   ipfiremake w_scan
   ipfiremake icecast
   ipfiremake icegenerator

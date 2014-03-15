@@ -92,8 +92,8 @@ sub makegraphbox {
 	print "<a href='".$_[0]."?".$_[1]."?month' target='".$_[1]."box'><b>".$Lang::tr{'month'}."</b></a>";
 	print " - ";
 	print "<a href='".$_[0]."?".$_[1]."?year' target='".$_[1]."box'><b>".$Lang::tr{'year'}."</b></a>";
-	print "<iframe src='".$_[0]."?".$_[1]."?".$_[2]."' width='".$width."' height='".$height."' scrolling='no' frameborder='no' marginheight='0' name='".$_[1]."box'></iframe>";
 	print "</center>";
+	print "<iframe src='".$_[0]."?".$_[1]."?".$_[2]."' width='".$width."' height='".$height."' scrolling='no' frameborder='no' marginheight='0' name='".$_[1]."box'></iframe>";
 }
 
 # Generate the CPU Graph for the current period of time for values given by
@@ -1140,7 +1140,6 @@ sub updateentropygraph {
 		"-t $Lang::tr{'entropy'}",
 		"-v $Lang::tr{'bit'}",
 		"DEF:entropy=$mainsettings{'RRDLOG'}/collectd/localhost/entropy/entropy.rrd:entropy:AVERAGE",
-		"CDEF:entropytrend=entropy,43200,TREND",
 		"LINE3:entropy#ff0000:" . sprintf("%-15s", $Lang::tr{'entropy'}),
 		"VDEF:entrmin=entropy,MINIMUM",
 		"VDEF:entrmax=entropy,MAXIMUM",
@@ -1148,7 +1147,6 @@ sub updateentropygraph {
 		"GPRINT:entrmax:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'maximum'}),
 		"GPRINT:entrmin:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'minimum'}),
 		"GPRINT:entravg:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'average'}) . "\\n",
-		"LINE3:entropytrend#000000",
 	);
 
 	RRDs::graph (@command);
