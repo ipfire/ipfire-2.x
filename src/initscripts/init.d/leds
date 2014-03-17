@@ -65,6 +65,11 @@ case "${1}" in
 		setup_netdev_trigger alix:2 ${RED_DEV} rx
 		setup_netdev_trigger alix:3 ${RED_DEV} tx
 
+		# Apu LED start
+		setup_heartbeat_trigger apu:1
+		setup_netdev_trigger apu:2 ${RED_DEV} rx
+		setup_netdev_trigger apu:3 ${RED_DEV} tx
+
 		# Geos LED start
 		setup_heartbeat_trigger geos:1
 		setup_netdev_trigger geos:2 ${RED_DEV} rx
@@ -96,6 +101,12 @@ case "${1}" in
 		enable_led alix:1
 		disable_led_trigger alix:2
 		disable_led_trigger alix:3
+
+		# Apu LED stop
+		disable_led_trigger apu:1
+		enable_led apu:1
+		disable_led_trigger apu:2
+		disable_led_trigger apu:3
 
 		# Geos LED stop
 		disable_led_trigger geos:1
