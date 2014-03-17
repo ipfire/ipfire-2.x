@@ -1,0 +1,215 @@
+diff -Naur linux-3.10.33.org/arch/x86/Kconfig linux-3.10.33/arch/x86/Kconfig
+--- linux-3.10.33.org/arch/x86/Kconfig	2014-03-07 06:58:45.000000000 +0100
++++ linux-3.10.33/arch/x86/Kconfig	2014-03-17 17:02:46.703135023 +0100
+@@ -2199,6 +2199,12 @@
+ 	   - AC adapter status updates
+ 	   - Battery status updates
+ 
++config APULED
++	bool "PCEngines APU Led Support"
++	depends on DMI
++	---help---
++	  This option enables system support for the PCEngines APU.
++
+ config ALIX
+ 	bool "PCEngines ALIX System Support (LED setup)"
+ 	select GPIOLIB
+diff -Naur linux-3.10.33.org/arch/x86/platform/apu/apu-led.c linux-3.10.33/arch/x86/platform/apu/apu-led.c
+--- linux-3.10.33.org/arch/x86/platform/apu/apu-led.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-3.10.33/arch/x86/platform/apu/apu-led.c	2014-03-17 17:00:36.187188456 +0100
+@@ -0,0 +1,181 @@
++/*
++ * LEDs driver for PCEngines apu
++ *
++ * Copyright (C) 2013 Christian Herzog <daduke@daduke.org>, based on
++ * Petr Leibman's leds-alix
++ * Hardware presence check added by Arne Fitzenreiter <arne_f@ipfire.org>
++ * Based on leds-wrap.c
++ * Hardware info taken from http://www.dpie.com/manuals/miniboards/kontron/KTD-S0043-0_KTA55_SoftwareGuide.pdf
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/leds.h>
++#include <linux/err.h>
++#include <asm/io.h>
++#include <linux/dmi.h>
++
++#define DRVNAME		"apu-led"
++#define BASEADDR	(0xFED801BD)
++#define LEDON		(0x8)
++#define LEDOFF		(0xC8)
++
++static struct platform_device *pdev;
++unsigned int *p1;
++unsigned int *p2;
++unsigned int *p3;
++
++static void apu_led_set_1(struct led_classdev *led_cdev,
++		enum led_brightness value) {
++	if (value)
++		iowrite8(LEDON, p1);
++	else
++		iowrite8(LEDOFF, p1);
++}
++
++static void apu_led_set_2(struct led_classdev *led_cdev,
++		enum led_brightness value) {
++	if (value)
++		iowrite8(LEDON, p2);
++	else
++		iowrite8(LEDOFF, p2);
++}
++
++static void apu_led_set_3(struct led_classdev *led_cdev,
++		enum led_brightness value) {
++	if (value)
++		iowrite8(LEDON, p3);
++	else
++		iowrite8(LEDOFF, p3);
++}
++
++static struct led_classdev apu_led_1 = {
++	.name		= "apu:1",
++	.brightness_set	= apu_led_set_1,
++};
++
++static struct led_classdev apu_led_2 = {
++	.name		= "apu:2",
++	.brightness_set	= apu_led_set_2,
++};
++
++static struct led_classdev apu_led_3 = {
++	.name		= "apu:3",
++	.brightness_set	= apu_led_set_3,
++};
++
++
++#ifdef CONFIG_PM
++static int apu_led_suspend(struct platform_device *dev,
++		pm_message_t state)
++{
++	led_classdev_suspend(&apu_led_1);
++	led_classdev_suspend(&apu_led_2);
++	led_classdev_suspend(&apu_led_3);
++	return 0;
++}
++
++static int apu_led_resume(struct platform_device *dev)
++{
++	led_classdev_resume(&apu_led_1);
++	led_classdev_resume(&apu_led_2);
++	led_classdev_resume(&apu_led_3);
++	return 0;
++}
++#else
++#define apu_led_suspend NULL
++#define apu_led_resume NULL
++#endif
++
++static int apu_led_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = led_classdev_register(&pdev->dev, &apu_led_1);
++	if (ret == 0)
++	{
++		ret = led_classdev_register(&pdev->dev, &apu_led_2);
++		if (ret >= 0)
++		{
++			ret = led_classdev_register(&pdev->dev, &apu_led_3);
++			if (ret < 0)
++				led_classdev_unregister(&apu_led_2);
++		}
++		if (ret < 0)
++			led_classdev_unregister(&apu_led_1);
++	}
++	return ret;
++}
++
++static int apu_led_remove(struct platform_device *pdev)
++{
++	led_classdev_unregister(&apu_led_1);
++	led_classdev_unregister(&apu_led_2);
++	led_classdev_unregister(&apu_led_3);
++	return 0;
++}
++
++static struct platform_driver apu_led_driver = {
++	.probe		= apu_led_probe,
++	.remove		= apu_led_remove,
++	.suspend	= apu_led_suspend,
++	.resume		= apu_led_resume,
++	.driver		= {
++	.name		= DRVNAME,
++	.owner		= THIS_MODULE,
++	},
++};
++
++static int __init apu_led_init(void)
++{
++	int ret=0;
++	const char *vendor, *product;
++
++	vendor = dmi_get_system_info(DMI_SYS_VENDOR);
++	if (!vendor || strcmp(vendor, "PC Engines"))
++		goto out;
++
++	product = dmi_get_system_info(DMI_PRODUCT_NAME);
++	if (!product || strcmp(product, "APU"))
++		goto out;
++
++	printk(KERN_INFO "%s: system is recognized as \"%s %s\"\n",
++	       KBUILD_MODNAME, vendor, product);
++
++	ret = platform_driver_register(&apu_led_driver);
++	if (ret < 0)
++		goto out;
++
++	pdev = platform_device_register_simple(DRVNAME, -1, NULL, 0);
++	if (IS_ERR(pdev)) {
++		ret = PTR_ERR(pdev);
++		platform_driver_unregister(&apu_led_driver);
++		goto out;
++	}
++
++	p1 = ioremap(BASEADDR, 1);
++	p2 = ioremap(BASEADDR+1, 1);
++	p3 = ioremap(BASEADDR+2, 1);
++
++out:
++	return ret;
++}
++
++static void __exit apu_led_exit(void)
++{
++	platform_device_unregister(pdev);
++	platform_driver_unregister(&apu_led_driver);
++}
++
++module_init(apu_led_init);
++module_exit(apu_led_exit);
++
++MODULE_AUTHOR("Christian Herzog");
++MODULE_DESCRIPTION("PCEngines apu LED driver");
++MODULE_LICENSE("GPL");
+diff -Naur linux-3.10.33.org/arch/x86/platform/apu/Makefile linux-3.10.33/arch/x86/platform/apu/Makefile
+--- linux-3.10.33.org/arch/x86/platform/apu/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ linux-3.10.33/arch/x86/platform/apu/Makefile	2014-03-17 17:05:19.245651480 +0100
+@@ -0,0 +1 @@
++obj-$(CONFIG_APULED)		+= apu-led.o
+diff -Naur linux-3.10.33.org/arch/x86/platform/Makefile linux-3.10.33/arch/x86/platform/Makefile
+--- linux-3.10.33.org/arch/x86/platform/Makefile	2014-03-07 06:58:45.000000000 +0100
++++ linux-3.10.33/arch/x86/platform/Makefile	2014-03-17 14:53:15.078571307 +0100
+@@ -1,4 +1,5 @@
+ # Platform specific code goes here
++obj-y	+= apu/
+ obj-y	+= ce4100/
+ obj-y	+= efi/
+ obj-y	+= geode/
