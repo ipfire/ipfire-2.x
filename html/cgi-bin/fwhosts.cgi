@@ -1236,7 +1236,7 @@ END
 				<tr><form method='post' style='display:inline'>
 					<td>$Lang::tr{'remark'}:</td>
 					<td colspan='2' style='width:98%;'><input type='TEXT' name='newrem' value='$fwhostsettings{'remark'}' style='width:98%;'></td>
-					<td align='right'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldrem' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='ACTION' value='changegrpremark' ></td>
+					<td align='right'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='grp' value='$fwhostsettings{'grp_name'}'><input type='hidden' name='oldrem' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='ACTION' value='changegrpremark' ></td>
 				</tr>
 			</table></form>
 			<br><br>
@@ -1256,7 +1256,7 @@ END
 					</label>
 				</td>
 				<td style='text-align:right;'>
-					<select name='DEFAULT_SRC_ADR' style='min-width:16em;'>
+					<select name='DEFAULT_SRC_ADR' style='width:16em;'>
 END
 			foreach my $network (sort keys %defaultNetworks)
 			{
@@ -1285,7 +1285,7 @@ END
 						</label>
 					</td>
 					<td style='text-align:right;'>
-						<select name='CUST_SRC_NET' style='min-width:16em;'>";
+						<select name='CUST_SRC_NET' style='width:16em;'>";
 END
 				foreach my $key (sort { ncmp($customnetwork{$a}[0],$customnetwork{$b}[0]) } keys  %customnetwork) {
 					print"<option>$customnetwork{$key}[0]</option>";
@@ -1302,7 +1302,7 @@ END
 						</label>
 					</td>
 					<td style='text-align:right;'>
-						<select name='CUST_SRC_HOST' style='min-width:16em;'>";
+						<select name='CUST_SRC_HOST' style='width:16em;'>";
 END
 				foreach my $key (sort { ncmp($customhost{$a}[0],$customhost{$b}[0]) } keys %customhost) {
 					print"<option>$customhost{$key}[0]</option>";
@@ -1322,7 +1322,7 @@ END
 					</label>
 				</td>
 				<td style='text-align:right;'>
-					<select name='OVPN_CCD_NET' style='min-width:16em;'>";
+					<select name='OVPN_CCD_NET' style='width:16em;'>";
 END
 				foreach my $key (sort { ncmp($ccdnet{$a}[0],$ccdnet{$b}[0]) }  keys %ccdnet)
 				{
@@ -1331,10 +1331,17 @@ END
 				print"</select></td></tr>";
 			}
 			#OVPN clients
+			my @ovpn_clients=();
 			foreach my $key (sort { ncmp($ccdhost{$a}[0],$ccdhost{$b}[0]) } keys %ccdhost)
 			{
 				if ($ccdhost{$key}[33] ne ''){
-					print<<END;
+					$show='1';
+					push (@ovpn_clients,$ccdhost{$key}[1]);
+				}
+			}
+			if ($show eq '1'){
+				$show='';
+				print<<END;
 					<td style='width:15em;'>
 						<label>
 							<input type='radio' name='grp2' value='ovpn_host' $checked{'grp2'}{'ovpn_host'}>
@@ -1342,17 +1349,24 @@ END
 						</label>
 					</td>
 					<td style='text-align:right;'>
-						<select name='OVPN_CCD_HOST' style='min-width:16em;'>" if ($show eq '');
+						<select name='OVPN_CCD_HOST' style='width:16em;'>" if ($show eq '');
 END
-					$show='1';
-					print"<option value='$ccdhost{$key}[1]'>$ccdhost{$key}[1]</option>";
+				foreach(@ovpn_clients){
+					print"<option value='$_'>$_</option>";
 				}
+				print"</select></td></tr>";
 			}
-			if ($show eq '1'){$show='';print"</select></td></tr>";}
 			#OVPN n2n networks
+			my @OVPN_N2N=();
 			foreach my $key (sort { ncmp($ccdhost{$a}[1],$ccdhost{$b}[1]) } keys %ccdhost) {
 				if($ccdhost{$key}[3] eq 'net'){
-					print<<END;
+					$show='1';
+					push (@OVPN_N2N,$ccdhost{$key}[1]);
+				}
+			}
+			if ($show eq '1'){
+				$show='';
+				print<<END;
 					<td style='width:15em;'>
 						<label>
 							<input type='radio' name='grp2' id='OVPN_N2N' value='ovpn_n2n' $checked{'grp2'}{'ovpn_n2n'}>
@@ -1360,17 +1374,24 @@ END
 						</label>
 					</td>
 					<td style='text-align:right;'>
-						<select name='OVPN_N2N' style='min-width:16em;'>"
+						<select name='OVPN_N2N' style='width:16em;'>"
 END
-					$show='1';
-					print"<option>$ccdhost{$key}[1]</option>";
+				foreach(@OVPN_N2N){
+					print"<option>$_</option>";
 				}
+				print"</select></td></tr>";
 			}
-			if ($show eq '1'){$show='';print"</select></td></tr>";}
 			#IPsec networks
+			my @IPSEC_N2N=();
 			foreach my $key (sort { ncmp($ipsecconf{$a}[0],$ipsecconf{$b}[0]) } keys %ipsecconf) {
 				if ($ipsecconf{$key}[3] eq 'net'){
-					print<<END;
+					$show='1';
+					push (@IPSEC_N2N,$ipsecconf{$key}[1]);
+				}
+			}
+			if ($show eq '1'){
+				$show='';
+				print<<END;
 					<td style='width:15em;'>
 						<label>
 							<input type='radio' name='grp2' id='IPSEC_NET' value='ipsec_net' $checked{'grp2'}{'ipsec_net'}>
@@ -1378,13 +1399,13 @@ END
 						</label>
 					</td>
 					<td style='text-align:right;'>
-					<select name='IPSEC_NET' style='min-width:16em;'>"
+					<select name='IPSEC_NET' style='width:16em;'>"
 END
-					$show='1';
-					print"<option value='$ipsecconf{$key}[1]'>$ipsecconf{$key}[1]</option>";
+				foreach(@IPSEC_N2N){
+					print"<option value='$_'>$_</option>";
 				}
 			}
-			if ($show eq '1'){$show='';print"</select></td></tr>";}
+			print"</select></td></tr>";
 			print"</table>";
 			print"</td></tr></table>";
 			print"<br><br>";
@@ -1479,9 +1500,28 @@ END
 		print<<END;
 		<table width='100%'><form method='post' style='display:inline'>
 		<tr><td width='10%'>$Lang::tr{'fwhost addgrpname'}</td><td width='20%'><input type='text' name='srvgrp' value='$fwhostsettings{'SRVGRP_NAME'}' size='14'></td><td align='left'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldsrvgrpname' value='$fwhostsettings{'oldsrvgrpname'}'><input type='hidden' name='ACTION' value='changesrvgrpname'></td><td width='3%'></td></form></tr>
-		<tr><form method='post'><td width='10%'>$Lang::tr{'remark'}:</td><td colspan='2'><input type='text' name='newsrvrem'  value='$fwhostsettings{'SRVGRP_REMARK'}' style='width:98%;'></td><td align='right'><input type='submit' value='$Lang::tr{'fwhost change'}'><input type='hidden' name='oldsrvrem' value='$fwhostsettings{'oldsrvgrpremark'}'><input type='hidden' name='ACTION' value='changesrvgrpremark' ></td></tr>
-		<tr><td colspan='4'><br></td></td></tr>
-		</table></form>
+		<tr>
+			<form method='post'>
+				<td width='10%'>
+					$Lang::tr{'remark'}:
+				</td>
+				<td colspan='2'>
+					<input type='text' name='newsrvrem'  value='$fwhostsettings{'SRVGRP_REMARK'}' style='width:98%;'>
+				</td>
+				<td align='right'>
+					<input type='submit' value='$Lang::tr{'fwhost change'}'>
+					<input type='hidden' name='oldsrvrem' value='$fwhostsettings{'oldsrvgrpremark'}'>
+					<input type='hidden' name='srvgrp' value='$fwhostsettings{'SRVGRP_NAME'}'>
+					<input type='hidden' name='ACTION' value='changesrvgrpremark' >
+				</td>
+		</tr>
+		<tr>
+				<td colspan='4'>
+					<br>
+				</td>
+		</tr>
+		</table>
+			</form>
 END
 	}
 	if($fwhostsettings{'updatesrvgrp'} eq 'on'){
