@@ -39,6 +39,8 @@
 < ccd err iroute
 < ccd err irouteexist
 < ccd err isipsecnet
+< ccd err isipsecrw
+< ccd err isovpnn2n
 < ccd err isovpnnet
 < ccd err issubnet
 < ccd err name
@@ -75,6 +77,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< downlink
 < dpd delay
 < dpd timeout
 < drop action
@@ -84,6 +87,7 @@
 < drop outgoing
 < encryption
 < entropy
+< entropy graphs
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -185,6 +189,7 @@
 < fwdfw use nat
 < fwdfw use srcport
 < fwdfw use srv
+< fwdfw warn1
 < fwdfw wd_fri
 < fwdfw wd_mon
 < fwdfw wd_sat
@@ -278,6 +283,7 @@
 < fw settings remark
 < fw settings ruletable
 < grouptype
+< hardware support
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -292,6 +298,7 @@
 < minimum
 < minute
 < most preferred
+< no hardware random number generator
 < notice
 < ntp common settings
 < ntp sync
@@ -333,6 +340,8 @@
 < ssh
 < static routes
 < support donation
+< system has hwrng
+< system has rdrand
 < system information
 < tor
 < tor 0 = disabled
@@ -389,6 +398,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload new ruleset
 < uptime
 < uptime load average
@@ -483,6 +493,8 @@
 < ccd err iroute
 < ccd err irouteexist
 < ccd err isipsecnet
+< ccd err isipsecrw
+< ccd err isovpnn2n
 < ccd err isovpnnet
 < ccd err issubnet
 < ccd err name
@@ -518,6 +530,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< downlink
 < dpd delay
 < dpd timeout
 < drop action
@@ -527,6 +540,7 @@
 < drop outgoing
 < encryption
 < entropy
+< entropy graphs
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -628,6 +642,7 @@
 < fwdfw use nat
 < fwdfw use srcport
 < fwdfw use srv
+< fwdfw warn1
 < fwdfw wd_fri
 < fwdfw wd_mon
 < fwdfw wd_sat
@@ -721,6 +736,7 @@
 < fw settings remark
 < fw settings ruletable
 < grouptype
+< hardware support
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -735,6 +751,7 @@
 < minimum
 < minute
 < most preferred
+< no hardware random number generator
 < notice
 < openvpn default
 < openvpn destination port used
@@ -792,6 +809,8 @@
 < ssh
 < static routes
 < support donation
+< system has hwrng
+< system has rdrand
 < system information
 < tor
 < tor 0 = disabled
@@ -848,6 +867,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < uptime
 < uptime load average
 < urlfilter redirect template
@@ -918,6 +938,8 @@
 < ccd err iroute
 < ccd err irouteexist
 < ccd err isipsecnet
+< ccd err isipsecrw
+< ccd err isovpnn2n
 < ccd err isovpnnet
 < ccd err issubnet
 < ccd err name
@@ -953,6 +975,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< downlink
 < dpd delay
 < dpd timeout
 < drop action
@@ -962,6 +985,7 @@
 < drop outgoing
 < encryption
 < entropy
+< entropy graphs
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -1055,6 +1079,7 @@
 < fwdfw use nat
 < fwdfw use srcport
 < fwdfw use srv
+< fwdfw warn1
 < fwdfw wd_fri
 < fwdfw wd_mon
 < fwdfw wd_sat
@@ -1148,6 +1173,7 @@
 < fw settings remark
 < fw settings ruletable
 < grouptype
+< hardware support
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -1162,6 +1188,7 @@
 < minimum
 < minute
 < most preferred
+< no hardware random number generator
 < notice
 < openvpn default
 < openvpn destination port used
@@ -1204,6 +1231,8 @@
 < ssh
 < static routes
 < support donation
+< system has hwrng
+< system has rdrand
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1259,6 +1288,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < uptime
 < uptime load average
 < urlfilter redirect template
@@ -1330,6 +1360,8 @@
 < ccd err iroute
 < ccd err irouteexist
 < ccd err isipsecnet
+< ccd err isipsecrw
+< ccd err isovpnn2n
 < ccd err isovpnnet
 < ccd err issubnet
 < ccd err name
@@ -1367,6 +1399,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< downlink
 < dpd delay
 < dpd timeout
 < drop action
@@ -1377,6 +1410,7 @@
 < Edit an existing route
 < encryption
 < entropy
+< entropy graphs
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -1471,6 +1505,7 @@
 < fwdfw use nat
 < fwdfw use srcport
 < fwdfw use srv
+< fwdfw warn1
 < fwdfw wd_fri
 < fwdfw wd_mon
 < fwdfw wd_sat
@@ -1564,6 +1599,7 @@
 < fw settings remark
 < fw settings ruletable
 < grouptype
+< hardware support
 < hour-graph
 < incoming traffic in bytes per second
 < integrity
@@ -1581,6 +1617,7 @@
 < minute
 < month-graph
 < most preferred
+< no hardware random number generator
 < notice
 < openvpn default
 < openvpn destination port used
@@ -1620,6 +1657,8 @@
 < ssh
 < static routes
 < support donation
+< system has hwrng
+< system has rdrand
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1675,6 +1714,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < uptime
 < uptime load average
 < urlfilter redirect template

@@ -9,6 +9,7 @@ etc/shadow
 etc/ssh/ssh_config
 etc/ssh/sshd_config
 etc/ssl/openssl.cnf
+etc/sudoers
 etc/sysconfig/firewall.local
 etc/sysconfig/rc.local
 etc/udev/rules.d/30-persistent-network.rules

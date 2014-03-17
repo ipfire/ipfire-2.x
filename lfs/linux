@@ -127,9 +127,6 @@ ifneq "$(KCFG)" "-headers"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
 endif
 
-	# Disable pcspeaker autoload
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.30-no-pcspkr-modalias.patch
-
 	# Remove ACPI Blacklist message
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6-silence-acpi-blacklist.patch
 

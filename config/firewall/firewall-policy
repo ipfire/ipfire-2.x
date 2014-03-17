@@ -52,9 +52,18 @@ case "${CONFIG_TYPE}" in
 		;;
 esac
 
+HAVE_IPSEC="true"
 HAVE_OPENVPN="true"
 
 # INPUT
+
+# IPsec INPUT
+case "${HAVE_IPSEC},${POLICY}" in
+	true,MODE1) ;;
+	true,*)
+		iptables -A POLICYIN -m policy --pol ipsec --dir in -j ACCEPT
+		;;
+esac
 
 # OpenVPN INPUT
 # Allow direct access to the internal IP addresses of the firewall
