@@ -76,7 +76,6 @@ etc/rc.d/init.d/networking/red.down/10-ipsec
 etc/rc.d/init.d/networking/red.down/10-miniupnpd
 etc/rc.d/init.d/networking/red.down/10-ovpn
 etc/rc.d/init.d/networking/red.down/20-RL-firewall
-etc/rc.d/init.d/networking/red.down/99-D-dialctrl.pl
 #etc/rc.d/init.d/networking/red.up
 etc/rc.d/init.d/networking/red.up/01-conntrack-cleanup
 etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq
@@ -91,7 +90,6 @@ etc/rc.d/init.d/networking/red.up/40-ipac
 etc/rc.d/init.d/networking/red.up/50-ipsec
 etc/rc.d/init.d/networking/red.up/50-ovpn
 etc/rc.d/init.d/networking/red.up/98-leds
-etc/rc.d/init.d/networking/red.up/99-U-dialctrl.pl
 etc/rc.d/init.d/networking/red.up/99-fireinfo
 etc/rc.d/init.d/networking/red.up/99-pakfire-update
 etc/rc.d/init.d/networking/wpa_supplicant.exe

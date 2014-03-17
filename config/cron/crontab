@@ -50,9 +50,6 @@ HOME=/
 %weekly  * 3-5   /var/ipfire/updatexlrator/autocheck/cron.weekly
 %monthly * 3-5 * /var/ipfire/updatexlrator/autocheck/cron.monthly
 
-# Reset Dialup Statistics
-&bootrun 0 0 1 * *	/usr/local/bin/dialctrl.pl reset
-
 # fireinfo
 %nightly,random * 23-4	/usr/bin/sendprofile >/dev/null 2>&1
 

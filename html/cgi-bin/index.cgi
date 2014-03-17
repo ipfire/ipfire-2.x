@@ -228,8 +228,6 @@ END
 
 #Dial profiles
 if ( $netsettings{'RED_TYPE'} ne "STATIC" && $netsettings{'RED_TYPE'} ne "DHCP" ){
-	# The dialctrl.pl script outputs html
-	print `/usr/local/bin/dialctrl.pl show`;
 	if ( ( $pppsettings{'VALID'} eq 'yes' ) || ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) ) {
 		print <<END;
 		<br/>
