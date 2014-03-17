@@ -294,7 +294,7 @@ sub buildrules {
 
 					my $firewall_is_in_source_subnet = 0;
 					if ($source) {
-						$firewall_is_in_source_subnet = &firewall_is_in_subnet($source, 0);
+						$firewall_is_in_source_subnet = &firewall_is_in_subnet($source);
 					}
 
 					# Process NAT rules.
@@ -308,7 +308,7 @@ sub buildrules {
 						# Destination NAT
 						if ($NAT_MODE eq "DNAT") {
 							# Make port-forwardings useable from the internal networks.
-							my @internal_addresses = &get_internal_firewall_ip_addresses();
+							my @internal_addresses = &get_internal_firewall_ip_addresses(1);
 							unless ($nat_address ~~ @internal_addresses) {
 								&add_dnat_mangle_rules($nat_address, @options);
 							}
@@ -405,7 +405,7 @@ sub get_nat_address {
 
 	} elsif ($zone eq "Default IP") {
 		if ($source) {
-			my $firewall_ip = &firewall_is_in_subnet($source, 1);
+			my $firewall_ip = &get_internal_firewall_ip_address($source, 1);
 
 			if ($firewall_ip) {
 				return $firewall_ip;
@@ -822,9 +822,15 @@ sub make_log_limit_options {
 }
 
 sub get_internal_firewall_ip_addresses {
-	my @addresses = ();
+	my $use_orange = shift;
 
-	for my $zone ("GREEN", "BLUE", "ORANGE") {
+	my @zones = ("GREEN", "BLUE");
+	if ($use_orange) {
+		push(@zones, "ORANGE");
+	}
+
+	my @addresses = ();
+	for my $zone (@zones) {
 		next unless (exists $defaultNetworks{$zone . "_ADDRESS"});
 
 		my $zone_address = $defaultNetworks{$zone . "_ADDRESS"};
@@ -834,29 +840,33 @@ sub get_internal_firewall_ip_addresses {
 	return @addresses;
 }
 
-sub firewall_is_in_subnet {
+sub get_internal_firewall_ip_address {
 	my $subnet = shift;
 	my $use_orange = shift;
 
 	my ($net_address, $net_mask) = split("/", $subnet);
 	if (!$net_mask) {
-		return 0;
+		return;
 	}
 
-	my @zones = ("GREEN", "BLUE");
-	if ($use_orange) {
-		push(@zones, "ORANGE");
-	}
-
-	# ORANGE is missing here, because nothing may ever access
-	# the firewall from this network.
-	foreach my $zone (@zones) {
-		next unless (exists $defaultNetworks{$zone . "_ADDRESS"});
-
-		my $zone_address = $defaultNetworks{$zone . "_ADDRESS"};
-
+	my @addresses = &get_internal_firewall_ip_addresses($use_orange);
+	foreach my $zone_address (@addresses) {
 		if (&General::IpInSubnet($zone_address, $net_address, $net_mask)) {
 			return $zone_address;
 		}
 	}
+}
+
+sub firewall_is_in_subnet {
+	my $subnet = shift;
+
+	# ORANGE is missing here, because nothing may ever access
+	# the firewall from this network.
+	my $address = &get_internal_firewall_ip_address($subnet, 0);
+
+	if ($address) {
+		return 1;
+	}
+
+	return 0;
 }
