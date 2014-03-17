@@ -39,6 +39,7 @@ my $CHAIN_NAT_SOURCE      = "NAT_SOURCE";
 my $CHAIN_NAT_DESTINATION = "NAT_DESTINATION";
 my $CHAIN_MANGLE_NAT_DESTINATION_FIX = "NAT_DESTINATION";
 my @VALID_CHAINS          = ($CHAIN_INPUT, $CHAIN_FORWARD, $CHAIN_OUTPUT);
+my @ANY_ADDRESSES         = ("0.0.0.0/0.0.0.0", "0.0.0.0/0", "0/0");
 
 my @PROTOCOLS = ("tcp", "udp", "icmp", "igmp", "ah", "esp", "gre", "ipv6", "ipip");
 my @PROTOCOLS_WITH_PORTS = ("tcp", "udp");
@@ -255,6 +256,16 @@ sub buildrules {
 					# Skip invalid rules.
 					next if (!$source || !$destination || ($destination eq "none"));
 
+					# Sanitize source.
+					if ($source ~~ @ANY_ADDRESSES) {
+						$source = "";
+					}
+
+					# Sanitize destination.
+					if ($destination ~~ @ANY_ADDRESSES) {
+						$destination = "";
+					}
+
 					# Array with iptables arguments.
 					my @options = ();
 
@@ -268,12 +279,15 @@ sub buildrules {
 					my @source_options = ();
 					if ($source =~ /mac/) {
 						push(@source_options, $source);
-					} else {
+					} elsif ($source) {
 						push(@source_options, ("-s", $source));
 					}
 
 					# Prepare destination options.
-					my @destination_options = ("-d", $destination);
+					my @destination_options = ();
+					if ($destination) {
+						push(@destination_options, ("-d", $destination));
+					}
 
 					# Add time constraint options.
 					push(@options, @time_options);
