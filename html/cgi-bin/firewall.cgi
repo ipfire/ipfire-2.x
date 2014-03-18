@@ -1649,7 +1649,7 @@ END
 		{
 			if ($defaultNetworks{$network}{'NAME'} eq 'BLUE'||$defaultNetworks{$network}{'NAME'} eq 'GREEN' ||$defaultNetworks{$network}{'NAME'} eq 'ORANGE'){
 				print "<option value='$defaultNetworks{$network}{'NAME'}'";
-				print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'nat'}} eq $defaultNetworks{$network}{'NAME'});
+				print " selected='selected'" if ($fwdfwsettings{'dnat'} eq $defaultNetworks{$network}{'NAME'});
 				print ">$network ($defaultNetworks{$network}{'NET'})</option>";
 			}
 		}
@@ -1678,7 +1678,7 @@ END
 		foreach my $network (sort keys %defaultNetworks) {
 			if ($defaultNetworks{$network}{'NAME'} eq 'BLUE'||$defaultNetworks{$network}{'NAME'} eq 'GREEN' ||$defaultNetworks{$network}{'NAME'} eq 'ORANGE'){
 				print "<option value='$defaultNetworks{$network}{'NAME'}'";
-				print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'nat'}} eq $defaultNetworks{$network}{'NAME'});
+				print " selected='selected'" if ($fwdfwsettings{'snat'} eq $defaultNetworks{$network}{'NAME'});
 				print ">$network ($defaultNetworks{$network}{'NET'})</option>";
 			}
 		}
