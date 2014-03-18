@@ -143,6 +143,8 @@ rm -rf /lib/modules
 
 # Remove old usb_modeswitch_data
 rm -rf /usr/share/usb_modeswitch
+# Remove old tzdata
+rm -rf /usr/share/zoneinfo
 
 # Remove dialctrl.pl script
 rm -f \
