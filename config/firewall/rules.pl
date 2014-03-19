@@ -400,18 +400,25 @@ sub get_nat_address {
 	my $source = shift;
 
 	# Any static address of any zone.
-	if ($zone eq "RED" || $zone eq "GREEN" || $zone eq "ORANGE" || $zone eq "BLUE") {
-		return $defaultNetworks{$zone . "_ADDRESS"};
-
-	} elsif ($zone eq "Default IP") {
+	if ($zone eq "AUTO") {
 		if ($source) {
 			my $firewall_ip = &get_internal_firewall_ip_address($source, 1);
+			if ($firewall_ip) {
+				return $firewall_ip;
+			}
 
+			$firewall_ip = &get_matching_firewall_address($source, 1);
 			if ($firewall_ip) {
 				return $firewall_ip;
 			}
 		}
 
+		return &get_external_address();
+
+	} elsif ($zone eq "RED" || $zone eq "GREEN" || $zone eq "ORANGE" || $zone eq "BLUE") {
+		return $defaultNetworks{$zone . "_ADDRESS"};
+
+	} elsif ($zone eq "Default IP") {
 		return &get_external_address();
 
 	} else {
@@ -845,8 +852,8 @@ sub get_internal_firewall_ip_address {
 	my $use_orange = shift;
 
 	my ($net_address, $net_mask) = split("/", $subnet);
-	if (!$net_mask) {
-		return;
+	if ((!$net_mask) || ($net_mask ~~ ["32", "255.255.255.255"])) {
+		return 0;
 	}
 
 	my @addresses = &get_internal_firewall_ip_addresses($use_orange);
@@ -855,6 +862,8 @@ sub get_internal_firewall_ip_address {
 			return $zone_address;
 		}
 	}
+
+	return 0;
 }
 
 sub firewall_is_in_subnet {
@@ -866,6 +875,31 @@ sub firewall_is_in_subnet {
 
 	if ($address) {
 		return 1;
+	}
+
+	return 0;
+}
+
+sub get_matching_firewall_address {
+	my $addr = shift;
+	my $use_orange = shift;
+
+	my ($address, $netmask) = split("/", $addr);
+
+	my @zones = ("GREEN", "BLUE");
+	if ($use_orange) {
+		push(@zones, "ORANGE");
+	}
+
+	foreach my $zone (@zones) {
+		next unless (exists $defaultNetworks{$zone . "_ADDRESS"});
+
+		my $zone_subnet = $defaultNetworks{$zone . "_NETADDRESS"};
+		my $zone_mask   = $defaultNetworks{$zone . "_NETMASK"};
+
+		if (&General::IpInSubnet($address, $zone_subnet, $zone_mask)) {
+			return $defaultNetworks{$zone . "_ADDRESS"};
+		}
 	}
 
 	return 0;
