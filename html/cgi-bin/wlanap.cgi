@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -557,6 +557,7 @@ driver=$wlanapsettings{'DRIVER_HOSTAPD'}
 interface=$wlanapsettings{'INTERFACE'}
 country_code=$wlanapsettings{'COUNTRY'}
 ieee80211d=1
+ieee80211h=1
 channel=$wlanapsettings{'CHANNEL'}
 END
 ;

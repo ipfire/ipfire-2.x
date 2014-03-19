@@ -142,3 +142,6 @@ CONFIG_IEEE80211N=y
 # This can be used to reduce the size of the hostapd considerably if debugging
 # code is not needed.
 CONFIG_NO_STDOUT_DEBUG=y
+
+# IEEE 802.11ac (Very High Throughput) support
+CONFIG_IEEE80211AC=y
