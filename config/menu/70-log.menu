@@ -33,6 +33,11 @@
 				 'title' => "$Lang::tr{'firewall logs port'}",
 				 'enabled' => 1
 				 };
+    $sublogs->{'43.firewallcountry'} = {'caption' => $Lang::tr{'firewall logs country'},
+				 'uri' => '/cgi-bin/logs.cgi/firewalllogcountry.dat',
+				 'title' => "$Lang::tr{'firewall logs country'}",
+				 'enabled' => 1
+				 };
     $sublogs->{'50.ids'} = {'caption' => $Lang::tr{'ids logs'},
 				'uri' => '/cgi-bin/logs.cgi/ids.dat',
 				'title' => "$Lang::tr{'ids logs'}",
