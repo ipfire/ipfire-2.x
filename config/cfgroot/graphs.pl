@@ -1140,7 +1140,6 @@ sub updateentropygraph {
 		"-t $Lang::tr{'entropy'}",
 		"-v $Lang::tr{'bit'}",
 		"DEF:entropy=$mainsettings{'RRDLOG'}/collectd/localhost/entropy/entropy.rrd:entropy:AVERAGE",
-		"CDEF:entropytrend=entropy,43200,TREND",
 		"LINE3:entropy#ff0000:" . sprintf("%-15s", $Lang::tr{'entropy'}),
 		"VDEF:entrmin=entropy,MINIMUM",
 		"VDEF:entrmax=entropy,MAXIMUM",
@@ -1148,7 +1147,6 @@ sub updateentropygraph {
 		"GPRINT:entrmax:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'maximum'}),
 		"GPRINT:entrmin:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'minimum'}),
 		"GPRINT:entravg:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'average'}) . "\\n",
-		"LINE3:entropytrend#000000",
 	);
 
 	RRDs::graph (@command);

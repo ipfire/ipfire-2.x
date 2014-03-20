@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -258,7 +258,25 @@ if ( -d '/sys/class/net/mon.'.$wlanapsettings{'INTERFACE'} ) {
 	$monwlaninterface =  'mon.'.$wlanapsettings{'INTERFACE'};
 }
 
-my @channellist_cmd = `iwlist $monwlaninterface channel|tail -n +2 2>/dev/null`;
+my @channellist_cmd;
+my @channellist;
+
+if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
+my $wiphy = `iw dev $wlanapsettings{'INTERFACE'} info | grep wiphy | cut -d" " -f2`;
+chomp $wiphy;
+
+@channellist_cmd = `iw phy phy$wiphy info | grep " MHz \\\[" | grep -v "(disabled)" | grep -v "no IBSS)" 2>/dev/null`;
+# get available channels
+
+my @temp;
+foreach (@channellist_cmd){
+$_ =~ /(.*) \[(\d+)(.*)\]/;
+$channel = $2;chomp $channel;
+if ( $channel =~ /\d+/ ){push(@temp,$channel);}
+}
+@channellist = @temp;
+} else {
+@channellist_cmd = `iwlist $monwlaninterface channel|tail -n +2 2>/dev/null`;
 # get available channels
 
 my @temp;
@@ -267,7 +285,8 @@ $_ =~ /(.*)Channel (\d+)(.*):/;
 $channel = $2;chomp $channel;
 if ( $channel =~ /\d+/ ){push(@temp,$channel);}
 }
-my @channellist = @temp;
+@channellist = @temp;
+}
 
 my @countrylist_cmd = `regdbdump /usr/lib/crda/regulatory.bin 2>/dev/null`;
 # get available country codes
@@ -488,12 +507,12 @@ print <<END
 </table>
 END
 ;
-
+my @status;
 if ( $wlanapsettings{'DRIVER'} eq 'MADWIFI' ){
-	 $status =  `wlanconfig $wlanapsettings{'INTERFACE'} list`;
+	 @status =  `wlanconfig $wlanapsettings{'INTERFACE'} list`;
 }
 if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
-	 $status =  `iw dev $wlanapsettings{'INTERFACE'} station dump`;
+	 @status =  `iw dev $wlanapsettings{'INTERFACE'} info && iw dev $wlanapsettings{'INTERFACE'} station dump`;
 }
 print <<END
 <br />
@@ -501,33 +520,37 @@ print <<END
 <tr><th colspan='3' bgcolor='$color{'color20'}' align='left'><strong>$Lang::tr{'wlanap wlan status'}</strong></th></tr>
 END
 ;
-foreach my $nr (@channellist_cmd){
-	my ($chan,$freq) = split(':',$nr);
-	if ($count % 2){
-		$col="bgcolor='$color{'color20'}'";
-	}else{
-		$col="bgcolor='$color{'color22'}'";
-	}
-	print"<tr><td $col>$chan</td><td $col>:</td><td $col>$freq</td></tr>";
-	$count++;
-}
+
+for (my $i=0;$i<$#status;$i++){
+
+if (@status[$i]=~"^Station ") { $count++; }
 if ($count % 2){
 		$col="bgcolor='$color{'color20'}'";
 	}else{
 		$col="bgcolor='$color{'color22'}'";
 	}
-if ($status){
-	print"<tr><td colspan='3' $col><pre>$status</pre></td></tr>";
-	$count++;
+	print"<tr><td colspan='3' $col><pre>@status[$i]</pre></td></tr>";
+	if (! @status[$i]=~"^/t" ) { $count++; }
 }
-for (my $i=0;$i<$#txpower_cmd;$i=$i+4){
-	next if (@txpower_cmd[$i] =~ /mon/i);
+	$count++;
+
+foreach my $nr (@channellist_cmd){
 	if ($count % 2){
 		$col="bgcolor='$color{'color20'}'";
 	}else{
 		$col="bgcolor='$color{'color22'}'";
 	}
-	print "<tr><td $col>@txpower_cmd[$i]</td><td $col>@txpower_cmd[$i+1]</td><td $col>@txpower_cmd[$i+2]</td></tr>";
+	print"<tr><td colspan='3' $col>$nr</td></tr>";
+	$count++;
+}
+
+for (my $i=0;$i<$#txpower_cmd;$i=$i+2){
+	if ($count % 2){
+		$col="bgcolor='$color{'color20'}'";
+	}else{
+		$col="bgcolor='$color{'color22'}'";
+	}
+	print "<tr><td $col>@txpower_cmd[$i]</td></tr>";
 	$count++;
 }
 print "</table><br>";
@@ -557,6 +580,7 @@ driver=$wlanapsettings{'DRIVER_HOSTAPD'}
 interface=$wlanapsettings{'INTERFACE'}
 country_code=$wlanapsettings{'COUNTRY'}
 ieee80211d=1
+ieee80211h=1
 channel=$wlanapsettings{'CHANNEL'}
 END
 ;

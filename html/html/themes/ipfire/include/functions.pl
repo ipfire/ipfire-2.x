@@ -110,7 +110,7 @@ sub openpage {
 	&genmenu();
 
 	my $headline = "IPFire";
-	if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
+	if (($settings{'WINDOWWITHHOSTNAME'} eq 'on') || ($settings{'WINDOWWITHHOSTNAME'} eq '')) {
 		$headline =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}";
 	}
 

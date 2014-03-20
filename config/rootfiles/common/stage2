@@ -81,7 +81,6 @@ usr/local/bin/backupiso
 usr/local/bin/connscheduler
 usr/local/bin/consort.sh
 usr/local/bin/convert-ovpn
-usr/local/bin/dialctrl.pl
 usr/local/bin/hddshutdown
 usr/local/bin/httpscert
 usr/local/bin/makegraphs

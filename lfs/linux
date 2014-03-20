@@ -127,9 +127,6 @@ ifneq "$(KCFG)" "-headers"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
 endif
 
-	# Disable pcspeaker autoload
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.30-no-pcspkr-modalias.patch
-
 	# Remove ACPI Blacklist message
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6-silence-acpi-blacklist.patch
 
@@ -149,6 +146,9 @@ endif
 
 	# cs5535audio spams syslog if no ac97 was present (geos router)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.30_cs5535audio_fix_logspam_on_geos.patch
+
+	# Add PC Engines APU led support
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-apu_leds.patch
 
 	# Fix uevent PHYSDEVDRIVER
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33_ipg-fix-driver-name.patch

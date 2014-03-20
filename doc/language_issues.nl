@@ -54,6 +54,7 @@ WARNING: translation string unused: and
 WARNING: translation string unused: ansi t1.483
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
+WARNING: translation string unused: attemps
 WARNING: translation string unused: available updates
 WARNING: translation string unused: backup archive
 WARNING: translation string unused: backup clear archive
@@ -150,6 +151,7 @@ WARNING: translation string unused: dial user password
 WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
 WARNING: translation string unused: disconnect
+WARNING: translation string unused: disconnects
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: display webinterface effects
 WARNING: translation string unused: dmz pinhole configuration
@@ -510,6 +512,7 @@ WARNING: translation string unused: to email adr
 WARNING: translation string unused: to install an update
 WARNING: translation string unused: to warn email bad
 WARNING: translation string unused: too long 80 char max
+WARNING: translation string unused: total connection time
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
@@ -587,9 +590,15 @@ WARNING: untranslated string: advproxy errmsg proxy ports equal
 WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: bit
 WARNING: untranslated string: bytes
+WARNING: untranslated string: ccd err isipsecrw
+WARNING: untranslated string: ccd err isovpnn2n
 WARNING: untranslated string: ccd iroute2
+WARNING: untranslated string: count
+WARNING: untranslated string: countries
+WARNING: untranslated string: country codes and flags
+WARNING: untranslated string: countrycode
 WARNING: untranslated string: dead peer detection
-WARNING: untranslated string: default ip
+WARNING: untranslated string: details
 WARNING: untranslated string: dh
 WARNING: untranslated string: dh key warn
 WARNING: untranslated string: dh name is invalid
@@ -612,8 +621,10 @@ WARNING: untranslated string: drop forward
 WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: encryption
 WARNING: untranslated string: entropy
+WARNING: untranslated string: entropy graphs
 WARNING: untranslated string: firewall rules
 WARNING: untranslated string: first
+WARNING: untranslated string: flag
 WARNING: untranslated string: fw default drop
 WARNING: untranslated string: fw settings
 WARNING: untranslated string: fw settings color
@@ -683,6 +694,7 @@ WARNING: untranslated string: fwdfw use nat
 WARNING: untranslated string: fwdfw use srcport
 WARNING: untranslated string: fwdfw use srv
 WARNING: untranslated string: fwdfw useless rule
+WARNING: untranslated string: fwdfw warn1
 WARNING: untranslated string: fwdfw wd_fri
 WARNING: untranslated string: fwdfw wd_mon
 WARNING: untranslated string: fwdfw wd_sat
@@ -759,6 +771,7 @@ WARNING: untranslated string: fwhost welcome
 WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
 WARNING: untranslated string: grouptype
+WARNING: untranslated string: hardware support
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
@@ -771,6 +784,7 @@ WARNING: untranslated string: mac filter
 WARNING: untranslated string: maximum
 WARNING: untranslated string: minimum
 WARNING: untranslated string: most preferred
+WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: notice
 WARNING: untranslated string: openvpn network
@@ -795,6 +809,8 @@ WARNING: untranslated string: show dh
 WARNING: untranslated string: snat new source ip address
 WARNING: untranslated string: ssh
 WARNING: untranslated string: support donation
+WARNING: untranslated string: system has hwrng
+WARNING: untranslated string: system has rdrand
 WARNING: untranslated string: tor
 WARNING: untranslated string: tor accounting
 WARNING: untranslated string: tor accounting bytes

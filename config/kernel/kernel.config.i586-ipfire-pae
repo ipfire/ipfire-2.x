@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 3.10.30-ipfire Kernel Configuration
+# Linux/x86 3.10.33 Kernel Configuration
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -670,6 +670,7 @@ CONFIG_EISA_PCI_EISA=y
 CONFIG_EISA_VIRTUAL_ROOT=y
 CONFIG_EISA_NAMES=y
 # CONFIG_SCx200 is not set
+CONFIG_APULED=y
 # CONFIG_ALIX is not set
 # CONFIG_NET5501 is not set
 # CONFIG_GEOS is not set

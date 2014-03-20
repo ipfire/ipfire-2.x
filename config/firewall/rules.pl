@@ -39,6 +39,7 @@ my $CHAIN_NAT_SOURCE      = "NAT_SOURCE";
 my $CHAIN_NAT_DESTINATION = "NAT_DESTINATION";
 my $CHAIN_MANGLE_NAT_DESTINATION_FIX = "NAT_DESTINATION";
 my @VALID_CHAINS          = ($CHAIN_INPUT, $CHAIN_FORWARD, $CHAIN_OUTPUT);
+my @ANY_ADDRESSES         = ("0.0.0.0/0.0.0.0", "0.0.0.0/0", "0/0");
 
 my @PROTOCOLS = ("tcp", "udp", "icmp", "igmp", "ah", "esp", "gre", "ipv6", "ipip");
 my @PROTOCOLS_WITH_PORTS = ("tcp", "udp");
@@ -255,6 +256,16 @@ sub buildrules {
 					# Skip invalid rules.
 					next if (!$source || !$destination || ($destination eq "none"));
 
+					# Sanitize source.
+					if ($source ~~ @ANY_ADDRESSES) {
+						$source = "";
+					}
+
+					# Sanitize destination.
+					if ($destination ~~ @ANY_ADDRESSES) {
+						$destination = "";
+					}
+
 					# Array with iptables arguments.
 					my @options = ();
 
@@ -268,12 +279,15 @@ sub buildrules {
 					my @source_options = ();
 					if ($source =~ /mac/) {
 						push(@source_options, $source);
-					} else {
+					} elsif ($source) {
 						push(@source_options, ("-s", $source));
 					}
 
 					# Prepare destination options.
-					my @destination_options = ("-d", $destination);
+					my @destination_options = ();
+					if ($destination) {
+						push(@destination_options, ("-d", $destination));
+					}
 
 					# Add time constraint options.
 					push(@options, @time_options);
@@ -285,7 +299,7 @@ sub buildrules {
 
 					# Process NAT rules.
 					if ($NAT) {
-						my $nat_address = &get_nat_address($$hash{$key}[29]);
+						my $nat_address = &get_nat_address($$hash{$key}[29], $source);
 
 						# Skip NAT rules if the NAT address is unknown
 						# (i.e. no internet connection has been established, yet).
@@ -294,7 +308,10 @@ sub buildrules {
 						# Destination NAT
 						if ($NAT_MODE eq "DNAT") {
 							# Make port-forwardings useable from the internal networks.
-							&add_dnat_mangle_rules($nat_address, @options);
+							my @internal_addresses = &get_internal_firewall_ip_addresses(1);
+							unless ($nat_address ~~ @internal_addresses) {
+								&add_dnat_mangle_rules($nat_address, @options);
+							}
 
 							my @nat_options = @options;
 							push(@nat_options, @source_options);
@@ -380,9 +397,25 @@ sub get_alias {
 
 sub get_nat_address {
 	my $zone = shift;
+	my $source = shift;
 
 	# Any static address of any zone.
-	if ($zone eq "RED" || $zone eq "GREEN" || $zone eq "ORANGE" || $zone eq "BLUE") {
+	if ($zone eq "AUTO") {
+		if ($source) {
+			my $firewall_ip = &get_internal_firewall_ip_address($source, 1);
+			if ($firewall_ip) {
+				return $firewall_ip;
+			}
+
+			$firewall_ip = &get_matching_firewall_address($source, 1);
+			if ($firewall_ip) {
+				return $firewall_ip;
+			}
+		}
+
+		return &get_external_address();
+
+	} elsif ($zone eq "RED" || $zone eq "GREEN" || $zone eq "ORANGE" || $zone eq "BLUE") {
 		return $defaultNetworks{$zone . "_ADDRESS"};
 
 	} elsif ($zone eq "Default IP") {
@@ -795,23 +828,77 @@ sub make_log_limit_options {
 	return @options;
 }
 
-sub firewall_is_in_subnet {
-	my $subnet = shift;
+sub get_internal_firewall_ip_addresses {
+	my $use_orange = shift;
 
-	my ($net_address, $net_mask) = split("/", $subnet);
-	if (!$net_mask) {
-		return 0;
+	my @zones = ("GREEN", "BLUE");
+	if ($use_orange) {
+		push(@zones, "ORANGE");
 	}
 
-	# ORANGE is missing here, because nothing may ever access
-	# the firewall from this network.
-	foreach my $zone ("GREEN", "BLUE") {
+	my @addresses = ();
+	for my $zone (@zones) {
 		next unless (exists $defaultNetworks{$zone . "_ADDRESS"});
 
 		my $zone_address = $defaultNetworks{$zone . "_ADDRESS"};
+		push(@addresses, $zone_address);
+	}
 
+	return @addresses;
+}
+
+sub get_internal_firewall_ip_address {
+	my $subnet = shift;
+	my $use_orange = shift;
+
+	my ($net_address, $net_mask) = split("/", $subnet);
+	if ((!$net_mask) || ($net_mask ~~ ["32", "255.255.255.255"])) {
+		return 0;
+	}
+
+	my @addresses = &get_internal_firewall_ip_addresses($use_orange);
+	foreach my $zone_address (@addresses) {
 		if (&General::IpInSubnet($zone_address, $net_address, $net_mask)) {
-			return 1;
+			return $zone_address;
+		}
+	}
+
+	return 0;
+}
+
+sub firewall_is_in_subnet {
+	my $subnet = shift;
+
+	# ORANGE is missing here, because nothing may ever access
+	# the firewall from this network.
+	my $address = &get_internal_firewall_ip_address($subnet, 0);
+
+	if ($address) {
+		return 1;
+	}
+
+	return 0;
+}
+
+sub get_matching_firewall_address {
+	my $addr = shift;
+	my $use_orange = shift;
+
+	my ($address, $netmask) = split("/", $addr);
+
+	my @zones = ("GREEN", "BLUE");
+	if ($use_orange) {
+		push(@zones, "ORANGE");
+	}
+
+	foreach my $zone (@zones) {
+		next unless (exists $defaultNetworks{$zone . "_ADDRESS"});
+
+		my $zone_subnet = $defaultNetworks{$zone . "_NETADDRESS"};
+		my $zone_mask   = $defaultNetworks{$zone . "_NETMASK"};
+
+		if (&General::IpInSubnet($address, $zone_subnet, $zone_mask)) {
+			return $defaultNetworks{$zone . "_ADDRESS"};
 		}
 	}
 

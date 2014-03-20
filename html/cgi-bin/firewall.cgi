@@ -1540,6 +1540,7 @@ sub newrule
 				$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
 				$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
+				$selected{'dnat'}{$fwdfwsettings{'dnat'}}				='selected';
 			}
 		}
 		$fwdfwsettings{'oldgrp1a'}=$fwdfwsettings{'grp1'};
@@ -1632,25 +1633,28 @@ END
 						</td>
 END
 
-		if (%aliases) {
-			print <<END;
+	print <<END;
 						<td width='25%' align='right'>$Lang::tr{'dnat address'}:</td>
 						<td width='30%'>
 							<select name='dnat' style='width: 100%;'>
-								<option value='Default IP' $selected{'dnat'}{'Default IP'}>$Lang::tr{'default ip'} ($netsettings{'RED_ADDRESS'})</option>
+								<option value='AUTO' $selected{'dnat'}{'AUTO'}>- $Lang::tr{'automatic'} -</option>
+								<option value='Default IP' $selected{'dnat'}{'Default IP'}>$Lang::tr{'red1'} ($redip)</option>
 END
+		if (%aliases) {
 			foreach my $alias (sort keys %aliases) {
 				print "<option value='$alias' $selected{'dnat'}{$alias}>$alias ($aliases{$alias}{'IPT'})</option>";
 			}
-
-			print "</select>";
-		} else {
-			print <<END;
-						<td colspan="2" width='55%'>
-							<input type='hidden' name='dnat' value='Default IP'>
-						</td>
-END
 		}
+		#DNAT Dropdown
+		foreach my $network (sort keys %defaultNetworks)
+		{
+			if ($defaultNetworks{$network}{'NAME'} eq 'BLUE'||$defaultNetworks{$network}{'NAME'} eq 'GREEN' ||$defaultNetworks{$network}{'NAME'} eq 'ORANGE'){
+				print "<option value='$defaultNetworks{$network}{'NAME'}'";
+				print " selected='selected'" if ($fwdfwsettings{'dnat'} eq $defaultNetworks{$network}{'NAME'});
+				print ">$network ($defaultNetworks{$network}{'NET'})</option>";
+			}
+		}
+		print "</select>";
 		print "</tr>";
 
 		#SNAT
@@ -1671,19 +1675,14 @@ END
 		foreach my $alias (sort keys %aliases) {
 			print "<option value='$alias' $selected{'snat'}{$alias}>$alias ($aliases{$alias}{'IPT'})</option>";
 		}
-
-		# XXX this is composed in a very ugly fashion
+		# SNAT Dropdown
 		foreach my $network (sort keys %defaultNetworks) {
-			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
-			next if($defaultNetworks{$network}{'NAME'} eq "ALL");
-			next if($defaultNetworks{$network}{'NAME'} =~ /OpenVPN/i);
-			next if($defaultNetworks{$network}{'NAME'} =~ /IPsec/i);
-
-			print "<option value='$defaultNetworks{$network}{'NAME'}'";
-			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{'nat'}} eq $defaultNetworks{$network}{'NAME'});
-			print ">$network ($defaultNetworks{$network}{'NET'})</option>";
+			if ($defaultNetworks{$network}{'NAME'} eq 'BLUE'||$defaultNetworks{$network}{'NAME'} eq 'GREEN' ||$defaultNetworks{$network}{'NAME'} eq 'ORANGE'){
+				print "<option value='$defaultNetworks{$network}{'NAME'}'";
+				print " selected='selected'" if ($fwdfwsettings{'snat'} eq $defaultNetworks{$network}{'NAME'});
+				print ">$network ($defaultNetworks{$network}{'NET'})</option>";
+			}
 		}
-
 		print <<END;
 							</select>
 						</td>
@@ -2375,26 +2374,18 @@ END
 				if($$hash{$key}[3] eq  'ipsec_net_src'){
 					if(&fwlib::get_ipsec_net_ip($host,11) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[3] eq  'ovpn_net_src'){
 					if(&fwlib::get_ovpn_net_ip($host,1) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[3] eq  'ovpn_n2n_src'){
 					if(&fwlib::get_ovpn_n2n_ip($host,27) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[3] eq  'ovpn_host_src'){
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}
 			}
@@ -2402,26 +2393,18 @@ END
 				if($$hash{$key}[5] eq 'ipsec_net_tgt'){
 					if(&fwlib::get_ipsec_net_ip($host,11) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[5] eq 'ovpn_net_tgt'){
 					if(&fwlib::get_ovpn_net_ip($host,1) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[5] eq 'ovpn_n2n_tgt'){
 					if(&fwlib::get_ovpn_n2n_ip($host,27) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}elsif($$hash{$key}[5] eq 'ovpn_host_tgt'){
 					if(&fwlib::get_ovpn_host_ip($host,33) eq ''){
 						$coloryellow='on';
-						&disable_rule($key);
-						$$hash{$key}[2]='';
 					}
 				}
 			}
@@ -2429,15 +2412,11 @@ END
 			foreach my $netgroup (sort keys %customgrp){
 				if(($$hash{$key}[4] eq $customgrp{$netgroup}[0] || $$hash{$key}[6] eq $customgrp{$netgroup}[0]) && $customgrp{$netgroup}[2] eq 'none'){
 					$coloryellow='on';
-					&disable_rule($key);
-					$$hash{$key}[2]='';
 				}
 			}
 			foreach my $srvgroup (sort keys %customservicegrp){
 				if($$hash{$key}[15] eq $customservicegrp{$srvgroup}[0] && $customservicegrp{$srvgroup}[2] eq 'none'){
 					$coloryellow='on';
-					&disable_rule($key);
-					$$hash{$key}[2]='';
 				}
 			}
 			$$hash{'ACTIVE'}=$$hash{$key}[2];
@@ -2573,6 +2552,7 @@ END
 END
 			#Is this a DNAT rule?
 			if ($$hash{$key}[31] eq 'dnat' && $$hash{$key}[28] eq 'ON'){
+				if ($$hash{$key}[29] eq 'Default IP'){$$hash{$key}[29]=$Lang::tr{'red1'};}
 				print "Firewall ($$hash{$key}[29])";
 				if($$hash{$key}[30] ne ''){
 					$$hash{$key}[30]=~ tr/|/,/;
