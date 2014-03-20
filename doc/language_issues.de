@@ -58,6 +58,7 @@ WARNING: translation string unused: alt vpn
 WARNING: translation string unused: and
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
+WARNING: translation string unused: attemps
 WARNING: translation string unused: available updates
 WARNING: translation string unused: backup config floppy
 WARNING: translation string unused: backup configuration
@@ -118,6 +119,7 @@ WARNING: translation string unused: ddns help freedns
 WARNING: translation string unused: ddns help plus
 WARNING: translation string unused: debugme
 WARNING: translation string unused: deep scan directories
+WARNING: translation string unused: default ip
 WARNING: translation string unused: default networks
 WARNING: translation string unused: default services
 WARNING: translation string unused: description
@@ -134,6 +136,7 @@ WARNING: translation string unused: dial user password
 WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
 WARNING: translation string unused: disconnect
+WARNING: translation string unused: disconnects
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: display webinterface effects
 WARNING: translation string unused: dmz pinhole configuration
@@ -528,6 +531,7 @@ WARNING: translation string unused: tor accounting period daily
 WARNING: translation string unused: tor accounting period monthly
 WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor exit country
+WARNING: translation string unused: total connection time
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad

@@ -65,8 +65,13 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< count
+< countries
+< countrycode
+< country codes and flags
 < default ip
 < deprecated fs warn
+< details
 < dnat address
 < dns address deleted txt
 < dnsforward
@@ -107,6 +112,7 @@
 < fireinfo your profile id
 < firewall rules
 < first
+< flag
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -519,8 +525,13 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< count
+< countries
+< countrycode
+< country codes and flags
 < default ip
 < deprecated fs warn
+< details
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -560,6 +571,7 @@
 < fireinfo your profile id
 < firewall rules
 < first
+< flag
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -964,8 +976,13 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< count
+< countries
+< countrycode
+< country codes and flags
 < default ip
 < deprecated fs warn
+< details
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -997,6 +1014,7 @@
 < extrahd you cant mount
 < firewall rules
 < first
+< flag
 < forward firewall
 < fw default drop
 < fwdfw ACCEPT
@@ -1386,9 +1404,14 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< count
+< countries
+< countrycode
+< country codes and flags
 < day-graph
 < default ip
 < deprecated fs warn
+< details
 < disk access per
 < dnat address
 < dnsforward
@@ -1422,6 +1445,7 @@
 < extrahd you cant mount
 < firewall rules
 < first
+< flag
 < forward firewall
 < frequency
 < fw default drop

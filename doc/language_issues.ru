@@ -54,6 +54,7 @@ WARNING: translation string unused: and
 WARNING: translation string unused: ansi t1.483
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
+WARNING: translation string unused: attemps
 WARNING: translation string unused: available updates
 WARNING: translation string unused: backup archive
 WARNING: translation string unused: backup clear archive
@@ -147,6 +148,7 @@ WARNING: translation string unused: dial user password
 WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
 WARNING: translation string unused: disconnect
+WARNING: translation string unused: disconnects
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: display webinterface effects
 WARNING: translation string unused: dmz pinhole configuration
@@ -504,6 +506,7 @@ WARNING: translation string unused: to email adr
 WARNING: translation string unused: to install an update
 WARNING: translation string unused: to warn email bad
 WARNING: translation string unused: too long 80 char max
+WARNING: translation string unused: total connection time
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
@@ -621,9 +624,13 @@ WARNING: untranslated string: ccd routes
 WARNING: untranslated string: ccd subnet
 WARNING: untranslated string: ccd used
 WARNING: untranslated string: community rules
+WARNING: untranslated string: count
+WARNING: untranslated string: countries
+WARNING: untranslated string: country codes and flags
+WARNING: untranslated string: countrycode
 WARNING: untranslated string: dead peer detection
-WARNING: untranslated string: default ip
 WARNING: untranslated string: deprecated fs warn
+WARNING: untranslated string: details
 WARNING: untranslated string: disk access per
 WARNING: untranslated string: dnat address
 WARNING: untranslated string: dns servers
@@ -655,6 +662,7 @@ WARNING: untranslated string: extrahd to root
 WARNING: untranslated string: extrahd you cant mount
 WARNING: untranslated string: firewall rules
 WARNING: untranslated string: first
+WARNING: untranslated string: flag
 WARNING: untranslated string: fw default drop
 WARNING: untranslated string: fw settings
 WARNING: untranslated string: fw settings color
