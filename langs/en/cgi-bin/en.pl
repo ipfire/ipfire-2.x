@@ -731,7 +731,7 @@
 'dmz pinhole rule added' => 'DMZ pinhole rule added; restarting DMZ pinhole',
 'dmz pinhole rule removed' => 'DMZ pinhole rule removed; restarting DMZ pinhole',
 'dmzpinholes for same net not necessary' => 'DMZ Pinholes are not necessary for same net. Select different source or destination net.',
-'dnat address' => 'External IP address',
+'dnat address' => 'Firewall Interface',
 'dns address deleted' => 'Successfully deleted!',
 'dns address deleted txt' => 'The DNS-Server addresses have been successfully deleted.<br />You have to reboot or reconnect that the changes have effect!',
 'dns address done' => 'The DNS-Server address settings are going to be saved.',

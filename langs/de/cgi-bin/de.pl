@@ -707,7 +707,7 @@
 'dmz pinhole rule added' => 'Regel für DMZ-Schlupfloch hinzugefügt; Starte DMZ-Schlupfloch neu',
 'dmz pinhole rule removed' => 'Regel für DMZ-Schlupfloch entfernt; Starte DMZ-Schlupfloch neu',
 'dmzpinholes for same net not necessary' => 'DMZ-Schlupflöcher werden im gleichen Netz nicht benötigt. Wählen Sie ein anderes Quell- oder Ziel-Netz.',
-'dnat address' => 'Externe IP-Adresse',
+'dnat address' => 'Firewall-Interface',
 'dns address deleted' => 'Erfolgreich gelöscht! ',
 'dns address deleted txt' => 'DNS Server Adressen wurden erfolgreich gelöscht. Änderungen werden jedoch erst nach einem Neustart oder einer Wiederverbindung übernommen.',
 'dns address done' => 'Die DNS-Server Adressen Einstellungen werden übernommen.',

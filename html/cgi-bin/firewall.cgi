@@ -1540,6 +1540,7 @@ sub newrule
 				$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
 				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
 				$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
+				$selected{'dnat'}{$fwdfwsettings{'dnat'}}				='selected';
 			}
 		}
 		$fwdfwsettings{'oldgrp1a'}=$fwdfwsettings{'grp1'};
@@ -1637,7 +1638,7 @@ END
 						<td width='30%'>
 							<select name='dnat' style='width: 100%;'>
 								<option value='AUTO' $selected{'dnat'}{'AUTO'}>- $Lang::tr{'automatic'} -</option>
-								<option value='Default IP' $selected{'dnat'}{'Default IP'}>$Lang::tr{'red1'} ($netsettings{'RED_ADDRESS'})</option>
+								<option value='Default IP' $selected{'dnat'}{'Default IP'}>$Lang::tr{'red1'} ($redip)</option>
 END
 		if (%aliases) {
 			foreach my $alias (sort keys %aliases) {
@@ -2551,6 +2552,7 @@ END
 END
 			#Is this a DNAT rule?
 			if ($$hash{$key}[31] eq 'dnat' && $$hash{$key}[28] eq 'ON'){
+				if ($$hash{$key}[29] eq 'Default IP'){$$hash{$key}[29]=$Lang::tr{'red1'};}
 				print "Firewall ($$hash{$key}[29])";
 				if($$hash{$key}[30] ne ''){
 					$$hash{$key}[30]=~ tr/|/,/;
