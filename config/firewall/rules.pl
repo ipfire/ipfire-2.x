@@ -175,6 +175,9 @@ sub buildrules {
 		# Collect all destinations.
 		my @destinations = &fwlib::get_addresses($hash, $key, "tgt");
 
+		# True if the destination is the firewall itself.
+		my $destination_is_firewall = ($$hash{$key}[5] eq "ipfire");
+
 		# Check if logging should be enabled.
 		my $LOG = ($$hash{$key}[17] eq 'ON');
 
@@ -320,21 +323,38 @@ sub buildrules {
 							push(@nat_options, @source_options);
 							push(@nat_options, ("-d", $nat_address));
 
-							my ($dnat_address, $dnat_mask) = split("/", $destination);
-							@destination_options = ("-d", $dnat_address);
-
+							my $dnat_port;
 							if ($protocol_has_ports) {
-								my $dnat_port = &get_dnat_target_port($hash, $key);
+								$dnat_port = &get_dnat_target_port($hash, $key);
+							}
 
-								if ($dnat_port) {
-									$dnat_address .= ":$dnat_port";
+							my @nat_action_options = ();
+
+							# Use iptables REDIRECT
+							my $use_redirect = ($destination_is_firewall && !$destination && $protocol_has_ports && $dnat_port);
+							if ($use_redirect) {
+								push(@nat_action_options, ("-j", "REDIRECT", "--to-ports", $dnat_port));
+
+							# Use iptables DNAT
+							} else {
+								my ($dnat_address, $dnat_mask) = split("/", $destination);
+								@destination_options = ("-d", $dnat_address);
+
+								if ($protocol_has_ports) {
+									my $dnat_port = &get_dnat_target_port($hash, $key);
+
+									if ($dnat_port) {
+										$dnat_address .= ":$dnat_port";
+									}
 								}
+
+								push(@nat_action_options, ("-j", "DNAT", "--to-destination", $dnat_address));
 							}
 
 							if ($LOG) {
 								run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options @log_limit_options -j LOG --log-prefix 'DNAT '");
 							}
-							run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options -j DNAT --to-destination $dnat_address");
+							run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options @nat_action_options");
 
 						# Source NAT
 						} elsif ($NAT_MODE eq "SNAT") {
