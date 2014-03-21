@@ -35,7 +35,6 @@ my %ipsecconf=();
 my %ipsecsettings=();
 my %netsettings=();
 my %ovpnsettings=();
-my %defaultNetworks=();
 my %aliases=();
 
 require '/var/ipfire/general-functions.pl';
@@ -56,7 +55,6 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/ovpn/settings", \%ovpnsettings);
 &General::readhash("${General::swroot}/vpn/settings", \%ipsecsettings);
-&General::readhash("$netsettings", \%defaultNetworks);
 
 &General::readhasharray("$confignet", \%customnetwork);
 &General::readhasharray("$confighost", \%customhost);
@@ -371,15 +369,15 @@ sub get_address
 
 		# GREEN
 		} elsif ($value eq "GREEN") {
-			push(@ret, $defaultNetworks{"GREEN_ADDRESS"});
+			push(@ret, $netsettings{"GREEN_ADDRESS"});
 
 		# BLUE
 		} elsif ($value eq "BLUE") {
-			push(@ret, $defaultNetworks{"BLUE_ADDRESS"});
+			push(@ret, $netsettings{"BLUE_ADDRESS"});
 
 		# ORANGE
 		} elsif ($value eq "ORANGE") {
-			push(@ret, $defaultNetworks{"ORANGE_ADDRESS"});
+			push(@ret, $netsettings{"ORANGE_ADDRESS"});
 
 		# RED
 		} elsif ($value ~~ ["RED", "RED1"]) {
@@ -451,7 +449,7 @@ sub get_nat_address
 		return &get_external_address();
 
 	} elsif ($zone eq "RED" || $zone eq "GREEN" || $zone eq "ORANGE" || $zone eq "BLUE") {
-		return $defaultNetworks{$zone . "_ADDRESS"};
+		return $netsettings{$zone . "_ADDRESS"};
 
 	} elsif ($zone eq "Default IP") {
 		return &get_external_address();
@@ -473,9 +471,9 @@ sub get_internal_firewall_ip_addresses
 
 	my @addresses = ();
 	for my $zone (@zones) {
-		next unless (exists $defaultNetworks{$zone . "_ADDRESS"});
+		next unless (exists $netsettings{$zone . "_ADDRESS"});
 
-		my $zone_address = $defaultNetworks{$zone . "_ADDRESS"};
+		my $zone_address = $netsettings{$zone . "_ADDRESS"};
 		push(@addresses, $zone_address);
 	}
 
@@ -494,13 +492,13 @@ sub get_matching_firewall_address
 	}
 
 	foreach my $zone (@zones) {
-		next unless (exists $defaultNetworks{$zone . "_ADDRESS"});
+		next unless (exists $netsettings{$zone . "_ADDRESS"});
 
-		my $zone_subnet = $defaultNetworks{$zone . "_NETADDRESS"};
-		my $zone_mask   = $defaultNetworks{$zone . "_NETMASK"};
+		my $zone_subnet = $netsettings{$zone . "_NETADDRESS"};
+		my $zone_mask   = $netsettings{$zone . "_NETMASK"};
 
 		if (&General::IpInSubnet($address, $zone_subnet, $zone_mask)) {
-			return $defaultNetworks{$zone . "_ADDRESS"};
+			return $netsettings{$zone . "_ADDRESS"};
 		}
 	}
 
