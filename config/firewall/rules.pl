@@ -322,6 +322,7 @@ sub buildrules {
 							}
 							push(@nat_options, @source_options);
 							push(@nat_options, ("-d", $nat_address));
+							push(@nat_options, @time_options);
 
 							my $dnat_port;
 							if ($protocol_has_ports) {
