@@ -337,6 +337,11 @@ sub buildrules {
 
 							# Use iptables DNAT
 							} else {
+								if ($destination_is_firewall && !$destination) {
+									$destination = &fwlib::get_external_address();
+								}
+								next unless ($destination);
+
 								my ($dnat_address, $dnat_mask) = split("/", $destination);
 								@destination_options = ("-d", $dnat_address);
 
