@@ -51,11 +51,12 @@ my $configipsec		= "${General::swroot}/vpn/config";
 my $configovpn		= "${General::swroot}/ovpn/settings";
 my $val;
 my $field;
+my $netsettings		= "${General::swroot}/ethernet/settings";
 
 &General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/ovpn/settings", \%ovpnsettings);
 &General::readhash("${General::swroot}/vpn/settings", \%ipsecsettings);
-
+&General::readhash("$netsettings", \%defaultNetworks);
 
 &General::readhasharray("$confignet", \%customnetwork);
 &General::readhasharray("$confighost", \%customhost);
@@ -253,8 +254,8 @@ sub get_host_ip
 		}  
 	}
 }
-# Functions used by rules.pl
-sub get_addresses {
+sub get_addresses
+{
 	my $hash = shift;
 	my $key  = shift;
 	my $type = shift;
@@ -293,7 +294,8 @@ sub get_addresses {
 
 	return @addresses;
 }
-sub get_address {
+sub get_address
+{
 	my $key   = shift;
 	my $value = shift;
 	my $type  = shift;
@@ -401,21 +403,24 @@ sub get_address {
 
 	return @ret;
 }
-sub get_external_interface() {
+sub get_external_interface()
+{
 	open(IFACE, "/var/ipfire/red/iface") or return "";
 	my $iface = <IFACE>;
 	close(IFACE);
 
 	return $iface;
 }
-sub get_external_address() {
+sub get_external_address()
+{
 	open(ADDR, "/var/ipfire/red/local-ipaddress") or return "";
 	my $address = <ADDR>;
 	close(ADDR);
 
 	return $address;
 }
-sub get_alias {
+sub get_alias
+{
 	my $id = shift;
 
 	foreach my $alias (sort keys %aliases) {
@@ -424,13 +429,14 @@ sub get_alias {
 		}
 	}
 }
-sub get_nat_address {
+sub get_nat_address
+{
 	my $zone = shift;
 	my $source = shift;
 
 	# Any static address of any zone.
 	if ($zone eq "AUTO") {
-		if ($source) {
+		if ($source && ($source !~ m/mac/i )) {
 			my $firewall_ip = &get_internal_firewall_ip_address($source, 1);
 			if ($firewall_ip) {
 				return $firewall_ip;
@@ -456,7 +462,8 @@ sub get_nat_address {
 
 	print_error("Could not find NAT address");
 }
-sub get_internal_firewall_ip_addresses {
+sub get_internal_firewall_ip_addresses
+{
 	my $use_orange = shift;
 
 	my @zones = ("GREEN", "BLUE");
@@ -474,7 +481,8 @@ sub get_internal_firewall_ip_addresses {
 
 	return @addresses;
 }
-sub get_matching_firewall_address {
+sub get_matching_firewall_address
+{
 	my $addr = shift;
 	my $use_orange = shift;
 
@@ -498,7 +506,8 @@ sub get_matching_firewall_address {
 
 	return 0;
 }
-sub get_internal_firewall_ip_address {
+sub get_internal_firewall_ip_address
+{
 	my $subnet = shift;
 	my $use_orange = shift;
 
@@ -516,6 +525,5 @@ sub get_internal_firewall_ip_address {
 
 	return 0;
 }
-
 
 return 1;
