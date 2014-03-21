@@ -246,7 +246,7 @@ sub buildrules {
 			}
 
 			# Prepare protocol options (like ICMP types, ports, etc...).
-			my @protocol_options = &get_protocol_options($hash, $key, $protocol);
+			my @protocol_options = &get_protocol_options($hash, $key, $protocol, 0);
 
 			# Check if this protocol knows ports.
 			my $protocol_has_ports = ($protocol ~~ @PROTOCOLS_WITH_PORTS);
@@ -271,7 +271,6 @@ sub buildrules {
 
 					# Append protocol.
 					if ($protocol ne "all") {
-						push(@options, ("-p", $protocol));
 						push(@options, @protocol_options);
 					}
 
@@ -313,7 +312,11 @@ sub buildrules {
 								&add_dnat_mangle_rules($nat_address, @options);
 							}
 
-							my @nat_options = @options;
+							my @nat_options = ();
+							if ($protocol ne "all") {
+								my @nat_protocol_options = &get_protocol_options($hash, $key, $protocol, 1);
+								push(@nat_options, @nat_protocol_options);
+							}
 							push(@nat_options, @source_options);
 							push(@nat_options, ("-d", $nat_address));
 
@@ -701,7 +704,15 @@ sub get_protocol_options {
 	my $hash = shift;
 	my $key  = shift;
 	my $protocol = shift;
+	my $nat_options_wanted = shift;
 	my @options = ();
+
+	# Nothing to do if no protocol is specified.
+	if ($protocol eq "all") {
+		return @options;
+	} else {
+		push(@options, ("-p", $protocol));
+	}
 
 	# Process source ports.
 	my $use_src_ports = ($$hash{$key}[7] eq "ON");
@@ -720,7 +731,7 @@ sub get_protocol_options {
 		my $dst_ports      = $$hash{$key}[15];
 
 		if (($dst_ports_mode eq "TGT_PORT") && $dst_ports) {
-			if ($use_dnat && $$hash{$key}[30]) {
+			if ($nat_options_wanted && $use_dnat && $$hash{$key}[30]) {
 				$dst_ports = $$hash{$key}[30];
 			}
 			push(@options, &format_ports($dst_ports, "dst"));
