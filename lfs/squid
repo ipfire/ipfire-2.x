@@ -117,7 +117,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-kill-parent-hack \
 		--disable-wccpv2 \
 		--enable-icap-client \
-		--disable-esi
+		--disable-esi \
+		--enable-zph-qos
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
