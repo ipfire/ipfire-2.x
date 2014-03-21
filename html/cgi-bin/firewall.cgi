@@ -584,8 +584,10 @@ sub checktarget
 				}
 			}
 		}else{
-			$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
-			return $errormessage;
+			if ($fwdfwsettings{'grp2'} ne 'ipfire'){
+				$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
+				return $errormessage;
+			}
 		}
 	}
 	if ($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} ne ''){
@@ -2564,8 +2566,7 @@ END
 					my @src_addresses=&fwlib::get_addresses(\%$hash,$key,'src');
 					my @nat_ifaces;
 					foreach my $val (@src_addresses){
-						my ($ip,$sub)=split("/",$val);
-						push (@nat_ifaces,&fwlib::get_nat_address($$hash{$key}[29],$ip));
+						push (@nat_ifaces,&fwlib::get_nat_address($$hash{$key}[29],$val));
 					}
 					@nat_ifaces=&del_double(@nat_ifaces);
 					$natstring = join(', ', @nat_ifaces);
