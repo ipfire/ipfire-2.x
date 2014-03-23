@@ -14,6 +14,9 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
@@ -329,6 +332,7 @@
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -398,6 +402,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -534,6 +540,9 @@
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
@@ -849,6 +858,7 @@
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -934,6 +944,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < Set time on boot
 < show dh
@@ -1047,6 +1059,9 @@
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
@@ -1353,6 +1368,7 @@
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -1424,6 +1440,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -1536,6 +1554,9 @@
 ############################################################################
 < Add a route
 < addon
+< administrator password
+< administrator username
+< adsl settings
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
@@ -1848,6 +1869,7 @@
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -1917,6 +1939,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address

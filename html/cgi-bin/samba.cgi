@@ -67,8 +67,7 @@ $ovpnip[3]=$ovpnip[3]+1;
 ############################################################################################################################
 ############################################# Samba Dienste fr Statusberprfung ##########################################
 
-my %servicenames = ('SMB Daemon' => 'smbd','NetBIOS Nameserver' => 'nmbd');
-#my %servicenames = ('SMB Daemon' => 'smbd','NetBIOS Nameserver' => 'nmbd','Winbind Daemon' => 'winbindd');
+my %servicenames = ('SMB Daemon' => 'smbd', 'NetBIOS Nameserver' => 'nmbd', 'Winbind Daemon' => 'winbindd');
 
 &Header::showhttpheaders();
 
@@ -192,6 +191,10 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	refreshpage();
 	}
 
+if ($sambasettings{'ACTION'} eq 'join') {
+	$message .= &joindomain($sambasettings{'USERNAME'}, $sambasettings{'PASSWORD'});
+}
+
 ############################################################################################################################
 ################################################ Sicherheitsabfrage für den Reset ##########################################
 
@@ -276,6 +279,7 @@ print FILE <<END
 netbios name = $sambasettings{'NETBIOSNAME'}
 server string = $sambasettings{'SRVSTRING'}
 workgroup = $sambasettings{'WORKGRP'}
+realm = $mainsettings{'DOMAINNAME'}
 passdb backend = smbpasswd
 
 wide links = $sambasettings{'WIDELINKS'}
@@ -314,6 +318,11 @@ remote browse sync = $sambasettings{'REMOTESYNC'}
 username level = 1
 wins support = $sambasettings{'WINSSUPPORT'}
 wins server = $sambasettings{'WINSSRV'}
+
+winbind separator = +
+winbind uid = 10000-20000
+winbind gid = 10000-20000
+winbind use default domain = yes
 
 log file       = /var/log/samba/samba-log.%m
 lock directory = /var/lock/samba
@@ -384,6 +393,15 @@ if ($errormessage)
 	&Header::closebox();
 	}
 
+if ($message) {
+	$message = &Header::cleanhtml($message);
+	$message =~ s/\n/<br>/g;
+
+	&Header::openbox('100%', 'left', $Lang::tr{'messages'});
+	print "$message\n";
+	&Header::closebox();
+}
+
 ############################################################################################################################
 ########################################## Aktivieren von Checkboxen und Dropdowns #########################################
 
@@ -440,14 +458,6 @@ $selected{'SECURITY'}{$sambasettings{'SECURITY'}} = "selected='selected'";
 print <<END
 <br />
 <table width='95%' cellspacing='0'>
-END
-;
-if ( $message ne "" )
-	{
-	print "<tr><td colspan='3' align='left'><font color='red'>$message</font>";
-	}
-
-print <<END
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'all services'}</b></td></tr>
 </table><table width='95%' cellspacing='0'>
 END
@@ -873,6 +883,55 @@ END
 		}
 
 &Header::closebox();
+}
+
+if ($sambasettings{'SECURITY'} eq "ADS") {
+	&Header::openbox('100%', 'center', $Lang::tr{'samba join a domain'});
+
+	my $AD_DOMAINNAME = uc($mainsettings{'DOMAINNAME'});
+
+	print <<END;
+	<form method="POST" action="$ENV{'SCRIPT_NAME'}">
+		<input type="hidden" name="ACTION" value="join">
+
+		<table width="95%">
+			<tbody>
+				<tr>
+					<td width="40%">
+						$Lang::tr{'domain'}
+					</td>
+					<td>
+						$AD_DOMAINNAME
+					</td>
+				</tr>
+				<tr>
+					<td width="40%">
+						$Lang::tr{'administrator username'}
+					</td>
+					<td>
+						<input type="text" name="USERNAME" size="30">
+					</td>
+				</tr>
+				<tr>
+					<td width="40%">
+						$Lang::tr{'administrator password'}
+					</td>
+					<td>
+						<input type="password" name="PASSWORD" size="30">
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<input type="submit" value="$Lang::tr{'samba join domain'}">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+END
+
+	&Header::closebox();
 }
 
 ############################################################################################################################
@@ -1304,3 +1363,13 @@ sub isrunning
 		}
 	return $status;
 	}
+
+sub joindomain {
+	my $username = shift;
+	my $password = shift;
+
+	my @options = ("/usr/local/bin/sambactrl", "join", $username, $password);
+	my $output = qx(@options);
+
+	return $output;
+}

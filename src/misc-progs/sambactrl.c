@@ -129,6 +129,16 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[1], "disable") == 0) {
 		safe_system("unlink /var/ipfire/samba/enable");
 		safe_system("rm -rf /etc/rc.d/rc*.d/*samba");
+
+	} else if (strcmp(argv[1], "join") == 0) {
+		if (argc == 4) {
+			snprintf(command, BUFFER_SIZE - 1, "/usr/bin/net join -U \"%s%%%s\"",
+				argv[2], argv[3]);
+			return safe_system(command);
+		} else {
+			fprintf(stderr, "Wrong number of arguments. Need username and password.\n");
+			return 1;
+		}
 	}
 
 	return 0;

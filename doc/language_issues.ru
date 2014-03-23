@@ -588,6 +588,8 @@ WARNING: untranslated string: MTU settings
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
+WARNING: untranslated string: administrator password
+WARNING: untranslated string: administrator username
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
@@ -844,6 +846,7 @@ WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: mac filter
 WARNING: untranslated string: maximum
+WARNING: untranslated string: messages
 WARNING: untranslated string: minimum
 WARNING: untranslated string: minute
 WARNING: untranslated string: model
@@ -908,6 +911,8 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: samba join a domain
+WARNING: untranslated string: samba join domain
 WARNING: untranslated string: server restart
 WARNING: untranslated string: show dh
 WARNING: untranslated string: snat new source ip address
