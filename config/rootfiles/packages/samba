@@ -222,7 +222,6 @@ var/lib/samba
 var/log/samba
 var/nmbd
 etc/rc.d/init.d/samba
-etc/rc.d/init.d/winbind
 srv/web/ipfire/cgi-bin/samba.cgi
 srv/web/ipfire/cgi-bin/sambahlp.cgi
 var/ipfire/menu.d/EX-samba.menu
