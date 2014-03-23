@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 57
+PAK_VER    = 58
 
-DEPS       = "cups"
+DEPS       = "cups krb5"
 
 ###############################################################################
 # Top-level Rules
@@ -78,16 +78,24 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP)/source3 && ./configure \
-				--prefix=/usr \
-				--libdir=/usr/lib/ \
-				--sysconfdir=/var/ipfire \
-				--localstatedir=/var \
-				--with-piddir=/var/run \
-				--with-fhs \
-				--with-winbind \
-				--disable-swat \
-				--enable-cups \
-				--with-syslog
+		--prefix=/usr \
+		--libdir=/usr/lib/ \
+		--sysconfdir=/var/ipfire \
+		--localstatedir=/var \
+		--with-piddir=/var/run \
+		--with-ads \
+		--with-acl-support \
+		--with-libsmbclient \
+		--with-libsmbsharemodes \
+		--with-sendfile-support \
+		--without-smbwrapper \
+		--with-mmap \
+		--with-fhs \
+		--with-vfs \
+		--with-winbind \
+		--disable-swat \
+		--enable-cups \
+		--with-syslog
 	cd $(DIR_APP)/source3 && make proto && make all $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/source3 && make install
 	cd $(DIR_APP)/source3 && chmod -v 644 /usr/include/libsmbclient.h
