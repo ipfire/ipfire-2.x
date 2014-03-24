@@ -110,7 +110,6 @@
 'advproxy AUTH method ldap' => 'LDAP',
 'advproxy AUTH method ncsa' => 'Yerel',
 'advproxy AUTH method none' => 'Yok',
-'advproxy AUTH method ntlm' => 'Windows',
 'advproxy AUTH method radius' => 'RADIUS',
 'advproxy AUTH no auth' => 'Kimlik doğrulaması olmayan hedefler (her satırda bir tane)',
 'advproxy AUTH number of auth processes' => 'Kimlik doğrulama işlemlerinin sayısı',

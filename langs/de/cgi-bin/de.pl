@@ -114,7 +114,7 @@
 'advproxy AUTH method ldap' => 'LDAP',
 'advproxy AUTH method ncsa' => 'Lokal',
 'advproxy AUTH method none' => 'Keine',
-'advproxy AUTH method ntlm' => 'Windows',
+'advproxy AUTH method ntlm' => 'Windows NT4-Domäne',
 'advproxy AUTH method ntlm auth' => 'Windows Active Directory',
 'advproxy AUTH method radius' => 'RADIUS',
 'advproxy AUTH no auth' => 'Domains ohne Authentifizierung (eine pro Zeile)',

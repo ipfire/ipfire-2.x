@@ -587,6 +587,7 @@ WARNING: untranslated string: Set time on boot
 WARNING: untranslated string: addons
 WARNING: untranslated string: administrator password
 WARNING: untranslated string: administrator username
+WARNING: untranslated string: advproxy AUTH method ntlm
 WARNING: untranslated string: advproxy AUTH method ntlm auth
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache

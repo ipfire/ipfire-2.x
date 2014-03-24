@@ -17,6 +17,7 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
@@ -544,6 +545,7 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
@@ -1064,6 +1066,7 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
@@ -1560,6 +1563,7 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
