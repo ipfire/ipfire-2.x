@@ -17,6 +17,7 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
@@ -543,6 +544,7 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
@@ -1062,6 +1064,7 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
@@ -1557,6 +1560,7 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy

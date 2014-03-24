@@ -115,6 +115,7 @@
 'advproxy AUTH method ncsa' => 'Local',
 'advproxy AUTH method none' => 'None',
 'advproxy AUTH method ntlm' => 'Windows',
+'advproxy AUTH method ntlm auth' => 'Windows Active Directory',
 'advproxy AUTH method radius' => 'RADIUS',
 'advproxy AUTH no auth' => 'Domains without authentication (one per line)',
 'advproxy AUTH number of auth processes' => 'Number of authentication processes',

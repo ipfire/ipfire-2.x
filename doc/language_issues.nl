@@ -654,6 +654,7 @@ WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: administrator password
 WARNING: untranslated string: administrator username
+WARNING: untranslated string: advproxy AUTH method ntlm auth
 WARNING: untranslated string: atm device
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities

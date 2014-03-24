@@ -219,6 +219,7 @@ var/ipfire/samba/shares
 var/ipfire/samba/smb.conf
 var/ipfire/samba/smb.conf.default
 var/lib/samba
+var/lib/samba/winbindd_privileged
 var/log/samba
 var/nmbd
 etc/rc.d/init.d/samba
