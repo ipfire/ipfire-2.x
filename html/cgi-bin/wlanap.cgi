@@ -265,7 +265,7 @@ if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
 my $wiphy = `iw dev $wlanapsettings{'INTERFACE'} info | grep wiphy | cut -d" " -f2`;
 chomp $wiphy;
 
-@channellist_cmd = `iw phy phy$wiphy info | grep " MHz \\\[" | grep -v "(disabled)" | grep -v "no IBSS)" 2>/dev/null`;
+@channellist_cmd = `iw phy phy$wiphy info | grep " MHz \\\[" | grep -v "(disabled)" | grep -v "no IBSS" | grep -v "passive scanning"" 2>/dev/null`;
 # get available channels
 
 my @temp;
