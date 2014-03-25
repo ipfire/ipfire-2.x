@@ -75,7 +75,10 @@ case "${1}" in
 			fi
 		fi
 
-		# First reset to World (00) and then set new country
+		# First set to any country then reset to World (00)
+		# and then set new country because the card is only
+		# reprogrammed if the region was changed.
+		/usr/sbin/iw reg set DE
 		/usr/sbin/iw reg set 00
 		/usr/sbin/iw reg set $COUNTRY
 
