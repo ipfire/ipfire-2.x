@@ -584,8 +584,10 @@ sub checktarget
 				}
 			}
 		}else{
-			$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
-			return $errormessage;
+			if ($fwdfwsettings{'grp2'} ne 'ipfire'){
+				$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
+				return $errormessage;
+			}
 		}
 	}
 	if ($fwdfwsettings{'tgt_addr'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{'tgt_addr'} ne ''){
@@ -988,6 +990,12 @@ sub deleterule
 	if($fwdfwsettings{'nobase'} ne 'on'){
 		&base;
 	}
+}
+sub del_double
+{
+	my %all=();
+	@all{@_}=1;
+	return (keys %all);
 }
 sub disable_rule
 {
@@ -2551,9 +2559,21 @@ END
 					<td align='center' $tdcolor>
 END
 			#Is this a DNAT rule?
+			my $natstring;
 			if ($$hash{$key}[31] eq 'dnat' && $$hash{$key}[28] eq 'ON'){
 				if ($$hash{$key}[29] eq 'Default IP'){$$hash{$key}[29]=$Lang::tr{'red1'};}
-				print "Firewall ($$hash{$key}[29])";
+				if ($$hash{$key}[29] eq 'AUTO'){
+					my @src_addresses=&fwlib::get_addresses(\%$hash,$key,'src');
+					my @nat_ifaces;
+					foreach my $val (@src_addresses){
+						push (@nat_ifaces,&fwlib::get_nat_address($$hash{$key}[29],$val));
+					}
+					@nat_ifaces=&del_double(@nat_ifaces);
+					$natstring = join(', ', @nat_ifaces);
+				}else{
+					$natstring = $$hash{$key}[29];
+				}
+				print "$Lang::tr{'firewall'} ($natstring)";
 				if($$hash{$key}[30] ne ''){
 					$$hash{$key}[30]=~ tr/|/,/;
 					print": $$hash{$key}[30]";

@@ -170,10 +170,13 @@ sub buildrules {
 		}
 
 		# Collect all sources.
-		my @sources = &get_addresses($hash, $key, "src");
+		my @sources = &fwlib::get_addresses($hash, $key, "src");
 
 		# Collect all destinations.
-		my @destinations = &get_addresses($hash, $key, "tgt");
+		my @destinations = &fwlib::get_addresses($hash, $key, "tgt");
+
+		# True if the destination is the firewall itself.
+		my $destination_is_firewall = ($$hash{$key}[5] eq "ipfire");
 
 		# Check if logging should be enabled.
 		my $LOG = ($$hash{$key}[17] eq 'ON');
@@ -246,7 +249,7 @@ sub buildrules {
 			}
 
 			# Prepare protocol options (like ICMP types, ports, etc...).
-			my @protocol_options = &get_protocol_options($hash, $key, $protocol);
+			my @protocol_options = &get_protocol_options($hash, $key, $protocol, 0);
 
 			# Check if this protocol knows ports.
 			my $protocol_has_ports = ($protocol ~~ @PROTOCOLS_WITH_PORTS);
@@ -271,7 +274,6 @@ sub buildrules {
 
 					# Append protocol.
 					if ($protocol ne "all") {
-						push(@options, ("-p", $protocol));
 						push(@options, @protocol_options);
 					}
 
@@ -299,7 +301,7 @@ sub buildrules {
 
 					# Process NAT rules.
 					if ($NAT) {
-						my $nat_address = &get_nat_address($$hash{$key}[29], $source);
+						my $nat_address = &fwlib::get_nat_address($$hash{$key}[29], $source);
 
 						# Skip NAT rules if the NAT address is unknown
 						# (i.e. no internet connection has been established, yet).
@@ -308,30 +310,57 @@ sub buildrules {
 						# Destination NAT
 						if ($NAT_MODE eq "DNAT") {
 							# Make port-forwardings useable from the internal networks.
-							my @internal_addresses = &get_internal_firewall_ip_addresses(1);
+							my @internal_addresses = &fwlib::get_internal_firewall_ip_addresses(1);
 							unless ($nat_address ~~ @internal_addresses) {
 								&add_dnat_mangle_rules($nat_address, @options);
 							}
 
-							my @nat_options = @options;
+							my @nat_options = ();
+							if ($protocol ne "all") {
+								my @nat_protocol_options = &get_protocol_options($hash, $key, $protocol, 1);
+								push(@nat_options, @nat_protocol_options);
+							}
 							push(@nat_options, @source_options);
 							push(@nat_options, ("-d", $nat_address));
+							push(@nat_options, @time_options);
 
-							my ($dnat_address, $dnat_mask) = split("/", $destination);
-							@destination_options = ("-d", $dnat_address);
-
+							my $dnat_port;
 							if ($protocol_has_ports) {
-								my $dnat_port = &get_dnat_target_port($hash, $key);
+								$dnat_port = &get_dnat_target_port($hash, $key);
+							}
 
-								if ($dnat_port) {
-									$dnat_address .= ":$dnat_port";
+							my @nat_action_options = ();
+
+							# Use iptables REDIRECT
+							my $use_redirect = ($destination_is_firewall && !$destination && $protocol_has_ports && $dnat_port);
+							if ($use_redirect) {
+								push(@nat_action_options, ("-j", "REDIRECT", "--to-ports", $dnat_port));
+
+							# Use iptables DNAT
+							} else {
+								if ($destination_is_firewall && !$destination) {
+									$destination = &fwlib::get_external_address();
 								}
+								next unless ($destination);
+
+								my ($dnat_address, $dnat_mask) = split("/", $destination);
+								@destination_options = ("-d", $dnat_address);
+
+								if ($protocol_has_ports) {
+									my $dnat_port = &get_dnat_target_port($hash, $key);
+
+									if ($dnat_port) {
+										$dnat_address .= ":$dnat_port";
+									}
+								}
+
+								push(@nat_action_options, ("-j", "DNAT", "--to-destination", $dnat_address));
 							}
 
 							if ($LOG) {
 								run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options @log_limit_options -j LOG --log-prefix 'DNAT '");
 							}
-							run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options -j DNAT --to-destination $dnat_address");
+							run("$IPTABLES -t nat -A $CHAIN_NAT_DESTINATION @nat_options @nat_action_options");
 
 						# Source NAT
 						} elsif ($NAT_MODE eq "SNAT") {
@@ -367,65 +396,6 @@ sub buildrules {
 			}
 		}
 	}
-}
-
-sub get_external_interface() {
-	open(IFACE, "/var/ipfire/red/iface") or return "";
-	my $iface = <IFACE>;
-	close(IFACE);
-
-	return $iface;
-}
-
-sub get_external_address() {
-	open(ADDR, "/var/ipfire/red/local-ipaddress") or return "";
-	my $address = <ADDR>;
-	close(ADDR);
-
-	return $address;
-}
-
-sub get_alias {
-	my $id = shift;
-
-	foreach my $alias (sort keys %aliases) {
-		if ($id eq $alias) {
-			return $aliases{$alias};
-		}
-	}
-}
-
-sub get_nat_address {
-	my $zone = shift;
-	my $source = shift;
-
-	# Any static address of any zone.
-	if ($zone eq "AUTO") {
-		if ($source) {
-			my $firewall_ip = &get_internal_firewall_ip_address($source, 1);
-			if ($firewall_ip) {
-				return $firewall_ip;
-			}
-
-			$firewall_ip = &get_matching_firewall_address($source, 1);
-			if ($firewall_ip) {
-				return $firewall_ip;
-			}
-		}
-
-		return &get_external_address();
-
-	} elsif ($zone eq "RED" || $zone eq "GREEN" || $zone eq "ORANGE" || $zone eq "BLUE") {
-		return $defaultNetworks{$zone . "_ADDRESS"};
-
-	} elsif ($zone eq "Default IP") {
-		return &get_external_address();
-
-	} else {
-		return &get_alias($zone);
-	}
-
-	print_error("Could not find NAT address");
 }
 
 # Formats the given timestamp into the iptables format which is "hh:mm" UTC.
@@ -493,155 +463,6 @@ sub p2pblock {
 	}
 }
 
-sub get_addresses {
-	my $hash = shift;
-	my $key  = shift;
-	my $type = shift;
-
-	my @addresses = ();
-	my $addr_type;
-	my $value;
-	my $group_name;
-
-	if ($type eq "src") {
-		$addr_type = $$hash{$key}[3];
-		$value = $$hash{$key}[4];
-
-	} elsif ($type eq "tgt") {
-		$addr_type = $$hash{$key}[5];
-		$value = $$hash{$key}[6];
-	}
-
-	if ($addr_type ~~ ["cust_grp_src", "cust_grp_tgt"]) {
-		foreach my $grp (sort {$a <=> $b} keys %customgrp) {
-			if ($customgrp{$grp}[0] eq $value) {
-				my @address = &get_address($customgrp{$grp}[3], $customgrp{$grp}[2], $type);
-
-				if (@address) {
-					push(@addresses, @address);
-				}
-			}
-		}
-	} else {
-		my @address = &get_address($addr_type, $value, $type);
-
-		if (@address) {
-			push(@addresses, @address);
-		}
-	}
-
-	return @addresses;
-}
-
-sub get_address {
-	my $key   = shift;
-	my $value = shift;
-	my $type  = shift;
-
-	my @ret = ();
-
-	# If the user manually typed an address, we just check if it is a MAC
-	# address. Otherwise, we assume that it is an IP address.
-	if ($key ~~ ["src_addr", "tgt_addr"]) {
-		if (&General::validmac($value)) {
-			push(@ret, "-m mac --mac-source $value");
-		} else {
-			push(@ret, $value);
-		}
-
-	# If a default network interface (GREEN, BLUE, etc.) is selected, we
-	# try to get the corresponding address of the network.
-	} elsif ($key ~~ ["std_net_src", "std_net_tgt", "Standard Network"]) {
-		my $external_interface = &get_external_interface();
-
-		my $network_address = &fwlib::get_std_net_ip($value, $external_interface);
-		if ($network_address) {
-			push(@ret, $network_address);
-		}
-
-	# Custom networks.
-	} elsif ($key ~~ ["cust_net_src", "cust_net_tgt", "Custom Network"]) {
-		my $network_address = &fwlib::get_net_ip($value);
-		if ($network_address) {
-			push(@ret, $network_address);
-		}
-
-	# Custom hosts.
-	} elsif ($key ~~ ["cust_host_src", "cust_host_tgt", "Custom Host"]) {
-		my $host_address = &fwlib::get_host_ip($value, $type);
-		if ($host_address) {
-			push(@ret, $host_address);
-		}
-
-	# OpenVPN networks.
-	} elsif ($key ~~ ["ovpn_net_src", "ovpn_net_tgt", "OpenVPN static network"]) {
-		my $network_address = &fwlib::get_ovpn_net_ip($value, 1);
-		if ($network_address) {
-			push(@ret, $network_address);
-		}
-
-	# OpenVPN hosts.
-	} elsif ($key ~~ ["ovpn_host_src", "ovpn_host_tgt", "OpenVPN static host"]) {
-		my $host_address = &fwlib::get_ovpn_host_ip($value, 33);
-		if ($host_address) {
-			push(@ret, $host_address);
-		}
-
-	# OpenVPN N2N.
-	} elsif ($key ~~ ["ovpn_n2n_src", "ovpn_n2n_tgt", "OpenVPN N-2-N"]) {
-		my $network_address = &fwlib::get_ovpn_n2n_ip($value, 11);
-		if ($network_address) {
-			push(@ret, $network_address);
-		}
-
-	# IPsec networks.
-	} elsif ($key ~~ ["ipsec_net_src", "ipsec_net_tgt", "IpSec Network"]) {
-		my $network_address = &fwlib::get_ipsec_net_ip($value, 11);
-		if ($network_address) {
-			push(@ret, $network_address);
-		}
-
-	# The firewall's own IP addresses.
-	} elsif ($key ~~ ["ipfire", "ipfire_src"]) {
-		# ALL
-		if ($value eq "ALL") {
-			push(@ret, "0/0");
-
-		# GREEN
-		} elsif ($value eq "GREEN") {
-			push(@ret, $defaultNetworks{"GREEN_ADDRESS"});
-
-		# BLUE
-		} elsif ($value eq "BLUE") {
-			push(@ret, $defaultNetworks{"BLUE_ADDRESS"});
-
-		# ORANGE
-		} elsif ($value eq "ORANGE") {
-			push(@ret, $defaultNetworks{"ORANGE_ADDRESS"});
-
-		# RED
-		} elsif ($value ~~ ["RED", "RED1"]) {
-			my $address = &get_external_address();
-			if ($address) {
-				push(@ret, $address);
-			}
-
-		# Aliases
-		} else {
-			my %alias = &get_alias($value);
-			if (%alias) {
-				push(@ret, $alias{"IPT"});
-			}
-		}
-
-	# If nothing was selected, we assume "any".
-	} else {
-		push(@ret, "0/0");
-	}
-
-	return @ret;
-}
-
 sub get_protocols {
 	my $hash = shift;
 	my $key = shift;
@@ -701,7 +522,15 @@ sub get_protocol_options {
 	my $hash = shift;
 	my $key  = shift;
 	my $protocol = shift;
+	my $nat_options_wanted = shift;
 	my @options = ();
+
+	# Nothing to do if no protocol is specified.
+	if ($protocol eq "all") {
+		return @options;
+	} else {
+		push(@options, ("-p", $protocol));
+	}
 
 	# Process source ports.
 	my $use_src_ports = ($$hash{$key}[7] eq "ON");
@@ -720,7 +549,7 @@ sub get_protocol_options {
 		my $dst_ports      = $$hash{$key}[15];
 
 		if (($dst_ports_mode eq "TGT_PORT") && $dst_ports) {
-			if ($use_dnat && $$hash{$key}[30]) {
+			if ($nat_options_wanted && $use_dnat && $$hash{$key}[30]) {
 				$dst_ports = $$hash{$key}[30];
 			}
 			push(@options, &format_ports($dst_ports, "dst"));
@@ -828,50 +657,12 @@ sub make_log_limit_options {
 	return @options;
 }
 
-sub get_internal_firewall_ip_addresses {
-	my $use_orange = shift;
-
-	my @zones = ("GREEN", "BLUE");
-	if ($use_orange) {
-		push(@zones, "ORANGE");
-	}
-
-	my @addresses = ();
-	for my $zone (@zones) {
-		next unless (exists $defaultNetworks{$zone . "_ADDRESS"});
-
-		my $zone_address = $defaultNetworks{$zone . "_ADDRESS"};
-		push(@addresses, $zone_address);
-	}
-
-	return @addresses;
-}
-
-sub get_internal_firewall_ip_address {
-	my $subnet = shift;
-	my $use_orange = shift;
-
-	my ($net_address, $net_mask) = split("/", $subnet);
-	if ((!$net_mask) || ($net_mask ~~ ["32", "255.255.255.255"])) {
-		return 0;
-	}
-
-	my @addresses = &get_internal_firewall_ip_addresses($use_orange);
-	foreach my $zone_address (@addresses) {
-		if (&General::IpInSubnet($zone_address, $net_address, $net_mask)) {
-			return $zone_address;
-		}
-	}
-
-	return 0;
-}
-
 sub firewall_is_in_subnet {
 	my $subnet = shift;
 
 	# ORANGE is missing here, because nothing may ever access
 	# the firewall from this network.
-	my $address = &get_internal_firewall_ip_address($subnet, 0);
+	my $address = &fwlib::get_internal_firewall_ip_address($subnet, 0);
 
 	if ($address) {
 		return 1;
@@ -880,27 +671,3 @@ sub firewall_is_in_subnet {
 	return 0;
 }
 
-sub get_matching_firewall_address {
-	my $addr = shift;
-	my $use_orange = shift;
-
-	my ($address, $netmask) = split("/", $addr);
-
-	my @zones = ("GREEN", "BLUE");
-	if ($use_orange) {
-		push(@zones, "ORANGE");
-	}
-
-	foreach my $zone (@zones) {
-		next unless (exists $defaultNetworks{$zone . "_ADDRESS"});
-
-		my $zone_subnet = $defaultNetworks{$zone . "_NETADDRESS"};
-		my $zone_mask   = $defaultNetworks{$zone . "_NETMASK"};
-
-		if (&General::IpInSubnet($address, $zone_subnet, $zone_mask)) {
-			return $defaultNetworks{$zone . "_ADDRESS"};
-		}
-	}
-
-	return 0;
-}
