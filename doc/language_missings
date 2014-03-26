@@ -301,6 +301,8 @@
 < lifetime
 < mac filter
 < maximum
+< MB read
+< MB written
 < minimum
 < minute
 < most preferred
@@ -760,6 +762,8 @@
 < lifetime
 < mac filter
 < maximum
+< MB read
+< MB written
 < minimum
 < minute
 < most preferred
@@ -1203,6 +1207,8 @@
 < lifetime
 < mac filter
 < maximum
+< MB read
+< MB written
 < minimum
 < minute
 < most preferred
@@ -1637,6 +1643,8 @@
 < lifetime
 < mac filter
 < maximum
+< MB read
+< MB written
 < minimum
 < minute
 < month-graph

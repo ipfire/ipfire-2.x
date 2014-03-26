@@ -33,6 +33,8 @@
 'Level7 Rule' => 'Level7-Regel',
 'Level7 rule' => 'Level7-Regel',
 'Local VPN IP' => 'Internes Netzwerk (GREEN)',
+'MB read' => 'MB gelesen',
+'MB written' => 'MB geschrieben',
 'MTU' => 'MTU Size',
 'Number of IPs for the pie chart' => 'Anzahl der angezeigten IPs im Diagramm',
 'Number of Ports for the pie chart' => 'Anzahl der angezeigten Ports im Diagramm',
