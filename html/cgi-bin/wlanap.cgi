@@ -512,7 +512,7 @@ if ( $wlanapsettings{'DRIVER'} eq 'MADWIFI' ){
 	 @status =  `wlanconfig $wlanapsettings{'INTERFACE'} list`;
 }
 if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
-	 @status =  `iw dev $wlanapsettings{'INTERFACE'} info && iw dev $wlanapsettings{'INTERFACE'} station dump`;
+	 @status =  `iw dev $wlanapsettings{'INTERFACE'} info && iw dev $wlanapsettings{'INTERFACE'} station dump && echo ""`;
 }
 print <<END
 <br />
