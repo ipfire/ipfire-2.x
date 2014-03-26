@@ -572,6 +572,7 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Add a route
 WARNING: untranslated string: Edit an existing route
+WARNING: untranslated string: MB read
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
 WARNING: untranslated string: advproxy cache-digest
