@@ -107,6 +107,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/firewall/firewall-policy	/usr/sbin/firewall-policy
 	cp $(DIR_SRC)/config/fwhosts/icmp-types			$(CONFIG_ROOT)/fwhosts/icmp-types
 	cp $(DIR_SRC)/config/fwhosts/customservices		$(CONFIG_ROOT)/fwhosts/customservices
+	cp $(DIR_SRC)/config/fwhosts/customservices             $(CONFIG_ROOT)/fwhosts/customservices.default
 	# Oneliner configfiles
 	echo  "ENABLED=off"		> $(CONFIG_ROOT)/vpn/settings
 	echo  "VPN_DELAYED_START=0"	>>$(CONFIG_ROOT)/vpn/settings

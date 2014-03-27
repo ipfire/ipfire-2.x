@@ -63,6 +63,7 @@ var/ipfire/fwhosts
 #var/ipfire/fwhosts/customnetworks
 #var/ipfire/fwhosts/customservicegrp
 #var/ipfire/fwhosts/customservices
+#var/ipfire/fwhosts/customservices.default
 #var/ipfire/fwhosts/icmp-types
 var/ipfire/fwlogs
 #var/ipfire/fwlogs/ipsettings

@@ -291,6 +291,10 @@ touch /var/ipfire/fwhosts/customgroups
 touch /var/ipfire/fwhosts/customservices
 touch /var/ipfire/fwhosts/customservicegrp
 
+if [ ! -s "/var/ipfire/fwhosts/customservices" ];then
+	cp /var/ipfire/fwhosts/customservices.default /var/ipfire/fwhosts/customservices
+fi
+
 # Fix ownership.
 chown -R nobody:nobody /var/ipfire/firewall
 chown -R nobody:nobody /var/ipfire/fwhosts

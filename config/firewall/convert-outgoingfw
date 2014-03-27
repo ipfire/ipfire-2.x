@@ -78,6 +78,11 @@ else
 
 if (! -s "$outfwsettings") {
         print "Empty DMZ configuration file. Nothing to do. Exiting...\n";
+        #Fill the firewall settings file
+	open (SETTINGS, ">/var/ipfire/firewall/settings");
+	print SETTINGS "POLICY=MODE2\n";
+	print SETTINGS "POLICY1=MODE2\n";
+	close (SETTINGS);
         exit(0);
 }
 

@@ -11,3 +11,4 @@ usr/sbin/firewall-policy
 var/ipfire/firewall/p2protocols
 var/ipfire/fwhosts/icmp-types
 var/ipfire/menu.d/50-firewall.menu
+var/ipfire/fwhosts/customservices.default
