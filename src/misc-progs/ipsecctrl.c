@@ -44,6 +44,14 @@ void usage() {
         fprintf (stderr, "\t\tI : Print Statusinfo\n");
 }
 
+static void ipsec_reload() {
+	/* Re-read all configuration files and secrets and
+	 * reload the daemon (#10339).
+	 */
+	safe_system("/usr/sbin/ipsec rereadall >/dev/null 2>&1");
+	safe_system("/usr/sbin/ipsec reload >/dev/null 2>&1");
+}
+
 /*
         ACCEPT the ipsec protocol ah, esp & udp (for nat traversal) on the specified interface
 */
@@ -172,14 +180,6 @@ void turn_connection_off (char *name) {
 
 	// Reload, so the connection is dropped.
 	ipsec_reload();
-}
-
-void ipsec_reload() {
-	/* Re-read all configuration files and secrets and
-	 * reload the daemon (#10339).
-	 */
-	safe_system("/usr/sbin/ipsec rereadall >/dev/null 2>&1");
-	safe_system("/usr/sbin/ipsec reload >/dev/null 2>&1");
 }
 
 int main(int argc, char *argv[]) {
