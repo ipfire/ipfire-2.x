@@ -279,6 +279,7 @@ rm -f /srv/web/ipfire/cgi-bin/{dmzholes,outgoingfw,portfw,xtaccess}.cgi
 /sbin/iptables -N POLICYOUT 2>/dev/null
 /sbin/iptables -t nat -N NAT_SOURCE 2>/dev/null
 /sbin/iptables -t nat -N NAT_DESTINATION 2>/dev/null
+/sbin/iptables -t mangle -N NAT_DESTINATION 2>/dev/null
 
 # Create config files for firewall and fix permissions.
 touch /var/ipfire/firewall/config
