@@ -1,0 +1,5 @@
+    $subipfire->{'92.tvheadend'} = {'caption' => 'tvheadend',
+				  'uri' => '/cgi-bin/tvheadend.cgi',
+				  'title' => 'tvheadend',
+				  'enabled' => 1,
+				  };

@@ -1,0 +1,35 @@
+#!/bin/sh
+# Begin $rc_base/init.d/tvheadend
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
+# ALSA specific parts by Mark Hymers - markh@linuxfromscratch.org
+# Stores mixer settings in the default location: /etc/asound.state
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+        start)
+                boot_mesg "Starting tvheadend..." 
+				/usr/bin/tvheadend -u root -g root -f -c /etc/tvheadend    
+                ;;
+        stop)
+                boot_mesg "Stopping tvheadend..."
+                kill -9 $(cat /var/run/tvheadend.pid)
+                ;;
+        restart)
+                $0 stop
+                sleep 3
+                $0 start
+                ;;
+		status)
+                statusproc /usr/bin/tvheadend
+                ;;
+        *)
+                echo "Usage: $0 (start|stop|restart)"
+                exit 1
+                ;;
+esac
+
+# End $rc_base/init.d/tvheadend
