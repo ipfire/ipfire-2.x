@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.3.11
+VER        = 3.4.4
 
 THISAPP    = squid-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = dd016ff5f14b2548083b3882207914f6
+$(DL_FILE)_MD5 = dc2bcb967fc6b15bbbc6b961010c0c00
 
 install : $(TARGET)
 
@@ -53,6 +53,7 @@ md5 : $(subst %,%_MD5,$(objects))
 ###############################################################################
 # Downloading, checking, md5sum
 ###############################################################################
+
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 	@$(CHECK)
 
@@ -116,7 +117,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-kill-parent-hack \
 		--disable-wccpv2 \
 		--enable-icap-client \
-		--disable-esi
+		--disable-esi \
+		--enable-zph-qos
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

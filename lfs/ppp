@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4.5
+VER        = 2.4.6
 
 THISAPP    = ppp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4621bc56167b6953ec4071043fe0ec57
+$(DL_FILE)_MD5 = 3434d2cc9327167a0723aaaa8670083b
 
 install : $(TARGET)
 
@@ -73,13 +73,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && rm -f include/pcap-int.h include/linux/if_pppol2tp.h
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-pppoatm.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-pppoatm-persist.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.1-oedod.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-pppoatm-modprobe.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-signal.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-printstats.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ppp-2.4.2-close.patch
 	cd $(DIR_APP) && sed -i -e "s+/etc/ppp/connect-errors+/var/log/connect-errors+" pppd/pathnames.h
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING) CC="gcc $(CFLAGS)"

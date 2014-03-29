@@ -34,7 +34,7 @@ usr/lib/squid/basic_smb_auth
 usr/lib/squid/basic_smb_auth.sh
 #usr/lib/squid/cachemgr.cgi
 usr/lib/squid/cert_tool
-usr/lib/squid/digest_edirectory_auth
+usr/lib/squid/cert_valid.pl
 usr/lib/squid/digest_file_auth
 usr/lib/squid/digest_ldap_auth
 usr/lib/squid/diskd
@@ -1374,6 +1374,7 @@ usr/lib/squid/errors/pl/error-details.txt
 #usr/lib/squid/errors/pt-br/ERR_WRITE_ERROR
 #usr/lib/squid/errors/pt-br/ERR_ZERO_SIZE_OBJECT
 #usr/lib/squid/errors/pt-br/error-details.txt
+#usr/lib/squid/errors/pt-bz
 #usr/lib/squid/errors/pt-pt
 #usr/lib/squid/errors/pt/ERR_ACCESS_DENIED
 #usr/lib/squid/errors/pt/ERR_ACL_TIME_QUOTA_EXCEEDED
@@ -2148,6 +2149,7 @@ usr/lib/squid/mib.txt
 usr/lib/squid/negotiate_wrapper_auth
 usr/lib/squid/ntlm_fake_auth
 usr/lib/squid/ntlm_smb_lm_auth
+usr/lib/squid/storeid_file_rewrite
 usr/lib/squid/unlinkd
 usr/lib/squid/url_fake_rewrite
 usr/lib/squid/url_fake_rewrite.sh
@@ -2173,6 +2175,7 @@ usr/sbin/updxlrator
 #usr/share/man/man8/ext_wbinfo_group_acl.8
 #usr/share/man/man8/log_db_daemon.8
 #usr/share/man/man8/squid.8
+#usr/share/man/man8/storeid_file_rewrite.8
 #var/cache/squid
 var/ipfire/proxy/errorpage-ipfire.css
 var/ipfire/proxy/errorpage-squid.css
@@ -2190,4 +2193,3 @@ var/log/cache
 var/log/squid/access.log
 var/log/updatexlrator
 #var/logs
-#var/run/squid

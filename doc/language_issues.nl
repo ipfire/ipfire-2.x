@@ -385,7 +385,6 @@ WARNING: translation string unused: outgoing firewall reset
 WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
-WARNING: translation string unused: ovpn
 WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
@@ -436,16 +435,12 @@ WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: requested data
-WARNING: translation string unused: reserved dst port
-WARNING: translation string unused: reserved src port
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
 WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: router ip
-WARNING: translation string unused: rsvd dst port overlap
-WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
@@ -572,6 +567,7 @@ WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn aggrmode
+WARNING: translation string unused: vpn configuration main
 WARNING: translation string unused: vpn incompatible use of defaultroute
 WARNING: translation string unused: vpn mtu invalid
 WARNING: translation string unused: vpn on blue
@@ -604,6 +600,9 @@ WARNING: untranslated string: country codes and flags
 WARNING: untranslated string: countrycode
 WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: details
+WARNING: untranslated string: dh
+WARNING: untranslated string: dh key warn
+WARNING: untranslated string: dh name is invalid
 WARNING: untranslated string: dnat address
 WARNING: untranslated string: dns servers
 WARNING: untranslated string: dnsforward
@@ -770,6 +769,8 @@ WARNING: untranslated string: fwhost stdnet
 WARNING: untranslated string: fwhost type
 WARNING: untranslated string: fwhost used
 WARNING: untranslated string: fwhost welcome
+WARNING: untranslated string: gen dh
+WARNING: untranslated string: generate dh key
 WARNING: untranslated string: grouptype
 WARNING: untranslated string: hardware support
 WARNING: untranslated string: integrity
@@ -785,8 +786,15 @@ WARNING: untranslated string: maximum
 WARNING: untranslated string: minimum
 WARNING: untranslated string: most preferred
 WARNING: untranslated string: no hardware random number generator
+WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: notice
 WARNING: untranslated string: openvpn network
+WARNING: untranslated string: ovpn crypt options
+WARNING: untranslated string: ovpn dh
+WARNING: untranslated string: ovpn dh name
+WARNING: untranslated string: ovpn generating the root and host certificates
+WARNING: untranslated string: ovpn ha
+WARNING: untranslated string: ovpn hmac
 WARNING: untranslated string: ovpn mgmt in root range
 WARNING: untranslated string: ovpn no connections
 WARNING: untranslated string: ovpn port in root range
@@ -798,6 +806,7 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: show dh
 WARNING: untranslated string: snat new source ip address
 WARNING: untranslated string: ssh
 WARNING: untranslated string: support donation
@@ -852,6 +861,7 @@ WARNING: untranslated string: tor traffic limit soft
 WARNING: untranslated string: tor traffic read written
 WARNING: untranslated string: tor use exit nodes
 WARNING: untranslated string: uplink
+WARNING: untranslated string: upload dh key
 WARNING: untranslated string: uptime load average
 WARNING: untranslated string: urlfilter redirect template
 WARNING: untranslated string: wlan client
