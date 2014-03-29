@@ -112,10 +112,28 @@ case "${POLICY}" in
 	*)
 		if [ -n "${IFACE}" ]; then
 			if [ "${HAVE_BLUE}" = "true" ] && [ -n "${BLUE_DEV}" ]; then
+				if [ "${DROPFORWARD}" = "on" ]; then
+					iptables -A POLICYFWD -i "${BLUE_DEV}" ! -o "${IFACE}" -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
+				fi
 				iptables -A POLICYFWD -i "${BLUE_DEV}" ! -o "${IFACE}" -j DROP
 			fi
 			if [ "${HAVE_ORANGE}" = "true" ] && [ -n "${ORANGE_DEV}" ]; then
+				if [ "${DROPFORWARD}" = "on" ]; then
+					iptables -A POLICYFWD -i "${ORANGE_DEV}" ! -o "${IFACE}" -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
+				fi
 				iptables -A POLICYFWD -i "${ORANGE_DEV}" ! -o "${IFACE}" -j DROP
+			fi
+
+			if [ "${DROPFORWARD}" = "on" ]; then
+				iptables -A POLICYFWD -i "${IFACE}" -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
+			fi
+			iptables -A POLICYFWD -i "${IFACE}" -j DROP
+
+			if [ "${IFACE}" != "${RED_DEV}" ]; then
+				if [ "${DROPFORWARD}" = "on" ]; then
+					iptables -A POLICYFWD -i "${RED_DEV}" -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
+				fi
+				iptables -A POLICYFWD -i "${RED_DEV}" -j DROP
 			fi
 		fi
 		iptables -A POLICYFWD -j ACCEPT
