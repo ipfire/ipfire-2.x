@@ -110,33 +110,28 @@ case "${POLICY}" in
 		;;
 
 	*)
+		# Access from GREEN is granted to everywhere
+		iptables -A POLICYFWD -i "${GREEN_DEV}" -s "${GREEN_NETADDRESS}/${GREEN_NETMASK}" -j ACCEPT
+
+		# Grant access for IPsec VPN connections
+		iptables -A POLICYFWD -m policy --pol ipsec --dir in -j ACCEPT
+
+		# Grant access for OpenVPN connections
+		iptables -A POLICYFWD -i tun+ -j ACCEPT
+
 		if [ -n "${IFACE}" ]; then
 			if [ "${HAVE_BLUE}" = "true" ] && [ -n "${BLUE_DEV}" ]; then
-				if [ "${DROPFORWARD}" = "on" ]; then
-					iptables -A POLICYFWD -i "${BLUE_DEV}" ! -o "${IFACE}" -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
-				fi
-				iptables -A POLICYFWD -i "${BLUE_DEV}" ! -o "${IFACE}" -j DROP
+				iptables -A POLICYFWD -i "${BLUE_DEV}" -s "${BLUE_NETADDRESS}/${BLUE_NETMASK}" -o "${IFACE}" -j ACCEPT
 			fi
+
 			if [ "${HAVE_ORANGE}" = "true" ] && [ -n "${ORANGE_DEV}" ]; then
-				if [ "${DROPFORWARD}" = "on" ]; then
-					iptables -A POLICYFWD -i "${ORANGE_DEV}" ! -o "${IFACE}" -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
-				fi
-				iptables -A POLICYFWD -i "${ORANGE_DEV}" ! -o "${IFACE}" -j DROP
-			fi
-
-			if [ "${DROPFORWARD}" = "on" ]; then
-				iptables -A POLICYFWD -i "${IFACE}" -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
-			fi
-			iptables -A POLICYFWD -i "${IFACE}" -j DROP
-
-			if [ "${IFACE}" != "${RED_DEV}" ]; then
-				if [ "${DROPFORWARD}" = "on" ]; then
-					iptables -A POLICYFWD -i "${RED_DEV}" -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
-				fi
-				iptables -A POLICYFWD -i "${RED_DEV}" -j DROP
+				iptables -A POLICYFWD -i "${ORANGE_DEV}" -s "${ORANGE_NETADDRESS}/${ORANGE_NETMASK}" -o "${IFACE}" -j ACCEPT
 			fi
 		fi
-		iptables -A POLICYFWD -j ACCEPT
+
+		if [ "${DROPFORWARD}" = "on" ]; then
+			iptables -A POLICYFWD -m limit --limit 10/minute -j LOG --log-prefix "DROP_FORWARD "
+		fi
 		iptables -A POLICYFWD -m comment --comment "DROP_FORWARD" -j DROP
 		;;
 esac
