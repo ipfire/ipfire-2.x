@@ -1,22 +1,46 @@
 #!/bin/sh
+########################################################################
 # Begin $rc_base/init.d/tvheadend
-
-# Based on sysklogd script from LFS-3.1 and earlier.
-# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
-# ALSA specific parts by Mark Hymers - markh@linuxfromscratch.org
-# Stores mixer settings in the default location: /etc/asound.state
+#
+# Description : This is a script that starts tvheadend as deamon
+#
+# Authors     :
+#
+# Version     :
+#
+# Notes       :
+#
+########################################################################
 
 . /etc/sysconfig/rc
 . $rc_functions
 
+PIDFILE=/var/run/tvheadend.pid
+
 case "$1" in
         start)
-                boot_mesg "Starting tvheadend..." 
-				/usr/bin/tvheadend -u root -g root -f -c /etc/tvheadend    
+				if [ -e "$PIDFILE" ]
+				then
+					if /bin/ps p `cat $PIDFILE` | grep tvheadend >/dev/null;
+					then
+						boot_mesg "tvheadend already running!" ${WARNING}
+						echo_warning
+						exit 0
+					fi
+				fi
+				boot_mesg "Starting tvheadend..." 
+				/usr/bin/tvheadend -u nobody -g video -f -c /etc/tvheadend
                 ;;
         stop)
-                boot_mesg "Stopping tvheadend..."
-                kill -9 $(cat /var/run/tvheadend.pid)
+				if [ -e "$PIDFILE" ]
+				then
+					boot_mesg "Stopping tvheadend..."
+					kill -9 $(cat $PIDFILE)
+					rm -f $PIDFILE
+				else
+					boot_mesg "tvheadend is not running..."
+					exit 0
+				fi 
                 ;;
         restart)
                 $0 stop
@@ -27,7 +51,7 @@ case "$1" in
                 statusproc /usr/bin/tvheadend
                 ;;
         *)
-                echo "Usage: $0 (start|stop|restart)"
+                echo "Usage: $0 (start|stop|restart|status)"
                 exit 1
                 ;;
 esac

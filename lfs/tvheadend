@@ -35,17 +35,21 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tvheadend
 PAK_VER    = 2
 
-DEPS       = "ffmpeg-libs openssl zlib bzip2"
+DEPS       = "openssl zlib bzip2"
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	dtv-scan-tables-2014-03-09-177b522.tar.bz2
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-
 $(DL_FILE)_MD5 = 86d1be0ad6e02bd2aecd3d529a026797
+
+dtv-scan-tables-2014-03-09-177b522.tar.bz2 = http://www.linuxtv.org/downloads/dtv-scan-tables/dtv-scan-tables-2014-03-09-177b522.tar.bz2
+dtv-scan-tables-2014-03-09-177b522.tar.bz2_MD5 = ebf86561ed9b999069f69722d2e922b8
+
 
 install : $(TARGET)
 
@@ -78,7 +82,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-avahi
+	mkdir $(DIR_APP)/data/dvb-scan
+	cd $(DIR_APP)/data/dvb-scan && tar xf $(DIR_DL)/dtv-scan-tables-2014-03-09-177b522.tar.bz2 --strip-components 3
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-avahi --disable-libav
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	
@@ -91,7 +97,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cp -vf $(DIR_SRC)/config/tvheadend/accesscontrol.1 /var/ipfire/tvheadend/accesscontrol/1 
 	cp -vf $(DIR_SRC)/config/tvheadend/superuser /var/ipfire/tvheadend/superuser
-	chown nobody:nobody -R /var/ipfire/tvheadend
+	chown nobody:video -R /var/ipfire/tvheadend
 	
 	ln -sf /var/ipfire/tvheadend /etc/tvheadend
 	install -v -m 755 -o root -g root $(DIR_SRC)/config/tvheadend/tvheadend.cgi /srv/web/ipfire/cgi-bin/tvheadend.cgi
