@@ -254,17 +254,22 @@ sub buildrules {
 			# Check if this protocol knows ports.
 			my $protocol_has_ports = ($protocol ~~ @PROTOCOLS_WITH_PORTS);
 
-			foreach my $source (@sources) {
-				foreach my $destination (@destinations) {
-					# Skip invalid rules.
-					next if (!$source || !$destination || ($destination eq "none"));
+			foreach my $src (@sources) {
+				# Skip invalid source.
+				next unless ($src);
 
-					# Sanitize source.
-					if ($source ~~ @ANY_ADDRESSES) {
-						$source = "";
-					}
+				# Sanitize source.
+				my $source = $src;
+				if ($source ~~ @ANY_ADDRESSES) {
+					$source = "";
+				}
+
+				foreach my $dst (@destinations) {
+					# Skip invalid rules.
+					next if (!$dst || ($dst eq "none"));
 
 					# Sanitize destination.
+					my $destination = $dst;
 					if ($destination ~~ @ANY_ADDRESSES) {
 						$destination = "";
 					}
