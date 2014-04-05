@@ -110,8 +110,15 @@ case "${POLICY}" in
 		;;
 
 	*)
+
 		# Access from GREEN is granted to everywhere
-		iptables -A POLICYFWD -i "${GREEN_DEV}" -s "${GREEN_NETADDRESS}/${GREEN_NETMASK}" -j ACCEPT
+		if [ "${IFACE}" = "${GREEN_DEV}" ]; then
+			# internet via green
+			# don't check source IP/NET if IFACE is GREEN
+			iptables -A POLICYFWD -i "${GREEN_DEV}" -j ACCEPT
+		else
+			iptables -A POLICYFWD -i "${GREEN_DEV}" -s "${GREEN_NETADDRESS}/${GREEN_NETMASK}" -j ACCEPT
+		fi
 
 		# Grant access for IPsec VPN connections
 		iptables -A POLICYFWD -m policy --pol ipsec --dir in -j ACCEPT
