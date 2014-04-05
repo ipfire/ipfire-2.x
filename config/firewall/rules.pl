@@ -53,7 +53,6 @@ my %customgrp=();
 my %configinputfw=();
 my %configoutgoingfw=();
 my %confignatfw=();
-my %aliases=();
 my @p2ps=();
 
 my $configfwdfw		= "${General::swroot}/firewall/config";
@@ -69,7 +68,6 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhasharray($configinput, \%configinputfw);
 &General::readhasharray($configoutgoing, \%configoutgoingfw);
 &General::readhasharray($configgrp, \%customgrp);
-&General::get_aliases(\%aliases);
 
 my @log_limit_options = &make_log_limit_options();
 
