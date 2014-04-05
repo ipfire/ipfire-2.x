@@ -311,7 +311,10 @@ iptables_red() {
 
 		# Outgoing masquerading (don't masqerade IPSEC (mark 50))
 		iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
-		iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
+
+		if [ "$IFACE" != "$GREEN_DEV" ]; then
+			iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
+		fi
 
 	fi
 
