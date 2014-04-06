@@ -12,7 +12,7 @@
 #include "install.h"
 #define _GNU_SOURCE
  
-#define INST_FILECOUNT 15000
+#define INST_FILECOUNT 21000
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 #define LICENSE_FILE	"/cdrom/COPYING"
 
