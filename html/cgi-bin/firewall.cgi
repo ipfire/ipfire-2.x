@@ -1401,11 +1401,13 @@ sub getcolor
 			}
 			#Check if IP is part of a IPsec N2N network
 			foreach my $key (sort keys %ipsecconf){
-				my ($a,$b) = split("/",$ipsecconf{$key}[11]);
-				$b=&General::iporsubtodec($b);
-				if (&General::IpInSubnet($c,$a,$b)){
-					$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
-					return;
+				if ($ipsecconf{$key}[11]){
+					my ($a,$b) = split("/",$ipsecconf{$key}[11]);
+					$b=&General::iporsubtodec($b);
+					if (&General::IpInSubnet($c,$a,$b)){
+						$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
+						return;
+					}
 				}
 			}
 		}
