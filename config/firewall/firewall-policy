@@ -110,7 +110,6 @@ case "${POLICY}" in
 		;;
 
 	*)
-
 		# Access from GREEN is granted to everywhere
 		if [ "${IFACE}" = "${GREEN_DEV}" ]; then
 			# internet via green
