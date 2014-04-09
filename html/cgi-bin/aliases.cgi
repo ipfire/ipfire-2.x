@@ -323,7 +323,7 @@ print <<END
 <input type='hidden' name='OLDIP' value='$settings{'IP'}' />
 <table style='width:100%;'>
 <tr>
-<td class='base' style='color:${Header::colourred};'>$Lang::tr{'name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+<td class='base' style='color:${Header::colourred};'>$Lang::tr{'name'}:</td>
 <td><input type='text' name='NAME' value='$settings{'NAME'}' size='32' /></td>
 <td class='base' style='text-align:right; color:${Header::colourred};'>$Lang::tr{'alias ip'}:&nbsp;</td>
 <td><input type='text' name='IP' value='$settings{'IP'}' size='16' /></td>
@@ -335,7 +335,6 @@ print <<END
 <hr />
 <table style='width:100%;'>
 <tr>
-    <td><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
     <td style='text-align:right;'><input type='hidden' name='ACTION' value='$Lang::tr{'add'}' /><input type='submit' name='SUBMIT' value='$buttontext' /></td>
 </tr>
 </table>
