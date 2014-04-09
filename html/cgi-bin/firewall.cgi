@@ -1264,41 +1264,29 @@ sub get_serviceports
 	my $udp;
 	my $icmp;
 	@protocols=();
+	my @specprot=("IPIP","IPV6","IGMP","GRE","AH","ESP");
 	if($type eq 'service'){
 		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
 			if ($customservice{$key}[0] eq $name){
-				push (@protocols,$customservice{$key}[2]);
+				push (@protocols," ".$customservice{$key}[2]);
 			}
 		}
 	}elsif($type eq 'group'){
 		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } keys %customservicegrp){
 			if ($customservicegrp{$key}[0] eq $name){
-				foreach my $key1 (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
-					if ($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
-						if($customservice{$key1}[2] eq 'TCP'){
-							$tcp='TCP';
-						}elsif($customservice{$key1}[2] eq 'ICMP'){
-							$icmp='ICMP';
-						}elsif($customservice{$key1}[2] eq 'UDP'){
-							$udp='UDP';
+				if ($customservicegrp{$key}[2] ~~ @specprot){
+					push (@protocols," ".$customservicegrp{$key}[2]);
+				}else{
+					foreach my $key1 (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
+						if ($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
+							if (!grep(/$customservice{$key1}[2]/, @protocols)){
+								push (@protocols," ".$customservice{$key1}[2]);
+							}
 						}
 					}
 				}
 			}
 		}
-	}
-	if($tcp && $udp && $icmp){
-		push (@protocols,"TCP,UDP, <br>ICMP");
-		return @protocols;
-	}
-	if($tcp){
-		push (@protocols,"TCP");
-	}
-	if($udp){
-		push (@protocols,"UDP");
-	}
-	if($icmp){
-		push (@protocols,"ICMP");
 	}
 	return @protocols;
 }
