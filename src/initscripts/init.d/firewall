@@ -196,6 +196,7 @@ iptables_init() {
 	# DNAT rules
 	iptables -t nat -N NAT_DESTINATION
 	iptables -t nat -A PREROUTING -j NAT_DESTINATION
+	iptables -t nat -A OUTPUT -j NAT_DESTINATION
 
 	iptables -t mangle -N NAT_DESTINATION
 	iptables -t mangle -A PREROUTING -j NAT_DESTINATION
