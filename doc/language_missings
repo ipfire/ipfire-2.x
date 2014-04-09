@@ -65,6 +65,10 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< ConnSched dial
+< ConnSched hangup
+< ConnSched reboot
+< ConnSched shutdown
 < count
 < countries
 < countrycode
@@ -527,6 +531,10 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< ConnSched dial
+< ConnSched hangup
+< ConnSched reboot
+< ConnSched shutdown
 < count
 < countries
 < countrycode
@@ -980,6 +988,10 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< ConnSched dial
+< ConnSched hangup
+< ConnSched reboot
+< ConnSched shutdown
 < count
 < countries
 < countrycode
@@ -1410,6 +1422,10 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< ConnSched dial
+< ConnSched hangup
+< ConnSched reboot
+< ConnSched shutdown
 < count
 < countries
 < countrycode

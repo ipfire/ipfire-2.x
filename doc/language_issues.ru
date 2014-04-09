@@ -575,6 +575,10 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Add a route
+WARNING: untranslated string: ConnSched dial
+WARNING: untranslated string: ConnSched hangup
+WARNING: untranslated string: ConnSched reboot
+WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: Edit an existing route
 WARNING: untranslated string: MB read
 WARNING: untranslated string: Scan for Songs

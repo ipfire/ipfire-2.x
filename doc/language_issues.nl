@@ -587,6 +587,10 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: ConnSched dial
+WARNING: untranslated string: ConnSched hangup
+WARNING: untranslated string: ConnSched reboot
+WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: MB read
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
