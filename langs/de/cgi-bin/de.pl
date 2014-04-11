@@ -986,6 +986,7 @@
 'fwdfw log' => 'Log',
 'fwdfw log rule' => 'Logging aktivieren',
 'fwdfw man port' => 'Port(s):',
+'fwdfw many' => 'Diverse',
 'fwdfw menu' => 'Firewall',
 'fwdfw movedown' => 'Herunter',
 'fwdfw moveup' => 'Herauf',
