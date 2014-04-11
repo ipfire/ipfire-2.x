@@ -1012,6 +1012,7 @@
 'fwdfw log' => 'Log',
 'fwdfw log rule' => 'Log rule',
 'fwdfw man port' => 'Port(s):',
+'fwdfw many' => 'Many',
 'fwdfw menu' => 'Firewall',
 'fwdfw movedown' => 'Move down',
 'fwdfw moveup' => 'Move up',
