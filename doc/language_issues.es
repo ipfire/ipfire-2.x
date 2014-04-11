@@ -715,6 +715,7 @@ WARNING: untranslated string: fwdfw hint mac
 WARNING: untranslated string: fwdfw iface
 WARNING: untranslated string: fwdfw log
 WARNING: untranslated string: fwdfw log rule
+WARNING: untranslated string: fwdfw many
 WARNING: untranslated string: fwdfw menu
 WARNING: untranslated string: fwdfw movedown
 WARNING: untranslated string: fwdfw moveup

@@ -162,6 +162,7 @@
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
+< fwdfw many
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -627,6 +628,7 @@
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
+< fwdfw many
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -1076,6 +1078,7 @@
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
+< fwdfw many
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -1514,6 +1517,7 @@
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
+< fwdfw many
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
