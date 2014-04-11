@@ -65,6 +65,10 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< ConnSched dial
+< ConnSched hangup
+< ConnSched reboot
+< ConnSched shutdown
 < count
 < countries
 < countrycode
@@ -111,6 +115,7 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< firewall logs country
 < firewall rules
 < flag
 < forward firewall
@@ -158,6 +163,7 @@
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
+< fwdfw many
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -313,6 +319,7 @@
 < notice
 < ntp common settings
 < ntp sync
+< Number of Countries for the pie chart
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -357,6 +364,7 @@
 < show dh
 < snat new source ip address
 < snort working
+< source ip country
 < ssh
 < static routes
 < support donation
@@ -539,6 +547,10 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< ConnSched dial
+< ConnSched hangup
+< ConnSched reboot
+< ConnSched shutdown
 < count
 < countries
 < countrycode
@@ -584,6 +596,7 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< firewall logs country
 < firewall rules
 < flag
 < forward firewall
@@ -631,6 +644,7 @@
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
+< fwdfw many
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -784,6 +798,7 @@
 < no hardware random number generator
 < not a valid dh key
 < notice
+< Number of Countries for the pie chart
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -846,6 +861,7 @@
 < Set time on boot
 < show dh
 < snat new source ip address
+< source ip country
 < ssh
 < static routes
 < support donation
@@ -1004,6 +1020,10 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< ConnSched dial
+< ConnSched hangup
+< ConnSched reboot
+< ConnSched shutdown
 < count
 < countries
 < countrycode
@@ -1041,6 +1061,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< firewall logs country
 < firewall rules
 < flag
 < forward firewall
@@ -1088,6 +1109,7 @@
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
+< fwdfw many
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -1241,6 +1263,7 @@
 < no hardware random number generator
 < not a valid dh key
 < notice
+< Number of Countries for the pie chart
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -1288,6 +1311,7 @@
 < server restart
 < show dh
 < snat new source ip address
+< source ip country
 < ssh
 < static routes
 < support donation
@@ -1446,6 +1470,10 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< ConnSched dial
+< ConnSched hangup
+< ConnSched reboot
+< ConnSched shutdown
 < count
 < countries
 < countrycode
@@ -1486,6 +1514,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< firewall logs country
 < firewall rules
 < flag
 < forward firewall
@@ -1534,6 +1563,7 @@
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
+< fwdfw many
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -1690,6 +1720,7 @@
 < no hardware random number generator
 < not a valid dh key
 < notice
+< Number of Countries for the pie chart
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -1734,6 +1765,7 @@
 < server restart
 < show dh
 < snat new source ip address
+< source ip country
 < ssh
 < static routes
 < support donation

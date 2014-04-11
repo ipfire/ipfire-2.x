@@ -400,6 +400,7 @@
 #usr/include/linux/netfilter/xt_helper.h
 #usr/include/linux/netfilter/xt_iprange.h
 #usr/include/linux/netfilter/xt_ipvs.h
+#usr/include/linux/netfilter/xt_layer7.h
 #usr/include/linux/netfilter/xt_length.h
 #usr/include/linux/netfilter/xt_limit.h
 #usr/include/linux/netfilter/xt_mac.h

@@ -1260,10 +1260,8 @@ sub get_serviceports
 	my $name=shift;
 	&General::readhasharray("$configsrv", \%customservice);
 	&General::readhasharray("$configsrvgrp", \%customservicegrp);
-	my $tcp;
-	my $udp;
-	my $icmp;
 	@protocols=();
+	my @specprot=("IPIP","IPV6","IGMP","GRE","AH","ESP");
 	if($type eq 'service'){
 		foreach my $key (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
 			if ($customservice{$key}[0] eq $name){
@@ -1273,32 +1271,18 @@ sub get_serviceports
 	}elsif($type eq 'group'){
 		foreach my $key (sort { ncmp($customservicegrp{$a}[0],$customservicegrp{$b}[0]) } keys %customservicegrp){
 			if ($customservicegrp{$key}[0] eq $name){
-				foreach my $key1 (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
-					if ($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
-						if($customservice{$key1}[2] eq 'TCP'){
-							$tcp='TCP';
-						}elsif($customservice{$key1}[2] eq 'ICMP'){
-							$icmp='ICMP';
-						}elsif($customservice{$key1}[2] eq 'UDP'){
-							$udp='UDP';
+				if ($customservicegrp{$key}[2] ~~ @specprot){
+					push (@protocols," ".$customservicegrp{$key}[2]);
+				}else{
+					foreach my $key1 (sort { ncmp($customservice{$a}[0],$customservice{$b}[0]) } keys %customservice){
+						if ($customservice{$key1}[0] eq $customservicegrp{$key}[2]){
+							if (!grep(/$customservice{$key1}[2]/, @protocols)){
+								push (@protocols,$customservice{$key1}[2]);}
 						}
 					}
 				}
 			}
 		}
-	}
-	if($tcp && $udp && $icmp){
-		push (@protocols,"TCP,UDP, <br>ICMP");
-		return @protocols;
-	}
-	if($tcp){
-		push (@protocols,"TCP");
-	}
-	if($udp){
-		push (@protocols,"UDP");
-	}
-	if($icmp){
-		push (@protocols,"ICMP");
 	}
 	return @protocols;
 }
@@ -1401,11 +1385,13 @@ sub getcolor
 			}
 			#Check if IP is part of a IPsec N2N network
 			foreach my $key (sort keys %ipsecconf){
-				my ($a,$b) = split("/",$ipsecconf{$key}[11]);
-				$b=&General::iporsubtodec($b);
-				if (&General::IpInSubnet($c,$a,$b)){
-					$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
-					return;
+				if ($ipsecconf{$key}[11]){
+					my ($a,$b) = split("/",$ipsecconf{$key}[11]);
+					$b=&General::iporsubtodec($b);
+					if (&General::IpInSubnet($c,$a,$b)){
+						$tdcolor="style='background-color: $Header::colourvpn;color:white;'";
+						return;
+					}
 				}
 			}
 		}
@@ -1611,7 +1597,7 @@ END
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
 			{
-				print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias</option>";
+				print "<option value='$alias' $selected{'ipfire_src'}{$alias}>$alias</option>";
 			}
 		}
 		print<<END;
@@ -2484,7 +2470,7 @@ END
 				push (@protocols,$Lang::tr{'all'});
 			}
 
-			my $protz=join(",",@protocols);
+			my $protz=join(", ",@protocols);
 			if($protz eq 'ICMP' && $$hash{$key}[9] ne 'All ICMP-Types' && $$hash{$key}[14] ne 'cust_srvgrp'){
 				&General::readhasharray("${General::swroot}/fwhosts/icmp-types", \%icmptypes);
 				foreach my $keyicmp (sort { ncmp($icmptypes{$a}[0],$icmptypes{$b}[0]) }keys %icmptypes){
@@ -2493,6 +2479,8 @@ END
 						last;
 					}
 				}
+			}elsif($#protocols gt '3'){
+				print"<td align='center'><span title='$protz'>$Lang::tr{'fwdfw many'}</span></td>";
 			}else{
 				print"<td align='center'>$protz</td>";
 			}

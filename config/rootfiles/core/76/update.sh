@@ -113,6 +113,7 @@ add_to_backup usr/share/usb_modeswitch
 add_to_backup etc/rc.d/init.d/networking/red.down/99-D-dialctrl.pl
 add_to_backup etc/rc.d/init.d/networking/red.up/99-U-dialctrl.pl
 add_to_backup usr/local/bin/dialctrl.pl
+add_to_backup usr/lib/locale/locale-archive
 
 # Backup the files
 tar cJvf /var/ipfire/backup/core-upgrade${core}_${KVER}.tar.xz \
@@ -145,6 +146,9 @@ rm -rf /lib/modules
 rm -rf /usr/share/usb_modeswitch
 # Remove old tzdata
 rm -rf /usr/share/zoneinfo
+
+# Remoce old locale-archive
+rm -rf /usr/lib/locale/locale-archive
 
 # Remove dialctrl.pl script
 rm -f \

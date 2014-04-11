@@ -363,7 +363,6 @@ WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
 WARNING: translation string unused: original
-WARNING: translation string unused: other countries
 WARNING: translation string unused: our donors
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing firewall add ip group
@@ -583,7 +582,12 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: ConnSched dial
+WARNING: untranslated string: ConnSched hangup
+WARNING: untranslated string: ConnSched reboot
+WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: MB read
+WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
 WARNING: untranslated string: advproxy cache-digest
@@ -623,6 +627,7 @@ WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: encryption
 WARNING: untranslated string: entropy
 WARNING: untranslated string: entropy graphs
+WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: firewall rules
 WARNING: untranslated string: first
 WARNING: untranslated string: flag
@@ -668,6 +673,7 @@ WARNING: untranslated string: fwdfw hint mac
 WARNING: untranslated string: fwdfw iface
 WARNING: untranslated string: fwdfw log
 WARNING: untranslated string: fwdfw log rule
+WARNING: untranslated string: fwdfw many
 WARNING: untranslated string: fwdfw menu
 WARNING: untranslated string: fwdfw movedown
 WARNING: untranslated string: fwdfw moveup
@@ -808,6 +814,7 @@ WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: show dh
 WARNING: untranslated string: snat new source ip address
+WARNING: untranslated string: source ip country
 WARNING: untranslated string: ssh
 WARNING: untranslated string: support donation
 WARNING: untranslated string: system has hwrng

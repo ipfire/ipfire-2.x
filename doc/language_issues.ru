@@ -353,7 +353,6 @@ WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
 WARNING: translation string unused: original
-WARNING: translation string unused: other countries
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing firewall add ip group
 WARNING: translation string unused: outgoing firewall add mac group
@@ -571,8 +570,13 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Add a route
+WARNING: untranslated string: ConnSched dial
+WARNING: untranslated string: ConnSched hangup
+WARNING: untranslated string: ConnSched reboot
+WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: Edit an existing route
 WARNING: untranslated string: MB read
+WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
 WARNING: untranslated string: advproxy cache-digest
@@ -660,6 +664,7 @@ WARNING: untranslated string: extrahd maybe the device is in use
 WARNING: untranslated string: extrahd to
 WARNING: untranslated string: extrahd to root
 WARNING: untranslated string: extrahd you cant mount
+WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: firewall rules
 WARNING: untranslated string: first
 WARNING: untranslated string: flag
@@ -705,6 +710,7 @@ WARNING: untranslated string: fwdfw hint mac
 WARNING: untranslated string: fwdfw iface
 WARNING: untranslated string: fwdfw log
 WARNING: untranslated string: fwdfw log rule
+WARNING: untranslated string: fwdfw many
 WARNING: untranslated string: fwdfw menu
 WARNING: untranslated string: fwdfw movedown
 WARNING: untranslated string: fwdfw moveup
@@ -870,6 +876,7 @@ WARNING: untranslated string: routing table
 WARNING: untranslated string: server restart
 WARNING: untranslated string: show dh
 WARNING: untranslated string: snat new source ip address
+WARNING: untranslated string: source ip country
 WARNING: untranslated string: ssh
 WARNING: untranslated string: static routes
 WARNING: untranslated string: support donation

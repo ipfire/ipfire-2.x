@@ -311,10 +311,10 @@ print <<END
 <tr><td width='15%' class='base'>$Lang::tr{'ConnSched action'}</td><td>
 <input type='radio' value='CONNECT' name='ACTION_ACTION' $checked_connect />&nbsp;<select name='ACTION_CONNECT'>
 <option value='reconnect' $selected{'reconnect'}>$Lang::tr{'ConnSched reconnect'}</option>
-<option value='dial' $selected{'dial'}>$Lang::tr{'dial'}</option>
-<option value='hangup' $selected{'hangup'}>$Lang::tr{'hangup'}</option>
-<option value='reboot' $selected{'reboot'}>$Lang::tr{'reboot'}</option>
-<option value='shutdown' $selected{'shutdown'}>$Lang::tr{'shutdown'}</option>
+<option value='dial' $selected{'dial'}>$Lang::tr{'ConnSched dial'}</option>
+<option value='hangup' $selected{'hangup'}>$Lang::tr{'ConnSched hangup'}</option>
+<option value='reboot' $selected{'reboot'}>$Lang::tr{'ConnSched reboot'}</option>
+<option value='shutdown' $selected{'shutdown'}>$Lang::tr{'ConnSched shutdown'}</option>
 <option value='ipsecstart' $selected{'ipsecstart'}>$Lang::tr{'ConnSched ipsecstart'}</option>
 <option value='ipsecstop' $selected{'ipsecstop'}>$Lang::tr{'ConnSched ipsecstop'}</option>
 </select></td></tr>
