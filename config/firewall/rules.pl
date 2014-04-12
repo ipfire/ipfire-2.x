@@ -495,29 +495,29 @@ sub time_convert_to_minutes {
 }
 
 sub p2pblock {
-	my $P2PSTRING = "";
-	my $DO;
-	open( FILE, "< $p2pfile" ) or die "Unable to read $p2pfile";
-	@p2ps = <FILE>;
-	close FILE;
-	my $CMD = "-m ipp2p";
-	foreach my $p2pentry (sort @p2ps) {
-		my @p2pline = split( /\;/, $p2pentry );
-		if ( $fwdfwsettings{'POLICY'} eq 'MODE1' ) {
-			$DO = "ACCEPT";
-			if ("$p2pline[2]" eq "on") {
-				$P2PSTRING = "$P2PSTRING --$p2pline[1]";
-			}
-		}else {
-			$DO = "RETURN";
-			if ("$p2pline[2]" eq "off") {
-				$P2PSTRING = "$P2PSTRING --$p2pline[1]";
-			}
-		}
+	my $search_action;
+	my $target;
+
+	if ($fwdfwsettings{"POLICY"} eq "MODE1") {
+		$search_action = "on";
+		$target = "ACCEPT";
+	} else {
+		$search_action = "off";
+		$target = "DROP";
 	}
 
-	if($P2PSTRING) {
-		run("$IPTABLES -A FORWARDFW $CMD $P2PSTRING -j $DO");
+	open(FILE, "<$p2pfile") or die "Unable to read $p2pfile";
+	my @protocols = ();
+	foreach my $p2pentry (<FILE>) {
+		my @p2pline = split(/\;/, $p2pentry);
+		next unless ($p2pline[2] eq $search_action);
+
+		push(@protocols, "--$p2pline[1]");
+	}
+	close(FILE);
+
+	if (@protocols) {
+		run("$IPTABLES -A FORWARDFW -m ipp2p @protocols -j $target");
 	}
 }
 
