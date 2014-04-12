@@ -1284,6 +1284,10 @@ sub get_serviceports
 			}
 		}
 	}
+
+	# Sort protocols alphabetically.
+	@protocols = sort(@protocols);
+
 	return @protocols;
 }
 sub getcolor
