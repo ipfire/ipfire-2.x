@@ -1,7 +1,7 @@
-    $subfirewall->{'10.forward'} = {
-				'caption' => $Lang::tr{'fwdfw menu'},
+    $subfirewall->{'10.firewall'} = {
+				'caption' => $Lang::tr{'firewall rules'},
 				'uri' => '/cgi-bin/firewall.cgi',
-				'title' => "$Lang::tr{'fwdfw menu'}",
+				'title' => "$Lang::tr{'firewall rules'}",
 				'enabled' => 1,
 				};
 	$subfirewall->{'20.fwhost'} = {

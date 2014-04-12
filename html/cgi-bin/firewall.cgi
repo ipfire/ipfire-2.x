@@ -101,7 +101,7 @@ my @protocols;
 &General::readhasharray("$configipsec", \%ipsecconf);
 &Header::showhttpheaders();
 &Header::getcgihash(\%fwdfwsettings);
-&Header::openpage($Lang::tr{'fwdfw menu'}, 1, '');
+&Header::openpage($Lang::tr{'firewall rules'}, 1, '');
 &Header::openbigbox('100%', 'center',$errormessage);
 #### JAVA SCRIPT ####
 print<<END;

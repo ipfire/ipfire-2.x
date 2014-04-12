@@ -239,6 +239,7 @@ WARNING: translation string unused: fwdfw final_rule
 WARNING: translation string unused: fwdfw from
 WARNING: translation string unused: fwdfw ipsec network
 WARNING: translation string unused: fwdfw man port
+WARNING: translation string unused: fwdfw menu
 WARNING: translation string unused: fwdfw natport used
 WARNING: translation string unused: fwdfw p2p txt
 WARNING: translation string unused: fwdfw rule action
