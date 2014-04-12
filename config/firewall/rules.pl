@@ -47,6 +47,7 @@ my @PROTOCOLS_WITH_PORTS = ("tcp", "udp");
 my @VALID_TARGETS = ("ACCEPT", "DROP", "REJECT");
 
 my %fwdfwsettings=();
+my %fwoptions = ();
 my %defaultNetworks=();
 my %configfwdfw=();;
 my %customgrp=();
@@ -63,6 +64,7 @@ my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
 
 &General::readhash("${General::swroot}/firewall/settings", \%fwdfwsettings);
+&General::readhash("${General::swroot}/optionsfw/settings", \%fwoptions);
 &General::readhash("$netsettings", \%defaultNetworks);
 &General::readhasharray($configfwdfw, \%configfwdfw);
 &General::readhasharray($configinput, \%configinputfw);
@@ -70,6 +72,14 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhasharray($configgrp, \%customgrp);
 
 my @log_limit_options = &make_log_limit_options();
+
+my $POLICY_INPUT_ALLOWED   = 0;
+my $POLICY_FORWARD_ALLOWED = ($fwdfwsettings{"POLICY"} eq "MODE2");
+my $POLICY_OUTPUT_ALLOWED  = ($fwdfwsettings{"POLICY1"} eq "MODE2");
+
+my $POLICY_INPUT_ACTION    = $fwoptions{"FWPOLICY2"};
+my $POLICY_FORWARD_ACTION  = $fwoptions{"FWPOLICY"};
+my $POLICY_OUTPUT_ACTION   = $fwoptions{"FWPOLICY1"};
 
 # MAIN
 &main();
@@ -131,19 +141,46 @@ sub flush {
 }
 
 sub preparerules {
-	if (! -z  "${General::swroot}/firewall/config"){
-		&buildrules(\%configfwdfw);
-	}
 	if (! -z  "${General::swroot}/firewall/input"){
 		&buildrules(\%configinputfw);
 	}
 	if (! -z  "${General::swroot}/firewall/outgoing"){
 		&buildrules(\%configoutgoingfw);
 	}
+	if (! -z  "${General::swroot}/firewall/config"){
+		&buildrules(\%configfwdfw);
+	}
 }
 
 sub buildrules {
 	my $hash = shift;
+
+	# Search for targets that need to be specially handled when adding
+	# forwarding rules. Additional rules will automatically get inserted
+	# into the INPUT/OUTPUT chains for these targets.
+	my @special_input_targets = ();
+	if (!$POLICY_FORWARD_ALLOWED) {
+		push(@special_input_targets, "ACCEPT");
+	}
+
+	if ($POLICY_INPUT_ACTION eq "DROP") {
+		push(@special_input_targets, "REJECT");
+	} elsif ($POLICY_INPUT_ACTION eq "REJECT") {
+		push(@special_input_targets, "DROP");
+	}
+
+	my @special_output_targets = ();
+	if ($POLICY_OUTPUT_ALLOWED) {
+		push(@special_output_targets, ("DROP", "REJECT"));
+	} else {
+		push(@special_output_targets, "ACCEPT");
+
+		if ($POLICY_OUTPUT_ACTION eq "DROP") {
+			push(@special_output_targets, "REJECT");
+		} elsif ($POLICY_OUTPUT_ACTION eq "REJECT") {
+			push(@special_output_targets, "DROP");
+		}
+	}
 
 	foreach my $key (sort {$a <=> $b} keys %$hash) {
 		# Skip disabled rules.
@@ -297,9 +334,14 @@ sub buildrules {
 					# Add time constraint options.
 					push(@options, @time_options);
 
-					my $firewall_is_in_source_subnet = 0;
+					my $firewall_is_in_source_subnet = 1;
 					if ($source) {
 						$firewall_is_in_source_subnet = &firewall_is_in_subnet($source);
+					}
+
+					my $firewall_is_in_destination_subnet = 1;
+					if ($destination) {
+						$firewall_is_in_destination_subnet = &firewall_is_in_subnet($destination);
 					}
 
 					# Process NAT rules.
@@ -380,14 +422,6 @@ sub buildrules {
 					}
 
 					push(@options, @source_options);
-
-					if ($firewall_is_in_source_subnet && ($fwdfwsettings{"POLICY"} eq "MODE1") && ($chain eq $CHAIN_FORWARD)) {
-						if ($LOG && !$NAT) {
-							run("$IPTABLES -A $CHAIN_INPUT @options @log_limit_options -j LOG --log-prefix '$CHAIN_INPUT '");
-						}
-						run("$IPTABLES -A $CHAIN_INPUT @options -j $target");
-					}
-
 					push(@options, @destination_options);
 
 					# Insert firewall rule.
@@ -395,6 +429,27 @@ sub buildrules {
 						run("$IPTABLES -A $chain @options @log_limit_options -j LOG --log-prefix '$chain '");
 					}
 					run("$IPTABLES -A $chain @options -j $target");
+
+					# Handle forwarding rules and add corresponding rules for firewall access.
+					if ($chain eq $CHAIN_FORWARD) {
+						# If the firewall is part of the destination subnet and access to the destination network
+						# is granted/forbidden for any network that the firewall itself is part of, we grant/forbid access
+						# for the firewall, too.
+						if ($firewall_is_in_destination_subnet && ($target ~~ @special_input_targets)) {
+							if ($LOG && !$NAT) {
+								run("$IPTABLES -A $CHAIN_INPUT @options @log_limit_options -j LOG --log-prefix '$CHAIN_INPUT '");
+							}
+							run("$IPTABLES -A $CHAIN_INPUT @options -j $target");
+						}
+
+						# Likewise.
+						if ($firewall_is_in_source_subnet && ($target ~~ @special_output_targets)) {
+							if ($LOG && !$NAT) {
+								run("$IPTABLES -A $CHAIN_OUTPUT @options @log_limit_options -j LOG --log-prefix '$CHAIN_OUTPUT '");
+							}
+							run("$IPTABLES -A $CHAIN_OUTPUT @options -j $target");
+						}
+					}
 				}
 			}
 		}
@@ -675,4 +730,3 @@ sub firewall_is_in_subnet {
 
 	return 0;
 }
-

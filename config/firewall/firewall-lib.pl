@@ -520,6 +520,9 @@ sub get_internal_firewall_ip_address
 		return 0;
 	}
 
+	# Convert net mask into correct format for &General::IpInSubnet().
+	$net_mask = &General::iporsubtodec($net_mask);
+
 	my @addresses = &get_internal_firewall_ip_addresses($use_orange);
 	foreach my $zone_address (@addresses) {
 		if (&General::IpInSubnet($zone_address, $net_address, $net_mask)) {
