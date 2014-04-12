@@ -577,6 +577,7 @@ WARNING: untranslated string: ConnSched hangup
 WARNING: untranslated string: ConnSched reboot
 WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: MB read
+WARNING: untranslated string: MB written
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: Set time on boot
 WARNING: untranslated string: addons

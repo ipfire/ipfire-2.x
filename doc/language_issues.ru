@@ -581,6 +581,7 @@ WARNING: untranslated string: ConnSched reboot
 WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: Edit an existing route
 WARNING: untranslated string: MB read
+WARNING: untranslated string: MB written
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
 WARNING: untranslated string: advproxy cache-digest
