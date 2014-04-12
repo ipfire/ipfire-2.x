@@ -195,6 +195,7 @@ WARNING: translation string unused: esp keylife
 WARNING: translation string unused: expected
 WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
+WARNING: translation string unused: external access
 WARNING: translation string unused: external access configuration
 WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
@@ -355,6 +356,7 @@ WARNING: translation string unused: or
 WARNING: translation string unused: original
 WARNING: translation string unused: other countries
 WARNING: translation string unused: out
+WARNING: translation string unused: outgoing firewall
 WARNING: translation string unused: outgoing firewall add ip group
 WARNING: translation string unused: outgoing firewall add mac group
 WARNING: translation string unused: outgoing firewall edit ip group
@@ -815,6 +817,7 @@ WARNING: untranslated string: fwhost used
 WARNING: untranslated string: fwhost welcome
 WARNING: untranslated string: grouptype
 WARNING: untranslated string: hardware support
+WARNING: untranslated string: incoming firewall access
 WARNING: untranslated string: incoming traffic in bytes per second
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
@@ -841,6 +844,7 @@ WARNING: untranslated string: openvpn prefix openvpn subnet
 WARNING: untranslated string: openvpn prefix remote subnet
 WARNING: untranslated string: openvpn subnet is used
 WARNING: untranslated string: other
+WARNING: untranslated string: outgoing firewall access
 WARNING: untranslated string: outgoing traffic in bytes per second
 WARNING: untranslated string: ovpn mgmt in root range
 WARNING: untranslated string: ovpn mtu-disc

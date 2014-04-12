@@ -2299,8 +2299,8 @@ sub viewtablerule
 	&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 
 	&viewtablenew(\%configfwdfw, $configfwdfw, $Lang::tr{'firewall rules'});
-	&viewtablenew(\%configinputfw, $configinput, $Lang::tr{'external access'});
-	&viewtablenew(\%configoutgoingfw, $configoutgoing, $Lang::tr{'outgoing firewall'});
+	&viewtablenew(\%configinputfw, $configinput, $Lang::tr{'incoming firewall access'});
+	&viewtablenew(\%configoutgoingfw, $configoutgoing, $Lang::tr{'outgoing firewall access'});
 }
 sub viewtablenew
 {

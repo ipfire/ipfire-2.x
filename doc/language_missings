@@ -295,6 +295,7 @@
 < fw settings ruletable
 < grouptype
 < hardware support
+< incoming firewall access
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -328,6 +329,7 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing firewall access
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -761,6 +763,7 @@
 < fw settings ruletable
 < grouptype
 < hardware support
+< incoming firewall access
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -792,6 +795,7 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing firewall access
 < outgoing firewall add ip group
 < outgoing firewall add mac group
 < outgoing firewall edit ip group
@@ -1211,6 +1215,7 @@
 < fw settings ruletable
 < grouptype
 < hardware support
+< incoming firewall access
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -1242,6 +1247,7 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing firewall access
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
 < ovpn mgmt in root range
@@ -1651,6 +1657,7 @@
 < grouptype
 < hardware support
 < hour-graph
+< incoming firewall access
 < incoming traffic in bytes per second
 < integrity
 < invalid input for dpd delay
@@ -1684,6 +1691,7 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing firewall access
 < outgoing traffic in bytes per second
 < ovpn mgmt in root range
 < ovpn mtu-disc
