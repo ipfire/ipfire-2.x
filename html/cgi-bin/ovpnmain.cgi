@@ -226,50 +226,6 @@ sub checkportinc
 	}
 }
 
-# Darren Critchley - certain ports are reserved for IPFire
-# TCP 67,68,81,222,444
-# UDP 67,68
-# Params passed in -> port, rangeyn, protocol
-sub disallowreserved
-{
-	# port 67 and 68 same for tcp and udp, don't bother putting in an array
-	my $msg = "";
-	my @tcp_reserved = (81,222,444);
-	my $prt = $_[0]; # the port or range
-	my $ryn = $_[1]; # tells us whether or not it is a port range
-	my $prot = $_[2]; # protocol
-	my $srcdst = $_[3]; # source or destination
-	if ($ryn) { # disect port range
-		if ($srcdst eq "src") {
-			$msg = "$Lang::tr{'rsvd src port overlap'}";
-		} else {
-			$msg = "$Lang::tr{'rsvd dst port overlap'}";
-		}
-		my @tmprng = split(/\:/,$prt);
-		unless (67 < $tmprng[0] || 67 > $tmprng[1]) { $errormessage="$msg 67"; return; }
-		unless (68 < $tmprng[0] || 68 > $tmprng[1]) { $errormessage="$msg 68"; return; }
-		if ($prot eq "tcp") {
-			foreach my $prange (@tcp_reserved) {
-				unless ($prange < $tmprng[0] || $prange > $tmprng[1]) { $errormessage="$msg $prange"; return; }
-			}
-		}
-	} else {
-		if ($srcdst eq "src") {
-			$msg = "$Lang::tr{'reserved src port'}";
-		} else {
-			$msg = "$Lang::tr{'reserved dst port'}";
-		}
-		if ($prt == 67) { $errormessage="$msg 67"; return; }
-		if ($prt == 68) { $errormessage="$msg 68"; return; }
-		if ($prot eq "tcp") {
-			foreach my $prange (@tcp_reserved) {
-				if ($prange == $prt) { $errormessage="$msg $prange"; return; }
-			}
-		}
-	}
-	return;
-}
-
 
 sub writeserverconf {
     my %sovpnsettings = ();  
@@ -362,7 +318,11 @@ sub writeserverconf {
     print CONF "status-version 1\n";
     print CONF "status /var/log/ovpnserver.log 30\n";
     print CONF "cipher $sovpnsettings{DCIPHER}\n";
-	print CONF "auth $sovpnsettings{DAUTH}\n";
+    if ($sovpnsettings{'DAUTH'} eq '') {
+        print CONF "";
+    } else {
+	    print CONF "auth $sovpnsettings{'DAUTH'}\n";
+	}
     if ($sovpnsettings{DCOMPLZO} eq 'on') {
         print CONF "comp-lzo\n";
     }
@@ -559,7 +519,7 @@ sub getccdadresses
 	my @iprange=();
 	my %ccdhash=();
 	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ccdhash);
-	$iprange[0]=$ip1.".".$ip2.".".$ip3.".".2;
+	$iprange[0]=$ip1.".".$ip2.".".$ip3.".".($ip4+2);
 	for (my $i=1;$i<=$count;$i++) {
 		my $tmpip=$iprange[$i-1];
 		my $stepper=$i*4;
@@ -1369,7 +1329,6 @@ END
 			goto UPLOADCA_ERROR;
 		}
     }
-
 
 ###
 ### Upload CA Certificate
@@ -2248,7 +2207,11 @@ else
 	$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "$confighash{$cgiparams{'KEY'}}[1]cert.pem") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1]cert.pem\n";    
     }
     print CLIENTCONF "cipher $vpnsettings{DCIPHER}\r\n";
-	print CLIENTCONF "auth $vpnsettings{DAUTH}\r\n";
+	if ($vpnsettings{'DAUTH'} eq '') {
+        print CLIENTCONF "";
+    } else {
+	    print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
+	}
     if ($vpnsettings{DCOMPLZO} eq 'on') {
         print CLIENTCONF "comp-lzo\r\n";
     }
@@ -2357,7 +2320,8 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
     }
-	&General::firewall_reload();
+
+    &General::firewall_reload();
 
 ###
 ### Download PKCS12 file
@@ -2419,19 +2383,21 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'show crl'}) {
 #    &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-    if ( -f "${General::swroot}/ovpn/crls/cacrl.pem") {
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'ovpn'}, 1, '');
-	&Header::openbigbox('100%', 'LEFT', '', '');
-	&Header::openbox('100%', 'LEFT', "$Lang::tr{'crl'}:");
-	my $output = `/usr/bin/openssl crl -text -noout -in ${General::swroot}/ovpn/crls/cacrl.pem`;
-	$output = &Header::cleanhtml($output,"y");
-	print "<pre>$output</pre>\n";
-	&Header::closebox();
-	print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
-	&Header::closebigbox();
-	&Header::closepage();
-	exit(0);
+	if (! -e "${General::swroot}/ovpn/crls/cacrl.pem") {
+		$errormessage = $Lang::tr{'not present'};
+	} else {
+        &Header::showhttpheaders();
+	    &Header::openpage($Lang::tr{'ovpn'}, 1, '');
+	    &Header::openbigbox('100%', 'LEFT', '', '');
+	    &Header::openbox('100%', 'LEFT', "$Lang::tr{'crl'}:");
+	    my $output = `/usr/bin/openssl crl -text -noout -in ${General::swroot}/ovpn/crls/cacrl.pem`;
+	    $output = &Header::cleanhtml($output,"y");
+	    print "<pre>$output</pre>\n";
+	    &Header::closebox();
+	    print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
+	    &Header::closebigbox();
+	    &Header::closepage();
+	    exit(0);
     }
 
 ###
@@ -2512,7 +2478,7 @@ ADV_ERROR:
     &Header::openbox('100%', 'LEFT', $Lang::tr{'advanced server'});
     print <<END;
     <form method='post' enctype='multipart/form-data'>
-<table width='100%' border=0>
+    <table width='100%' border='0'>
 	<tr>
 		<td colspan='4'><b>$Lang::tr{'dhcp-options'}</b></td>
     </tr>
@@ -2584,6 +2550,7 @@ print <<END;
 	<tr>
      	  <td class='base'>mssfix</td>
      	  <td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
+	      <td>$Lang::tr{'openvpn default'}: on</td>
 	</tr>
 	<tr>
 		<td class='base'>$Lang::tr{'ovpn mtu-disc'}</td>
@@ -2632,12 +2599,12 @@ print <<END;
     </tr>	
     <tr><td class='base'>$Lang::tr{'ovpn ha'}</td>
 		<td><select name='DAUTH'>
-				<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
-				<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
-				<option value='SHA384'			$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
-				<option value='SHA256'			$selected{'DAUTH'}{'SHA256'}>SHA2 (256 $Lang::tr{'bit'})</option>
+				<option value='whirlpool'			$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
+				<option value='SHA512'				$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
+				<option value='SHA384'				$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
+				<option value='SHA256'				$selected{'DAUTH'}{'SHA256'}>SHA2 (256 $Lang::tr{'bit'})</option>
 				<option value='ecdsa-with-SHA1'		$selected{'DAUTH'}{'ecdsa-with-SHA1'}>ECDSA-SHA1 (160 $Lang::tr{'bit'})</option>
-				<option value='SHA1'			$selected{'DAUTH'}{'SHA1'}>SHA1 (160 $Lang::tr{'bit'})</option>
+				<option value='SHA1'				$selected{'DAUTH'}{'SHA1'}>SHA1 (160 $Lang::tr{'bit'})</option>
 			</select>
 		</td>
 		<td>Default: <span class="base">SHA1 (160 $Lang::tr{'bit'})</span></td>
@@ -2721,10 +2688,10 @@ if ($cgiparams{'ACTION'} eq "edit"){
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'ccd modify'});
 
     print <<END;
-    <table width='100%' border=0>
+    <table width='100%' border='0'>
     <tr><form method='post'>
 	<td width='10%' nowrap='nowrap'>$Lang::tr{'ccd name'}:</td><td><input type='TEXT' name='ccdname' value='$cgiparams{'ccdname'}' /></td>
-	<td width='8%'>$Lang::tr{'ccd subnet'}:</td><td><input type='TEXT' name='ccdsubnet' value='$cgiparams{'ccdsubnet'}' readonly /></td></tr>
+	<td width='8%'>$Lang::tr{'ccd subnet'}:</td><td><input type='TEXT' name='ccdsubnet' value='$cgiparams{'ccdsubnet'}' readonly='readonly' /></td></tr>
 	<tr><td colspan='4' align='right'><hr><input type='submit' value='$Lang::tr{'save'}' /><input type='hidden' name='ACTION' value='editsave'/>
 	<input type='hidden' name='ccdname' value='$cgiparams{'ccdname'}'/><input type='submit' value='$Lang::tr{'cancel'}' />
 	</td></tr>
@@ -2784,7 +2751,7 @@ END
 		print"<td>$ccdconf[0]</td><td align='center'>$ccdconf[1]</td><td align='center'>$ccdhosts/".(&ccdmaxclients($ccdconf[1])+1)."</td><td>";
         print <<END;
 		<form method='post' />
-		<input type='image' src='/images/edit.gif' align='middle' alt=$Lang::tr{'edit'} title=$Lang::tr{'edit'} />
+		<input type='image' src='/images/edit.gif' align='middle' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
 		<input type='hidden' name='ACTION' value='edit'/>
 		<input type='hidden' name='ccdname' value='$ccdconf[0]' />
 		<input type='hidden' name='ccdsubnet' value='$ccdconf[1]' />
@@ -2793,7 +2760,7 @@ END
 		<td><input type='hidden' name='ACTION' value='kill'/>
 		<input type='hidden' name='number' value='$count' />
 		<input type='hidden' name='net' value='$ccdconf[0]' />
-		<input type='image' src='/images/delete.gif' align='middle' alt=$Lang::tr{'remove'} title=$Lang::tr{'remove'} /></form></td></tr>
+		<input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' /></form></td></tr>
 END
 ;
 	}	
@@ -3023,7 +2990,7 @@ if ( -s "${General::swroot}/ovpn/settings") {
 		<td class='base'>$Lang::tr{'net to net vpn'} (Upload Client Package)</td></tr>
 	  <tr><td>&nbsp;</td><td class='base'><input type='file' name='FH' size='30'></td></tr>
 	  <tr><td>&nbsp;</td><td>Import Connection Name <img src='/blob.gif' /></td></tr>
-    <tr><td>&nbsp;</td><td class='base'><input type='text' name='n2nname' size='30'>Default : Client Packagename</td></tr>
+    <tr><td>&nbsp;</td><td class='base'><input type='text' name='n2nname' size='30'>$Lang::tr{'openvpn default'}: Client Packagename</td></tr>
 	  <tr><td colspan='3'><hr /></td></tr>
     <tr><td align='right' colspan='3'><input type='submit' name='ACTION' value='$Lang::tr{'add'}' /></td></tr>
 	  <tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
@@ -3756,13 +3723,14 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 		  goto VPNCONF_ERROR;
-	}
-	#Check if remote subnet is used elsewhere
-	my ($n2nip,$n2nsub)=split("/",$cgiparams{'REMOTE_SUBNET'});
-	$warnmessage=&General::checksubnets('',$n2nip,'ovpn');
-	if ($warnmessage){
-		$warnmessage=$Lang::tr{'remote subnet'}." ($cgiparams{'REMOTE_SUBNET'}) <br>".$warnmessage;
-	}
+       }
+       #Check if remote subnet is used elsewhere
+       my ($n2nip,$n2nsub)=split("/",$cgiparams{'REMOTE_SUBNET'});
+       $warnmessage=&General::checksubnets('',$n2nip,'ovpn');
+       if ($warnmessage){
+               $warnmessage=$Lang::tr{'remote subnet'}." ($cgiparams{'REMOTE_SUBNET'}) <br>".$warnmessage;
+       }
+ 
 }
 
 #	if (($cgiparams{'TYPE'} eq 'net') && ($cgiparams{'SIDE'} !~ /^(left|right)$/)) {
@@ -4637,7 +4605,7 @@ if ($cgiparams{'TYPE'} eq 'host') {
    <tr><td>&nbsp;</td>
 		<td class='base'>$Lang::tr{'pkcs12 file password'}:</td>
 		<td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS1' value='$cgiparams{'CERT_PASS1'}' size='32' $cakeydisabled /></td></tr>
-	    <tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:<BR>($Lang::tr{'confirmation'})</td>
+	    <tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:<br>($Lang::tr{'confirmation'})</td>
 		<td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS2' value='$cgiparams{'CERT_PASS2'}' size='32' $cakeydisabled /></td></tr>
      <tr><td colspan='3'>&nbsp;</td></tr>
      <tr><td colspan='3'><hr /></td></tr>
@@ -4901,15 +4869,15 @@ END
 	&Header::closebox();
     }
 
-	if ($warnmessage) {
-		&Header::openbox('100%', 'LEFT', $Lang::tr{'warning messages'});
-		print "$warnmessage<br>";
-		print "$Lang::tr{'fwdfw warn1'}<br>";
-		&Header::closebox();
-		print"<center><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'ok'}' style='width: 5em;'></form>";
-		&Header::closepage();
-		exit 0;
-	}
+    if ($warnmessage) {
+        &Header::openbox('100%', 'LEFT', $Lang::tr{'warning messages'});
+        print "$warnmessage<br>";
+        print "$Lang::tr{'fwdfw warn1'}<br>";
+        &Header::closebox();
+        print"<center><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'ok'}' style='width: 5em;'></form>";
+        &Header::closepage();
+        exit 0;
+    }
 
     my $sactive = "<table cellpadding='2' cellspacing='0' bgcolor='${Header::colourred}' width='50%'><tr><td align='center'><b><font color='#FFFFFF'>$Lang::tr{'stopped'}</font></b></td></tr></table>";
     my $srunning = "no";
@@ -4923,7 +4891,7 @@ END
     }	
     &Header::openbox('100%', 'LEFT', $Lang::tr{'global settings'});	
 	print <<END;
-    <table width='100%' border=0>
+    <table width='100%' border='0'>
     <form method='post'>
     <td width='25%'>&nbsp;</td>
     <td width='25%'>&nbsp;</td>
