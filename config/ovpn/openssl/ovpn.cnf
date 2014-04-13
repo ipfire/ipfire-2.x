@@ -1,46 +1,46 @@
-HOME		= .
-RANDFILE	= /var/ipfire/ovpn/ca/.rnd
-oid_section	= new_oids
+HOME				= .
+RANDFILE			= /var/ipfire/ovpn/ca/.rnd
+oid_section			= new_oids
 
 [ new_oids ]
 
 [ ca ]
-default_ca	= openvpn
+default_ca			= openvpn
 
 [ openvpn ]
-dir		= /var/ipfire/ovpn
-certs		= $dir/certs
-crl_dir		= $dir/crl
-database	= $dir/certs/index.txt
-new_certs_dir	= $dir/certs
-certificate	= $dir/ca/cacert.pem
-serial		= $dir/certs/serial
-crl		= $dir/crl.pem
-private_key	= $dir/ca/cakey.pem
-RANDFILE	= $dir/ca/.rand
-x509_extensions	= usr_cert
-default_days	= 999999
-default_crl_days= 30
-default_md	= md5
-preserve	= no
-policy		= policy_match
-email_in_dn	= no
+dir				= /var/ipfire/ovpn
+certs				= $dir/certs
+crl_dir				= $dir/crl
+database			= $dir/certs/index.txt
+new_certs_dir			= $dir/certs
+certificate			= $dir/ca/cacert.pem
+serial				= $dir/certs/serial
+crl				= $dir/crl.pem
+private_key			= $dir/ca/cakey.pem
+RANDFILE			= $dir/ca/.rand
+x509_extensions			= usr_cert
+default_days			= 999999
+default_crl_days		= 30
+default_md			= sha256
+preserve			= no
+policy				= policy_match
+email_in_dn			= no
 
 [ policy_match ]
-countryName		= optional
-stateOrProvinceName	= optional
-organizationName	= optional
-organizationalUnitName	= optional
-commonName		= supplied
-emailAddress		= optional
+countryName			= optional
+stateOrProvinceName		= optional
+organizationName		= optional
+organizationalUnitName		= optional
+commonName			= supplied
+emailAddress			= optional
 
 [ req ]
-default_bits		= 1024
-default_keyfile 	= privkey.pem
-distinguished_name	= req_distinguished_name
-attributes		= req_attributes
-x509_extensions	= v3_ca
-string_mask = nombstr
+default_bits			= 2048
+default_keyfile 		= privkey.pem
+distinguished_name		= req_distinguished_name
+attributes			= req_attributes
+x509_extensions			= v3_ca
+string_mask 			= nombstr
 
 [ req_distinguished_name ]
 countryName			= Country Name (2 letter code)
@@ -73,31 +73,31 @@ challengePassword_max		= 20
 unstructuredName		= An optional company name
 
 [ usr_cert ]
-basicConstraints=CA:FALSE
+basicConstraints		= CA:FALSE
 nsComment			= "OpenSSL Generated Certificate"
-subjectKeyIdentifier=hash
-authorityKeyIdentifier=keyid,issuer:always
+subjectKeyIdentifier		= hash
+authorityKeyIdentifier		= keyid,issuer:always
 
 [ server ]
 
 # JY ADDED -- Make a cert with nsCertType set to "server"
-basicConstraints=CA:FALSE
+basicConstraints		= CA:FALSE
 nsCertType			= server
 nsComment			= "OpenSSL Generated Server Certificate"
-subjectKeyIdentifier=hash
-authorityKeyIdentifier=keyid,issuer:always 
+subjectKeyIdentifier		= hash
+authorityKeyIdentifier		= keyid,issuer:always 
 
 [ v3_req ]
-basicConstraints = CA:FALSE
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+basicConstraints 		= CA:FALSE
+keyUsage 			= nonRepudiation, digitalSignature, keyEncipherment
 
 [ v3_ca ]
-subjectKeyIdentifier=hash
-authorityKeyIdentifier=keyid:always,issuer:always
-basicConstraints = CA:true
+subjectKeyIdentifier		= hash
+authorityKeyIdentifier		= keyid:always,issuer:always
+basicConstraints 		= CA:true
 
 [ crl_ext ]
-authorityKeyIdentifier=keyid:always,issuer:always
+authorityKeyIdentifier		= keyid:always,issuer:always
 
 [ engine ]
-default = openssl
+default 			= openssl
