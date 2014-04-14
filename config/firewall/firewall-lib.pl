@@ -64,6 +64,7 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhasharray("$configipsec", \%ipsecconf);
 &General::readhasharray("$configsrv", \%customservice);
 &General::readhasharray("$configsrvgrp", \%customservicegrp);
+&General::get_aliases(\%aliases);
 
 sub get_srv_prot
 {
@@ -388,9 +389,9 @@ sub get_address
 
 		# Aliases
 		} else {
-			my %alias = &get_alias($value);
-			if (%alias) {
-				push(@ret, $alias{"IPT"});
+			my $alias = &get_alias($value);
+			if ($alias) {
+				push(@ret, $alias);
 			}
 		}
 
@@ -423,12 +424,12 @@ sub get_alias
 
 	foreach my $alias (sort keys %aliases) {
 		if ($id eq $alias) {
-			return $aliases{$alias};
+			return $aliases{$alias}{"IPT"};
 		}
 	}
 }
-sub get_nat_address
-{
+
+sub get_nat_address {
 	my $zone = shift;
 	my $source = shift;
 
@@ -451,15 +452,20 @@ sub get_nat_address
 	} elsif ($zone eq "RED" || $zone eq "GREEN" || $zone eq "ORANGE" || $zone eq "BLUE") {
 		return $netsettings{$zone . "_ADDRESS"};
 
-	} elsif ($zone eq "Default IP") {
+	} elsif ($zone ~~ ["Default IP", "ALL"]) {
 		return &get_external_address();
 
 	} else {
-		return &get_alias($zone);
+		my $alias = &get_alias($zone);
+		unless ($alias) {
+			$alias = &get_external_address();
+		}
+		return $alias;
 	}
 
 	print_error("Could not find NAT address");
 }
+
 sub get_internal_firewall_ip_addresses
 {
 	my $use_orange = shift;

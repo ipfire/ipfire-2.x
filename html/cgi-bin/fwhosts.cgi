@@ -66,7 +66,6 @@ my $fwconfigfwd		= "${General::swroot}/firewall/config";
 my $fwconfiginp		= "${General::swroot}/firewall/input";
 my $fwconfigout		= "${General::swroot}/firewall/outgoing";
 my $configovpn		= "${General::swroot}/ovpn/settings";
-my $tdcolor='';
 my $configipsecrw	= "${General::swroot}/vpn/settings";
 
 unless (-e $confignet)    { system("touch $confignet"); }
@@ -1624,6 +1623,7 @@ sub getcolor
 		my $c=shift;
 		my $sip;
 		my $scidr;
+		my $tdcolor='';
 		#Check if MAC
 		if (&General::validmac($c)){ return $c;}
 
@@ -1688,10 +1688,13 @@ sub getcolor
 
 		#Check if IP is part of a IPsec N2N network
 		foreach my $key (sort keys %ipsecconf){
-			my ($a,$b) = split("/",$ipsecconf{$key}[11]);
-			if (&General::IpInSubnet($sip,$a,$b)){
-				$tdcolor="<font style='color: $Header::colourvpn;'>$c</font>";
-				return $tdcolor;
+			if ($ipsecconf{$key}[11]){
+				my ($a,$b) = split("/",$ipsecconf{$key}[11]);
+				$b=&General::iporsubtodec($b);
+				if (&General::IpInSubnet($sip,$a,$b)){
+					$tdcolor="<font style='color: $Header::colourvpn;'>$c</font>";
+					return $tdcolor;
+				}
 			}
 		}
 		return "$c";

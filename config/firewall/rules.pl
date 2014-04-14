@@ -53,7 +53,6 @@ my %customgrp=();
 my %configinputfw=();
 my %configoutgoingfw=();
 my %confignatfw=();
-my %aliases=();
 my @p2ps=();
 
 my $configfwdfw		= "${General::swroot}/firewall/config";
@@ -69,7 +68,6 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhasharray($configinput, \%configinputfw);
 &General::readhasharray($configoutgoing, \%configoutgoingfw);
 &General::readhasharray($configgrp, \%customgrp);
-&General::get_aliases(\%aliases);
 
 my @log_limit_options = &make_log_limit_options();
 
@@ -254,17 +252,22 @@ sub buildrules {
 			# Check if this protocol knows ports.
 			my $protocol_has_ports = ($protocol ~~ @PROTOCOLS_WITH_PORTS);
 
-			foreach my $source (@sources) {
-				foreach my $destination (@destinations) {
-					# Skip invalid rules.
-					next if (!$source || !$destination || ($destination eq "none"));
+			foreach my $src (@sources) {
+				# Skip invalid source.
+				next unless ($src);
 
-					# Sanitize source.
-					if ($source ~~ @ANY_ADDRESSES) {
-						$source = "";
-					}
+				# Sanitize source.
+				my $source = $src;
+				if ($source ~~ @ANY_ADDRESSES) {
+					$source = "";
+				}
+
+				foreach my $dst (@destinations) {
+					# Skip invalid rules.
+					next if (!$dst || ($dst eq "none"));
 
 					# Sanitize destination.
+					my $destination = $dst;
 					if ($destination ~~ @ANY_ADDRESSES) {
 						$destination = "";
 					}
@@ -532,43 +535,45 @@ sub get_protocol_options {
 		push(@options, ("-p", $protocol));
 	}
 
-	# Process source ports.
-	my $use_src_ports = ($$hash{$key}[7] eq "ON");
-	my $src_ports     = $$hash{$key}[10];
+	if ($protocol ~~ @PROTOCOLS_WITH_PORTS) {
+		# Process source ports.
+		my $use_src_ports = ($$hash{$key}[7] eq "ON");
+		my $src_ports     = $$hash{$key}[10];
 
-	if ($use_src_ports && $src_ports) {
-		push(@options, &format_ports($src_ports, "src"));
-	}
+		if ($use_src_ports && $src_ports) {
+			push(@options, &format_ports($src_ports, "src"));
+		}
 
-	# Process destination ports.
-	my $use_dst_ports  = ($$hash{$key}[11] eq "ON");
-	my $use_dnat       = (($$hash{$key}[28] eq "ON") && ($$hash{$key}[31] eq "dnat"));
+		# Process destination ports.
+		my $use_dst_ports  = ($$hash{$key}[11] eq "ON");
+		my $use_dnat       = (($$hash{$key}[28] eq "ON") && ($$hash{$key}[31] eq "dnat"));
 
-	if ($use_dst_ports) {
-		my $dst_ports_mode = $$hash{$key}[14];
-		my $dst_ports      = $$hash{$key}[15];
+		if ($use_dst_ports) {
+			my $dst_ports_mode = $$hash{$key}[14];
+			my $dst_ports      = $$hash{$key}[15];
 
-		if (($dst_ports_mode eq "TGT_PORT") && $dst_ports) {
-			if ($nat_options_wanted && $use_dnat && $$hash{$key}[30]) {
-				$dst_ports = $$hash{$key}[30];
-			}
-			push(@options, &format_ports($dst_ports, "dst"));
-
-		} elsif ($dst_ports_mode eq "cust_srv") {
-			if ($protocol eq "ICMP") {
-				push(@options, ("--icmp-type", &fwlib::get_srv_port($dst_ports, 3, "ICMP")));
-			} else {
-				$dst_ports = &fwlib::get_srv_port($dst_ports, 1, uc($protocol));
+			if (($dst_ports_mode eq "TGT_PORT") && $dst_ports) {
+				if ($nat_options_wanted && $use_dnat && $$hash{$key}[30]) {
+					$dst_ports = $$hash{$key}[30];
+				}
 				push(@options, &format_ports($dst_ports, "dst"));
-			}
 
-		} elsif ($dst_ports_mode eq "cust_srvgrp") {
-			push(@options, &fwlib::get_srvgrp_port($dst_ports, uc($protocol)));
+			} elsif ($dst_ports_mode eq "cust_srv") {
+				if ($protocol eq "ICMP") {
+					push(@options, ("--icmp-type", &fwlib::get_srv_port($dst_ports, 3, "ICMP")));
+				} else {
+					$dst_ports = &fwlib::get_srv_port($dst_ports, 1, uc($protocol));
+					push(@options, &format_ports($dst_ports, "dst"));
+				}
+
+			} elsif ($dst_ports_mode eq "cust_srvgrp") {
+				push(@options, &fwlib::get_srvgrp_port($dst_ports, uc($protocol)));
+			}
 		}
 	}
 
 	# Check if a single ICMP type is selected.
-	if (!$use_src_ports && !$use_dst_ports && $protocol eq "icmp") {
+	if ($protocol eq "icmp") {
 		my $icmp_type = $$hash{$key}[9];
 
 		if (($icmp_type ne "All ICMP-Types") && $icmp_type) {

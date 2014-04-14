@@ -4,6 +4,7 @@ WARNING: translation string unused: ConnSched select profile
 WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Level7 rule
 WARNING: translation string unused: Local VPN IP
+WARNING: translation string unused: MB written
 WARNING: translation string unused: Ping
 WARNING: translation string unused: Queuelenght
 WARNING: translation string unused: Remote IP
@@ -169,7 +170,6 @@ WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
 WARNING: translation string unused: driver
-WARNING: translation string unused: drop output
 WARNING: translation string unused: dstprt range overlaps
 WARNING: translation string unused: dstprt within existing
 WARNING: translation string unused: dynamic dns client
@@ -403,7 +403,6 @@ WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
 WARNING: translation string unused: original
-WARNING: translation string unused: other countries
 WARNING: translation string unused: our donors
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing firewall add ip group
@@ -475,12 +474,16 @@ WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: requested data
+WARNING: translation string unused: reserved dst port
+WARNING: translation string unused: reserved src port
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
 WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: router ip
+WARNING: translation string unused: rsvd dst port overlap
+WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
@@ -552,6 +555,7 @@ WARNING: translation string unused: to email adr
 WARNING: translation string unused: to install an update
 WARNING: translation string unused: to warn email bad
 WARNING: translation string unused: too long 80 char max
+WARNING: translation string unused: tor 0 = disabled
 WARNING: translation string unused: tor accounting period daily
 WARNING: translation string unused: tor accounting period monthly
 WARNING: translation string unused: tor accounting period weekly
@@ -633,29 +637,22 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
-WARNING: untranslated string: MB read
+WARNING: untranslated string: ConnSched dial
+WARNING: untranslated string: ConnSched hangup
+WARNING: untranslated string: ConnSched reboot
+WARNING: untranslated string: ConnSched shutdown
+WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
-WARNING: untranslated string: ccd err isipsecrw
-WARNING: untranslated string: ccd err isovpnn2n
 WARNING: untranslated string: count
-WARNING: untranslated string: countries
-WARNING: untranslated string: country codes and flags
-WARNING: untranslated string: countrycode
-WARNING: untranslated string: details
 WARNING: untranslated string: dh
 WARNING: untranslated string: dh key warn
 WARNING: untranslated string: dh name is invalid
-WARNING: untranslated string: drop outgoing
-WARNING: untranslated string: entropy graphs
-WARNING: untranslated string: flag
-WARNING: untranslated string: fwdfw warn1
+WARNING: untranslated string: firewall logs country
+WARNING: untranslated string: fwdfw many
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
-WARNING: untranslated string: hardware support
-WARNING: untranslated string: last
-WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
@@ -668,6 +665,5 @@ WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: show dh
-WARNING: untranslated string: system has hwrng
-WARNING: untranslated string: system has rdrand
+WARNING: untranslated string: source ip country
 WARNING: untranslated string: upload dh key

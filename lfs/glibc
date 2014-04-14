@@ -298,8 +298,7 @@ endif
 ifeq "$(ROOT)" ""
 	# Creating the locales
 	mkdir -p /usr/lib/locale
-	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f ISO-8859-1 en_US
-	cd $(DIR_SRC)/glibc-build && localedef -i en_US -f UTF-8      en_US.utf8
+	cd $(DIR_SRC)/glibc-build && make localedata/install-locales
 
 	# Timezone data will be shipped by tzdata.
 	rm -rfv /usr/share/zoneinfo

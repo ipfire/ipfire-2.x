@@ -1,3 +1,4 @@
+WARNING: translation string unused: Client status and controlc
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
 WARNING: translation string unused: HDD temperature
@@ -354,7 +355,6 @@ WARNING: translation string unused: network time
 WARNING: translation string unused: network traffic graphs
 WARNING: translation string unused: network updated
 WARNING: translation string unused: networks settings
-WARNING: translation string unused: never
 WARNING: translation string unused: new optionsfw must boot
 WARNING: translation string unused: no alcatelusb firmware
 WARNING: translation string unused: no cfg upload
@@ -377,7 +377,6 @@ WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
 WARNING: translation string unused: original
-WARNING: translation string unused: other countries
 WARNING: translation string unused: our donors
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing firewall add ip group
@@ -401,10 +400,7 @@ WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn dl
-WARNING: translation string unused: ovpn engines
 WARNING: translation string unused: ovpn log
-WARNING: translation string unused: ovpn reneg sec
-WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
 WARNING: translation string unused: ovpn_mtudisc
@@ -450,12 +446,16 @@ WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: requested data
+WARNING: translation string unused: reserved dst port
+WARNING: translation string unused: reserved src port
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
 WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: router ip
+WARNING: translation string unused: rsvd dst port overlap
+WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
@@ -586,6 +586,7 @@ WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn aggrmode
+WARNING: translation string unused: vpn configuration main
 WARNING: translation string unused: vpn incompatible use of defaultroute
 WARNING: translation string unused: vpn mtu invalid
 WARNING: translation string unused: vpn on blue
@@ -601,20 +602,18 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
 WARNING: untranslated string: bytes
 WARNING: untranslated string: community rules
 WARNING: untranslated string: dead peer detection
-WARNING: untranslated string: dns servers
-WARNING: untranslated string: downlink
 WARNING: untranslated string: emerging rules
-WARNING: untranslated string: first
+WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: fwhost err hostip
-WARNING: untranslated string: last
 WARNING: untranslated string: qos add subclass
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
-WARNING: untranslated string: uplink
+WARNING: untranslated string: source ip country

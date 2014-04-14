@@ -323,14 +323,14 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/developer/debugging.html.en
 #srv/web/ipfire/manual/developer/documenting.html
 #srv/web/ipfire/manual/developer/documenting.html.en
-#srv/web/ipfire/manual/developer/documenting.html.zh-cn
+#srv/web/ipfire/manual/developer/documenting.html.zh-cn.utf8
 #srv/web/ipfire/manual/developer/filters.html
 #srv/web/ipfire/manual/developer/filters.html.en
 #srv/web/ipfire/manual/developer/hooks.html
 #srv/web/ipfire/manual/developer/hooks.html.en
 #srv/web/ipfire/manual/developer/index.html
 #srv/web/ipfire/manual/developer/index.html.en
-#srv/web/ipfire/manual/developer/index.html.zh-cn
+#srv/web/ipfire/manual/developer/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/developer/modules.html
 #srv/web/ipfire/manual/developer/modules.html.en
 #srv/web/ipfire/manual/developer/modules.html.ja.utf8
@@ -357,7 +357,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/faq/index.html
 #srv/web/ipfire/manual/faq/index.html.en
 #srv/web/ipfire/manual/faq/index.html.tr.utf8
-#srv/web/ipfire/manual/faq/index.html.zh-cn
+#srv/web/ipfire/manual/faq/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/filter.html
 #srv/web/ipfire/manual/filter.html.en
 #srv/web/ipfire/manual/filter.html.es
@@ -381,7 +381,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/handler.html.ko.euc-kr
 #srv/web/ipfire/manual/handler.html.ru.koi8-r
 #srv/web/ipfire/manual/handler.html.tr.utf8
-#srv/web/ipfire/manual/handler.html.zh-cn
+#srv/web/ipfire/manual/handler.html.zh-cn.utf8
 #srv/web/ipfire/manual/howto
 #srv/web/ipfire/manual/howto/access.html
 #srv/web/ipfire/manual/howto/access.html.en
@@ -405,7 +405,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/howto/index.html.en
 #srv/web/ipfire/manual/howto/index.html.ja.utf8
 #srv/web/ipfire/manual/howto/index.html.ko.euc-kr
-#srv/web/ipfire/manual/howto/index.html.zh-cn
+#srv/web/ipfire/manual/howto/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/howto/public_html.html
 #srv/web/ipfire/manual/howto/public_html.html.en
 #srv/web/ipfire/manual/howto/public_html.html.ja.utf8
@@ -434,6 +434,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/images/mod_filter_new.png
 #srv/web/ipfire/manual/images/mod_filter_new.tr.png
 #srv/web/ipfire/manual/images/mod_filter_old.gif
+#srv/web/ipfire/manual/images/mod_filter_old.png
 #srv/web/ipfire/manual/images/mod_rewrite_fig1.gif
 #srv/web/ipfire/manual/images/mod_rewrite_fig1.png
 #srv/web/ipfire/manual/images/mod_rewrite_fig2.gif
@@ -461,7 +462,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/index.html.ko.euc-kr
 #srv/web/ipfire/manual/index.html.pt-br
 #srv/web/ipfire/manual/index.html.tr.utf8
-#srv/web/ipfire/manual/index.html.zh-cn
+#srv/web/ipfire/manual/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/install.html
 #srv/web/ipfire/manual/install.html.de
 #srv/web/ipfire/manual/install.html.en
@@ -492,7 +493,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/misc/index.html.en
 #srv/web/ipfire/manual/misc/index.html.ko.euc-kr
 #srv/web/ipfire/manual/misc/index.html.tr.utf8
-#srv/web/ipfire/manual/misc/index.html.zh-cn
+#srv/web/ipfire/manual/misc/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/misc/password_encryptions.html
 #srv/web/ipfire/manual/misc/password_encryptions.html.en
 #srv/web/ipfire/manual/misc/perf-tuning.html
@@ -534,7 +535,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/mod/directives.html.ko.euc-kr
 #srv/web/ipfire/manual/mod/directives.html.ru.koi8-r
 #srv/web/ipfire/manual/mod/directives.html.tr.utf8
-#srv/web/ipfire/manual/mod/directives.html.zh-cn
+#srv/web/ipfire/manual/mod/directives.html.zh-cn.utf8
 #srv/web/ipfire/manual/mod/event.html
 #srv/web/ipfire/manual/mod/event.html.en
 #srv/web/ipfire/manual/mod/index.html
@@ -544,7 +545,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/mod/index.html.ja.utf8
 #srv/web/ipfire/manual/mod/index.html.ko.euc-kr
 #srv/web/ipfire/manual/mod/index.html.tr.utf8
-#srv/web/ipfire/manual/mod/index.html.zh-cn
+#srv/web/ipfire/manual/mod/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/mod/mod_actions.html
 #srv/web/ipfire/manual/mod/mod_actions.html.de
 #srv/web/ipfire/manual/mod/mod_actions.html.en
@@ -852,7 +853,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/mod/quickreference.html.ko.euc-kr
 #srv/web/ipfire/manual/mod/quickreference.html.ru.koi8-r
 #srv/web/ipfire/manual/mod/quickreference.html.tr.utf8
-#srv/web/ipfire/manual/mod/quickreference.html.zh-cn
+#srv/web/ipfire/manual/mod/quickreference.html.zh-cn.utf8
 #srv/web/ipfire/manual/mod/worker.html
 #srv/web/ipfire/manual/mod/worker.html.de
 #srv/web/ipfire/manual/mod/worker.html.en
@@ -866,7 +867,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/mpm.html.ja.utf8
 #srv/web/ipfire/manual/mpm.html.ko.euc-kr
 #srv/web/ipfire/manual/mpm.html.tr.utf8
-#srv/web/ipfire/manual/mpm.html.zh-cn
+#srv/web/ipfire/manual/mpm.html.zh-cn.utf8
 #srv/web/ipfire/manual/new_features_2_0.html
 #srv/web/ipfire/manual/new_features_2_0.html.de
 #srv/web/ipfire/manual/new_features_2_0.html.en
@@ -890,7 +891,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/platform/index.html
 #srv/web/ipfire/manual/platform/index.html.en
 #srv/web/ipfire/manual/platform/index.html.ko.euc-kr
-#srv/web/ipfire/manual/platform/index.html.zh-cn
+#srv/web/ipfire/manual/platform/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/platform/netware.html
 #srv/web/ipfire/manual/platform/netware.html.en
 #srv/web/ipfire/manual/platform/netware.html.ko.euc-kr
@@ -953,7 +954,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/programs/index.html.ko.euc-kr
 #srv/web/ipfire/manual/programs/index.html.ru.koi8-r
 #srv/web/ipfire/manual/programs/index.html.tr.utf8
-#srv/web/ipfire/manual/programs/index.html.zh-cn
+#srv/web/ipfire/manual/programs/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/programs/logresolve.html
 #srv/web/ipfire/manual/programs/logresolve.html.en
 #srv/web/ipfire/manual/programs/logresolve.html.ko.euc-kr
@@ -986,7 +987,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/rewrite/index.html.en
 #srv/web/ipfire/manual/rewrite/index.html.fr
 #srv/web/ipfire/manual/rewrite/index.html.tr.utf8
-#srv/web/ipfire/manual/rewrite/index.html.zh-cn
+#srv/web/ipfire/manual/rewrite/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/rewrite/intro.html
 #srv/web/ipfire/manual/rewrite/intro.html.en
 #srv/web/ipfire/manual/rewrite/intro.html.fr
@@ -1019,13 +1020,13 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/sitemap.html.ja.utf8
 #srv/web/ipfire/manual/sitemap.html.ko.euc-kr
 #srv/web/ipfire/manual/sitemap.html.tr.utf8
-#srv/web/ipfire/manual/sitemap.html.zh-cn
+#srv/web/ipfire/manual/sitemap.html.zh-cn.utf8
 #srv/web/ipfire/manual/ssl
 #srv/web/ipfire/manual/ssl/index.html
 #srv/web/ipfire/manual/ssl/index.html.en
 #srv/web/ipfire/manual/ssl/index.html.ja.utf8
 #srv/web/ipfire/manual/ssl/index.html.tr.utf8
-#srv/web/ipfire/manual/ssl/index.html.zh-cn
+#srv/web/ipfire/manual/ssl/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/ssl/ssl_compat.html
 #srv/web/ipfire/manual/ssl/ssl_compat.html.en
 #srv/web/ipfire/manual/ssl/ssl_faq.html
@@ -1062,7 +1063,9 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/style/manualpage.dtd
 #srv/web/ipfire/manual/style/modulesynopsis.dtd
 #srv/web/ipfire/manual/style/scripts
+#srv/web/ipfire/manual/style/scripts/MINIFY
 #srv/web/ipfire/manual/style/scripts/prettify.js
+#srv/web/ipfire/manual/style/scripts/prettify.min.js
 #srv/web/ipfire/manual/style/sitemap.dtd
 #srv/web/ipfire/manual/style/version.ent
 #srv/web/ipfire/manual/style/xsl
@@ -1109,7 +1112,7 @@ etc/httpd/conf/mime.types
 #srv/web/ipfire/manual/vhosts/index.html.ko.euc-kr
 #srv/web/ipfire/manual/vhosts/index.html.ru.koi8-r
 #srv/web/ipfire/manual/vhosts/index.html.tr.utf8
-#srv/web/ipfire/manual/vhosts/index.html.zh-cn
+#srv/web/ipfire/manual/vhosts/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/vhosts/ip-based.html
 #srv/web/ipfire/manual/vhosts/ip-based.html.en
 #srv/web/ipfire/manual/vhosts/ip-based.html.fr
@@ -1154,6 +1157,7 @@ etc/httpd/conf/mime.types
 #usr/include/apache/apr_dso.h
 #usr/include/apache/apr_env.h
 #usr/include/apache/apr_errno.h
+#usr/include/apache/apr_escape.h
 #usr/include/apache/apr_file_info.h
 #usr/include/apache/apr_file_io.h
 #usr/include/apache/apr_fnmatch.h
@@ -1189,6 +1193,7 @@ etc/httpd/conf/mime.types
 #usr/include/apache/apr_sha1.h
 #usr/include/apache/apr_shm.h
 #usr/include/apache/apr_signal.h
+#usr/include/apache/apr_skiplist.h
 #usr/include/apache/apr_strings.h
 #usr/include/apache/apr_strmatch.h
 #usr/include/apache/apr_support.h
@@ -1331,12 +1336,12 @@ usr/lib/apr-util-1/apr_dbd_sqlite3.so
 #usr/lib/libapr-1.la
 usr/lib/libapr-1.so
 usr/lib/libapr-1.so.0
-usr/lib/libapr-1.so.0.4.8
+usr/lib/libapr-1.so.0.5.0
 #usr/lib/libaprutil-1.a
 #usr/lib/libaprutil-1.la
 usr/lib/libaprutil-1.so
 usr/lib/libaprutil-1.so.0
-usr/lib/libaprutil-1.so.0.5.2
+usr/lib/libaprutil-1.so.0.5.3
 #usr/lib/pkgconfig/apr-1.pc
 #usr/lib/pkgconfig/apr-util-1.pc
 #usr/sbin/ab
