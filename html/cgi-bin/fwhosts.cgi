@@ -1846,7 +1846,7 @@ sub viewtablegrp
 				print "<td align='center' $col>$Lang::tr{'fwhost deleted'}</td><td align='center' $col>$customgrp{$key}[3]</td><td width='1%' $col><form method='post'>";
 			}else{
 				my ($colip,$colsub) = split("/",$ip);
-				$ip="$colip/".&General::subtocidr($colsub) if ($colsub);
+				$ip="$colip/".&General::iporsubtocidr($colsub) if ($colsub);
 				print"<td align='center' $col>".&getcolor($ip)."</td><td align='center' $col>$customgrp{$key}[3]</td><td width='1%' $col><form method='post'>";
 			}
 			if ($delflag > 0 && $ip ne ''){
