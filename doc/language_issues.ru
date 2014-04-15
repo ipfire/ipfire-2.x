@@ -594,6 +594,7 @@ WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: attention
 WARNING: untranslated string: bit
 WARNING: untranslated string: bytes
+WARNING: untranslated string: capabilities
 WARNING: untranslated string: ccd add
 WARNING: untranslated string: ccd choose net
 WARNING: untranslated string: ccd client options
@@ -816,6 +817,8 @@ WARNING: untranslated string: fwhost used
 WARNING: untranslated string: fwhost welcome
 WARNING: untranslated string: grouptype
 WARNING: untranslated string: hardware support
+WARNING: untranslated string: imei
+WARNING: untranslated string: imsi
 WARNING: untranslated string: incoming firewall access
 WARNING: untranslated string: incoming traffic in bytes per second
 WARNING: untranslated string: integrity
@@ -830,6 +833,20 @@ WARNING: untranslated string: mac filter
 WARNING: untranslated string: maximum
 WARNING: untranslated string: minimum
 WARNING: untranslated string: minute
+WARNING: untranslated string: model
+WARNING: untranslated string: modem hardware details
+WARNING: untranslated string: modem information
+WARNING: untranslated string: modem network bit error rate
+WARNING: untranslated string: modem network information
+WARNING: untranslated string: modem network mode
+WARNING: untranslated string: modem network operator
+WARNING: untranslated string: modem network registration
+WARNING: untranslated string: modem network signal quality
+WARNING: untranslated string: modem no connection
+WARNING: untranslated string: modem no connection message
+WARNING: untranslated string: modem sim information
+WARNING: untranslated string: modem status
+WARNING: untranslated string: monitor interface
 WARNING: untranslated string: most preferred
 WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: notice
@@ -870,6 +887,7 @@ WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: server restart
 WARNING: untranslated string: snat new source ip address
+WARNING: untranslated string: software version
 WARNING: untranslated string: ssh
 WARNING: untranslated string: static routes
 WARNING: untranslated string: support donation
@@ -926,6 +944,7 @@ WARNING: untranslated string: tor use exit nodes
 WARNING: untranslated string: uplink
 WARNING: untranslated string: uptime load average
 WARNING: untranslated string: urlfilter redirect template
+WARNING: untranslated string: vendor
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: wlan client

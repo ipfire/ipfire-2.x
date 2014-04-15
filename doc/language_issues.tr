@@ -646,12 +646,31 @@ WARNING: untranslated string: ConnSched reboot
 WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
+WARNING: untranslated string: capabilities
 WARNING: untranslated string: count
 WARNING: untranslated string: fwdfw many
 WARNING: untranslated string: fwhost err hostip
+WARNING: untranslated string: imei
+WARNING: untranslated string: imsi
 WARNING: untranslated string: incoming firewall access
+WARNING: untranslated string: model
+WARNING: untranslated string: modem hardware details
+WARNING: untranslated string: modem information
+WARNING: untranslated string: modem network bit error rate
+WARNING: untranslated string: modem network information
+WARNING: untranslated string: modem network mode
+WARNING: untranslated string: modem network operator
+WARNING: untranslated string: modem network registration
+WARNING: untranslated string: modem network signal quality
+WARNING: untranslated string: modem no connection
+WARNING: untranslated string: modem no connection message
+WARNING: untranslated string: modem sim information
+WARNING: untranslated string: modem status
+WARNING: untranslated string: monitor interface
 WARNING: untranslated string: outgoing firewall access
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: software version
+WARNING: untranslated string: vendor

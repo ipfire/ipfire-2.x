@@ -514,6 +514,8 @@ buildipfire() {
   ipfiremake perl-GD
   ipfiremake GD-Graph
   ipfiremake GD-TextUtil
+  ipfiremake perl-Device-SerialPort
+  ipfiremake perl-Device-Modem
   ipfiremake gnupg
   ipfiremake hdparm
   ipfiremake sdparm

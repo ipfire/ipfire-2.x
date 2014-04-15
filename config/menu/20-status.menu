@@ -70,6 +70,11 @@
 				'title' => "$Lang::tr{'qos graphs'}",
 				'enabled' => 1,
 				};
+    $substatus->{'74.modem-status'} = {'caption' => $Lang::tr{'modem status'},
+				  'uri' => '/cgi-bin/modem-status.cgi',
+				  'title' => $Lang::tr{'modem status'},
+				  'enabled' => 0,
+				  };
     $substatus->{'75.atm-status'} = {'caption' => 'Atm-status',
 				  'uri' => '/cgi-bin/atm-status.cgi',
 				  'title' => 'Atm-status',

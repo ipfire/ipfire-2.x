@@ -73,6 +73,9 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
         if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'COMPORT'} !~ /^(ttyS0|ttyS1|ttyS2|ttyS3|ttyS4|ttyACM0|ttyACM1|ttyACM2|ttyACM3|ttyUSB0|ttyUSB1|ttyUSB2|ttyUSB3|rfcomm0|rfcomm1|isdn1|isdn2)$/) {
                 $errormessage = $Lang::tr{'invalid input'};
                 goto ERROR; }
+        if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'MONPORT'} !~ /^(ttyUSB0|ttyUSB1|ttyUSB2|ttyUSB3)$/) {
+                $errormessage = $Lang::tr{'invalid input'};
+                goto ERROR; }
         if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ && $pppsettings{'DTERATE'} !~ /^(9600|19200|38400|57600|115200|230400|460800|921600)$/) {
                 $errormessage = $Lang::tr{'invalid input'};
                 goto ERROR; }
@@ -335,6 +338,13 @@ $selected{'COMPORT'}{'rfcomm0'} = '';
 $selected{'COMPORT'}{'rfcomm1'} = '';
 $selected{'COMPORT'}{$pppsettings{'COMPORT'}} = "selected='selected'";
 
+$selected{'MONPORT'}{''} = '';
+$selected{'MONPORT'}{'ttyUSB0'} = '';
+$selected{'MONPORT'}{'ttyUSB1'} = '';
+$selected{'MONPORT'}{'ttyUSB2'} = '';
+$selected{'MONPORT'}{'ttyUSB3'} = '';
+$selected{'MONPORT'}{$pppsettings{'MONPORT'}} = "selected='selected'";
+
 $selected{'DTERATE'}{'9600'} = '';
 $selected{'DTERATE'}{'19200'} = '';
 $selected{'DTERATE'}{'38400'} = '';
@@ -583,6 +593,24 @@ END
 ;
                 }
     print "</select></td>       "}
+
+	if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/) {
+		print <<END;
+			<tr>
+				<td colspan='3' width='75%'>$Lang::tr{'monitor interface'}:</td>
+				<td width='25%'>
+					<select name="MONPORT" style="width: 165px;">
+						<option value="" $selected{'MONPORT'}{''}>---</option>
+						<option value="ttyUSB0" $selected{'MONPORT'}{'ttyUSB0'}>ttyUSB0</option>
+						<option value="ttyUSB1" $selected{'MONPORT'}{'ttyUSB1'}>ttyUSB1</option>
+						<option value="ttyUSB2" $selected{'MONPORT'}{'ttyUSB2'}>ttyUSB2</option>
+						<option value="ttyUSB3" $selected{'MONPORT'}{'ttyUSB3'}>ttyUSB3</option>
+					</select>
+				</td>
+			</tr>
+END
+	}
+
                 if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ ) {
                         print <<END
   <tr>
@@ -926,6 +954,7 @@ sub initprofile
 {
         $pppsettings{'PROFILENAME'} = $Lang::tr{'unnamed'};
         $pppsettings{'COMPORT'} = 'ttyS0';
+        $pppsettings{'MONPORT'} = '';
         $pppsettings{'DTERATE'} = 115200;
         $pppsettings{'SPEAKER'} = 'off';
         $pppsettings{'RECONNECTION'} = 'persistent';

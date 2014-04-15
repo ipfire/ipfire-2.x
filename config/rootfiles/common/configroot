@@ -116,6 +116,7 @@ var/ipfire/menu.d/70-log.menu
 var/ipfire/modem
 #var/ipfire/modem/defaults
 #var/ipfire/modem/settings
+var/ipfire/modem-lib.pl
 var/ipfire/net-traffic
 #var/ipfire/net-traffic/net-traffic-admin.pl
 #var/ipfire/net-traffic/net-traffic-lib.pl
