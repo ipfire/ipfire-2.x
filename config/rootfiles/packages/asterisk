@@ -356,6 +356,7 @@ usr/lib/asterisk/modules/res_security_log.so
 usr/lib/asterisk/modules/res_smdi.so
 usr/lib/asterisk/modules/res_snmp.so
 usr/lib/asterisk/modules/res_speech.so
+usr/lib/asterisk/modules/res_srtp.so
 usr/lib/asterisk/modules/res_stun_monitor.so
 usr/lib/asterisk/modules/res_timing_pthread.so
 usr/lib/asterisk/modules/res_timing_timerfd.so
@@ -493,7 +494,7 @@ var/ipfire/backup/addons/includes/asterisk
 #var/lib/asterisk/documentation/core-en_US.xml
 #var/lib/asterisk/documentation/thirdparty
 #var/lib/asterisk/firmware
-#var/lib/asterisk/firmware/iax
+var/lib/asterisk/firmware/iax
 #var/lib/asterisk/images
 var/lib/asterisk/images/asterisk-intro.jpg
 var/lib/asterisk/images/kpad2.jpg
