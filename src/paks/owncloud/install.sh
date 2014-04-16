@@ -23,10 +23,14 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
-mkdir /var/owncloud/data
-chown -R nobody:nobody /var/owncloud/*
+
+# Fix permissions.
 chmod 777 /srv/web/owncloud/apps
 chmod 777 /srv/web/owncloud/config
+
+# Create data directory.
+mkdir -p /var/owncloud/data
+chown -R nobody:nobody /var/owncloud
 
 # Import web interface certificates if none exist.
 if [ ! -e "/etc/httpd/owncloud.crt" ] && [ ! "/etc/httpd/owncloud.key" ]; then
@@ -35,3 +39,5 @@ if [ ! -e "/etc/httpd/owncloud.crt" ] && [ ! "/etc/httpd/owncloud.key" ]; then
 fi
 
 /etc/init.d/apache reload
+
+exit 0
