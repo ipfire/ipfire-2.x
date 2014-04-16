@@ -28,4 +28,10 @@ chown -R nobody:nobody /var/owncloud/*
 chmod 777 /srv/web/owncloud/apps
 chmod 777 /srv/web/owncloud/config
 
+# Import web interface certificates if none exist.
+if [ ! -e "/etc/httpd/owncloud.crt" ] && [ ! "/etc/httpd/owncloud.key" ]; then
+	cat /etc/httpd/server.crt > /etc/httpd/owncloud.crt
+	cat /etc/httpd/server.key > /etc/httpd/owncloud.key
+fi
+
 /etc/init.d/apache reload
