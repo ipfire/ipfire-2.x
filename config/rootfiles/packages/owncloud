@@ -6190,3 +6190,5 @@ srv/web/owncloud
 #srv/web/owncloud/themes/README
 #srv/web/owncloud/upgrade.php
 var/ipfire/backup/addons/includes/owncloud
+#var/owncloud
+#var/owncloud/data

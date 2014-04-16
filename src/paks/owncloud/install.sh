@@ -23,8 +23,8 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
-mkdir /srv/web/owncloud/data
-chown -R nobody:nobody /srv/web/owncloud/*
+mkdir /var/owncloud/data
+chown -R nobody:nobody /var/owncloud/*
 chmod 777 /srv/web/owncloud/apps
 chmod 777 /srv/web/owncloud/config
 

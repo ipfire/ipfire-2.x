@@ -86,7 +86,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	done <<< "$$(find /srv/web/owncloud | grep ' ')"
 
 	# Create data directory
-	mkdir -pv /srv/web/owncloud/data
+	mkdir -pv /var/owncloud/data
+	ln -s /var/owncloud/data /srv/web/owncloud/data 
 
 	# Make sure everything is owned by root, except...
 	chown -R root.root /srv/web/owncloud
