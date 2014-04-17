@@ -23,6 +23,7 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
+restore_backup ${NAME}
 
 # Fix permissions.
 chmod 777 /srv/web/owncloud/apps

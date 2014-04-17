@@ -22,6 +22,9 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+make_backup ${NAME}
 remove_files
 
 /etc/init.d/apache reload
+
+exit 0
