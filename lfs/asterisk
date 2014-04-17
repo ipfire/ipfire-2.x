@@ -30,7 +30,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
 PAK_VER    = 9
 
-DEPS       = "sqlite libpri libtiff libvorbis libogg spandsp netsnmpd mysql"
+DEPS       = "sqlite ffmpeg spandsp"
 
 ###############################################################################
 # Top-level Rules
@@ -87,16 +87,28 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# build srtp
 	@rm -rf $(DIR_SRC)/srtp && cd $(DIR_SRC) && tar zxf $(DIR_DL)/srtp-1.4.2.tar.gz
-	cd $(DIR_SRC)/srtp && ./configure --prefix=/usr && make uninstall && make install
+	cd $(DIR_SRC)/srtp && ./configure --prefix=/usr && make uninstall && make && make install
 
 	# remove old directories and extract asterisk
 	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-* $(DIR_SRC)/agx-ast-addons && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
 	# configure asterisk
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire --disable-xmldoc
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire \
+		--without-oss \
+		--without-sdl \
+		--without-SDL_image \
+		--without-netsnmp \
+		--disable-xmldoc
 
 	# enable additional features (include following sound-tars)
-	cd $(DIR_APP) && make menuselect.makeopts && menuselect/menuselect --enable app_mysql --enable cdr_mysql --enable res_config_mysql --enable EXTRA-SOUNDS-EN-GSM --enable MOH-OPSOUND-GSM  menuselect.makeopts
+	cd $(DIR_APP) && make menuselect.makeopts && menuselect/menuselect \
+		--enable res_srtp \
+		--enable app_mysql \
+		--enable cdr_mysql \
+		--enable res_config_mysql \
+		--enable EXTRA-SOUNDS-EN-GSM \
+		--enable MOH-OPSOUND-GSM  \
+		menuselect.makeopts
 
 	# add additional sounds
 	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-extra-sounds-en-gsm-1.4.14.tar.gz $(DIR_APP)/sounds/
