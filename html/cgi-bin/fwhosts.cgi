@@ -909,9 +909,6 @@ if ($fwhostsettings{'ACTION'} eq 'deletegrphost')
 	}
 	&General::writehasharray("$configgrp", \%customgrp);
 	&General::firewall_config_changed();
-	if ($fwhostsettings{'grpcnt'} > 0){
-		&General::firewall_config_changed();
-	}
 	if ($fwhostsettings{'update'} eq 'on'){
 		$fwhostsettings{'remark'}= $grpremark;
 		$fwhostsettings{'grp_name'}=$grpname;
@@ -1843,11 +1840,11 @@ sub viewtablegrp
 				print "$customgrp{$key}[2]</td>";
 			}
 			if ($ip eq '' && $customgrp{$key}[2] ne $Lang::tr{'fwhost err emptytable'}){
-				print "<td align='center' $col>$Lang::tr{'fwhost deleted'}</td><td align='center' $col>$customgrp{$key}[3]</td><td width='1%' $col><form method='post'>";
+				print "<td align='center' $col>$Lang::tr{'fwhost deleted'}</td><td align='center' $col>$Lang::tr{'fwhost '.$customgrp{$key}[3]}</td><td width='1%' $col><form method='post'>";
 			}else{
 				my ($colip,$colsub) = split("/",$ip);
 				$ip="$colip/".&General::iporsubtocidr($colsub) if ($colsub);
-				print"<td align='center' $col>".&getcolor($ip)."</td><td align='center' $col>$customgrp{$key}[3]</td><td width='1%' $col><form method='post'>";
+				print"<td align='center' $col>".&getcolor($ip)."</td><td align='center' $col>$Lang::tr{'fwhost '.$customgrp{$key}[3]}</td><td width='1%' $col><form method='post'>";
 			}
 			if ($delflag > 0 && $ip ne ''){
 				print"<input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' />";
@@ -1858,8 +1855,7 @@ sub viewtablegrp
 					}
 				}
 			}
-			print"<input type='hidden' name='ACTION' value='deletegrphost'><input type='hidden' name='grpcnt' value='$customgrp{$key}[4]'><input type='hidden' name='update' value='$fwhostsettings{'update'}'><input type='hidden' name='delhost' value='$grpname,$remark,$customgrp{$key}[2],$customgrp{$key}[3]'></form></td></tr>";
-			
+			print"<input type='hidden' name='ACTION' value='deletegrphost'><input type='hidden' name='update' value='$fwhostsettings{'update'}'><input type='hidden' name='delhost' value='$grpname,$remark,$customgrp{$key}[2],$customgrp{$key}[3]'></form></td></tr>";
 			$helper=$customgrp{$key}[0];
 			$number++;
 		}
