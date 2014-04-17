@@ -9,19 +9,30 @@
 . $rc_functions
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
+function flush_chains() {
+	iptables -F DHCPGREENINPUT
+	iptables -F DHCPGREENOUTPUT
+	iptables -F DHCPBLUEINPUT
+	iptables -F DHCPBLUEOUTPUT
+}
+
 case "$1" in
 	start)
-		iptables -F DHCPBLUEINPUT
+		flush_chains
+
 		if [ -e /var/ipfire/dhcp/enable_green ]; then
 			devices="${GREEN_DEV}"
+
+			iptables -A DHCPGREENINPUT  -i "${GREEN_DEV}" -j DHCPINPUT
+			iptables -A DHCPGREENOUTPUT -o "${GREEN_DEV}" -j DHCPOUTPUT
 		fi
 		if [ -e /var/ipfire/dhcp/enable_blue ]; then
 			devices+=" ${BLUE_DEV}"
-			
-			iptables -A DHCPBLUEINPUT -p tcp --source-port 68 --destination-port 67 -i ${BLUE_DEV} -j ACCEPT > /dev/null 2>&1
-			iptables -A DHCPBLUEINPUT -p udp --source-port 68 --destination-port 67 -i ${BLUE_DEV} -j ACCEPT > /dev/null 2>&1
-		fi		
-		
+
+			iptables -A DHCPBLUEINPUT  -i "${BLUE_DEV}" -j DHCPINPUT
+			iptables -A DHCPBLUEOUTPUT -o "${BLUE_DEV}" -j DHCPOUTPUT
+		fi
+
 		boot_mesg "Starting DHCP Server..."
 		loadproc /usr/sbin/dhcpd -q ${devices}
 		
@@ -29,6 +40,8 @@ case "$1" in
 		;;
 
 	stop)
+		flush_chains
+
 		boot_mesg "Stopping DHCP Server..."
 		killproc -p /var/run/dhcpd.pid /usr/sbin/dhcpd
 		if [ "$(ps -A | grep " dhcpd")" != "" ] ; then
