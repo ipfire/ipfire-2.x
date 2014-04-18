@@ -226,6 +226,14 @@ WARNING: translation string unused: fwdfw std network
 WARNING: translation string unused: fwdfw till
 WARNING: translation string unused: fwdfw time
 WARNING: translation string unused: fwdfw xt access
+WARNING: translation string unused: fwhost Custom Host
+WARNING: translation string unused: fwhost Custom Network
+WARNING: translation string unused: fwhost IpSec Host
+WARNING: translation string unused: fwhost IpSec Network
+WARNING: translation string unused: fwhost OpenVPN N-2-N
+WARNING: translation string unused: fwhost OpenVPN static host
+WARNING: translation string unused: fwhost OpenVPN static network
+WARNING: translation string unused: fwhost Standard Network
 WARNING: translation string unused: fwhost attention
 WARNING: translation string unused: fwhost blue
 WARNING: translation string unused: fwhost changeremark
