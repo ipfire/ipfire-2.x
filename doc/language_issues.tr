@@ -4,7 +4,6 @@ WARNING: translation string unused: ConnSched select profile
 WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Level7 rule
 WARNING: translation string unused: Local VPN IP
-WARNING: translation string unused: MB written
 WARNING: translation string unused: Ping
 WARNING: translation string unused: Queuelenght
 WARNING: translation string unused: Remote IP
@@ -204,6 +203,7 @@ WARNING: translation string unused: esp keylife
 WARNING: translation string unused: expected
 WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
+WARNING: translation string unused: external access
 WARNING: translation string unused: external access configuration
 WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
@@ -239,6 +239,7 @@ WARNING: translation string unused: fwdfw final_rule
 WARNING: translation string unused: fwdfw from
 WARNING: translation string unused: fwdfw ipsec network
 WARNING: translation string unused: fwdfw man port
+WARNING: translation string unused: fwdfw menu
 WARNING: translation string unused: fwdfw natport used
 WARNING: translation string unused: fwdfw p2p txt
 WARNING: translation string unused: fwdfw rule action
@@ -405,6 +406,7 @@ WARNING: translation string unused: or
 WARNING: translation string unused: original
 WARNING: translation string unused: our donors
 WARNING: translation string unused: out
+WARNING: translation string unused: outgoing firewall
 WARNING: translation string unused: outgoing firewall add ip group
 WARNING: translation string unused: outgoing firewall add mac group
 WARNING: translation string unused: outgoing firewall edit ip group
@@ -644,6 +646,7 @@ WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
+WARNING: untranslated string: capabilities
 WARNING: untranslated string: count
 WARNING: untranslated string: dh
 WARNING: untranslated string: dh key warn
@@ -653,7 +656,25 @@ WARNING: untranslated string: fwdfw many
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
+WARNING: untranslated string: imei
+WARNING: untranslated string: imsi
+WARNING: untranslated string: incoming firewall access
+WARNING: untranslated string: model
+WARNING: untranslated string: modem hardware details
+WARNING: untranslated string: modem information
+WARNING: untranslated string: modem network bit error rate
+WARNING: untranslated string: modem network information
+WARNING: untranslated string: modem network mode
+WARNING: untranslated string: modem network operator
+WARNING: untranslated string: modem network registration
+WARNING: untranslated string: modem network signal quality
+WARNING: untranslated string: modem no connection
+WARNING: untranslated string: modem no connection message
+WARNING: untranslated string: modem sim information
+WARNING: untranslated string: modem status
+WARNING: untranslated string: monitor interface
 WARNING: untranslated string: not a valid dh key
+WARNING: untranslated string: outgoing firewall access
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
 WARNING: untranslated string: ovpn dh name
@@ -665,5 +686,7 @@ WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: show dh
+WARNING: untranslated string: software version
 WARNING: untranslated string: source ip country
 WARNING: untranslated string: upload dh key
+WARNING: untranslated string: vendor

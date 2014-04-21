@@ -25,6 +25,7 @@
 < age ssecond
 < attention
 < bit
+< capabilities
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -300,6 +301,9 @@
 < generate dh key
 < grouptype
 < hardware support
+< imei
+< imsi
+< incoming firewall access
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -315,6 +319,19 @@
 < MB written
 < minimum
 < minute
+< model
+< modem hardware details
+< modem information
+< modem network bit error rate
+< modem network information
+< modem network mode
+< modem network operator
+< modem network registration
+< modem network signal quality
+< modem no connection
+< modem no connection message
+< modem sim information
+< modem status
 < most preferred
 < no hardware random number generator
 < not a valid dh key
@@ -334,6 +351,7 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing firewall access
 < ovpn crypt options
 < ovpn dh
 < ovpn dh name
@@ -363,6 +381,7 @@
 < show dh
 < snat new source ip address
 < snort working
+< software version
 < ssh
 < static routes
 < support donation
@@ -432,6 +451,7 @@
 < urlfilter file ext block
 < urlfilter mode block
 < urlfilter redirect template
+< vendor
 < visit us at
 < vpn keyexchange
 < wlanap access point
@@ -506,6 +526,7 @@
 < Async logging enabled
 < attention
 < bit
+< capabilities
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -780,6 +801,9 @@
 < generate dh key
 < grouptype
 < hardware support
+< imei
+< imsi
+< incoming firewall access
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -795,6 +819,19 @@
 < MB written
 < minimum
 < minute
+< model
+< modem hardware details
+< modem information
+< modem network bit error rate
+< modem network information
+< modem network mode
+< modem network operator
+< modem network registration
+< modem network signal quality
+< modem no connection
+< modem no connection message
+< modem sim information
+< modem status
 < most preferred
 < no hardware random number generator
 < not a valid dh key
@@ -812,6 +849,7 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing firewall access
 < outgoing firewall add ip group
 < outgoing firewall add mac group
 < outgoing firewall edit ip group
@@ -859,6 +897,7 @@
 < Set time on boot
 < show dh
 < snat new source ip address
+< software version
 < ssh
 < static routes
 < support donation
@@ -925,6 +964,7 @@
 < uptime
 < uptime load average
 < urlfilter redirect template
+< vendor
 < visit us at
 < vpn keyexchange
 < wlanap country
@@ -978,6 +1018,7 @@
 < age ssecond
 < attention
 < bit
+< capabilities
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -1244,6 +1285,9 @@
 < generate dh key
 < grouptype
 < hardware support
+< imei
+< imsi
+< incoming firewall access
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -1259,6 +1303,19 @@
 < MB written
 < minimum
 < minute
+< model
+< modem hardware details
+< modem information
+< modem network bit error rate
+< modem network information
+< modem network mode
+< modem network operator
+< modem network registration
+< modem network signal quality
+< modem no connection
+< modem no connection message
+< modem sim information
+< modem status
 < most preferred
 < no hardware random number generator
 < not a valid dh key
@@ -1276,6 +1333,7 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing firewall access
 < ovpn crypt options
 < ovpn dh
 < ovpn dh name
@@ -1308,6 +1366,7 @@
 < server restart
 < show dh
 < snat new source ip address
+< software version
 < ssh
 < static routes
 < support donation
@@ -1373,6 +1432,7 @@
 < uptime
 < uptime load average
 < urlfilter redirect template
+< vendor
 < visit us at
 < vpn keyexchange
 < wlanap country
@@ -1427,6 +1487,7 @@
 < age ssecond
 < attention
 < bit
+< capabilities
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -1698,6 +1759,9 @@
 < grouptype
 < hardware support
 < hour-graph
+< imei
+< imsi
+< incoming firewall access
 < incoming traffic in bytes per second
 < integrity
 < invalid input for dpd delay
@@ -1714,6 +1778,19 @@
 < MB written
 < minimum
 < minute
+< model
+< modem hardware details
+< modem information
+< modem network bit error rate
+< modem network information
+< modem network mode
+< modem network operator
+< modem network registration
+< modem network signal quality
+< modem no connection
+< modem no connection message
+< modem sim information
+< modem status
 < month-graph
 < most preferred
 < no hardware random number generator
@@ -1732,6 +1809,7 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing firewall access
 < outgoing traffic in bytes per second
 < ovpn crypt options
 < ovpn dh
@@ -1761,6 +1839,7 @@
 < server restart
 < show dh
 < snat new source ip address
+< software version
 < ssh
 < static routes
 < support donation
@@ -1826,6 +1905,7 @@
 < uptime
 < uptime load average
 < urlfilter redirect template
+< vendor
 < visit us at
 < vpn keyexchange
 < week-graph

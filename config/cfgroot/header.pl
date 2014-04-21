@@ -153,6 +153,10 @@ sub genmenu {
     if (&General::RedIsWireless()) {
         $menu->{'01.system'}{'subMenu'}->{'21.wlan'}{'enabled'} = 1;
     }
+
+    if ($ethsettings{'RED_TYPE'} eq "PPPOE") {
+        $menu->{'02.status'}{'subMenu'}->{'74.modem-status'}{'enabled'} = 1;
+    }
 }
 
 sub showhttpheaders
