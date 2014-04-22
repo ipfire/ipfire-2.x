@@ -1539,6 +1539,7 @@ sub newrule
 				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
 				$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
 				$selected{'dnat'}{$fwdfwsettings{'dnat'}}				='selected';
+				$selected{'snat'}{$fwdfwsettings{'snat'}}				='selected';
 			}
 		}
 		$fwdfwsettings{'oldgrp1a'}=$fwdfwsettings{'grp1'};
