@@ -93,6 +93,14 @@ $(TARGET) :
 	cp -f /etc/nsswitch.conf /install/initrd/etc/
 	cp -f $(DIR_SRC)/config/initrd/dhcpc/* /install/initrd/var/ipfire/dhcpc/dhcpcd-hooks/
 
+	# Install needed locales.
+	-mkdir -pv /install/initrd/usr/lib/locale
+	for lang in $(DIR_SRC)/langs/*; do \
+		for path in /usr/lib/locale/$${lang##*/}*; do \
+			[ -d "$${path}" ] && cp -lrvf "$${path}" /install/initrd/usr/lib/locale/; \
+		done; \
+	done
+
 	cd /install/initrd && find . | cpio -o -H newc | lzma > /install/images/initrd
 	cd /install/initrd && find ./ -ls > $(DIR_INFO)/_build.initrd.log
 
