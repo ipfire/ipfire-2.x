@@ -640,17 +640,9 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
-WARNING: untranslated string: ConnSched dial
-WARNING: untranslated string: ConnSched hangup
-WARNING: untranslated string: ConnSched reboot
-WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
-WARNING: untranslated string: count
-WARNING: untranslated string: fwdfw many
 WARNING: untranslated string: fwhost err hostip
-WARNING: untranslated string: incoming firewall access
-WARNING: untranslated string: outgoing firewall access
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
