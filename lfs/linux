@@ -137,6 +137,7 @@ endif
 	# Wlan Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-drivers-3.8.3-ath_ignore_eeprom_regdomain.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.34-iwlwifi-noibss_only_on_radar_chan.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.37-rt2800usb_add_dlink_dwa137_usbid.patch
 
 	# mISDN Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN_hfc-s_add_id.patch
