@@ -117,6 +117,7 @@ etc/rc.d/init.d/squid
 etc/rc.d/init.d/sshd
 #etc/rc.d/init.d/sslh
 etc/rc.d/init.d/static-routes
+#etc/rc.d/init.d/stunnel
 etc/rc.d/init.d/swap
 etc/rc.d/init.d/sysctl
 etc/rc.d/init.d/sysklogd
