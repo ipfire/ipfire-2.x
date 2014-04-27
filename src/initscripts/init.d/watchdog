@@ -1,44 +1,31 @@
 #!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/watchdog
+#
+# Description : watchdog daemon initscript
+#
+########################################################################
 
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-PATH=/bin:/usr/bin:/sbin:/usr/sbin
-
-test -x /usr/sbin/watchdog || exit 0
-
-# For configuration of the init script use the file
-# /etc/sysconfig/watchdog, do not edit this init script.
-
-# Set run_watchdog to 1 to start watchdog or 0 to disable it.
-run_watchdog=0
-
-# Specify additional watchdog options here (see manpage).
-watchdog_options=""
-
-# Specify module to load
-watchdog_module="none"
-
-[ -e /etc/sysconfig/watchdog ] && . /etc/sysconfig/watchdog
-
-DAEMON=/usr/sbin/watchdog
-WD_DAEMON=/usr/sbin/wd_keepalive
+if [ -e "/etc/sysconfig/watchdog" ]; then
+	. /etc/sysconfig/watchdog
+fi
 
 case "${1}" in
 	start)
-		boot_mesg "Starting watchdog ..."
-    		if [ $run_watchdog = 1 ]
-    		then
-    			# do we have to load a module?
-			[ ${watchdog_module:-none} != "none" ] && /sbin/modprobe $watchdog_module
+		if [ -n "${watchdog_module}" ]; then
+			modprobe -q "${watchdog_module}" 2>/dev/null
+		fi
 
-			loadproc $DAEMON $watchdog_options
-    		fi
+		boot_mesg "Starting watchdog daemon..."
+		loadproc /usr/sbin/watchdog ${watchdog_options}
 		;;
 
 	stop)
-		boot_mesg "Stopping watchdog ..."
-		killproc $DAEMON
+		boot_mesg "Stopping watchdog daemon..."
+		killproc /usr/sbin/watchdog
 		;;
 
 	restart)
@@ -48,7 +35,7 @@ case "${1}" in
 		;;
 
 	status)
-		statusproc $DAEMON
+		statusproc /usr/sbin/watchdog
 		;;
 
 	*)
@@ -57,3 +44,4 @@ case "${1}" in
 		;;
 esac
 
+# End $rc_base/init.d/watchdog
