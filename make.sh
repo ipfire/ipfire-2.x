@@ -508,6 +508,7 @@ buildipfire() {
   ipfiremake arping
   ipfiremake beep
   ipfiremake dvdrtools
+  ipfiremake nettle
   ipfiremake dnsmasq
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
