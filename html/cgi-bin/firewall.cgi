@@ -2562,11 +2562,11 @@ END
 						push (@nat_ifaces,&fwlib::get_nat_address($$hash{$key}[29],$val));
 					}
 					@nat_ifaces=&del_double(@nat_ifaces);
-					$natstring = join(', ', @nat_ifaces);
+					$natstring = "";
 				}else{
-					$natstring = $$hash{$key}[29];
+					$natstring = "($$hash{$key}[29])";
 				}
-				print "$Lang::tr{'firewall'} ($natstring)";
+				print "$Lang::tr{'firewall'} $natstring";
 				if($$hash{$key}[30] ne ''){
 					$$hash{$key}[30]=~ tr/|/,/;
 					print": $$hash{$key}[30]";
