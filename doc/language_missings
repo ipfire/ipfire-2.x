@@ -23,6 +23,7 @@
 < age shour
 < age sminute
 < age ssecond
+< atm device
 < attention
 < bit
 < ccd add
@@ -500,6 +501,7 @@
 < age sminute
 < age ssecond
 < Async logging enabled
+< atm device
 < attention
 < bit
 < ccd add
@@ -968,6 +970,7 @@
 < age shour
 < age sminute
 < age ssecond
+< atm device
 < attention
 < bit
 < ccd add
@@ -1413,6 +1416,7 @@
 < age shour
 < age sminute
 < age ssecond
+< atm device
 < attention
 < bit
 < ccd add
