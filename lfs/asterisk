@@ -20,7 +20,7 @@
 
 include Config
 
-VER        = 11.8.1
+VER        = 11.9.0
 
 THISAPP    = asterisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -28,9 +28,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 9
+PAK_VER    = 10
 
-DEPS       = "sqlite ffmpeg spandsp"
+DEPS       = "sqlite"
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +48,7 @@ asterisk-extra-sounds-en-gsm-1.4.14.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds
 asterisk-moh-opsound-gsm-2.03.tar.gz = $(URL_IPFIRE)/asterisk-moh-opsound-gsm-2.03.tar.gz
 asterisk-1.4-de-prompts.tar.gz = $(URL_IPFIRE)/asterisk-1.4-de-prompts.tar.gz
 
-$(DL_FILE)_MD5 = 7bace8e6845188ca68b8d682d71cb1cc
+$(DL_FILE)_MD5 = 743e7dc0112e24f794453443b17ce42b
 srtp-1.4.2.tar.gz_MD5 = 7b0ffbfad9bbaf33d397027e031cb35a
 asterisk-extra-sounds-en-gsm-1.4.14.tar.gz_MD5 = ffc2e0ffd783c03fef5b75277dba0896
 asterisk-moh-opsound-gsm-2.03.tar.gz_MD5 = 09066f55f1358f298bc1a6e4678a3ddf
@@ -90,14 +90,21 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/srtp && ./configure --prefix=/usr && make uninstall && make && make install
 
 	# remove old directories and extract asterisk
-	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-* $(DIR_SRC)/agx-ast-addons && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
+	# patch asterisk
+	cd $(DIR_APP) && patch -p4 < $(DIR_SRC)/src/patches/asterisk-no-ffmpeg.patch
+	
 	# configure asterisk
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire \
 		--without-oss \
 		--without-sdl \
 		--without-SDL_image \
 		--without-netsnmp \
+		--without-avcodec \
+		--without-vorbis \
+		--without-ogg \
+		--without-spandsp \
 		--disable-xmldoc
 
 	# enable additional features (include following sound-tars)
