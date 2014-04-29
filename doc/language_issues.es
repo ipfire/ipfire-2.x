@@ -588,6 +588,7 @@ WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: advproxy errmsg proxy ports equal
 WARNING: untranslated string: advproxy proxy port transparent
+WARNING: untranslated string: atm device
 WARNING: untranslated string: attention
 WARNING: untranslated string: bit
 WARNING: untranslated string: bytes

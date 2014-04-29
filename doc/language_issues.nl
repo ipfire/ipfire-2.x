@@ -600,6 +600,7 @@ WARNING: untranslated string: addons
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg proxy ports equal
 WARNING: untranslated string: advproxy proxy port transparent
+WARNING: untranslated string: atm device
 WARNING: untranslated string: bit
 WARNING: untranslated string: bytes
 WARNING: untranslated string: ccd err isipsecrw
