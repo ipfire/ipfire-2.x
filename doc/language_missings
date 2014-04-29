@@ -356,6 +356,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < snat new source ip address
@@ -848,6 +849,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < Set time on boot
@@ -1294,6 +1296,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < snat new source ip address
@@ -1743,6 +1746,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < snat new source ip address

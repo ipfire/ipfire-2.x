@@ -1782,6 +1782,7 @@
 'qos warning' => 'Die Regel <strong>muss</strong> wieder gespeichert werden, ansonsten wird sie verworfen!',
 'quick playlist' => 'Quick Playlist',
 'ram' => 'RAM-Speicher',
+'random number generator daemon' => 'Random Number Generator Daemon',
 'read bytes' => 'Gelesene Bytes',
 'read list' => 'Liste der Leseberechtigten',
 'real address' => 'Reale Addresse',

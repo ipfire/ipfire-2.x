@@ -1814,6 +1814,7 @@
 'quick control' => 'Quick Control',
 'quick playlist' => 'Quick Playlist',
 'ram' => 'RAM',
+'random number generator daemon' => 'Random Number Generator Daemon',
 'read bytes' => 'Read Bytes',
 'read list' => 'list with readonly hosts',
 'real address' => 'Real Address',

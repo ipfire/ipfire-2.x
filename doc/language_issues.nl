@@ -802,6 +802,7 @@ WARNING: untranslated string: ovpn port in root range
 WARNING: untranslated string: p2p block
 WARNING: untranslated string: p2p block save notice
 WARNING: untranslated string: qos enter bandwidths
+WARNING: untranslated string: random number generator daemon
 WARNING: untranslated string: red1
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
