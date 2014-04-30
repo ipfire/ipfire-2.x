@@ -798,6 +798,7 @@ buildipfire() {
   ipfiremake wavemon
   ipfiremake iptraf-ng
   ipfiremake iotop
+  ipfiremake stunnel
 }
 
 buildinstaller() {
