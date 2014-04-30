@@ -399,6 +399,7 @@ if [ -e /var/ipfire/qos/enable ]; then
 	/usr/local/bin/qosctrl start
 fi
 
+chown cron:cron /var/spool/cron
 # Update crontab
 cat <<EOF >> /var/spool/cron/root.orig
 
