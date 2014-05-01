@@ -636,7 +636,6 @@ buildipfire() {
   ipfiremake libmpeg2
   ipfiremake cmake
   ipfiremake gnump3d
-  ipfiremake libsigc++
   ipfiremake rsync
   ipfiremake tcpwrapper
   ipfiremake libevent
