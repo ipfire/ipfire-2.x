@@ -20,13 +20,13 @@ case "$1" in
 	start)
 		flush_chains
 
-		if [ -e /var/ipfire/dhcp/enable_green ]; then
+		if [ -n "${GREEN_DEV}" -a -e "/var/ipfire/dhcp/enable_green" ]; then
 			devices="${GREEN_DEV}"
 
 			iptables -A DHCPGREENINPUT  -i "${GREEN_DEV}" -j DHCPINPUT
 			iptables -A DHCPGREENOUTPUT -o "${GREEN_DEV}" -j DHCPOUTPUT
 		fi
-		if [ -e /var/ipfire/dhcp/enable_blue ]; then
+		if [ -n "${BLUE_DEV}" -a -e "/var/ipfire/dhcp/enable_blue" ]; then
 			devices+=" ${BLUE_DEV}"
 
 			iptables -A DHCPBLUEINPUT  -i "${BLUE_DEV}" -j DHCPINPUT
@@ -35,7 +35,7 @@ case "$1" in
 
 		boot_mesg "Starting DHCP Server..."
 		loadproc /usr/sbin/dhcpd -q ${devices}
-		
+
 		(sleep 5 && chmod 644 /var/run/dhcpd.pid) & # Fix because silly dhcpd creates its pid with mode 640
 		;;
 
