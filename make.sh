@@ -637,8 +637,6 @@ buildipfire() {
   ipfiremake cmake
   ipfiremake gnump3d
   ipfiremake libsigc++
-  ipfiremake libtorrent
-  ipfiremake rtorrent
   ipfiremake rsync
   ipfiremake tcpwrapper
   ipfiremake libevent
