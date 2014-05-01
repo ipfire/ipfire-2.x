@@ -31,3 +31,4 @@ var/ipfire/header.pl
 var/ipfire/graphs.pl
 var/ipfire/langs
 var/ipfire/menu.d/10-system.menu
+var/ipfire/menu.d/20-status.menu
