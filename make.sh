@@ -798,6 +798,7 @@ buildipfire() {
   ipfiremake wavemon
   ipfiremake iptraf-ng
   ipfiremake iotop
+  ipfiremake stunnel
 }
 
 buildinstaller() {
@@ -841,7 +842,8 @@ buildpackages() {
   ipfiremake cdrom
 
   # Check if there is a loop device for building in virtual environments
-  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
+  modprobe loop 2>/dev/null
+  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ] || [ -e "/dev/loop-control" ]); then
 	ipfiremake flash-images
   fi
 

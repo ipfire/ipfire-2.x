@@ -600,6 +600,7 @@ WARNING: untranslated string: addons
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg proxy ports equal
 WARNING: untranslated string: advproxy proxy port transparent
+WARNING: untranslated string: atm device
 WARNING: untranslated string: bit
 WARNING: untranslated string: bytes
 WARNING: untranslated string: ccd err isipsecrw
@@ -802,6 +803,7 @@ WARNING: untranslated string: ovpn port in root range
 WARNING: untranslated string: p2p block
 WARNING: untranslated string: p2p block save notice
 WARNING: untranslated string: qos enter bandwidths
+WARNING: untranslated string: random number generator daemon
 WARNING: untranslated string: red1
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added

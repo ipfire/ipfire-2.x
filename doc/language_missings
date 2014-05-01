@@ -23,6 +23,7 @@
 < age shour
 < age sminute
 < age ssecond
+< atm device
 < attention
 < bit
 < ccd add
@@ -356,6 +357,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < snat new source ip address
@@ -500,6 +502,7 @@
 < age sminute
 < age ssecond
 < Async logging enabled
+< atm device
 < attention
 < bit
 < ccd add
@@ -848,6 +851,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < Set time on boot
@@ -968,6 +972,7 @@
 < age shour
 < age sminute
 < age ssecond
+< atm device
 < attention
 < bit
 < ccd add
@@ -1294,6 +1299,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < snat new source ip address
@@ -1413,6 +1419,7 @@
 < age shour
 < age sminute
 < age ssecond
+< atm device
 < attention
 < bit
 < ccd add
@@ -1743,6 +1750,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < snat new source ip address

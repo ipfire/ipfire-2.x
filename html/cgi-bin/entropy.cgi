@@ -61,9 +61,27 @@ if ( $querry[0] ne~ "") {
 		$message = $Lang::tr{'no hardware random number generator'};
 	}
 
+	my $rngd_status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
+	if (&rngd_is_running()) {
+		$rngd_status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
+	}
+
 	&Header::openbox('100%', 'center', $Lang::tr{'hardware support'});
 	print <<EOF;
 		<p style="color: $message_colour; text-align: center;">$message</p>
+
+		<table width='80%' cellspacing='1' class='tbl'>
+			<tr>
+				<th align='center'><b>$Lang::tr{'service'}</b></th>
+				<th align='center'><b>$Lang::tr{'status'}</b></th>
+			</tr>
+			<tr>
+				<td align='center'>
+					$Lang::tr{'random number generator daemon'}
+				</td>
+				$rngd_status
+			</tr>
+		</table>
 EOF
 	&Header::closebox();
 
@@ -86,4 +104,8 @@ sub has_rdrand() {
 	}
 
 	return 0;
+}
+
+sub rngd_is_running() {
+	return (-e "/var/run/rngd.pid");
 }
