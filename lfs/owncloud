@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.0.11
+VER        = 6.0.3
 
 THISAPP    = owncloud-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ae31d78bf9b29835330922fefa96e076
+$(DL_FILE)_MD5 = 007d6025cca1e46abd52bc6700149bc9
 
 install : $(TARGET)
 
