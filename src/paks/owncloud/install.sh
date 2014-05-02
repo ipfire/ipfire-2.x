@@ -34,7 +34,7 @@ mkdir -p /var/owncloud/data
 chown -R nobody:nobody /var/owncloud
 
 # Import web interface certificates if none exist.
-if [ ! -e "/etc/httpd/owncloud.crt" ] && [ ! "/etc/httpd/owncloud.key" ]; then
+if [ ! -e "/etc/httpd/owncloud.crt" ] && [ ! -e "/etc/httpd/owncloud.key" ]; then
 	cat /etc/httpd/server.crt > /etc/httpd/owncloud.crt
 	cat /etc/httpd/server.key > /etc/httpd/owncloud.key
 fi
