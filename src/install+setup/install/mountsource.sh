@@ -58,7 +58,7 @@ done
 # scan all Partitions on raid/mmc devices
 for DEVICE in `find /sys/block/* -maxdepth 0 ! -name fd* ! -name loop* ! -name ram* -exec basename {} \;`
 do
-	for DEVICEP in $(ls /dev/${DEVICE}p? | sed "s/\/dev\///");do
+	for DEVICEP in $(ls /dev/${DEVICE}p? | sed "s/\/dev\///" 2> /dev/null);do
 		mount /dev/${DEVICEP} /cdrom 2> /dev/null
 		if [ -n "$(ls /cdrom/${version}.media 2>/dev/null)" ]; then
 			echo -n ${DEVICEP} > /tmp/source_device
