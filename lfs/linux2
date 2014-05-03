@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 28
+PAK_VER    = 29
 DEPS	   = ""
 
 # Normal build or XEN build.
