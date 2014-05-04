@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -42,7 +42,7 @@ done
 # scan all Partitions on block devices
 for DEVICE in `find /sys/block/* -maxdepth 0 ! -name fd* ! -name loop* ! -name ram* -exec basename {} \;`
 do
-	for DEVICEP in $(ls /dev/${DEVICE}? | sed "s/\/dev\///" 2> /dev/null);do
+	for DEVICEP in $(ls /dev/${DEVICE}? 2>/dev/null | sed "s/\/dev\///");do
 		mount /dev/${DEVICEP} /cdrom 2> /dev/null
 		if [ -n "$(ls /cdrom/${version}.media 2>/dev/null)" ]; then
 			echo -n ${DEVICEP} > /tmp/source_device
@@ -58,7 +58,7 @@ done
 # scan all Partitions on raid/mmc devices
 for DEVICE in `find /sys/block/* -maxdepth 0 ! -name fd* ! -name loop* ! -name ram* -exec basename {} \;`
 do
-	for DEVICEP in $(ls /dev/${DEVICE}p? | sed "s/\/dev\///" 2> /dev/null);do
+	for DEVICEP in $(ls /dev/${DEVICE}p? 2>/dev/null | sed "s/\/dev\///");do
 		mount /dev/${DEVICEP} /cdrom 2> /dev/null
 		if [ -n "$(ls /cdrom/${version}.media 2>/dev/null)" ]; then
 			echo -n ${DEVICEP} > /tmp/source_device
