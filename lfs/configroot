@@ -80,6 +80,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/lang.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/countries.pl		$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/graphs.pl			$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/modem-lib.pl		$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/advoptions-list		$(CONFIG_ROOT)/dhcp/advoptions-list
 	cp $(DIR_SRC)/config/cfgroot/connscheduler-lib.pl	$(CONFIG_ROOT)/connscheduler/lib.pl
 	cp $(DIR_SRC)/config/cfgroot/connscheduler.conf		$(CONFIG_ROOT)/connscheduler

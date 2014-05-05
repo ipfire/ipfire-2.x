@@ -196,6 +196,7 @@ WARNING: translation string unused: esp keylife
 WARNING: translation string unused: expected
 WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
+WARNING: translation string unused: external access
 WARNING: translation string unused: external access configuration
 WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
@@ -360,6 +361,7 @@ WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
 WARNING: translation string unused: original
 WARNING: translation string unused: out
+WARNING: translation string unused: outgoing firewall
 WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
@@ -576,6 +578,7 @@ WARNING: untranslated string: ConnSched hangup
 WARNING: untranslated string: ConnSched reboot
 WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: MB read
+WARNING: untranslated string: MB written
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: Set time on boot
@@ -588,6 +591,7 @@ WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: attention
 WARNING: untranslated string: bit
 WARNING: untranslated string: bytes
+WARNING: untranslated string: capabilities
 WARNING: untranslated string: ccd add
 WARNING: untranslated string: ccd choose net
 WARNING: untranslated string: ccd client options
@@ -720,7 +724,6 @@ WARNING: untranslated string: fwdfw iface
 WARNING: untranslated string: fwdfw log
 WARNING: untranslated string: fwdfw log rule
 WARNING: untranslated string: fwdfw many
-WARNING: untranslated string: fwdfw menu
 WARNING: untranslated string: fwdfw movedown
 WARNING: untranslated string: fwdfw moveup
 WARNING: untranslated string: fwdfw newrule
@@ -825,6 +828,9 @@ WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
 WARNING: untranslated string: grouptype
 WARNING: untranslated string: hardware support
+WARNING: untranslated string: imei
+WARNING: untranslated string: imsi
+WARNING: untranslated string: incoming firewall access
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
@@ -837,6 +843,20 @@ WARNING: untranslated string: mac filter
 WARNING: untranslated string: maximum
 WARNING: untranslated string: minimum
 WARNING: untranslated string: minute
+WARNING: untranslated string: model
+WARNING: untranslated string: modem hardware details
+WARNING: untranslated string: modem information
+WARNING: untranslated string: modem network bit error rate
+WARNING: untranslated string: modem network information
+WARNING: untranslated string: modem network mode
+WARNING: untranslated string: modem network operator
+WARNING: untranslated string: modem network registration
+WARNING: untranslated string: modem network signal quality
+WARNING: untranslated string: modem no connection
+WARNING: untranslated string: modem no connection message
+WARNING: untranslated string: modem sim information
+WARNING: untranslated string: modem status
+WARNING: untranslated string: monitor interface
 WARNING: untranslated string: most preferred
 WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: not a valid dh key
@@ -851,6 +871,7 @@ WARNING: untranslated string: openvpn prefix openvpn subnet
 WARNING: untranslated string: openvpn prefix remote subnet
 WARNING: untranslated string: openvpn subnet is used
 WARNING: untranslated string: other
+WARNING: untranslated string: outgoing firewall access
 WARNING: untranslated string: outgoing firewall p2p allow
 WARNING: untranslated string: outgoing firewall p2p deny
 WARNING: untranslated string: ovpn crypt options
@@ -890,6 +911,7 @@ WARNING: untranslated string: routing table
 WARNING: untranslated string: server restart
 WARNING: untranslated string: show dh
 WARNING: untranslated string: snat new source ip address
+WARNING: untranslated string: software version
 WARNING: untranslated string: source ip country
 WARNING: untranslated string: ssh
 WARNING: untranslated string: static routes
@@ -949,6 +971,7 @@ WARNING: untranslated string: uplink
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: uptime load average
 WARNING: untranslated string: urlfilter redirect template
+WARNING: untranslated string: vendor
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: wlan client

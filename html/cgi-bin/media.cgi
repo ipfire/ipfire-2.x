@@ -152,7 +152,7 @@ END
 
 	for(my $i = 1; $i <= $#iostat1; $i++){
 		if ( $i eq '1' ){
-			print "<tr><td align='center' class='boldbase'><b>$Lang::tr{'device'}</b></td><td align='center' class='boldbase'><b>$Lang::tr{'MB read'}</b></td><td align='center' class='boldbase'><b>$Lang::{'MB written'}</b></td></tr>";
+			print "<tr><td align='center' class='boldbase'><b>$Lang::tr{'device'}</b></td><td align='center' class='boldbase'><b>$Lang::tr{'MB read'}</b></td><td align='center' class='boldbase'><b>$Lang::tr{'MB written'}</b></td></tr>";
 		}else{
 			print "<tr><td align='center'>$iostat1[$i]</td><td align='center'>$iostat2[$i]</td><td align='center'>$iostat3[$i]</td></tr>";
 		}

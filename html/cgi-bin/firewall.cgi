@@ -101,7 +101,7 @@ my @protocols;
 &General::readhasharray("$configipsec", \%ipsecconf);
 &Header::showhttpheaders();
 &Header::getcgihash(\%fwdfwsettings);
-&Header::openpage($Lang::tr{'fwdfw menu'}, 1, '');
+&Header::openpage($Lang::tr{'firewall rules'}, 1, '');
 &Header::openbigbox('100%', 'center',$errormessage);
 #### JAVA SCRIPT ####
 print<<END;
@@ -1284,6 +1284,10 @@ sub get_serviceports
 			}
 		}
 	}
+
+	# Sort protocols alphabetically.
+	@protocols = sort(@protocols);
+
 	return @protocols;
 }
 sub getcolor
@@ -2295,8 +2299,8 @@ sub viewtablerule
 	&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 
 	&viewtablenew(\%configfwdfw, $configfwdfw, $Lang::tr{'firewall rules'});
-	&viewtablenew(\%configinputfw, $configinput, $Lang::tr{'external access'});
-	&viewtablenew(\%configoutgoingfw, $configoutgoing, $Lang::tr{'outgoing firewall'});
+	&viewtablenew(\%configinputfw, $configinput, $Lang::tr{'incoming firewall access'});
+	&viewtablenew(\%configoutgoingfw, $configoutgoing, $Lang::tr{'outgoing firewall access'});
 }
 sub viewtablenew
 {

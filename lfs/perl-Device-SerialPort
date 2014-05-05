@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2014 IPFire Team  <info@ipfire.org>                           #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,21 +24,13 @@
 
 include Config
 
-VER        = 5.1.3
+VER        = 1.000002
 
-THISAPP    = strongswan-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = Device-SerialPort-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/strongswan-$(VER)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-
-ifeq "$(MACHINE)" "i586"
-	CONFIGURE_OPTIONS = \
-		--enable-padlock
-else
-	CONFIGURE_OPTIONS = \
-		--disable-padlock
-endif
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1d1c108775242743cd8699215b2918c3
+$(DL_FILE)_MD5 = f53db3733679adc5d05d06fa530444b6
 
 install : $(TARGET)
 
@@ -77,43 +69,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-5.0.2_ipfire.patch
-
-	cd $(DIR_APP) && [ -x "configure" ] || ./autogen.sh
-	cd $(DIR_APP) && ./configure \
-		--prefix="/usr" \
-		--sysconfdir="/etc" \
-		--enable-curl \
-		--enable-dhcp \
-		--enable-farp \
-		--enable-openssl \
-		--enable-xauth-eap \
-		--enable-eap-radius \
-		--enable-eap-tls \
-		--enable-eap-ttls \
-		--enable-eap-peap \
-		--enable-eap-mschapv2 \
-		--enable-eap-identity \
-		--enable-unity \
-		$(CONFIGURE_OPTIONS)
-
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && perl Makefile.PL
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-
-	# Remove all library files we don't want or need.
-	rm -vf /usr/lib/ipsec/plugins/*.{,l}a
-
-	-rm -rfv /etc/rc*.d/*ipsec
-	cd $(DIR_SRC) && cp src/initscripts/init.d/ipsec /etc/rc.d/init.d/ipsec
-	rm -f /etc/ipsec.conf /etc/ipsec.secrets
-	ln -sf $(CONFIG_ROOT)/vpn/ipsec.conf /etc/ipsec.conf
-	ln -sf $(CONFIG_ROOT)/vpn/ipsec.secrets /etc/ipsec.secrets
-
-	rm -rf /etc/ipsec.d/{cacerts,certs,crls}
-	ln -sf $(CONFIG_ROOT)/ca    /etc/ipsec.d/cacerts
-	ln -sf $(CONFIG_ROOT)/certs /etc/ipsec.d/certs
-	ln -sf $(CONFIG_ROOT)/crls  /etc/ipsec.d/crls
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

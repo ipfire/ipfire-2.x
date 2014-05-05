@@ -107,7 +107,6 @@ iptables_init() {
 	# Block OpenVPN transfer networks
 	iptables -N OVPNBLOCK
 	iptables -A INPUT   -i tun+ -j OVPNBLOCK
-	iptables -A OUTPUT  -o tun+ -j OVPNBLOCK
 	iptables -A FORWARD -i tun+ -j OVPNBLOCK
 	iptables -A FORWARD -o tun+ -j OVPNBLOCK
 
