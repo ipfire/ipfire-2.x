@@ -1334,7 +1334,7 @@ sub getcolor
 			return;
 		}elsif($val =~ /^(.*?)\/(.*?)$/){
 			my ($sip,$scidr) = split ("/",$val);
-			if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
+			if ( &Header::orange_used() && &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
 				$tdcolor="style='background-color: $Header::colourorange;color:white;'";
 				return;
 			}
@@ -1342,7 +1342,7 @@ sub getcolor
 				$tdcolor="style='background-color: $Header::colourgreen;color:white;'";
 				return;
 			}
-			if ( &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
+			if ( &Header::blue_used() && &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
 				$tdcolor="style='background-color: $Header::colourblue;color:white;'";
 				return;
 			}
