@@ -64,11 +64,25 @@ $(TARGET) :
 
 	-cd / && cpio -d -p /install/initrd < /tmp/ROOTFILES
 
-	# Copy hid and network modules
+	# Copy hid and network modules (and deps)
 	cp -aRf /lib/modules/$(KVER)-ipfire/kernel/drivers/hid \
 		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
 	cp -aRf /lib/modules/$(KVER)-ipfire/kernel/drivers/net \
 		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
+	cp -aRf /lib/modules/$(KVER)-ipfire/kernel/drivers/pcmcia \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
+	cp -aRf /lib/modules/$(KVER)-ipfire/kernel/drivers/ssb \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
+	cp -aRf /lib/modules/$(KVER)-ipfire/kernel/drivers/uio \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
+	cp -aRf /lib/modules/$(KVER)-ipfire/kernel/drivers/ptp \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
+	cp -aRf /lib/modules/$(KVER)-ipfire/kernel/drivers/dca \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
+	cp -aRf /lib/modules/$(KVER)-ipfire/kernel/drivers/pps \
+		/install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/
+	# Remove wireless modules
+	rm -rf /install/initrd/lib/modules/$(KVER)-ipfire/kernel/drivers/net/wireless
 
 	cd /install/initrd/etc && rm -f fstab
 	cp -aRf $(DIR_SRC)/config/install/* /install/initrd/etc/
