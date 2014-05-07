@@ -35,7 +35,7 @@ if [ "x$MODE" = "xnone" ] ; then
 fi
 
 upsd=/usr/sbin/upsd
-upsdrvctl=/usr/bin/upsdrvctl
+upsdrvctl=/usr/sbin/upsdrvctl
 upsmon=/usr/sbin/upsmon
 log=">/dev/null 2>/dev/null"
 
