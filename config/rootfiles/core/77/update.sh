@@ -401,7 +401,7 @@ fi
 
 chown cron:cron /var/spool/cron
 # Update crontab
-cat <<EOF >> /var/spool/cron/root.orig
+grep -q timezone-transition /var/spool/cron/root.orig || cat <<EOF >> /var/spool/cron/root.orig
 
 # Re-read firewall rules every Sunday in March, October and November to take care of daylight saving time
 00 3 * 3 0          /usr/local/bin/timezone-transition /usr/local/bin/firewallctrl
