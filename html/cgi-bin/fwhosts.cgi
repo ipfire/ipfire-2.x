@@ -1632,7 +1632,7 @@ sub getcolor
 		}
 
 		#Now check if IP is part of ORANGE,BLUE or GREEN
-		if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
+		if ( &Header::orange_used() && &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
 			$tdcolor="<font style='color: $Header::colourorange;'>$c</font>";
 			return $tdcolor;
 		}
@@ -1640,7 +1640,7 @@ sub getcolor
 			$tdcolor="<font style='color: $Header::colourgreen;'>$c</font>";
 			return $tdcolor;
 		}
-		if ( &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
+		if ( &Header::blue_used() && &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
 			$tdcolor="<font style='color: $Header::colourblue;'>$c</font>";
 			return $tdcolor;
 		}
