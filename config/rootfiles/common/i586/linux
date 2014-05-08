@@ -1648,6 +1648,8 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/libertas_tf
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/libertas_tf/libertas_tf.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/libertas_tf/libertas_tf_usb.ko
+#lib/modules/KVER-ipfire/kernel/drivers/net/wireless/libertas_uap
+#lib/modules/KVER-ipfire/kernel/drivers/net/wireless/libertas_uap/uap8xxx.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/mac80211_hwsim.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/mwifiex
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/mwifiex/mwifiex.ko
