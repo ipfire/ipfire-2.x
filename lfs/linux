@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 3.10.37
+VER        = 3.10.39
 
-RPI_PATCHES = linux-3.10.34-grsec-dea8280
-GRS_PATCHES = grsecurity-2.9.1-3.10.37-ipfire1.patch.xz
+RPI_PATCHES = linux-3.10.38-grsec-1b49b45
+GRS_PATCHES = grsecurity-2.9.1-3.10.39-ipfire1.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -36,7 +36,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 42
+PAK_VER    = 44
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -74,9 +74,9 @@ $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 $(GRS_PATCHES)				= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5				= a08a10ffc31b07d9422af1cd2baa3274
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= 522683db031f7033b1b5dfe1b1f30e67
-$(GRS_PATCHES)_MD5			= 7b0f44571974217d79dbcdf5d7e33976
+$(DL_FILE)_MD5				= 74db7cc558a1a72ebf5044d286e2bc47
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= a7408e8bad57b4b2cb677dd5a0bfb7ff
+$(GRS_PATCHES)_MD5			= 6296b7ec4146544249075249e338ceb3
 
 install : $(TARGET)
 
@@ -137,6 +137,8 @@ endif
 	# Wlan Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-drivers-3.8.3-ath_ignore_eeprom_regdomain.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.34-iwlwifi-noibss_only_on_radar_chan.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.37-rt2800usb_add_dlink_dwa137_usbid.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-add_libertas_uap.patch
 
 	# mISDN Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN_hfc-s_add_id.patch

@@ -124,8 +124,6 @@ int main(int argc, char *argv[])
 	}
 
 	// Load common modules
-	mysystem("/sbin/modprobe iso9660"); // CDROM
-//	mysystem("/sbin/modprobe ext2"); // Boot patition
 	mysystem("/sbin/modprobe vfat"); // USB key
 	
 	/* German is the default */

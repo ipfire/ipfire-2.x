@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20131113
+VER        = 20140327
 
 THISAPP    = usb-modeswitch-data-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7b5ac1226b360ddc366c286e62b3c3a4
+$(DL_FILE)_MD5 = bbbc0a8e6a98bde2c6e119b3826658fb
 
 install : $(TARGET)
 

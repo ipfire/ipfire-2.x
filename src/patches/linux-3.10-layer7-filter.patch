@@ -1514,10 +1514,10 @@ index 0000000..339631f
 +}
 diff --git a/net/netfilter/xt_layer7.c b/net/netfilter/xt_layer7.c
 new file mode 100644
-index 0000000..51bb747
+index 0000000..1573e9d
 --- /dev/null
 +++ b/net/netfilter/xt_layer7.c
-@@ -0,0 +1,625 @@
+@@ -0,0 +1,665 @@
 +/*
 +  Kernel module to match application layer (OSI layer 7) data in connections.
 +
@@ -1726,40 +1726,67 @@ index 0000000..51bb747
 +
 +static int can_handle(const struct sk_buff *skb)
 +{
-+	if(!ip_hdr(skb)) /* not IP */
++	struct iphdr iphdr_tmp;
++	struct iphdr *iphdr;
++	int offset;
++
++	if (!ip_hdr(skb))
 +		return 0;
-+	if(ip_hdr(skb)->protocol != IPPROTO_TCP &&
-+	   ip_hdr(skb)->protocol != IPPROTO_UDP &&
-+	   ip_hdr(skb)->protocol != IPPROTO_ICMP)
++
++	offset = ((uintptr_t)ip_hdr(skb)) - ((uintptr_t)skb->data);
++
++	iphdr = skb_header_pointer(skb, offset, sizeof(*iphdr), &iphdr_tmp);
++	if (!iphdr)
 +		return 0;
-+	return 1;
++
++	if (iphdr->protocol == IPPROTO_TCP ||
++	    iphdr->protocol == IPPROTO_UDP ||
++	    iphdr->protocol == IPPROTO_ICMP)
++		return 1;
++
++	return 0;
 +}
 +
-+/* Returns offset the into the skb->data that the application data starts */
 +static int app_data_offset(const struct sk_buff *skb)
 +{
-+	/* In case we are ported somewhere (ebtables?) where ip_hdr(skb)
-+	isn't set, this can be gotten from 4*(skb->data[0] & 0x0f) as well. */
-+	int ip_hl = 4*ip_hdr(skb)->ihl;
++	int offset;
++	struct iphdr iphdr_tmp;
++	struct iphdr *iphdr;
++	struct tcphdr tcphdr_tmp;
++	struct tcphdr *tcphdr;
 +
-+	if( ip_hdr(skb)->protocol == IPPROTO_TCP ) {
-+		/* 12 == offset into TCP header for the header length field.
-+		Can't get this with skb->h.th->doff because the tcphdr
-+		struct doesn't get set when routing (this is confirmed to be
-+		true in Netfilter as well as QoS.) */
-+		int tcp_hl = 4*(skb->data[ip_hl + 12] >> 4);
++	if (!ip_hdr(skb))
++		return -1;
 +
-+		return ip_hl + tcp_hl;
-+	} else if( ip_hdr(skb)->protocol == IPPROTO_UDP  ) {
-+		return ip_hl + 8; /* UDP header is always 8 bytes */
-+	} else if( ip_hdr(skb)->protocol == IPPROTO_ICMP ) {
-+		return ip_hl + 8; /* ICMP header is 8 bytes */
-+	} else {
-+		if (net_ratelimit())
-+			printk(KERN_ERR "layer7: tried to handle unknown "
-+					"protocol!\n");
-+		return ip_hl + 8; /* something reasonable */
++	offset = ((uintptr_t)ip_hdr(skb)) - ((uintptr_t)skb->data);
++
++	iphdr = skb_header_pointer(skb, offset, sizeof(*iphdr), &iphdr_tmp);
++	if (!iphdr)
++		return -1;
++
++	offset += iphdr->ihl * 4;
++
++	if (iphdr->protocol == IPPROTO_TCP) {
++		tcphdr = skb_header_pointer(skb, offset, sizeof(*tcphdr),
++					    &tcphdr_tmp);
++		if (!tcphdr)
++			return -1;
++
++		offset += tcphdr->doff * 4;
++
++		return offset;
 +	}
++
++	if (iphdr->protocol == IPPROTO_UDP)
++		return offset + 8;
++
++	if (iphdr->protocol == IPPROTO_ICMP)
++		return offset + 8;
++
++	if (net_ratelimit())
++		pr_err(KERN_ERR "layer7: tried to handle unknown protocol!\n");
++
++	return offset + 8; /* something reasonable */
 +}
 +
 +/* handles whether there's a match when we aren't appending data anymore */
@@ -1849,13 +1876,39 @@ index 0000000..51bb747
 +	return length;
 +}
 +
++/* add the new app data to the buffer.  Return number of bytes added. */
++static int add_data(char *target, int offset, const struct sk_buff *skb)
++{
++	int length, length_sum = 0;
++	int data_start = app_data_offset(skb);
++	int remaining = skb->len - data_start;
++	int to_copy;
++	uint8_t buf[512];
++	uint8_t *data;
++
++	while ((offset < maxdatalen - 1) && (remaining > 0)) {
++		to_copy = min_t(int, remaining, sizeof(buf));
++
++		data = skb_header_pointer(skb, data_start, to_copy, buf);
++		length = add_datastr(target, offset, data, to_copy);
++
++		remaining -= to_copy;
++		data_start += to_copy;
++		offset += length;
++		length_sum += length;
++	}
++
++	return length_sum;
++}
++
 +/* add the new app data to the conntrack.  Return number of bytes added. */
-+static int add_data(struct nf_conn * master_conntrack,
-+                    char * app_data, int appdatalen)
++static int add_data_conntrack(struct nf_conn *master_conntrack,
++			      const struct sk_buff *skb)
 +{
 +	int length;
 +
-+	length = add_datastr(master_conntrack->layer7.app_data, master_conntrack->layer7.app_data_len, app_data, appdatalen);
++	length = add_data(master_conntrack->layer7.app_data,
++			  master_conntrack->layer7.app_data_len, skb);
 +	master_conntrack->layer7.app_data_len += length;
 +
 +	return length;
@@ -1911,20 +1964,20 @@ index 0000000..51bb747
 +static bool match(const struct sk_buff *skbin, struct xt_action_param *par)
 +{
 +	/* sidestep const without getting a compiler warning... */
-+	struct sk_buff * skb = (struct sk_buff *)skbin; 
++	struct sk_buff *skb = (struct sk_buff *)skbin;
 +
 +	const struct xt_layer7_info * info = par->matchinfo;
 +
 +	enum ip_conntrack_info master_ctinfo, ctinfo;
 +	struct nf_conn *master_conntrack, *conntrack;
-+	unsigned char *app_data, *tmp_data;
-+	unsigned int pattern_result, appdatalen;
++	unsigned char *tmp_data;
++	unsigned int pattern_result;
 +	regexp * comppattern;
 +
 +	/* Be paranoid/incompetent - lock the entire match function. */
 +	spin_lock_bh(&l7_lock);
 +
-+	if(!can_handle(skb)){
++	if (!can_handle(skbin)) {
 +		DPRINTK("layer7: This is some protocol I can't handle.\n");
 +		spin_unlock_bh(&l7_lock);
 +		return info->invert;
@@ -1933,8 +1986,9 @@ index 0000000..51bb747
 +	/* Treat parent & all its children together as one connection, except
 +	for the purpose of setting conntrack->layer7.app_proto in the actual
 +	connection. This makes /proc/net/ip_conntrack more satisfying. */
-+	if(!(conntrack = nf_ct_get(skb, &ctinfo)) ||
-+	   !(master_conntrack=nf_ct_get(skb,&master_ctinfo))){
++	conntrack = nf_ct_get(skbin, &ctinfo);
++	master_conntrack = nf_ct_get(skbin, &master_ctinfo);
++	if (!conntrack || !master_conntrack) {
 +		DPRINTK("layer7: couldn't get conntrack.\n");
 +		spin_unlock_bh(&l7_lock);
 +		return info->invert;
@@ -1962,20 +2016,6 @@ index 0000000..51bb747
 +		return (pattern_result ^ info->invert);
 +	}
 +
-+	if(skb_is_nonlinear(skb)){
-+		if(skb_linearize(skb) != 0){
-+			if (net_ratelimit())
-+				printk(KERN_ERR "layer7: failed to linearize "
-+						"packet, bailing.\n");
-+			spin_unlock_bh(&l7_lock);
-+			return info->invert;
-+		}
-+	}
-+
-+	/* now that the skb is linearized, it's safe to set these. */
-+	app_data = skb->data + app_data_offset(skb);
-+	appdatalen = skb_tail_pointer(skb) - app_data;
-+
 +	/* the return value gets checked later, when we're ready to use it */
 +	comppattern = compile_and_cache(info->pattern, info->protocol);
 +
@@ -1988,7 +2028,7 @@ index 0000000..51bb747
 +		}
 +
 +		tmp_data[0] = '\0';
-+		add_datastr(tmp_data, 0, app_data, appdatalen);
++		add_data(tmp_data, 0, skbin);
 +		pattern_result = ((comppattern && regexec(comppattern, tmp_data)) ? 1 : 0);
 +
 +		kfree(tmp_data);
@@ -2023,7 +2063,7 @@ index 0000000..51bb747
 +
 +	if(!skb->cb[0]){
 +		int newbytes;
-+		newbytes = add_data(master_conntrack, app_data, appdatalen);
++		newbytes = add_data_conntrack(master_conntrack, skb);
 +
 +		if(newbytes == 0) { /* didn't add any data */
 +			skb->cb[0] = 1;

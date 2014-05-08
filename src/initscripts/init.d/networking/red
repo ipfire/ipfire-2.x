@@ -22,6 +22,7 @@
 #Define some defaults
 INET_VLAN=7
 IPTV_VLAN=8
+ATM_DEV=0
 
 eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 if [ "$RRDLOG" == "" ]; then
@@ -170,17 +171,17 @@ case "${1}" in
 
 
 			if [ "$TYPE" == "pppoeatm" ] || [ "$TYPE" == "pptpatm" ]; then
-				PPP_NIC=nas0		
-				DEVICE=nas0
+				PPP_NIC=nas${ATM_DEV}
+				DEVICE=nas${ATM_DEV}
 				boot_mesg "Createing ATM-Bridge as $PPP_NIC ..."
-				br2684ctl -c0 -e${ENCAP} -a0.${VPI}.${VCI} >/dev/null 2>&1 &
+				br2684ctl -c${ATM_DEV} -e${ENCAP} -a${ATM_DEV}.${VPI}.${VCI} >/dev/null 2>&1 &
 				sleep 1
 
 				# use user-defined or green mac address for nas0
 				if [ -n "$MAC" ]; then
-					ip link set dev nas0 address ${MAC}
+					ip link set dev nas${ATM_DEV} address ${MAC}
 				else
-					ip link set dev nas0 address $(cat /sys/class/net/green0/address)
+					ip link set dev nas${ATM_DEV} address $(cat /sys/class/net/green0/address)
 				fi
 
 				if [ "$TYPE" == "pppoeatm" ]; then

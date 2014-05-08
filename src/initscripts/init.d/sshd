@@ -43,7 +43,10 @@ case "$1" in
 	(
 		sleep 3
 		pid=$(cat /var/run/sshd.pid 2>/dev/null)
-		[ -n "${pid}" ] && echo "-16" > "/proc/${pid}/oom_score_adj"
+		[ -n "${pid}" ] && [ -e "/proc/${pid}/oom_score_adj" ] && \
+					echo "-16" > "/proc/${pid}/oom_score_adj" || \
+				[ -e "/proc/${pid}/oom_adj" ] && \
+					echo "-16" > "/proc/${pid}/oom_adj"
 	) &
         ;;
 

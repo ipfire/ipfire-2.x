@@ -58,6 +58,7 @@ etc/strongswan.d/charon/updown.conf
 etc/strongswan.d/charon/x509.conf
 etc/strongswan.d/charon/xauth-eap.conf
 etc/strongswan.d/charon/xauth-generic.conf
+etc/strongswan.d/charon/xauth-noauth.conf
 etc/strongswan.d/charon/xcbc.conf
 etc/strongswan.d/starter.conf
 etc/strongswan.d/tools.conf
@@ -134,17 +135,18 @@ usr/lib/ipsec/plugins/libstrongswan-updown.so
 usr/lib/ipsec/plugins/libstrongswan-x509.so
 usr/lib/ipsec/plugins/libstrongswan-xauth-eap.so
 usr/lib/ipsec/plugins/libstrongswan-xauth-generic.so
+usr/lib/ipsec/plugins/libstrongswan-xauth-noauth.so
 usr/lib/ipsec/plugins/libstrongswan-xcbc.so
 #usr/libexec/ipsec
 usr/libexec/ipsec/_copyright
 usr/libexec/ipsec/_updown
 usr/libexec/ipsec/_updown_espmark
 usr/libexec/ipsec/charon
-usr/libexec/ipsec/openac
 usr/libexec/ipsec/scepclient
 usr/libexec/ipsec/starter
 usr/libexec/ipsec/stroke
 usr/sbin/ipsec
+#usr/share/man/man1/pki---acert.1
 #usr/share/man/man1/pki---gen.1
 #usr/share/man/man1/pki---issue.1
 #usr/share/man/man1/pki---keyid.1
@@ -212,6 +214,7 @@ usr/sbin/ipsec
 #usr/share/strongswan/templates/config/plugins/x509.conf
 #usr/share/strongswan/templates/config/plugins/xauth-eap.conf
 #usr/share/strongswan/templates/config/plugins/xauth-generic.conf
+#usr/share/strongswan/templates/config/plugins/xauth-noauth.conf
 #usr/share/strongswan/templates/config/plugins/xcbc.conf
 #usr/share/strongswan/templates/config/strongswan.conf
 #usr/share/strongswan/templates/config/strongswan.d

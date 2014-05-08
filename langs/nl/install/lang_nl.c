@@ -588,9 +588,9 @@ char *nl_tr[] = {
 /* TR_DHCP_FORCE_MTU */
 "Forceer DHCP mtu:",
 /* TR_IDENTIFY */
-"Identify",
+"Identificeer",
 /* TR_IDENTIFY_SHOULD_BLINK */
-"Selected port should blink now ...",
+"Geselecteerde poort zou nu moeten knipperen ...",
 /* TR_IDENTIFY_NOT_SUPPORTED */
-"Function is not supported by this port.",
+"Functie wordt niet ondersteund door deze poort.",
 };

@@ -354,20 +354,21 @@ sub buildrules {
 
 						# Destination NAT
 						if ($NAT_MODE eq "DNAT") {
-							# Make port-forwardings useable from the internal networks.
-							my @internal_addresses = &fwlib::get_internal_firewall_ip_addresses(1);
-							unless ($nat_address ~~ @internal_addresses) {
-								&add_dnat_mangle_rules($nat_address, @options);
-							}
-
 							my @nat_options = ();
 							if ($protocol ne "all") {
 								my @nat_protocol_options = &get_protocol_options($hash, $key, $protocol, 1);
 								push(@nat_options, @nat_protocol_options);
 							}
+							push(@nat_options, @time_options);
+
+							# Make port-forwardings useable from the internal networks.
+							my @internal_addresses = &fwlib::get_internal_firewall_ip_addresses(1);
+							unless ($nat_address ~~ @internal_addresses) {
+								&add_dnat_mangle_rules($nat_address, @nat_options);
+							}
+
 							push(@nat_options, @source_options);
 							push(@nat_options, ("-d", $nat_address));
-							push(@nat_options, @time_options);
 
 							my $dnat_port;
 							if ($protocol_has_ports) {
