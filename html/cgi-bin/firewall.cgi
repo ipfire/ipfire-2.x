@@ -1602,7 +1602,7 @@ END
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
 			{
-				print "<option value='$alias' $selected{'ipfire_src'}{$alias}>$alias</option>";
+				print "<option value='$alias' $selected{'ipfire_src'}{$alias}>$alias ($aliases{$alias}{'IPT'})</option>";
 			}
 		}
 		print<<END;
@@ -1706,7 +1706,7 @@ END
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
 			{
-				print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias</option>";
+				print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias ($aliases{$alias}{'IPT'})</option>";
 			}
 		}
 		print<<END;
