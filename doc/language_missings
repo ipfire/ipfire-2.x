@@ -23,6 +23,7 @@
 < age shour
 < age sminute
 < age ssecond
+< atm device
 < attention
 < bit
 < capabilities
@@ -230,6 +231,8 @@
 < fwhost cust addr
 < fwhost cust grp
 < fwhost cust net
+< fwhost Custom Host
+< fwhost Custom Network
 < fwhost cust service
 < fwhost cust srvgrp
 < fwhost deleted
@@ -271,7 +274,9 @@
 < fwhost ipadr
 < fwhost ip_mac
 < fwhost ipsec host
+< fwhost IpSec Host
 < fwhost ipsec net
+< fwhost IpSec Network
 < fwhost menu
 < fwhost netaddress
 < fwhost newgrp
@@ -279,6 +284,9 @@
 < fwhost newnet
 < fwhost newservice
 < fwhost newservicegrp
+< fwhost OpenVPN N-2-N
+< fwhost OpenVPN static host
+< fwhost OpenVPN static network
 < fwhost orange
 < fwhost ovpn_n2n
 < fwhost port
@@ -287,6 +295,7 @@
 < fwhost reset
 < fwhost services
 < fwhost srv_name
+< fwhost Standard Network
 < fwhost stdnet
 < fwhost type
 < fwhost used
@@ -376,6 +385,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < show dh
@@ -524,6 +534,7 @@
 < age sminute
 < age ssecond
 < Async logging enabled
+< atm device
 < attention
 < bit
 < capabilities
@@ -730,6 +741,8 @@
 < fwhost cust addr
 < fwhost cust grp
 < fwhost cust net
+< fwhost Custom Host
+< fwhost Custom Network
 < fwhost cust service
 < fwhost cust srvgrp
 < fwhost deleted
@@ -771,7 +784,9 @@
 < fwhost ipadr
 < fwhost ip_mac
 < fwhost ipsec host
+< fwhost IpSec Host
 < fwhost ipsec net
+< fwhost IpSec Network
 < fwhost menu
 < fwhost netaddress
 < fwhost newgrp
@@ -779,6 +794,9 @@
 < fwhost newnet
 < fwhost newservice
 < fwhost newservicegrp
+< fwhost OpenVPN N-2-N
+< fwhost OpenVPN static host
+< fwhost OpenVPN static network
 < fwhost orange
 < fwhost ovpn_n2n
 < fwhost port
@@ -787,6 +805,7 @@
 < fwhost reset
 < fwhost services
 < fwhost srv_name
+< fwhost Standard Network
 < fwhost stdnet
 < fwhost type
 < fwhost used
@@ -892,6 +911,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < Set time on boot
@@ -1016,6 +1036,7 @@
 < age shour
 < age sminute
 < age ssecond
+< atm device
 < attention
 < bit
 < capabilities
@@ -1214,6 +1235,8 @@
 < fwhost cust addr
 < fwhost cust grp
 < fwhost cust net
+< fwhost Custom Host
+< fwhost Custom Network
 < fwhost cust service
 < fwhost cust srvgrp
 < fwhost deleted
@@ -1255,7 +1278,9 @@
 < fwhost ipadr
 < fwhost ip_mac
 < fwhost ipsec host
+< fwhost IpSec Host
 < fwhost ipsec net
+< fwhost IpSec Network
 < fwhost menu
 < fwhost netaddress
 < fwhost newgrp
@@ -1263,6 +1288,9 @@
 < fwhost newnet
 < fwhost newservice
 < fwhost newservicegrp
+< fwhost OpenVPN N-2-N
+< fwhost OpenVPN static host
+< fwhost OpenVPN static network
 < fwhost orange
 < fwhost ovpn_n2n
 < fwhost port
@@ -1271,6 +1299,7 @@
 < fwhost reset
 < fwhost services
 < fwhost srv_name
+< fwhost Standard Network
 < fwhost stdnet
 < fwhost type
 < fwhost used
@@ -1362,6 +1391,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < show dh
@@ -1485,6 +1515,7 @@
 < age shour
 < age sminute
 < age ssecond
+< atm device
 < attention
 < bit
 < capabilities
@@ -1687,6 +1718,8 @@
 < fwhost cust addr
 < fwhost cust grp
 < fwhost cust net
+< fwhost Custom Host
+< fwhost Custom Network
 < fwhost cust service
 < fwhost cust srvgrp
 < fwhost deleted
@@ -1728,7 +1761,9 @@
 < fwhost ipadr
 < fwhost ip_mac
 < fwhost ipsec host
+< fwhost IpSec Host
 < fwhost ipsec net
+< fwhost IpSec Network
 < fwhost menu
 < fwhost netaddress
 < fwhost newgrp
@@ -1736,6 +1771,9 @@
 < fwhost newnet
 < fwhost newservice
 < fwhost newservicegrp
+< fwhost OpenVPN N-2-N
+< fwhost OpenVPN static host
+< fwhost OpenVPN static network
 < fwhost orange
 < fwhost ovpn_n2n
 < fwhost port
@@ -1744,6 +1782,7 @@
 < fwhost reset
 < fwhost services
 < fwhost srv_name
+< fwhost Standard Network
 < fwhost stdnet
 < fwhost type
 < fwhost used
@@ -1835,6 +1874,7 @@
 < proxy reports today
 < proxy reports weekly
 < qos enter bandwidths
+< random number generator daemon
 < red1
 < server restart
 < show dh

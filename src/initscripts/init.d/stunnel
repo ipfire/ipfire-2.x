@@ -1,0 +1,39 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/stunnel
+#
+# Description : Provides an SSL encryption wrapper.
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "$1" in
+	start)
+		boot_mesg "Starting the Stunnel Daemon..."
+		loadproc /usr/bin/stunnel
+		;;
+
+	stop)
+		boot_mesg "Stopping the Stunnel Daemon..."
+		killproc /usr/bin/stunnel
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/bin/stunnel
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/stunnel

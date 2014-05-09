@@ -427,8 +427,8 @@ sub process_rules
 				$grp1='std_net_src';
 				$source='ORANGE';
 			}elsif ($configline[2] eq 'red') {
-				$grp1='std_net_src';
-				$source='IPFire';
+				$grp1='ipfire_src';
+				$source='RED1';
 				&General::readhash($fwdfwsettings,\%fwdsettings);
 				$fwdsettings{'POLICY1'}=$outsettings{'POLICY'};
 				$fwdsettings{'POLICY'}=$outsettings{'POLICY'};
@@ -538,7 +538,7 @@ sub process_rules
 		my $chain;
 		foreach my $protocol (@prot){
 			my $now=localtime;
-			if ($source eq 'IPFire'){
+			if ($source eq 'RED1'){
 				$chain='OUTGOINGFW';
 			}else{
 				$chain='FORWARDFW';

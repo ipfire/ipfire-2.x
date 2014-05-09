@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.15"							# Version number
-CORE="77-rc1"							# Core Level (Filename)
+CORE="77"							# Core Level (Filename)
 PAKFIRE_CORE="77"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -638,9 +638,6 @@ buildipfire() {
   ipfiremake libmpeg2
   ipfiremake cmake
   ipfiremake gnump3d
-  ipfiremake libsigc++
-  ipfiremake libtorrent
-  ipfiremake rtorrent
   ipfiremake rsync
   ipfiremake tcpwrapper
   ipfiremake libevent
@@ -800,6 +797,7 @@ buildipfire() {
   ipfiremake wavemon
   ipfiremake iptraf-ng
   ipfiremake iotop
+  ipfiremake stunnel
 }
 
 buildinstaller() {
@@ -843,7 +841,8 @@ buildpackages() {
   ipfiremake cdrom
 
   # Check if there is a loop device for building in virtual environments
-  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ]); then
+  modprobe loop 2>/dev/null
+  if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ] || [ -e "/dev/loop-control" ]); then
 	ipfiremake flash-images
   fi
 

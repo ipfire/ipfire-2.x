@@ -248,6 +248,14 @@ WARNING: translation string unused: fwdfw std network
 WARNING: translation string unused: fwdfw till
 WARNING: translation string unused: fwdfw time
 WARNING: translation string unused: fwdfw xt access
+WARNING: translation string unused: fwhost Custom Host
+WARNING: translation string unused: fwhost Custom Network
+WARNING: translation string unused: fwhost IpSec Host
+WARNING: translation string unused: fwhost IpSec Network
+WARNING: translation string unused: fwhost OpenVPN N-2-N
+WARNING: translation string unused: fwhost OpenVPN static host
+WARNING: translation string unused: fwhost OpenVPN static network
+WARNING: translation string unused: fwhost Standard Network
 WARNING: translation string unused: fwhost attention
 WARNING: translation string unused: fwhost blue
 WARNING: translation string unused: fwhost changeremark
@@ -639,26 +647,19 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
-WARNING: untranslated string: ConnSched dial
-WARNING: untranslated string: ConnSched hangup
-WARNING: untranslated string: ConnSched reboot
-WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
-WARNING: untranslated string: count
 WARNING: untranslated string: dh
 WARNING: untranslated string: dh key warn
 WARNING: untranslated string: dh name is invalid
 WARNING: untranslated string: firewall logs country
-WARNING: untranslated string: fwdfw many
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
 WARNING: untranslated string: imei
 WARNING: untranslated string: imsi
-WARNING: untranslated string: incoming firewall access
 WARNING: untranslated string: model
 WARNING: untranslated string: modem hardware details
 WARNING: untranslated string: modem information
@@ -674,7 +675,6 @@ WARNING: untranslated string: modem sim information
 WARNING: untranslated string: modem status
 WARNING: untranslated string: monitor interface
 WARNING: untranslated string: not a valid dh key
-WARNING: untranslated string: outgoing firewall access
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
 WARNING: untranslated string: ovpn dh name

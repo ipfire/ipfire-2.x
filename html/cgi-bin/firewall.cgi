@@ -1334,7 +1334,7 @@ sub getcolor
 			return;
 		}elsif($val =~ /^(.*?)\/(.*?)$/){
 			my ($sip,$scidr) = split ("/",$val);
-			if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
+			if ( &Header::orange_used() && &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
 				$tdcolor="style='background-color: $Header::colourorange;color:white;'";
 				return;
 			}
@@ -1342,7 +1342,7 @@ sub getcolor
 				$tdcolor="style='background-color: $Header::colourgreen;color:white;'";
 				return;
 			}
-			if ( &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
+			if ( &Header::blue_used() && &General::IpInSubnet($sip,$netsettings{'BLUE_ADDRESS'},$netsettings{'BLUE_NETMASK'})){
 				$tdcolor="style='background-color: $Header::colourblue;color:white;'";
 				return;
 			}
@@ -1539,6 +1539,7 @@ sub newrule
 				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
 				$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
 				$selected{'dnat'}{$fwdfwsettings{'dnat'}}				='selected';
+				$selected{'snat'}{$fwdfwsettings{'snat'}}				='selected';
 			}
 		}
 		$fwdfwsettings{'oldgrp1a'}=$fwdfwsettings{'grp1'};
@@ -1601,7 +1602,7 @@ END
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
 			{
-				print "<option value='$alias' $selected{'ipfire_src'}{$alias}>$alias</option>";
+				print "<option value='$alias' $selected{'ipfire_src'}{$alias}>$alias ($aliases{$alias}{'IPT'})</option>";
 			}
 		}
 		print<<END;
@@ -1705,7 +1706,7 @@ END
 		if (! -z "${General::swroot}/ethernet/aliases"){
 			foreach my $alias (sort keys %aliases)
 			{
-				print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias</option>";
+				print "<option value='$alias' $selected{'ipfire'}{$alias}>$alias ($aliases{$alias}{'IPT'})</option>";
 			}
 		}
 		print<<END;
@@ -2561,11 +2562,11 @@ END
 						push (@nat_ifaces,&fwlib::get_nat_address($$hash{$key}[29],$val));
 					}
 					@nat_ifaces=&del_double(@nat_ifaces);
-					$natstring = join(', ', @nat_ifaces);
+					$natstring = "";
 				}else{
-					$natstring = $$hash{$key}[29];
+					$natstring = "($$hash{$key}[29])";
 				}
-				print "$Lang::tr{'firewall'} ($natstring)";
+				print "$Lang::tr{'firewall'} $natstring";
 				if($$hash{$key}[30] ne ''){
 					$$hash{$key}[30]=~ tr/|/,/;
 					print": $$hash{$key}[30]";
