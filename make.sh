@@ -730,6 +730,7 @@ buildipfire() {
   ipfiremake iftop
   ipfiremake motion
   ipfiremake joe
+  ipfiremake monit
   ipfiremake nut
   ipfiremake watchdog
   ipfiremake libpri
