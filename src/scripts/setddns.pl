@@ -684,6 +684,39 @@ if ($ip ne $ipcache) {
                                 &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure (could not connect to server, check your credentials---$out-$response--)");
                             }
                         }
+			elsif ($settings{'SERVICE'} eq 'variomedia') { 
+			    # use proxy ?
+ 			    my %proxysettings;
+ 			    &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+ 			    if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
+ 				my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+ 				Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
+ 			    }
+ 
+ 			    if ($settings{'HOSTNAME'} eq '') {
+ 				$settings{'HOSTDOMAIN'} = $settings{'DOMAIN'};
+ 			    } else {
+ 				$settings{'HOSTDOMAIN'} = "$settings{'HOSTNAME'}.$settings{'DOMAIN'}";
+ 			    }
+ 
+ 			    my ($out, $response) = Net::SSLeay::get_https( 'dyndns.variomedia.de',
+ 									    443,
+ 									    "/nic/update?hostname=$settings{'HOSTDOMAIN'}&myip=$ip",
+ 									    Net::SSLeay::make_headers('User-Agent' => 'IPFire',
+ 												      'Authorization' => 'Basic ' . encode_base64("$settings{'LOGIN'}:$settings{'PASSWORD'}")) );
+ 
+ 			    # Valid response is 'good $ip'
+ 			    if ($response =~ m%HTTP/1\.. 200 OK%) {
+ 				if ( $out !~ m/^good $ip/ ) {
+ 				    &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} ($ip) : failure ($out)");
+ 				} else {
+ 				    &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} ($ip) : success");
+ 				    $success++;
+ 				}
+ 			    } else {
+ 				&General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure (could not connect to server, check your credentials---$out-$response--)");
+ 			    }
+ 			}
 			else {
 				if ($settings{'WILDCARDS'} eq 'on') {
 				    $settings{'WILDCARDS'} = '-w';
