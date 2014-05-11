@@ -634,8 +634,9 @@ WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: details
 WARNING: untranslated string: dh
+WARNING: untranslated string: dh key move failed
 WARNING: untranslated string: dh key warn
-WARNING: untranslated string: dh name is invalid
+WARNING: untranslated string: dh key warn1
 WARNING: untranslated string: dnat address
 WARNING: untranslated string: dns servers
 WARNING: untranslated string: dnsforward
@@ -873,7 +874,8 @@ WARNING: untranslated string: outgoing firewall p2p allow
 WARNING: untranslated string: outgoing firewall p2p deny
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
-WARNING: untranslated string: ovpn dh name
+WARNING: untranslated string: ovpn dh upload
+WARNING: untranslated string: ovpn engines
 WARNING: untranslated string: ovpn errmsg green already pushed
 WARNING: untranslated string: ovpn errmsg invalid ip or mask
 WARNING: untranslated string: ovpn generating the root and host certificates

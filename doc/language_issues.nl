@@ -650,8 +650,9 @@ WARNING: untranslated string: atm device
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
 WARNING: untranslated string: dh
+WARNING: untranslated string: dh key move failed
 WARNING: untranslated string: dh key warn
-WARNING: untranslated string: dh name is invalid
+WARNING: untranslated string: dh key warn1
 WARNING: untranslated string: dns servers
 WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: firewall logs country
@@ -677,7 +678,8 @@ WARNING: untranslated string: monitor interface
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
-WARNING: untranslated string: ovpn dh name
+WARNING: untranslated string: ovpn dh upload
+WARNING: untranslated string: ovpn engines
 WARNING: untranslated string: ovpn generating the root and host certificates
 WARNING: untranslated string: ovpn ha
 WARNING: untranslated string: ovpn hmac

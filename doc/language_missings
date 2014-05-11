@@ -6,6 +6,7 @@
 ############################################################################
 < addon
 < ccd maxclients
+< ovpn_fragment
 ############################################################################
 # Checking install/setup translations for language: fr                     #
 ############################################################################
@@ -79,8 +80,9 @@
 < deprecated fs warn
 < details
 < dh
+< dh key move failed
 < dh key warn
-< dh name is invalid
+< dh key warn1
 < dnat address
 < dns address deleted txt
 < dnsforward
@@ -362,7 +364,7 @@
 < outgoing firewall access
 < ovpn crypt options
 < ovpn dh
-< ovpn dh name
+< ovpn dh upload
 < ovpn engines
 < ovpn generating the root and host certificates
 < ovpn ha
@@ -591,8 +593,9 @@
 < deprecated fs warn
 < details
 < dh
+< dh key move failed
 < dh key warn
-< dh name is invalid
+< dh key warn1
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -885,7 +888,7 @@
 < outgoing firewall view group
 < ovpn crypt options
 < ovpn dh
-< ovpn dh name
+< ovpn dh upload
 < ovpn engines
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
@@ -1094,8 +1097,9 @@
 < deprecated fs warn
 < details
 < dh
+< dh key move failed
 < dh key warn
-< dh name is invalid
+< dh key warn1
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -1366,7 +1370,7 @@
 < outgoing firewall access
 < ovpn crypt options
 < ovpn dh
-< ovpn dh name
+< ovpn dh upload
 < ovpn engines
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
@@ -1575,8 +1579,9 @@
 < deprecated fs warn
 < details
 < dh
+< dh key move failed
 < dh key warn
-< dh name is invalid
+< dh key warn1
 < disk access per
 < dnat address
 < dnsforward
@@ -1854,7 +1859,7 @@
 < outgoing traffic in bytes per second
 < ovpn crypt options
 < ovpn dh
-< ovpn dh name
+< ovpn dh upload
 < ovpn engines
 < ovpn generating the root and host certificates
 < ovpn ha
