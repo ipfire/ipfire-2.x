@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.6.3
+VER        = 2.7.2
 
 THISAPP    = nut-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nut
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8db00c21f8bc03add6e14d15f634ec6a
+$(DL_FILE)_MD5 = c3568b42e058cfc385b46d25140dced4
 
 install : $(TARGET)
 
