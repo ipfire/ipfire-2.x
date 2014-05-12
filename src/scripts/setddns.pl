@@ -400,6 +400,41 @@ if ($ip ne $ipcache) {
 			        &General::log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'} : failure (could not connect to server)");
 			    }
 			}
+                        elsif ($settings{'SERVICE'} eq 'spdns.de') {
+                            # use proxy ?
+                            my %proxysettings;
+                            &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+                            if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
+                                my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+                                Net::SSLeay::set_proxy($peer,$peerport,$proxysettings{'UPSTREAM_USER'},$proxysettings{'UPSTREAM_PASSWORD'} );
+                            }
+                            
+                            if ($settings{'HOSTNAME'} eq '') {
+                                $settings{'HOSTDOMAIN'} = $settings{'DOMAIN'};
+                            } else {
+                                $settings{'HOSTDOMAIN'} = "$settings{'HOSTNAME'}.$settings{'DOMAIN'}";
+                            }
+                            
+                            my ($out, $response) = Net::SSLeay::get_https( 'www.spdns.de', 443,
+                                                                            "/nic/update?&hostname=$settings{'HOSTDOMAIN'}&myip=$ip",
+                                                                            Net::SSLeay::make_headers('User-Agent' => 'IPFire' ,
+                                                                                                      'Authorization' => 'Basic ' . encode_base64("$settings{'LOGIN'}:$settings{'PASSWORD'}"))
+                                                                         );
+                            
+                            #Valid responses from service are:
+                            # good xxx.xxx.xxx.xxx
+                            # nochg  xxx.xxx.xxx.xxx
+                            if ($response =~ m%HTTP/1\.. 200 OK%) {
+                                if ($out !~ m/good |nochg /ig) {
+                                    &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure ($out)");
+                                } else {
+                                    &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : success");
+                                    $success++;
+                                }
+                            } else {
+                                &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure (could not connect to server)");
+                            }
+                        }
 			elsif ($settings{'SERVICE'} eq 'strato') {
 				# use proxy ?
 				my %proxysettings;
