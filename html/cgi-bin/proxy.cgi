@@ -2974,9 +2974,22 @@ if (
      (isPlainHostName(host)) ||
      (dnsDomainIs(host, ".$mainsettings{'DOMAINNAME'}")) ||
      (isInNet(host, "127.0.0.1", "255.0.0.0")) ||
-     (isInNet(host, "10.0.0.0", "255.0.0.0")) ||
-     (isInNet(host, "172.16.0.0", "255.240.0.0")) ||
-     (isInNet(host, "192.168.0.0", "255.255.0.0")) ||
+END
+;
+
+	if ($netsettings{'GREEN_DEV'}) {
+		print FILE "     (isInNet(host, \"$netsettings{'GREEN_NETADDRESS'}\", \"$netsettings{'GREEN_NETMASK'}\")) ||\n";
+	}
+
+	if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {
+		print FILE "     (isInNet(host, \"$netsettings{'BLUE_NETADDRESS'}\", \"$netsettings{'BLUE_NETMASK'}\")) ||\n";
+	}
+
+	if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {
+		print FILE "     (isInNet(host, \"$netsettings{'ORANGE_NETADDRESS'}\", \"$netsettings{'ORANGE_NETMASK'}\")) ||\n";
+	}
+
+	print FILE <<END
      (isInNet(host, "169.254.0.0", "255.255.0.0"))
    )
      return "DIRECT";
