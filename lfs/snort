@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.9.5.3
+VER        = 2.9.6.1
 
 THISAPP    = snort-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f99465c0734a6173bfca899dcb72266b
+$(DL_FILE)_MD5 = d7c0f1ddb2e70b70acdaa4664abb5fb0
 
 install : $(TARGET)
 
@@ -70,14 +70,26 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/snort* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls \
-		--sysconfdir=/etc/snort --target=i586 \
-		--enable-linux-smp-stats --enable-smb-alerts \
-		--enable-gre --enable-mpls --enable-targetbased \
-		--enable-decoder-preprocessor-rules --enable-ppm \
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--disable-nls \
+		--sysconfdir=/etc/snort \
+		--target=i586 \
+		--enable-linux-smp-stats \
+		--enable-smb-alerts \
+		--enable-gre --enable-mpls \
+		--enable-targetbased \
+		--enable-decoder-preprocessor-rules \
+		--enable-ppm \
 		--enable-non-ether-decoders \
-		--enable-perfprofiling --enable-zlib --enable-active-response \
-		--enable-normalizer --enable-reload --enable-react --enable-flexresp3
+		--enable-perfprofiling \
+		--enable-zlib \
+		--enable-active-response \
+		--enable-normalizer \
+		--enable-reload \
+		--enable-react \
+		--enable-flexresp3
+
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	mv /usr/bin/snort /usr/sbin/
