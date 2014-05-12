@@ -2972,7 +2972,6 @@ sub writepacfile
 		print FILE <<END
 if (
      (isPlainHostName(host)) ||
-     (dnsDomainIs(host, ".$mainsettings{'DOMAINNAME'}")) ||
      (isInNet(host, "127.0.0.1", "255.0.0.0")) ||
 END
 ;
