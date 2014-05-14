@@ -643,6 +643,7 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: MTU settings
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
@@ -674,8 +675,9 @@ WARNING: untranslated string: monitor interface
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
+WARNING: untranslated string: ovpn dh new key
+WARNING: untranslated string: ovpn dh parameters
 WARNING: untranslated string: ovpn dh upload
-WARNING: untranslated string: ovpn engines
 WARNING: untranslated string: ovpn generating the root and host certificates
 WARNING: untranslated string: ovpn ha
 WARNING: untranslated string: ovpn hmac

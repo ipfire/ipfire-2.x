@@ -341,6 +341,7 @@
 < modem sim information
 < modem status
 < most preferred
+< MTU settings
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -364,6 +365,8 @@
 < outgoing firewall access
 < ovpn crypt options
 < ovpn dh
+< ovpn dh new key
+< ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
 < ovpn generating the root and host certificates
@@ -853,6 +856,7 @@
 < modem sim information
 < modem status
 < most preferred
+< MTU settings
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -888,6 +892,8 @@
 < outgoing firewall view group
 < ovpn crypt options
 < ovpn dh
+< ovpn dh new key
+< ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
 < ovpn errmsg green already pushed
@@ -1349,6 +1355,7 @@
 < modem sim information
 < modem status
 < most preferred
+< MTU settings
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1370,6 +1377,8 @@
 < outgoing firewall access
 < ovpn crypt options
 < ovpn dh
+< ovpn dh new key
+< ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
 < ovpn errmsg green already pushed
@@ -1837,6 +1846,7 @@
 < modem status
 < month-graph
 < most preferred
+< MTU settings
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1859,6 +1869,8 @@
 < outgoing traffic in bytes per second
 < ovpn crypt options
 < ovpn dh
+< ovpn dh new key
+< ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
 < ovpn generating the root and host certificates

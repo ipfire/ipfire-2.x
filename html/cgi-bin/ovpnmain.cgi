@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 ###
+# Based on IPFireCore 77
 ###
 use CGI;
 use CGI qw/:standard/;
@@ -92,7 +93,6 @@ $cgiparams{'PMTU_DISCOVERY'} = '';
 $cgiparams{'DCIPHER'} = '';
 $cgiparams{'DAUTH'} = '';
 $cgiparams{'TLSAUTH'} = '';
-$cgiparams{'ENGINES'} = '';
 $routes_push_file = "${General::swroot}/ovpn/routes_push";
 unless (-e $routes_push_file)    { system("touch $routes_push_file"); }
 unless (-e "${General::swroot}/ovpn/ccd.conf")    { system("touch ${General::swroot}/ovpn/ccd.conf"); }
@@ -370,11 +370,6 @@ sub writeserverconf {
     }
     if ($sovpnsettings{'TLSAUTH'} eq 'on') {
 	print CONF "tls-auth ${General::swroot}/ovpn/ca/ta.key 0\n";
-    }
-    if ($sovpnsettings{ENGINES} eq 'disabled') {
-	print CONF "";
-    } else {
-	print CONF "engine $sovpnsettings{ENGINES}\n";
     }
     if ($sovpnsettings{DCOMPLZO} eq 'on') {
         print CONF "comp-lzo\n";
@@ -796,7 +791,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'PMTU_DISCOVERY'} = $cgiparams{'PMTU_DISCOVERY'};
     $vpnsettings{'DAUTH'} = $cgiparams{'DAUTH'};
     $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
-    $vpnsettings{'ENGINES'} = $cgiparams{'ENGINES'};
     my @temp=();
     
     if ($cgiparams{'FRAGMENT'} eq '') {
@@ -1008,12 +1002,6 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
 	print SERVERCONF "# HMAC algorithm\n";
 	print SERVERCONF "auth $cgiparams{'DAUTH'}\n";
   }
-  if ($cgiparams{'ENGINES'} eq 'disabled') {
-	print SERVERCONF "";
-  } else {
-	print SERVERCONF "# Crypto engine\n";
-	print SERVERCONF "engine $cgiparams{'ENGINES'}\n";
-  }
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print SERVERCONF "# Enable Compression\n";
    print SERVERCONF "comp-lzo\r\n";
@@ -1108,12 +1096,6 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   } else {
 	print CLIENTCONF "# HMAC algorithm\n";
 	print CLIENTCONF "auth $cgiparams{'DAUTH'}\n";
-  }
-  if ($cgiparams{'ENGINES'} eq 'disabled') {
-	print CLIENTCONF "";
-  } else {
-	print CLIENTCONF "# Crypto engine\n";
-	print CLIENTCONF "engine $cgiparams{'ENGINES'}\n";
   }
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print CLIENTCONF "# Enable Compression\n";
@@ -1299,7 +1281,6 @@ SETTINGS_ERROR:
 			<tr>
 				<td align='center'>
 				<input type='hidden' name='AREUSURE' value='yes' />
-				<b><font color='${Header::colourred}'>$Lang::tr{'capswarning'}</font></b>: 
 				<b><font color='${Header::colourred}'>$Lang::tr{'capswarning'}</font></b>:
 				$Lang::tr{'resetting the vpn configuration will remove the root ca, the host certificate and all certificate based connections'}</td>
 			</tr>
@@ -1343,7 +1324,7 @@ END
 	print <<END;
 	<table width='100%'>
 	<tr>
-		<td width='15%'> </td> <td width='15%'></td> <td width='65%'></td>
+		<td width='20%'> </td> <td width='15%'></td> <td width='65%'></td>
 	</tr>
 	<tr>
 		<td class='base'>$Lang::tr{'ovpn dh'}:</td>
@@ -2539,6 +2520,12 @@ ADV_ERROR:
     if ($cgiparams{'TLSAUTH'} eq '') {
 	$cgiparams{'TLSAUTH'} = 'off';
     }
+    if ($cgiparams{'DAUTH'} eq '') {
+	$cgiparams{'DAUTH'} = 'SHA1';
+    }
+    if ($cgiparams{'TLSAUTH'} eq '') {
+	$cgiparams{'TLSAUTH'} = 'off';
+    }
     $checked{'CLIENT2CLIENT'}{'off'} = '';
     $checked{'CLIENT2CLIENT'}{'on'} = '';
     $checked{'CLIENT2CLIENT'}{$cgiparams{'CLIENT2CLIENT'}} = 'CHECKED';
@@ -2571,13 +2558,7 @@ ADV_ERROR:
     $checked{'TLSAUTH'}{'off'} = '';
     $checked{'TLSAUTH'}{'on'} = '';
     $checked{'TLSAUTH'}{$cgiparams{'TLSAUTH'}} = 'CHECKED';
-    $selected{'ENGINES'}{'cryptodev'} = '';
-    $selected{'ENGINES'}{'dynamic'} = '';
-    $selected{'ENGINES'}{'aesni'} = '';
-    $selected{'ENGINES'}{'padlock'} = '';
-    $selected{'ENGINES'}{'disabled'} = '';
-    $selected{'ENGINES'}{$cgiparams{'ENGINES'}} = 'SELECTED';
-
+   
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', $errormessage);    
@@ -2719,18 +2700,6 @@ print <<END;
 		</td>
 		<td>Default: <span class="base">SHA1 (160 $Lang::tr{'bit'})</span></td>
     </tr>
-
-    <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn engines'}</td>
-		<td><select name='ENGINES'>
-				<option value='cryptodev'		$selected{'ENGINES'}{'cryptodev'}>Cryptodev</option>
-				<option value='dynamic'			$selected{'ENGINES'}{'dynamic'}>Dynamic</option>
-				<option value='aesni'			$selected{'ENGINES'}{'aesni'}>AES-NI</option>
-				<option value='padlock'			$selected{'ENGINES'}{'padlock'}>Padlock</option>
-				<option value='disabled'		$selected{'ENGINES'}{'disabled'}>$Lang::tr{'disabled'}</option>
-			</select>
-		</td>
-		<td>Default: <span class="base">$Lang::tr{'disabled'}</span></td>
-	</tr>
 </table>
 
 <table width='100%'>
@@ -3301,8 +3270,7 @@ my @n2nremsub = split(/ /, (grep { /^route/ } @firen2nconf)[0]);
 my @n2nmgmt =  split(/ /, (grep { /^management/ } @firen2nconf)[0]);
 my @n2nlocalsub  = split(/ /, (grep { /^# remsub/ } @firen2nconf)[0]);
 my @n2ncipher = split(/ /, (grep { /^cipher/ } @firen2nconf)[0]);
-my @n2nauth = split(/ /, (grep { /^auth/ } @firen2nconf)[0]);
-my @n2nengine = split(/ /, (grep { /^engine/ } @firen2nconf)[0]);;
+my @n2nauth = split(/ /, (grep { /^auth/ } @firen2nconf)[0]);;
 
 ###
 # m.a.d delete CR and LF from arrays for this chomp doesnt work
@@ -3323,7 +3291,6 @@ $n2nmgmt[2] =~ s/\n|\r//g;
 $n2nmtudisc[1] =~ s/\n|\r//g;
 $n2ncipher[1] =~ s/\n|\r//g;
 $n2nauth[1] =~ s/\n|\r//g;
-$n2nengine[1] =~ s/\n|\r//g;
 chomp ($complzoactive);
 chomp ($mssfixactive);
 
@@ -3542,7 +3509,6 @@ if ($confighash{$cgiparams{'KEY'}}) {
 		$cgiparams{'DAUTH'}		= $confighash{$cgiparams{'KEY'}}[39];
 		$cgiparams{'DCIPHER'}		= $confighash{$cgiparams{'KEY'}}[40];
 		$cgiparams{'TLSAUTH'}		= $confighash{$cgiparams{'KEY'}}[41];
-		$cgiparams{'ENGINES'}		= $confighash{$cgiparams{'KEY'}}[42];
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 	
@@ -4268,7 +4234,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$confighash{$key}[38]		= $cgiparams{'PMTU_DISCOVERY'};
 	$confighash{$key}[39]		= $cgiparams{'DAUTH'};
 	$confighash{$key}[40]		= $cgiparams{'DCIPHER'};
-	$confighash{$key}[42]		= $cgiparams{'ENGINES'};
 
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 	
@@ -4380,7 +4345,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
         $cgiparams{'FRAGMENT'} = '1300';
 	$cgiparams{'PMTU_DISCOVERY'} = 'off';
 	$cgiparams{'DAUTH'} = 'SHA1';
-	$cgiparams{'ENGINES'} = 'disabled';
 ###
 # m.a.d n2n end
 ###	
@@ -4479,18 +4443,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
     }
     $selected{'DAUTH'}{$cgiparams{'DAUTH'}} = 'SELECTED';
 
-    $selected{'ENGINES'}{'disabled'} = '';
-    $selected{'ENGINES'}{'cryptodev'} = '';
-    $selected{'ENGINES'}{'dynamic'} = '';
-    $selected{'ENGINES'}{'aesni'} = '';
-    $selected{'ENGINES'}{'padlock'} = '';
-    # If no engine has been choosen yet, select
-    # a default one (disabled).
-    if ($cgiparams{'ENGINES'} eq '') {
-        $cgiparams{'ENGINES'} = 'disabled';
-    }
-    $selected{'ENGINES'}{$cgiparams{'ENGINES'}} = 'SELECTED';
-
     if (1) {
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ovpn'}, 1, '');
@@ -4547,100 +4499,66 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 	    print <<END;
 		    <td width='25%'>&nbsp;</td>
-		    <td width='25%'>&nbsp;</td></tr>
+		    <td width='25%'>&nbsp;</td></tr>	
+	<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'Act as'}</td>
+		<td><select name='SIDE'>
+				<option value='server' $selected{'SIDE'}{'server'}>$Lang::tr{'openvpn server'}</option>
+				<option value='client' $selected{'SIDE'}{'client'}>$Lang::tr{'openvpn client'}</option>
+			</select>
+		</td>
 
-		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'Act as'}</td>
-		    <td><select name='SIDE'><option value='server' $selected{'SIDE'}{'server'}>$Lang::tr{'openvpn server'}</option>
-					    <option value='client' $selected{'SIDE'}{'client'}>$Lang::tr{'openvpn client'}</option></select></td>
+ 		<td class='boldbase'>$Lang::tr{'remote host/ip'}:</td>
+		<td><input type='TEXT' name='REMOTE' value='$cgiparams{'REMOTE'}' /></td>
+	</tr>
 
- 		    <td class='boldbase'>$Lang::tr{'remote host/ip'}:</td>
-		    <td><input type='TEXT' name='REMOTE' value='$cgiparams{'REMOTE'}' /></td></tr>
+	<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'local subnet'}</td>
+		<td><input type='TEXT' name='LOCAL_SUBNET' value='$cgiparams{'LOCAL_SUBNET'}' /></td>
 
-		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'local subnet'}</td>
-		    <td><input type='TEXT' name='LOCAL_SUBNET' value='$cgiparams{'LOCAL_SUBNET'}' /></td>
+		<td class='boldbase' nowrap='nowrap'>$Lang::tr{'remote subnet'}</td>
+		<td><input type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' /></td>
+	</tr>
 
-		    <td class='boldbase' nowrap='nowrap'>$Lang::tr{'remote subnet'}</td>
-		    <td><input type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' /></td></tr>
+	<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn subnet'}</td>
+		<td><input type='TEXT' name='OVPN_SUBNET' value='$cgiparams{'OVPN_SUBNET'}' /></td>
 
-		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn subnet'}</td>
-		    <td><input type='TEXT' name='OVPN_SUBNET' value='$cgiparams{'OVPN_SUBNET'}' /></td></tr>
+		<td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td>
+		<td><select name='PROTOCOL'>
+			<option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP</option>
+			<option value='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP</option></select></td>
+	</tr>
+	
+	<tr>
+		<td class='boldbase'>$Lang::tr{'destination port'}:</td>
+		<td><input type='TEXT' name='DEST_PORT' value='$cgiparams{'DEST_PORT'}' size='5' /></td>
 
-		    
-		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td>
-			<td><select name='PROTOCOL'><option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP</option>
-					<option value='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP</option></select></td>
+		<td class='boldbase' nowrap='nowrap'>Management Port ($Lang::tr{'openvpn default'}: <span class="base">$Lang::tr{'destination port'}): &nbsp;<img src='/blob.gif' /></td>
+		<td> <input type='TEXT' name='OVPN_MGMT' VALUE='$cgiparams{'OVPN_MGMT'}'size='5' /></td>
+	</tr>
 
-			<td class='boldbase'>$Lang::tr{'destination port'}:</td>
-			<td><input type='TEXT' name='DEST_PORT' value='$cgiparams{'DEST_PORT'}' size='5' /></td>
-		</tr>
+	<tr><td colspan=4><hr /></td></tr><tr>
+	
+	<tr>
+		<td class'base'><b>$Lang::tr{'MTU settings'}</b></td>
+	</tr>
 
-		<tr><td class='boldbase'>$Lang::tr{'cipher'}</td>
-			<td><select name='DCIPHER'>
-					<option value='CAMELLIA-256-CBC'	$selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-CBC (256 $Lang::tr{'bit'})</option>
-					<option value='CAMELLIA-192-CBC'	$selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (196 $Lang::tr{'bit'})</option>
-					<option value='CAMELLIA-128-CBC'	$selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-CBC (128 $Lang::tr{'bit'})</option>
-					<option value='AES-256-CBC' 	 	$selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'})</option>
-					<option value='AES-192-CBC' 	 	$selected{'DCIPHER'}{'AES-192-CBC'}>AES-CBC (192 $Lang::tr{'bit'})</option>
-					<option value='AES-128-CBC' 	 	$selected{'DCIPHER'}{'AES-128-CBC'}>AES-CBC (128 $Lang::tr{'bit'})</option>
-					<option value='DES-EDE3-CBC'	 	$selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'})</option>
-					<option value='DESX-CBC' 		$selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'})</option>
-					<option value='SEED-CBC' 		$selected{'DCIPHER'}{'SEED-CBC'}>SEED-CBC (128 $Lang::tr{'bit'})</option>
-					<option value='DES-EDE-CBC' 		$selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'})</option>
-					<option value='BF-CBC' 			$selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'})</option>
-					<option value='CAST5-CBC' 		$selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'})</option>
-					<option value='RC2-CBC' 		$selected{'DCIPHER'}{'RC2-CBC'}>RC2-CBC (128 $Lang::tr{'bit'})</option>
-					<option value='DES-CBC' 		$selected{'DCIPHER'}{'DES-CBC'}>DES-CBC (64 $Lang::tr{'bit'} not recommended)</option>
-					<option value='RC2-64-CBC' 		$selected{'DCIPHER'}{'RC2-64-CBC'}>RC2-CBC (64 $Lang::tr{'bit'} not recommended)</option>
-					<option value='RC2-40-CBC' 		$selected{'DCIPHER'}{'RC2-40-CBC'}>RC2-CBC (40 $Lang::tr{'bit'} not recommended)</option>
-				</select>
-			</td>
+        <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;<img src='/blob.gif' /></td>
+		<td><input type='TEXT' name='MTU' VALUE='$cgiparams{'MTU'}'size='5' /></td>
+		<td colspan='2'>$Lang::tr{'openvpn default'}: udp/tcp <span class="base">1500/1400</span></td>
+	</tr>
 
-			<td class='boldbase'>$Lang::tr{'ovpn ha'}:</td>
-			<td><select name='DAUTH'>
-					<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
-					<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
-					<option value='SHA384'			$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
-					<option value='SHA256'			$selected{'DAUTH'}{'SHA256'}>SHA2 (256 $Lang::tr{'bit'})</option>
-					<option value='SHA1'			$selected{'DAUTH'}{'SHA1'}>SHA1 (160 $Lang::tr{'bit'} Default)</option>
-				</select>
-			</td>
-		</tr>
+	<tr><td class='boldbase' nowrap='nowrap'>fragment &nbsp;<img src='/blob.gif' /></td>
+		<td><input type='TEXT' name='FRAGMENT' VALUE='$cgiparams{'FRAGMENT'}'size='5' /></td>
+		<td>$Lang::tr{'openvpn default'}: <span class="base">1300</span></td>
+	</tr>
 
-		<tr>	<td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn engines'} &nbsp;<img src='/blob.gif'</td>
-			<td><select name='ENGINES'>
-					<option value='cryptodev'		$selected{'ENGINES'}{'cryptodev'}>Cryptodev</option>
-					<option value='dynamic'			$selected{'ENGINES'}{'dynamic'}>Dynamic</option>
-					<option value='aesni'			$selected{'ENGINES'}{'aesni'}>AES-NI</option>
-					<option value='padlock'			$selected{'ENGINES'}{'padlock'}>Padlock</option>
-					<option value='disabled'		$selected{'ENGINES'}{'disabled'}>$Lang::tr{'disabled'} (Default)</option>
-				</select>
-			</td>
-		</tr>
+	<tr><td class='boldbase' nowrap='nowrap'>mssfix &nbsp;<img src='/blob.gif' /></td>
+		<td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
+		<td>$Lang::tr{'openvpn default'}: <span class="base">on</span></td>
+	</tr>
 
-		<tr><td colspan=2><hr /></td></tr><tr>
-
-			<tr><td class='boldbase' nowrap='nowrap'>Management Port ($Lang::tr{'openvpn default'}: <span class="base">$Lang::tr{'destination port'}): &nbsp;<img src='/blob.gif' /></td>
-			<td> <input type='TEXT' name='OVPN_MGMT' VALUE='$cgiparams{'OVPN_MGMT'}'size='5' /></td>
-		</tr>
-
-	        <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;<img src='/blob.gif' /></td>
-			<td> <input type='TEXT' name='MTU' VALUE='$cgiparams{'MTU'}'size='5' /></td>
-			<td colspan='2'>$Lang::tr{'openvpn default'}: udp/tcp <span class="base">1500/1400</span></td>
-		</tr>
-
-		<tr><td class='boldbase' nowrap='nowrap'>fragment &nbsp;<img src='/blob.gif' /></td>
-			<td><input type='TEXT' name='FRAGMENT' VALUE='$cgiparams{'FRAGMENT'}'size='5' /></td>
-			<td>$Lang::tr{'openvpn default'}: <span class="base">1300</span></td>
-		</tr>
-
-		<tr><td class='boldbase' nowrap='nowrap'>mssfix &nbsp;<img src='/blob.gif' /></td>
-			<td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
-			<td>$Lang::tr{'openvpn default'}: <span class="base">on</span></td>
-		</tr>
-
-	        <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'} &nbsp;<img src='/blob.gif'</td>
-			<td><input type='checkbox' name='COMPLZO' $checked{'COMPLZO'}{'on'} /></td>
-		</tr>
+        <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'} &nbsp;<img src='/blob.gif'</td>
+		<td><input type='checkbox' name='COMPLZO' $checked{'COMPLZO'}{'on'} /></td>
+	</tr>
 
 	<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn mtu-disc'}</td>
 		<td colspan='3'>
@@ -4650,6 +4568,42 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	        	<input type='radio' name='PMTU_DISCOVERY' value='off' $checked{'PMTU_DISCOVERY'}{'off'} /> $Lang::tr{'ovpn mtu-disc off'}
 		</td>
 	</tr>
+
+<tr><td colspan=4><hr /></td></tr><tr>
+	<tr>
+		<td class'base'><b>$Lang::tr{'ovpn crypt options'}:</b></td>
+	</tr>
+
+	<tr><td class='boldbase'>$Lang::tr{'cipher'}</td>
+		<td><select name='DCIPHER'>
+				<option value='CAMELLIA-256-CBC'	$selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-CBC (256 $Lang::tr{'bit'})</option>
+				<option value='CAMELLIA-192-CBC'	$selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (192 $Lang::tr{'bit'})</option>
+				<option value='CAMELLIA-128-CBC'	$selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-CBC (128 $Lang::tr{'bit'})</option>
+				<option value='AES-256-CBC' 	 	$selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'})</option>
+				<option value='AES-192-CBC' 	 	$selected{'DCIPHER'}{'AES-192-CBC'}>AES-CBC (192 $Lang::tr{'bit'})</option>
+				<option value='AES-128-CBC' 	 	$selected{'DCIPHER'}{'AES-128-CBC'}>AES-CBC (128 $Lang::tr{'bit'})</option>
+				<option value='DES-EDE3-CBC'	 	$selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'})</option>
+				<option value='DESX-CBC' 		$selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'})</option>
+				<option value='SEED-CBC' 		$selected{'DCIPHER'}{'SEED-CBC'}>SEED-CBC (128 $Lang::tr{'bit'})</option>
+				<option value='DES-EDE-CBC' 		$selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'})</option>
+				<option value='BF-CBC' 			$selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'})</option>
+				<option value='CAST5-CBC' 		$selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'})</option>
+				<option value='RC2-CBC' 		$selected{'DCIPHER'}{'RC2-CBC'}>RC2-CBC (128 $Lang::tr{'bit'})</option>
+			</select>
+		</td>
+
+		<td class='boldbase'>$Lang::tr{'ovpn ha'}:</td>
+		<td><select name='DAUTH'>
+				<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
+				<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
+				<option value='SHA384'			$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
+				<option value='SHA256'			$selected{'DAUTH'}{'SHA256'}>SHA2 (256 $Lang::tr{'bit'})</option>
+				<option value='SHA1'			$selected{'DAUTH'}{'SHA1'}>SHA1 (160 $Lang::tr{'bit'} Default)</option>
+			</select>
+		</td>
+	</tr>
+	<tr><td colspan=4><hr /></td></tr><tr>
+
 END
 ;
 	}
@@ -5025,13 +4979,6 @@ END
     $selected{'DAUTH'}{'SHA1'} = '';
     $selected{'DAUTH'}{$cgiparams{'DAUTH'}} = 'SELECTED';
 
-    $selected{'ENGINES'}{'cryptodev'} = '';
-    $selected{'ENGINES'}{'dynamic'} = '';
-    $selected{'ENGINES'}{'aesni'} = '';
-    $selected{'ENGINES'}{'padlock'} = '';
-    $selected{'ENGINES'}{'disabled'} = '';
-    $selected{'ENGINES'}{$cgiparams{'ENGINES'}} = 'SELECTED';
-
     $checked{'DCOMPLZO'}{'off'} = '';
     $checked{'DCOMPLZO'}{'on'} = '';
     $checked{'DCOMPLZO'}{$cgiparams{'DCOMPLZO'}} = 'CHECKED';
@@ -5107,10 +5054,11 @@ END
         <td><input type='TEXT' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' size='5' /></td></tr>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;</td>
         <td> <input type='TEXT' name='DMTU' VALUE='$cgiparams{'DMTU'}'size='5' /></td>
+
 		<td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td>
 		<td><select name='DCIPHER'>
 				<option value='CAMELLIA-256-CBC' $selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-CBC (256 $Lang::tr{'bit'})</option>
-				<option value='CAMELLIA-192-CBC' $selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (196 $Lang::tr{'bit'})</option>
+				<option value='CAMELLIA-192-CBC' $selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-128-CBC' $selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-CBC (128 $Lang::tr{'bit'})</option>
 				<option value='AES-256-CBC' $selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'})</option>
 				<option value='AES-192-CBC' $selected{'DCIPHER'}{'AES-192-CBC'}>AES-CBC (192 $Lang::tr{'bit'})</option>
@@ -5122,9 +5070,6 @@ END
 				<option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'})</option>
 				<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'})</option>
 				<option value='RC2-CBC' $selected{'DCIPHER'}{'RC2-CBC'}>RC2-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='DES-CBC' $selected{'DCIPHER'}{'DES-CBC'}>DES-CBC (64 $Lang::tr{'bit'} not recommended)</option>
-				<option value='RC2-64-CBC' $selected{'DCIPHER'}{'RC2-64-CBC'}>RC2-CBC (64 $Lang::tr{'bit'} not recommended)</option>
-				<option value='RC2-40-CBC' $selected{'DCIPHER'}{'RC2-40-CBC'}>RC2-CBC (40 $Lang::tr{'bit'} not recommended)</option>
 			</select>
 		</td>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
@@ -5519,22 +5464,32 @@ END
 		<td nowrap='nowrap' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'upload ca certificate'}' /></td>
 	</tr>
 
+	<tr align='right'>
+		<td colspan='4' align='right' width='80%'><input type='submit' name='ACTION' value='$Lang::tr{'show crl'}' /></td>
+	</tr>
+
+	<tr><td colspan=4><hr /></td></tr><tr>
+	<tr>
+		<td class'base'><b>$Lang::tr{'ovpn dh parameters'}:</b></td>
+	</tr>
+
 	<tr>
 		<td class='base' nowrap='nowrap'>$Lang::tr{'ovpn dh upload'}:</td>
 		<td nowrap='nowrap'><size='15' align='left'/></td>
 		<td nowrap='nowrap'><input type='file' name='FH' size='25' />
 		<td colspan='4' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'upload dh key'}' /></td>
 	</tr>
-	<tr><td colspan='4'><br></td></tr>
 	<tr>
+		<td class='base' nowrap='nowrap'>$Lang::tr{'ovpn dh new key'}:</td>
+		<td nowrap='nowrap'><size='15' align='left'/></td>
 		<td nowrap='nowrap'><input type='submit' name='ACTION' value='$Lang::tr{'generate dh key'}' /></td>
+	</tr>
+	<tr>
 		<td colspan='4' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'show dh'}' /></td>
 	</tr>
-
-	<tr align='right'>
-		<td colspan='4' align='right' width='80%'><input type='submit' name='ACTION' value='$Lang::tr{'show crl'}' /></td>
-	</tr>
 	</table>
+	
+	<tr><td colspan=4><hr /></td></tr><tr>
 END
 	;
 

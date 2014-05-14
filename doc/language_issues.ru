@@ -579,6 +579,7 @@ WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: Edit an existing route
 WARNING: untranslated string: MB read
 WARNING: untranslated string: MB written
+WARNING: untranslated string: MTU settings
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
@@ -869,8 +870,9 @@ WARNING: untranslated string: outgoing firewall access
 WARNING: untranslated string: outgoing traffic in bytes per second
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
+WARNING: untranslated string: ovpn dh new key
+WARNING: untranslated string: ovpn dh parameters
 WARNING: untranslated string: ovpn dh upload
-WARNING: untranslated string: ovpn engines
 WARNING: untranslated string: ovpn generating the root and host certificates
 WARNING: untranslated string: ovpn ha
 WARNING: untranslated string: ovpn hmac

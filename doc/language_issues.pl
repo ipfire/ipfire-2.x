@@ -575,6 +575,7 @@ WARNING: untranslated string: ConnSched reboot
 WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: MB read
 WARNING: untranslated string: MB written
+WARNING: untranslated string: MTU settings
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: Set time on boot
@@ -874,8 +875,9 @@ WARNING: untranslated string: outgoing firewall p2p allow
 WARNING: untranslated string: outgoing firewall p2p deny
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
+WARNING: untranslated string: ovpn dh new key
+WARNING: untranslated string: ovpn dh parameters
 WARNING: untranslated string: ovpn dh upload
-WARNING: untranslated string: ovpn engines
 WARNING: untranslated string: ovpn errmsg green already pushed
 WARNING: untranslated string: ovpn errmsg invalid ip or mask
 WARNING: untranslated string: ovpn generating the root and host certificates
