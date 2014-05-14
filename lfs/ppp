@@ -73,10 +73,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && rm -f include/pcap-int.h include/linux/if_pppol2tp.h
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp-2.4.6-increase-max-padi-attempts.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/0003-build-sys-utilize-compiler-flags-handed-to-us-by-rpm.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/0012-pppd-we-don-t-want-to-accidentally-leak-fds.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/0013-everywhere-O_CLOEXEC-harder.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/0014-everywhere-use-SOCK_CLOEXEC-when-creating-socket.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/ppp-2.4.6-increase-max-padi-attempts.patch
 	cd $(DIR_APP) && sed -i -e "s+/etc/ppp/connect-errors+/var/log/connect-errors+" pppd/pathnames.h
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
-	cd $(DIR_APP) && make $(MAKETUNING) CC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && make $(MAKETUNING) CC="gcc" RPM_OPT_FLAGS="$(CFLAGS)"
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make install-etcppp
 	touch /var/log/connect-errors
