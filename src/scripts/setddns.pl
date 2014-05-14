@@ -415,7 +415,7 @@ if ($ip ne $ipcache) {
                                 $settings{'HOSTDOMAIN'} = "$settings{'HOSTNAME'}.$settings{'DOMAIN'}";
                             }
                             
-                            my ($out, $response) = Net::SSLeay::get_https( 'www.spdns.de', 443,
+                            my ($out, $response) = Net::SSLeay::get_https( 'update.spdns.de', 443,
                                                                             "/nic/update?&hostname=$settings{'HOSTDOMAIN'}&myip=$ip",
                                                                             Net::SSLeay::make_headers('User-Agent' => 'IPFire' ,
                                                                                                       'Authorization' => 'Basic ' . encode_base64("$settings{'LOGIN'}:$settings{'PASSWORD'}"))
