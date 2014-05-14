@@ -32,7 +32,7 @@ SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
 MAX_RETRIES=1							# prefetch/check loop
-BUILD_IMAGES=1							# Build USB, Flash and Xen Images
+BUILD_IMAGES=0							# Build USB, Flash and Xen Images
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag

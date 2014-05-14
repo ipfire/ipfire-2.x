@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2014  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 29
+PAK_VER    = 30
 DEPS	   = ""
 
 # Normal build or XEN build.
@@ -162,6 +162,9 @@ endif
 
 	# Fix mv_cesa
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32-crypto-mv_cesa.patch
+
+	# Fix for CVE-2014-0196
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.61_CVE-2014-0196.patch
 
 ifeq "$(KCFG)" "-kirkwood"
 	# Add dreamplug,guruplug and icy 62x0  support on ARM-kirkwood
