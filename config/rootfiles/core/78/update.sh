@@ -135,9 +135,6 @@ esac
 /etc/init.d/ipsec stop
 /etc/init.d/apache stop
 
-# Remove the old default theme
-rm -rf /srv/web/ipfire/html/themes/ipfire
-
 # rename /etc/modprobe.d files
 for i in $(find /etc/modprobe.d/* | grep -v ".conf"); do
 	mv $i $i.conf
