@@ -60,6 +60,7 @@ echo "Running mkisofs"
 mkisofs -J -r -V "ipfire backup ${TS}" \
             -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
             -c boot/isolinux/boot.catalog backupiso.${TS} > $(basename ${ISO} .iso)-${TS}.iso
+isohybrid $(basename ${ISO} .iso)-${TS}.iso
 
 echo "Cleaning up"
 rm -rf backupiso.${TS}
