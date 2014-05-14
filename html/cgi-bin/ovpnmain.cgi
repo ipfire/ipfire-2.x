@@ -4421,10 +4421,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $selected{'DCIPHER'}{'DES-EDE-CBC'} = '';
     $selected{'DCIPHER'}{'CAST5-CBC'} = '';
     $selected{'DCIPHER'}{'BF-CBC'} = '';
-    $selected{'DCIPHER'}{'RC2-CBC'} = '';
     $selected{'DCIPHER'}{'DES-CBC'} = '';
-    $selected{'DCIPHER'}{'RC2-64-CBC'} = '';
-    $selected{'DCIPHER'}{'RC2-40-CBC'} = '';
     # If no cipher has been chossen yet, select
     # the old default (AES-256-CBC) for compatiblity reasons.
     if ($cgiparams{'DCIPHER'} eq '') {
@@ -4588,7 +4585,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 				<option value='DES-EDE-CBC' 		$selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'})</option>
 				<option value='BF-CBC' 			$selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'})</option>
 				<option value='CAST5-CBC' 		$selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='RC2-CBC' 		$selected{'DCIPHER'}{'RC2-CBC'}>RC2-CBC (128 $Lang::tr{'bit'})</option>
 			</select>
 		</td>
 
@@ -4966,10 +4962,7 @@ END
     $selected{'DCIPHER'}{'DES-EDE-CBC'} = '';
     $selected{'DCIPHER'}{'CAST5-CBC'} = '';
     $selected{'DCIPHER'}{'BF-CBC'} = '';
-    $selected{'DCIPHER'}{'RC2-CBC'} = '';
     $selected{'DCIPHER'}{'DES-CBC'} = '';
-    $selected{'DCIPHER'}{'RC2-64-CBC'} = '';
-    $selected{'DCIPHER'}{'RC2-40-CBC'} = '';
     $selected{'DCIPHER'}{$cgiparams{'DCIPHER'}} = 'SELECTED';
 
     $selected{'DAUTH'}{'whirlpool'} = '';
@@ -5069,7 +5062,6 @@ END
 				<option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'})</option>
 				<option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'})</option>
 				<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='RC2-CBC' $selected{'DCIPHER'}{'RC2-CBC'}>RC2-CBC (128 $Lang::tr{'bit'})</option>
 			</select>
 		</td>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
