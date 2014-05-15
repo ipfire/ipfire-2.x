@@ -51,7 +51,7 @@ if ($ip eq "unavailable") {
 	exit(0);
 }
 
-&General::log("Dynamic DNS public router IP is: $ip");
+#&General::log("Dynamic DNS public router IP is: $ip");
 
 if ($ARGV[0] eq '-f') {
 	unlink ($cachefile);	# next regular calls will try again if this force update fails.
