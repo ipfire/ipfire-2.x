@@ -1,0 +1,25 @@
+diff -Nur Pound-2.7c-vanilla/config.c Pound-2.7c/config.c
+--- Pound-2.7c-vanilla/config.c	2014-04-21 13:16:08.000000000 +0200
++++ Pound-2.7c/config.c	2014-05-16 12:57:33.273583192 +0200
+@@ -345,8 +345,10 @@
+ #ifdef  SSL_OP_NO_COMPRESSION
+             SSL_CTX_set_options(res->ctx, SSL_OP_NO_COMPRESSION);
+ #endif
++#if 0
+             SSL_CTX_clear_options(res->ctx, SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION);
+             SSL_CTX_clear_options(res->ctx, SSL_OP_LEGACY_SERVER_CONNECT);
++#endif
+             sprintf(lin, "%d-Pound-%ld", getpid(), random());
+             SSL_CTX_set_session_id_context(res->ctx, (unsigned char *)lin, strlen(lin));
+             SSL_CTX_set_tmp_rsa_callback(res->ctx, RSA_tmp_callback);
+@@ -368,8 +370,10 @@
+ #ifdef  SSL_OP_NO_COMPRESSION
+             SSL_CTX_set_options(res->ctx, SSL_OP_NO_COMPRESSION);
+ #endif
++#if 0
+             SSL_CTX_clear_options(res->ctx, SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION);
+             SSL_CTX_clear_options(res->ctx, SSL_OP_LEGACY_SERVER_CONNECT);
++#endif
+             sprintf(lin, "%d-Pound-%ld", getpid(), random());
+             SSL_CTX_set_session_id_context(res->ctx, (unsigned char *)lin, strlen(lin));
+             SSL_CTX_set_tmp_rsa_callback(res->ctx, RSA_tmp_callback);
