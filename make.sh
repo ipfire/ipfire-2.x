@@ -797,6 +797,7 @@ buildipfire() {
   ipfiremake iptraf-ng
   ipfiremake iotop
   ipfiremake stunnel
+  ipfiremake sslscan
 }
 
 buildinstaller() {
