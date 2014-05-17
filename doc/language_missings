@@ -334,6 +334,12 @@
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
@@ -865,6 +871,12 @@
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
@@ -1380,6 +1392,12 @@
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
@@ -1886,6 +1904,12 @@
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written

@@ -683,6 +683,12 @@ WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
 WARNING: untranslated string: imei
 WARNING: untranslated string: imsi
+WARNING: untranslated string: masquerade blue
+WARNING: untranslated string: masquerade green
+WARNING: untranslated string: masquerade orange
+WARNING: untranslated string: masquerading
+WARNING: untranslated string: masquerading disabled
+WARNING: untranslated string: masquerading enabled
 WARNING: untranslated string: model
 WARNING: untranslated string: modem hardware details
 WARNING: untranslated string: modem information

@@ -336,10 +336,31 @@ iptables_red() {
 		# Outgoing masquerading (don't masqerade IPSEC (mark 50))
 		iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
 
-		if [ "$IFACE" != "$GREEN_DEV" ]; then
-			iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
+		if [ "$IFACE" = "$GREEN_DEV" ]; then
+			MASQUERADE_GREEN="off"
 		fi
 
+		local NO_MASQ_DEVICES
+
+		if [ "${MASQUERADE_GREEN}" = "off" ]; then
+			NO_MASQ_DEVICES="${NO_MASQ_DEVICES} ${GREEN_DEV}"
+		fi
+
+		if [ "${MASQUERADE_BLUE}" = "off" ]; then
+			NO_MASQ_DEVICES="${NO_MASQ_DEVICES} ${BLUE_DEV}"
+		fi
+
+		if [ "${MASQUERADE_ORANGE}" = "off" ]; then
+			NO_MASQ_DEVICES="${NO_MASQ_DEVICES} ${ORANGE_DEV}"
+		fi
+
+		local device
+		for device in ${NO_MASQ_DEVICES}; do
+			iptables -t nat -A REDNAT -i "${device}" -o "${IFACE}" -j RETURN
+		done
+
+		# Masquerade everything else
+		iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
 	fi
 
 	# Reload all rules.
