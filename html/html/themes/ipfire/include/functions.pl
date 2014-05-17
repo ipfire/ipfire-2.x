@@ -194,7 +194,7 @@ sub openpagewithoutmenu {
 sub closepage () {
 	open(FILE, "</etc/system-release");
 	my $system_release = <FILE>;
-	$system_release =~ s/core/Core Update/;
+	$system_release =~ s/core/Core Update /;
 	close(FILE);
 
 print <<END;

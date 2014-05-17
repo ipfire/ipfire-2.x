@@ -253,8 +253,11 @@ $checked{'SERVICE'}{'nsupdate'} = '';
 $checked{'SERVICE'}{'ovh.com'} = '';
 $checked{'SERVICE'}{'regfish.com'} = '';
 $checked{'SERVICE'}{'selfhost.de'} = '';
+$checked{'SERVICE'}{'spdns.org'} = '';
 $checked{'SERVICE'}{'strato.com'} = '';
+$checked{'SERVICE'}{'twodns.de'} = '';
 $checked{'SERVICE'}{'tzo.com'} = '';
+$checked{'SERVICE'}{'variomedia.de'} = '';
 $checked{'SERVICE'}{'zoneedit.com'} = '';
 $checked{'SERVICE'}{$settings{'SERVICE'}} = "selected='selected'";
 
@@ -349,8 +352,11 @@ print <<END
     <option $checked{'SERVICE'}{'ovh.com'}>ovh.com</option>
     <option $checked{'SERVICE'}{'regfish.com'}>regfish.com</option>
     <option $checked{'SERVICE'}{'selfhost.de'}>selfhost.de</option>
+    <option $checked{'SERVICE'}{'spdns.org'}>spdns.org</option>
     <option $checked{'SERVICE'}{'strato.com'}>strato.com</option>
+    <option $checked{'SERVICE'}{'twodns.de'}>twodns.de</option>
 <!--    <option $checked{'SERVICE'}{'tzo.com'}>tzo.com</option>        comment this service out until a working fix is developed -->
+    <option $checked{'SERVICE'}{'variomedia.de'}>variomedia.de</option>
     <option $checked{'SERVICE'}{'zoneedit.com'}>zoneedit.com</option>
     </select></td>
     <td width='20%' class='base'>$Lang::tr{'hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>

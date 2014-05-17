@@ -54,7 +54,7 @@ char *tr_tr[] = {
 /* TR_JOURNAL_EXT3 */
 "Ext3 için günlük oluşturuluyor...",
 /* TR_CHOOSE_NETCARD */
-"Aşağıdaki ara birim için bir ağ kartı seçin - %s.",
+"Aşağıdan şu ara birim için bir ağ kartı seçin - %s",
 /* TR_NETCARDMENU2 */
 "Genişletilmiş Ağ Listesi",
 /* TR_ERROR_INTERFACES */
@@ -132,7 +132,7 @@ char *tr_tr[] = {
 /* TR_DNS_AND_GATEWAY_SETTINGS */
 "DNS ve Ağ Geçidi ayarları",
 /* TR_DNS_AND_GATEWAY_SETTINGS_LONG */
-"DNS ve ağ geçidi bilgilerini girin. Bu ayarlar sadece KIRMIZI arabirim adres ayarlarında Sabit seçenği seçilmişse kullanılır. Eğer KIRMIZI arabirim adres ayarlarında DHCP seçeneğini seçtiyseniz bu alanı boş bırakabilirsiniz.",
+"DNS ve ağ geçidi bilgilerini girin. Bu ayarlar sadece KIRMIZI ara birim adres ayarlarında Statik seçenği seçilmişse kullanılır. Eğer KIRMIZI ara birim adres ayarlarında DHCP seçeneğini seçtiyseniz bu alanı boş bırakabilirsiniz.",
 /* TR_DNS_GATEWAY_WITH_GREEN */
 "Yapılandırmanız KIRMIZI ara birim için ethernet adaptörünü kullanamaz. DNS ve Çevirmeli ağ kullanıcıları için ağ geçidi bilgisi çevirmeli ağda otomatik olarak yapılandırılır.",
 /* TR_DOMAINNAME */
@@ -164,7 +164,7 @@ char *tr_tr[] = {
 /* TR_ENTER_ADDITIONAL_MODULE_PARAMS */
 "Bazı ISDN kartları (özellikle ISA olanlar) IRQ ve GÇ adres bilgilerini ayarlamak için ek modül parametrelerine ihtiyaç duyar.Böyle bir ISDN kartınız varsa burada bu ek parametreleri girin. Örneğin: \"io = 0x280 irq = 9 \". Bunlar kart algılama sırasında kullanılacaktır.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"%s 'admin' kullanıcı parolasını giriniz. Bu, %s web yönetimi sayfalarının kayıtlarına erişebilen kullanıcıdır.",
+"%s 'admin' kullanıcı parolasını girin. Bu, %s web yönetimi sayfalarının kayıtlarına erişebilen kullanıcıdır.",
 /* TR_ENTER_DOMAINNAME */
 "Alan adını girin",
 /* TR_ENTER_HOSTNAME */
@@ -228,7 +228,7 @@ char *tr_tr[] = {
 /* TR_INTERFACE_FAILED_TO_COME_UP */
 "Ara birim yükseltmesi başarısız oldu.",
 /* TR_INVALID_FIELDS */
-"Aşağıdaki alan geçersizdir:\n\n",
+"Aşağıdaki alan geçersiz:\n\n",
 /* TR_INVALID_IO */
 "Girilen GÇ bağlantı noktası detayları geçersiz. ",
 /* TR_INVALID_IRQ */
@@ -354,7 +354,7 @@ char *tr_tr[] = {
 /* TR_PHONENUMBER_CANNOT_BE_EMPTY */
 "Telefon numarası boş olamaz.",
 /* TR_PREPARE_HARDDISK */
-"Sabit disk kurulum programı /dev/sda üzerindeki %s sabit diski hazırlayacak. İlk olarak diskiniz bölümlendirilir ve daha sonra bu bölüme dosya sistemleri oluşturulur.\n\nDİSKTEKİ TÜM VERİLER SİLİNECEKTİR. Kabul ediyor musunuz?",
+"Sabit disk kurulum programı %s üzerindeki sabit diski hazırlayacak. İlk olarak diskiniz bölümlendirilir ve daha sonra bu bölüme dosya sistemleri oluşturulur.\n\nDİSKTEKİ TÜM VERİLER SİLİNECEKTİR. Kabul ediyor musunuz?",
 /* TR_PRESS_OK_TO_REBOOT */
 "Yeniden Başlat",
 /* TR_PRIMARY_DNS */
@@ -428,7 +428,7 @@ char *tr_tr[] = {
 /* TR_SETTING_SETUP_PASSWORD */
 "KALDIRILACAK",
 /* TR_SETUP_FINISHED */
-"Kurulum tamamlandı. Tamam tuşuna basın.",
+"Kurulum tamamlandı. Tamam seçneği ile ilerleyin.",
 /* TR_SETUP_NOT_COMPLETE */
 "Başlangıç kurulumu tamamlanamadı. Şimdi kurulumu tekrar çalıştırarak ayarlarınızın düzgün yapılmış olduğundan emin olun.",
 /* TR_SETUP_PASSWORD */
@@ -444,7 +444,7 @@ char *tr_tr[] = {
 /* TR_START_ADDRESS_CR */
 "Başlangıç adresi\n",
 /* TR_STATIC */
-"Sabit",
+"Statik",
 /* TR_SUGGEST_IO */
 "(öneri %x)",
 /* TR_SUGGEST_IRQ */
@@ -546,7 +546,7 @@ char *tr_tr[] = {
 /* TR_WARNING */
 "UYARI",
 /* TR_WARNING_LONG */
-"Bu IP adresini değiştiriseniz %s makinesi ile uzak oturum bağlantısı kopar ve yeniden IP adresi girmeniz gerekir. Bu riskli bir işlemdir. Bu işlem sırasında bir şeyler ters giderse düzeltmek için makineye fiziksel erişiminiz varsa denemelisiniz.",
+"Bu IP adresini değiştiriseniz %s makinesi ile uzak oturum bağlantısı kopar ve yeniden IP adresi girmeniz gerekir. Bu riskli bir işlemdir. Bu işlem sırasında bir şeyler ters giderse düzeltmek için makineye fiziksel erişiminiz olmalıdır. Makineye fiziksel erişiminiz varsa bu işlemi gerçekleştirin.",
 /* TR_WELCOME */
 "%s kurulum programına hoş geldiniz. Sonraki ekranların herhangi birinde İptal seçeneğini seçtiğinizde bilgisayar yeniden başlatılacaktır.",
 /* TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER */
@@ -588,9 +588,9 @@ char *tr_tr[] = {
 /* TR_DHCP_FORCE_MTU */
 "DHCP mtu zorla:",
 /* TR_IDENTIFY */
-"Identify",
+"Belirle",
 /* TR_IDENTIFY_SHOULD_BLINK */
-"Selected port should blink now ...",
+"Seçilen bağlantı noktasının şimdi yanıp sönmesi gerekir...",
 /* TR_IDENTIFY_NOT_SUPPORTED */
-"Function is not supported by this port.",
+"İşlev bu bağlantı noktası tarafından desteklenmiyor.",
 };

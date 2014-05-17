@@ -1,0 +1,16 @@
+etc/system-release
+etc/issue
+srv/web/ipfire/cgi-bin/ddns.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/firewalllogcountry.dat
+srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromcountry.dat
+srv/web/ipfire/cgi-bin/modem-status.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
+srv/web/ipfire/html/themes/ipfire/include/functions.pl
+usr/local/bin/setddns.pl
+var/ipfire/langs
+var/ipfire/menu.d/20-status.menu
+var/ipfire/menu.d/70-log.menu
+var/ipfire/modem-lib.pl
+var/ipfire/ovpn/openssl/ovpn.cnf

@@ -485,16 +485,12 @@ WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: requested data
-WARNING: translation string unused: reserved dst port
-WARNING: translation string unused: reserved src port
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
 WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: router ip
-WARNING: translation string unused: rsvd dst port overlap
-WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
@@ -648,14 +644,16 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: MTU settings
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: atm device
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
 WARNING: untranslated string: dh
+WARNING: untranslated string: dh key move failed
 WARNING: untranslated string: dh key warn
-WARNING: untranslated string: dh name is invalid
+WARNING: untranslated string: dh key warn1
 WARNING: untranslated string: dns servers
 WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: firewall logs country
@@ -681,7 +679,9 @@ WARNING: untranslated string: monitor interface
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
-WARNING: untranslated string: ovpn dh name
+WARNING: untranslated string: ovpn dh new key
+WARNING: untranslated string: ovpn dh parameters
+WARNING: untranslated string: ovpn dh upload
 WARNING: untranslated string: ovpn generating the root and host certificates
 WARNING: untranslated string: ovpn ha
 WARNING: untranslated string: ovpn hmac
