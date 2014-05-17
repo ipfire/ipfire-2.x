@@ -172,105 +172,6 @@ sub deletebackupcert
 		unlink ("${General::swroot}/ovpn/certs/$hexvalue.pem");
 	}
 }
-sub checkportfw {
-	my $DPORT = shift;
-	my $DPROT = shift;
-	my %natconfig =();
-	my $confignat = "${General::swroot}/firewall/config";
-	$DPROT= uc ($DPROT);
-	&General::readhasharray($confignat, \%natconfig);
-	foreach my $key (sort keys %natconfig){
-		my @portarray = split (/\|/,$natconfig{$key}[30]);
-		foreach my $value (@portarray){
-			if ($value =~ /:/i){
-				my ($a,$b) = split (":",$value);
-				if ($DPROT eq $natconfig{$key}[12] && $DPORT gt $a && $DPORT lt $b){
-					$errormessage= "$Lang::tr{'source port in use'} $DPORT";
-				}
-			}else{
-				if ($DPROT eq $natconfig{$key}[12] && $DPORT eq $value){
-					$errormessage= "$Lang::tr{'source port in use'} $DPORT";
-				}
-			}
-		}
-	}
-	return;
-}
-
-sub checkportoverlap
-{
-	my $portrange1 = $_[0]; # New port range
-	my $portrange2 = $_[1]; # existing port range
-	my @tempr1 = split(/\:/,$portrange1);
-	my @tempr2 = split(/\:/,$portrange2);
-
-	unless (&checkportinc($tempr1[0], $portrange2)){ return 0;}
-	unless (&checkportinc($tempr1[1], $portrange2)){ return 0;}
-	
-	unless (&checkportinc($tempr2[0], $portrange1)){ return 0;}
-	unless (&checkportinc($tempr2[1], $portrange1)){ return 0;}
-
-	return 1; # Everything checks out!
-}
-
-# Darren Critchley - we want to make sure that a port entry is not within an already existing range
-sub checkportinc
-{
-	my $port1 = $_[0]; # Port
-	my $portrange2 = $_[1]; # Port range
-	my @tempr1 = split(/\:/,$portrange2);
-
-	if ($port1 < $tempr1[0] || $port1 > $tempr1[1]) {
-		return 1; 
-	} else {
-		return 0; 
-	}
-}
-
-# Darren Critchley - certain ports are reserved for IPFire
-# TCP 67,68,81,222,444
-# UDP 67,68
-# Params passed in -> port, rangeyn, protocol
-sub disallowreserved
-{
-	# port 67 and 68 same for tcp and udp, don't bother putting in an array
-	my $msg = "";
-	my @tcp_reserved = (81,222,444);
-	my $prt = $_[0]; # the port or range
-	my $ryn = $_[1]; # tells us whether or not it is a port range
-	my $prot = $_[2]; # protocol
-	my $srcdst = $_[3]; # source or destination
-	if ($ryn) { # disect port range
-		if ($srcdst eq "src") {
-			$msg = "$Lang::tr{'rsvd src port overlap'}";
-		} else {
-			$msg = "$Lang::tr{'rsvd dst port overlap'}";
-		}
-		my @tmprng = split(/\:/,$prt);
-		unless (67 < $tmprng[0] || 67 > $tmprng[1]) { $errormessage="$msg 67"; return; }
-		unless (68 < $tmprng[0] || 68 > $tmprng[1]) { $errormessage="$msg 68"; return; }
-		if ($prot eq "tcp") {
-			foreach my $prange (@tcp_reserved) {
-				unless ($prange < $tmprng[0] || $prange > $tmprng[1]) { $errormessage="$msg $prange"; return; }
-			}
-		}
-	} else {
-		if ($srcdst eq "src") {
-			$msg = "$Lang::tr{'reserved src port'}";
-		} else {
-			$msg = "$Lang::tr{'reserved dst port'}";
-		}
-		if ($prt == 67) { $errormessage="$msg 67"; return; }
-		if ($prt == 68) { $errormessage="$msg 68"; return; }
-		if ($prot eq "tcp") {
-			foreach my $prange (@tcp_reserved) {
-				if ($prange == $prt) { $errormessage="$msg $prange"; return; }
-			}
-		}
-	}
-	return;
-}
-
 
 sub writeserverconf {
     my %sovpnsettings = ();  
@@ -1129,11 +1030,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 		$errormessage = $Lang::tr{'invalid input for hostname'};
 	goto SETTINGS_ERROR;
     	}
-    }
-    if ($errormessage) { goto SETTINGS_ERROR; }
-
-    if ($cgiparams{'ENABLED'} eq 'on'){
-	&checkportfw($cgiparams{'DDEST_PORT'},$cgiparams{'DPROTOCOL'});
     }
     if ($errormessage) { goto SETTINGS_ERROR; }
     
