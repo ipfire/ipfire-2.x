@@ -2511,20 +2511,8 @@ ADV_ERROR:
     if ($cgiparams{'DAUTH'} eq '') {
 		$cgiparams{'DAUTH'} = 'SHA1';
     }
-    if ($cgiparams{'DAUTH'} eq '') {
-	$cgiparams{'DAUTH'} = 'SHA1';
-    }
-    if ($cgiparams{'ENGINES'} eq '') {
-	$cgiparams{'ENGINES'} = 'disabled';
-    }
     if ($cgiparams{'TLSAUTH'} eq '') {
-	$cgiparams{'TLSAUTH'} = 'off';
-    }
-    if ($cgiparams{'DAUTH'} eq '') {
-	$cgiparams{'DAUTH'} = 'SHA1';
-    }
-    if ($cgiparams{'TLSAUTH'} eq '') {
-	$cgiparams{'TLSAUTH'} = 'off';
+		$cgiparams{'TLSAUTH'} = 'off';
     }
     $checked{'CLIENT2CLIENT'}{'off'} = '';
     $checked{'CLIENT2CLIENT'}{'on'} = '';
@@ -4926,9 +4914,6 @@ END
     }
 	if ($cgiparams{'DAUTH'} eq '') {
 		$cgiparams{'DAUTH'} = 'SHA1';
-    }
-    if ($cgiparams{'ENGINES'} eq '') {
-	$cgiparams{'ENGINES'} = 'disabled';
     }
     if ($cgiparams{'DOVPN_SUBNET'} eq '') {
 		$cgiparams{'DOVPN_SUBNET'} = '10.' . int(rand(256)) . '.' . int(rand(256)) . '.0/255.255.255.0';
