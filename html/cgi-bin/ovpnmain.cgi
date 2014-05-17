@@ -270,7 +270,7 @@ sub writeserverconf {
 	print CONF "auth $sovpnsettings{'DAUTH'}\n";
     }
     if ($sovpnsettings{'TLSAUTH'} eq 'on') {
-	print CONF "tls-auth ${General::swroot}/ovpn/ca/ta.key 0\n";
+	print CONF "tls-auth ${General::swroot}/ovpn/certs/ta.key\n";
     }
     if ($sovpnsettings{DCOMPLZO} eq 'on') {
         print CONF "comp-lzo\n";
@@ -711,13 +711,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     	$vpnsettings{'MSSFIX'} = $cgiparams{'MSSFIX'};
     }
 
-   # Create ta.key for tls-auth if not presant
-   if ($cgiparams{'TLSAUTH'} eq 'on') {
-	if ( ! -e "${General::swroot}/ovpn/ca/ta.key") {
-		system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/ca/ta.key")
-	}
-    }
-
     if (($cgiparams{'PMTU_DISCOVERY'} eq 'yes') ||
         ($cgiparams{'PMTU_DISCOVERY'} eq 'maybe') ||
         ($cgiparams{'PMTU_DISCOVERY'} eq 'no' )) {
@@ -815,6 +808,16 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     if ($cgiparams{'KEEPALIVE_2'} < ($cgiparams{'KEEPALIVE_1'} * 2)){
         $errormessage = $Lang::tr{'invalid input for keepalive 1:2'};
         goto ADV_ERROR;	
+    }
+    # Create ta.key for tls-auth if not presant
+    if ($cgiparams{'TLSAUTH'} eq 'on') {
+	if ( ! -e "${General::swroot}/ovpn/certs/ta.key") {
+		system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/certs/ta.key");
+		if ($?) {
+		$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
+        goto ADV_ERROR;
+		}
+	}
     }
     
     &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
@@ -1840,7 +1843,14 @@ END
 	    goto ROOTCERT_ERROR;
 #	} else {
 #	    &cleanssldatabase();
-	}       
+	}
+	# Create ta.key for tls-auth
+	system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/certs/ta.key");
+	if ($?) {
+	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
+	    &cleanssldatabase();
+	    goto ROOTCERT_ERROR;
+	}
 	goto ROOTCERT_SUCCESS;
     }
     ROOTCERT_ERROR:
@@ -2182,8 +2192,8 @@ else
 	print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
     }
     if ($vpnsettings{'TLSAUTH'} eq 'on') {
-	print CLIENTCONF "tls-auth ta.key 1\r\n";
-	$zip->addFile( "${General::swroot}/ovpn/ca/ta.key", "ta.key")  or die "Can't add file ta.key\n";
+	print CLIENTCONF "tls-auth ta.key\r\n";
+	$zip->addFile( "${General::swroot}/ovpn/certs/ta.key", "ta.key")  or die "Can't add file ta.key\n";
     }
     if ($vpnsettings{DCOMPLZO} eq 'on') {
         print CLIENTCONF "comp-lzo\r\n";
