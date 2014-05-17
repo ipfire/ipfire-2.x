@@ -77,17 +77,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/monit \
 			 /var/ipfire/backup/addons/includes/monit
-	ln -sf ../init.d/pound /etc/rc.d/rc3.d/S60monit
-	ln -sf ../init.d/pound /etc/rc.d/rc0.d/K40monit
-	ln -sf ../init.d/pound /etc/rc.d/rc6.d/K40monit
 
-	# Remove temporary file.
-	rm -vf /root/.rnd
+	# Install default configuration                                                                                                                
+	install -v -m 644 $(DIR_SRC)/config/monit/monitrc /etc                                                                              
 
-#	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
