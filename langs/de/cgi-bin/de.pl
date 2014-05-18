@@ -739,6 +739,7 @@
 'dns saved' => 'Erfolgreich gespeichert!',
 'dns saved txt' => 'Die beiden eingegebenen DNS-Server-Adressen wurde erfolgreich gespeichert.<br/>Um die Änderung wirksam zu machen, müssen Sie neustarten oder wiederverbinden!',
 'dns server' => 'DNS Server',
+'dns servers' => 'DNS-Server',
 'dns title' => 'Domain Name System',
 'dnsforward' => 'DNS-Weiterleitung',
 'dnsforward add a new entry' => 'Neuen Eintrag hinzufügen',

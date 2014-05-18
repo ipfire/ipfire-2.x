@@ -92,6 +92,7 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dns servers
 < dpd delay
 < dpd timeout
 < drop action
@@ -607,6 +608,7 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dns servers
 < dpd delay
 < dpd timeout
 < drop action
@@ -1114,6 +1116,7 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dns servers
 < dpd delay
 < dpd timeout
 < drop action
@@ -1600,6 +1603,7 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dns servers
 < dpd delay
 < dpd timeout
 < drop action
