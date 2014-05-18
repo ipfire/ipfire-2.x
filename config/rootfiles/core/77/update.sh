@@ -44,19 +44,11 @@ done
 #
 # Do some sanity checks.
 case $(uname -r) in
-	*-ipfire-versatile )
-		/usr/bin/logger -p syslog.emerg -t ipfire \
-			"core-update-${core}: ERROR cannot update. versatile support is dropped."
-		# Report no error to pakfire. So it does not try to install it again.
-		exit 0
-		;;
 	*-ipfire-xen )
-		BOOTSIZE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f2 | tail -n 1`
-		if [ $BOOTSIZE -lt 28000 ]; then
-			/usr/bin/logger -p syslog.emerg -t ipfire \
-				"core-update-${core}: ERROR cannot update because not enough space on boot."
-			exit 2
-		fi
+		/usr/bin/logger -p syslog.emerg -t ipfire \
+			"core-update-${core}: ERROR cannot update. legacy-xen support was dropped."
+			echo "IPFire 2.13 (i586) - core 76 - xen-legacy (EOL) No support!" > /etc/system-release
+		exit 0
 		;;
 	*-ipfire* )
 		# Ok.
@@ -473,18 +465,6 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 		echo "ProgVersion: 0" >> /opt/pakfire/db/meta/meta-linux-pae
 		echo "Release: 0"     >> /opt/pakfire/db/meta/meta-linux-pae
 	fi
-fi
-
-# Force reinstall xen kernel if it was installed
-if [ -e "/opt/pakfire/db/installed/meta-linux-xen" ]; then
-	echo "Name: linux-xen" > /opt/pakfire/db/installed/meta-linux-xen
-	echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-xen
-	echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-xen
-	echo "Name: linux-xen" > /opt/pakfire/db/meta/meta-linux-xen
-	echo "ProgVersion: 0" >> /opt/pakfire/db/meta/meta-linux-xen
-	echo "Release: 0"     >> /opt/pakfire/db/meta/meta-linux-xen
-	# Add xvc0 to /etc/securetty
-	echo "xvc0" >> /etc/securetty
 fi
 
 #
