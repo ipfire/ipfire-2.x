@@ -425,16 +425,12 @@ WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: requested data
-WARNING: translation string unused: reserved dst port
-WARNING: translation string unused: reserved src port
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
 WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: router ip
-WARNING: translation string unused: rsvd dst port overlap
-WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
@@ -583,6 +579,7 @@ WARNING: untranslated string: ConnSched shutdown
 WARNING: untranslated string: Edit an existing route
 WARNING: untranslated string: MB read
 WARNING: untranslated string: MB written
+WARNING: untranslated string: MTU settings
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
@@ -591,6 +588,7 @@ WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: advproxy errmsg proxy ports equal
 WARNING: untranslated string: advproxy proxy port transparent
+WARNING: untranslated string: atm device
 WARNING: untranslated string: attention
 WARNING: untranslated string: bit
 WARNING: untranslated string: bytes
@@ -641,8 +639,9 @@ WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: details
 WARNING: untranslated string: dh
+WARNING: untranslated string: dh key move failed
 WARNING: untranslated string: dh key warn
-WARNING: untranslated string: dh name is invalid
+WARNING: untranslated string: dh key warn1
 WARNING: untranslated string: disk access per
 WARNING: untranslated string: dnat address
 WARNING: untranslated string: dns servers
@@ -871,7 +870,9 @@ WARNING: untranslated string: outgoing firewall access
 WARNING: untranslated string: outgoing traffic in bytes per second
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
-WARNING: untranslated string: ovpn dh name
+WARNING: untranslated string: ovpn dh new key
+WARNING: untranslated string: ovpn dh parameters
+WARNING: untranslated string: ovpn dh upload
 WARNING: untranslated string: ovpn generating the root and host certificates
 WARNING: untranslated string: ovpn ha
 WARNING: untranslated string: ovpn hmac
@@ -893,6 +894,7 @@ WARNING: untranslated string: proxy reports monthly
 WARNING: untranslated string: proxy reports today
 WARNING: untranslated string: proxy reports weekly
 WARNING: untranslated string: qos enter bandwidths
+WARNING: untranslated string: random number generator daemon
 WARNING: untranslated string: red1
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added

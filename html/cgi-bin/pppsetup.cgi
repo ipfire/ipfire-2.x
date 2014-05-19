@@ -153,6 +153,9 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
                 if (($pppsettings{'VPI'} eq '0') && ($pppsettings{'VCI'} eq '0')) {
                         $errormessage = $Lang::tr{'invalid vpi vpci'};
                         goto ERROR; }
+                if ($pppsettings{'ATM_DEV'} eq '') {
+                        $errormessage = $Lang::tr{'invalid input'};
+                        goto ERROR; }
                 if ( $pppsettings{'PROTOCOL'} eq '' ) {
                         $errormessage = $Lang::tr{'invalid input'};
                         goto ERROR; }
@@ -751,11 +754,12 @@ if ($pppsettings{'TYPE'} =~ /^(pppoeatm|pptpatm)$/)
 
 print <<END
 <tr>
-        <td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'adsl settings'}:</b></td>
+        <td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'atm settings'}:</b></td>
 <tr>
-
+        <td nowrap='nowrap'>$Lang::tr{'atm device'}</td>
+        <td><input type='text' size='5' name='ATM_DEV' value='$pppsettings{'ATM_DEV'}' /></td>
         <td> $Lang::tr{'encapsulation'}:</td>
-        <td colspan='2' width='30%'>
+        <td>
                 <select name='ENCAP'>
                    <option value='0' $selected{'ENCAP'}{'0'}>LLC</option>
                    <option value='1' $selected{'ENCAP'}{'1'}>VCmux</option>
@@ -763,11 +767,10 @@ print <<END
         </td>
 </tr>
 <tr>
-
         <td nowrap='nowrap'>$Lang::tr{'vpi number'}</td>
         <td><input type='text' size='5' name='VPI' value='$pppsettings{'VPI'}' /></td>
-        <td align='right'>$Lang::tr{'vci number'}</td>
-        <td colspan='2'><input type='text' size='5' name='VCI' value='$pppsettings{'VCI'}' /></td>
+        <td> $Lang::tr{'vci number'}</td>
+        <td><input type='text' size='5' name='VCI' value='$pppsettings{'VCI'}' /></td>
 </tr>
 END
 ;
@@ -968,6 +971,7 @@ sub initprofile
         $pppsettings{'ENCAP'} = '0';
         $pppsettings{'VPI'} = '1';
         $pppsettings{'VCI'} = '32';
+        $pppsettings{'ATM_DEV'} = '0';
         $pppsettings{'PPTP_PEER'} = '10.0.0.138';
 	$pppsettings{'PPTP_NICCFG'} = '10.0.0.140/24 broadcast 10.0.0.255';
 	$pppsettings{'PPTP_ROUTE'} = '';

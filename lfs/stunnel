@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,17 +24,15 @@
 
 include Config
 
-VER        = 0.8.6
+VER        = 5.01
 
-THISAPP    = rtorrent-$(VER)
+THISAPP    = stunnel-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = rtorrent
-PAK_VER    = 5
-CFLAGS     =
-CXXFLAGS   =
+PROG       = stunnel
+PAK_VER    = 1
 
 DEPS       = ""
 
@@ -46,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b804c45c01c40312926bcea6b55bb084
+$(DL_FILE)_MD5 = 7b63266b6fa05da696729e245100da65
 
 install : $(TARGET)
 
@@ -79,8 +77,25 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--localstatedir=/var
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	# Create secure directory
+	install -v -m750 -o stunnel -g stunnel -d /var/lib/stunnel/run
+	chown -v stunnel:stunnel /var/lib/stunnel
+
+	# Install default configuration
+	-mkdir -pv /etc/stunnel
+	install -v -m 644 $(DIR_SRC)/config/stunnel/stunnel.conf \
+		/etc/stunnel
+
+	# Install backup include
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/stunnel \
+		/var/ipfire/backup/addons/includes
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

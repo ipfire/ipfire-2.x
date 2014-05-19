@@ -1,6 +1,6 @@
 #sbin/extlinux
 #usr/bin/gethostip
-#usr/bin/isohybrid
+usr/bin/isohybrid
 #usr/bin/isohybrid.pl
 #usr/bin/keytab-lilo
 #usr/bin/lss16toppm

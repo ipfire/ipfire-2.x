@@ -27,15 +27,16 @@ KERN_TYPE=pae
 KVER=xxxKVERxxx
 KERN_PACK=xxxKERN_PACKxxx
 KRNDOWN=http://mirror0.ipfire.org/pakfire2/$VERSION/paks
-
+CONSOLE=hvc0
 ###############################################################################
 # If you really want to use  outdated legacy kernel uncomment this lines. #####
 # Not recommended!!! ##########################################################
 ######################
 #KERN_TYPE=xen
 #KVER=2.6.32.61
-#KERN_PACK=28
+#KERN_PACK=29
 #KRNDOWN=http://mirror0.ipfire.org/pakfire2/2.15/paks
+#CONSOLE=xvc0
 ###############################################################################
 
 SIZEboot=64
@@ -108,10 +109,10 @@ mount -o loop $IMGvar $MNThdd/var
 
 # Install IPFire without kernel modules
 tar -C $MNThdd/ -xvf $ISODIR/$SNAME-$VERSION.tlz --lzma \
-	--exclude=lib/modules* --exclude=boot*
+	--exclude=lib/modules* --exclude=boot* --numeric-owner
 
 #Install Kernel
-tar -C $MNThdd/opt/pakfire/tmp -xvf $TMPDIR/$KERNEL
+tar -C $MNThdd/opt/pakfire/tmp -xvf $TMPDIR/$KERNEL --numeric-owner
 chroot $MNThdd /opt/pakfire/tmp/install.sh
 rm -rf $MNThdd/opt/pakfire/tmp/*
 
@@ -120,7 +121,7 @@ mkdir $MNThdd/boot/grub
 echo "timeout 10"                          > $MNThdd/boot/grub/grub.conf
 echo "default 0"                          >> $MNThdd/boot/grub/grub.conf
 echo "title IPFire ($KERN_TYPE-kernel)"   >> $MNThdd/boot/grub/grub.conf
-echo "  kernel /vmlinuz-$KVER-ipfire-xen root=/dev/xvda3 rootdelay=10 panic=10 console=xvc0 ro" \
+echo "  kernel /vmlinuz-$KVER-ipfire-$KERN_TYPE root=/dev/xvda3 rootdelay=10 panic=10 console=$CONSOLE ro" \
 					  >> $MNThdd/boot/grub/grub.conf
 echo "  initrd /ipfirerd-$KVER-$KERN_TYPE.img" >> $MNThdd/boot/grub/grub.conf
 echo "# savedefault 0" >> $MNThdd/boot/grub/grub.conf
@@ -161,12 +162,12 @@ rm -rf $MNThdd/etc/rc.d/rcsysinit.d/S19checkfstab
 #Remove console init
 rm -rf $MNThdd/etc/rc.d/rcsysinit.d/S70console
 
-#Add xvc0 to securetty
-echo xvc0 >> $MNThdd/etc/securetty
+#Add console to securetty
+echo $CONSOLE >> $MNThdd/etc/securetty
 
-#Add getty for xvc0
+#Add getty for console
 echo "#Enable login for XEN" >> $MNThdd/etc/inittab
-echo "8:2345:respawn:/sbin/agetty xvc0 9600 --noclear" >> $MNThdd/etc/inittab
+echo "8:2345:respawn:/sbin/agetty $CONSOLE 9600 --noclear" >> $MNThdd/etc/inittab
 
 #Disable some initskripts
 echo "#!/bin/sh" > $MNThdd/etc/rc.d/init.d/setclock

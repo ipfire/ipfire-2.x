@@ -143,6 +143,31 @@ iptables_init() {
 		iptables -A ${i} -j CONNTRACK
 	done
 
+	# Allow DHCP
+	iptables -N DHCPINPUT
+	iptables -A DHCPINPUT -p udp --sport 68 --dport 67 -j ACCEPT
+	iptables -A DHCPINPUT -p tcp --sport 68 --dport 67 -j ACCEPT
+
+	iptables -N DHCPOUTPUT
+	iptables -A DHCPOUTPUT -p udp --sport 67 --dport 68 -j ACCEPT
+	iptables -A DHCPOUTPUT -p tcp --sport 67 --dport 68 -j ACCEPT
+
+	# Allow DHCP on GREEN
+	iptables -N DHCPGREENINPUT
+	iptables -N DHCPGREENOUTPUT
+	if [ -n "${GREEN_DEV}" ]; then
+		iptables -A INPUT  -i "${GREEN_DEV}" -j DHCPGREENINPUT
+		iptables -A OUTPUT -o "${GREEN_DEV}" -j DHCPGREENOUTPUT
+	fi
+
+	# allow DHCP on BLUE to be turned on/off
+	iptables -N DHCPBLUEINPUT
+	iptables -N DHCPBLUEOUTPUT
+	if [ -n "${BLUE_DEV}" ]; then
+		iptables -A INPUT  -i "${BLUE_DEV}" -j DHCPBLUEINPUT
+		iptables -A OUTPUT -o "${BLUE_DEV}" -j DHCPBLUEOUTPUT
+	fi
+
 	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
 	iptables -N IPSECINPUT
 	iptables -N IPSECFORWARD
@@ -155,11 +180,7 @@ iptables_init() {
 
 	# localhost and ethernet.
 	iptables -A INPUT   -i $GREEN_DEV  -m conntrack --ctstate NEW -j ACCEPT ! -p icmp
-	
-	# allow DHCP on BLUE to be turned on/off
-	iptables -N DHCPBLUEINPUT 
-	iptables -A INPUT -j DHCPBLUEINPUT
-	
+
 	# WIRELESS chains
 	iptables -N WIRELESSINPUT
 	iptables -A INPUT -m conntrack --ctstate NEW -j WIRELESSINPUT

@@ -65,9 +65,9 @@ else
 endif
 
 # /boot:  64MB - OFFSET
-# /    : 600MB
+# /    : 700MB
 S_BOOT := $(shell echo $$(( 131072 - $(S_OFFSET) )))
-S_ROOT := 1228800
+S_ROOT := 1433600
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf $(MNThdd) $(IMGinst) $(IMGpart) $(IMGboot) $(IMGroot) && mkdir -p $(MNThdd)

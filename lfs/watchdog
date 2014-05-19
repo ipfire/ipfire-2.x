@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.9
+VER        = 5.13
 
 THISAPP    = watchdog-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = watchdog
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d7cae3c9829f5d9a680764f314234867
+$(DL_FILE)_MD5 = 153455f008f1cf8f65f6ad9586a21ff1
 
 install : $(TARGET)
 
@@ -77,7 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure
+	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/watchdog \

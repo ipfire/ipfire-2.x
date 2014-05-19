@@ -2,8 +2,8 @@
 
 COREVER=$(cat /opt/pakfire/db/core/mine)
 # FIXME: edit this lines before release
-URL="http://download.ipfire.org/releases/ipfire-2.x/2.13-core$COREVER/"
-ISO="ipfire-2.13.i586-full-core$COREVER.iso"
+URL="http://download.ipfire.org/releases/ipfire-2.x/2.15-core$COREVER/"
+ISO="ipfire-2.15.i586-full-core$COREVER.iso"
 
 if [ -z $1 ]; then
 	echo usage: $0 backup-file
@@ -60,6 +60,7 @@ echo "Running mkisofs"
 mkisofs -J -r -V "ipfire backup ${TS}" \
             -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
             -c boot/isolinux/boot.catalog backupiso.${TS} > $(basename ${ISO} .iso)-${TS}.iso
+isohybrid $(basename ${ISO} .iso)-${TS}.iso
 
 echo "Cleaning up"
 rm -rf backupiso.${TS}
