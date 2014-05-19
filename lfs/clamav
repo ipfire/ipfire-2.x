@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.98.1
+VER        = 0.98.3
 
 THISAPP    = clamav-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = clamav
-PAK_VER    = 24
+PAK_VER    = 25
 
 DEPS       = ""
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b1ec7b19dea8385954515ef1d63576d8
+$(DL_FILE)_MD5 = b649d35ee85d4d6075a98173dd255c17
 
 install : $(TARGET)
 
@@ -96,6 +96,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Disable PaX mprotect for clamd and freshclam
 	paxctl -cm /usr/sbin/clamd
+	paxctl -cm /usr/bin/clamscan
 	paxctl -cm /usr/bin/freshclam
 
 	@rm -rf $(DIR_APP)
