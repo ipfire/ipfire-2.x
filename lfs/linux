@@ -120,6 +120,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Layer7-patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-layer7-filter.patch
 
+	# pie packet scheduler
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-pie_packet_sch.patch
+
 	# Grsecurity-patches
 ifneq "$(KCFG)" "-headers"
 	cd $(DIR_APP) && xz -c -d $(DIR_DL)/$(GRS_PATCHES) | patch -Np1
