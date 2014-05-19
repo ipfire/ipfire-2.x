@@ -796,6 +796,7 @@ buildipfire() {
   ipfiremake iptraf-ng
   ipfiremake iotop
   ipfiremake stunnel
+  ipfiremake vdr_vnsiserver5
 }
 
 buildinstaller() {
