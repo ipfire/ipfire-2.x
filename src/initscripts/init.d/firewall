@@ -120,10 +120,10 @@ iptables_init() {
 	iptables -N IPTVFORWARD
 	iptables -A FORWARD -j IPTVFORWARD
 
-	# filtering from GUI
-	iptables -N GUIINPUT
-	iptables -A INPUT -j GUIINPUT
-	iptables -A GUIINPUT -p icmp --icmp-type 8 -j ACCEPT
+	# Allow to ping the firewall.
+	iptables -N ICMPINPUT
+	iptables -A INPUT -j ICMPINPUT
+	iptables -A ICMPINPUT -p icmp --icmp-type 8 -j ACCEPT
 
 	# Accept everything on loopback
 	iptables -N LOOPBACK
