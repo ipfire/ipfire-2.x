@@ -2675,6 +2675,7 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/net/sched/sch_mqprio.ko
 #lib/modules/KVER-ipfire-pae/kernel/net/sched/sch_multiq.ko
 #lib/modules/KVER-ipfire-pae/kernel/net/sched/sch_netem.ko
+#lib/modules/KVER-ipfire-pae/kernel/net/sched/sch_pie.ko
 #lib/modules/KVER-ipfire-pae/kernel/net/sched/sch_plug.ko
 #lib/modules/KVER-ipfire-pae/kernel/net/sched/sch_prio.ko
 #lib/modules/KVER-ipfire-pae/kernel/net/sched/sch_qfq.ko
