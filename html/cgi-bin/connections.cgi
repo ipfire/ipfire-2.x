@@ -238,6 +238,23 @@ if (-e "${General::swroot}/ovpn/settings") {
 	}
 }
 
+# Add OpenVPN net for custom OVPN networks
+if (-e "${General::swroot}/ovpn/ccd.conf") {
+	open(OVPNSUB, "${General::swroot}/ovpn/ccd.conf");	
+	my @ovpnsub = <OVPNSUB>;
+	close(OVPNSUB);
+
+	foreach (@ovpnsub) {
+		my ($network, $mask) = split '/', (split ',', $_)[2];
+		
+		$mask = ipv4_cidr2msk($mask) unless &General::validip($mask);
+
+		push(@network, $network);
+		push(@masklen, $mask);
+		push(@colour, ${Header::colourovpn});
+	}
+}
+
 open(IPSEC, "${General::swroot}/vpn/config");
 my @ipsec = <IPSEC>;
 close(IPSEC);
