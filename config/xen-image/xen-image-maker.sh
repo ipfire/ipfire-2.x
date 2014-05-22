@@ -28,16 +28,6 @@ KVER=xxxKVERxxx
 KERN_PACK=xxxKERN_PACKxxx
 KRNDOWN=http://mirror0.ipfire.org/pakfire2/$VERSION/paks
 CONSOLE=hvc0
-###############################################################################
-# If you really want to use  outdated legacy kernel uncomment this lines. #####
-# Not recommended!!! ##########################################################
-######################
-#KERN_TYPE=xen
-#KVER=2.6.32.61
-#KERN_PACK=29
-#KRNDOWN=http://mirror0.ipfire.org/pakfire2/2.15/paks
-#CONSOLE=xvc0
-###############################################################################
 
 SIZEboot=64
 SIZEswap=512
