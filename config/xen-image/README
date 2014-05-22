@@ -20,5 +20,5 @@ other usefull commands from the Dom0:
 - look what is going on: "xm top" or "xm list"
 
 This script can also build a Citrix XenCenter xva image.
-- run "XEN_IMAGE_TYPE=xva sh xen-image-maker.sh" to build an xva image.
+- run "XEN_IMG_TYPE=xva sh xen-image-maker.sh" to build an xva image.
 - import the vm with "xe vm-import file=ipfire.xfa"
