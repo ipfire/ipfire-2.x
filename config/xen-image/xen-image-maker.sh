@@ -138,16 +138,16 @@ echo "# savedefault 0" >> $MNThdd/boot/grub/grub.conf
 ln -s grub.conf $MNThdd/boot/grub/menu.lst
 
 #create the meta-info of linux-kernel package
-echo ""                       >  $MNThdd/opt/pakfire/db/meta/linux-$KERN_TYPE
-echo "Name: linux-$KERN_TYPE" >> $MNThdd/opt/pakfire/db/meta/linux-$KERN_TYPE
-echo "ProgVersion: $KVER"     >> $MNThdd/opt/pakfire/db/meta/linux-$KERN_TYPE
-echo "Release: $KERN_PACK"    >> $MNThdd/opt/pakfire/db/meta/linux-$KERN_TYPE
-echo ""                       >> $MNThdd/opt/pakfire/db/meta/linux-$KERN_TYPE
-echo ""                       >  $MNThdd/opt/pakfire/db/installed/linux-$KERN_TYPE
-echo "Name: linux-$KERN_TYPE" >> $MNThdd/opt/pakfire/db/installed/linux-$KERN_TYPE
-echo "ProgVersion: $KVER"     >> $MNThdd/opt/pakfire/db/installed/linux-$KERN_TYPE
-echo "Release: $KERN_PACK"    >> $MNThdd/opt/pakfire/db/installed/linux-$KERN_TYPE
-echo ""                       >> $MNThdd/opt/pakfire/db/installed/linux-$KERN_TYPE
+echo ""                       >  $MNThdd/opt/pakfire/db/meta/meta-linux-$KERN_TYPE
+echo "Name: linux-$KERN_TYPE" >> $MNThdd/opt/pakfire/db/meta/meta-linux-$KERN_TYPE
+echo "ProgVersion: $KVER"     >> $MNThdd/opt/pakfire/db/meta/meta-linux-$KERN_TYPE
+echo "Release: $KERN_PACK"    >> $MNThdd/opt/pakfire/db/meta/meta-linux-$KERN_TYPE
+echo ""                       >> $MNThdd/opt/pakfire/db/meta/meta-linux-$KERN_TYPE
+echo ""                       >  $MNThdd/opt/pakfire/db/installed/meta-linux-$KERN_TYPE
+echo "Name: linux-$KERN_TYPE" >> $MNThdd/opt/pakfire/db/installed/meta-linux-$KERN_TYPE
+echo "ProgVersion: $KVER"     >> $MNThdd/opt/pakfire/db/installed/meta-linux-$KERN_TYPE
+echo "Release: $KERN_PACK"    >> $MNThdd/opt/pakfire/db/installed/meta-linux-$KERN_TYPE
+echo ""                       >> $MNThdd/opt/pakfire/db/installed/meta-linux-$KERN_TYPE
 
 #Set default configuration
 echo "LANGUAGE=en" >> $MNThdd/var/ipfire/main/settings
