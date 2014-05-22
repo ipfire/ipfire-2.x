@@ -33,8 +33,7 @@ SIZEboot=64
 SIZEswap=512
 SIZEroot=1024
 SIZEvar=1024
-# ct'server does not support ext4 so change this to ext3.
-FSTYPE=ext4
+FSTYPE=ext3
 
 ##############################################################################
 
