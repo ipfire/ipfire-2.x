@@ -51,6 +51,25 @@ IMGvar=./$SNAME-var.img
 
 KERNEL=linux-$KERN_TYPE-$KVER-$KERN_PACK.ipfire
 
+if [ "$XEN_IMG_TYPE" == "xva" ]; then
+	# download xva.py if it not exist.
+	if [ ! -e xva.py ]; then
+		wget http://source.ipfire.org/source-2.x/xva.py
+	fi
+	# XenCenter use other devicenames and
+	# xvdd seems to be reserved (converter bug?).
+	P1=xvda
+	P2=xvdb
+	P3=xvdc
+	P4=xvde
+else
+	# old style xen image partition names
+	P1=xvda1
+	P2=xvda2
+	P3=xvda3
+	P4=xvda4
+fi
+
 rm -rf $TMPDIR && mkdir -p $MNThdd && mkdir -p $ISODIR
 echo --------------------------------------------------------
 echo - Download $SOURCEISO ...
@@ -97,7 +116,8 @@ mount -o loop $IMGboot $MNThdd/boot
 mount -o loop $IMGvar $MNThdd/var
 
 # Install IPFire without kernel modules
-tar -C $MNThdd/ -xvf $ISODIR/$SNAME-$VERSION.tlz --lzma \
+xz -d < $ISODIR/$SNAME-$VERSION.tlz > $TMPDIR/$SNAME-$VERSION.tar
+tar -C $MNThdd/ -xvf $TMPDIR/$SNAME-$VERSION.tar \
 	--exclude=lib/modules* --exclude=boot* --numeric-owner
 
 #Install Kernel
@@ -110,7 +130,7 @@ mkdir $MNThdd/boot/grub
 echo "timeout 10"                          > $MNThdd/boot/grub/grub.conf
 echo "default 0"                          >> $MNThdd/boot/grub/grub.conf
 echo "title IPFire ($KERN_TYPE-kernel)"   >> $MNThdd/boot/grub/grub.conf
-echo "  kernel /vmlinuz-$KVER-ipfire-$KERN_TYPE root=/dev/xvda3 rootdelay=10 panic=10 console=$CONSOLE ro" \
+echo "  kernel /vmlinuz-$KVER-ipfire-$KERN_TYPE root=/dev/$P3 rootdelay=10 panic=10 console=$CONSOLE ro" \
 					  >> $MNThdd/boot/grub/grub.conf
 echo "  initrd /ipfirerd-$KVER-$KERN_TYPE.img" >> $MNThdd/boot/grub/grub.conf
 echo "# savedefault 0" >> $MNThdd/boot/grub/grub.conf
@@ -139,10 +159,10 @@ mount --bind /proc $MNThdd/proc
 mount --bind /dev  $MNThdd/dev
 mount --bind /sys  $MNThdd/sys
 chroot $MNThdd /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
-sed -i -e "s|DEVICE1|/dev/xvda1|g" $MNThdd/etc/fstab
-sed -i -e "s|DEVICE2|/dev/xvda2|g" $MNThdd/etc/fstab
-sed -i -e "s|DEVICE3|/dev/xvda3|g" $MNThdd/etc/fstab
-sed -i -e "s|DEVICE4|/dev/xvda4|g" $MNThdd/etc/fstab
+sed -i -e "s|DEVICE1|/dev/$P1|g" $MNThdd/etc/fstab
+sed -i -e "s|DEVICE2|/dev/$P2|g" $MNThdd/etc/fstab
+sed -i -e "s|DEVICE3|/dev/$P3|g" $MNThdd/etc/fstab
+sed -i -e "s|DEVICE4|/dev/$P4|g" $MNThdd/etc/fstab
 
 sed -i -e "s|FSTYPE|$FSTYPE|g" $MNThdd/etc/fstab
 
@@ -181,6 +201,11 @@ umount $MNThdd
 
 umount $ISODIR
 rm -rf ./ipfire-tmp
+
+if [ "$XEN_IMG_TYPE" == "xva" ]; then
+	python xva.py --sparse -c $SNAME.cfg -f $SNAME.xva
+	rm -f $SNAME*.img
+fi
 echo --------------------------------------------------------
 echo - Done.
 echo --------------------------------------------------------
