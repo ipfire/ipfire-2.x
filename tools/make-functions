@@ -462,7 +462,7 @@ entershell() {
 		KGCC="ccache /usr/bin/gcc" \
 		$(fake_environ) \
 		$(qemu_environ) \
-		/tools/bin/bash
+		/tools/bin/bash -i
 	if [ $? -ne 0 ]; then
 			beautify message FAIL
 			exiterror "chroot error"
