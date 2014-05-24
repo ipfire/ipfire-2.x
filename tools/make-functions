@@ -105,8 +105,6 @@ configure_target() {
 	CFLAGS="-O2 -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fPIC"
 	CFLAGS="${CFLAGS} -fstack-protector-all --param=ssp-buffer-size=4 ${CFLAGS_ARCH}"
 	CXXFLAGS="${CFLAGS}"
-	C2FLAGS="${CFLAGS}"
-	CXX2FLAGS="${CXXFLAGS}"
 }
 
 configure_target_guess() {
@@ -450,7 +448,7 @@ entershell() {
 		PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
 		VERSION=$VERSION CONFIG_ROOT=$CONFIG_ROOT \
 		NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-		CFLAGS="$CF2LAGS" CXXFLAGS="$CXX2FLAGS" \
+		CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
 		CCACHE_DIR=/usr/src/ccache \
 		CCACHE_COMPRESS=1 \
 		CCACHE_COMPILERCHECK="none" \
@@ -574,7 +572,7 @@ lfsmake2() {
 						SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
+						CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
 						CCACHE_COMPILERCHECK="none" \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
@@ -615,7 +613,7 @@ ipfiremake() {
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						SYSTEM_RELEASE="$SYSTEM_RELEASE" \
-						CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
+						CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
 						CCACHE_COMPILERCHECK="none" \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
@@ -654,7 +652,7 @@ ipfiredist() {
 					VERSION=$VERSION \
 					CONFIG_ROOT=$CONFIG_ROOT \
 					NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-					CFLAGS="$C2FLAGS" CXXFLAGS="$CXX2FLAGS" \
+					CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
 					CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
 					CCACHE_COMPILERCHECK="none" \
 					KVER=$KVER \
@@ -694,7 +692,7 @@ installmake() {
 						SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="-Os" CXXFLAGS="-Os" \
+						CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
 						KVER=$KVER \
 						BUILDTARGET="$BUILDTARGET" \
