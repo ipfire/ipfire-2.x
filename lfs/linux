@@ -253,26 +253,26 @@ else
 
 	# Cleanup kernel source
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config
-	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
-	cd $(DIR_APP) && make CC="$(KGCC)" clean
+	cd $(DIR_APP) && make oldconfig
+	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
 
 ifeq "$(KCFG)" "-kirkwood"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage modules
+	cd $(DIR_APP) && make $(MAKETUNING) uImage modules
 	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
 else
 ifeq "$(KCFG)" "-multi"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage modules
+	cd $(DIR_APP) && make $(MAKETUNING) zImage modules
 	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/zImage-$(VERSUFIX)
 else
 ifeq "$(KCFG)" "-rpi"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage modules
+	cd $(DIR_APP) && make $(MAKETUNING) zImage modules
 	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/kernel.img
 else
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage modules
+	cd $(DIR_APP) && make $(MAKETUNING) bzImage modules
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
 endif
@@ -281,11 +281,11 @@ endif
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
 	ln -sf System.map-$(VER)-$(VERSUFIX) /boot/System.map-$(VERSUFIX)
-	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
-	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
+	cd $(DIR_APP) && make $(MAKETUNING) modules_install
+	cd $(DIR_APP) && make $(MAKETUNING) firmware_install
 
 ifeq "$(MACHINE_TYPE)" "arm"
-	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) dtbs
+	cd $(DIR_APP) && make $(MAKETUNING) dtbs
 	cd $(DIR_APP) && for f in $$(find arch/arm/boot/dts/ -name *.dtb); do \
 				mkdir -p /boot/dtb-$(VER)-$(VERSUFIX) ; \
 				install -m 644 $$f /boot/dtb-$(VER)-$(VERSUFIX)/ ; \

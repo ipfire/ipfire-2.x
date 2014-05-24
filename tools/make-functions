@@ -459,7 +459,6 @@ entershell() {
 		CROSSTARGET="${CROSSTARGET}" \
 		MACHINE="$MACHINE" \
 		MACHINE_TYPE="$MACHINE_TYPE" \
-		KGCC="ccache /usr/bin/gcc" \
 		$(fake_environ) \
 		$(qemu_environ) \
 		/tools/bin/bash -i
