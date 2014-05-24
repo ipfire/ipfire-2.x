@@ -651,7 +651,7 @@ if ($ip ne $ipcache) {
 			        &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure (could not connect to server)");
 			    }
 			}
-			elsif ($settings{'SERVICE'} eq 'udmedia.de') {
+			elsif ($settings{'SERVICE'} eq 'udmedia') {
 			    # use proxy ?
 			    my %proxysettings;
 			    &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
@@ -685,7 +685,7 @@ if ($ip ne $ipcache) {
 				&General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure (could not connect to server, check your credentials---$out-$response--)");
 			    }
 			}
-                        elsif ($settings{'SERVICE'} eq 'twodns.de') {
+                        elsif ($settings{'SERVICE'} eq 'twodns') {
                             # use proxy ?
                             my %proxysettings;
                             &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
