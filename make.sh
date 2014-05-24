@@ -34,16 +34,13 @@ NICE=10								# Nice level
 MAX_RETRIES=1							# prefetch/check loop
 BUILD_IMAGES=1							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
-MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 TOOLCHAINVER=7
 
-BUILDMACHINE=$MACHINE
-    if [ "$MACHINE" = "x86_64" ]; then
-        BUILDMACHINE="i686";
-    fi
-
+# New architecture variables
+BUILD_ARCH="$(uname -m)"
+BUILDMACHINE="${BUILD_ARCH}"
 
 # Debian specific settings
 if [ ! -e /etc/debian_version ]; then
@@ -67,6 +64,8 @@ mkdir $BASEDIR/log/ 2>/dev/null
 
 # Include funtions
 . tools/make-functions
+
+configure_target "default"
 
 if [ -f .config ]; then
 	. .config
@@ -241,7 +240,7 @@ prepareenv() {
 
 buildtoolchain() {
     local error=false
-    case "${MACHINE}:$(uname -m)" in
+    case "${TARGET_ARCH}:${BUILD_ARCH}" in
         # x86
         i586:i586|i586:i686|i586:x86_64)
             # These are working.
@@ -897,6 +896,22 @@ ipfirepackages() {
   mv -f $LFS/install/packages/* $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*
 }
+
+while [ $# -gt 0 ]; do
+	case "${1}" in
+		--target=*)
+			configure_target "${1#--target=}"
+			;;
+		-*)
+			exiterror "Unknown configuration option: ${1}"
+			;;
+		*)
+			# Found a command, so exit options parsing.
+			break
+			;;
+	esac
+	shift
+done
 
 # See what we're supposed to do
 case "$1" in 
