@@ -399,61 +399,62 @@ buildipfire() {
   ipfiremake bc
   ipfiremake u-boot
 
-  if [ "${MACHINE_TYPE}" != "arm" ]; then
+  case "${TARGET_ARCH}" in
+	i586)
+		# x86-pae (Native and new XEN) kernel build
+		ipfiremake linux			KCFG="-pae"
+#		ipfiremake kvm-kmod			KCFG="-pae"
+#		ipfiremake v4l-dvb			KCFG="-pae"
+#		ipfiremake mISDN			KCFG="-pae"
+		ipfiremake cryptodev			KCFG="-pae"
+#		ipfiremake compat-drivers		KCFG="-pae"
+#		ipfiremake r8169			KCFG="-pae"
+#		ipfiremake r8168			KCFG="-pae"
+#		ipfiremake r8101			KCFG="-pae"
+		ipfiremake e1000e			KCFG="-pae"
+		ipfiremake igb				KCFG="-pae"
 
-    # x86-pae (Native and new XEN) kernel build
-    ipfiremake linux			KCFG="-pae"
-#    ipfiremake kvm-kmod			KCFG="-pae"
-#    ipfiremake v4l-dvb			KCFG="-pae"
-#    ipfiremake mISDN			KCFG="-pae"
-    ipfiremake cryptodev		KCFG="-pae"
-#    ipfiremake compat-drivers		KCFG="-pae"
-#    ipfiremake r8169			KCFG="-pae"
-#    ipfiremake r8168			KCFG="-pae"
-#    ipfiremake r8101			KCFG="-pae"
-    ipfiremake e1000e			KCFG="-pae"
-    ipfiremake igb			KCFG="-pae"
+		# x86 kernel build
+		ipfiremake linux			KCFG=""
+#		ipfiremake kvm-kmod			KCFG=""
+#		ipfiremake v4l-dvb			KCFG=""
+#		ipfiremake mISDN			KCFG=""
+		ipfiremake cryptodev			KCFG=""
+#		ipfiremake compat-drivers		KCFG=""
+#		ipfiremake r8169			KCFG=""
+#		ipfiremake r8168			KCFG=""
+#		ipfiremake r8101			KCFG=""
+		ipfiremake e1000e			KCFG=""
+		ipfiremake igb				KCFG=""
+		;;
 
-    # x86 kernel build
-    ipfiremake linux			KCFG=""
-#    ipfiremake kvm-kmod			KCFG=""
-#    ipfiremake v4l-dvb			KCFG=""
-#    ipfiremake mISDN			KCFG=""
-    ipfiremake cryptodev		KCFG=""
-#    ipfiremake compat-drivers		KCFG=""
-#    ipfiremake r8169			KCFG=""
-#    ipfiremake r8168			KCFG=""
-#    ipfiremake r8101			KCFG=""
-    ipfiremake e1000e			KCFG=""
-    ipfiremake igb			KCFG=""
+	armv5tel)
+		# arm-rpi (Raspberry Pi) kernel build
+		ipfiremake linux			KCFG="-rpi"
+#		ipfiremake v4l-dvb			KCFG="-rpi"
+#		ipfiremake mISDN			KCFG="-rpi" NOPCI=1
+		ipfiremake cryptodev			KCFG="-rpi"
+#		ipfiremake compat-drivers		KCFG="-rpi"
 
-  else
-    # arm-rpi (Raspberry Pi) kernel build
-    ipfiremake linux			KCFG="-rpi"
-#    ipfiremake v4l-dvb			KCFG="-rpi"
-#    ipfiremake mISDN			KCFG="-rpi" NOPCI=1
-    ipfiremake cryptodev		KCFG="-rpi"
-#    ipfiremake compat-drivers		KCFG="-rpi"
+		# arm multi platform (Panda, Wandboard ...) kernel build
+		ipfiremake linux			KCFG="-multi"
+		ipfiremake cryptodev			KCFG="-multi"
+		ipfiremake e1000e			KCFG="-multi"
+		ipfiremake igb				KCFG="-multi"
 
-    # arm multi platform (Panda, Wandboard ...) kernel build
-    ipfiremake linux			KCFG="-multi"
-    ipfiremake cryptodev		KCFG="-multi"
-    ipfiremake e1000e			KCFG="-multi"
-    ipfiremake igb			KCFG="-multi"
-
-    # arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
-    ipfiremake linux			KCFG="-kirkwood"
-#    ipfiremake v4l-dvb			KCFG="-kirkwood"
-#    ipfiremake mISDN			KCFG="-kirkwood"
-    ipfiremake cryptodev		KCFG="-kirkwood"
-#    ipfiremake compat-drivers		KCFG="-kirkwood"
-#    ipfiremake r8169			KCFG="-kirkwood"
-#    ipfiremake r8168			KCFG="-kirkwood"
-#    ipfiremake r8101			KCFG="-kirkwood"
-#    ipfiremake e1000e			KCFG="-kirkwood"
-    ipfiremake igb			KCFG="-kirkwood"
-
-  fi
+		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
+		ipfiremake linux			KCFG="-kirkwood"
+#		ipfiremake v4l-dvb			KCFG="-kirkwood"
+#		ipfiremake mISDN			KCFG="-kirkwood"
+		ipfiremake cryptodev			KCFG="-kirkwood"
+#		ipfiremake compat-drivers		KCFG="-kirkwood"
+#		ipfiremake r8169			KCFG="-kirkwood"
+#		ipfiremake r8168			KCFG="-kirkwood"
+#		ipfiremake r8101			KCFG="-kirkwood"
+#		ipfiremake e1000e			KCFG="-kirkwood"
+		ipfiremake igb				KCFG="-kirkwood"
+		;;
+  esac
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
