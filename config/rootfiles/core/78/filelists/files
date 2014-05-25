@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/sshd
 srv/web/ipfire/cgi-bin/ddns.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllogcountry.dat
