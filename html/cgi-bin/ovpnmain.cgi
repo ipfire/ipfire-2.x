@@ -5353,7 +5353,7 @@ END
 
 	<tr><td colspan=4><hr /></td></tr><tr>
 	<tr>
-		<td class'base'><b>$Lang::tr{'ovpn dh parameters'}:</b></td>
+		<td class'base'><b>$Lang::tr{'ovpn dh parameters'}</b></td>
 	</tr>
 
 	<tr>
