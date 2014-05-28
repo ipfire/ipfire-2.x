@@ -76,6 +76,7 @@
 < countries
 < countrycode
 < country codes and flags
+< default
 < default ip
 < deprecated fs warn
 < details
@@ -83,6 +84,7 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh parameter
 < dnat address
 < dns address deleted txt
 < dnsforward
@@ -93,6 +95,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< download dh parameter
 < dpd delay
 < dpd timeout
 < drop action
@@ -593,6 +596,7 @@
 < countries
 < countrycode
 < country codes and flags
+< default
 < default ip
 < deprecated fs warn
 < details
@@ -600,6 +604,7 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh parameter
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -609,6 +614,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< download dh parameter
 < dpd delay
 < dpd timeout
 < drop action
@@ -1101,6 +1107,7 @@
 < countries
 < countrycode
 < country codes and flags
+< default
 < default ip
 < deprecated fs warn
 < details
@@ -1108,6 +1115,7 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh parameter
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -1117,6 +1125,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< download dh parameter
 < dpd delay
 < dpd timeout
 < drop action
@@ -1587,6 +1596,7 @@
 < countrycode
 < country codes and flags
 < day-graph
+< default
 < default ip
 < deprecated fs warn
 < details
@@ -1594,6 +1604,7 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh parameter
 < disk access per
 < dnat address
 < dnsforward
@@ -1604,6 +1615,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< download dh parameter
 < dpd delay
 < dpd timeout
 < drop action
