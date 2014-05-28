@@ -69,13 +69,13 @@ configure_target() {
 
 	case "${target_arch}" in
 		i586)
-			BUILDTARGET="${TARGET_ARCH}-pc-linux-gnu"
+			BUILDTARGET="${target_arch}-pc-linux-gnu"
 			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnu"
 			CFLAGS_ARCH="-march=i586 -fomit-frame-pointer"
 			;;
 
 		armv5tel)
-			BUILDTARGET="${TARGET_ARCH}-unknown-linux-gnueabi"
+			BUILDTARGET="${target_arch}-unknown-linux-gnueabi"
 			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnueabi"
 			CFLAGS_ARCH="-march=armv5te -mfloat-abi=soft -fomit-frame-pointer"
 			MACHINE_TYPE="arm"
