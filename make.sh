@@ -65,10 +65,14 @@ mkdir $BASEDIR/log/ 2>/dev/null
 # Include funtions
 . tools/make-functions
 
-configure_target "default"
-
 if [ -f .config ]; then
 	. .config
+fi
+
+if [ -n "${TARGET_ARCH}" ]; then
+	configure_target "${TARGET_ARCH}"
+else
+	configure_target "default"
 fi
 
 if [ -z $EDITOR ]; then
