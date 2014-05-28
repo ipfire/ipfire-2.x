@@ -632,12 +632,14 @@ WARNING: untranslated string: countries
 WARNING: untranslated string: country codes and flags
 WARNING: untranslated string: countrycode
 WARNING: untranslated string: dead peer detection
+WARNING: untranslated string: default
 WARNING: untranslated string: deprecated fs warn
 WARNING: untranslated string: details
 WARNING: untranslated string: dh
 WARNING: untranslated string: dh key move failed
 WARNING: untranslated string: dh key warn
 WARNING: untranslated string: dh key warn1
+WARNING: untranslated string: dh parameter
 WARNING: untranslated string: dnat address
 WARNING: untranslated string: dns servers
 WARNING: untranslated string: dnsforward
@@ -648,6 +650,7 @@ WARNING: untranslated string: dnsforward entries
 WARNING: untranslated string: dnsforward forward_server
 WARNING: untranslated string: dnsforward zone
 WARNING: untranslated string: downlink
+WARNING: untranslated string: download dh parameter
 WARNING: untranslated string: dpd delay
 WARNING: untranslated string: dpd timeout
 WARNING: untranslated string: drop action

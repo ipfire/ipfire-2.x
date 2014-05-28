@@ -1023,7 +1023,6 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
 ### Save main settings
 ###
 
-
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cgiparams{'KEY'} eq '') {
     &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
     #DAN do we really need (to to check) this value? Besides if we listen on blue and orange too,
@@ -1034,8 +1033,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	goto SETTINGS_ERROR;
     	}
     }
-    if ($errormessage) { goto SETTINGS_ERROR; }
-    
+
     if (! &General::validipandmask($cgiparams{'DOVPN_SUBNET'})) {
             $errormessage = $Lang::tr{'ovpn subnet is invalid'};
 			goto SETTINGS_ERROR;
@@ -1520,6 +1518,18 @@ END
 	print `/usr/bin/openssl x509 -in ${General::swroot}/ovpn/certs/servercert.pem`;
 	exit(0);
     }
+
+###
+### Download Diffie-Hellman parameter
+###
+}elsif ($cgiparams{'ACTION'} eq $Lang::tr{'download dh parameter'}) {
+    if ( -f "${General::swroot}/ovpn/ca/dh1024.pem" ) {
+	print "Content-Type: application/octet-stream\r\n";
+	print "Content-Disposition: filename=dh1024.pem\r\n\r\n";
+	print `/usr/bin/openssl dhparam -in ${General::swroot}/ovpn/ca/dh1024.pem`;
+	exit(0);
+    }
+
 ###
 ### Form for generating a root certificate
 ###
@@ -4470,7 +4480,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 				<option value='CAMELLIA-256-CBC'	$selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-CBC (256 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-192-CBC'	$selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-128-CBC'	$selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='AES-256-CBC' 	 	$selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'})</option>
+				<option value='AES-256-CBC' 	 	$selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'}, $Lang::tr{'default'})</option>
 				<option value='AES-192-CBC' 	 	$selected{'DCIPHER'}{'AES-192-CBC'}>AES-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='AES-128-CBC' 	 	$selected{'DCIPHER'}{'AES-128-CBC'}>AES-CBC (128 $Lang::tr{'bit'})</option>
 				<option value='DES-EDE3-CBC'	 	$selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'})</option>
@@ -5216,7 +5226,9 @@ END
 END
     ;
     my $col1="bgcolor='$color{'color22'}'";
-	my $col2="bgcolor='$color{'color20'}'";
+    my $col2="bgcolor='$color{'color20'}'";
+    my $col3="bgcolor='$color{'color22'}'";
+
     if (-f "${General::swroot}/ovpn/ca/cacert.pem") {
 		my $casubject = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/ca/cacert.pem`;
 		$casubject    =~ /Subject: (.*)[\n]/;
@@ -5278,6 +5290,39 @@ END
 			<td width='25%' class='base' $col2>$Lang::tr{'host certificate'}:</td>
 			<td class='base' $col2>$Lang::tr{'not present'}</td>
 		</td><td colspan='3' $col2>&nbsp;</td></tr>
+END
+		;
+    }
+
+    # Adding DH parameter to chart
+    if (-f "${General::swroot}/ovpn/ca/dh1024.pem") {
+		my $dhsubject = `/usr/bin/openssl dhparam -text -in ${General::swroot}/ovpn/ca/dh1024.pem`;
+		$dhsubject    =~ /PKCS#3 (.*)[\n]/;
+		$dhsubject    = $1;
+
+
+	print <<END;
+		<tr>
+			<td class='base' $col3>$Lang::tr{'dh parameter'}</td>
+			<td class='base' $col3>$dhsubject</td>
+		<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
+			<input type='hidden' name='ACTION' value='$Lang::tr{'show dh'}' />
+			<input type='image' name='$Lang::tr{'show dh'}' src='/images/info.gif' alt='$Lang::tr{'show dh'}' title='$Lang::tr{'show dh'}' width='20' height='20' border='0' />
+		</td></form>
+		<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
+			<input type='image' name="$Lang::tr{'download dh parameter'}" src='/images/media-floppy.png' alt="$Lang::tr{'download dh parameter'}" title="$Lang::tr{'download dh parameter'}" border='0' />
+			<input type='hidden' name='ACTION' value="$Lang::tr{'download dh parameter'}" />
+		</td></form>
+		<td width='4%' $col3>&nbsp;</td></tr>
+END
+		;
+    } else {
+		# Nothing
+		print <<END;
+		<tr>
+			<td width='25%' class='base' $col3>$Lang::tr{'dh parameter'}:</td>
+			<td class='base' $col3>$Lang::tr{'not present'}</td>
+		</td><td colspan='3' $col3>&nbsp;</td></tr>
 END
 		;
     }
@@ -5366,9 +5411,6 @@ END
 		<td class='base' nowrap='nowrap'>$Lang::tr{'ovpn dh new key'}:</td>
 		<td nowrap='nowrap'><size='15' align='left'/></td>
 		<td nowrap='nowrap'><input type='submit' name='ACTION' value='$Lang::tr{'generate dh key'}' /></td>
-	</tr>
-	<tr>
-		<td colspan='4' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'show dh'}' /></td>
 	</tr>
 	</table>
 	
