@@ -670,6 +670,7 @@ buildipfire() {
   ipfiremake tunctl
   ipfiremake nagios
   ipfiremake nagios_nrpe
+  ipfiremake icinga
   ipfiremake ebtables
   ipfiremake directfb
   ipfiremake dfb++

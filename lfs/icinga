@@ -1,0 +1,137 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 1.11.4
+PLUGIN_VER = 2.0.2
+
+THISAPP    = icinga-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = icinga
+PAK_VER    = 1
+
+DEPS       = ""
+
+CFLAGS    += -fno-strict-aliasing
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE) nagios-plugins-$(PLUGIN_VER).tar.gz
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+nagios-plugins-$(PLUGIN_VER).tar.gz = \
+	$(DL_FROM)/nagios-plugins-$(PLUGIN_VER).tar.gz
+
+$(DL_FILE)_MD5 = cfe64b91ec84f5431e53959e31ff07b5
+nagios-plugins-$(PLUGIN_VER).tar.gz_MD5 = 2f6d9c43adcf9f024175e48a44d099d4
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_SRC)/nagios-plugins-$(PLUGIN_VER) && cd $(DIR_SRC) && \
+		tar axf $(DIR_DL)/nagios-plugins-$(PLUGIN_VER).tar.gz
+
+	# Compile core
+	cd $(DIR_APP) && \
+		./configure \
+			--prefix=/usr \
+			--sysconfdir=/etc/icinga \
+			--datadir=/usr/share/icinga \
+			--datarootdir=/usr/share/icinga \
+			--sbindir=/usr/share/icinga/cgi-bin \
+			--localstatedir=/var/icinga \
+			--libdir=/usr/lib/icinga \
+			--libexecdir=/usr/lib/icinga/plugins \
+			--with-lockfile=/var/run/icinga.pid \
+			--with-httpd-conf=/etc/httpd/conf/conf.d \
+			--with-icinga-user=nobody \
+			--with-icinga-group=nobody \
+			--enable-event-broker \
+			--enable-embedded-perl \
+			--disable-idoutils
+	cd $(DIR_APP) && make all $(MAKETUNING)
+
+	# Compile plugins
+	cd $(DIR_SRC)/nagios-plugins-$(PLUGIN_VER) && \
+		./configure \
+			--prefix=/usr \
+			--libexecdir=/usr/lib/icinga/plugins \
+			--with-nagios-user=nobody \
+			--with-nagios-group=nobody
+	cd $(DIR_SRC)/nagios-plugins-$(PLUGIN_VER) && make $(MAKETUNING)
+
+	# Install core
+	cd $(DIR_APP) && make \
+		install install-init install-commandmode install-config \
+		install-webconf install-eventhandlers
+	rm -vf /etc/httpd/conf/conf.d/icinga.conf
+	install -v -m 644 $(DIR_SRC)/config/icinga/icinga.conf \
+		/etc/httpd/conf/vhosts.d/icinga.conf
+
+	# Install plugins
+	cd $(DIR_SRC)/nagios-plugins-$(PLUGIN_VER) && make install
+
+	ln -svf /etc/rc.d/init.d/icinga /etc/rc.d/rc3.d/S67icinga
+	ln -svf /etc/rc.d/init.d/icinga /etc/rc.d/rc0.d/K33icinga
+	ln -svf /etc/rc.d/init.d/icinga /etc/rc.d/rc6.d/K33icinga
+
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/icinga \
+			 /var/ipfire/backup/addons/includes/icinga
+
+	@rm -rf $(DIR_APP) $(DIR_SRC)/nagios-plugins-$(PLUGIN_VER)
+	@$(POSTBUILD)
