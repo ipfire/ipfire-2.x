@@ -355,7 +355,6 @@ buildbase() {
     lfsmake2 groff
     lfsmake2 gperf
     lfsmake2 gzip
-    lfsmake2 inetutils
     lfsmake2 iproute2
     lfsmake2 jwhois
     lfsmake2 kbd
@@ -675,6 +674,7 @@ buildipfire() {
   ipfiremake tunctl
   ipfiremake nagios
   ipfiremake nagios_nrpe
+  ipfiremake icinga
   ipfiremake ebtables
   ipfiremake directfb
   ipfiremake dfb++
