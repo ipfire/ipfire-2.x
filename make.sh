@@ -672,6 +672,7 @@ buildipfire() {
   ipfiremake netpbm
   ipfiremake phpSANE
   ipfiremake tunctl
+  ipfiremake netsnmpd
   ipfiremake nagios
   ipfiremake nagios_nrpe
   ipfiremake icinga
@@ -719,7 +720,6 @@ buildipfire() {
   ipfiremake perl-Sort-Naturally
   ipfiremake vdradmin
   ipfiremake miau
-  ipfiremake netsnmpd
   ipfiremake perl-DBI
   ipfiremake perl-DBD-mysql
   ipfiremake perl-DBD-SQLite
