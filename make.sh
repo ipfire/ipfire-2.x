@@ -726,7 +726,6 @@ buildipfire() {
   ipfiremake perl-DBD-SQLite
   ipfiremake perl-File-ReadBackwards
   ipfiremake cacti
-  ipfiremake icecc
   ipfiremake openvmtools
   ipfiremake nagiosql
   ipfiremake iftop
