@@ -683,6 +683,7 @@ buildipfire() {
   ipfiremake ffmpeg
   ipfiremake vdr
   ipfiremake vdr_streamdev
+  ipfiremake vdr_vnsiserver5
   ipfiremake vdr_vnsiserver3
   ipfiremake vdr_epgsearch
   ipfiremake vdr_dvbapi
