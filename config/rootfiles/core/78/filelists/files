@@ -10,6 +10,7 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 usr/bin/squidGuard
+usr/sbin/updxlrator
 usr/local/bin/setddns.pl
 var/ipfire/langs
 var/ipfire/menu.d/20-status.menu
