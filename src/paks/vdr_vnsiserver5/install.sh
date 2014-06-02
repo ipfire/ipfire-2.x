@@ -22,5 +22,6 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-stop_service icecream
-remove_files
+stop_service vdr
+extract_files
+start_service --background vdr

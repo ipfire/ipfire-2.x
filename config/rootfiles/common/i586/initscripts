@@ -36,7 +36,6 @@ etc/rc.d/init.d/functions
 #etc/rc.d/init.d/gnump3d
 etc/rc.d/init.d/halt
 #etc/rc.d/init.d/hostapd
-#etc/rc.d/init.d/icecream
 #etc/rc.d/init.d/imspector
 etc/rc.d/init.d/ipsec
 #etc/rc.d/init.d/keepalived

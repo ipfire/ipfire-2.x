@@ -1,0 +1,6 @@
+/var/log/cacti/cacti.log {
+	missingok
+	monthly
+	notifempty
+	compress
+}

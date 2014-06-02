@@ -13,3 +13,11 @@ Maintainer / advanced commands
     toolchain : Create our own toolchain package to save 20% of build time.
         shell : Enter a shell inside the chroot, used to tune lfs script
 		  and / or during kernel upgrade to rebuild a new .config
+
+
+Options:
+    --target=[armv5tel|i586] : Cross-compile for this target architecture.
+                               Uses the QEMU emulator if needed to virtualise
+                               the desired target architecture.
+                               Can be permanently set with TARGET_ARCH= in
+                               .config.

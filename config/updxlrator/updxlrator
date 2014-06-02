@@ -70,7 +70,7 @@ while (<>) {
 	$username   = $tmp[2]; if ($username eq '') { $username='-'; };
 	$method     = $tmp[3];
 
-	$xlrator_url = $source_url;
+	$xlrator_url = "";
 
 	if (($method eq 'GET') || ($method eq 'HEAD')) 
 	{
@@ -212,9 +212,11 @@ while (<>) {
 # ----------- ADD NEW SOURCES BEFORE THIS LINE !!! ------------------
 	}
 
-	$request="$xlrator_url $hostaddr $username $method\n";
-
-	print $request;
+	if ($xlrator_url) {
+		print "OK rewrite-url=\"$xlrator_url\"\n";
+	} else {
+		print "ERR\n";
+	}
 }
 
 # -------------------------------------------------------------------
