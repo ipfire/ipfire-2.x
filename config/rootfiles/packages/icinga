@@ -22,6 +22,7 @@ etc/rc.d/rc3.d/S67icinga
 etc/rc.d/rc6.d/K33icinga
 #usr/bin/icinga
 usr/bin/icingastats
+#usr/lib/icinga
 usr/lib/icinga/p1.pl
 #usr/lib/icinga/plugins
 usr/lib/icinga/plugins/check_apt

@@ -34,6 +34,7 @@ usr/lib/nagios
 #usr/lib/nagios/check_file_age
 #usr/lib/nagios/check_flexlm
 #usr/lib/nagios/check_ftp
+#usr/lib/nagios/check_hpjd
 #usr/lib/nagios/check_http
 #usr/lib/nagios/check_icmp
 #usr/lib/nagios/check_ide_smart
@@ -69,6 +70,7 @@ usr/lib/nagios
 #usr/lib/nagios/check_sensors
 #usr/lib/nagios/check_simap
 #usr/lib/nagios/check_smtp
+#usr/lib/nagios/check_snmp
 #usr/lib/nagios/check_spop
 #usr/lib/nagios/check_ssh
 #usr/lib/nagios/check_ssmtp

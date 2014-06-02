@@ -234,6 +234,7 @@ usr/share/bash-completion
 #usr/share/man/man1/ipcmk.1
 #usr/share/man/man1/ipcrm.1
 #usr/share/man/man1/ipcs.1
+#usr/share/man/man1/logger.1
 #usr/share/man/man1/look.1
 #usr/share/man/man1/lscpu.1
 #usr/share/man/man1/mcookie.1
@@ -303,4 +304,3 @@ usr/share/bash-completion
 #usr/share/man/man8/umount.8
 #usr/share/man/man8/wdctl.8
 #usr/share/man/man8/wipefs.8
-
