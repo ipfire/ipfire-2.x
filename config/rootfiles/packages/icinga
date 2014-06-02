@@ -37,7 +37,6 @@ usr/lib/icinga/plugins/check_dns
 usr/lib/icinga/plugins/check_dummy
 usr/lib/icinga/plugins/check_file_age
 usr/lib/icinga/plugins/check_flexlm
-usr/lib/icinga/plugins/check_fping
 usr/lib/icinga/plugins/check_ftp
 usr/lib/icinga/plugins/check_hpjd
 usr/lib/icinga/plugins/check_http
