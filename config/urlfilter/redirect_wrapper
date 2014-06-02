@@ -100,7 +100,7 @@ while($line = <>) {
 			}
 
 		# break if redirector changes data
-		if($return ne "\n" and $return ne $line ){
+		if($return ne "ERR\n" and $return ne $line ){
 			if ( $redirectors->[$i] ne "/usr/sbin/updxlrator"){
 				if ($debug){
 					writetolog($redirectors->[$i]." is stopping querry because block was found.");
