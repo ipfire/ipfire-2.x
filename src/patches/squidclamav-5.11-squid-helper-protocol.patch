@@ -1,6 +1,6 @@
-diff -Nur squidclamav-5.11-vanilla/src/squidclamav.c squidclamav-5.11/src/squidclamav.c
---- squidclamav-5.11-vanilla/src/squidclamav.c	2012-10-29 09:46:06.000000000 +0100
-+++ squidclamav-5.11/src/squidclamav.c	2014-06-02 15:19:05.463465297 +0200
+diff -Naur squidclamav-5.11.org/src/squidclamav.c squidclamav-5.11/src/squidclamav.c
+--- squidclamav-5.11.org/src/squidclamav.c	2012-10-29 09:46:06.000000000 +0100
++++ squidclamav-5.11/src/squidclamav.c	2014-06-03 12:26:36.215696508 +0200
 @@ -483,7 +483,7 @@
  	   aren't appropriate, then just echo back the line from stdin */
  	if (buff_status == 1) {
@@ -61,7 +61,7 @@ diff -Nur squidclamav-5.11-vanilla/src/squidclamav.c squidclamav-5.11/src/squidc
  				  }
 -				  fprintf (stdout, "%s %s %s %s\n", urlredir,
 -				       in_buff.src_address, in_buff.ident, in_buff.method);
-+				  fprintf (stdout, "OK status=302 url=\"%s\"\n", urlredir);
++				  fprintf (stdout, "OK rewrite-url=\"%s\"\n", urlredir);
  				  fflush(stdout);
  				  xfree(urlredir);
  				  if (debug != 0)
@@ -170,7 +170,7 @@ diff -Nur squidclamav-5.11-vanilla/src/squidclamav.c squidclamav-5.11/src/squidc
  			  }
 -			  fprintf (stdout, "%s %s %s %s\n", urlredir,
 -			       in_buff.src_address, in_buff.ident, in_buff.method);
-+			  fprintf (stdout, "OK status=302 url=\"%s\"\n", urlredir);
++			  fprintf (stdout, "OK rewrite-url=\"%s\"\n", urlredir);
  			  fflush(stdout);
  			  xfree(urlredir);
  			  if (debug != 0)
