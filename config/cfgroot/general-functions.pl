@@ -1187,4 +1187,16 @@ sub firewall_reload() {
 	system("/usr/local/bin/firewallctrl");
 }
 
+# Function which will return the used interface for the red network zone (red0, ppp0, etc).
+sub get_red_interface() {
+
+	open(IFACE, "${General::swroot}/red/iface") or die "Could not open /var/ipfire/red/iface";
+
+	my $interface = <IFACE>;
+	close(IFACE);
+	chomp $interface;
+
+	return $interface;
+}
+
 1;
