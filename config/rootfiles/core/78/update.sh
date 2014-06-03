@@ -173,6 +173,9 @@ chmod 4755 /usr/bin/ping
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+# Add nobody to group dialout
+usermod -a -G dialout nobody
+
 #
 # Start services
 #
