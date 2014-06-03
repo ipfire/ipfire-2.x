@@ -543,11 +543,18 @@ sub BuildConfiguration() {
 
 	my $configfile = "${General::swroot}/guardian/guardian.conf";
 
+	# We set this to 1 (enabled) to prevent guardian from blocking the ISP gateway.
+	my $HostGatewayByte = "1";
+
+	# Grab interface of red network zone.
+	my $red_interface = &General::get_red_interface();
+
+	# Open configfile for writing.
 	open(FILE, ">$configfile");
 
-	print FILE "Interface		red0\n";
+	print FILE "Interface		$red_interface\n";
 	print FILE "BlockOption		$settings{'GUARDIAN_BLOCKINTERFACES'}\n";
-	print FILE "HostGatewayByte	1\n";
+	print FILE "HostGatewayByte	$HostGatewayByte\n";
 	print FILE "LogFile		$settings{'GUARDIAN_LOGFILE'}\n";
 	print FILE "AlertFile		$settings{'GUARDIAN_SNORT_ALERTFILE'}\n";
 	print FILE "IgnoreFile		$ignorefile\n";
