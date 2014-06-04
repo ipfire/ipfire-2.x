@@ -20,7 +20,7 @@ etc/rc.d/init.d/icinga
 etc/rc.d/rc0.d/K33icinga
 etc/rc.d/rc3.d/S67icinga
 etc/rc.d/rc6.d/K33icinga
-#usr/bin/icinga
+usr/bin/icinga
 usr/bin/icingastats
 #usr/lib/icinga
 usr/lib/icinga/p1.pl
