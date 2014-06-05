@@ -11,7 +11,7 @@ srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 usr/bin/squidGuard
-usr/sbin/firewall_policy
+usr/sbin/firewall-policy
 usr/sbin/redirect_wrapper
 usr/sbin/updxlrator
 usr/local/bin/setddns.pl
