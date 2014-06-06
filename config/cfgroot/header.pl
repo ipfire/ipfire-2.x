@@ -45,6 +45,7 @@ my %menuhash = ();
 my $menu = \%menuhash;
 %settings = ();
 %ethsettings = ();
+%pppsettings = ();
 @URI = ();
 
 ### Make sure this is an SSL request
@@ -57,6 +58,7 @@ if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
 ### Initialize environment
 &General::readhash("${swroot}/main/settings", \%settings);
 &General::readhash("${swroot}/ethernet/settings", \%ethsettings);
+&General::readhash("${swroot}/ppp/settings", \%pppsettings);
 $language = $settings{'LANGUAGE'};
 $hostname = $settings{'HOSTNAME'};
 $hostnameintitle = 0;
@@ -154,7 +156,7 @@ sub genmenu {
         $menu->{'01.system'}{'subMenu'}->{'21.wlan'}{'enabled'} = 1;
     }
 
-    if ($ethsettings{'RED_TYPE'} eq "PPPOE") {
+    if ( $ethsettings{'RED_TYPE'} eq "PPPOE" && $pppsettings{'MONPORT'} ne "" ) {
         $menu->{'02.status'}{'subMenu'}->{'74.modem-status'}{'enabled'} = 1;
     }
 }
