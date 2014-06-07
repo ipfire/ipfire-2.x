@@ -9,6 +9,7 @@ srv/web/ipfire/cgi-bin/modem-status.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
+srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 usr/bin/squidGuard
 usr/sbin/firewall-policy
