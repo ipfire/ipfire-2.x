@@ -1522,7 +1522,7 @@
 'modify' => 'Modify',
 'modulation' => 'Modulation',
 'monday' => 'Monday',
-'monitor interface' => 'Monitior interface',
+'monitor interface' => 'Monitor Interface',
 'month' => 'Month',
 'month-graph' => 'Month',
 'monthly firewallhits' => 'monthly firewallhits',
