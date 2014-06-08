@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 3.10.41
+VER        = 3.10.42
 
 RPI_PATCHES = linux-3.10.38-grsec-1b49b45
-GRS_PATCHES = grsecurity-2.9.1-3.10.41-ipfire1.patch.xz
+GRS_PATCHES = grsecurity-2.9.1-3.10.42-ipfire1.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -36,7 +36,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 46
+PAK_VER    = 47
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -74,9 +74,9 @@ $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 $(GRS_PATCHES)				= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5				= 08631db3e6b4328b0315f59ef3fa7b0a
+$(DL_FILE)_MD5				= ef927e91cf8b8c4ddf98847341ccf2c8
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= a7408e8bad57b4b2cb677dd5a0bfb7ff
-$(GRS_PATCHES)_MD5			= de48891a35952a3c6de5beea694f7557
+$(GRS_PATCHES)_MD5			= 6ada73f5b8a8180b4139c71dd5da9059
 
 install : $(TARGET)
 
