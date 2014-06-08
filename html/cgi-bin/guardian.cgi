@@ -466,7 +466,7 @@ END
 
 			print <<END;
 			<tr>
-				<td width='80%' class='base' $col>$blocked_host</td>
+				<td width='80%' class='base' $col><a href='/cgi-bin/ipinfo.cgi?ip=$blocked_host'>$blocked_host</a></td>
 				<td width='20%' align='center' $col>
 					<form method='post' name='frmb$id' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='image' name='$Lang::tr{'unblock'}' src='/images/delete.gif' title='$Lang::tr{'unblock'}' alt='$Lang::tr{'unblock'}'>
