@@ -20,7 +20,7 @@
 
 include Config
 
-VER        = 11.9.0
+VER        = 11.10.0
 
 THISAPP    = asterisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -28,7 +28,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 10
+PAK_VER    = 11
 
 DEPS       = "sqlite"
 
@@ -48,7 +48,7 @@ asterisk-extra-sounds-en-gsm-1.4.14.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds
 asterisk-moh-opsound-gsm-2.03.tar.gz = $(URL_IPFIRE)/asterisk-moh-opsound-gsm-2.03.tar.gz
 asterisk-1.4-de-prompts.tar.gz = $(URL_IPFIRE)/asterisk-1.4-de-prompts.tar.gz
 
-$(DL_FILE)_MD5 = 743e7dc0112e24f794453443b17ce42b
+$(DL_FILE)_MD5 = 47384cd1ff48b306dca6e03027b023bd
 libsrtp-1.4.5-99426a54.tar.gz_MD5 = 05bfbe63a2a27343889c2436c836110a
 asterisk-extra-sounds-en-gsm-1.4.14.tar.gz_MD5 = ffc2e0ffd783c03fef5b75277dba0896
 asterisk-moh-opsound-gsm-2.03.tar.gz_MD5 = 09066f55f1358f298bc1a6e4678a3ddf
