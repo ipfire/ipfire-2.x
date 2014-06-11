@@ -57,6 +57,9 @@ HAVE_OPENVPN="true"
 
 # INPUT
 
+# Allow access from GREEN
+iptables -A POLICYIN -i "${GREEN_DEV}" -j ACCEPT
+
 # IPsec INPUT
 case "${HAVE_IPSEC},${POLICY}" in
 	true,MODE1) ;;

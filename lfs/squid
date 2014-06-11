@@ -118,7 +118,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-wccpv2 \
 		--enable-icap-client \
 		--disable-esi \
-		--enable-zph-qos
+		--enable-zph-qos \
+		--disable-arch-native
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

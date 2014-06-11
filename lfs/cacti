@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.8.7h
+VER        = 0.8.8b
 
 THISAPP    = cacti-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cacti
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = "netsnmpd mysql"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 58c9371341f49a190ae11a85118e598d
+$(DL_FILE)_MD5 = acb40deae073ca22e5c01a8e3ba389fb
 
 install : $(TARGET)
 
@@ -53,7 +53,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
 
 dist: 
 	@$(PAK)
@@ -78,6 +77,21 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/cacti/cacti-0.8.8a-legal.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/cacti/cacti-0.8.8a-replace_treeview_by_jquery.jstree.patch
+	cd $(DIR_APP) && patch -p2 -i $(DIR_SRC)/src/patches/cacti/cacti-0.8.8b-html-injection.patch
+	cd $(DIR_APP) && patch -p2 -i $(DIR_SRC)/src/patches/cacti/cacti-0.8.8b-remote-command-execution.patch
+	cd $(DIR_APP) && patch -p2 -i $(DIR_SRC)/src/patches/cacti/cacti-0.8.8b-rra-comments.patch
+	cd $(DIR_APP) && patch -p2 -i $(DIR_SRC)/src/patches/cacti/cacti-0.8.8b-sanitize-variables.patch
+	cd $(DIR_APP) && patch -p2 -i $(DIR_SRC)/src/patches/cacti/cacti-0.8.8b-sql-injection-shell-escaping.patch
+	cp -vf \
+		$(DIR_SRC)/config/cacti/d.gif \
+		$(DIR_SRC)/config/cacti/d.png \
+		$(DIR_SRC)/config/cacti/throbber.gif \
+		$(DIR_APP)/include/js/jquery/themes/default/
+	cd $(DIR_APP) && rm -rf include/treeview
+
 	@rm -rf /var/cacti /usr/share/cacti
 	mkdir -pv /var/cacti /usr/share/cacti
 
@@ -91,6 +105,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mv -vf /usr/share/cacti/rra /var/cacti
 	ln -s /var/cacti/log /usr/share/cacti/log
 	ln -s /var/cacti/rra /usr/share/cacti/rra
+
+	-mkdir -pv /etc/logrotate.d
+	install -v -m 644 $(DIR_SRC)/config/cacti/cacti.logrotate /etc/logrotate.d/cacti
 
 	chown -R nobody:nobody /var/cacti/rra /var/cacti/log
 	@rm -rf $(DIR_APP)

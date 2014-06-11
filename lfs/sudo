@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.8.10p1
+VER        = 1.8.10p3
 
 THISAPP    = sudo-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1d9c2bc5aaf02608343d17b9a666e8e1
+$(DL_FILE)_MD5 = fcd8d0d9f9f0397d076ee901e242ed39
 
 install : $(TARGET)
 
@@ -79,7 +79,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--with-env-editor \
 			--with-ignore-dot \
 			--with-tty-tickets \
-			--with-passpromt="[sudo] password for %p: "
+			--with-passpromt="[sudo] password for %p: " \
+			--without-pam
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
