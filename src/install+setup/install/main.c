@@ -542,7 +542,7 @@ int main(int argc, char *argv[])
 		replace("/harddisk/boot/grub/grub.conf", "splashimage", "#splashimage");
 		replace("/harddisk/boot/grub/grub.conf", "#serial", "serial");
 		replace("/harddisk/boot/grub/grub.conf", "#terminal", "terminal");
-		replace("/harddisk/boot/grub/grub.conf", " panic=10 ", " console=ttyS0,38400n8 panic=10 ");
+		replace("/harddisk/boot/grub/grub.conf", " panic=10 ", " console=ttyS0,115200n8 panic=10 ");
 
 		/*inittab*/
 		replace("/harddisk/etc/inittab", "1:2345:respawn:", "#1:2345:respawn:");
