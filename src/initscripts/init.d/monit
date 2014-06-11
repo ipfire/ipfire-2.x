@@ -12,12 +12,12 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting monit..."
-		loadproc /usr/sbin/monit
+		loadproc /usr/bin/monit
 		;;
 
 	stop)
 		boot_mesg "Stopping monit..."
-		killproc /usr/sbin/monit
+		killproc /usr/bin/monit
 		;;
 
 	restart)
@@ -27,7 +27,7 @@ case "${1}" in
 		;;
 
 	status)
-		statusproc /usr/sbin/monit
+		statusproc /usr/bin/monit
 		;;
 
 	*)
