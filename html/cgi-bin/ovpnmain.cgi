@@ -5226,6 +5226,7 @@ END
     ;
     my $col1="bgcolor='$color{'color22'}'";
     my $col2="bgcolor='$color{'color20'}'";
+    # DH parameter line
     my $col3="bgcolor='$color{'color22'}'";
 
     if (-f "${General::swroot}/ovpn/ca/cacert.pem") {
@@ -5238,15 +5239,16 @@ END
 		<tr>
 			<td class='base' $col1>$Lang::tr{'root certificate'}</td>
 			<td class='base' $col1>$casubject</td>
-		<form method='post' name='frmrootcrta'><td width='3%' align='center' $col1>
+			<form method='post' name='frmrootcrta'><td width='3%' align='center' $col1>
 			<input type='hidden' name='ACTION' value='$Lang::tr{'show root certificate'}' />
 			<input type='image' name='$Lang::tr{'edit'}' src='/images/info.gif' alt='$Lang::tr{'show root certificate'}' title='$Lang::tr{'show root certificate'}' width='20' height='20' border='0' />
-		</td></form>
-		<form method='post' name='frmrootcrtb'><td width='3%' align='center' $col1>
+			</form>
+			<form method='post' name='frmrootcrtb'><td width='3%' align='center' $col1>
 			<input type='image' name='$Lang::tr{'download root certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download root certificate'}' title='$Lang::tr{'download root certificate'}' border='0' />
 			<input type='hidden' name='ACTION' value='$Lang::tr{'download root certificate'}' />
-		</td></form>
-		<td width='4%' $col1>&nbsp;</td></tr>
+			</form>
+			<td width='4%' $col1>&nbsp;</td>
+		</tr>
 END
 		;
     } else {
@@ -5255,7 +5257,8 @@ END
 		<tr>
 			<td class='base' $col1>$Lang::tr{'root certificate'}:</td>
 			<td class='base' $col1>$Lang::tr{'not present'}</td>
-			<td colspan='3' $col1>&nbsp;</td></tr>
+			<td colspan='3' $col1>&nbsp;</td>
+		</tr>
 END
 		;
     }
@@ -5271,15 +5274,16 @@ END
 		<tr>
 			<td class='base' $col2>$Lang::tr{'host certificate'}</td>
 			<td class='base' $col2>$hostsubject</td>
-		<form method='post' name='frmhostcrta'><td width='3%' align='center' $col2>
+			<form method='post' name='frmhostcrta'><td width='3%' align='center' $col2>
 			<input type='hidden' name='ACTION' value='$Lang::tr{'show host certificate'}' />
 			<input type='image' name='$Lang::tr{'show host certificate'}' src='/images/info.gif' alt='$Lang::tr{'show host certificate'}' title='$Lang::tr{'show host certificate'}' width='20' height='20' border='0' />
-		</td></form>
-		<form method='post' name='frmhostcrtb'><td width='3%' align='center' $col2>
+			</form>
+			<form method='post' name='frmhostcrtb'><td width='3%' align='center' $col2>
 			<input type='image' name="$Lang::tr{'download host certificate'}" src='/images/media-floppy.png' alt="$Lang::tr{'download host certificate'}" title="$Lang::tr{'download host certificate'}" border='0' />
 			<input type='hidden' name='ACTION' value="$Lang::tr{'download host certificate'}" />
-		</td></form>
-		<td width='4%' $col2>&nbsp;</td></tr>
+			</td></form>
+			<td width='4%' $col2>&nbsp;</td>
+		</tr>
 END
 		;
     } else {
@@ -5288,7 +5292,8 @@ END
 		<tr>
 			<td width='25%' class='base' $col2>$Lang::tr{'host certificate'}:</td>
 			<td class='base' $col2>$Lang::tr{'not present'}</td>
-		</td><td colspan='3' $col2>&nbsp;</td></tr>
+			</td><td colspan='3' $col2>&nbsp;</td>
+		</tr>
 END
 		;
     }
@@ -5296,7 +5301,7 @@ END
     # Adding DH parameter to chart
     if (-f "${General::swroot}/ovpn/ca/dh1024.pem") {
 		my $dhsubject = `/usr/bin/openssl dhparam -text -in ${General::swroot}/ovpn/ca/dh1024.pem`;
-		$dhsubject    =~ /PKCS#3 (.*)[\n]/;
+		$dhsubject    =~ /    (.*)[\n]/;
 		$dhsubject    = $1;
 
 
@@ -5304,15 +5309,16 @@ END
 		<tr>
 			<td class='base' $col3>$Lang::tr{'dh parameter'}</td>
 			<td class='base' $col3>$dhsubject</td>
-		<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
+			<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
 			<input type='hidden' name='ACTION' value='$Lang::tr{'show dh'}' />
 			<input type='image' name='$Lang::tr{'show dh'}' src='/images/info.gif' alt='$Lang::tr{'show dh'}' title='$Lang::tr{'show dh'}' width='20' height='20' border='0' />
-		</td></form>
-		<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
+			</form>
+			<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
 			<input type='image' name="$Lang::tr{'download dh parameter'}" src='/images/media-floppy.png' alt="$Lang::tr{'download dh parameter'}" title="$Lang::tr{'download dh parameter'}" border='0' />
 			<input type='hidden' name='ACTION' value="$Lang::tr{'download dh parameter'}" />
-		</td></form>
-		<td width='4%' $col3>&nbsp;</td></tr>
+			</form>
+			<td width='4%' $col3>&nbsp;</td>
+		</tr>
 END
 		;
     } else {
@@ -5321,7 +5327,8 @@ END
 		<tr>
 			<td width='25%' class='base' $col3>$Lang::tr{'dh parameter'}:</td>
 			<td class='base' $col3>$Lang::tr{'not present'}</td>
-		</td><td colspan='3' $col3>&nbsp;</td></tr>
+			</td><td colspan='3' $col3>&nbsp;</td>
+		</tr>
 END
 		;
     }
