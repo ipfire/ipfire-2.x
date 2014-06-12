@@ -5351,8 +5351,6 @@ END
 			<input type='image' name='$Lang::tr{'show dh'}' src='/images/info.gif' alt='$Lang::tr{'show dh'}' title='$Lang::tr{'show dh'}' width='20' height='20' border='0' />
 			</form>
 			<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
-			<input type='image' name="$Lang::tr{'download dh parameter'}" src='/images/media-floppy.png' alt="$Lang::tr{'download dh parameter'}" title="$Lang::tr{'download dh parameter'}" border='0' />
-			<input type='hidden' name='ACTION' value="$Lang::tr{'download dh parameter'}" />
 			</form>
 			<td width='4%' $col3>&nbsp;</td>
 		</tr>
@@ -5463,7 +5461,7 @@ END
 	<form method='post' enctype='multipart/form-data'>
 	<table width='100%' border='0'cellspacing='1' cellpadding='0'>
 	<tr>
-		<td class'base'><b>CA-Upload</b></td>
+		<td class'base'><b>$Lang::tr{'upload ca certificate'}</b></td>
 	</tr>
 	<tr>
 		<td class='base' nowrap='nowrap'>$Lang::tr{'ca name'}:</td>
