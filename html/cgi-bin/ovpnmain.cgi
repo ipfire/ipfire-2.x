@@ -3155,7 +3155,6 @@ my $complzoactive;
 my $mssfixactive;
 my $authactive;
 my $n2nfragment;
-my $authactive;
 my @n2nmtudisc = split(/ /, (grep { /^mtu-disc/ } @firen2nconf)[0]);
 my @n2nproto2 = split(/ /, (grep { /^proto/ } @firen2nconf)[0]);
 my @n2nproto = split(/-/, $n2nproto2[1]);
