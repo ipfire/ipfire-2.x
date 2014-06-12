@@ -1,7 +1,9 @@
 #usr/bin/pcap-config
 #usr/include/pcap
+#usr/include/pcap/bluetooth.h
 #usr/include/pcap-bpf.h
 #usr/include/pcap-int.h
+#usr/include/pcap/ipnet.h
 #usr/include/pcap-namedb.h
 #usr/include/pcap.h
 #usr/include/pcap/bpf.h
@@ -9,11 +11,12 @@
 #usr/include/pcap/pcap.h
 #usr/include/pcap/sll.h
 #usr/include/pcap/usb.h
+#usr/include/pcap/vlan.h
 #usr/lib/libpcap.a
 usr/lib/libpcap.so
 usr/lib/libpcap.so.1
 usr/lib/libpcap.so.1.0
-usr/lib/libpcap.so.1.0.0
+usr/lib/libpcap.so.1.4.0
 #usr/share/man/man1/pcap-config.1
 #usr/share/man/man3/pcap.3pcap
 #usr/share/man/man3/pcap_activate.3pcap
@@ -39,6 +42,7 @@ usr/lib/libpcap.so.1.0.0
 #usr/share/man/man3/pcap_findalldevs.3pcap
 #usr/share/man/man3/pcap_fopen_offline.3pcap
 #usr/share/man/man3/pcap_free_datalinks.3pcap
+#usr/share/man/man3/pcap_free_tstamp_types.3pcap
 #usr/share/man/man3/pcap_freealldevs.3pcap
 #usr/share/man/man3/pcap_freecode.3pcap
 #usr/share/man/man3/pcap_get_selectable_fd.3pcap
@@ -48,6 +52,7 @@ usr/lib/libpcap.so.1.0.0
 #usr/share/man/man3/pcap_is_swapped.3pcap
 #usr/share/man/man3/pcap_lib_version.3pcap
 #usr/share/man/man3/pcap_list_datalinks.3pcap
+#usr/share/man/man3/pcap_list_tstamp_types.3pcap
 #usr/share/man/man3/pcap_lookupdev.3pcap
 #usr/share/man/man3/pcap_lookupnet.3pcap
 #usr/share/man/man3/pcap_loop.3pcap
@@ -67,6 +72,7 @@ usr/lib/libpcap.so.1.0.0
 #usr/share/man/man3/pcap_set_rfmon.3pcap
 #usr/share/man/man3/pcap_set_snaplen.3pcap
 #usr/share/man/man3/pcap_set_timeout.3pcap
+#usr/share/man/man3/pcap_set_tstamp_type.3pcap
 #usr/share/man/man3/pcap_setdirection.3pcap
 #usr/share/man/man3/pcap_setfilter.3pcap
 #usr/share/man/man3/pcap_setnonblock.3pcap
@@ -74,6 +80,9 @@ usr/lib/libpcap.so.1.0.0
 #usr/share/man/man3/pcap_stats.3pcap
 #usr/share/man/man3/pcap_statustostr.3pcap
 #usr/share/man/man3/pcap_strerror.3pcap
+#usr/share/man/man3/pcap_tstamp_type_name_to_val.3pcap
+#usr/share/man/man3/pcap_tstamp_type_val_to_name.3pcap
 #usr/share/man/man5/pcap-savefile.5
 #usr/share/man/man7/pcap-filter.7
 #usr/share/man/man7/pcap-linktype.7
+#usr/share/man/man7/pcap-tstamp.7
