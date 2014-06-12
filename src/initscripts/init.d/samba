@@ -7,8 +7,17 @@
 . /etc/sysconfig/rc
 . $rc_functions
 
+function fix_permissions() {
+	local lockdir="/var/lib/samba/winbindd_privileged"
+
+	chmod 750 "${lockdir}"
+	chgrp wbpriv "${lockdir}"
+}
+
 case "$1" in
 	start)
+		fix_permissions
+
 		boot_mesg "Starting nmbd..."
 		loadproc /usr/sbin/nmbd -D
 

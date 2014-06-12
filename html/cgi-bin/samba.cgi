@@ -325,7 +325,6 @@ winbind gid = 10000-20000
 winbind use default domain = yes
 
 log file       = /var/log/samba/samba-log.%m
-lock directory = /var/lock/samba
 pid directory  = /var/run/
 log level = $sambasettings{'LOGLEVEL'}
 syslog = $sambasettings{'SYSLOGLEVEL'}

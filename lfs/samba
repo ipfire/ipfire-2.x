@@ -82,6 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--libdir=/usr/lib/ \
 		--sysconfdir=/var/ipfire \
 		--localstatedir=/var \
+		--with-cachedir=/var/lib/samba \
 		--with-lockdir=/var/lib/samba \
 		--with-piddir=/var/run \
 		--with-ads \
@@ -96,6 +97,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-winbind \
 		--disable-swat \
 		--enable-cups \
+		--disable-avahi \
 		--with-syslog
 	cd $(DIR_APP)/source3 && make proto && make all $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/source3 && make install
