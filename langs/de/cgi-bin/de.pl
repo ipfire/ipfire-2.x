@@ -266,6 +266,8 @@
 'advproxy fake useragent' => 'Gefälschter Useragent für externe Web-Sites',
 'advproxy friday' => 'Fre',
 'advproxy from' => 'Von',
+'advproxy group access control' => 'Gruppenbasierte Zugriffskontrolle',
+'advproxy group required' => 'Erforderliche Gruppe',
 'advproxy hdd cache size' => 'Cachegröße auf der Festplatte (MB)',
 'advproxy invalid num of children' => 'Ungültige Anzahl der Filter-Prozesse',
 'advproxy log enabled' => 'Protokoll aktiviert',

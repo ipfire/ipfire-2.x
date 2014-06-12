@@ -266,6 +266,7 @@ $proxysettings{'LDAP_PORT'} = '389';
 $proxysettings{'LDAP_BINDDN_USER'} = '';
 $proxysettings{'LDAP_BINDDN_PASS'} = '';
 $proxysettings{'LDAP_GROUP'} = '';
+$proxysettings{'NTLM_AUTH_GROUP'} = '';
 $proxysettings{'NTLM_DOMAIN'} = '';
 $proxysettings{'NTLM_PDC'} = '';
 $proxysettings{'NTLM_BDC'} = '';
@@ -1995,6 +1996,27 @@ END
 ; }
 
 # ===================================================================
+#  NTLM-AUTH settings
+# ===================================================================
+
+if ($proxysettings{'AUTH_METHOD'} eq 'ntlm-auth') {
+	print <<END;
+		<hr size ='1'>
+		<table width='100%'>
+			<tr>
+				<td colspan='4'><b>$Lang::tr{'advproxy group access control'}</b></td>
+			</tr>
+			<tr>
+				<td width='20%' class='base'>$Lang::tr{'advproxy group required'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+				<td width='40%'><input type='text' name='NTLM_AUTH_GROUP' value='$proxysettings{'NTLM_AUTH_GROUP'}' size='37' /></td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+	</table>
+END
+}
+
+# ===================================================================
 #  LDAP auth settings
 # ===================================================================
 
@@ -3319,7 +3341,15 @@ END
 
 		if ($proxysettings{'AUTH_METHOD'} eq 'ntlm-auth')
 		{
-			print FILE "auth_param ntlm program /usr/bin/ntlm_auth --helper-protocol=squid-2.5-ntlmssp\n";
+			print FILE "auth_param ntlm program /usr/bin/ntlm_auth --helper-protocol=squid-2.5-ntlmssp";
+			if ($proxysettings{'NTLM_AUTH_GROUP'}) {
+				my $ntlm_auth_group = $proxysettings{'NTLM_AUTH_GROUP'};
+				$ntlm_auth_group =~ s/\\/\+/;
+
+				print FILE " --require-membership-of=\"$ntlm_auth_group\"";
+			}
+			print FILE "\n";
+
 			print FILE "auth_param ntlm children $proxysettings{'AUTH_CHILDREN'}\n";
 		}
 

@@ -596,6 +596,8 @@ WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: advproxy errmsg proxy ports equal
+WARNING: untranslated string: advproxy group access control
+WARNING: untranslated string: advproxy group required
 WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: atm device
 WARNING: untranslated string: attention
