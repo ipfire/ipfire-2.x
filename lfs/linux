@@ -36,7 +36,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 48
+PAK_VER    = 49
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -159,6 +159,9 @@ endif
 	# Fix uevent PHYSDEVDRIVER
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33_ipg-fix-driver-name.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
+
+	# Moschip 7830 link detection
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.y-usbnet_mcs7830_rework_link_detect.patch
 
 
 ifeq "$(KCFG)" "-kirkwood"
