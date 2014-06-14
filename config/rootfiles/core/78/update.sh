@@ -165,9 +165,16 @@ if [ $BOOTSPACE -lt 1000 ]; then
 	esac
 fi
 
+# Update ping
+rm -f /bin/ping
+ln -sf ../usr/bin/ping /bin/ping
+chmod 4755 /usr/bin/ping
 
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+
+# Add nobody to group dialout
+usermod -a -G dialout nobody
 
 #
 # Start services

@@ -172,105 +172,6 @@ sub deletebackupcert
 		unlink ("${General::swroot}/ovpn/certs/$hexvalue.pem");
 	}
 }
-sub checkportfw {
-	my $DPORT = shift;
-	my $DPROT = shift;
-	my %natconfig =();
-	my $confignat = "${General::swroot}/firewall/config";
-	$DPROT= uc ($DPROT);
-	&General::readhasharray($confignat, \%natconfig);
-	foreach my $key (sort keys %natconfig){
-		my @portarray = split (/\|/,$natconfig{$key}[30]);
-		foreach my $value (@portarray){
-			if ($value =~ /:/i){
-				my ($a,$b) = split (":",$value);
-				if ($DPROT eq $natconfig{$key}[12] && $DPORT gt $a && $DPORT lt $b){
-					$errormessage= "$Lang::tr{'source port in use'} $DPORT";
-				}
-			}else{
-				if ($DPROT eq $natconfig{$key}[12] && $DPORT eq $value){
-					$errormessage= "$Lang::tr{'source port in use'} $DPORT";
-				}
-			}
-		}
-	}
-	return;
-}
-
-sub checkportoverlap
-{
-	my $portrange1 = $_[0]; # New port range
-	my $portrange2 = $_[1]; # existing port range
-	my @tempr1 = split(/\:/,$portrange1);
-	my @tempr2 = split(/\:/,$portrange2);
-
-	unless (&checkportinc($tempr1[0], $portrange2)){ return 0;}
-	unless (&checkportinc($tempr1[1], $portrange2)){ return 0;}
-	
-	unless (&checkportinc($tempr2[0], $portrange1)){ return 0;}
-	unless (&checkportinc($tempr2[1], $portrange1)){ return 0;}
-
-	return 1; # Everything checks out!
-}
-
-# Darren Critchley - we want to make sure that a port entry is not within an already existing range
-sub checkportinc
-{
-	my $port1 = $_[0]; # Port
-	my $portrange2 = $_[1]; # Port range
-	my @tempr1 = split(/\:/,$portrange2);
-
-	if ($port1 < $tempr1[0] || $port1 > $tempr1[1]) {
-		return 1; 
-	} else {
-		return 0; 
-	}
-}
-
-# Darren Critchley - certain ports are reserved for IPFire
-# TCP 67,68,81,222,444
-# UDP 67,68
-# Params passed in -> port, rangeyn, protocol
-sub disallowreserved
-{
-	# port 67 and 68 same for tcp and udp, don't bother putting in an array
-	my $msg = "";
-	my @tcp_reserved = (81,222,444);
-	my $prt = $_[0]; # the port or range
-	my $ryn = $_[1]; # tells us whether or not it is a port range
-	my $prot = $_[2]; # protocol
-	my $srcdst = $_[3]; # source or destination
-	if ($ryn) { # disect port range
-		if ($srcdst eq "src") {
-			$msg = "$Lang::tr{'rsvd src port overlap'}";
-		} else {
-			$msg = "$Lang::tr{'rsvd dst port overlap'}";
-		}
-		my @tmprng = split(/\:/,$prt);
-		unless (67 < $tmprng[0] || 67 > $tmprng[1]) { $errormessage="$msg 67"; return; }
-		unless (68 < $tmprng[0] || 68 > $tmprng[1]) { $errormessage="$msg 68"; return; }
-		if ($prot eq "tcp") {
-			foreach my $prange (@tcp_reserved) {
-				unless ($prange < $tmprng[0] || $prange > $tmprng[1]) { $errormessage="$msg $prange"; return; }
-			}
-		}
-	} else {
-		if ($srcdst eq "src") {
-			$msg = "$Lang::tr{'reserved src port'}";
-		} else {
-			$msg = "$Lang::tr{'reserved dst port'}";
-		}
-		if ($prt == 67) { $errormessage="$msg 67"; return; }
-		if ($prt == 68) { $errormessage="$msg 68"; return; }
-		if ($prot eq "tcp") {
-			foreach my $prange (@tcp_reserved) {
-				if ($prange == $prt) { $errormessage="$msg $prange"; return; }
-			}
-		}
-	}
-	return;
-}
-
 
 sub writeserverconf {
     my %sovpnsettings = ();  
@@ -369,7 +270,7 @@ sub writeserverconf {
 	print CONF "auth $sovpnsettings{'DAUTH'}\n";
     }
     if ($sovpnsettings{'TLSAUTH'} eq 'on') {
-	print CONF "tls-auth ${General::swroot}/ovpn/ca/ta.key 0\n";
+	print CONF "tls-auth ${General::swroot}/ovpn/certs/ta.key\n";
     }
     if ($sovpnsettings{DCOMPLZO} eq 'on') {
         print CONF "comp-lzo\n";
@@ -810,13 +711,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     	$vpnsettings{'MSSFIX'} = $cgiparams{'MSSFIX'};
     }
 
-   # Create ta.key for tls-auth if not presant
-   if ($cgiparams{'TLSAUTH'} eq 'on') {
-	if ( ! -e "${General::swroot}/ovpn/ca/ta.key") {
-		system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/ca/ta.key")
-	}
-    }
-
     if (($cgiparams{'PMTU_DISCOVERY'} eq 'yes') ||
         ($cgiparams{'PMTU_DISCOVERY'} eq 'maybe') ||
         ($cgiparams{'PMTU_DISCOVERY'} eq 'no' )) {
@@ -914,6 +808,16 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     if ($cgiparams{'KEEPALIVE_2'} < ($cgiparams{'KEEPALIVE_1'} * 2)){
         $errormessage = $Lang::tr{'invalid input for keepalive 1:2'};
         goto ADV_ERROR;	
+    }
+    # Create ta.key for tls-auth if not presant
+    if ($cgiparams{'TLSAUTH'} eq 'on') {
+	if ( ! -e "${General::swroot}/ovpn/certs/ta.key") {
+		system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/certs/ta.key");
+		if ($?) {
+		$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
+        goto ADV_ERROR;
+		}
+	}
     }
     
     &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
@@ -1119,7 +1023,6 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
 ### Save main settings
 ###
 
-
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cgiparams{'KEY'} eq '') {
     &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
     #DAN do we really need (to to check) this value? Besides if we listen on blue and orange too,
@@ -1130,13 +1033,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	goto SETTINGS_ERROR;
     	}
     }
-    if ($errormessage) { goto SETTINGS_ERROR; }
 
-    if ($cgiparams{'ENABLED'} eq 'on'){
-	&checkportfw($cgiparams{'DDEST_PORT'},$cgiparams{'DPROTOCOL'});
-    }
-    if ($errormessage) { goto SETTINGS_ERROR; }
-    
     if (! &General::validipandmask($cgiparams{'DOVPN_SUBNET'})) {
             $errormessage = $Lang::tr{'ovpn subnet is invalid'};
 			goto SETTINGS_ERROR;
@@ -1621,6 +1518,18 @@ END
 	print `/usr/bin/openssl x509 -in ${General::swroot}/ovpn/certs/servercert.pem`;
 	exit(0);
     }
+
+###
+### Download Diffie-Hellman parameter
+###
+}elsif ($cgiparams{'ACTION'} eq $Lang::tr{'download dh parameter'}) {
+    if ( -f "${General::swroot}/ovpn/ca/dh1024.pem" ) {
+	print "Content-Type: application/octet-stream\r\n";
+	print "Content-Disposition: filename=dh1024.pem\r\n\r\n";
+	print `/usr/bin/openssl dhparam -in ${General::swroot}/ovpn/ca/dh1024.pem`;
+	exit(0);
+    }
+
 ###
 ### Form for generating a root certificate
 ###
@@ -1944,7 +1853,14 @@ END
 	    goto ROOTCERT_ERROR;
 #	} else {
 #	    &cleanssldatabase();
-	}       
+	}
+	# Create ta.key for tls-auth
+	system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/certs/ta.key");
+	if ($?) {
+	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
+	    &cleanssldatabase();
+	    goto ROOTCERT_ERROR;
+	}
 	goto ROOTCERT_SUCCESS;
     }
     ROOTCERT_ERROR:
@@ -2286,8 +2202,8 @@ else
 	print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
     }
     if ($vpnsettings{'TLSAUTH'} eq 'on') {
-	print CLIENTCONF "tls-auth ta.key 1\r\n";
-	$zip->addFile( "${General::swroot}/ovpn/ca/ta.key", "ta.key")  or die "Can't add file ta.key\n";
+	print CLIENTCONF "tls-auth ta.key\r\n";
+	$zip->addFile( "${General::swroot}/ovpn/certs/ta.key", "ta.key")  or die "Can't add file ta.key\n";
     }
     if ($vpnsettings{DCOMPLZO} eq 'on') {
         print CLIENTCONF "comp-lzo\r\n";
@@ -2511,20 +2427,8 @@ ADV_ERROR:
     if ($cgiparams{'DAUTH'} eq '') {
 		$cgiparams{'DAUTH'} = 'SHA1';
     }
-    if ($cgiparams{'DAUTH'} eq '') {
-	$cgiparams{'DAUTH'} = 'SHA1';
-    }
-    if ($cgiparams{'ENGINES'} eq '') {
-	$cgiparams{'ENGINES'} = 'disabled';
-    }
     if ($cgiparams{'TLSAUTH'} eq '') {
-	$cgiparams{'TLSAUTH'} = 'off';
-    }
-    if ($cgiparams{'DAUTH'} eq '') {
-	$cgiparams{'DAUTH'} = 'SHA1';
-    }
-    if ($cgiparams{'TLSAUTH'} eq '') {
-	$cgiparams{'TLSAUTH'} = 'off';
+		$cgiparams{'TLSAUTH'} = 'off';
     }
     $checked{'CLIENT2CLIENT'}{'off'} = '';
     $checked{'CLIENT2CLIENT'}{'on'} = '';
@@ -4576,7 +4480,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 				<option value='CAMELLIA-256-CBC'	$selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-CBC (256 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-192-CBC'	$selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-128-CBC'	$selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='AES-256-CBC' 	 	$selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'})</option>
+				<option value='AES-256-CBC' 	 	$selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'}, $Lang::tr{'default'})</option>
 				<option value='AES-192-CBC' 	 	$selected{'DCIPHER'}{'AES-192-CBC'}>AES-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='AES-128-CBC' 	 	$selected{'DCIPHER'}{'AES-128-CBC'}>AES-CBC (128 $Lang::tr{'bit'})</option>
 				<option value='DES-EDE3-CBC'	 	$selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'})</option>
@@ -4926,9 +4830,6 @@ END
     }
 	if ($cgiparams{'DAUTH'} eq '') {
 		$cgiparams{'DAUTH'} = 'SHA1';
-    }
-    if ($cgiparams{'ENGINES'} eq '') {
-	$cgiparams{'ENGINES'} = 'disabled';
     }
     if ($cgiparams{'DOVPN_SUBNET'} eq '') {
 		$cgiparams{'DOVPN_SUBNET'} = '10.' . int(rand(256)) . '.' . int(rand(256)) . '.0/255.255.255.0';
@@ -5325,7 +5226,9 @@ END
 END
     ;
     my $col1="bgcolor='$color{'color22'}'";
-	my $col2="bgcolor='$color{'color20'}'";
+    my $col2="bgcolor='$color{'color20'}'";
+    my $col3="bgcolor='$color{'color22'}'";
+
     if (-f "${General::swroot}/ovpn/ca/cacert.pem") {
 		my $casubject = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/ca/cacert.pem`;
 		$casubject    =~ /Subject: (.*)[\n]/;
@@ -5387,6 +5290,39 @@ END
 			<td width='25%' class='base' $col2>$Lang::tr{'host certificate'}:</td>
 			<td class='base' $col2>$Lang::tr{'not present'}</td>
 		</td><td colspan='3' $col2>&nbsp;</td></tr>
+END
+		;
+    }
+
+    # Adding DH parameter to chart
+    if (-f "${General::swroot}/ovpn/ca/dh1024.pem") {
+		my $dhsubject = `/usr/bin/openssl dhparam -text -in ${General::swroot}/ovpn/ca/dh1024.pem`;
+		$dhsubject    =~ /PKCS#3 (.*)[\n]/;
+		$dhsubject    = $1;
+
+
+	print <<END;
+		<tr>
+			<td class='base' $col3>$Lang::tr{'dh parameter'}</td>
+			<td class='base' $col3>$dhsubject</td>
+		<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
+			<input type='hidden' name='ACTION' value='$Lang::tr{'show dh'}' />
+			<input type='image' name='$Lang::tr{'show dh'}' src='/images/info.gif' alt='$Lang::tr{'show dh'}' title='$Lang::tr{'show dh'}' width='20' height='20' border='0' />
+		</td></form>
+		<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
+			<input type='image' name="$Lang::tr{'download dh parameter'}" src='/images/media-floppy.png' alt="$Lang::tr{'download dh parameter'}" title="$Lang::tr{'download dh parameter'}" border='0' />
+			<input type='hidden' name='ACTION' value="$Lang::tr{'download dh parameter'}" />
+		</td></form>
+		<td width='4%' $col3>&nbsp;</td></tr>
+END
+		;
+    } else {
+		# Nothing
+		print <<END;
+		<tr>
+			<td width='25%' class='base' $col3>$Lang::tr{'dh parameter'}:</td>
+			<td class='base' $col3>$Lang::tr{'not present'}</td>
+		</td><td colspan='3' $col3>&nbsp;</td></tr>
 END
 		;
     }
@@ -5462,7 +5398,7 @@ END
 
 	<tr><td colspan=4><hr /></td></tr><tr>
 	<tr>
-		<td class'base'><b>$Lang::tr{'ovpn dh parameters'}:</b></td>
+		<td class'base'><b>$Lang::tr{'ovpn dh parameters'}</b></td>
 	</tr>
 
 	<tr>
@@ -5475,9 +5411,6 @@ END
 		<td class='base' nowrap='nowrap'>$Lang::tr{'ovpn dh new key'}:</td>
 		<td nowrap='nowrap'><size='15' align='left'/></td>
 		<td nowrap='nowrap'><input type='submit' name='ACTION' value='$Lang::tr{'generate dh key'}' /></td>
-	</tr>
-	<tr>
-		<td colspan='4' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'show dh'}' /></td>
 	</tr>
 	</table>
 	

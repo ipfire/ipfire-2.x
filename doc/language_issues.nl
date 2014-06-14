@@ -650,11 +650,14 @@ WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: atm device
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
+WARNING: untranslated string: default
 WARNING: untranslated string: dh
 WARNING: untranslated string: dh key move failed
 WARNING: untranslated string: dh key warn
 WARNING: untranslated string: dh key warn1
+WARNING: untranslated string: dh parameter
 WARNING: untranslated string: dns servers
+WARNING: untranslated string: download dh parameter
 WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: fwhost err hostip

@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586
 PROG       = qemu
-PAK_VER    = 13
+PAK_VER    = 14
 
 DEPS       = "sdl"
 

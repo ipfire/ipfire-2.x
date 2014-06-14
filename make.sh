@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.15"							# Version number
 CORE="78"							# Core Level (Filename)
-PAKFIRE_CORE="77"						# Core Level (PAKFIRE)
+PAKFIRE_CORE="78"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -34,16 +34,13 @@ NICE=10								# Nice level
 MAX_RETRIES=1							# prefetch/check loop
 BUILD_IMAGES=1							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
-MACHINE=`uname -m`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 TOOLCHAINVER=7
 
-BUILDMACHINE=$MACHINE
-    if [ "$MACHINE" = "x86_64" ]; then
-        BUILDMACHINE="i686";
-    fi
-
+# New architecture variables
+BUILD_ARCH="$(uname -m)"
+BUILDMACHINE="${BUILD_ARCH}"
 
 # Debian specific settings
 if [ ! -e /etc/debian_version ]; then
@@ -70,6 +67,12 @@ mkdir $BASEDIR/log/ 2>/dev/null
 
 if [ -f .config ]; then
 	. .config
+fi
+
+if [ -n "${TARGET_ARCH}" ]; then
+	configure_target "${TARGET_ARCH}"
+else
+	configure_target "default"
 fi
 
 if [ -z $EDITOR ]; then
@@ -241,7 +244,7 @@ prepareenv() {
 
 buildtoolchain() {
     local error=false
-    case "${MACHINE}:$(uname -m)" in
+    case "${TARGET_ARCH}:${BUILD_ARCH}" in
         # x86
         i586:i586|i586:i686|i586:x86_64)
             # These are working.
@@ -352,7 +355,7 @@ buildbase() {
     lfsmake2 groff
     lfsmake2 gperf
     lfsmake2 gzip
-    lfsmake2 inetutils
+    lfsmake2 hostname
     lfsmake2 iproute2
     lfsmake2 jwhois
     lfsmake2 kbd
@@ -399,61 +402,62 @@ buildipfire() {
   ipfiremake bc
   ipfiremake u-boot
 
-  if [ "${MACHINE_TYPE}" != "arm" ]; then
+  case "${TARGET_ARCH}" in
+	i586)
+		# x86-pae (Native and new XEN) kernel build
+		ipfiremake linux			KCFG="-pae"
+#		ipfiremake kvm-kmod			KCFG="-pae"
+#		ipfiremake v4l-dvb			KCFG="-pae"
+#		ipfiremake mISDN			KCFG="-pae"
+		ipfiremake cryptodev			KCFG="-pae"
+#		ipfiremake compat-drivers		KCFG="-pae"
+#		ipfiremake r8169			KCFG="-pae"
+#		ipfiremake r8168			KCFG="-pae"
+#		ipfiremake r8101			KCFG="-pae"
+		ipfiremake e1000e			KCFG="-pae"
+		ipfiremake igb				KCFG="-pae"
 
-    # x86-pae (Native and new XEN) kernel build
-    ipfiremake linux			KCFG="-pae"
-#    ipfiremake kvm-kmod			KCFG="-pae"
-#    ipfiremake v4l-dvb			KCFG="-pae"
-#    ipfiremake mISDN			KCFG="-pae"
-    ipfiremake cryptodev		KCFG="-pae"
-#    ipfiremake compat-drivers		KCFG="-pae"
-#    ipfiremake r8169			KCFG="-pae"
-#    ipfiremake r8168			KCFG="-pae"
-#    ipfiremake r8101			KCFG="-pae"
-    ipfiremake e1000e			KCFG="-pae"
-    ipfiremake igb			KCFG="-pae"
+		# x86 kernel build
+		ipfiremake linux			KCFG=""
+#		ipfiremake kvm-kmod			KCFG=""
+#		ipfiremake v4l-dvb			KCFG=""
+#		ipfiremake mISDN			KCFG=""
+		ipfiremake cryptodev			KCFG=""
+#		ipfiremake compat-drivers		KCFG=""
+#		ipfiremake r8169			KCFG=""
+#		ipfiremake r8168			KCFG=""
+#		ipfiremake r8101			KCFG=""
+		ipfiremake e1000e			KCFG=""
+		ipfiremake igb				KCFG=""
+		;;
 
-    # x86 kernel build
-    ipfiremake linux			KCFG=""
-#    ipfiremake kvm-kmod			KCFG=""
-#    ipfiremake v4l-dvb			KCFG=""
-#    ipfiremake mISDN			KCFG=""
-    ipfiremake cryptodev		KCFG=""
-#    ipfiremake compat-drivers		KCFG=""
-#    ipfiremake r8169			KCFG=""
-#    ipfiremake r8168			KCFG=""
-#    ipfiremake r8101			KCFG=""
-    ipfiremake e1000e			KCFG=""
-    ipfiremake igb			KCFG=""
+	armv5tel)
+		# arm-rpi (Raspberry Pi) kernel build
+		ipfiremake linux			KCFG="-rpi"
+#		ipfiremake v4l-dvb			KCFG="-rpi"
+#		ipfiremake mISDN			KCFG="-rpi" NOPCI=1
+		ipfiremake cryptodev			KCFG="-rpi"
+#		ipfiremake compat-drivers		KCFG="-rpi"
 
-  else
-    # arm-rpi (Raspberry Pi) kernel build
-    ipfiremake linux			KCFG="-rpi"
-#    ipfiremake v4l-dvb			KCFG="-rpi"
-#    ipfiremake mISDN			KCFG="-rpi" NOPCI=1
-    ipfiremake cryptodev		KCFG="-rpi"
-#    ipfiremake compat-drivers		KCFG="-rpi"
+		# arm multi platform (Panda, Wandboard ...) kernel build
+		ipfiremake linux			KCFG="-multi"
+		ipfiremake cryptodev			KCFG="-multi"
+		ipfiremake e1000e			KCFG="-multi"
+		ipfiremake igb				KCFG="-multi"
 
-    # arm multi platform (Panda, Wandboard ...) kernel build
-    ipfiremake linux			KCFG="-multi"
-    ipfiremake cryptodev		KCFG="-multi"
-    ipfiremake e1000e			KCFG="-multi"
-    ipfiremake igb			KCFG="-multi"
-
-    # arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
-    ipfiremake linux			KCFG="-kirkwood"
-#    ipfiremake v4l-dvb			KCFG="-kirkwood"
-#    ipfiremake mISDN			KCFG="-kirkwood"
-    ipfiremake cryptodev		KCFG="-kirkwood"
-#    ipfiremake compat-drivers		KCFG="-kirkwood"
-#    ipfiremake r8169			KCFG="-kirkwood"
-#    ipfiremake r8168			KCFG="-kirkwood"
-#    ipfiremake r8101			KCFG="-kirkwood"
-#    ipfiremake e1000e			KCFG="-kirkwood"
-    ipfiremake igb			KCFG="-kirkwood"
-
-  fi
+		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
+		ipfiremake linux			KCFG="-kirkwood"
+#		ipfiremake v4l-dvb			KCFG="-kirkwood"
+#		ipfiremake mISDN			KCFG="-kirkwood"
+		ipfiremake cryptodev			KCFG="-kirkwood"
+#		ipfiremake compat-drivers		KCFG="-kirkwood"
+#		ipfiremake r8169			KCFG="-kirkwood"
+#		ipfiremake r8168			KCFG="-kirkwood"
+#		ipfiremake r8101			KCFG="-kirkwood"
+#		ipfiremake e1000e			KCFG="-kirkwood"
+		ipfiremake igb				KCFG="-kirkwood"
+		;;
+  esac
   ipfiremake pkg-config
   ipfiremake linux-atm
   ipfiremake cpio
@@ -669,8 +673,10 @@ buildipfire() {
   ipfiremake netpbm
   ipfiremake phpSANE
   ipfiremake tunctl
+  ipfiremake netsnmpd
   ipfiremake nagios
   ipfiremake nagios_nrpe
+  ipfiremake icinga
   ipfiremake ebtables
   ipfiremake directfb
   ipfiremake dfb++
@@ -678,6 +684,7 @@ buildipfire() {
   ipfiremake ffmpeg
   ipfiremake vdr
   ipfiremake vdr_streamdev
+  ipfiremake vdr_vnsiserver5
   ipfiremake vdr_vnsiserver3
   ipfiremake vdr_epgsearch
   ipfiremake vdr_dvbapi
@@ -715,13 +722,11 @@ buildipfire() {
   ipfiremake perl-Sort-Naturally
   ipfiremake vdradmin
   ipfiremake miau
-  ipfiremake netsnmpd
   ipfiremake perl-DBI
   ipfiremake perl-DBD-mysql
   ipfiremake perl-DBD-SQLite
   ipfiremake perl-File-ReadBackwards
   ipfiremake cacti
-  ipfiremake icecc
   ipfiremake openvmtools
   ipfiremake nagiosql
   ipfiremake iftop
@@ -897,6 +902,22 @@ ipfirepackages() {
   mv -f $LFS/install/packages/* $BASEDIR/packages >> $LOGFILE 2>&1
   rm -rf  $BASEDIR/build/install/packages/*
 }
+
+while [ $# -gt 0 ]; do
+	case "${1}" in
+		--target=*)
+			configure_target "${1#--target=}"
+			;;
+		-*)
+			exiterror "Unknown configuration option: ${1}"
+			;;
+		*)
+			# Found a command, so exit options parsing.
+			break
+			;;
+	esac
+	shift
+done
 
 # See what we're supposed to do
 case "$1" in 

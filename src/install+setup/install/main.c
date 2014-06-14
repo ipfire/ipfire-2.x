@@ -321,10 +321,10 @@ int main(int argc, char *argv[])
 		swap_file = memory / 4;
 	
   /* Calculating Root-Size dependend of Max Disk Space */
-  if ( disk < 756 )
-		root_partition = 200;
-	else if ( disk >= 756 && disk <= 3072 )
-		root_partition = 512;
+  if ( disk < 2048 )
+		root_partition = 1024;
+	else if ( disk >= 2048 && disk <= 3072 )
+		root_partition = 1536;
 	else 
 		root_partition = 2048;
 		

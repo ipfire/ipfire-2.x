@@ -22,5 +22,6 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-extract_files
-start_service --delay 90 --background icecream
+stop_service vdr
+remove_files
+start_service vdr --background
