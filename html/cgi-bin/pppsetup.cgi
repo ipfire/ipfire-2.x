@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -70,10 +70,10 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'refresh'})
 }
 elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
 {
-        if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'COMPORT'} !~ /^(ttyS0|ttyS1|ttyS2|ttyS3|ttyS4|ttyACM0|ttyACM1|ttyACM2|ttyACM3|ttyUSB0|ttyUSB1|ttyUSB2|ttyUSB3|rfcomm0|rfcomm1|isdn1|isdn2)$/) {
+        if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'COMPORT'} !~ /^(ttyS0|ttyS1|ttyS2|ttyS3|ttyS4|ttyACM[0-9]|ttyUSB[0-9]|rfcomm0|rfcomm1|isdn1|isdn2)$/) {
                 $errormessage = $Lang::tr{'invalid input'};
                 goto ERROR; }
-        if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'MONPORT'} !~ /^(ttyUSB0|ttyUSB1|ttyUSB2|ttyUSB3)$/) {
+        if ($pppsettings{'TYPE'} =~ /^(modem|serial|isdn)$/ && $pppsettings{'MONPORT'} !~ /^(|ttyACM[0-9]|ttyUSB[0-9]|rfcomm0|rfcomm1)$/) {
                 $errormessage = $Lang::tr{'invalid input'};
                 goto ERROR; }
         if ($pppsettings{'TYPE'} =~ /^(modem|serial)$/ && $pppsettings{'DTERATE'} !~ /^(9600|19200|38400|57600|115200|230400|460800|921600)$/) {
@@ -333,19 +333,49 @@ $selected{'COMPORT'}{'ttyACM0'} = '';
 $selected{'COMPORT'}{'ttyACM1'} = '';
 $selected{'COMPORT'}{'ttyACM2'} = '';
 $selected{'COMPORT'}{'ttyACM3'} = '';
+$selected{'COMPORT'}{'ttyACM4'} = '';
+$selected{'COMPORT'}{'ttyACM5'} = '';
+$selected{'COMPORT'}{'ttyACM6'} = '';
+$selected{'COMPORT'}{'ttyACM7'} = '';
+$selected{'COMPORT'}{'ttyACM8'} = '';
+$selected{'COMPORT'}{'ttyACM9'} = '';
 $selected{'COMPORT'}{'ttyUSB0'} = '';
 $selected{'COMPORT'}{'ttyUSB1'} = '';
 $selected{'COMPORT'}{'ttyUSB2'} = '';
 $selected{'COMPORT'}{'ttyUSB3'} = '';
+$selected{'COMPORT'}{'ttyUSB4'} = '';
+$selected{'COMPORT'}{'ttyUSB5'} = '';
+$selected{'COMPORT'}{'ttyUSB6'} = '';
+$selected{'COMPORT'}{'ttyUSB7'} = '';
+$selected{'COMPORT'}{'ttyUSB8'} = '';
+$selected{'COMPORT'}{'ttyUSB9'} = '';
 $selected{'COMPORT'}{'rfcomm0'} = '';
 $selected{'COMPORT'}{'rfcomm1'} = '';
 $selected{'COMPORT'}{$pppsettings{'COMPORT'}} = "selected='selected'";
 
 $selected{'MONPORT'}{''} = '';
+$selected{'MONPORT'}{'ttyACM0'} = '';
+$selected{'MONPORT'}{'ttyACM1'} = '';
+$selected{'MONPORT'}{'ttyACM2'} = '';
+$selected{'MONPORT'}{'ttyACM3'} = '';
+$selected{'MONPORT'}{'ttyACM4'} = '';
+$selected{'MONPORT'}{'ttyACM5'} = '';
+$selected{'MONPORT'}{'ttyACM6'} = '';
+$selected{'MONPORT'}{'ttyACM7'} = '';
+$selected{'MONPORT'}{'ttyACM8'} = '';
+$selected{'MONPORT'}{'ttyACM9'} = '';
 $selected{'MONPORT'}{'ttyUSB0'} = '';
 $selected{'MONPORT'}{'ttyUSB1'} = '';
 $selected{'MONPORT'}{'ttyUSB2'} = '';
 $selected{'MONPORT'}{'ttyUSB3'} = '';
+$selected{'MONPORT'}{'ttyUSB4'} = '';
+$selected{'MONPORT'}{'ttyUSB5'} = '';
+$selected{'MONPORT'}{'ttyUSB6'} = '';
+$selected{'MONPORT'}{'ttyUSB7'} = '';
+$selected{'MONPORT'}{'ttyUSB8'} = '';
+$selected{'MONPORT'}{'ttyUSB9'} = '';
+$selected{'MONPORT'}{'rfcomm0'} = '';
+$selected{'MONPORT'}{'rfcomm1'} = '';
 $selected{'MONPORT'}{$pppsettings{'MONPORT'}} = "selected='selected'";
 
 $selected{'DTERATE'}{'9600'} = '';
@@ -582,16 +612,28 @@ END
                 <option value='ttyUSB1' $selected{'COMPORT'}{'ttyUSB1'}>ttyUSB1</option>
                 <option value='ttyUSB2' $selected{'COMPORT'}{'ttyUSB2'}>ttyUSB2</option>
                 <option value='ttyUSB3' $selected{'COMPORT'}{'ttyUSB3'}>ttyUSB3</option>
+                <option value='ttyUSB4' $selected{'COMPORT'}{'ttyUSB4'}>ttyUSB4</option>
+                <option value='ttyUSB5' $selected{'COMPORT'}{'ttyUSB5'}>ttyUSB5</option>
+                <option value='ttyUSB6' $selected{'COMPORT'}{'ttyUSB6'}>ttyUSB6</option>
+                <option value='ttyUSB7' $selected{'COMPORT'}{'ttyUSB7'}>ttyUSB7</option>
+                <option value='ttyUSB8' $selected{'COMPORT'}{'ttyUSB8'}>ttyUSB8</option>
+                <option value='ttyUSB9' $selected{'COMPORT'}{'ttyUSB9'}>ttyUSB9</option>
                 <option value='rfcomm0' $selected{'COMPORT'}{'rfcomm0'}>rfcomm0 (bluetooth)</option>
                 <option value='rfcomm1' $selected{'COMPORT'}{'rfcomm1'}>rfcomm1 (bluetooth)</option>
 END
 ;
                 if ($pppsettings{'TYPE'} ne 'serial' ) {
                         print <<END
-                <option value='ttyACM0' $selected{'COMPORT'}{'ttyACM0'}>$Lang::tr{'usb modem on acm0'}</option>
-                <option value='ttyACM1' $selected{'COMPORT'}{'ttyACM1'}>$Lang::tr{'usb modem on acm1'}</option>
-                <option value='ttyACM2' $selected{'COMPORT'}{'ttyACM2'}>$Lang::tr{'usb modem on acm2'}</option>
-                <option value='ttyACM3' $selected{'COMPORT'}{'ttyACM3'}>$Lang::tr{'usb modem on acm3'}</option>
+                <option value='ttyACM0' $selected{'COMPORT'}{'ttyACM0'}>ttyACM0</option>
+                <option value='ttyACM1' $selected{'COMPORT'}{'ttyACM1'}>ttyACM1</option>
+                <option value='ttyACM2' $selected{'COMPORT'}{'ttyACM2'}>ttyACM2</option>
+                <option value='ttyACM3' $selected{'COMPORT'}{'ttyACM3'}>ttyACM3</option>
+                <option value='ttyACM4' $selected{'COMPORT'}{'ttyACM4'}>ttyACM4</option>
+                <option value='ttyACM5' $selected{'COMPORT'}{'ttyACM5'}>ttyACM5</option>
+                <option value='ttyACM6' $selected{'COMPORT'}{'ttyACM6'}>ttyACM6</option>
+                <option value='ttyACM7' $selected{'COMPORT'}{'ttyACM7'}>ttyACM7</option>
+                <option value='ttyACM8' $selected{'COMPORT'}{'ttyACM8'}>ttyACM8</option>
+                <option value='ttyACM9' $selected{'COMPORT'}{'ttyACM9'}>ttyACM9</option>
 END
 ;
                 }
@@ -608,6 +650,24 @@ END
 						<option value="ttyUSB1" $selected{'MONPORT'}{'ttyUSB1'}>ttyUSB1</option>
 						<option value="ttyUSB2" $selected{'MONPORT'}{'ttyUSB2'}>ttyUSB2</option>
 						<option value="ttyUSB3" $selected{'MONPORT'}{'ttyUSB3'}>ttyUSB3</option>
+						<option value="ttyUSB4" $selected{'MONPORT'}{'ttyUSB4'}>ttyUSB4</option>
+						<option value="ttyUSB5" $selected{'MONPORT'}{'ttyUSB5'}>ttyUSB5</option>
+						<option value="ttyUSB6" $selected{'MONPORT'}{'ttyUSB6'}>ttyUSB6</option>
+						<option value="ttyUSB7" $selected{'MONPORT'}{'ttyUSB7'}>ttyUSB7</option>
+						<option value="ttyUSB8" $selected{'MONPORT'}{'ttyUSB8'}>ttyUSB8</option>
+						<option value="ttyUSB9" $selected{'MONPORT'}{'ttyUSB9'}>ttyUSB9</option>
+						<option value="rfcomm0" $selected{'COMPORT'}{'rfcomm0'}>rfcomm0 (bluetooth)</option>
+						<option value="rfcomm1" $selected{'COMPORT'}{'rfcomm1'}>rfcomm1 (bluetooth)</option>
+						<option value="ttyACM0" $selected{'COMPORT'}{'ttyACM0'}>ttyACM0</option>
+						<option value="ttyACM1" $selected{'COMPORT'}{'ttyACM1'}>ttyACM1</option>
+						<option value="ttyACM2" $selected{'COMPORT'}{'ttyACM2'}>ttyACM2</option>
+						<option value="ttyACM3" $selected{'COMPORT'}{'ttyACM3'}>ttyACM3</option>
+						<option value="ttyACM4" $selected{'COMPORT'}{'ttyACM4'}>ttyACM4</option>
+						<option value="ttyACM5" $selected{'COMPORT'}{'ttyACM5'}>ttyACM5</option>
+						<option value="ttyACM6" $selected{'COMPORT'}{'ttyACM6'}>ttyACM6</option>
+						<option value="ttyACM7" $selected{'COMPORT'}{'ttyACM7'}>ttyACM7</option>
+						<option value="ttyACM8" $selected{'COMPORT'}{'ttyACM8'}>ttyACM8</option>
+						<option value="ttyACM9" $selected{'COMPORT'}{'ttyACM9'}>ttyACM9</option>
 					</select>
 				</td>
 			</tr>

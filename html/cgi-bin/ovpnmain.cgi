@@ -1531,6 +1531,17 @@ END
     }
 
 ###
+### Download tls-auth key
+###
+}elsif ($cgiparams{'ACTION'} eq $Lang::tr{'download tls-auth key'}) {
+    if ( -f "${General::swroot}/ovpn/certs/ta.key" ) {
+	print "Content-Type: application/octet-stream\r\n";
+	print "Content-Disposition: filename=ta.key\r\n\r\n";
+	print `/bin/cat ${General::swroot}/ovpn/certs/ta.key`;
+	exit(0);
+    }
+
+###
 ### Form for generating a root certificate
 ###
 }elsif ($cgiparams{'ACTION'} eq $Lang::tr{'generate root/host certificates'} ||
@@ -2370,6 +2381,28 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
     }
 
 ###
+### Display tls-auth key
+###
+} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'show tls-auth key'}) {
+
+    if (! -e "${General::swroot}/ovpn/certs/ta.key") {
+	$errormessage = $Lang::tr{'not present'};
+	} else {
+		&Header::showhttpheaders();
+		&Header::openpage($Lang::tr{'ovpn'}, 1, '');
+		&Header::openbigbox('100%', 'LEFT', '', '');
+		&Header::openbox('100%', 'LEFT', "$Lang::tr{'ta key'}:");
+		my $output = `/bin/cat ${General::swroot}/ovpn/certs/ta.key`;
+		$output = &Header::cleanhtml($output,"y");
+		print "<pre>$output</pre>\n";
+		&Header::closebox();
+		print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
+		&Header::closebigbox();
+		&Header::closepage();
+		exit(0);
+    }
+
+###
 ### Display Certificate Revoke List
 ###
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'show crl'}) {
@@ -3155,7 +3188,6 @@ my $complzoactive;
 my $mssfixactive;
 my $authactive;
 my $n2nfragment;
-my $authactive;
 my @n2nmtudisc = split(/ /, (grep { /^mtu-disc/ } @firen2nconf)[0]);
 my @n2nproto2 = split(/ /, (grep { /^proto/ } @firen2nconf)[0]);
 my @n2nproto = split(/-/, $n2nproto2[1]);
@@ -5215,6 +5247,8 @@ END
     ;
 	&Header::closebox();
 	}
+
+    # CA/key listing
     &Header::openbox('100%', 'LEFT', "$Lang::tr{'certificate authorities'}");
     print <<END;
     <table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
@@ -5227,7 +5261,10 @@ END
     ;
     my $col1="bgcolor='$color{'color22'}'";
     my $col2="bgcolor='$color{'color20'}'";
+    # DH parameter line
     my $col3="bgcolor='$color{'color22'}'";
+    # ta.key line
+    my $col4="bgcolor='$color{'color20'}'";
 
     if (-f "${General::swroot}/ovpn/ca/cacert.pem") {
 		my $casubject = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/ca/cacert.pem`;
@@ -5239,15 +5276,16 @@ END
 		<tr>
 			<td class='base' $col1>$Lang::tr{'root certificate'}</td>
 			<td class='base' $col1>$casubject</td>
-		<form method='post' name='frmrootcrta'><td width='3%' align='center' $col1>
+			<form method='post' name='frmrootcrta'><td width='3%' align='center' $col1>
 			<input type='hidden' name='ACTION' value='$Lang::tr{'show root certificate'}' />
 			<input type='image' name='$Lang::tr{'edit'}' src='/images/info.gif' alt='$Lang::tr{'show root certificate'}' title='$Lang::tr{'show root certificate'}' width='20' height='20' border='0' />
-		</td></form>
-		<form method='post' name='frmrootcrtb'><td width='3%' align='center' $col1>
+			</form>
+			<form method='post' name='frmrootcrtb'><td width='3%' align='center' $col1>
 			<input type='image' name='$Lang::tr{'download root certificate'}' src='/images/media-floppy.png' alt='$Lang::tr{'download root certificate'}' title='$Lang::tr{'download root certificate'}' border='0' />
 			<input type='hidden' name='ACTION' value='$Lang::tr{'download root certificate'}' />
-		</td></form>
-		<td width='4%' $col1>&nbsp;</td></tr>
+			</form>
+			<td width='4%' $col1>&nbsp;</td>
+		</tr>
 END
 		;
     } else {
@@ -5256,7 +5294,8 @@ END
 		<tr>
 			<td class='base' $col1>$Lang::tr{'root certificate'}:</td>
 			<td class='base' $col1>$Lang::tr{'not present'}</td>
-			<td colspan='3' $col1>&nbsp;</td></tr>
+			<td colspan='3' $col1>&nbsp;</td>
+		</tr>
 END
 		;
     }
@@ -5272,15 +5311,16 @@ END
 		<tr>
 			<td class='base' $col2>$Lang::tr{'host certificate'}</td>
 			<td class='base' $col2>$hostsubject</td>
-		<form method='post' name='frmhostcrta'><td width='3%' align='center' $col2>
+			<form method='post' name='frmhostcrta'><td width='3%' align='center' $col2>
 			<input type='hidden' name='ACTION' value='$Lang::tr{'show host certificate'}' />
 			<input type='image' name='$Lang::tr{'show host certificate'}' src='/images/info.gif' alt='$Lang::tr{'show host certificate'}' title='$Lang::tr{'show host certificate'}' width='20' height='20' border='0' />
-		</td></form>
-		<form method='post' name='frmhostcrtb'><td width='3%' align='center' $col2>
+			</form>
+			<form method='post' name='frmhostcrtb'><td width='3%' align='center' $col2>
 			<input type='image' name="$Lang::tr{'download host certificate'}" src='/images/media-floppy.png' alt="$Lang::tr{'download host certificate'}" title="$Lang::tr{'download host certificate'}" border='0' />
 			<input type='hidden' name='ACTION' value="$Lang::tr{'download host certificate'}" />
-		</td></form>
-		<td width='4%' $col2>&nbsp;</td></tr>
+			</td></form>
+			<td width='4%' $col2>&nbsp;</td>
+		</tr>
 END
 		;
     } else {
@@ -5289,7 +5329,8 @@ END
 		<tr>
 			<td width='25%' class='base' $col2>$Lang::tr{'host certificate'}:</td>
 			<td class='base' $col2>$Lang::tr{'not present'}</td>
-		</td><td colspan='3' $col2>&nbsp;</td></tr>
+			</td><td colspan='3' $col2>&nbsp;</td>
+		</tr>
 END
 		;
     }
@@ -5297,7 +5338,7 @@ END
     # Adding DH parameter to chart
     if (-f "${General::swroot}/ovpn/ca/dh1024.pem") {
 		my $dhsubject = `/usr/bin/openssl dhparam -text -in ${General::swroot}/ovpn/ca/dh1024.pem`;
-		$dhsubject    =~ /PKCS#3 (.*)[\n]/;
+		$dhsubject    =~ /    (.*)[\n]/;
 		$dhsubject    = $1;
 
 
@@ -5305,15 +5346,14 @@ END
 		<tr>
 			<td class='base' $col3>$Lang::tr{'dh parameter'}</td>
 			<td class='base' $col3>$dhsubject</td>
-		<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
+			<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
 			<input type='hidden' name='ACTION' value='$Lang::tr{'show dh'}' />
 			<input type='image' name='$Lang::tr{'show dh'}' src='/images/info.gif' alt='$Lang::tr{'show dh'}' title='$Lang::tr{'show dh'}' width='20' height='20' border='0' />
-		</td></form>
-		<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
-			<input type='image' name="$Lang::tr{'download dh parameter'}" src='/images/media-floppy.png' alt="$Lang::tr{'download dh parameter'}" title="$Lang::tr{'download dh parameter'}" border='0' />
-			<input type='hidden' name='ACTION' value="$Lang::tr{'download dh parameter'}" />
-		</td></form>
-		<td width='4%' $col3>&nbsp;</td></tr>
+			</form>
+			<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
+			</form>
+			<td width='4%' $col3>&nbsp;</td>
+		</tr>
 END
 		;
     } else {
@@ -5322,7 +5362,42 @@ END
 		<tr>
 			<td width='25%' class='base' $col3>$Lang::tr{'dh parameter'}:</td>
 			<td class='base' $col3>$Lang::tr{'not present'}</td>
-		</td><td colspan='3' $col3>&nbsp;</td></tr>
+			</td><td colspan='3' $col3>&nbsp;</td>
+		</tr>
+END
+		;
+    }
+
+    # Adding ta.key to chart
+    if (-f "${General::swroot}/ovpn/certs/ta.key") {
+		my $tasubject = `/bin/cat ${General::swroot}/ovpn/certs/ta.key`;
+		$tasubject    =~ /# (.*)[\n]/;
+		$tasubject    = $1;
+		print <<END;
+
+		<tr>
+			<td class='base' $col4>$Lang::tr{'ta key'}</td>
+			<td class='base' $col4>$tasubject</td>
+			<form method='post' name='frmtakey'><td width='3%' align='center' $col4>
+			<input type='hidden' name='ACTION' value='$Lang::tr{'show tls-auth key'}' />
+			<input type='image' name='$Lang::tr{'edit'}' src='/images/info.gif' alt='$Lang::tr{'show tls-auth key'}' title='$Lang::tr{'show tls-auth key'}' width='20' height='20' border='0' />
+			</form>
+			<form method='post' name='frmtakey'><td width='3%' align='center' $col4>
+			<input type='image' name='$Lang::tr{'download tls-auth key'}' src='/images/media-floppy.png' alt='$Lang::tr{'download tls-auth key'}' title='$Lang::tr{'download tls-auth key'}' border='0' />
+			<input type='hidden' name='ACTION' value='$Lang::tr{'download tls-auth key'}' />
+			</form>
+			<td width='4%' $col4>&nbsp;</td>
+		</tr>
+END
+		;
+    } else {
+		# Nothing
+		print <<END;
+		<tr>
+			<td width='25%' class='base' $col4>$Lang::tr{'ta key'}:</td>
+			<td class='base' $col4>$Lang::tr{'not present'}</td>
+			<td colspan='3' $col4>&nbsp;</td>
+		</tr>
 END
 		;
     }
@@ -5385,6 +5460,9 @@ END
 	<hr size='1'>
 	<form method='post' enctype='multipart/form-data'>
 	<table width='100%' border='0'cellspacing='1' cellpadding='0'>
+	<tr>
+		<td class'base'><b>$Lang::tr{'upload ca certificate'}</b></td>
+	</tr>
 	<tr>
 		<td class='base' nowrap='nowrap'>$Lang::tr{'ca name'}:</td>
 		<td nowrap='nowrap'><input type='text' name='CA_NAME' value='$cgiparams{'CA_NAME'}' size='15' align='left'/></td>
