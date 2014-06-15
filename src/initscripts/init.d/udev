@@ -64,7 +64,7 @@ case "${1}" in
 
 		# Now traverse /sys in order to "coldplug" devices that have
 		# already been discovered
-		/bin/udevadm trigger
+		/bin/udevadm trigger --action=add
 
 		# Now wait for udevd to process the uevents we triggered
 		/bin/udevadm settle

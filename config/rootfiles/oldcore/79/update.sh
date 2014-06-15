@@ -35,7 +35,7 @@ function add_to_backup ()
 
 #
 # Remove old core updates from pakfire cache to save space...
-core=78
+core=79
 for (( i=1; i<=${core}; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire

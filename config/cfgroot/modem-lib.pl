@@ -33,7 +33,10 @@ sub new() {
 	bless $self, $class;
 
 	# Initialize the connetion to the modem.
-	$self->_initialize($port, $baud);
+	my $ret = $self->_initialize($port, $baud);
+	if ($ret) {
+		return undef;
+	}
 
 	if ($self->_is_working()) {
 		return $self;
@@ -54,9 +57,16 @@ sub DESTROY() {
 sub _initialize() {
 	my ($self, $port, $baud) = @_;
 
+	# Check if the character device actually exists.
+	if (! -c $port) {
+		return 1;
+	}
+
 	# Establish connection to the modem.
 	$self->{modem} = new Device::Modem(port => $port);
 	$self->{modem}->connect(baudrate => $baud);
+
+	return 0;
 }
 
 sub _is_working() {

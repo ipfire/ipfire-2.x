@@ -344,6 +344,7 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < most preferred
 < MTU settings
 < never
@@ -863,6 +864,7 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < most preferred
 < MTU settings
 < never
@@ -1366,6 +1368,7 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < most preferred
 < MTU settings
 < never
@@ -1860,6 +1863,7 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < month-graph
 < most preferred
 < MTU settings

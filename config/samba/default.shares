@@ -1,18 +1,9 @@
-[Temp]
-path = /tmp
-comment = Temp
-browseable = yes
+[Share1]
+path = /mnt/share1
+comment = Shared Folder
+browsable = yes
 writeable = yes
-create mask = 0777
-directory mask = 0777
-guest ok = yes
-force user = samba
-[P2P]
-path = /var/ipfire/samba/p2p
-comment = P2P
-browseable = yes
-writeable = yes
-create mask = 0777
-directory mask = 0777
+create mask = 0644
+directory mask = 0755
 guest ok = yes
 force user = samba
