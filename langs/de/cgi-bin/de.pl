@@ -665,7 +665,7 @@
 'devices on blue' => 'Geräte auf Blau',
 'dh' => 'Diffie-Hellman-Parameter',
 'dh key move failed' => 'Verschieben der Diffie-Hellman-Parameter fehlgeschlagen.',
-'dh key warn' => 'Das Generieren der Diffie-Hellman-Parameter mit 1024 oder 2048 Bit dauert üblicherweise mehrere Minuten. Schlüssellängen von 3072 oder 4096 Bit beanspruchen mehrere Stunden. Bitte haben Sie etwas Geduld.',
+'dh key warn' => 'Das Generieren der DH-Parameter mit 1024 oder 2048 Bit dauert üblicherweise mehrere Minuten. Schlüssellängen von 3072 oder 4096 Bit beanspruchen mehrere Stunden. Bitte haben Sie etwas Geduld.',
 'dh key warn1' => 'Bei schwachen Systemen oder Systeme mit wenig Entropie wird empfohlen lange Diffie-Hellman-Parameter über die Upload-Funktion hochzuladen.',
 'dh parameter' => 'Diffie-Hellman-Parameter',
 'dhcp advopt add' => 'DHCP Option hinzufügen',
