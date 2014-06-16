@@ -598,6 +598,19 @@ sub checksubnets
 	if (($ownnet{'RED_NETADDRESS'} 		ne '' && $ownnet{'RED_NETADDRESS'} 		ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'RED_NETADDRESS'},&iporsubtodec($ownnet{'RED_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err red'};return $errormessage;}
 }
 
+sub check_net_internal{
+	my $network=shift;
+	my ($ip,$cidr)=split(/\//,$network);
+	my %ownnet=();
+	my $errormessage;
+	$cidr=&iporsubtocidr($cidr);
+	#check if we use one of ipfire's networks (green,orange,blue)
+	&readhash("${General::swroot}/ethernet/settings", \%ownnet);
+	if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'GREEN_NETADDRESS'},&iporsubtodec($ownnet{'GREEN_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err green'};return $errormessage;}
+	if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'ORANGE_NETADDRESS'},&iporsubtodec($ownnet{'ORANGE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err orange'};return $errormessage;}
+	if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'BLUE_NETADDRESS'},&iporsubtodec($ownnet{'BLUE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err blue'};return $errormessage;}
+	if (($ownnet{'RED_NETADDRESS'} 		ne '' && $ownnet{'RED_NETADDRESS'} 		ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'RED_NETADDRESS'},&iporsubtodec($ownnet{'RED_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err red'};return $errormessage;}
+}
 
 sub validport
 {
