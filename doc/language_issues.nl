@@ -485,16 +485,12 @@ WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: requested data
-WARNING: translation string unused: reserved dst port
-WARNING: translation string unused: reserved src port
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
 WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: router ip
-WARNING: translation string unused: rsvd dst port overlap
-WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
@@ -524,7 +520,6 @@ WARNING: translation string unused: source ip in use
 WARNING: translation string unused: source ip or net
 WARNING: translation string unused: source net
 WARNING: translation string unused: source network
-WARNING: translation string unused: source port in use
 WARNING: translation string unused: source port overlaps
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
@@ -662,7 +657,7 @@ WARNING: untranslated string: dh key warn
 WARNING: untranslated string: dh key warn1
 WARNING: untranslated string: dh parameter
 WARNING: untranslated string: dns servers
-WARNING: untranslated string: download dh parameter
+WARNING: untranslated string: download tls-auth key
 WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: fwhost err hostip
@@ -699,7 +694,9 @@ WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: show dh
+WARNING: untranslated string: show tls-auth key
 WARNING: untranslated string: software version
 WARNING: untranslated string: source ip country
+WARNING: untranslated string: ta key
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: vendor
