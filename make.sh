@@ -467,6 +467,9 @@ buildipfire() {
   ipfiremake pam
   ipfiremake openssl
   ipfiremake openssl-compat
+  ipfiremake libgpg-error
+  ipfiremake libgcrypt
+  ipfiremake libassuan
   ipfiremake curl
   ipfiremake tcl
   ipfiremake sqlite
@@ -769,8 +772,6 @@ buildipfire() {
   ipfiremake fping
   ipfiremake telnet
   ipfiremake xinetd
-  ipfiremake libgpg-error
-  ipfiremake libassuan
   ipfiremake gpgme
   ipfiremake pygpgme
   ipfiremake pakfire3
