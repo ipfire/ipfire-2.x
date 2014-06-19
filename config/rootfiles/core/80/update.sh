@@ -41,6 +41,11 @@ extract_files
 # Update Language cache
 #perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+# Uninstall the libgpg-error package.
+rm -f \
+	/opt/pakfire/db/installed/meta-libgpg-error \
+	/opt/pakfire/db/rootfiles/libgpg-error
+
 sync
 
 # This update need a reboot...
