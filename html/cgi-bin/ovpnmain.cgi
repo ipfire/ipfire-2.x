@@ -3891,11 +3891,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		&deletebackupcert();
 	    }
 
-	    my $temp = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /Subject:.*CN=(.*)[\n]/;
+	    my $temp = `/usr/bin/openssl x509 -subject -nameopt sep_multiline,sname,esc_ctrl,esc_msb -noout -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
+	    $temp =~ /.*CN=(.+)[\n]/;
 	    $temp = $1;
-	    $temp =~ s+/Email+, E+;
-	    $temp =~ s/ ST=/ S=/;
 	    $cgiparams{'CERT_NAME'} = $temp;
 	    $cgiparams{'CERT_NAME'} =~ s/,//g;
 	    $cgiparams{'CERT_NAME'} =~ s/\'//g;
@@ -3945,14 +3943,13 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		}
 	    }
 
-	    my $temp = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /Subject:.*CN=(.*)[\n]/;
+	    my $temp = `/usr/bin/openssl x509 -subject -nameopt sep_multiline,sname,esc_ctrl,esc_msb -noout -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
+	    $temp =~ /.*CN=(.+)[\n]/;
 	    $temp = $1;
-	    $temp =~ s+/Email+, E+;
-	    $temp =~ s/ ST=/ S=/;
 	    $cgiparams{'CERT_NAME'} = $temp;
 	    $cgiparams{'CERT_NAME'} =~ s/,//g;
 	    $cgiparams{'CERT_NAME'} =~ s/\'//g;
+
 	    if ($cgiparams{'CERT_NAME'} eq '') {
 		unlink ("${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem");
 		$errormessage = $Lang::tr{'could not retrieve common name from certificate'};
