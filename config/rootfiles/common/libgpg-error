@@ -16,6 +16,8 @@ usr/lib/libgpg-error.so.0.11.0
 #usr/share/locale/cs/LC_MESSAGES/libgpg-error.mo
 #usr/share/locale/da/LC_MESSAGES/libgpg-error.mo
 #usr/share/locale/de/LC_MESSAGES/libgpg-error.mo
+#usr/share/locale/eo
+#usr/share/locale/eo/LC_MESSAGES
 #usr/share/locale/eo/LC_MESSAGES/libgpg-error.mo
 #usr/share/locale/fr/LC_MESSAGES/libgpg-error.mo
 #usr/share/locale/it/LC_MESSAGES/libgpg-error.mo
