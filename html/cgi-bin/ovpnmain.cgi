@@ -5117,7 +5117,9 @@ END
 					$cn = $match[1];
 				}
 				$cn =~ s/[_]/ /g;
-				if ($cn eq "$confighash{$key}[2]") {
+				# For compatibility reasons, the CNs cannot be compared exactly with 'eq'.
+				# See https://bugzilla.ipfire.org/show_bug.cgi?id=10552 .
+				if ($confighash{$key}[2] =~ /$cn(\/.+=.+)?/) {
 					$col1="bgcolor='${Header::colourgreen}'";
 					$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
 				}
