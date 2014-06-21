@@ -1520,17 +1520,6 @@ END
     }
 
 ###
-### Download Diffie-Hellman parameter
-###
-}elsif ($cgiparams{'ACTION'} eq $Lang::tr{'download dh parameter'}) {
-    if ( -f "${General::swroot}/ovpn/ca/dh1024.pem" ) {
-	print "Content-Type: application/octet-stream\r\n";
-	print "Content-Disposition: filename=dh1024.pem\r\n\r\n";
-	print `/usr/bin/openssl dhparam -in ${General::swroot}/ovpn/ca/dh1024.pem`;
-	exit(0);
-    }
-
-###
 ### Download tls-auth key
 ###
 }elsif ($cgiparams{'ACTION'} eq $Lang::tr{'download tls-auth key'}) {

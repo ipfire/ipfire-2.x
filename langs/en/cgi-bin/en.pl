@@ -687,7 +687,7 @@
 'devices on blue' => 'Devices on BLUE',
 'dh' => 'Diffie-Hellman parameters',
 'dh key move failed' => 'Diffie-Hellman parameters move failed.',
-'dh key warn' => 'Creating Diffie-Hellman parameters with lengths of 1024 or 2048 bits takes up to several minutes. Lengths of 3072 or 4096 bits might needs several hours. Please be patient.',
+'dh key warn' => 'Creating DH-parameters with lengths of 1024 or 2048 bits takes up to several minutes. Lengths of 3072 or 4096 bits might needs several hours. Please be patient.',
 'dh key warn1' => 'For weak systems or systems with little entropy, it is recommended to upload long Diffie-Hellman parameters by usage of the upload function.',
 'dh name is invalid' => 'Name is invalid, please use "dh1024.pem".',
 'dh parameter' => 'Diffie-Hellman parameters',

@@ -96,6 +96,7 @@
 < dnsforward zone
 < dns servers
 < download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -410,6 +411,7 @@
 < system has hwrng
 < system has rdrand
 < system information
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -616,6 +618,7 @@
 < dnsforward zone
 < dns servers
 < download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -946,6 +949,7 @@
 < system has hwrng
 < system has rdrand
 < system information
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1128,6 +1132,7 @@
 < dnsforward zone
 < dns servers
 < download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -1434,6 +1439,7 @@
 < support donation
 < system has hwrng
 < system has rdrand
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1619,6 +1625,7 @@
 < dnsforward zone
 < dns servers
 < download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -1927,6 +1934,7 @@
 < support donation
 < system has hwrng
 < system has rdrand
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
