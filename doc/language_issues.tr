@@ -622,6 +622,10 @@ WARNING: translation string unused: urlfilter update information
 WARNING: translation string unused: urlfilter update notification
 WARNING: translation string unused: urlfilter update results
 WARNING: translation string unused: urlfilter upload background
+WARNING: translation string unused: usb modem on acm0
+WARNING: translation string unused: usb modem on acm1
+WARNING: translation string unused: usb modem on acm2
+WARNING: translation string unused: usb modem on acm3
 WARNING: translation string unused: use
 WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
