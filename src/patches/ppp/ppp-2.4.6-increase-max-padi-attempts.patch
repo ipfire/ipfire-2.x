@@ -7,7 +7,7 @@ index 9ab2eee..86762bd 100644
  
  /* How many PADI/PADS attempts? */
 -#define MAX_PADI_ATTEMPTS 3
-+#define MAX_PADI_ATTEMPTS 12
++#define MAX_PADI_ATTEMPTS 4
  
  /* Initial timeout for PADO/PADS */
  #define PADI_TIMEOUT 5
