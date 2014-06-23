@@ -23,8 +23,8 @@
 
 require '/var/ipfire/general-functions.pl';
 
-my $DEPTH     = $ARGV[0];
-my $CN        = $ARGV[1];
+my $DEPTH = $ARGV[0];
+my $CN    = $ARGV[1];
 
 # Exit immediately for every certificate depth other than 0.
 exit 0 unless ($DEPTH eq "0");
@@ -48,17 +48,16 @@ if (-f "${General::swroot}/ovpn/ovpnconfig"){
 		exit 0 if ($cn eq $CN);
 
 		# Compatibility code for incorrectly saved CNs:
-		#
-		my $cn_matcher = "$CN(\/.+=.+)?";
 
 		# 1) try to match an incorrectly saved CN
 		# See https://bugzilla.ipfire.org/show_bug.cgi?id=10552
-		exit 0 if($cn =~ /$cn_matcher/);
+		$cn =~ s/($CN)(\/.+)?/$1/g;
 
 		# 2) Handle OpenVPN's substitutions of space characters 
 		# See http://lists.ipfire.org/pipermail/development/2013-January/000225.html
 		$cn =~ s/\ /_/g;
-		exit 0 if ($cn =~ /$cn_matcher/);
+
+                exit 0 if ($cn eq $CN);
 	}
 }
 

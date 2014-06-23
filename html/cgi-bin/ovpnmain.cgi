@@ -5108,7 +5108,9 @@ END
         }else {
 
 				my $cn;
+				my $config_cn;
 				my @match = ();
+
 		foreach my $line (@status) {
 			chomp($line);
 			if ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
@@ -5116,10 +5118,16 @@ END
 				if ($match[1] ne "Common Name") {
 					$cn = $match[1];
 				}
+				#Handle OpenVPN's substitutions of space characters
+				# See http://lists.ipfire.org/pipermail/development/2013-January/000225.html
 				$cn =~ s/[_]/ /g;
-				# For compatibility reasons, the CNs cannot be compared exactly with 'eq'.
+
+				# Work around incorrectly saved CNs 
 				# See https://bugzilla.ipfire.org/show_bug.cgi?id=10552 .
-				if ($confighash{$key}[2] =~ /$cn(\/.+=.+)?/) {
+				$config_cn = $confighash{$key}[2];
+				$config_cn =~ s/($cn)(\/.+)?/$1/g;
+
+				if ($config_cn eq $cn) {
 					$col1="bgcolor='${Header::colourgreen}'";
 					$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
 				}
