@@ -3892,7 +3892,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 
 	    my $temp = `/usr/bin/openssl x509 -subject -nameopt sep_multiline,sname,esc_ctrl,esc_msb -noout -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /[\ ]+CN=(.+)$/;
+	    $temp =~ /^[\ ]{4}CN=(.+)$/m;
 	    $temp = $1;
 	    $cgiparams{'CERT_NAME'} = $temp;
 	    $cgiparams{'CERT_NAME'} =~ s/,//g;
@@ -3944,7 +3944,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 
 	    my $temp = `/usr/bin/openssl x509 -subject -nameopt sep_multiline,sname,esc_ctrl,esc_msb -noout -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /[\ ]+CN=(.+)$/;
+	    $temp =~ /^[\ ]{4}CN=(.+)$/m;
 	    $temp = $1;
 	    $cgiparams{'CERT_NAME'} = $temp;
 	    $cgiparams{'CERT_NAME'} =~ s/,//g;
