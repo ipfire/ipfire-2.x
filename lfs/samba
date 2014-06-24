@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.6.23
+VER        = 3.6.24
 
 THISAPP    = samba-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
