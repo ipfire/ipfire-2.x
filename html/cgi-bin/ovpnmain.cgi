@@ -5125,7 +5125,7 @@ END
 				# Work around incorrectly saved CNs 
 				# See https://bugzilla.ipfire.org/show_bug.cgi?id=10552 .
 				$config_cn = $confighash{$key}[2];
-				$config_cn =~ s/($cn)(\/.+)?/$1/g;
+				$config_cn =~ s/^([^\/]+)(\/.*)?/$1/g;
 
 				if ($config_cn eq $cn) {
 					$col1="bgcolor='${Header::colourgreen}'";
