@@ -426,9 +426,6 @@ END
 sub showBlockedBox() {
 	&Header::openbox('100%', 'center', $Lang::tr{'guardian blocked hosts'});
 
-	# Lauch helper to get chains from iptables.
-	open(FILE, "/usr/local/bin/guardianctrl get-chain |");
-
 	print <<END;
 	<table width='60%'>
 		<tr>
@@ -436,23 +433,14 @@ sub showBlockedBox() {
 		</tr>
 END
 
+		# Lauch function to get the currently blocked hosts.
+		my @blocked_hosts = &GetBlockedHosts();
+
 		my $id = 0;
-		my $address = "";
 		my $col = "";
-		my $interface = "";
 
-		# Read file line by line and print out the elements.
-		foreach my $line (<FILE>) {
-			# Skip descriptive lines.
-			next if ($line =~ /^Chain/);
-			next if ($line =~ /^ pkts/);
-
-			# Generate array based on the line content (seperator is a single or multiple space's)
-			my @comps = split(/\s{1,}/, $line);
-			my ($lead, $pkts, $bytes, $target, $prot, $opt, $in, $out, $source, $destination) = @comps;
-
-			# Assign different variable names.
-			my $blocked_host = $source;
+		# Loop through our blocked hosts array.
+		foreach my $blocked_host (@blocked_hosts) {
 
 			# Increase id number for each element in the ignore file.
 			$id++;
@@ -535,6 +523,42 @@ sub daemonstats() {
                 close(FILE);
         }
         $memory+=$memory[0];
+}
+
+sub GetBlockedHosts() {
+
+	# Create new, empty array.
+	my @hosts;
+
+	# Lauch helper to get chains from iptables.
+	open(FILE, "/usr/local/bin/guardianctrl get-chain |");
+
+	# Read file line by line and print out the elements.
+	foreach my $line (<FILE>) {
+
+		# Skip descriptive lines.
+		next if ($line =~ /^Chain/);
+		next if ($line =~ /^ pkts/);
+
+		# Generate array, based on the line content (seperator is a single or multiple space's)
+		my @comps = split(/\s{1,}/, $line);
+		my ($lead, $pkts, $bytes, $target, $prot, $opt, $in, $out, $source, $destination) = @comps;
+
+		# Assign different variable names.
+		my $blocked_host = $source;
+
+		# Add host to our hosts array.
+		push(@hosts, $blocked_host);
+	}
+
+	# Convert entries, sort them, write back and store the sorted entries into new array.
+	my @sorted = map  { $_->[0] }
+             sort { $a->[1] <=> $b->[1] }
+             map  { [$_, int sprintf("%03.f%03.f%03.f%03.f", split(/\./, $_))] }
+             @hosts;
+
+	# Return our sorted list.
+	return @sorted
 }
 
 sub BuildConfiguration() {
