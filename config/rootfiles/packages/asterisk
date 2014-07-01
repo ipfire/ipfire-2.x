@@ -1,6 +1,6 @@
 #usr/lib/libsrtp.a
 etc/asterisk
-etc/fcron.minutely/wakeup.sh
+etc/logrotate.d/asterisk
 etc/rc.d/rc0.d/K30asterisk
 etc/rc.d/rc3.d/S30asterisk
 etc/rc.d/rc6.d/K30asterisk
@@ -512,11 +512,6 @@ var/ipfire/asterisk/unistim.conf
 var/ipfire/asterisk/users.conf
 var/ipfire/asterisk/voicemail.conf
 var/ipfire/asterisk/vpb.conf
-#var/ipfire/asterisk/wakeup
-#var/ipfire/asterisk/wakeup/source
-var/ipfire/asterisk/wakeup/source/536.call
-var/ipfire/asterisk/wakeup/source/bsp.call.tpl
-var/ipfire/asterisk/wakeup/wakeup.sh
 var/ipfire/asterisk/xmpp.conf
 var/ipfire/backup/addons/includes/asterisk
 #var/lib/asterisk
@@ -2896,5 +2891,3 @@ var/spool/asterisk/voicemail/default/1234/en
 var/spool/asterisk/voicemail/default/1234/en/busy.gsm
 var/spool/asterisk/voicemail/default/1234/en/unavail.gsm
 etc/rc.d/init.d/asterisk
-srv/web/ipfire/cgi-bin/asterisk
-var/ipfire/menu.d/EX-asterisk.menu

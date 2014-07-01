@@ -146,13 +146,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod o+w /var/ipfire/asterisk
 	chown nobody:nobody -R /var/ipfire/asterisk
 	chown nobody:nobody -R /var/lib/asterisk
-	ln -f -s /var/ipfire/asterisk/wakeup/wakeup.sh /etc/fcron.minutely/wakeup.sh
 
 	# be sure all source is removed
 	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-* $(DIR_SRC)/libsrtp*
 
 	# remember backup-location
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/asterisk /var/ipfire/backup/addons/includes/asterisk
+
+	# Logrotate                                                                                                                                                                           
+	mkdir -pv /etc/logrotate.d                                                                                                                                                            
+	install -v -m 644 $(DIR_SRC)/config/asterisk/asterisk.logrotate /etc/logrotate.d/asterisk   
 
 	# generate softlink (or asterisk will not work properly)
 	ln -sf /var/ipfire/asterisk /etc/asterisk
