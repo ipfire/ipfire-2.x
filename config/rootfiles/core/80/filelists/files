@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/logrotate.conf
 etc/rc.d/init.d/dhcrelay
 etc/rc.d/init.d/dnsmasq
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
