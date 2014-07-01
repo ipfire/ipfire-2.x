@@ -632,23 +632,22 @@ if ($ip ne $ipcache) {
 			    	$settings{'HOSTDOMAIN'} = "$settings{'HOSTNAME'}.$settings{'DOMAIN'}";
 			    }
 
-			    my ($out, $response) = Net::SSLeay::get_http(  'dynserv.ca',
-									    80,
-									    "/dyn/dynengine.cgi?func=set&name=$settings{'LOGIN'}&pass=$settings{'PASSWORD'}&ip=$ip&domain=$settings{'DOMAIN'}",
+			    my ($out, $response) = Net::SSLeay::get_https( 'api.dynu.com',
+									    443,
+									    "/nic/update?hostname=$settings{'HOSTDOMAIN'}&myip=$ip&username=$settings{'LOGIN'}&password=$settings{'PASSWORD'}",
 	                						    Net::SSLeay::make_headers('User-Agent' => 'IPFire' )
 									 );
-			    #Valid responses from service are:
-			    # 02 == Domain already exists, refreshing data for ... => xxx.xxx.xxx.xxx
-			    #
+			    # Valid responses are 'good xxx.xxx.xxx.xxx', 'nochg'
+			    # see http://www.dynu.com/Default.aspx?page=dnsapi for further details
 			    if ($response =~ m%HTTP/1\.. 200 OK%) {
-				if ( $out !~ m/Domain already exists, refreshing data for/ig ) {
+				if ( $out !~ m/^(good|nochg)/ ) {
 				    &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure ($out)");
 				} else {
-				    &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : success");
+				    &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : success ($out)");
 				    $success++;
 				}
 			    } else {
-			        &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure (could not connect to server)");
+			        &General::log("Dynamic DNS ip-update for $settings{'HOSTDOMAIN'} : failure (could not connect to server---$out-$response)");
 			    }
 			}
 			elsif ($settings{'SERVICE'} eq 'udmedia') {

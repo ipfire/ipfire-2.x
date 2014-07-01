@@ -1,2 +1,5 @@
 etc/system-release
 etc/issue
+usr/local/bin/setddns.pl
+var/ipfire/general-functions.pl
+var/ipfire/langs

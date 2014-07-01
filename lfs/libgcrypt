@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,21 +24,13 @@
 
 include Config
 
-VER        = 0.98.4
+VER        = 1.6.1
 
-THISAPP    = clamav-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+THISAPP    = libgcrypt-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = clamav
-PAK_VER    = 26
-
-DEPS       = ""
-
-ifeq "$(MACHINE_TYPE)" "arm"
-CONFIGURE_FLAGS = --disable-fanotify
-endif
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6d409eab6c311de05a0a591fccd2ec83
+$(DL_FILE)_MD5 = a5a5060dc2f80bcac700ab0236ea47dc
 
 install : $(TARGET)
 
@@ -57,9 +49,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -80,24 +69,12 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--sysconfdir=/var/ipfire/clamav \
-		$(CONFIGURE_FLAGS)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && \
+		./configure \
+			--prefix=/usr \
+			--enable-noexecstack
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	mkdir -p /usr/share/clamav/
-	chown clamav.clamav -R /usr/share/clamav/
-	cp -rf $(DIR_SRC)/config/clamav/* /var/ipfire/clamav/
-	rm -rfv /usr/share/clamav/*.cvd
-	mkdir -p /var/run/clamav
-	chown clamav:clamav /var/run/clamav
-
-	# Disable PaX mprotect for clamd and freshclam
-	paxctl -cm /usr/sbin/clamd
-	paxctl -cm /usr/bin/clamscan
-	paxctl -cm /usr/bin/freshclam
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
