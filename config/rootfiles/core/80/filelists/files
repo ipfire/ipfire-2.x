@@ -1,5 +1,7 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/dhcrelay
 usr/local/bin/setddns.pl
+usr/sbin/dhcrelay
 var/ipfire/general-functions.pl
 var/ipfire/langs
