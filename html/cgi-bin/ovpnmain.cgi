@@ -5041,7 +5041,7 @@ END
 	my $id = 0;
 	my $gif;
 	my $col1="";
-	foreach my $key (sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
+	foreach my $key (sort { ncmp ($confighash{$a}[3],$confighash{$b}[3]) } sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
 	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 	if ($id % 2) {
 		print "<tr>";
