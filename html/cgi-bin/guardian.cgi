@@ -404,11 +404,10 @@ END
 
 		print "</table>\n";
 
-	&Header::closebox();
-
 	# Section to add new elements to the ignore list.
 	print <<END;
-	<div class='post' align='center'>
+	<br>
+	<div align='center'>
 		<table width='60%'>
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<tr>
@@ -420,6 +419,8 @@ END
 		</table>
 	</div>
 END
+
+	&Header::closebox();
 }
 
 # Function to list currently bocked addresses from guardian and unblock them or add custom entries to block.
@@ -466,8 +467,6 @@ END
 END
 		}
 
-	close (FILE);
-
 	# If the loop only has been runs once the id still is "0", which means there are no
 	# additional entries (blocked hosts) in the iptables chain.
 	if ($id == 0) {
@@ -480,12 +479,11 @@ END
 
 	print "</table>\n";
 
-	&Header::closebox();
-
         # Section for a manual block of an IP-address.
 	print <<END;
-	<div class='post' align='center'>
-		<table width='60%'>
+	<br>
+	<div align='center'>
+		<table width='60%' border='0'>
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<tr>
 				<td width='30%'>$Lang::tr{'guardian block a host'}: </td>
@@ -497,6 +495,8 @@ END
 		</table>
 	</div>
 END
+
+	&Header::closebox();
 }
 
 &Header::closebigbox();
