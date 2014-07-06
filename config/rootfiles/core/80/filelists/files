@@ -3,7 +3,6 @@ etc/issue
 etc/rc.d/init.d/dhcrelay
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/routing.cgi
-usr/local/bin/setddns.pl
 usr/sbin/dhcrelay
 var/ipfire/general-functions.pl
 var/ipfire/langs
