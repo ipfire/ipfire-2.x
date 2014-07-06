@@ -62,7 +62,6 @@ $settings{'LOGIN'} = '';
 $settings{'PASSWORD'} = '';
 $settings{'ENABLED'} = '';
 $settings{'PROXY'} = '';
-$settings{'WILDCARDS'} = '';
 $settings{'SERVICE'} = '';
 
 $settings{'ACTION'} = '';
@@ -136,11 +135,6 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 
 				# Update ENABLED.
 				print FILE "$temp[0],$temp[1],$temp[2],$temp[3],$temp[4],$temp[5],$temp[6],$settings{'ENABLED'}\n";
-
-			} elsif ($settings{'WILDCARDS'} ne '') {
-
-				# Update WILDCARDS.
-				print FILE "$temp[0],$temp[1],$temp[2],$temp[3],$settings{'WILDCARDS'},$temp[5],$temp[6],$temp[7]\n";
 			}
 		} else {
 
@@ -169,8 +163,6 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 # Add new accounts, or edit existing ones.
 #
 if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::tr{'update'})) {
-
-	# XXX TODO: Check for provider which supports wildcards.
 
 	# Check if a hostname has been given.
 	if ($settings{'HOSTNAME'} eq '') {
@@ -356,7 +348,6 @@ $checked{'BEHINDROUTER'}{'RED_IP'} = '';
 $checked{'BEHINDROUTER'}{'FETCH_IP'} = '';
 $checked{'BEHINDROUTER'}{$settings{'BEHINDROUTER'}} = "checked='checked'";
 
-$checked{'WILDCARDS'}{'on'} = ($settings{'WILDCARDS'} eq '') ? '' : "checked='checked'";
 $checked{'ENABLED'}{'on'} = ($settings{'ENABLED'} eq '' ) ? '' : "checked='checked'";
 
 # Show box for errormessages..
@@ -453,8 +444,8 @@ print <<END
 	</tr>
 
 	<tr>
-		<td class='base'>$Lang::tr{'enable wildcards'}</td>
-		<td><input type='checkbox' name='WILDCARDS' value='on' $checked{'WILDCARDS'}{'on'} /></td>
+		<td class='base'></td>
+		<td></td>
 		<td class='base'>$Lang::tr{'username'}:</td>
 		<td><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
 	</tr>
@@ -495,10 +486,9 @@ END
 print <<END
 <table width='100%' class='tbl'>
 	<tr>
-		<th width='15%' align='center' class='boldbase'><b>$Lang::tr{'service'}</b></th>
-		<th width='25%' align='center' class='boldbase'><b>$Lang::tr{'hostname'}</b></th>
+		<th width='20%' align='center' class='boldbase'><b>$Lang::tr{'service'}</b></th>
+		<th width='30%' align='center' class='boldbase'><b>$Lang::tr{'hostname'}</b></th>
 		<th width='30%' align='center' class='boldbase'><b>$Lang::tr{'domain'}</b></th>
-		<th width='10%' align='center' class='boldbase'><b>$Lang::tr{'wildcards'}</b></th>
 		<th width='20%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></th>
 	</tr>
 END
@@ -513,26 +503,12 @@ close(FILE);
 my $ip = &General::GetDyndnsRedIP;
 my $id = 0;
 my $toggle_enabled;
-my $toggle_wildcards;
 
 foreach my $line (@current) {
 
 	# Remove newlines.
 	chomp(@current);
 	my @temp = split(/\,/,$line);
-
-	# Generate checkbox icons for wildcard.
-	my $gifwildcard='';
-	my $descwildcard='';
-	if ($temp[4] eq "on") {
-		$gifwildcard = 'on.gif';
-		$descwildcard = $Lang::tr{'click to disable'};
-		$toggle_wildcards = 'off';
-	} else {
-		$gifwildcard = 'off.gif';
-		$descwildcard = $Lang::tr{'click to enable'};
-		$toggle_wildcards = 'on';
-	}
 
 	# Generate value for enable/disable checkbox.
 	my $sync = "<font color='blue'>";
@@ -569,13 +545,6 @@ print <<END
 	<td align='center' $col><a href='http://$temp[0]'>$temp[0]</a></td>
 	<td align='center' $col>$sync$temp[1]</td>
 	<td align='center' $col>$sync$temp[2]</td>
-
-	<td align='center' $col><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<input type='hidden' name='ID' value='$id'>
-		<input type='hidden' name='WILDCARDS' value='$toggle_wildcards'>
-		<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
-		<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gifwildcard' alt='$descwildcard' title='$descwildcard' />
-	</form></td>
 
 	<td align='center' $col><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='hidden' name='ID' value='$id'>
