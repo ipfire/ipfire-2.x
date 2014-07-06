@@ -486,9 +486,8 @@ END
 print <<END
 <table width='100%' class='tbl'>
 	<tr>
-		<th width='20%' align='center' class='boldbase'><b>$Lang::tr{'service'}</b></th>
-		<th width='30%' align='center' class='boldbase'><b>$Lang::tr{'hostname'}</b></th>
-		<th width='30%' align='center' class='boldbase'><b>$Lang::tr{'domain'}</b></th>
+		<th width='30%' align='center' class='boldbase'><b>$Lang::tr{'service'}</b></th>
+		<th width='50%' align='center' class='boldbase'><b>$Lang::tr{'hostname'}</b></th>
 		<th width='20%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></th>
 	</tr>
 END
@@ -543,8 +542,7 @@ foreach my $line (@current) {
 print <<END
 <tr>
 	<td align='center' $col><a href='http://$temp[0]'>$temp[0]</a></td>
-	<td align='center' $col>$sync$temp[1]</td>
-	<td align='center' $col>$sync$temp[2]</td>
+	<td align='center' $col>$sync$temp[1].$sync$temp[2]</td>
 
 	<td align='center' $col><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='hidden' name='ID' value='$id'>
