@@ -475,6 +475,7 @@ buildipfire() {
   ipfiremake sqlite
   ipfiremake python
   ipfiremake fireinfo
+  ipfiremake ddns
   ipfiremake libnet
   ipfiremake libnl
   ipfiremake libidn
