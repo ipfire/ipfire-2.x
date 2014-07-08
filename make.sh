@@ -385,9 +385,6 @@ buildipfire() {
   export LOGFILE
   ipfiremake configroot
   ipfiremake backup
-  ipfiremake bind
-  ipfiremake dhcp
-  ipfiremake dhcpcd
   ipfiremake libusb
   ipfiremake libusbx
   ipfiremake libpcap
@@ -459,17 +456,20 @@ buildipfire() {
 		;;
   esac
   ipfiremake pkg-config
+  ipfiremake openssl
+  ipfiremake openssl-compat
+  ipfiremake libgpg-error
+  ipfiremake libgcrypt
+  ipfiremake libassuan
+  ipfiremake bind
+  ipfiremake dhcp
+  ipfiremake dhcpcd
   ipfiremake linux-atm
   ipfiremake cpio
   ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake pam
-  ipfiremake openssl
-  ipfiremake openssl-compat
-  ipfiremake libgpg-error
-  ipfiremake libgcrypt
-  ipfiremake libassuan
   ipfiremake curl
   ipfiremake tcl
   ipfiremake sqlite
@@ -508,6 +508,7 @@ buildipfire() {
   ipfiremake arping
   ipfiremake beep
   ipfiremake dvdrtools
+  ipfiremake nettle
   ipfiremake dnsmasq
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
