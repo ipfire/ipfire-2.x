@@ -31,6 +31,12 @@ do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Remove old strongswan files
+rm -f \
+	/etc/strongswan.d/charon/unity.conf \
+	/usr/lib/ipsec/plugins/libstrongswan-unity.so \
+	/usr/share/strongswan/templates/config/plugins/unity.conf
+
 # Stop services
 
 # Extract files

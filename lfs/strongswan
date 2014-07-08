@@ -97,7 +97,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-eap-peap \
 		--enable-eap-mschapv2 \
 		--enable-eap-identity \
-		--enable-unity \
 		$(CONFIGURE_OPTIONS)
 
 	cd $(DIR_APP) && make $(MAKETUNING)

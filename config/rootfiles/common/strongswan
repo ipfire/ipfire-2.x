@@ -54,7 +54,6 @@ etc/strongswan.d/charon/sha2.conf
 etc/strongswan.d/charon/socket-default.conf
 etc/strongswan.d/charon/sshkey.conf
 etc/strongswan.d/charon/stroke.conf
-etc/strongswan.d/charon/unity.conf
 etc/strongswan.d/charon/updown.conf
 etc/strongswan.d/charon/x509.conf
 etc/strongswan.d/charon/xauth-eap.conf
@@ -133,7 +132,6 @@ usr/lib/ipsec/plugins/libstrongswan-sha2.so
 usr/lib/ipsec/plugins/libstrongswan-socket-default.so
 usr/lib/ipsec/plugins/libstrongswan-sshkey.so
 usr/lib/ipsec/plugins/libstrongswan-stroke.so
-usr/lib/ipsec/plugins/libstrongswan-unity.so
 usr/lib/ipsec/plugins/libstrongswan-updown.so
 usr/lib/ipsec/plugins/libstrongswan-x509.so
 usr/lib/ipsec/plugins/libstrongswan-xauth-eap.so
@@ -213,7 +211,6 @@ usr/sbin/ipsec
 #usr/share/strongswan/templates/config/plugins/socket-default.conf
 #usr/share/strongswan/templates/config/plugins/sshkey.conf
 #usr/share/strongswan/templates/config/plugins/stroke.conf
-#usr/share/strongswan/templates/config/plugins/unity.conf
 #usr/share/strongswan/templates/config/plugins/updown.conf
 #usr/share/strongswan/templates/config/plugins/x509.conf
 #usr/share/strongswan/templates/config/plugins/xauth-eap.conf
