@@ -52,6 +52,19 @@ rm -f \
 touch /var/ipfire/ddns/ddns.conf
 chown nobody.nobody /var/ipfire/ddns/ddns.conf
 
+# Update crontab
+sed -i /var/spool/cron/root.orig -e "/setddns.pl/d"
+
+grep -q /usr/bin/ddns /var/spool/cron/root.orig || cat <<EOF >> /var/spool/cron/root.orig
+
+# Update dynamic DNS records every five minutes.
+# Force an update once a month
+*/5 * * * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all
+3 2 1 * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all --force
+EOF
+
+fcrontab -z &>/dev/null
+
 sync
 
 # This update need a reboot...
