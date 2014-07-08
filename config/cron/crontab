@@ -25,9 +25,9 @@ HOME=/
 17 5 * * * 	/etc/init.d/tmpfs backup >/dev/null
 
 # Update dynamic DNS records every five minutes.
-# Force an update once a week
+# Force an update once a month
 */5 * * * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all
-9 2 * * 0	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all --force
+3 2 1 * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all --force
 
 # Logwatch
 01 0 * * *	/usr/local/bin/logwatch > /var/log/logwatch/`date -I -d yesterday`; \
