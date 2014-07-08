@@ -60,12 +60,12 @@
 #usr/include/nettle/yarrow.h
 #usr/lib/libhogweed.a
 #usr/lib/libhogweed.so
-#usr/lib/libhogweed.so.3
-#usr/lib/libhogweed.so.3.0
+usr/lib/libhogweed.so.3
+usr/lib/libhogweed.so.3.0
 #usr/lib/libnettle.a
 #usr/lib/libnettle.so
-#usr/lib/libnettle.so.5
-#usr/lib/libnettle.so.5.0
+usr/lib/libnettle.so.5
+usr/lib/libnettle.so.5.0
 #usr/lib/pkgconfig/hogweed.pc
 #usr/lib/pkgconfig/nettle.pc
 #usr/share/info/nettle.info

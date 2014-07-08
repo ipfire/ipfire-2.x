@@ -37,6 +37,7 @@ done
 extract_files
 
 # Start services
+/etc/init.d/dnsmasq restart
 
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"

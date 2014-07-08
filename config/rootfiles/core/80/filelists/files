@@ -1,6 +1,7 @@
 etc/system-release
 etc/issue
 etc/rc.d/init.d/dhcrelay
+etc/rc.d/init.d/dnsmasq
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/routing.cgi
 usr/local/bin/setddns.pl
