@@ -46,6 +46,12 @@ rm -f \
 	/opt/pakfire/db/installed/meta-libgpg-error \
 	/opt/pakfire/db/rootfiles/libgpg-error
 
+# Generate ddns configuration file
+/srv/web/ipfire/cgi-bin/ddns.cgi
+
+touch /var/ipfire/ddns/ddns.conf
+chown nobody.nobody /var/ipfire/ddns/ddns.conf
+
 sync
 
 # This update need a reboot...
