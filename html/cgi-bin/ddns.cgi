@@ -659,12 +659,20 @@ sub GenerateDDNSConfigFile {
 		} elsif ($provider eq "freedns.afraid.org" && $password eq "") {
 			$use_token = 1;
 			$password = $username;
+
+		# Handle keys for nsupdate
+		} elsif (($provider eq "nsupdate") && $username && $password) {
+			print FILE "key = $username\n";
+			print FILE "secret = $password\n";
+
+			$username = "";
+			$password = "";
 		}
 
 		# Write auth details.
 		if ($use_token) {
 			print FILE "token = $password\n";
-		} else {
+		} elsif ($username && $password) {
 			print FILE "username = $username\n";
 			print FILE "password = $password\n";
 		}
