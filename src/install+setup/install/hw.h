@@ -1,8 +1,7 @@
-#!/bin/sh
-###############################################################################
+/*#############################################################################
 #                                                                             #
-# IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# IPFire - An Open Source Firewall Distribution                               #
+# Copyright (C) 2014 IPFire development team                                  #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -17,38 +16,26 @@
 # You should have received a copy of the GNU General Public License           #
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
-###############################################################################
+#############################################################################*/
 
-#lfs change the url while build!
-IPFireISO=ipfire.iso
-#
+#ifndef HEADER_HW_H
+#define HEADER_HW_H
 
-#Get user defined download from boot cmdline
-grep "netinstall=" /proc/cmdline > /dev/null && CMDLINE=1
-if ( [ "$CMDLINE" == "1" ]); then
-	read CMDLINE < /proc/cmdline
-	POS=${CMDLINE%%netinstall*}
-	POS=${#POS}
-	IPFireISO=`echo ${CMDLINE:POS} | cut -d"=" -f2 | cut -d" " -f1`
-fi
+#include <libudev.h>
 
-echo
-echo "Configure Network with DHCP..."
-dhcpcd
-echo
-echo "Sleep 15s..."
-sleep 15
-echo
-echo "Download with wget..."
-wget $IPFireISO -O /tmp/download.iso -t3 -U IPFire_NetInstall/2.x
-wget $IPFireISO.md5 -O /tmp/download.iso.md5 -t3 -U IPFire_NetInstall/2.x
-echo
-echo "Checking download..."
-md5_file=`md5sum /tmp/download.iso | cut -d" " -f1`
-md5_down=`cat /tmp/download.iso.md5 | cut -d" " -f1`
-if [ "$md5_file" == "$md5_down" ]; then
-	echo -n "/tmp/download.iso" > /tmp/source_device
-	exit 0
-fi
-echo "Error - SKIP"
-exit 10
+#define SOURCE_MOUNT_PATH "/cdrom"
+#define SOURCE_TEST_FILE  SOURCE_MOUNT_PATH "/" VERSION ".media"
+
+struct hw {
+	struct udev *udev;
+};
+
+struct hw* hw_init();
+void hw_free(struct hw* hw);
+
+int hw_mount(const char* source, const char* target, int flags);
+int hw_umount(const char* target);
+
+char* hw_find_source_medium(struct hw* hw);
+
+#endif /* HEADER_HW_H */

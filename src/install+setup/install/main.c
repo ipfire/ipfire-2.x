@@ -9,8 +9,16 @@
  * 
  */
 
-#include "install.h"
 #define _GNU_SOURCE
+
+#include <assert.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mount.h>
+
+#include "hw.h"
+#include "install.h"
  
 #define INST_FILECOUNT 21000
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
@@ -40,8 +48,8 @@ extern char *pl_tr[];
 extern char *ru_tr[];
 extern char *tr_tr[];
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
+	struct hw* hw = hw_init();
 
 	char discl_msg[40000] =	"Disclaimer\n";
 
@@ -49,7 +57,8 @@ int main(int argc, char *argv[])
 	char *shortlangnames[] = { "de", "en", "fr", "es", "nl", "pl", "ru", "tr", NULL };
 	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, nl_tr, pl_tr, ru_tr, tr_tr, NULL };
 	char hdletter;
-	char harddrive[30], sourcedrive[5];	/* Device holder. */
+	char harddrive[30];	/* Device holder. */
+	char* sourcedrive = NULL;
 	char harddrive_info[STRING_SIZE];	/* Additional infos about target */
 	struct devparams hdparams, cdromparams; /* Params for CDROM and HD */
 	int rc = 0;
@@ -70,7 +79,7 @@ int main(int argc, char *argv[])
 	FILE *handle, *cmdfile, *copying;
 	char line[STRING_SIZE];
 	char string[STRING_SIZE];
-	long memory = 0, disk = 0, free;
+	long memory = 0, disk = 0;
 	long system_partition, boot_partition, root_partition, swap_file;
 	int scsi_disk = 0;
 	char *yesnoharddisk[3];	//	char *yesnoharddisk = { "NO", "YES", NULL };
@@ -150,20 +159,31 @@ int main(int argc, char *argv[])
 		newtWinMessage(title, ctr[TR_OK], message);
 	}
 
-	mysystem("/bin/mountsource.sh");
+	/* Search for a source drive that holds the right
+	 * version of the image we are going to install. */
+	sourcedrive = hw_find_source_medium(hw);
 
-	if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
+	fprintf(flog, "Source drive: %s\n", sourcedrive);
+	if (!sourcedrive) {
 		newtWinMessage(title, ctr[TR_OK], ctr[TR_NO_LOCAL_SOURCE]);
-		runcommandwithstatus("/bin/downloadsource.sh",ctr[TR_DOWNLOADING_ISO]);
+		runcommandwithstatus("/bin/downloadsource.sh", ctr[TR_DOWNLOADING_ISO]);
 		if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
 			errorbox(ctr[TR_DOWNLOAD_ERROR]);
 			goto EXIT;
 		}
+
+		fgets(sourcedrive, 5, handle);
+		fclose(handle);
 	}
 
-	fgets(sourcedrive, 5, handle);
-	fprintf(flog, "Source drive: %s\n", sourcedrive);
-	fclose(handle);
+	assert(sourcedrive);
+
+	int r = hw_mount(sourcedrive, SOURCE_MOUNT_PATH, MS_RDONLY);
+	if (r) {
+		fprintf(flog, "Could not mount %s to %s\n", sourcedrive, SOURCE_MOUNT_PATH);
+		fprintf(flog, strerror(errno));
+		exit(1);
+	}
 
 	if (!unattended) {
 		// Read the license file.
@@ -628,6 +648,9 @@ EXIT:
 
 	if (!(allok))
 		system("/etc/halt");
+
+	// Free resources
+	free(sourcedrive);
 
 	return 0;
 }

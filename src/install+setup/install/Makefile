@@ -20,12 +20,12 @@
 
 
 CC      = gcc 
-CFLAGS  = -Os -Wall
+CFLAGS  = -O2 -Wall
 INCLUDE =
 
 LD      = gcc
 LDFLAGS =
-LIBS    = -lnewt -lslang -lpci
+LIBS    = -lnewt -lslang -lpci -ludev
 
 COMPILE = $(CC) -c $(INCLUDE) $(CFLAGS)
 
@@ -40,7 +40,7 @@ clean :
 
 ######
 
-OBJS=main.o config.o ../libsmooth/libsmooth.o unattended.o
+OBJS=main.o config.o ../libsmooth/libsmooth.o unattended.o hw.o
 
 install: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)
