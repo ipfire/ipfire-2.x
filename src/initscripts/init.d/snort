@@ -56,8 +56,12 @@ case "$1" in
 		if [ "$ENABLE_SNORT" == "on" ]; then
 			DEVICES+=`cat /var/ipfire/red/iface 2>/dev/null`
 			LOCAL_IP=`cat /var/ipfire/red/local-ipaddress 2>/dev/null`
-			if [ "$LOCAL_IP" ]; then
-				HOMENET+="$LOCAL_IP,"
+			if [ "$RED_TYPE" == "STATIC" ]; then
+				HOMENET+="$RED_NETADDRESS/$RED_NETMASK,"
+			else
+				if [ "$LOCAL_IP" ]; then
+					HOMENET+="$LOCAL_IP,"
+				fi
 			fi
 		fi
 		HOMENET+="127.0.0.1"
