@@ -675,6 +675,14 @@ sub GenerateDDNSConfigFile {
 			$password = "";
 		}
 
+		# Handle keys for nsupdate.info
+		} elsif (($provider eq "nsupdate.info") && $password) {
+			print FILE "secret = $password\n";
+
+			$username = "";
+			$password = "";
+		}
+
 		# Write auth details.
 		if ($use_token) {
 			print FILE "token = $password\n";
@@ -684,7 +692,7 @@ sub GenerateDDNSConfigFile {
 		}
 
 		# These providers need to be set to only use IPv4.
-		if ($provider ~~ ["freedns.afraid.org", "variomedia.de", "zoneedit.com"]) {
+		if ($provider ~~ ["freedns.afraid.org", "nsupdate.info", "variomedia.de", "zoneedit.com"]) {
 			print FILE "proto = ipv4\n";
 		}
 
