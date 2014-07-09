@@ -61,6 +61,7 @@ etc/strongswan.d/charon/xauth-generic.conf
 etc/strongswan.d/charon/xauth-noauth.conf
 etc/strongswan.d/charon/xcbc.conf
 etc/strongswan.d/pki.conf
+etc/strongswan.d/scepclient.conf
 etc/strongswan.d/starter.conf
 etc/strongswan.d/tools.conf
 usr/bin/pki
@@ -222,5 +223,6 @@ usr/sbin/ipsec
 #usr/share/strongswan/templates/config/strongswan.d/charon-logging.conf
 #usr/share/strongswan/templates/config/strongswan.d/charon.conf
 #usr/share/strongswan/templates/config/strongswan.d/pki.conf
+#usr/share/strongswan/templates/config/strongswan.d/scepclient.conf
 #usr/share/strongswan/templates/config/strongswan.d/starter.conf
 #usr/share/strongswan/templates/config/strongswan.d/tools.conf
