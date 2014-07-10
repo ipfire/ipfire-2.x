@@ -3169,9 +3169,35 @@ END
 		print FILE "\n";
 	}
 
-	if ($proxysettings{'CACHE_SIZE'} ne '0')
+	if ($proxysettings{'CACHE_SIZE'} > 0) {
+		print FILE <<END
+maximum_object_size $proxysettings{'MAX_SIZE'} KB
+minimum_object_size $proxysettings{'MIN_SIZE'} KB
+
+cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256
+END
+		;
+	} else {
+		print FILE "cache deny all\n\n";
+	}
+
+	print FILE <<END
+request_body_max_size $proxysettings{'MAX_OUTGOING_SIZE'} KB
+END
+	;
+
+	if ($proxysettings{'MAX_INCOMING_SIZE'} > 0) {
+		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size none IPFire_unrestricted_ips\n"; }
+		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size none IPFire_unrestricted_mac\n"; }
+		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
+		{
+			if (!-z $extgrp) { print FILE "reply_body_max_size none for_extended_users\n"; }
+		}
+	}
+
+	if ( $proxysettings{'MAX_INCOMING_SIZE'} != '0' )
 	{
-		print FILE "cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256\n\n";
+		print FILE "reply_body_max_size $proxysettings{'MAX_INCOMING_SIZE'} KB all\n\n";
 	}
 
 	if ($proxysettings{'LOGGING'} eq 'on')
@@ -3949,34 +3975,6 @@ END
 		}
 		print FILE "http_reply_access deny  blocked_mimetypes\n";
 		print FILE "http_reply_access allow all\n\n";
-	}
-
-	if ($proxysettings{'CACHE_SIZE'} > 0)
-	{
-		print FILE <<END
-maximum_object_size $proxysettings{'MAX_SIZE'} KB
-minimum_object_size $proxysettings{'MIN_SIZE'} KB
-
-END
-		;
-	} else { print FILE "cache deny all\n\n";	}
-
-	print FILE <<END
-request_body_max_size $proxysettings{'MAX_OUTGOING_SIZE'} KB
-END
-	;
-	if ($proxysettings{'MAX_INCOMING_SIZE'} > 0) {
-		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size none IPFire_unrestricted_ips\n"; }
-		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size none IPFire_unrestricted_mac\n"; }
-		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
-		{
-			if (!-z $extgrp) { print FILE "reply_body_max_size none for_extended_users\n"; }
-		}
-	}
-	
-	if ( $proxysettings{'MAX_INCOMING_SIZE'} != '0' )
-	{
-		print FILE "reply_body_max_size $proxysettings{'MAX_INCOMING_SIZE'} KB all\n\n";
 	}
 
 	print FILE "visible_hostname";
