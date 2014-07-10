@@ -450,8 +450,8 @@ print <<END
 	</tr>
 
 	<tr>
-		<td class='base'></td>
-		<td></td>
+		<td class='base'>$Lang::tr{'enabled'}</td>
+		<td><input type='checkbox' name='ENABLED' value='on' $checked{'ENABLED'}{'on'} /></td>
 		<td class='base'>$Lang::tr{'username'}</td>
 		<td><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
 	</tr>
@@ -461,13 +461,6 @@ print <<END
 		<td></td>
 		<td class='base'>$Lang::tr{'password'}</td>
 		<td><input type='password' name='PASSWORD' value='$settings{'PASSWORD'}' /></td>
-	</tr>
-
-	<tr>
-		<td class='base'>$Lang::tr{'enabled'}</td>
-		<td><input type='checkbox' name='ENABLED' value='on' $checked{'ENABLED'}{'on'} /></td>
-		<td class='base'></td>
-		<td></td>
 	</tr>
 </table>
 <br>
