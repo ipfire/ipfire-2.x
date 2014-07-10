@@ -636,7 +636,7 @@ sub GenerateDDNSConfigFile {
 		my ($provider, $hostname, $domain, $proxy, $wildcards, $username, $password, $enabled) = @settings;
 
 		# Skip entries if they are not (longer) supported.
-		next if (!&General::is_part_of("$provider", @providers));
+		next unless ($provider ~~ @providers);
 
 		# Skip disabled entries.
 		next if ($enabled eq "off");
