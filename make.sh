@@ -738,6 +738,7 @@ buildipfire() {
   ipfiremake nut
   ipfiremake watchdog
   ipfiremake libpri
+  ipfiremake libsrtp
   ipfiremake asterisk
   ipfiremake lcr
   ipfiremake usb_modeswitch

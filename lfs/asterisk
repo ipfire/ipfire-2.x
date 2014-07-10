@@ -37,19 +37,16 @@ DEPS       = "sqlite"
 ###############################################################################
 
 objects = $(DL_FILE) \
-	libsrtp-1.4.5-99426a54.tar.gz \
 	asterisk-1.4-de-prompts.tar.gz \
 	asterisk-extra-sounds-en-gsm-1.4.14.tar.gz \
 	asterisk-moh-opsound-gsm-2.03.tar.gz 
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-libsrtp-1.4.5-99426a54.tar.gz = $(URL_IPFIRE)/libsrtp-1.4.5-99426a54.tar.gz
 asterisk-extra-sounds-en-gsm-1.4.14.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-gsm-1.4.14.tar.gz
 asterisk-moh-opsound-gsm-2.03.tar.gz = $(URL_IPFIRE)/asterisk-moh-opsound-gsm-2.03.tar.gz
 asterisk-1.4-de-prompts.tar.gz = $(URL_IPFIRE)/asterisk-1.4-de-prompts.tar.gz
 
 $(DL_FILE)_MD5 = 47384cd1ff48b306dca6e03027b023bd
-libsrtp-1.4.5-99426a54.tar.gz_MD5 = 05bfbe63a2a27343889c2436c836110a
 asterisk-extra-sounds-en-gsm-1.4.14.tar.gz_MD5 = ffc2e0ffd783c03fef5b75277dba0896
 asterisk-moh-opsound-gsm-2.03.tar.gz_MD5 = 09066f55f1358f298bc1a6e4678a3ddf
 asterisk-1.4-de-prompts.tar.gz_MD5 = 626a2b95071a5505851e43874dfbfd5c
@@ -84,10 +81,6 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-
-	# build srtp
-	@rm -rf $(DIR_SRC)/srtp && cd $(DIR_SRC) && tar zxf $(DIR_DL)/libsrtp-1.4.5-99426a54.tar.gz
-	cd $(DIR_SRC)/libsrtp-1.4.5 && ./configure --prefix=/usr && make uninstall && make && make install
 
 	# remove old directories and extract asterisk
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)

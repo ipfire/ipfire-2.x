@@ -1,4 +1,4 @@
-#usr/lib/libsrtp.a
+usr/lib/libsrtp.so
 etc/asterisk
 etc/logrotate.d/asterisk
 etc/rc.d/rc0.d/K30asterisk
