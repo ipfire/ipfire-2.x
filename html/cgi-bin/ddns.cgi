@@ -452,7 +452,7 @@ print <<END
 	<tr>
 		<td class='base'></td>
 		<td></td>
-		<td class='base'>$Lang::tr{'username'}:</td>
+		<td class='base'>$Lang::tr{'username'}</td>
 		<td><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
 	</tr>
 
