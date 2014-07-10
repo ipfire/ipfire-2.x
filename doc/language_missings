@@ -95,6 +95,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -126,6 +127,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -324,6 +326,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -467,6 +470,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < upload new ruleset
 < uptime
@@ -617,6 +621,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -648,6 +653,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -846,6 +852,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -1005,6 +1012,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1131,6 +1139,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -1154,6 +1163,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -1352,6 +1362,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -1495,6 +1506,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1624,6 +1636,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -1648,6 +1661,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < frequency
@@ -1849,6 +1863,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -1990,6 +2005,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
