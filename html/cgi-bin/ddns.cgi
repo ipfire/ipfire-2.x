@@ -480,9 +480,20 @@ END
 
 ##
 # Third section, display all created ddns hosts.
+# Re-open file to get changes.
+open(FILE, $datafile) or die "Unable to open $datafile.";
+@current = <FILE>;
+close(FILE);
 
-&Header::openbox('100%', 'left', $Lang::tr{'current hosts'});
-print <<END
+# Get IP address of the red interface.
+my $ip = &General::GetDyndnsRedIP();
+my $id = 0;
+my $toggle_enabled;
+
+if (@current) {
+	&Header::openbox('100%', 'left', $Lang::tr{'current hosts'});
+
+	print <<END;
 <table width='100%' class='tbl'>
 	<tr>
 		<th width='30%' align='center' class='boldbase'><b>$Lang::tr{'service'}</b></th>
@@ -490,55 +501,43 @@ print <<END
 		<th width='20%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></th>
 	</tr>
 END
-;
 
-# Re-open file to get changes.
-open(FILE, $datafile) or die "Unable to open $datafile.";
-@current = <FILE>;
-close(FILE);
+	foreach my $line (@current) {
+		# Remove newlines.
+		chomp(@current);
+		my @temp = split(/\,/,$line);
 
-# Get IP address of the red interface.
-my $ip = &General::GetDyndnsRedIP;
-my $id = 0;
-my $toggle_enabled;
+		# Generate value for enable/disable checkbox.
+		my $sync = "<font color='blue'>";
+		my $gif = '';
+		my $gdesc = '';
 
-foreach my $line (@current) {
+		if ($temp[7] eq "on") {
+			$gif = 'on.gif';
+			$gdesc = $Lang::tr{'click to disable'};
+			$sync = (&General::DyndnsServiceSync ($ip,$temp[1], $temp[2]) ? "<font color='green'>": "<font color='red'>") ;
+			$toggle_enabled = 'off';
+		} else {
+			$gif = 'off.gif';
+			$gdesc = $Lang::tr{'click to enable'};
+			$toggle_enabled = 'on';
+		}
 
-	# Remove newlines.
-	chomp(@current);
-	my @temp = split(/\,/,$line);
+		# Background color.
+		my $col="";
 
-	# Generate value for enable/disable checkbox.
-	my $sync = "<font color='blue'>";
-	my $gif = '';
-	my $gdesc = '';
+		if ($settings{'ID'} eq $id) {
+			$col="bgcolor='${Header::colouryellow}'";
+		} elsif (!($temp[0] ~~ @providers)) {
+			$col="bgcolor='#FF4D4D'";
+		} elsif ($id % 2) {
+			$col="bgcolor='$color{'color20'}'";
+		} else {
+			$col="bgcolor='$color{'color22'}'";
+		}
 
-	if ($temp[7] eq "on") {
-		$gif = 'on.gif';
-		$gdesc = $Lang::tr{'click to disable'};
-		$sync = (&General::DyndnsServiceSync ($ip,$temp[1], $temp[2]) ? "<font color='green'>": "<font color='red'>") ;
-		$toggle_enabled = 'off';
-	} else {
-		$gif = 'off.gif';
-		$gdesc = $Lang::tr{'click to enable'};
-		$toggle_enabled = 'on';
-	}
-
-	# Background color.
-	my $col="";
-
-	if ($settings{'ID'} eq $id) {
-		$col="bgcolor='${Header::colouryellow}'";
-	} elsif (!&General::is_part_of("$temp[0]", @providers)) {
-		$col="bgcolor='#FF4D4D'";
-	} elsif ($id % 2) {
-		$col="bgcolor='$color{'color20'}'";
-	} else {
-		$col="bgcolor='$color{'color22'}'";
-	}
-
-# The following HTML Code still is part of the loop.
-print <<END
+		# The following HTML Code still is part of the loop.
+		print <<END;
 <tr>
 	<td align='center' $col><a href='http://$temp[0]'>$temp[0]</a></td>
 	<td align='center' $col>$sync$temp[1].$sync$temp[2]</td>
@@ -563,14 +562,11 @@ print <<END
 	</form></td>
 </tr>
 END
-;
-    $id++;
-}
-print "</table>";
+ 	   	$id++;
+	}
 
-# If table contains entries, print 'Key to action icons'
-if ($id) {
-print <<END
+	print <<END;
+</table>
 <table width='100%'>
 	<tr>
 		<td class='boldbase'>&nbsp;<b>$Lang::tr{'legend'}:&nbsp;</b></td>
@@ -591,10 +587,10 @@ print <<END
 	</tr>
 </table>
 END
-;
+
+	&Header::closebox();
 }
 
-&Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
 
