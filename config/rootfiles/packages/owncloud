@@ -7411,6 +7411,8 @@ srv/web/owncloud
 #srv/web/owncloud/core/doc/admin/_images/custom_mount_config_gui-3.png
 #srv/web/owncloud/core/doc/admin/_images/custom_mount_config_gui-4.png
 #srv/web/owncloud/core/doc/admin/_images/edit_encrypted_file.png
+#srv/web/owncloud/core/doc/admin/_images/install-wizard-advanced.png
+#srv/web/owncloud/core/doc/admin/_images/install-wizard.png
 #srv/web/owncloud/core/doc/admin/_images/ldap-advanced-1-connection.png
 #srv/web/owncloud/core/doc/admin/_images/ldap-advanced-2-directory.png
 #srv/web/owncloud/core/doc/admin/_images/ldap-advanced-3-attributes.png
@@ -7508,6 +7510,7 @@ srv/web/owncloud
 #srv/web/owncloud/core/doc/admin/_sources/installation/installation_source.txt
 #srv/web/owncloud/core/doc/admin/_sources/installation/installation_ucs.txt
 #srv/web/owncloud/core/doc/admin/_sources/installation/installation_windows.txt
+#srv/web/owncloud/core/doc/admin/_sources/installation/installation_wizard.txt
 #srv/web/owncloud/core/doc/admin/_sources/issues
 #srv/web/owncloud/core/doc/admin/_sources/issues/index.txt
 #srv/web/owncloud/core/doc/admin/_sources/maintenance
@@ -7632,6 +7635,7 @@ srv/web/owncloud
 #srv/web/owncloud/core/doc/admin/installation/installation_source.html
 #srv/web/owncloud/core/doc/admin/installation/installation_ucs.html
 #srv/web/owncloud/core/doc/admin/installation/installation_windows.html
+#srv/web/owncloud/core/doc/admin/installation/installation_wizard.html
 #srv/web/owncloud/core/doc/admin/issues
 #srv/web/owncloud/core/doc/admin/issues/index.html
 #srv/web/owncloud/core/doc/admin/maintenance
@@ -9530,6 +9534,7 @@ srv/web/owncloud
 #srv/web/owncloud/lib/private/connector/sabre/directory.php
 #srv/web/owncloud/lib/private/connector/sabre/exception
 #srv/web/owncloud/lib/private/connector/sabre/exception/entitytoolarge.php
+#srv/web/owncloud/lib/private/connector/sabre/exception/filelocked.php
 #srv/web/owncloud/lib/private/connector/sabre/exception/unsupportedmediatype.php
 #srv/web/owncloud/lib/private/connector/sabre/exceptionloggerplugin.php
 #srv/web/owncloud/lib/private/connector/sabre/file.php
@@ -9569,6 +9574,7 @@ srv/web/owncloud
 #srv/web/owncloud/lib/private/files/cache
 #srv/web/owncloud/lib/private/files/cache/backgroundwatcher.php
 #srv/web/owncloud/lib/private/files/cache/cache.php
+#srv/web/owncloud/lib/private/files/cache/changepropagator.php
 #srv/web/owncloud/lib/private/files/cache/homecache.php
 #srv/web/owncloud/lib/private/files/cache/legacy.php
 #srv/web/owncloud/lib/private/files/cache/permissions.php
@@ -9787,6 +9793,7 @@ srv/web/owncloud
 #srv/web/owncloud/lib/public/files/folder.php
 #srv/web/owncloud/lib/public/files/invalidcontentexception.php
 #srv/web/owncloud/lib/public/files/invalidpathexception.php
+#srv/web/owncloud/lib/public/files/locknotacquiredexception.php
 #srv/web/owncloud/lib/public/files/node.php
 #srv/web/owncloud/lib/public/files/notenoughspaceexception.php
 #srv/web/owncloud/lib/public/files/notfoundexception.php
