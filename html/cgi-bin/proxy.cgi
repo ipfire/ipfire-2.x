@@ -3396,19 +3396,25 @@ END
 	}
 
 open (PORTS,"$acl_ports_ssl");
-@temp = <PORTS>;
+my @ssl_ports = <PORTS>;
 close PORTS;
-if (@temp)
-{
-	foreach (@temp) { print FILE "acl SSL_ports port $_"; }
+
+if (@ssl_ports) {
+	foreach (@ssl_ports) {
+		print FILE "acl SSL_ports port $_";
+	}
 }
+
 open (PORTS,"$acl_ports_safe");
-@temp = <PORTS>;
+my @safe_ports = <PORTS>;
 close PORTS;
-if (@temp)
-{
-	foreach (@temp) { print FILE "acl Safe_ports port $_"; }
+
+if (@safe_ports) {
+	foreach (@safe_ports) {
+		print FILE "acl Safe_ports port $_";
+	}
 }
+
 	print FILE <<END
 
 acl IPFire_http  port $http_port
@@ -3498,7 +3504,7 @@ END
 		print FILE "http_access deny purge\n";
 		print FILE "url_rewrite_access deny localhost\n";
 	}
-	print FILE <<END
+	print FILE <<END;
 
 #Access to squid:
 #local machine, no restriction
@@ -3509,11 +3515,15 @@ http_access allow         IPFire_ips IPFire_networks IPFire_http
 http_access allow CONNECT IPFire_ips IPFire_networks IPFire_https
 
 #Deny not web services
-http_access deny          !Safe_ports
-http_access deny  CONNECT !SSL_ports
-
 END
-	;
+
+if (@safe_ports) {
+	print FILE "http_access deny          !Safe_ports\n";
+}
+
+if (@ssl_ports) {
+	print FILE "http_access deny  CONNECT !SSL_ports\n";
+}
 
 if ($proxysettings{'AUTH_METHOD'} eq 'ident')
 {

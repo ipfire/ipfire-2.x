@@ -53,6 +53,9 @@ rm -f \
 	/opt/pakfire/db/installed/meta-libgpg-error \
 	/opt/pakfire/db/rootfiles/libgpg-error
 
+# Regenerate squid configuration file
+/srv/web/ipfire/cgi-bin/proxy.cgi
+
 # Generate ddns configuration file
 /srv/web/ipfire/cgi-bin/ddns.cgi
 
