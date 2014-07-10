@@ -475,7 +475,6 @@ buildipfire() {
   ipfiremake sqlite
   ipfiremake python
   ipfiremake fireinfo
-  ipfiremake ddns
   ipfiremake libnet
   ipfiremake libnl
   ipfiremake libidn
@@ -764,6 +763,7 @@ buildipfire() {
   ipfiremake python-progressbar
   ipfiremake python-xattr
   ipfiremake intltool
+  ipfiremake ddns
   ipfiremake transmission
   ipfiremake dpfhack
   ipfiremake lcd4linux
