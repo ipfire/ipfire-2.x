@@ -673,7 +673,6 @@ sub GenerateDDNSConfigFile {
 
 			$username = "";
 			$password = "";
-		}
 
 		# Handle keys for nsupdate.info
 		} elsif (($provider eq "nsupdate.info") && $password) {
