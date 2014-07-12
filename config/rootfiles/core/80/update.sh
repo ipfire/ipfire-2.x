@@ -31,19 +31,24 @@ do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Stop services
+/etc/init.d/ipsec stop
+
 # Remove old strongswan files
 rm -f \
 	/etc/strongswan.d/charon/unity.conf \
 	/usr/lib/ipsec/plugins/libstrongswan-unity.so \
 	/usr/share/strongswan/templates/config/plugins/unity.conf
 
-# Stop services
-
 # Extract files
 extract_files
 
 # Start services
 /etc/init.d/dnsmasq restart
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	/etc/init.d/ipsec start
+fi
+
 
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
