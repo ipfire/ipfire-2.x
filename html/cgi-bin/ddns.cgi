@@ -47,7 +47,7 @@ my $datafile = "${General::swroot}/ddns/config";
 # Dynamic ddns programm call.
 my @ddnsprog = ("/usr/bin/ddns", "--config",
 		"/var/ipfire/ddns/ddns.conf",
-		"update-all", "--force" );
+		"update-all");
 
 my %settings=();
 my $errormessage = '';
