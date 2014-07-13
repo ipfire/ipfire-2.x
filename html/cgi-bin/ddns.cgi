@@ -29,12 +29,6 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-# Hook to regenerate the configuration files, if cgi got called from command line.
-if ($ENV{"REMOTE_ADDR"} eq "") {
-	&GenerateDDNSConfigFile();
-	exit(0);
-}
-
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::table2colour}, ${Header::colouryellow} );
 undef (@dummy);
@@ -72,6 +66,15 @@ $settings{'SERVICE'} = '';
 
 $settings{'ACTION'} = '';
 
+# Get supported ddns providers.
+my @providers = &GetProviders();
+
+# Hook to regenerate the configuration files, if cgi got called from command line.
+if ($ENV{"REMOTE_ADDR"} eq "") {
+	&GenerateDDNSConfigFile();
+	exit(0);
+}
+
 &Header::showhttpheaders();
 
 #Get GUI values
@@ -81,9 +84,6 @@ $settings{'ACTION'} = '';
 open(FILE, "$datafile") or die "Unable to open $datafile.";
 my @current = <FILE>;
 close (FILE);
-
-# Get supported ddns providers.
-my @providers = &GetProviders();
 
 #
 # Save General Settings.
