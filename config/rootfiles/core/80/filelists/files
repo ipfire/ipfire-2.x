@@ -3,6 +3,8 @@ etc/issue
 etc/logrotate.conf
 etc/rc.d/init.d/dhcrelay
 etc/rc.d/init.d/dnsmasq
+etc/rc.d/init.d/networking/red.up/30-ddns
+srv/web/ipfire/cgi-bin/ddns.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllogcountry.dat
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/routing.cgi

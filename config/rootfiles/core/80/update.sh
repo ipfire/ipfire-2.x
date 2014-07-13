@@ -40,6 +40,8 @@ rm -f \
 	/usr/lib/ipsec/plugins/libstrongswan-unity.so \
 	/usr/share/strongswan/templates/config/plugins/unity.conf
 
+rm -f /usr/local/bin/setddns.pl
+
 # Extract files
 extract_files
 
