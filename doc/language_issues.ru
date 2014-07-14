@@ -668,6 +668,10 @@ WARNING: untranslated string: dnsforward edit an entry
 WARNING: untranslated string: dnsforward entries
 WARNING: untranslated string: dnsforward forward_server
 WARNING: untranslated string: dnsforward zone
+WARNING: untranslated string: dnssec aware
+WARNING: untranslated string: dnssec information
+WARNING: untranslated string: dnssec not supported
+WARNING: untranslated string: dnssec validating
 WARNING: untranslated string: downlink
 WARNING: untranslated string: download tls-auth key
 WARNING: untranslated string: dpd delay
@@ -870,6 +874,7 @@ WARNING: untranslated string: modem sim information
 WARNING: untranslated string: modem status
 WARNING: untranslated string: monitor interface
 WARNING: untranslated string: most preferred
+WARNING: untranslated string: nameserver
 WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: notice

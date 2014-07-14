@@ -94,6 +94,10 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
 < downlink
 < download dh parameter
@@ -351,6 +355,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -620,6 +625,10 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
 < downlink
 < download dh parameter
@@ -877,6 +886,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1138,6 +1148,10 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
 < downlink
 < download dh parameter
@@ -1387,6 +1401,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1635,6 +1650,10 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
 < downlink
 < download dh parameter
@@ -1889,6 +1908,7 @@
 < month-graph
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
