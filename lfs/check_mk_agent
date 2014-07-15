@@ -32,7 +32,7 @@ DL_FROM    = http://mathias-kettner.de/download
 DIR_APP    = $(DIR_SRC)/check_mk-${VER}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = check_mk_agent
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
