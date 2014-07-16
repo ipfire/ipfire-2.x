@@ -12,4 +12,5 @@ srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/routing.cgi
 usr/sbin/dhcrelay
 var/ipfire/general-functions.pl
+var/ipfire/header.pl
 var/ipfire/langs
