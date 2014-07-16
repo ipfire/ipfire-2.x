@@ -111,22 +111,26 @@ END
 		my $status = &check_dnssec($nameserver, "ping.ipfire.org");
 
 		my $colour = "";
+		my $bgcolour = "";
 		my $message = "";
 
 		# DNSSEC Not supported
 		if ($status == 0) {
 			$message = $Lang::tr{'dnssec not supported'};
-			$colour = ${Header::colourred};
+			$colour = "white";
+			$bgcolour = ${Header::colourred};
 
 		# DNSSEC Aware
 		} elsif ($status == 1) {
 			$message = $Lang::tr{'dnssec aware'};
-			$colour = ${Header::colouryellow};
+			$colour = "black";
+			$bgcolour = ${Header::colouryellow};
 
 		# DNSSEC Validating
 		} elsif ($status == 2) {
 			$message = $Lang::tr{'dnssec validating'};
-			$colour = ${Header::colourgreen};
+			$colour = "white";
+			$bgcolour = ${Header::colourgreen};
 
 		# Error
 		} else {
@@ -138,8 +142,8 @@ END
 		print <<END;
 			<tr bgcolor="$table_colour">
 				<td>$nameserver</td>
-				<td bgcolor="$colour" align="center">
-					<font color='white'><strong>$message</strong></font>
+				<td bgcolor="$bgcolour" align="center">
+					<font color="$colour"><strong>$message</strong></font>
 				</td>
 			</tr>
 END
