@@ -8,6 +8,7 @@ srv/web/ipfire/cgi-bin/ddns.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllogcountry.dat
 srv/web/ipfire/cgi-bin/netexternal.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/routing.cgi
 usr/sbin/dhcrelay
 var/ipfire/general-functions.pl
