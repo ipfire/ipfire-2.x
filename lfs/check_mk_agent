@@ -28,7 +28,7 @@ VER        = 1.2.4p5
 
 THISAPP    = check_mk_agent-$(VER)
 DL_FILE    = check_mk-${VER}.tar.gz
-DL_FROM    = http://mathias-kettner.de/download
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/check_mk-${VER}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = check_mk_agent
