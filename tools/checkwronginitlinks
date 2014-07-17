@@ -25,3 +25,10 @@ if [ "${?}" == "0" ]; then
 	grep -r "^etc/init.d//*" ./config/rootfiles/
 	echo "Change this to 'etc/rc.d/init.d/...' !"
 fi
+
+grep -r "^var/run//*" ./config/rootfiles/ >/dev/null 2>&1
+if [ "${?}" == "0" ]; then
+	echo "Error! 'var/run/...' in rootfiles files found!"
+	grep -r "^var/run//*" ./config/rootfiles/
+	echo "Comment this and create it at initskript if needed !"
+fi
