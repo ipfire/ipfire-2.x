@@ -61,13 +61,19 @@ rm -f \
 	/opt/pakfire/db/rootfiles/libgpg-error
 
 # Regenerate squid configuration file
-/srv/web/ipfire/cgi-bin/proxy.cgi
+sudo -u nobody /srv/web/ipfire/cgi-bin/proxy.cgi
+
+# Fix broken proxy configuration permissions
+chown -R nobody.nobody \
+	/var/ipfire/proxy/advanced \
+	/var/ipfire/proxy/acl-1.4 \
+	/var/ipfire/proxy/enable \
+	/var/ipfire/proxy/settings \
+	/var/ipfire/proxy/squid.conf \
+	/var/ipfire/proxy/transparent
 
 # Generate ddns configuration file
-/srv/web/ipfire/cgi-bin/ddns.cgi
-
-touch /var/ipfire/ddns/ddns.conf
-chown nobody.nobody /var/ipfire/ddns/ddns.conf
+sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
 
 # Update crontab
 sed -i /var/spool/cron/root.orig -e "/setddns.pl/d"
