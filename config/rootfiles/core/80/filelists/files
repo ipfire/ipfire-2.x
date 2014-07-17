@@ -1,6 +1,7 @@
 etc/system-release
 etc/issue
 etc/logrotate.conf
+etc/rc.d/init.d/cleanfs
 etc/rc.d/init.d/dhcrelay
 etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/networking/red.up/30-ddns
