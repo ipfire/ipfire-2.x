@@ -50,4 +50,4 @@ usr/share/dbus-1/services
 #usr/share/man/man1/dbus-send.1
 #usr/share/man/man1/dbus-uuidgen.1
 var/lib/dbus
-var/run/dbus
+#var/run/dbus

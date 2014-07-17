@@ -2706,7 +2706,7 @@ var/lib/asterisk/static-http/prototype.js
 var/log/asterisk/cdr-csv
 var/log/asterisk/cdr-custom
 var/log/asterisk/cel-custom
-var/run/asterisk
+#var/run/asterisk
 #var/spool/asterisk
 var/spool/asterisk/dictate
 var/spool/asterisk/meetme
