@@ -291,23 +291,27 @@ sub buildrules {
 
 			foreach my $src (@sources) {
 				# Skip invalid source.
-				next unless ($src);
+				next unless (@$src[0]);
 
 				# Sanitize source.
-				my $source = $src;
+				my $source = @$src[0];
 				if ($source ~~ @ANY_ADDRESSES) {
 					$source = "";
 				}
 
+				my $source_intf = @$src[1];
+
 				foreach my $dst (@destinations) {
 					# Skip invalid rules.
-					next if (!$dst || ($dst eq "none"));
+					next if (!@$dst[0] || (@$dst[0] eq "none"));
 
 					# Sanitize destination.
-					my $destination = $dst;
+					my $destination = @$dst[0];
 					if ($destination ~~ @ANY_ADDRESSES) {
 						$destination = "";
 					}
+
+					my $destination_intf = @$dst[1];
 
 					# Array with iptables arguments.
 					my @options = ();
@@ -325,10 +329,18 @@ sub buildrules {
 						push(@source_options, ("-s", $source));
 					}
 
+					if ($source_intf) {
+						push(@source_options, ("-i", $source_intf));
+					}
+
 					# Prepare destination options.
 					my @destination_options = ();
 					if ($destination) {
 						push(@destination_options, ("-d", $destination));
+					}
+
+					if ($destination_intf) {
+						push(@destination_options, ("-o", $destination_intf));
 					}
 
 					# Add time constraint options.
@@ -364,7 +376,7 @@ sub buildrules {
 							# Make port-forwardings useable from the internal networks.
 							my @internal_addresses = &fwlib::get_internal_firewall_ip_addresses(1);
 							unless ($nat_address ~~ @internal_addresses) {
-								&add_dnat_mangle_rules($nat_address, @nat_options);
+								&add_dnat_mangle_rules($nat_address, $source_intf, @nat_options);
 							}
 
 							push(@nat_options, @source_options);
@@ -681,6 +693,7 @@ sub get_dnat_target_port {
 
 sub add_dnat_mangle_rules {
 	my $nat_address = shift;
+	my $interface = shift;
 	my @options = @_;
 
 	my $mark = 0;
@@ -690,6 +703,8 @@ sub add_dnat_mangle_rules {
 		# Skip rule if not all required information exists.
 		next unless (exists $defaultNetworks{$zone . "_NETADDRESS"});
 		next unless (exists $defaultNetworks{$zone . "_NETMASK"});
+
+		next if ($interface && $interface ne $defaultNetworks{$zone . "_DEV"});
 
 		my @mangle_options = @options;
 
