@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2014   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -75,6 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && $(CONFIGURE_ARGS) ./configure --prefix=/usr \
+		--build=$(BUILDTARGET) \
 		--enable-cxx --enable-mpbsd --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
