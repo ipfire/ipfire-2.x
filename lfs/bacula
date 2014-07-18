@@ -80,6 +80,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --enable-client-only
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	mv /sbin/bacula /etc/init.d/bacula
+	mv -f /sbin/bacula /etc/init.d/bacula
+	mv -f /opt/bacula /var/
+	sed -i -e 's#/opt/bacula/working#/var/bacula/working#' /etc/bacula/bacula-fd.conf
+	rm -f /root/.rnd
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -15,9 +15,8 @@ etc/bacula/bacula-fd.conf
 #etc/bacula/mtx-changer
 #etc/bacula/mtx-changer.conf
 etc/rc.d/init.d/bacula
-#opt/bacula
-opt/bacula/working
-#root/.rnd
+#var/bacula
+var/bacula/working
 sbin/bacula-fd
 #sbin/bconsole
 #sbin/btraceback
