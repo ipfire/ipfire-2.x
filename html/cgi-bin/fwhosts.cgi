@@ -292,25 +292,25 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 		}
 		if($fwhostsettings{'error'} ne 'on'){
 			#check if we use one of ipfire's networks (green,orange,blue)
-			if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &General::IpInSubnet($fwhostsettings{'IP'},$ownnet{'GREEN_NETADDRESS'},$ownnet{'GREEN_NETMASK'}))
+			if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && ($fwhostsettings{'IP'} eq $ownnet{'GREEN_NETADDRESS'} && $fwhostsettings{'SUBNET'} eq $ownnet{'GREEN_NETMASK'}))
 			{ 
 				$errormessage=$errormessage.$Lang::tr{'ccd err green'}."<br>";
 				$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
 				if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}='editnet';}
 			}
-			if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && &General::IpInSubnet($fwhostsettings{'IP'},$ownnet{'ORANGE_NETADDRESS'},$ownnet{'ORANGE_NETMASK'}))
+			if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && ($fwhostsettings{'IP'} eq $ownnet{'ORANGE_NETADDRESS'} && $fwhostsettings{'SUBNET'} eq $ownnet{'ORANGE_NETMASK'}))
 			{ 
 				$errormessage=$errormessage.$Lang::tr{'ccd err orange'}."<br>";
 				$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
 				if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}='editnet';}
 			}
-			if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &General::IpInSubnet($fwhostsettings{'IP'},$ownnet{'BLUE_NETADDRESS'},$ownnet{'BLUE_NETMASK'}))
+			if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && ($fwhostsettings{'IP'} eq $ownnet{'BLUE_NETADDRESS'} && $fwhostsettings{'SUBNET'} eq $ownnet{'BLUE_NETMASK'}))
 			{ 
 				$errormessage=$errormessage.$Lang::tr{'ccd err blue'}."<br>";
 				$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
 				if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}='editnet';}
 			}
-			if (($ownnet{'RED_NETADDRESS'} 	ne '' && $ownnet{'RED_NETADDRESS'} 		ne '0.0.0.0') && &General::IpInSubnet($fwhostsettings{'IP'},$ownnet{'RED_NETADDRESS'},$ownnet{'RED_NETMASK'}))
+			if (($ownnet{'RED_NETADDRESS'} 	ne '' && $ownnet{'RED_NETADDRESS'} 		ne '0.0.0.0') && ($fwhostsettings{'IP'} eq $ownnet{'RED_NETADDRESS'} && $fwhostsettings{'SUBNET'} eq $ownnet{'RED_NETMASK'}))
 			{ 
 				$errormessage=$errormessage.$Lang::tr{'ccd err red'}."<br>";
 				$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
