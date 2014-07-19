@@ -908,7 +908,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   }
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print SERVERCONF "# Enable Compression\n";
-   print SERVERCONF "comp-lzo\r\n";
+   print SERVERCONF "comp-lzo\n";
      }
   print SERVERCONF "# Debug Level\n"; 
   print SERVERCONF "verb 3\n"; 
@@ -1003,7 +1003,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   }
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print CLIENTCONF "# Enable Compression\n";
-   print CLIENTCONF "comp-lzo\r\n";
+   print CLIENTCONF "comp-lzo\n";
   }
   print CLIENTCONF "# Debug Level\n"; 
   print CLIENTCONF "verb 3\n"; 
@@ -2103,7 +2103,7 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    }
    if ($confighash{$cgiparams{'KEY'}}[30] eq 'on') {
    print CLIENTCONF "# Enable Compression\n";
-   print CLIENTCONF "comp-lzo\r\n";
+   print CLIENTCONF "comp-lzo\n";
      }
    print CLIENTCONF "# Debug Level\n"; 
    print CLIENTCONF "verb 3\n"; 
