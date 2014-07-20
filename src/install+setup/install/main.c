@@ -48,6 +48,107 @@ extern char *pl_tr[];
 extern char *ru_tr[];
 extern char *tr_tr[];
 
+static int newtChecklist(const char* title, const char* message,
+		unsigned int width, unsigned int height, unsigned int num_entries,
+		const char** entries, int* states) {
+	int ret;
+	const int list_height = 4;
+
+	char cbstates[num_entries];
+
+	for (unsigned int i = 0; i < num_entries; i++) {
+		cbstates[i] = states[i] ? '*' : ' ';
+	}
+
+	newtCenteredWindow(width, height, title);
+
+	newtComponent textbox = newtTextbox(1, 1, width - 2, height - 6 - list_height,
+		NEWT_FLAG_WRAP);
+	newtTextboxSetText(textbox, message);
+
+	int top = newtTextboxGetNumLines(textbox) + 2;
+
+	newtComponent form = newtForm(NULL, NULL, 0);
+
+	newtComponent sb = NULL;
+	if (list_height < num_entries) {
+		sb = newtVerticalScrollbar(
+			width - 4, top + 1, list_height,
+			NEWT_COLORSET_CHECKBOX, NEWT_COLORSET_ACTCHECKBOX);
+
+		newtFormAddComponent(form, sb);
+	}
+
+	newtComponent subform = newtForm(sb, NULL, 0);
+	newtFormSetBackground(subform, NEWT_COLORSET_CHECKBOX);
+
+	newtFormSetHeight(subform, list_height);
+	newtFormSetWidth(subform, width - 10);
+
+	for (unsigned int i = 0; i < num_entries; i++) {
+		newtComponent cb = newtCheckbox(4, top + i, entries[i], cbstates[i],
+			NULL, &cbstates[i]);
+
+		newtFormAddComponent(subform, cb);
+	}
+
+	newtFormAddComponents(form, textbox, subform, NULL);
+
+	newtComponent btn_okay   = newtButton((width - 18) / 3, height - 4, ctr[TR_OK]);
+	newtComponent btn_cancel = newtButton((width - 18) / 3 * 2 + 9, height - 4, ctr[TR_CANCEL]);
+	newtFormAddComponents(form, btn_okay, btn_cancel, NULL);
+
+	newtComponent answer = newtRunForm(form);
+
+	if ((answer == NULL) || (answer == btn_cancel)) {
+		ret = -1;
+	} else {
+		ret = 0;
+
+		for (unsigned int i = 0; i < num_entries; i++) {
+			states[i] = (cbstates[i] != ' ');
+
+			if (states[i])
+				ret++;
+		}
+	}
+
+	newtFormDestroy(form);
+	newtPopWindow();
+
+	return ret;
+}
+
+static int newtWinOkCancel(const char* title, const char* message, int width, int height,
+		const char* btn_txt_ok, const char* btn_txt_cancel) {
+	int ret = 1;
+
+	newtCenteredWindow(width, height, title);
+
+	newtComponent form = newtForm(NULL, NULL, 0);
+
+	newtComponent textbox = newtTextbox(1, 1, width - 2, height - 6, NEWT_FLAG_WRAP);
+	newtTextboxSetText(textbox, message);
+	newtFormAddComponent(form, textbox);
+
+	newtComponent btn_ok = newtButton((width - 16) / 3, height - 4, btn_txt_ok);
+	newtComponent btn_cancel = newtButton((width - 16) / 3 * 2 + 9, height - 4,
+		btn_txt_cancel);
+
+	newtFormAddComponents(form, btn_ok, btn_cancel, NULL);
+
+	newtComponent answer = newtRunForm(form);
+
+	if (answer == btn_ok) {
+		ret = 0;
+	}
+
+	newtFormDestroy(form);
+	newtPopWindow();
+
+	return ret;
+}
+
 int main(int argc, char *argv[]) {
 	struct hw* hw = hw_init();
 
@@ -56,45 +157,32 @@ int main(int argc, char *argv[]) {
 	char *langnames[] = { "Deutsch", "English", "Français", "Español", "Nederlands", "Polski", "Русский", "Türkçe", NULL };
 	char *shortlangnames[] = { "de", "en", "fr", "es", "nl", "pl", "ru", "tr", NULL };
 	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, nl_tr, pl_tr, ru_tr, tr_tr, NULL };
-	char hdletter;
-	char harddrive[30];	/* Device holder. */
 	char* sourcedrive = NULL;
-	char harddrive_info[STRING_SIZE];	/* Additional infos about target */
-	struct devparams hdparams, cdromparams; /* Params for CDROM and HD */
 	int rc = 0;
 	char commandstring[STRING_SIZE];
 	char mkfscommand[STRING_SIZE];
 	char *fstypes[] = { "ext2", "ext3", "ext4", "ReiserFS", NULL };
 	int fstype = EXT4;
 	int choice;
-	int i;
-	int found = 0;
 	char shortlangname[10];
-	char message[1000];
+	char message[STRING_SIZE];
 	char title[STRING_SIZE];
 	int allok = 0;
 	int allok_fastexit=0;
-	int raid_disk = 0;
 	struct keyvalue *ethernetkv = initkeyvalues();
 	FILE *handle, *cmdfile, *copying;
 	char line[STRING_SIZE];
 	char string[STRING_SIZE];
 	long memory = 0, disk = 0;
 	long system_partition, boot_partition, root_partition, swap_file;
-	int scsi_disk = 0;
-	char *yesnoharddisk[3];	//	char *yesnoharddisk = { "NO", "YES", NULL };
 		
 	int unattended = 0;
 	int serialconsole = 0;
 	struct keyvalue *unattendedkv = initkeyvalues();
-	int hardyn = 0;
 	char restore_file[STRING_SIZE] = "";
 
 	setlocale (LC_ALL, "");
 	sethostname( SNAME , 10);
-
-	memset(&hdparams, 0, sizeof(struct devparams));
-	memset(&cdromparams, 0, sizeof(struct devparams));
 
 	/* Log file/terminal stuff. */
 	if (argc >= 2)
@@ -185,6 +273,14 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
+	/* load unattended configuration */
+	if (unattended) {
+	    fprintf(flog, "unattended: Reading unattended.conf\n");
+
+	    (void) readkeyvalues(unattendedkv, UNATTENDED_CONF);
+	    findkey(unattendedkv, "RESTORE_FILE", restore_file);
+	}
+
 	if (!unattended) {
 		// Read the license file.
 		if (!(copying = fopen(LICENSE_FILE, "r"))) {
@@ -201,87 +297,100 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	i = 0;
-	while (found == 0) {
-		i++;
-		fprintf(flog, "Harddisk scan pass %i\n", i);
+	int part_type = HW_PART_TYPE_NORMAL;
 
-		switch (mysystem("/bin/mountdest.sh") % 255) {
-			case 0: // Found IDE disk
-				scsi_disk = 0;
-				raid_disk = 0;
-				found = 1;
+	// Scan for disks to install on.
+	struct hw_disk** disks = hw_find_disks(hw);
+
+	struct hw_disk** selected_disks = NULL;
+	unsigned int num_selected_disks = 0;
+
+	// Check how many disks have been found and what
+	// we can do with them.
+	unsigned int num_disks = hw_count_disks(disks);
+
+	while (1) {
+		// no harddisks found
+		if (num_disks == 0) {
+			errorbox(ctr[TR_NO_HARDDISK]);
+			goto EXIT;
+
+		// exactly one disk has been found
+		} else if (num_disks == 1) {
+			selected_disks = hw_select_disks(disks, NULL);
+
+		// more than one usable disk has been found and
+		// the user needs to choose what to do with them
+		} else {
+			const char* disk_names[num_disks];
+			int disk_selection[num_disks];
+
+			for (unsigned int i = 0; i < num_disks; i++) {
+				disk_names[i] = &disks[i]->description;
+				disk_selection[i] = 0;
+			}
+
+			while (!selected_disks) {
+				rc = newtChecklist(ctr[TR_DISK_SELECTION], ctr[TR_DISK_SELECTION_MSG],
+					50, 20, num_disks, disk_names, disk_selection);
+
+				// Error
+				if (rc < 0) {
+					goto EXIT;
+
+				// Nothing has been selected
+				} else if (rc == 0) {
+					errorbox(ctr[TR_NO_DISK_SELECTED]);
+
+				} else {
+					selected_disks = hw_select_disks(disks, disk_selection);
+				}
+			}
+		}
+
+		num_selected_disks = hw_count_disks(selected_disks);
+
+		if (num_selected_disks == 1) {
+			snprintf(message, sizeof(message), ctr[TR_DISK_SETUP_DESC], (*selected_disks)->description);
+			rc = newtWinOkCancel(ctr[TR_DISK_SETUP], message, 50, 10,
+				ctr[TR_DELETE_ALL_DATA], ctr[TR_CANCEL]);
+
+			if (rc == 0)
 				break;
-			case 1: // Found SCSI disk
-				scsi_disk = 1;
-				raid_disk = 0;
-				found = 1;
+
+		} else if (num_selected_disks == 2) {
+			snprintf(message, sizeof(message), ctr[TR_RAID_SETUP_DESC],
+				(*selected_disks)->description, (*selected_disks + 1)->description);
+			rc = newtWinOkCancel(ctr[TR_RAID_SETUP], message, 50, 10,
+				ctr[TR_DELETE_ALL_DATA], ctr[TR_CANCEL]);
+
+			if (rc == 0) {
+				part_type = HW_PART_TYPE_RAID1;
+
 				break;
-			case 2: // Found RAID disk
-				scsi_disk = 0;
-				raid_disk= 1;
-				found = 1;
-				break;
-			case 10: // No harddisk found
-				errorbox(ctr[TR_NO_HARDDISK]);
-				goto EXIT;
+			}
+
+		// Currently not supported
+		} else {
+			errorbox(ctr[TR_DISK_CONFIGURATION_NOT_SUPPORTED]);
+		}
+
+		if (selected_disks) {
+			hw_free_disks(selected_disks);
+			selected_disks = NULL;
 		}
 	}
 
-	if ((handle = fopen("/tmp/dest_device", "r")) == NULL) {
-		errorbox(ctr[TR_NO_HARDDISK]);
-		goto EXIT;
-	}
-	fgets(harddrive, 30, handle);
-	fclose(handle);
-	if ((handle = fopen("/tmp/dest_device_info", "r")) == NULL) {
-		sprintf(harddrive_info, "%s", harddrive);
-	}
-	fgets(harddrive_info, 70, handle);
-	fclose(handle);
+	hw_free_disks(disks);
 
-			
-	/* load unattended configuration */
-	if (unattended) {
-	    fprintf(flog, "unattended: Reading unattended.conf\n");
+	struct hw_destination* destination = hw_make_destination(part_type, selected_disks);
+	assert(destination);
 
-	    (void) readkeyvalues(unattendedkv, UNATTENDED_CONF);
-	    findkey(unattendedkv, "RESTORE_FILE", restore_file);	    
-	}
-	
-	/* Make the hdparms struct and print the contents.
-	   With USB-KEY install and SCSI disk, while installing, the disk
-	   is named 'sdb,sdc,...' (following keys)
-	   On reboot, it will become 'sda'
-	   To avoid many test, all names are built in the struct.
-	*/
-	sprintf(hdparams.devnode_disk, "/dev/%s", harddrive);
-	/* Address the partition or raid partition (eg dev/sda or /dev/sdap1 */
-	sprintf(hdparams.devnode_part, "/dev/%s%s", harddrive,raid_disk ? "p" : "");
-	/* Now the names after the machine is booted. Only scsi is affected
-	   and we only install on the first scsi disk. */
-
-	fprintf(flog, "Destination drive: %s\n", hdparams.devnode_disk);
-	
-	sprintf(message, ctr[TR_PREPARE_HARDDISK], harddrive_info);
-	if (unattended) {
-	    hardyn = 1;
-	} else {
-		yesnoharddisk[0] = ctr[TR_NO];
-		yesnoharddisk[1] = ctr[TR_YES];
-		yesnoharddisk[2] = NULL;
-	}
-
-	while (! hardyn) {
-		rc = newtWinMenu(title, message,
-				 50, 5, 5, 6, yesnoharddisk,
-				 &hardyn, ctr[TR_OK],
-				 ctr[TR_CANCEL], NULL);
-		if (rc == 2)
-			goto EXIT;
-	}
-	if (rc == 2)
-		goto EXIT;
+	fprintf(flog, "Destination drive: %s\n", destination->path);
+	fprintf(flog, "  boot: %s\n", destination->part_boot);
+	fprintf(flog, "  swap: %s\n", destination->part_swap);
+	fprintf(flog, "  root: %s\n", destination->part_root);
+	fprintf(flog, "  data: %s\n", destination->part_data);
 
 	fstypes[0]=ctr[TR_EXT2FS_DESCR];
 	fstypes[1]=ctr[TR_EXT3FS_DESCR];
@@ -317,18 +426,7 @@ int main(int argc, char *argv[]) {
 	 * partition.  In order to do that we need to know the size of
 	 * the disk. 
 	 */
-	/* Don't use mysystem here so we can redirect output */
-	sprintf(commandstring, "/sbin/sfdisk -s /dev/%s > /tmp/disksize 2> /dev/null", harddrive);
-	system(commandstring);
-
-	/* Calculate amount of disk space */
-	if ((handle = fopen("/tmp/disksize", "r"))) {
-		fgets(line, STRING_SIZE-1, handle);
-		if (sscanf (line, "%s", string)) {
-			disk = atoi(string) / 1024;
-		}
-		fclose(handle);
-	}
+	disk = destination->size / 1024 / 1024;
 	
 	fprintf(flog, "Disksize = %ld, memory = %ld", disk, memory);
 	
@@ -392,10 +490,10 @@ int main(int argc, char *argv[]) {
 
 	if (disk < 2097150) {
 		// <2TB use sfdisk and normal mbr
-		snprintf(commandstring, STRING_SIZE, "/sbin/sfdisk -L -uM %s < /tmp/partitiontable", hdparams.devnode_disk);
+		snprintf(commandstring, STRING_SIZE, "/sbin/sfdisk -L -uM %s < /tmp/partitiontable", destination->path);
 	} else {
 		// >2TB use parted with gpt
-		snprintf(commandstring, STRING_SIZE, "/usr/sbin/parted -s %s mklabel gpt mkpart boot ext2 1M 64M mkpart swap linux-swap 64M 1000M mkpart root ext4 1000M 5000M mkpart var ext4 5000M 100%% disk_set pmbr_boot on", hdparams.devnode_disk);
+		snprintf(commandstring, STRING_SIZE, "/usr/sbin/parted -s %s mklabel gpt mkpart boot ext2 1M 64M mkpart swap linux-swap 64M 1000M mkpart root ext4 1000M 5000M mkpart var ext4 5000M 100%% disk_set pmbr_boot on", destination->path);		
 	}
 
 	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
@@ -418,7 +516,7 @@ int main(int argc, char *argv[]) {
 		sprintf(mkfscommand, "/sbin/mke2fs -T ext4");
 	}
 
-	snprintf(commandstring, STRING_SIZE, "/sbin/mke2fs -T ext2 -I 128 %s1", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "/sbin/mke2fs -T ext2 -I 128 %s", destination->part_boot);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_BOOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_BOOT_FILESYSTEM]);
@@ -426,7 +524,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (swap_file) {
-		snprintf(commandstring, STRING_SIZE, "/sbin/mkswap %s2", hdparams.devnode_part);
+		snprintf(commandstring, STRING_SIZE, "/sbin/mkswap %s", destination->part_swap);
 		if (runcommandwithstatus(commandstring, ctr[TR_MAKING_SWAPSPACE]))
 		{
 			errorbox(ctr[TR_UNABLE_TO_MAKE_SWAPSPACE]);
@@ -434,21 +532,21 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	snprintf(commandstring, STRING_SIZE, "%s %s3", mkfscommand, hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "%s %s", mkfscommand, destination->part_root);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_ROOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
 		goto EXIT;
 	}
 
-	snprintf(commandstring, STRING_SIZE, "%s %s4", mkfscommand, hdparams.devnode_part);	
+	snprintf(commandstring, STRING_SIZE, "%s %s", mkfscommand, destination->part_data);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_LOG_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_LOG_FILESYSTEM]);
 		goto EXIT;
 	}
 
-	snprintf(commandstring, STRING_SIZE, "/bin/mount %s3 /harddisk", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "/bin/mount %s /harddisk", destination->part_root);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_ROOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_ROOT_FILESYSTEM]);
@@ -459,21 +557,21 @@ int main(int argc, char *argv[]) {
 	mkdir("/harddisk/var", S_IRWXU|S_IRWXG|S_IRWXO);
 	mkdir("/harddisk/var/log", S_IRWXU|S_IRWXG|S_IRWXO);
 
-	snprintf(commandstring, STRING_SIZE, "/bin/mount %s1 /harddisk/boot", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "/bin/mount %s /harddisk/boot", destination->part_boot);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_BOOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_BOOT_FILESYSTEM]);
 		goto EXIT;
 	}
 	if (swap_file) {
-		snprintf(commandstring, STRING_SIZE, "/sbin/swapon %s2", hdparams.devnode_part);
+		snprintf(commandstring, STRING_SIZE, "/sbin/swapon %s", destination->part_swap);
 		if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_SWAP_PARTITION]))
 		{
 			errorbox(ctr[TR_UNABLE_TO_MOUNT_SWAP_PARTITION]);
 			goto EXIT;
 		}
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mount %s4 /harddisk/var", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "/bin/mount %s /harddisk/var", destination->part_data);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_LOG_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_LOG_FILESYSTEM]);
@@ -508,13 +606,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* Update /etc/fstab */
-	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE1#UUID=$(/sbin/blkid %s1 -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE1#UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", destination->part_boot);
 	system(commandstring);
-	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE2#UUID=$(/sbin/blkid %s2 -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE2#UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", destination->part_swap);
 	system(commandstring);
-	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE3#UUID=$(/sbin/blkid %s3 -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE3#UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", destination->part_root);
 	system(commandstring);
-	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE4#UUID=$(/sbin/blkid %s4 -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE4#UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", destination->part_data);
 	system(commandstring);
 
 	if (fstype == EXT2) {
@@ -533,7 +631,7 @@ int main(int argc, char *argv[]) {
 
 	replace("/harddisk/boot/grub/grub.conf", "KVER", KERNEL_VERSION);
 
-	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#root=ROOT#root=UUID=$(/sbin/blkid %s3 -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/boot/grub/grub.conf", hdparams.devnode_part);
+	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#root=ROOT#root=UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/boot/grub/grub.conf", destination->part_root);
 	system(commandstring);
 
 	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
@@ -545,12 +643,12 @@ int main(int argc, char *argv[]) {
 	 */
 	FILE *f = NULL;
 	if (f = fopen("/harddisk/boot/grub/device.map", "w")) {
-		fprintf(f, "(hd0) %s\n", hdparams.devnode_disk);
+		fprintf(f, "(hd0) %s\n", destination->path);
 		fclose(f);
 	}
 
 	snprintf(commandstring, STRING_SIZE, 
-		 "/usr/sbin/chroot /harddisk /usr/sbin/grub-install --no-floppy %s", hdparams.devnode_disk);
+		 "/usr/sbin/chroot /harddisk /usr/sbin/grub-install --no-floppy %s", destination->path);
 	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_GRUB])) {
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;
@@ -633,7 +731,7 @@ EXIT:
 	fcloseall();
 
 	if (swap_file) {
-		snprintf(commandstring, STRING_SIZE, "/bin/swapoff %s2", hdparams.devnode_part);
+		snprintf(commandstring, STRING_SIZE, "/bin/swapoff %s", destination->part_swap);
 	}
 
 	newtFinished();
@@ -651,6 +749,12 @@ EXIT:
 
 	// Free resources
 	free(sourcedrive);
+	free(destination);
+
+	if (selected_disks)
+		hw_free_disks(selected_disks);
+
+	hw_free(hw);
 
 	return 0;
 }

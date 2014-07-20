@@ -25,7 +25,7 @@ INCLUDE =
 
 LD      = gcc
 LDFLAGS =
-LIBS    = -lnewt -lslang -lpci -ludev
+LIBS    = -lnewt -lslang -lpci -ludev -lblkid
 
 COMPILE = $(CC) -c $(INCLUDE) $(CFLAGS)
 

@@ -325,6 +325,22 @@ char *pl_tr[] = {
 "Nie przypisano interfejsu GREEN.",
 /* TR_NO_HARDDISK */
 "Nie znaleziono dysku twardego.",
+/* TR_DISK_SELECTION */
+"Disk Selection",
+/* TR_DISK_SELECTION_MSG */
+"Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n\nALL DATA ON THE DISK WILL BE DESTROYED.",
+/* TR_NO_DISK_SELECTED */
+"No disk has been selected.\n\nPlease select one or more disks you want to install IPFire on.",
+/* TR_DISK_SETUP */
+"Disk Setup",
+/* TR_DISK_SETUP_DESC */
+"The installation program will now prepare the chosen harddisk:\n\n  %s\n\nDo you agree to continue?",
+/* TR_RAID_SETUP */
+"RAID Setup",
+/* TR_RAID_SETUP_DESC */
+"The installation program will now set up a RAID configuration on the selected harddisks:\n\n  %s\n  %s\n\nDo you agree to continue?",
+/* TR_DELETE_ALL_DATA */
+"Delete all data",
 /* TR_NO_IPCOP_TARBALL_FOUND */
 "Nie znaleziono archiwum tar ipcop na serwerze Web.",
 /* TR_NO_ORANGE_INTERFACE */

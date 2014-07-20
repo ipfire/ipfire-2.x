@@ -57,7 +57,7 @@ $(TARGET) :
 	cd $(DIR_APP)/libsmooth && make CFLAGS="-Os -fomit-frame-pointer -Wall \
 	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
 	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'" 
-	cd $(DIR_APP)/install && make CFLAGS="-Os -fomit-frame-pointer -Wall \
+	cd $(DIR_APP)/install && make CFLAGS="-Os -std=gnu99 -fomit-frame-pointer -Wall \
 	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
 	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DKERNEL_VERSION='\"$(KVER)\"'"
 	cd $(DIR_APP)/install && install -v -m 0755 install probenic.sh \

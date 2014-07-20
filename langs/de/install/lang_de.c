@@ -333,6 +333,22 @@ char *de_tr[] = {
 "Keine GRÜNE Schnittstelle zugewiesen.",
 /* TR_NO_HARDDISK */
 "Keine Festplatte gefunden.",
+/* TR_DISK_SELECTION */
+"Festplattenauswahl",
+/* TR_DISK_SELECTION_MSG */
+"Wählen Sie die Festplatte(n), auf die Sie IPFire installieren möchten. Diese wird dann zuerst partitioniert und danach wird ein Dateisystem auf die Partitionen installiert.\n\nALLE DATEN AUF DER FESTPLATTE WERDEN GELÖSCHT.",
+/* TR_NO_DISK_SELECTED */
+"Es wurde kein Datenträger ausgewählt.\n\nBitte wählen Sie einen oder mehrere Festplatten aus, um mit der Installation fortzufahren.",
+/* TR_DISK_SETUP */
+"Festplatten-Setup",
+/* TR_DISK_SETUP_DESC */
+"Das Installationsprogramm wird nun die ausgewählte Festplatte vorbereiten:\n\n  %s\n\nMöchten Sie fortfahren?",
+/* TR_RAID_SETUP */
+"RAID-Setup",
+/* TR_RAID_SETUP_DESC */
+"Das Installationsprogramm wird nun eine RAID-Konfiguration auf den ausgewählten Festplatten anlegen:\n\n  %s\n  %s\n\nMöchten Sie fortfahren?",
+/* TR_DELETE_ALL_DATA */
+"Alle Daten löschen",
 /* TR_NO_IPCOP_TARBALL_FOUND */
 "Auf dem Webserver wurde kein ipcop-Tarball gefunden.",
 /* TR_NO_ORANGE_INTERFACE */
