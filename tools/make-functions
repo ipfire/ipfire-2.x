@@ -71,7 +71,7 @@ configure_target() {
 		i586)
 			BUILDTARGET="${target_arch}-pc-linux-gnu"
 			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnu"
-			CFLAGS_ARCH="-march=i586 -fomit-frame-pointer"
+			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer"
 			;;
 
 		armv5tel)

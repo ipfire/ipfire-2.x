@@ -32,11 +32,25 @@ do
 done
 
 # Stop services
+/etc/init.d/ipsec stop
+
+# Remove old strongswan files
+rm -f \
+	/etc/strongswan.d/charon/unity.conf \
+	/usr/lib/ipsec/plugins/libstrongswan-unity.so \
+	/usr/share/strongswan/templates/config/plugins/unity.conf
+
+rm -f /usr/local/bin/setddns.pl
 
 # Extract files
 extract_files
 
 # Start services
+/etc/init.d/dnsmasq restart
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	/etc/init.d/ipsec start
+fi
+
 
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
@@ -45,6 +59,34 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 rm -f \
 	/opt/pakfire/db/installed/meta-libgpg-error \
 	/opt/pakfire/db/rootfiles/libgpg-error
+
+# Regenerate squid configuration file
+sudo -u nobody /srv/web/ipfire/cgi-bin/proxy.cgi
+
+# Fix broken proxy configuration permissions
+chown -R nobody.nobody \
+	/var/ipfire/proxy/advanced \
+	/var/ipfire/proxy/acl-1.4 \
+	/var/ipfire/proxy/enable \
+	/var/ipfire/proxy/settings \
+	/var/ipfire/proxy/squid.conf \
+	/var/ipfire/proxy/transparent
+
+# Generate ddns configuration file
+sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
+
+# Update crontab
+sed -i /var/spool/cron/root.orig -e "/setddns.pl/d"
+
+grep -q /usr/bin/ddns /var/spool/cron/root.orig || cat <<EOF >> /var/spool/cron/root.orig
+
+# Update dynamic DNS records every five minutes.
+# Force an update once a month
+*/5 * * * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all
+3 2 1 * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all --force
+EOF
+
+fcrontab -z &>/dev/null
 
 sync
 

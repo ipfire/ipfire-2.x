@@ -3169,9 +3169,35 @@ END
 		print FILE "\n";
 	}
 
-	if ($proxysettings{'CACHE_SIZE'} ne '0')
+	if ($proxysettings{'CACHE_SIZE'} > 0) {
+		print FILE <<END
+maximum_object_size $proxysettings{'MAX_SIZE'} KB
+minimum_object_size $proxysettings{'MIN_SIZE'} KB
+
+cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256
+END
+		;
+	} else {
+		print FILE "cache deny all\n\n";
+	}
+
+	print FILE <<END
+request_body_max_size $proxysettings{'MAX_OUTGOING_SIZE'} KB
+END
+	;
+
+	if ($proxysettings{'MAX_INCOMING_SIZE'} > 0) {
+		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size none IPFire_unrestricted_ips\n"; }
+		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size none IPFire_unrestricted_mac\n"; }
+		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
+		{
+			if (!-z $extgrp) { print FILE "reply_body_max_size none for_extended_users\n"; }
+		}
+	}
+
+	if ( $proxysettings{'MAX_INCOMING_SIZE'} != '0' )
 	{
-		print FILE "cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256\n\n";
+		print FILE "reply_body_max_size $proxysettings{'MAX_INCOMING_SIZE'} KB all\n\n";
 	}
 
 	if ($proxysettings{'LOGGING'} eq 'on')
@@ -3396,19 +3422,25 @@ END
 	}
 
 open (PORTS,"$acl_ports_ssl");
-@temp = <PORTS>;
+my @ssl_ports = <PORTS>;
 close PORTS;
-if (@temp)
-{
-	foreach (@temp) { print FILE "acl SSL_ports port $_"; }
+
+if (@ssl_ports) {
+	foreach (@ssl_ports) {
+		print FILE "acl SSL_ports port $_";
+	}
 }
+
 open (PORTS,"$acl_ports_safe");
-@temp = <PORTS>;
+my @safe_ports = <PORTS>;
 close PORTS;
-if (@temp)
-{
-	foreach (@temp) { print FILE "acl Safe_ports port $_"; }
+
+if (@safe_ports) {
+	foreach (@safe_ports) {
+		print FILE "acl Safe_ports port $_";
+	}
 }
+
 	print FILE <<END
 
 acl IPFire_http  port $http_port
@@ -3498,7 +3530,7 @@ END
 		print FILE "http_access deny purge\n";
 		print FILE "url_rewrite_access deny localhost\n";
 	}
-	print FILE <<END
+	print FILE <<END;
 
 #Access to squid:
 #local machine, no restriction
@@ -3509,11 +3541,15 @@ http_access allow         IPFire_ips IPFire_networks IPFire_http
 http_access allow CONNECT IPFire_ips IPFire_networks IPFire_https
 
 #Deny not web services
-http_access deny          !Safe_ports
-http_access deny  CONNECT !SSL_ports
-
 END
-	;
+
+if (@safe_ports) {
+	print FILE "http_access deny          !Safe_ports\n";
+}
+
+if (@ssl_ports) {
+	print FILE "http_access deny  CONNECT !SSL_ports\n";
+}
 
 if ($proxysettings{'AUTH_METHOD'} eq 'ident')
 {
@@ -3939,34 +3975,6 @@ END
 		}
 		print FILE "http_reply_access deny  blocked_mimetypes\n";
 		print FILE "http_reply_access allow all\n\n";
-	}
-
-	if ($proxysettings{'CACHE_SIZE'} > 0)
-	{
-		print FILE <<END
-maximum_object_size $proxysettings{'MAX_SIZE'} KB
-minimum_object_size $proxysettings{'MIN_SIZE'} KB
-
-END
-		;
-	} else { print FILE "cache deny all\n\n";	}
-
-	print FILE <<END
-request_body_max_size $proxysettings{'MAX_OUTGOING_SIZE'} KB
-END
-	;
-	if ($proxysettings{'MAX_INCOMING_SIZE'} > 0) {
-		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size none IPFire_unrestricted_ips\n"; }
-		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size none IPFire_unrestricted_mac\n"; }
-		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
-		{
-			if (!-z $extgrp) { print FILE "reply_body_max_size none for_extended_users\n"; }
-		}
-	}
-	
-	if ( $proxysettings{'MAX_INCOMING_SIZE'} != '0' )
-	{
-		print FILE "reply_body_max_size $proxysettings{'MAX_INCOMING_SIZE'} KB all\n\n";
 	}
 
 	print FILE "visible_hostname";

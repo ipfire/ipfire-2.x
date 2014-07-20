@@ -21,7 +21,7 @@ etc/dhcp/dhcpd.conf
 #usr/lib/libomapi.a
 #usr/sbin/dhclient
 usr/sbin/dhcpd
-#usr/sbin/dhcrelay
+usr/sbin/dhcrelay
 #usr/share/man/man1/omshell.1
 #usr/share/man/man3/dhcpctl.3
 #usr/share/man/man3/omapi.3

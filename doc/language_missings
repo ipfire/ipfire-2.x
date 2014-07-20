@@ -94,7 +94,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -126,6 +131,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -324,6 +330,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -348,6 +355,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -467,6 +475,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < upload new ruleset
 < uptime
@@ -616,7 +625,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -648,6 +662,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -846,6 +861,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -870,6 +886,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1005,6 +1022,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1130,7 +1148,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -1154,6 +1177,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -1352,6 +1376,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -1376,6 +1401,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1495,6 +1521,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1623,7 +1650,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -1648,6 +1680,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < frequency
@@ -1849,6 +1882,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -1874,6 +1908,7 @@
 < month-graph
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1990,6 +2025,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -33,366 +33,444 @@ require "${General::swroot}/header.pl";
 my @dummy = ( ${Header::table2colour}, ${Header::colouryellow} );
 undef (@dummy);
 
-my $ddnsprefix = $Lang::tr{'ddns noip prefix'};
-$ddnsprefix =~ s/%/$General::noipprefix/;
-
 my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
-# Files used
-my $setting = "${General::swroot}/ddns/settings";
-our $datafile = "${General::swroot}/ddns/config";
+# Config file for basic configuration.
+my $settingsfile = "${General::swroot}/ddns/settings";
+
+# Config file to store the configured ddns providers.
+my $datafile = "${General::swroot}/ddns/config";
+
+# Dynamic ddns programm call.
+my @ddnsprog = ("/usr/bin/ddns", "--config",
+		"/var/ipfire/ddns/ddns.conf",
+		"update-all");
 
 my %settings=();
-#Settings1
-$settings{'BEHINDROUTER'} = 'RED_IP';
-$settings{'MINIMIZEUPDATES'} = '';
+my $errormessage = '';
 
-#Settings2 for editing the multi-line list
-#Must not be saved !
+# DDNS General settings.
+$settings{'BEHINDROUTER'} = 'RED_IP';
+
+# Account settings.
 $settings{'HOSTNAME'} = '';
 $settings{'DOMAIN'} = '';
 $settings{'LOGIN'} = '';
 $settings{'PASSWORD'} = '';
-$settings{'PASSWORD2'} = '';
 $settings{'ENABLED'} = '';
 $settings{'PROXY'} = '';
-$settings{'WILDCARDS'} = '';
 $settings{'SERVICE'} = '';
 
-my @nosaved=('HOSTNAME','DOMAIN','LOGIN','PASSWORD','PASSWORD2',
-	     'ENABLED','PROXY','WILDCARDS','SERVICE');	# List here ALL setting2 fields. Mandatory
-    
-$settings{'ACTION'} = '';		# add/edit/remove
-$settings{'KEY1'} = '';			# point record for ACTION
-$settings{'KEY2'} = '';			# point record for ACTION
+$settings{'ACTION'} = '';
 
-my $errormessage = '';
-my $warnmessage = '';
+# Get supported ddns providers.
+my @providers = &GetProviders();
+
+# Hook to regenerate the configuration files, if cgi got called from command line.
+if ($ENV{"REMOTE_ADDR"} eq "") {
+	&GenerateDDNSConfigFile();
+	exit(0);
+}
 
 &Header::showhttpheaders();
 
 #Get GUI values
 &Header::getcgihash(\%settings);
 
-# Load multiline data
-our @current = ();
-if (open(FILE, "$datafile")) {
-    @current = <FILE>;
-    close (FILE);
-}
+# Read configuration file.
+open(FILE, "$datafile") or die "Unable to open $datafile.";
+my @current = <FILE>;
+close (FILE);
 
 #
-# Check Settings1 first because they are needed before working on @current
+# Save General Settings.
 #
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
-    # No user input to check.  !
-    #unless ($errormessage) {					# Everything is ok, save settings
-	$settings{'BEHINDROUTERWAITLOOP'} = '-1';		# init  & will update on next setddns.pl call
-	map (delete ($settings{$_}) ,(@nosaved,'ACTION','KEY1','KEY2'));# Must never be saved 
-	&General::writehash($setting, \%settings);		# Save good settings
-	$settings{'ACTION'} = $Lang::tr{'save'};		# Recreate  'ACTION'
-	map ($settings{$_}= '',(@nosaved,'KEY1','KEY2'));	# and reinit var to empty
-    #}
-} else {
-    &General::readhash($setting, \%settings);			# Get saved settings and reset to good if needed
+
+	# Open /var/ipfire/ddns/settings for writing.
+	open(FILE, ">$settingsfile") or die "Unable to open $settingsfile.";
+
+	# Lock file for writing.
+	flock FILE, 2;
+
+	# Check if BEHINDROUTER has been configured.
+	if ($settings{'BEHINDROUTER'} ne '') {
+		print FILE "BEHINDROUTER=$settings{'BEHINDROUTER'}\n";
+	}
+
+	# Close file after writing.
+	close(FILE);
+
+	# Unset given CGI parmas.
+	undef %settings;
+
+	# Update ddns config file.
+	&GenerateDDNSConfigFile();
 }
 
-#
-# Now manipulate the multi-line list with Settings2
 #
 # Toggle enable/disable field.  Field is in second position
+#
 if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
-    #move out new line
-    chomp(@current[$settings{'KEY1'}]);
-    my @temp = split(/\,/,@current[$settings{'KEY1'}]);
-    my $K2=$settings{'KEY2'};
-    $temp[ $K2 ] = ( $temp[ $K2 ] eq 'on') ? '' : 'on';		# Toggle the field
-    @current[$settings{'KEY1'}] = join (',',@temp)."\n";
-    $settings{'KEY1'} = ''; 					# End edit mode
-    &General::log($Lang::tr{'ddns hostname modified'});
 
-    # Write changes to config file.
-    &WriteDataFile;						# sort newly added/modified entry
+	# Open /var/ipfire/ddns/config for writing.
+	open(FILE, ">$datafile") or die "Unable to open $datafile.";
+
+	# Lock file for writing.
+	flock FILE, 2;
+
+	my @temp;
+	my $id = 0;
+
+	# Read file line by line.
+	foreach my $line (@current) {
+
+		# Remove newlines.
+		chomp($line);
+
+		if ($settings{'ID'} eq $id) {
+
+			# Splitt lines (splitting element is a single ",") and save values into temp array.
+			@temp = split(/\,/,$line);
+
+			# Check if we want to toggle ENABLED or WILDCARDS.
+			if ($settings{'ENABLED'} ne '') {
+
+				# Update ENABLED.
+				print FILE "$temp[0],$temp[1],$temp[2],$temp[3],$temp[4],$temp[5],$temp[6],$settings{'ENABLED'}\n";
+			}
+		} else {
+
+			# Print unmodified line.
+			print FILE "$line\n";
+		}
+
+		# Increase $id.
+		$id++;
+	}
+
+	# Close file after writing.
+	close(FILE);
+
+	# Unset given CGI params.
+	undef %settings;
+
+	# Write out logging notice.
+	&General::log($Lang::tr{'ddns hostname modified'});
+
+	# Update ddns config file.
+	&GenerateDDNSConfigFile();
 }
 
-if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
-    # Validate inputs
+#
+# Add new accounts, or edit existing ones.
+#
+if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::tr{'update'})) {
 
-    unless ($settings{'LOGIN'} ne '') {
-	$errormessage = $Lang::tr{'username not set'};
-    }
+	# Check if a hostname has been given.
+	if ($settings{'HOSTNAME'} eq '') {
+		$errormessage = $Lang::tr{'hostname not set'};
+	}
 
-    # list box returns 'service optional synonyms'
-    # keep only first name
-    $settings{'SERVICE'} =~ s/ .*$//;
-    
-    # for freedns.afraid.org, only 'connect string' is mandatory
-    if ($settings{'SERVICE'} ne 'freedns.afraid.org') {
-	unless ($settings{'SERVICE'} eq 'regfish.com' || $settings{'PASSWORD'} ne '') {
-	    $errormessage = $Lang::tr{'password not set'};
+	# Check if a valid domainname has been provided.
+	if (!&General::validdomainname($settings{'HOSTNAME'})) {
+		$errormessage = $Lang::tr{'invalid domain name'};
 	}
-	unless ($settings{'PASSWORD'} eq $settings{'PASSWORD2'}) {
-	    $errormessage = $Lang::tr{'passwords do not match'};
-	}
-	
-	# Permit an empty HOSTNAME for the nsupdate, regfish, dyndns, enom, ovh, zoneedit, no-ip, easydns
-	#and namecheap
-        unless ($settings{'SERVICE'} eq 'zoneedit.com' || $settings{'SERVICE'} eq 'nsupdate' || 
-		$settings{'SERVICE'} eq 'dyndns-custom'|| $settings{'SERVICE'} eq 'regfish.com' || 
-		$settings{'SERVICE'} eq 'enom.com' || $settings{'SERVICE'} eq 'dnspark.com' ||
-		$settings{'SERVICE'} eq 'ovh.com' || $settings{'HOSTNAME'} ne '' ||
-		$settings{'SERVICE'} eq 'no-ip.com' || $settings{'SERVICE'} eq 'easydns.com'  ||
-		$settings{'SERVICE'} eq 'namecheap.com' )	{
-	    $errormessage = $Lang::tr{'hostname not set'};
-	}
-	unless ($settings{'HOSTNAME'} eq '' || $settings{'HOSTNAME'} =~ /^[a-zA-Z_0-9-]+$/) {
-	    $errormessage = $Lang::tr{'invalid hostname'};
-	}
-	unless ($settings{'DOMAIN'} ne '') {
-	    $errormessage = $Lang::tr{'domain not set'};
-	}
-	unless ($settings{'DOMAIN'} =~ /^[a-zA-Z_0-9.-]+$/) { 
-	    $errormessage = $Lang::tr{'invalid domain name'};
-	}
-	unless ($settings{'DOMAIN'} =~ /[.]/) {
-	    $errormessage = $Lang::tr{'invalid domain name'};
-	}
-    }
 
-    # recheck service wich don't need too much fields
-    if ($settings{'SERVICE'} eq 'cjb.net') {
-	$errormessage = ''; # clear previous error
-	unless ($settings{'LOGIN'} ne '') {
-	    $errormessage = $Lang::tr{'username not set'};
+	# Check if a username has been sent.
+	if ($settings{'LOGIN'} eq '') {
+		$errormessage = $Lang::tr{'username not set'};
 	}
-	unless ($settings{'PASSWORD'} ne '') {
-	    $errormessage = $Lang::tr{'password not set'};
-	}
-	unless ($settings{'PASSWORD'} eq $settings{'PASSWORD2'}) {
-	    $errormessage = $Lang::tr{'passwords do not match'};
-	}
-    }
 
-    unless ($errormessage) {
-	if ($settings{'KEY1'} eq '') { #add or edit ?
-	    unshift (@current, "$settings{'SERVICE'},$settings{'HOSTNAME'},$settings{'DOMAIN'},$settings{'PROXY'},$settings{'WILDCARDS'},$settings{'LOGIN'},$settings{'PASSWORD'},$settings{'ENABLED'}\n");
-	    &General::log($Lang::tr{'ddns hostname added'});
-	} else {
-	    @current[$settings{'KEY1'}] = "$settings{'SERVICE'},$settings{'HOSTNAME'},$settings{'DOMAIN'},$settings{'PROXY'},$settings{'WILDCARDS'},$settings{'LOGIN'},$settings{'PASSWORD'},$settings{'ENABLED'}\n";
-	    $settings{'KEY1'} = '';       # End edit mode
-	    &General::log($Lang::tr{'ddns hostname modified'});
+	# Check if a password has been typed in.
+	# freedns.afraid.org does not require this field.
+	if (($settings{'PASSWORD'} eq '') && ($settings{'SERVICE'} ne 'freedns.afraid.org')) {
+		$errormessage = $Lang::tr{'password not set'};
 	}
-	map ($settings{$_}='' ,@nosaved);	# Clear fields
-        # Write changes to config file.
-	&WriteDataFile;				# sort newly added/modified entry
-    }
+
+	# Go furter if there was no error.
+	if ( ! $errormessage) {
+
+		# Splitt hostname field into 2 parts for storrage.
+		my($hostname, $domain) = split(/\./, $settings{'HOSTNAME'}, 2);
+
+		# Handle adding new accounts.
+		if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
+
+			# Open /var/ipfire/ddns/config for writing.
+			open(FILE, ">>$datafile") or die "Unable to open $datafile.";
+
+			# Lock file for writing.
+			flock FILE, 2;
+
+			# Add account data to the file.
+			print FILE "$settings{'SERVICE'},$hostname,$domain,$settings{'PROXY'},$settings{'WILDCARDS'},$settings{'LOGIN'},$settings{'PASSWORD'},$settings{'ENABLED'}\n";
+
+			# Close file after writing.
+			close(FILE);
+
+			# Write out notice to logfile.
+			&General::log($Lang::tr{'ddns hostname added'});
+
+			# Update ddns config file.
+
+		# Handle account edditing.
+		} elsif ($settings{'ACTION'} eq $Lang::tr{'update'}) {
+
+			# Open /var/ipfire/ddns/config for writing.
+			open(FILE, ">$datafile") or die "Unable to open $datafile.";
+
+			# Lock file for writing.
+			flock FILE, 2;
+
+			my $id = 0;
+
+			# Read file line by line.
+			foreach my $line (@current) {
+
+				if ($settings{'ID'} eq $id) {
+					print FILE "$settings{'SERVICE'},$hostname,$domain,$settings{'PROXY'},$settings{'WILDCARDS'},$settings{'LOGIN'},$settings{'PASSWORD'},$settings{'ENABLED'}\n";
+				} else {
+					print FILE "$line";
+				}
+
+				# Increase $id.
+				$id++;
+			}
+
+			# Close file after writing.
+			close(FILE);
+
+			# Write out notice to logfile.
+			&General::log($Lang::tr{'ddns hostname modified'});
+		}
+
+		# Unset given CGI params.
+		undef %settings;
+
+		# Update ddns config file.
+		&GenerateDDNSConfigFile();
+	}
 }
 
-if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
-    #move out new line
-    my $line = @current[$settings{'KEY1'}];	# KEY1 is the index in current
-    chomp($line);
-    my @temp = split(/\,/, $line);
-    $settings{'SERVICE'}	= $temp[0];
-    $settings{'HOSTNAME'}	= $temp[1];
-    $settings{'DOMAIN'}		= $temp[2];
-    $settings{'PROXY'}		= $temp[3];
-    $settings{'WILDCARDS'}	= $temp[4];
-    $settings{'LOGIN'}		= $temp[5];
-    $settings{'PASSWORD'} = $settings{'PASSWORD2'} = $temp[6];
-    $settings{'ENABLED'}	= $temp[7];
-}
-
+#
+# Remove existing accounts.
+#
 if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
-    splice (@current,$settings{'KEY1'},1);		# Delete line 
-    open(FILE, ">$datafile") or die 'ddns datafile error';
-    print FILE @current;
-    close(FILE);
-    $settings{'KEY1'} = '';				# End remove mode
-    &General::log($Lang::tr{'ddns hostname removed'});
-    # Write changes to config file.
-    &WriteDataFile;
+
+	# Open /var/ipfire/ddns/config for writing.
+	open(FILE, ">$datafile") or die "Unable to open $datafile.";
+
+	# Lock file for writing.
+	flock FILE, 2;
+
+	my $id = 0;
+
+	# Read file line by line.
+	foreach my $line (@current) {
+
+		# Write back every line, except the one we want to drop
+		# (identified by the ID)
+		unless ($settings{'ID'} eq $id) {
+			print FILE "$line";
+		}
+
+		# Increase id.
+		$id++;
+	}
+
+	# Close file after writing.
+	close(FILE);
+
+	# Unset given CGI params.
+	undef %settings;
+
+	# Write out notice to logfile.
+	&General::log($Lang::tr{'ddns hostname removed'});
+
+	# Update ddns config file.
+	&GenerateDDNSConfigFile();
 }
 
+#
+# Read items for editing.
+#
+if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
+
+	my $id = 0;
+	my @temp;
+
+	# Read file line by line.
+	foreach my $line (@current) {
+
+		if ($settings{'ID'} eq $id) {
+
+			# Remove newlines.
+			chomp($line);
+
+			# Splitt lines (splitting element is a single ",") and save values into temp array.
+			@temp = split(/\,/,$line);
+
+			$settings{'SERVICE'} = $temp[0];
+			$settings{'HOSTNAME'} = "$temp[1].$temp[2]";
+			$settings{'PROXY'} = $temp[3];
+			$settings{'WILDCARDS'} = $temp[4];
+			$settings{'LOGIN'} = $temp[5];
+			$settings{'PASSWORD'} = $temp[6];
+			$settings{'ENABLED'} = $temp[7];
+		}
+	# Increase $id.
+	$id++;
+
+	}
+}
+
+#
+# Handle forced updates.
+#
 if ($settings{'ACTION'} eq $Lang::tr{'instant update'}) {
-    system('/usr/local/bin/setddns.pl', '-f');
+    system(@ddnsprog) == 0 or die "@ddnsprog failed: $?\n";
 }
 
-
-if ($settings{'ACTION'} eq '')
-{
-    $settings{'SERVICE'} = 'dyndns.org';
-    $settings{'ENABLED'} = 'on';
+#
+# Set default values.
+#
+if (! $settings{'ACTION'}) {
+	$settings{'SERVICE'} = 'dyndns.org';
+	$settings{'ENABLED'} = 'on';
 }
 
 &Header::openpage($Lang::tr{'dynamic dns'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
-my %checked =();     # Checkbox manipulations
-$checked{'SERVICE'}{'all-inkl.com'} = '';
-$checked{'SERVICE'}{'cjb.net'} = '';
-$checked{'SERVICE'}{'dhs.org'} = '';
-$checked{'SERVICE'}{'dnspark.com'} = '';
-$checked{'SERVICE'}{'dns.lightningwirelabs.com'} = '';
-$checked{'SERVICE'}{'dtdns.com'} = '';
-$checked{'SERVICE'}{'dyndns.org'} = '';
-$checked{'SERVICE'}{'dyndns-custom'} = '';
-$checked{'SERVICE'}{'dyndns-static'} = '';
-$checked{'SERVICE'}{'dyns.cx'} = '';
-$checked{'SERVICE'}{'dynu.ca'} = '';
-$checked{'SERVICE'}{'easydns.com'} = '';
-$checked{'SERVICE'}{'enom.com'} = '';
-$checked{'SERVICE'}{'freedns.afraid.org'} = '';
-$checked{'SERVICE'}{'hn.org'} = '';
-$checked{'SERVICE'}{'namecheap.com'} = '';
-$checked{'SERVICE'}{'no-ip.com'} = '';
-$checked{'SERVICE'}{'nsupdate'} = '';
-$checked{'SERVICE'}{'ovh.com'} = '';
-$checked{'SERVICE'}{'regfish.com'} = '';
-$checked{'SERVICE'}{'selfhost.de'} = '';
-$checked{'SERVICE'}{'spdns.org'} = '';
-$checked{'SERVICE'}{'strato.com'} = '';
-$checked{'SERVICE'}{'twodns.de'} = '';
-$checked{'SERVICE'}{'tzo.com'} = '';
-$checked{'SERVICE'}{'variomedia.de'} = '';
-$checked{'SERVICE'}{'zoneedit.com'} = '';
-$checked{'SERVICE'}{$settings{'SERVICE'}} = "selected='selected'";
+# Read file for general ddns settings.
+&General::readhash($settingsfile, \%settings);
 
+my %checked =();
 $checked{'BEHINDROUTER'}{'RED_IP'} = '';
 $checked{'BEHINDROUTER'}{'FETCH_IP'} = '';
 $checked{'BEHINDROUTER'}{$settings{'BEHINDROUTER'}} = "checked='checked'";
-$checked{'MINIMIZEUPDATES'} = ($settings{'MINIMIZEUPDATES'} eq '' ) ? '' : "checked='checked'";
 
-$checked{'PROXY'}{'on'} = ($settings{'PROXY'} eq '') ? '' : "checked='checked'";
-$checked{'WILDCARDS'}{'on'} = ($settings{'WILDCARDS'} eq '') ? '' : "checked='checked'";
 $checked{'ENABLED'}{'on'} = ($settings{'ENABLED'} eq '' ) ? '' : "checked='checked'";
 
+# Show box for errormessages..
 if ($errormessage) {
     &Header::openbox('100%', 'left', $Lang::tr{'error messages'});
     print "<font class='base'>$errormessage&nbsp;</font>";
     &Header::closebox();
 }
 
-if ($warnmessage) {
-    $warnmessage = "<font color=${Header::colourred}><b>$Lang::tr{'capswarning'}</b></font>: $warnmessage";
-}
 &Header::openbox('100%', 'left', $Lang::tr{'settings'});
-print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
-print <<END
-<table width='100%'>
-<tr>
-        <td class='base'>$Lang::tr{'dyn dns source choice'}</td>
-</tr><tr>
-    <td class='base'><input type='radio' name='BEHINDROUTER' value='RED_IP' $checked{'BEHINDROUTER'}{'RED_IP'} />
-    $Lang::tr{'use ipfire red ip'}</td>
-</tr><tr>
-    <td class='base'><input type='radio' name='BEHINDROUTER' value='FETCH_IP' $checked{'BEHINDROUTER'}{'FETCH_IP'} />
-    $Lang::tr{'fetch ip from'} <img src='/blob.gif' alt='*' /></td>
-</tr>
-<tr>
-    <td class='base'><input type='checkbox' name='MINIMIZEUPDATES' $checked{'MINIMIZEUPDATES'} />
-    $Lang::tr{'ddns minimize updates'}</td>
-</tr>
-</table>
-<br /><hr />
-END
-;
 
+##
+# Section for general ddns setup.
 print <<END
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table width='100%'>
-<tr>
-    <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
-    <td width='70%' class='base'>$Lang::tr{'avoid dod'}</td>
-    <td width='30%' align='right' valign='top' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-</tr>
+	<tr>
+		<td class='base'>$Lang::tr{'dyn dns source choice'}</td>
+	</tr>
+	<tr>
+		<td class='base'><input type='radio' name='BEHINDROUTER' value='RED_IP' $checked{'BEHINDROUTER'}{'RED_IP'} />
+		$Lang::tr{'use ipfire red ip'}</td>
+	</tr>
+	<tr>
+		<td class='base'><input type='radio' name='BEHINDROUTER' value='FETCH_IP' $checked{'BEHINDROUTER'}{'FETCH_IP'} />
+		$Lang::tr{'fetch ip from'}</td>
+	</tr>
+</table>
+<br />
+<hr />
+
+<table width='100%'>
+	<tr>
+		<td align='right' valign='top' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+	</tr>
 </table>
 </form>
 END
 ;
-&Header::closebox();   # end of Settings1
 
+&Header::closebox();
 
+##
+# Section to add or edit an existing entry.
+
+# Default is add.
 my $buttontext = $Lang::tr{'add'};
-if ($settings{'KEY1'} ne '') {
-    $buttontext = $Lang::tr{'update'};
-    &Header::openbox('100%', 'left', $Lang::tr{'edit an existing host'});
+
+# Change buttontext and headline if we edit an account.
+if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
+
+	# Rename button and print headline for updating.
+	$buttontext = $Lang::tr{'update'};
+	&Header::openbox('100%', 'left', $Lang::tr{'edit an existing host'});
 } else {
-    &Header::openbox('100%', 'left', $Lang::tr{'add a host'});
+
+	# Otherwise use default button text and show headline for adding a new account.
+	&Header::openbox('100%', 'left', $Lang::tr{'add a host'});
 }
 
-#Edited line number (KEY1) passed until cleared by 'save' or 'remove'
 print <<END
+
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<input type='hidden' name='KEY1' value='$settings{'KEY1'}' />
+<input type='hidden' name='ID' value='$settings{'ID'}' />
 <table width='100%'>
-<tr>
-    <td width='25%' class='base'>$Lang::tr{'service'}:</td>
-    <td width='25%'><select size='1' name='SERVICE'>
-    <option $checked{'SERVICE'}{'all-inkl.com'}>all-inkl.com</option>
-    <option $checked{'SERVICE'}{'cjb.net'}>cjb.net</option>
-    <option $checked{'SERVICE'}{'dhs.org'}>dhs.org</option>
-    <option $checked{'SERVICE'}{'dnspark.com'}>dnspark.com</option>
-    <option $checked{'SERVICE'}{'dns.lightningwirelabs.com'}>dns.lightningwirelabs.com</option>
-    <option $checked{'SERVICE'}{'dtdns.com'}>dtdns.com</option>
-    <option $checked{'SERVICE'}{'dyndns.org'}>dyndns.org</option>
-    <option $checked{'SERVICE'}{'dyndns-custom'}>dyndns-custom</option>
-    <option $checked{'SERVICE'}{'dyndns-static'}>dyndns-static</option>
-    <option $checked{'SERVICE'}{'dyns.cx'}>dyns.cx</option>
-    <option $checked{'SERVICE'}{'dynu.ca'}>dynu.ca dyn.ee dynserv.(ca|org|net|com)</option>
-    <option $checked{'SERVICE'}{'easydns.com'}>easydns.com</option>
-    <option $checked{'SERVICE'}{'enom.com'}>enom.com</option>
-    <option $checked{'SERVICE'}{'freedns.afraid.org'}>freedns.afraid.org</option>
-    <option $checked{'SERVICE'}{'hn.org'}>hn.org</option>
-	<option $checked{'SERVICE'}{'namecheap.com'}>namecheap.com</option>
-    <option $checked{'SERVICE'}{'no-ip.com'}>no-ip.com</option>
-    <option $checked{'SERVICE'}{'nsupdate'}>nsupdate</option>
-    <option $checked{'SERVICE'}{'ovh.com'}>ovh.com</option>
-    <option $checked{'SERVICE'}{'regfish.com'}>regfish.com</option>
-    <option $checked{'SERVICE'}{'selfhost.de'}>selfhost.de</option>
-    <option $checked{'SERVICE'}{'spdns.org'}>spdns.org</option>
-    <option $checked{'SERVICE'}{'strato.com'}>strato.com</option>
-    <option $checked{'SERVICE'}{'twodns.de'}>twodns.de</option>
-<!--    <option $checked{'SERVICE'}{'tzo.com'}>tzo.com</option>        comment this service out until a working fix is developed -->
-    <option $checked{'SERVICE'}{'variomedia.de'}>variomedia.de</option>
-    <option $checked{'SERVICE'}{'zoneedit.com'}>zoneedit.com</option>
-    </select></td>
-    <td width='20%' class='base'>$Lang::tr{'hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-    <td width='30%'><input type='text' name='HOSTNAME' value='$settings{'HOSTNAME'}' /></td>
-</tr><tr>
-    <td class='base'>$Lang::tr{'behind a proxy'}</td>
-    <td><input type='checkbox' name='PROXY' value='on' $checked{'PROXY'}{'on'} /></td>
-    <td class='base'>$Lang::tr{'domain'}:</td>
-    <td><input type='text' name='DOMAIN' value='$settings{'DOMAIN'}' /></td>
-</tr><tr>
-    <td class='base'>$Lang::tr{'enable wildcards'}</td>
-    <td><input type='checkbox' name='WILDCARDS' value='on' $checked{'WILDCARDS'}{'on'} /></td>
-    <td class='base'>$Lang::tr{'username'}</td>
-    <td><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
-</tr><tr>
-    <td></td>
-    <td></td>
-    <td class='base'>$Lang::tr{'password'}</td>
-    <td><input type='password' name='PASSWORD' value='$settings{'PASSWORD'}' /></td>
-</tr><tr>
-    <td class='base'>$Lang::tr{'enabled'}</td>
-    <td><input type='checkbox' name='ENABLED' value='on' $checked{'ENABLED'}{'on'} /></td>
-    <td class='base'>$Lang::tr{'again'}</td>
-    <td><input type='password' name='PASSWORD2' value='$settings{'PASSWORD2'}' /></td>
-</tr>
+	<tr>
+		<td width='25%' class='base'>$Lang::tr{'service'}:</td>
+		<td width='25%'>
+END
+;
+		# Generate dropdown menu for service selection.
+		print"<select size='1' name='SERVICE'>\n";
+
+		my $selected;
+
+		# Loop to print the providerlist.
+		foreach my $provider (@providers) {
+
+			# Check if the current provider needs to be selected.
+			if ($provider eq $settings{'SERVICE'}) {
+				$selected = 'selected';
+			} else {
+				$selected = "";
+			}
+
+			# Print out the HTML option field.
+			print "<option value=\"$provider\" $selected>$provider</option>\n";
+		}
+
+		print"</select></td>\n";
+print <<END
+		<td width='20%' class='base'>$Lang::tr{'hostname'}:</td>
+		<td width='30%'><input type='text' name='HOSTNAME' value='$settings{'HOSTNAME'}' /></td>
+	</tr>
+
+	<tr>
+		<td class='base'>$Lang::tr{'enabled'}</td>
+		<td><input type='checkbox' name='ENABLED' value='on' $checked{'ENABLED'}{'on'} /></td>
+		<td class='base'>$Lang::tr{'username'}</td>
+		<td><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
+	</tr>
+
+	<tr>
+		<td class='base'></td>
+		<td></td>
+		<td class='base'>$Lang::tr{'password'}</td>
+		<td><input type='password' name='PASSWORD' value='$settings{'PASSWORD'}' /></td>
+	</tr>
 </table>
 <br>
-<hr />
+<hr>
+
 <table width='100%'>
 <tr>
-    <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
-    <td width='70%' class='base'>$ddnsprefix</td>
-    
     <td width='30%' align='right' class='base'>
-	<input type='hidden' name='ACTION' value='$Lang::tr{'add'}' />
-	<input type='submit' name='SUBMIT' value='$buttontext' />    </td>
+	<input type='hidden' name='ACTION' value='$buttontext'>
+	<input type='submit' name='SUBMIT' value='$buttontext'></td>
 </tr>
 </table>
 </form>
@@ -400,174 +478,239 @@ END
 ;
 &Header::closebox();
 
-#
-# Third box shows the list, in columns
-#
-&Header::openbox('100%', 'left', $Lang::tr{'current hosts'});
-print <<END
+##
+# Third section, display all created ddns hosts.
+# Re-open file to get changes.
+open(FILE, $datafile) or die "Unable to open $datafile.";
+@current = <FILE>;
+close(FILE);
+
+# Get IP address of the red interface.
+my $ip = &General::GetDyndnsRedIP();
+my $id = 0;
+my $toggle_enabled;
+
+if (@current) {
+	&Header::openbox('100%', 'left', $Lang::tr{'current hosts'});
+
+	print <<END;
 <table width='100%' class='tbl'>
+	<tr>
+		<th width='30%' align='center' class='boldbase'><b>$Lang::tr{'service'}</b></th>
+		<th width='50%' align='center' class='boldbase'><b>$Lang::tr{'hostname'}</b></th>
+		<th width='20%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></th>
+	</tr>
+END
+
+	foreach my $line (@current) {
+		# Remove newlines.
+		chomp(@current);
+		my @temp = split(/\,/,$line);
+
+		# Generate value for enable/disable checkbox.
+		my $sync = "<font color='blue'>";
+		my $gif = '';
+		my $gdesc = '';
+
+		if ($temp[7] eq "on") {
+			$gif = 'on.gif';
+			$gdesc = $Lang::tr{'click to disable'};
+			$sync = (&General::DyndnsServiceSync ($ip,$temp[1], $temp[2]) ? "<font color='green'>": "<font color='red'>") ;
+			$toggle_enabled = 'off';
+		} else {
+			$gif = 'off.gif';
+			$gdesc = $Lang::tr{'click to enable'};
+			$toggle_enabled = 'on';
+		}
+
+		# Background color.
+		my $col="";
+
+		if ($settings{'ID'} eq $id) {
+			$col="bgcolor='${Header::colouryellow}'";
+		} elsif (!($temp[0] ~~ @providers)) {
+			$col="bgcolor='#FF4D4D'";
+		} elsif ($id % 2) {
+			$col="bgcolor='$color{'color20'}'";
+		} else {
+			$col="bgcolor='$color{'color22'}'";
+		}
+
+		# The following HTML Code still is part of the loop.
+		print <<END;
 <tr>
-    <th width='15%' align='center' class='boldbase'><b>$Lang::tr{'service'}</b></th>
-    <th width='25%' align='center' class='boldbase'><b>$Lang::tr{'hostname'}</b></th>
-    <th width='30%' align='center' class='boldbase'><b>$Lang::tr{'domain'}</b></th>
-    <th width='10%' align='center' class='boldbase'><b>$Lang::tr{'proxy'}</b></th>
-    <th width='10%' align='center' class='boldbase'><b>$Lang::tr{'wildcards'}</b></th>
-    <th width='10%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></th>
+	<td align='center' $col><a href='http://$temp[0]'>$temp[0]</a></td>
+	<td align='center' $col>$sync$temp[1].$sync$temp[2]</td>
+
+	<td align='center' $col><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<input type='hidden' name='ID' value='$id'>
+		<input type='hidden' name='ENABLED' value='$toggle_enabled'>
+		<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
+		<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc' />
+	</form></td>
+
+	<td align='center' $col><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<input type='hidden' name='ID' value='$id'>
+		<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
+		<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
+	</form></td>
+
+	<td align='center' $col><form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<input type='hidden' name='ID' value='$id'>
+		<input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
+		<input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
+	</form></td>
 </tr>
 END
-;
-my $ip = &General::GetDyndnsRedIP;
-my $key = 0;
-foreach my $line (@current) {
-    chomp($line);   				# remove newline
-    my @temp = split(/\,/,$line);
+ 	   	$id++;
+	}
 
-    if ($temp[0] eq 'no-ip.com') {
-    	$temp[1] =~ s!$General::noipprefix(.*)!<b>group:</b>$1 !;
-    } 
-
-    #Choose icon for checkbox
-
-    my $gifproxy='';
-    my $descproxy='';
-    if ($temp[3] eq "on") {
-	$gifproxy = 'on.gif';
-	$descproxy = $Lang::tr{'click to disable'};
-    } else {
-	$gifproxy = 'off.gif';
-	$descproxy = $Lang::tr{'click to enable'};
-    }
-
-    my $gifwildcard='';
-    my $descwildcard='';
-    if ($temp[4] eq "on") {
-	$gifwildcard = 'on.gif';
-	$descwildcard = $Lang::tr{'click to disable'};
-    } else {
-	$gifwildcard = 'off.gif';
-	$descwildcard = $Lang::tr{'click to enable'}; 
-    }
-
-    my $sync = "<font color='blue'>";
-    my $gif = '';
-    my $gdesc = '';
-    if ($temp[7] eq "on") {
-	$gif = 'on.gif';
-	$gdesc = $Lang::tr{'click to disable'};
-        $sync = (&General::DyndnsServiceSync ($ip,$temp[1], $temp[2]) ? "<font color='green'>": "<font color='red'>") ;
-    } else {
-	$gif = 'off.gif';
-	$gdesc = $Lang::tr{'click to enable'};
-    }
-
-	my $col="";
-    #Colorize each line
-    if ($settings{'KEY1'} eq $key) {
-	print "<tr>";
-	$col="bgcolor='${Header::colouryellow}'";
-    } elsif ($key % 2) {
-	print "<tr>";
-	$col="bgcolor='$color{'color20'}'";
-    } else {
-	print "<tr>";
-	$col="bgcolor='$color{'color22'}'";
-    }
-
-    #if a field is empty, replace it with a '---' to see colorized info!
-    $temp[1] = '---' if (!$temp[1]);
-    $temp[2] = '---' if (!$temp[2]);
-
-    print <<END
-<td align='center' $col><a href='http://$temp[0]'>$temp[0]</a></td>
-<td align='center' $col>$sync$temp[1]</td>
-<td align='center' $col>$sync$temp[2]</td>
-
-<td align='center' $col>
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
-<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gifproxy' alt='$descproxy' title='$descproxy' />
-<input type='hidden' name='KEY1' value='$key' />
-<input type='hidden' name='KEY2' value='3' />
-</form>
-</td>
-
-<td align='center' $col>
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
-<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gifwildcard' alt='$descwildcard' title='$descwildcard' />
-<input type='hidden' name='KEY1' value='$key' />
-<input type='hidden' name='KEY2' value='4' />
-</form>
-</td>
-
-<td align='center' $col>
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
-<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc' />
-<input type='hidden' name='KEY1' value='$key' />
-<input type='hidden' name='KEY2' value='7' />
-</form>
-</td>
-
-<td align='center' $col>
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
-<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
-<input type='hidden' name='KEY1' value='$key' />
-</form>
-</td>
-
-<td align='center' $col>
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<input type='hidden' name='ACTION' value='$Lang::tr{'remove'}' />
-<input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' />
-<input type='hidden' name='KEY1' value='$key' />
-</form>
-</td>
-</tr>
-END
-;
-    $key++;
-}
-print "</table>";
-
-# If table contains entries, print 'Key to action icons'
-if ($key) {
-print <<END
+	print <<END;
+</table>
 <table width='100%'>
-<tr>
-    <td class='boldbase'>&nbsp;<b>$Lang::tr{'legend'}:&nbsp;</b></td>
-    <td><img src='/images/on.gif' alt='$Lang::tr{'click to disable'}' /></td>
-    <td class='base'>$Lang::tr{'click to disable'}</td>
-    <td>&nbsp;&nbsp;</td>
-    <td><img src='/images/off.gif' alt='$Lang::tr{'click to enable'}' /></td>
-    <td class='base'>$Lang::tr{'click to enable'}</td>
-    <td>&nbsp;&nbsp;</td>
-    <td><img src='/images/edit.gif' alt='$Lang::tr{'edit'}' /></td>
-    <td class='base'>$Lang::tr{'edit'}</td>
-    <td>&nbsp;&nbsp;</td>
-    <td><img src='/images/delete.gif' alt='$Lang::tr{'remove'}' /></td>
-    <td class='base'>$Lang::tr{'remove'}</td>
-    <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-        <td align='right' width='30%'><input type='submit' name='ACTION' value='$Lang::tr{'instant update'}' /></td>
-    </form>
-</tr>
+	<tr>
+		<td class='boldbase'>&nbsp;<b>$Lang::tr{'legend'}:&nbsp;</b></td>
+		<td><img src='/images/on.gif' alt='$Lang::tr{'click to disable'}' /></td>
+		<td class='base'>$Lang::tr{'click to disable'}</td>
+		<td>&nbsp;&nbsp;</td>
+		<td><img src='/images/off.gif' alt='$Lang::tr{'click to enable'}' /></td>
+		<td class='base'>$Lang::tr{'click to enable'}</td>
+		<td>&nbsp;&nbsp;</td>
+		<td><img src='/images/edit.gif' alt='$Lang::tr{'edit'}' /></td>
+		<td class='base'>$Lang::tr{'edit'}</td>
+		<td>&nbsp;&nbsp;</td>
+		<td><img src='/images/delete.gif' alt='$Lang::tr{'remove'}' /></td>
+		<td class='base'>$Lang::tr{'remove'}</td>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<td align='right' width='30%'><input type='submit' name='ACTION' value='$Lang::tr{'instant update'}' /></td>
+		</form>
+	</tr>
 </table>
 END
-;
+
+	&Header::closebox();
 }
 
-&Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
 
-## Ouf it's the end !
+# Function to generate the required configuration file for the DDNS tool.
+sub GenerateDDNSConfigFile {
+	# Open datafile file
+	open(SETTINGS, "<$datafile") or die "Could not open $datafile.";
 
+	open(FILE, ">${General::swroot}/ddns/ddns.conf");
 
-# write the "current" array
-sub WriteDataFile {
-    #Save current
-    open(FILE, ">$datafile") or die 'ddns datafile error';
-    print FILE @current;
-    close (FILE);
+	# Global configuration options.
+	print FILE "[config]\n";
+
+	# Check if we guess our IP address by an extranal server.
+	if ($settings{'BEHINDROUTER'} eq "FETCH_IP") {
+		print FILE "guess_external_ip = true\n";
+	} else {
+		print FILE "guess_external_ip = false\n";
+	}
+
+	# Use an upstream proxy and generate proxy url.
+	my %proxysettings;
+	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+	if ($proxysettings{'UPSTREAM_PROXY'}) {
+		my $proxy_string = "http://";
+
+		if ($proxysettings{'UPSTREAM_USER'} && $proxysettings{'UPSTREAM_PASSWORD'}) {
+			$proxy_string .= "$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@";
+		}
+
+		$proxy_string .= $proxysettings{'UPSTREAM_PROXY'};
+
+		print FILE "proxy = $proxy_string\n";
+	}
+
+	print FILE "\n";
+
+	while (<SETTINGS>) {
+		my $line = $_;
+
+		# Generate array based on the line content (seperator is a single or multiple space's)
+		my @settings = split(/,/, $line);
+		my ($provider, $hostname, $domain, $proxy, $wildcards, $username, $password, $enabled) = @settings;
+
+		# Skip entries if they are not (longer) supported.
+		next unless ($provider ~~ @providers);
+
+		# Skip disabled entries.
+		next if ($enabled eq "off");
+
+		print FILE "[$hostname.$domain]\n";
+		print FILE "provider = $provider\n";
+
+		my $use_token = 0;
+
+		# Handle token based auth for various providers.
+		if ($provider ~~ ["dns.lightningwirelabs.com", "entrydns.net", "regfish.com"] && $username eq "token") {
+			$use_token = 1;
+
+		# Handle token auth for freedns.afraid.org.
+		} elsif ($provider eq "freedns.afraid.org" && $password eq "") {
+			$use_token = 1;
+			$password = $username;
+
+		# Handle keys for nsupdate
+		} elsif (($provider eq "nsupdate") && $username && $password) {
+			print FILE "key = $username\n";
+			print FILE "secret = $password\n";
+
+			$username = "";
+			$password = "";
+
+		# Handle keys for nsupdate.info
+		} elsif (($provider eq "nsupdate.info") && $password) {
+			print FILE "secret = $password\n";
+
+			$username = "";
+			$password = "";
+		}
+
+		# Write auth details.
+		if ($use_token) {
+			print FILE "token = $password\n";
+		} elsif ($username && $password) {
+			print FILE "username = $username\n";
+			print FILE "password = $password\n";
+		}
+
+		# These providers need to be set to only use IPv4.
+		if ($provider ~~ ["freedns.afraid.org", "nsupdate.info", "opendns.com", "variomedia.de", "zoneedit.com"]) {
+			print FILE "proto = ipv4\n";
+		}
+
+		print FILE "\n";
+	}
+
+	close(SETTINGS);
+	close(FILE);
+}
+
+# Function which generates an array (@providers) which contains the supported providers.
+sub GetProviders {
+	# Get supported providers.
+	open(PROVIDERS, "/usr/bin/ddns list-providers |");
+
+	# Create new array to store the providers.
+	my @providers = ();
+
+	while (<PROVIDERS>) {
+		my $provider = $_;
+
+		# Remove following newlines.
+		chomp($provider);
+
+		# Add provider to the array.
+		push(@providers, $provider);
+	}
+
+	close(PROVIDERS);
+
+	# Return our array.
+	return @providers;
 }

@@ -142,6 +142,8 @@ sub genmenu {
     my %sublogshash = ();
     my $sublogs = \%sublogshash;
 
+  if ( -e "/var/ipfire/main/gpl_accepted") {
+
     eval `/bin/cat /var/ipfire/menu.d/*.menu`;
     eval `/bin/cat /var/ipfire/menu.d/*.main`;
 
@@ -159,6 +161,7 @@ sub genmenu {
     if ( $ethsettings{'RED_TYPE'} eq "PPPOE" && $pppsettings{'MONPORT'} ne "" ) {
         $menu->{'02.status'}{'subMenu'}->{'74.modem-status'}{'enabled'} = 1;
     }
+  }
 }
 
 sub showhttpheaders
