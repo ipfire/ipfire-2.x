@@ -315,3 +315,23 @@ struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks
 
 	return dest;
 }
+
+unsigned long long hw_memory() {
+	FILE* handle = NULL;
+	char line[STRING_SIZE];
+
+	unsigned long long memory = 0;
+
+	/* Calculate amount of memory in machine */
+	if ((handle = fopen("/proc/meminfo", "r"))) {
+		while (fgets(line, sizeof(line), handle)) {
+			if (!sscanf (line, "MemTotal: %llu kB", memory)) {
+				memory = 0;
+			}
+		}
+
+		fclose(handle);
+	}
+
+	return memory * 1024;
+}

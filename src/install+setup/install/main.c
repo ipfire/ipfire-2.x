@@ -410,16 +410,7 @@ int main(int argc, char *argv[]) {
 	if (rc == 2)
 		goto EXIT;
 
-	/* Calculate amount of memory in machine */
-        if ((handle = fopen("/proc/meminfo", "r")))
-        {
-            while (fgets(line, STRING_SIZE-1, handle)) {
-                if (sscanf (line, "MemTotal: %s kB", string)) {
-                    memory = atoi(string) / 1024 ;
-                }
-            }
-            fclose(handle);
-        }
+	memory = hw_memory() / 1024 / 1024;
 
 	/* Partition, mkswp, mkfs.
 	 * before partitioning, first determine the sizes of each

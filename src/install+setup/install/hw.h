@@ -77,4 +77,6 @@ void hw_free_disks(struct hw_disk** disks);
 unsigned int hw_count_disks(struct hw_disk** disks);
 struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection);
 
+unsigned long long hw_memory();
+
 #endif /* HEADER_HW_H */
