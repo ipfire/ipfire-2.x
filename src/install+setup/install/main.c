@@ -552,9 +552,11 @@ int main(int argc, char *argv[]) {
 			"cp /cdrom/%s /harddisk/var/ipfire/backup", restore_file);
 		mysystem(commandstring);
 	}
-	
-	mysystem("umount /cdrom");
-	snprintf(commandstring, STRING_SIZE, "/usr/bin/eject /dev/%s", sourcedrive);
+
+	// Umount source drive and eject
+	hw_umount(SOURCE_MOUNT_PATH);
+
+	snprintf(commandstring, STRING_SIZE, "/usr/bin/eject %s", sourcedrive);
 	mysystem(commandstring);
 
 	if (!unattended) {
