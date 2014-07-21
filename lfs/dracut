@@ -84,7 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cp -vf $(DIR_SRC)/src/dracut/dracut.conf /etc/dracut.conf.d/
 
-	rm -rf /usr/share/dracut/modules.d/*{dash,fips,redhat-i18n,rpmversion,network,ifcfg,plymouth,btrfs,crypt,dm,dmraid,dmsquash-live,lvm,mdraid,multipath,dasd,dasd_mod,fcoe,iscsi,nbd,nfs,resume,uswsusp,zfcp,znet,selinux}
+	rm -rf /usr/share/dracut/modules.d/*{dash,fips,redhat-i18n,rpmversion,network,ifcfg,plymouth,btrfs,crypt,dm,dmraid,dmsquash-live,lvm,multipath,dasd,dasd_mod,fcoe,iscsi,nbd,nfs,resume,uswsusp,zfcp,znet,selinux}
 
 	sed -e "s/--resolve-names=never//g" -i \
 		/usr/share/dracut/modules.d/99base/init
