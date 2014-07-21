@@ -531,13 +531,11 @@ int main(int argc, char *argv[]) {
 	switch (destination->filesystem) {
 		case HW_FS_REISERFS:
 			replace("/harddisk/etc/fstab", "FSTYPE", "reiserfs");
-			replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 			break;
 
 		case HW_FS_EXT4:
 		case HW_FS_EXT4_WO_JOURNAL:
 			replace("/harddisk/etc/fstab", "FSTYPE", "ext4");
-			replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
 			break;
 
 		default:
