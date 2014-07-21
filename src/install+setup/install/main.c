@@ -160,7 +160,6 @@ int main(int argc, char *argv[]) {
 	char message[STRING_SIZE];
 	char title[STRING_SIZE];
 	int allok = 0;
-	struct keyvalue *ethernetkv = initkeyvalues();
 	FILE *handle, *cmdfile, *copying;
 	char line[STRING_SIZE];
 		
@@ -571,8 +570,6 @@ EXIT:
 
 	if (!(allok))
 		newtWinMessage(title, ctr[TR_OK], ctr[TR_PRESS_OK_TO_REBOOT]);	
-	
-	freekeyvalues(ethernetkv);
 
 	if (allok) {
 		fflush(flog);
