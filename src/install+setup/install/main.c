@@ -528,20 +528,6 @@ int main(int argc, char *argv[]) {
 	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE4#UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", destination->part_data);
 	system(commandstring);
 
-	switch (destination->filesystem) {
-		case HW_FS_REISERFS:
-			replace("/harddisk/etc/fstab", "FSTYPE", "reiserfs");
-			break;
-
-		case HW_FS_EXT4:
-		case HW_FS_EXT4_WO_JOURNAL:
-			replace("/harddisk/etc/fstab", "FSTYPE", "ext4");
-			break;
-
-		default:
-			assert(0);
-	}
-
 	replace("/harddisk/boot/grub/grub.conf", "KVER", KERNEL_VERSION);
 
 	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#root=ROOT#root=UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/boot/grub/grub.conf", destination->part_root);
