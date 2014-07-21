@@ -349,6 +349,16 @@ char *de_tr[] = {
 "Das Installationsprogramm wird nun eine RAID-Konfiguration auf den ausgewählten Festplatten anlegen:\n\n  %s\n  %s\n\nMöchten Sie fortfahren?",
 /* TR_DELETE_ALL_DATA */
 "Alle Daten löschen",
+/* TR_DISK_CONFIGURATION_NOT_SUPPORTED */
+"Ihre gewünschte Auswahl wird derzeit nicht unterstützt.",
+/* TR_CREATING_FILESYSTEMS */
+"Erstelle Dateisysteme...",
+/* TR_UNABLE_TO_CREATE_FILESYSTEMS */
+"Die Dateisysteme konnten nicht erstellt werden.",
+/* TR_MOUNTING_FILESYSTEMS */
+"Hänge Dateisysteme ein...",
+/* TR_UNABLE_TO_MOUNT_FILESYSTEMS */
+"Die Dateisysteme konnten nicht eingehangen werden.",
 /* TR_NO_IPCOP_TARBALL_FOUND */
 "Auf dem Webserver wurde kein ipcop-Tarball gefunden.",
 /* TR_NO_ORANGE_INTERFACE */
@@ -591,14 +601,12 @@ char *de_tr[] = {
 "Ich akzeptiere diese Lizenz.",
 /* TR_LICENSE_NOT_ACCEPTED */
 "Die Lizenz wurde nicht akzeptiert. Abbruch!",
-/* TR_EXT2FS_DESCR */
-"Ext2 - Dateisystem ohne Journal (empfohlen für Flash)",
-/* TR_EXT3FS_DESCR */
-"Ext3 - Dateisystem mit Journal",
-/* TR_EXT4FS_DESCR */
-"Ext4 - Dateisystem mit Journal",
-/* TR_REISERFS_DESCR */
-"ReiserFS - Dateisystem mit Journal",
+/* TR_EXT4FS */
+"EXT4 - Dateisystem",
+/* TR_EXT4FS_WO_JOURNAL */
+"EXT4 - Dateisystem ohne Journal",
+/* TR_REISERFS */
+"ReiserFS - Dateisystem",
 /* TR_NO_LOCAL_SOURCE */
 "Kein lokales Quellmedium gefunden. Starte Download.",
 /* TR_DOWNLOADING_ISO */

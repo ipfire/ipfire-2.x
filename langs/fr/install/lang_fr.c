@@ -341,6 +341,16 @@ char *fr_tr[] = {
 "The installation program will now set up a RAID configuration on the selected harddisks:\n\n  %s\n  %s\n\nDo you agree to continue?",
 /* TR_DELETE_ALL_DATA */
 "Delete all data",
+/* TR_DISK_CONFIGURATION_NOT_SUPPORTED */
+"You disk configuration is currently not supported.",
+/* TR_CREATING_FILESYSTEMS */
+"Creating filesystems...",
+/* TR_UNABLE_TO_CREATE_FILESYSTEMS */
+"Unable to create filesystems.",
+/* TR_MOUNTING_FILESYSTEMS */
+"Mounting filesystems...",
+/* TR_UNABLE_TO_MOUNT_FILESYSTEMS */
+"Unable to mount filesystems.",
 /* TR_NO_IPCOP_TARBALL_FOUND */
 "Aucun tarball ipcop trouvé sur le serveur Web.",
 /* TR_NO_ORANGE_INTERFACE */
@@ -583,14 +593,12 @@ char *fr_tr[] = {
 "J'accepte les termes de cette licence.",
 /* TR_LICENSE_NOT_ACCEPTED */
 "Je n'accepte pas les termes de cette licence, quitter le programme d'installation.",
-/* TR_EXT2FS_DESCR */
-"Ext2 - Système de fichiers sans journal (suggéré pour les cartes flash)",
-/* TR_EXT3FS_DESCR */
-"Ext3 - Système de fichiers avec journal",
-/* TR_EXT4FS_DESCR */
-"Ext4 - Système de fichiers avec journal",
-/* TR_REISERFS_DESCR */
-"ReiserFS - Système de fichiers avec journal",
+/* TR_EXT4FS */
+"EXT4 - Filesystem",
+/* TR_EXT4FS_WO_JOURNAL */
+"EXT4 - Filesystem without journal",
+/* TR_REISERFS */
+"ReiserFS - Filesystem",
 /* TR_NO_LOCAL_SOURCE */
 "Pas de source locale trouvée. Démarrage du téléchargement.",
 /* TR_DOWNLOADING_ISO */

@@ -345,6 +345,16 @@ char *nl_tr[] = {
 "The installation program will now set up a RAID configuration on the selected harddisks:\n\n  %s\n  %s\n\nDo you agree to continue?",
 /* TR_DELETE_ALL_DATA */
 "Delete all data",
+/* TR_DISK_CONFIGURATION_NOT_SUPPORTED */
+"You disk configuration is currently not supported.",
+/* TR_CREATING_FILESYSTEMS */
+"Creating filesystems...",
+/* TR_UNABLE_TO_CREATE_FILESYSTEMS */
+"Unable to create filesystems.",
+/* TR_MOUNTING_FILESYSTEMS */
+"Mounting filesystems...",
+/* TR_UNABLE_TO_MOUNT_FILESYSTEMS */
+"Unable to mount filesystems.",
 /* TR_NO_IPCOP_TARBALL_FOUND */
 "Er is geen ipcop tarball gevonden op de webserver.",
 /* TR_NO_ORANGE_INTERFACE */
@@ -587,14 +597,12 @@ char *nl_tr[] = {
 "Ik accepteer deze licentie.",
 /* TR_LICENSE_NOT_ACCEPTED */
 "Licentie niet geaccepteerd. Stopt!",
-/* TR_EXT2FS_DESCR */
-"Ext2 - Bestandssysteem zonder journal (geschikt voor flashdrives)",
-/* TR_EXT3FS_DESCR */
-"Ext3 - Bestandssysteem met journal",
-/* TR_EXT4FS_DESCR */
-"Ext4 - Bestandssysteem met journal",
-/* TR_REISERFS_DESCR */
-"ReiserFS - Bestandssysteem met journal",
+/* TR_EXT4FS */
+"EXT4 - Filesystem",
+/* TR_EXT4FS_WO_JOURNAL */
+"EXT4 - Filesystem without journal",
+/* TR_REISERFS */
+"ReiserFS - Filesystem",
 /* TR_NO_LOCAL_SOURCE */
 "Geen lokale bronmedia gevonden. Start download.",
 /* TR_DOWNLOADING_ISO */

@@ -341,6 +341,16 @@ char *es_tr[] = {
 "The installation program will now set up a RAID configuration on the selected harddisks:\n\n  %s\n  %s\n\nDo you agree to continue?",
 /* TR_DELETE_ALL_DATA */
 "Delete all data",
+/* TR_DISK_CONFIGURATION_NOT_SUPPORTED */
+"You disk configuration is currently not supported.",
+/* TR_CREATING_FILESYSTEMS */
+"Creating filesystems...",
+/* TR_UNABLE_TO_CREATE_FILESYSTEMS */
+"Unable to create filesystems.",
+/* TR_MOUNTING_FILESYSTEMS */
+"Mounting filesystems...",
+/* TR_UNABLE_TO_MOUNT_FILESYSTEMS */
+"Unable to mount filesystems.",
 /* TR_NO_IPCOP_TARBALL_FOUND */
 "No se encontró ningun archivo tarball de ipcop en el servidor web",
 /* TR_NO_ORANGE_INTERFACE */
@@ -583,14 +593,12 @@ char *es_tr[] = {
 "I accept this license.",
 /* TR_LICENSE_NOT_ACCEPTED */
 "License not accepted. Exit!",
-/* TR_EXT2FS_DESCR */
-"Ext2 - Filesystem without journal (suggested for flashdrives)",
-/* TR_EXT3FS_DESCR */
-"Ext3 - Filesystem with journal",
-/* TR_EXT4FS_DESCR */
-"Ext4 - Filesystem with journal",
-/* TR_REISERFS_DESCR */
-"ReiserFS - Filesystem with journal",
+/* TR_EXT4FS */
+"EXT4 - Filesystem",
+/* TR_EXT4FS_WO_JOURNAL */
+"EXT4 - Filesystem without journal",
+/* TR_REISERFS */
+"ReiserFS - Filesystem",
 /* TR_NO_LOCAL_SOURCE */
 "No local source media found. Starting download.",
 /* TR_DOWNLOADING_ISO */

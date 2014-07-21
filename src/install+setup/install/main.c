@@ -24,11 +24,6 @@
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 #define LICENSE_FILE	"/cdrom/COPYING"
 
-#define EXT2 0
-#define EXT3 1
-#define EXT4 2
-#define REISERFS 3
-
 FILE *flog = NULL;
 char *mylog;
 
@@ -160,21 +155,14 @@ int main(int argc, char *argv[]) {
 	char* sourcedrive = NULL;
 	int rc = 0;
 	char commandstring[STRING_SIZE];
-	char mkfscommand[STRING_SIZE];
-	char *fstypes[] = { "ext2", "ext3", "ext4", "ReiserFS", NULL };
-	int fstype = EXT4;
 	int choice;
 	char shortlangname[10];
 	char message[STRING_SIZE];
 	char title[STRING_SIZE];
 	int allok = 0;
-	int allok_fastexit=0;
 	struct keyvalue *ethernetkv = initkeyvalues();
 	FILE *handle, *cmdfile, *copying;
 	char line[STRING_SIZE];
-	char string[STRING_SIZE];
-	long memory = 0, disk = 0;
-	long system_partition, boot_partition, root_partition, swap_file;
 		
 	int unattended = 0;
 	int serialconsole = 0;
@@ -266,7 +254,7 @@ int main(int argc, char *argv[]) {
 
 	assert(sourcedrive);
 
-	int r = hw_mount(sourcedrive, SOURCE_MOUNT_PATH, MS_RDONLY);
+	int r = hw_mount(sourcedrive, SOURCE_MOUNT_PATH, "iso9660", MS_RDONLY);
 	if (r) {
 		fprintf(flog, "Could not mount %s to %s\n", sourcedrive, SOURCE_MOUNT_PATH);
 		fprintf(flog, strerror(errno));
@@ -384,191 +372,87 @@ int main(int argc, char *argv[]) {
 	hw_free_disks(disks);
 
 	struct hw_destination* destination = hw_make_destination(part_type, selected_disks);
-	assert(destination);
+
+	if (!destination) {
+		errorbox(ctr[TR_DISK_TOO_SMALL]);
+		goto EXIT;
+	}
 
 	fprintf(flog, "Destination drive: %s\n", destination->path);
-	fprintf(flog, "  boot: %s\n", destination->part_boot);
-	fprintf(flog, "  swap: %s\n", destination->part_swap);
-	fprintf(flog, "  root: %s\n", destination->part_root);
-	fprintf(flog, "  data: %s\n", destination->part_data);
+	fprintf(flog, "  boot: %s (%lluMB)\n", destination->part_boot, BYTES2MB(destination->size_boot));
+	fprintf(flog, "  swap: %s (%lluMB)\n", destination->part_swap, BYTES2MB(destination->size_swap));
+	fprintf(flog, "  root: %s (%lluMB)\n", destination->part_root, BYTES2MB(destination->size_root));
+	fprintf(flog, "  data: %s (%lluMB)\n", destination->part_data, BYTES2MB(destination->size_data));
 
-	fstypes[0]=ctr[TR_EXT2FS_DESCR];
-	fstypes[1]=ctr[TR_EXT3FS_DESCR];
-	fstypes[2]=ctr[TR_EXT4FS_DESCR];
-	fstypes[3]=ctr[TR_REISERFS_DESCR];
-	fstypes[4]=NULL;
+	// Warn the user if there is not enough space to create a swap partition
+	if (!unattended && !*destination->part_swap) {
+		rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], ctr[TR_CONTINUE_NO_SWAP]);
 
-	if (!unattended) {		
-		sprintf(message, ctr[TR_CHOOSE_FILESYSTEM]);
-		rc = newtWinMenu( ctr[TR_CHOOSE_FILESYSTEM], message,
-			50, 5, 5, 6, fstypes, &fstype, ctr[TR_OK],
-			ctr[TR_CANCEL], NULL);
-	} else {
-	    rc = 1;
-	    fstype = EXT4;
-	}
-	if (rc == 2)
-		goto EXIT;
-
-	memory = hw_memory() / 1024 / 1024;
-
-	/* Partition, mkswp, mkfs.
-	 * before partitioning, first determine the sizes of each
-	 * partition.  In order to do that we need to know the size of
-	 * the disk. 
-	 */
-	disk = destination->size / 1024 / 1024;
-	
-	fprintf(flog, "Disksize = %ld, memory = %ld", disk, memory);
-	
-	 /* Calculating Swap-Size dependend of Ram Size */
-	if (memory <= 256)
-		swap_file = 128;
-	else if (memory <= 1024 && memory > 256)
-		swap_file = 256;
-	else 
-		swap_file = memory / 4;
-	
-  /* Calculating Root-Size dependend of Max Disk Space */
-  if ( disk < 2048 )
-		root_partition = 1024;
-	else if ( disk >= 2048 && disk <= 3072 )
-		root_partition = 1536;
-	else 
-		root_partition = 2048;
-		
-	
-  /* Calculating the amount of free space */
-	boot_partition = 64; /* in MB */
-	system_partition = disk - ( root_partition + swap_file + boot_partition );
-	
-	fprintf(flog, ", boot = %ld, swap = %ld, mylog = %ld, root = %ld\n",
-	boot_partition, swap_file, system_partition, root_partition);
-	rc = 0;
-
-	if ( (!unattended) && (((disk - (root_partition + swap_file + boot_partition)) < 256 ) && ((disk - (root_partition + boot_partition )) > 256)) ) {
-   rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], ctr[TR_CONTINUE_NO_SWAP]);
-    if (rc == 1){
-      swap_file = 0;
-      system_partition = disk - ( root_partition + swap_file + boot_partition );
-      fprintf(flog, "Changing Swap Size to 0 MB.\n");
-    }
-    else if (rc == 2){
-    fprintf(flog, "Disk is too small.\n");
-    errorbox(ctr[TR_DISK_TOO_SMALL]);goto EXIT;
-    }
-  } 
-  else if (disk - (root_partition + swap_file + boot_partition) >= 256) {
-  
-  }
-  else {
-   fprintf(flog, "Disk is too small.\n");
-   errorbox(ctr[TR_DISK_TOO_SMALL]);goto EXIT;
-  }
-  	 
-	handle = fopen("/tmp/partitiontable", "w");
-
-	/* Make swapfile */
-  if (swap_file) {
-     fprintf(handle, ",%ld,L,*\n,%ld,S,\n,%ld,L,\n,,L,\n",
-     boot_partition, swap_file, root_partition);
-  } else {
-     fprintf(handle, ",%ld,L,*\n,0,0,\n,%ld,L,\n,,L,\n",
-     boot_partition, root_partition);
-  }
-
-	fclose(handle);
-
-	if (disk < 2097150) {
-		// <2TB use sfdisk and normal mbr
-		snprintf(commandstring, STRING_SIZE, "/sbin/sfdisk -L -uM %s < /tmp/partitiontable", destination->path);
-	} else {
-		// >2TB use parted with gpt
-		snprintf(commandstring, STRING_SIZE, "/usr/sbin/parted -s %s mklabel gpt mkpart boot ext2 1M 64M mkpart swap linux-swap 64M 1000M mkpart root ext4 1000M 5000M mkpart var ext4 5000M 100%% disk_set pmbr_boot on", destination->path);		
+		if (rc != 1)
+			goto EXIT;
 	}
 
-	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
-	{
+	// Filesystem selection
+	if (!unattended) {
+		struct filesystems {
+			int fstype;
+			const char* description;
+		} filesystems[] = {
+			{ HW_FS_EXT4,            ctr[TR_EXT4FS] },
+			{ HW_FS_EXT4_WO_JOURNAL, ctr[TR_EXT4FS_WO_JOURNAL] },
+			{ HW_FS_REISERFS,        ctr[TR_REISERFS] },
+			{ 0, NULL },
+		};
+		unsigned int num_filesystems = sizeof(filesystems) / sizeof(*filesystems);
+
+		char* fs_names[num_filesystems];
+		int fs_choice = 0;
+		for (unsigned int i = 0; i < num_filesystems; i++) {
+			if (HW_FS_DEFAULT == filesystems[i].fstype)
+				fs_choice = i;
+
+			fs_names[i] = filesystems[i].description;
+		}
+
+		rc = newtWinMenu(ctr[TR_CHOOSE_FILESYSTEM], ctr[TR_CHOOSE_FILESYSTEM],
+			50, 5, 5, 6, fs_names, &fs_choice, ctr[TR_OK], ctr[TR_CANCEL], NULL);
+
+		if (rc == 0)
+			destination->filesystem = filesystems[fs_choice].fstype;
+
+		else
+			goto EXIT;
+	}
+
+	// Execute the partitioning...
+	statuswindow(60, 4, title, ctr[TR_PARTITIONING_DISK]);
+
+	rc = hw_create_partitions(destination);
+	if (rc) {
 		errorbox(ctr[TR_UNABLE_TO_PARTITION]);
 		goto EXIT;
 	}
 
-	if (fstype == EXT2) {
-//		mysystem("/sbin/modprobe ext2");
-		sprintf(mkfscommand, "/sbin/mke2fs -T ext2");
-	} else if (fstype == REISERFS) {
-		mysystem("/sbin/modprobe reiserfs");
-		sprintf(mkfscommand, "/sbin/mkreiserfs -f");
-	} else if (fstype == EXT3) {
-//		mysystem("/sbin/modprobe ext3");
-		sprintf(mkfscommand, "/sbin/mke2fs -T ext3");
-	} else if (fstype == EXT4) {
-//		mysystem("/sbin/modprobe ext4");
-		sprintf(mkfscommand, "/sbin/mke2fs -T ext4");
-	}
+	newtPopWindow();
 
-	snprintf(commandstring, STRING_SIZE, "/sbin/mke2fs -T ext2 -I 128 %s", destination->part_boot);
-	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_BOOT_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_BOOT_FILESYSTEM]);
+	// Execute the formatting...
+	statuswindow(60, 4, title, ctr[TR_CREATING_FILESYSTEMS]);
+
+	rc = hw_create_filesystems(destination);
+	if (rc) {
+		errorbox(ctr[TR_UNABLE_TO_CREATE_FILESYSTEMS]);
 		goto EXIT;
 	}
 
-	if (swap_file) {
-		snprintf(commandstring, STRING_SIZE, "/sbin/mkswap %s", destination->part_swap);
-		if (runcommandwithstatus(commandstring, ctr[TR_MAKING_SWAPSPACE]))
-		{
-			errorbox(ctr[TR_UNABLE_TO_MAKE_SWAPSPACE]);
-			goto EXIT;
-		}
-	}
-
-	snprintf(commandstring, STRING_SIZE, "%s %s", mkfscommand, destination->part_root);
-	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_ROOT_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
+	rc = hw_mount_filesystems(destination, DESTINATION_MOUNT_PATH);
+	if (rc) {
+		errorbox(ctr[TR_UNABLE_TO_MOUNT_FILESYSTEMS]);
 		goto EXIT;
 	}
 
-	snprintf(commandstring, STRING_SIZE, "%s %s", mkfscommand, destination->part_data);
-	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_LOG_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_LOG_FILESYSTEM]);
-		goto EXIT;
-	}
+	newtPopWindow();
 
-	snprintf(commandstring, STRING_SIZE, "/bin/mount %s /harddisk", destination->part_root);
-	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_ROOT_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MOUNT_ROOT_FILESYSTEM]);
-		goto EXIT;
-	}
-
-	mkdir("/harddisk/boot", S_IRWXU|S_IRWXG|S_IRWXO);
-	mkdir("/harddisk/var", S_IRWXU|S_IRWXG|S_IRWXO);
-	mkdir("/harddisk/var/log", S_IRWXU|S_IRWXG|S_IRWXO);
-
-	snprintf(commandstring, STRING_SIZE, "/bin/mount %s /harddisk/boot", destination->part_boot);
-	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_BOOT_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MOUNT_BOOT_FILESYSTEM]);
-		goto EXIT;
-	}
-	if (swap_file) {
-		snprintf(commandstring, STRING_SIZE, "/sbin/swapon %s", destination->part_swap);
-		if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_SWAP_PARTITION]))
-		{
-			errorbox(ctr[TR_UNABLE_TO_MOUNT_SWAP_PARTITION]);
-			goto EXIT;
-		}
-	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mount %s /harddisk/var", destination->part_data);
-	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_LOG_FILESYSTEM]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MOUNT_LOG_FILESYSTEM]);
-		goto EXIT;
-	}
-
+	// Extract files...
 	snprintf(commandstring, STRING_SIZE,
 		"/bin/tar -C /harddisk  -xvf /cdrom/" SNAME "-" VERSION ".tlz --lzma 2>/dev/null");
 	
@@ -581,12 +465,6 @@ int main(int argc, char *argv[]) {
 	
 	/* Save language und local settings */
 	write_lang_configs(shortlangname);
-
-	/* mount proc filesystem */
-	mysystem("mkdir /harddisk/proc");
-	mysystem("/bin/mount --bind /proc /harddisk/proc");
-	mysystem("/bin/mount --bind /dev  /harddisk/dev");
-	mysystem("/bin/mount --bind /sys  /harddisk/sys");
 
 	/* Build cache lang file */
 	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
@@ -606,18 +484,20 @@ int main(int argc, char *argv[]) {
 	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE4#UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", destination->part_data);
 	system(commandstring);
 
-	if (fstype == EXT2) {
-		replace("/harddisk/etc/fstab", "FSTYPE", "ext2");
-		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
-	} else if (fstype == REISERFS) {
-		replace("/harddisk/etc/fstab", "FSTYPE", "reiserfs");
-		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
-	} else if (fstype == EXT3) {
-		replace("/harddisk/etc/fstab", "FSTYPE", "ext3");
-		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
-	} else if (fstype == EXT4) {
-		replace("/harddisk/etc/fstab", "FSTYPE", "ext4");
-		replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
+	switch (destination->filesystem) {
+		case HW_FS_REISERFS:
+			replace("/harddisk/etc/fstab", "FSTYPE", "reiserfs");
+			replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
+			break;
+
+		case HW_FS_EXT4:
+		case HW_FS_EXT4_WO_JOURNAL:
+			replace("/harddisk/etc/fstab", "FSTYPE", "ext4");
+			replace("/harddisk/boot/grub/grub.conf", "MOUNT", "ro");
+			break;
+
+		default:
+			assert(0);
 	}
 
 	replace("/harddisk/boot/grub/grub.conf", "KVER", KERNEL_VERSION);
@@ -694,58 +574,30 @@ EXIT:
 	
 	freekeyvalues(ethernetkv);
 
-	if (allok && !allok_fastexit)
-	{
-		if (unattended) {
-			fprintf(flog, "Entering unattended setup\n");
-			if (unattended_setup(unattendedkv)) {
-				snprintf(commandstring, STRING_SIZE, "/bin/sleep 10");
-				runcommandwithstatus(commandstring, "Unattended installation finished, system will reboot");
-			} else {
-				errorbox("Unattended setup failed.");
-				goto EXIT;
-			}
-		}
-
+	if (allok) {
 		fflush(flog);
 		fclose(flog);
-		newtFinished();
-
-		if (system("/bin/umount /harddisk/proc"))
-			printf("Unable to umount /harddisk/proc.\n"); 
-	} else {
-		fflush(flog);
-		fclose(flog);
-		newtFinished();
-	}
-
-	fcloseall();
-
-	if (swap_file) {
-		snprintf(commandstring, STRING_SIZE, "/bin/swapoff %s", destination->part_swap);
 	}
 
 	newtFinished();
 
-	system("/bin/umount /harddisk/proc >/dev/null 2>&1");
-	system("/bin/umount /harddisk/dev >/dev/null 2>&1");
-	system("/bin/umount /harddisk/sys >/dev/null 2>&1");
-
-	system("/bin/umount /harddisk/var >/dev/null 2>&1");
-	system("/bin/umount /harddisk/boot >/dev/null 2>&1");
-	system("/bin/umount /harddisk >/dev/null 2>&1");
-
-	if (!(allok))
-		system("/etc/halt");
-
 	// Free resources
 	free(sourcedrive);
-	free(destination);
+
+	if (destination) {
+		hw_umount_filesystems(destination, DESTINATION_MOUNT_PATH);
+		free(destination);
+	}
 
 	if (selected_disks)
 		hw_free_disks(selected_disks);
 
 	hw_free(hw);
+
+	fcloseall();
+
+	if (!(allok))
+		system("/etc/halt");
 
 	return 0;
 }

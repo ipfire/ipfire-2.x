@@ -23,6 +23,7 @@
 
 #include <libudev.h>
 
+#define DESTINATION_MOUNT_PATH        "/harddisk"
 #define SOURCE_MOUNT_PATH "/cdrom"
 #define SOURCE_TEST_FILE  SOURCE_MOUNT_PATH "/" VERSION ".media"
 
@@ -30,8 +31,24 @@
 #define STRING_SIZE                1024
 #define DEV_SIZE                    128
 
+#define HW_PATH_BOOT                  "/boot"
+#define HW_PATH_DATA                  "/var"
+
 #define HW_PART_TYPE_NORMAL           0
 #define HW_PART_TYPE_RAID1            1
+
+#define HW_PART_TABLE_MSDOS           0
+#define HW_PART_TABLE_GPT             1
+
+#define HW_FS_SWAP                    0
+#define HW_FS_REISERFS                1
+#define HW_FS_EXT4                    2
+#define HW_FS_EXT4_WO_JOURNAL         3
+
+#define HW_FS_DEFAULT                 HW_FS_EXT4
+
+#define BYTES2MB(x) ((x) / 1024 / 1024)
+#define MB2BYTES(x) ((unsigned long long)(x) * 1024 * 1024)
 
 struct hw {
 	struct udev *udev;
@@ -51,23 +68,31 @@ struct hw_disk {
 
 struct hw_destination {
 	char path[DEV_SIZE];
-	unsigned long long size;
 
 	int is_raid;
-
 	const struct hw_disk* disk1;
 	const struct hw_disk* disk2;
 
+	int part_table;
 	char part_boot[DEV_SIZE];
 	char part_swap[DEV_SIZE];
 	char part_root[DEV_SIZE];
 	char part_data[DEV_SIZE];
+	int part_boot_idx;
+
+	int filesystem;
+
+	unsigned long long size;
+	unsigned long long size_boot;
+	unsigned long long size_swap;
+	unsigned long long size_root;
+	unsigned long long size_data;
 };
 
 struct hw* hw_init();
 void hw_free(struct hw* hw);
 
-int hw_mount(const char* source, const char* target, int flags);
+int hw_mount(const char* source, const char* target, const char* fs, int flags);
 int hw_umount(const char* target);
 
 char* hw_find_source_medium(struct hw* hw);
@@ -77,6 +102,14 @@ void hw_free_disks(struct hw_disk** disks);
 unsigned int hw_count_disks(struct hw_disk** disks);
 struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection);
 
+struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks);
+
 unsigned long long hw_memory();
+
+int hw_create_partitions(struct hw_destination* dest);
+int hw_create_filesystems(struct hw_destination* dest);
+
+int hw_mount_filesystems(struct hw_destination* dest, const char* prefix);
+int hw_umount_filesystems(struct hw_destination* dest, const char* prefix);
 
 #endif /* HEADER_HW_H */
