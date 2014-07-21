@@ -359,6 +359,10 @@ char *de_tr[] = {
 "Hänge Dateisysteme ein...",
 /* TR_UNABLE_TO_MOUNT_FILESYSTEMS */
 "Die Dateisysteme konnten nicht eingehangen werden.",
+/* TR_BUILDING_RAID */
+"Erstelle RAID...",
+/* TR_UNABLE_TO_BUILD_RAID */
+"Das RAID konnte nicht erstellt werden.",
 /* TR_NO_IPCOP_TARBALL_FOUND */
 "Auf dem Webserver wurde kein ipcop-Tarball gefunden.",
 /* TR_NO_ORANGE_INTERFACE */

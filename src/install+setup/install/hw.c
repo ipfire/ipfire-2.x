@@ -116,7 +116,7 @@ char* hw_find_source_medium(struct hw* hw) {
 
 		// Skip everything what we cannot work with
 		if (strstartswith(dev_path, "/dev/loop") || strstartswith(dev_path, "/dev/fd") ||
-				strstartswith(dev_path, "/dev/ram"))
+				strstartswith(dev_path, "/dev/ram") || strstartswith(dev_path, "/dev/md"))
 			continue;
 
 		if (hw_test_source_medium(dev_path)) {
@@ -173,7 +173,8 @@ struct hw_disk** hw_find_disks(struct hw* hw) {
 
 		// Skip everything what we cannot work with
 		if (strstartswith(dev_path, "/dev/loop") || strstartswith(dev_path, "/dev/fd") ||
-				strstartswith(dev_path, "/dev/ram") || strstartswith(dev_path, "/dev/sr")) {
+				strstartswith(dev_path, "/dev/ram") || strstartswith(dev_path, "/dev/sr") ||
+				strstartswith(dev_path, "/dev/md")) {
 			udev_device_unref(dev);
 			continue;
 		}
@@ -410,6 +411,7 @@ struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks
 	} else if (part_type == HW_PART_TYPE_RAID1) {
 		dest->disk1 = *disks++;
 		dest->disk2 = *disks;
+		dest->raid_level = 1;
 
 		snprintf(dest->path, sizeof(dest->path), "/dev/md0");
 	}
@@ -674,4 +676,49 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 	}
 
 	return 0;
+}
+
+int hw_setup_raid(struct hw_destination* dest) {
+	char* cmd = NULL;
+
+	assert(dest->is_raid);
+
+	asprintf(&cmd, "echo \"y\" | /sbin/mdadm --create --verbose --metadata=0.9 %s", dest->path);
+
+	switch (dest->raid_level) {
+		case 1:
+			asprintf(&cmd, "%s --level=1 --raid-devices=2", cmd);
+			break;
+
+		default:
+			assert(0);
+	}
+
+	if (dest->disk1) {
+		asprintf(&cmd, "%s %s", cmd, dest->disk1->path);
+	}
+
+	if (dest->disk2) {
+		asprintf(&cmd, "%s %s", cmd, dest->disk2->path);
+	}
+
+	int r = mysystem(cmd);
+	free(cmd);
+
+	// Wait a moment until the device has been properly brought up
+	if (r == 0) {
+		unsigned int counter = 10;
+		while (counter-- > 0) {
+			sleep(1);
+
+			if (access(dest->path, R_OK) == 0)
+				break;
+		}
+	}
+
+	return r;
+}
+
+int hw_stop_all_raid_arrays() {
+	return mysystem("/sbin/mdadm --stop --scan");
 }

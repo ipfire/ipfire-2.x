@@ -70,6 +70,7 @@ struct hw_destination {
 	char path[DEV_SIZE];
 
 	int is_raid;
+	int raid_level;
 	const struct hw_disk* disk1;
 	const struct hw_disk* disk2;
 
@@ -111,5 +112,8 @@ int hw_create_filesystems(struct hw_destination* dest);
 
 int hw_mount_filesystems(struct hw_destination* dest, const char* prefix);
 int hw_umount_filesystems(struct hw_destination* dest, const char* prefix);
+
+int hw_setup_raid(struct hw_destination* dest);
+int hw_stop_all_raid_arrays();
 
 #endif /* HEADER_HW_H */

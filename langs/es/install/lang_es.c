@@ -351,6 +351,10 @@ char *es_tr[] = {
 "Mounting filesystems...",
 /* TR_UNABLE_TO_MOUNT_FILESYSTEMS */
 "Unable to mount filesystems.",
+/* TR_BUILDING_RAID */
+"Building RAID...",
+/* TR_UNABLE_TO_BUILD_RAID */
+"Unable to build RAID.",
 /* TR_NO_IPCOP_TARBALL_FOUND */
 "No se encontró ningun archivo tarball de ipcop en el servidor web",
 /* TR_NO_ORANGE_INTERFACE */

@@ -239,7 +239,8 @@ int main(int argc, char *argv[]) {
 
 	// Load common modules
 	mysystem("/sbin/modprobe vfat"); // USB key
-	
+	hw_stop_all_raid_arrays();
+
 	/* German is the default */
 	for (choice = 0; langnames[choice]; choice++)
 	{
@@ -454,6 +455,19 @@ int main(int argc, char *argv[]) {
 			goto EXIT;
 	}
 
+	// Setting up RAID if needed.
+	if (destination->is_raid) {
+		statuswindow(60, 4, title, ctr[TR_BUILDING_RAID]);
+
+		rc = hw_setup_raid(destination);
+		if (rc) {
+			errorbox(ctr[TR_UNABLE_TO_BUILD_RAID]);
+			goto EXIT;
+		}
+
+		newtPopWindow();
+	}
+
 	// Execute the partitioning...
 	statuswindow(60, 4, title, ctr[TR_PARTITIONING_DISK]);
 
@@ -618,6 +632,8 @@ EXIT:
 		hw_umount_filesystems(destination, DESTINATION_MOUNT_PATH);
 		free(destination);
 	}
+
+	hw_stop_all_raid_arrays();
 
 	if (selected_disks)
 		hw_free_disks(selected_disks);

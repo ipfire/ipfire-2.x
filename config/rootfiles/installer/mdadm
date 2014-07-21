@@ -1,0 +1,3 @@
+lib/udev/rules.d/64-md-raid.rules
+sbin/mdadm
+sbin/mdmon

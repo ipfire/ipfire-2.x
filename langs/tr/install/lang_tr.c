@@ -355,6 +355,10 @@ char *tr_tr[] = {
 "Mounting filesystems...",
 /* TR_UNABLE_TO_MOUNT_FILESYSTEMS */
 "Unable to mount filesystems.",
+/* TR_BUILDING_RAID */
+"Building RAID...",
+/* TR_UNABLE_TO_BUILD_RAID */
+"Unable to build RAID.",
 /* TR_NO_IPCOP_TARBALL_FOUND */
 "Web sunucuda hiçbir ipfire arşivi bulunamadı.",
 /* TR_NO_ORANGE_INTERFACE */
