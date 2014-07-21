@@ -144,6 +144,36 @@ static int newtWinOkCancel(const char* title, const char* message, int width, in
 	return ret;
 }
 
+static int newtLicenseBox(const char* title, const char* text, int width, int height) {
+	int ret = 1;
+
+	newtCenteredWindow(width, height, title);
+
+	newtComponent form = newtForm(NULL, NULL, 0);
+
+	newtComponent textbox = newtTextbox(1, 1, width - 2, height - 7,
+		NEWT_FLAG_WRAP|NEWT_FLAG_SCROLL);
+	newtTextboxSetText(textbox, text);
+	newtFormAddComponent(form, textbox);
+
+	char choice;
+	newtComponent checkbox = newtCheckbox(3, height - 3, ctr[TR_LICENSE_ACCEPT],
+		' ', " *", &choice);
+
+	newtComponent btn = newtButton(width - 15, height - 4, ctr[TR_OK]);
+
+	newtFormAddComponents(form, checkbox, btn, NULL);
+
+	newtComponent answer = newtRunForm(form);
+	if (answer == btn && choice == '*')
+		ret = 0;
+
+	newtFormDestroy(form);
+	newtPopWindow();
+
+	return ret;
+}
+
 int main(int argc, char *argv[]) {
 	struct hw* hw = hw_init();
 
@@ -277,8 +307,9 @@ int main(int argc, char *argv[]) {
 			fread(discl_msg, 1, 40000, copying);
 			fclose(copying);
 
-			if (disclaimerbox(discl_msg)==0) {
+			if (newtLicenseBox(title, discl_msg, 75, 20)) {
 				errorbox(ctr[TR_LICENSE_NOT_ACCEPTED]);
+
 				goto EXIT;
 			}
 		}

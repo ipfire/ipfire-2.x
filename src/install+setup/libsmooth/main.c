@@ -45,61 +45,6 @@ void errorbox(char *message)
 	newtWinMessage(ctr[TR_ERROR], ctr[TR_OK], message);
 }
 
-int scrollmsgbox(int width, int height, char *title, char *text, ...)
-{
-	int rc = 0;
-	newtComponent t, f, b, c;
-	char *buf = NULL;
-	char checkbox;
-	int size = 0;
-	int i = 0;
-	va_list args;
-
-	va_start(args, text);
-
-	do {
-		size += 40000;
-		if (buf) free(buf);
-		buf = malloc(size);
-		i = vsnprintf(buf, size, text, args);
-	} while (i == size);
-
-	va_end(args);
-
-	newtCenteredWindow(width, height, title);
-
-	b = newtCompactButton(width - 15 ,height - 2, ctr[TR_OK]);
-	c = newtCheckbox(3, height - 2, ctr[TR_LICENSE_ACCEPT], ' ', " *", &checkbox);
-
-	t = newtTextbox(1, 1, width - 2, height - 4, NEWT_TEXTBOX_WRAP+NEWT_TEXTBOX_SCROLL);
-	newtTextboxSetText(t, buf);
-
-	f = newtForm(NULL, NULL, 0);
-	free(buf);
-
-	newtFormAddComponent(f, c);
-	newtFormAddComponent(f, b);
-	newtFormAddComponent(f, t);
-
-	newtRunForm(f);
-	if (checkbox=='*') rc=1;
-	newtFormDestroy(f);
-	return rc;
-}
-
-int disclaimerbox(char *message)
-{
-	int rc;
-	char title[STRING_SIZE];
-	
-	sprintf (title, "%s v%s - %s", NAME, VERSION, SLOGAN);
-	rc = scrollmsgbox(75, 20, title, message);
-	newtPopWindow();
-	
-	return rc;
-}
-
-
 void statuswindow(int width, int height, char *title, char *text, ...)
 {
 	newtComponent t, f;
