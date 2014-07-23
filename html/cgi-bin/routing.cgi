@@ -134,6 +134,27 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 	$errormessage = $Lang::tr{'invalid ip'}. " - ".$Lang::tr{'gateway ip'};
 	}
 
+	#set networkip if not already correctly defined
+	my($ip,$cidr) = split(/\//,$settings{'IP'});
+	my $netip=&General::getnetworkip($ip,$cidr);
+	$settings{'IP'} = "$netip/$cidr";
+
+	#Check for already existing routing entry
+	foreach my $line (@current) {
+		chomp($line);				# remove newline
+		my @temp=split(/\,/,$line);
+		$temp[2] ='' unless defined $temp[2]; # not always populated
+		$temp[3] ='' unless defined $temp[2]; # not always populated
+		#Same ip already used?
+		if($temp[1] eq $settings{'IP'}){
+			$errormessage = $Lang::tr{'ccd err irouteexist'};
+			last;
+		}
+		#Is the network part of an internal network?
+		$errormessage .= &General::check_net_internal($settings{'IP'});
+		last;
+	}
+
     unless ($errormessage) {
 	if ($settings{'KEY1'} eq '') { #add or edit ?
 	    unshift (@current, "$settings{'EN'},$settings{'IP'},$settings{'GATEWAY'},$settings{'REMARK'}\n");

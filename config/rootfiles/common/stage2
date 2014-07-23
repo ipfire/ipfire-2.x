@@ -74,6 +74,7 @@ usr/lib/libgcc_s.so.1
 #usr/lib/libstdc++.la
 #usr/lib/libstdc++.so
 usr/lib/libstdc++.so.6
+#usr/lib/sse2
 #usr/local
 #usr/local/bin
 #usr/local/bin/archive.files
@@ -90,7 +91,6 @@ usr/local/bin/rebuild-initrd
 usr/local/bin/run-parts
 #usr/local/bin/sanedloop
 usr/local/bin/scanhd
-usr/local/bin/setddns.pl
 usr/local/bin/settime
 usr/local/bin/timecheck
 usr/local/bin/timezone-transition

@@ -94,8 +94,14 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -125,6 +131,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -323,6 +330,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -344,8 +352,10 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -409,6 +419,7 @@
 < system has hwrng
 < system has rdrand
 < system information
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -464,6 +475,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < upload new ruleset
 < uptime
@@ -613,8 +625,14 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -644,6 +662,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -842,6 +861,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -863,8 +883,10 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -944,6 +966,7 @@
 < system has hwrng
 < system has rdrand
 < system information
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -999,6 +1022,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1124,8 +1148,14 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -1147,6 +1177,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -1345,6 +1376,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -1366,8 +1398,10 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1431,6 +1465,7 @@
 < support donation
 < system has hwrng
 < system has rdrand
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1486,6 +1521,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1614,8 +1650,14 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -1638,6 +1680,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < frequency
@@ -1839,6 +1882,7 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
@@ -1860,9 +1904,11 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < month-graph
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1923,6 +1969,7 @@
 < support donation
 < system has hwrng
 < system has rdrand
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1978,6 +2025,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average

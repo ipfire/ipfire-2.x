@@ -17,9 +17,11 @@ fi
 # Load ethernet settings
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
-if [ "${RED_DEV}" == "" ]; then
-	RED_DEV=ppp0
-fi
+case "${RED_TYPE}" in
+	PPPOE)
+		RED_DEV="ppp0"
+		;;
+esac
 
 # setup_netdev_trigger LED DEVICE MODE
 setup_netdev_trigger ()

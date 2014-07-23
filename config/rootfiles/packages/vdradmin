@@ -182,4 +182,4 @@ etc/rc.d/rc3.d/S99vdradmin
 #usr/share/locale/en_US.utf8/LC_MESSAGES/vdradmin.mo
 var/cache/vdradmin
 var/log/vdradmin
-var/run/vdradmin
+#var/run/vdradmin

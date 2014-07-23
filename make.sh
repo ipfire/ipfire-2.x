@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.15"							# Version number
-CORE="78"							# Core Level (Filename)
-PAKFIRE_CORE="78"						# Core Level (PAKFIRE)
+CORE="80"							# Core Level (Filename)
+PAKFIRE_CORE="80"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -385,9 +385,6 @@ buildipfire() {
   export LOGFILE
   ipfiremake configroot
   ipfiremake backup
-  ipfiremake bind
-  ipfiremake dhcp
-  ipfiremake dhcpcd
   ipfiremake libusb
   ipfiremake libusbx
   ipfiremake libpcap
@@ -459,14 +456,20 @@ buildipfire() {
 		;;
   esac
   ipfiremake pkg-config
+  ipfiremake openssl
+  ipfiremake openssl-compat
+  ipfiremake libgpg-error
+  ipfiremake libgcrypt
+  ipfiremake libassuan
+  ipfiremake bind
+  ipfiremake dhcp
+  ipfiremake dhcpcd
   ipfiremake linux-atm
   ipfiremake cpio
   ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake pam
-  ipfiremake openssl
-  ipfiremake openssl-compat
   ipfiremake curl
   ipfiremake tcl
   ipfiremake sqlite
@@ -505,6 +508,7 @@ buildipfire() {
   ipfiremake arping
   ipfiremake beep
   ipfiremake dvdrtools
+  ipfiremake nettle
   ipfiremake dnsmasq
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
@@ -760,6 +764,7 @@ buildipfire() {
   ipfiremake python-progressbar
   ipfiremake python-xattr
   ipfiremake intltool
+  ipfiremake ddns
   ipfiremake transmission
   ipfiremake dpfhack
   ipfiremake lcd4linux
@@ -770,8 +775,6 @@ buildipfire() {
   ipfiremake fping
   ipfiremake telnet
   ipfiremake xinetd
-  ipfiremake libgpg-error
-  ipfiremake libassuan
   ipfiremake gpgme
   ipfiremake pygpgme
   ipfiremake pakfire3
@@ -804,6 +807,7 @@ buildipfire() {
   ipfiremake iotop
   ipfiremake stunnel
   ipfiremake sslscan
+  ipfiremake owncloud
 }
 
 buildinstaller() {

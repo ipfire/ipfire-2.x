@@ -20,7 +20,20 @@ if [ -e "/etc/sysconfig/dnsmasq" ]; then
 	. /etc/sysconfig/dnsmasq
 fi
 
+CACHE_SIZE=2500
+ENABLE_DNSSEC=1
 SHOW_SRV=1
+TRUST_ANCHOR=".,19036,8,2,49AAC11D7B6F6446702E54A1607371607A1A41855200FD2CE1CDDE32F24E8FB5"
+
+function dnssec_args() {
+	local cmdline="--dnssec"
+
+	if [ -n "${TRUST_ANCHOR}" ]; then
+		cmdline="${cmdline} --trust-anchor=${TRUST_ANCHOR}"
+	fi
+
+	echo "${cmdline}"
+}
 
 function dns_forward_args() {
 	local file="${1}"
@@ -40,7 +53,6 @@ function dns_forward_args() {
 
 	echo "${cmdline}"
 }
-
 
 case "${1}" in
 	start)
@@ -72,6 +84,15 @@ case "${1}" in
 
 		# Add custom forward dns zones.
 		ARGS="${ARGS} $(dns_forward_args /var/ipfire/dnsforward/config)"
+
+		# Enabled DNSSEC validation
+		if [ "${ENABLE_DNSSEC}" -eq 1 ]; then
+			ARGS="${ARGS} $(dnssec_args)"
+		fi
+
+		if [ -n "${CACHE_SIZE}" ]; then
+			ARGS="${ARGS} --cache-size=${CACHE_SIZE}"
+		fi
 
 		loadproc /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $ARGS
 		

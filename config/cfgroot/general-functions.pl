@@ -413,9 +413,9 @@ sub getnetworkip
 	#Gets:  IP, CIDR    (10.10.10.0-255, 24)
 	#Gives:  10.10.10.0
 	my ($ccdip,$ccdsubnet) = @_;
-	my $ip_address_binary = inet_aton( $ccdip );
-	my $netmask_binary    = ~pack("N", (2**(32-$ccdsubnet))-1);
-	my $network_address    = inet_ntoa( $ip_address_binary & $netmask_binary );
+	my $ip_address_binary = &Socket::inet_pton( AF_INET,$ccdip );
+	my $netmask_binary = &Socket::inet_pton(AF_INET,&iporsubtodec($ccdsubnet));
+	my $network_address    = &Socket::inet_ntop( AF_INET,$ip_address_binary & $netmask_binary );
 	return $network_address;
 }
 
@@ -598,6 +598,19 @@ sub checksubnets
 	if (($ownnet{'RED_NETADDRESS'} 		ne '' && $ownnet{'RED_NETADDRESS'} 		ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'RED_NETADDRESS'},&iporsubtodec($ownnet{'RED_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err red'};return $errormessage;}
 }
 
+sub check_net_internal{
+	my $network=shift;
+	my ($ip,$cidr)=split(/\//,$network);
+	my %ownnet=();
+	my $errormessage;
+	$cidr=&iporsubtocidr($cidr);
+	#check if we use one of ipfire's networks (green,orange,blue)
+	&readhash("${General::swroot}/ethernet/settings", \%ownnet);
+	if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'GREEN_NETADDRESS'},&iporsubtodec($ownnet{'GREEN_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err green'};return $errormessage;}
+	if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'ORANGE_NETADDRESS'},&iporsubtodec($ownnet{'ORANGE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err orange'};return $errormessage;}
+	if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'BLUE_NETADDRESS'},&iporsubtodec($ownnet{'BLUE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err blue'};return $errormessage;}
+	if (($ownnet{'RED_NETADDRESS'} 		ne '' && $ownnet{'RED_NETADDRESS'} 		ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'RED_NETADDRESS'},&iporsubtodec($ownnet{'RED_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err red'};return $errormessage;}
+}
 
 sub validport
 {
@@ -760,12 +773,21 @@ sub validportrange # used to check a port range
 # Return: TRUE/FALSE
 sub IpInSubnet
 {
-    my $ip = unpack('N', &Socket::inet_aton(shift));
-    my $start = unpack('N', &Socket::inet_aton(shift));
-    my $mask  = unpack('N', &Socket::inet_aton(shift));
-       $start &= $mask;  # base of subnet...
-    my $end   = $start + ~$mask;
-    return (($ip >= $start) && ($ip <= $end));
+	my $addr = shift;
+	my $network = shift;
+	my $netmask = shift;
+
+	my $addr_num = &Socket::inet_pton(AF_INET,$addr);
+	my $network_num = &Socket::inet_pton(AF_INET,$network);
+	my $netmask_num = &Socket::inet_pton(AF_INET,$netmask);
+
+	# Find start address
+	my $network_start = $network_num & $netmask_num;
+
+	# Find end address
+	my $network_end = $network_start ^ ~$netmask_num;
+
+	return (($addr_num ge $network_start) && ($addr_num le $network_end));
 }
 
 #
@@ -1163,6 +1185,18 @@ sub firewall_needs_reload() {
 
 sub firewall_reload() {
 	system("/usr/local/bin/firewallctrl");
+}
+
+# Function which will return the used interface for the red network zone (red0, ppp0, etc).
+sub get_red_interface() {
+
+	open(IFACE, "${General::swroot}/red/iface") or die "Could not open /var/ipfire/red/iface";
+
+	my $interface = <IFACE>;
+	close(IFACE);
+	chomp $interface;
+
+	return $interface;
 }
 
 1;

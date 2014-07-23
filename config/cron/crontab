@@ -24,12 +24,10 @@ HOME=/
 */5 * * * * 	/usr/local/bin/makegraphs >/dev/null
 17 5 * * * 	/etc/init.d/tmpfs backup >/dev/null
 
-# Force update the dynamic dns registration once a week
-# Force update even if IP has not changed once a month if 'minimize update' selected in GUI
-# to avoid account declared as dead
-*/5 * * * *	[ -f "/var/ipfire/red/active" ] && /usr/local/bin/setddns.pl
-9 2 * * 0	[ -f "/var/ipfire/red/active" ] && /usr/local/bin/setddns.pl -f
-3 2 1 * *	[ -f "/var/ipfire/red/active" ] && /usr/local/bin/setddns.pl -f -m
+# Update dynamic DNS records every five minutes.
+# Force an update once a month
+*/5 * * * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all
+3 2 1 * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all --force
 
 # Logwatch
 01 0 * * *	/usr/local/bin/logwatch > /var/log/logwatch/`date -I -d yesterday`; \
