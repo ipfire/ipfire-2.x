@@ -85,12 +85,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			 /var/ipfire/backup/addons/includes/monit
 
 	# Install default configuration                                                                                       
-	install -v -m 644 $(DIR_SRC)/config/monit/monitrc /etc                                                                              
+	install -v -m 644 $(DIR_SRC)/config/monit/monitrc /etc 
 
 	# Install start links and backup include file. 
 	ln -sf ../init.d/monit /etc/rc.d/rc3.d/S60monit
 	ln -sf ../init.d/monit /etc/rc.d/rc0.d/K40monit
 	ln -sf ../init.d/monit /etc/rc.d/rc6.d/K40monit
 
-	@rm -rf $(DIR_APP)
+#	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
