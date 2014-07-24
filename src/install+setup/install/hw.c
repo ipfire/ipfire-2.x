@@ -341,6 +341,10 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 	if (dest->is_raid) {
 		dest->size = (dest->disk1->size >= dest->disk2->size) ?
 			dest->disk1->size : dest->disk2->size;
+
+		// The RAID will install some metadata at the end of the disk
+		// and we will save up some space for that.
+		dest->size -= MB2BYTES(2);
 	} else {
 		dest->size = dest->disk1->size;
 	}
