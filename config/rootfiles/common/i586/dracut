@@ -1,4 +1,4 @@
-#boot/ipfirerd-KVER.img
+#boot/initramfs-KVER-ipfire.img
 etc/dracut.conf
 etc/dracut.conf.d
 #etc/dracut.conf.d/dracut.conf

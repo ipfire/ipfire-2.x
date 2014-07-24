@@ -54,7 +54,7 @@ $(TARGET) :
 
 	# Finish up initrd directory
 	-mkdir -p /install/initrd/{dev,etc,mnt,root,lib/modules/$(KVER)-ipfire/kernel/drivers,cdrom,dev,harddisk,proc,tmp,usr/share/terminfo/l,var/run,sys}
-	cd /install/initrd && lzma -d -c /boot/ipfirerd-$(KVER).img | cpio -i
+	cd /install/initrd && lzma -d -c /boot/initramfs-$(KVER)-ipfire.img | cpio -i
 
 	# Copy Files packages for installer
 	find $(DIR_SRC)/config/rootfiles/installer/* -maxdepth 1 | xargs cat | grep -v "^#" > /tmp/ROOTFILES

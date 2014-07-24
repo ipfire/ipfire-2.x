@@ -102,7 +102,7 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-multi.img uInit-ipfire-multi
 #	cd /boot && cp -f ipfirerd-$(KVER)-multi.img zInit-ipfire-multi
 else
-	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER).img $(KVER)-ipfire
+	/sbin/dracut --force --verbose --strip /boot/initramfs-$(KVER)-ipfire.img $(KVER)-ipfire
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

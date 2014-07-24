@@ -2954,4 +2954,4 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/modules.symbols.bin
 #lib/modules/KVER-ipfire/source
 sbin/gen_init_cpio
-boot/ipfirerd-KVER.img
+boot/initramfs-KVER-ipfire.img
