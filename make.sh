@@ -464,6 +464,7 @@ buildipfire() {
   ipfiremake bind
   ipfiremake dhcp
   ipfiremake dhcpcd
+  ipfiremake boost
   ipfiremake linux-atm
   ipfiremake cpio
   ipfiremake dracut
