@@ -503,6 +503,30 @@ int hw_create_partitions(struct hw_destination* dest) {
 
 	int r = mysystem(cmd);
 
+	// Wait until the system re-read the partition table
+	if (r == 0) {
+		unsigned int counter = 10;
+
+		while (counter-- > 0) {
+			sleep(1);
+
+			if (*dest->part_boot && (access(dest->part_boot, R_OK) != 0))
+				continue;
+
+			if (*dest->part_swap && (access(dest->part_swap, R_OK) != 0))
+				continue;
+
+			if (*dest->part_root && (access(dest->part_root, R_OK) != 0))
+				continue;
+
+			if (*dest->part_data && (access(dest->part_data, R_OK) != 0))
+				continue;
+
+			// All partitions do exist, exiting the loop.
+			break;
+		}
+	}
+
 	if (cmd)
 		free(cmd);
 
