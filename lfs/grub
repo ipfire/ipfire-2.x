@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--prefix=/usr \
 			--sysconfdir=/etc \
 			--with-platform=pc \
-			--with-grubdir=grub2 \
+			--with-grubdir=grub \
 			--program-transform-name=s,grub,grub, \
 			--disable-grub-mount \
 			--disable-werror

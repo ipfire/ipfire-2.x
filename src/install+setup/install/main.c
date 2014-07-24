@@ -528,30 +528,18 @@ int main(int argc, char *argv[]) {
 	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE4#UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", destination->part_data);
 	system(commandstring);
 
-	replace("/harddisk/boot/grub/grub.conf", "KVER", KERNEL_VERSION);
-
-	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#root=ROOT#root=UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/boot/grub/grub.conf", destination->part_root);
-	system(commandstring);
-
-	mysystem("ln -s grub.conf /harddisk/boot/grub/menu.lst");
-
 	system("/bin/sed -e 's#/harddisk#/#g' -e 's#//#/#g'  < /proc/mounts > /harddisk/etc/mtab");
 
-	/*
-	 * Generate device.map to help grub finding the device to install itself on.
-	 */
-	FILE *f = NULL;
-	if (f = fopen("/harddisk/boot/grub/device.map", "w")) {
-		fprintf(f, "(hd0) %s\n", destination->path);
-		fclose(f);
-	}
+	// Installing bootloader...
+	statuswindow(60, 4, title, ctr[TR_INSTALLING_GRUB]);
 
-	snprintf(commandstring, STRING_SIZE, 
-		 "/usr/sbin/chroot /harddisk /usr/sbin/grub-install --no-floppy %s", destination->path);
-	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_GRUB])) {
+	rc = hw_install_bootloader(destination);
+	if (rc) {
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;
 	}
+
+	newtPopWindow();
 
 	/* Serial console ? */
 	if (serialconsole) {

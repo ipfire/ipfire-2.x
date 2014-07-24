@@ -47,6 +47,14 @@ const char* other_filesystems[] = {
 	NULL
 };
 
+static int system_chroot(const char* path, const char* cmd) {
+	char chroot_cmd[STRING_SIZE];
+
+	snprintf(chroot_cmd, sizeof(chroot_cmd), "/usr/sbin/chroot %s %s", path, cmd);
+
+	return mysystem(chroot_cmd);
+}
+
 struct hw* hw_init() {
 	struct hw* hw = malloc(sizeof(*hw));
 	assert(hw);
@@ -460,7 +468,7 @@ int hw_create_partitions(struct hw_destination* dest) {
 	else if (dest->part_table == HW_PART_TABLE_GPT)
 		asprintf(&cmd, "%s mklabel gpt", cmd);
 
-	unsigned long long part_start = 0 * 1024 * 1024; // 1MB
+	unsigned long long part_start = 1 * 1024 * 1024; // 1MB
 
 	if (*dest->part_boot) {
 		asprintf(&cmd, "%s mkpart %s ext2 %lluMB %lluMB", cmd,
@@ -707,7 +715,7 @@ int hw_setup_raid(struct hw_destination* dest) {
 
 	assert(dest->is_raid);
 
-	asprintf(&cmd, "echo \"y\" | /sbin/mdadm --create --verbose --metadata=0.9 %s", dest->path);
+	asprintf(&cmd, "echo \"y\" | /sbin/mdadm --create --verbose --metadata=1.2 %s", dest->path);
 
 	switch (dest->raid_level) {
 		case 1:
@@ -751,4 +759,33 @@ int hw_setup_raid(struct hw_destination* dest) {
 
 int hw_stop_all_raid_arrays() {
 	return mysystem("/sbin/mdadm --stop --scan");
+}
+
+int hw_install_bootloader(struct hw_destination* dest) {
+	char cmd[STRING_SIZE];
+	int r;
+
+	// Generate configuration file
+	snprintf(cmd, sizeof(cmd), "/usr/sbin/grub-mkconfig -o /boot/grub/grub.cfg");
+	r = system_chroot(DESTINATION_MOUNT_PATH, cmd);
+	if (r)
+		return r;
+
+	char cmd_grub[STRING_SIZE];
+	snprintf(cmd_grub, sizeof(cmd_grub), "/usr/sbin/grub-install --no-floppy --recheck");
+
+	if (dest->is_raid) {
+		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->disk1->path);
+		r = system_chroot(DESTINATION_MOUNT_PATH, cmd);
+		if (r)
+			return r;
+
+		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->disk2->path);
+		r = system_chroot(DESTINATION_MOUNT_PATH, cmd);
+	} else {
+		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->path);
+		r = system_chroot(DESTINATION_MOUNT_PATH, cmd);
+	}
+
+	return r;
 }
