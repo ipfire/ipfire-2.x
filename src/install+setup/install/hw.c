@@ -711,8 +711,14 @@ int hw_setup_raid(struct hw_destination* dest) {
 		while (counter-- > 0) {
 			sleep(1);
 
-			if (access(dest->path, R_OK) == 0)
+			// If the raid device has not yet been properly brought up,
+			// opening it will fail with the message: Device or resource busy
+			// Hence we will wait a bit until it becomes usable.
+			FILE* f = fopen(dest->path, "r");
+			if (f) {
+				fclose(f);
 				break;
+			}
 		}
 	}
 
