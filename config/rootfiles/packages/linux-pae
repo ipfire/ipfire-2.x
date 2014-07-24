@@ -1,8 +1,6 @@
 boot/System.map-KVER-ipfire-pae
-boot/System.map-ipfire-pae
 boot/config-KVER-ipfire-pae
 boot/vmlinuz-KVER-ipfire-pae
-boot/vmlinuz-ipfire-pae
 #lib/modules
 lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/build

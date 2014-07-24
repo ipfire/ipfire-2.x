@@ -1,5 +1,4 @@
 boot/System.map-KVER-ipfire-kirkwood
-#boot/System.map-ipfire-kirkwood
 boot/config-KVER-ipfire-kirkwood
 boot/dtb-KVER-ipfire-kirkwood
 #boot/dtb-KVER-ipfire-kirkwood/kirkwood-cloudbox.dtb

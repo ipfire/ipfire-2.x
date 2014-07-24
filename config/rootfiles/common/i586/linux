@@ -1,8 +1,6 @@
 boot/System.map-KVER-ipfire
-boot/System.map-ipfire
 boot/config-KVER-ipfire
 boot/vmlinuz-KVER-ipfire
-boot/vmlinuz-ipfire
 etc/modprobe.d/framebuffer.conf
 etc/modprobe.d/ipv6.conf
 etc/modprobe.d/isdn.conf
