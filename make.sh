@@ -807,6 +807,8 @@ buildipfire() {
   ipfiremake stunnel
   ipfiremake sslscan
   ipfiremake owncloud
+  ipfiremake haserl
+  ipfiremake coova-chilli
 }
 
 buildinstaller() {
