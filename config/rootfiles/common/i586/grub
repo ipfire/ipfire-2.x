@@ -176,7 +176,7 @@ usr/lib/grub/i386-pc/gcry_whirlpool.mod
 usr/lib/grub/i386-pc/gcry_whirlpool.module
 usr/lib/grub/i386-pc/gdb.mod
 usr/lib/grub/i386-pc/gdb.module
-usr/lib/grub/i386-pc/gdb_grub2
+usr/lib/grub/i386-pc/gdb_grub
 usr/lib/grub/i386-pc/geli.mod
 usr/lib/grub/i386-pc/geli.module
 usr/lib/grub/i386-pc/gettext.mod
