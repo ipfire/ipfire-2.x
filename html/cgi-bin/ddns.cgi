@@ -293,8 +293,17 @@ if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
 			# Splitt lines (splitting element is a single ",") and save values into temp array.
 			@temp = split(/\,/,$line);
 
+			# Handle hostname details. Only connect the values with a dott if both are available.
+			my $hostname;
+
+			if (($temp[1]) && ($temp[2])) {
+				$hostname = "$temp[1].$temp[2]";
+			} else {
+				$hostname = "$temp[1]";
+			}
+
 			$settings{'SERVICE'} = $temp[0];
-			$settings{'HOSTNAME'} = "$temp[1].$temp[2]";
+			$settings{'HOSTNAME'} = $hostname;
 			$settings{'PROXY'} = $temp[3];
 			$settings{'WILDCARDS'} = $temp[4];
 			$settings{'LOGIN'} = $temp[5];
@@ -531,11 +540,20 @@ END
 			$col="bgcolor='$color{'color22'}'";
 		}
 
+		# Handle hostname details. Only connect the values with a dott if both are available.
+		my $hostname="";
+
+		if (($temp[1]) && ($temp[2])) {
+			$hostname="$temp[1].$temp[2]";
+		} else {
+			$hostname="$temp[1]";
+		}
+
 		# The following HTML Code still is part of the loop.
 		print <<END;
 <tr>
 	<td align='center' $col><a href='http://$temp[0]'>$temp[0]</a></td>
-	<td align='center' $col>$sync$temp[1].$sync$temp[2]</td>
+	<td align='center' $col>$sync$hostname</td>
 
 	<td align='center' $col><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='hidden' name='ID' value='$id'>
@@ -637,7 +655,13 @@ sub GenerateDDNSConfigFile {
 		# Skip disabled entries.
 		next unless ($enabled eq "on");
 
-		print FILE "[$hostname.$domain]\n";
+		# Handle hostname details. Only connect the values with a dott if both are available.
+		if (($hostname) && ($domain)) {
+			print FILE "[$hostname.$domain]\n";
+		} else {
+			print FILE "[$hostname]\n";
+		}
+
 		print FILE "provider = $provider\n";
 
 		my $use_token = 0;
