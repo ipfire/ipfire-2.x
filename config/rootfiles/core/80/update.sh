@@ -60,9 +60,6 @@ rm -f \
 	/opt/pakfire/db/installed/meta-libgpg-error \
 	/opt/pakfire/db/rootfiles/libgpg-error
 
-# Regenerate squid configuration file
-sudo -u nobody /srv/web/ipfire/cgi-bin/proxy.cgi
-
 # Fix broken proxy configuration permissions
 chown -R nobody.nobody \
 	/var/ipfire/proxy/advanced \
@@ -71,6 +68,9 @@ chown -R nobody.nobody \
 	/var/ipfire/proxy/settings \
 	/var/ipfire/proxy/squid.conf \
 	/var/ipfire/proxy/transparent
+
+# Regenerate squid configuration file
+sudo -u nobody /srv/web/ipfire/cgi-bin/proxy.cgi
 
 # Generate ddns configuration file
 sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
