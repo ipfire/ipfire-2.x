@@ -808,6 +808,7 @@ buildipfire() {
   ipfiremake stunnel
   ipfiremake sslscan
   ipfiremake owncloud
+  ipfiremake bacula
 }
 
 buildinstaller() {
