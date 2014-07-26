@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2
+VER        = 4.3
 
 THISAPP    = bash-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -35,20 +35,15 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --bindir=/bin \
-    --without-bash-malloc --with-installed-readline \
-    --disable-nls
-  EXTRA_MAKE =
-  EXTRA_INSTALL =
+  CONFIGURE_OPTIONS = --prefix=/usr --bindir=/bin \
+    --with-installed-readline
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  EXTRA_CONFIG = --prefix=/tools --without-bash-malloc \
-    --disable-nls
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+  CONFIGURE_OPTIONS = --prefix=/tools
 endif
 
-EXTRA_CONFIG += ac_cv_func_working_mktime=yes
+CONFIGURE_OPTIONS += \
+	--without-bash-malloc
 
 ###############################################################################
 # Top-level Rules
@@ -58,7 +53,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)             = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5         = 00bfa16d58e034e3c2aa27f390390d30
+$(DL_FILE)_MD5         = 81348932d5da294953e15d4814c74dd1
 
 install : $(TARGET)
 
@@ -87,25 +82,31 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zaxf $(DIR_DL)/$(DL_FILE)
 
-	for i in $$(seq 1 53); do \
-		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash32-$$(printf "%03d" "$${i}") || exit 1; \
+	sed -e "s/filename, RTLD_LAZY/filename, RTLD_NOW/" \
+		-i $(DIR_APP)/builtins/enable.def
+
+	for i in $$(seq 1 18); do \
+		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash43-$$(printf "%03d" "$${i}") || exit 1; \
 	done
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-paths-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-profile-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-3.2-ssh_source_bash.patch
 
-	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(EXTRA_MAKE)
-	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	cd $(DIR_APP) && ./configure $(CONFIGURE_OPTIONS)
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+
 	ln -sf bash /bin/sh
+
 ifneq "$(ROOT)" ""
 	-mkdir -p $(ROOT)/bin
 	-mkdir -p $(ROOT)/usr/bin
 	ln -sf bash /tools/bin/sh
 	-ln -sf /tools/bin/bash $(ROOT)/bin/sh
 endif
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
