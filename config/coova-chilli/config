@@ -1,0 +1,70 @@
+# -*- mode: shell-script; -*-
+#
+#   Coova-Chilli Configuration.
+
+
+###
+#   Local Network Configurations
+# 
+
+HS_WANIF=blue0              # WAN Interface toward the Internet
+HS_LANIF=orange0	   # Subscriber Interface for client devices
+HS_NETWORK=10.1.0.0	   # HotSpot Network (must include HS_UAMLISTEN)
+HS_NETMASK=255.255.255.0   # HotSpot Network Netmask
+HS_UAMLISTEN=10.1.0.1      # HotSpot IP Address (on subscriber network)
+HS_UAMPORT=3990            # HotSpot UAM Port (on subscriber network)
+HS_UAMUIPORT=4990          # HotSpot UAM "UI" Port (on subscriber network, for embedded portal)
+
+HS_RAD_PROTO=pap
+
+HS_DNS_DOMAIN=linuxmuster.lokal
+
+# OpenDNS Servers
+HS_DNS1=10.16.1.1
+# HS_DNS1=8.8.4.4
+HS_DNS2=10.16.1.1
+# HS_DNS2=8.8.8.8
+HS_LOCAL_DNS=on
+
+###
+#   HotSpot settings for simple Captive Portal
+#
+HS_NASID=LMLAN01
+HS_RADIUS=10.16.1.1
+HS_RADIUS2=10.16.1.1
+HS_UAMALLOW=
+HS_RADSECRET=xxRADSECRETxx     # Set to be your RADIUS shared secret
+HS_UAMSECRET=xxUAMSECRETxx     # Set to be your UAM secret
+HS_UAMALIASNAME=chilli
+
+HS_UAMSERVER=$HS_UAMLISTEN
+
+HS_UAMFORMAT=http://\$HS_UAMLISTEN:\$HS_UAMUIPORT/www/login.chi
+#HS_UAMFORMAT=http://\$HS_UAMLISTEN:\$HS_UAMUIPORT/www/index.html
+
+HS_UAMHOMEPAGE=http://\$HS_UAMLISTEN:\$HS_UAMPORT/www/coova.html
+#HS_UAMHOMEPAGE=http://\$HS_UAMLISTEN:\$HS_UAMPORT/www/index.html
+
+HS_UAMSERVICE=https://10.16.1.254:444/cgi-bin/uam.pl
+
+HS_MODE=hotspot
+HS_TYPE=chillispot
+HS_RADAUTH=1812
+
+HS_WWWDIR=/etc/chilli/www
+
+HS_WWWBIN=/etc/chilli/wwwsh
+
+HS_PROVIDER=Coova
+HS_PROVIDER_LINK=http://www.coova.org/
+
+HS_LOC_NAME="HS Linuxmuster.net"	   # WISPr Location Name and used in portal
+HS_DEFSESSIONTIMEOUT=900
+
+#
+# Proxy Settings
+#
+HS_POSTAUTH_PROXY=172.16.16.254
+HS_POSTAUTH_PROXYPORT=800
+HS_TCP_PORTS="80 443"
+HS_LAN_ACCESS=allow
