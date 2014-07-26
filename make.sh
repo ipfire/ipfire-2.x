@@ -362,7 +362,6 @@ buildbase() {
     lfsmake2 less
     lfsmake2 make
     lfsmake2 man
-    lfsmake2 mktemp
     lfsmake2 kmod
     lfsmake2 net-tools
     lfsmake2 patch
