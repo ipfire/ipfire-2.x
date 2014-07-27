@@ -609,6 +609,8 @@ char *de_tr[] = {
 "EXT4 - Dateisystem",
 /* TR_EXT4FS_WO_JOURNAL */
 "EXT4 - Dateisystem ohne Journal",
+/* TR_XFS */
+"XFS - Dateisystem",
 /* TR_REISERFS */
 "ReiserFS - Dateisystem",
 /* TR_NO_LOCAL_SOURCE */

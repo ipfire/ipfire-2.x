@@ -605,6 +605,8 @@ char *en_tr[] = {
 "EXT4 - Filesystem",
 /* TR_EXT4FS_WO_JOURNAL */
 "EXT4 - Filesystem without journal",
+/* TR_XFS */
+"XFS - Filesystem",
 /* TR_REISERFS */
 "ReiserFS - Filesystem",
 /* TR_NO_LOCAL_SOURCE */

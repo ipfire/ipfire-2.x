@@ -432,6 +432,7 @@ int main(int argc, char *argv[]) {
 		} filesystems[] = {
 			{ HW_FS_EXT4,            ctr[TR_EXT4FS] },
 			{ HW_FS_EXT4_WO_JOURNAL, ctr[TR_EXT4FS_WO_JOURNAL] },
+			{ HW_FS_XFS,             ctr[TR_XFS] },
 			{ HW_FS_REISERFS,        ctr[TR_REISERFS] },
 			{ 0, NULL },
 		};

@@ -44,6 +44,7 @@
 #define HW_FS_REISERFS                1
 #define HW_FS_EXT4                    2
 #define HW_FS_EXT4_WO_JOURNAL         3
+#define HW_FS_XFS                     4
 
 #define HW_FS_DEFAULT                 HW_FS_EXT4
 

@@ -27,8 +27,8 @@ install() {
     instmods virtio_net hv_netvsc vmxnet3
 
     # Filesystem support
-    inst_multiple parted mkswap mke2fs mkreiserfs
-    instmods ext4 iso9660 reiserfs vfat
+    inst_multiple parted mkswap mke2fs mkreiserfs mkfs.xfs
+    instmods ext4 iso9660 reiserfs vfat xfs
 
     # Extraction
     inst_multiple tar gzip lzma xz
