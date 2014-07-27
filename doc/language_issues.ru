@@ -779,6 +779,7 @@ WARNING: untranslated string: fwdfw wd_sun
 WARNING: untranslated string: fwdfw wd_thu
 WARNING: untranslated string: fwdfw wd_tue
 WARNING: untranslated string: fwdfw wd_wed
+WARNING: untranslated string: fwhost OpenVPN N-2-N
 WARNING: untranslated string: fwhost addgrp
 WARNING: untranslated string: fwhost addgrpname
 WARNING: untranslated string: fwhost addhost
