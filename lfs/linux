@@ -293,6 +293,17 @@ ifeq "$(MACHINE_TYPE)" "arm"
 			done
 endif
 
+	# Create initramfs images
+	dracut --force --verbose --strip /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
+
+ifeq "$(KCFG)" "-kirkwood"
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-kirkwood.img uInit-ipfire-kirkwood
+endif
+
+ifeq "$(KCFG)" "-multi"
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-multi.img uInit-ipfire-multi
+endif
+
 ifeq "$(LASTKERNEL)" "1"
 	# Only do this once
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/

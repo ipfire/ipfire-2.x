@@ -400,6 +400,8 @@ buildipfire() {
   ipfiremake rpi-firmware
   ipfiremake bc
   ipfiremake u-boot
+  ipfiremake cpio
+  ipfiremake dracut
 
   case "${TARGET_ARCH}" in
 	i586)
@@ -459,8 +461,6 @@ buildipfire() {
   esac
   ipfiremake pkg-config
   ipfiremake linux-atm
-  ipfiremake cpio
-  ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake pam

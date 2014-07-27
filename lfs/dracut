@@ -78,20 +78,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cp -vf $(DIR_SRC)/src/dracut/dracut.conf /etc/dracut.conf.d/
 
-	# Build initramdisk
-	# Strip all binaries in that initrd, because no debugging code is
-	# needed.
-
-ifeq "$(MACHINE_TYPE)" "arm"
-	# kirkwood kernel
-	dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-kirkwood.img $(KVER)-ipfire-kirkwood
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-kirkwood.img uInit-ipfire-kirkwood
-	# arm7 multi kernel
-	dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-multi.img $(KVER)-ipfire-multi
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-multi.img uInit-ipfire-multi
-#	cd /boot && cp -f ipfirerd-$(KVER)-multi.img zInit-ipfire-multi
-else
-	dracut --force --verbose --strip /boot/initramfs-$(KVER)-ipfire.img $(KVER)-ipfire
-endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
