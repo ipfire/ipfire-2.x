@@ -81,6 +81,10 @@ static int strstartswith(const char* a, const char* b) {
 }
 
 int hw_mount(const char* source, const char* target, const char* fs, int flags) {
+	// Create target if it does not exist
+	if (access(target, X_OK) != 0)
+		mkdir(target, S_IRWXU|S_IRWXG|S_IRWXO);
+
 	return mount(source, target, fs, flags, NULL);
 }
 
