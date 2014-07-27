@@ -359,6 +359,13 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 		dest->size = dest->disk1->size;
 	}
 
+	// As we add some extra space before the beginning of the first
+	// partition, we need to substract that here.
+	dest->size -= MB2BYTES(1);
+
+	// Add some more space for partition tables, etc.
+	dest->size -= MB2BYTES(1);
+
 	// Determine partition table
 	dest->part_table = HW_PART_TABLE_MSDOS;
 
@@ -493,44 +500,44 @@ int hw_create_partitions(struct hw_destination* dest) {
 	else if (dest->part_table == HW_PART_TABLE_GPT)
 		asprintf(&cmd, "%s mklabel gpt", cmd);
 
-	unsigned long long part_start = 1 * 1024 * 1024; // 1MB
+	unsigned long long part_start = MB2BYTES(1);
 
 	if (*dest->part_bootldr) {
-		asprintf(&cmd, "%s mkpart %s ext2 %lluMB %lluMB", cmd,
+		asprintf(&cmd, "%s mkpart %s ext2 %lluB %lluB", cmd,
 			(dest->part_table == HW_PART_TABLE_GPT) ? "BOOTLDR" : "primary",
-		BYTES2MB(part_start), BYTES2MB(part_start + dest->size_bootldr));
+		part_start, part_start + dest->size_bootldr - 1);
 
 		part_start += dest->size_bootldr;
 	}
 
 	if (*dest->part_boot) {
-		asprintf(&cmd, "%s mkpart %s ext2 %lluMB %lluMB", cmd,
+		asprintf(&cmd, "%s mkpart %s ext2 %lluB %lluB", cmd,
 			(dest->part_table == HW_PART_TABLE_GPT) ? "BOOT" : "primary",
-			BYTES2MB(part_start), BYTES2MB(part_start + dest->size_boot));
+			part_start, part_start + dest->size_boot - 1);
 
 		part_start += dest->size_boot;
 	}
 
 	if (*dest->part_swap) {
-		asprintf(&cmd, "%s mkpart %s linux-swap %lluMB %lluMB", cmd,
+		asprintf(&cmd, "%s mkpart %s linux-swap %lluB %lluB", cmd,
 			(dest->part_table == HW_PART_TABLE_GPT) ? "SWAP" : "primary",
-			BYTES2MB(part_start), BYTES2MB(part_start + dest->size_swap));
+			part_start, part_start + dest->size_swap - 1);
 
 		part_start += dest->size_swap;
 	}
 
 	if (*dest->part_root) {
-		asprintf(&cmd, "%s mkpart %s ext2 %lluMB %lluMB", cmd,
+		asprintf(&cmd, "%s mkpart %s ext2 %lluB %lluB", cmd,
 			(dest->part_table == HW_PART_TABLE_GPT) ? "ROOT" : "primary",
-			BYTES2MB(part_start), BYTES2MB(part_start + dest->size_root));
+			part_start, part_start + dest->size_root - 1);
 
 		part_start += dest->size_root;
 	}
 
 	if (*dest->part_data) {
-		asprintf(&cmd, "%s mkpart %s ext2 %lluMB %lluMB", cmd,
+		asprintf(&cmd, "%s mkpart %s ext2 %lluB %lluB", cmd,
 			(dest->part_table == HW_PART_TABLE_GPT) ? "DATA" : "primary",
-			BYTES2MB(part_start), BYTES2MB(part_start + dest->size_data));
+			part_start, part_start + dest->size_data - 1);
 
 		part_start += dest->size_data;
 	}
