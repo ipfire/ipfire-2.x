@@ -44,7 +44,7 @@ install() {
 
     # Misc. tools
     inst_multiple eject ping wget
-    inst_multiple -o fdisk cfdisk
+    inst_multiple -o fdisk cfdisk df ps top
 
     # Hardware IDs
     inst /usr/share/hwdata/pci.ids /usr/share/hwdata/usb.ids
