@@ -42,6 +42,7 @@ WARNING: translation string unused: advproxy no cre groups
 WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy update information
 WARNING: translation string unused: advproxy update notification
+WARNING: translation string unused: again
 WARNING: translation string unused: alcatelusb help
 WARNING: translation string unused: alcatelusb upload
 WARNING: translation string unused: all interfaces
@@ -56,6 +57,7 @@ WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: attemps
 WARNING: translation string unused: available updates
+WARNING: translation string unused: avoid dod
 WARNING: translation string unused: backup archive
 WARNING: translation string unused: backup clear archive
 WARNING: translation string unused: backup config floppy
@@ -82,6 +84,7 @@ WARNING: translation string unused: backup protect key password
 WARNING: translation string unused: backup sets
 WARNING: translation string unused: backup to floppy
 WARNING: translation string unused: bad characters in
+WARNING: translation string unused: behind a proxy
 WARNING: translation string unused: bewan adsl pci st
 WARNING: translation string unused: bewan adsl usb
 WARNING: translation string unused: bitrate
@@ -128,6 +131,8 @@ WARNING: translation string unused: dbfile
 WARNING: translation string unused: ddns help dnsmadeeasy
 WARNING: translation string unused: ddns help freedns
 WARNING: translation string unused: ddns help plus
+WARNING: translation string unused: ddns minimize updates
+WARNING: translation string unused: ddns noip prefix
 WARNING: translation string unused: debugme
 WARNING: translation string unused: deep scan directories
 WARNING: translation string unused: default networks
@@ -157,6 +162,7 @@ WARNING: translation string unused: dmz pinhole rule removed
 WARNING: translation string unused: dmzpinholes for same net not necessary
 WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
+WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
 WARNING: translation string unused: driver
@@ -173,6 +179,7 @@ WARNING: translation string unused: editor
 WARNING: translation string unused: eg
 WARNING: translation string unused: email server can not be empty
 WARNING: translation string unused: enable javascript
+WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabled on
 WARNING: translation string unused: enabledtitle
 WARNING: translation string unused: encrypted
@@ -410,6 +417,7 @@ WARNING: translation string unused: pots
 WARNING: translation string unused: pppoe
 WARNING: translation string unused: present
 WARNING: translation string unused: profiles
+WARNING: translation string unused: proxy
 WARNING: translation string unused: proxy access graphs
 WARNING: translation string unused: proxy no proxy extend
 WARNING: translation string unused: proxy no proxy local
@@ -425,12 +433,16 @@ WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: requested data
+WARNING: translation string unused: reserved dst port
+WARNING: translation string unused: reserved src port
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
 WARNING: translation string unused: route subnet is invalid
 WARNING: translation string unused: router ip
+WARNING: translation string unused: rsvd dst port overlap
+WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
@@ -460,6 +472,7 @@ WARNING: translation string unused: source ip in use
 WARNING: translation string unused: source ip or net
 WARNING: translation string unused: source net
 WARNING: translation string unused: source network
+WARNING: translation string unused: source port in use
 WARNING: translation string unused: source port overlaps
 WARNING: translation string unused: squid extension methods
 WARNING: translation string unused: squid extension methods invalid
@@ -567,6 +580,7 @@ WARNING: translation string unused: vpn watch
 WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: weekly firewallhits
+WARNING: translation string unused: wildcards
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
@@ -583,10 +597,16 @@ WARNING: untranslated string: MTU settings
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
+WARNING: untranslated string: administrator password
+WARNING: untranslated string: administrator username
+WARNING: untranslated string: advproxy AUTH method ntlm
+WARNING: untranslated string: advproxy AUTH method ntlm auth
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: advproxy errmsg proxy ports equal
+WARNING: untranslated string: advproxy group access control
+WARNING: untranslated string: advproxy group required
 WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: atm device
 WARNING: untranslated string: attention
@@ -654,6 +674,10 @@ WARNING: untranslated string: dnsforward edit an entry
 WARNING: untranslated string: dnsforward entries
 WARNING: untranslated string: dnsforward forward_server
 WARNING: untranslated string: dnsforward zone
+WARNING: untranslated string: dnssec aware
+WARNING: untranslated string: dnssec information
+WARNING: untranslated string: dnssec not supported
+WARNING: untranslated string: dnssec validating
 WARNING: untranslated string: downlink
 WARNING: untranslated string: download tls-auth key
 WARNING: untranslated string: dpd delay
@@ -755,6 +779,7 @@ WARNING: untranslated string: fwdfw wd_sun
 WARNING: untranslated string: fwdfw wd_thu
 WARNING: untranslated string: fwdfw wd_tue
 WARNING: untranslated string: fwdfw wd_wed
+WARNING: untranslated string: fwhost OpenVPN N-2-N
 WARNING: untranslated string: fwhost addgrp
 WARNING: untranslated string: fwhost addgrpname
 WARNING: untranslated string: fwhost addhost
@@ -839,6 +864,7 @@ WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: mac filter
 WARNING: untranslated string: maximum
+WARNING: untranslated string: messages
 WARNING: untranslated string: minimum
 WARNING: untranslated string: minute
 WARNING: untranslated string: model
@@ -856,6 +882,7 @@ WARNING: untranslated string: modem sim information
 WARNING: untranslated string: modem status
 WARNING: untranslated string: monitor interface
 WARNING: untranslated string: most preferred
+WARNING: untranslated string: nameserver
 WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: notice
@@ -903,6 +930,8 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: samba join a domain
+WARNING: untranslated string: samba join domain
 WARNING: untranslated string: server restart
 WARNING: untranslated string: show dh
 WARNING: untranslated string: show tls-auth key

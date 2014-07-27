@@ -172,6 +172,8 @@ unless (-e $acl_include) { system("touch $acl_include"); }
 unless (-e $browserdb) { system("touch $browserdb"); }
 unless (-e $mimetypes) { system("touch $mimetypes"); }
 
+my $HAVE_NTLM_AUTH = (-e "/usr/bin/ntlm_auth");
+
 open FILE, $browserdb;
 @useragentlist = sort { reverse(substr(reverse(substr($a,index($a,',')+1)),index(reverse(substr($a,index($a,','))),',')+1)) cmp reverse(substr(reverse(substr($b,index($b,',')+1)),index(reverse(substr($b,index($b,','))),',')+1))} grep !/(^$)|(^\s*#)/,<FILE>;
 close(FILE);
@@ -264,6 +266,7 @@ $proxysettings{'LDAP_PORT'} = '389';
 $proxysettings{'LDAP_BINDDN_USER'} = '';
 $proxysettings{'LDAP_BINDDN_PASS'} = '';
 $proxysettings{'LDAP_GROUP'} = '';
+$proxysettings{'NTLM_AUTH_GROUP'} = '';
 $proxysettings{'NTLM_DOMAIN'} = '';
 $proxysettings{'NTLM_PDC'} = '';
 $proxysettings{'NTLM_BDC'} = '';
@@ -860,6 +863,7 @@ $checked{'AUTH_METHOD'}{'ncsa'} = '';
 $checked{'AUTH_METHOD'}{'ident'} = '';
 $checked{'AUTH_METHOD'}{'ldap'} = '';
 $checked{'AUTH_METHOD'}{'ntlm'} = '';
+$checked{'AUTH_METHOD'}{'ntlm-auth'} = '';
 $checked{'AUTH_METHOD'}{'radius'} = '';
 $checked{'AUTH_METHOD'}{$proxysettings{'AUTH_METHOD'}} = "checked='checked'";
 
@@ -1686,18 +1690,33 @@ print <<END
 END
 ;
 
-print <<END
+my $auth_columns = 5;
+if ($HAVE_NTLM_AUTH) {
+	$auth_columns++;
+}
+my $auth_column_width = 100 / $auth_columns;
+
+print <<END;
 <table width='100%'>
 <tr>
-	<td colspan='5'><b>$Lang::tr{'advproxy AUTH method'}</b></td>
+	<td colspan='$auth_columns'><b>$Lang::tr{'advproxy AUTH method'}</b></td>
 </tr>
 <tr>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='none' $checked{'AUTH_METHOD'}{'none'} />$Lang::tr{'advproxy AUTH method none'}</td>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='ncsa' $checked{'AUTH_METHOD'}{'ncsa'} />$Lang::tr{'advproxy AUTH method ncsa'}</td>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='ident' $checked{'AUTH_METHOD'}{'ident'} />$Lang::tr{'advproxy AUTH method ident'}</td>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='ldap' $checked{'AUTH_METHOD'}{'ldap'} />$Lang::tr{'advproxy AUTH method ldap'}</td>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='ntlm' $checked{'AUTH_METHOD'}{'ntlm'} />$Lang::tr{'advproxy AUTH method ntlm'}</td>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='radius' $checked{'AUTH_METHOD'}{'radius'} />$Lang::tr{'advproxy AUTH method radius'}</td>
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='none' $checked{'AUTH_METHOD'}{'none'} />$Lang::tr{'advproxy AUTH method none'}</td>
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ncsa' $checked{'AUTH_METHOD'}{'ncsa'} />$Lang::tr{'advproxy AUTH method ncsa'}</td>
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ident' $checked{'AUTH_METHOD'}{'ident'} />$Lang::tr{'advproxy AUTH method ident'}</td>
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ldap' $checked{'AUTH_METHOD'}{'ldap'} />$Lang::tr{'advproxy AUTH method ldap'}</td>
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ntlm' $checked{'AUTH_METHOD'}{'ntlm'} />$Lang::tr{'advproxy AUTH method ntlm'}</td>
+END
+
+if ($HAVE_NTLM_AUTH) {
+	print <<END;
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ntlm-auth' $checked{'AUTH_METHOD'}{'ntlm-auth'} />$Lang::tr{'advproxy AUTH method ntlm auth'}</td>
+END
+}
+
+print <<END
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='radius' $checked{'AUTH_METHOD'}{'radius'} />$Lang::tr{'advproxy AUTH method radius'}</td>
 </tr>
 </table>
 END
@@ -1975,6 +1994,27 @@ if ($proxysettings{'AUTH_METHOD'} eq 'ntlm') { print <<END
 </table>
 END
 ; }
+
+# ===================================================================
+#  NTLM-AUTH settings
+# ===================================================================
+
+if ($proxysettings{'AUTH_METHOD'} eq 'ntlm-auth') {
+	print <<END;
+		<hr size ='1'>
+		<table width='100%'>
+			<tr>
+				<td colspan='4'><b>$Lang::tr{'advproxy group access control'}</b></td>
+			</tr>
+			<tr>
+				<td width='20%' class='base'>$Lang::tr{'advproxy group required'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+				<td width='40%'><input type='text' name='NTLM_AUTH_GROUP' value='$proxysettings{'NTLM_AUTH_GROUP'}' size='37' /></td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+	</table>
+END
+}
 
 # ===================================================================
 #  LDAP auth settings
@@ -3143,7 +3183,6 @@ END
 	print FILE <<END
 
 cache_effective_user squid
-cache_effective_group squid
 umask 022
 
 pid_filename /var/run/squid.pid
@@ -3169,9 +3208,35 @@ END
 		print FILE "\n";
 	}
 
-	if ($proxysettings{'CACHE_SIZE'} ne '0')
+	if ($proxysettings{'CACHE_SIZE'} > 0) {
+		print FILE <<END
+maximum_object_size $proxysettings{'MAX_SIZE'} KB
+minimum_object_size $proxysettings{'MIN_SIZE'} KB
+
+cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256
+END
+		;
+	} else {
+		print FILE "cache deny all\n\n";
+	}
+
+	print FILE <<END
+request_body_max_size $proxysettings{'MAX_OUTGOING_SIZE'} KB
+END
+	;
+
+	if ($proxysettings{'MAX_INCOMING_SIZE'} > 0) {
+		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size none IPFire_unrestricted_ips\n"; }
+		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size none IPFire_unrestricted_mac\n"; }
+		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
+		{
+			if (!-z $extgrp) { print FILE "reply_body_max_size none for_extended_users\n"; }
+		}
+	}
+
+	if ( $proxysettings{'MAX_INCOMING_SIZE'} != '0' )
 	{
-		print FILE "cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DIRS'} 256\n\n";
+		print FILE "reply_body_max_size $proxysettings{'MAX_INCOMING_SIZE'} KB all\n\n";
 	}
 
 	if ($proxysettings{'LOGGING'} eq 'on')
@@ -3300,6 +3365,20 @@ END
 			}
 		}
 
+		if ($proxysettings{'AUTH_METHOD'} eq 'ntlm-auth')
+		{
+			print FILE "auth_param ntlm program /usr/bin/ntlm_auth --helper-protocol=squid-2.5-ntlmssp";
+			if ($proxysettings{'NTLM_AUTH_GROUP'}) {
+				my $ntlm_auth_group = $proxysettings{'NTLM_AUTH_GROUP'};
+				$ntlm_auth_group =~ s/\\/\+/;
+
+				print FILE " --require-membership-of=\"$ntlm_auth_group\"";
+			}
+			print FILE "\n";
+
+			print FILE "auth_param ntlm children $proxysettings{'AUTH_CHILDREN'}\n";
+		}
+
 		if ($proxysettings{'AUTH_METHOD'} eq 'radius')
 		{
 			print FILE "auth_param basic program $authdir/basic_radius_auth -h $proxysettings{'RADIUS_SERVER'} -p $proxysettings{'RADIUS_PORT'} ";
@@ -3396,19 +3475,25 @@ END
 	}
 
 open (PORTS,"$acl_ports_ssl");
-@temp = <PORTS>;
+my @ssl_ports = <PORTS>;
 close PORTS;
-if (@temp)
-{
-	foreach (@temp) { print FILE "acl SSL_ports port $_"; }
+
+if (@ssl_ports) {
+	foreach (@ssl_ports) {
+		print FILE "acl SSL_ports port $_";
+	}
 }
+
 open (PORTS,"$acl_ports_safe");
-@temp = <PORTS>;
+my @safe_ports = <PORTS>;
 close PORTS;
-if (@temp)
-{
-	foreach (@temp) { print FILE "acl Safe_ports port $_"; }
+
+if (@safe_ports) {
+	foreach (@safe_ports) {
+		print FILE "acl Safe_ports port $_";
+	}
 }
+
 	print FILE <<END
 
 acl IPFire_http  port $http_port
@@ -3498,7 +3583,7 @@ END
 		print FILE "http_access deny purge\n";
 		print FILE "url_rewrite_access deny localhost\n";
 	}
-	print FILE <<END
+	print FILE <<END;
 
 #Access to squid:
 #local machine, no restriction
@@ -3509,11 +3594,15 @@ http_access allow         IPFire_ips IPFire_networks IPFire_http
 http_access allow CONNECT IPFire_ips IPFire_networks IPFire_https
 
 #Deny not web services
-http_access deny          !Safe_ports
-http_access deny  CONNECT !SSL_ports
-
 END
-	;
+
+if (@safe_ports) {
+	print FILE "http_access deny          !Safe_ports\n";
+}
+
+if (@ssl_ports) {
+	print FILE "http_access deny  CONNECT !SSL_ports\n";
+}
 
 if ($proxysettings{'AUTH_METHOD'} eq 'ident')
 {
@@ -3939,34 +4028,6 @@ END
 		}
 		print FILE "http_reply_access deny  blocked_mimetypes\n";
 		print FILE "http_reply_access allow all\n\n";
-	}
-
-	if ($proxysettings{'CACHE_SIZE'} > 0)
-	{
-		print FILE <<END
-maximum_object_size $proxysettings{'MAX_SIZE'} KB
-minimum_object_size $proxysettings{'MIN_SIZE'} KB
-
-END
-		;
-	} else { print FILE "cache deny all\n\n";	}
-
-	print FILE <<END
-request_body_max_size $proxysettings{'MAX_OUTGOING_SIZE'} KB
-END
-	;
-	if ($proxysettings{'MAX_INCOMING_SIZE'} > 0) {
-		if (!-z $acl_src_unrestricted_ip) { print FILE "reply_body_max_size none IPFire_unrestricted_ips\n"; }
-		if (!-z $acl_src_unrestricted_mac) { print FILE "reply_body_max_size none IPFire_unrestricted_mac\n"; }
-		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
-		{
-			if (!-z $extgrp) { print FILE "reply_body_max_size none for_extended_users\n"; }
-		}
-	}
-	
-	if ( $proxysettings{'MAX_INCOMING_SIZE'} != '0' )
-	{
-		print FILE "reply_body_max_size $proxysettings{'MAX_INCOMING_SIZE'} KB all\n\n";
 	}
 
 	print FILE "visible_hostname";

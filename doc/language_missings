@@ -14,10 +14,17 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -94,7 +101,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -126,6 +138,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -324,12 +337,14 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -348,6 +363,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -399,6 +415,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -467,6 +485,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < upload new ruleset
 < uptime
@@ -536,10 +555,17 @@
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -616,7 +642,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -648,6 +679,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -846,12 +878,14 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -870,6 +904,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -937,6 +972,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < Set time on boot
 < show dh
@@ -1005,6 +1042,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1051,10 +1089,17 @@
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -1130,7 +1175,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -1154,6 +1204,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -1352,12 +1403,14 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -1376,6 +1429,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1429,6 +1483,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -1495,6 +1551,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1542,10 +1599,17 @@
 ############################################################################
 < Add a route
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -1623,7 +1687,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -1648,6 +1717,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < frequency
@@ -1849,12 +1919,14 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -1874,6 +1946,7 @@
 < month-graph
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1924,6 +1997,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -1990,6 +2065,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average

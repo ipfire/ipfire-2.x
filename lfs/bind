@@ -25,13 +25,15 @@
 
 include Config
 
-VER        = 9.3.2
+VER        = 9.9.5
 
 THISAPP    = bind-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+
+export CPPFLAGS = -DDIG_SIGCHASE
 
 ###############################################################################
 # Top-level Rules
@@ -41,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 55e709501a7780233c36e25ccd15ece2
+$(DL_FILE)_MD5 = e676c65cad5234617ee22f48e328c24e
 
 install : $(TARGET)
 
@@ -71,7 +73,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls --disable-ipv6
+	cd $(DIR_APP) && STD_CDEFINES="$(CPPFLAGS)" \
+		./configure \
+			--prefix=/usr \
+			--disable-static \
+			--disable-openssl-version-check
 	cd $(DIR_APP) && make -C lib/dns
 	cd $(DIR_APP) && make -C lib/isc
 	cd $(DIR_APP) && make -C lib/bind9
@@ -81,5 +87,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make -C bin/dig install
 	cd $(DIR_APP) && make -C bin/nsupdate
 	cd $(DIR_APP) && make -C bin/nsupdate install
+
+	install -v -m 644 $(DIR_SRC)/config/bind/trusted-key.key \
+		/etc/trusted-key.key
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

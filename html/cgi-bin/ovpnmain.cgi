@@ -908,7 +908,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   }
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print SERVERCONF "# Enable Compression\n";
-   print SERVERCONF "comp-lzo\r\n";
+   print SERVERCONF "comp-lzo\n";
      }
   print SERVERCONF "# Debug Level\n"; 
   print SERVERCONF "verb 3\n"; 
@@ -1003,7 +1003,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   }
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print CLIENTCONF "# Enable Compression\n";
-   print CLIENTCONF "comp-lzo\r\n";
+   print CLIENTCONF "comp-lzo\n";
   }
   print CLIENTCONF "# Debug Level\n"; 
   print CLIENTCONF "verb 3\n"; 
@@ -2103,7 +2103,7 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    }
    if ($confighash{$cgiparams{'KEY'}}[30] eq 'on') {
    print CLIENTCONF "# Enable Compression\n";
-   print CLIENTCONF "comp-lzo\r\n";
+   print CLIENTCONF "comp-lzo\n";
      }
    print CLIENTCONF "# Debug Level\n"; 
    print CLIENTCONF "verb 3\n"; 
@@ -5024,24 +5024,41 @@ END
 ###
 
     &Header::openbox('100%', 'LEFT', $Lang::tr{'connection status and controlc' });
-    print <<END;
-
-
-    <table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
-<tr>
-    <th width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></th>
-    <th width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
-    <th width='22%' class='boldbase' align='center'><b>$Lang::tr{'network'}</b></th>
-    <th width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
-    <th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
-    <th width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></th>
-</tr>
-END
 	;
 	my $id = 0;
 	my $gif;
 	my $col1="";
-	foreach my $key (sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
+	my $lastnet;
+	foreach my $key (sort { ncmp ($confighash{$a}[32],$confighash{$b}[32]) } sort { ncmp ($confighash{$a}[1],$confighash{$b}[1]) } keys %confighash) {
+		if ($confighash{$key}[32] eq "" && $confighash{$key}[3] eq 'net' ){$confighash{$key}[32]=$Lang::tr{'fwhost OpenVPN N-2-N'};}
+		if ($confighash{$key}[32] eq "dynamic"){$confighash{$key}[32]=$Lang::tr{'ccd dynrange'};}
+		if($id == 0){
+			print"<b>$confighash{$key}[32]</b>";
+			print <<END;
+	<table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
+<tr>
+	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></th>
+	<th width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
+	<th width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
+	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
+	<th width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></th>
+</tr>
+END
+		}
+		if ($id > 0 && $lastnet ne $confighash{$key}[32]){
+			print "</table><br>";
+			print"<b>$confighash{$key}[32]</b>";
+			print <<END;
+	<table width='100%' cellspacing='1' cellpadding='0' class='tbl'>
+<tr>
+	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'name'}</b></th>
+	<th width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
+	<th width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
+	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
+	<th width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></th>
+</tr>
+END
+		}
 	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 	if ($id % 2) {
 		print "<tr>";
@@ -5060,9 +5077,6 @@ END
 	my $cavalid = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem`;
 	$cavalid    =~ /Not After : (.*)[\n]/;
 	$cavalid    = $1;
-	if ($confighash{$key}[32] eq "" && $confighash{$key}[3] eq 'net' ){$confighash{$key}[32]="net-2-net";}
-	if ($confighash{$key}[32] eq "" && $confighash{$key}[3] eq 'host' ){$confighash{$key}[32]="dynamic";}
-	print "<td align='center' $col>$confighash{$key}[32]</td>";
 	print "<td align='center' $col>$confighash{$key}[25]</td>";
 	$col1="bgcolor='${Header::colourred}'";
 	my $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
@@ -5191,7 +5205,9 @@ END
 END
 	;
 	$id++;
+	$lastnet = $confighash{$key}[32];
     }
+    print"</table>";
     ;
 
     # If the config file contains entries, print Key to action icons

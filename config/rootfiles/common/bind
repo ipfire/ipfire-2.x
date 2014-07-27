@@ -1,8 +1,9 @@
+etc/trusted-key.key
 usr/bin/dig
 usr/bin/host
 usr/bin/nslookup
 usr/bin/nsupdate
-#usr/man/man1/dig.1
-#usr/man/man1/host.1
-#usr/man/man1/nslookup.1
-#usr/man/man8/nsupdate.8
+#usr/share/man/man1/dig.1
+#usr/share/man/man1/host.1
+#usr/share/man/man1/nslookup.1
+#usr/share/man/man1/nsupdate.1

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2014   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,17 +24,24 @@
 
 include Config
 
-VER        = 5.0.5
+VER        = 6.0.0
 
 THISAPP    = gmp-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP)a.tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ifeq "$(MACHINE)" "i586"
 	CONFIGURE_ARGS = ABI=32
+	BUILDTARGET_PENTIUM4 = $(patsubst $(MACHINE)-%,pentium4-%,$(BUILDTARGET))
 endif
+
+CONFIGURE_OPTIONS = \
+	--prefix=/usr \
+	--enable-cxx \
+	--enable-mpbsd \
+	--disable-nls
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +51,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 041487d25e9c230b0c42b106361055fe
+$(DL_FILE)_MD5 = 1e6da4e434553d2811437aa42c7f7c76
 
 install : $(TARGET)
 
@@ -73,10 +80,30 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && $(CONFIGURE_ARGS) ./configure --prefix=/usr \
-		--enable-cxx --enable-mpbsd --disable-nls
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && \
+		$(CONFIGURE_ARGS) \
+		./configure \
+			--build=$(BUILDTARGET) \
+			$(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+ifeq "$(MACHINE)" "i586"
+	# Build SSE/SSE2 optimised version for x86
+	cd $(DIR_APP) && make clean
+	cd $(DIR_APP) && \
+		$(CONFIGURE_ARGS) \
+		./configure \
+			--build=$(BUILDTARGET_PENTIUM4) \
+			$(CONFIGURE_OPTIONS) \
+			CFLAGS="$(CFLAGS) -march=pentium4" \
+			CXXFLAGS="$(CXXFLAGS) -march=pentium4"
+	cd $(DIR_APP) && make $(MAKETUNING)
+
+	-mkdir -pv /usr/lib/sse2
+	cd $(DIR_APP) && install -v -m 755 .libs/libgmp.so.10.2.0 /usr/lib/sse2
+endif
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

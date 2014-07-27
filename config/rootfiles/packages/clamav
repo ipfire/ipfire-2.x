@@ -41,6 +41,6 @@ var/ipfire/clamav/clamd.conf
 var/ipfire/clamav/clamd.conf.sample
 var/ipfire/clamav/freshclam.conf
 var/ipfire/clamav/freshclam.conf.sample
-var/run/clamav
+#var/run/clamav
 etc/rc.d/init.d/clamav
 usr/local/bin/clamavctrl
