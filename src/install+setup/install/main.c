@@ -380,7 +380,7 @@ int main(int argc, char *argv[]) {
 		} else if (num_selected_disks == 2) {
 			snprintf(message, sizeof(message), ctr[TR_RAID_SETUP_DESC],
 				(*selected_disks)->description, (*selected_disks + 1)->description);
-			rc = newtWinOkCancel(ctr[TR_RAID_SETUP], message, 50, 10,
+			rc = newtWinOkCancel(ctr[TR_RAID_SETUP], message, 50, 14,
 				ctr[TR_DELETE_ALL_DATA], ctr[TR_CANCEL]);
 
 			if (rc == 0) {
