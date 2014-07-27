@@ -75,6 +75,7 @@ struct hw_destination {
 	const struct hw_disk* disk2;
 
 	int part_table;
+	char part_bootldr[DEV_SIZE];
 	char part_boot[DEV_SIZE];
 	char part_swap[DEV_SIZE];
 	char part_root[DEV_SIZE];
@@ -84,6 +85,7 @@ struct hw_destination {
 	int filesystem;
 
 	unsigned long long size;
+	unsigned long long size_bootldr;
 	unsigned long long size_boot;
 	unsigned long long size_swap;
 	unsigned long long size_root;

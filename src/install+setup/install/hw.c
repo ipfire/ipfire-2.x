@@ -337,6 +337,12 @@ static unsigned long long hw_boot_size(struct hw_destination* dest) {
 }
 
 static int hw_calculate_partition_table(struct hw_destination* dest) {
+	char path[DEV_SIZE];
+	int part_idx = 1;
+
+	snprintf(path, sizeof(path), "%s%s", dest->path, (dest->is_raid) ? "p" : "");
+	dest->part_boot_idx = 0;
+
 	// Determine the size of the target block device
 	if (dest->is_raid) {
 		dest->size = (dest->disk1->size >= dest->disk2->size) ?
@@ -349,12 +355,38 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 		dest->size = dest->disk1->size;
 	}
 
+	// Determine partition table
+	dest->part_table = HW_PART_TABLE_MSDOS;
+
+	// Disks over 2TB need to use GPT
+	if (dest->size >= MB2BYTES(2047 * 1024))
+		dest->part_table = HW_PART_TABLE_GPT;
+
+	// We also use GPT on raid disks by default
+	else if (dest->is_raid)
+		dest->part_table = HW_PART_TABLE_GPT;
+
+	// When using GPT, GRUB2 needs a little bit of space to put
+	// itself in.
+	if (dest->part_table = HW_PART_TABLE_GPT) {
+		snprintf(dest->part_bootldr, sizeof(dest->part_bootldr),
+			"%s%d", path, part_idx);
+
+		dest->size_bootldr = MB2BYTES(4);
+
+		dest->part_boot_idx = part_idx++;
+	} else {
+		*dest->part_bootldr = '\0';
+		dest->size_bootldr = 0;
+	}
+
 	dest->size_boot = hw_boot_size(dest);
 	dest->size_swap = hw_swap_size(dest);
 	dest->size_root = hw_root_size(dest);
 
 	// Determine the size of the data partition.
-	unsigned long long used_space = dest->size_boot + dest->size_swap + dest->size_root;
+	unsigned long long used_space = dest->size_bootldr + dest->size_boot
+		+ dest->size_swap + dest->size_root;
 
 	// Disk is way too small
 	if (used_space >= dest->size)
@@ -369,13 +401,9 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 	}
 
 	// Set partition names
-	char path[DEV_SIZE];
-	int part_idx = 1;
-
-	snprintf(path, sizeof(path), "%s%s", dest->path, (dest->is_raid) ? "p" : "");
-
 	if (dest->size_boot > 0) {
-		dest->part_boot_idx = part_idx;
+		if (dest->part_boot_idx == 0)
+			dest->part_boot_idx = part_idx;
 
 		snprintf(dest->part_boot, sizeof(dest->part_boot), "%s%d", path, part_idx++);
 	} else
@@ -387,7 +415,7 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 		*dest->part_swap = '\0';
 
 	// There is always a root partition
-	if (!*dest->part_boot)
+	if (dest->part_boot_idx == 0)
 		dest->part_boot_idx = part_idx;
 
 	snprintf(dest->part_root, sizeof(dest->part_root), "%s%d", path, part_idx++);
@@ -396,17 +424,6 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 		snprintf(dest->part_data, sizeof(dest->part_data), "%s%d", path, part_idx++);
 	else
 		*dest->part_data = '\0';
-
-	// Determine partition table
-	dest->part_table = HW_PART_TABLE_MSDOS;
-
-	// Disks over 2TB need to use GPT
-	if (dest->size >= MB2BYTES(2047 * 1024))
-		dest->part_table = HW_PART_TABLE_GPT;
-
-	// We also use GPT on raid disks by default
-	else if (dest->is_raid)
-		dest->part_table = HW_PART_TABLE_GPT;
 
 	return 0;
 }
@@ -474,6 +491,14 @@ int hw_create_partitions(struct hw_destination* dest) {
 
 	unsigned long long part_start = 1 * 1024 * 1024; // 1MB
 
+	if (*dest->part_bootldr) {
+		asprintf(&cmd, "%s mkpart %s ext2 %lluMB %lluMB", cmd,
+			(dest->part_table == HW_PART_TABLE_GPT) ? "BOOTLDR" : "primary",
+		BYTES2MB(part_start), BYTES2MB(part_start + dest->size_bootldr));
+
+		part_start += dest->size_bootldr;
+	}
+
 	if (*dest->part_boot) {
 		asprintf(&cmd, "%s mkpart %s ext2 %lluMB %lluMB", cmd,
 			(dest->part_table == HW_PART_TABLE_GPT) ? "BOOT" : "primary",
@@ -510,6 +535,9 @@ int hw_create_partitions(struct hw_destination* dest) {
 		asprintf(&cmd, "%s set %d boot on", cmd, dest->part_boot_idx);
 
 	} else if (dest->part_table == HW_PART_TABLE_GPT) {
+		if (*dest->part_bootldr) {
+			asprintf(&cmd, "%s set %d bios_grub on", cmd, dest->part_boot_idx);
+		}
 		asprintf(&cmd, "%s disk_set pmbr_boot on", cmd);
 	}
 
@@ -521,6 +549,9 @@ int hw_create_partitions(struct hw_destination* dest) {
 
 		while (counter-- > 0) {
 			sleep(1);
+
+			if (*dest->part_bootldr && (access(dest->part_bootldr, R_OK) != 0))
+				continue;
 
 			if (*dest->part_boot && (access(dest->part_boot, R_OK) != 0))
 				continue;
@@ -778,7 +809,7 @@ int hw_install_bootloader(struct hw_destination* dest) {
 	char cmd_grub[STRING_SIZE];
 	snprintf(cmd_grub, sizeof(cmd_grub), "/usr/sbin/grub-install --no-floppy --recheck");
 
-	if (dest->is_raid) {
+	if (dest->is_raid && (dest->part_table == HW_PART_TABLE_MSDOS)) {
 		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->disk1->path);
 		r = system_chroot(DESTINATION_MOUNT_PATH, cmd);
 		if (r)

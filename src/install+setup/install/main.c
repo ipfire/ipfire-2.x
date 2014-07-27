@@ -410,10 +410,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	fprintf(flog, "Destination drive: %s\n", destination->path);
-	fprintf(flog, "  boot: %s (%lluMB)\n", destination->part_boot, BYTES2MB(destination->size_boot));
-	fprintf(flog, "  swap: %s (%lluMB)\n", destination->part_swap, BYTES2MB(destination->size_swap));
-	fprintf(flog, "  root: %s (%lluMB)\n", destination->part_root, BYTES2MB(destination->size_root));
-	fprintf(flog, "  data: %s (%lluMB)\n", destination->part_data, BYTES2MB(destination->size_data));
+	fprintf(flog, "  bootldr: %s (%lluMB)\n", destination->part_bootldr, BYTES2MB(destination->size_bootldr));
+	fprintf(flog, "  boot   : %s (%lluMB)\n", destination->part_boot, BYTES2MB(destination->size_boot));
+	fprintf(flog, "  swap   : %s (%lluMB)\n", destination->part_swap, BYTES2MB(destination->size_swap));
+	fprintf(flog, "  root   : %s (%lluMB)\n", destination->part_root, BYTES2MB(destination->size_root));
+	fprintf(flog, "  data   : %s (%lluMB)\n", destination->part_data, BYTES2MB(destination->size_data));
 
 	// Warn the user if there is not enough space to create a swap partition
 	if (!unattended && !*destination->part_swap) {
