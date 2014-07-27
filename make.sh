@@ -811,7 +811,6 @@ buildinstaller() {
   ipfiremake memtest
   ipfiremake installer
   installmake strip
-  ipfiremake initrd
 }
 
 buildpackages() {

@@ -33,7 +33,7 @@ LINK = $(LD) $(LDFLAGS)
 
 all : programs
 
-programs : install
+programs : installer
 
 clean :
 	-rm -f *.o install core
@@ -42,7 +42,7 @@ clean :
 
 OBJS=main.o config.o ../libsmooth/libsmooth.o unattended.o hw.o
 
-install: $(OBJS)
+installer: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)
 
 %.o : %.c

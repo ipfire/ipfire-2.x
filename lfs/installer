@@ -60,11 +60,14 @@ $(TARGET) :
 	cd $(DIR_APP)/install && make CFLAGS="-Os -std=gnu99 -fomit-frame-pointer -Wall \
 	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
 	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DKERNEL_VERSION='\"$(KVER)\"'"
-	cd $(DIR_APP)/install && install -v -m 0755 install probenic.sh \
-		downloadsource.sh mountdest.sh /install/initrd/bin
+	cd $(DIR_APP)/install && install -v -m 0755 installer probenic.sh \
+		downloadsource.sh mountdest.sh /usr/bin
+	rm -rvf /usr/lib/dracut/modules.d/99installer
+	cd $(DIR_APP)/install && cp -rvf dracut-module /usr/lib/dracut/modules.d/99installer
+
 	#Patch ISO Name for download ...
 	sed -i -e "s|ipfire.iso|download.ipfire.org/releases/ipfire-2.x/$(VERSION)-core$(CORE)/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso|g" \
-				/install/initrd/bin/downloadsource.sh
+				/usr/bin/downloadsource.sh
 	#Patch version for mediacheck ...
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
