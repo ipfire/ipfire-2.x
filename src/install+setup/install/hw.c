@@ -843,3 +843,72 @@ int hw_install_bootloader(struct hw_destination* dest) {
 
 	return r;
 }
+
+static char* hw_get_uuid(const char* dev) {
+	blkid_probe p = blkid_new_probe_from_filename(dev);
+	const char* buffer = NULL;
+	char* uuid = NULL;
+
+	if (!p)
+		return NULL;
+
+	blkid_do_probe(p);
+	blkid_probe_lookup_value(p, "UUID", &buffer, NULL);
+
+	if (buffer)
+		uuid = strdup(buffer);
+
+	blkid_free_probe(p);
+
+	return uuid;
+}
+
+int hw_write_fstab(struct hw_destination* dest) {
+	FILE* f = fopen(DESTINATION_MOUNT_PATH "/etc/fstab", "w");
+	if (!f)
+		return -1;
+
+	const char* fmt = "UUID=%s %-8s %-4s %-10s %d %d\n";
+	char* uuid = NULL;
+
+	// boot
+	if (*dest->part_boot) {
+		uuid = hw_get_uuid(dest->part_boot);
+
+		if (uuid) {
+			fprintf(f, fmt, uuid, "/boot", "auto", "defaults", 1, 2);
+			free(uuid);
+		}
+	}
+
+	// swap
+	if (*dest->part_swap) {
+		uuid = hw_get_uuid(dest->part_swap);
+
+		if (uuid) {
+			fprintf(f, fmt, uuid, "swap", "swap", "defaults,pri=1", 0, 0);
+			free(uuid);
+		}
+	}
+
+	// root
+	uuid = hw_get_uuid(dest->part_root);
+	if (uuid) {
+		fprintf(f, fmt, uuid, "/", "auto", "defaults", 1, 1);
+		free(uuid);
+	}
+
+	// data
+	if (*dest->part_data) {
+		uuid = hw_get_uuid(dest->part_data);
+
+		if (uuid) {
+			fprintf(f, fmt, uuid, "/var", "auto", "defaults", 1, 1);
+			free(uuid);
+		}
+	}
+
+	fclose(f);
+
+	return 0;
+}

@@ -508,7 +508,14 @@ int main(int argc, char *argv[]) {
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
 		goto EXIT;
 	}
-	
+
+	// Write fstab
+	rc = hw_write_fstab(destination);
+	if (rc) {
+		fprintf(flog, "Could not write /etc/fstab\n");
+		goto EXIT;
+	}
+
 	/* Save language und local settings */
 	write_lang_configs(shortlangname);
 
@@ -519,18 +526,6 @@ int main(int argc, char *argv[]) {
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_LANG_CACHE]);
 		goto EXIT;
 	}
-
-	/* Update /etc/fstab */
-	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE1#UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", destination->part_boot);
-	system(commandstring);
-	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE2#UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", destination->part_swap);
-	system(commandstring);
-	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE3#UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", destination->part_root);
-	system(commandstring);
-	snprintf(commandstring, STRING_SIZE, "/bin/sed -i -e \"s#DEVICE4#UUID=$(/sbin/blkid %s -sUUID | /usr/bin/cut -d'\"' -f2)#g\" /harddisk/etc/fstab", destination->part_data);
-	system(commandstring);
-
-	system("/bin/sed -e 's#/harddisk#/#g' -e 's#//#/#g'  < /proc/mounts > /harddisk/etc/mtab");
 
 	// Installing bootloader...
 	statuswindow(60, 4, title, ctr[TR_INSTALLING_GRUB]);
