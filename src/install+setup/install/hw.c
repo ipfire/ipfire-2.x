@@ -379,7 +379,7 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 
 	// When using GPT, GRUB2 needs a little bit of space to put
 	// itself in.
-	if (dest->part_table = HW_PART_TABLE_GPT) {
+	if (dest->part_table == HW_PART_TABLE_GPT) {
 		snprintf(dest->part_bootldr, sizeof(dest->part_bootldr),
 			"%s%d", path, part_idx);
 
