@@ -178,6 +178,8 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/base
 #lib/modules/KVER-ipfire-pae/kernel/drivers/base/regmap
 #lib/modules/KVER-ipfire-pae/kernel/drivers/base/regmap/regmap-i2c.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/bcma
+#lib/modules/KVER-ipfire-pae/kernel/drivers/bcma/bcma.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/block
 #lib/modules/KVER-ipfire-pae/kernel/drivers/block/DAC960.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/block/cciss.ko
@@ -1630,6 +1632,8 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/wireless/brcm80211
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/wireless/brcm80211/brcmfmac
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/wireless/brcm80211/brcmfmac/brcmfmac.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/net/wireless/brcm80211/brcmsmac
+#lib/modules/KVER-ipfire-pae/kernel/drivers/net/wireless/brcm80211/brcmsmac/brcmsmac.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/wireless/brcm80211/brcmutil
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/wireless/brcm80211/brcmutil/brcmutil.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/wireless/hostap
@@ -2032,6 +2036,7 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/usb/dwc3/dwc3-pci.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/usb/dwc3/dwc3.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/usb/host
+#lib/modules/KVER-ipfire-pae/kernel/drivers/usb/host/bcma-hcd.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/usb/host/hwa-hc.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/usb/host/isp1362-hcd.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/usb/host/sl811-hcd.ko
