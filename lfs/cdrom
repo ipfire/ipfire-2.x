@@ -109,8 +109,8 @@ endif
 	cd /install/cdrom && find -type f ! -name md5sum.txt | grep -v "./boot" | \
 						xargs md5sum > md5sum.txt
 
-ifeq "$(MACHINE_TYPE)" "arm"
 	mkdir -p /install/images
+ifeq "$(MACHINE_TYPE)" "arm"
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
 		. > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
 else
