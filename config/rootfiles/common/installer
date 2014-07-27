@@ -1,0 +1,9 @@
+#usr/bin/downloadsource.sh
+#usr/bin/installer
+#usr/bin/mountdest.sh
+#usr/bin/probenic.sh
+#usr/lib/dracut/modules.d/99installer
+#usr/lib/dracut/modules.d/99installer/70-dhcpcd.exe
+#usr/lib/dracut/modules.d/99installer/fake-root.sh
+#usr/lib/dracut/modules.d/99installer/module-setup.sh
+#usr/lib/dracut/modules.d/99installer/run-installer.sh

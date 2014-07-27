@@ -1,5 +1,6 @@
 boot/System.map-KVER-ipfire-pae
 boot/config-KVER-ipfire-pae
+#boot/initramfs-KVER-ipfire-pae.img
 boot/vmlinuz-KVER-ipfire-pae
 #lib/modules
 lib/modules/KVER-ipfire-pae
