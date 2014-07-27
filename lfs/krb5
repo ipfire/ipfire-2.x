@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,17 +24,17 @@
 
 include Config
 
-VER        = 3.6.24
+VER        = 1.12.1
 
-THISAPP    = samba-$(VER)
+THISAPP    = krb5-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)/src
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = samba
-PAK_VER    = 58
+PROG       = krb5
+PAK_VER    = 1
 
-DEPS       = "cups krb5"
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d98425c0c2b73e08f048d31ffc727fb0
+$(DL_FILE)_MD5 = 4a631b3474d3e44773f1ecda96f04400
 
 install : $(TARGET)
 
@@ -76,51 +76,30 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/source3 && ./configure \
-		--prefix=/usr \
-		--libdir=/usr/lib/ \
-		--sysconfdir=/var/ipfire \
-		--localstatedir=/var \
-		--with-cachedir=/var/lib/samba \
-		--with-lockdir=/var/lib/samba \
-		--with-piddir=/var/run \
-		--with-ads \
-		--with-acl-support \
-		--with-libsmbclient \
-		--with-libsmbsharemodes \
-		--with-sendfile-support \
-		--without-smbwrapper \
-		--with-mmap \
-		--with-fhs \
-		--with-vfs \
-		--with-winbind \
-		--disable-swat \
-		--enable-cups \
-		--disable-avahi \
-		--with-syslog
-	cd $(DIR_APP)/source3 && make proto && make all $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP)/source3 && make install
-	cd $(DIR_APP)/source3 && chmod -v 644 /usr/include/libsmbclient.h
-	#cd $(DIR_APP)/source3 && install -v -m755 nsswitch/libnss_wins.so /lib
-	#cd $(DIR_APP)/source3 && install -v -m755 nsswitch/libnss_winbind.so /lib
-	#cd $(DIR_APP)/source3 && ln -v -sf libnss_winbind.so /lib/libnss_winbind.so.2
-	#cd $(DIR_APP)/source3 && ln -v -sf libnss_wins.so /lib/libnss_wins.so.2
-	cd $(DIR_APP)/source3 && install -v -m644 ../examples/smb.conf.default /var/ipfire/samba
-	-mkdir -p /var/ipfire/samba	
-	cp -vrf $(DIR_SRC)/config/samba/* /var/ipfire/samba/
-	chown nobody:nobody -R /var/ipfire/samba/
-	cp -vfp /var/ipfire/samba/default.global /var/ipfire/samba/global
-	cp -vfp /var/ipfire/samba/default.pdc /var/ipfire/samba/pdc
-	cp -vfp /var/ipfire/samba/default.settings /var/ipfire/samba/settings
-	cp -vfp /var/ipfire/samba/default.shares /var/ipfire/samba/shares
-	cp -vfp /var/ipfire/samba/default.printer /var/ipfire/samba/printer
-	cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf
-	-mkdir -p /var/log/samba
-	install -v -m 644 $(DIR_SRC)/config/backup/includes/samba /var/ipfire/backup/addons/includes/samba
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/mitkrb-1.12.1-db2_fix-1.patch
 
-	-mkdir -p 750 /var/lib/samba/winbindd_privileged
-	chgrp wbpriv /var/lib/samba/winbindd_privileged
+	cd $(DIR_APP) && sed -e "s@python2.5/Python.h@& python2.7/Python.h@g" \
+		-e "s@-lpython2.5]@&,\n  AC_CHECK_LIB(python2.7,main,[PYTHON_LIB=-lpython2.7])@g" \
+		-i configure.in
+	cd $(DIR_APP) && autoconf
+
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--localstatedir=/var/lib \
+		--with-system-et \
+		--with-system-ss \
+		--enable-dns-for-realm \
+		CPPFLAGS="-I/usr/include/et"
+
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+
+	for LIB in gssapi_krb5 gssrpc k5crypto kadm5clnt kadm5srv \
+        		kdb5 kdb_ldap krad krb5 krb5support verto; do \
+		chmod -f -v 755 "/usr/lib/lib$$LIB.so"; \
+	done
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -616,6 +616,7 @@ buildipfire() {
   ipfiremake foomatic
   ipfiremake hplip
   ipfiremake cifs-utils
+  ipfiremake krb5
   ipfiremake samba
   ipfiremake sudo
   ipfiremake mc
