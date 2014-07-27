@@ -74,6 +74,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install sbindir=/sbin sysconfdir=/etc
 
+	rm -rf /usr/lib/dracut/modules.d/*{bootchart,dash,fips*,modsign,busybox,convertfs,network,ifcfg,url-lib,gensplash,cms,plymouth,btrfs,crypt*,dm,dmraid,dmsquash-live,livenet,lvm,multipath,qemu*,cifs,dasd*,fcoe*,iscsi,nbd,nfs,resume,ssh-client,zfcp*,systemd*,znet,securityfs,masterkey,selinux,usrmount,uefi-lib}
+
 	cp -vf $(DIR_SRC)/src/dracut/dracut.conf /etc/dracut.conf.d/
 
 	# Build initramdisk
