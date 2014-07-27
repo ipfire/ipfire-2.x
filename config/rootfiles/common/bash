@@ -13,10 +13,6 @@ bin/bash
 #usr/share/doc/bash/bash.html
 #usr/share/doc/bash/bashref.html
 #usr/share/info/bash.info
-#usr/share/man/man1/bash.1
-#usr/share/man/man1/bashbug.1
-#usr/share/locale/af
-#usr/share/locale/af/LC_MESSAGES
 #usr/share/locale/af/LC_MESSAGES/bash.mo
 #usr/share/locale/bg/LC_MESSAGES/bash.mo
 #usr/share/locale/ca/LC_MESSAGES/bash.mo
@@ -27,6 +23,8 @@ bin/bash
 #usr/share/locale/en@boldquot
 #usr/share/locale/en@boldquot/LC_MESSAGES
 #usr/share/locale/en@boldquot/LC_MESSAGES/bash.mo
+#usr/share/locale/en@quot
+#usr/share/locale/en@quot/LC_MESSAGES
 #usr/share/locale/en@quot/LC_MESSAGES/bash.mo
 #usr/share/locale/eo/LC_MESSAGES/bash.mo
 #usr/share/locale/es/LC_MESSAGES/bash.mo
@@ -54,3 +52,8 @@ bin/bash
 #usr/share/locale/sv/LC_MESSAGES/bash.mo
 #usr/share/locale/tr/LC_MESSAGES/bash.mo
 #usr/share/locale/uk/LC_MESSAGES/bash.mo
+#usr/share/locale/vi/LC_MESSAGES/bash.mo
+#usr/share/locale/zh_CN/LC_MESSAGES/bash.mo
+#usr/share/locale/zh_TW/LC_MESSAGES/bash.mo
+#usr/share/man/man1/bash.1
+#usr/share/man/man1/bashbug.1
