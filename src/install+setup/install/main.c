@@ -615,8 +615,8 @@ EXIT:
 
 	fcloseall();
 
-	if (!(allok))
-		system("/etc/halt");
+	if (allok == 1)
+		return 0;
 
-	return 0;
+	return 1;
 }
