@@ -413,9 +413,9 @@ sub getnetworkip
 	#Gets:  IP, CIDR    (10.10.10.0-255, 24)
 	#Gives:  10.10.10.0
 	my ($ccdip,$ccdsubnet) = @_;
-	my $ip_address_binary = &Socket::inet_pton( AF_INET,$ccdip );
-	my $netmask_binary = &Socket::inet_pton(AF_INET,&iporsubtodec($ccdsubnet));
-	my $network_address    = &Socket::inet_ntop( AF_INET,$ip_address_binary & $netmask_binary );
+	my $ip_address_binary = inet_aton( $ccdip );
+	my $netmask_binary    = ~pack("N", (2**(32-$ccdsubnet))-1);
+	my $network_address    = inet_ntoa( $ip_address_binary & $netmask_binary );
 	return $network_address;
 }
 
