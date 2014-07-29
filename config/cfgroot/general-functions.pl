@@ -773,21 +773,12 @@ sub validportrange # used to check a port range
 # Return: TRUE/FALSE
 sub IpInSubnet
 {
-	my $addr = shift;
-	my $network = shift;
-	my $netmask = shift;
-
-	my $addr_num = &Socket::inet_pton(AF_INET,$addr);
-	my $network_num = &Socket::inet_pton(AF_INET,$network);
-	my $netmask_num = &Socket::inet_pton(AF_INET,$netmask);
-
-	# Find start address
-	my $network_start = $network_num & $netmask_num;
-
-	# Find end address
-	my $network_end = $network_start ^ ~$netmask_num;
-
-	return (($addr_num ge $network_start) && ($addr_num le $network_end));
+    my $ip = unpack('N', &Socket::inet_aton(shift));
+    my $start = unpack('N', &Socket::inet_aton(shift));
+    my $mask  = unpack('N', &Socket::inet_aton(shift));
+       $start &= $mask;  # base of subnet...
+    my $end   = $start + ~$mask;
+    return (($ip >= $start) && ($ip <= $end));
 }
 
 #
