@@ -228,10 +228,11 @@ struct hw_disk** hw_find_disks(struct hw* hw) {
 			vendor = udev_device_get_sysattr_value(dev, "vendor");
 		if (!vendor)
 			vendor = udev_device_get_sysattr_value(dev, "manufacturer");
-		if (!vendor)
-			vendor = "N/A";
 
-		strncpy(disk->vendor, vendor, sizeof(disk->vendor));
+		if (vendor)
+			strncpy(disk->vendor, vendor, sizeof(disk->vendor));
+		else
+			*disk->vendor = '\0';
 
 		// Model
 		const char* model = udev_device_get_property_value(dev, "ID_MODEL");
@@ -239,14 +240,28 @@ struct hw_disk** hw_find_disks(struct hw* hw) {
 			model = udev_device_get_sysattr_value(dev, "model");
 		if (!model)
 			model = udev_device_get_sysattr_value(dev, "product");
-		if (!model)
-			model = "N/A";
 
-		strncpy(disk->model, model, sizeof(disk->model));
+		if (model)
+			strncpy(disk->model, model, sizeof(disk->model));
+		else
+			*disk->model = '\0';
 
-		snprintf(disk->description, sizeof(disk->description),
-			"%4.1fGB %s - %s", (double)disk->size / pow(1024, 3),
-			disk->vendor, disk->model);
+		// Format description
+		char size_str[STRING_SIZE];
+		snprintf(size_str, sizeof(size_str), "%4.1fGB", (double)disk->size / pow(1024, 3));
+
+		if (*disk->vendor && *disk->model) {
+			snprintf(disk->description, sizeof(disk->description),
+				"%s | %s - %s", size_str, disk->vendor, disk->model);
+
+		} else if (*disk->vendor || *disk->model) {
+			snprintf(disk->description, sizeof(disk->description),
+				"%s | %s", size_str, (*disk->vendor) ? disk->vendor : disk->model);
+
+		} else {
+			snprintf(disk->description, sizeof(disk->description),
+				"%s | N/A", size_str);
+		}
 
 		*disks++ = disk;
 
