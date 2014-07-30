@@ -48,17 +48,13 @@ md5 :
 
 $(TARGET) :
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/install+setup/* $(DIR_APP)
+	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/setup/* $(DIR_APP)
 
-	cd $(DIR_APP)/libsmooth && make CFLAGS="$(CFLAGS) -Wall \
+	cd $(DIR_APP) && make CFLAGS="$(CFLAGS) -Wall \
 	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
 	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'"
 
-	cd $(DIR_APP)/setup && make CFLAGS="$(CFLAGS) -Wall \
-	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
-	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'"
-
-	cd $(DIR_APP)/setup && install -m 0755 setup /usr/local/sbin
-	install -m 0755 $(DIR_SRC)/src/install+setup/install/probenic.sh /bin
+	cd $(DIR_APP) && install -m 0755 setup /usr/local/sbin
+	cd $(DIR_APP) && install -m 0755 probenic.sh /bin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

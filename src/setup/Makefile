@@ -24,7 +24,7 @@ INCLUDE =
 
 LD      = gcc
 LDFLAGS = 
-LIBS    = -lnewt -lslang
+LIBS    = -lnewt -lslang -lsmooth
 
 COMPILE = $(CC) -c $(INCLUDE) $(CFLAGS)
 
@@ -40,7 +40,7 @@ clean :
 ######
 
 OBJS=main.o hostname.o domainname.o passwords.o networking.o misc.o \
-	dhcp.o keymap.o timezone.o ../libsmooth/libsmooth.o
+	dhcp.o keymap.o timezone.o
 
 setup: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)
