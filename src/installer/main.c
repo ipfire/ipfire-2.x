@@ -10,6 +10,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mount.h>
@@ -176,8 +177,41 @@ int write_lang_configs(const char *lang) {
 	return 1;
 }
 
+static char* get_system_release() {
+	char system_release[STRING_SIZE] = "\0";
+
+	FILE* f = fopen("/etc/system-release", "r");
+	if (f) {
+		fgets(system_release, sizeof(system_release), f);
+		fclose(f);
+	}
+
+	return strdup(system_release);
+}
+
+static char* center_string(const char* str, int width) {
+	unsigned int str_len = strlen(str);
+
+	unsigned int indent_length = (width - str_len) / 2;
+	char indent[indent_length + 1];
+
+	for (unsigned int i = 0; i < indent_length; i++) {
+		indent[i] = ' ';
+	}
+	indent[indent_length] = '\0';
+
+	char* string = NULL;
+	if (asprintf(&string, "%s%s", indent, str) < 0)
+		return NULL;
+
+	return string;
+}
+
 int main(int argc, char *argv[]) {
 	struct hw* hw = hw_init();
+
+	// Read /etc/system-release
+	char* system_release = get_system_release();
 
 	char discl_msg[40000] =	"Disclaimer\n";
 
@@ -218,7 +252,16 @@ int main(int argc, char *argv[]) {
 	newtInit();
 	newtCls();
 
-	newtDrawRootText(14, 0, NAME " " VERSION " - " SLOGAN );
+	// Determine the size of the screen
+	int screen_cols = 0;
+	int screen_rows = 0;
+
+	newtGetScreenSize(&screen_cols, &screen_rows);
+
+	// Draw title
+	char* roottext = center_string(system_release, screen_cols);
+	newtDrawRootText(0, 0, roottext);
+
 	sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
 
 	if (! (cmdfile = fopen("/proc/cmdline", "r")))
@@ -258,7 +301,8 @@ int main(int argc, char *argv[]) {
 
 	setlocale(LC_ALL, shortlangnames[choice]);
 
-	newtPushHelpLine(_("<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"));
+	char* helpline = center_string(_("<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"), screen_cols);
+	newtPushHelpLine(helpline);
 
 	if (!unattended) {
 		snprintf(message, sizeof(message),
@@ -607,6 +651,10 @@ EXIT:
 	newtFinished();
 
 	// Free resources
+	free(system_release);
+	free(roottext);
+	free(helpline);
+
 	free(sourcedrive);
 
 	if (destination) {
