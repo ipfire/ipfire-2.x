@@ -48,26 +48,20 @@ md5 :
 
 $(TARGET) :
 	@$(PREBUILD)
-	-mkdir -p /install/initrd/bin
-	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/install+setup/* $(DIR_APP)
-	for i in $(DIR_SRC)/langs/*/install/lang_*.c ; do \
-	    cp $$i $(DIR_APP)/libsmooth; \
-	done
-	cd $(DIR_APP)/libsmooth && chmod 755 makelangs.pl
-	cd $(DIR_APP)/libsmooth && make CFLAGS="-Os -fomit-frame-pointer -Wall \
-	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
-	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'" 
-	cd $(DIR_APP)/install && make CFLAGS="-Os -std=gnu99 -fomit-frame-pointer -Wall \
-	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
-	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DKERNEL_VERSION='\"$(KVER)\"'"
-	cd $(DIR_APP)/install && install -v -m 0755 installer probenic.sh \
-		downloadsource.sh mountdest.sh /usr/bin
-	rm -rvf /usr/lib/dracut/modules.d/99installer
-	cd $(DIR_APP)/install && cp -rvf dracut-module /usr/lib/dracut/modules.d/99installer
+	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/installer/* $(DIR_APP)
+
+	cd $(DIR_APP) && ./autogen.sh
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--with-distro-name="$(NAME)" \
+		--with-distro-sname="$(SNAME)" \
+		--with-distro-slogan="$(SLOGAN)" \
+		--with-config-root="$(CONFIG_ROOT)"
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
 
 	#Patch ISO Name for download ...
-	sed -i -e "s|ipfire.iso|download.ipfire.org/releases/ipfire-2.x/$(VERSION)-core$(CORE)/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso|g" \
-				/usr/bin/downloadsource.sh
-	#Patch version for mediacheck ...
+	#sed -i -e "s|ipfire.iso|download.ipfire.org/releases/ipfire-2.x/$(VERSION)-core$(CORE)/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso|g" \
+	#			/usr/bin/downloadsource.sh
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

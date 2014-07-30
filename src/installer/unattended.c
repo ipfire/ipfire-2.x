@@ -80,7 +80,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     replacekeyvalue(ethernetkv, "GREEN_BROADCAST", green_broadcast);
     replacekeyvalue(ethernetkv, "CONFIG_TYPE", "0");
     replacekeyvalue(ethernetkv, "GREEN_DEV", "eth0");
-    write_ethernet_configs(ethernetkv);
+    writekeyvalues(ethernetkv, "/harddisk" CONFIG_ROOT "/ethernet/settings");
     freekeyvalues(ethernetkv);
 
     /* timezone */

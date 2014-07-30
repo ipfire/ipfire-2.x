@@ -1,4 +1,3 @@
-
 /* SmoothWall install program.
  *
  * This program is distributed under the terms of the GNU General Public
@@ -9,8 +8,6 @@
  * 
  */
 
-#define _GNU_SOURCE
-
 #include <assert.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -19,7 +16,11 @@
 
 #include "hw.h"
 #include "install.h"
- 
+
+// Translation
+#include <libintl.h>
+#define _(x) dgettext("installer", x)
+
 #define INST_FILECOUNT 21000
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 #define LICENSE_FILE	"/cdrom/COPYING"
@@ -30,18 +31,6 @@ char *mylog;
 char **ctr;
 
 extern char url[STRING_SIZE];
-
-struct  nic  nics[20] = { { "" , "" , "" } }; // only defined for compile
-struct knic knics[20] = { { "" , "" , "" , "" } }; // only defined for compile
-
-extern char *en_tr[];
-extern char *es_tr[];
-extern char *de_tr[];
-extern char *fr_tr[];
-extern char *nl_tr[];
-extern char *pl_tr[];
-extern char *ru_tr[];
-extern char *tr_tr[];
 
 static int newtChecklist(const char* title, const char* message,
 		unsigned int width, unsigned int height, unsigned int num_entries,
@@ -89,8 +78,8 @@ static int newtChecklist(const char* title, const char* message,
 
 	newtFormAddComponents(form, textbox, subform, NULL);
 
-	newtComponent btn_okay   = newtButton((width - 18) / 3, height - 4, ctr[TR_OK]);
-	newtComponent btn_cancel = newtButton((width - 18) / 3 * 2 + 9, height - 4, ctr[TR_CANCEL]);
+	newtComponent btn_okay   = newtButton((width - 18) / 3, height - 4, _("OK"));
+	newtComponent btn_cancel = newtButton((width - 18) / 3 * 2 + 9, height - 4, _("Cancel"));
 	newtFormAddComponents(form, btn_okay, btn_cancel, NULL);
 
 	newtComponent answer = newtRunForm(form);
@@ -157,10 +146,10 @@ static int newtLicenseBox(const char* title, const char* text, int width, int he
 	newtFormAddComponent(form, textbox);
 
 	char choice;
-	newtComponent checkbox = newtCheckbox(3, height - 3, ctr[TR_LICENSE_ACCEPT],
+	newtComponent checkbox = newtCheckbox(3, height - 3, _("I accept this license"),
 		' ', " *", &choice);
 
-	newtComponent btn = newtButton(width - 15, height - 4, ctr[TR_OK]);
+	newtComponent btn = newtButton(width - 15, height - 4, _("OK"));
 
 	newtFormAddComponents(form, checkbox, btn, NULL);
 
@@ -174,6 +163,19 @@ static int newtLicenseBox(const char* title, const char* text, int width, int he
 	return ret;
 }
 
+int write_lang_configs(const char *lang) {
+	struct keyvalue *kv = initkeyvalues();
+
+	/* default stuff for main/settings. */
+	replacekeyvalue(kv, "LANGUAGE", lang);
+	replacekeyvalue(kv, "HOSTNAME", SNAME);
+	replacekeyvalue(kv, "THEME", "ipfire");
+	writekeyvalues(kv, "/harddisk" CONFIG_ROOT "/main/settings");
+	freekeyvalues(kv);
+
+	return 1;
+}
+
 int main(int argc, char *argv[]) {
 	struct hw* hw = hw_init();
 
@@ -181,7 +183,6 @@ int main(int argc, char *argv[]) {
 
 	char *langnames[] = { "Deutsch", "English", "Français", "Español", "Nederlands", "Polski", "Русский", "Türkçe", NULL };
 	char *shortlangnames[] = { "de", "en", "fr", "es", "nl", "pl", "ru", "tr", NULL };
-	char **langtrs[] = { de_tr, en_tr, fr_tr, es_tr, nl_tr, pl_tr, ru_tr, tr_tr, NULL };
 	char* sourcedrive = NULL;
 	int rc = 0;
 	char commandstring[STRING_SIZE];
@@ -229,7 +230,7 @@ int main(int argc, char *argv[]) {
 		// check if we have to make an unattended install
 		if (strstr (line, "unattended") != NULL) {
 		    unattended = 1;
-		    runcommandwithstatus("/bin/sleep 10", "WARNING: Unattended installation will start in 10 seconds...");
+		    runcommandwithstatus("/bin/sleep 10", title, "WARNING: Unattended installation will start in 10 seconds...");
 		}		
 		// check if we have to patch for serial console
 		if (strstr (line, "console=ttyS0") != NULL) {
@@ -255,14 +256,15 @@ int main(int argc, char *argv[]) {
 		    langnames, &choice, "Ok", NULL);
 	}
 
-	ctr = langtrs[choice];
-	strcpy(shortlangname, shortlangnames[choice]);
+	setlocale(LC_ALL, shortlangnames[choice]);
 
-	newtPushHelpLine(ctr[TR_HELPLINE]);
+	newtPushHelpLine(_("<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"));
 
 	if (!unattended) {
-		sprintf(message, ctr[TR_WELCOME], NAME);
-		newtWinMessage(title, ctr[TR_OK], message);
+		snprintf(message, sizeof(message),
+			_("Welcome to the %s installation program. "
+			"Selecting Cancel on any of the following screens will reboot the computer."), NAME);
+		newtWinMessage(title, _("Start installation"), message);
 	}
 
 	/* Search for a source drive that holds the right
@@ -271,10 +273,10 @@ int main(int argc, char *argv[]) {
 
 	fprintf(flog, "Source drive: %s\n", sourcedrive);
 	if (!sourcedrive) {
-		newtWinMessage(title, ctr[TR_OK], ctr[TR_NO_LOCAL_SOURCE]);
-		runcommandwithstatus("/bin/downloadsource.sh", ctr[TR_DOWNLOADING_ISO]);
+		newtWinMessage(title, _("OK"), _("No local source media found. Starting download."));
+		runcommandwithstatus("/bin/downloadsource.sh", title, _("Downloading installation image ..."));
 		if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
-			errorbox(ctr[TR_DOWNLOAD_ERROR]);
+			errorbox(_("Download error"));
 			goto EXIT;
 		}
 
@@ -309,7 +311,7 @@ int main(int argc, char *argv[]) {
 			fclose(copying);
 
 			if (newtLicenseBox(title, discl_msg, 75, 20)) {
-				errorbox(ctr[TR_LICENSE_NOT_ACCEPTED]);
+				errorbox(_("License not accepted!"));
 
 				goto EXIT;
 			}
@@ -331,7 +333,7 @@ int main(int argc, char *argv[]) {
 	while (1) {
 		// no harddisks found
 		if (num_disks == 0) {
-			errorbox(ctr[TR_NO_HARDDISK]);
+			errorbox(_("No hard disk found."));
 			goto EXIT;
 
 		// exactly one disk has been found
@@ -350,7 +352,10 @@ int main(int argc, char *argv[]) {
 			}
 
 			while (!selected_disks) {
-				rc = newtChecklist(ctr[TR_DISK_SELECTION], ctr[TR_DISK_SELECTION_MSG],
+				rc = newtChecklist(_("Disk Selection"),
+					_("Select the disk(s) you want to install IPFire on. "
+					"First those will be partitioned, and then the partitions will have a filesystem put on them.\n\n"
+					"ALL DATA ON THE DISK WILL BE DESTROYED."),
 					50, 20, num_disks, disk_names, disk_selection);
 
 				// Error
@@ -359,7 +364,8 @@ int main(int argc, char *argv[]) {
 
 				// Nothing has been selected
 				} else if (rc == 0) {
-					errorbox(ctr[TR_NO_DISK_SELECTED]);
+					errorbox(_("No disk has been selected.\n\n"
+						"Please select one or more disks you want to install IPFire on."));
 
 				} else {
 					selected_disks = hw_select_disks(disks, disk_selection);
@@ -370,18 +376,21 @@ int main(int argc, char *argv[]) {
 		num_selected_disks = hw_count_disks(selected_disks);
 
 		if (num_selected_disks == 1) {
-			snprintf(message, sizeof(message), ctr[TR_DISK_SETUP_DESC], (*selected_disks)->description);
-			rc = newtWinOkCancel(ctr[TR_DISK_SETUP], message, 50, 10,
-				ctr[TR_DELETE_ALL_DATA], ctr[TR_CANCEL]);
+			snprintf(message, sizeof(message),
+				_("The installation program will now prepare the chosen harddisk:\n\n  %s\n\n"
+				"Do you agree to continue?"), (*selected_disks)->description);
+			rc = newtWinOkCancel(_("Disk Setup"), message, 50, 10,
+				_("Delete all data"), _("Cancel"));
 
 			if (rc == 0)
 				break;
 
 		} else if (num_selected_disks == 2) {
-			snprintf(message, sizeof(message), ctr[TR_RAID_SETUP_DESC],
-				(*selected_disks)->description, (*selected_disks + 1)->description);
-			rc = newtWinOkCancel(ctr[TR_RAID_SETUP], message, 50, 14,
-				ctr[TR_DELETE_ALL_DATA], ctr[TR_CANCEL]);
+			snprintf(message, sizeof(message),
+				_("The installation program will now set up a RAID configuration on the selected harddisks:\n\n  %s\n  %s\n\n"
+				"Do you agree to continue?"), (*selected_disks)->description, (*selected_disks + 1)->description);
+			rc = newtWinOkCancel(_("RAID Setup"), message, 50, 14,
+				_("Delete all data"), _("Cancel"));
 
 			if (rc == 0) {
 				part_type = HW_PART_TYPE_RAID1;
@@ -391,7 +400,7 @@ int main(int argc, char *argv[]) {
 
 		// Currently not supported
 		} else {
-			errorbox(ctr[TR_DISK_CONFIGURATION_NOT_SUPPORTED]);
+			errorbox(_("You disk configuration is currently not supported."));
 		}
 
 		if (selected_disks) {
@@ -405,7 +414,7 @@ int main(int argc, char *argv[]) {
 	struct hw_destination* destination = hw_make_destination(part_type, selected_disks);
 
 	if (!destination) {
-		errorbox(ctr[TR_DISK_TOO_SMALL]);
+		errorbox(_("Your harddisk is too small."));
 		goto EXIT;
 	}
 
@@ -418,7 +427,8 @@ int main(int argc, char *argv[]) {
 
 	// Warn the user if there is not enough space to create a swap partition
 	if (!unattended && !*destination->part_swap) {
-		rc = newtWinChoice(title, ctr[TR_OK], ctr[TR_CANCEL], ctr[TR_CONTINUE_NO_SWAP]);
+		rc = newtWinChoice(title, _("OK"), _("Cancel"),
+			_("Your harddisk is very small, but you can continue with an very small swap. (Use with caution)."));
 
 		if (rc != 1)
 			goto EXIT;
@@ -430,10 +440,10 @@ int main(int argc, char *argv[]) {
 			int fstype;
 			const char* description;
 		} filesystems[] = {
-			{ HW_FS_EXT4,            ctr[TR_EXT4FS] },
-			{ HW_FS_EXT4_WO_JOURNAL, ctr[TR_EXT4FS_WO_JOURNAL] },
-			{ HW_FS_XFS,             ctr[TR_XFS] },
-			{ HW_FS_REISERFS,        ctr[TR_REISERFS] },
+			{ HW_FS_EXT4,            _("ext4 Filesystem") },
+			{ HW_FS_EXT4_WO_JOURNAL, _("ext4 Filesystem without journal") },
+			{ HW_FS_XFS,             _("XFS Filesystem") },
+			{ HW_FS_REISERFS,        _("ReiserFS Filesystem") },
 			{ 0, NULL },
 		};
 		unsigned int num_filesystems = sizeof(filesystems) / sizeof(*filesystems);
@@ -447,8 +457,8 @@ int main(int argc, char *argv[]) {
 			fs_names[i] = filesystems[i].description;
 		}
 
-		rc = newtWinMenu(ctr[TR_CHOOSE_FILESYSTEM], ctr[TR_CHOOSE_FILESYSTEM],
-			50, 5, 5, 6, fs_names, &fs_choice, ctr[TR_OK], ctr[TR_CANCEL], NULL);
+		rc = newtWinMenu(_("Filesystem Selection"), _("Please choose your filesystem:"),
+			50, 5, 5, 6, fs_names, &fs_choice, _("OK"), _("Cancel"), NULL);
 
 		if (rc == 0)
 			destination->filesystem = filesystems[fs_choice].fstype;
@@ -459,11 +469,11 @@ int main(int argc, char *argv[]) {
 
 	// Setting up RAID if needed.
 	if (destination->is_raid) {
-		statuswindow(60, 4, title, ctr[TR_BUILDING_RAID]);
+		statuswindow(60, 4, title, _("Building RAID..."));
 
 		rc = hw_setup_raid(destination);
 		if (rc) {
-			errorbox(ctr[TR_UNABLE_TO_BUILD_RAID]);
+			errorbox(_("Unable to build the RAID."));
 			goto EXIT;
 		}
 
@@ -471,28 +481,28 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Execute the partitioning...
-	statuswindow(60, 4, title, ctr[TR_PARTITIONING_DISK]);
+	statuswindow(60, 4, title, _("Partitioning disk..."));
 
 	rc = hw_create_partitions(destination);
 	if (rc) {
-		errorbox(ctr[TR_UNABLE_TO_PARTITION]);
+		errorbox(_("Unable to partition the disk."));
 		goto EXIT;
 	}
 
 	newtPopWindow();
 
 	// Execute the formatting...
-	statuswindow(60, 4, title, ctr[TR_CREATING_FILESYSTEMS]);
+	statuswindow(60, 4, title, _("Creating filesystems..."));
 
 	rc = hw_create_filesystems(destination);
 	if (rc) {
-		errorbox(ctr[TR_UNABLE_TO_CREATE_FILESYSTEMS]);
+		errorbox(_("Unable to create filesystems."));
 		goto EXIT;
 	}
 
 	rc = hw_mount_filesystems(destination, DESTINATION_MOUNT_PATH);
 	if (rc) {
-		errorbox(ctr[TR_UNABLE_TO_MOUNT_FILESYSTEMS]);
+		errorbox(_("Unable to mount filesystems."));
 		goto EXIT;
 	}
 
@@ -500,12 +510,11 @@ int main(int argc, char *argv[]) {
 
 	// Extract files...
 	snprintf(commandstring, STRING_SIZE,
-		"/bin/tar -C /harddisk  -xvf /cdrom/" SNAME "-" VERSION ".tlz --lzma 2>/dev/null");
-	
+		"/bin/tar -C /harddisk  -xvf /cdrom/distro.img --lzma 2>/dev/null");
+
 	if (runcommandwithprogress(60, 4, title, commandstring, INST_FILECOUNT,
-		ctr[TR_INSTALLING_FILES]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
+			_("Installing the system..."))) {
+		errorbox(_("Unable to install the system."));
 		goto EXIT;
 	}
 
@@ -521,18 +530,17 @@ int main(int argc, char *argv[]) {
 
 	/* Build cache lang file */
 	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
-	if (runcommandwithstatus(commandstring, ctr[TR_INSTALLING_LANG_CACHE]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_INSTALL_LANG_CACHE]);
+	if (runcommandwithstatus(commandstring, title, _("Installing the language cache..."))) {
+		errorbox(_("Unable to install the language cache."));
 		goto EXIT;
 	}
 
 	// Installing bootloader...
-	statuswindow(60, 4, title, ctr[TR_INSTALLING_GRUB]);
+	statuswindow(60, 4, title, _("Installing the bootloader..."));
 
 	rc = hw_install_bootloader(destination);
 	if (rc) {
-		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
+		errorbox(_("Unable to install the bootloader."));
 		goto EXIT;
 	}
 
@@ -574,9 +582,13 @@ int main(int argc, char *argv[]) {
 	mysystem(commandstring);
 
 	if (!unattended) {
-		sprintf(message, ctr[TR_CONGRATULATIONS_LONG],
-				NAME, SNAME, NAME);
-		newtWinMessage(ctr[TR_CONGRATULATIONS], ctr[TR_PRESS_OK_TO_REBOOT], message);
+		snprintf(message, sizeof(message), _("%s was successfully installed. "
+			"Please remove any installation mediums from this system. "
+			"Setup will now run where you may configure networking and the system passwords. "
+			"After Setup has been completed, you should point your web browser at https://%s:444 "
+			"(or whatever you name your %s), and configure dialup networking (if required) and "
+			"remote access."), NAME, SNAME, NAME);
+		newtWinMessage(_("Congratulations!"), _("Reboot"), message);
 	}
 
 	allok = 1;
@@ -585,7 +597,7 @@ EXIT:
 	fprintf(flog, "Install program ended.\n");	
 
 	if (!(allok))
-		newtWinMessage(title, ctr[TR_OK], ctr[TR_PRESS_OK_TO_REBOOT]);	
+		newtWinMessage(title, _("OK"), _("Press Ok to reboot."));
 
 	if (allok) {
 		fflush(flog);

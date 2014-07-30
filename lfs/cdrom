@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
 	@mkdir /tmp/sys
-	cd /tmp && tar  cf /install/cdrom/$(SNAME)-$(VERSION).tlz $(TAR_OPTIONS) * && rm -rf *
+	cd /tmp && tar  cf /install/cdrom/distro.img $(TAR_OPTIONS) * && rm -rf *
 
 	# Other files
 	touch /install/cdrom/$(SNAME)-$(VERSION)-core$(CORE).media

@@ -15,6 +15,7 @@ depends() {
 
 # called by dracut
 install() {
+    inst /etc/system-release
     inst /usr/bin/installer
     inst /usr/bin/downloadsource.sh
     inst /usr/local/bin/iowrap
@@ -55,6 +56,10 @@ install() {
             inst "${file}"
         done
     done
+
+    # Bash start files
+    inst_multiple /etc/profile /root/.bash_profile /etc/bashrc /root/.bashrc
+    inst_dir /etc/profile.d
 
     inst_hook cmdline 99 "$moddir/fake-root.sh"
     inst_hook pre-mount 99 "$moddir/run-installer.sh"

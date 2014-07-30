@@ -37,8 +37,9 @@
 
 #include <linux/fs.h>
 
+#include <libsmooth.h>
+
 #include "hw.h"
-#include "../libsmooth/libsmooth.h"
 
 const char* other_filesystems[] = {
 	"/dev",
@@ -97,16 +98,16 @@ static int hw_test_source_medium(const char* path) {
 
 	// If the source could not be mounted we
 	// cannot proceed.
-	if (ret)
+	if (ret != 0)
 		return ret;
 
 	// Check if the test file exists.
-	ret = access(SOURCE_TEST_FILE, F_OK);
+	ret = access(SOURCE_TEST_FILE, R_OK);
 
 	// Umount the test device.
 	hw_umount(SOURCE_MOUNT_PATH);
 
-	return ret;
+	return (ret == 0);
 }
 
 char* hw_find_source_medium(struct hw* hw) {
@@ -131,7 +132,7 @@ char* hw_find_source_medium(struct hw* hw) {
 				strstartswith(dev_path, "/dev/ram") || strstartswith(dev_path, "/dev/md"))
 			continue;
 
-		if (hw_test_source_medium(dev_path)) {
+		if (hw_test_source_medium(dev_path) == 0) {
 			ret = strdup(dev_path);
 		}
 
@@ -350,7 +351,7 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 	// Determine the size of the target block device
 	if (dest->is_raid) {
 		dest->size = (dest->disk1->size >= dest->disk2->size) ?
-			dest->disk1->size : dest->disk2->size;
+			dest->disk2->size : dest->disk1->size;
 
 		// The RAID will install some metadata at the end of the disk
 		// and we will save up some space for that.
