@@ -5,48 +5,40 @@
  *
  * (c) Lawrence Manning, 2001
  * Contains library functions.
- * 
- * $Id: main.c,v 1.6.2.9 2005/12/09 22:31:41 franck78 Exp $
- * 
  */
  
 #include "libsmooth.h"
+
+#include <libintl.h>
+#define _(x) dgettext("libsmooth", x)
 
 extern FILE *flog;
 extern char *mylog;
 
 extern char **ctr;
   
-/* reboot().  reboots. */
-void reboot(void)
-{
-	mysystem("/etc/halt");
-}
-
 /* stripnl().  Replaces \n with \0 */
-void stripnl(char *s)
-{
+void stripnl(char *s) {
 	char *t = strchr(s, '\n');
-	if (t) *t = '\0';
+	if (t)
+		*t = '\0';
 }
 
 /* Little wrapper. */
-int mysystem(char *command)
-{
+int mysystem(const char *command) {
 	char mycommand[STRING_SIZE];
-	
+
 	snprintf(mycommand, STRING_SIZE, "%s >>%s 2>>%s", command, mylog, mylog);
 	fprintf(flog, "Running command: %s\n", command);
+
 	return system(mycommand);
 }
 
-void errorbox(char *message)
-{
-	newtWinMessage(ctr[TR_ERROR], ctr[TR_OK], message);
+void errorbox(char *message) {
+	newtWinMessage(_("Error"), _("OK"), message);
 }
 
-void statuswindow(int width, int height, char *title, char *text, ...)
-{
+void statuswindow(int width, int height, const char *title, const char *text, ...) {
 	newtComponent t, f;
 	char *buf = NULL;
 	int size = 0;
@@ -79,39 +71,31 @@ void statuswindow(int width, int height, char *title, char *text, ...)
 	newtFormDestroy(f);
 }
 
-int runcommandwithstatus(char *command, char *message)
-{
-	int rc;
-	char title[STRING_SIZE];
-	
-	sprintf (title, "%s v%s - %s", NAME, VERSION, SLOGAN);
+int runcommandwithstatus(const char *command, const char* title, const char *message) {
 	statuswindow(60, 4, title, message);
-	rc = mysystem(command);
+
+	int rc = mysystem(command);
 	newtPopWindow();
-	
+
 	return rc;
 }
 
-int runhiddencommandwithstatus(char *command, char *message)
-{
-	int rc;
-	char title[STRING_SIZE];
-	char mycommand[STRING_SIZE];
-	
-	sprintf (title, "%s v%s - %s", NAME, VERSION, SLOGAN);
+int runhiddencommandwithstatus(const char *command, const char* title, const char *message) {
 	statuswindow(60, 4, title, message);
+
+	char mycommand[STRING_SIZE];
 	snprintf(mycommand, STRING_SIZE, "%s >>%s 2>>%s", command, mylog, mylog);
 	fprintf(flog, "Running command: ***** HIDDEN *****\n");
-	rc = system(mycommand);
+
+	int rc = system(mycommand);
 	newtPopWindow();
-	
+
 	return rc;
 }
 
 /* This one borrowed from redhat installer. */
-int runcommandwithprogress(int width, int height, char *title, char *command,
-	int lines, char *text, ...)
-{
+int runcommandwithprogress(int width, int height, const char *title, const char *command,
+	int lines, char *text, ...) {
 	newtComponent t, f, s;
 	char *buf = NULL;
 	int size = 0;
@@ -178,12 +162,11 @@ EXIT:
 	return rc;
 }
 
-int checkformodule(char *module)
-{
+int checkformodule(const char *module) {
 	FILE *file;
 	char buffer[STRING_SIZE];
 	int result = 0;
-	
+
 	if (!(file = fopen("/proc/modules", "r")))
 	{
 		fprintf(flog, "Unable to open /proc/modules in checkformodule()\n");
@@ -239,8 +222,7 @@ int _replace_string(char string[], char *from, char *to)
 	return 0;
 }
 
-int replace(char filename1[], char *from, char *to)
-{
+int replace(char filename1[], char *from, char *to) {
 	FILE *file1, *file2;
 	char filename2[1000];
 	char temp[1000];
@@ -257,7 +239,6 @@ int replace(char filename1[], char *from, char *to)
 
 	/* Start reading in lines */
 	while (fgets (temp, 1000, file1) != NULL) {
-
 		if (strlen(to) > 0) {
 			/* Replace string */
 			ret = _replace_string (temp, from, to);
@@ -281,20 +262,6 @@ int replace(char filename1[], char *from, char *to)
 	return (ret);
 }
 
-/* Include enabled languages */
-#ifdef  LANG_EN_ONLY
-        #include "lang_en.c"
-#else
-	#include "lang_de.c"
-	#include "lang_en.c"
-	#include "lang_es.c"
-	#include "lang_fr.c"
-	#include "lang_pl.c"
-	#include "lang_ru.c"
-	#include "lang_nl.c"
-	#include "lang_tr.c"
-#endif
-
 // returns a pointer to the actual running version number of IPFire.
 // Successive updates increase effective version but not VERSION !
 char g_title[STRING_SIZE] = "";
@@ -304,8 +271,6 @@ char* get_version(void) {
 		fgets (g_title, STRING_SIZE, f_title);
 		fclose (f_title);
 		if (g_title[strlen(g_title) - 1] == '\n') g_title[strlen(g_title) - 1] = '\0';
-	} else {
-	        sprintf (g_title, "%s %s - %s", NAME, VERSION, SLOGAN);
 	}
 	return g_title;
 }

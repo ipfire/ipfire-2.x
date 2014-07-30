@@ -383,6 +383,7 @@ buildipfire() {
   LOGFILE="$BASEDIR/log/_build.ipfire.log"
   export LOGFILE
   ipfiremake configroot
+  ipfiremake libsmooth
   ipfiremake backup
   ipfiremake bind
   ipfiremake dhcp
