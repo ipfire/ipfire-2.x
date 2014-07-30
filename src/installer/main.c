@@ -504,11 +504,10 @@ int main(int argc, char *argv[]) {
 		rc = newtWinMenu(_("Filesystem Selection"), _("Please choose your filesystem:"),
 			50, 5, 5, 6, fs_names, &fs_choice, _("OK"), _("Cancel"), NULL);
 
-		if (rc == 0)
-			destination->filesystem = filesystems[fs_choice].fstype;
-
-		else
+		if (rc != 1)
 			goto EXIT;
+
+		destination->filesystem = filesystems[fs_choice].fstype;
 	}
 
 	// Setting up RAID if needed.
