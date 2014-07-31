@@ -507,17 +507,32 @@ END
 		chomp(@current);
 		my @temp = split(/\,/,$line);
 
+		# Handle hostname details. Only connect the values with a dott if both are available.
+		my $hostname="";
+
+		if (($temp[1]) && ($temp[2])) {
+			$hostname="$temp[1].$temp[2]";
+		} else {
+			$hostname="$temp[1]";
+		}
+
 		# Generate value for enable/disable checkbox.
-		my $sync = "<font color='blue'>";
+		my $sync = '';
 		my $gif = '';
 		my $gdesc = '';
 
 		if ($temp[7] eq "on") {
 			$gif = 'on.gif';
 			$gdesc = $Lang::tr{'click to disable'};
-			$sync = (&General::DyndnsServiceSync ($ip,$temp[1], $temp[2]) ? "<font color='green'>": "<font color='red'>") ;
+
+			# Check if the given hostname is a FQDN before doing a nslookup.
+			if (&General::validfqdn($hostname)) {
+				$sync = (&General::DyndnsServiceSync ($ip,$temp[1], $temp[2]) ? "<font color='green'>": "<font color='red'>") ;
+			}
+
 			$toggle_enabled = 'off';
 		} else {
+			$sync = "<font color='blue'>";
 			$gif = 'off.gif';
 			$gdesc = $Lang::tr{'click to enable'};
 			$toggle_enabled = 'on';
