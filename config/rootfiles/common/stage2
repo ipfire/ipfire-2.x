@@ -98,6 +98,7 @@ usr/local/bin/timezone-transition
 usr/local/bin/update-lang-cache
 #usr/local/include
 #usr/local/lib
+#usr/local/lib/sse2
 #usr/local/sbin
 #usr/local/share
 #usr/local/share/doc

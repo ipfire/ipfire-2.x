@@ -64,16 +64,20 @@ iptables_init() {
 	iptables -A BADTCP -i lo -j RETURN
 
 	# Disallow packets frequently used by port-scanners
-	# nmap xmas
-	iptables -A BADTCP -p tcp --tcp-flags ALL FIN,URG,PSH  -j PSCAN
-	# Null
-	iptables -A BADTCP -p tcp --tcp-flags ALL NONE -j PSCAN
-	# FIN
+	# NMAP FIN/URG/PSH (XMAS scan)
+	iptables -A BADTCP -p tcp --tcp-flags ALL FIN,URG,PSH -j PSCAN
+	# SYN/RST/ACK/FIN/URG
+	iptables -A BADTCP -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j PSCAN
+	# ALL/ALL
+	iptables -A BADTCP -p tcp --tcp-flags ALL ALL -j PSCAN
+	# FIN Stealth
 	iptables -A BADTCP -p tcp --tcp-flags ALL FIN -j PSCAN
 	# SYN/RST (also catches xmas variants that set SYN+RST+...)
 	iptables -A BADTCP -p tcp --tcp-flags SYN,RST SYN,RST -j PSCAN
 	# SYN/FIN (QueSO or nmap OS probe)
 	iptables -A BADTCP -p tcp --tcp-flags SYN,FIN SYN,FIN -j PSCAN
+	# Null
+	iptables -A BADTCP -p tcp --tcp-flags ALL NONE -j PSCAN
 	# NEW TCP without SYN
 	iptables -A BADTCP -p tcp ! --syn -m conntrack --ctstate NEW -j NEWNOTSYN
 
@@ -83,6 +87,7 @@ iptables_init() {
 	# Connection tracking chain
 	iptables -N CONNTRACK
 	iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+	iptables -A CONNTRACK -m conntrack --ctstate INVALID -j DROP
 
 	# Fix for braindead ISP's
 	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
@@ -253,20 +258,6 @@ iptables_init() {
 	iptables -A FORWARD -j REDFORWARD
 	iptables -t nat -N REDNAT
 	iptables -t nat -A POSTROUTING -j REDNAT
-
-	# Filter logging of incoming broadcasts.
-	iptables -N BROADCAST_FILTER
-	iptables -A INPUT -j BROADCAST_FILTER
-
-	iptables -A BROADCAST_FILTER -i "${GREEN_DEV}" -d "${GREEN_BROADCAST}" -j DROP
-
-	if [ -n "${BLUE_DEV}" -a -n "${BLUE_BROADCAST}" ]; then
-		iptables -A BROADCAST_FILTER -i "${BLUE_DEV}" -d "${BLUE_BROADCAST}" -j DROP
-	fi
-
-	if [ -n "${ORANGE_DEV}" -a -n "${ORANGE_BROADCAST}" ]; then
-		iptables -A BROADCAST_FILTER -i "${ORANGE_DEV}" -d "${ORANGE_BROADCAST}" -j DROP
-	fi
 
 	# Apply OpenVPN firewall rules
 	/usr/local/bin/openvpnctrl --firewall-rules
