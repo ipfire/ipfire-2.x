@@ -413,6 +413,8 @@ buildipfire() {
 #		ipfiremake r8101			KCFG="-pae"
 		ipfiremake e1000e			KCFG="-pae"
 		ipfiremake igb				KCFG="-pae"
+		ipfiremake ixgbe			KCFG="-pae"
+
 
 		# x86 kernel build
 		ipfiremake linux			KCFG=""
@@ -426,6 +428,7 @@ buildipfire() {
 #		ipfiremake r8101			KCFG=""
 		ipfiremake e1000e			KCFG=""
 		ipfiremake igb				KCFG=""
+		ipfiremake ixgbe			KCFG=""
 		;;
 
 	armv5tel)
@@ -441,6 +444,7 @@ buildipfire() {
 		ipfiremake cryptodev			KCFG="-multi"
 		ipfiremake e1000e			KCFG="-multi"
 		ipfiremake igb				KCFG="-multi"
+		ipfiremake ixgbe			KCFG="-multi"
 
 		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
 		ipfiremake linux			KCFG="-kirkwood"
@@ -451,8 +455,9 @@ buildipfire() {
 #		ipfiremake r8169			KCFG="-kirkwood"
 #		ipfiremake r8168			KCFG="-kirkwood"
 #		ipfiremake r8101			KCFG="-kirkwood"
-#		ipfiremake e1000e			KCFG="-kirkwood"
+		ipfiremake e1000e			KCFG="-kirkwood"
 		ipfiremake igb				KCFG="-kirkwood"
+		ipfiremake ixgbe			KCFG="-kirkwood"
 		;;
   esac
   ipfiremake pkg-config
