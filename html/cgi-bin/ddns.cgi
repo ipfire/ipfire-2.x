@@ -187,7 +187,7 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 
 	# Check if a password has been typed in.
 	# freedns.afraid.org does not require this field.
-	if (($settings{'PASSWORD'} eq '') && ($settings{'SERVICE'} ne 'freedns.afraid.org')) {
+	if (($settings{'PASSWORD'} eq '') && ($settings{'SERVICE'} ne 'freedns.afraid.org') && ($settings{'SERVICE'} ne 'regfish.com')) {
 		$errormessage = $Lang::tr{'password not set'};
 	}
 
@@ -650,8 +650,8 @@ sub GenerateDDNSConfigFile {
 		if ($provider ~~ ["dns.lightningwirelabs.com", "entrydns.net", "regfish.com"] && $username eq "token") {
 			$use_token = 1;
 
-		# Handle token auth for freedns.afraid.org.
-		} elsif ($provider eq "freedns.afraid.org" && $password eq "") {
+		# Handle token auth for freedns.afraid.org and regfish.com.
+		} elsif ($provider ~~ ["freedns.afraid.org", "regfish.com"] && $password eq "") {
 			$use_token = 1;
 			$password = $username;
 
