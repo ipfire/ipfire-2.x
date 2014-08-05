@@ -197,6 +197,12 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 		# Splitt hostname field into 2 parts for storrage.
 		my($hostname, $domain) = split(/\./, $settings{'HOSTNAME'}, 2);
 
+		# Handle enabled checkbox. When the checkbox is selected a "on" will be returned,
+		# if the checkbox is not checked nothing is returned in this case we set the value to "off".
+		if ($settings{'ENABLED'} ne 'on') {
+			$settings{'ENABLED'} = 'off';
+		}
+
 		# Handle adding new accounts.
 		if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 
@@ -214,8 +220,6 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 
 			# Write out notice to logfile.
 			&General::log($Lang::tr{'ddns hostname added'});
-
-			# Update ddns config file.
 
 		# Handle account edditing.
 		} elsif ($settings{'ACTION'} eq $Lang::tr{'update'}) {
@@ -354,7 +358,9 @@ $checked{'BEHINDROUTER'}{'RED_IP'} = '';
 $checked{'BEHINDROUTER'}{'FETCH_IP'} = '';
 $checked{'BEHINDROUTER'}{$settings{'BEHINDROUTER'}} = "checked='checked'";
 
-$checked{'ENABLED'}{'on'} = ($settings{'ENABLED'} eq '' ) ? '' : "checked='checked'";
+$checked{'ENABLED'}{'on'} = '';
+$checked{'ENABLED'}{'off'} = '';
+$checked{'ENABLED'}{$settings{'ENABLED'}} = "checked='checked'";
 
 # Show box for errormessages..
 if ($errormessage) {
@@ -451,7 +457,7 @@ print <<END
 
 	<tr>
 		<td class='base'>$Lang::tr{'enabled'}</td>
-		<td><input type='checkbox' name='ENABLED' value='on' $checked{'ENABLED'}{'on'} /></td>
+		<td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
 		<td class='base'>$Lang::tr{'username'}</td>
 		<td><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
 	</tr>
