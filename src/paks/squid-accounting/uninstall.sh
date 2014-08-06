@@ -24,3 +24,4 @@
 . /opt/pakfire/lib/functions.sh
 make_backup ${NAME}
 remove_files
+/usr/local/bin/update-lang-cache

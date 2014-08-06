@@ -28,7 +28,8 @@ restore_backup ${NAME}
 #Generate SQLite DB if it does not exist
 if [ ! -f /var/ipfire/accounting/acct.db ]; then
 	perl /var/ipfire/accounting/dbinstall.pl
-	chmod 777 /var/ipfire/accounting/acct.db
+	chmod 644 /var/ipfire/accounting/acct.db
+	chown nobody.nobody /var/ipfire/accounting/acct.db
 fi
 rm -f /var/ipfire/accounting/dbinstall.pl
 /usr/local/bin/update-lang-cache
