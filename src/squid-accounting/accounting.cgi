@@ -92,15 +92,16 @@ if ($cgiparams{'BILLACTION'} eq "open_preview"){
 	my $actyear  = $now[5];
 	my ($from,$till)=&ACCT::getmonth($actmonth,$actyear);
 	my @billar = &ACCT::GetTaValues($from,$till,$rggrp);
-	&ACCT::pdf2(\@billar,$actmonth,$actyear,$mwst,$address_cust,$address_host,$billpos,$rggrp,$cur,"on");
+	my $tempfile=&ACCT::pdf2(\@billar,$actmonth,$actyear,$mwst,$address_cust,$address_host,$billpos,$rggrp,$cur,"on");
 	#Show PDF preview
-	open(DLFILE, "</var/ipfire/accounting/bill/tmp.pdf") or die "Unable to open tmp.pdf: $!";
+	open(DLFILE, "<$tempfile") or die "Unable to open tmp.pdf: $!";
 	my @fileholder = <DLFILE>;
 	print "Content-Type:application/pdf\n";
-	my @fileinfo = stat("/var/ipfire/accounting/bill/tmp.pdf");
+	my @fileinfo = stat($tempfile);
 	print "Content-Length:$fileinfo[7]\n";
 	print "Content-Disposition:attachment;filename='tmp.pdf';\n\n";
 	print @fileholder;
+	unlink ($tempfile);
 	exit (0);
 }
 

@@ -27,6 +27,7 @@ use PDF::API2;
 use utf8;
 use Encode;
 use File::Copy;
+use File::Temp qw/ tempfile tempdir /;
 
 ###############################################################################
 my $dbh;
@@ -430,7 +431,7 @@ sub pdf2 {
 
 	#Check if we are creating a preview or a real bill
 	if($preview eq 'on'){
-		$filename="$path/tmp.pdf";
+		$filename="$path/".tempfile( SUFFIX => ".pdf", );
 	}
 	####################################################################
 	#Prepare DATA from arrays
@@ -790,6 +791,9 @@ sub pdf2 {
 	$pdf->end( );			#END
 	if ($preview ne 'on'){
 		&fillBill($path.$grp,$name,$no,$grp);
+	}
+	if($preview eq 'on'){
+		return $filename;
 	}
 	return '0';
 }
