@@ -810,6 +810,8 @@ buildipfire() {
   ipfiremake sslscan
   ipfiremake owncloud
   ipfiremake bacula
+  ipfiremake perl-PDF-API2
+  ipfiremake squid-accounting
 }
 
 buildinstaller() {
