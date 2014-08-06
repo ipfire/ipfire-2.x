@@ -44,7 +44,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)
 	mkdir -p /var/ipfire/accounting/bill
 	mkdir -p /srv/web/ipfire/html/accounting/logo
-	chmod -R 777 /srv/web/ipfire/html/accounting
 
 #Touch Logfile
 	touch /var/log/accounting.log
@@ -55,7 +54,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	
 	install -v -m 755 $(DIR_APP)/squid-accounting/accounting.cgi /srv/web/ipfire/cgi-bin/
 	install -v -m 755 $(DIR_APP)/squid-accounting/acct.pl /usr/local/bin/
-	install -v -m 755 $(DIR_APP)/squid-accounting/acct-lib.pl /var/ipfire/accounting/
+	install -v -m 644 $(DIR_APP)/squid-accounting/acct-lib.pl /var/ipfire/accounting/
 	install -v -m 655 $(DIR_APP)/squid-accounting/acct.de.pl /var/ipfire/addon-lang/
 	install -v -m 655 $(DIR_APP)/squid-accounting/acct.en.pl /var/ipfire/addon-lang/
 	install -v -m 655 $(DIR_APP)/squid-accounting/EX-squid-accounting.menu /var/ipfire/menu.d/
