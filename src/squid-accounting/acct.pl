@@ -209,7 +209,7 @@ sub sendbill {
 	my $cur = $_[2];
 	my @now = localtime(time);
 	$now[5] = $now[5] + 1900;
-	my $actmonth = $now[4]+1;
+	my $actmonth = $now[4];
 	my $month			= '0'.$actmonth if $actmonth < 10;
 	my $actyear  = $now[5];
 	my ($from,$till)=&ACCT::getmonth($actmonth,$actyear);					#FIXME month and year as variables!
