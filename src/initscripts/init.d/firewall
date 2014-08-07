@@ -277,10 +277,16 @@ iptables_init() {
 	/usr/sbin/firewall-policy
 
 	# Install firewall rules for the red interface.
-	iptables_red
+	iptables_red_up
+
+	# If red has not been brought up yet, we will
+	# add the blocking rules for MASQUERADE
+	if [ ! -e "/var/ipfire/red/active" ]; then
+		iptables_red_down
+	fi
 }
 
-iptables_red() {
+iptables_red_up() {
 	iptables -F REDINPUT
 	iptables -F REDFORWARD
 	iptables -t nat -F REDNAT
@@ -358,6 +364,18 @@ iptables_red() {
 	/usr/local/bin/firewallctrl
 }
 
+iptables_red_down() {
+	# Prohibit packets to reach the masquerading rule
+	# while the wan interface is down - this is required to
+	# circumvent udp related NAT issues
+	# http://forum.ipfire.org/index.php?topic=11127.0
+	iptables -F REDFORWARD
+	iptables -A REDFORWARD -o $IFACE -j DROP
+
+	# Reload all rules.
+	/usr/local/bin/firewallctrl
+}
+
 # See how we were called.
 case "$1" in
   start)
@@ -388,15 +406,20 @@ case "$1" in
 		/etc/sysconfig/firewall.local start
 	fi
 	;;
-  reload)
+  reload|up)
 	boot_mesg "Reloading firewall"
-	iptables_red
+	iptables_red_up
 	evaluate_retval
 
 	# run local firewall configuration, if present
 	if [ -x /etc/sysconfig/firewall.local ]; then
 		/etc/sysconfig/firewall.local reload
 	fi
+	;;
+  down)
+	boot_mesg "Disabling firewall access to RED"
+	iptables_red_down
+	evaluate_retval
 	;;
   restart)
 	# run local firewall configuration, if present
