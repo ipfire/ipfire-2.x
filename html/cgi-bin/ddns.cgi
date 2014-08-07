@@ -103,9 +103,6 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	# Close file after writing.
 	close(FILE);
 
-	# Unset given CGI parmas.
-	undef %settings;
-
 	# Update ddns config file.
 	&GenerateDDNSConfigFile();
 }
@@ -145,6 +142,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 		# Increase $id.
 		$id++;
 	}
+	undef $settings{'ID'};
 
 	# Close file after writing.
 	close(FILE);
@@ -160,7 +158,6 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 # Add new accounts, or edit existing ones.
 #
 if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::tr{'update'})) {
-
 	# Check if a hostname has been given.
 	if ($settings{'HOSTNAME'} eq '') {
 		$errormessage = $Lang::tr{'hostname not set'};
@@ -238,9 +235,7 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 			# Write out notice to logfile.
 			&General::log($Lang::tr{'ddns hostname modified'});
 		}
-
-		# Unset given CGI params.
-		undef %settings;
+		undef $settings{'ID'};
 
 		# Update ddns config file.
 		&GenerateDDNSConfigFile();
@@ -270,12 +265,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
 		# Increase id.
 		$id++;
 	}
+	undef $settings{'ID'};
 
 	# Close file after writing.
 	close(FILE);
-
-	# Unset given CGI params.
-	undef %settings;
 
 	# Write out notice to logfile.
 	&General::log($Lang::tr{'ddns hostname removed'});
@@ -326,9 +319,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'instant update'}) {
 #
 # Set default values.
 #
-if (! $settings{'ACTION'}) {
+if (!$settings{'ACTION'}) {
 	$settings{'SERVICE'} = 'dyndns.org';
 	$settings{'ENABLED'} = 'on';
+	$settings{'ID'} = '';
 }
 
 &Header::openpage($Lang::tr{'dynamic dns'}, 1, '');
