@@ -478,6 +478,7 @@ buildipfire() {
   ipfiremake fireinfo
   ipfiremake libnet
   ipfiremake libnl
+  ipfiremake libnl-3
   ipfiremake libidn
   ipfiremake nasm
   ipfiremake libjpeg
@@ -810,6 +811,7 @@ buildipfire() {
   ipfiremake sslscan
   ipfiremake owncloud
   ipfiremake bacula
+  ipfiremake batctl
 }
 
 buildinstaller() {
