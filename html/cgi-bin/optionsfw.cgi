@@ -70,6 +70,17 @@ if ($errormessage) {
         &Header::closebox();
 }
 
+# Set new defaults
+if (!$settings{'MASQUERADE_GREEN'}) {
+	$settings{'MASQUERADE_GREEN'} = 'on';
+}
+if (!$settings{'MASQUERADE_ORANGE'}) {
+	$settings{'MASQUERADE_ORANGE'} = 'on';
+}
+if (!$settings{'MASQUERADE_BLUE'}) {
+	$settings{'MASQUERADE_BLUE'} = 'on';
+}
+
 $checked{'DROPNEWNOTSYN'}{'off'} = '';
 $checked{'DROPNEWNOTSYN'}{'on'} = '';
 $checked{'DROPNEWNOTSYN'}{$settings{'DROPNEWNOTSYN'}} = "checked='checked'";
@@ -112,12 +123,69 @@ $checked{'SHOWDROPDOWN'}{$settings{'SHOWDROPDOWN'}} = "checked='checked'";
 $selected{'FWPOLICY'}{$settings{'FWPOLICY'}}= 'selected';
 $selected{'FWPOLICY1'}{$settings{'FWPOLICY1'}}= 'selected';
 $selected{'FWPOLICY2'}{$settings{'FWPOLICY2'}}= 'selected';
+$selected{'MASQUERADE_GREEN'}{'off'} = '';
+$selected{'MASQUERADE_GREEN'}{'on'} = '';
+$selected{'MASQUERADE_GREEN'}{$settings{'MASQUERADE_GREEN'}} = 'selected="selected"';
+$selected{'MASQUERADE_ORANGE'}{'off'} = '';
+$selected{'MASQUERADE_ORANGE'}{'on'} = '';
+$selected{'MASQUERADE_ORANGE'}{$settings{'MASQUERADE_ORANGE'}} = 'selected="selected"';
+$selected{'MASQUERADE_BLUE'}{'off'} = '';
+$selected{'MASQUERADE_BLUE'}{'on'} = '';
+$selected{'MASQUERADE_BLUE'}{$settings{'MASQUERADE_BLUE'}} = 'selected="selected"';
 
 &Header::openbox('100%', 'center',);
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
 
-print <<END
+print <<END;
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='95%' cellspacing='0'>
+		<tr bgcolor='$color{'color20'}'>
+			<td colspan='2' align='left'><b>$Lang::tr{'masquerading'}</b></td>
+		</tr>
+		<tr>
+			<td align='left' width='60%'>$Lang::tr{'masquerade green'}</td>
+			<td>
+				<select name='MASQUERADE_GREEN'>
+					<option value='on' $selected{'MASQUERADE_GREEN'}{'on'}>$Lang::tr{'masquerading enabled'}</option>
+					<option value='off' $selected{'MASQUERADE_GREEN'}{'off'}>$Lang::tr{'masquerading disabled'}</option>
+				</select>
+			</td>
+		</tr>
+END
+
+	if (&Header::orange_used()) {
+		print <<END;
+			<tr>
+				<td align='left' width='60%'>$Lang::tr{'masquerade orange'}</td>
+				<td>
+					<select name='MASQUERADE_ORANGE'>
+						<option value='on' $selected{'MASQUERADE_ORANGE'}{'on'}>$Lang::tr{'masquerading enabled'}</option>
+						<option value='off' $selected{'MASQUERADE_ORANGE'}{'off'}>$Lang::tr{'masquerading disabled'}</option>
+					</select>
+				</td>
+			</tr>
+END
+	}
+
+	if (&Header::blue_used()) {
+		print <<END;
+			<tr>
+				<td align='left' width='60%'>$Lang::tr{'masquerade blue'}</td>
+				<td>
+					<select name='MASQUERADE_BLUE'>
+						<option value='on' $selected{'MASQUERADE_BLUE'}{'on'}>$Lang::tr{'masquerading enabled'}</option>
+						<option value='off' $selected{'MASQUERADE_BLUE'}{'off'}>$Lang::tr{'masquerading disabled'}</option>
+					</select>
+				</td>
+			</tr>
+END
+	}
+
+	print <<END
+	</table>
+
+	<br>
+
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw logging'}</b></td></tr>
 <tr><td align='left' width='60%'>$Lang::tr{'drop newnotsyn'}</td><td align='left'>on <input type='radio' name='DROPNEWNOTSYN' value='on' $checked{'DROPNEWNOTSYN'}{'on'} />/

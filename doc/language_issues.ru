@@ -863,6 +863,12 @@ WARNING: untranslated string: last
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: mac filter
+WARNING: untranslated string: masquerade blue
+WARNING: untranslated string: masquerade green
+WARNING: untranslated string: masquerade orange
+WARNING: untranslated string: masquerading
+WARNING: untranslated string: masquerading disabled
+WARNING: untranslated string: masquerading enabled
 WARNING: untranslated string: maximum
 WARNING: untranslated string: messages
 WARNING: untranslated string: minimum
