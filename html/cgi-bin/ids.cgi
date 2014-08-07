@@ -263,11 +263,11 @@ if (-e "/etc/snort/snort.conf") {
 #######################  End added for snort rules control  #################################
 
 if ($snortsettings{'RULES'} eq 'subscripted') {
-	$url=" http://www.snort.org/sub-rules/snortrules-snapshot-2961.tar.gz/$snortsettings{'OINKCODE'}";
+	$url=" https://www.snort.org/rules/snortrules-snapshot-2961.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
-	$url=" http://www.snort.org/reg-rules/snortrules-snapshot-2960.tar.gz/$snortsettings{'OINKCODE'}";
+	$url=" https://www.snort.org/rules/snortrules-snapshot-2961.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
 } elsif ($snortsettings{'RULES'} eq 'community') {
-	$url=" http://s3.amazonaws.com/snort-org/www/rules/community/community-rules.tar.gz";
+	$url=" https://www.snort.org/rules/community";
 } else {
 	$url="http://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz";
 }

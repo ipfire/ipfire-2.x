@@ -89,7 +89,6 @@ close (FILE);
 # Save General Settings.
 #
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
-
 	# Open /var/ipfire/ddns/settings for writing.
 	open(FILE, ">$settingsfile") or die "Unable to open $settingsfile.";
 
@@ -104,9 +103,6 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	# Close file after writing.
 	close(FILE);
 
-	# Unset given CGI parmas.
-	undef %settings;
-
 	# Update ddns config file.
 	&GenerateDDNSConfigFile();
 }
@@ -115,7 +111,6 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 # Toggle enable/disable field.  Field is in second position
 #
 if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
-
 	# Open /var/ipfire/ddns/config for writing.
 	open(FILE, ">$datafile") or die "Unable to open $datafile.";
 
@@ -127,23 +122,19 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 
 	# Read file line by line.
 	foreach my $line (@current) {
-
 		# Remove newlines.
 		chomp($line);
 
 		if ($settings{'ID'} eq $id) {
-
 			# Splitt lines (splitting element is a single ",") and save values into temp array.
 			@temp = split(/\,/,$line);
 
 			# Check if we want to toggle ENABLED or WILDCARDS.
 			if ($settings{'ENABLED'} ne '') {
-
 				# Update ENABLED.
 				print FILE "$temp[0],$temp[1],$temp[2],$temp[3],$temp[4],$temp[5],$temp[6],$settings{'ENABLED'}\n";
 			}
 		} else {
-
 			# Print unmodified line.
 			print FILE "$line\n";
 		}
@@ -151,12 +142,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 		# Increase $id.
 		$id++;
 	}
+	undef $settings{'ID'};
 
 	# Close file after writing.
 	close(FILE);
-
-	# Unset given CGI params.
-	undef %settings;
 
 	# Write out logging notice.
 	&General::log($Lang::tr{'ddns hostname modified'});
@@ -169,7 +158,6 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 # Add new accounts, or edit existing ones.
 #
 if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::tr{'update'})) {
-
 	# Check if a hostname has been given.
 	if ($settings{'HOSTNAME'} eq '') {
 		$errormessage = $Lang::tr{'hostname not set'};
@@ -187,19 +175,23 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 
 	# Check if a password has been typed in.
 	# freedns.afraid.org does not require this field.
-	if (($settings{'PASSWORD'} eq '') && ($settings{'SERVICE'} ne 'freedns.afraid.org')) {
+	if (($settings{'PASSWORD'} eq '') && ($settings{'SERVICE'} ne 'freedns.afraid.org') && ($settings{'SERVICE'} ne 'regfish.com')) {
 		$errormessage = $Lang::tr{'password not set'};
 	}
 
 	# Go furter if there was no error.
-	if ( ! $errormessage) {
-
+	if (!$errormessage) {
 		# Splitt hostname field into 2 parts for storrage.
 		my($hostname, $domain) = split(/\./, $settings{'HOSTNAME'}, 2);
 
+		# Handle enabled checkbox. When the checkbox is selected a "on" will be returned,
+		# if the checkbox is not checked nothing is returned in this case we set the value to "off".
+		if ($settings{'ENABLED'} ne 'on') {
+			$settings{'ENABLED'} = 'off';
+		}
+
 		# Handle adding new accounts.
 		if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
-
 			# Open /var/ipfire/ddns/config for writing.
 			open(FILE, ">>$datafile") or die "Unable to open $datafile.";
 
@@ -215,11 +207,8 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 			# Write out notice to logfile.
 			&General::log($Lang::tr{'ddns hostname added'});
 
-			# Update ddns config file.
-
 		# Handle account edditing.
 		} elsif ($settings{'ACTION'} eq $Lang::tr{'update'}) {
-
 			# Open /var/ipfire/ddns/config for writing.
 			open(FILE, ">$datafile") or die "Unable to open $datafile.";
 
@@ -230,7 +219,6 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 
 			# Read file line by line.
 			foreach my $line (@current) {
-
 				if ($settings{'ID'} eq $id) {
 					print FILE "$settings{'SERVICE'},$hostname,$domain,$settings{'PROXY'},$settings{'WILDCARDS'},$settings{'LOGIN'},$settings{'PASSWORD'},$settings{'ENABLED'}\n";
 				} else {
@@ -247,9 +235,7 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 			# Write out notice to logfile.
 			&General::log($Lang::tr{'ddns hostname modified'});
 		}
-
-		# Unset given CGI params.
-		undef %settings;
+		undef $settings{'ID'};
 
 		# Update ddns config file.
 		&GenerateDDNSConfigFile();
@@ -260,7 +246,6 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 # Remove existing accounts.
 #
 if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
-
 	# Open /var/ipfire/ddns/config for writing.
 	open(FILE, ">$datafile") or die "Unable to open $datafile.";
 
@@ -271,7 +256,6 @@ if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
 
 	# Read file line by line.
 	foreach my $line (@current) {
-
 		# Write back every line, except the one we want to drop
 		# (identified by the ID)
 		unless ($settings{'ID'} eq $id) {
@@ -281,12 +265,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
 		# Increase id.
 		$id++;
 	}
+	undef $settings{'ID'};
 
 	# Close file after writing.
 	close(FILE);
-
-	# Unset given CGI params.
-	undef %settings;
 
 	# Write out notice to logfile.
 	&General::log($Lang::tr{'ddns hostname removed'});
@@ -299,15 +281,12 @@ if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
 # Read items for editing.
 #
 if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
-
 	my $id = 0;
 	my @temp;
 
 	# Read file line by line.
 	foreach my $line (@current) {
-
 		if ($settings{'ID'} eq $id) {
-
 			# Remove newlines.
 			chomp($line);
 
@@ -331,10 +310,12 @@ if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
 			$settings{'PASSWORD'} = $temp[6];
 			$settings{'ENABLED'} = $temp[7];
 		}
-	# Increase $id.
-	$id++;
 
+		# Increase $id.
+		$id++;
 	}
+
+	&GenerateDDNSConfigFile();
 }
 
 #
@@ -347,9 +328,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'instant update'}) {
 #
 # Set default values.
 #
-if (! $settings{'ACTION'}) {
+if (!$settings{'ACTION'}) {
 	$settings{'SERVICE'} = 'dyndns.org';
 	$settings{'ENABLED'} = 'on';
+	$settings{'ID'} = '';
 }
 
 &Header::openpage($Lang::tr{'dynamic dns'}, 1, '');
@@ -363,7 +345,9 @@ $checked{'BEHINDROUTER'}{'RED_IP'} = '';
 $checked{'BEHINDROUTER'}{'FETCH_IP'} = '';
 $checked{'BEHINDROUTER'}{$settings{'BEHINDROUTER'}} = "checked='checked'";
 
-$checked{'ENABLED'}{'on'} = ($settings{'ENABLED'} eq '' ) ? '' : "checked='checked'";
+$checked{'ENABLED'}{'on'} = '';
+$checked{'ENABLED'}{'off'} = '';
+$checked{'ENABLED'}{$settings{'ENABLED'}} = "checked='checked'";
 
 # Show box for errormessages..
 if ($errormessage) {
@@ -413,18 +397,15 @@ my $buttontext = $Lang::tr{'add'};
 
 # Change buttontext and headline if we edit an account.
 if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
-
 	# Rename button and print headline for updating.
 	$buttontext = $Lang::tr{'update'};
 	&Header::openbox('100%', 'left', $Lang::tr{'edit an existing host'});
 } else {
-
 	# Otherwise use default button text and show headline for adding a new account.
 	&Header::openbox('100%', 'left', $Lang::tr{'add a host'});
 }
 
 print <<END
-
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ID' value='$settings{'ID'}' />
 <table width='100%'>
@@ -440,7 +421,6 @@ END
 
 		# Loop to print the providerlist.
 		foreach my $provider (@providers) {
-
 			# Check if the current provider needs to be selected.
 			if ($provider eq $settings{'SERVICE'}) {
 				$selected = 'selected';
@@ -460,7 +440,7 @@ print <<END
 
 	<tr>
 		<td class='base'>$Lang::tr{'enabled'}</td>
-		<td><input type='checkbox' name='ENABLED' value='on' $checked{'ENABLED'}{'on'} /></td>
+		<td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
 		<td class='base'>$Lang::tr{'username'}</td>
 		<td><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
 	</tr>
@@ -516,17 +496,32 @@ END
 		chomp(@current);
 		my @temp = split(/\,/,$line);
 
+		# Handle hostname details. Only connect the values with a dott if both are available.
+		my $hostname="";
+
+		if (($temp[1]) && ($temp[2])) {
+			$hostname="$temp[1].$temp[2]";
+		} else {
+			$hostname="$temp[1]";
+		}
+
 		# Generate value for enable/disable checkbox.
-		my $sync = "<font color='blue'>";
+		my $sync = '';
 		my $gif = '';
 		my $gdesc = '';
 
 		if ($temp[7] eq "on") {
 			$gif = 'on.gif';
 			$gdesc = $Lang::tr{'click to disable'};
-			$sync = (&General::DyndnsServiceSync ($ip,$temp[1], $temp[2]) ? "<font color='green'>": "<font color='red'>") ;
+
+			# Check if the given hostname is a FQDN before doing a nslookup.
+			if (&General::validfqdn($hostname)) {
+				$sync = (&General::DyndnsServiceSync ($ip,$temp[1], $temp[2]) ? "<font color='green'>": "<font color='red'>") ;
+			}
+
 			$toggle_enabled = 'off';
 		} else {
+			$sync = "<font color='blue'>";
 			$gif = 'off.gif';
 			$gdesc = $Lang::tr{'click to enable'};
 			$toggle_enabled = 'on';
@@ -648,6 +643,7 @@ sub GenerateDDNSConfigFile {
 
 	while (<SETTINGS>) {
 		my $line = $_;
+		chomp($line);
 
 		# Generate array based on the line content (seperator is a single or multiple space's)
 		my @settings = split(/,/, $line);
@@ -657,7 +653,7 @@ sub GenerateDDNSConfigFile {
 		next unless ($provider ~~ @providers);
 
 		# Skip disabled entries.
-		next if ($enabled eq "off");
+		next unless ($enabled eq "on");
 
 		# Handle hostname details. Only connect the values with a dott if both are available.
 		if (($hostname) && ($domain)) {
@@ -674,8 +670,8 @@ sub GenerateDDNSConfigFile {
 		if ($provider ~~ ["dns.lightningwirelabs.com", "entrydns.net", "regfish.com"] && $username eq "token") {
 			$use_token = 1;
 
-		# Handle token auth for freedns.afraid.org.
-		} elsif ($provider eq "freedns.afraid.org" && $password eq "") {
+		# Handle token auth for freedns.afraid.org and regfish.com.
+		} elsif ($provider ~~ ["freedns.afraid.org", "regfish.com"] && $password eq "") {
 			$use_token = 1;
 			$password = $username;
 
