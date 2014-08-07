@@ -812,6 +812,8 @@ buildipfire() {
   ipfiremake owncloud
   ipfiremake bacula
   ipfiremake batctl
+  ipfiremake perl-PDF-API2
+  ipfiremake squid-accounting
 }
 
 buildinstaller() {
