@@ -651,6 +651,7 @@ sub GenerateDDNSConfigFile {
 
 	while (<SETTINGS>) {
 		my $line = $_;
+		chomp($line);
 
 		# Generate array based on the line content (seperator is a single or multiple space's)
 		my @settings = split(/,/, $line);
@@ -660,7 +661,7 @@ sub GenerateDDNSConfigFile {
 		next unless ($provider ~~ @providers);
 
 		# Skip disabled entries.
-		next if ($enabled eq "off");
+		next unless ($enabled eq "on");
 
 		print FILE "[$hostname.$domain]\n";
 		print FILE "provider = $provider\n";
