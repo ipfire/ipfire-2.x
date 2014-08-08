@@ -413,9 +413,9 @@ sub getnetworkip
 	#Gets:  IP, CIDR    (10.10.10.0-255, 24)
 	#Gives:  10.10.10.0
 	my ($ccdip,$ccdsubnet) = @_;
-	my $ip_address_binary = &Socket::inet_pton( AF_INET,$ccdip );
-	my $netmask_binary = &Socket::inet_pton(AF_INET,&iporsubtodec($ccdsubnet));
-	my $network_address    = &Socket::inet_ntop( AF_INET,$ip_address_binary & $netmask_binary );
+	my $ip_address_binary = inet_aton( $ccdip );
+	my $netmask_binary    = ~pack("N", (2**(32-$ccdsubnet))-1);
+	my $network_address    = inet_ntoa( $ip_address_binary & $netmask_binary );
 	return $network_address;
 }
 
@@ -773,21 +773,12 @@ sub validportrange # used to check a port range
 # Return: TRUE/FALSE
 sub IpInSubnet
 {
-	my $addr = shift;
-	my $network = shift;
-	my $netmask = shift;
-
-	my $addr_num = &Socket::inet_pton(AF_INET,$addr);
-	my $network_num = &Socket::inet_pton(AF_INET,$network);
-	my $netmask_num = &Socket::inet_pton(AF_INET,$netmask);
-
-	# Find start address
-	my $network_start = $network_num & $netmask_num;
-
-	# Find end address
-	my $network_end = $network_start ^ ~$netmask_num;
-
-	return (($addr_num ge $network_start) && ($addr_num le $network_end));
+    my $ip = unpack('N', &Socket::inet_aton(shift));
+    my $start = unpack('N', &Socket::inet_aton(shift));
+    my $mask  = unpack('N', &Socket::inet_aton(shift));
+       $start &= $mask;  # base of subnet...
+    my $end   = $start + ~$mask;
+    return (($ip >= $start) && ($ip <= $end));
 }
 
 #

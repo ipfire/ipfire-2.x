@@ -187,7 +187,7 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 
 	# Check if a password has been typed in.
 	# freedns.afraid.org does not require this field.
-	if (($settings{'PASSWORD'} eq '') && ($settings{'SERVICE'} ne 'freedns.afraid.org')) {
+	if (($settings{'PASSWORD'} eq '') && ($settings{'SERVICE'} ne 'freedns.afraid.org') && ($settings{'SERVICE'} ne 'regfish.com')) {
 		$errormessage = $Lang::tr{'password not set'};
 	}
 
@@ -196,6 +196,12 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 
 		# Splitt hostname field into 2 parts for storrage.
 		my($hostname, $domain) = split(/\./, $settings{'HOSTNAME'}, 2);
+
+		# Handle enabled checkbox. When the checkbox is selected a "on" will be returned,
+		# if the checkbox is not checked nothing is returned in this case we set the value to "off".
+		if ($settings{'ENABLED'} ne 'on') {
+			$settings{'ENABLED'} = 'off';
+		}
 
 		# Handle adding new accounts.
 		if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
@@ -214,8 +220,6 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 
 			# Write out notice to logfile.
 			&General::log($Lang::tr{'ddns hostname added'});
-
-			# Update ddns config file.
 
 		# Handle account edditing.
 		} elsif ($settings{'ACTION'} eq $Lang::tr{'update'}) {
@@ -354,7 +358,9 @@ $checked{'BEHINDROUTER'}{'RED_IP'} = '';
 $checked{'BEHINDROUTER'}{'FETCH_IP'} = '';
 $checked{'BEHINDROUTER'}{$settings{'BEHINDROUTER'}} = "checked='checked'";
 
-$checked{'ENABLED'}{'on'} = ($settings{'ENABLED'} eq '' ) ? '' : "checked='checked'";
+$checked{'ENABLED'}{'on'} = '';
+$checked{'ENABLED'}{'off'} = '';
+$checked{'ENABLED'}{$settings{'ENABLED'}} = "checked='checked'";
 
 # Show box for errormessages..
 if ($errormessage) {
@@ -451,7 +457,7 @@ print <<END
 
 	<tr>
 		<td class='base'>$Lang::tr{'enabled'}</td>
-		<td><input type='checkbox' name='ENABLED' value='on' $checked{'ENABLED'}{'on'} /></td>
+		<td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
 		<td class='base'>$Lang::tr{'username'}</td>
 		<td><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
 	</tr>
@@ -507,17 +513,32 @@ END
 		chomp(@current);
 		my @temp = split(/\,/,$line);
 
+		# Handle hostname details. Only connect the values with a dott if both are available.
+		my $hostname="";
+
+		if (($temp[1]) && ($temp[2])) {
+			$hostname="$temp[1].$temp[2]";
+		} else {
+			$hostname="$temp[1]";
+		}
+
 		# Generate value for enable/disable checkbox.
-		my $sync = "<font color='blue'>";
+		my $sync = '';
 		my $gif = '';
 		my $gdesc = '';
 
 		if ($temp[7] eq "on") {
 			$gif = 'on.gif';
 			$gdesc = $Lang::tr{'click to disable'};
-			$sync = (&General::DyndnsServiceSync ($ip,$temp[1], $temp[2]) ? "<font color='green'>": "<font color='red'>") ;
+
+			# Check if the given hostname is a FQDN before doing a nslookup.
+			if (&General::validfqdn($hostname)) {
+				$sync = (&General::DyndnsServiceSync ($ip,$temp[1], $temp[2]) ? "<font color='green'>": "<font color='red'>") ;
+			}
+
 			$toggle_enabled = 'off';
 		} else {
+			$sync = "<font color='blue'>";
 			$gif = 'off.gif';
 			$gdesc = $Lang::tr{'click to enable'};
 			$toggle_enabled = 'on';
@@ -650,8 +671,8 @@ sub GenerateDDNSConfigFile {
 		if ($provider ~~ ["dns.lightningwirelabs.com", "entrydns.net", "regfish.com"] && $username eq "token") {
 			$use_token = 1;
 
-		# Handle token auth for freedns.afraid.org.
-		} elsif ($provider eq "freedns.afraid.org" && $password eq "") {
+		# Handle token auth for freedns.afraid.org and regfish.com.
+		} elsif ($provider ~~ ["freedns.afraid.org", "regfish.com"] && $password eq "") {
 			$use_token = 1;
 			$password = $username;
 

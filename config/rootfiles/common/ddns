@@ -60,4 +60,7 @@ usr/lib/python2.7/site-packages/ddns/system.pyo
 #usr/share/locale/uz@Latn/LC_MESSAGES
 #usr/share/locale/uz@Latn/LC_MESSAGES/ddns.mo
 #usr/share/locale/vi/LC_MESSAGES/ddns.mo
+#usr/share/locale/zh
+#usr/share/locale/zh/LC_MESSAGES
+#usr/share/locale/zh/LC_MESSAGES/ddns.mo
 #var/ipfire/ddns/ddns.conf.sample
