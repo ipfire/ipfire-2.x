@@ -39,6 +39,7 @@ done
 extract_files
 
 # Start services
+/etc/init.d/apache restart
 
 # Update Language cache
 #perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
@@ -46,8 +47,8 @@ extract_files
 sync
 
 # This update need a reboot...
-#touch /var/run/need_reboot
-
+touch /var/run/need_reboot
+^^
 # Finish
 /etc/init.d/fireinfo start
 sendprofile
