@@ -58,7 +58,6 @@ our %mainsettings = ();
 our %settings = ();
 
 $settings{'GUARDIAN_ENABLED'} = 'off';
-$settings{'GUARDIAN_BLOCKINTERFACES'} ='default';
 $settings{'GUARDIAN_BLOCKTIME'} = '86400';
 $settings{'GUARDIAN_LOGFILE'} = '/var/log/guardian/guardian.log';
 $settings{'GUARDIAN_SNORT_ALERTFILE'} = '/var/log/snort/alert';
@@ -236,11 +235,6 @@ sub showMainBox() {
 	$checked{'GUARDIAN_ENABLED'}{'off'} = '';
 	$checked{'GUARDIAN_ENABLED'}{$settings{'GUARDIAN_ENABLED'}} = 'checked';
 
-	$checked{'GUARDIAN_BLOCKINTERFACES'}{'default'} = '';
-	$checked{'GUARDIAN_BLOCKINTERFACES'}{'all'} = '';
-	$checked{'GUARDIAN_BLOCKINTERFACES'}{$settings{'GUARDIAN_BLOCKINTERFACES'}} = "checked='checked'";
-
-
 	&Header::openpage($Lang::tr{'guardian configuration'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -306,29 +300,23 @@ END
 
 		<table width='95%'>
 			<tr>
-				<td colspan='5' class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'guardian common settings'}</b></td>
+				<td colspan='2' class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'guardian common settings'}</b></td>
 			</tr>
 			<tr>
 				<td width='20%' class='base'>$Lang::tr{'guardian enabled'}:</td>
-				<td width='30%'><input type='checkbox' name='GUARDIAN_ENABLED' $checked{'GUARDIAN_ENABLED'}{'on'} /></td>
-				<td width='20%' class='base'>$Lang::tr{'guardian blockinterfaces'}:</td>
-				<td width='15%'> $Lang::tr{'guardian blockinterfaces default'}
-					<input type='radio' name='GUARDIAN_BLOCKINTERFACES' value='default' $checked{'GUARDIAN_BLOCKINTERFACES'}{'default'} /></td>
-				<td width='15%'> $Lang::tr{'guardian blockinterfaces all'}
-					<input type='radio' name='GUARDIAN_BLOCKINTERFACES' value='all' $checked{'GUARDIAN_BLOCKINTERFACES'}{'all'} /></td>
-
+				<td><input type='checkbox' name='GUARDIAN_ENABLED' $checked{'GUARDIAN_ENABLED'}{'on'} /></td>
 			</tr>
 			<tr>
 				<td width='20%' class='base'>$Lang::tr{'guardian blocktime'}:</td>
-				<td colspan='5'><input type='text' name='GUARDIAN_BLOCKTIME' value='$settings{'GUARDIAN_BLOCKTIME'}' size='10' /></td>
+				<td><input type='text' name='GUARDIAN_BLOCKTIME' value='$settings{'GUARDIAN_BLOCKTIME'}' size='10' /></td>
 			</tr>
 			<tr>
                                 <td width='20%' class='base'>$Lang::tr{'guardian logfile'}:</td>
-                                <td colspan='5'><input type='text' name='GUARDIAN_LOGFILE' value='$settings{'GUARDIAN_LOGFILE'}' size='30' /></td>
+                                <td><input type='text' name='GUARDIAN_LOGFILE' value='$settings{'GUARDIAN_LOGFILE'}' size='30' /></td>
                         </tr>
                         <tr>
                                 <td width='20%' class='base'>$Lang::tr{'guardian snort alertfile'}:</td>
-                                <td colspan='5'><input type='text' name='GUARDIAN_SNORT_ALERTFILE' value='$settings{'GUARDIAN_SNORT_ALERTFILE'}' size='30' /></td>
+                                <td><input type='text' name='GUARDIAN_SNORT_ALERTFILE' value='$settings{'GUARDIAN_SNORT_ALERTFILE'}' size='30' /></td>
                         </tr>
 		</table>
 END
@@ -577,7 +565,6 @@ sub BuildConfiguration() {
 	open(FILE, ">$configfile");
 
 	print FILE "Interface		$red_interface\n";
-	print FILE "BlockOption		$settings{'GUARDIAN_BLOCKINTERFACES'}\n";
 	print FILE "HostGatewayByte	$HostGatewayByte\n";
 	print FILE "LogFile		$settings{'GUARDIAN_LOGFILE'}\n";
 	print FILE "AlertFile		$settings{'GUARDIAN_SNORT_ALERTFILE'}\n";
