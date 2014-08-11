@@ -196,6 +196,7 @@
 'advproxy back to main page' => 'Back to main page',
 'advproxy banned ip clients' => 'Banned IP addresses (one per line)',
 'advproxy banned mac clients' => 'Banned MAC addresses (one per line)',
+'advproxy basic authentication' => 'Allow HTTP Basic authentication',
 'advproxy cache management' => 'Cache management',
 'advproxy cache replacement policy' => 'Cache replacement policy',
 'advproxy cache-digest' => 'Enable Cache-Digest Generation',

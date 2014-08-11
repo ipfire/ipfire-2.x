@@ -664,6 +664,7 @@ WARNING: untranslated string: administrator password
 WARNING: untranslated string: administrator username
 WARNING: untranslated string: advproxy AUTH method ntlm
 WARNING: untranslated string: advproxy AUTH method ntlm auth
+WARNING: untranslated string: advproxy basic authentication
 WARNING: untranslated string: advproxy group access control
 WARNING: untranslated string: advproxy group required
 WARNING: untranslated string: atm device

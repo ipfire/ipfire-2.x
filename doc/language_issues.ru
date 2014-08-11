@@ -601,6 +601,7 @@ WARNING: untranslated string: administrator password
 WARNING: untranslated string: administrator username
 WARNING: untranslated string: advproxy AUTH method ntlm
 WARNING: untranslated string: advproxy AUTH method ntlm auth
+WARNING: untranslated string: advproxy basic authentication
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy

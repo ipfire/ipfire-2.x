@@ -19,6 +19,7 @@
 < adsl settings
 < advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
@@ -566,6 +567,7 @@
 < adsl settings
 < advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
@@ -1106,6 +1108,7 @@
 < adsl settings
 < advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
@@ -1622,6 +1625,7 @@
 < adsl settings
 < advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy

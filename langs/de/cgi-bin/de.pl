@@ -196,6 +196,7 @@
 'advproxy back to main page' => 'Zurück zur Hauptseite',
 'advproxy banned ip clients' => 'Gesperrte IP-Adressen (eine pro Zeile)',
 'advproxy banned mac clients' => 'Gesperrte MAC-Adressen (eine pro Zeile)',
+'advproxy basic authentication' => 'Erlaube HTTP-Basic-Authentifizierung',
 'advproxy cache management' => 'Cacheverwaltung',
 'advproxy cache replacement policy' => 'Cache Ersetzungsrichtlinie',
 'advproxy cache-digest' => 'Cache-Digest-Erstellung aktivieren',
