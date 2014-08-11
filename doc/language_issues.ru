@@ -601,6 +601,7 @@ WARNING: untranslated string: administrator password
 WARNING: untranslated string: administrator username
 WARNING: untranslated string: advproxy AUTH method ntlm
 WARNING: untranslated string: advproxy AUTH method ntlm auth
+WARNING: untranslated string: advproxy basic authentication
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
@@ -863,6 +864,12 @@ WARNING: untranslated string: last
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: mac filter
+WARNING: untranslated string: masquerade blue
+WARNING: untranslated string: masquerade green
+WARNING: untranslated string: masquerade orange
+WARNING: untranslated string: masquerading
+WARNING: untranslated string: masquerading disabled
+WARNING: untranslated string: masquerading enabled
 WARNING: untranslated string: maximum
 WARNING: untranslated string: messages
 WARNING: untranslated string: minimum

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 003
+VER        = 004
 
 THISAPP    = ddns-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9ff8ab5fa716859b51f63b0a241f1337
+$(DL_FILE)_MD5 = ff77cb72d0cb06c73bde70419b15bae8
 
 install : $(TARGET)
 
@@ -70,8 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ddns-003-Add-a-program-prefix-to-syslog-messages.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire

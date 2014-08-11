@@ -627,9 +627,8 @@ sub validdomainname
 	my @parts = split (/\./, $domainname);	# Split hostname at the '.'
 
 	foreach $part (@parts) {
-		# Each part should be at least two characters in length
-		# but no more than 63 characters
-		if (length ($part) < 2 || length ($part) > 63) {
+		# Each part should be no more than 63 characters in length
+		if (length ($part) < 1 || length ($part) > 63) {
 			return 0;}
 		# Only valid characters are a-z, A-Z, 0-9 and -
 		if ($part !~ /^[a-zA-Z0-9-]*$/) {

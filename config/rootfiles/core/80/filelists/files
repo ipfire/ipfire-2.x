@@ -8,6 +8,7 @@ etc/rc.d/init.d/firewall
 etc/rc.d/init.d/networking/red.up/30-ddns
 etc/rc.d/init.d/rngd
 srv/web/ipfire/cgi-bin/ddns.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllogcountry.dat
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/netexternal.cgi

@@ -1,0 +1,5 @@
+    $sublogs->{'32.proxy'} = {'caption' => $Lang::tr{'acct menu'},
+			        'uri' => '/cgi-bin/accounting.cgi',
+			        'title' => $Lang::tr{'acct menu'},
+			        'enabled' => 1,
+			        };
