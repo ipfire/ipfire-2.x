@@ -124,4 +124,6 @@ int hw_stop_all_raid_arrays();
 int hw_install_bootloader(struct hw_destination* dest);
 int hw_write_fstab(struct hw_destination* dest);
 
+void hw_sync();
+
 #endif /* HEADER_HW_H */

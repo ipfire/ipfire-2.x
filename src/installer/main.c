@@ -676,6 +676,8 @@ EXIT:
 	free(sourcedrive);
 
 	if (destination) {
+		hw_sync();
+
 		hw_umount_filesystems(destination, DESTINATION_MOUNT_PATH);
 		free(destination);
 	}

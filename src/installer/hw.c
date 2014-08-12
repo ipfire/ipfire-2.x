@@ -969,3 +969,9 @@ int hw_write_fstab(struct hw_destination* dest) {
 
 	return 0;
 }
+
+void hw_sync() {
+	sync();
+	sync();
+	sync();
+}
