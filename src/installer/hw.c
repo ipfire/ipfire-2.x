@@ -90,7 +90,7 @@ int hw_mount(const char* source, const char* target, const char* fs, int flags) 
 }
 
 int hw_umount(const char* target) {
-	return umount2(target, MNT_DETACH);
+	return umount2(target, 0);
 }
 
 static int hw_test_source_medium(const char* path) {
