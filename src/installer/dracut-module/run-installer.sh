@@ -13,8 +13,17 @@ echo "Starting shells on tty2 and tty3 ..."
 
 echo "Loading Installer..."
 /bin/bash --login -c "/usr/bin/installer /dev/tty2"
+ret=$?
 
-sleep 60
+case "${ret}" in
+	0)
+		# The installer has finished without a problem.
+		;;
+	*)
+		echo "The installer has crashed. You will be dropped to a debugging shell"
+		/bin/bash --login
+		;;
+esac
 
 # Reboot the system
 /shutdown reboot
