@@ -505,9 +505,38 @@ unsigned long long hw_memory() {
 	return memory * 1024;
 }
 
-int hw_create_partitions(struct hw_destination* dest) {
-	char* cmd = NULL;
+static int hw_zero_out_device(const char* path, int bytes) {
+	char block[512];
+	memset(block, 0, sizeof(block));
 
+	int blocks = bytes / sizeof(block);
+
+	int fd = open(path, O_WRONLY);
+	if (fd < 0)
+		return -1;
+
+	unsigned int bytes_written = 0;
+	while (blocks-- > 0) {
+		bytes_written += write(fd, block, sizeof(block));
+	}
+
+	fsync(fd);
+	close(fd);
+
+	return bytes_written;
+}
+
+int hw_create_partitions(struct hw_destination* dest) {
+	// Before we write a new partition table to the disk, we will erase
+	// the first couple of megabytes at the beginning of the device to
+	// get rid of all left other things like bootloaders and partition tables.
+	// This solves some problems when changing from MBR to GPT partitions or
+	// the other way around.
+	int r = hw_zero_out_device(dest->path, MB2BYTES(10));
+	if (r <= 0)
+		return r;
+
+	char* cmd = NULL;
 	asprintf(&cmd, "/usr/sbin/parted -s %s -a optimal", dest->path);
 
 	// Set partition type
@@ -798,10 +827,20 @@ int hw_setup_raid(struct hw_destination* dest) {
 
 	if (dest->disk1) {
 		asprintf(&cmd, "%s %s", cmd, dest->disk1->path);
+
+		// Clear all data at the beginning
+		r = hw_zero_out_device(dest->disk1->path, MB2BYTES(10));
+		if (r <= 0)
+			return r;
 	}
 
 	if (dest->disk2) {
 		asprintf(&cmd, "%s %s", cmd, dest->disk2->path);
+
+		// Clear all data at the beginning
+		r = hw_zero_out_device(dest->disk2->path, MB2BYTES(10));
+		if (r <= 0)
+			return r;
 	}
 
 	int r = mysystem(cmd);
