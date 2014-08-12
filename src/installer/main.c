@@ -29,8 +29,6 @@
 FILE *flog = NULL;
 char *mylog;
 
-char **ctr;
-
 extern char url[STRING_SIZE];
 
 static int newtChecklist(const char* title, const char* message,
@@ -207,6 +205,24 @@ static char* center_string(const char* str, int width) {
 	return string;
 }
 
+#define DEFAULT_LANG "English"
+#define NUM_LANGS 8
+
+static struct lang {
+	const char* code;
+	char* name;
+} languages[NUM_LANGS + 1] = {
+	{ "nl", "Dutch (Nederlands)" },
+	{ "en", "English" },
+	{ "fr", "French (Français)" },
+	{ "de", "German (Deutsch)" },
+	{ "pl", "Polish (Polski)" },
+	{ "ru", "Russian (Русский)" },
+	{ "es", "Spanish (Español)" },
+	{ "tr", "Turkish (Türkçe)" },
+	{ NULL, NULL },
+};
+
 int main(int argc, char *argv[]) {
 	struct hw* hw = hw_init();
 
@@ -215,8 +231,6 @@ int main(int argc, char *argv[]) {
 
 	char discl_msg[40000] =	"Disclaimer\n";
 
-	char *langnames[] = { "Deutsch", "English", "Français", "Español", "Nederlands", "Polski", "Русский", "Türkçe", NULL };
-	char *shortlangnames[] = { "de", "en", "fr", "es", "nl", "pl", "ru", "tr", NULL };
 	char* sourcedrive = NULL;
 	int rc = 0;
 	char commandstring[STRING_SIZE];
@@ -285,21 +299,26 @@ int main(int argc, char *argv[]) {
 	mysystem("/sbin/modprobe vfat"); // USB key
 	hw_stop_all_raid_arrays();
 
-	/* German is the default */
-	for (choice = 0; langnames[choice]; choice++)
-	{
-		if (strcmp(langnames[choice], "English") == 0)
-			break;
-	}
-	if (!langnames[choice])
-		goto EXIT;
-
 	if (!unattended) {
-	    rc = newtWinMenu("Language selection", "Select the language you wish to use for the " NAME ".", 50, 5, 5, 8,
-		    langnames, &choice, "Ok", NULL);
-	}
+		// Language selection
+		char* langnames[NUM_LANGS + 1];
 
-	setlocale(LC_ALL, shortlangnames[choice]);
+		for (unsigned int i = 0; i < NUM_LANGS; i++) {
+			if (strcmp(languages[i].name, DEFAULT_LANG) == 0)
+				choice = i;
+
+			langnames[i] = languages[i].name;
+		}
+		langnames[NUM_LANGS] = NULL;
+
+	    rc = newtWinMenu(_("Language selection"), _("Select the language you wish to use for the installation."),
+			50, 5, 5, 8, langnames, &choice, _("OK"), NULL);
+
+		assert(choice <= NUM_LANGS);
+
+		fprintf(flog, "Selected language: %s (%s)\n", languages[choice].name, languages[choice].code);
+		setlocale(LC_ALL, languages[choice].code);
+	}
 
 	char* helpline = center_string(_("<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"), screen_cols);
 	newtPushHelpLine(helpline);

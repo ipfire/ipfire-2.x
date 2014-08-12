@@ -56,6 +56,9 @@ install() {
             inst "${file}"
         done
     done
+    for file in /usr/share/locale/*/LC_MESSAGES/installer.mo; do
+        inst "${file}"
+    done
 
     # Bash start files
     inst_multiple /etc/profile /root/.bash_profile /etc/bashrc /root/.bashrc

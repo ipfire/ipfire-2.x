@@ -41,6 +41,9 @@ AC_PROG_CC_C_O
 
 AC_PATH_PROG([M4], [m4])
 
+# Gettext
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.18])
 AC_CHECK_HEADERS([libintl.h])
 
 # This makes sure pkg.m4 is available.
@@ -83,6 +86,7 @@ AC_ARG_WITH([config-root],
 
 AC_CONFIG_FILES([
 	Makefile
+	po/Makefile.in
 ])
 
 AC_OUTPUT
