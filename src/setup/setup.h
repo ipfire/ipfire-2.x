@@ -10,7 +10,8 @@
  * 
  */
 
-#include "../libsmooth/libsmooth.h"
+#include <newt.h>
+#include <libsmooth.h>
 
 /* hostname.c */
 int handlehostname(void);

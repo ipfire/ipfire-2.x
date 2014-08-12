@@ -40,7 +40,7 @@ clean :
 ######
 
 OBJS=main.o hostname.o domainname.o passwords.o networking.o misc.o \
-	dhcp.o keymap.o timezone.o
+	dhcp.o keymap.o timezone.o netstuff.o
 
 setup: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)

@@ -10,12 +10,14 @@
  * 
  */
 
+// Translation
+#include <libintl.h>
+#define _(x) dgettext("setup", x)
+
 #include "setup.h"
 
 extern FILE *flog;
 extern char *mylog;
-
-extern char **ctr;
 
 extern int automode;
 
@@ -28,14 +30,13 @@ int handlerootpassword(void)
 	char commandstring[STRING_SIZE];
 		
 	/* Root password. */
-	if (getpassword(password, ctr[TR_ENTER_ROOT_PASSWORD]) == 2)
+	if (getpassword(password, _("Enter the 'root' user password. Login as this user for commandline access.")) == 2)
 		return 0;
 	
 	snprintf(commandstring, STRING_SIZE,
 		"/bin/echo 'root:%s' | /usr/sbin/chpasswd", password);
-	if (runhiddencommandwithstatus(commandstring, ctr[TR_SETTING_ROOT_PASSWORD]))
-	{
-		errorbox(ctr[TR_PROBLEM_SETTING_ROOT_PASSWORD]);
+	if (runhiddencommandwithstatus(commandstring, _("Setting password"), _("Setting 'root' password...."))) {
+		errorbox(_("Problem setting 'root' password."));
 		return 0;
 	}
 	
@@ -49,16 +50,16 @@ int handleadminpassword(void)
 	char message[1000];
 		
 	/* web interface admin password. */
-	sprintf(message, ctr[TR_ENTER_ADMIN_PASSWORD], NAME, NAME);
+	sprintf(message, _("Enter %s 'admin' user password. "
+		"This is the user to use for logging into the %s web administration pages."), NAME, NAME);
 	if (getpassword(password, message) == 2)
 		return 0;
 	
 	snprintf(commandstring, STRING_SIZE,
 		"/usr/sbin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", password);
-	sprintf(message, ctr[TR_SETTING_ADMIN_PASSWORD], NAME);
-	if (runhiddencommandwithstatus(commandstring, message))
-	{
-		sprintf(message, ctr[TR_PROBLEM_SETTING_ADMIN_PASSWORD], NAME);
+	sprintf(message, _("Setting %s 'admin' user password..."), NAME);
+	if (runhiddencommandwithstatus(commandstring, _("Setting password"), message)) {
+		sprintf(message, _("Problem setting %s 'admin' user password."), NAME);
 		errorbox(message);
 		return 0;
 	}
@@ -72,8 +73,8 @@ int getpassword(char *password, char *text)
 	char *values[] = {	NULL, NULL, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 	{ 
-		{ ctr[TR_PASSWORD_PROMPT], &values[0], 2 },
-		{ ctr[TR_AGAIN_PROMPT], &values[1], 2 },
+		{ _("Password:"), &values[0], 2 },
+		{ _("Again:"), &values[1], 2 },
 		{ NULL, NULL, 0 }
 	};
 	char title[STRING_SIZE];
@@ -85,27 +86,27 @@ int getpassword(char *password, char *text)
 		done = 1;
 		sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
 		rc = newtWinEntries(title, text,
-			65, 5, 5, 50, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);
+			65, 5, 5, 50, entries, _("OK"), _("Cancel"), NULL);
 
 		if (rc != 2)
 		{
 			if (strlen(values[0]) == 0 || strlen(values[1]) == 0)
 			{
-				errorbox(ctr[TR_PASSWORD_CANNOT_BE_BLANK]);
+				errorbox(_("Password cannot be blank."));
 				done = 0;
 				strcpy(values[0], "");
 				strcpy(values[1], "");
 			}
 			else if (strcmp(values[0], values[1]) != 0)
 			{
-				errorbox(ctr[TR_PASSWORDS_DO_NOT_MATCH]);
+				errorbox(_("Passwords do not match."));
 				done = 0;
 				strcpy(values[0], "");
 				strcpy(values[1], "");
 			}
 			else if (strchr(values[0], ' '))
 			{
-				errorbox(ctr[TR_PASSWORD_CANNOT_CONTAIN_SPACES]);
+				errorbox(_("Password cannot contain spaces."));
 				done = 0;
 				strcpy(values[0], "");
 				strcpy(values[1], "");

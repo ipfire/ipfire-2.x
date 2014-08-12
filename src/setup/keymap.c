@@ -9,13 +9,15 @@
  * $Id: keymap.c,v 1.9.2.1 2004/04/14 22:05:41 gespinasse Exp $
  * 
  */
-   
+
+// Translation
+#include <libintl.h>
+#define _(x) dgettext("setup", x)
+
 #include "setup.h"
  
 extern FILE *flog;
 extern char *mylog;
-
-extern char **ctr;
 
 extern int automode;
 
@@ -65,7 +67,7 @@ int handlekeymap(void)
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/main/settings")))
 	{
 		freekeyvalues(kv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}	
 	
@@ -79,8 +81,9 @@ int handlekeymap(void)
 			choice = c;
 	}
 	
-	rc = newtWinMenu(ctr[TR_KEYBOARD_MAPPING], ctr[TR_KEYBOARD_MAPPING_LONG], 50, 5, 5, 6, displaynames, &choice,
-		ctr[TR_OK], ctr[TR_CANCEL], NULL);
+	rc = newtWinMenu(_("Keyboard mapping"),
+		_("Choose the type of keyboard you are using from the list below."),
+		50, 5, 5, 6, displaynames, &choice, _("OK"), _("Cancel"), NULL);
 
 	strcpy(keymap, filenames[choice]);
 	

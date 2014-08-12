@@ -10,12 +10,14 @@
  * 
  */
 
+// Translation
+#include <libintl.h>
+#define _(x) dgettext("setup", x)
+
 #include "setup.h"
  
 extern FILE *flog;
 extern char *mylog;
-
-extern char **ctr;
 
 extern int automode;
 
@@ -58,7 +60,7 @@ int handletimezone(void)
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/main/settings")))
 	{
 		freekeyvalues(kv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}	
 	
@@ -72,8 +74,8 @@ int handletimezone(void)
 			choice = c;
 	}
 	
-	rc = newtWinMenu(ctr[TR_TIMEZONE], ctr[TR_TIMEZONE_LONG], 50, 5, 5, 6, displaynames, &choice,
-		ctr[TR_OK], ctr[TR_CANCEL], NULL);
+	rc = newtWinMenu(_("Timezone"), _("Choose the timezone you are in from the list below."),
+		50, 5, 5, 6, displaynames, &choice, _("OK"), _("Cancel"), NULL);
 
 	strcpy(timezone, filenames[choice]);
 	

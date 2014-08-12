@@ -6,13 +6,15 @@
  * $Id: domainname.c
  * 
  */
- 
+
+// Translation
+#include <libintl.h>
+#define _(x) dgettext("setup", x)
+
 #include "setup.h"
  
 extern FILE *flog;
 extern char *mylog;
-
-extern char **ctr;
 
 extern int automode;
 
@@ -29,7 +31,7 @@ int handledomainname(void)
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/main/settings")))
 	{
 		freekeyvalues(kv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}	
 	
@@ -37,19 +39,18 @@ int handledomainname(void)
 	
 	for (;;)
 	{	
-		rc = newtWinEntries(ctr[TR_DOMAINNAME], ctr[TR_ENTER_DOMAINNAME],
-			50, 5, 5, 40, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);	
+		rc = newtWinEntries(_("Domain name"), _("Enter Domain name"),
+			50, 5, 5, 40, entries, _("OK"), _("Cancel"), NULL);	
 		
-		if (rc == 1)
-		{
+		if (rc == 1) {
 			strcpy(domainname, values[0]);
 			if (!(strlen(domainname)))
-				errorbox(ctr[TR_DOMAINNAME_CANNOT_BE_EMPTY]);
+				errorbox(_("Domain name cannot be empty."));
 			else if (strchr(domainname, ' '))
-				errorbox(ctr[TR_DOMAINNAME_CANNOT_CONTAIN_SPACES]);
+				errorbox(_("Domain name cannot contain spaces."));
 			else if (strlen(domainname) != strspn(domainname,
 				"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-."))
-				errorbox(ctr[TR_DOMAINNAME_NOT_VALID_CHARS]);
+				errorbox(_("Domain name may only contain letters, numbers, hyphens and periods."));
 			else
 			{
 				replacekeyvalue(kv, "DOMAINNAME", domainname);

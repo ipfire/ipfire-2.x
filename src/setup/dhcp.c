@@ -7,7 +7,11 @@
  * Stuff for setting up the DHCP server from the setup prog.
  * 
  */
- 
+
+// Translation
+#include <libintl.h>
+#define _(x) dgettext("setup", x)
+
 #include "setup.h"
 
 #define TOP 4
@@ -23,8 +27,6 @@
 
 extern FILE *flog;
 extern char *mylog;
-
-extern char **ctr;
 
 extern int automode;
 
@@ -44,13 +46,24 @@ int handledhcp(void)
 	newtComponent labels[MAX_BOXES];
 	newtComponent ok, cancel;	
 	char message[1000];
-	char *labeltexts[MAX_BOXES] = { ctr[TR_START_ADDRESS], ctr[TR_END_ADDRESS],
-		ctr[TR_PRIMARY_DNS], ctr[TR_SECONDARY_DNS], ctr[TR_DEFAULT_LEASE],
-		ctr[TR_MAX_LEASE], ctr[TR_DOMAIN_NAME_SUFFIX] };
-	char *varnames[MAX_BOXES] = { "START_ADDR_GREEN", "END_ADDR_GREEN", 
-		"DNS1_GREEN", "DNS2_GREEN",
-		"DEFAULT_LEASE_TIME_GREEN", "MAX_LEASE_TIME_GREEN", 
-		"DOMAIN_NAME_GREEN"};
+	char *labeltexts[MAX_BOXES] = {
+		_("Start address:"),
+		_("End address:"),
+		_("Primary DNS:"),
+		_("Secondary DNS:"),
+		_("Default lease (mins):"),
+		_("Max lease (mins):"),
+		_("Domain name suffix:")
+	};
+	char *varnames[MAX_BOXES] = {
+		"START_ADDR_GREEN",
+		"END_ADDR_GREEN",
+		"DNS1_GREEN",
+		"DNS2_GREEN",
+		"DEFAULT_LEASE_TIME_GREEN",
+		"MAX_LEASE_TIME_GREEN",
+		"DOMAIN_NAME_GREEN"
+	};
 	char defaults[MAX_BOXES][STRING_SIZE]; 
 	int result;
 	int c;
@@ -70,14 +83,14 @@ int handledhcp(void)
 	{
 		freekeyvalues(dhcpkv);
 		freekeyvalues(ethernetkv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}
 	if (!(readkeyvalues(ethernetkv, CONFIG_ROOT "/ethernet/settings")))
 	{
 		freekeyvalues(dhcpkv);
 		freekeyvalues(ethernetkv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}
 	if (!(readkeyvalues(mainkv, CONFIG_ROOT "/main/settings")))
@@ -85,7 +98,7 @@ int handledhcp(void)
 		freekeyvalues(dhcpkv);
 		freekeyvalues(ethernetkv);
 		freekeyvalues(mainkv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}
 
@@ -95,13 +108,13 @@ int handledhcp(void)
 	strcpy(defaults[DEFAULT_LEASE_TIME], "60");
 	strcpy(defaults[MAX_LEASE_TIME], "120");
 
-	sprintf(message, ctr[TR_DHCP_SERVER_CONFIGURATION]);
-	newtCenteredWindow(55, 18, message);
+	newtCenteredWindow(55, 18, _("DHCP server configuration"));
 
 	dhcpform = newtForm(NULL, NULL, 0);
-	
-	sprintf(message, ctr[TR_CONFIGURE_DHCP]);
-	header = newtTextboxReflowed(1, 1, message, 52, 0, 0, 0);
+
+	header = newtTextboxReflowed(1, 1,
+		_("Configure the DHCP server by entering the settings information."),
+		52, 0, 0, 0);
 	newtFormAddComponent(dhcpform, header);
 
 	strcpy(temp, ""); findkey(dhcpkv, "ENABLE_GREEN", temp);
@@ -109,7 +122,7 @@ int handledhcp(void)
 		startenabled = '*';
 	else
 		startenabled = ' ';
-	enabledcheckbox = newtCheckbox(2, TOP + 0, ctr[TR_ENABLED], startenabled, " *", &enabledresult);
+	enabledcheckbox = newtCheckbox(2, TOP + 0, _("Enabled"), startenabled, " *", &enabledresult);
 	newtFormAddComponent(dhcpform, enabledcheckbox);
 	newtComponentAddCallback(enabledcheckbox, dhcpdialogcallbackdhcp, NULL);		
 
@@ -126,13 +139,12 @@ int handledhcp(void)
 		
 	}
 	
-	ok = newtButton(10, c + 7, ctr[TR_OK]);
-	cancel = newtButton(34, c + 7, ctr[TR_CANCEL]);
+	ok = newtButton(10, c + 7, _("OK"));
+	cancel = newtButton(34, c + 7, _("Cancel"));
 
 	newtFormAddComponents(dhcpform, ok, cancel, NULL);
 	
-	do
-	{
+	do {
 		error = 0;
 		newtFormRun(dhcpform, &es);
 	
@@ -141,22 +153,25 @@ int handledhcp(void)
 			/* OK was pressed; verify the contents of each entry. */		
 			if (enabledresult == '*')
 			{
-				strcpy(message, ctr[TR_INVALID_FIELDS]);			
+				strcpy(message, _("The following fields are invalid:\n\n"));
 				if (inet_addr(results[START_ADDRESS]) == INADDR_NONE)
 				{
-					strcat(message, ctr[TR_START_ADDRESS_CR]);
+					strcat(message, _("Start address"));
+					strcat(message, "\n");
 					error = 1;
 				}
 				if (inet_addr(results[END_ADDRESS]) == INADDR_NONE)
 				{
-					strcat(message, ctr[TR_END_ADDRESS_CR]);
+					strcat(message, _("End address"));
+					strcat(message, "\n");
 					error = 1;
 				}
 				if (strlen(results[SECONDARY_DNS]))
 				{
 					if (inet_addr(results[PRIMARY_DNS]) == INADDR_NONE)
 					{
-						strcat(message, ctr[TR_PRIMARY_DNS_CR]);
+						strcat(message, _("Primary DNS"));
+						strcat(message, "\n");
 						error = 1;
 					}
 				}
@@ -164,18 +179,21 @@ int handledhcp(void)
 				{
 					if (inet_addr(results[SECONDARY_DNS]) == INADDR_NONE)
 					{
-						strcat(message, ctr[TR_SECONDARY_DNS_CR]);
+						strcat(message, _("Secondary DNS"));
+						strcat(message, "\n");
 						error = 1;
 					}
 				}
 				if (!(atol(results[DEFAULT_LEASE_TIME])))
 				{
-					strcat(message, ctr[TR_DEFAULT_LEASE_CR]);
+					strcat(message, _("Default lease time"));
+					strcat(message, "\n");
 					error = 1;
 				}
 				if (!(atol(results[MAX_LEASE_TIME])))
 				{
-					strcat(message, ctr[TR_MAX_LEASE_CR]);
+					strcat(message, _("Max. lease time"));
+					strcat(message, "\n");
 					error = 1;
 				}
 			}				
@@ -236,8 +254,7 @@ int handledhcp(void)
 		}
 		else
 			result = 0;
-	}		
-	while (error);
+	} while (error);
 	
 	newtFormDestroy(dhcpform);
 	newtPopWindow();

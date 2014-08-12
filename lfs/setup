@@ -49,12 +49,14 @@ md5 :
 $(TARGET) :
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/setup/* $(DIR_APP)
-
-	cd $(DIR_APP) && make CFLAGS="$(CFLAGS) -Wall \
-	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
-	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'"
-
-	cd $(DIR_APP) && install -m 0755 setup /usr/local/sbin
-	cd $(DIR_APP) && install -m 0755 probenic.sh /bin
+	cd $(DIR_APP) && bash autogen.sh
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--with-distro-name="$(NAME)" \
+		--with-distro-sname="$(SNAME)" \
+		--with-distro-slogan="$(SLOGAN)" \
+		--with-config-root="$(CONFIG_ROOT)"
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -9,13 +9,15 @@
  * $Id: hostname.c,v 1.6.2.1 2004/04/14 22:05:41 gespinasse Exp $
  * 
  */
- 
+
+// Translation
+#include <libintl.h>
+#define _(x) dgettext("setup", x)
+
 #include "setup.h"
  
 extern FILE *flog;
 extern char *mylog;
-
-extern char **ctr;
 
 extern int automode;
 
@@ -32,7 +34,7 @@ int handlehostname(void)
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/main/settings")))
 	{
 		freekeyvalues(kv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}	
 	
@@ -41,19 +43,19 @@ int handlehostname(void)
 	
 	for (;;)
 	{
-		rc = newtWinEntries(ctr[TR_HOSTNAME], ctr[TR_ENTER_HOSTNAME],
-			50, 5, 5, 40, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);
+		rc = newtWinEntries(_("Hostname"), _("Enter the machine's hostname."),
+			50, 5, 5, 40, entries, _("OK"), _("Cancel"), NULL);
 		
 		if (rc == 1)
 		{
 			strcpy(hostname, values[0]);
 			if (!(strlen(hostname)))
-				errorbox(ctr[TR_HOSTNAME_CANNOT_BE_EMPTY]);
+				errorbox(_("Hostname cannot be empty."));
 			else if (strchr(hostname, ' '))
-				errorbox(ctr[TR_HOSTNAME_CANNOT_CONTAIN_SPACES]);
+				errorbox(_("Hostname cannot contain spaces."));
 			else if (strlen(hostname) != strspn(hostname,
 				"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-"))
-				errorbox(ctr[TR_HOSTNAME_NOT_VALID_CHARS]);
+				errorbox(_("Hostname may only contain letters, numbers and hyphens."));
 			else
 			{
 				replacekeyvalue(kv, "HOSTNAME", hostname);

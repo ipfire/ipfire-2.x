@@ -7,14 +7,16 @@
  * Misc. stuff for the lib.
  * 
  */
- 
+
+// Translation
+#include <libintl.h>
+#define _(x) dgettext("setup", x)
+
 #include "setup.h"
 
 extern FILE *flog;
 extern char *mylog;
 
-extern char **ctr;
- 
 extern int automode;
 
 /* This will rewrite /etc/hosts, /etc/hosts.*, and the apache ServerName file. */
@@ -35,7 +37,7 @@ int writehostsfiles(void)
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
 		freekeyvalues(kv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}
 	findkey(kv, "GREEN_ADDRESS", address);
@@ -47,7 +49,7 @@ int writehostsfiles(void)
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/main/settings")))
 	{
 		freekeyvalues(kv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}
 	strcpy(hostname, SNAME );
@@ -57,7 +59,7 @@ int writehostsfiles(void)
 		
 	if (!(file = fopen(CONFIG_ROOT "/main/hostname.conf", "w")))
 	{
-		sprintf (message, ctr[TR_UNABLE_TO_WRITE_VAR_SMOOTHWALL_MAIN_HOSTNAMECONF], CONFIG_ROOT);
+		sprintf (message, _("Unable to write %s/main/hostname.conf"), CONFIG_ROOT);
 		errorbox(message);
 		return 0;
 	}
@@ -66,12 +68,12 @@ int writehostsfiles(void)
 	
 	if (!(file = fopen(CONFIG_ROOT "/main/hosts", "r")))
 	{
-		errorbox(ctr[TR_UNABLE_TO_OPEN_HOSTS_FILE]);
+		errorbox(_("Unable to open main hosts file."));
 		return 0;
 	}
 	if (!(hosts = fopen("/etc/hosts", "w")))
 	{
-		errorbox(ctr[TR_UNABLE_TO_WRITE_ETC_HOSTS]);
+		errorbox(_("Unable to write /etc/hosts."));
 		return 0;
 	}
 	fprintf(hosts, "127.0.0.1\tlocalhost\n");
@@ -112,7 +114,7 @@ int writehostsfiles(void)
 	/* TCP wrappers stuff. */
 	if (!(file = fopen("/etc/hosts.deny", "w")))
 	{
-		errorbox(ctr[TR_UNABLE_TO_WRITE_ETC_HOSTS_DENY]);
+		errorbox(_("Unable to write /etc/hosts.deny."));
 		return 0;
 	}
 	fprintf(file, "ALL : ALL\n");
@@ -120,7 +122,7 @@ int writehostsfiles(void)
 	
 	if (!(file = fopen("/etc/hosts.allow", "w")))
 	{
-		errorbox(ctr[TR_UNABLE_TO_WRITE_ETC_HOSTS_ALLOW]);
+		errorbox(_("Unable to write /etc/hosts.allow."));
 		return 0;
 	}
 	fprintf(file, "sshd : ALL\n");
@@ -131,7 +133,7 @@ int writehostsfiles(void)
 	sprintf(commandstring, "/bin/hostname %s.%s", hostname, domainname);
 	if (mysystem(commandstring))
 	{
-		errorbox(ctr[TR_UNABLE_TO_SET_HOSTNAME]);
+		errorbox(_("Unable to set hostname."));
 		return 0;
 	}
 	
@@ -142,8 +144,8 @@ int handleisdn(void)
 {
 	char command[STRING_SIZE];
 	sprintf(command, "/etc/rc.d/init.d/mISDN config");
-	if (runcommandwithstatus(command, ctr[TR_PROBING_ISDN]))
-		errorbox(ctr[TR_ERROR_PROBING_ISDN]);
+	if (runcommandwithstatus(command, _("ISDN"), _("Scanning and configuring ISDN devices.")))
+		errorbox(_("Unable to scan for ISDN devices."));
 	// Need to write some lines that count the cards and say the names...
 	return 1;
 }

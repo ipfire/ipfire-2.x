@@ -8,13 +8,17 @@
  * 
  */
 
-#include "libsmooth.h"
+#include <libsmooth.h>
 #include <signal.h>
+
+// Translation
+#include <libintl.h>
+#define _(x) dgettext("setup", x)
+
+#include "setup.h"
 
 extern FILE *flog;
 extern char *mylog;
-
-extern char **ctr;
 
 extern struct nic nics[];
 extern struct knic knics[];
@@ -79,12 +83,12 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	sprintf(dhcphostnamefield, "%s_DHCP_HOSTNAME", colour);
 	sprintf(dhcpforcemtufield, "%s_DHCP_FORCE_MTU", colour);
 		
-	sprintf(message, ctr[TR_INTERFACE], colour);
+	sprintf(message, _("Interface - %s"), colour);
 	newtCenteredWindow(44, (typeflag ? 18 : 12), message);
 	
 	networkform = newtForm(NULL, NULL, 0);
 
-	sprintf(message, ctr[TR_ENTER_THE_IP_ADDRESS_INFORMATION], colour);
+	sprintf(message, _("Enter the IP address information for the %s interface."), colour);
 	header = newtTextboxReflowed(1, 1, message, 42, 0, 0, 0);
 	newtFormAddComponent(networkform, header);
 
@@ -96,18 +100,19 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 		if (strcmp(temp, "STATIC") == 0) startstatictype = 1;
 		if (strcmp(temp, "DHCP") == 0) startdhcptype = 1;
 		if (strcmp(temp, "PPPOE") == 0) startpppoetype = 1;
-		statictyperadio = newtRadiobutton(2, 4, ctr[TR_STATIC], startstatictype, NULL);
-		dhcptyperadio = newtRadiobutton(2, 5, ctr[TR_DHCP], startdhcptype, statictyperadio);
-		pppoetyperadio = newtRadiobutton(2, 6, ctr[TR_PPP_DIALUP], startpppoetype, dhcptyperadio);
+		statictyperadio = newtRadiobutton(2, 4, _("Static"), startstatictype, NULL);
+		dhcptyperadio = newtRadiobutton(2, 5, _("DHCP"), startdhcptype, statictyperadio);
+		pppoetyperadio = newtRadiobutton(2, 6, _("PPP DIALUP (PPPoE, modem, ATM ...)"),
+			startpppoetype, dhcptyperadio);
 		newtFormAddComponents(networkform, statictyperadio, dhcptyperadio, 
 			pppoetyperadio, NULL);
 		newtComponentAddCallback(statictyperadio, networkdialogcallbacktype, NULL);
 		newtComponentAddCallback(dhcptyperadio, networkdialogcallbacktype, NULL);
 		newtComponentAddCallback(pppoetyperadio, networkdialogcallbacktype, NULL);
 		dhcphostnamelabel = newtTextbox(2, 8, 18, 1, 0);
-		newtTextboxSetText(dhcphostnamelabel, ctr[TR_DHCP_HOSTNAME]);
+		newtTextboxSetText(dhcphostnamelabel, _("DHCP Hostname:"));
 		dhcpforcemtulabel = newtTextbox(2, 9, 18, 1, 0);
-		newtTextboxSetText(dhcpforcemtulabel, ctr[TR_DHCP_FORCE_MTU]);
+		newtTextboxSetText(dhcpforcemtulabel, _("Force DHCP MTU:"));
 		strcpy(temp, defaultdhcphostname);
 		findkey(kv, dhcphostnamefield, temp);
 		dhcphostnameentry = newtEntry(20, 8, temp, 20, &dhcphostnameresult, 0);
@@ -126,7 +131,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	}
 	/* Address */
 	addresslabel = newtTextbox(2, (typeflag ? 11 : 4) + 0, 18, 1, 0);
-	newtTextboxSetText(addresslabel, ctr[TR_IP_ADDRESS_PROMPT]);
+	newtTextboxSetText(addresslabel, _("IP address:"));
 	strcpy(temp, "");
 	findkey(kv, addressfield, temp);
 	addressentry = newtEntry(20, (typeflag ? 11 : 4) + 0, temp, 20, &addressresult, 0);
@@ -138,7 +143,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	
 	/* Netmask */
 	netmasklabel = newtTextbox(2, (typeflag ? 11 : 4) + 1, 18, 1, 0);
-	newtTextboxSetText(netmasklabel, ctr[TR_NETMASK_PROMPT]);
+	newtTextboxSetText(netmasklabel, _("Network mask:"));
 	strcpy(temp, "255.255.255.0"); findkey(kv, netmaskfield, temp);
 	netmaskentry = newtEntry(20, (typeflag ? 11 : 4) + 1, temp, 20, &netmaskresult, 0);
 	newtEntrySetFilter(netmaskentry, ip_input_filter, NULL);
@@ -149,8 +154,8 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	newtFormAddComponent(networkform, netmaskentry);
 
 	/* Buttons. */
-	ok = newtButton(8, (typeflag ? 14 : 7), ctr[TR_OK]);
-	cancel = newtButton(26, (typeflag ? 14 : 7), ctr[TR_CANCEL]);
+	ok = newtButton(8, (typeflag ? 14 : 7), _("OK"));
+	cancel = newtButton(26, (typeflag ? 14 : 7), _("Cancel"));
 
 	newtFormAddComponents(networkform, ok, cancel, NULL);
 
@@ -165,7 +170,8 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 		if (es.u.co == ok)
 		{
 			/* OK was pressed; verify the contents of each entry. */
-			strcpy(message, ctr[TR_INVALID_FIELDS]);
+			strcpy(message, _("The following fields are invalid:"));
+			strcat(message, "\n\n");
 			
 			strcpy(type, "STATIC");
 			if (typeflag)
@@ -174,12 +180,14 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 			{		
 				if (inet_addr(addressresult) == INADDR_NONE)
 				{
-					strcat(message, ctr[TR_IP_ADDRESS_CR]);
+					strcat(message, _("IP address"));
+					strcat(message, "\n");
 					error = 1;
 				}
 				if (inet_addr(netmaskresult) == INADDR_NONE)
 				{
-					strcat(message, ctr[TR_NETWORK_MASK_CR]);
+					strcat(message, _("Network mask"));
+					strcat(message, "\n");
 					error = 1;
 				}
 			}
@@ -187,7 +195,8 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 			{
 				if (!strlen(dhcphostnameresult))
 				{
-					strcat(message, ctr[TR_DHCP_HOSTNAME_CR]);
+					strcat(message, _("DHCP hostname"));
+					strcat(message, "\n");
 					error = 1;
 				}
 			}
@@ -365,7 +374,7 @@ int get_knic(int card)		//returns "0" for zero cards or error and "1" card is fo
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
 		freekeyvalues(kv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}
 
@@ -384,7 +393,7 @@ int get_knic(int card)		//returns "0" for zero cards or error and "1" card is fo
 		strcpy(knics[ card ].driver, temp);
 		ret_value = 1;
 	} else {
-		strcpy(knics[ card ].description, ctr[TR_UNSET]);
+		strcpy(knics[ card ].description, _("Unset"));
 		ret_value = 0;
 	}
 	freekeyvalues(kv);
@@ -554,7 +563,7 @@ int write_configs_netudev(int card , int colour)
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
 		freekeyvalues(kv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}
 
@@ -657,16 +666,17 @@ int nicmenu(int colour)
 
 		pMenuInhalt[mcount] = NULL;
 
-		sprintf(message, ctr[TR_CHOOSE_NETCARD], ucolourcard[colour]);
+		sprintf(message, _("Please choose a networkcard for the following interface - %s."), ucolourcard[colour]);
 		rc=2;
 		while ( rc == 2 ) {
-			rc = newtWinMenu( ctr[TR_NETCARDMENU2], message, 50, 5, 5, 6, pMenuInhalt, &choise, ctr[TR_SELECT], ctr[TR_IDENTIFY], ctr[TR_CANCEL], NULL);
+			rc = newtWinMenu(_("Extended Network Menu"), message, 50, 5, 5, 6, pMenuInhalt, &choise,
+				_("Select"), _("Identify"), _("Cancel"), NULL);
 			if ( rc == 2 ) {
 				sprintf(temp, "/sbin/ip link set %s up", nics[found_NIC_as_Card[choise]].nic);
 				mysystem(temp);
 				sprintf(temp, "/usr/sbin/ethtool -p %s 10", nics[found_NIC_as_Card[choise]].nic);
-				if (runcommandwithstatus(temp,ctr[TR_IDENTIFY_SHOULD_BLINK]) != 0) {      
-					errorbox(ctr[TR_IDENTIFY_NOT_SUPPORTED]);
+				if (runcommandwithstatus(temp, _("Device Identification"), _("The lights on the selected port should flash now for 10 seconds...")) != 0) {
+					errorbox(_("Identification is not supported by this interface."));
 				sprintf(temp, "/sbin/ip link set %s down", nics[found_NIC_as_Card[choise]].nic);
 				mysystem(temp);
 				}
@@ -678,7 +688,7 @@ int nicmenu(int colour)
 		return 0;
 	} else {
 		// We have to add here that you can manually add a device
-		errorbox( ctr[TR_ERROR_INTERFACES]);
+		errorbox(_("There are no unassigned interfaces on your system."));
 		return 1;
 	}
 }
@@ -691,12 +701,12 @@ int clear_card_entry(int card)
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
 	{
 		freekeyvalues(kv);
-		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
+		errorbox(_("Unable to open settings file"));
 		return 0;
 	}
 
 	strcpy(knics[card].driver, "");
-	strcpy(knics[card].description, ctr[TR_UNSET]);
+	strcpy(knics[card].description, _("Unset"));
 	strcpy(knics[card].macaddr, "");
 	strcpy(knics[card].colour, "");
 	sprintf(temp, "%s_DRIVER", ucolourcard[card]);
@@ -719,8 +729,8 @@ int ask_clear_card_entry(int card)
 	char message[STRING_SIZE];
 	int rc;
 
-	sprintf(message, ctr[TR_REMOVE_CARD], ucolourcard[card]);
-	rc = newtWinChoice(ctr[TR_WARNING], ctr[TR_OK], ctr[TR_CANCEL], message);				
+	sprintf(message, _("Do you really want to remove the assigned %s interface?"), ucolourcard[card]);
+	rc = newtWinChoice(_("Warning"), _("OK"), _("Cancel"), message);
 
 	if ( rc = 0 || rc == 1) {
 		clear_card_entry(card);
@@ -742,15 +752,14 @@ int manualdriver(char *driver, char *driveroptions)
 	strcpy(driver, "");
 	strcpy(driveroptions, "");
 	
-	rc = newtWinEntries(ctr[TR_SELECT_NETWORK_DRIVER], 
-		ctr[TR_MODULE_PARAMETERS], 50, 5, 5, 40, entries, 
-		ctr[TR_OK], ctr[TR_CANCEL], NULL);	
+	rc = newtWinEntries(_("Select network driver"), _("Set additional module parameters"),
+		50, 5, 5, 40, entries,  _("OK"), _("Cancel"), NULL);
 	if (rc == 0 || rc == 1)
 	{
 		if (strlen(values[0]))
 		{
 			sprintf(commandstring, "/sbin/modprobe %s", values[0]);
-			if (runcommandwithstatus(commandstring, ctr[TR_LOADING_MODULE]) == 0)
+			if (runcommandwithstatus(commandstring, _("Loading module..."), _("Loading module...")) == 0)
 			{
 				if ((driverend = strchr(values[0], ' ')))
 				{
@@ -765,10 +774,10 @@ int manualdriver(char *driver, char *driveroptions)
 				}
 			}
 			else
-				errorbox(ctr[TR_UNABLE_TO_LOAD_DRIVER_MODULE]);
+				errorbox(_("Unable to load driver module."));
 		}
 		else
-			errorbox(ctr[TR_MODULE_NAME_CANNOT_BE_BLANK]);
+			errorbox(_("Module name cannot be blank."));
 	}
 	free(values[0]);
 
