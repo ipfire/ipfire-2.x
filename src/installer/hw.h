@@ -48,6 +48,8 @@
 
 #define HW_FS_DEFAULT                 HW_FS_EXT4
 
+#define RAID_METADATA                 "1.0"
+
 #define BYTES2MB(x) ((x) / 1024 / 1024)
 #define MB2BYTES(x) ((unsigned long long)(x) * 1024 * 1024)
 

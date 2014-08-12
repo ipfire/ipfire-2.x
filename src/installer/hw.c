@@ -811,10 +811,12 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 
 int hw_setup_raid(struct hw_destination* dest) {
 	char* cmd = NULL;
+	int r;
 
 	assert(dest->is_raid);
 
-	asprintf(&cmd, "echo \"y\" | /sbin/mdadm --create --verbose --metadata=1.2 %s", dest->path);
+	asprintf(&cmd, "echo \"y\" | /sbin/mdadm --create --verbose --metadata=%s --auto=mdp %s",
+		RAID_METADATA, dest->path);
 
 	switch (dest->raid_level) {
 		case 1:
@@ -843,7 +845,7 @@ int hw_setup_raid(struct hw_destination* dest) {
 			return r;
 	}
 
-	int r = mysystem(cmd);
+	r = mysystem(cmd);
 	free(cmd);
 
 	// Wait a moment until the device has been properly brought up
