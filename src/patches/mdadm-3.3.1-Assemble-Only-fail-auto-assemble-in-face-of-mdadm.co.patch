@@ -1,0 +1,85 @@
+From 5141638c54535b4ac80b8481404d868a63a18ecd Mon Sep 17 00:00:00 2001
+From: NeilBrown <neilb@suse.de>
+Date: Tue, 29 Jul 2014 13:48:23 +1000
+Subject: [PATCH] Assemble: Only fail auto-assemble in face of mdadm.conf
+ conflicts.
+
+We should never auto-assemble things that conflict with mdadm.conf
+However explicit assembly requests should be allowed.
+
+Reported-by: olovopb
+Resolves: https://bugzilla.redhat.com/show_bug.cgi?id=1070245
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ Assemble.c | 47 ++++++++++++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 21 deletions(-)
+
+diff --git a/Assemble.c b/Assemble.c
+index aca28be..cdcdb0f 100644
+--- a/Assemble.c
++++ b/Assemble.c
+@@ -366,9 +366,6 @@ static int select_devices(struct mddev_dev *devlist,
+ 			tmpdev = NULL;
+ 			goto loop;
+ 		} else {
+-			int rv = 0;
+-			struct mddev_ident *match;
+-
+ 			content = *contentp;
+ 			tst->ss->getinfo_super(tst, content, NULL);
+ 
+@@ -377,25 +374,33 @@ static int select_devices(struct mddev_dev *devlist,
+ 					   report_mismatch ? devname : NULL))
+ 				goto loop;
+ 
+-			match = conf_match(tst, content, devname,
+-					   report_mismatch ? c->verbose : -1,
+-					   &rv);
+-			if (!match && rv == 2)
+-				goto loop;
+-			if (match && match->devname &&
+-			    strcasecmp(match->devname, "<ignore>") == 0) {
+-				if (report_mismatch)
+-					pr_err("%s is a member of an explicitly ignored array\n",
+-					       devname);
+-				goto loop;
+-			}
+-			if (match && !ident_matches(match, content, tst,
+-						    c->homehost, c->update,
+-						    report_mismatch ? devname : NULL))
+-				/* Array exists  in mdadm.conf but some
+-				 * details don't match, so reject it
++			if (auto_assem) {
++				/* Never auto-assemble things that conflict
++				 * with mdadm.conf in some way
+ 				 */
+-				goto loop;
++				struct mddev_ident *match;
++				int rv = 0;
++
++				match = conf_match(tst, content, devname,
++						   report_mismatch ? c->verbose : -1,
++						   &rv);
++				if (!match && rv == 2)
++					goto loop;
++				if (match && match->devname &&
++				    strcasecmp(match->devname, "<ignore>") == 0) {
++					if (report_mismatch)
++						pr_err("%s is a member of an explicitly ignored array\n",
++						       devname);
++					goto loop;
++				}
++				if (match && !ident_matches(match, content, tst,
++							    c->homehost, c->update,
++							    report_mismatch ? devname : NULL))
++					/* Array exists  in mdadm.conf but some
++					 * details don't match, so reject it
++					 */
++					goto loop;
++			}
+ 
+ 			/* should be safe to try an exclusive open now, we
+ 			 * have rejected anything that some other mdadm might
+-- 
+1.9.3
+
