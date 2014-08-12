@@ -523,7 +523,7 @@ int main(int argc, char *argv[]) {
 		rc = newtWinMenu(_("Filesystem Selection"), _("Please choose your filesystem:"),
 			50, 5, 5, 6, fs_names, &fs_choice, _("OK"), _("Cancel"), NULL);
 
-		if (rc != 1)
+		if (rc == 2)
 			goto EXIT;
 
 		destination->filesystem = filesystems[fs_choice].fstype;
