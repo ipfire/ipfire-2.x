@@ -587,17 +587,17 @@ int hw_create_partitions(struct hw_destination* dest) {
 		part_start += dest->size_data;
 	}
 
-	if (dest->part_table == HW_PART_TABLE_MSDOS && dest->part_boot_idx > 0) {
+	if (dest->part_boot_idx > 0)
 		asprintf(&cmd, "%s set %d boot on", cmd, dest->part_boot_idx);
 
-	} else if (dest->part_table == HW_PART_TABLE_GPT) {
+	if (dest->part_table == HW_PART_TABLE_GPT) {
 		if (*dest->part_bootldr) {
 			asprintf(&cmd, "%s set %d bios_grub on", cmd, dest->part_boot_idx);
 		}
 		asprintf(&cmd, "%s disk_set pmbr_boot on", cmd);
 	}
 
-	int r = mysystem(cmd);
+	r = mysystem(cmd);
 
 	// Wait until the system re-read the partition table
 	if (r == 0) {
@@ -885,7 +885,7 @@ int hw_install_bootloader(struct hw_destination* dest) {
 	char cmd_grub[STRING_SIZE];
 	snprintf(cmd_grub, sizeof(cmd_grub), "/usr/sbin/grub-install --no-floppy --recheck");
 
-	if (dest->is_raid && (dest->part_table == HW_PART_TABLE_MSDOS)) {
+	if (dest->is_raid) {
 		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->disk1->path);
 		r = system_chroot(DESTINATION_MOUNT_PATH, cmd);
 		if (r)
