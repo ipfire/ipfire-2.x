@@ -809,11 +809,35 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 	return 0;
 }
 
+static int hw_destroy_raid_superblocks(const struct hw_destination* dest) {
+	char cmd[STRING_SIZE];
+
+	hw_stop_all_raid_arrays();
+	hw_stop_all_raid_arrays();
+
+	if (dest->disk1) {
+		snprintf(cmd, sizeof(cmd), "/sbin/mdadm --zero-superblock %s", dest->disk1);
+		mysystem(cmd);
+	}
+
+	if (dest->disk2) {
+		snprintf(cmd, sizeof(cmd), "/sbin/mdadm --zero-superblock %s", dest->disk2);
+		mysystem(cmd);
+	}
+
+	return 0;
+}
+
 int hw_setup_raid(struct hw_destination* dest) {
 	char* cmd = NULL;
 	int r;
 
 	assert(dest->is_raid);
+
+	// Stop all RAID arrays that might be around (again).
+	// It seems that there is some sort of race-condition with udev re-enabling
+	// the raid arrays and therefore locking the disks.
+	r = hw_destroy_raid_superblocks(dest);
 
 	asprintf(&cmd, "echo \"y\" | /sbin/mdadm --create --verbose --metadata=%s --auto=mdp %s",
 		RAID_METADATA, dest->path);
@@ -869,7 +893,7 @@ int hw_setup_raid(struct hw_destination* dest) {
 }
 
 int hw_stop_all_raid_arrays() {
-	return mysystem("/sbin/mdadm --stop --scan");
+	return mysystem("/sbin/mdadm --stop --scan --verbose");
 }
 
 int hw_install_bootloader(struct hw_destination* dest) {
