@@ -62,7 +62,9 @@ install() {
 
     # Bash start files
     inst_multiple /etc/profile /root/.bash_profile /etc/bashrc /root/.bashrc
-    inst_dir /etc/profile.d
+    for file in /etc/profile.d/*.sh; do
+        inst "${file}"
+    done
 
     inst_hook cmdline 99 "$moddir/fake-root.sh"
     inst_hook pre-mount 99 "$moddir/run-installer.sh"
