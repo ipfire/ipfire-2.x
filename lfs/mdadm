@@ -31,10 +31,6 @@ DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = mdadm
-PAK_VER    = 2
-
-DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -80,8 +76,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mdadm-3.3.1-Assemble-Only-fail-auto-assemble-in-face-of-mdadm.co.patch
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	ln -sf ../init.d/mdadm /etc/rc.d/rcsysinit.d/S11mdadm
-	ln -sf ../init.d/mdadm /etc/rc.d/rc0.d/S85mdadm
-	ln -sf ../init.d/mdadm /etc/rc.d/rc6.d/S75mdadm
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

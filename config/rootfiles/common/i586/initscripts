@@ -45,7 +45,6 @@ etc/rc.d/init.d/ipsec
 etc/rc.d/init.d/leds
 etc/rc.d/init.d/localnet
 etc/rc.d/init.d/mISDN
-#etc/rc.d/init.d/mdadm
 #etc/rc.d/init.d/mediatomb
 #etc/rc.d/init.d/messagebus
 #etc/rc.d/init.d/miau
