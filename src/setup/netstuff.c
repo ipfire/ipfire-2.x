@@ -594,7 +594,7 @@ int scan_network_cards(void)
 	
 	if (!(scanned_nics_read_done))
 	{
-		mysystem("/bin/probenic.sh");
+		mysystem("/usr/bin/probenic.sh");
 		if( (fp = fopen(SCANNED_NICS, "r")) == NULL )
 		{
 			fprintf(stderr,"Couldn't open "SCANNED_NICS);
