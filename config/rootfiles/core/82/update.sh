@@ -33,7 +33,8 @@ done
 
 # Stop services
 
-# Remove old strongswan files
+# Remove old files
+rm -vf /etc/rc.d/init.d/networking/red.up/20-RL-firewall
 
 # Extract files
 extract_files
@@ -41,7 +42,7 @@ extract_files
 # Start services
 
 # Update Language cache
-#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 sync
 
