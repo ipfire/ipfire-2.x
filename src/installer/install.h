@@ -11,4 +11,4 @@
 #include <libsmooth.h>
 
 /* unattended.c */
-int unattended_setup(struct keyvalue *unattendedkv);
+int unattended_setup(struct keyvalue *unattendedkv, const char* output);

@@ -48,12 +48,12 @@ const char* other_filesystems[] = {
 	NULL
 };
 
-static int system_chroot(const char* path, const char* cmd) {
+static int system_chroot(const char* output, const char* path, const char* cmd) {
 	char chroot_cmd[STRING_SIZE];
 
 	snprintf(chroot_cmd, sizeof(chroot_cmd), "/usr/sbin/chroot %s %s", path, cmd);
 
-	return mysystem(chroot_cmd);
+	return mysystem(output, chroot_cmd);
 }
 
 struct hw* hw_init() {
@@ -526,7 +526,7 @@ static int hw_zero_out_device(const char* path, int bytes) {
 	return bytes_written;
 }
 
-int hw_create_partitions(struct hw_destination* dest) {
+int hw_create_partitions(struct hw_destination* dest, const char* output) {
 	// Before we write a new partition table to the disk, we will erase
 	// the first couple of megabytes at the beginning of the device to
 	// get rid of all left other things like bootloaders and partition tables.
@@ -597,7 +597,7 @@ int hw_create_partitions(struct hw_destination* dest) {
 		asprintf(&cmd, "%s disk_set pmbr_boot on", cmd);
 	}
 
-	r = mysystem(cmd);
+	r = mysystem(output, cmd);
 
 	// Wait until the system re-read the partition table
 	if (r == 0) {
@@ -632,7 +632,7 @@ int hw_create_partitions(struct hw_destination* dest) {
 	return r;
 }
 
-static int hw_format_filesystem(const char* path, int fs) {
+static int hw_format_filesystem(const char* path, int fs, const char* output) {
 	char cmd[STRING_SIZE] = "\0";
 
 	// Swap
@@ -657,36 +657,36 @@ static int hw_format_filesystem(const char* path, int fs) {
 
 	assert(*cmd);
 
-	int r = mysystem(cmd);
+	int r = mysystem(output, cmd);
 
 	return r;
 }
 
-int hw_create_filesystems(struct hw_destination* dest) {
+int hw_create_filesystems(struct hw_destination* dest, const char* output) {
 	int r;
 
 	// boot
 	if (*dest->part_boot) {
-		r = hw_format_filesystem(dest->part_boot, dest->filesystem);
+		r = hw_format_filesystem(dest->part_boot, dest->filesystem, output);
 		if (r)
 			return r;
 	}
 
 	// swap
 	if (*dest->part_swap) {
-		r = hw_format_filesystem(dest->part_swap, HW_FS_SWAP);
+		r = hw_format_filesystem(dest->part_swap, HW_FS_SWAP, output);
 		if (r)
 			return r;
 	}
 
 	// root
-	r = hw_format_filesystem(dest->part_root, dest->filesystem);
+	r = hw_format_filesystem(dest->part_root, dest->filesystem, output);
 	if (r)
 		return r;
 
 	// data
 	if (*dest->part_data) {
-		r = hw_format_filesystem(dest->part_data, dest->filesystem);
+		r = hw_format_filesystem(dest->part_data, dest->filesystem, output);
 		if (r)
 			return r;
 	}
@@ -809,26 +809,26 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 	return 0;
 }
 
-static int hw_destroy_raid_superblocks(const struct hw_destination* dest) {
+static int hw_destroy_raid_superblocks(const struct hw_destination* dest, const char* output) {
 	char cmd[STRING_SIZE];
 
-	hw_stop_all_raid_arrays();
-	hw_stop_all_raid_arrays();
+	hw_stop_all_raid_arrays(output);
+	hw_stop_all_raid_arrays(output);
 
 	if (dest->disk1) {
-		snprintf(cmd, sizeof(cmd), "/sbin/mdadm --zero-superblock %s", dest->disk1);
-		mysystem(cmd);
+		snprintf(cmd, sizeof(cmd), "/sbin/mdadm --zero-superblock %s", dest->disk1->path);
+		mysystem(output, cmd);
 	}
 
 	if (dest->disk2) {
-		snprintf(cmd, sizeof(cmd), "/sbin/mdadm --zero-superblock %s", dest->disk2);
-		mysystem(cmd);
+		snprintf(cmd, sizeof(cmd), "/sbin/mdadm --zero-superblock %s", dest->disk2->path);
+		mysystem(output, cmd);
 	}
 
 	return 0;
 }
 
-int hw_setup_raid(struct hw_destination* dest) {
+int hw_setup_raid(struct hw_destination* dest, const char* output) {
 	char* cmd = NULL;
 	int r;
 
@@ -837,7 +837,7 @@ int hw_setup_raid(struct hw_destination* dest) {
 	// Stop all RAID arrays that might be around (again).
 	// It seems that there is some sort of race-condition with udev re-enabling
 	// the raid arrays and therefore locking the disks.
-	r = hw_destroy_raid_superblocks(dest);
+	r = hw_destroy_raid_superblocks(dest, output);
 
 	asprintf(&cmd, "echo \"y\" | /sbin/mdadm --create --verbose --metadata=%s --auto=mdp %s",
 		RAID_METADATA, dest->path);
@@ -869,7 +869,7 @@ int hw_setup_raid(struct hw_destination* dest) {
 			return r;
 	}
 
-	r = mysystem(cmd);
+	r = mysystem(output, cmd);
 	free(cmd);
 
 	// Wait a moment until the device has been properly brought up
@@ -892,17 +892,17 @@ int hw_setup_raid(struct hw_destination* dest) {
 	return r;
 }
 
-int hw_stop_all_raid_arrays() {
-	return mysystem("/sbin/mdadm --stop --scan --verbose");
+int hw_stop_all_raid_arrays(const char* output) {
+	return mysystem(output, "/sbin/mdadm --stop --scan --verbose");
 }
 
-int hw_install_bootloader(struct hw_destination* dest) {
+int hw_install_bootloader(struct hw_destination* dest, const char* output) {
 	char cmd[STRING_SIZE];
 	int r;
 
 	// Generate configuration file
 	snprintf(cmd, sizeof(cmd), "/usr/sbin/grub-mkconfig -o /boot/grub/grub.cfg");
-	r = system_chroot(DESTINATION_MOUNT_PATH, cmd);
+	r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
 	if (r)
 		return r;
 
@@ -911,15 +911,15 @@ int hw_install_bootloader(struct hw_destination* dest) {
 
 	if (dest->is_raid) {
 		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->disk1->path);
-		r = system_chroot(DESTINATION_MOUNT_PATH, cmd);
+		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
 		if (r)
 			return r;
 
 		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->disk2->path);
-		r = system_chroot(DESTINATION_MOUNT_PATH, cmd);
+		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
 	} else {
 		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->path);
-		r = system_chroot(DESTINATION_MOUNT_PATH, cmd);
+		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
 	}
 
 	return r;

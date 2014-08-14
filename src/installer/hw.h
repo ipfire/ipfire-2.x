@@ -112,16 +112,16 @@ struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks
 
 unsigned long long hw_memory();
 
-int hw_create_partitions(struct hw_destination* dest);
-int hw_create_filesystems(struct hw_destination* dest);
+int hw_create_partitions(struct hw_destination* dest, const char* output);
+int hw_create_filesystems(struct hw_destination* dest, const char* output);
 
 int hw_mount_filesystems(struct hw_destination* dest, const char* prefix);
 int hw_umount_filesystems(struct hw_destination* dest, const char* prefix);
 
-int hw_setup_raid(struct hw_destination* dest);
-int hw_stop_all_raid_arrays();
+int hw_setup_raid(struct hw_destination* dest, const char* output);
+int hw_stop_all_raid_arrays(const char* output);
 
-int hw_install_bootloader(struct hw_destination* dest);
+int hw_install_bootloader(struct hw_destination* dest, const char* output);
 int hw_write_fstab(struct hw_destination* dest);
 
 void hw_sync();

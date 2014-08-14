@@ -12,11 +12,6 @@
 #include <libintl.h>
 #define _(x) dgettext("libsmooth", x)
 
-extern FILE *flog;
-extern char *mylog;
-
-extern char **ctr;
-  
 /* stripnl().  Replaces \n with \0 */
 void stripnl(char *s) {
 	char *t = strchr(s, '\n');
@@ -25,11 +20,17 @@ void stripnl(char *s) {
 }
 
 /* Little wrapper. */
-int mysystem(const char *command) {
+int mysystem(const char* output, const char *command) {
 	char mycommand[STRING_SIZE];
 
-	snprintf(mycommand, STRING_SIZE, "%s >>%s 2>>%s", command, mylog, mylog);
-	fprintf(flog, "Running command: %s\n", command);
+	if (output == NULL)
+		output = "/dev/null";
+
+	snprintf(mycommand, sizeof(mycommand), "%s >>%s 2>&1", command, output);
+
+	FILE* f = fopen(output, "w+");
+	fprintf(f, "Running command: %s\n", command);
+	fclose(f);
 
 	return system(mycommand);
 }
@@ -71,23 +72,19 @@ void statuswindow(int width, int height, const char *title, const char *text, ..
 	newtFormDestroy(f);
 }
 
-int runcommandwithstatus(const char *command, const char* title, const char *message) {
+int runcommandwithstatus(const char *command, const char* title, const char *message, const char* output) {
 	statuswindow(60, 4, title, message);
 
-	int rc = mysystem(command);
+	int rc = mysystem(output, command);
 	newtPopWindow();
 
 	return rc;
 }
 
-int runhiddencommandwithstatus(const char *command, const char* title, const char *message) {
+int runhiddencommandwithstatus(const char *command, const char* title, const char *message, const char* output) {
 	statuswindow(60, 4, title, message);
 
-	char mycommand[STRING_SIZE];
-	snprintf(mycommand, STRING_SIZE, "%s >>%s 2>>%s", command, mylog, mylog);
-	fprintf(flog, "Running command: ***** HIDDEN *****\n");
-
-	int rc = system(mycommand);
+	int rc = mysystem(output, command);
 	newtPopWindow();
 
 	return rc;
@@ -135,10 +132,7 @@ int runcommandwithprogress(int width, int height, const char *title, const char 
 
 	newtDrawForm(f);
 	newtRefresh();
-	
-	snprintf(mycommand, STRING_SIZE, "%s 2>>%s", command, mylog);
-	fprintf(flog, "Running command: %s\n", command);
-	
+
 	if (!(p = popen(command, "r")))
 	{
 		rc = 1;
@@ -146,13 +140,11 @@ int runcommandwithprogress(int width, int height, const char *title, const char 
 	}
 	setvbuf(p, NULL, _IOLBF, 255);
 	
-	while (fgets(buffer, STRING_SIZE, p))
-	{
+	while (fgets(buffer, STRING_SIZE, p)) {
 		newtScaleSet(s, ++progress);
 		newtRefresh();	
-		fprintf(flog, "%s", buffer);
 	}
-		
+
 	rc = pclose(p);
 	
 EXIT:
@@ -169,7 +161,7 @@ int checkformodule(const char *module) {
 
 	if (!(file = fopen("/proc/modules", "r")))
 	{
-		fprintf(flog, "Unable to open /proc/modules in checkformodule()\n");
+		fprintf(stderr, "Unable to open /proc/modules in checkformodule()\n");
 		return 0;
 	}
 	

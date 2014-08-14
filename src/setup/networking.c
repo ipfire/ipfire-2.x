@@ -107,12 +107,12 @@ int handlenetworking(void)
 		if (netaddresschange)
 		{
 			runcommandwithstatus("/etc/rc.d/init.d/network stop",
-				_("Networking"), _("Stopping network..."));
+				_("Networking"), _("Stopping network..."), NULL);
 
 			rename_nics();
 
 			runcommandwithstatus("/etc/rc.d/init.d/network start",
-				_("Networking"), _("Restarting network..."));
+				_("Networking"), _("Restarting network..."), NULL);
 		}
 	} else {
 		rename_nics();
@@ -445,7 +445,7 @@ int changedrivers(void)
 	}
 	if (automode == 0)
 		runcommandwithstatus("/etc/rc.d/init.d/network stop red blue orange",
-			_("Networking"), _("Restarting non-local network..."));
+			_("Networking"), _("Restarting non-local network..."), NULL);
 
 	findkey(kv, "CONFIG_TYPE", temp); configtype = atol(temp);
 	if (configtype == 1)

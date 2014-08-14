@@ -35,7 +35,7 @@ int handlerootpassword(void)
 	
 	snprintf(commandstring, STRING_SIZE,
 		"/bin/echo 'root:%s' | /usr/sbin/chpasswd", password);
-	if (runhiddencommandwithstatus(commandstring, _("Setting password"), _("Setting 'root' password...."))) {
+	if (runhiddencommandwithstatus(commandstring, _("Setting password"), _("Setting 'root' password...."), NULL)) {
 		errorbox(_("Problem setting 'root' password."));
 		return 0;
 	}
@@ -58,7 +58,7 @@ int handleadminpassword(void)
 	snprintf(commandstring, STRING_SIZE,
 		"/usr/sbin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", password);
 	sprintf(message, _("Setting %s 'admin' user password..."), NAME);
-	if (runhiddencommandwithstatus(commandstring, _("Setting password"), message)) {
+	if (runhiddencommandwithstatus(commandstring, _("Setting password"), message, NULL)) {
 		sprintf(message, _("Problem setting %s 'admin' user password."), NAME);
 		errorbox(message);
 		return 0;

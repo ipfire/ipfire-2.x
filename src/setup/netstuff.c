@@ -422,7 +422,7 @@ int is_interface_up(char *card) {	/* Check if the interface is UP */
 	char temp[STRING_SIZE];
 
 	sprintf(temp,"ip link show dev %s | grep -q UP", card);
-	if (mysystem(temp)) return 0; else return 1;
+	if (mysystem(NULL, temp)) return 0; else return 1;
 }
 
 int rename_device(char *old_name, char *new_name) {
@@ -434,7 +434,7 @@ int rename_device(char *old_name, char *new_name) {
 		return 0;
 	}
 	sprintf(temp,"/sbin/ip link set dev %s name %s",old_name ,new_name );
-	mysystem(temp);
+	mysystem(NULL, temp);
 
 	return 1;
 }
@@ -486,14 +486,14 @@ int nic_shutdown(char *nic) {
 	char temp[STRING_SIZE];
 	
 	sprintf(temp,"ip link set %s down", nic);
-	mysystem(temp);
+	mysystem(NULL, temp);
 }
 
 int nic_startup(char *nic) {
 	char temp[STRING_SIZE];
 	
 	sprintf(temp,"ip link set %s up", nic);
-	mysystem(temp);
+	mysystem(NULL, temp);
 
 }
 
@@ -594,7 +594,7 @@ int scan_network_cards(void)
 	
 	if (!(scanned_nics_read_done))
 	{
-		mysystem("/usr/bin/probenic.sh");
+		mysystem(NULL, "/usr/bin/probenic.sh");
 		if( (fp = fopen(SCANNED_NICS, "r")) == NULL )
 		{
 			fprintf(stderr,"Couldn't open "SCANNED_NICS);
@@ -673,12 +673,12 @@ int nicmenu(int colour)
 				_("Select"), _("Identify"), _("Cancel"), NULL);
 			if ( rc == 2 ) {
 				sprintf(temp, "/sbin/ip link set %s up", nics[found_NIC_as_Card[choise]].nic);
-				mysystem(temp);
+				mysystem(NULL, temp);
 				sprintf(temp, "/usr/sbin/ethtool -p %s 10", nics[found_NIC_as_Card[choise]].nic);
-				if (runcommandwithstatus(temp, _("Device Identification"), _("The lights on the selected port should flash now for 10 seconds...")) != 0) {
+				if (runcommandwithstatus(temp, _("Device Identification"), _("The lights on the selected port should flash now for 10 seconds..."), NULL) != 0) {
 					errorbox(_("Identification is not supported by this interface."));
 				sprintf(temp, "/sbin/ip link set %s down", nics[found_NIC_as_Card[choise]].nic);
-				mysystem(temp);
+				mysystem(NULL, temp);
 				}
 			}
 		}
@@ -759,7 +759,7 @@ int manualdriver(char *driver, char *driveroptions)
 		if (strlen(values[0]))
 		{
 			sprintf(commandstring, "/sbin/modprobe %s", values[0]);
-			if (runcommandwithstatus(commandstring, _("Loading module..."), _("Loading module...")) == 0)
+			if (runcommandwithstatus(commandstring, _("Loading module..."), _("Loading module..."), NULL) == 0)
 			{
 				if ((driverend = strchr(values[0], ' ')))
 				{

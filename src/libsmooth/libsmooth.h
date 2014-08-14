@@ -43,15 +43,15 @@ struct keyvalue {
 
 /* libsmooth.c */
 void stripnl(char *s);
-int mysystem(const char *command);
+int mysystem(const char* output, const char *command);
 void errorbox(char *message);
 int statuswindowscroll(int width, int height, const char *title, const char *text, ...);
 int disclaimerbox(char *message);
 void statuswindow(int width, int height, const char *title, const char *text, ...);
 int runcommandwithprogress(int width, int height, const char *title, const char *command,
 	int lines, char *text, ...);
-int runcommandwithstatus(const char *command, const char* title, const char *message);
-int runhiddencommandwithstatus(const char *command, const char* title, const char *message);
+int runcommandwithstatus(const char *command, const char* title, const char *message, const char* output);
+int runhiddencommandwithstatus(const char *command, const char* title, const char *message, const char* output);
 int checkformodule(const char *module); 
 int replace(char filename1[], char *from, char *to);
 char* get_version(void);

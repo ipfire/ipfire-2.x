@@ -26,9 +26,6 @@
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 #define LICENSE_FILE	"/cdrom/COPYING"
 
-FILE *flog = NULL;
-char *mylog;
-
 extern char url[STRING_SIZE];
 
 static int newtChecklist(const char* title, const char* message,
@@ -225,6 +222,7 @@ static struct lang {
 
 int main(int argc, char *argv[]) {
 	struct hw* hw = hw_init();
+	const char* logfile = NULL;
 
 	// Read /etc/system-release
 	char* system_release = get_system_release();
@@ -251,16 +249,16 @@ int main(int argc, char *argv[]) {
 	sethostname( SNAME , 10);
 
 	/* Log file/terminal stuff. */
-	if (argc >= 2)
-	{		
-		if (!(flog = fopen(argv[1], "w+")))
+	FILE* flog = NULL;
+	if (argc >= 2) {
+		logfile = argv[1];
+
+		if (!(flog = fopen(logfile, "w+")))
 			return 0;
-	}
-	else
+	} else {
 		return 0;
-	
-	mylog = argv[1];
-	
+	}
+
 	fprintf(flog, "Install program started.\n");
 		
 	newtInit();
@@ -287,7 +285,7 @@ int main(int argc, char *argv[]) {
 		// check if we have to make an unattended install
 		if (strstr (line, "unattended") != NULL) {
 		    unattended = 1;
-		    runcommandwithstatus("/bin/sleep 10", title, "WARNING: Unattended installation will start in 10 seconds...");
+		    runcommandwithstatus("/bin/sleep 10", title, "WARNING: Unattended installation will start in 10 seconds...", NULL);
 		}		
 		// check if we have to patch for serial console
 		if (strstr (line, "console=ttyS0") != NULL) {
@@ -296,8 +294,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Load common modules
-	mysystem("/sbin/modprobe vfat"); // USB key
-	hw_stop_all_raid_arrays();
+	mysystem(logfile, "/sbin/modprobe vfat"); // USB key
+	hw_stop_all_raid_arrays(logfile);
 
 	if (!unattended) {
 		// Language selection
@@ -337,7 +335,7 @@ int main(int argc, char *argv[]) {
 	fprintf(flog, "Source drive: %s\n", sourcedrive);
 	if (!sourcedrive) {
 		newtWinMessage(title, _("OK"), _("No local source media found. Starting download."));
-		runcommandwithstatus("/bin/downloadsource.sh", title, _("Downloading installation image ..."));
+		runcommandwithstatus("/bin/downloadsource.sh", title, _("Downloading installation image ..."), logfile);
 		if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
 			errorbox(_("Download error"));
 			goto EXIT;
@@ -533,7 +531,7 @@ int main(int argc, char *argv[]) {
 	if (destination->is_raid) {
 		statuswindow(60, 4, title, _("Building RAID..."));
 
-		rc = hw_setup_raid(destination);
+		rc = hw_setup_raid(destination, logfile);
 		if (rc) {
 			errorbox(_("Unable to build the RAID."));
 			goto EXIT;
@@ -545,7 +543,7 @@ int main(int argc, char *argv[]) {
 	// Execute the partitioning...
 	statuswindow(60, 4, title, _("Partitioning disk..."));
 
-	rc = hw_create_partitions(destination);
+	rc = hw_create_partitions(destination, logfile);
 	if (rc) {
 		errorbox(_("Unable to partition the disk."));
 		goto EXIT;
@@ -556,7 +554,7 @@ int main(int argc, char *argv[]) {
 	// Execute the formatting...
 	statuswindow(60, 4, title, _("Creating filesystems..."));
 
-	rc = hw_create_filesystems(destination);
+	rc = hw_create_filesystems(destination, logfile);
 	if (rc) {
 		errorbox(_("Unable to create filesystems."));
 		goto EXIT;
@@ -575,7 +573,7 @@ int main(int argc, char *argv[]) {
 		"/bin/tar -C /harddisk  -xvf /cdrom/distro.img --lzma 2>/dev/null");
 
 	if (runcommandwithprogress(60, 4, title, commandstring, INST_FILECOUNT,
-			_("Installing the system..."))) {
+			_("Installing the system..."), logfile)) {
 		errorbox(_("Unable to install the system."));
 		goto EXIT;
 	}
@@ -592,7 +590,7 @@ int main(int argc, char *argv[]) {
 
 	/* Build cache lang file */
 	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
-	if (runcommandwithstatus(commandstring, title, _("Installing the language cache..."))) {
+	if (runcommandwithstatus(commandstring, title, _("Installing the language cache..."), logfile)) {
 		errorbox(_("Unable to install the language cache."));
 		goto EXIT;
 	}
@@ -600,7 +598,7 @@ int main(int argc, char *argv[]) {
 	// Installing bootloader...
 	statuswindow(60, 4, title, _("Installing the bootloader..."));
 
-	rc = hw_install_bootloader(destination);
+	rc = hw_install_bootloader(destination, logfile);
 	if (rc) {
 		errorbox(_("Unable to install the bootloader."));
 		goto EXIT;
@@ -627,21 +625,21 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* Set marker that the user has already accepted the gpl */
-	mysystem("/usr/bin/touch /harddisk/var/ipfire/main/gpl_accepted");
+	mysystem(logfile, "/usr/bin/touch /harddisk/var/ipfire/main/gpl_accepted");
 
 	/* Copy restore file from cdrom */
 	if (unattended && (strlen(restore_file) > 0)) {
 		fprintf(flog, "unattended: Copy restore file\n");
 		snprintf(commandstring, STRING_SIZE, 
 			"cp /cdrom/%s /harddisk/var/ipfire/backup", restore_file);
-		mysystem(commandstring);
+		mysystem(logfile, commandstring);
 	}
 
 	// Umount source drive and eject
 	hw_umount(SOURCE_MOUNT_PATH);
 
 	snprintf(commandstring, STRING_SIZE, "/usr/bin/eject %s", sourcedrive);
-	mysystem(commandstring);
+	mysystem(logfile, commandstring);
 
 	if (!unattended) {
 		snprintf(message, sizeof(message), _("%s was successfully installed. "
@@ -656,7 +654,7 @@ int main(int argc, char *argv[]) {
 	allok = 1;
 
 EXIT:
-	fprintf(flog, "Install program ended.\n");	
+	fprintf(flog, "Install program ended.\n");
 
 	if (!(allok))
 		newtWinMessage(title, _("OK"), _("Press Ok to reboot."));
@@ -682,7 +680,7 @@ EXIT:
 		free(destination);
 	}
 
-	hw_stop_all_raid_arrays();
+	hw_stop_all_raid_arrays(logfile);
 
 	if (selected_disks)
 		hw_free_disks(selected_disks);

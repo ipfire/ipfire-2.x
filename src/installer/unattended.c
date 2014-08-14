@@ -20,9 +20,9 @@
  */
 
 #include "install.h"
-extern FILE *flog;
 
-int unattended_setup(struct keyvalue *unattendedkv) {
+int unattended_setup(struct keyvalue *unattendedkv, const char* output) {
+    FILE* flog = fopen(output, "w+");
 
     struct keyvalue *mainsettings = initkeyvalues();
     struct keyvalue *ethernetkv = initkeyvalues();
@@ -132,7 +132,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     fprintf(flog, "unattended: setting root password\n");
     snprintf(commandstring, STRING_SIZE,
 	    "/usr/sbin/chroot /harddisk /bin/sh -c \"echo 'root:%s' | /usr/sbin/chpasswd\"", root_password);
-    if (mysystem(commandstring)) {
+    if (mysystem(NULL, commandstring)) {
 	errorbox("unattended: ERROR setting root password");
 	return 0;
     }
@@ -141,7 +141,7 @@ int unattended_setup(struct keyvalue *unattendedkv) {
     fprintf(flog, "unattended: setting admin password\n");
     snprintf(commandstring, STRING_SIZE,
 	    "/usr/sbin/chroot /harddisk /usr/sbin/htpasswd -c -m -b " CONFIG_ROOT "/auth/users admin '%s'", admin_password);
-    if (mysystem(commandstring)) {
+    if (mysystem(NULL, commandstring)) {
 	errorbox("unattended: ERROR setting admin password");
 	return 0;
     }
@@ -151,11 +151,13 @@ int unattended_setup(struct keyvalue *unattendedkv) {
 		fprintf(flog, "unattended: Restoring Backup\n");
 	    snprintf(commandstring, STRING_SIZE,
 		    "/usr/sbin/chroot /harddisk /bin/tar -xvzp -f /var/ipfire/backup/%s -C /", restore_file);
-	    if (mysystem(commandstring)) {
+	    if (mysystem(NULL, commandstring)) {
 	    	errorbox("unattended: ERROR restoring backup");
 	    }
 	}
 
     fprintf(flog, "unattended: Setup ended\n");
+    fclose(flog);
+
     return 1;
 }
