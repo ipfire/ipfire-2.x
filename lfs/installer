@@ -30,6 +30,8 @@ THISAPP    = installer
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+SLOGAN     = An Open Source Firewall Solution
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################

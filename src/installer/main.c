@@ -274,7 +274,7 @@ int main(int argc, char *argv[]) {
 	char* roottext = center_string(system_release, screen_cols);
 	newtDrawRootText(0, 0, roottext);
 
-	sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
+	snprintf(title, sizeof(title), "%s - %s", NAME, SLOGAN);
 
 	if (! (cmdfile = fopen("/proc/cmdline", "r")))
 	{
@@ -325,7 +325,7 @@ int main(int argc, char *argv[]) {
 
 	if (!unattended) {
 		snprintf(message, sizeof(message),
-			_("Welcome to the %s installation program. "
+			_("Welcome to the %s installation program.\n\n"
 			"Selecting Cancel on any of the following screens will reboot the computer."), NAME);
 		newtWinMessage(title, _("Start installation"), message);
 	}
@@ -373,7 +373,7 @@ int main(int argc, char *argv[]) {
 			fread(discl_msg, 1, 40000, copying);
 			fclose(copying);
 
-			if (newtLicenseBox(title, discl_msg, 75, 20)) {
+			if (newtLicenseBox(_("License Agreement"), discl_msg, 75, 20)) {
 				errorbox(_("License not accepted!"));
 
 				goto EXIT;
@@ -491,7 +491,7 @@ int main(int argc, char *argv[]) {
 	// Warn the user if there is not enough space to create a swap partition
 	if (!unattended && !*destination->part_swap) {
 		rc = newtWinChoice(title, _("OK"), _("Cancel"),
-			_("Your harddisk is very small, but you can continue with an very small swap. (Use with caution)."));
+			_("Your harddisk is very small, but you can continue without a swap partition."));
 
 		if (rc != 1)
 			goto EXIT;
@@ -644,12 +644,12 @@ int main(int argc, char *argv[]) {
 	mysystem(logfile, commandstring);
 
 	if (!unattended) {
-		snprintf(message, sizeof(message), _("%s was successfully installed. "
-			"Please remove any installation mediums from this system. "
-			"Setup will now run where you may configure networking and the system passwords. "
-			"After Setup has been completed, you should point your web browser at https://%s:444 "
-			"(or whatever you name your %s), and configure dialup networking (if required) and "
-			"remote access."), NAME, SNAME, NAME);
+		snprintf(message, sizeof(message), _(
+			"%s was successfully installed!\n\n"
+			"Please remove any installation mediums from this system and hit the reboot button. "
+			"Once the system has restarted you will be asked to setup networking and system passwords. "
+			"After that, you should point your web browser at https://%s:444 (or what ever you name "
+			"your %s) for the web configuration console."), NAME, SNAME, NAME);
 		newtWinMessage(_("Congratulations!"), _("Reboot"), message);
 	}
 
@@ -657,14 +657,11 @@ int main(int argc, char *argv[]) {
 
 EXIT:
 	fprintf(flog, "Install program ended.\n");
+	fflush(flog);
+	fclose(flog);
 
-	if (!(allok))
-		newtWinMessage(title, _("OK"), _("Press Ok to reboot."));
-
-	if (allok) {
-		fflush(flog);
-		fclose(flog);
-	}
+	if (!allok)
+		newtWinMessage(title, _("OK"), _("Setup has failed. Press Ok to reboot."));
 
 	newtFinished();
 
