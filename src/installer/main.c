@@ -209,14 +209,14 @@ static struct lang {
 	const char* code;
 	char* name;
 } languages[NUM_LANGS + 1] = {
-	{ "nl", "Dutch (Nederlands)" },
-	{ "en", "English" },
-	{ "fr", "French (Français)" },
-	{ "de", "German (Deutsch)" },
-	{ "pl", "Polish (Polski)" },
-	{ "ru", "Russian (Русский)" },
-	{ "es", "Spanish (Español)" },
-	{ "tr", "Turkish (Türkçe)" },
+	{ "nl_NL.utf8", "Dutch (Nederlands)" },
+	{ "en_US.utf8", "English" },
+	{ "fr_FR.utf8", "French (Français)" },
+	{ "de_DE.utf8", "German (Deutsch)" },
+	{ "pl_PL.utf8", "Polish (Polski)" },
+	{ "ru_RU.utf8", "Russian (Русский)" },
+	{ "es_ES.utf8", "Spanish (Español)" },
+	{ "tr_TR.utf8", "Turkish (Türkçe)" },
 	{ NULL, NULL },
 };
 
@@ -315,6 +315,8 @@ int main(int argc, char *argv[]) {
 		assert(choice <= NUM_LANGS);
 
 		fprintf(flog, "Selected language: %s (%s)\n", languages[choice].name, languages[choice].code);
+
+		setenv("LANGUAGE", languages[choice].code, 1);
 		setlocale(LC_ALL, languages[choice].code);
 	}
 
