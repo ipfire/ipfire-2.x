@@ -779,6 +779,9 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 }
 
 int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
+	// Write all buffers to disk before umounting
+	hw_sync();
+
 	// boot
 	if (*dest->part_boot) {
 		hw_umount(dest->part_boot);

@@ -637,6 +637,13 @@ int main(int argc, char *argv[]) {
 		mysystem(logfile, commandstring);
 	}
 
+	// Umount the destination drive
+	hw_umount_filesystems(destination, DESTINATION_MOUNT_PATH);
+
+	// Stop the RAID array if we are using RAID
+	if (destination->is_raid)
+		hw_stop_all_raid_arrays(logfile);
+
 	// Umount source drive and eject
 	hw_umount(SOURCE_MOUNT_PATH);
 
@@ -671,13 +678,7 @@ EXIT:
 	free(helpline);
 
 	free(sourcedrive);
-
-	if (destination) {
-		hw_sync();
-
-		hw_umount_filesystems(destination, DESTINATION_MOUNT_PATH);
-		free(destination);
-	}
+	free(destination);
 
 	hw_stop_all_raid_arrays(logfile);
 
