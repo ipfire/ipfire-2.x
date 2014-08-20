@@ -1,6 +1,5 @@
 etc/dracut.conf
 etc/dracut.conf.d
-#etc/dracut.conf.d/dracut.conf
 usr/bin/dracut
 usr/bin/dracut-catimages
 #usr/bin/lsinitrd
