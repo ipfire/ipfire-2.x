@@ -291,6 +291,7 @@ sub buildrules {
 
 			foreach my $src (@sources) {
 				# Skip invalid source.
+				next unless (defined $src);
 				next unless ($src);
 
 				# Sanitize source.
@@ -301,6 +302,7 @@ sub buildrules {
 
 				foreach my $dst (@destinations) {
 					# Skip invalid rules.
+					next unless (defined $dst);
 					next if (!$dst || ($dst eq "none"));
 
 					# Sanitize destination.

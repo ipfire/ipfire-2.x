@@ -283,12 +283,14 @@ END
 &Header::openbox('100%', 'left', 'Firewall Logs');
 print "<p><b>$Lang::tr{'firewall hits'} $longmonthstr $daystr: $lines</b></p>";
 
+my $red_interface = &General::get_red_interface();
 my $linesjc = 0;
 my %tabjc;
 my $gi = Geo::IP::PurePerl->new();
 
 if ($pienumber == -1 || $pienumber > $lines || $sortcolumn == 2) { $pienumber = $lines; };
 $lines = 0;
+
 foreach $_ (@log)
 {
   /^... (..) (..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/;
@@ -296,7 +298,7 @@ foreach $_ (@log)
   $packet =~ /IN=(\w+)/;       my $iface=$1; if ( $1 =~ /2./ ){ $iface="";}
   $packet =~ /SRC=([\d\.]+)/;  my $srcaddr=$1;
 
-  if($iface eq 'red0') {
+  if($iface eq $red_interface) {
     if($srcaddr ne '') {
       my $ccode = $gi->country_code_by_name($srcaddr);
       if( $ccode eq '') {

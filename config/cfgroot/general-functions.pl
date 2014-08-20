@@ -26,6 +26,8 @@ $General::swroot = 'CONFIG_ROOT';
 $General::noipprefix = 'noipg-';
 $General::adminmanualurl = 'http://wiki.ipfire.org';
 
+require "${General::swroot}/network-functions.pl";
+
 #
 # log ("message") use default 'ipcop' tag
 # log ("tag","message") use your tag
@@ -281,21 +283,10 @@ sub validip
 	}
 }
 
-sub validmask
-{
-	my $mask = $_[0];
+sub validmask {
+	my $mask = shift;
 
-	# secord part an ip?
-	if (&validip($mask)) {
-		return 1; }
-	# second part a number?
-	if (/^0/) {
-		return 0; }
-	if (!($mask =~ /^\d+$/)) {
-		return 0; }
-	if ($mask >= 0 && $mask <= 32) {
-		return 1; }
-	return 0;
+	return &Network::check_netmask($mask) or &Network::check_prefix($mask);
 }
 
 sub validipormask
@@ -316,24 +307,12 @@ sub validipormask
 	return &validmask($mask);
 }
 
-sub subtocidr
-{
-	#gets: Subnet in decimal (255.255.255.0) 
-	#Gives: 24 (The cidr of network)
-	my ($byte1, $byte2, $byte3, $byte4) = split(/\./, $_[0].".0.0.0.0"); 
-	my $num = ($byte1 * 16777216) + ($byte2 * 65536) + ($byte3 * 256) + $byte4; 
-	my $bin = unpack("B*", pack("N", $num)); 
-	my $count = ($bin =~ tr/1/1/); 
-	return $count;
+sub subtocidr {
+	return &Network::convert_netmask2prefix(shift);
 }
 
-sub cidrtosub
-{
-	#gets: Cidr of network (20-30 for ccd) 
-	#Konverts 30 to 255.255.255.252 e.g
-	my $cidr=$_[0];
-    my $netmask = &Net::IPv4Addr::ipv4_cidr2msk($cidr);
-    return "$netmask";
+sub cidrtosub {
+	return &Network::convert_prefix2netmask(shift);
 }
   
 sub iporsubtodec
@@ -408,15 +387,8 @@ sub iporsubtocidr
 	return 3;
 }
 
-sub getnetworkip
-{
-	#Gets:  IP, CIDR    (10.10.10.0-255, 24)
-	#Gives:  10.10.10.0
-	my ($ccdip,$ccdsubnet) = @_;
-	my $ip_address_binary = inet_aton( $ccdip );
-	my $netmask_binary    = ~pack("N", (2**(32-$ccdsubnet))-1);
-	my $network_address    = inet_ntoa( $ip_address_binary & $netmask_binary );
-	return $network_address;
+sub getnetworkip {
+	return &Network::get_netaddress(shift);
 }
 
 sub getccdbc
@@ -431,46 +403,20 @@ sub getccdbc
 	return $broadcast_address;
 }
 
-sub ip2dec 
-{
-    my $ip_num;
-    my $ip=$_[0];
-    if ( $ip =~ /(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/ ) {
-        $ip_num = (($1*256**3) + ($2*256**2) + ($3*256) + $4);
-    } else {
-        $ip_num = -1;
-    }
-    $ip_num = (($1*256**3) + ($2*256**2) + ($3*256) + $4);
-    return($ip_num);
+sub ip2dec  {
+	return &Network::ip2bin(shift);
 }
 
-sub dec2ip 
-{
-    my $ip;
-    my $ip_num=$_[0];
-	my $o1=$ip_num%256;
-	$ip_num=int($ip_num/256);
-	my $o2=$ip_num%256;
-	$ip_num=int($ip_num/256);
-	my $o3=$ip_num%256;
-	$ip_num=int($ip_num/256);
-	my $o4=$ip_num%256;
-	$ip="$o4.$o3.$o2.$o1";
-    return ($ip);
+sub dec2ip  {
+	return &Network::bin2ip(shift);
 }
 
-sub getnextip
-{
-	my $decip=&ip2dec($_[0]);
-	$decip=$decip+4;
-	return &dec2ip($decip);
+sub getnextip {
+	return &Network::find_next_ip_address(shift, 4);
 }
 
-sub getlastip
-{
-	my $decip=&ip2dec($_[0]);
-	$decip--;
-	return &dec2ip($decip);
+sub getlastip {
+	return &Network::find_next_ip_address(shift, -1);
 }
 
 sub validipandmask
@@ -598,6 +544,19 @@ sub checksubnets
 	if (($ownnet{'RED_NETADDRESS'} 		ne '' && $ownnet{'RED_NETADDRESS'} 		ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'RED_NETADDRESS'},&iporsubtodec($ownnet{'RED_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err red'};return $errormessage;}
 }
 
+sub check_net_internal{
+	my $network=shift;
+	my ($ip,$cidr)=split(/\//,$network);
+	my %ownnet=();
+	my $errormessage;
+	$cidr=&iporsubtocidr($cidr);
+	#check if we use one of ipfire's networks (green,orange,blue)
+	&readhash("${General::swroot}/ethernet/settings", \%ownnet);
+	if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'GREEN_NETADDRESS'},&iporsubtodec($ownnet{'GREEN_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err green'};return $errormessage;}
+	if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'ORANGE_NETADDRESS'},&iporsubtodec($ownnet{'ORANGE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err orange'};return $errormessage;}
+	if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'BLUE_NETADDRESS'},&iporsubtodec($ownnet{'BLUE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err blue'};return $errormessage;}
+	if (($ownnet{'RED_NETADDRESS'} 		ne '' && $ownnet{'RED_NETADDRESS'} 		ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'RED_NETADDRESS'},&iporsubtodec($ownnet{'RED_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err red'};return $errormessage;}
+}
 
 sub validport
 {
@@ -668,9 +627,8 @@ sub validdomainname
 	my @parts = split (/\./, $domainname);	# Split hostname at the '.'
 
 	foreach $part (@parts) {
-		# Each part should be at least two characters in length
-		# but no more than 63 characters
-		if (length ($part) < 2 || length ($part) > 63) {
+		# Each part should be no more than 63 characters in length
+		if (length ($part) < 1 || length ($part) > 63) {
 			return 0;}
 		# Only valid characters are a-z, A-Z, 0-9 and -
 		if ($part !~ /^[a-zA-Z0-9-]*$/) {
@@ -753,19 +711,12 @@ sub validportrange # used to check a port range
 	}
 }
 
-# Test if IP is within a subnet
-# Call: IpInSubnet (Addr, Subnet, Subnet Mask)
-#       Subnet can be an IP of the subnet: 10.0.0.0 or 10.0.0.1
-#       Everything in dottted notation
-# Return: TRUE/FALSE
-sub IpInSubnet
-{
-    my $ip = unpack('N', &Socket::inet_aton(shift));
-    my $start = unpack('N', &Socket::inet_aton(shift));
-    my $mask  = unpack('N', &Socket::inet_aton(shift));
-       $start &= $mask;  # base of subnet...
-    my $end   = $start + ~$mask;
-    return (($ip >= $start) && ($ip <= $end));
+sub IpInSubnet {
+	my $addr = shift;
+	my $network = shift;
+	my $netmask = shift;
+
+	return &Network::ip_address_in_network($addr, "$network/$netmask");
 }
 
 #
@@ -773,31 +724,24 @@ sub IpInSubnet
 # Call: NextIP ('1.1.1.1');
 # Return: '1.1.1.2'
 #
-sub NextIP
-{
-    return &Socket::inet_ntoa( pack("N", 1 +  unpack('N', &Socket::inet_aton(shift))
-				   )
-			     );
+sub NextIP {
+	return &Network::find_next_ip_address(shift, 1);
 }
-sub NextIP2
-{
-    return &Socket::inet_ntoa( pack("N", 4 +  unpack('N', &Socket::inet_aton(shift))
-				   )
-			     );
+
+sub NextIP2 {
+	return &Network::find_next_ip_address(shift, 4);
 }
-sub ipcidr
-{
+
+sub ipcidr {
 	my ($ip,$cidr) = &Net::IPv4Addr::ipv4_parse(shift);
 	return "$ip\/$cidr";
 }
 
-sub ipcidr2msk
-{
+sub ipcidr2msk {
        my ($ip,$cidr) = &Net::IPv4Addr::ipv4_parse(shift);
        my $netmask = &Net::IPv4Addr::ipv4_cidr2msk($cidr);
        return "$ip\/$netmask";
 }
-
 
 sub validemail {
     my $mail = shift;
@@ -1163,6 +1107,18 @@ sub firewall_needs_reload() {
 
 sub firewall_reload() {
 	system("/usr/local/bin/firewallctrl");
+}
+
+# Function which will return the used interface for the red network zone (red0, ppp0, etc).
+sub get_red_interface() {
+
+	open(IFACE, "${General::swroot}/red/iface") or die "Could not open /var/ipfire/red/iface";
+
+	my $interface = <IFACE>;
+	close(IFACE);
+	chomp $interface;
+
+	return $interface;
 }
 
 1;
