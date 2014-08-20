@@ -401,6 +401,7 @@ buildipfire() {
   ipfiremake bc
   ipfiremake u-boot
   ipfiremake cpio
+  ipfiremake mdadm
   ipfiremake dracut
 
   case "${TARGET_ARCH}" in
@@ -740,7 +741,6 @@ buildipfire() {
   ipfiremake usb_modeswitch
   ipfiremake usb_modeswitch_data
   ipfiremake zerofree
-  ipfiremake mdadm
   ipfiremake pound
   ipfiremake minicom
   ipfiremake ddrescue
