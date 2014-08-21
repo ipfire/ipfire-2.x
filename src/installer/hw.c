@@ -165,7 +165,7 @@ static unsigned long long hw_block_device_get_size(const char* dev) {
 	return size;
 }
 
-struct hw_disk** hw_find_disks(struct hw* hw) {
+struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 	struct hw_disk** ret = hw_create_disks();
 	struct hw_disk** disks = ret;
 
@@ -192,15 +192,15 @@ struct hw_disk** hw_find_disks(struct hw* hw) {
 			continue;
 		}
 
-		// DEVTYPE must be disk (otherwise we will see all sorts of partitions here)
-		const char* devtype = udev_device_get_property_value(dev, "DEVTYPE");
-		if (devtype && (strcmp(devtype, "disk") != 0)) {
+		// Skip sourcedrive if we need to
+		if (sourcedrive && (strcmp(dev_path, sourcedrive) == 0)) {
 			udev_device_unref(dev);
 			continue;
 		}
 
-		// Skip all source mediums
-		if (hw_test_source_medium(dev_path) == 0) {
+		// DEVTYPE must be disk (otherwise we will see all sorts of partitions here)
+		const char* devtype = udev_device_get_property_value(dev, "DEVTYPE");
+		if (devtype && (strcmp(devtype, "disk") != 0)) {
 			udev_device_unref(dev);
 			continue;
 		}

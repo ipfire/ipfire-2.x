@@ -105,7 +105,7 @@ int hw_umount(const char* target);
 
 char* hw_find_source_medium(struct hw* hw);
 
-struct hw_disk** hw_find_disks(struct hw* hw);
+struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive);
 void hw_free_disks(struct hw_disk** disks);
 unsigned int hw_count_disks(struct hw_disk** disks);
 struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection);

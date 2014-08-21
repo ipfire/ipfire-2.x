@@ -384,7 +384,7 @@ int main(int argc, char *argv[]) {
 	int part_type = HW_PART_TYPE_NORMAL;
 
 	// Scan for disks to install on.
-	struct hw_disk** disks = hw_find_disks(hw);
+	struct hw_disk** disks = hw_find_disks(hw, sourcedrive);
 
 	struct hw_disk** selected_disks = NULL;
 	unsigned int num_selected_disks = 0;
