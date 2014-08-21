@@ -451,7 +451,7 @@ int main(int argc, char *argv[]) {
 		} else if (num_selected_disks == 2) {
 			snprintf(message, sizeof(message),
 				_("The installation program will now set up a RAID configuration on the selected harddisks:\n\n  %s\n  %s\n\n"
-				"Do you agree to continue?"), (*selected_disks)->description, (*selected_disks + 1)->description);
+				"Do you agree to continue?"), selected_disks[0]->description, selected_disks[1]->description);
 			rc = newtWinOkCancel(_("RAID Setup"), message, 50, 14,
 				_("Delete all data"), _("Cancel"));
 
