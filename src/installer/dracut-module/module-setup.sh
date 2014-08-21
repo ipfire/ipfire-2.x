@@ -44,7 +44,7 @@ install() {
     inst "$moddir/70-dhcpcd.exe" "/var/ipfire/dhcpc/dhcpcd-hooks/70-dhcpcd.exe"
 
     # Misc. tools
-    inst_multiple eject ping wget
+    inst_multiple eject ping touch wget
     inst_multiple -o fdisk cfdisk df ps top
 
     # Hardware IDs
