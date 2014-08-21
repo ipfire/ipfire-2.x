@@ -307,7 +307,7 @@ struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection) {
 	unsigned int num_disks = hw_count_disks(disks);
 
 	for (unsigned int i = 0; i < num_disks; i++) {
-		if (selection && selection[i]) {
+		if (!selection || selection[i]) {
 			struct hw_disk *selected_disk = disks[i];
 			selected_disk->ref++;
 
