@@ -84,7 +84,7 @@ int getpassword(char *password, char *text)
 	do
 	{
 		done = 1;
-		sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
+		sprintf (title, "%s - %s", NAME, SLOGAN);
 		rc = newtWinEntries(title, text,
 			65, 5, 5, 50, entries, _("OK"), _("Cancel"), NULL);
 

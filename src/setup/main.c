@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 		title[strlen(title) - 1] = '\0';
 	    fclose (f_title);
 	} else {
-	    sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
+	    sprintf (title, "%s - %s", NAME, SLOGAN);
 	}
 	newtDrawRootText(14, 0, title);
 	newtPushHelpLine(_("              <Tab>/<Alt-Tab> between elements   |  <Space> selects"));		
@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 EXIT:
 	if (automode != 0)
 	{
-		sprintf (title, "%s %s - %s", NAME, VERSION, SLOGAN);
+		sprintf (title, "%s - %s", NAME, SLOGAN);
 		if (autook)
 			newtWinMessage(title, _("OK"), _("Setup is complete."));
 		else {
