@@ -180,7 +180,6 @@ $(TARGET) :
 	ln -sf ../init.d/wlanclient  /etc/rc.d/rc6.d/K82wlanclient
 
 	ln -sf ../../dnsmasq /etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq
-	ln -sf ../../firewall /etc/rc.d/init.d/networking/red.up/20-RL-firewall
 	ln -sf ../../../../../usr/local/bin/snortctrl \
 		/etc/rc.d/init.d/networking/red.up/23-RS-snort
 	ln -sf ../../../../../usr/local/bin/qosctrl \
