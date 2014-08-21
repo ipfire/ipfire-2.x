@@ -3,45 +3,43 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Michael Tremer <michael.tremer@ipfire.org>, 2014
-# Stefan Schantl <stefan.schantl@ipfire.org>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:09+0000\n"
-"PO-Revision-Date: 2014-08-21 16:04+0000\n"
-"Last-Translator: Stefan Schantl <stefan.schantl@ipfire.org>\n"
-"Language-Team: German (http://www.transifex.com/projects/p/ipfire/language/de/)\n"
+"PO-Revision-Date: 2014-08-21 15:11+0000\n"
+"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"Language-Team: Turkmen (http://www.transifex.com/projects/p/ipfire/language/tk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
+"Language: tk\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: main.c:77 main.c:148 main.c:313 main.c:339 main.c:493 main.c:524 main.c:682
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: main.c:78 main.c:446 main.c:456 main.c:493 main.c:524
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr ""
 
 #: main.c:145
 msgid "I accept this license"
-msgstr "Ich akzeptiere die Lizenz"
+msgstr ""
 
 #: main.c:312
 msgid "Language selection"
-msgstr "Sprachauswahl"
+msgstr ""
 
 #: main.c:312
 msgid "Select the language you wish to use for the installation."
-msgstr "Wählen Sie die gewünschte Sprache für den Installationsprozess aus."
+msgstr ""
 
 #: main.c:323
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
-msgstr "<Tab>/<Alt-Tab> um zu wechseln | <Leertaste> wählt aus | <F12> nächster Bildschirm"
+msgstr ""
 
 #: main.c:328
 #, c-format
@@ -49,53 +47,53 @@ msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr "Willkommen zum %s Installationsprogramm.\n\nWenn Sie auf irgendeiner der folgenden Seiten 'Abbrechen' auswählen, wird der Computer neu gestartet."
+msgstr ""
 
 #: main.c:330
 msgid "Start installation"
-msgstr "Installation beginnen"
+msgstr ""
 
 #: main.c:339
 msgid "No local source media found. Starting download."
-msgstr "Kein lokales Quellmedium gefunden. Starte Download."
+msgstr ""
 
 #: main.c:340
 msgid "Downloading installation image ..."
-msgstr "Lade Installationsimage herunter..."
+msgstr ""
 
 #: main.c:342
 msgid "Download error"
-msgstr "Fehler beim Download"
+msgstr ""
 
 #: main.c:376
 msgid "License Agreement"
-msgstr "Lizenzvereinbarung"
+msgstr ""
 
 #: main.c:377
 msgid "License not accepted!"
-msgstr "Lizenz nicht akzeptiert!"
+msgstr ""
 
 #: main.c:399
 msgid "No hard disk found."
-msgstr "Es wurde keine Festplatte gefunden."
+msgstr ""
 
 #: main.c:418
 msgid "Disk Selection"
-msgstr "Festplattenauswahl"
+msgstr ""
 
 #: main.c:419
 msgid ""
 "Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
-msgstr "Wählen Sie die Festplatte(n) auf denen IPFire installiert werden soll. Diese wird/werden zuerst partitioniert und danach mit einem Dateisystem ausgestattet.\n\nSÄMTLICHE DATEN AUF DER FESTPLATTE GEHEN VERLOREN."
+msgstr ""
 
 #: main.c:430
 msgid ""
 "No disk has been selected.\n"
 "\n"
 "Please select one or more disks you want to install IPFire on."
-msgstr "Keine Festplatte ausgewählt.\n\nBitte wählen Sie eine oder mehrere Festplatten auf denen IPFire installiert werden soll aus."
+msgstr ""
 
 #: main.c:443
 #, c-format
@@ -105,15 +103,15 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "Das Installationsprogramm wird die folgende  Festplatte nun vorbereiten:\n\n%s\n\nMöchten Sie damit fortfahren?"
+msgstr ""
 
 #: main.c:445
 msgid "Disk Setup"
-msgstr "Disk-Setup"
+msgstr ""
 
 #: main.c:446 main.c:456
 msgid "Delete all data"
-msgstr "Alle Daten löschen"
+msgstr ""
 
 #: main.c:453
 #, c-format
@@ -124,104 +122,104 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "Das Installationsprogramm wird nun einen RAID Verbund auf den folgenden Festplatten erstellen:\n\n%s\n%s\n\nMöchten Sie damit fortfahren?"
+msgstr ""
 
 #: main.c:455
 msgid "RAID Setup"
-msgstr "RAID-Setup"
+msgstr ""
 
 #: main.c:466
 msgid "You disk configuration is currently not supported."
-msgstr "Die gewählte Festplattenkonstellation wird momentan nicht unterstützt."
+msgstr ""
 
 #: main.c:480
 msgid "Your harddisk is too small."
-msgstr "Ihre Festplatte ist zu klein."
+msgstr ""
 
 #: main.c:494
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
-msgstr "Die gewählte Festplatte ist sehr klein, die Installation kann aber ohne Swap Partition fortgesetzt werden."
+msgstr ""
 
 #: main.c:506
 msgid "ext4 Filesystem"
-msgstr "ext4-Dateisystem"
+msgstr ""
 
 #: main.c:507
 msgid "ext4 Filesystem without journal"
-msgstr "ext4-Dateisystem ohne Journal"
+msgstr ""
 
 #: main.c:508
 msgid "XFS Filesystem"
-msgstr "XFS-Dateisystem"
+msgstr ""
 
 #: main.c:509
 msgid "ReiserFS Filesystem"
-msgstr "ReiserFS-Dateisystem"
+msgstr ""
 
 #: main.c:523
 msgid "Filesystem Selection"
-msgstr "Dateisystemauswahl"
+msgstr ""
 
 #: main.c:523
 msgid "Please choose your filesystem:"
-msgstr "Bitte wählen Sie ein Dateisystem:"
+msgstr ""
 
 #: main.c:534
 msgid "Building RAID..."
-msgstr "Erstelle RAID..."
+msgstr ""
 
 #: main.c:538
 msgid "Unable to build the RAID."
-msgstr "Das RAID konnte nicht erstellt werden."
+msgstr ""
 
 #: main.c:550
 msgid "Partitioning disk..."
-msgstr "Partitioniere die Festplatte..."
+msgstr ""
 
 #: main.c:554
 msgid "Unable to partition the disk."
-msgstr "Die Festplatte konnte nicht partitioniert werden."
+msgstr ""
 
 #: main.c:561
 msgid "Creating filesystems..."
-msgstr "Erstelle Dateisysteme..."
+msgstr ""
 
 #: main.c:565
 msgid "Unable to create filesystems."
-msgstr "Die Dateisysteme konnten nicht erstellt werden."
+msgstr ""
 
 #: main.c:571
 msgid "Unable to mount filesystems."
-msgstr "Die Dateisysteme konnten nicht eingehangen werden."
+msgstr ""
 
 #: main.c:582
 msgid "Installing the system..."
-msgstr "Installiere das System..."
+msgstr ""
 
 #: main.c:583
 msgid "Unable to install the system."
-msgstr "Das System konnte nicht installiert werden."
+msgstr ""
 
 #: main.c:599
 msgid "Installing the language cache..."
-msgstr "Installiere den Sprachdateicache..."
+msgstr ""
 
 #: main.c:600
 msgid "Unable to install the language cache."
-msgstr "Der Sprachdateicache konnte nicht erstellt werden."
+msgstr ""
 
 #: main.c:605
 msgid "Installing the bootloader..."
-msgstr "Installiere den Bootloader..."
+msgstr ""
 
 #: main.c:612
 msgid "Unable to open /etc/default/grub for writing."
-msgstr "/etc/default/grub konnte nicht geschrieben werden."
+msgstr ""
 
 #: main.c:634
 msgid "Unable to install the bootloader."
-msgstr "Der Bootloader konnte nicht installiert werden."
+msgstr ""
 
 #: main.c:666
 #, c-format
@@ -229,16 +227,16 @@ msgid ""
 "%s was successfully installed!\n"
 "\n"
 "Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr "%s wurde erfolgreich installiert.\n\nEntfernen Sie bitte alle Installionsmedian aus dem Computer und drücken Sie den \"Neustarten\" Knopf . \n\nNach dem erfolgten Neustart wird das Setup-Programm gestartet, in dem Sie Netzwerkkarten und die Systempasswörter konfigurieren können. Sobald dies fertiggestellt ist, können Sie in Ihrem Webbrowser die Weboberfläche mit https://%s:444 (oder welchen Namen Sie Ihrem %s auch immer gegeben haben) erreichen."
+msgstr ""
 
 #: main.c:671
 msgid "Congratulations!"
-msgstr "Herzlichen Glückwunsch!"
+msgstr ""
 
 #: main.c:671
 msgid "Reboot"
-msgstr "Neustarten"
+msgstr ""
 
 #: main.c:682
 msgid "Setup has failed. Press Ok to reboot."
-msgstr "Installation fehlgeschlagen. Drücken Sie \"OK\" für einen Neustart des Systems."
+msgstr ""

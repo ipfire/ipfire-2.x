@@ -3,49 +3,47 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Michael Tremer <michael.tremer@ipfire.org>, 2014
-# Stefan Schantl <stefan.schantl@ipfire.org>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-08-21 18:01+0000\n"
-"Last-Translator: Stefan Schantl <stefan.schantl@ipfire.org>\n"
-"Language-Team: German (http://www.transifex.com/projects/p/ipfire/language/de/)\n"
+"PO-Revision-Date: 2014-08-21 15:13+0000\n"
+"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"Language-Team: Arabic (http://www.transifex.com/projects/p/ipfire/language/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #: dhcp.c:50
 msgid "Start address:"
-msgstr "Startadresse:"
+msgstr ""
 
 #: dhcp.c:51
 msgid "End address:"
-msgstr "Endadresse:"
+msgstr ""
 
 #: dhcp.c:52 networking.c:717
 msgid "Primary DNS:"
-msgstr "Primärer DNS:"
+msgstr ""
 
 #: dhcp.c:53 networking.c:723
 msgid "Secondary DNS:"
-msgstr "Sekundärer DNS:"
+msgstr ""
 
 #: dhcp.c:54
 msgid "Default lease (mins):"
-msgstr "Vorgegebene Gültigkeitsdauer (min):"
+msgstr ""
 
 #: dhcp.c:55
 msgid "Max lease (mins):"
-msgstr "Maximale Gültigkeitsdauer (min):"
+msgstr ""
 
 #: dhcp.c:56
 msgid "Domain name suffix:"
-msgstr "Domänenname:"
+msgstr ""
 
 #: dhcp.c:86 dhcp.c:93 dhcp.c:101 domainname.c:34 hostname.c:37 keymap.c:70
 #: misc.c:40 misc.c:52 netstuff.c:377 netstuff.c:566 netstuff.c:704
@@ -53,19 +51,19 @@ msgstr "Domänenname:"
 #: networking.c:442 networking.c:552 networking.c:603 networking.c:610
 #: networking.c:713 timezone.c:63
 msgid "Unable to open settings file"
-msgstr "Settings-Datei konnte nicht geöffnet werden"
+msgstr ""
 
 #: dhcp.c:111
 msgid "DHCP server configuration"
-msgstr "DHCP-Serverkonfiguration"
+msgstr ""
 
 #: dhcp.c:116
 msgid "Configure the DHCP server by entering the settings information."
-msgstr "Konfigurieren Sie den DHCP-Server durch Eingabe der Einstellungen:"
+msgstr ""
 
 #: dhcp.c:125
 msgid "Enabled"
-msgstr "Aktiviert"
+msgstr ""
 
 #: dhcp.c:142 domainname.c:43 hostname.c:47 keymap.c:86 main.c:99 main.c:172
 #: main.c:174 netstuff.c:157 netstuff.c:733 netstuff.c:756 networking.c:163
@@ -73,367 +71,367 @@ msgstr "Aktiviert"
 #: networking.c:642 networking.c:653 networking.c:746 passwords.c:89
 #: timezone.c:78
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: dhcp.c:143 domainname.c:43 hostname.c:47 keymap.c:86 netstuff.c:158
 #: netstuff.c:673 netstuff.c:733 netstuff.c:756 networking.c:305
 #: networking.c:410 networking.c:560 networking.c:653 networking.c:746
 #: passwords.c:89 timezone.c:78
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr ""
 
 #: dhcp.c:156
 msgid ""
 "The following fields are invalid:\n"
 "\n"
-msgstr "Die folgenden Eingaben sind ungültig:\n\n"
+msgstr ""
 
 #: dhcp.c:159
 msgid "Start address"
-msgstr "Startadresse"
+msgstr ""
 
 #: dhcp.c:165
 msgid "End address"
-msgstr "Endadresse"
+msgstr ""
 
 #: dhcp.c:173 networking.c:755
 msgid "Primary DNS"
-msgstr "Primärer DNS"
+msgstr ""
 
 #: dhcp.c:182 networking.c:764
 msgid "Secondary DNS"
-msgstr "Sekundärer DNS"
+msgstr ""
 
 #: dhcp.c:189
 msgid "Default lease time"
-msgstr "Vorgegebene Gültigkeitsdauer"
+msgstr ""
 
 #: dhcp.c:195
 msgid "Max. lease time"
-msgstr "Maximale Gültigkeitsdauer"
+msgstr ""
 
 #: domainname.c:42 main.c:70
 msgid "Domain name"
-msgstr "Domänenname"
+msgstr ""
 
 #: domainname.c:42
 msgid "Enter Domain name"
-msgstr "Bitte geben Sie den Domänennamen ein"
+msgstr ""
 
 #: domainname.c:48
 msgid "Domain name cannot be empty."
-msgstr "Der Domänenname darf nicht leer sein."
+msgstr ""
 
 #: domainname.c:50
 msgid "Domain name cannot contain spaces."
-msgstr "Der Domänenname darf keine Leerzeichen enthalten."
+msgstr ""
 
 #: domainname.c:53
 msgid "Domain name may only contain letters, numbers, hyphens and periods."
-msgstr "Der Domänenname darf nur Buchstaben, Ziffern, Bindestriche oder Punkte enthalten."
+msgstr ""
 
 #: hostname.c:46 main.c:69
 msgid "Hostname"
-msgstr "Hostname"
+msgstr ""
 
 #: hostname.c:46
 msgid "Enter the machine's hostname."
-msgstr "Bitte geben Sie den Hostname der Maschine ein."
+msgstr ""
 
 #: hostname.c:53
 msgid "Hostname cannot be empty."
-msgstr "Der Hostname darf nicht leer sein."
+msgstr ""
 
 #: hostname.c:55
 msgid "Hostname cannot contain spaces."
-msgstr "Der Hostname darf keine Leerzeichen enthalten."
+msgstr ""
 
 #: hostname.c:58
 msgid "Hostname may only contain letters, numbers and hyphens."
-msgstr "Der Hostname darf nur Buchstaben, Ziffern oder Bindestriche enthalten."
+msgstr ""
 
 #: keymap.c:84 main.c:67
 msgid "Keyboard mapping"
-msgstr "Tastaturbelegung"
+msgstr ""
 
 #: keymap.c:85
 msgid "Choose the type of keyboard you are using from the list below."
-msgstr "Wählen Sie aus dieser Liste den Tastatur-Typ aus, den Sie benutzen."
+msgstr ""
 
 #: main.c:68 timezone.c:77
 msgid "Timezone"
-msgstr "Zeitzone"
+msgstr ""
 
 #: main.c:71 networking.c:110 networking.c:115 networking.c:447
 msgid "Networking"
-msgstr "Netzwerk"
+msgstr ""
 
 #: main.c:72 misc.c:147
 msgid "ISDN"
-msgstr "ISDN"
+msgstr ""
 
 #: main.c:73
 msgid "'root' password"
-msgstr "'root'-Passwort"
+msgstr ""
 
 #: main.c:74
 msgid "'admin' password"
-msgstr "'admin'-Passwort"
+msgstr ""
 
 #: main.c:90
 msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
-msgstr "<Tab>/<Alt-Tab> wechselt die Auswahl | <Space> wählt aus"
+msgstr ""
 
 #: main.c:97
 msgid "Section menu"
-msgstr "Hauptmenü"
+msgstr ""
 
 #: main.c:98
 msgid "Select the item you wish to configure."
-msgstr "Wählen Sie den Bereich aus, den Sie konfigurieren möchten."
+msgstr ""
 
 #: main.c:99
 msgid "Quit"
-msgstr "Beenden"
+msgstr ""
 
 #: main.c:172
 msgid "Setup is complete."
-msgstr "Das Setup ist jetzt fertiggestellt."
+msgstr ""
 
 #: main.c:174 netstuff.c:733 networking.c:560 networking.c:653
 msgid "Warning"
-msgstr "Warnung"
+msgstr ""
 
 #: main.c:175
 msgid ""
 "Initial setup was not entirely complete. You must ensure that Setup is "
 "properly finished by running setup again at the shell."
-msgstr "Das erste Setup wurde nicht vollständig durchgeführt. Sie müssen Setup vollständig beenden; dies können Sie durch Ausführen von Setup in der Shell nachholen."
+msgstr ""
 
 #: misc.c:62
 #, c-format
 msgid "Unable to write %s/main/hostname.conf"
-msgstr "Schreiben von %s/main/hostname.conf fehlgeschlagen."
+msgstr ""
 
 #: misc.c:71
 msgid "Unable to open main hosts file."
-msgstr "Öffnen der primären hosts-Datei fehlgeschlagen."
+msgstr ""
 
 #: misc.c:76
 msgid "Unable to write /etc/hosts."
-msgstr "Schreiben von /etc/hosts fehlgeschlagen."
+msgstr ""
 
 #: misc.c:117
 msgid "Unable to write /etc/hosts.deny."
-msgstr "Schreiben von /etc/hosts.deny fehlgeschlagen."
+msgstr ""
 
 #: misc.c:125
 msgid "Unable to write /etc/hosts.allow."
-msgstr "Schreiben von /etc/hosts.allow fehlgeschlagen."
+msgstr ""
 
 #: misc.c:136
 msgid "Unable to set hostname."
-msgstr "Kann Hostnamen nicht setzen."
+msgstr ""
 
 #: misc.c:147
 msgid "Scanning and configuring ISDN devices."
-msgstr "Suche und konfiguriere ISDN Geräte."
+msgstr ""
 
 #: misc.c:148
 msgid "Unable to scan for ISDN devices."
-msgstr "Konnte ISDN Scan nicht durchführen."
+msgstr ""
 
 #: netstuff.c:86
 #, c-format
 msgid "Interface - %s"
-msgstr "Interface - %s"
+msgstr ""
 
 #: netstuff.c:91
 #, c-format
 msgid "Enter the IP address information for the %s interface."
-msgstr "Geben Sie die IP-Adressinformationen für die folgende Schnittstelle ein - %s."
+msgstr ""
 
 #: netstuff.c:103
 msgid "Static"
-msgstr "Statisch"
+msgstr ""
 
 #: netstuff.c:104
 msgid "DHCP"
-msgstr "DHCP"
+msgstr ""
 
 #: netstuff.c:105
 msgid "PPP DIALUP (PPPoE, modem, ATM ...)"
-msgstr "PPP-Einwahl (PPPoE, Modem, ATM...)"
+msgstr ""
 
 #: netstuff.c:113
 msgid "DHCP Hostname:"
-msgstr "DHCP-Hostname:"
+msgstr ""
 
 #: netstuff.c:115
 msgid "Force DHCP MTU:"
-msgstr "DHCP MTU erzwingen:"
+msgstr ""
 
 #: netstuff.c:134
 msgid "IP address:"
-msgstr "IP-Adresse:"
+msgstr ""
 
 #: netstuff.c:146
 msgid "Network mask:"
-msgstr "Netzmaske:"
+msgstr ""
 
 #: netstuff.c:173 networking.c:749
 msgid "The following fields are invalid:"
-msgstr "Die folgenden Felder sind ungültig:"
+msgstr ""
 
 #: netstuff.c:183
 msgid "IP address"
-msgstr "IP-Adresse"
+msgstr ""
 
 #: netstuff.c:189
 msgid "Network mask"
-msgstr "Netzmaske"
+msgstr ""
 
 #: netstuff.c:198
 msgid "DHCP hostname"
-msgstr "DHCP-Hostname"
+msgstr ""
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
-msgstr "Entfernen"
+msgstr ""
 
 #: netstuff.c:669
 #, c-format
 msgid "Please choose a networkcard for the following interface - %s."
-msgstr "Bitte wählen Sie eine Netzwerkkarte für das folgende Interface aus - %s."
+msgstr ""
 
 #: netstuff.c:672
 msgid "Extended Network Menu"
-msgstr "Erweitertes Netzwerkmenü"
+msgstr ""
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
-msgstr "Auswählen"
+msgstr ""
 
 #: netstuff.c:673
 msgid "Identify"
-msgstr "Identifizieren"
+msgstr ""
 
 #: netstuff.c:678
 msgid "Device Identification"
-msgstr "Device-Identifizierung"
+msgstr ""
 
 #: netstuff.c:678
 msgid "The lights on the selected port should flash now for 10 seconds..."
-msgstr "Der ausgewählte Port sollte nun für 10 Sekunden blinken..."
+msgstr ""
 
 #: netstuff.c:679
 msgid "Identification is not supported by this interface."
-msgstr "Dieser Netzwerkport unterstützt die Identifikation leider nicht."
+msgstr ""
 
 #: netstuff.c:691
 msgid "There are no unassigned interfaces on your system."
-msgstr "Keine noch nicht zugewiesenen Schnittstellen auf dem System vorhanden."
+msgstr ""
 
 #: netstuff.c:732
 #, c-format
 msgid "Do you really want to remove the assigned %s interface?"
-msgstr "Möchten Sie die ausgewählte Schnittstelle %s wirklich entfernen?"
+msgstr ""
 
 #: netstuff.c:755
 msgid "Select network driver"
-msgstr "Kann die Netzwerkkarte nicht automatisch erkennen. Geben Sie den Modulnamen und eventuelle Parameter für die Netzwerkkarte an."
+msgstr ""
 
 #: netstuff.c:755
 msgid "Set additional module parameters"
-msgstr "Optionale Modulparameter"
+msgstr ""
 
 #: netstuff.c:762
 msgid "Loading module..."
-msgstr "Lade Module..."
+msgstr ""
 
 #: netstuff.c:777
 msgid "Unable to load driver module."
-msgstr "Das Laden des Treibermoduls schlug fehl."
+msgstr ""
 
 #: netstuff.c:780
 msgid "Module name cannot be blank."
-msgstr "Der Modulname darf nicht leer sein."
+msgstr ""
 
 #: networking.c:110
 msgid "Stopping network..."
-msgstr "Stoppe Netzwerk..."
+msgstr ""
 
 #: networking.c:115
 msgid "Restarting network..."
-msgstr "Starte Netzwerk neu..."
+msgstr ""
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
-msgstr "Keine GRÜNE Schnittstelle zugewiesen."
+msgstr ""
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
-msgstr "Fehlende IP auf der grünen Schnittstelle!"
+msgstr ""
 
 #: networking.c:163
 msgid "Error"
-msgstr "Error"
+msgstr ""
 
 #: networking.c:163
 msgid "Ignore"
-msgstr "Ignorieren"
+msgstr ""
 
 #: networking.c:164
 msgid "No RED interface assigned."
-msgstr "Keine rote Schnittstelle zugewiesen."
+msgstr ""
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
-msgstr "Fehlende IP auf der roten Schnittstelle!"
+msgstr ""
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
-msgstr "Keine orange Schnittstelle zugewiesen."
+msgstr ""
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
-msgstr "Fehlende IP auf der orangen Schnittstelle!"
+msgstr ""
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
-msgstr "Keine blaue Schnittstelle zugewiesen."
+msgstr ""
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
-msgstr "Fehlende IP auf der blauen Schnittstelle!"
+msgstr ""
 
 #: networking.c:217
 msgid "Misssing DNS."
-msgstr "Fehlende DNS Information."
+msgstr ""
 
 #: networking.c:224
 msgid "Missing Default Gateway."
-msgstr "Fehlender Standardgateway."
+msgstr ""
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
-msgstr "Typ der Netzwerkkonfiguration"
+msgstr ""
 
 #: networking.c:238 networking.c:409
 msgid "Drivers and card assignments"
-msgstr "Netzwerkkartenzuordnungen"
+msgstr ""
 
 #: networking.c:239 networking.c:640
 msgid "Address settings"
-msgstr "Adresseinstellungen"
+msgstr ""
 
 #: networking.c:240 networking.c:743
 msgid "DNS and Gateway settings"
-msgstr "DNS- und Gatewayeinstellungen"
+msgstr ""
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
-msgstr "Nach Abschluss der Konfiguration muss das Netzwerk neu gestartet werden."
+msgstr ""
 
 #: networking.c:267
 #, c-format
@@ -441,15 +439,15 @@ msgid ""
 "Current config: %s\n"
 "\n"
 "%s"
-msgstr "Aktuelle Konfiguration: %s\n\n%s"
+msgstr ""
 
 #: networking.c:268
 msgid "Network configuration menu"
-msgstr "Netzwerkkonfigurationsmenü"
+msgstr ""
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
-msgstr "Fertig"
+msgstr ""
 
 #: networking.c:300
 #, c-format
@@ -458,7 +456,7 @@ msgid ""
 "list those interfaces which have ethernet attached. If you change this "
 "setting, a network restart will be required, and you will have to "
 "reconfigure the network driver assignments."
-msgstr "Wählen Sie die Netzwerkkonfiguration für %s aus. Die folgenden Konfigurationstypen listen diejenigen Schnittstellen auf, die am Ethernet angeschlossen sind. Wenn Sie diese Einstellung ändern, muss das Netzwerk neu gestartet werden und Sie müssen die Netzwerktreiber neu zuweisen."
+msgstr ""
 
 #: networking.c:307
 #, c-format
@@ -466,35 +464,35 @@ msgid ""
 "Not enough netcards for your choice.\n"
 "\n"
 "Needed: %d - Available: %d\n"
-msgstr "Nicht genügend Schnittstellen für Ihre Auswahl vorhanden.\n\nBenötigt: %d - Vorhanden: %d\n"
+msgstr ""
 
 #: networking.c:359
 msgid ""
 "Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
 "\n"
-msgstr "Konfigurieren Sie die Netzwerktreiber und geben Sie an, welcher Schnittstelle jede Karte zugewiesen ist. Die aktuelle Konfiguration ist wie folgt:\n\n"
+msgstr ""
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
-msgstr "Möchten Sie diese Einstellungen ändern?"
+msgstr ""
 
 #: networking.c:447
 msgid "Restarting non-local network..."
-msgstr "Starte Nicht-Lokale Netzwerke neu..."
+msgstr ""
 
 #: networking.c:464
 msgid ""
 "Please choose the interface you wish to change.\n"
 "\n"
-msgstr "Wählen Sie die Schnittstelle aus, die Sie konfigurieren möchten.\n\n"
+msgstr ""
 
 #: networking.c:519
 msgid "Assigned Cards"
-msgstr "Zugewiesene Netzwerkkarten"
+msgstr ""
 
 #: networking.c:520
 msgid "Remove"
-msgstr "Entfernen"
+msgstr ""
 
 #: networking.c:556 networking.c:649
 #, c-format
@@ -503,84 +501,84 @@ msgid ""
 "connection to the %s machine will be broken, and you will have to reconnect "
 "on the new IP. This is a risky operation, and should only be attempted if "
 "you have physical access to the machine, should something go wrong."
-msgstr "Wenn Sie diese IP-Adresse ändern, während Sie über den Fernwartungszugang zugreifen, wird die Verbindung zum %s-Rechner abbrechen. Sie müssen dann eine Verbindung zur neuen IP-Adresse aufbauen. Dies ist ein riskanter Vorgang, der nur versucht werden sollte, wenn Sie physikalischen Zugriff auf den Rechner haben, für den Fall, dass etwas schief geht."
+msgstr ""
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
-msgstr "Wählen Sie die Schnittstelle aus, die Sie neu konfigurieren möchten."
+msgstr ""
 
 #: networking.c:729
 msgid "Default gateway:"
-msgstr "Standard-Gateway:"
+msgstr ""
 
 #: networking.c:744
 msgid ""
 "Enter the DNS and gateway information. These settings are used only with "
 "Static IP (and DHCP if DNS set) on the RED interface."
-msgstr "Geben Sie die DNS- und Gateway-Informationen ein. Diese Einstellungen werden nur bei einer statischen IP an der ROTEN Schnittstelle benutzt (und DHCP, falls DNS eingetragen wurde)."
+msgstr ""
 
 #: networking.c:773
 msgid "Default gateway"
-msgstr "Standard-Gateway"
+msgstr ""
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
-msgstr "Sekundären DNS angegeben ohne primären DNS"
+msgstr ""
 
 #: passwords.c:33
 msgid ""
 "Enter the 'root' user password. Login as this user for commandline access."
-msgstr "Geben Sie das Passwort für den Benutzer 'root' ein. Melden Sie sich als dieser Benutzer an, um Zugriff auf die Befehlszeile zu erhalten."
+msgstr ""
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
-msgstr "Setze das Passwort"
+msgstr ""
 
 #: passwords.c:38
 msgid "Setting 'root' password...."
-msgstr "Setze 'root'-Passwort...."
+msgstr ""
 
 #: passwords.c:39
 msgid "Problem setting 'root' password."
-msgstr "Setzen des 'root'-Passworts fehlgeschlagen."
+msgstr ""
 
 #: passwords.c:53
 #, c-format
 msgid ""
 "Enter %s 'admin' user password. This is the user to use for logging into the"
 " %s web administration pages."
-msgstr "Geben Sie das Passwort für den %s-Administrator 'admin' ein. Das ist der Benutzer, mit dem Sie sich an den %s-Webadministrationsseiten anmelden."
+msgstr ""
 
 #: passwords.c:60
 #, c-format
 msgid "Setting %s 'admin' user password..."
-msgstr "Setze %s 'admin'-Passwort...."
+msgstr ""
 
 #: passwords.c:62
 #, c-format
 msgid "Problem setting %s 'admin' user password."
-msgstr "Setzen des %s 'admin'-Passworts fehlgeschlagen."
+msgstr ""
 
 #: passwords.c:76
 msgid "Password:"
-msgstr "Passwort:"
+msgstr ""
 
 #: passwords.c:77
 msgid "Again:"
-msgstr "Wiederholung:"
+msgstr ""
 
 #: passwords.c:95
 msgid "Password cannot be blank."
-msgstr "Das Passwort darf nicht leer sein."
+msgstr ""
 
 #: passwords.c:102
 msgid "Passwords do not match."
-msgstr "Die Passwörter stimmen nicht überein."
+msgstr ""
 
 #: passwords.c:109
 msgid "Password cannot contain spaces."
-msgstr "Das Passwort darf keine Leerzeichen enthalten."
+msgstr ""
 
 #: timezone.c:77
 msgid "Choose the timezone you are in from the list below."
-msgstr "Bitte wählen Sie die Zeitzone in der Sie sich befinden aus dem untenstehenden Menü aus."
+msgstr ""
