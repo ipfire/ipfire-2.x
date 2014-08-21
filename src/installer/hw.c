@@ -822,7 +822,7 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 	return 0;
 }
 
-static int hw_destroy_raid_superblocks(const struct hw_destination* dest, const char* output) {
+int hw_destroy_raid_superblocks(const struct hw_destination* dest, const char* output) {
 	char cmd[STRING_SIZE];
 
 	hw_stop_all_raid_arrays(output);

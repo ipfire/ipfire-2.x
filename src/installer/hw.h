@@ -120,6 +120,7 @@ int hw_create_filesystems(struct hw_destination* dest, const char* output);
 int hw_mount_filesystems(struct hw_destination* dest, const char* prefix);
 int hw_umount_filesystems(struct hw_destination* dest, const char* prefix);
 
+int hw_destroy_raid_superblocks(const struct hw_destination* dest, const char* output);
 int hw_setup_raid(struct hw_destination* dest, const char* output);
 int hw_stop_all_raid_arrays(const char* output);
 

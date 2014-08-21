@@ -540,6 +540,10 @@ int main(int argc, char *argv[]) {
 		}
 
 		newtPopWindow();
+	} else {
+		// We will have to destroy all RAID setups that may have
+		// been on the devices that we want to use now.
+		hw_destroy_raid_superblocks(destination, logfile);
 	}
 
 	// Execute the partitioning...
