@@ -526,6 +526,16 @@ static int hw_zero_out_device(const char* path, int bytes) {
 	return bytes_written;
 }
 
+static int try_open(const char* path) {
+	FILE* f = fopen(path, "r");
+	if (f) {
+		fclose(f);
+		return 0;
+	}
+
+	return -1;
+}
+
 int hw_create_partitions(struct hw_destination* dest, const char* output) {
 	// Before we write a new partition table to the disk, we will erase
 	// the first couple of megabytes at the beginning of the device to
@@ -606,19 +616,19 @@ int hw_create_partitions(struct hw_destination* dest, const char* output) {
 		while (counter-- > 0) {
 			sleep(1);
 
-			if (*dest->part_bootldr && (access(dest->part_bootldr, R_OK) != 0))
+			if (*dest->part_bootldr && (try_open(dest->part_bootldr) != 0))
 				continue;
 
-			if (*dest->part_boot && (access(dest->part_boot, R_OK) != 0))
+			if (*dest->part_boot && (try_open(dest->part_boot) != 0))
 				continue;
 
-			if (*dest->part_swap && (access(dest->part_swap, R_OK) != 0))
+			if (*dest->part_swap && (try_open(dest->part_swap) != 0))
 				continue;
 
-			if (*dest->part_root && (access(dest->part_root, R_OK) != 0))
+			if (*dest->part_root && (try_open(dest->part_root) != 0))
 				continue;
 
-			if (*dest->part_data && (access(dest->part_data, R_OK) != 0))
+			if (*dest->part_data && (try_open(dest->part_data) != 0))
 				continue;
 
 			// All partitions do exist, exiting the loop.
@@ -884,11 +894,8 @@ int hw_setup_raid(struct hw_destination* dest, const char* output) {
 			// If the raid device has not yet been properly brought up,
 			// opening it will fail with the message: Device or resource busy
 			// Hence we will wait a bit until it becomes usable.
-			FILE* f = fopen(dest->path, "r");
-			if (f) {
-				fclose(f);
+			if (try_open(dest->path) == 0)
 				break;
-			}
 		}
 	}
 
