@@ -600,23 +600,22 @@ int main(int argc, char *argv[]) {
 	// Installing bootloader...
 	statuswindow(60, 4, title, _("Installing the bootloader..."));
 
-	rc = hw_install_bootloader(destination, logfile);
-	if (rc) {
-		errorbox(_("Unable to install the bootloader."));
-		goto EXIT;
-	}
-
-	newtPopWindow();
-
 	/* Serial console ? */
 	if (serialconsole) {
 		/* grub */
-		replace("/harddisk/boot/grub/grub.conf", "splashimage", "#splashimage");
-		replace("/harddisk/boot/grub/grub.conf", "#serial", "serial");
-		replace("/harddisk/boot/grub/grub.conf", "#terminal", "terminal");
-		replace("/harddisk/boot/grub/grub.conf", " panic=10 ", " console=ttyS0,115200n8 panic=10 ");
+		FILE* f = fopen(DESTINATION_MOUNT_PATH "/etc/default/grub", "a");
+		if (!f) {
+			errorbox(_("Unable to open /etc/default/grub for writing."));
+			goto EXIT;
+		}
 
-		/*inittab*/
+		fprintf(f, "GRUB_TERMINAL=\"serial console\"\n");
+		fprintf(f, "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=%d\"\n", SERIAL_BAUDRATE);
+		fclose(f);
+
+		replace(DESTINATION_MOUNT_PATH "/etc/default/grub", "panic=10", "panic=10 console=ttyS0,115200n8");
+
+		/* inittab */
 		replace("/harddisk/etc/inittab", "1:2345:respawn:", "#1:2345:respawn:");
 		replace("/harddisk/etc/inittab", "2:2345:respawn:", "#2:2345:respawn:");
 		replace("/harddisk/etc/inittab", "3:2345:respawn:", "#3:2345:respawn:");
@@ -625,6 +624,14 @@ int main(int argc, char *argv[]) {
 		replace("/harddisk/etc/inittab", "6:2345:respawn:", "#6:2345:respawn:");
 		replace("/harddisk/etc/inittab", "#7:2345:respawn:", "7:2345:respawn:");
 	}
+
+	rc = hw_install_bootloader(destination, logfile);
+	if (rc) {
+		errorbox(_("Unable to install the bootloader."));
+		goto EXIT;
+	}
+
+	newtPopWindow();
 
 	/* Set marker that the user has already accepted the gpl */
 	mysystem(logfile, "/usr/bin/touch /harddisk/var/ipfire/main/gpl_accepted");

@@ -50,6 +50,8 @@
 
 #define RAID_METADATA                 "1.0"
 
+#define SERIAL_BAUDRATE               115200
+
 #define BYTES2MB(x) ((x) / 1024 / 1024)
 #define MB2BYTES(x) ((unsigned long long)(x) * 1024 * 1024)
 
