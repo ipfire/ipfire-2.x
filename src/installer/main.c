@@ -111,8 +111,11 @@ static int newtWinOkCancel(const char* title, const char* message, int width, in
 	newtTextboxSetText(textbox, message);
 	newtFormAddComponent(form, textbox);
 
-	newtComponent btn_ok = newtButton((width - 16) / 3, height - 4, btn_txt_ok);
-	newtComponent btn_cancel = newtButton((width - 16) / 3 * 2 + 9, height - 4,
+	unsigned int btn_width_ok = strlen(btn_txt_ok);
+	unsigned int btn_width_cancel = strlen(btn_txt_cancel);
+
+	newtComponent btn_ok = newtButton((width / 3) - (btn_width_ok / 2) - 2, height - 4, btn_txt_ok);
+	newtComponent btn_cancel = newtButton((width * 2 / 3) - (btn_width_cancel / 2) - 2, height - 4,
 		btn_txt_cancel);
 
 	newtFormAddComponents(form, btn_ok, btn_cancel, NULL);
