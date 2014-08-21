@@ -264,8 +264,7 @@ int firstmenu(void)
 	x--;
 	if (x < 0 || x > 4) x = 0;
 	/* Format heading bit. */
-	snprintf(message, 1000, _("Current config: %s%s"), configtypenames[x],
-		networkrestart);
+	snprintf(message, 1000, _("Current config: %s\n\n%s"), configtypenames[x], networkrestart);
 	rc = newtWinMenu(_("Network configuration menu"), message, 50, 5, 5, 6,
 			sections, &choice, _("OK"), _("Done"), NULL);
 

@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 	char *sections[11]; /* need to fill this out AFTER knowning lang */
 	int rc;
 	struct keyvalue *kv;
-	char selectedshortlang[STRING_SIZE] = "en";
+	char lang[STRING_SIZE] = "en_US.utf8";
 	char title[STRING_SIZE];
 	int langcounter;
 	int autook = 0;
@@ -53,36 +53,16 @@ int main(int argc, char *argv[])
 	if (!setlocale(LC_CTYPE,""))
 		fprintf(flog, "Locale not spezified. Check LANG, LC_CTYPE, RC_ALL.");
 
-#if 0
 	kv = initkeyvalues();
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/main/settings")))
 	{
 		printf("%s is not properly installed.\n", NAME);
 		return 1;
 	}
-	findkey(kv, "LANGUAGE", selectedshortlang);
+	findkey(kv, "LANGUAGE", lang);
 
-	for (langcounter = 0; langtrs[langcounter]; langcounter++)
-	{
-		if (strcmp(selectedshortlang, shortlangnames[langcounter]) == 0)
-		{
-			ctr = langtrs[langcounter];
-			break;
-		}
-	}
-
-	if (!ctr)
-	{
-		for (choice = 0; shortlangnames[choice]; choice++)
-		{
-			if (strcmp(shortlangnames[choice], "en") == 0)
-				break;
-		}
-		if (!shortlangnames[choice])
-			goto EXIT;
-		ctr = langtrs[choice];
-	}
-#endif
+	setlocale(LC_ALL, lang);
+	setenv("LANGUAGE", lang, 1);
 
 	sections[0] = _("Keyboard mapping");
 	sections[1] = _("Timezone");
