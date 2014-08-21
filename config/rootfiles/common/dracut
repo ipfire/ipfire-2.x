@@ -73,9 +73,6 @@ usr/lib/dracut
 #usr/lib/dracut/modules.d/95virtfs/module-setup.sh
 #usr/lib/dracut/modules.d/95virtfs/mount-virtfs.sh
 #usr/lib/dracut/modules.d/95virtfs/parse-virtfs.sh
-#usr/lib/dracut/modules.d/97biosdevname
-#usr/lib/dracut/modules.d/97biosdevname/module-setup.sh
-#usr/lib/dracut/modules.d/97biosdevname/parse-biosdevname.sh
 #usr/lib/dracut/modules.d/98integrity
 #usr/lib/dracut/modules.d/98integrity/README
 #usr/lib/dracut/modules.d/98integrity/evm-enable.sh
