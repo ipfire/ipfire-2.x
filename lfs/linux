@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 3.10.39
+VER        = 3.10.44
 
 RPI_PATCHES = linux-3.10.38-grsec-1b49b45
-GRS_PATCHES = grsecurity-2.9.1-3.10.39-ipfire1.patch.xz
+GRS_PATCHES = grsecurity-2.9.1-3.10.44-ipfire1.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -36,7 +36,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 44
+PAK_VER    = 51
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -74,9 +74,9 @@ $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 $(GRS_PATCHES)				= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5				= 74db7cc558a1a72ebf5044d286e2bc47
+$(DL_FILE)_MD5				= 8a4006eff3bbd8aff58fe4b443223e7a
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= a7408e8bad57b4b2cb677dd5a0bfb7ff
-$(GRS_PATCHES)_MD5			= 6296b7ec4146544249075249e338ceb3
+$(GRS_PATCHES)_MD5			= 07e5d812146063ed5b2ce49d0d24099b
 
 install : $(TARGET)
 
@@ -120,6 +120,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Layer7-patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-layer7-filter.patch
 
+	# pie packet scheduler
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-pie_packet_sch.patch
+
 	# Grsecurity-patches
 ifneq "$(KCFG)" "-headers"
 	cd $(DIR_APP) && xz -c -d $(DIR_DL)/$(GRS_PATCHES) | patch -Np1
@@ -156,6 +159,9 @@ endif
 	# Fix uevent PHYSDEVDRIVER
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33_ipg-fix-driver-name.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
+
+	# Moschip 7830 link detection
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.y-usbnet_mcs7830_rework_link_detect.patch
 
 
 ifeq "$(KCFG)" "-kirkwood"
@@ -250,26 +256,26 @@ else
 
 	# Cleanup kernel source
 	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config
-	cd $(DIR_APP) && make CC="$(KGCC)" oldconfig
-	cd $(DIR_APP) && make CC="$(KGCC)" clean
+	cd $(DIR_APP) && make oldconfig
+	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
 
 ifeq "$(KCFG)" "-kirkwood"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" uImage modules
+	cd $(DIR_APP) && make $(MAKETUNING) uImage modules
 	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
 else
 ifeq "$(KCFG)" "-multi"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage modules
+	cd $(DIR_APP) && make $(MAKETUNING) zImage modules
 	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/zImage-$(VERSUFIX)
 else
 ifeq "$(KCFG)" "-rpi"
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" zImage modules
+	cd $(DIR_APP) && make $(MAKETUNING) zImage modules
 	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/kernel.img
 else
-	cd $(DIR_APP) && make $(MAKETUNING) CC="$(KGCC)" bzImage modules
+	cd $(DIR_APP) && make $(MAKETUNING) bzImage modules
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
 endif
@@ -278,11 +284,11 @@ endif
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
 	ln -sf System.map-$(VER)-$(VERSUFIX) /boot/System.map-$(VERSUFIX)
-	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) modules_install
-	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) firmware_install
+	cd $(DIR_APP) && make $(MAKETUNING) modules_install
+	cd $(DIR_APP) && make $(MAKETUNING) firmware_install
 
 ifeq "$(MACHINE_TYPE)" "arm"
-	cd $(DIR_APP) && make CC="$(KGCC)" $(MAKETUNING) dtbs
+	cd $(DIR_APP) && make $(MAKETUNING) dtbs
 	cd $(DIR_APP) && for f in $$(find arch/arm/boot/dts/ -name *.dtb); do \
 				mkdir -p /boot/dtb-$(VER)-$(VERSUFIX) ; \
 				install -m 644 $$f /boot/dtb-$(VER)-$(VERSUFIX)/ ; \

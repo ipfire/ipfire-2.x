@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -88,10 +88,7 @@ sub display_vnstat
 	if ( $testdata =~ 'enough') {
 		print"No data for $device !<br>";
 	} else {
-	    # Falls back to textoutput if there was no % value because vnstati hang in this case
-	    if (!($testdata =~ 'nan%')) {
-		    system("/usr/bin/vnstati -c 5 -s -i $device -o /srv/web/ipfire/html/graphs/vnstat-s-$device.png");
-	    }
+	    system("/usr/bin/vnstati -c 5 -s -i $device -o /srv/web/ipfire/html/graphs/vnstat-s-$device.png");
 	    # Hour graph
 	    system("/usr/bin/vnstati -c 5 -h -i $device -o /srv/web/ipfire/html/graphs/vnstat-h-$device.png");
 	    # Day graph
@@ -102,15 +99,9 @@ sub display_vnstat
 	    system("/usr/bin/vnstati -c 5 -t -i $device -o /srv/web/ipfire/html/graphs/vnstat-t-$device.png");
 
 # Generate HTML-Table with the graphs
-	    print "<table>";
-	    if ($testdata =~ 'nan%') {
-		print "<tr><td><b><pre>";
-		system("/usr/bin/vnstat -i $device");
-		print "</pre></b></td></tr>";
-	    } else {
-		print"<tr><td><img src=\"/graphs/vnstat-s-$device.png\"></td></tr>";
-	    }
 print <<END
+<table>
+<tr><td><img src="/graphs/vnstat-s-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-h-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-d-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-m-$device.png"></td></tr>

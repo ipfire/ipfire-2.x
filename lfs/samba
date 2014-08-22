@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.6.23
+VER        = 3.6.24
 
 THISAPP    = samba-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 57
+PAK_VER    = 58
 
-DEPS       = "cups"
+DEPS       = "cups krb5"
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2f7aee1dc5d31aefcb364600915b31dc
+$(DL_FILE)_MD5 = d98425c0c2b73e08f048d31ffc727fb0
 
 install : $(TARGET)
 
@@ -78,16 +78,27 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP)/source3 && ./configure \
-				--prefix=/usr \
-				--libdir=/usr/lib/ \
-				--sysconfdir=/var/ipfire \
-				--localstatedir=/var \
-				--with-piddir=/var/run \
-				--with-fhs \
-				--with-winbind \
-				--disable-swat \
-				--enable-cups \
-				--with-syslog
+		--prefix=/usr \
+		--libdir=/usr/lib/ \
+		--sysconfdir=/var/ipfire \
+		--localstatedir=/var \
+		--with-cachedir=/var/lib/samba \
+		--with-lockdir=/var/lib/samba \
+		--with-piddir=/var/run \
+		--with-ads \
+		--with-acl-support \
+		--with-libsmbclient \
+		--with-libsmbsharemodes \
+		--with-sendfile-support \
+		--without-smbwrapper \
+		--with-mmap \
+		--with-fhs \
+		--with-vfs \
+		--with-winbind \
+		--disable-swat \
+		--enable-cups \
+		--disable-avahi \
+		--with-syslog
 	cd $(DIR_APP)/source3 && make proto && make all $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/source3 && make install
 	cd $(DIR_APP)/source3 && chmod -v 644 /usr/include/libsmbclient.h
@@ -107,5 +118,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf
 	-mkdir -p /var/log/samba
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/samba /var/ipfire/backup/addons/includes/samba
+
+	-mkdir -p 750 /var/lib/samba/winbindd_privileged
+	chgrp wbpriv /var/lib/samba/winbindd_privileged
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

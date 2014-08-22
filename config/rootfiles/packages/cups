@@ -936,7 +936,7 @@ var/ipfire/cups/ppd
 var/ipfire/cups/snmp.conf
 var/ipfire/cups/ssl
 var/log/cups
-var/run/cups
-var/run/cups/certs
+#var/run/cups
+#var/run/cups/certs
 var/spool/cups
 var/spool/cups/tmp

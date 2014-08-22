@@ -28,23 +28,12 @@ KVER=xxxKVERxxx
 KERN_PACK=xxxKERN_PACKxxx
 KRNDOWN=http://mirror0.ipfire.org/pakfire2/$VERSION/paks
 CONSOLE=hvc0
-###############################################################################
-# If you really want to use  outdated legacy kernel uncomment this lines. #####
-# Not recommended!!! ##########################################################
-######################
-#KERN_TYPE=xen
-#KVER=2.6.32.61
-#KERN_PACK=29
-#KRNDOWN=http://mirror0.ipfire.org/pakfire2/2.15/paks
-#CONSOLE=xvc0
-###############################################################################
 
 SIZEboot=64
 SIZEswap=512
 SIZEroot=1024
 SIZEvar=1024
-# ct'server does not support ext4 so change this to ext3.
-FSTYPE=ext4
+FSTYPE=ext3
 
 ##############################################################################
 
@@ -61,6 +50,25 @@ IMGroot=./$SNAME-root.img
 IMGvar=./$SNAME-var.img
 
 KERNEL=linux-$KERN_TYPE-$KVER-$KERN_PACK.ipfire
+
+if [ "$XEN_IMG_TYPE" == "xva" ]; then
+	# download xva.py if it not exist.
+	if [ ! -e xva.py ]; then
+		wget http://source.ipfire.org/source-2.x/xva.py
+	fi
+	# XenCenter use other devicenames and
+	# xvdd seems to be reserved (converter bug?).
+	P1=xvda
+	P2=xvdb
+	P3=xvdc
+	P4=xvde
+else
+	# old style xen image partition names
+	P1=xvda1
+	P2=xvda2
+	P3=xvda3
+	P4=xvda4
+fi
 
 rm -rf $TMPDIR && mkdir -p $MNThdd && mkdir -p $ISODIR
 echo --------------------------------------------------------
@@ -108,7 +116,8 @@ mount -o loop $IMGboot $MNThdd/boot
 mount -o loop $IMGvar $MNThdd/var
 
 # Install IPFire without kernel modules
-tar -C $MNThdd/ -xvf $ISODIR/$SNAME-$VERSION.tlz --lzma \
+xz -d < $ISODIR/$SNAME-$VERSION.tlz > $TMPDIR/$SNAME-$VERSION.tar
+tar -C $MNThdd/ -xvf $TMPDIR/$SNAME-$VERSION.tar \
 	--exclude=lib/modules* --exclude=boot* --numeric-owner
 
 #Install Kernel
@@ -121,7 +130,7 @@ mkdir $MNThdd/boot/grub
 echo "timeout 10"                          > $MNThdd/boot/grub/grub.conf
 echo "default 0"                          >> $MNThdd/boot/grub/grub.conf
 echo "title IPFire ($KERN_TYPE-kernel)"   >> $MNThdd/boot/grub/grub.conf
-echo "  kernel /vmlinuz-$KVER-ipfire-xen root=/dev/xvda3 rootdelay=10 panic=10 console=$CONSOLE ro" \
+echo "  kernel /vmlinuz-$KVER-ipfire-$KERN_TYPE root=/dev/$P3 rootdelay=10 panic=10 console=$CONSOLE ro" \
 					  >> $MNThdd/boot/grub/grub.conf
 echo "  initrd /ipfirerd-$KVER-$KERN_TYPE.img" >> $MNThdd/boot/grub/grub.conf
 echo "# savedefault 0" >> $MNThdd/boot/grub/grub.conf
@@ -129,16 +138,16 @@ echo "# savedefault 0" >> $MNThdd/boot/grub/grub.conf
 ln -s grub.conf $MNThdd/boot/grub/menu.lst
 
 #create the meta-info of linux-kernel package
-echo ""                       >  $MNThdd/opt/pakfire/db/meta/linux-$KERN_TYPE
-echo "Name: linux-$KERN_TYPE" >> $MNThdd/opt/pakfire/db/meta/linux-$KERN_TYPE
-echo "ProgVersion: $KVER"     >> $MNThdd/opt/pakfire/db/meta/linux-$KERN_TYPE
-echo "Release: $KERN_PACK"    >> $MNThdd/opt/pakfire/db/meta/linux-$KERN_TYPE
-echo ""                       >> $MNThdd/opt/pakfire/db/meta/linux-$KERN_TYPE
-echo ""                       >  $MNThdd/opt/pakfire/db/installed/linux-$KERN_TYPE
-echo "Name: linux-$KERN_TYPE" >> $MNThdd/opt/pakfire/db/installed/linux-$KERN_TYPE
-echo "ProgVersion: $KVER"     >> $MNThdd/opt/pakfire/db/installed/linux-$KERN_TYPE
-echo "Release: $KERN_PACK"    >> $MNThdd/opt/pakfire/db/installed/linux-$KERN_TYPE
-echo ""                       >> $MNThdd/opt/pakfire/db/installed/linux-$KERN_TYPE
+echo ""                       >  $MNThdd/opt/pakfire/db/meta/meta-linux-$KERN_TYPE
+echo "Name: linux-$KERN_TYPE" >> $MNThdd/opt/pakfire/db/meta/meta-linux-$KERN_TYPE
+echo "ProgVersion: $KVER"     >> $MNThdd/opt/pakfire/db/meta/meta-linux-$KERN_TYPE
+echo "Release: $KERN_PACK"    >> $MNThdd/opt/pakfire/db/meta/meta-linux-$KERN_TYPE
+echo ""                       >> $MNThdd/opt/pakfire/db/meta/meta-linux-$KERN_TYPE
+echo ""                       >  $MNThdd/opt/pakfire/db/installed/meta-linux-$KERN_TYPE
+echo "Name: linux-$KERN_TYPE" >> $MNThdd/opt/pakfire/db/installed/meta-linux-$KERN_TYPE
+echo "ProgVersion: $KVER"     >> $MNThdd/opt/pakfire/db/installed/meta-linux-$KERN_TYPE
+echo "Release: $KERN_PACK"    >> $MNThdd/opt/pakfire/db/installed/meta-linux-$KERN_TYPE
+echo ""                       >> $MNThdd/opt/pakfire/db/installed/meta-linux-$KERN_TYPE
 
 #Set default configuration
 echo "LANGUAGE=en" >> $MNThdd/var/ipfire/main/settings
@@ -150,10 +159,10 @@ mount --bind /proc $MNThdd/proc
 mount --bind /dev  $MNThdd/dev
 mount --bind /sys  $MNThdd/sys
 chroot $MNThdd /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
-sed -i -e "s|DEVICE1|/dev/xvda1|g" $MNThdd/etc/fstab
-sed -i -e "s|DEVICE2|/dev/xvda2|g" $MNThdd/etc/fstab
-sed -i -e "s|DEVICE3|/dev/xvda3|g" $MNThdd/etc/fstab
-sed -i -e "s|DEVICE4|/dev/xvda4|g" $MNThdd/etc/fstab
+sed -i -e "s|DEVICE1|/dev/$P1|g" $MNThdd/etc/fstab
+sed -i -e "s|DEVICE2|/dev/$P2|g" $MNThdd/etc/fstab
+sed -i -e "s|DEVICE3|/dev/$P3|g" $MNThdd/etc/fstab
+sed -i -e "s|DEVICE4|/dev/$P4|g" $MNThdd/etc/fstab
 
 sed -i -e "s|FSTYPE|$FSTYPE|g" $MNThdd/etc/fstab
 
@@ -192,6 +201,11 @@ umount $MNThdd
 
 umount $ISODIR
 rm -rf ./ipfire-tmp
+
+if [ "$XEN_IMG_TYPE" == "xva" ]; then
+	python xva.py --sparse -c $SNAME.cfg -f $SNAME.xva
+	rm -f $SNAME*.img
+fi
 echo --------------------------------------------------------
 echo - Done.
 echo --------------------------------------------------------

@@ -27,7 +27,7 @@ int writehostsfiles(void)
 	FILE *file, *hosts;
 	struct keyvalue *kv;
 	char hostname[STRING_SIZE];
-	char domainname[STRING_SIZE] = "";
+	char domainname[STRING_SIZE] = "localdomain";
 	char commandstring[STRING_SIZE];
 	char buffer[STRING_SIZE];
 	

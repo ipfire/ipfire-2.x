@@ -28,12 +28,18 @@ case "${1}" in
 		fi
 
 		boot_mesg "Starting Random Number Generator Daemon..."
-		loadproc /usr/sbin/rngd --no-tpm=1
+
+		if pidofproc /usr/sbin/rngd &>/dev/null; then
+			# Is already running.
+			echo_ok
+		else
+			loadproc /usr/sbin/rngd --no-tpm=1
+		fi
 		;;
 
 	stop)
 		boot_mesg "Stopping Random Number Generator Daemon..."
-		killproc /usr/sbin/rngd
+		killproc -p /var/run/rngd.pid /usr/sbin/rngd
 		;;
 
 	restart)

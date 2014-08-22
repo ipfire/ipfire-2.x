@@ -14,10 +14,18 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -76,6 +84,7 @@
 < countries
 < countrycode
 < country codes and flags
+< default
 < default ip
 < deprecated fs warn
 < details
@@ -83,6 +92,7 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh parameter
 < dnat address
 < dns address deleted txt
 < dnsforward
@@ -92,6 +102,14 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
+< dns servers
+< downlink
+< download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -121,6 +139,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -319,12 +338,20 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -340,7 +367,10 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < most preferred
+< MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -364,6 +394,8 @@
 < outgoing firewall access
 < ovpn crypt options
 < ovpn dh
+< ovpn dh new key
+< ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
 < ovpn generating the root and host certificates
@@ -390,6 +422,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -402,6 +436,7 @@
 < system has hwrng
 < system has rdrand
 < system information
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -457,6 +492,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < upload new ruleset
 < uptime
@@ -526,10 +562,18 @@
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -589,6 +633,7 @@
 < countries
 < countrycode
 < country codes and flags
+< default
 < default ip
 < deprecated fs warn
 < details
@@ -596,6 +641,7 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh parameter
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -604,6 +650,14 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
+< dns servers
+< downlink
+< download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -633,6 +687,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -831,12 +886,20 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -852,7 +915,10 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < most preferred
+< MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -888,6 +954,8 @@
 < outgoing firewall view group
 < ovpn crypt options
 < ovpn dh
+< ovpn dh new key
+< ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
 < ovpn errmsg green already pushed
@@ -918,6 +986,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < Set time on boot
 < show dh
@@ -930,6 +1000,7 @@
 < system has hwrng
 < system has rdrand
 < system information
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -985,6 +1056,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1031,10 +1103,18 @@
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -1093,6 +1173,7 @@
 < countries
 < countrycode
 < country codes and flags
+< default
 < default ip
 < deprecated fs warn
 < details
@@ -1100,6 +1181,7 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh parameter
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -1108,6 +1190,14 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
+< dns servers
+< downlink
+< download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -1129,6 +1219,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -1327,12 +1418,20 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -1348,7 +1447,10 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < most preferred
+< MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1370,6 +1472,8 @@
 < outgoing firewall access
 < ovpn crypt options
 < ovpn dh
+< ovpn dh new key
+< ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
 < ovpn errmsg green already pushed
@@ -1400,6 +1504,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -1410,6 +1516,7 @@
 < support donation
 < system has hwrng
 < system has rdrand
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1465,6 +1572,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1512,10 +1620,18 @@
 ############################################################################
 < Add a route
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -1575,6 +1691,7 @@
 < countrycode
 < country codes and flags
 < day-graph
+< default
 < default ip
 < deprecated fs warn
 < details
@@ -1582,6 +1699,7 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh parameter
 < disk access per
 < dnat address
 < dnsforward
@@ -1591,6 +1709,14 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
+< dns servers
+< downlink
+< download dh parameter
+< download tls-auth key
 < dpd delay
 < dpd timeout
 < drop action
@@ -1613,6 +1739,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < frequency
@@ -1814,12 +1941,20 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -1835,8 +1970,11 @@
 < modem no connection message
 < modem sim information
 < modem status
+< monitor interface
 < month-graph
 < most preferred
+< MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1859,6 +1997,8 @@
 < outgoing traffic in bytes per second
 < ovpn crypt options
 < ovpn dh
+< ovpn dh new key
+< ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
 < ovpn generating the root and host certificates
@@ -1885,6 +2025,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -1895,6 +2037,7 @@
 < support donation
 < system has hwrng
 < system has rdrand
+< ta key
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1950,6 +2093,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average

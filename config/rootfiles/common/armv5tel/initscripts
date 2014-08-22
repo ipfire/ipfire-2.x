@@ -24,6 +24,7 @@ etc/rc.d/init.d/console
 #etc/rc.d/init.d/cyrus-imapd
 #etc/rc.d/init.d/cyrus-sasl
 etc/rc.d/init.d/dhcp
+etc/rc.d/init.d/dhcrelay
 etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/fcron
 #etc/rc.d/init.d/fetchmail
@@ -34,7 +35,6 @@ etc/rc.d/init.d/functions
 #etc/rc.d/init.d/gnump3d
 etc/rc.d/init.d/halt
 #etc/rc.d/init.d/hostapd
-#etc/rc.d/init.d/icecream
 #etc/rc.d/init.d/imspector
 etc/rc.d/init.d/ipsec
 #etc/rc.d/init.d/keepalived
@@ -73,13 +73,13 @@ etc/rc.d/init.d/networking/red.down/05-RS-dnsmasq
 etc/rc.d/init.d/networking/red.down/10-ipsec
 etc/rc.d/init.d/networking/red.down/10-miniupnpd
 etc/rc.d/init.d/networking/red.down/10-ovpn
-etc/rc.d/init.d/networking/red.down/20-RL-firewall
+etc/rc.d/init.d/networking/red.down/20-firewall
 #etc/rc.d/init.d/networking/red.up
 etc/rc.d/init.d/networking/red.up/01-conntrack-cleanup
 etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq
 etc/rc.d/init.d/networking/red.up/10-miniupnpd
 etc/rc.d/init.d/networking/red.up/10-multicast
-etc/rc.d/init.d/networking/red.up/20-RL-firewall
+etc/rc.d/init.d/networking/red.up/20-firewall
 etc/rc.d/init.d/networking/red.up/23-RS-snort
 etc/rc.d/init.d/networking/red.up/24-RS-qos
 etc/rc.d/init.d/networking/red.up/27-RS-squid
@@ -131,7 +131,6 @@ etc/rc.d/init.d/upnpd
 #etc/rc.d/init.d/vdradmin
 #etc/rc.d/init.d/vsftpd
 #etc/rc.d/init.d/watchdog
-#etc/rc.d/init.d/winbind
 etc/rc.d/init.d/wlanclient
 #etc/rc.d/init.d/xinetd
 #etc/rc.d/rc0.d

@@ -654,6 +654,7 @@
 #usr/include/linux/unix_diag.h
 #usr/include/linux/usb
 #usr/include/linux/usb/audio.h
+#usr/include/linux/usb/cdc-wdm.h
 #usr/include/linux/usb/cdc.h
 #usr/include/linux/usb/ch11.h
 #usr/include/linux/usb/ch9.h

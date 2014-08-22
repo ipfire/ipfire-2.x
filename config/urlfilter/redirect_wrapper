@@ -21,11 +21,8 @@
 #                                                                             #
 ###############################################################################
 
-use strict;
 use IPC::Open2;
 use IO::Handle;
-
-my $redirectors;
 
 require '/var/ipfire/general-functions.pl';
 
@@ -35,15 +32,20 @@ $proxysettings{'ENABLE_CLAMAV'} = 'off';
 $proxysettings{'ENABLE_UPDXLRATOR'} = 'off';
 &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
 
-# define here your redirectors (use a comma sperated list)
-if ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){$redirectors = [ '/usr/bin/squidGuard', '/usr/bin/squidclamav', '/usr/sbin/updxlrator' ];}
-elsif ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'off' ){$redirectors = [ '/usr/bin/squidGuard', '/usr/bin/squidclamav' ];}
-elsif ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'off' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){$redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator' ];}
-elsif ( $proxysettings{'ENABLE_FILTER'} eq 'on' && $proxysettings{'ENABLE_CLAMAV'} eq 'off' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'off' ){$redirectors = [ '/usr/bin/squidGuard' ];}
-elsif ( $proxysettings{'ENABLE_FILTER'} eq 'off' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){$redirectors = [ '/usr/bin/squidclamav', '/usr/sbin/updxlrator' ];}
-elsif ( $proxysettings{'ENABLE_FILTER'} eq 'off' && $proxysettings{'ENABLE_CLAMAV'} eq 'on' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'off' ){$redirectors = [ '/usr/bin/squidclamav' ];}
-elsif ( $proxysettings{'ENABLE_FILTER'} eq 'off' && $proxysettings{'ENABLE_CLAMAV'} eq 'off' && $proxysettings{'ENABLE_UPDXLRATOR'} eq 'on' ){$redirectors = [ '/usr/sbin/updxlrator' ];}
-else  { $redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator' ];}
+# define here your redirectors
+my @redirectors = ();
+
+if ($proxysettings{'ENABLE_FILTER'} eq 'on') {
+	push(@redirectors, "/usr/bin/squidGuard");
+}
+
+if ($proxysettings{'ENABLE_CLAMAV'} eq 'on') {
+	push(@redirectors, "/usr/bin/squidclamav");
+}
+
+if ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on') {
+	push(@redirectors, "/usr/sbin/updxlrator");
+}
 
 # Attention: keep in mind that the order of your redirectors is important.
 # It doesn't make sense to scan for viruses on pages you restrict access to...
@@ -55,68 +57,89 @@ else  { $redirectors = [ '/usr/bin/squidGuard', '/usr/sbin/updxlrator' ];}
 # init
 $| = 1;
 STDOUT->autoflush(1);
-my $line;
-my $return;
-my $i;
+
 my $debug=0; # enable only for debugging
 
-if ( -e "/var/ipfire/proxy/enable_redirector_debug" ){
-	$debug = 1;
+if (-e "/var/ipfire/proxy/enable_redirector_debug") {
 	writetolog("Urlfilter = ".$proxysettings{'ENABLE_FILTER'}." Clamav = ".$proxysettings{'ENABLE_CLAMAV'}." Updxlrator = ".$proxysettings{'ENABLE_UPDXLRATOR'});
+	$debug = 1;
+}
+
+# Open one instance for each redirector in the list and
+# put them into an array with the STDIN and STDOUT file
+# descriptors.
+my @instances = ();
+
+foreach my $redirector (@redirectors) {
+	my $desc_out = new IO::Handle();
+	my $desc_in  = new IO::Handle();
+
+	my $pid = open2($desc_out, $desc_in, $redirector);
+
+	if ($debug) {
+		&writetolog("Started an instance of $redirector with PID $pid");
 	}
 
-# open progamms
-my $pidlist = [];
-my $rlist = [];
-my $wlist = [];
-
-for($i = 0; $i < @$redirectors; $i++) {
-	$pidlist->[$i] = open2($rlist->[$i], $wlist->[$i], $redirectors->[$i]);
-	if ($debug){
-		writetolog("Current redirector is ".$redirectors->[$i]." number ".$i." PID ".$pidlist->[$i]);
-		}
-	}
+	push(@instances, [$redirector, $desc_out, $desc_in]);
+}
 
 # wait for data...
-while($line = <>) {
-	$return = "";
+my $line;
+while ($line = <>) {
+	my $return = "ERR\n";
 
-	for($i = 0; $i < @$redirectors; $i++) {
-		$wlist->[$i]->print($line);
-		$return = $rlist->[$i]->getline;
+	foreach my $instance (@instances) {
+		my $redirector = @$instance[0];
+		my $desc_out   = @$instance[1];
+		my $desc_in    = @$instance[2];
+		my $response;
 
-		if ( $return eq "Processing file and database" ){
+		# Send request to the redirector.
+		$desc_in->print($line);
+
+		# Wait for a response.
+		$response = $desc_out->getline;
+
+		# Catch invalid responses from squidGuard.
+		if ($redirector eq "/usr/bin/squidGuard" && $response eq "Processing file and database") {
 			system("logger -t ipfire 'Emergency - squidGuard not initialised please run squidGuard -C all'");
-			}
-
-		if ($debug){
-			my $dline = $line;my $dreturn = $return;chomp $dline;chomp $dreturn;
-			if ( $return eq $line or $return eq "\n" or $return eq "" ){
-				writetolog("Request equals result by ".$redirectors->[$i]." ".$dline);
-				}
-			else {
-				writetolog($redirectors->[$i]." answers ".$dreturn."\n   Querried ".$dline);
-				}
-			}
-
-		# break if redirector changes data
-		if($return ne "\n" and $return ne $line ){
-			if ( $redirectors->[$i] ne "/usr/sbin/updxlrator"){
-				if ($debug){
-					writetolog($redirectors->[$i]." is stopping querry because block was found.");
-					}
-				$i = @$redirectors;
-				}
-			}
+			next;
 		}
-	print $return;
+
+		# Writing debug output.
+		if ($debug) {
+			my $len_response = length($response);
+
+			&writetolog("Queried $redirector for: $line");
+			&writetolog("  --> Response ($len_response): $response");
+		}
+
+		# If we got a decisive response, we send it back to squid
+		# and stop querying any more redirectors.
+		if ($response =~ /^(OK|BH)/) {
+			if ($debug) {
+				&writetolog("  --  Stopped querying redirectors");
+			}
+
+			$return = $response;
+			last;
+		}
 	}
+
+	# Send response back to squid.
+	if ($debug) {
+		&writetolog("Sending back to squid: $return");
+	}
+	print $return;
+}
 
 exit 0;
 
 sub writetolog {
-	open(DATEI, ">>/var/log/squid/redirector_debug") || die "Unable to acces file /var/log/squid/redirector_debug";
-	my $log = shift;
-	print DATEI $log."\n";
-	close(DATEI);
-	}
+	my $message = shift;
+	chomp($message);
+
+	open(FILE, ">>/var/log/squid/redirector_debug") || die "Unable to acces file /var/log/squid/redirector_debug";
+	print FILE "$message\n";
+	close(FILE);
+}

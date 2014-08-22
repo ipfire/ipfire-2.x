@@ -1,9 +1,4 @@
-bin/dnsdomainname
-bin/domainname
-bin/hostname
 bin/netstat
-#bin/nisdomainname
-#bin/ypdomainname
 sbin/arp
 sbin/ifconfig
 #sbin/ipmaddr
@@ -14,10 +9,6 @@ sbin/nameif
 sbin/rarp
 sbin/route
 sbin/slattach
-#usr/share/man/man1/dnsdomainname.1
-#usr/share/man/man1/domainname.1
-#usr/share/man/man1/nisdomainname.1
-#usr/share/man/man1/ypdomainname.1
 #usr/share/man/man5/ethers.5
 #usr/share/man/man8/arp.8
 #usr/share/man/man8/ifconfig.8
