@@ -20,6 +20,7 @@ WARNING: translation string unused: add xtaccess
 WARNING: translation string unused: add-route
 WARNING: translation string unused: admin user password has been changed
 WARNING: translation string unused: administrator user password
+WARNING: translation string unused: adsl settings
 WARNING: translation string unused: advproxy LDAP auth
 WARNING: translation string unused: advproxy NTLM auth
 WARNING: translation string unused: advproxy advanced proxy
@@ -260,7 +261,6 @@ WARNING: translation string unused: fwhost Custom Host
 WARNING: translation string unused: fwhost Custom Network
 WARNING: translation string unused: fwhost IpSec Host
 WARNING: translation string unused: fwhost IpSec Network
-WARNING: translation string unused: fwhost OpenVPN N-2-N
 WARNING: translation string unused: fwhost OpenVPN static host
 WARNING: translation string unused: fwhost OpenVPN static network
 WARNING: translation string unused: fwhost Standard Network

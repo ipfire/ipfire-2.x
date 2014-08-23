@@ -172,6 +172,8 @@ unless (-e $acl_include) { system("touch $acl_include"); }
 unless (-e $browserdb) { system("touch $browserdb"); }
 unless (-e $mimetypes) { system("touch $mimetypes"); }
 
+my $HAVE_NTLM_AUTH = (-e "/usr/bin/ntlm_auth");
+
 open FILE, $browserdb;
 @useragentlist = sort { reverse(substr(reverse(substr($a,index($a,',')+1)),index(reverse(substr($a,index($a,','))),',')+1)) cmp reverse(substr(reverse(substr($b,index($b,',')+1)),index(reverse(substr($b,index($b,','))),',')+1))} grep !/(^$)|(^\s*#)/,<FILE>;
 close(FILE);
@@ -264,6 +266,8 @@ $proxysettings{'LDAP_PORT'} = '389';
 $proxysettings{'LDAP_BINDDN_USER'} = '';
 $proxysettings{'LDAP_BINDDN_PASS'} = '';
 $proxysettings{'LDAP_GROUP'} = '';
+$proxysettings{'NTLM_AUTH_GROUP'} = '';
+$proxysettings{'NTLM_AUTH_BASIC'} = 'off';
 $proxysettings{'NTLM_DOMAIN'} = '';
 $proxysettings{'NTLM_PDC'} = '';
 $proxysettings{'NTLM_BDC'} = '';
@@ -860,6 +864,7 @@ $checked{'AUTH_METHOD'}{'ncsa'} = '';
 $checked{'AUTH_METHOD'}{'ident'} = '';
 $checked{'AUTH_METHOD'}{'ldap'} = '';
 $checked{'AUTH_METHOD'}{'ntlm'} = '';
+$checked{'AUTH_METHOD'}{'ntlm-auth'} = '';
 $checked{'AUTH_METHOD'}{'radius'} = '';
 $checked{'AUTH_METHOD'}{$proxysettings{'AUTH_METHOD'}} = "checked='checked'";
 
@@ -890,6 +895,10 @@ $checked{'NTLM_ENABLE_ACL'}{$proxysettings{'NTLM_ENABLE_ACL'}} = "checked='check
 $checked{'NTLM_USER_ACL'}{'positive'} = '';
 $checked{'NTLM_USER_ACL'}{'negative'} = '';
 $checked{'NTLM_USER_ACL'}{$proxysettings{'NTLM_USER_ACL'}} = "checked='checked'";
+
+$checked{'NTLM_AUTH_BASIC'}{'on'} = '';
+$checked{'NTLM_AUTH_BASIC'}{'off'} = '';
+$checked{'NTLM_AUTH_BASIC'}{$proxysettings{'NTLM_AUTH_BASIC'}} = "checked='checked'";
 
 $checked{'RADIUS_ENABLE_ACL'}{'off'} = '';
 $checked{'RADIUS_ENABLE_ACL'}{'on'} = '';
@@ -1686,18 +1695,33 @@ print <<END
 END
 ;
 
-print <<END
+my $auth_columns = 5;
+if ($HAVE_NTLM_AUTH) {
+	$auth_columns++;
+}
+my $auth_column_width = 100 / $auth_columns;
+
+print <<END;
 <table width='100%'>
 <tr>
-	<td colspan='5'><b>$Lang::tr{'advproxy AUTH method'}</b></td>
+	<td colspan='$auth_columns'><b>$Lang::tr{'advproxy AUTH method'}</b></td>
 </tr>
 <tr>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='none' $checked{'AUTH_METHOD'}{'none'} />$Lang::tr{'advproxy AUTH method none'}</td>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='ncsa' $checked{'AUTH_METHOD'}{'ncsa'} />$Lang::tr{'advproxy AUTH method ncsa'}</td>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='ident' $checked{'AUTH_METHOD'}{'ident'} />$Lang::tr{'advproxy AUTH method ident'}</td>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='ldap' $checked{'AUTH_METHOD'}{'ldap'} />$Lang::tr{'advproxy AUTH method ldap'}</td>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='ntlm' $checked{'AUTH_METHOD'}{'ntlm'} />$Lang::tr{'advproxy AUTH method ntlm'}</td>
-	<td width='16%' class='base'><input type='radio' name='AUTH_METHOD' value='radius' $checked{'AUTH_METHOD'}{'radius'} />$Lang::tr{'advproxy AUTH method radius'}</td>
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='none' $checked{'AUTH_METHOD'}{'none'} />$Lang::tr{'advproxy AUTH method none'}</td>
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ncsa' $checked{'AUTH_METHOD'}{'ncsa'} />$Lang::tr{'advproxy AUTH method ncsa'}</td>
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ident' $checked{'AUTH_METHOD'}{'ident'} />$Lang::tr{'advproxy AUTH method ident'}</td>
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ldap' $checked{'AUTH_METHOD'}{'ldap'} />$Lang::tr{'advproxy AUTH method ldap'}</td>
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ntlm' $checked{'AUTH_METHOD'}{'ntlm'} />$Lang::tr{'advproxy AUTH method ntlm'}</td>
+END
+
+if ($HAVE_NTLM_AUTH) {
+	print <<END;
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ntlm-auth' $checked{'AUTH_METHOD'}{'ntlm-auth'} />$Lang::tr{'advproxy AUTH method ntlm auth'}</td>
+END
+}
+
+print <<END
+	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='radius' $checked{'AUTH_METHOD'}{'radius'} />$Lang::tr{'advproxy AUTH method radius'}</td>
 </tr>
 </table>
 END
@@ -1975,6 +1999,35 @@ if ($proxysettings{'AUTH_METHOD'} eq 'ntlm') { print <<END
 </table>
 END
 ; }
+
+# ===================================================================
+#  NTLM-AUTH settings
+# ===================================================================
+
+if ($proxysettings{'AUTH_METHOD'} eq 'ntlm-auth') {
+	print <<END;
+		<hr size ='1'>
+		<table width='100%'>
+			<td width='20%' class='base'>$Lang::tr{'advproxy basic authentication'}:</td>
+			<td width='40%'><input type='checkbox' name='NTLM_AUTH_BASIC' $checked{'NTLM_AUTH_BASIC'}{'on'} /></td>
+			<td colspan='2'>&nbsp;</td>
+		</table>
+
+		<hr size='1' />
+
+		<table width='100%'>
+			<tr>
+				<td colspan='4'><b>$Lang::tr{'advproxy group access control'}</b></td>
+			</tr>
+			<tr>
+				<td width='20%' class='base'>$Lang::tr{'advproxy group required'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+				<td width='40%'><input type='text' name='NTLM_AUTH_GROUP' value='$proxysettings{'NTLM_AUTH_GROUP'}' size='37' /></td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+	</table>
+END
+}
 
 # ===================================================================
 #  LDAP auth settings
@@ -3143,7 +3196,6 @@ END
 	print FILE <<END
 
 cache_effective_user squid
-cache_effective_group squid
 umask 022
 
 pid_filename /var/run/squid.pid
@@ -3323,6 +3375,35 @@ END
 					}
 				}
 				close(MSNTCONF);
+			}
+		}
+
+		if ($proxysettings{'AUTH_METHOD'} eq 'ntlm-auth')
+		{
+			print FILE "auth_param ntlm program /usr/bin/ntlm_auth --helper-protocol=squid-2.5-ntlmssp";
+			if ($proxysettings{'NTLM_AUTH_GROUP'}) {
+				my $ntlm_auth_group = $proxysettings{'NTLM_AUTH_GROUP'};
+				$ntlm_auth_group =~ s/\\/\+/;
+
+				print FILE " --require-membership-of=\"$ntlm_auth_group\"";
+			}
+			print FILE "\n";
+
+			print FILE "auth_param ntlm children $proxysettings{'AUTH_CHILDREN'}\n\n";
+
+			# BASIC authentication
+			if ($proxysettings{'NTLM_AUTH_BASIC'} eq "on") {
+				print FILE "auth_param basic program /usr/bin/ntlm_auth --helper-protocol=squid-2.5-basic";
+				if ($proxysettings{'NTLM_AUTH_GROUP'}) {
+					my $ntlm_auth_group = $proxysettings{'NTLM_AUTH_GROUP'};
+					$ntlm_auth_group =~ s/\\/\+/;
+
+					print FILE " --require-membership-of=\"$ntlm_auth_group\"";
+				}
+				print FILE "\n";
+				print FILE "auth_param basic children 10\n";
+				print FILE "auth_param basic realm IPFire Web Proxy Server\n";
+				print FILE "auth_param basic credentialsttl 2 hours\n\n";
 			}
 		}
 

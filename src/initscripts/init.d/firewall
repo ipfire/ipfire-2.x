@@ -277,10 +277,16 @@ iptables_init() {
 	/usr/sbin/firewall-policy
 
 	# Install firewall rules for the red interface.
-	iptables_red
+	iptables_red_up
+
+	# If red has not been brought up yet, we will
+	# add the blocking rules for MASQUERADE
+	if [ ! -e "/var/ipfire/red/active" ]; then
+		iptables_red_down
+	fi
 }
 
-iptables_red() {
+iptables_red_up() {
 	iptables -F REDINPUT
 	iptables -F REDFORWARD
 	iptables -t nat -F REDNAT
@@ -327,10 +333,45 @@ iptables_red() {
 		# Outgoing masquerading (don't masqerade IPSEC (mark 50))
 		iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
 
-		if [ "$IFACE" != "$GREEN_DEV" ]; then
-			iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
+		if [ "$IFACE" = "$GREEN_DEV" ]; then
+			MASQUERADE_GREEN="off"
 		fi
 
+		local NO_MASQ_NETWORKS
+
+		if [ "${MASQUERADE_GREEN}" = "off" ]; then
+			NO_MASQ_NETWORKS="${NO_MASQ_NETWORKS} ${GREEN_NETADDRESS}/${GREEN_NETMASK}"
+		fi
+
+		if [ "${MASQUERADE_BLUE}" = "off" ]; then
+			NO_MASQ_NETWORKS="${NO_MASQ_NETWORKS} ${BLUE_NETADDRESS}/${BLUE_NETMASK}"
+		fi
+
+		if [ "${MASQUERADE_ORANGE}" = "off" ]; then
+			NO_MASQ_NETWORKS="${NO_MASQ_NETWORKS} ${ORANGE_NETADDRESS}/${ORANGE_NETMASK}"
+		fi
+
+		local network
+		for network in ${NO_MASQ_NETWORKS}; do
+			iptables -t nat -A REDNAT -s "${network}" -o "${IFACE}" -j RETURN
+		done
+
+		# Masquerade everything else
+		iptables -t nat -A REDNAT -o $IFACE -j MASQUERADE
+	fi
+
+	# Reload all rules.
+	/usr/local/bin/firewallctrl
+}
+
+iptables_red_down() {
+	# Prohibit packets to reach the masquerading rule
+	# while the wan interface is down - this is required to
+	# circumvent udp related NAT issues
+	# http://forum.ipfire.org/index.php?topic=11127.0
+	if [ -n "${IFACE}" ]; then
+		iptables -F REDFORWARD
+		iptables -A REDFORWARD -o "${IFACE}" -j DROP
 	fi
 
 	# Reload all rules.
@@ -367,15 +408,20 @@ case "$1" in
 		/etc/sysconfig/firewall.local start
 	fi
 	;;
-  reload)
+  reload|up)
 	boot_mesg "Reloading firewall"
-	iptables_red
+	iptables_red_up
 	evaluate_retval
 
 	# run local firewall configuration, if present
 	if [ -x /etc/sysconfig/firewall.local ]; then
 		/etc/sysconfig/firewall.local reload
 	fi
+	;;
+  down)
+	boot_mesg "Disabling firewall access to RED"
+	iptables_red_down
+	evaluate_retval
 	;;
   restart)
 	# run local firewall configuration, if present

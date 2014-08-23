@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.15"							# Version number
-CORE="81"							# Core Level (Filename)
-PAKFIRE_CORE="81"						# Core Level (PAKFIRE)
+CORE="82"							# Core Level (Filename)
+PAKFIRE_CORE="82"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -469,6 +469,7 @@ buildipfire() {
   ipfiremake bind
   ipfiremake dhcp
   ipfiremake dhcpcd
+  ipfiremake boost
   ipfiremake linux-atm
   ipfiremake cpio
   ipfiremake dracut
@@ -482,6 +483,7 @@ buildipfire() {
   ipfiremake fireinfo
   ipfiremake libnet
   ipfiremake libnl
+  ipfiremake libnl-3
   ipfiremake libidn
   ipfiremake nasm
   ipfiremake libjpeg
@@ -620,6 +622,7 @@ buildipfire() {
   ipfiremake foomatic
   ipfiremake hplip
   ipfiremake cifs-utils
+  ipfiremake krb5
   ipfiremake samba
   ipfiremake sudo
   ipfiremake mc
@@ -812,6 +815,10 @@ buildipfire() {
   ipfiremake stunnel
   ipfiremake sslscan
   ipfiremake owncloud
+  ipfiremake bacula
+  ipfiremake batctl
+  ipfiremake perl-PDF-API2
+  ipfiremake squid-accounting
 }
 
 buildinstaller() {

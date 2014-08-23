@@ -1,0 +1,5 @@
+/var/ipfire/accounting/settings.conf
+/var/ipfire/accounting/bill
+/srv/web/ipfire/html/accounting
+/var/ipfire/accounting/acct.db
+/var/log/accounting.log

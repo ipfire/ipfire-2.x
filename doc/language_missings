@@ -14,10 +14,18 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -334,9 +342,16 @@
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -407,6 +422,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -545,10 +562,18 @@
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -865,9 +890,16 @@
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -954,6 +986,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < Set time on boot
 < show dh
@@ -1069,10 +1103,18 @@
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -1380,9 +1422,16 @@
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -1455,6 +1504,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -1569,10 +1620,18 @@
 ############################################################################
 < Add a route
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -1886,9 +1945,16 @@
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -1959,6 +2025,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
