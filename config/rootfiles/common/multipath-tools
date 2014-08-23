@@ -1,0 +1,4 @@
+#etc/udev/rules.d/kpartx.rules
+#lib/udev/kpartx_id
+#sbin/kpartx
+#usr/share/man/man8/kpartx.8.gz

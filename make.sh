@@ -376,7 +376,6 @@ buildbase() {
     lfsmake2 vim
     lfsmake2 xz
     lfsmake2 paxctl
-    lfsmake2 grub
 }
 
 buildipfire() {
@@ -400,6 +399,9 @@ buildipfire() {
   ipfiremake cpio
   ipfiremake mdadm
   ipfiremake dracut
+  ipfiremake lvm2
+  ipfiremake multipath-tools
+  ipfiremake grub
 
   case "${TARGET_ARCH}" in
 	i586)
