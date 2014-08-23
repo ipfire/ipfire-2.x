@@ -862,6 +862,7 @@ buildpackages() {
   modprobe loop 2>/dev/null
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ] || [ -e "/dev/loop-control" ]); then
 	ipfiremake flash-images
+	ipfiremake flash-images SCON=1
   fi
 
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
