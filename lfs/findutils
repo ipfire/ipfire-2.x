@@ -91,6 +91,10 @@ ifeq "$(ROOT)" ""
 	mv -v /usr/bin/find /bin
 	sed -i -e 's|BINDIR=/usr/bin|BINDIR=/bin|' /usr/bin/updatedb
 	-mkdir -p /var/lib/locate
+
+	-mkdir -pv /etc/fcron.weekly
+	install -v -m 754 $(DIR_SRC)/config/findutils/updatedb \
+		/etc/fcron.weekly/updatedb
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
