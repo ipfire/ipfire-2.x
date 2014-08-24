@@ -1,9 +1,0 @@
-#
-# file system  mount-point  type     options         dump  fsck
-#                                                        order
-DEVICE1	/boot	auto	defaults	1	2
-DEVICE2	 swap	swap	pri=1	0	0
-DEVICE3	/	auto	defaults	1	1
-DEVICE4	/var	auto	defaults	1	1
-none	/var/log/rrd	tmpfs	defaults,size=64M	0	0
-none	/var/lock	tmpfs	defaults,size=8M	0	0
