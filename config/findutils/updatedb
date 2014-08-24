@@ -13,4 +13,4 @@ else
 	touch "$LOCKFILE"
 fi
 
-exec /usr/bin/updatedb
+/usr/bin/updatedb
