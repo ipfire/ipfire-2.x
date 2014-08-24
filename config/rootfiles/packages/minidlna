@@ -1,3 +1,15 @@
 etc/rc.d/init.d/minidlna
 etc/minidlna.conf
-usr/sbin/minidlna
+usr/sbin/minidlnad
+#usr/share/locale/da/LC_MESSAGES/minidlna.mo
+#usr/share/locale/de/LC_MESSAGES/minidlna.mo
+#usr/share/locale/es/LC_MESSAGES/minidlna.mo
+#usr/share/locale/fr/LC_MESSAGES/minidlna.mo
+#usr/share/locale/it/LC_MESSAGES/minidlna.mo
+#usr/share/locale/ja/LC_MESSAGES/minidlna.mo
+#usr/share/locale/nb/LC_MESSAGES/minidlna.mo
+#usr/share/locale/nl/LC_MESSAGES/minidlna.mo
+#usr/share/locale/pl/LC_MESSAGES/minidlna.mo
+#usr/share/locale/ru/LC_MESSAGES/minidlna.mo
+#usr/share/locale/sl/LC_MESSAGES/minidlna.mo
+#usr/share/locale/sv/LC_MESSAGES/minidlna.mo

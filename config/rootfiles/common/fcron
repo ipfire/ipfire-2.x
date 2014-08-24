@@ -11,7 +11,6 @@ etc/fcron.hourly/info.txt
 etc/fcron.minutely/info.txt
 #etc/fcron.monthly
 etc/fcron.monthly/info.txt
-#etc/fcron.weekly
 etc/fcron.weekly/info.txt
 usr/bin/fcronsighup
 usr/bin/fcrontab
