@@ -79,6 +79,8 @@ endif
 S_BOOT := $(shell echo $$(( 131072 - $(S_OFFSET) )))
 S_ROOT := 1433600
 
+PADDING = 100 # MB
+
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Stop if $(MNThdd) is still mounted
 	mountpoint $(MNThdd) && exit 1 || exit 0
@@ -206,6 +208,10 @@ endif
 
 	kpartx -d -v $(DEVICE)
 	losetup -d $(DEVICE)
+
+	# Add padding at the end of the image (to fix alignment issues if the image is
+	# not copied to a block device)
+	dd if=/dev/zero bs=1M count=$(PADDING) >> $(IMG)
 
 	# Compress Image
 	pigz -f9 < $(IMG) > $(IMAGE_FILE)
