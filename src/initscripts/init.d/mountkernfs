@@ -34,6 +34,11 @@ case "${1}" in
 			mount -n -t tmpfs -o nosuid,nodev,mode=755,size=8M /run /run || failed=1
 		fi
 
+		if ! mountpoint /var/lock &>/dev/null; then
+			boot_mesg -n " /var/lock" ${NORMAL}
+			mount -n -t tmpfs -o nosuid,nodev,size=8M /var/lock /var/lock || failed=1
+		fi
+
 		boot_mesg "" ${NORMAL}
 
 		(exit ${failed})
