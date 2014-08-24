@@ -162,11 +162,6 @@ endif
 	printf "$(FSTAB_FMT)" "$$(blkid -o value -s UUID $(PART_ROOT))" "/" \
 		"auto" "defaults" 1 1 >> $(MNThdd)/etc/fstab
 
-	# Setup symlink for partresize at first boot...
-	ln -sf ../init.d/partresize $(MNThdd)/etc/rc.d/rcsysinit.d/S25partresize
-	# Setup symlink for fsresize at second boot...
-	ln -sf ../init.d/fsresize $(MNThdd)/etc/rc.d/rcsysinit.d/S42fsresize
-
 ifeq "$(BOOTLOADER)" "grub"
 ifeq "$(SCON)" "1"
 	# Enable serial console on GRUB
@@ -188,6 +183,9 @@ endif
 	grub-install --force --recheck --no-floppy \
 		--root-directory=$(MNThdd) $(DEVICE)
 endif
+
+	# Automatically resize the root partition to its maximum size at first boot
+	touch $(MNThdd)/.partresize
 
 	# Unmount
 	umount $(MNThdd)/proc

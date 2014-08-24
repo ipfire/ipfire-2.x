@@ -17,22 +17,24 @@
 
 case "${1}" in
 	start)
-		boot_mesg "Background Autoresize root partition to use the whole drive"
-		# Detect device
-		ROOT=`mount | grep -m1 " / " | cut -d" " -f1`;
-		DRV=${ROOT::`expr length $ROOT`-1}
+		if [ -e "/.resizefs" ]; then
+			boot_mesg "Re-sizing root partition..."
 
-		boot_mesg "resize ${DRV}3 ..."
-		nice -n 19 $0 background ${DRV}3 > /dev/null &
-		;;
-	background)
-		resize2fs -p $2
+			# Find root device
+			while read -r dev mountpoint fs options; do
+				# Skip generic entries
+				[ "${dev}" = "rootfs" ] && continue
 
-		# Erase symlink, it should run only once
-		rm -f /etc/rc.d/rcsysinit.d/S42fsresize
-		sync
-		exit 0;
+				if [ "${mountpoint}" = "/" ]; then
+					# Resize filesystem
+					resize2fs -p "${dev}"
 
+					# Remove marker
+					rm -f /.resizefs
+					break
+				fi
+			done < /proc/mounts
+		fi
 		;;
 
 	*)

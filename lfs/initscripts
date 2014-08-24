@@ -162,8 +162,10 @@ $(TARGET) :
 	ln -sf ../init.d/udev        /etc/rc.d/rcsysinit.d/S10udev
 	ln -sf ../init.d/waitdrives  /etc/rc.d/rcsysinit.d/S19waitdrives
 	ln -sf ../init.d/swap        /etc/rc.d/rcsysinit.d/S20swap
+	ln -sf ../init.d/partresize  /etc/rc.d/rcsysinit.d/S25partresize
 	ln -sf ../init.d/checkfs     /etc/rc.d/rcsysinit.d/S30checkfs
 	ln -sf ../init.d/mountfs     /etc/rc.d/rcsysinit.d/S40mountfs
+	ln -sf ../init.d/fsresize    /etc/rc.d/rcsysinit.d/S42fsresize
 	ln -sf ../init.d/udev_retry  /etc/rc.d/rcsysinit.d/S45udev_retry
 	ln -sf ../init.d/cleanfs     /etc/rc.d/rcsysinit.d/S50cleanfs
 	ln -sf ../init.d/setclock    /etc/rc.d/rcsysinit.d/S60setclock
