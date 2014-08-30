@@ -238,7 +238,7 @@ int main(int argc, char *argv[]) {
 	int rc = 0;
 	char commandstring[STRING_SIZE];
 	int choice;
-	char shortlangname[10];
+	char language[STRING_SIZE];
 	char message[STRING_SIZE];
 	char title[STRING_SIZE];
 	int allok = 0;
@@ -320,9 +320,10 @@ int main(int argc, char *argv[]) {
 		assert(choice <= NUM_LANGS);
 
 		fprintf(flog, "Selected language: %s (%s)\n", languages[choice].name, languages[choice].code);
+		snprintf(language, sizeof(language), languages[choice].code);
 
-		setenv("LANGUAGE", languages[choice].code, 1);
-		setlocale(LC_ALL, languages[choice].code);
+		setenv("LANGUAGE", language, 1);
+		setlocale(LC_ALL, language);
 	}
 
 	char* helpline = center_string(_("<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"), screen_cols);
@@ -598,7 +599,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* Save language und local settings */
-	write_lang_configs(shortlangname);
+	write_lang_configs(language);
 
 	/* Build cache lang file */
 	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
