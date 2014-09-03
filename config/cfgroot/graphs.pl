@@ -586,6 +586,48 @@ sub updateifgraph {
 		$ERROR = RRDs::error;
 		print "Error in RRD::graph for ".$interface.": ".$ERROR."\n" if $ERROR;
 }
+sub updatevpngraph {
+	my $interface = $_[0];
+	my $period    = $_[1];
+	RRDs::graph(
+		"-",
+		"--start",
+		"-1".$period,
+		"-aPNG",
+		"-i",
+		"-z",
+		"-W www.ipfire.org",
+		"--alt-y-grid",
+		"-w 600",
+		"-h 125",
+		"-r",
+		"-t ".$Lang::tr{'traffic on'}." ".$interface." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
+		"-v ".$Lang::tr{'bytes per second'},
+		"--color=SHADEA".$color{"color19"},
+		"--color=SHADEB".$color{"color19"},
+		"--color=BACK".$color{"color21"},
+		"DEF:incoming=".$mainsettings{'RRDLOG'}."/collectd/localhost/openvpn-$interface/if_octets.rrd:rx:AVERAGE",
+		"DEF:outgoing=".$mainsettings{'RRDLOG'}."/collectd/localhost/openvpn-$interface/if_octets.rrd:tx:AVERAGE",
+		"CDEF:outgoingn=outgoing,-1,*",
+		"COMMENT:".sprintf("%-20s",$Lang::tr{'caption'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
+		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j",
+		"AREA:incoming".$color{"color12"}."A0:".sprintf("%-20s",$Lang::tr{'incoming traffic in bytes per second'}),
+		"GPRINT:incoming:MAX:%8.1lf %sBps",
+		"GPRINT:incoming:AVERAGE:%8.1lf %sBps",
+		"GPRINT:incoming:MIN:%8.1lf %sBps",
+		"GPRINT:incoming:LAST:%8.1lf %sBps\\j",
+		"AREA:outgoingn".$color{"color13"}."A0:".sprintf("%-20s",$Lang::tr{'outgoing traffic in bytes per second'}),
+		"GPRINT:outgoing:MAX:%8.1lf %sBps",
+		"GPRINT:outgoing:AVERAGE:%8.1lf %sBps",
+		"GPRINT:outgoing:MIN:%8.1lf %sBps",
+		"GPRINT:outgoing:LAST:%8.1lf %sBps\\j",
+		);
+		$ERROR = RRDs::error;
+		print "Error in RRD::graph for ".$interface.": ".$ERROR."\n" if $ERROR;
+}
 
 # Generate the Firewall Graph for the current period of time for values given by collecd
 

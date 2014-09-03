@@ -2,6 +2,7 @@ etc/collectd.conf
 etc/collectd.custom
 etc/collectd.precache
 etc/collectd.thermal
+etc/collectd.vpn
 etc/rc.d/init.d/collectd
 etc/rc.d/rc0.d/K50collectd
 etc/rc.d/rc3.d/S29collectd
