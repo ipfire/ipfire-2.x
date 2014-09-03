@@ -388,7 +388,9 @@ sub iporsubtocidr
 }
 
 sub getnetworkip {
-	return &Network::get_netaddress(shift);
+	my $arg = join("/", $@);
+
+	return &Network::get_netaddress($arg);
 }
 
 sub getccdbc
