@@ -364,7 +364,7 @@ static int hw_device_has_p_suffix(const struct hw_destination* dest) {
 
 	// Devices with a number at the end have the p suffix, too.
 	// e.g. mmcblk0, cciss0
-	unsigned int last_char = strlen(dest->path);
+	unsigned int last_char = strlen(dest->path) - 1;
 	if ((dest->path[last_char] >= '0') && (dest->path[last_char] <= '9'))
 		return 1;
 
