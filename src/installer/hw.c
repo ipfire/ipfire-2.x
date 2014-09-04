@@ -33,6 +33,7 @@
 #include <sys/ioctl.h>
 #include <sys/mount.h>
 #include <sys/swap.h>
+#include <sys/sysinfo.h>
 #include <unistd.h>
 
 #include <linux/fs.h>
@@ -502,23 +503,13 @@ struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks
 }
 
 unsigned long long hw_memory() {
-	FILE* handle = NULL;
-	char line[STRING_SIZE];
+	struct sysinfo si;
 
-	unsigned long long memory = 0;
+	int r = sysinfo(&si);
+	if (r < 0)
+		return 0;
 
-	/* Calculate amount of memory in machine */
-	if ((handle = fopen("/proc/meminfo", "r"))) {
-		while (fgets(line, sizeof(line), handle)) {
-			if (!sscanf (line, "MemTotal: %llu kB", &memory)) {
-				memory = 0;
-			}
-		}
-
-		fclose(handle);
-	}
-
-	return memory * 1024;
+	return si.totalram;
 }
 
 static int hw_zero_out_device(const char* path, int bytes) {
