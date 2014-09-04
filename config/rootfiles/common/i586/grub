@@ -1,6 +1,7 @@
 #boot/grub
 boot/grub/grub.cfg
 boot/grub/splash.png
+boot/grub/unifont.pf2
 #etc/bash_completion.d
 #etc/bash_completion.d/grub
 etc/default/grub
@@ -17,6 +18,7 @@ usr/bin/grub-editenv
 usr/bin/grub-fstest
 usr/bin/grub-kbdcomp
 usr/bin/grub-menulst2cfg
+usr/bin/grub-mkfont
 usr/bin/grub-mkimage
 usr/bin/grub-mklayout
 usr/bin/grub-mkpasswd-pbkdf2

@@ -401,6 +401,7 @@ buildipfire() {
   ipfiremake dracut
   ipfiremake lvm2
   ipfiremake multipath-tools
+  ipfiremake freetype
   ipfiremake grub
 
   case "${TARGET_ARCH}" in
@@ -488,7 +489,6 @@ buildipfire() {
   ipfiremake libpng
   ipfiremake libtiff
   ipfiremake libart
-  ipfiremake freetype
   ipfiremake gd
   ipfiremake popt
   ipfiremake pcre
