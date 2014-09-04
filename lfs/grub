@@ -92,6 +92,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /boot/grub
 	touch /boot/grub/grub.cfg
 	ln -svf ../boot/grub/grub.cfg /etc/grub2.cfg
+	install -m 644 $(DIR_SRC)/config/grub2/splash.png /boot/grub/splash.png
 
 	-mkdir -pv /etc/default
 	install -m 644 $(DIR_SRC)/config/grub2/default /etc/default/grub

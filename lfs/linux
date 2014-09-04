@@ -294,7 +294,7 @@ ifeq "$(MACHINE_TYPE)" "arm"
 endif
 
 	# Create initramfs images
-	dracut --force --verbose --strip /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
+	dracut --force --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
 
 ifeq "$(KCFG)" "-kirkwood"
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-kirkwood.img uInit-ipfire-kirkwood

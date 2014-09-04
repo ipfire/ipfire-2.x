@@ -219,6 +219,7 @@ struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 		disk->ref = 1;
 
 		strncpy(disk->path, dev_path, sizeof(disk->path));
+		const char* p = disk->path + 5;
 
 		disk->size = size;
 
@@ -252,15 +253,15 @@ struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 
 		if (*disk->vendor && *disk->model) {
 			snprintf(disk->description, sizeof(disk->description),
-				"%s - %s - %s", size_str, disk->vendor, disk->model);
+				"%s - %s - %s - %s", size_str, p, disk->vendor, disk->model);
 
 		} else if (*disk->vendor || *disk->model) {
 			snprintf(disk->description, sizeof(disk->description),
-				"%s - %s", size_str, (*disk->vendor) ? disk->vendor : disk->model);
+				"%s - %s - %s", size_str, p, (*disk->vendor) ? disk->vendor : disk->model);
 
 		} else {
 			snprintf(disk->description, sizeof(disk->description),
-				"%s - N/A", size_str);
+				"%s - %s", size_str, p);
 		}
 
 		*disks++ = disk;
@@ -356,11 +357,26 @@ static unsigned long long hw_boot_size(struct hw_destination* dest) {
 	return MB2BYTES(64);
 }
 
+static int hw_device_has_p_suffix(const struct hw_destination* dest) {
+	// All RAID devices have the p suffix.
+	if (dest->is_raid)
+		return 1;
+
+	// Devices with a number at the end have the p suffix, too.
+	// e.g. mmcblk0, cciss0
+	unsigned int last_char = strlen(dest->path);
+	if ((dest->path[last_char] >= '0') && (dest->path[last_char] <= '9'))
+		return 1;
+
+	return 0;
+}
+
 static int hw_calculate_partition_table(struct hw_destination* dest) {
 	char path[DEV_SIZE];
 	int part_idx = 1;
 
-	snprintf(path, sizeof(path), "%s%s", dest->path, (dest->is_raid) ? "p" : "");
+	snprintf(path, sizeof(path), "%s%s", dest->path,
+		hw_device_has_p_suffix(dest) ? "p" : "");
 	dest->part_boot_idx = 0;
 
 	// Determine the size of the target block device

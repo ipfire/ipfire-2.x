@@ -2,8 +2,8 @@ etc/dracut.conf
 etc/dracut.conf.d
 usr/bin/dracut
 usr/bin/dracut-catimages
-#usr/bin/lsinitrd
-#usr/bin/mkinitrd
+usr/bin/lsinitrd
+usr/bin/mkinitrd
 usr/lib/dracut
 #usr/lib/dracut/dracut-functions
 #usr/lib/dracut/dracut-functions.sh
