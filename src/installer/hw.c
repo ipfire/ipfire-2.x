@@ -219,6 +219,7 @@ struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 		disk->ref = 1;
 
 		strncpy(disk->path, dev_path, sizeof(disk->path));
+		const char* p = disk->path + 5;
 
 		disk->size = size;
 
@@ -252,15 +253,15 @@ struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 
 		if (*disk->vendor && *disk->model) {
 			snprintf(disk->description, sizeof(disk->description),
-				"%s - %s - %s", size_str, disk->vendor, disk->model);
+				"%s - %s - %s - %s", size_str, p, disk->vendor, disk->model);
 
 		} else if (*disk->vendor || *disk->model) {
 			snprintf(disk->description, sizeof(disk->description),
-				"%s - %s", size_str, (*disk->vendor) ? disk->vendor : disk->model);
+				"%s - %s - %s", size_str, p, (*disk->vendor) ? disk->vendor : disk->model);
 
 		} else {
 			snprintf(disk->description, sizeof(disk->description),
-				"%s - N/A", size_str);
+				"%s - %s", size_str, p);
 		}
 
 		*disks++ = disk;
