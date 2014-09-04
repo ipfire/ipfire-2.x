@@ -1,5 +1,6 @@
 #boot/grub
 boot/grub/grub.cfg
+boot/grub/splash.png
 #etc/bash_completion.d
 #etc/bash_completion.d/grub
 etc/default/grub
