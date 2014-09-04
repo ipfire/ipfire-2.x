@@ -40,11 +40,14 @@ CXXFLAGS   =
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	unifont-7.0.03.pcf.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+unifont-7.0.03.pcf.gz = $(DL_FROM)/unifont-7.0.03.pcf.gz
 
 $(DL_FILE)_MD5 = a1043102fbc7bcedbf53e7ee3d17ab91
+unifont-7.0.03.pcf.gz_MD5 = f6903ac8c1caeeb30c1e9a2975028401
 
 install : $(TARGET)
 
@@ -95,6 +98,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Disable hardening.
 	paxctl -mpes /usr/sbin/grub-bios-setup /usr/sbin/grub-probe
+
+	# We don't need to install unifont just to generate a grub2 compatible
+	# font archive for the graphical boot menu. The following command only
+	# converts Latin-1, Latin Extended A+B, Arrows, Box and Block characters.
+	/usr/bin/grub-mkfont --output /boot/grub/unifont.pf2 \
+		--range=0x0000-0x0241,0x2190-0x21FF,0x2500-0x259f \
+		$(DIR_DL)/unifont-7.0.03.pcf.gz
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
