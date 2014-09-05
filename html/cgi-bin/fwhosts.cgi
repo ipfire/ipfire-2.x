@@ -293,7 +293,6 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 		if($fwhostsettings{'error'} ne 'on'){
 				my $fullip="$fwhostsettings{'IP'}/".&General::iporsubtocidr($fwhostsettings{'SUBNET'});
 				$errormessage=$errormessage.&General::checksubnets($fwhostsettings{'HOSTNAME'},$fullip,"");
-				if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}='editnet';}
 		}
 		#only check plausi when no error till now
 		if (!$errormessage){
@@ -310,9 +309,8 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			$customnetwork{$key}[3] = $fwhostsettings{'orgnetremark'};
 			&General::writehasharray("$confignet", \%customnetwork);
 			undef %customnetwork;
-		} 			
+		}
 		if (!$errormessage){
-			
 			&General::readhasharray("$confignet", \%customnetwork);
 			if ($fwhostsettings{'ACTION'} eq 'updatenet'){
 				if ($fwhostsettings{'update'} == '0'){
@@ -364,7 +362,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 						&General::writehasharray("$fwconfiginp", \%fwinp);
 					}
 				}
-			}					
+			}
 			my $key = &General::findhasharraykey (\%customnetwork);
 			foreach my $i (0 .. 3) { $customnetwork{$key}[$i] = "";}
 			$fwhostsettings{'SUBNET'}	= &General::iporsubtocidr($fwhostsettings{'SUBNET'});
@@ -388,7 +386,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			}
 			&addnet;
 			&viewtablenet;
-		}else		{
+		}else{
 			$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
 			&addnet;
 			&viewtablenet;
