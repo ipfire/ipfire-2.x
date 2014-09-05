@@ -291,42 +291,14 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			$errormessage=$errormessage.$Lang::tr{'fwhost err sub32'};
 		}
 		if($fwhostsettings{'error'} ne 'on'){
-			#check if we use one of ipfire's networks (green,orange,blue)
-			if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && ($fwhostsettings{'IP'} eq $ownnet{'GREEN_NETADDRESS'} && $fwhostsettings{'SUBNET'} eq $ownnet{'GREEN_NETMASK'}))
-			{ 
-				$errormessage=$errormessage.$Lang::tr{'ccd err green'}."<br>";
-				$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
+				my $fullip="$fwhostsettings{'IP'}/".&General::iporsubtocidr($fwhostsettings{'SUBNET'});
+				$errormessage=$errormessage.&General::checksubnets($fwhostsettings{'HOSTNAME'},$fullip,"");
 				if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}='editnet';}
-			}
-			if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && ($fwhostsettings{'IP'} eq $ownnet{'ORANGE_NETADDRESS'} && $fwhostsettings{'SUBNET'} eq $ownnet{'ORANGE_NETMASK'}))
-			{ 
-				$errormessage=$errormessage.$Lang::tr{'ccd err orange'}."<br>";
-				$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
-				if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}='editnet';}
-			}
-			if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && ($fwhostsettings{'IP'} eq $ownnet{'BLUE_NETADDRESS'} && $fwhostsettings{'SUBNET'} eq $ownnet{'BLUE_NETMASK'}))
-			{ 
-				$errormessage=$errormessage.$Lang::tr{'ccd err blue'}."<br>";
-				$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
-				if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}='editnet';}
-			}
-			if (($ownnet{'RED_NETADDRESS'} 	ne '' && $ownnet{'RED_NETADDRESS'} 		ne '0.0.0.0') && ($fwhostsettings{'IP'} eq $ownnet{'RED_NETADDRESS'} && $fwhostsettings{'SUBNET'} eq $ownnet{'RED_NETMASK'}))
-			{ 
-				$errormessage=$errormessage.$Lang::tr{'ccd err red'}."<br>";
-				$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
-				if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}='editnet';}
-			}
 		}
 		#only check plausi when no error till now
 		if (!$errormessage){
 			&plausicheck("editnet");
 		}
-		#check if network ip is part of an already used one 
-		if(&checksubnet(\%customnetwork))
-		{
-			$errormessage=$errormessage.$Lang::tr{'fwhost err partofnet'};
-			$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
-		}				
 		if($fwhostsettings{'actualize'} eq 'on' && $fwhostsettings{'newnet'} ne 'on' && $errormessage)
 		{
 			$fwhostsettings{'actualize'} = '';
@@ -417,6 +389,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			&addnet;
 			&viewtablenet;
 		}else		{
+			$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
 			&addnet;
 			&viewtablenet;
 		}
