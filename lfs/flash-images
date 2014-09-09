@@ -167,7 +167,7 @@ endif
 ifeq "$(BOOTLOADER)" "grub"
 ifeq "$(SCON)" "1"
 	# Enable serial console on GRUB
-	echo "GRUB_TERMINAL=\"serial console\"" >> $(MNThdd)/etc/default/grub
+	echo "GRUB_TERMINAL=\"serial\"" >> $(MNThdd)/etc/default/grub
 	echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> $(MNThdd)/etc/default/grub
 
 	sed -i -e "s|panic=10|& console=ttyS0,115200n8|g" $(MNThdd)/etc/default/grub

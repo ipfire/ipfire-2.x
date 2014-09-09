@@ -621,7 +621,7 @@ int main(int argc, char *argv[]) {
 			goto EXIT;
 		}
 
-		fprintf(f, "GRUB_TERMINAL=\"serial console\"\n");
+		fprintf(f, "GRUB_TERMINAL=\"serial\"\n");
 		fprintf(f, "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=%d\"\n", SERIAL_BAUDRATE);
 		fclose(f);
 
