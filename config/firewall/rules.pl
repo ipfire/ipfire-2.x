@@ -268,6 +268,33 @@ sub buildrules {
 			}
 		}
 
+		# Concurrent connection limit
+		my @ratelimit_options = ();
+		if ($$hash{$key}[32] eq 'ON') {
+			my $conn_limit = $$hash{$key}[33];
+
+			if ($conn_limit ge 1) {
+				push(@ratelimit_options, ("-m", "connlimit"));
+
+				# Use the the entire source IP address
+				push(@ratelimit_options, "--connlimit-saddr");
+				push(@ratelimit_options, ("--connlimit-mask", "32"));
+
+				# Apply the limit
+				push(@ratelimit_options, ("--connlimit-upto", $conn_limit));
+			}
+		}
+
+		# Ratelimit
+		if ($$hash{$key}[34] eq 'ON') {
+			my $rate_limit = "$$hash{$key}[35]/$$hash{$key}[36]";
+
+				if ($rate_limit) {
+					push(@ratelimit_options, ("-m", "limit"));
+					push(@ratelimit_options, ("--limit", $rate_limit));
+				}
+		}
+
 		# Check which protocols are used in this rule and so that we can
 		# later group rules by protocols.
 		my @protocols = &get_protocols($hash, $key);
@@ -335,6 +362,9 @@ sub buildrules {
 
 					# Add time constraint options.
 					push(@options, @time_options);
+
+					# Add ratelimiting option
+					push(@options, @ratelimit_options);
 
 					my $firewall_is_in_source_subnet = 1;
 					if ($source) {
