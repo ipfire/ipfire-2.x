@@ -457,6 +457,10 @@ sub buildrules {
 			}
 		}
 	}
+	#Reload firewall.local if present
+	if ( -f '/etc/sysconfig/firewall.local'){
+		run("/etc/sysconfig/firewall.local reload");
+	}
 }
 
 # Formats the given timestamp into the iptables format which is "hh:mm" UTC.
