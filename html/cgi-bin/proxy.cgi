@@ -3221,6 +3221,48 @@ END
 		print FILE "\n";
 	}
 
+	open (PORTS,"$acl_ports_ssl");
+	my @ssl_ports = <PORTS>;
+	close PORTS;
+
+	if (@ssl_ports) {
+		foreach (@ssl_ports) {
+			print FILE "acl SSL_ports port $_";
+		}
+	}
+
+	open (PORTS,"$acl_ports_safe");
+	my @safe_ports = <PORTS>;
+	close PORTS;
+
+	if (@safe_ports) {
+		foreach (@safe_ports) {
+			print FILE "acl Safe_ports port $_";
+		}
+	}
+
+	print FILE <<END
+
+acl IPFire_http  port $http_port
+acl IPFire_https port $https_port
+acl IPFire_ips              dst $netsettings{'GREEN_ADDRESS'}
+acl IPFire_networks         src "$acl_src_subnets"
+acl IPFire_servers          dst "$acl_src_subnets"
+acl IPFire_green_network    src $green_cidr
+acl IPFire_green_servers    dst $green_cidr
+END
+	;
+	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_network     src $blue_cidr\n"; }
+	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_servers     dst $blue_cidr\n"; }
+	if (!-z $acl_src_banned_ip) { print FILE "acl IPFire_banned_ips       src \"$acl_src_banned_ip\"\n"; }
+	if (!-z $acl_src_banned_mac) { print FILE "acl IPFire_banned_mac       arp \"$acl_src_banned_mac\"\n"; }
+	if (!-z $acl_src_unrestricted_ip) { print FILE "acl IPFire_unrestricted_ips src \"$acl_src_unrestricted_ip\"\n"; }
+	if (!-z $acl_src_unrestricted_mac) { print FILE "acl IPFire_unrestricted_mac arp \"$acl_src_unrestricted_mac\"\n"; }
+	print FILE <<END
+acl CONNECT method CONNECT
+END
+	;
+
 	if ($proxysettings{'CACHE_SIZE'} > 0) {
 		print FILE <<END
 maximum_object_size $proxysettings{'MAX_SIZE'} KB
@@ -3501,48 +3543,6 @@ END
 	if ((!-z $mimetypes) && ($proxysettings{'ENABLE_MIME_FILTER'} eq 'on')) {
 		print FILE "acl blocked_mimetypes rep_mime_type \"$mimetypes\"\n\n";
 	}
-
-open (PORTS,"$acl_ports_ssl");
-my @ssl_ports = <PORTS>;
-close PORTS;
-
-if (@ssl_ports) {
-	foreach (@ssl_ports) {
-		print FILE "acl SSL_ports port $_";
-	}
-}
-
-open (PORTS,"$acl_ports_safe");
-my @safe_ports = <PORTS>;
-close PORTS;
-
-if (@safe_ports) {
-	foreach (@safe_ports) {
-		print FILE "acl Safe_ports port $_";
-	}
-}
-
-	print FILE <<END
-
-acl IPFire_http  port $http_port
-acl IPFire_https port $https_port
-acl IPFire_ips              dst $netsettings{'GREEN_ADDRESS'}
-acl IPFire_networks         src "$acl_src_subnets"
-acl IPFire_servers          dst "$acl_src_subnets"
-acl IPFire_green_network    src $green_cidr
-acl IPFire_green_servers    dst $green_cidr
-END
-	;
-	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_network     src $blue_cidr\n"; }
-	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_servers     dst $blue_cidr\n"; }
-	if (!-z $acl_src_banned_ip) { print FILE "acl IPFire_banned_ips       src \"$acl_src_banned_ip\"\n"; }
-	if (!-z $acl_src_banned_mac) { print FILE "acl IPFire_banned_mac       arp \"$acl_src_banned_mac\"\n"; }
-	if (!-z $acl_src_unrestricted_ip) { print FILE "acl IPFire_unrestricted_ips src \"$acl_src_unrestricted_ip\"\n"; }
-	if (!-z $acl_src_unrestricted_mac) { print FILE "acl IPFire_unrestricted_mac arp \"$acl_src_unrestricted_mac\"\n"; }
-	print FILE <<END
-acl CONNECT method CONNECT
-END
-	;
 
 	if ($proxysettings{'CLASSROOM_EXT'} eq 'on') {
 		print FILE <<END

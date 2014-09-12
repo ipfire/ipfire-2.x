@@ -1,0 +1,45 @@
+diff -Nrup a/malloc/malloc.c b/malloc/malloc.c
+--- a/malloc/malloc.c	2013-09-23 17:08:33.698331221 -0400
++++ b/malloc/malloc.c	2013-09-23 21:04:25.901270645 -0400
+@@ -3879,6 +3879,13 @@ public_mEMALIGn(size_t alignment, size_t
+   /* Otherwise, ensure that it is at least a minimum chunk size */
+   if (alignment <  MINSIZE) alignment = MINSIZE;
+ 
++  /* Check for overflow.  */
++  if (bytes > SIZE_MAX - alignment - MINSIZE)
++    {
++      __set_errno (ENOMEM);
++      return 0;
++    }
++
+   arena_get(ar_ptr, bytes + alignment + MINSIZE);
+   if(!ar_ptr)
+     return 0;
+@@ -3924,6 +3931,13 @@ public_vALLOc(size_t bytes)
+ 
+   size_t pagesz = mp_.pagesize;
+ 
++  /* Check for overflow.  */
++  if (bytes > SIZE_MAX - pagesz - MINSIZE)
++    {
++      __set_errno (ENOMEM);
++      return 0;
++    }
++
+   __malloc_ptr_t (*hook) __MALLOC_PMT ((size_t, size_t,
+ 					__const __malloc_ptr_t)) =
+     force_reg (__memalign_hook);
+@@ -3975,6 +3989,13 @@ public_pVALLOc(size_t bytes)
+   size_t page_mask = mp_.pagesize - 1;
+   size_t rounded_bytes = (bytes + page_mask) & ~(page_mask);
+ 
++  /* Check for overflow.  */
++  if (bytes > SIZE_MAX - 2*pagesz - MINSIZE)
++    {
++      __set_errno (ENOMEM);
++      return 0;
++    }
++
+   __malloc_ptr_t (*hook) __MALLOC_PMT ((size_t, size_t,
+ 					__const __malloc_ptr_t)) =
+     force_reg (__memalign_hook);

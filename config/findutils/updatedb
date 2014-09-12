@@ -1,0 +1,16 @@
+#!/bin/bash
+
+[ -x "/usr/bin/updatedb" ] || exit 0
+
+LOCKFILE="/var/lib/locate/updatedb.lock"
+
+trap "rm -f $LOCKFILE" EXIT
+
+if [ -e "$LOCKFILE" ]; then
+	echo >&2 "Warning: $LOCKFILE present, not running updatedb."
+	exit 1
+else
+	touch "$LOCKFILE"
+fi
+
+/usr/bin/updatedb

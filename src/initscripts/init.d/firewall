@@ -369,8 +369,10 @@ iptables_red_down() {
 	# while the wan interface is down - this is required to
 	# circumvent udp related NAT issues
 	# http://forum.ipfire.org/index.php?topic=11127.0
-	iptables -F REDFORWARD
-	iptables -A REDFORWARD -o $IFACE -j DROP
+	if [ -n "${IFACE}" ]; then
+		iptables -F REDFORWARD
+		iptables -A REDFORWARD -o "${IFACE}" -j DROP
+	fi
 
 	# Reload all rules.
 	/usr/local/bin/firewallctrl

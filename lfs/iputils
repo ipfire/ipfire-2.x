@@ -73,8 +73,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/iputils-20020927-headers.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/iputils-20020927-rh.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/iputils-glibckernheaders.patch
-	cd $(DIR_APP) && make ping
+	cd $(DIR_APP) && make ping tracepath
 	cd $(DIR_APP) && install -m 4755 ping /usr/bin
+	cd $(DIR_APP) && install -m 0755 tracepath /usr/bin
 
 	# Some scripts expect ping in /bin/ping.
 	ln -svf ../usr/bin/ping /bin/ping
