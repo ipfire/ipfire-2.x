@@ -460,7 +460,6 @@ sub pdf2 {
 	$lines->linewidth('0.5');
 
 	#Fill BILL DATA into PDF
-	setlocale(LC_ALL, "$mainsettings{'LANGUAGE'}_$uplang");
 	foreach (@billar) {
 		my ($a1,$a2) = split( /\,/, $_ );
 		$a2=sprintf"%.2f",($a2/1024/1024);

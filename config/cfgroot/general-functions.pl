@@ -286,7 +286,7 @@ sub validip
 sub validmask {
 	my $mask = shift;
 
-	return &Network::check_netmask($mask) or &Network::check_prefix($mask);
+	return &Network::check_netmask($mask) || &Network::check_prefix($mask);
 }
 
 sub validipormask
@@ -388,7 +388,9 @@ sub iporsubtocidr
 }
 
 sub getnetworkip {
-	return &Network::get_netaddress(shift);
+	my $arg = join("/", @_);
+
+	return &Network::get_netaddress($arg);
 }
 
 sub getccdbc
