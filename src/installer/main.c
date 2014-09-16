@@ -469,7 +469,7 @@ int main(int argc, char *argv[]) {
 
 		// Currently not supported
 		} else {
-			errorbox(_("You disk configuration is currently not supported."));
+			errorbox(_("Your disk configuration is currently not supported."));
 			fprintf(flog, "Num disks selected: %d\n", num_selected_disks);
 		}
 
