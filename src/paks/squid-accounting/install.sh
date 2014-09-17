@@ -31,5 +31,8 @@ if [ ! -f /var/ipfire/accounting/acct.db ]; then
 	chmod 644 /var/ipfire/accounting/acct.db
 	chown nobody.nobody /var/ipfire/accounting/acct.db
 fi
+#Set right permissions of directory /srv/web/ipfire/html/accounting
+chown -R nobody.nobody /srv/web/ipfire/html/accounting
+chmod 755 -R /srv/web/ipfire/html/accounting
 rm -f /var/ipfire/accounting/dbinstall.pl
 /usr/local/bin/update-lang-cache
