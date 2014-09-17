@@ -25,7 +25,7 @@
 include Config
 
 PKG_NAME   = collectd
-VER        = 4.10.7
+VER        = 4.10.9
 
 THISAPP    = collectd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f4193fdb5002ddac8159c88032a726bc
+$(DL_FILE)_MD5 = 980dd3387508f9ad209df04a6f7a126c
 
 install : $(TARGET)
 
@@ -79,6 +79,28 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0001-src-utils_mount.h-Add-stdio.h.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0002-Don-t-notify-continuously-when-MySQL-slave-SQL-threa.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0003-curl_xml.c-avoid-using-uninitalized-variable-in-erro.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0004-interface.c-FreeBSD-10-support.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0005-Revert-curl_xml.c-avoid-using-uninitalized-variable-.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0006-network-set_thread_cbs-so-we-initialize-the-right-th.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0007-apache-plugin-Call-curl_global_init-from-the-init-fu.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0008-network-comment-libgcrypt-initalization-process.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0009-Call-curl_global_init-in-_init-of-plugins-using-curl.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0010-indent-wh_init-to-be-consistent-with-the-rest-of-the.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0011-Configparser-when-we-alocate-an-empty-list-we-also-n.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0012-don-t-assume-pkg-config-is-in-PATH.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0013-add-missing-backticks-which-broke-the-build.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0014-snmp-free-snmp_pdu-struct-allocated-by-snmp_pdu_crea.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0015-curl_xml-plugin-Fixed-tautological-pointer-compariso.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0016-Add-support-for-OpenVPN-2.3.0-status-files.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0017-openvpn-plugin-Don-t-signal-an-error-when-no-clients.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0018-openvpn-Remove-boguous-file-handler-check.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0019-openvpn-Ignore-not-fully-established-connections.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0020-openvpn-Make-read-functions-robust-like-in-8516f9abb.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0021-openvpn-Fix-copy-and-paste-error.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0022-openvpn-Change-data-type-from-COUNTER-to-DERIVE.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --localstatedir=/var \
 		--disable-{apple_sensors,csv,ipvs,mbmon,memcached,mysql} \
 		--disable-{netlink,nginx,nut,perl,serial,snmp,tape,vserver,xmms} \
