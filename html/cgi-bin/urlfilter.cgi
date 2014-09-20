@@ -935,7 +935,7 @@ if (($besettings{'ACTION'} eq $Lang::tr{'urlfilter install blacklist'}) && ($bes
 		close FILE;
 
 		system("rm -f $dbdir/$besettings{'BE_NAME'}/*.db");
-		system("/usr/sbin/squidGuard -c $editdir/install.conf -C all");
+		system("/usr/bin/squidGuard -c $editdir/install.conf -C all");
 		system("chmod a+w $dbdir/$besettings{'BE_NAME'}/*.db");
 
 		&readblockcategories;
