@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 3.10.54
+VER        = 3.10.55
 
 RPI_PATCHES = linux-3.10.38-grsec-1b49b45
-GRS_PATCHES = grsecurity-2.9.1-3.10.54-ipfire1.patch.xz
+GRS_PATCHES = grsecurity-2.9.1-3.10.55-ipfire1.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -74,9 +74,9 @@ $(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 $(GRS_PATCHES)				= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5				= 4120a4fb0e85784f8e7f310cecc41290
+$(DL_FILE)_MD5				= 5e9282099d35c2c4d8115a9b09352669
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= a7408e8bad57b4b2cb677dd5a0bfb7ff
-$(GRS_PATCHES)_MD5			= 76ee852810da08295841dce28fb6ce47
+$(GRS_PATCHES)_MD5			= bdee0a80cb139f28235b3bc696927b23
 
 install : $(TARGET)
 
