@@ -95,6 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-profile-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-3.2-ssh_source_bash.patch
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash-4.3-CVE-2014-6271.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash-3.2-CVE-2014-7169.patch
 
 	cd $(DIR_APP) && ./configure $(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)
