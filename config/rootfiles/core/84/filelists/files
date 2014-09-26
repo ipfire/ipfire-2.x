@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/firewall
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 usr/lib/firewall/firewall-lib.pl
