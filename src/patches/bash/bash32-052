@@ -1,3 +1,20 @@
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.2
+Patch-ID: bash32-052
+
+Bug-Reported-by:	Stephane Chazelas <stephane.chazelas@gmail.com>
+Bug-Reference-ID:
+Bug-Reference-URL:
+
+Bug-Description:
+
+Under certain circumstances, bash will execute user code while processing the
+environment for exported function definitions.
+
+Patch (apply with `patch -p0'):
+
 *** ../bash-3.2.51/builtins/common.h	2006-03-06 09:38:44.000000000 -0500
 --- builtins/common.h	2014-09-16 19:08:02.000000000 -0400
 ***************
@@ -70,3 +87,18 @@
   	}
   #if defined (ARRAY_VARS)
 --- 331,334 ----
+*** ../bash-3.2/patchlevel.h	Thu Apr 13 08:31:04 2006
+--- patchlevel.h	Mon Oct 16 14:22:54 2006
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 51
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 52
+  
+  #endif /* _PATCHLEVEL_H_ */
