@@ -1,18 +1,18 @@
 diff --git a/Makefile b/Makefile
-index 292c8bd..5e0cdbe 100644
+index 58a7975..616c6b7 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -69,7 +69,7 @@ objs = cache.o rfc1035.o util.o option.o forward.o network.o \
         dnsmasq.o dhcp.o lease.o rfc2131.o netlink.o dbus.o bpf.o \
         helper.o tftp.o log.o conntrack.o dhcp6.o rfc3315.o \
         dhcp-common.o outpacket.o radv.o slaac.o auth.o ipset.o \
--       domain.o dnssec.o blockdata.o
-+       domain.o dnssec.o blockdata.o isc.o
+-       domain.o dnssec.o blockdata.o tables.o loop.o
++       domain.o dnssec.o blockdata.o tables.o loop.o isc.o
  
  hdrs = dnsmasq.h config.h dhcp-protocol.h dhcp6-protocol.h \
         dns-protocol.h radv-protocol.h ip6addr.h
 diff --git a/src/cache.c b/src/cache.c
-index 5cec918..1f5657f 100644
+index 2c3a498..77a7046 100644
 --- a/src/cache.c
 +++ b/src/cache.c
 @@ -17,7 +17,7 @@
@@ -65,10 +65,10 @@ index 5cec918..1f5657f 100644
        cache_hash(crec);
  
 diff --git a/src/dnsmasq.c b/src/dnsmasq.c
-index 1c96a0e..156ac9a 100644
+index f4a89fc..a448ec4 100644
 --- a/src/dnsmasq.c
 +++ b/src/dnsmasq.c
-@@ -934,6 +934,11 @@ int main (int argc, char **argv)
+@@ -940,6 +940,11 @@ int main (int argc, char **argv)
  
  	  poll_resolv(0, daemon->last_resolv != 0, now); 	  
  	  daemon->last_resolv = now;
@@ -81,18 +81,24 @@ index 1c96a0e..156ac9a 100644
        
        if (FD_ISSET(piperead, &rset))
 diff --git a/src/dnsmasq.h b/src/dnsmasq.h
-index 3032546..a40b2a9 100644
+index e74b15a..4a35168 100644
 --- a/src/dnsmasq.h
 +++ b/src/dnsmasq.h
-@@ -1447,3 +1447,8 @@ void slaac_add_addrs(struct dhcp_lease *lease, time_t now, int force);
- time_t periodic_slaac(time_t now, struct dhcp_lease *leases);
+@@ -1463,9 +1463,13 @@ time_t periodic_slaac(time_t now, struct dhcp_lease *leases);
  void slaac_ping_reply(struct in6_addr *sender, unsigned char *packet, char *interface, struct dhcp_lease *leases);
  #endif
-+
+ 
 +/* isc.c */
 +#ifdef HAVE_ISC_READER
 +void load_dhcp(time_t now);
 +#endif
++
+ /* loop.c */
+ #ifdef HAVE_LOOP
+ void loop_send_probes();
+ int detect_loop(char *query, int type);
+ #endif
+-
 diff --git a/src/isc.c b/src/isc.c
 new file mode 100644
 index 0000000..5106442
@@ -351,10 +357,10 @@ index 0000000..5106442
 +
 +#endif
 diff --git a/src/option.c b/src/option.c
-index daa728f..d16c982 100644
+index 45d8875..29c9ee5 100644
 --- a/src/option.c
 +++ b/src/option.c
-@@ -1642,7 +1642,7 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+@@ -1669,7 +1669,7 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
  	ret_err(_("bad MX target"));
        break;
  
