@@ -1138,7 +1138,7 @@
 'fwhost err remark' => 'Invalid remark. Allowed characters: Upper- and lowercase letters, digits, space, dash, braces, semicolon, pipe and dot.',
 'fwhost err srv exists' => 'A service with the same name already exists',
 'fwhost err srvexist' => 'This service already exists in the group',
-'fwhost err sub32' => 'Please add a single host, not a network.',
+'fwhost err sub32' => 'Please add a network, not a single host',
 'fwhost green' => 'Green',
 'fwhost hint' => 'Note',
 'fwhost hosts' => 'Firewall Hosts',

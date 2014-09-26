@@ -1111,7 +1111,7 @@
 'fwhost err remark' => 'Ungültige Bemerkung. Erlaubte Zeichen: Klein- und Großbuchstaben, Bindestrich, Unterstrich, Runde Klammern, Semikolon, Punkt.',
 'fwhost err srv exists' => 'Ein Service mit diesem Namen existiert bereits',
 'fwhost err srvexist' => 'Dieser Dienst ist bereits in der Gruppe',
-'fwhost err sub32' => 'Bitte einen einzelnen Host hinzufügen, keine Netzwerke',
+'fwhost err sub32' => 'Bitte Netzwerke hinzufügen, keinen einzelnen Host',
 'fwhost green' => 'Grün',
 'fwhost hint' => 'Hinweis',
 'fwhost hosts' => 'Firewall-Hosts',
