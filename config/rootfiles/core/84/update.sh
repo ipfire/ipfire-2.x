@@ -32,6 +32,7 @@ do
 done
 
 # Stop services
+/etc/init.d/dnsmasq stop
 
 # Remove old files
 
@@ -39,6 +40,7 @@ done
 extract_files
 
 # Start services
+/etc/init.d/dnsmasq start
 
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
