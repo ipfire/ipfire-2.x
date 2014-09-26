@@ -38,6 +38,9 @@ done
 # Extract files
 extract_files
 
+# reload init because glibc/linker changed
+telinit -u
+
 # Start services
 
 # Update Language cache
