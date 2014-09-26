@@ -39,7 +39,7 @@ done
 extract_files
 
 # reload init because glibc/linker changed
-telinit -u
+telinit u
 
 # Start services
 
