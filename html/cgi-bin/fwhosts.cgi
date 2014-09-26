@@ -1644,7 +1644,10 @@ sub getcolor
 			$tdcolor="<font style='color: $Header::colourblue;'>$c</font>";
 			return $tdcolor;
 		}
-
+		if ("$sip/$scidr" eq "0.0.0.0/0"){
+			$tdcolor="<font style='color: $Header::colourred;'>$c</font>";
+			return $tdcolor;
+		}
 		#Check if IP is part of OpenVPN N2N subnet
 		foreach my $key (sort keys %ccdhost){
 			if ($ccdhost{$key}[3] eq 'net'){
@@ -2500,6 +2503,9 @@ sub getipforgroup
 			my %hash=();
 			&General::readhash("${General::swroot}/vpn/settings",\%hash);
 			return $hash{'RW_NET'};
+		}
+		if ($name eq 'RED'){
+			return "0.0.0.0/0";
 		}
 	}
 }

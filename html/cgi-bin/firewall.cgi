@@ -1064,7 +1064,6 @@ print<<END;
 END
 	foreach my $network (sort keys %defaultNetworks)
 		{
-			next if($defaultNetworks{$network}{'NAME'} eq "RED" && $srctgt eq 'src');
 			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
 			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $defaultNetworks{$network}{'NAME'});
