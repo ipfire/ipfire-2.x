@@ -87,15 +87,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -e "s/filename, RTLD_LAZY/filename, RTLD_NOW/" \
 		-i $(DIR_APP)/builtins/enable.def
 
-	for i in $$(seq 1 18); do \
+	for i in $$(seq 1 26); do \
 		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash43-$$(printf "%03d" "$${i}") || exit 1; \
 	done
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-paths-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-profile-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-3.2-ssh_source_bash.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash-4.3-CVE-2014-6271.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash-3.2-CVE-2014-7169.patch
 
 	cd $(DIR_APP) && ./configure $(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)
