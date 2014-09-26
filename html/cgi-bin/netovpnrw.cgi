@@ -50,17 +50,21 @@ if ( $querry[0] ne "" && $querry[0] ne "UNDEF"){
 	&Header::openpage($Lang::tr{'host to net vpn'}, 1, '');
 	&Header::openbigbox('100%', 'left');
 
-	my @vpngraphs = `find /var/log/rrd/collectd/localhost/openvpn-*/ -not  -path *openvpn-UNDEF* -name *.rrd|sort`;
+	my @vpngraphs = `find /var/log/rrd/collectd/localhost/openvpn-*/ -not  -path *openvpn-UNDEF*  -not -path *openvpn-*n2n* -name *.rrd|sort`;
 	foreach (@vpngraphs){
-		$_ =~ /(.*)\/openvpn-(.*)\/if_octets.rrd/;
-		push(@vpns,$2);
+		if($_ =~ /(.*)\/openvpn-(.*)\/if_octets_derive.rrd/){
+			push(@vpns,$2);
+		}
 	}
-	foreach (@vpns) {
-		&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("netovpnrw.cgi",$_,"week");
-		&Header::closebox();
+	if(@vpns){
+		foreach (@vpns) {
+			&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+			&Graphs::makegraphbox("netovpnrw.cgi",$_,"week");
+			&Header::closebox();
+		}
+	}else{
+		print "<center>".$Lang::tr{'no data'}."</center>";
 	}
-
 	my $output = '';
 
 	&Header::closebigbox();

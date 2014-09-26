@@ -52,15 +52,19 @@ if ( $querry[0] ne ""){
 
 	my @vpngraphs = `find /var/log/rrd/collectd/localhost/openvpn-*-n2n/ -not  -path *openvpn-UNDEF* -name *traffic.rrd|sort`;
 	foreach (@vpngraphs){
-		$_ =~ /(.*)\/openvpn-(.*)\/if_octets-traffic.rrd/;
-		push(@vpns,$2);
+		if($_ =~ /(.*)\/openvpn-(.*)\/if_octets_derive-traffic.rrd/){
+			push(@vpns,$2);
+		}
 	}
-	foreach (@vpns) {
-		&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("netovpnsrv.cgi",$_,"week");
-		&Header::closebox();
+	if (@vpns){
+		foreach (@vpns) {
+			&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+			&Graphs::makegraphbox("netovpnsrv.cgi",$_,"week");
+			&Header::closebox();
+		}
+	}else{
+		print "<center>".$Lang::tr{'no data'}."</center>";
 	}
-
 	my $output = '';
 
 	&Header::closebigbox();
