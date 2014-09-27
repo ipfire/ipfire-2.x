@@ -18,7 +18,6 @@ eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 init_networking() {
 	/etc/rc.d/init.d/dnsmasq start
-	/etc/rc.d/init.d/static-routes start
 }
 
 DO="${1}"
@@ -69,6 +68,8 @@ case "${DO}" in
 				[ "$AUTOCONNECT" == "off" ] || /etc/rc.d/init.d/networking/red start
 			fi
 		fi
+
+		/etc/rc.d/init.d/static-routes start
 		;;
 
 	stop)
