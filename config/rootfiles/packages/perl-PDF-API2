@@ -129,9 +129,9 @@ usr/lib/perl5/site_perl/5.12.3/PDF/API2/Resource/uniglyph.txt
 usr/lib/perl5/site_perl/5.12.3/PDF/API2/UniWrap.pm
 usr/lib/perl5/site_perl/5.12.3/PDF/API2/Util.pm
 usr/lib/perl5/site_perl/5.12.3/PDF/API2/Win32.pm
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/PDF
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/PDF/API2
-#usr/lib/perl5/site_perl/5.12.3/i586-linux-thread-multi/auto/PDF/API2/.packlist
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/PDF
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/PDF/API2
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/PDF/API2/.packlist
 #usr/share/man/man3/PDF::API2.3
 #usr/share/man/man3/PDF::API2::Annotation.3
 #usr/share/man/man3/PDF::API2::Basic::PDF::Array.3

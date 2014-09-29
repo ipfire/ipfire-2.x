@@ -1,0 +1,28 @@
+commit cf26a0cb6a0bbaca46a01ddad6662e5e5159a32a
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Thu May 15 12:33:11 2014 +0530
+
+    Return EAI_AGAIN for AF_UNSPEC when herrno is TRY_AGAIN (BZ #16849)
+    
+    getaddrinfo correctly returns EAI_AGAIN for AF_INET and AF_INET6
+    queries.  For AF_UNSPEC however, an older change
+    (a682a1bf553b1efe4dbb03207fece5b719cec482) broke the check and due to
+    that the returned error was EAI_NONAME.
+    
+    This patch fixes the check so that a non-authoritative not-found is
+    returned as EAI_AGAIN to the user instead of EAI_NONAME.
+
+diff --git a/sysdeps/posix/getaddrinfo.c b/sysdeps/posix/getaddrinfo.c
+index 6258330..8f392b9 100644
+--- a/sysdeps/posix/getaddrinfo.c
++++ b/sysdeps/posix/getaddrinfo.c
+@@ -867,8 +867,7 @@ gaih_inet (const char *name, const struct gaih_service *service,
+ 		      if (status != NSS_STATUS_TRYAGAIN
+ 			  || rc != ERANGE || herrno != NETDB_INTERNAL)
+ 			{
+-			  if (status == NSS_STATUS_TRYAGAIN
+-			      && herrno == TRY_AGAIN)
++			  if (herrno == TRY_AGAIN)
+ 			    no_data = EAI_AGAIN;
+ 			  else
+ 			    no_data = herrno == NO_DATA;
