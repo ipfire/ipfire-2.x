@@ -5,7 +5,7 @@
 #                                                                          #
 # IPFire is free software; you can redistribute it and/or modify           #
 # it under the terms of the GNU General Public License as published by     #
-# the Free Software Foundation; either version 2 of the License, or        #
+# the Free Software Foundation; either version 3 of the License, or        #
 # (at your option) any later version.                                      #
 #                                                                          #
 # IPFire is distributed in the hope that it will be useful,                #
@@ -17,22 +17,42 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2009 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2014 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-extract_files
-restore_backup ${NAME}
+/usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-#Generate SQLite DB if it does not exist
-if [ ! -f /var/ipfire/accounting/acct.db ]; then
-	perl /var/ipfire/accounting/dbinstall.pl
-	chmod 644 /var/ipfire/accounting/acct.db
-	chown nobody.nobody /var/ipfire/accounting/acct.db
-fi
-#Set right permissions of directory /srv/web/ipfire/html/accounting
-chown -R nobody.nobody /srv/web/ipfire/html/accounting
-chmod 755 -R /srv/web/ipfire/html/accounting
-rm -f /var/ipfire/accounting/dbinstall.pl
-/usr/local/bin/update-lang-cache
+# Remove old core updates from pakfire cache to save space...
+core=84
+for (( i=1; i<=$core; i++ ))
+do
+	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
+done
+
+# Stop services
+/etc/init.d/dnsmasq stop
+
+# Remove old files
+
+# Extract files
+extract_files
+
+# Start services
+/etc/init.d/dnsmasq start
+
+# Update Language cache
+perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+
+sync
+
+# This update need a reboot...
+touch /var/run/need_reboot
+
+# Finish
+/etc/init.d/fireinfo start
+sendprofile
+
+# Don't report the exitcode last command
+exit 0

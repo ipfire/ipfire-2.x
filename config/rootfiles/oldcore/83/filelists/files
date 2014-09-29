@@ -1,0 +1,6 @@
+etc/system-release
+etc/issue
+srv/web/ipfire/cgi-bin/logs.cgi/ids.dat
+srv/web/ipfire/cgi-bin/proxy.cgi
+srv/web/ipfire/cgi-bin/urlfilter.cgi
+var/ipfire/general-functions.pl
