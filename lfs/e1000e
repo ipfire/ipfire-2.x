@@ -25,7 +25,7 @@
 include Config
 
 VERSUFIX = ipfire$(KCFG)
-MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/e1000e
+MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/ethernet/intel/e1000e
 
 VER        = 3.1.0.2
 
