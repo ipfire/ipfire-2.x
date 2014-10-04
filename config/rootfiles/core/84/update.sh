@@ -32,6 +32,7 @@ do
 done
 
 # Stop services
+/etc/init.d/squid stop
 /etc/init.d/dnsmasq stop
 
 # Remove old files
@@ -41,6 +42,7 @@ extract_files
 
 # Start services
 /etc/init.d/dnsmasq start
+/etc/init.d/squid start
 
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"

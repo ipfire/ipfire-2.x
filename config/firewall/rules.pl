@@ -131,6 +131,12 @@ sub print_rule {
 	print "\n";
 }
 
+sub count_elements {
+	my $hash = shift;
+
+	return scalar @$hash;
+}
+
 sub flush {
 	run("$IPTABLES -F $CHAIN_INPUT");
 	run("$IPTABLES -F $CHAIN_FORWARD");
@@ -185,6 +191,9 @@ sub buildrules {
 	foreach my $key (sort {$a <=> $b} keys %$hash) {
 		# Skip disabled rules.
 		next unless ($$hash{$key}[2] eq 'ON');
+
+		# Count number of elements in this line
+		my $elements = &count_elements($$hash{$key});
 
 		if ($DEBUG) {
 			print_rule($$hash{$key});
@@ -270,7 +279,8 @@ sub buildrules {
 
 		# Concurrent connection limit
 		my @ratelimit_options = ();
-		if ($$hash{$key}[32] eq 'ON') {
+
+		if (($elements gt 34) && ($$hash{$key}[32] eq 'ON')) {
 			my $conn_limit = $$hash{$key}[33];
 
 			if ($conn_limit ge 1) {
@@ -286,7 +296,7 @@ sub buildrules {
 		}
 
 		# Ratelimit
-		if ($$hash{$key}[34] eq 'ON') {
+		if (($elements gt 37) && ($$hash{$key}[34] eq 'ON')) {
 			my $rate_limit = "$$hash{$key}[35]/$$hash{$key}[36]";
 
 				if ($rate_limit) {
