@@ -564,8 +564,8 @@ sub p2pblock {
 	}
 	close(FILE);
 
+	run("$IPTABLES -F P2PBLOCK");
 	if (@protocols) {
-		run("$IPTABLES -F P2PBLOCK");
 		run("$IPTABLES -A P2PBLOCK -m ipp2p @protocols -j DROP");
 	}
 }
