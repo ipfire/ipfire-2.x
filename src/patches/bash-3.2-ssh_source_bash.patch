@@ -1,9 +1,12 @@
-diff -up bash-3.2/config-top.h.ssh_source_bash bash-3.2/config-top.h
---- bash-3.2/config-top.h.ssh_source_bash	2008-10-23 15:08:04.000000000 +0200
-+++ bash-3.2/config-top.h	2008-10-23 15:08:33.000000000 +0200
-@@ -86,4 +86,4 @@
- 
- /* Define this if you want bash to try to check whether it's being run by
-    sshd and source the .bashrc if so (like the rshd behavior). */
+diff -up bash-4.0/config-top.h.ssh_source_bash bash-4.0/config-top.h
+--- bash-4.0/config-top.h.ssh_source_bash	2009-01-21 15:20:06.000000000 +0100
++++ bash-4.0/config-top.h	2009-01-21 15:25:46.000000000 +0100
+@@ -90,7 +90,7 @@
+    sshd and source the .bashrc if so (like the rshd behavior).  This checks
+    for the presence of SSH_CLIENT or SSH2_CLIENT in the initial environment,
+    which can be fooled under certain not-uncommon circumstances. */
 -/* #define SSH_SOURCE_BASHRC */
 +#define SSH_SOURCE_BASHRC
+ 
+ /* Define if you want the case-capitalizing operators (~[~]) and the
+    `capcase' variable attribute (declare -c). */
