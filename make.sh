@@ -870,6 +870,7 @@ buildipfire() {
   ipfiremake libyajl
   ipfiremake libvirt
   ipfiremake freeradius
+  ipfiremake perl-inotify2
 }
 
 buildinstaller() {
