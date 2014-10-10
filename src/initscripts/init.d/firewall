@@ -104,6 +104,12 @@ iptables_init() {
 	iptables -t nat -N CUSTOMPOSTROUTING
 	iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
 
+	# P2PBLOCK
+	iptables -N P2PBLOCK
+	iptables -A INPUT -j P2PBLOCK
+	iptables -A FORWARD -j P2PBLOCK
+	iptables -A OUTPUT -j P2PBLOCK
+	
 	# Guardian (IPS) chains
 	iptables -N GUARDIAN
 	iptables -A INPUT -j GUARDIAN
@@ -402,21 +408,11 @@ case "$1" in
 	boot_mesg "Setting up firewall"
 	iptables_init
 	evaluate_retval
-
-	# run local firewall configuration, if present
-	if [ -x /etc/sysconfig/firewall.local ]; then
-		/etc/sysconfig/firewall.local start
-	fi
 	;;
   reload|up)
 	boot_mesg "Reloading firewall"
 	iptables_red_up
 	evaluate_retval
-
-	# run local firewall configuration, if present
-	if [ -x /etc/sysconfig/firewall.local ]; then
-		/etc/sysconfig/firewall.local reload
-	fi
 	;;
   down)
 	boot_mesg "Disabling firewall access to RED"
@@ -424,10 +420,6 @@ case "$1" in
 	evaluate_retval
 	;;
   restart)
-	# run local firewall configuration, if present
-	if [ -x /etc/sysconfig/firewall.local ]; then
-		/etc/sysconfig/firewall.local stop
-	fi
 	$0 start
 	;;
   *)
