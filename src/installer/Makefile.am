@@ -40,8 +40,7 @@ bin_SCRIPTS = \
 installer_SOURCES = \
 	hw.c \
 	hw.h \
-	main.c \
-	unattended.c
+	main.c
 
 installer_CFLAGS = \
 	$(BLKID_CFLAGS) \

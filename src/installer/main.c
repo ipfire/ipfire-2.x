@@ -10,13 +10,13 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <libsmooth.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mount.h>
 
 #include "hw.h"
-#include "install.h"
 
 // Translation
 #include <libintl.h>
