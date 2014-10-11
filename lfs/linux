@@ -144,6 +144,9 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.55-rt2800usb-change_queue_warn_to_debug.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-add_libertas_uap.patch
 
+	# mmc
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.57-mmc_add_eMMC_5.x.patch
+
 	# mISDN Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN_hfc-s_add_id.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb-reportl1down.patch
