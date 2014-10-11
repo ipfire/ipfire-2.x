@@ -281,17 +281,16 @@ int main(int argc, char *argv[]) {
 
 	snprintf(title, sizeof(title), "%s - %s", NAME, SLOGAN);
 
-	if (! (cmdfile = fopen("/proc/cmdline", "r")))
-	{
+	if (! (cmdfile = fopen("/proc/cmdline", "r"))) {
 		fprintf(flog, "Couldn't open commandline: /proc/cmdline\n");
 	} else {
 		fgets(line, STRING_SIZE, cmdfile);
-		
+
 		// check if we have to make an unattended install
-		if (strstr (line, "unattended") != NULL) {
+		if (strstr(line, "installer.unattended") != NULL) {
+		    splashWindow(title, _("Warning: Unattended installation will start in 10 seconds..."), 10);
 		    unattended = 1;
-		    runcommandwithstatus("/bin/sleep 10", title, "WARNING: Unattended installation will start in 10 seconds...", NULL);
-		}		
+		}
 		// check if we have to patch for serial console
 		if (strstr (line, "console=ttyS0") != NULL) {
 		    serialconsole = 1;
@@ -314,7 +313,7 @@ int main(int argc, char *argv[]) {
 		}
 		langnames[NUM_LANGS] = NULL;
 
-	    rc = newtWinMenu(_("Language selection"), _("Select the language you wish to use for the installation."),
+		rc = newtWinMenu(_("Language selection"), _("Select the language you wish to use for the installation."),
 			50, 5, 5, 8, langnames, &choice, _("OK"), NULL);
 
 		assert(choice <= NUM_LANGS);
@@ -406,8 +405,10 @@ int main(int argc, char *argv[]) {
 			goto EXIT;
 
 		// exactly one disk has been found
-		} else if (num_disks == 1) {
-			selected_disks = hw_select_disks(disks, NULL);
+		// or if we are running in unattended mode, we will select
+		// the first disk and go with that one
+		} else if ((num_disks == 1) || (unattended && num_disks >= 1)) {
+			selected_disks = hw_select_first_disk(disks);
 
 		// more than one usable disk has been found and
 		// the user needs to choose what to do with them
@@ -441,6 +442,11 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		}
+
+		// Don't print the auto-selected harddisk setup in
+		// unattended mode.
+		if (unattended)
+			break;
 
 		num_selected_disks = hw_count_disks(selected_disks);
 

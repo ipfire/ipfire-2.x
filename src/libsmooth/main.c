@@ -90,6 +90,16 @@ int runhiddencommandwithstatus(const char *command, const char* title, const cha
 	return rc;
 }
 
+int splashWindow(const char* title, const char* message, unsigned int timeout) {
+	statuswindow(60, 4, title, message);
+
+	// Wait so the user can read this message
+	sleep(timeout);
+	newtPopWindow();
+
+	return 0;
+}
+
 /* This one borrowed from redhat installer. */
 int runcommandwithprogress(int width, int height, const char *title, const char *command,
 	int lines, char *text, ...) {

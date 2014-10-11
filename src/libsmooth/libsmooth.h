@@ -52,6 +52,7 @@ int runcommandwithprogress(int width, int height, const char *title, const char 
 	int lines, char *text, ...);
 int runcommandwithstatus(const char *command, const char* title, const char *message, const char* output);
 int runhiddencommandwithstatus(const char *command, const char* title, const char *message, const char* output);
+int splashWindow(const char* title, const char* message, unsigned int timeout);
 int checkformodule(const char *module); 
 int replace(char filename1[], char *from, char *to);
 char* get_version(void);

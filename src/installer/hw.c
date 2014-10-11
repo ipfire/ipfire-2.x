@@ -323,6 +323,27 @@ struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection) {
 	return ret;
 }
 
+struct hw_disk** hw_select_first_disk(const struct hw_disk** disks) {
+	struct hw_disk** ret = hw_create_disks();
+	struct hw_disk** selected_disks = ret;
+
+	unsigned int num_disks = hw_count_disks(disks);
+	assert(num_disks > 0);
+
+	for (unsigned int i = 0; i < num_disks; i++) {
+		struct hw_disk *disk = disks[i];
+		disk->ref++;
+
+		*selected_disks++ = disk;
+		break;
+	}
+
+	// Set sentinel
+	*selected_disks = NULL;
+
+	return ret;
+}
+
 static unsigned long long hw_swap_size(struct hw_destination* dest) {
 	unsigned long long memory = hw_memory();
 
