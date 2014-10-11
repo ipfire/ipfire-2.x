@@ -238,8 +238,8 @@ sub get_interface
 	if($net eq "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}"){
 		return "$netsettings{'BLUE_DEV'}";
 	}
-	if($net eq "0.0.0.0/0"){
-		return "$netsettings{'RED_DEV'}";
+	if($net eq "0.0.0.0/0") {
+		return &get_external_interface();
 	}
 	return "";
 }
