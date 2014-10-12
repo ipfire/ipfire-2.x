@@ -351,37 +351,57 @@ int main(int argc, char *argv[]) {
 	/* If we could not find a source drive, we will try
 	 * downloading the install image */
 	if (!sourcedrive) {
-		require_networking = 1;
-
 		if (!unattended) {
-			rc = newtWinOkCancel(title, _("No source drive could be found.\n\n"
-				"You can try to download the required installation data. "
-				"Please make sure to connect your machine to a network and "
-				"the installer will try connect to acquire an IP address."),
-				55, 10, _("Download installation image"), _("Cancel"));
+			// Show the right message to the user
+			char reason[STRING_SIZE];
+			if (require_networking) {
+				snprintf(reason, sizeof(reason),
+					_("The installer will now try downloading the installation image."));
+			} else {
+				snprintf(reason, sizeof(reason),
+					_("No source drive could be found.\n\n"
+					"You can try downloading the required installation image."));
+			}
+			snprintf(message, sizeof(message), "%s %s", reason,
+				_("Please make sure to connect your machine to a network and "
+                                "the installer will try connect to acquire an IP address."));
+
+			rc = newtWinOkCancel(title, message, 55, 12,
+				_("Download installation image"), _("Cancel"));
 
 			if (rc != 0)
 				goto EXIT;
 		}
+
+		require_networking = 1;
 	}
 
 	// Try starting the networking if we require it
 	if (require_networking) {
-		statuswindow(60, 4, title, _("Trying to start networking (DHCP)..."));
+		while (1) {
+			statuswindow(60, 4, title, _("Trying to start networking (DHCP)..."));
 
-		rc = hw_start_networking(logfile);
-		newtPopWindow();
+			rc = hw_start_networking(logfile);
+			newtPopWindow();
 
-		if (rc) {
-			errorbox(_("Networking could not be started "
-				"but is required to go on with the installation.\n\n"
-				"Please connect your machine to a network with a "
-				"DHCP server and retry."));
-			goto EXIT;
+			// Networking was successfully started
+			if (rc == 0) {
+				break;
+
+			// An error happened, ask the user what to do
+			} else {
+				rc = newtWinOkCancel(title, _("Networking could not be started "
+					"but is required to go on with the installation.\n\n"
+					"Please connect your machine to a network with a "
+					"DHCP server and retry."), 50, 10, _("Retry"), _("Cancel"));
+
+				if (rc)
+					goto EXIT;
+			}
 		}
 
 		// Download the image if required
-		if (!sourcedrive) {
+		while (!sourcedrive) {
 			snprintf(commandstring, sizeof(commandstring), "/usr/bin/downloadsource.sh %s", SOURCE_TEMPFILE);
 			runcommandwithstatus(commandstring, title, _("Downloading installation image..."), logfile);
 
@@ -390,8 +410,11 @@ int main(int argc, char *argv[]) {
 				sourcedrive = SOURCE_TEMPFILE;
 				fclose(f);
 			} else {
-				errorbox(_("The installation image could not be downloaded."));
-				goto EXIT;
+				rc = newtWinOkCancel(title, _("The installation image could not be downloaded."),
+					60, 8, _("Retry"), _("Cancel"));
+
+				if (rc)
+					goto EXIT;
 			}
 		}
 	}
