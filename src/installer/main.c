@@ -247,6 +247,7 @@ int main(int argc, char *argv[]) {
 		
 	int unattended = 0;
 	int serialconsole = 0;
+	int require_networking = 0;
 	struct keyvalue *unattendedkv = initkeyvalues();
 	char restore_file[STRING_SIZE] = "";
 
@@ -291,6 +292,12 @@ int main(int argc, char *argv[]) {
 		    splashWindow(title, _("Warning: Unattended installation will start in 10 seconds..."), 10);
 		    unattended = 1;
 		}
+
+		// check if the installer should start networking
+		if (strstr(line, "installer.net") != NULL) {
+			require_networking = 1;
+		}
+
 		// check if we have to patch for serial console
 		if (strstr (line, "console=ttyS0") != NULL) {
 		    serialconsole = 1;
@@ -338,18 +345,53 @@ int main(int argc, char *argv[]) {
 	/* Search for a source drive that holds the right
 	 * version of the image we are going to install. */
 	sourcedrive = hw_find_source_medium(hw);
-
 	fprintf(flog, "Source drive: %s\n", sourcedrive);
+
+	/* If we could not find a source drive, we will try
+	 * downloading the install image */
 	if (!sourcedrive) {
-		newtWinMessage(title, _("OK"), _("No local source media found. Starting download."));
-		runcommandwithstatus("/bin/downloadsource.sh", title, _("Downloading installation image ..."), logfile);
-		if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
-			errorbox(_("Download error"));
+		require_networking = 1;
+
+		if (!unattended) {
+			rc = newtWinOkCancel(title, _("No source drive could be found.\n\n"
+				"You can try to download the required installation data. "
+				"Please make sure to connect your machine to a network and "
+				"the installer will try connect to acquire an IP address."),
+				55, 10, _("Download installation image"), _("Cancel"));
+
+			if (rc != 0)
+				goto EXIT;
+		}
+	}
+
+	// Try starting the networking if we require it
+	if (require_networking) {
+		statuswindow(60, 4, title, _("Trying to start networking (DHCP)..."));
+
+		rc = hw_start_networking(logfile);
+		newtPopWindow();
+
+		if (rc) {
+			errorbox(_("Networking could not be started "
+				"but is required to go on with the installation.\n\n"
+				"Please connect your machine to a network with a "
+				"DHCP server and retry."));
 			goto EXIT;
 		}
 
-		fgets(sourcedrive, 5, handle);
-		fclose(handle);
+		// Download the image if required
+		if (!sourcedrive) {
+			runcommandwithstatus("/usr/bin/downloadsource.sh",
+				title, _("Downloading installation image..."), logfile);
+
+			if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
+				errorbox(_("Download error"));
+				goto EXIT;
+			}
+
+			fgets(sourcedrive, 5, handle);
+			fclose(handle);
+		}
 	}
 
 	assert(sourcedrive);

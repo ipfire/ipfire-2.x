@@ -1037,3 +1037,7 @@ void hw_sync() {
 	sync();
 	sync();
 }
+
+int hw_start_networking(const char* output) {
+	return mysystem(output, "/usr/bin/start-networking.sh");
+}

@@ -33,7 +33,8 @@ bin_PROGRAMS = \
 	installer
 
 bin_SCRIPTS = \
-	downloadsource.sh
+	downloadsource.sh \
+	start-networking.sh
 
 #- installer -------------------------------------------------------------------
 

@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2014  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,29 +19,47 @@
 #                                                                             #
 ###############################################################################
 
-#lfs change the url while build!
-IPFireISO=ipfire.iso
-#
+function list_interfaces() {
+	local interface
 
-#Get user defined download from boot cmdline
-grep "netinstall=" /proc/cmdline > /dev/null && CMDLINE=1
-if ( [ "$CMDLINE" == "1" ]); then
-	read CMDLINE < /proc/cmdline
-	POS=${CMDLINE%%netinstall*}
-	POS=${#POS}
-	IPFireISO=`echo ${CMDLINE:POS} | cut -d"=" -f2 | cut -d" " -f1`
-fi
+	for interface in /sys/class/net/*; do
+		[ -d "${interface}" ] || continue
 
-echo "Download with wget..."
-wget $IPFireISO -O /tmp/download.iso -t3 -U IPFire_NetInstall/2.x
-wget $IPFireISO.md5 -O /tmp/download.iso.md5 -t3 -U IPFire_NetInstall/2.x
-echo
-echo "Checking download..."
-md5_file=`md5sum /tmp/download.iso | cut -d" " -f1`
-md5_down=`cat /tmp/download.iso.md5 | cut -d" " -f1`
-if [ "$md5_file" == "$md5_down" ]; then
-	echo -n "/tmp/download.iso" > /tmp/source_device
-	exit 0
-fi
-echo "Error - SKIP"
-exit 10
+		interface="$(basename ${interface})"
+		case "${interface}" in
+			eth*)
+				echo "${interface}"
+				;;
+		esac
+	done
+}
+
+function try_dhcp() {
+	local interface="${1}"
+
+	# Bring up the interface
+	ip link set "${interface}" up
+
+	# Try to make the lights of the adapter light up
+	ethtool -i "${interface}" &>/dev/null
+
+	# Start the DHCP client
+	dhcpcd "${interface}"
+}
+
+function main() {
+	local interface
+	for interface in $(list_interfaces); do
+		if ! try_dhcp "${interface}"; then
+			echo "Could not acquire an IP address on ${interface}"
+			continue
+		fi
+
+		echo "Successfully started on ${interface}"
+		return 0
+	done
+
+	return 1
+}
+
+main

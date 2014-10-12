@@ -34,8 +34,9 @@ install() {
     # Extraction
     inst_multiple tar gzip lzma xz
 
-    # DHCP Client
-    inst dhcpcd
+    # Networking
+    inst_multiple dhcpcd ethtool hostname ip ping wget
+    inst /usr/bin/start-networking.sh
     inst /var/ipfire/dhcpc/dhcpcd-run-hooks
     inst /var/ipfire/dhcpc/dhcpcd.conf
     for file in /var/ipfire/dhcpc/dhcpcd-hooks/*; do
@@ -44,7 +45,7 @@ install() {
     inst "$moddir/70-dhcpcd.exe" "/var/ipfire/dhcpc/dhcpcd-hooks/70-dhcpcd.exe"
 
     # Misc. tools
-    inst_multiple eject ping touch wget
+    inst_multiple cut grep eject killall md5sum touch
     inst_multiple -o fdisk cfdisk df ps top
 
     # Hardware IDs
