@@ -25,6 +25,7 @@
 #define INST_FILECOUNT 21000
 #define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 #define LICENSE_FILE	"/cdrom/COPYING"
+#define SOURCE_TEMPFILE "/tmp/downloaded-image.iso"
 
 extern char url[STRING_SIZE];
 
@@ -381,16 +382,17 @@ int main(int argc, char *argv[]) {
 
 		// Download the image if required
 		if (!sourcedrive) {
-			runcommandwithstatus("/usr/bin/downloadsource.sh",
-				title, _("Downloading installation image..."), logfile);
+			snprintf(commandstring, sizeof(commandstring), "/usr/bin/downloadsource.sh %s", SOURCE_TEMPFILE);
+			runcommandwithstatus(commandstring, title, _("Downloading installation image..."), logfile);
 
-			if ((handle = fopen("/tmp/source_device", "r")) == NULL) {
-				errorbox(_("Download error"));
+			FILE* f = fopen(SOURCE_TEMPFILE, "r");
+			if (f) {
+				sourcedrive = SOURCE_TEMPFILE;
+				fclose(f);
+			} else {
+				errorbox(_("The installation image could not be downloaded."));
 				goto EXIT;
 			}
-
-			fgets(sourcedrive, 5, handle);
-			fclose(handle);
 		}
 	}
 
