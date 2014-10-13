@@ -609,6 +609,7 @@ WARNING: untranslated string: advproxy errmsg proxy ports equal
 WARNING: untranslated string: advproxy group access control
 WARNING: untranslated string: advproxy group required
 WARNING: untranslated string: advproxy proxy port transparent
+WARNING: untranslated string: age second
 WARNING: untranslated string: atm device
 WARNING: untranslated string: attention
 WARNING: untranslated string: bit
@@ -725,9 +726,11 @@ WARNING: untranslated string: fwdfw dnat nochoice
 WARNING: untranslated string: fwdfw dnat porterr
 WARNING: untranslated string: fwdfw dnat porterr2
 WARNING: untranslated string: fwdfw edit
+WARNING: untranslated string: fwdfw err concon
 WARNING: untranslated string: fwdfw err nosrc
 WARNING: untranslated string: fwdfw err notgt
 WARNING: untranslated string: fwdfw err prot_port
+WARNING: untranslated string: fwdfw err ratecon
 WARNING: untranslated string: fwdfw err remark
 WARNING: untranslated string: fwdfw err ruleexists
 WARNING: untranslated string: fwdfw err same
@@ -743,12 +746,15 @@ WARNING: untranslated string: fwdfw hint ip1
 WARNING: untranslated string: fwdfw hint ip2
 WARNING: untranslated string: fwdfw hint mac
 WARNING: untranslated string: fwdfw iface
+WARNING: untranslated string: fwdfw limitconcon
 WARNING: untranslated string: fwdfw log
 WARNING: untranslated string: fwdfw log rule
 WARNING: untranslated string: fwdfw many
+WARNING: untranslated string: fwdfw maxconcon
 WARNING: untranslated string: fwdfw movedown
 WARNING: untranslated string: fwdfw moveup
 WARNING: untranslated string: fwdfw newrule
+WARNING: untranslated string: fwdfw numcon
 WARNING: untranslated string: fwdfw pol allow
 WARNING: untranslated string: fwdfw pol block
 WARNING: untranslated string: fwdfw pol text
@@ -756,6 +762,7 @@ WARNING: untranslated string: fwdfw pol text1
 WARNING: untranslated string: fwdfw pol title
 WARNING: untranslated string: fwdfw prot41
 WARNING: untranslated string: fwdfw prot41 short
+WARNING: untranslated string: fwdfw ratelimit
 WARNING: untranslated string: fwdfw red
 WARNING: untranslated string: fwdfw reread
 WARNING: untranslated string: fwdfw rule activate
@@ -821,7 +828,6 @@ WARNING: untranslated string: fwhost err name
 WARNING: untranslated string: fwhost err name1
 WARNING: untranslated string: fwhost err net
 WARNING: untranslated string: fwhost err netexist
-WARNING: untranslated string: fwhost err partofnet
 WARNING: untranslated string: fwhost err port
 WARNING: untranslated string: fwhost err remark
 WARNING: untranslated string: fwhost err srv exists

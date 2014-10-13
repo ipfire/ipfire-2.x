@@ -43,7 +43,6 @@ WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy update information
 WARNING: translation string unused: advproxy update notification
 WARNING: translation string unused: again
-WARNING: translation string unused: age second
 WARNING: translation string unused: age seconds
 WARNING: translation string unused: age shour
 WARNING: translation string unused: age sminute
@@ -269,6 +268,7 @@ WARNING: translation string unused: fwhost changeremark
 WARNING: translation string unused: fwhost err addrgrp
 WARNING: translation string unused: fwhost err hostorip
 WARNING: translation string unused: fwhost err mac
+WARNING: translation string unused: fwhost err partofnet
 WARNING: translation string unused: fwhost green
 WARNING: translation string unused: fwhost hosts
 WARNING: translation string unused: fwhost ipadr
@@ -684,6 +684,12 @@ WARNING: untranslated string: dnssec validating
 WARNING: untranslated string: download tls-auth key
 WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: firewall logs country
+WARNING: untranslated string: fwdfw err concon
+WARNING: untranslated string: fwdfw err ratecon
+WARNING: untranslated string: fwdfw limitconcon
+WARNING: untranslated string: fwdfw maxconcon
+WARNING: untranslated string: fwdfw numcon
+WARNING: untranslated string: fwdfw ratelimit
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
