@@ -131,6 +131,12 @@ sub print_rule {
 	print "\n";
 }
 
+sub count_elements {
+	my $hash = shift;
+
+	return scalar @$hash;
+}
+
 sub flush {
 	run("$IPTABLES -F $CHAIN_INPUT");
 	run("$IPTABLES -F $CHAIN_FORWARD");
@@ -185,6 +191,9 @@ sub buildrules {
 	foreach my $key (sort {$a <=> $b} keys %$hash) {
 		# Skip disabled rules.
 		next unless ($$hash{$key}[2] eq 'ON');
+
+		# Count number of elements in this line
+		my $elements = &count_elements($$hash{$key});
 
 		if ($DEBUG) {
 			print_rule($$hash{$key});
@@ -268,6 +277,34 @@ sub buildrules {
 			}
 		}
 
+		# Concurrent connection limit
+		my @ratelimit_options = ();
+
+		if (($elements gt 34) && ($$hash{$key}[32] eq 'ON')) {
+			my $conn_limit = $$hash{$key}[33];
+
+			if ($conn_limit ge 1) {
+				push(@ratelimit_options, ("-m", "connlimit"));
+
+				# Use the the entire source IP address
+				push(@ratelimit_options, "--connlimit-saddr");
+				push(@ratelimit_options, ("--connlimit-mask", "32"));
+
+				# Apply the limit
+				push(@ratelimit_options, ("--connlimit-upto", $conn_limit));
+			}
+		}
+
+		# Ratelimit
+		if (($elements gt 37) && ($$hash{$key}[34] eq 'ON')) {
+			my $rate_limit = "$$hash{$key}[35]/$$hash{$key}[36]";
+
+				if ($rate_limit) {
+					push(@ratelimit_options, ("-m", "limit"));
+					push(@ratelimit_options, ("--limit", $rate_limit));
+				}
+		}
+
 		# Check which protocols are used in this rule and so that we can
 		# later group rules by protocols.
 		my @protocols = &get_protocols($hash, $key);
@@ -295,10 +332,12 @@ sub buildrules {
 				next unless ($src);
 
 				# Sanitize source.
-				my $source = $src;
+				my $source = @$src[0];
 				if ($source ~~ @ANY_ADDRESSES) {
 					$source = "";
 				}
+
+				my $source_intf = @$src[1];
 
 				foreach my $dst (@destinations) {
 					# Skip invalid rules.
@@ -306,10 +345,12 @@ sub buildrules {
 					next if (!$dst || ($dst eq "none"));
 
 					# Sanitize destination.
-					my $destination = $dst;
+					my $destination = @$dst[0];
 					if ($destination ~~ @ANY_ADDRESSES) {
 						$destination = "";
 					}
+
+					my $destination_intf = @$dst[1];
 
 					# Array with iptables arguments.
 					my @options = ();
@@ -327,14 +368,25 @@ sub buildrules {
 						push(@source_options, ("-s", $source));
 					}
 
+					if ($source_intf) {
+						push(@source_options, ("-i", $source_intf));
+					}
+
 					# Prepare destination options.
 					my @destination_options = ();
 					if ($destination) {
 						push(@destination_options, ("-d", $destination));
 					}
 
+					if ($destination_intf) {
+						push(@destination_options, ("-o", $destination_intf));
+					}
+
 					# Add time constraint options.
 					push(@options, @time_options);
+
+					# Add ratelimiting option
+					push(@options, @ratelimit_options);
 
 					my $firewall_is_in_source_subnet = 1;
 					if ($source) {
@@ -366,7 +418,7 @@ sub buildrules {
 							# Make port-forwardings useable from the internal networks.
 							my @internal_addresses = &fwlib::get_internal_firewall_ip_addresses(1);
 							unless ($nat_address ~~ @internal_addresses) {
-								&add_dnat_mangle_rules($nat_address, @nat_options);
+								&add_dnat_mangle_rules($nat_address, $source_intf, @nat_options);
 							}
 
 							push(@nat_options, @source_options);
@@ -456,6 +508,10 @@ sub buildrules {
 				}
 			}
 		}
+	}
+	#Reload firewall.local if present
+	if ( -f '/etc/sysconfig/firewall.local'){
+		run("/etc/sysconfig/firewall.local reload");
 	}
 }
 
@@ -683,6 +739,7 @@ sub get_dnat_target_port {
 
 sub add_dnat_mangle_rules {
 	my $nat_address = shift;
+	my $interface = shift;
 	my @options = @_;
 
 	my $mark = 0;
@@ -692,6 +749,8 @@ sub add_dnat_mangle_rules {
 		# Skip rule if not all required information exists.
 		next unless (exists $defaultNetworks{$zone . "_NETADDRESS"});
 		next unless (exists $defaultNetworks{$zone . "_NETMASK"});
+
+		next if ($interface && $interface ne $defaultNetworks{$zone . "_DEV"});
 
 		my @mangle_options = @options;
 

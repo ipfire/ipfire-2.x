@@ -43,7 +43,6 @@ WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy update information
 WARNING: translation string unused: advproxy update notification
 WARNING: translation string unused: again
-WARNING: translation string unused: age second
 WARNING: translation string unused: age seconds
 WARNING: translation string unused: age shour
 WARNING: translation string unused: age sminute
@@ -270,6 +269,7 @@ WARNING: translation string unused: fwhost changeremark
 WARNING: translation string unused: fwhost err addrgrp
 WARNING: translation string unused: fwhost err hostorip
 WARNING: translation string unused: fwhost err mac
+WARNING: translation string unused: fwhost err partofnet
 WARNING: translation string unused: fwhost green
 WARNING: translation string unused: fwhost hosts
 WARNING: translation string unused: fwhost ipadr
