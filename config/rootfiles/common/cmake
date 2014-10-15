@@ -2,6 +2,7 @@
 #usr/bin/cmake
 #usr/bin/cpack
 #usr/bin/ctest
+#usr/doc
 #usr/doc/cmake-2.6
 #usr/doc/cmake-2.6/ccmake.docbook
 #usr/doc/cmake-2.6/ccmake.html

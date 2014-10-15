@@ -53,8 +53,8 @@ cp -pr backupiso.tmp.${TS} backupiso.${TS}
 umount backupiso.tmp.${TS}
 rm -r backupiso.tmp.${TS}
 
-echo "RESTORE_FILE=${TS}.ipf" >> backupiso.${TS}/boot/unattended.conf
-cp /var/ipfire/backup/${TS}.ipf backupiso.${TS}
+# Copy backup file to disk
+cp "/var/ipfire/backup/${TS}.ipf" "backupiso.${TS}/backup.ipf"
 
 echo "Running mkisofs"
 mkisofs -J -r -V "ipfire backup ${TS}" \

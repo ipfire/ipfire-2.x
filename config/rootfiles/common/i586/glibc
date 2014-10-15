@@ -52,7 +52,7 @@ usr/bin/getconf
 usr/bin/getent
 #usr/bin/iconv
 usr/bin/ldd
-#usr/bin/lddlibc4
+usr/bin/lddlibc4
 usr/bin/locale
 #usr/bin/localedef
 #usr/bin/mtrace

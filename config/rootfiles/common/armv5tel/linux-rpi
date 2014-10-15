@@ -1,5 +1,4 @@
 boot/System.map-KVER-ipfire-rpi
-#boot/System.map-ipfire-rpi
 boot/config-KVER-ipfire-rpi
 boot/kernel.img
 boot/vmlinuz-KVER-ipfire-rpi

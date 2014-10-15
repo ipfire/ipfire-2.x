@@ -1,0 +1,801 @@
+/* SmoothWall install program.
+ *
+ * This program is distributed under the terms of the GNU General Public
+ * Licence.  See the file COPYING for details.
+ *
+ * (c) Lawrence Manning, 2001
+ * Contains main entry point, and misc functions.6
+ * 
+ */
+
+#include <assert.h>
+#include <errno.h>
+#include <libsmooth.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mount.h>
+
+#include "hw.h"
+
+// Translation
+#include <libintl.h>
+#define _(x) dgettext("installer", x)
+
+#define INST_FILECOUNT 21000
+#define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
+#define LICENSE_FILE	"/cdrom/COPYING"
+#define SOURCE_TEMPFILE "/tmp/downloaded-image.iso"
+
+extern char url[STRING_SIZE];
+
+static int newtChecklist(const char* title, const char* message,
+		unsigned int width, unsigned int height, unsigned int num_entries,
+		const char** entries, int* states) {
+	int ret;
+	const int list_height = 4;
+
+	char cbstates[num_entries];
+
+	for (unsigned int i = 0; i < num_entries; i++) {
+		cbstates[i] = states[i] ? '*' : ' ';
+	}
+
+	newtCenteredWindow(width, height, title);
+
+	newtComponent textbox = newtTextbox(1, 1, width - 2, height - 6 - list_height,
+		NEWT_FLAG_WRAP);
+	newtTextboxSetText(textbox, message);
+
+	int top = newtTextboxGetNumLines(textbox) + 2;
+
+	newtComponent form = newtForm(NULL, NULL, 0);
+
+	newtComponent sb = NULL;
+	if (list_height < num_entries) {
+		sb = newtVerticalScrollbar(
+			width - 4, top + 1, list_height,
+			NEWT_COLORSET_CHECKBOX, NEWT_COLORSET_ACTCHECKBOX);
+
+		newtFormAddComponent(form, sb);
+	}
+
+	newtComponent subform = newtForm(sb, NULL, 0);
+	newtFormSetBackground(subform, NEWT_COLORSET_CHECKBOX);
+
+	newtFormSetHeight(subform, list_height);
+	newtFormSetWidth(subform, width - 10);
+
+	for (unsigned int i = 0; i < num_entries; i++) {
+		newtComponent cb = newtCheckbox(4, top + i, entries[i], cbstates[i],
+			NULL, &cbstates[i]);
+
+		newtFormAddComponent(subform, cb);
+	}
+
+	newtFormAddComponents(form, textbox, subform, NULL);
+
+	newtComponent btn_okay   = newtButton((width - 18) / 3, height - 4, _("OK"));
+	newtComponent btn_cancel = newtButton((width - 18) / 3 * 2 + 9, height - 4, _("Cancel"));
+	newtFormAddComponents(form, btn_okay, btn_cancel, NULL);
+
+	newtComponent answer = newtRunForm(form);
+
+	if ((answer == NULL) || (answer == btn_cancel)) {
+		ret = -1;
+	} else {
+		ret = 0;
+
+		for (unsigned int i = 0; i < num_entries; i++) {
+			states[i] = (cbstates[i] != ' ');
+
+			if (states[i])
+				ret++;
+		}
+	}
+
+	newtFormDestroy(form);
+	newtPopWindow();
+
+	return ret;
+}
+
+static int newtWinOkCancel(const char* title, const char* message, int width, int height,
+		const char* btn_txt_ok, const char* btn_txt_cancel) {
+	int ret = 1;
+
+	newtCenteredWindow(width, height, title);
+
+	newtComponent form = newtForm(NULL, NULL, 0);
+
+	newtComponent textbox = newtTextbox(1, 1, width - 2, height - 6, NEWT_FLAG_WRAP);
+	newtTextboxSetText(textbox, message);
+	newtFormAddComponent(form, textbox);
+
+	unsigned int btn_width_ok = strlen(btn_txt_ok);
+	unsigned int btn_width_cancel = strlen(btn_txt_cancel);
+
+	newtComponent btn_ok = newtButton((width / 3) - (btn_width_ok / 2) - 2, height - 4, btn_txt_ok);
+	newtComponent btn_cancel = newtButton((width * 2 / 3) - (btn_width_cancel / 2) - 2, height - 4,
+		btn_txt_cancel);
+
+	newtFormAddComponents(form, btn_ok, btn_cancel, NULL);
+
+	newtComponent answer = newtRunForm(form);
+
+	if (answer == btn_ok) {
+		ret = 0;
+	}
+
+	newtFormDestroy(form);
+	newtPopWindow();
+
+	return ret;
+}
+
+static int newtLicenseBox(const char* title, const char* text, int width, int height) {
+	int ret = 1;
+
+	newtCenteredWindow(width, height, title);
+
+	newtComponent form = newtForm(NULL, NULL, 0);
+
+	newtComponent textbox = newtTextbox(1, 1, width - 2, height - 7,
+		NEWT_FLAG_WRAP|NEWT_FLAG_SCROLL);
+	newtTextboxSetText(textbox, text);
+	newtFormAddComponent(form, textbox);
+
+	char choice;
+	newtComponent checkbox = newtCheckbox(3, height - 3, _("I accept this license"),
+		' ', " *", &choice);
+
+	newtComponent btn = newtButton(width - 15, height - 4, _("OK"));
+
+	newtFormAddComponents(form, checkbox, btn, NULL);
+
+	newtComponent answer = newtRunForm(form);
+	if (answer == btn && choice == '*')
+		ret = 0;
+
+	newtFormDestroy(form);
+	newtPopWindow();
+
+	return ret;
+}
+
+int write_lang_configs(const char *lang) {
+	struct keyvalue *kv = initkeyvalues();
+
+	/* default stuff for main/settings. */
+	replacekeyvalue(kv, "LANGUAGE", lang);
+	replacekeyvalue(kv, "HOSTNAME", SNAME);
+	replacekeyvalue(kv, "THEME", "ipfire");
+	writekeyvalues(kv, "/harddisk" CONFIG_ROOT "/main/settings");
+	freekeyvalues(kv);
+
+	return 1;
+}
+
+static char* get_system_release() {
+	char system_release[STRING_SIZE] = "\0";
+
+	FILE* f = fopen("/etc/system-release", "r");
+	if (f) {
+		fgets(system_release, sizeof(system_release), f);
+		fclose(f);
+	}
+
+	return strdup(system_release);
+}
+
+static char* center_string(const char* str, int width) {
+	unsigned int str_len = strlen(str);
+
+	unsigned int indent_length = (width - str_len) / 2;
+	char indent[indent_length + 1];
+
+	for (unsigned int i = 0; i < indent_length; i++) {
+		indent[i] = ' ';
+	}
+	indent[indent_length] = '\0';
+
+	char* string = NULL;
+	if (asprintf(&string, "%s%s", indent, str) < 0)
+		return NULL;
+
+	return string;
+}
+
+#define DEFAULT_LANG "English"
+#define NUM_LANGS 8
+
+static struct lang {
+	const char* code;
+	char* name;
+} languages[NUM_LANGS + 1] = {
+	{ "da.utf8",    "Danish (Dansk)" },
+	{ "nl_NL.utf8", "Dutch (Nederlands)" },
+	{ "en_US.utf8", "English" },
+	{ "fr_FR.utf8", "French (Français)" },
+	{ "de_DE.utf8", "German (Deutsch)" },
+	{ "pl_PL.utf8", "Polish (Polski)" },
+	{ "pt_BR.utf8", "Portuguese (Brasil)" },
+	{ "ru_RU.utf8", "Russian (Русский)" },
+	{ "es_ES.utf8", "Spanish (Español)" },
+	{ "tr_TR.utf8", "Turkish (Türkçe)" },
+	{ NULL, NULL },
+};
+
+int main(int argc, char *argv[]) {
+	struct hw* hw = hw_init();
+	const char* logfile = NULL;
+
+	// Read /etc/system-release
+	char* system_release = get_system_release();
+
+	char discl_msg[40000] =	"Disclaimer\n";
+
+	char* sourcedrive = NULL;
+	int rc = 0;
+	char commandstring[STRING_SIZE];
+	int choice;
+	char language[STRING_SIZE];
+	char message[STRING_SIZE];
+	char title[STRING_SIZE];
+	int allok = 0;
+	FILE *handle, *cmdfile, *copying;
+	char line[STRING_SIZE];
+		
+	int unattended = 0;
+	int serialconsole = 0;
+	int require_networking = 0;
+	struct keyvalue *unattendedkv = initkeyvalues();
+	char restore_file[STRING_SIZE] = "";
+
+	setlocale (LC_ALL, "");
+	sethostname( SNAME , 10);
+
+	/* Log file/terminal stuff. */
+	FILE* flog = NULL;
+	if (argc >= 2) {
+		logfile = argv[1];
+
+		if (!(flog = fopen(logfile, "w+")))
+			return 0;
+	} else {
+		return 0;
+	}
+
+	fprintf(flog, "Install program started.\n");
+		
+	newtInit();
+	newtCls();
+
+	// Determine the size of the screen
+	int screen_cols = 0;
+	int screen_rows = 0;
+
+	newtGetScreenSize(&screen_cols, &screen_rows);
+
+	// Draw title
+	char* roottext = center_string(system_release, screen_cols);
+	newtDrawRootText(0, 0, roottext);
+
+	snprintf(title, sizeof(title), "%s - %s", NAME, SLOGAN);
+
+	if (! (cmdfile = fopen("/proc/cmdline", "r"))) {
+		fprintf(flog, "Couldn't open commandline: /proc/cmdline\n");
+	} else {
+		fgets(line, STRING_SIZE, cmdfile);
+
+		// check if we have to make an unattended install
+		if (strstr(line, "installer.unattended") != NULL) {
+		    splashWindow(title, _("Warning: Unattended installation will start in 10 seconds..."), 10);
+		    unattended = 1;
+		}
+
+		// check if the installer should start networking
+		if (strstr(line, "installer.net") != NULL) {
+			require_networking = 1;
+		}
+
+		// check if we have to patch for serial console
+		if (strstr (line, "console=ttyS0") != NULL) {
+		    serialconsole = 1;
+		}
+	}
+
+	// Load common modules
+	mysystem(logfile, "/sbin/modprobe vfat"); // USB key
+	hw_stop_all_raid_arrays(logfile);
+
+	if (!unattended) {
+		// Language selection
+		char* langnames[NUM_LANGS + 1];
+
+		for (unsigned int i = 0; i < NUM_LANGS; i++) {
+			if (strcmp(languages[i].name, DEFAULT_LANG) == 0)
+				choice = i;
+
+			langnames[i] = languages[i].name;
+		}
+		langnames[NUM_LANGS] = NULL;
+
+		rc = newtWinMenu(_("Language selection"), _("Select the language you wish to use for the installation."),
+			50, 5, 5, 8, langnames, &choice, _("OK"), NULL);
+
+		assert(choice <= NUM_LANGS);
+
+		fprintf(flog, "Selected language: %s (%s)\n", languages[choice].name, languages[choice].code);
+		snprintf(language, sizeof(language), languages[choice].code);
+
+		setenv("LANGUAGE", language, 1);
+		setlocale(LC_ALL, language);
+	}
+
+	char* helpline = center_string(_("<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"), screen_cols);
+	newtPushHelpLine(helpline);
+
+	if (!unattended) {
+		snprintf(message, sizeof(message),
+			_("Welcome to the %s installation program.\n\n"
+			"Selecting Cancel on any of the following screens will reboot the computer."), NAME);
+		newtWinMessage(title, _("Start installation"), message);
+	}
+
+	/* Search for a source drive that holds the right
+	 * version of the image we are going to install. */
+	sourcedrive = hw_find_source_medium(hw);
+	fprintf(flog, "Source drive: %s\n", sourcedrive);
+
+	/* If we could not find a source drive, we will try
+	 * downloading the install image */
+	if (!sourcedrive) {
+		if (!unattended) {
+			// Show the right message to the user
+			char reason[STRING_SIZE];
+			if (require_networking) {
+				snprintf(reason, sizeof(reason),
+					_("The installer will now try downloading the installation image."));
+			} else {
+				snprintf(reason, sizeof(reason),
+					_("No source drive could be found.\n\n"
+					"You can try downloading the required installation image."));
+			}
+			snprintf(message, sizeof(message), "%s %s", reason,
+				_("Please make sure to connect your machine to a network and "
+                                "the installer will try connect to acquire an IP address."));
+
+			rc = newtWinOkCancel(title, message, 55, 12,
+				_("Download installation image"), _("Cancel"));
+
+			if (rc != 0)
+				goto EXIT;
+		}
+
+		require_networking = 1;
+	}
+
+	// Try starting the networking if we require it
+	if (require_networking) {
+		while (1) {
+			statuswindow(60, 4, title, _("Trying to start networking (DHCP)..."));
+
+			rc = hw_start_networking(logfile);
+			newtPopWindow();
+
+			// Networking was successfully started
+			if (rc == 0) {
+				break;
+
+			// An error happened, ask the user what to do
+			} else {
+				rc = newtWinOkCancel(title, _("Networking could not be started "
+					"but is required to go on with the installation.\n\n"
+					"Please connect your machine to a network with a "
+					"DHCP server and retry."), 50, 10, _("Retry"), _("Cancel"));
+
+				if (rc)
+					goto EXIT;
+			}
+		}
+
+		// Download the image if required
+		while (!sourcedrive) {
+			snprintf(commandstring, sizeof(commandstring), "/usr/bin/downloadsource.sh %s", SOURCE_TEMPFILE);
+			runcommandwithstatus(commandstring, title, _("Downloading installation image..."), logfile);
+
+			FILE* f = fopen(SOURCE_TEMPFILE, "r");
+			if (f) {
+				sourcedrive = SOURCE_TEMPFILE;
+				fclose(f);
+			} else {
+				rc = newtWinOkCancel(title, _("The installation image could not be downloaded."),
+					60, 8, _("Retry"), _("Cancel"));
+
+				if (rc)
+					goto EXIT;
+			}
+		}
+	}
+
+	assert(sourcedrive);
+
+	int r = hw_mount(sourcedrive, SOURCE_MOUNT_PATH, "iso9660", MS_RDONLY);
+	if (r) {
+		fprintf(flog, "Could not mount %s to %s\n", sourcedrive, SOURCE_MOUNT_PATH);
+		fprintf(flog, strerror(errno));
+		exit(1);
+	}
+
+	/* load unattended configuration */
+	if (unattended) {
+	    fprintf(flog, "unattended: Reading unattended.conf\n");
+
+	    (void) readkeyvalues(unattendedkv, UNATTENDED_CONF);
+	    findkey(unattendedkv, "RESTORE_FILE", restore_file);
+	}
+
+	if (!unattended) {
+		// Read the license file.
+		if (!(copying = fopen(LICENSE_FILE, "r"))) {
+			sprintf(discl_msg, "Could not open license file: %s\n", LICENSE_FILE);
+			fprintf(flog, discl_msg);
+		} else {
+			fread(discl_msg, 1, 40000, copying);
+			fclose(copying);
+
+			if (newtLicenseBox(_("License Agreement"), discl_msg, 75, 20)) {
+				errorbox(_("License not accepted!"));
+
+				goto EXIT;
+			}
+		}
+	}
+
+	int part_type = HW_PART_TYPE_NORMAL;
+
+	// Scan for disks to install on.
+	struct hw_disk** disks = hw_find_disks(hw, sourcedrive);
+
+	struct hw_disk** selected_disks = NULL;
+	unsigned int num_selected_disks = 0;
+
+	// Check how many disks have been found and what
+	// we can do with them.
+	unsigned int num_disks = hw_count_disks(disks);
+
+	while (1) {
+		// no harddisks found
+		if (num_disks == 0) {
+			errorbox(_("No hard disk found."));
+			goto EXIT;
+
+		// exactly one disk has been found
+		// or if we are running in unattended mode, we will select
+		// the first disk and go with that one
+		} else if ((num_disks == 1) || (unattended && num_disks >= 1)) {
+			selected_disks = hw_select_first_disk(disks);
+
+		// more than one usable disk has been found and
+		// the user needs to choose what to do with them
+		} else {
+			const char* disk_names[num_disks];
+			int disk_selection[num_disks];
+
+			for (unsigned int i = 0; i < num_disks; i++) {
+				disk_names[i] = &disks[i]->description;
+				disk_selection[i] = 0;
+			}
+
+			while (!selected_disks) {
+				rc = newtChecklist(_("Disk Selection"),
+					_("Select the disk(s) you want to install IPFire on. "
+					"First those will be partitioned, and then the partitions will have a filesystem put on them.\n\n"
+					"ALL DATA ON THE DISK WILL BE DESTROYED."),
+					50, 20, num_disks, disk_names, disk_selection);
+
+				// Error
+				if (rc < 0) {
+					goto EXIT;
+
+				// Nothing has been selected
+				} else if (rc == 0) {
+					errorbox(_("No disk has been selected.\n\n"
+						"Please select one or more disks you want to install IPFire on."));
+
+				} else {
+					selected_disks = hw_select_disks(disks, disk_selection);
+				}
+			}
+		}
+
+		// Don't print the auto-selected harddisk setup in
+		// unattended mode.
+		if (unattended)
+			break;
+
+		num_selected_disks = hw_count_disks(selected_disks);
+
+		if (num_selected_disks == 1) {
+			snprintf(message, sizeof(message),
+				_("The installation program will now prepare the chosen harddisk:\n\n  %s\n\n"
+				"Do you agree to continue?"), (*selected_disks)->description);
+			rc = newtWinOkCancel(_("Disk Setup"), message, 50, 10,
+				_("Delete all data"), _("Cancel"));
+
+			if (rc == 0)
+				break;
+
+		} else if (num_selected_disks == 2) {
+			snprintf(message, sizeof(message),
+				_("The installation program will now set up a RAID configuration on the selected harddisks:\n\n  %s\n  %s\n\n"
+				"Do you agree to continue?"), selected_disks[0]->description, selected_disks[1]->description);
+			rc = newtWinOkCancel(_("RAID Setup"), message, 50, 14,
+				_("Delete all data"), _("Cancel"));
+
+			if (rc == 0) {
+				part_type = HW_PART_TYPE_RAID1;
+
+				break;
+			}
+
+		// Currently not supported
+		} else {
+			errorbox(_("Your disk configuration is currently not supported."));
+			fprintf(flog, "Num disks selected: %d\n", num_selected_disks);
+		}
+
+		if (selected_disks) {
+			hw_free_disks(selected_disks);
+			selected_disks = NULL;
+		}
+	}
+
+	hw_free_disks(disks);
+
+	struct hw_destination* destination = hw_make_destination(part_type, selected_disks);
+
+	if (!destination) {
+		errorbox(_("Your harddisk is too small."));
+		goto EXIT;
+	}
+
+	fprintf(flog, "Destination drive: %s\n", destination->path);
+	fprintf(flog, "  bootldr: %s (%lluMB)\n", destination->part_bootldr, BYTES2MB(destination->size_bootldr));
+	fprintf(flog, "  boot   : %s (%lluMB)\n", destination->part_boot, BYTES2MB(destination->size_boot));
+	fprintf(flog, "  swap   : %s (%lluMB)\n", destination->part_swap, BYTES2MB(destination->size_swap));
+	fprintf(flog, "  root   : %s (%lluMB)\n", destination->part_root, BYTES2MB(destination->size_root));
+	fprintf(flog, "  data   : %s (%lluMB)\n", destination->part_data, BYTES2MB(destination->size_data));
+	fprintf(flog, "Memory   : %lluMB\n", BYTES2MB(hw_memory()));
+
+	// Warn the user if there is not enough space to create a swap partition
+	if (!unattended && !*destination->part_swap) {
+		rc = newtWinChoice(title, _("OK"), _("Cancel"),
+			_("Your harddisk is very small, but you can continue without a swap partition."));
+
+		if (rc != 1)
+			goto EXIT;
+	}
+
+	// Filesystem selection
+	if (!unattended) {
+		struct filesystems {
+			int fstype;
+			const char* description;
+		} filesystems[] = {
+			{ HW_FS_EXT4,            _("ext4 Filesystem") },
+			{ HW_FS_EXT4_WO_JOURNAL, _("ext4 Filesystem without journal") },
+			{ HW_FS_XFS,             _("XFS Filesystem") },
+			{ HW_FS_REISERFS,        _("ReiserFS Filesystem") },
+			{ 0, NULL },
+		};
+		unsigned int num_filesystems = sizeof(filesystems) / sizeof(*filesystems);
+
+		char* fs_names[num_filesystems];
+		int fs_choice = 0;
+		for (unsigned int i = 0; i < num_filesystems; i++) {
+			if (HW_FS_DEFAULT == filesystems[i].fstype)
+				fs_choice = i;
+
+			fs_names[i] = filesystems[i].description;
+		}
+
+		rc = newtWinMenu(_("Filesystem Selection"), _("Please choose your filesystem:"),
+			50, 5, 5, 6, fs_names, &fs_choice, _("OK"), _("Cancel"), NULL);
+
+		if (rc == 2)
+			goto EXIT;
+
+		destination->filesystem = filesystems[fs_choice].fstype;
+	}
+
+	// Setting up RAID if needed.
+	if (destination->is_raid) {
+		statuswindow(60, 4, title, _("Building RAID..."));
+
+		rc = hw_setup_raid(destination, logfile);
+		if (rc) {
+			errorbox(_("Unable to build the RAID."));
+			goto EXIT;
+		}
+
+		newtPopWindow();
+	} else {
+		// We will have to destroy all RAID setups that may have
+		// been on the devices that we want to use now.
+		hw_destroy_raid_superblocks(destination, logfile);
+	}
+
+	// Execute the partitioning...
+	statuswindow(60, 4, title, _("Partitioning disk..."));
+
+	rc = hw_create_partitions(destination, logfile);
+	if (rc) {
+		errorbox(_("Unable to partition the disk."));
+		goto EXIT;
+	}
+
+	newtPopWindow();
+
+	// Execute the formatting...
+	statuswindow(60, 4, title, _("Creating filesystems..."));
+
+	rc = hw_create_filesystems(destination, logfile);
+	if (rc) {
+		errorbox(_("Unable to create filesystems."));
+		goto EXIT;
+	}
+
+	rc = hw_mount_filesystems(destination, DESTINATION_MOUNT_PATH);
+	if (rc) {
+		errorbox(_("Unable to mount filesystems."));
+		goto EXIT;
+	}
+
+	newtPopWindow();
+
+	// Extract files...
+	snprintf(commandstring, STRING_SIZE,
+		"/bin/tar -C /harddisk  -xvf /cdrom/distro.img --lzma 2>/dev/null");
+
+	if (runcommandwithprogress(60, 4, title, commandstring, INST_FILECOUNT,
+			_("Installing the system..."), logfile)) {
+		errorbox(_("Unable to install the system."));
+		goto EXIT;
+	}
+
+	// Write fstab
+	rc = hw_write_fstab(destination);
+	if (rc) {
+		fprintf(flog, "Could not write /etc/fstab\n");
+		goto EXIT;
+	}
+
+	/* Save language und local settings */
+	write_lang_configs(language);
+
+	/* Build cache lang file */
+	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
+	if (runcommandwithstatus(commandstring, title, _("Installing the language cache..."), logfile)) {
+		errorbox(_("Unable to install the language cache."));
+		goto EXIT;
+	}
+
+	// Installing bootloader...
+	statuswindow(60, 4, title, _("Installing the bootloader..."));
+
+	/* Serial console ? */
+	if (serialconsole) {
+		/* grub */
+		FILE* f = fopen(DESTINATION_MOUNT_PATH "/etc/default/grub", "a");
+		if (!f) {
+			errorbox(_("Unable to open /etc/default/grub for writing."));
+			goto EXIT;
+		}
+
+		fprintf(f, "GRUB_TERMINAL=\"serial\"\n");
+		fprintf(f, "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=%d\"\n", SERIAL_BAUDRATE);
+		fclose(f);
+
+		replace(DESTINATION_MOUNT_PATH "/etc/default/grub", "panic=10", "panic=10 console=ttyS0,115200n8");
+
+		/* inittab */
+		replace("/harddisk/etc/inittab", "1:2345:respawn:", "#1:2345:respawn:");
+		replace("/harddisk/etc/inittab", "2:2345:respawn:", "#2:2345:respawn:");
+		replace("/harddisk/etc/inittab", "3:2345:respawn:", "#3:2345:respawn:");
+		replace("/harddisk/etc/inittab", "4:2345:respawn:", "#4:2345:respawn:");
+		replace("/harddisk/etc/inittab", "5:2345:respawn:", "#5:2345:respawn:");
+		replace("/harddisk/etc/inittab", "6:2345:respawn:", "#6:2345:respawn:");
+		replace("/harddisk/etc/inittab", "#7:2345:respawn:", "7:2345:respawn:");
+	}
+
+	rc = hw_install_bootloader(destination, logfile);
+	if (rc) {
+		errorbox(_("Unable to install the bootloader."));
+		goto EXIT;
+	}
+
+	newtPopWindow();
+
+	/* Set marker that the user has already accepted the gpl */
+	mysystem(logfile, "/usr/bin/touch /harddisk/var/ipfire/main/gpl_accepted");
+
+	/* Copy restore file from cdrom */
+	char* backup_file = hw_find_backup_file(logfile, SOURCE_MOUNT_PATH);
+	if (backup_file) {
+		rc = 0;
+		if (!unattended) {
+			rc = newtWinOkCancel(title, _("A backup file has been found on the installation image.\n\n"
+				"Do you want to restore the backup?"), 50, 10, _("Yes"), _("No"));
+		}
+
+		if (rc == 0) {
+			rc = hw_restore_backup(logfile, backup_file, DESTINATION_MOUNT_PATH);
+
+			if (rc) {
+				errorbox(_("An error occured when the backup file was restored."));
+				goto EXIT;
+			}
+		}
+
+		free(backup_file);
+	}
+
+	// Umount the destination drive
+	hw_umount_filesystems(destination, DESTINATION_MOUNT_PATH);
+
+	// Stop the RAID array if we are using RAID
+	if (destination->is_raid)
+		hw_stop_all_raid_arrays(logfile);
+
+	// Umount source drive and eject
+	hw_umount(SOURCE_MOUNT_PATH);
+
+	snprintf(commandstring, STRING_SIZE, "/usr/bin/eject %s", sourcedrive);
+	mysystem(logfile, commandstring);
+
+	if (!unattended) {
+		snprintf(message, sizeof(message), _(
+			"%s was successfully installed!\n\n"
+			"Please remove any installation mediums from this system and hit the reboot button. "
+			"Once the system has restarted you will be asked to setup networking and system passwords. "
+			"After that, you should point your web browser at https://%s:444 (or what ever you name "
+			"your %s) for the web configuration console."), NAME, SNAME, NAME);
+		newtWinMessage(_("Congratulations!"), _("Reboot"), message);
+	}
+
+	allok = 1;
+
+EXIT:
+	fprintf(flog, "Install program ended.\n");
+	fflush(flog);
+	fclose(flog);
+
+	if (!allok)
+		newtWinMessage(title, _("OK"), _("Setup has failed. Press Ok to reboot."));
+
+	newtFinished();
+
+	// Free resources
+	free(system_release);
+	free(roottext);
+	free(helpline);
+
+	free(sourcedrive);
+	free(destination);
+
+	hw_stop_all_raid_arrays(logfile);
+
+	if (selected_disks)
+		hw_free_disks(selected_disks);
+
+	hw_free(hw);
+
+	fcloseall();
+
+	if (allok == 1)
+		return 0;
+
+	return 1;
+}

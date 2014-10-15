@@ -362,7 +362,6 @@ buildbase() {
     lfsmake2 less
     lfsmake2 make
     lfsmake2 man
-    lfsmake2 mktemp
     lfsmake2 kmod
     lfsmake2 net-tools
     lfsmake2 patch
@@ -377,7 +376,6 @@ buildbase() {
     lfsmake2 vim
     lfsmake2 xz
     lfsmake2 paxctl
-    lfsmake2 grub
 }
 
 buildipfire() {
@@ -398,6 +396,13 @@ buildipfire() {
   ipfiremake rpi-firmware
   ipfiremake bc
   ipfiremake u-boot
+  ipfiremake cpio
+  ipfiremake mdadm
+  ipfiremake dracut
+  ipfiremake lvm2
+  ipfiremake multipath-tools
+  ipfiremake freetype
+  ipfiremake grub
 
   case "${TARGET_ARCH}" in
 	i586)
@@ -466,8 +471,6 @@ buildipfire() {
   ipfiremake dhcpcd
   ipfiremake boost
   ipfiremake linux-atm
-  ipfiremake cpio
-  ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake pam
@@ -486,12 +489,12 @@ buildipfire() {
   ipfiremake libpng
   ipfiremake libtiff
   ipfiremake libart
-  ipfiremake freetype
   ipfiremake gd
   ipfiremake popt
   ipfiremake pcre
   ipfiremake slang
   ipfiremake newt
+  ipfiremake libsmooth
   ipfiremake attr
   ipfiremake acl
   ipfiremake libcap
@@ -747,7 +750,6 @@ buildipfire() {
   ipfiremake usb_modeswitch
   ipfiremake usb_modeswitch_data
   ipfiremake zerofree
-  ipfiremake mdadm
   ipfiremake pound
   ipfiremake minicom
   ipfiremake ddrescue
@@ -814,6 +816,7 @@ buildipfire() {
   ipfiremake batctl
   ipfiremake perl-PDF-API2
   ipfiremake squid-accounting
+  ipfiremake pigz
 }
 
 buildinstaller() {
@@ -823,7 +826,6 @@ buildinstaller() {
   ipfiremake memtest
   ipfiremake installer
   installmake strip
-  ipfiremake initrd
 }
 
 buildpackages() {
@@ -860,6 +862,7 @@ buildpackages() {
   modprobe loop 2>/dev/null
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ] || [ -e "/dev/loop-control" ]); then
 	ipfiremake flash-images
+	ipfiremake flash-images SCON=1
   fi
 
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1

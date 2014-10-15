@@ -1,5 +1,4 @@
 boot/System.map-KVER-ipfire-multi
-#boot/System.map-ipfire-multi
 boot/config-KVER-ipfire-multi
 boot/dtb-KVER-ipfire-multi
 #boot/dtb-KVER-ipfire-multi/am335x-bone.dtb
