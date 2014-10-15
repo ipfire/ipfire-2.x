@@ -145,7 +145,10 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-add_libertas_uap.patch
 
 	# mmc
+ifneq "$(KCFG)" "-headers"
+	# this patch is also in the rpi patchset.
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.57-mmc_add_eMMC_5.x.patch
+endif
 
 	# mISDN Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN_hfc-s_add_id.patch
