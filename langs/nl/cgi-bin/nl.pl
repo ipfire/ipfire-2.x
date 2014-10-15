@@ -110,7 +110,6 @@
 'advproxy AUTH method ldap' => 'LDAP',
 'advproxy AUTH method ncsa' => 'Lokaal',
 'advproxy AUTH method none' => 'Geen',
-'advproxy AUTH method ntlm' => 'Windows',
 'advproxy AUTH method radius' => 'RADIUS',
 'advproxy AUTH no auth' => 'Domeinen zonder authenticatie (een per regel)',
 'advproxy AUTH number of auth processes' => 'Aantal authenticatieprocessen',

@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 5.0.5
+VER        = 6.0.0
 
 THISAPP    = gmp-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP)a.tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -51,7 +51,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 041487d25e9c230b0c42b106361055fe
+$(DL_FILE)_MD5 = 1e6da4e434553d2811437aa42c7f7c76
 
 install : $(TARGET)
 
@@ -80,7 +80,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && \
 		$(CONFIGURE_ARGS) \
 		./configure \
@@ -102,8 +102,7 @@ ifeq "$(MACHINE)" "i586"
 	cd $(DIR_APP) && make $(MAKETUNING)
 
 	-mkdir -pv /usr/lib/sse2
-	cd $(DIR_APP) && install -v -m 755 .libs/libgmp.so.10.0.5 /usr/lib/sse2
-	cd $(DIR_APP) && install -v -m 755 .libs/libmp.so.3.1.25 /usr/lib/sse2
+	cd $(DIR_APP) && install -v -m 755 .libs/libgmp.so.10.2.0 /usr/lib/sse2
 endif
 
 	@rm -rf $(DIR_APP)

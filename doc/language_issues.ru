@@ -597,11 +597,19 @@ WARNING: untranslated string: MTU settings
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
+WARNING: untranslated string: administrator password
+WARNING: untranslated string: administrator username
+WARNING: untranslated string: advproxy AUTH method ntlm
+WARNING: untranslated string: advproxy AUTH method ntlm auth
+WARNING: untranslated string: advproxy basic authentication
 WARNING: untranslated string: advproxy cache-digest
 WARNING: untranslated string: advproxy errmsg cache
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy
 WARNING: untranslated string: advproxy errmsg proxy ports equal
+WARNING: untranslated string: advproxy group access control
+WARNING: untranslated string: advproxy group required
 WARNING: untranslated string: advproxy proxy port transparent
+WARNING: untranslated string: age second
 WARNING: untranslated string: atm device
 WARNING: untranslated string: attention
 WARNING: untranslated string: bit
@@ -718,9 +726,11 @@ WARNING: untranslated string: fwdfw dnat nochoice
 WARNING: untranslated string: fwdfw dnat porterr
 WARNING: untranslated string: fwdfw dnat porterr2
 WARNING: untranslated string: fwdfw edit
+WARNING: untranslated string: fwdfw err concon
 WARNING: untranslated string: fwdfw err nosrc
 WARNING: untranslated string: fwdfw err notgt
 WARNING: untranslated string: fwdfw err prot_port
+WARNING: untranslated string: fwdfw err ratecon
 WARNING: untranslated string: fwdfw err remark
 WARNING: untranslated string: fwdfw err ruleexists
 WARNING: untranslated string: fwdfw err same
@@ -736,12 +746,15 @@ WARNING: untranslated string: fwdfw hint ip1
 WARNING: untranslated string: fwdfw hint ip2
 WARNING: untranslated string: fwdfw hint mac
 WARNING: untranslated string: fwdfw iface
+WARNING: untranslated string: fwdfw limitconcon
 WARNING: untranslated string: fwdfw log
 WARNING: untranslated string: fwdfw log rule
 WARNING: untranslated string: fwdfw many
+WARNING: untranslated string: fwdfw maxconcon
 WARNING: untranslated string: fwdfw movedown
 WARNING: untranslated string: fwdfw moveup
 WARNING: untranslated string: fwdfw newrule
+WARNING: untranslated string: fwdfw numcon
 WARNING: untranslated string: fwdfw pol allow
 WARNING: untranslated string: fwdfw pol block
 WARNING: untranslated string: fwdfw pol text
@@ -749,6 +762,7 @@ WARNING: untranslated string: fwdfw pol text1
 WARNING: untranslated string: fwdfw pol title
 WARNING: untranslated string: fwdfw prot41
 WARNING: untranslated string: fwdfw prot41 short
+WARNING: untranslated string: fwdfw ratelimit
 WARNING: untranslated string: fwdfw red
 WARNING: untranslated string: fwdfw reread
 WARNING: untranslated string: fwdfw rule activate
@@ -773,6 +787,7 @@ WARNING: untranslated string: fwdfw wd_sun
 WARNING: untranslated string: fwdfw wd_thu
 WARNING: untranslated string: fwdfw wd_tue
 WARNING: untranslated string: fwdfw wd_wed
+WARNING: untranslated string: fwhost OpenVPN N-2-N
 WARNING: untranslated string: fwhost addgrp
 WARNING: untranslated string: fwhost addgrpname
 WARNING: untranslated string: fwhost addhost
@@ -813,7 +828,6 @@ WARNING: untranslated string: fwhost err name
 WARNING: untranslated string: fwhost err name1
 WARNING: untranslated string: fwhost err net
 WARNING: untranslated string: fwhost err netexist
-WARNING: untranslated string: fwhost err partofnet
 WARNING: untranslated string: fwhost err port
 WARNING: untranslated string: fwhost err remark
 WARNING: untranslated string: fwhost err srv exists
@@ -856,7 +870,14 @@ WARNING: untranslated string: last
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
 WARNING: untranslated string: mac filter
+WARNING: untranslated string: masquerade blue
+WARNING: untranslated string: masquerade green
+WARNING: untranslated string: masquerade orange
+WARNING: untranslated string: masquerading
+WARNING: untranslated string: masquerading disabled
+WARNING: untranslated string: masquerading enabled
 WARNING: untranslated string: maximum
+WARNING: untranslated string: messages
 WARNING: untranslated string: minimum
 WARNING: untranslated string: minute
 WARNING: untranslated string: model
@@ -922,6 +943,8 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: samba join a domain
+WARNING: untranslated string: samba join domain
 WARNING: untranslated string: server restart
 WARNING: untranslated string: show dh
 WARNING: untranslated string: show tls-auth key

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec /etc/rc.d/init.d/firewall down

@@ -9,10 +9,14 @@
 #usr/include/readline/tilde.h
 #usr/lib/libhistory.so
 usr/lib/libhistory.so.6
-usr/lib/libhistory.so.6.2
+usr/lib/libhistory.so.6.3
 #usr/lib/libreadline.so
 usr/lib/libreadline.so.6
-usr/lib/libreadline.so.6.2
+usr/lib/libreadline.so.6.3
+#usr/share/doc/readline
+#usr/share/doc/readline/CHANGES
+#usr/share/doc/readline/INSTALL
+#usr/share/doc/readline/README
 #usr/share/info/history.info
 #usr/share/info/readline.info
 #usr/share/info/rluserman.info
