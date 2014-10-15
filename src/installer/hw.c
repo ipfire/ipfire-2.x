@@ -1041,3 +1041,27 @@ void hw_sync() {
 int hw_start_networking(const char* output) {
 	return mysystem(output, "/usr/bin/start-networking.sh");
 }
+
+char* hw_find_backup_file(const char* output, const char* search_path) {
+	char path[STRING_SIZE];
+
+	snprintf(path, sizeof(path), "%s/backup.ipf", search_path);
+	int r = access(path, R_OK);
+
+	if (r == 0)
+		return strdup(path);
+
+	return NULL;
+}
+
+int hw_restore_backup(const char* output, const char* backup_path, const char* destination) {
+	char command[STRING_SIZE];
+
+	snprintf(command, sizeof(command), "/bin/tar xzpf %s -C %s", backup_path, destination);
+	int rc = mysystem(output, command);
+
+	if (rc)
+		return -1;
+
+	return 0;
+}

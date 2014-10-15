@@ -128,6 +128,9 @@ int hw_stop_all_raid_arrays(const char* output);
 int hw_install_bootloader(struct hw_destination* dest, const char* output);
 int hw_write_fstab(struct hw_destination* dest);
 
+char* hw_find_backup_file(const char* output, const char* search_path);
+int hw_restore_backup(const char* output, const char* backup_path, const char* destination);
+
 void hw_sync();
 
 #endif /* HEADER_HW_H */

@@ -722,11 +722,24 @@ int main(int argc, char *argv[]) {
 	mysystem(logfile, "/usr/bin/touch /harddisk/var/ipfire/main/gpl_accepted");
 
 	/* Copy restore file from cdrom */
-	if (unattended && (strlen(restore_file) > 0)) {
-		fprintf(flog, "unattended: Copy restore file\n");
-		snprintf(commandstring, STRING_SIZE, 
-			"cp /cdrom/%s /harddisk/var/ipfire/backup", restore_file);
-		mysystem(logfile, commandstring);
+	char* backup_file = hw_find_backup_file(logfile, SOURCE_MOUNT_PATH);
+	if (backup_file) {
+		rc = 0;
+		if (!unattended) {
+			rc = newtWinOkCancel(title, _("A backup file has been found on the installation image.\n\n"
+				"Do you want to restore the backup?"), 50, 10, _("Yes"), _("No"));
+		}
+
+		if (rc == 0) {
+			rc = hw_restore_backup(logfile, backup_file, DESTINATION_MOUNT_PATH);
+
+			if (rc) {
+				errorbox(_("An error occured when the backup file was restored."));
+				goto EXIT;
+			}
+		}
+
+		free(backup_file);
 	}
 
 	// Umount the destination drive
