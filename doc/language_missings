@@ -159,12 +159,14 @@
 < fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
+< fwdfw err concon
 < fwdfw err nosrc
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
 < fwdfw err prot_port
 < fwdfw err prot_port1
+< fwdfw err ratecon
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
@@ -183,10 +185,12 @@
 < fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
+< fwdfw limitconcon
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw many
+< fwdfw maxconcon
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -194,6 +198,7 @@
 < fwdfw moveup
 < fwdfw natport used
 < fwdfw newrule
+< fwdfw numcon
 < fwdfw p2p txt
 < fwdfw pol allow
 < fwdfw pol block
@@ -202,6 +207,7 @@
 < fwdfw pol title
 < fwdfw prot41
 < fwdfw prot41 short
+< fwdfw ratelimit
 < fwdfw red
 < fwdfw REJECT
 < fwdfw reread
@@ -707,12 +713,14 @@
 < fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
+< fwdfw err concon
 < fwdfw err nosrc
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
 < fwdfw err prot_port
 < fwdfw err prot_port1
+< fwdfw err ratecon
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
@@ -731,10 +739,12 @@
 < fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
+< fwdfw limitconcon
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw many
+< fwdfw maxconcon
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -742,6 +752,7 @@
 < fwdfw moveup
 < fwdfw natport used
 < fwdfw newrule
+< fwdfw numcon
 < fwdfw p2p txt
 < fwdfw pol allow
 < fwdfw pol block
@@ -750,6 +761,7 @@
 < fwdfw pol title
 < fwdfw prot41
 < fwdfw prot41 short
+< fwdfw ratelimit
 < fwdfw red
 < fwdfw REJECT
 < fwdfw reread
@@ -1239,12 +1251,14 @@
 < fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
+< fwdfw err concon
 < fwdfw err nosrc
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
 < fwdfw err prot_port
 < fwdfw err prot_port1
+< fwdfw err ratecon
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
@@ -1263,10 +1277,12 @@
 < fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
+< fwdfw limitconcon
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw many
+< fwdfw maxconcon
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -1274,6 +1290,7 @@
 < fwdfw moveup
 < fwdfw natport used
 < fwdfw newrule
+< fwdfw numcon
 < fwdfw p2p txt
 < fwdfw pol allow
 < fwdfw pol block
@@ -1282,6 +1299,7 @@
 < fwdfw pol title
 < fwdfw prot41
 < fwdfw prot41 short
+< fwdfw ratelimit
 < fwdfw red
 < fwdfw REJECT
 < fwdfw reread
@@ -1760,12 +1778,14 @@
 < fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
+< fwdfw err concon
 < fwdfw err nosrc
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
 < fwdfw err prot_port
 < fwdfw err prot_port1
+< fwdfw err ratecon
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
@@ -1784,10 +1804,12 @@
 < fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
+< fwdfw limitconcon
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw many
+< fwdfw maxconcon
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -1795,6 +1817,7 @@
 < fwdfw moveup
 < fwdfw natport used
 < fwdfw newrule
+< fwdfw numcon
 < fwdfw p2p txt
 < fwdfw pol allow
 < fwdfw pol block
@@ -1803,6 +1826,7 @@
 < fwdfw pol title
 < fwdfw prot41
 < fwdfw prot41 short
+< fwdfw ratelimit
 < fwdfw red
 < fwdfw REJECT
 < fwdfw reread
