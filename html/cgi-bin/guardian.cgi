@@ -58,7 +58,7 @@ $settings{'GUARDIAN_ENABLED'} = 'off';
 $settings{'GUARDIAN_ENABLE_SNORT'} = 'on';
 $settings{'GUARDIAN_ENABLE_SSH'} = 'on';
 $settings{'GUARDIAN_ENABLE_HTTPD'} = 'on';
-$settings{'GUARDIAN_BLOCKINTERFACES'} ='default';
+$settings{'GUARDIAN_LOGLEVEL'} ='info';
 $settings{'GUARDIAN_BLOCKTIME'} = '86400';
 $settings{'GUARDIAN_LOGFILE'} = '/var/log/guardian/guardian.log';
 $settings{'GUARDIAN_SNORT_ALERTFILE'} = '/var/log/snort/alert';
@@ -231,6 +231,7 @@ if ( ($memory != 0) && (@pid[0] ne "///") ) {
 # Function to display the status of guardian and allow base configuration.
 sub showMainBox() {
 	my %checked = ();
+	my %selected = ();
 
 	$checked{'GUARDIAN_ENABLED'}{'on'} = '';
 	$checked{'GUARDIAN_ENABLED'}{'off'} = '';
@@ -244,6 +245,8 @@ sub showMainBox() {
 	$checked{'GUARDIAN_ENABLE_HTTPD'}{'off'} = '';
 	$checked{'GUARDIAN_ENABLE_HTTPD'}{'on'} = '';
 	$checked{'GUARDIAN_ENABLE_HTTPD'}{$settings{'GUARDIAN_ENABLE_HTTPD'}} = "checked='checked'";
+
+	$selected{'GUARDIAN_LOGLEVEL'}{$settings{'GUARDIAN_LOGLEVEL'}}= 'selected';
 
 	&Header::openpage($Lang::tr{'guardian configuration'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
@@ -337,6 +340,15 @@ END
 			<tr>
 				<td colspan='2'><br></td>
 			</tr>
+			<tr>
+				<td align='left' width='20%'>$Lang::tr{'guardian loglevel'}</td>
+				<td><select name='GUARDIAN_LOGLEVEL'>
+					<option value='off' $selected{'GUARDIAN_LOGLEVEL'}{'off'}>off</option>
+					<option value='info' $selected{'GUARDIAN_LOGLEVEL'}{'info'}>info</option>
+					<option value='debug' $selected{'GUARDIAN_LOGLEVEL'}{'debug'}>debug</option>
+				</select></td>
+			</tr>
+
 			<tr>
 				<td width='20%' class='base'>$Lang::tr{'guardian blocktime'}:</td>
 				<td><input type='text' name='GUARDIAN_BLOCKTIME' value='$settings{'GUARDIAN_BLOCKTIME'}' size='10' /></td>
@@ -595,6 +607,7 @@ sub BuildConfiguration() {
 	print FILE "EnableSnortMonitoring	$settings{'GUARDIAN_ENABLE_SNORT'}\n";
 	print FILE "EnableSSHMonitoring		$settings{'GUARDIAN_ENABLE_SSH'}\n";
 	print FILE "EnableHTTPDMonitoring	$settings{'GUARDIAN_ENABLE_HTTPD'}\n";
+	print FILE "LogLevel			$settings{'GUARDIAN_LOGLEVEL'}\n";
 	print FILE "HostGatewayByte		$HostGatewayByte\n";
 	print FILE "LogFile			$settings{'GUARDIAN_LOGFILE'}\n";
 	print FILE "AlertFile			$settings{'GUARDIAN_SNORT_ALERTFILE'}\n";
