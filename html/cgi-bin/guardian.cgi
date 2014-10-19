@@ -323,17 +323,17 @@ END
 				<td colspan='2'><br></td>
 			</tr>
 			<tr>
-				<td width='20%' class='base'>Monitor Snort Alerts:</td>
+				<td width='20%' class='base'>$Lang::tr{'guardian watch snort alertfile'}</td>
 				<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_SNORT' value='on' $checked{'GUARDIAN_ENABLE_SNORT'}{'on'} /> /
 				<input type='radio' name='GUARDIAN_ENABLE_SNORT' value='off' $checked{'GUARDIAN_ENABLE_SNORT'}{'off'} /> off</td>
 			</tr>
 			<tr>
-				<td width='20%' class='base'>Block SSH-Bruteforcing:</td>
+				<td width='20%' class='base'>$Lang::tr{'guardian block ssh brute-force'}</td>
 				<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_SSH' value='on' $checked{'GUARDIAN_ENABLE_SSH'}{'on'} /> /
 				<input type='radio' name='GUARDIAN_ENABLE_SSH' value='off' $checked{'GUARDIAN_ENABLE_SSH'}{'off'} /> off</td>
 			</tr>
 			<tr>
-				<td width='20%' class='base'>Block WUI-Bruteforcing:</td>
+				<td width='20%' class='base'>$Lang::tr{'guardian block httpd brute-force'}</td>
 				<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_HTTPD' value='on' $checked{'GUARDIAN_ENABLE_HTTPD'}{'on'} /> /
 				<input type='radio' name='GUARDIAN_ENABLE_HTTPD' value='off' $checked{'GUARDIAN_ENABLE_HTTPD'}{'off'} /> off</td>
 			</tr>
