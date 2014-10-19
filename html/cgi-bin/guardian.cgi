@@ -58,6 +58,10 @@ our %mainsettings = ();
 our %settings = ();
 
 $settings{'GUARDIAN_ENABLED'} = 'off';
+$settings{'GUARDIAN_ENABLE_SNORT'} = 'on';
+$settings{'GUARDIAN_ENABLE_SSH'} = 'on';
+$settings{'GUARDIAN_ENABLE_HTTPD'} = 'on';
+$settings{'GUARDIAN_BLOCKINTERFACES'} ='default';
 $settings{'GUARDIAN_BLOCKTIME'} = '86400';
 $settings{'GUARDIAN_LOGFILE'} = '/var/log/guardian/guardian.log';
 $settings{'GUARDIAN_SNORT_ALERTFILE'} = '/var/log/snort/alert';
@@ -234,6 +238,15 @@ sub showMainBox() {
 	$checked{'GUARDIAN_ENABLED'}{'on'} = '';
 	$checked{'GUARDIAN_ENABLED'}{'off'} = '';
 	$checked{'GUARDIAN_ENABLED'}{$settings{'GUARDIAN_ENABLED'}} = 'checked';
+	$checked{'GUARDIAN_ENABLE_SNORT'}{'off'} = '';
+	$checked{'GUARDIAN_ENABLE_SNORT'}{'on'} = '';
+	$checked{'GUARDIAN_ENABLE_SNORT'}{$settings{'GUARDIAN_ENABLE_SNORT'}} = "checked='checked'";
+	$checked{'GUARDIAN_ENABLE_SSH'}{'off'} = '';
+	$checked{'GUARDIAN_ENABLE_SSH'}{'on'} = '';
+	$checked{'GUARDIAN_ENABLE_SSH'}{$settings{'GUARDIAN_ENABLE_SSH'}} = "checked='checked'";
+	$checked{'GUARDIAN_ENABLE_HTTPD'}{'off'} = '';
+	$checked{'GUARDIAN_ENABLE_HTTPD'}{'on'} = '';
+	$checked{'GUARDIAN_ENABLE_HTTPD'}{$settings{'GUARDIAN_ENABLE_HTTPD'}} = "checked='checked'";
 
 	&Header::openpage($Lang::tr{'guardian configuration'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
@@ -305,6 +318,27 @@ END
 			<tr>
 				<td width='20%' class='base'>$Lang::tr{'guardian enabled'}:</td>
 				<td><input type='checkbox' name='GUARDIAN_ENABLED' $checked{'GUARDIAN_ENABLED'}{'on'} /></td>
+			</tr>
+			<tr>
+				<td colspan='2'><br></td>
+			</tr>
+			<tr>
+				<td width='20%' class='base'>Monitor Snort Alerts:</td>
+				<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_SNORT' value='on' $checked{'GUARDIAN_ENABLE_SNORT'}{'on'} /> /
+				<input type='radio' name='GUARDIAN_ENABLE_SNORT' value='off' $checked{'GUARDIAN_ENABLE_SNORT'}{'off'} /> off</td>
+			</tr>
+			<tr>
+				<td width='20%' class='base'>Block SSH-Bruteforcing:</td>
+				<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_SSH' value='on' $checked{'GUARDIAN_ENABLE_SSH'}{'on'} /> /
+				<input type='radio' name='GUARDIAN_ENABLE_SSH' value='off' $checked{'GUARDIAN_ENABLE_SSH'}{'off'} /> off</td>
+			</tr>
+			<tr>
+				<td width='20%' class='base'>Block WUI-Bruteforcing:</td>
+				<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_HTTPD' value='on' $checked{'GUARDIAN_ENABLE_HTTPD'}{'on'} /> /
+				<input type='radio' name='GUARDIAN_ENABLE_HTTPD' value='off' $checked{'GUARDIAN_ENABLE_HTTPD'}{'off'} /> off</td>
+			</tr>
+			<tr>
+				<td colspan='2'><br></td>
 			</tr>
 			<tr>
 				<td width='20%' class='base'>$Lang::tr{'guardian blocktime'}:</td>
@@ -564,13 +598,16 @@ sub BuildConfiguration() {
 	# Open configfile for writing.
 	open(FILE, ">$configfile");
 
-	print FILE "Interface		$red_interface\n";
-	print FILE "HostGatewayByte	$HostGatewayByte\n";
-	print FILE "LogFile		$settings{'GUARDIAN_LOGFILE'}\n";
-	print FILE "AlertFile		$settings{'GUARDIAN_SNORT_ALERTFILE'}\n";
-	print FILE "IgnoreFile		$ignorefile\n";
-	print FILE "TargetFile		$targetfile\n";
-	print FILE "TimeLimit		$settings{'GUARDIAN_BLOCKTIME'}\n";
+	print FILE "Interface			$red_interface\n";
+	print FILE "EnableSnortMonitoring	$settings{'GUARDIAN_ENABLE_SNORT'}\n";
+	print FILE "EnableSSHMonitoring		$settings{'GUARDIAN_ENABLE_SSH'}\n";
+	print FILE "EnableHTTPDMonitoring	$settings{'GUARDIAN_ENABLE_HTTPD'}\n";
+	print FILE "HostGatewayByte		$HostGatewayByte\n";
+	print FILE "LogFile			$settings{'GUARDIAN_LOGFILE'}\n";
+	print FILE "AlertFile			$settings{'GUARDIAN_SNORT_ALERTFILE'}\n";
+	print FILE "IgnoreFile			$ignorefile\n";
+	print FILE "TargetFile			$targetfile\n";
+	print FILE "TimeLimit			$settings{'GUARDIAN_BLOCKTIME'}\n";
 
 	close(FILE);
 
