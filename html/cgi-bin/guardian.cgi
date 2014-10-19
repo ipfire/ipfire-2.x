@@ -44,9 +44,6 @@ my %cgiparams=();
 # Path to the guardian.ignore file.
 my $ignorefile ='/var/ipfire/guardian/guardian.ignore';
 
-# Path to the guardian.target file.
-my $targetfile ='/var/ipfire/guardian/guardian.ignore';
-
 our %netsettings = ();
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
@@ -592,13 +589,9 @@ sub BuildConfiguration() {
 	# We set this to 1 (enabled) to prevent guardian from blocking the ISP gateway.
 	my $HostGatewayByte = "1";
 
-	# Grab interface of red network zone.
-	my $red_interface = &General::get_red_interface();
-
 	# Open configfile for writing.
 	open(FILE, ">$configfile");
 
-	print FILE "Interface			$red_interface\n";
 	print FILE "EnableSnortMonitoring	$settings{'GUARDIAN_ENABLE_SNORT'}\n";
 	print FILE "EnableSSHMonitoring		$settings{'GUARDIAN_ENABLE_SSH'}\n";
 	print FILE "EnableHTTPDMonitoring	$settings{'GUARDIAN_ENABLE_HTTPD'}\n";
@@ -606,7 +599,6 @@ sub BuildConfiguration() {
 	print FILE "LogFile			$settings{'GUARDIAN_LOGFILE'}\n";
 	print FILE "AlertFile			$settings{'GUARDIAN_SNORT_ALERTFILE'}\n";
 	print FILE "IgnoreFile			$ignorefile\n";
-	print FILE "TargetFile			$targetfile\n";
 	print FILE "TimeLimit			$settings{'GUARDIAN_BLOCKTIME'}\n";
 
 	close(FILE);
