@@ -72,6 +72,10 @@ my $errormessage = '';
 # Get GUI values.
 &Header::getcgihash(\%settings);
 
+# Check if guardian is running and grab some stats.
+&daemonstats();
+my $pid = @pid[0];
+
 ## Perform input checks and save settings.
 #
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
@@ -131,6 +135,12 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		close(FILE);
 	}
 
+	# Check if guardian is running.
+	if ($pid > 0) {
+		# Call guardianctrl to perform a reload.
+		system("/usr/local/bin/guardianctrl reload &>/dev/null");
+	}
+
 ## Remove entry from ignore list.
 #
 } elsif ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
@@ -154,6 +164,12 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		}
 	}
 	close(FILE);
+
+	# Check if guardian is running.
+	if ($pid > 0) {
+		# Call guardianctrl to perform a reload.
+		system("/usr/local/bin/guardianctrl reload &>/dev/null");
+	}
 
 ## Block a user given address or subnet.
 #
@@ -221,7 +237,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 &showIgnoreBox();
 
 # Display area only if guardian is running.
-if ( ($memory != 0) && (@pid[0] ne "///") ) {
+if ( ($memory != 0) && ($pid > 0) ) {
 	&showBlockedBox();
 }
 
@@ -259,11 +275,12 @@ sub showMainBox() {
 	# Draw current guardian state.
 	&Header::openbox('100%', 'center', $Lang::tr{'guardian'});
 
-	# Check if guardian is running and grab some stats.
+	# Get current status of guardian.
 	&daemonstats();
+	$pid = @pid[0];
 
 	# Display some useful information related to guardian, if daemon is running.
-	if ( ($memory != 0) && (@pid[0] ne "///") ){
+	if ( ($memory != 0) && ($pid > 0) ){
 		print <<END;
 			<table width='95%' cellspacing='0' class='tbl'>
 				<tr>
@@ -620,10 +637,17 @@ sub BuildConfiguration() {
 
 	close(FILE);
 
-	# Restart the service.
-	if ($settings{'GUARDIAN_ENABLED'} eq 'on') {
-		system("/usr/local/bin/guardianctrl restart &>/dev/null");
+	# Check if guardian should be started or stopped.
+	if($settings{'GUARDIAN_ENABLED'} eq 'on') {
+		if($pid > 0) {
+			# Call guardianctl to perform a reload.
+			system("/usr/local/bin/guardianctrl reload &>/dev/null");
+		} else {
+			# Launch guardian.
+			system("/usr/local/bin/guardianctrl start &>/dev/null");
+		}
 	} else {
+		# Stop the daemon.
 		system("/usr/local/bin/guardianctrl stop &>/dev/null");
 	}
 }
