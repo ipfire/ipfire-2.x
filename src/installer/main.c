@@ -226,6 +226,14 @@ static struct lang {
 	{ NULL, NULL },
 };
 
+static struct config {
+	int serial_console;
+	int require_networking;
+} config = {
+	.serial_console = 0,
+	.require_networking = 0,
+};
+
 int main(int argc, char *argv[]) {
 	struct hw* hw = hw_init();
 	const char* logfile = NULL;
@@ -247,10 +255,6 @@ int main(int argc, char *argv[]) {
 	char line[STRING_SIZE];
 		
 	int unattended = 0;
-	int serialconsole = 0;
-	int require_networking = 0;
-	struct keyvalue *unattendedkv = initkeyvalues();
-	char restore_file[STRING_SIZE] = "";
 
 	setlocale (LC_ALL, "");
 	sethostname( SNAME , 10);
@@ -296,12 +300,12 @@ int main(int argc, char *argv[]) {
 
 		// check if the installer should start networking
 		if (strstr(line, "installer.net") != NULL) {
-			require_networking = 1;
+			config.require_networking = 1;
 		}
 
 		// check if we have to patch for serial console
 		if (strstr (line, "console=ttyS0") != NULL) {
-		    serialconsole = 1;
+			config.serial_console = 1;
 		}
 	}
 
@@ -354,7 +358,7 @@ int main(int argc, char *argv[]) {
 		if (!unattended) {
 			// Show the right message to the user
 			char reason[STRING_SIZE];
-			if (require_networking) {
+			if (config.require_networking) {
 				snprintf(reason, sizeof(reason),
 					_("The installer will now try downloading the installation image."));
 			} else {
@@ -373,11 +377,11 @@ int main(int argc, char *argv[]) {
 				goto EXIT;
 		}
 
-		require_networking = 1;
+		config.require_networking = 1;
 	}
 
 	// Try starting the networking if we require it
-	if (require_networking) {
+	if (config.require_networking) {
 		while (1) {
 			statuswindow(60, 4, title, _("Trying to start networking (DHCP)..."));
 
@@ -426,14 +430,6 @@ int main(int argc, char *argv[]) {
 		fprintf(flog, "Could not mount %s to %s\n", sourcedrive, SOURCE_MOUNT_PATH);
 		fprintf(flog, strerror(errno));
 		exit(1);
-	}
-
-	/* load unattended configuration */
-	if (unattended) {
-	    fprintf(flog, "unattended: Reading unattended.conf\n");
-
-	    (void) readkeyvalues(unattendedkv, UNATTENDED_CONF);
-	    findkey(unattendedkv, "RESTORE_FILE", restore_file);
 	}
 
 	if (!unattended) {
@@ -686,7 +682,7 @@ int main(int argc, char *argv[]) {
 	statuswindow(60, 4, title, _("Installing the bootloader..."));
 
 	/* Serial console ? */
-	if (serialconsole) {
+	if (config.serial_console) {
 		/* grub */
 		FILE* f = fopen(DESTINATION_MOUNT_PATH "/etc/default/grub", "a");
 		if (!f) {
