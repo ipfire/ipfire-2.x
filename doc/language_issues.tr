@@ -663,12 +663,6 @@ WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
-WARNING: untranslated string: fwdfw err concon
-WARNING: untranslated string: fwdfw err ratecon
-WARNING: untranslated string: fwdfw limitconcon
-WARNING: untranslated string: fwdfw maxconcon
-WARNING: untranslated string: fwdfw numcon
-WARNING: untranslated string: fwdfw ratelimit
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
