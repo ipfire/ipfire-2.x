@@ -94,6 +94,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/usr/share/zoneinfo
 
 	rm -vf /usr/share/zoneinfo/localtime
+	rm -vf /etc/localtime
 	cp -vf /usr/share/zoneinfo/GMT /etc/localtime
 
 	@rm -rf $(DIR_APP)
