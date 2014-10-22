@@ -23,7 +23,6 @@
 #define _(x) dgettext("installer", x)
 
 #define INST_FILECOUNT 21000
-#define UNATTENDED_CONF "/cdrom/boot/unattended.conf"
 #define LICENSE_FILE	"/cdrom/COPYING"
 #define SOURCE_TEMPFILE "/tmp/downloaded-image.iso"
 
@@ -227,12 +226,45 @@ static struct lang {
 };
 
 static struct config {
+	int unattended;
 	int serial_console;
 	int require_networking;
 } config = {
+	.unattended = 0,
 	.serial_console = 0,
 	.require_networking = 0,
 };
+
+static void parse_command_line(struct config* c) {
+	char cmdline[STRING_SIZE];
+
+	FILE* f = fopen("/proc/cmdline", "r");
+	if (!f)
+		return;
+
+	int r = fread(&cmdline, 1, sizeof(cmdline) - 1, f);
+	if (r > 0) {
+		char* token = strtok(&cmdline, " ");
+
+		while (token) {
+			// serial console
+			if (strcmp(token, "console=ttyS0") == 0)
+				c->serial_console = 1;
+
+			// enable networking?
+			else if (strcmp(token, "installer.net") == 0)
+				c->require_networking = 1;
+
+			// unattended mode
+			else if (strcmp(token, "installer.unattended") == 0)
+				c->unattended = 1;
+
+			token = strtok(NULL, " ");
+		}
+	}
+
+	fclose(f);
+}
 
 int main(int argc, char *argv[]) {
 	struct hw* hw = hw_init();
@@ -251,11 +283,9 @@ int main(int argc, char *argv[]) {
 	char message[STRING_SIZE];
 	char title[STRING_SIZE];
 	int allok = 0;
-	FILE *handle, *cmdfile, *copying;
+	FILE *handle, *copying;
 	char line[STRING_SIZE];
 		
-	int unattended = 0;
-
 	setlocale (LC_ALL, "");
 	sethostname( SNAME , 10);
 
@@ -287,33 +317,18 @@ int main(int argc, char *argv[]) {
 
 	snprintf(title, sizeof(title), "%s - %s", NAME, SLOGAN);
 
-	if (! (cmdfile = fopen("/proc/cmdline", "r"))) {
-		fprintf(flog, "Couldn't open commandline: /proc/cmdline\n");
-	} else {
-		fgets(line, STRING_SIZE, cmdfile);
+	// Parse parameters from the kernel command line
+	parse_command_line(&config);
 
-		// check if we have to make an unattended install
-		if (strstr(line, "installer.unattended") != NULL) {
-		    splashWindow(title, _("Warning: Unattended installation will start in 10 seconds..."), 10);
-		    unattended = 1;
-		}
-
-		// check if the installer should start networking
-		if (strstr(line, "installer.net") != NULL) {
-			config.require_networking = 1;
-		}
-
-		// check if we have to patch for serial console
-		if (strstr (line, "console=ttyS0") != NULL) {
-			config.serial_console = 1;
-		}
+	if (config.unattended) {
+		splashWindow(title, _("Warning: Unattended installation will start in 10 seconds..."), 10);
 	}
 
 	// Load common modules
 	mysystem(logfile, "/sbin/modprobe vfat"); // USB key
 	hw_stop_all_raid_arrays(logfile);
 
-	if (!unattended) {
+	if (!config.unattended) {
 		// Language selection
 		char* langnames[NUM_LANGS + 1];
 
@@ -340,7 +355,7 @@ int main(int argc, char *argv[]) {
 	char* helpline = center_string(_("<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"), screen_cols);
 	newtPushHelpLine(helpline);
 
-	if (!unattended) {
+	if (!config.unattended) {
 		snprintf(message, sizeof(message),
 			_("Welcome to the %s installation program.\n\n"
 			"Selecting Cancel on any of the following screens will reboot the computer."), NAME);
@@ -355,7 +370,7 @@ int main(int argc, char *argv[]) {
 	/* If we could not find a source drive, we will try
 	 * downloading the install image */
 	if (!sourcedrive) {
-		if (!unattended) {
+		if (!config.unattended) {
 			// Show the right message to the user
 			char reason[STRING_SIZE];
 			if (config.require_networking) {
@@ -432,7 +447,7 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	if (!unattended) {
+	if (!config.unattended) {
 		// Read the license file.
 		if (!(copying = fopen(LICENSE_FILE, "r"))) {
 			sprintf(discl_msg, "Could not open license file: %s\n", LICENSE_FILE);
@@ -470,7 +485,7 @@ int main(int argc, char *argv[]) {
 		// exactly one disk has been found
 		// or if we are running in unattended mode, we will select
 		// the first disk and go with that one
-		} else if ((num_disks == 1) || (unattended && num_disks >= 1)) {
+		} else if ((num_disks == 1) || (config.unattended && num_disks >= 1)) {
 			selected_disks = hw_select_first_disk(disks);
 
 		// more than one usable disk has been found and
@@ -508,7 +523,7 @@ int main(int argc, char *argv[]) {
 
 		// Don't print the auto-selected harddisk setup in
 		// unattended mode.
-		if (unattended)
+		if (config.unattended)
 			break;
 
 		num_selected_disks = hw_count_disks(selected_disks);
@@ -566,7 +581,7 @@ int main(int argc, char *argv[]) {
 	fprintf(flog, "Memory   : %lluMB\n", BYTES2MB(hw_memory()));
 
 	// Warn the user if there is not enough space to create a swap partition
-	if (!unattended && !*destination->part_swap) {
+	if (!config.unattended && !*destination->part_swap) {
 		rc = newtWinChoice(title, _("OK"), _("Cancel"),
 			_("Your harddisk is very small, but you can continue without a swap partition."));
 
@@ -575,7 +590,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Filesystem selection
-	if (!unattended) {
+	if (!config.unattended) {
 		struct filesystems {
 			int fstype;
 			const char* description;
@@ -721,7 +736,7 @@ int main(int argc, char *argv[]) {
 	char* backup_file = hw_find_backup_file(logfile, SOURCE_MOUNT_PATH);
 	if (backup_file) {
 		rc = 0;
-		if (!unattended) {
+		if (!config.unattended) {
 			rc = newtWinOkCancel(title, _("A backup file has been found on the installation image.\n\n"
 				"Do you want to restore the backup?"), 50, 10, _("Yes"), _("No"));
 		}
@@ -751,7 +766,7 @@ int main(int argc, char *argv[]) {
 	snprintf(commandstring, STRING_SIZE, "/usr/bin/eject %s", sourcedrive);
 	mysystem(logfile, commandstring);
 
-	if (!unattended) {
+	if (!config.unattended) {
 		snprintf(message, sizeof(message), _(
 			"%s was successfully installed!\n\n"
 			"Please remove any installation mediums from this system and hit the reboot button. "
