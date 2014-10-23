@@ -284,6 +284,9 @@ endif
 	#   Makefile:235: *** mixed implicit and normal rules.  Stop.
 	cd $(DIR_APP) && sed -i 's/ot \$$/ot:\n\ttouch $$@\n$$/' manual/Makefile
 
+	# http://sourceware.org/ml/libc-ports/2011-09/msg00018.html
+	cd $(DIR_APP) && sed -e "s/PIC/SHARED/g" -i ports/sysdeps/arm/{,eabi/}{set,__long}jmp.S
+
 ifeq "$(ROOT)" ""
 ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.3 -o|' \
