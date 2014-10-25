@@ -39,6 +39,16 @@ AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_CC_C_O
 
+CC_CHECK_FLAGS_APPEND([with_cflags], [CFLAGS], [\
+	"-Wformat=2 -Wformat-security -Wformat-nonliteral" \
+	-Werror=overflow \
+	-fno-strict-aliasing \
+	-fstack-protector \
+	-fstack-protector-strong \
+	-fPIE \
+	--param=ssp-buffer-size=4])
+AC_SUBST([OUR_CFLAGS], "$with_cflags")
+
 AC_PATH_PROG([M4], [m4])
 
 # Gettext

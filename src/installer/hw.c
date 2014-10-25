@@ -340,7 +340,7 @@ void hw_free_disks(struct hw_disk** disks) {
 	free(disks);
 }
 
-unsigned int hw_count_disks(struct hw_disk** disks) {
+unsigned int hw_count_disks(const struct hw_disk** disks) {
 	unsigned int ret = 0;
 
 	while (*disks++)
@@ -353,7 +353,7 @@ struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection) {
 	struct hw_disk** ret = hw_create_disks();
 	struct hw_disk** selected_disks = ret;
 
-	unsigned int num_disks = hw_count_disks(disks);
+	unsigned int num_disks = hw_count_disks((const struct hw_disk**)disks);
 
 	for (unsigned int i = 0; i < num_disks; i++) {
 		if (!selection || selection[i]) {
@@ -1029,12 +1029,13 @@ static char* hw_get_uuid(const char* dev) {
 	return uuid;
 }
 
+#define FSTAB_FMT "UUID=%s %-8s %-4s %-10s %d %d\n"
+
 int hw_write_fstab(struct hw_destination* dest) {
 	FILE* f = fopen(DESTINATION_MOUNT_PATH "/etc/fstab", "w");
 	if (!f)
 		return -1;
 
-	const char* fmt = "UUID=%s %-8s %-4s %-10s %d %d\n";
 	char* uuid = NULL;
 
 	// boot
@@ -1042,7 +1043,7 @@ int hw_write_fstab(struct hw_destination* dest) {
 		uuid = hw_get_uuid(dest->part_boot);
 
 		if (uuid) {
-			fprintf(f, fmt, uuid, "/boot", "auto", "defaults", 1, 2);
+			fprintf(f, FSTAB_FMT, uuid, "/boot", "auto", "defaults", 1, 2);
 			free(uuid);
 		}
 	}
@@ -1052,7 +1053,7 @@ int hw_write_fstab(struct hw_destination* dest) {
 		uuid = hw_get_uuid(dest->part_swap);
 
 		if (uuid) {
-			fprintf(f, fmt, uuid, "swap", "swap", "defaults,pri=1", 0, 0);
+			fprintf(f, FSTAB_FMT, uuid, "swap", "swap", "defaults,pri=1", 0, 0);
 			free(uuid);
 		}
 	}
@@ -1060,7 +1061,7 @@ int hw_write_fstab(struct hw_destination* dest) {
 	// root
 	uuid = hw_get_uuid(dest->part_root);
 	if (uuid) {
-		fprintf(f, fmt, uuid, "/", "auto", "defaults", 1, 1);
+		fprintf(f, FSTAB_FMT, uuid, "/", "auto", "defaults", 1, 1);
 		free(uuid);
 	}
 
@@ -1069,7 +1070,7 @@ int hw_write_fstab(struct hw_destination* dest) {
 		uuid = hw_get_uuid(dest->part_data);
 
 		if (uuid) {
-			fprintf(f, fmt, uuid, "/var", "auto", "defaults", 1, 1);
+			fprintf(f, FSTAB_FMT, uuid, "/var", "auto", "defaults", 1, 1);
 			free(uuid);
 		}
 	}

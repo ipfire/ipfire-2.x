@@ -44,6 +44,7 @@ installer_SOURCES = \
 	main.c
 
 installer_CFLAGS = \
+	$(AM_CFLAGS) \
 	$(BLKID_CFLAGS) \
 	$(LIBSMOOTH_CFLAGS) \
 	$(PCI_CFLAGS) \

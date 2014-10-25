@@ -7,6 +7,7 @@
  * Contains main entry point, and misc functions.6
  * 
  */
+#define _GNU_SOURCE
 
 #include <assert.h>
 #include <errno.h>
@@ -162,7 +163,7 @@ static int newtLicenseBox(const char* title, const char* text, int width, int he
 	return ret;
 }
 
-int write_lang_configs(const char *lang) {
+int write_lang_configs(char* lang) {
 	struct keyvalue *kv = initkeyvalues();
 
 	/* default stuff for main/settings. */
@@ -206,7 +207,7 @@ static char* center_string(const char* str, int width) {
 }
 
 #define DEFAULT_LANG "English"
-#define NUM_LANGS 8
+#define NUM_LANGS 10
 
 static struct lang {
 	const char* code;
@@ -253,7 +254,7 @@ static void parse_command_line(struct config* c) {
 
 		while (token) {
 			strncpy(buffer, token, sizeof(buffer));
-			char* val = &buffer;
+			char* val = buffer;
 			char* key = strsep(&val, "=");
 
 			// serial console
@@ -270,7 +271,7 @@ static void parse_command_line(struct config* c) {
 
 			// download url
 			else if (strcmp(key, "installer.download-url") == 0) {
-				strncpy(&c->download_url, val, sizeof(c->download_url));
+				strncpy(c->download_url, val, sizeof(c->download_url));
 				c->perform_download = 1;
 
 				// Require networking for the download
@@ -301,11 +302,10 @@ int main(int argc, char *argv[]) {
 	char message[STRING_SIZE];
 	char title[STRING_SIZE];
 	int allok = 0;
-	FILE *handle, *copying;
-	char line[STRING_SIZE];
-		
-	setlocale (LC_ALL, "");
-	sethostname( SNAME , 10);
+	FILE *copying;
+
+	setlocale(LC_ALL, "");
+	sethostname(SNAME, 10);
 
 	/* Log file/terminal stuff. */
 	FILE* flog = NULL;
@@ -364,7 +364,7 @@ int main(int argc, char *argv[]) {
 		assert(choice <= NUM_LANGS);
 
 		fprintf(flog, "Selected language: %s (%s)\n", languages[choice].name, languages[choice].code);
-		snprintf(language, sizeof(language), languages[choice].code);
+		snprintf(language, sizeof(language), "%s", languages[choice].code);
 
 		setenv("LANGUAGE", language, 1);
 		setlocale(LC_ALL, language);
@@ -487,7 +487,7 @@ int main(int argc, char *argv[]) {
 		// Read the license file.
 		if (!(copying = fopen(LICENSE_FILE, "r"))) {
 			sprintf(discl_msg, "Could not open license file: %s\n", LICENSE_FILE);
-			fprintf(flog, discl_msg);
+			fprintf(flog, "%s", discl_msg);
 		} else {
 			fread(discl_msg, 1, 40000, copying);
 			fclose(copying);
@@ -510,7 +510,7 @@ int main(int argc, char *argv[]) {
 
 	// Check how many disks have been found and what
 	// we can do with them.
-	unsigned int num_disks = hw_count_disks(disks);
+	unsigned int num_disks = hw_count_disks((const struct hw_disk**)disks);
 
 	while (1) {
 		// no harddisks found
@@ -522,7 +522,7 @@ int main(int argc, char *argv[]) {
 		// or if we are running in unattended mode, we will select
 		// the first disk and go with that one
 		} else if ((num_disks == 1) || (config.unattended && num_disks >= 1)) {
-			selected_disks = hw_select_first_disk(disks);
+			selected_disks = hw_select_first_disk((const struct hw_disk**)disks);
 
 		// more than one usable disk has been found and
 		// the user needs to choose what to do with them
@@ -531,7 +531,7 @@ int main(int argc, char *argv[]) {
 			int disk_selection[num_disks];
 
 			for (unsigned int i = 0; i < num_disks; i++) {
-				disk_names[i] = &disks[i]->description;
+				disk_names[i] = disks[i]->description;
 				disk_selection[i] = 0;
 			}
 
@@ -562,7 +562,7 @@ int main(int argc, char *argv[]) {
 		if (config.unattended)
 			break;
 
-		num_selected_disks = hw_count_disks(selected_disks);
+		num_selected_disks = hw_count_disks((const struct hw_disk**)selected_disks);
 
 		if (num_selected_disks == 1) {
 			snprintf(message, sizeof(message),
@@ -645,7 +645,7 @@ int main(int argc, char *argv[]) {
 			if (HW_FS_DEFAULT == filesystems[i].fstype)
 				fs_choice = i;
 
-			fs_names[i] = filesystems[i].description;
+			fs_names[i] = &filesystems[i].description;
 		}
 
 		rc = newtWinMenu(_("Filesystem Selection"), _("Please choose your filesystem:"),

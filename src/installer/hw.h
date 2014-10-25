@@ -107,7 +107,7 @@ char* hw_find_source_medium(struct hw* hw);
 
 struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive);
 void hw_free_disks(struct hw_disk** disks);
-unsigned int hw_count_disks(struct hw_disk** disks);
+unsigned int hw_count_disks(const struct hw_disk** disks);
 struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection);
 struct hw_disk** hw_select_first_disk(const struct hw_disk** disks);
 
@@ -130,6 +130,8 @@ int hw_write_fstab(struct hw_destination* dest);
 
 char* hw_find_backup_file(const char* output, const char* search_path);
 int hw_restore_backup(const char* output, const char* backup_path, const char* destination);
+
+int hw_start_networking(const char* output);
 
 void hw_sync();
 
