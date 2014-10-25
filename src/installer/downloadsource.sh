@@ -19,29 +19,39 @@
 #                                                                             #
 ###############################################################################
 
-#lfs change the url while build!
-IPFireISO=ipfire.iso
-#
+function download() {
+	wget -U "IPFire-NetInstall/2.x" "$@"
+}
 
-#Get user defined download from boot cmdline
-grep "netinstall=" /proc/cmdline > /dev/null && CMDLINE=1
-if ( [ "$CMDLINE" == "1" ]); then
-	read CMDLINE < /proc/cmdline
-	POS=${CMDLINE%%netinstall*}
-	POS=${#POS}
-	IPFireISO=`echo ${CMDLINE:POS} | cut -d"=" -f2 | cut -d" " -f1`
+if [ $# -lt 2 ]; then
+	echo "$0: Insufficient number of arguments" >&2
+	exit 2
 fi
 
-echo "Download with wget..."
-wget $IPFireISO -O /tmp/download.iso -t3 -U IPFire_NetInstall/2.x
-wget $IPFireISO.md5 -O /tmp/download.iso.md5 -t3 -U IPFire_NetInstall/2.x
-echo
-echo "Checking download..."
-md5_file=`md5sum /tmp/download.iso | cut -d" " -f1`
-md5_down=`cat /tmp/download.iso.md5 | cut -d" " -f1`
-if [ "$md5_file" == "$md5_down" ]; then
-	echo -n "/tmp/download.iso" > /tmp/source_device
-	exit 0
+OUTPUT="${1}"
+URL="${2}"
+
+echo "Downloading ${URL}..."
+if ! download -O "${OUTPUT}" "${URL}"; then
+	echo "Download failed" >&2
+
+	rm -f "${OUTPUT}"
+	exit 1
 fi
-echo "Error - SKIP"
-exit 10
+
+# Download went well. Checking for MD5 sum
+if download -O "${OUTPUT}.md5" "${URL}.md5" &>/dev/null; then
+	# Read downloaded checksum
+	read -r md5sum rest < "${OUTPUT}.md5"
+	rm -f "${OUTPUT}.md5"
+
+	# Compute checkum of downloaded image file
+	read -r md5sum_image rest <<< "$(md5sum "${OUTPUT}")"
+
+	if [ "${md5sum}" != "${md5sum_image}" ]; then
+		echo "MD5 sum mismatch: ${md5sum} != ${md5sum_image}" >&2
+		exit 2
+	fi
+fi
+
+exit 0

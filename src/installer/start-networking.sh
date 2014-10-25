@@ -56,6 +56,10 @@ function main() {
 		fi
 
 		echo "Successfully started on ${interface}"
+
+		# Wait until everything is settled
+		sleep 15
+
 		return 0
 	done
 

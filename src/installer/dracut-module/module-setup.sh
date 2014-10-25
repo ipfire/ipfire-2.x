@@ -35,17 +35,18 @@ install() {
     inst_multiple tar gzip lzma xz
 
     # Networking
-    inst_multiple dhcpcd ethtool hostname ip ping wget
+    inst_multiple dhcpcd ethtool hostname ip ping sort wget
     inst /usr/bin/start-networking.sh
-    inst /var/ipfire/dhcpc/dhcpcd-run-hooks
     inst /var/ipfire/dhcpc/dhcpcd.conf
-    for file in /var/ipfire/dhcpc/dhcpcd-hooks/*; do
-        inst "${file}"
-    done
+    inst /var/ipfire/dhcpc/dhcpcd-run-hooks
     inst "$moddir/70-dhcpcd.exe" "/var/ipfire/dhcpc/dhcpcd-hooks/70-dhcpcd.exe"
 
+    inst /etc/host.conf /etc/hosts /etc/protocols
+    inst /etc/nsswitch.conf /etc/resolv.conf
+    inst_libdir_file "libnss_dns.so.*"
+
     # Misc. tools
-    inst_multiple cut grep eject killall md5sum touch
+    inst_multiple cut grep eject id killall md5sum touch
     inst_multiple -o fdisk cfdisk df ps top
 
     # Hardware IDs

@@ -229,13 +229,18 @@ static struct config {
 	int unattended;
 	int serial_console;
 	int require_networking;
+	int perform_download;
+	char download_url[STRING_SIZE];
 } config = {
 	.unattended = 0,
 	.serial_console = 0,
 	.require_networking = 0,
+	.perform_download = 0,
+	.download_url = DOWNLOAD_URL,
 };
 
 static void parse_command_line(struct config* c) {
+	char buffer[STRING_SIZE];
 	char cmdline[STRING_SIZE];
 
 	FILE* f = fopen("/proc/cmdline", "r");
@@ -244,9 +249,13 @@ static void parse_command_line(struct config* c) {
 
 	int r = fread(&cmdline, 1, sizeof(cmdline) - 1, f);
 	if (r > 0) {
-		char* token = strtok(&cmdline, " ");
+		char* token = strtok(cmdline, " ");
 
 		while (token) {
+			strncpy(buffer, token, sizeof(buffer));
+			char* val = &buffer;
+			char* key = strsep(&val, "=");
+
 			// serial console
 			if (strcmp(token, "console=ttyS0") == 0)
 				c->serial_console = 1;
@@ -258,6 +267,15 @@ static void parse_command_line(struct config* c) {
 			// unattended mode
 			else if (strcmp(token, "installer.unattended") == 0)
 				c->unattended = 1;
+
+			// download url
+			else if (strcmp(key, "installer.download-url") == 0) {
+				strncpy(&c->download_url, val, sizeof(c->download_url));
+				c->perform_download = 1;
+
+				// Require networking for the download
+				c->require_networking = 1;
+			}
 
 			token = strtok(NULL, " ");
 		}
@@ -364,16 +382,21 @@ int main(int argc, char *argv[]) {
 
 	/* Search for a source drive that holds the right
 	 * version of the image we are going to install. */
-	sourcedrive = hw_find_source_medium(hw);
-	fprintf(flog, "Source drive: %s\n", sourcedrive);
+	if (!config.perform_download) {
+		sourcedrive = hw_find_source_medium(hw);
+		fprintf(flog, "Source drive: %s\n", sourcedrive);
+	}
 
 	/* If we could not find a source drive, we will try
 	 * downloading the install image */
-	if (!sourcedrive) {
+	if (!sourcedrive)
+		config.perform_download = 1;
+
+	if (config.perform_download) {
 		if (!config.unattended) {
 			// Show the right message to the user
 			char reason[STRING_SIZE];
-			if (config.require_networking) {
+			if (config.perform_download) {
 				snprintf(reason, sizeof(reason),
 					_("The installer will now try downloading the installation image."));
 			} else {
@@ -392,6 +415,7 @@ int main(int argc, char *argv[]) {
 				goto EXIT;
 		}
 
+		// Make sure that we enable networking before download
 		config.require_networking = 1;
 	}
 
@@ -420,20 +444,31 @@ int main(int argc, char *argv[]) {
 		}
 
 		// Download the image if required
-		while (!sourcedrive) {
-			snprintf(commandstring, sizeof(commandstring), "/usr/bin/downloadsource.sh %s", SOURCE_TEMPFILE);
-			runcommandwithstatus(commandstring, title, _("Downloading installation image..."), logfile);
+		if (config.perform_download) {
+			fprintf(flog, "Download URL: %s\n", config.download_url);
+			snprintf(commandstring, sizeof(commandstring), "/usr/bin/downloadsource.sh %s %s",
+				SOURCE_TEMPFILE, config.download_url);
 
-			FILE* f = fopen(SOURCE_TEMPFILE, "r");
-			if (f) {
-				sourcedrive = SOURCE_TEMPFILE;
-				fclose(f);
-			} else {
-				rc = newtWinOkCancel(title, _("The installation image could not be downloaded."),
-					60, 8, _("Retry"), _("Cancel"));
+			while (!sourcedrive) {
+				rc = runcommandwithstatus(commandstring, title, _("Downloading installation image..."), logfile);
 
-				if (rc)
-					goto EXIT;
+				FILE* f = fopen(SOURCE_TEMPFILE, "r");
+				if (f) {
+					sourcedrive = SOURCE_TEMPFILE;
+					fclose(f);
+				} else {
+					char reason[STRING_SIZE] = "-";
+					if (rc == 2)
+						snprintf(reason, sizeof(STRING_SIZE), _("MD5 checksum mismatch"));
+
+					snprintf(message, sizeof(message),
+						_("The installation image could not be downloaded.\n  Reason: %s\n\n%s"),
+						reason, config.download_url);
+
+					rc = newtWinOkCancel(title, message, 75, 12, _("Retry"), _("Cancel"));
+					if (rc)
+						goto EXIT;
+				}
 			}
 		}
 	}
@@ -442,9 +477,10 @@ int main(int argc, char *argv[]) {
 
 	int r = hw_mount(sourcedrive, SOURCE_MOUNT_PATH, "iso9660", MS_RDONLY);
 	if (r) {
-		fprintf(flog, "Could not mount %s to %s\n", sourcedrive, SOURCE_MOUNT_PATH);
-		fprintf(flog, strerror(errno));
-		exit(1);
+		snprintf(message, sizeof(message), _("Could not mount %s to %s:\n  %s\n"),
+			sourcedrive, SOURCE_MOUNT_PATH, strerror(errno));
+		errorbox(message);
+		goto EXIT;
 	}
 
 	if (!config.unattended) {

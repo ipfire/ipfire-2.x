@@ -26,12 +26,14 @@
 #include <blkid/blkid.h>
 #include <fcntl.h>
 #include <libudev.h>
+#include <linux/loop.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mount.h>
+#include <sys/stat.h>
 #include <sys/swap.h>
 #include <sys/sysinfo.h>
 #include <unistd.h>
@@ -82,10 +84,55 @@ static int strstartswith(const char* a, const char* b) {
 	return (strncmp(a, b, strlen(b)) == 0);
 }
 
+static char loop_device[STRING_SIZE];
+
+static int setup_loop_device(const char* source, const char* device) {
+	int file_fd = open(source, O_RDWR);
+	if (file_fd < 0)
+		goto ERROR;
+
+	int device_fd = -1;
+	if ((device_fd = open(device, O_RDWR)) < 0)
+		goto ERROR;
+
+	if (ioctl(device_fd, LOOP_SET_FD, file_fd) < 0)
+		goto ERROR;
+
+	close(file_fd);
+	close(device_fd);
+
+	return 0;
+
+ERROR:
+	if (file_fd >= 0)
+		close(file_fd);
+
+	if (device_fd >= 0) {
+		ioctl(device_fd, LOOP_CLR_FD, 0);
+		close(device_fd);
+	}
+
+	return -1;
+}
+
 int hw_mount(const char* source, const char* target, const char* fs, int flags) {
+	const char* loop_device = "/dev/loop0";
+
 	// Create target if it does not exist
 	if (access(target, X_OK) != 0)
 		mkdir(target, S_IRWXU|S_IRWXG|S_IRWXO);
+
+	struct stat st;
+	stat(source, &st);
+
+	if (S_ISREG(st.st_mode)) {
+		int r = setup_loop_device(source, loop_device);
+		if (r == 0) {
+			source = loop_device;
+		} else {
+			return -1;
+		}
+	}
 
 	return mount(source, target, fs, flags, NULL);
 }
