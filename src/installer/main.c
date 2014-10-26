@@ -233,6 +233,7 @@ static struct config {
 	int perform_download;
 	int disable_swap;
 	char download_url[STRING_SIZE];
+	char postinstall[STRING_SIZE];
 } config = {
 	.unattended = 0,
 	.serial_console = 0,
@@ -240,6 +241,7 @@ static struct config {
 	.perform_download = 0,
 	.disable_swap = 0,
 	.download_url = DOWNLOAD_URL,
+	.postinstall = "\0",
 };
 
 static void parse_command_line(struct config* c) {
@@ -279,6 +281,13 @@ static void parse_command_line(struct config* c) {
 			else if (strcmp(key, "installer.download-url") == 0) {
 				strncpy(c->download_url, val, sizeof(c->download_url));
 				c->perform_download = 1;
+
+				// Require networking for the download
+				c->require_networking = 1;
+
+			// postinstall script
+			} else if (strcmp(key, "installer.postinstall") == 0) {
+				strncpy(c->postinstall, val, sizeof(c->postinstall));
 
 				// Require networking for the download
 				c->require_networking = 1;
@@ -806,6 +815,17 @@ int main(int argc, char *argv[]) {
 
 	// Umount source drive and eject
 	hw_umount(SOURCE_MOUNT_PATH);
+
+	// Download and execute the postinstall script
+	if (*config.postinstall) {
+		snprintf(commandstring, sizeof(commandstring),
+			"/usr/bin/execute-postinstall.sh %s %s", DESTINATION_MOUNT_PATH, config.postinstall);
+
+		if (runcommandwithstatus(commandstring, title, _("Running post-install script..."), logfile)) {
+			errorbox(_("Post-install script failed."));
+			goto EXIT;
+		}
+	}
 
 	snprintf(commandstring, STRING_SIZE, "/usr/bin/eject %s", sourcedrive);
 	mysystem(logfile, commandstring);

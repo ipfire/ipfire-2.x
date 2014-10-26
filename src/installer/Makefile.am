@@ -34,6 +34,7 @@ bin_PROGRAMS = \
 
 bin_SCRIPTS = \
 	downloadsource.sh \
+	execute-postinstall.sh \
 	start-networking.sh
 
 #- installer -------------------------------------------------------------------

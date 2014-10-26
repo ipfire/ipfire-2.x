@@ -18,6 +18,7 @@ install() {
     inst /etc/system-release
     inst /usr/bin/installer
     inst /usr/bin/downloadsource.sh
+    inst /usr/bin/execute-postinstall.sh
     inst /usr/local/bin/iowrap
 
     # Kernel drivers
@@ -46,7 +47,7 @@ install() {
     inst_libdir_file "libnss_dns.so.*"
 
     # Misc. tools
-    inst_multiple cut grep eject id killall md5sum touch
+    inst_multiple chmod cut grep eject id killall md5sum touch
     inst_multiple -o fdisk cfdisk df ps top
 
     # Hardware IDs
