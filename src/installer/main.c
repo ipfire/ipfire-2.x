@@ -231,12 +231,14 @@ static struct config {
 	int serial_console;
 	int require_networking;
 	int perform_download;
+	int disable_swap;
 	char download_url[STRING_SIZE];
 } config = {
 	.unattended = 0,
 	.serial_console = 0,
 	.require_networking = 0,
 	.perform_download = 0,
+	.disable_swap = 0,
 	.download_url = DOWNLOAD_URL,
 };
 
@@ -268,6 +270,10 @@ static void parse_command_line(struct config* c) {
 			// unattended mode
 			else if (strcmp(token, "installer.unattended") == 0)
 				c->unattended = 1;
+
+			// disable swap
+			else if (strcmp(token, "installer.disable-swap") == 0)
+				c->disable_swap = 1;
 
 			// download url
 			else if (strcmp(key, "installer.download-url") == 0) {
@@ -601,7 +607,7 @@ int main(int argc, char *argv[]) {
 
 	hw_free_disks(disks);
 
-	struct hw_destination* destination = hw_make_destination(part_type, selected_disks);
+	struct hw_destination* destination = hw_make_destination(part_type, selected_disks, config.disable_swap);
 
 	if (!destination) {
 		errorbox(_("Your harddisk is too small."));
@@ -617,19 +623,21 @@ int main(int argc, char *argv[]) {
 	fprintf(flog, "Memory   : %lluMB\n", BYTES2MB(hw_memory()));
 
 	// Warn the user if there is not enough space to create a swap partition
-	if (!config.unattended && !*destination->part_swap) {
-		rc = newtWinChoice(title, _("OK"), _("Cancel"),
-			_("Your harddisk is very small, but you can continue without a swap partition."));
+	if (!config.unattended) {
+		if (!config.disable_swap && !*destination->part_swap) {
+			rc = newtWinChoice(title, _("OK"), _("Cancel"),
+				_("Your harddisk is very small, but you can continue without a swap partition."));
 
-		if (rc != 1)
-			goto EXIT;
+			if (rc != 1)
+				goto EXIT;
+		}
 	}
 
 	// Filesystem selection
 	if (!config.unattended) {
 		struct filesystems {
 			int fstype;
-			const char* description;
+			char* description;
 		} filesystems[] = {
 			{ HW_FS_EXT4,            _("ext4 Filesystem") },
 			{ HW_FS_EXT4_WO_JOURNAL, _("ext4 Filesystem without journal") },
@@ -645,7 +653,7 @@ int main(int argc, char *argv[]) {
 			if (HW_FS_DEFAULT == filesystems[i].fstype)
 				fs_choice = i;
 
-			fs_names[i] = &filesystems[i].description;
+			fs_names[i] = filesystems[i].description;
 		}
 
 		rc = newtWinMenu(_("Filesystem Selection"), _("Please choose your filesystem:"),

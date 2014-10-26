@@ -440,7 +440,7 @@ static int hw_device_has_p_suffix(const struct hw_destination* dest) {
 	return 0;
 }
 
-static int hw_calculate_partition_table(struct hw_destination* dest) {
+static int hw_calculate_partition_table(struct hw_destination* dest, int disable_swap) {
 	char path[DEV_SIZE];
 	int part_idx = 1;
 
@@ -493,8 +493,13 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 	}
 
 	dest->size_boot = hw_boot_size(dest);
-	dest->size_swap = hw_swap_size(dest);
 	dest->size_root = hw_root_size(dest);
+
+	// Should we use swap?
+	if (disable_swap)
+		dest->size_swap = 0;
+	else
+		dest->size_swap = hw_swap_size(dest);
 
 	// Determine the size of the data partition.
 	unsigned long long used_space = dest->size_bootldr + dest->size_boot
@@ -540,7 +545,7 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 	return 0;
 }
 
-struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks) {
+struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks, int disable_swap) {
 	struct hw_destination* dest = malloc(sizeof(*dest));
 
 	if (part_type == HW_PART_TYPE_NORMAL) {
@@ -560,7 +565,7 @@ struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks
 	// Is this a RAID device?
 	dest->is_raid = (part_type > HW_PART_TYPE_NORMAL);
 
-	int r = hw_calculate_partition_table(dest);
+	int r = hw_calculate_partition_table(dest, disable_swap);
 	if (r)
 		return NULL;
 
