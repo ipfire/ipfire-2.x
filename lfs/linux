@@ -297,11 +297,11 @@ endif
 	dracut --force --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
 
 ifeq "$(KCFG)" "-kirkwood"
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-kirkwood.img uInit-ipfire-kirkwood
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
 endif
 
 ifeq "$(KCFG)" "-multi"
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-multi.img uInit-ipfire-multi
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
 endif
 
 ifeq "$(LASTKERNEL)" "1"

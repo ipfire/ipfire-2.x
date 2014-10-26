@@ -24,8 +24,8 @@
 
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
-VERSION="2.15"							# Version number
-CORE="85"							# Core Level (Filename)
+VERSION="2.17"							# Version number
+CORE="86"							# Core Level (Filename)
 PAKFIRE_CORE="85"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -36,7 +36,7 @@ BUILD_IMAGES=1							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=7
+TOOLCHAINVER=8
 
 # New architecture variables
 BUILD_ARCH="$(uname -m)"
