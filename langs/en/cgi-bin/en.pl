@@ -1260,6 +1260,7 @@
 'guardian logfile' => 'Logfile',
 'guardian no entries' => 'No entries at the moment.',
 'guardian not running no hosts can be blocked' => 'Guardian is not running. No hosts will be blocked.',
+'guardian priority level' => 'Prioritylevel',
 'guardian service' => 'Guardian Service',
 'guardian snort alertfile' => 'Alertfile from Snort',
 'guest ok' => 'allow guests to access',

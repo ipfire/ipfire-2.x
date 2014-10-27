@@ -62,6 +62,7 @@ $settings{'GUARDIAN_BLOCKCOUNT'} = '3';
 $settings{'GUARDIAN_BLOCKTIME'} = '86400';
 $settings{'GUARDIAN_LOGFILE'} = '/var/log/guardian/guardian.log';
 $settings{'GUARDIAN_SNORT_ALERTFILE'} = '/var/log/snort/alert';
+$settings{'GUARDIAN_PRIORITY_LEVEL'} = '3';
 
 $settings{'ACTION'} = '';
 
@@ -259,7 +260,8 @@ sub showMainBox() {
 	$checked{'GUARDIAN_ENABLE_HTTPD'}{'on'} = '';
 	$checked{'GUARDIAN_ENABLE_HTTPD'}{$settings{'GUARDIAN_ENABLE_HTTPD'}} = "checked='checked'";
 
-	$selected{'GUARDIAN_LOGLEVEL'}{$settings{'GUARDIAN_LOGLEVEL'}}= 'selected';
+	$selected{'GUARDIAN_LOGLEVEL'}{$settings{'GUARDIAN_LOGLEVEL'}} = 'selected';
+	$selected{'GUARDIAN_PRIORITY_LEVEL'}{$settings{'GUARDIAN_PRIORITY_LEVEL'}} = 'selected';
 
 	&Header::openpage($Lang::tr{'guardian configuration'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
@@ -360,6 +362,18 @@ END
 					<option value='off' $selected{'GUARDIAN_LOGLEVEL'}{'off'}>off</option>
 					<option value='info' $selected{'GUARDIAN_LOGLEVEL'}{'info'}>info</option>
 					<option value='debug' $selected{'GUARDIAN_LOGLEVEL'}{'debug'}>debug</option>
+				</select></td>
+			</tr>
+			<tr>
+				<td colspan='2'><br></td>
+			</tr>
+			<tr>
+				<td align='left' width='20%'>$Lang::tr{'guardian priority level'}:</td>
+				<td><select name='GUARDIAN_PRIORITY_LEVEL'>
+					<option value='1' $selected{'GUARDIAN_PRIORITY_LEVEL'}{'1'}>1</option>
+					<option value='2' $selected{'GUARDIAN_PRIORITY_LEVEL'}{'2'}>2</option>
+					<option value='3' $selected{'GUARDIAN_PRIORITY_LEVEL'}{'3'}>3</option>
+					<option value='4' $selected{'GUARDIAN_PRIORITY_LEVEL'}{'4'}>4</option>
 				</select></td>
 			</tr>
 			<tr>
@@ -634,6 +648,7 @@ sub BuildConfiguration() {
 	print FILE "AlertFile			$settings{'GUARDIAN_SNORT_ALERTFILE'}\n";
 	print FILE "IgnoreFile			$ignorefile\n";
 	print FILE "TimeLimit			$settings{'GUARDIAN_BLOCKTIME'}\n";
+	print FILE "PriorityLevel		$settings{'GUARDIAN_PRIORITY_LEVEL'}\n";
 
 	close(FILE);
 
