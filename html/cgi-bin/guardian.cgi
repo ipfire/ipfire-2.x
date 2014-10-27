@@ -638,17 +638,17 @@ sub BuildConfiguration() {
 	# Open configfile for writing.
 	open(FILE, ">$configfile");
 
-	print FILE "EnableSnortMonitoring	$settings{'GUARDIAN_ENABLE_SNORT'}\n";
-	print FILE "EnableSSHMonitoring		$settings{'GUARDIAN_ENABLE_SSH'}\n";
-	print FILE "EnableHTTPDMonitoring	$settings{'GUARDIAN_ENABLE_HTTPD'}\n";
-	print FILE "LogLevel			$settings{'GUARDIAN_LOGLEVEL'}\n";
-	print FILE "BlockCount			$settings{'GUARDIAN_BLOCKCOUNT'}\n";
-	print FILE "HostGatewayByte		$HostGatewayByte\n";
-	print FILE "LogFile			$settings{'GUARDIAN_LOGFILE'}\n";
-	print FILE "AlertFile			$settings{'GUARDIAN_SNORT_ALERTFILE'}\n";
-	print FILE "IgnoreFile			$ignorefile\n";
-	print FILE "TimeLimit			$settings{'GUARDIAN_BLOCKTIME'}\n";
-	print FILE "PriorityLevel		$settings{'GUARDIAN_PRIORITY_LEVEL'}\n";
+	print FILE "EnableSnortMonitoring\t\t$settings{'GUARDIAN_ENABLE_SNORT'}\n";
+	print FILE "EnableSSHMonitoring\t\t$settings{'GUARDIAN_ENABLE_SSH'}\n";
+	print FILE "EnableHTTPDMonitoring\t\t$settings{'GUARDIAN_ENABLE_HTTPD'}\n";
+	print FILE "LogLevel\t\t\t$settings{'GUARDIAN_LOGLEVEL'}\n";
+	print FILE "BlockCount\t\t\t$settings{'GUARDIAN_BLOCKCOUNT'}\n";
+	print FILE "HostGatewayByte\t\t\t$HostGatewayByte\n";
+	print FILE "LogFile\t\t\t\t$settings{'GUARDIAN_LOGFILE'}\n";
+	print FILE "AlertFile\t\t\t$settings{'GUARDIAN_SNORT_ALERTFILE'}\n";
+	print FILE "IgnoreFile\t\t\t$ignorefile\n";
+	print FILE "TimeLimit\t\t\t$settings{'GUARDIAN_BLOCKTIME'}\n";
+	print FILE "PriorityLevel\t\t\t$settings{'GUARDIAN_PRIORITY_LEVEL'}\n";
 
 	close(FILE);
 
