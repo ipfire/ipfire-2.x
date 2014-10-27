@@ -80,27 +80,27 @@ my $pid = @pid[0];
 #
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	# Check for valid blocktime.
-	if (! $settings{'GUARDIAN_BLOCKTIME'} =~ /^\d+$/) {
+	unless(($settings{'GUARDIAN_BLOCKTIME'} =~ /^\d+$/) && ($settings{'GUARDIAN_BLOCKTIME'} ne "0")) {
 			$errormessage = "$Lang::tr{'guardian invalid blocktime'}";
 	}
 
 	# Check if the bloccount is valid.
-	if (! $settings{'GUARDIAN_BLOCKCOUNT'} =~ /^\d+$/) {
+	unless(($settings{'GUARDIAN_BLOCKCOUNT'} =~ /^\d+$/) && ($settings{'GUARDIAN_BLOCKCOUNT'} ne "0")) {
 			$errormessage = "$Lang::tr{'guardian invalid blockcount'}";
 	}
 
 	# Check Logfile.
-	if (! $settings{'GUARDIAN_LOGFILE'} =~ /^[a-zA-Z0-9\.\/]+$/) {
+	unless($settings{'GUARDIAN_LOGFILE'} =~ /^[a-zA-Z0-9\.\/]+$/) {
 		$errormessage = "$Lang::tr{'guardian invalid logfile'}";
 	}
 
 	# Check input for snort alert file.
-	if (! $settings{'GUARDIAN_SNORT_ALERTFILE'} =~ /^[a-zA-Z0-9\.\/]+$/) {
+	unless($settings{'GUARDIAN_SNORT_ALERTFILE'} =~ /^[a-zA-Z0-9\.\/]+$/) {
 		$errormessage = "$Lang::tr{'guardian invalid alertfile'}";
 	}
 
 	# Only continue if no error message has been set.
-	if ($errormessage eq '') {
+	if($errormessage eq '') {
 		# Write configuration settings to file.
 		&General::writehash("${General::swroot}/guardian/settings", \%settings);
 
