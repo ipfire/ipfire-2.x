@@ -176,17 +176,40 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 #
 } elsif ($settings{'ACTION'} eq $Lang::tr{'block'}) {
 
-	# Check if no empty input has been performed.
-        if ($settings{'ADDRESS_BLOCK'} ne '') {
+	# Assign some temporary variables used for input validation.
+	my $input = $settings{'ADDRESS_BLOCK'};
+	my $green = $netsettings{'GREEN_ADDRESS'};
+	my $blue = $netsettings{'BLUE_ADDRESS'};
+	my $orange = $netsettings{'ORANGE_ADDRESS'};
+	my $red = $netsettings{'RED_ADDRESS'};
 
-                # Check if the given input is no valid IP-address or IP-address with subnet, display an error message.
-                if ((!&General::validip($settings{'ADDRESS_BLOCK'})) && (!&General::validipandmask($settings{'ADDRESS_BLOCK'}))) {
+	# Get gateway address.
+	my $gateway = &General::get_gateway();
+
+	# Check if any input has been performed.
+	if ($input eq '') {
+		$errormessage = "$Lang::tr{'guardian empty input'}";
+	}
+
+	# Check if the given input is localhost (127.0.0.1).
+	elsif ($input eq "127.0.0.1") {
+		$errormessage = "$Lang::tr{'guardian blocking of this address is not allowed'}";
+	}
+
+	# Check if the given input is anywhere (0.0.0.0).
+	elsif ($input eq "0.0.0.0") {
+		$errormessage = "$Lang::tr{'guardian blocking of this address is not allowed'}";
+	}
+
+	# Check if the given input is one of the interface addresses or our gateway.
+	elsif ($input eq "$green" || $input eq "$blue" || $input eq "$orange" || $input eq "$red" || $input eq "$gateway") {
+		$errormessage = "$Lang::tr{'guardian blocking of this address is not allowed'}";
+	}
+
+	# Check if the given input is a valid IP address.
+        elsif (!&General::validip($input)) {
                         $errormessage = "$Lang::tr{'guardian invalid address or subnet'}";
-                }
-
-        } else {
-                $errormessage = "$Lang::tr{'guardian empty input'}";
-        }
+	}
 
         # Go further if there was no error.
         if ($errormessage eq '') {
