@@ -1,6 +1,6 @@
-
-%tr = (
+%tr = ( 
 %tr,
+
 'Act as' => 'Lavora come:',
 'Add Level7 rule' => 'Aggiungo una regola al Level7',
 'Add Port Rule' => 'Aggiungo regola porta',
@@ -2677,7 +2677,4 @@
 'your e-mail' => 'Your e-mail address',
 );
 
-
 #EOF
-
-
