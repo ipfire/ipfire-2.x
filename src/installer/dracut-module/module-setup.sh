@@ -54,11 +54,10 @@ install() {
     inst /usr/share/hwdata/pci.ids /usr/share/hwdata/usb.ids
 
     # Locales
-    for locale in de en es fr nl pl ru tr; do
-        for file in $(find /usr/lib/locale/${locale}*); do
-            inst "${file}"
-        done
-    done
+    mkdir -p "${initdir}/usr/lib/locale"
+    localedef --quiet --prefix="${initdir}" --add-to-archive /usr/lib/locale/en_US
+    localedef --quiet --prefix="${initdir}" --add-to-archive /usr/lib/locale/en_US.utf8
+
     for file in /usr/share/locale/*/LC_MESSAGES/installer.mo; do
         inst "${file}"
     done
