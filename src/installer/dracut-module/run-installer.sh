@@ -3,6 +3,12 @@
 # IPFire Installer RC
 #
 
+# Enable Unicode
+echo -en '\033%G' && kbd_mode -u
+
+# Load default console font
+setfont LatArCyrHeb-16
+
 # Silence the kernel
 echo >/proc/sys/kernel/printk "1 4 1 7"
 echo -n -e "\033[9;0]"

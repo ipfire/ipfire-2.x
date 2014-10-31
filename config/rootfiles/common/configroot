@@ -80,6 +80,7 @@ var/ipfire/langs
 #var/ipfire/langs/en.pl
 #var/ipfire/langs/es.pl
 #var/ipfire/langs/fr.pl
+#var/ipfire/langs/it.pl
 #var/ipfire/langs/list
 #var/ipfire/langs/nl.pl
 #var/ipfire/langs/pl.pl

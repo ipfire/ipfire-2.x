@@ -18,6 +18,7 @@ install() {
     inst /etc/system-release
     inst /usr/bin/installer
     inst /usr/bin/downloadsource.sh
+    inst /usr/bin/execute-postinstall.sh
     inst /usr/local/bin/iowrap
 
     # Kernel drivers
@@ -35,28 +36,28 @@ install() {
     inst_multiple tar gzip lzma xz
 
     # Networking
-    inst_multiple dhcpcd ethtool hostname ip ping wget
+    inst_multiple dhcpcd ethtool hostname ip ping sort wget
     inst /usr/bin/start-networking.sh
-    inst /var/ipfire/dhcpc/dhcpcd-run-hooks
     inst /var/ipfire/dhcpc/dhcpcd.conf
-    for file in /var/ipfire/dhcpc/dhcpcd-hooks/*; do
-        inst "${file}"
-    done
+    inst /var/ipfire/dhcpc/dhcpcd-run-hooks
     inst "$moddir/70-dhcpcd.exe" "/var/ipfire/dhcpc/dhcpcd-hooks/70-dhcpcd.exe"
 
+    inst /etc/host.conf /etc/hosts /etc/protocols
+    inst /etc/nsswitch.conf /etc/resolv.conf
+    inst_libdir_file "libnss_dns.so.*"
+
     # Misc. tools
-    inst_multiple cut grep eject killall md5sum touch
+    inst_multiple chmod cut grep eject id killall md5sum touch
     inst_multiple -o fdisk cfdisk df ps top
 
     # Hardware IDs
     inst /usr/share/hwdata/pci.ids /usr/share/hwdata/usb.ids
 
     # Locales
-    for locale in de en es fr nl pl ru tr; do
-        for file in $(find /usr/lib/locale/${locale}*); do
-            inst "${file}"
-        done
-    done
+    mkdir -p "${initdir}/usr/lib/locale"
+    localedef --quiet --prefix="${initdir}" --add-to-archive /usr/lib/locale/en_US
+    localedef --quiet --prefix="${initdir}" --add-to-archive /usr/lib/locale/en_US.utf8
+
     for file in /usr/share/locale/*/LC_MESSAGES/installer.mo; do
         inst "${file}"
     done
