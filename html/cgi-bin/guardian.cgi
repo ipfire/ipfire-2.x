@@ -249,12 +249,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 
 	# Call helper to flush iptables chain from guardian.
 	system("/usr/local/bin/guardianctrl flush-chain &>/dev/null");
-
-} else {
-        # Load settings from file.
-        &General::readhash("${General::swroot}/guardian/settings", \%settings);
 }
 
+# Load settings from file.
+&General::readhash("${General::swroot}/guardian/settings", \%settings);
 
 # Call functions to generate whole page.
 &showMainBox();
