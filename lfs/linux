@@ -226,16 +226,6 @@ ifeq "$(MACHINE_TYPE)" "arm"
 			done
 endif
 
-	# Create initramfs images
-	dracut --force --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
-
-ifeq "$(KCFG)" "-kirkwood"
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
-endif
-
-ifeq "$(KCFG)" "-multi"
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
-endif
 
 ifeq "$(LASTKERNEL)" "1"
 	# Only do this once
@@ -263,6 +253,10 @@ ifeq "$(LASTKERNEL)" "1"
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf
 endif
 endif
+
+	#force new build of external modules and initrd if the kernel was rebuild
+	-rm -f /usr/src/log/*-kmod-$(VER)-$(VERSUFIX)
+	-rm -f /usr/src/log/linux-initrd-$(VER)-$(VERSUFIX)
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)

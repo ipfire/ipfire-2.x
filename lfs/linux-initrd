@@ -1,0 +1,70 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2014  IPFire Team <info@ipfire.org>                      #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = $(KVER)
+
+THISAPP    = linux-initrd-$(VER)
+
+VERSUFIX=ipfire$(KCFG)
+
+TARGET = $(DIR_INFO)/$(THISAPP)-$(VERSUFIX)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+dist:
+	@$(PAK)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+
+	# rebuild module deps
+	depmod -a $(KVER)-$(VERSUFIX)
+
+	# Create initramfs images
+	dracut --force --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
+
+ifeq "$(KCFG)" "-kirkwood"
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
+endif
+
+ifeq "$(KCFG)" "-multi"
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
+endif
+	@$(POSTBUILD)
