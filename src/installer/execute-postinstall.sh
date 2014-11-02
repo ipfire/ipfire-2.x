@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
@@ -19,51 +19,47 @@
 #                                                                             #
 ###############################################################################
 
-function list_interfaces() {
-	local interface
-
-	for interface in /sys/class/net/*; do
-		[ -d "${interface}" ] || continue
-
-		interface="$(basename ${interface})"
-		case "${interface}" in
-			eth*)
-				echo "${interface}"
-				;;
-		esac
-	done
+function download() {
+	wget -U "IPFire-NetInstall/2.x" "$@"
 }
 
-function try_dhcp() {
-	local interface="${1}"
+if [ $# -lt 2 ]; then
+	echo "$0: Insufficient number of arguments" >&2
+	exit 2
+fi
 
-	# Bring up the interface
-	ip link set "${interface}" up
+DESTINATION="${1}"
+DOWNLOAD_URL="${2}"
 
-	# Try to make the lights of the adapter light up
-	ethtool -i "${interface}" &>/dev/null
+DOWNLOAD_TARGET="/tmp/post-install.exe"
 
-	# Start the DHCP client
-	dhcpcd "${interface}"
-}
+if download -O "${DESTINATION}${DOWNLOAD_TARGET}" "${DOWNLOAD_URL}"; then
+	echo "Downloading post-install script from ${DOWNLOAD_URL}..."
 
-function main() {
-	local interface
-	for interface in $(list_interfaces); do
-		if ! try_dhcp "${interface}"; then
-			echo "Could not acquire an IP address on ${interface}"
-			continue
-		fi
+	# Make it executable
+	chmod a+x "${DESTINATION}${DOWNLOAD_TARGET}"
 
-		echo "Successfully started on ${interface}"
-
-		# Wait until everything is settled
-		sleep 15
-
-		return 0
+	# Replace /etc/resolv.conf so that we will have
+	cp -fb /etc/resolv.conf ${DESTINATION}/etc/resolv.conf
+	for i in /dev /proc /sys; do
+		mount --bind "${i}" "${DESTINATION}${i}"
 	done
 
-	return 1
-}
+	# Execute the downloaded script
+	chroot "${DESTINATION}" sh --login -c "${DOWNLOAD_TARGET}"
+	retval=$?
 
-main
+	# Cleanup the environment
+	mv -f ${DESTINATION}/etc/resolv.conf{~,}
+	for i in /dev /proc /sys; do
+		umount "${DESTINATION}${i}"
+	done
+	rm -f "${DESTINATION}${DOWNLOAD_TARGET}"
+
+	exit ${retval}
+
+# In case the download failed
+else
+	echo "Could not download the post-install script" >&2
+	exit 1
+fi

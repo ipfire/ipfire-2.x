@@ -34,6 +34,7 @@ bin_PROGRAMS = \
 
 bin_SCRIPTS = \
 	downloadsource.sh \
+	execute-postinstall.sh \
 	start-networking.sh
 
 #- installer -------------------------------------------------------------------
@@ -44,6 +45,7 @@ installer_SOURCES = \
 	main.c
 
 installer_CFLAGS = \
+	$(AM_CFLAGS) \
 	$(BLKID_CFLAGS) \
 	$(LIBSMOOTH_CFLAGS) \
 	$(PCI_CFLAGS) \

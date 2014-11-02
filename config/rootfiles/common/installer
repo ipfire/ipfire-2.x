@@ -1,4 +1,5 @@
 #usr/bin/downloadsource.sh
+#usr/bin/execute-postinstall.sh
 #usr/bin/start-networking.sh
 #usr/bin/installer
 #usr/lib/dracut/modules.d/99installer

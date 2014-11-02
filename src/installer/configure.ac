@@ -39,6 +39,16 @@ AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_CC_C_O
 
+CC_CHECK_FLAGS_APPEND([with_cflags], [CFLAGS], [\
+	"-Wformat=2 -Wformat-security -Wformat-nonliteral" \
+	-Werror=overflow \
+	-fno-strict-aliasing \
+	-fstack-protector \
+	-fstack-protector-strong \
+	-fPIE \
+	--param=ssp-buffer-size=4])
+AC_SUBST([OUR_CFLAGS], "$with_cflags")
+
 AC_PATH_PROG([M4], [m4])
 
 # Gettext
@@ -83,6 +93,11 @@ AC_ARG_WITH([config-root],
 	AS_HELP_STRING([--with-distro-config-root] [The configuration directory]),
 	AC_DEFINE_UNQUOTED([CONFIG_ROOT], "$withval", [The config-root]),
 	AC_MSG_ERROR([*** you need to set CONFIG_ROOT with --with-config-root=]))
+
+AC_ARG_WITH([download-url],
+	AS_HELP_STRING([--with-download-url] [The default download URL]),
+	AC_DEFINE_UNQUOTED([DOWNLOAD_URL], "$withval", [The default download URL]),
+	AC_MSG_ERROR([*** you need to set DOWNLOAD_URL with --with-download-url=]))
 
 AC_CONFIG_FILES([
 	Makefile

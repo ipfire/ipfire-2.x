@@ -26,12 +26,14 @@
 #include <blkid/blkid.h>
 #include <fcntl.h>
 #include <libudev.h>
+#include <linux/loop.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mount.h>
+#include <sys/stat.h>
 #include <sys/swap.h>
 #include <sys/sysinfo.h>
 #include <unistd.h>
@@ -82,10 +84,55 @@ static int strstartswith(const char* a, const char* b) {
 	return (strncmp(a, b, strlen(b)) == 0);
 }
 
+static char loop_device[STRING_SIZE];
+
+static int setup_loop_device(const char* source, const char* device) {
+	int file_fd = open(source, O_RDWR);
+	if (file_fd < 0)
+		goto ERROR;
+
+	int device_fd = -1;
+	if ((device_fd = open(device, O_RDWR)) < 0)
+		goto ERROR;
+
+	if (ioctl(device_fd, LOOP_SET_FD, file_fd) < 0)
+		goto ERROR;
+
+	close(file_fd);
+	close(device_fd);
+
+	return 0;
+
+ERROR:
+	if (file_fd >= 0)
+		close(file_fd);
+
+	if (device_fd >= 0) {
+		ioctl(device_fd, LOOP_CLR_FD, 0);
+		close(device_fd);
+	}
+
+	return -1;
+}
+
 int hw_mount(const char* source, const char* target, const char* fs, int flags) {
+	const char* loop_device = "/dev/loop0";
+
 	// Create target if it does not exist
 	if (access(target, X_OK) != 0)
 		mkdir(target, S_IRWXU|S_IRWXG|S_IRWXO);
+
+	struct stat st;
+	stat(source, &st);
+
+	if (S_ISREG(st.st_mode)) {
+		int r = setup_loop_device(source, loop_device);
+		if (r == 0) {
+			source = loop_device;
+		} else {
+			return -1;
+		}
+	}
 
 	return mount(source, target, fs, flags, NULL);
 }
@@ -293,7 +340,7 @@ void hw_free_disks(struct hw_disk** disks) {
 	free(disks);
 }
 
-unsigned int hw_count_disks(struct hw_disk** disks) {
+unsigned int hw_count_disks(const struct hw_disk** disks) {
 	unsigned int ret = 0;
 
 	while (*disks++)
@@ -306,7 +353,7 @@ struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection) {
 	struct hw_disk** ret = hw_create_disks();
 	struct hw_disk** selected_disks = ret;
 
-	unsigned int num_disks = hw_count_disks(disks);
+	unsigned int num_disks = hw_count_disks((const struct hw_disk**)disks);
 
 	for (unsigned int i = 0; i < num_disks; i++) {
 		if (!selection || selection[i]) {
@@ -393,7 +440,7 @@ static int hw_device_has_p_suffix(const struct hw_destination* dest) {
 	return 0;
 }
 
-static int hw_calculate_partition_table(struct hw_destination* dest) {
+static int hw_calculate_partition_table(struct hw_destination* dest, int disable_swap) {
 	char path[DEV_SIZE];
 	int part_idx = 1;
 
@@ -446,8 +493,13 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 	}
 
 	dest->size_boot = hw_boot_size(dest);
-	dest->size_swap = hw_swap_size(dest);
 	dest->size_root = hw_root_size(dest);
+
+	// Should we use swap?
+	if (disable_swap)
+		dest->size_swap = 0;
+	else
+		dest->size_swap = hw_swap_size(dest);
 
 	// Determine the size of the data partition.
 	unsigned long long used_space = dest->size_bootldr + dest->size_boot
@@ -493,7 +545,7 @@ static int hw_calculate_partition_table(struct hw_destination* dest) {
 	return 0;
 }
 
-struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks) {
+struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks, int disable_swap) {
 	struct hw_destination* dest = malloc(sizeof(*dest));
 
 	if (part_type == HW_PART_TYPE_NORMAL) {
@@ -513,7 +565,7 @@ struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks
 	// Is this a RAID device?
 	dest->is_raid = (part_type > HW_PART_TYPE_NORMAL);
 
-	int r = hw_calculate_partition_table(dest);
+	int r = hw_calculate_partition_table(dest, disable_swap);
 	if (r)
 		return NULL;
 
@@ -982,12 +1034,13 @@ static char* hw_get_uuid(const char* dev) {
 	return uuid;
 }
 
+#define FSTAB_FMT "UUID=%s %-8s %-4s %-10s %d %d\n"
+
 int hw_write_fstab(struct hw_destination* dest) {
 	FILE* f = fopen(DESTINATION_MOUNT_PATH "/etc/fstab", "w");
 	if (!f)
 		return -1;
 
-	const char* fmt = "UUID=%s %-8s %-4s %-10s %d %d\n";
 	char* uuid = NULL;
 
 	// boot
@@ -995,7 +1048,7 @@ int hw_write_fstab(struct hw_destination* dest) {
 		uuid = hw_get_uuid(dest->part_boot);
 
 		if (uuid) {
-			fprintf(f, fmt, uuid, "/boot", "auto", "defaults", 1, 2);
+			fprintf(f, FSTAB_FMT, uuid, "/boot", "auto", "defaults", 1, 2);
 			free(uuid);
 		}
 	}
@@ -1005,7 +1058,7 @@ int hw_write_fstab(struct hw_destination* dest) {
 		uuid = hw_get_uuid(dest->part_swap);
 
 		if (uuid) {
-			fprintf(f, fmt, uuid, "swap", "swap", "defaults,pri=1", 0, 0);
+			fprintf(f, FSTAB_FMT, uuid, "swap", "swap", "defaults,pri=1", 0, 0);
 			free(uuid);
 		}
 	}
@@ -1013,7 +1066,7 @@ int hw_write_fstab(struct hw_destination* dest) {
 	// root
 	uuid = hw_get_uuid(dest->part_root);
 	if (uuid) {
-		fprintf(f, fmt, uuid, "/", "auto", "defaults", 1, 1);
+		fprintf(f, FSTAB_FMT, uuid, "/", "auto", "defaults", 1, 1);
 		free(uuid);
 	}
 
@@ -1022,7 +1075,7 @@ int hw_write_fstab(struct hw_destination* dest) {
 		uuid = hw_get_uuid(dest->part_data);
 
 		if (uuid) {
-			fprintf(f, fmt, uuid, "/var", "auto", "defaults", 1, 1);
+			fprintf(f, FSTAB_FMT, uuid, "/var", "auto", "defaults", 1, 1);
 			free(uuid);
 		}
 	}

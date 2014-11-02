@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2014 IPFire Team   <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,43 +24,61 @@
 
 include Config
 
-VER = ipfire
+VER        = 1.9a
 
-THISAPP    = installer
+THISAPP    = tmux-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = tmux
+PAK_VER    = 1
 
-SLOGAN     = An Open Source Firewall Solution
-DOWNLOAD_URL = http://downloads.ipfire.org/releases/ipfire-2.x/$(VERSION)-core$(CORE)/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = b07601711f96f1d260b390513b509a2d
+
 install : $(TARGET)
 
-check :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download :
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 :
+md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
 ###############################################################################
 
-$(TARGET) :
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/installer/* $(DIR_APP)
-
-	cd $(DIR_APP) && ./autogen.sh
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--with-distro-name="$(NAME)" \
-		--with-distro-sname="$(SNAME)" \
-		--with-distro-slogan="$(SLOGAN)" \
-		--with-config-root="$(CONFIG_ROOT)" \
-		--with-download-url="$(DOWNLOAD_URL)"
+		--prefix=/usr
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
