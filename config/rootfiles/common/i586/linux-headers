@@ -105,6 +105,7 @@
 #usr/include/drm/i810_drm.h
 #usr/include/drm/i915_drm.h
 #usr/include/drm/mga_drm.h
+#usr/include/drm/msm_drm.h
 #usr/include/drm/nouveau_drm.h
 #usr/include/drm/qxl_drm.h
 #usr/include/drm/r128_drm.h
@@ -150,6 +151,7 @@
 #usr/include/linux/ax25.h
 #usr/include/linux/b1lli.h
 #usr/include/linux/baycom.h
+#usr/include/linux/bcm933xx_hcs.h
 #usr/include/linux/bfs_fs.h
 #usr/include/linux/binfmts.h
 #usr/include/linux/blkpg.h
@@ -332,6 +334,7 @@
 #usr/include/linux/kvm.h
 #usr/include/linux/kvm_para.h
 #usr/include/linux/l2tp.h
+#usr/include/linux/libc-compat.h
 #usr/include/linux/limits.h
 #usr/include/linux/llc.h
 #usr/include/linux/loop.h
@@ -345,6 +348,8 @@
 #usr/include/linux/mei.h
 #usr/include/linux/mempolicy.h
 #usr/include/linux/meye.h
+#usr/include/linux/mic_common.h
+#usr/include/linux/mic_ioctl.h
 #usr/include/linux/mii.h
 #usr/include/linux/minix_fs.h
 #usr/include/linux/mman.h
@@ -382,6 +387,8 @@
 #usr/include/linux/netfilter/nf_conntrack_tcp.h
 #usr/include/linux/netfilter/nf_conntrack_tuple_common.h
 #usr/include/linux/netfilter/nf_nat.h
+#usr/include/linux/netfilter/nf_tables.h
+#usr/include/linux/netfilter/nf_tables_compat.h
 #usr/include/linux/netfilter/nfnetlink.h
 #usr/include/linux/netfilter/nfnetlink_acct.h
 #usr/include/linux/netfilter/nfnetlink_compat.h
@@ -398,6 +405,7 @@
 #usr/include/linux/netfilter/xt_CONNSECMARK.h
 #usr/include/linux/netfilter/xt_CT.h
 #usr/include/linux/netfilter/xt_DSCP.h
+#usr/include/linux/netfilter/xt_HMARK.h
 #usr/include/linux/netfilter/xt_IDLETIMER.h
 #usr/include/linux/netfilter/xt_LED.h
 #usr/include/linux/netfilter/xt_LOG.h
@@ -412,6 +420,7 @@
 #usr/include/linux/netfilter/xt_TPROXY.h
 #usr/include/linux/netfilter/xt_addrtype.h
 #usr/include/linux/netfilter/xt_bpf.h
+#usr/include/linux/netfilter/xt_cgroup.h
 #usr/include/linux/netfilter/xt_cluster.h
 #usr/include/linux/netfilter/xt_comment.h
 #usr/include/linux/netfilter/xt_connbytes.h
@@ -427,8 +436,10 @@
 #usr/include/linux/netfilter/xt_esp.h
 #usr/include/linux/netfilter/xt_hashlimit.h
 #usr/include/linux/netfilter/xt_helper.h
+#usr/include/linux/netfilter/xt_ipcomp.h
 #usr/include/linux/netfilter/xt_iprange.h
 #usr/include/linux/netfilter/xt_ipvs.h
+#usr/include/linux/netfilter/xt_l2tp.h
 #usr/include/linux/netfilter/xt_layer7.h
 #usr/include/linux/netfilter/xt_length.h
 #usr/include/linux/netfilter/xt_limit.h
@@ -445,6 +456,7 @@
 #usr/include/linux/netfilter/xt_rateest.h
 #usr/include/linux/netfilter/xt_realm.h
 #usr/include/linux/netfilter/xt_recent.h
+#usr/include/linux/netfilter/xt_rpfilter.h
 #usr/include/linux/netfilter/xt_sctp.h
 #usr/include/linux/netfilter/xt_set.h
 #usr/include/linux/netfilter/xt_socket.h
@@ -527,6 +539,7 @@
 #usr/include/linux/nfsd/stats.h
 #usr/include/linux/nl80211.h
 #usr/include/linux/nubus.h
+#usr/include/linux/nvme.h
 #usr/include/linux/nvram.h
 #usr/include/linux/omap3isp.h
 #usr/include/linux/omapfb.h
@@ -618,6 +631,7 @@
 #usr/include/linux/taskstats.h
 #usr/include/linux/tc_act
 #usr/include/linux/tc_act/tc_csum.h
+#usr/include/linux/tc_act/tc_defact.h
 #usr/include/linux/tc_act/tc_gact.h
 #usr/include/linux/tc_act/tc_ipt.h
 #usr/include/linux/tc_act/tc_mirred.h
@@ -700,6 +714,8 @@
 #usr/include/linux/x25.h
 #usr/include/linux/xattr.h
 #usr/include/linux/xfrm.h
+#usr/include/linux/zorro.h
+#usr/include/linux/zorro_ids.h
 #usr/include/mtd
 #usr/include/mtd/inftl-user.h
 #usr/include/mtd/mtd-abi.h
@@ -729,6 +745,7 @@
 #usr/include/sound/compress_offload.h
 #usr/include/sound/compress_params.h
 #usr/include/sound/emu10k1.h
+#usr/include/sound/firewire.h
 #usr/include/sound/hdsp.h
 #usr/include/sound/hdspm.h
 #usr/include/sound/sb16_csp.h
@@ -740,4 +757,6 @@
 #usr/include/video/uvesafb.h
 #usr/include/xen
 #usr/include/xen/evtchn.h
+#usr/include/xen/gntalloc.h
+#usr/include/xen/gntdev.h
 #usr/include/xen/privcmd.h

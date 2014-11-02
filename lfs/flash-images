@@ -127,8 +127,11 @@ ifeq "$(MACHINE_TYPE)" "arm"
 endif
 
 	# Install IPFire
+ifneq "$(MACHINE_TYPE)" "arm"
 	tar -x --lzma -C $(MNThdd)/ -f /install/cdrom/distro.img
-
+else
+	tar -x -C $(MNThdd)/ -f /install/cdrom/distro.img
+endif
 	echo "LANGUAGE=en" >> $(MNThdd)/var/ipfire/main/settings
 	echo "HOSTNAME=$(SNAME)" >> $(MNThdd)/var/ipfire/main/settings
 	echo "THEME=ipfire" >> $(MNThdd)/var/ipfire/main/settings
