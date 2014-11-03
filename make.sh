@@ -418,6 +418,8 @@ buildipfire() {
 #		ipfiremake r8101			KCFG="-pae"
 		ipfiremake e1000e			KCFG="-pae"
 		ipfiremake igb				KCFG="-pae"
+		ipfiremake ixgbe			KCFG="-pae"
+		ipfiremake linux-initrd			KCFG="-pae"
 
 		# x86 kernel build
 		ipfiremake linux			KCFG=""
@@ -431,6 +433,8 @@ buildipfire() {
 #		ipfiremake r8101			KCFG=""
 		ipfiremake e1000e			KCFG=""
 		ipfiremake igb				KCFG=""
+		ipfiremake ixgbe			KCFG=""
+		ipfiremake linux-initrd			KCFG=""
 		;;
 
 	armv5tel)
@@ -440,12 +444,15 @@ buildipfire() {
 #		ipfiremake mISDN			KCFG="-rpi" NOPCI=1
 		ipfiremake cryptodev			KCFG="-rpi"
 #		ipfiremake compat-drivers		KCFG="-rpi"
+		ipfiremake linux-initrd			KCFG="-rpi"
 
 		# arm multi platform (Panda, Wandboard ...) kernel build
 		ipfiremake linux			KCFG="-multi"
 		ipfiremake cryptodev			KCFG="-multi"
 		ipfiremake e1000e			KCFG="-multi"
 		ipfiremake igb				KCFG="-multi"
+		ipfiremake ixgbe			KCFG="-multi"
+		ipfiremake linux-initrd			KCFG="-multi"
 
 		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
 		ipfiremake linux			KCFG="-kirkwood"
@@ -456,8 +463,10 @@ buildipfire() {
 #		ipfiremake r8169			KCFG="-kirkwood"
 #		ipfiremake r8168			KCFG="-kirkwood"
 #		ipfiremake r8101			KCFG="-kirkwood"
-#		ipfiremake e1000e			KCFG="-kirkwood"
+		ipfiremake e1000e			KCFG="-kirkwood"
 		ipfiremake igb				KCFG="-kirkwood"
+		ipfiremake ixgbe			KCFG="-kirkwood"
+		ipfiremake linux-initrd			KCFG="-kirkwood"
 		;;
   esac
   ipfiremake pkg-config

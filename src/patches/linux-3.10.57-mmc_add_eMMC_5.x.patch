@@ -1,0 +1,12 @@
+diff -Naur linux-3.10.57.org/drivers/mmc/core/mmc.c linux-3.10.57/drivers/mmc/core/mmc.c
+--- linux-3.10.57.org/drivers/mmc/core/mmc.c	2014-10-09 21:18:54.000000000 +0200
++++ linux-3.10.57/drivers/mmc/core/mmc.c	2014-10-11 09:20:02.225472403 +0200
+@@ -293,7 +293,7 @@
+ 	}
+ 
+ 	card->ext_csd.rev = ext_csd[EXT_CSD_REV];
+-	if (card->ext_csd.rev > 6) {
++	if (card->ext_csd.rev > 7) {
+ 		pr_err("%s: unrecognised EXT_CSD revision %d\n",
+ 			mmc_hostname(card->host), card->ext_csd.rev);
+ 		err = -EINVAL;
