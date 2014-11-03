@@ -104,6 +104,37 @@ static int newtWinOkCancel(const char* title, const char* message, int width, in
 		const char* btn_txt_ok, const char* btn_txt_cancel) {
 	int ret = 1;
 
+	unsigned int btn_width_ok = strlen(btn_txt_ok);
+	unsigned int btn_width_cancel = strlen(btn_txt_cancel);
+
+	// Maybe make the box wider to fix both buttons inside
+	unsigned int min_width = btn_width_ok + btn_width_cancel + 5;
+	if (width < min_width)
+		width = min_width;
+
+	unsigned int btn_pos_ok = (width / 3) - (btn_width_ok / 2) - 1;
+	unsigned int btn_pos_cancel = (width * 2 / 3) - (btn_width_cancel / 2) - 1;
+
+	// Move buttons a bit if they overlap
+	while ((btn_pos_ok + btn_width_ok + 5) > btn_pos_cancel) {
+		// Move the cancel button to the right if there is enough space left
+		if ((btn_pos_cancel + btn_width_cancel + 2) < width) {
+			++btn_pos_cancel;
+			continue;
+		}
+
+		// Move the OK button to the left if possible
+		if (btn_pos_ok > 1) {
+			--btn_pos_ok;
+			continue;
+		}
+
+		// If they still overlap, we cannot fix the situtation
+		// and break. Should actually never get here, because we
+		// adjust the width of the window earlier.
+		break;
+	}
+
 	newtCenteredWindow(width, height, title);
 
 	newtComponent form = newtForm(NULL, NULL, 0);
@@ -112,12 +143,8 @@ static int newtWinOkCancel(const char* title, const char* message, int width, in
 	newtTextboxSetText(textbox, message);
 	newtFormAddComponent(form, textbox);
 
-	unsigned int btn_width_ok = strlen(btn_txt_ok);
-	unsigned int btn_width_cancel = strlen(btn_txt_cancel);
-
-	newtComponent btn_ok = newtButton((width / 3) - (btn_width_ok / 2) - 2, height - 4, btn_txt_ok);
-	newtComponent btn_cancel = newtButton((width * 2 / 3) - (btn_width_cancel / 2) - 2, height - 4,
-		btn_txt_cancel);
+	newtComponent btn_ok = newtButton(btn_pos_ok, height - 4, btn_txt_ok);
+	newtComponent btn_cancel = newtButton(btn_pos_cancel, height - 4, btn_txt_cancel);
 
 	newtFormAddComponents(form, btn_ok, btn_cancel, NULL);
 
