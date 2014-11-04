@@ -161,6 +161,7 @@ endif
 
 ifeq "$(KCFG)" "-kirkwood"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-mv_cesa_disable_failing_hmac_sha1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-kirkwood_legacy_boot.patch
 endif
 
 ifeq "$(KCFG)" "-multi"
