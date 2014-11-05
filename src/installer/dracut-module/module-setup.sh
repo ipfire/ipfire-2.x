@@ -42,7 +42,7 @@ install() {
     inst /var/ipfire/dhcpc/dhcpcd-run-hooks
     inst "$moddir/70-dhcpcd.exe" "/var/ipfire/dhcpc/dhcpcd-hooks/70-dhcpcd.exe"
 
-    inst /etc/host.conf /etc/hosts /etc/protocols
+    inst /etc/host.conf /etc/protocols
     inst /etc/nsswitch.conf /etc/resolv.conf
     inst_libdir_file "libnss_dns.so.*"
 
