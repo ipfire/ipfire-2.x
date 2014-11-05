@@ -32,7 +32,7 @@ SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
 MAX_RETRIES=1							# prefetch/check loop
-BUILD_IMAGES=1							# Flash and Xen Downloader
+BUILD_IMAGES=0							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
@@ -240,6 +240,25 @@ prepareenv() {
 
     # Remove pre-install list of installed files in case user erase some files before rebuild
     rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
+}
+
+shutdownenv() {
+    umount $BASEDIR/build/dev
+    umount $BASEDIR/build/dev/pts
+    umount $BASEDIR/build/dev/shm
+    umount $BASEDIR/build/proc
+    umount $BASEDIR/build/sys
+    umount $BASEDIR/build/usr/src/cache
+    umount $BASEDIR/build/usr/src/ccache
+    umount $BASEDIR/build/usr/src/config
+    umount $BASEDIR/build/usr/src/doc
+    umount $BASEDIR/build/usr/src/html
+    umount $BASEDIR/build/usr/src/langs
+    umount $BASEDIR/build/usr/src/lfs
+    umount $BASEDIR/build/usr/src/log
+    umount $BASEDIR/build/usr/src/src
+
+
 }
 
 buildtoolchain() {
@@ -947,6 +966,7 @@ build)
 				tar zxf $PACKAGE
 				prepareenv
 			else
+				shutdownenv
 				exiterror "$PACKAGENAME md5 did not match, check downloaded package"
 			fi
 		fi
@@ -975,8 +995,9 @@ build)
 	tools/checknewlog.pl
 	tools/checkwronginitlinks
 	cd $PWD
-
+	
 	beautify build_end
+	shutdownenv
 	;;
 shell)
 	# enter a shell inside LFS chroot
@@ -1075,6 +1096,7 @@ toolchain)
 	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.md5
 	stdumount
+	shutdownenv
 	;;
 gettoolchain)
 	# arbitrary name to be updated in case of new toolchain package upload
@@ -1113,6 +1135,7 @@ othersrc)
 		beautify message FAIL
 	fi
 	stdumount
+	shutdownenv
 	;;
 uploadsrc)
 	PWD=`pwd`
