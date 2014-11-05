@@ -412,7 +412,13 @@ int main(int argc, char *argv[]) {
 		setlocale(LC_ALL, language);
 	}
 
-	char* helpline = center_string(_("<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"), screen_cols);
+	// Set helpline
+	char* helpline = NULL;
+	if (config.unattended)
+		helpline = center_string(_("Unattended mode"), screen_cols);
+	else
+		helpline = center_string(_("<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"), screen_cols);
+
 	newtPushHelpLine(helpline);
 
 	if (!config.unattended) {
