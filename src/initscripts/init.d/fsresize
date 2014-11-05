@@ -21,7 +21,7 @@ case "${1}" in
 			boot_mesg "Re-sizing root partition..."
 
 			# Find root device
-			while read -r dev mountpoint fs options; do
+			mount | while read -r dev tmp1 mountpoint tmp2; do
 				# Skip generic entries
 				[ "${dev}" = "rootfs" ] && continue
 
@@ -33,7 +33,7 @@ case "${1}" in
 					rm -f /.resizefs
 					break
 				fi
-			done < /proc/mounts
+			done
 		fi
 		;;
 
