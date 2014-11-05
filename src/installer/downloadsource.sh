@@ -31,6 +31,15 @@ fi
 OUTPUT="${1}"
 URL="${2}"
 
+# Mount a tmpfs which is big enough to hold the ISO image
+OUTPUT_DIR="${OUTPUT%/*}"
+
+mkdir -p "${OUTPUT_DIR}"
+if ! mount -t tmpfs none "${OUTPUT_DIR}" -o size=512M; then
+	echo "Could not mount tmpfs to ${OUTPUT_DIR}" >&2
+	exit 1
+fi
+
 echo "Downloading ${URL}..."
 if ! download -O "${OUTPUT}" "${URL}"; then
 	echo "Download failed" >&2
