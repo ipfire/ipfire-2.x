@@ -25,7 +25,7 @@
 
 #define INST_FILECOUNT 21000
 #define LICENSE_FILE	"/cdrom/COPYING"
-#define SOURCE_TEMPFILE "/tmp/downloaded-image.iso"
+#define SOURCE_TEMPFILE "/tmp/downloads/image.iso"
 
 extern char url[STRING_SIZE];
 
@@ -502,7 +502,7 @@ int main(int argc, char *argv[]) {
 
 				FILE* f = fopen(SOURCE_TEMPFILE, "r");
 				if (f) {
-					sourcedrive = SOURCE_TEMPFILE;
+					sourcedrive = strdup(SOURCE_TEMPFILE);
 					fclose(f);
 				} else {
 					char reason[STRING_SIZE] = "-";
@@ -849,6 +849,18 @@ int main(int argc, char *argv[]) {
 	// Umount source drive and eject
 	hw_umount(SOURCE_MOUNT_PATH);
 
+	// Free downloaded ISO image
+	if (strcmp(sourcedrive, SOURCE_TEMPFILE) == 0) {
+		rc = unlink(sourcedrive);
+		if (rc)
+			fprintf(flog, "Could not free downloaded ISO image: %s\n", sourcedrive);
+
+	// or eject real images
+	} else {
+		snprintf(commandstring, STRING_SIZE, "/usr/bin/eject %s", sourcedrive);
+		mysystem(logfile, commandstring);
+	}
+
 	// Download and execute the postinstall script
 	if (*config.postinstall) {
 		snprintf(commandstring, sizeof(commandstring),
@@ -859,9 +871,6 @@ int main(int argc, char *argv[]) {
 			goto EXIT;
 		}
 	}
-
-	snprintf(commandstring, STRING_SIZE, "/usr/bin/eject %s", sourcedrive);
-	mysystem(logfile, commandstring);
 
 	if (!config.unattended) {
 		snprintf(message, sizeof(message), _(
@@ -886,19 +895,28 @@ EXIT:
 	newtFinished();
 
 	// Free resources
-	free(system_release);
-	free(roottext);
-	free(helpline);
+	if (system_release)
+		free(system_release);
 
-	free(sourcedrive);
-	free(destination);
+	if (roottext)
+		free(roottext);
+
+	if (helpline)
+		free(helpline);
+
+	if (sourcedrive)
+		free(sourcedrive);
+
+	if (destination)
+		free(destination);
 
 	hw_stop_all_raid_arrays(logfile);
 
 	if (selected_disks)
 		hw_free_disks(selected_disks);
 
-	hw_free(hw);
+	if (hw)
+		hw_free(hw);
 
 	fcloseall();
 
