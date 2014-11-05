@@ -289,7 +289,7 @@ static void parse_command_line(struct config* c) {
 			char* key = strsep(&val, "=");
 
 			// serial console
-			if (strcmp(token, "console=ttyS0") == 0)
+			if ((strcmp(key, "console") == 0) && (strncmp(val, "ttyS", 4) == 0))
 				c->serial_console = 1;
 
 			// enable networking?
