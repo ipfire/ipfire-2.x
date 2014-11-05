@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.31
+VER        = 8.36
 
 THISAPP    = pcre-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fab1bb3b91a4c35398263a5c1e0858c1
+$(DL_FILE)_MD5 = ff7b4bb14e355f04885cf18ff4125c98
 
 install : $(TARGET)
 
