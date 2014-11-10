@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -31,7 +31,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 DEVICE     = $(shell losetup -f)
 PART_BOOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p1
-PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p2
+PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
 ifeq "$(SCON)" "1"
 	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).1gb-ext4-scon.$(MACHINE)-full-core$(CORE).img.gz
@@ -92,7 +92,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	losetup $(DEVICE) $(IMG)
 
 	# Write Partition table
-	echo -e "$(S_OFFSET),$(S_BOOT),$(PART_TYPE),*\n$$(( $(S_BOOT) + $(S_OFFSET) )),$(S_ROOT),L\n" \
+	echo -e "$(S_OFFSET),$(S_BOOT),$(PART_TYPE),*\n,0,0\n$$(( $(S_BOOT) + $(S_OFFSET) )),$(S_ROOT),L\n" \
 		| sfdisk -D -uS -H 64 -S 32 $(DEVICE)
 
 	kpartx -v -a $(DEVICE)
