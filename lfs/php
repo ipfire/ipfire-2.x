@@ -24,13 +24,16 @@
 
 include Config
 
-VER        = 5.3.27
+VER        = 5.6.2
 
 THISAPP    = php-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = $(URL_IPFIRE)
+DL_FROM    = http://de1.php.net/get/$(DL_FILE)/from/this/mirror
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+LIBGD      = libgd-2.1.0-rc2
+LIBGD_FILE = $(LIBGD).tar.bz2
+LIBGD_URL  = https://bitbucket.org/libgd/gd-libgd/downloads
 
 ifeq "$(MACHINE_TYPE)" "arm"
 	CFLAGS    := $(patsubst -march=%,,$(CFLAGS))
@@ -40,15 +43,15 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) idn-0.1.tgz Log-1.9.11.tgz
+objects = $(DL_FILE) icu4c-54_1.src.tgz $(LIBGD_FILE)
 
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-idn-0.1.tgz = $(DL_FROM)/idn-0.1.tgz
-Log-1.9.11.tgz = $(DL_FROM)/Log-1.9.11.tgz
+$(DL_FILE) = $(DL_FROM)
+icu4c-54_1.src.tgz = http://download.icu-project.org/files/icu4c/54.1/icu4c-54_1-src.tgz
+$(LIBGD_FILE) = $(LIBGD_URL)/($LIBGD_FILE)
 
-$(DL_FILE)_MD5 = 25ae23a5b9615fe8d33de5b63e1bb788
-idn-0.1.tgz_MD5 = ef8635ec22348325a76abd2abddca4a1
-Log-1.9.11.tgz_MD5 = fb7c648b212f12fdb5ce1ab687793513
+$(DL_FILE)_MD5 = 97202449bf4f011c477ff860b173a92a
+icu4c-54_1.src.tgz_MD5 = e844caed8f2ca24c088505b0d6271bc0
+$(LIBGD_FILE)_MD5 = de89f18ba67ba30bd118d6a201d9210f
 
 install : $(TARGET)
 
@@ -77,62 +80,37 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/idn-* $(DIR_SRC)/Log-* $(DIR_SRC)/package.xml && \
-		cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr \
-										            --sysconfdir=/etc \
-										            --with-apxs2 \
-										            --enable-force-cgi-redirect \
-										            --enable-discard-path \
-										            --enable-fastcgi \
-										            --with-config-file-path=/etc \
-										            --with-openssl \
-										            --with-kerberos \
-										            --with-zlib \
-										            --enable-bcmath \
-										            --with-bz2 \
-										            --enable-calendar \
-										            --with-curl \
-										            --with-curlwrappers \
-										            --enable-dba=shared \
-										            --with-gdbm \
-										            --with-db4 \
-										            --with-inifile \
-										            --with-flatfile \
-										            --enable-exif \
-										            --enable-ftp \
-										            --with-openssl-dir=/usr \
-										            --with-gd=/usr \
-										            --with-jpeg-dir=/usr \
-										            --with-png-dir=/usr \
-										            --with-zlib-dir=/usr \
-										            --with-freetype-dir=/usr \
-										            --with-gettext \
-										            --with-gmp \
-										            --enable-mbstring \
-										            --with-mysql \
-										            --with-mysql-sock=/var/run/mysql \
-										            --with-ncurses \
-										            --with-pdo-mysql \
-										            --with-pdo-sqlite \
-										            --with-readline \
-										            --enable-sockets \
-										            --with-xsl \
-										            --with-iconv \
-										            --enable-zip
+#	@rm -rf $(DIR_APP)
+	
+# ICU
+	cd $(DIR_SRC) && tar xf $(DIR_DL)/icu4c-54_1-src.tgz
+	cd $(DIR_SRC)/icu/source && ./configure --prefix=/usr && make $(MAKETUNING) && make install
+#	cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(LIBGD_FILE)
+#	cd $(DIR_SRC)/$(LIBGD) && ./configure --prefix=/usr && make $(MAKETUNING) && make install
+
+	cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure \
+		    --prefix=/usr \
+	            --sysconfdir=/etc \
+		    --with-apxs2 \
+		    --disable-ipv6 \
+		    --enable-dba \
+		    --with-zlib=/usr \
+		    --enable-exif \
+		    --enable-ftp \
+		    --enable-intl \
+		    --with-mysql \
+		    --enable-pdo \
+		    --enable-phar \
+		    --enable-posix \
+		    --enable-sysvmsg \
+		    --enable-sysvsem \
+		    --enable-sysvshm \
+		    --enable-zip \
+		    --enable-mysqlnd
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && install -v -m644 $(DIR_SRC)/config/php/php.ini /etc/php.ini
-	-grep -v libphp5.so < /etc/httpd/conf/httpd.conf > /etc/httpd/conf/httpd.conf.bak
-	mv -f /etc/httpd/conf/httpd.conf.bak /etc/httpd/conf/httpd.conf
-	cd $(DIR_SRC) && tar xfz $(DIR_DL)/idn-0.1.tgz
-	-rm -f $(DIR_SRC)/package.xml
-	cd $(DIR_SRC)/idn-* && phpize
-	cd $(DIR_SRC)/idn-* && ./configure --prefix=/usr --with-idn
-	cd $(DIR_SRC)/idn-* && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/idn-* && make install
-	cd $(DIR_SRC) && tar xfz $(DIR_DL)/Log-1.9.11.tgz
-	-rm -f $(DIR_SRC)/package.xml
-	cd $(DIR_SRC)/Log-* && cp -av Log Log.php /usr/lib/php 
-	@rm -rf $(DIR_APP) $(DIR_SRC)/idn-* $(DIR_SRC)/Log-* $(DIR_SRC)/package.xml
+#	-grep -v libphp5.so < /etc/httpd/conf/loadmodule.conf > /etc/httpd/conf/loadmodule.conf.bak
+#	mv -f /etc/httpd/conf/loadmodule.conf.bak /etc/httpd/conf/loadmodule.conf
 	@$(POSTBUILD)
