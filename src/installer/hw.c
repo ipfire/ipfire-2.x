@@ -24,6 +24,7 @@
 
 #include <assert.h>
 #include <blkid/blkid.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <libudev.h>
 #include <linux/loop.h>
@@ -138,7 +139,16 @@ int hw_mount(const char* source, const char* target, const char* fs, int flags) 
 }
 
 int hw_umount(const char* target) {
-	return umount2(target, 0);
+	int r = umount2(target, 0);
+
+	if (r && errno == EBUSY) {
+		// Give it a moment to settle
+		sleep(1);
+
+		r = umount2(target, MNT_FORCE);
+	}
+
+	return r;
 }
 
 static int hw_test_source_medium(const char* path) {
@@ -869,21 +879,27 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 }
 
 int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
+	int r;
+	char target[STRING_SIZE];
+
 	// Write all buffers to disk before umounting
 	hw_sync();
 
 	// boot
 	if (*dest->part_boot) {
-		hw_umount(dest->part_boot);
+		snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_BOOT);
+		r = hw_umount(target);
+		if (r)
+			return -1;
 	}
 
 	// data
 	if (*dest->part_data) {
-		hw_umount(dest->part_data);
+		snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_DATA);
+		r = hw_umount(target);
+		if (r)
+			return -1;
 	}
-
-	// root
-	hw_umount(dest->part_root);
 
 	// swap
 	if (*dest->part_swap) {
@@ -891,13 +907,18 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 	}
 
 	// misc filesystems
-	char target[STRING_SIZE];
 	char** otherfs = other_filesystems;
-
 	while (*otherfs) {
 		snprintf(target, sizeof(target), "%s%s", prefix, *otherfs++);
-		hw_umount(target);
+		r = hw_umount(target);
+		if (r)
+			return -1;
 	}
+
+	// root
+	r = hw_umount(prefix);
+	if (r)
+		return -1;
 
 	return 0;
 }
@@ -1011,6 +1032,8 @@ int hw_install_bootloader(struct hw_destination* dest, const char* output) {
 		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->path);
 		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
 	}
+
+	hw_sync();
 
 	return r;
 }

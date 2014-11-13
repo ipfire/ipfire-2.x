@@ -839,12 +839,28 @@ int main(int argc, char *argv[]) {
 		free(backup_file);
 	}
 
-	// Umount the destination drive
-	hw_umount_filesystems(destination, DESTINATION_MOUNT_PATH);
+	// Download and execute the postinstall script
+	if (*config.postinstall) {
+		snprintf(commandstring, sizeof(commandstring),
+			"/usr/bin/execute-postinstall.sh %s %s", DESTINATION_MOUNT_PATH, config.postinstall);
 
-	// Stop the RAID array if we are using RAID
-	if (destination->is_raid)
-		hw_stop_all_raid_arrays(logfile);
+		if (runcommandwithstatus(commandstring, title, _("Running post-install script..."), logfile)) {
+			errorbox(_("Post-install script failed."));
+			goto EXIT;
+		}
+	}
+
+	// Umount the destination drive
+	statuswindow(60, 4, title, _("Umounting filesystems..."));
+
+	rc = hw_umount_filesystems(destination, DESTINATION_MOUNT_PATH);
+	if (rc) {
+		// Show an error message if filesystems could not be umounted properly
+		snprintf(message, sizeof(message),
+			_("Could not umount all filesystems successfully:\n\n  %s"), strerror(errno));
+		errorbox(message);
+		goto EXIT;
+	}
 
 	// Umount source drive and eject
 	hw_umount(SOURCE_MOUNT_PATH);
@@ -860,19 +876,18 @@ int main(int argc, char *argv[]) {
 		snprintf(commandstring, STRING_SIZE, "/usr/bin/eject %s", sourcedrive);
 		mysystem(logfile, commandstring);
 	}
+	newtPopWindow();
 
-	// Download and execute the postinstall script
-	if (*config.postinstall) {
-		snprintf(commandstring, sizeof(commandstring),
-			"/usr/bin/execute-postinstall.sh %s %s", DESTINATION_MOUNT_PATH, config.postinstall);
+	// Stop the RAID array if we are using RAID
+	if (destination->is_raid)
+		hw_stop_all_raid_arrays(logfile);
 
-		if (runcommandwithstatus(commandstring, title, _("Running post-install script..."), logfile)) {
-			errorbox(_("Post-install script failed."));
-			goto EXIT;
-		}
-	}
+	// Show a short message that the installation went well and
+	// wait a moment so that all disk caches get flushed.
+	if (config.unattended) {
+		splashWindow(title, _("Unattended installation has finished. The system will be shutting down in a moment..."), 5);
 
-	if (!config.unattended) {
+	} else {
 		snprintf(message, sizeof(message), _(
 			"%s was successfully installed!\n\n"
 			"Please remove any installation mediums from this system and hit the reboot button. "
