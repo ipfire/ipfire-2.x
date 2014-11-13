@@ -1295,6 +1295,7 @@
 'invalid input for organization' => 'Ungültige Eingabe für Organisation',
 'invalid input for remote host/ip' => 'Ungültige Eingabe für Remote Host/IP',
 'invalid input for state or province' => 'Ungültige Eingabe für Bundesstaat oder Provinz.',
+'invalid input for valid till days' => 'Ungültige Eingabe für Gültig bis (Tage).',
 'invalid ip' => 'Ungültige IP-Adresse',
 'invalid keep time' => 'Die Aufbewahrungszeit muss eine gültige Zahl sein',
 'invalid key' => 'Ungültiger Schlüssel.',
