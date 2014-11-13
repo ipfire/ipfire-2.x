@@ -22,10 +22,7 @@ echo "Loading Installer..."
 ret=$?
 
 case "${ret}" in
-	0)
-		# The installer has finished without a problem.
-		;;
-	*)
+	139)
 		echo "The installer has crashed. You will be dropped to a debugging shell"
 		/bin/bash --login
 		;;
