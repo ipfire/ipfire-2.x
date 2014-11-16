@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2013 IPFire-Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2014 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -31,6 +31,7 @@ if [ ! -z $ROOTUUID ]; then
 	ROOT="UUID=$ROOTUUID"
 fi
 
+if [ -f /boot/grub/grub.conf ]; then
 MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
 # Nur den letzten Parameter verwenden
 echo $MOUNT > /dev/null
@@ -63,6 +64,8 @@ echo "title IPFire (PAE-Kernel)" >> /boot/grub/grub.conf
 echo "  kernel /vmlinuz-$KVER-ipfire-pae root=$ROOT panic=10$console $MOUNT" >> /boot/grub/grub.conf
 echo "  initrd /ipfirerd-$KVER-pae.img" >> /boot/grub/grub.conf
 echo "  savedefault $ENTRY" >> /boot/grub/grub.conf
+fi
+
 #
 # Create new module depency
 #
@@ -70,11 +73,15 @@ depmod -a $KVER-ipfire-pae
 #
 # Made initramdisk
 #
-/sbin/dracut --force --verbose /boot/ipfirerd-$KVER-pae.img $KVER-ipfire-pae
+/usr/bin/dracut --force --xz /boot/initramfs-$KVER-ipfire-pae.img $KVER-ipfire-pae  
 
-# Default pae and request a reboot if pae is supported
+#
+# Update grub2 config
+#
+grub-mkconfig > /boot/grub/grub.cfg
+
+# request a reboot if pae is supported
 if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
-	grub-set-default $ENTRY
 	touch /var/run/need_reboot
 fi
 sync && sync
