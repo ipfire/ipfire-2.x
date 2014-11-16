@@ -3,6 +3,11 @@
 # IPFire Installer RC
 #
 
+unattended=0
+if grep -q "installer.unattended" /proc/cmdline; then
+	unattended=1
+fi
+
 # Enable Unicode
 echo -en '\033%G' && kbd_mode -u
 
@@ -27,6 +32,11 @@ case "${ret}" in
 		/bin/bash --login
 		;;
 esac
+
+# Poweroff after an unattended installation
+if [ "${unattended}" = "1" ]; then
+	/shutdown poweroff
+fi
 
 # Reboot the system
 /shutdown reboot
