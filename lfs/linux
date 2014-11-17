@@ -26,7 +26,7 @@ include Config
 
 VER        = 3.14.24
 
-RPI_PATCHES = 3.14.24-grsec-ipfire1
+RPI_PATCHES = 3.14.24-grsec-ipfire2
 A7M_PATCHES = 3.14.24-grsec-ipfire1
 GRS_PATCHES = grsecurity-3.0-3.14.24-201411150026.patch.xz
 
@@ -78,7 +78,7 @@ arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
 $(DL_FILE)_MD5					= a32e402545c45180b943d43d1746fed9
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 472a6a7322c30f96fde4547bba240fa6
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 854d8f1d9a8275170ace5cee535613c7
 arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 7cdd1c384cc5e51e40fdd51b3e984f2d
 $(GRS_PATCHES)_MD5				= b7d344dbf2ad00e966870a21c7e2c855
 
