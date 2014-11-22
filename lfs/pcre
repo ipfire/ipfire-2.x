@@ -74,7 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--prefix=/usr \
 		--disable-static \
 		--enable-utf8 \
-		--enable-jit \
+		--disable-jit \
 		--enable-unicode-properties
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
