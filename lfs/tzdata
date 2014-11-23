@@ -86,7 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && zic -y ./yearistype -d zoneinfo/posix \
 		-L /dev/null $(FILES)
 	cd $(DIR_APP) && zic -y ./yearistype -d zoneinfo/right \
-		-L /dev/null $(FILES)
+		-L leapseconds $(FILES)
 
 	rm -rf /usr/share/zoneinfo
 	cd $(DIR_APP) && cp -prd zoneinfo /usr/share
