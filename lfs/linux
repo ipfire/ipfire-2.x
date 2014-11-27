@@ -176,6 +176,7 @@ ifeq "$(KCFG)" "-rpi"
 	cd $(DIR_APP) && xzcat $(DIR_DL)/rpi-patches-$(RPI_PATCHES).patch.xz | patch -Np1
 endif
 
+ifeq "$(KCFG)" "-headers"
 	# Install the header files
 	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) INSTALL_HDR_PATH=dest headers_install
 	-mkdir -pv $(BUILDROOT)/$(HEADERS_PREFIX)/include
@@ -250,6 +251,7 @@ ifeq "$(LASTKERNEL)" "1"
 
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf
+endif
 endif
 endif
 
