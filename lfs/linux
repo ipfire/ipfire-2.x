@@ -124,10 +124,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Layer7-patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14-layer7-filter.patch
 
+ifneq "$(KCFG)" "-headers"
 	# Grsecurity-patches
 	cd $(DIR_APP) && xz -c -d $(DIR_DL)/$(GRS_PATCHES) | patch -Np1
 	cd $(DIR_APP) && rm localversion-grsec
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
+endif
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-dvbsky.patch
@@ -174,7 +176,6 @@ ifeq "$(KCFG)" "-rpi"
 	cd $(DIR_APP) && xzcat $(DIR_DL)/rpi-patches-$(RPI_PATCHES).patch.xz | patch -Np1
 endif
 
-ifeq "$(KCFG)" "-headers"
 	# Install the header files
 	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) INSTALL_HDR_PATH=dest headers_install
 	-mkdir -pv $(BUILDROOT)/$(HEADERS_PREFIX)/include
@@ -209,7 +210,6 @@ ifeq "$(KCFG)" "-rpi"
 else
 	cd $(DIR_APP) && make $(MAKETUNING) bzImage modules
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-endif
 endif
 endif
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
