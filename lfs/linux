@@ -213,6 +213,8 @@ else
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 endif
 endif
+endif
+
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && make $(MAKETUNING) modules_install
@@ -225,7 +227,6 @@ ifeq "$(MACHINE_TYPE)" "arm"
 				install -m 644 $$f /boot/dtb-$(VER)-$(VERSUFIX)/ ; \
 			done
 endif
-
 
 ifeq "$(LASTKERNEL)" "1"
 	# Only do this once
@@ -251,7 +252,6 @@ ifeq "$(LASTKERNEL)" "1"
 
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf
-endif
 endif
 endif
 
