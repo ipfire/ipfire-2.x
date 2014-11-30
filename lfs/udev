@@ -76,7 +76,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(VER)-1.tar.bz2
 
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-208_remove_systemd_log.patch
-#	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-141_no_netif_rename.patch
 
 	cd $(DIR_APP)/udev-lfs-$(VER)-1 && sed -i "s/HANDLE_AT 1/HANDLE_AT 0/g" cfg.h
 
