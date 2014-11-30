@@ -57,6 +57,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# rebuild module deps
 	depmod -a $(KVER)-$(VERSUFIX)
 
+	#skip initrd build on pae and rpi kernel.
+ifneq "$(KCFG)" "-rpi"
+ifneq "$(KCFG)" "-pae"
+
 	# Create initramfs images
 	dracut --force --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
 
@@ -66,5 +70,8 @@ endif
 
 ifeq "$(KCFG)" "-multi"
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
+endif
+
+endif
 endif
 	@$(POSTBUILD)
