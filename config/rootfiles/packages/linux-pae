@@ -1,6 +1,5 @@
 boot/System.map-KVER-ipfire-pae
 boot/config-KVER-ipfire-pae
-#boot/initramfs-KVER-ipfire-pae.img
 boot/vmlinuz-KVER-ipfire-pae
 #lib/modules
 lib/modules/KVER-ipfire-pae
@@ -17,6 +16,7 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/kernel/cpu
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/kernel/cpu/microcode
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/kernel/cpu/microcode/microcode.ko
+#lib/modules/KVER-ipfire-pae/kernel/arch/x86/kernel/iosf_mbi.ko
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/kernel/test_nx.ko
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/kvm
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/kvm/kvm-amd.ko

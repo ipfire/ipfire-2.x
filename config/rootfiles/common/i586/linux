@@ -1,6 +1,5 @@
 boot/System.map-KVER-ipfire
 boot/config-KVER-ipfire
-boot/initramfs-KVER-ipfire.img
 boot/vmlinuz-KVER-ipfire
 etc/modprobe.d/framebuffer.conf
 etc/modprobe.d/ipv6.conf
@@ -19,6 +18,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/arch/x86/kernel/cpu
 #lib/modules/KVER-ipfire/kernel/arch/x86/kernel/cpu/microcode
 #lib/modules/KVER-ipfire/kernel/arch/x86/kernel/cpu/microcode/microcode.ko
+#lib/modules/KVER-ipfire/kernel/arch/x86/kernel/iosf_mbi.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/kernel/test_nx.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/kvm
 #lib/modules/KVER-ipfire/kernel/arch/x86/kvm/kvm-amd.ko
@@ -3076,3 +3076,4 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/modules.symbols.bin
 #lib/modules/KVER-ipfire/source
 sbin/gen_init_cpio
+boot/initramfs-KVER-ipfire.img
