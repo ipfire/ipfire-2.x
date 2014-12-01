@@ -97,6 +97,9 @@ else
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
+
+  # Disable stack protection in toolchain.
+  CFLAGS += -fno-stack-protector
 endif
 
 ifeq "$(MACHINE_TYPE)" "arm"

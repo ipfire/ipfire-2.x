@@ -52,7 +52,7 @@ usr/bin/getconf
 usr/bin/getent
 #usr/bin/iconv
 usr/bin/ldd
-#usr/bin/lddlibc4
+usr/bin/lddlibc4
 usr/bin/locale
 #usr/bin/localedef
 #usr/bin/mtrace
@@ -7058,6 +7058,7 @@ usr/lib/locale
 #usr/share/i18n/locales/eu_ES@euro
 #usr/share/i18n/locales/fa_IR
 #usr/share/i18n/locales/fi_FI
+#usr/share/i18n/locales/fi_FI.orig
 #usr/share/i18n/locales/fi_FI@euro
 #usr/share/i18n/locales/fil_PH
 #usr/share/i18n/locales/fo_FO

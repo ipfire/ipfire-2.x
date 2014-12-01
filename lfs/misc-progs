@@ -48,16 +48,8 @@ md5 :
 
 $(TARGET) :
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/install+setup && cp -R $(DIR_SRC)/src/misc-progs/ $(DIR_SRC)
-	cp -R $(DIR_SRC)/src/install+setup/ $(DIR_SRC)
-	for i in $(DIR_SRC)/langs/*/install/lang_*.c ; do \
-	    cp $$i $(DIR_SRC)/install+setup/libsmooth; \
-	done
-	cd $(DIR_SRC)/install+setup/libsmooth && chmod 755 makelangs.pl
-	cd $(DIR_SRC)/install+setup/libsmooth && make CFLAGS="$(CFLAGS) -Wall \
-	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
-	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'" 
+	@rm -rf $(DIR_APP) && cp -R $(DIR_SRC)/src/misc-progs/ $(DIR_SRC)
 	cd $(DIR_APP) && make CFLAGS="$(CFLAGS) -Wall -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DSNAME='\"$(SNAME)\"'"
 	cd $(DIR_APP) && make install
-	@rm -rf $(DIR_APP) $(DIR_SRC)/install+setup
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

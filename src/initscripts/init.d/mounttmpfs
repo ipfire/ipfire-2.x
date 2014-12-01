@@ -1,0 +1,33 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/mounttmpfs
+#
+# Description : Mount tmpfses
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg -n "Mounting ramdisk file systems:" ${INFO}
+
+		if ! mountpoint /var/lock &>/dev/null; then
+			boot_mesg -n " /var/lock" ${NORMAL}
+			mount -n -t tmpfs -o nosuid,nodev,size=8M /var/lock /var/lock || failed=1
+		fi
+
+		boot_mesg "" ${NORMAL}
+
+		(exit ${failed})
+		evaluate_retval
+		;;
+
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/mounttmpfs

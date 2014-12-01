@@ -30,6 +30,9 @@ THISAPP    = installer
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+SLOGAN     = An Open Source Firewall Solution
+DOWNLOAD_URL = http://downloads.ipfire.org/releases/ipfire-2.x/$(VERSION)-core$(CORE)/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -48,25 +51,19 @@ md5 :
 
 $(TARGET) :
 	@$(PREBUILD)
-	-mkdir -p /install/initrd/bin
-	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/install+setup/* $(DIR_APP)
-	for i in $(DIR_SRC)/langs/*/install/lang_*.c ; do \
-	    cp $$i $(DIR_APP)/libsmooth; \
-	done
-	cd $(DIR_APP)/libsmooth && chmod 755 makelangs.pl
-	cd $(DIR_APP)/libsmooth && make CFLAGS="-Os -fomit-frame-pointer -Wall \
-	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
-	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"'" 
-	cd $(DIR_APP)/install && make CFLAGS="-Os -fomit-frame-pointer -Wall \
-	    -DNAME='\"$(NAME)\"' -DSNAME='\"$(SNAME)\"' -DVERSION='\"$(VERSION)\"' \
-	     -DSLOGAN='\"$(SLOGAN)\"' -DCONFIG_ROOT='\"$(CONFIG_ROOT)\"' -DKERNEL_VERSION='\"$(KVER)\"'"
-	cd $(DIR_APP)/install && install -v -m 0755 install probenic.sh \
-		downloadsource.sh mountsource.sh mountdest.sh /install/initrd/bin
-	#Patch ISO Name for download ...
-	sed -i -e "s|ipfire.iso|download.ipfire.org/releases/ipfire-2.x/$(VERSION)-core$(CORE)/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso|g" \
-				/install/initrd/bin/downloadsource.sh
-	#Patch version for mediacheck ...
-	sed -i -e "s|FullIPFireVersion|$(SNAME)-$(VERSION)-core$(CORE)|g" \
-				/install/initrd/bin/mountsource.sh
+	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/installer/* $(DIR_APP)
+
+	cd $(DIR_APP) && ./autogen.sh
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--with-distro-name="$(NAME)" \
+		--with-distro-sname="$(SNAME)" \
+		--with-distro-slogan="$(SLOGAN)" \
+		--with-config-root="$(CONFIG_ROOT)" \
+		--with-download-url="$(DOWNLOAD_URL)"
+
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

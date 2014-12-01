@@ -50,8 +50,8 @@ $language = $settings{'LANGUAGE'};
 # (it is a developper options)
 #
 sub reload {
+    my $LG = &FindWebLanguage(shift);
 
-    my ($LG) = @_;
     %Lang::tr = ();	# start with a clean array
 
     # Use CacheLang if present & not empty.
@@ -157,4 +157,23 @@ sub BuildCacheLang {
     &General::log ("WARNING: cannot build cachelang file for [$missed].") if ($error);
     return $error;
 }
+
+sub FindWebLanguage() {
+	my $lang = shift;
+
+	my @options = ($lang);
+
+	my ($shortlang, $encoding) = split(/\./, $lang);
+	push(@options, $shortlang);
+
+	my ($language, $country) = split(/_/, $shortlang);
+	push(@options, $language);
+
+	foreach my $option (@options) {
+		return $option if (-e "${General::swroot}/langs/$option.pl");
+	}
+
+	return undef;
+}
+
 1;

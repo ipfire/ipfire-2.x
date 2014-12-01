@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2013 IPFire-Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2014 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #

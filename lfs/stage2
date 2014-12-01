@@ -75,7 +75,7 @@ $(TARGET) :
 
 	# Config files
 	cp -rvf $(DIR_SRC)/config/etc/* /etc;
-	touch /etc/mtab
+	touch /etc/{fs,m}tab
 	echo "$(NAME) v$(VERSION) - $(SLOGAN)" >  /etc/issue
 	echo "===============================" >> /etc/issue
 	echo "\n running on \s \r \m"          >> /etc/issue

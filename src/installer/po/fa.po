@@ -1,0 +1,243 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR The IPFire Project (www.ipfire.org)
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# Khalil Delavaran <khalil.delavaran@gmail.com>, 2014
+msgid ""
+msgstr ""
+"Project-Id-Version: IPFire Project\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-21 15:09+0000\n"
+"PO-Revision-Date: 2014-08-21 15:11+0000\n"
+"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"Language-Team: Persian (http://www.transifex.com/projects/p/ipfire/language/fa/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fa\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: main.c:77 main.c:148 main.c:313 main.c:339 main.c:493 main.c:524 main.c:682
+msgid "OK"
+msgstr "بله"
+
+#: main.c:78 main.c:446 main.c:456 main.c:493 main.c:524
+msgid "Cancel"
+msgstr "نمی خواهم"
+
+#: main.c:145
+msgid "I accept this license"
+msgstr "من این پروانه را می پذیرم."
+
+#: main.c:312
+msgid "Language selection"
+msgstr ""
+
+#: main.c:312
+msgid "Select the language you wish to use for the installation."
+msgstr ""
+
+#: main.c:323
+msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
+msgstr "<Tab>/<Alt-Tab> میان عنصری  | <Space> گزینش | <F12>  برای برگه پسین"
+
+#: main.c:328
+#, c-format
+msgid ""
+"Welcome to the %s installation program.\n"
+"\n"
+"Selecting Cancel on any of the following screens will reboot the computer."
+msgstr ""
+
+#: main.c:330
+msgid "Start installation"
+msgstr "آغاز برپا سازی"
+
+#: main.c:339
+msgid "No local source media found. Starting download."
+msgstr "هیچ رسانه محلی یافت نشد. دانلود آغاز شد."
+
+#: main.c:340
+msgid "Downloading installation image ..."
+msgstr "در حال دانلود ایمیج برای برپا سازی..."
+
+#: main.c:342
+msgid "Download error"
+msgstr "ایراد در دانلود"
+
+#: main.c:376
+msgid "License Agreement"
+msgstr ""
+
+#: main.c:377
+msgid "License not accepted!"
+msgstr "پروانه پذیرفته نشد!"
+
+#: main.c:399
+msgid "No hard disk found."
+msgstr "هارد دیسک یافت نشد."
+
+#: main.c:418
+msgid "Disk Selection"
+msgstr "گزینش دیسک"
+
+#: main.c:419
+msgid ""
+"Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
+"\n"
+"ALL DATA ON THE DISK WILL BE DESTROYED."
+msgstr "دیسک (های) را برای برپاسازی IPFire گزینش کنید. نخست آنها را پارنیشین بندی کرده، و سپس، سیستم فایلی برای پارتیشن ها برگزینید.\n\nهمه داده های دیسک پاک می شوند."
+
+#: main.c:430
+msgid ""
+"No disk has been selected.\n"
+"\n"
+"Please select one or more disks you want to install IPFire on."
+msgstr "هیچ دیسکی گزینش نشده است.\n\nخواهشمند است یک دیسک یا بیشتر را برای برپا سازی IPFire گزینش کنید."
+
+#: main.c:443
+#, c-format
+msgid ""
+"The installation program will now prepare the chosen harddisk:\n"
+"\n"
+"  %s\n"
+"\n"
+"Do you agree to continue?"
+msgstr "آماده سازی دیسک سخت برای برپا سازی برنامه :\n\n%s\n\nآیا شما گرایش به ادامه دارید؟"
+
+#: main.c:445
+msgid "Disk Setup"
+msgstr "پیکربندی دیسک"
+
+#: main.c:446 main.c:456
+msgid "Delete all data"
+msgstr "پاک کردن همه داده ها"
+
+#: main.c:453
+#, c-format
+msgid ""
+"The installation program will now set up a RAID configuration on the selected harddisks:\n"
+"\n"
+"  %s\n"
+"  %s\n"
+"\n"
+"Do you agree to continue?"
+msgstr "پیکربندی RAID بر روی هارد دیسکهای گزینش شده برای برپا سازی برنامه\n\n%s\n%s\n\nآیا شما گرایش به ادامه دارید؟"
+
+#: main.c:455
+msgid "RAID Setup"
+msgstr "پیکربندی RAID"
+
+#: main.c:466
+msgid "You disk configuration is currently not supported."
+msgstr "پیکربندی دیسک شما پشتیبانی نمی شود."
+
+#: main.c:480
+msgid "Your harddisk is too small."
+msgstr "هارد دیسک شما بسیار کوچک است."
+
+#: main.c:494
+msgid ""
+"Your harddisk is very small, but you can continue without a swap partition."
+msgstr ""
+
+#: main.c:506
+msgid "ext4 Filesystem"
+msgstr "فایل سیستم ext4"
+
+#: main.c:507
+msgid "ext4 Filesystem without journal"
+msgstr "سیستم فایل ext4 بدون روزنامه"
+
+#: main.c:508
+msgid "XFS Filesystem"
+msgstr "فایل سیستم XFS"
+
+#: main.c:509
+msgid "ReiserFS Filesystem"
+msgstr "فایل سیستم RaiserFS"
+
+#: main.c:523
+msgid "Filesystem Selection"
+msgstr "گزینش فایل سیستم"
+
+#: main.c:523
+msgid "Please choose your filesystem:"
+msgstr "خواهشمند است فایل سیستم خود را گزینش کنید:"
+
+#: main.c:534
+msgid "Building RAID..."
+msgstr "ساخت RAID..."
+
+#: main.c:538
+msgid "Unable to build the RAID."
+msgstr "ناتوانی در ساخت RAID."
+
+#: main.c:550
+msgid "Partitioning disk..."
+msgstr "پارتیشن بندی دیسک..."
+
+#: main.c:554
+msgid "Unable to partition the disk."
+msgstr "ناتوانی در پارتیشین بندی دیسک."
+
+#: main.c:561
+msgid "Creating filesystems..."
+msgstr "ساخت سیستم فایل..."
+
+#: main.c:565
+msgid "Unable to create filesystems."
+msgstr "ناتوانی در ساخت سیستم فایل."
+
+#: main.c:571
+msgid "Unable to mount filesystems."
+msgstr "ناتوانی در مونت کردن سیستم فایل."
+
+#: main.c:582
+msgid "Installing the system..."
+msgstr "برپا سازی سیستم..."
+
+#: main.c:583
+msgid "Unable to install the system."
+msgstr "ناتوانی در برپاسازی سیستم."
+
+#: main.c:599
+msgid "Installing the language cache..."
+msgstr "در حال برپا سازی کش زبان..."
+
+#: main.c:600
+msgid "Unable to install the language cache."
+msgstr "ناتوانی در برپا سازی کش زبان."
+
+#: main.c:605
+msgid "Installing the bootloader..."
+msgstr "برپا سازی بوت لودر..."
+
+#: main.c:612
+msgid "Unable to open /etc/default/grub for writing."
+msgstr ""
+
+#: main.c:634
+msgid "Unable to install the bootloader."
+msgstr "ناتوانی در برپا سازی بوت لودر."
+
+#: main.c:666
+#, c-format
+msgid ""
+"%s was successfully installed!\n"
+"\n"
+"Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
+msgstr ""
+
+#: main.c:671
+msgid "Congratulations!"
+msgstr "شادباش می گوییم!"
+
+#: main.c:671
+msgid "Reboot"
+msgstr "ریبوت"
+
+#: main.c:682
+msgid "Setup has failed. Press Ok to reboot."
+msgstr ""
