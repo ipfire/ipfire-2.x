@@ -1203,8 +1203,7 @@ END
         unlink "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}";
 	}
 	# Create Diffie Hellmann Parameter
-	system('/usr/bin/openssl', 'dhparam', '-rand', '/proc/interrupts:/proc/net/rt_cache',
-	'-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
+	system('/usr/bin/openssl', 'dhparam', '-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
 	if ($?) {
 		$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 		unlink ("${General::swroot}/ovpn/ca/dh1024.pem");
@@ -1757,7 +1756,7 @@ END
 		goto ROOTCERT_ERROR;
 	    }
 	} else {	# child
-	    unless (exec ('/usr/bin/openssl', 'req', '-x509', '-nodes', '-rand', '/proc/interrupts:/proc/net/rt_cache',
+	    unless (exec ('/usr/bin/openssl', 'req', '-x509', '-nodes',
 			'-days', '999999', '-newkey', 'rsa:4096', '-sha512',
 			'-keyout', "${General::swroot}/ovpn/ca/cakey.pem",
 			'-out', "${General::swroot}/ovpn/ca/cacert.pem",
@@ -1788,7 +1787,7 @@ END
 		goto ROOTCERT_ERROR;
 	    }
 	} else {	# child
-	    unless (exec ('/usr/bin/openssl', 'req', '-nodes', '-rand', '/proc/interrupts:/proc/net/rt_cache',
+	    unless (exec ('/usr/bin/openssl', 'req', '-nodes',
 			'-newkey', 'rsa:2048',
 			'-keyout', "${General::swroot}/ovpn/certs/serverkey.pem",
 			'-out', "${General::swroot}/ovpn/certs/serverreq.pem",
@@ -1840,8 +1839,7 @@ END
 #	    &cleanssldatabase();
 	}
 	# Create Diffie Hellmann Parameter
-	system('/usr/bin/openssl', 'dhparam', '-rand', '/proc/interrupts:/proc/net/rt_cache',
-	       '-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
+	system('/usr/bin/openssl', 'dhparam', '-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
 	if ($?) {
 	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 	    unlink ("${General::swroot}/ovpn/certs/serverkey.pem");
@@ -4041,7 +4039,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		    goto VPNCONF_ERROR;
 		}
 	    } else {	# child
-		unless (exec ('/usr/bin/openssl', 'req', '-nodes', '-rand', '/proc/interrupts:/proc/net/rt_cache',
+		unless (exec ('/usr/bin/openssl', 'req', '-nodes',
 			'-newkey', 'rsa:2048',
 			'-keyout', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}key.pem",
 			'-out', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}req.pem",
