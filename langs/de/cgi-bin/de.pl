@@ -1690,6 +1690,7 @@
 'outgoing traffic in bytes per second' => 'Abgehender Verkehr',
 'override mtu' => 'Überschreibe Standard MTU',
 'ovpn' => 'OpenVPN',
+'ovpn add conf' => 'Erweiterte Konfiguration',
 'ovpn con stat' => 'OpenVPN Verbindungs-Statistik',
 'ovpn config' => 'OVPN-Konfiguration',
 'ovpn crypt options' => 'Kryptografieoptionen',
