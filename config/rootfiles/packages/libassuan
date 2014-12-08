@@ -3,6 +3,6 @@ usr/bin/libassuan-config
 #usr/lib/libassuan.la
 usr/lib/libassuan.so
 usr/lib/libassuan.so.0
-usr/lib/libassuan.so.0.3.0
+usr/lib/libassuan.so.0.4.3
 #usr/share/aclocal/libassuan.m4
 #usr/share/info/assuan.info
