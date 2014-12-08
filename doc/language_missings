@@ -335,6 +335,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -392,6 +393,7 @@
 < other
 < our donors
 < outgoing firewall access
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -886,6 +888,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -955,6 +958,7 @@
 < outgoing firewall p2p description 2
 < outgoing firewall p2p description 3
 < outgoing firewall view group
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -1421,6 +1425,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -1476,6 +1481,7 @@
 < other
 < our donors
 < outgoing firewall access
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -1947,6 +1953,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -2004,6 +2011,7 @@
 < our donors
 < outgoing firewall access
 < outgoing traffic in bytes per second
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
