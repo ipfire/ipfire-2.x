@@ -4012,6 +4012,10 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		$errormessage = $Lang::tr{'passwords do not match'};
 		goto VPNCONF_ERROR;
 	    }
+	    if ($cgiparams{'DAYS_VALID'} ne '' && $cgiparams{'DAYS_VALID'} !~ /^[0-9]+$/) {
+		$errormessage = $Lang::tr{'invalid input for valid till days'};
+		goto VPNCONF_ERROR;
+	    }
 
 	    # Replace empty strings with a .
 	    (my $ou = $cgiparams{'CERT_OU'}) =~ s/^\s*$/\./;
@@ -4282,6 +4286,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$cgiparams{'CERT_CITY'}         = $vpnsettings{'ROOTCERT_CITY'};
 	$cgiparams{'CERT_STATE'}        = $vpnsettings{'ROOTCERT_STATE'};
 	$cgiparams{'CERT_COUNTRY'}      = $vpnsettings{'ROOTCERT_COUNTRY'};
+	$cgiparams{'DAYS_VALID'}     	= $vpnsettings{'DAYS_VALID'};
     }
 
     VPNCONF_ERROR:
@@ -4643,27 +4648,28 @@ END
 
 if ($cgiparams{'TYPE'} eq 'host') {
 	print <<END;
-	    </select></td></tr>
-
-	<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):</td>
-	<td class='base' nowrap='nowrap'><input type='text' name='DAYS_VALID' value='$cgiparams{'DAYS_VALID'}' size='32' $cakeydisabled /></td></tr>
-   <tr><td>&nbsp;</td>
+	</select></td></tr>
+		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):</td>
+		<td class='base' nowrap='nowrap'><input type='text' name='DAYS_VALID' value='$cgiparams{'DAYS_VALID'}' size='32' $cakeydisabled /></td></tr>
+		<tr><td>&nbsp;</td>
 		<td class='base'>$Lang::tr{'pkcs12 file password'}:</td>
 		<td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS1' value='$cgiparams{'CERT_PASS1'}' size='32' $cakeydisabled /></td></tr>
-	    <tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:<br>($Lang::tr{'confirmation'})</td>
+		<tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:<br>($Lang::tr{'confirmation'})</td>
 		<td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS2' value='$cgiparams{'CERT_PASS2'}' size='32' $cakeydisabled /></td></tr>
-     <tr><td colspan='3'>&nbsp;</td></tr>
-     <tr><td colspan='3'><hr /></td></tr>
-     <tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
-     </table>
+		<tr><td colspan='3'>&nbsp;</td></tr>
+		<tr><td colspan='3'><hr /></td></tr>
+		<tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
+	</table>
 END
 }else{
 	print <<END;
-	    </select></td></tr>
-   <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-	 <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-	 <tr><td colspan='3'><hr /></td></tr>
-	 <tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
+	</select></td></tr>
+		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):</td>
+		<td class='base' nowrap='nowrap'><input type='text' name='DAYS_VALID' value='$cgiparams{'DAYS_VALID'}' size='32' $cakeydisabled /></td></tr>
+		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+		<tr><td colspan='3'><hr /></td></tr>
+		<tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
        </table>
  
 END
