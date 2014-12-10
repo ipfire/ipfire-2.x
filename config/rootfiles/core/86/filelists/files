@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+opt/pakfire/etc/pakfire.conf
 var/ipfire/header.pl
 var/ipfire/langs
 var/ipfire/lang.pl
