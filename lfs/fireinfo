@@ -73,6 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/0001-bogomips-Don-t-crash-when-no-bogomips-are-available.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/0002-ARM-Read-board-model-from-device-tree-in-proc.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/0003-Revert-vendor-model-for-ARM-to-old-behaviour.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr
