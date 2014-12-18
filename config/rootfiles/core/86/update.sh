@@ -180,16 +180,10 @@ case "$(uname -m)" in
 			echo "GRUB_TERMINAL=\"serial\"" >> /etc/default/grub
 			echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> /etc/default/grub
 		fi
-		grub-mkconfig -o /boot/grub/grub.cfg
 
-		ROOT=$(mount | grep " / " | cut -d" " -f1)
-		ROOT=${ROOT::-1}
-
-		if ! grub-install --no-floppy --recheck "${ROOT}"; then
-			if ! grub-install --no-floppy --recheck --force "${ROOT}"; then
-				logger -p syslog.emerg -t ipfire \
-					"Could not update the bootloader!"
-			fi
+		if ! /usr/local/bin/update-bootloader; then
+			logger -p syslog.emerg -t ipfire \
+				"Could not update the bootloader!"
 		fi
 		;;
 esac
