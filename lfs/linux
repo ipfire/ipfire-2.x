@@ -24,11 +24,11 @@
 
 include Config
 
-VER        = 3.14.26
+VER        = 3.14.27
 
-RPI_PATCHES = 3.14.26-grsec-ipfire1
-A7M_PATCHES = 3.14.26-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.0-3.14.26-201412071005.patch.xz
+RPI_PATCHES = 3.14.27-grsec-ipfire1
+A7M_PATCHES = 3.14.27-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.0-3.14.27-201412170659.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 54
+PAK_VER    = 55
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -77,13 +77,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= 9a91a9c507c9efb68c7075e151c30fa7
-
+$(DL_FILE)_MD5					= 0af2d0702df6ee6d7181e697e0af3481
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 543a77d5602829f78b18788e5cb82188
-
-arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= c395cb6c1946d1c0fb7edc66ea912e86
-
-$(GRS_PATCHES)_MD5				= d98e1c65baab50e6669616785dbc34e1
+arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 7014ce20d9ede588ea2c244d901cbeeb
+$(GRS_PATCHES)_MD5				= 66af1d48af9dce2d0eb363bbc6bfb668
 
 install : $(TARGET)
 
