@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2013.10
+VER        = 2014.04
 
 THISAPP    = u-boot-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a076a044b64371edc52f7e562b13f6b2
+$(DL_FILE)_MD5 = 6d2116d1385a66e9a59742caa9d62a54
 
 install : $(TARGET)
 
@@ -84,7 +84,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Install pandaboard uboot as default
 	cd $(DIR_APP) && install MLO /boot/
 	cd $(DIR_APP) && install u-boot.img /boot/
-	cp -vf $(DIR_SRC)/config/u-boot/* /boot/
 	cd $(DIR_APP) && make distclean
 
 	# Wandboard Quad
@@ -111,9 +110,22 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/usr/share/u-boot/wandboard_solo
 	cd $(DIR_APP) && make distclean
 
+	# LeMaker Banana Pi
+	-mkdir -pv /usr/share/u-boot/banana_pi
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/sunxi/001-uboot-sunxi-509d96d4f1f602d62d36db660973249e16f9d088.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/sunxi/002-uboot-jwrdegoede-psci-support.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/sunxi/003-uboot-fix-gmac-not-working-reliable-on-bananapi.patch
+	cd $(DIR_APP) && make CROSS_COMPILE="" Bananapi_config
+	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && install -v -m 644 u-boot-sunxi-with-spl.bin \
+		/usr/share/u-boot/banana_pi
+
 	# mkimage
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)" tools
 	cd $(DIR_APP) && install -v -m 755 tools/mkimage /usr/bin
+
+	# config (uEnv.txt)
+	cp -vf $(DIR_SRC)/config/u-boot/* /boot/
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
