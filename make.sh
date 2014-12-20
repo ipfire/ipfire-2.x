@@ -804,6 +804,7 @@ buildipfire() {
   ipfiremake squid-accounting
   ipfiremake pigz
   ipfiremake tmux
+  ipfiremake perl-Text-CSV_XS
 }
 
 buildinstaller() {
