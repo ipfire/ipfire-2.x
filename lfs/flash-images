@@ -121,6 +121,9 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	cp -v /boot/MLO $(MNThdd)/boot/
 	cp -v /boot/u-boot.img $(MNThdd)/boot/
 	cp -v /boot/zImage-ipfire-multi $(MNThdd)/boot/
+	# work around a u-boot bug not find the folders sometimes
+	mkdir -pv $(MNThdd)/boot/dtb-$(KVER)-ipfire-multi
+	mkdir -pv $(MNThdd)/boot/dtb-$(KVER)-ipfire-kirkwood
 	sync
 	umount $(MNThdd)/boot
 	mount $(PART_BOOT) $(MNThdd)/boot
