@@ -126,6 +126,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# config (uEnv.txt)
 	cp -vf $(DIR_SRC)/config/u-boot/* /boot/
+	# patch real Kernel version to uEnv.txt
+	sed -e "s/xxxKVERxxx/$(KVER)/g" -i /boot/uEnv.txt
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
