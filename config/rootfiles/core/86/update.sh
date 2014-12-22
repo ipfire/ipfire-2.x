@@ -128,7 +128,7 @@ tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
 
 #
 #restart init because glibc was updated.
-telinit i
+telinit u
 
 # Check diskspace on boot
 BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
