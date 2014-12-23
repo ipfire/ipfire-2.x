@@ -262,7 +262,7 @@ sub writeserverconf {
 	print CONF "keepalive $sovpnsettings{'KEEPALIVE_1'} $sovpnsettings{'KEEPALIVE_2'}\n";
     }	
     print CONF "status-version 1\n";
-    print CONF "status /var/log/ovpnserver.log 30\n";
+    print CONF "status /var/run/ovpnserver.log 30\n";
     print CONF "cipher $sovpnsettings{DCIPHER}\n";
     if ($sovpnsettings{'DAUTH'} eq '') {
         print CONF "";
@@ -313,7 +313,7 @@ sub writeserverconf {
 }    
 
 sub emptyserverlog{
-    if (open(FILE, ">/var/log/ovpnserver.log")) {
+    if (open(FILE, ">/var/run/ovpnserver.log")) {
 	flock FILE, 2;
 	print FILE "";
 	close FILE;
@@ -865,7 +865,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "dev tun\n"; 
   print SERVERCONF "#Logfile for statistics\n";
   print SERVERCONF "status-version 1\n";
-  print SERVERCONF "status /var/log/openvpn/$cgiparams{'NAME'}-n2n 10\n";
+  print SERVERCONF "status /var/run/openvpn/$cgiparams{'NAME'}-n2n 10\n";
   print SERVERCONF "# Port and Protokol\n"; 
   print SERVERCONF "port $cgiparams{'DEST_PORT'}\n"; 
 
@@ -2840,7 +2840,7 @@ END
     </tr>
 END
 ;
-	my $filename = "/var/log/ovpnserver.log";
+	my $filename = "/var/run/ovpnserver.log";
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -4834,7 +4834,7 @@ END
     &General::readhasharray("${General::swroot}/ovpn/caconfig", \%cahash);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-    my @status = `/bin/cat /var/log/ovpnserver.log`;
+    my @status = `/bin/cat /var/run/ovpnserver.log`;
 
     if ($cgiparams{'VPN_IP'} eq '' && -e "${General::swroot}/red/active") {
 		if (open(IPADDR, "${General::swroot}/red/local-ipaddress")) {

@@ -1,5 +1,5 @@
 LoadPlugin openvpn
 
 <Plugin openvpn>
-StatusFile "/var/log/ovpnserver.log"
+StatusFile "/var/run/ovpnserver.log"
 </Plugin>
