@@ -233,7 +233,7 @@ static char* center_string(const char* str, int width) {
 	return string;
 }
 
-#define DEFAULT_LANG "English"
+#define DEFAULT_LANG "en_US.utf8"
 #define NUM_LANGS 10
 
 static struct lang {
@@ -261,6 +261,7 @@ static struct config {
 	int disable_swap;
 	char download_url[STRING_SIZE];
 	char postinstall[STRING_SIZE];
+	char* language;
 } config = {
 	.unattended = 0,
 	.serial_console = 0,
@@ -269,6 +270,7 @@ static struct config {
 	.disable_swap = 0,
 	.download_url = DOWNLOAD_URL,
 	.postinstall = "\0",
+	.language = DEFAULT_LANG,
 };
 
 static void parse_command_line(struct config* c) {
@@ -340,7 +342,6 @@ int main(int argc, char *argv[]) {
 	int rc = 0;
 	char commandstring[STRING_SIZE];
 	int choice;
-	char language[STRING_SIZE];
 	char message[STRING_SIZE];
 	char title[STRING_SIZE];
 	int allok = 0;
@@ -393,7 +394,7 @@ int main(int argc, char *argv[]) {
 		char* langnames[NUM_LANGS + 1];
 
 		for (unsigned int i = 0; i < NUM_LANGS; i++) {
-			if (strcmp(languages[i].name, DEFAULT_LANG) == 0)
+			if (strcmp(languages[i].code, DEFAULT_LANG) == 0)
 				choice = i;
 
 			langnames[i] = languages[i].name;
@@ -406,10 +407,10 @@ int main(int argc, char *argv[]) {
 		assert(choice <= NUM_LANGS);
 
 		fprintf(flog, "Selected language: %s (%s)\n", languages[choice].name, languages[choice].code);
-		snprintf(language, sizeof(language), "%s", languages[choice].code);
+		config.language = languages[choice].code;
 
-		setenv("LANGUAGE", language, 1);
-		setlocale(LC_ALL, language);
+		setlocale(LC_ALL, config.language);
+		setenv("LANGUAGE", config.language, 1);
 	}
 
 	// Set helpline
@@ -770,7 +771,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* Save language und local settings */
-	write_lang_configs(language);
+	write_lang_configs(config.language);
 
 	/* Build cache lang file */
 	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");
