@@ -1,2 +1,3 @@
-usr/local/sbin/setup
-bin/probenic.sh
+usr/bin/probenic.sh
+usr/sbin/setup
+usr/share/locale/de/LC_MESSAGES/setup.mo

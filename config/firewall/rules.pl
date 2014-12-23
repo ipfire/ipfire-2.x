@@ -554,29 +554,19 @@ sub time_convert_to_minutes {
 }
 
 sub p2pblock {
-	my $search_action;
-	my $target;
-
-	if ($fwdfwsettings{"POLICY"} eq "MODE1") {
-		$search_action = "on";
-		$target = "ACCEPT";
-	} else {
-		$search_action = "off";
-		$target = "DROP";
-	}
-
 	open(FILE, "<$p2pfile") or die "Unable to read $p2pfile";
 	my @protocols = ();
 	foreach my $p2pentry (<FILE>) {
 		my @p2pline = split(/\;/, $p2pentry);
-		next unless ($p2pline[2] eq $search_action);
+		next unless ($p2pline[2] eq "off");
 
 		push(@protocols, "--$p2pline[1]");
 	}
 	close(FILE);
 
+	run("$IPTABLES -F P2PBLOCK");
 	if (@protocols) {
-		run("$IPTABLES -A FORWARDFW -m ipp2p @protocols -j $target");
+		run("$IPTABLES -A P2PBLOCK -m ipp2p @protocols -j DROP");
 	}
 }
 

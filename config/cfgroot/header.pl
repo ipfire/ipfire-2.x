@@ -59,12 +59,12 @@ if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
 &General::readhash("${swroot}/main/settings", \%settings);
 &General::readhash("${swroot}/ethernet/settings", \%ethsettings);
 &General::readhash("${swroot}/ppp/settings", \%pppsettings);
-$language = $settings{'LANGUAGE'};
 $hostname = $settings{'HOSTNAME'};
 $hostnameintitle = 0;
 
 ### Initialize language
-if ($language =~ /^(\w+)$/) {$language = $1;}
+require "${swroot}/lang.pl";
+$language = &Lang::FindWebLanguage($settings{"LANGUAGE"});
 
 ### Read English Files
 if ( -d "/var/ipfire/langs/en/" ) {

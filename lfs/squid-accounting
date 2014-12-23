@@ -9,7 +9,7 @@
 
 include Config
 
-VER        = 1.0.1
+VER        = 1.0.2
 
 THISAPP    = squid-accounting-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)

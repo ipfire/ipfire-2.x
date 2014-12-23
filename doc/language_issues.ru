@@ -864,6 +864,7 @@ WARNING: untranslated string: incoming traffic in bytes per second
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
+WARNING: untranslated string: invalid input for valid till days
 WARNING: untranslated string: ipsec
 WARNING: untranslated string: ipsec network
 WARNING: untranslated string: last
@@ -911,6 +912,7 @@ WARNING: untranslated string: openvpn subnet is used
 WARNING: untranslated string: other
 WARNING: untranslated string: outgoing firewall access
 WARNING: untranslated string: outgoing traffic in bytes per second
+WARNING: untranslated string: ovpn add conf
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
 WARNING: untranslated string: ovpn dh new key

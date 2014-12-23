@@ -1,0 +1,11 @@
+dhcp.c
+domainname.c
+hostname.c
+keymap.c
+main.c
+misc.c
+netstuff.c
+networking.c
+passwords.c
+setup.h
+timezone.c

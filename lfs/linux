@@ -24,10 +24,11 @@
 
 include Config
 
-VER        = 3.10.44
+VER        = 3.14.25
 
-RPI_PATCHES = linux-3.10.38-grsec-1b49b45
-GRS_PATCHES = grsecurity-2.9.1-3.10.44-ipfire1.patch.xz
+RPI_PATCHES = 3.14.25-grsec-ipfire1
+A7M_PATCHES = 3.14.25-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.0-3.14.25-201411220954.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -36,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 51
+PAK_VER    = 53
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -67,16 +68,19 @@ endif
 ###############################################################################
 objects =$(DL_FILE) \
 	rpi-patches-$(RPI_PATCHES).patch.xz \
+	arm7-multi-patches-$(A7M_PATCHES).patch.xz \
 	$(GRS_PATCHES)
 
 
-$(DL_FILE)				= $(URL_IPFIRE)/$(DL_FILE)
-rpi-patches-$(RPI_PATCHES).patch.xz	= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
-$(GRS_PATCHES)				= $(URL_IPFIRE)/$(GRS_PATCHES)
+$(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
+rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
+arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
+$(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5				= 8a4006eff3bbd8aff58fe4b443223e7a
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5	= a7408e8bad57b4b2cb677dd5a0bfb7ff
-$(GRS_PATCHES)_MD5			= 07e5d812146063ed5b2ce49d0d24099b
+$(DL_FILE)_MD5					= 3ae910d35292706d85870c3939547123
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= b573af847c28ebed8c15a74542360db1
+arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 8b47b81a530db68cb2c2f6bb6418ca28
+$(GRS_PATCHES)_MD5				= 6b2c8669e39304cfe647f9de16260929
 
 install : $(TARGET)
 
@@ -112,35 +116,30 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 	# Linux Intermediate Queueing Device
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.30-imq.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-imq.patch
 
 	# ipp2p 0.8.2-ipfire
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-ipp2p-0.8.2-ipfire.patch
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-layer7-filter.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14-layer7-filter.patch
 
-	# pie packet scheduler
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-pie_packet_sch.patch
-
-	# Grsecurity-patches
 ifneq "$(KCFG)" "-headers"
+	# Grsecurity-patches
 	cd $(DIR_APP) && xz -c -d $(DIR_DL)/$(GRS_PATCHES) | patch -Np1
 	cd $(DIR_APP) && rm localversion-grsec
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
 endif
 
-	# Remove ACPI Blacklist message
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6-silence-acpi-blacklist.patch
-
 	# DVB Patches
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.9-dvbsky-wot2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-dvbsky.patch
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
 
 	# Wlan Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-drivers-3.8.3-ath_ignore_eeprom_regdomain.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.34-iwlwifi-noibss_only_on_radar_chan.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-iwlwifi-noibss_only_on_radar_chan.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.37-rt2800usb_add_dlink_dwa137_usbid.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.55-rt2800usb-change_queue_warn_to_debug.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-add_libertas_uap.patch
 
 	# mISDN Patches
@@ -148,7 +147,7 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb-reportl1down.patch
 
 	# Add LED trigger
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.9-ledtrig-netdev-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-ledtrig_netdev.patch
 
 	# cs5535audio spams syslog if no ac97 was present (geos router)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.30_cs5535audio_fix_logspam_on_geos.patch
@@ -160,81 +159,16 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33_ipg-fix-driver-name.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
-	# Moschip 7830 link detection
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.y-usbnet_mcs7830_rework_link_detect.patch
-
-
 ifeq "$(KCFG)" "-kirkwood"
-	# Add dreamplug,guruplug and icy 62x0  support on ARM-kirkwood
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-arm_kirkwood_setups.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-mv_cesa_disable_failing_hmac_sha1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-kirkwood_legacy_boot.patch
 endif
 
 ifeq "$(KCFG)" "-multi"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.27-fs-exec-atomic64-operand-requires-impossible-reload.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-smsc95xx-add_mac_addr_param.patch
 
-	# Patchset for Omap (beagle/panda).
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/0002-omap2-twl-common-Add-default-power-configuration.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/sakoman/0001-OMAP-DSS2-add-bootarg-for-selecting-svideo.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/sakoman/0002-video-add-timings-for-hd720.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0001-Beagle-expansion-add-buddy-param-for-expansionboard-.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0002-Beagle-expansion-add-zippy.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0003-Beagle-expansion-add-zippy2.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0004-Beagle-expansion-add-trainer.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0005-Beagle-expansion-add-CircuitCo-ulcd-Support.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0006-Beagle-expansion-add-wifi.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0007-Beagle-expansion-add-beaglefpga.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0008-Beagle-expansion-add-spidev.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0009-Beagle-expansion-add-Aptina-li5m03-camera.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0010-Beagle-expansion-add-LSR-COM6L-Adapter-Board.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/expansion/0011-Beagle-expansion-LSR-COM6L-Adapter-Board-also-initia.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0001-meego-modedb-add-Toshiba-LTA070B220F-800x480-support.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0002-backlight-Add-TLC59108-backlight-control-driver.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0003-tlc59108-adjust-for-beagleboard-uLCD7.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0004-zeroMAP-Open-your-eyes.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0005-ARM-OMAP-Beagle-use-TWL4030-generic-reset-script.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/beagle/0006-DSS2-use-DSI-PLL-for-DPI-with-OMAP3.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0001-panda-fix-wl12xx-regulator.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0002-ti-st-st-kim-fixing-firmware-path.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0003-Panda-expansion-add-spidev.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0004-HACK-PandaES-disable-cpufreq-so-board-will-boot.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0006-ARM-hw_breakpoint-Enable-debug-powerdown-only-if-sys.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0007-Revert-regulator-twl-Remove-TWL6030_FIXED_RESOURCE.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0008-Revert-regulator-twl-Remove-another-unused-variable-.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0009-Revert-regulator-twl-Remove-references-to-the-twl403.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0010-Revert-regulator-twl-Remove-references-to-32kHz-cloc.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/panda/0011-panda-spidev-setup-pinmux.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/omap/sgx/0001-arm-Export-cache-flush-management-symbols-when-MULTI.patch
-
-	# Patchset for Wandboard.
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0001-imx6qdl-wandboard-dts-backport.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0002-ARM-dts-imx6qdl-wandboard-add-gpio-lines-to-wandboar.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0003-ARM-dts-imx6qdl-wandboard-Add-support-for-i2c1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0004-ARM-dts-wandboard-add-binding-for-wand-rfkill-driver.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/dts/0005-ARM-dts-imx6qdl-add-pcie-device-node.patch
-
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0001-i2c-imx-retry-on-NAK.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0002-i.MX6-Wandboard-add-CKO1-clock-output.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0003-thermal-add-imx-thermal-driver-support.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0004-ARM-i.MX6-Wandboard-add-wifi-bt-rfkill-driver.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0005-Add-IMX6Q-AHCI-support.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0006-imx-Add-IMX53-AHCI-support.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0007-imx6-enable-sata-clk-if-SATA_AHCI_PLATFORM.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0008-ARM-imx6q-update-the-sata-bits-definitions-of-gpr13.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0009-ahci_imx-add-ahci-sata-support-on-imx-platforms.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0010-ahci_imx-depend-on-CONFIG_MFD_SYSCON.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0011-add-pcie-designware.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0012-pcie-backport-fixes.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0013-of-pci-Provide-support-for-parsing-PCI-DT-ranges-pro.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0014-ARM-imx6q-Add-PCIe-bits-to-GPR-syscon-definition.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0015-PCI-imx6-Add-support-for-i.MX6-PCIe-controller.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0016-imx6-pci-tweaks.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0017-ARM-imx-Add-LVDS-general-purpose-clocks-to-i.MX6Q.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/wandboard/imx/0018-ARM-imx6q-clock-and-Kconfig-update-for-PCIe-support.patch
-
-	# Patchset for Compulab Utilite.
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel/utilite/linux-3.10-compulab-utilite-support.patch
+	# Apply Arm7-multiarch kernel patches.
+	cd $(DIR_APP) && xzcat $(DIR_DL)/arm7-multi-patches-$(A7M_PATCHES).patch.xz | patch -Np1
 endif
 
 ifeq "$(KCFG)" "-rpi"
@@ -277,13 +211,12 @@ ifeq "$(KCFG)" "-rpi"
 else
 	cd $(DIR_APP) && make $(MAKETUNING) bzImage modules
 	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-	ln -sf vmlinuz-$(VER)-$(VERSUFIX) /boot/vmlinuz-$(VERSUFIX)
 endif
 endif
 endif
+
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
-	ln -sf System.map-$(VER)-$(VERSUFIX) /boot/System.map-$(VERSUFIX)
 	cd $(DIR_APP) && make $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make $(MAKETUNING) firmware_install
 
@@ -321,6 +254,10 @@ ifeq "$(LASTKERNEL)" "1"
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf
 endif
 endif
+
+	#force new build of external modules and initrd if the kernel was rebuild
+	-rm -f /usr/src/log/*-kmod-$(VER)-$(VERSUFIX)
+	-rm -f /usr/src/log/linux-initrd-$(VER)-$(VERSUFIX)
 
 	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
 	@$(POSTBUILD)

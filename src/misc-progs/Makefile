@@ -18,10 +18,9 @@
 #                                                                             #
 ###############################################################################
 
-CC=gcc 
-CFLAGS=-O2 -Wall
-
-COMPILE=$(CC) $(CFLAGS)
+CC      = gcc
+CFLAGS ?= -O2 -Wall
+LIBS    = -lsmooth -lnewt
 
 PROGS = iowrap
 SUID_PROGS = squidctrl sshctrl ipfirereboot \
@@ -35,128 +34,24 @@ SUID_PROGS = squidctrl sshctrl ipfirereboot \
 	getconntracktable wirelessclient dnsmasqctrl torctrl
 SUID_UPDX = updxsetperms
 
-install : all
+OBJS = $(patsubst %,%.o,$(PROGS) $(SUID_PROGS))
+
+install: all
 	install -m 755  $(PROGS) /usr/local/bin
 	install -m 4750 -g nobody $(SUID_PROGS) /usr/local/bin
 
-all : $(PROGS) $(SUID_PROGS)
+all: $(PROGS) $(SUID_PROGS)
 
-clean : 
+clean:
 	-rm -f $(PROGS) $(SUID_PROGS) *.o core
 
 ######
 
-% : %.c
-	$(COMPILE) $< setuid.o -o $@
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 setuid.o: setuid.c setuid.h
-	$(COMPILE) $< -c -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(SUID_PROGS): setuid.o
-
-$(PROGS): setuid.o
-
-logwatch: logwatch.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ logwatch.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-openvpnctrl: openvpnctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ openvpnctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-qosctrl: qosctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ qosctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-redctrl: redctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ redctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-extrahdctrl: extrahdctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ extrahdctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-	
-upnpctrl: upnpctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ upnpctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-sambactrl: sambactrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ sambactrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-tripwirectrl: tripwirectrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ tripwirectrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-	
-smartctrl: smartctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ smartctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-clamavctrl: clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ clamavctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-firewallctrl: firewallctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ firewallctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-timectrl: timectrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ timectrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-launch-ether-wake: launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ launch-ether-wake.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-rebuildhosts: rebuildhosts.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ rebuildhosts.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-applejuicectrl: applejuicectrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ applejuicectrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-dhcpctrl: dhcpctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ dhcpctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-sshctrl: sshctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ sshctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-squidctrl: squidctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ squidctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-snortctrl: snortctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ snortctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-wirelessctrl: wirelessctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ wirelessctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-ipsecctrl: ipsecctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ ipsecctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-getipstat: getipstat.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ getipstat.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-pakfire: pakfire.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ pakfire.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-mpfirectrl: mpfirectrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ mpfirectrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-backupctrl: backupctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ backupctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-addonctrl: addonctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ addonctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-syslogdctrl: syslogdctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ syslogdctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-wlanapctrl: wlanapctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ wlanapctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-setaliases: setaliases.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ setaliases.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-fireinfoctrl: fireinfoctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ fireinfoctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-rebuildroutes: rebuildroutes.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ rebuildroutes.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-getconntracktable: getconntracktable.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ getconntracktable.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-wirelessclient: wirelessclient.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ wirelessclient.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-dnsmasqctrl: dnsmasqctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ dnsmasqctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
-
-torctrl: torctrl.c setuid.o ../install+setup/libsmooth/varval.o
-	$(COMPILE) -I../install+setup/libsmooth/ torctrl.c setuid.o ../install+setup/libsmooth/varval.o -o $@
+$(PROGS) $(SUID_PROGS): setuid.o | $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.o $< $(LIBS)

@@ -1,0 +1,70 @@
+From 810fe43289f5b003cbf80ebb1d9a79f52a767cdb Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Mon, 15 Dec 2014 22:48:26 +0100
+Subject: [PATCH 3/3] Revert vendor/model for ARM to old behaviour
+
+---
+ src/fireinfo/system.py | 33 +++++++++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 4 deletions(-)
+
+diff --git a/src/fireinfo/system.py b/src/fireinfo/system.py
+index 195832e9f7eb..ce33837af747 100644
+--- a/src/fireinfo/system.py
++++ b/src/fireinfo/system.py
+@@ -304,6 +304,27 @@ class System(object):
+ 		"""
+ 		return read_from_file("/sys/class/dmi/id/bios_vendor")
+ 
++	def vendor_model_tuple(self):
++		try:
++			s = self.__cpuinfo["Hardware"]
++		except KeyError:
++			return (None, None)
++
++		if s.startswith("ARM-Versatile"):
++			return ("ARM", s)
++
++		try:
++			v, m = s.split(" ", 1)
++		except ValueError:
++			if s.startswith("BCM"):
++				v = "Broadcom"
++				m = s
++			else:
++				v = None
++				m = s
++
++		return v, m
++
+ 	@property
+ 	def vendor(self):
+ 		"""
+@@ -316,10 +337,10 @@ class System(object):
+ 				break
+ 
+ 		if ret is None:
+-			try:
+-				return self.__cpuinfo["Hardware"]
+-			except KeyError:
+-				pass
++			if os.path.exists("/proc/device-tree"):
++				ret = self.__cpuinfo.get("Hardware", None)
++			else:
++				ret, m = self.vendor_model_tuple()
+ 
+ 		return ret
+ 
+@@ -340,6 +361,10 @@ class System(object):
+ 			# replace the NULL byte with which the DT string ends
+ 			ret = ret.replace(u"\u0000", "")
+ 
++		# Fall back to read /proc/cpuinfo
++		if not ret:
++			v, ret = self.vendor_model_tuple()
++
+ 		return ret
+ 
+ 	@property
+-- 
+1.9.3
+
