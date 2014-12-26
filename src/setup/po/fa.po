@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# hashem ghavami <hashem.wolf@gmail.com>, 2014
 # Khalil Delavaran <khalil.delavaran@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-08-21 15:13+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"PO-Revision-Date: 2014-11-12 18:28+0000\n"
+"Last-Translator: Khalil Delavaran <khalil.delavaran@gmail.com>\n"
 "Language-Team: Persian (http://www.transifex.com/projects/p/ipfire/language/fa/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -52,7 +53,7 @@ msgstr "پسوند نام دامنه:"
 #: networking.c:442 networking.c:552 networking.c:603 networking.c:610
 #: networking.c:713 timezone.c:63
 msgid "Unable to open settings file"
-msgstr ""
+msgstr "نمی توان فایل پیکربندی را باز کرد"
 
 #: dhcp.c:111
 msgid "DHCP server configuration"
@@ -60,7 +61,7 @@ msgstr "پیکربندی سرور DHCP"
 
 #: dhcp.c:116
 msgid "Configure the DHCP server by entering the settings information."
-msgstr ""
+msgstr "سرویس دهنده DHcp  با داده و تنظیمات وارد شده پیکربندی شد"
 
 #: dhcp.c:125
 msgid "Enabled"
@@ -85,7 +86,7 @@ msgstr "نمی خواهم"
 msgid ""
 "The following fields are invalid:\n"
 "\n"
-msgstr ""
+msgstr "شاخص های زیر اشتباه هستند:\n\n"
 
 #: dhcp.c:159
 msgid "Start address"
@@ -129,7 +130,7 @@ msgstr "نام دامنه نمی تواند فاصله داشته باشد."
 
 #: domainname.c:53
 msgid "Domain name may only contain letters, numbers, hyphens and periods."
-msgstr ""
+msgstr "نام دامنه ممکن است شامل حروف، اعداد، خط فاصله و دوره های باشذ"
 
 #: hostname.c:46 main.c:69
 msgid "Hostname"
@@ -149,23 +150,23 @@ msgstr "نام هاست نمیتواند فاصله داشته باشد."
 
 #: hostname.c:58
 msgid "Hostname may only contain letters, numbers and hyphens."
-msgstr ""
+msgstr "نام هاست ممکن است شامل حروف، اعداد و خط فاصله باشد."
 
 #: keymap.c:84 main.c:67
 msgid "Keyboard mapping"
-msgstr ""
+msgstr "نگاشت کیبورد"
 
 #: keymap.c:85
 msgid "Choose the type of keyboard you are using from the list below."
-msgstr ""
+msgstr "نوع کی بورد خود را از لیست زیر گزینش کنید."
 
 #: main.c:68 timezone.c:77
 msgid "Timezone"
-msgstr ""
+msgstr "منطقه زمانی"
 
 #: main.c:71 networking.c:110 networking.c:115 networking.c:447
 msgid "Networking"
-msgstr ""
+msgstr "شبکه بندی"
 
 #: main.c:72 misc.c:147
 msgid "ISDN"
@@ -181,15 +182,15 @@ msgstr "گذر واژه 'admin'"
 
 #: main.c:90
 msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
-msgstr ""
+msgstr "              <Tab>/<Alt-Tab> میان عنصری   |  <Space> گزینش"
 
 #: main.c:97
 msgid "Section menu"
-msgstr ""
+msgstr "برش منو"
 
 #: main.c:98
 msgid "Select the item you wish to configure."
-msgstr ""
+msgstr "اینترفیسی که قصد پیکربندی دوباره آنرا دارید گزینش کنید."
 
 #: main.c:99
 msgid "Quit"
@@ -207,50 +208,50 @@ msgstr "گوشزد"
 msgid ""
 "Initial setup was not entirely complete. You must ensure that Setup is "
 "properly finished by running setup again at the shell."
-msgstr ""
+msgstr "راه اندازی به پایان نرسیده است. شما با اجرای دوباره راه اندازی در خط فرمان باید مطمئن شوید که راه اندازی پایان یافته است."
 
 #: misc.c:62
 #, c-format
 msgid "Unable to write %s/main/hostname.conf"
-msgstr ""
+msgstr "نمی توان %s/main/hostname.conf را نوشت."
 
 #: misc.c:71
 msgid "Unable to open main hosts file."
-msgstr ""
+msgstr "نمی توان فایل هاست های اصلی را باز کرد."
 
 #: misc.c:76
 msgid "Unable to write /etc/hosts."
-msgstr ""
+msgstr "نمی توان در /etc/hosts نوشت."
 
 #: misc.c:117
 msgid "Unable to write /etc/hosts.deny."
-msgstr ""
+msgstr "نمی توان در /etc/hosts.deny نوشت."
 
 #: misc.c:125
 msgid "Unable to write /etc/hosts.allow."
-msgstr ""
+msgstr "نمی توان در /etc/hosts.allow نوشت."
 
 #: misc.c:136
 msgid "Unable to set hostname."
-msgstr ""
+msgstr "نمی توان نام هاست را پیکربندی کرد."
 
 #: misc.c:147
 msgid "Scanning and configuring ISDN devices."
-msgstr ""
+msgstr "پویش و پیکربندی دستگاه های ISDN."
 
 #: misc.c:148
 msgid "Unable to scan for ISDN devices."
-msgstr ""
+msgstr "نمی توان دستگاههای ISDN را پویش کرد."
 
 #: netstuff.c:86
 #, c-format
 msgid "Interface - %s"
-msgstr ""
+msgstr "اینترفیس - %s"
 
 #: netstuff.c:91
 #, c-format
 msgid "Enter the IP address information for the %s interface."
-msgstr ""
+msgstr "داده های آدرس IP برای اینترفیس %s را بنویسید."
 
 #: netstuff.c:103
 msgid "Static"
@@ -270,7 +271,7 @@ msgstr "نام هاست DHCP:"
 
 #: netstuff.c:115
 msgid "Force DHCP MTU:"
-msgstr ""
+msgstr "DHCP MTU به زور:"
 
 #: netstuff.c:134
 msgid "IP address:"
@@ -282,7 +283,7 @@ msgstr "ماسک شبکه:"
 
 #: netstuff.c:173 networking.c:749
 msgid "The following fields are invalid:"
-msgstr ""
+msgstr "شاخص های زیر اشتباه هستند"
 
 #: netstuff.c:183
 msgid "IP address"
@@ -298,16 +299,16 @@ msgstr "نام هاست DHCP"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
-msgstr ""
+msgstr "تنظیم نشده"
 
 #: netstuff.c:669
 #, c-format
 msgid "Please choose a networkcard for the following interface - %s."
-msgstr ""
+msgstr "خواهشمند است یک کارت شبکه برای اینترفیس %s زیر گزینش کنید."
 
 #: netstuff.c:672
 msgid "Extended Network Menu"
-msgstr ""
+msgstr "منوی گسترده شبکه"
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
@@ -315,28 +316,28 @@ msgstr "گزینش"
 
 #: netstuff.c:673
 msgid "Identify"
-msgstr ""
+msgstr "شناختن"
 
 #: netstuff.c:678
 msgid "Device Identification"
-msgstr ""
+msgstr "شناسایی دستگاه"
 
 #: netstuff.c:678
 msgid "The lights on the selected port should flash now for 10 seconds..."
-msgstr ""
+msgstr "چراغ های پورت گزینش شده، هم اکنون باید برای 10 ثانیه چشمک بزنند..."
 
 #: netstuff.c:679
 msgid "Identification is not supported by this interface."
-msgstr ""
+msgstr "این اینترفیس شناسایی را پشتیبانی نمی کند."
 
 #: netstuff.c:691
 msgid "There are no unassigned interfaces on your system."
-msgstr ""
+msgstr "هیچ رابط اختصاص داده نشده بر روی سیستم شما وجود ندارد."
 
 #: netstuff.c:732
 #, c-format
 msgid "Do you really want to remove the assigned %s interface?"
-msgstr ""
+msgstr "آیا شما واقعا می خواهید اینترفیس %s  اختصاص داده شده را پاک کنید؟"
 
 #: netstuff.c:755
 msgid "Select network driver"
@@ -344,35 +345,35 @@ msgstr "گزینش راه انداز شبکه"
 
 #: netstuff.c:755
 msgid "Set additional module parameters"
-msgstr ""
+msgstr "پیکربندی پارامترهای افزوده ماژول"
 
 #: netstuff.c:762
 msgid "Loading module..."
-msgstr ""
+msgstr "بارگذاری ماژول..."
 
 #: netstuff.c:777
 msgid "Unable to load driver module."
-msgstr ""
+msgstr "نمی توان راه انداز ماژول را بارگذاری کرد."
 
 #: netstuff.c:780
 msgid "Module name cannot be blank."
-msgstr ""
+msgstr "نام ماژول نمی تواند پوچ باشد."
 
 #: networking.c:110
 msgid "Stopping network..."
-msgstr ""
+msgstr "از کار انداختن شبکه..."
 
 #: networking.c:115
 msgid "Restarting network..."
-msgstr ""
+msgstr "شروع دوباره شبکه..."
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
-msgstr ""
+msgstr "به اینترفیس سبز میزانی داده نشده است."
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
-msgstr ""
+msgstr "آدرس IP بر روی سبز یافت نشد."
 
 #: networking.c:163
 msgid "Error"
@@ -384,43 +385,43 @@ msgstr "نادیده گرفتن"
 
 #: networking.c:164
 msgid "No RED interface assigned."
-msgstr ""
+msgstr "برای اینترفیس قرمز میزانی داده نشده است."
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
-msgstr ""
+msgstr "آدرس IP بر روی قرمز یافت نشد."
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
-msgstr ""
+msgstr "برای اینترفیس نارنجی میزانی داده نشده است."
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
-msgstr ""
+msgstr "آدرس IP بر روی نارنجی یافت نشد."
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
-msgstr ""
+msgstr "برای اینترفیس آبی میزانی داده نشده است."
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
-msgstr ""
+msgstr "آدرس IP بر روی آبی یافت نشد."
 
 #: networking.c:217
 msgid "Misssing DNS."
-msgstr ""
+msgstr "DNS یافت نشد."
 
 #: networking.c:224
 msgid "Missing Default Gateway."
-msgstr ""
+msgstr "Gateway پیش پندار یافت نشد."
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
-msgstr ""
+msgstr "چگونگی پیکربندی شبکه"
 
 #: networking.c:238 networking.c:409
 msgid "Drivers and card assignments"
-msgstr ""
+msgstr "راه انداز ها و تکالیف کارت ها"
 
 #: networking.c:239 networking.c:640
 msgid "Address settings"
@@ -428,11 +429,11 @@ msgstr "پیکربندی آدرس"
 
 #: networking.c:240 networking.c:743
 msgid "DNS and Gateway settings"
-msgstr ""
+msgstr "پیکربندی DNS و Gateway"
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
-msgstr ""
+msgstr "وقتی پیکربندی کامل شد سرویس شبکه در صورت نیاز راه اندازی مجدد خواهد شد"
 
 #: networking.c:267
 #, c-format
@@ -440,11 +441,11 @@ msgid ""
 "Current config: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "پیکربندی جاری: %s\n\n%s"
 
 #: networking.c:268
 msgid "Network configuration menu"
-msgstr ""
+msgstr "منوی پیکربندی شبکه"
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
@@ -457,7 +458,7 @@ msgid ""
 "list those interfaces which have ethernet attached. If you change this "
 "setting, a network restart will be required, and you will have to "
 "reconfigure the network driver assignments."
-msgstr ""
+msgstr "پیکربندی شبکه برای %s را گزینش کنید. لیست روش های پیکربندی زیر آن اینترفیس ها، وقتیکه به شبکه متصل شده اند. اگر شما پیکربندی را دگرگون سازید، یک شبکه نیاز به خاموش روشن دارد، و شما راه انداز شبکه اختصاص داده شده را دوباره پیکربندی کنید."
 
 #: networking.c:307
 #, c-format
@@ -465,7 +466,7 @@ msgid ""
 "Not enough netcards for your choice.\n"
 "\n"
 "Needed: %d - Available: %d\n"
-msgstr ""
+msgstr "کارتهای شبکه برای گزینش شما کافی نیست.\n\nنیازمند: %d - در دسترس: %d\n"
 
 #: networking.c:359
 msgid ""
@@ -475,21 +476,21 @@ msgstr ""
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
-msgstr ""
+msgstr "ایا قصد دارید این تنظیمات تغییر دهید؟"
 
 #: networking.c:447
 msgid "Restarting non-local network..."
-msgstr ""
+msgstr "شروع دوباره شبکه..."
 
 #: networking.c:464
 msgid ""
 "Please choose the interface you wish to change.\n"
 "\n"
-msgstr ""
+msgstr "خواهشمند است اینترفیسی را که می خواهید دگرگون سازید را گزینش کنید.\n\n"
 
 #: networking.c:519
 msgid "Assigned Cards"
-msgstr ""
+msgstr "کارت های واگذار شده"
 
 #: networking.c:520
 msgid "Remove"
@@ -506,7 +507,7 @@ msgstr ""
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
-msgstr ""
+msgstr "اینترفیس که قصد پیکربندی مجدد را دارید انتخاب کنید"
 
 #: networking.c:729
 msgid "Default gateway:"
@@ -524,12 +525,12 @@ msgstr "Gateway پیش پندار"
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
-msgstr ""
+msgstr "دومین DNS بدون پیکربندی نخستین DNS"
 
 #: passwords.c:33
 msgid ""
 "Enter the 'root' user password. Login as this user for commandline access."
-msgstr ""
+msgstr "رمز عبور کاربر ریشه را وارد کنید.این کاربر سطح دسترسی خط فرمان را فراهم میکند"
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
@@ -558,7 +559,7 @@ msgstr "پیکربندی %s 'admin' گذر واژه کاربر..."
 #: passwords.c:62
 #, c-format
 msgid "Problem setting %s 'admin' user password."
-msgstr ""
+msgstr "ایراد در پیکربندی %s گذر واژه کاربر 'admin'"
 
 #: passwords.c:76
 msgid "Password:"
@@ -582,4 +583,4 @@ msgstr "در گذر واژه نمی توان فاصله گذاشت."
 
 #: timezone.c:77
 msgid "Choose the timezone you are in from the list below."
-msgstr ""
+msgstr " از لیست منطقه زمانی خود را انتخاب کنید"
