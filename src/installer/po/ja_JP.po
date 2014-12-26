@@ -3,54 +3,52 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Kudret Emre <kudretemre@hotmail.com.tr>, 2014
-# Kudret Emre <kudretemre@hotmail.com.tr>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-12-08 17:24+0000\n"
-"Last-Translator: Kudret Emre <kudretemre@hotmail.com.tr>\n"
-"Language-Team: Turkish (http://www.transifex.com/projects/p/ipfire/language/tr/)\n"
+"PO-Revision-Date: 2014-07-31 09:39+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Japanese (Japan) (http://www.transifex.com/projects/p/ipfire/language/ja_JP/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: tr\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: ja_JP\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
 msgid "OK"
-msgstr "Tamam"
+msgstr ""
 
 #: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
 #: main.c:702
 msgid "Cancel"
-msgstr "İptal"
+msgstr ""
 
 #: main.c:176
 msgid "I accept this license"
-msgstr "Lisansı kabul ediyorum"
+msgstr ""
 
 #: main.c:384
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr "Uyarı: Katılımsız kurulum 10 saniye içinde başlayacak..."
+msgstr ""
 
 #: main.c:403
 msgid "Language selection"
-msgstr "Dil seçimi"
+msgstr ""
 
 #: main.c:403
 msgid "Select the language you wish to use for the installation."
-msgstr "Yükleme için istediğiniz dili seçin."
+msgstr ""
 
 #: main.c:418
 msgid "Unattended mode"
-msgstr "Katılımsız kurulum modu"
+msgstr ""
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
-msgstr "<Tab>/<Alt-Tab> elementler arası geçiş | <Space> seç | <F12> sonraki ekran"
+msgstr ""
 
 #: main.c:426
 #, c-format
@@ -58,16 +56,16 @@ msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr "%s yükleme programına hoşgeldiniz.\n\nİlerleyen ekranların herhangi birinde İptal'e tıklamanız bilgisayarınızı yeniden başlatır."
+msgstr ""
 
 #: main.c:428
 msgid "Start installation"
-msgstr "Yüklemeyi başlat"
+msgstr ""
 
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr "Yükleyici şimdi yükleme dosyasını indirmeyi deneyecek."
+msgstr ""
 
 #: main.c:452
 #, c-format
@@ -75,7 +73,7 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr "Hiçbir kaynak sürücüsü bulunamadı.\n\nGerekli yükleme dosyasını indirmeyi deneyebilirsiniz."
+msgstr ""
 
 #: main.c:456
 msgid ""
@@ -85,31 +83,31 @@ msgstr ""
 
 #: main.c:460
 msgid "Download installation image"
-msgstr "Yükleme dosyasını indir"
+msgstr ""
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
-msgstr "Ağa bağlanmaya çalışılıyor (DHCP)..."
+msgstr ""
 
 #: main.c:484
 msgid ""
 "Networking could not be started but is required to go on with the installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr "Yüklemenin devam etmesi için ağ bağlantısı gereklidir fakat başlatılamıyor.\n\nLütfen makinenizi bir DHCP sunucu ile ağa bağlayıp tekrar deneyin."
+msgstr ""
 
 #: main.c:487 main.c:516
 msgid "Retry"
-msgstr "Tekrar dene"
+msgstr ""
 
 #: main.c:501
 msgid "Downloading installation image..."
-msgstr "Yükleme dosyası indiriliyor..."
+msgstr ""
 
 #: main.c:510
 #, c-format
 msgid "MD5 checksum mismatch"
-msgstr "MD5 checksum uyuşmuyor"
+msgstr ""
 
 #: main.c:513
 #, c-format
@@ -118,7 +116,7 @@ msgid ""
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr "Yükleme dosyası indirilemedi.\nSebep: %s\n\n%s"
+msgstr ""
 
 #: main.c:528
 #, c-format
@@ -129,33 +127,33 @@ msgstr ""
 
 #: main.c:543
 msgid "License Agreement"
-msgstr "Lisans Anlaşması"
+msgstr ""
 
 #: main.c:544
 msgid "License not accepted!"
-msgstr "Lisans kabul edilmedi!"
+msgstr ""
 
 #: main.c:566
 msgid "No hard disk found."
-msgstr "Sabit disk bulunamadı."
+msgstr ""
 
 #: main.c:587
 msgid "Disk Selection"
-msgstr "Disk Seçimi"
+msgstr ""
 
 #: main.c:588
 msgid ""
 "Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
-msgstr "IPFire'ı yüklemek istediğiniz disk(ler)i seçin. Diskler önce bölümlenecek, sonra bölümlere dosya sistemi oluşturulacaktır.\n\nDİSKTEKİ TÜM VERİLER SİLİNECEKTİR."
+msgstr ""
 
 #: main.c:599
 msgid ""
 "No disk has been selected.\n"
 "\n"
 "Please select one or more disks you want to install IPFire on."
-msgstr "Hiçbir disk seçilmedi.\n\nLütfen IPFire'ı yüklemek için bir veya daha fazla disk seçin."
+msgstr ""
 
 #: main.c:617
 #, c-format
@@ -165,15 +163,15 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "Yükleme programı şimdi seçilen diski hazırlayacak:\n\n%s\n\nDevam etmek istiyor musunuz?"
+msgstr ""
 
 #: main.c:619
 msgid "Disk Setup"
-msgstr "Disk Kurulumu"
+msgstr ""
 
 #: main.c:620 main.c:630
 msgid "Delete all data"
-msgstr "Tüm veriyi sil"
+msgstr ""
 
 #: main.c:627
 #, c-format
@@ -184,131 +182,131 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr "Yükleme programı şimdi seçilen sabit disk üzerinde bir RAID yapılandırması kuracak:\n\n%s\n%s\n\nDevam etmek istiyor musunuz?"
+msgstr ""
 
 #: main.c:629
 msgid "RAID Setup"
-msgstr "RAID Kurulumu"
+msgstr ""
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
-msgstr "Disk yapılandırmanız desteklenmiyor."
+msgstr ""
 
 #: main.c:655
 msgid "Your harddisk is too small."
-msgstr "Sabit diskiniz çok küçük."
+msgstr ""
 
 #: main.c:671
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
-msgstr "Sabit diskiniz çok küçük, fakat takas bölümü olmadan devam edebilirsiniz."
+msgstr ""
 
 #: main.c:684
 msgid "ext4 Filesystem"
-msgstr "ext4 Dosya sistemi"
+msgstr ""
 
 #: main.c:685
 msgid "ext4 Filesystem without journal"
-msgstr "ext4 Dosya sistemi - günlüksüz"
+msgstr ""
 
 #: main.c:686
 msgid "XFS Filesystem"
-msgstr "XFS Dosya sistemi"
+msgstr ""
 
 #: main.c:687
 msgid "ReiserFS Filesystem"
-msgstr "ReiserFS Dosya sistemi"
+msgstr ""
 
 #: main.c:701
 msgid "Filesystem Selection"
-msgstr "Dosya sistemi Seçimi"
+msgstr ""
 
 #: main.c:701
 msgid "Please choose your filesystem:"
-msgstr "Lütfen dosya sisteminizi seçin:"
+msgstr ""
 
 #: main.c:712
 msgid "Building RAID..."
-msgstr "RAID oluşturuluyor..."
+msgstr ""
 
 #: main.c:716
 msgid "Unable to build the RAID."
-msgstr "RAID oluşturulamıyor."
+msgstr ""
 
 #: main.c:728
 msgid "Partitioning disk..."
-msgstr "Disk bölümleniyor..."
+msgstr ""
 
 #: main.c:732
 msgid "Unable to partition the disk."
-msgstr "Disk bölümlendirilemiyor."
+msgstr ""
 
 #: main.c:739
 msgid "Creating filesystems..."
-msgstr "Dosya sistemleri oluşturuluyor..."
+msgstr ""
 
 #: main.c:743
 msgid "Unable to create filesystems."
-msgstr "Dosya sistemleri oluşturulamıyor."
+msgstr ""
 
 #: main.c:749
 msgid "Unable to mount filesystems."
-msgstr "Dosya sistemleri bağlanamıyor."
+msgstr ""
 
 #: main.c:760
 msgid "Installing the system..."
-msgstr "Sistem yükleniyor..."
+msgstr ""
 
 #: main.c:761
 msgid "Unable to install the system."
-msgstr "Sistem yüklenemiyor."
+msgstr ""
 
 #: main.c:777
 msgid "Installing the language cache..."
-msgstr "Dil ön blleği yükleniyor..."
+msgstr ""
 
 #: main.c:778
 msgid "Unable to install the language cache."
-msgstr "Dil ön belleği yüklenemiyor."
+msgstr ""
 
 #: main.c:783
 msgid "Installing the bootloader..."
-msgstr "bootloader yükleniyor..."
+msgstr ""
 
 #: main.c:790
 msgid "Unable to open /etc/default/grub for writing."
-msgstr "/etc/default/grub yazma işlemi için açılamıyor."
+msgstr ""
 
 #: main.c:812
 msgid "Unable to install the bootloader."
-msgstr "bootloader yüklenemiyor."
+msgstr ""
 
 #: main.c:826
 msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr "Yükleme dosyasında bir yedekleme dosyası bulundu.\n\nYedeği geri yüklemek ister misiniz?"
+msgstr ""
 
 #: main.c:827
 msgid "Yes"
-msgstr "Evet"
+msgstr ""
 
 #: main.c:827
 msgid "No"
-msgstr "Hayır"
+msgstr ""
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr "Yedek dosyası geri yüklenirken bir hata oluştu."
+msgstr ""
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr "post-install betiği çalıştırılıyor..."
+msgstr ""
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr "post-install betiği başarısız oldu."
+msgstr ""
 
 #: main.c:877
 #, c-format
@@ -316,16 +314,16 @@ msgid ""
 "%s was successfully installed!\n"
 "\n"
 "Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr "%s başarıyla yüklendi!\n\nLütfen yükleme ortamlarını bu sistemden çıkarın ve yeniden başlatma butonuna tıklayın. Sistem yeniden başlatıldığında ağ ve sistem şifrenizi ayarlamanız istenecek. Daha sonra web yapılandırma konsoluna gitmek için yarayıcınızdan https://%s:444 (veya %s yerine ne isim verdiyseniz) adresine gidin."
+msgstr ""
 
 #: main.c:882
 msgid "Congratulations!"
-msgstr "Tebrikler!"
+msgstr ""
 
 #: main.c:882
 msgid "Reboot"
-msgstr "Yeniden başlat."
+msgstr ""
 
 #: main.c:893
 msgid "Setup has failed. Press Ok to reboot."
-msgstr "Kurulum başarısız oldu. Yeniden başlatmak için Tamam'a basın."
+msgstr ""

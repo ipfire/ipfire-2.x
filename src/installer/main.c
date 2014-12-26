@@ -234,22 +234,25 @@ static char* center_string(const char* str, int width) {
 }
 
 #define DEFAULT_LANG "en_US.utf8"
-#define NUM_LANGS 10
+#define NUM_LANGS 13
 
 static struct lang {
 	const char* code;
 	char* name;
 } languages[NUM_LANGS + 1] = {
-	{ "da.utf8",    "Danish (Dansk)" },
-	{ "nl_NL.utf8", "Dutch (Nederlands)" },
-	{ "en_US.utf8", "English" },
-	{ "fr_FR.utf8", "French (Français)" },
-	{ "de_DE.utf8", "German (Deutsch)" },
-	{ "pl_PL.utf8", "Polish (Polski)" },
-	{ "pt_BR.utf8", "Portuguese (Brasil)" },
-	{ "ru_RU.utf8", "Russian (Русский)" },
-	{ "es_ES.utf8", "Spanish (Español)" },
-	{ "tr_TR.utf8", "Turkish (Türkçe)" },
+	{ "fa.utf8",    "فارسی (Persian)" },
+	{ "da.utf8",    "Dansk (Danish)" },
+	{ "es.utf8",    "Español (Spanish)" },
+	{ "en.utf8",    "English" },
+	{ "fr.utf8",    "Français (French)" },
+	{ "hr.utf8",    "Hrvatski (Croatian)" },
+	{ "it.utf8",    "Italiano (Italian)" },
+	{ "de.utf8",    "Deutsch (German)" },
+	{ "nl.utf8",    "Nederlands (Dutch)" },
+	{ "pl.utf8",    "Polski (Polish)" },
+	{ "pt.utf8",    "Portuguese (Brasil)" },
+	{ "ru.utf8",    "Русский (Russian)" },
+	{ "tr.utf8",    "Türkçe (Turkish)" },
 	{ NULL, NULL },
 };
 
