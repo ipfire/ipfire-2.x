@@ -137,6 +137,7 @@ lib/kbd/consolefonts/iso07u-16.psfu.gz
 #lib/kbd/consolefonts/lat0-12.psfu.gz
 #lib/kbd/consolefonts/lat0-14.psfu.gz
 lib/kbd/consolefonts/lat0-16.psfu.gz
+lib/kbd/consolefonts/lat0-sun16.psfu.gz
 #lib/kbd/consolefonts/lat1-08.psfu.gz
 #lib/kbd/consolefonts/lat1-10.psfu.gz
 #lib/kbd/consolefonts/lat1-12.psfu.gz
@@ -147,6 +148,7 @@ lib/kbd/consolefonts/lat1-16.psfu.gz
 #lib/kbd/consolefonts/lat2-12.psfu.gz
 #lib/kbd/consolefonts/lat2-14.psfu.gz
 lib/kbd/consolefonts/lat2-16.psfu.gz
+lib/kbd/consolefonts/lat2-sun16.psfu.gz
 #lib/kbd/consolefonts/lat2a-16.psfu.gz
 #lib/kbd/consolefonts/lat4-08.psfu.gz
 #lib/kbd/consolefonts/lat4-10.psfu.gz
@@ -188,6 +190,7 @@ lib/kbd/consolefonts/lat5-16.psfu.gz
 #lib/kbd/consolefonts/lat9w-12.psfu.gz
 #lib/kbd/consolefonts/lat9w-14.psfu.gz
 #lib/kbd/consolefonts/lat9w-16.psfu.gz
+lib/kbd/consolefonts/latarcyrheb-sun16.psfu.gz
 #lib/kbd/consolefonts/partialfonts
 #lib/kbd/consolefonts/partialfonts/8859-1.a0-ff.08.gz
 #lib/kbd/consolefonts/partialfonts/8859-1.a0-ff.14.gz
