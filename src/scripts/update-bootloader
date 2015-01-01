@@ -23,8 +23,19 @@
 
 GRUB_INSTALL_ARGS="--no-floppy --recheck"
 
-function find_root_device() {
-	# rootfs / rootfs rw 0 0
+function find_bootloader_device() {
+	local mp
+	for mp in /boot /; do
+		if find_device "${mp}"; then
+			return 0
+		fi
+	done
+
+	return 1
+}
+
+function find_device() {
+	local mountpoint="${1}"
 
 	local root
 	local dev mp fs flags rest
@@ -32,29 +43,27 @@ function find_root_device() {
 		# Skip unwanted entries
 		[ "${dev}" = "rootfs" ] && continue
 
-		if [ "${mp}" = "/" ] && [ -b "${dev}" ]; then
+		if [ "${mp}" = "${mountpoint}" ] && [ -b "${dev}" ]; then
 			root="$(basename "${dev}")"
 			break
 		fi
 	done < /proc/mounts
 
 	# Get the actual device from the partition that holds /
-	if [ -n "${root}" ]; then
-		while [ -n "${root}" ]; do
-			if [ -e "/sys/block/${root}" ]; then
-				echo "${root}"
-				return 0
-			fi
+	while [ -n "${root}" ]; do
+		if [ -e "/sys/block/${root}" ]; then
+			echo "${root}"
+			return 0
+		fi
 
-			# Remove last character
-			root="${root::-1}"
-		done
-	fi
+		# Remove last character
+		root="${root::-1}"
+	done
 
 	return 1
 }
 
-function root_device_is_mdraid() {
+function device_is_mdraid() {
 	local device="${1}"
 
 	[ -d "/sys/block/${device}/md" ]
@@ -103,19 +112,19 @@ function grub_install() {
 
 function main() {
 	# Find the root device
-	local device="$(find_root_device)"
+	local device="$(find_bootloader_device)"
 	if [ -z "${device}" ]; then
 		echo "Could not find root device. Aborting." >&2
 		exit 1
 	fi
 
-	echo "Found root device: /dev/${device}"
+	echo "Found bootloader device: /dev/${device}"
 
 	# Update configuration files
 	grub_update_config || exit $?
 
 	# Handle mdraid devices
-	if root_device_is_mdraid "${device}"; then
+	if device_is_mdraid "${device}"; then
 		local slave
 		for slave in $(mdraid_get_slaves "${device}"); do
 			grub_install "/dev/${slave}"
