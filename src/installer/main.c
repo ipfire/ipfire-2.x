@@ -216,19 +216,31 @@ static char* get_system_release() {
 }
 
 static char* center_string(const char* str, int width) {
-	unsigned int str_len = strlen(str);
-
-	unsigned int indent_length = (width - str_len) / 2;
-	char indent[indent_length + 1];
-
-	for (unsigned int i = 0; i < indent_length; i++) {
-		indent[i] = ' ';
-	}
-	indent[indent_length] = '\0';
+	if (!str)
+		return NULL;
 
 	char* string = NULL;
-	if (asprintf(&string, "%s%s", indent, str) < 0)
-		return NULL;
+	unsigned int str_len = strlen(str);
+
+	if (str_len == width) {
+		string = strdup(str);
+
+	} else if (str_len > width) {
+		string = strdup(str);
+		string[width - 1] = '\0';
+
+	} else {
+		unsigned int indent_length = (width - str_len) / 2;
+		char indent[indent_length + 1];
+
+		for (unsigned int i = 0; i < indent_length; i++) {
+			indent[i] = ' ';
+		}
+		indent[indent_length] = '\0';
+
+		if (asprintf(&string, "%s%s", indent, str) < 0)
+			return NULL;
+	}
 
 	return string;
 }
@@ -377,7 +389,8 @@ int main(int argc, char *argv[]) {
 
 	// Draw title
 	char* roottext = center_string(system_release, screen_cols);
-	newtDrawRootText(0, 0, roottext);
+	if (roottext)
+		newtDrawRootText(0, 0, roottext);
 
 	snprintf(title, sizeof(title), "%s - %s", NAME, SLOGAN);
 
@@ -423,7 +436,8 @@ int main(int argc, char *argv[]) {
 	else
 		helpline = center_string(_("<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"), screen_cols);
 
-	newtPushHelpLine(helpline);
+	if (helpline)
+		newtPushHelpLine(helpline);
 
 	if (!config.unattended) {
 		snprintf(message, sizeof(message),
