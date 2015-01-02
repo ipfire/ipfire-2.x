@@ -280,7 +280,7 @@ sub buildrules {
 		# Concurrent connection limit
 		my @ratelimit_options = ();
 
-		if (($elements gt 34) && ($$hash{$key}[32] eq 'ON')) {
+		if (($elements ge 34) && ($$hash{$key}[32] eq 'ON')) {
 			my $conn_limit = $$hash{$key}[33];
 
 			if ($conn_limit ge 1) {
@@ -296,13 +296,13 @@ sub buildrules {
 		}
 
 		# Ratelimit
-		if (($elements gt 37) && ($$hash{$key}[34] eq 'ON')) {
+		if (($elements ge 37) && ($$hash{$key}[34] eq 'ON')) {
 			my $rate_limit = "$$hash{$key}[35]/$$hash{$key}[36]";
 
-				if ($rate_limit) {
-					push(@ratelimit_options, ("-m", "limit"));
-					push(@ratelimit_options, ("--limit", $rate_limit));
-				}
+			if ($rate_limit) {
+				push(@ratelimit_options, ("-m", "limit"));
+				push(@ratelimit_options, ("--limit", $rate_limit));
+			}
 		}
 
 		# Check which protocols are used in this rule and so that we can
