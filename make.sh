@@ -383,6 +383,7 @@ buildipfire() {
   export LOGFILE
   ipfiremake configroot
   ipfiremake backup
+  ipfiremake pkg-config
   ipfiremake libusb
   ipfiremake libusbx
   ipfiremake libpcap
@@ -403,6 +404,8 @@ buildipfire() {
   ipfiremake multipath-tools
   ipfiremake freetype
   ipfiremake grub
+  ipfiremake libmnl
+  ipfiremake iptables
 
   case "${TARGET_ARCH}" in
 	i586)
@@ -412,6 +415,7 @@ buildipfire() {
 		ipfiremake e1000e			KCFG="-pae"
 		ipfiremake igb				KCFG="-pae"
 		ipfiremake ixgbe			KCFG="-pae"
+		ipfiremake xtables-addons		KCFG="-pae"
 		ipfiremake linux-initrd			KCFG="-pae"
 
 		# x86 kernel build
@@ -420,6 +424,7 @@ buildipfire() {
 		ipfiremake e1000e			KCFG=""
 		ipfiremake igb				KCFG=""
 		ipfiremake ixgbe			KCFG=""
+		ipfiremake xtables-addons		KCFG=""
 		ipfiremake linux-initrd			KCFG=""
 		;;
 
@@ -427,6 +432,7 @@ buildipfire() {
 		# arm-rpi (Raspberry Pi) kernel build
 		ipfiremake linux			KCFG="-rpi"
 		ipfiremake cryptodev			KCFG="-rpi"
+		ipfiremake xtables-addons		KCFG="-rpi"
 		ipfiremake linux-initrd			KCFG="-rpi"
 
 		# arm multi platform (Panda, Wandboard ...) kernel build
@@ -435,6 +441,7 @@ buildipfire() {
 		ipfiremake e1000e			KCFG="-multi"
 		ipfiremake igb				KCFG="-multi"
 		ipfiremake ixgbe			KCFG="-multi"
+		ipfiremake xtables-addons		KCFG="-multi"
 		ipfiremake linux-initrd			KCFG="-multi"
 
 		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
@@ -443,10 +450,11 @@ buildipfire() {
 		ipfiremake e1000e			KCFG="-kirkwood"
 		ipfiremake igb				KCFG="-kirkwood"
 		ipfiremake ixgbe			KCFG="-kirkwood"
+		ipfiremake xtables-addons		KCFG="-kirkwood"
 		ipfiremake linux-initrd			KCFG="-kirkwood"
 		;;
   esac
-  ipfiremake pkg-config
+  ipfiremake xtables-addons			USPACE="1"
   ipfiremake openssl
   ipfiremake openssl-compat
   ipfiremake libgpg-error
@@ -521,8 +529,6 @@ buildipfire() {
   ipfiremake mtools
   ipfiremake initscripts
   ipfiremake whatmask
-  ipfiremake libmnl
-  ipfiremake iptables
   ipfiremake conntrack-tools
   ipfiremake libupnp
   ipfiremake ipaddr
