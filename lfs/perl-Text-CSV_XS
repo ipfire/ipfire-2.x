@@ -31,9 +31,6 @@ DL_FILE    = ${THISAPP}.tgz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = perl-Text-CSV_XS
-DEPS       = ""
-PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -52,9 +49,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
