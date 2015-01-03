@@ -17,6 +17,7 @@ package General;
 use strict;
 use Socket;
 use IO::Socket;
+use Locale::Country;
 use Net::SSLeay;
 use Net::IPv4Addr qw(:all);
 $|=1; # line buffering
@@ -1121,6 +1122,32 @@ sub get_red_interface() {
 	chomp $interface;
 
 	return $interface;
+}
+
+# Function to get the county name by a given country code.
+sub get_full_country_name($) {
+	my ($input) = @_;
+	my $name;
+
+	# Remove whitespaces.
+	chomp($input);
+
+	# Convert input into lower case format.
+	my $code = lc($input);
+
+	# Handle country codes which are not in the list.
+	if ($code eq "a1") { $name = "Anonymous Proxy" }
+	elsif ($code eq "a2") { $name = "Satellite Provider" }
+	elsif ($code eq "o1") { $name = "Other Country" }
+	elsif ($code eq "ap") { $name = "Asia/Pacific Region" }
+	elsif ($code eq "eu") { $name = "Europe" }
+	elsif ($code eq "yu") { $name = "Yugoslavia" }
+	else {
+		# Use perl built-in module to get the country code.
+		$name = &Locale::Country::code2country($code);
+	}
+
+	return $name;
 }
 
 1;
