@@ -1192,7 +1192,7 @@
 'generating the root and host certificates may take a long time. it can take up to several minutes on older hardware. please be patient' => 'Generating the root and host certificates may take a long time.  It can take up to several minutes on older hardware. Please be patient.',
 'genkey' => 'Generate PSK',
 'genre' => 'Genre',
-'geoipblock' => 'GeoIP based blocking',
+'geoipblock' => 'GeoIP Block',
 'geoipblock block countries' => 'Block countries',
 'geoipblock configuration' => 'GeoIP Configuration',
 'geoipblock country code' => 'Country Code',
