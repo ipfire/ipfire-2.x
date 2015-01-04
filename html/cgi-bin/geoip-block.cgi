@@ -33,6 +33,7 @@ my $flagdir = "/srv/web/ipfire/html/images/flags";
 # File extension of the country flags.
 my $extension = "png";
 
+my $notice;
 my $settingsfile = "${General::swroot}/firewall/geoipblock";
 
 my %color = ();
@@ -52,7 +53,7 @@ my %cgiparams = ();
 &Header::getcgihash(\%cgiparams);
 
 # Call subfunction to get all available locations.
-my @locations = &get_geoip_locations();
+my @locations = &fwlib::get_geoip_locations();
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	# Check if we want to disable geoipblock.
@@ -75,12 +76,22 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 
 	&General::writehash("$settingsfile", \%settings);
 
-#	&General::firewall_config_changed();
-#
-#	$notice = $Lang::tr{'p2p block save notice'};
+	# Mark the firewall config as changed.
+	&General::firewall_config_changed();
+
+	# Assign reload notice. We directly can use
+	# the notice from p2p block.
+	$notice = $Lang::tr{'p2p block save notice'};
 }
 
 &Header::openpage($Lang::tr{'geoipblock configuration'}, 1, '');
+
+# Print notice that a firewall reload is required.
+if ($notice) {
+	&Header::openbox('100%', 'left', $Lang::tr{'notice'});
+	print "<font class='base'>$notice</font>";
+	&Header::closebox();
+}
 
 # Checkbox pre-selection.
 my $checked;
@@ -258,35 +269,3 @@ print"</form>\n";
 
 &Header::closebigbox();
 &Header::closepage();
-
-sub get_geoip_locations() {
-	# Path to the directory which contains the binary geoip
-	# databases.
-	my $directory="/usr/share/xt_geoip/BE";
-
-	# Array with the final contry codes list.
-	my @contry_codes;
-
-	# Open location and do a directory listing.
-	opendir(DIR, "$directory");
-	my @locations = readdir(DIR);
-	closedir(DIR);
-
-	# Loop through the directory listing, and cut of the file extensions.
-	foreach my $location (sort @locations) {	
-		# skip . and ..
-		next if($location =~ /^\.$/);
-		next if($location =~ /^\.\.$/);
-
-		# Remove whitespaces.
-		chomp($location);
-
-		# Cut-off file extension.
-		my ($contry_code, $extension) = split(/\./, $location);
-
-		# Add country code to array.
-		push(@contry_codes, $contry_code);
-	}
-
-	return @contry_codes;
-}

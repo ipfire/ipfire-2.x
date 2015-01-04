@@ -552,4 +552,37 @@ sub get_internal_firewall_ip_address
 	return 0;
 }
 
+sub get_geoip_locations() {
+	# Path to the directory which contains the binary geoip
+	# databases.
+	my $directory="/usr/share/xt_geoip/LE";
+
+	# Array to store the final country list.
+	my @country_codes = ();
+
+	# Open location and do a directory listing.
+	opendir(DIR, "$directory");
+	my @locations = readdir(DIR);
+	closedir(DIR);
+
+	# Loop through the directory listing, and cut of the file extensions.
+	foreach my $location (sort @locations) {
+		# skip . and ..
+		next if($location =~ /^\.$/);
+		next if($location =~ /^\.\.$/);
+
+		# Remove whitespaces.
+		chomp($location);
+
+		# Cut-off file extension.
+		my ($contry_code, $extension) = split(/\./, $location);
+
+		# Add country code to array.
+		push(@contry_codes, $contry_code);
+	}
+
+	# Return final array.
+	return @country_codes;
+}
+
 return 1;
