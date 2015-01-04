@@ -22,6 +22,12 @@
 				'title' => "P2P-Block",
 				'enabled' => 1,
 				};
+    $subfirewall->{'50.geoipblock'} = {
+				'caption' => $Lang::tr{'geoipblock'},
+				'uri' => '/cgi-bin/geoip-block.cgi',
+				'title' => $Lang::tr{'geoipblock'},
+				'enabled' => 1,
+				};
     $subfirewall->{'60.wireless'} = {
 				'caption' => $Lang::tr{'blue access'},
 				'uri' => '/cgi-bin/wireless.cgi',
