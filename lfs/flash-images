@@ -75,9 +75,9 @@ else
 endif
 
 # /boot:  64MB - OFFSET
-# /    : 700MB
+# /    : 750MB
 S_BOOT := $(shell echo $$(( 131072 - $(S_OFFSET) )))
-S_ROOT := 1433600
+S_ROOT := 1536000
 
 PADDING = 100 # MB
 
