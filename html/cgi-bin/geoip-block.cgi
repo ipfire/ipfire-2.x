@@ -27,6 +27,7 @@ use strict;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "/usr/lib/firewall/firewall-lib.pl";
 
 # Directory which contains flag icons.
 my $flagdir = "/srv/web/ipfire/html/images/flags";

@@ -575,10 +575,10 @@ sub get_geoip_locations() {
 		chomp($location);
 
 		# Cut-off file extension.
-		my ($contry_code, $extension) = split(/\./, $location);
+		my ($country_code, $extension) = split(/\./, $location);
 
 		# Add country code to array.
-		push(@contry_codes, $contry_code);
+		push(@country_codes, $country_code);
 	}
 
 	# Return final array.
