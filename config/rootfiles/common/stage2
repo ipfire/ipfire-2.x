@@ -136,6 +136,7 @@ usr/share/doc/licenses/GPLv3
 #usr/share/man/man8
 #usr/share/misc
 #usr/share/terminfo
+#usr/share/xt_geoip
 #usr/share/zoneinfo
 run
 #var
