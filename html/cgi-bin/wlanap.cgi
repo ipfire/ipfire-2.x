@@ -291,7 +291,7 @@ if ( $channel =~ /\d+/ ){push(@temp,$channel);}
 my @countrylist_cmd = `regdbdump /usr/lib/crda/regulatory.bin 2>/dev/null`;
 # get available country codes
 
-my @temp;
+my @temp = "00";
 foreach (@countrylist_cmd){
 $_ =~ /country (.*):/;
 $country = $1;chomp $country;
