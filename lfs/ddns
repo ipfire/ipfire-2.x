@@ -71,6 +71,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ddns/ddns-005-Add-changeip-com.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ddns/ddns-005-SPDNS-fix-auth.patch
+
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire
 	cd $(DIR_APP) && make $(MAKETUNING)
