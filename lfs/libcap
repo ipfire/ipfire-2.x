@@ -73,7 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	# link for old binaries
-	ln -s libcap.so.2 /lib/libcap.so.1
+	ln -svf libcap.so.2 /lib/libcap.so.1
 	chmod +x /lib/libcap.so.*
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
