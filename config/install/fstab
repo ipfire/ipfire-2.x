@@ -1,5 +1,0 @@
-/dev/ram0	/	squashfs
-/proc		/proc	proc
-none		/sys	sysfs
-none		/tmp	tmpfs
-none		/dev	tmpfs

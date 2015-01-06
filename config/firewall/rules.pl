@@ -280,7 +280,7 @@ sub buildrules {
 		# Concurrent connection limit
 		my @ratelimit_options = ();
 
-		if (($elements gt 34) && ($$hash{$key}[32] eq 'ON')) {
+		if (($elements ge 34) && ($$hash{$key}[32] eq 'ON')) {
 			my $conn_limit = $$hash{$key}[33];
 
 			if ($conn_limit ge 1) {
@@ -296,13 +296,13 @@ sub buildrules {
 		}
 
 		# Ratelimit
-		if (($elements gt 37) && ($$hash{$key}[34] eq 'ON')) {
+		if (($elements ge 37) && ($$hash{$key}[34] eq 'ON')) {
 			my $rate_limit = "$$hash{$key}[35]/$$hash{$key}[36]";
 
-				if ($rate_limit) {
-					push(@ratelimit_options, ("-m", "limit"));
-					push(@ratelimit_options, ("--limit", $rate_limit));
-				}
+			if ($rate_limit) {
+				push(@ratelimit_options, ("-m", "limit"));
+				push(@ratelimit_options, ("--limit", $rate_limit));
+			}
 		}
 
 		# Check which protocols are used in this rule and so that we can
@@ -554,29 +554,19 @@ sub time_convert_to_minutes {
 }
 
 sub p2pblock {
-	my $search_action;
-	my $target;
-
-	if ($fwdfwsettings{"POLICY"} eq "MODE1") {
-		$search_action = "on";
-		$target = "ACCEPT";
-	} else {
-		$search_action = "off";
-		$target = "DROP";
-	}
-
 	open(FILE, "<$p2pfile") or die "Unable to read $p2pfile";
 	my @protocols = ();
 	foreach my $p2pentry (<FILE>) {
 		my @p2pline = split(/\;/, $p2pentry);
-		next unless ($p2pline[2] eq $search_action);
+		next unless ($p2pline[2] eq "off");
 
 		push(@protocols, "--$p2pline[1]");
 	}
 	close(FILE);
 
+	run("$IPTABLES -F P2PBLOCK");
 	if (@protocols) {
-		run("$IPTABLES -A FORWARDFW -m ipp2p @protocols -j $target");
+		run("$IPTABLES -A P2PBLOCK -m ipp2p @protocols -j DROP");
 	}
 }
 

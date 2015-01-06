@@ -70,6 +70,9 @@ my $configgrp="${General::swroot}/fwhosts/customgroups";
 my $customnet="${General::swroot}/fwhosts/customnetworks";
 my $name;
 my $col="";
+my $local_serverconf = "${General::swroot}/ovpn/scripts/server.conf.local";
+my $local_clientconf = "${General::swroot}/ovpn/scripts/client.conf.local";
+
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'ENABLED_BLUE'} = 'off';
@@ -94,10 +97,33 @@ $cgiparams{'DCIPHER'} = '';
 $cgiparams{'DAUTH'} = '';
 $cgiparams{'TLSAUTH'} = '';
 $routes_push_file = "${General::swroot}/ovpn/routes_push";
-unless (-e $routes_push_file)    { system("touch $routes_push_file"); }
-unless (-e "${General::swroot}/ovpn/ccd.conf")    { system("touch ${General::swroot}/ovpn/ccd.conf"); }
-unless (-e "${General::swroot}/ovpn/ccdroute")    { system("touch ${General::swroot}/ovpn/ccdroute"); }
-unless (-e "${General::swroot}/ovpn/ccdroute2")    { system("touch ${General::swroot}/ovpn/ccdroute2"); }
+
+# Add CCD files if not already presant
+unless (-e $routes_push_file) {
+	open(RPF, ">$routes_push_file");
+	close(RPF);
+}
+unless (-e "${General::swroot}/ovpn/ccd.conf") {
+	open(CCDC, ">${General::swroot}/ovpn/ccd.conf");
+	close (CCDC);
+}
+unless (-e "${General::swroot}/ovpn/ccdroute") {
+	open(CCDR, ">${General::swroot}/ovpn/ccdroute");
+	close (CCDR);
+}
+unless (-e "${General::swroot}/ovpn/ccdroute2") {
+	open(CCDRT, ">${General::swroot}/ovpn/ccdroute2");
+	close (CCDRT);
+}
+# Add additional configs if not already presant
+unless (-e "$local_serverconf") {
+	open(LSC, ">$local_serverconf");
+       close (LSC);
+}
+unless (-e "$local_clientconf") {
+       open(LCC, ">$local_clientconf");
+       close (LCC);
+}
 
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
@@ -306,7 +332,22 @@ sub writeserverconf {
 		print CONF "verb $sovpnsettings{LOG_VERB}\n";
 	} else {
 		print CONF "verb 3\n";
-	}	
+	}
+    # Print server.conf.local if entries exist to server.conf
+    if ( !-z $local_serverconf  && $sovpnsettings{'ADDITIONAL_CONFIGS'} eq 'on') {
+       open (LSC, "$local_serverconf");
+               print CONF "\n#---------------------------\n";
+               print CONF "# Start of custom directives\n";
+               print CONF "# from server.conf.local\n";
+               print CONF "#---------------------------\n\n";
+       while (<LSC>) {
+               print CONF $_;
+       }
+               print CONF "\n#-----------------------------\n";
+               print CONF "# End of custom directives\n";
+               print CONF "#-----------------------------\n";
+       close (LSC);
+    }
     print CONF "\n";
     
     close(CONF);
@@ -685,6 +726,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'MAX_CLIENTS'} = $cgiparams{'MAX_CLIENTS'};
     $vpnsettings{'REDIRECT_GW_DEF1'} = $cgiparams{'REDIRECT_GW_DEF1'};
     $vpnsettings{'CLIENT2CLIENT'} = $cgiparams{'CLIENT2CLIENT'};
+    $vpnsettings{'ADDITIONAL_CONFIGS'} = $cgiparams{'ADDITIONAL_CONFIGS'};
     $vpnsettings{'DHCP_DOMAIN'} = $cgiparams{'DHCP_DOMAIN'};
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
     $vpnsettings{'DHCP_WINS'} = $cgiparams{'DHCP_WINS'};
@@ -1203,8 +1245,7 @@ END
         unlink "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}";
 	}
 	# Create Diffie Hellmann Parameter
-	system('/usr/bin/openssl', 'dhparam', '-rand', '/proc/interrupts:/proc/net/rt_cache',
-	'-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
+	system('/usr/bin/openssl', 'dhparam', '-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
 	if ($?) {
 		$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 		unlink ("${General::swroot}/ovpn/ca/dh1024.pem");
@@ -1757,7 +1798,7 @@ END
 		goto ROOTCERT_ERROR;
 	    }
 	} else {	# child
-	    unless (exec ('/usr/bin/openssl', 'req', '-x509', '-nodes', '-rand', '/proc/interrupts:/proc/net/rt_cache',
+	    unless (exec ('/usr/bin/openssl', 'req', '-x509', '-nodes',
 			'-days', '999999', '-newkey', 'rsa:4096', '-sha512',
 			'-keyout', "${General::swroot}/ovpn/ca/cakey.pem",
 			'-out', "${General::swroot}/ovpn/ca/cacert.pem",
@@ -1788,7 +1829,7 @@ END
 		goto ROOTCERT_ERROR;
 	    }
 	} else {	# child
-	    unless (exec ('/usr/bin/openssl', 'req', '-nodes', '-rand', '/proc/interrupts:/proc/net/rt_cache',
+	    unless (exec ('/usr/bin/openssl', 'req', '-nodes',
 			'-newkey', 'rsa:2048',
 			'-keyout', "${General::swroot}/ovpn/certs/serverkey.pem",
 			'-out', "${General::swroot}/ovpn/certs/serverreq.pem",
@@ -1840,8 +1881,7 @@ END
 #	    &cleanssldatabase();
 	}
 	# Create Diffie Hellmann Parameter
-	system('/usr/bin/openssl', 'dhparam', '-rand', '/proc/interrupts:/proc/net/rt_cache',
-	       '-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
+	system('/usr/bin/openssl', 'dhparam', '-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
 	if ($?) {
 	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 	    unlink ("${General::swroot}/ovpn/certs/serverkey.pem");
@@ -2226,6 +2266,21 @@ else
 		print CLIENTCONF "mtu-disc $vpnsettings{'PMTU_DISCOVERY'}\r\n";
 	}
     }
+    # Print client.conf.local if entries exist to client.ovpn
+    if (!-z $local_clientconf && $vpnsettings{'ADDITIONAL_CONFIGS'} eq 'on') {
+       open (LCC, "$local_clientconf");
+               print CLIENTCONF "\n#---------------------------\n";
+               print CLIENTCONF "# Start of custom directives\n";
+               print CLIENTCONF "# from client.conf.local\n";
+               print CLIENTCONF "#---------------------------\n\n";
+       while (<LCC>) {
+               print CLIENTCONF $_;
+       }
+               print CLIENTCONF "\n#---------------------------\n";
+               print CLIENTCONF "# End of custom directives\n";
+               print CLIENTCONF "#---------------------------\n\n";
+       close (LCC);
+    }
     close(CLIENTCONF);
         
     $zip->addFile( "$tempdir/$clientovpn", $clientovpn) or die "Can't add file $clientovpn\n";
@@ -2458,6 +2513,9 @@ ADV_ERROR:
     $checked{'REDIRECT_GW_DEF1'}{'off'} = '';
     $checked{'REDIRECT_GW_DEF1'}{'on'} = '';
     $checked{'REDIRECT_GW_DEF1'}{$cgiparams{'REDIRECT_GW_DEF1'}} = 'CHECKED';
+    $checked{'ADDITIONAL_CONFIGS'}{'off'} = '';
+    $checked{'ADDITIONAL_CONFIGS'}{'on'} = '';
+    $checked{'ADDITIONAL_CONFIGS'}{$cgiparams{'ADDITIONAL_CONFIGS'}} = 'CHECKED';
     $checked{'MSSFIX'}{'off'} = '';
     $checked{'MSSFIX'}{'on'} = '';
     $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
@@ -2538,39 +2596,52 @@ print <<END;
 </table>
 <hr size='1'>
 <table width='100%'>
-    <tr>
+	<tr>
 		<td class'base'><b>$Lang::tr{'misc-options'}</b></td>
-    </tr>
-    <tr>
+	</tr>
+
+	<tr>
 		<td width='20%'></td> <td width='15%'> </td><td width='15%'> </td><td width='15%'></td><td width='35%'></td>
-    </tr>
-    <tr>
+	</tr>
+
+	<tr>
 		<td class='base'>Client-To-Client</td>
 		<td><input type='checkbox' name='CLIENT2CLIENT' $checked{'CLIENT2CLIENT'}{'on'} /></td>
-    </tr>
-    <tr>	
+	</tr>
+
+	<tr>
 		<td class='base'>Redirect-Gateway def1</td>
 		<td><input type='checkbox' name='REDIRECT_GW_DEF1' $checked{'REDIRECT_GW_DEF1'}{'on'} /></td>
-    </tr>
-    <tr>	
-        <td class='base'>Max-Clients</td>
-        <td><input type='text' name='MAX_CLIENTS' value='$cgiparams{'MAX_CLIENTS'}' size='10' /></td>
-    </tr>	
+	</tr>
+
 	<tr>
-     	  <td class='base'>Keepalive <br />
-     	    (ping/ping-restart)</td>
-     	  <td><input type='TEXT' name='KEEPALIVE_1' value='$cgiparams{'KEEPALIVE_1'}' size='10' /></td>
-     	  <td><input type='TEXT' name='KEEPALIVE_2' value='$cgiparams{'KEEPALIVE_2'}' size='10' /></td>
-    </tr>
+		<td class='base'>$Lang::tr{'ovpn add conf'}</td>
+		<td><input type='checkbox' name='ADDITIONAL_CONFIGS' $checked{'ADDITIONAL_CONFIGS'}{'on'} /></td>
+		<td>$Lang::tr{'openvpn default'}: off</td>
+	</tr>
+
 	<tr>
-     	  <td class='base'>fragment <br></td>
-     	  <td><input type='TEXT' name='FRAGMENT' value='$cgiparams{'FRAGMENT'}' size='10' /></td>
-      </tr>
-     	<tr>
-     	  <td class='base'>mssfix</td>
-     	  <td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
-	  <td>$Lang::tr{'openvpn default'}: off</td>
-   	  </tr>
+		<td class='base'>mssfix</td>
+		<td><input type='checkbox' name='MSSFIX' $checked{'MSSFIX'}{'on'} /></td>
+		<td>$Lang::tr{'openvpn default'}: off</td>
+	</tr>
+
+	<tr>
+		<td class='base'>fragment <br></td>
+		<td><input type='TEXT' name='FRAGMENT' value='$cgiparams{'FRAGMENT'}' size='10' /></td>
+	</tr>
+
+
+	<tr>
+		<td class='base'>Max-Clients</td>
+		<td><input type='text' name='MAX_CLIENTS' value='$cgiparams{'MAX_CLIENTS'}' size='10' /></td>
+	</tr>
+	<tr>
+		<td class='base'>Keepalive <br />
+		(ping/ping-restart)</td>
+		<td><input type='TEXT' name='KEEPALIVE_1' value='$cgiparams{'KEEPALIVE_1'}' size='10' /></td>
+		<td><input type='TEXT' name='KEEPALIVE_2' value='$cgiparams{'KEEPALIVE_2'}' size='10' /></td>
+	</tr>
 
 	<tr>
 		<td class='base'>$Lang::tr{'ovpn mtu-disc'}</td>
@@ -4014,6 +4085,10 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		$errormessage = $Lang::tr{'passwords do not match'};
 		goto VPNCONF_ERROR;
 	    }
+	    if ($cgiparams{'DAYS_VALID'} ne '' && $cgiparams{'DAYS_VALID'} !~ /^[0-9]+$/) {
+		$errormessage = $Lang::tr{'invalid input for valid till days'};
+		goto VPNCONF_ERROR;
+	    }
 
 	    # Replace empty strings with a .
 	    (my $ou = $cgiparams{'CERT_OU'}) =~ s/^\s*$/\./;
@@ -4041,7 +4116,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		    goto VPNCONF_ERROR;
 		}
 	    } else {	# child
-		unless (exec ('/usr/bin/openssl', 'req', '-nodes', '-rand', '/proc/interrupts:/proc/net/rt_cache',
+		unless (exec ('/usr/bin/openssl', 'req', '-nodes',
 			'-newkey', 'rsa:2048',
 			'-keyout', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}key.pem",
 			'-out', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}req.pem",
@@ -4284,6 +4359,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$cgiparams{'CERT_CITY'}         = $vpnsettings{'ROOTCERT_CITY'};
 	$cgiparams{'CERT_STATE'}        = $vpnsettings{'ROOTCERT_STATE'};
 	$cgiparams{'CERT_COUNTRY'}      = $vpnsettings{'ROOTCERT_COUNTRY'};
+	$cgiparams{'DAYS_VALID'}     	= $vpnsettings{'DAYS_VALID'};
     }
 
     VPNCONF_ERROR:
@@ -4645,27 +4721,28 @@ END
 
 if ($cgiparams{'TYPE'} eq 'host') {
 	print <<END;
-	    </select></td></tr>
-
-	<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):</td>
-	<td class='base' nowrap='nowrap'><input type='text' name='DAYS_VALID' value='$cgiparams{'DAYS_VALID'}' size='32' $cakeydisabled /></td></tr>
-   <tr><td>&nbsp;</td>
+	</select></td></tr>
+		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):</td>
+		<td class='base' nowrap='nowrap'><input type='text' name='DAYS_VALID' value='$cgiparams{'DAYS_VALID'}' size='32' $cakeydisabled /></td></tr>
+		<tr><td>&nbsp;</td>
 		<td class='base'>$Lang::tr{'pkcs12 file password'}:</td>
 		<td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS1' value='$cgiparams{'CERT_PASS1'}' size='32' $cakeydisabled /></td></tr>
-	    <tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:<br>($Lang::tr{'confirmation'})</td>
+		<tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:<br>($Lang::tr{'confirmation'})</td>
 		<td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS2' value='$cgiparams{'CERT_PASS2'}' size='32' $cakeydisabled /></td></tr>
-     <tr><td colspan='3'>&nbsp;</td></tr>
-     <tr><td colspan='3'><hr /></td></tr>
-     <tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
-     </table>
+		<tr><td colspan='3'>&nbsp;</td></tr>
+		<tr><td colspan='3'><hr /></td></tr>
+		<tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
+	</table>
 END
 }else{
 	print <<END;
-	    </select></td></tr>
-   <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-	 <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-	 <tr><td colspan='3'><hr /></td></tr>
-	 <tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
+	</select></td></tr>
+		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):</td>
+		<td class='base' nowrap='nowrap'><input type='text' name='DAYS_VALID' value='$cgiparams{'DAYS_VALID'}' size='32' $cakeydisabled /></td></tr>
+		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+		<tr><td colspan='3'><hr /></td></tr>
+		<tr><td class='base' colspan='3' align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
        </table>
  
 END

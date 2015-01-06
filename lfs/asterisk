@@ -20,7 +20,7 @@
 
 include Config
 
-VER        = 11.10.0
+VER        = 11.15.0
 
 THISAPP    = asterisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -28,7 +28,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 11
+PAK_VER    = 13
 
 DEPS       = "sqlite"
 
@@ -38,16 +38,16 @@ DEPS       = "sqlite"
 
 objects = $(DL_FILE) \
 	asterisk-1.4-de-prompts.tar.gz \
-	asterisk-extra-sounds-en-gsm-1.4.14.tar.gz \
+	asterisk-extra-sounds-en-gsm-1.4.15.tar.gz \
 	asterisk-moh-opsound-gsm-2.03.tar.gz 
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-asterisk-extra-sounds-en-gsm-1.4.14.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-gsm-1.4.14.tar.gz
+asterisk-extra-sounds-en-gsm-1.4.15.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-gsm-1.4.15.tar.gz
 asterisk-moh-opsound-gsm-2.03.tar.gz = $(URL_IPFIRE)/asterisk-moh-opsound-gsm-2.03.tar.gz
 asterisk-1.4-de-prompts.tar.gz = $(URL_IPFIRE)/asterisk-1.4-de-prompts.tar.gz
 
-$(DL_FILE)_MD5 = 47384cd1ff48b306dca6e03027b023bd
-asterisk-extra-sounds-en-gsm-1.4.14.tar.gz_MD5 = ffc2e0ffd783c03fef5b75277dba0896
+$(DL_FILE)_MD5 = 71e8c2e207255f7ef12b81b7f0da30ea
+asterisk-extra-sounds-en-gsm-1.4.15.tar.gz_MD5 = 5099fc65f49008e33ba7fb043a4ec995
 asterisk-moh-opsound-gsm-2.03.tar.gz_MD5 = 09066f55f1358f298bc1a6e4678a3ddf
 asterisk-1.4-de-prompts.tar.gz_MD5 = 626a2b95071a5505851e43874dfbfd5c
 
@@ -87,7 +87,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# patch asterisk
 	cd $(DIR_APP) && patch -p4 < $(DIR_SRC)/src/patches/asterisk-no-ffmpeg.patch
-	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/asterisk-ssl-reader-should-block.patch	
 
 	# configure asterisk
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire \
@@ -112,7 +111,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		menuselect.makeopts
 
 	# add additional sounds
-	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-extra-sounds-en-gsm-1.4.14.tar.gz $(DIR_APP)/sounds/
+	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-extra-sounds-en-gsm-1.4.15.tar.gz $(DIR_APP)/sounds/
 	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-moh-opsound-gsm-2.03.tar.gz $(DIR_APP)/sounds/
 
 	# Fix wrong cpu optimization (march=armv5tel)
@@ -140,7 +139,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown nobody:nobody -R /var/ipfire/asterisk
 	chown nobody:nobody -R /var/lib/asterisk
 
-	# be sure all source is removed
+# be sure all source is removed
 	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-* $(DIR_SRC)/libsrtp*
 
 	# remember backup-location

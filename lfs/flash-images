@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -29,6 +29,18 @@ VER = ipfire
 THISAPP    = flash-image
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+DEVICE     = $(shell losetup -f)
+PART_BOOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p1
+PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
+
+ifeq "$(SCON)" "1"
+	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).1gb-ext4-scon.$(MACHINE)-full-core$(CORE).img.gz
+else
+	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).1gb-ext4.$(MACHINE)-full-core$(CORE).img.gz
+endif
+
+FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -44,21 +56,19 @@ md5 :
 ###############################################################################
 # Installation Details
 ###############################################################################
-IMGinst  := /install/images/$(SNAME)-$(VERSION).1gb-ext4.$(MACHINE)-full-core$(CORE).img
-IMGinsts := /install/images/$(SNAME)-$(VERSION).1gb-ext4-scon.$(MACHINE)-full-core$(CORE).img
 MNThdd   := /install/harddisk
-IMGpart  := /install/images/part_area
-IMGboot  := /install/images/bootfs
-IMGroot  := /install/images/rootfs
+IMG      := /install/images/image.img
 
 # All sizes in blocks
 ifeq "$(MACHINE_TYPE)" "arm"
+ BOOTLOADER =
  S_OFFSET = 8192
 
  # FAT32
  PART_TYPE = c
 else
- S_OFFSET = 32
+ BOOTLOADER = grub
+ S_OFFSET = 8192
 
  # Logical
  PART_TYPE = L
@@ -69,34 +79,42 @@ endif
 S_BOOT := $(shell echo $$(( 131072 - $(S_OFFSET) )))
 S_ROOT := 1433600
 
+PADDING = 100 # MB
+
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
-	rm -rf $(MNThdd) $(IMGinst) $(IMGpart) $(IMGboot) $(IMGroot) && mkdir -p $(MNThdd)
+	# Stop if $(MNThdd) is still mounted
+	mountpoint $(MNThdd) && exit 1 || exit 0
 
-	# Create first 32 sectors of image
-	dd if=/dev/zero of=$(IMGpart) bs=512 count=$(S_OFFSET)
+	rm -rf $(IMG) $(MNThdd) && mkdir -p $(MNThdd)
 
-	# Create images for filesystems
-	dd if=/dev/zero of=$(IMGboot) bs=512 count=$(S_BOOT)
-	dd if=/dev/zero of=$(IMGroot) bs=512 count=$(S_ROOT)
+	# Allocate image on disk
+	dd if=/dev/zero of=$(IMG) bs=512 count=$$(( $(S_OFFSET) + $(S_BOOT) + $(S_ROOT) ))
+	losetup $(DEVICE) $(IMG)
+
+	# Write Partition table
+	echo -e "$(S_OFFSET),$(S_BOOT),$(PART_TYPE),*\n,0,0\n$$(( $(S_BOOT) + $(S_OFFSET) )),$(S_ROOT),L\n" \
+		| sfdisk -D -uS -H 64 -S 32 $(DEVICE)
+
+	kpartx -v -a $(DEVICE)
 
 	# Format them
 ifeq "$(PART_TYPE)" "c"
-	mkfs.vfat $(IMGboot)
+	mkfs.vfat $(PART_BOOT)
 else
-	mkfs.ext2 -F $(IMGboot)
+	mkfs.ext2 -F $(PART_BOOT)
 endif
-	mkfs.ext4 -O ^has_journal,extent -F $(IMGroot)
+	mkfs.ext4 -O ^has_journal,extent -F $(PART_ROOT)
 
 	# Most systems that use Flashimages has no RTC at boot
 	# so the interval check should disables
-	tune2fs -i0 $(IMGroot)
+	tune2fs -i0 $(PART_ROOT)
 
-	# Mount Images
-	mount -o loop $(IMGroot) $(MNThdd)
-	mkdir $(MNThdd)/boot
-	mkdir $(MNThdd)/var
-	mkdir $(MNThdd)/var/log
-	mount -o loop $(IMGboot) $(MNThdd)/boot
+	# Mount root partition
+	mount $(PART_ROOT) $(MNThdd)
+
+	# Mount boot partition
+	mkdir -pv $(MNThdd)/boot
+	mount $(PART_BOOT) $(MNThdd)/boot
 
 	# Install MLO and uboot first
 ifeq "$(MACHINE_TYPE)" "arm"
@@ -105,98 +123,21 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	cp -v /boot/zImage-ipfire-multi $(MNThdd)/boot/
 	sync
 	umount $(MNThdd)/boot
-	mount -o loop $(IMGboot) $(MNThdd)/boot
+	mount $(PART_BOOT) $(MNThdd)/boot
 endif
 
 	# Install IPFire
-	tar -C $(MNThdd)/ -xvaf /install/cdrom/$(SNAME)-$(VERSION).tlz
+ifneq "$(MACHINE_TYPE)" "arm"
+	tar -x --lzma -C $(MNThdd)/ -f /install/cdrom/distro.img
+else
+	tar -x -C $(MNThdd)/ -f /install/cdrom/distro.img
+endif
 	echo "LANGUAGE=en" >> $(MNThdd)/var/ipfire/main/settings
 	echo "HOSTNAME=$(SNAME)" >> $(MNThdd)/var/ipfire/main/settings
 	echo "THEME=ipfire" >> $(MNThdd)/var/ipfire/main/settings
-	-touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
-	mkdir $(MNThdd)/proc
-	mount --bind /proc $(MNThdd)/proc
-	mount --bind /dev  $(MNThdd)/dev
-	mount --bind /sys  $(MNThdd)/sys
-	chroot $(MNThdd) /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
-	sed -i -e "s|DEVICE1|UUID=$$(blkid -sUUID $(IMGboot) | cut -d'"' -f2)|g" $(MNThdd)/etc/fstab
-ifeq "$(PART_TYPE)" "c"
-	# ARM flash images have a VFAT partition for /boot.
-	sed -i -e "s|ext2|vfat|" $(MNThdd)/etc/fstab
-endif
-	sed -i -e "s|DEVICE2|#DEVICE2|g" $(MNThdd)/etc/fstab
-	sed -i -e "s|DEVICE3|UUID=$$(blkid -sUUID $(IMGroot) | cut -d'"' -f2)|g" $(MNThdd)/etc/fstab
-	sed -i -e "s|DEVICE4|#DEVICE4|g" $(MNThdd)/etc/fstab
-	sed -i -e "s|FSTYPE|ext4|g" $(MNThdd)/etc/fstab
 
-ifneq "$(MACHINE_TYPE)" "arm"
-	sed -i -e "s|MOUNT|ro|g" $(MNThdd)/boot/grub/grub.conf
-	sed -i -e "s|KVER|$(KVER)|g" $(MNThdd)/boot/grub/grub.conf
-	sed -i -e "s|ROOT|UUID=$$(blkid -sUUID $(IMGroot) | cut -d'"' -f2)|g" $(MNThdd)/boot/grub/grub.conf
-	ln -s grub.conf $(MNThdd)/boot/grub/menu.lst
-
-	# Copy grub files manually
-	cp -f $(MNThdd)/usr/lib/grub/i386-pc/* $(MNThdd)/boot/grub/
-endif
-
-	# Setup symlink for partresize at first boot...
-	ln -sf ../init.d/partresize $(MNThdd)/etc/rc.d/rcsysinit.d/S25partresize
-	# Setup symlink for fsresize at second boot...
-	ln -sf ../init.d/fsresize $(MNThdd)/etc/rc.d/rcsysinit.d/S42fsresize
-
-	# Unmount
-	umount $(MNThdd)/proc
-	umount $(MNThdd)/dev
-	umount $(MNThdd)/sys
-	umount $(MNThdd)/boot
-	umount $(MNThdd)
-
-	# zerofree the ext2 images to get better compression
-ifneq "$(PART_TYPE)" "c"
-	zerofree $(IMGboot)
-	-fsck.ext2 -f -y $(IMGboot)
-	fsck.ext2 -f -y $(IMGboot)
-endif
-	zerofree $(IMGroot)
-	-fsck.ext4 -f -y  $(IMGroot)
-	fsck.ext4 -f -y  $(IMGroot)
-
-	# Cat to an image
-	cat $(IMGpart) $(IMGboot) $(IMGroot) > $(IMGinst)
-
-	# Write Partition table
-	echo -e "$(S_OFFSET),$(S_BOOT),$(PART_TYPE),*\n,0,0\n$$(( $(S_BOOT) + $(S_OFFSET) )),$(S_ROOT),L\n,0,0\n" \
-		| sfdisk -D -uS -H 64 -S 32 $(IMGinst)
-
-ifneq "$(MACHINE_TYPE)" "arm"
-	# Install grub
-	echo "device (hd0) $(IMGinst)" > /tmp/grubinst.tmp
-	echo "root (hd0,0)"           >> /tmp/grubinst.tmp
-	echo "setup (hd0)"            >> /tmp/grubinst.tmp
-	echo "quit"                   >> /tmp/grubinst.tmp
-	grub < /tmp/grubinst.tmp
-	rm -f /tmp/grubinst.tmp
-endif
-
-	# Compress Image
-	gzip -f9 $(IMGinst)
-
-	# Now Build serialcon Version
-	# Mount Images
-	mount -o loop $(IMGroot) $(MNThdd)
-	mount -o loop $(IMGboot) $(MNThdd)/boot
-
-ifneq "$(MACHINE_TYPE)" "arm"
-	sed -i -e "s|splashimage|#splashimage|g" $(MNThdd)/boot/grub/grub.conf
-	sed -i -e "s|#serial|serial|g" $(MNThdd)/boot/grub/grub.conf
-	sed -i -e "s|#terminal|terminal|g" $(MNThdd)/boot/grub/grub.conf
-	sed -i -e "s| panic=10 | console=ttyS0,115200n8 panic=10 |g" $(MNThdd)/boot/grub/grub.conf
-else
-	sed -i -e "s| console=tty1 | console=ttyAMA0,115200n8 |g" $(MNThdd)/boot/cmdline.txt
-	sed -i -e "s| console=tty1 | console=ttyO2,115200n8 |g" $(MNThdd)/boot/boot.script
-	cd $(MNThdd)/boot && ./convert_bootscript
-endif
-
+ifeq "$(SCON)" "1"
+	# Enable serial console
 	sed -i -e "s|1:2345:respawn:|#1:2345:respawn:|g" $(MNThdd)/etc/inittab
 	sed -i -e "s|2:2345:respawn:|#2:2345:respawn:|g" $(MNThdd)/etc/inittab
 	sed -i -e "s|3:2345:respawn:|#3:2345:respawn:|g" $(MNThdd)/etc/inittab
@@ -205,38 +146,76 @@ endif
 	sed -i -e "s|6:2345:respawn:|#6:2345:respawn:|g" $(MNThdd)/etc/inittab
 	sed -i -e "s|#7:2345:respawn:|7:2345:respawn:|g" $(MNThdd)/etc/inittab
 
+ifeq "$(MACHINE_TYPE)" "arm"
+	sed -i -e "s| console=tty1 | console=ttyAMA0,115200n8 |g" $(MNThdd)/boot/cmdline.txt
+	sed -i -e "s| console=tty1 | console=ttyO2,115200n8 |g" $(MNThdd)/boot/boot.script
+	cd $(MNThdd)/boot && ./convert_bootscript
+endif
+endif
+
+	-touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
+	mkdir $(MNThdd)/proc
+	mount --bind /proc $(MNThdd)/proc
+	mount --bind /dev  $(MNThdd)/dev
+	mount --bind /sys  $(MNThdd)/sys
+
+	chroot $(MNThdd) /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+
+	# Create /etc/fstab
+	printf "$(FSTAB_FMT)" "$$(blkid -o value -s UUID $(PART_BOOT))" "/boot" \
+		"auto" "defaults" 1 2 >  $(MNThdd)/etc/fstab
+	printf "$(FSTAB_FMT)" "$$(blkid -o value -s UUID $(PART_ROOT))" "/" \
+		"auto" "defaults" 1 1 >> $(MNThdd)/etc/fstab
+
+ifeq "$(BOOTLOADER)" "grub"
+ifeq "$(SCON)" "1"
+	# Enable serial console on GRUB
+	echo "GRUB_TERMINAL=\"serial\"" >> $(MNThdd)/etc/default/grub
+	echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> $(MNThdd)/etc/default/grub
+
+	sed -i -e "s|panic=10|& console=ttyS0,115200n8|g" $(MNThdd)/etc/default/grub
+endif
+
+	# Create configuration
+	mkdir -pv $(MNThdd)/boot/grub
+	chroot $(MNThdd) grub-mkconfig -o /boot/grub/grub.cfg
+
+	# Insert the UUID because grub-mkconfig fails to detect that correctly
+	sed -i $(MNThdd)/boot/grub/grub.cfg \
+		-e "s/root=[a-z0-9\/]*/root=UUID=$$(blkid -o value -s UUID $(PART_ROOT))/g"
+
+	# Install GRUB
+	grub-install --force --recheck --no-floppy \
+		--root-directory=$(MNThdd) $(DEVICE)
+endif
+
+	# Automatically resize the root partition to its maximum size at first boot
+	touch $(MNThdd)/.partresize
+
+	# Unmount
+	umount $(MNThdd)/proc
+	umount $(MNThdd)/sys
+	umount $(MNThdd)/dev
 	umount $(MNThdd)/boot
 	umount $(MNThdd)
 
-	# zerofree the ext3 images to get better compression
+	# zerofree the ext2 images to get better compression
 ifneq "$(PART_TYPE)" "c"
-	zerofree $(IMGboot)
-	-fsck.ext2 -f -y  $(IMGboot)
-	fsck.ext2 -f -y  $(IMGboot)
+	zerofree $(PART_BOOT)
+	-fsck.ext2 -f -y $(PART_BOOT)
+	fsck.ext2 -f -y $(PART_BOOT)
 endif
-	zerofree $(IMGroot)
-	-fsck.ext4 -f -y  $(IMGroot)
-	fsck.ext4 -f -y  $(IMGroot)
+	zerofree $(PART_ROOT)
+	-fsck.ext4 -f -y $(PART_ROOT)
+	fsck.ext4 -f -y $(PART_ROOT)
 
-	# Cat to an image
-	cat $(IMGpart) $(IMGboot) $(IMGroot) > $(IMGinsts)
-	rm -vf $(IMGpart) $(IMGboot) $(IMGroot)
+	kpartx -d -v $(DEVICE)
+	losetup -d $(DEVICE)
 
-	# Write Partition table
-	echo -e "$(S_OFFSET),$(S_BOOT),$(PART_TYPE),*\n,0,0\n$$(( $(S_BOOT) + $(S_OFFSET) )),$(S_ROOT),L\n,0,0\n" \
-		| sfdisk -D -uS -H 64 -S 32 $(IMGinsts)
-
-ifneq "$(MACHINE_TYPE)" "arm"
-	# Install grub
-	echo "device (hd0) $(IMGinsts)" > /tmp/grubinst.tmp
-	echo "root (hd0,0)"            >> /tmp/grubinst.tmp
-	echo "setup (hd0)"             >> /tmp/grubinst.tmp
-	echo "quit"                    >> /tmp/grubinst.tmp
-	grub < /tmp/grubinst.tmp
-	rm -f /tmp/grubinst.tmp
-endif
+	# Add padding at the end of the image (to fix alignment issues if the image is
+	# not copied to a block device)
+	dd if=/dev/zero bs=1M count=$(PADDING) >> $(IMG)
 
 	# Compress Image
-	gzip -f9 $(IMGinsts)
-
-	rm -rf $(MNThdd) $(IMGpart) $(IMGboot) $(IMGroot)
+	pigz -f9 < $(IMG) > $(IMAGE_FILE)
+	rm -rf $(IMG) $(MNThdd)

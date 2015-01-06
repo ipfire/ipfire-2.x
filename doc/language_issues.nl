@@ -695,6 +695,7 @@ WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
 WARNING: untranslated string: imei
 WARNING: untranslated string: imsi
+WARNING: untranslated string: invalid input for valid till days
 WARNING: untranslated string: masquerade blue
 WARNING: untranslated string: masquerade green
 WARNING: untranslated string: masquerade orange
@@ -718,6 +719,7 @@ WARNING: untranslated string: modem status
 WARNING: untranslated string: monitor interface
 WARNING: untranslated string: nameserver
 WARNING: untranslated string: not a valid dh key
+WARNING: untranslated string: ovpn add conf
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh
 WARNING: untranslated string: ovpn dh new key

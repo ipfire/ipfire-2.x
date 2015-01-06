@@ -30,7 +30,7 @@ endif
 
 VERSUFIX=ipfire$(KCFG)
 
-VER        = 1.4
+VER        = 6aa62a2c320b04f55fdfe0ed015c3d9b48997239
 
 THISAPP    = cryptodev-linux-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7b0ac1c0a88d8fbe7316db02f21666e6
+$(DL_FILE)_MD5 = ddf7876487c876f6676ef0e050e9d204
 
 install : $(TARGET)
 

@@ -337,7 +337,12 @@ sub getmonth{
 		my $monat=$_[0]-1 if($_[0]);
 		my $tag=1;
 		my $time1=timelocal(0,0,0,$tag,$monat,$jahr);
-		my $time2=timelocal(0,0,0,$tag,($monat+1),$jahr);
+		my $time2=0;
+		if (($monat+1) == 12){
+			$time2=timelocal(0,0,0,$tag,0,$jahr+1);
+		}else{
+			$time2=timelocal(0,0,0,$tag,$monat+1,$jahr);
+		}
 		--$time2;
 		return ($time1,$time2);
 }

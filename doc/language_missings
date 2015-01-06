@@ -1,15 +1,9 @@
 ############################################################################
-# Checking install/setup translations for language: en                     #
-############################################################################
-############################################################################
 # Checking cgi-bin translations for language: en                           #
 ############################################################################
 < addon
 < ccd maxclients
 < ovpn_fragment
-############################################################################
-# Checking install/setup translations for language: fr                     #
-############################################################################
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -341,6 +335,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -398,6 +393,7 @@
 < other
 < our donors
 < outgoing firewall access
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -561,9 +557,6 @@
 < wlan client wpa mode ccmp ccmp
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
-############################################################################
-# Checking install/setup translations for language: es                     #
-############################################################################
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
@@ -895,6 +888,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -964,6 +958,7 @@
 < outgoing firewall p2p description 2
 < outgoing firewall p2p description 3
 < outgoing firewall view group
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -1108,9 +1103,6 @@
 < wlan client wpa mode ccmp ccmp
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
-############################################################################
-# Checking install/setup translations for language: pl                     #
-############################################################################
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
@@ -1433,6 +1425,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -1488,6 +1481,7 @@
 < other
 < our donors
 < outgoing firewall access
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -1630,9 +1624,6 @@
 < wlan client wpa mode ccmp ccmp
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
-############################################################################
-# Checking install/setup translations for language: ru                     #
-############################################################################
 ############################################################################
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
@@ -1962,6 +1953,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -2019,6 +2011,7 @@
 < our donors
 < outgoing firewall access
 < outgoing traffic in bytes per second
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key

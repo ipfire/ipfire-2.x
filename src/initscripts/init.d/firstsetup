@@ -28,7 +28,7 @@ ser_console $cmdline
 #
 /etc/init.d/sysklogd start
 export LANG=en_US.utf8
-/usr/local/sbin/setup /dev/tty2 INSTALL
+/usr/sbin/setup /dev/tty2 INSTALL
 if [ "${?}" == "1" ]; then
 	echo Setup not finished. Rebooting ...
 	reboot -f

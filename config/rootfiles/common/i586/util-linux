@@ -73,7 +73,7 @@ usr/bin/renice
 #usr/bin/script
 #usr/bin/scriptreplay
 #usr/bin/setarch
-#usr/bin/setsid
+usr/bin/setsid
 #usr/bin/setterm
 #usr/bin/tailf
 #usr/bin/taskset

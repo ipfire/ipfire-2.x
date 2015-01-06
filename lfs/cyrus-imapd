@@ -79,7 +79,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-autocreate-0.9.4.diff
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-gcc4.patch
-#	cp -f /usr/include/et/com_err.h /usr/include/com_err.h
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-service-path=/usr/lib/cyrus \
 				--with-cyrus-prefix=/usr/lib/cyrus --sysconfdir=/var/ipfire/cyrusimap \
 				--with-auth=unix --with-perl --with-sasl --with-idle=idled \

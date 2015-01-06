@@ -119,7 +119,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -p /var/log/samba
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/samba /var/ipfire/backup/addons/includes/samba
 
-	-mkdir -p 750 /var/lib/samba/winbindd_privileged
+	-mkdir -p /var/lib/samba/winbindd_privileged
+	chmod 750 /var/lib/samba/winbindd_privileged
 	chgrp wbpriv /var/lib/samba/winbindd_privileged
 
 	@rm -rf $(DIR_APP)
