@@ -112,6 +112,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i -e "s/.*DEBUGFS=y/# & is not set/g" .config
 	cd $(DIR_APP) && sed -i -e "s/=y is not set/ is not set/g" .config
 
+	# Disable OF_GRAPH (not supported by kernel 3.14)
+	cd $(DIR_APP) && sed -i -e "s/CONFIG_OF/CONFIG_OF_IGNORE/g" include/linux/of_graph.h
+
 	cd $(DIR_APP) && make $(MAKETUNING) KLIB=/lib/modules/$(KVER)-$(VERSUFIX)/ install
 
 	# Remove vsp1 module (not mach to our platforms)
