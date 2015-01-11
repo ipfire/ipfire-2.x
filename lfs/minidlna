@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = minidlna
-PAK_VER    = 3
+PAK_VER    = 4
 
-DEPS       = "ffmpeg flac libexif libid3tag libogg sqlite"
+DEPS       = "ffmpeg flac libexif libid3tag libogg"
 
 ###############################################################################
 # Top-level Rules
