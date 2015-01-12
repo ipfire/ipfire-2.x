@@ -1,0 +1,22 @@
+Submitted By: hauke from OpenWRT
+Date: 2009-04-17
+Initial Package Version: 1.0.2
+Origin: https://dev.openwrt.org/changeset/15405/trunk/package/crda/patches/101-make_crypto_use_optional.patch
+Description: The patch was modified for version crda-3.13 by Erik Kapfer <erik.kapfer@ipfire.org>..
+This patch provides the following improvements:
+    * Crypto usage is optional.
+
+diff -Nur crda-3.13.orig/Makefile crda-3.13/Makefile
+--- crda-3.13.orig/Makefile	2015-01-12 07:55:08.791183765 +0100
++++ crda-3.13/Makefile	2015-01-12 07:56:35.437381029 +0100
+@@ -43,7 +43,9 @@
+ 
+ $(LIBREG): keys-ssl.c
+ 
+-else
++endif
++
++ifeq ($(USE_GCRYPT),1)
+ CFLAGS += -DUSE_GCRYPT
+ LDLIBS += -lgcrypt
+ 
