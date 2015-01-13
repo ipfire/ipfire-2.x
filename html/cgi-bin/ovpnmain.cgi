@@ -288,7 +288,7 @@ sub writeserverconf {
 	print CONF "keepalive $sovpnsettings{'KEEPALIVE_1'} $sovpnsettings{'KEEPALIVE_2'}\n";
     }	
     print CONF "status-version 1\n";
-    print CONF "status /var/log/ovpnserver.log 30\n";
+    print CONF "status /var/run/ovpnserver.log 30\n";
     print CONF "cipher $sovpnsettings{DCIPHER}\n";
     if ($sovpnsettings{'DAUTH'} eq '') {
         print CONF "";
@@ -354,7 +354,7 @@ sub writeserverconf {
 }    
 
 sub emptyserverlog{
-    if (open(FILE, ">/var/log/ovpnserver.log")) {
+    if (open(FILE, ">/var/run/ovpnserver.log")) {
 	flock FILE, 2;
 	print FILE "";
 	close FILE;
@@ -905,9 +905,12 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "route $remsubnet[0] $remsubnet[1]\n";
   print SERVERCONF "# tun Device\n"; 
   print SERVERCONF "dev tun\n"; 
+  print SERVERCONF "#Logfile for statistics\n";
+  print SERVERCONF "status-version 1\n";
+  print SERVERCONF "status /var/run/openvpn/$cgiparams{'NAME'}-n2n 10\n";
   print SERVERCONF "# Port and Protokol\n"; 
   print SERVERCONF "port $cgiparams{'DEST_PORT'}\n"; 
-  
+
   if ($cgiparams{'PROTOCOL'} eq 'tcp') {
   print SERVERCONF "proto tcp-server\n";
   print SERVERCONF "# Packet size\n";
@@ -1190,6 +1193,14 @@ SETTINGS_ERROR:
 	print FILE "";
 	close FILE;
     }
+    while ($file = glob("${General::swroot}/ovpn/ccd/*")) {
+	unlink $file
+    }
+# Delete all RRD files for Roadwarrior connections
+    chdir('/var/ipfire/ovpn/ccd');
+	while ($file = glob("*")) {
+	system ("/usr/local/bin/openvpnctrl -drrd $file");
+	}
     while ($file = glob("${General::swroot}/ovpn/ccd/*")) {
 	unlink $file
     }
@@ -2359,7 +2370,10 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 	
 # CCD end 
 
-	
+###
+###  Delete all RRD's for client
+###
+	system ("/usr/local/bin/openvpnctrl -drrd $confighash{$cgiparams{'KEY'}}[1]");
 	delete $confighash{$cgiparams{'KEY'}};
 	my $temp2 = `/usr/bin/openssl ca -gencrl -out ${General::swroot}/ovpn/crls/cacrl.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
@@ -2897,7 +2911,7 @@ END
     </tr>
 END
 ;
-	my $filename = "/var/log/ovpnserver.log";
+	my $filename = "/var/run/ovpnserver.log";
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -4897,7 +4911,7 @@ END
     &General::readhasharray("${General::swroot}/ovpn/caconfig", \%cahash);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-    my @status = `/bin/cat /var/log/ovpnserver.log`;
+    my @status = `/bin/cat /var/run/ovpnserver.log`;
 
     if ($cgiparams{'VPN_IP'} eq '' && -e "${General::swroot}/red/active") {
 		if (open(IPADDR, "${General::swroot}/red/local-ipaddress")) {
