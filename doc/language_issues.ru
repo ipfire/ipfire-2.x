@@ -859,7 +859,9 @@ WARNING: untranslated string: grouptype
 WARNING: untranslated string: hardware support
 WARNING: untranslated string: imei
 WARNING: untranslated string: imsi
+WARNING: untranslated string: incoming compression in bytes per second
 WARNING: untranslated string: incoming firewall access
+WARNING: untranslated string: incoming overhead in bytes per second
 WARNING: untranslated string: incoming traffic in bytes per second
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
@@ -897,6 +899,7 @@ WARNING: untranslated string: modem status
 WARNING: untranslated string: monitor interface
 WARNING: untranslated string: most preferred
 WARNING: untranslated string: nameserver
+WARNING: untranslated string: no data
 WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: notice
@@ -910,7 +913,9 @@ WARNING: untranslated string: openvpn prefix openvpn subnet
 WARNING: untranslated string: openvpn prefix remote subnet
 WARNING: untranslated string: openvpn subnet is used
 WARNING: untranslated string: other
+WARNING: untranslated string: outgoing compression in bytes per second
 WARNING: untranslated string: outgoing firewall access
+WARNING: untranslated string: outgoing overhead in bytes per second
 WARNING: untranslated string: outgoing traffic in bytes per second
 WARNING: untranslated string: ovpn add conf
 WARNING: untranslated string: ovpn crypt options
