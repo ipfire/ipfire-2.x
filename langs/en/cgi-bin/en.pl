@@ -1267,6 +1267,7 @@
 'guardian watch snort alertfile' => 'Monitor Snort alertfile',
 'guardian block ssh brute-force' => 'SSH Brute-force detection',
 'guardian block httpd brute-force' => 'HTTPD Brute-force detection',
+'guardian block owncloud brute-force' => 'Owncloud Brute-force detection',
 'guest ok' => 'allow guests to access',
 'gui settings' => 'GUI Settings',
 'gz with key' => 'Only an encrypted archive can be restored on this machine.',

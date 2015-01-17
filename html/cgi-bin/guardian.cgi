@@ -51,7 +51,13 @@ our %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
+# Pakfire meta file for owncloud.
+# (File exists when the addon is installed.)
+my $owncloud_meta = "/opt/pakfire/db/meta/meta-owncloud";
+
 our %settings = ();
+
+$settings{'ACTION'} = '';
 
 $settings{'GUARDIAN_ENABLED'} = 'off';
 $settings{'GUARDIAN_ENABLE_SNORT'} = 'on';
@@ -64,7 +70,10 @@ $settings{'GUARDIAN_LOGFILE'} = '/var/log/guardian/guardian.log';
 $settings{'GUARDIAN_SNORT_ALERTFILE'} = '/var/log/snort/alert';
 $settings{'GUARDIAN_PRIORITY_LEVEL'} = '3';
 
-$settings{'ACTION'} = '';
+# Default settings for owncloud if installed.
+if ( -e "$owncloud_meta") {
+	$settings{'GUARDIAN_ENABLE_OWNCLOUD'} = 'off';
+}
 
 my $errormessage = '';
 
@@ -280,6 +289,9 @@ sub showMainBox() {
 	$checked{'GUARDIAN_ENABLE_HTTPD'}{'off'} = '';
 	$checked{'GUARDIAN_ENABLE_HTTPD'}{'on'} = '';
 	$checked{'GUARDIAN_ENABLE_HTTPD'}{$settings{'GUARDIAN_ENABLE_HTTPD'}} = "checked='checked'";
+	$checked{'GUARDIAN_ENABLE_OWNCLOUD'}{'off'} = '';
+	$checked{'GUARDIAN_ENABLE_OWNCLOUD'}{'on'} = '';
+	$checked{'GUARDIAN_ENABLE_OWNCLOUD'}{$settings{'GUARDIAN_ENABLE_OWNCLOUD'}} = "checked='checked'";
 
 	$selected{'GUARDIAN_LOGLEVEL'}{$settings{'GUARDIAN_LOGLEVEL'}} = 'selected';
 	$selected{'GUARDIAN_PRIORITY_LEVEL'}{$settings{'GUARDIAN_PRIORITY_LEVEL'}} = 'selected';
@@ -374,6 +386,16 @@ END
 				<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_HTTPD' value='on' $checked{'GUARDIAN_ENABLE_HTTPD'}{'on'} /> /
 				<input type='radio' name='GUARDIAN_ENABLE_HTTPD' value='off' $checked{'GUARDIAN_ENABLE_HTTPD'}{'off'} /> off</td>
 			</tr>
+END
+			# Display owncloud checkbox when the addon is installed.
+			if ( -e "$owncloud_meta" ) {
+				print"<tr>\n";
+				print"<td width='20%' class='base'>$Lang::tr{'guardian block owncloud brute-force'}</td>\n";
+				print"<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_OWNCLOUD' value='on' $checked{'GUARDIAN_ENABLE_OWNCLOUD'}{'on'} /> /\n";
+				print"<input type='radio' name='GUARDIAN_ENABLE_OWNCLOUD' value='off' $checked{'GUARDIAN_ENABLE_OWNCLOUD'}{'off'} /> off</td>\n";
+				print"</tr>\n";
+			}
+	print <<END;
 			<tr>
 				<td colspan='2'><br></td>
 			</tr>
@@ -662,6 +684,12 @@ sub BuildConfiguration() {
 	print FILE "EnableSnortMonitoring\t\t$settings{'GUARDIAN_ENABLE_SNORT'}\n";
 	print FILE "EnableSSHMonitoring\t\t$settings{'GUARDIAN_ENABLE_SSH'}\n";
 	print FILE "EnableHTTPDMonitoring\t\t$settings{'GUARDIAN_ENABLE_HTTPD'}\n";
+
+	# Check if owncloud settings should be written.
+	if (exists $settings{'GUARDIAN_ENABLE_OWNCLOUD'}) {
+		print FILE "EnableOwncloudMonitoring\t$settings{'GUARDIAN_ENABLE_OWNCLOUD'}\n";
+	}
+
 	print FILE "LogLevel\t\t\t$settings{'GUARDIAN_LOGLEVEL'}\n";
 	print FILE "BlockCount\t\t\t$settings{'GUARDIAN_BLOCKCOUNT'}\n";
 	print FILE "HostGatewayByte\t\t\t$HostGatewayByte\n";
