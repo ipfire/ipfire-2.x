@@ -106,8 +106,13 @@ case "${1}" in
 		sleep 2
 
 		if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
-			boot_mesg "Error! Can't set wlan master mode"
-			echo_failure;
+			killproc /usr/bin/hostapd > /dev/null 2>&1
+			boot_mesg "Try to create additional AP device ..." 
+			ip link set ${INTERFACE} down
+			ip link set ${INTERFACE} name ${INTERFACE}_man
+			iw dev  ${INTERFACE}_man interface add ${INTERFACE} type __ap
+			evaluate_retval;
+			/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf >/dev/null 2>&1 &
 			exit 0;
 		else
 			echo_ok
@@ -116,7 +121,9 @@ case "${1}" in
 
 	stop)
 		boot_mesg "Stopping hostapd..."
-
+		ip link set ${INTERFACE} down > /dev/null 2>&1
+		ip link set ${INTERFACE} down_man > /dev/null 2>&1
+		sleep 1
 		killproc /usr/bin/hostapd
 		evaluate_retval
 		;;
