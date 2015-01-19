@@ -937,7 +937,7 @@
 'ike grouptype' => 'IKE Grouptype:',
 'ike integrity' => 'IKE Integrity:',
 'ike lifetime' => 'IKE Lifetime:',
-'ike lifetime should be between 1 and 8 hours' => 'IKE lifetime should be between 1 and 8 hours.',
+'ike lifetime should be between 1 and 24 hours' => 'IKE lifetime should be between 1 and 24 hours.',
 'import' => 'Import',
 'importkey' => 'Import PSK',
 'in' => 'In',

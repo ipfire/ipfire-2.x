@@ -1261,7 +1261,7 @@
 'ike grouptype' => 'IKE Grup Türü:',
 'ike integrity' => 'IKE Bütünlüğü:',
 'ike lifetime' => 'IKE Yaşam Süresi:',
-'ike lifetime should be between 1 and 8 hours' => 'IKE yaşam süresi 1 ila 8 saat arasında olmalıdır.',
+'ike lifetime should be between 1 and 24 hours' => 'IKE yaşam süresi 1 ila 24 saat arasında olmalıdır.',
 'imei' => 'IMEI',
 'import' => 'Al',
 'importkey' => 'PSK Al',
