@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2015  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,11 +24,11 @@
 
 include Config
 
-VER        = 3.14.27
+VER        = 3.14.29
 
-RPI_PATCHES = 3.14.27-grsec-ipfire1
-A7M_PATCHES = 3.14.27-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.0-3.14.27-201412170659.patch.xz
+RPI_PATCHES = 3.14.29-grsec-ipfire1
+A7M_PATCHES = 3.14.29-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.0-3.14.29-201501182217.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 55
+PAK_VER    = 56
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -77,10 +77,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= 0af2d0702df6ee6d7181e697e0af3481
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 543a77d5602829f78b18788e5cb82188
-arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 7014ce20d9ede588ea2c244d901cbeeb
-$(GRS_PATCHES)_MD5				= 66af1d48af9dce2d0eb363bbc6bfb668
+$(DL_FILE)_MD5					= a745f70181b573a34579d685ca16370e
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= a3eddb2183aea4f8fa82fff9ebc14df3
+arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 45f550a7f0d8ee4d6a1aab53efc2ad05
+$(GRS_PATCHES)_MD5				= c60550bc1b435412757497d771e280e9
 
 install : $(TARGET)
 
