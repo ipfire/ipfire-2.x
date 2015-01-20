@@ -24,15 +24,6 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-function add_to_backup ()
-{
-	# Add path to ROOTFILES but remove old entries to prevent double
-	# files in the tar
-	grep -v "^$1" /opt/pakfire/tmp/ROOTFILES > /opt/pakfire/tmp/ROOTFILES.tmp
-	mv /opt/pakfire/tmp/ROOTFILES.tmp /opt/pakfire/tmp/ROOTFILES
-	echo $1 >> /opt/pakfire/tmp/ROOTFILES
-}
-
 #
 # Remove old core updates from pakfire cache to save space...
 core=86
@@ -64,23 +55,6 @@ esac
 #
 #
 KVER="xxxKVERxxx"
-
-#
-# check if we the backup file already exist
-if [ -e /var/ipfire/backup/core-upgrade${core}_${KVER}.tar.xz ]; then
-    echo Moving backup to backup-old ...
-    mv -f /var/ipfire/backup/core-upgrade${core}_${KVER}.tar.xz \
-       /var/ipfire/backup/core-upgrade${core}_${KVER}-old.tar.xz
-fi
-echo First we made a backup of all files that was inside of the
-echo update archive. This may take a while ...
-# Add some files that are not in the package to backup
-add_to_backup lib/modules
-add_to_backup boot
-
-# Backup the files
-tar cJvf /var/ipfire/backup/core-upgrade${core}_${KVER}.tar.xz \
-    -C / -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' --exclude='/var/cache' > /dev/null 2>&1
 
 # Check diskspace on root
 ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
@@ -232,7 +206,7 @@ echo '/opt/pakfire/pakfire update -y --force'             >> /tmp/pak_update
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
-echo '/usr/bin/logger -p syslog.emerg -t ipfire "Core-upgrade finished. If you use a customized grub.cfg"' >> /tmp/pak_update
+echo '/usr/bin/logger -p syslog.emerg -t ipfire "Core-upgrade finished. If you use a customized grub/uboot config"' >> /tmp/pak_update
 echo '/usr/bin/logger -p syslog.emerg -t ipfire "Check it before reboot !!!"' >> /tmp/pak_update
 echo '/usr/bin/logger -p syslog.emerg -t ipfire " *** Please reboot... *** "' >> /tmp/pak_update
 echo 'touch /var/run/need_reboot ' >> /tmp/pak_update
