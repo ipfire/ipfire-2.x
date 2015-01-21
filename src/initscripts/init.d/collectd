@@ -84,7 +84,7 @@ case "$1" in
 		fi
 
 		# Enable swap plugin if swap found
-		if [ "$(swapon -s | wc -l)" == "1" ]; then
+		if [ "$(swapon -s | wc -l)" == "0" ]; then
 			sed -i -e "s|^LoadPlugin swap|#LoadPlugin swap|g" /etc/collectd.conf
 		else
 			sed -i -e "s|^#LoadPlugin swap|LoadPlugin swap|g" /etc/collectd.conf
