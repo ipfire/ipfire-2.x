@@ -272,7 +272,7 @@ my @temp;
 foreach (@channellist_cmd){
 $_ =~ /(.*) \[(\d+)(.*)\]/;
 $channel = $2;chomp $channel;
-if ( $channel =~ /\d+/ ){push(@temp,$channel);}
+if ( $channel =~ /\d+/ ){push(@temp,$channel + 0);}
 }
 @channellist = @temp;
 } else {
@@ -283,7 +283,7 @@ my @temp;
 foreach (@channellist_cmd){
 $_ =~ /(.*)Channel (\d+)(.*):/;
 $channel = $2;chomp $channel;
-if ( $channel =~ /\d+/ ){push(@temp,$channel);}
+if ( $channel =~ /\d+/ ){push(@temp,$channel + 0);}
 }
 @channellist = @temp;
 }
