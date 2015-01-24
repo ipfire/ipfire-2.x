@@ -53,7 +53,7 @@ our %mainsettings = ();
 
 # Pakfire meta file for owncloud.
 # (File exists when the addon is installed.)
-my $owncloud_meta = "/opt/pakfire/db/meta/meta-owncloud";
+my $owncloud_meta = "/opt/pakfire/db/installed/meta-owncloud";
 
 our %settings = ();
 
