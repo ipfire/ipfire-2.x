@@ -331,7 +331,9 @@
 < hardware support
 < imei
 < imsi
+< incoming compression in bytes per second
 < incoming firewall access
+< incoming overhead in bytes per second
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -392,7 +394,9 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing compression in bytes per second
 < outgoing firewall access
+< outgoing overhead in bytes per second
 < ovpn add conf
 < ovpn crypt options
 < ovpn dh
@@ -884,7 +888,9 @@
 < hardware support
 < imei
 < imsi
+< incoming compression in bytes per second
 < incoming firewall access
+< incoming overhead in bytes per second
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -943,6 +949,7 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing compression in bytes per second
 < outgoing firewall access
 < outgoing firewall add ip group
 < outgoing firewall add mac group
@@ -958,6 +965,7 @@
 < outgoing firewall p2p description 2
 < outgoing firewall p2p description 3
 < outgoing firewall view group
+< outgoing overhead in bytes per second
 < ovpn add conf
 < ovpn crypt options
 < ovpn dh
@@ -1421,7 +1429,9 @@
 < hardware support
 < imei
 < imsi
+< incoming compression in bytes per second
 < incoming firewall access
+< incoming overhead in bytes per second
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
@@ -1480,7 +1490,9 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing compression in bytes per second
 < outgoing firewall access
+< outgoing overhead in bytes per second
 < ovpn add conf
 < ovpn crypt options
 < ovpn dh
@@ -1948,7 +1960,9 @@
 < hour-graph
 < imei
 < imsi
+< incoming compression in bytes per second
 < incoming firewall access
+< incoming overhead in bytes per second
 < incoming traffic in bytes per second
 < integrity
 < invalid input for dpd delay
@@ -2009,7 +2023,9 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing compression in bytes per second
 < outgoing firewall access
+< outgoing overhead in bytes per second
 < outgoing traffic in bytes per second
 < ovpn add conf
 < ovpn crypt options

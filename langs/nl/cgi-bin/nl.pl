@@ -1227,7 +1227,7 @@
 'ike grouptype' => 'IKE Groepstype:',
 'ike integrity' => 'IKE Integriteit:',
 'ike lifetime' => 'IKE Levensduur:',
-'ike lifetime should be between 1 and 8 hours' => 'IKE levensduur moet tussen 1 en 8 uur liggen.',
+'ike lifetime should be between 1 and 24 hours' => 'IKE levensduur moet tussen 1 en 24 uur liggen.',
 'import' => 'Importeer',
 'importkey' => 'Importeer PSK',
 'in' => 'In',

@@ -695,6 +695,8 @@ WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
 WARNING: untranslated string: imei
 WARNING: untranslated string: imsi
+WARNING: untranslated string: incoming compression in bytes per second
+WARNING: untranslated string: incoming overhead in bytes per second
 WARNING: untranslated string: invalid input for valid till days
 WARNING: untranslated string: masquerade blue
 WARNING: untranslated string: masquerade green
@@ -718,7 +720,10 @@ WARNING: untranslated string: modem sim information
 WARNING: untranslated string: modem status
 WARNING: untranslated string: monitor interface
 WARNING: untranslated string: nameserver
+WARNING: untranslated string: no data
 WARNING: untranslated string: not a valid dh key
+WARNING: untranslated string: outgoing compression in bytes per second
+WARNING: untranslated string: outgoing overhead in bytes per second
 WARNING: untranslated string: ovpn add conf
 WARNING: untranslated string: ovpn crypt options
 WARNING: untranslated string: ovpn dh

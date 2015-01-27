@@ -73,6 +73,9 @@ void usage(void)
 	printf(" -kn2n --kill-net-2-net\n");
 	printf("      kills all net2net connections\n");
 	printf("      you may pass a connection name to the switch to only start a specific one\n");
+	printf(" -drrd --delete-rrd\n");
+	printf("      Deletes the RRD data for a specific client\n");
+	printf("      you need to pass a connection name (RW) to the switch to delete the directory (case sensitive)\n");
 	printf(" -d   --display\n");
 	printf("      displays OpenVPN status to syslog\n");
 	printf(" -fwr --firewall-rules\n");
@@ -565,6 +568,28 @@ int killNet2Net(char *name) {
 	return 0;
 }
 
+int deleterrd(char *name) {
+	connection *conn = getConnections();
+
+	char rrd_file[STRING_SIZE];
+	snprintf(rrd_file, STRING_SIZE - 1, "/var/log/rrd/collectd/localhost/openvpn-%s/if_octets.rrd", name);
+
+	char rrd_dir[STRING_SIZE];
+	snprintf(rrd_dir, STRING_SIZE - 1, "/var/log/rrd/collectd/localhost/openvpn-%s", name);
+
+	while(conn) {
+		/* Find only RW-Connections with the given name. */
+		if (((strcmp(conn->type, "host") == 0) && (strcmp(conn->name, name) == 0))) {
+			remove(rrd_file);
+			remove(rrd_dir);
+			return 0;
+		}
+		conn = conn->next;
+	}
+
+	return 1;
+}
+
 void startAllNet2Net() {
 	int exitcode = 0, _exitcode = 0;
 
@@ -633,6 +658,10 @@ int main(int argc, char *argv[]) {
 		}
 		else if( (strcmp(argv[1], "-kn2n") == 0) || (strcmp(argv[1], "--kill-net-2-net") == 0) ) {
 			killNet2Net(argv[2]);
+			return 0;
+		}
+		else if( (strcmp(argv[1], "-drrd") == 0) || (strcmp(argv[1], "--delete-rrd") == 0) ) {
+			deleterrd(argv[2]);
 			return 0;
 		} else {
 			usage();

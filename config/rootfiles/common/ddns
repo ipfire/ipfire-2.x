@@ -6,6 +6,9 @@ usr/lib/python2.7/site-packages/ddns/__init__.pyo
 usr/lib/python2.7/site-packages/ddns/__version__.py
 usr/lib/python2.7/site-packages/ddns/__version__.pyc
 usr/lib/python2.7/site-packages/ddns/__version__.pyo
+usr/lib/python2.7/site-packages/ddns/database.py
+usr/lib/python2.7/site-packages/ddns/database.pyc
+usr/lib/python2.7/site-packages/ddns/database.pyo
 usr/lib/python2.7/site-packages/ddns/errors.py
 usr/lib/python2.7/site-packages/ddns/errors.pyc
 usr/lib/python2.7/site-packages/ddns/errors.pyo

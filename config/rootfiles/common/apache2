@@ -1419,6 +1419,8 @@ srv/web/ipfire/cgi-bin/modem-status.cgi
 srv/web/ipfire/cgi-bin/netexternal.cgi
 srv/web/ipfire/cgi-bin/netinternal.cgi
 srv/web/ipfire/cgi-bin/netother.cgi
+srv/web/ipfire/cgi-bin/netovpnrw.cgi
+srv/web/ipfire/cgi-bin/netovpnsrv.cgi
 srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/p2p-block.cgi

@@ -1,0 +1,23 @@
+commit 25f39b4e437627bd1a49393280271d59ad28b86e
+Author: Stefan Schantl <stefan.schantl@ipfire.org>
+Date:   Mon Jan 5 21:37:55 2015 +0100
+
+    spdns.de: Fix authentication.
+    
+    There was a simple copy and paste issue which prevents a
+    correct authentication with username and password against the
+    providers API.
+
+diff --git a/src/ddns/providers.py b/src/ddns/providers.py
+index 587d5ff..bcfb088 100644
+--- a/src/ddns/providers.py
++++ b/src/ddns/providers.py
+@@ -1271,7 +1271,7 @@ class DDNSProviderSPDNS(DDNSProtocolDynDNS2, DDNSProvider):
+ 
+ 	@property
+ 	def password(self):
+-		return self.get("username") or self.token
++		return self.get("password") or self.token
+ 
+ 
+ class DDNSProviderStrato(DDNSProtocolDynDNS2, DDNSProvider):
