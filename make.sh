@@ -809,6 +809,7 @@ buildipfire() {
   ipfiremake squid-accounting
   ipfiremake pigz
   ipfiremake tmux
+  ipfiremake swconfig
 }
 
 buildinstaller() {
