@@ -171,6 +171,9 @@ ifeq "$(KCFG)" "-multi"
 
 	# Apply Arm7-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm7-multi-patches-$(A7M_PATCHES).patch.xz | patch -Np1
+
+	# After next kernel update this patch will included to arm7-multi patchset.
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.x-lamobo-r1.patch
 endif
 
 ifeq "$(KCFG)" "-rpi"
