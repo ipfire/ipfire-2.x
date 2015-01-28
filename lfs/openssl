@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.1j
+VER        = 1.0.1k
 
 THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -51,7 +51,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f7175c9cd3c39bb1907ac8bba9df8ed3
+$(DL_FILE)_MD5 = d4f002bd22a56881340105028842ae1f
 
 install : $(TARGET)
 
@@ -105,6 +105,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		no-mdc2 \
 		no-rc5 \
 		no-srp \
+		no-ssl2 \
+		no-ssl3 \
 		$(CONFIGURE_ARGS) \
 		-DSSL_FORBID_ENULL \
 		-DHAVE_CRYPTODEV \

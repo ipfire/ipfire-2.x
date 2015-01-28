@@ -210,7 +210,9 @@ sub sendbill {
 	my @now = localtime(time);
 	$now[5] = $now[5] + 1900;
 	my $actmonth = $now[4];
-	my $month			= '0'.$actmonth if $actmonth < 10;
+	my $month;
+	$month = '0'.$actmonth if $actmonth < 10;
+	$month = '12' if $actmonth == 0;
 	my $actyear  = $now[5];
 	my ($from,$till)=&ACCT::getmonth($actmonth,$actyear);					#FIXME month and year as variables!
 	my @billar = &ACCT::GetTaValues($from,$till,$rggrp);

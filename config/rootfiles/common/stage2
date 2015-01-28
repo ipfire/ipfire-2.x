@@ -95,6 +95,7 @@ usr/local/bin/settime
 usr/local/bin/timecheck
 usr/local/bin/timezone-transition
 #usr/local/bin/uname
+usr/local/bin/update-bootloader
 usr/local/bin/update-lang-cache
 #usr/local/include
 #usr/local/lib
