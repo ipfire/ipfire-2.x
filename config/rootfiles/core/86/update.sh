@@ -89,11 +89,17 @@ case "$(uname -m)" in
 		# Remove all files that belong to GRUB-legacy
 		rm -rfv /boot/grub
 		;;
+	armv*)
+		# Backup uEnv.txt if exist
+		if [ -e /boot/uEnv.txt ]; then
+			cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
+		fi
+
+		# work around the u-boot folder detection bug
+		mkdir -pv /boot/dtb-$KVER-ipfire-kirkwood
+		mkdir -pv /boot/dtb-$KVER-ipfire-multi
+		;;
 esac
-# Backup uEnv.txt if exist
-if [ -e /boot/uEnv.txt ]; then
-	cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
-fi
 
 #
 #Stop services
@@ -119,6 +125,8 @@ if [ $BOOTSPACE -lt 1000 ]; then
 			# Special handling for old kirkwood images.
 			# (install only kirkwood kernel)
 			rm -rf /boot/*
+			# work around the u-boot folder detection bug
+			mkdir -pv /boot/dtb-$KVER-ipfire-kirkwood
 			tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p \
 				--numeric-owner -C / --wildcards 'boot/*-kirkwood*'
 			;;
