@@ -186,18 +186,6 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 	fi
 fi
 
-# Force reinstall xen kernel if it was installed
-if [ -e "/opt/pakfire/db/installed/meta-linux-xen" ]; then
-	echo "Name: linux-xen" > /opt/pakfire/db/installed/meta-linux-xen
-	echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-xen
-	echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-xen
-	echo "Name: linux-xen" > /opt/pakfire/db/meta/meta-linux-xen
-	echo "ProgVersion: 0" >> /opt/pakfire/db/meta/meta-linux-xen
-	echo "Release: 0"     >> /opt/pakfire/db/meta/meta-linux-xen
-	# Add xvc0 to /etc/securetty
-	echo "xvc0" >> /etc/securetty
-fi
-
 #
 # After pakfire has ended run it again and update the lists and do upgrade
 #
