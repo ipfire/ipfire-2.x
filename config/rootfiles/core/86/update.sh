@@ -69,7 +69,7 @@ fi
 echo
 echo Update Kernel to $KVER ...
 #
-# Remove old kernel, configs, initrd, modules ...
+# Remove old kernel, configs, initrd, modules, dtb's ...
 #
 rm -rf /boot/System.map-*
 rm -rf /boot/config-*
@@ -78,6 +78,7 @@ rm -rf /boot/initramfs-*
 rm -rf /boot/vmlinuz-*
 rm -rf /boot/uImage-ipfire-*
 rm -rf /boot/uInit-ipfire-*
+rm -rf /boot/dtb-*-ipfire-*
 rm -rf /lib/modules
 
 case "$(uname -m)" in
@@ -89,6 +90,11 @@ case "$(uname -m)" in
 		rm -rfv /boot/grub
 		;;
 esac
+# Backup uEnv.txt if exist
+if [ -e /boot/uEnv.txt ]; then
+	cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
+fi
+
 #
 #Stop services
 /etc/init.d/snort stop
