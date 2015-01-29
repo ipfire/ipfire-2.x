@@ -172,6 +172,9 @@ ifeq "$(KCFG)" "-multi"
 	# Apply Arm7-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm7-multi-patches-$(A7M_PATCHES).patch.xz | patch -Np1
 
+	# Update Banana Pi, Lamobo-R1 and add Banana Pro dtb
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.x-update_banana_dts.patch
+
 	# Install switch api userspace header
 	cd $(DIR_APP) && install -v -m644 include/uapi/linux/switch.h /usr/include/linux/
 endif

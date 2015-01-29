@@ -110,6 +110,7 @@ boot/dtb-KVER-ipfire-multi
 #boot/dtb-KVER-ipfire-multi/sun5i-a13-olinuxino.dtb
 #boot/dtb-KVER-ipfire-multi/sun6i-a31-colombus.dtb
 #boot/dtb-KVER-ipfire-multi/sun7i-a20-bananapi.dtb
+#boot/dtb-KVER-ipfire-multi/sun7i-a20-bananapro.dtb
 #boot/dtb-KVER-ipfire-multi/sun7i-a20-cubieboard2.dtb
 #boot/dtb-KVER-ipfire-multi/sun7i-a20-cubietruck.dtb
 #boot/dtb-KVER-ipfire-multi/sun7i-a20-lamobo-r1.dtb
