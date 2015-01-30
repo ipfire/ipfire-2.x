@@ -112,7 +112,12 @@ case "${1}" in
 			ip link set ${INTERFACE} name ${INTERFACE}_man
 			iw dev  ${INTERFACE}_man interface add ${INTERFACE} type __ap
 			evaluate_retval;
-			/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf >/dev/null 2>&1 &
+			if [ -d /sys/class/net/${INTERFACE} ]; then
+				/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf >/dev/null 2>&1 &
+			else
+				ip link set ${INTERFACE}_man down
+				ip link set ${INTERFACE}_man name ${INTERFACE}
+			fi
 			exit 0;
 		else
 			echo_ok
