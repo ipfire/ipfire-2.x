@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-11-05 01:33+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"PO-Revision-Date: 2015-01-26 12:07+0000\n"
+"Last-Translator: Blago Culjak <blago.culjak@hotmail.com>\n"
 "Language-Team: Croatian (http://www.transifex.com/projects/p/ipfire/language/hr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,7 +32,7 @@ msgstr "Prihvaćam ovu licencu"
 
 #: main.c:384
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr ""
+msgstr "Upozoranje: Nenadgledana instalacija će započeti za 10 sekundi..."
 
 #: main.c:403
 msgid "Language selection"
@@ -44,7 +44,7 @@ msgstr "Odaberite jezik koji želite koristiti za instalaciju."
 
 #: main.c:418
 msgid "Unattended mode"
-msgstr ""
+msgstr "Nenadgledana instalacija"
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
@@ -65,7 +65,7 @@ msgstr "Pokrenite instalaciju"
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr ""
+msgstr "Instalacija će pokušati preuzeti instalacijsku sliku."
 
 #: main.c:452
 #, c-format
@@ -73,41 +73,41 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr ""
+msgstr "Izvorišni pogon nije pronađen.\n\nMožete pokušati preuzeti instalacijsku sliku."
 
 #: main.c:456
 msgid ""
 "Please make sure to connect your machine to a network and the installer will"
 " try connect to acquire an IP address."
-msgstr ""
+msgstr "Provjerite da li ste priključeni na mrežu, instalacija će pokušati dobiti IP adresu."
 
 #: main.c:460
 msgid "Download installation image"
-msgstr ""
+msgstr "Preuzimanje instalacijske slike"
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
-msgstr ""
+msgstr "Pokušaj starta mreže (DHCP)..."
 
 #: main.c:484
 msgid ""
 "Networking could not be started but is required to go on with the installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr ""
+msgstr "Mreža nije mogla biti pokrenuta a obvezna je za nastavak instalacije. \n\nPriključite se na mrežu s omogućenim DHCPom i pokušajte ponovno."
 
 #: main.c:487 main.c:516
 msgid "Retry"
-msgstr ""
+msgstr "Ponovno"
 
 #: main.c:501
 msgid "Downloading installation image..."
-msgstr ""
+msgstr "Preuzimanje instalacijske slike"
 
 #: main.c:510
 #, c-format
 msgid "MD5 checksum mismatch"
-msgstr ""
+msgstr "MD5 checksum se ne podudara"
 
 #: main.c:513
 #, c-format
@@ -116,14 +116,14 @@ msgid ""
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Instalacijska slika nije preuzeta.\n  Razlog: %s\n\n%s"
 
 #: main.c:528
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr ""
+msgstr "Nemogu monitari %s na %s:\n  %s\n"
 
 #: main.c:543
 msgid "License Agreement"
@@ -190,7 +190,7 @@ msgstr "Postavljanje RAIDa"
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
-msgstr ""
+msgstr "Vaša diskovna konfiguracija nije podržana."
 
 #: main.c:655
 msgid "Your harddisk is too small."
@@ -286,27 +286,27 @@ msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr ""
+msgstr "Pričuvna kopija je pronađena na instalacijskoj slici.\n\nDa li želite povratiti kopiju?"
 
 #: main.c:827
 msgid "Yes"
-msgstr ""
+msgstr "Da"
 
 #: main.c:827
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr ""
+msgstr "Greška pri povratu pričuvne kopije."
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr ""
+msgstr "Izvodim post-instalacijske skripte."
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr ""
+msgstr "Post-instalacijske skripte nisu uspješno izvršene."
 
 #: main.c:877
 #, c-format

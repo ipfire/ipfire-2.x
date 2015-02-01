@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Khalil Delavaran <khalil.delavaran@gmail.com>, 2014
+# Khalil Delavaran <khalil.delavaran@gmail.com>, 2014-2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-11-12 18:37+0000\n"
+"PO-Revision-Date: 2015-01-26 07:48+0000\n"
 "Last-Translator: Khalil Delavaran <khalil.delavaran@gmail.com>\n"
 "Language-Team: Persian (http://www.transifex.com/projects/p/ipfire/language/fa/)\n"
 "MIME-Version: 1.0\n"
@@ -74,7 +74,7 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr ""
+msgstr "درایو منبع پیدا نشد.\n\nشما می توانید ایمیج مورد نیاز نصب را دانلود کنید. "
 
 #: main.c:456
 msgid ""
@@ -88,14 +88,14 @@ msgstr "دانلود ایمیج برپاسازی"
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
-msgstr ""
+msgstr "تلاش برای شروع شبکه (DHCP)..."
 
 #: main.c:484
 msgid ""
 "Networking could not be started but is required to go on with the installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr ""
+msgstr "شبکه نمی تواند شروع کند، و رفتن به نصب ضروری می باشد.\n\nخواهشمند است سیستم را به یک شبکه با DHCP سرور وصل کرده و دوباره تلاش کنید."
 
 #: main.c:487 main.c:516
 msgid "Retry"
@@ -108,7 +108,7 @@ msgstr "در حال دانلود ایمیج برای برپا سازی..."
 #: main.c:510
 #, c-format
 msgid "MD5 checksum mismatch"
-msgstr ""
+msgstr "ناهماهنگی در کنرل جمعی MD5"
 
 #: main.c:513
 #, c-format
@@ -191,7 +191,7 @@ msgstr "پیکربندی RAID"
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
-msgstr ""
+msgstr "پیکربندی دیسک شما پشتیبانی نمی شود."
 
 #: main.c:655
 msgid "Your harddisk is too small."
@@ -287,7 +287,7 @@ msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr ""
+msgstr "یک فایل بک آپ در ایمیج نصب پیدا شد.\n\nآیا می خواهید بک آپ را بازیابی کنید؟"
 
 #: main.c:827
 msgid "Yes"
@@ -299,15 +299,15 @@ msgstr "خیر"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr ""
+msgstr "در هنگامه بازیابی فایل بک آپ شکستی رخ داده است."
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr ""
+msgstr "اجرای اسکریپت پس از نصب ..."
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr ""
+msgstr "اسکریپت پس از نصب شکست خورد."
 
 #: main.c:877
 #, c-format

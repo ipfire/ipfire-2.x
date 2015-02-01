@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Rafael Tavares <rafael@ibinetwork.com.br>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-08-21 15:13+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"PO-Revision-Date: 2015-01-22 20:19+0000\n"
+"Last-Translator: Rafael Tavares <rafael@ibinetwork.com.br>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/ipfire/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,27 +20,27 @@ msgstr ""
 
 #: dhcp.c:50
 msgid "Start address:"
-msgstr ""
+msgstr "Endereço de Inicial:"
 
 #: dhcp.c:51
 msgid "End address:"
-msgstr ""
+msgstr "Endereço final:"
 
 #: dhcp.c:52 networking.c:717
 msgid "Primary DNS:"
-msgstr ""
+msgstr "DNS Primário:"
 
 #: dhcp.c:53 networking.c:723
 msgid "Secondary DNS:"
-msgstr ""
+msgstr "DNS Secundário:"
 
 #: dhcp.c:54
 msgid "Default lease (mins):"
-msgstr ""
+msgstr "Tempo padrão (mins):"
 
 #: dhcp.c:55
 msgid "Max lease (mins):"
-msgstr ""
+msgstr "Tempo máximo (mins)"
 
 #: dhcp.c:56
 msgid "Domain name suffix:"
@@ -51,19 +52,19 @@ msgstr ""
 #: networking.c:442 networking.c:552 networking.c:603 networking.c:610
 #: networking.c:713 timezone.c:63
 msgid "Unable to open settings file"
-msgstr ""
+msgstr "Não foi possível abrir o arquivo de configurações"
 
 #: dhcp.c:111
 msgid "DHCP server configuration"
-msgstr ""
+msgstr "Configurar servidor DHCP"
 
 #: dhcp.c:116
 msgid "Configure the DHCP server by entering the settings information."
-msgstr ""
+msgstr "Configurar servidor DHCP digitando as informações de configuração"
 
 #: dhcp.c:125
 msgid "Enabled"
-msgstr ""
+msgstr "Habilitado"
 
 #: dhcp.c:142 domainname.c:43 hostname.c:47 keymap.c:86 main.c:99 main.c:172
 #: main.c:174 netstuff.c:157 netstuff.c:733 netstuff.c:756 networking.c:163
@@ -71,14 +72,14 @@ msgstr ""
 #: networking.c:642 networking.c:653 networking.c:746 passwords.c:89
 #: timezone.c:78
 msgid "OK"
-msgstr ""
+msgstr "Ok"
 
 #: dhcp.c:143 domainname.c:43 hostname.c:47 keymap.c:86 netstuff.c:158
 #: netstuff.c:673 netstuff.c:733 netstuff.c:756 networking.c:305
 #: networking.c:410 networking.c:560 networking.c:653 networking.c:746
 #: passwords.c:89 timezone.c:78
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: dhcp.c:156
 msgid ""
@@ -88,31 +89,31 @@ msgstr ""
 
 #: dhcp.c:159
 msgid "Start address"
-msgstr ""
+msgstr "Endereço de Inicial"
 
 #: dhcp.c:165
 msgid "End address"
-msgstr ""
+msgstr "Endereço final"
 
 #: dhcp.c:173 networking.c:755
 msgid "Primary DNS"
-msgstr ""
+msgstr "DNS Primário"
 
 #: dhcp.c:182 networking.c:764
 msgid "Secondary DNS"
-msgstr ""
+msgstr "DNS Secundário"
 
 #: dhcp.c:189
 msgid "Default lease time"
-msgstr ""
+msgstr "Tempo padrão"
 
 #: dhcp.c:195
 msgid "Max. lease time"
-msgstr ""
+msgstr "Tempo máximo padrão"
 
 #: domainname.c:42 main.c:70
 msgid "Domain name"
-msgstr ""
+msgstr "Domínio "
 
 #: domainname.c:42
 msgid "Enter Domain name"
@@ -132,7 +133,7 @@ msgstr ""
 
 #: hostname.c:46 main.c:69
 msgid "Hostname"
-msgstr ""
+msgstr "Hostname"
 
 #: hostname.c:46
 msgid "Enter the machine's hostname."
@@ -152,7 +153,7 @@ msgstr ""
 
 #: keymap.c:84 main.c:67
 msgid "Keyboard mapping"
-msgstr ""
+msgstr "Selecione seu teclado"
 
 #: keymap.c:85
 msgid "Choose the type of keyboard you are using from the list below."
@@ -160,7 +161,7 @@ msgstr ""
 
 #: main.c:68 timezone.c:77
 msgid "Timezone"
-msgstr ""
+msgstr "Fuso horário "
 
 #: main.c:71 networking.c:110 networking.c:115 networking.c:447
 msgid "Networking"
@@ -168,15 +169,15 @@ msgstr ""
 
 #: main.c:72 misc.c:147
 msgid "ISDN"
-msgstr ""
+msgstr "ISDN"
 
 #: main.c:73
 msgid "'root' password"
-msgstr ""
+msgstr "senha ´'root'"
 
 #: main.c:74
 msgid "'admin' password"
-msgstr ""
+msgstr "senha 'admin'"
 
 #: main.c:90
 msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
@@ -188,19 +189,19 @@ msgstr ""
 
 #: main.c:98
 msgid "Select the item you wish to configure."
-msgstr ""
+msgstr "Selecione um item para configurar."
 
 #: main.c:99
 msgid "Quit"
-msgstr ""
+msgstr "Sair"
 
 #: main.c:172
 msgid "Setup is complete."
-msgstr ""
+msgstr "Configuração completa."
 
 #: main.c:174 netstuff.c:733 networking.c:560 networking.c:653
 msgid "Warning"
-msgstr ""
+msgstr "Atenção"
 
 #: main.c:175
 msgid ""
@@ -211,7 +212,7 @@ msgstr ""
 #: misc.c:62
 #, c-format
 msgid "Unable to write %s/main/hostname.conf"
-msgstr ""
+msgstr "Não foi possível salvar %s/main/hostname.conf"
 
 #: misc.c:71
 msgid "Unable to open main hosts file."
@@ -219,15 +220,15 @@ msgstr ""
 
 #: misc.c:76
 msgid "Unable to write /etc/hosts."
-msgstr ""
+msgstr "Não foi possível salvar /etc/hosts."
 
 #: misc.c:117
 msgid "Unable to write /etc/hosts.deny."
-msgstr ""
+msgstr "Não foi possível salvar /etc/hosts.deny."
 
 #: misc.c:125
 msgid "Unable to write /etc/hosts.allow."
-msgstr ""
+msgstr "Não foi possível salvar /etc/hosts.allow."
 
 #: misc.c:136
 msgid "Unable to set hostname."
@@ -244,7 +245,7 @@ msgstr ""
 #: netstuff.c:86
 #, c-format
 msgid "Interface - %s"
-msgstr ""
+msgstr "Interface - %s"
 
 #: netstuff.c:91
 #, c-format
@@ -253,15 +254,15 @@ msgstr ""
 
 #: netstuff.c:103
 msgid "Static"
-msgstr ""
+msgstr "Estático "
 
 #: netstuff.c:104
 msgid "DHCP"
-msgstr ""
+msgstr "Automático "
 
 #: netstuff.c:105
 msgid "PPP DIALUP (PPPoE, modem, ATM ...)"
-msgstr ""
+msgstr "Discador PPP (PPPoE, modem, ATM ...)"
 
 #: netstuff.c:113
 msgid "DHCP Hostname:"
@@ -273,11 +274,11 @@ msgstr ""
 
 #: netstuff.c:134
 msgid "IP address:"
-msgstr ""
+msgstr "Endereço IP:"
 
 #: netstuff.c:146
 msgid "Network mask:"
-msgstr ""
+msgstr "Mascara de rede:"
 
 #: netstuff.c:173 networking.c:749
 msgid "The following fields are invalid:"
@@ -285,11 +286,11 @@ msgstr ""
 
 #: netstuff.c:183
 msgid "IP address"
-msgstr ""
+msgstr "Endereço IP"
 
 #: netstuff.c:189
 msgid "Network mask"
-msgstr ""
+msgstr "Marcara de rede"
 
 #: netstuff.c:198
 msgid "DHCP hostname"
@@ -310,11 +311,11 @@ msgstr ""
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
-msgstr ""
+msgstr "Selecione"
 
 #: netstuff.c:673
 msgid "Identify"
-msgstr ""
+msgstr "Identifique"
 
 #: netstuff.c:678
 msgid "Device Identification"
@@ -347,7 +348,7 @@ msgstr ""
 
 #: netstuff.c:762
 msgid "Loading module..."
-msgstr ""
+msgstr "Carregando modulo..."
 
 #: netstuff.c:777
 msgid "Unable to load driver module."
@@ -359,75 +360,75 @@ msgstr ""
 
 #: networking.c:110
 msgid "Stopping network..."
-msgstr ""
+msgstr "Parando a rede..."
 
 #: networking.c:115
 msgid "Restarting network..."
-msgstr ""
+msgstr "Reiniciando a rede..."
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
-msgstr ""
+msgstr "Nenhuma interface VERDE definida."
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
-msgstr ""
+msgstr "Faltando endereço IP na interface VERDE."
 
 #: networking.c:163
 msgid "Error"
-msgstr ""
+msgstr "Erro"
 
 #: networking.c:163
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorar"
 
 #: networking.c:164
 msgid "No RED interface assigned."
-msgstr ""
+msgstr "Nenhuma interface VERMELHA definida."
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
-msgstr ""
+msgstr "Faltando endereço IP na interface VERMELHA."
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
-msgstr ""
+msgstr "Nenhuma interface LARANJA definida."
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
-msgstr ""
+msgstr "Faltando endereço IP na interface LARANJA."
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
-msgstr ""
+msgstr "Nenhuma interface AZUL definida."
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
-msgstr ""
+msgstr "Faltando endereço IP na interface AZUL."
 
 #: networking.c:217
 msgid "Misssing DNS."
-msgstr ""
+msgstr "Faltando DNS."
 
 #: networking.c:224
 msgid "Missing Default Gateway."
-msgstr ""
+msgstr "Faltando Gateway Padrão."
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
-msgstr ""
+msgstr "Tipo de configuração de rede"
 
 #: networking.c:238 networking.c:409
 msgid "Drivers and card assignments"
-msgstr ""
+msgstr "Definir Drivers e Placas"
 
 #: networking.c:239 networking.c:640
 msgid "Address settings"
-msgstr ""
+msgstr "Configurar endereços"
 
 #: networking.c:240 networking.c:743
 msgid "DNS and Gateway settings"
-msgstr ""
+msgstr "Configurar Gateway e DNS"
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
@@ -439,7 +440,7 @@ msgid ""
 "Current config: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Configuração atual: %s\n\n%s"
 
 #: networking.c:268
 msgid "Network configuration menu"
@@ -447,7 +448,7 @@ msgstr ""
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
-msgstr ""
+msgstr "Pronto"
 
 #: networking.c:300
 #, c-format
@@ -488,11 +489,11 @@ msgstr ""
 
 #: networking.c:519
 msgid "Assigned Cards"
-msgstr ""
+msgstr "Placas Definidas"
 
 #: networking.c:520
 msgid "Remove"
-msgstr ""
+msgstr "Remover"
 
 #: networking.c:556 networking.c:649
 #, c-format
@@ -509,7 +510,7 @@ msgstr ""
 
 #: networking.c:729
 msgid "Default gateway:"
-msgstr ""
+msgstr "Gateway padrão:"
 
 #: networking.c:744
 msgid ""
@@ -519,7 +520,7 @@ msgstr ""
 
 #: networking.c:773
 msgid "Default gateway"
-msgstr ""
+msgstr "Gateway padrão"
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
@@ -532,15 +533,15 @@ msgstr ""
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
-msgstr ""
+msgstr "Configurar senha"
 
 #: passwords.c:38
 msgid "Setting 'root' password...."
-msgstr ""
+msgstr "Configurar senha 'root'"
 
 #: passwords.c:39
 msgid "Problem setting 'root' password."
-msgstr ""
+msgstr "Problema ao configurar senha 'root'"
 
 #: passwords.c:53
 #, c-format
@@ -561,24 +562,24 @@ msgstr ""
 
 #: passwords.c:76
 msgid "Password:"
-msgstr ""
+msgstr "Senha:"
 
 #: passwords.c:77
 msgid "Again:"
-msgstr ""
+msgstr "Novamente:"
 
 #: passwords.c:95
 msgid "Password cannot be blank."
-msgstr ""
+msgstr "A senha não pode estar em branco."
 
 #: passwords.c:102
 msgid "Passwords do not match."
-msgstr ""
+msgstr "As senhas não coincidem."
 
 #: passwords.c:109
 msgid "Password cannot contain spaces."
-msgstr ""
+msgstr "A senha não pode conter espaços."
 
 #: timezone.c:77
 msgid "Choose the timezone you are in from the list below."
-msgstr ""
+msgstr "Selecione seu fuso horário na lista abaixo."
