@@ -664,6 +664,13 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
 WARNING: untranslated string: fwhost err hostip
+WARNING: untranslated string: incoming compression in bytes per second
+WARNING: untranslated string: incoming overhead in bytes per second
+WARNING: untranslated string: invalid input for valid till days
+WARNING: untranslated string: no data
+WARNING: untranslated string: outgoing compression in bytes per second
+WARNING: untranslated string: outgoing overhead in bytes per second
+WARNING: untranslated string: ovpn add conf
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed

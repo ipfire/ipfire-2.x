@@ -24,11 +24,11 @@
 
 include Config
 
-VER        = 3.14.25
+VER        = 3.14.27
 
-RPI_PATCHES = 3.14.25-grsec-ipfire1
-A7M_PATCHES = 3.14.25-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.0-3.14.25-201411220954.patch.xz
+RPI_PATCHES = 3.14.27-grsec-ipfire1
+A7M_PATCHES = 3.14.27-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.0-3.14.27-201412170659.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 53
+PAK_VER    = 55
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -77,10 +77,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= 3ae910d35292706d85870c3939547123
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= b573af847c28ebed8c15a74542360db1
-arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 8b47b81a530db68cb2c2f6bb6418ca28
-$(GRS_PATCHES)_MD5				= 6b2c8669e39304cfe647f9de16260929
+$(DL_FILE)_MD5					= 0af2d0702df6ee6d7181e697e0af3481
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 543a77d5602829f78b18788e5cb82188
+arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 7014ce20d9ede588ea2c244d901cbeeb
+$(GRS_PATCHES)_MD5				= 66af1d48af9dce2d0eb363bbc6bfb668
 
 install : $(TARGET)
 
@@ -140,6 +140,8 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-iwlwifi-noibss_only_on_radar_chan.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.37-rt2800usb_add_dlink_dwa137_usbid.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.55-rt2800usb-change_queue_warn_to_debug.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.25_rt2x00_fix_bss_bcn_num.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.25-rt5592_no_special_txop_init.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-add_libertas_uap.patch
 
 	# mISDN Patches

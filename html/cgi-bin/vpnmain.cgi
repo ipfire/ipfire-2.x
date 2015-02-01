@@ -2168,8 +2168,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    $errormessage = $Lang::tr{'invalid input for ike lifetime'};
 	    goto ADVANCED_ERROR;
 	}
-	if ($cgiparams{'IKE_LIFETIME'} < 1 || $cgiparams{'IKE_LIFETIME'} > 8) {
-	    $errormessage = $Lang::tr{'ike lifetime should be between 1 and 8 hours'};
+	if ($cgiparams{'IKE_LIFETIME'} < 1 || $cgiparams{'IKE_LIFETIME'} > 24) {
+	    $errormessage = $Lang::tr{'ike lifetime should be between 1 and 24 hours'};
 	    goto ADVANCED_ERROR;
 	}
 	@temp = split('\|', $cgiparams{'ESP_ENCRYPTION'});

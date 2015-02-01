@@ -865,7 +865,7 @@ sub checkrule
 		$errormessage.=$Lang::tr{'fwdfw err remark'}."<br>";
 	}
 	#check if source and target identical
-	if ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ALL'){
+	if ($fwdfwsettings{$fwdfwsettings{'grp1'}} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ALL' && $fwdfwsettings{'grp2'} ne 'ipfire'){
 		$errormessage=$Lang::tr{'fwdfw err same'};
 		return $errormessage;
 	}

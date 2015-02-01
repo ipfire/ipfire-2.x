@@ -24,17 +24,13 @@
 
 include Config
 
-VER        = 3070603
+VER        = 3080704
 
 THISAPP    = sqlite-autoconf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = sqlite
-PAK_VER    = 2
-
-DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7eb41eea5ffa5cbe359a48629084c425
+$(DL_FILE)_MD5 = 33bb8db0038317ce1b0480ca1185c7ba
 
 install : $(TARGET)
 
@@ -66,9 +62,6 @@ $(patsubst %,$(DIR_DL)/%,$(objects)) :
 
 $(subst %,%_MD5,$(objects)) :
 	@$(MD5)
-
-dist: 
-	@$(PAK)
 
 ###############################################################################
 # Installation Details

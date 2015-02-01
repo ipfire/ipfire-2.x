@@ -1,7 +1,0 @@
-setenv initrd_high 90000000
-fatload mmc 0:1 0x82000000 zImage-ipfire-multi
-#fatload mmc 0:1 0x85000000 uInit-ipfire-multi
-fatload mmc 0:1 ${fdtaddr} omap4-${board_name}.dtb
-setenv bootargs video=800x600 console=tty1 rootwait smsc95xx.macaddr=$usbethaddr root=/dev/mmcblk0p3 ro
-#bootz 0x82000000 0x85000000 ${fdtaddr}
-bootz 0x82000000 - ${fdtaddr}

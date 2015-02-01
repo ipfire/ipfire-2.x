@@ -943,7 +943,7 @@
 'ike grouptype' => 'Typ grupy IKE:',
 'ike integrity' => 'Spójność IKE:',
 'ike lifetime' => 'Czas ważności IKE:',
-'ike lifetime should be between 1 and 8 hours' => 'Czas ważności IKE powinien wynosić od 1 do 8 godzin.',
+'ike lifetime should be between 1 and 24 hours' => 'Czas ważności IKE powinien wynosić od 1 do 24 godzin.',
 'import' => 'Import',
 'importkey' => 'Import PSK',
 'in' => 'W',

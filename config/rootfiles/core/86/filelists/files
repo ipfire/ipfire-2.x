@@ -1,5 +1,8 @@
 etc/system-release
 etc/issue
+opt/pakfire/etc/pakfire.conf
+usr/lib/firewall/rules.pl
+usr/local/bin/update-bootloader
 var/ipfire/header.pl
 var/ipfire/langs
 var/ipfire/lang.pl

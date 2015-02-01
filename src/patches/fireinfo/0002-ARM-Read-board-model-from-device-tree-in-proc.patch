@@ -1,7 +1,7 @@
 From b9a068e26261007d4a0592fcb47f82658af2c775 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Mon, 3 Nov 2014 21:33:45 +0100
-Subject: [PATCH 2/2] ARM: Read board model from device-tree in /proc
+Subject: [PATCH 2/3] ARM: Read board model from device-tree in /proc
 
 ---
  src/fireinfo/system.py | 35 +++++++++--------------------------

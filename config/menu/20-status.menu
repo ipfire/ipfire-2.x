@@ -40,6 +40,18 @@
 				'title' => "$Lang::tr{'network other'}",
 				'enabled' => 1,
 			  };
+	$substatus->{'53.networkovpn'} = {
+				'caption' => "$Lang::tr{'openvpn client'}",
+				'uri' => '/cgi-bin/netovpnrw.cgi',
+				'title' => "$Lang::tr{'openvpn client'}",
+				'enabled' => 1,
+			  };
+	$substatus->{'54.networkovpnsrv'} = {
+				'caption' => "$Lang::tr{'openvpn server'}",
+				'uri' => '/cgi-bin/netovpnsrv.cgi',
+				'title' => "$Lang::tr{'openvpn server'}",
+				'enabled' => 1,
+			  };
     $substatus->{'60.hardwaregraphs'} = {
 				'caption' => "$Lang::tr{'hardware graphs'}",
 				'uri' => '/cgi-bin/hardwaregraphs.cgi',

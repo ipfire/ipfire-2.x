@@ -100,6 +100,7 @@ echo Update Kernel to $KVER ...
 rm -rf /boot/System.map-*
 rm -rf /boot/config-*
 rm -rf /boot/ipfirerd-*
+rm -rf /boot/initramfs-*
 rm -rf /boot/vmlinuz-*
 rm -rf /boot/uImage-ipfire-*
 rm -rf /boot/uInit-ipfire-*
@@ -124,6 +125,10 @@ esac
 #
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
+
+#
+#restart init because glibc was updated.
+telinit u
 
 # Check diskspace on boot
 BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
@@ -175,16 +180,10 @@ case "$(uname -m)" in
 			echo "GRUB_TERMINAL=\"serial\"" >> /etc/default/grub
 			echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> /etc/default/grub
 		fi
-		grub-mkconfig -o /boot/grub/grub.cfg
 
-		ROOT=$(mount | grep " / " | cut -d" " -f1)
-		ROOT=${ROOT::-1}
-
-		if ! grub-install --no-floppy --recheck "${ROOT}"; then
-			if ! grub-install --no-floppy --recheck --force "${ROOT}"; then
-				logger -p syslog.emerg -t ipfire \
-					"Could not update the bootloader!"
-			fi
+		if ! /usr/local/bin/update-bootloader; then
+			logger -p syslog.emerg -t ipfire \
+				"Could not update the bootloader!"
 		fi
 		;;
 esac

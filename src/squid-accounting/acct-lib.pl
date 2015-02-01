@@ -392,6 +392,7 @@ sub pdf2 {
 	my @billar		= @{$_[0]}; #DATA from sendbill (just host/values)
 	my $month		= $_[1];
 	$month			= '0'.$month if $month < 10;
+	$month			= '12' if $month == 0;
 	my $year 		= $_[2];
 	my $mwst		= $_[3];
 	my @address_cust= @{$_[4]}; #Array which contains customer and hoster adresses and some additional info from billgroup
