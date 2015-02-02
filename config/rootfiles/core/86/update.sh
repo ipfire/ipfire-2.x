@@ -172,7 +172,7 @@ case "$(uname -m)" in
 		echo Update grub configuration ...
 		if grep -qE "^serial" /boot/old-grub-config; then
 			sed -i /etc/default/grub \
-				-e "s| panic=10 | console=ttyS0,115200n8 panic=10 |g"
+				-e "s|panic=10|& console=ttyS0,115200n8|g"
 			echo "GRUB_TERMINAL=\"serial\"" >> /etc/default/grub
 			echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> /etc/default/grub
 		fi
