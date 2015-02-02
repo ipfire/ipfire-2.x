@@ -83,8 +83,16 @@ rm -rf /lib/modules
 
 case "$(uname -m)" in
 	i?86)
-		# Backup grub.conf
-		cp -vf /boot/grub/grub.conf /boot/grub-legacy.conf
+		# Backup old grub config
+		if [ -f /boot/grub/grub.conf ]; then
+			cp -vf /boot/grub/grub.conf /boot/old-grub-config
+		fi
+		if [ -f /boot/grub/menu.lst ]; then
+			cp -vf /boot/grub/menu.lst /boot/old-grub-config
+		fi
+		if [ -f /boot/grub/grub.cfg ]; then
+			cp -vf /boot/grub/grub.cfg /boot/old-grub-config
+		fi
 
 		# Remove all files that belong to GRUB-legacy
 		rm -rfv /boot/grub
@@ -162,7 +170,7 @@ case "$(uname -m)" in
 		#
 		echo
 		echo Update grub configuration ...
-		if grep -qE "^serial" /boot/grub-legacy.conf; then
+		if grep -qE "^serial" /boot/old-grub-config; then
 			sed -i /etc/default/grub \
 				-e "s| panic=10 | console=ttyS0,115200n8 panic=10 |g"
 			echo "GRUB_TERMINAL=\"serial\"" >> /etc/default/grub
