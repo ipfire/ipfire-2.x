@@ -1,0 +1,56 @@
+#/bin/bash
+########################################################################
+# Begin
+#
+# Description : DHCP Client Script (initrd version)
+#
+# Authors     : Arne Fitzenreiter - arne_f@ipfire.org
+#
+# Version     : 02.00
+#
+# Notes       : 
+#
+########################################################################
+
+LEASE_FILE="/var/ipfire/dhcpc/dhcpcd-${interface}.info"
+
+export_lease() {
+	set | grep "^new_" | sed "s|^new_||g" | \
+	sed "s|'||g" | sort > ${LEASE_FILE}
+}
+
+make_resolvconf() {
+	local DNS="$(grep 'domain_name_servers' ${LEASE_FILE} | cut -d'=' -f2)"
+	local DNS1="$(echo ${DNS} | cut -d' ' -f1)"
+	local DNS2="$(echo ${DNS} | cut -d' ' -f2)"
+
+	(
+		echo "nameserver ${DNS1}"
+		echo "nameserver ${DNS2}"
+	) > /etc/resolv.conf
+}
+
+case "${reason}" in
+	PREINIT)
+		# Configure MTU
+		if [ -n "${new_interface_mtu}" ] && [ ${new_interface_mtu} -gt 576 ]; then
+			echo "Setting MTU to ${new_interface_mtu}"
+			ip link set "${interface}" mtu "${new_interface_mtu}"
+		fi
+		;;
+
+	BOUND|INFORM|REBIND|REBOOT|RENEW|TIMEOUT|STATIC)
+		# Export all information about the newly received lease
+		# to file
+		export_lease
+
+		# Create system configuration files
+		make_resolvconf
+		;;
+
+	EXPIRE|FAIL|IPV4LL|NAK|NOCARRIER|RELEASE|STOP)
+		rm -f "${LEASE_FILE}"
+		;;
+esac
+
+exit 0

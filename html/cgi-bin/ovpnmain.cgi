@@ -908,7 +908,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   }
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print SERVERCONF "# Enable Compression\n";
-   print SERVERCONF "comp-lzo\r\n";
+   print SERVERCONF "comp-lzo\n";
      }
   print SERVERCONF "# Debug Level\n"; 
   print SERVERCONF "verb 3\n"; 
@@ -1003,7 +1003,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   }
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print CLIENTCONF "# Enable Compression\n";
-   print CLIENTCONF "comp-lzo\r\n";
+   print CLIENTCONF "comp-lzo\n";
   }
   print CLIENTCONF "# Debug Level\n"; 
   print CLIENTCONF "verb 3\n"; 
@@ -2103,7 +2103,7 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    }
    if ($confighash{$cgiparams{'KEY'}}[30] eq 'on') {
    print CLIENTCONF "# Enable Compression\n";
-   print CLIENTCONF "comp-lzo\r\n";
+   print CLIENTCONF "comp-lzo\n";
      }
    print CLIENTCONF "# Debug Level\n"; 
    print CLIENTCONF "verb 3\n"; 
@@ -3968,10 +3968,8 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		$errormessage = $Lang::tr{'name too long'};
 		goto VPNCONF_ERROR;
 	    }
-	    if ($cgiparams{'CERT_NAME'} !~ /^[a-zA-Z0-9 ,\.\-_]+$/) {
+	    if ($cgiparams{'CERT_NAME'} eq '' || $cgiparams{'CERT_NAME'} !~ /^[a-zA-Z0-9 ,\.\-_]+$/) {
 		$errormessage = $Lang::tr{'invalid input for name'};
-		unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-		rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 		goto VPNCONF_ERROR;
 	    }
 	    if ($cgiparams{'CERT_EMAIL'} ne '' && (! &General::validemail($cgiparams{'CERT_EMAIL'}))) {

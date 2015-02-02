@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 006
+VER        = 038
 
 THISAPP    = dracut-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 016052b57001789ec2acf89d382a82f5
+$(DL_FILE)_MD5 = 4487bd98000cc536c5c3839a2f112831
 
 install : $(TARGET)
 
@@ -69,40 +69,15 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dracut-038-always-enable-mdraid.patch
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_lzma.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_remove_cdrom_wait.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_add_run_dir.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dracut-006_remove_scsi_wait.patch
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install sbindir=/sbin sysconfdir=/etc
 
-	cd $(DIR_APP) && cp -vf $(DIR_SRC)/src/dracut/switch_root.c .
+	rm -rf /usr/lib/dracut/modules.d/*{biosdevname,bootchart,dash,fips*,modsign,busybox,convertfs,network,ifcfg,url-lib,gensplash,cms,plymouth,btrfs,crypt*,dm,dmraid,dmsquash-live,livenet,lvm,multipath,qemu*,cifs,dasd*,fcoe*,iscsi,nbd,nfs,resume,ssh-client,zfcp*,systemd*,znet,securityfs,masterkey,selinux,usrmount,uefi-lib}
 
-	cd $(DIR_APP) && make $(MAKETUNING) WITH_SWITCH_ROOT=1
-	cd $(DIR_APP) && make install WITH_SWITCH_ROOT=1 \
-		sbindir=/sbin sysconfdir=/etc
+	cp -vf $(DIR_SRC)/config/dracut/dracut.conf /etc/dracut.conf
 
-	cp -vf $(DIR_SRC)/src/dracut/dracut.conf /etc/dracut.conf.d/
-
-	rm -rf /usr/share/dracut/modules.d/*{dash,fips,redhat-i18n,rpmversion,network,ifcfg,plymouth,btrfs,crypt,dm,dmraid,dmsquash-live,lvm,mdraid,multipath,dasd,dasd_mod,fcoe,iscsi,nbd,nfs,resume,uswsusp,zfcp,znet,selinux}
-
-	sed -e "s/--resolve-names=never//g" -i \
-		/usr/share/dracut/modules.d/99base/init
-
-	# Build initramdisk
-	# Strip all binaries in that initrd, because no debugging code is
-	# needed.
-
-ifeq "$(MACHINE_TYPE)" "arm"
-	# kirkwood kernel
-	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-kirkwood.img $(KVER)-ipfire-kirkwood
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-kirkwood.img uInit-ipfire-kirkwood
-	# arm7 multi kernel
-	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER)-multi.img $(KVER)-ipfire-multi
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d ipfirerd-$(KVER)-multi.img uInit-ipfire-multi
-#	cd /boot && cp -f ipfirerd-$(KVER)-multi.img zInit-ipfire-multi
-else
-	/sbin/dracut --force --verbose --strip /boot/ipfirerd-$(KVER).img $(KVER)-ipfire
-endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

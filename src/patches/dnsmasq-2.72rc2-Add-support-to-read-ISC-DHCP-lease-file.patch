@@ -1,0 +1,371 @@
+diff --git a/Makefile b/Makefile
+index 58a7975..616c6b7 100644
+--- a/Makefile
++++ b/Makefile
+@@ -69,7 +69,7 @@ objs = cache.o rfc1035.o util.o option.o forward.o network.o \
+        dnsmasq.o dhcp.o lease.o rfc2131.o netlink.o dbus.o bpf.o \
+        helper.o tftp.o log.o conntrack.o dhcp6.o rfc3315.o \
+        dhcp-common.o outpacket.o radv.o slaac.o auth.o ipset.o \
+-       domain.o dnssec.o blockdata.o tables.o loop.o
++       domain.o dnssec.o blockdata.o tables.o loop.o isc.o
+ 
+ hdrs = dnsmasq.h config.h dhcp-protocol.h dhcp6-protocol.h \
+        dns-protocol.h radv-protocol.h ip6addr.h
+diff --git a/src/cache.c b/src/cache.c
+index 2c3a498..77a7046 100644
+--- a/src/cache.c
++++ b/src/cache.c
+@@ -17,7 +17,7 @@
+ #include "dnsmasq.h"
+ 
+ static struct crec *cache_head = NULL, *cache_tail = NULL, **hash_table = NULL;
+-#ifdef HAVE_DHCP
++#if (defined HAVE_DHCP) || (defined HAVE_ISC_READER)
+ static struct crec *dhcp_spare = NULL;
+ #endif
+ static struct crec *new_chain = NULL;
+@@ -222,6 +222,9 @@ static void cache_free(struct crec *crecp)
+       crecp->flags &= ~F_BIGNAME;
+     }
+ 
++  if (crecp->flags & F_DHCP)
++    free(crecp->name.namep);
++
+ #ifdef HAVE_DNSSEC
+   cache_blockdata_free(crecp);
+ #endif
+@@ -1110,7 +1113,7 @@ void cache_reload(void)
+       total_size = read_hostsfile(ah->fname, ah->index, total_size, (struct crec **)daemon->packet, revhashsz);
+ } 
+ 
+-#ifdef HAVE_DHCP
++#if (defined HAVE_DHCP) || (defined HAVE_ISC_READER)
+ struct in_addr a_record_from_hosts(char *name, time_t now)
+ {
+   struct crec *crecp = NULL;
+@@ -1188,7 +1191,7 @@ void cache_add_dhcp_entry(char *host_name, int prot,
+       addrlen = sizeof(struct in6_addr);
+     }
+ #endif
+-  
++
+   inet_ntop(prot, host_address, daemon->addrbuff, ADDRSTRLEN);
+   
+   while ((crec = cache_find_by_name(crec, host_name, 0, flags | F_CNAME)))
+@@ -1253,7 +1256,11 @@ void cache_add_dhcp_entry(char *host_name, int prot,
+       else
+ 	crec->ttd = ttd;
+       crec->addr.addr = *host_address;
++#ifdef HAVE_ISC_READER
++      crec->name.namep = strdup(host_name);
++#else
+       crec->name.namep = host_name;
++#endif
+       crec->uid = next_uid();
+       cache_hash(crec);
+ 
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index f4a89fc..a448ec4 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -940,6 +940,11 @@ int main (int argc, char **argv)
+ 
+ 	  poll_resolv(0, daemon->last_resolv != 0, now); 	  
+ 	  daemon->last_resolv = now;
++
++#ifdef HAVE_ISC_READER
++	  if (daemon->lease_file && !daemon->dhcp)
++	    load_dhcp(now);
++#endif
+ 	}
+       
+       if (FD_ISSET(piperead, &rset))
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index e74b15a..4a35168 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -1463,9 +1463,13 @@ time_t periodic_slaac(time_t now, struct dhcp_lease *leases);
+ void slaac_ping_reply(struct in6_addr *sender, unsigned char *packet, char *interface, struct dhcp_lease *leases);
+ #endif
+ 
++/* isc.c */
++#ifdef HAVE_ISC_READER
++void load_dhcp(time_t now);
++#endif
++
+ /* loop.c */
+ #ifdef HAVE_LOOP
+ void loop_send_probes();
+ int detect_loop(char *query, int type);
+ #endif
+-
+diff --git a/src/isc.c b/src/isc.c
+new file mode 100644
+index 0000000..5106442
+--- /dev/null
++++ b/src/isc.c
+@@ -0,0 +1,251 @@
++/* dnsmasq is Copyright (c) 2014 John Volpe, Simon Kelley and
++     Michael Tremer
++
++  This program is free software; you can redistribute it and/or modify
++  it under the terms of the GNU General Public License as published by
++  the Free Software Foundation; version 2 dated June, 1991, or
++  (at your option) version 3 dated 29 June, 2007.
++
++  This program is distributed in the hope that it will be useful,
++  but WITHOUT ANY WARRANTY; without even the implied warranty of
++  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++  GNU General Public License for more details.
++  
++  You should have received a copy of the GNU General Public License
++  along with this program.  If not, see <http://www.gnu.org/licenses/>.
++
++  Code in this file is based on contributions by John Volpe and
++  Simon Kelley. Updated for recent versions of dnsmasq by
++  Michael Tremer.
++*/
++
++#include "dnsmasq.h"
++
++#ifdef HAVE_ISC_READER
++#define MAXTOK 50
++
++struct isc_dhcp_lease {
++	char* name;
++	char* fqdn;
++	time_t expires;
++	struct in_addr addr;
++	struct isc_dhcp_lease* next;
++};
++
++static struct isc_dhcp_lease* dhcp_lease_new(const char* hostname) {
++	struct isc_dhcp_lease* lease = whine_malloc(sizeof(*lease));
++
++	lease->name = strdup(hostname);
++	if (daemon->domain_suffix) {
++		asprintf(&lease->fqdn, "%s.%s", hostname, daemon->domain_suffix);
++	}
++	lease->expires = 0;
++	lease->next = NULL;
++
++	return lease;
++}
++
++static void dhcp_lease_free(struct isc_dhcp_lease* lease) {
++	if (!lease)
++		return;
++
++	if (lease->name)
++		free(lease->name);
++	if (lease->fqdn)
++		free(lease->fqdn);
++	free(lease);
++}
++
++static int next_token(char* token, int buffsize, FILE* fp) {
++	int c, count = 0;
++	char* cp = token;
++
++	while ((c = getc(fp)) != EOF) {
++		if (c == '#') {
++			do {
++				c = getc(fp);
++			} while (c != '\n' && c != EOF);
++		}
++
++		if (c == ' ' || c == '\t' || c == '\n' || c == ';') {
++			if (count)
++				break;
++		} else if ((c != '"') && (count < buffsize - 1)) {
++			*cp++ = c;
++			count++;
++		}
++	}
++
++	*cp = 0;
++	return count ? 1 : 0;
++}
++
++static long get_utc_offset() {
++	time_t t = time(NULL);
++	struct tm* time_struct = localtime(&t);
++
++	return time_struct->tm_gmtoff;
++}
++
++static time_t parse_lease_time(const char* token_date, const char* token_time) {
++	time_t time = (time_t)(-1);
++	struct tm lease_time;
++
++	if (sscanf(token_date, "%d/%d/%d", &lease_time.tm_year, &lease_time.tm_mon, &lease_time.tm_mday) == 3) {
++		lease_time.tm_year -= 1900;
++		lease_time.tm_mon -= 1;
++
++		if (sscanf(token_time, "%d:%d:%d", &lease_time.tm_hour, &lease_time.tm_min, &lease_time.tm_sec) == 3) {
++			time = mktime(&lease_time) + get_utc_offset();
++		}
++	}
++
++	return time;
++}
++
++static struct isc_dhcp_lease* find_lease(const char* hostname, struct isc_dhcp_lease* leases) {
++	struct isc_dhcp_lease* lease = leases;
++
++	while (lease) {
++		if (strcmp(hostname, lease->name) == 0) {
++			return lease;
++		}
++		lease = lease->next;
++	}
++
++	return NULL;
++}
++
++static off_t lease_file_size = (off_t)0;
++static ino_t lease_file_inode = (ino_t)0;
++
++void load_dhcp(time_t now) {
++	struct isc_dhcp_lease* leases = NULL;
++
++	struct stat statbuf;
++	if (stat(daemon->lease_file, &statbuf) == -1) {
++		return;
++	}
++
++	/* Do nothing if the lease file has not changed. */
++	if ((statbuf.st_size <= lease_file_size) && (statbuf.st_ino == lease_file_inode))
++		return;
++
++	lease_file_size = statbuf.st_size;
++	lease_file_inode = statbuf.st_ino;
++
++	FILE* fp = fopen(daemon->lease_file, "r");
++	if (!fp) {
++		my_syslog(LOG_ERR, _("failed to load %s:%s"), daemon->lease_file, strerror(errno));
++		return;
++	}
++
++	my_syslog(LOG_INFO, _("reading %s"), daemon->lease_file);
++
++	char* hostname = daemon->namebuff;
++	struct in_addr host_address;
++	time_t time_starts = -1;
++	time_t time_ends = -1;
++	int nomem;
++
++	char token[MAXTOK];
++	while ((next_token(token, MAXTOK, fp))) {
++		if (strcmp(token, "lease") == 0) {
++			hostname[0] = '\0';
++
++			if (next_token(token, MAXTOK, fp) && ((host_address.s_addr = inet_addr(token)) != (in_addr_t)-1)) {
++				if (next_token(token, MAXTOK, fp) && *token == '{') {
++					while (next_token(token, MAXTOK, fp) && *token != '}') {
++						if ((strcmp(token, "client-hostname") == 0) || (strcmp(token, "hostname") == 0)) {
++							if (next_token(hostname, MAXDNAME, fp)) {
++								if (!canonicalise(hostname, &nomem)) {
++									*hostname = 0;
++									my_syslog(LOG_ERR, _("bad name in %s"), daemon->lease_file);
++								}
++							}
++						} else if ((strcmp(token, "starts") == 0) || (strcmp(token, "ends") == 0)) {
++							char token_date[MAXTOK];
++							char token_time[MAXTOK];
++
++							int is_starts = strcmp(token, "starts") == 0;
++
++							// Throw away the weekday and parse the date.
++							if (next_token(token, MAXTOK, fp) && next_token(token_date, MAXTOK, fp) && next_token(token_time, MAXTOK, fp)) {
++								time_t time = parse_lease_time(token_date, token_time);
++
++								if (is_starts)
++									time_starts = time;
++								else
++									time_ends = time;
++							}
++						}
++					}
++
++					if (!*hostname)
++						continue;
++
++					if ((time_starts == -1) || (time_ends == -1))
++						continue;
++
++					if (difftime(now, time_ends) > 0)
++						continue;
++
++					char* dot = strchr(hostname, '.');
++					if (dot) {
++						if (!daemon->domain_suffix || hostname_isequal(dot + 1, daemon->domain_suffix)) {
++							my_syslog(LOG_WARNING,
++								_("Ignoring DHCP lease for %s because it has an illegal domain part"),
++								hostname);
++							continue;
++						}
++						*dot = 0;
++					}
++
++					// Search for an existing lease in the list
++					// with the given host name and update the data
++					// if needed.
++					struct isc_dhcp_lease* lease = find_lease(hostname, leases);
++
++					// If no lease already exists, we create a new one
++					// and append it to the list.
++					if (!lease) {
++						lease = dhcp_lease_new(hostname);
++
++						lease->next = leases;
++						leases = lease;
++					}
++
++					// Only update more recent leases.
++					if (lease->expires > time_ends)
++						continue;
++
++					lease->addr = host_address;
++					lease->expires = time_ends;
++				}
++			}
++		}
++	}
++
++	fclose(fp);
++
++	// Drop all entries.
++	cache_unhash_dhcp();
++
++	while (leases) {
++		struct isc_dhcp_lease *lease = leases;
++		leases = lease->next;
++
++		if (lease->fqdn) {
++			cache_add_dhcp_entry(lease->fqdn, AF_INET, (struct all_addr*)&lease->addr.s_addr, lease->expires);
++		}
++
++		if (lease->name) {
++			cache_add_dhcp_entry(lease->name, AF_INET, (struct all_addr*)&lease->addr.s_addr, lease->expires);
++		}
++
++		// Cleanup
++		dhcp_lease_free(lease);
++	}
++}
++
++#endif
+diff --git a/src/option.c b/src/option.c
+index 45d8875..29c9ee5 100644
+--- a/src/option.c
++++ b/src/option.c
+@@ -1669,7 +1669,7 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+ 	ret_err(_("bad MX target"));
+       break;
+ 
+-#ifdef HAVE_DHCP      
++#if (defined HAVE_DHCP) || (defined HAVE_ISC_READER)
+     case 'l':  /* --dhcp-leasefile */
+       daemon->lease_file = opt_string_alloc(arg);
+       break;

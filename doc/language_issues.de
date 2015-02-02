@@ -21,6 +21,7 @@ WARNING: translation string unused: add-route
 WARNING: translation string unused: addon
 WARNING: translation string unused: admin user password has been changed
 WARNING: translation string unused: administrator user password
+WARNING: translation string unused: adsl settings
 WARNING: translation string unused: advproxy LDAP auth
 WARNING: translation string unused: advproxy NTLM auth
 WARNING: translation string unused: advproxy advanced proxy
@@ -42,7 +43,6 @@ WARNING: translation string unused: advproxy no cre groups
 WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy update notification
 WARNING: translation string unused: again
-WARNING: translation string unused: age second
 WARNING: translation string unused: age seconds
 WARNING: translation string unused: age shour
 WARNING: translation string unused: age sminute
@@ -237,7 +237,6 @@ WARNING: translation string unused: fwhost Custom Host
 WARNING: translation string unused: fwhost Custom Network
 WARNING: translation string unused: fwhost IpSec Host
 WARNING: translation string unused: fwhost IpSec Network
-WARNING: translation string unused: fwhost OpenVPN N-2-N
 WARNING: translation string unused: fwhost OpenVPN static host
 WARNING: translation string unused: fwhost OpenVPN static network
 WARNING: translation string unused: fwhost Standard Network
@@ -247,6 +246,7 @@ WARNING: translation string unused: fwhost changeremark
 WARNING: translation string unused: fwhost err addrgrp
 WARNING: translation string unused: fwhost err hostorip
 WARNING: translation string unused: fwhost err mac
+WARNING: translation string unused: fwhost err partofnet
 WARNING: translation string unused: fwhost green
 WARNING: translation string unused: fwhost hosts
 WARNING: translation string unused: fwhost ipadr

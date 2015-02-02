@@ -17,26 +17,8 @@
 . ${rc_functions}
 eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 
-# English is default
-FONT="lat0-16"
+FONT="latarcyrheb-sun16"
 KEYMAP_CORRECTIONS="euro2"
-
-case "${LANGUAGE}" in
-	# German
-	de)
-		LEGACY_CHARSET="iso-8859-15"
-		FONT="lat0-16 -m 8859-15"
-		;;
-	# Polish
-	pl)
-		FONT="lat2-16"
-		;;
-	# Russish/Turkish
-	ru|tr)
-		FONT="LatArCyrHeb-16"
-		;;
-esac
-
 UNICODE="1"
 BROKEN_COMPOSE="0"
 

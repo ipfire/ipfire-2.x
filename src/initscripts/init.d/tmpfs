@@ -68,6 +68,10 @@ case "$1" in
 		evaluate_retval
 		;;
 	restore)
+		if ! mountpoint $RRDLOG &>/dev/null; then
+			mount -t tmpfs -o size=64M none "$RRDLOG"
+		fi
+
 		if [ -e $RRDLOG.bak/cron/new.root ]; then
 			if [ -e $RRDLOG.bak/cron/root ]; then
 				rm -f $RRDLOG.bak/cron/new.root

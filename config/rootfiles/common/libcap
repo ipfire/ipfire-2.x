@@ -9,7 +9,6 @@ sbin/getcap
 sbin/getpcaps
 sbin/setcap
 #usr/include/sys/capability.h
-usr/lib/libnewt.so.0.51
 #usr/share/man/man1/capsh.1
 #usr/share/man/man3/cap_clear.3
 #usr/share/man/man3/cap_clear_flag.3

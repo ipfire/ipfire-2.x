@@ -43,7 +43,6 @@ WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy update information
 WARNING: translation string unused: advproxy update notification
 WARNING: translation string unused: again
-WARNING: translation string unused: age second
 WARNING: translation string unused: age seconds
 WARNING: translation string unused: age shour
 WARNING: translation string unused: age sminute
@@ -260,7 +259,6 @@ WARNING: translation string unused: fwhost Custom Host
 WARNING: translation string unused: fwhost Custom Network
 WARNING: translation string unused: fwhost IpSec Host
 WARNING: translation string unused: fwhost IpSec Network
-WARNING: translation string unused: fwhost OpenVPN N-2-N
 WARNING: translation string unused: fwhost OpenVPN static host
 WARNING: translation string unused: fwhost OpenVPN static network
 WARNING: translation string unused: fwhost Standard Network
@@ -270,6 +268,7 @@ WARNING: translation string unused: fwhost changeremark
 WARNING: translation string unused: fwhost err addrgrp
 WARNING: translation string unused: fwhost err hostorip
 WARNING: translation string unused: fwhost err mac
+WARNING: translation string unused: fwhost err partofnet
 WARNING: translation string unused: fwhost green
 WARNING: translation string unused: fwhost hosts
 WARNING: translation string unused: fwhost ipadr
@@ -661,6 +660,13 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: MTU settings
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
+WARNING: untranslated string: administrator password
+WARNING: untranslated string: administrator username
+WARNING: untranslated string: advproxy AUTH method ntlm
+WARNING: untranslated string: advproxy AUTH method ntlm auth
+WARNING: untranslated string: advproxy basic authentication
+WARNING: untranslated string: advproxy group access control
+WARNING: untranslated string: advproxy group required
 WARNING: untranslated string: atm device
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
@@ -678,11 +684,24 @@ WARNING: untranslated string: dnssec validating
 WARNING: untranslated string: download tls-auth key
 WARNING: untranslated string: drop outgoing
 WARNING: untranslated string: firewall logs country
+WARNING: untranslated string: fwdfw err concon
+WARNING: untranslated string: fwdfw err ratecon
+WARNING: untranslated string: fwdfw limitconcon
+WARNING: untranslated string: fwdfw maxconcon
+WARNING: untranslated string: fwdfw numcon
+WARNING: untranslated string: fwdfw ratelimit
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
 WARNING: untranslated string: imei
 WARNING: untranslated string: imsi
+WARNING: untranslated string: masquerade blue
+WARNING: untranslated string: masquerade green
+WARNING: untranslated string: masquerade orange
+WARNING: untranslated string: masquerading
+WARNING: untranslated string: masquerading disabled
+WARNING: untranslated string: masquerading enabled
+WARNING: untranslated string: messages
 WARNING: untranslated string: model
 WARNING: untranslated string: modem hardware details
 WARNING: untranslated string: modem information
@@ -712,6 +731,8 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: samba join a domain
+WARNING: untranslated string: samba join domain
 WARNING: untranslated string: show dh
 WARNING: untranslated string: show tls-auth key
 WARNING: untranslated string: software version

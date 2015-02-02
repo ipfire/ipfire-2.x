@@ -1,0 +1,586 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR The IPFire Project (www.ipfire.org)
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# btelega <btelega@gmail.com>, 2014
+# Przemysław Karpeta <przemyslaw.karpeta@gmail.com>, 2014
+msgid ""
+msgstr ""
+"Project-Id-Version: IPFire Project\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-21 15:12+0000\n"
+"PO-Revision-Date: 2014-11-03 15:36+0000\n"
+"Last-Translator: Przemysław Karpeta <przemyslaw.karpeta@gmail.com>\n"
+"Language-Team: Polish (http://www.transifex.com/projects/p/ipfire/language/pl/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: dhcp.c:50
+msgid "Start address:"
+msgstr "Adres początkowy:"
+
+#: dhcp.c:51
+msgid "End address:"
+msgstr "Adres końcowy:"
+
+#: dhcp.c:52 networking.c:717
+msgid "Primary DNS:"
+msgstr "Główny DNS:"
+
+#: dhcp.c:53 networking.c:723
+msgid "Secondary DNS:"
+msgstr "Pomocniczy DNS:"
+
+#: dhcp.c:54
+msgid "Default lease (mins):"
+msgstr "Domyślna dzierżawa (min.):"
+
+#: dhcp.c:55
+msgid "Max lease (mins):"
+msgstr "Maksymalna dzierżawa (min.):"
+
+#: dhcp.c:56
+msgid "Domain name suffix:"
+msgstr "Przyrostek domeny: "
+
+#: dhcp.c:86 dhcp.c:93 dhcp.c:101 domainname.c:34 hostname.c:37 keymap.c:70
+#: misc.c:40 misc.c:52 netstuff.c:377 netstuff.c:566 netstuff.c:704
+#: networking.c:134 networking.c:255 networking.c:291 networking.c:346
+#: networking.c:442 networking.c:552 networking.c:603 networking.c:610
+#: networking.c:713 timezone.c:63
+msgid "Unable to open settings file"
+msgstr "Nie można otworzyć pliku ustawień"
+
+#: dhcp.c:111
+msgid "DHCP server configuration"
+msgstr "Konfiguracja serwera DHCP "
+
+#: dhcp.c:116
+msgid "Configure the DHCP server by entering the settings information."
+msgstr "Skonfiguruj serwer DHCP wprowadzając właściwe ustawienia."
+
+#: dhcp.c:125
+msgid "Enabled"
+msgstr "Włączony"
+
+#: dhcp.c:142 domainname.c:43 hostname.c:47 keymap.c:86 main.c:99 main.c:172
+#: main.c:174 netstuff.c:157 netstuff.c:733 netstuff.c:756 networking.c:163
+#: networking.c:269 networking.c:305 networking.c:409 networking.c:560
+#: networking.c:642 networking.c:653 networking.c:746 passwords.c:89
+#: timezone.c:78
+msgid "OK"
+msgstr "OK"
+
+#: dhcp.c:143 domainname.c:43 hostname.c:47 keymap.c:86 netstuff.c:158
+#: netstuff.c:673 netstuff.c:733 netstuff.c:756 networking.c:305
+#: networking.c:410 networking.c:560 networking.c:653 networking.c:746
+#: passwords.c:89 timezone.c:78
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: dhcp.c:156
+msgid ""
+"The following fields are invalid:\n"
+"\n"
+msgstr "Następujące pola są nieprawidłowe:\n\n"
+
+#: dhcp.c:159
+msgid "Start address"
+msgstr "Adres początkowy"
+
+#: dhcp.c:165
+msgid "End address"
+msgstr "Adres końcowy"
+
+#: dhcp.c:173 networking.c:755
+msgid "Primary DNS"
+msgstr "Główny DNS"
+
+#: dhcp.c:182 networking.c:764
+msgid "Secondary DNS"
+msgstr "Pomocniczy DNS"
+
+#: dhcp.c:189
+msgid "Default lease time"
+msgstr "Domyślny okres dzierżawy"
+
+#: dhcp.c:195
+msgid "Max. lease time"
+msgstr "Maksymalny okres dzierżawy"
+
+#: domainname.c:42 main.c:70
+msgid "Domain name"
+msgstr "Nazwa Domeny"
+
+#: domainname.c:42
+msgid "Enter Domain name"
+msgstr "Wpisz nazwę Domeny"
+
+#: domainname.c:48
+msgid "Domain name cannot be empty."
+msgstr "Nazwa Domeny nie może być pusta"
+
+#: domainname.c:50
+msgid "Domain name cannot contain spaces."
+msgstr "Nazwa domeny nie może zawierać spacji."
+
+#: domainname.c:53
+msgid "Domain name may only contain letters, numbers, hyphens and periods."
+msgstr "Nazwa domeny może zawierać jedynie litery, cyfry, myślniki i kropki."
+
+#: hostname.c:46 main.c:69
+msgid "Hostname"
+msgstr "Nazwa hosta"
+
+#: hostname.c:46
+msgid "Enter the machine's hostname."
+msgstr "Wprowadź nazwę hosta."
+
+#: hostname.c:53
+msgid "Hostname cannot be empty."
+msgstr "Nazwa hosta nie może być pusta."
+
+#: hostname.c:55
+msgid "Hostname cannot contain spaces."
+msgstr "Nazwa hosta nie może zawierać spacji."
+
+#: hostname.c:58
+msgid "Hostname may only contain letters, numbers and hyphens."
+msgstr "Nazwa hosta może zawierać tylko litery, cyfry i myślniki."
+
+#: keymap.c:84 main.c:67
+msgid "Keyboard mapping"
+msgstr "Mapowanie klawiatury"
+
+#: keymap.c:85
+msgid "Choose the type of keyboard you are using from the list below."
+msgstr "Wybierz używany przez siebie typ klawiatury z poniższej listy."
+
+#: main.c:68 timezone.c:77
+msgid "Timezone"
+msgstr "Strefa czasowa"
+
+#: main.c:71 networking.c:110 networking.c:115 networking.c:447
+msgid "Networking"
+msgstr "Sieć"
+
+#: main.c:72 misc.c:147
+msgid "ISDN"
+msgstr "ISDN"
+
+#: main.c:73
+msgid "'root' password"
+msgstr "Hasło użytkownika 'root'"
+
+#: main.c:74
+msgid "'admin' password"
+msgstr "Hasło użytkownika 'admin'"
+
+#: main.c:90
+msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
+msgstr "              <Tab>/<Alt-Tab> przełącza między elementami   |  <Space> wybiera"
+
+#: main.c:97
+msgid "Section menu"
+msgstr "Menu sekcji"
+
+#: main.c:98
+msgid "Select the item you wish to configure."
+msgstr "Wybierz element który chcesz skonfigurować."
+
+#: main.c:99
+msgid "Quit"
+msgstr "Wyjście"
+
+#: main.c:172
+msgid "Setup is complete."
+msgstr "Instalacja zakończona"
+
+#: main.c:174 netstuff.c:733 networking.c:560 networking.c:653
+msgid "Warning"
+msgstr "Ostrzeżenie"
+
+#: main.c:175
+msgid ""
+"Initial setup was not entirely complete. You must ensure that Setup is "
+"properly finished by running setup again at the shell."
+msgstr "Wstępna konfiguracjia nie została ukończona. Musisz upewnić się, że konfiguracja jest ukończona poprzez ponowne uruchomienie polecenia 'setup' w powłoce."
+
+#: misc.c:62
+#, c-format
+msgid "Unable to write %s/main/hostname.conf"
+msgstr "Nie można zapisać %s/main/hostname.conf"
+
+#: misc.c:71
+msgid "Unable to open main hosts file."
+msgstr "Nie można otworzyc głównego pliku hosts."
+
+#: misc.c:76
+msgid "Unable to write /etc/hosts."
+msgstr "Nie można zapisać /etc/hosts"
+
+#: misc.c:117
+msgid "Unable to write /etc/hosts.deny."
+msgstr "Nie można zapisać /etc/hosts.deny"
+
+#: misc.c:125
+msgid "Unable to write /etc/hosts.allow."
+msgstr "Nie można zapisać /etc/hosts.allow"
+
+#: misc.c:136
+msgid "Unable to set hostname."
+msgstr "Ustawienie nazwy hosta niemożliwe."
+
+#: misc.c:147
+msgid "Scanning and configuring ISDN devices."
+msgstr "Wykrywanie i konfiguracja urządzeń ISDN."
+
+#: misc.c:148
+msgid "Unable to scan for ISDN devices."
+msgstr "Wykrywanie urządzeń ISDN jest niemożliwe."
+
+#: netstuff.c:86
+#, c-format
+msgid "Interface - %s"
+msgstr "Interfejs - %s"
+
+#: netstuff.c:91
+#, c-format
+msgid "Enter the IP address information for the %s interface."
+msgstr "Wprowadź ustawienia adresu IP dla interfejsu %s."
+
+#: netstuff.c:103
+msgid "Static"
+msgstr "Statyczny"
+
+#: netstuff.c:104
+msgid "DHCP"
+msgstr "DHCP"
+
+#: netstuff.c:105
+msgid "PPP DIALUP (PPPoE, modem, ATM ...)"
+msgstr "PPP DIALUP (PPPoE, modem, ATM ...)"
+
+#: netstuff.c:113
+msgid "DHCP Hostname:"
+msgstr "Nazwa hosta DHCP:"
+
+#: netstuff.c:115
+msgid "Force DHCP MTU:"
+msgstr "Wymuś DHCP MTU:"
+
+#: netstuff.c:134
+msgid "IP address:"
+msgstr "IP address:"
+
+#: netstuff.c:146
+msgid "Network mask:"
+msgstr "Maska podsieci:"
+
+#: netstuff.c:173 networking.c:749
+msgid "The following fields are invalid:"
+msgstr "Następujące pola są nieprawidłowe:"
+
+#: netstuff.c:183
+msgid "IP address"
+msgstr "IP address"
+
+#: netstuff.c:189
+msgid "Network mask"
+msgstr "Maska podsieci"
+
+#: netstuff.c:198
+msgid "DHCP hostname"
+msgstr "Nazwa hosta DHCP"
+
+#: netstuff.c:396 netstuff.c:709
+msgid "Unset"
+msgstr "Wyłącz"
+
+#: netstuff.c:669
+#, c-format
+msgid "Please choose a networkcard for the following interface - %s."
+msgstr "Proszę wybrać kartę sieciową dla następującego interfejsu - %s"
+
+#: netstuff.c:672
+msgid "Extended Network Menu"
+msgstr "Rozszerzone Menu Sieci"
+
+#: netstuff.c:673 networking.c:520
+msgid "Select"
+msgstr "Wybierz"
+
+#: netstuff.c:673
+msgid "Identify"
+msgstr "Zidentyfikuj"
+
+#: netstuff.c:678
+msgid "Device Identification"
+msgstr "Identyfikacja urządzenia"
+
+#: netstuff.c:678
+msgid "The lights on the selected port should flash now for 10 seconds..."
+msgstr "Kontrolki na wybranym porcie powinny migotać przez następne 10 sekund..."
+
+#: netstuff.c:679
+msgid "Identification is not supported by this interface."
+msgstr "Ten interfejs nie wspiera identyfikacji."
+
+#: netstuff.c:691
+msgid "There are no unassigned interfaces on your system."
+msgstr "Nie ma już nieprzydzielonych interfejsów w systemie."
+
+#: netstuff.c:732
+#, c-format
+msgid "Do you really want to remove the assigned %s interface?"
+msgstr "Na pewno chcesz usunąć przydzielony interfejs %s ?"
+
+#: netstuff.c:755
+msgid "Select network driver"
+msgstr "Wybierz sterownik karty sieciowej"
+
+#: netstuff.c:755
+msgid "Set additional module parameters"
+msgstr "Ustaw dodatkowe parametry modułu"
+
+#: netstuff.c:762
+msgid "Loading module..."
+msgstr "Wczytywanie modułu..."
+
+#: netstuff.c:777
+msgid "Unable to load driver module."
+msgstr "Nie da się wczytać modułu."
+
+#: netstuff.c:780
+msgid "Module name cannot be blank."
+msgstr "Nazwa modułu nie może być pusta."
+
+#: networking.c:110
+msgid "Stopping network..."
+msgstr "Zatrzymywanie sieci..."
+
+#: networking.c:115
+msgid "Restarting network..."
+msgstr "Ponowne uruchamianie sieci..."
+
+#: networking.c:146
+msgid "No GREEN interface assigned."
+msgstr "Interfejs GREEN nie został przypisany."
+
+#: networking.c:152
+msgid "Missing an IP address on GREEN."
+msgstr "Brak adresu IP na GREEN."
+
+#: networking.c:163
+msgid "Error"
+msgstr "Błąd"
+
+#: networking.c:163
+msgid "Ignore"
+msgstr "Ignoruj"
+
+#: networking.c:164
+msgid "No RED interface assigned."
+msgstr "Interfejs RED nie został przypisany."
+
+#: networking.c:173
+msgid "Missing an IP address on RED."
+msgstr "Brak adresu IP na RED."
+
+#: networking.c:183
+msgid "No ORANGE interface assigned."
+msgstr "Interfejs ORANGE nie został przypisany."
+
+#: networking.c:189
+msgid "Missing an IP address on ORANGE."
+msgstr "Brak adresu IP na ORANGE."
+
+#: networking.c:199
+msgid "No BLUE interface assigned."
+msgstr "Interfejs BLUE nie został przypisany."
+
+#: networking.c:205
+msgid "Missing an IP address on BLUE."
+msgstr "Brak adresu IP na BLUE."
+
+#: networking.c:217
+msgid "Misssing DNS."
+msgstr "Brakuje DNS."
+
+#: networking.c:224
+msgid "Missing Default Gateway."
+msgstr "Brakuje Bramy Domyślnej."
+
+#: networking.c:237 networking.c:304
+msgid "Network configuration type"
+msgstr "Rodzaj konfiguracji sieci"
+
+#: networking.c:238 networking.c:409
+msgid "Drivers and card assignments"
+msgstr "Przydziały sterowników i kart"
+
+#: networking.c:239 networking.c:640
+msgid "Address settings"
+msgstr "Ustawienia adresu"
+
+#: networking.c:240 networking.c:743
+msgid "DNS and Gateway settings"
+msgstr "Ustawienia DNS i Bramy"
+
+#: networking.c:260
+msgid "When configuration is complete, a network restart will be required."
+msgstr "Po ukończeniu konfiguracji wymagane będzie ponowne uruchomienie sieci."
+
+#: networking.c:267
+#, c-format
+msgid ""
+"Current config: %s\n"
+"\n"
+"%s"
+msgstr "Obecna konfiguracja: %s\n\n%s"
+
+#: networking.c:268
+msgid "Network configuration menu"
+msgstr "Menu konfiguracji sieci"
+
+#: networking.c:269 networking.c:520 networking.c:642
+msgid "Done"
+msgstr "Zrobione"
+
+#: networking.c:300
+#, c-format
+msgid ""
+"Select the network configuration for %s. The following configuration types "
+"list those interfaces which have ethernet attached. If you change this "
+"setting, a network restart will be required, and you will have to "
+"reconfigure the network driver assignments."
+msgstr "Wybierz konfigurację sieci dla %s. Poniższe typy konfiguracji wyświetlają interfejsy z przyłączonym ethernetem. Jeśli zmienisz te ustawienia, wymagany będzie restart sieci, i trzeba będzie zrekonfigurować przydziały sterowników kart sieciowych. "
+
+#: networking.c:307
+#, c-format
+msgid ""
+"Not enough netcards for your choice.\n"
+"\n"
+"Needed: %d - Available: %d\n"
+msgstr "Niewystarczająca liczba kart sieciowych.\n\nPotrzebne: %d - Dostępne: %d\n"
+
+#: networking.c:359
+msgid ""
+"Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
+"\n"
+msgstr "Skonfiguruj sterowniki kart sieciowych, i przydziel karty do odpowiednich interfejsów. Obecna konfiguracja wygląda tak:\n\n"
+
+#: networking.c:408
+msgid "Do you wish to change these settings?"
+msgstr "Czy chcesz zmienić te ustawienia ?"
+
+#: networking.c:447
+msgid "Restarting non-local network..."
+msgstr "Ponowne uruchamianie sieci innych, niż lokalna..."
+
+#: networking.c:464
+msgid ""
+"Please choose the interface you wish to change.\n"
+"\n"
+msgstr "Wybierz interfejs, który chcesz zmienić.\n\n"
+
+#: networking.c:519
+msgid "Assigned Cards"
+msgstr "Przypisane Karty"
+
+#: networking.c:520
+msgid "Remove"
+msgstr "Usuń"
+
+#: networking.c:556 networking.c:649
+#, c-format
+msgid ""
+"If you change this IP address, and you are logged in remotely, your "
+"connection to the %s machine will be broken, and you will have to reconnect "
+"on the new IP. This is a risky operation, and should only be attempted if "
+"you have physical access to the machine, should something go wrong."
+msgstr "Jeśli zmienisz ten adres IP, a jesteś zalogowany zdalnie, Twoje połączenie do maszyny %s zostanie zerwane, i trzeba będzie połączyć się ponownie na nowy adres IP. To ryzykowna operacja, która powinna byc podejmowana tylko w przypadku posiadania bezpośredniego, fizycznego dostępu do maszyny na wypadek, gdyby coś poszło źle."
+
+#: networking.c:641
+msgid "Select the interface you wish to reconfigure."
+msgstr "Zaznacz interfejs, który chcesz zrekonfigurować."
+
+#: networking.c:729
+msgid "Default gateway:"
+msgstr "Brama domyślna:"
+
+#: networking.c:744
+msgid ""
+"Enter the DNS and gateway information. These settings are used only with "
+"Static IP (and DHCP if DNS set) on the RED interface."
+msgstr "Wprowadź informacje o serwerze DNS i bramie. Te ustawienia stosuje się tylko do statycznego IP (i DHCP, gdzie DNS ustawia się ręcznie) na interfejsie RED."
+
+#: networking.c:773
+msgid "Default gateway"
+msgstr "Brama domyślna"
+
+#: networking.c:780
+msgid "Secondary DNS specified without a Primary DNS"
+msgstr "Podano adres Zapasowego DNS bez podania adresu Podstawowego DNS."
+
+#: passwords.c:33
+msgid ""
+"Enter the 'root' user password. Login as this user for commandline access."
+msgstr "Wprowadź hasło użytkownika 'root'. Zaloguj się jako ten użytkownik, aby uzyskać dostęp do linii poleceń."
+
+#: passwords.c:38 passwords.c:61
+msgid "Setting password"
+msgstr "Ustawienie hasła"
+
+#: passwords.c:38
+msgid "Setting 'root' password...."
+msgstr "Ustawianie hasła użytkownika 'root'...."
+
+#: passwords.c:39
+msgid "Problem setting 'root' password."
+msgstr "Problem z ustawieniem hasła użytkownika 'root'."
+
+#: passwords.c:53
+#, c-format
+msgid ""
+"Enter %s 'admin' user password. This is the user to use for logging into the"
+" %s web administration pages."
+msgstr "Wprowadź haslo użytkownika 'admin' systemu %s. Zalogowanie się na tego użytkownika umożliwi dostęp do administracyjnej strony WWW %s."
+
+#: passwords.c:60
+#, c-format
+msgid "Setting %s 'admin' user password..."
+msgstr "Ustawianie hasła użytkownika 'admin' systemu %s..."
+
+#: passwords.c:62
+#, c-format
+msgid "Problem setting %s 'admin' user password."
+msgstr "Problem z ustawieniem hasła użytkownika 'admin' systemu %s."
+
+#: passwords.c:76
+msgid "Password:"
+msgstr "Hasło:"
+
+#: passwords.c:77
+msgid "Again:"
+msgstr "Ponownie:"
+
+#: passwords.c:95
+msgid "Password cannot be blank."
+msgstr "Hasło nie może być puste."
+
+#: passwords.c:102
+msgid "Passwords do not match."
+msgstr "Hasła nie są zgodne."
+
+#: passwords.c:109
+msgid "Password cannot contain spaces."
+msgstr "Hasło nie może zawierać spacji."
+
+#: timezone.c:77
+msgid "Choose the timezone you are in from the list below."
+msgstr "Wybierz strefę czasową w której się znajdujesz z listy poniżej."

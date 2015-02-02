@@ -1,0 +1,4 @@
+etc/system-release
+etc/issue
+etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
+var/ipfire/langs

@@ -1,0 +1,72 @@
+From b9a068e26261007d4a0592fcb47f82658af2c775 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Mon, 3 Nov 2014 21:33:45 +0100
+Subject: [PATCH 2/3] ARM: Read board model from device-tree in /proc
+
+---
+ src/fireinfo/system.py | 35 +++++++++--------------------------
+ 1 file changed, 9 insertions(+), 26 deletions(-)
+
+diff --git a/src/fireinfo/system.py b/src/fireinfo/system.py
+index 890f58c05027..195832e9f7eb 100644
+--- a/src/fireinfo/system.py
++++ b/src/fireinfo/system.py
+@@ -304,27 +304,6 @@ class System(object):
+ 		"""
+ 		return read_from_file("/sys/class/dmi/id/bios_vendor")
+ 
+-	def vendor_model_tuple(self):
+-		try:
+-			s = self.__cpuinfo["Hardware"]
+-		except KeyError:
+-			return (None, None)
+-
+-		if s.startswith("ARM-Versatile"):
+-			return ("ARM", s)
+-
+-		try:
+-			v, m = s.split(" ", 1)
+-		except ValueError:
+-			if s.startswith("BCM"):
+-				v = "Broadcom"
+-				m = s
+-			else:
+-				v = None
+-				m = s
+-
+-		return v, m
+-
+ 	@property
+ 	def vendor(self):
+ 		"""
+@@ -337,8 +316,10 @@ class System(object):
+ 				break
+ 
+ 		if ret is None:
+-			v, m = self.vendor_model_tuple()
+-			ret = v
++			try:
++				return self.__cpuinfo["Hardware"]
++			except KeyError:
++				pass
+ 
+ 		return ret
+ 
+@@ -353,9 +334,11 @@ class System(object):
+ 			if ret:
+ 				break
+ 
+-		if ret is None:
+-			v, m = self.vendor_model_tuple()
+-			ret = m
++		# Read device-tree model if available
++		ret = read_from_file("/proc/device-tree/model")
++		if ret:
++			# replace the NULL byte with which the DT string ends
++			ret = ret.replace(u"\u0000", "")
+ 
+ 		return ret
+ 
+-- 
+1.9.3
+

@@ -336,7 +336,7 @@ print <<END
 END
 	;
 	if ($sid ne "n/a") {
-		print "<a href='http://www.snort.org/search/sid/$sid' ";
+		print "<a href='https://www.snort.org/rule_docs/$sid' ";
 		print "target='_blank'>$sid</a></td>\n";
 	} else {
 		print $sid;

@@ -1,0 +1,28 @@
+commit 4d653a59ffeae0f46f76a40230e2cfa9587b7e7e
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Fri May 30 22:43:52 2014 +0530
+
+    Add mmap usage in malloc_info output
+    
+    The current malloc_info xml output only has information about
+    allocations on the heap.  Display information about number of mappings
+    and total mmapped size to this to complete the picture.
+
+diff -pruN a/malloc/malloc.c b/malloc/malloc.c
+--- a/malloc/malloc.c	2014-06-02 07:35:22.573256155 +0530
++++ b/malloc/malloc.c	2014-06-02 07:34:58.856257177 +0530
+@@ -6553,12 +6553,14 @@ malloc_info (int options, FILE *fp)
+   fprintf (fp,
+ 	   "<total type=\"fast\" count=\"%zu\" size=\"%zu\"/>\n"
+ 	   "<total type=\"rest\" count=\"%zu\" size=\"%zu\"/>\n"
++	   "<total type=\"mmap\" count=\"%d\" size=\"%zu\"/>\n"
+ 	   "<system type=\"current\" size=\"%zu\"/>\n"
+ 	   "<system type=\"max\" size=\"%zu\"/>\n"
+ 	   "<aspace type=\"total\" size=\"%zu\"/>\n"
+ 	   "<aspace type=\"mprotect\" size=\"%zu\"/>\n"
+ 	   "</malloc>\n",
+ 	   total_nfastblocks, total_fastavail, total_nblocks, total_avail,
++	   mp_.n_mmaps, mp_.mmapped_mem,
+ 	   total_system, total_max_system,
+ 	   total_aspace, total_aspace_mprotect);
+ 

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.7c
+VER        = 2.7
 
 THISAPP    = Pound-$(VER)
 DL_FILE    = $(THISAPP).tgz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = pound
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 56dace6b79c6be1d25b31355269c380a
+$(DL_FILE)_MD5 = ec8298aa3e4aee3ffbecdc0639d7f14a
 
 install : $(TARGET)
 

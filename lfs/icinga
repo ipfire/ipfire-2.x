@@ -112,7 +112,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--prefix=/usr \
 			--libexecdir=/usr/lib/icinga/plugins \
 			--with-nagios-user=nobody \
-			--with-nagios-group=nobody
+			--with-nagios-group=nobody \
+			--without-ipv6
 	cd $(DIR_SRC)/nagios-plugins-$(PLUGIN_VER) && make $(MAKETUNING)
 
 	# Install core

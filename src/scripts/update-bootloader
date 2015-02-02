@@ -1,0 +1,142 @@
+#!/bin/bash
+############################################################################
+#                                                                          #
+# This file is part of the IPFire Firewall.                                #
+#                                                                          #
+# IPFire is free software; you can redistribute it and/or modify           #
+# it under the terms of the GNU General Public License as published by     #
+# the Free Software Foundation; either version 2 of the License, or        #
+# (at your option) any later version.                                      #
+#                                                                          #
+# IPFire is distributed in the hope that it will be useful,                #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+# GNU General Public License for more details.                             #
+#                                                                          #
+# You should have received a copy of the GNU General Public License        #
+# along with IPFire; if not, write to the Free Software                    #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
+#                                                                          #
+# Copyright (C) 2014 IPFire Team <info@ipfire.org>.                        #
+#                                                                          #
+############################################################################
+
+GRUB_INSTALL_ARGS="--no-floppy --recheck"
+
+function find_bootloader_device() {
+	local mp
+	for mp in /boot /; do
+		if find_device "${mp}"; then
+			return 0
+		fi
+	done
+
+	return 1
+}
+
+function find_device() {
+	local mountpoint="${1}"
+
+	local root
+	local dev mp fs flags rest
+	while read -r dev mp fs flags rest; do
+		# Skip unwanted entries
+		[ "${dev}" = "rootfs" ] && continue
+
+		if [ "${mp}" = "${mountpoint}" ] && [ -b "${dev}" ]; then
+			root="$(basename "${dev}")"
+			break
+		fi
+	done < /proc/mounts
+
+	# Get the actual device from the partition that holds /
+	while [ -n "${root}" ]; do
+		if [ -e "/sys/block/${root}" ]; then
+			echo "${root}"
+			return 0
+		fi
+
+		# Remove last character
+		root="${root::-1}"
+	done
+
+	return 1
+}
+
+function device_is_mdraid() {
+	local device="${1}"
+
+	[ -d "/sys/block/${device}/md" ]
+}
+
+function mdraid_get_slaves() {
+	local device="${1}"
+
+	local slave
+	for slave in /sys/block/${device}/slaves/*; do
+		basename "${slave}"
+	done 2>/dev/null
+}
+
+function grub_update_config() {
+	echo "Updating configuration..."
+
+	if ! grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null; then
+		echo "Could not update configuration. Aborting." >&2
+		return 1
+	fi
+
+	return 0
+}
+
+function grub_install() {
+	local device="${1}"
+
+	echo "Installing GRUB on ${device}..."
+
+	if [ ! -b "${device}" ]; then
+		echo "${device} does not exist or is not a block device" >&2
+		return 1
+	fi
+
+	local args
+	for args in "" "--force"; do
+		if grub-install ${GRUB_INSTALL_ARGS} ${args} "${device}" &>/dev/null; then
+			return 0
+		fi
+	done
+
+	echo "Could not install GRUB on ${device}" >&2
+	return 1
+}
+
+function main() {
+	# Find the root device
+	local device="$(find_bootloader_device)"
+	if [ -z "${device}" ]; then
+		echo "Could not find root device. Aborting." >&2
+		exit 1
+	fi
+
+	echo "Found bootloader device: /dev/${device}"
+
+	# Update configuration files
+	grub_update_config || exit $?
+
+	# Handle mdraid devices
+	if device_is_mdraid "${device}"; then
+		local slave
+		for slave in $(mdraid_get_slaves "${device}"); do
+			grub_install "/dev/${slave}"
+		done
+
+	# Handle normal block devices
+	else
+		grub_install "/dev/${device}"
+	fi
+
+	return 0
+}
+
+# Run main function
+main

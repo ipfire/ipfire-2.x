@@ -22,6 +22,14 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+
+# If the wbpriv group does not exist yet, then create it and put squid
+# into it.
+if ! getent group wbpriv >/dev/null; then
+	groupadd -g 88 wbpriv
+	usermod -a -G wbpriv squid
+fi
+
 extract_files
 restore_backup ${NAME}
 /usr/local/bin/sambactrl smbstart
