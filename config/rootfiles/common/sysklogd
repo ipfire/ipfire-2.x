@@ -4,4 +4,3 @@ usr/sbin/syslogd
 #usr/share/man/man8/sysklogd.8
 var/log/dhcpcd.log
 var/log/messages
-var/log/ovpnserver.log
