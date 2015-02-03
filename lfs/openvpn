@@ -93,8 +93,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 700 /var/ipfire/ovpn/ovpn-leases.db
 	chown -R root:root /var/ipfire/ovpn/scripts
 	chown -R nobody:nobody /var/ipfire/ovpn
-	chown root.nobody /var/run/ovpnserver.log
-	chmod 660 /var/run/ovpnserver.log
 	chmod 700 /var/ipfire/ovpn/certs
 	mv -v /var/ipfire/ovpn/verify /usr/lib/openvpn/verify
 	chown root:root /usr/lib/openvpn/verify
