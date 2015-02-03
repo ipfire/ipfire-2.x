@@ -2711,4 +2711,5 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/modules.symbols
 #lib/modules/KVER-ipfire-multi/modules.symbols.bin
 #lib/modules/KVER-ipfire-multi/source
+usr/include/linux/switch.h
 boot/uInit-ipfire-multi
