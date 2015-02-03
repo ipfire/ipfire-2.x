@@ -1,0 +1,39 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/monit
+#
+# Description : monit monitoring daemon
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting monit..."
+		loadproc /usr/bin/monit
+		;;
+
+	stop)
+		boot_mesg "Stopping monit..."
+		killproc /usr/bin/monit
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/monit
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/monit
