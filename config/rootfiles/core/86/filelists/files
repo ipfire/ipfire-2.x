@@ -9,3 +9,4 @@ usr/local/bin/update-bootloader
 var/ipfire/header.pl
 var/ipfire/langs
 var/ipfire/lang.pl
+var/ipfire/ovpn/openssl/ovpn.cnf

@@ -15,7 +15,9 @@ etc/sysconfig/rc.local
 etc/udev/rules.d/30-persistent-network.rules
 srv/web/ipfire/html/proxy.pac
 var/ipfire/time
-var/ipfire/ovpn
+var/ipfire/ovpn/ccd.conf
+var/ipfire/ovpn/ccdroute
+var/ipfire/ovpn/ccdroute2
 var/log/cache
 var/state/dhcp/dhcpd.leases
 var/updatecache
