@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.17"							# Version number
-CORE="87"							# Core Level (Filename)
+CORE="87-rc1"							# Core Level (Filename)
 PAKFIRE_CORE="86"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -811,6 +811,7 @@ buildipfire() {
   ipfiremake squid-accounting
   ipfiremake pigz
   ipfiremake tmux
+  ipfiremake swconfig
 }
 
 buildinstaller() {

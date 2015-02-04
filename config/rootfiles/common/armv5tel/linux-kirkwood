@@ -548,6 +548,8 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/common/siano/smsdvb.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/common/siano/smsmdtv.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/common/tveeprom.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/dvb-core
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/dvb-core/dvb-core.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/dvb-frontends
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/dvb-frontends/a8293.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/dvb-frontends/af9013.ko
@@ -649,6 +651,7 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/i2c/cs53l32a.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/i2c/cx25840
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/i2c/cx25840/cx25840.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/i2c/ir-kbd-i2c.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/i2c/m52790.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/i2c/msp3400.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/i2c/mt9v011.ko
@@ -684,6 +687,7 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/i2c/vp27smpx.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/i2c/wm8739.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/i2c/wm8775.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/media.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/pci
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/pci/b2c2
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/pci/b2c2/b2c2-flexcop-pci.ko
@@ -878,6 +882,7 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/rc/keymaps/rc-winfast.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/rc/lirc_dev.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/rc/mceusb.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/rc/rc-core.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/rc/rc-loopback.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/rc/redrat3.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/rc/streamzap.ko
@@ -890,8 +895,10 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/fc2580.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/m88ts2022.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/max2165.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/mc44s803.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/mt2060.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/mt2063.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/mt20xx.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/mt2131.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/mt2266.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/mxl5005s.ko
@@ -900,8 +907,17 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/r820t.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/tda18212.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/tda18218.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/tda18271.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/tda827x.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/tda8290.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/tda9887.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/tua9001.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/tuner-simple.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/tuner-types.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/tuner-xc2028.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/tuner_it913x.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/xc4000.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/tuners/xc5000.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/usb
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/usb/au0828
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/usb/au0828/au0828.ko
@@ -1049,6 +1065,8 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/usb/zr364xx/zr364xx.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/v4l2-core
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/v4l2-core/tuner.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/v4l2-core/v4l2-common.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/v4l2-core/v4l2-dv-timings.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/v4l2-core/v4l2-mem2mem.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/v4l2-core/videobuf-core.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/v4l2-core/videobuf-dma-contig.ko
@@ -1059,6 +1077,7 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/v4l2-core/videobuf2-dma-contig.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/v4l2-core/videobuf2-memops.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/v4l2-core/videobuf2-vmalloc.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/media/v4l2-core/videodev.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/memstick
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/memstick/core
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/memstick/core/memstick.ko

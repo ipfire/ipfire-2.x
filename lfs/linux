@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2015  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,11 +24,11 @@
 
 include Config
 
-VER        = 3.14.27
+VER        = 3.14.31
 
-RPI_PATCHES = 3.14.27-grsec-ipfire1
-A7M_PATCHES = 3.14.27-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.0-3.14.27-201412170659.patch.xz
+RPI_PATCHES = 3.14.31-grsec-ipfire1
+A7M_PATCHES = 3.14.31-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.0-3.14.31-201501310705.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 55
+PAK_VER    = 58
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -77,10 +77,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= 0af2d0702df6ee6d7181e697e0af3481
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 543a77d5602829f78b18788e5cb82188
-arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 7014ce20d9ede588ea2c244d901cbeeb
-$(GRS_PATCHES)_MD5				= 66af1d48af9dce2d0eb363bbc6bfb668
+$(DL_FILE)_MD5					= f37ac2b5675ac59e46103f81e5f31624
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 6c18ea5fb919e09e821b9b2018a7f93e
+arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= efcfe5889f120d879387dd4ebe881587
+$(GRS_PATCHES)_MD5				= af534d3efa6926fa2d88d9dcaec8462f
 
 install : $(TARGET)
 
@@ -171,6 +171,12 @@ ifeq "$(KCFG)" "-multi"
 
 	# Apply Arm7-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm7-multi-patches-$(A7M_PATCHES).patch.xz | patch -Np1
+
+	# Update Banana Pi, Lamobo-R1 and add Banana Pro dtb
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.x-update_banana_dts.patch
+
+	# Install switch api userspace header
+	cd $(DIR_APP) && install -v -m644 include/uapi/linux/switch.h /usr/include/linux/
 endif
 
 ifeq "$(KCFG)" "-rpi"

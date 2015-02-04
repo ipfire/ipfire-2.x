@@ -20,6 +20,7 @@ etc/ld.so.conf
 etc/logrotate.conf
 etc/mime.types
 etc/modprobe.d
+etc/modprobe.d/btmrvl_sdio.conf
 etc/modprobe.d/cfg80211.conf
 etc/modprobe.d/pcspeaker.conf
 etc/modules.conf
@@ -45,6 +46,11 @@ etc/system-release
 #home
 home/nobody
 #lib
+#lib/firmware
+#lib/firmware/brcm
+lib/firmware/brcm/brcmfmac4329-sdio.txt
+lib/firmware/brcm/brcmfmac4330-sdio.txt
+lib/firmware/brcm/brcmfmac43362-sdio.txt
 #media
 media/cdrom
 media/floppy
@@ -60,6 +66,7 @@ root/.bash_logout
 root/.bash_profile
 root/.bashrc
 root/ipfire
+run
 #sbin
 #srv
 #usr/bin
@@ -94,7 +101,6 @@ usr/local/bin/scanhd
 usr/local/bin/settime
 usr/local/bin/timecheck
 usr/local/bin/timezone-transition
-#usr/local/bin/uname
 usr/local/bin/update-bootloader
 usr/local/bin/update-lang-cache
 #usr/local/include
@@ -138,7 +144,6 @@ usr/share/doc/licenses/GPLv3
 #usr/share/misc
 #usr/share/terminfo
 #usr/share/zoneinfo
-run
 #var
 #var/cache
 var/empty

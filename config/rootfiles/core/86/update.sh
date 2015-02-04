@@ -24,15 +24,6 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-function add_to_backup ()
-{
-	# Add path to ROOTFILES but remove old entries to prevent double
-	# files in the tar
-	grep -v "^$1" /opt/pakfire/tmp/ROOTFILES > /opt/pakfire/tmp/ROOTFILES.tmp
-	mv /opt/pakfire/tmp/ROOTFILES.tmp /opt/pakfire/tmp/ROOTFILES
-	echo $1 >> /opt/pakfire/tmp/ROOTFILES
-}
-
 #
 # Remove old core updates from pakfire cache to save space...
 core=86
@@ -65,23 +56,6 @@ esac
 #
 KVER="xxxKVERxxx"
 
-#
-# check if we the backup file already exist
-if [ -e /var/ipfire/backup/core-upgrade${core}_${KVER}.tar.xz ]; then
-    echo Moving backup to backup-old ...
-    mv -f /var/ipfire/backup/core-upgrade${core}_${KVER}.tar.xz \
-       /var/ipfire/backup/core-upgrade${core}_${KVER}-old.tar.xz
-fi
-echo First we made a backup of all files that was inside of the
-echo update archive. This may take a while ...
-# Add some files that are not in the package to backup
-add_to_backup lib/modules
-add_to_backup boot
-
-# Backup the files
-tar cJvf /var/ipfire/backup/core-upgrade${core}_${KVER}.tar.xz \
-    -C / -T /opt/pakfire/tmp/ROOTFILES --exclude='#*' --exclude='/var/cache' > /dev/null 2>&1
-
 # Check diskspace on root
 ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 
@@ -95,7 +69,7 @@ fi
 echo
 echo Update Kernel to $KVER ...
 #
-# Remove old kernel, configs, initrd, modules ...
+# Remove old kernel, configs, initrd, modules, dtb's ...
 #
 rm -rf /boot/System.map-*
 rm -rf /boot/config-*
@@ -104,17 +78,37 @@ rm -rf /boot/initramfs-*
 rm -rf /boot/vmlinuz-*
 rm -rf /boot/uImage-ipfire-*
 rm -rf /boot/uInit-ipfire-*
+rm -rf /boot/dtb-*-ipfire-*
 rm -rf /lib/modules
 
 case "$(uname -m)" in
 	i?86)
-		# Backup grub.conf
-		cp -vf /boot/grub/grub.conf /boot/grub-legacy.conf
+		# Backup old grub config
+		if [ -f /boot/grub/grub.conf ]; then
+			cp -vf /boot/grub/grub.conf /boot/old-grub-config
+		fi
+		if [ -f /boot/grub/menu.lst ]; then
+			cp -vf /boot/grub/menu.lst /boot/old-grub-config
+		fi
+		if [ -f /boot/grub/grub.cfg ]; then
+			cp -vf /boot/grub/grub.cfg /boot/old-grub-config
+		fi
 
 		# Remove all files that belong to GRUB-legacy
 		rm -rfv /boot/grub
 		;;
+	armv*)
+		# Backup uEnv.txt if exist
+		if [ -e /boot/uEnv.txt ]; then
+			cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
+		fi
+
+		# work around the u-boot folder detection bug
+		mkdir -pv /boot/dtb-$KVER-ipfire-kirkwood
+		mkdir -pv /boot/dtb-$KVER-ipfire-multi
+		;;
 esac
+
 #
 #Stop services
 /etc/init.d/snort stop
@@ -139,6 +133,8 @@ if [ $BOOTSPACE -lt 1000 ]; then
 			# Special handling for old kirkwood images.
 			# (install only kirkwood kernel)
 			rm -rf /boot/*
+			# work around the u-boot folder detection bug
+			mkdir -pv /boot/dtb-$KVER-ipfire-kirkwood
 			tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p \
 				--numeric-owner -C / --wildcards 'boot/*-kirkwood*'
 			;;
@@ -174,9 +170,9 @@ case "$(uname -m)" in
 		#
 		echo
 		echo Update grub configuration ...
-		if grep -qE "^serial" /boot/grub-legacy.conf; then
+		if grep -qE "^serial" /boot/old-grub-config; then
 			sed -i /etc/default/grub \
-				-e "s| panic=10 | console=ttyS0,115200n8 panic=10 |g"
+				-e "s|panic=10|& console=ttyS0,115200n8|g"
 			echo "GRUB_TERMINAL=\"serial\"" >> /etc/default/grub
 			echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> /etc/default/grub
 		fi
@@ -206,18 +202,6 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 	fi
 fi
 
-# Force reinstall xen kernel if it was installed
-if [ -e "/opt/pakfire/db/installed/meta-linux-xen" ]; then
-	echo "Name: linux-xen" > /opt/pakfire/db/installed/meta-linux-xen
-	echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-xen
-	echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-xen
-	echo "Name: linux-xen" > /opt/pakfire/db/meta/meta-linux-xen
-	echo "ProgVersion: 0" >> /opt/pakfire/db/meta/meta-linux-xen
-	echo "Release: 0"     >> /opt/pakfire/db/meta/meta-linux-xen
-	# Add xvc0 to /etc/securetty
-	echo "xvc0" >> /etc/securetty
-fi
-
 #
 # After pakfire has ended run it again and update the lists and do upgrade
 #
@@ -232,7 +216,7 @@ echo '/opt/pakfire/pakfire update -y --force'             >> /tmp/pak_update
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
 echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
-echo '/usr/bin/logger -p syslog.emerg -t ipfire "Core-upgrade finished. If you use a customized grub.cfg"' >> /tmp/pak_update
+echo '/usr/bin/logger -p syslog.emerg -t ipfire "Core-upgrade finished. If you use a customized grub/uboot config"' >> /tmp/pak_update
 echo '/usr/bin/logger -p syslog.emerg -t ipfire "Check it before reboot !!!"' >> /tmp/pak_update
 echo '/usr/bin/logger -p syslog.emerg -t ipfire " *** Please reboot... *** "' >> /tmp/pak_update
 echo 'touch /var/run/need_reboot ' >> /tmp/pak_update

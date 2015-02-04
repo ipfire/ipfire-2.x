@@ -5,13 +5,14 @@
 # Translators:
 # btelega <btelega@gmail.com>, 2014
 # Przemysław Karpeta <przemyslaw.karpeta@gmail.com>, 2014
+# Przemyslaw Zdroik <zdroyer@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-11-05 01:33+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"PO-Revision-Date: 2015-01-26 10:41+0000\n"
+"Last-Translator: Przemyslaw Zdroik <zdroyer@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/ipfire/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -34,7 +35,7 @@ msgstr "Akceptuje licencje"
 
 #: main.c:384
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr ""
+msgstr "Ostrzeżenie: Zautomatyzowana instalacja zacznie się za 10 sekund..."
 
 #: main.c:403
 msgid "Language selection"
@@ -46,7 +47,7 @@ msgstr "Wybierz język jaki chcesz użyć do tej instalacji."
 
 #: main.c:418
 msgid "Unattended mode"
-msgstr ""
+msgstr "Tryb zautomatyzowany"
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
@@ -67,7 +68,7 @@ msgstr "Rozpoczynam instalację"
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr ""
+msgstr "Instalator spróbuje teraz pobrać plik obrazu instalacji."
 
 #: main.c:452
 #, c-format
@@ -75,41 +76,41 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr ""
+msgstr "Medium źródłowe nie zostało znalezione.\n\nMożesz spróbować pobrać wymagany plik obrazu instalacji."
 
 #: main.c:456
 msgid ""
 "Please make sure to connect your machine to a network and the installer will"
 " try connect to acquire an IP address."
-msgstr ""
+msgstr "Podłącz twój komputer do sieci a instalator spróbuje połączyć się by pobrać adres IP."
 
 #: main.c:460
 msgid "Download installation image"
-msgstr ""
+msgstr "Pobierz pliku obrazu instalacji"
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
-msgstr ""
+msgstr "Próba uruchomienia sieci (DHCP)..."
 
 #: main.c:484
 msgid ""
 "Networking could not be started but is required to go on with the installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr ""
+msgstr "Obsługa sieci, która jest wymagana do kontynuowania instalacji, nie mogła zostać uruchomiona \n\nPodłącz proszę twój komputer do sieci z działającym serwerem DHCP i Spróbuj ponownie."
 
 #: main.c:487 main.c:516
 msgid "Retry"
-msgstr ""
+msgstr "Spróbuj ponownie"
 
 #: main.c:501
 msgid "Downloading installation image..."
-msgstr ""
+msgstr "Pobieranie pliku obrazu instalacji..."
 
 #: main.c:510
 #, c-format
 msgid "MD5 checksum mismatch"
-msgstr ""
+msgstr "Niezgodność sumy kontrolnej MD5"
 
 #: main.c:513
 #, c-format
@@ -118,14 +119,14 @@ msgid ""
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Plik obrazu instalacji nie został pobrany\nPrzyczyna: %s\n\n%s"
 
 #: main.c:528
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr ""
+msgstr "Nie można zamontować %s w %s:\n%s \n"
 
 #: main.c:543
 msgid "License Agreement"
@@ -192,7 +193,7 @@ msgstr "Konfiguracja RAID"
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
-msgstr ""
+msgstr "Twoja konfiguracja dysku nie jest aktualnie obsługiwana. "
 
 #: main.c:655
 msgid "Your harddisk is too small."
@@ -205,11 +206,11 @@ msgstr "Dysk twardy jest bardzo mały, ale można kontynuować bez partycji swap
 
 #: main.c:684
 msgid "ext4 Filesystem"
-msgstr "ext4 Filesystem"
+msgstr "system plików ext4 "
 
 #: main.c:685
 msgid "ext4 Filesystem without journal"
-msgstr "ext4 Filesystem bez dziennika"
+msgstr "system plików ext4 bez dziennika"
 
 #: main.c:686
 msgid "XFS Filesystem"
@@ -288,27 +289,27 @@ msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr ""
+msgstr "Plik kopii zapasowej został odnaleziony w obrazie instalacji.\n\nCzy chcesz przywrócić informację ze znalezionej kopii zapasowej? "
 
 #: main.c:827
 msgid "Yes"
-msgstr ""
+msgstr "Tak"
 
 #: main.c:827
 msgid "No"
-msgstr ""
+msgstr "Nie"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr ""
+msgstr "Wystąpił błąd podczas przywracania pliku kopii zapasowej."
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr ""
+msgstr "Działanie skryptu post-instalacyjnego..."
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr ""
+msgstr "Skrypt post-instalacyjny zawiódł."
 
 #: main.c:877
 #, c-format

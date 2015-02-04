@@ -4,13 +4,13 @@
 # 
 # Translators:
 # hashem ghavami <hashem.wolf@gmail.com>, 2014
-# Khalil Delavaran <khalil.delavaran@gmail.com>, 2014
+# Khalil Delavaran <khalil.delavaran@gmail.com>, 2014-2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-11-12 18:28+0000\n"
+"PO-Revision-Date: 2015-01-26 06:42+0000\n"
 "Last-Translator: Khalil Delavaran <khalil.delavaran@gmail.com>\n"
 "Language-Team: Persian (http://www.transifex.com/projects/p/ipfire/language/fa/)\n"
 "MIME-Version: 1.0\n"
@@ -472,7 +472,7 @@ msgstr "کارتهای شبکه برای گزینش شما کافی نیست.\n\
 msgid ""
 "Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
 "\n"
-msgstr ""
+msgstr "پیکربندی راه اندازهای شبکه، که به اینترفیس هر کارت اختصاص داده شده است. پیکربندی کنونی در زیر آمده است:\n\n"
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
@@ -503,7 +503,7 @@ msgid ""
 "connection to the %s machine will be broken, and you will have to reconnect "
 "on the new IP. This is a risky operation, and should only be attempted if "
 "you have physical access to the machine, should something go wrong."
-msgstr ""
+msgstr "اگر شما این IP را تغییر دهید، و شما از راه ریموت وارد شده باشید، اتصال شما به سیستم %s شکسته می شود، و شما با IP جدید دوباره وصل شوید. این کار شما، ریسک دارد، و فقط باید دسترسی فیزیکی به سیستم داشته باشید، این کار شما اشتباه است."
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
@@ -517,7 +517,7 @@ msgstr "Gateway پیش پندار:"
 msgid ""
 "Enter the DNS and gateway information. These settings are used only with "
 "Static IP (and DHCP if DNS set) on the RED interface."
-msgstr ""
+msgstr "اطلاعات gateway و DNS را بنویسید. این پیکربندی ها فقط با IP استاتیک (و DHCP اگر DNS نوشته شده باشد) بر روی اینترفیس قرمز بکار می روند."
 
 #: networking.c:773
 msgid "Default gateway"
@@ -549,7 +549,7 @@ msgstr "ایراد در پیکربندی گذواژه 'root'."
 msgid ""
 "Enter %s 'admin' user password. This is the user to use for logging into the"
 " %s web administration pages."
-msgstr ""
+msgstr "گذرواژه کاربر 'admin' %s را بنویسید. این کاربر برای ورود به برگه مدیریت وب %s می باشد."
 
 #: passwords.c:60
 #, c-format

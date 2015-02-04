@@ -92,6 +92,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.37-rt2800usb_add_dlink_dwa137_usbid.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1_add_libertas_uap.patch
 
+	# smsc mac address patch for pandaboard and raspberry pi
+ifeq "$(KCFG)" "-multi"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-smsc95xx-add_mac_addr_param.patch
+endif
+ifeq "$(KCFG)" "-rpi"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-smsc95xx-add_mac_addr_param.patch
+endif
+
 	# generate config
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX)/ allmodconfig
 

@@ -368,18 +368,10 @@ sub buildrules {
 						push(@source_options, ("-s", $source));
 					}
 
-					if ($source_intf) {
-						push(@source_options, ("-i", $source_intf));
-					}
-
 					# Prepare destination options.
 					my @destination_options = ();
 					if ($destination) {
 						push(@destination_options, ("-d", $destination));
-					}
-
-					if ($destination_intf) {
-						push(@destination_options, ("-o", $destination_intf));
 					}
 
 					# Add time constraint options.
@@ -474,6 +466,17 @@ sub buildrules {
 							}
 							run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options -j SNAT --to-source $nat_address");
 						}
+					}
+
+					# Add source and destination interface to the filter rules.
+					# These are supposed to help filtering forged packets that originate
+					# from BLUE with an IP address from GREEN for instance.
+					if ($source_intf) {
+						push(@source_options, ("-i", $source_intf));
+					}
+
+					if ($destination_intf) {
+						push(@destination_options, ("-o", $destination_intf));
 					}
 
 					push(@options, @source_options);

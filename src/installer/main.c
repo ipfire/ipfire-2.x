@@ -245,7 +245,7 @@ static char* center_string(const char* str, int width) {
 	return string;
 }
 
-#define DEFAULT_LANG "en_US.utf8"
+#define DEFAULT_LANG "en.utf8"
 #define NUM_LANGS 13
 
 static struct lang {
