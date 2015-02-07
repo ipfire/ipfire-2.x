@@ -83,7 +83,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-1.0.0 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.17
+	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-* $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-*
 
 	@cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 #	cp -rf /usr/src/linux/include/linux/netfilter /usr/include/linux
@@ -138,5 +138,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/libnetfilter_cttimeout-1.0.0 && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/libnetfilter_cttimeout-1.0.0 && make install
 
-	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-1.0.0 $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-0.0.17
+	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-* $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-*
 	@$(POSTBUILD)

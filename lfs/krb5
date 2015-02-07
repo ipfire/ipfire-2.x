@@ -76,7 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_SRC)/$(THISAPP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/mitkrb-1.12.1-db2_fix-1.patch
 
 	cd $(DIR_APP) && sed -e "s@python2.5/Python.h@& python2.7/Python.h@g" \
@@ -101,5 +101,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		chmod -f -v 755 "/usr/lib/lib$$LIB.so"; \
 	done
 
-	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_SRC)/$(THISAPP)
 	@$(POSTBUILD)

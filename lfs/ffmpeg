@@ -88,6 +88,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/ffmpeg && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/ffmpeg && make install
 	cd $(DIR_SRC)/ffmpeg && make install-libs
-	ldconfig
-#	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

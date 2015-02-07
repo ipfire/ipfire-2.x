@@ -97,4 +97,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/etc/httpd/conf/vhosts.d/
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/owncloud \
 		/var/ipfire/backup/addons/includes/owncloud
+
+	@rm -rf $(DIR_SRC)/$(PROG)
 	@$(POSTBUILD)

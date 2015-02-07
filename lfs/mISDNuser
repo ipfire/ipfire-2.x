@@ -74,4 +74,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/mISDNuser && ./configure --prefix=/usr --with-AF_ISDN=34
 	cd $(DIR_SRC)/mISDNuser && make MISDNDIR=/usr/src/linux
 	cd $(DIR_SRC)/mISDNuser && make install MISDNDIR=/usr/src/linux
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
