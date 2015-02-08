@@ -689,7 +689,7 @@
 'dhcp advopt removed' => 'DHCP Option entfernt',
 'dhcp advopt scope' => 'Options-Wertebereich',
 'dhcp advopt scope global' => 'Global',
-'dhcp advopt scope help' => 'Globaler Bereich oder begenze Bereich auf überprüfte Schnittstellen',
+'dhcp advopt scope help' => 'Globaler Bereich oder begrenze Bereich auf überprüfte Schnittstellen',
 'dhcp advopt unknown' => 'Name der DHCP Option wurde nicht erkannt',
 'dhcp advopt value' => 'Optionswert',
 'dhcp allow bootp' => 'BOOTP Clients zulassen',
