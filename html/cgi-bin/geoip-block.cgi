@@ -25,14 +25,10 @@ use strict;
 #use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/geoip-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "/usr/lib/firewall/firewall-lib.pl";
-
-# Directory which contains flag icons.
-my $flagdir = "/srv/web/ipfire/html/images/flags";
-# File extension of the country flags.
-my $extension = "png";
 
 my $notice;
 my $settingsfile = "${General::swroot}/firewall/geoipblock";
@@ -179,20 +175,15 @@ foreach my $location (@locations) {
 	my $ccode_lc = lc($location);
 
 	# Full name of the country based on the country code.
-	my $cname = &General::get_full_country_name($ccode_lc);
+	my $cname = &GeoIP::get_full_country_name($ccode_lc);
 
-	# Generate flag filename, based on the lower case written contry code
-	# and the defined file extension of the image files. (de.png)
-	my $flagfile = join('.', $ccode_lc,$extension);
-
-	# Generate the full path to the flagfile, based on the given path and
-	# the previously generated filename.
-	my $flagpath = join('/', $flagdir,$flagfile);
+	# Get flag icon for of the country.
+	my $flag_icon = &GeoIP::get_flag_icon($ccode_uc);
 
 	my $flag;
 	# Check if a flag for the country is available.
-	if (-e "$flagpath") {
-		$flag="<img src='/images/flags/$flagfile' alt='$ccode_uc' title='$ccode_uc'>";
+	if ($flag_icon) {
+		$flag="<img src='$flag_icon' alt='$ccode_uc' title='$ccode_uc'>";
 	} else {
 		$flag="<b>N/A</b>";
 	}
