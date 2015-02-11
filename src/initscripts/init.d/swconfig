@@ -25,7 +25,7 @@ fi
 
 case "${1}" in
 	start)
-		case `cat /proc/device-tree/model` in
+		case `cat /proc/device-tree/model 2>/dev/null` in
 			"Lamobo-R1")
 				#
 				# Lamobo R1 aka BPi R1 Routerboard
