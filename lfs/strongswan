@@ -79,6 +79,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-5.0.2_ipfire.patch
+	cd $(DIR_APP) && patch -Np1 --ignore-whitespace \
+		-i $(DIR_SRC)/src/patches/strongswan-5.2.2-issue-816.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-5.2.2-issue-819-cd2c30a.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || ./autogen.sh
 	cd $(DIR_APP) && ./configure \
@@ -115,6 +118,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -sf $(CONFIG_ROOT)/ca    /etc/ipsec.d/cacerts
 	ln -sf $(CONFIG_ROOT)/certs /etc/ipsec.d/certs
 	ln -sf $(CONFIG_ROOT)/crls  /etc/ipsec.d/crls
+
+	install -v -m 644 $(DIR_SRC)/config/strongswan/charon.conf \
+		/etc/strongswan.d/charon.conf
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
