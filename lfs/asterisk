@@ -30,7 +30,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
 PAK_VER    = 13
 
-DEPS       = "sqlite"
+DEPS       = "libsrtp sqlite"
 
 ###############################################################################
 # Top-level Rules
