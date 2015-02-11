@@ -738,4 +738,19 @@ update_langs() {
 		$BASEDIR/tools/check_strings.pl it > $BASEDIR/doc/language_issues.it
 		$BASEDIR/tools/check_langs.sh > $BASEDIR/doc/language_missings
 		beautify message DONE
+
+		echo -ne "Updating language lists..."
+		update_language_list ${BASEDIR}/src/installer/po
+		update_language_list ${BASEDIR}/src/setup/po
+		beautify message DONE
+}
+
+update_language_list() {
+	local path="${1}"
+
+	local lang
+	for lang in ${path}/*.po; do
+		lang="$(basename "${lang}")"
+		echo "${lang%*.po}"
+	done | sort -u > "${path}/LINGUAS"
 }
