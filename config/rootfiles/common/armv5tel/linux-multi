@@ -110,8 +110,10 @@ boot/dtb-KVER-ipfire-multi
 #boot/dtb-KVER-ipfire-multi/sun5i-a13-olinuxino.dtb
 #boot/dtb-KVER-ipfire-multi/sun6i-a31-colombus.dtb
 #boot/dtb-KVER-ipfire-multi/sun7i-a20-bananapi.dtb
+#boot/dtb-KVER-ipfire-multi/sun7i-a20-bananapro.dtb
 #boot/dtb-KVER-ipfire-multi/sun7i-a20-cubieboard2.dtb
 #boot/dtb-KVER-ipfire-multi/sun7i-a20-cubietruck.dtb
+#boot/dtb-KVER-ipfire-multi/sun7i-a20-lamobo-r1.dtb
 #boot/dtb-KVER-ipfire-multi/sun7i-a20-olinuxino-micro.dtb
 #boot/dtb-KVER-ipfire-multi/sun7i-a20-pcduino3.dtb
 #boot/dtb-KVER-ipfire-multi/vexpress-v2p-ca15-tc1.dtb
@@ -596,6 +598,8 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/common/siano/smsdvb.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/common/siano/smsmdtv.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/common/tveeprom.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/dvb-core
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/dvb-core/dvb-core.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/dvb-frontends
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/dvb-frontends/a8293.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/dvb-frontends/af9013.ko
@@ -694,6 +698,7 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/i2c/cs53l32a.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/i2c/cx25840
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/i2c/cx25840/cx25840.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/i2c/ir-kbd-i2c.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/i2c/m52790.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/i2c/msp3400.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/i2c/mt9v011.ko
@@ -728,6 +733,7 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/i2c/vp27smpx.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/i2c/wm8739.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/i2c/wm8775.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/media.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/pci
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/pci/b2c2
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/pci/b2c2/b2c2-flexcop-pci.ko
@@ -793,6 +799,8 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/pci/ttpci/ttpci-eeprom.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/platform
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/platform/m2m-deinterlace.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/platform/omap
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/platform/omap/omap-vout.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/platform/sh_veu.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/platform/soc_camera
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/platform/soc_camera/mx3_camera.ko
@@ -925,6 +933,7 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/rc/keymaps/rc-winfast.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/rc/lirc_dev.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/rc/mceusb.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/rc/rc-core.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/rc/rc-loopback.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/rc/redrat3.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/rc/streamzap.ko
@@ -938,8 +947,10 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/fc2580.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/m88ts2022.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/max2165.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/mc44s803.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/mt2060.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/mt2063.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/mt20xx.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/mt2131.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/mt2266.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/mxl5005s.ko
@@ -948,8 +959,17 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/r820t.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/tda18212.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/tda18218.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/tda18271.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/tda827x.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/tda8290.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/tda9887.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/tua9001.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/tuner-simple.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/tuner-types.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/tuner-xc2028.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/tuner_it913x.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/xc4000.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/tuners/xc5000.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/usb
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/usb/au0828
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/usb/au0828/au0828.ko
@@ -1092,7 +1112,11 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/usb/zr364xx/zr364xx.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/tuner.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/v4l2-common.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/v4l2-dv-timings.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/v4l2-mem2mem.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/videobuf-core.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/videobuf-dma-contig.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/videobuf-dma-sg.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/videobuf-dvb.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/videobuf-vmalloc.ko
@@ -1100,6 +1124,7 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/videobuf2-dma-contig.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/videobuf2-memops.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/videobuf2-vmalloc.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/media/v4l2-core/videodev.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/memstick
 #lib/modules/KVER-ipfire-multi/kernel/drivers/memstick/core
 #lib/modules/KVER-ipfire-multi/kernel/drivers/memstick/core/memstick.ko
@@ -1261,8 +1286,6 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/jme.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell/mv643xx_eth.ko
-#lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell/mvmdio.ko
-#lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell/mvneta.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell/skge.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/marvell/sky2.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/mellanox
@@ -1352,6 +1375,9 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/amd.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/at803x.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/b53
+#lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/b53/b53_common.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/b53/b53_mdio.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/bcm87xx.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/broadcom.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/cicada.ko
@@ -1362,6 +1388,7 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/lxt.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/marvell.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/mdio-bitbang.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/mdio-gpio.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/mdio-mux-gpio.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/mdio-mux-mmioreg.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/mdio-mux.ko
@@ -1372,6 +1399,7 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/realtek.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/smsc.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/ste10Xp.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/swconfig.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/vitesse.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ppp
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ppp/bsd_comp.ko
@@ -1605,7 +1633,6 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-max6900.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-moxart.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-msm6242.ko
-#lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-mv.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-mxc.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-pcf2127.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-pcf8523.ko
@@ -2684,4 +2711,5 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/modules.symbols
 #lib/modules/KVER-ipfire-multi/modules.symbols.bin
 #lib/modules/KVER-ipfire-multi/source
+usr/include/linux/switch.h
 boot/uInit-ipfire-multi

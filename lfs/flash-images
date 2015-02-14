@@ -75,9 +75,9 @@ else
 endif
 
 # /boot:  64MB - OFFSET
-# /    : 700MB
+# /    : 750MB
 S_BOOT := $(shell echo $$(( 131072 - $(S_OFFSET) )))
-S_ROOT := 1433600
+S_ROOT := 1536000
 
 PADDING = 100 # MB
 
@@ -116,11 +116,14 @@ endif
 	mkdir -pv $(MNThdd)/boot
 	mount $(PART_BOOT) $(MNThdd)/boot
 
-	# Install MLO and uboot first
+	# Install Pandaboard MLO and uboot first
 ifeq "$(MACHINE_TYPE)" "arm"
 	cp -v /boot/MLO $(MNThdd)/boot/
 	cp -v /boot/u-boot.img $(MNThdd)/boot/
 	cp -v /boot/zImage-ipfire-multi $(MNThdd)/boot/
+	# work around a u-boot bug not find the folders sometimes
+	mkdir -pv $(MNThdd)/boot/dtb-$(KVER)-ipfire-multi
+	mkdir -pv $(MNThdd)/boot/dtb-$(KVER)-ipfire-kirkwood
 	sync
 	umount $(MNThdd)/boot
 	mount $(PART_BOOT) $(MNThdd)/boot
@@ -148,8 +151,7 @@ ifeq "$(SCON)" "1"
 
 ifeq "$(MACHINE_TYPE)" "arm"
 	sed -i -e "s| console=tty1 | console=ttyAMA0,115200n8 |g" $(MNThdd)/boot/cmdline.txt
-	sed -i -e "s| console=tty1 | console=ttyO2,115200n8 |g" $(MNThdd)/boot/boot.script
-	cd $(MNThdd)/boot && ./convert_bootscript
+	sed -i -e "s| console=tty1 | console=ttyO2,115200n8 |g" $(MNThdd)/boot/uEnv.txt
 endif
 endif
 
@@ -215,6 +217,11 @@ endif
 	# Add padding at the end of the image (to fix alignment issues if the image is
 	# not copied to a block device)
 	dd if=/dev/zero bs=1M count=$(PADDING) >> $(IMG)
+
+ifeq "$(MACHINE_TYPE)" "arm"
+	# Install u-boot for LeMaker Banana Pi into image 8KB
+	dd if=/usr/share/u-boot/banana_pi/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
+endif
 
 	# Compress Image
 	pigz -f9 < $(IMG) > $(IMAGE_FILE)

@@ -284,7 +284,7 @@ sub buildrules {
 		# Concurrent connection limit
 		my @ratelimit_options = ();
 
-		if (($elements gt 34) && ($$hash{$key}[32] eq 'ON')) {
+		if (($elements ge 34) && ($$hash{$key}[32] eq 'ON')) {
 			my $conn_limit = $$hash{$key}[33];
 
 			if ($conn_limit ge 1) {
@@ -300,13 +300,13 @@ sub buildrules {
 		}
 
 		# Ratelimit
-		if (($elements gt 37) && ($$hash{$key}[34] eq 'ON')) {
+		if (($elements ge 37) && ($$hash{$key}[34] eq 'ON')) {
 			my $rate_limit = "$$hash{$key}[35]/$$hash{$key}[36]";
 
-				if ($rate_limit) {
-					push(@ratelimit_options, ("-m", "limit"));
-					push(@ratelimit_options, ("--limit", $rate_limit));
-				}
+			if ($rate_limit) {
+				push(@ratelimit_options, ("-m", "limit"));
+				push(@ratelimit_options, ("--limit", $rate_limit));
+			}
 		}
 
 		# Check which protocols are used in this rule and so that we can
@@ -372,18 +372,10 @@ sub buildrules {
 						push(@source_options, ("-s", $source));
 					}
 
-					if ($source_intf) {
-						push(@source_options, ("-i", $source_intf));
-					}
-
 					# Prepare destination options.
 					my @destination_options = ();
 					if ($destination) {
 						push(@destination_options, ("-d", $destination));
-					}
-
-					if ($destination_intf) {
-						push(@destination_options, ("-o", $destination_intf));
 					}
 
 					# Add time constraint options.
@@ -478,6 +470,17 @@ sub buildrules {
 							}
 							run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options -j SNAT --to-source $nat_address");
 						}
+					}
+
+					# Add source and destination interface to the filter rules.
+					# These are supposed to help filtering forged packets that originate
+					# from BLUE with an IP address from GREEN for instance.
+					if ($source_intf) {
+						push(@source_options, ("-i", $source_intf));
+					}
+
+					if ($destination_intf) {
+						push(@destination_options, ("-o", $destination_intf));
 					}
 
 					push(@options, @source_options);

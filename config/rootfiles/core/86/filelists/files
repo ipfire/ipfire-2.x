@@ -1,5 +1,12 @@
 etc/system-release
 etc/issue
+etc/modprobe.d/btmrvl_sdio.conf
+etc/rc.d/init.d/collectd
+etc/rc.d/init.d/leds
+opt/pakfire/etc/pakfire.conf
+usr/lib/firewall/rules.pl
+usr/local/bin/update-bootloader
 var/ipfire/header.pl
 var/ipfire/langs
 var/ipfire/lang.pl
+var/ipfire/ovpn/openssl/ovpn.cnf

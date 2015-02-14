@@ -94,6 +94,11 @@ case "${1}" in
 		setup_netdev_trigger nas6210:red:power ${RED_DEV} tx rx
 		setup_netdev_trigger nas6210:red:usb_copy ${GREEN_DEV} tx rx
 
+		# Mirabox start
+		setup_heartbeat_trigger mirabox:green:pwr
+		setup_netdev_trigger mirabox:green:stat ${GREEN_DEV} tx rx
+		setup_netdev_trigger mirabox:blue:stat ${BLUE_DEV} tx rx
+
 		exit 0
 	;;
 
@@ -131,6 +136,12 @@ case "${1}" in
 		# ICY Box LED stop
 		disable_led_trigger nas6210:red:power
 		disable_led_trigger nas6210:red:usb_copy
+
+		# Mirabox stop
+		disable_led_trigger mirabox:green:pwr
+		enable_led mirabox:green:pwr
+		disable_led_trigger mirabox:green:stat
+		disable_led_trigger mirabox:blue:stat
 
 		exit 0
 	;;

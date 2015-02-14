@@ -12,7 +12,7 @@ fi
 echo -en '\033%G' && kbd_mode -u
 
 # Load default console font
-setfont LatArCyrHeb-16
+setfont latarcyrheb-sun16
 
 # Silence the kernel
 echo >/proc/sys/kernel/printk "1 4 1 7"

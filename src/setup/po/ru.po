@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Andrei Skipin <skian2007@yandex.ru>, 2014
 # bubnov_pi <ipfire@bubnov.su>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-08-21 15:13+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"PO-Revision-Date: 2014-12-10 10:22+0000\n"
+"Last-Translator: Andrei Skipin <skian2007@yandex.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/ipfire/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -189,19 +190,19 @@ msgstr ""
 
 #: main.c:98
 msgid "Select the item you wish to configure."
-msgstr ""
+msgstr "Выберите пункт меню для настройки"
 
 #: main.c:99
 msgid "Quit"
-msgstr ""
+msgstr "Выход"
 
 #: main.c:172
 msgid "Setup is complete."
-msgstr ""
+msgstr "Установка завершена"
 
 #: main.c:174 netstuff.c:733 networking.c:560 networking.c:653
 msgid "Warning"
-msgstr ""
+msgstr "Предупреждение"
 
 #: main.c:175
 msgid ""
@@ -220,15 +221,15 @@ msgstr ""
 
 #: misc.c:76
 msgid "Unable to write /etc/hosts."
-msgstr ""
+msgstr "Недоступна запись в /etc/hosts."
 
 #: misc.c:117
 msgid "Unable to write /etc/hosts.deny."
-msgstr ""
+msgstr "Недоступна запись в /etc/hosts.deny."
 
 #: misc.c:125
 msgid "Unable to write /etc/hosts.allow."
-msgstr ""
+msgstr "Недоступна запись в /etc/hosts.allow."
 
 #: misc.c:136
 msgid "Unable to set hostname."
@@ -236,7 +237,7 @@ msgstr ""
 
 #: misc.c:147
 msgid "Scanning and configuring ISDN devices."
-msgstr ""
+msgstr "Сканирование и конфигурирование ISDN устройств."
 
 #: misc.c:148
 msgid "Unable to scan for ISDN devices."
@@ -245,7 +246,7 @@ msgstr ""
 #: netstuff.c:86
 #, c-format
 msgid "Interface - %s"
-msgstr ""
+msgstr "Интерфейс - %s"
 
 #: netstuff.c:91
 #, c-format
@@ -254,7 +255,7 @@ msgstr ""
 
 #: netstuff.c:103
 msgid "Static"
-msgstr ""
+msgstr "Статический"
 
 #: netstuff.c:104
 msgid "DHCP"
@@ -266,7 +267,7 @@ msgstr ""
 
 #: netstuff.c:113
 msgid "DHCP Hostname:"
-msgstr ""
+msgstr "Имя хоста DHCP:"
 
 #: netstuff.c:115
 msgid "Force DHCP MTU:"
@@ -274,11 +275,11 @@ msgstr ""
 
 #: netstuff.c:134
 msgid "IP address:"
-msgstr ""
+msgstr "IP-адрес:"
 
 #: netstuff.c:146
 msgid "Network mask:"
-msgstr ""
+msgstr "Сетевая маска:"
 
 #: netstuff.c:173 networking.c:749
 msgid "The following fields are invalid:"
@@ -286,15 +287,15 @@ msgstr ""
 
 #: netstuff.c:183
 msgid "IP address"
-msgstr ""
+msgstr "IP-адрес"
 
 #: netstuff.c:189
 msgid "Network mask"
-msgstr ""
+msgstr "Сетевая маска"
 
 #: netstuff.c:198
 msgid "DHCP hostname"
-msgstr ""
+msgstr "Имя хоста DHCP"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
@@ -307,11 +308,11 @@ msgstr ""
 
 #: netstuff.c:672
 msgid "Extended Network Menu"
-msgstr ""
+msgstr "Расширенное сетевое меню"
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
-msgstr ""
+msgstr "Выберите"
 
 #: netstuff.c:673
 msgid "Identify"
@@ -340,7 +341,7 @@ msgstr ""
 
 #: netstuff.c:755
 msgid "Select network driver"
-msgstr ""
+msgstr "Выберите сетевой драйвер"
 
 #: netstuff.c:755
 msgid "Set additional module parameters"
@@ -348,11 +349,11 @@ msgstr ""
 
 #: netstuff.c:762
 msgid "Loading module..."
-msgstr ""
+msgstr "Модуль загружается..."
 
 #: netstuff.c:777
 msgid "Unable to load driver module."
-msgstr ""
+msgstr "Невозможно загрузить драйвер модуля."
 
 #: netstuff.c:780
 msgid "Module name cannot be blank."
@@ -360,11 +361,11 @@ msgstr ""
 
 #: networking.c:110
 msgid "Stopping network..."
-msgstr ""
+msgstr "Остановка сети.."
 
 #: networking.c:115
 msgid "Restarting network..."
-msgstr ""
+msgstr "Перезапуск сети..."
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
@@ -408,11 +409,11 @@ msgstr ""
 
 #: networking.c:217
 msgid "Misssing DNS."
-msgstr ""
+msgstr "Отсутствует DNS."
 
 #: networking.c:224
 msgid "Missing Default Gateway."
-msgstr ""
+msgstr "Отсутствует шлюз по умолчанию."
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
@@ -444,11 +445,11 @@ msgstr ""
 
 #: networking.c:268
 msgid "Network configuration menu"
-msgstr ""
+msgstr "Меню настройки сети"
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
-msgstr ""
+msgstr "Успешно завершено."
 
 #: networking.c:300
 #, c-format
@@ -493,7 +494,7 @@ msgstr ""
 
 #: networking.c:520
 msgid "Remove"
-msgstr ""
+msgstr "Удалить"
 
 #: networking.c:556 networking.c:649
 #, c-format
@@ -510,7 +511,7 @@ msgstr ""
 
 #: networking.c:729
 msgid "Default gateway:"
-msgstr ""
+msgstr "Шлюз по умолчанию:"
 
 #: networking.c:744
 msgid ""
@@ -520,7 +521,7 @@ msgstr ""
 
 #: networking.c:773
 msgid "Default gateway"
-msgstr ""
+msgstr "Шлюз по умолчанию"
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
@@ -533,11 +534,11 @@ msgstr ""
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
-msgstr ""
+msgstr "Установка пароля"
 
 #: passwords.c:38
 msgid "Setting 'root' password...."
-msgstr ""
+msgstr "Установка 'root' пароля..."
 
 #: passwords.c:39
 msgid "Problem setting 'root' password."
@@ -562,23 +563,23 @@ msgstr ""
 
 #: passwords.c:76
 msgid "Password:"
-msgstr ""
+msgstr "Пароль:"
 
 #: passwords.c:77
 msgid "Again:"
-msgstr ""
+msgstr "Повторите пароль:"
 
 #: passwords.c:95
 msgid "Password cannot be blank."
-msgstr ""
+msgstr "Пароль не может быть пустым."
 
 #: passwords.c:102
 msgid "Passwords do not match."
-msgstr ""
+msgstr "Пароли не совпадают"
 
 #: passwords.c:109
 msgid "Password cannot contain spaces."
-msgstr ""
+msgstr "Пароль не может содержать пробелы"
 
 #: timezone.c:77
 msgid "Choose the timezone you are in from the list below."

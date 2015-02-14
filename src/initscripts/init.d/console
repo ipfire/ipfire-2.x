@@ -17,7 +17,7 @@
 . ${rc_functions}
 eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 
-FONT="LatArCyrHeb-16"
+FONT="latarcyrheb-sun16"
 KEYMAP_CORRECTIONS="euro2"
 UNICODE="1"
 BROKEN_COMPOSE="0"

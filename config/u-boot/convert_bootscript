@@ -1,1 +1,0 @@
-mkimage -A arm -T script -C none -d boot.script boot.scr

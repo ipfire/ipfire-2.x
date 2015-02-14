@@ -216,40 +216,55 @@ static char* get_system_release() {
 }
 
 static char* center_string(const char* str, int width) {
-	unsigned int str_len = strlen(str);
-
-	unsigned int indent_length = (width - str_len) / 2;
-	char indent[indent_length + 1];
-
-	for (unsigned int i = 0; i < indent_length; i++) {
-		indent[i] = ' ';
-	}
-	indent[indent_length] = '\0';
+	if (!str)
+		return NULL;
 
 	char* string = NULL;
-	if (asprintf(&string, "%s%s", indent, str) < 0)
-		return NULL;
+	unsigned int str_len = strlen(str);
+
+	if (str_len == width) {
+		string = strdup(str);
+
+	} else if (str_len > width) {
+		string = strdup(str);
+		string[width - 1] = '\0';
+
+	} else {
+		unsigned int indent_length = (width - str_len) / 2;
+		char indent[indent_length + 1];
+
+		for (unsigned int i = 0; i < indent_length; i++) {
+			indent[i] = ' ';
+		}
+		indent[indent_length] = '\0';
+
+		if (asprintf(&string, "%s%s", indent, str) < 0)
+			return NULL;
+	}
 
 	return string;
 }
 
-#define DEFAULT_LANG "English"
-#define NUM_LANGS 10
+#define DEFAULT_LANG "en.utf8"
+#define NUM_LANGS 13
 
 static struct lang {
 	const char* code;
 	char* name;
 } languages[NUM_LANGS + 1] = {
-	{ "da.utf8",    "Danish (Dansk)" },
-	{ "nl_NL.utf8", "Dutch (Nederlands)" },
-	{ "en_US.utf8", "English" },
-	{ "fr_FR.utf8", "French (Français)" },
-	{ "de_DE.utf8", "German (Deutsch)" },
-	{ "pl_PL.utf8", "Polish (Polski)" },
-	{ "pt_BR.utf8", "Portuguese (Brasil)" },
-	{ "ru_RU.utf8", "Russian (Русский)" },
-	{ "es_ES.utf8", "Spanish (Español)" },
-	{ "tr_TR.utf8", "Turkish (Türkçe)" },
+	{ "fa.utf8",    "فارسی (Persian)" },
+	{ "da.utf8",    "Dansk (Danish)" },
+	{ "es.utf8",    "Español (Spanish)" },
+	{ "en.utf8",    "English" },
+	{ "fr.utf8",    "Français (French)" },
+	{ "hr.utf8",    "Hrvatski (Croatian)" },
+	{ "it.utf8",    "Italiano (Italian)" },
+	{ "de.utf8",    "Deutsch (German)" },
+	{ "nl.utf8",    "Nederlands (Dutch)" },
+	{ "pl.utf8",    "Polski (Polish)" },
+	{ "pt.utf8",    "Portuguese (Brasil)" },
+	{ "ru.utf8",    "Русский (Russian)" },
+	{ "tr.utf8",    "Türkçe (Turkish)" },
 	{ NULL, NULL },
 };
 
@@ -261,6 +276,7 @@ static struct config {
 	int disable_swap;
 	char download_url[STRING_SIZE];
 	char postinstall[STRING_SIZE];
+	char* language;
 } config = {
 	.unattended = 0,
 	.serial_console = 0,
@@ -269,6 +285,7 @@ static struct config {
 	.disable_swap = 0,
 	.download_url = DOWNLOAD_URL,
 	.postinstall = "\0",
+	.language = DEFAULT_LANG,
 };
 
 static void parse_command_line(struct config* c) {
@@ -340,7 +357,6 @@ int main(int argc, char *argv[]) {
 	int rc = 0;
 	char commandstring[STRING_SIZE];
 	int choice;
-	char language[STRING_SIZE];
 	char message[STRING_SIZE];
 	char title[STRING_SIZE];
 	int allok = 0;
@@ -373,7 +389,8 @@ int main(int argc, char *argv[]) {
 
 	// Draw title
 	char* roottext = center_string(system_release, screen_cols);
-	newtDrawRootText(0, 0, roottext);
+	if (roottext)
+		newtDrawRootText(0, 0, roottext);
 
 	snprintf(title, sizeof(title), "%s - %s", NAME, SLOGAN);
 
@@ -393,7 +410,7 @@ int main(int argc, char *argv[]) {
 		char* langnames[NUM_LANGS + 1];
 
 		for (unsigned int i = 0; i < NUM_LANGS; i++) {
-			if (strcmp(languages[i].name, DEFAULT_LANG) == 0)
+			if (strcmp(languages[i].code, DEFAULT_LANG) == 0)
 				choice = i;
 
 			langnames[i] = languages[i].name;
@@ -406,10 +423,10 @@ int main(int argc, char *argv[]) {
 		assert(choice <= NUM_LANGS);
 
 		fprintf(flog, "Selected language: %s (%s)\n", languages[choice].name, languages[choice].code);
-		snprintf(language, sizeof(language), "%s", languages[choice].code);
+		config.language = languages[choice].code;
 
-		setenv("LANGUAGE", language, 1);
-		setlocale(LC_ALL, language);
+		setlocale(LC_ALL, config.language);
+		setenv("LANGUAGE", config.language, 1);
 	}
 
 	// Set helpline
@@ -419,7 +436,8 @@ int main(int argc, char *argv[]) {
 	else
 		helpline = center_string(_("<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"), screen_cols);
 
-	newtPushHelpLine(helpline);
+	if (helpline)
+		newtPushHelpLine(helpline);
 
 	if (!config.unattended) {
 		snprintf(message, sizeof(message),
@@ -770,7 +788,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* Save language und local settings */
-	write_lang_configs(language);
+	write_lang_configs(config.language);
 
 	/* Build cache lang file */
 	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/bin/perl -e \"require '" CONFIG_ROOT "/lang.pl'; &Lang::BuildCacheLang\"");

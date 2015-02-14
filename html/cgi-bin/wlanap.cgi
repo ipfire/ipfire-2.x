@@ -65,7 +65,7 @@ $wlanapsettings{'SSID'} = 'IPFire';
 $wlanapsettings{'HIDESSID'} = 'off';
 $wlanapsettings{'ENC'} = 'wpa2';               # none / wpa1 /wpa2
 $wlanapsettings{'TXPOWER'} = 'auto';
-$wlanapsettings{'CHANNEL'} = '05';
+$wlanapsettings{'CHANNEL'} = '6';
 $wlanapsettings{'COUNTRY'} = '00';
 $wlanapsettings{'HW_MODE'} = 'g';
 $wlanapsettings{'PWD'} = 'IPFire-2.x';
@@ -272,7 +272,7 @@ my @temp;
 foreach (@channellist_cmd){
 $_ =~ /(.*) \[(\d+)(.*)\]/;
 $channel = $2;chomp $channel;
-if ( $channel =~ /\d+/ ){push(@temp,$channel);}
+if ( $channel =~ /\d+/ ){push(@temp,$channel + 0);}
 }
 @channellist = @temp;
 } else {
@@ -283,7 +283,7 @@ my @temp;
 foreach (@channellist_cmd){
 $_ =~ /(.*)Channel (\d+)(.*):/;
 $channel = $2;chomp $channel;
-if ( $channel =~ /\d+/ ){push(@temp,$channel);}
+if ( $channel =~ /\d+/ ){push(@temp,$channel + 0);}
 }
 @channellist = @temp;
 }
@@ -291,7 +291,7 @@ if ( $channel =~ /\d+/ ){push(@temp,$channel);}
 my @countrylist_cmd = `regdbdump /usr/lib/crda/regulatory.bin 2>/dev/null`;
 # get available country codes
 
-my @temp;
+my @temp = "00";
 foreach (@countrylist_cmd){
 $_ =~ /country (.*):/;
 $country = $1;chomp $country;

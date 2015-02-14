@@ -84,11 +84,14 @@ case "$1" in
 		fi
 
 		# Enable swap plugin if swap found
-		if [ "$(swapon -s | wc -l)" == "1" ]; then
+		if [ "$(swapon -s | wc -l)" == "0" ]; then
 			sed -i -e "s|^LoadPlugin swap|#LoadPlugin swap|g" /etc/collectd.conf
 		else
 			sed -i -e "s|^#LoadPlugin swap|LoadPlugin swap|g" /etc/collectd.conf
 		fi
+		
+		# sync after config update...
+		sync
 
 		if [ $(date +%Y) -gt 2011 ]; then
 			boot_mesg "Starting Collection daemon..."
@@ -107,6 +110,8 @@ case "$1" in
 		if [ "$(basename $0)" == "collectd" ]; then
 		    /etc/init.d/tmpfs backup
 		fi
+		# sync after backup...
+		sync
 		;;
 	restart)
 		${0} stop

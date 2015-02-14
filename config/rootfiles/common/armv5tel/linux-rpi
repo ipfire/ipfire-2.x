@@ -778,6 +778,7 @@ lib/modules/KVER-ipfire-rpi
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/ifb.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/imq.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/macvlan.ko
+#lib/modules/KVER-ipfire-rpi/kernel/drivers/net/mii.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/netconsole.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/phy
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/phy/libphy.ko
@@ -824,8 +825,10 @@ lib/modules/KVER-ipfire-rpi
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/usb/rtl8150.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/usb/sierra_net.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/usb/smsc75xx.ko
+#lib/modules/KVER-ipfire-rpi/kernel/drivers/net/usb/smsc95xx.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/usb/sr9700.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/usb/sr9800.ko
+#lib/modules/KVER-ipfire-rpi/kernel/drivers/net/usb/usbnet.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/usb/zaurus.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/veth.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/net/wireless

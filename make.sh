@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.17"							# Version number
-CORE="86"							# Core Level (Filename)
-PAKFIRE_CORE="85"						# Core Level (PAKFIRE)
+CORE="87-rc1"							# Core Level (Filename)
+PAKFIRE_CORE="86"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -411,6 +411,7 @@ buildipfire() {
 	i586)
 		# x86-pae (Native and new XEN) kernel build
 		ipfiremake linux			KCFG="-pae"
+		ipfiremake backports			KCFG="-pae"
 		ipfiremake cryptodev			KCFG="-pae"
 		ipfiremake e1000e			KCFG="-pae"
 		ipfiremake igb				KCFG="-pae"
@@ -420,6 +421,7 @@ buildipfire() {
 
 		# x86 kernel build
 		ipfiremake linux			KCFG=""
+		ipfiremake backports			KCFG=""
 		ipfiremake cryptodev			KCFG=""
 		ipfiremake e1000e			KCFG=""
 		ipfiremake igb				KCFG=""
@@ -431,12 +433,14 @@ buildipfire() {
 	armv5tel)
 		# arm-rpi (Raspberry Pi) kernel build
 		ipfiremake linux			KCFG="-rpi"
+		ipfiremake backports			KCFG="-rpi"
 		ipfiremake cryptodev			KCFG="-rpi"
 		ipfiremake xtables-addons		KCFG="-rpi"
 		ipfiremake linux-initrd			KCFG="-rpi"
 
 		# arm multi platform (Panda, Wandboard ...) kernel build
 		ipfiremake linux			KCFG="-multi"
+		ipfiremake backports			KCFG="-multi"
 		ipfiremake cryptodev			KCFG="-multi"
 		ipfiremake e1000e			KCFG="-multi"
 		ipfiremake igb				KCFG="-multi"
@@ -446,6 +450,7 @@ buildipfire() {
 
 		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
 		ipfiremake linux			KCFG="-kirkwood"
+		ipfiremake backports			KCFG="-kirkwood"
 		ipfiremake cryptodev			KCFG="-kirkwood"
 		ipfiremake e1000e			KCFG="-kirkwood"
 		ipfiremake igb				KCFG="-kirkwood"
@@ -811,6 +816,7 @@ buildipfire() {
   ipfiremake pigz
   ipfiremake tmux
   ipfiremake perl-Text-CSV_XS
+  ipfiremake swconfig
 }
 
 buildinstaller() {
