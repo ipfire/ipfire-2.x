@@ -32,7 +32,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-COPTS      = -DHAVE_ISC_READER
+# We cannot use INOTIFY because our ISC reader code does not support that
+COPTS      = -DHAVE_ISC_READER -DNO_INOTIFY
 
 ###############################################################################
 # Top-level Rules
