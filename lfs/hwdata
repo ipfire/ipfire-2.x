@@ -29,6 +29,9 @@ VER        = ipfire
 THISAPP    = hwdata
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+# https://pci-ids.ucw.cz/v2.2/pci.ids
+# http://www.linux-usb.org/usb.ids
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
