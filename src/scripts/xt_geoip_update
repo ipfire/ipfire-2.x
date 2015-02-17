@@ -20,7 +20,7 @@
 ###############################################################################
 
 TMP_PATH=$(mktemp -d)
-TMP_FILE=$(mktemp)
+TMP_FILE=$(mktemp -p $TMP_PATH)
 
 SCRIPT_PATH=/usr/libexec/xtables-addons
 DEST_PATH=/usr/share/xt_geoip
@@ -35,11 +35,14 @@ ARCH=LE
 function download() {
 	echo "Downloading latest GeoIP ruleset..."
 
+	# Create temporary directory.
+	mkdir -pv $TMP_PATH
+
 	# Get the latest GeoIP database from server.
-	wget $DL_URL/$DL_FILE -O $TMP_PATH/$TMP_FILE
+	wget $DL_URL/$DL_FILE -O $TMP_FILE
 
 	# Extract files.
-	unzip $TMP_PATH/$TMP_FILE -d $TMP_PATH
+	unzip $TMP_FILE -d $TMP_PATH
 
 	return 0
 }
@@ -55,7 +58,7 @@ function build() {
 
 	# Run script to convert the CSV file into several xtables
 	# compatible binary files.
-	if ! $SCRIPT_PATH/xt_geoip_build $TMP_DIR/$CSV_FILE -D $TMP_DIR; then
+	if ! $SCRIPT_PATH/xt_geoip_build $TMP_PATH/$CSV_FILE -D $TMP_PATH; then
 		echo "Could not convert ruleset. Aborting." >&2
 		return 1
 	fi
