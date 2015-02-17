@@ -368,13 +368,17 @@ sub buildrules {
 					my @source_options = ();
 					if ($source =~ /mac/) {
 						push(@source_options, $source);
-					} elsif ($source) {
+					} elsif ($source =~ /-m geoip/) {
+						push(@source_options, $source);
+					} elsif($source) {
 						push(@source_options, ("-s", $source));
 					}
 
 					# Prepare destination options.
 					my @destination_options = ();
-					if ($destination) {
+					if ($destination =~ /-m geoip/) {
+						push(@destination_options,  $destination);
+					} elsif ($destination) {
 						push(@destination_options, ("-d", $destination));
 					}
 
