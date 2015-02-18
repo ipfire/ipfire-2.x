@@ -22,13 +22,13 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+if [ -f /boot/grub/grub.conf ]; then
+	echo "Error! Connot remove linux-pae because we are on XEN."
+	exit 1
+fi
 remove_files
 rm -rf /boot/initramfs-*-pae.img
 rm -rf /boot/vmlinuz-*-pae
 rm -rf /lib/modules/*-ipfire-pae
-if [ -f /boot/grub/grub.conf ]; then
-	cp /boot/grub/grub.conf /boot/grub/grub-backup-pae_uninstall.conf
-	sed -i "/title IPFire (PAE-Kernel)/,+3d" /boot/grub/grub.conf
-fi
 grub-mkconfig > /boot/grub/grub.cfg
 sync && sync

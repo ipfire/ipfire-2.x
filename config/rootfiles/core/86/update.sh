@@ -24,6 +24,37 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
+
+function find_device() {
+	local mountpoint="${1}"
+
+	local root
+	local dev mp fs flags rest
+	while read -r dev mp fs flags rest; do
+		# Skip unwanted entries
+		[ "${dev}" = "rootfs" ] && continue
+
+		if [ "${mp}" = "${mountpoint}" ] && [ -b "${dev}" ]; then
+			root="$(basename "${dev}")"
+			break
+		fi
+	done < /proc/mounts
+
+	# Get the actual device from the partition that holds /
+	while [ -n "${root}" ]; do
+		if [ -e "/sys/block/${root}" ]; then
+			echo "${root}"
+			return 0
+		fi
+
+		# Remove last character
+		root="${root::-1}"
+	done
+
+	return 1
+}
+
+
 #
 # Remove old core updates from pakfire cache to save space...
 core=86
@@ -165,23 +196,29 @@ fi
 
 case "$(uname -m)" in
 	i?86)
-		#
-		# Update to GRUB2
-		#
-		echo
-		echo Update grub configuration ...
-		if grep -qE "^serial" /boot/old-grub-config; then
-			sed -i /etc/default/grub \
-				-e "s|panic=10|& console=ttyS0,115200n8|g"
-			echo "GRUB_TERMINAL=\"serial\"" >> /etc/default/grub
-			echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> /etc/default/grub
-		fi
+	case "$(find_device "/")" in
+		xvd* )
+			echo Skip bootloader update on xen.
+			;;
+		* )
+			#
+			# Update to GRUB2
+			#
+			echo
+			echo Update grub configuration ...
+			if grep -qE "^serial" /boot/old-grub-config; then
+				sed -i /etc/default/grub \
+					-e "s|panic=10|& console=ttyS0,115200n8|g"
+				echo "GRUB_TERMINAL=\"serial\"" >> /etc/default/grub
+				echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> /etc/default/grub
+			fi
 
-		if ! /usr/local/bin/update-bootloader; then
-			logger -p syslog.emerg -t ipfire \
-				"Could not update the bootloader!"
-		fi
-		;;
+			if ! /usr/local/bin/update-bootloader; then
+				logger -p syslog.emerg -t ipfire \
+					"Could not update the bootloader!"
+			fi
+			;;
+	esac
 esac
 
 # Force (re)install pae kernel if pae is supported
