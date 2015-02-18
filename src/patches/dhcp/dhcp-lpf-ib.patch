@@ -1,16 +1,16 @@
-diff -up dhcp-4.2.2/client/dhclient.c.lpf-ib dhcp-4.2.2/client/dhclient.c
---- dhcp-4.2.2/client/dhclient.c.lpf-ib	2011-09-19 11:24:08.693775799 +0200
-+++ dhcp-4.2.2/client/dhclient.c	2011-09-19 11:24:08.703775541 +0200
-@@ -113,6 +113,8 @@ static int check_domain_name_list(const 
+diff -up dhcp-4.3.1b1/client/dhclient.c.bmgpWV dhcp-4.3.1b1/client/dhclient.c
+--- dhcp-4.3.1b1/client/dhclient.c.bmgpWV	2014-07-10 17:50:26.922402550 +0200
++++ dhcp-4.3.1b1/client/dhclient.c	2014-07-10 17:53:43.629623477 +0200
+@@ -114,6 +114,8 @@ static int check_domain_name_list(const
  static int check_option_values(struct universe *universe, unsigned int opt,
  			       const char *ptr, size_t len);
  
 +static void setup_ib_interface(struct interface_info *ip);
 +
+ #ifndef UNIT_TEST
  int
  main(int argc, char **argv) {
- 	int fd;
-@@ -919,6 +921,14 @@ main(int argc, char **argv) {
+@@ -937,6 +939,13 @@ main(int argc, char **argv) {
  	}
  	srandom(seed + cur_time + (unsigned)getpid());
  
@@ -21,11 +21,10 @@ diff -up dhcp-4.2.2/client/dhclient.c.lpf-ib dhcp-4.2.2/client/dhclient.c
 +			setup_ib_interface(ip);
 +		}
 +	}
-+
- 	/* Start a configuration state machine for each interface. */
- #ifdef DHCPv6
- 	if (local_family == AF_INET6) {
-@@ -1195,6 +1205,29 @@ int find_subnet (struct subnet **sp,
+ 
+ 	/*
+ 	 * Establish a default DUID.  We always do so for v6 and
+@@ -1230,6 +1239,29 @@ int find_subnet (struct subnet **sp,
  	return 0;
  }
  
@@ -55,10 +54,10 @@ diff -up dhcp-4.2.2/client/dhclient.c.lpf-ib dhcp-4.2.2/client/dhclient.c
  /* Individual States:
   *
   * Each routine is called from the dhclient_state_machine() in one of
-diff -up dhcp-4.2.2/common/bpf.c.lpf-ib dhcp-4.2.2/common/bpf.c
---- dhcp-4.2.2/common/bpf.c.lpf-ib	2011-09-19 11:24:08.694775773 +0200
-+++ dhcp-4.2.2/common/bpf.c	2011-09-19 11:24:08.704775516 +0200
-@@ -198,11 +198,44 @@ struct bpf_insn dhcp_bpf_filter [] = {
+diff -up dhcp-4.3.1b1/common/bpf.c.bmgpWV dhcp-4.3.1b1/common/bpf.c
+--- dhcp-4.3.1b1/common/bpf.c.bmgpWV	2014-07-10 17:48:03.797424616 +0200
++++ dhcp-4.3.1b1/common/bpf.c	2014-07-10 17:52:57.705272295 +0200
+@@ -199,11 +199,44 @@ struct bpf_insn dhcp_bpf_filter [] = {
  	BPF_STMT(BPF_RET+BPF_K, 0),
  };
  
@@ -103,21 +102,15 @@ diff -up dhcp-4.2.2/common/bpf.c.lpf-ib dhcp-4.2.2/common/bpf.c
  #if defined (HAVE_TR_SUPPORT)
  struct bpf_insn dhcp_bpf_tr_filter [] = {
          /* accept all token ring packets due to variable length header */
-diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
---- dhcp-4.2.2/common/lpf.c.lpf-ib	2011-09-19 11:24:08.694775773 +0200
-+++ dhcp-4.2.2/common/lpf.c	2011-09-19 11:26:15.107109935 +0200
-@@ -42,6 +42,7 @@
- #include "includes/netinet/udp.h"
- #include "includes/netinet/if_ether.h"
+diff -up dhcp-4.3.1b1/common/lpf.c.bmgpWV dhcp-4.3.1b1/common/lpf.c
+--- dhcp-4.3.1b1/common/lpf.c.bmgpWV	2014-07-10 17:48:03.797424616 +0200
++++ dhcp-4.3.1b1/common/lpf.c	2014-07-10 17:52:57.706272281 +0200
+@@ -46,6 +46,17 @@
+ #if defined (USE_LPF_RECEIVE) || defined (USE_LPF_HWADDR)
+ #include <sys/ioctl.h>
  #include <net/if.h>
 +#include <ifaddrs.h>
- 
- #ifndef PACKET_AUXDATA
- #define PACKET_AUXDATA 8
-@@ -59,6 +60,15 @@ struct tpacket_auxdata
- /* Reinitializes the specified interface after an address change.   This
-    is not required for packet-filter APIs. */
- 
++
 +/* Default broadcast address for IPoIB */
 +static unsigned char default_ib_bcast_addr[20] = {
 + 	0x00, 0xff, 0xff, 0xff,
@@ -127,10 +120,10 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
 +	0xff, 0xff, 0xff, 0xff
 +};
 +
- #ifdef USE_LPF_SEND
- void if_reinitialize_send (info)
- 	struct interface_info *info;
-@@ -86,10 +96,21 @@ int if_register_lpf (info)
+ #endif
+ 
+ #if defined (USE_LPF_SEND) || defined (USE_LPF_RECEIVE)
+@@ -92,10 +103,21 @@ int if_register_lpf (info)
  		struct sockaddr common;
  	} sa;
  	struct ifreq ifr;
@@ -154,7 +147,7 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
  		if (errno == ENOPROTOOPT || errno == EPROTONOSUPPORT ||
  		    errno == ESOCKTNOSUPPORT || errno == EPFNOSUPPORT ||
  		    errno == EAFNOSUPPORT || errno == EINVAL) {
-@@ -112,6 +133,7 @@ int if_register_lpf (info)
+@@ -118,6 +140,7 @@ int if_register_lpf (info)
  	/* Bind to the interface name */
  	memset (&sa, 0, sizeof sa);
  	sa.ll.sll_family = AF_PACKET;
@@ -162,7 +155,7 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
  	sa.ll.sll_ifindex = ifr.ifr_ifindex;
  	if (bind (sock, &sa.common, sizeof sa)) {
  		if (errno == ENOPROTOOPT || errno == EPROTONOSUPPORT ||
-@@ -127,8 +149,6 @@ int if_register_lpf (info)
+@@ -133,8 +156,6 @@ int if_register_lpf (info)
  		log_fatal ("Bind socket to interface: %m");
  	}
  
@@ -171,7 +164,7 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
  	return sock;
  }
  #endif /* USE_LPF_SEND || USE_LPF_RECEIVE */
-@@ -183,6 +203,8 @@ void if_deregister_send (info)
+@@ -189,6 +210,8 @@ void if_deregister_send (info)
     in bpf includes... */
  extern struct sock_filter dhcp_bpf_filter [];
  extern int dhcp_bpf_filter_len;
@@ -180,7 +173,7 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
  
  #if defined (HAVE_TR_SUPPORT)
  extern struct sock_filter dhcp_bpf_tr_filter [];
-@@ -200,11 +222,13 @@ void if_register_receive (info)
+@@ -206,11 +229,13 @@ void if_register_receive (info)
  	/* Open a LPF device and hang it on this interface... */
  	info -> rfdesc = if_register_lpf (info);
  
@@ -199,7 +192,7 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
  	}
  
  #if defined (HAVE_TR_SUPPORT)
-@@ -250,15 +274,28 @@ static void lpf_gen_filter_setup (info)
+@@ -256,15 +281,28 @@ static void lpf_gen_filter_setup (info)
  
  	memset(&p, 0, sizeof(p));
  
@@ -237,7 +230,7 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
  
  	if (setsockopt (info -> rfdesc, SOL_SOCKET, SO_ATTACH_FILTER, &p,
  			sizeof p) < 0) {
-@@ -315,6 +352,54 @@ static void lpf_tr_filter_setup (info)
+@@ -321,6 +359,54 @@ static void lpf_tr_filter_setup (info)
  #endif /* USE_LPF_RECEIVE */
  
  #ifdef USE_LPF_SEND
@@ -292,7 +285,7 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
  ssize_t send_packet (interface, packet, raw, len, from, to, hto)
  	struct interface_info *interface;
  	struct packet *packet;
-@@ -335,6 +420,11 @@ ssize_t send_packet (interface, packet, 
+@@ -341,6 +427,11 @@ ssize_t send_packet (interface, packet,
  		return send_fallback (interface, packet, raw,
  				      len, from, to, hto);
  
@@ -304,7 +297,7 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
  	if (hto == NULL && interface->anycast_mac_addr.hlen)
  		hto = &interface->anycast_mac_addr;
  
-@@ -356,6 +446,42 @@ ssize_t send_packet (interface, packet, 
+@@ -362,6 +453,42 @@ ssize_t send_packet (interface, packet,
  #endif /* USE_LPF_SEND */
  
  #ifdef USE_LPF_RECEIVE
@@ -347,7 +340,7 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
  ssize_t receive_packet (interface, buf, len, from, hfrom)
  	struct interface_info *interface;
  	unsigned char *buf;
-@@ -382,6 +508,10 @@ ssize_t receive_packet (interface, buf, 
+@@ -388,6 +515,10 @@ ssize_t receive_packet (interface, buf,
  	};
  	struct cmsghdr *cmsg;
  
@@ -358,60 +351,100 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
  	length = recvmsg (interface -> rfdesc, &msg, 0);
  	if (length <= 0)
  		return length;
-@@ -462,33 +592,44 @@ void maybe_setup_fallback ()
- }
+@@ -469,11 +600,33 @@ void maybe_setup_fallback ()
+ #endif
  
- void
+ #if defined (USE_LPF_RECEIVE) || defined (USE_LPF_HWADDR)
+-void
 -get_hw_addr(const char *name, struct hardware *hw) {
--	int sock;
--	struct ifreq tmp;
++struct sockaddr_ll *
++get_ll (struct ifaddrs *ifaddrs, struct ifaddrs **ifa, char *name)
++{
++	for (*ifa = ifaddrs; *ifa != NULL; *ifa = (*ifa)->ifa_next) {
++		if ((*ifa)->ifa_addr == NULL)
++			continue;
++
++		if ((*ifa)->ifa_addr->sa_family != AF_PACKET)
++			continue;
++
++		if ((*ifa)->ifa_flags & IFF_LOOPBACK)
++			continue;
++
++		if (strcmp((*ifa)->ifa_name, name) == 0)
++			return (struct sockaddr_ll *)(void *)(*ifa)->ifa_addr;
++	}
++	*ifa = NULL;
++	return NULL;
++}
++
++struct sockaddr_ll *
++ioctl_get_ll(char *name)
++{
+ 	int sock;
+ 	struct ifreq tmp;
 -	struct sockaddr *sa;
++	struct sockaddr *sa = NULL;
++	struct sockaddr_ll *sll = NULL;
+ 
+ 	if (strlen(name) >= sizeof(tmp.ifr_name)) {
+ 		log_fatal("Device name too long: \"%s\"", name);
+@@ -487,16 +640,62 @@ get_hw_addr(const char *name, struct har
+ 	memset(&tmp, 0, sizeof(tmp));
+ 	strcpy(tmp.ifr_name, name);
+ 	if (ioctl(sock, SIOCGIFHWADDR, &tmp) < 0) {
+-		log_fatal("Error getting hardware address for \"%s\": %m", 
++		log_fatal("Error getting hardware address for \"%s\": %m",
+ 			  name);
+ 	}
++	close(sock);
+ 
+ 	sa = &tmp.ifr_hwaddr;
+-	switch (sa->sa_family) {
++	// needs to be freed outside this function
++	sll = dmalloc (sizeof (struct sockaddr_ll), MDL);
++	if (!sll)
++		log_fatal("Unable to allocate memory for link layer address");
++	memcpy(&sll->sll_hatype, &sa->sa_family, sizeof (sll->sll_hatype));
++	memcpy(sll->sll_addr, sa->sa_data, sizeof (sll->sll_addr));
++	switch (sll->sll_hatype) {
++		case ARPHRD_INFINIBAND:
++			/* ioctl limits hardware addresses to 8 bytes */
++			sll->sll_halen = 8;
++			break;
++		default:
++			break;
++	}
++	return sll;
++}
++
++void
 +get_hw_addr(struct interface_info *info)
 +{
 +	struct hardware *hw = &info->hw_address;
 +	char *name = info->name;
-+	struct ifaddrs *ifaddrs;
-+	struct ifaddrs *ifa;
++	struct ifaddrs *ifaddrs = NULL;
++	struct ifaddrs *ifa = NULL;
 +	struct sockaddr_ll *sll = NULL;
- 
--	if (strlen(name) >= sizeof(tmp.ifr_name)) {
--		log_fatal("Device name too long: \"%s\"", name);
--	}
++	int sll_allocated = 0;
++	char *dup = NULL;
++	char *colon = NULL;
++
 +	if (getifaddrs(&ifaddrs) == -1)
 +		log_fatal("Failed to get interfaces");
- 
--	sock = socket(AF_INET, SOCK_DGRAM, 0);
--	if (sock < 0) {
--		log_fatal("Can't create socket for \"%s\": %m", name);
-+	for (ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
 +
-+		if (ifa->ifa_addr == NULL)
-+			continue;
++	if ((sll = get_ll(ifaddrs, &ifa, name)) == NULL) {
++		/*
++		 * We were unable to get link-layer address for name.
++		 * Fall back to ioctl(SIOCGIFHWADDR).
++		 */
++		sll = ioctl_get_ll(name);
++		if (sll != NULL)
++			sll_allocated = 1;
++		else
++			// shouldn't happen
++			log_fatal("Unexpected internal error");
++	}
 +
-+		if (ifa->ifa_addr->sa_family != AF_PACKET)
-+			continue;
-+
-+		if (ifa->ifa_flags & IFF_LOOPBACK)
-+			continue;
-+
-+		if (strcmp(ifa->ifa_name, name) == 0) {
-+			sll = (struct sockaddr_ll *)(void *)ifa->ifa_addr;
-+			break;
-+		}
- 	}
- 
--	memset(&tmp, 0, sizeof(tmp));
--	strcpy(tmp.ifr_name, name);
--	if (ioctl(sock, SIOCGIFHWADDR, &tmp) < 0) {
--		log_fatal("Error getting hardware address for \"%s\": %m", 
--			  name);
-+	if (sll == NULL) {
-+		freeifaddrs(ifaddrs);
-+		log_fatal("Failed to get HW address for %s\n", name);
- 	}
- 
--	sa = &tmp.ifr_hwaddr;
--	switch (sa->sa_family) {
 +	switch (sll->sll_hatype) {
  		case ARPHRD_ETHER:
  			hw->hlen = 7;
@@ -421,7 +454,7 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
  			break;
  		case ARPHRD_IEEE802:
  #ifdef ARPHRD_IEEE802_TR
-@@ -496,18 +637,35 @@ get_hw_addr(const char *name, struct har
+@@ -504,18 +703,48 @@ get_hw_addr(const char *name, struct har
  #endif /* ARPHRD_IEEE802_TR */
  			hw->hlen = 7;
  			hw->hbuf[0] = HTYPE_IEEE802;
@@ -429,16 +462,28 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
 +			memcpy(&hw->hbuf[1], sll->sll_addr, 6);
  			break;
  		case ARPHRD_FDDI:
- 			hw->hlen = 17;
+ 			hw->hlen = 7;
  			hw->hbuf[0] = HTYPE_FDDI;
--			memcpy(&hw->hbuf[1], sa->sa_data, 16);
-+			memcpy(&hw->hbuf[1], sll->sll_addr, 16);
+-			memcpy(&hw->hbuf[1], sa->sa_data, 6);
++			memcpy(&hw->hbuf[1], sll->sll_addr, 6);
 +			break;
 +		case ARPHRD_INFINIBAND:
++			dup = strdup(name);
++			/* Aliased infiniband interface is special case where
++			 * neither get_ll() nor ioctl_get_ll() get's correct hw
++			 * address, so we have to truncate the :0 and run
++			 * get_ll() again for the rest.
++			*/
++			if ((colon = strchr(dup, ':')) != NULL) {
++				*colon = '\0';
++				if ((sll = get_ll(ifaddrs, &ifa, dup)) == NULL)
++					log_fatal("Error getting hardware address for \"%s\": %m", name);
++			}
++			free (dup);
 +			/* For Infiniband, save the broadcast address and store
 +			 * the port GUID into the hardware address.
 +			 */
-+			if (ifa->ifa_flags & IFF_BROADCAST) {
++			if (ifa && (ifa->ifa_flags & IFF_BROADCAST)) {
 +				struct sockaddr_ll *bll;
 +
 +				bll = (struct sockaddr_ll *)ifa->ifa_broadaddr;
@@ -450,36 +495,40 @@ diff -up dhcp-4.2.2/common/lpf.c.lpf-ib dhcp-4.2.2/common/lpf.c
 +
 +			hw->hlen = 1;
 +			hw->hbuf[0] = HTYPE_INFINIBAND;
++			memcpy(&hw->hbuf[1], &sll->sll_addr[sll->sll_halen - 8], 8);
  			break;
  #if defined(ARPHRD_PPP)
  		case ARPHRD_PPP:
  			if (local_family != AF_INET6)
 -				log_fatal("Unsupported device type %d for \"%s\"",
 -				           sa->sa_family, name);
-+				log_fatal("Unsupported device type %ld for \"%s\"",
-+					  (long int)sll->sll_family, name);
++				log_fatal("local_family != AF_INET6 for \"%s\"",
++					  name);
  			hw->hlen = 0;
  			hw->hbuf[0] = HTYPE_RESERVED;
  			/* 0xdeadbeef should never occur on the wire,
-@@ -520,10 +678,11 @@ get_hw_addr(const char *name, struct har
+@@ -528,10 +757,13 @@ get_hw_addr(const char *name, struct har
  			break;
  #endif
  		default:
-+			freeifaddrs(ifaddrs);
- 			log_fatal("Unsupported device type %ld for \"%s\"",
+-			log_fatal("Unsupported device type %ld for \"%s\"",
 -				  (long int)sa->sa_family, name);
-+				  (long int)sll->sll_family, name);
++			freeifaddrs(ifaddrs);
++			log_fatal("Unsupported device type %hu for \"%s\"",
++				  sll->sll_hatype, name);
  	}
  
 -	close(sock);
++	if (sll_allocated)
++		dfree(sll, MDL);
 +	freeifaddrs(ifaddrs);
  }
  #endif
-diff -up dhcp-4.2.2/common/socket.c.lpf-ib dhcp-4.2.2/common/socket.c
---- dhcp-4.2.2/common/socket.c.lpf-ib	2011-06-27 18:18:20.000000000 +0200
-+++ dhcp-4.2.2/common/socket.c	2011-09-19 11:24:08.705775490 +0200
-@@ -324,7 +324,7 @@ void if_register_send (info)
- 	info->wfdesc = if_register_socket(info, AF_INET, 0);
+diff -up dhcp-4.3.1b1/common/socket.c.bmgpWV dhcp-4.3.1b1/common/socket.c
+--- dhcp-4.3.1b1/common/socket.c.bmgpWV	2014-07-02 19:58:38.000000000 +0200
++++ dhcp-4.3.1b1/common/socket.c	2014-07-10 17:52:57.706272281 +0200
+@@ -322,7 +322,7 @@ void if_register_send (info)
+ 	info->wfdesc = if_register_socket(info, AF_INET, 0, NULL);
  	/* If this is a normal IPv4 address, get the hardware address. */
  	if (strcmp(info->name, "fallback") != 0)
 -		get_hw_addr(info->name, &info->hw_address);
@@ -487,7 +536,7 @@ diff -up dhcp-4.2.2/common/socket.c.lpf-ib dhcp-4.2.2/common/socket.c
  #if defined (USE_SOCKET_FALLBACK)
  	/* Fallback only registers for send, but may need to receive as
  	   well. */
-@@ -387,7 +387,7 @@ void if_register_receive (info)
+@@ -385,7 +385,7 @@ void if_register_receive (info)
  #endif /* IP_PKTINFO... */
  	/* If this is a normal IPv4 address, get the hardware address. */
  	if (strcmp(info->name, "fallback") != 0)
@@ -496,7 +545,7 @@ diff -up dhcp-4.2.2/common/socket.c.lpf-ib dhcp-4.2.2/common/socket.c
  
  	if (!quiet_interface_discovery)
  		log_info ("Listening on Socket/%s%s%s",
-@@ -497,7 +497,7 @@ if_register6(struct interface_info *info
+@@ -499,7 +499,7 @@ if_register6(struct interface_info *info
  	if (req_multi)
  		if_register_multicast(info);
  
@@ -505,10 +554,19 @@ diff -up dhcp-4.2.2/common/socket.c.lpf-ib dhcp-4.2.2/common/socket.c
  
  	if (!quiet_interface_discovery) {
  		if (info->shared_network != NULL) {
-diff -up dhcp-4.2.2/includes/dhcpd.h.lpf-ib dhcp-4.2.2/includes/dhcpd.h
---- dhcp-4.2.2/includes/dhcpd.h.lpf-ib	2011-09-19 11:24:08.696775721 +0200
-+++ dhcp-4.2.2/includes/dhcpd.h	2011-09-19 11:24:08.707775438 +0200
-@@ -1243,6 +1243,7 @@ struct interface_info {
+@@ -555,7 +555,7 @@ if_register_linklocal6(struct interface_
+ 	info->rfdesc = sock;
+ 	info->wfdesc = sock;
+ 
+-	get_hw_addr(info->name, &info->hw_address);
++	get_hw_addr(info);
+ 
+ 	if (!quiet_interface_discovery) {
+ 		if (info->shared_network != NULL) {
+diff -up dhcp-4.3.1b1/includes/dhcpd.h.bmgpWV dhcp-4.3.1b1/includes/dhcpd.h
+--- dhcp-4.3.1b1/includes/dhcpd.h.bmgpWV	2014-07-10 17:50:26.923402536 +0200
++++ dhcp-4.3.1b1/includes/dhcpd.h	2014-07-10 17:52:57.707272266 +0200
+@@ -1248,6 +1248,7 @@ struct interface_info {
  	struct shared_network *shared_network;
  				/* Networks connected to this interface. */
  	struct hardware hw_address;	/* Its physical address. */
@@ -516,7 +574,7 @@ diff -up dhcp-4.2.2/includes/dhcpd.h.lpf-ib dhcp-4.2.2/includes/dhcpd.h
  	struct in_addr *addresses;	/* Addresses associated with this
  					 * interface.
  					 */
-@@ -2356,7 +2357,7 @@ void print_dns_status (int, struct dhcp_
+@@ -2439,7 +2440,7 @@ void print_dns_status (int, struct dhcp_
  #endif
  const char *print_time(TIME);
  
@@ -525,14 +583,3 @@ diff -up dhcp-4.2.2/includes/dhcpd.h.lpf-ib dhcp-4.2.2/includes/dhcpd.h
  
  /* socket.c */
  #if defined (USE_SOCKET_SEND) || defined (USE_SOCKET_RECEIVE) \
-diff -up dhcp-4.2.2/includes/dhcp.h.lpf-ib dhcp-4.2.2/includes/dhcp.h
---- dhcp-4.2.2/includes/dhcp.h.lpf-ib	2011-09-19 11:24:08.696775721 +0200
-+++ dhcp-4.2.2/includes/dhcp.h	2011-09-19 11:24:08.707775438 +0200
-@@ -79,6 +79,7 @@ struct dhcp_packet {
- #define HTYPE_ETHER	1               /* Ethernet 10Mbps              */
- #define HTYPE_IEEE802	6               /* IEEE 802.2 Token Ring...	*/
- #define HTYPE_FDDI	8		/* FDDI...			*/
-+#define HTYPE_INFINIBAND 32		/* Infiniband IPoIB		*/
- 
- #define HTYPE_RESERVED  0               /* RFC 5494 */
- 
