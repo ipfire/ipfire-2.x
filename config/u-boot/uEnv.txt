@@ -1,4 +1,5 @@
-uenvcmd=if test "$board" = "panda" ;then run bootpanda; else run bootbananapi; fi;
 KVER=xxxKVERxxx
-bootpanda=setenv initrd_high 90000000; fatload mmc 0:1 0x82000000 zImage-ipfire-multi; fatload mmc 0:1 ${fdtaddr} dtb-${KVER}-ipfire-multi/${fdtfile};              setenv bootargs video=800x600 console=tty1 rootwait smsc95xx.macaddr=$usbethaddr root=/dev/mmcblk0p3 ro;           bootz 0x82000000 - ${fdtaddr};
-bootbananapi=setenv fdt_high ffffffff; fatload mmc 0:1 0x46000000 zImage-ipfire-multi; fatload mmc 0:1 0x49000000 dtb-${KVER}-ipfire-multi/sun7i-a20-bananapi.dtb;  setenv bootargs console=ttyS0,115200n8 rootwait root=/dev/mmcblk0p3 rootwait;                                      bootz 0x46000000 - 0x49000000;
+DTBSUNXI=sun7i-a20-bananapi.dtb
+uenvcmd=if test "$board" = "panda" ;then run bootpanda; else run bootsunxi; fi;
+bootpanda=setenv initrd_high 90000000; fatload mmc 0:1 0x82000000 zImage-ipfire-multi; fatload mmc 0:1 ${fdtaddr} dtb-${KVER}-ipfire-multi/${fdtfile};                                                 setenv bootargs video=800x600 console=tty1 rootwait smsc95xx.macaddr=$usbethaddr root=/dev/mmcblk0p3; bootz 0x82000000 - ${fdtaddr};
+bootsunxi=setenv fdt_high ffffffff;    fatload mmc 0:1 0x46000000 zImage-ipfire-multi; fatload mmc 0:1 0x49000000 dtb-${KVER}-ipfire-multi/${DTBSUNXI}; fatload mmc 0:1 0x49100000 uInit-ipfire-multi; setenv bootargs console=ttyS0,115200n8 rootwait root=/dev/mmcblk0p3 rootwait;                         bootz 0x46000000 0x49100000 0x49000000;
