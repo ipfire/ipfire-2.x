@@ -57,7 +57,7 @@ function find_device() {
 
 #
 # Remove old core updates from pakfire cache to save space...
-core=86
+core=87
 for (( i=1; i<=${core}; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
