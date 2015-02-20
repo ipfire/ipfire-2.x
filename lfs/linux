@@ -177,6 +177,9 @@ ifeq "$(KCFG)" "-multi"
 
 	# Install switch api userspace header
 	cd $(DIR_APP) && install -v -m644 include/uapi/linux/switch.h /usr/include/linux/
+
+	# Fix Lamobo-R1 SATA Power
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.x-lamobo-r1-fix-sata-pwr.patch
 endif
 
 ifeq "$(KCFG)" "-rpi"
