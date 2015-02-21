@@ -5,6 +5,8 @@ etc/ipsec.secrets
 etc/ipsec.user.conf
 etc/ipsec.user.secrets
 etc/localtime
+etc/rc.d/rcsysinit.d/S19checkfstab
+etc/rc.d/rcsysinit.d/S70console
 etc/shadow
 etc/ssh/ssh_config
 etc/ssh/sshd_config
