@@ -24,11 +24,11 @@
 
 include Config
 
-VER        = 3.14.32
+VER        = 3.14.33
 
-RPI_PATCHES = 3.14.32-grsec-ipfire1
-A7M_PATCHES = 3.14.32-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.0-3.14.32-201502062101.patch.xz
+RPI_PATCHES = 3.14.33-grsec-ipfire1
+A7M_PATCHES = 3.14.33-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.0-3.14.33-201502180832.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -77,10 +77,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= 3178fb8f6f1eafcffdd730fec68754f8
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 375dc501711ff3ffeffdfc9848675d26
-arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= efcfe5889f120d879387dd4ebe881587
-$(GRS_PATCHES)_MD5				= c1565eb2a630a673f3ace31a6901e251
+$(DL_FILE)_MD5					= c19feb0646fde7e96602ac313fb7e5d6
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= e423c8b3a408f23b9a26f8f0f4384c50
+arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= f147ce7c81889d2c5134304f3a6e60e3
+$(GRS_PATCHES)_MD5				= 119943451628ff5a62437637d60a585d
 
 install : $(TARGET)
 
@@ -175,11 +175,11 @@ ifeq "$(KCFG)" "-multi"
 	# Apply Arm7-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm7-multi-patches-$(A7M_PATCHES).patch.xz | patch -Np1
 
-	# Update Banana Pi, Lamobo-R1 and add Banana Pro dtb
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.x-update_banana_dts.patch
-
 	# Install switch api userspace header
 	cd $(DIR_APP) && install -v -m644 include/uapi/linux/switch.h /usr/include/linux/
+
+	# Fix Lamobo-R1 SATA Power
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.x-lamobo-r1-fix-sata-pwr.patch
 endif
 
 ifeq "$(KCFG)" "-rpi"

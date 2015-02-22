@@ -22,5 +22,11 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-./uninstall.sh
+remove_files
+rm -rf /boot/initramfs-*-pae.img
+rm -rf /boot/vmlinuz-*-pae
+rm -rf /lib/modules/*-ipfire-pae
+if [ ! -f /boot/grub/grub.conf ]; then
+	grub-mkconfig > /boot/grub/grub.cfg
+fi
 ./install.sh

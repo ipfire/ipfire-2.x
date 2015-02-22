@@ -116,7 +116,7 @@ mount -o loop $IMGboot $MNThdd/boot
 mount -o loop $IMGvar $MNThdd/var
 
 # Install IPFire without kernel modules
-xz -d < $ISODIR/$SNAME-$VERSION.tlz > $TMPDIR/$SNAME-$VERSION.tar
+xz -d < $ISODIR/distro.img > $TMPDIR/$SNAME-$VERSION.tar
 tar -C $MNThdd/ -xvf $TMPDIR/$SNAME-$VERSION.tar \
 	--exclude=lib/modules* --exclude=boot* --numeric-owner
 
@@ -130,9 +130,9 @@ mkdir $MNThdd/boot/grub
 echo "timeout 10"                          > $MNThdd/boot/grub/grub.conf
 echo "default 0"                          >> $MNThdd/boot/grub/grub.conf
 echo "title IPFire ($KERN_TYPE-kernel)"   >> $MNThdd/boot/grub/grub.conf
-echo "  kernel /vmlinuz-$KVER-ipfire-$KERN_TYPE root=/dev/$P3 rootdelay=10 panic=10 console=$CONSOLE ro" \
+echo "  kernel /vmlinuz-$KVER-ipfire-$KERN_TYPE root=/dev/$P3 rootdelay=10 panic=10 console=$CONSOLE" \
 					  >> $MNThdd/boot/grub/grub.conf
-echo "  initrd /ipfirerd-$KVER-$KERN_TYPE.img" >> $MNThdd/boot/grub/grub.conf
+echo "  initrd /initramfs-$KVER-ipfire-$KERN_TYPE.img" >> $MNThdd/boot/grub/grub.conf
 echo "# savedefault 0" >> $MNThdd/boot/grub/grub.conf
 
 ln -s grub.conf $MNThdd/boot/grub/menu.lst
@@ -159,12 +159,13 @@ mount --bind /proc $MNThdd/proc
 mount --bind /dev  $MNThdd/dev
 mount --bind /sys  $MNThdd/sys
 chroot $MNThdd /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
-sed -i -e "s|DEVICE1|/dev/$P1|g" $MNThdd/etc/fstab
-sed -i -e "s|DEVICE2|/dev/$P2|g" $MNThdd/etc/fstab
-sed -i -e "s|DEVICE3|/dev/$P3|g" $MNThdd/etc/fstab
-sed -i -e "s|DEVICE4|/dev/$P4|g" $MNThdd/etc/fstab
 
-sed -i -e "s|FSTYPE|$FSTYPE|g" $MNThdd/etc/fstab
+# create fstab
+echo "/dev/$P1 /boot auto defaults 1 3" > $MNThdd/etc/fstab
+echo "/dev/$P2 swap swap defaults 0 0" >> $MNThdd/etc/fstab
+echo "/dev/$P3 / auto defaults 1 1"    >> $MNThdd/etc/fstab
+echo "/dev/$P4 /var auto defaults 1 2" >> $MNThdd/etc/fstab
+
 
 #Remove root / fstab check
 rm -rf $MNThdd/etc/rc.d/rcsysinit.d/S19checkfstab
