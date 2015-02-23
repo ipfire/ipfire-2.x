@@ -198,8 +198,9 @@ case "$(uname -m)" in
 	i?86)
 	case "$(find_device "/")" in
 		xvd* )
-			echo Skip remove grub2 files, because pygrub fail.
-			rm -f /boot/grub/*
+			echo Remove grub2 files, because pygrub fail.
+			rm -rvf /boot/grub/*
+			touch /boot/grub/grub.conf
 			echo config will recreated by linux-pae install.
 			;;
 		* )
