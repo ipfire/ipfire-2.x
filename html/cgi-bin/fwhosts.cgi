@@ -728,10 +728,10 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 			}
 		}
 	}
-	if ($tcpcounter > 15){
+	if ($tcpcounter > 14){
 		$errormessage=$Lang::tr{'fwhost err maxservicetcp'};
 	}
-	if ($udpcounter > 15){
+	if ($udpcounter > 14){
 		$errormessage=$Lang::tr{'fwhost err maxserviceudp'};
 	}
 	$tcpcounter=0;
