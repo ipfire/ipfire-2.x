@@ -322,6 +322,9 @@ struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 				"%s - %s", size_str, p);
 		}
 
+		// Cut off the description string after 40 characters
+		disk->description[41] = '\0';
+
 		*disks++ = disk;
 
 		if (--i == 0)
