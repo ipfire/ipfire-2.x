@@ -31,7 +31,11 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 #workaround to suppress a warning when a variable is used only once
-my @dummy = ( ${Header::colouryellow} );
+my @dummy = (
+	${Header::colourred},
+	${Header::colourgreen}
+);
+
 undef (@dummy);
 
 my $string=();
