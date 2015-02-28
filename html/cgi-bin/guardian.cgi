@@ -63,6 +63,7 @@ $settings{'GUARDIAN_ENABLED'} = 'off';
 $settings{'GUARDIAN_ENABLE_SNORT'} = 'on';
 $settings{'GUARDIAN_ENABLE_SSH'} = 'on';
 $settings{'GUARDIAN_ENABLE_HTTPD'} = 'on';
+$settings{'GUARDIAN_ENABLE_OWNCLOUD'} = '';
 $settings{'GUARDIAN_LOGLEVEL'} = 'info';
 $settings{'GUARDIAN_BLOCKCOUNT'} = '3';
 $settings{'GUARDIAN_BLOCKTIME'} = '86400';
