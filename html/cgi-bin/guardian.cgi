@@ -84,7 +84,7 @@ my $errormessage = '';
 
 # Check if guardian is running and grab some stats.
 &daemonstats();
-my $pid = @pid[0];
+my $pid = $pid[0];
 
 ## Perform input checks and save settings.
 #
@@ -312,7 +312,7 @@ sub showMainBox() {
 
 	# Get current status of guardian.
 	&daemonstats();
-	$pid = @pid[0];
+	$pid = $pid[0];
 
 	# Display some useful information related to guardian, if daemon is running.
 	if ( ($memory != 0) && ($pid > 0) ){
@@ -332,7 +332,7 @@ sub showMainBox() {
 				</tr>
 				<tr>
 					<td class='base'></td>
-					<td bgcolor='$color{'color22'}' align='center'>@pid[0]</td>
+					<td bgcolor='$color{'color22'}' align='center'>$pid</td>
 					<td bgcolor='$color{'color22'}' align='center'>$memory KB</td>
 				</tr>
 			</table>
