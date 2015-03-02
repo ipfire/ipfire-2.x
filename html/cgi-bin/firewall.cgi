@@ -66,6 +66,7 @@ my %ipsecsettings=();
 my %aliases=();
 my %optionsfw=();
 my %ifaces=();
+my %rulehash=();
 
 my @PROTOCOLS = ("TCP", "UDP", "ICMP", "IGMP", "AH", "ESP", "GRE","IPv6","IPIP");
 
@@ -194,6 +195,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	&General::readhasharray("$configfwdfw", \%configfwdfw);
 	&General::readhasharray("$configinput", \%configinputfw);
 	&General::readhasharray("$configoutgoing", \%configoutgoingfw);
+	my $maxkey;
 	#Set Variables according to the JQuery code in protocol section
 	if ($fwdfwsettings{'PROT'} eq 'TCP' || $fwdfwsettings{'PROT'} eq 'UDP')
 	{
@@ -230,157 +232,80 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	if(	$fwdfwsettings{'grp1'} eq 'ipfire_src' && $fwdfwsettings{'grp2'} eq 'ipfire'){
 		$errormessage=$Lang::tr{'fwdfw err same'};
 	}
-	#INPUT part
-	if($fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE'){
+	# INPUT part
+	if ($fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE'){
 		$fwdfwsettings{'config'}=$configinput;
 		$fwdfwsettings{'chain'} = 'INPUTFW';
-		my $maxkey=&General::findhasharraykey(\%configinputfw);
-		#check if we have an identical rule already
-		if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
-			foreach my $key (sort keys %configinputfw){
-				if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'},$fwdfwsettings{'LIMIT_CON_CON'},$fwdfwsettings{'concon'},$fwdfwsettings{'RATE_LIMIT'},$fwdfwsettings{'ratecon'},$fwdfwsettings{'RATETIME'}"
-					eq "$configinputfw{$key}[0],$configinputfw{$key}[2],$configinputfw{$key}[3],$configinputfw{$key}[4],$configinputfw{$key}[5],$configinputfw{$key}[6],$configinputfw{$key}[7],$configinputfw{$key}[8],$configinputfw{$key}[9],$configinputfw{$key}[10],$configinputfw{$key}[11],$configinputfw{$key}[12],$configinputfw{$key}[13],$configinputfw{$key}[14],$configinputfw{$key}[15],$configinputfw{$key}[17],$configinputfw{$key}[18],$configinputfw{$key}[19],$configinputfw{$key}[20],$configinputfw{$key}[21],$configinputfw{$key}[22],$configinputfw{$key}[23],$configinputfw{$key}[24],$configinputfw{$key}[25],$configinputfw{$key}[26],$configinputfw{$key}[27],$configinputfw{$key}[28],$configinputfw{$key}[29],$configinputfw{$key}[30],$configinputfw{$key}[31],$configinputfw{$key}[32],$configinputfw{$key}[33],$configinputfw{$key}[34],$configinputfw{$key}[35],$configinputfw{$key}[36]"){
-						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
-							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
-						}
-						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && &validremark($fwdfwsettings{'ruleremark'})){
-							$errormessage='';
-						}
-						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
-							$fwdfwsettings{'nosave'} = 'on';
-						}
-				}
-			}
-		}
-		#check Rulepos on new Rule
-		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
-			$fwdfwsettings{'oldrulenumber'}=$maxkey;
-			foreach my $key (sort keys %configinputfw){
-				if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'},$fwdfwsettings{'LIMIT_CON_CON'},$fwdfwsettings{'concon'},$fwdfwsettings{'RATE_LIMIT'},$fwdfwsettings{'ratecon'},$fwdfwsettings{'RATETIME'}"
-					eq "$configinputfw{$key}[0],$configinputfw{$key}[2],$configinputfw{$key}[3],$configinputfw{$key}[4],$configinputfw{$key}[5],$configinputfw{$key}[6],$configinputfw{$key}[7],$configinputfw{$key}[8],$configinputfw{$key}[9],$configinputfw{$key}[10],$configinputfw{$key}[11],$configinputfw{$key}[12],$configinputfw{$key}[13],$configinputfw{$key}[14],$configinputfw{$key}[15],$configinputfw{$key}[17],$configinputfw{$key}[18],$configinputfw{$key}[19],$configinputfw{$key}[20],$configinputfw{$key}[21],$configinputfw{$key}[22],$configinputfw{$key}[23],$configinputfw{$key}[24],$configinputfw{$key}[25],$configinputfw{$key}[26],$configinputfw{$key}[27],$configinputfw{$key}[28],$configinputfw{$key}[29],$configinputfw{$key}[30],$configinputfw{$key}[31],$configinputfw{$key}[32],$configinputfw{$key}[33],$configinputfw{$key}[34],$configinputfw{$key}[35],$configinputfw{$key}[36]"){
-						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-				}
-			}
-		}
-		#check if we just close a rule
-		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'oldruletype'} eq $fwdfwsettings{'chain'} ) {
-			if($fwdfwsettings{'nosave'} eq 'on' && $fwdfwsettings{'updatefwrule'} eq 'on'){
-				$errormessage='';
-				$fwdfwsettings{'nosave2'} = 'on';
-			}
-		}
-		if (!$errormessage){
-			if($fwdfwsettings{'nosave2'} ne 'on'){
-				&saverule(\%configinputfw,$configinput);
-			}
-		}
-	}elsif($fwdfwsettings{'grp1'} eq 'ipfire_src' ){
+		$maxkey=&General::findhasharraykey(\%configinputfw);
+		%rulehash=%configinputfw;
+	}elsif ($fwdfwsettings{'grp1'} eq 'ipfire_src' ){
 	# OUTGOING PART
 		$fwdfwsettings{'config'}=$configoutgoing;
 		$fwdfwsettings{'chain'} = 'OUTGOINGFW';
-		my $maxkey=&General::findhasharraykey(\%configoutgoingfw);
-		if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
-			foreach my $key (sort keys %configoutgoingfw){
-				if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'},$fwdfwsettings{'LIMIT_CON_CON'},$fwdfwsettings{'concon'},$fwdfwsettings{'RATE_LIMIT'},$fwdfwsettings{'ratecon'},$fwdfwsettings{'RATETIME'}"
-					eq "$configoutgoingfw{$key}[0],$configoutgoingfw{$key}[2],$configoutgoingfw{$key}[3],$configoutgoingfw{$key}[4],$configoutgoingfw{$key}[5],$configoutgoingfw{$key}[6],$configoutgoingfw{$key}[7],$configoutgoingfw{$key}[8],$configoutgoingfw{$key}[9],$configoutgoingfw{$key}[10],$configoutgoingfw{$key}[11],$configoutgoingfw{$key}[12],$configoutgoingfw{$key}[13],$configoutgoingfw{$key}[14],$configoutgoingfw{$key}[15],$configoutgoingfw{$key}[17],$configoutgoingfw{$key}[18],$configoutgoingfw{$key}[19],$configoutgoingfw{$key}[20],$configoutgoingfw{$key}[21],$configoutgoingfw{$key}[22],$configoutgoingfw{$key}[23],$configoutgoingfw{$key}[24],$configoutgoingfw{$key}[25],$configoutgoingfw{$key}[26],$configoutgoingfw{$key}[27],$configoutgoingfw{$key}[28],$configoutgoingfw{$key}[29],$configoutgoingfw{$key}[30],$configoutgoingfw{$key}[31],$configoutgoingfw{$key}[32],$configoutgoingfw{$key}[33],$configoutgoingfw{$key}[34],$configoutgoingfw{$key}[35],$configoutgoingfw{$key}[36]"){
-						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
-							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
-						}
-						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && &validremark($fwdfwsettings{'ruleremark'})){
-							$errormessage='';
-						}
-						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
-							$fwdfwsettings{'nosave'} = 'on';
-						}
-				}
-			}
-		}
-		#check Rulepos on new Rule
-		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
-			$fwdfwsettings{'oldrulenumber'}=$maxkey;
-			foreach my $key (sort keys %configoutgoingfw){
-				if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'LOG'},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'},$fwdfwsettings{'LIMIT_CON_CON'},$fwdfwsettings{'concon'},$fwdfwsettings{'RATE_LIMIT'},$fwdfwsettings{'ratecon'},$fwdfwsettings{'RATETIME'}"
-					eq "$configoutgoingfw{$key}[0],$configoutgoingfw{$key}[2],$configoutgoingfw{$key}[3],$configoutgoingfw{$key}[4],$configoutgoingfw{$key}[5],$configoutgoingfw{$key}[6],$configoutgoingfw{$key}[7],$configoutgoingfw{$key}[8],$configoutgoingfw{$key}[9],$configoutgoingfw{$key}[10],$configoutgoingfw{$key}[11],$configoutgoingfw{$key}[12],$configoutgoingfw{$key}[13],$configoutgoingfw{$key}[14],$configoutgoingfw{$key}[15],$configoutgoingfw{$key}[17],$configoutgoingfw{$key}[18],$configoutgoingfw{$key}[19],$configoutgoingfw{$key}[20],$configoutgoingfw{$key}[21],$configoutgoingfw{$key}[22],$configoutgoingfw{$key}[23],$configoutgoingfw{$key}[24],$configoutgoingfw{$key}[25],$configoutgoingfw{$key}[26],$configoutgoingfw{$key}[27],$configoutgoingfw{$key}[28],$configoutgoingfw{$key}[29],$configoutgoingfw{$key}[30],$configoutgoingfw{$key}[31],$configoutgoingfw{$key}[32],$configoutgoingfw{$key}[33],$configoutgoingfw{$key}[34],$configoutgoingfw{$key}[35],$configoutgoingfw{$key}[36]"){
-						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-				}
-			}
-		}
-		#check if we just close a rule
-		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'oldruletype'} eq $fwdfwsettings{'chain'} ) {
-			if($fwdfwsettings{'nosave'} eq 'on' && $fwdfwsettings{'updatefwrule'} eq 'on'){
-				$fwdfwsettings{'nosave2'} = 'on';
-				$errormessage='';
-			}
-		}
-		#increase counters
-		if (!$errormessage){
-			if ($fwdfwsettings{'nosave2'} ne 'on'){
-				&saverule(\%configoutgoingfw,$configoutgoing);
-			}
-		}
-	}else{
-		#FORWARD PART
+		$maxkey=&General::findhasharraykey(\%configoutgoingfw);
+		%rulehash=%configoutgoingfw;
+	}else {
+	# FORWARD PART
 		$fwdfwsettings{'config'}=$configfwdfw;
 		$fwdfwsettings{'chain'} = 'FORWARDFW';
-		my $maxkey=&General::findhasharraykey(\%configfwdfw);
-		if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
-			#check if we have an identical rule already
-			foreach my $key (sort keys %configfwdfw){
-				if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'},$fwdfwsettings{'LIMIT_CON_CON'},$fwdfwsettings{'concon'},$fwdfwsettings{'RATE_LIMIT'},$fwdfwsettings{'ratecon'},$fwdfwsettings{'RATETIME'}"
-					eq "$configfwdfw{$key}[0],$configfwdfw{$key}[2],$configfwdfw{$key}[3],$configfwdfw{$key}[4],$configfwdfw{$key}[5],$configfwdfw{$key}[6],$configfwdfw{$key}[7],$configfwdfw{$key}[8],$configfwdfw{$key}[9],$configfwdfw{$key}[10],$configfwdfw{$key}[11],$configfwdfw{$key}[12],$configfwdfw{$key}[13],$configfwdfw{$key}[14],$configfwdfw{$key}[15],$configfwdfw{$key}[18],$configfwdfw{$key}[19],$configfwdfw{$key}[20],$configfwdfw{$key}[21],$configfwdfw{$key}[22],$configfwdfw{$key}[23],$configfwdfw{$key}[24],$configfwdfw{$key}[25],$configfwdfw{$key}[26],$configfwdfw{$key}[27],$configfwdfw{$key}[28],$configfwdfw{$key}[29],$configfwdfw{$key}[30],$configfwdfw{$key}[31],$configfwdfw{$key}[32],$configfwdfw{$key}[33],$configfwdfw{$key}[34],$configfwdfw{$key}[35],$configfwdfw{$key}[36]"){
-						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
-							$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
-						}
-						if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && &validremark($fwdfwsettings{'ruleremark'})){
-							$errormessage='';
-						}
-						if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
-							$fwdfwsettings{'nosave'} = 'on';
-						}
-				}
+		$maxkey=&General::findhasharraykey(\%configfwdfw);
+		%rulehash=%configfwdfw;
+	}
+	#check if we have an identical rule already
+	if($fwdfwsettings{'oldrulenumber'} eq $fwdfwsettings{'rulepos'}){
+		foreach my $key (sort keys %rulehash){
+			if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'},$fwdfwsettings{'LIMIT_CON_CON'},$fwdfwsettings{'concon'},$fwdfwsettings{'RATE_LIMIT'},$fwdfwsettings{'ratecon'},$fwdfwsettings{'RATETIME'}"
+				eq "$rulehash{$key}[0],$rulehash{$key}[2],$rulehash{$key}[3],$rulehash{$key}[4],$rulehash{$key}[5],$rulehash{$key}[6],$rulehash{$key}[7],$rulehash{$key}[8],$rulehash{$key}[9],$rulehash{$key}[10],$rulehash{$key}[11],$rulehash{$key}[12],$rulehash{$key}[13],$rulehash{$key}[14],$rulehash{$key}[15],$rulehash{$key}[18],$rulehash{$key}[19],$rulehash{$key}[20],$rulehash{$key}[21],$rulehash{$key}[22],$rulehash{$key}[23],$rulehash{$key}[24],$rulehash{$key}[25],$rulehash{$key}[26],$rulehash{$key}[27],$rulehash{$key}[28],$rulehash{$key}[29],$rulehash{$key}[30],$rulehash{$key}[31],$rulehash{$key}[32],$rulehash{$key}[33],$rulehash{$key}[34],$rulehash{$key}[35],$rulehash{$key}[36]"){
+					$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
+					if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && !&validremark($fwdfwsettings{'ruleremark'})){
+						$errormessage=$Lang::tr{'fwdfw err remark'}."<br>";
+					}
+					if($fwdfwsettings{'oldruleremark'} ne $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'updatefwrule'} eq 'on' && $fwdfwsettings{'ruleremark'} ne '' && &validremark($fwdfwsettings{'ruleremark'})){
+						$errormessage='';
+					}
+					if ($fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'}){
+						$fwdfwsettings{'nosave'} = 'on';
+					}
 			}
 		}
-		#check Rulepos on new Rule
-		if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
-			$fwdfwsettings{'oldrulenumber'}=$maxkey;
-			foreach my $key (sort keys %configfwdfw){
-				if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'},$fwdfwsettings{'LIMIT_CON_CON'},$fwdfwsettings{'concon'},$fwdfwsettings{'RATE_LIMIT'},$fwdfwsettings{'ratecon'},$fwdfwsettings{'RATETIME'}"
-					eq "$configfwdfw{$key}[0],$configfwdfw{$key}[2],$configfwdfw{$key}[3],$configfwdfw{$key}[4],$configfwdfw{$key}[5],$configfwdfw{$key}[6],$configfwdfw{$key}[7],$configfwdfw{$key}[8],$configfwdfw{$key}[9],$configfwdfw{$key}[10],$configfwdfw{$key}[11],$configfwdfw{$key}[12],$configfwdfw{$key}[13],$configfwdfw{$key}[14],$configfwdfw{$key}[15],$configfwdfw{$key}[18],$configfwdfw{$key}[19],$configfwdfw{$key}[20],$configfwdfw{$key}[21],$configfwdfw{$key}[22],$configfwdfw{$key}[23],$configfwdfw{$key}[24],$configfwdfw{$key}[25],$configfwdfw{$key}[26],$configfwdfw{$key}[27],$configfwdfw{$key}[28],$configfwdfw{$key}[29],$configfwdfw{$key}[30],$configfwdfw{$key}[31],$configfwdfw{$key}[32],$configfwdfw{$key}[33],$configfwdfw{$key}[34],$configfwdfw{$key}[35],$configfwdfw{$key}[36]"){
-						$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
-				}
+	}
+	#check Rulepos on new Rule
+	if($fwdfwsettings{'rulepos'} > 0 && !$fwdfwsettings{'oldrulenumber'}){
+		$fwdfwsettings{'oldrulenumber'}=$maxkey;
+		foreach my $key (sort keys %rulehash){
+			if (   "$fwdfwsettings{'RULE_ACTION'},$fwdfwsettings{'ACTIVE'},$fwdfwsettings{'grp1'},$fwdfwsettings{$fwdfwsettings{'grp1'}},$fwdfwsettings{'grp2'},$fwdfwsettings{$fwdfwsettings{'grp2'}},$fwdfwsettings{'USE_SRC_PORT'},$fwdfwsettings{'PROT'},$fwdfwsettings{'ICMP_TYPES'},$fwdfwsettings{'SRC_PORT'},$fwdfwsettings{'USESRV'},$fwdfwsettings{'TGT_PROT'},$fwdfwsettings{'ICMP_TGT'},$fwdfwsettings{'grp3'},$fwdfwsettings{$fwdfwsettings{'grp3'}},$fwdfwsettings{'TIME'},$fwdfwsettings{'TIME_MON'},$fwdfwsettings{'TIME_TUE'},$fwdfwsettings{'TIME_WED'},$fwdfwsettings{'TIME_THU'},$fwdfwsettings{'TIME_FRI'},$fwdfwsettings{'TIME_SAT'},$fwdfwsettings{'TIME_SUN'},$fwdfwsettings{'TIME_FROM'},$fwdfwsettings{'TIME_TO'},$fwdfwsettings{'USE_NAT'},$fwdfwsettings{$fwdfwsettings{'nat'}},$fwdfwsettings{'dnatport'},$fwdfwsettings{'nat'},$fwdfwsettings{'LIMIT_CON_CON'},$fwdfwsettings{'concon'},$fwdfwsettings{'RATE_LIMIT'},$fwdfwsettings{'ratecon'},$fwdfwsettings{'RATETIME'}"
+				eq "$rulehash{$key}[0],$rulehash{$key}[2],$rulehash{$key}[3],$rulehash{$key}[4],$rulehash{$key}[5],$rulehash{$key}[6],$rulehash{$key}[7],$rulehash{$key}[8],$rulehash{$key}[9],$rulehash{$key}[10],$rulehash{$key}[11],$rulehash{$key}[12],$rulehash{$key}[13],$rulehash{$key}[14],$rulehash{$key}[15],$rulehash{$key}[18],$rulehash{$key}[19],$rulehash{$key}[20],$rulehash{$key}[21],$rulehash{$key}[22],$rulehash{$key}[23],$rulehash{$key}[24],$rulehash{$key}[25],$rulehash{$key}[26],$rulehash{$key}[27],$rulehash{$key}[28],$rulehash{$key}[29],$rulehash{$key}[30],$rulehash{$key}[31],$rulehash{$key}[32],$rulehash{$key}[33],$rulehash{$key}[34],$rulehash{$key}[35],$rulehash{$key}[36]"){
+					$errormessage.=$Lang::tr{'fwdfw err ruleexists'};
 			}
 		}
-		#check if we just close a rule
-		if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'oldruletype'} eq $fwdfwsettings{'chain'}){
-			if($fwdfwsettings{'nosave'} eq 'on' && $fwdfwsettings{'updatefwrule'} eq 'on'){
-				$fwdfwsettings{'nosave2'} = 'on';
-				$errormessage='';
-			}
+	}
+	#check if we just close a rule
+	if( $fwdfwsettings{'oldgrp1a'} eq  $fwdfwsettings{'grp1'} && $fwdfwsettings{'oldgrp1b'} eq $fwdfwsettings{$fwdfwsettings{'grp1'}} && $fwdfwsettings{'oldgrp2a'} eq  $fwdfwsettings{'grp2'} && $fwdfwsettings{'oldgrp2b'} eq $fwdfwsettings{$fwdfwsettings{'grp2'}} &&  $fwdfwsettings{'oldgrp3a'} eq $fwdfwsettings{'grp3'} && $fwdfwsettings{'oldgrp3b'} eq  $fwdfwsettings{$fwdfwsettings{'grp3'}} && $fwdfwsettings{'oldusesrv'} eq $fwdfwsettings{'USESRV'} && $fwdfwsettings{'oldruleremark'} eq $fwdfwsettings{'ruleremark'} && $fwdfwsettings{'oldruletype'} eq $fwdfwsettings{'chain'}){
+		if($fwdfwsettings{'nosave'} eq 'on' && $fwdfwsettings{'updatefwrule'} eq 'on'){
+			$fwdfwsettings{'nosave2'} = 'on';
+			$errormessage='';
 		}
-		#check max concurrent connections per ip address
-		if ($fwdfwsettings{'LIMIT_CON_CON'} eq 'ON'){
-			if (!($fwdfwsettings{'concon'} =~ /^(\d+)$/)) {
-				$errormessage.=$Lang::tr{'fwdfw err concon'};
-			}
-		}else{
-			$fwdfwsettings{'concon'}='';
+	}
+	#check max concurrent connections per ip address
+	if ($fwdfwsettings{'LIMIT_CON_CON'} eq 'ON'){
+		if (!($fwdfwsettings{'concon'} =~ /^(\d+)$/)) {
+			$errormessage.=$Lang::tr{'fwdfw err concon'};
 		}
-		#check ratelimit value
-		if ($fwdfwsettings{'RATE_LIMIT'} eq 'ON'){
-			if (!($fwdfwsettings{'ratecon'} =~ /^(\d+)$/)) {
-				$errormessage.=$Lang::tr{'fwdfw err ratecon'};
-			}
-		}else{
-			$fwdfwsettings{'ratecon'}='';
+	}else{
+		$fwdfwsettings{'concon'}='';
+	}
+	#check ratelimit value
+	if ($fwdfwsettings{'RATE_LIMIT'} eq 'ON'){
+		if (!($fwdfwsettings{'ratecon'} =~ /^(\d+)$/)) {
+			$errormessage.=$Lang::tr{'fwdfw err ratecon'};
 		}
-		#increase counters
-		if (!$errormessage){
-			if ($fwdfwsettings{'nosave2'} ne 'on'){
-				&saverule(\%configfwdfw,$configfwdfw);
-			}
+	}else{
+		$fwdfwsettings{'ratecon'}='';
+	}
+	#increase counters
+	if (!$errormessage){
+		if ($fwdfwsettings{'nosave2'} ne 'on'){
+			&saverule(\%rulehash,$fwdfwsettings{'config'});
 		}
 	}
 	if ($errormessage){
