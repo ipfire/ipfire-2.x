@@ -252,10 +252,6 @@ sub writeipsecfiles {
     print CONF "\tkeyingtries=%forever\n";
     print CONF "\n";
 
-    # Add user includes to config file
-    print CONF "include /etc/ipsec.user.conf\n";
-    print CONF "\n";
-
     print SECRETS "include /etc/ipsec.user.secrets\n";
 
     if (-f "${General::swroot}/certs/hostkey.pem") {
@@ -437,6 +433,12 @@ sub writeipsecfiles {
 	}
 	print CONF "\n";
     }#foreach key
+
+    # Add user includes to config file
+    # After the GUI-connections allows to patch connections.
+    print CONF "include /etc/ipsec.user.conf\n";
+    print CONF "\n";
+
     print SECRETS $last_secrets if ($last_secrets);
     close(CONF);
     close(SECRETS);
