@@ -664,7 +664,6 @@ buildipfire() {
   ipfiremake lm_sensors
   ipfiremake liboping
   ipfiremake collectd
-  ipfiremake teamspeak
   ipfiremake elinks
   ipfiremake igmpproxy
   ipfiremake fbset
