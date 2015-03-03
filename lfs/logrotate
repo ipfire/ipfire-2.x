@@ -72,6 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	touch /var/lib/logrotate.status
+	mkdir -pv /etc/logrotate.d
+	touch /etc/logrotate.d/.empty /var/lib/logrotate.status
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

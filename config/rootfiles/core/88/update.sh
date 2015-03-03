@@ -48,6 +48,9 @@ rm -f \
 	/opt/pakfire/db/installed/meta-sqlite \
 	/opt/pakfire/db/rootfiles/sqlite
 
+# Fix #10625
+mkdir -p /etc/logrotate.d
+
 sync
 
 # This update need a reboot...
