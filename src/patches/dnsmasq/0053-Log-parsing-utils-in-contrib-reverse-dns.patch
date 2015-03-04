@@ -1,0 +1,110 @@
+From 47b9ac59c715827252ae6e6732903c3dabb697fb Mon Sep 17 00:00:00 2001
+From: Joachim Zobel <jz-2014@heute-morgen.de>
+Date: Mon, 23 Feb 2015 21:38:11 +0000
+Subject: [PATCH 53/55] Log parsing utils in contrib/reverse-dns
+
+---
+ contrib/reverse-dns/README             | 18 ++++++++++++++++++
+ contrib/reverse-dns/reverse_dns.sh     | 29 +++++++++++++++++++++++++++++
+ contrib/reverse-dns/reverse_replace.sh | 28 ++++++++++++++++++++++++++++
+ 3 files changed, 75 insertions(+)
+ create mode 100644 contrib/reverse-dns/README
+ create mode 100644 contrib/reverse-dns/reverse_dns.sh
+ create mode 100644 contrib/reverse-dns/reverse_replace.sh
+
+diff --git a/contrib/reverse-dns/README b/contrib/reverse-dns/README
+new file mode 100644
+index 000000000000..f87eb77c4c22
+--- /dev/null
++++ b/contrib/reverse-dns/README
+@@ -0,0 +1,18 @@
++Hi.
++
++To translate my routers netstat-nat output into names that actually talk
++to me I have started writing to simple shell scripts. They require 
++
++log-queries
++log-facility=/var/log/dnsmasq.log
++
++to be set. With
++
++netstat-nat -n -4 | reverse_replace.sh 
++
++I get retranslated output.
++
++Sincerely,
++Joachim
++
++
+diff --git a/contrib/reverse-dns/reverse_dns.sh b/contrib/reverse-dns/reverse_dns.sh
+new file mode 100644
+index 000000000000..c0fff300a947
+--- /dev/null
++++ b/contrib/reverse-dns/reverse_dns.sh
+@@ -0,0 +1,29 @@
++#!/bin/bash
++# $Id: reverse_dns.sh 4 2015-02-17 20:14:59Z jo $
++#
++# Usage: reverse_dns.sh IP
++# Uses the dnsmasq query log to lookup the name 
++# that was last queried to return the given IP.
++#
++
++IP=$1
++qmIP=`echo $IP | sed 's#\.#\\.#g'`
++LOG=/var/log/dnsmasq.log
++
++IP_regex='^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'
++
++if ! [[ $IP =~ $IP_regex ]]; then
++  echo -n $IP
++  exit
++fi
++
++NAME=`tac $LOG | \
++  grep " is $IP" | head -1 | \
++  sed "s#.* \([^ ]*\) is $qmIP.*#\1#" `
++
++if [ -z "$NAME" ]; then
++  echo -n $IP
++else
++  echo -n $NAME
++fi
++
+diff --git a/contrib/reverse-dns/reverse_replace.sh b/contrib/reverse-dns/reverse_replace.sh
+new file mode 100644
+index 000000000000..a11c164b7f19
+--- /dev/null
++++ b/contrib/reverse-dns/reverse_replace.sh
+@@ -0,0 +1,28 @@
++#!/bin/bash
++# $Id: reverse_replace.sh 4 2015-02-17 20:14:59Z jo $
++#
++# Usage e.g.: netstat -n -4 | reverse_replace.sh 
++# Parses stdin for IP4 addresses and replaces them 
++# with names retrieved by reverse_dns.sh
++#
++
++DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
++DNS=$DIR/reverse_dns.sh
++
++# sed regex
++IP_regex='[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
++
++while read LINE; do
++  if grep --quiet $IP_regex <<< "$LINE"; then
++    IPs=`sed "s#.*\b\($IP_regex\)\b.*#\1 #g" <<< "$LINE"`
++    IPs=($IPs)
++    for IP in "${IPs[@]}"
++    do
++      NAME=`$DNS $IP`
++      # echo "$NAME is $IP";
++      LINE="${LINE/$IP/$NAME}" 
++    done
++  fi
++  echo $LINE
++done < /dev/stdin
++
+-- 
+2.1.0
+

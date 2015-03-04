@@ -1,0 +1,39 @@
+From 6ef15b34ca83c62a939f69356d5c3f7a6bfef3d0 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Sat, 31 Jan 2015 22:44:26 +0000
+Subject: [PATCH 41/55] Fix broken ECDSA DNSSEC signatures.
+
+---
+ CHANGELOG    | 2 ++
+ src/dnssec.c | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index c05dec63c587..c80dc0fdbe9e 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -65,6 +65,8 @@ version 2.73
+ 	    configured to do stateful DHCPv6. Thanks to Win King Wan 
+ 	    for the patch.
+ 
++	    Fix broken DNSSEC validation of ECDSA signatures.
++	
+ 	
+ version 2.72
+             Add ra-advrouter mode, for RFC-3775 mobile IPv6 support.
+diff --git a/src/dnssec.c b/src/dnssec.c
+index a8dfe3871c85..26932373cd3e 100644
+--- a/src/dnssec.c
++++ b/src/dnssec.c
+@@ -275,7 +275,7 @@ static int dnsmasq_ecdsa_verify(struct blockdata *key_data, unsigned int key_len
+     }
+   
+   if (sig_len != 2*t || key_len != 2*t ||
+-      (p = blockdata_retrieve(key_data, key_len, NULL)))
++      !(p = blockdata_retrieve(key_data, key_len, NULL)))
+     return 0;
+   
+   mpz_import(x, t , 1, 1, 0, 0, p);
+-- 
+2.1.0
+

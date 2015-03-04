@@ -1,0 +1,63 @@
+From 9003b50b13da624ca45f3e0cf99abb623b8d026b Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Mon, 2 Mar 2015 22:47:23 +0000
+Subject: [PATCH 55/55] Fix last commit to not crash if uid changing not
+ configured.
+
+---
+ src/dnsmasq.c | 2 +-
+ src/dnsmasq.h | 2 +-
+ src/dnssec.c  | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index 769a19afe6c5..9e05c0e31569 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -374,7 +374,7 @@ int main (int argc, char **argv)
+     die(_("unknown user or group: %s"), baduser, EC_BADCONF);
+ 
+ #ifdef HAVE_DNSSEC  
+-  badtime = setup_timestamp(ent_pw->pw_uid);
++  badtime = setup_timestamp(ent_pw);
+ #endif
+ 
+   /* implement group defaults, "dip" if available, or group associated with uid */
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index b2f02dda63f0..a451cb4dd03c 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -1152,7 +1152,7 @@ int dnssec_chase_cname(time_t now, struct dns_header *header, size_t plen, char
+ int dnskey_keytag(int alg, int flags, unsigned char *rdata, int rdlen);
+ size_t filter_rrsigs(struct dns_header *header, size_t plen);
+ unsigned char* hash_questions(struct dns_header *header, size_t plen, char *name);
+-int setup_timestamp(uid_t uid);
++int setup_timestamp(struct passwd *ent_pw);
+ 
+ /* util.c */
+ void rand_init(void);
+diff --git a/src/dnssec.c b/src/dnssec.c
+index bf4406469de0..c60eacf73c6b 100644
+--- a/src/dnssec.c
++++ b/src/dnssec.c
+@@ -402,7 +402,7 @@ static int serial_compare_32(unsigned long s1, unsigned long s2)
+ static time_t timestamp_time;
+ static int back_to_the_future;
+ 
+-int setup_timestamp(uid_t uid)
++int setup_timestamp(struct passwd *ent_pw)
+ {
+   struct stat statbuf;
+   
+@@ -437,7 +437,7 @@ int setup_timestamp(uid_t uid)
+ 	  
+ 	  timestamp_time = timbuf.actime = timbuf.modtime = 1420070400; /* 1-1-2015 */
+ 	  if (utime(daemon->timestamp_file, &timbuf) == 0 &&
+-	      (getuid() != 0 || chown(daemon->timestamp_file, uid, -1) == 0))
++	      (!ent_pw || getuid() != 0 || chown(daemon->timestamp_file, ent_pw->pw_uid, -1) == 0))
+ 	    goto check_and_exit;
+ 	}
+     }
+-- 
+2.1.0
+

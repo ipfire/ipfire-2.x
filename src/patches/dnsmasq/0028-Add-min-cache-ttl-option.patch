@@ -1,0 +1,144 @@
+From 28de38768e2c7d763b9aa5b7a4d251d5e56bab0b Mon Sep 17 00:00:00 2001
+From: RinSatsuki <aa65535@live.com>
+Date: Sat, 10 Jan 2015 15:22:21 +0000
+Subject: [PATCH 28/55] Add --min-cache-ttl option.
+
+---
+ CHANGELOG     |  7 +++++++
+ man/dnsmasq.8 |  6 ++++++
+ src/cache.c   |  4 +++-
+ src/config.h  |  1 +
+ src/dnsmasq.h |  2 +-
+ src/option.c  | 11 +++++++++++
+ 6 files changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index 0bbb7835df4f..23fc6d0530cf 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -43,6 +43,13 @@ version 2.73
+ 	    Add --log-queries=extra option, which makes logs easier
+ 	    to search automatically.
+ 
++	    Add --min-cache-ttl option. I've resisted this for a long 
++	    time, on the grounds that disbelieving TTLs is never a 
++	    good idea, but I've been persuaded that there are 
++	    sometimes reasons to do it. (Step forward, GFW).
++	    To avoid misuse, there's a hard limit on the TTL 
++	    floor of one hour. Thansk to RinSatsuki for the patch.
++	
+ 	
+ version 2.72
+             Add ra-advrouter mode, for RFC-3775 mobile IPv6 support.
+diff --git a/man/dnsmasq.8 b/man/dnsmasq.8
+index 227d74bd80e7..5cfa355dea4a 100644
+--- a/man/dnsmasq.8
++++ b/man/dnsmasq.8
+@@ -81,6 +81,12 @@ the upstream DNS servers.
+ .B --max-cache-ttl=<time>
+ Set a maximum TTL value for entries in the cache.
+ .TP
++.B --min-cache-ttl=<time>
++Extend short TTL values to the time given when caching them. Note that
++artificially extending TTL values is in general a bad idea, do not do it 
++unless you have a good reason, and understand what you are doing. 
++Dnsmasq limits the value of this option to one hour, unless recompiled.
++.TP
+ .B --auth-ttl=<time>
+ Set the TTL value returned in answers from the authoritative server.
+ .TP
+diff --git a/src/cache.c b/src/cache.c
+index 960bb7938778..945be071a0b6 100644
+--- a/src/cache.c
++++ b/src/cache.c
+@@ -461,9 +461,11 @@ struct crec *cache_insert(char *name, struct all_addr *addr,
+   if (flags & (F_IPV4 | F_IPV6 | F_CNAME))
+     {
+       log_query(flags | F_UPSTREAM, name, addr, NULL);
+-      /* Don;t mess with TTL for DNSSEC records. */
++      /* Don't mess with TTL for DNSSEC records. */
+       if (daemon->max_cache_ttl != 0 && daemon->max_cache_ttl < ttl)
+ 	ttl = daemon->max_cache_ttl;
++      if (daemon->min_cache_ttl != 0 && daemon->min_cache_ttl > ttl)
++	ttl = daemon->min_cache_ttl;
+     }
+ 
+   /* if previous insertion failed give up now. */
+diff --git a/src/config.h b/src/config.h
+index 3b88d8193dca..cdca231b4079 100644
+--- a/src/config.h
++++ b/src/config.h
+@@ -27,6 +27,7 @@
+ #define RANDOM_SOCKS 64 /* max simultaneous random ports */
+ #define LEASE_RETRY 60 /* on error, retry writing leasefile after LEASE_RETRY seconds */
+ #define CACHESIZ 150 /* default cache size */
++#define TTL_FLOOR_LIMIT 3600 /* don't allow --min-cache-ttl to raise TTL above this under any circumstances */
+ #define MAXLEASES 1000 /* maximum number of DHCP leases */
+ #define PING_WAIT 3 /* wait for ping address-in-use test */
+ #define PING_CACHE_TIME 30 /* Ping test assumed to be valid this long. */
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index 4e9aea401b75..f8275e3ac479 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -943,7 +943,7 @@ extern struct daemon {
+   int max_logs;  /* queue limit */
+   int cachesize, ftabsize;
+   int port, query_port, min_port;
+-  unsigned long local_ttl, neg_ttl, max_ttl, max_cache_ttl, auth_ttl;
++  unsigned long local_ttl, neg_ttl, max_ttl, min_cache_ttl, max_cache_ttl, auth_ttl;
+   struct hostsfile *addn_hosts;
+   struct dhcp_context *dhcp, *dhcp6;
+   struct ra_interface *ra_interfaces;
+diff --git a/src/option.c b/src/option.c
+index b7372be0a090..8b994098cc9f 100644
+--- a/src/option.c
++++ b/src/option.c
+@@ -148,6 +148,7 @@ struct myoption {
+ #define LOPT_DNSSEC_TIME   336
+ #define LOPT_LOOP_DETECT   337
+ #define LOPT_IGNORE_ADDR   338
++#define LOPT_MINCTTL       339
+ 
+ 
+ #ifdef HAVE_GETOPT_LONG
+@@ -256,6 +257,7 @@ static const struct myoption opts[] =
+     { "dhcp-broadcast", 2, 0, LOPT_BROADCAST },
+     { "neg-ttl", 1, 0, LOPT_NEGTTL },
+     { "max-ttl", 1, 0, LOPT_MAXTTL },
++    { "min-cache-ttl", 1, 0, LOPT_MINCTTL },
+     { "max-cache-ttl", 1, 0, LOPT_MAXCTTL },
+     { "dhcp-alternate-port", 2, 0, LOPT_ALTPORT },
+     { "dhcp-scriptuser", 1, 0, LOPT_SCRIPTUSR },
+@@ -371,6 +373,8 @@ static struct {
+   { 'T', ARG_ONE, "<integer>", gettext_noop("Specify time-to-live in seconds for replies from /etc/hosts."), NULL },
+   { LOPT_NEGTTL, ARG_ONE, "<integer>", gettext_noop("Specify time-to-live in seconds for negative caching."), NULL },
+   { LOPT_MAXTTL, ARG_ONE, "<integer>", gettext_noop("Specify time-to-live in seconds for maximum TTL to send to clients."), NULL },
++  { LOPT_MAXCTTL, ARG_ONE, "<integer>", gettext_noop("Specify time-to-live ceiling for cache."), NULL },
++  { LOPT_MINCTTL, ARG_ONE, "<integer>", gettext_noop("Specify time-to-live floor for cache."), NULL },
+   { 'u', ARG_ONE, "<username>", gettext_noop("Change to this user after startup. (defaults to %s)."), CHUSER }, 
+   { 'U', ARG_DUP, "set:<tag>,<class>", gettext_noop("Map DHCP vendor class to tag."), NULL },
+   { 'v', 0, NULL, gettext_noop("Display dnsmasq version and copyright information."), NULL },
+@@ -2457,6 +2461,7 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+     case 'T':         /* --local-ttl */
+     case LOPT_NEGTTL: /* --neg-ttl */
+     case LOPT_MAXTTL: /* --max-ttl */
++    case LOPT_MINCTTL: /* --min-cache-ttl */
+     case LOPT_MAXCTTL: /* --max-cache-ttl */
+     case LOPT_AUTHTTL: /* --auth-ttl */
+       {
+@@ -2467,6 +2472,12 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+ 	  daemon->neg_ttl = (unsigned long)ttl;
+ 	else if (option == LOPT_MAXTTL)
+ 	  daemon->max_ttl = (unsigned long)ttl;
++	else if (option == LOPT_MINCTTL)
++	  {
++	    if (ttl > TTL_FLOOR_LIMIT)
++	      ttl = TTL_FLOOR_LIMIT;
++	    daemon->min_cache_ttl = (unsigned long)ttl;
++	  }
+ 	else if (option == LOPT_MAXCTTL)
+ 	  daemon->max_cache_ttl = (unsigned long)ttl;
+ 	else if (option == LOPT_AUTHTTL)
+-- 
+2.1.0
+

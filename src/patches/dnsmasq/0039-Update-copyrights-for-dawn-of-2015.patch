@@ -1,0 +1,428 @@
+From aff3396280e944833f0e23d834aa6acd5fe2605a Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Sat, 31 Jan 2015 20:13:40 +0000
+Subject: [PATCH 39/55] Update copyrights for dawn of 2015.
+
+---
+ Makefile             | 2 +-
+ src/auth.c           | 2 +-
+ src/blockdata.c      | 2 +-
+ src/bpf.c            | 2 +-
+ src/cache.c          | 2 +-
+ src/config.h         | 2 +-
+ src/conntrack.c      | 2 +-
+ src/dbus.c           | 2 +-
+ src/dhcp-common.c    | 2 +-
+ src/dhcp-protocol.h  | 2 +-
+ src/dhcp.c           | 2 +-
+ src/dhcp6-protocol.h | 2 +-
+ src/dhcp6.c          | 2 +-
+ src/dns-protocol.h   | 2 +-
+ src/dnsmasq.c        | 2 +-
+ src/dnsmasq.h        | 4 ++--
+ src/dnssec.c         | 2 +-
+ src/domain.c         | 2 +-
+ src/forward.c        | 2 +-
+ src/helper.c         | 2 +-
+ src/inotify.c        | 2 +-
+ src/ip6addr.h        | 2 +-
+ src/lease.c          | 2 +-
+ src/log.c            | 2 +-
+ src/loop.c           | 2 +-
+ src/netlink.c        | 2 +-
+ src/network.c        | 2 +-
+ src/option.c         | 2 +-
+ src/outpacket.c      | 2 +-
+ src/radv-protocol.h  | 2 +-
+ src/radv.c           | 2 +-
+ src/rfc1035.c        | 2 +-
+ src/rfc2131.c        | 2 +-
+ src/rfc3315.c        | 2 +-
+ src/slaac.c          | 2 +-
+ src/tftp.c           | 2 +-
+ src/util.c           | 2 +-
+ 37 files changed, 38 insertions(+), 38 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index bcbd5571671d..21e4a5c4101c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,4 +1,4 @@
+-# dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++# dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ #
+ #  This program is free software; you can redistribute it and/or modify
+ #  it under the terms of the GNU General Public License as published by
+diff --git a/src/auth.c b/src/auth.c
+index 59e05d3da38e..15721e52793f 100644
+--- a/src/auth.c
++++ b/src/auth.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/blockdata.c b/src/blockdata.c
+index 5a70a7967fa3..c8f5eae811eb 100644
+--- a/src/blockdata.c
++++ b/src/blockdata.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/bpf.c b/src/bpf.c
+index 4416b1c07287..997d87421bed 100644
+--- a/src/bpf.c
++++ b/src/bpf.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/cache.c b/src/cache.c
+index abaf25ec0f18..117ae279fd4e 100644
+--- a/src/cache.c
++++ b/src/cache.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/config.h b/src/config.h
+index 5e5009271eba..8def6f200461 100644
+--- a/src/config.h
++++ b/src/config.h
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/conntrack.c b/src/conntrack.c
+index 6a5133ab93af..0fa2da903b03 100644
+--- a/src/conntrack.c
++++ b/src/conntrack.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/dbus.c b/src/dbus.c
+index a2a94dc85dac..5b69de518beb 100644
+--- a/src/dbus.c
++++ b/src/dbus.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/dhcp-common.c b/src/dhcp-common.c
+index 9d13ac8df6f1..ce115202a646 100644
+--- a/src/dhcp-common.c
++++ b/src/dhcp-common.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/dhcp-protocol.h b/src/dhcp-protocol.h
+index 4c0961472482..701b6cb3346e 100644
+--- a/src/dhcp-protocol.h
++++ b/src/dhcp-protocol.h
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/dhcp.c b/src/dhcp.c
+index 7acf2c4311a9..f29be9b489a7 100644
+--- a/src/dhcp.c
++++ b/src/dhcp.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/dhcp6-protocol.h b/src/dhcp6-protocol.h
+index 5927dc32f6af..928a2fa162ed 100644
+--- a/src/dhcp6-protocol.h
++++ b/src/dhcp6-protocol.h
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/dhcp6.c b/src/dhcp6.c
+index bc48fdddd3de..3c56e77c6085 100644
+--- a/src/dhcp6.c
++++ b/src/dhcp6.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/dns-protocol.h b/src/dns-protocol.h
+index 0aced3ce6952..16fade33d98c 100644
+--- a/src/dns-protocol.h
++++ b/src/dns-protocol.h
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index 2c629fe422aa..e903a24c8105 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index 0c322a93993e..89e758b56a0a 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+  
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+@@ -14,7 +14,7 @@
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
+-#define COPYRIGHT "Copyright (c) 2000-2014 Simon Kelley" 
++#define COPYRIGHT "Copyright (c) 2000-2015 Simon Kelley" 
+ 
+ #ifndef NO_LARGEFILE
+ /* Ensure we can use files >2GB (log files may grow this big) */
+diff --git a/src/dnssec.c b/src/dnssec.c
+index d39ab85ed966..a8dfe3871c85 100644
+--- a/src/dnssec.c
++++ b/src/dnssec.c
+@@ -1,5 +1,5 @@
+ /* dnssec.c is Copyright (c) 2012 Giovanni Bajo <rasky@develer.com>
+-           and Copyright (c) 2012-2014 Simon Kelley
++           and Copyright (c) 2012-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/domain.c b/src/domain.c
+index fdd5e4f0838f..278698ca04b3 100644
+--- a/src/domain.c
++++ b/src/domain.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/forward.c b/src/forward.c
+index b17bc34f865f..438e9fa490b8 100644
+--- a/src/forward.c
++++ b/src/forward.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/helper.c b/src/helper.c
+index 4be53c361ee1..1fee72dead8c 100644
+--- a/src/helper.c
++++ b/src/helper.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/inotify.c b/src/inotify.c
+index c537f4c1562a..470d6ed99213 100644
+--- a/src/inotify.c
++++ b/src/inotify.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+  
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/ip6addr.h b/src/ip6addr.h
+index c7dcb39c33fa..f0b7e820e227 100644
+--- a/src/ip6addr.h
++++ b/src/ip6addr.h
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/lease.c b/src/lease.c
+index 5d56b1b9147e..545bbb7fd09c 100644
+--- a/src/lease.c
++++ b/src/lease.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/log.c b/src/log.c
+index 8083a8697323..a5ac605c7c5d 100644
+--- a/src/log.c
++++ b/src/log.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/loop.c b/src/loop.c
+index bb377ad12644..565f7d8e58e0 100644
+--- a/src/loop.c
++++ b/src/loop.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/netlink.c b/src/netlink.c
+index b39328376389..10f94db25a14 100644
+--- a/src/netlink.c
++++ b/src/netlink.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/network.c b/src/network.c
+index 14d2af2ce313..7045253d467b 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/option.c b/src/option.c
+index 6ef80117cc8c..cb4e76ba0aa2 100644
+--- a/src/option.c
++++ b/src/option.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/outpacket.c b/src/outpacket.c
+index dce68f7cb09f..5b1ff9318bbd 100644
+--- a/src/outpacket.c
++++ b/src/outpacket.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/radv-protocol.h b/src/radv-protocol.h
+index 72ccda49d7fe..4cc1ea426e69 100644
+--- a/src/radv-protocol.h
++++ b/src/radv-protocol.h
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/radv.c b/src/radv.c
+index 3c8b162dbd8e..6da125b864ae 100644
+--- a/src/radv.c
++++ b/src/radv.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/rfc1035.c b/src/rfc1035.c
+index 262274fc5b80..5ef5ddb7485e 100644
+--- a/src/rfc1035.c
++++ b/src/rfc1035.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/rfc2131.c b/src/rfc2131.c
+index 5c9040892f1d..55526443dc84 100644
+--- a/src/rfc2131.c
++++ b/src/rfc2131.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/rfc3315.c b/src/rfc3315.c
+index e593ec9c362c..c1ddc805988d 100644
+--- a/src/rfc3315.c
++++ b/src/rfc3315.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/slaac.c b/src/slaac.c
+index 351d6802f85e..abaad537e25a 100644
+--- a/src/slaac.c
++++ b/src/slaac.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/tftp.c b/src/tftp.c
+index a527911fc0df..a57a31514f44 100644
+--- a/src/tftp.c
++++ b/src/tftp.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+diff --git a/src/util.c b/src/util.c
+index d532444da207..91d02410b13f 100644
+--- a/src/util.c
++++ b/src/util.c
+@@ -1,4 +1,4 @@
+-/* dnsmasq is Copyright (c) 2000-2014 Simon Kelley
++/* dnsmasq is Copyright (c) 2000-2015 Simon Kelley
+ 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+-- 
+2.1.0
+

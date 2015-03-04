@@ -1,0 +1,148 @@
+From 476693678e778886b64d0b56e27eb7695cbcca99 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Wed, 17 Dec 2014 12:41:56 +0000
+Subject: [PATCH 15/55] Eliminate IPv6 privacy addresses from --interface-name
+ answers.
+
+---
+ CHANGELOG     |  5 +++++
+ src/auth.c    |  4 ++++
+ src/dnsmasq.h |  1 +
+ src/network.c | 12 ++++++++----
+ src/rfc1035.c | 17 ++++++++++-------
+ 5 files changed, 28 insertions(+), 11 deletions(-)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index 9e6c7aa4fd68..01f5208ec006 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -14,6 +14,11 @@ version 2.73
+ 	    Fix breakage of --domain=<domain>,<subnet>,local - only reverse
+ 	    queries were intercepted. THis appears to have been broken 
+ 	    since 2.69. Thanks to Josh Stone for finding the bug.
++
++	    Eliminate IPv6 privacy addresses and deprecated addresses from
++	    the answers given by --interface-name. Note that reverse queries
++	    (ie looking for names, given addresses) are not affected. 
++	    Thanks to Michael Gorbach for the suggestion.
+ 	
+ 
+ version 2.72
+diff --git a/src/auth.c b/src/auth.c
+index dd46566ec2cc..a327f16d8c0b 100644
+--- a/src/auth.c
++++ b/src/auth.c
+@@ -363,6 +363,10 @@ size_t answer_auth(struct dns_header *header, char *limit, size_t qlen, time_t n
+ 		 if (((addrlist->flags & ADDRLIST_IPV6)  ? T_AAAA : T_A) == qtype &&
+ 		     (local_query || filter_zone(zone, flag, &addrlist->addr)))
+ 		   {
++#ifdef HAVE_IPV6
++		     if (addrlist->flags & ADDRLIST_REVONLY)
++		       continue;
++#endif
+ 		     found = 1;
+ 		     log_query(F_FORWARD | F_CONFIG | flag, name, &addrlist->addr, NULL);
+ 		     if (add_resource_record(header, limit, &trunc, nameoffset, &ansp, 
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index ebb6b957812f..1dd61c5edba3 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -318,6 +318,7 @@ struct ds_config {
+ 
+ #define ADDRLIST_LITERAL 1
+ #define ADDRLIST_IPV6    2
++#define ADDRLIST_REVONLY 4
+ 
+ struct addrlist {
+   struct all_addr addr;
+diff --git a/src/network.c b/src/network.c
+index 99419f57951e..14d2af2ce313 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -236,7 +236,7 @@ struct iface_param {
+ };
+ 
+ static int iface_allowed(struct iface_param *param, int if_index, char *label,
+-			 union mysockaddr *addr, struct in_addr netmask, int prefixlen, int dad) 
++			 union mysockaddr *addr, struct in_addr netmask, int prefixlen, int iface_flags) 
+ {
+   struct irec *iface;
+   int mtu = 0, loopback;
+@@ -388,6 +388,10 @@ static int iface_allowed(struct iface_param *param, int if_index, char *label,
+ 		 {
+ 		    al->addr.addr.addr6 = addr->in6.sin6_addr;
+ 		    al->flags = ADDRLIST_IPV6;
++		    /* Privacy addresses and addresses still undergoing DAD and deprecated addresses
++		       don't appear in forward queries, but will in reverse ones. */
++		    if (!(iface_flags & IFACE_PERMANENT) || (iface_flags & (IFACE_DEPRECATED | IFACE_TENTATIVE)))
++		      al->flags |= ADDRLIST_REVONLY;
+ 		 } 
+ #endif
+ 	      }
+@@ -399,7 +403,7 @@ static int iface_allowed(struct iface_param *param, int if_index, char *label,
+   for (iface = daemon->interfaces; iface; iface = iface->next) 
+     if (sockaddr_isequal(&iface->addr, addr))
+       {
+-	iface->dad = dad;
++	iface->dad = !!(iface_flags & IFACE_TENTATIVE);
+ 	iface->found = 1; /* for garbage collection */
+ 	return 1;
+       }
+@@ -474,7 +478,7 @@ static int iface_allowed(struct iface_param *param, int if_index, char *label,
+       iface->dhcp_ok = dhcp_ok;
+       iface->dns_auth = auth_dns;
+       iface->mtu = mtu;
+-      iface->dad = dad;
++      iface->dad = !!(iface_flags & IFACE_TENTATIVE);
+       iface->found = 1;
+       iface->done = iface->multicast_done = iface->warned = 0;
+       iface->index = if_index;
+@@ -519,7 +523,7 @@ static int iface_allowed_v6(struct in6_addr *local, int prefix,
+   else
+     addr.in6.sin6_scope_id = 0;
+   
+-  return iface_allowed((struct iface_param *)vparam, if_index, NULL, &addr, netmask, prefix, !!(flags & IFACE_TENTATIVE));
++  return iface_allowed((struct iface_param *)vparam, if_index, NULL, &addr, netmask, prefix, flags);
+ }
+ #endif
+ 
+diff --git a/src/rfc1035.c b/src/rfc1035.c
+index 8a7d2608dac5..bdeb3fb10e68 100644
+--- a/src/rfc1035.c
++++ b/src/rfc1035.c
+@@ -1923,14 +1923,17 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
+ 		  for (intr = daemon->int_names; intr; intr = intr->next)
+ 		    if (hostname_isequal(name, intr->name))
+ 		      {
+-			ans = 1;
+-			if (!dryrun)
+-			  {
+-			    
+-			    for (addrlist = intr->addr; addrlist; addrlist = addrlist->next)
++			for (addrlist = intr->addr; addrlist; addrlist = addrlist->next)
+ #ifdef HAVE_IPV6
+-			      if (((addrlist->flags & ADDRLIST_IPV6) ? T_AAAA : T_A) == type)
++			  if (((addrlist->flags & ADDRLIST_IPV6) ? T_AAAA : T_A) == type)
+ #endif
++			    {
++#ifdef HAVE_IPV6
++			      if (addrlist->flags & ADDRLIST_REVONLY)
++				continue;
++#endif	
++			      ans = 1;	
++			      if (!dryrun)
+ 				{
+ 				  gotit = 1;
+ 				  log_query(F_FORWARD | F_CONFIG | flag, name, &addrlist->addr, NULL);
+@@ -1939,7 +1942,7 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
+ 							  type == T_A ? "4" : "6", &addrlist->addr))
+ 				    anscount++;
+ 				}
+-			  }
++			    }
+ 		      }
+ 		  
+ 		  if (!dryrun && !gotit)
+-- 
+2.1.0
+

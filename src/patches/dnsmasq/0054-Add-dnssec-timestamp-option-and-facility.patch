@@ -1,0 +1,252 @@
+From f6e62e2af96f5fa0d1e3d93167a93a8f09bf6e61 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Sun, 1 Mar 2015 18:17:54 +0000
+Subject: [PATCH 54/55] Add --dnssec-timestamp option and facility.
+
+---
+ CHANGELOG     |  6 +++++
+ man/dnsmasq.8 |  6 +++++
+ src/dnsmasq.c | 11 +++++++-
+ src/dnsmasq.h |  2 ++
+ src/dnssec.c  | 82 +++++++++++++++++++++++++++++++++++++++++++++++++++++++----
+ src/option.c  |  7 +++++
+ 6 files changed, 108 insertions(+), 6 deletions(-)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index c80dc0fdbe9e..4f4fa305deaa 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -66,6 +66,12 @@ version 2.73
+ 	    for the patch.
+ 
+ 	    Fix broken DNSSEC validation of ECDSA signatures.
++
++	    Add --dnssec-timestamp option, which provides an automatic
++	    way to detect when the system time becomes valid after boot
++	    on systems without an RTC, whilst allowing DNS queries before the
++	    clock is valid so that NTP can run. Thanks to
++	    Kevin Darbyshire-Bryant for developing this idea.
+ 	
+ 	
+ version 2.72
+diff --git a/man/dnsmasq.8 b/man/dnsmasq.8
+index 5cdd186afaa0..097e7d75145c 100644
+--- a/man/dnsmasq.8
++++ b/man/dnsmasq.8
+@@ -674,6 +674,12 @@ that dnsmasq should be started with this flag when the platform determines that
+ reliable time is established, a SIGHUP should be sent to dnsmasq, which enables time checking, and purges the cache of DNS records
+ which have not been throughly checked.
+ .TP
++.B --dnssec-timestamp=<path>
++Enables an alternative way of checking the validity of the system time for DNSSEC (see --dnssec-no-timecheck). In this case, the 
++system time is considered to be valid once it becomes later than the timestamp on the specified file. The file is created and 
++its timestamp set automatically by dnsmasq. The file must be stored on a persistent filesystem, so that it and its mtime are carried 
++over system restarts. 
++.TP
+ .B --proxy-dnssec
+ Copy the DNSSEC Authenticated Data bit from upstream servers to downstream clients and cache it.  This is an 
+ alternative to having dnsmasq validate DNSSEC, but it depends on the security of the network between 
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index e6dabbf556f7..769a19afe6c5 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -58,6 +58,9 @@ int main (int argc, char **argv)
+   struct dhcp_context *context;
+   struct dhcp_relay *relay;
+ #endif
++#ifdef HAVE_DNSSEC
++  int badtime;
++#endif
+ 
+ #ifdef LOCALEDIR
+   setlocale(LC_ALL, "");
+@@ -369,7 +372,11 @@ int main (int argc, char **argv)
+ 
+   if (baduser)
+     die(_("unknown user or group: %s"), baduser, EC_BADCONF);
+-   
++
++#ifdef HAVE_DNSSEC  
++  badtime = setup_timestamp(ent_pw->pw_uid);
++#endif
++
+   /* implement group defaults, "dip" if available, or group associated with uid */
+   if (!daemon->group_set && !gp)
+     {
+@@ -689,6 +696,8 @@ int main (int argc, char **argv)
+       my_syslog(LOG_INFO, _("DNSSEC validation enabled"));
+       if (option_bool(OPT_DNSSEC_TIME))
+ 	my_syslog(LOG_INFO, _("DNSSEC signature timestamps not checked until first cache reload"));
++      if (badtime)
++	my_syslog(LOG_INFO, _("DNSSEC signature timestamps not checked until system time valid"));
+     }
+ #endif
+ 
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index 89e758b56a0a..b2f02dda63f0 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -986,6 +986,7 @@ extern struct daemon {
+ #endif
+ #ifdef HAVE_DNSSEC
+   struct ds_config *ds;
++  char *timestamp_file;
+ #endif
+ 
+   /* globally used stuff for DNS */
+@@ -1151,6 +1152,7 @@ int dnssec_chase_cname(time_t now, struct dns_header *header, size_t plen, char
+ int dnskey_keytag(int alg, int flags, unsigned char *rdata, int rdlen);
+ size_t filter_rrsigs(struct dns_header *header, size_t plen);
+ unsigned char* hash_questions(struct dns_header *header, size_t plen, char *name);
++int setup_timestamp(uid_t uid);
+ 
+ /* util.c */
+ void rand_init(void);
+diff --git a/src/dnssec.c b/src/dnssec.c
+index 26932373cd3e..bf4406469de0 100644
+--- a/src/dnssec.c
++++ b/src/dnssec.c
+@@ -34,6 +34,7 @@
+ #include <nettle/dsa-compat.h>
+ #endif
+ 
++#include <utime.h>
+ 
+ #define SERIAL_UNDEF  -100
+ #define SERIAL_EQ        0
+@@ -394,17 +395,88 @@ static int serial_compare_32(unsigned long s1, unsigned long s2)
+   return SERIAL_UNDEF;
+ }
+ 
++/* Called at startup. If the timestamp file is configured and exists, put its mtime on
++   timestamp_time. If it doesn't exist, create it, and set the mtime to 1-1-2015.
++   Change the ownership to the user we'll be running as, so that we can update the mtime.
++*/
++static time_t timestamp_time;
++static int back_to_the_future;
++
++int setup_timestamp(uid_t uid)
++{
++  struct stat statbuf;
++  
++  back_to_the_future = 0;
++  
++  if (!option_bool(OPT_DNSSEC_VALID) || !daemon->timestamp_file)
++    return 0;
++  
++  if (stat(daemon->timestamp_file, &statbuf) != -1)
++    {
++      timestamp_time = statbuf.st_mtime;
++    check_and_exit:
++      if (difftime(timestamp_time, time(0)) <=  0)
++	{
++	  /* time already OK, update timestamp, and do key checking from the start. */
++	  if (utime(daemon->timestamp_file, NULL) == -1)
++	    my_syslog(LOG_ERR, _("failed to update mtime on %s: %s"), daemon->timestamp_file, strerror(errno));
++	  back_to_the_future = 1;
++	  return 0;
++	}
++      return 1;
++    }
++  
++  if (errno == ENOENT)
++    {
++      int fd = open(daemon->timestamp_file, O_WRONLY | O_CREAT | O_NONBLOCK, 0666);
++      if (fd != -1)
++	{
++	  struct utimbuf timbuf;
++
++	  close(fd);
++	  
++	  timestamp_time = timbuf.actime = timbuf.modtime = 1420070400; /* 1-1-2015 */
++	  if (utime(daemon->timestamp_file, &timbuf) == 0 &&
++	      (getuid() != 0 || chown(daemon->timestamp_file, uid, -1) == 0))
++	    goto check_and_exit;
++	}
++    }
++
++  die(_("Cannot create timestamp file %s: %s" ), daemon->timestamp_file, EC_BADCONF);
++  return 0;
++}
++
+ /* Check whether today/now is between date_start and date_end */
+ static int check_date_range(unsigned long date_start, unsigned long date_end)
+ {
+-  unsigned long curtime;
+-
++  unsigned long curtime = time(0);
++ 
+   /* Checking timestamps may be temporarily disabled */
+-  if (option_bool(OPT_DNSSEC_TIME))
++    
++  /* If the current time if _before_ the timestamp
++     on our persistent timestamp file, then assume the
++     time if not yet correct, and don't check the
++     key timestamps. As soon as the current time is
++     later then the timestamp, update the timestamp
++     and start checking keys */
++  if (daemon->timestamp_file)
++    {
++      if (back_to_the_future == 0 && difftime(timestamp_time, curtime) <= 0)
++	{
++	  if (utime(daemon->timestamp_file, NULL) != 0)
++	    my_syslog(LOG_ERR, _("failed to update mtime on %s: %s"), daemon->timestamp_file, strerror(errno));
++	  
++	  back_to_the_future = 1;	
++	  set_option_bool(OPT_DNSSEC_TIME);
++	  queue_event(EVENT_RELOAD); /* purge cache */
++	} 
++
++      if (back_to_the_future == 0)
++	return 1;
++    }
++  else if (option_bool(OPT_DNSSEC_TIME))
+     return 1;
+   
+-  curtime = time(0);
+-  
+   /* We must explicitly check against wanted values, because of SERIAL_UNDEF */
+   return serial_compare_32(curtime, date_start) == SERIAL_GT
+     && serial_compare_32(curtime, date_end) == SERIAL_LT;
+diff --git a/src/option.c b/src/option.c
+index ae0ad002d8b8..eace40bb566c 100644
+--- a/src/option.c
++++ b/src/option.c
+@@ -152,6 +152,7 @@ struct myoption {
+ #define LOPT_DHCP_INOTIFY  340
+ #define LOPT_DHOPT_INOTIFY 341
+ #define LOPT_HOST_INOTIFY  342
++#define LOPT_DNSSEC_STAMP  343
+ 
+ #ifdef HAVE_GETOPT_LONG
+ static const struct option opts[] =  
+@@ -300,6 +301,7 @@ static const struct myoption opts[] =
+     { "dnssec-debug", 0, 0, LOPT_DNSSEC_DEBUG },
+     { "dnssec-check-unsigned", 0, 0, LOPT_DNSSEC_CHECK },
+     { "dnssec-no-timecheck", 0, 0, LOPT_DNSSEC_TIME },
++    { "dnssec-timestamp", 1, 0, LOPT_DNSSEC_STAMP },
+ #ifdef OPTION6_PREFIX_CLASS 
+     { "dhcp-prefix-class", 1, 0, LOPT_PREF_CLSS },
+ #endif
+@@ -463,6 +465,7 @@ static struct {
+   { LOPT_DNSSEC_DEBUG, OPT_DNSSEC_DEBUG, NULL, gettext_noop("Disable upstream checking for DNSSEC debugging."), NULL },
+   { LOPT_DNSSEC_CHECK, OPT_DNSSEC_NO_SIGN, NULL, gettext_noop("Ensure answers without DNSSEC are in unsigned zones."), NULL },
+   { LOPT_DNSSEC_TIME, OPT_DNSSEC_TIME, NULL, gettext_noop("Don't check DNSSEC signature timestamps until first cache-reload"), NULL },
++  { LOPT_DNSSEC_STAMP, ARG_ONE, "<path>", gettext_noop("Timestamp file to verify system clock for DNSSEC"), NULL },
+ #ifdef OPTION6_PREFIX_CLASS 
+   { LOPT_PREF_CLSS, ARG_DUP, "set:tag,<class>", gettext_noop("Specify DHCPv6 prefix class"), NULL },
+ #endif
+@@ -3867,6 +3870,10 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+       }
+ 
+ #ifdef HAVE_DNSSEC
++    case LOPT_DNSSEC_STAMP:
++      daemon->timestamp_file = opt_string_alloc(arg); 
++      break;
++
+     case LOPT_TRUST_ANCHOR:
+       {
+ 	struct ds_config *new = opt_malloc(sizeof(struct ds_config));
+-- 
+2.1.0
+

@@ -1,0 +1,55 @@
+From 28b879ac47b872af6e8c5e86d76806c69338434d Mon Sep 17 00:00:00 2001
+From: Chen Wei <weichen302@icloud.com>
+Date: Tue, 17 Feb 2015 22:07:35 +0000
+Subject: [PATCH 51/55] Fix trivial memory leaks to quieten valgrind.
+
+---
+ src/dnsmasq.c |  2 ++
+ src/option.c  | 11 +++++++++--
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index e903a24c8105..e6dabbf556f7 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -627,6 +627,8 @@ int main (int argc, char **argv)
+     }
+   
+ #ifdef HAVE_LINUX_NETWORK
++  free(hdr);
++  free(data);
+   if (option_bool(OPT_DEBUG)) 
+     prctl(PR_SET_DUMPABLE, 1, 0, 0, 0);
+ #endif
+diff --git a/src/option.c b/src/option.c
+index e4b4865d07a5..ae0ad002d8b8 100644
+--- a/src/option.c
++++ b/src/option.c
+@@ -4361,7 +4361,7 @@ void read_opts(int argc, char **argv, char *compile_opts)
+ {
+   char *buff = opt_malloc(MAXDNAME);
+   int option, conffile_opt = '7', testmode = 0;
+-  char *arg, *conffile = CONFFILE;
++  char *arg, *conffile = NULL;
+       
+   opterr = 0;
+ 
+@@ -4476,7 +4476,14 @@ void read_opts(int argc, char **argv, char *compile_opts)
+     }
+ 
+   if (conffile)
+-    one_file(conffile, conffile_opt);
++    {
++      one_file(conffile, conffile_opt);
++      free(conffile);
++    }
++  else
++    {
++      one_file(CONFFILE, conffile_opt);
++    }
+ 
+   /* port might not be known when the address is parsed - fill in here */
+   if (daemon->servers)
+-- 
+2.1.0
+
