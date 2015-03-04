@@ -1,5 +1,6 @@
 #etc/init.d
 #etc/init.d/fuse
+#etc/rc.d/init.d/fuse
 etc/udev/rules.d/99-fuse.rules
 sbin/mount.fuse
 usr/bin/fusermount
@@ -19,10 +20,13 @@ usr/bin/ulockmgr_server
 #usr/lib/libfuse.la
 usr/lib/libfuse.so
 usr/lib/libfuse.so.2
-usr/lib/libfuse.so.2.8.3
+usr/lib/libfuse.so.2.9.3
 #usr/lib/libulockmgr.a
 #usr/lib/libulockmgr.la
 usr/lib/libulockmgr.so
 usr/lib/libulockmgr.so.1
 usr/lib/libulockmgr.so.1.0.1
 #usr/lib/pkgconfig/fuse.pc
+#usr/share/man/man1/fusermount.1
+#usr/share/man/man1/ulockmgr_server.1
+#usr/share/man/man8/mount.fuse.8
