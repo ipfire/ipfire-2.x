@@ -1,0 +1,31 @@
+commit eb251906298b529fa53b8a99746a9a7a9f318dd5
+Author: Tobias Brunner <tobias@strongswan.org>
+Date:   Wed Feb 25 08:18:58 2015 +0100
+
+    ikev2: Don't destroy the SA if an IKE_SA_INIT with unexpected MID is received
+    
+    This reverts 8f727d800751 ("Clean up IKE_SA state if IKE_SA_INIT request
+    does not have message ID 0") because it allowed to close any IKE_SA by
+    sending an IKE_SA_INIT with an unexpected MID and both SPIs set to those
+    of that SA.
+    
+    The next commit will prevent SAs from getting created for IKE_SA_INIT messages
+    with invalid MID.
+    
+    Fixes #816.
+
+diff --git a/src/libcharon/sa/ikev2/task_manager_v2.c b/src/libcharon/sa/ikev2/task_manager_v2.c
+index 48266aa..be84e71 100644
+--- a/src/libcharon/sa/ikev2/task_manager_v2.c
++++ b/src/libcharon/sa/ikev2/task_manager_v2.c
+@@ -1355,10 +1355,6 @@ METHOD(task_manager_t, process_message, status_t,
+ 		{
+ 			DBG1(DBG_IKE, "received message ID %d, expected %d. Ignored",
+ 				 mid, this->responding.mid);
+-			if (msg->get_exchange_type(msg) == IKE_SA_INIT)
+-			{	/* clean up IKE_SA state if IKE_SA_INIT has invalid msg ID */
+-				return DESTROY_ME;
+-			}
+ 		}
+ 	}
+ 	else
