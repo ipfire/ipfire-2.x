@@ -811,6 +811,7 @@ buildipfire() {
   ipfiremake pigz
   ipfiremake tmux
   ipfiremake swconfig
+  ipfiremake haproxy
 }
 
 buildinstaller() {
