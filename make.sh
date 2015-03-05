@@ -649,7 +649,7 @@ buildipfire() {
   ipfiremake libevent2
   ipfiremake portmap
   ipfiremake nfs
-  #ipfiremake nmap
+  ipfiremake nmap
   ipfiremake ncftp
   ipfiremake etherwake
   ipfiremake bwm-ng
