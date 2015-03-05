@@ -22,49 +22,29 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+
+
+function find_partition() {
+	local mountpoint="${1}"
+
+	local root
+	local dev mp fs flags rest
+	while read -r dev mp fs flags rest; do
+		# Skip unwanted entries
+		[ "${dev}" = "rootfs" ] && continue
+
+		if [ "${mp}" = "${mountpoint}" ] && [ -b "${dev}" ]; then
+			root="$(basename "${dev}")"
+			break
+		fi
+	done < /proc/mounts
+	echo ${root}
+	return 0
+}
+
 extract_files
 #
 KVER=xxxKVERxxx
-ROOT=`mount | grep " / " | cut -d" " -f1`
-ROOTUUID=`blkid -c /dev/null -sUUID $ROOT | cut -d'"' -f2`
-if [ ! -z $ROOTUUID ]; then
-	ROOT="UUID=$ROOTUUID"
-fi
-
-if [ -f /boot/grub/grub.conf ]; then
-MOUNT=`grep "kernel" /boot/grub/grub.conf | tail -n 1`
-# Nur den letzten Parameter verwenden
-echo $MOUNT > /dev/null
-MOUNT=$_
-if [ ! $MOUNT == "rw" ]; then
-	MOUNT="ro"
-fi
-
-ENTRY=`grep "savedefault" /boot/grub/grub.conf | tail -n 1`
-# Nur den letzten Parameter verwenden
-echo $ENTRY > /dev/null
-let ENTRY=$_+1
-
-#Check if the system use serial console...
-if [ "$(grep "^serial" /boot/grub/grub.conf)" == "" ]; then
-	console=""
-else
-	console=" console=ttyS0,115200n8"
-fi
-
-#
-# backup grub.conf
-#
-cp /boot/grub/grub.conf /boot/grub/grub-backup-$KVER-pae_install.conf
-#
-# Add new Entry to grub.conf
-#
-echo "" >> /boot/grub/grub.conf
-echo "title IPFire (PAE-Kernel)" >> /boot/grub/grub.conf
-echo "  kernel /vmlinuz-$KVER-ipfire-pae root=$ROOT panic=10$console $MOUNT" >> /boot/grub/grub.conf
-echo "  initrd /ipfirerd-$KVER-pae.img" >> /boot/grub/grub.conf
-echo "  savedefault $ENTRY" >> /boot/grub/grub.conf
-fi
 
 #
 # Create new module depency
@@ -75,10 +55,29 @@ depmod -a $KVER-ipfire-pae
 #
 /usr/bin/dracut --force --xz /boot/initramfs-$KVER-ipfire-pae.img $KVER-ipfire-pae  
 
-#
-# Update grub2 config
-#
-grub-mkconfig > /boot/grub/grub.cfg
+
+ROOT="$(find_partition "/")"
+case $ROOT in
+	xvd* )
+		#
+		# We are on XEN so create new grub.conf / menu.lst for pygrub
+		#
+		echo "timeout 10"                          > /boot/grub/grub.conf
+		echo "default 0"                          >> /boot/grub/grub.conf
+		echo "title IPFire (pae-kernel)"          >> /boot/grub/grub.conf
+		echo "  kernel /vmlinuz-$KVER-ipfire-pae root=/dev/$ROOT rootdelay=10 panic=10 console=hvc0" \
+							  >> /boot/grub/grub.conf
+		echo "  initrd /initramfs-$KVER-ipfire-pae.img" >> /boot/grub/grub.conf
+		echo "# savedefault 0"			  >> /boot/grub/grub.conf
+		ln -s grub.conf $MNThdd/boot/grub/menu.lst
+		;;
+	* )
+		#
+		# Update grub2 config
+		#
+		grub-mkconfig > /boot/grub/grub.cfg
+		;;
+esac
 
 # request a reboot if pae is supported
 if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then

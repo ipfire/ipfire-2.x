@@ -48,8 +48,6 @@ home/nobody
 #lib
 #lib/firmware
 #lib/firmware/brcm
-lib/firmware/brcm/brcmfmac4329-sdio.txt
-lib/firmware/brcm/brcmfmac4330-sdio.txt
 lib/firmware/brcm/brcmfmac43362-sdio.txt
 #media
 media/cdrom
