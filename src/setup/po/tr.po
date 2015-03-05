@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Ersan YILDIRIM <ersan73@gmail.com>, 2015
 # Kudret Emre <kudretemre@hotmail.com.tr>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-09-30 20:41+0000\n"
-"Last-Translator: Kudret Emre <kudretemre@hotmail.com.tr>\n"
+"PO-Revision-Date: 2015-02-28 22:59+0000\n"
+"Last-Translator: Ersan YILDIRIM <ersan73@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/projects/p/ipfire/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -56,11 +57,11 @@ msgstr "Ayar dosyası açılamıyor"
 
 #: dhcp.c:111
 msgid "DHCP server configuration"
-msgstr "DHCP sunucu yapılandırması"
+msgstr "DHCP Sunucu Yapılandırması"
 
 #: dhcp.c:116
 msgid "Configure the DHCP server by entering the settings information."
-msgstr "Ayarlar bilgisini girerek DHCP sunucusunu yapılandırın."
+msgstr "DHCP ayar bilgilerini girerek DHCP sunucusunu yapılandırın."
 
 #: dhcp.c:125
 msgid "Enabled"
@@ -157,7 +158,7 @@ msgstr "Klavye eşlemesi"
 
 #: keymap.c:85
 msgid "Choose the type of keyboard you are using from the list below."
-msgstr "Aşağıdaki listeden kullandığınız klavye tipini seçin."
+msgstr "Aşağıdaki listeden kullandığınız klavye türünü seçin."
 
 #: main.c:68 timezone.c:77
 msgid "Timezone"
@@ -173,11 +174,11 @@ msgstr "ISDN"
 
 #: main.c:73
 msgid "'root' password"
-msgstr "'root' şifresi"
+msgstr "'root' parolası"
 
 #: main.c:74
 msgid "'admin' password"
-msgstr "'admin' şifresi"
+msgstr "'admin' parolası"
 
 #: main.c:90
 msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
@@ -185,7 +186,7 @@ msgstr "              <Tab>/<Alt-Tab> elementler arası geçiş   |  <Space> se�
 
 #: main.c:97
 msgid "Section menu"
-msgstr "Bölüm menüsü"
+msgstr "Bölüm listesi"
 
 #: main.c:98
 msgid "Select the item you wish to configure."
@@ -207,7 +208,7 @@ msgstr "Uyarı"
 msgid ""
 "Initial setup was not entirely complete. You must ensure that Setup is "
 "properly finished by running setup again at the shell."
-msgstr "İlk kurulum tamamen yapılamadı. Kurulumun kabuktan yeniden başlatılıp düzgünce bitirildiğinden emin olmalısınız."
+msgstr "İlk kurulum tamamen yapılamadı. Kurulumun terminalden yeniden başlatılıp düzgünce bitirildiğinden emin olmalısınız."
 
 #: misc.c:62
 #, c-format
@@ -245,12 +246,12 @@ msgstr "ISDN cihazları için tarama yapılamıyor."
 #: netstuff.c:86
 #, c-format
 msgid "Interface - %s"
-msgstr "Arayüz - %s"
+msgstr "Ara Birim - %s"
 
 #: netstuff.c:91
 #, c-format
 msgid "Enter the IP address information for the %s interface."
-msgstr "%s arayüzü için IP adresi bilgisini girin."
+msgstr "%s ara birimi için IP adres bilgisini girin."
 
 #: netstuff.c:103
 msgid "Static"
@@ -270,7 +271,7 @@ msgstr "DHCP Ana bilgisayar adı:"
 
 #: netstuff.c:115
 msgid "Force DHCP MTU:"
-msgstr "Force DHCP MTU:"
+msgstr "DHCP MTU zorla:"
 
 #: netstuff.c:134
 msgid "IP address:"
@@ -298,16 +299,16 @@ msgstr "DHCP Ana bilgisayar adı"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
-msgstr "Unset"
+msgstr "Kurulmamış"
 
 #: netstuff.c:669
 #, c-format
 msgid "Please choose a networkcard for the following interface - %s."
-msgstr "Lütfen %s arayüzü için bit ağ kartı seçin."
+msgstr "Lütfen %s ara birimi için bir ağ kartı seçin."
 
 #: netstuff.c:672
 msgid "Extended Network Menu"
-msgstr "Genişletilmiş Ağ Menüsü"
+msgstr "Genişletilmiş Ağ Listesi"
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
@@ -327,16 +328,16 @@ msgstr "Seçilen porttaki ışıklar şimdi 10 saniye boyunca yanıp sönmeli...
 
 #: netstuff.c:679
 msgid "Identification is not supported by this interface."
-msgstr "Bu arayüz kimdik doğrulamayı desteklemiyor."
+msgstr "Bu ara birim kimdik doğrulamayı desteklemiyor."
 
 #: netstuff.c:691
 msgid "There are no unassigned interfaces on your system."
-msgstr "Sisteminizde atanmamış arayüz yok."
+msgstr "Sisteminizde atanmamış ara birim yok."
 
 #: netstuff.c:732
 #, c-format
 msgid "Do you really want to remove the assigned %s interface?"
-msgstr "Atanmış %s arayüzü gerçekten kaldırmak istiyor musunuz?"
+msgstr "Atanmış %s ara birimini gerçekten kaldırmak istiyor musunuz?"
 
 #: netstuff.c:755
 msgid "Select network driver"
@@ -368,7 +369,7 @@ msgstr "Ağ yeniden başlatılıyor..."
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
-msgstr "Atanmış YEŞİL arayüz yok."
+msgstr "Atanmış YEŞİL ara birim yok."
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
@@ -384,7 +385,7 @@ msgstr "Yoksay"
 
 #: networking.c:164
 msgid "No RED interface assigned."
-msgstr "Atanmış KIRMIZI arayüz yok."
+msgstr "Atanmış KIRMIZI ara birim yok."
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
@@ -392,7 +393,7 @@ msgstr "KIRMIZI üzerinde kayıp IP adresi."
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
-msgstr "Atanmış TURUNCU arayüz yok."
+msgstr "Atanmış TURUNCU ara birim yok."
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
@@ -400,7 +401,7 @@ msgstr "TURUNCU üzerinde kayıp IP adresi."
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
-msgstr "Atanmış MAVİ arayüz yok."
+msgstr "Atanmış MAVİ ara birim yok."
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
@@ -416,7 +417,7 @@ msgstr "Kayıp Varsayılan Ağ Geçidi"
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
-msgstr "Ağ yapılandırma tipi"
+msgstr "Ağ yapılandırma türü"
 
 #: networking.c:238 networking.c:409
 msgid "Drivers and card assignments"
@@ -424,15 +425,15 @@ msgstr "Sürücüler ve kart atamaları"
 
 #: networking.c:239 networking.c:640
 msgid "Address settings"
-msgstr "Adres ayarları"
+msgstr "Adres Ayarları"
 
 #: networking.c:240 networking.c:743
 msgid "DNS and Gateway settings"
-msgstr "DNS ve Ağ Geçidi ayarları"
+msgstr "DNS ve Ağ Geçidi Ayarları"
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
-msgstr "Yapılandırma tamamlandığında yeniden başlatma gerekecek."
+msgstr "Yapılandırma tamamlandığında ağı yeniden başlatmanız gerekir."
 
 #: networking.c:267
 #, c-format
@@ -444,11 +445,11 @@ msgstr "Geçerli yapılandırma: %s\n\n%s"
 
 #: networking.c:268
 msgid "Network configuration menu"
-msgstr "Ağ yapılandırma menüsü"
+msgstr "Ağ Yapılandırma Listesi"
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
-msgstr "Tamam"
+msgstr "Bitti"
 
 #: networking.c:300
 #, c-format
@@ -457,7 +458,7 @@ msgid ""
 "list those interfaces which have ethernet attached. If you change this "
 "setting, a network restart will be required, and you will have to "
 "reconfigure the network driver assignments."
-msgstr "%s için ağ yapılandırmasını seçin. Aşağıdaki yapılandırma tipi listesi ethernet ayarı yapılmış olan arayüzleri gösterir. Eğer bu ayarları değiştirirseniz, ağın yeniden başlatılması ve ağ sürücüleri atamalarını tekrar yapılandırmanız gerekecektir."
+msgstr "%s için ağ yapılandırmasını seçin. Aşağıdaki yapılandırma türleri ethernet kartlarına atanmış arabirimleri listeler. Eğer bu ayarları değiştirirseniz, ağın yeniden başlatılması ve ağ sürücüleri atamalarını tekrar yapılandırmanız gerekecektir."
 
 #: networking.c:307
 #, c-format
@@ -471,7 +472,7 @@ msgstr "Seçiminiz için yeterli kart yok.\n\nGereken: %d - Kullanılabilir: %d\
 msgid ""
 "Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
 "\n"
-msgstr "Ağ sürücülerini ve her bir kart için atanmış arayüzleri yapılandırın. Geçerli yapılandırma aşağıdaki gibidir:\n\n"
+msgstr "Ağ sürücülerini ve her bir kart için atanmış ara birimleri yapılandırın. Geçerli yapılandırma aşağıdaki gibidir:\n\n"
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
@@ -485,7 +486,7 @@ msgstr "Yerel olmayan ağ yeniden başlatılıyor..."
 msgid ""
 "Please choose the interface you wish to change.\n"
 "\n"
-msgstr "Lütfen değiştirmek istediğiniz arayüzü seçin.\n\n"
+msgstr "Lütfen değiştirmek istediğiniz ara birimi seçin.\n\n"
 
 #: networking.c:519
 msgid "Assigned Cards"
@@ -506,7 +507,7 @@ msgstr "Eğer bu IP adresini değiştirirseniz, ve uzaktan oturum açmışsanız
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
-msgstr "Yeniden yapılandırmak istediğiniz arayüzü seçin."
+msgstr "Yeniden yapılandırmak istediğiniz ara birimi seçin."
 
 #: networking.c:729
 msgid "Default gateway:"
@@ -516,7 +517,7 @@ msgstr "Varsayılan ağ geçidi:"
 msgid ""
 "Enter the DNS and gateway information. These settings are used only with "
 "Static IP (and DHCP if DNS set) on the RED interface."
-msgstr "DNS ve ağ geçidi bilgisini girin. Bu ayarlar sadece KIRMIZI arayüzde Statik IP  (ve eğer DNS ayarlanmışsa DHCP) ile kullanılacaktır."
+msgstr "DNS ve ağ geçidi bilgilerini girin. Bu ayarlar sadece KIRMIZI ara birim adres ayarlarında Statik seçeneği seçilmişse kullanılır. Eğer KIRMIZI ara birim adres ayarlarında DHCP seçeneğini seçtiyseniz bu alanı boş bırakabilirsiniz."
 
 #: networking.c:773
 msgid "Default gateway"
@@ -529,40 +530,40 @@ msgstr "Birincil DNS olmadan İkincil DNS belirtildi."
 #: passwords.c:33
 msgid ""
 "Enter the 'root' user password. Login as this user for commandline access."
-msgstr "'root' kullanıcı şifresini girin. Komut satırına erişmek için bu kullanıcıyla oturum açın."
+msgstr "%s 'root' kullanıcı parolasını girin. Komut satırı erişimi için bu kullanıcıyla oturum açın."
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
-msgstr "Şifre ayarlanıyor"
+msgstr "Parola ayarlanıyor"
 
 #: passwords.c:38
 msgid "Setting 'root' password...."
-msgstr "'root' şifresi ayarlanıyor..."
+msgstr "'root' parolası ayarlanıyor..."
 
 #: passwords.c:39
 msgid "Problem setting 'root' password."
-msgstr "'root' şifresi ayarlama sorunu."
+msgstr "'root' parolası ayarlama sorunu."
 
 #: passwords.c:53
 #, c-format
 msgid ""
 "Enter %s 'admin' user password. This is the user to use for logging into the"
 " %s web administration pages."
-msgstr "%s 'admin' kullanıcısı için şifre girin. Bu kullanıcı, %s web yönetim sayfalarını kullanmak için oturum açılacak kullanıcıdır."
+msgstr "%s 'admin' kullanıcı parolasını girin. Bu kullanıcı, %s web yönetimi sayfalarının kayıtlarına erişebilen kullanıcıdır."
 
 #: passwords.c:60
 #, c-format
 msgid "Setting %s 'admin' user password..."
-msgstr "%s 'admin' kullanıcısının şifresi ayarlanıyor..."
+msgstr "%s 'admin' kullanıcısının parolası ayarlanıyor..."
 
 #: passwords.c:62
 #, c-format
 msgid "Problem setting %s 'admin' user password."
-msgstr "%s 'admin' kullanıcı şifresi ayarlama sorunu."
+msgstr "%s 'admin' kullanıcı parolası ayarlama sorunu."
 
 #: passwords.c:76
 msgid "Password:"
-msgstr "Şifre:"
+msgstr "Parola:"
 
 #: passwords.c:77
 msgid "Again:"
@@ -570,16 +571,16 @@ msgstr "Tekrar:"
 
 #: passwords.c:95
 msgid "Password cannot be blank."
-msgstr "Şifre boş olamaz."
+msgstr "Parola boş olamaz."
 
 #: passwords.c:102
 msgid "Passwords do not match."
-msgstr "Şifreler eşleşmiyor."
+msgstr "Parolalar eşleşmiyor."
 
 #: passwords.c:109
 msgid "Password cannot contain spaces."
-msgstr "Şifre boşluk içeremez."
+msgstr "Parola boşluk içeremez."
 
 #: timezone.c:77
 msgid "Choose the timezone you are in from the list below."
-msgstr "Aşağıdaki listeden içinde bulunduğunuz zaman dilimini seçin."
+msgstr "Aşağıdaki listeden bulunduğunuz zaman dilimini seçin."

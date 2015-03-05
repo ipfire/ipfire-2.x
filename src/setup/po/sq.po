@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Ardit Dani <ardit.dani@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-08-21 15:13+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"PO-Revision-Date: 2015-02-02 22:35+0000\n"
+"Last-Translator: Ardit Dani <ardit.dani@gmail.com>\n"
 "Language-Team: Albanian (http://www.transifex.com/projects/p/ipfire/language/sq/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -78,7 +79,7 @@ msgstr ""
 #: networking.c:410 networking.c:560 networking.c:653 networking.c:746
 #: passwords.c:89 timezone.c:78
 msgid "Cancel"
-msgstr ""
+msgstr "Anulo"
 
 #: dhcp.c:156
 msgid ""
@@ -253,7 +254,7 @@ msgstr ""
 
 #: netstuff.c:103
 msgid "Static"
-msgstr ""
+msgstr "Statik"
 
 #: netstuff.c:104
 msgid "DHCP"
@@ -310,11 +311,11 @@ msgstr ""
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
-msgstr ""
+msgstr "Përzgjedhje"
 
 #: netstuff.c:673
 msgid "Identify"
-msgstr ""
+msgstr "Identifikuesi"
 
 #: netstuff.c:678
 msgid "Device Identification"

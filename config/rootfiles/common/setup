@@ -18,9 +18,6 @@ usr/share/locale/hu/LC_MESSAGES/setup.mo
 usr/share/locale/id/LC_MESSAGES/setup.mo
 usr/share/locale/it/LC_MESSAGES/setup.mo
 usr/share/locale/ja/LC_MESSAGES/setup.mo
-#usr/share/locale/ja_JP
-#usr/share/locale/ja_JP/LC_MESSAGES
-usr/share/locale/ja_JP/LC_MESSAGES/setup.mo
 #usr/share/locale/jv
 #usr/share/locale/jv/LC_MESSAGES
 usr/share/locale/jv/LC_MESSAGES/setup.mo
@@ -37,9 +34,6 @@ usr/share/locale/pt_PT/LC_MESSAGES/setup.mo
 #usr/share/locale/ro_RO/LC_MESSAGES
 usr/share/locale/ro_RO/LC_MESSAGES/setup.mo
 usr/share/locale/ru/LC_MESSAGES/setup.mo
-#usr/share/locale/ru_RU
-#usr/share/locale/ru_RU/LC_MESSAGES
-usr/share/locale/ru_RU/LC_MESSAGES/setup.mo
 usr/share/locale/rw/LC_MESSAGES/setup.mo
 usr/share/locale/sk/LC_MESSAGES/setup.mo
 usr/share/locale/sq/LC_MESSAGES/setup.mo

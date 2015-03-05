@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# nonux <nonux@free.fr>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-11-05 01:33+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"PO-Revision-Date: 2015-02-17 23:23+0000\n"
+"Last-Translator: nonux <nonux@free.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/ipfire/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,11 +25,11 @@ msgstr ""
 #: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
 #: main.c:702
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: main.c:176
 msgid "I accept this license"
-msgstr ""
+msgstr "J'accepte la licence"
 
 #: main.c:384
 msgid "Warning: Unattended installation will start in 10 seconds..."
@@ -36,11 +37,11 @@ msgstr ""
 
 #: main.c:403
 msgid "Language selection"
-msgstr ""
+msgstr "Sélection de la langue"
 
 #: main.c:403
 msgid "Select the language you wish to use for the installation."
-msgstr ""
+msgstr "Sélectionnez la langue que vous souhaitez utiliser pour l'installation."
 
 #: main.c:418
 msgid "Unattended mode"
@@ -60,12 +61,12 @@ msgstr ""
 
 #: main.c:428
 msgid "Start installation"
-msgstr ""
+msgstr "Démarrer l'installation"
 
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr ""
+msgstr "Le programme d'installation va maintenant essayer de télécharger l'image d'installation."
 
 #: main.c:452
 #, c-format
@@ -83,11 +84,11 @@ msgstr ""
 
 #: main.c:460
 msgid "Download installation image"
-msgstr ""
+msgstr "Télécharger l'image d'installation"
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
-msgstr ""
+msgstr "Tente de démarrer le réseau (DHCP)..."
 
 #: main.c:484
 msgid ""
@@ -98,11 +99,11 @@ msgstr ""
 
 #: main.c:487 main.c:516
 msgid "Retry"
-msgstr ""
+msgstr "Ré-essayer"
 
 #: main.c:501
 msgid "Downloading installation image..."
-msgstr ""
+msgstr "Téléchargement de l'image d'installation ..."
 
 #: main.c:510
 #, c-format
@@ -127,19 +128,19 @@ msgstr ""
 
 #: main.c:543
 msgid "License Agreement"
-msgstr ""
+msgstr "Contrat de licence"
 
 #: main.c:544
 msgid "License not accepted!"
-msgstr ""
+msgstr "Contrat de licence non accepté!"
 
 #: main.c:566
 msgid "No hard disk found."
-msgstr ""
+msgstr "Aucun disque dur trouvé."
 
 #: main.c:587
 msgid "Disk Selection"
-msgstr ""
+msgstr "Sélection du disque"
 
 #: main.c:588
 msgid ""
@@ -167,11 +168,11 @@ msgstr ""
 
 #: main.c:619
 msgid "Disk Setup"
-msgstr ""
+msgstr "Configuration du disque"
 
 #: main.c:620 main.c:630
 msgid "Delete all data"
-msgstr ""
+msgstr "Supprime toutes les données"
 
 #: main.c:627
 #, c-format
@@ -190,76 +191,76 @@ msgstr ""
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
-msgstr ""
+msgstr "La configuration du disque n'est pas actuellement supportée."
 
 #: main.c:655
 msgid "Your harddisk is too small."
-msgstr ""
+msgstr "Votre disque dur est trop petit."
 
 #: main.c:671
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
-msgstr ""
+msgstr "Votre disque dur est très petit, mais vous pouvez continuer sans la partition d'échange."
 
 #: main.c:684
 msgid "ext4 Filesystem"
-msgstr ""
+msgstr "Système de fichier ext4"
 
 #: main.c:685
 msgid "ext4 Filesystem without journal"
-msgstr ""
+msgstr "Système de fichier ext4 sans journalisation"
 
 #: main.c:686
 msgid "XFS Filesystem"
-msgstr ""
+msgstr "Système de fichier XFS"
 
 #: main.c:687
 msgid "ReiserFS Filesystem"
-msgstr ""
+msgstr "Système de fichier ReiserFS"
 
 #: main.c:701
 msgid "Filesystem Selection"
-msgstr ""
+msgstr "Choix du système de fichier"
 
 #: main.c:701
 msgid "Please choose your filesystem:"
-msgstr ""
+msgstr "Merci de choisir votre système de fichier : "
 
 #: main.c:712
 msgid "Building RAID..."
-msgstr ""
+msgstr "Contruction du RAID..."
 
 #: main.c:716
 msgid "Unable to build the RAID."
-msgstr ""
+msgstr "Impossible de construire le RAID."
 
 #: main.c:728
 msgid "Partitioning disk..."
-msgstr ""
+msgstr "Partitionnement du disque..."
 
 #: main.c:732
 msgid "Unable to partition the disk."
-msgstr ""
+msgstr "Impossible de partitionner le disque."
 
 #: main.c:739
 msgid "Creating filesystems..."
-msgstr ""
+msgstr "Création des systèmes de fichiers"
 
 #: main.c:743
 msgid "Unable to create filesystems."
-msgstr ""
+msgstr "Impossible de créer les systèmes de fichiers."
 
 #: main.c:749
 msgid "Unable to mount filesystems."
-msgstr ""
+msgstr "Impossible de monter les systèmes de fichiers."
 
 #: main.c:760
 msgid "Installing the system..."
-msgstr ""
+msgstr "Installation du système..."
 
 #: main.c:761
 msgid "Unable to install the system."
-msgstr ""
+msgstr "Impossible d'installer le système."
 
 #: main.c:777
 msgid "Installing the language cache..."
@@ -290,11 +291,11 @@ msgstr ""
 
 #: main.c:827
 msgid "Yes"
-msgstr ""
+msgstr "Oui"
 
 #: main.c:827
 msgid "No"
-msgstr ""
+msgstr "Non"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
@@ -322,8 +323,8 @@ msgstr ""
 
 #: main.c:882
 msgid "Reboot"
-msgstr ""
+msgstr "Re-démarrer"
 
 #: main.c:893
 msgid "Setup has failed. Press Ok to reboot."
-msgstr ""
+msgstr "La configuration a échoué. Appuyez sur OK pour re-démarrer."

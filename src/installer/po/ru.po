@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# ellviss <kpe1501@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-11-05 01:33+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"PO-Revision-Date: 2015-02-24 12:56+0000\n"
+"Last-Translator: ellviss <kpe1501@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/ipfire/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,36 +20,36 @@ msgstr ""
 
 #: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
 msgid "OK"
-msgstr ""
+msgstr "ОК"
 
 #: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
 #: main.c:702
 msgid "Cancel"
-msgstr ""
+msgstr "Отмена"
 
 #: main.c:176
 msgid "I accept this license"
-msgstr ""
+msgstr "Я Согласен с этой лицензией"
 
 #: main.c:384
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr ""
+msgstr "Внимание : запуск автоматической установки начнётся через 10 секунд ..."
 
 #: main.c:403
 msgid "Language selection"
-msgstr ""
+msgstr "Выберите язык"
 
 #: main.c:403
 msgid "Select the language you wish to use for the installation."
-msgstr ""
+msgstr "Выберете язык для инсталяции"
 
 #: main.c:418
 msgid "Unattended mode"
-msgstr ""
+msgstr "Автоматический режим"
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
-msgstr ""
+msgstr "<Tab>/<Alt-Tab> переход между элементами   |  <Space> выбор <F12> следующий  экран"
 
 #: main.c:426
 #, c-format
@@ -56,16 +57,16 @@ msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr ""
+msgstr "Добро пожаловать в установку  %s .\n\nНажатие Отмены на любом из следующих экранах приведёт к перезагрузке."
 
 #: main.c:428
 msgid "Start installation"
-msgstr ""
+msgstr "Начать установку"
 
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr ""
+msgstr "Установщик пробует скачать установочный образ"
 
 #: main.c:452
 #, c-format
@@ -73,21 +74,21 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr ""
+msgstr "Не найден источник\n\nВы можете скачать необходимый загрузочный образ"
 
 #: main.c:456
 msgid ""
 "Please make sure to connect your machine to a network and the installer will"
 " try connect to acquire an IP address."
-msgstr ""
+msgstr "Убедитесь что компьютер подсоединён к сети и установщик может подключиться к запращиваемому ip адресу"
 
 #: main.c:460
 msgid "Download installation image"
-msgstr ""
+msgstr "Скачать образ установки"
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
-msgstr ""
+msgstr "Проверка запуска (DHCP)..."
 
 #: main.c:484
 msgid ""
@@ -98,16 +99,16 @@ msgstr ""
 
 #: main.c:487 main.c:516
 msgid "Retry"
-msgstr ""
+msgstr "Повтор"
 
 #: main.c:501
 msgid "Downloading installation image..."
-msgstr ""
+msgstr "Скачивание образа установки..."
 
 #: main.c:510
 #, c-format
 msgid "MD5 checksum mismatch"
-msgstr ""
+msgstr "MD5 хеш не совпал"
 
 #: main.c:513
 #, c-format
@@ -123,23 +124,23 @@ msgstr ""
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr ""
+msgstr "Не удалось подключить %s к %s:\n\n%s\n"
 
 #: main.c:543
 msgid "License Agreement"
-msgstr ""
+msgstr "Лицензионное соглашение"
 
 #: main.c:544
 msgid "License not accepted!"
-msgstr ""
+msgstr "Лицензия не принята"
 
 #: main.c:566
 msgid "No hard disk found."
-msgstr ""
+msgstr "Не найдены жесткие диски"
 
 #: main.c:587
 msgid "Disk Selection"
-msgstr ""
+msgstr "Выберете диск"
 
 #: main.c:588
 msgid ""
@@ -163,15 +164,15 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr ""
+msgstr "Установочная программа настроит выбранный диск :\n\n%s\n\nВы согласны продолжить?"
 
 #: main.c:619
 msgid "Disk Setup"
-msgstr ""
+msgstr "Настройка диска"
 
 #: main.c:620 main.c:630
 msgid "Delete all data"
-msgstr ""
+msgstr "Удалить все данные"
 
 #: main.c:627
 #, c-format
@@ -186,127 +187,127 @@ msgstr ""
 
 #: main.c:629
 msgid "RAID Setup"
-msgstr ""
+msgstr "Настройка RAID"
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
-msgstr ""
+msgstr "Конфигурация ваших дисков не поддерживается"
 
 #: main.c:655
 msgid "Your harddisk is too small."
-msgstr ""
+msgstr "Ваш диск слишком мал"
 
 #: main.c:671
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
-msgstr ""
+msgstr "Ваш диск слишком мал, но вы можете продолжить без файла подкачки"
 
 #: main.c:684
 msgid "ext4 Filesystem"
-msgstr ""
+msgstr "раздел ext4"
 
 #: main.c:685
 msgid "ext4 Filesystem without journal"
-msgstr ""
+msgstr "журналируемый раздел ext4"
 
 #: main.c:686
 msgid "XFS Filesystem"
-msgstr ""
+msgstr "раздел XFS"
 
 #: main.c:687
 msgid "ReiserFS Filesystem"
-msgstr ""
+msgstr "раздел ReiserFS"
 
 #: main.c:701
 msgid "Filesystem Selection"
-msgstr ""
+msgstr "Выбор файловой системы"
 
 #: main.c:701
 msgid "Please choose your filesystem:"
-msgstr ""
+msgstr "Пожалуйста, выберете тип файловой системы:"
 
 #: main.c:712
 msgid "Building RAID..."
-msgstr ""
+msgstr "Создание RAID...."
 
 #: main.c:716
 msgid "Unable to build the RAID."
-msgstr ""
+msgstr "Не возмозжно создать RAID"
 
 #: main.c:728
 msgid "Partitioning disk..."
-msgstr ""
+msgstr "Разбивка диска..."
 
 #: main.c:732
 msgid "Unable to partition the disk."
-msgstr ""
+msgstr "Невозможно разбить диск"
 
 #: main.c:739
 msgid "Creating filesystems..."
-msgstr ""
+msgstr "Создание файловой системы..."
 
 #: main.c:743
 msgid "Unable to create filesystems."
-msgstr ""
+msgstr "Не возможно создать раздел"
 
 #: main.c:749
 msgid "Unable to mount filesystems."
-msgstr ""
+msgstr "Невозможно присоединить  раздел"
 
 #: main.c:760
 msgid "Installing the system..."
-msgstr ""
+msgstr "Установка системы ...."
 
 #: main.c:761
 msgid "Unable to install the system."
-msgstr ""
+msgstr "Невозможно установить систему"
 
 #: main.c:777
 msgid "Installing the language cache..."
-msgstr ""
+msgstr "Установка кеша языка...."
 
 #: main.c:778
 msgid "Unable to install the language cache."
-msgstr ""
+msgstr "Невозможно установить  кеш языка"
 
 #: main.c:783
 msgid "Installing the bootloader..."
-msgstr ""
+msgstr "Установка загрузчика....."
 
 #: main.c:790
 msgid "Unable to open /etc/default/grub for writing."
-msgstr ""
+msgstr "Невозможно открыть /etc/default/grub на запись"
 
 #: main.c:812
 msgid "Unable to install the bootloader."
-msgstr ""
+msgstr "Невозможно установить загрузчик"
 
 #: main.c:826
 msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr ""
+msgstr "Файл восстановления был найдет на установочном носителе\n\nвы хотите восстановить ?"
 
 #: main.c:827
 msgid "Yes"
-msgstr ""
+msgstr "Да"
 
 #: main.c:827
 msgid "No"
-msgstr ""
+msgstr "Нет"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr ""
+msgstr "Произошла ошибка при восстановлении из файла."
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr ""
+msgstr "Выполняются пост-установочные скрипты..."
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr ""
+msgstr "Пост-установочный скрипт не сработал"
 
 #: main.c:877
 #, c-format
@@ -314,16 +315,16 @@ msgid ""
 "%s was successfully installed!\n"
 "\n"
 "Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr ""
+msgstr "%s успешно установлено!\n\nПожалуйста извлеките все установочные носители из системы и нажмите кнопку перезагрузки. После перезапуска система попросит установить системный и сетевой пароли. После этого  вы можете зайти через браузер на https://%s:444 ( где  %s - ваш адрес ) для конфигурирования системы через web"
 
 #: main.c:882
 msgid "Congratulations!"
-msgstr ""
+msgstr "Поздравляем!"
 
 #: main.c:882
 msgid "Reboot"
-msgstr ""
+msgstr "Перезагрузка"
 
 #: main.c:893
 msgid "Setup has failed. Press Ok to reboot."
-msgstr ""
+msgstr "Установка не удалась. Нажмите ОК для перезапуска"
