@@ -76,6 +76,86 @@ if ( $querry[0] ne~ ""){
 		&Header::closebox();
 	}
 
+	## DNSSEC
+	my @nameservers = ();
+	foreach my $f ("${General::swroot}/red/dns1", "${General::swroot}/red/dns2") {
+		open(DNS, "<$f");
+		my $nameserver = <DNS>;
+		close(DNS);
+
+		chomp($nameserver);
+		if ($nameserver) {
+			push(@nameservers, $nameserver);
+		}
+	}
+
+	&Header::openbox('100%', 'center', $Lang::tr{'dnssec information'});
+
+	print <<END;
+		<table class="tbl" width='66%'>
+			<thead>
+				<tr>
+					<th align="center">
+						<strong>$Lang::tr{'nameserver'}</strong>
+					</th>
+					<th align="center">
+						<strong>$Lang::tr{'status'}</strong>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+END
+
+	my $id = 0;
+	for my $nameserver (@nameservers) {
+		my $status = &check_dnssec($nameserver, "ping.ipfire.org");
+
+		my $colour = "";
+		my $bgcolour = "";
+		my $message = "";
+
+		# DNSSEC Not supported
+		if ($status == 0) {
+			$message = $Lang::tr{'dnssec not supported'};
+			$colour = "white";
+			$bgcolour = ${Header::colourred};
+
+		# DNSSEC Aware
+		} elsif ($status == 1) {
+			$message = $Lang::tr{'dnssec aware'};
+			$colour = "black";
+			$bgcolour = ${Header::colouryellow};
+
+		# DNSSEC Validating
+		} elsif ($status == 2) {
+			$message = $Lang::tr{'dnssec validating'};
+			$colour = "white";
+			$bgcolour = ${Header::colourgreen};
+
+		# Error
+		} else {
+			$colour = ${Header::colourred};
+		}
+
+		my $table_colour = ($id++ % 2) ? $color{'color22'} : $color{'color20'};
+
+		print <<END;
+			<tr bgcolor="$table_colour">
+				<td>$nameserver</td>
+				<td bgcolor="$bgcolour" align="center">
+					<font color="$colour"><strong>$message</strong></font>
+				</td>
+			</tr>
+END
+	}
+
+	print <<END;
+			</tbody>
+		</table>
+END
+
+	&Header::closebox();
+
 	if ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/  && $netsettings{'RED_TYPE'} eq "DHCP"){
 
 		&Header::openbox('100%', 'left', "RED $Lang::tr{'dhcp configuration'}");
@@ -161,4 +241,33 @@ END
 
 	&Header::closebigbox();
 	&Header::closepage();
-}	
+}
+
+sub check_dnssec($$) {
+	my $nameserver = shift;
+	my $record = shift;
+
+	my @command = ("dig", "+dnssec", $record, "\@$nameserver");
+
+	my @output = qx(@command);
+	my $output = join("", @output);
+
+	my $status = 0;
+	if ($output =~ m/status: (\w+)/) {
+		$status = ($1 eq "NOERROR");
+
+		if (!$status) {
+			return -1;
+		}
+	}
+
+	my @flags = ();
+	if ($output =~ m/flags: (.*);/) {
+		@flags = split(/ /, $1);
+	}
+
+	my $aware = ($output =~ m/RRSIG/);
+	my $validating = ("ad" ~~ @flags);
+
+	return $aware + $validating;
+}

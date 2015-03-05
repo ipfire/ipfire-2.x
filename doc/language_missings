@@ -1,23 +1,25 @@
 ############################################################################
-# Checking install/setup translations for language: en                     #
-############################################################################
-############################################################################
 # Checking cgi-bin translations for language: en                           #
 ############################################################################
 < addon
 < ccd maxclients
 < ovpn_fragment
 ############################################################################
-# Checking install/setup translations for language: fr                     #
-############################################################################
-############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -94,7 +96,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -126,6 +133,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -145,12 +153,14 @@
 < fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
+< fwdfw err concon
 < fwdfw err nosrc
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
 < fwdfw err prot_port
 < fwdfw err prot_port1
+< fwdfw err ratecon
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
@@ -169,10 +179,12 @@
 < fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
+< fwdfw limitconcon
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw many
+< fwdfw maxconcon
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -180,6 +192,7 @@
 < fwdfw moveup
 < fwdfw natport used
 < fwdfw newrule
+< fwdfw numcon
 < fwdfw p2p txt
 < fwdfw pol allow
 < fwdfw pol block
@@ -188,6 +201,7 @@
 < fwdfw pol title
 < fwdfw prot41
 < fwdfw prot41 short
+< fwdfw ratelimit
 < fwdfw red
 < fwdfw REJECT
 < fwdfw reread
@@ -324,12 +338,20 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -348,6 +370,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -399,6 +422,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -467,6 +492,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < upload new ruleset
 < uptime
@@ -530,16 +556,21 @@
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
 ############################################################################
-# Checking install/setup translations for language: es                     #
-############################################################################
-############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -616,7 +647,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -648,6 +684,7 @@
 < fireinfo your profile id
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -667,12 +704,14 @@
 < fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
+< fwdfw err concon
 < fwdfw err nosrc
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
 < fwdfw err prot_port
 < fwdfw err prot_port1
+< fwdfw err ratecon
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
@@ -691,10 +730,12 @@
 < fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
+< fwdfw limitconcon
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw many
+< fwdfw maxconcon
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -702,6 +743,7 @@
 < fwdfw moveup
 < fwdfw natport used
 < fwdfw newrule
+< fwdfw numcon
 < fwdfw p2p txt
 < fwdfw pol allow
 < fwdfw pol block
@@ -710,6 +752,7 @@
 < fwdfw pol title
 < fwdfw prot41
 < fwdfw prot41 short
+< fwdfw ratelimit
 < fwdfw red
 < fwdfw REJECT
 < fwdfw reread
@@ -846,12 +889,20 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -870,6 +921,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -937,6 +989,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < Set time on boot
 < show dh
@@ -1005,6 +1059,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1045,16 +1100,21 @@
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
 ############################################################################
-# Checking install/setup translations for language: pl                     #
-############################################################################
-############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -1130,7 +1190,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -1154,6 +1219,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < fw default drop
@@ -1173,12 +1239,14 @@
 < fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
+< fwdfw err concon
 < fwdfw err nosrc
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
 < fwdfw err prot_port
 < fwdfw err prot_port1
+< fwdfw err ratecon
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
@@ -1197,10 +1265,12 @@
 < fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
+< fwdfw limitconcon
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw many
+< fwdfw maxconcon
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -1208,6 +1278,7 @@
 < fwdfw moveup
 < fwdfw natport used
 < fwdfw newrule
+< fwdfw numcon
 < fwdfw p2p txt
 < fwdfw pol allow
 < fwdfw pol block
@@ -1216,6 +1287,7 @@
 < fwdfw pol title
 < fwdfw prot41
 < fwdfw prot41 short
+< fwdfw ratelimit
 < fwdfw red
 < fwdfw REJECT
 < fwdfw reread
@@ -1352,12 +1424,20 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -1376,6 +1456,7 @@
 < monitor interface
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1429,6 +1510,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -1495,6 +1578,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average
@@ -1535,17 +1619,22 @@
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
 ############################################################################
-# Checking install/setup translations for language: ru                     #
-############################################################################
-############################################################################
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
 < Add a route
 < addon
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
 < advproxy proxy port transparent
 < age second
 < age seconds
@@ -1623,7 +1712,12 @@
 < dnsforward entries
 < dnsforward forward_server
 < dnsforward zone
+< dnssec aware
+< dnssec information
+< dnssec not supported
+< dnssec validating
 < dns servers
+< downlink
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -1648,6 +1742,7 @@
 < extrahd you cant mount
 < firewall logs country
 < firewall rules
+< first
 < flag
 < forward firewall
 < frequency
@@ -1668,12 +1763,14 @@
 < fwdfw dnat porterr2
 < fwdfw DROP
 < fwdfw edit
+< fwdfw err concon
 < fwdfw err nosrc
 < fwdfw err nosrcip
 < fwdfw err notgt
 < fwdfw err notgtip
 < fwdfw err prot_port
 < fwdfw err prot_port1
+< fwdfw err ratecon
 < fwdfw err remark
 < fwdfw err ruleexists
 < fwdfw err same
@@ -1692,10 +1789,12 @@
 < fwdfw hint mac
 < fwdfw iface
 < fwdfw ipsec network
+< fwdfw limitconcon
 < fwdfw log
 < fwdfw log rule
 < fwdfw man port
 < fwdfw many
+< fwdfw maxconcon
 < fwdfw menu
 < fwdfw MODE1
 < fwdfw MODE2
@@ -1703,6 +1802,7 @@
 < fwdfw moveup
 < fwdfw natport used
 < fwdfw newrule
+< fwdfw numcon
 < fwdfw p2p txt
 < fwdfw pol allow
 < fwdfw pol block
@@ -1711,6 +1811,7 @@
 < fwdfw pol title
 < fwdfw prot41
 < fwdfw prot41 short
+< fwdfw ratelimit
 < fwdfw red
 < fwdfw REJECT
 < fwdfw reread
@@ -1849,12 +1950,20 @@
 < ipsec
 < ipsec network
 < ipsec no connections
+< last
 < least preferred
 < lifetime
 < mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
 < maximum
 < MB read
 < MB written
+< messages
 < minimum
 < minute
 < model
@@ -1874,6 +1983,7 @@
 < month-graph
 < most preferred
 < MTU settings
+< nameserver
 < never
 < no hardware random number generator
 < not a valid dh key
@@ -1924,6 +2034,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< samba join a domain
+< samba join domain
 < server restart
 < show dh
 < snat new source ip address
@@ -1990,6 +2102,7 @@
 < tor use exit nodes
 < updxlrtr sources
 < updxlrtr standard view
+< uplink
 < upload dh key
 < uptime
 < uptime load average

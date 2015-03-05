@@ -1,3 +1,5 @@
+#etc/fcron.weekly
+etc/fcron.weekly/updatedb
 bin/find
 usr/bin/locate
 #usr/bin/oldfind

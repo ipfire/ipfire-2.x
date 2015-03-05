@@ -49,11 +49,11 @@ $(TARGET) :
 	@$(PREBUILD)
 
 	# Create directories
-	-mkdir -pv /{bin,boot,etc/opt,etc/modprobe.d,home,lib,mnt,opt,run}
+	-mkdir -pv /{bin,boot,etc/opt,etc/modprobe.d,home,lib/firmware/brcm,mnt,opt,run}
 	-mkdir -pv /{media/{floppy,cdrom,usbkey},sbin,srv,var}
 	-install -dv -m 0750 /root
 	-install -dv -m 1777 /tmp /var/tmp
-	-mkdir -pv /usr/{,local/}{bin,include,lib,sbin,src}
+	-mkdir -pv /usr/{,local/}{bin,include,lib{,/sse2},sbin,src}
 	-mkdir -pv /usr/{,local/}share/{doc,info,locale,man}
 	-mkdir -v  /usr/{,local/}share/{misc,terminfo,zoneinfo}
 	-mkdir -pv /usr/{,local/}share/man/man{1..8}
@@ -75,7 +75,8 @@ $(TARGET) :
 
 	# Config files
 	cp -rvf $(DIR_SRC)/config/etc/* /etc;
-	touch /etc/mtab
+	cp -rvf $(DIR_SRC)/config/lib/* /lib;
+	touch /etc/{fs,m}tab
 	echo "$(NAME) v$(VERSION) - $(SLOGAN)" >  /etc/issue
 	echo "===============================" >> /etc/issue
 	echo "\n running on \s \r \m"          >> /etc/issue

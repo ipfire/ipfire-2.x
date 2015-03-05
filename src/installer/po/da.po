@@ -1,0 +1,330 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR The IPFire Project (www.ipfire.org)
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# Henrik Simonsen <cybermaze@gmail.com>, 2014
+msgid ""
+msgstr ""
+"Project-Id-Version: IPFire Project\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-11-05 01:29+0000\n"
+"PO-Revision-Date: 2014-11-05 01:33+0000\n"
+"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"Language-Team: Danish (http://www.transifex.com/projects/p/ipfire/language/da/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: da\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
+msgid "OK"
+msgstr "OK"
+
+#: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
+#: main.c:702
+msgid "Cancel"
+msgstr "Annuller"
+
+#: main.c:176
+msgid "I accept this license"
+msgstr "Jeg accepterer brugerlicensen"
+
+#: main.c:384
+msgid "Warning: Unattended installation will start in 10 seconds..."
+msgstr ""
+
+#: main.c:403
+msgid "Language selection"
+msgstr "Vælg sprog"
+
+#: main.c:403
+msgid "Select the language you wish to use for the installation."
+msgstr "Vælg det sprog du ønsker at anvende under installationen."
+
+#: main.c:418
+msgid "Unattended mode"
+msgstr ""
+
+#: main.c:420
+msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
+msgstr "<Tab>/<Alt-Tab> mellem elementer | <Space> vælger | <F12> næste skærm"
+
+#: main.c:426
+#, c-format
+msgid ""
+"Welcome to the %s installation program.\n"
+"\n"
+"Selecting Cancel on any of the following screens will reboot the computer."
+msgstr "Velkommen til %s installationsprogram.\n\nVælg Annuller på ethvert tidspunkt for at genstarte computeren."
+
+#: main.c:428
+msgid "Start installation"
+msgstr "Start installationen"
+
+#: main.c:449
+#, c-format
+msgid "The installer will now try downloading the installation image."
+msgstr ""
+
+#: main.c:452
+#, c-format
+msgid ""
+"No source drive could be found.\n"
+"\n"
+"You can try downloading the required installation image."
+msgstr ""
+
+#: main.c:456
+msgid ""
+"Please make sure to connect your machine to a network and the installer will"
+" try connect to acquire an IP address."
+msgstr ""
+
+#: main.c:460
+msgid "Download installation image"
+msgstr ""
+
+#: main.c:473
+msgid "Trying to start networking (DHCP)..."
+msgstr ""
+
+#: main.c:484
+msgid ""
+"Networking could not be started but is required to go on with the installation.\n"
+"\n"
+"Please connect your machine to a network with a DHCP server and retry."
+msgstr ""
+
+#: main.c:487 main.c:516
+msgid "Retry"
+msgstr ""
+
+#: main.c:501
+msgid "Downloading installation image..."
+msgstr ""
+
+#: main.c:510
+#, c-format
+msgid "MD5 checksum mismatch"
+msgstr ""
+
+#: main.c:513
+#, c-format
+msgid ""
+"The installation image could not be downloaded.\n"
+"  Reason: %s\n"
+"\n"
+"%s"
+msgstr ""
+
+#: main.c:528
+#, c-format
+msgid ""
+"Could not mount %s to %s:\n"
+"  %s\n"
+msgstr ""
+
+#: main.c:543
+msgid "License Agreement"
+msgstr "Licensaftale"
+
+#: main.c:544
+msgid "License not accepted!"
+msgstr "Brugerlicensen ikke accepteret!"
+
+#: main.c:566
+msgid "No hard disk found."
+msgstr "Fandt ikke en harddisk."
+
+#: main.c:587
+msgid "Disk Selection"
+msgstr "Vælg harddisk"
+
+#: main.c:588
+msgid ""
+"Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
+"\n"
+"ALL DATA ON THE DISK WILL BE DESTROYED."
+msgstr "Vælg den eller de harddisk(e) du vil installere IPFire på. Diskene bliver først partitioneret og dernæst bliver der oprettet filsystemer.\n\nAL DATA PÅ DISKENE BLIVER SLETTET."
+
+#: main.c:599
+msgid ""
+"No disk has been selected.\n"
+"\n"
+"Please select one or more disks you want to install IPFire on."
+msgstr "Ingen harddisk valgt.\n\nVælg venligst en eller flere harddiske du vil installere IPFire på."
+
+#: main.c:617
+#, c-format
+msgid ""
+"The installation program will now prepare the chosen harddisk:\n"
+"\n"
+"  %s\n"
+"\n"
+"Do you agree to continue?"
+msgstr "Installationsprogrammet forbereder nu den eller de valgte harddiske:\n\n%s\n\nVil du fortsætte?"
+
+#: main.c:619
+msgid "Disk Setup"
+msgstr "Harddisk opsætning"
+
+#: main.c:620 main.c:630
+msgid "Delete all data"
+msgstr "Slet alle data"
+
+#: main.c:627
+#, c-format
+msgid ""
+"The installation program will now set up a RAID configuration on the selected harddisks:\n"
+"\n"
+"  %s\n"
+"  %s\n"
+"\n"
+"Do you agree to continue?"
+msgstr "Installationsprogrammet vil nu opsætte RAID konfigurationen på de valgte harddiske:\n\n%s\n%s\n\nVil du fortsætte?"
+
+#: main.c:629
+msgid "RAID Setup"
+msgstr "RAID opsætning"
+
+#: main.c:640
+msgid "Your disk configuration is currently not supported."
+msgstr ""
+
+#: main.c:655
+msgid "Your harddisk is too small."
+msgstr "Din harddisk er for lille."
+
+#: main.c:671
+msgid ""
+"Your harddisk is very small, but you can continue without a swap partition."
+msgstr "Din harddisk er meget lille, men du kan fortsætte uden en swap partition."
+
+#: main.c:684
+msgid "ext4 Filesystem"
+msgstr "ext4 filsystem"
+
+#: main.c:685
+msgid "ext4 Filesystem without journal"
+msgstr "ext4 filsystem uden journal"
+
+#: main.c:686
+msgid "XFS Filesystem"
+msgstr "XFS filsystem"
+
+#: main.c:687
+msgid "ReiserFS Filesystem"
+msgstr "ReiserFS filsystem"
+
+#: main.c:701
+msgid "Filesystem Selection"
+msgstr "Vælg filsystem"
+
+#: main.c:701
+msgid "Please choose your filesystem:"
+msgstr "Vælg venligst et filsystem:"
+
+#: main.c:712
+msgid "Building RAID..."
+msgstr "Bygger RAID..."
+
+#: main.c:716
+msgid "Unable to build the RAID."
+msgstr "Kunne ikke bygge RAID."
+
+#: main.c:728
+msgid "Partitioning disk..."
+msgstr "Partitionerer harddisk..."
+
+#: main.c:732
+msgid "Unable to partition the disk."
+msgstr "Kunne ikke partitionere harddisk."
+
+#: main.c:739
+msgid "Creating filesystems..."
+msgstr "Opretter filsystemer..."
+
+#: main.c:743
+msgid "Unable to create filesystems."
+msgstr "Kunne ikke oprette filsystemer."
+
+#: main.c:749
+msgid "Unable to mount filesystems."
+msgstr "Kunne ikke forbinde til filsystemer."
+
+#: main.c:760
+msgid "Installing the system..."
+msgstr "Installerer systemet..."
+
+#: main.c:761
+msgid "Unable to install the system."
+msgstr "Kunne ikke installere systemet."
+
+#: main.c:777
+msgid "Installing the language cache..."
+msgstr "Installerer sprog arkivet..."
+
+#: main.c:778
+msgid "Unable to install the language cache."
+msgstr "Kunne ikke installere sprog arkivet."
+
+#: main.c:783
+msgid "Installing the bootloader..."
+msgstr "Installerer bootloader..."
+
+#: main.c:790
+msgid "Unable to open /etc/default/grub for writing."
+msgstr "Kunne ikke gemme til /etc/default/grub."
+
+#: main.c:812
+msgid "Unable to install the bootloader."
+msgstr "Kunne ikke installere bootloader."
+
+#: main.c:826
+msgid ""
+"A backup file has been found on the installation image.\n"
+"\n"
+"Do you want to restore the backup?"
+msgstr ""
+
+#: main.c:827
+msgid "Yes"
+msgstr ""
+
+#: main.c:827
+msgid "No"
+msgstr ""
+
+#: main.c:834
+msgid "An error occured when the backup file was restored."
+msgstr ""
+
+#: main.c:869
+msgid "Running post-install script..."
+msgstr ""
+
+#: main.c:870
+msgid "Post-install script failed."
+msgstr ""
+
+#: main.c:877
+#, c-format
+msgid ""
+"%s was successfully installed!\n"
+"\n"
+"Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
+msgstr "%s blev installeret korrekt!\n\nFjern venligst installationsmedier fra systemet og vælg Genstart. Efter genstart bliver du bedt om at opsætte netværket og system kodeord. Efter opsætningen, besøg da https://%s:444 (eller hvad du navngav %s) fra din internet browser for at anvende web konsollen."
+
+#: main.c:882
+msgid "Congratulations!"
+msgstr "Tillykke!"
+
+#: main.c:882
+msgid "Reboot"
+msgstr "Genstart"
+
+#: main.c:893
+msgid "Setup has failed. Press Ok to reboot."
+msgstr "Installationen fejlede. Vælg Ok for at genstarte."

@@ -1,0 +1,166 @@
+commit 028478fa40d85a73b19638dbe3f83b1acebf370c
+Author: Ulrich Drepper <drepper@gmail.com>
+Date:   Thu Mar 10 12:51:33 2011 -0500
+
+    Fix copy relocations handling of unique objects.
+
+ 2011-03-06  Ulrich Drepper  <drepper@gmail.com>
+
+and a part of:
+
+commit 33f85a3fb9fe432e0ebf6a3481bc2d5e29cb605f
+Author: Ulrich Drepper <drepper@gmail.com>
+Date:   Thu Mar 10 03:18:21 2011 -0500
+
+    Don't run tests checking xecutable stack when SELinux is enforcing.
+
+since the latter incorrectly had a bit of the former changes.
+
+Additionally, the test case needs -lstdc++ to build.
+
+diff --git a/elf/Makefile b/elf/Makefile
+index c427679..56cb1b1 100644
+--- a/elf/Makefile
++++ b/elf/Makefile
+@@ -201,7 +201,7 @@ tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
+ 	 unload3 unload4 unload5 unload6 unload7 unload8 tst-global1 order2 \
+ 	 tst-audit1 tst-audit2 tst-audit9 \
+ 	 tst-stackguard1 tst-addr1 tst-thrlock \
+-	 tst-unique1 tst-unique2
++	 tst-unique1 tst-unique2 tst-unique3
+ #	 reldep9
+ test-srcs = tst-pathopt
+ tests-execstack-yes = tst-execstack tst-execstack-needed tst-execstack-prog
+@@ -255,6 +255,7 @@ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
+ 		order2mod1 order2mod2 order2mod3 order2mod4 \
+ 		tst-unique1mod1 tst-unique1mod2 \
+ 		tst-unique2mod1 tst-unique2mod2 \
++		tst-unique3lib tst-unique3lib2 \
+ 		tst-auditmod9a tst-auditmod9b
+ ifeq (yes,$(have-initfini-array))
+ modules-names += tst-array2dep tst-array5dep
+@@ -1178,6 +1179,11 @@ $(objpfx)tst-unique1.out: $(objpfx)tst-unique1mod1.so \
+ $(objpfx)tst-unique2: $(libdl) $(objpfx)tst-unique2mod1.so
+ $(objpfx)tst-unique2.out: $(objpfx)tst-unique2mod2.so
+ 
++LDLIBS-tst-unique3lib.so = -lstdc++
++LDLIBS-tst-unique3lib2.so = -lstdc++
++$(objpfx)tst-unique3: $(libdl) $(objpfx)tst-unique3lib.so
++$(objpfx)tst-unique3.out: $(objpfx)tst-unique3lib2.so
++
+ ifeq (yes,$(config-cflags-avx))
+ CFLAGS-tst-audit4.c += -mavx
+ CFLAGS-tst-auditmod4a.c += -mavx
+diff --git a/elf/dl-lookup.c b/elf/dl-lookup.c
+index 78c8669..874a4bb 100644
+--- a/elf/dl-lookup.c
++++ b/elf/dl-lookup.c
+@@ -364,8 +363,19 @@ do_lookup_x (const char *undef_name, uint_fast32_t new_hash,
+ 		      if (entries[idx].hashval == new_hash
+ 			  && strcmp (entries[idx].name, undef_name) == 0)
+ 			{
+-			  result->s = entries[idx].sym;
+-			  result->m = (struct link_map *) entries[idx].map;
++			  if ((type_class & ELF_RTYPE_CLASS_COPY) != 0)
++			    {
++			      /* We possibly have to initialize the central
++				 copy from the copy addressed through the
++				 relocation.  */
++			      result->s = sym;
++			      result->m = (struct link_map *) map;
++			    }
++			  else
++			    {
++			      result->s = entries[idx].sym;
++			      result->m = (struct link_map *) entries[idx].map;
++			    }
+ 			  __rtld_lock_unlock_recursive (tab->lock);
+ 			  return 1;
+ 			}
+diff --git a/elf/tst-unique3.cc b/elf/tst-unique3.cc
+new file mode 100644
+index 0000000..b2c9593
+--- /dev/null
++++ b/elf/tst-unique3.cc
+@@ -0,0 +1,23 @@
++#include "tst-unique3.h"
++#include <cstdio>
++#include "../dlfcn/dlfcn.h"
++
++int t = S<char>::i;
++
++int
++main (void)
++{
++  std::printf ("%d %d\n", S<char>::i, t);
++  int result = S<char>::i++ != 1 || t != 1;
++  result |= in_lib ();
++  void *d = dlopen ("$ORIGIN/tst-unique3lib2.so", RTLD_LAZY);
++  int (*fp) ();
++  if (d == NULL || (fp = (int(*)()) dlsym (d, "in_lib2")) == NULL)
++    {
++      std::printf ("failed to get symbol in_lib2\n");
++      return 1;
++    }
++  result |= fp ();
++  dlclose (d);
++  return result;
++}
+diff --git a/elf/tst-unique3.h b/elf/tst-unique3.h
+new file mode 100644
+index 0000000..716d236
+--- /dev/null
++++ b/elf/tst-unique3.h
+@@ -0,0 +1,8 @@
++// BZ 12510
++template<typename T>
++struct S
++{
++  static int i;
++};
++
++extern int in_lib (void);
+diff --git a/elf/tst-unique3lib.cc b/elf/tst-unique3lib.cc
+new file mode 100644
+index 0000000..fa8e85a
+--- /dev/null
++++ b/elf/tst-unique3lib.cc
+@@ -0,0 +1,11 @@
++#include <cstdio>
++#include "tst-unique3.h"
++template<typename T> int S<T>::i = 1;
++static int i = S<char>::i;
++
++int
++in_lib (void)
++{
++  std::printf ("in_lib: %d %d\n", S<char>::i, i);
++  return S<char>::i++ != 2 || i != 1;
++}
+diff --git a/elf/tst-unique3lib2.cc b/elf/tst-unique3lib2.cc
+new file mode 100644
+index 0000000..17d817e
+--- /dev/null
++++ b/elf/tst-unique3lib2.cc
+@@ -0,0 +1,12 @@
++#include <cstdio>
++#include "tst-unique3.h"
++
++template<typename T> int S<T>::i;
++
++extern "C"
++int
++in_lib2 ()
++{
++  std::printf ("in_lib2: %d\n", S<char>::i);
++  return S<char>::i != 3;
++}
+diff --git a/include/bits/dlfcn.h b/include/bits/dlfcn.h
+index cb4a5c2..c31a645 100644
+--- a/include/bits/dlfcn.h
++++ b/include/bits/dlfcn.h
+@@ -1,4 +1,3 @@
+ #include_next <bits/dlfcn.h>
+ 
+-extern void _dl_mcount_wrapper_check (void *__selfpc);
+ libc_hidden_proto (_dl_mcount_wrapper_check)

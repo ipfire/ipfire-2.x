@@ -1,2 +1,3 @@
 bin/ping
 usr/bin/ping
+usr/bin/tracepath

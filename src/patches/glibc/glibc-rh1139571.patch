@@ -1,0 +1,154 @@
+commit 41488498b6d9440ee66ab033808cce8323bba7ac
+Author: Florian Weimer <fweimer@redhat.com>
+Date:   Wed Sep 3 19:45:43 2014 +0200
+
+    CVE-2014-6040: Crashes on invalid input in IBM gconv modules [BZ #17325]
+    
+    These changes are based on the fix for BZ #14134 in commit
+    6e230d11837f3ae7b375ea69d7905f0d18eb79e5.
+
+diff --git a/iconvdata/Makefile b/iconvdata/Makefile
+index 0a410a1..b6327d6 100644
+--- a/iconvdata/Makefile
++++ b/iconvdata/Makefile
+@@ -297,6 +297,7 @@ $(objpfx)tst-iconv7.out: $(objpfx)gconv-modules \
+ $(objpfx)iconv-test.out: run-iconv-test.sh $(objpfx)gconv-modules \
+ 			 $(addprefix $(objpfx),$(modules.so)) \
+ 			 $(common-objdir)/iconv/iconv_prog TESTS
++	iconv_modules="$(modules)" \
+ 	$(SHELL) -e $< $(common-objdir) > $@
+ 
+ $(objpfx)tst-tables.out: tst-tables.sh $(objpfx)gconv-modules \
+diff --git a/iconvdata/ibm1364.c b/iconvdata/ibm1364.c
+index 0b5484f..cf80993 100644
+--- a/iconvdata/ibm1364.c
++++ b/iconvdata/ibm1364.c
+@@ -221,7 +221,8 @@ enum
+ 	  ++rp2;							      \
+ 									      \
+ 	uint32_t res;							      \
+-	if (__builtin_expect (ch < rp2->start, 0)			      \
++	if (__builtin_expect (rp2->start == 0xffff, 0)			      \
++	    || __builtin_expect (ch < rp2->start, 0)			      \
+ 	    || (res = DB_TO_UCS4[ch + rp2->idx],			      \
+ 		__builtin_expect (res, L'\1') == L'\0' && ch != '\0'))	      \
+ 	  {								      \
+diff --git a/iconvdata/ibm932.c b/iconvdata/ibm932.c
+index f5dca59..aa69d65 100644
+--- a/iconvdata/ibm932.c
++++ b/iconvdata/ibm932.c
+@@ -74,11 +74,12 @@
+ 	  }								      \
+ 									      \
+ 	ch = (ch * 0x100) + inptr[1];					      \
++	/* ch was less than 0xfd.  */					      \
++	assert (ch < 0xfd00);						      \
+ 	while (ch > rp2->end)						      \
+ 	  ++rp2;							      \
+ 									      \
+-	if (__builtin_expect (rp2 == NULL, 0)				      \
+-	    || __builtin_expect (ch < rp2->start, 0)			      \
++	if (__builtin_expect (ch < rp2->start, 0)			      \
+ 	    || (res = __ibm932db_to_ucs4[ch + rp2->idx],		      \
+ 	    __builtin_expect (res, '\1') == 0 && ch !=0))		      \
+ 	  {								      \
+diff --git a/iconvdata/ibm933.c b/iconvdata/ibm933.c
+index f46dfb5..461fb5e 100644
+--- a/iconvdata/ibm933.c
++++ b/iconvdata/ibm933.c
+@@ -162,7 +162,7 @@ enum
+ 	while (ch > rp2->end)						      \
+ 	  ++rp2;							      \
+ 									      \
+-	if (__builtin_expect (rp2 == NULL, 0)				      \
++	if (__builtin_expect (rp2->start == 0xffff, 0)			      \
+ 	    || __builtin_expect (ch < rp2->start, 0)			      \
+ 	    || (res = __ibm933db_to_ucs4[ch + rp2->idx],		      \
+ 		__builtin_expect (res, L'\1') == L'\0' && ch != '\0'))	      \
+diff --git a/iconvdata/ibm935.c b/iconvdata/ibm935.c
+index a8e4e6c..132d816 100644
+--- a/iconvdata/ibm935.c
++++ b/iconvdata/ibm935.c
+@@ -162,7 +162,7 @@ enum
+ 	while (ch > rp2->end)						      \
+ 	  ++rp2;							      \
+ 									      \
+-	if (__builtin_expect (rp2 == NULL, 0)				      \
++	if (__builtin_expect (rp2->start == 0xffff, 0)			      \
+ 	    || __builtin_expect (ch < rp2->start, 0)			      \
+ 	    || (res = __ibm935db_to_ucs4[ch + rp2->idx],		      \
+ 		__builtin_expect (res, L'\1') == L'\0' && ch != '\0'))	      \
+diff --git a/iconvdata/ibm937.c b/iconvdata/ibm937.c
+index 239be61..69b154d 100644
+--- a/iconvdata/ibm937.c
++++ b/iconvdata/ibm937.c
+@@ -162,7 +162,7 @@ enum
+ 	while (ch > rp2->end)						      \
+ 	  ++rp2;							      \
+ 									      \
+-	if (__builtin_expect (rp2 == NULL, 0)				      \
++	if (__builtin_expect (rp2->start == 0xffff, 0)			      \
+ 	    || __builtin_expect (ch < rp2->start, 0)			      \
+ 	    || (res = __ibm937db_to_ucs4[ch + rp2->idx],		      \
+ 		__builtin_expect (res, L'\1') == L'\0' && ch != '\0'))	      \
+diff --git a/iconvdata/ibm939.c b/iconvdata/ibm939.c
+index 5d0db36..9936e2c 100644
+--- a/iconvdata/ibm939.c
++++ b/iconvdata/ibm939.c
+@@ -162,7 +162,7 @@ enum
+ 	while (ch > rp2->end)						      \
+ 	  ++rp2;							      \
+ 									      \
+-	if (__builtin_expect (rp2 == NULL, 0)				      \
++	if (__builtin_expect (rp2->start == 0xffff, 0)			      \
+ 	    || __builtin_expect (ch < rp2->start, 0)			      \
+ 	    || (res = __ibm939db_to_ucs4[ch + rp2->idx],		      \
+ 		__builtin_expect (res, L'\1') == L'\0' && ch != '\0'))	      \
+diff --git a/iconvdata/ibm943.c b/iconvdata/ibm943.c
+index be0c14f..c5d5742 100644
+--- a/iconvdata/ibm943.c
++++ b/iconvdata/ibm943.c
+@@ -75,11 +75,12 @@
+ 	  }								      \
+ 									      \
+ 	ch = (ch * 0x100) + inptr[1];					      \
++	/* ch was less than 0xfd.  */					      \
++	assert (ch < 0xfd00);						      \
+ 	while (ch > rp2->end)						      \
+ 	  ++rp2;							      \
+ 									      \
+-	if (__builtin_expect (rp2 == NULL, 0)				      \
+-	    || __builtin_expect (ch < rp2->start, 0)			      \
++	if (__builtin_expect (ch < rp2->start, 0)			      \
+ 	    || (res = __ibm943db_to_ucs4[ch + rp2->idx],		      \
+ 	    __builtin_expect (res, '\1') == 0 && ch !=0))		      \
+ 	  {								      \
+diff --git a/iconvdata/run-iconv-test.sh b/iconvdata/run-iconv-test.sh
+index c98c929..5dfb69f 100755
+--- a/iconvdata/run-iconv-test.sh
++++ b/iconvdata/run-iconv-test.sh
+@@ -184,6 +184,24 @@ while read utf8 from filename; do
+ 
+ done < TESTS2
+ 
++# Check for crashes in decoders.
++printf '\016\377\377\377\377\377\377\377' > $temp1
++for from in $iconv_modules ; do
++    echo $ac_n "test decoder $from $ac_c"
++    PROG=`eval echo $ICONV`
++    if $PROG < $temp1 >/dev/null 2>&1 ; then
++	: # fall through
++    else
++	status=$?
++	if test $status -gt 1 ; then
++	    echo "/FAILED"
++	    failed=1
++	    continue
++	fi
++    fi
++    echo "OK"
++done
++
+ exit $failed
+ # Local Variables:
+ #  mode:shell-script

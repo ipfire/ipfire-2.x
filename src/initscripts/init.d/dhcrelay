@@ -1,0 +1,53 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/dhcrelay
+#
+# Description : The DHCP Relay Daemon
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+CONFIG_FILE="/var/ipfire/dhcp/relay"
+
+if [ -r "${CONFIG_FILE}" ]; then
+	eval $(/usr/local/bin/readhash ${CONFIG_FILE})
+fi
+
+ARGS="-q"
+
+for interface in ${INTERFACES}; do
+	ARGS="${ARGS} -i ${interface}"
+done
+
+ARGS="${ARGS} ${SERVERS}"
+
+case "${1}" in
+	start)
+		boot_mesg "Starting DHCP Relay..."
+		loadproc /usr/sbin/dhcrelay ${ARGS}
+		;;
+
+	stop)
+		boot_mesg "Stopping DHCP Relay..."
+		killproc -p /var/run/dhcrelay.pid /usr/sbin/dhcrelay
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/dhcrelay
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/dhcrelay

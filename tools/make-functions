@@ -71,7 +71,7 @@ configure_target() {
 		i586)
 			BUILDTARGET="${target_arch}-pc-linux-gnu"
 			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnu"
-			CFLAGS_ARCH="-march=i586 -fomit-frame-pointer"
+			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer"
 			;;
 
 		armv5tel)
@@ -726,6 +726,7 @@ update_langs() {
 		$BASEDIR/tools/sort_strings.pl ru
 		$BASEDIR/tools/sort_strings.pl nl
 		$BASEDIR/tools/sort_strings.pl tr
+		$BASEDIR/tools/sort_strings.pl it
 		$BASEDIR/tools/check_strings.pl en > $BASEDIR/doc/language_issues.en
 		$BASEDIR/tools/check_strings.pl de > $BASEDIR/doc/language_issues.de
 		$BASEDIR/tools/check_strings.pl fr > $BASEDIR/doc/language_issues.fr
@@ -734,6 +735,22 @@ update_langs() {
 		$BASEDIR/tools/check_strings.pl ru > $BASEDIR/doc/language_issues.ru
 		$BASEDIR/tools/check_strings.pl nl > $BASEDIR/doc/language_issues.nl
 		$BASEDIR/tools/check_strings.pl tr > $BASEDIR/doc/language_issues.tr
+		$BASEDIR/tools/check_strings.pl it > $BASEDIR/doc/language_issues.it
 		$BASEDIR/tools/check_langs.sh > $BASEDIR/doc/language_missings
 		beautify message DONE
+
+		echo -ne "Updating language lists..."
+		update_language_list ${BASEDIR}/src/installer/po
+		update_language_list ${BASEDIR}/src/setup/po
+		beautify message DONE
+}
+
+update_language_list() {
+	local path="${1}"
+
+	local lang
+	for lang in ${path}/*.po; do
+		lang="$(basename "${lang}")"
+		echo "${lang%*.po}"
+	done | sort -u > "${path}/LINGUAS"
 }

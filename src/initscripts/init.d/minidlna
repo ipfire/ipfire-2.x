@@ -16,17 +16,17 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting minidlna..."
-		loadproc /usr/sbin/minidlna
+		loadproc /usr/sbin/minidlnad
 		;;
 
 	stop)
 		boot_mesg "Stopping minidlna..."
-		killproc /usr/sbin/minidlna
+		killproc /usr/sbin/minidlnad
 		;;
 
 	reload)
 		boot_mesg "Reloading minidlna..."
-		reloadproc /usr/sbin/minidlna
+		reloadproc /usr/sbin/minidlnad
 		;;
 
 	restart)
@@ -36,7 +36,7 @@ case "${1}" in
 		;;
 
 	status)
-		statusproc /usr/sbin/minidlna
+		statusproc /usr/sbin/minidlnad
 		;;
 
 	*)

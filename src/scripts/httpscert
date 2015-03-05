@@ -14,7 +14,7 @@ case "$1" in
 	/bin/cat /etc/certparams | sed "s/HOSTNAME/`hostname -f`/" | /usr/bin/openssl \
 		req -new -key /etc/httpd/server.key -out /etc/httpd/server.csr
 	echo "Signing certificate"
-	/usr/bin/openssl x509 -req -days 999999 -in \
+	/usr/bin/openssl x509 -req -days 999999 -sha256 -in \
 		/etc/httpd/server.csr -signkey /etc/httpd/server.key -out \
 		/etc/httpd/server.crt
  	;;

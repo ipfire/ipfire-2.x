@@ -3,10 +3,12 @@ lib/udev/rules.d/85-regulatory.rules
 #root/.python-eggs/M2Crypto-0.21.1-py2.7-linux-MACHINE.egg-tmp
 #root/.python-eggs/M2Crypto-0.21.1-py2.7-linux-MACHINE.egg-tmp/M2Crypto
 #root/.python-eggs/M2Crypto-0.21.1-py2.7-linux-MACHINE.egg-tmp/M2Crypto/__m2crypto.so
-#root/.python-eggs/M2Crypto-0.21.1-py2.7-linux-i686.egg-tmp
-#root/.python-eggs/M2Crypto-0.21.1-py2.7-linux-i686.egg-tmp/M2Crypto
-#root/.python-eggs/M2Crypto-0.21.1-py2.7-linux-i686.egg-tmp/M2Crypto/__m2crypto.so
 sbin/crda
 sbin/regdbdump
+#usr/include/reglib
+#usr/include/reglib/nl80211.h
+#usr/include/reglib/regdb.h
+#usr/include/reglib/reglib.h
+usr/lib/libreg.so
 #usr/share/man/man8/crda.8.gz
 #usr/share/man/man8/regdbdump.8.gz

@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
 	@mkdir /tmp/sys
-	cd /tmp && tar  cf /install/cdrom/$(SNAME)-$(VERSION).tlz $(TAR_OPTIONS) * && rm -rf *
+	cd /tmp && tar  cf /install/cdrom/distro.img $(TAR_OPTIONS) * && rm -rf *
 
 	# Other files
 	touch /install/cdrom/$(SNAME)-$(VERSION)-core$(CORE).media
@@ -86,16 +86,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp $(DIR_SRC)/doc/COPYING				/install/cdrom/
 	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt}	/install/cdrom/doc
 
-	# Configuration
-	mkdir -p /install/cdrom/boot
-	cp $(DIR_SRC)/config/syslinux/unattended.conf    /install/cdrom/boot/unattended.conf
-
 	# Make the ISO
 	mkdir -p /install/cdrom/boot/isolinux
 	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog
 ifneq "$(MACHINE_TYPE)" "arm"
 	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
-	cp /install/images/initrd                   /install/cdrom/boot/isolinux/instroot
+	dracut --force -a "installer" --strip --xz /install/cdrom/boot/isolinux/instroot $(KVER)-ipfire
 	cp $(DIR_SRC)/config/syslinux/boot.png      /install/cdrom/boot/isolinux/boot.png
 	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
 	cp /usr/share/ipfire-netboot/ipxe.lkrn      /install/cdrom/boot/isolinux/netboot
@@ -109,8 +105,8 @@ endif
 	cd /install/cdrom && find -type f ! -name md5sum.txt | grep -v "./boot" | \
 						xargs md5sum > md5sum.txt
 
-ifeq "$(MACHINE_TYPE)" "arm"
 	mkdir -p /install/images
+ifeq "$(MACHINE_TYPE)" "arm"
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
 		. > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
 else

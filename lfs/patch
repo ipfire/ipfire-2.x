@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.5.4
+VER        = 2.7.1
 
 THISAPP    = patch-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
@@ -53,7 +53,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ee5ae84d115f051d87fcaaef3b4ae782
+$(DL_FILE)_MD5 = e9ae5393426d3ad783a300a338c09b72
 
 install : $(TARGET)
 
@@ -82,8 +82,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && CPPFLAGS=-D_GNU_SOURCE ./configure $(EXTRA_CONFIG)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 	@rm -rf $(DIR_APP)

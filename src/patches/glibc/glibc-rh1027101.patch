@@ -1,0 +1,58 @@
+commit 362b47fe09ca9a928d444c7e2f7992f7f61bfc3e
+Author: Maxim Kuvyrkov <maxim@kugelworks.com>
+Date:   Tue Dec 24 09:44:50 2013 +1300
+
+    Fix race in free() of fastbin chunk: BZ #15073
+    
+    Perform sanity check only if we have_lock.  Due to lockless nature of fastbins
+    we need to be careful derefencing pointers to fastbin entries (chunksize(old)
+    in this case) in multithreaded environments.
+    
+    The fix is to add have_lock to the if-condition checks.  The rest of the patch
+    only makes code more readable.
+    
+    	* malloc/malloc.c (_int_free): Perform sanity check only if we
+    	have_lock.
+
+diff --git a/malloc/malloc.c b/malloc/malloc.c
+index b1668b5..5e419ad 100644
+--- a/malloc/malloc.c
++++ b/malloc/malloc.c
+@@ -3783,25 +3783,29 @@ _int_free(mstate av, mchunkptr p, int have_lock)
+     fb = &fastbin (av, idx);
+ 
+ #ifdef ATOMIC_FASTBINS
+-    mchunkptr fd;
+-    mchunkptr old = *fb;
++    /* Atomically link P to its fastbin: P->FD = *FB; *FB = P;  */
++    mchunkptr old = *fb, old2;
+     unsigned int old_idx = ~0u;
+     do
+       {
+-	/* Another simple check: make sure the top of the bin is not the
+-	   record we are going to add (i.e., double free).  */
++	/* Check that the top of the bin is not the record we are going to add
++	   (i.e., double free).  */
+ 	if (__builtin_expect (old == p, 0))
+ 	  {
+ 	    errstr = "double free or corruption (fasttop)";
+ 	    goto errout;
+ 	  }
+-	if (old != NULL)
++	/* Check that size of fastbin chunk at the top is the same as
++	   size of the chunk that we are adding.  We can dereference OLD
++	   only if we have the lock, otherwise it might have already been
++	   deallocated.  See use of OLD_IDX below for the actual check.  */
++	if (have_lock && old != NULL)
+ 	  old_idx = fastbin_index(chunksize(old));
+-	p->fd = fd = old;
++	p->fd = old2 = old;
+       }
+-    while ((old = catomic_compare_and_exchange_val_rel (fb, p, fd)) != fd);
++    while ((old = catomic_compare_and_exchange_val_rel (fb, p, old2)) != old2);
+ 
+-    if (fd != NULL && __builtin_expect (old_idx != idx, 0))
++    if (have_lock && old != NULL && __builtin_expect (old_idx != idx, 0))
+       {
+ 	errstr = "invalid fastbin entry (free)";
+ 	goto errout;

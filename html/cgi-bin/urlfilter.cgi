@@ -935,7 +935,7 @@ if (($besettings{'ACTION'} eq $Lang::tr{'urlfilter install blacklist'}) && ($bes
 		close FILE;
 
 		system("rm -f $dbdir/$besettings{'BE_NAME'}/*.db");
-		system("/usr/sbin/squidGuard -c $editdir/install.conf -C all");
+		system("/usr/bin/squidGuard -c $editdir/install.conf -C all");
 		system("chmod a+w $dbdir/$besettings{'BE_NAME'}/*.db");
 
 		&readblockcategories;
@@ -2722,9 +2722,9 @@ sub setpermissions
 
 sub writeconfigfile
 {
-	my $executables = "\\.\(ade|adp|asx|bas|bat|chm|com|cmd|cpl|crt|dll|eml|exe|hiv|hlp|hta|inc|inf|ins|isp|jse|jtd|lnk|msc|msh|msi|msp|mst|nws|ocx|oft|ops|pcd|pif|plx|reg|scr|sct|sha|shb|shm|shs|sys|tlb|tsp|url|vbe|vbs|vxd|wsc|wsf|wsh\)\$";
-	my $audiovideo = "\\.\(aiff|asf|avi|dif|divx|mov|movie|mp3|mpe?g?|mpv2|ogg|ra?m|snd|qt|wav|wma|wmf|wmv\)\$";
-	my $archives = "\\.\(bin|bz2|cab|cdr|dmg|gz|hqx|rar|smi|sit|sea|tar|tgz|zip\)\$";
+	my $executables = "/[^/]*\\.\(ade|adp|asx|bas|bat|chm|com|cmd|cpl|crt|dll|eml|exe|hiv|hlp|hta|inc|inf|ins|isp|jse|jtd|lnk|msc|msh|msi|msp|mst|nws|ocx|oft|ops|pcd|pif|plx|reg|scr|sct|sha|shb|shm|shs|sys|tlb|tsp|url|vbe|vbs|vxd|wsc|wsf|wsh\)\$";
+	my $audiovideo = "/[^/]*\\.\(aiff|asf|avi|dif|divx|flv|mkv|mov|movie|mp3|mp4|mpe?g?|mpv2|ogg|ra?m|snd|qt|wav|wma|wmf|wmv\)\$";
+	my $archives = "/[^/]*\\.\(7z|bin|bz2|cab|cdr|dmg|gz|hqx|rar|smi|sit|sea|tar|tgz|zip\)\$";
 
 	my $ident = " anonymous";
 
@@ -2854,11 +2854,13 @@ sub writeconfigfile
 		if ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on')
 		{
 			print FILE "    # rewrite safesearch\n";
-			print FILE "    s@(.*\\Wgoogle\\.\\w+/(webhp|search|imghp|images|grphp|groups|frghp|froogle)\\?)(.*)(\\bsafe=\\w+)(.*)\@\\1\\3safe=strict\\5\@i\n";
-			print FILE "    s@(.*\\Wgoogle\\.\\w+/(webhp|search|imghp|images|grphp|groups|frghp|froogle)\\?)(.*)\@\\1safe=strict\\\&\\3\@i\n";
+			print FILE "    s@(.*\\Wgoogle\\.\\w+/(webhp|search|imghp|images|grphp|groups|nwshp|frghp|froogle)\\?)(.*)(\\bsafe=\\w+)(.*)\@\\1\\3safe=strict\\5\@i\n";
+			print FILE "    s@(.*\\Wgoogle\\.\\w+/(webhp|search|imghp|images|grphp|groups|nwshp|frghp|froogle)\\?)(.*)\@\\1safe=strict\\\&\\3\@i\n";
 			print FILE "    s@(.*\\Wsearch\\.yahoo\\.\\w+/search\\W)(.*)(\\bvm=\\w+)(.*)\@\\1\\2vm=r\\4\@i\n";
 			print FILE "    s@(.*\\Wsearch\\.yahoo\\.\\w+/search\\W.*)\@\\1\\\&vm=r\@i\n";
 			print FILE "    s@(.*\\Walltheweb\\.com/customize\\?)(.*)(\\bcopt_offensive=\\w+)(.*)\@\\1\\2copt_offensive=on\\4\@i\n";
+			print FILE "    s@(.*\\Wbing\\.\\w+/)(.*)(\\badlt=\\w+)(.*)\@\\1\\2adlt=strict\\4\@i\n";
+			print FILE "    s@(.*\\Wbing\\.\\w+/.*)\@\\1\\\&adlt=strict\@i\n";
 		}
 
 		print FILE "}\n\n";

@@ -19,6 +19,7 @@ other usefull commands from the Dom0:
 - reset the fire: "xm destroy ipfire-xen"
 - look what is going on: "xm top" or "xm list"
 
-This script can also build a Citrix XenCenter xva image.
-- run "XEN_IMG_TYPE=xva sh xen-image-maker.sh" to build an xva image.
-- import the vm with "xe vm-import file=ipfire.xfa"
+This script can also build a Citrix XenCenter xva image. (Need xz-aware
+xen version. Tested with Citrix Xen Server 6.5)
+- run "XEN_IMG_TYPE=xva bash xen-image-maker.sh" to build an xva image.
+- import the vm with "xe vm-import filename=ipfire.xva"

@@ -24,6 +24,7 @@ etc/rc.d/init.d/console
 #etc/rc.d/init.d/cyrus-imapd
 #etc/rc.d/init.d/cyrus-sasl
 etc/rc.d/init.d/dhcp
+etc/rc.d/init.d/dhcrelay
 etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/fcron
 #etc/rc.d/init.d/fetchmail
@@ -43,7 +44,6 @@ etc/rc.d/init.d/ipsec
 etc/rc.d/init.d/leds
 etc/rc.d/init.d/localnet
 etc/rc.d/init.d/mISDN
-#etc/rc.d/init.d/mdadm
 #etc/rc.d/init.d/mediatomb
 #etc/rc.d/init.d/messagebus
 #etc/rc.d/init.d/miau
@@ -54,6 +54,7 @@ etc/rc.d/init.d/modules
 #etc/rc.d/init.d/motion
 etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/mountkernfs
+etc/rc.d/init.d/mounttmpfs
 #etc/rc.d/init.d/mpd
 #etc/rc.d/init.d/mysql
 #etc/rc.d/init.d/netsnmpd
@@ -72,13 +73,13 @@ etc/rc.d/init.d/networking/red.down/05-RS-dnsmasq
 etc/rc.d/init.d/networking/red.down/10-ipsec
 etc/rc.d/init.d/networking/red.down/10-miniupnpd
 etc/rc.d/init.d/networking/red.down/10-ovpn
-etc/rc.d/init.d/networking/red.down/20-RL-firewall
+etc/rc.d/init.d/networking/red.down/20-firewall
 #etc/rc.d/init.d/networking/red.up
 etc/rc.d/init.d/networking/red.up/01-conntrack-cleanup
 etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq
 etc/rc.d/init.d/networking/red.up/10-miniupnpd
 etc/rc.d/init.d/networking/red.up/10-multicast
-etc/rc.d/init.d/networking/red.up/20-RL-firewall
+etc/rc.d/init.d/networking/red.up/20-firewall
 etc/rc.d/init.d/networking/red.up/23-RS-snort
 etc/rc.d/init.d/networking/red.up/24-RS-qos
 etc/rc.d/init.d/networking/red.up/27-RS-squid
@@ -116,6 +117,7 @@ etc/rc.d/init.d/sshd
 etc/rc.d/init.d/static-routes
 #etc/rc.d/init.d/stunnel
 etc/rc.d/init.d/swap
+etc/rc.d/init.d/swconfig
 etc/rc.d/init.d/sysctl
 etc/rc.d/init.d/sysklogd
 etc/rc.d/init.d/teamspeak
@@ -130,7 +132,6 @@ etc/rc.d/init.d/upnpd
 #etc/rc.d/init.d/vdradmin
 #etc/rc.d/init.d/vsftpd
 #etc/rc.d/init.d/watchdog
-#etc/rc.d/init.d/winbind
 etc/rc.d/init.d/wlanclient
 #etc/rc.d/init.d/xinetd
 #etc/rc.d/rc0.d
@@ -214,12 +215,16 @@ etc/rc.d/rcsysinit.d/S05modules
 etc/rc.d/rcsysinit.d/S10udev
 etc/rc.d/rcsysinit.d/S19waitdrives
 etc/rc.d/rcsysinit.d/S20swap
+etc/rc.d/rcsysinit.d/S25partresize
 etc/rc.d/rcsysinit.d/S30checkfs
 etc/rc.d/rcsysinit.d/S40mountfs
+etc/rc.d/rcsysinit.d/S42fsresize
+etc/rc.d/rcsysinit.d/S43mounttmpfs
 etc/rc.d/rcsysinit.d/S45udev_retry
 etc/rc.d/rcsysinit.d/S50cleanfs
 etc/rc.d/rcsysinit.d/S60setclock
 etc/rc.d/rcsysinit.d/S70console
+etc/rc.d/rcsysinit.d/S73swconfig
 etc/rc.d/rcsysinit.d/S75firstsetup
 etc/rc.d/rcsysinit.d/S80localnet
 etc/rc.d/rcsysinit.d/S85firewall

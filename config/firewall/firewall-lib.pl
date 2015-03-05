@@ -217,7 +217,7 @@ sub get_std_net_ip
 	}elsif($val eq 'BLUE'){
 		return "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}";
 	}elsif($val eq 'RED'){
-		return "0.0.0.0/0 -o $con";
+		return "0.0.0.0/0";
 	}elsif($val =~ /OpenVPN/i){
 		return "$ovpnsettings{'DOVPN_SUBNET'}";
 	}elsif($val =~ /IPsec/i){
@@ -225,6 +225,23 @@ sub get_std_net_ip
 	}elsif($val eq 'IPFire'){
 		return ;
 	}
+}
+sub get_interface
+{
+	my $net=shift;
+	if($net eq "$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}"){
+		return "$netsettings{'GREEN_DEV'}";
+	}
+	if($net eq "$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}"){
+		return "$netsettings{'ORANGE_DEV'}";
+	}
+	if($net eq "$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}"){
+		return "$netsettings{'BLUE_DEV'}";
+	}
+	if($net eq "0.0.0.0/0") {
+		return &get_external_interface();
+	}
+	return "";
 }
 sub get_net_ip
 {
@@ -305,9 +322,9 @@ sub get_address
 	# address. Otherwise, we assume that it is an IP address.
 	if ($key ~~ ["src_addr", "tgt_addr"]) {
 		if (&General::validmac($value)) {
-			push(@ret, "-m mac --mac-source $value");
+			push(@ret, ["-m mac --mac-source $value", ""]);
 		} else {
-			push(@ret, $value);
+			push(@ret, [$value, ""]);
 		}
 
 	# If a default network interface (GREEN, BLUE, etc.) is selected, we
@@ -316,88 +333,90 @@ sub get_address
 		my $external_interface = &get_external_interface();
 
 		my $network_address = &get_std_net_ip($value, $external_interface);
+
 		if ($network_address) {
-			push(@ret, $network_address);
+			my $interface = &get_interface($network_address);
+			push(@ret, [$network_address, $interface]);
 		}
 
 	# Custom networks.
 	} elsif ($key ~~ ["cust_net_src", "cust_net_tgt", "Custom Network"]) {
 		my $network_address = &get_net_ip($value);
 		if ($network_address) {
-			push(@ret, $network_address);
+			push(@ret, [$network_address, ""]);
 		}
 
 	# Custom hosts.
 	} elsif ($key ~~ ["cust_host_src", "cust_host_tgt", "Custom Host"]) {
 		my $host_address = &get_host_ip($value, $type);
 		if ($host_address) {
-			push(@ret, $host_address);
+			push(@ret, [$host_address, ""]);
 		}
 
 	# OpenVPN networks.
 	} elsif ($key ~~ ["ovpn_net_src", "ovpn_net_tgt", "OpenVPN static network"]) {
 		my $network_address = &get_ovpn_net_ip($value, 1);
 		if ($network_address) {
-			push(@ret, $network_address);
+			push(@ret, [$network_address, ""]);
 		}
 
 	# OpenVPN hosts.
 	} elsif ($key ~~ ["ovpn_host_src", "ovpn_host_tgt", "OpenVPN static host"]) {
 		my $host_address = &get_ovpn_host_ip($value, 33);
 		if ($host_address) {
-			push(@ret, $host_address);
+			push(@ret, [$host_address, ""]);
 		}
 
 	# OpenVPN N2N.
 	} elsif ($key ~~ ["ovpn_n2n_src", "ovpn_n2n_tgt", "OpenVPN N-2-N"]) {
 		my $network_address = &get_ovpn_n2n_ip($value, 11);
 		if ($network_address) {
-			push(@ret, $network_address);
+			push(@ret, [$network_address, ""]);
 		}
 
 	# IPsec networks.
 	} elsif ($key ~~ ["ipsec_net_src", "ipsec_net_tgt", "IpSec Network"]) {
 		my $network_address = &get_ipsec_net_ip($value, 11);
 		if ($network_address) {
-			push(@ret, $network_address);
+			push(@ret, [$network_address, ""]);
 		}
 
 	# The firewall's own IP addresses.
 	} elsif ($key ~~ ["ipfire", "ipfire_src"]) {
 		# ALL
 		if ($value eq "ALL") {
-			push(@ret, "0/0");
+			push(@ret, ["0/0", ""]);
 
 		# GREEN
 		} elsif ($value eq "GREEN") {
-			push(@ret, $netsettings{"GREEN_ADDRESS"});
+			push(@ret, [$netsettings{"GREEN_ADDRESS"}, ""]);
 
 		# BLUE
 		} elsif ($value eq "BLUE") {
-			push(@ret, $netsettings{"BLUE_ADDRESS"});
+			push(@ret, [$netsettings{"BLUE_ADDRESS"}, ""]);
 
 		# ORANGE
 		} elsif ($value eq "ORANGE") {
-			push(@ret, $netsettings{"ORANGE_ADDRESS"});
+			push(@ret, [$netsettings{"ORANGE_ADDRESS"}, ""]);
 
 		# RED
 		} elsif ($value ~~ ["RED", "RED1"]) {
 			my $address = &get_external_address();
 			if ($address) {
-				push(@ret, $address);
+				push(@ret, [$address, ""]);
 			}
 
 		# Aliases
 		} else {
 			my $alias = &get_alias($value);
 			if ($alias) {
-				push(@ret, $alias);
+				push(@ret, [$alias, ""]);
 			}
 		}
 
 	# If nothing was selected, we assume "any".
 	} else {
-		push(@ret, "0/0");
+		push(@ret, ["0/0", ""]);
 	}
 
 	return @ret;

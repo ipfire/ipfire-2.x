@@ -59,12 +59,12 @@ if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
 &General::readhash("${swroot}/main/settings", \%settings);
 &General::readhash("${swroot}/ethernet/settings", \%ethsettings);
 &General::readhash("${swroot}/ppp/settings", \%pppsettings);
-$language = $settings{'LANGUAGE'};
 $hostname = $settings{'HOSTNAME'};
 $hostnameintitle = 0;
 
 ### Initialize language
-if ($language =~ /^(\w+)$/) {$language = $1;}
+require "${swroot}/lang.pl";
+$language = &Lang::FindWebLanguage($settings{"LANGUAGE"});
 
 ### Read English Files
 if ( -d "/var/ipfire/langs/en/" ) {
@@ -142,6 +142,8 @@ sub genmenu {
     my %sublogshash = ();
     my $sublogs = \%sublogshash;
 
+  if ( -e "/var/ipfire/main/gpl_accepted") {
+
     eval `/bin/cat /var/ipfire/menu.d/*.menu`;
     eval `/bin/cat /var/ipfire/menu.d/*.main`;
 
@@ -159,6 +161,7 @@ sub genmenu {
     if ( $ethsettings{'RED_TYPE'} eq "PPPOE" && $pppsettings{'MONPORT'} ne "" ) {
         $menu->{'02.status'}{'subMenu'}->{'74.modem-status'}{'enabled'} = 1;
     }
+  }
 }
 
 sub showhttpheaders

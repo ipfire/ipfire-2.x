@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2013.02.13
+VER        = 2014.11.18
 
 THISAPP    = wireless-regdb-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 46a4aa49282ea6713c3cf28cc2fc600f
+$(DL_FILE)_MD5 = d750c402c5510add7380edcb1d9b75b2
 
 install : $(TARGET)
 

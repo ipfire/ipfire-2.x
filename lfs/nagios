@@ -102,7 +102,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC) && tar xfz $(DIR_DL)/nagios-plugins-1.4.13.tar.gz
 	cd $(DIR_SRC)/nagios-plugins* && ./configure --prefix=/usr \
 		--libexecdir=/usr/lib/nagios \
-		--with-nagios-user=nobody --with-nagios-group=nobody
+		--with-nagios-user=nobody --with-nagios-group=nobody \
+		--without-ipv6
 	cd $(DIR_SRC)/nagios-plugins* && make
 	cd $(DIR_SRC)/nagios-plugins* && make install
 	chown -R nobody:nobody /var/nagios

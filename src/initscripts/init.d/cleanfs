@@ -71,6 +71,13 @@ create_files() {
 
 case "${1}" in
 	start)
+		if [[ ! -L "/var/run" ]]; then
+			boot_mesg "Repair /var/run symlink to /run..."
+			mv -u /var/run/* /run/ 2>&1 > /dev/null
+			rm -rf /var/run
+			ln -s ../run /var/run
+		fi
+
 		boot_mesg -n "Cleaning file systems:" ${INFO}
 
 		boot_mesg -n " /tmp" ${NORMAL}

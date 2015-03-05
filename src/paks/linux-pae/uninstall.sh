@@ -17,15 +17,18 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2013 IPFire-Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2014 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+if [ -f /boot/grub/grub.conf ]; then
+	echo "Error! Connot remove linux-pae because we are on XEN."
+	exit 1
+fi
 remove_files
-rm -rf /boot/ipfirerd-*-pae.img
+rm -rf /boot/initramfs-*-pae.img
+rm -rf /boot/vmlinuz-*-pae
 rm -rf /lib/modules/*-ipfire-pae
-cp /boot/grub/grub.conf /boot/grub/grub-backup-pae_uninstall.conf
-sed -i "/title IPFire (PAE-Kernel)/,+3d" /boot/grub/grub.conf
-grub-set-default 1
+grub-mkconfig > /boot/grub/grub.cfg
 sync && sync

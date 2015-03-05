@@ -25,6 +25,7 @@ stunnel:x:51:
 lock:x:54:
 sshd:x:74:
 pcap:x:77:
+wbpriv:x:88:squid
 nobody:x:99:
 users:x:100:
 snort:x:101:
