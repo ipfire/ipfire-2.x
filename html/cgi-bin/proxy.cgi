@@ -3102,22 +3102,26 @@ END
 
 	print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
 	if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
+	print FILE " name=explicit_green";
 	print FILE "\n";
 
 	if ($proxysettings{'TRANSPARENT'} eq 'on') {
 		print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'TRANSPARENT_PORT'} intercept";
 		if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
+		print FILE " name=transparent_green";
 		print FILE "\n";
 	}
 
 	if ($netsettings{'BLUE_DEV'} && $proxysettings{'ENABLE_BLUE'} eq 'on') {
 		print FILE "http_port $netsettings{'BLUE_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
 		if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
+		print FILE " name=explicit_blue";
 		print FILE "\n";
 
 		if ($proxysettings{'TRANSPARENT_BLUE'} eq 'on') {
 			print FILE "http_port $netsettings{'BLUE_ADDRESS'}:$proxysettings{'TRANSPARENT_PORT'} intercept";
 			if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
+			print FILE " name=transparent_blue";
 			print FILE "\n";
 		}
 	}
