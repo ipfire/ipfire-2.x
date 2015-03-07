@@ -14,7 +14,7 @@ done
 
 # Download ruleset if none has been found.
 if ! ${found}; then
-	/us/local/bin/xt_geoip_update >/dev/null 2>&1
+	/usr/local/bin/xt_geoip_update >/dev/null 2>&1
 fi
 
 exit 0
