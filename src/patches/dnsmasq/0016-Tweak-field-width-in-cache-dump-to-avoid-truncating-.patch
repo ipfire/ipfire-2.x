@@ -1,0 +1,35 @@
+From 3267804598047bd1781cab91508d1bc516e5ddbb Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Wed, 17 Dec 2014 20:38:20 +0000
+Subject: [PATCH 16/55] Tweak field width in cache dump to avoid truncating
+ IPv6 addresses.
+
+---
+ src/cache.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/cache.c b/src/cache.c
+index 2c3a49887053..f9e1d31e8c99 100644
+--- a/src/cache.c
++++ b/src/cache.c
+@@ -1411,7 +1411,7 @@ void dump_cache(time_t now)
+ 	    *a = 0;
+ 	    if (strlen(n) == 0 && !(cache->flags & F_REVERSE))
+ 	      n = "<Root>";
+-	    p += sprintf(p, "%-40.40s ", n);
++	    p += sprintf(p, "%-30.30s ", n);
+ 	    if ((cache->flags & F_CNAME) && !is_outdated_cname_pointer(cache))
+ 	      a = cache_get_cname_target(cache);
+ #ifdef HAVE_DNSSEC
+@@ -1454,7 +1454,7 @@ void dump_cache(time_t now)
+ 	    else if (cache->flags & F_DNSKEY)
+ 	      t = "K";
+ #endif
+-	    p += sprintf(p, "%-30.30s %s%s%s%s%s%s%s%s%s  ", a, t,
++	    p += sprintf(p, "%-40.40s %s%s%s%s%s%s%s%s%s  ", a, t,
+ 			 cache->flags & F_FORWARD ? "F" : " ",
+ 			 cache->flags & F_REVERSE ? "R" : " ",
+ 			 cache->flags & F_IMMORTAL ? "I" : " ",
+-- 
+2.1.0
+

@@ -1,0 +1,36 @@
+From 6ac3bc0452a74e16e3d620a0757b0f8caab182ec Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Fri, 3 Oct 2014 08:48:11 +0100
+Subject: [PATCH 03/55] Debian build fixes for kFreeBSD
+
+---
+ src/tables.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/tables.c b/src/tables.c
+index 834f11944cd0..dcdef794c4d2 100644
+--- a/src/tables.c
++++ b/src/tables.c
+@@ -20,6 +20,10 @@
+ 
+ #if defined(HAVE_IPSET) && defined(HAVE_BSD_NETWORK)
+ 
++#ifndef __FreeBSD__
++#include <bsd/string.h>
++#endif
++
+ #include <sys/types.h>
+ #include <sys/ioctl.h>
+ 
+@@ -136,7 +140,7 @@ int add_to_ipset(const char *setname, const struct all_addr *ipaddr,
+       return -1;
+     }
+   
+-  if (rc = pfr_add_tables(&table, 1, &n, 0)) 
++  if ((rc = pfr_add_tables(&table, 1, &n, 0))) 
+     {
+       my_syslog(LOG_WARNING, _("warning: pfr_add_tables: %s(%d)"),
+ 		pfr_strerror(errno),rc);
+-- 
+2.1.0
+

@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Henrik Simonsen <cybermaze@gmail.com>, 2014
+# Henrik Simonsen <cybermaze@gmail.com>, 2014-2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-11-05 01:33+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"PO-Revision-Date: 2015-01-13 21:22+0000\n"
+"Last-Translator: Henrik Simonsen <cybermaze@gmail.com>\n"
 "Language-Team: Danish (http://www.transifex.com/projects/p/ipfire/language/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,7 +33,7 @@ msgstr "Jeg accepterer brugerlicensen"
 
 #: main.c:384
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr ""
+msgstr "Advarsel: Installation uden opsyn starter om 10 sekunder..."
 
 #: main.c:403
 msgid "Language selection"
@@ -45,7 +45,7 @@ msgstr "Vælg det sprog du ønsker at anvende under installationen."
 
 #: main.c:418
 msgid "Unattended mode"
-msgstr ""
+msgstr "Uden opsyn"
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
@@ -66,7 +66,7 @@ msgstr "Start installationen"
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr ""
+msgstr "Installationen vil nu forsøge at hente installationsbilledet."
 
 #: main.c:452
 #, c-format
@@ -74,41 +74,41 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr ""
+msgstr "Kunne ikke finde et kildedrev.\n\nDu kan prøve at hente det påkrævede installationsbillede."
 
 #: main.c:456
 msgid ""
 "Please make sure to connect your machine to a network and the installer will"
 " try connect to acquire an IP address."
-msgstr ""
+msgstr "Sørg venligst for at din computer er forbundet til et netværk, så vil installationen forsøge at skaffe en IP adresse."
 
 #: main.c:460
 msgid "Download installation image"
-msgstr ""
+msgstr "Hent installationsbillede"
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
-msgstr ""
+msgstr "Prøver at starte netværk (DHCP)..."
 
 #: main.c:484
 msgid ""
 "Networking could not be started but is required to go on with the installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr ""
+msgstr "Kunne ikke oprette forbindelse til et netværk hvilket er nødvendigt for installationen.\n\nForbind venligst din computer til et netværk med en DHCP server og prøv igen."
 
 #: main.c:487 main.c:516
 msgid "Retry"
-msgstr ""
+msgstr "Prøv igen"
 
 #: main.c:501
 msgid "Downloading installation image..."
-msgstr ""
+msgstr "Henter installationsbillede..."
 
 #: main.c:510
 #, c-format
 msgid "MD5 checksum mismatch"
-msgstr ""
+msgstr "MD5 checksum mismatch"
 
 #: main.c:513
 #, c-format
@@ -117,14 +117,14 @@ msgid ""
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Installationsbilledet kunne ikke hentes.\n  Årsag: %s\n\n%s"
 
 #: main.c:528
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr ""
+msgstr "Kunne ikke montere %s til %s:\n  %s\n"
 
 #: main.c:543
 msgid "License Agreement"
@@ -191,16 +191,16 @@ msgstr "RAID opsætning"
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
-msgstr ""
+msgstr "Din drev konfiguration er ikke understøttet pt."
 
 #: main.c:655
 msgid "Your harddisk is too small."
-msgstr "Din harddisk er for lille."
+msgstr "Din harddisk har for lille kapacitet."
 
 #: main.c:671
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
-msgstr "Din harddisk er meget lille, men du kan fortsætte uden en swap partition."
+msgstr "Din harddisk har meget lille kapacitet, men du kan fortsætte uden en swap partition."
 
 #: main.c:684
 msgid "ext4 Filesystem"
@@ -287,27 +287,27 @@ msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr ""
+msgstr "En backup fil er fundet på installationsbilledet.\n\nØnsker du at genskabe denne backup?"
 
 #: main.c:827
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: main.c:827
 msgid "No"
-msgstr ""
+msgstr "Nej"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr ""
+msgstr "Der opstod en fejl under forsøget på at genskabe backup filen."
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr ""
+msgstr "Kører efter-installation script..."
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr ""
+msgstr "Efter-installation script fejlede."
 
 #: main.c:877
 #, c-format

@@ -1,0 +1,25 @@
+From 8d8a54ec79d9f96979fabbd97b1dd2ddebc7d78f Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Sun, 1 Feb 2015 21:48:46 +0000
+Subject: [PATCH 43/55] Fix build failure on openBSD.
+
+---
+ src/tables.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/tables.c b/src/tables.c
+index dcdef794c4d2..aae1252708db 100644
+--- a/src/tables.c
++++ b/src/tables.c
+@@ -21,7 +21,7 @@
+ #if defined(HAVE_IPSET) && defined(HAVE_BSD_NETWORK)
+ 
+ #ifndef __FreeBSD__
+-#include <bsd/string.h>
++#include <string.h>
+ #endif
+ 
+ #include <sys/types.h>
+-- 
+2.1.0
+

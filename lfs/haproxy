@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2013  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,12 +24,15 @@
 
 include Config
 
-VER        = 2.0.24.1
+VER        = 1.5.11
 
-THISAPP    = teamspeak-$(VER)
+THISAPP    = haproxy-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = teamspeak
-PAK_VER    = 2
+PROG       = haproxy
+PAK_VER    = 1
 
 DEPS       = ""
 
@@ -37,26 +40,60 @@ DEPS       = ""
 # Top-level Rules
 ###############################################################################
 
-objects = 
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = 5500a79d0d2b238d4a1e9749bd0c2cb2
 
 install : $(TARGET)
 
-check :
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download :
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 :
+md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
 ###############################################################################
 
-$(TARGET) :
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	-mkdir -p /opt/teamspeak
-	install -v -m 644 $(DIR_SRC)/config/backup/includes/teamspeak \
-			/var/ipfire/backup/addons/includes/teamspeak
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && make $(MAKETUNING) CPU="generic" TARGET="linux2628" \
+		USE_OPENSSL=1 USE_PCRE=1 USE_ZLIB=1 USE_REGPARM=1 \
+		ADDINC="$(CFLAGS)" USE_LINUX_TPROXY=1 ADDLIB="$(LDFLAGS)"
+
+	cd $(DIR_APP) && make install-bin install-man PREFIX=/usr
+
+	-mkdir -pv /etc/haproxy /var/lib/haproxy
+	install -v -m 644 $(DIR_SRC)/config/haproxy/haproxy.cfg \
+		/etc/haproxy/haproxy.cfg
+
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/haproxy \
+		/var/ipfire/backup/addons/includes/haproxy
+
+	# Restore initscript
+	install -v -m 754 $(DIR_SRC)/src/initscripts/init.d/haproxy \
+		/etc/rc.d/init.d/haproxy
+
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

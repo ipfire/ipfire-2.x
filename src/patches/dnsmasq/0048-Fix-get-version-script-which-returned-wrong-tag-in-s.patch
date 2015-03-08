@@ -1,0 +1,26 @@
+From f4f400776b3c1aa303d1a0fcd500f0ab5bc970f2 Mon Sep 17 00:00:00 2001
+From: Shantanu Gadgil <shantanugadgil@yahoo.com>
+Date: Wed, 11 Feb 2015 20:16:59 +0000
+Subject: [PATCH 48/55] Fix get-version script which returned wrong tag in some
+ situations.
+
+---
+ bld/get-version | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bld/get-version b/bld/get-version
+index c246a3cc6a47..7ab75db729ac 100755
+--- a/bld/get-version
++++ b/bld/get-version
+@@ -20,7 +20,7 @@ else
+      vers=`cat $1/VERSION | sed 's/[(), ]/,/ g' | tr ',' '\n' | grep ^v[0-9]`
+ 
+      if [ $? -eq 0 ]; then
+-         echo "${vers}" | sort | head -n 1 | sed 's/^v//'
++         echo "${vers}" | sort -r | head -n 1 | sed 's/^v//'
+      else
+          cat $1/VERSION
+      fi
+-- 
+2.1.0
+

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2015-01-26 07:48+0000\n"
+"PO-Revision-Date: 2015-02-17 23:49+0000\n"
 "Last-Translator: Khalil Delavaran <khalil.delavaran@gmail.com>\n"
 "Language-Team: Persian (http://www.transifex.com/projects/p/ipfire/language/fa/)\n"
 "MIME-Version: 1.0\n"
@@ -66,7 +66,7 @@ msgstr "آغاز برپا سازی"
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr ""
+msgstr "برنامه نصب تلاش خواهد کرد که ایمیج نصب را دانلود کند."
 
 #: main.c:452
 #, c-format
@@ -80,7 +80,7 @@ msgstr "درایو منبع پیدا نشد.\n\nشما می توانید ایم�
 msgid ""
 "Please make sure to connect your machine to a network and the installer will"
 " try connect to acquire an IP address."
-msgstr ""
+msgstr "لطفا مطمئن شوید که دستگاه شما به شبکه متصل است و برنامه نصب برای بدست آوردن IP تلاش خواهد کرد."
 
 #: main.c:460
 msgid "Download installation image"

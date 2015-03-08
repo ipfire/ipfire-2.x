@@ -1,0 +1,27 @@
+From ad946d555dce44eb690c7699933b6ff40ab85bb6 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Mon, 15 Dec 2014 17:52:22 +0000
+Subject: [PATCH 12/55] CHANGELOG re. inotify.
+
+---
+ CHANGELOG | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index 68252924e743..9174b0bd75dc 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -7,6 +7,10 @@ version 2.73
+ 	    DNSSEC in use, the original rationale for this has long gone.
+ 	    Thanks to Anders Kaseorg for spotting this.
+ 
++	    Use inotify for checking on updates to /etc/resolv.conf and
++	    friends under Linux. This fixes race conditions when the files are 
++	    updated rapidly and saves CPU by noy polling.
++	
+ 
+ version 2.72
+             Add ra-advrouter mode, for RFC-3775 mobile IPv6 support.
+-- 
+2.1.0
+

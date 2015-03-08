@@ -4,14 +4,15 @@
 # 
 # Translators:
 # André Felipe Morro <andre@andremorro.com>, 2014
+# Evertton de Lima <e.everttonlima@gmail.com>, 2015
 # Leandro Luquetti Basilio da Silva <leandroluquetti@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-11-05 01:33+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
+"PO-Revision-Date: 2015-02-16 23:04+0000\n"
+"Last-Translator: Evertton de Lima <e.everttonlima@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/ipfire/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -34,19 +35,19 @@ msgstr "Eu aceito esta licença"
 
 #: main.c:384
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr ""
+msgstr "Cuidado: A instalação irá iniciar em 10 segundos..."
 
 #: main.c:403
 msgid "Language selection"
-msgstr ""
+msgstr "Seleção de idioma"
 
 #: main.c:403
 msgid "Select the language you wish to use for the installation."
-msgstr ""
+msgstr "Selecione o idioma que você deseja usar para a instalação."
 
 #: main.c:418
 msgid "Unattended mode"
-msgstr ""
+msgstr "Modo automático"
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
@@ -58,7 +59,7 @@ msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr ""
+msgstr "Bem-vindo para o programa de instalação %s.\n\nSelecionando Cancelar em qualquer uma das telas seguintes irá reiniciar o computador."
 
 #: main.c:428
 msgid "Start installation"
@@ -67,7 +68,7 @@ msgstr "Iniciar a instalação"
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr ""
+msgstr "O instalador irá tentar baixar a imagem de instalação agora."
 
 #: main.c:452
 #, c-format
@@ -85,26 +86,26 @@ msgstr ""
 
 #: main.c:460
 msgid "Download installation image"
-msgstr ""
+msgstr "Baixar imagem de instalação"
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
-msgstr ""
+msgstr "Tentando iniciar a rede (DHCP)..."
 
 #: main.c:484
 msgid ""
 "Networking could not be started but is required to go on with the installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr ""
+msgstr "Rede não pode ser iniciado, mas é necessária para continuar a instalação.\n\nPor favor, conecte sua máquina a uma rede com servidor DHCP e reinicie."
 
 #: main.c:487 main.c:516
 msgid "Retry"
-msgstr ""
+msgstr "Tentar novamente"
 
 #: main.c:501
 msgid "Downloading installation image..."
-msgstr ""
+msgstr "Baixando imagem de instalação..."
 
 #: main.c:510
 #, c-format
@@ -118,18 +119,18 @@ msgid ""
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "A imagem de instalação não pode ser baixada.\nMotivo: %s\n\n%s"
 
 #: main.c:528
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr ""
+msgstr "Não pode montar %s para %s:\n%s\n"
 
 #: main.c:543
 msgid "License Agreement"
-msgstr ""
+msgstr "Contrato de Licença"
 
 #: main.c:544
 msgid "License not accepted!"
@@ -192,7 +193,7 @@ msgstr "Configuração de RAID"
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
-msgstr ""
+msgstr "Sua configuração de disco não é suportada atualmente."
 
 #: main.c:655
 msgid "Your harddisk is too small."
@@ -201,7 +202,7 @@ msgstr "Seu disco rígido é muito pequeno."
 #: main.c:671
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
-msgstr ""
+msgstr "Seu disco rígido é muito pequeno, mas você pode continuar sem uma partição swap."
 
 #: main.c:684
 msgid "ext4 Filesystem"
@@ -277,7 +278,7 @@ msgstr "Instalando o gerenciador de inicialização..."
 
 #: main.c:790
 msgid "Unable to open /etc/default/grub for writing."
-msgstr ""
+msgstr "Não possível abrir /etc/default/grub para escrita."
 
 #: main.c:812
 msgid "Unable to install the bootloader."
@@ -288,27 +289,27 @@ msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr ""
+msgstr "Uma cópia de segurança foi encontrada na imagem de instalação.\n\nVocê quer restaurar a cópia de segurança?"
 
 #: main.c:827
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: main.c:827
 msgid "No"
-msgstr ""
+msgstr "Não"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr ""
+msgstr "Um erro ocorreu enquanto a cópia de segurança foi restaurada."
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr ""
+msgstr "Executando post-install script..."
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr ""
+msgstr "Post-install script falhou."
 
 #: main.c:877
 #, c-format
@@ -328,4 +329,4 @@ msgstr "Reiniciar"
 
 #: main.c:893
 msgid "Setup has failed. Press Ok to reboot."
-msgstr ""
+msgstr "Instalação falhou. Pressione Ok para reiniciar."

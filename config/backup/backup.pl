@@ -160,12 +160,10 @@ sub createinclude(){
   close(DATEI);
   
   foreach (@Zeilen){
-  if ( $_ =~ /\*/){
-    my @files = `ls $_`;
+    chomp($_);
+    my @files = `find $_ -maxdepth 0 2>/dev/null`;
     foreach (@files){
       push(@include,$_);
-     }
-   }
-  else {push(@include,$_);}
+    }
   }
 }

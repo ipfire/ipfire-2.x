@@ -1,0 +1,419 @@
+From 5f4dc5c6ca50655ab14f572c7e30815ed74cd51a Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Tue, 20 Jan 2015 20:51:02 +0000
+Subject: [PATCH 34/55] Add --dhcp-hostsdir config option.
+
+---
+ CHANGELOG     |   5 +++
+ man/dnsmasq.8 |   9 +++++
+ src/dnsmasq.c |  28 ++++++++++----
+ src/dnsmasq.h |  15 ++++++--
+ src/inotify.c | 119 +++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ src/option.c  |  22 +++++++++--
+ 6 files changed, 177 insertions(+), 21 deletions(-)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index bbd7e6619689..0076b557e95e 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -53,6 +53,11 @@ version 2.73
+ 	    Cope with multiple interfaces with the same link-local 
+ 	    address. (IPv6 addresses are scoped, so this is allowed.)
+ 	    Thanks to Cory Benfield for help with this.
++
++	    Add --dhcp-hostsdir. This allows addition of new host
++	    configurations to a running dnsmasq instance much more 
++	    cheaply than having dnsmasq re-read all its existing
++	    configuration each time. 
+ 	
+ 	
+ version 2.72
+diff --git a/man/dnsmasq.8 b/man/dnsmasq.8
+index 5cfa355dea4a..005b5cca8d1f 100644
+--- a/man/dnsmasq.8
++++ b/man/dnsmasq.8
+@@ -977,6 +977,15 @@ is given, then read all the files contained in that directory. The advantage of
+ using this option is the same as for --dhcp-hostsfile: the
+ dhcp-optsfile will be re-read when dnsmasq receives SIGHUP. Note that
+ it is possible to encode the information in a
++.TP
++.B --dhcp-hostsdir=<path>
++This is exactly equivalent to dhcp-hostfile, except for the following. The path MUST be a
++directory, and not an individual file. Changed or new files within
++the directory are read automatically, without the need to send SIGHUP.
++If a file is deleted for changed after it has been read by dnsmasq, then the
++host record it contained will remain until dnsmasq recieves a SIGHUP, or 
++is restarted; ie host records are only added dynamically.
++.TP
+ .B --dhcp-boot
+ flag as DHCP options, using the options names bootfile-name,
+ server-ip-address and tftp-server. This allows these to be included
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index c0c0589d4ce1..04cc98278f62 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -142,6 +142,9 @@ int main (int argc, char **argv)
+       set_option_bool(OPT_NOWILD);
+       reset_option_bool(OPT_CLEVERBIND);
+     }
++
++  if (daemon->inotify_hosts)
++    die(_("dhcp-hostsdir not supported on this platform"), NULL, EC_BADCONF);
+ #endif
+   
+   if (option_bool(OPT_DNSSEC_VALID))
+@@ -316,13 +319,16 @@ int main (int argc, char **argv)
+ #ifdef HAVE_DNSSEC
+       blockdata_init();
+ #endif
++    }
+ 
+ #ifdef HAVE_LINUX_NETWORK
+-      if (!option_bool(OPT_NO_POLL))
+-	inotify_dnsmasq_init();
++  if ((!option_bool(OPT_NO_POLL) && daemon->port != 0) ||
++      daemon->dhcp || daemon->doing_dhcp6)
++    inotify_dnsmasq_init();
++  else
++    daemon->inotifyfd = -1;
+ #endif
+-    }
+-    
++       
+   if (option_bool(OPT_DBUS))
+ #ifdef HAVE_DBUS
+     {
+@@ -745,7 +751,7 @@ int main (int argc, char **argv)
+ #endif
+ 
+ #ifdef HAVE_TFTP
+-	if (option_bool(OPT_TFTP))
++  if (option_bool(OPT_TFTP))
+     {
+ #ifdef FD_SETSIZE
+       if (FD_SETSIZE < (unsigned)max_fd)
+@@ -870,7 +876,7 @@ int main (int argc, char **argv)
+ #if defined(HAVE_LINUX_NETWORK)
+       FD_SET(daemon->netlinkfd, &rset);
+       bump_maxfd(daemon->netlinkfd, &maxfd);
+-      if (daemon->port != 0 && !option_bool(OPT_NO_POLL))
++      if (daemon->inotifyfd != -1)
+ 	{
+ 	  FD_SET(daemon->inotifyfd, &rset);
+ 	  bump_maxfd(daemon->inotifyfd, &maxfd);
+@@ -943,8 +949,11 @@ int main (int argc, char **argv)
+ #endif
+ 
+ #ifdef HAVE_LINUX_NETWORK
+-      if (daemon->port != 0 && !option_bool(OPT_NO_POLL) && FD_ISSET(daemon->inotifyfd, &rset) && inotify_check())
+-	poll_resolv(1, 1, now); 	  
++      if  (daemon->inotifyfd != -1 && FD_ISSET(daemon->inotifyfd, &rset) && inotify_check(now))
++	{
++	  if (daemon->port != 0 && !option_bool(OPT_NO_POLL))
++	    poll_resolv(1, 1, now);
++	} 	  
+ #else
+       /* Check for changes to resolv files once per second max. */
+       /* Don't go silent for long periods if the clock goes backwards. */
+@@ -1385,6 +1394,9 @@ void clear_cache_and_reload(time_t now)
+       if (option_bool(OPT_ETHERS))
+ 	dhcp_read_ethers();
+       reread_dhcp();
++#ifdef HAVE_LINUX_NETWORK
++      set_dhcp_inotify();
++#endif
+       dhcp_update_configs(daemon->dhcp_conf);
+       lease_update_from_configs(); 
+       lease_update_file(now); 
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index f8275e3ac479..d841fdc064ad 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -550,13 +550,17 @@ struct resolvc {
+ #endif
+ };
+ 
+-/* adn-hosts parms from command-line (also dhcp-hostsfile and dhcp-optsfile */
++/* adn-hosts parms from command-line (also dhcp-hostsfile and dhcp-optsfile and dhcp-hostsdir*/
+ #define AH_DIR      1
+ #define AH_INACTIVE 2
++#define AH_WD_DONE  4
+ struct hostsfile {
+   struct hostsfile *next;
+   int flags;
+   char *fname;
++#ifdef HAVE_LINUX_NETWORK
++  int wd; /* inotify watch descriptor */
++#endif
+   unsigned int index; /* matches to cache entries for logging */
+ };
+ 
+@@ -961,7 +965,7 @@ extern struct daemon {
+   int doing_ra, doing_dhcp6;
+   struct dhcp_netid_list *dhcp_ignore, *dhcp_ignore_names, *dhcp_gen_names; 
+   struct dhcp_netid_list *force_broadcast, *bootp_dynamic;
+-  struct hostsfile *dhcp_hosts_file, *dhcp_opts_file;
++  struct hostsfile *dhcp_hosts_file, *dhcp_opts_file, *inotify_hosts;
+   int dhcp_max, tftp_max;
+   int dhcp_server_port, dhcp_client_port;
+   int start_tftp_port, end_tftp_port; 
+@@ -1197,7 +1201,7 @@ void reset_option_bool(unsigned int opt);
+ struct hostsfile *expand_filelist(struct hostsfile *list);
+ char *parse_server(char *arg, union mysockaddr *addr, 
+ 		   union mysockaddr *source_addr, char *interface, int *flags);
+-
++int option_read_hostsfile(char *file);
+ /* forward.c */
+ void reply_query(int fd, int family, time_t now);
+ void receive_query(struct listener *listen, time_t now);
+@@ -1486,5 +1490,8 @@ int detect_loop(char *query, int type);
+ /* inotify.c */
+ #ifdef HAVE_LINUX_NETWORK
+ void inotify_dnsmasq_init();
+-int inotify_check(void);
++int inotify_check(time_t now);
++#  ifdef HAVE_DHCP
++void set_dhcp_inotify(void);
++#  endif
+ #endif
+diff --git a/src/inotify.c b/src/inotify.c
+index 83730008c11b..52a30d7f44db 100644
+--- a/src/inotify.c
++++ b/src/inotify.c
+@@ -19,6 +19,11 @@
+ 
+ #include <sys/inotify.h>
+ 
++#ifdef HAVE_DHCP
++static void check_for_dhcp_inotify(struct inotify_event *in, time_t now);
++#endif
++
++
+ /* the strategy is to set a inotify on the directories containing
+    resolv files, for any files in the directory which are close-write 
+    or moved into the directory.
+@@ -40,8 +45,6 @@ void inotify_dnsmasq_init()
+   struct resolvc *res;
+ 
+   inotify_buffer = safe_malloc(INOTIFY_SZ);
+-
+-
+   daemon->inotifyfd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
+   
+   if (daemon->inotifyfd == -1)
+@@ -66,6 +69,7 @@ void inotify_dnsmasq_init()
+ 	{
+ 	  *d = 0; /* make path just directory */
+ 	  res->wd = inotify_add_watch(daemon->inotifyfd, path, IN_CLOSE_WRITE | IN_MOVED_TO);
++
+ 	  res->file = d+1; /* pointer to filename */
+ 	  *d = '/';
+ 	  
+@@ -78,7 +82,7 @@ void inotify_dnsmasq_init()
+     }
+ }
+ 
+-int inotify_check(void)
++int inotify_check(time_t now)
+ {
+   int hit = 0;
+   
+@@ -101,13 +105,116 @@ int inotify_check(void)
+ 	  for (res = daemon->resolv_files; res; res = res->next)
+ 	    if (res->wd == in->wd && in->len != 0 && strcmp(res->file, in->name) == 0)
+ 	      hit = 1;
++
++#ifdef HAVE_DHCP
++	  if (daemon->dhcp || daemon->doing_dhcp6)
++	    check_for_dhcp_inotify(in, now);
++#endif
+ 	}
+     }
+-
+   return hit;
+ }
+ 
+-#endif
++#ifdef HAVE_DHCP 
++/* initialisation for dhcp-hostdir. Set inotify watch for each directory, and read pre-existing files */
++void set_dhcp_inotify(void)
++{
++  struct hostsfile *ah;
+ 
+-  
++  for (ah = daemon->inotify_hosts; ah; ah = ah->next)
++    {
++       DIR *dir_stream = NULL;
++       struct dirent *ent;
++       struct stat buf;
++
++       if (stat(ah->fname, &buf) == -1 || !(S_ISDIR(buf.st_mode)))
++	 {
++	   my_syslog(LOG_ERR, _("bad directory in dhcp-hostsdir %s"), ah->fname);
++	   continue;
++	 }
++
++       if (!(ah->flags & AH_WD_DONE))
++	 {
++	   ah->wd = inotify_add_watch(daemon->inotifyfd, ah->fname, IN_CLOSE_WRITE | IN_MOVED_TO);
++	   ah->flags |= AH_WD_DONE;
++	 }
++       /* Read contents of dir _after_ calling add_watch, in the ho[e of avoiding
++	  a race which misses files being added as we start */
++       if (ah->wd == -1 || !(dir_stream = opendir(ah->fname)))
++	 {
++	   my_syslog(LOG_ERR, _("failed to create inotify for %s"), ah->fname);
++	   continue;
++	 }
++
++       while ((ent = readdir(dir_stream)))
++	 {
++	   size_t lendir = strlen(ah->fname);
++	   size_t lenfile = strlen(ent->d_name);
++	   char *path;
++	   
++	   /* ignore emacs backups and dotfiles */
++	   if (lenfile == 0 || 
++	       ent->d_name[lenfile - 1] == '~' ||
++	       (ent->d_name[0] == '#' && ent->d_name[lenfile - 1] == '#') ||
++	       ent->d_name[0] == '.')
++	     continue;
++	   
++	   if ((path = whine_malloc(lendir + lenfile + 2)))
++	     {
++	       strcpy(path, ah->fname);
++	       strcat(path, "/");
++	       strcat(path, ent->d_name);
++	       
++	       /* ignore non-regular files */
++	       if (stat(path, &buf) != -1 && S_ISREG(buf.st_mode))
++		 option_read_hostsfile(path);
++	       
++	       free(path);
++	     }
++	 }
++    }
++}
++
++static void check_for_dhcp_inotify(struct inotify_event *in, time_t now)
++{
++  struct hostsfile *ah;
++
++  /* ignore emacs backups and dotfiles */
++  if (in->len == 0 || 
++      in->name[in->len - 1] == '~' ||
++      (in->name[0] == '#' && in->name[in->len - 1] == '#') ||
++      in->name[0] == '.')
++    return;
++
++  for (ah = daemon->inotify_hosts; ah; ah = ah->next)
++    if (ah->wd == in->wd)
++      {
++	size_t lendir = strlen(ah->fname);
++	char *path;
++	   
++	if ((path = whine_malloc(lendir + in->len + 2)))
++	  {
++	    strcpy(path, ah->fname);
++	    strcat(path, "/");
++	    strcat(path, in->name);
++	    
++	    if (option_read_hostsfile(path))
++	      {
++		/* Propogate the consequences of loading a new dhcp-host */
++		dhcp_update_configs(daemon->dhcp_conf);
++		lease_update_from_configs(); 
++		lease_update_file(now); 
++		lease_update_dns(1);
++	      }
++	    
++	    free(path);
++	  }
++	
++	return;
++      }
++}
++
++#endif /* DHCP */
++
++#endif  /* LINUX_NETWORK */
+   
+diff --git a/src/option.c b/src/option.c
+index 8b994098cc9f..22e11c37d374 100644
+--- a/src/option.c
++++ b/src/option.c
+@@ -149,7 +149,7 @@ struct myoption {
+ #define LOPT_LOOP_DETECT   337
+ #define LOPT_IGNORE_ADDR   338
+ #define LOPT_MINCTTL       339
+-
++#define LOPT_DHCP_INOTIFY  340
+ 
+ #ifdef HAVE_GETOPT_LONG
+ static const struct option opts[] =  
+@@ -248,6 +248,7 @@ static const struct myoption opts[] =
+     { "interface-name", 1, 0, LOPT_INTNAME },
+     { "dhcp-hostsfile", 1, 0, LOPT_DHCP_HOST },
+     { "dhcp-optsfile", 1, 0, LOPT_DHCP_OPTS },
++    { "dhcp-hostsdir", 1, 0, LOPT_DHCP_INOTIFY },
+     { "dhcp-no-override", 0, 0, LOPT_OVERRIDE },
+     { "tftp-port-range", 1, 0, LOPT_TFTPPORTS },
+     { "stop-dns-rebind", 0, 0, LOPT_REBIND },
+@@ -336,6 +337,7 @@ static struct {
+   { 'G', ARG_DUP, "<hostspec>", gettext_noop("Set address or hostname for a specified machine."), NULL },
+   { LOPT_DHCP_HOST, ARG_DUP, "<path>", gettext_noop("Read DHCP host specs from file."), NULL },
+   { LOPT_DHCP_OPTS, ARG_DUP, "<path>", gettext_noop("Read DHCP option specs from file."), NULL },
++  { LOPT_DHCP_INOTIFY, ARG_DUP, "<path>", gettext_noop("Read DHCP host specs from a directory."), NULL }, 
+   { LOPT_TAG_IF, ARG_DUP, "tag-expression", gettext_noop("Evaluate conditional tag expression."), NULL },
+   { 'h', OPT_NO_HOSTS, NULL, gettext_noop("Do NOT load %s file."), HOSTSFILE },
+   { 'H', ARG_DUP, "<path>", gettext_noop("Specify a hosts file to be read in addition to %s."), HOSTSFILE },
+@@ -1710,8 +1712,9 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+       break;
+ #endif /* HAVE_DHCP */
+ 
+-    case LOPT_DHCP_HOST: /* --dhcp-hostfile */
++    case LOPT_DHCP_HOST: /* --dhcp-hostsfile */
+     case LOPT_DHCP_OPTS: /* --dhcp-optsfile */
++    case LOPT_DHCP_INOTIFY: /* dhcp-hostsdir */
+     case 'H': /* --addn-hosts */
+       {
+ 	struct hostsfile *new = opt_malloc(sizeof(struct hostsfile));
+@@ -1734,6 +1737,12 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+ 	    new->next = daemon->dhcp_opts_file;
+ 	    daemon->dhcp_opts_file = new;
+ 	  } 	  
++	else if (option == LOPT_DHCP_INOTIFY)
++	  {
++	    new->next = daemon->inotify_hosts;
++	    daemon->inotify_hosts = new;
++	  }
++	
+ 	break;
+       }
+       
+@@ -4042,6 +4051,13 @@ static void read_file(char *file, FILE *f, int hard_opt)
+   fclose(f);
+ }
+ 
++#ifdef HAVE_DHCP
++int option_read_hostsfile(char *file)
++{
++  return one_file(file, LOPT_BANK);
++}
++#endif
++
+ static int one_file(char *file, int hard_opt)
+ {
+   FILE *f;
+@@ -4139,7 +4155,7 @@ struct hostsfile *expand_filelist(struct hostsfile *list)
+ 	    
+ 	    /* don't read this as a file */
+ 	    ah->flags |= AH_INACTIVE;
+-
++	    
+ 	    if (!(dir_stream = opendir(ah->fname)))
+ 	      my_syslog(LOG_ERR, _("cannot access directory %s: %s"), 
+ 			ah->fname, strerror(errno));
+-- 
+2.1.0
+
