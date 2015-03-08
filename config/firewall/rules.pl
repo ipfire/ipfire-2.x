@@ -586,6 +586,9 @@ sub geoipblock {
 		# Read settings file
 		&General::readhash("$geoipfile", \%geoipsettings);
 	} else {
+		# Drop active rules.
+		run("$IPTABLES -F GEOIPBLOCK");
+
 		# Exit submodule, go on processing the remaining script
 		return;
 	}
@@ -599,7 +602,7 @@ sub geoipblock {
 	# Get supported locations.
 	my @locations = &fwlib::get_geoip_locations();
 
-	# Create iptables chain.
+	# Flush iptables chain.
 	run("$IPTABLES -F GEOIPBLOCK");
 
 	# Loop through all supported geoip locations and
