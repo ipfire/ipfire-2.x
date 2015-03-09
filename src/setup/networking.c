@@ -117,7 +117,6 @@ int handlenetworking(void)
 	} else {
 		rename_nics();
 	}
-	create_udev();
 	return 1;
 }
 
