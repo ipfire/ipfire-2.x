@@ -128,6 +128,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0053-Log-parsing-utils-in-contrib-reverse-dns.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0054-Add-dnssec-timestamp-option-and-facility.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0055-Fix-last-commit-to-not-crash-if-uid-changing-not-con.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0056-New-version-of-contrib-reverse-dns.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0057-Tweak-DNSSEC-timestamp-code-to-create-file-later-rem.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 	cd $(DIR_APP) && sed -i src/config.h \
 		-e 's|/\* #define HAVE_IDN \*/|#define HAVE_IDN|g' \
