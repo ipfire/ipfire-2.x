@@ -437,14 +437,6 @@ sub writeipsecfiles {
 	}
 	print CONF "\n";
     }#foreach key
-
-    # Add post user includes to config file
-    # After the GUI-connections allows to patch connections.
-    if (-e "/etc/ipsec.user-post.conf") {
-        print CONF "include /etc/ipsec.user-post.conf\n";
-        print CONF "\n";
-    }
-
     print SECRETS $last_secrets if ($last_secrets);
     close(CONF);
     close(SECRETS);
@@ -1886,12 +1878,12 @@ END
 	$cgiparams{'REMOTE_ID'} = '';
 
 	#use default advanced value
-	$cgiparams{'IKE_ENCRYPTION'} = 'aes256|aes192|aes128|3des';	#[18];
-	$cgiparams{'IKE_INTEGRITY'}  = 'sha2_256|sha|md5';	#[19];
+	$cgiparams{'IKE_ENCRYPTION'} = 'aes256|aes192|aes128|aes256gcm128|aes192gcm128|aes128gcm128|aes256gcm96|aes192gcm96|aes128gcm96|aes256gcm64|aes192gcm64|aes128gcm64';	#[18];
+	$cgiparams{'IKE_INTEGRITY'}  = 'sha2_512|sha2_256|sha';	#[19];
 	$cgiparams{'IKE_GROUPTYPE'}  = '4096|3072|2048|1536|1024';		#[20];
 	$cgiparams{'IKE_LIFETIME'}   = '3';		#[16];
-	$cgiparams{'ESP_ENCRYPTION'} = 'aes256|aes192|aes128|3des';	#[21];
-	$cgiparams{'ESP_INTEGRITY'}  = 'sha2_256|sha1|md5';	#[22];
+	$cgiparams{'ESP_ENCRYPTION'} = 'aes256|aes192|aes128|aes256gcm128|aes192gcm128|aes128gcm128|aes256gcm96|aes192gcm96|aes128gcm96|aes256gcm64|aes192gcm64|aes128gcm64';	#[21];
+	$cgiparams{'ESP_INTEGRITY'}  = 'sha2_512|sha2_256|sha1';	#[22];
 	$cgiparams{'ESP_GROUPTYPE'}  = '';		#[23];
 	$cgiparams{'ESP_KEYLIFE'}    = '1';		#[17];
 	$cgiparams{'COMPRESSION'}    = 'on';		#[13];
@@ -2145,7 +2137,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(aes256|aes192|aes128|3des|camellia256|camellia192|camellia128)$/) {
+	    if ($val !~ /^(aes(256|192|128)(gcm(128|96|64))?|3des|camellia(256|192|128))$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2176,8 +2168,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    $errormessage = $Lang::tr{'invalid input for ike lifetime'};
 	    goto ADVANCED_ERROR;
 	}
-	if ($cgiparams{'IKE_LIFETIME'} < 1 || $cgiparams{'IKE_LIFETIME'} > 24) {
-	    $errormessage = $Lang::tr{'ike lifetime should be between 1 and 24 hours'};
+	if ($cgiparams{'IKE_LIFETIME'} < 1 || $cgiparams{'IKE_LIFETIME'} > 8) {
+	    $errormessage = $Lang::tr{'ike lifetime should be between 1 and 8 hours'};
 	    goto ADVANCED_ERROR;
 	}
 	@temp = split('\|', $cgiparams{'ESP_ENCRYPTION'});
@@ -2186,7 +2178,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(aes256|aes192|aes128|3des|camellia256|camellia192|camellia128)$/) {
+	    if ($val !~ /^(aes(256|192|128)(gcm(128|96|64))?|3des|camellia(256|192|128))$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2297,6 +2289,15 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'IKE_ENCRYPTION'}{'aes256'} = '';
     $checked{'IKE_ENCRYPTION'}{'aes192'} = '';
     $checked{'IKE_ENCRYPTION'}{'aes128'} = '';
+    $checked{'IKE_ENCRYPTION'}{'aes256gcm128'} = '';
+    $checked{'IKE_ENCRYPTION'}{'aes192gcm128'} = '';
+    $checked{'IKE_ENCRYPTION'}{'aes128gcm128'} = '';
+    $checked{'IKE_ENCRYPTION'}{'aes256gcm96'} = '';
+    $checked{'IKE_ENCRYPTION'}{'aes192gcm96'} = '';
+    $checked{'IKE_ENCRYPTION'}{'aes128gcm96'} = '';
+    $checked{'IKE_ENCRYPTION'}{'aes256gcm64'} = '';
+    $checked{'IKE_ENCRYPTION'}{'aes192gcm64'} = '';
+    $checked{'IKE_ENCRYPTION'}{'aes128gcm64'} = '';
     $checked{'IKE_ENCRYPTION'}{'3des'} = '';
     $checked{'IKE_ENCRYPTION'}{'camellia256'} = '';
     $checked{'IKE_ENCRYPTION'}{'camellia192'} = '';
@@ -2328,6 +2329,15 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'ESP_ENCRYPTION'}{'aes256'} = '';
     $checked{'ESP_ENCRYPTION'}{'aes192'} = '';
     $checked{'ESP_ENCRYPTION'}{'aes128'} = '';
+    $checked{'ESP_ENCRYPTION'}{'aes256gcm128'} = '';
+    $checked{'ESP_ENCRYPTION'}{'aes192gcm128'} = '';
+    $checked{'ESP_ENCRYPTION'}{'aes128gcm128'} = '';
+    $checked{'ESP_ENCRYPTION'}{'aes256gcm96'} = '';
+    $checked{'ESP_ENCRYPTION'}{'aes192gcm96'} = '';
+    $checked{'ESP_ENCRYPTION'}{'aes128gcm96'} = '';
+    $checked{'ESP_ENCRYPTION'}{'aes256gcm64'} = '';
+    $checked{'ESP_ENCRYPTION'}{'aes192gcm64'} = '';
+    $checked{'ESP_ENCRYPTION'}{'aes128gcm64'} = '';
     $checked{'ESP_ENCRYPTION'}{'3des'} = '';
     $checked{'ESP_ENCRYPTION'}{'camellia256'} = '';
     $checked{'ESP_ENCRYPTION'}{'camellia192'} = '';
@@ -2406,24 +2416,42 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			<td class='boldbase' width="15%">$Lang::tr{'encryption'}</td>
 			<td class='boldbase'>
 				<select name='IKE_ENCRYPTION' multiple='multiple' size='6' style='width: 100%'>
-					<option value='aes256' $checked{'IKE_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
-					<option value='aes192' $checked{'IKE_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
-					<option value='aes128' $checked{'IKE_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
-					<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>3DES</option>
-					<option value='camellia256' $checked{'IKE_ENCRYPTION'}{'camellia256'}>Camellia (256 bit)</option>
-					<option value='camellia192' $checked{'IKE_ENCRYPTION'}{'camellia192'}>Camellia (192 bit)</option>
-					<option value='camellia128' $checked{'IKE_ENCRYPTION'}{'camellia128'}>Camellia (128 bit)</option>
+					<option value='aes256' $checked{'IKE_ENCRYPTION'}{'aes256'}>256 bit AES-CBC</option>
+					<option value='aes192' $checked{'IKE_ENCRYPTION'}{'aes192'}>192 bit AES-CBC</option>
+					<option value='aes128' $checked{'IKE_ENCRYPTION'}{'aes128'}>128 bit AES-CBC</option>
+					<option value='aes256gcm128' $checked{'IKE_ENCRYPTION'}{'aes256gcm128'}>256 bit AES-GCM/128 bit ICV</option>
+					<option value='aes192gcm128' $checked{'IKE_ENCRYPTION'}{'aes192gcm128'}>192 bit AES-GCM/128 bit ICV</option>
+					<option value='aes128gcm128' $checked{'IKE_ENCRYPTION'}{'aes128gcm128'}>128 bit AES-GCM/128 bit ICV</option>
+					<option value='aes256gcm96' $checked{'IKE_ENCRYPTION'}{'aes256gcm96'}>256 bit AES-GCM/96 bit ICV</option>
+					<option value='aes192gcm96' $checked{'IKE_ENCRYPTION'}{'aes192gcm96'}>192 bit AES-GCM/96 bit ICV</option>
+					<option value='aes128gcm96' $checked{'IKE_ENCRYPTION'}{'aes128gcm96'}>128 bit AES-GCM/96 bit ICV</option>
+					<option value='aes256gcm64' $checked{'IKE_ENCRYPTION'}{'aes256gcm64'}>256 bit AES-GCM/64 bit ICV</option>
+					<option value='aes192gcm64' $checked{'IKE_ENCRYPTION'}{'aes192gcm64'}>192 bit AES-GCM/64 bit ICV</option>
+					<option value='aes128gcm64' $checked{'IKE_ENCRYPTION'}{'aes128gcm64'}>128 bit AES-GCM/64 bit ICV</option>
+					<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>168 bit 3DES-EDE-CBC</option>
+					<option value='camellia256' $checked{'IKE_ENCRYPTION'}{'camellia256'}>256 bit Camellia-CBC</option>
+					<option value='camellia192' $checked{'IKE_ENCRYPTION'}{'camellia192'}>192 bit Camellia-CBC</option>
+					<option value='camellia128' $checked{'IKE_ENCRYPTION'}{'camellia128'}>128 bit Camellia-CBC</option>
 				</select>
 			</td>
 			<td class='boldbase'>
 				<select name='ESP_ENCRYPTION' multiple='multiple' size='6' style='width: 100%'>
-					<option value='aes256' $checked{'ESP_ENCRYPTION'}{'aes256'}>AES (256 bit)</option>
-					<option value='aes192' $checked{'ESP_ENCRYPTION'}{'aes192'}>AES (192 bit)</option>
-					<option value='aes128' $checked{'ESP_ENCRYPTION'}{'aes128'}>AES (128 bit)</option>
-					<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>3DES</option>
-					<option value='camellia256' $checked{'ESP_ENCRYPTION'}{'camellia256'}>Camellia (256 bit)</option>
-					<option value='camellia192' $checked{'ESP_ENCRYPTION'}{'camellia192'}>Camellia (192 bit)</option>
-					<option value='camellia128' $checked{'ESP_ENCRYPTION'}{'camellia128'}>Camellia (128 bit)</option>
+					<option value='aes256' $checked{'ESP_ENCRYPTION'}{'aes256'}>256 bit AES-CBC</option>
+					<option value='aes192' $checked{'ESP_ENCRYPTION'}{'aes192'}>192 bit AES-CBC</option>
+					<option value='aes128' $checked{'ESP_ENCRYPTION'}{'aes128'}>128 bit AES-CBC</option>
+					<option value='aes256gcm128' $checked{'ESP_ENCRYPTION'}{'aes256gcm128'}>256 bit AES-GCM/128 bit ICV</option>
+					<option value='aes192gcm128' $checked{'ESP_ENCRYPTION'}{'aes192gcm128'}>192 bit AES-GCM/128 bit ICV</option>
+					<option value='aes128gcm128' $checked{'ESP_ENCRYPTION'}{'aes128gcm128'}>128 bit AES-GCM/128 bit ICV</option>
+					<option value='aes256gcm96' $checked{'ESP_ENCRYPTION'}{'aes256gcm96'}>256 bit AES-GCM/96 bit ICV</option>
+					<option value='aes192gcm96' $checked{'ESP_ENCRYPTION'}{'aes192gcm96'}>192 bit AES-GCM/96 bit ICV</option>
+					<option value='aes128gcm96' $checked{'ESP_ENCRYPTION'}{'aes128gcm96'}>128 bit AES-GCM/96 bit ICV</option>
+					<option value='aes256gcm64' $checked{'ESP_ENCRYPTION'}{'aes256gcm64'}>256 bit AES-GCM/64 bit ICV</option>
+					<option value='aes192gcm64' $checked{'ESP_ENCRYPTION'}{'aes192gcm64'}>192 bit AES-GCM/64 bit ICV</option>
+					<option value='aes128gcm64' $checked{'ESP_ENCRYPTION'}{'aes128gcm64'}>128 bit AES-GCM/64 bit ICV</option>
+					<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>168 bit 3DES-EDE-CBC</option>
+					<option value='camellia256' $checked{'ESP_ENCRYPTION'}{'camellia256'}>256 bit Camellia-CBC</option>
+					<option value='camellia192' $checked{'ESP_ENCRYPTION'}{'camellia192'}>192 bit Camellia-CBC</option>
+					<option value='camellia128' $checked{'ESP_ENCRYPTION'}{'camellia128'}>128 bit Camellia-CBC</option>
 				</select>
 			</td>
 		</tr>
