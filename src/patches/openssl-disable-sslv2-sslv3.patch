@@ -1,0 +1,13 @@
+diff -up openssl-1.0.1h/ssl/ssl_lib.c.v2v3 openssl-1.0.1h/ssl/ssl_lib.c
+--- openssl-1.0.1h/ssl/ssl_lib.c.v2v3	2014-06-11 16:02:52.000000000 +0200
++++ openssl-1.0.1h/ssl/ssl_lib.c	2014-06-30 14:18:04.290248080 +0200
+@@ -1875,6 +1875,9 @@ SSL_CTX *SSL_CTX_new(const SSL_METHOD *m
+ 	 */
+ 	ret->options |= SSL_OP_LEGACY_SERVER_CONNECT;
+ 
++	/* Disable SSLv2 and SSLv3 by default (affects the SSLv23_method() only) */
++	ret->options |= SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3;
++
+ 	return(ret);
+ err:
+ 	SSLerr(SSL_F_SSL_CTX_NEW,ERR_R_MALLOC_FAILURE);

@@ -86,6 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-cryptodev.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-fix_parallel_build-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-weak-ciphers.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-disable-sslv2-sslv3.patch
 
 	cd $(DIR_APP) && find crypto/ -name Makefile -exec \
 		sed 's/^ASFLAGS=/&-Wa,--noexecstack /' -i {} \;
