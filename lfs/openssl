@@ -105,8 +105,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		no-mdc2 \
 		no-rc5 \
 		no-srp \
-		no-ssl2 \
-		no-ssl3 \
 		$(CONFIGURE_ARGS) \
 		-DSSL_FORBID_ENULL \
 		-DHAVE_CRYPTODEV \
