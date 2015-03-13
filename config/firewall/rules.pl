@@ -415,6 +415,9 @@ sub buildrules {
 
 							push(@nat_options, @source_options);
 							push(@nat_options, ("-d", $nat_address));
+							if ($source_intf) {
+								push(@nat_options, ('-i', $source_intf));
+							}
 
 							my $dnat_port;
 							if ($protocol_has_ports) {
@@ -460,6 +463,9 @@ sub buildrules {
 
 							push(@nat_options, @source_options);
 							push(@nat_options, @destination_options);
+							if ($destination_intf) {
+								push(@nat_options, ('-o', $destination_intf));
+							}
 
 							if ($LOG) {
 								run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options @log_limit_options -j LOG --log-prefix 'SNAT '");
