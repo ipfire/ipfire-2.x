@@ -646,12 +646,12 @@ print <<END
 		<td width='10%' class='boldbase'>$Lang::tr{'dhcp dns key name'}:</td>
 		<td width='20%'><input type='text' name='DNS_UPDATE_KEY_NAME_${itf}' value='$dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"}'></td>
 		<td width='10%' class='boldbase' align='right'>$Lang::tr{'dhcp dns update secret'}:&nbsp;&nbsp;</td>
-		<td width='20%'><input type='password' name='DNS_UPDATE_SECRET_${itf}' value='$dhcpsettings{"DNS_UPDATE_SECRET_${itf}"}'></td>
+		<td width='20%'><input type='password' name='DNS_UPDATE_KEY_SECRET_${itf}' value='$dhcpsettings{"DNS_UPDATE_KEY_SECRET_${itf}"}'></td>
 		<td width='10%' class='boldbase' align='right'>$Lang::tr{'dhcp dns update algo'}:&nbsp;&nbsp;</td>
 		<td width='20%'>
-			<select name='DNS_UPDATE_ALGO_${itf}'>
-				<option value='hmac-sha1' $selected{'DNS_UPDATE_ALGO_${itf}'}{'hmac-sha1'}>HMAC-SHA1</option>
-				<option value='hmac-md5' $selected{'DNS_UPDATE_ALGO_${itf}'}{'hmac-md5'}>HMAC-MD5</option>
+			<select name='DNS_UPDATE_KEY_ALGO_${itf}'>
+				<option value='hmac-sha1' $selected{'DNS_UPDATE_KEY_ALGO_${itf}'}{'hmac-sha1'}>HMAC-SHA1</option>
+				<option value='hmac-md5' $selected{'DNS_UPDATE_KEY_ALGO_${itf}'}{'hmac-md5'}>HMAC-MD5</option>
 			</select>
 		</td>
 	</tr>
@@ -1220,12 +1220,13 @@ sub buildconf {
 	    }
 	}# on    
     }# foreach line
+    print FILE "\n";
 
     #Subnet range definition
     foreach my $itf (@ITFs) {
 	my $lc_itf=lc($itf);
 	if ($dhcpsettings{"ENABLE_${itf}"} eq 'on' ){
-	    print FILE "\nsubnet " . $netsettings{"${itf}_NETADDRESS"} . " netmask ". $netsettings{"${itf}_NETMASK"} . " #$itf\n";
+	    print FILE "subnet " . $netsettings{"${itf}_NETADDRESS"} . " netmask ". $netsettings{"${itf}_NETMASK"} . " #$itf\n";
 	    print FILE "{\n";
 	    print FILE "\trange " . $dhcpsettings{"START_ADDR_${itf}"} . ' ' . $dhcpsettings{"END_ADDR_${itf}"}.";\n" if ($dhcpsettings{"START_ADDR_${itf}"});
 	    print FILE "\toption subnet-mask "   . $netsettings{"${itf}_NETMASK"} . ";\n";
@@ -1262,10 +1263,10 @@ sub buildconf {
 		    }
 		}# on    
 	    }# foreach line
-	    print FILE "} #$itf\n";
+	    print FILE "} #$itf\n\n";
 
 	    if (($dhcpsettings{"DNS_UPDATE_ENABLED"} eq "on") && ($dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} ne "")) {
-	        print FILE "key " . $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} . "{\n";
+	        print FILE "key " . $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} . " {\n";
 	        print FILE "\talgorithm " . $dhcpsettings{"DNS_UPDATE_KEY_ALGO_${itf}"} . ";\n";
 	        print FILE "\tsecret \"" . $dhcpsettings{"DNS_UPDATE_KEY_SECRET_${itf}"} . "\";\n";
 	        print FILE "};\n\n";
