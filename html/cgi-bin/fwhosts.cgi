@@ -685,6 +685,9 @@ if ($fwhostsettings{'ACTION'} eq 'savegeoipgrp')
 	my @target;
 	my @newgrp;
 	&General::readhasharray("$configgeoipgrp", \%customgeoipgrp);
+	&General::readhasharray("$fwconfigfwd", \%fwfwd);
+	&General::readhasharray("$fwconfiginp", \%fwinp);
+	&General::readhasharray("$fwconfigout", \%fwout);
 
 	# Check for existing group name.
 	if (!&checkgroup($grp) && $fwhostsettings{'update'} ne 'on'){
