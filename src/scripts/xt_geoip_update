@@ -1,0 +1,121 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2014 IPFire Development Team <info@ipfire.org>                #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+TMP_PATH=$(mktemp -d)
+TMP_FILE=$(mktemp -p $TMP_PATH)
+
+SCRIPT_PATH=/usr/libexec/xtables-addons
+DEST_PATH=/usr/share/xt_geoip
+
+DL_URL=http://geolite.maxmind.com/download/geoip/database
+DL_FILE=GeoIPCountryCSV.zip
+
+CSV_FILE=GeoIPCountryWhois.csv
+
+ARCH=LE
+
+function download() {
+	echo "Downloading latest GeoIP ruleset..."
+
+	# Create temporary directory.
+	mkdir -pv $TMP_PATH
+
+	# Get the latest GeoIP database from server.
+	wget $DL_URL/$DL_FILE -O $TMP_FILE
+
+	# Extract files.
+	unzip $TMP_FILE -d $TMP_PATH
+
+	return 0
+}
+
+function build() {
+	echo "Convert database..."
+
+	# Check if the csv file exists.
+	if [ ! -e $TMP_PATH/$CSV_FILE ]; then
+		echo "$TMP_PATH/$CSV_FILE not found. Exiting."
+		return 1
+	fi
+
+	# Run script to convert the CSV file into several xtables
+	# compatible binary files.
+	if ! $SCRIPT_PATH/xt_geoip_build $TMP_PATH/$CSV_FILE -D $TMP_PATH; then
+		echo "Could not convert ruleset. Aborting." >&2
+		return 1
+	fi
+
+	return 0
+}
+
+function install() {
+	echo "Install databases..."
+
+	# Check if our destination exist.
+	if [ ! -e "$DEST_PATH" ]; then
+		mkdir -p $DEST_PATH &>/dev/null
+	fi
+
+	# Install databases.
+	if ! cp -af $TMP_PATH/$ARCH $DEST_PATH &>/dev/null; then
+		echo "Could not copy files. Aborting." >&2
+		return 1
+	fi
+
+	return 0
+}
+
+function cleanup() {
+	echo "Cleaning up temporary files..."
+	if ! rm -rf $TMP_PATH &>/dev/null; then
+		echo "Could not remove files. Aborting." >&2
+		return 1
+	fi
+
+	return 0
+}
+
+function main() {
+	# Download ruleset.
+	download || exit $?
+
+	# Convert the ruleset.
+	if ! build; then
+		# Do cleanup.
+		cleanup || exit $?
+		exit 1
+	fi
+
+	# Install the converted ruleset.
+	if ! install; then
+		# Do cleanup.
+		cleanup || exit $?
+		exit 1
+	fi
+
+	# Finaly remove temporary files.
+	cleanup || exit $?
+
+	return 0
+}
+
+# Run the main function.
+main

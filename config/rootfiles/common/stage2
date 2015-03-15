@@ -101,6 +101,8 @@ usr/local/bin/timecheck
 usr/local/bin/timezone-transition
 usr/local/bin/update-bootloader
 usr/local/bin/update-lang-cache
+usr/local/bin/xt_geoip_build
+usr/local/bin/xt_geoip_update
 #usr/local/include
 #usr/local/lib
 #usr/local/lib/sse2
@@ -120,6 +122,7 @@ usr/local/bin/update-lang-cache
 #usr/local/share/man/man8
 #usr/local/share/misc
 #usr/local/share/terminfo
+#usr/local/share/xt_geoip
 #usr/local/share/zoneinfo
 #usr/local/src
 #usr/sbin
@@ -141,6 +144,7 @@ usr/share/doc/licenses/GPLv3
 #usr/share/man/man8
 #usr/share/misc
 #usr/share/terminfo
+#usr/share/xt_geoip
 #usr/share/zoneinfo
 #var
 #var/cache

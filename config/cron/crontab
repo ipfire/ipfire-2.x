@@ -57,3 +57,6 @@ HOME=/
 # Re-read firewall rules every Sunday in March, October and November to take care of daylight saving time
 00 3 * 3 0          /usr/local/bin/timezone-transition /usr/local/bin/firewallctrl
 00 2 * 10-11 0      /usr/local/bin/timezone-transition /usr/local/bin/firewallctrl
+
+# Update GeoIP database once a month.
+3 2 1 * * *	[ -f "/var/ipfire/red/active" ] && /usr/local/bin/xt_geoip_update >/dev/null 2>&1
