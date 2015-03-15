@@ -676,6 +676,11 @@ WARNING: untranslated string: dh key move failed
 WARNING: untranslated string: dh key warn
 WARNING: untranslated string: dh key warn1
 WARNING: untranslated string: dh parameter
+WARNING: untranslated string: dhcp dns enable update
+WARNING: untranslated string: dhcp dns key name
+WARNING: untranslated string: dhcp dns update
+WARNING: untranslated string: dhcp dns update algo
+WARNING: untranslated string: dhcp dns update secret
 WARNING: untranslated string: dns servers
 WARNING: untranslated string: dnssec aware
 WARNING: untranslated string: dnssec information

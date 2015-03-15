@@ -663,6 +663,11 @@ WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
+WARNING: untranslated string: dhcp dns enable update
+WARNING: untranslated string: dhcp dns key name
+WARNING: untranslated string: dhcp dns update
+WARNING: untranslated string: dhcp dns update algo
+WARNING: untranslated string: dhcp dns update secret
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: incoming compression in bytes per second
 WARNING: untranslated string: incoming overhead in bytes per second

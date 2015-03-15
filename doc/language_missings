@@ -83,6 +83,11 @@
 < deprecated fs warn
 < details
 < dh
+< dhcp dns enable update
+< dhcp dns key name
+< dhcp dns update
+< dhcp dns update algo
+< dhcp dns update secret
 < dh key move failed
 < dh key warn
 < dh key warn1
@@ -641,6 +646,11 @@
 < deprecated fs warn
 < details
 < dh
+< dhcp dns enable update
+< dhcp dns key name
+< dhcp dns update
+< dhcp dns update algo
+< dhcp dns update secret
 < dh key move failed
 < dh key warn
 < dh key warn1
@@ -1190,6 +1200,11 @@
 < deprecated fs warn
 < details
 < dh
+< dhcp dns enable update
+< dhcp dns key name
+< dhcp dns update
+< dhcp dns update algo
+< dhcp dns update secret
 < dh key move failed
 < dh key warn
 < dh key warn1
@@ -1717,6 +1732,11 @@
 < deprecated fs warn
 < details
 < dh
+< dhcp dns enable update
+< dhcp dns key name
+< dhcp dns update
+< dhcp dns update algo
+< dhcp dns update secret
 < dh key move failed
 < dh key warn
 < dh key warn1
