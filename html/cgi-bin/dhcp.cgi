@@ -70,10 +70,16 @@ foreach my $itf (@ITFs) {
     $dhcpsettings{"NTP2_${itf}"} = '';
     $dhcpsettings{"NEXT_${itf}"} = '';
     $dhcpsettings{"FILE_${itf}"} = '';
+    $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} = '';
+    $dhcpsettings{"DNS_UPDATE_KEY_SECRET_${itf}"} = '';
+    $dhcpsettings{"DNS_UPDATE_KEY_ALGO_${itf}"} = '';
 }
 
 $dhcpsettings{'SORT_FLEASELIST'} = 'FIPADDR';
 $dhcpsettings{'SORT_LEASELIST'} = 'IPADDR';
+
+# DNS Update settings
+$dhcpsettings{'DNS_UPDATE_ENABLED'} = 'off';
 
 #Settings2 for editing the multi-line list
 #Must not be saved with writehash !
@@ -1102,9 +1108,18 @@ sub buildconf {
     flock(FILE, 2);
 
     # Global settings
-    print FILE "ddns-update-style none;\n";
     print FILE "deny bootp;	#default\n";
     print FILE "authoritative;\n";
+
+    # DNS Update settings
+    if ($dhcpsettings{'DNS_UPDATE_ENABLED'} eq 'on') {
+        print FILE "ddns-updates           on;\n";
+        print FILE "ddns-update-style      interim;\n";
+        print FILE "ignore                 client-updates;\n";
+        print FILE "update-static-leases   on;\n";
+    } else {
+        print FILE "ddns-update-style none;\n";
+    }
     
     # Write first new option definition
     foreach my $line (@current1) {
@@ -1176,6 +1191,17 @@ sub buildconf {
 		}# on    
 	    }# foreach line
 	    print FILE "} #$itf\n";
+
+	    if (($dhcpsettings{"DNS_UPDATE_ENABLED"} eq "on") && ($dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} ne "")) {
+	        print FILE "key " . $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} . "{\n";
+	        print FILE "\talgorithm " . $dhcpsettings{"DNS_UPDATE_KEY_ALGO_${itf}"} . ";\n";
+	        print FILE "\tsecret \"" . $dhcpsettings{"DNS_UPDATE_KEY_SECRET_${itf}"} . "\";\n";
+	        print FILE "};\n\n";
+
+	        print FILE "zone " . $dhcpsettings{"DOMAIN_NAME_${itf}"} . ". {\n";
+	        print FILE "\tkey " . $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} . ";\n";
+		print FILE "}\n\n";
+	    }
 
 	    system ('/usr/bin/touch', "${General::swroot}/dhcp/enable_${lc_itf}");
 	    &General::log("DHCP on ${itf}: " . $Lang::tr{'dhcp server enabled'})
