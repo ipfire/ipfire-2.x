@@ -1,6 +1,6 @@
-diff -up dhcp-4.2.0/client/clparse.c.requested dhcp-4.2.0/client/clparse.c
---- dhcp-4.2.0/client/clparse.c.requested	2010-07-21 13:29:05.000000000 +0200
-+++ dhcp-4.2.0/client/clparse.c	2010-07-21 13:50:29.000000000 +0200
+diff -up dhcp-4.3.0a1/client/clparse.c.requested dhcp-4.3.0a1/client/clparse.c
+--- dhcp-4.3.0a1/client/clparse.c.requested	2013-12-19 15:13:27.276631307 +0100
++++ dhcp-4.3.0a1/client/clparse.c	2013-12-19 15:13:27.313630789 +0100
 @@ -37,7 +37,7 @@
  
  struct client_config top_level_config;
@@ -10,7 +10,7 @@ diff -up dhcp-4.2.0/client/clparse.c.requested dhcp-4.2.0/client/clparse.c
  struct option *default_requested_options[NUM_DEFAULT_REQUESTED_OPTS + 1];
  
  static void parse_client_default_duid(struct parse *cfile);
-@@ -111,6 +111,31 @@ isc_result_t read_client_conf ()
+@@ -119,6 +119,31 @@ isc_result_t read_client_conf ()
  	option_code_hash_lookup(&default_requested_options[8],
  				dhcpv6_universe.code_hash, &code, 0, MDL);
  

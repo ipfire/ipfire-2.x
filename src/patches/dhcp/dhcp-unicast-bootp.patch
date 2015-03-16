@@ -1,7 +1,7 @@
-diff -up dhcp-4.2.0/server/bootp.c.unicast dhcp-4.2.0/server/bootp.c
---- dhcp-4.2.0/server/bootp.c.unicast	2009-11-20 02:49:03.000000000 +0100
-+++ dhcp-4.2.0/server/bootp.c	2010-07-21 13:40:25.000000000 +0200
-@@ -58,6 +58,7 @@ void bootp (packet)
+diff -up dhcp-4.3.0a1/server/bootp.c.unicast dhcp-4.3.0a1/server/bootp.c
+--- dhcp-4.3.0a1/server/bootp.c.unicast	2013-12-11 01:25:12.000000000 +0100
++++ dhcp-4.3.0a1/server/bootp.c	2013-12-19 15:12:12.974671154 +0100
+@@ -59,6 +59,7 @@ void bootp (packet)
  	char msgbuf [1024];
  	int ignorep;
  	int peer_has_leases = 0;
@@ -9,7 +9,7 @@ diff -up dhcp-4.2.0/server/bootp.c.unicast dhcp-4.2.0/server/bootp.c
  
  	if (packet -> raw -> op != BOOTREQUEST)
  		return;
-@@ -73,7 +74,7 @@ void bootp (packet)
+@@ -74,7 +75,7 @@ void bootp (packet)
  		 ? inet_ntoa (packet -> raw -> giaddr)
  		 : packet -> interface -> name);
  
@@ -18,24 +18,26 @@ diff -up dhcp-4.2.0/server/bootp.c.unicast dhcp-4.2.0/server/bootp.c
  		log_info ("%s: network unknown", msgbuf);
  		return;
  	}
-@@ -390,6 +391,13 @@ void bootp (packet)
- 					      from, &to, &hto);
+@@ -396,6 +397,15 @@ void bootp (packet)
+ 
  			goto out;
  		}
 +	} else if (norelay == 2) {
 +		to.sin_addr = raw.ciaddr;
 +		to.sin_port = remote_port;
 +		if (fallback_interface) {
-+			result = send_packet (fallback_interface, (struct packet *)0, &raw, outgoing.packet_length, from, &to, &hto);
++			result = send_packet (fallback_interface, NULL, &raw,
++					      outgoing.packet_length, from,
++					      &to, &hto);
 +			goto out;
 +		}
  
  	/* If it comes from a client that already knows its address
  	   and is not requesting a broadcast response, and we can
-diff -up dhcp-4.2.0/server/dhcp.c.unicast dhcp-4.2.0/server/dhcp.c
---- dhcp-4.2.0/server/dhcp.c.unicast	2010-06-01 19:29:59.000000000 +0200
-+++ dhcp-4.2.0/server/dhcp.c	2010-07-21 13:40:25.000000000 +0200
-@@ -4185,6 +4185,7 @@ int locate_network (packet)
+diff -up dhcp-4.3.0a1/server/dhcp.c.unicast dhcp-4.3.0a1/server/dhcp.c
+--- dhcp-4.3.0a1/server/dhcp.c.unicast	2013-12-13 21:50:38.000000000 +0100
++++ dhcp-4.3.0a1/server/dhcp.c	2013-12-19 15:12:12.975671140 +0100
+@@ -4627,6 +4627,7 @@ int locate_network (packet)
  	struct data_string data;
  	struct subnet *subnet = (struct subnet *)0;
  	struct option_cache *oc;
@@ -43,7 +45,7 @@ diff -up dhcp-4.2.0/server/dhcp.c.unicast dhcp-4.2.0/server/dhcp.c
  
  	/* See if there's a Relay Agent Link Selection Option, or a
  	 * Subnet Selection Option.  The Link-Select and Subnet-Select
-@@ -4200,12 +4201,24 @@ int locate_network (packet)
+@@ -4642,12 +4643,24 @@ int locate_network (packet)
  	   from the interface, if there is one.   If not, fail. */
  	if (!oc && !packet -> raw -> giaddr.s_addr) {
  		if (packet -> interface -> shared_network) {
@@ -73,7 +75,7 @@ diff -up dhcp-4.2.0/server/dhcp.c.unicast dhcp-4.2.0/server/dhcp.c
  	}
  
  	/* If there's an option indicating link connection, and it's valid,
-@@ -4228,7 +4241,10 @@ int locate_network (packet)
+@@ -4670,7 +4683,10 @@ int locate_network (packet)
  		data_string_forget (&data, MDL);
  	} else {
  		ia.len = 4;
@@ -85,7 +87,7 @@ diff -up dhcp-4.2.0/server/dhcp.c.unicast dhcp-4.2.0/server/dhcp.c
  	}
  
  	/* If we know the subnet on which the IP address lives, use it. */
-@@ -4236,7 +4252,10 @@ int locate_network (packet)
+@@ -4678,7 +4694,10 @@ int locate_network (packet)
  		shared_network_reference (&packet -> shared_network,
  					  subnet -> shared_network, MDL);
  		subnet_dereference (&subnet, MDL);

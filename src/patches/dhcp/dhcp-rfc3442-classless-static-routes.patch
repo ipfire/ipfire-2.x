@@ -1,7 +1,7 @@
-diff -up dhcp-4.2.2b1/client/clparse.c.rfc3442 dhcp-4.2.2b1/client/clparse.c
---- dhcp-4.2.2b1/client/clparse.c.rfc3442	2011-07-01 14:22:38.031534508 +0200
-+++ dhcp-4.2.2b1/client/clparse.c	2011-07-01 14:22:38.128532940 +0200
-@@ -37,7 +37,7 @@
+diff -up dhcp-4.3.0rc1/client/clparse.c.rfc3442 dhcp-4.3.0rc1/client/clparse.c
+--- dhcp-4.3.0rc1/client/clparse.c.rfc3442	2014-01-29 10:05:48.474400352 +0100
++++ dhcp-4.3.0rc1/client/clparse.c	2014-01-29 10:05:48.517399955 +0100
+@@ -31,7 +31,7 @@
  
  struct client_config top_level_config;
  
@@ -10,7 +10,7 @@ diff -up dhcp-4.2.2b1/client/clparse.c.rfc3442 dhcp-4.2.2b1/client/clparse.c
  struct option *default_requested_options[NUM_DEFAULT_REQUESTED_OPTS + 1];
  
  static void parse_client_default_duid(struct parse *cfile);
-@@ -82,7 +82,11 @@ isc_result_t read_client_conf ()
+@@ -84,7 +84,11 @@ isc_result_t read_client_conf ()
  				dhcp_universe.code_hash, &code, 0, MDL);
  
  	/* 4 */
@@ -23,7 +23,7 @@ diff -up dhcp-4.2.2b1/client/clparse.c.rfc3442 dhcp-4.2.2b1/client/clparse.c
  	option_code_hash_lookup(&default_requested_options[3],
  				dhcp_universe.code_hash, &code, 0, MDL);
  
-@@ -136,6 +140,11 @@ isc_result_t read_client_conf ()
+@@ -138,6 +142,11 @@ isc_result_t read_client_conf ()
  	option_code_hash_lookup(&default_requested_options[13],
  				dhcp_universe.code_hash, &code, 0, MDL);
  
@@ -35,10 +35,10 @@ diff -up dhcp-4.2.2b1/client/clparse.c.rfc3442 dhcp-4.2.2b1/client/clparse.c
  	for (code = 0 ; code < NUM_DEFAULT_REQUESTED_OPTS ; code++) {
  		if (default_requested_options[code] == NULL)
  			log_fatal("Unable to find option definition for "
-diff -up dhcp-4.2.2b1/common/dhcp-options.5.rfc3442 dhcp-4.2.2b1/common/dhcp-options.5
---- dhcp-4.2.2b1/common/dhcp-options.5.rfc3442	2011-07-01 14:22:38.020534686 +0200
-+++ dhcp-4.2.2b1/common/dhcp-options.5	2011-07-01 14:22:38.129532924 +0200
-@@ -115,6 +115,26 @@ hexadecimal, separated by colons.   For 
+diff -up dhcp-4.3.0rc1/common/dhcp-options.5.rfc3442 dhcp-4.3.0rc1/common/dhcp-options.5
+--- dhcp-4.3.0rc1/common/dhcp-options.5.rfc3442	2014-01-29 10:05:48.466400426 +0100
++++ dhcp-4.3.0rc1/common/dhcp-options.5	2014-01-29 10:05:48.518399945 +0100
+@@ -111,6 +111,26 @@ hexadecimal, separated by colons.  For e
  or
    option dhcp-client-identifier 43:4c:49:45:54:2d:46:4f:4f;
  .fi
@@ -64,8 +64,8 @@ diff -up dhcp-4.2.2b1/common/dhcp-options.5.rfc3442 dhcp-4.2.2b1/common/dhcp-opt
 +.fi
  .SH SETTING OPTION VALUES USING EXPRESSIONS
  Sometimes it's helpful to be able to set the value of a DHCP option
- based on some value that the client has sent.   To do this, you can
-@@ -931,6 +951,29 @@ dhclient-script will create routes:
+ based on some value that the client has sent.  To do this, you can
+@@ -972,6 +992,29 @@ dhclient-script will create routes:
  .RE
  .PP
  .nf
@@ -95,10 +95,10 @@ diff -up dhcp-4.2.2b1/common/dhcp-options.5.rfc3442 dhcp-4.2.2b1/common/dhcp-opt
  .B option \fBstreettalk-directory-assistance-server\fR \fIip-address\fR
                                             [\fB,\fR \fIip-address\fR...]\fB;\fR
  .fi
-diff -up dhcp-4.2.2b1/common/inet.c.rfc3442 dhcp-4.2.2b1/common/inet.c
---- dhcp-4.2.2b1/common/inet.c.rfc3442	2011-05-11 02:47:22.000000000 +0200
-+++ dhcp-4.2.2b1/common/inet.c	2011-07-01 14:22:38.130532908 +0200
-@@ -528,6 +528,60 @@ free_iaddrcidrnetlist(struct iaddrcidrne
+diff -up dhcp-4.3.0rc1/common/inet.c.rfc3442 dhcp-4.3.0rc1/common/inet.c
+--- dhcp-4.3.0rc1/common/inet.c.rfc3442	2014-01-26 19:40:44.000000000 +0100
++++ dhcp-4.3.0rc1/common/inet.c	2014-01-29 10:05:48.519399936 +0100
+@@ -521,6 +521,60 @@ free_iaddrcidrnetlist(struct iaddrcidrne
  	return ISC_R_SUCCESS;
  }
  
@@ -159,10 +159,10 @@ diff -up dhcp-4.2.2b1/common/inet.c.rfc3442 dhcp-4.2.2b1/common/inet.c
  /* piaddr() turns an iaddr structure into a printable address. */
  /* XXX: should use a const pointer rather than passing the structure */
  const char *
-diff -up dhcp-4.2.2b1/common/options.c.rfc3442 dhcp-4.2.2b1/common/options.c
---- dhcp-4.2.2b1/common/options.c.rfc3442	2011-03-24 22:57:13.000000000 +0100
-+++ dhcp-4.2.2b1/common/options.c	2011-07-01 14:22:38.132532876 +0200
-@@ -706,7 +706,11 @@ cons_options(struct packet *inpacket, st
+diff -up dhcp-4.3.0rc1/common/options.c.rfc3442 dhcp-4.3.0rc1/common/options.c
+--- dhcp-4.3.0rc1/common/options.c.rfc3442	2014-01-26 19:40:44.000000000 +0100
++++ dhcp-4.3.0rc1/common/options.c	2014-01-29 10:05:48.520399927 +0100
+@@ -707,7 +707,11 @@ cons_options(struct packet *inpacket, st
  		 * packet.
  		 */
  		priority_list[priority_len++] = DHO_SUBNET_MASK;
@@ -175,15 +175,15 @@ diff -up dhcp-4.2.2b1/common/options.c.rfc3442 dhcp-4.2.2b1/common/options.c
  		priority_list[priority_len++] = DHO_DOMAIN_NAME_SERVERS;
  		priority_list[priority_len++] = DHO_HOST_NAME;
  		priority_list[priority_len++] = DHO_FQDN;
-@@ -1683,6 +1687,7 @@ const char *pretty_print_option (option,
- 	const unsigned char *dp = data;
- 	char comma;
+@@ -1688,6 +1692,7 @@ const char *pretty_print_option (option,
  	unsigned long tval;
-+        unsigned int octets = 0;
+ 	isc_boolean_t a_array = ISC_FALSE;
+ 	int len_used;
++	unsigned int octets = 0;
  
  	if (emit_commas)
  		comma = ',';
-@@ -1691,6 +1696,7 @@ const char *pretty_print_option (option,
+@@ -1696,6 +1701,7 @@ const char *pretty_print_option (option,
  
  	memset (enumbuf, 0, sizeof enumbuf);
  
@@ -191,7 +191,7 @@ diff -up dhcp-4.2.2b1/common/options.c.rfc3442 dhcp-4.2.2b1/common/options.c
  	/* Figure out the size of the data. */
  	for (l = i = 0; option -> format [i]; i++, l++) {
  		if (l >= sizeof(fmtbuf) - 1)
-@@ -1840,6 +1846,33 @@ const char *pretty_print_option (option,
+@@ -1870,6 +1876,33 @@ const char *pretty_print_option (option,
  	if (numhunk < 0)
  		numhunk = 1;
  
@@ -224,8 +224,8 @@ diff -up dhcp-4.2.2b1/common/options.c.rfc3442 dhcp-4.2.2b1/common/options.c
 +
  	/* Cycle through the array (or hunk) printing the data. */
  	for (i = 0; i < numhunk; i++) {
- 		for (j = 0; j < numelem; j++) {
-@@ -1978,6 +2011,20 @@ const char *pretty_print_option (option,
+ 		if ((a_array == ISC_TRUE) && (i != 0) && (numelem > 0)) {
+@@ -2025,6 +2058,20 @@ const char *pretty_print_option (option,
  				strcpy(op, piaddr(iaddr));
  				dp += 4;
  				break;
@@ -246,10 +246,10 @@ diff -up dhcp-4.2.2b1/common/options.c.rfc3442 dhcp-4.2.2b1/common/options.c
  			      case '6':
  				iaddr.len = 16;
  				memcpy(iaddr.iabuf, dp, 16);
-diff -up dhcp-4.2.2b1/common/parse.c.rfc3442 dhcp-4.2.2b1/common/parse.c
---- dhcp-4.2.2b1/common/parse.c.rfc3442	2011-07-01 14:22:38.097533441 +0200
-+++ dhcp-4.2.2b1/common/parse.c	2011-07-01 14:22:38.135532828 +0200
-@@ -341,6 +341,39 @@ int parse_ip_addr (cfile, addr)
+diff -up dhcp-4.3.0rc1/common/parse.c.rfc3442 dhcp-4.3.0rc1/common/parse.c
+--- dhcp-4.3.0rc1/common/parse.c.rfc3442	2014-01-29 10:05:48.491400195 +0100
++++ dhcp-4.3.0rc1/common/parse.c	2014-01-29 10:05:48.522399908 +0100
+@@ -335,6 +335,39 @@ int parse_ip_addr (cfile, addr)
  }	
  
  /*
@@ -289,7 +289,7 @@ diff -up dhcp-4.2.2b1/common/parse.c.rfc3442 dhcp-4.2.2b1/common/parse.c
   * Return true if every character in the string is hexadecimal.
   */
  static int
-@@ -700,8 +733,10 @@ unsigned char *parse_numeric_aggregate (
+@@ -713,8 +746,10 @@ unsigned char *parse_numeric_aggregate (
  		if (count) {
  			token = peek_token (&val, (unsigned *)0, cfile);
  			if (token != separator) {
@@ -301,7 +301,7 @@ diff -up dhcp-4.2.2b1/common/parse.c.rfc3442 dhcp-4.2.2b1/common/parse.c
  				if (token != RBRACE && token != LBRACE)
  					token = next_token (&val,
  							    (unsigned *)0,
-@@ -1624,6 +1659,9 @@ int parse_option_code_definition (cfile,
+@@ -1654,6 +1689,9 @@ int parse_option_code_definition (cfile,
  	      case IP_ADDRESS:
  		type = 'I';
  		break;
@@ -311,7 +311,7 @@ diff -up dhcp-4.2.2b1/common/parse.c.rfc3442 dhcp-4.2.2b1/common/parse.c
  	      case IP6_ADDRESS:
  		type = '6';
  		break;
-@@ -5288,6 +5326,15 @@ int parse_option_token (rv, cfile, fmt, 
+@@ -5071,6 +5109,15 @@ int parse_option_token (rv, cfile, fmt,
  		}
  		break;
  
@@ -327,7 +327,7 @@ diff -up dhcp-4.2.2b1/common/parse.c.rfc3442 dhcp-4.2.2b1/common/parse.c
  	      case '6': /* IPv6 address. */
  		if (!parse_ip6_addr(cfile, &addr)) {
  			return 0;
-@@ -5548,6 +5595,13 @@ int parse_option_decl (oc, cfile)
+@@ -5348,6 +5395,13 @@ int parse_option_decl (oc, cfile)
  					goto exit;
  				len = ip_addr.len;
  				dp = ip_addr.iabuf;
@@ -341,10 +341,10 @@ diff -up dhcp-4.2.2b1/common/parse.c.rfc3442 dhcp-4.2.2b1/common/parse.c
  
  			      alloc:
  				if (hunkix + len > sizeof hunkbuf) {
-diff -up dhcp-4.2.2b1/common/tables.c.rfc3442 dhcp-4.2.2b1/common/tables.c
---- dhcp-4.2.2b1/common/tables.c.rfc3442	2011-07-01 14:22:38.087533601 +0200
-+++ dhcp-4.2.2b1/common/tables.c	2011-07-01 14:22:38.137532796 +0200
-@@ -51,6 +51,7 @@ HASH_FUNCTIONS (option_code, const unsig
+diff -up dhcp-4.3.0rc1/common/tables.c.rfc3442 dhcp-4.3.0rc1/common/tables.c
+--- dhcp-4.3.0rc1/common/tables.c.rfc3442	2014-01-29 10:05:48.485400250 +0100
++++ dhcp-4.3.0rc1/common/tables.c	2014-01-29 10:06:25.724038563 +0100
+@@ -46,6 +46,7 @@ HASH_FUNCTIONS (option_code, const unsig
     Format codes:
  
     I - IPv4 address
@@ -352,18 +352,18 @@ diff -up dhcp-4.2.2b1/common/tables.c.rfc3442 dhcp-4.2.2b1/common/tables.c
     6 - IPv6 address
     l - 32-bit signed integer
     L - 32-bit unsigned integer
-@@ -208,6 +209,7 @@ static struct option dhcp_options[] = {
- 	{ "default-url", "t",			&dhcp_universe, 114, 1 },
+@@ -214,6 +215,7 @@ static struct option dhcp_options[] = {
+ #endif
  	{ "subnet-selection", "I",		&dhcp_universe, 118, 1 },
- 	{ "domain-search", "D",		&dhcp_universe, 119, 1 },
+ 	{ "domain-search", "D",			&dhcp_universe, 119, 1 },
 +	{ "classless-static-routes", "RIA",	&dhcp_universe, 121, 1 },
  	{ "vivco", "Evendor-class.",		&dhcp_universe, 124, 1 },
  	{ "vivso", "Evendor.",			&dhcp_universe, 125, 1 },
  #if 0
-diff -up dhcp-4.2.2b1/includes/dhcpd.h.rfc3442 dhcp-4.2.2b1/includes/dhcpd.h
---- dhcp-4.2.2b1/includes/dhcpd.h.rfc3442	2011-07-01 14:22:38.000000000 +0200
-+++ dhcp-4.2.2b1/includes/dhcpd.h	2011-07-01 14:24:19.999810333 +0200
-@@ -2662,6 +2662,7 @@ isc_result_t range2cidr(struct iaddrcidr
+diff -up dhcp-4.3.0rc1/includes/dhcpd.h.rfc3442 dhcp-4.3.0rc1/includes/dhcpd.h
+--- dhcp-4.3.0rc1/includes/dhcpd.h.rfc3442	2014-01-29 10:05:48.470400389 +0100
++++ dhcp-4.3.0rc1/includes/dhcpd.h	2014-01-29 10:05:48.525399881 +0100
+@@ -2725,6 +2725,7 @@ isc_result_t range2cidr(struct iaddrcidr
  			const struct iaddr *lo, const struct iaddr *hi);
  isc_result_t free_iaddrcidrnetlist(struct iaddrcidrnetlist **result);
  const char *piaddr (struct iaddr);
@@ -371,7 +371,7 @@ diff -up dhcp-4.2.2b1/includes/dhcpd.h.rfc3442 dhcp-4.2.2b1/includes/dhcpd.h
  char *piaddrmask(struct iaddr *, struct iaddr *);
  char *piaddrcidr(const struct iaddr *, unsigned int);
  u_int16_t validate_port(char *);
-@@ -2869,6 +2870,7 @@ void parse_client_lease_declaration (str
+@@ -2934,6 +2935,7 @@ void parse_client_lease_declaration (str
  int parse_option_decl (struct option_cache **, struct parse *);
  void parse_string_list (struct parse *, struct string_list **, int);
  int parse_ip_addr (struct parse *, struct iaddr *);
@@ -379,10 +379,10 @@ diff -up dhcp-4.2.2b1/includes/dhcpd.h.rfc3442 dhcp-4.2.2b1/includes/dhcpd.h
  int parse_ip_addr_with_subnet(struct parse *, struct iaddrmatch *);
  void parse_reject_statement (struct parse *, struct client_config *);
  
-diff -up dhcp-4.2.2b1/includes/dhcp.h.rfc3442 dhcp-4.2.2b1/includes/dhcp.h
---- dhcp-4.2.2b1/includes/dhcp.h.rfc3442	2009-11-20 02:49:01.000000000 +0100
-+++ dhcp-4.2.2b1/includes/dhcp.h	2011-07-01 14:22:38.145532665 +0200
-@@ -158,6 +158,7 @@ struct dhcp_packet {
+diff -up dhcp-4.3.0rc1/includes/dhcp.h.rfc3442 dhcp-4.3.0rc1/includes/dhcp.h
+--- dhcp-4.3.0rc1/includes/dhcp.h.rfc3442	2014-01-26 19:40:44.000000000 +0100
++++ dhcp-4.3.0rc1/includes/dhcp.h	2014-01-29 10:05:48.524399890 +0100
+@@ -159,6 +159,7 @@ struct dhcp_packet {
  #define DHO_ASSOCIATED_IP			92
  #define DHO_SUBNET_SELECTION			118 /* RFC3011! */
  #define DHO_DOMAIN_SEARCH			119 /* RFC3397 */
@@ -390,16 +390,16 @@ diff -up dhcp-4.2.2b1/includes/dhcp.h.rfc3442 dhcp-4.2.2b1/includes/dhcp.h
  #define DHO_VIVCO_SUBOPTIONS			124
  #define DHO_VIVSO_SUBOPTIONS			125
  
-diff -up dhcp-4.2.2b1/includes/dhctoken.h.rfc3442 dhcp-4.2.2b1/includes/dhctoken.h
---- dhcp-4.2.2b1/includes/dhctoken.h.rfc3442	2011-07-01 14:22:37.000000000 +0200
-+++ dhcp-4.2.2b1/includes/dhctoken.h	2011-07-01 14:25:12.541867623 +0200
-@@ -362,7 +362,8 @@ enum dhcp_token {
- 	REWIND = 663,
- 	INITIAL_DELAY = 664,
- 	GETHOSTBYNAME = 665,
--	BOOTP_BROADCAST_ALWAYS = 666
-+	BOOTP_BROADCAST_ALWAYS = 666,
-+	DESTINATION_DESCRIPTOR = 667
+diff -up dhcp-4.3.0rc1/includes/dhctoken.h.rfc3442 dhcp-4.3.0rc1/includes/dhctoken.h
+--- dhcp-4.3.0rc1/includes/dhctoken.h.rfc3442	2014-01-29 10:05:48.435400713 +0100
++++ dhcp-4.3.0rc1/includes/dhctoken.h	2014-01-29 10:05:48.526399871 +0100
+@@ -368,7 +368,8 @@ enum dhcp_token {
+ 	POOL6 = 669,
+ 	V6RELAY = 670,
+ 	V6RELOPT = 671,
+-	BOOTP_BROADCAST_ALWAYS = 672
++	BOOTP_BROADCAST_ALWAYS = 672,
++	DESTINATION_DESCRIPTOR = 673
  };
  
  #define is_identifier(x)	((x) >= FIRST_TOKEN &&	\
