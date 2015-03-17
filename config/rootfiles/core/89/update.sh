@@ -43,9 +43,9 @@ extract_files
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
-# Uninstall the sqlite package.
+# Prevent uninstall sqlite (now common package).
 rm -f \
-	/opt/pakfire/db/installed/meta-sqlite \
+	/opt/pakfire/db/*/meta-sqlite \
 	/opt/pakfire/db/rootfiles/sqlite
 
 # Fix #10625
