@@ -667,7 +667,8 @@ sub GenerateDDNSConfigFile {
 		my $use_token = 0;
 
 		# Handle token based auth for various providers.
-		if ($provider ~~ ["dns.lightningwirelabs.com", "entrydns.net", "regfish.com", "spdns.de"] && $username eq "token") {
+		if ($provider ~~ ["dns.lightningwirelabs.com", "entrydns.net", "regfish.com",
+				  "spdns.de", "zzzz.io"] && $username eq "token") {
 			$use_token = 1;
 
 		# Handle token auth for freedns.afraid.org and regfish.com.

@@ -1,6 +1,0 @@
-etc/system-release
-etc/issue
-srv/web/ipfire/cgi-bin/fwhosts.cgi
-srv/web/ipfire/cgi-bin/ovpnmain.cgi
-var/ipfire/backup/bin/backup.pl
-var/ipfire/langs

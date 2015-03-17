@@ -169,6 +169,9 @@ sub FindWebLanguage() {
 	my ($language, $country) = split(/_/, $shortlang);
 	push(@options, $language);
 
+	# Add English as fallback
+	push(@options, "en");
+
 	foreach my $option (@options) {
 		return $option if (-e "${General::swroot}/langs/$option.pl");
 	}

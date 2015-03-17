@@ -25,27 +25,35 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
 # Remove old core updates from pakfire cache to save space...
-core=88
+core=89
 for (( i=1; i<=$core; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
 # Stop services
+/etc/init.d/ipsec stop
 
 # Remove old files
 
 # Extract files
 extract_files
 
+# Generate ddns configuration file
+sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
+
 # Start services
+/etc/init.d/dnsmasq restart
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	/etc/init.d/ipsec start
+fi
 
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
-# Uninstall the sqlite package.
+# Prevent uninstall sqlite (now common package).
 rm -f \
-	/opt/pakfire/db/installed/meta-sqlite \
+	/opt/pakfire/db/*/meta-sqlite \
 	/opt/pakfire/db/rootfiles/sqlite
 
 # Fix #10625
