@@ -32,13 +32,21 @@ do
 done
 
 # Stop services
+/etc/init.d/ipsec stop
 
 # Remove old files
 
 # Extract files
 extract_files
 
+# Generate ddns configuration file
+sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
+
 # Start services
+/etc/init.d/dnsmasq restart
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	/etc/init.d/ipsec start
+fi
 
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
