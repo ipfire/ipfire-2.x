@@ -334,13 +334,14 @@ foreach $_ (@log)
         my $comment = $3; 
         my $packet = $4;
 
-        $packet =~ /IN=(\w+)/;       my $iface=$1; if ( $1 =~ /2./ ){ $iface="";}
-        $packet =~ /SRC=([\d\.]+)/;  my $srcaddr=$1;
-        $packet =~ /DST=([\d\.]+)/;  my $dstaddr=$1;
-        $packet =~ /MAC=([\w+\:]+)/; my $macaddr=$1;
-        $packet =~ /PROTO=(\w+)/;    my $proto=$1;
-        $packet =~ /SPT=(\d+)/;      my $srcport=$1;
-        $packet =~ /DPT=(\d+)/;      my $dstport=$1;
+		my ($iface, $srcaddr, $dstaddr, $macaddr, $proto, $srcport, $dstport);
+		$iface=$1   if $packet =~ /IN=(\w+)/;
+		$srcaddr=$1 if $packet =~ /SRC=([\d\.]+)/;
+		$dstaddr=$1 if $packet =~ /DST=([\d\.]+)/;
+		$macaddr=$1 if $packet =~ /MAC=([\w+\:]+)/;
+		$proto=$1   if $packet =~ /PROTO=(\w+)/;
+		$srcport=$1 if $packet =~ /SPT=(\d+)/;
+		$dstport=$1 if $packet =~ /DPT=(\d+)/;
 
         my $gi = Geo::IP::PurePerl->new();
         my $ccode = $gi->country_code_by_name($srcaddr);

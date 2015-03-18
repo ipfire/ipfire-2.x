@@ -3,14 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# douglasdiasn <douglasdiasn@gmail.com>, 2015
+# Evertton de Lima <e.everttonlima@gmail.com>, 2015
 # Rafael Tavares <rafael@ibinetwork.com.br>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2015-01-22 20:19+0000\n"
-"Last-Translator: Rafael Tavares <rafael@ibinetwork.com.br>\n"
+"PO-Revision-Date: 2015-02-16 23:15+0000\n"
+"Last-Translator: Evertton de Lima <e.everttonlima@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/ipfire/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -85,7 +87,7 @@ msgstr "Cancelar"
 msgid ""
 "The following fields are invalid:\n"
 "\n"
-msgstr ""
+msgstr "Os campos a seguir são inválidos: \n"
 
 #: dhcp.c:159
 msgid "Start address"
@@ -117,19 +119,19 @@ msgstr "Domínio "
 
 #: domainname.c:42
 msgid "Enter Domain name"
-msgstr ""
+msgstr "Entre com o nome do Domínio"
 
 #: domainname.c:48
 msgid "Domain name cannot be empty."
-msgstr ""
+msgstr "O nome de Domínio não pode ser vazio."
 
 #: domainname.c:50
 msgid "Domain name cannot contain spaces."
-msgstr ""
+msgstr "O nome de Domínio não pode conter \"espaços\"."
 
 #: domainname.c:53
 msgid "Domain name may only contain letters, numbers, hyphens and periods."
-msgstr ""
+msgstr "O nome de Domínio pode conter somente letras, números, hífens e pontos."
 
 #: hostname.c:46 main.c:69
 msgid "Hostname"
@@ -137,19 +139,19 @@ msgstr "Hostname"
 
 #: hostname.c:46
 msgid "Enter the machine's hostname."
-msgstr ""
+msgstr "Entre com o nome do host."
 
 #: hostname.c:53
 msgid "Hostname cannot be empty."
-msgstr ""
+msgstr "O nome de Host não pode ser vazio."
 
 #: hostname.c:55
 msgid "Hostname cannot contain spaces."
-msgstr ""
+msgstr "O nome de Host não pode conter \"espaços\"."
 
 #: hostname.c:58
 msgid "Hostname may only contain letters, numbers and hyphens."
-msgstr ""
+msgstr "O nome de Host pode conter somente Letras, números e hífens."
 
 #: keymap.c:84 main.c:67
 msgid "Keyboard mapping"
@@ -157,7 +159,7 @@ msgstr "Selecione seu teclado"
 
 #: keymap.c:85
 msgid "Choose the type of keyboard you are using from the list below."
-msgstr ""
+msgstr "Escolha o tipo do teclado que você esta usando a partir da lista abaixo:"
 
 #: main.c:68 timezone.c:77
 msgid "Timezone"
@@ -165,7 +167,7 @@ msgstr "Fuso horário "
 
 #: main.c:71 networking.c:110 networking.c:115 networking.c:447
 msgid "Networking"
-msgstr ""
+msgstr "Rede"
 
 #: main.c:72 misc.c:147
 msgid "ISDN"
@@ -173,19 +175,19 @@ msgstr "ISDN"
 
 #: main.c:73
 msgid "'root' password"
-msgstr "senha ´'root'"
+msgstr "senha 'ROOT'"
 
 #: main.c:74
 msgid "'admin' password"
-msgstr "senha 'admin'"
+msgstr "senha 'ADMIN'"
 
 #: main.c:90
 msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
-msgstr ""
+msgstr "<Tab>/<Alt-Tab> entre elementos | <Space> seleciona"
 
 #: main.c:97
 msgid "Section menu"
-msgstr ""
+msgstr "Menu de seleção"
 
 #: main.c:98
 msgid "Select the item you wish to configure."
@@ -207,7 +209,7 @@ msgstr "Atenção"
 msgid ""
 "Initial setup was not entirely complete. You must ensure that Setup is "
 "properly finished by running setup again at the shell."
-msgstr ""
+msgstr "O setup inicial não foi inteiramente completo. Você deve se certificar que o Setup foi finalizado corretamente rodando o setup novamente no shell."
 
 #: misc.c:62
 #, c-format
@@ -216,7 +218,7 @@ msgstr "Não foi possível salvar %s/main/hostname.conf"
 
 #: misc.c:71
 msgid "Unable to open main hosts file."
-msgstr ""
+msgstr "Não foi possível abrir o arquivo de Hosts Principal"
 
 #: misc.c:76
 msgid "Unable to write /etc/hosts."
@@ -232,15 +234,15 @@ msgstr "Não foi possível salvar /etc/hosts.allow."
 
 #: misc.c:136
 msgid "Unable to set hostname."
-msgstr ""
+msgstr "Não foi possível aplicar o Hostname"
 
 #: misc.c:147
 msgid "Scanning and configuring ISDN devices."
-msgstr ""
+msgstr "Escaneando e configurando dispositivos ISDN."
 
 #: misc.c:148
 msgid "Unable to scan for ISDN devices."
-msgstr ""
+msgstr "Não foi possível escanear por dispositivos ISDN."
 
 #: netstuff.c:86
 #, c-format
@@ -250,7 +252,7 @@ msgstr "Interface - %s"
 #: netstuff.c:91
 #, c-format
 msgid "Enter the IP address information for the %s interface."
-msgstr ""
+msgstr "Entre com a informação do endereço IP  para a interface %s."
 
 #: netstuff.c:103
 msgid "Static"
@@ -266,11 +268,11 @@ msgstr "Discador PPP (PPPoE, modem, ATM ...)"
 
 #: netstuff.c:113
 msgid "DHCP Hostname:"
-msgstr ""
+msgstr "Nome do Host DHCP:"
 
 #: netstuff.c:115
 msgid "Force DHCP MTU:"
-msgstr ""
+msgstr "Forçar DHCP MTU:"
 
 #: netstuff.c:134
 msgid "IP address:"
@@ -282,7 +284,7 @@ msgstr "Mascara de rede:"
 
 #: netstuff.c:173 networking.c:749
 msgid "The following fields are invalid:"
-msgstr ""
+msgstr "Os campos a seguir são inválidos:"
 
 #: netstuff.c:183
 msgid "IP address"
@@ -294,7 +296,7 @@ msgstr "Marcara de rede"
 
 #: netstuff.c:198
 msgid "DHCP hostname"
-msgstr ""
+msgstr "Nome do Host DHCP:"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
@@ -303,11 +305,11 @@ msgstr ""
 #: netstuff.c:669
 #, c-format
 msgid "Please choose a networkcard for the following interface - %s."
-msgstr ""
+msgstr "Favor selecionar a Placa de Rede para a interface - %s."
 
 #: netstuff.c:672
 msgid "Extended Network Menu"
-msgstr ""
+msgstr "Abrir o menu de redes"
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
@@ -319,28 +321,28 @@ msgstr "Identifique"
 
 #: netstuff.c:678
 msgid "Device Identification"
-msgstr ""
+msgstr "Identificação do dispositivo"
 
 #: netstuff.c:678
 msgid "The lights on the selected port should flash now for 10 seconds..."
-msgstr ""
+msgstr "As luzes da porta selecionada deverão piscar por 10 segundos a partir de agora..."
 
 #: netstuff.c:679
 msgid "Identification is not supported by this interface."
-msgstr ""
+msgstr "Identificação não é suportada por esta interface."
 
 #: netstuff.c:691
 msgid "There are no unassigned interfaces on your system."
-msgstr ""
+msgstr "Não existem interfaces não associadas em seu sistema."
 
 #: netstuff.c:732
 #, c-format
 msgid "Do you really want to remove the assigned %s interface?"
-msgstr ""
+msgstr "Você realmente quer remover a interface %s associada?"
 
 #: netstuff.c:755
 msgid "Select network driver"
-msgstr ""
+msgstr "Selecionar driver de rede"
 
 #: netstuff.c:755
 msgid "Set additional module parameters"
@@ -432,7 +434,7 @@ msgstr "Configurar Gateway e DNS"
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
-msgstr ""
+msgstr "Quando a configuração estiver completa, um reinício da rede será necessário."
 
 #: networking.c:267
 #, c-format
@@ -444,7 +446,7 @@ msgstr "Configuração atual: %s\n\n%s"
 
 #: networking.c:268
 msgid "Network configuration menu"
-msgstr ""
+msgstr "Menu de configuração de rede"
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
@@ -475,11 +477,11 @@ msgstr ""
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
-msgstr ""
+msgstr "Você gostaria de alterar essas configurações?"
 
 #: networking.c:447
 msgid "Restarting non-local network..."
-msgstr ""
+msgstr "Reiniciando rede non-local..."
 
 #: networking.c:464
 msgid ""
@@ -524,7 +526,7 @@ msgstr "Gateway padrão"
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
-msgstr ""
+msgstr "DNS secundário especificado sem um DNS primário"
 
 #: passwords.c:33
 msgid ""

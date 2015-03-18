@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.17"							# Version number
-CORE="87"							# Core Level (Filename)
-PAKFIRE_CORE="87"						# Core Level (PAKFIRE)
+CORE="88"							# Core Level (Filename)
+PAKFIRE_CORE="88"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -649,7 +649,7 @@ buildipfire() {
   ipfiremake libevent2
   ipfiremake portmap
   ipfiremake nfs
-  #ipfiremake nmap
+  ipfiremake nmap
   ipfiremake ncftp
   ipfiremake etherwake
   ipfiremake bwm-ng
@@ -811,6 +811,7 @@ buildipfire() {
   ipfiremake pigz
   ipfiremake tmux
   ipfiremake swconfig
+  ipfiremake haproxy
 }
 
 buildinstaller() {

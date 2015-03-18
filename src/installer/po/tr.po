@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Ersan YILDIRIM <ersan73@gmail.com>, 2015
 # Kudret Emre <kudretemre@hotmail.com.tr>, 2014
 # Kudret Emre <kudretemre@hotmail.com.tr>, 2014
 msgid ""
@@ -10,8 +11,8 @@ msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-12-08 17:24+0000\n"
-"Last-Translator: Kudret Emre <kudretemre@hotmail.com.tr>\n"
+"PO-Revision-Date: 2015-02-28 22:11+0000\n"
+"Last-Translator: Ersan YILDIRIM <ersan73@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/projects/p/ipfire/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -50,7 +51,7 @@ msgstr "Katılımsız kurulum modu"
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
-msgstr "<Tab>/<Alt-Tab> elementler arası geçiş | <Space> seç | <F12> sonraki ekran"
+msgstr "<Tab>/<Alt-Tab> düğmeler arası geçiş | <Space> seç | <F12> sonraki ekran"
 
 #: main.c:426
 #, c-format
@@ -58,16 +59,16 @@ msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr "%s yükleme programına hoşgeldiniz.\n\nİlerleyen ekranların herhangi birinde İptal'e tıklamanız bilgisayarınızı yeniden başlatır."
+msgstr "%s kurulum programına hoş geldiniz.\n\nSonraki ekranların herhangi birinde İptal seçeneğini seçtiğinizde bilgisayar yeniden başlatılac."
 
 #: main.c:428
 msgid "Start installation"
-msgstr "Yüklemeyi başlat"
+msgstr "Kurulumu Başlat"
 
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr "Yükleyici şimdi yükleme dosyasını indirmeyi deneyecek."
+msgstr "Yükleyici şimdi kurulum dosyasını indirmeyi deneyecek."
 
 #: main.c:452
 #, c-format
@@ -75,17 +76,17 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr "Hiçbir kaynak sürücüsü bulunamadı.\n\nGerekli yükleme dosyasını indirmeyi deneyebilirsiniz."
+msgstr "Hiçbir kaynak sürücüsü bulunamadı.\n\nGerekli kurulum dosyasını indirmeyi deneyebilirsiniz."
 
 #: main.c:456
 msgid ""
 "Please make sure to connect your machine to a network and the installer will"
 " try connect to acquire an IP address."
-msgstr ""
+msgstr "Makinenizi bir ağa bağladığınıza emin olun ve yükleyiciye IP adresini elle girerek bağlanmayı tekrar deneyin."
 
 #: main.c:460
 msgid "Download installation image"
-msgstr "Yükleme dosyasını indir"
+msgstr "Kurulum dosyasını indir"
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
@@ -125,7 +126,7 @@ msgstr "Yükleme dosyası indirilemedi.\nSebep: %s\n\n%s"
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr ""
+msgstr "Bağlanamadı: %s - %s:\n%s\n\n"
 
 #: main.c:543
 msgid "License Agreement"
@@ -173,7 +174,7 @@ msgstr "Disk Kurulumu"
 
 #: main.c:620 main.c:630
 msgid "Delete all data"
-msgstr "Tüm veriyi sil"
+msgstr "Tüm Veriyi Sil"
 
 #: main.c:627
 #, c-format
@@ -221,7 +222,7 @@ msgstr "ReiserFS Dosya sistemi"
 
 #: main.c:701
 msgid "Filesystem Selection"
-msgstr "Dosya sistemi Seçimi"
+msgstr "Dosya Sistemi Seçimi"
 
 #: main.c:701
 msgid "Please choose your filesystem:"
@@ -288,7 +289,7 @@ msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr "Yükleme dosyasında bir yedekleme dosyası bulundu.\n\nYedeği geri yüklemek ister misiniz?"
+msgstr "Kurulum dosyasında bir yedek dosyası bulundu.\n\nYedeği geri yüklemek ister misiniz?"
 
 #: main.c:827
 msgid "Yes"
@@ -304,11 +305,11 @@ msgstr "Yedek dosyası geri yüklenirken bir hata oluştu."
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr "post-install betiği çalıştırılıyor..."
+msgstr "Post-install betiği çalıştırılıyor..."
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr "post-install betiği başarısız oldu."
+msgstr "Post-install betiği başarısız oldu."
 
 #: main.c:877
 #, c-format
@@ -316,7 +317,7 @@ msgid ""
 "%s was successfully installed!\n"
 "\n"
 "Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr "%s başarıyla yüklendi!\n\nLütfen yükleme ortamlarını bu sistemden çıkarın ve yeniden başlatma butonuna tıklayın. Sistem yeniden başlatıldığında ağ ve sistem şifrenizi ayarlamanız istenecek. Daha sonra web yapılandırma konsoluna gitmek için yarayıcınızdan https://%s:444 (veya %s yerine ne isim verdiyseniz) adresine gidin."
+msgstr "%s başarıyla yüklendi!\n\nLütfen yükleme ortamını sistemden çıkarın ve Yeniden Başlat düğmesine tıklayın. Sistem yeniden başlatıldığında ağ kartları, ağ ve sistem parolalarını yapılandırabileceğiniz programı çalıştıracaktır. Kurulum tamamlandıktan sonra bir internet tarayıcısı açıp yapılandırma sayfasına gitmek için adres satırına https://%s:444 (veya %s yerine ne ad verdiyseniz) adresini girin."
 
 #: main.c:882
 msgid "Congratulations!"
@@ -324,8 +325,8 @@ msgstr "Tebrikler!"
 
 #: main.c:882
 msgid "Reboot"
-msgstr "Yeniden başlat."
+msgstr "Yeniden Başlat"
 
 #: main.c:893
 msgid "Setup has failed. Press Ok to reboot."
-msgstr "Kurulum başarısız oldu. Yeniden başlatmak için Tamam'a basın."
+msgstr "Kurulum başarısız oldu. Yeniden başlatmak için Tamam düğmesine basın."

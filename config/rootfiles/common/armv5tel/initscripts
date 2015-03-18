@@ -34,6 +34,7 @@ etc/rc.d/init.d/firstsetup
 etc/rc.d/init.d/functions
 #etc/rc.d/init.d/gnump3d
 etc/rc.d/init.d/halt
+#etc/rc.d/init.d/haproxy
 #etc/rc.d/init.d/hostapd
 #etc/rc.d/init.d/imspector
 etc/rc.d/init.d/ipsec
@@ -60,6 +61,7 @@ etc/rc.d/init.d/mounttmpfs
 #etc/rc.d/init.d/mysql
 #etc/rc.d/init.d/netsnmpd
 etc/rc.d/init.d/network
+etc/rc.d/init.d/network-trigger
 etc/rc.d/init.d/network-vlans
 #etc/rc.d/init.d/networking
 etc/rc.d/init.d/networking/any
@@ -228,6 +230,7 @@ etc/rc.d/rcsysinit.d/S73swconfig
 etc/rc.d/rcsysinit.d/S75firstsetup
 etc/rc.d/rcsysinit.d/S80localnet
 etc/rc.d/rcsysinit.d/S85firewall
+etc/rc.d/rcsysinit.d/S90network-trigger
 etc/rc.d/rcsysinit.d/S91network-vlans
 etc/rc.d/rcsysinit.d/S92rngd
 etc/rc.d/rc3.d/S15fireinfo

@@ -41,15 +41,8 @@ extract_files
 # Start services
 
 # Update Language cache
-perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
+#perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
-# Uninstall the sqlite package.
-rm -f \
-	/opt/pakfire/db/installed/meta-sqlite \
-	/opt/pakfire/db/rootfiles/sqlite
-
-# Fix #10625
-mkdir -p /etc/logrotate.d
 
 sync
 

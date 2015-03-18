@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2015-01-26 08:29+0000\n"
+"PO-Revision-Date: 2015-02-03 07:00+0000\n"
 "Last-Translator: Jacques Hylkema <j.hylkema@intronics.nl>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/ipfire/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -298,7 +298,7 @@ msgstr "DHCP hostnaam"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
-msgstr ""
+msgstr "Niet ingesteld"
 
 #: netstuff.c:669
 #, c-format
@@ -352,87 +352,87 @@ msgstr "Bezig met laden van module..."
 
 #: netstuff.c:777
 msgid "Unable to load driver module."
-msgstr ""
+msgstr "Kan driver module niet laden."
 
 #: netstuff.c:780
 msgid "Module name cannot be blank."
-msgstr ""
+msgstr "Module naam mag niet leeg zijn."
 
 #: networking.c:110
 msgid "Stopping network..."
-msgstr ""
+msgstr "Bezig met stoppen van netwerk..."
 
 #: networking.c:115
 msgid "Restarting network..."
-msgstr ""
+msgstr "Bezig met herstarten van netwerk..."
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
-msgstr ""
+msgstr "Geen GROENE interface toegewezen."
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
-msgstr ""
+msgstr "Geen IP adres toegewezen aan GROEN."
 
 #: networking.c:163
 msgid "Error"
-msgstr ""
+msgstr "Fout"
 
 #: networking.c:163
 msgid "Ignore"
-msgstr ""
+msgstr "Negeer"
 
 #: networking.c:164
 msgid "No RED interface assigned."
-msgstr ""
+msgstr "Geen RODE interface toegewezen."
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
-msgstr ""
+msgstr "Geen IP adres toegewezen aan ROOD."
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
-msgstr ""
+msgstr "Geen ORANJE interface toegewezen."
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
-msgstr ""
+msgstr "Geen IP adres toegewezen aan ORANJE"
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
-msgstr ""
+msgstr "Geen BLAUWE interface toegewezen."
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
-msgstr ""
+msgstr "Geen IP adres toegewezen aan BLAUW."
 
 #: networking.c:217
 msgid "Misssing DNS."
-msgstr ""
+msgstr "DNS gegevens ontbreken."
 
 #: networking.c:224
 msgid "Missing Default Gateway."
-msgstr ""
+msgstr "Standaard gateway ontbreekt."
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
-msgstr ""
+msgstr "Netwerk configuratie type"
 
 #: networking.c:238 networking.c:409
 msgid "Drivers and card assignments"
-msgstr ""
+msgstr "Drivers en kaart toewijzingen"
 
 #: networking.c:239 networking.c:640
 msgid "Address settings"
-msgstr ""
+msgstr "Adres instellingen"
 
 #: networking.c:240 networking.c:743
 msgid "DNS and Gateway settings"
-msgstr ""
+msgstr "DNS en Gateway instellingen"
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
-msgstr ""
+msgstr "Nadat de configuratie is voltooid, moet het netwerk worden herstart."
 
 #: networking.c:267
 #, c-format
@@ -440,15 +440,15 @@ msgid ""
 "Current config: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Huidige configuratie: %s\n\n%s"
 
 #: networking.c:268
 msgid "Network configuration menu"
-msgstr ""
+msgstr "Netwerk configuratie menu"
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
-msgstr ""
+msgstr "Gereed"
 
 #: networking.c:300
 #, c-format
@@ -457,7 +457,7 @@ msgid ""
 "list those interfaces which have ethernet attached. If you change this "
 "setting, a network restart will be required, and you will have to "
 "reconfigure the network driver assignments."
-msgstr ""
+msgstr "Selecteer de netwerk configuratie voor %s. De volgende configuratie types laten alleen de netwerkkaarten zien die op ethernet zijn aangesloten. Als je dit wijzigt, moet het netwerk worden herstart en moet je de netwerk driver toewijzingen opnieuw configureren."
 
 #: networking.c:307
 #, c-format
@@ -465,35 +465,35 @@ msgid ""
 "Not enough netcards for your choice.\n"
 "\n"
 "Needed: %d - Available: %d\n"
-msgstr ""
+msgstr "Er zijn onvoldoende netwerkkaarten aanwezig voor je keuze.\n\nBenodigd: %d - Beschikbaar: %d\n"
 
 #: networking.c:359
 msgid ""
 "Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
 "\n"
-msgstr ""
+msgstr "Configureer netwerk drivers, en welke netwerkkaart aan welke interface is toegewezen. De huidige configuratie is het volgende:\n\n"
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
-msgstr ""
+msgstr "Wil je deze instellingen wijzigen?"
 
 #: networking.c:447
 msgid "Restarting non-local network..."
-msgstr ""
+msgstr "Bezig met herstarten van het niet-lokale netwerk..."
 
 #: networking.c:464
 msgid ""
 "Please choose the interface you wish to change.\n"
 "\n"
-msgstr ""
+msgstr "Kies de interface die je wil wijzigen.\n\n"
 
 #: networking.c:519
 msgid "Assigned Cards"
-msgstr ""
+msgstr "Toegewezen kaarten"
 
 #: networking.c:520
 msgid "Remove"
-msgstr ""
+msgstr "Verwijder"
 
 #: networking.c:556 networking.c:649
 #, c-format
@@ -502,84 +502,84 @@ msgid ""
 "connection to the %s machine will be broken, and you will have to reconnect "
 "on the new IP. This is a risky operation, and should only be attempted if "
 "you have physical access to the machine, should something go wrong."
-msgstr ""
+msgstr "Als je dit IP adres wijzigt en je bent op afstand ingelogd, dan zal je connectie naar de %s machine worden onderbroken en moet je opnieuw inloggen op het nieuwe IP adres. Dit is een risicovolle operatie die alleen zou moeten worden uitgevoerd als je fysieke toegang tot de machine hebt, mocht er iets misgaan."
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
-msgstr ""
+msgstr "Selecteer de interface die je wil herconfigureren."
 
 #: networking.c:729
 msgid "Default gateway:"
-msgstr ""
+msgstr "Standaard gateway:"
 
 #: networking.c:744
 msgid ""
 "Enter the DNS and gateway information. These settings are used only with "
 "Static IP (and DHCP if DNS set) on the RED interface."
-msgstr ""
+msgstr "Voer de DNS en gatway informatie in. Deze instellingen worden alleen gebruikt indien een statisch IP adres (en DHCP indien DNS is ingesteld) voor de RODE interface is ingesteld."
 
 #: networking.c:773
 msgid "Default gateway"
-msgstr ""
+msgstr "Standaard gateway"
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
-msgstr ""
+msgstr "Er is een secundaire DNS ingesteld zonder dat een primaire DNS is ingesteld"
 
 #: passwords.c:33
 msgid ""
 "Enter the 'root' user password. Login as this user for commandline access."
-msgstr ""
+msgstr "Voer het 'root' wachtwoord in. Log als deze gebruiker in voor commando regel toegang."
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
-msgstr ""
+msgstr "Instellen wachtwoord"
 
 #: passwords.c:38
 msgid "Setting 'root' password...."
-msgstr ""
+msgstr "Instellen 'root' wachtwoord..."
 
 #: passwords.c:39
 msgid "Problem setting 'root' password."
-msgstr ""
+msgstr "Probleem bij instellen van 'root' wachtwoord."
 
 #: passwords.c:53
 #, c-format
 msgid ""
 "Enter %s 'admin' user password. This is the user to use for logging into the"
 " %s web administration pages."
-msgstr ""
+msgstr "Voer het %s 'admin' gebruiker wachtwoord in. Dit is de gebruiker om mee in te loggen op de %s web administratie interface."
 
 #: passwords.c:60
 #, c-format
 msgid "Setting %s 'admin' user password..."
-msgstr ""
+msgstr "Instellen %s 'admin' wachtwoord..."
 
 #: passwords.c:62
 #, c-format
 msgid "Problem setting %s 'admin' user password."
-msgstr ""
+msgstr "Probleem bij instellen van %s 'admin' wachtwoord."
 
 #: passwords.c:76
 msgid "Password:"
-msgstr ""
+msgstr "Wachtwoord:"
 
 #: passwords.c:77
 msgid "Again:"
-msgstr ""
+msgstr "Nogmaals:"
 
 #: passwords.c:95
 msgid "Password cannot be blank."
-msgstr ""
+msgstr "Wachtwoord mag niet leeg zijn."
 
 #: passwords.c:102
 msgid "Passwords do not match."
-msgstr ""
+msgstr "Wachtwoorden komen niet overeen,"
 
 #: passwords.c:109
 msgid "Password cannot contain spaces."
-msgstr ""
+msgstr "Wachtwoord mag geen spaties bevatten."
 
 #: timezone.c:77
 msgid "Choose the timezone you are in from the list below."
-msgstr ""
+msgstr "Kies de tijdzone waar je bent uit onderstaande lijst."
