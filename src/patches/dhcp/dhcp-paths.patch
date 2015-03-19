@@ -1,7 +1,6 @@
-diff -up dhcp-4.2.0/includes/dhcpd.h.paths dhcp-4.2.0/includes/dhcpd.h
---- dhcp-4.2.0/includes/dhcpd.h.paths	2010-07-21 13:55:42.000000000 +0200
-+++ dhcp-4.2.0/includes/dhcpd.h	2010-07-21 14:29:57.000000000 +0200
-@@ -1390,15 +1390,15 @@ typedef unsigned char option_mask [16];
+--- expanded_org/includes/dhcpd.h	Wed Aug 06 23:35:02 2014
++++ expanded_patched_51_4_2_0_paths_patch/includes/dhcpd.h	Mon Feb 16 13:22:11 2015
+@@ -1424,15 +1424,15 @@
  #else /* !DEBUG */
  
  #ifndef _PATH_DHCPD_CONF
@@ -20,7 +19,7 @@ diff -up dhcp-4.2.0/includes/dhcpd.h.paths dhcp-4.2.0/includes/dhcpd.h
  #endif
  
  #ifndef _PATH_DHCPD_PID
-@@ -1412,7 +1412,7 @@ typedef unsigned char option_mask [16];
+@@ -1446,7 +1446,7 @@
  #endif /* DEBUG */
  
  #ifndef _PATH_DHCLIENT_CONF
@@ -29,7 +28,7 @@ diff -up dhcp-4.2.0/includes/dhcpd.h.paths dhcp-4.2.0/includes/dhcpd.h
  #endif
  
  #ifndef _PATH_DHCLIENT_SCRIPT
-@@ -1428,11 +1428,11 @@ typedef unsigned char option_mask [16];
+@@ -1462,11 +1462,11 @@
  #endif
  
  #ifndef _PATH_DHCLIENT_DB

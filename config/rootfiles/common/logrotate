@@ -1,5 +1,6 @@
 #etc/logrotate.d
 etc/logrotate.d/.empty
+#usr/man/man5/logrotate.5
 #usr/man/man8/logrotate.8
 usr/sbin/logrotate
 var/lib/logrotate.status

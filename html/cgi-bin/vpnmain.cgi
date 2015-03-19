@@ -961,9 +961,9 @@ END
 	if (!$errormessage) {
 	    &General::log("ipsec", "Creating cacert...");
 	    if (open(STDIN, "-|")) {
-    		my $opt  = " req -x509 -nodes -rand /proc/interrupts:/proc/net/rt_cache";
+    		my $opt  = " req -x509 -sha256 -nodes";
 		   $opt .= " -days 999999";
-		   $opt .= " -newkey rsa:2048";
+		   $opt .= " -newkey rsa:4096";
 		   $opt .= " -keyout ${General::swroot}/private/cakey.pem";
 		   $opt .= " -out ${General::swroot}/ca/cacert.pem";
 
@@ -984,8 +984,8 @@ END
 	if (!$errormessage) {
 	    &General::log("ipsec", "Creating host cert...");
 	    if (open(STDIN, "-|")) {
-    		my $opt  = " req -nodes -rand /proc/interrupts:/proc/net/rt_cache";
-		   $opt .= " -newkey rsa:1024";
+    		my $opt  = " req -sha256 -nodes";
+		   $opt .= " -newkey rsa:2048";
 		   $opt .= " -keyout ${General::swroot}/certs/hostkey.pem";
 		   $opt .= " -out ${General::swroot}/certs/hostreq.pem";
 		$errormessage = &callssl ($opt);
@@ -1020,7 +1020,7 @@ END
 	    print $fh "subjectAltName=$cgiparams{'SUBJECTALTNAME'}" if ($cgiparams{'SUBJECTALTNAME'});
 	    close ($fh);
 	    
-	    my  $opt  = " ca -days 999999";
+	    my  $opt  = " ca -md sha256 -days 999999";
 		$opt .= " -batch -notext";
 		$opt .= " -in ${General::swroot}/certs/hostreq.pem";
 		$opt .= " -out ${General::swroot}/certs/hostcert.pem";
@@ -1443,7 +1443,7 @@ END
 
 	    # Sign the certificate request
 	    &General::log("ipsec", "Signing your cert $cgiparams{'NAME'}...");
-    	    my 	$opt  = " ca -days 999999";
+    	    my 	$opt  = " ca -md sha256 -days 999999";
 		$opt .= " -batch -notext";
 		$opt .= " -in $filename";
 		$opt .= " -out ${General::swroot}/certs/$cgiparams{'NAME'}cert.pem";
@@ -1678,7 +1678,7 @@ END
 
 	    if (open(STDIN, "-|")) {
     		my $opt  = " req -nodes -rand /proc/interrupts:/proc/net/rt_cache";
-		   $opt .= " -newkey rsa:1024";
+		   $opt .= " -newkey rsa:2048";
 		   $opt .= " -keyout ${General::swroot}/certs/$cgiparams{'NAME'}key.pem";
 		   $opt .= " -out ${General::swroot}/certs/$cgiparams{'NAME'}req.pem";
 
@@ -1715,7 +1715,7 @@ END
 	    print $fh "subjectAltName=$cgiparams{'SUBJECTALTNAME'}" if ($cgiparams{'SUBJECTALTNAME'});
 	    close ($fh);
 
-	    my $opt  = " ca -days 999999 -batch -notext";
+	    my $opt  = " ca -md sha256 -days 999999 -batch -notext";
 	       $opt .= " -in ${General::swroot}/certs/$cgiparams{'NAME'}req.pem";
 	       $opt .= " -out ${General::swroot}/certs/$cgiparams{'NAME'}cert.pem";
 	       $opt .= " -extfile $v3extname";
@@ -2148,7 +2148,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(sha2_512|sha2_384|sha2_256|sha|md5|aesxcbc)$/) {
+	    if ($val !~ /^(sha2_(512|384|256)|sha|md5|aesxcbc)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }
@@ -2189,7 +2189,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    goto ADVANCED_ERROR;
 	}
 	foreach my $val (@temp) {
-	    if ($val !~ /^(sha2_512|sha2_384|sha2_256|sha1|md5|aesxcbc)$/) {
+	    if ($val !~ /^(sha2_(512|384|256)|sha1|md5|aesxcbc)$/) {
 		$errormessage = $Lang::tr{'invalid input'};
 		goto ADVANCED_ERROR;
 	    }

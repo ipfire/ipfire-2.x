@@ -1,7 +1,7 @@
-diff -up dhcp-4.2.2/client/dhclient.c.improved-xid dhcp-4.2.2/client/dhclient.c
---- dhcp-4.2.2/client/dhclient.c.improved-xid	2011-09-16 18:18:00.649730661 +0200
-+++ dhcp-4.2.2/client/dhclient.c	2011-09-16 18:22:36.815035513 +0200
-@@ -898,6 +898,26 @@ main(int argc, char **argv) {
+diff -up dhcp-4.3.0a1/client/dhclient.c.improved-xid dhcp-4.3.0a1/client/dhclient.c
+--- dhcp-4.3.0a1/client/dhclient.c.improved-xid	2013-12-20 13:29:41.836260810 +0100
++++ dhcp-4.3.0a1/client/dhclient.c	2013-12-20 13:29:41.843260713 +0100
+@@ -894,6 +894,26 @@ main(int argc, char **argv) {
  		}
  	}
  
@@ -28,7 +28,7 @@ diff -up dhcp-4.2.2/client/dhclient.c.improved-xid dhcp-4.2.2/client/dhclient.c
  	/* At this point, all the interfaces that the script thinks
  	   are relevant should be running, so now we once again call
  	   discover_interfaces(), and this time ask it to actually set
-@@ -912,14 +932,36 @@ main(int argc, char **argv) {
+@@ -908,14 +928,36 @@ main(int argc, char **argv) {
  	   Not much entropy, but we're booting, so we're not likely to
  	   find anything better. */
  	seed = 0;
@@ -66,7 +66,7 @@ diff -up dhcp-4.2.2/client/dhclient.c.improved-xid dhcp-4.2.2/client/dhclient.c
  
  	/* Setup specific Infiniband options */
  	for (ip = interfaces; ip; ip = ip->next) {
-@@ -1457,7 +1499,7 @@ void dhcpack (packet)
+@@ -1460,7 +1502,7 @@ void dhcpack (packet)
  		return;
  	}
  
@@ -75,7 +75,7 @@ diff -up dhcp-4.2.2/client/dhclient.c.improved-xid dhcp-4.2.2/client/dhclient.c
  
  	lease = packet_to_lease (packet, client);
  	if (!lease) {
-@@ -2174,7 +2216,7 @@ void dhcpnak (packet)
+@@ -2171,7 +2213,7 @@ void dhcpnak (packet)
  		return;
  	}
  
@@ -84,7 +84,7 @@ diff -up dhcp-4.2.2/client/dhclient.c.improved-xid dhcp-4.2.2/client/dhclient.c
  
  	if (!client -> active) {
  #if defined (DEBUG)
-@@ -2300,10 +2342,10 @@ void send_discover (cpp)
+@@ -2298,10 +2340,10 @@ void send_discover (cpp)
  		client -> packet.secs = htons (65535);
  	client -> secs = client -> packet.secs;
  
@@ -96,8 +96,8 @@ diff -up dhcp-4.2.2/client/dhclient.c.improved-xid dhcp-4.2.2/client/dhclient.c
 +	      ntohs (sockaddr_broadcast.sin_port), (long)(client -> interval), client -> xid);
  
  	/* Send out a packet. */
- 	result = send_packet (client -> interface, (struct packet *)0,
-@@ -2584,10 +2626,10 @@ void send_request (cpp)
+ 	result = send_packet(client->interface, NULL, &client->packet,
+@@ -2570,10 +2612,10 @@ void send_request (cpp)
  			client -> packet.secs = htons (65535);
  	}
  
@@ -109,21 +109,21 @@ diff -up dhcp-4.2.2/client/dhclient.c.improved-xid dhcp-4.2.2/client/dhclient.c
 +	      ntohs (destination.sin_port), client -> xid);
  
  	if (destination.sin_addr.s_addr != INADDR_BROADCAST &&
- 	    fallback_interface)
-@@ -2618,10 +2660,10 @@ void send_decline (cpp)
+ 	    fallback_interface) {
+@@ -2613,10 +2655,10 @@ void send_decline (cpp)
  
  	int result;
  
 -	log_info ("DHCPDECLINE on %s to %s port %d",
 +	log_info ("DHCPDECLINE on %s to %s port %d (xid=0x%x)",
- 	      client -> name ? client -> name : client -> interface -> name,
- 	      inet_ntoa (sockaddr_broadcast.sin_addr),
--	      ntohs (sockaddr_broadcast.sin_port));
-+	      ntohs (sockaddr_broadcast.sin_port), client -> xid);
+ 	      client->name ? client->name : client->interface->name,
+ 	      inet_ntoa(sockaddr_broadcast.sin_addr),
+-	      ntohs(sockaddr_broadcast.sin_port));
++	      ntohs(sockaddr_broadcast.sin_port), client -> xid);
  
  	/* Send out a packet. */
- 	result = send_packet (client -> interface, (struct packet *)0,
-@@ -2661,10 +2703,10 @@ void send_release (cpp)
+ 	result = send_packet(client->interface, NULL, &client->packet,
+@@ -2659,10 +2701,10 @@ void send_release (cpp)
  		return;
  	}
  
@@ -134,5 +134,5 @@ diff -up dhcp-4.2.2/client/dhclient.c.improved-xid dhcp-4.2.2/client/dhclient.c
 -	      ntohs (destination.sin_port));
 +	      ntohs (destination.sin_port), client -> xid);
  
- 	if (fallback_interface)
- 		result = send_packet (fallback_interface,
+ 	if (fallback_interface) {
+ 		result = send_packet(fallback_interface, NULL, &client->packet,
