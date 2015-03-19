@@ -83,7 +83,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.0-beta5-enginesdir.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1-beta2-build.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-cryptodev.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-fix_parallel_build-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-weak-ciphers.patch
 
@@ -106,9 +105,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		no-rc5 \
 		no-srp \
 		$(CONFIGURE_ARGS) \
-		-DSSL_FORBID_ENULL \
-		-DHAVE_CRYPTODEV \
-		-DUSE_CRYPTODEV_DIGEST
+		-DSSL_FORBID_ENULL
 
 	cd $(DIR_APP) && make depend
 	cd $(DIR_APP) && make
