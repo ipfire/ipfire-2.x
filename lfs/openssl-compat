@@ -71,7 +71,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-0.9.8u-cryptodev.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-disable-sslv2-sslv3.patch
 
 	cd $(DIR_APP) && sed -i -e 's/mcpu/march/' config
