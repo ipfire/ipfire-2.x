@@ -71,6 +71,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
+	# Apply our CFLAGS
+	cd $(DIR_APP) && sed -i Configure \
+		-e "s/-O3 -fomit-frame-pointer/$(CFLAGS)/g"
+
 	cd $(DIR_APP) && sed -i -e 's/mcpu/march/' config
 	cd $(DIR_APP) && sed -i -e 's/-O3/-O2/' -e 's/-march=i486/-march=i586/' Configure
 
@@ -84,9 +88,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		zlib-dynamic \
 		no-engines \
 		no-asm 386 \
-		-DSSL_FORBID_ENULL \
-		-DHAVE_CRYPTODEV \
-		-DUSE_CRYPTODEV_DIGEST
+		-DSSL_FORBID_ENULL
 
 	cd $(DIR_APP) && make depend
 	cd $(DIR_APP) && make
