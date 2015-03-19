@@ -32,14 +32,30 @@ CSV_FILE=GeoIPCountryWhois.csv
 
 ARCH=LE
 
+eval $(/usr/local/bin/readhash /var/ipfire/proxy/settings)
+
 function download() {
 	echo "Downloading latest GeoIP ruleset..."
 
 	# Create temporary directory.
 	mkdir -pv $TMP_PATH
 
+	# Proxy settings.
+	# Check if a proxy should be used.
+	if [[ $UPSTREAM_PROXY ]]; then
+		PROXYSETTINGS="-e http_proxy=http://"
+
+		# Check if authentication against the proxy is configured.
+		if [[ $UPSTREAM_USER && $UPSTREAM_PASSWORD ]]; then
+			PROXYSETTINGS="$PROXYSETTINGS$UPSTREAM_USER:$UPSTREAM_PASSWORD@"
+		fi
+
+		# Add proxy server.
+		PROXYSETTINGS="$PROXYSETTINGS$UPSTREAM_PROXY"
+	fi
+
 	# Get the latest GeoIP database from server.
-	wget $DL_URL/$DL_FILE -O $TMP_FILE
+	wget $DL_URL/$DL_FILE $PROXYSETTINGS -O $TMP_FILE
 
 	# Extract files.
 	unzip $TMP_FILE -d $TMP_PATH
