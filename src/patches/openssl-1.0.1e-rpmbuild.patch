@@ -1,0 +1,44 @@
+diff -up openssl-1.0.1e/Configure.rpmbuild openssl-1.0.1e/Configure
+--- openssl-1.0.1e/Configure.rpmbuild	2014-08-13 19:19:53.211005598 +0200
++++ openssl-1.0.1e/Configure	2014-08-13 19:29:21.704099285 +0200
+@@ -1675,7 +1676,7 @@ while (<IN>)
+ 	elsif ($shared_extension ne "" && $shared_extension =~ /^\.s([ol])\.[^\.]*\.[^\.]*$/)
+ 		{
+ 		my $sotmp = $1;
+-		s/^SHARED_LIBS_LINK_EXTS=.*/SHARED_LIBS_LINK_EXTS=.s$sotmp.\$(SHLIB_MAJOR) .s$sotmp/;
++		s/^SHARED_LIBS_LINK_EXTS=.*/SHARED_LIBS_LINK_EXTS=.s$sotmp.\$(SHLIB_SONAMEVER) .s$sotmp/;
+ 		}
+ 	elsif ($shared_extension ne "" && $shared_extension =~ /^\.[^\.]*\.[^\.]*\.dylib$/)
+ 		{
+diff -up openssl-1.0.1e/Makefile.org.rpmbuild openssl-1.0.1e/Makefile.org
+--- openssl-1.0.1e/Makefile.org.rpmbuild	2013-02-11 16:26:04.000000000 +0100
++++ openssl-1.0.1e/Makefile.org	2014-08-13 19:19:53.218005759 +0200
+@@ -10,6 +10,7 @@ SHLIB_VERSION_HISTORY=
+ SHLIB_MAJOR=
+ SHLIB_MINOR=
+ SHLIB_EXT=
++SHLIB_SONAMEVER=10
+ PLATFORM=dist
+ OPTIONS=
+ CONFIGURE_ARGS=
+@@ -333,10 +334,9 @@ clean-shared:
+ link-shared:
+ 	@ set -e; for i in $(SHLIBDIRS); do \
+ 		$(MAKE) -f $(HERE)/Makefile.shared -e $(BUILDENV) \
+-			LIBNAME=$$i LIBVERSION=$(SHLIB_MAJOR).$(SHLIB_MINOR) \
++			LIBNAME=$$i LIBVERSION=$(SHLIB_SONAMEVER) \
+ 			LIBCOMPATVERSIONS=";$(SHLIB_VERSION_HISTORY)" \
+ 			symlink.$(SHLIB_TARGET); \
+-		libs="$$libs -l$$i"; \
+ 	done
+ 
+ build-shared: do_$(SHLIB_TARGET) link-shared
+@@ -347,7 +347,7 @@ do_$(SHLIB_TARGET):
+ 			libs="$(LIBKRB5) $$libs"; \
+ 		fi; \
+ 		$(CLEARENV) && $(MAKE) -f Makefile.shared -e $(BUILDENV) \
+-			LIBNAME=$$i LIBVERSION=$(SHLIB_MAJOR).$(SHLIB_MINOR) \
++			LIBNAME=$$i LIBVERSION=$(SHLIB_SONAMEVER) \
+ 			LIBCOMPATVERSIONS=";$(SHLIB_VERSION_HISTORY)" \
+ 			LIBDEPS="$$libs $(EX_LIBS)" \
+ 			link_a.$(SHLIB_TARGET); \
