@@ -700,11 +700,6 @@ sub GenerateDDNSConfigFile {
 			print FILE "password = $password\n";
 		}
 
-		# These providers need to be set to only use IPv4.
-		if ($provider ~~ ["freedns.afraid.org", "nsupdate.info", "opendns.com", "variomedia.de", "zoneedit.com"]) {
-			print FILE "proto = ipv4\n";
-		}
-
 		print FILE "\n";
 	}
 
