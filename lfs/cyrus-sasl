@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.1.21
+VER        = 2.1.26
 
 THISAPP    = cyrus-sasl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -49,7 +49,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = dde02db234dea892bee298390890502e
+$(DL_FILE)_MD5 = a7f4e5e559a0e37b3ffc438c9456e425
 
 install : $(TARGET)
 
@@ -82,7 +82,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-sasl-2.1.22-bad-elif.patch
 	cd $(DIR_APP) && sed -i '/sasl_global/s/^static //' lib/client.c
 	cd $(DIR_APP) && sed -i 's/cat8/man8/' saslauthd/Makefile.am
 	cd $(DIR_APP) && autoconf
@@ -90,7 +89,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(PASS)" ""
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
 		            --with-dbpath=/var/lib/sasl/sasldb2 \
-		            --with-saslauthd=/var/run/saslauthd
+		            --with-saslauthd=/var/run/saslauthd \
+		            --with-des=no --with-rc4=no
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	install -v -m700 -d /var/lib/sasl
