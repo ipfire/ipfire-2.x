@@ -39,9 +39,6 @@ done
 # Extract files
 extract_files
 
-# Generate ddns configuration file
-sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
-
 # Start services
 /etc/init.d/dnsmasq restart
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
@@ -58,6 +55,9 @@ rm -f \
 
 # Fix #10625
 mkdir -p /etc/logrotate.d
+
+# Generate ddns configuration file
+sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
 
 sync
 
