@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = monit
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = ""
 
@@ -80,6 +80,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	mkdir -p /var/lib/monit
 
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/monit \
 			 /var/ipfire/backup/addons/includes/monit
