@@ -385,7 +385,7 @@ buildipfire() {
   ipfiremake backup
   ipfiremake pkg-config
   ipfiremake libusb
-  ipfiremake libusbx
+  ipfiremake libusb-compat
   ipfiremake libpcap
   ipfiremake ppp
   ipfiremake pptp
