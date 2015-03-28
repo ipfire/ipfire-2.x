@@ -1,0 +1,342 @@
+diff -up dhcp-4.3.0a1/client/clparse.c.cloexec dhcp-4.3.0a1/client/clparse.c
+--- dhcp-4.3.0a1/client/clparse.c.cloexec	2013-12-19 15:34:41.638886256 +0100
++++ dhcp-4.3.0a1/client/clparse.c	2013-12-19 15:34:41.657885985 +0100
+@@ -253,7 +253,7 @@ int read_client_conf_file (const char *n
+ 	int token;
+ 	isc_result_t status;
+ 
+-	if ((file = open (name, O_RDONLY)) < 0)
++	if ((file = open (name, O_RDONLY | O_CLOEXEC)) < 0)
+ 		return uerr2isc (errno);
+ 
+ 	cfile = NULL;
+@@ -290,7 +290,7 @@ void read_client_leases ()
+ 
+ 	/* Open the lease file.   If we can't open it, just return -
+ 	   we can safely trust the server to remember our state. */
+-	if ((file = open (path_dhclient_db, O_RDONLY)) < 0)
++	if ((file = open (path_dhclient_db, O_RDONLY | O_CLOEXEC)) < 0)
+ 		return;
+ 
+ 	cfile = NULL;
+diff -up dhcp-4.3.0a1/client/dhclient.c.cloexec dhcp-4.3.0a1/client/dhclient.c
+--- dhcp-4.3.0a1/client/dhclient.c.cloexec	2013-12-19 15:34:41.629886384 +0100
++++ dhcp-4.3.0a1/client/dhclient.c	2013-12-19 15:36:41.608180467 +0100
+@@ -148,11 +148,11 @@ main(int argc, char **argv) {
+ 	/* Make sure that file descriptors 0 (stdin), 1, (stdout), and
+ 	   2 (stderr) are open. To do this, we assume that when we
+ 	   open a file the lowest available file descriptor is used. */
+-	fd = open("/dev/null", O_RDWR);
++	fd = open("/dev/null", O_RDWR | O_CLOEXEC);
+ 	if (fd == 0)
+-		fd = open("/dev/null", O_RDWR);
++		fd = open("/dev/null", O_RDWR | O_CLOEXEC);
+ 	if (fd == 1)
+-		fd = open("/dev/null", O_RDWR);
++		fd = open("/dev/null", O_RDWR | O_CLOEXEC);
+ 	if (fd == 2)
+ 		log_perror = 0; /* No sense logging to /dev/null. */
+ 	else if (fd != -1)
+@@ -504,7 +504,7 @@ main(int argc, char **argv) {
+ 		long temp;
+ 		int e;
+ 
+-		if ((pidfd = fopen(path_dhclient_pid, "r")) != NULL) {
++		if ((pidfd = fopen(path_dhclient_pid, "re")) != NULL) {
+ 			e = fscanf(pidfd, "%ld\n", &temp);
+ 			oldpid = (pid_t)temp;
+ 
+@@ -554,7 +554,7 @@ main(int argc, char **argv) {
+ 					strncpy(new_path_dhclient_pid, path_dhclient_pid, pfx);
+ 					sprintf(new_path_dhclient_pid + pfx, "-%s.pid", ip->name);
+ 
+-					if ((pidfd = fopen(new_path_dhclient_pid, "r")) != NULL) {
++					if ((pidfd = fopen(new_path_dhclient_pid, "re")) != NULL) {
+ 						e = fscanf(pidfd, "%ld\n", &temp);
+ 						oldpid = (pid_t)temp;
+ 
+@@ -579,7 +579,7 @@ main(int argc, char **argv) {
+ 		int dhc_running = 0;
+ 		char procfn[256] = "";
+ 
+-		if ((pidfp = fopen(path_dhclient_pid, "r")) != NULL) {
++		if ((pidfp = fopen(path_dhclient_pid, "re")) != NULL) {
+ 			if ((fscanf(pidfp, "%ld", &temp)==1) && ((dhcpid=(pid_t)temp) > 0)) {
+ 				snprintf(procfn,256,"/proc/%u",dhcpid);
+ 				dhc_running = (access(procfn, F_OK) == 0);
+@@ -3077,7 +3077,7 @@ void rewrite_client_leases ()
+ 
+ 	if (leaseFile != NULL)
+ 		fclose (leaseFile);
+-	leaseFile = fopen (path_dhclient_db, "w");
++	leaseFile = fopen (path_dhclient_db, "we");
+ 	if (leaseFile == NULL) {
+ 		log_error ("can't create %s: %m", path_dhclient_db);
+ 		return;
+@@ -3261,7 +3261,7 @@ write_duid(struct data_string *duid)
+ 		return DHCP_R_INVALIDARG;
+ 
+ 	if (leaseFile == NULL) {	/* XXX? */
+-		leaseFile = fopen(path_dhclient_db, "w");
++		leaseFile = fopen(path_dhclient_db, "we");
+ 		if (leaseFile == NULL) {
+ 			log_error("can't create %s: %m", path_dhclient_db);
+ 			return ISC_R_IOERROR;
+@@ -3441,7 +3441,7 @@ int write_client_lease (client, lease, r
+ 		return 1;
+ 
+ 	if (leaseFile == NULL) {	/* XXX */
+-		leaseFile = fopen (path_dhclient_db, "w");
++		leaseFile = fopen (path_dhclient_db, "we");
+ 		if (leaseFile == NULL) {
+ 			log_error ("can't create %s: %m", path_dhclient_db);
+ 			return 0;
+@@ -3952,9 +3952,9 @@ void go_daemon ()
+ 	(void) close(2);
+ 
+ 	/* Reopen them on /dev/null. */
+-	(void) open("/dev/null", O_RDWR);
+-	(void) open("/dev/null", O_RDWR);
+-	(void) open("/dev/null", O_RDWR);
++	(void) open("/dev/null", O_RDWR | O_CLOEXEC);
++	(void) open("/dev/null", O_RDWR | O_CLOEXEC);
++	(void) open("/dev/null", O_RDWR | O_CLOEXEC);
+ 
+ 	write_client_pid_file ();
+ 
+@@ -3971,14 +3971,14 @@ void write_client_pid_file ()
+ 		return;
+ 	}
+ 
+-	pfdesc = open (path_dhclient_pid, O_CREAT | O_TRUNC | O_WRONLY, 0644);
++	pfdesc = open (path_dhclient_pid, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0644);
+ 
+ 	if (pfdesc < 0) {
+ 		log_error ("Can't create %s: %m", path_dhclient_pid);
+ 		return;
+ 	}
+ 
+-	pf = fdopen (pfdesc, "w");
++	pf = fdopen (pfdesc, "we");
+ 	if (!pf) {
+ 		close(pfdesc);
+ 		log_error ("Can't fdopen %s: %m", path_dhclient_pid);
+diff -up dhcp-4.3.0a1/common/bpf.c.cloexec dhcp-4.3.0a1/common/bpf.c
+--- dhcp-4.3.0a1/common/bpf.c.cloexec	2013-12-19 15:34:41.640886227 +0100
++++ dhcp-4.3.0a1/common/bpf.c	2013-12-19 15:34:41.661885928 +0100
+@@ -95,7 +95,7 @@ int if_register_bpf (info)
+ 	for (b = 0; 1; b++) {
+ 		/* %Audit% 31 bytes max. %2004.06.17,Safe% */
+ 		sprintf(filename, BPF_FORMAT, b);
+-		sock = open (filename, O_RDWR, 0);
++		sock = open (filename, O_RDWR | O_CLOEXEC, 0);
+ 		if (sock < 0) {
+ 			if (errno == EBUSY) {
+ 				continue;
+diff -up dhcp-4.3.0a1/common/dlpi.c.cloexec dhcp-4.3.0a1/common/dlpi.c
+--- dhcp-4.3.0a1/common/dlpi.c.cloexec	2013-12-19 15:34:41.641886213 +0100
++++ dhcp-4.3.0a1/common/dlpi.c	2013-12-19 15:34:41.662885914 +0100
+@@ -804,7 +804,7 @@ dlpiopen(const char *ifname) {
+ 	}
+ 	*dp = '\0';
+ 	
+-	return open (devname, O_RDWR, 0);
++	return open (devname, O_RDWR | O_CLOEXEC, 0);
+ }
+ 
+ /*
+diff -up dhcp-4.3.0a1/common/nit.c.cloexec dhcp-4.3.0a1/common/nit.c
+--- dhcp-4.3.0a1/common/nit.c.cloexec	2013-12-19 15:34:41.642886199 +0100
++++ dhcp-4.3.0a1/common/nit.c	2013-12-19 15:34:41.662885914 +0100
+@@ -81,7 +81,7 @@ int if_register_nit (info)
+ 	struct strioctl sio;
+ 
+ 	/* Open a NIT device */
+-	sock = open ("/dev/nit", O_RDWR);
++	sock = open ("/dev/nit", O_RDWR | O_CLOEXEC);
+ 	if (sock < 0)
+ 		log_fatal ("Can't open NIT device for %s: %m", info -> name);
+ 
+diff -up dhcp-4.3.0a1/common/resolv.c.cloexec dhcp-4.3.0a1/common/resolv.c
+--- dhcp-4.3.0a1/common/resolv.c.cloexec	2013-12-11 01:25:12.000000000 +0100
++++ dhcp-4.3.0a1/common/resolv.c	2013-12-19 15:34:41.663885900 +0100
+@@ -50,7 +50,7 @@ void read_resolv_conf (parse_time)
+ 	struct domain_search_list *dp, *dl, *nd;
+ 	isc_result_t status;
+ 
+-	if ((file = open (path_resolv_conf, O_RDONLY)) < 0) {
++	if ((file = open (path_resolv_conf, O_RDONLY | O_CLOEXEC)) < 0) {
+ 		log_error ("Can't open %s: %m", path_resolv_conf);
+ 		return;
+ 	}
+diff -up dhcp-4.3.0a1/common/upf.c.cloexec dhcp-4.3.0a1/common/upf.c
+--- dhcp-4.3.0a1/common/upf.c.cloexec	2013-12-19 15:34:41.642886199 +0100
++++ dhcp-4.3.0a1/common/upf.c	2013-12-19 15:34:41.663885900 +0100
+@@ -77,7 +77,7 @@ int if_register_upf (info)
+ 		/* %Audit% Cannot exceed 36 bytes. %2004.06.17,Safe% */
+ 		sprintf(filename, "/dev/pf/pfilt%d", b);
+ 
+-		sock = open (filename, O_RDWR, 0);
++		sock = open (filename, O_RDWR | O_CLOEXEC, 0);
+ 		if (sock < 0) {
+ 			if (errno == EBUSY) {
+ 				continue;
+diff -up dhcp-4.3.0a1/omapip/trace.c.cloexec dhcp-4.3.0a1/omapip/trace.c
+--- dhcp-4.3.0a1/omapip/trace.c.cloexec	2013-12-11 01:01:03.000000000 +0100
++++ dhcp-4.3.0a1/omapip/trace.c	2013-12-19 15:34:41.663885900 +0100
+@@ -142,10 +142,10 @@ isc_result_t trace_begin (const char *fi
+ 		return DHCP_R_INVALIDARG;
+ 	}
+ 
+-	traceoutfile = open (filename, O_CREAT | O_WRONLY | O_EXCL, 0600);
++	traceoutfile = open (filename, O_CREAT | O_WRONLY | O_EXCL | O_CLOEXEC, 0600);
+ 	if (traceoutfile < 0 && errno == EEXIST) {
+ 		log_error ("WARNING: Overwriting trace file \"%s\"", filename);
+-		traceoutfile = open (filename, O_WRONLY | O_EXCL | O_TRUNC,
++		traceoutfile = open (filename, O_WRONLY | O_EXCL | O_TRUNC | O_CLOEXEC,
+ 				     0600);
+ 	}
+ 
+@@ -433,7 +433,7 @@ void trace_file_replay (const char *file
+ 	isc_result_t result;
+ 	int len;
+ 
+-	traceinfile = fopen (filename, "r");
++	traceinfile = fopen (filename, "re");
+ 	if (!traceinfile) {
+ 		log_error("Can't open tracefile %s: %m", filename);
+ 		return;
+diff -up dhcp-4.3.0a1/relay/dhcrelay.c.cloexec dhcp-4.3.0a1/relay/dhcrelay.c
+--- dhcp-4.3.0a1/relay/dhcrelay.c.cloexec	2013-12-13 22:26:21.000000000 +0100
++++ dhcp-4.3.0a1/relay/dhcrelay.c	2013-12-19 15:34:41.664885886 +0100
+@@ -193,11 +193,11 @@ main(int argc, char **argv) {
+ 	/* Make sure that file descriptors 0(stdin), 1,(stdout), and
+ 	   2(stderr) are open. To do this, we assume that when we
+ 	   open a file the lowest available file descriptor is used. */
+-	fd = open("/dev/null", O_RDWR);
++	fd = open("/dev/null", O_RDWR | O_CLOEXEC);
+ 	if (fd == 0)
+-		fd = open("/dev/null", O_RDWR);
++		fd = open("/dev/null", O_RDWR | O_CLOEXEC);
+ 	if (fd == 1)
+-		fd = open("/dev/null", O_RDWR);
++		fd = open("/dev/null", O_RDWR | O_CLOEXEC);
+ 	if (fd == 2)
+ 		log_perror = 0; /* No sense logging to /dev/null. */
+ 	else if (fd != -1)
+@@ -564,13 +564,13 @@ main(int argc, char **argv) {
+ 
+ 		if (no_pid_file == ISC_FALSE) {
+ 			pfdesc = open(path_dhcrelay_pid,
+-				      O_CREAT | O_TRUNC | O_WRONLY, 0644);
++				      O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, 0644);
+ 
+ 			if (pfdesc < 0) {
+ 				log_error("Can't create %s: %m",
+ 					  path_dhcrelay_pid);
+ 			} else {
+-				pf = fdopen(pfdesc, "w");
++				pf = fdopen(pfdesc, "we");
+ 				if (!pf)
+ 					log_error("Can't fdopen %s: %m",
+ 						  path_dhcrelay_pid);
+diff -up dhcp-4.3.0a1/server/confpars.c.cloexec dhcp-4.3.0a1/server/confpars.c
+--- dhcp-4.3.0a1/server/confpars.c.cloexec	2013-12-11 01:25:12.000000000 +0100
++++ dhcp-4.3.0a1/server/confpars.c	2013-12-19 15:34:41.665885871 +0100
+@@ -117,7 +117,7 @@ isc_result_t read_conf_file (const char
+ 	}
+ #endif
+ 
+-	if ((file = open (filename, O_RDONLY)) < 0) {
++	if ((file = open (filename, O_RDONLY | O_CLOEXEC)) < 0) {
+ 		if (leasep) {
+ 			log_error ("Can't open lease database %s: %m --",
+ 				   path_dhcpd_db);
+diff -up dhcp-4.3.0a1/server/db.c.cloexec dhcp-4.3.0a1/server/db.c
+--- dhcp-4.3.0a1/server/db.c.cloexec	2013-12-11 01:25:12.000000000 +0100
++++ dhcp-4.3.0a1/server/db.c	2013-12-19 15:34:41.666885857 +0100
+@@ -1081,7 +1081,7 @@ void db_startup (testp)
+ 	}
+ #endif
+ 	if (!testp) {
+-		db_file = fopen (path_dhcpd_db, "a");
++		db_file = fopen (path_dhcpd_db, "ae");
+ 		if (!db_file)
+ 			log_fatal ("Can't open %s for append.", path_dhcpd_db);
+ 		expire_all_pools ();
+@@ -1129,12 +1129,12 @@ int new_lease_file ()
+ 		     path_dhcpd_db, (int)t) >= sizeof newfname)
+ 		log_fatal("new_lease_file: lease file path too long");
+ 
+-	db_fd = open (newfname, O_WRONLY | O_TRUNC | O_CREAT, 0664);
++	db_fd = open (newfname, O_WRONLY | O_TRUNC | O_CREAT | O_CLOEXEC, 0664);
+ 	if (db_fd < 0) {
+ 		log_error ("Can't create new lease file: %m");
+ 		return 0;
+ 	}
+-	if ((new_db_file = fdopen(db_fd, "w")) == NULL) {
++	if ((new_db_file = fdopen(db_fd, "we")) == NULL) {
+ 		log_error("Can't fdopen new lease file: %m");
+ 		close(db_fd);
+ 		goto fdfail;
+diff -up dhcp-4.3.0a1/server/dhcpd.c.cloexec dhcp-4.3.0a1/server/dhcpd.c
+--- dhcp-4.3.0a1/server/dhcpd.c.cloexec	2013-12-13 22:26:01.000000000 +0100
++++ dhcp-4.3.0a1/server/dhcpd.c	2013-12-19 15:37:17.258674472 +0100
+@@ -193,11 +193,11 @@ main(int argc, char **argv) {
+         /* Make sure that file descriptors 0 (stdin), 1, (stdout), and
+            2 (stderr) are open. To do this, we assume that when we
+            open a file the lowest available file descriptor is used. */
+-        fd = open("/dev/null", O_RDWR);
++        fd = open("/dev/null", O_RDWR | O_CLOEXEC);
+         if (fd == 0)
+-                fd = open("/dev/null", O_RDWR);
++                fd = open("/dev/null", O_RDWR | O_CLOEXEC);
+         if (fd == 1)
+-                fd = open("/dev/null", O_RDWR);
++                fd = open("/dev/null", O_RDWR | O_CLOEXEC);
+         if (fd == 2)
+                 log_perror = 0; /* No sense logging to /dev/null. */
+         else if (fd != -1)
+@@ -716,7 +716,7 @@ main(int argc, char **argv) {
+ 	 */
+ 	if (no_pid_file == ISC_FALSE) {
+ 		/*Read previous pid file. */
+-		if ((i = open (path_dhcpd_pid, O_RDONLY)) >= 0) {
++		if ((i = open (path_dhcpd_pid, O_RDONLY | O_CLOEXEC)) >= 0) {
+ 			status = read(i, pbuf, (sizeof pbuf) - 1);
+ 			close (i);
+ 			if (status > 0) {
+@@ -735,7 +735,7 @@ main(int argc, char **argv) {
+ 		}
+ 
+ 		/* Write new pid file. */
+-		i = open(path_dhcpd_pid, O_WRONLY|O_CREAT|O_TRUNC, 0644);
++		i = open(path_dhcpd_pid, O_WRONLY|O_CREAT|O_TRUNC|O_CLOEXEC, 0644);
+ 		if (i >= 0) {
+ 			sprintf(pbuf, "%d\n", (int) getpid());
+ 			IGNORE_RET (write(i, pbuf, strlen(pbuf)));
+@@ -763,9 +763,9 @@ main(int argc, char **argv) {
+                 (void) close(2);
+ 
+                 /* Reopen them on /dev/null. */
+-                (void) open("/dev/null", O_RDWR);
+-                (void) open("/dev/null", O_RDWR);
+-                (void) open("/dev/null", O_RDWR);
++                (void) open("/dev/null", O_RDWR | O_CLOEXEC);
++                (void) open("/dev/null", O_RDWR | O_CLOEXEC);
++                (void) open("/dev/null", O_RDWR | O_CLOEXEC);
+                 log_perror = 0; /* No sense logging to /dev/null. */
+ 
+        		IGNORE_RET (chdir("/"));
+diff -up dhcp-4.3.0a1/server/ldap.c.cloexec dhcp-4.3.0a1/server/ldap.c
+--- dhcp-4.3.0a1/server/ldap.c.cloexec	2013-12-11 01:25:12.000000000 +0100
++++ dhcp-4.3.0a1/server/ldap.c	2013-12-19 15:34:41.667885843 +0100
+@@ -684,7 +684,7 @@ ldap_start (void)
+ 
+   if (ldap_debug_file != NULL && ldap_debug_fd == -1)
+     {
+-      if ((ldap_debug_fd = open (ldap_debug_file, O_CREAT | O_TRUNC | O_WRONLY,
++      if ((ldap_debug_fd = open (ldap_debug_file, O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC,
+                                  S_IRUSR | S_IWUSR)) < 0)
+         log_error ("Error opening debug LDAP log file %s: %s", ldap_debug_file,
+                    strerror (errno));

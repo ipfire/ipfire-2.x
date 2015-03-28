@@ -527,27 +527,6 @@ int rename_nics(void) {
 				}
 }
 
-int create_udev(void)
-{
-	#define UDEV_NET_CONF "/etc/udev/rules.d/30-persistent-network.rules"
-	FILE *fp;
-	int i;
-
-	if ( (fp = fopen(UDEV_NET_CONF, "w")) == NULL ) {
-		fprintf(stderr,"Couldn't open" UDEV_NET_CONF);
-		return 1;
-	}
-
-	for (i = 0 ; i < 4 ; i++)
-	{
-		if (strcmp(knics[i].macaddr, "")) {
-			fprintf(fp,"\n# %s\nACTION==\"add\", SUBSYSTEM==\"net\", ATTR{type}==\"1\", ATTR{address}==\"%s\", NAME=\"%s0\"\n", knics[i].description, knics[i].macaddr, lcolourcard[i]);
-		}
-	}
-	fclose(fp);
-	return 0;
-}
-
 int write_configs_netudev(int card , int colour)
 {	
 	char commandstring[STRING_SIZE];

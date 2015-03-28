@@ -21,7 +21,7 @@ RANDFILE	= $dir/tmp/.rand
 x509_extensions	= usr_cert
 default_days	= 999999
 default_crl_days= 30
-default_md	= md5
+default_md	= sha256
 preserve	= no
 policy		= policy_match
 email_in_dn	= no
@@ -35,7 +35,7 @@ commonName		= supplied
 emailAddress		= optional
 
 [ req ]
-default_bits		= 1024
+default_bits		= 2048
 default_keyfile 	= privkey.pem
 distinguished_name	= req_distinguished_name
 attributes		= req_attributes

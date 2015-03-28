@@ -2,7 +2,6 @@ bin/udevadm
 etc/modprobe.d/blacklist.conf
 etc/udev
 #etc/udev/rules.d
-#etc/udev/rules.d/30-persistent-network.rules
 #etc/udev/rules.d/55-lfs.rules
 #etc/udev/rules.d/81-cdrom.rules
 #etc/udev/rules.d/83-cdrom-symlinks.rules
@@ -29,6 +28,7 @@ lib/udev
 #lib/udev/hwdb.d/60-keyboard.hwdb
 #lib/udev/init-net-rules.sh
 #lib/udev/mtd_probe
+#lib/udev/network-hotplug-rename
 #lib/udev/rule_generator.functions
 #lib/udev/rules.d
 #lib/udev/rules.d/25-alsa.rules
@@ -37,6 +37,7 @@ lib/udev
 #lib/udev/rules.d/50-udev-default.rules
 #lib/udev/rules.d/60-cdrom_id.rules
 #lib/udev/rules.d/60-keyboard.rules
+#lib/udev/rules.d/60-net.rules
 #lib/udev/rules.d/60-persistent-alsa.rules
 #lib/udev/rules.d/60-persistent-input.rules
 #lib/udev/rules.d/60-persistent-serial.rules

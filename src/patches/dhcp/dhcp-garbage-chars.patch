@@ -1,0 +1,12 @@
+diff -up dhcp-4.3.0rc1/common/tables.c.garbage dhcp-4.3.0rc1/common/tables.c
+--- dhcp-4.3.0rc1/common/tables.c.garbage	2014-01-29 10:03:52.132624677 +0100
++++ dhcp-4.3.0rc1/common/tables.c	2014-01-29 10:04:51.413875343 +0100
+@@ -213,7 +213,7 @@ static struct option dhcp_options[] = {
+ 	{ "name-service-search", "Sa",		&dhcp_universe, 117, 1 },
+ #endif
+ 	{ "subnet-selection", "I",		&dhcp_universe, 118, 1 },
+-	{ "domain-search", "Dc",		&dhcp_universe, 119, 1 },
++	{ "domain-search", "D",			&dhcp_universe, 119, 1 },
+ 	{ "vivco", "Evendor-class.",		&dhcp_universe, 124, 1 },
+ 	{ "vivso", "Evendor.",			&dhcp_universe, 125, 1 },
+ #if 0

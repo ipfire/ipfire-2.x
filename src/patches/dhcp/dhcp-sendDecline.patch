@@ -1,0 +1,231 @@
+diff -up dhcp-4.3.0a1/client/dhc6.c.sendDecline dhcp-4.3.0a1/client/dhc6.c
+--- dhcp-4.3.0a1/client/dhc6.c.sendDecline	2013-12-11 01:25:12.000000000 +0100
++++ dhcp-4.3.0a1/client/dhc6.c	2013-12-19 15:56:18.297660118 +0100
+@@ -96,6 +96,8 @@ void do_select6(void *input);
+ void do_refresh6(void *input);
+ static void do_release6(void *input);
+ static void start_bound(struct client_state *client);
++static void start_decline6(struct client_state *client);
++static void do_decline6(void *input);
+ static void start_informed(struct client_state *client);
+ void informed_handler(struct packet *packet, struct client_state *client);
+ void bound_handler(struct packet *packet, struct client_state *client);
+@@ -2017,6 +2019,7 @@ start_release6(struct client_state *clie
+ 	cancel_timeout(do_select6, client);
+ 	cancel_timeout(do_refresh6, client);
+ 	cancel_timeout(do_release6, client);
++	cancel_timeout(do_decline6, client);
+ 	client->state = S_STOPPED;
+ 
+ 	/*
+@@ -2650,6 +2653,7 @@ dhc6_check_reply(struct client_state *cl
+ 		break;
+ 
+ 	      case S_STOPPED:
++	      case S_DECLINED:
+ 		action = dhc6_stop_action;
+ 		break;
+ 
+@@ -2751,6 +2755,7 @@ dhc6_check_reply(struct client_state *cl
+ 		break;
+ 
+ 	      case S_STOPPED:
++	      case S_DECLINED:
+ 		/* Nothing critical to do at this stage. */
+ 		break;
+ 
+@@ -3741,17 +3746,23 @@ reply_handler(struct packet *packet, str
+ 	cancel_timeout(do_select6, client);
+ 	cancel_timeout(do_refresh6, client);
+ 	cancel_timeout(do_release6, client);
++	cancel_timeout(do_decline6, client);
+ 
+ 	/* If this is in response to a Release/Decline, clean up and return. */
+-	if (client->state == S_STOPPED) {
+-		if (client->active_lease == NULL)
+-			return;
++	if ((client->state == S_STOPPED) ||
++	    (client->state == S_DECLINED)) {
++
++		if (client->active_lease != NULL) {
++			dhc6_lease_destroy(&client->active_lease, MDL);
++			client->active_lease = NULL;
++			/* We should never wait for nothing!? */
++			if (stopping_finished())
++				exit(0);
++		}
++
++		if (client->state == S_DECLINED)
++			start_init6(client);
+ 
+-		dhc6_lease_destroy(&client->active_lease, MDL);
+-		client->active_lease = NULL;
+-		/* We should never wait for nothing!? */
+-		if (stopping_finished())
+-			exit(0);
+ 		return;
+ 	}
+ 
+@@ -4279,7 +4290,11 @@ start_bound(struct client_state *client)
+ 			dhc6_marshall_values("new_", client, lease, ia, addr);
+ 			script_write_requested6(client);
+ 
+-			script_go(client);
++			// when script returns 3, DAD failed
++			if (script_go(client) == 3) {
++				start_decline6(client);
++				return;
++			}
+ 		}
+ 
+ 		/* XXX: maybe we should loop on the old values instead? */
+@@ -4327,6 +4342,149 @@ start_bound(struct client_state *client)
+ 	dhc6_check_times(client);
+ }
+ 
++/*
++ * Decline addresses.
++ */
++void
++start_decline6(struct client_state *client)
++{
++	/* Cancel any pending transmissions */
++	cancel_timeout(do_confirm6, client);
++	cancel_timeout(do_select6, client);
++	cancel_timeout(do_refresh6, client);
++	cancel_timeout(do_release6, client);
++	cancel_timeout(do_decline6, client);
++	client->state = S_DECLINED;
++
++	if (client->active_lease == NULL)
++		return;
++
++	/* Set timers per RFC3315 section 18.1.7. */
++	client->IRT = DEC_TIMEOUT * 100;
++	client->MRT = 0;
++	client->MRC = DEC_MAX_RC;
++	client->MRD = 0;
++
++	dhc6_retrans_init(client);
++	client->v6_handler = reply_handler;
++
++	client->refresh_type = DHCPV6_DECLINE;
++	do_decline6(client);
++}
++
++/*
++ * do_decline6() creates a Decline packet and transmits it.
++ */
++static void
++do_decline6(void *input)
++{
++	struct client_state *client;
++	struct data_string ds;
++	int send_ret;
++	struct timeval elapsed, tv;
++
++	client = input;
++
++	if ((client->active_lease == NULL) || !active_prefix(client))
++		return;
++
++	if ((client->MRC != 0) && (client->txcount > client->MRC))  {
++		log_info("Max retransmission count exceeded.");
++		goto decline_done;
++	}
++
++	/*
++	 * Start_time starts at the first transmission.
++	 */
++	if (client->txcount == 0) {
++		client->start_time.tv_sec = cur_tv.tv_sec;
++		client->start_time.tv_usec = cur_tv.tv_usec;
++	}
++
++	/* elapsed = cur - start */
++	elapsed.tv_sec = cur_tv.tv_sec - client->start_time.tv_sec;
++	elapsed.tv_usec = cur_tv.tv_usec - client->start_time.tv_usec;
++	if (elapsed.tv_usec < 0) {
++		elapsed.tv_sec -= 1;
++		elapsed.tv_usec += 1000000;
++	}
++
++	memset(&ds, 0, sizeof(ds));
++	if (!buffer_allocate(&ds.buffer, 4, MDL)) {
++		log_error("Unable to allocate memory for Decline.");
++		goto decline_done;
++	}
++
++	ds.data = ds.buffer->data;
++	ds.len = 4;
++	ds.buffer->data[0] = DHCPV6_DECLINE;
++	memcpy(ds.buffer->data + 1, client->dhcpv6_transaction_id, 3);
++
++	/* Form an elapsed option. */
++	/* Maximum value is 65535 1/100s coded as 0xffff. */
++	if ((elapsed.tv_sec < 0) || (elapsed.tv_sec > 655) ||
++	    ((elapsed.tv_sec == 655) && (elapsed.tv_usec > 350000))) {
++		client->elapsed = 0xffff;
++	} else {
++		client->elapsed = elapsed.tv_sec * 100;
++		client->elapsed += elapsed.tv_usec / 10000;
++	}
++
++	client->elapsed = htons(client->elapsed);
++
++	log_debug("XMT: Forming Decline.");
++	make_client6_options(client, &client->sent_options,
++			     client->active_lease, DHCPV6_DECLINE);
++	dhcpv6_universe.encapsulate(&ds, NULL, NULL, client, NULL,
++				    client->sent_options, &global_scope,
++				    &dhcpv6_universe);
++
++	/* Append IA's (but don't release temporary addresses). */
++	if (wanted_ia_na &&
++	    dhc6_add_ia_na(client, &ds, client->active_lease,
++			   DHCPV6_DECLINE) != ISC_R_SUCCESS) {
++		data_string_forget(&ds, MDL);
++		goto decline_done;
++	}
++	if (wanted_ia_pd &&
++	    dhc6_add_ia_pd(client, &ds, client->active_lease,
++			   DHCPV6_DECLINE) != ISC_R_SUCCESS) {
++		data_string_forget(&ds, MDL);
++		goto decline_done;
++	}
++
++	/* Transmit and wait. */
++	log_info("XMT: Decline on %s, interval %ld0ms.",
++		 client->name ? client->name : client->interface->name,
++		 (long int)client->RT);
++
++	send_ret = send_packet6(client->interface, ds.data, ds.len,
++				&DHCPv6DestAddr);
++	if (send_ret != ds.len) {
++		log_error("dhc6: sendpacket6() sent %d of %d bytes",
++			  send_ret, ds.len);
++	}
++
++	data_string_forget(&ds, MDL);
++
++	/* Wait RT */
++	tv.tv_sec = cur_tv.tv_sec + client->RT / 100;
++	tv.tv_usec = cur_tv.tv_usec + (client->RT % 100) * 10000;
++	if (tv.tv_usec >= 1000000) {
++		tv.tv_sec += 1;
++		tv.tv_usec -= 1000000;
++	}
++	add_timeout(&tv, do_decline6, client, NULL, NULL);
++	dhc6_retrans_advance(client);
++	return;
++
++decline_done:
++	dhc6_lease_destroy(&client->active_lease, MDL);
++	client->active_lease = NULL;
++	start_init6(client);
++	return;
++}
++
+ /* While bound, ignore packets.  In the future we'll want to answer
+  * Reconfigure-Request messages and the like.
+  */
