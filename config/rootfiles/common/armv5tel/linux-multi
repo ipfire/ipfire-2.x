@@ -53,6 +53,7 @@ boot/dtb-KVER-ipfire-multi
 #boot/dtb-KVER-ipfire-multi/imx6dl-sabresd.dtb
 #boot/dtb-KVER-ipfire-multi/imx6dl-wandboard.dtb
 #boot/dtb-KVER-ipfire-multi/imx6q-arm2.dtb
+#boot/dtb-KVER-ipfire-multi/imx6q-cm-fx6.dtb
 #boot/dtb-KVER-ipfire-multi/imx6q-cubox-i.dtb
 #boot/dtb-KVER-ipfire-multi/imx6q-gw51xx.dtb
 #boot/dtb-KVER-ipfire-multi/imx6q-gw52xx.dtb
