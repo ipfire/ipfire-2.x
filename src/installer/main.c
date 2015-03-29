@@ -833,8 +833,11 @@ int main(int argc, char *argv[]) {
 
 	newtPopWindow();
 
-	/* Set marker that the user has already accepted the gpl */
-	mysystem(logfile, "/usr/bin/touch /harddisk/var/ipfire/main/gpl_accepted");
+	/* Set marker that the user has already accepted the GPL if the license has been shown
+	 * in the installation process. In unatteded mode, the user will be presented the
+	 * license when he or she logs on to the web user interface for the first time. */
+	if (!config.unattended)
+		mysystem(logfile, "/usr/bin/touch /harddisk/var/ipfire/main/gpl_accepted");
 
 	/* Copy restore file from cdrom */
 	char* backup_file = hw_find_backup_file(logfile, SOURCE_MOUNT_PATH);

@@ -88,14 +88,27 @@ sub main {
 	# Flush all chains.
 	&flush();
 
-	# Reload firewall rules.
-	&preparerules();
+	# Prepare firewall rules.
+	if (! -z  "${General::swroot}/firewall/input"){
+		&buildrules(\%configinputfw);
+	}
+	if (! -z  "${General::swroot}/firewall/outgoing"){
+		&buildrules(\%configoutgoingfw);
+	}
+	if (! -z  "${General::swroot}/firewall/config"){
+		&buildrules(\%configfwdfw);
+	}
 
 	# Load P2P block rules.
 	&p2pblock();
 
 	# Reload firewall policy.
 	run("/usr/sbin/firewall-policy");
+
+	#Reload firewall.local if present
+	if ( -f '/etc/sysconfig/firewall.local'){
+		run("/etc/sysconfig/firewall.local reload");
+	}
 }
 
 sub run {
@@ -144,18 +157,6 @@ sub flush {
 	run("$IPTABLES -t nat -F $CHAIN_NAT_SOURCE");
 	run("$IPTABLES -t nat -F $CHAIN_NAT_DESTINATION");
 	run("$IPTABLES -t mangle -F $CHAIN_MANGLE_NAT_DESTINATION_FIX");
-}
-
-sub preparerules {
-	if (! -z  "${General::swroot}/firewall/input"){
-		&buildrules(\%configinputfw);
-	}
-	if (! -z  "${General::swroot}/firewall/outgoing"){
-		&buildrules(\%configoutgoingfw);
-	}
-	if (! -z  "${General::swroot}/firewall/config"){
-		&buildrules(\%configfwdfw);
-	}
 }
 
 sub buildrules {
@@ -511,10 +512,6 @@ sub buildrules {
 				}
 			}
 		}
-	}
-	#Reload firewall.local if present
-	if ( -f '/etc/sysconfig/firewall.local'){
-		run("/etc/sysconfig/firewall.local reload");
 	}
 }
 

@@ -1,0 +1,405 @@
+diff -up dhcp-4.3.0rc1/client/clparse.c.rfc3442 dhcp-4.3.0rc1/client/clparse.c
+--- dhcp-4.3.0rc1/client/clparse.c.rfc3442	2014-01-29 10:05:48.474400352 +0100
++++ dhcp-4.3.0rc1/client/clparse.c	2014-01-29 10:05:48.517399955 +0100
+@@ -31,7 +31,7 @@
+ 
+ struct client_config top_level_config;
+ 
+-#define NUM_DEFAULT_REQUESTED_OPTS	14
++#define NUM_DEFAULT_REQUESTED_OPTS	15
+ struct option *default_requested_options[NUM_DEFAULT_REQUESTED_OPTS + 1];
+ 
+ static void parse_client_default_duid(struct parse *cfile);
+@@ -84,7 +84,11 @@ isc_result_t read_client_conf ()
+ 				dhcp_universe.code_hash, &code, 0, MDL);
+ 
+ 	/* 4 */
+-	code = DHO_ROUTERS;
++	/* The Classless Static Routes option code MUST appear in the parameter
++     * request list prior to both the Router option code and the Static
++     * Routes option code, if present. (RFC3442)
++	 */
++	code = DHO_CLASSLESS_STATIC_ROUTES;
+ 	option_code_hash_lookup(&default_requested_options[3],
+ 				dhcp_universe.code_hash, &code, 0, MDL);
+ 
+@@ -138,6 +142,11 @@ isc_result_t read_client_conf ()
+ 	option_code_hash_lookup(&default_requested_options[13],
+ 				dhcp_universe.code_hash, &code, 0, MDL);
+ 
++	/* 15 */
++	code = DHO_ROUTERS;
++	option_code_hash_lookup(&default_requested_options[14],
++				dhcp_universe.code_hash, &code, 0, MDL);
++
+ 	for (code = 0 ; code < NUM_DEFAULT_REQUESTED_OPTS ; code++) {
+ 		if (default_requested_options[code] == NULL)
+ 			log_fatal("Unable to find option definition for "
+diff -up dhcp-4.3.0rc1/common/dhcp-options.5.rfc3442 dhcp-4.3.0rc1/common/dhcp-options.5
+--- dhcp-4.3.0rc1/common/dhcp-options.5.rfc3442	2014-01-29 10:05:48.466400426 +0100
++++ dhcp-4.3.0rc1/common/dhcp-options.5	2014-01-29 10:05:48.518399945 +0100
+@@ -111,6 +111,26 @@ hexadecimal, separated by colons.  For e
+ or
+   option dhcp-client-identifier 43:4c:49:45:54:2d:46:4f:4f;
+ .fi
++.PP
++The
++.B destination-descriptor
++describe the IP subnet number and subnet mask
++of a particular destination using a compact encoding. This encoding
++consists of one octet describing the width of the subnet mask,
++followed by all the significant octets of the subnet number.
++The following table contains some examples of how various subnet
++number/mask combinations can be encoded:
++.nf
++.sp 1
++Subnet number   Subnet mask      Destination descriptor
++0               0                0
++10.0.0.0        255.0.0.0        8.10
++10.0.0.0        255.255.255.0    24.10.0.0
++10.17.0.0       255.255.0.0      16.10.17
++10.27.129.0     255.255.255.0    24.10.27.129
++10.229.0.128    255.255.255.128  25.10.229.0.128
++10.198.122.47   255.255.255.255  32.10.198.122.47
++.fi
+ .SH SETTING OPTION VALUES USING EXPRESSIONS
+ Sometimes it's helpful to be able to set the value of a DHCP option
+ based on some value that the client has sent.  To do this, you can
+@@ -972,6 +992,29 @@ dhclient-script will create routes:
+ .RE
+ .PP
+ .nf
++.B option \fBclassless-static-routes\fR \fIdestination-descriptor ip-address\fR
++                            [\fB,\fR \fIdestination-descriptor ip-address\fR...]\fB;\fR
++.fi
++.RS 0.25i
++.PP
++This option (see RFC3442) specifies a list of classless static routes
++that the client should install in its routing cache.
++.PP
++This option can contain one or more static routes, each of which
++consists of a destination descriptor and the IP address of the router
++that should be used to reach that destination.
++.PP
++Many clients may not implement the Classless Static Routes option.
++DHCP server administrators should therefore configure their DHCP
++servers to send both a Router option and a Classless Static Routes
++option, and should specify the default router(s) both in the Router
++option and in the Classless Static Routes option.
++.PP
++If the DHCP server returns both a Classless Static Routes option and
++a Router option, the DHCP client ignores the Router option.
++.RE
++.PP
++.nf
+ .B option \fBstreettalk-directory-assistance-server\fR \fIip-address\fR
+                                            [\fB,\fR \fIip-address\fR...]\fB;\fR
+ .fi
+diff -up dhcp-4.3.0rc1/common/inet.c.rfc3442 dhcp-4.3.0rc1/common/inet.c
+--- dhcp-4.3.0rc1/common/inet.c.rfc3442	2014-01-26 19:40:44.000000000 +0100
++++ dhcp-4.3.0rc1/common/inet.c	2014-01-29 10:05:48.519399936 +0100
+@@ -521,6 +521,60 @@ free_iaddrcidrnetlist(struct iaddrcidrne
+ 	return ISC_R_SUCCESS;
+ }
+ 
++static const char *
++inet_ntopdd(const unsigned char *src, unsigned srclen, char *dst, size_t size)
++{
++	char tmp[sizeof("32.255.255.255.255")];
++	int len;
++
++	switch (srclen) {
++		case 2:
++			len = sprintf (tmp, "%u.%u", src[0], src[1]);
++			break;
++		case 3:
++			len = sprintf (tmp, "%u.%u.%u", src[0], src[1], src[2]);
++			break;
++		case 4:
++			len = sprintf (tmp, "%u.%u.%u.%u", src[0], src[1], src[2], src[3]);
++			break;
++		case 5:
++			len = sprintf (tmp, "%u.%u.%u.%u.%u", src[0], src[1], src[2], src[3], src[4]);
++			break;
++		default:
++			return NULL;
++	}
++	if (len < 0)
++		return NULL;
++
++	if (len > size) {
++		errno = ENOSPC;
++		return NULL;
++	}
++
++	return strcpy (dst, tmp);
++}
++
++/* pdestdesc() turns an iaddr structure into a printable dest. descriptor */
++const char *
++pdestdesc(const struct iaddr addr) {
++	static char pbuf[sizeof("255.255.255.255.255")];
++
++	if (addr.len == 0) {
++		return "<null destination descriptor>";
++	}
++	if (addr.len == 1) {
++		return "0";
++	}
++	if ((addr.len >= 2) && (addr.len <= 5)) {
++		return inet_ntopdd(addr.iabuf, addr.len, pbuf, sizeof(pbuf));
++	}
++
++	log_fatal("pdestdesc():%s:%d: Invalid destination descriptor length %d.",
++		  MDL, addr.len);
++	/* quell compiler warnings */
++	return NULL;
++}
++
+ /* piaddr() turns an iaddr structure into a printable address. */
+ /* XXX: should use a const pointer rather than passing the structure */
+ const char *
+diff -up dhcp-4.3.0rc1/common/options.c.rfc3442 dhcp-4.3.0rc1/common/options.c
+--- dhcp-4.3.0rc1/common/options.c.rfc3442	2014-01-26 19:40:44.000000000 +0100
++++ dhcp-4.3.0rc1/common/options.c	2014-01-29 10:05:48.520399927 +0100
+@@ -707,7 +707,11 @@ cons_options(struct packet *inpacket, st
+ 		 * packet.
+ 		 */
+ 		priority_list[priority_len++] = DHO_SUBNET_MASK;
+-		priority_list[priority_len++] = DHO_ROUTERS;
++		if (lookup_option(&dhcp_universe, cfg_options,
++							DHO_CLASSLESS_STATIC_ROUTES))
++			priority_list[priority_len++] = DHO_CLASSLESS_STATIC_ROUTES;
++		else
++			priority_list[priority_len++] = DHO_ROUTERS;
+ 		priority_list[priority_len++] = DHO_DOMAIN_NAME_SERVERS;
+ 		priority_list[priority_len++] = DHO_HOST_NAME;
+ 		priority_list[priority_len++] = DHO_FQDN;
+@@ -1688,6 +1692,7 @@ const char *pretty_print_option (option,
+ 	unsigned long tval;
+ 	isc_boolean_t a_array = ISC_FALSE;
+ 	int len_used;
++	unsigned int octets = 0;
+ 
+ 	if (emit_commas)
+ 		comma = ',';
+@@ -1696,6 +1701,7 @@ const char *pretty_print_option (option,
+ 
+ 	memset (enumbuf, 0, sizeof enumbuf);
+ 
++	if (option->format[0] != 'R') { /* see explanation lower */
+ 	/* Figure out the size of the data. */
+ 	for (l = i = 0; option -> format [i]; i++, l++) {
+ 		if (l >= sizeof(fmtbuf) - 1)
+@@ -1870,6 +1876,33 @@ const char *pretty_print_option (option,
+ 	if (numhunk < 0)
+ 		numhunk = 1;
+ 
++	} else { /* option->format[i] == 'R') */
++		/* R (destination descriptor) has variable length.
++		 * We can find it only in classless static route option,
++		 * so we are for sure parsing classless static route option now.
++		 * We go through whole the option to check whether there are no
++		 * missing/extra bytes.
++		 * I didn't find out how to improve the existing code and that's the
++		 * reason for this separate 'else' where I do my own checkings.
++		 * I know it's little bit unsystematic, but it works.
++		 */
++		numhunk = 0;
++		numelem = 2; /* RI */
++		fmtbuf[0]='R'; fmtbuf[1]='I'; fmtbuf[2]=0;
++		for (i =0; i < len; i = i + octets + 5) {
++			if (data[i] > 32) { /* subnet mask width */
++				log_error ("wrong subnet mask width in destination descriptor");
++				break;
++			}
++			numhunk++;
++			octets = ((data[i]+7) / 8);
++		}
++		if (i != len) {
++			log_error ("classless static routes option has wrong size or "
++					   "there's some garbage in format");
++		}
++	}
++
+ 	/* Cycle through the array (or hunk) printing the data. */
+ 	for (i = 0; i < numhunk; i++) {
+ 		if ((a_array == ISC_TRUE) && (i != 0) && (numelem > 0)) {
+@@ -2025,6 +2058,20 @@ const char *pretty_print_option (option,
+ 				strcpy(op, piaddr(iaddr));
+ 				dp += 4;
+ 				break;
++
++			      case 'R':
++				if (dp[0] <= 32)
++					iaddr.len = (((dp[0]+7)/8)+1);
++				else {
++					log_error ("wrong subnet mask width in destination descriptor");
++					return "<error>";
++				}
++
++				memcpy(iaddr.iabuf, dp, iaddr.len);
++				strcpy(op, pdestdesc(iaddr));
++				dp += iaddr.len;
++				break;
++
+ 			      case '6':
+ 				iaddr.len = 16;
+ 				memcpy(iaddr.iabuf, dp, 16);
+diff -up dhcp-4.3.0rc1/common/parse.c.rfc3442 dhcp-4.3.0rc1/common/parse.c
+--- dhcp-4.3.0rc1/common/parse.c.rfc3442	2014-01-29 10:05:48.491400195 +0100
++++ dhcp-4.3.0rc1/common/parse.c	2014-01-29 10:05:48.522399908 +0100
+@@ -335,6 +335,39 @@ int parse_ip_addr (cfile, addr)
+ }	
+ 
+ /*
++ * destination-descriptor :== NUMBER DOT NUMBER |
++ *                            NUMBER DOT NUMBER DOT NUMBER |
++ *                            NUMBER DOT NUMBER DOT NUMBER DOT NUMBER |
++ *                            NUMBER DOT NUMBER DOT NUMBER DOT NUMBER DOT NUMBER
++ */
++
++int parse_destination_descriptor (cfile, addr)
++	struct parse *cfile;
++	struct iaddr *addr;
++{
++		unsigned int mask_width, dest_dest_len;
++		addr -> len = 0;
++		if (parse_numeric_aggregate (cfile, addr -> iabuf,
++									 &addr -> len, DOT, 10, 8)) {
++			mask_width = (unsigned int)addr->iabuf[0];
++			dest_dest_len = (((mask_width+7)/8)+1);
++			if (mask_width > 32) {
++				parse_warn (cfile,
++				"subnet mask width (%u) greater than 32.", mask_width);
++			}
++			else if (dest_dest_len != addr->len) {
++				parse_warn (cfile,
++				"destination descriptor with subnet mask width %u "
++				"should have %u octets, but has %u octets.",
++				mask_width, dest_dest_len, addr->len);
++			}
++
++			return 1;
++		}
++		return 0;
++}
++
++/*
+  * Return true if every character in the string is hexadecimal.
+  */
+ static int
+@@ -713,8 +746,10 @@ unsigned char *parse_numeric_aggregate (
+ 		if (count) {
+ 			token = peek_token (&val, (unsigned *)0, cfile);
+ 			if (token != separator) {
+-				if (!*max)
++				if (!*max) {
++					*max = count;
+ 					break;
++				}
+ 				if (token != RBRACE && token != LBRACE)
+ 					token = next_token (&val,
+ 							    (unsigned *)0,
+@@ -1654,6 +1689,9 @@ int parse_option_code_definition (cfile,
+ 	      case IP_ADDRESS:
+ 		type = 'I';
+ 		break;
++	      case DESTINATION_DESCRIPTOR:
++		type = 'R';
++		break;
+ 	      case IP6_ADDRESS:
+ 		type = '6';
+ 		break;
+@@ -5071,6 +5109,15 @@ int parse_option_token (rv, cfile, fmt,
+ 		}
+ 		break;
+ 
++	      case 'R': /* destination descriptor */
++		if (!parse_destination_descriptor (cfile, &addr)) {
++			return 0;
++		}
++		if (!make_const_data (&t, addr.iabuf, addr.len, 0, 1, MDL)) {
++			return 0;
++		}
++		break;
++
+ 	      case '6': /* IPv6 address. */
+ 		if (!parse_ip6_addr(cfile, &addr)) {
+ 			return 0;
+@@ -5348,6 +5395,13 @@ int parse_option_decl (oc, cfile)
+ 					goto exit;
+ 				len = ip_addr.len;
+ 				dp = ip_addr.iabuf;
++				goto alloc;
++
++			      case 'R': /* destination descriptor */
++				if (!parse_destination_descriptor (cfile, &ip_addr))
++					goto exit;
++				len = ip_addr.len;
++				dp = ip_addr.iabuf;
+ 
+ 			      alloc:
+ 				if (hunkix + len > sizeof hunkbuf) {
+diff -up dhcp-4.3.0rc1/common/tables.c.rfc3442 dhcp-4.3.0rc1/common/tables.c
+--- dhcp-4.3.0rc1/common/tables.c.rfc3442	2014-01-29 10:05:48.485400250 +0100
++++ dhcp-4.3.0rc1/common/tables.c	2014-01-29 10:06:25.724038563 +0100
+@@ -46,6 +46,7 @@ HASH_FUNCTIONS (option_code, const unsig
+    Format codes:
+ 
+    I - IPv4 address
++   R - destination descriptor (RFC3442)
+    6 - IPv6 address
+    l - 32-bit signed integer
+    L - 32-bit unsigned integer
+@@ -214,6 +215,7 @@ static struct option dhcp_options[] = {
+ #endif
+ 	{ "subnet-selection", "I",		&dhcp_universe, 118, 1 },
+ 	{ "domain-search", "D",			&dhcp_universe, 119, 1 },
++	{ "classless-static-routes", "RIA",	&dhcp_universe, 121, 1 },
+ 	{ "vivco", "Evendor-class.",		&dhcp_universe, 124, 1 },
+ 	{ "vivso", "Evendor.",			&dhcp_universe, 125, 1 },
+ #if 0
+diff -up dhcp-4.3.0rc1/includes/dhcpd.h.rfc3442 dhcp-4.3.0rc1/includes/dhcpd.h
+--- dhcp-4.3.0rc1/includes/dhcpd.h.rfc3442	2014-01-29 10:05:48.470400389 +0100
++++ dhcp-4.3.0rc1/includes/dhcpd.h	2014-01-29 10:05:48.525399881 +0100
+@@ -2725,6 +2725,7 @@ isc_result_t range2cidr(struct iaddrcidr
+ 			const struct iaddr *lo, const struct iaddr *hi);
+ isc_result_t free_iaddrcidrnetlist(struct iaddrcidrnetlist **result);
+ const char *piaddr (struct iaddr);
++const char *pdestdesc (struct iaddr);
+ char *piaddrmask(struct iaddr *, struct iaddr *);
+ char *piaddrcidr(const struct iaddr *, unsigned int);
+ u_int16_t validate_port(char *);
+@@ -2934,6 +2935,7 @@ void parse_client_lease_declaration (str
+ int parse_option_decl (struct option_cache **, struct parse *);
+ void parse_string_list (struct parse *, struct string_list **, int);
+ int parse_ip_addr (struct parse *, struct iaddr *);
++int parse_destination_descriptor (struct parse *, struct iaddr *);
+ int parse_ip_addr_with_subnet(struct parse *, struct iaddrmatch *);
+ void parse_reject_statement (struct parse *, struct client_config *);
+ 
+diff -up dhcp-4.3.0rc1/includes/dhcp.h.rfc3442 dhcp-4.3.0rc1/includes/dhcp.h
+--- dhcp-4.3.0rc1/includes/dhcp.h.rfc3442	2014-01-26 19:40:44.000000000 +0100
++++ dhcp-4.3.0rc1/includes/dhcp.h	2014-01-29 10:05:48.524399890 +0100
+@@ -159,6 +159,7 @@ struct dhcp_packet {
+ #define DHO_ASSOCIATED_IP			92
+ #define DHO_SUBNET_SELECTION			118 /* RFC3011! */
+ #define DHO_DOMAIN_SEARCH			119 /* RFC3397 */
++#define DHO_CLASSLESS_STATIC_ROUTES		121 /* RFC3442 */
+ #define DHO_VIVCO_SUBOPTIONS			124
+ #define DHO_VIVSO_SUBOPTIONS			125
+ 
+diff -up dhcp-4.3.0rc1/includes/dhctoken.h.rfc3442 dhcp-4.3.0rc1/includes/dhctoken.h
+--- dhcp-4.3.0rc1/includes/dhctoken.h.rfc3442	2014-01-29 10:05:48.435400713 +0100
++++ dhcp-4.3.0rc1/includes/dhctoken.h	2014-01-29 10:05:48.526399871 +0100
+@@ -368,7 +368,8 @@ enum dhcp_token {
+ 	POOL6 = 669,
+ 	V6RELAY = 670,
+ 	V6RELOPT = 671,
+-	BOOTP_BROADCAST_ALWAYS = 672
++	BOOTP_BROADCAST_ALWAYS = 672,
++	DESTINATION_DESCRIPTOR = 673
+ };
+ 
+ #define is_identifier(x)	((x) >= FIRST_TOKEN &&	\

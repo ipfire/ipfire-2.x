@@ -93,6 +93,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-farp \
 		--enable-openssl \
 		--enable-gcrypt \
+		--enable-gcm \
 		--enable-xauth-eap \
 		--enable-xauth-noauth \
 		--enable-eap-radius \
