@@ -271,6 +271,7 @@ static struct lang {
 static struct config {
 	int unattended;
 	int serial_console;
+	int novga;
 	int require_networking;
 	int perform_download;
 	int disable_swap;
@@ -280,6 +281,7 @@ static struct config {
 } config = {
 	.unattended = 0,
 	.serial_console = 0,
+	.novga = 0,
 	.require_networking = 0,
 	.perform_download = 0,
 	.disable_swap = 0,
@@ -308,6 +310,10 @@ static void parse_command_line(struct config* c) {
 			// serial console
 			if ((strcmp(key, "console") == 0) && (strncmp(val, "ttyS", 4) == 0))
 				c->serial_console = 1;
+
+			// novga
+			else if (strcmp(key, "novga") == 0)
+				c->novga = 1;
 
 			// enable networking?
 			else if (strcmp(token, "installer.net") == 0)
@@ -823,6 +829,19 @@ int main(int argc, char *argv[]) {
 		replace("/harddisk/etc/inittab", "5:2345:respawn:", "#5:2345:respawn:");
 		replace("/harddisk/etc/inittab", "6:2345:respawn:", "#6:2345:respawn:");
 		replace("/harddisk/etc/inittab", "#7:2345:respawn:", "7:2345:respawn:");
+	}
+
+	/* novga */
+	if (config.novga) {
+		/* grub */
+		FILE* f = fopen(DESTINATION_MOUNT_PATH "/etc/default/grub", "a");
+		if (!f) {
+			errorbox(_("Unable to open /etc/default/grub for writing."));
+			goto EXIT;
+		}
+
+		fprintf(f, "GRUB_GFXMODE=\"none\"\n");
+		fclose(f);
 	}
 
 	rc = hw_install_bootloader(destination, logfile);
