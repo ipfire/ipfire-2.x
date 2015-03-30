@@ -1336,7 +1336,7 @@ usr/lib/apr-util-1/apr_dbd_sqlite3.so
 #usr/lib/libapr-1.la
 usr/lib/libapr-1.so
 usr/lib/libapr-1.so.0
-usr/lib/libapr-1.so.0.5.0
+usr/lib/libapr-1.so.0.5.1
 #usr/lib/libaprutil-1.a
 #usr/lib/libaprutil-1.la
 usr/lib/libaprutil-1.so
