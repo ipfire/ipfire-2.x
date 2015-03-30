@@ -1187,6 +1187,7 @@ sub buildconf {
     if ($dhcpsettings{'DNS_UPDATE_ENABLED'} eq 'on') {
         print FILE "ddns-updates           on;\n";
         print FILE "ddns-update-style      interim;\n";
+        print FILE "ddns-ttl               60; # 1 min\n";
         print FILE "ignore                 client-updates;\n";
         print FILE "update-static-leases   on;\n";
     } else {
