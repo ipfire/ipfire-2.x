@@ -1,8 +1,8 @@
---- a/src/_updown/_updown.in
-+++ b/src/_updown/_updown.in
-@@ -178,6 +178,29 @@
- 	;;
- esac
+--- strongswan-5.3.0/src/_updown/_updown.in.old	2015-03-17 18:17:43.000000000 +0000
++++ strongswan-5.3.0/src/_updown/_updown.in	2015-03-30 22:48:27.084030719 +0000
+@@ -122,6 +122,29 @@
+ #              address family.
+ #
  
 +function ip_encode() {
 +	local IFS=.
@@ -27,10 +27,10 @@
 +	[ $vlsm -eq 0 ] && echo 0 || echo $(( -1 << $(( 32 - $vlsm )) ))
 +}
 +
- # utility functions for route manipulation
- # Meddling with this stuff should not be necessary and requires great care.
- uproute() {
-@@ -407,12 +430,12 @@
+ # define a minimum PATH environment in case it is not set
+ PATH="/sbin:/bin:/usr/sbin:/usr/bin:@sbindir@"
+ export PATH
+@@ -232,12 +255,12 @@
  	# connection to me, with (left/right)firewall=yes, coming up
  	# This is used only by the default updown script, not by your custom
  	# ones, so do not mess with it; see CAUTION comment up at top.
@@ -46,7 +46,7 @@
  	#
  	# allow IPIP traffic because of the implicit SA created by the kernel if
  	# IPComp is used (for small inbound packets that are not compressed)
-@@ -428,10 +451,10 @@
+@@ -253,10 +276,10 @@
  	  if [ "$PLUTO_PEER_CLIENT" = "$PLUTO_PEER/32" ]
  	  then
  	    logger -t $TAG -p $FAC_PRIO \
@@ -59,7 +59,7 @@
  	  fi
  	fi
  	;;
-@@ -439,12 +462,12 @@
+@@ -264,12 +287,12 @@
  	# connection to me, with (left/right)firewall=yes, going down
  	# This is used only by the default updown script, not by your custom
  	# ones, so do not mess with it; see CAUTION comment up at top.
@@ -75,7 +75,7 @@
  	#
  	# IPIP exception teardown
  	if [ -n "$PLUTO_IPCOMP" ]
-@@ -459,10 +482,10 @@
+@@ -284,10 +307,10 @@
  	  if [ "$PLUTO_PEER_CLIENT" = "$PLUTO_PEER/32" ]
  	  then
  	    logger -t $TAG -p $FAC_PRIO -- \
@@ -88,7 +88,7 @@
  	  fi
  	fi
  	;;
-@@ -472,24 +495,24 @@
+@@ -297,24 +320,24 @@
  	# ones, so do not mess with it; see CAUTION comment up at top.
  	if [ "$PLUTO_PEER_CLIENT" != "$PLUTO_MY_SOURCEIP/32" ]
  	then
@@ -121,7 +121,7 @@
  	fi
  	#
  	# allow IPIP traffic because of the implicit SA created by the kernel if
-@@ -497,7 +520,7 @@
+@@ -322,7 +345,7 @@
  	# INPUT is correct here even for forwarded traffic.
  	if [ -n "$PLUTO_IPCOMP" ]
  	then
@@ -130,7 +130,7 @@
  	      -s $PLUTO_PEER -d $PLUTO_ME $IPSEC_POLICY_IN -j ACCEPT
  	fi
  	#
-@@ -507,12 +530,51 @@
+@@ -332,12 +355,51 @@
  	  if [ "$PLUTO_PEER_CLIENT" = "$PLUTO_PEER/32" ]
  	  then
  	    logger -t $TAG -p $FAC_PRIO \
@@ -184,7 +184,7 @@
  	;;
  down-client:iptables)
  	# connection to client subnet, with (left/right)firewall=yes, going down
-@@ -520,34 +582,34 @@
+@@ -345,34 +407,34 @@
  	# ones, so do not mess with it; see CAUTION comment up at top.
  	if [ "$PLUTO_PEER_CLIENT" != "$PLUTO_MY_SOURCEIP/32" ]
  	then
@@ -228,7 +228,7 @@
  	      -s $PLUTO_PEER -d $PLUTO_ME $IPSEC_POLICY_IN -j ACCEPT
  	fi
  	#
-@@ -557,12 +619,51 @@
+@@ -382,12 +444,51 @@
  	  if [ "$PLUTO_PEER_CLIENT" = "$PLUTO_PEER/32" ]
  	  then
  	    logger -t $TAG -p $FAC_PRIO -- \
@@ -282,7 +282,7 @@
  	;;
  #
  # IPv6
-@@ -597,10 +698,10 @@
+@@ -412,10 +513,10 @@
  	# connection to me, with (left/right)firewall=yes, coming up
  	# This is used only by the default updown script, not by your custom
  	# ones, so do not mess with it; see CAUTION comment up at top.
@@ -295,7 +295,7 @@
  	    -s $PLUTO_ME $S_MY_PORT $IPSEC_POLICY_OUT \
  	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j ACCEPT
  	#
-@@ -621,10 +722,10 @@
+@@ -436,10 +537,10 @@
  	# connection to me, with (left/right)firewall=yes, going down
  	# This is used only by the default updown script, not by your custom
  	# ones, so do not mess with it; see CAUTION comment up at top.
@@ -308,7 +308,7 @@
  	    -s $PLUTO_ME $S_MY_PORT $IPSEC_POLICY_OUT \
  	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j ACCEPT
  	#
-@@ -647,10 +748,10 @@
+@@ -462,10 +563,10 @@
  	# ones, so do not mess with it; see CAUTION comment up at top.
  	if [ "$PLUTO_PEER_CLIENT" != "$PLUTO_MY_SOURCEIP/128" ]
  	then
@@ -321,7 +321,7 @@
  	      -s $PLUTO_PEER_CLIENT $S_PEER_PORT \
  	      -d $PLUTO_MY_CLIENT $D_MY_PORT $IPSEC_POLICY_IN -j ACCEPT
  	fi
-@@ -659,10 +760,10 @@
+@@ -474,10 +575,10 @@
  	# or sometimes host access via the internal IP is needed
  	if [ -n "$PLUTO_MY_SOURCEIP" -o -n "$PLUTO_HOST_ACCESS" ]
  	then
@@ -334,7 +334,7 @@
  	      -s $PLUTO_MY_CLIENT $S_MY_PORT \
  	      -d $PLUTO_PEER_CLIENT $D_PEER_PORT $IPSEC_POLICY_OUT -j ACCEPT
  	fi
-@@ -686,11 +787,11 @@
+@@ -501,11 +602,11 @@
  	# ones, so do not mess with it; see CAUTION comment up at top.
  	if [ "$PLUTO_PEER_CLIENT" != "$PLUTO_MY_SOURCEIP/128" ]
  	then
@@ -348,7 +348,7 @@
  	      -s $PLUTO_PEER_CLIENT $S_PEER_PORT \
  	      -d $PLUTO_MY_CLIENT $D_MY_PORT \
  	         $IPSEC_POLICY_IN -j ACCEPT
-@@ -700,11 +801,11 @@
+@@ -515,11 +616,11 @@
  	# or sometimes host access via the internal IP is needed
  	if [ -n "$PLUTO_MY_SOURCEIP" -o -n "$PLUTO_HOST_ACCESS" ]
  	then
