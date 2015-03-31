@@ -24,11 +24,11 @@
 
 include Config
 
-VER        = 3.14.33
+VER        = 3.14.37
 
-RPI_PATCHES = 3.14.33-grsec-ipfire1
-A7M_PATCHES = 3.14.33-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.0-3.14.33-201502180832.patch.xz
+RPI_PATCHES = 3.14.37-grsec-ipfire1
+A7M_PATCHES = 3.14.37-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.1-3.14.37-201503270048.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 58
+PAK_VER    = 59
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -77,10 +77,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= c19feb0646fde7e96602ac313fb7e5d6
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= e423c8b3a408f23b9a26f8f0f4384c50
-arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= f147ce7c81889d2c5134304f3a6e60e3
-$(GRS_PATCHES)_MD5				= 119943451628ff5a62437637d60a585d
+$(DL_FILE)_MD5					= 43abcb454054c53fb07296e84119edc5
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 375dc501711ff3ffeffdfc9848675d26
+arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 8a0a0d6ef78d53b3095691499dac4b71
+$(GRS_PATCHES)_MD5				= d83ca635c83bbd5efc4372992ab58094
 
 install : $(TARGET)
 
@@ -164,6 +164,9 @@ endif
 	# r8169 L23 patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.32-r8169_disable_L23.patch
 
+	# HyperV 2008 patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.x-hyperv-2008-fix.patch
+
 ifeq "$(KCFG)" "-kirkwood"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-mv_cesa_disable_failing_hmac_sha1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-kirkwood_legacy_boot.patch
@@ -178,8 +181,6 @@ ifeq "$(KCFG)" "-multi"
 	# Install switch api userspace header
 	cd $(DIR_APP) && install -v -m644 include/uapi/linux/switch.h /usr/include/linux/
 
-	# Fix Lamobo-R1 SATA Power
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.x-lamobo-r1-fix-sata-pwr.patch
 endif
 
 ifeq "$(KCFG)" "-rpi"

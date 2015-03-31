@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.9.8ze
+VER        = 0.9.8zf
 
 THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = edcca64ac2fbf2b03461936d5e42a262
+$(DL_FILE)_MD5 = c69a4a679233f7df189e1ad6659511ec
 
 install : $(TARGET)
 
@@ -71,7 +71,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-0.9.8u-cryptodev.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-disable-sslv2-sslv3.patch
+
+	# Apply our CFLAGS
+	cd $(DIR_APP) && sed -i Configure \
+		-e "s/-O3 -fomit-frame-pointer/$(CFLAGS)/g"
 
 	cd $(DIR_APP) && sed -i -e 's/mcpu/march/' config
 	cd $(DIR_APP) && sed -i -e 's/-O3/-O2/' -e 's/-march=i486/-march=i586/' Configure
@@ -86,9 +90,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		zlib-dynamic \
 		no-engines \
 		no-asm 386 \
-		-DSSL_FORBID_ENULL \
-		-DHAVE_CRYPTODEV \
-		-DUSE_CRYPTODEV_DIGEST
+		-DSSL_FORBID_ENULL
 
 	cd $(DIR_APP) && make depend
 	cd $(DIR_APP) && make

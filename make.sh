@@ -411,7 +411,7 @@ buildipfire() {
 		ipfiremake backports			KCFG="-pae"
 		ipfiremake cryptodev			KCFG="-pae"
 		ipfiremake e1000e			KCFG="-pae"
-		ipfiremake igb				KCFG="-pae"
+#		ipfiremake igb				KCFG="-pae"
 		ipfiremake ixgbe			KCFG="-pae"
 		ipfiremake linux-initrd			KCFG="-pae"
 
@@ -420,7 +420,7 @@ buildipfire() {
 		ipfiremake backports			KCFG=""
 		ipfiremake cryptodev			KCFG=""
 		ipfiremake e1000e			KCFG=""
-		ipfiremake igb				KCFG=""
+#		ipfiremake igb				KCFG=""
 		ipfiremake ixgbe			KCFG=""
 		ipfiremake linux-initrd			KCFG=""
 		;;
@@ -437,7 +437,7 @@ buildipfire() {
 		ipfiremake backports			KCFG="-multi"
 		ipfiremake cryptodev			KCFG="-multi"
 		ipfiremake e1000e			KCFG="-multi"
-		ipfiremake igb				KCFG="-multi"
+#		ipfiremake igb				KCFG="-multi"
 		ipfiremake ixgbe			KCFG="-multi"
 		ipfiremake linux-initrd			KCFG="-multi"
 
@@ -446,7 +446,7 @@ buildipfire() {
 		ipfiremake backports			KCFG="-kirkwood"
 		ipfiremake cryptodev			KCFG="-kirkwood"
 		ipfiremake e1000e			KCFG="-kirkwood"
-		ipfiremake igb				KCFG="-kirkwood"
+#		ipfiremake igb				KCFG="-kirkwood"
 		ipfiremake ixgbe			KCFG="-kirkwood"
 		ipfiremake linux-initrd			KCFG="-kirkwood"
 		;;
