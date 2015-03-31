@@ -1,4 +1,4 @@
-usr/bin/powertop
+usr/sbin/powertop
 #usr/share/locale/de/LC_MESSAGES/powertop.mo
 #usr/share/locale/es/LC_MESSAGES/powertop.mo
 #usr/share/locale/fi/LC_MESSAGES/powertop.mo
