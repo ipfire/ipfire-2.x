@@ -76,7 +76,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make -j $(PARALLELISM)
 	cd $(DIR_APP) && make install
 
-	echo "# Set group ownership for raw USB devices" > /etc/udev/rules.d/23-usb.rules
-	echo "SUBSYSTEM==\"usb_device\", GROUP=\"usb\"" >> /etc/udev/rules.d/23-usb.rules
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
