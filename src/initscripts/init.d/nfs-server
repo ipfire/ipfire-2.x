@@ -27,8 +27,8 @@ case "$1" in
 			loadproc /usr/sbin/rpc.rquotad
 		fi
 
-		# NFSD support only in 2.6 kernel
-		/bin/uname -r | /bin/grep "2.6" 2>&1 > /dev/null
+		# NFSD support requires kernel 2.6 or newer.
+		/bin/uname -r | /bin/grep -E "^2.6|^3" 2>&1 > /dev/null
 		if [ $? = 0 ]; then
 			boot_mesg "Mounting nfsd virtual filesystem..."
 			/bin/mount -t nfsd none /proc/fs/nfsd 2>&1 > /dev/null
@@ -62,8 +62,8 @@ case "$1" in
 		/usr/sbin/exportfs -au 2>&1 > /dev/null
 		evaluate_retval
 
-		# NFSD support only in 2.6 kernel
-                /bin/uname -r | /bin/grep "2.6" 2>&1 > /dev/null
+		# NFSD support requires kernel 2.6 or newer.
+                /bin/uname -r | /bin/grep -E "^2.6|^3" 2>&1 > /dev/null
                 if [ $? = 0 ]; then
 			boot_mesg "Unmounting NFS Virtual Filesystem..."
 			/bin/umount /proc/fs/nfsd 2>&1 > /dev/null
