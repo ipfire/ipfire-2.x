@@ -1,7 +1,7 @@
 From 393415597c8b5b09558b789ab9ac238dbe3db65d Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sun, 18 Jan 2015 22:11:10 +0000
-Subject: [PATCH 32/55] Cope with multiple interfaces with the same LL address.
+Subject: [PATCH 32/71] Cope with multiple interfaces with the same LL address.
 
 ---
  CHANGELOG  | 4 ++++

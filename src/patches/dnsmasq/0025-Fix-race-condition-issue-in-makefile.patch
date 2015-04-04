@@ -1,7 +1,7 @@
 From d8dbd903d024f84a149dac2f8a674a68dfed47a3 Mon Sep 17 00:00:00 2001
 From: Yousong Zhou <yszhou4tech@gmail.com>
 Date: Mon, 5 Jan 2015 17:03:35 +0000
-Subject: [PATCH 25/55] Fix race condition issue in makefile.
+Subject: [PATCH 25/71] Fix race condition issue in makefile.
 
 ---
  Makefile | 4 +++-

@@ -1,7 +1,7 @@
 From e9828b6f66b22ce8873f8d30a773137d1aef1b92 Mon Sep 17 00:00:00 2001
 From: Karl Vogel <karl.vogel@gmail.com>
 Date: Fri, 3 Oct 2014 21:45:15 +0100
-Subject: [PATCH 04/55] Set conntrack mark before connect() call.
+Subject: [PATCH 04/71] Set conntrack mark before connect() call.
 
 SO_MARK has to be done before issuing the connect() call on the
 TCP socket.

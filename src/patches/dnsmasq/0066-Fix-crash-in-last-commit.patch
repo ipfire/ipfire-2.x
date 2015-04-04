@@ -1,0 +1,30 @@
+From 794fccca7ffebfba4468bfffc6276b68bbf6afd9 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Sun, 29 Mar 2015 22:35:44 +0100
+Subject: [PATCH 66/71] Fix crash in last commit.
+
+---
+ src/cache.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/src/cache.c b/src/cache.c
+index 873c5779044c..d7bea574c0d8 100644
+--- a/src/cache.c
++++ b/src/cache.c
+@@ -1404,9 +1404,10 @@ int cache_make_stat(struct txt_record *t)
+ static char *sanitise(char *name)
+ {
+   unsigned char *r;
+-  for (r = (unsigned char *)name; *r; r++)
+-    if (!isprint((int)*r))
+-      return "<name unprintable>";
++  if (name)
++    for (r = (unsigned char *)name; *r; r++)
++      if (!isprint((int)*r))
++	return "<name unprintable>";
+ 
+   return name;
+ }
+-- 
+2.1.0
+

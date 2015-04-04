@@ -1,7 +1,7 @@
 From 00cd9d551998307225312fd21f761cfa8868bd2c Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Thu, 2 Oct 2014 21:44:21 +0100
-Subject: [PATCH 02/55] crash at startup when an empty suffix is supplied to
+Subject: [PATCH 02/71] crash at startup when an empty suffix is supplied to
  --conf-dir
 
 ---
