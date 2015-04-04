@@ -245,6 +245,7 @@ WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
 WARNING: translation string unused: ike lifetime
+WARNING: translation string unused: ike lifetime should be between 1 and 24 hours
 WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
@@ -857,6 +858,7 @@ WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
 WARNING: untranslated string: grouptype
 WARNING: untranslated string: hardware support
+WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: imei
 WARNING: untranslated string: imsi
 WARNING: untranslated string: incoming compression in bytes per second

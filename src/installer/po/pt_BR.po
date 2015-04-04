@@ -6,13 +6,14 @@
 # André Felipe Morro <andre@andremorro.com>, 2014
 # Evertton de Lima <e.everttonlima@gmail.com>, 2015
 # Leandro Luquetti Basilio da Silva <leandroluquetti@gmail.com>, 2014
+# Moisés Bites Borges de Castro <moisesbites@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2015-02-16 23:04+0000\n"
-"Last-Translator: Evertton de Lima <e.everttonlima@gmail.com>\n"
+"PO-Revision-Date: 2015-03-24 21:30+0000\n"
+"Last-Translator: Moisés Bites Borges de Castro <moisesbites@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/ipfire/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -76,13 +77,13 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr ""
+msgstr "Nenhum Drive de origem foi encontrado.\n\nVocê pode tentar baixar a imagem da instalação solicitada. "
 
 #: main.c:456
 msgid ""
 "Please make sure to connect your machine to a network and the installer will"
 " try connect to acquire an IP address."
-msgstr ""
+msgstr "Por favor certifique que sua máquina está conectada com uma rede e o instalador irá tentar conectar para pegar um endereço IP;"
 
 #: main.c:460
 msgid "Download installation image"
@@ -110,7 +111,7 @@ msgstr "Baixando imagem de instalação..."
 #: main.c:510
 #, c-format
 msgid "MD5 checksum mismatch"
-msgstr ""
+msgstr "Assinatura MD5 incompatível"
 
 #: main.c:513
 #, c-format
@@ -301,15 +302,15 @@ msgstr "Não"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr "Um erro ocorreu enquanto a cópia de segurança foi restaurada."
+msgstr "Um erro ocorreu enquanto a cópia de segurança era restaurada."
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr "Executando post-install script..."
+msgstr "Executando script pós instalação..."
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr "Post-install script falhou."
+msgstr "Script de pós instalação falhou."
 
 #: main.c:877
 #, c-format
@@ -317,7 +318,7 @@ msgid ""
 "%s was successfully installed!\n"
 "\n"
 "Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr ""
+msgstr "%s está instalado com sucesso!\n\nPor favor, remova qualquer mídia de instalação desse sistema e o reinicie. Assim que o sistema for reiniciado você será solicitado a configurar a rede e especificar as senhas de sistema. Após isso, você deve  apontar seu navegador para https://%s:444 (ou use nome de %s) para a página de configuração web."
 
 #: main.c:882
 msgid "Congratulations!"

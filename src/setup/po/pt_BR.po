@@ -5,14 +5,15 @@
 # Translators:
 # douglasdiasn <douglasdiasn@gmail.com>, 2015
 # Evertton de Lima <e.everttonlima@gmail.com>, 2015
+# Moisés Bites Borges de Castro <moisesbites@gmail.com>, 2015
 # Rafael Tavares <rafael@ibinetwork.com.br>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2015-02-16 23:15+0000\n"
-"Last-Translator: Evertton de Lima <e.everttonlima@gmail.com>\n"
+"PO-Revision-Date: 2015-03-24 21:31+0000\n"
+"Last-Translator: Moisés Bites Borges de Castro <moisesbites@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/ipfire/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,7 +23,7 @@ msgstr ""
 
 #: dhcp.c:50
 msgid "Start address:"
-msgstr "Endereço de Inicial:"
+msgstr "Endereço inicial:"
 
 #: dhcp.c:51
 msgid "End address:"
@@ -38,15 +39,15 @@ msgstr "DNS Secundário:"
 
 #: dhcp.c:54
 msgid "Default lease (mins):"
-msgstr "Tempo padrão (mins):"
+msgstr "Concessão padrão (min):"
 
 #: dhcp.c:55
 msgid "Max lease (mins):"
-msgstr "Tempo máximo (mins)"
+msgstr "Concessão máxima (min)"
 
 #: dhcp.c:56
 msgid "Domain name suffix:"
-msgstr ""
+msgstr "Sufixo do nome de Domínio:"
 
 #: dhcp.c:86 dhcp.c:93 dhcp.c:101 domainname.c:34 hostname.c:37 keymap.c:70
 #: misc.c:40 misc.c:52 netstuff.c:377 netstuff.c:566 netstuff.c:704
@@ -58,7 +59,7 @@ msgstr "Não foi possível abrir o arquivo de configurações"
 
 #: dhcp.c:111
 msgid "DHCP server configuration"
-msgstr "Configurar servidor DHCP"
+msgstr "Configuração do servidor DHCP"
 
 #: dhcp.c:116
 msgid "Configure the DHCP server by entering the settings information."
@@ -87,11 +88,11 @@ msgstr "Cancelar"
 msgid ""
 "The following fields are invalid:\n"
 "\n"
-msgstr "Os campos a seguir são inválidos: \n"
+msgstr "Os campos a seguir são inválidos: \n\n"
 
 #: dhcp.c:159
 msgid "Start address"
-msgstr "Endereço de Inicial"
+msgstr "Endereço inicial"
 
 #: dhcp.c:165
 msgid "End address"
@@ -107,19 +108,19 @@ msgstr "DNS Secundário"
 
 #: dhcp.c:189
 msgid "Default lease time"
-msgstr "Tempo padrão"
+msgstr "Tempo de concessão padrão"
 
 #: dhcp.c:195
 msgid "Max. lease time"
-msgstr "Tempo máximo padrão"
+msgstr "Tempo de concessão máximo"
 
 #: domainname.c:42 main.c:70
 msgid "Domain name"
-msgstr "Domínio "
+msgstr "Nome de Domínio "
 
 #: domainname.c:42
 msgid "Enter Domain name"
-msgstr "Entre com o nome do Domínio"
+msgstr "Digite o nome do Domínio"
 
 #: domainname.c:48
 msgid "Domain name cannot be empty."
@@ -135,11 +136,11 @@ msgstr "O nome de Domínio pode conter somente letras, números, hífens e ponto
 
 #: hostname.c:46 main.c:69
 msgid "Hostname"
-msgstr "Hostname"
+msgstr "Nome do Host"
 
 #: hostname.c:46
 msgid "Enter the machine's hostname."
-msgstr "Entre com o nome do host."
+msgstr "Entre com o nome de Host da máquina."
 
 #: hostname.c:53
 msgid "Hostname cannot be empty."
@@ -260,7 +261,7 @@ msgstr "Estático "
 
 #: netstuff.c:104
 msgid "DHCP"
-msgstr "Automático "
+msgstr "DHCP"
 
 #: netstuff.c:105
 msgid "PPP DIALUP (PPPoE, modem, ATM ...)"
@@ -300,7 +301,7 @@ msgstr "Nome do Host DHCP:"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
-msgstr ""
+msgstr "Desativado"
 
 #: netstuff.c:669
 #, c-format
@@ -342,11 +343,11 @@ msgstr "Você realmente quer remover a interface %s associada?"
 
 #: netstuff.c:755
 msgid "Select network driver"
-msgstr "Selecionar driver de rede"
+msgstr "Selecionar o driver de rede"
 
 #: netstuff.c:755
 msgid "Set additional module parameters"
-msgstr ""
+msgstr "Especifique os parâmetros adicionais"
 
 #: netstuff.c:762
 msgid "Loading module..."
@@ -354,11 +355,11 @@ msgstr "Carregando modulo..."
 
 #: netstuff.c:777
 msgid "Unable to load driver module."
-msgstr ""
+msgstr "Não foi possível carregar o driver."
 
 #: netstuff.c:780
 msgid "Module name cannot be blank."
-msgstr ""
+msgstr "O nome do módulo não pode ficar vazio."
 
 #: networking.c:110
 msgid "Stopping network..."
@@ -459,7 +460,7 @@ msgid ""
 "list those interfaces which have ethernet attached. If you change this "
 "setting, a network restart will be required, and you will have to "
 "reconfigure the network driver assignments."
-msgstr ""
+msgstr "Selecione a configuração de rede para %s. Os tipos de configuração seguintes lista as interfaces cabo Ethernet. Se você alterar estas configurações, uma reinicialização de rede será exigida, e você terá que reconfigurar os drivers de rede especificados."
 
 #: networking.c:307
 #, c-format
@@ -467,13 +468,13 @@ msgid ""
 "Not enough netcards for your choice.\n"
 "\n"
 "Needed: %d - Available: %d\n"
-msgstr ""
+msgstr "Não há dispositivos de rede suficientes para sua escolha.\n\nNecessárias: %d - Disponíveis: %d\n"
 
 #: networking.c:359
 msgid ""
 "Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
 "\n"
-msgstr ""
+msgstr "Configure os drivers de rede, e a placa de rede que a interface está relacionada. A configuração atual é a seguinte:\n\n"
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
@@ -487,7 +488,7 @@ msgstr "Reiniciando rede non-local..."
 msgid ""
 "Please choose the interface you wish to change.\n"
 "\n"
-msgstr ""
+msgstr "Por favor, escolha a interface de rede que quer alterar.\n\n"
 
 #: networking.c:519
 msgid "Assigned Cards"
@@ -504,11 +505,11 @@ msgid ""
 "connection to the %s machine will be broken, and you will have to reconnect "
 "on the new IP. This is a risky operation, and should only be attempted if "
 "you have physical access to the machine, should something go wrong."
-msgstr ""
+msgstr "Se você alterar o endereço IP, e você estiver logado remotamente, sua conexão com a máquina %s cairá, e você terá que reconectar através do novo IP. Esta é uma operação arriscada, e somente deve ser feita se você tem acesso físico à máquina, caso algo errado aconteça."
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
-msgstr ""
+msgstr "Selecione a interface que deseja reconfigurar."
 
 #: networking.c:729
 msgid "Default gateway:"
@@ -518,7 +519,7 @@ msgstr "Gateway padrão:"
 msgid ""
 "Enter the DNS and gateway information. These settings are used only with "
 "Static IP (and DHCP if DNS set) on the RED interface."
-msgstr ""
+msgstr "Digite as informações de DNS e roteador. Estas configurações são usada somente com IP estático (e DHCP se o DNS está habilitado) para a inerface VERMELHA."
 
 #: networking.c:773
 msgid "Default gateway"
@@ -531,7 +532,7 @@ msgstr "DNS secundário especificado sem um DNS primário"
 #: passwords.c:33
 msgid ""
 "Enter the 'root' user password. Login as this user for commandline access."
-msgstr ""
+msgstr "Digite a senha do usuário 'root'. Autentique com este usuário para acesso à linha de comando."
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
@@ -550,17 +551,17 @@ msgstr "Problema ao configurar senha 'root'"
 msgid ""
 "Enter %s 'admin' user password. This is the user to use for logging into the"
 " %s web administration pages."
-msgstr ""
+msgstr "Digite a senha do usuário 'admin' do %s. Este é o usuário para autenticação na interface web de administração do %s."
 
 #: passwords.c:60
 #, c-format
 msgid "Setting %s 'admin' user password..."
-msgstr ""
+msgstr "Especificando a senha do usuário 'admin' do %s..."
 
 #: passwords.c:62
 #, c-format
 msgid "Problem setting %s 'admin' user password."
-msgstr ""
+msgstr "Tem um problema ao gravar senha do usuário 'admin' do %s."
 
 #: passwords.c:76
 msgid "Password:"
