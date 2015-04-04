@@ -1,0 +1,26 @@
+From 982faf402487e265ed11ac03524531d42b03c966 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Fri, 3 Apr 2015 21:42:30 +0100
+Subject: [PATCH 71/71] Fix compiler warning when not including DNSSEC.
+
+---
+ src/forward.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/forward.c b/src/forward.c
+index e8cf615aa939..3f6b9a23b6ab 100644
+--- a/src/forward.c
++++ b/src/forward.c
+@@ -530,7 +530,8 @@ static size_t process_reply(struct dns_header *header, time_t now, struct server
+   size_t plen; 
+ 
+   (void)ad_reqd;
+-  (void) do_bit;
++  (void)do_bit;
++  (void)bogusanswer;
+ 
+ #ifdef HAVE_IPSET
+   if (daemon->ipsets && extract_request(header, n, daemon->namebuff, NULL))
+-- 
+2.1.0
+

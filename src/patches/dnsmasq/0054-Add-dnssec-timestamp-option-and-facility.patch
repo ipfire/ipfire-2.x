@@ -1,7 +1,7 @@
 From f6e62e2af96f5fa0d1e3d93167a93a8f09bf6e61 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sun, 1 Mar 2015 18:17:54 +0000
-Subject: [PATCH 54/55] Add --dnssec-timestamp option and facility.
+Subject: [PATCH 54/71] Add --dnssec-timestamp option and facility.
 
 ---
  CHANGELOG     |  6 +++++

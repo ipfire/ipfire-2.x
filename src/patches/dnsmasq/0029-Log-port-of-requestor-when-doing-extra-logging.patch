@@ -1,7 +1,7 @@
 From 9f79ee4ae34886c0319f06d8f162b81ef79d62fb Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 12 Jan 2015 20:18:18 +0000
-Subject: [PATCH 29/55] Log port of requestor when doing extra logging.
+Subject: [PATCH 29/71] Log port of requestor when doing extra logging.
 
 ---
  src/cache.c | 6 +++---
