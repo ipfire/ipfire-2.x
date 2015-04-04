@@ -150,6 +150,7 @@ WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
 WARNING: translation string unused: destination port overlaps
+WARNING: translation string unused: dh name is invalid
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -173,8 +174,8 @@ WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
+WARNING: translation string unused: download dh parameter
 WARNING: translation string unused: driver
-WARNING: translation string unused: drop output
 WARNING: translation string unused: dstprt range overlaps
 WARNING: translation string unused: dstprt within existing
 WARNING: translation string unused: dynamic dns client
@@ -397,6 +398,7 @@ WARNING: translation string unused: network time
 WARNING: translation string unused: network traffic graphs
 WARNING: translation string unused: network updated
 WARNING: translation string unused: networks settings
+WARNING: translation string unused: never
 WARNING: translation string unused: new optionsfw must boot
 WARNING: translation string unused: no alcatelusb firmware
 WARNING: translation string unused: no cfg upload
@@ -444,9 +446,10 @@ WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn dl
+WARNING: translation string unused: ovpn engines
 WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpn reneg sec
 WARNING: translation string unused: ovpn_fastio
-WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
 WARNING: translation string unused: ovpn_mtudisc
 WARNING: translation string unused: ovpn_processprio
@@ -558,6 +561,7 @@ WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: system graphs
 WARNING: translation string unused: system log viewer
 WARNING: translation string unused: system status information
+WARNING: translation string unused: teovpn_fragment
 WARNING: translation string unused: test
 WARNING: translation string unused: test email could not be sent
 WARNING: translation string unused: test email was sent
@@ -663,28 +667,11 @@ WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: administrator password
 WARNING: untranslated string: administrator username
-WARNING: untranslated string: advproxy AUTH method ntlm
 WARNING: untranslated string: advproxy AUTH method ntlm auth
 WARNING: untranslated string: advproxy basic authentication
 WARNING: untranslated string: advproxy group access control
 WARNING: untranslated string: advproxy group required
-WARNING: untranslated string: atm device
 WARNING: untranslated string: bytes
-WARNING: untranslated string: capabilities
-WARNING: untranslated string: default
-WARNING: untranslated string: dh
-WARNING: untranslated string: dh key move failed
-WARNING: untranslated string: dh key warn
-WARNING: untranslated string: dh key warn1
-WARNING: untranslated string: dh parameter
-WARNING: untranslated string: dns servers
-WARNING: untranslated string: dnssec aware
-WARNING: untranslated string: dnssec information
-WARNING: untranslated string: dnssec not supported
-WARNING: untranslated string: dnssec validating
-WARNING: untranslated string: download tls-auth key
-WARNING: untranslated string: drop outgoing
-WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: fwdfw err concon
 WARNING: untranslated string: fwdfw err ratecon
 WARNING: untranslated string: fwdfw limitconcon
@@ -692,11 +679,7 @@ WARNING: untranslated string: fwdfw maxconcon
 WARNING: untranslated string: fwdfw numcon
 WARNING: untranslated string: fwdfw ratelimit
 WARNING: untranslated string: fwhost err hostip
-WARNING: untranslated string: gen dh
-WARNING: untranslated string: generate dh key
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
-WARNING: untranslated string: imei
-WARNING: untranslated string: imsi
 WARNING: untranslated string: incoming compression in bytes per second
 WARNING: untranslated string: incoming overhead in bytes per second
 WARNING: untranslated string: invalid input for valid till days
@@ -707,45 +690,13 @@ WARNING: untranslated string: masquerading
 WARNING: untranslated string: masquerading disabled
 WARNING: untranslated string: masquerading enabled
 WARNING: untranslated string: messages
-WARNING: untranslated string: model
-WARNING: untranslated string: modem hardware details
-WARNING: untranslated string: modem information
-WARNING: untranslated string: modem network bit error rate
-WARNING: untranslated string: modem network information
-WARNING: untranslated string: modem network mode
-WARNING: untranslated string: modem network operator
-WARNING: untranslated string: modem network registration
-WARNING: untranslated string: modem network signal quality
-WARNING: untranslated string: modem no connection
-WARNING: untranslated string: modem no connection message
-WARNING: untranslated string: modem sim information
-WARNING: untranslated string: modem status
-WARNING: untranslated string: monitor interface
-WARNING: untranslated string: nameserver
 WARNING: untranslated string: no data
-WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: outgoing compression in bytes per second
 WARNING: untranslated string: outgoing overhead in bytes per second
 WARNING: untranslated string: ovpn add conf
-WARNING: untranslated string: ovpn crypt options
-WARNING: untranslated string: ovpn dh
-WARNING: untranslated string: ovpn dh new key
-WARNING: untranslated string: ovpn dh parameters
-WARNING: untranslated string: ovpn dh upload
-WARNING: untranslated string: ovpn generating the root and host certificates
-WARNING: untranslated string: ovpn ha
-WARNING: untranslated string: ovpn hmac
-WARNING: untranslated string: random number generator daemon
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: samba join a domain
 WARNING: untranslated string: samba join domain
-WARNING: untranslated string: show dh
-WARNING: untranslated string: show tls-auth key
-WARNING: untranslated string: software version
-WARNING: untranslated string: source ip country
-WARNING: untranslated string: ta key
-WARNING: untranslated string: upload dh key
-WARNING: untranslated string: vendor
