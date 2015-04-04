@@ -27,13 +27,9 @@ case "$1" in
 			loadproc /usr/sbin/rpc.rquotad
 		fi
 
-		# NFSD support requires kernel 2.6 or newer.
-		/bin/uname -r | /bin/grep -E "^2.6|^3" 2>&1 > /dev/null
-		if [ $? = 0 ]; then
-			boot_mesg "Mounting nfsd virtual filesystem..."
-			/bin/mount -t nfsd none /proc/fs/nfsd 2>&1 > /dev/null
-			evaluate_retval
-		fi
+		boot_mesg "Mounting nfsd virtual filesystem..."
+		/bin/mount -t nfsd none /proc/fs/nfsd 2>&1 > /dev/null
+		evaluate_retval
 
 		# Make ceratin that the list is refreshed on
 		# a restart.
@@ -62,13 +58,9 @@ case "$1" in
 		/usr/sbin/exportfs -au 2>&1 > /dev/null
 		evaluate_retval
 
-		# NFSD support requires kernel 2.6 or newer.
-                /bin/uname -r | /bin/grep -E "^2.6|^3" 2>&1 > /dev/null
-                if [ $? = 0 ]; then
-			boot_mesg "Unmounting NFS Virtual Filesystem..."
-			/bin/umount /proc/fs/nfsd 2>&1 > /dev/null
-			evaluate_retval
-		fi
+		boot_mesg "Unmounting NFS Virtual Filesystem..."
+		/bin/umount /proc/fs/nfsd 2>&1 > /dev/null
+		evaluate_retval
 
 		# Remove a pid file that isn't done automatically
 		boot_mesg "Removing the rpc.statd pid file if it exists"
