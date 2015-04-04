@@ -1,6 +1,7 @@
 etc/monitrc
 usr/bin/monit
 #usr/share/man/man1/monit.1
+var/lib/monit
 var/ipfire/backup/addons/includes/monit
 etc/rc.d/init.d/monit
 etc/rc.d/rc0.d/K40monit
