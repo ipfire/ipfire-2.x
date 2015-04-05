@@ -1,0 +1,458 @@
+From ff841ebf5a5d6864ff48571f607c32ce80dbb75a Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Wed, 11 Mar 2015 21:36:30 +0000
+Subject: [PATCH 58/71] Fix boilerplate code for re-running system calls on
+ EINTR and EAGAIN etc.
+
+The nasty code with static variable in retry_send() which
+avoids looping forever needs to be called on success of the syscall,
+to reset the static variable.
+---
+ src/bpf.c     |  2 +-
+ src/dhcp.c    |  2 +-
+ src/dhcp6.c   |  6 +++---
+ src/dnsmasq.c | 35 +++++++++++++++++----------------
+ src/dnsmasq.h |  2 +-
+ src/forward.c | 41 ++++++++++++++++++--------------------
+ src/ipset.c   |  8 ++++----
+ src/loop.c    |  5 +++--
+ src/netlink.c |  8 ++++----
+ src/radv.c    |  5 +++--
+ src/util.c    | 63 ++++++++++++++++++++++++++++++++++-------------------------
+ 11 files changed, 93 insertions(+), 84 deletions(-)
+
+diff --git a/src/bpf.c b/src/bpf.c
+index 997d87421bed..a066641f969f 100644
+--- a/src/bpf.c
++++ b/src/bpf.c
+@@ -359,7 +359,7 @@ void send_via_bpf(struct dhcp_packet *mess, size_t len,
+   iov[3].iov_base = mess;
+   iov[3].iov_len = len;
+ 
+-  while (writev(daemon->dhcp_raw_fd, iov, 4) == -1 && retry_send());
++  while (retry_send(writev(daemon->dhcp_raw_fd, iov, 4)));
+ }
+ 
+ #endif /* defined(HAVE_BSD_NETWORK) && defined(HAVE_DHCP) */
+diff --git a/src/dhcp.c b/src/dhcp.c
+index f29be9b489a7..5c3089ab94ff 100644
+--- a/src/dhcp.c
++++ b/src/dhcp.c
+@@ -443,7 +443,7 @@ void dhcp_packet(time_t now, int pxe_fd)
+   setsockopt(fd, IPPROTO_IP, IP_BOUND_IF, &iface_index, sizeof(iface_index));
+ #endif
+   
+-  while(sendmsg(fd, &msg, 0) == -1 && retry_send());
++  while(retry_send(sendmsg(fd, &msg, 0)));
+ }
+  
+ /* check against secondary interface addresses */
+diff --git a/src/dhcp6.c b/src/dhcp6.c
+index c7144f5fee7c..ee2aa5d3bf3c 100644
+--- a/src/dhcp6.c
++++ b/src/dhcp6.c
+@@ -225,9 +225,9 @@ void dhcp6_packet(time_t now)
+   if (port != 0)
+     {
+       from.sin6_port = htons(port);
+-      while (sendto(daemon->dhcp6fd, daemon->outpacket.iov_base, save_counter(0), 
+-		    0, (struct sockaddr *)&from, sizeof(from)) == -1 &&
+-	   retry_send());
++      while (retry_send(sendto(daemon->dhcp6fd, daemon->outpacket.iov_base, 
++			       save_counter(0), 0, (struct sockaddr *)&from, 
++			       sizeof(from))));
+     }
+ }
+ 
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index f3e5bcffec4f..b784951950d4 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -444,7 +444,7 @@ int main (int argc, char **argv)
+ 	      char *msg;
+ 
+ 	      /* close our copy of write-end */
+-	      close(err_pipe[1]);
++	      while (retry_send(close(err_pipe[1])));
+ 	      
+ 	      /* check for errors after the fork */
+ 	      if (read_event(err_pipe[0], &ev, &msg))
+@@ -453,7 +453,7 @@ int main (int argc, char **argv)
+ 	      _exit(EC_GOOD);
+ 	    } 
+ 	  
+-	  close(err_pipe[0]);
++	  while (retry_send(close(err_pipe[0])));
+ 
+ 	  /* NO calls to die() from here on. */
+ 	  
+@@ -505,10 +505,12 @@ int main (int argc, char **argv)
+ 	    {
+ 	      if (!read_write(fd, (unsigned char *)daemon->namebuff, strlen(daemon->namebuff), 0))
+ 		err = 1;
+-	      
+-	      while (!err && close(fd) == -1)
+-		if (!retry_send())
+-		  err = 1;
++	      else 
++		{
++		  while (retry_send(close(fd)));
++		  if (errno != 0)
++		    err = 1;
++		}
+ 	    }
+ 
+ 	  if (err)
+@@ -813,7 +815,7 @@ int main (int argc, char **argv)
+ 
+   /* finished start-up - release original process */
+   if (err_pipe[1] != -1)
+-    close(err_pipe[1]);
++    while (retry_send(close(err_pipe[1])));
+   
+   if (daemon->port != 0)
+     check_servers();
+@@ -1319,7 +1321,7 @@ static void async_event(int pipe, time_t now)
+ 	    do {
+ 	      helper_write();
+ 	    } while (!helper_buf_empty() || do_script_run(now));
+-	    close(daemon->helperfd);
++	    while (retry_send(close(daemon->helperfd)));
+ 	  }
+ #endif
+ 	
+@@ -1544,7 +1546,7 @@ static void check_dns_listeners(fd_set *set, time_t now)
+ 	  
+ 	  if (getsockname(confd, (struct sockaddr *)&tcp_addr, &tcp_len) == -1)
+ 	    {
+-	      close(confd);
++	      while (retry_send(close(confd)));
+ 	      continue;
+ 	    }
+ 	  
+@@ -1609,7 +1611,7 @@ static void check_dns_listeners(fd_set *set, time_t now)
+ 	  if (!client_ok)
+ 	    {
+ 	      shutdown(confd, SHUT_RDWR);
+-	      close(confd);
++	      while (retry_send(close(confd)));
+ 	    }
+ #ifndef NO_FORK
+ 	  else if (!option_bool(OPT_DEBUG) && (p = fork()) != 0)
+@@ -1624,7 +1626,7 @@ static void check_dns_listeners(fd_set *set, time_t now)
+ 			break;
+ 		      }
+ 		}
+-	      close(confd);
++	      while (retry_send(close(confd)));
+ 
+ 	      /* The child can use up to TCP_MAX_QUERIES ids, so skip that many. */
+ 	      daemon->log_id += TCP_MAX_QUERIES;
+@@ -1669,7 +1671,7 @@ static void check_dns_listeners(fd_set *set, time_t now)
+ 	      buff = tcp_request(confd, now, &tcp_addr, netmask, auth_dns);
+ 	       
+ 	      shutdown(confd, SHUT_RDWR);
+-	      close(confd);
++	      while (retry_send(close(confd)));
+ 	      
+ 	      if (buff)
+ 		free(buff);
+@@ -1678,7 +1680,7 @@ static void check_dns_listeners(fd_set *set, time_t now)
+ 		if (s->tcpfd != -1)
+ 		  {
+ 		    shutdown(s->tcpfd, SHUT_RDWR);
+-		    close(s->tcpfd);
++		    while (retry_send(close(s->tcpfd)));
+ 		  }
+ #ifndef NO_FORK		   
+ 	      if (!option_bool(OPT_DEBUG))
+@@ -1756,9 +1758,8 @@ int icmp_ping(struct in_addr addr)
+     j = (j & 0xffff) + (j >> 16);  
+   packet.icmp.icmp_cksum = (j == 0xffff) ? j : ~j;
+   
+-  while (sendto(fd, (char *)&packet.icmp, sizeof(struct icmp), 0, 
+-		(struct sockaddr *)&saddr, sizeof(saddr)) == -1 &&
+-	 retry_send());
++  while (retry_send(sendto(fd, (char *)&packet.icmp, sizeof(struct icmp), 0, 
++			   (struct sockaddr *)&saddr, sizeof(saddr))));
+   
+   for (now = start = dnsmasq_time(); 
+        difftime(now, start) < (float)PING_WAIT;)
+@@ -1820,7 +1821,7 @@ int icmp_ping(struct in_addr addr)
+     }
+   
+ #if defined(HAVE_LINUX_NETWORK) || defined(HAVE_SOLARIS_NETWORK)
+-  close(fd);
++  while (retry_send(close(fd)));
+ #else
+   opt = 1;
+   setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &opt, sizeof(opt));
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index fc7259881358..de95d0e875e3 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -1177,7 +1177,7 @@ int is_same_net6(struct in6_addr *a, struct in6_addr *b, int prefixlen);
+ u64 addr6part(struct in6_addr *addr);
+ void setaddr6part(struct in6_addr *addr, u64 host);
+ #endif
+-int retry_send(void);
++int retry_send(ssize_t rc);
+ void prettyprint_time(char *buf, unsigned int t);
+ int prettyprint_addr(union mysockaddr *addr, char *buf);
+ int parse_hex(char *in, unsigned char *out, int maxlen, 
+diff --git a/src/forward.c b/src/forward.c
+index 438e9fa490b8..7c0fa8da3fdf 100644
+--- a/src/forward.c
++++ b/src/forward.c
+@@ -103,15 +103,11 @@ int send_from(int fd, int nowild, char *packet, size_t len,
+ #endif
+     }
+   
+-  while (sendmsg(fd, &msg, 0) == -1)
++  while (retry_send(sendmsg(fd, &msg, 0)));
++
++  /* If interface is still in DAD, EINVAL results - ignore that. */
++  if (errno != 0 && errno != EINVAL)
+     {
+-      if (retry_send())
+-	continue;
+-      
+-      /* If interface is still in DAD, EINVAL results - ignore that. */
+-      if (errno == EINVAL)
+-	break;
+-      
+       my_syslog(LOG_ERR, _("failed to send packet: %s"), strerror(errno));
+       return 0;
+     }
+@@ -297,9 +293,9 @@ static int forward_query(int udpfd, union mysockaddr *udpaddr,
+ 		fd = forward->rfd4->fd;
+ 	    }
+ 	  
+-	  while (sendto(fd, (char *)header, plen, 0,
+-			&forward->sentto->addr.sa,
+-			sa_len(&forward->sentto->addr)) == -1 && retry_send());
++	  while (retry_send( sendto(fd, (char *)header, plen, 0,
++				    &forward->sentto->addr.sa,
++				    sa_len(&forward->sentto->addr))));
+ 	  
+ 	  return 1;
+ 	}
+@@ -469,14 +465,12 @@ static int forward_query(int udpfd, union mysockaddr *udpaddr,
+ #endif
+ 		}
+ 	      
+-	      if (sendto(fd, (char *)header, plen, 0,
+-			 &start->addr.sa,
+-			 sa_len(&start->addr)) == -1)
+-		{
+-		  if (retry_send())
+-		    continue;
+-		}
+-	      else
++	      if (retry_send(sendto(fd, (char *)header, plen, 0,
++				    &start->addr.sa,
++				    sa_len(&start->addr))))
++		continue;
++	    
++	      if (errno == 0)
+ 		{
+ 		  /* Keep info in case we want to re-send this packet */
+ 		  daemon->srv_save = start;
+@@ -932,7 +926,9 @@ void reply_query(int fd, int family, time_t now)
+ 		  
+ 		  if (fd != -1)
+ 		    {
+-		      while (sendto(fd, (char *)header, nn, 0, &server->addr.sa, sa_len(&server->addr)) == -1 && retry_send()); 
++		      while (retry_send(sendto(fd, (char *)header, nn, 0, 
++					       &server->addr.sa, 
++					       sa_len(&server->addr)))); 
+ 		      server->queries++;
+ 		    }
+ 		  
+@@ -2228,8 +2224,9 @@ void resend_query()
+       else
+ 	return;
+       
+-      while(sendto(fd, daemon->packet, daemon->packet_len, 0,
+-		   &daemon->srv_save->addr.sa, sa_len(&daemon->srv_save->addr)) == -1 && retry_send()); 
++      while(retry_send(sendto(fd, daemon->packet, daemon->packet_len, 0,
++			      &daemon->srv_save->addr.sa, 
++			      sa_len(&daemon->srv_save->addr)))); 
+     }
+ }
+ 
+diff --git a/src/ipset.c b/src/ipset.c
+index 8c5b72722371..a315e86bc7f4 100644
+--- a/src/ipset.c
++++ b/src/ipset.c
+@@ -121,7 +121,6 @@ static int new_add_to_ipset(const char *setname, const struct all_addr *ipaddr,
+   struct my_nlattr *nested[2];
+   uint8_t proto;
+   int addrsz = INADDRSZ;
+-  ssize_t rc;
+ 
+ #ifdef HAVE_IPV6
+   if (af == AF_INET6)
+@@ -162,9 +161,10 @@ static int new_add_to_ipset(const char *setname, const struct all_addr *ipaddr,
+   nested[1]->nla_len = (void *)buffer + NL_ALIGN(nlh->nlmsg_len) - (void *)nested[1];
+   nested[0]->nla_len = (void *)buffer + NL_ALIGN(nlh->nlmsg_len) - (void *)nested[0];
+ 	
+-  while ((rc = sendto(ipset_sock, buffer, nlh->nlmsg_len, 0,
+-		      (struct sockaddr *)&snl, sizeof(snl))) == -1 && retry_send());
+-  return rc;
++  while (retry_send(sendto(ipset_sock, buffer, nlh->nlmsg_len, 0,
++			   (struct sockaddr *)&snl, sizeof(snl))));
++								    
++  return errno == 0 ? 0 : -1;
+ }
+ 
+ 
+diff --git a/src/loop.c b/src/loop.c
+index 565f7d8e58e0..c9ed075670de 100644
+--- a/src/loop.c
++++ b/src/loop.c
+@@ -45,8 +45,9 @@ void loop_send_probes()
+ 	     fd = rfd->fd;
+ 	   }
+ 
+-	 while (sendto(fd, daemon->packet, len, 0, &serv->addr.sa, sa_len(&serv->addr)) == -1 && retry_send());
+-
++	 while (retry_send(sendto(fd, daemon->packet, len, 0, 
++				  &serv->addr.sa, sa_len(&serv->addr))));
++	 
+ 	 free_rfd(rfd);
+        }
+ }
+diff --git a/src/netlink.c b/src/netlink.c
+index 10f94db25a14..753784dc20b4 100644
+--- a/src/netlink.c
++++ b/src/netlink.c
+@@ -169,10 +169,10 @@ int iface_enumerate(int family, void *parm, int (*callback)())
+   req.g.rtgen_family = family; 
+ 
+   /* Don't block in recvfrom if send fails */
+-  while((len = sendto(daemon->netlinkfd, (void *)&req, sizeof(req), 0, 
+-		      (struct sockaddr *)&addr, sizeof(addr))) == -1 && retry_send());
+-  
+-  if (len == -1)
++  while(retry_send(sendto(daemon->netlinkfd, (void *)&req, sizeof(req), 0, 
++			  (struct sockaddr *)&addr, sizeof(addr))));
++
++  if (errno != 0)
+     return 0;
+     
+   while (1)
+diff --git a/src/radv.c b/src/radv.c
+index 6da125b864ae..d0faddf8684a 100644
+--- a/src/radv.c
++++ b/src/radv.c
+@@ -479,8 +479,9 @@ static void send_ra(time_t now, int iface, char *iface_name, struct in6_addr *de
+       setsockopt(daemon->icmp6fd, IPPROTO_IPV6, IPV6_MULTICAST_IF, &iface, sizeof(iface));
+     }
+   
+-  while (sendto(daemon->icmp6fd, daemon->outpacket.iov_base, save_counter(0), 0, 
+-		(struct sockaddr *)&addr, sizeof(addr)) == -1 && retry_send());
++  while (retry_send(sendto(daemon->icmp6fd, daemon->outpacket.iov_base, 
++			   save_counter(0), 0, (struct sockaddr *)&addr, 
++			   sizeof(addr))));
+   
+ }
+ 
+diff --git a/src/util.c b/src/util.c
+index 91d02410b13f..648bc4d4b428 100644
+--- a/src/util.c
++++ b/src/util.c
+@@ -569,17 +569,27 @@ void bump_maxfd(int fd, int *max)
+     *max = fd;
+ }
+ 
+-int retry_send(void)
++/* rc is return from sendto and friends.
++   Return 1 if we should retry.
++   Set errno to zero if we succeeded. */
++int retry_send(ssize_t rc)
+ {
++  static int retries = 0;
++  struct timespec waiter;
++  
++  if (rc != -1)
++    {
++      retries = 0;
++      errno = 0;
++      return 0;
++    }
++  
+   /* Linux kernels can return EAGAIN in perpetuity when calling
+      sendmsg() and the relevant interface has gone. Here we loop
+      retrying in EAGAIN for 1 second max, to avoid this hanging 
+      dnsmasq. */
+ 
+-  static int retries = 0;
+-  struct timespec waiter;
+-
+-   if (errno == EAGAIN || errno == EWOULDBLOCK)
++  if (errno == EAGAIN || errno == EWOULDBLOCK)
+      {
+        waiter.tv_sec = 0;
+        waiter.tv_nsec = 10000;
+@@ -587,13 +597,13 @@ int retry_send(void)
+        if (retries++ < 1000)
+ 	 return 1;
+      }
+-
+-   retries = 0;
+-   
+-   if (errno == EINTR)
+-     return 1;
+-   
+-   return 0;
++  
++  retries = 0;
++  
++  if (errno == EINTR)
++    return 1;
++  
++  return 0;
+ }
+ 
+ int read_write(int fd, unsigned char *packet, int size, int rw)
+@@ -602,22 +612,21 @@ int read_write(int fd, unsigned char *packet, int size, int rw)
+   
+   for (done = 0; done < size; done += n)
+     {
+-    retry:
+-      if (rw)
+-        n = read(fd, &packet[done], (size_t)(size - done));
+-      else
+-        n = write(fd, &packet[done], (size_t)(size - done));
+-
+-      if (n == 0)
+-        return 0;
+-      else if (n == -1)
+-        {
+-          if (retry_send() || errno == ENOMEM || errno == ENOBUFS)
+-            goto retry;
+-          else
+-            return 0;
+-        }
++      do { 
++	if (rw)
++	  n = read(fd, &packet[done], (size_t)(size - done));
++	else
++	  n = write(fd, &packet[done], (size_t)(size - done));
++	
++	if (n == 0)
++	  return 0;
++	
++      } while (retry_send(n) || errno == ENOMEM || errno == ENOBUFS);
++
++      if (errno != 0)
++	return 0;
+     }
++     
+   return 1;
+ }
+ 
+-- 
+2.1.0
+
