@@ -39,6 +39,12 @@ done
 # Extract files
 extract_files
 
+# Update /etc/sysconfig/createfiles
+cat <<EOF >> /etc/sysconfig/createfiles
+/var/run/ovpnserver.log file    644     nobody  nobody
+/var/run/openvpn        dir     644     nobody  nobody
+EOF
+
 # Generate ddns configuration file
 sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
 
