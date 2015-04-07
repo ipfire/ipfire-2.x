@@ -11,6 +11,7 @@ srv/web/ipfire/cgi-bin/netovpnrw.cgi
 srv/web/ipfire/cgi-bin/netovpnsrv.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/local/bin/collectdctrl
 usr/local/bin/openvpnctrl
 var/ipfire/backup/bin/backup.pl
 var/ipfire/graphs.pl
