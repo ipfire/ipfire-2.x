@@ -45,6 +45,9 @@ cat <<EOF >> /etc/sysconfig/createfiles
 /var/run/openvpn        dir     644     nobody  nobody
 EOF
 
+# Update /etc/collectd.conf
+echo "include \"/etc/collectd.vpn\"" >> /etc/collectd.conf
+
 # Generate ddns configuration file
 sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
 

@@ -243,3 +243,4 @@ usr/share/collectd/types.db
 #usr/share/man/man5/collectd.conf.5
 #usr/share/man/man5/types.db.5
 #var/lib/collectd
+var/ipfire/ovpn/collectd.vpn
