@@ -147,7 +147,6 @@ usr/lib/ipsec/plugins/libstrongswan-xcbc.so
 #usr/libexec/ipsec
 usr/libexec/ipsec/_copyright
 usr/libexec/ipsec/_updown
-usr/libexec/ipsec/_updown_espmark
 usr/libexec/ipsec/charon
 usr/libexec/ipsec/scepclient
 usr/libexec/ipsec/starter
