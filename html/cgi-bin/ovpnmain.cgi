@@ -668,6 +668,29 @@ sub read_routepushfile
 	}
 }
 
+sub writecollectdconf {
+	my $vpncollectd;
+	my %ccdhash=();
+
+	open(COLLECTDVPN, ">${General::swroot}/ovpn/collectd.vpn") or die "Unable to open collectd.vpn: $!";
+	print COLLECTDVPN "Loadplugin openvpn\n";
+	print COLLECTDVPN "\n";
+	print COLLECTDVPN "<Plugin openvpn>\n";
+	print COLLECTDVPN "Statusfile \"/var/run/ovpnserver.log\"\n";
+
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ccdhash);
+	foreach my $key (keys %ccdhash) {
+		if ($ccdhash{$key}[0] eq 'on' && $ccdhash{$key}[3] eq 'net') {
+			print COLLECTDVPN "Statusfile \"/var/run/openvpn/$ccdhash{$key}[1]-n2n\"\n";
+		}
+	}
+
+	print COLLECTDVPN "</Plugin>\n";
+	close(COLLECTDVPN);
+
+	# Reload collectd afterwards
+	system("/usr/local/bin/collectdctrl restart &>/dev/null");
+}
 
 #hier die refresh page
 if ( -e "${General::swroot}/ovpn/gencanow") {
@@ -2041,7 +2064,8 @@ END
 			&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
 			if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
-                 system('/usr/local/bin/openvpnctrl', '-sn2n', $confighash{$cgiparams{'KEY'}}[1]);
+				system('/usr/local/bin/openvpnctrl', '-sn2n', $confighash{$cgiparams{'KEY'}}[1]);
+				&writecollectdconf();
 			}
 		} else {
 
@@ -2049,14 +2073,15 @@ END
 			&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
 			if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
-                    if ($n2nactive ne ''){				
-						system('/usr/local/bin/openvpnctrl', '-kn2n', $confighash{$cgiparams{'KEY'}}[1]);
-					}
+				if ($n2nactive ne '') {
+					system('/usr/local/bin/openvpnctrl', '-kn2n', $confighash{$cgiparams{'KEY'}}[1]);
+					&writecollectdconf();
+				}
  
 			} else {
-   	          $errormessage = $Lang::tr{'invalid key'};
+				$errormessage = $Lang::tr{'invalid key'};
 			}
-      }
+		}
   }
 
 ###
@@ -2370,14 +2395,13 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 	
 # CCD end 
 
-	# Delete RRDs
-	system ("/usr/local/bin/openvpnctrl -drrd $confighash{$cgiparams{'KEY'}}[1]");
-
 	delete $confighash{$cgiparams{'KEY'}};
 	my $temp2 = `/usr/bin/openssl ca -gencrl -out ${General::swroot}/ovpn/crls/cacrl.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-	#&writeserverconf();
+	# Update collectd configuration and delete all RRD files of the removed connection
+	&writecollectdconf();
+	system ("/usr/local/bin/openvpnctrl -drrd $confighash{$cgiparams{'KEY'}}[1]");
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
     }
