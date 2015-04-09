@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = hostapd
-PAK_VER    = 33
+PAK_VER    = 34
 
 DEPS       = ""
 
@@ -77,6 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/hostapd-2.3_increase_EAPOL-timeouts.patch
 	cd $(DIR_APP)/hostapd && cp $(DIR_SRC)/config/hostapd/config ./.config
 	cd $(DIR_APP)/hostapd && sed -e "s@/usr/local@/usr@g" -i Makefile
 	cd $(DIR_APP)/hostapd && make $(MAKETUNING) $(EXTRA_MAKE)
