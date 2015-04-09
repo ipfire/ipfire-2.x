@@ -1190,9 +1190,13 @@ SETTINGS_ERROR:
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
     foreach my $key (keys %confighash) {
+	my $name = $confighash{$cgiparams{'$key'}}[1];
+
 	if ($confighash{$key}[4] eq 'cert') {
 	    delete $confighash{$cgiparams{'$key'}};
 	}
+
+	system ("/usr/local/bin/openvpnctrl -drrd $name");
     }
     while ($file = glob("${General::swroot}/ovpn/ca/*")) {
 	unlink $file;
@@ -1219,11 +1223,6 @@ SETTINGS_ERROR:
     while ($file = glob("${General::swroot}/ovpn/ccd/*")) {
 	unlink $file
     }
-# Delete all RRD files for Roadwarrior connections
-    chdir('/var/ipfire/ovpn/ccd');
-	while ($file = glob("*")) {
-	system ("/usr/local/bin/openvpnctrl -drrd $file");
-	}
     while ($file = glob("${General::swroot}/ovpn/ccd/*")) {
 	unlink $file
     }
@@ -1238,6 +1237,9 @@ SETTINGS_ERROR:
     while ($file = glob("${General::swroot}/ovpn/n2nconf/*")) {
 	system ("rm -rf $file");
     }
+
+    # Remove everything from the collectd configuration
+    &writecollectdconf();
 
     #&writeserverconf();
 ###
