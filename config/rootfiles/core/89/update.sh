@@ -35,6 +35,7 @@ done
 /etc/init.d/ipsec stop
 
 # Remove old files
+rm -f /usr/local/sbin/setup
 
 # Extract files
 extract_files
