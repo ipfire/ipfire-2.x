@@ -2370,10 +2370,9 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 	
 # CCD end 
 
-###
-###  Delete all RRD's for client
-###
+	# Delete RRDs
 	system ("/usr/local/bin/openvpnctrl -drrd $confighash{$cgiparams{'KEY'}}[1]");
+
 	delete $confighash{$cgiparams{'KEY'}};
 	my $temp2 = `/usr/bin/openssl ca -gencrl -out ${General::swroot}/ovpn/crls/cacrl.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
@@ -3068,6 +3067,10 @@ END
 	unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
 	unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
 	delete $confighash{$cgiparams{'KEY'}};
+
+	# Delete RRD's for collectd
+	system("/usr/local/bin/openvpnctrl", "-drrd", "$confighash{$cgiparams{'KEY'}}[1]", "&>/dev/null");
+
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 	#&writeserverconf();
     } else {
