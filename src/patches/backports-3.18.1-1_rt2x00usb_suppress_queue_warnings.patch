@@ -1,6 +1,6 @@
 diff -Naur backports-3.18.1-1.org/drivers/net/wireless/rt2x00/rt2800usb.c backports-3.18.1-1/drivers/net/wireless/rt2x00/rt2800usb.c
 --- backports-3.18.1-1.org/drivers/net/wireless/rt2x00/rt2800usb.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/rt2x00/rt2800usb.c	2015-03-29 21:42:13.865183543 +0200
++++ backports-3.18.1-1/drivers/net/wireless/rt2x00/rt2800usb.c	2015-04-07 11:44:16.647963570 +0200
 @@ -444,7 +444,7 @@
  
  	rt2x00usb_register_read(rt2x00dev, TXRXQ_PCNT, &reg);
@@ -28,3 +28,15 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/rt2x00/rt2800usb.c backpo
  				    entry->entry_idx, qid);
  			break;
  		}
+diff -Naur backports-3.18.1-1.org/drivers/net/wireless/rt2x00/rt2x00usb.c backports-3.18.1-1/drivers/net/wireless/rt2x00/rt2x00usb.c
+--- backports-3.18.1-1.org/drivers/net/wireless/rt2x00/rt2x00usb.c	2014-12-21 22:37:14.000000000 +0100
++++ backports-3.18.1-1/drivers/net/wireless/rt2x00/rt2x00usb.c	2015-04-07 11:42:41.723492892 +0200
+@@ -524,7 +524,7 @@
+ 
+ static void rt2x00usb_watchdog_tx_dma(struct data_queue *queue)
+ {
+-	rt2x00_warn(queue->rt2x00dev, "TX queue %d DMA timed out, invoke forced forced reset\n",
++	rt2x00_dbg(queue->rt2x00dev, "TX queue %d DMA timed out, invoke forced reset\n",
+ 		    queue->qid);
+ 
+ 	rt2x00queue_stop_queue(queue);

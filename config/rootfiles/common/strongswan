@@ -147,7 +147,6 @@ usr/lib/ipsec/plugins/libstrongswan-xcbc.so
 #usr/libexec/ipsec
 usr/libexec/ipsec/_copyright
 usr/libexec/ipsec/_updown
-usr/libexec/ipsec/_updown_espmark
 usr/libexec/ipsec/charon
 usr/libexec/ipsec/scepclient
 usr/libexec/ipsec/starter
@@ -169,7 +168,6 @@ usr/sbin/ipsec
 #usr/share/man/man5/ipsec.secrets.5
 #usr/share/man/man5/strongswan.conf.5
 #usr/share/man/man8/_updown.8
-#usr/share/man/man8/_updown_espmark.8
 #usr/share/man/man8/ipsec.8
 #usr/share/man/man8/openac.8
 #usr/share/man/man8/scepclient.8
