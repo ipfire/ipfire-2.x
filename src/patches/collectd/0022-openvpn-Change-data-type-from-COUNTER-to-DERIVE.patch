@@ -61,7 +61,7 @@ index 2db3677..d446e99 100644
  		sstrncpy (vl.plugin_instance, pinst,
  				sizeof (vl.plugin_instance));
 -	sstrncpy (vl.type, "compression", sizeof (vl.type));
-+	sstrncpy (vl.type, "compression_dervice", sizeof (vl.type));
++	sstrncpy (vl.type, "compression_derive", sizeof (vl.type));
  	if (tinst != NULL)
  		sstrncpy (vl.type_instance, tinst, sizeof (vl.type_instance));
  
