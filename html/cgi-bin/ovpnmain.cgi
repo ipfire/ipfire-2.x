@@ -2343,75 +2343,68 @@ else
 
 
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'remove'}) {
-    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
-    &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+	&General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-    if ($confighash{$cgiparams{'KEY'}}) {
-#	if ($vpnsettings{'ENABLED'} eq 'on' ||
-#	    $vpnsettings{'ENABLED_BLUE'} eq 'on') {
-#	    system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'});
-#	}
-#
-	my $temp = `/usr/bin/openssl ca -revoke ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
+	if ($confighash{$cgiparams{'KEY'}}) {
+		my $temp = `/usr/bin/openssl ca -revoke ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
 
 ###
 # m.a.d net2net
 ###
 
-if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
-	my $conffile = glob("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]/$confighash{$cgiparams{'KEY'}}[1].conf");
-	my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
-	unlink ($certfile);
-	unlink ($conffile);
+		if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
+			my $conffile = glob("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]/$confighash{$cgiparams{'KEY'}}[1].conf");
+			my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
+			unlink ($certfile);
+			unlink ($conffile);
 
-	if (-e "${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") {
-		rmdir ("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") || die "Kann Verzeichnis nicht loeschen: $!";
-	}
+			if (-e "${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") {
+				rmdir ("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") || die "Kann Verzeichnis nicht loeschen: $!";
+			}
 
-	unlink("/var/run/openvpn/$confighash{$cgiparams{'KEY'}}[1]-n2n");
-}
+			unlink("/var/run/openvpn/$confighash{$cgiparams{'KEY'}}[1]-n2n");
+		}
 
-  unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
-  unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
+		unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
+		unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
 
 # A.Marx CCD delete ccd files and routes
 
-	
-	if (-f "${General::swroot}/ovpn/ccd/$confighash{$cgiparams{'KEY'}}[2]")
-	{
-		unlink "${General::swroot}/ovpn/ccd/$confighash{$cgiparams{'KEY'}}[2]";
-	}
-	
-	&General::readhasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
-	foreach my $key (keys %ccdroutehash) {
-		if ($ccdroutehash{$key}[0] eq $confighash{$cgiparams{'KEY'}}[1]){
-			delete $ccdroutehash{$key};
+		if (-f "${General::swroot}/ovpn/ccd/$confighash{$cgiparams{'KEY'}}[2]")
+		{
+			unlink "${General::swroot}/ovpn/ccd/$confighash{$cgiparams{'KEY'}}[2]";
 		}
-	}
-	&General::writehasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
 	
-	&General::readhasharray("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
-	foreach my $key (keys %ccdroute2hash) {
-		if ($ccdroute2hash{$key}[0] eq $confighash{$cgiparams{'KEY'}}[1]){
-			delete $ccdroute2hash{$key};
+		&General::readhasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
+		foreach my $key (keys %ccdroutehash) {
+			if ($ccdroutehash{$key}[0] eq $confighash{$cgiparams{'KEY'}}[1]){
+				delete $ccdroutehash{$key};
+			}
 		}
+		&General::writehasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
+	
+		&General::readhasharray("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
+		foreach my $key (keys %ccdroute2hash) {
+			if ($ccdroute2hash{$key}[0] eq $confighash{$cgiparams{'KEY'}}[1]){
+				delete $ccdroute2hash{$key};
+			}
+		}
+		&General::writehasharray("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
+		&writeserverconf;
+
+# CCD end
+		# Update collectd configuration and delete all RRD files of the removed connection
+		&writecollectdconf();
+		system ("/usr/local/bin/openvpnctrl -drrd $confighash{$cgiparams{'KEY'}}[1]");
+
+		delete $confighash{$cgiparams{'KEY'}};
+		my $temp2 = `/usr/bin/openssl ca -gencrl -out ${General::swroot}/ovpn/crls/cacrl.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
+		&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+
+	} else {
+		$errormessage = $Lang::tr{'invalid key'};
 	}
-	&General::writehasharray("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
-	&writeserverconf;
-	
-	
-# CCD end 
-
-	delete $confighash{$cgiparams{'KEY'}};
-	my $temp2 = `/usr/bin/openssl ca -gencrl -out ${General::swroot}/ovpn/crls/cacrl.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
-	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-
-	# Update collectd configuration and delete all RRD files of the removed connection
-	&writecollectdconf();
-	system ("/usr/local/bin/openvpnctrl -drrd $confighash{$cgiparams{'KEY'}}[1]");
-    } else {
-	$errormessage = $Lang::tr{'invalid key'};
-    }
 	&General::firewall_reload();
 
 ###
