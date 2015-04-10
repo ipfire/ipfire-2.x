@@ -13,6 +13,7 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/local/bin/collectdctrl
 usr/local/bin/openvpnctrl
+usr/sbin/ovpn-collectd-convert
 usr/sbin/setup
 var/ipfire/backup/bin/backup.pl
 var/ipfire/graphs.pl

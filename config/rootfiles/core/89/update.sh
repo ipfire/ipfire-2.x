@@ -66,6 +66,9 @@ rm -f \
 	/opt/pakfire/db/*/meta-sqlite \
 	/opt/pakfire/db/rootfiles/sqlite
 
+# Update OpenVPN/collectd configuration
+/usr/sbin/ovpn-collectd-convert
+
 # Fix #10625
 mkdir -p /etc/logrotate.d
 
