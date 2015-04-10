@@ -3077,36 +3077,6 @@ END
     }
 
 ###
-### Remove connection
-###
-} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'remove'}) {
-    &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
-    &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-
-    if ($confighash{$cgiparams{'KEY'}}) {
-#	if ($vpnsettings{'ENABLED'} eq 'on' ||
-#	    $vpnsettings{'ENABLED_BLUE'} eq 'on') {
-#	    system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'});
-#	}
-	unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
-	unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
-	delete $confighash{$cgiparams{'KEY'}};
-
-	# Delete RRD's for collectd
-	system("/usr/local/bin/openvpnctrl", "-drrd", "$confighash{$cgiparams{'KEY'}}[1]", "&>/dev/null");
-
-	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-	#&writeserverconf();
-    } else {
-	$errormessage = $Lang::tr{'invalid key'};
-    }
-#test33
-
-###
-### Choose between adding a host-net or net-net connection
-###
-
-###
 # m.a.d net2net
 ###
 
