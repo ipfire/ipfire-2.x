@@ -1189,6 +1189,9 @@ SETTINGS_ERROR:
     my $file = '';
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
+    # Kill all N2N connections
+    system("/usr/local/bin/openvpnctrl -kn2n &>/dev/null");
+
     foreach my $key (keys %confighash) {
 	my $name = $confighash{$cgiparams{'$key'}}[1];
 
@@ -2351,6 +2354,9 @@ else
 ###
 
 		if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
+			# Stop the N2N connection before it is removed
+			system("/usr/local/bin/openvpnctrl -kn2n $confighash{$cgiparams{'KEY'}}[1] &>/dev/null");
+
 			my $conffile = glob("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]/$confighash{$cgiparams{'KEY'}}[1].conf");
 			my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
 			unlink ($certfile);
