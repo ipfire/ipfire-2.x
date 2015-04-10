@@ -1237,9 +1237,6 @@ SETTINGS_ERROR:
     while ($file = glob("${General::swroot}/ovpn/n2nconf/*")) {
 	system ("rm -rf $file");
     }
-    while ($file = glob("/var/run/openvpn/*-n2n")) {
-	unlink $file;
-    }
 
     # Remove everything from the collectd configuration
     &writecollectdconf();
@@ -2362,8 +2359,6 @@ else
 			if (-e "${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") {
 				rmdir ("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]") || die "Kann Verzeichnis nicht loeschen: $!";
 			}
-
-			unlink("/var/run/openvpn/$confighash{$cgiparams{'KEY'}}[1]-n2n");
 		}
 
 		unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
