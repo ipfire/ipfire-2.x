@@ -124,6 +124,7 @@ usr/local/bin/update-lang-cache
 #usr/local/src
 #usr/sbin
 usr/sbin/ovpn-ccd-convert
+usr/sbin/ovpn-collectd-convert
 #usr/share
 #usr/share/doc
 #usr/share/doc/licenses

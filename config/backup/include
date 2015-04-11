@@ -4,6 +4,7 @@
 /var/ipfire/*/config
 /var/ipfire/*/enable
 /var/ipfire/*/*enable*
+/var/ipfire/ovpn/collectd.vpn
 /etc/passwd
 /etc/shadow
 /etc/group
