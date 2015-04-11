@@ -47,10 +47,10 @@ if ( $querry[0] ne ""){
 	&Graphs::updatevpnn2ngraph($querry[0],$querry[1]);
 }else{
 	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'openvpn server'}, 1, '');
+	&Header::openpage($Lang::tr{'vpn statistic n2n'}, 1, '');
 	&Header::openbigbox('100%', 'left');
 
-	my @vpngraphs = `find /var/log/rrd/collectd/localhost/openvpn-*-n2n/ -not  -path *openvpn-UNDEF* -name *traffic.rrd|sort`;
+	my @vpngraphs = `find /var/log/rrd/collectd/localhost/openvpn-*-n2n/ -not  -path *openvpn-UNDEF* -name *traffic.rrd 2>/dev/null|sort`;
 	foreach (@vpngraphs){
 		if($_ =~ /(.*)\/openvpn-(.*)\/if_octets_derive-traffic.rrd/){
 			push(@vpns,$2);

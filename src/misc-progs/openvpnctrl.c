@@ -1,3 +1,4 @@
+#define _XOPEN_SOURCE 500
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,6 +8,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <fcntl.h>
+#include <ftw.h>
 #include "setuid.h"
 #include "netutil.h"
 #include "libsmooth.h"
@@ -43,6 +45,18 @@ struct connection_struct {
 };
 
 typedef struct connection_struct connection;
+
+static int recursive_remove_callback(const char* fpath, const struct stat* sb, int typeflag, struct FTW* ftwbuf) {
+	int rv = remove(fpath);
+	if (rv)
+		perror(fpath);
+
+	return rv;
+}
+
+static int recursive_remove(const char* path) {
+	return nftw(path, recursive_remove_callback, 64, FTW_DEPTH | FTW_PHYS);
+}
 
 void exithandler(void)
 {
@@ -537,6 +551,7 @@ int startNet2Net(char *name) {
 int killNet2Net(char *name) {
 	connection *conn = NULL;
 	connection *conn_iter;
+	int rc = 0;
 
 	conn_iter = getConnections();
 
@@ -569,26 +584,40 @@ int killNet2Net(char *name) {
 	snprintf(command, STRING_SIZE - 1, "/bin/rm -f %s", pidfile);
 	executeCommand(command);
 
+	char runfile[STRING_SIZE];
+	snprintf(runfile, STRING_SIZE - 1, "/var/run/openvpn/%s-n2n", conn->name);
+	rc = recursive_remove(runfile);
+	if (rc)
+		perror(runfile);
+
 	return 0;
 }
 
 int deleterrd(char *name) {
-	connection *conn = getConnections();
-
-	char rrd_file[STRING_SIZE];
-	snprintf(rrd_file, STRING_SIZE - 1, "/var/log/rrd/collectd/localhost/openvpn-%s/if_octets.rrd", name);
-
 	char rrd_dir[STRING_SIZE];
-	snprintf(rrd_dir, STRING_SIZE - 1, "/var/log/rrd/collectd/localhost/openvpn-%s", name);
 
+	connection *conn = getConnections();
 	while(conn) {
-		/* Find only RW-Connections with the given name. */
-		if (((strcmp(conn->type, "host") == 0) && (strcmp(conn->name, name) == 0))) {
-			remove(rrd_file);
-			remove(rrd_dir);
-			return 0;
+		if (strcmp(conn->name, name) != 0) {
+			conn = conn->next;
+			continue;
 		}
-		conn = conn->next;
+
+		// Handle RW connections
+		if (strcmp(conn->type, "host") == 0) {
+			snprintf(rrd_dir, STRING_SIZE - 1, "/var/log/rrd/collectd/localhost/openvpn-%s/", name);
+
+		// Handle N2N connections
+		} else if (strcmp(conn->type, "net") == 0) {
+			snprintf(rrd_dir, STRING_SIZE - 1, "/var/log/rrd/collectd/localhost/openvpn-%s-n2n/", name);
+
+		// Unhandled connection type
+		} else {
+			conn = conn->next;
+			continue;
+		}
+
+		return recursive_remove(rrd_dir);
 	}
 
 	return 1;

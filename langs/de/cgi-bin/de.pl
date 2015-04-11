@@ -2574,6 +2574,8 @@
 'vpn red name' => 'Öffentliche IP oder FQDN für das rote Interface oder <%defaultroute>',
 'vpn remote id' => 'Remote ID',
 'vpn subjectaltname' => 'Subjekt Alternativer Name',
+'vpn statistic rw' => 'OpenVPN-Roadwarrior-Statistik',
+'vpn statistic n2n' => 'OpenVPN-Netz-zu-Netz-Statistik',
 'vpn vhost' => 'Roadwarrior virtuelle IP (manchmal auch Inner-IP genannt)',
 'vpn watch' => 'Netz-zu-Netz VPN neu starten, wenn sich Remote-IP ändert (DynDNS).',
 'waiting to synchronize clock' => 'Bitte warten, die Uhr wird synchronisiert',

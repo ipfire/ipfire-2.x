@@ -2615,6 +2615,8 @@
 'vpn payload compression' => 'Negotiate payload compression',
 'vpn red name' => 'Public IP or FQDN for RED interface or <%defaultroute>',
 'vpn remote id' => 'Remote ID',
+'vpn statistic rw' => 'OpenVPN Roadwarrior Statistics',
+'vpn statistic n2n' => 'OpenVPN Net-to-Net Statistics',
 'vpn subjectaltname' => 'Subject Alt Name',
 'vpn vhost' => 'Roadwarrior virtual IP (sometimes called Inner-IP)',
 'vpn watch' => 'Restart net-to-net vpn when remote peer IP changes (dyndns).',

@@ -25,7 +25,7 @@ LIBS    = -lsmooth -lnewt
 PROGS = iowrap
 SUID_PROGS = squidctrl sshctrl ipfirereboot \
 	ipsecctrl timectrl dhcpctrl snortctrl \
-	applejuicectrl rebuildhosts backupctrl \
+	applejuicectrl rebuildhosts backupctrl collectdctrl \
 	logwatch openvpnctrl firewallctrl \
 	wirelessctrl getipstat qosctrl launch-ether-wake \
 	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl tripwirectrl \

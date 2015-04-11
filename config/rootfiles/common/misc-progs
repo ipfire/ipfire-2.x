@@ -2,6 +2,7 @@ usr/local/bin/addonctrl
 #usr/local/bin/applejuicectrl
 usr/local/bin/backupctrl
 #usr/local/bin/clamavctrl
+usr/local/bin/collectdctrl
 usr/local/bin/dhcpctrl
 usr/local/bin/dnsmasqctrl
 usr/local/bin/extrahdctrl

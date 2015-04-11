@@ -47,10 +47,10 @@ if ( $querry[0] ne "" && $querry[0] ne "UNDEF"){
 	&Graphs::updatevpngraph($querry[0],$querry[1]);
 }else{
 	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'host to net vpn'}, 1, '');
+	&Header::openpage($Lang::tr{'vpn statistic rw'}, 1, '');
 	&Header::openbigbox('100%', 'left');
 
-	my @vpngraphs = `find /var/log/rrd/collectd/localhost/openvpn-*/ -not  -path *openvpn-UNDEF*  -not -path *openvpn-*n2n* -name *.rrd|sort`;
+	my @vpngraphs = `find /var/log/rrd/collectd/localhost/openvpn-*/ -not  -path *openvpn-UNDEF*  -not -path *openvpn-*n2n* -name *.rrd 2>/dev/null|sort`;
 	foreach (@vpngraphs){
 		if($_ =~ /(.*)\/openvpn-(.*)\/if_octets_derive.rrd/){
 			push(@vpns,$2);

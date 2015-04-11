@@ -71,7 +71,7 @@ $wlanapsettings{'HW_MODE'} = 'g';
 $wlanapsettings{'PWD'} = 'IPFire-2.x';
 $wlanapsettings{'SYSLOGLEVEL'} = '0';
 $wlanapsettings{'DEBUG'} = '4';
-$wlanapsettings{'DRIVER'} = 'MADWIFI';
+$wlanapsettings{'DRIVER'} = 'NL80211';
 $wlanapsettings{'HTCAPS'} = '';
 
 &General::readhash("/var/ipfire/wlanap/settings", \%wlanapsettings);
@@ -265,7 +265,7 @@ if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
 my $wiphy = `iw dev $wlanapsettings{'INTERFACE'} info | grep wiphy | cut -d" " -f2`;
 chomp $wiphy;
 
-@channellist_cmd = `iw phy phy$wiphy info | grep " MHz \\\[" | grep -v "(disabled)" | grep -v "no IBSS" | grep -v "passive scanning" 2>/dev/null`;
+@channellist_cmd = `iw phy phy$wiphy info | grep " MHz \\\[" | grep -v "(disabled)" | grep -v "no IBSS" | grep -v "no IR" | grep -v "passive scanning" 2>/dev/null`;
 # get available channels
 
 my @temp;
@@ -305,15 +305,6 @@ if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
 	@txpower_cmd = `iwlist txpower 2>/dev/null | sed -e "s|unknown transmit-power information.||g"`;
 }
 # get available power
-
-my @temp;
-foreach (@txpower_cmd){
-$_ =~ /(\s)(\d+)(\s)dBm(\s)(.*)(\W)(\d+)(.*)/;
-$txpower = $7;chomp $txpower;
-if ( $txpower =~ /\d+/ ){push(@temp,$txpower."mW");}
-}
-my @txpower = @temp;
-push(@txpower,"auto");
 
 $selected{'SYSLOGLEVEL'}{$wlanapsettings{'SYSLOGLEVEL'}} = "selected='selected'";
 $selected{'DEBUG'}{$wlanapsettings{'DEBUG'}} = "selected='selected'";
@@ -437,20 +428,7 @@ END
 ;
 print <<END
 <tr><td width='25%' class='base'>HT Caps:&nbsp;</td><td class='base' colspan='3'><input type='text' name='HTCAPS' size='30' value='$wlanapsettings{'HTCAPS'}' /></td></tr>
-<tr><td width='25%' class='base'>Tx Power:&nbsp;</td><td class='base' colspan='3'>
-END
-;
-
-if ( $wlanapsettings{'DRIVER'} eq 'MADWIFI' ){
-	print "<select name='TXPOWER'>";
-	foreach $txpower (@txpower){
-		print "<option $selected{'TXPOWER'}{$txpower}>$txpower</option>&nbsp;dBm";
-	}
-	print "	</select></td></tr>";
-} else {
-	print "<input type='text' name='TXPOWER' size='10' value='$wlanapsettings{'TXPOWER'}' /></td></tr>"
-}
-print <<END
+<tr><td width='25%' class='base'>Tx Power:&nbsp;</td><td class='base' colspan='3'><input type='text' name='TXPOWER' size='10' value='$wlanapsettings{'TXPOWER'}' /></td></tr>
 <tr><td width='25%' class='base'>Loglevel (hostapd):&nbsp;</td><td class='base' width='25%'>
 	<select name='SYSLOGLEVEL'>
 		<option value='0' $selected{'SYSLOGLEVEL'}{'0'}>0 ($Lang::tr{'wlanap verbose'})</option>
@@ -508,9 +486,6 @@ print <<END
 END
 ;
 my @status;
-if ( $wlanapsettings{'DRIVER'} eq 'MADWIFI' ){
-	 @status =  `wlanconfig $wlanapsettings{'INTERFACE'} list`;
-}
 if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
 	 @status =  `iw dev $wlanapsettings{'INTERFACE'} info && iw dev $wlanapsettings{'INTERFACE'} station dump && echo ""`;
 }
