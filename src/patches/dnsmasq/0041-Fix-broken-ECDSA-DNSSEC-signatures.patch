@@ -1,7 +1,7 @@
 From 6ef15b34ca83c62a939f69356d5c3f7a6bfef3d0 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sat, 31 Jan 2015 22:44:26 +0000
-Subject: [PATCH 41/55] Fix broken ECDSA DNSSEC signatures.
+Subject: [PATCH 41/71] Fix broken ECDSA DNSSEC signatures.
 
 ---
  CHANGELOG    | 2 ++

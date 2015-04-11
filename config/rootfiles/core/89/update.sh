@@ -35,9 +35,22 @@ done
 /etc/init.d/ipsec stop
 
 # Remove old files
+rm -f /usr/local/sbin/setup
 
 # Extract files
 extract_files
+
+# Update /etc/sysconfig/createfiles
+cat <<EOF >> /etc/sysconfig/createfiles
+/var/run/ovpnserver.log file    644     nobody  nobody
+/var/run/openvpn        dir     644     nobody  nobody
+EOF
+
+# Update /etc/collectd.conf
+echo "include \"/etc/collectd.vpn\"" >> /etc/collectd.conf
+
+# Generate ddns configuration file
+sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
 
 # Start services
 /etc/init.d/dnsmasq restart
@@ -52,6 +65,9 @@ perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 rm -f \
 	/opt/pakfire/db/*/meta-sqlite \
 	/opt/pakfire/db/rootfiles/sqlite
+
+# Update OpenVPN/collectd configuration
+/usr/sbin/ovpn-collectd-convert
 
 # Fix #10625
 mkdir -p /etc/logrotate.d

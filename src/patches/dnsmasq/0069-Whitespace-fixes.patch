@@ -1,0 +1,85 @@
+From 7aa970e2c7043201663d86a4b5d8cd5c592cef39 Mon Sep 17 00:00:00 2001
+From: Stefan Tomanek <stefan.tomanek+dnsmasq@wertarbyte.de>
+Date: Wed, 1 Apr 2015 17:55:07 +0100
+Subject: [PATCH 69/71] Whitespace fixes.
+
+---
+ src/dnsmasq.c | 14 +++++++-------
+ src/tftp.c    |  2 +-
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index 0d4d4558a2e2..a7c5da8fbd01 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -345,7 +345,7 @@ int main (int argc, char **argv)
+ #else
+   die(_("DBus not available: set HAVE_DBUS in src/config.h"), NULL, EC_BADCONF);
+ #endif
+-  
++
+   if (daemon->port != 0)
+     pre_allocate_sfds();
+ 
+@@ -657,7 +657,7 @@ int main (int argc, char **argv)
+ 	    }
+ 	  closedir(dir);
+ 	}
+-      
++
+       for (p = daemon->if_prefix; p; p = p->next)
+ 	{
+ 	  p->missing = 0;
+@@ -669,12 +669,12 @@ int main (int argc, char **argv)
+ 		  send_event(err_pipe[1], EVENT_TFTP_ERR, errno, p->prefix);
+ 		  _exit(0);
+ 		}
+-	    } 
++	    }
+ 	  closedir(dir);
+ 	}
+     }
+ #endif
+-  
++
+   if (daemon->port == 0)
+     my_syslog(LOG_INFO, _("started, version %s DNS disabled"), VERSION);
+   else if (daemon->cachesize != 0)
+@@ -784,7 +784,7 @@ int main (int argc, char **argv)
+ 
+ #ifdef HAVE_TFTP
+   if (option_bool(OPT_TFTP))
+-    { 
++    {
+       struct tftp_prefix *p;
+ #ifdef FD_SETSIZE
+       if (FD_SETSIZE < (unsigned)max_fd)
+@@ -795,10 +795,10 @@ int main (int argc, char **argv)
+ 		daemon->tftp_prefix ? _("root is ") : _("enabled"),
+ 		daemon->tftp_prefix ? daemon->tftp_prefix: "",
+ 		option_bool(OPT_TFTP_SECURE) ? _("secure mode") : "");
+-       
++
+       if (tftp_prefix_missing)
+ 	my_syslog(MS_TFTP | LOG_WARNING, _("warning: %s inaccessible"), daemon->tftp_prefix);
+-      
++
+       for (p = daemon->if_prefix; p; p = p->next)
+ 	if (p->missing)
+ 	   my_syslog(MS_TFTP | LOG_WARNING, _("warning: TFTP directory %s inaccessible"), p->prefix);
+diff --git a/src/tftp.c b/src/tftp.c
+index a57a31514f44..d3fb6d7492e4 100644
+--- a/src/tftp.c
++++ b/src/tftp.c
+@@ -236,7 +236,7 @@ void tftp_request(struct listener *listen, time_t now)
+       if (ioctl(listen->tftpfd, SIOCGIFMTU, &ifr) != -1)
+ 	mtu = ifr.ifr_mtu;      
+     }
+-  
++
+   if (name)
+     {
+       /* check for per-interface prefix */ 
+-- 
+2.1.0
+

@@ -15,18 +15,19 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+CACHE_SIZE=2500
+ENABLE_DNSSEC=1
+SHOW_SRV=1
+TRUST_ANCHOR=".,19036,8,2,49AAC11D7B6F6446702E54A1607371607A1A41855200FD2CE1CDDE32F24E8FB5"
+TIMESTAMP_FILE="/var/ipfire/dns/dnssec-timestamp"
+
 # Pull custom configuration file
 if [ -e "/etc/sysconfig/dnsmasq" ]; then
 	. /etc/sysconfig/dnsmasq
 fi
 
-CACHE_SIZE=2500
-ENABLE_DNSSEC=1
-SHOW_SRV=1
-TRUST_ANCHOR=".,19036,8,2,49AAC11D7B6F6446702E54A1607371607A1A41855200FD2CE1CDDE32F24E8FB5"
-
 function dnssec_args() {
-	local cmdline="--dnssec"
+	local cmdline="--dnssec --dnssec-timestamp ${TIMESTAMP_FILE}"
 
 	if [ -n "${TRUST_ANCHOR}" ]; then
 		cmdline="${cmdline} --trust-anchor=${TRUST_ANCHOR}"
