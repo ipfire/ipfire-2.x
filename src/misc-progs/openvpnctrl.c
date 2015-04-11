@@ -605,7 +605,7 @@ int deleterrd(char *name) {
 
 		// Handle RW connections
 		if (strcmp(conn->type, "host") == 0) {
-			snprintf(rrd_dir, STRING_SIZE - 1, "/var/log/rrd/collectd/localhost/openvpn-%s", name);
+			snprintf(rrd_dir, STRING_SIZE - 1, "/var/log/rrd/collectd/localhost/openvpn-%s/", name);
 
 		// Handle N2N connections
 		} else if (strcmp(conn->type, "net") == 0) {
