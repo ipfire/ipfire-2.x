@@ -70,6 +70,7 @@ rm -f \
 
 # Update OpenVPN/collectd configuration
 /usr/sbin/ovpn-collectd-convert
+chown nobody.nobody /var/ipfire/ovpn/collectd.vpn
 
 # Fix #10625
 mkdir -p /etc/logrotate.d
