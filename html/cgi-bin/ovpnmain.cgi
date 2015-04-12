@@ -213,7 +213,7 @@ sub writeserverconf {
     print CONF "writepid /var/run/openvpn.pid\n";
     print CONF "#DAN prepare OpenVPN for listening on blue and orange\n";
     print CONF ";local $sovpnsettings{'VPN_IP'}\n";
-    print CONF "dev $sovpnsettings{'DDEVICE'}\n";
+    print CONF "dev tun\n";
     print CONF "proto $sovpnsettings{'DPROTOCOL'}\n";
     print CONF "port $sovpnsettings{'DDEST_PORT'}\n";
     print CONF "script-security 3 system\n";
@@ -231,15 +231,15 @@ sub writeserverconf {
     # Check if we are using mssfix, fragment or mtu-disc and set the corretct mtu of 1500.
     # If we doesn't use one of them, we can use the configured mtu value.
     if ($sovpnsettings{'MSSFIX'} eq 'on') 
-	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; }
+	{ print CONF "tun-mtu 1500\n"; }
     elsif ($sovpnsettings{'FRAGMENT'} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') 
-	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; }
+	{ print CONF "tun-mtu 1500\n"; }
     elsif (($sovpnsettings{'PMTU_DISCOVERY'} eq 'yes') ||
 	($sovpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
 	($sovpnsettings{'PMTU_DISCOVERY'} eq 'no' ))
-	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu 1500\n"; } 
+	{ print CONF "tun-mtu 1500\n"; } 
     else 
-	{ print CONF "$sovpnsettings{'DDEVICE'}-mtu $sovpnsettings{'DMTU'}\n"; }
+	{ print CONF "tun-mtu $sovpnsettings{'DMTU'}\n"; }
 
     if ($vpnsettings{'ROUTES_PUSH'} ne '') {
 		@temp = split(/\n/,$vpnsettings{'ROUTES_PUSH'});
@@ -1167,7 +1167,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
 #new settings for daemon
     $vpnsettings{'DOVPN_SUBNET'} = $cgiparams{'DOVPN_SUBNET'};
-    $vpnsettings{'DDEVICE'} = $cgiparams{'DDEVICE'};
     $vpnsettings{'DPROTOCOL'} = $cgiparams{'DPROTOCOL'};
     $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
@@ -2138,7 +2137,7 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    print CLIENTCONF "# Server Gateway Network\n"; 
    print CLIENTCONF "route $remsubnet[0] $remsubnet[1]\n";
    print CLIENTCONF "# tun Device\n"; 
-   print CLIENTCONF "dev $vpnsettings{'DDEVICE'}\n"; 
+   print CLIENTCONF "dev tun\n"; 
    print CLIENTCONF "# Port and Protokoll\n"; 
    print CLIENTCONF "port $confighash{$cgiparams{'KEY'}}[29]\n"; 
    
@@ -2230,21 +2229,21 @@ else
     print CLIENTCONF "tls-client\r\n";
     print CLIENTCONF "client\r\n";
     print CLIENTCONF "nobind\r\n";
-    print CLIENTCONF "dev $vpnsettings{'DDEVICE'}\r\n";
+    print CLIENTCONF "dev tun\r\n";
     print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}\r\n";
 
     # Check if we are using fragment, mssfix or mtu-disc and set MTU to 1500
     # or use configured value.
     if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' )
-	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\r\n"; }
+	{ print CLIENTCONF "tun-mtu 1500\r\n"; }
     elsif ($vpnsettings{MSSFIX} eq 'on')
-	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\r\n"; }
+	{ print CLIENTCONF "tun-mtu 1500\r\n"; }
     elsif (($vpnsettings{'PMTU_DISCOVERY'} eq 'yes') ||
            ($vpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
            ($vpnsettings{'PMTU_DISCOVERY'} eq 'no' )) 
-	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu 1500\r\n"; }
+	{ print CLIENTCONF "tun-mtu 1500\r\n"; }
     else
-	{ print CLIENTCONF "$vpnsettings{'DDEVICE'}-mtu $vpnsettings{'DMTU'}\r\n"; }
+	{ print CLIENTCONF "tun-mtu $vpnsettings{'DMTU'}\r\n"; }
 
     if ( $vpnsettings{'ENABLED'} eq 'on'){
     	print CLIENTCONF "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
@@ -4951,9 +4950,6 @@ END
     $checked{'ENABLED_ORANGE'}{'off'} = '';
     $checked{'ENABLED_ORANGE'}{'on'} = '';
     $checked{'ENABLED_ORANGE'}{$cgiparams{'ENABLED_ORANGE'}} = 'CHECKED';
-    $selected{'DDEVICE'}{'tun'} = '';
-    $selected{'DDEVICE'}{'tap'} = '';
-    $selected{'DDEVICE'}{$cgiparams{'DDEVICE'}} = 'SELECTED';
 
     $selected{'DPROTOCOL'}{'udp'} = '';
     $selected{'DPROTOCOL'}{'tcp'} = '';
@@ -5045,10 +5041,6 @@ END
     print <<END;
     <tr><td class='base' nowrap='nowrap' colspan='2'>$Lang::tr{'local vpn hostname/ip'}:<br /><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' size='30' /></td>
 	<td class='boldbase' nowrap='nowrap' colspan='2'>$Lang::tr{'ovpn subnet'}<br /><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
-    <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn device'}</td>
-        <td><select name='DDEVICE' ><option value='tun' $selected{'DDEVICE'}{'tun'}>TUN</option>
-               			<!-- this is still not working
-               			    <option value='tap' $selected{'DDEVICE'}{'tap'}>TAP</option></select>--> </td>				    
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td>
         <td><select name='DPROTOCOL'><option value='udp' $selected{'DPROTOCOL'}{'udp'}>UDP</option>
                			    <option value='tcp' $selected{'DPROTOCOL'}{'tcp'}>TCP</option></select></td>				    
