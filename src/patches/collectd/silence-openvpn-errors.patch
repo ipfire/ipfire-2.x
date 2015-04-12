@@ -1,0 +1,13 @@
+diff --git a/src/openvpn.c b/src/openvpn.c
+index d446e9957b68..cc33eed61e25 100644
+--- a/src/openvpn.c
++++ b/src/openvpn.c
+@@ -567,7 +567,7 @@ static int openvpn_read (void)
+ 		read += vpn_read;
+ 	}
+ 
+-	return (read ? 0 : -1);
++	return 0;
+ } /* int openvpn_read */
+ 
+ static int version_detect (const char *filename)

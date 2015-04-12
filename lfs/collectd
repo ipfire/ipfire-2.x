@@ -101,6 +101,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0020-openvpn-Make-read-functions-robust-like-in-8516f9abb.patch
 	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0021-openvpn-Fix-copy-and-paste-error.patch
 	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0022-openvpn-Change-data-type-from-COUNTER-to-DERIVE.patch
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/silence-openvpn-errors.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --localstatedir=/var \
 		--disable-{apple_sensors,csv,ipvs,mbmon,memcached,mysql} \
 		--disable-{netlink,nginx,nut,perl,serial,snmp,tape,vserver,xmms} \

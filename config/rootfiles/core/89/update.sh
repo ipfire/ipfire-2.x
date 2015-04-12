@@ -47,7 +47,9 @@ cat <<EOF >> /etc/sysconfig/createfiles
 EOF
 
 # Update /etc/collectd.conf
-echo "include \"/etc/collectd.vpn\"" >> /etc/collectd.conf
+if ! grep -q "collectd.vpn" /etc/collectd.conf; then
+	echo "include \"/etc/collectd.vpn\"" >> /etc/collectd.conf
+fi
 
 # Generate ddns configuration file
 sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
@@ -68,6 +70,7 @@ rm -f \
 
 # Update OpenVPN/collectd configuration
 /usr/sbin/ovpn-collectd-convert
+chown nobody.nobody /var/ipfire/ovpn/collectd.vpn
 
 # Fix #10625
 mkdir -p /etc/logrotate.d
