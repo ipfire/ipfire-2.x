@@ -47,7 +47,9 @@ cat <<EOF >> /etc/sysconfig/createfiles
 EOF
 
 # Update /etc/collectd.conf
-echo "include \"/etc/collectd.vpn\"" >> /etc/collectd.conf
+if ! grep -q "collectd.vpn" /etc/collectd.conf; then
+	echo "include \"/etc/collectd.vpn\"" >> /etc/collectd.conf
+fi
 
 # Generate ddns configuration file
 sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
