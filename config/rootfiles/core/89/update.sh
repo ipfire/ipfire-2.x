@@ -72,6 +72,12 @@ rm -f \
 /usr/sbin/ovpn-collectd-convert
 chown nobody.nobody /var/ipfire/ovpn/collectd.vpn
 
+mkdir -p /var/run/openvpn
+touch /var/run/ovpnserver.log
+chown nobody.nobody \
+	/var/run/openvpn \
+	/var/run/ovpnserver.log
+
 # Fix #10625
 mkdir -p /etc/logrotate.d
 
