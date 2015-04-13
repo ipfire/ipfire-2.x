@@ -59,7 +59,7 @@ if ( $querry[0] ne "" && $querry[0] ne "UNDEF"){
 	if(@vpns){
 		foreach (@vpns) {
 			&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-			&Graphs::makegraphbox("netovpnrw.cgi",$_,"week");
+			&Graphs::makegraphbox("netovpnrw.cgi",$_, "day");
 			&Header::closebox();
 		}
 	}else{
