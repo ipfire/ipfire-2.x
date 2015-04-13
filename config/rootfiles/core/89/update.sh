@@ -78,6 +78,9 @@ chown nobody.nobody \
 	/var/run/openvpn \
 	/var/run/ovpnserver.log
 
+# Fix permissions
+chown nobody.nobody /var/ipfire/dns
+
 # Fix #10625
 mkdir -p /etc/logrotate.d
 
