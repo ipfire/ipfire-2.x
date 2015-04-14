@@ -41,15 +41,15 @@
 				'enabled' => 1,
 			  };
 	$substatus->{'53.networkovpn'} = {
-				'caption' => "$Lang::tr{'openvpn client'}",
+				'caption' => "$Lang::tr{'vpn statistic rw'}",
 				'uri' => '/cgi-bin/netovpnrw.cgi',
-				'title' => "$Lang::tr{'openvpn client'}",
+				'title' => "$Lang::tr{'vpn statistic rw'}",
 				'enabled' => 1,
 			  };
 	$substatus->{'54.networkovpnsrv'} = {
-				'caption' => "$Lang::tr{'openvpn server'}",
+				'caption' => "$Lang::tr{'vpn statistic n2n'}",
 				'uri' => '/cgi-bin/netovpnsrv.cgi',
-				'title' => "$Lang::tr{'openvpn server'}",
+				'title' => "$Lang::tr{'vpn statistics n2n'}",
 				'enabled' => 1,
 			  };
     $substatus->{'60.hardwaregraphs'} = {
