@@ -3197,7 +3197,6 @@ END
 		@firen2nconf = <FILE>;
 		close (FILE);
 		chomp(@firen2nconf);
-
 	} else {
 
 		$errormessage = "Filecount does not match only 2 files are allowed\n";
@@ -3237,6 +3236,13 @@ END
    } 
     unless(-d "${General::swroot}/ovpn/n2nconf/"){mkdir "${General::swroot}/ovpn/n2nconf", 0755 or die "Unable to create dir $!";}
     unless(-d "${General::swroot}/ovpn/n2nconf/$n2nname[0]"){mkdir "${General::swroot}/ovpn/n2nconf/$n2nname[0]", 0770 or die "Unable to create dir $!";}   
+
+	#Add collectd settings to configfile
+	open(FILE, ">> $tempdir/$uplconffilename") or die 'Unable to open config file.';
+	print FILE "# Logfile\n";
+	print FILE "status-version 1\n";
+	print FILE "status /var/run/openvpn/$n2nname[0]-n2n 10\n";
+	close FILE;
 
 	move("$tempdir/$uplconffilename", "${General::swroot}/ovpn/n2nconf/$n2nname[0]/$uplconffilename2");
 

@@ -20,7 +20,7 @@
 ###############################################################################
 
 use strict;
-
+use URI::Escape;
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -37,7 +37,7 @@ my %mainsettings = ();
 
 my @vpns=();
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
+my @querry = split(/\?/,uri_unescape($ENV{'QUERY_STRING'}));
 $querry[0] = '' unless defined $querry[0];
 $querry[1] = 'week' unless defined $querry[1];
 
