@@ -1,0 +1,7 @@
+etc/system-release
+etc/issue
+etc/rc.d/init.d/network-trigger
+etc/rc.d/rcsysinit.d/S90network-trigger
+usr/lib/firewall/rules.pl
+var/ipfire/backup/include
+var/ipfire/langs
