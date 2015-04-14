@@ -68,9 +68,30 @@ rm -f \
 	/opt/pakfire/db/*/meta-sqlite \
 	/opt/pakfire/db/rootfiles/sqlite
 
+mkdir -p /var/run/openvpn
+touch /var/run/ovpnserver.log
+chown nobody.nobody \
+	/var/run/openvpn \
+	/var/run/ovpnserver.log
+
 # Update OpenVPN/collectd configuration
+files=`find /var/ipfire/ovpn/n2nconf/ -type d`
+for i in $files;
+do
+	if ! grep -q "status-version" $i/${i##*/}.conf; then
+		echo "# Logfile" >> $i/${i##*/}.conf
+		echo "status-version 1" >> $i/${i##*/}.conf
+	fi
+	if ! grep -q "status " $i/${i##*/}.conf; then
+		echo "status /var/run/openvpn/${i##*/}-n2n 10" >> $i/${i##*/}.conf
+	fi
+done
+
 /usr/sbin/ovpn-collectd-convert
 chown nobody.nobody /var/ipfire/ovpn/collectd.vpn
+
+# Fix permissions
+chown nobody.nobody /var/ipfire/dns
 
 # Fix #10625
 mkdir -p /etc/logrotate.d

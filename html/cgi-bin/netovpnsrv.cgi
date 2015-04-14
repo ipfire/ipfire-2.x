@@ -59,7 +59,7 @@ if ( $querry[0] ne ""){
 	if (@vpns){
 		foreach (@vpns) {
 			&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-			&Graphs::makegraphbox("netovpnsrv.cgi",$_,"week");
+			&Graphs::makegraphbox("netovpnsrv.cgi",$_, "day");
 			&Header::closebox();
 		}
 	}else{
