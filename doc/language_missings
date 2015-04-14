@@ -509,6 +509,8 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn statistic n2n
+< vpn statistic rw
 < wlanap access point
 < wlanap channel
 < wlanap country
@@ -1079,6 +1081,8 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn statistic n2n
+< vpn statistic rw
 < wlanap country
 < wlan client
 < wlan client advanced settings
@@ -1604,6 +1608,8 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn statistic n2n
+< vpn statistic rw
 < wlanap country
 < wlan client
 < wlan client advanced settings
@@ -2134,6 +2140,8 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn statistic n2n
+< vpn statistic rw
 < week-graph
 < wlanap country
 < wlan client
