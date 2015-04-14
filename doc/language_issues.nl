@@ -747,3 +747,6 @@ WARNING: untranslated string: source ip country
 WARNING: untranslated string: ta key
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: vendor
+WARNING: untranslated string: vpn statistic n2n
+WARNING: untranslated string: vpn statistic rw
+WARNING: untranslated string: vpn statistics n2n
