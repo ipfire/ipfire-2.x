@@ -188,6 +188,9 @@ END
 			# mdadm should not stopped with webif because this could crash the system
 			#
 			chomp($_);
+			if ( $_ eq 'squid' ) {
+				next;
+			}
 			if ( ($_ ne "alsa") && ($_ ne "mdadm") ) {
 				$lines++;
 				if ($lines % 2){

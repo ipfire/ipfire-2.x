@@ -13,6 +13,7 @@
 /etc/hosts*
 /etc/httpd/*
 /etc/ssh/ssh_host*
+/etc/ssh/sshd_config
 /etc/logrotate.d
 /var/ipfire/auth/users
 /var/ipfire/dhcp/*
