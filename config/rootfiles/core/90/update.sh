@@ -159,6 +159,22 @@ if [ $BOOTSPACE -lt 1000 ]; then
 	esac
 fi
 
+# Create GeoIP related files if they do not exist yet.
+if [ ! -e "/var/ipfire/firewall/geoipblock" ]; then
+	touch /var/ipfire/firewall/geoipblock
+	chown nobody:nobody /var/ipfire/firewall/geoipblock
+
+	# Insert default value into file.
+	echo "GEOIPBLOCK_ENABLED=off" >> /var/ipfire/firewall/geoipblock
+fi
+if [ ! -e "/var/ipfire/fwhosts/customgeoipgrp" ]; then
+	touch /var/ipfire/fwhosts/customgeoipgrp
+	chown nobody:nobody /var/ipfire/fwhosts/customgeoipgrp
+fi
+
+# Download/Update GeoIP databases.
+/usr/local/bin/xt_geoip_update
+
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
