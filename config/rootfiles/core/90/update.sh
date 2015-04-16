@@ -175,6 +175,16 @@ fi
 # Download/Update GeoIP databases.
 /usr/local/bin/xt_geoip_update
 
+# Update crontab
+grep -q /usr/local/bin/xt_geoip_update /var/spool/cron/root.orig || cat <<EOF >> /var/spool/cron/root.orig
+
+# Update GeoIP database once a month.
+%monthly,random * * * [ -f "/var/ipfire/red/active" ] && /usr/local/bin/xt_geoip_update >/dev/null 2>&1
+EOF
+
+fcrontab -z &>/dev/null
+
+
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
