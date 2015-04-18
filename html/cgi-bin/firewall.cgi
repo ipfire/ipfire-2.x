@@ -157,6 +157,19 @@ print<<END;
 			\$("#actions").toggle();
 		});
 
+		// Hide SNAT items when DNAT is selected and vice versa.
+		if (\$('input[name=nat]:checked').val() == 'dnat') {
+			\$('.snat').hide();
+		} else {
+			\$('.dnat').hide();
+		}
+
+		// Show/Hide elements when SNAT/DNAT get changed.
+		\$('input[name=nat]').change(function() {
+			\$('.snat').toggle();
+			\$('.dnat').toggle();
+		});
+
 		// Time constraints
 		if(!\$("#USE_TIME_CONSTRAINTS").attr("checked")) {
 			\$("#TIME_CONSTRAINTS").hide();
@@ -1643,7 +1656,7 @@ END
 				$Lang::tr{'fwdfw use nat'}
 			</label>
 			<div class="NAT">
-				<table width='100%' border='0'>
+				<table class='fw-nat' width='100%' border='0'>
 					<tr>
 						<td width='5%'></td>
 						<td width='40%'>
@@ -1655,9 +1668,9 @@ END
 END
 
 	print <<END;
-						<td width='25%' align='right'>$Lang::tr{'dnat address'}:</td>
+						<td width='25%' align='right'><span class='dnat'>$Lang::tr{'dnat address'}:</span></td>
 						<td width='30%'>
-							<select name='dnat' style='width: 100%;'>
+							<select name='dnat' class='dnat' style='width: 100%;'>
 								<option value='AUTO' $selected{'dnat'}{'AUTO'}>- $Lang::tr{'automatic'} -</option>
 								<option value='Default IP' $selected{'dnat'}{'Default IP'}>$Lang::tr{'red1'} ($redip)</option>
 END
@@ -1688,9 +1701,9 @@ END
 								$Lang::tr{'fwdfw snat'}
 							</label>
 						</td>
-						<td width='25%' align='right'>$Lang::tr{'snat new source ip address'}:</td>
+						<td width='25%' align='right'><span class='snat'>$Lang::tr{'snat new source ip address'}:</span></td>
 						<td width='30%'>
-							<select name='snat' style='width: 100%;'>
+							<select name='snat' class='snat' style='width: 100%;'>
 END
 
 		foreach my $alias (sort keys %aliases) {
