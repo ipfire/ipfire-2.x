@@ -1,0 +1,7 @@
+lib/xtables/libxt_geoip.so
+#usr/libexec/xtables-addons
+usr/libexec/xtables-addons/xt_geoip_build
+usr/libexec/xtables-addons/xt_geoip_dl
+#usr/share/man/man1/xt_geoip_build.1
+#usr/share/man/man1/xt_geoip_dl.1
+#usr/share/man/man8/xtables-addons.8

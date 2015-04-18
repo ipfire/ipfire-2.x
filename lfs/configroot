@@ -64,8 +64,8 @@ $(TARGET) :
 	for i in auth/users backup/include.user backup/exclude.user \
 	    certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
-	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings firewall/settings firewall/config firewall/input firewall/outgoing \
-	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwlogs/ipsettings fwlogs/portsettings \
+	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings firewall/settings firewall/config firewall/geoipblock firewall/input firewall/outgoing \
+	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customgeoipgrp fwlogs/ipsettings fwlogs/portsettings \
 	    isdn/settings mac/settings main/disable_nf_sip main/hosts main/routing main/settings net-traffic/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings proxy/squid.conf proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
@@ -78,6 +78,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/header.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/general-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/network-functions.pl	$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/geoip-functions.pl		$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/lang.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/countries.pl		$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/graphs.pl			$(CONFIG_ROOT)/
