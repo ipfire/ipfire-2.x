@@ -1,7 +1,7 @@
 From 25cf5e373eb41c088d4ee5e625209c4cf6a5659e Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Fri, 9 Jan 2015 15:53:03 +0000
-Subject: [PATCH 27/71] Add --log-queries=extra option for more complete
+Subject: [PATCH 27/78] Add --log-queries=extra option for more complete
  logging.
 
 ---

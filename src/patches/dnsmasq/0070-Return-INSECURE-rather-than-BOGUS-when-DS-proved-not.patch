@@ -1,7 +1,7 @@
 From fe3992f9fa69fa975ea31919c53933b5f6a63527 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Fri, 3 Apr 2015 21:25:05 +0100
-Subject: [PATCH 70/71] Return INSECURE, rather than BOGUS when DS proved not
+Subject: [PATCH 70/78] Return INSECURE, rather than BOGUS when DS proved not
  to exist.
 
 Return INSECURE when validating DNS replies which have RRSIGs, but

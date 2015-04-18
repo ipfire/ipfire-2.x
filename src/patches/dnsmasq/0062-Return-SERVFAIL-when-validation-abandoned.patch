@@ -1,7 +1,7 @@
 From 150162bc37170a6edae9d488435e836b1e4e3a4e Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Fri, 27 Mar 2015 09:58:26 +0000
-Subject: [PATCH 62/71] Return SERVFAIL when validation abandoned.
+Subject: [PATCH 62/78] Return SERVFAIL when validation abandoned.
 
 ---
  src/forward.c | 11 +++++++++--

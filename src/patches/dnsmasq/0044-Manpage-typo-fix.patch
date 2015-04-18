@@ -1,7 +1,7 @@
 From d36b732c4cfa91ea09af64b5dc0f3a85a075e5bc Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <thiebaud@weksteen.fr>
 Date: Mon, 2 Feb 2015 21:37:27 +0000
-Subject: [PATCH 44/71] Manpage typo fix.
+Subject: [PATCH 44/78] Manpage typo fix.
 
 ---
  man/dnsmasq.8 | 2 +-

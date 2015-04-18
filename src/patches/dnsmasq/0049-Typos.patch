@@ -1,7 +1,7 @@
 From 8ff70de618eb7de9147dbfbd4deca4a2dd62f0cb Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sat, 14 Feb 2015 20:02:37 +0000
-Subject: [PATCH 49/71] Typos.
+Subject: [PATCH 49/78] Typos.
 
 ---
  src/inotify.c | 3 ++-

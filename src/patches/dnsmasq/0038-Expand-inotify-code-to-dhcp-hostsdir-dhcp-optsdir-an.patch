@@ -1,7 +1,7 @@
 From 70d1873dd9e70041ed4bb88c69d5b886b7cc634c Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sat, 31 Jan 2015 19:59:29 +0000
-Subject: [PATCH 38/71] Expand inotify code to dhcp-hostsdir, dhcp-optsdir and
+Subject: [PATCH 38/78] Expand inotify code to dhcp-hostsdir, dhcp-optsdir and
  hostsdir.
 
 ---

@@ -1,7 +1,7 @@
 From 2ae195f5a71f7c5a75717845de1bd72fc7dd67f3 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sun, 18 Jan 2015 22:20:48 +0000
-Subject: [PATCH 33/71] Don't treat SERVFAIL as a recoverable error.....
+Subject: [PATCH 33/78] Don't treat SERVFAIL as a recoverable error.....
 
 ---
  src/forward.c | 2 +-
