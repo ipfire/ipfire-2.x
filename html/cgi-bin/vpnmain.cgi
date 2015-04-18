@@ -1673,7 +1673,7 @@ END
 	    (my $city = $cgiparams{'CERT_CITY'}) =~ s/^\s*$/\./;
 	    (my $state = $cgiparams{'CERT_STATE'}) =~ s/^\s*$/\./;
 
-	    # Create the Host certificate request
+	    # Create the Client certificate request
 	    &General::log("ipsec", "Creating a cert...");
 
 	    if (open(STDIN, "-|")) {
@@ -1700,7 +1700,7 @@ END
 		exit (0);
 	    }
 	    
-	    # Sign the host certificate request
+	    # Sign the client certificate request
 	    &General::log("ipsec", "Signing the cert $cgiparams{'NAME'}...");
 
 	    #No easy way for specifying the contain of subjectAltName without writing a config file...
@@ -1709,6 +1709,7 @@ END
 	    basicConstraints=CA:FALSE
 	    nsComment="OpenSSL Generated Certificate"
 	    subjectKeyIdentifier=hash
+	    extendedKeyUsage=clientAuth
 	    authorityKeyIdentifier=keyid,issuer:always
 END
 ;
