@@ -672,13 +672,26 @@ WARNING: untranslated string: advproxy basic authentication
 WARNING: untranslated string: advproxy group access control
 WARNING: untranslated string: advproxy group required
 WARNING: untranslated string: bytes
+WARNING: untranslated string: check all
 WARNING: untranslated string: fwdfw err concon
 WARNING: untranslated string: fwdfw err ratecon
 WARNING: untranslated string: fwdfw limitconcon
 WARNING: untranslated string: fwdfw maxconcon
 WARNING: untranslated string: fwdfw numcon
 WARNING: untranslated string: fwdfw ratelimit
+WARNING: untranslated string: fwhost addgeoipgrp
+WARNING: untranslated string: fwhost cust geoipgroup
+WARNING: untranslated string: fwhost cust geoipgrp
+WARNING: untranslated string: fwhost cust geoiplocation
 WARNING: untranslated string: fwhost err hostip
+WARNING: untranslated string: fwhost newgeoipgrp
+WARNING: untranslated string: geoip
+WARNING: untranslated string: geoipblock
+WARNING: untranslated string: geoipblock block countries
+WARNING: untranslated string: geoipblock configuration
+WARNING: untranslated string: geoipblock country is allowed
+WARNING: untranslated string: geoipblock country is blocked
+WARNING: untranslated string: geoipblock enable feature
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: incoming compression in bytes per second
 WARNING: untranslated string: incoming overhead in bytes per second
@@ -700,3 +713,7 @@ WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: samba join a domain
 WARNING: untranslated string: samba join domain
+WARNING: untranslated string: uncheck all
+WARNING: untranslated string: vpn statistic n2n
+WARNING: untranslated string: vpn statistic rw
+WARNING: untranslated string: vpn statistics n2n

@@ -671,6 +671,7 @@ WARNING: untranslated string: advproxy group required
 WARNING: untranslated string: atm device
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
+WARNING: untranslated string: check all
 WARNING: untranslated string: default
 WARNING: untranslated string: dh
 WARNING: untranslated string: dh key move failed
@@ -691,9 +692,21 @@ WARNING: untranslated string: fwdfw limitconcon
 WARNING: untranslated string: fwdfw maxconcon
 WARNING: untranslated string: fwdfw numcon
 WARNING: untranslated string: fwdfw ratelimit
+WARNING: untranslated string: fwhost addgeoipgrp
+WARNING: untranslated string: fwhost cust geoipgroup
+WARNING: untranslated string: fwhost cust geoipgrp
+WARNING: untranslated string: fwhost cust geoiplocation
 WARNING: untranslated string: fwhost err hostip
+WARNING: untranslated string: fwhost newgeoipgrp
 WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
+WARNING: untranslated string: geoip
+WARNING: untranslated string: geoipblock
+WARNING: untranslated string: geoipblock block countries
+WARNING: untranslated string: geoipblock configuration
+WARNING: untranslated string: geoipblock country is allowed
+WARNING: untranslated string: geoipblock country is blocked
+WARNING: untranslated string: geoipblock enable feature
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: imei
 WARNING: untranslated string: imsi
@@ -747,6 +760,7 @@ WARNING: untranslated string: show tls-auth key
 WARNING: untranslated string: software version
 WARNING: untranslated string: source ip country
 WARNING: untranslated string: ta key
+WARNING: untranslated string: uncheck all
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: vendor
 WARNING: untranslated string: vpn statistic n2n
