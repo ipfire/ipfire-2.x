@@ -2,6 +2,7 @@ etc/system-release
 etc/issue
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/network-trigger
+etc/rc.d/init.d/networking/functions.network
 etc/rc.d/init.d/networking/red.up/99-geoip-database
 etc/rc.d/rcsysinit.d/S90network-trigger
 srv/web/ipfire/cgi-bin/firewall.cgi
