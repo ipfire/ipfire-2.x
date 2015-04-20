@@ -118,9 +118,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Linux Intermediate Queueing Device
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-imq.patch
 
-	# ipp2p 0.8.2-ipfire
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-ipp2p-0.8.2-ipfire.patch
-
 	# Layer7-patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14-layer7-filter.patch
 
