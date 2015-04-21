@@ -435,6 +435,10 @@ sub writeipsecfiles {
 	} else {
 	    print CONF "\tauto=start\n";
 	}
+
+	# Fragmentation
+	print CONF "\tfragmentation=yes\n";
+
 	print CONF "\n";
     }#foreach key
     print SECRETS $last_secrets if ($last_secrets);
