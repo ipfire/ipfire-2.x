@@ -75,7 +75,7 @@ dhcpcd_start() {
 	fi
 
 	# Start dhcpcd.
-	/sbin/dhcpcd "${device}" "${dhcp_start}" >/dev/null 2>&1
+	/sbin/dhcpcd ${dhcp_start} ${device} >/dev/null 2>&1
 	ret="$?"
 
 	if [ "${ret}" -eq 0 ]; then
@@ -124,7 +124,7 @@ dhcpcd_stop() {
 	fi
 
 	# Stop dhcpcd.
-	/sbin/dhcpcd "${device}" "${dhcp_stop}" &> /dev/null
+	/sbin/dhcpcd ${dhcp_stop} ${device} &> /dev/null
 	ret="$?"
 
 	# Wait until dhcpd has stopped.

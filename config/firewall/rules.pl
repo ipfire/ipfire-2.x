@@ -580,17 +580,15 @@ sub p2pblock {
 
 sub geoipblock {
 	my %geoipsettings = ();
+	$geoipsettings{'GEOIPBLOCK_ENABLED'} = "off";
+
+	# Flush iptables chain.
+	run("$IPTABLES -F GEOIPBLOCK");
 
 	# Check if the geoip settings file exists
 	if (-e "$geoipfile") {
 		# Read settings file
 		&General::readhash("$geoipfile", \%geoipsettings);
-	} else {
-		# Drop active rules.
-		run("$IPTABLES -F GEOIPBLOCK");
-
-		# Exit submodule, go on processing the remaining script
-		return;
 	}
 
 	# If geoip blocking is not enabled, we are finished here.
@@ -601,9 +599,6 @@ sub geoipblock {
 
 	# Get supported locations.
 	my @locations = &fwlib::get_geoip_locations();
-
-	# Flush iptables chain.
-	run("$IPTABLES -F GEOIPBLOCK");
 
 	# Loop through all supported geoip locations and
 	# create iptables rules, if blocking this country
