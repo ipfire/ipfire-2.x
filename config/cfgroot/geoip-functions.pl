@@ -23,7 +23,7 @@
 
 package GeoIP;
 
-use Locale::Country;
+use Locale::Codes::Country;
 
 # Function to get the flag icon for a specified country code.
 sub get_flag_icon($) {
@@ -81,7 +81,7 @@ sub get_full_country_name($) {
 	elsif ($code eq "yu") { $name = "Yugoslavia" }
 	else {
 		# Use perl built-in module to get the country code.
-		$name = &Locale::Country::code2country($code);
+		$name = &Locale::Codes::Country::code2country($code);
 	}
 
 	return $name;

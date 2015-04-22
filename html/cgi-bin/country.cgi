@@ -21,7 +21,7 @@
 
 use strict;
 
-use Locale::Country;
+use Locale::Codes::Country;
 
 my $flagdir = '/srv/web/ipfire/html/images/flags';
 my $lines = '1';
