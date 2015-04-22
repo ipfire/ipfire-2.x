@@ -907,7 +907,7 @@ sub generatemonthgraph{
 	my $sth;
 	my $cnt=0;
 	#If we want to show Data from within last 2 months, get DATA from ACCT
-	if ( ! $grmon < ($mon+1) && $gryear == ($year+1900)){
+	if ( $grmon == ($mon)+1 && $gryear == ($year+1900)){
 		$sth=&ACCT::getmonthgraphdata("ACCT",$from,$till,$grhost);
 	}else{
 		#If we want to show data from a date older than last two months, use ACCT_HIST
@@ -1959,9 +1959,9 @@ END
 sub viewtablehosts{
 	$dbh=&ACCT::connectdb;
 	&Header::openbox('100%', 'left', $Lang::tr{'acct hosts'});
-	my $mon=$_[0];
-	my $year=$_[1];
-	my ($from,$till)=&ACCT::getmonth($mon,$year);
+	my $mon1=$_[0];
+	my $year1=$_[1];
+	my ($from,$till)=&ACCT::getmonth($mon1,$year1);
 	$count=0;
 	#Menu to display another month
 	print<<END;
@@ -1986,7 +1986,7 @@ END
 		</select></td>
 		<td style='text-align: center;'><select name='year'>
 END
-	for (my $j=2014;$j<=($year);$j++){
+	for (my $j=2014;$j<=($year1);$j++){
 		if(($_[1]) eq $j){
 			print"<option selected>$j</option>";
 		}else{
@@ -2011,7 +2011,12 @@ END
 		<th></th>
 	</tr>
 END
-	my $res = $dbh->selectall_arrayref("SELECT SUM(BYTES),min(TIME_RUN),max(TIME_RUN),NAME from ACCT where TIME_RUN between ".$from." and ".$till." group by NAME;");
+	my $res;
+	if (($mon)+1 == $mon1 && ($year)+1900 == $year1){
+		$res = $dbh->selectall_arrayref("SELECT SUM(BYTES),min(TIME_RUN),max(TIME_RUN),NAME from ACCT where TIME_RUN between ".$from." and ".$till." group by NAME;");
+	}else{
+		$res = $dbh->selectall_arrayref("SELECT SUM(BYTES),min(strftime('%s',TIME_RUN)),max(strftime('%s',TIME_RUN)),NAME from ACCT_HIST where date(TIME_RUN) > date($from,'unixepoch') and date(TIME_RUN) < date($till,'unixepoch') group by NAME;");
+	}
 	my $sumbytes;
 	my $type;
 	my $lineval;
@@ -2036,8 +2041,8 @@ END
 					<input type='image' src='/images/utilities-system-monitor.png' alt="$Lang::tr{'status'}" title="$Lang::tr{'status'}" />
 					<input type='hidden' name='ACTION' value='viewgraph'>
 					<input type='hidden' name='host' value='$name'>
-					<input type='hidden' name='month' value='$mon'>
-					<input type='hidden' name='year' value='$year'>
+					<input type='hidden' name='month' value='$mon1'>
+					<input type='hidden' name='year' value='$year1'>
 					<input type='hidden' name='traffic' value="$Lang::tr{'acct sum'} $Lang::tr{'acct traffic'} $lineval $type">
 					</form>
 					

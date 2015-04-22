@@ -301,7 +301,7 @@ END
 		print '</td>';
 		print '</tr>';
 	}
-if ( $netsettings{'BLUE_DEV'} ) {
+if (&Header::blue_used()) {
 		my $sub=&General::iporsubtocidr($netsettings{'BLUE_NETMASK'});
 		print <<END;
 		<tr>
@@ -318,7 +318,7 @@ END
 		print '</td>';
 		print '</tr>';
 	}
-if ( $netsettings{'ORANGE_DEV'} ) {
+if (&Header::orange_used()) {
 		my $sub=&General::iporsubtocidr($netsettings{'ORANGE_NETMASK'});
 		print <<END;
 		<tr>

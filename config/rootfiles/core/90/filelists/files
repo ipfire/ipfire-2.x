@@ -8,6 +8,7 @@ etc/rc.d/rcsysinit.d/S90network-trigger
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/geoip-block.cgi
+srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/themes/darkdos/include/style.css
