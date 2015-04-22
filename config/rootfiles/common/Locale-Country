@@ -33,9 +33,9 @@ usr/lib/perl5/5.12.3/Locale/Codes/Script.pm
 usr/lib/perl5/5.12.3/Locale/Codes/Script.pod
 usr/lib/perl5/5.12.3/Locale/Codes/Script_Codes.pm
 usr/lib/perl5/5.12.3/Locale/Codes/Script_Retired.pm
-#usr/lib/perl5/5.12.3/i586-linux-thread-multi/auto/Locale
-#usr/lib/perl5/5.12.3/i586-linux-thread-multi/auto/Locale/Codes
-#usr/lib/perl5/5.12.3/i586-linux-thread-multi/auto/Locale/Codes/.packlist
+#usr/lib/perl5/5.12.3/MACHINE-linux-thread-multi/auto/Locale
+#usr/lib/perl5/5.12.3/MACHINE-linux-thread-multi/auto/Locale/Codes
+#usr/lib/perl5/5.12.3/MACHINE-linux-thread-multi/auto/Locale/Codes/.packlist
 #usr/share/man/man3/Locale::Codes.3
 #usr/share/man/man3/Locale::Codes::API.3
 #usr/share/man/man3/Locale::Codes::Changes.3
