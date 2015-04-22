@@ -21,9 +21,11 @@ iptables_init() {
 	iptables -F
 	iptables -t nat -F
 	iptables -t mangle -F
+	iptables -t raw -F
 	iptables -X
 	iptables -t nat -X
 	iptables -t mangle -X
+	iptables -t raw -X
 
 	# Set up policies
 	iptables -P INPUT DROP
@@ -84,10 +86,36 @@ iptables_init() {
 	iptables -A INPUT   -p tcp -j BADTCP
 	iptables -A FORWARD -p tcp -j BADTCP
 
-	# Connection tracking chain
+	# Connection tracking chains
 	iptables -N CONNTRACK
-	iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+	iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED -j ACCEPT
 	iptables -A CONNTRACK -m conntrack --ctstate INVALID -j DROP
+	iptables -t raw -N CONNTRACK
+	iptables -t raw -A PREROUTING -j CONNTRACK
+
+	# Conntrack helpers (https://home.regit.org/netfilter-en/secure-use-of-helpers/)
+
+	# SIP
+	iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+		-m helper --helper sip -j ACCEPT
+	for proto in udp tcp; do
+		iptables -t raw -A CONNTRACK -p "${proto}" --dport 5060 -j CT --helper sip
+	done
+
+	# FTP
+	iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+		-m helper --helper ftp -p tcp --dport 1024: -j ACCEPT
+	iptables -t raw -A CONNTRACK -p tcp --dport 21 -j CT --helper ftp
+
+	# PPTP
+	iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+		-m helper --helper pptp -j ACCEPT
+	iptables -t raw -A CONNTRACK -p udp --dport 1723 -j CT --helper pptp
+
+	# TFTP
+	iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+		-m helper --helper tftp -j ACCEPT
+	iptables -t raw -A CONNTRACK -p udp --dport 69 -j CT --helper tftp
 
 	# Fix for braindead ISP's
 	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
