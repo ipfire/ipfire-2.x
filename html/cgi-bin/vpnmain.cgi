@@ -310,67 +310,33 @@ sub writeipsecfiles {
 
 	# Algorithms
 	if ($lconfighash{$key}[18] && $lconfighash{$key}[19] && $lconfighash{$key}[20]) {
-	    print CONF "\tike=";
-	    my @encs   = split('\|', $lconfighash{$key}[18]);
-	    my @ints   = split('\|', $lconfighash{$key}[19]);
-	    my @groups = split('\|', $lconfighash{$key}[20]);
-	    my $comma = 0;
-	    foreach my $i (@encs) {
-	        foreach my $j (@ints) {
-	    	    foreach my $k (@groups) {
-		        if ($comma != 0) { print CONF ","; } else { $comma = 1; }
+		my @encs   = split('\|', $lconfighash{$key}[18]);
+		my @ints   = split('\|', $lconfighash{$key}[19]);
+		my @groups = split('\|', $lconfighash{$key}[20]);
 
-		        my @l = split("", $k);
-		        if ($l[0] eq "e") {
-		            shift @l;
-		            print CONF "$i-$j-ecp".join("", @l);
-		        } else {
-		            print CONF "$i-$j-modp$k";
-		        }
-		    }
-	        }
-	    }
-	    if ($lconfighash{$key}[24] eq 'on') {	#only proposed algorythms?
-		print CONF "!\n";
-	    } else {
-	        print CONF "\n";
-	    }
-	}
-	if ($lconfighash{$key}[21] && $lconfighash{$key}[22]) {
-	    print CONF "\tesp=";
-	    my @encs   = split('\|', $lconfighash{$key}[21]);
-	    my @ints   = split('\|', $lconfighash{$key}[22]);
-	    my @groups = split('\|', $lconfighash{$key}[20]);
-	    my $comma = 0;
-	    foreach my $i (@encs) {
-		foreach my $j (@ints) {
-			my $modp = "";
-			if ($pfs eq "on") {
-				foreach my $k (@groups) {
-				    if ($comma != 0) { print CONF ","; } else { $comma = 1; }
-				    if ($pfs eq "on") {
-					my @l = split("", $k);
-					if ($l[0] eq "e") {
-						$modp = "";
-					} else {
-						$modp = "-modp$k";
-					}
-				    } else {
-				        $modp = "";
-				    }
-				    print CONF "$i-$j$modp";
-				}
-			} else {
-				if ($comma != 0) { print CONF ","; } else { $comma = 1; }
-				print CONF "$i-$j";
-			}
+		my @algos = &make_algos("ike", \@encs, \@ints, \@groups, 1);
+		print CONF "\tike=" . join(",", @algos);
+
+		if ($lconfighash{$key}[24] eq 'on') {	#only proposed algorythms?
+			print CONF "!\n";
+		} else {
+			print CONF "\n";
 		}
-	    }
-	    if ($lconfighash{$key}[24] eq 'on') {	#only proposed algorythms?
-		print CONF "!\n";
-	    } else {
-		print CONF "\n";
-	    }
+	}
+
+	if ($lconfighash{$key}[21] && $lconfighash{$key}[22]) {
+		my @encs   = split('\|', $lconfighash{$key}[21]);
+		my @ints   = split('\|', $lconfighash{$key}[22]);
+		my @groups = split('\|', $lconfighash{$key}[20]);
+
+		my @algos = &make_algos("esp", \@encs, \@ints, \@groups, ($pfs eq "on"));
+		print CONF "\tesp=" . join(",", @algos);
+
+		if ($lconfighash{$key}[24] eq 'on') {	#only proposed algorythms?
+			print CONF "!\n";
+		} else {
+			print CONF "\n";
+		}
 	}
 
 	# IKE V1 or V2
@@ -3025,3 +2991,54 @@ END
     &Header::closebox();
     &Header::closebigbox();
     &Header::closepage();
+
+sub array_unique($) {
+	my $array = shift;
+	my @unique = ();
+
+	my %seen = ();
+	foreach my $e (@$array) {
+		next if $seen{$e}++;
+		push(@unique, $e);
+	}
+
+	return @unique;
+}
+
+sub make_algos($$$$$) {
+	my ($mode, $encs, $ints, $grps, $pfs) = @_;
+	my @algos = ();
+
+	foreach my $enc (@$encs) {
+		foreach my $int (@$ints) {
+			foreach my $grp (@$grps) {
+				my @algo = ($enc);
+
+				my $is_aead = ($enc =~ m/[cg]cm/);
+				if (!$is_aead) {
+					push(@algo, $int);
+				}
+
+				if ($mode eq "ike") {
+					if ($grp =~ m/^e(\d+)/) {
+						push(@algo, "ecp$1");
+					} else {
+						push(@algo, "modp$grp");
+					}
+				}
+
+				if ($mode eq "esp" && $pfs) {
+					if ($grp =~ m/^e\d+/) {
+						push(@algo, $grp);
+					} else {
+						push(@algo, "modp$grp");
+					}
+				}
+
+				push(@algos, join("-", @algo));
+			}
+		}
+	}
+
+	return &array_unique(\@algos);
+}
