@@ -3014,20 +3014,22 @@ sub make_algos($$$$$) {
 			foreach my $grp (@$grps) {
 				my @algo = ($enc);
 
-				my $is_aead = ($enc =~ m/[cg]cm/);
-				if (!$is_aead) {
-					push(@algo, $int);
-				}
-
 				if ($mode eq "ike") {
+					push(@algo, $int);
+
 					if ($grp =~ m/^e(\d+)/) {
 						push(@algo, "ecp$1");
 					} else {
 						push(@algo, "modp$grp");
 					}
-				}
 
-				if ($mode eq "esp" && $pfs) {
+				} elsif ($mode eq "esp" && $pfs) {
+					my $is_aead = ($enc =~ m/[cg]cm/);
+
+					if (!$is_aead) {
+						push(@algo, $int);
+					}
+
 					if ($grp =~ m/^e\d+/) {
 						push(@algo, $grp);
 					} else {
