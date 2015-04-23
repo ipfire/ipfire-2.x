@@ -18,6 +18,7 @@ srv/web/ipfire/html/themes/ipfire/include/css/style.css
 srv/web/ipfire/html/themes/maniac/include/style.css
 usr/lib/firewall/firewall-lib.pl
 usr/lib/firewall/rules.pl
+usr/local/bin/backupiso
 usr/local/bin/xt_geoip_build
 usr/local/bin/xt_geoip_update
 var/ipfire/general-functions.pl
