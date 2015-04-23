@@ -1,6 +1,6 @@
-diff -up openssl-1.0.1e/Configure.rpmbuild openssl-1.0.1e/Configure
---- openssl-1.0.2a.vanilla/Configure    2015-03-19 13:30:36.000000000 +0000
-+++ openssl-1.0.2a/Configure    2015-04-19 09:53:04.381491868 +0000
+diff -Nur openssl-1.0.2a-vanilla/Configure openssl-1.0.2a/Configure
+--- openssl-1.0.2a-vanilla/Configure	2015-03-19 13:30:36.000000000 +0000
++++ openssl-1.0.2a/Configure	2015-04-23 10:31:41.336569854 +0000
 @@ -348,7 +348,7 @@
  ####
  # *-generic* is endian-neutral target, but ./config is free to
@@ -10,7 +10,16 @@ diff -up openssl-1.0.1e/Configure.rpmbuild openssl-1.0.1e/Configure
  "linux-ppc",	"gcc:-DB_ENDIAN -O3 -Wall::-D_REENTRANT::-ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_RISC1 DES_UNROLL:${ppc32_asm}:linux32:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
  
  #######################################################################
-@@ -1675,7 +1676,7 @@ while (<IN>)
+@@ -389,7 +389,7 @@
+ "linux64-mips64",   "gcc:-mabi=64 -O3 -Wall -DBN_DIV3W::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL BF_PTR:${mips64_asm}:64:dlfcn:linux-shared:-fPIC:-mabi=64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):::64",
+ #### IA-32 targets...
+ "linux-ia32-icc",	"icc:-DL_ENDIAN -O2::-D_REENTRANT::-ldl -no_cpprt:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-KPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+-"linux-elf",	"gcc:-DL_ENDIAN -O3 -fomit-frame-pointer -Wall::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++"linux-elf",	"gcc:-DL_ENDIAN \$(CFLAGS) -Wall::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_SONAMEVER)",
+ "linux-aout",	"gcc:-DL_ENDIAN -O3 -fomit-frame-pointer -march=i486 -Wall::(unknown):::BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_asm}:a.out",
+ ####
+ "linux-generic64","gcc:-O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL BF_PTR:${no_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+@@ -1737,7 +1737,7 @@
  	elsif ($shared_extension ne "" && $shared_extension =~ /^\.s([ol])\.[^\.]*\.[^\.]*$/)
  		{
  		my $sotmp = $1;
@@ -19,10 +28,10 @@ diff -up openssl-1.0.1e/Configure.rpmbuild openssl-1.0.1e/Configure
  		}
  	elsif ($shared_extension ne "" && $shared_extension =~ /^\.[^\.]*\.[^\.]*\.dylib$/)
  		{
-diff -up openssl-1.0.1e/Makefile.org.rpmbuild openssl-1.0.1e/Makefile.org
---- openssl-1.0.1e/Makefile.org.rpmbuild	2013-02-11 16:26:04.000000000 +0100
-+++ openssl-1.0.1e/Makefile.org	2014-08-13 19:19:53.218005759 +0200
-@@ -10,6 +10,7 @@ SHLIB_VERSION_HISTORY=
+diff -Nur openssl-1.0.2a-vanilla/Makefile.org openssl-1.0.2a/Makefile.org
+--- openssl-1.0.2a-vanilla/Makefile.org	2015-03-19 13:30:36.000000000 +0000
++++ openssl-1.0.2a/Makefile.org	2015-04-23 10:30:03.184371933 +0000
+@@ -10,6 +10,7 @@
  SHLIB_MAJOR=
  SHLIB_MINOR=
  SHLIB_EXT=
@@ -30,7 +39,7 @@ diff -up openssl-1.0.1e/Makefile.org.rpmbuild openssl-1.0.1e/Makefile.org
  PLATFORM=dist
  OPTIONS=
  CONFIGURE_ARGS=
-@@ -333,10 +334,9 @@ clean-shared:
+@@ -335,10 +336,9 @@
  link-shared:
  	@ set -e; for i in $(SHLIBDIRS); do \
  		$(MAKE) -f $(HERE)/Makefile.shared -e $(BUILDENV) \
@@ -42,7 +51,7 @@ diff -up openssl-1.0.1e/Makefile.org.rpmbuild openssl-1.0.1e/Makefile.org
  	done
  
  build-shared: do_$(SHLIB_TARGET) link-shared
-@@ -347,7 +347,7 @@ do_$(SHLIB_TARGET):
+@@ -349,7 +349,7 @@
  			libs="$(LIBKRB5) $$libs"; \
  		fi; \
  		$(CLEARENV) && $(MAKE) -f Makefile.shared -e $(BUILDENV) \

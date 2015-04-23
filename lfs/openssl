@@ -30,18 +30,44 @@ THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
 
-ifeq "$(MACHINE)" "i586"
-	CONFIGURE_ARGS = linux-generic32 no-asm 386
-endif
-
-ifeq "$(MACHINE)" "armv5tel"
-	CONFIGURE_ARGS = linux-generic32
+ifeq "$(SSE2)" "1"
+	TARGET = $(DIR_INFO)/$(THISAPP)-sse2
+else
+	TARGET = $(DIR_INFO)/$(THISAPP)
 endif
 
 CFLAGS += -DPURIFY
 export RPM_OPT_FLAGS = $(CFLAGS)
+
+CONFIGURE_OPTIONS = \
+	--prefix=/usr \
+	--openssldir=/etc/ssl \
+	--enginesdir=/usr/lib/openssl/engines \
+	shared \
+	zlib-dynamic \
+	enable-camellia \
+	enable-md2 \
+	enable-seed \
+	enable-tlsext \
+	enable-rfc3779 \
+	no-idea \
+	no-mdc2 \
+	no-rc5 \
+	no-srp \
+	-DSSL_FORBID_ENULL
+
+ifeq "$(MACHINE)" "i586"
+	CONFIGURE_OPTIONS += linux-elf
+
+ifneq "$(SSE2)" "1"
+	CONFIGURE_OPTIONS += no-sse2
+endif
+endif
+
+ifeq "$(MACHINE)" "armv5tel"
+	CONFIGURE_OPIONS += linux-generic32
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -93,27 +119,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && find crypto/ -name Makefile -exec \
 		sed 's/^ASFLAGS=/&-Wa,--noexecstack /' -i {} \;
 
-	cd $(DIR_APP) && ./Configure \
-		--prefix=/usr \
-		--openssldir=/etc/ssl \
-		--enginesdir=/usr/lib/openssl/engines \
-		shared \
-		zlib-dynamic \
-		enable-camellia \
-		enable-md2 \
-		enable-seed \
-		enable-tlsext \
-		enable-rfc3779 \
-		no-idea \
-		no-mdc2 \
-		no-rc5 \
-		no-srp \
-		$(CONFIGURE_ARGS) \
-		-DSSL_FORBID_ENULL
+	cd $(DIR_APP) && ./Configure $(CONFIGURE_OPTIONS)
 
 	cd $(DIR_APP) && make depend
 	cd $(DIR_APP) && make
 
+ifeq "$(SSE2)" "1"
+	-mkdir -pv /usr/lib/sse2
+	cd $(DIR_APP) && install -m 755 \
+		libcrypto.so.10 libssl.so.10 /usr/lib/sse2
+else
 	# Install everything.
 	cd $(DIR_APP) && make install
 	install -m 0644 $(DIR_SRC)/config/ssl/openssl.cnf /etc/ssl
@@ -125,6 +140,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /usr/lib/openssl
 	rm -vfr /usr/lib/openssl/engines
 	mv -v /usr/lib/engines /usr/lib/openssl
+endif
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
