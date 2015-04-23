@@ -173,7 +173,7 @@ if [ ! -e "/var/ipfire/fwhosts/customgeoipgrp" ]; then
 fi
 
 #Fix BUG10812 (openvpn server.conf has wrong collectd logfile path)
-if grep -q "status /var/log/ovpnserver.log 30" /var/ipfire/ovpnserver.conf; then
+if grep -q "status /var/log/ovpnserver.log 30" /var/ipfire/ovpn/server.conf; then
 	sed -i "s/\/var\/log\/ovpnserver.log 30/\/var\/run\/ovpnserver.log 30/" /var/ipfire/ovpn/server.conf
 fi
 
