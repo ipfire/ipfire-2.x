@@ -462,7 +462,6 @@ buildipfire() {
   ipfiremake xtables-addons			USPACE="1"
   ipfiremake openssl
   [ "${TARGET_ARCH}" = "i586" ] && ipfiremake openssl SSE2="1"
-  ipfiremake openssl-compat
   ipfiremake libgpg-error
   ipfiremake libgcrypt
   ipfiremake libassuan

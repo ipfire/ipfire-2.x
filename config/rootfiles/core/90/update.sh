@@ -136,6 +136,9 @@ esac
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
 
+# Remove old openssl libraries
+rm -vf /usr/lib/libcrypto.so.0.9.8 /usr/lib/libssl.so.0.9.8
+
 # Check diskspace on boot
 BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 
