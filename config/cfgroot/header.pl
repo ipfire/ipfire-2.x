@@ -263,7 +263,7 @@ sub getcgihash {
 	return if ($ENV{'REQUEST_METHOD'} ne 'POST');
 	if (!$params->{'wantfile'}) {
 		$CGI::DISABLE_UPLOADS = 1;
-		$CGI::POST_MAX        = 512 * 1024;
+		$CGI::POST_MAX        = 1024 * 1024;
 	} else {
 		$CGI::POST_MAX = 10 * 1024 * 1024;
 	}

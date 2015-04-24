@@ -1,7 +1,7 @@
 From fbf01f7046e75f9aa73fd4aab2a94e43386d9052 Mon Sep 17 00:00:00 2001
 From: Conrad Kostecki <ck@conrad-kostecki.de>
 Date: Tue, 20 Jan 2015 21:07:56 +0000
-Subject: [PATCH 35/71] Update German translation.
+Subject: [PATCH 35/78] Update German translation.
 
 ---
  po/de.po | 101 +++++++++++++++++++++++++++++----------------------------------

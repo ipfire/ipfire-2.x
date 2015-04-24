@@ -2346,7 +2346,9 @@ else
 	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
 	if ($confighash{$cgiparams{'KEY'}}) {
+		# Revoke certificate if certificate was deleted and rewrite the CRL
 		my $temp = `/usr/bin/openssl ca -revoke ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
+		my $tempA = `/usr/bin/openssl ca -gencrl -out ${General::swroot}/ovpn/crls/cacrl.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
 
 ###
 # m.a.d net2net

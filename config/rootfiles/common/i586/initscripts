@@ -94,6 +94,7 @@ etc/rc.d/init.d/networking/red.up/50-ipsec
 etc/rc.d/init.d/networking/red.up/50-ovpn
 etc/rc.d/init.d/networking/red.up/98-leds
 etc/rc.d/init.d/networking/red.up/99-fireinfo
+etc/rc.d/init.d/networking/red.up/99-geoip-database
 etc/rc.d/init.d/networking/red.up/99-pakfire-update
 etc/rc.d/init.d/networking/wpa_supplicant.exe
 #etc/rc.d/init.d/nfs-server

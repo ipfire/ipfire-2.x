@@ -136,6 +136,9 @@ esac
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
 
+# Remove old openssl libraries
+rm -vf /usr/lib/libcrypto.so.0.9.8 /usr/lib/libssl.so.0.9.8
+
 # Check diskspace on boot
 BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 
@@ -158,6 +161,37 @@ if [ $BOOTSPACE -lt 1000 ]; then
 			;;
 	esac
 fi
+
+# Create GeoIP related files if they do not exist yet.
+if [ ! -e "/var/ipfire/firewall/geoipblock" ]; then
+	touch /var/ipfire/firewall/geoipblock
+	chown nobody:nobody /var/ipfire/firewall/geoipblock
+
+	# Insert default value into file.
+	echo "GEOIPBLOCK_ENABLED=off" >> /var/ipfire/firewall/geoipblock
+fi
+if [ ! -e "/var/ipfire/fwhosts/customgeoipgrp" ]; then
+	touch /var/ipfire/fwhosts/customgeoipgrp
+	chown nobody:nobody /var/ipfire/fwhosts/customgeoipgrp
+fi
+
+#Fix BUG10812 (openvpn server.conf has wrong collectd logfile path)
+if grep -q "status /var/log/ovpnserver.log 30" /var/ipfire/ovpn/server.conf; then
+	sed -i "s/\/var\/log\/ovpnserver.log 30/\/var\/run\/ovpnserver.log 30/" /var/ipfire/ovpn/server.conf
+fi
+
+# Download/Update GeoIP databases.
+/usr/local/bin/xt_geoip_update
+
+# Update crontab
+grep -q /usr/local/bin/xt_geoip_update /var/spool/cron/root.orig || cat <<EOF >> /var/spool/cron/root.orig
+
+# Update GeoIP database once a month.
+%monthly,random * * * [ -f "/var/ipfire/red/active" ] && /usr/local/bin/xt_geoip_update >/dev/null 2>&1
+EOF
+
+fcrontab -z &>/dev/null
+
 
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"

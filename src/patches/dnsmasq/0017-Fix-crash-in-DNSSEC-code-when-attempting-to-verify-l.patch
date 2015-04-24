@@ -1,7 +1,7 @@
 From 094b5c3d904bae9aeb3206d9f3b8348926b84975 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sun, 21 Dec 2014 16:11:52 +0000
-Subject: [PATCH 17/71] Fix crash in DNSSEC code when attempting to verify
+Subject: [PATCH 17/78] Fix crash in DNSSEC code when attempting to verify
  large RRs.
 
 ---

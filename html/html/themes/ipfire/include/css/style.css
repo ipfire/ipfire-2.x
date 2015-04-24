@@ -324,3 +324,7 @@ table {
 .tbl tr:last-child td {
 	border-bottom: 1px solid lightgrey;
 }
+
+table.fw-nat tbody tr td {
+	height: 2.25em;
+}

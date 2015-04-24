@@ -1,7 +1,7 @@
 From 8d8a54ec79d9f96979fabbd97b1dd2ddebc7d78f Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sun, 1 Feb 2015 21:48:46 +0000
-Subject: [PATCH 43/71] Fix build failure on openBSD.
+Subject: [PATCH 43/78] Fix build failure on openBSD.
 
 ---
  src/tables.c | 2 +-

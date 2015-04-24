@@ -1,7 +1,7 @@
 From 193de4abf59e49c6b70d54cfe9720fcb95ca2f71 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Wed, 10 Dec 2014 17:32:16 +0000
-Subject: [PATCH 09/71] Use inotify instead of polling on Linux.
+Subject: [PATCH 09/78] Use inotify instead of polling on Linux.
 
 This should solve problems people are seeing when a file changes
 twice within a second and thus is missed for polling.

@@ -1,0 +1,36 @@
+From b4c0f092d8ce63ea4763c0ac17aa8d24318ad301 Mon Sep 17 00:00:00 2001
+From: Stefan Tomanek <stefan.tomanek+dnsmasq@wertarbyte.de>
+Date: Thu, 16 Apr 2015 15:20:59 +0100
+Subject: [PATCH 76/78] Fix (srk induced) crash in new tftp_no_fail code.
+
+---
+ src/dnsmasq.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index a7c5da8fbd01..20b15c05103a 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -655,7 +655,8 @@ int main (int argc, char **argv)
+ 	          _exit(0);
+ 	        }
+ 	    }
+-	  closedir(dir);
++	  else
++	    closedir(dir);
+ 	}
+ 
+       for (p = daemon->if_prefix; p; p = p->next)
+@@ -670,7 +671,8 @@ int main (int argc, char **argv)
+ 		  _exit(0);
+ 		}
+ 	    }
+-	  closedir(dir);
++	  else
++	    closedir(dir);
+ 	}
+     }
+ #endif
+-- 
+2.1.0
+

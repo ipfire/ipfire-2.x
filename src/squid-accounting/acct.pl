@@ -100,7 +100,7 @@ if (-f $proxyenabled && $proxylog eq $Lang::tr{'running'}){
 		open (FH,">/var/log/accounting.log");
 		close (FH);
 		chmod 0755, "/var/log/accounting.log";
-		#move all db entries older than 2 months to second table and cumulate them hourly
+		#move all db entries older than this month to second table and cumulate them daily
 		&ACCT::movedbdata;
 		&ACCT::logger($settings{'LOG'},"New Month. Old trafficvalues moved to ACCT_HIST Table\n");
 		if ($settings{'USEMAIL'} eq 'on'){

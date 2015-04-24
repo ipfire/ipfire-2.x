@@ -1,7 +1,7 @@
 From 360f2513ab12a9bf1e262d388dd2ea8a566590a3 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sat, 7 Mar 2015 18:28:06 +0000
-Subject: [PATCH 57/71] Tweak DNSSEC timestamp code to create file later,
+Subject: [PATCH 57/78] Tweak DNSSEC timestamp code to create file later,
  removing need to chown it.
 
 ---

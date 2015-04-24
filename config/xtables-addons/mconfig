@@ -1,0 +1,24 @@
+# -*- Makefile -*-
+#
+build_ACCOUNT=m
+build_CHAOS=m
+build_DELUDE=m
+build_DHCPMAC=m
+build_DNETMAP=m
+build_ECHO=m
+build_IPMARK=m
+build_LOGMARK=m
+build_SYSRQ=n
+build_TARPIT=m
+build_condition=m
+build_fuzzy=m
+build_geoip=m
+build_gradm=n
+build_iface=m
+build_ipp2p=m
+build_ipv4options=m
+build_length2=m
+build_lscan=m
+build_pknock=m
+build_psd=m
+build_quota2=m

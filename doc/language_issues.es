@@ -233,6 +233,9 @@ WARNING: translation string unused: g.lite
 WARNING: translation string unused: gen static key
 WARNING: translation string unused: generate
 WARNING: translation string unused: genkey
+WARNING: translation string unused: geoipblock country code
+WARNING: translation string unused: geoipblock country name
+WARNING: translation string unused: geoipblock flag
 WARNING: translation string unused: green interface
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: hint
@@ -650,6 +653,7 @@ WARNING: untranslated string: ccd none
 WARNING: untranslated string: ccd routes
 WARNING: untranslated string: ccd subnet
 WARNING: untranslated string: ccd used
+WARNING: untranslated string: check all
 WARNING: untranslated string: count
 WARNING: untranslated string: countries
 WARNING: untranslated string: country codes and flags
@@ -794,6 +798,7 @@ WARNING: untranslated string: fwdfw wd_thu
 WARNING: untranslated string: fwdfw wd_tue
 WARNING: untranslated string: fwdfw wd_wed
 WARNING: untranslated string: fwhost OpenVPN N-2-N
+WARNING: untranslated string: fwhost addgeoipgrp
 WARNING: untranslated string: fwhost addgrp
 WARNING: untranslated string: fwhost addgrpname
 WARNING: untranslated string: fwhost addhost
@@ -806,6 +811,9 @@ WARNING: untranslated string: fwhost ccdhost
 WARNING: untranslated string: fwhost ccdnet
 WARNING: untranslated string: fwhost change
 WARNING: untranslated string: fwhost cust addr
+WARNING: untranslated string: fwhost cust geoipgroup
+WARNING: untranslated string: fwhost cust geoipgrp
+WARNING: untranslated string: fwhost cust geoiplocation
 WARNING: untranslated string: fwhost cust grp
 WARNING: untranslated string: fwhost cust net
 WARNING: untranslated string: fwhost cust service
@@ -845,6 +853,7 @@ WARNING: untranslated string: fwhost ip_mac
 WARNING: untranslated string: fwhost ipsec net
 WARNING: untranslated string: fwhost menu
 WARNING: untranslated string: fwhost netaddress
+WARNING: untranslated string: fwhost newgeoipgrp
 WARNING: untranslated string: fwhost newgrp
 WARNING: untranslated string: fwhost newhost
 WARNING: untranslated string: fwhost newnet
@@ -1025,6 +1034,7 @@ WARNING: untranslated string: tor traffic limit hard
 WARNING: untranslated string: tor traffic limit soft
 WARNING: untranslated string: tor traffic read written
 WARNING: untranslated string: tor use exit nodes
+WARNING: untranslated string: uncheck all
 WARNING: untranslated string: uplink
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: uptime load average

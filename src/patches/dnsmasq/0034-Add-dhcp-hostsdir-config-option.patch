@@ -1,7 +1,7 @@
 From 5f4dc5c6ca50655ab14f572c7e30815ed74cd51a Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Tue, 20 Jan 2015 20:51:02 +0000
-Subject: [PATCH 34/71] Add --dhcp-hostsdir config option.
+Subject: [PATCH 34/78] Add --dhcp-hostsdir config option.
 
 ---
  CHANGELOG     |   5 +++

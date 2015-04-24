@@ -20,7 +20,7 @@
 ###############################################################################
 
 use strict;
-use Locale::Country;
+use Locale::Codes::Country;
 
 # enable only the following on debugging purpose
 use warnings;
@@ -323,9 +323,9 @@ END
 						<option value=''>- $Lang::tr{'tor exit country any'} -</option>
 END
 
-		my @country_names = Locale::Country::all_country_names();
+		my @country_names = Locale::Codes::Country::all_country_names();
 		foreach my $country_name (sort @country_names) {
-			my $country_code = Locale::Country::country2code($country_name);
+			my $country_code = Locale::Codes::Country::country2code($country_name);
 			$country_code = uc($country_code);
 			print "<option value='$country_code'";
 

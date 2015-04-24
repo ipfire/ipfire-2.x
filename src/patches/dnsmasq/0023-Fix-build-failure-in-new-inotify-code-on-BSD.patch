@@ -1,7 +1,7 @@
 From d310ab7ecbffce79d3d90debba621e0222f9bced Mon Sep 17 00:00:00 2001
 From: Matthias Andree <matthias.andree@gmx.de>
 Date: Sat, 27 Dec 2014 15:36:38 +0000
-Subject: [PATCH 23/71] Fix build failure in new inotify code on BSD.
+Subject: [PATCH 23/78] Fix build failure in new inotify code on BSD.
 
 ---
  src/inotify.c | 4 ++--

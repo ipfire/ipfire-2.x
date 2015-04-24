@@ -60,6 +60,7 @@ my $configfwdfw		= "${General::swroot}/firewall/config";
 my $configinput	    = "${General::swroot}/firewall/input";
 my $configoutgoing  = "${General::swroot}/firewall/outgoing";
 my $p2pfile			= "${General::swroot}/firewall/p2protocols";
+my $geoipfile		= "${General::swroot}/firewall/geoipblock";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
 
@@ -101,6 +102,9 @@ sub main {
 
 	# Load P2P block rules.
 	&p2pblock();
+
+	# Load GeoIP block rules.
+	&geoipblock();
 
 	# Reload firewall policy.
 	run("/usr/sbin/firewall-policy");
@@ -365,13 +369,17 @@ sub buildrules {
 					my @source_options = ();
 					if ($source =~ /mac/) {
 						push(@source_options, $source);
-					} elsif ($source) {
+					} elsif ($source =~ /-m geoip/) {
+						push(@source_options, $source);
+					} elsif($source) {
 						push(@source_options, ("-s", $source));
 					}
 
 					# Prepare destination options.
 					my @destination_options = ();
-					if ($destination) {
+					if ($destination =~ /-m geoip/) {
+						push(@destination_options,  $destination);
+					} elsif ($destination) {
 						push(@destination_options, ("-d", $destination));
 					}
 
@@ -567,6 +575,38 @@ sub p2pblock {
 	run("$IPTABLES -F P2PBLOCK");
 	if (@protocols) {
 		run("$IPTABLES -A P2PBLOCK -m ipp2p @protocols -j DROP");
+	}
+}
+
+sub geoipblock {
+	my %geoipsettings = ();
+	$geoipsettings{'GEOIPBLOCK_ENABLED'} = "off";
+
+	# Flush iptables chain.
+	run("$IPTABLES -F GEOIPBLOCK");
+
+	# Check if the geoip settings file exists
+	if (-e "$geoipfile") {
+		# Read settings file
+		&General::readhash("$geoipfile", \%geoipsettings);
+	}
+
+	# If geoip blocking is not enabled, we are finished here.
+	if ($geoipsettings{'GEOIPBLOCK_ENABLED'} ne "on") {
+		# Exit submodule. Process remaining script.
+		return;
+	}
+
+	# Get supported locations.
+	my @locations = &fwlib::get_geoip_locations();
+
+	# Loop through all supported geoip locations and
+	# create iptables rules, if blocking this country
+	# is enabled.
+	foreach my $location (@locations) {
+		if($geoipsettings{$location} eq "on") {
+			run("$IPTABLES -A GEOIPBLOCK -m geoip --src-cc $location -j DROP");
+		}
 	}
 }
 

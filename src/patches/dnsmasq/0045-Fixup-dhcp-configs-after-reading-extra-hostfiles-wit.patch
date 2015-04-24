@@ -1,7 +1,7 @@
 From 2941d3ac898cf84b544e47c9735c5e4111711db1 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 2 Feb 2015 22:36:42 +0000
-Subject: [PATCH 45/71] Fixup dhcp-configs after reading extra hostfiles with
+Subject: [PATCH 45/78] Fixup dhcp-configs after reading extra hostfiles with
  inotify.
 
 ---
