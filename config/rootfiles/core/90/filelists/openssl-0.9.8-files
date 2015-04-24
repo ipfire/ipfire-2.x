@@ -5,7 +5,6 @@ usr/lib/gnupg/gpgkeys_curl
 usr/lib/apache/libphp5.so
 usr/lib/squid/digest_ldap_auth
 usr/lib/squid/basic_ldap_auth
-usr/lib/squid/digest_edirectory_auth
 usr/lib/squid/ext_kerberos_ldap_group_acl
 usr/lib/squid/ext_edirectory_userip_acl
 usr/lib/squid/ext_ldap_group_acl
