@@ -461,7 +461,7 @@ buildipfire() {
   esac
   ipfiremake xtables-addons			USPACE="1"
   ipfiremake openssl
-  [ "${TARGET_ARCH}" = "i586" ] && ipfiremake openssl SSE2="1"
+  [ "${TARGET_ARCH}" = "i586" ] && ipfiremake openssl KCFG='-sse2'
   ipfiremake libgpg-error
   ipfiremake libgcrypt
   ipfiremake libassuan

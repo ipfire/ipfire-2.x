@@ -31,11 +31,7 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-ifeq "$(SSE2)" "1"
-	TARGET = $(DIR_INFO)/$(THISAPP)-sse2
-else
-	TARGET = $(DIR_INFO)/$(THISAPP)
-endif
+TARGET = $(DIR_INFO)/$(THISAPP)$(KCFG)
 
 CFLAGS += -DPURIFY
 export RPM_OPT_FLAGS = $(CFLAGS)
@@ -60,7 +56,7 @@ CONFIGURE_OPTIONS = \
 ifeq "$(MACHINE)" "i586"
 	CONFIGURE_OPTIONS += linux-elf
 
-ifneq "$(SSE2)" "1"
+ifneq "$(KCFG)" "-sse2"
 	CONFIGURE_OPTIONS += no-sse2
 endif
 endif
@@ -124,7 +120,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make depend
 	cd $(DIR_APP) && make
 
-ifeq "$(SSE2)" "1"
+ifeq "$(KCFG)" "-sse2"
 	-mkdir -pv /usr/lib/sse2
 	cd $(DIR_APP) && install -m 755 \
 		libcrypto.so.10 libssl.so.10 /usr/lib/sse2
