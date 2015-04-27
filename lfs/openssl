@@ -117,6 +117,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1m-weak-ciphers.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-disable-sslv2-sslv3.patch
 
+	# Enable Padlock in i586
+ifeq "$(MACHINE)" "i586"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a_auto_enable_padlock.patch
+endif
+
 	# Apply our CFLAGS
 	cd $(DIR_APP) && sed -i Configure \
 		-e "s/-O3 -fomit-frame-pointer/$(CFLAGS)/g"
