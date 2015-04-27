@@ -33,7 +33,16 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 TARGET = $(DIR_INFO)/$(THISAPP)$(KCFG)
 
+ifneq "$(KCFG)" "-sse2"
 CFLAGS += -DPURIFY
+else
+CFLAGS =-O2 -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fPIC
+CFLAGS+= -fstack-protector-all --param=ssp-buffer-size=4
+CFLAGS+= -march=i686 -mmmx -msse -msse2 -mfpmath=sse
+CFLAGS+= -fomit-frame-pointer -DPURIFY
+CXXFLAGS="${CFLAGS}"
+endif
+
 export RPM_OPT_FLAGS = $(CFLAGS)
 
 CONFIGURE_OPTIONS = \
