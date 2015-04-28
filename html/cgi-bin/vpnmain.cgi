@@ -363,12 +363,12 @@ sub writeipsecfiles {
 			print CONF "\tdpddelay=0\n";
 		}
 	} else {
-		my $dpddelay = $lconfighash{$key}[30];
+		my $dpddelay = $lconfighash{$key}[31];
 		if (!$dpddelay) {
 			$dpddelay = 30;
 		}
 		print CONF "\tdpddelay=$dpddelay\n";
-		my $dpdtimeout = $lconfighash{$key}[31];
+		my $dpdtimeout = $lconfighash{$key}[30];
 		if (!$dpdtimeout) {
 			$dpdtimeout = 120;
 		}
