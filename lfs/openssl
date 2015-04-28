@@ -137,7 +137,7 @@ endif
 ifeq "$(KCFG)" "-sse2"
 	-mkdir -pv /usr/lib/sse2
 	cd $(DIR_APP) && install -m 755 \
-		libcrypto.so.10 libssl.so.10 /usr/lib/sse2
+		libcrypto.so.10 /usr/lib/sse2
 else
 	# Install everything.
 	cd $(DIR_APP) && make install
