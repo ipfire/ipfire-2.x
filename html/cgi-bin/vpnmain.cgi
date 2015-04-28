@@ -3030,8 +3030,8 @@ sub make_algos($$$$$) {
 						push(@algo, $int);
 					}
 
-					if ($grp =~ m/^e\d+/) {
-						push(@algo, $grp);
+					if ($grp =~ m/^e(\d+)/) {
+						push(@algo, "ecp$1");
 					} else {
 						push(@algo, "modp$grp");
 					}
