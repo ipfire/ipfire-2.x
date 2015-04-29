@@ -1,7 +1,7 @@
 From b8f16556d36924cd8dc7663cb4129d7b1f3fc2be Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Wed, 22 Apr 2015 21:14:31 +0100
-Subject: [PATCH 82/84] Tweaks to previous, DNS label charset commit.
+Subject: [PATCH 82/87] Tweaks to previous, DNS label charset commit.
 
 ---
  src/dns-protocol.h |  6 +++++-

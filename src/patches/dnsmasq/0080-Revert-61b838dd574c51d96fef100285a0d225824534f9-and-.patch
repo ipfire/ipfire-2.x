@@ -1,7 +1,7 @@
 From 338b340be9e7198f5c0f68133d070d6598a0814c Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 20 Apr 2015 21:34:05 +0100
-Subject: [PATCH 80/84] Revert 61b838dd574c51d96fef100285a0d225824534f9 and
+Subject: [PATCH 80/87] Revert 61b838dd574c51d96fef100285a0d225824534f9 and
  just quieten log instead.
 
 ---

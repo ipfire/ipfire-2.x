@@ -1,7 +1,7 @@
 From 979fe86bc8693f660eddea232ae39cbbb50b294c Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Thu, 19 Mar 2015 22:50:22 +0000
-Subject: [PATCH 59/78] Make --address=/example.com/ equivalent to
+Subject: [PATCH 59/87] Make --address=/example.com/ equivalent to
  --server=/example.com/
 
 ---

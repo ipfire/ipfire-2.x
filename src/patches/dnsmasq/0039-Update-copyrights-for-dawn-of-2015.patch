@@ -1,7 +1,7 @@
 From aff3396280e944833f0e23d834aa6acd5fe2605a Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sat, 31 Jan 2015 20:13:40 +0000
-Subject: [PATCH 39/78] Update copyrights for dawn of 2015.
+Subject: [PATCH 39/87] Update copyrights for dawn of 2015.
 
 ---
  Makefile             | 2 +-

@@ -1,7 +1,7 @@
 From a5ae1f85873829efe473075ad77806cc02792622 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sat, 25 Apr 2015 21:46:10 +0100
-Subject: [PATCH 83/84] Logs in DHCPv6 not suppressed by dhcp6-quiet.
+Subject: [PATCH 83/87] Logs in DHCPv6 not suppressed by dhcp6-quiet.
 
 ---
  CHANGELOG     | 6 +++++-

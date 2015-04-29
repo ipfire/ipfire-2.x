@@ -1,7 +1,7 @@
 From a006eb7e1486023480ea40244720ef7aab51de71 Mon Sep 17 00:00:00 2001
 From: Moshe Levi <moshele@mellanox.com>
 Date: Sun, 19 Apr 2015 22:10:40 +0100
-Subject: [PATCH 79/84] Check IP address command line arg in dhcp_release.c
+Subject: [PATCH 79/87] Check IP address command line arg in dhcp_release.c
 
 ---
  contrib/wrt/dhcp_release.c | 5 +++++

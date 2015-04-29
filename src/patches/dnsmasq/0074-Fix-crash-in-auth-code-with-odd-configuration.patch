@@ -1,7 +1,7 @@
 From 38440b204db65f9be16c4c3daa7e991e4356f6ed Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sun, 12 Apr 2015 21:52:47 +0100
-Subject: [PATCH 74/78] Fix crash in auth code with odd configuration.
+Subject: [PATCH 74/87] Fix crash in auth code with odd configuration.
 
 ---
  CHANGELOG  | 32 +++++++++++++++++++++-----------

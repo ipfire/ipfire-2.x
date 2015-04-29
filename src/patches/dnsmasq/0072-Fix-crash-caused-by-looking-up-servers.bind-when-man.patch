@@ -1,7 +1,7 @@
 From 04b0ac05377936d121a36873bb63d492cde292c9 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 6 Apr 2015 17:19:13 +0100
-Subject: [PATCH 72/78] Fix crash caused by looking up servers.bind when many
+Subject: [PATCH 72/87] Fix crash caused by looking up servers.bind when many
  servers defined.
 
 ---
