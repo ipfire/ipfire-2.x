@@ -1,7 +1,7 @@
 From 794fccca7ffebfba4468bfffc6276b68bbf6afd9 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sun, 29 Mar 2015 22:35:44 +0100
-Subject: [PATCH 66/78] Fix crash in last commit.
+Subject: [PATCH 66/87] Fix crash in last commit.
 
 ---
  src/cache.c | 7 ++++---

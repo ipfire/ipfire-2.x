@@ -1,7 +1,7 @@
 From 982faf402487e265ed11ac03524531d42b03c966 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Fri, 3 Apr 2015 21:42:30 +0100
-Subject: [PATCH 71/78] Fix compiler warning when not including DNSSEC.
+Subject: [PATCH 71/87] Fix compiler warning when not including DNSSEC.
 
 ---
  src/forward.c | 3 ++-

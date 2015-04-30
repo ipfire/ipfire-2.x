@@ -151,6 +151,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0076-Fix-srk-induced-crash-in-new-tftp_no_fail-code.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0077-Note-CVE-2015-3294.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0078-Log-domain-when-reporting-DNSSEC-validation-failure.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0079-Check-IP-address-command-line-arg-in-dhcp_release.c.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0080-Revert-61b838dd574c51d96fef100285a0d225824534f9-and-.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0081-Handle-domain-names-with-.-or-000-within-labels.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0082-Tweaks-to-previous-DNS-label-charset-commit.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0083-Logs-in-DHCPv6-not-suppressed-by-dhcp6-quiet.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0084-Make-get-version-work-when-repo-is-a-git-submodule.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0085-Fix-argument-order-botch-which-broke-DNSSEC-for-TCP-.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0086-Don-t-remove-RRSIG-RR-from-answers-to-ANY-queries-wh.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0087-Constify-some-DHCP-lease-management-functions.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 	cd $(DIR_APP) && sed -i src/config.h \
 		-e 's|/\* #define HAVE_IDN \*/|#define HAVE_IDN|g' \

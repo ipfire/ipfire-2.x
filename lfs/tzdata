@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2015a
+VER        = 2015d
 TZDATA_VER = $(VER)
 TZCODE_VER = $(VER)
 
@@ -45,8 +45,8 @@ objects = tzdata$(TZDATA_VER).tar.gz tzcode$(TZCODE_VER).tar.gz
 tzdata$(TZDATA_VER).tar.gz = $(DL_FROM)/tzdata$(TZDATA_VER).tar.gz
 tzcode$(TZCODE_VER).tar.gz = $(DL_FROM)/tzcode$(TZCODE_VER).tar.gz
 
-tzdata$(TZDATA_VER).tar.gz_MD5 = 4ed11c894a74a5ea64201b1c6dbb8831
-tzcode$(TZCODE_VER).tar.gz_MD5 = 8f375ede46ae137fbac047ac431bda37
+tzdata$(TZDATA_VER).tar.gz_MD5 = b595bdc4474b8fc1a15cffc67c66025b
+tzcode$(TZCODE_VER).tar.gz_MD5 = 4008a3abc025a398697b2587c48258b9
 
 install : $(TARGET)
 

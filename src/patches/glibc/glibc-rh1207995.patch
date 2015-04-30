@@ -1,0 +1,27 @@
+#
+# Based on the following commit:
+#
+# commit f9d2d03254a58d92635a311a42253eeed5a40a47
+# Author: Andreas Schwab <schwab@suse.de>
+# Date:   Mon May 26 18:01:31 2014 +0200
+# 
+#     Fix invalid file descriptor reuse while sending DNS query (BZ #15946)
+# 
+# 2014-06-03  Andreas Schwab  <schwab@suse.de>
+# 
+# 	[BZ #15946]
+# 	* resolv/res_send.c (send_dg): Reload file descriptor after
+# 	calling reopen.
+# 
+diff --git a/resolv/res_send.c b/resolv/res_send.c
+index 3273d55..af42b8a 100644
+--- a/resolv/res_send.c
++++ b/resolv/res_send.c
+@@ -1410,6 +1410,7 @@ send_dg(res_state statp,
+ 					retval = reopen (statp, terrno, ns);
+ 					if (retval <= 0)
+ 						return retval;
++					pfd[0].fd = EXT(statp).nssocks[ns];
+ 				}
+ 			}
+ 			goto wait;

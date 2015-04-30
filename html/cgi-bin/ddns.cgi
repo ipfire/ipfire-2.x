@@ -44,10 +44,8 @@ my $settingsfile = "${General::swroot}/ddns/settings";
 # Config file to store the configured ddns providers.
 my $datafile = "${General::swroot}/ddns/config";
 
-# Dynamic ddns programm call.
-my @ddnsprog = ("/usr/bin/ddns", "--config",
-		"/var/ipfire/ddns/ddns.conf",
-		"update-all");
+# Call the ddnsctrl helper binary to perform the update.
+my @ddnsprog = ("/usr/local/bin/ddnsctrl", "update-all");
 
 my %settings=();
 my $errormessage = '';

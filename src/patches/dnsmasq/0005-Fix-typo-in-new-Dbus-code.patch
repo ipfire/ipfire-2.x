@@ -1,7 +1,7 @@
 From 17b475912f6a4e72797a543dad59d4d5dde6bb1b Mon Sep 17 00:00:00 2001
 From: Daniel Collins <daniel.collins@smoothwall.net>
 Date: Fri, 3 Oct 2014 21:58:43 +0100
-Subject: [PATCH 05/78] Fix typo in new Dbus code.
+Subject: [PATCH 05/87] Fix typo in new Dbus code.
 
 Simon's fault.
 ---

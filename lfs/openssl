@@ -33,7 +33,16 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 TARGET = $(DIR_INFO)/$(THISAPP)$(KCFG)
 
+ifneq "$(KCFG)" "-sse2"
 CFLAGS += -DPURIFY
+else
+CFLAGS =-O2 -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fPIC
+CFLAGS+= -fstack-protector-all --param=ssp-buffer-size=4
+CFLAGS+= -march=i686 -mmmx -msse -msse2 -mfpmath=sse
+CFLAGS+= -fomit-frame-pointer -DPURIFY
+CXXFLAGS="${CFLAGS}"
+endif
+
 export RPM_OPT_FLAGS = $(CFLAGS)
 
 CONFIGURE_OPTIONS = \
@@ -108,6 +117,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1m-weak-ciphers.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-disable-sslv2-sslv3.patch
 
+	# i586 specific patches
+ifeq "$(MACHINE)" "i586"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a_auto_enable_padlock.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a_disable_ssse3_for_amd.patch
+endif
+
 	# Apply our CFLAGS
 	cd $(DIR_APP) && sed -i Configure \
 		-e "s/-O3 -fomit-frame-pointer/$(CFLAGS)/g"
@@ -123,7 +138,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(KCFG)" "-sse2"
 	-mkdir -pv /usr/lib/sse2
 	cd $(DIR_APP) && install -m 755 \
-		libcrypto.so.10 libssl.so.10 /usr/lib/sse2
+		libcrypto.so.10 /usr/lib/sse2
 else
 	# Install everything.
 	cd $(DIR_APP) && make install

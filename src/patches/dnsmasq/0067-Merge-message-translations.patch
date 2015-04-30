@@ -1,7 +1,7 @@
 From fd6ad9e481ab7c812a6b1515244908818cbb0442 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 30 Mar 2015 07:52:21 +0100
-Subject: [PATCH 67/78] Merge message translations.
+Subject: [PATCH 67/87] Merge message translations.
 
 ---
  po/de.po    | 803 +++++++++++++++++++++++++++++++++--------------------------

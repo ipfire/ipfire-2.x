@@ -1,7 +1,7 @@
 From ae4624bf46b5e37ff1a9a2ba3c927e0dede95adb Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 12 Jan 2015 23:22:08 +0000
-Subject: [PATCH 31/78] Logs for DS records consistent.
+Subject: [PATCH 31/87] Logs for DS records consistent.
 
 ---
  src/rfc1035.c | 2 +-

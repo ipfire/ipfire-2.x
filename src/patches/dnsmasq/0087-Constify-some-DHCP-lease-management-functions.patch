@@ -1,0 +1,57 @@
+From 64bcff1c7c72eecda8750bc2dca8b4c5dc38a837 Mon Sep 17 00:00:00 2001
+From: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+Date: Tue, 28 Apr 2015 21:55:18 +0100
+Subject: [PATCH 87/87] Constify some DHCP lease management functions.
+
+---
+ src/dnsmasq.h | 7 ++++---
+ src/lease.c   | 8 ++++----
+ 2 files changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index 6fe4a4189188..824a86009439 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -1304,9 +1304,10 @@ void lease_update_slaac(time_t now);
+ void lease_set_iaid(struct dhcp_lease *lease, int iaid);
+ void lease_make_duid(time_t now);
+ #endif
+-void lease_set_hwaddr(struct dhcp_lease *lease, unsigned char *hwaddr,
+-		      unsigned char *clid, int hw_len, int hw_type, int clid_len, time_t now, int force);
+-void lease_set_hostname(struct dhcp_lease *lease, char *name, int auth, char *domain, char *config_domain);
++void lease_set_hwaddr(struct dhcp_lease *lease, const unsigned char *hwaddr,
++		      const unsigned char *clid, int hw_len, int hw_type,
++		      int clid_len, time_t now, int force);
++void lease_set_hostname(struct dhcp_lease *lease, const char *name, int auth, char *domain, char *config_domain);
+ void lease_set_expires(struct dhcp_lease *lease, unsigned int len, time_t now);
+ void lease_set_interface(struct dhcp_lease *lease, int interface, time_t now);
+ struct dhcp_lease *lease_find_by_client(unsigned char *hwaddr, int hw_len, int hw_type,  
+diff --git a/src/lease.c b/src/lease.c
+index 545bbb7fd09c..8adb60588671 100644
+--- a/src/lease.c
++++ b/src/lease.c
+@@ -813,9 +813,9 @@ void lease_set_iaid(struct dhcp_lease *lease, int iaid)
+ }
+ #endif
+ 
+-void lease_set_hwaddr(struct dhcp_lease *lease, unsigned char *hwaddr,
+-		      unsigned char *clid, int hw_len, int hw_type, int clid_len, 
+-		      time_t now, int force)
++void lease_set_hwaddr(struct dhcp_lease *lease, const unsigned char *hwaddr,
++		      const unsigned char *clid, int hw_len, int hw_type,
++		      int clid_len, time_t now, int force)
+ {
+ #ifdef HAVE_DHCP6
+   int change = force;
+@@ -897,7 +897,7 @@ static void kill_name(struct dhcp_lease *lease)
+   lease->hostname = lease->fqdn = NULL;
+ }
+ 
+-void lease_set_hostname(struct dhcp_lease *lease, char *name, int auth, char *domain, char *config_domain)
++void lease_set_hostname(struct dhcp_lease *lease, const char *name, int auth, char *domain, char *config_domain)
+ {
+   struct dhcp_lease *lease_tmp;
+   char *new_name = NULL, *new_fqdn = NULL;
+-- 
+2.1.0
+

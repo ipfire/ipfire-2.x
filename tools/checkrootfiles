@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  info@ipfire.org                       #
+# Copyright (C) 2007-2015  IPFire Team  info@ipfire.org                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -31,4 +31,18 @@ if [ "${?}" == "0" ]; then
 	echo "Error! 'var/run/...' in rootfiles files found!"
 	grep -r "^var/run//*" ./config/rootfiles/
 	echo "Comment this and create it at initskript if needed !"
+fi
+
+grep -r "/i586" ./config/rootfiles/ --exclude gcc --exclude-dir oldcore >/dev/null 2>&1
+if [ "${?}" == "0" ]; then
+	echo "Error! '/i586' in rootfiles files found!"
+	grep -r "/i586" ./config/rootfiles/ --exclude gcc --exclude-dir oldcore
+	echo "Replace by MACHINE !"
+fi
+
+grep -r "/armv5tel" ./config/rootfiles/ --exclude gcc --exclude-dir oldcore >/dev/null 2>&1
+if [ "${?}" == "0" ]; then
+	echo "Error! '/armv5tel' in rootfiles files found!"
+	grep -r "/armv5tel" ./config/rootfiles/ --exclude gcc --exclude-dir oldcore
+	echo "Replace by MACHINE !"
 fi

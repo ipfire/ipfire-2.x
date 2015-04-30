@@ -1,7 +1,7 @@
 From ff841ebf5a5d6864ff48571f607c32ce80dbb75a Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Wed, 11 Mar 2015 21:36:30 +0000
-Subject: [PATCH 58/78] Fix boilerplate code for re-running system calls on
+Subject: [PATCH 58/87] Fix boilerplate code for re-running system calls on
  EINTR and EAGAIN etc.
 
 The nasty code with static variable in retry_send() which

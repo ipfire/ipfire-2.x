@@ -1,7 +1,7 @@
 From 83d2ed09fc0216b567d7fb2197e4ff3eae150b0d Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Tue, 23 Dec 2014 18:42:38 +0000
-Subject: [PATCH 20/78] Initialise return value.
+Subject: [PATCH 20/87] Initialise return value.
 
 ---
  src/dnssec.c | 7 +++++--
