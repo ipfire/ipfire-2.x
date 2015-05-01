@@ -3017,7 +3017,7 @@ sub make_algos($$$$$) {
 				if ($mode eq "ike") {
 					push(@algo, $int);
 
-					if ($grp =~ m/^e(\d+)/) {
+					if ($grp =~ m/^e(.*)$/) {
 						push(@algo, "ecp$1");
 					} else {
 						push(@algo, "modp$grp");
@@ -3030,7 +3030,7 @@ sub make_algos($$$$$) {
 						push(@algo, $int);
 					}
 
-					if ($grp =~ m/^e(\d+)/) {
+					if ($grp =~ m/^e(.*)$/) {
 						push(@algo, "ecp$1");
 					} else {
 						push(@algo, "modp$grp");
