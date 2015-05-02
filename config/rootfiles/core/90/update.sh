@@ -195,6 +195,9 @@ fcrontab -z &>/dev/null
 # Generate ddns configuration file
 sudo -u nobody /srv/web/ipfire/cgi-bin/ddns.cgi
 
+# Regenerate IPsec configuration
+sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
+
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
