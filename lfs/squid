@@ -78,12 +78,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--libexecdir=/usr/lib/squid \
 		--localstatedir=/var \
 		--disable-ipv6 \
+		--disable-ssl \
 		--enable-poll \
 		--disable-icmp \
 		--disable-wccp \
 		--enable-ident-lookups \
 		--enable-storeio="aufs,diskd,ufs" \
-		--enable-ssl \
 		--enable-underscores \
 		--enable-http-violations \
 		--enable-removal-policies="heap,lru" \
