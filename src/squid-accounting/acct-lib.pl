@@ -93,8 +93,10 @@ sub delbefore {
 }
 
 sub movedbdata {
+	&connectdb;
 	$dbh->do("insert into ACCT_HIST select datetime(TIME_RUN,'unixepoch'),NAME,SUM(BYTES) from ACCT where datetime(TIME_RUN,'unixepoch') < datetime('now','start of month') group by NAME,datetime(TIME_RUN,'unixepoch');");
 	$dbh->do("DELETE FROM ACCT WHERE datetime(TIME_RUN,'unixepoch') < date('now','start of month');");
+	&closedb;
 }
 
 sub gethourgraphdata {
