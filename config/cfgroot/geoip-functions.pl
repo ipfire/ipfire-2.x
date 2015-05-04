@@ -41,8 +41,8 @@ sub get_flag_icon($) {
 	# Remove whitespaces.
 	chomp($input);
 
-	# Convert given country code to lower case.
-	my $ccode = lc($input);
+	# Convert given country code to upper case.
+	my $ccode = uc($input);
 
 	# Generate filename, based on the contry code in lower case
 	# and the defined file extension.
@@ -58,6 +58,21 @@ sub get_flag_icon($) {
 	if (-e "$absolute_path") {
 		# Return content of flag_icon.
 		return $flag_icon;
+	} else {
+		# If no icon for the specified country exists, try to use
+		# the icon for "unknown".
+		my $ccode = "unknown";
+
+		# Redoing all the stuff from abouve for the "unknown" icon.
+		my $file = join('.', $ccode,$ext);
+		my $flag_icon = join('/', $flagdir,$file);
+		my $absolute_path = join('', $webroot,$flag_icon);
+
+		# Check if the icon is present.
+		if (-e "$absolute_path") {
+			# Return "unknown" icon.
+			return $flag_icon;
+		}
 	}
 }
 
