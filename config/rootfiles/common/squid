@@ -34,7 +34,6 @@ usr/lib/squid/basic_smb_auth
 usr/lib/squid/basic_smb_auth.sh
 #usr/lib/squid/cachemgr.cgi
 usr/lib/squid/cert_tool
-usr/lib/squid/cert_valid.pl
 usr/lib/squid/digest_file_auth
 usr/lib/squid/digest_ldap_auth
 usr/lib/squid/diskd
