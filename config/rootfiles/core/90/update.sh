@@ -132,6 +132,9 @@ esac
 /etc/init.d/ipsec stop
 /etc/init.d/apache stop
 
+# Drop old flag icons, before extracting the new ones.
+rm /srv/web/ipfire/html/images/flags/*
+
 #
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
