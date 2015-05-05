@@ -21,6 +21,7 @@ use Getopt::Std;
 #use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/geoip-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -372,10 +373,15 @@ foreach $_ (@log)
         <td align='center' $col>$srcport<br/>$dstport</td>
 END
 ;
-        if ( $fcode ne "" ){
-        print "<td align='center' $col><a href='../country.cgi#$fcode'><img src='/images/flags/$fcode.png' border='0' align='absmiddle' alt='$ccode'></a></td>";}
-        else {
-        print "<td align='center' $col></td>";}
+	# Get flag icon for of the country.
+	my $flag_icon = &GeoIP::get_flag_icon($fcode);
+
+        if ( $flag_icon) {
+		print "<td align='center' $col><a href='../country.cgi#$fcode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode'></a></td>";
+	} else {
+		print "<td align='center' $col></td>";
+	}
+
         print <<END
         <td align='center' $col>$macaddr</td>
 </tr>
