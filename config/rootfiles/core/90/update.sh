@@ -139,6 +139,10 @@ rm /srv/web/ipfire/html/images/flags/*
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
 
+#
+# restart init because glibc was updated.
+telinit u
+
 # Remove old openssl libraries
 rm -vf /usr/lib/libcrypto.so.0.9.8 /usr/lib/libssl.so.0.9.8
 
