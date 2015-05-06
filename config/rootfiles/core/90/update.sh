@@ -231,6 +231,11 @@ case "$(uname -m)" in
 	esac
 esac
 
+# Upadate Kernel version uEnv.txt
+if [ -e /boot/uEnv.txt ]; then
+	sed -i -e "s/KVER=.*/KVER=${KVER}/g" /boot/uEnv.txt
+fi
+
 # Force (re)install pae kernel if pae is supported
 rm -rf /opt/pakfire/db/*/meta-linux-pae
 if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
