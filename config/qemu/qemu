@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# QEMU wrapper to enable kvm as default like old qemu-kvm...
+#
+if [[ $* == *" -no-kvm"* ]]; then
+	qemu-system-i386 $*
+else
+	qemu-system-i386 -enable-kvm $*
+fi
+exit ${?}
