@@ -507,7 +507,8 @@ buildipfire() {
   ipfiremake openldap
   ipfiremake apache2
   ipfiremake php
-  ipfiremake apache2			PASS=C
+  ipfiremake web-user-interface
+  ipfiremake flag-icons
   ipfiremake jquery
   ipfiremake arping
   ipfiremake beep

@@ -132,9 +132,16 @@ esac
 /etc/init.d/ipsec stop
 /etc/init.d/apache stop
 
+# Drop old flag icons, before extracting the new ones.
+rm /srv/web/ipfire/html/images/flags/*
+
 #
 #Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
+
+#
+# restart init because glibc was updated.
+telinit u
 
 # Remove old openssl libraries
 rm -vf /usr/lib/libcrypto.so.0.9.8 /usr/lib/libssl.so.0.9.8
@@ -227,6 +234,17 @@ case "$(uname -m)" in
 			;;
 	esac
 esac
+
+# Upadate Kernel version uEnv.txt
+if [ -e /boot/uEnv.txt ]; then
+	sed -i -e "s/KVER=.*/KVER=${KVER}/g" /boot/uEnv.txt
+fi
+
+# call user update script (needed for some arm boards)
+if [ -e /boot/pakfire-kernel-update ]; then
+	/boot/pakfire-kernel-update ${KVER}
+fi
+
 
 # Force (re)install pae kernel if pae is supported
 rm -rf /opt/pakfire/db/*/meta-linux-pae

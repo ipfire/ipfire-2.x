@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2009  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2015   IPFire Team  <info@ipfire.org>                    #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -18,58 +18,30 @@
 #                                                                             #
 ###############################################################################
 
+
 ###############################################################################
 # Definitions
 ###############################################################################
 
 include Config
 
-VER        = 2.3.0
+VER        = ipfire
 
-THISAPP    = qemu-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = $(URL_IPFIRE)
+THISAPP    = web-user-interface-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = i586
-PROG       = qemu
-PAK_VER    = 15
-
-DEPS       = "sdl"
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+install: $(TARGET)
 
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+check: 
 
-$(DL_FILE)_MD5 = 2fab3ea4460de9b57192e5b8b311f221
+download:
 
-install : $(TARGET)
-
-check : $(patsubst %,$(DIR_CHK)/%,$(objects))
-
-download :$(patsubst %,$(DIR_DL)/%,$(objects))
-
-md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	@$(PAK)
-
-###############################################################################
-# Downloading, checking, md5sum
-###############################################################################
-
-$(patsubst %,$(DIR_CHK)/%,$(objects)) :
-	@$(CHECK)
-
-$(patsubst %,$(DIR_DL)/%,$(objects)) :
-	@$(LOAD)
-
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+md5: 
 
 ###############################################################################
 # Installation Details
@@ -77,20 +49,24 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
-		--enable-kvm --disable-attr \
-		--target-list="i386-linux-user i386-softmmu arm-softmmu" \
-		--extra-cflags="$(CFLAGS)"
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
 
-	# install wrapper for old kvm parameter handling
-	install -m 755 $(DIR_SRC)/config/qemu/qemu /usr/bin/qemu
+	# Copy all html/cgi-bin files
+	mkdir -p /srv/web/ipfire/{cgi-bin,html}
+	mkdir -p /var/updatecache/{download,metadata}
+	cp -aR $(DIR_SRC)/html/* /srv/web/ipfire
 
-	# disable PaX MPROTECT
-	paxctl -m /usr/bin/qemu-system-arm
-	paxctl -m /usr/bin/qemu-system-i386
+	# Change CONFIG_ROOT in cgi-scripts
+	for i in /srv/web/ipfire/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \
+	    if [ -f $$i ]; then \
+	        sed -i "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i; \
+	    fi; \
+	done
+	chown -R root:root /srv/web/ipfire
+	chmod -R 755 /srv/web/ipfire/cgi-bin
+	chmod -R 644 /srv/web/ipfire/html
+	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include,themes,themes/*,themes/*/*}
+	ln -svf ipfire /srv/web/ipfire/html/themes/ipfire-rounded
 
-	@rm -rf $(DIR_APP)
+	# Reset permissions of redirect templates and theme directories
+	find /srv/web/ipfire/html/{redirect-templates,themes} -type d | xargs chmod -v 755
 	@$(POSTBUILD)
