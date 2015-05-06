@@ -42,7 +42,7 @@ foreach my $key (keys %ovpnconfig){
 	}else{
 		print "Client $ovpnconfig{$key}[2] NOT converted!\n";
 	}
-	$ovpnconfig{$key}[32] = 'dynamic';
+	$ovpnconfig{$key}[32] = 'dynamic' if ($ovpnconfig{$key}[32] eq '');
 }
 &General::writehasharray("/var/ipfire/ovpn/ovpnconfig", \%ovpnconfig);
 if ($running eq 'on')
