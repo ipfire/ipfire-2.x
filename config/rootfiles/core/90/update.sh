@@ -240,6 +240,12 @@ if [ -e /boot/uEnv.txt ]; then
 	sed -i -e "s/KVER=.*/KVER=${KVER}/g" /boot/uEnv.txt
 fi
 
+# call user update script (needed for some arm boards)
+if [ -e /boot/pakfire-kernel-update ]; then
+	/boot/pakfire-kernel-update
+fi
+
+
 # Force (re)install pae kernel if pae is supported
 rm -rf /opt/pakfire/db/*/meta-linux-pae
 if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
