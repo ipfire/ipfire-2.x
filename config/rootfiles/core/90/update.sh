@@ -242,7 +242,7 @@ fi
 
 # call user update script (needed for some arm boards)
 if [ -e /boot/pakfire-kernel-update ]; then
-	/boot/pakfire-kernel-update
+	/boot/pakfire-kernel-update ${KVER}
 fi
 
 
