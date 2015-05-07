@@ -58,17 +58,7 @@ static void ipsec_reload() {
 void open_physical (char *interface, int nat_traversal_port) {
         char str[STRING_SIZE];
 
-        // GRE ???
-//        sprintf(str, "/sbin/iptables -A " phystable " -p 47  -i %s -j ACCEPT", interface);
-//        safe_system(str);
-        // ESP
-//        sprintf(str, "/sbin/iptables -A " phystable " -p 50  -i %s -j ACCEPT", interface);
-//        safe_system(str);
-        // AH
-//        sprintf(str, "/sbin/iptables -A " phystable " -p 51  -i %s -j ACCEPT", interface);
-//        safe_system(str);
         // IKE
-
         sprintf(str, "/sbin/iptables -D IPSECINPUT -p udp -i %s --dport 500 -j ACCEPT >/dev/null 2>&1", interface);
         safe_system(str);
         sprintf(str, "/sbin/iptables -A IPSECINPUT -p udp -i %s --dport 500 -j ACCEPT", interface);
