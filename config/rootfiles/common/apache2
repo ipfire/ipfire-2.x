@@ -1,8 +1,8 @@
 #etc/httpd
 #etc/httpd/conf
 #etc/httpd/conf/conf.d
-#etc/httpd/conf/conf.d/php5.conf
-#etc/httpd/conf/default-server.conf
+etc/httpd/conf/conf.d/php5.conf
+etc/httpd/conf/default-server.conf
 #etc/httpd/conf/extra
 #etc/httpd/conf/extra/httpd-autoindex.conf
 #etc/httpd/conf/extra/httpd-dav.conf
