@@ -79,7 +79,6 @@ void networkdialogcallbacktype(newtComponent cm, void *data);
 int interfacecheck(struct keyvalue *kv, char *colour);
 int rename_nics(void);
 int init_knics(void);
-int create_udev(void);
 int scan_network_cards(void);
 int nicmenu(int colour);
 int clear_card_entry(int cards);

@@ -55,7 +55,7 @@ $(TARGET) :
 	-install -dv -m 1777 /tmp /var/tmp
 	-mkdir -pv /usr/{,local/}{bin,include,lib{,/sse2},sbin,src}
 	-mkdir -pv /usr/{,local/}share/{doc,info,locale,man}
-	-mkdir -v  /usr/{,local/}share/{misc,terminfo,zoneinfo}
+	-mkdir -v  /usr/{,local/}share/{misc,terminfo,xt_geoip,zoneinfo}
 	-mkdir -pv /usr/{,local/}share/man/man{1..8}
 	#-for dir in /usr /usr/local; do \
 	#  ln -sv share/{man,doc,info} $$dir; \

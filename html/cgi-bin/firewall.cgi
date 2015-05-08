@@ -33,6 +33,7 @@ no warnings 'uninitialized';
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/geoip-functions.pl";
 require "/usr/lib/firewall/firewall-lib.pl";
 
 unless (-d "${General::swroot}/firewall")			{ system("mkdir ${General::swroot}/firewall"); }
@@ -47,6 +48,7 @@ my %defaultNetworks=();
 my %netsettings=();
 my %customhost=();
 my %customgrp=();
+my %customgeoipgrp=();
 my %customnetworks=();
 my %customservice=();
 my %customservicegrp=();
@@ -74,6 +76,7 @@ my $color;
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
 my $configgrp 		= "${General::swroot}/fwhosts/customgroups";
+my $configgeoipgrp	= "${General::swroot}/fwhosts/customgeoipgrp";
 my $configsrv 		= "${General::swroot}/fwhosts/customservices";
 my $configsrvgrp	= "${General::swroot}/fwhosts/customservicegrp";
 my $configccdnet 	= "${General::swroot}/ovpn/ccd.conf";
@@ -152,6 +155,19 @@ print<<END;
 		\$("#USE_NAT").change(function() {
 			\$(".NAT").toggle();
 			\$("#actions").toggle();
+		});
+
+		// Hide SNAT items when DNAT is selected and vice versa.
+		if (\$('input[name=nat]:checked').val() == 'dnat') {
+			\$('.snat').hide();
+		} else {
+			\$('.dnat').hide();
+		}
+
+		// Show/Hide elements when SNAT/DNAT get changed.
+		\$('input[name=nat]').change(function() {
+			\$('.snat').toggle();
+			\$('.dnat').toggle();
 		});
 
 		// Time constraints
@@ -1060,6 +1076,54 @@ END
 		}
 		print"</select></td>";
 	}
+	# geoip locations / groups.
+	my @geoip_locations = &fwlib::get_geoip_locations();
+
+	print "<tr>\n";
+	print "<td valign='top'><input type='radio' name='$grp' id='cust_geoip_$srctgt' value='cust_geoip_$srctgt' $checked{$grp}{'cust_geoip_'.$srctgt}></td>\n";
+	print "<td>$Lang::tr{'geoip'}</td>\n";
+	print "<td align='right'><select name='cust_geoip_$srctgt' style='width:200px;'>\n";
+
+	# Add GeoIP groups to dropdown.
+	if (!-z $configgeoipgrp) {
+		print "<optgroup label='$Lang::tr{'fwhost cust geoipgroup'}'>\n";
+		foreach my $key (sort { ncmp($customgeoipgrp{$a}[0],$customgeoipgrp{$b}[0]) } keys %customgeoipgrp) {
+			my $selected;
+
+			# Generate stored value for select detection.
+			my $stored = join(':', "group",$customgeoipgrp{$key}[0]);
+
+			# Only show a group once and group with elements.
+			if($helper ne $customgeoipgrp{$key}[0] && $customgeoipgrp{$key}[2] ne 'none') {
+				# Mark current entry as selected.
+				if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $stored) {
+					$selected = "selected='selected'";
+				}
+                                print"<option $selected value='group:$customgeoipgrp{$key}[0]'>$customgeoipgrp{$key}[0]</option>\n";
+                        }
+                        $helper=$customgeoipgrp{$key}[0];
+                }
+		print "</optgroup>\n";
+	}
+
+	# Add locations.
+	print "<optgroup label='$Lang::tr{'fwhost cust geoiplocation'}'>\n";
+	foreach my $location (@geoip_locations) {
+		# Get country name.
+		my $country_name = &GeoIP::get_full_country_name($location);
+
+		# Mark current entry as selected.
+		my $selected;
+		if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $location) {
+			$selected = "selected='selected'";
+		}
+		print "<option $selected value='$location'>$location - $country_name</option>\n";
+	}
+	print "</optgroup>\n";
+
+	# Close GeoIP dropdown.
+	print "</select></td>\n";
+
 	#End left table. start right table (vpn)
 	print"</tr></table></td><td valign='top'><table width='95%' border='0' align='right'><tr>";
 	# CCD networks
@@ -1397,6 +1461,7 @@ sub newrule
 	&General::readhasharray("$confighost", \%customhost);
 	&General::readhasharray("$configccdhost", \%ccdhost);
 	&General::readhasharray("$configgrp", \%customgrp);
+	&General::readhasharray("$configgeoipgrp", \%customgeoipgrp);
 	&General::readhasharray("$configipsec", \%ipsecconf);
 	&General::get_aliases(\%aliases);
 	my %checked=();
@@ -1591,7 +1656,7 @@ END
 				$Lang::tr{'fwdfw use nat'}
 			</label>
 			<div class="NAT">
-				<table width='100%' border='0'>
+				<table class='fw-nat' width='100%' border='0'>
 					<tr>
 						<td width='5%'></td>
 						<td width='40%'>
@@ -1603,9 +1668,9 @@ END
 END
 
 	print <<END;
-						<td width='25%' align='right'>$Lang::tr{'dnat address'}:</td>
+						<td width='25%' align='right'><span class='dnat'>$Lang::tr{'dnat address'}:</span></td>
 						<td width='30%'>
-							<select name='dnat' style='width: 100%;'>
+							<select name='dnat' class='dnat' style='width: 100%;'>
 								<option value='AUTO' $selected{'dnat'}{'AUTO'}>- $Lang::tr{'automatic'} -</option>
 								<option value='Default IP' $selected{'dnat'}{'Default IP'}>$Lang::tr{'red1'} ($redip)</option>
 END
@@ -1636,9 +1701,9 @@ END
 								$Lang::tr{'fwdfw snat'}
 							</label>
 						</td>
-						<td width='25%' align='right'>$Lang::tr{'snat new source ip address'}:</td>
+						<td width='25%' align='right'><span class='snat'>$Lang::tr{'snat new source ip address'}:</span></td>
 						<td width='30%'>
-							<select name='snat' style='width: 100%;'>
+							<select name='snat' class='snat' style='width: 100%;'>
 END
 
 		foreach my $alias (sort keys %aliases) {
@@ -2525,6 +2590,13 @@ END
 				}else{
 					print $$hash{$key}[4];
 				}
+			}elsif ($$hash{$key}[3] eq 'cust_geoip_src') {
+				my ($split1,$split2) = split(":", $$hash{$key}[4]);
+				if ($split2) {
+					print "$split2\n";
+				}else{
+					print "$Lang::tr{'geoip'}: $$hash{$key}[4]\n";
+				}
 			}elsif ($$hash{$key}[4] eq 'RED1'){
 				print "$ipfireiface $Lang::tr{'fwdfw red'}";
 			}elsif ($$hash{$key}[4] eq 'ALL'){
@@ -2601,6 +2673,13 @@ END
 				}else{
 					print $$hash{$key}[6];
 				}
+			}elsif ($$hash{$key}[5] eq 'cust_geoip_tgt') {
+				my ($split1,$split2) = split(":", $$hash{$key}[6]);
+				if ($split2) {
+					print "$split2\n";
+				}else{
+					print "$Lang::tr{'geoip'}: $$hash{$key}[6]\n";
+				}
 			}elsif ($$hash{$key}[5] eq 'tgt_addr'){
 				my ($split1,$split2) = split("/",$$hash{$key}[6]);
 				if ($split2 eq '32'){
@@ -2618,7 +2697,6 @@ END
 			#RULE ACTIVE
 			if($$hash{$key}[2] eq 'ON'){
 				$gif="/images/on.gif"
-				
 			}else{
 				$gif="/images/off.gif"
 			}

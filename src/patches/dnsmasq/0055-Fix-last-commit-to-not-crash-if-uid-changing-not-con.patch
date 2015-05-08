@@ -1,7 +1,7 @@
 From 9003b50b13da624ca45f3e0cf99abb623b8d026b Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 2 Mar 2015 22:47:23 +0000
-Subject: [PATCH 55/71] Fix last commit to not crash if uid changing not
+Subject: [PATCH 55/87] Fix last commit to not crash if uid changing not
  configured.
 
 ---

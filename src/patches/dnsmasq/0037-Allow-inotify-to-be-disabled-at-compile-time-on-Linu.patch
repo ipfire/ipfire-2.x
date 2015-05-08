@@ -1,7 +1,7 @@
 From 0491805d2ff6e7727f0272c94fd97d9897d1e22c Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 26 Jan 2015 11:23:43 +0000
-Subject: [PATCH 37/71] Allow inotify to be disabled at compile time on Linux.
+Subject: [PATCH 37/87] Allow inotify to be disabled at compile time on Linux.
 
 ---
  CHANGELOG     |  4 +++-

@@ -1,7 +1,7 @@
 From 6ac3bc0452a74e16e3d620a0757b0f8caab182ec Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Fri, 3 Oct 2014 08:48:11 +0100
-Subject: [PATCH 03/71] Debian build fixes for kFreeBSD
+Subject: [PATCH 03/87] Debian build fixes for kFreeBSD
 
 ---
  src/tables.c | 6 +++++-

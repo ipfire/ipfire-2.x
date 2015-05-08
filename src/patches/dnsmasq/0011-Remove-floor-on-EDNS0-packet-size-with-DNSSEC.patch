@@ -1,7 +1,7 @@
 From 800c5cc1e7438818fd80f08c2d472df249a6942d Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 15 Dec 2014 17:50:15 +0000
-Subject: [PATCH 11/71] Remove floor on EDNS0 packet size with DNSSEC.
+Subject: [PATCH 11/87] Remove floor on EDNS0 packet size with DNSSEC.
 
 ---
  CHANGELOG     | 6 +++++-

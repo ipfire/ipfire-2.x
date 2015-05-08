@@ -1,6 +1,7 @@
 #etc/dhcp
-#etc/dhcp/dhclient.conf
+#etc/dhcp/dhclient.conf.example
 etc/dhcp/dhcpd.conf
+#etc/dhcp/dhcpd.conf.example
 #usr/bin/omshell
 #usr/include/dhcpctl
 #usr/include/dhcpctl/dhcpctl.h

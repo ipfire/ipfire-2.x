@@ -1,7 +1,7 @@
 From 8805283088d670baecb92569252c01cf754cda51 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Thu, 26 Mar 2015 21:15:43 +0000
-Subject: [PATCH 61/71] Don't fail DNSSEC when a signed CNAME dangles into an
+Subject: [PATCH 61/87] Don't fail DNSSEC when a signed CNAME dangles into an
  unsigned zone.
 
 ---

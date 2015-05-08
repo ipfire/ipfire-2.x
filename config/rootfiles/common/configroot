@@ -52,6 +52,7 @@ var/ipfire/extrahd
 var/ipfire/firewall
 #var/ipfire/firewall/config
 #var/ipfire/firewall/dmz
+#var/ipfire/firewall/geoipblock
 #var/ipfire/firewall/input
 #var/ipfire/firewall/nat
 #var/ipfire/firewall/outgoing
@@ -59,6 +60,7 @@ var/ipfire/firewall
 #var/ipfire/firewall/settings
 var/ipfire/fwhosts
 #var/ipfire/fwhosts/customgroups
+#var/ipfire/fwhosts/customgeoipgrp
 #var/ipfire/fwhosts/customhosts
 #var/ipfire/fwhosts/customnetworks
 #var/ipfire/fwhosts/customservicegrp
@@ -69,6 +71,7 @@ var/ipfire/fwlogs
 #var/ipfire/fwlogs/ipsettings
 #var/ipfire/fwlogs/portsettings
 var/ipfire/general-functions.pl
+var/ipfire/geoip-functions.pl
 var/ipfire/graphs.pl
 var/ipfire/header.pl
 var/ipfire/isdn

@@ -1,0 +1,40 @@
+From e66b4dff3c562c7836d5be4c26972d665ad783f1 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Tue, 28 Apr 2015 20:45:57 +0100
+Subject: [PATCH 85/87] Fix argument-order botch which broke DNSSEC for TCP
+ queries.
+
+---
+ src/forward.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/src/forward.c b/src/forward.c
+index 1c7da3f5655c..a8e403c4b25e 100644
+--- a/src/forward.c
++++ b/src/forward.c
+@@ -1996,8 +1996,9 @@ unsigned char *tcp_request(int confd, time_t now,
+ 			    }
+ 			  else
+ 			    result = (status == STAT_SECURE ? "SECURE" : (status == STAT_INSECURE ? "INSECURE" : "BOGUS"));
+-			   if (status == STAT_BOGUS && extract_request(header, m, daemon->namebuff, NULL))
+-			     domain = daemon->namebuff;
++			  
++			  if (status == STAT_BOGUS && extract_request(header, m, daemon->namebuff, NULL))
++			    domain = daemon->namebuff;
+ 
+ 			  log_query(F_KEYTAG | F_SECSTAT, domain, NULL, result);
+ 			  
+@@ -2040,8 +2041,8 @@ unsigned char *tcp_request(int confd, time_t now,
+ #endif
+ 
+ 		      m = process_reply(header, now, last_server, (unsigned int)m, 
+-					option_bool(OPT_NO_REBIND) && !norebind, no_cache_dnssec, bogusanswer,
+-					cache_secure, ad_question, do_bit, added_pheader, check_subnet, &peer_addr); 
++					option_bool(OPT_NO_REBIND) && !norebind, no_cache_dnssec, cache_secure, bogusanswer,
++					ad_question, do_bit, added_pheader, check_subnet, &peer_addr); 
+ 		      
+ 		      break;
+ 		    }
+-- 
+2.1.0
+

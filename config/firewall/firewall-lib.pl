@@ -27,6 +27,7 @@ package fwlib;
 my %customnetwork=();
 my %customhost=();
 my %customgrp=();
+my %customgeoipgrp=();
 my %customservice=();
 my %customservicegrp=();
 my %ccdnet=();
@@ -42,6 +43,7 @@ require '/var/ipfire/general-functions.pl';
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
 my $configgrp 		= "${General::swroot}/fwhosts/customgroups";
+my $configgeoipgrp 	= "${General::swroot}/fwhosts/customgeoipgrp";
 my $configsrv 		= "${General::swroot}/fwhosts/customservices";
 my $configsrvgrp	= "${General::swroot}/fwhosts/customservicegrp";
 my $configccdnet 	= "${General::swroot}/ovpn/ccd.conf";
@@ -59,6 +61,7 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhasharray("$confignet", \%customnetwork);
 &General::readhasharray("$confighost", \%customhost);
 &General::readhasharray("$configgrp", \%customgrp);
+&General::readhasharray("$configgeoipgrp", \%customgeoipgrp);
 &General::readhasharray("$configccdnet", \%ccdnet);
 &General::readhasharray("$configccdhost", \%ccdhost);
 &General::readhasharray("$configipsec", \%ipsecconf);
@@ -300,6 +303,17 @@ sub get_addresses
 				}
 			}
 		}
+	}elsif ($addr_type ~~ ["cust_geoip_src", "cust_geoip_tgt"] && $value =~ "group:") {
+		$value=substr($value,6);
+		foreach my $grp (sort {$a <=> $b} keys %customgeoipgrp) {
+			if ($customgeoipgrp{$grp}[0] eq $value) {
+				my @address = &get_address($addr_type, $customgeoipgrp{$grp}[2], $type);
+
+				if (@address) {
+					push(@addresses, @address);
+				}
+			}
+		}
 	} else {
 		my @address = &get_address($addr_type, $value, $type);
 
@@ -413,6 +427,20 @@ sub get_address
 				push(@ret, [$alias, ""]);
 			}
 		}
+
+	# Handle rule options with GeoIP as source.
+	} elsif ($key eq "cust_geoip_src") {
+		# Get external interface.
+		my $external_interface = &get_external_interface();
+
+		push(@ret, ["-m geoip --src-cc $value", "$external_interface"]);
+
+	# Handle rule options with GeoIP as target.
+	} elsif ($key eq "cust_geoip_tgt") {
+		# Get external interface.
+		my $external_interface = &get_external_interface();
+
+		push(@ret, ["-m geoip --dst-cc $value", "$external_interface"]);
 
 	# If nothing was selected, we assume "any".
 	} else {
@@ -550,6 +578,39 @@ sub get_internal_firewall_ip_address
 	}
 
 	return 0;
+}
+
+sub get_geoip_locations() {
+	# Path to the directory which contains the binary geoip
+	# databases.
+	my $directory="/usr/share/xt_geoip/LE";
+
+	# Array to store the final country list.
+	my @country_codes = ();
+
+	# Open location and do a directory listing.
+	opendir(DIR, "$directory");
+	my @locations = readdir(DIR);
+	closedir(DIR);
+
+	# Loop through the directory listing, and cut of the file extensions.
+	foreach my $location (sort @locations) {
+		# skip . and ..
+		next if($location =~ /^\.$/);
+		next if($location =~ /^\.\.$/);
+
+		# Remove whitespaces.
+		chomp($location);
+
+		# Cut-off file extension.
+		my ($country_code, $extension) = split(/\./, $location);
+
+		# Add country code to array.
+		push(@country_codes, $country_code);
+	}
+
+	# Return final array.
+	return @country_codes;
 }
 
 return 1;

@@ -520,7 +520,8 @@ foreach my $line (@conntrack) {
 	}
 
 	my $sip_colour = ipcolour($sip);
-	my $dip_colour = ipcolour($dip);
+	# use colour of destination network for DNAT
+	my $dip_colour = $dip ne $dip_ret ? ipcolour($dip_ret) : ipcolour($dip);
 
 	my $sserv = '';
 	if ($sport < 1024) {

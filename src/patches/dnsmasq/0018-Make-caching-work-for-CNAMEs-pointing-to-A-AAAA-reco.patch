@@ -1,7 +1,7 @@
 From cbc652423403e3cef00e00240f6beef713142246 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sun, 21 Dec 2014 21:21:53 +0000
-Subject: [PATCH 18/71] Make caching work for CNAMEs pointing to A/AAAA records
+Subject: [PATCH 18/87] Make caching work for CNAMEs pointing to A/AAAA records
  shadowed in /etc/hosts
 
 If the answer to an upstream query is a CNAME which points to an

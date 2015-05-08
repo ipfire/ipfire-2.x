@@ -1,0 +1,54 @@
+From 04b0ac05377936d121a36873bb63d492cde292c9 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Mon, 6 Apr 2015 17:19:13 +0100
+Subject: [PATCH 72/87] Fix crash caused by looking up servers.bind when many
+ servers defined.
+
+---
+ CHANGELOG   | 7 ++++++-
+ src/cache.c | 4 ++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index 34432ae4807f..6aa3d851a297 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -75,7 +75,12 @@ version 2.73
+ 
+ 	    Add --tftp-no-fail option. Thanks to Stefan Tomanek for
+ 	    the patch.
+-	
++
++	    Fix crash caused by looking up servers.bind, CHAOS text record,
++	    when more than about five --servers= lines are in the dnsmasq
++	    config. This causes memory corruption which causes a crash later.
++	    Thanks to Matt Coddington for sterling work chasing this down.
++
+ 	
+ version 2.72
+             Add ra-advrouter mode, for RFC-3775 mobile IPv6 support.
+diff --git a/src/cache.c b/src/cache.c
+index d7bea574c0d8..178d654ca92e 100644
+--- a/src/cache.c
++++ b/src/cache.c
+@@ -1367,7 +1367,7 @@ int cache_make_stat(struct txt_record *t)
+ 		}
+ 	    port = prettyprint_addr(&serv->addr, daemon->addrbuff);
+ 	    lenp = p++; /* length */
+-	    bytes_avail = (p - buff) + bufflen;
++	    bytes_avail = bufflen - (p - buff );
+ 	    bytes_needed = snprintf(p, bytes_avail, "%s#%d %u %u", daemon->addrbuff, port, queries, failed_queries);
+ 	    if (bytes_needed >= bytes_avail)
+ 	      {
+@@ -1381,7 +1381,7 @@ int cache_make_stat(struct txt_record *t)
+ 		lenp = p - 1;
+ 		buff = new;
+ 		bufflen = newlen;
+-		bytes_avail = (p - buff) + bufflen;
++		bytes_avail =  bufflen - (p - buff );
+ 		bytes_needed = snprintf(p, bytes_avail, "%s#%d %u %u", daemon->addrbuff, port, queries, failed_queries);
+ 	      }
+ 	    *lenp = bytes_needed;
+-- 
+2.1.0
+

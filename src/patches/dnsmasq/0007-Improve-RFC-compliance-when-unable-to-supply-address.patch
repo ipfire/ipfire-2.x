@@ -1,7 +1,7 @@
 From b9ff5c8f435173cfa616e3c398bdc089ef690a07 Mon Sep 17 00:00:00 2001
 From: Vladislav Grishenko <themiron@mail.ru>
 Date: Mon, 6 Oct 2014 14:34:24 +0100
-Subject: [PATCH 07/71] Improve RFC-compliance when unable to supply addresses
+Subject: [PATCH 07/87] Improve RFC-compliance when unable to supply addresses
  in DHCPv6
 
 While testing https://github.com/sbyx/odhcp6c client I have noticed it

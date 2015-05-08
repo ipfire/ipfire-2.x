@@ -1,7 +1,7 @@
 From caeea190f12efd20139f694aac4942d1ac00019f Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sat, 14 Feb 2015 20:08:56 +0000
-Subject: [PATCH 50/71] Make dynamic hosts files work when --no-hosts set.
+Subject: [PATCH 50/87] Make dynamic hosts files work when --no-hosts set.
 
 ---
  src/cache.c | 21 +++++++++++----------

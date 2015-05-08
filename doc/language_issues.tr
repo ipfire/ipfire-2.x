@@ -300,6 +300,7 @@ WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
 WARNING: translation string unused: ike lifetime
+WARNING: translation string unused: ike lifetime should be between 1 and 24 hours
 WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
@@ -663,7 +664,21 @@ WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
+WARNING: untranslated string: check all
+WARNING: untranslated string: fwhost addgeoipgrp
+WARNING: untranslated string: fwhost cust geoipgroup
+WARNING: untranslated string: fwhost cust geoipgrp
+WARNING: untranslated string: fwhost cust geoiplocation
 WARNING: untranslated string: fwhost err hostip
+WARNING: untranslated string: fwhost newgeoipgrp
+WARNING: untranslated string: geoip
+WARNING: untranslated string: geoipblock
+WARNING: untranslated string: geoipblock block countries
+WARNING: untranslated string: geoipblock configuration
+WARNING: untranslated string: geoipblock country is allowed
+WARNING: untranslated string: geoipblock country is blocked
+WARNING: untranslated string: geoipblock enable feature
+WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: incoming compression in bytes per second
 WARNING: untranslated string: incoming overhead in bytes per second
 WARNING: untranslated string: invalid input for valid till days
@@ -675,6 +690,7 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: uncheck all
 WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw
 WARNING: untranslated string: vpn statistics n2n

@@ -1,7 +1,7 @@
 From 4c960fa90a975d20f75a1ecabd217247f1922c8f Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Wed, 4 Mar 2015 20:32:26 +0000
-Subject: [PATCH 56/71] New version of contrib/reverse-dns
+Subject: [PATCH 56/87] New version of contrib/reverse-dns
 
 ---
  contrib/reverse-dns/README             |  22 +++---

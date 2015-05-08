@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2014 IPFire Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2015 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.17"							# Version number
-CORE="89"							# Core Level (Filename)
-PAKFIRE_CORE="89"						# Core Level (PAKFIRE)
+CORE="90"							# Core Level (Filename)
+PAKFIRE_CORE="90"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -36,7 +36,7 @@ BUILD_IMAGES=1							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=8
+TOOLCHAINVER=9
 
 # New architecture variables
 BUILD_ARCH="$(uname -m)"
@@ -383,6 +383,7 @@ buildipfire() {
   export LOGFILE
   ipfiremake configroot
   ipfiremake backup
+  ipfiremake pkg-config
   ipfiremake libusb
   ipfiremake libusbx
   ipfiremake libpcap
@@ -403,6 +404,8 @@ buildipfire() {
   ipfiremake multipath-tools
   ipfiremake freetype
   ipfiremake grub
+  ipfiremake libmnl
+  ipfiremake iptables
 
   case "${TARGET_ARCH}" in
 	i586)
@@ -411,8 +414,9 @@ buildipfire() {
 		ipfiremake backports			KCFG="-pae"
 		ipfiremake cryptodev			KCFG="-pae"
 		ipfiremake e1000e			KCFG="-pae"
-		ipfiremake igb				KCFG="-pae"
+#		ipfiremake igb				KCFG="-pae"
 		ipfiremake ixgbe			KCFG="-pae"
+		ipfiremake xtables-addons		KCFG="-pae"
 		ipfiremake linux-initrd			KCFG="-pae"
 
 		# x86 kernel build
@@ -420,8 +424,9 @@ buildipfire() {
 		ipfiremake backports			KCFG=""
 		ipfiremake cryptodev			KCFG=""
 		ipfiremake e1000e			KCFG=""
-		ipfiremake igb				KCFG=""
+#		ipfiremake igb				KCFG=""
 		ipfiremake ixgbe			KCFG=""
+		ipfiremake xtables-addons		KCFG=""
 		ipfiremake linux-initrd			KCFG=""
 		;;
 
@@ -430,6 +435,7 @@ buildipfire() {
 		ipfiremake linux			KCFG="-rpi"
 		ipfiremake backports			KCFG="-rpi"
 		ipfiremake cryptodev			KCFG="-rpi"
+		ipfiremake xtables-addons		KCFG="-rpi"
 		ipfiremake linux-initrd			KCFG="-rpi"
 
 		# arm multi platform (Panda, Wandboard ...) kernel build
@@ -437,8 +443,9 @@ buildipfire() {
 		ipfiremake backports			KCFG="-multi"
 		ipfiremake cryptodev			KCFG="-multi"
 		ipfiremake e1000e			KCFG="-multi"
-		ipfiremake igb				KCFG="-multi"
+#		ipfiremake igb				KCFG="-multi"
 		ipfiremake ixgbe			KCFG="-multi"
+		ipfiremake xtables-addons		KCFG="-multi"
 		ipfiremake linux-initrd			KCFG="-multi"
 
 		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
@@ -446,14 +453,15 @@ buildipfire() {
 		ipfiremake backports			KCFG="-kirkwood"
 		ipfiremake cryptodev			KCFG="-kirkwood"
 		ipfiremake e1000e			KCFG="-kirkwood"
-		ipfiremake igb				KCFG="-kirkwood"
+#		ipfiremake igb				KCFG="-kirkwood"
 		ipfiremake ixgbe			KCFG="-kirkwood"
+		ipfiremake xtables-addons		KCFG="-kirkwood"
 		ipfiremake linux-initrd			KCFG="-kirkwood"
 		;;
   esac
-  ipfiremake pkg-config
+  ipfiremake xtables-addons			USPACE="1"
   ipfiremake openssl
-  ipfiremake openssl-compat
+  [ "${TARGET_ARCH}" = "i586" ] && ipfiremake openssl KCFG='-sse2'
   ipfiremake libgpg-error
   ipfiremake libgcrypt
   ipfiremake libassuan
@@ -499,7 +507,8 @@ buildipfire() {
   ipfiremake openldap
   ipfiremake apache2
   ipfiremake php
-  ipfiremake apache2			PASS=C
+  ipfiremake web-user-interface
+  ipfiremake flag-icons
   ipfiremake jquery
   ipfiremake arping
   ipfiremake beep
@@ -526,8 +535,6 @@ buildipfire() {
   ipfiremake mtools
   ipfiremake initscripts
   ipfiremake whatmask
-  ipfiremake libmnl
-  ipfiremake iptables
   ipfiremake conntrack-tools
   ipfiremake libupnp
   ipfiremake ipaddr
@@ -810,6 +817,7 @@ buildipfire() {
   ipfiremake squid-accounting
   ipfiremake pigz
   ipfiremake tmux
+  ipfiremake perl-Text-CSV_XS
   ipfiremake swconfig
   ipfiremake haproxy
 }
@@ -971,7 +979,7 @@ build)
 
 	cd $BASEDIR
 	tools/checknewlog.pl
-	tools/checkwronginitlinks
+	tools/checkrootfiles
 	cd $PWD
 
 	beautify build_end

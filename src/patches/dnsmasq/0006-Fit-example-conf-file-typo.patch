@@ -1,7 +1,7 @@
 From 3d9d2dd0018603a2ae4b9cd65ac6ff959f4fd8c7 Mon Sep 17 00:00:00 2001
 From: Tomas Hozza <thozza@redhat.com>
 Date: Mon, 6 Oct 2014 10:46:48 +0100
-Subject: [PATCH 06/71] Fit example conf file typo.
+Subject: [PATCH 06/87] Fit example conf file typo.
 
 ---
  dnsmasq.conf.example | 2 +-

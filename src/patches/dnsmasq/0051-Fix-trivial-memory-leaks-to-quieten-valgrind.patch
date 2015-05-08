@@ -1,7 +1,7 @@
 From 28b879ac47b872af6e8c5e86d76806c69338434d Mon Sep 17 00:00:00 2001
 From: Chen Wei <weichen302@icloud.com>
 Date: Tue, 17 Feb 2015 22:07:35 +0000
-Subject: [PATCH 51/71] Fix trivial memory leaks to quieten valgrind.
+Subject: [PATCH 51/87] Fix trivial memory leaks to quieten valgrind.
 
 ---
  src/dnsmasq.c |  2 ++

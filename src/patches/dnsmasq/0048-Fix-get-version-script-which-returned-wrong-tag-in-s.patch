@@ -1,7 +1,7 @@
 From f4f400776b3c1aa303d1a0fcd500f0ab5bc970f2 Mon Sep 17 00:00:00 2001
 From: Shantanu Gadgil <shantanugadgil@yahoo.com>
 Date: Wed, 11 Feb 2015 20:16:59 +0000
-Subject: [PATCH 48/71] Fix get-version script which returned wrong tag in some
+Subject: [PATCH 48/87] Fix get-version script which returned wrong tag in some
  situations.
 
 ---

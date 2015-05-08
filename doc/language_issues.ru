@@ -245,6 +245,7 @@ WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
 WARNING: translation string unused: ike lifetime
+WARNING: translation string unused: ike lifetime should be between 1 and 24 hours
 WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
@@ -652,6 +653,7 @@ WARNING: untranslated string: ccd none
 WARNING: untranslated string: ccd routes
 WARNING: untranslated string: ccd subnet
 WARNING: untranslated string: ccd used
+WARNING: untranslated string: check all
 WARNING: untranslated string: community rules
 WARNING: untranslated string: count
 WARNING: untranslated string: countries
@@ -788,6 +790,7 @@ WARNING: untranslated string: fwdfw wd_thu
 WARNING: untranslated string: fwdfw wd_tue
 WARNING: untranslated string: fwdfw wd_wed
 WARNING: untranslated string: fwhost OpenVPN N-2-N
+WARNING: untranslated string: fwhost addgeoipgrp
 WARNING: untranslated string: fwhost addgrp
 WARNING: untranslated string: fwhost addgrpname
 WARNING: untranslated string: fwhost addhost
@@ -800,6 +803,9 @@ WARNING: untranslated string: fwhost ccdhost
 WARNING: untranslated string: fwhost ccdnet
 WARNING: untranslated string: fwhost change
 WARNING: untranslated string: fwhost cust addr
+WARNING: untranslated string: fwhost cust geoipgroup
+WARNING: untranslated string: fwhost cust geoipgrp
+WARNING: untranslated string: fwhost cust geoiplocation
 WARNING: untranslated string: fwhost cust grp
 WARNING: untranslated string: fwhost cust net
 WARNING: untranslated string: fwhost cust service
@@ -839,6 +845,7 @@ WARNING: untranslated string: fwhost ip_mac
 WARNING: untranslated string: fwhost ipsec net
 WARNING: untranslated string: fwhost menu
 WARNING: untranslated string: fwhost netaddress
+WARNING: untranslated string: fwhost newgeoipgrp
 WARNING: untranslated string: fwhost newgrp
 WARNING: untranslated string: fwhost newhost
 WARNING: untranslated string: fwhost newnet
@@ -855,8 +862,16 @@ WARNING: untranslated string: fwhost used
 WARNING: untranslated string: fwhost welcome
 WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
+WARNING: untranslated string: geoip
+WARNING: untranslated string: geoipblock
+WARNING: untranslated string: geoipblock block countries
+WARNING: untranslated string: geoipblock configuration
+WARNING: untranslated string: geoipblock country is allowed
+WARNING: untranslated string: geoipblock country is blocked
+WARNING: untranslated string: geoipblock enable feature
 WARNING: untranslated string: grouptype
 WARNING: untranslated string: hardware support
+WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: imei
 WARNING: untranslated string: imsi
 WARNING: untranslated string: incoming compression in bytes per second
@@ -1012,6 +1027,7 @@ WARNING: untranslated string: tor traffic limit hard
 WARNING: untranslated string: tor traffic limit soft
 WARNING: untranslated string: tor traffic read written
 WARNING: untranslated string: tor use exit nodes
+WARNING: untranslated string: uncheck all
 WARNING: untranslated string: uplink
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: uptime load average

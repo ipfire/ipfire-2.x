@@ -2346,7 +2346,9 @@ else
 	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
 	if ($confighash{$cgiparams{'KEY'}}) {
+		# Revoke certificate if certificate was deleted and rewrite the CRL
 		my $temp = `/usr/bin/openssl ca -revoke ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
+		my $tempA = `/usr/bin/openssl ca -gencrl -out ${General::swroot}/ovpn/crls/cacrl.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
 
 ###
 # m.a.d net2net
@@ -5547,42 +5549,49 @@ END
     }
 
 	print <<END
-	<hr size='1'>
+
+	<br><hr><br>
+
 	<form method='post' enctype='multipart/form-data'>
-	<table width='100%' border='0'cellspacing='1' cellpadding='0'>
-	<tr>
-		<td class'base'><b>$Lang::tr{'upload ca certificate'}</b></td>
-	</tr>
-	<tr>
-		<td class='base' nowrap='nowrap'>$Lang::tr{'ca name'}:</td>
-		<td nowrap='nowrap'><input type='text' name='CA_NAME' value='$cgiparams{'CA_NAME'}' size='15' align='left'/></td>
-		<td nowrap='nowrap'><input type='file' name='FH' size='25' />
-		<td nowrap='nowrap' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'upload ca certificate'}' /></td>
-	</tr>
+		<table border='0' width='100%'>
+			<tr>
+				<td colspan='4'><b>$Lang::tr{'upload ca certificate'}</b></td>
+			</tr>
 
-	<tr align='right'>
-		<td colspan='4' align='right' width='80%'><input type='submit' name='ACTION' value='$Lang::tr{'show crl'}' /></td>
-	</tr>
+			<tr>
+				<td width='10%'>$Lang::tr{'ca name'}:</td>
+				<td width='30%'><input type='text' name='CA_NAME' value='$cgiparams{'CA_NAME'}' size='15' align='left'></td>
+				<td width='30%'><input type='file' name='FH' size='25'>
+				<td width='30%'align='right'><input type='submit' name='ACTION' value='$Lang::tr{'upload ca certificate'}'></td>
+			</tr>
 
-	<tr><td colspan=4><hr /></td></tr><tr>
-	<tr>
-		<td class'base'><b>$Lang::tr{'ovpn dh parameters'}</b></td>
-	</tr>
+			<tr>
+				<td colspan='3'>&nbsp;</td>
+				<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'show crl'}' /></td>
+			</tr>
+		</table>
 
-	<tr>
-		<td class='base' nowrap='nowrap'>$Lang::tr{'ovpn dh upload'}:</td>
-		<td nowrap='nowrap'><size='15' align='left'/></td>
-		<td nowrap='nowrap'><input type='file' name='FH' size='25' />
-		<td colspan='4' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'upload dh key'}' /></td>
-	</tr>
-	<tr>
-		<td class='base' nowrap='nowrap'>$Lang::tr{'ovpn dh new key'}:</td>
-		<td nowrap='nowrap'><size='15' align='left'/></td>
-		<td nowrap='nowrap'><input type='submit' name='ACTION' value='$Lang::tr{'generate dh key'}' /></td>
-	</tr>
-	</table>
+		<br>
+
+		<table border='0' width='100%'>
+			<tr>
+				<td colspan='4'><b>$Lang::tr{'ovpn dh parameters'}</b></td>
+			</tr>
+
+			<tr>
+				<td width='40%'>$Lang::tr{'ovpn dh upload'}:</td>
+				<td width='30%'><input type='file' name='FH' size='25'>
+				<td width='30%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'upload dh key'}'></td>
+			</tr>
+
+			<tr>
+				<td width='40%'>$Lang::tr{'ovpn dh new key'}:</td>
+				<td colspan='2' width='60%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'generate dh key'}' /></td>
+			</tr>
+		</table>
+	</form>
 	
-	<tr><td colspan=4><hr /></td></tr><tr>
+	<br><hr>
 END
 	;
 

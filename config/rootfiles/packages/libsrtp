@@ -37,4 +37,5 @@
 #usr/include/srtp/ut_sim.h
 #usr/include/srtp/xfm.h
 usr/lib/libsrtp.so
+usr/lib/libsrtp.so.1
 #usr/lib/pkgconfig/libsrtp.pc

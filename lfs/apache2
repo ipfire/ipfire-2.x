@@ -25,17 +25,14 @@
 
 include Config
 
-VER        = 2.2.27
+VER        = 2.2.29
 
 THISAPP    = httpd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-ifeq "$(PASS)" "C"
-	TARGET     = $(DIR_INFO)/$(THISAPP)-config
-else
-	TARGET     = $(DIR_INFO)/$(THISAPP)
-endif
+
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -47,7 +44,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 httpd-2.2.2-config-1.patch = $(DL_FROM)/httpd-2.2.2-config-1.patch
 
-$(DL_FILE)_MD5 = 8faef0decf3fa7e69b2568eb2105a3d8
+$(DL_FILE)_MD5 = 579342fdeaa7b8b68d17fee91f8fab6e
 httpd-2.2.2-config-1.patch_MD5 = e02a3ec5925eb9e111400b9aa229f822
 
 install : $(TARGET)
@@ -77,32 +74,6 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-ifeq "$(PASS)" "C"
-	# DO THIS IN AN EXTRA STEP BECAUSE PHP AND SUBVERSION WILL FAIL.
-
-	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
-	ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
-
-	# Copy all html/cgi-bin files
-	mkdir -p /srv/web/ipfire/{cgi-bin,html}
-	mkdir -p /var/updatecache/{download,metadata}
-	cp -aR $(DIR_SRC)/html/* /srv/web/ipfire
-
-	# Change CONFIG_ROOT in cgi-scripts
-	for i in /srv/web/ipfire/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \
-	    if [ -f $$i ]; then \
-	        sed -i "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i; \
-	    fi; \
-	done
-	chown -R root:root /srv/web/ipfire
-	chmod -R 755 /srv/web/ipfire/cgi-bin
-	chmod -R 644 /srv/web/ipfire/html
-	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include,themes,themes/*,themes/*/*}
-	ln -svf ipfire /srv/web/ipfire/html/themes/ipfire-rounded
-
-	# Reset permissions of redirect templates and theme directories
-	find /srv/web/ipfire/html/{redirect-templates,themes} -type d | xargs chmod -v 755
-else
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/httpd-2.2.2-config-1.patch
 
@@ -140,6 +111,10 @@ else
 	    /usr/share/man/man1/{dbmmanage,ht{dbm,digest,passwd,txt2dbm}}.1 \
 	    /usr/share/man/man8/{ab,apachectl,apxs,htcacheclean,httpd}.8 \
 	    /usr/share/man/man8/{logresolve,rotatelogs,suexec}.8
+
+	# Install apache config
+	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
+	ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
+
 	@rm -rf $(DIR_APP)
-endif
 	@$(POSTBUILD)

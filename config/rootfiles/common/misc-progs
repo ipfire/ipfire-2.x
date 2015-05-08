@@ -3,6 +3,7 @@ usr/local/bin/addonctrl
 usr/local/bin/backupctrl
 #usr/local/bin/clamavctrl
 usr/local/bin/collectdctrl
+usr/local/bin/ddnsctrl
 usr/local/bin/dhcpctrl
 usr/local/bin/dnsmasqctrl
 usr/local/bin/extrahdctrl

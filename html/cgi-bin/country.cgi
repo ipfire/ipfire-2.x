@@ -21,7 +21,7 @@
 
 use strict;
 
-use Locale::Country;
+use Locale::Codes::Country;
 
 my $flagdir = '/srv/web/ipfire/html/images/flags';
 my $lines = '1';
@@ -31,6 +31,7 @@ my @flaglistfiles=();
 my $flag = '';
 
 require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/geoip-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -64,12 +65,16 @@ foreach $flag (@flaglistfiles)
 
 	my $flagcode = uc(substr($flag, 0, 2));
 	my $fcode = lc($flagcode);
+
+	# Get flag icon for of the country.
+	my $flag_icon = &GeoIP::get_flag_icon($fcode);
+
 	my $country = Locale::Country::code2country($fcode);
 	if($fcode eq 'eu') { $country = 'Europe'; }
 	if($fcode eq 'tp') { $country = 'East Timor'; }
 	if($fcode eq 'yu') { $country = 'Yugoslavia'; }
 	if ($lines % 2) {
-		print "<td $col><a id='$fcode'><img src='/images/flags/$fcode.png' alt='$flagcode' title='$flagcode'/></a></td>";
+		print "<td $col><a id='$fcode'><img src='$flag_icon' alt='$flagcode' title='$flagcode'/></a></td>";
 		print "<td $col>$flagcode</td>";
 		print "<td $col>$country</td></tr>\n";
 	}
@@ -81,7 +86,7 @@ foreach $flag (@flaglistfiles)
 			$col="style='background-color:${Header::table1colour};'";
 		}
 		print "<tr>";
-		print "<td $col><a id='$fcode'><img src='/images/flags/$fcode.png' alt='$flagcode' title='$flagcode'/></a></td>";
+		print "<td $col><a id='$fcode'><img src='$flag_icon' alt='$flagcode' title='$flagcode'/></a></td>";
 		print "<td $col>$flagcode</td>";
 		print "<td $col>$country</td>";
 		print "<td $col>&nbsp;</td>";

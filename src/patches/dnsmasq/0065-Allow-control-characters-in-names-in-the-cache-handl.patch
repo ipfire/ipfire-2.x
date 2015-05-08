@@ -1,7 +1,7 @@
 From 394ff492da6af5da7e7d356be9586683bc5fc011 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sun, 29 Mar 2015 22:17:14 +0100
-Subject: [PATCH 65/71] Allow control characters in names in the cache, handle
+Subject: [PATCH 65/87] Allow control characters in names in the cache, handle
  when logging.
 
 ---
