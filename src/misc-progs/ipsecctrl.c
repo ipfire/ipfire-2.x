@@ -58,36 +58,26 @@ static void ipsec_reload() {
 void open_physical (char *interface, int nat_traversal_port) {
         char str[STRING_SIZE];
 
-        // GRE ???
-//        sprintf(str, "/sbin/iptables -A " phystable " -p 47  -i %s -j ACCEPT", interface);
-//        safe_system(str);
-        // ESP
-//        sprintf(str, "/sbin/iptables -A " phystable " -p 50  -i %s -j ACCEPT", interface);
-//        safe_system(str);
-        // AH
-//        sprintf(str, "/sbin/iptables -A " phystable " -p 51  -i %s -j ACCEPT", interface);
-//        safe_system(str);
         // IKE
-
-        sprintf(str, "/sbin/iptables -D IPSECINPUT -p udp -i %s --dport 500 -j ACCEPT >/dev/null 2>&1", interface);
+        sprintf(str, "/sbin/iptables --wait -D IPSECINPUT -p udp -i %s --dport 500 -j ACCEPT >/dev/null 2>&1", interface);
         safe_system(str);
-        sprintf(str, "/sbin/iptables -A IPSECINPUT -p udp -i %s --dport 500 -j ACCEPT", interface);
+        sprintf(str, "/sbin/iptables --wait -A IPSECINPUT -p udp -i %s --dport 500 -j ACCEPT", interface);
         safe_system(str);
 
         if (! nat_traversal_port) 
             return;
 
-        sprintf(str, "/sbin/iptables -D IPSECINPUT -p udp -i %s --dport %i -j ACCEPT >/dev/null 2>&1", interface, nat_traversal_port);
+        sprintf(str, "/sbin/iptables --wait -D IPSECINPUT -p udp -i %s --dport %i -j ACCEPT >/dev/null 2>&1", interface, nat_traversal_port);
         safe_system(str);
-        sprintf(str, "/sbin/iptables -A IPSECINPUT -p udp -i %s --dport %i -j ACCEPT", interface, nat_traversal_port);
+        sprintf(str, "/sbin/iptables --wait -A IPSECINPUT -p udp -i %s --dport %i -j ACCEPT", interface, nat_traversal_port);
         safe_system(str);
 }
 
 void ipsec_norules() {
         /* clear input rules */
-        safe_system("/sbin/iptables -F IPSECINPUT");
-        safe_system("/sbin/iptables -F IPSECFORWARD");
-        safe_system("/sbin/iptables -F IPSECOUTPUT");
+        safe_system("/sbin/iptables --wait -F IPSECINPUT");
+        safe_system("/sbin/iptables --wait -F IPSECFORWARD");
+        safe_system("/sbin/iptables --wait -F IPSECOUTPUT");
 }
 
 /*
