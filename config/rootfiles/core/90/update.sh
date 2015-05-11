@@ -208,6 +208,9 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+# Remove old udev configuration
+rm -vf /etc/udev/rules.d/30-persistent-network.rules
+
 #
 # Start services
 #
