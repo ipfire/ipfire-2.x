@@ -90,6 +90,7 @@ iptables_init() {
 	iptables -N CONNTRACK
 	iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED -j ACCEPT
 	iptables -A CONNTRACK -m conntrack --ctstate INVALID -j DROP
+	iptables -A CONNTRACK -p icmp -m conntrack --ctstate RELATED -j ACCEPT
 	iptables -t raw -N CONNTRACK
 	iptables -t raw -A PREROUTING -j CONNTRACK
 
