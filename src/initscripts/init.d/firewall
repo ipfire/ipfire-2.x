@@ -105,6 +105,18 @@ iptables_init() {
 		done
 	fi
 
+	# H.323
+	if [ "${CONNTRACK_H323}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper h323 -j ACCEPT
+
+		# Gatekeeper RAS
+		iptables -t raw -A CONNTRACK -p udp --dport 1719 -j CT --helper h323
+
+		# Q.931
+		iptables -t raw -A CONNTRACK -p tcp --dport 1720 -j CT --helper h323
+	fi
+
 	# FTP
 	if [ "${CONNTRACK_FTP}" = "on" ]; then
 		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
