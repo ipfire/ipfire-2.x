@@ -136,7 +136,7 @@ $(TARGET) :
 	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 
 	# Add conntrack helper default settings
-	for proto in AMANDA FTP PPTP SIP TFTP; do \
+	for proto in AMANDA FTP IRC PPTP SIP TFTP; do \
 		echo "CONNTRACK_$${proto}=on" >> $(CONFIG_ROOT)/optionsfw/settings; \
 	done
 
