@@ -97,26 +97,34 @@ iptables_init() {
 	# Conntrack helpers (https://home.regit.org/netfilter-en/secure-use-of-helpers/)
 
 	# SIP
-	iptables -A CONNTRACK -m conntrack --ctstate RELATED \
-		-m helper --helper sip -j ACCEPT
-	for proto in udp tcp; do
-		iptables -t raw -A CONNTRACK -p "${proto}" --dport 5060 -j CT --helper sip
-	done
+	if [ "${CONNTRACK_SIP}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper sip -j ACCEPT
+		for proto in udp tcp; do
+			iptables -t raw -A CONNTRACK -p "${proto}" --dport 5060 -j CT --helper sip
+		done
+	fi
 
 	# FTP
-	iptables -A CONNTRACK -m conntrack --ctstate RELATED \
-		-m helper --helper ftp -p tcp --dport 1024: -j ACCEPT
-	iptables -t raw -A CONNTRACK -p tcp --dport 21 -j CT --helper ftp
+	if [ "${CONNTRACK_FTP}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper ftp -p tcp --dport 1024: -j ACCEPT
+		iptables -t raw -A CONNTRACK -p tcp --dport 21 -j CT --helper ftp
+	fi
 
 	# PPTP
-	iptables -A CONNTRACK -m conntrack --ctstate RELATED \
-		-m helper --helper pptp -j ACCEPT
-	iptables -t raw -A CONNTRACK -p udp --dport 1723 -j CT --helper pptp
+	if [ "${CONNTRACK_PPTP}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper pptp -j ACCEPT
+		iptables -t raw -A CONNTRACK -p udp --dport 1723 -j CT --helper pptp
+	fi
 
 	# TFTP
-	iptables -A CONNTRACK -m conntrack --ctstate RELATED \
-		-m helper --helper tftp -j ACCEPT
-	iptables -t raw -A CONNTRACK -p udp --dport 69 -j CT --helper tftp
+	if [ "${CONNTRACK_TFTP}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper tftp -j ACCEPT
+		iptables -t raw -A CONNTRACK -p udp --dport 69 -j CT --helper tftp
+	fi
 
 	# Fix for braindead ISP's
 	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu

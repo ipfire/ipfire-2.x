@@ -135,6 +135,11 @@ $(TARGET) :
 	echo  "POLICY=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 
+	# Add conntrack helper default settings
+	for proto in FTP PPTP SIP TFTP; do \
+		echo "CONNTRACK_$${proto}=on" >> $(CONFIG_ROOT)/optionsfw/settings; \
+	done
+
 	# set converters executable
 	chmod 755 /usr/sbin/convert-*
 
