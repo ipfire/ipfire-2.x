@@ -126,6 +126,13 @@ iptables_init() {
 		iptables -t raw -A CONNTRACK -p udp --dport 69 -j CT --helper tftp
 	fi
 
+	# Amanda
+	if [ "${CONNTRACK_AMANDA}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper amanda -j ACCEPT
+		iptables -t raw -A CONNTRACK -j CT --helper amanda
+	fi
+
 	# Fix for braindead ISP's
 	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
