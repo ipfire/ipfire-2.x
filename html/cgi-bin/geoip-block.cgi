@@ -225,7 +225,16 @@ foreach my $location (@locations) {
 	print "<td align='center' $col>$flag</td>\n";
 	print "<td align='center' $col>$ccode_uc</td>\n";
 	print "<td align='left' $col>$cname</td>$line_end\n";
-			
+
+	# Finish column when the last element in the array has passed and we have an uneven amount of items.
+	if(! ($lines2 % 2) && ($location eq $locations[-1] )) {
+		print "<td $col>&nbsp;</td>\n";
+		print "<td $col>&nbsp;</td>\n";
+		print "<td $col>&nbsp;</td>\n";
+		print "<td $col>&nbsp;</td>\n";
+		print "<td $col>&nbsp;</td></tr>\n";
+	}
+
 $lines2++;
 }
 
