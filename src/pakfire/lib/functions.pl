@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2015   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -587,6 +587,25 @@ sub resolvedeps {
 	message("");
 	chomp (@all);
 	return @all;
+}
+
+sub resolvedeps_recursive {
+	my @packages = shift;
+	my @result = ();
+
+	foreach my $pkg (@packages) {
+		my @deps = &Pakfire::resolvedeps($pkg);
+
+		foreach my $dep (@deps) {
+			push(@result, $dep);
+		}
+	}
+
+	# Sort the result array and remove dupes
+	my %sort = map{ $_, 1 } @result;
+	@result = keys %sort;
+
+	return @result;
 }
 
 sub cleanup {
