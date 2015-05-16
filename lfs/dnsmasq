@@ -162,6 +162,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0087-Constify-some-DHCP-lease-management-functions.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0088-Handle-UDP-packet-loss-when-fragmentation-of-large-packets-is-broken.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0089-Check-IPv4-mapped-IPv6-addresses-with--stop-rebind.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0090-Tweak-EDNS-timeout-code.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0091-Pointer-to-mail-archive-mailing-list-mirror-in-doc-html.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0092-Allow-T1-and-T2-DHCPv4-options-to-be-set.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0093-Use-correct-DHCP-context-for-PXE-proxy-server-id.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0094-Fix-buffer-overflow-introduced-in-2-73rc6.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 	cd $(DIR_APP) && sed -i src/config.h \
 		-e 's|/\* #define HAVE_IDN \*/|#define HAVE_IDN|g' \
