@@ -393,6 +393,7 @@ sub dbgetlist {
 	foreach $file (@files) {
 		next if ( $file eq "." );
 		next if ( $file eq ".." );
+		next if ( $file eq "meta-" );
 		next if ( $file =~ /^old/ );
 		open(FILE, "<$Conf::dbdir/meta/$file");
 		@meta = <FILE>;
@@ -714,7 +715,7 @@ sub getpak {
 	}
 	
 	unless ($file) {
-		message("No filename given in meta-file. Please phone the developers.");
+		message("No filename given in meta-file.");
 		exit 1;
 	}
 	
