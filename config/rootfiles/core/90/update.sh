@@ -265,7 +265,7 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
 		echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
 		echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-pae
-		rm -f /opt/pakfire/db/meta/meta-linux-pae 2>&1 > /dev/null
+#		rm -f /opt/pakfire/db/meta/meta-linux-pae 2>&1 > /dev/null
 	fi
 fi
 
