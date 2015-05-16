@@ -254,7 +254,7 @@ fi
 
 
 # Force (re)install pae kernel if pae is supported
-rm -rf /opt/pakfire/db/*/meta-linux-pae
+rm -rf /opt/pakfire/db/installed/meta-linux-pae
 if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 	ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 	BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
