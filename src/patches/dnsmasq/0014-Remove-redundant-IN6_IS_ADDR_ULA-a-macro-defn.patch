@@ -1,7 +1,7 @@
 From bd9520b7ade7098ee423acc38965376aa57feb07 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Tue, 16 Dec 2014 20:41:29 +0000
-Subject: [PATCH 14/87] Remove redundant IN6_IS_ADDR_ULA(a) macro defn.
+Subject: [PATCH 14/98] Remove redundant IN6_IS_ADDR_ULA(a) macro defn.
 
 ---
  src/network.c | 4 ----

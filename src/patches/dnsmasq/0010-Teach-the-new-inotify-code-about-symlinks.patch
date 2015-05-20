@@ -1,7 +1,7 @@
 From 857973e6f7e0a3d03535a9df7f9373fd7a0b65cc Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 15 Dec 2014 15:58:13 +0000
-Subject: [PATCH 10/87] Teach the new inotify code about symlinks.
+Subject: [PATCH 10/98] Teach the new inotify code about symlinks.
 
 ---
  src/inotify.c | 43 +++++++++++++++++++++++++++----------------

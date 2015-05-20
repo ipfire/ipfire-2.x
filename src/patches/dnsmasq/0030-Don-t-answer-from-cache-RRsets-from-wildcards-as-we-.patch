@@ -1,7 +1,7 @@
 From 5e321739db381a1d7b5964d76e9c81471d2564c9 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 12 Jan 2015 23:16:56 +0000
-Subject: [PATCH 30/87] Don't answer from cache RRsets from wildcards, as we
+Subject: [PATCH 30/98] Don't answer from cache RRsets from wildcards, as we
  don't have NSECs.
 
 ---

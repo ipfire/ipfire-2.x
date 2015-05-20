@@ -1,7 +1,7 @@
 From 0b1008d367d44e77352134a4c5178f896f0db3e7 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sat, 27 Dec 2014 15:33:32 +0000
-Subject: [PATCH 22/87] Bad packet protection.
+Subject: [PATCH 22/98] Bad packet protection.
 
 ---
  src/dnssec.c | 2 +-

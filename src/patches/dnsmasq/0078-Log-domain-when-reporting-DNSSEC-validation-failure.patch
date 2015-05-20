@@ -1,7 +1,7 @@
 From 554b580e970275d5a869cb4fbfb2716f92b2f664 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Fri, 17 Apr 2015 22:50:20 +0100
-Subject: [PATCH 78/87] Log domain when reporting DNSSEC validation failure.
+Subject: [PATCH 78/98] Log domain when reporting DNSSEC validation failure.
 
 ---
  src/forward.c | 15 ++++++++++-----
