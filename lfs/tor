@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.2.5.12
+VER        = 0.2.6.8
 
 THISAPP    = tor-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tor
-PAK_VER    = 10
+PAK_VER    = 11
 
 DEPS       = "libevent2"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 89745069a7efb7aafd01ae263bd0fe5c
+$(DL_FILE)_MD5 = 20a8c1f8cd7e8c912c4f3f0b67740fa5
 
 install : $(TARGET)
 
