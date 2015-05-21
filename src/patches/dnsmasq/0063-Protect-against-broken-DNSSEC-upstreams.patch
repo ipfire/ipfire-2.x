@@ -1,7 +1,7 @@
 From 0b8a5a30a77331974ba24a04e43e720585dfbc61 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Fri, 27 Mar 2015 11:44:55 +0000
-Subject: [PATCH 63/87] Protect against broken DNSSEC upstreams.
+Subject: [PATCH 63/98] Protect against broken DNSSEC upstreams.
 
 ---
  src/dnssec.c | 7 +++++--

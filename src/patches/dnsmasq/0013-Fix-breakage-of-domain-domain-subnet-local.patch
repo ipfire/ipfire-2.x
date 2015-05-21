@@ -1,7 +1,7 @@
 From 3ad3f3bbd4ee716a7d2fb1e115cf89bd1b1a5de9 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Tue, 16 Dec 2014 18:25:17 +0000
-Subject: [PATCH 13/87] Fix breakage of --domain=<domain>,<subnet>,local
+Subject: [PATCH 13/98] Fix breakage of --domain=<domain>,<subnet>,local
 
 ---
  CHANGELOG    |  4 ++++

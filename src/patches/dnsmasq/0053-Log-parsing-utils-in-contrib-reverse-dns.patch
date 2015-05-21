@@ -1,7 +1,7 @@
 From 47b9ac59c715827252ae6e6732903c3dabb697fb Mon Sep 17 00:00:00 2001
 From: Joachim Zobel <jz-2014@heute-morgen.de>
 Date: Mon, 23 Feb 2015 21:38:11 +0000
-Subject: [PATCH 53/87] Log parsing utils in contrib/reverse-dns
+Subject: [PATCH 53/98] Log parsing utils in contrib/reverse-dns
 
 ---
  contrib/reverse-dns/README             | 18 ++++++++++++++++++

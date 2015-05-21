@@ -1,7 +1,7 @@
 From f2658275b25ebfe691cdcb9fede85a3088cca168 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Thu, 25 Sep 2014 21:51:25 +0100
-Subject: [PATCH 01/87] Add newline at the end of example config file.
+Subject: [PATCH 01/98] Add newline at the end of example config file.
 
 ---
  dnsmasq.conf.example | 2 +-

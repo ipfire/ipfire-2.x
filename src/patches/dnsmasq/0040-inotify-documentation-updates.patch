@@ -1,7 +1,7 @@
 From 3d04f46334d0e345f589eda1372e638b946fe637 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sat, 31 Jan 2015 21:59:13 +0000
-Subject: [PATCH 40/87] inotify documentation updates.
+Subject: [PATCH 40/98] inotify documentation updates.
 
 ---
  man/dnsmasq.8 | 11 +++++++++--
