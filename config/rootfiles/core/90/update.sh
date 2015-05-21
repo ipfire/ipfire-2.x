@@ -225,22 +225,9 @@ if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
 
-case "$(uname -m)" in
-	i?86)
-	case "$(find_device "/")" in
-		xvd* )
-			echo Skip remove grub2 files, because pygrub fail.
-			rm -f /boot/grub/*
-			echo config will recreated by linux-pae install.
-			;;
-		* )
-			#
-			# Update to GRUB2 config
-			#
-			grub-mkconfig > /boot/grub/grub.cfg
-			;;
-	esac
-esac
+if [ -e /boot/grub/grub.cfg ]; then
+		grub-mkconfig > /boot/grub/grub.cfg
+fi
 
 # Upadate Kernel version uEnv.txt
 if [ -e /boot/uEnv.txt ]; then

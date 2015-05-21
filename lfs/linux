@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 59
+PAK_VER    = 60
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
