@@ -27,9 +27,9 @@ include Config
 VER        = 1.1.6
 
 THISAPP    = libnet-$(VER)
-DL_FILE    = libnet.tar.gz
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/libnet
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
