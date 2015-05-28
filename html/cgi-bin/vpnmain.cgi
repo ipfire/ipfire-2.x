@@ -3029,12 +3029,6 @@ sub make_algos($$$$$) {
 					if (!$is_aead) {
 						push(@algo, $int);
 					}
-
-					if ($grp =~ m/^e(.*)$/) {
-						push(@algo, "ecp$1");
-					} else {
-						push(@algo, "modp$grp");
-					}
 				}
 
 				push(@algos, join("-", @algo));
