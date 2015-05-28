@@ -447,6 +447,7 @@
 < red1
 < samba join a domain
 < samba join domain
+< search
 < server restart
 < show dh
 < snat new source ip address
@@ -1032,6 +1033,7 @@
 < red1
 < samba join a domain
 < samba join domain
+< search
 < server restart
 < Set time on boot
 < show dh
@@ -1581,6 +1583,7 @@
 < red1
 < samba join a domain
 < samba join domain
+< search
 < server restart
 < show dh
 < snat new source ip address
@@ -2133,6 +2136,7 @@
 < red1
 < samba join a domain
 < samba join domain
+< search
 < server restart
 < show dh
 < snat new source ip address
