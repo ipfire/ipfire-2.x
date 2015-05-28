@@ -1950,6 +1950,7 @@
 'save settings' => 'Einstellungen speichern',
 'save-adv-options' => 'Erweiterte Optionen speichern',
 'script name' => 'Skriptname:',
+'search' => 'Suchen',
 'secondary dns' => 'Sekundärer DNS:',
 'secondary ntp server' => 'Sekundärer NTP-Server',
 'secondary wins server address' => 'Sekundäre WINS-Server Adresse',

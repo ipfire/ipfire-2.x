@@ -382,6 +382,7 @@ WARNING: translation string unused: outgoing firewall reset
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn config
+WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn_fastio
@@ -973,6 +974,7 @@ WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: samba join a domain
 WARNING: untranslated string: samba join domain
+WARNING: untranslated string: search
 WARNING: untranslated string: server restart
 WARNING: untranslated string: show dh
 WARNING: untranslated string: show tls-auth key

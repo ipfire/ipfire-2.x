@@ -1982,6 +1982,7 @@
 'save settings' => 'Save settings',
 'save-adv-options' => 'Save advanced options',
 'script name' => 'Script name:',
+'search' => 'Search',
 'secondary dns' => 'Secondary DNS:',
 'secondary ntp server' => 'Secondary NTP server',
 'secondary wins server address' => 'Secondary WINS server address',
