@@ -75,15 +75,17 @@ chown nobody.nobody \
 	/var/run/ovpnserver.log
 
 # Update OpenVPN/collectd configuration
-files=`find /var/ipfire/ovpn/n2nconf/ -type d`
-for i in $files;
-do
-	if ! grep -q "status-version" $i/${i##*/}.conf; then
-		echo "# Logfile" >> $i/${i##*/}.conf
-		echo "status-version 1" >> $i/${i##*/}.conf
+for i in /var/ipfire/ovpn/n2nconf/*/*.conf; do
+	name="${i##*/}"
+	name="${name%*.conf}"
+
+	if ! grep -qE "^status-version" ${i}; then
+		echo "# Logfile" >> ${i}
+		echo "status-version 1" >> ${i}
 	fi
-	if ! grep -q "status " $i/${i##*/}.conf; then
-		echo "status /var/run/openvpn/${i##*/}-n2n 10" >> $i/${i##*/}.conf
+
+	if ! grep -qE "^status " ${i}; then
+		echo "status /var/run/openvpn/${name}-n2n 10" >> ${i}
 	fi
 done
 
