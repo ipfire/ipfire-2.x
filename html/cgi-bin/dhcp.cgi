@@ -438,6 +438,9 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'add'}.'2') {
 	if ($dhcpsettings{'KEY2'} eq '') { #add or edit ?
 	    unshift (@current2, "$dhcpsettings{'FIX_MAC'},$dhcpsettings{'FIX_ADDR'},$dhcpsettings{'FIX_ENABLED'},$dhcpsettings{'FIX_NEXTADDR'},$dhcpsettings{'FIX_FILENAME'},$dhcpsettings{'FIX_ROOTPATH'},$dhcpsettings{'FIX_REMARK'}\n");
 	    &General::log($Lang::tr{'fixed ip lease added'});
+
+	    # Enter edit mode
+	    $dhcpsettings{'KEY2'} = $key;
 	} else {
 	    @current2[$dhcpsettings{'KEY2'}] = "$dhcpsettings{'FIX_MAC'},$dhcpsettings{'FIX_ADDR'},$dhcpsettings{'FIX_ENABLED'},$dhcpsettings{'FIX_NEXTADDR'},$dhcpsettings{'FIX_FILENAME'},$dhcpsettings{'FIX_ROOTPATH'},$dhcpsettings{'FIX_REMARK'}\n";
 	    $dhcpsettings{'KEY2'} = '';       # End edit mode
