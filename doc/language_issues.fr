@@ -932,6 +932,7 @@ WARNING: untranslated string: most preferred
 WARNING: untranslated string: nameserver
 WARNING: untranslated string: no data
 WARNING: untranslated string: no hardware random number generator
+WARNING: untranslated string: none
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: notice
 WARNING: untranslated string: ntp common settings

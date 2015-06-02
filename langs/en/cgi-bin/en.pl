@@ -1645,6 +1645,7 @@
 'no modem selected' => 'No modem selected',
 'no set selected' => 'No set was selected',
 'no time limit' => 'unlimited time',
+'none' => 'none',
 'none found' => 'none found',
 'nonetworkname' => 'No Network Name entered',
 'noservicename' => 'No Service Name entered',
