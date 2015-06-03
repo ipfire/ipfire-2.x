@@ -82,8 +82,6 @@ int main(int argc, char *argv[])
 	if (!(gw = fopen(CONFIG_ROOT "/red/remote-ipaddress", "r")))
 	{
 		fprintf(stderr, "Couldn't open remote-ipaddress file\n");
-		fclose(gw);
-		gw = NULL;
 		exit(1);
 	}
 
