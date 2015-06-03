@@ -253,8 +253,10 @@ sub writeipsecfiles {
     print CONF "\n";
 
     # Add user includes to config file
-    print CONF "include /etc/ipsec.user.conf\n";
-    print CONF "\n";
+    if (-e "/etc/ipsec.user.conf") {
+        print CONF "include /etc/ipsec.user.conf\n";
+        print CONF "\n";
+    }
 
     print SECRETS "include /etc/ipsec.user.secrets\n";
 
@@ -407,6 +409,14 @@ sub writeipsecfiles {
 
 	print CONF "\n";
     }#foreach key
+
+    # Add post user includes to config file
+    # After the GUI-connections allows to patch connections.
+    if (-e "/etc/ipsec.user-post.conf") {
+        print CONF "include /etc/ipsec.user-post.conf\n";
+        print CONF "\n";
+    }
+
     print SECRETS $last_secrets if ($last_secrets);
     close(CONF);
     close(SECRETS);
