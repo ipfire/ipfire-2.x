@@ -3,3 +3,5 @@ etc/issue
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/dhcp.cgi
+srv/web/ipfire/cgi-bin/pppsetup.cgi
+var/ipfire/langs
