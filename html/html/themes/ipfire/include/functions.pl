@@ -152,12 +152,14 @@ print <<END
 	<body>
 		<div id="header" class="fixed">
 			<div id="logo">
+				<a href="http://www.ipfire.org" style="text-decoration: none;">
+					<img src="/themes/ipfire/images/tux2.png" style="float:left; margin-left: -3px; margin-top: -3px;"/>
 END
 ;
 	if ($settings{'WINDOWWITHHOSTNAME'} ne 'off') {
-		print "<h1>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</h1>";
+		print "</a><h1>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</h1>";
 	} else {
-		print "<h1>IPFire</h1>";
+		print "<h1>IPFire</h1></a>";
 	}
 
 print <<END
