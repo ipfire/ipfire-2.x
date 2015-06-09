@@ -34,6 +34,10 @@ done
 # Extract files
 extract_files
 
+# Create some missing graphs folders (core90)
+mkdir -p /srv/web/ipfire/html/{accounting,graphs}
+chmod 777 /srv/web/ipfire/html/{accounting,graphs}
+
 # Update Language cache
 update-lang-cache
 
