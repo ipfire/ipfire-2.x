@@ -24,7 +24,7 @@
 
 include Config
 
-VER	   = 2.7.9
+VER	   = 2.7.3
 
 include python
 
