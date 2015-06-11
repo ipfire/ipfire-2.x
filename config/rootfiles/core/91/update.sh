@@ -55,7 +55,7 @@ if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 fi
 
 # This update need a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
