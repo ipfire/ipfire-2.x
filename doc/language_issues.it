@@ -708,6 +708,9 @@ WARNING: untranslated string: no data
 WARNING: untranslated string: outgoing compression in bytes per second
 WARNING: untranslated string: outgoing overhead in bytes per second
 WARNING: untranslated string: ovpn add conf
+WARNING: untranslated string: pptp netconfig
+WARNING: untranslated string: pptp peer
+WARNING: untranslated string: pptp route
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed

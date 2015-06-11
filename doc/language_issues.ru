@@ -954,6 +954,9 @@ WARNING: untranslated string: ovpn no connections
 WARNING: untranslated string: ovpn port in root range
 WARNING: untranslated string: p2p block
 WARNING: untranslated string: p2p block save notice
+WARNING: untranslated string: pptp netconfig
+WARNING: untranslated string: pptp peer
+WARNING: untranslated string: pptp route
 WARNING: untranslated string: proxy reports
 WARNING: untranslated string: proxy reports daily
 WARNING: untranslated string: proxy reports monthly

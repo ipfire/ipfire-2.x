@@ -749,6 +749,9 @@ WARNING: untranslated string: ovpn dh upload
 WARNING: untranslated string: ovpn generating the root and host certificates
 WARNING: untranslated string: ovpn ha
 WARNING: untranslated string: ovpn hmac
+WARNING: untranslated string: pptp netconfig
+WARNING: untranslated string: pptp peer
+WARNING: untranslated string: pptp route
 WARNING: untranslated string: random number generator daemon
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
