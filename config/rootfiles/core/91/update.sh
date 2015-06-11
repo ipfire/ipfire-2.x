@@ -39,7 +39,7 @@ mkdir -p /srv/web/ipfire/html/{accounting,graphs}
 chmod 777 /srv/web/ipfire/html/{accounting,graphs}
 
 # Update Language cache
-update-lang-cache
+/usr/local/bin/update-lang-cache
 
 sync
 
