@@ -960,6 +960,9 @@ WARNING: untranslated string: ovpn routes push options
 WARNING: untranslated string: p2p block
 WARNING: untranslated string: p2p block save notice
 WARNING: untranslated string: pakfire ago
+WARNING: untranslated string: pptp netconfig
+WARNING: untranslated string: pptp peer
+WARNING: untranslated string: pptp route
 WARNING: untranslated string: proxy reports
 WARNING: untranslated string: proxy reports daily
 WARNING: untranslated string: proxy reports monthly

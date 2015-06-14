@@ -92,7 +92,6 @@ srv/web/ipfire/html/blob.gif
 srv/web/ipfire/html/clwarn.cgi
 srv/web/ipfire/html/dial.cgi
 srv/web/ipfire/html/favicon.ico
-#srv/web/ipfire/html/graphs
 #srv/web/ipfire/html/images
 srv/web/ipfire/html/images/IPFire.png
 srv/web/ipfire/html/images/add.gif
@@ -357,3 +356,5 @@ srv/web/ipfire/html/themes/maniac/include/style.css
 var/updatecache
 var/updatecache/download
 var/updatecache/metadata
+srv/web/ipfire/html/accounting
+srv/web/ipfire/html/graphs

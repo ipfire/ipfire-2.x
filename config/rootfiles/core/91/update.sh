@@ -31,16 +31,31 @@ do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Stop services
+/etc/init.d/ipsec stop
+
 # Extract files
 extract_files
 
+# Create some missing graphs folders (core90)
+mkdir -p /srv/web/ipfire/html/{accounting,graphs}
+chmod 777 /srv/web/ipfire/html/{accounting,graphs}
+
 # Update Language cache
-update-lang-cache
+/usr/local/bin/update-lang-cache
+
+# Regenerate IPsec configuration
+sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
 
 sync
 
+# Start services
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	/etc/init.d/ipsec start
+fi
+
 # This update need a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start

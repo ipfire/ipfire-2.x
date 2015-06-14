@@ -437,6 +437,9 @@
 < ovpn reneg sec
 < p2p block
 < p2p block save notice
+< pptp netconfig
+< pptp peer
+< pptp route
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -1023,6 +1026,9 @@
 < ovpn routes push options
 < p2p block
 < p2p block save notice
+< pptp netconfig
+< pptp peer
+< pptp route
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -1573,6 +1579,9 @@
 < ovpn routes push options
 < p2p block
 < p2p block save notice
+< pptp netconfig
+< pptp peer
+< pptp route
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -2126,6 +2135,9 @@
 < ovpn reneg sec
 < p2p block
 < p2p block save notice
+< pptp netconfig
+< pptp peer
+< pptp route
 < proxy reports
 < proxy reports daily
 < proxy reports monthly

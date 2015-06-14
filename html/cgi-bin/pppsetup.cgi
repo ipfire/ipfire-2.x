@@ -793,15 +793,15 @@ print <<END
         <td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'pptp settings'}</b></td>
 </tr>
 <tr>
-        <td width='25%'>Peer</td>
+        <td width='25%'>$Lang::tr{'pptp peer'}:</td>
         <td colspan='3'><input size=50 type='text' name='PPTP_PEER' value='$pppsettings{'PPTP_PEER'}' /></td>
 </tr>
 <tr>
-        <td width='25%'>My Netconfig</td>
+        <td width='25%'>$Lang::tr{'pptp netconfig'}:</td>
         <td colspan='3'><input size=50 type='text' name='PPTP_NICCFG' value='$pppsettings{'PPTP_NICCFG'}' /></td>
 </tr>
 <tr>
-        <td width='25%'>PPTP Route&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'>$Lang::tr{'pptp route'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td colspan='3'><input size=50 type='text' name='PPTP_ROUTE' value='$pppsettings{'PPTP_ROUTE'}' /></td>
 </tr>
 

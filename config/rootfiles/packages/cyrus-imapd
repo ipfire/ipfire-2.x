@@ -146,6 +146,7 @@ var/imap/msg
 var/imap/proc
 var/imap/ptclient
 var/imap/socket
+var/ipfire/backup/addons/includes/cyrus-imapd
 var/ipfire/cyrusimap
 var/ipfire/cyrusimap/cyrus.conf
 var/ipfire/cyrusimap/imapd.conf

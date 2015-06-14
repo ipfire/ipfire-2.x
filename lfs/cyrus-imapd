@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cyrus-imapd
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = ""
 
@@ -100,5 +100,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f $(DIR_APP)/tools/mkimap /usr/bin
 	sudo -u cyrus /usr/bin/mkimap /var/ipfire/cyrusimap/imapd.conf
 	chown cyrus.mail /var/imap/socket
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/cyrus-imapd \
+		/var/ipfire/backup/addons/includes/cyrus-imapd
 	@rm -rf $(DIR_APP) /usr/include/com_err.h
 	@$(POSTBUILD)

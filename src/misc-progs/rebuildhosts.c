@@ -79,18 +79,13 @@ int main(int argc, char *argv[])
 	freekeyvalues(kv);
 	kv = NULL;
 
-	if (!(gw = fopen(CONFIG_ROOT "/red/remote-ipaddress", "r")))
-	{
+	if ((gw = fopen(CONFIG_ROOT "/red/remote-ipaddress", "r"))) {
+		if (fgets(gateway, STRING_SIZE, gw) == NULL) {
+			fprintf(stderr, "Couldn't read remote-ipaddress\n");
+			exit(1);
+		}
+	} else {
 		fprintf(stderr, "Couldn't open remote-ipaddress file\n");
-		fclose(gw);
-		gw = NULL;
-		exit(1);
-	}
-
-	if (fgets(gateway, STRING_SIZE, gw) == NULL)
-	{
-		fprintf(stderr, "Couldn't read remote-ipaddress\n");
-		exit(1);
 	}
 
 	if (!(fd = fopen(CONFIG_ROOT "/main/hosts", "r")))
@@ -112,7 +107,8 @@ int main(int argc, char *argv[])
 	else
 		fprintf(hosts, "%s\t%s\n",address,hostname);
 
-	fprintf(hosts, "%s\tgateway\n",gateway);
+	if (strlen(gateway) > 0)
+		fprintf(hosts, "%s\tgateway\n", gateway);
 
 	while (fgets(buffer, STRING_SIZE, fd))
 	{
