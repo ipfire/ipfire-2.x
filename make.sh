@@ -702,6 +702,7 @@ buildipfire() {
   ipfiremake mpd
   ipfiremake libmpdclient
   ipfiremake mpc
+  ipfiremake perl-Net-SMTP-SSL
   ipfiremake git
   ipfiremake squidclamav
   ipfiremake vnstat
