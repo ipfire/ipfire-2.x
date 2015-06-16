@@ -704,6 +704,7 @@ buildipfire() {
   ipfiremake mpc
   ipfiremake perl-Net-SMTP-SSL
   ipfiremake perl-MIME-Base64
+  ipfiremake perl-Authen-SASL
   ipfiremake git
   ipfiremake squidclamav
   ipfiremake vnstat
