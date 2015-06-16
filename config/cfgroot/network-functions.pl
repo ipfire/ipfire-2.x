@@ -23,6 +23,8 @@
 
 package Network;
 
+require "/var/ipfire/general-functions.pl";
+
 use Socket;
 
 my %PREFIX2NETMASK = (
@@ -242,6 +244,31 @@ sub ip_address_in_network($$) {
 	my $broadcast_bin = $network_bin ^ ~$netmask_bin;
 
 	return (($address_bin ge $network_bin) && ($address_bin le $broadcast_bin));
+}
+
+sub setup_upstream_proxy() {
+	my %proxysettings = ();
+	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+
+	if ($proxysettings{'UPSTREAM_PROXY'}) {
+		my $credentials = "";
+
+		if ($proxysettings{'UPSTREAM_USER'}) {
+			$credentials = $proxysettings{'UPSTREAM_USER'};
+
+			if ($proxysettings{'UPSTREAM_PASSWORD'}) {
+				$credentials .= ":" . $proxysettings{'UPSTREAM_PASSWORD'};
+			}
+
+			$credentials .= "@";
+		}
+
+		my $proxy = "http://" . $credentials . $proxysettings{'UPSTREAM_PROXY'};
+
+		$ENV{'http_proxy'} = $proxy;
+		$ENV{'https_proxy'} = $proxy;
+		$ENV{'ftp_proxy'} = $proxy;
+	}
 }
 
 1;
