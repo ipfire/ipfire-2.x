@@ -438,6 +438,9 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'add'}.'2') {
 	if ($dhcpsettings{'KEY2'} eq '') { #add or edit ?
 	    unshift (@current2, "$dhcpsettings{'FIX_MAC'},$dhcpsettings{'FIX_ADDR'},$dhcpsettings{'FIX_ENABLED'},$dhcpsettings{'FIX_NEXTADDR'},$dhcpsettings{'FIX_FILENAME'},$dhcpsettings{'FIX_ROOTPATH'},$dhcpsettings{'FIX_REMARK'}\n");
 	    &General::log($Lang::tr{'fixed ip lease added'});
+
+	    # Enter edit mode
+	    $dhcpsettings{'KEY2'} = $key;
 	} else {
 	    @current2[$dhcpsettings{'KEY2'}] = "$dhcpsettings{'FIX_MAC'},$dhcpsettings{'FIX_ADDR'},$dhcpsettings{'FIX_ENABLED'},$dhcpsettings{'FIX_NEXTADDR'},$dhcpsettings{'FIX_FILENAME'},$dhcpsettings{'FIX_ROOTPATH'},$dhcpsettings{'FIX_REMARK'}\n";
 	    $dhcpsettings{'KEY2'} = '';       # End edit mode
@@ -857,12 +860,31 @@ print <<END
 </tr>
 </table>
 </form>
+<hr />
 END
 ;
 #Edited line number (KEY2) passed until cleared by 'save' or 'remove' or 'new sort order'
 
+# Search for static leases
+my $search_query = $dhcpsettings{'q'};
+
+if (scalar @current2 >= 10) {
+	print <<END;
+		<form method="POST" action="#search">
+			<a name="search"></a>
+			<table width='100%'>
+				<tr>
+					<td>
+						<input type="text" name="q" value="$search_query">
+						<input type="submit" value="$Lang::tr{'search'}">
+					</td>
+				</tr>
+			</table>
+		</form>
+END
+}
+
 print <<END
-<hr />
 <table width='100%' class='tbl'>
 <tr>
     <th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?FETHER'><b>$Lang::tr{'mac address'}</b></a></th>
@@ -916,6 +938,11 @@ foreach my $line (@current2) {
     } else {
 	$gif = 'off.gif';
 	$gdesc = $Lang::tr{'click to enable'}; 
+    }
+
+    # Skip all entries that do not match the search query
+    if ($search_query ne "") {
+	next if (!grep(/$search_query/, @temp));
     }
 
     if ($dhcpsettings{'KEY2'} eq $key) {

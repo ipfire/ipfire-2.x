@@ -1,7 +1,7 @@
 From fbc5205702c7f6f431d9f1043c553d7fb62ddfdb Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Tue, 23 Dec 2014 15:46:08 +0000
-Subject: [PATCH 19/87] Fix problems validating NSEC3 and wildcards.
+Subject: [PATCH 19/98] Fix problems validating NSEC3 and wildcards.
 
 ---
  src/dnssec.c | 253 ++++++++++++++++++++++++++++++-----------------------------

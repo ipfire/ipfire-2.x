@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2015   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -255,14 +255,11 @@
 	} elsif ("$ARGV[0]" eq "upgrade") {
 		&Pakfire::upgradecore();
 		my @upgradepaks = &Pakfire::dblist("upgrade", "noweb");
-		my @temp, $pak;
-		
-		foreach (@upgradepaks) {
-			@temp = &Pakfire::resolvedeps("$_");
-			foreach (@temp) { push(@upgradepaks,$_) if $_; }
-		}
-		
+
 		if (@upgradepaks) {
+			# Resolve the dependencies of the to be upgraded packages
+			my @deps = &Pakfire::resolvedeps_recursive(@upgradepaks);
+
 			&Pakfire::message("");
 			&Pakfire::message("PAKFIRE UPGR: We are going to install all packages listed above.");
 			if ($interactive) {
@@ -277,16 +274,24 @@
 			}
 		}
 		
-		### Download first
+		# Download packages
 		foreach $pak (@upgradepaks) {
-			#system("mv $Conf::dbdir/meta/meta-$pak $Conf::dbdir/meta/old-meta-$pak");
 			&Pakfire::getpak("$pak", "");
 		}
-		
+
+		# Download dependencies
+		foreach $pak (@deps) {
+			&Pakfire::getpak("$pak", "");
+		}
+
+		# Install dependencies first
+		foreach $pak (@deps) {
+			&Pakfire::setuppak("$pak");
+		}
+
+		# Install all upgrades
 		foreach $pak (@upgradepaks) {
-			if (&Pakfire::upgradepak("$pak")) {
-				#system("mv $Conf::dbdir/meta/old-meta-$pak $Conf::dbdir/meta/meta-$pak");
-			}
+			&Pakfire::upgradepak("$pak");
 		}
 		
 	} elsif ("$ARGV[0]" eq "list") {

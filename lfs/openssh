@@ -70,9 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(PADLOCK)" "1"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssh-4.7p1-padlock.patch
-endif
 	cd $(DIR_APP) && sed -i "s/lkrb5 -ldes/lkrb5/" configure
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc/ssh \
 		    --libexecdir=/usr/lib/openssh --with-md5-passwords \

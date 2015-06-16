@@ -1,7 +1,7 @@
 From 28de38768e2c7d763b9aa5b7a4d251d5e56bab0b Mon Sep 17 00:00:00 2001
 From: RinSatsuki <aa65535@live.com>
 Date: Sat, 10 Jan 2015 15:22:21 +0000
-Subject: [PATCH 28/87] Add --min-cache-ttl option.
+Subject: [PATCH 28/98] Add --min-cache-ttl option.
 
 ---
  CHANGELOG     |  7 +++++++

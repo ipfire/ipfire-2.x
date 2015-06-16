@@ -356,3 +356,5 @@ srv/web/ipfire/html/themes/maniac/include/style.css
 var/updatecache
 var/updatecache/download
 var/updatecache/metadata
+srv/web/ipfire/html/accounting
+srv/web/ipfire/html/graphs

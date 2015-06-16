@@ -445,6 +445,7 @@ WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn config
+WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
 WARNING: translation string unused: ovpn log
@@ -683,13 +684,18 @@ WARNING: untranslated string: incoming compression in bytes per second
 WARNING: untranslated string: incoming overhead in bytes per second
 WARNING: untranslated string: invalid input for valid till days
 WARNING: untranslated string: no data
+WARNING: untranslated string: none
 WARNING: untranslated string: outgoing compression in bytes per second
 WARNING: untranslated string: outgoing overhead in bytes per second
 WARNING: untranslated string: ovpn add conf
+WARNING: untranslated string: pptp netconfig
+WARNING: untranslated string: pptp peer
+WARNING: untranslated string: pptp route
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: search
 WARNING: untranslated string: uncheck all
 WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw

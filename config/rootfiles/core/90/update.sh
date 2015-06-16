@@ -208,6 +208,13 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
 # Update Language cache
 perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
+# Remove old udev configuration
+rm -vf /etc/udev/rules.d/30-persistent-network.rules
+
+# Remove pids from dhcp client because it hang at normal shutdown
+# so let the sysvinit kill it
+rm -f /run/dhcpcd-*.pid
+
 #
 # Start services
 #
@@ -218,22 +225,9 @@ if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
 
-case "$(uname -m)" in
-	i?86)
-	case "$(find_device "/")" in
-		xvd* )
-			echo Skip remove grub2 files, because pygrub fail.
-			rm -f /boot/grub/*
-			echo config will recreated by linux-pae install.
-			;;
-		* )
-			#
-			# Update to GRUB2 config
-			#
-			grub-mkconfig > /boot/grub/grub.cfg
-			;;
-	esac
-esac
+if [ -e /boot/grub/grub.cfg ]; then
+		grub-mkconfig > /boot/grub/grub.cfg
+fi
 
 # Upadate Kernel version uEnv.txt
 if [ -e /boot/uEnv.txt ]; then
@@ -247,7 +241,7 @@ fi
 
 
 # Force (re)install pae kernel if pae is supported
-rm -rf /opt/pakfire/db/*/meta-linux-pae
+rm -rf /opt/pakfire/db/installed/meta-linux-pae
 if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 	ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 	BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
@@ -258,9 +252,7 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
 		echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
 		echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-pae
-		echo "Name: linux-pae" > /opt/pakfire/db/meta/meta-linux-pae
-		echo "ProgVersion: 0" >> /opt/pakfire/db/meta/meta-linux-pae
-		echo "Release: 0"     >> /opt/pakfire/db/meta/meta-linux-pae
+#		rm -f /opt/pakfire/db/meta/meta-linux-pae 2>&1 > /dev/null
 	fi
 fi
 

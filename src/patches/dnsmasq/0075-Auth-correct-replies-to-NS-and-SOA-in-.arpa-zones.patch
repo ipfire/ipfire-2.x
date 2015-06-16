@@ -1,7 +1,7 @@
 From 78c6184752dce27849e36cce4360abc27b8d76d2 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Thu, 16 Apr 2015 15:05:30 +0100
-Subject: [PATCH 75/87] Auth: correct replies to NS and SOA in .arpa zones.
+Subject: [PATCH 75/98] Auth: correct replies to NS and SOA in .arpa zones.
 
 ---
  CHANGELOG  |  8 ++++++++

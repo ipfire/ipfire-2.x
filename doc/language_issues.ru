@@ -384,6 +384,7 @@ WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn config
+WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn_fastio
@@ -916,6 +917,7 @@ WARNING: untranslated string: most preferred
 WARNING: untranslated string: nameserver
 WARNING: untranslated string: no data
 WARNING: untranslated string: no hardware random number generator
+WARNING: untranslated string: none
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: notice
 WARNING: untranslated string: openvpn default
@@ -953,6 +955,9 @@ WARNING: untranslated string: ovpn no connections
 WARNING: untranslated string: ovpn port in root range
 WARNING: untranslated string: p2p block
 WARNING: untranslated string: p2p block save notice
+WARNING: untranslated string: pptp netconfig
+WARNING: untranslated string: pptp peer
+WARNING: untranslated string: pptp route
 WARNING: untranslated string: proxy reports
 WARNING: untranslated string: proxy reports daily
 WARNING: untranslated string: proxy reports monthly
@@ -967,6 +972,7 @@ WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: samba join a domain
 WARNING: untranslated string: samba join domain
+WARNING: untranslated string: search
 WARNING: untranslated string: server restart
 WARNING: untranslated string: show dh
 WARNING: untranslated string: show tls-auth key

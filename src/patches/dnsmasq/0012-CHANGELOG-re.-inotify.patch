@@ -1,7 +1,7 @@
 From ad946d555dce44eb690c7699933b6ff40ab85bb6 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Mon, 15 Dec 2014 17:52:22 +0000
-Subject: [PATCH 12/87] CHANGELOG re. inotify.
+Subject: [PATCH 12/98] CHANGELOG re. inotify.
 
 ---
  CHANGELOG | 4 ++++

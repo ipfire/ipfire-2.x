@@ -55,29 +55,24 @@ depmod -a $KVER-ipfire-pae
 #
 /usr/bin/dracut --force --xz /boot/initramfs-$KVER-ipfire-pae.img $KVER-ipfire-pae  
 
-
-ROOT="$(find_partition "/")"
-case $ROOT in
-	xvd* )
-		#
-		# We are on XEN so create new grub.conf / menu.lst for pygrub
-		#
-		echo "timeout 10"                          > /boot/grub/grub.conf
-		echo "default 0"                          >> /boot/grub/grub.conf
-		echo "title IPFire (pae-kernel)"          >> /boot/grub/grub.conf
-		echo "  kernel /vmlinuz-$KVER-ipfire-pae root=/dev/$ROOT rootdelay=10 panic=10 console=hvc0" \
-							  >> /boot/grub/grub.conf
-		echo "  initrd /initramfs-$KVER-ipfire-pae.img" >> /boot/grub/grub.conf
-		echo "# savedefault 0"			  >> /boot/grub/grub.conf
-		ln -s grub.conf $MNThdd/boot/grub/menu.lst
-		;;
-	* )
-		#
-		# Update grub2 config
-		#
-		grub-mkconfig > /boot/grub/grub.cfg
-		;;
-esac
+if [ -e /boot/grub/grub.cfg ]; then
+	#
+	# Update grub2 config
+	#
+	grub-mkconfig > /boot/grub/grub.cfg
+else
+	#
+	# xen pv with pygrub need grub.conf / menu.lst
+	#
+	echo "timeout 10"                          > /boot/grub/grub.conf
+	echo "default 0"                          >> /boot/grub/grub.conf
+	echo "title IPFire (pae-kernel)"          >> /boot/grub/grub.conf
+	echo "  kernel /vmlinuz-$KVER-ipfire-pae root=/dev/$ROOT rootdelay=10 panic=10 console=hvc0" \
+						  >> /boot/grub/grub.conf
+	echo "  initrd /initramfs-$KVER-ipfire-pae.img" >> /boot/grub/grub.conf
+	echo "# savedefault 0"			  >> /boot/grub/grub.conf
+	ln -s grub.conf $MNThdd/boot/grub/menu.lst
+fi
 
 # request a reboot if pae is supported
 if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then

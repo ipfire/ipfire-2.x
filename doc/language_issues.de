@@ -423,6 +423,7 @@ WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn config
+WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
 WARNING: translation string unused: ovpn log
@@ -643,6 +644,7 @@ WARNING: untranslated string: fwhost cust geoipgrp
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: no data
+WARNING: untranslated string: none
 WARNING: untranslated string: qos add subclass
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added

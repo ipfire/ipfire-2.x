@@ -443,6 +443,7 @@ WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn config
+WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn_fastio
@@ -736,6 +737,7 @@ WARNING: untranslated string: modem status
 WARNING: untranslated string: monitor interface
 WARNING: untranslated string: nameserver
 WARNING: untranslated string: no data
+WARNING: untranslated string: none
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: outgoing compression in bytes per second
 WARNING: untranslated string: outgoing overhead in bytes per second
@@ -748,6 +750,9 @@ WARNING: untranslated string: ovpn dh upload
 WARNING: untranslated string: ovpn generating the root and host certificates
 WARNING: untranslated string: ovpn ha
 WARNING: untranslated string: ovpn hmac
+WARNING: untranslated string: pptp netconfig
+WARNING: untranslated string: pptp peer
+WARNING: untranslated string: pptp route
 WARNING: untranslated string: random number generator daemon
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
@@ -755,6 +760,7 @@ WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: samba join a domain
 WARNING: untranslated string: samba join domain
+WARNING: untranslated string: search
 WARNING: untranslated string: show dh
 WARNING: untranslated string: show tls-auth key
 WARNING: untranslated string: software version

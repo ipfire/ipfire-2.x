@@ -253,8 +253,10 @@ sub writeipsecfiles {
     print CONF "\n";
 
     # Add user includes to config file
-    print CONF "include /etc/ipsec.user.conf\n";
-    print CONF "\n";
+    if (-e "/etc/ipsec.user.conf") {
+        print CONF "include /etc/ipsec.user.conf\n";
+        print CONF "\n";
+    }
 
     print SECRETS "include /etc/ipsec.user.secrets\n";
 
@@ -327,7 +329,13 @@ sub writeipsecfiles {
 	if ($lconfighash{$key}[21] && $lconfighash{$key}[22]) {
 		my @encs   = split('\|', $lconfighash{$key}[21]);
 		my @ints   = split('\|', $lconfighash{$key}[22]);
-		my @groups = split('\|', $lconfighash{$key}[20]);
+		my @groups = split('\|', $lconfighash{$key}[23]);
+
+		# Use IKE grouptype if no ESP group type has been selected
+		# (for backwards compatibility)
+		if ($lconfighash{$key}[23] eq "") {
+			@groups = split('\|', $lconfighash{$key}[20]);
+		}
 
 		my @algos = &make_algos("esp", \@encs, \@ints, \@groups, ($pfs eq "on"));
 		print CONF "\tesp=" . join(",", @algos);
@@ -407,6 +415,14 @@ sub writeipsecfiles {
 
 	print CONF "\n";
     }#foreach key
+
+    # Add post user includes to config file
+    # After the GUI-connections allows to patch connections.
+    if (-e "/etc/ipsec.user-post.conf") {
+        print CONF "include /etc/ipsec.user-post.conf\n";
+        print CONF "\n";
+    }
+
     print SECRETS $last_secrets if ($last_secrets);
     close(CONF);
     close(SECRETS);
@@ -1260,6 +1276,9 @@ END
 	$cgiparams{'ESP_ENCRYPTION'} 	= $confighash{$cgiparams{'KEY'}}[21];
 	$cgiparams{'ESP_INTEGRITY'}  	= $confighash{$cgiparams{'KEY'}}[22];
 	$cgiparams{'ESP_GROUPTYPE'}  	= $confighash{$cgiparams{'KEY'}}[23];
+	if ($cgiparams{'ESP_GROUPTYPE'} eq "") {
+		$cgiparams{'ESP_GROUPTYPE'} = $cgiparams{'IKE_GROUPTYPE'};
+	}
 	$cgiparams{'ESP_KEYLIFE'}    	= $confighash{$cgiparams{'KEY'}}[17];
 	$cgiparams{'COMPRESSION'}    	= $confighash{$cgiparams{'KEY'}}[13];
 	$cgiparams{'ONLY_PROPOSED'}  	= $confighash{$cgiparams{'KEY'}}[24];
@@ -1855,7 +1874,7 @@ END
 	$cgiparams{'IKE_LIFETIME'}   = '3';		#[16];
 	$cgiparams{'ESP_ENCRYPTION'} = 'aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128';	#[21];
 	$cgiparams{'ESP_INTEGRITY'}  = 'sha2_512|sha2_256|sha1';	#[22];
-	$cgiparams{'ESP_GROUPTYPE'}  = '';		#[23];
+	$cgiparams{'ESP_GROUPTYPE'}  = '4096|3072|2048|1536|1024';		#[23];
 	$cgiparams{'ESP_KEYLIFE'}    = '1';		#[17];
 	$cgiparams{'COMPRESSION'}    = 'on';		#[13];
 	$cgiparams{'ONLY_PROPOSED'}  = 'off';		#[24];
@@ -2165,13 +2184,17 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		goto ADVANCED_ERROR;
 	    }
 	}
-	if ($cgiparams{'ESP_GROUPTYPE'} ne '' &&
-	    $cgiparams{'ESP_GROUPTYPE'} !~  /^ecp(192|224|256|384|512)(bp)?$/ &&
-	    $cgiparams{'ESP_GROUPTYPE'} !~  /^modp(1024|1536|2048|2048s(256|224|160)|3072|4096|6144|8192)$/) {
+	@temp = split('\|', $cgiparams{'ESP_GROUPTYPE'});
+	if ($#temp < 0) {
 	    $errormessage = $Lang::tr{'invalid input'};
 	    goto ADVANCED_ERROR;
 	}
-
+	foreach my $val (@temp) {
+	    if ($val !~ /^(e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192|none)$/) {
+		$errormessage = $Lang::tr{'invalid input'};
+		goto ADVANCED_ERROR;
+	    }
+	}
 	if ($cgiparams{'ESP_KEYLIFE'} !~ /^\d+$/) {
 	    $errormessage = $Lang::tr{'invalid input for esp keylife'};
 	    goto ADVANCED_ERROR;
@@ -2234,6 +2257,9 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$cgiparams{'ESP_ENCRYPTION'} = $confighash{$cgiparams{'KEY'}}[21];
 	$cgiparams{'ESP_INTEGRITY'}  = $confighash{$cgiparams{'KEY'}}[22];
 	$cgiparams{'ESP_GROUPTYPE'}  = $confighash{$cgiparams{'KEY'}}[23];
+	if ($cgiparams{'ESP_GROUPTYPE'} eq "") {
+		$cgiparams{'ESP_GROUPTYPE'} = $cgiparams{'IKE_GROUPTYPE'};
+	}
 	$cgiparams{'ESP_KEYLIFE'}    = $confighash{$cgiparams{'KEY'}}[17];
 	$cgiparams{'COMPRESSION'}    = $confighash{$cgiparams{'KEY'}}[13];
 	$cgiparams{'ONLY_PROPOSED'}  = $confighash{$cgiparams{'KEY'}}[24];
@@ -2323,7 +2349,17 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'ESP_INTEGRITY'}{'aesxcbc'} = '';
     @temp = split('\|', $cgiparams{'ESP_INTEGRITY'});
     foreach my $key (@temp) {$checked{'ESP_INTEGRITY'}{$key} = "selected='selected'"; }
-    $checked{'ESP_GROUPTYPE'}{$cgiparams{'ESP_GROUPTYPE'}} = "selected='selected'";
+    $checked{'ESP_GROUPTYPE'}{'768'} = '';
+    $checked{'ESP_GROUPTYPE'}{'1024'} = '';
+    $checked{'ESP_GROUPTYPE'}{'1536'} = '';
+    $checked{'ESP_GROUPTYPE'}{'2048'} = '';
+    $checked{'ESP_GROUPTYPE'}{'3072'} = '';
+    $checked{'ESP_GROUPTYPE'}{'4096'} = '';
+    $checked{'ESP_GROUPTYPE'}{'6144'} = '';
+    $checked{'ESP_GROUPTYPE'}{'8192'} = '';
+    $checked{'ESP_GROUPTYPE'}{'none'} = '';
+    @temp = split('\|', $cgiparams{'ESP_GROUPTYPE'});
+    foreach my $key (@temp) {$checked{'ESP_GROUPTYPE'}{$key} = "selected='selected'"; }
 
     $checked{'COMPRESSION'} = $cgiparams{'COMPRESSION'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'ONLY_PROPOSED'} = $cgiparams{'ONLY_PROPOSED'} eq 'on' ? "checked='checked'" : '' ;
@@ -2484,7 +2520,30 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024</option>
 				</select>
 			</td>
-			<td></td>
+			<td class='boldbase'>
+				<select name='ESP_GROUPTYPE' multiple='multiple' size='6' style='width: 100%'>
+					<option value='e521' $checked{'ESP_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
+					<option value='e512bp' $checked{'ESP_GROUPTYPE'}{'e512bp'}>ECP-512 (Brainpool)</option>
+					<option value='e384' $checked{'ESP_GROUPTYPE'}{'e384'}>ECP-384 (NIST)</option>
+					<option value='e384bp' $checked{'ESP_GROUPTYPE'}{'e384bp'}>ECP-384 (Brainpool)</option>
+					<option value='e256' $checked{'ESP_GROUPTYPE'}{'e256'}>ECP-256 (NIST)</option>
+					<option value='e256bp' $checked{'ESP_GROUPTYPE'}{'e256bp'}>ECP-256 (Brainpool)</option>
+					<option value='e224' $checked{'ESP_GROUPTYPE'}{'e224'}>ECP-224 (NIST)</option>
+					<option value='e224bp' $checked{'ESP_GROUPTYPE'}{'e224bp'}>ECP-224 (Brainpool)</option>
+					<option value='e192' $checked{'ESP_GROUPTYPE'}{'e192'}>ECP-192 (NIST)</option>
+					<option value='8192' $checked{'ESP_GROUPTYPE'}{'8192'}>MODP-8192</option>
+					<option value='6144' $checked{'ESP_GROUPTYPE'}{'6144'}>MODP-6144</option>
+					<option value='4096' $checked{'ESP_GROUPTYPE'}{'4096'}>MODP-4096</option>
+					<option value='3072' $checked{'ESP_GROUPTYPE'}{'3072'}>MODP-3072</option>
+					<option value='2048s256' $checked{'ESP_GROUPTYPE'}{'2048s256'}>MODP-2048/256</option>
+					<option value='2048s224' $checked{'ESP_GROUPTYPE'}{'2048s224'}>MODP-2048/224</option>
+					<option value='2048s160' $checked{'ESP_GROUPTYPE'}{'2048s160'}>MODP-2048/160</option>
+					<option value='2048' $checked{'ESP_GROUPTYPE'}{'2048'}>MODP-2048</option>
+					<option value='1536' $checked{'ESP_GROUPTYPE'}{'1536'}>MODP-1536</option>
+					<option value='1024' $checked{'ESP_GROUPTYPE'}{'1024'}>MODP-1024</option>
+					<option value='none' $checked{'ESP_GROUPTYPE'}{'none'}>- $Lang::tr{'none'} -</option>
+				</select>
+			</td>
 		</tr>
 	</tbody>
     </table>
@@ -3030,7 +3089,9 @@ sub make_algos($$$$$) {
 						push(@algo, $int);
 					}
 
-					if ($grp =~ m/^e(.*)$/) {
+					if ($grp eq "none") {
+						# noop
+					} elsif ($grp =~ m/^e(.*)$/) {
 						push(@algo, "ecp$1");
 					} else {
 						push(@algo, "modp$grp");

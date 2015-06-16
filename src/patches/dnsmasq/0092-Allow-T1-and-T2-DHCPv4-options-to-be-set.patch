@@ -1,17 +1,17 @@
 From ca85a28241ef87919d68d52c843b6964b7070e11 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Wed, 13 May 2015 22:33:04 +0100
-Subject: [PATCH] Allow T1 and T2 DHCPv4 options to be set.
+Subject: [PATCH 92/98] Allow T1 and T2 DHCPv4 options to be set.
 
 ---
- CHANGELOG            |    3 +++
- dnsmasq.conf.example |    8 ++++++
- src/dhcp-common.c    |    4 +--
- src/rfc2131.c        |   71 +++++++++++++++++++++++++++++++++++---------------
+ CHANGELOG            |  3 +++
+ dnsmasq.conf.example |  8 ++++++
+ src/dhcp-common.c    |  4 +--
+ src/rfc2131.c        | 71 ++++++++++++++++++++++++++++++++++++----------------
  4 files changed, 63 insertions(+), 23 deletions(-)
 
 diff --git a/CHANGELOG b/CHANGELOG
-index 94a521f..ef39a41 100644
+index 94a521f996e2..ef39a415788b 100644
 --- a/CHANGELOG
 +++ b/CHANGELOG
 @@ -118,6 +118,9 @@ version 2.73
@@ -25,7 +25,7 @@ index 94a521f..ef39a41 100644
  version 2.72
              Add ra-advrouter mode, for RFC-3775 mobile IPv6 support.
 diff --git a/dnsmasq.conf.example b/dnsmasq.conf.example
-index 67be99a..1ae11df 100644
+index 67be99acb028..1ae11dfb5358 100644
 --- a/dnsmasq.conf.example
 +++ b/dnsmasq.conf.example
 @@ -345,6 +345,14 @@
@@ -44,7 +44,7 @@ index 67be99a..1ae11df 100644
  # is running dnsmasq
  #dhcp-option=42,0.0.0.0
 diff --git a/src/dhcp-common.c b/src/dhcp-common.c
-index ce11520..bc48f41 100644
+index ce115202a646..bc48f41a14d7 100644
 --- a/src/dhcp-common.c
 +++ b/src/dhcp-common.c
 @@ -545,8 +545,8 @@ static const struct opttab_t {
@@ -59,7 +59,7 @@ index ce11520..bc48f41 100644
    { "client-id", 61, OT_INTERNAL },
    { "nis+-domain", 64, OT_NAME },
 diff --git a/src/rfc2131.c b/src/rfc2131.c
-index 5552644..a10e499 100644
+index 55526443dc84..a10e499ef768 100644
 --- a/src/rfc2131.c
 +++ b/src/rfc2131.c
 @@ -52,7 +52,9 @@ static void do_options(struct dhcp_context *context,
@@ -160,16 +160,16 @@ index 5552644..a10e499 100644
 +	  if (hval < lease_time && hval > 2)
 +	    t2val = hval;
 +	}
-+
++       	  
++       while (fuzz > (t1val/8))
++	 fuzz = fuzz/2;
++	 
++       t1val -= fuzz;
++       t2val -= fuzz;
++       
 +       /* ensure T1 is still < T2 */
 +       if (t2val <= t1val)
 +	 t1val = t2val - 1; 
-+
-+       while (fuzz > (t1val/8))
-+	 fuzz = fuzz/2;
-+
-+       t1val -= fuzz;
-+       t2val -= fuzz;
 +
 +       option_put(mess, end, OPTION_T1, 4, t1val);
 +       option_put(mess, end, OPTION_T2, 4, t2val);
@@ -196,5 +196,4 @@ index 5552644..a10e499 100644
  
        if (optno == OPTION_SNAME && done_server)
 -- 
-1.7.10.4
-
+2.1.0
