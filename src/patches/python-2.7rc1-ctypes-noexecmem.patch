@@ -1,0 +1,85 @@
+diff -up Python-2.7rc1/Modules/_ctypes/callbacks.c.selinux Python-2.7rc1/Modules/_ctypes/callbacks.c
+--- Python-2.7rc1/Modules/_ctypes/callbacks.c.selinux	2010-05-09 10:46:46.000000000 -0400
++++ Python-2.7rc1/Modules/_ctypes/callbacks.c	2010-06-08 08:44:18.357366200 -0400
+@@ -21,8 +21,8 @@ CThunkObject_dealloc(PyObject *_self)
+     Py_XDECREF(self->converters);
+     Py_XDECREF(self->callable);
+     Py_XDECREF(self->restype);
+-    if (self->pcl)
+-        _ctypes_free_closure(self->pcl);
++    if (self->pcl_write)
++        ffi_closure_free(self->pcl_write);
+     PyObject_GC_Del(self);
+ }
+ 
+@@ -391,7 +391,8 @@ static CThunkObject* CThunkObject_new(Py
+         return NULL;
+     }
+ 
+-    p->pcl = NULL;
++    p->pcl_exec = NULL;
++    p->pcl_write = NULL;
+     memset(&p->cif, 0, sizeof(p->cif));
+     p->converters = NULL;
+     p->callable = NULL;
+@@ -421,8 +422,9 @@ CThunkObject *_ctypes_alloc_callback(PyO
+ 
+     assert(CThunk_CheckExact(p));
+ 
+-    p->pcl = _ctypes_alloc_closure();
+-    if (p->pcl == NULL) {
++    p->pcl_write = ffi_closure_alloc(sizeof(ffi_closure),
++                                     &p->pcl_exec);
++    if (p->pcl_write == NULL) {
+         PyErr_NoMemory();
+         goto error;
+     }
+@@ -467,7 +469,9 @@ CThunkObject *_ctypes_alloc_callback(PyO
+                      "ffi_prep_cif failed with %d", result);
+         goto error;
+     }
+-    result = ffi_prep_closure(p->pcl, &p->cif, closure_fcn, p);
++    result = ffi_prep_closure_loc(p->pcl_write, &p->cif, closure_fcn,
++                                  p,
++                                  p->pcl_exec);
+     if (result != FFI_OK) {
+         PyErr_Format(PyExc_RuntimeError,
+                      "ffi_prep_closure failed with %d", result);
+diff -up Python-2.7rc1/Modules/_ctypes/_ctypes.c.selinux Python-2.7rc1/Modules/_ctypes/_ctypes.c
+--- Python-2.7rc1/Modules/_ctypes/_ctypes.c.selinux	2010-05-09 10:46:46.000000000 -0400
++++ Python-2.7rc1/Modules/_ctypes/_ctypes.c	2010-06-07 23:19:39.950146038 -0400
+@@ -3463,7 +3463,7 @@ PyCFuncPtr_new(PyTypeObject *type, PyObj
+     self->callable = callable;
+ 
+     self->thunk = thunk;
+-    *(void **)self->b_ptr = (void *)thunk->pcl;
++    *(void **)self->b_ptr = (void *)thunk->pcl_exec;
+ 
+     Py_INCREF((PyObject *)thunk); /* for KeepRef */
+     if (-1 == KeepRef((CDataObject *)self, 0, (PyObject *)thunk)) {
+diff -up Python-2.7rc1/Modules/_ctypes/ctypes.h.selinux Python-2.7rc1/Modules/_ctypes/ctypes.h
+--- Python-2.7rc1/Modules/_ctypes/ctypes.h.selinux	2010-05-09 10:46:46.000000000 -0400
++++ Python-2.7rc1/Modules/_ctypes/ctypes.h	2010-06-07 23:19:39.950146038 -0400
+@@ -95,7 +95,8 @@ struct tagCDataObject {
+ 
+ typedef struct {
+     PyObject_VAR_HEAD
+-    ffi_closure *pcl; /* the C callable */
++    ffi_closure *pcl_write; /* the C callable, writeable */
++    void *pcl_exec;         /* the C callable, executable */
+     ffi_cif cif;
+     int flags;
+     PyObject *converters;
+diff -up Python-2.7rc1/setup.py.selinux Python-2.7rc1/setup.py
+--- Python-2.7rc1/setup.py.selinux	2010-06-07 23:19:39.922147795 -0400
++++ Python-2.7rc1/setup.py	2010-06-07 23:19:39.951145942 -0400
+@@ -1864,8 +1864,7 @@ class PyBuildExt(build_ext):
+                    '_ctypes/callbacks.c',
+                    '_ctypes/callproc.c',
+                    '_ctypes/stgdict.c',
+-                   '_ctypes/cfield.c',
+-                   '_ctypes/malloc_closure.c']
++                   '_ctypes/cfield.c']
+         depends = ['_ctypes/ctypes.h']
+ 
+         if sys.platform == 'darwin':

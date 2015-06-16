@@ -476,6 +476,7 @@ buildipfire() {
   ipfiremake curl
   ipfiremake tcl
   ipfiremake sqlite
+  ipfiremake libffi
   ipfiremake python
   ipfiremake fireinfo
   ipfiremake libnet
@@ -579,7 +580,6 @@ buildipfire() {
   ipfiremake python-mechanize
   ipfiremake python-feedparser
   ipfiremake python-rssdler
-  ipfiremake libffi
   ipfiremake glib
   ipfiremake GeoIP
   ipfiremake fwhits
