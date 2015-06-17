@@ -942,7 +942,10 @@ foreach my $line (@current2) {
 
     # Skip all entries that do not match the search query
     if ($search_query ne "") {
-	next if (!grep(/$search_query/, @temp));
+	if (!grep(/$search_query/, @temp)) {
+		$key++;
+		next;
+	}
     }
 
     if ($dhcpsettings{'KEY2'} eq $key) {
