@@ -1,0 +1,9 @@
+etc/system-release
+etc/issue
+srv/web/ipfire/cgi-bin/connections.cgi
+srv/web/ipfire/cgi-bin/dhcp.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
+srv/web/ipfire/cgi-bin/webaccess.cgi
+var/ipfire/network-functions.pl
+var/ipfire/langs
+var/ipfire/urlfilter/bin/autoupdate.pl
