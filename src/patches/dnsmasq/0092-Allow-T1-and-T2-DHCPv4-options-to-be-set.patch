@@ -197,4 +197,3 @@ index 55526443dc84..a10e499ef768 100644
        if (optno == OPTION_SNAME && done_server)
 -- 
 2.1.0
-
