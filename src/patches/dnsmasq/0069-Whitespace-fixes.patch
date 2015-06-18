@@ -1,7 +1,7 @@
 From 7aa970e2c7043201663d86a4b5d8cd5c592cef39 Mon Sep 17 00:00:00 2001
 From: Stefan Tomanek <stefan.tomanek+dnsmasq@wertarbyte.de>
 Date: Wed, 1 Apr 2015 17:55:07 +0100
-Subject: [PATCH 69/98] Whitespace fixes.
+Subject: [PATCH 069/113] Whitespace fixes.
 
 ---
  src/dnsmasq.c | 14 +++++++-------

@@ -1,8 +1,8 @@
 From 476693678e778886b64d0b56e27eb7695cbcca99 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Wed, 17 Dec 2014 12:41:56 +0000
-Subject: [PATCH 15/98] Eliminate IPv6 privacy addresses from --interface-name
- answers.
+Subject: [PATCH 015/113] Eliminate IPv6 privacy addresses from
+ --interface-name answers.
 
 ---
  CHANGELOG     |  5 +++++

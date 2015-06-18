@@ -1,7 +1,7 @@
 From 64bcff1c7c72eecda8750bc2dca8b4c5dc38a837 Mon Sep 17 00:00:00 2001
 From: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
 Date: Tue, 28 Apr 2015 21:55:18 +0100
-Subject: [PATCH 87/98] Constify some DHCP lease management functions.
+Subject: [PATCH 087/113] Constify some DHCP lease management functions.
 
 ---
  src/dnsmasq.h | 7 ++++---

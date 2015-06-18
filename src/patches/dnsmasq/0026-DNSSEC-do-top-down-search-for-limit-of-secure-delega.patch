@@ -1,7 +1,7 @@
 From 97e618a0e3f29465acc689d87288596b006f197e Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Wed, 7 Jan 2015 21:55:43 +0000
-Subject: [PATCH 26/98] DNSSEC: do top-down search for limit of secure
+Subject: [PATCH 026/113] DNSSEC: do top-down search for limit of secure
  delegation.
 
 ---

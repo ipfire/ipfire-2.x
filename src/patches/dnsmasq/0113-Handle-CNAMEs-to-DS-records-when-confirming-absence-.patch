@@ -1,0 +1,173 @@
+From e3ec6f0bd7323b043faa9dffa20f0c9151fae1e3 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Fri, 12 Jun 2015 21:39:11 +0100
+Subject: [PATCH 113/113] Handle CNAMEs to DS records when confirming absence
+ of DS for DNSSEC.
+
+---
+ src/dnssec.c  | 40 ++++++++++++++++++++++++++++++++++------
+ src/forward.c | 38 ++++++++++++++++++++++++++++++++++----
+ 2 files changed, 68 insertions(+), 10 deletions(-)
+
+diff --git a/src/dnssec.c b/src/dnssec.c
+index 93217b05a846..52d14548b8e2 100644
+--- a/src/dnssec.c
++++ b/src/dnssec.c
+@@ -1223,8 +1223,11 @@ int dnssec_validate_ds(time_t now, struct dns_header *header, size_t plen, char
+     val = dnssec_validate_reply(now, header, plen, name, keyname, NULL, &neganswer, &nons);
+   /* Note dnssec_validate_reply() will have cached positive answers */
+   
+-  if (val == STAT_NO_SIG || val == STAT_INSECURE)
++  if (val == STAT_INSECURE)
+     val = STAT_BOGUS;
++
++  if (val == STAT_NO_SIG)
++    return val;
+   
+   p = (unsigned char *)(header+1);
+   extract_name(header, plen, &p, name, 1, 4);
+@@ -1875,11 +1878,14 @@ int dnssec_validate_reply(time_t now, struct dns_header *header, size_t plen, ch
+    
+   if (neganswer && !have_answer)
+     *neganswer = 1;
+-
++  
+   /* No data, therefore no sigs */
+   if (ntohs(header->ancount) + ntohs(header->nscount) == 0)
+-    return STAT_NO_SIG;
+-  
++    {
++      *keyname = 0;
++      return STAT_NO_SIG;
++    }
++
+   for (p1 = ans_start, i = 0; i < ntohs(header->ancount) + ntohs(header->nscount); i++)
+     {
+       if (!extract_name(header, plen, &p1, name, 1, 10))
+@@ -1948,6 +1954,19 @@ int dnssec_validate_reply(time_t now, struct dns_header *header, size_t plen, ch
+ 		{
+ 		  if (class)
+ 		    *class = class1; /* Class for DS or DNSKEY */
++
++		  if (rc == STAT_NO_SIG)
++		    {
++		      /* If we dropped off the end of a CNAME chain, return
++			 STAT_NO_SIG and the last name is keyname. This is used for proving non-existence
++			 if DS records in CNAME chains. */
++		      if (cname_count == CNAME_CHAIN || i < ntohs(header->ancount)) 
++			/* No CNAME chain, or no sig in answer section, return empty name. */
++			*keyname = 0;
++		      else if (!extract_name(header, plen, &qname, keyname, 1, 0))
++			return STAT_BOGUS;
++		    }
++ 
+ 		  return rc;
+ 		}
+ 	      
+@@ -2060,8 +2079,17 @@ int dnssec_validate_reply(time_t now, struct dns_header *header, size_t plen, ch
+   /* NXDOMAIN or NODATA reply, prove that (name, class1, type1) can't exist */
+   /* First marshall the NSEC records, if we've not done it previously */
+   if (!nsec_type && !(nsec_type = find_nsec_records(header, plen, &nsecs, &nsec_count, qclass)))
+-    return STAT_NO_SIG; /* No NSECs, this is probably a dangling CNAME pointing into
+-			   an unsigned zone. Return STAT_NO_SIG to cause this to be proved. */
++    {
++      /* No NSEC records. If we dropped off the end of a CNAME chain, return
++	 STAT_NO_SIG and the last name is keyname. This is used for proving non-existence
++	 if DS records in CNAME chains. */
++      if (cname_count == CNAME_CHAIN) /* No CNAME chain, return empty name. */
++	*keyname = 0;
++      else if (!extract_name(header, plen, &qname, keyname, 1, 0))
++	return STAT_BOGUS;
++      return STAT_NO_SIG; /* No NSECs, this is probably a dangling CNAME pointing into
++			     an unsigned zone. Return STAT_NO_SIG to cause this to be proved. */
++    }
+    
+   /* Get name of missing answer */
+   if (!extract_name(header, plen, &qname, name, 1, 0))
+diff --git a/src/forward.c b/src/forward.c
+index 8c3e71cebe87..b40dda37eca2 100644
+--- a/src/forward.c
++++ b/src/forward.c
+@@ -851,7 +851,7 @@ void reply_query(int fd, int family, time_t now)
+ 		   Avoid caching a reply with sigs if there's a vaildated break in the 
+ 		   DS chain, so we don't return replies from cache missing sigs. */
+ 		status = STAT_INSECURE_DS;
+-	      else if (status == STAT_NO_NS)
++	      else if (status == STAT_NO_NS || status == STAT_NO_SIG)
+ 		status = STAT_BOGUS;
+ 	    }
+ 	  else if (forward->flags & FREC_CHECK_NOSIGN)
+@@ -997,7 +997,7 @@ void reply_query(int fd, int family, time_t now)
+ 			   Avoid caching a reply with sigs if there's a vaildated break in the 
+ 			   DS chain, so we don't return replies from cache missing sigs. */
+ 			status = STAT_INSECURE_DS;
+-		      else if (status == STAT_NO_NS)
++		      else if (status == STAT_NO_NS || status == STAT_NO_SIG)
+ 			status = STAT_BOGUS; 
+ 		    }
+ 		  else if (forward->flags & FREC_CHECK_NOSIGN)
+@@ -1456,6 +1456,21 @@ static int do_check_sign(struct frec *forward, int status, time_t now, char *nam
+       if (status == STAT_BOGUS)
+ 	return STAT_BOGUS;
+ 
++      if (status == STAT_NO_SIG && *keyname != 0)
++	{
++	  /* There is a validated CNAME chain that doesn't end in a DS record. Start 
++	     the search again in that domain. */
++	  blockdata_free(forward->orig_domain);
++	  forward->name_start = strlen(keyname);
++	  forward->name_len = forward->name_start + 1;
++	  if (!(forward->orig_domain = blockdata_alloc(keyname, forward->name_len)))
++	    return STAT_BOGUS;
++	  
++	  strcpy(name, keyname);
++	  status = 0; /* force to cache when we iterate. */
++	  continue;
++	}
++      
+       /* There's a proven DS record, or we're within a zone, where there doesn't need
+ 	 to be a DS record. Add a name and try again. 
+ 	 If we've already tried the whole name, then fail */
+@@ -1572,6 +1587,21 @@ static int  tcp_check_for_unsigned_zone(time_t now, struct dns_header *header, s
+ 	      return STAT_INSECURE;
+ 	    }
+ 	  
++	  if (status == STAT_NO_SIG && *keyname != 0)
++	    {
++	      /* There is a validated CNAME chain that doesn't end in a DS record. Start 
++		 the search again in that domain. */
++	      blockdata_free(block);
++	      name_len = strlen(keyname) + 1;
++	      name_start = name + name_len - 1;
++	      
++	      if (!(block = blockdata_alloc(keyname, name_len)))
++		return STAT_BOGUS;
++	      
++	      strcpy(name, keyname);
++	      continue;
++	    }
++	  
+ 	  if (status == STAT_BOGUS)
+ 	    {
+ 	      free(packet);
+@@ -1627,7 +1657,7 @@ static int tcp_key_recurse(time_t now, int status, struct dns_header *header, si
+ 	{
+ 	  if (new_status == STAT_NO_DS)
+ 	    new_status = STAT_INSECURE_DS;
+-	  else if (new_status == STAT_NO_NS)
++	  else if (new_status == STAT_NO_NS || new_status == STAT_NO_SIG)
+ 	    new_status = STAT_BOGUS;
+ 	}
+     }
+@@ -1692,7 +1722,7 @@ static int tcp_key_recurse(time_t now, int status, struct dns_header *header, si
+ 		    {
+ 		      if (new_status == STAT_NO_DS)
+ 			new_status = STAT_INSECURE_DS;
+-		      else if (new_status == STAT_NO_NS)
++		      else if (new_status == STAT_NO_NS || new_status == STAT_NO_SIG)
+ 			new_status = STAT_BOGUS; /* Validated no DS */
+ 		    }
+ 		}
+-- 
+2.1.0
+

@@ -1,0 +1,28 @@
+From 654f59e7620c857279843e50588ac76e88040b0f Mon Sep 17 00:00:00 2001
+From: Neil Jerram <Neil.Jerram@metaswitch.com>
+Date: Wed, 10 Jun 2015 22:06:33 +0100
+Subject: [PATCH 106/113] Fix logging of unknown interface in
+ --bridge-interface, DHPCv4.
+
+---
+ src/dhcp.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/dhcp.c b/src/dhcp.c
+index f1f43f8d8f90..eb1ea810b573 100644
+--- a/src/dhcp.c
++++ b/src/dhcp.c
+@@ -236,7 +236,9 @@ void dhcp_packet(time_t now, int pxe_fd)
+ 	  {
+ 	    if (!(iface_index = if_nametoindex(bridge->iface)))
+ 	      {
+-		my_syslog(LOG_WARNING, _("unknown interface %s in bridge-interface"), ifr.ifr_name);
++		my_syslog(MS_DHCP | LOG_WARNING,
++			  _("unknown interface %s in bridge-interface"),
++			  bridge->iface);
+ 		return;
+ 	      }
+ 	    else 
+-- 
+2.1.0
+

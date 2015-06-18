@@ -1,7 +1,7 @@
 From e66b4dff3c562c7836d5be4c26972d665ad783f1 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Tue, 28 Apr 2015 20:45:57 +0100
-Subject: [PATCH 85/98] Fix argument-order botch which broke DNSSEC for TCP
+Subject: [PATCH 085/113] Fix argument-order botch which broke DNSSEC for TCP
  queries.
 
 ---

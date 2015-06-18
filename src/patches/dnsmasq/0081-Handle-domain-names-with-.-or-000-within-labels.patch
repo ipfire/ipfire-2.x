@@ -1,7 +1,7 @@
 From cbe379ad6b52a538a4416a7cd992817e5637ccf9 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Tue, 21 Apr 2015 22:57:06 +0100
-Subject: [PATCH 81/98] Handle domain names with '.' or /000 within labels.
+Subject: [PATCH 081/113] Handle domain names with '.' or /000 within labels.
 
 Only in DNSSEC mode, where we might need to validate or store
 such names. In none-DNSSEC mode, simply don't cache these, as before.

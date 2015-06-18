@@ -1,0 +1,85 @@
+From 2fd5bc952dc802433ffebc90eacb78da3d30b80e Mon Sep 17 00:00:00 2001
+From: Neil Jerram <Neil.Jerram@metaswitch.com>
+Date: Wed, 10 Jun 2015 22:13:06 +0100
+Subject: [PATCH 108/113] Allow router advertisements to have the "off-link"
+ bit set.
+
+---
+ src/dnsmasq.h |  1 +
+ src/option.c  |  2 ++
+ src/radv.c    | 13 +++++++++----
+ 3 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index ab16f79b3ec9..8d005d732e72 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -868,6 +868,7 @@ struct dhcp_context {
+ #define CONTEXT_USED           (1u<<15)
+ #define CONTEXT_OLD            (1u<<16)
+ #define CONTEXT_V6             (1u<<17)
++#define CONTEXT_RA_OFF_LINK    (1u<<18)
+ 
+ struct ping_result {
+   struct in_addr addr;
+diff --git a/src/option.c b/src/option.c
+index c7add88de7ac..f99c3f59e9d3 100644
+--- a/src/option.c
++++ b/src/option.c
+@@ -2699,6 +2699,8 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+ 		  new->flags |= CONTEXT_RA_ROUTER | CONTEXT_RA;
+ 		else if (strcmp(a[leasepos], "ra-stateless") == 0)
+ 		  new->flags |= CONTEXT_RA_STATELESS | CONTEXT_DHCP | CONTEXT_RA;
++		else if (strcmp(a[leasepos], "off-link") == 0)
++		  new->flags |= CONTEXT_RA_OFF_LINK;
+ 		else if (leasepos == 1 && inet_pton(AF_INET6, a[leasepos], &new->end6))
+ 		  new->flags |= CONTEXT_DHCP; 
+ 		else if (strstr(a[leasepos], "constructor:") == a[leasepos])
+diff --git a/src/radv.c b/src/radv.c
+index d0faddf8684a..ec22464b78b9 100644
+--- a/src/radv.c
++++ b/src/radv.c
+@@ -313,8 +313,10 @@ static void send_ra(time_t now, int iface, char *iface_name, struct in6_addr *de
+ 		  opt->type = ICMP6_OPT_PREFIX;
+ 		  opt->len = 4;
+ 		  opt->prefix_len = context->prefix;
+-		  /* autonomous only if we're not doing dhcp, always set "on-link" */
+-		  opt->flags = do_slaac ? 0xC0 : 0x80;
++		  /* autonomous only if we're not doing dhcp, set
++                     "on-link" unless "off-link" was specified */
++		  opt->flags = (do_slaac ? 0x40 : 0) |
++                    ((context->flags & CONTEXT_RA_OFF_LINK) ? 0 : 0x80);
+ 		  opt->valid_lifetime = htonl(context->saved_valid - old);
+ 		  opt->preferred_lifetime = htonl(0);
+ 		  opt->reserved = 0; 
+@@ -514,6 +516,7 @@ static int add_prefixes(struct in6_addr *local,  int prefix,
+ 	  int deprecate  = 0;
+ 	  int constructed = 0;
+ 	  int adv_router = 0;
++	  int off_link = 0;
+ 	  unsigned int time = 0xffffffff;
+ 	  struct dhcp_context *context;
+ 	  
+@@ -586,6 +589,7 @@ static int add_prefixes(struct in6_addr *local,  int prefix,
+ 		      context->ra_time = 0;
+ 		    context->flags |= CONTEXT_RA_DONE;
+ 		    real_prefix = context->prefix;
++                    off_link = (context->flags & CONTEXT_RA_OFF_LINK);
+ 		  }
+ 
+ 		param->first = 0;	
+@@ -636,8 +640,9 @@ static int add_prefixes(struct in6_addr *local,  int prefix,
+ 		  opt->type = ICMP6_OPT_PREFIX;
+ 		  opt->len = 4;
+ 		  opt->prefix_len = real_prefix;
+-		  /* autonomous only if we're not doing dhcp, always set "on-link" */
+-		  opt->flags = 0x80;
++		  /* autonomous only if we're not doing dhcp, set
++                     "on-link" unless "off-link" was specified */
++		  opt->flags = (off_link ? 0 : 0x80);
+ 		  if (do_slaac)
+ 		    opt->flags |= 0x40;
+ 		  if (adv_router)
+-- 
+2.1.0
+

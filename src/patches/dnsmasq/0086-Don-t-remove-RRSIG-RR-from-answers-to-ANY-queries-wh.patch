@@ -1,8 +1,8 @@
 From 2ed162ac204f3609fe4d9f9a0430baeaa352d88f Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Tue, 28 Apr 2015 21:26:35 +0100
-Subject: [PATCH 86/98] Don't remove RRSIG RR from answers to ANY queries when
- the do bit is not set.
+Subject: [PATCH 086/113] Don't remove RRSIG RR from answers to ANY queries
+ when the do bit is not set.
 
 ---
  src/rfc1035.c | 5 +++++
