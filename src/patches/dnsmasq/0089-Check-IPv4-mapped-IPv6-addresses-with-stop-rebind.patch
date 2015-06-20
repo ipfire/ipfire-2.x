@@ -1,7 +1,7 @@
 From b059c96dc69dfe3055c5b32b078a05c53b11ebb3 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Fri, 8 May 2015 20:25:51 +0100
-Subject: [PATCH 89/98] Check IPv4-mapped IPv6 addresses with --stop-rebind.
+Subject: [PATCH 089/113] Check IPv4-mapped IPv6 addresses with --stop-rebind.
 
 ---
  CHANGELOG     |  3 +++

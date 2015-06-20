@@ -1,7 +1,7 @@
 From 81c538efcebfce2ce4a1d3a420b6c885b8f08df9 Mon Sep 17 00:00:00 2001
 From: Yousong Zhou <yszhou4tech@gmail.com>
 Date: Sat, 3 Jan 2015 16:36:14 +0000
-Subject: [PATCH 24/98] Implement makefile dependencies on COPTS variable.
+Subject: [PATCH 024/113] Implement makefile dependencies on COPTS variable.
 
 ---
  .gitignore |  2 +-

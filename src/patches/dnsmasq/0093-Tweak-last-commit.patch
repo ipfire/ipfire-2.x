@@ -1,7 +1,7 @@
 From 7c0f2543a7e761d1ec82738374556beeb8a35bef Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Thu, 14 May 2015 21:16:18 +0100
-Subject: [PATCH 93/98] Tweak last commit.
+Subject: [PATCH 093/113] Tweak last commit.
 
 ---
  src/rfc2131.c | 8 ++++----

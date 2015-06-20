@@ -1,7 +1,7 @@
 From 106266761828a0acb006346ae47bf031dee46a5d Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sun, 1 Feb 2015 00:15:16 +0000
-Subject: [PATCH 42/98] BSD make support
+Subject: [PATCH 042/113] BSD make support
 
 ---
  Makefile | 6 ++++--

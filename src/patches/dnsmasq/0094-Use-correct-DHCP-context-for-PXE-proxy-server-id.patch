@@ -1,7 +1,7 @@
 From 62018e1f720fa11e83879111a4b1b3753b5c25bb Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Thu, 14 May 2015 21:30:00 +0100
-Subject: [PATCH 94/98] Use correct DHCP context for PXE-proxy server-id.
+Subject: [PATCH 094/113] Use correct DHCP context for PXE-proxy server-id.
 
 ---
  src/rfc2131.c | 4 ++--

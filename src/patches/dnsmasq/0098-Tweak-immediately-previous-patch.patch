@@ -1,7 +1,7 @@
 From 549b1a478c5eee9dbd3a0709913a26ec29d30f2c Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Wed, 20 May 2015 20:20:24 +0100
-Subject: [PATCH 98/98] Tweak immediately previous patch.
+Subject: [PATCH 098/113] Tweak immediately previous patch.
 
 ---
  src/rfc2131.c | 9 +++++++--

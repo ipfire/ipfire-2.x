@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2015  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.72
+VER        = 2.73
 
 THISAPP    = dnsmasq-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0256e0a71e27c8d8a5c89a0d18f3cfe2
+$(DL_FILE)_MD5 = b8bfe96d22945c8cf4466826ba9b21bd
 
 install : $(TARGET)
 
@@ -73,104 +73,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0001-Add-newline-at-the-end-of-example-config-file.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0002-crash-at-startup-when-an-empty-suffix-is-supplied-to.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0003-Debian-build-fixes-for-kFreeBSD.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0004-Set-conntrack-mark-before-connect-call.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0005-Fix-typo-in-new-Dbus-code.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0006-Fit-example-conf-file-typo.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0007-Improve-RFC-compliance-when-unable-to-supply-address.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0008-Fix-conntrack-with-bind-interfaces.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0009-Use-inotify-instead-of-polling-on-Linux.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0010-Teach-the-new-inotify-code-about-symlinks.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0011-Remove-floor-on-EDNS0-packet-size-with-DNSSEC.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0012-CHANGELOG-re.-inotify.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0013-Fix-breakage-of-domain-domain-subnet-local.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0014-Remove-redundant-IN6_IS_ADDR_ULA-a-macro-defn.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0015-Eliminate-IPv6-privacy-addresses-from-interface-name.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0016-Tweak-field-width-in-cache-dump-to-avoid-truncating-.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0017-Fix-crash-in-DNSSEC-code-when-attempting-to-verify-l.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0018-Make-caching-work-for-CNAMEs-pointing-to-A-AAAA-reco.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0019-Fix-problems-validating-NSEC3-and-wildcards.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0020-Initialise-return-value.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0021-Add-ignore-address-option.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0022-Bad-packet-protection.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0023-Fix-build-failure-in-new-inotify-code-on-BSD.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0024-Implement-makefile-dependencies-on-COPTS-variable.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0025-Fix-race-condition-issue-in-makefile.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0026-DNSSEC-do-top-down-search-for-limit-of-secure-delega.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0027-Add-log-queries-extra-option-for-more-complete-loggi.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0028-Add-min-cache-ttl-option.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0029-Log-port-of-requestor-when-doing-extra-logging.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0030-Don-t-answer-from-cache-RRsets-from-wildcards-as-we-.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0031-Logs-for-DS-records-consistent.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0032-Cope-with-multiple-interfaces-with-the-same-LL-addre.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0033-Don-t-treat-SERVFAIL-as-a-recoverable-error.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0034-Add-dhcp-hostsdir-config-option.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0035-Update-German-translation.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0036-Don-t-reply-to-DHCPv6-SOLICIT-messages-when-not-conf.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0037-Allow-inotify-to-be-disabled-at-compile-time-on-Linu.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0038-Expand-inotify-code-to-dhcp-hostsdir-dhcp-optsdir-an.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0039-Update-copyrights-for-dawn-of-2015.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0040-inotify-documentation-updates.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0041-Fix-broken-ECDSA-DNSSEC-signatures.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0042-BSD-make-support.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0043-Fix-build-failure-on-openBSD.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0044-Manpage-typo-fix.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0045-Fixup-dhcp-configs-after-reading-extra-hostfiles-wit.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0046-Extra-logging-for-inotify-code.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0047-man-page-typo.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0048-Fix-get-version-script-which-returned-wrong-tag-in-s.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0049-Typos.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0050-Make-dynamic-hosts-files-work-when-no-hosts-set.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0051-Fix-trivial-memory-leaks-to-quieten-valgrind.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0052-Fix-uninitialized-value-used-in-get_client_mac.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0053-Log-parsing-utils-in-contrib-reverse-dns.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0054-Add-dnssec-timestamp-option-and-facility.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0055-Fix-last-commit-to-not-crash-if-uid-changing-not-con.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0056-New-version-of-contrib-reverse-dns.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0057-Tweak-DNSSEC-timestamp-code-to-create-file-later-rem.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0058-Fix-boilerplate-code-for-re-running-system-calls-on-.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0059-Make-address-example.com-equivalent-to-server-exampl.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0060-dhcp-set-outbound-interface-via-cmsg-in-unicast-repl.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0061-Don-t-fail-DNSSEC-when-a-signed-CNAME-dangles-into-a.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0062-Return-SERVFAIL-when-validation-abandoned.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0063-Protect-against-broken-DNSSEC-upstreams.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0064-DNSSEC-fix-for-non-ascii-characters-in-labels.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0065-Allow-control-characters-in-names-in-the-cache-handl.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0066-Fix-crash-in-last-commit.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0067-Merge-message-translations.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0068-add-tftp-no-fail-to-ignore-missing-tftp-root.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0069-Whitespace-fixes.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0070-Return-INSECURE-rather-than-BOGUS-when-DS-proved-not.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0071-Fix-compiler-warning-when-not-including-DNSSEC.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0072-Fix-crash-caused-by-looking-up-servers.bind-when-man.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0073-Fix-crash-on-receipt-of-certain-malformed-DNS-reques.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0074-Fix-crash-in-auth-code-with-odd-configuration.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0075-Auth-correct-replies-to-NS-and-SOA-in-.arpa-zones.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0076-Fix-srk-induced-crash-in-new-tftp_no_fail-code.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0077-Note-CVE-2015-3294.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0078-Log-domain-when-reporting-DNSSEC-validation-failure.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0079-Check-IP-address-command-line-arg-in-dhcp_release.c.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0080-Revert-61b838dd574c51d96fef100285a0d225824534f9-and-.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0081-Handle-domain-names-with-.-or-000-within-labels.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0082-Tweaks-to-previous-DNS-label-charset-commit.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0083-Logs-in-DHCPv6-not-suppressed-by-dhcp6-quiet.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0084-Make-get-version-work-when-repo-is-a-git-submodule.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0085-Fix-argument-order-botch-which-broke-DNSSEC-for-TCP-.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0086-Don-t-remove-RRSIG-RR-from-answers-to-ANY-queries-wh.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0087-Constify-some-DHCP-lease-management-functions.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0088-Handle-UDP-packet-loss-when-fragmentation-of-large-p.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0089-Check-IPv4-mapped-IPv6-addresses-with-stop-rebind.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0090-Tweak-EDNS-timeout-code.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0091-Pointer-to-mail-archive-mailing-list-mirror-in-doc.h.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0092-Allow-T1-and-T2-DHCPv4-options-to-be-set.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0093-Tweak-last-commit.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0094-Use-correct-DHCP-context-for-PXE-proxy-server-id.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0095-Fix-buffer-overflow-introduced-in-2.73rc6.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0096-Remove-support-for-DNS-Extended-Label-Types.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0097-Select-correct-DHCP-context-when-in-PXE-bootserver-m.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/0098-Tweak-immediately-previous-patch.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 	cd $(DIR_APP) && sed -i src/config.h \
 		-e 's|/\* #define HAVE_IDN \*/|#define HAVE_IDN|g' \

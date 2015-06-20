@@ -1,7 +1,7 @@
 From 0705a7e2d57654b27c7e14f35ca77241c1821f4d Mon Sep 17 00:00:00 2001
 From: Tomas Hozza <thozza@redhat.com>
 Date: Mon, 23 Feb 2015 21:26:26 +0000
-Subject: [PATCH 52/98] Fix uninitialized value used in get_client_mac()
+Subject: [PATCH 052/113] Fix uninitialized value used in get_client_mac()
 
 ---
  src/dhcp6.c | 4 +++-

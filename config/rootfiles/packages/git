@@ -95,8 +95,8 @@ usr/libexec/git-core/git-index-pack
 usr/libexec/git-core/git-init
 usr/libexec/git-core/git-init-db
 usr/libexec/git-core/git-instaweb
+usr/libexec/git-core/git-interpret-trailers
 usr/libexec/git-core/git-log
-usr/libexec/git-core/git-lost-found
 usr/libexec/git-core/git-ls-files
 usr/libexec/git-core/git-ls-remote
 usr/libexec/git-core/git-ls-tree
@@ -126,7 +126,6 @@ usr/libexec/git-core/git-pack-redundant
 usr/libexec/git-core/git-pack-refs
 usr/libexec/git-core/git-parse-remote
 usr/libexec/git-core/git-patch-id
-usr/libexec/git-core/git-peek-remote
 usr/libexec/git-core/git-prune
 usr/libexec/git-core/git-prune-packed
 usr/libexec/git-core/git-pull
@@ -150,7 +149,6 @@ usr/libexec/git-core/git-remote-https
 usr/libexec/git-core/git-remote-testsvn
 usr/libexec/git-core/git-repack
 usr/libexec/git-core/git-replace
-usr/libexec/git-core/git-repo-config
 usr/libexec/git-core/git-request-pull
 usr/libexec/git-core/git-rerere
 usr/libexec/git-core/git-reset
@@ -177,7 +175,6 @@ usr/libexec/git-core/git-submodule
 usr/libexec/git-core/git-svn
 usr/libexec/git-core/git-symbolic-ref
 usr/libexec/git-core/git-tag
-usr/libexec/git-core/git-tar-tree
 usr/libexec/git-core/git-unpack-file
 usr/libexec/git-core/git-unpack-objects
 usr/libexec/git-core/git-update-index
@@ -186,6 +183,7 @@ usr/libexec/git-core/git-update-server-info
 usr/libexec/git-core/git-upload-archive
 usr/libexec/git-core/git-upload-pack
 usr/libexec/git-core/git-var
+usr/libexec/git-core/git-verify-commit
 usr/libexec/git-core/git-verify-pack
 usr/libexec/git-core/git-verify-tag
 usr/libexec/git-core/git-web--browse
@@ -193,6 +191,7 @@ usr/libexec/git-core/git-whatchanged
 usr/libexec/git-core/git-write-tree
 usr/libexec/git-core/mergetools
 usr/libexec/git-core/mergetools/araxis
+usr/libexec/git-core/mergetools/bc
 usr/libexec/git-core/mergetools/bc3
 usr/libexec/git-core/mergetools/codecompare
 usr/libexec/git-core/mergetools/deltawalker
@@ -202,6 +201,7 @@ usr/libexec/git-core/mergetools/ecmerge
 usr/libexec/git-core/mergetools/emerge
 usr/libexec/git-core/mergetools/gvimdiff
 usr/libexec/git-core/mergetools/gvimdiff2
+usr/libexec/git-core/mergetools/gvimdiff3
 usr/libexec/git-core/mergetools/kdiff3
 usr/libexec/git-core/mergetools/kompare
 usr/libexec/git-core/mergetools/meld
@@ -211,6 +211,7 @@ usr/libexec/git-core/mergetools/tkdiff
 usr/libexec/git-core/mergetools/tortoisemerge
 usr/libexec/git-core/mergetools/vimdiff
 usr/libexec/git-core/mergetools/vimdiff2
+usr/libexec/git-core/mergetools/vimdiff3
 usr/libexec/git-core/mergetools/xxdiff
 usr/share/git-core
 usr/share/git-core/templates
@@ -257,6 +258,7 @@ usr/share/git-core/templates/info/exclude
 #usr/share/git-gui/lib/merge.tcl
 #usr/share/git-gui/lib/mergetool.tcl
 #usr/share/git-gui/lib/msgs
+#usr/share/git-gui/lib/msgs/bg.msg
 #usr/share/git-gui/lib/msgs/de.msg
 #usr/share/git-gui/lib/msgs/el.msg
 #usr/share/git-gui/lib/msgs/fr.msg
@@ -267,6 +269,7 @@ usr/share/git-core/templates/info/exclude
 #usr/share/git-gui/lib/msgs/pt_br.msg
 #usr/share/git-gui/lib/msgs/ru.msg
 #usr/share/git-gui/lib/msgs/sv.msg
+#usr/share/git-gui/lib/msgs/vi.msg
 #usr/share/git-gui/lib/msgs/zh_cn.msg
 #usr/share/git-gui/lib/option.tcl
 #usr/share/git-gui/lib/remote.tcl
@@ -287,6 +290,8 @@ usr/share/git-core/templates/info/exclude
 #usr/share/gitk
 #usr/share/gitk/lib
 #usr/share/gitk/lib/msgs
+#usr/share/gitk/lib/msgs/bg.msg
+#usr/share/gitk/lib/msgs/ca.msg
 #usr/share/gitk/lib/msgs/de.msg
 #usr/share/gitk/lib/msgs/es.msg
 #usr/share/gitk/lib/msgs/fr.msg
@@ -296,6 +301,7 @@ usr/share/git-core/templates/info/exclude
 #usr/share/gitk/lib/msgs/pt_br.msg
 #usr/share/gitk/lib/msgs/ru.msg
 #usr/share/gitk/lib/msgs/sv.msg
+#usr/share/gitk/lib/msgs/vi.msg
 #usr/share/gitweb
 #usr/share/gitweb/gitweb.cgi
 #usr/share/gitweb/static
@@ -303,15 +309,14 @@ usr/share/git-core/templates/info/exclude
 #usr/share/gitweb/static/git-logo.png
 #usr/share/gitweb/static/gitweb.css
 #usr/share/gitweb/static/gitweb.js
-#usr/share/locale/da/LC_MESSAGES/git.mo
+#usr/share/locale/bg/LC_MESSAGES/git.mo
+#usr/share/locale/ca/LC_MESSAGES/git.mo
 #usr/share/locale/de/LC_MESSAGES/git.mo
 #usr/share/locale/fr/LC_MESSAGES/git.mo
 #usr/share/locale/is/LC_MESSAGES/git.mo
 #usr/share/locale/it/LC_MESSAGES/git.mo
-#usr/share/locale/nl/LC_MESSAGES/git.mo
-#usr/share/locale/pt_PT
-#usr/share/locale/pt_PT/LC_MESSAGES
 #usr/share/locale/pt_PT/LC_MESSAGES/git.mo
+#usr/share/locale/ru/LC_MESSAGES/git.mo
 #usr/share/locale/sv/LC_MESSAGES/git.mo
 #usr/share/locale/vi/LC_MESSAGES/git.mo
 #usr/share/locale/zh_CN/LC_MESSAGES/git.mo

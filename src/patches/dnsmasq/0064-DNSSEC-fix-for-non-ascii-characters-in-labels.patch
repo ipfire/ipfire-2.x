@@ -1,7 +1,7 @@
 From 1e153945def3c50d1e59ceea6a768db0ac770f98 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sat, 28 Mar 2015 21:34:07 +0000
-Subject: [PATCH 64/98] DNSSEC fix for non-ascii characters in labels.
+Subject: [PATCH 064/113] DNSSEC fix for non-ascii characters in labels.
 
 ---
  src/dnssec.c  | 34 +++++++++++++++++-----------------

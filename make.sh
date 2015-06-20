@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.17"							# Version number
-CORE="91"							# Core Level (Filename)
+CORE="92"							# Core Level (Filename)
 PAKFIRE_CORE="91"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -385,7 +385,7 @@ buildipfire() {
   ipfiremake backup
   ipfiremake pkg-config
   ipfiremake libusb
-  ipfiremake libusbx
+  ipfiremake libusb-compat
   ipfiremake libpcap
   ipfiremake ppp
   ipfiremake pptp
@@ -476,6 +476,7 @@ buildipfire() {
   ipfiremake curl
   ipfiremake tcl
   ipfiremake sqlite
+  ipfiremake libffi
   ipfiremake python
   ipfiremake fireinfo
   ipfiremake libnet
@@ -579,7 +580,6 @@ buildipfire() {
   ipfiremake python-mechanize
   ipfiremake python-feedparser
   ipfiremake python-rssdler
-  ipfiremake libffi
   ipfiremake glib
   ipfiremake GeoIP
   ipfiremake fwhits
@@ -702,6 +702,9 @@ buildipfire() {
   ipfiremake mpd
   ipfiremake libmpdclient
   ipfiremake mpc
+  ipfiremake perl-Net-SMTP-SSL
+  ipfiremake perl-MIME-Base64
+  ipfiremake perl-Authen-SASL
   ipfiremake git
   ipfiremake squidclamav
   ipfiremake vnstat

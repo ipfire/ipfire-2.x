@@ -244,7 +244,7 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'save'}) {
 	} # enabled
     }#loop interface verify
 
-    map (delete ($dhcpsettings{$_}) ,@nosaved,'ACTION','KEY1','KEY2');	# Must not be saved 
+    map (delete ($dhcpsettings{$_}) ,@nosaved,'ACTION','KEY1','KEY2','q');	# Must not be saved
     &General::writehash($setting, \%dhcpsettings);		# Save good settings
     $dhcpsettings{'ACTION'} = $Lang::tr{'save'};		# create an 'ACTION'
     map ($dhcpsettings{$_} = '',@nosaved,'KEY1','KEY2');	# and reinit vars to empty
@@ -267,7 +267,7 @@ if ($ENV{'QUERY_STRING'} =~ /^FETHER|^FIPADDR/ ) {
 	$newsort.=$Rev;
     }
     $dhcpsettings{'SORT_FLEASELIST'}=$newsort;
-    map (delete ($dhcpsettings{$_}) ,@nosaved,'ACTION','KEY1','KEY2');	# Must never be saved 
+    map (delete ($dhcpsettings{$_}) ,@nosaved,'ACTION','KEY1','KEY2', 'q');	# Must never be saved
     &General::writehash($setting, \%dhcpsettings);
     &sortcurrent2;
     $dhcpsettings{'ACTION'} = 'SORT';			# create an 'ACTION'
@@ -942,7 +942,10 @@ foreach my $line (@current2) {
 
     # Skip all entries that do not match the search query
     if ($search_query ne "") {
-	next if (!grep(/$search_query/, @temp));
+	if (!grep(/$search_query/, @temp)) {
+		$key++;
+		next;
+	}
     }
 
     if ($dhcpsettings{'KEY2'} eq $key) {
