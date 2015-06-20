@@ -494,9 +494,6 @@ usr/lib/python2.7/ctypes/macholib/framework.pyc
 #usr/lib/python2.7/ctypes/test/test_delattr.py
 #usr/lib/python2.7/ctypes/test/test_delattr.pyc
 #usr/lib/python2.7/ctypes/test/test_delattr.pyo
-#usr/lib/python2.7/ctypes/test/test_errcheck.py
-#usr/lib/python2.7/ctypes/test/test_errcheck.pyc
-#usr/lib/python2.7/ctypes/test/test_errcheck.pyo
 #usr/lib/python2.7/ctypes/test/test_errno.py
 #usr/lib/python2.7/ctypes/test/test_errno.pyc
 #usr/lib/python2.7/ctypes/test/test_errno.pyo
@@ -518,9 +515,6 @@ usr/lib/python2.7/ctypes/macholib/framework.pyc
 #usr/lib/python2.7/ctypes/test/test_init.py
 #usr/lib/python2.7/ctypes/test/test_init.pyc
 #usr/lib/python2.7/ctypes/test/test_init.pyo
-#usr/lib/python2.7/ctypes/test/test_integers.py
-#usr/lib/python2.7/ctypes/test/test_integers.pyc
-#usr/lib/python2.7/ctypes/test/test_integers.pyo
 #usr/lib/python2.7/ctypes/test/test_internals.py
 #usr/lib/python2.7/ctypes/test/test_internals.pyc
 #usr/lib/python2.7/ctypes/test/test_internals.pyo
@@ -1469,8 +1463,8 @@ usr/lib/python2.7/encodings/zlib_codec.pyc
 #usr/lib/python2.7/ensurepip/__main__.pyc
 #usr/lib/python2.7/ensurepip/__main__.pyo
 #usr/lib/python2.7/ensurepip/_bundled
-#usr/lib/python2.7/ensurepip/_bundled/pip-1.5.6-py2.py3-none-any.whl
-#usr/lib/python2.7/ensurepip/_bundled/setuptools-7.0-py2.py3-none-any.whl
+#usr/lib/python2.7/ensurepip/_bundled/pip-6.1.1-py2.py3-none-any.whl
+#usr/lib/python2.7/ensurepip/_bundled/setuptools-15.2-py2.py3-none-any.whl
 #usr/lib/python2.7/ensurepip/_uninstall.py
 #usr/lib/python2.7/ensurepip/_uninstall.pyc
 #usr/lib/python2.7/ensurepip/_uninstall.pyo
@@ -1774,6 +1768,9 @@ usr/lib/python2.7/httplib.pyc
 #usr/lib/python2.7/idlelib/idle_test/test_idlehistory.py
 #usr/lib/python2.7/idlelib/idle_test/test_idlehistory.pyc
 #usr/lib/python2.7/idlelib/idle_test/test_idlehistory.pyo
+#usr/lib/python2.7/idlelib/idle_test/test_io.py
+#usr/lib/python2.7/idlelib/idle_test/test_io.pyc
+#usr/lib/python2.7/idlelib/idle_test/test_io.pyo
 #usr/lib/python2.7/idlelib/idle_test/test_parenmatch.py
 #usr/lib/python2.7/idlelib/idle_test/test_parenmatch.pyc
 #usr/lib/python2.7/idlelib/idle_test/test_parenmatch.pyo
@@ -1819,9 +1816,6 @@ usr/lib/python2.7/httplib.pyc
 #usr/lib/python2.7/idlelib/tabbedpages.py
 #usr/lib/python2.7/idlelib/tabbedpages.pyc
 #usr/lib/python2.7/idlelib/tabbedpages.pyo
-#usr/lib/python2.7/idlelib/testcode.py
-#usr/lib/python2.7/idlelib/testcode.pyc
-#usr/lib/python2.7/idlelib/testcode.pyo
 #usr/lib/python2.7/idlelib/textView.py
 #usr/lib/python2.7/idlelib/textView.pyc
 #usr/lib/python2.7/idlelib/textView.pyo
@@ -1922,7 +1916,7 @@ usr/lib/python2.7/json/tool.pyc
 usr/lib/python2.7/keyword.pyc
 #usr/lib/python2.7/keyword.pyo
 #usr/lib/python2.7/lib-dynload
-usr/lib/python2.7/lib-dynload/Python-2.7.9-py2.7.egg-info
+#usr/lib/python2.7/lib-dynload/Python-2.7.10-py2.7.egg-info
 usr/lib/python2.7/lib-dynload/_bisect.so
 usr/lib/python2.7/lib-dynload/_bsddb.so
 usr/lib/python2.7/lib-dynload/_codecs_cn.so
@@ -2098,9 +2092,9 @@ usr/lib/python2.7/lib-dynload/zlib.so
 #usr/lib/python2.7/lib-tk/turtle.pyo
 #usr/lib/python2.7/lib2to3
 #usr/lib/python2.7/lib2to3/Grammar.txt
-#usr/lib/python2.7/lib2to3/Grammar2.7.9.final.0.pickle
+#usr/lib/python2.7/lib2to3/Grammar2.7.10.final.0.pickle
 #usr/lib/python2.7/lib2to3/PatternGrammar.txt
-#usr/lib/python2.7/lib2to3/PatternGrammar2.7.9.final.0.pickle
+#usr/lib/python2.7/lib2to3/PatternGrammar2.7.10.final.0.pickle
 #usr/lib/python2.7/lib2to3/__init__.py
 #usr/lib/python2.7/lib2to3/__init__.pyc
 #usr/lib/python2.7/lib2to3/__init__.pyo
@@ -2981,7 +2975,7 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/decimaltestdata/tointegral.decTest
 #usr/lib/python2.7/test/decimaltestdata/tointegralx.decTest
 #usr/lib/python2.7/test/decimaltestdata/xor.decTest
-#usr/lib/python2.7/test/dh512.pem
+#usr/lib/python2.7/test/dh1024.pem
 #usr/lib/python2.7/test/doctest_aliases.py
 #usr/lib/python2.7/test/doctest_aliases.pyc
 #usr/lib/python2.7/test/doctest_aliases.pyo
@@ -4167,6 +4161,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/test_time.py
 #usr/lib/python2.7/test/test_time.pyc
 #usr/lib/python2.7/test/test_time.pyo
+#usr/lib/python2.7/test/test_timeit.py
+#usr/lib/python2.7/test/test_timeit.pyc
+#usr/lib/python2.7/test/test_timeit.pyo
 #usr/lib/python2.7/test/test_timeout.py
 #usr/lib/python2.7/test/test_timeout.pyc
 #usr/lib/python2.7/test/test_timeout.pyo
