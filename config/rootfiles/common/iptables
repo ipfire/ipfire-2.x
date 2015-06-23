@@ -160,10 +160,6 @@ sbin/xtables-multi
 #usr/include/libnetfilter_queue
 #usr/include/libnetfilter_queue/libnetfilter_queue.h
 #usr/include/libnetfilter_queue/linux_nfnetlink_queue.h
-#usr/include/libnfnetlink
-#usr/include/libnfnetlink/libnfnetlink.h
-#usr/include/libnfnetlink/linux_nfnetlink.h
-#usr/include/libnfnetlink/linux_nfnetlink_compat.h
 #usr/include/xtables-version.h
 #usr/include/xtables.h
 #usr/lib/libnetfilter_conntrack.la
@@ -178,11 +174,6 @@ usr/lib/libnetfilter_cttimeout.so.1.0.0
 usr/lib/libnetfilter_queue.so
 usr/lib/libnetfilter_queue.so.1
 usr/lib/libnetfilter_queue.so.1.2.0
-#usr/lib/libnfnetlink.a
-#usr/lib/libnfnetlink.la
-usr/lib/libnfnetlink.so
-usr/lib/libnfnetlink.so.0
-usr/lib/libnfnetlink.so.0.2.0
 #usr/lib/pkgconfig/libip4tc.pc
 #usr/lib/pkgconfig/libip6tc.pc
 #usr/lib/pkgconfig/libipq.pc
@@ -190,7 +181,6 @@ usr/lib/libnfnetlink.so.0.2.0
 #usr/lib/pkgconfig/libnetfilter_conntrack.pc
 #usr/lib/pkgconfig/libnetfilter_cttimeout.pc
 #usr/lib/pkgconfig/libnetfilter_queue.pc
-#usr/lib/pkgconfig/libnfnetlink.pc
 #usr/lib/pkgconfig/xtables.pc
 #usr/share/man/man1/iptables-xml.1
 #usr/share/man/man3/ipq_create_handle.3
