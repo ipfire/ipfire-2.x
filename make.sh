@@ -406,6 +406,7 @@ buildipfire() {
   ipfiremake grub
   ipfiremake libmnl
   ipfiremake libnfnetlink
+  ipfiremake libnetfilter_conntrack
   ipfiremake iptables
 
   case "${TARGET_ARCH}" in

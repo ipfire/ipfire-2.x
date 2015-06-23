@@ -24,9 +24,9 @@
 
 include Config
 
-VER        = 1.4.21
+VER        = 1.0.4
 
-THISAPP    = iptables-$(VER)
+THISAPP    = libnetfilter_conntrack-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -35,20 +35,12 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-objects = 	$(DL_FILE) \
-			netfilter-layer7-v2.22.tar.gz \
-			libnetfilter_queue-1.0.1.tar.bz2 \
-			libnetfilter_cttimeout-1.0.0.tar.bz2
+
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-netfilter-layer7-v2.22.tar.gz 		= $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
-libnetfilter_queue-1.0.1.tar.bz2	= $(URL_IPFIRE)/libnetfilter_queue-1.0.1.tar.bz2
-libnetfilter_cttimeout-1.0.0.tar.bz2	= $(URL_IPFIRE)/libnetfilter_cttimeout-1.0.0.tar.bz2
 
-$(DL_FILE)_MD5 = 536d048c8e8eeebcd9757d0863ebb0c0
-netfilter-layer7-v2.22.tar.gz_MD5 = 98dff8a3d5a31885b73341633f69501f
-libnetfilter_queue-1.0.1.tar.bz2_MD5 = 08b968cb2d36c24deb7f26a69f5d8602
-libnetfilter_cttimeout-1.0.0.tar.bz2_MD5 = 7697437fc9ebb6f6b83df56a633db7f9
+$(DL_FILE)_MD5 = 18cf80c4b339a3285e78822dbd4f08d7
 
 install : $(TARGET)
 
@@ -77,47 +69,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-* $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-*
-
-	@cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-#	cp -rf /usr/src/linux/include/linux/netfilter /usr/include/linux
-
-	# Layer7
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.22.tar.gz
-	cd $(DIR_APP) && cp -vf $(DIR_SRC)/netfilter-layer7-v2.22/iptables-1.4.3forward-for-kernel-2.6.20forward/* \
-	                 ./extensions/
-
-	# imq
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.12-IMQ-test4.diff
-
-	cd $(DIR_APP) && ./configure  --prefix=/usr --with-ksource=/usr/src/linux \
-				    --libdir=/lib --includedir=/usr/include --enable-libipq \
-				    --libexecdir=/lib --bindir=/sbin \
-				    --sbindir=/sbin --mandir=/usr/share/man \
-				    --with-pkgconfigdir=/usr/lib/pkgconfig
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-
-	# Iptables doesn't install all headers
-#	mkdir -p /usr/include/net/netfilter
-#	cp -f $(DIR_APP)/include/net/netfilter/*.h /usr/include/net/netfilter/
-#	mkdir -p /usr/include/iptables
-#	cp -f $(DIR_APP)/include/iptables/*.h /usr/include/iptables/
-#	cp -f $(DIR_APP)/include/iptables.h /usr/include/
-#	mkdir -p /usr/include/libipulog
-#	cp -f $(DIR_APP)/include/libipulog/*.h /usr/include/libipulog/
-#	mkdir -p /usr/include/libiptc
-#	cp -f $(DIR_APP)/include/libiptc/*.h /usr/include/libiptc/
-
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnetfilter_queue-1.0.1.tar.bz2
-	cd $(DIR_SRC)/libnetfilter_queue-1.0.1 && ./configure --prefix=/usr
-	cd $(DIR_SRC)/libnetfilter_queue-1.0.1 && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/libnetfilter_queue-1.0.1 && make install
-
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/libnetfilter_cttimeout-1.0.0.tar.bz2
-	cd $(DIR_SRC)/libnetfilter_cttimeout-1.0.0 && ./configure --prefix=/usr
-	cd $(DIR_SRC)/libnetfilter_cttimeout-1.0.0 && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/libnetfilter_cttimeout-1.0.0 && make install
-
-	@rm -rf $(DIR_APP) $(DIR_SRC)/libnfnetlink-* $(DIR_SRC)/netfilter-layer7* $(DIR_SRC)/libnetfilter_queue-*
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
