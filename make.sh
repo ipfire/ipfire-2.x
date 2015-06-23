@@ -406,6 +406,7 @@ buildipfire() {
   ipfiremake grub
   ipfiremake libmnl
   ipfiremake libnfnetlink
+  ipfiremake libnetfilter_queue
   ipfiremake libnetfilter_conntrack
   ipfiremake iptables
 
