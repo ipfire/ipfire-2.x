@@ -35,11 +35,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-objects = 	$(DL_FILE) \
-			netfilter-layer7-v2.22.tar.gz \
+objects = $(DL_FILE) \
+	netfilter-layer7-v2.22.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-netfilter-layer7-v2.22.tar.gz 		= $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
+netfilter-layer7-v2.22.tar.gz = $(URL_IPFIRE)/netfilter-layer7-v2.22.tar.gz
 
 $(DL_FILE)_MD5 = 536d048c8e8eeebcd9757d0863ebb0c0
 netfilter-layer7-v2.22.tar.gz_MD5 = 98dff8a3d5a31885b73341633f69501f
@@ -72,9 +72,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/netfilter-layer7*
-
 	@cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-#	cp -rf /usr/src/linux/include/linux/netfilter /usr/include/linux
 
 	# Layer7
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.22.tar.gz
@@ -84,24 +82,20 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# imq
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iptables-1.4.12-IMQ-test4.diff
 
-	cd $(DIR_APP) && ./configure  --prefix=/usr --with-ksource=/usr/src/linux \
-				    --libdir=/lib --includedir=/usr/include --enable-libipq \
-				    --libexecdir=/lib --bindir=/sbin \
-				    --sbindir=/sbin --mandir=/usr/share/man \
-				    --with-pkgconfigdir=/usr/lib/pkgconfig
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--with-ksource=/usr/src/linux \
+		--libdir=/lib \
+		--includedir=/usr/include \
+		--enable-libipq \
+		--libexecdir=/lib \
+		--bindir=/sbin \
+		--sbindir=/sbin \
+		--mandir=/usr/share/man \
+		--with-pkgconfigdir=/usr/lib/pkgconfig
+
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-
-	# Iptables doesn't install all headers
-#	mkdir -p /usr/include/net/netfilter
-#	cp -f $(DIR_APP)/include/net/netfilter/*.h /usr/include/net/netfilter/
-#	mkdir -p /usr/include/iptables
-#	cp -f $(DIR_APP)/include/iptables/*.h /usr/include/iptables/
-#	cp -f $(DIR_APP)/include/iptables.h /usr/include/
-#	mkdir -p /usr/include/libipulog
-#	cp -f $(DIR_APP)/include/libipulog/*.h /usr/include/libipulog/
-#	mkdir -p /usr/include/libiptc
-#	cp -f $(DIR_APP)/include/libiptc/*.h /usr/include/libiptc/
 
 	@rm -rf $(DIR_APP) $(DIR_SRC)/netfilter-layer7*
 	@$(POSTBUILD)
