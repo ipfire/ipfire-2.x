@@ -1,0 +1,7 @@
+#usr/include/libnetfilter_cthelper
+#usr/include/libnetfilter_cthelper/libnetfilter_cthelper.h
+#usr/lib/libnetfilter_cthelper.la
+#usr/lib/libnetfilter_cthelper.so
+usr/lib/libnetfilter_cthelper.so.0
+usr/lib/libnetfilter_cthelper.so.0.0.0
+#usr/lib/pkgconfig/libnetfilter_cthelper.pc
