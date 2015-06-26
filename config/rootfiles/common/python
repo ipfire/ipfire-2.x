@@ -181,7 +181,7 @@ usr/lib/python2.7/_pyio.pyc
 usr/lib/python2.7/_strptime.pyc
 #usr/lib/python2.7/_strptime.pyo
 #usr/lib/python2.7/_sysconfigdata.py
-#usr/lib/python2.7/_sysconfigdata.pyc
+usr/lib/python2.7/_sysconfigdata.pyc
 #usr/lib/python2.7/_sysconfigdata.pyo
 #usr/lib/python2.7/_threading_local.py
 usr/lib/python2.7/_threading_local.pyc

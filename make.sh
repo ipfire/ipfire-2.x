@@ -405,6 +405,11 @@ buildipfire() {
   ipfiremake freetype
   ipfiremake grub
   ipfiremake libmnl
+  ipfiremake libnfnetlink
+  ipfiremake libnetfilter_queue
+  ipfiremake libnetfilter_conntrack
+  ipfiremake libnetfilter_cthelper
+  ipfiremake libnetfilter_cttimeout
   ipfiremake iptables
 
   case "${TARGET_ARCH}" in
