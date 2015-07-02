@@ -43,6 +43,7 @@ extract_files
 # Regenerate IPsec configuration
 sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
 
+rm -f /bin/[
 sync
 
 # Start services
