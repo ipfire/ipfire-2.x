@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = transmission
-PAK_VER    = 11
+PAK_VER    = 12
 
-DEPS       = "libevent2"
+DEPS       = ""
 
 CXXFLAGS  += -fno-exceptions
 
