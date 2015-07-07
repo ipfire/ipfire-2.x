@@ -2333,7 +2333,7 @@ else
     }
     print CLIENTCONF "verb 3\r\n";
     print CLIENTCONF "ns-cert-type server\r\n";
-    print CLIENTCONF "tls-remote $vpnsettings{ROOTCERT_HOSTNAME}\r\n"; 
+    print CLIENTCONF "verify-x509-name $vpnsettings{ROOTCERT_HOSTNAME} name\r\n";
     if ($vpnsettings{MSSFIX} eq 'on') {
 	print CLIENTCONF "mssfix\r\n";
     }
