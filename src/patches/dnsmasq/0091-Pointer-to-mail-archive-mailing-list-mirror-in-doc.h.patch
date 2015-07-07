@@ -1,7 +1,7 @@
 From 585840b03365372679907f175b07a01c9d621ae0 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Wed, 13 May 2015 12:35:57 +0100
-Subject: [PATCH 91/98] Pointer to mail-archive mailing list mirror in
+Subject: [PATCH 091/113] Pointer to mail-archive mailing list mirror in
  doc.html.
 
 ---

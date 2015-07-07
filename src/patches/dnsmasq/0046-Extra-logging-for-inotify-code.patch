@@ -1,7 +1,7 @@
 From f9c863708c6b0aea31ff7a466647685dc739de50 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Tue, 3 Feb 2015 21:52:48 +0000
-Subject: [PATCH 46/98] Extra logging for inotify code.
+Subject: [PATCH 046/113] Extra logging for inotify code.
 
 ---
  src/cache.c   | 9 ++++-----

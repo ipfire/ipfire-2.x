@@ -1,7 +1,7 @@
 From 06568c663643b9ed1577d95efee69d734f427cf5 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Fri, 15 May 2015 20:43:48 +0100
-Subject: [PATCH 96/98] Remove support for DNS Extended Label Types.
+Subject: [PATCH 096/113] Remove support for DNS Extended Label Types.
 
 The support was only partial, and the whole concept is
 now deprecated in the standards.

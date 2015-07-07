@@ -1,0 +1,32 @@
+From d91b1fd402d8de127921dc4cca01007d9da23f92 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Tue, 9 Jun 2015 20:45:07 +0100
+Subject: [PATCH 105/113] Add a couple of missed logging strings to the
+ catalogue.
+
+---
+ src/dbus.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/dbus.c b/src/dbus.c
+index 801d4825001b..3d686e86f41e 100644
+--- a/src/dbus.c
++++ b/src/dbus.c
+@@ -436,12 +436,12 @@ static DBusMessage *dbus_set_bool(DBusMessage *message, int flag, char *name)
+ 
+   if (enabled)
+     { 
+-      my_syslog(LOG_INFO, "Enabling --%s option from D-Bus", name);
++      my_syslog(LOG_INFO, _("Enabling --%s option from D-Bus"), name);
+       set_option_bool(flag);
+     }
+   else
+     {
+-      my_syslog(LOG_INFO, "Disabling --%s option from D-Bus", name);
++      my_syslog(LOG_INFO, _("Disabling --%s option from D-Bus"), name);
+       reset_option_bool(flag);
+     }
+ 
+-- 
+2.1.0
+

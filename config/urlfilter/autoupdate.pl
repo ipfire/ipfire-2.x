@@ -8,6 +8,8 @@
 #
 use strict;
 
+require "/var/ipfire/general-functions.pl";
+
 my $make_clean = 1;
 
 my $swroot = "/var/ipfire";
@@ -72,6 +74,7 @@ unless ($blacklist_url eq '')
 	if (-d $target) { system("rm -rf $target"); }
 	system("mkdir $target");
 
+	&Network::setup_upstream_proxy();
 	system("/usr/bin/wget -o $target/wget.log -O $blacklist $blacklist_url");
 
 	if (-e $blacklist)

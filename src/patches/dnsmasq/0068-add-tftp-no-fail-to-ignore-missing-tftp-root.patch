@@ -1,7 +1,7 @@
 From 30d0879ed55cb67b1b735beab3d93f3bb3ef1dd2 Mon Sep 17 00:00:00 2001
 From: Stefan Tomanek <stefan.tomanek+dnsmasq@wertarbyte.de>
 Date: Tue, 31 Mar 2015 22:32:11 +0100
-Subject: [PATCH 68/98] add --tftp-no-fail to ignore missing tftp root
+Subject: [PATCH 068/113] add --tftp-no-fail to ignore missing tftp root
 
 ---
  CHANGELOG            |  3 +++

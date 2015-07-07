@@ -1,0 +1,14 @@
+#usr/include/internal.h
+#usr/include/libnetfilter_queue
+#usr/include/libnetfilter_queue/libnetfilter_queue.h
+#usr/include/libnetfilter_queue/libnetfilter_queue_ipv4.h
+#usr/include/libnetfilter_queue/libnetfilter_queue_ipv6.h
+#usr/include/libnetfilter_queue/libnetfilter_queue_tcp.h
+#usr/include/libnetfilter_queue/libnetfilter_queue_udp.h
+#usr/include/libnetfilter_queue/linux_nfnetlink_queue.h
+#usr/include/libnetfilter_queue/pktbuff.h
+#usr/lib/libnetfilter_queue.la
+#usr/lib/libnetfilter_queue.so
+usr/lib/libnetfilter_queue.so.1
+usr/lib/libnetfilter_queue.so.1.3.0
+#usr/lib/pkgconfig/libnetfilter_queue.pc

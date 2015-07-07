@@ -1,7 +1,7 @@
 From 8efd731cc4ed2baa42aa69d0a9d336392e9987cb Mon Sep 17 00:00:00 2001
 From: "Johnny S. Lee" <_@jsl.io>
 Date: Sun, 26 Apr 2015 22:23:57 +0100
-Subject: [PATCH 84/98] Make get-version work when repo is a git submodule.
+Subject: [PATCH 084/113] Make get-version work when repo is a git submodule.
 
 ---
  bld/get-version | 5 +++--

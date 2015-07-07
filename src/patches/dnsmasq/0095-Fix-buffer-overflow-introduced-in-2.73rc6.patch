@@ -1,7 +1,7 @@
 From 5d07d77e75e0f02bc0a8f6029ffbc8b371fa804e Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Fri, 15 May 2015 18:13:06 +0100
-Subject: [PATCH 95/98] Fix buffer overflow introduced in 2.73rc6.
+Subject: [PATCH 095/113] Fix buffer overflow introduced in 2.73rc6.
 
 Fix off-by-one in code which checks for over-long domain names
 in received DNS packets. This enables buffer overflow attacks

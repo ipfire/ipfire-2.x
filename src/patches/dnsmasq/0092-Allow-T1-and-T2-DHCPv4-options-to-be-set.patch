@@ -1,7 +1,7 @@
 From ca85a28241ef87919d68d52c843b6964b7070e11 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Wed, 13 May 2015 22:33:04 +0100
-Subject: [PATCH 92/98] Allow T1 and T2 DHCPv4 options to be set.
+Subject: [PATCH 092/113] Allow T1 and T2 DHCPv4 options to be set.
 
 ---
  CHANGELOG            |  3 +++
@@ -197,4 +197,3 @@ index 55526443dc84..a10e499ef768 100644
        if (optno == OPTION_SNAME && done_server)
 -- 
 2.1.0
-

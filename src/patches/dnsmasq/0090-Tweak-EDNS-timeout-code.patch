@@ -1,7 +1,7 @@
 From 86fa1046920dedc8134136a6244ca96e8a37e9d8 Mon Sep 17 00:00:00 2001
 From: Simon Kelley <simon@thekelleys.org.uk>
 Date: Sun, 10 May 2015 13:50:59 +0100
-Subject: [PATCH 90/98] Tweak EDNS timeout code.
+Subject: [PATCH 090/113] Tweak EDNS timeout code.
 
 ---
  src/forward.c | 6 ++++--
@@ -26,4 +26,3 @@ index 592243fd4d35..74e5ab66c423 100644
    /* If the answer is an error, keep the forward record in place in case
 -- 
 2.1.0
-

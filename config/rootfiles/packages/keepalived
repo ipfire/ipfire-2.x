@@ -26,12 +26,12 @@ etc/keepalived/samples
 #etc/keepalived/samples/keepalived.conf.vrrp.sync
 #etc/keepalived/samples/root.pem
 #etc/keepalived/samples/sample.misccheck.smbcheck.sh
-#etc/rc.d/init.d/keepalived
-#etc/sysconfig
 #etc/sysconfig/keepalived
 usr/bin/genhash
 usr/sbin/keepalived
 #usr/share/man/man1/genhash.1
 #usr/share/man/man5/keepalived.conf.5
 #usr/share/man/man8/keepalived.8
+#usr/share/snmp/mibs/KEEPALIVED-MIB
+#usr/share/snmp/mibs/VRRP-MIB
 var/ipfire/backup/addons/includes/keepalived

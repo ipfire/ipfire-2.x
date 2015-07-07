@@ -1,6 +1,13 @@
+#usr/lib/conntrack-tools
+#usr/lib/conntrack-tools/ct_helper_ftp.la
+usr/lib/conntrack-tools/ct_helper_ftp.so
+#usr/lib/conntrack-tools/ct_helper_rpc.la
+usr/lib/conntrack-tools/ct_helper_rpc.so
+#usr/lib/conntrack-tools/ct_helper_tns.la
+usr/lib/conntrack-tools/ct_helper_tns.so
 usr/sbin/conntrack
-#usr/sbin/conntrackd
-#usr/sbin/nfct
+usr/sbin/conntrackd
+usr/sbin/nfct
 #usr/share/man/man8/conntrack.8
 #usr/share/man/man8/conntrackd.8
 #usr/share/man/man8/nfct.8

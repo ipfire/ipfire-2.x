@@ -1,0 +1,201 @@
+From 4918bd550573844441a287a67202a6a3f0f6126a Mon Sep 17 00:00:00 2001
+From: Neil Jerram <Neil.Jerram@metaswitch.com>
+Date: Wed, 10 Jun 2015 22:23:20 +0100
+Subject: [PATCH 111/113] Documenation updates for --bridge-interface and
+ "off-link".
+
+---
+ CHANGELOG        |  6 ++++++
+ man/dnsmasq.8    | 17 +++++++++++------
+ man/es/dnsmasq.8 | 12 ++++++++----
+ man/fr/dnsmasq.8 | 18 ++++++++++++------
+ src/dhcp.c       |  9 +++++----
+ src/dhcp6.c      |  2 +-
+ src/radv.c       |  6 +++---
+ 7 files changed, 46 insertions(+), 24 deletions(-)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index a5bd4dc02701..7d8f73ffa61c 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -128,6 +128,12 @@ version 2.73
+ 
+ 	    Add AddDhcpLease and DeleteDhcpLease DBus methods. Thanks
+ 	    to Nicolas Cavallari for the patch.
++
++	    Allow configuration of router advertisements without the 
++	    "on-link" bit set. Thanks to Neil Jerram for the patch.
++
++	    Extend --bridge-interface to DHCPv6 and router 
++	    advertisements. Thanks to Neil Jerram for the patch.
+ 	
+ 	
+ version 2.72
+diff --git a/man/dnsmasq.8 b/man/dnsmasq.8
+index f811dc326e9f..ffa0c7b1f436 100644
+--- a/man/dnsmasq.8
++++ b/man/dnsmasq.8
+@@ -833,7 +833,7 @@ and
+ for details.)
+ 
+ For IPv6, the mode may be some combination of
+-.B ra-only, slaac, ra-names, ra-stateless, ra-advrouter.
++.B ra-only, slaac, ra-names, ra-stateless, ra-advrouter, off-link.
+ 
+ .B ra-only
+ tells dnsmasq to offer Router Advertisement only on this subnet,
+@@ -873,6 +873,9 @@ enables a mode where router address(es) rather than prefix(es) are included in t
+ This is described in RFC-3775 section 7.2 and is used in mobile IPv6. In this mode the interval option
+ is also included, as described in RFC-3775 section 7.3.
+ 
++.B off-link
++tells dnsmasq to advertise the prefix without the on-link (aka L) bit set.
++
+ .TP
+ .B \-G, --dhcp-host=[<hwaddr>][,id:<client_id>|*][,set:<tag>][,<ipaddr>][,<hostname>][,<lease_time>][,ignore]
+ Specify per host parameters for the DHCP server. This allows a machine
+@@ -1597,11 +1600,13 @@ option also forces the leasechange script to be called on changes
+ to the client-id and lease length and expiry time.
+ .TP
+ .B --bridge-interface=<interface>,<alias>[,<alias>]
+-Treat DHCP request packets arriving at any of the <alias> interfaces
+-as if they had arrived at <interface>. This option is necessary when
+-using "old style" bridging on BSD platforms, since
+-packets arrive at tap interfaces which don't have an IP address.
+-A trailing '*' wildcard can be used in each <alias>.
++Treat DHCP (v4 and v6) request and IPv6 Router Solicit packets
++arriving at any of the <alias> interfaces as if they had arrived at
++<interface>.  This option allows dnsmasq to provide DHCP and RA
++service over unaddressed and unbridged Ethernet interfaces, e.g. on an
++OpenStack compute host where each such interface is a TAP interface to
++a VM, or as in "old style bridging" on BSD platforms.  A trailing '*'
++wildcard can be used in each <alias>.
+ .TP
+ .B \-s, --domain=<domain>[,<address range>[,local]]
+ Specifies DNS domains for the DHCP server. Domains may be be given 
+diff --git a/man/es/dnsmasq.8 b/man/es/dnsmasq.8
+index 65e4b7277a6b..81c745a48b6e 100644
+--- a/man/es/dnsmasq.8
++++ b/man/es/dnsmasq.8
+@@ -1062,10 +1062,14 @@ esta opci
+ cuando hay cambios hechos a el client-id y tiempos de arriendo y vencimiento.
+ .TP
+ .B --bridge-interface=<nombre de interface>,<alias>[,<alias>]
+-Tratar paquetes de pedidos DHCP que llegan a cualquiera de las interfaces <alias>
+-como si hubieran llegado a la interface <nombre de interface>. Esta opci�n
+-es necesaria al usar bridging estilo viejo en plataformas BSD, dado a que
+-los paquetes llegan a interfaces tap que no tienen una direcci�n IP.
++Tratar paquetes de pedidos DHCP (v4 y v6) y de IPv6 Router Solicit que
++llegan a cualquiera de las interfaces <alias> como si hubieran llegado
++a la interface <nombre de interface>.  Esta opci�n permite que dnsmasq
++puede proporcionar los servicios DHCP y RA a trav�s de interfaces
++ethernet sin direcci�n y sin puente; por ejemplo en un nodo de c�lculo
++de OpenStack, donde cada una de esas interfaces es una interfaz TAP
++para una m�quina virtual, o al usar bridging estilo viejo en
++plataformas BSD.
+ .TP
+ .B \-s, --domain=<dominio>[,<rango de IPs>]
+ Especifica los dominios DNS para el servidor DHCP. Dominios pueden ser
+diff --git a/man/fr/dnsmasq.8 b/man/fr/dnsmasq.8
+index e0d1e9ad92e5..b4cc16dd3786 100644
+--- a/man/fr/dnsmasq.8
++++ b/man/fr/dnsmasq.8
+@@ -852,7 +852,7 @@ et
+ pour plus de détails).
+ 
+ Pour IPv6, le mode peut-être une combinaison des valeurs
+-.B ra-only, slaac, ra-names, ra-stateless.
++.B ra-only, slaac, ra-names, ra-stateless, off-link.
+ 
+ .B ra-only
+ indique à dnsmasq de n'effectuer que des annonces de routeur (Router
+@@ -888,6 +888,9 @@ peut-être combiné avec
+ et
+ .B slaac.
+ 
++.B off-link
++indique à dnsmasq d'annoncer le préfixe sans le bit L (sur lien).
++
+ .TP
+ .B \-G, --dhcp-host=[<adresse matérielle>][,id:<identifiant client>|*][,set:<label>][,<adresse IP>][,<nom d'hôte>][,<durée de bail>][,ignore]
+ Spécifie les paramètres DHCP relatifs à un hôte. Cela permet à une machine
+@@ -1655,11 +1658,14 @@ changement d'état de bail à chaque changement de l'identifiant de client, de
+ longueur de bail ou de date d'expiration.
+ .TP
+ .B --bridge-interface=<interface>,<alias>[,<alias>]
+-Traiter les requêtes DHCP arrivant sur n'importe laquelle des interfaces <alias>
+-comme si elles arrivaient de l'interface <interface>. Cette option est
+-nécessaire lors de l'utilisation de pont ethernet "ancien mode" sur plate-forme
+-BSD, puisque dans ce cas les paquets arrivent sur des interfaces "tap" n'ont
+-pas d'adresse IP.  Chaque <alias> peut finir avec un simple '*' joker.
++Traiter les requêtes DHCP (v4 et v6) et IPv6 Router Solicit arrivant
++sur n'importe laquelle des interfaces <alias> comme si elles
++arrivaient de l'interface <interface>. Cette option permet à dnsmasq
++de fournir les service DHCP et RA sur les interfaces ethernet non
++adressés et non pontés; par exemple sur un hôte de calcul d'OpenStack
++où chaque telle interface est une interface TAP à une machine
++virtuelle, ou lors de l'utilisation de pont ethernet "ancien mode" sur
++plate-forme BSD.  Chaque <alias> peut finir avec un simple '*' joker.
+ .TP
+ .B \-s, --domain=<domaine>[,<gamme d'adresses>[,local]]
+ Spécifie le domaine du serveur DHCP. Le domaine peut être donné de manière
+diff --git a/src/dhcp.c b/src/dhcp.c
+index eb1ea810b573..e6fceb13a3e1 100644
+--- a/src/dhcp.c
++++ b/src/dhcp.c
+@@ -225,10 +225,11 @@ void dhcp_packet(time_t now, int pxe_fd)
+   strncpy(arp_req.arp_dev, ifr.ifr_name, 16);
+ #endif 
+ 
+-   /* One form of bridging on BSD has the property that packets
+-      can be recieved on bridge interfaces which do not have an IP address.
+-      We allow these to be treated as aliases of another interface which does have
+-      an IP address with --dhcp-bridge=interface,alias,alias */
++  /* If the interface on which the DHCP request was received is an
++     alias of some other interface (as specified by the
++     --bridge-interface option), change ifr.ifr_name so that we look
++     for DHCP contexts associated with the aliased interface instead
++     of with the aliasing one. */
+   for (bridge = daemon->bridges; bridge; bridge = bridge->next)
+     {
+       for (alias = bridge->alias; alias; alias = alias->next)
+diff --git a/src/dhcp6.c b/src/dhcp6.c
+index 4c60c6e86c0c..8286ff400217 100644
+--- a/src/dhcp6.c
++++ b/src/dhcp6.c
+@@ -165,7 +165,7 @@ void dhcp6_packet(time_t now)
+ 
+       /* If the interface on which the DHCPv6 request was received is
+          an alias of some other interface (as specified by the
+-         --bridge-interfaces option), change parm.ind so that we look
++         --bridge-interface option), change parm.ind so that we look
+          for DHCPv6 contexts associated with the aliased interface
+          instead of with the aliasing one. */
+       for (bridge = daemon->bridges; bridge; bridge = bridge->next)
+diff --git a/src/radv.c b/src/radv.c
+index 300c31c83c78..39f1e92ae75f 100644
+--- a/src/radv.c
++++ b/src/radv.c
+@@ -205,8 +205,8 @@ void icmp6_packet(time_t now)
+ 	my_syslog(MS_DHCP | LOG_INFO, "RTR-SOLICIT(%s) %s", interface, mac);
+ 
+       /* If the incoming interface is an alias of some other one (as
+-         specified by the --bridge-interfaces option), send an RA
+-         using the context of the aliased interface. */
++         specified by the --bridge-interface option), send an RA using
++         the context of the aliased interface. */
+       for (bridge = daemon->bridges; bridge; bridge = bridge->next)
+         {
+           int bridge_index = if_nametoindex(bridge->iface);
+@@ -827,7 +827,7 @@ time_t periodic_ra(time_t now)
+                       }
+ 
+                     /* The source interface can only appear in at most
+-                       one --bridge-interfaces. */
++                       one --bridge-interface. */
+                     break;
+                   }
+             }
+-- 
+2.1.0
+

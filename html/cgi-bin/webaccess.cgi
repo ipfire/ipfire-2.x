@@ -30,7 +30,6 @@ my $acl_src_noaccess_mac = "$apdir/acls/src_noaccess_mac.acl";
 
 my $banner = "A D V A N C E D &nbsp; P R O X Y &nbsp; - &nbsp; W E B &nbsp; A C C E S S &nbsp; M A N A G E R";
 my %cgiparams;
-my %mainsettings;
 my %proxysettings;
 
 my %acl=();
@@ -38,18 +37,10 @@ my @group_defs=();
 my @groups=();
 
 ### Initialize environment
-&readhash("${swroot}/main/settings", \%mainsettings);
 &readhash("${swroot}/proxy/advanced/settings", \%proxysettings);
-$language = $mainsettings{'LANGUAGE'};
 
 ### Initialize language
-if ($language =~ /^(\w+)$/) {$language = $1;}
- #
- # Uncomment this to force a certain language:
- # $language='en';
- #
-require "${swroot}/langs/en.pl";
-require "${swroot}/langs/${language}.pl";
+require "${swroot}/lang.pl";
 
 &getcgihash(\%cgiparams);
 

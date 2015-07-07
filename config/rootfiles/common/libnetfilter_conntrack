@@ -1,0 +1,15 @@
+#usr/include/libnetfilter_conntrack
+#usr/include/libnetfilter_conntrack/libnetfilter_conntrack.h
+#usr/include/libnetfilter_conntrack/libnetfilter_conntrack_dccp.h
+#usr/include/libnetfilter_conntrack/libnetfilter_conntrack_icmp.h
+#usr/include/libnetfilter_conntrack/libnetfilter_conntrack_ipv4.h
+#usr/include/libnetfilter_conntrack/libnetfilter_conntrack_ipv6.h
+#usr/include/libnetfilter_conntrack/libnetfilter_conntrack_sctp.h
+#usr/include/libnetfilter_conntrack/libnetfilter_conntrack_tcp.h
+#usr/include/libnetfilter_conntrack/libnetfilter_conntrack_udp.h
+#usr/include/libnetfilter_conntrack/linux_nfnetlink_conntrack.h
+#usr/lib/libnetfilter_conntrack.la
+#usr/lib/libnetfilter_conntrack.so
+usr/lib/libnetfilter_conntrack.so.3
+usr/lib/libnetfilter_conntrack.so.3.5.0
+#usr/lib/pkgconfig/libnetfilter_conntrack.pc
