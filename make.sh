@@ -653,6 +653,7 @@ buildipfire() {
   ipfiremake libshout
   ipfiremake xvid
   ipfiremake libmpeg2
+  ipfiremake libarchive
   ipfiremake cmake
   ipfiremake gnump3d
   ipfiremake rsync
