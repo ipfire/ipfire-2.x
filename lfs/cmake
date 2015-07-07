@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2015  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.6.4
+VER        = 3.2.3
 
 THISAPP    = cmake-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 50f387d0436696c4a68b5512a72c9cde
+$(DL_FILE)_MD5 = d51c92bf66b1e9d4fe2b7aaedd51377c
 
 install : $(TARGET)
 
@@ -74,8 +74,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./bootstrap --prefix=/usr
+	cd $(DIR_APP) && ./bootstrap \
+			--prefix=/usr \
+			--system-libs \
+			--mandir=/share/man \
+			--no-system-jsoncpp \
+			--docdir=/share/doc/cmake-2.8.12.2
+
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
