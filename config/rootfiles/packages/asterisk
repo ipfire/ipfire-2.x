@@ -1,6 +1,5 @@
 etc/asterisk
 etc/logrotate.d/asterisk
-etc/rc.d/init.d/asterisk
 etc/rc.d/rc0.d/K30asterisk
 etc/rc.d/rc3.d/S30asterisk
 etc/rc.d/rc6.d/K30asterisk
@@ -152,6 +151,7 @@ etc/rc.d/rc6.d/K30asterisk
 #usr/include/asterisk/ulaw.h
 #usr/include/asterisk/unaligned.h
 #usr/include/asterisk/utils.h
+#usr/include/asterisk/vector.h
 #usr/include/asterisk/version.h
 #usr/include/asterisk/xml.h
 #usr/include/asterisk/xmldoc.h
@@ -956,6 +956,7 @@ var/lib/asterisk/sounds/en/bar.gsm
 var/lib/asterisk/sounds/en/barn.gsm
 var/lib/asterisk/sounds/en/barns.gsm
 var/lib/asterisk/sounds/en/barometric.gsm
+var/lib/asterisk/sounds/en/basic-pbx-ivr-main.gsm
 var/lib/asterisk/sounds/en/bearing.gsm
 var/lib/asterisk/sounds/en/beaufort.gsm
 var/lib/asterisk/sounds/en/because-paranoid.gsm
@@ -2855,3 +2856,4 @@ var/spool/asterisk/voicemail/default/1234/INBOX
 var/spool/asterisk/voicemail/default/1234/en
 var/spool/asterisk/voicemail/default/1234/en/busy.gsm
 var/spool/asterisk/voicemail/default/1234/en/unavail.gsm
+etc/rc.d/init.d/asterisk
