@@ -255,10 +255,11 @@
 	} elsif ("$ARGV[0]" eq "upgrade") {
 		&Pakfire::upgradecore();
 		my @upgradepaks = &Pakfire::dblist("upgrade", "noweb");
+		my @deps = ();
 
 		if (@upgradepaks) {
 			# Resolve the dependencies of the to be upgraded packages
-			my @deps = &Pakfire::resolvedeps_recursive(@upgradepaks);
+			@deps = &Pakfire::resolvedeps_recursive(@upgradepaks);
 
 			&Pakfire::message("");
 			&Pakfire::message("PAKFIRE UPGR: We are going to install all packages listed above.");
