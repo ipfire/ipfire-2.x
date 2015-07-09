@@ -45,7 +45,7 @@ function find_partition() {
 extract_files
 #
 KVER=xxxKVERxxx
-
+ROOT=`find_partition /`
 #
 # Create new module depency
 #
