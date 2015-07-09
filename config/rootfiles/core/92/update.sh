@@ -57,6 +57,10 @@ fi
 # Finish
 /etc/init.d/fireinfo start
 sendprofile
+# Update grub config to display new core version
+if [ -e /boot/grub/grub.cfg ]; then
+	grub-mkconfig > /boot/grub/grub.cfg
+fi
 
 # Don't report the exitcode last command
 exit 0
