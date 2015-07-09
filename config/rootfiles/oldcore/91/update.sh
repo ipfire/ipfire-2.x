@@ -54,6 +54,11 @@ if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
 
+# Update grub config to display new core version
+if [ -e /boot/grub/grub.cfg ]; then
+	grub-mkconfig > /boot/grub/grub.cfg
+fi
+
 # This update need a reboot...
 touch /var/run/need_reboot
 
