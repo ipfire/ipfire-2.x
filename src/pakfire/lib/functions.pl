@@ -591,7 +591,7 @@ sub resolvedeps {
 }
 
 sub resolvedeps_recursive {
-	my @packages = shift;
+	my @packages = @_;
 	my @result = ();
 
 	foreach my $pkg (@packages) {
