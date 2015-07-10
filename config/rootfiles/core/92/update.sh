@@ -32,6 +32,7 @@ do
 done
 
 # Stop services
+/etc/init.d/squid stop
 /etc/init.d/ipsec stop
 
 # Extract files
@@ -44,19 +45,24 @@ extract_files
 sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
 
 rm -f /bin/[
-sync
 
 # Start services
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
+/etc/init.d/squid start
 
 # This update need a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
 sendprofile
+# Update grub config to display new core version
+if [ -e /boot/grub/grub.cfg ]; then
+	grub-mkconfig > /boot/grub/grub.cfg
+fi
+sync
 
 # Don't report the exitcode last command
 exit 0

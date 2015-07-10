@@ -1,0 +1,4 @@
+etc/ssl/cert.pem
+#etc/ssl/certs
+etc/ssl/certs/ca-bundle.crt
+etc/ssl/certs/ca-bundle.trust.crt

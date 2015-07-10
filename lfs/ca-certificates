@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2015  IPFire Team  <info@ipfire.de>                           #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,14 +24,38 @@
 
 include Config
 
-VER	   = 2.7.10
+VER        = 20150710
 
-include python
+THISAPP    = ca-certificates
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
-PROG	   = python-optional-src
-PAK_VER    = 4
-DEPS       =
+###############################################################################
+# Top-level Rules
+###############################################################################
 
-dist: 
-	@$(PAK)
+install : $(TARGET)
 
+check : 
+
+download : 
+
+md5 : 
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cp -av $(DIR_CONF)/$(THISAPP) $(DIR_APP)
+
+	cd $(DIR_APP) && sh ./build.sh
+
+	-mkdir -pv /etc/ssl/certs
+	cd $(DIR_APP) && install -p -m 644 ca-bundle.crt ca-bundle.trust.crt \
+		/etc/ssl/certs
+	ln -svf certs/ca-bundle.crt /etc/ssl/cert.pem
+
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)
