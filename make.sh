@@ -483,6 +483,7 @@ buildipfire() {
   ipfiremake sqlite
   ipfiremake libffi
   ipfiremake python
+  ipfiremake ca-certificates
   ipfiremake fireinfo
   ipfiremake libnet
   ipfiremake libnl
