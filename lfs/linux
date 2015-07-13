@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 61
+PAK_VER    = 62
 DEPS	   = ""
 
 VERSUFIX=ipfire$(KCFG)
@@ -160,6 +160,11 @@ endif
 
 	# r8169 L23 patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.32-r8169_disable_L23.patch
+
+	# SuperSSpeed S238 NOTRIM patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.43_SuperSSpeed_NOTRIM.patch
+	# update the queued trim blacklist from kernel 4.2rc1
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.43_new_qtrim_blacklist.patch
 
 	# HyperV 2008 patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.x-hyperv-2008-fix.patch
