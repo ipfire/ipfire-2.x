@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 007
+VER        = 008
 
 THISAPP    = ddns-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 44f63cecc36db0d9ffddfa4bca7983ae
+$(DL_FILE)_MD5 = f8b9441f18c2667d440d5416ec2e0011
 
 install : $(TARGET)
 
@@ -70,9 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ddns/001-ddns-007-perform-lazy-database-init.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ddns/002-ddns-007-also-open-database-for-search-operations.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure \
