@@ -1027,6 +1027,9 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print CLIENTCONF "route $remsubnet[0] $remsubnet[1]\n"; 
   print CLIENTCONF "# tun Device\n"; 
   print CLIENTCONF "dev tun\n"; 
+  print CLIENTCONF "#Logfile for statistics\n";
+  print CLIENTCONF "status-version 1\n";
+  print CLIENTCONF "status /var/run/openvpn/$cgiparams{'NAME'}-n2n 10\n";
   print CLIENTCONF "# Port and Protokol\n"; 
   print CLIENTCONF "port $cgiparams{'DEST_PORT'}\n"; 
 
@@ -2138,6 +2141,9 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    print CLIENTCONF "route $remsubnet[0] $remsubnet[1]\n";
    print CLIENTCONF "# tun Device\n"; 
    print CLIENTCONF "dev tun\n"; 
+   print CLIENTCONF "#Logfile for statistics\n";
+   print CLIENTCONF "status-version 1\n";
+   print CLIENTCONF "status /var/run/openvpn/$cgiparams{'NAME'}-n2n 10\n";
    print CLIENTCONF "# Port and Protokoll\n"; 
    print CLIENTCONF "port $confighash{$cgiparams{'KEY'}}[29]\n"; 
    
