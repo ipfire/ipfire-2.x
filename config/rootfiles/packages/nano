@@ -21,10 +21,12 @@ usr/share/nano/cmake.nanorc
 usr/share/nano/css.nanorc
 usr/share/nano/debian.nanorc
 usr/share/nano/default.nanorc
+usr/share/nano/elisp.nanorc
 usr/share/nano/fortran.nanorc
 usr/share/nano/gentoo.nanorc
 #usr/share/nano/go.nanorc
 usr/share/nano/groff.nanorc
+usr/share/nano/guile.nanorc
 usr/share/nano/html.nanorc
 usr/share/nano/java.nanorc
 #usr/share/nano/javascript.nanorc
@@ -41,6 +43,7 @@ usr/share/nano/patch.nanorc
 usr/share/nano/perl.nanorc
 usr/share/nano/php.nanorc
 usr/share/nano/po.nanorc
+usr/share/nano/postgresql.nanorc
 usr/share/nano/pov.nanorc
 usr/share/nano/python.nanorc
 usr/share/nano/ruby.nanorc
