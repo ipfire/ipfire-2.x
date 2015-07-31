@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.5
+VER        = 2.0.6
 
 THISAPP    = daq-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 75c00d23f9536bc8da419375f38222cb
+$(DL_FILE)_MD5 = 2cd6da422a72c129c685fc4bb848c24c
 
 install : $(TARGET)
 
