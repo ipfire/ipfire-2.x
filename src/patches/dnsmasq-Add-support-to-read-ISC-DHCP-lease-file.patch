@@ -1,18 +1,19 @@
 diff --git a/Makefile b/Makefile
-index 2910320b6452..0a76ce3c5154 100644
+index 4c87ea9..4e0ea10 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -73,7 +73,7 @@ objs = cache.o rfc1035.o util.o option.o forward.o network.o \
+@@ -73,7 +73,8 @@ objs = cache.o rfc1035.o util.o option.o forward.o network.o \
         dnsmasq.o dhcp.o lease.o rfc2131.o netlink.o dbus.o bpf.o \
         helper.o tftp.o log.o conntrack.o dhcp6.o rfc3315.o \
         dhcp-common.o outpacket.o radv.o slaac.o auth.o ipset.o \
--       domain.o dnssec.o blockdata.o tables.o loop.o inotify.o
-+       domain.o dnssec.o blockdata.o tables.o loop.o inotify.o isc.o
+-       domain.o dnssec.o blockdata.o tables.o loop.o inotify.o poll.o
++       domain.o dnssec.o blockdata.o tables.o loop.o inotify.o poll.o \
++       isc.o
  
  hdrs = dnsmasq.h config.h dhcp-protocol.h dhcp6-protocol.h \
         dns-protocol.h radv-protocol.h ip6addr.h
 diff --git a/src/cache.c b/src/cache.c
-index 117ae279fd4e..6ee7ee362e6c 100644
+index 178d654..6d0b131 100644
 --- a/src/cache.c
 +++ b/src/cache.c
 @@ -17,7 +17,7 @@
@@ -65,10 +66,10 @@ index 117ae279fd4e..6ee7ee362e6c 100644
        cache_hash(crec);
  
 diff --git a/src/dnsmasq.c b/src/dnsmasq.c
-index e903a24c8105..eefc7f939933 100644
+index 81254f6..ce2d1a7 100644
 --- a/src/dnsmasq.c
 +++ b/src/dnsmasq.c
-@@ -970,6 +970,11 @@ int main (int argc, char **argv)
+@@ -982,6 +982,11 @@ int main (int argc, char **argv)
  
  	  poll_resolv(0, daemon->last_resolv != 0, now); 	  
  	  daemon->last_resolv = now;
@@ -81,21 +82,20 @@ index e903a24c8105..eefc7f939933 100644
  #endif
  
 diff --git a/src/dnsmasq.h b/src/dnsmasq.h
-index 89e758b56a0a..c5edd6fdf7f5 100644
+index cf1a782..30437aa 100644
 --- a/src/dnsmasq.h
 +++ b/src/dnsmasq.h
-@@ -1502,3 +1502,8 @@ void inotify_dnsmasq_init();
- int inotify_check(time_t now);
- void set_dynamic_inotify(int flag, int total_size, struct crec **rhash, int revhashsz);
- #endif
-+
+@@ -1519,3 +1519,7 @@ int poll_check(int fd, short event);
+ void poll_listen(int fd, short event);
+ int do_poll(int timeout);
+ 
 +/* isc.c */
 +#ifdef HAVE_ISC_READER
 +void load_dhcp(time_t now);
 +#endif
 diff --git a/src/isc.c b/src/isc.c
 new file mode 100644
-index 000000000000..51064426f17f
+index 0000000..5106442
 --- /dev/null
 +++ b/src/isc.c
 @@ -0,0 +1,251 @@
@@ -351,10 +351,10 @@ index 000000000000..51064426f17f
 +
 +#endif
 diff --git a/src/option.c b/src/option.c
-index cb4e76ba0aa2..f6420fcbb7ab 100644
+index ecc2619..527c5aa 100644
 --- a/src/option.c
 +++ b/src/option.c
-@@ -1693,7 +1693,7 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+@@ -1699,7 +1699,7 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
  	ret_err(_("bad MX target"));
        break;
  
