@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.3
+VER        = 2.0.4
 
 THISAPP    = cups-$(VER)
 DL_FILE    = $(THISAPP)-source.tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 12
+PAK_VER    = 13
 
 DEPS       = "ghostscript"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8d98b85edbdab7ab03739c9622f570e8
+$(DL_FILE)_MD5 = f5c847d9a4fac6c4c66fb0526a7afaae
 
 install : $(TARGET)
 
