@@ -107,6 +107,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Install network rules.
 	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-rename \
 		/lib/udev/network-hotplug-rename
+	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-vlan \
+		/lib/udev/network-hotplug-vlan
 	install -v -m 644 $(DIR_SRC)/config/udev/60-net.rules \
 		/lib/udev/rules.d
 

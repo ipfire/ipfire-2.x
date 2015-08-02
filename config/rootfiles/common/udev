@@ -29,6 +29,7 @@ lib/udev
 #lib/udev/init-net-rules.sh
 #lib/udev/mtd_probe
 #lib/udev/network-hotplug-rename
+#lib/udev/network-hotplug-vlan
 #lib/udev/rule_generator.functions
 #lib/udev/rules.d
 #lib/udev/rules.d/25-alsa.rules
