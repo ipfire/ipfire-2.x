@@ -32,12 +32,16 @@ do
 done
 
 # Stop services
+/etc/init.d/squid stop
 
 # Extract files
 extract_files
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
+
+# Start services
+/etc/init.d/squid start
 
 # This update need a reboot...
 #touch /var/run/need_reboot
