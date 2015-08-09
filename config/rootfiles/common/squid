@@ -2082,8 +2082,6 @@ usr/lib/squid/errors/tr/error-details.txt
 usr/lib/squid/ext_edirectory_userip_acl
 usr/lib/squid/ext_file_userip_acl
 usr/lib/squid/ext_kerberos_ldap_group_acl
-usr/lib/squid/negotiate_kerberos_auth
-usr/lib/squid/negotiate_kerberos_auth_test
 usr/lib/squid/ext_ldap_group_acl
 usr/lib/squid/ext_session_acl
 usr/lib/squid/ext_sql_session_acl
