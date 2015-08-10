@@ -32,6 +32,7 @@ do
 done
 
 # Stop services
+/etc/init.d/dnsmasq stop
 /etc/init.d/squid stop
 
 # Extract files
@@ -46,6 +47,7 @@ rm -f /opt/pakfire/db/rootfiles/libevent2
 
 # Start services
 /etc/init.d/squid start
+/etc/init.d/dnsmasq start
 
 # This update need a reboot...
 #touch /var/run/need_reboot
