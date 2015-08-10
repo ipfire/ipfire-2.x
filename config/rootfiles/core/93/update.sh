@@ -37,6 +37,10 @@ done
 # Extract files
 extract_files
 
+# Remove libevent2 addon meta and rootfile. libevent2 is now in core.
+rm -f /opt/pakfire/db/*/meta-libevent2
+rm -f /opt/pakfire/db/rootfiles/libevent2
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
