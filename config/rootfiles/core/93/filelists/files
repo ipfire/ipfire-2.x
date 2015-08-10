@@ -1,5 +1,7 @@
 etc/system-release
 etc/issue
+opt/pakfire/pakfire
+opt/pakfire/lib/functions.pl
 srv/web/ipfire/html/themes/darkdos/include/functions.pl
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
