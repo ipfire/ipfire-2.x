@@ -57,7 +57,7 @@ rm -f /opt/pakfire/db/rootfiles/libevent2
 sendprofile
 # Update grub config to display new core version
 if [ -e /boot/grub/grub.cfg ]; then
-	grub-mkconfig > /boot/grub/grub.cfg
+	grub-mkconfig -o /boot/grub/grub.cfg
 fi
 sync
 
