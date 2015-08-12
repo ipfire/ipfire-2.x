@@ -149,7 +149,7 @@ iptables_init() {
 	if [ "${CONNTRACK_AMANDA}" = "on" ]; then
 		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
 			-m helper --helper amanda -j ACCEPT
-		iptables -t raw -A CONNTRACK -j CT --helper amanda
+		iptables -t raw -A CONNTRACK -p tcp -j CT --helper amanda
 	fi
 
 	# Fix for braindead ISP's
