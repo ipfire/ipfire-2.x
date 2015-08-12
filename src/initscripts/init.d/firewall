@@ -111,10 +111,10 @@ iptables_init() {
 			-m helper --helper h323 -j ACCEPT
 
 		# Gatekeeper RAS
-		iptables -t raw -A CONNTRACK -p udp --dport 1719 -j CT --helper h323
+		iptables -t raw -A CONNTRACK -p udp --dport 1719 -j CT --helper RAS
 
 		# Q.931
-		iptables -t raw -A CONNTRACK -p tcp --dport 1720 -j CT --helper h323
+		iptables -t raw -A CONNTRACK -p tcp --dport 1720 -j CT --helper Q.931
 	fi
 
 	# FTP
