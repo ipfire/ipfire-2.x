@@ -32,6 +32,7 @@ do
 done
 
 # Stop services
+/etc/init.d/sshd stop
 
 # Extract files
 extract_files
@@ -39,7 +40,12 @@ extract_files
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Update SSH configuration
+sed -i /etc/ssh/sshd_config \
+	-e 's/^#\?PermitRootLogin .*$$/PermitRootLogin yes/'
+
 # Start services
+/etc/init.d/sshd start
 
 # This update need a reboot...
 #touch /var/run/need_reboot
