@@ -1,0 +1,8 @@
+usr/lib/dma-mbox-create
+var/ipfire/dma
+var/ipfire/dma/auth.conf
+var/ipfire/dma/dma.conf
+usr/sbin/dma
+usr/sbin/mailq
+usr/sbin/sendmail.dma
+var/spool/dma

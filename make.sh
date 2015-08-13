@@ -641,6 +641,7 @@ buildipfire() {
   ipfiremake clamav
   ipfiremake spamassassin
   ipfiremake amavisd
+  ipfiremake dma
   ipfiremake alsa
   ipfiremake mpfire
   ipfiremake guardian
