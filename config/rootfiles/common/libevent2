@@ -34,12 +34,12 @@ usr/lib/libevent_openssl-2.0.so.5
 usr/lib/libevent_openssl-2.0.so.5.1.9
 #usr/lib/libevent_openssl.a
 #usr/lib/libevent_openssl.la
-#usr/lib/libevent_openssl.so
+usr/lib/libevent_openssl.so
 usr/lib/libevent_pthreads-2.0.so.5
 usr/lib/libevent_pthreads-2.0.so.5.1.9
 #usr/lib/libevent_pthreads.a
 #usr/lib/libevent_pthreads.la
-#usr/lib/libevent_pthreads.so
+usr/lib/libevent_pthreads.so
 #usr/lib/pkgconfig/libevent.pc
 #usr/lib/pkgconfig/libevent_openssl.pc
 #usr/lib/pkgconfig/libevent_pthreads.pc
