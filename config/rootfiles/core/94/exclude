@@ -1,4 +1,5 @@
 boot/config.txt
+etc/alternatives
 etc/collectd.custom
 etc/ipsec.conf
 etc/ipsec.secrets
@@ -15,6 +16,7 @@ etc/sysconfig/rc.local
 etc/udev/rules.d/30-persistent-network.rules
 srv/web/ipfire/html/proxy.pac
 var/ipfire/ovpn
+var/lib/alternatives
 var/log/cache
 var/state/dhcp/dhcpd.leases
 var/updatecache

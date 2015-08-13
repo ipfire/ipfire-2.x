@@ -633,6 +633,7 @@ buildipfire() {
   ipfiremake screen
   ipfiremake smartmontools
   ipfiremake htop
+  ipfiremake chkconfig
   ipfiremake postfix
   ipfiremake fetchmail
   ipfiremake cyrus-imapd
