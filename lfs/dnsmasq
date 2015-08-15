@@ -73,7 +73,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/001-include_0_0_0_0_8_in_DNS_rebind_checks.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/002-enhance_add_subnet_to_allow_arbitary_subnet_addresses.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/003-dont_answer_non_auth_queries_for_auth_zones_locally_when_localise_queries_set.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
+
 	cd $(DIR_APP) && sed -i src/config.h \
 		-e 's|/\* #define HAVE_IDN \*/|#define HAVE_IDN|g' \
 		-e 's|/\* #define HAVE_DNSSEC \*/|#define HAVE_DNSSEC|g' \
