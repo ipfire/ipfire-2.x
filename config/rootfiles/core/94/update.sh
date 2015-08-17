@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/init.d/sshd stop
+/etc/init.d/dnsmasq stop
 
 # Extract files
 extract_files
@@ -45,6 +46,7 @@ sed -i /etc/ssh/sshd_config \
 	-e 's/^#\?PermitRootLogin .*$$/PermitRootLogin yes/'
 
 # Start services
+/etc/init.d/dnsmasq start
 /etc/init.d/sshd start
 
 # This update need a reboot...
