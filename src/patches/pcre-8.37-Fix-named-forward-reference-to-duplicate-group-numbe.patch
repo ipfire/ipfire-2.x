@@ -1,0 +1,98 @@
+From 83ed574998fe7b844b98ab7cd56291068feb9e31 Mon Sep 17 00:00:00 2001
+From: ph10 <ph10@2f5784b3-3f2a-0410-8824-cb99058d5e15>
+Date: Sat, 16 May 2015 11:05:40 +0000
+Subject: [PATCH] Fix named forward reference to duplicate group number
+ overflow bug.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Port to 8.37:
+
+commit 2fa78aa4e42bcebf2d616c4ee89c012f29dc3447
+Author: ph10 <ph10@2f5784b3-3f2a-0410-8824-cb99058d5e15>
+Date:   Sat May 16 11:05:40 2015 +0000
+
+    Fix named forward reference to duplicate group number overflow bug.
+
+    git-svn-id: svn://vcs.exim.org/pcre/code/trunk@1559 2f5784b3-3f2a-0410-8824-cb99058d5e15
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pcre_compile.c       | 24 ++++++++++++++++--------
+ testdata/testinput1  |  3 +++
+ testdata/testoutput1 |  5 +++++
+ 3 files changed, 24 insertions(+), 8 deletions(-)
+
+diff --git a/pcre_compile.c b/pcre_compile.c
+index b66b1f6..8b4aaef 100644
+--- a/pcre_compile.c
++++ b/pcre_compile.c
+@@ -7183,15 +7183,15 @@ for (;; ptr++)
+               open_capitem *oc;
+               recno = ng->number;
+               if (is_recurse) break;
+-              for (oc = cd->open_caps; oc != NULL; oc = oc->next)         
+-                {          
+-                if (oc->number == recno)                                     
+-                  {               
+-                  oc->flag = TRUE;                                      
++              for (oc = cd->open_caps; oc != NULL; oc = oc->next)
++                {
++                if (oc->number == recno)
++                  {
++                  oc->flag = TRUE;
+                   break;
+-                  }                                                         
+-                }                          
+-              }    
++                  }
++                }
++              }
+             }
+ 
+           /* Count named back references. */
+@@ -7203,6 +7203,14 @@ for (;; ptr++)
+           16-bit data item. */
+ 
+           *lengthptr += IMM2_SIZE;
++
++          /* If this is a forward reference and we are within a (?|...) group,
++          the reference may end up as the number of a group which we are
++          currently inside, that is, it could be a recursive reference. In the
++          real compile this will be picked up and the reference wrapped with
++          OP_ONCE to make it atomic, so we must space in case this occurs. */
++
++          if (recno == 0) *lengthptr += 2 + 2*LINK_SIZE;
+           }
+ 
+         /* In the real compile, search the name table. We check the name
+diff --git a/testdata/testinput1 b/testdata/testinput1
+index 73c2f4d..8379ce0 100644
+--- a/testdata/testinput1
++++ b/testdata/testinput1
+@@ -5730,4 +5730,7 @@ AbcdCBefgBhiBqz
+ "(?1)(?#?'){8}(a)"
+     baaaaaaaaac
+ 
++"(?|(\k'Pm')|(?'Pm'))"
++    abcd
++
+ /-- End of testinput1 --/
+diff --git a/testdata/testoutput1 b/testdata/testoutput1
+index 0a53fd0..e852ab9 100644
+--- a/testdata/testoutput1
++++ b/testdata/testoutput1
+@@ -9429,4 +9429,9 @@ No match
+  0: aaaaaaaaa
+  1: a
+ 
++"(?|(\k'Pm')|(?'Pm'))"
++    abcd
++ 0: 
++ 1: 
++
+ /-- End of testinput1 --/
+-- 
+2.4.3
+
