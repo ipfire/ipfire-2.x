@@ -382,6 +382,7 @@ WARNING: translation string unused: outgoing firewall reset
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn config
+WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn_fastio
@@ -611,6 +612,7 @@ WARNING: untranslated string: advproxy group access control
 WARNING: untranslated string: advproxy group required
 WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: age second
+WARNING: untranslated string: application layer gateways
 WARNING: untranslated string: atm device
 WARNING: untranslated string: attention
 WARNING: untranslated string: bit

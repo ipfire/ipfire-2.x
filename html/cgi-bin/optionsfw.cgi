@@ -241,16 +241,16 @@ END
 </table>
 <br />
 <table width='95%' cellspacing='0'>
-<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>Application Layer Gateways</b></td></tr>
-<tr><td align='left' width='60%'>ftp</td><td align='left'>on <input type='radio' name='CONNTRACK_FTP' value='on' $checked{'CONNTRACK_FTP'}{'on'} />/
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'application layer gateways'}</b></td></tr>
+<tr><td align='left' width='60%'>FTP</td><td align='left'>on <input type='radio' name='CONNTRACK_FTP' value='on' $checked{'CONNTRACK_FTP'}{'on'} />/
 																						<input type='radio' name='CONNTRACK_FTP' value='off' $checked{'CONNTRACK_FTP'}{'off'} /> off</td></tr>
-<tr><td align='left' width='60%'>h323</td><td align='left'>on <input type='radio' name='CONNTRACK_H323' value='on' $checked{'CONNTRACK_H323'}{'on'} />/
+<tr><td align='left' width='60%'>H.323</td><td align='left'>on <input type='radio' name='CONNTRACK_H323' value='on' $checked{'CONNTRACK_H323'}{'on'} />/
 																						<input type='radio' name='CONNTRACK_H323' value='off' $checked{'CONNTRACK_H323'}{'off'} /> off</td></tr>
-<tr><td align='left' width='60%'>irc</td><td align='left'>on <input type='radio' name='CONNTRACK_IRC' value='on' $checked{'CONNTRACK_IRC'}{'on'} />/
+<tr><td align='left' width='60%'>IRC</td><td align='left'>on <input type='radio' name='CONNTRACK_IRC' value='on' $checked{'CONNTRACK_IRC'}{'on'} />/
 																						<input type='radio' name='CONNTRACK_IRC' value='off' $checked{'CONNTRACK_IRC'}{'off'} /> off</td></tr>
-<tr><td align='left' width='60%'>sip</td><td align='left'>on <input type='radio' name='CONNTRACK_SIP' value='on' $checked{'CONNTRACK_SIP'}{'on'} />/
+<tr><td align='left' width='60%'>SIP</td><td align='left'>on <input type='radio' name='CONNTRACK_SIP' value='on' $checked{'CONNTRACK_SIP'}{'on'} />/
 																						<input type='radio' name='CONNTRACK_SIP' value='off' $checked{'CONNTRACK_SIP'}{'off'} /> off</td></tr>
-<tr><td align='left' width='60%'>tftp</td><td align='left'>on <input type='radio' name='CONNTRACK_TFTP' value='on' $checked{'CONNTRACK_TFTP'}{'on'} />/
+<tr><td align='left' width='60%'>TFTP</td><td align='left'>on <input type='radio' name='CONNTRACK_TFTP' value='on' $checked{'CONNTRACK_TFTP'}{'on'} />/
 																						<input type='radio' name='CONNTRACK_TFTP' value='off' $checked{'CONNTRACK_TFTP'}{'off'} /> off</td></tr>
 
 </table>

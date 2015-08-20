@@ -445,6 +445,7 @@ WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn config
+WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
 WARNING: translation string unused: ovpn log
@@ -663,6 +664,7 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
+WARNING: untranslated string: application layer gateways
 WARNING: untranslated string: bytes
 WARNING: untranslated string: check all
 WARNING: untranslated string: fwhost addgeoipgrp

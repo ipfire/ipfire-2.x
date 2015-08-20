@@ -26,6 +26,7 @@
 < age shour
 < age sminute
 < age ssecond
+< application layer gateways
 < atm device
 < attention
 < bit
@@ -605,6 +606,7 @@
 < age shour
 < age sminute
 < age ssecond
+< application layer gateways
 < Async logging enabled
 < atm device
 < attention
@@ -1167,6 +1169,7 @@
 < age shour
 < age sminute
 < age ssecond
+< application layer gateways
 < atm device
 < attention
 < bit
@@ -1715,6 +1718,7 @@
 < age shour
 < age sminute
 < age ssecond
+< application layer gateways
 < atm device
 < attention
 < bit
