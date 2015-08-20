@@ -1,0 +1,4 @@
+usr/lib/perl5/site_perl/5.12.3/Email
+usr/lib/perl5/site_perl/5.12.3/Email/Date
+usr/lib/perl5/site_perl/5.12.3/Email/Date/Format.pm
+#usr/share/man/man3/Email::Date::Format.3
