@@ -1,3 +1,4 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/sshd
 var/ipfire/langs

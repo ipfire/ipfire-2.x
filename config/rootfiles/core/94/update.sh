@@ -45,6 +45,9 @@ extract_files
 sed -i /etc/ssh/sshd_config \
 	-e 's/^#\?PermitRootLogin .*$$/PermitRootLogin yes/'
 
+# Move away old and unsupported keys
+mv -f /etc/ssh/ssh_host_dsa_key{,.old}
+
 # Start services
 /etc/init.d/dnsmasq start
 /etc/init.d/sshd start

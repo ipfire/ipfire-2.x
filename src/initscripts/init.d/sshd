@@ -18,7 +18,7 @@ case "$1" in
 		evaluate_retval
 	fi
 
-	for algo in rsa dsa ecdsa ed25519; do
+	for algo in rsa ecdsa ed25519; do
 		keyfile="/etc/ssh/ssh_host_${algo}_key"
 
 		# If the key already exists, there is nothing to do.
