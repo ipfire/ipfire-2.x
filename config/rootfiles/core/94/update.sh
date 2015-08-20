@@ -47,6 +47,9 @@ sed -i /etc/ssh/sshd_config \
 
 # Move away old and unsupported keys
 mv -f /etc/ssh/ssh_host_dsa_key{,.old}
+# Regenerating weak RSA keys
+mv -f /etc/ssh/ssh_host_key{,.old}
+mv -f /etc/ssh/ssh_host_rsa_key{,.old}
 
 # Start services
 /etc/init.d/dnsmasq start
