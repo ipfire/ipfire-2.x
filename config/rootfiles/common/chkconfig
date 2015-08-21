@@ -1,4 +1,4 @@
-etc/alternatives
+#etc/alternatives
 usr/sbin/alternatives
 usr/sbin/update-alternatives
-var/lib/alternatives
+#var/lib/alternatives
