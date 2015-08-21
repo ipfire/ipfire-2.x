@@ -73,7 +73,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	mkdir /var/ipfire/dma
+	mkdir -pv /var/ipfire/dma
 	cd $(DIR_APP) && sed -i '/PREFIX/s/usr\/local/usr/g' Makefile
 	cd $(DIR_APP) && sed -i '/CONFDIR/s/etc\/dma/var\/ipfire\/dma/g' Makefile
 	cd $(DIR_APP) && make
