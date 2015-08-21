@@ -1,10 +1,12 @@
 etc/alternatives/sendmail
 usr/lib/dma-mbox-create
-var/ipfire/dma
-var/ipfire/dma/auth.conf
-var/ipfire/dma/dma.conf
 usr/sbin/dma
 usr/sbin/mailq
+usr/sbin/sendmail
 usr/sbin/sendmail.dma
+#usr/share/man/man8/dma.8
+#var/ipfire/dma
+var/ipfire/dma/auth.conf
+var/ipfire/dma/dma.conf
 var/lib/alternatives/sendmail
 var/spool/dma

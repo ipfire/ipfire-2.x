@@ -48,6 +48,7 @@ srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromport.dat
 srv/web/ipfire/cgi-bin/logs.cgi/summary.dat
 srv/web/ipfire/cgi-bin/logs.cgi/urlfilter.dat
 srv/web/ipfire/cgi-bin/mac.cgi
+srv/web/ipfire/cgi-bin/mail.cgi
 srv/web/ipfire/cgi-bin/mdstat.cgi
 srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/memory.cgi
