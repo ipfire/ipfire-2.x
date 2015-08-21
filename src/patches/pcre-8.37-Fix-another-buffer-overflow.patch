@@ -1,0 +1,110 @@
+From f6efcf125123199d446c5561266c3c3846ed9f30 Mon Sep 17 00:00:00 2001
+From: ph10 <ph10@2f5784b3-3f2a-0410-8824-cb99058d5e15>
+Date: Wed, 3 Jun 2015 16:51:59 +0000
+Subject: [PATCH] Fix another buffer overflow.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ported to 8.37:
+
+commit 225f0d5eb16c7a26591a1e3f286c7476907b5a6a
+Author: ph10 <ph10@2f5784b3-3f2a-0410-8824-cb99058d5e15>
+Date:   Wed Jun 3 16:51:59 2015 +0000
+
+    Fix another buffer overflow.
+
+    git-svn-id: svn://vcs.exim.org/pcre/code/trunk@1562 2f5784b3-3f2a-0410-8824-cb99058d5e15
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ pcre_compile.c           | 7 ++++++-
+ testdata/testinput2      | 2 ++
+ testdata/testoutput11-16 | 2 +-
+ testdata/testoutput11-32 | 2 +-
+ testdata/testoutput11-8  | 2 +-
+ testdata/testoutput2     | 2 ++
+ 6 files changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/pcre_compile.c b/pcre_compile.c
+index 8b4aaef..f5d2384 100644
+--- a/pcre_compile.c
++++ b/pcre_compile.c
+@@ -7210,7 +7210,12 @@ for (;; ptr++)
+           real compile this will be picked up and the reference wrapped with
+           OP_ONCE to make it atomic, so we must space in case this occurs. */
+ 
+-          if (recno == 0) *lengthptr += 2 + 2*LINK_SIZE;
++          /* In fact, this can happen for a non-forward reference because
++          another group with the same number might be created later. This
++          issue is fixed "properly" in PCRE2. As PCRE1 is now in maintenance
++          only mode, we finesse the bug by allowing more memory always. */
++
++          /* if (recno == 0) */ *lengthptr += 2 + 2*LINK_SIZE;
+           }
+ 
+         /* In the real compile, search the name table. We check the name
+diff --git a/testdata/testinput2 b/testdata/testinput2
+index 5cc9ce6..e12de3a 100644
+--- a/testdata/testinput2
++++ b/testdata/testinput2
+@@ -4156,4 +4156,6 @@ backtracking verbs. --/
+ 
+ /(?=di(?<=(?1))|(?=(.))))/
+ 
++"(?J:(?|(?'R')(\k'R')|((?'R'))))"
++
+ /-- End of testinput2 --/
+diff --git a/testdata/testoutput11-16 b/testdata/testoutput11-16
+index 422f2ad..e222e7c 100644
+--- a/testdata/testoutput11-16
++++ b/testdata/testoutput11-16
+@@ -231,7 +231,7 @@ Memory allocation (code space): 73
+ ------------------------------------------------------------------
+ 
+ /(?P<a>a)...(?P=a)bbb(?P>a)d/BM
+-Memory allocation (code space): 61
++Memory allocation (code space): 77
+ ------------------------------------------------------------------
+   0  24 Bra
+   2   5 CBra 1
+diff --git a/testdata/testoutput11-32 b/testdata/testoutput11-32
+index d953ec8..9a80ec9 100644
+--- a/testdata/testoutput11-32
++++ b/testdata/testoutput11-32
+@@ -231,7 +231,7 @@ Memory allocation (code space): 155
+ ------------------------------------------------------------------
+ 
+ /(?P<a>a)...(?P=a)bbb(?P>a)d/BM
+-Memory allocation (code space): 125
++Memory allocation (code space): 157
+ ------------------------------------------------------------------
+   0  24 Bra
+   2   5 CBra 1
+diff --git a/testdata/testoutput11-8 b/testdata/testoutput11-8
+index 6ec18ec..3adaca2 100644
+--- a/testdata/testoutput11-8
++++ b/testdata/testoutput11-8
+@@ -231,7 +231,7 @@ Memory allocation (code space): 45
+ ------------------------------------------------------------------
+ 
+ /(?P<a>a)...(?P=a)bbb(?P>a)d/BM
+-Memory allocation (code space): 38
++Memory allocation (code space): 50
+ ------------------------------------------------------------------
+   0  30 Bra
+   3   7 CBra 1
+diff --git a/testdata/testoutput2 b/testdata/testoutput2
+index 4decb8d..5bad26c 100644
+--- a/testdata/testoutput2
++++ b/testdata/testoutput2
+@@ -14428,4 +14428,6 @@ Failed: lookbehind assertion is not fixed length at offset 17
+ /(?=di(?<=(?1))|(?=(.))))/
+ Failed: unmatched parentheses at offset 23
+ 
++"(?J:(?|(?'R')(\k'R')|((?'R'))))"
++
+ /-- End of testinput2 --/
+-- 
+2.4.3
+
