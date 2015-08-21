@@ -77,10 +77,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i '/PREFIX/s/usr\/local/usr/g' Makefile
 	cd $(DIR_APP) && sed -i '/CONFDIR/s/etc\/dma/var\/ipfire\/dma/g' Makefile
 	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make install sendmail-link mailq-link install-spool-dirs install-etc
+	cd $(DIR_APP) && make install mailq-link install-spool-dirs install-etc
 	chown -R nobody.nobody /var/ipfire/dma
 	chown nobody.root /var/ipfire/dma/auth.conf
-	mv /usr/sbin/sendmail /usr/sbin/sendmail.dma
-	/usr/sbin/alternatives --install /sbin/sendmail sendmail /usr/sbin/sendmail.dma 20
+	ln -svf dma /usr/sbin/sendmail.dma
+	/usr/sbin/alternatives --install /usr/sbin/sendmail sendmail /usr/sbin/sendmail.dma 20
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
