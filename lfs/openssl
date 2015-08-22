@@ -63,7 +63,7 @@ CONFIGURE_OPTIONS = \
 	-DSSL_FORBID_ENULL
 
 ifeq "$(MACHINE)" "x86_64"
-	CONFIGURE_ARGS = linux-x86_64
+	CONFIGURE_OPTIONS += linux-x86_64
 endif
 
 ifeq "$(MACHINE)" "i586"
