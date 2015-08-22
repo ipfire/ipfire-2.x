@@ -51,6 +51,11 @@ mv -f /etc/ssh/ssh_host_dsa_key{,.old}
 mv -f /etc/ssh/ssh_host_key{,.old}
 mv -f /etc/ssh/ssh_host_rsa_key{,.old}
 
+# Update crontab
+sed -i /var/spool/cron/root.orig -e "/Force an update once a month/d"
+sed -i /var/spool/cron/root.orig -e "/ddns update-all --force/d"
+fcrontab -z &>/dev/null
+
 # Start services
 /etc/init.d/dnsmasq start
 /etc/init.d/sshd start
