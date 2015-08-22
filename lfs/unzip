@@ -70,11 +70,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(MACHINE_TYPE)" "arm"
-	# ARM cannot use the x86 assembly code.
-	cd $(DIR_APP) && make -f unix/Makefile LOCAL_UNZIP=-D_FILE_OFFSET_BITS=64 linux_noasm
-else
+ifeq "$(MACHINE)" "i586"
 	cd $(DIR_APP) && make -f unix/Makefile LOCAL_UNZIP=-D_FILE_OFFSET_BITS=64 linux
+else
+	# ARM/x86_64 cannot use the x86 32 bit assembly code.
+	cd $(DIR_APP) && make -f unix/Makefile LOCAL_UNZIP=-D_FILE_OFFSET_BITS=64 linux_noasm
 endif
 	cd $(DIR_APP) && make prefix=/usr install
 	@rm -rf $(DIR_APP)
