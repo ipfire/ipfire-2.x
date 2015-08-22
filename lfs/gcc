@@ -114,6 +114,11 @@ ifeq "$(MACHINE)" "i586"
 		--with-tune=generic
 endif
 
+ifeq "$(MACHINE)" "x86_64"
+	EXTRA_CONFIG += \
+		--disable-multilib
+endif
+
 EXTRA_CONFIG += \
 	--with-bugurl=http://bugtracker.ipfire.org \
 	--disable-libunwind-exceptions \

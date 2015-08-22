@@ -305,8 +305,13 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.3 -o|' \
 		scripts/test-installation.pl
 else
+ifeq "$(MACHINE)" "x86_64"
+	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib64 -Wl,-dynamic-linker=/lib64/ld-linux-x86-64.so.2 -o|' \
+		scripts/test-installation.pl
+else
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.2 -o|' \
 		scripts/test-installation.pl
+endif
 endif
 endif
 
@@ -337,6 +342,8 @@ ifeq "$(ROOT)" ""
 
 	# Timezone data will be shipped by tzdata.
 	rm -rfv /usr/share/zoneinfo
+else
+	ln -svf lib /tools/lib64
 endif
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build
 	@$(POSTBUILD)
