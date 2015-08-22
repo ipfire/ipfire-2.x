@@ -29,8 +29,15 @@ VER = ipfire
 THISAPP    = flash-image
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+ifeq "$(MACHINE)" "i586"
+	EFI = 1
+endif
+
 DEVICE     = $(shell losetup -f)
 PART_BOOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p1
+ifeq "$(EFI)" "1"
+  PART_EFI = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p2
+endif
 PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
 IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.xz
@@ -70,12 +77,32 @@ else
  PART_TYPE = L
 endif
 
+GRUB_CFGS = /boot/grub/grub.cfg
+
+ifeq "$(EFI)" "1"
+ S_EFI = 204800
+ GRUB_CFGS += /boot/efi/EFI/ipfire/grub-efi/grub.cfg
+else
+ S_EFI = 0
+endif
+
 # /boot:  128MB - OFFSET
 # /    : 1200 MB
 S_BOOT := $(shell echo $$(( 262144 - $(S_OFFSET) )))
 S_ROOT := 2477600
 
 PADDING = 100 # MB
+
+ifeq "$(EFI)" "1"
+ SFDISK_EFI  = $(S_OFFSET),$(S_EFI),c,*\n
+ SFDISK      = $(SFDISK_BOOT)$(SFDISK_EFI)$(SFDISK_ROOT)
+else
+ SFDISK_SWAP = ,0,0\n
+ SFDISK      = $(SFDISK_BOOT)$(SFDISK_SWAP)$(SFDISK_ROOT)
+endif
+
+SFDISK_BOOT = $(shell echo $$(( $(S_OFFSET) + $(S_EFI) ))),$(S_BOOT),$(PART_TYPE)\n
+SFDISK_ROOT = $(shell echo $$(( $(S_OFFSET) + $(S_EFI) + $(S_BOOT) ))),$(S_ROOT),L\n
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Stop if $(MNThdd) is still mounted
@@ -84,13 +111,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf $(IMG) $(MNThdd) && mkdir -p $(MNThdd)
 
 	# Allocate image on disk
-	dd if=/dev/zero of=$(IMG) bs=512 count=$$(( $(S_OFFSET) + $(S_BOOT) + $(S_ROOT) ))
+	dd if=/dev/zero of=$(IMG) bs=512 count=$$(( $(S_OFFSET) + $(S_BOOT) + $(S_EFI) + $(S_ROOT) ))
 	losetup $(DEVICE) $(IMG)
 
 	# Write Partition table
-	echo -e "$(S_OFFSET),$(S_BOOT),$(PART_TYPE),*\n,0,0\n$$(( $(S_BOOT) + $(S_OFFSET) )),$(S_ROOT),L\n" \
-		| sfdisk -uS $(DEVICE)
+	echo -e "$(SFDISK)" | sfdisk -uS $(DEVICE)
+
+	# Remove 2nd empty partition
+ifneq "$(EFI)" "1"
 	-echo -e "d\n2\nw\n\q\n" | fdisk $(DEVICE)
+endif
 
 	kpartx -v -a $(DEVICE)
 
@@ -99,6 +129,9 @@ ifeq "$(PART_TYPE)" "c"
 	mkfs.vfat $(PART_BOOT)
 else
 	mkfs.ext2 -F $(PART_BOOT)
+endif
+ifeq "$(EFI)" "1"
+	mkfs.vfat $(PART_EFI)
 endif
 	mkfs.ext4 -O ^has_journal,extent -F $(PART_ROOT)
 
@@ -112,6 +145,11 @@ endif
 	# Mount boot partition
 	mkdir -pv $(MNThdd)/boot
 	mount $(PART_BOOT) $(MNThdd)/boot
+
+ifeq "$(EFI)" "1"
+	mkdir -pv $(MNThdd)/boot/efi
+	mount $(PART_EFI) $(MNThdd)/boot/efi
+endif
 
 	# Install Pandaboard MLO and uboot first
 ifeq "$(BUILD_ARCH)" "armv5tel"
@@ -139,6 +177,10 @@ endif
 	# Create /etc/fstab
 	printf "$(FSTAB_FMT)" "$$(blkid -o value -s UUID $(PART_BOOT))" "/boot" \
 		"auto" "defaults" 1 2 >  $(MNThdd)/etc/fstab
+ifeq "$(EFI)" "1"
+	printf "$(FSTAB_FMT)" "$$(blkid -o value -s UUID $(PART_EFI))" "/boot/efi" \
+		"auto" "defaults" 1 2 >> $(MNThdd)/etc/fstab
+endif
 	printf "$(FSTAB_FMT)" "$$(blkid -o value -s UUID $(PART_ROOT))" "/" \
 		"auto" "defaults" 1 1 >> $(MNThdd)/etc/fstab
 
@@ -155,14 +197,17 @@ ifeq "$(BOOTLOADER)" "grub"
 			$(MNThdd)/etc/grub.d/
 
 	# Create configuration
-	mkdir -pv $(MNThdd)/boot/grub
-	chroot $(MNThdd) grub-mkconfig -o /boot/grub/grub.cfg
+	for i in $(GRUB_CFGS); do \
+		mkdir -pv $$(dirname $(MNThdd)$(GRUB_CFG)); \
+		chroot $(MNThdd) grub-mkconfig -o $$i || exit 1; \
+	done
 
 	# Boot the first kernel by default
 	chroot $(MNThdd) grub-set-default 0
 
 	# Insert the UUID because grub-mkconfig often fails to
 	# detect that correctly
+	sed -i $(addprefix $(MNThdd),$(GRUB_CFGS)) \
 	sed -i $(MNThdd)/boot/grub/grub.cfg \
 		-e "s/root=[A-Za-z0-9\/=-]*/root=UUID=$$(blkid -o value -s UUID $(PART_ROOT))/g"
 
@@ -173,6 +218,12 @@ ifeq "$(BOOTLOADER)" "grub"
 	# restore orginal defaults
 	mv -f $(MNThdd)/etc/default/grub.backup $(MNThdd)/etc/default/grub
 	rm -f $(MNThdd)/etc/grub.d/11_linux_scon
+
+ifeq "$(EFI)" "1"
+	mkdir -pv $(MNThdd)/boot/efi/EFI/boot
+	cp -vf $(MNThdd)/boot/efi/EFI/ipfire/grub-efi/grub.efi \
+		$(MNThdd)/boot/efi/EFI/boot/bootia32.efi
+endif
 endif
 
 	# Set ramdisk mode to automatic
@@ -185,6 +236,9 @@ endif
 	umount $(MNThdd)/proc
 	umount $(MNThdd)/sys
 	umount $(MNThdd)/dev
+ifeq "$(EFI)" "1"
+	umount $(MNThdd)/boot/efi
+endif
 	umount $(MNThdd)/boot
 	umount $(MNThdd)
 
