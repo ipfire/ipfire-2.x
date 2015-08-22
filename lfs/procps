@@ -71,7 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-fix_unknown_HZ_value.patch
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make $(MAKETUNING) LIBPROC=proc/libproc-$(VER).so
 	cd $(DIR_APP) && make install
 	install -m 0644 $(DIR_SRC)/config/etc/sysctl.conf /etc
 	@rm -rf $(DIR_APP)
