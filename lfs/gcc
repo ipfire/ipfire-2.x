@@ -38,6 +38,9 @@ CFLAGS    := $(patsubst -march=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mtune=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfloat-abi=%,,$(CFLAGS))
 
+# https://bugzilla.redhat.com/show_bug.cgi?id=476370
+CFLAGS += -fgnu89-inline
+
 # Normal build or /tools build.
 #
 ifeq "$(ROOT)" ""
