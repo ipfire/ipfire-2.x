@@ -245,6 +245,11 @@ prepareenv() {
 buildtoolchain() {
     local error=false
     case "${TARGET_ARCH}:${BUILD_ARCH}" in
+        # x86_64
+        x86_64:x86_64)
+             # This is working.
+             ;;
+
         # x86
         i586:i586|i586:i686|i586:x86_64)
             # These are working.
@@ -413,6 +418,9 @@ buildipfire() {
   ipfiremake iptables
 
   case "${TARGET_ARCH}" in
+	x86_64)
+		# No kernel, yet.
+		;;
 	i586)
 		# x86-pae (Native and new XEN) kernel build
 		ipfiremake linux			KCFG="-pae"
