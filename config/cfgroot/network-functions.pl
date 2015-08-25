@@ -163,6 +163,21 @@ sub check_ip_address_and_netmask($$) {
 	return &check_netmask($netmask);
 }
 
+# Returns True for all valid subnets like a.b.c.d/e or a.b.c.d/a.b.c.d
+sub check_subnet($) {
+	my $subnet = shift;
+
+	my ($address, $network) = split(/\//, $subnet, 2);
+
+	# Check if the IP address is fine.
+	my $result = &check_ip_address($address);
+	unless ($result) {
+		return $result;
+	}
+
+	return &check_prefix($network) || &check_netmask($network);
+}
+
 # For internal use only. Will take an IP address and
 # return it in a normalised style. Like 8.8.8.010 -> 8.8.8.8.
 sub _normalise_ip_address($) {
