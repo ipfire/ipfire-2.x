@@ -58,3 +58,9 @@ HOME=/
 
 # Update GeoIP database once a month.
 %monthly,random * * * [ -f "/var/ipfire/red/active" ] && /usr/local/bin/xt_geoip_update >/dev/null 2>&1
+
+# Retry sending spooled mails regularly
+%hourly * /usr/sbin/dma -q
+
+# Cleanup the mail spool directory
+%weekly * * /usr/sbin/dma-cleanup-spool

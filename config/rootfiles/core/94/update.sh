@@ -59,6 +59,9 @@ grep -qv "dma -q" || cat <<EOF >> /var/spool/cron/root.orig
 
 # Retry sending spooled mails regularly
 %hourly * /usr/sbin/dma -q
+
+# Cleanup the mail spool directory
+%weekly * * /usr/sbin/dma-cleanup-spool
 EOF
 
 fcrontab -z &>/dev/null
