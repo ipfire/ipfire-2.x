@@ -1,4 +1,7 @@
 etc/system-release
 etc/issue
 etc/rc.d/init.d/sshd
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+srv/web/ipfire/cgi-bin/mail.cgi
 var/ipfire/langs
+var/ipfire/menu/40-services.menu

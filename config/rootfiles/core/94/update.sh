@@ -54,6 +54,13 @@ mv -f /etc/ssh/ssh_host_rsa_key{,.old}
 # Update crontab
 sed -i /var/spool/cron/root.orig -e "/Force an update once a month/d"
 sed -i /var/spool/cron/root.orig -e "/ddns update-all --force/d"
+
+grep -qv "dma -q" || cat <<EOF >> /var/spool/cron/root.orig
+
+# Retry sending spooled mails regularly
+%hourly * /usr/sbin/dma -q
+EOF
+
 fcrontab -z &>/dev/null
 
 # Start services
