@@ -284,15 +284,13 @@ sub writeipsecfiles {
 
 	print CONF "conn $lconfighash{$key}[1]\n";
 	print CONF "\tleft=$localside\n";
-	my $cidr_net=&General::ipcidr($lconfighash{$key}[8]);
-	print CONF "\tleftsubnet=$cidr_net\n";
+	print CONF "\tleftsubnet=" . &make_subnets($lconfighash{$key}[8]) . "\n";
 	print CONF "\tleftfirewall=yes\n";
 	print CONF "\tlefthostaccess=yes\n";
 
 	print CONF "\tright=$lconfighash{$key}[10]\n";
 	if ($lconfighash{$key}[3] eq 'net') {
-	    my $cidr_net=&General::ipcidr($lconfighash{$key}[11]);
-	    print CONF "\trightsubnet=$cidr_net\n";
+	    print CONF "\trightsubnet=" . &make_subnets($lconfighash{$key}[11]) . "\n";
 	} elsif ($lconfighash{$key}[10] eq '%any' && $lconfighash{$key}[14] eq 'on') { #vhost allowed for roadwarriors?
 	    print CONF "\trightsubnet=vhost:%no,%priv\n";
 	}
@@ -1262,10 +1260,12 @@ END
 	$cgiparams{'PSK'}		= $confighash{$cgiparams{'KEY'}}[5];
 	#$cgiparams{'free'}		= $confighash{$cgiparams{'KEY'}}[6];
 	$cgiparams{'LOCAL_ID'}		= $confighash{$cgiparams{'KEY'}}[7];
-	$cgiparams{'LOCAL_SUBNET'} 	= $confighash{$cgiparams{'KEY'}}[8];
+	my @local_subnets = split(",", $confighash{$cgiparams{'KEY'}}[8]);
+	$cgiparams{'LOCAL_SUBNET'} 	= join(/\|/, @local_subnets);
 	$cgiparams{'REMOTE_ID'}		= $confighash{$cgiparams{'KEY'}}[9];
 	$cgiparams{'REMOTE'}		= $confighash{$cgiparams{'KEY'}}[10];
-	$cgiparams{'REMOTE_SUBNET'} 	= $confighash{$cgiparams{'KEY'}}[11];
+	my @remote_subnets = split(",", $confighash{$cgiparams{'KEY'}}[11]);
+	$cgiparams{'REMOTE_SUBNET'} 	= join(/\|/, @remote_subnets);
 	$cgiparams{'REMARK'}		= $confighash{$cgiparams{'KEY'}}[25];
 	$cgiparams{'DPD_ACTION'}	= $confighash{$cgiparams{'KEY'}}[27];
 	$cgiparams{'IKE_VERSION'}	= $confighash{$cgiparams{'KEY'}}[29];
@@ -1345,9 +1345,12 @@ END
 	    }
 	}
 
-        unless (&General::validipandmask($cgiparams{'LOCAL_SUBNET'})) {
-            $errormessage = $Lang::tr{'local subnet is invalid'};
-	    goto VPNCONF_ERROR;
+	my @local_subnets = split(",", $cgiparams{'LOCAL_SUBNET'});
+	foreach my $subnet (@local_subnets) {
+		unless (&Network::check_subnet($subnet)) {
+			$errormessage = $Lang::tr{'local subnet is invalid'};
+			goto VPNCONF_ERROR;
+		}
 	}
 
 	# Allow only one roadwarrior/psk without remote IP-address
@@ -1361,9 +1364,15 @@ END
 		}
 	    }
 	}
-	if (($cgiparams{'TYPE'} eq 'net') && (! &General::validipandmask($cgiparams{'REMOTE_SUBNET'}))) {
-            $errormessage = $Lang::tr{'remote subnet is invalid'};
-	    goto VPNCONF_ERROR;
+
+	if ($cgiparams{'TYPE'} eq 'net') {
+		my @remote_subnets = split(",", $cgiparams{'REMOTE_SUBNET'});
+		foreach my $subnet (@remote_subnets) {
+			unless (&Network::check_subnet($subnet)) {
+				$errormessage = $Lang::tr{'remote subnet is invalid'};
+				goto VPNCONF_ERROR;
+			}
+		}
 	}
 
 	if ($cgiparams{'ENABLED'} !~ /^(on|off)$/) {
@@ -1783,10 +1792,12 @@ END
 	    $confighash{$key}[4] = 'cert';
 	}
 	if ($cgiparams{'TYPE'} eq 'net') {
-	    $confighash{$key}[11] = $cgiparams{'REMOTE_SUBNET'};
+	    my @remote_subnets = split(",", $cgiparams{'REMOTE_SUBNET'});
+	    $confighash{$key}[11] = join('|', @remote_subnets);
 	}
 	$confighash{$key}[7] = $cgiparams{'LOCAL_ID'};
-	$confighash{$key}[8] = $cgiparams{'LOCAL_SUBNET'};
+	my @local_subnets = split(",", $cgiparams{'LOCAL_SUBNET'});
+	$confighash{$key}[8] = join('|', @local_subnets);
 	$confighash{$key}[9] = $cgiparams{'REMOTE_ID'};
 	$confighash{$key}[10] = $cgiparams{'REMOTE'};
 	$confighash{$key}[25] = $cgiparams{'REMARK'};
@@ -1964,6 +1975,12 @@ EOF
 	$blob = "<img src='/blob.gif' alt='*' />";
     };
 
+    my @local_subnets = split(/\|/, $cgiparams{'LOCAL_SUBNET'});
+    my $local_subnets = join(",", @local_subnets);
+
+    my @remote_subnets = split(/\|/, $cgiparams{'REMOTE_SUBNET'});
+    my $remote_subnets = join(",", @remote_subnets);
+
     print <<END
 	<tr>
 		<td width='20%'>$Lang::tr{'enabled'}</td>
@@ -1972,7 +1989,7 @@ EOF
 		</td>
 	    <td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'local subnet'}</td>
 	    <td width='30%'>
-	        <input type='text' name='LOCAL_SUBNET' value='$cgiparams{'LOCAL_SUBNET'}' size="25" />
+	        <input type='text' name='LOCAL_SUBNET' value='$local_subnets' />
 	    </td>
 	</tr>
 	<tr>
@@ -1982,7 +1999,7 @@ EOF
 	    </td>
 	    <td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'remote subnet'}</td>
 	    <td width='30%'>
-	        <input $disabled type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' size="25" />
+	        <input $disabled type='text' name='REMOTE_SUBNET' value='$remote_subnets' />
 	    </td>
 	</tr>
 	<tr>
@@ -3104,4 +3121,17 @@ sub make_algos($$$$$) {
 	}
 
 	return &array_unique(\@algos);
+}
+
+sub make_subnets($) {
+	my $subnets = shift;
+
+	my @nets = split(/\|/, $subnets);
+	my @cidr_nets = ();
+	foreach my $net (@nets) {
+		my $cidr_net = &General::ipcidr($net);
+		push(@cidr_nets, $cidr_net);
+	}
+
+	return join(",", @cidr_nets);
 }
