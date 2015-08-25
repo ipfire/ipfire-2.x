@@ -641,6 +641,7 @@ buildipfire() {
   ipfiremake clamav
   ipfiremake spamassassin
   ipfiremake amavisd
+  ipfiremake dma
   ipfiremake alsa
   ipfiremake mpfire
   ipfiremake guardian
@@ -713,6 +714,8 @@ buildipfire() {
   ipfiremake perl-Net-SMTP-SSL
   ipfiremake perl-MIME-Base64
   ipfiremake perl-Authen-SASL
+  ipfiremake perl-MIME-Lite
+  ipfiremake perl-Email-Date-Format
   ipfiremake git
   ipfiremake squidclamav
   ipfiremake vnstat

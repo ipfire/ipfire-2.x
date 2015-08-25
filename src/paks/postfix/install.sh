@@ -34,3 +34,6 @@ start_service ${NAME}
 ln -sf  ../init.d/postfix /etc/rc.d/rc0.d/K25postfix
 ln -sf  ../init.d/postfix /etc/rc.d/rc3.d/S35postfix
 ln -sf  ../init.d/postfix /etc/rc.d/rc6.d/K25postfix
+
+# Update alternatives
+/usr/sbin/alternatives --install /usr/sbin/sendmail sendmail /usr/sbin/sendmail.postfix 15

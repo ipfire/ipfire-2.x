@@ -25,5 +25,6 @@
 extract_backup_includes
 stop_service ${NAME}
 make_backup ${NAME}
+/usr/sbin/alternatives --remove sendmail /usr/sbin/sendmail.postfix
 remove_files
 rm -rfv /etc/rc.d/rc*.d/*postfix

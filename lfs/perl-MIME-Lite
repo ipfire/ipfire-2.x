@@ -24,42 +24,13 @@
 
 include Config
 
-VER        = 2.10.0
+VER        = 3.030
 
-THISAPP    = postfix-$(VER)
+THISAPP    = MIME-Lite-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = postfix
-PAK_VER    = 9
-
-DEPS       = "amavisd mysql"
-
-CCARGS     = -DNO_IPV6 `getconf LFS_CFLAGS` \
-	-DDEF_DAEMON_DIR="'\"/usr/lib/postfix\"'" \
-	-DDEF_MANPAGE_DIR="'\"/usr/share/man\"'"
-AUXLIBS    =
-
-# LDAP
-CCARGS    += -DHAS_LDAP -DLDAP_DEPRECATED=1
-AUXLIBS   += -lldap -llber
-
-# PCRE
-CCARGS    += -DHAS_PCRE -I/usr/include/pcre
-AUXLIBS   += -lpcre
-
-# MySQL
-CCARGS    += -DHAS_MYSQL -I/usr/include/mysql
-AUXLIBS   += -L/usr/lib/mysql -lmysqlclient -lm
-
-# SASL
-CCARGS    += -DUSE_SASL_AUTH -DUSE_CYRUS_SASL -I/usr/include/sasl
-AUXLIBS   += -L/usr/lib/sasl2 -lsasl2
-
-# SSL
-CCARGS    += -DUSE_TLS `pkg-config --cflags openssl`
-AUXLIBS   += `pkg-config --libs openssl`
 
 ###############################################################################
 # Top-level Rules
@@ -69,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b2a563b2d5c53462952886e6fc4e4b7b
+$(DL_FILE)_MD5 = 5a6d90329e049eee77248d667343acc7
 
 install : $(TARGET)
 
@@ -78,9 +49,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -102,19 +70,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make -f Makefile.init makefiles \
-		DEBUG="" OPT="$(CFLAGS) -fno-strict-aliasing" CCARGS="$(CCARGS)" AUXLIBS="$(AUXLIBS)"
+	cd $(DIR_APP) && yes |perl Makefile.PL
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && sh postfix-install -non-interactive
-	## Install configuration
-	rm -vf /etc/postfix/main.cf.default
-	cp -vf $(DIR_CONF)/postfix/* /etc/postfix
-	mv -vf /etc/postfix/aliases /etc/aliases
-	mkdir -p /var/lib/postfix
-	chown postfix.root /var/lib/postfix
-
-	install -v -m 644 $(DIR_SRC)/config/backup/includes/postfix \
-			 /var/ipfire/backup/addons/includes/postfix
-	mv /usr/sbin/sendmail /usr/sbin/sendmail.postfix
+	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

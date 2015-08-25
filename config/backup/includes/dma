@@ -1,0 +1,5 @@
+/var/ipfire/dma
+/var/ipfire/dma/dma.conf
+/var/ipfire/dma/auth.conf
+/var/ipfire/dma/mail.conf
+/var/spool/dma
