@@ -78,6 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i '/CONFDIR/s/etc\/dma/var\/ipfire\/dma/g' Makefile
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install mailq-link install-spool-dirs install-etc
+	install -v -m 755 $(DIR_SRC)/config/dma/dma-cleanup-spool /usr/sbin
 	chown -R nobody.nobody /var/ipfire/dma
 	chown nobody.root /var/ipfire/dma/auth.conf
 	ln -svf dma /usr/sbin/sendmail.dma
