@@ -101,8 +101,8 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){ #SaveButton on configsite
 
 		#clear configfiles
 		open (TXT, ">$dmafile") or die("Could not open /var/ipfire/dma/dma.conf: $!\n");
-		open (TXT1, ">$authfile") or die("Could not open /var/ipfire/dma/dma.conf: $!\n");
-		open (TXT2, ">$mailfile") or die("Could not open /var/ipfire/dma/dma.conf: $!\n");
+		open (TXT1, ">$authfile") or die("Could not open /var/ipfire/dma/auth.conf: $!\n");
+		open (TXT2, ">$mailfile") or die("Could not open /var/ipfire/dma/mail.conf: $!\n");
 		close TXT2;
 
 		#Fill hashes with actual values
