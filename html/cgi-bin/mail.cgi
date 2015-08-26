@@ -204,32 +204,32 @@ END
 	<div class="MAILSRV">
 		<table style='width:100%;'>
 		<tr>
-			<td style='width:24em'>$Lang::tr{'email mailaddr'}</td>
+			<td>$Lang::tr{'email mailsender'}<img src='/blob.gif' alt='*' /></td>
+			<td><input type='text' name='txt_mailsender' value='$mail{'SENDER'}' style='width:22em;'></td>
+		</tr>
+		<tr>
+			<td>$Lang::tr{'email mailrcpt'}<img src='/blob.gif' alt='*' /></td>
+			<td><input type='text' name='txt_recipient' value='$mail{'RECIPIENT'}' style='width:22em;'></td>
+		</tr>
+		<tr>
+			<td style='width:24em'>$Lang::tr{'email mailaddr'}<img src='/blob.gif' alt='*' /></td>
 			<td><input type='text' name='txt_mailserver' value='$dma{'SMARTHOST'}' style='width:22em;'></td>
 		</tr>
 		<tr>
-			<td>$Lang::tr{'email mailport'}</td>
+			<td>$Lang::tr{'email mailport'}<img src='/blob.gif' alt='*' /></td>
 			<td><input type='text' name='txt_mailport' value='$dma{'PORT'}' size='3'></td>
 		</tr>
 		<tr>
-			<td>$Lang::tr{'email mailuser'}<img src='/blob.gif' alt='*' /></td>
+			<td>$Lang::tr{'email mailuser'}</td>
 			<td><input type='text' name='txt_mailuser' value='$auth{'AUTHNAME'}' style='width:22em;'></td>
 		</tr>
 		<tr>
-			<td>$Lang::tr{'email mailpass'}<img src='/blob.gif' alt='*' /></td>
+			<td>$Lang::tr{'email mailpass'}</td>
 			<td><input type='password' name='txt_mailpass' value='$auth{'AUTHPASS'}' style='width:22em;' ></td>
 		</tr>
 		<tr>
 			<td>$Lang::tr{'email tls'}</td>
 			<td><input type='checkbox' name='mail_tls' $checked{'mail_tls'}{'on'}></td>
-		</tr>
-		<tr>
-			<td>$Lang::tr{'email mailsender'}</td>
-			<td><input type='text' name='txt_mailsender' value='$mail{'SENDER'}' style='width:22em;'></td>
-		</tr>
-		<tr>
-			<td>$Lang::tr{'email mailrcpt'}</td>
-			<td><input type='text' name='txt_recipient' value='$mail{'RECIPIENT'}' style='width:22em;'></td>
 		</tr>
 END
 		if (! -z $dmafile && $mail{'USEMAIL'} eq 'on'){
