@@ -56,11 +56,16 @@ my $count=0;
 my $col;
 my $proxlog=$Lang::tr{'stopped'};
 my $proxsrv=$Lang::tr{'stopped'};
+my $mailfile="${General::swroot}/dma/mail.conf";
 
 &Header::getcgihash(\%cgiparams);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 &General::readhash("$settingsfile", \%settings) if(-f $settingsfile);
+
+if ( -f $mailfile){
+	&General::readhash($mailfile, \%mail);
+}
 
 #Find out which lang is set (used later to set decimal separator correctly)
 my $uplang=uc($mainsettings{'LANGUAGE'});
@@ -136,11 +141,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){ #SaveButton on configsite
 	if ($cgiparams{'USEMAIL'} eq 'on'){
 		$errormessage=&checkmailsettings;
 	}elsif($cgiparams{'USEMAIL'} ne 'on'){
-		$cgiparams{'txt_mailserver'}='';
-		$cgiparams{'txt_mailport'}='';
-		$cgiparams{'txt_mailuser'}='';
-		$cgiparams{'txt_mailpass'}='';
-		$cgiparams{'mail_tls'}='';
 		$cgiparams{'txt_mailsender'}='';
 		$cgiparams{'txt_mailsubject'}='';
 		$mailtxt='';
@@ -155,11 +155,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){ #SaveButton on configsite
 		$settings{'CURRENCY'}	= $cgiparams{'txt_currency'};
 		$settings{'SKIPURLS'}	= $skipurls;
 		$settings{'USEMAIL'}	= $cgiparams{'USEMAIL'};
-		$settings{'MAILSRV'}	= $cgiparams{'txt_mailserver'};
-		$settings{'MAILPORT'}	= $cgiparams{'txt_mailport'};
-		$settings{'MAILUSER'}	= $cgiparams{'txt_mailuser'};
-		$settings{'MAILPASS'}	= $cgiparams{'txt_mailpass'};
-		$settings{'TLS'}		= $cgiparams{'mail_tls'};
 		$settings{'MAILSENDER'}	= $cgiparams{'txt_mailsender'};
 		$settings{'MAILSUB'}	= $cgiparams{'txt_mailsubject'};
 		$settings{'MAILTXT'}	= $mailtxt;
@@ -568,10 +563,6 @@ sub configsite{
 	#If update set fieldvalues new
 	if($cgiparams{'update'} eq 'on'){
 		$settings{'USEMAIL'} = 'on';
-		$settings{'MAILSRV'} = $cgiparams{'txt_mailserver'};
-		$settings{'MAILPORT'} = $cgiparams{'txt_mailport'};
-		$settings{'MAILUSER'} = $cgiparams{'txt_mailuser'};
-		$settings{'MAILPASS'} = $cgiparams{'txt_mailpass'};
 		$settings{'MAILSUB'} = $cgiparams{'txt_mailsubject'};
 		$settings{'MAILTXT'} = $cgiparams{'txt_mailtxt'};
 	}
@@ -580,14 +571,13 @@ sub configsite{
 	$checked{'logging'}{$settings{'LOG'}}					= 'CHECKED';
 	$checked{'multiuser'}{$settings{'MULTIUSER'}}			= 'CHECKED';
 	$checked{'usemail'}{$settings{'USEMAIL'}}				= 'CHECKED';
-	$checked{'mail_tls'}{$settings{'TLS'}}					= 'CHECKED';
-	
+
 	#Open site
 	&Header::openpage($Lang::tr{'acct settings'}, 1, '');
 	&Header::openbigbox('100%', 'center');
 	&error;
 	&Header::openbox('100%', 'left', $Lang::tr{'acct config'});
-	
+
 	#### JAVA SCRIPT ####
 	print<<END;
 <script>
@@ -631,56 +621,44 @@ END
 		<td>$Lang::tr{'acct multiuser'}</td>
 		<td><input type='checkbox' name='multiuser' $checked{'multiuser'}{'on'}></td>
 		<td></td>
-	<tr>
+	</tr>
 	<tr>
 		<td>$Lang::tr{'acct mwst'}</td>
 		<td><input type='text' name='txt_mwst' value='$settings{'MWST'}' style='width:22em;'></td>
 		<td></td>
+	</tr>
 	<tr>
 		<td>$Lang::tr{'acct currency'}</td>
 		<td><input type='text' name='txt_currency' value='$settings{'CURRENCY'}' style='width:22em;'></td>
 		<td></td>
-	
+	</tr>
 	<tr>
 		<td valign='top'>$Lang::tr{'acct skipurl'}</td>
 		<td style='padding-left:0.2em;'><textarea name="txt_skipurls" cols="20" rows="6" style='width:22em;'>$settings{'SKIPURLS'}</textarea></td>
 		<td></td>
 	</tr>
+END
+
+if ($mail{'USEMAIL'} eq 'on'){
+	if (!$settings{'MAILSENDER'}){
+		$settings{'MAILSENDER'} = $mail{'SENDER'};
+	}
+print <<END;
 	<tr>
 		<td>$Lang::tr{'acct usemail'}</td>
 		<td><label><input type='checkbox' name='USEMAIL' id='MAIL' $checked{'usemail'}{'on'}></label></td>
 		<td></td>
 	</tr>
-	</table><br>
+END
+}
 
+print <<END;
+	</table><br>
 	<div class="MAILSRV">
 		<table style='width:100%;'>
 		<tr>
-			<td style='width:24em'>$Lang::tr{'acct mailaddr'}</td>
-			<td><input type='text' name='txt_mailserver' value='$settings{'MAILSRV'}' style='width:22em;'></td>
-		</tr>
-		<tr>
-			<td>$Lang::tr{'acct mailport'}</td>
-			<td><input type='text' name='txt_mailport' value='$settings{'MAILPORT'}' size='3'></td>
-		</tr>
-		<tr>
-			<td>$Lang::tr{'acct mailuser'}<img src='/blob.gif' alt='*' /></td>
-			<td><input type='text' name='txt_mailuser' value='$settings{'MAILUSER'}' style='width:22em;'></td>
-		</tr>
-		<tr>
-			<td>$Lang::tr{'acct mailpass'}<img src='/blob.gif' alt='*' /></td>
-			<td><input type='password' name='txt_mailpass' value='$settings{'MAILPASS'}' style='width:22em;' ></td>
-		</tr>
-		<tr>
-			<td>$Lang::tr{'acct tls'}</td>
-			<td><input type='checkbox' name='mail_tls' $checked{'mail_tls'}{'on'}></td>
-		</tr>
-		<tr>
-			<td>$Lang::tr{'acct mailsender'}</td>
+			<td style='width:24em'>$Lang::tr{'acct mailsender'}</td>
 			<td><input type='text' name='txt_mailsender' value='$settings{'MAILSENDER'}' style='width:22em;'></td>
-		</tr>
-		<tr>
-			<td colspan='2'>&nbsp;</td>
 		</tr>
 		<tr>
 			<td>$Lang::tr{'acct subject'}</td>
@@ -692,7 +670,6 @@ END
 		
 		</table>
 	</div>
-
 
 	<table style='width:100%;'>
 	<tr>
@@ -1119,28 +1096,28 @@ print<<END;
 				<td>
 					<input type='radio' name='rdo_companytype' value='CUST' $checked{'rdo_companytype'}{'CUST'}>$Lang::tr{'acct customer'} &nbsp;
 					<input type='radio' name='rdo_companytype' value='HOST' $checked{'rdo_companytype'}{'HOST'}>$Lang::tr{'acct hoster'}</td>
-				<td style='width:8em;'>$Lang::tr{'acct bank'}</td>
+				<td style='width:8em;'>$Lang::tr{'acct bank'}<img src='/blob.gif' alt='*' /></td>
 				<td>
 					<input type='text' name='txt_bank' value='$cgiparams{'txt_bank'}' style='width:25em;'></td>
 			</tr>
 			<tr>
-				<td>$Lang::tr{'acct company'}</td>
+				<td>$Lang::tr{'acct company'}<img src='/blob.gif' alt='*' /></td>
 				<td>
 					<input type='text' name='txt_company' value='$cgiparams{'txt_company'}' style='width:25em;'></td>
-				<td>$Lang::tr{'acct iban'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct iban'}</td>
 				<td>
 					<input type='text' name='txt_iban' value='$cgiparams{'txt_iban'}' style='width:25em;'></td>
 			</tr>
 			<tr>
-				<td>$Lang::tr{'acct name1'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct name1'}</td>
 				<td>
 					<input type='text' name='txt_name1' value='$cgiparams{'txt_name1'}' style='width:25em;'></td>
-				<td>$Lang::tr{'acct bic'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct bic'}</td>
 				<td>
 					<input type='text' name='txt_bic' maxlength='8' value='$cgiparams{'txt_bic'}' style='width:25em;'></td>
 			</tr>
 			<tr>
-				<td>$Lang::tr{'acct str'}</td>
+				<td>$Lang::tr{'acct str'}<img src='/blob.gif' alt='*' /></td>
 				<td align='left'>
 					<input type='text' name='txt_str' value='$cgiparams{'txt_str'}' style='width:25em;'></td>
 				<td>$Lang::tr{'acct blz'}</td>
@@ -1148,7 +1125,7 @@ print<<END;
 					<input type='text' name='txt_blz' maxlength='8' value='$cgiparams{'txt_blz'}' style='width:25em;'></td>
 			</tr>
 			<tr>
-				<td>$Lang::tr{'acct str_nr'}</td>
+				<td>$Lang::tr{'acct str_nr'}<img src='/blob.gif' alt='*' /></td>
 				<td><input type='text' name='txt_str_nr' value='$cgiparams{'txt_str_nr'}' style='width:25em;'></td>
 				<td>$Lang::tr{'acct kto'}</td>
 				<td>
@@ -1157,16 +1134,16 @@ print<<END;
 
 			
 			<tr>
-				<td>$Lang::tr{'acct plz'}</td>
+				<td>$Lang::tr{'acct plz'}<img src='/blob.gif' alt='*' /></td>
 				<td>
 					<input type='text' name='txt_plz' value='$cgiparams{'txt_plz'}' style='width:25em;'></td>
-				<td>$Lang::tr{'acct email'}</td>
+				<td>$Lang::tr{'acct email'}<img src='/blob.gif' alt='*' /></td>
 				<td><input type='text' name='txt_email' value='$cgiparams{'txt_email'}' style='width:25em;'></td>
 			</tr>
 			<tr>
-				<td>$Lang::tr{'acct city'}</td>
+				<td>$Lang::tr{'acct city'}<img src='/blob.gif' alt='*' /></td>
 				<td><input type='text' name='txt_city' value='$cgiparams{'txt_city'}' style='width:25em;'></td>
-				<td>$Lang::tr{'acct inet'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct inet'}</td>
 				<td>
 					<input type='text' name='txt_inet' value='$cgiparams{'txt_inet'}' style='width:25em;'></td>
 			</tr>
@@ -1180,25 +1157,25 @@ print<<END;
 			<tr>
 				<td></td>
 				<td></td>
-				<td>$Lang::tr{'acct ustid'}</td>
+				<td>$Lang::tr{'acct ustid'}<img src='/blob.gif' alt='*' /></td>
 				<td><input type='text' name='txt_ustid' value='$cgiparams{'txt_ustid'}' style='width:25em;'></td>
 			</tr>
 			<tr>
 				<td></td>
 				<td></td>
-				<td>$Lang::tr{'acct tel'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct tel'}</td>
 				<td>
 					<input type='text' name='txt_tel' value='$cgiparams{'txt_tel'}' style='width:25em;'></td>
 			</tr>
 			<tr>
 				<td></td>
 				<td></td>
-				<td>$Lang::tr{'acct fax'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct fax'}</td>
 				<td>
 					<input type='text' name='txt_fax' value='$cgiparams{'txt_fax'}' style='width:25em;'></td>
 			</tr>
 			<tr>
-				<td colspan='6'><img src='/blob.gif' alt='*' /><font size="1">$Lang::tr{'acct optional'}</font></td>
+				<td colspan='6'><img src='/blob.gif' alt='*' /><font size="1">$Lang::tr{'acct not optional'}</font></td>
 			</tr>
 			<tr>
 END
@@ -2175,18 +2152,6 @@ END
 }
 
 sub checkmailsettings{
-	#Check if mailserver is an ip address or a domain
-	if ($cgiparams{'txt_mailserver'} =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/){
-		if (! &General::validip($cgiparams{'txt_mailserver'})){
-			$errormessage.="$Lang::tr{'acct invalid mailip'} $cgiparams{'txt_mailserver'}<br>";
-		}
-	}elsif(! &General::validfqdn($cgiparams{'txt_mailserver'})){
-			$errormessage.="$Lang::tr{'acct invalid mailfqdn'} $cgiparams{'txt_mailserver'}<br>";
-	}
-	#Check valid mailserverport
-	if($cgiparams{'txt_mailport'} < 1 || $cgiparams{'txt_mailport'} > 65535){
-		$errormessage.="$Lang::tr{'acct invalid mailport'} $cgiparams{'txt_mailport'}<br>";
-	}
 	#Check valid sender
 	if(! $cgiparams{'txt_mailsender'}){
 		$errormessage.="$Lang::tr{'acct empty field'} $Lang::tr{'acct mailsender'}<br>";

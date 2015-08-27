@@ -27,6 +27,8 @@
 use Time::Local;
 use File::ReadBackwards;
 use strict;
+use MIME::Lite;
+
 #use warnings;
 
 require '/var/ipfire/general-functions.pl';
@@ -62,12 +64,18 @@ my ($mini,$max)=&ACCT::getminmax;
 my $now = localtime;
 my $proxylog;
 my $proxysrv;
+my $dmafile="${General::swroot}/dma/dma.conf";
+my $authfile="${General::swroot}/dma/auth.conf";
+my $mailfile="${General::swroot}/dma/mail.conf";
+my %mail=();
+my %dma=();
 
 ########
 # Main #
 ########
 
 &checkproxy;
+
 
 #If we have a disabled file and the proxy is off, we don't need to check anything, exit!
 if((! -f $proxyenabled || $proxylog eq $Lang::tr{'stopped'}) && -f "${General::swroot}/accounting/disabled"){
@@ -92,7 +100,7 @@ if (-f $proxyenabled && $proxylog eq $Lang::tr{'running'}){
 	$dbh=&ACCT::connectdb;
 	my $m=sprintf("%d",(localtime((time-3600)))[4]+1);
 	&ACCT::logger($settings{'LOG'},"month before one hour $m, now is ".($mon+1)."\n");
-	if ($m < ($mon+1) || $m == '12' && ($mon+1) == '1'){
+	if ($m = ($mon+1) || $m == '12' && ($mon+1) == '1'){
 		#Logrotate
 		my $year1=$year+1900;
 		system ("tar", "cfz", "/var/log/accounting-$m-$year1.tar.gz", "/var/log/accounting.log");
@@ -103,11 +111,22 @@ if (-f $proxyenabled && $proxylog eq $Lang::tr{'running'}){
 		#move all db entries older than this month to second table and cumulate them daily
 		&ACCT::movedbdata;
 		&ACCT::logger($settings{'LOG'},"New Month. Old trafficvalues moved to ACCT_HIST Table\n");
-		if ($settings{'USEMAIL'} eq 'on'){
+		#check if mail is enabled
+		if ( -f $mailfile){
+			&General::readhash($mailfile, \%mail);
+		}
+		if ($mail{'USEMAIL'} eq 'on'){
 			&ACCT::logger($settings{'LOG'},"Mailserver is activated - Now sending bills via mail...\n");
 			my $res=&ACCT::getbillgroups;
 			foreach my $line (@$res){
 				my ($grp) = @$line;
+				open (FILE, "<", $dmafile) or die $!;
+				foreach my $line (<FILE>) {
+					$line =~ m/^([A-Z]+)\s+?(.*)?$/;
+					my $key = $1;
+					my $val = $2;
+					$dma{$key}=$val;
+				}
 				&sendbill($grp,$settings{'MWST'},$settings{'CURRENCY'});
 			}
 		}else{
@@ -214,7 +233,7 @@ sub sendbill {
 	$month = '0'.$actmonth if $actmonth < 10;
 	$month = '12' if $actmonth == 0;
 	my $actyear  = $now[5];
-	my ($from,$till)=&ACCT::getmonth($actmonth,$actyear);					#FIXME month and year as variables!
+	my ($from,$till)=&ACCT::getmonth($actmonth,$actyear);
 	my @billar = &ACCT::GetTaValues($from,$till,$rggrp);
 	my $address_cust = &ACCT::getTaAddress($rggrp,'CUST');
 	my $address_host = &ACCT::getTaAddress($rggrp,'HOST');
@@ -229,23 +248,34 @@ sub sendbill {
 
 	if ($back eq '0'){
 		&ACCT::logger($settings{'LOG'},"Bill for $company_cust successfully created.\n");
-		my $file="'/var/ipfire/accounting/bill/$rggrp/$month-$actyear-$no.pdf'";
+		my $file="/var/ipfire/accounting/bill/$rggrp/$month-$actyear-$no.pdf";
 		$settings{'MAILTXT'} =~ tr/\|/\r\n/ ;
-		my $cmd = "/usr/local/bin/sendEmail ";
-		$cmd .= " -f $settings{'MAILSENDER'}";							#Sender
-		$cmd .= " -t $email";											#Recipient
-		if ($ccmail){
-			$cmd .= " -cc $ccmail";
-		}
-		#Send Mail via TLS?
-		if ($settings{'TLS'} eq 'on'){
-			$cmd .= " -o tls=yes";										#TLS
-		}
-		$cmd .= " -u '$settings{'MAILSUB'}'";							#Subject
-		$cmd .= " -m '$settings{'MAILTXT'}'";							#Mailtext
-		$cmd .= " -s $settings{'MAILSRV'}:$settings{'MAILPORT'}";		#Mailserver:port
-		$cmd .= " -a $file";
-		my $res=system ($cmd);
+
+		#extract filename from path
+		my ($filename) = $file =~ m{([^/]+)$};
+
+		my $msg = MIME::Lite->new(
+			From	=> $mail{'SENDER'},
+			To		=> $email,
+			Cc		=> $ccmail,
+			Subject	=> $settings{'MAILSUB'},
+			Type	=> 'multipart/mixed'
+		);
+
+		$msg->attach(
+			Type	=> 'TEXT',
+			Data	=> $settings{'MAILTXT'}
+		);
+
+		$msg->attach(
+			Type		=> 'application/pdf',
+			Path		=> $file,
+			Filename	=> $filename,
+			Disposition	=> 'attachment'
+		);
+
+		my $res=$msg->send_by_sendmail;
+
 		if ($res == 0){
 			&ACCT::logger($settings{'LOG'},"Bill for $company_cust successfully sent.\n");
 		}elsif ($res > 0){
@@ -255,13 +285,19 @@ sub sendbill {
 		
 	}else{
 		&ACCT::logger($settings{'LOG'},"ERROR Bill for $company_cust could not be created.\n");
-		my $cmd = "/usr/local/bin/sendEmail ";
-		$cmd .= " -f $settings{'MAILSENDER'}";
-		$cmd .= " -t $settings{'MAILSENDER'}";
-		$cmd .= " -u Fehler Squid Accounting";
-		$cmd .= " -m 'Die Rechnung konnte nicht erzeugt und per Mail versendet werden' $company_cust";
-		$cmd .= " -s $settings{'MAILSRV'}:$settings{'MAILPORT'}";
-		my $res=system ($cmd);
+		my $msg = MIME::Lite->new(
+			From	=> $mail{'SENDER'},
+			To		=> $mail{'RECIPIENT'},
+			Subject	=> "ERROR Squid Accounting",
+			Type	=> 'multipart/mixed'
+		);
+
+		$msg->attach(
+			Type	=> 'TEXT',
+			Data	=> "The bill could not be created for customer $company_cust"
+		);
+
+		$msg->send_by_sendmail;
 		return 0;
 	}
 }

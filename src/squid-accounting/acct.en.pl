@@ -90,7 +90,7 @@
 'acct name2' => 'Name 2',
 'acct nr' => 'RG-No.',
 'acct oldestdb' => 'Fist DB Entry',
-'acct optional' => 'These fields are optional',
+'acct not optional' => 'These fields are required',
 'acct parameter' => 'Parameter',
 'acct path' => 'Path',
 'acct pdf billtxt' => 'Bill',
