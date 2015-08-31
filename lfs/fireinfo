@@ -72,6 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo-Add-an-other-forbidden-string-Serial.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo-Skip-search-for-hypervisor-name-when-the-CPU-string-.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/0001-Filter-all-IDs-that-only-consist-of-0xff.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr
