@@ -32,6 +32,7 @@ do
 done
 
 # Stop services
+/etc/init.d/squid stop
 /etc/init.d/sshd stop
 /etc/init.d/dnsmasq stop
 
@@ -69,6 +70,7 @@ fcrontab -z &>/dev/null
 # Start services
 /etc/init.d/dnsmasq start
 /etc/init.d/sshd start
+/etc/init.d/squid start
 
 # This update need a reboot...
 #touch /var/run/need_reboot
