@@ -263,9 +263,9 @@ print <<END
 </td></tr>
 <tr>
 	<td>&nbsp;</td>
-	<td width='25%' class='base'>$Lang::tr{'primary ntp server'}:</td>
+	<td width='25%' class='base'>$Lang::tr{'primary ntp server'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td width='25%'><input type='text' name='NTP_ADDR_1' value='$timesettings{'NTP_ADDR_1'}' /></td>
-	<td width='25%' class='base'>$Lang::tr{'secondary ntp server'}: &nbsp;<img src='/blob.gif' align='top' alt='*' /></td>
+	<td width='25%' class='base'>$Lang::tr{'secondary ntp server'}:</td>
 	<td width='25%'><input type='text' name='NTP_ADDR_2' value='$timesettings{'NTP_ADDR_2'}' /></td>
 </tr>
 <tr>
@@ -319,7 +319,7 @@ print <<END
 <hr />
 <table width='100%'>
 <tr>
-	<td width='30%'><img src='/blob.gif' alt='*' /> $Lang::tr{'this field may be blank'}</td>
+	<td width='30%'><img src='/blob.gif' alt='*' /> $Lang::tr{'required field'}</td>
 	<td width='65%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'set time now'}' /></td>
 	<td width='5%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>

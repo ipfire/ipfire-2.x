@@ -1093,15 +1093,24 @@ print<<END;
 			</tr>
 			<tr>
 				<td>$Lang::tr{'acct companytype'}</td>
+<!-- TODO: when the value of this radio button changes, the layout needs to be reloaded so "blob.gif" gets displayed -->
 				<td>
 					<input type='radio' name='rdo_companytype' value='CUST' $checked{'rdo_companytype'}{'CUST'}>$Lang::tr{'acct customer'} &nbsp;
 					<input type='radio' name='rdo_companytype' value='HOST' $checked{'rdo_companytype'}{'HOST'}>$Lang::tr{'acct hoster'}</td>
-				<td style='width:8em;'>$Lang::tr{'acct bank'}<img src='/blob.gif' alt='*' /></td>
+				<td style='width:8em;'>$Lang::tr{'acct bank'}
+END
+
+if ($cgiparams{'rdo_companytype'} eq 'HOST'){
+	print "&nbsp;<img src='/blob.gif' alt='*' />";
+}
+
+print <<END;
+				</td>
 				<td>
 					<input type='text' name='txt_bank' value='$cgiparams{'txt_bank'}' style='width:25em;'></td>
 			</tr>
 			<tr>
-				<td>$Lang::tr{'acct company'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct company'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td>
 					<input type='text' name='txt_company' value='$cgiparams{'txt_company'}' style='width:25em;'></td>
 				<td>$Lang::tr{'acct iban'}</td>
@@ -1117,31 +1126,47 @@ print<<END;
 					<input type='text' name='txt_bic' maxlength='8' value='$cgiparams{'txt_bic'}' style='width:25em;'></td>
 			</tr>
 			<tr>
-				<td>$Lang::tr{'acct str'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct str'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td align='left'>
 					<input type='text' name='txt_str' value='$cgiparams{'txt_str'}' style='width:25em;'></td>
-				<td>$Lang::tr{'acct blz'}</td>
+				<td>$Lang::tr{'acct blz'}
+END
+
+if ($cgiparams{'rdo_companytype'} eq 'HOST'){
+	print "&nbsp;<img src='/blob.gif' alt='*' />";
+}
+
+print <<END;
+				</td>
 				<td>
 					<input type='text' name='txt_blz' maxlength='8' value='$cgiparams{'txt_blz'}' style='width:25em;'></td>
 			</tr>
 			<tr>
-				<td>$Lang::tr{'acct str_nr'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct str_nr'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td><input type='text' name='txt_str_nr' value='$cgiparams{'txt_str_nr'}' style='width:25em;'></td>
-				<td>$Lang::tr{'acct kto'}</td>
+				<td>$Lang::tr{'acct kto'}
+END
+
+if ($cgiparams{'rdo_companytype'} eq 'HOST'){
+	print "&nbsp;<img src='/blob.gif' alt='*' />";
+}
+
+print <<END;
+				</td>
 				<td>
 					<input type='text' name='txt_kto' value='$cgiparams{'txt_kto'}' style='width:25em;'></td>
 			</tr>
 
 			
 			<tr>
-				<td>$Lang::tr{'acct plz'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct plz'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td>
 					<input type='text' name='txt_plz' value='$cgiparams{'txt_plz'}' style='width:25em;'></td>
-				<td>$Lang::tr{'acct email'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct email'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td><input type='text' name='txt_email' value='$cgiparams{'txt_email'}' style='width:25em;'></td>
 			</tr>
 			<tr>
-				<td>$Lang::tr{'acct city'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct city'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td><input type='text' name='txt_city' value='$cgiparams{'txt_city'}' style='width:25em;'></td>
 				<td>$Lang::tr{'acct inet'}</td>
 				<td>
@@ -1150,14 +1175,14 @@ print<<END;
 			<tr>
 				<td></td>
 				<td></td>
-				<td>$Lang::tr{'acct hrb'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct hrb'}</td>
 				<td>
 					<input type='text' name='txt_hrb' value='$cgiparams{'txt_hrb'}' style='width:25em;'></td>
 			</tr>
 			<tr>
 				<td></td>
 				<td></td>
-				<td>$Lang::tr{'acct ustid'}<img src='/blob.gif' alt='*' /></td>
+				<td>$Lang::tr{'acct ustid'}</td>
 				<td><input type='text' name='txt_ustid' value='$cgiparams{'txt_ustid'}' style='width:25em;'></td>
 			</tr>
 			<tr>
@@ -1175,7 +1200,7 @@ print<<END;
 					<input type='text' name='txt_fax' value='$cgiparams{'txt_fax'}' style='width:25em;'></td>
 			</tr>
 			<tr>
-				<td colspan='6'><img src='/blob.gif' alt='*' /><font size="1">$Lang::tr{'acct not optional'}</font></td>
+				<td colspan='6'><img src='/blob.gif' alt='*' /><font size="1">&nbsp;$Lang::tr{'acct not optional'}</font></td>
 			</tr>
 			<tr>
 END
@@ -1692,14 +1717,14 @@ if ($host && $cust){
 	<form method='post' action='$ENV{'SCRIPT_NAME'}' ENCTYPE='multipart/form-data'>
 		<table style='width:100%;'>
 			<tr>
-				<td style='width: 22em;'>$Lang::tr{'name'}</td>
+				<td style='width: 22em;'>$Lang::tr{'name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td><input type='text' name='txt_billgroup' value='$cgiparams{'txt_billgroup'}' style='width: 24em;'></td>
 			</tr>
 			<tr>
 				<td><br></td>
 			</tr>
 			<tr>
-				<td valign='top'>$Lang::tr{'acct billtext1'}<img src='/blob.gif' alt='*' /></td>
+				<td valign='top'>$Lang::tr{'acct billtext1'}</td>
 				<td><textarea name='txt_billtext1' cols='40' rows='5'  style='width: 24em;' maxlength='300'>$cgiparams{'txt_billtext1'}</textarea></td>
 			</tr>
 			<tr><td><br></td></tr>
@@ -1759,7 +1784,7 @@ END
 	my $val=sprintf"%.3f",$cgiparams{'txt_cent'};
 	print"<tr><td>$Lang::tr{'acct cent'}</td><td><input type='text' name='txt_cent' value='$val' size='3'>$settings{'CURRENCY'} </td></tr>";
 	#Optional note
-	print"<tr><td colspan='2' align='left'><img src='/blob.gif' alt='*' /><font size='1'>$Lang::tr{'acct optional'}</font></td></tr>";
+	print"<tr><td colspan='2' align='left'><img src='/blob.gif' alt='*' /><font size='1'>$Lang::tr{'required field'}</font></td></tr>";
 	print"<tr><td colspan='2' align='right'><br><br>";
 	print"</td></tr></table>";
 

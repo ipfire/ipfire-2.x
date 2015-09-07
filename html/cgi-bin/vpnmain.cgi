@@ -1058,17 +1058,17 @@ END
     print <<END
     <form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'>
     <table width='100%' border='0' cellspacing='1' cellpadding='0'>
-    <tr><td width='40%' class='base'>$Lang::tr{'organization name'}:</td>
+    <tr><td width='40%' class='base'>$Lang::tr{'organization name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='60%' class='base' nowrap='nowrap'><input type='text' name='ROOTCERT_ORGANIZATION' value='$cgiparams{'ROOTCERT_ORGANIZATION'}' size='32' /></td></tr>
-    <tr><td class='base'>$Lang::tr{'ipfires hostname'}:</td>
+    <tr><td class='base'>$Lang::tr{'ipfires hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td class='base' nowrap='nowrap'><input type='text' name='ROOTCERT_HOSTNAME' value='$cgiparams{'ROOTCERT_HOSTNAME'}' size='32' /></td></tr>
-    <tr><td class='base'>$Lang::tr{'your e-mail'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <tr><td class='base'>$Lang::tr{'your e-mail'}:</td>
         <td class='base' nowrap='nowrap'><input type='text' name='ROOTCERT_EMAIL' value='$cgiparams{'ROOTCERT_EMAIL'}' size='32' /></td></tr>
-    <tr><td class='base'>$Lang::tr{'your department'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <tr><td class='base'>$Lang::tr{'your department'}:</td>
         <td class='base' nowrap='nowrap'><input type='text' name='ROOTCERT_OU' value='$cgiparams{'ROOTCERT_OU'}' size='32' /></td></tr>
-    <tr><td class='base'>$Lang::tr{'city'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <tr><td class='base'>$Lang::tr{'city'}:</td>
         <td class='base' nowrap='nowrap'><input type='text' name='ROOTCERT_CITY' value='$cgiparams{'ROOTCERT_CITY'}' size='32' /></td></tr>
-    <tr><td class='base'>$Lang::tr{'state or province'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <tr><td class='base'>$Lang::tr{'state or province'}:</td>
         <td class='base' nowrap='nowrap'><input type='text' name='ROOTCERT_STATE' value='$cgiparams{'ROOTCERT_STATE'}' size='32' /></td></tr>
     <tr><td class='base'>$Lang::tr{'country'}:</td>
         <td class='base'><select name='ROOTCERT_COUNTRY'>
@@ -1083,7 +1083,7 @@ END
     }
     print <<END
         </select></td></tr>
-    <tr><td class='base'>$Lang::tr{'vpn subjectaltname'} (subjectAltName=email:*,URI:*,DNS:*,RID:*) <img src='/blob.gif' alt='*' /></td>
+    <tr><td class='base'>$Lang::tr{'vpn subjectaltname'} (subjectAltName=email:*,URI:*,DNS:*,RID:*)</td>
 	<td class='base' nowrap='nowrap'><input type='text' name='SUBJECTALTNAME' value='$cgiparams{'SUBJECTALTNAME'}' size='32' /></td></tr>
     <tr><td>&nbsp;</td>
         <td><br /><input type='submit' name='ACTION' value='$Lang::tr{'generate root/host certificates'}' /><br /><br /></td></tr>
@@ -1094,12 +1094,12 @@ END
     <tr><td colspan='2'><hr></td></tr>
     <tr><td class='base' nowrap='nowrap'>$Lang::tr{'upload p12 file'}:</td>
         <td nowrap='nowrap'><input type='file' name='FH' size='32' /></td></tr>
-    <tr><td class='base'>$Lang::tr{'pkcs12 file password'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <tr><td class='base'>$Lang::tr{'pkcs12 file password'}:</td>
         <td class='base' nowrap='nowrap'><input type='password' name='P12_PASS' value='$cgiparams{'P12_PASS'}' size='32' /></td></tr>
     <tr><td>&nbsp;</td>
         <td><input type='submit' name='ACTION' value='$Lang::tr{'upload p12 file'}' /></td></tr>
     <tr><td class='base' colspan='2' align='left'>
-        <img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td></tr>
+        <img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'required field'}</td></tr>
     </table></form>
 END
     ;
@@ -1961,7 +1961,7 @@ END
     if (!$cgiparams{'KEY'}) {
     	print <<EOF;
     		<tr>
-    			<td width='20%'>$Lang::tr{'name'}:</td>
+    			<td width='20%'>$Lang::tr{'name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     			<td width='30%'>
     				<input type='text' name='NAME' value='$cgiparams{'NAME'}' size='25' />
     			</td>
@@ -1973,8 +1973,9 @@ EOF
     my $disabled;
     my $blob;
     if ($cgiparams{'TYPE'} eq 'host') {
-	$disabled = "disabled='disabled'";
-	$blob = "<img src='/blob.gif' alt='*' />";
+		$disabled = "disabled='disabled'";
+    } elsif ($cgiparams{'TYPE'} eq 'net') {
+		$blob = "<img src='/blob.gif' alt='*' />";
     };
 
     print <<END
@@ -1983,7 +1984,7 @@ EOF
 		<td width='30%'>
 			<input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} />
 		</td>
-	    <td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'local subnet'}</td>
+	    <td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'local subnet'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 	    <td width='30%'>
 	        <input type='text' name='LOCAL_SUBNET' value='$cgiparams{'LOCAL_SUBNET'}' size="25" />
 	    </td>
@@ -1993,7 +1994,7 @@ EOF
 	    <td width='30%'>
 	        <input type='text' name='REMOTE' value='$cgiparams{'REMOTE'}' size="25" />
 	    </td>
-	    <td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'remote subnet'}</td>
+	    <td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'remote subnet'}&nbsp;$blob</td>
 	    <td width='30%'>
 	        <input $disabled type='text' name='REMOTE_SUBNET' value='$cgiparams{'REMOTE_SUBNET'}' size="25" />
 	    </td>
@@ -2010,7 +2011,7 @@ EOF
 	</tr>
 	<tr><td colspan="4"><br /></td></tr>
 	<tr>
-	    <td class='boldbase' width='20%'>$Lang::tr{'remark title'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+	    <td class='boldbase' width='20%'>$Lang::tr{'remark title'}</td>
 	    <td colspan='3'>
 	    	<input type='text' name='REMARK' value='$cgiparams{'REMARK'}' maxlength='50' size="73" />
 	    </td>
@@ -2059,22 +2060,22 @@ END
 	<tr><td><input type='radio' name='AUTH' value='certgen' $checked{'AUTH'}{'certgen'} $cakeydisabled /></td>
 	    <td class='base'><hr />$Lang::tr{'generate a certificate'}</td><td>&nbsp;</td></tr>
 	<tr><td>&nbsp;</td>
-	    <td class='base'>$Lang::tr{'users fullname or system hostname'}:</td>
+	    <td class='base'>$Lang::tr{'users fullname or system hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	    <td class='base' nowrap='nowrap'><input type='text' name='CERT_NAME' value='$cgiparams{'CERT_NAME'}' size='32' $cakeydisabled /></td></tr>
 	<tr><td>&nbsp;</td>
-	    <td class='base'>$Lang::tr{'users email'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	    <td class='base'>$Lang::tr{'users email'}:</td>
 	    <td class='base' nowrap='nowrap'><input type='text' name='CERT_EMAIL' value='$cgiparams{'CERT_EMAIL'}' size='32' $cakeydisabled /></td></tr>
 	<tr><td>&nbsp;</td>
-	    <td class='base'>$Lang::tr{'users department'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	    <td class='base'>$Lang::tr{'users department'}:</td>
 	    <td class='base' nowrap='nowrap'><input type='text' name='CERT_OU' value='$cgiparams{'CERT_OU'}' size='32' $cakeydisabled /></td></tr>
 	<tr><td>&nbsp;</td>
-	    <td class='base'>$Lang::tr{'organization name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	    <td class='base'>$Lang::tr{'organization name'}:</td>
 	    <td class='base' nowrap='nowrap'><input type='text' name='CERT_ORGANIZATION' value='$cgiparams{'CERT_ORGANIZATION'}' size='32' $cakeydisabled /></td></tr>
 	<tr><td>&nbsp;</td>
-	    <td class='base'>$Lang::tr{'city'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	    <td class='base'>$Lang::tr{'city'}:</td>
 	    <td class='base' nowrap='nowrap'><input type='text' name='CERT_CITY' value='$cgiparams{'CERT_CITY'}' size='32' $cakeydisabled /></td></tr>
 	<tr><td>&nbsp;</td>
-	    <td class='base'>$Lang::tr{'state or province'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	    <td class='base'>$Lang::tr{'state or province'}:</td>
 	    <td class='base' nowrap='nowrap'><input type='text' name='CERT_STATE' value='$cgiparams{'CERT_STATE'}' size='32' $cakeydisabled /></td></tr>
 	<tr><td>&nbsp;</td>
 	    <td class='base'>$Lang::tr{'country'}:</td>
@@ -2091,12 +2092,12 @@ END
 	print <<END
 	    </select></td></tr>
 
-	<tr><td>&nbsp;</td><td class='base'>$Lang::tr{'vpn subjectaltname'} (subjectAltName=email:*,URI:*,DNS:*,RID:*)<img src='/blob.gif' alt='*' /></td>
+	<tr><td>&nbsp;</td><td class='base'>$Lang::tr{'vpn subjectaltname'} (subjectAltName=email:*,URI:*,DNS:*,RID:*)</td>
 	    <td class='base' nowrap='nowrap'><input type='text' name='SUBJECTALTNAME' value='$cgiparams{'SUBJECTALTNAME'}' size='32' $cakeydisabled /></td></tr>
 	<tr><td>&nbsp;</td>
-	    <td class='base'>$Lang::tr{'pkcs12 file password'}:</td>
+	    <td class='base'>$Lang::tr{'pkcs12 file password'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	    <td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS1' value='$cgiparams{'CERT_PASS1'}' size='32' $cakeydisabled /></td></tr>
-	<tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}:($Lang::tr{'confirmation'})</td>
+	<tr><td>&nbsp;</td><td class='base'>$Lang::tr{'pkcs12 file password'}&nbsp;($Lang::tr{'confirmation'}):&nbsp;<img src='/blob.gif' alt='*' /></td>
 	    <td class='base' nowrap='nowrap'><input type='password' name='CERT_PASS2' value='$cgiparams{'CERT_PASS2'}' size='32' $cakeydisabled /></td></tr>
 	</table>
 END
@@ -2504,7 +2505,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			</td>
 		</tr>
 		<tr>
-			<td class='boldbase' width="15%">$Lang::tr{'lifetime'}</td>
+			<td class='boldbase' width="15%">$Lang::tr{'lifetime'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 			<td class='boldbase'>
 				<input type='text' name='IKE_LIFETIME' value='$cgiparams{'IKE_LIFETIME'}' size='5' /> $Lang::tr{'hours'}
 			</td>
@@ -2582,13 +2583,13 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</td>
 	</tr>
 	<tr>
-		<td width="15%">$Lang::tr{'dpd timeout'}:</td>
+		<td width="15%">$Lang::tr{'dpd timeout'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 		<td>
 			<input type='text' name='DPD_TIMEOUT' size='5' value='$cgiparams{'DPD_TIMEOUT'}' />
 		</td>
 	</tr>
 	<tr>
-		<td width="15%">$Lang::tr{'dpd delay'}:</td>
+		<td width="15%">$Lang::tr{'dpd delay'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 		<td>
 			<input type='text' name='DPD_DELAY' size='5' value='$cgiparams{'DPD_DELAY'}' />
 		</td>
@@ -2644,6 +2645,7 @@ EOF
 
     print <<EOF;
 	<tr>
+		<td align='left' colspan='1'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
 		<td align='right' colspan='2'>
 			<input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
 			<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}' />
@@ -2717,7 +2719,7 @@ EOF
     <form method='post' action='$ENV{'SCRIPT_NAME'}'>
     <table width='100%'>
     <tr>
-	<td width='20%' class='base' nowrap='nowrap'>$Lang::tr{'vpn red name'}:</td>
+	<td width='20%' class='base' nowrap='nowrap'>$Lang::tr{'vpn red name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td width='20%'><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' /></td>
 	<td width='20%' class='base'>$Lang::tr{'enabled'}<input type='checkbox' name='ENABLED' $checked{'ENABLED'} /></td>
     </tr>
@@ -2729,7 +2731,7 @@ print <<END
 	<td ><input type='text' name='VPN_DELAYED_START' value='$cgiparams{'VPN_DELAYED_START'}' /></td>
     </tr>
     <tr>
-	<td  class='base' nowrap='nowrap'>$Lang::tr{'host to net vpn'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td  class='base' nowrap='nowrap'>$Lang::tr{'host to net vpn'}:</td>
 	<td ><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
     </tr>
 </table>
@@ -2738,7 +2740,7 @@ print <<END
 <table width='100%'>
 <tr>
     <td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
-    <td width='70%' class='base' valign='top'>$Lang::tr{'this field may be blank'}</td><td width='30%' align='right' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+    <td width='70%' class='base' valign='top'>$Lang::tr{'required field'}</td><td width='30%' align='right' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 <tr>
     <td class='base' valign='top' nowrap='nowrap'><img src='/blob.gif' alt='*' /><img src='/blob.gif' alt='*' />&nbsp;</td>
@@ -3059,7 +3061,7 @@ END
     <table width='100%' border='0' cellspacing='1' cellpadding='0'>
     $createCA
     <tr>
-	<td class='base' nowrap='nowrap'>$Lang::tr{'ca name'}:</td>
+	<td class='base' nowrap='nowrap'>$Lang::tr{'ca name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td nowrap='nowrap'><input type='text' name='CA_NAME' value='$cgiparams{'CA_NAME'}' size='15' /> </td>
 	<td nowrap='nowrap'><input type='file' name='FH' size='30' /></td>
 	<td nowrap='nowrap'><input type='submit' name='ACTION' value='$Lang::tr{'upload ca certificate'}' /></td>

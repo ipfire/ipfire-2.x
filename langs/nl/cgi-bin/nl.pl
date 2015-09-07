@@ -2057,7 +2057,6 @@
 'there are updates available' => 'Er zijn updates beschikbaar voor uw systeem. Het wordt aangeraden om deze zo snel mogelijk te installeren.',
 'there was no file upload' => 'Er is geen bestand geüpload.',
 'this feature has been sponsored by' => 'Deze feature wordt gesponsord door',
-'this field may be blank' => 'Dit veld mag leeg blijven.',
 'this is not a valid archive' => 'Dit is geen geldig archief.',
 'this is not an authorised update' => 'Dit is geen geautoriseerde update.',
 'this months volume' => 'Volume van deze maand',

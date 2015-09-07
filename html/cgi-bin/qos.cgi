@@ -938,7 +938,7 @@ END
 		<tr><td width='33%' align='right'>$Lang::tr{'guaranteed bandwith'}:
 		    <td width='33%' align='left'><input type='text' size='20' name='MINBWDTH' maxlength='8' required='1' value="$qossettings{'MINBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>$Lang::tr{'max bandwith'}:
+		<tr><td width='33%' align='right'>$Lang::tr{'max bandwith'}&nbsp;<img src='/blob.gif' alt='*' />:
 		    <td width='33%' align='left'><input type='text' size='20' name='MAXBWDTH' maxlength='8' required='1' value="$qossettings{'MAXBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Burst:
@@ -960,8 +960,8 @@ print <<END
 				<option value='1' $selected{'TOS'}{'1'}>$Lang::tr{'min costs'} (1)</option></select>
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>$Lang::tr{'remark'}:
-		    <td width='66%' colspan='2' align='left'><input type='text' name='REMARK' size='40' maxlength='40' value="$qossettings{'REMARK'}" /> <img alt="" alt='blob' src='/blob.gif' />
-		<tr><td width='33%' align='right'>&nbsp;
+		    <td width='66%' colspan='2' align='left'><input type='text' name='REMARK' size='40' maxlength='40' value="$qossettings{'REMARK'}" />
+		<tr><td width='33%' align='right'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'required field'}
 		    <td width='33%' align='left'>&nbsp;
 		    <td width='33%' align='center'><input type='submit' name='DOCLASS' value='$Lang::tr{'save'}' />&nbsp;<input type='reset' value='$Lang::tr{'reset'}' />
 		</table></form>

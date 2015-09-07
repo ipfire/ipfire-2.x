@@ -693,7 +693,7 @@ END
 ;
                 }
                 if ($pppsettings{'TYPE'} =~ /^(modem)$/ ) {
-                        print "<tr><td colspan='3' width='75%'>$Lang::tr{'number'}</td>\n";
+                        print "<tr><td colspan='3' width='75%'>$Lang::tr{'number'}&nbsp;<img src='/blob.gif' alt='*' /></td>\n";
                         print "<td width='25%'><input type='text' name='TELEPHONE' value='$pppsettings{'TELEPHONE'}'></td><tr>\n";
                         if ($pppsettings{'TYPE'} eq 'modem' ) {
                                 print "<tr><td colspan='3' width='75%'>$Lang::tr{'modem speaker on'}</td>\n";
@@ -711,15 +711,15 @@ END
         </select></td>
 </tr>
 <tr>
-        <td colspan='3' width='75%'>$Lang::tr{'optional at cmd'}&nbsp;1&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td colspan='3' width='75%'>$Lang::tr{'optional at cmd'}&nbsp;1</td>
         <td width='25%'><input type='text' name='ADD_AT1' value='$pppsettings{'ADD_AT1'}'></td>
 </tr>
 <tr>
-        <td colspan='3' width='75%'>$Lang::tr{'optional at cmd'}&nbsp;2&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td colspan='3' width='75%'>$Lang::tr{'optional at cmd'}&nbsp;2</td>
         <td width='25%'><input type='text' name='ADD_AT2' value='$pppsettings{'ADD_AT2'}'></td>
 </tr>
 <tr>
-        <td colspan='3' width='75%'>$Lang::tr{'optional at cmd'}&nbsp;3&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td colspan='3' width='75%'>$Lang::tr{'optional at cmd'}&nbsp;3</td>
         <td width='25%'><input type='text' name='ADD_AT3' value='$pppsettings{'ADD_AT3'}'></td>
 </tr>
 <tr>
@@ -732,7 +732,7 @@ END
 
 print <<END
 <tr>
-        <td colspan='3' width='75%'>$Lang::tr{'idle timeout'}</td>
+        <td colspan='3' width='75%'>$Lang::tr{'idle timeout'}&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='25%'><input type='text' name='TIMEOUT' value='$pppsettings{'TIMEOUT'}' /></td>
 </tr>
  <tr>
@@ -774,11 +774,11 @@ print <<END
   <td width='25%'><input type='checkbox' name='DIALONDEMANDDNS' $checked{'DIALONDEMANDDNS'}{'on'} /></td>
 </tr>
 <tr>
-        <td colspan='3' width='75%'>$Lang::tr{'holdoff'}:</td>
+        <td colspan='3' width='75%'>$Lang::tr{'holdoff'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='25%'><input type='text' name='HOLDOFF' value='$pppsettings{'HOLDOFF'}' /></td>
 </tr>
 <tr>
-        <td colspan='3' width='75%'>$Lang::tr{'maximum retries'}</td>
+        <td colspan='3' width='75%'>$Lang::tr{'maximum retries'}&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='25%'><input type='text' name='MAXRETRIES' value='$pppsettings{'MAXRETRIES'}' /></td>
 </tr>
 END
@@ -793,15 +793,15 @@ print <<END
         <td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'pptp settings'}</b></td>
 </tr>
 <tr>
-        <td width='25%'>$Lang::tr{'pptp peer'}:</td>
+        <td width='25%'>$Lang::tr{'pptp peer'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td colspan='3'><input size=50 type='text' name='PPTP_PEER' value='$pppsettings{'PPTP_PEER'}' /></td>
 </tr>
 <tr>
-        <td width='25%'>$Lang::tr{'pptp netconfig'}:</td>
+        <td width='25%'>$Lang::tr{'pptp netconfig'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td colspan='3'><input size=50 type='text' name='PPTP_NICCFG' value='$pppsettings{'PPTP_NICCFG'}' /></td>
 </tr>
 <tr>
-        <td width='25%'>$Lang::tr{'pptp route'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'>$Lang::tr{'pptp route'}:</td>
         <td colspan='3'><input size=50 type='text' name='PPTP_ROUTE' value='$pppsettings{'PPTP_ROUTE'}' /></td>
 </tr>
 
@@ -889,12 +889,12 @@ print <<END
         <td colspan='4' width='100%' bgcolor='$color{'color20'}'><b>$Lang::tr{'pppoe settings'}</b></td>
 </tr>
 <tr>
-        <td width='25%'>$Lang::tr{'service name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'>$Lang::tr{'service name'}</td>
         <td colspan='2' width='50%'></td>
         <td width='25%'><input type='text' name='SERVICENAME' value='$pppsettings{'SERVICENAME'}' /></td>
 </tr>
 <tr>
-        <td width='25%'>$Lang::tr{'concentrator name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'>$Lang::tr{'concentrator name'}</td>
         <td colspan='2' width='50%'></td>
         <td width='25%'><input type='text' name='CONCENTRATORNAME' value='$pppsettings{'CONCENTRATORNAME'}' /></td>
 </tr>
@@ -909,11 +909,11 @@ print <<END
 </tr>
 <tr>
 <tr>
-        <td width='25%'>MTU&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'>MTU:</td>
         <td width='25%'><input type='text' name='MTU' value='$pppsettings{'MTU'}' /></td>
 </tr>
 <tr>
-        <td width='25%'>MRU&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'>MRU:</td>
         <td width='25%'><input type='text' name='MRU' value='$pppsettings{'MRU'}' /></td>
 </tr>
 END
@@ -925,9 +925,9 @@ print <<END
         <td bgcolor='$color{'color20'}' colspan='4' width='100%'><b>$Lang::tr{'authentication'}</b></td>
 </tr>
 <tr>
-        <td width='25%'>$Lang::tr{'username'}</td>
+        <td width='25%'>$Lang::tr{'username'}&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='25%'><input type='text' name='USERNAME' value='$pppsettings{'USERNAME'}' /></td>
-        <td width='25%'>$Lang::tr{'password'}</td>
+        <td width='25%'>$Lang::tr{'password'}&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='25%'><input type='password' name='PASSWORD' value='$pppsettings{'PASSWORD'}' /></td>
 </tr>
 <tr>
@@ -948,7 +948,7 @@ END
 }
 print <<END
         </select></td>
-        <td width='25%'>$Lang::tr{'script name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'>$Lang::tr{'script name'}</td>
         <td width='25%'><input type='text' name='LOGINSCRIPT' value='$pppsettings{'LOGINSCRIPT'}' /></td>
 </tr>
 <tr><td colspan='4' width='100%'><br></br></td></tr>
@@ -969,7 +969,7 @@ print <<END
 </tr>
 <tr><td colspan='4' width='100%'><br></br><hr></hr><br></br></td></tr>
 <tr>
-        <td width='25%'>$Lang::tr{'profile name'}</td>
+        <td width='25%'>$Lang::tr{'profile name'}&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='25%'><input type='text' name='PROFILENAME' value='$pppsettings{'PROFILENAME'}'>
         <td colspan='2' width='50%'></td>
 </tr>
@@ -978,7 +978,7 @@ print <<END
 </tr>
 <tr>
         <td colspan='2' width='50%'>$Lang::tr{'legend'}:</td>
-        <td colspan='2' width='50%'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
+        <td colspan='2' width='50%'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
 </tr>
 </table>
 END

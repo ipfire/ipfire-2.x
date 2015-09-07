@@ -547,39 +547,39 @@ print <<END
     <input type='checkbox' name='ENABLE_${itf}' $checked{'ENABLE'}{'on'} /></td>
     <td width='25%' class='base'>$Lang::tr{'ip address'}<br />$Lang::tr{'netmask'}:</td><td><b>$netsettings{"${itf}_ADDRESS"}<br />$netsettings{"${itf}_NETMASK"}</b></td>
 </tr><tr>
-    <td width='25%' class='base'>$Lang::tr{'start address'}</td>
+    <td width='25%' class='base'>$Lang::tr{'start address'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td width='25%'><input type='text' name='START_ADDR_${itf}' value='$dhcpsettings{"START_ADDR_${itf}"}' /></td>
-    <td width='25%' class='base'>$Lang::tr{'end address'}</td>
+    <td width='25%' class='base'>$Lang::tr{'end address'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td width='25%'><input type='text' name='END_ADDR_${itf}' value='$dhcpsettings{"END_ADDR_${itf}"}' /></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'default lease time'}</td>
+    <td class='base'>$Lang::tr{'default lease time'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='DEFAULT_LEASE_TIME_${itf}' value='$dhcpsettings{"DEFAULT_LEASE_TIME_${itf}"}' /></td>
-    <td class='base'>$Lang::tr{'max lease time'}</td>
+    <td class='base'>$Lang::tr{'max lease time'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='MAX_LEASE_TIME_${itf}' value='$dhcpsettings{"MAX_LEASE_TIME_${itf}"}' /></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'domain name suffix'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'domain name suffix'}</td>
     <td><input type='text' name='DOMAIN_NAME_${itf}' value='$dhcpsettings{"DOMAIN_NAME_${itf}"}' /></td>
     <td>$Lang::tr{'dhcp allow bootp'}:</td>
     <td><input type='checkbox' name='ENABLEBOOTP_${itf}' $checked{'ENABLEBOOTP'}{'on'} /></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'primary dns'}</td>
+    <td class='base'>$Lang::tr{'primary dns'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='DNS1_${itf}' value='$dhcpsettings{"DNS1_${itf}"}' /></td>
-    <td class='base'>$Lang::tr{'secondary dns'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'secondary dns'}</td>
     <td><input type='text' name='DNS2_${itf}' value='$dhcpsettings{"DNS2_${itf}"}' /></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'primary ntp server'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'primary ntp server'}:</td>
     <td><input type='text' name='NTP1_${itf}' value='$dhcpsettings{"NTP1_${itf}"}' /></td>
-    <td class='base'>$Lang::tr{'secondary ntp server'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'secondary ntp server'}:</td>
     <td><input type='text' name='NTP2_${itf}' value='$dhcpsettings{"NTP2_${itf}"}' /></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'primary wins server address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'primary wins server address'}:</td>
     <td><input type='text' name='WINS1_${itf}' value='$dhcpsettings{"WINS1_${itf}"}' /></td>
-    <td class='base'>$Lang::tr{'secondary wins server address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'secondary wins server address'}:</td>
     <td><input type='text' name='WINS2_${itf}' value='$dhcpsettings{"WINS2_${itf}"}' /></td>
 </tr><tr>
-    <td class='base'>next-server:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>next-server:</td>
     <td><input type='text' name='NEXT_${itf}' value='$dhcpsettings{"NEXT_${itf}"}' /></td>
-    <td class='base'>filename:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>filename:</td>
     <td><input type='text' name='FILE_${itf}' value='$dhcpsettings{"FILE_${itf}"}' /></td>
 </tr>
 </table>
@@ -591,7 +591,7 @@ END
 print <<END
 <table width='100%'>
 <tr>
-    <td class='base' width='25%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
+    <td class='base' width='25%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
     <td class='base' width='30%'>$warnNTPmessage</td>
     <td width='40%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
@@ -625,13 +625,13 @@ if ($opt ne '') {
 }
 print <<END
 <tr>
-    <td class='base'>$Lang::tr{'dhcp advopt name'}:</td>
+    <td class='base'>$Lang::tr{'dhcp advopt name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='ADVOPT_NAME' value='$dhcpsettings{'ADVOPT_NAME'}' size='18' /></td>
-    <td class='base'>$Lang::tr{'dhcp advopt value'}:</td>
+    <td class='base'>$Lang::tr{'dhcp advopt value'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='ADVOPT_DATA' value='$dhcpsettings{'ADVOPT_DATA'}' size='40' /></td>
 </tr>$opt<tr>
     <td class='base'>$Lang::tr{'enabled'}</td><td><input type='checkbox' name='ADVOPT_ENABLED' $checked{'ADVOPT_ENABLED'}{'on'} /></td>
-    <td class='base'>$Lang::tr{'dhcp advopt scope'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'dhcp advopt scope'}:</td>
     <td>
 END
 ;
@@ -652,7 +652,7 @@ print <<END
 <hr />
 <table width='100%'>
 <tr>
-    <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'dhcp advopt scope help'}</td>
+    <td class='base' width='50%'>$Lang::tr{'dhcp advopt scope help'}</td>
     <td width='50%' align='right'>
     <input type='hidden' name='ACTION' value='$Lang::tr{'add'}1' />
     <input type='submit' name='SUBMIT' value='$buttontext' />
@@ -830,29 +830,29 @@ if ($dhcpsettings{'KEY2'} ne '') {
 }
 print <<END
 <tr>
-    <td class='base'>$Lang::tr{'mac address'}:</td>
+    <td class='base'>$Lang::tr{'mac address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='FIX_MAC' value='$dhcpsettings{'FIX_MAC'}' size='18' /></td>
-    <td class='base'>$Lang::tr{'ip address'}:</td>
+    <td class='base'>$Lang::tr{'ip address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='FIX_ADDR' value='$dhcpsettings{'FIX_ADDR'}' size='18' /></td>
-    <td class='base'>$Lang::tr{'remark'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'remark'}:</td>
     <td><input type='text' name='FIX_REMARK' value='$dhcpsettings{'FIX_REMARK'}' size='18' /></td>
 </tr><tr>
     <td class='base'>$Lang::tr{'enabled'}</td><td><input type='checkbox' name='FIX_ENABLED' $checked{'FIX_ENABLED'}{'on'} /></td>
 </tr><tr>
     <td colspan = '3'><b>$Lang::tr{'dhcp bootp pxe data'}</b></td>
 </tr><tr>
-    <td class='base'>next-server:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>next-server:</td>
     <td><input type='text' name='FIX_NEXTADDR' value='$dhcpsettings{'FIX_NEXTADDR'}' size='18' /></td>
-    <td class='base'>filename:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>filename:</td>
     <td><input type='text' name='FIX_FILENAME' value='$dhcpsettings{'FIX_FILENAME'}' size='18' /></td>
-    <td class='base'>root path:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>root path:</td>
     <td><input type='text' name='FIX_ROOTPATH' value='$dhcpsettings{'FIX_ROOTPATH'}' size='18' /></td>
 </tr>
 </table>
 <hr />
 <table width='100%'>
 <tr>
-    <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
+    <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
     <td width='50%' align='right'>
 	<input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' />
 	<input type='submit' name='SUBMIT' value='$buttontext' />
@@ -860,7 +860,6 @@ print <<END
 </tr>
 </table>
 </form>
-<hr />
 END
 ;
 #Edited line number (KEY2) passed until cleared by 'save' or 'remove' or 'new sort order'

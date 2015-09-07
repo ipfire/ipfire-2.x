@@ -1699,7 +1699,6 @@
 'there are updates available' => 'Existen actualizaciones disponibles para su sistema. Se recomienda encarecidamente que las instala a la brevedad posible.',
 'there was no file upload' => 'No había archivo para cargar.',
 'this feature has been sponsored by' => 'Esta característica ha sido patrocinada por',
-'this field may be blank' => 'Este campo se puede dejar en blanco',
 'this is not a valid archive' => 'No es un archivo válido.',
 'this is not an authorised update' => 'No es una actualización autorizada.',
 'this months volume' => 'Volúmen de este mes',

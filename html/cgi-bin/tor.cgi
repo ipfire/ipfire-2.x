@@ -266,7 +266,7 @@ if ( ($memory != 0) && (@pid[0] ne "///") ){
 			<tr>
 				<td width='25%' class='base'>$Lang::tr{'tor enabled'}:</td>
 				<td width='30%'><input type='checkbox' name='TOR_ENABLED' $checked{'TOR_ENABLED'}{'on'} /></td>
-				<td width='25%' class='base'>$Lang::tr{'tor socks port'}:</td>
+				<td width='25%' class='base'>$Lang::tr{'tor socks port'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td width='20%'><input type='text' name='TOR_SOCKS_PORT' value='$settings{'TOR_SOCKS_PORT'}' size='5' /></td>
 			</tr>
 			<tr>
@@ -386,17 +386,17 @@ END
 						<option value='private-bridge' $selected{'TOR_RELAY_MODE'}{'private-bridge'}>$Lang::tr{'tor relay mode private bridge'}</option>
 					</select>
 				</td>
-				<td width='25%' class='base'>$Lang::tr{'tor relay nickname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+				<td width='25%' class='base'>$Lang::tr{'tor relay nickname'}:</td>
 				<td width='20%'>
 					<input type='text' name='TOR_RELAY_NICKNAME' value='$settings{'TOR_RELAY_NICKNAME'}' maxlength='19' />
 				</td>
 			</tr>
 			<tr>
-				<td width='25%' class='base'>$Lang::tr{'tor relay address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+				<td width='25%' class='base'>$Lang::tr{'tor relay address'}:</td>
 				<td width='30%'>
 					<input type='text' name='TOR_RELAY_ADDRESS' value='$settings{'TOR_RELAY_ADDRESS'}' />
 				</td>
-				<td width='25%' class='base'>$Lang::tr{'tor relay port'}:</td>
+				<td width='25%' class='base'>$Lang::tr{'tor relay port'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td width='20%'>
 					<input type='text' name='TOR_RELAY_PORT' value='$settings{'TOR_RELAY_PORT'}' size='5' />
 				</td>
@@ -404,13 +404,13 @@ END
 			<tr>
 				<td width='25%'>&nbsp;</td>
 				<td width='30%'>&nbsp;</td>
-				<td width='25%' class='base'>$Lang::tr{'tor directory port'}:</td>
+				<td width='25%' class='base'>$Lang::tr{'tor directory port'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td width='20%'>
 					<input type='text' name='TOR_RELAY_DIRPORT' value='$settings{'TOR_RELAY_DIRPORT'}' size='5' />&nbsp;$Lang::tr{'tor 0 = disabled'}
 				</td>
 			</tr>
 			<tr>
-				<td width='25%' class='base'>$Lang::tr{'tor contact info'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+				<td width='25%' class='base'>$Lang::tr{'tor contact info'}:</td>
 				<td width='75%' colspan='3'>
 					<input type='text' name='TOR_RELAY_CONTACT_INFO' value='$settings{'TOR_RELAY_CONTACT_INFO'}' style='width: 98%;' />
 				</td>
@@ -441,7 +441,7 @@ END
 						<option value='0' $selected{'TOR_RELAY_BANDWIDTH_RATE'}{'0'}>$Lang::tr{'tor bandwidth unlimited'}</option>
 					</select>
 				</td>
-				<td width='25%' class='base'>$Lang::tr{'tor accounting limit'}:</td>
+				<td width='25%' class='base'>$Lang::tr{'tor accounting limit'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 				<td width='20%'>
 					<input type='text' name='TOR_RELAY_ACCOUNTING_LIMIT' value='$settings{'TOR_RELAY_ACCOUNTING_LIMIT'}' size='12' />
 				</td>
@@ -484,9 +484,7 @@ END
 	print <<END;
 		<table width='95%'>
 			<tr>
-				<td>
-					<img src='/blob.gif' align='top' alt='*' />&nbsp;<font class='base'>$Lang::tr{'this field may be blank'}</font>
-				</td>
+				<td><img src='/blob.gif' align='top' alt='*' />&nbsp;<font class='base'>$Lang::tr{'required field'}</font></td>
 				<td align='right'>&nbsp;</td>
 			</tr>
 		</table>

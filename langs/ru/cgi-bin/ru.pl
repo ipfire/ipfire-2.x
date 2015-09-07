@@ -1707,7 +1707,6 @@
 'there are updates available' => 'There are updates available for your system. It is strongly urged that you install them as soon as possible.',
 'there was no file upload' => 'There was no file upload.',
 'this feature has been sponsored by' => 'This feature has been sponsored by',
-'this field may be blank' => 'Эти поля могут остаться пустыми.',
 'this is not a valid archive' => 'This is not a valid archive.',
 'this is not an authorised update' => 'This is not an authorised update.',
 'this months volume' => 'This months volume',

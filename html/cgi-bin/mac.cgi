@@ -134,7 +134,7 @@ print <<END
     <td colspan="2">&nbsp;</td>
   </tr>
   <tr>
-    <td width="25%"><font class='base'>$Lang::tr{'mac new'}&nbsp;</font></td><td>
+    <td width="25%"><font class='base'>$Lang::tr{'mac new'}&nbsp;<img src='/blob.gif' alt='*' /></font></td><td>
 END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
@@ -159,12 +159,12 @@ END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
 print <<END 
-      <input type="text" name="MAC1" maxlength="17" value=''/><img src='/blob.gif' alt='*' /></td>
+      <input type="text" name="MAC1" maxlength="17" value=''/></td>
 END
 ;
 } else {   
 print <<END
-      <input type="text" name="MAC1" maxlength="17" value='$macsettings{"MAC1"}'/><img src='/blob.gif' alt='*' /></td>
+      <input type="text" name="MAC1" maxlength="17" value='$macsettings{"MAC1"}'/></td>
 END
 ;  
 } 
@@ -179,12 +179,12 @@ END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
 print <<END 
-      <input type="text" name="MAC2" maxlength="17" value=''/><img src='/blob.gif' alt='*' /></td>
+      <input type="text" name="MAC2" maxlength="17" value=''/></td>
 END
 ;
 } else {   
 print <<END
-      <input type="text" name="MAC2" maxlength="17" value='$macsettings{"MAC2"}'/><img src='/blob.gif' alt='*' /></td>
+      <input type="text" name="MAC2" maxlength="17" value='$macsettings{"MAC2"}'/></td>
 END
 ;  
 } 
@@ -195,7 +195,7 @@ print <<END
     <td colspan="2"><br><hr /></td>
   </tr>
   <tr>
-    <td align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td><div align="right"></td>
+    <td align='left'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'required field'}</td><div align="right"></td>
     <td align='right'>
 END
 ;

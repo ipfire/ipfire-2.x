@@ -1712,7 +1712,6 @@
 'there are updates available' => 'Dostępne są nowe aktualizacje dla twojego systemu. Zalecane jest wykonanie aktualizacji tak szybko jak to możliwe',
 'there was no file upload' => 'Nie wgrano żadnego pliku.',
 'this feature has been sponsored by' => 'Ta funkcjonalność jest sponsorowana przez',
-'this field may be blank' => 'To pole może być puste.',
 'this is not a valid archive' => 'Nie odnaleziono poprawnego archiwum.',
 'this is not an authorised update' => 'To nie jest autoryzowana aktualizacja.',
 'this months volume' => 'Ilość w tym miesiącu',

@@ -2135,7 +2135,6 @@
 'there are updates available' => 'Sisteminiz için kullanılabilir güncelleştirmeler var. Kesinlikle en kısa zamanda bunları yüklemeniz gerekir.',
 'there was no file upload' => 'Hiçbir dosya yüklenemedi.',
 'this feature has been sponsored by' => 'Bu özelliklerin destekçisi',
-'this field may be blank' => 'Bu alan boş kalabilir.',
 'this is not a valid archive' => 'Bu, geçerli bir arşiv değil.',
 'this is not an authorised update' => 'Bu yetkili bir güncelleştirme değil.',
 'this months volume' => 'Bu ayki hacim',
