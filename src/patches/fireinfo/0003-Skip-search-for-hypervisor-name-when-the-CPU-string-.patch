@@ -1,7 +1,8 @@
 From c667589410912ca980a78f417e86dd6585d58f9a Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Mon, 4 May 2015 16:00:31 +0200
-Subject: [PATCH] Skip search for hypervisor name when the CPU string is empty
+Subject: [PATCH 3/5] Skip search for hypervisor name when the CPU string is
+ empty
 
 ---
  src/_fireinfo/fireinfo.c | 11 ++++++-----
@@ -30,5 +31,5 @@ index fc639d9d4cd9..6601c21a733f 100644
  		}
  
 -- 
-2.1.0
+2.4.3
 
