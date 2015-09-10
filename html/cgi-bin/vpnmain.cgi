@@ -108,6 +108,7 @@ $cgiparams{'ROOTCERT_STATE'} = '';
 $cgiparams{'RW_NET'} = '';
 $cgiparams{'DPD_DELAY'} = '30';
 $cgiparams{'DPD_TIMEOUT'} = '120';
+$cgiparams{'FORCE_MOBIKE'} = 'off';
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -359,6 +360,11 @@ sub writeipsecfiles {
 
 	# Compression
 	print CONF "\tcompress=yes\n" if ($lconfighash{$key}[13] eq 'on');
+
+	# Force MOBIKE?
+	if (($lconfighash{$key}[29] eq "ikev2") && ($lconfighash{$key}[32] eq 'on')) {
+		print CONF "\tmobike=yes\n";
+	}
 
 	# Dead Peer Detection
 	my $dpdaction = $lconfighash{$key}[27];
@@ -1286,6 +1292,7 @@ END
 	$cgiparams{'VHOST'}            	= $confighash{$cgiparams{'KEY'}}[14];
 	$cgiparams{'DPD_TIMEOUT'}		= $confighash{$cgiparams{'KEY'}}[30];
 	$cgiparams{'DPD_DELAY'}		= $confighash{$cgiparams{'KEY'}}[31];
+	$cgiparams{'FORCE_MOBIKE'}	= $confighash{$cgiparams{'KEY'}}[32];
 
 	if (!$cgiparams{'DPD_DELAY'}) {
 		$cgiparams{'DPD_DELAY'} = 30;
@@ -1768,7 +1775,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 	    $key = &General::findhasharraykey (\%confighash);
-	    foreach my $i (0 .. 31) { $confighash{$key}[$i] = "";}
+	    foreach my $i (0 .. 32) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -1810,6 +1817,7 @@ END
 	$confighash{$key}[14] = $cgiparams{'VHOST'};
 	$confighash{$key}[30] = $cgiparams{'DPD_TIMEOUT'};
 	$confighash{$key}[31] = $cgiparams{'DPD_DELAY'};
+	$confighash{$key}[32] = $cgiparams{'FORCE_MOBIKE'};
 
 	#free unused fields!
 	$confighash{$key}[6] = 'off';
@@ -1856,6 +1864,10 @@ END
 
 	if (!$cgiparams{'DPD_TIMEOUT'}) {
 		$cgiparams{'DPD_TIMEOUT'} = 120;
+	}
+
+	if (!$cgiparams{'FORCE_MOBIKE'}) {
+		$cgiparams{'FORCE_MOBIKE'} = 'no';
 	}
 
 	# Default IKE Version to v2
@@ -1935,6 +1947,7 @@ END
 	<input type='hidden' name='DPD_ACTION' value='$cgiparams{'DPD_ACTION'}' />
 	<input type='hidden' name='DPD_DELAY' value='$cgiparams{'DPD_DELAY'}' />
 	<input type='hidden' name='DPD_TIMEOUT' value='$cgiparams{'DPD_TIMEOUT'}' />
+	<input type='hidden' name='FORCE_MOBIKE' value='$cgiparams{'FORCE_MOBIKE'}' />
 END
     ;
     if ($cgiparams{'KEY'}) {
@@ -2206,6 +2219,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
 	if (
 	    ($cgiparams{'COMPRESSION'} !~ /^(|on|off)$/) ||
+	    ($cgiparams{'FORCE_MOBIKE'} !~ /^(|on|off)$/) ||
 	    ($cgiparams{'ONLY_PROPOSED'} !~ /^(|on|off)$/) ||
 	    ($cgiparams{'PFS'} !~ /^(|on|off)$/) ||
 	    ($cgiparams{'VHOST'} !~ /^(|on|off)$/)
@@ -2241,6 +2255,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$confighash{$cgiparams{'KEY'}}[27] = $cgiparams{'DPD_ACTION'};
 	$confighash{$cgiparams{'KEY'}}[30] = $cgiparams{'DPD_TIMEOUT'};
 	$confighash{$cgiparams{'KEY'}}[31] = $cgiparams{'DPD_DELAY'};
+	$confighash{$cgiparams{'KEY'}}[32] = $cgiparams{'FORCE_MOBIKE'};
 	&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 	&writeipsecfiles();
 	if (&vpnenabled) {
@@ -2268,6 +2283,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$cgiparams{'DPD_ACTION'}     = $confighash{$cgiparams{'KEY'}}[27];
 	$cgiparams{'DPD_TIMEOUT'}    = $confighash{$cgiparams{'KEY'}}[30];
 	$cgiparams{'DPD_DELAY'}      = $confighash{$cgiparams{'KEY'}}[31];
+	$cgiparams{'FORCE_MOBIKE'}   = $confighash{$cgiparams{'KEY'}}[32];
 
 	if (!$cgiparams{'DPD_DELAY'}) {
 		$cgiparams{'DPD_DELAY'} = 30;
@@ -2362,6 +2378,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     foreach my $key (@temp) {$checked{'ESP_GROUPTYPE'}{$key} = "selected='selected'"; }
 
     $checked{'COMPRESSION'} = $cgiparams{'COMPRESSION'} eq 'on' ? "checked='checked'" : '' ;
+    $checked{'FORCE_MOBIKE'} = $cgiparams{'FORCE_MOBIKE'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'ONLY_PROPOSED'} = $cgiparams{'ONLY_PROPOSED'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'PFS'} = $cgiparams{'PFS'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'VHOST'} = $cgiparams{'VHOST'} eq 'on' ? "checked='checked'" : '' ;
@@ -2602,6 +2619,14 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			<label>
 				<input type='checkbox' name='COMPRESSION' $checked{'COMPRESSION'} />
 				$Lang::tr{'vpn payload compression'}
+			</label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<label>
+				<input type='checkbox' name='FORCE_MOBIKE' $checked{'FORCE_MOBIKE'} />
+				$Lang::tr{'vpn force mobike'}
 			</label>
 		</td>
 	</tr>

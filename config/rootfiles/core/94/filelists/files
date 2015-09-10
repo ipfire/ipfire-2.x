@@ -3,6 +3,7 @@ etc/issue
 etc/rc.d/init.d/sshd
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/mail.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/langs
 var/ipfire/menu.d/40-services.menu
 var/ipfire/network-functions.pl

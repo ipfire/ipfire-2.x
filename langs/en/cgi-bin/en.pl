@@ -2648,6 +2648,7 @@
 'vpn configuration main' => 'VPN Configuration',
 'vpn delayed start' => 'Delay before launching VPN (seconds)',
 'vpn delayed start help' => 'If required, this delay can be used to allow dynamic DNS updates to propagate properly. 60 is a common value when RED is a dynamic IP.',
+'vpn force mobike' => 'Force using MOBIKE (only IKEv2)',
 'vpn incompatible use of defaultroute' => 'hostname=%defaultroute not allowed',
 'vpn keyexchange' => 'Keyexchange',
 'vpn local id' => 'Local ID',
