@@ -419,7 +419,14 @@ buildipfire() {
 
   case "${TARGET_ARCH}" in
 	x86_64)
-		# No kernel, yet.
+		ipfiremake linux			KCFG=""
+		ipfiremake backports			KCFG=""
+		ipfiremake cryptodev			KCFG=""
+		ipfiremake e1000e			KCFG=""
+#		ipfiremake igb				KCFG=""
+		ipfiremake ixgbe			KCFG=""
+		ipfiremake xtables-addons		KCFG=""
+		ipfiremake linux-initrd			KCFG=""
 		;;
 	i586)
 		# x86-pae (Native and new XEN) kernel build

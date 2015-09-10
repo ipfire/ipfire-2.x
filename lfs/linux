@@ -40,6 +40,12 @@ CXXFLAGS   =
 PAK_VER    = 62
 DEPS	   = ""
 
+KERNEL_ARCH = $(MACHINE)
+
+ifeq "$(MACHINE)" "i586"
+	KERNEL_ARCH = i386
+endif
+
 VERSUFIX=ipfire$(KCFG)
 
 ifeq "$(TOOLS)" "1"
@@ -224,7 +230,7 @@ ifeq "$(KCFG)" "-rpi"
 	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/kernel.img
 else
 	cd $(DIR_APP) && make $(MAKETUNING) bzImage modules
-	cd $(DIR_APP) && cp -v arch/i386/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
 endif
 endif
 endif
