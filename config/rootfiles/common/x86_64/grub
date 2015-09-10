@@ -115,6 +115,8 @@ usr/lib/grub/i386-pc/echo.mod
 usr/lib/grub/i386-pc/echo.module
 usr/lib/grub/i386-pc/efiemu.mod
 usr/lib/grub/i386-pc/efiemu.module
+usr/lib/grub/i386-pc/efiemu32.o
+usr/lib/grub/i386-pc/efiemu64.o
 usr/lib/grub/i386-pc/ehci.mod
 usr/lib/grub/i386-pc/ehci.module
 usr/lib/grub/i386-pc/elf.mod

@@ -1,1 +1,1 @@
-../i586/linux-initrd
+#boot/initramfs-KVER-ipfire.img
