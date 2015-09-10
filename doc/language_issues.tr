@@ -666,6 +666,22 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
 WARNING: untranslated string: check all
+WARNING: untranslated string: email config
+WARNING: untranslated string: email empty field
+WARNING: untranslated string: email invalid
+WARNING: untranslated string: email invalid mailfqdn
+WARNING: untranslated string: email invalid mailip
+WARNING: untranslated string: email invalid mailport
+WARNING: untranslated string: email mailaddr
+WARNING: untranslated string: email mailpass
+WARNING: untranslated string: email mailport
+WARNING: untranslated string: email mailrcpt
+WARNING: untranslated string: email mailsender
+WARNING: untranslated string: email mailuser
+WARNING: untranslated string: email settings
+WARNING: untranslated string: email testmail
+WARNING: untranslated string: email tls
+WARNING: untranslated string: email usemail
 WARNING: untranslated string: fwhost addgeoipgrp
 WARNING: untranslated string: fwhost cust geoipgroup
 WARNING: untranslated string: fwhost cust geoipgrp
@@ -682,6 +698,7 @@ WARNING: untranslated string: geoipblock enable feature
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: incoming compression in bytes per second
 WARNING: untranslated string: incoming overhead in bytes per second
+WARNING: untranslated string: info messages
 WARNING: untranslated string: invalid input for valid till days
 WARNING: untranslated string: no data
 WARNING: untranslated string: none

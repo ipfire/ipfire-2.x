@@ -113,6 +113,26 @@
 < drop action2
 < drop forward
 < drop outgoing
+< email config
+< email empty field
+< email error
+< email invalid
+< email invalid mailfqdn
+< email invalid mailip
+< email invalid mailport
+< email mailaddr
+< email mailpass
+< email mailport
+< email mailrcpt
+< email mailsender
+< email mailuser
+< email settings
+< email subject
+< email success
+< email testmail
+< email text
+< email tls
+< email usemail
 < encryption
 < entropy
 < entropy graphs
@@ -696,6 +716,26 @@
 < drop action2
 < drop forward
 < drop outgoing
+< email config
+< email empty field
+< email error
+< email invalid
+< email invalid mailfqdn
+< email invalid mailip
+< email invalid mailport
+< email mailaddr
+< email mailpass
+< email mailport
+< email mailrcpt
+< email mailsender
+< email mailuser
+< email settings
+< email subject
+< email success
+< email testmail
+< email text
+< email tls
+< email usemail
 < encryption
 < entropy
 < entropy graphs
@@ -1261,6 +1301,26 @@
 < drop action2
 < drop forward
 < drop outgoing
+< email config
+< email empty field
+< email error
+< email invalid
+< email invalid mailfqdn
+< email invalid mailip
+< email invalid mailport
+< email mailaddr
+< email mailpass
+< email mailport
+< email mailrcpt
+< email mailsender
+< email mailuser
+< email settings
+< email subject
+< email success
+< email testmail
+< email text
+< email tls
+< email usemail
 < encryption
 < entropy
 < entropy graphs
@@ -1816,6 +1876,26 @@
 < drop forward
 < drop outgoing
 < Edit an existing route
+< email config
+< email empty field
+< email error
+< email invalid
+< email invalid mailfqdn
+< email invalid mailip
+< email invalid mailport
+< email mailaddr
+< email mailpass
+< email mailport
+< email mailrcpt
+< email mailsender
+< email mailuser
+< email settings
+< email subject
+< email success
+< email testmail
+< email text
+< email tls
+< email usemail
 < encryption
 < entropy
 < entropy graphs

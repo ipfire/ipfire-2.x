@@ -164,7 +164,11 @@ WARNING: translation string unused: edit network
 WARNING: translation string unused: edit service
 WARNING: translation string unused: editor
 WARNING: translation string unused: eg
+WARNING: translation string unused: email error
 WARNING: translation string unused: email server can not be empty
+WARNING: translation string unused: email subject
+WARNING: translation string unused: email success
+WARNING: translation string unused: email text
 WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabled on
@@ -643,6 +647,7 @@ WARNING: untranslated string: emerging rules
 WARNING: untranslated string: fwhost cust geoipgrp
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
+WARNING: untranslated string: info messages
 WARNING: untranslated string: no data
 WARNING: untranslated string: none
 WARNING: untranslated string: qos add subclass

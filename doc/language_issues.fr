@@ -698,6 +698,22 @@ WARNING: untranslated string: drop action1
 WARNING: untranslated string: drop action2
 WARNING: untranslated string: drop forward
 WARNING: untranslated string: drop outgoing
+WARNING: untranslated string: email config
+WARNING: untranslated string: email empty field
+WARNING: untranslated string: email invalid
+WARNING: untranslated string: email invalid mailfqdn
+WARNING: untranslated string: email invalid mailip
+WARNING: untranslated string: email invalid mailport
+WARNING: untranslated string: email mailaddr
+WARNING: untranslated string: email mailpass
+WARNING: untranslated string: email mailport
+WARNING: untranslated string: email mailrcpt
+WARNING: untranslated string: email mailsender
+WARNING: untranslated string: email mailuser
+WARNING: untranslated string: email settings
+WARNING: untranslated string: email testmail
+WARNING: untranslated string: email tls
+WARNING: untranslated string: email usemail
 WARNING: untranslated string: emerging rules
 WARNING: untranslated string: encryption
 WARNING: untranslated string: entropy
@@ -894,6 +910,7 @@ WARNING: untranslated string: imsi
 WARNING: untranslated string: incoming compression in bytes per second
 WARNING: untranslated string: incoming firewall access
 WARNING: untranslated string: incoming overhead in bytes per second
+WARNING: untranslated string: info messages
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
