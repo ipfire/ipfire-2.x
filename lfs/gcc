@@ -38,6 +38,9 @@ CFLAGS    := $(patsubst -march=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mtune=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfloat-abi=%,,$(CFLAGS))
 
+# https://bugzilla.redhat.com/show_bug.cgi?id=476370
+CFLAGS += -fgnu89-inline
+
 # Normal build or /tools build.
 #
 ifeq "$(ROOT)" ""
@@ -112,6 +115,11 @@ ifeq "$(MACHINE)" "i586"
 	EXTRA_CONFIG += \
 		--with-arch=i586 \
 		--with-tune=generic
+endif
+
+ifeq "$(MACHINE)" "x86_64"
+	EXTRA_CONFIG += \
+		--disable-multilib
 endif
 
 EXTRA_CONFIG += \

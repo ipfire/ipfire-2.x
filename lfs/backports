@@ -113,6 +113,10 @@ endif
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_CFG80211_DEFAULT_PS=y/# CPTCFG_CFG80211_DEFAULT_PS is not set/g" .config
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_NFC=m/# CPTCFG_NFC is not set/g" .config
 
+ifeq "$(MACHINE)" "x86_64"
+	cd $(DIR_APP) && sed -i -e "s/CPTCFG_LIBERTAS_UAP=m/# CPTCFG_LIBERTAS_UAP is not set/g" .config
+endif
+
 	# Disable some modules (build fail)
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_VIDEO_VIA_CAMERA=m/# CPTCFG_VIDEO_VIA_CAMERA is not set/g" .config
 

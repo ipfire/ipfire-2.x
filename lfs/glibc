@@ -291,6 +291,7 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-remove-ctors-dtors-output-sections.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-test-installation.pl-nss_test1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-test-installation.pl-libgcc_s.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.12-accept-make-versions-4.0-and-greater.patch
 
 	# Fixes:
 	#   Makefile:235: *** mixed implicit and normal rules.  Stop.
@@ -306,8 +307,13 @@ ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.3 -o|' \
 		scripts/test-installation.pl
 else
+ifeq "$(MACHINE)" "x86_64"
+	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib64 -Wl,-dynamic-linker=/lib64/ld-linux-x86-64.so.2 -o|' \
+		scripts/test-installation.pl
+else
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.2 -o|' \
 		scripts/test-installation.pl
+endif
 endif
 endif
 
@@ -338,6 +344,8 @@ ifeq "$(ROOT)" ""
 
 	# Timezone data will be shipped by tzdata.
 	rm -rfv /usr/share/zoneinfo
+else
+	ln -svf lib /tools/lib64
 endif
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build
 	@$(POSTBUILD)

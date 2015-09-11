@@ -63,7 +63,12 @@ $(TARGET) :
 
 	# Symlink /var/run -> /run.
 	ln -svf ../run /var/run
-	
+
+ifeq "$(MACHINE)" "x86_64"
+	ln -svf lib /lib64
+	ln -svf lib /usr/lib64
+endif
+
 	# Symlinks
 	# for this reason, stage2 rebuild will broke the iso:perl, grubbatch
 	-ln -sv /tools/bin/{bash,cat,echo,pwd,stty} /bin

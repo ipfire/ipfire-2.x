@@ -62,6 +62,10 @@ CONFIGURE_OPTIONS = \
 	no-srp \
 	-DSSL_FORBID_ENULL
 
+ifeq "$(MACHINE)" "x86_64"
+	CONFIGURE_OPTIONS += linux-x86_64
+endif
+
 ifeq "$(MACHINE)" "i586"
 	CONFIGURE_OPTIONS += linux-elf
 

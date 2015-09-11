@@ -93,7 +93,9 @@ ifneq "$(MACHINE_TYPE)" "arm"
 	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
 	dracut --force -a "installer" --strip --xz /install/cdrom/boot/isolinux/instroot $(KVER)-ipfire
 	cp $(DIR_SRC)/config/syslinux/boot.png      /install/cdrom/boot/isolinux/boot.png
+ifeq "$(MACHINE)" "i586"
 	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
+endif
 	cp /usr/share/ipfire-netboot/ipxe.lkrn      /install/cdrom/boot/isolinux/netboot
 	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin
 	cp /usr/share/hwdata/pci.ids                /install/cdrom/boot/isolinux/pci.ids

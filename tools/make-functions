@@ -68,6 +68,12 @@ configure_target() {
 	fi
 
 	case "${target_arch}" in
+		x86_64)
+			BUILDTARGET="${TARGET_ARCH}-unknown-linux-gnu"
+			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnu"
+			CFLAGS_ARCH="-m64 -mtune=generic"
+			;;
+
 		i586)
 			BUILDTARGET="${target_arch}-pc-linux-gnu"
 			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnu"

@@ -3,6 +3,7 @@ usr/bin/iostat
 usr/bin/mpstat
 usr/bin/sadf
 usr/bin/sar
+#usr/doc
 #usr/doc/sysstat-6.0.2
 #usr/doc/sysstat-6.0.2/CHANGES
 #usr/doc/sysstat-6.0.2/COPYING
