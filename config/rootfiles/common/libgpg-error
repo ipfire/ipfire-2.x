@@ -4,7 +4,7 @@ usr/bin/gpg-error
 #usr/lib/libgpg-error.la
 #usr/lib/libgpg-error.so
 usr/lib/libgpg-error.so.0
-usr/lib/libgpg-error.so.0.14.0
+usr/lib/libgpg-error.so.0.16.0
 #usr/share/aclocal/gpg-error.m4
 #usr/share/common-lisp
 #usr/share/common-lisp/source
