@@ -74,7 +74,7 @@ case "$1" in
 
                 for DEVICE in $DEVICES; do
                         boot_mesg "Starting Intrusion Detection System on $DEVICE..."
-                        /usr/sbin/snort -c /etc/snort/snort.conf -i $DEVICE -D -l /var/log/snort --create-pidfile --nolock-pidfile --pid-path /var/run/
+                        /usr/sbin/snort -c /etc/snort/snort.conf -i $DEVICE -D -l /var/log/snort --create-pidfile --nolock-pidfile --pid-path /var/run
                         evaluate_retval
 			sleep 1
                         chmod 644 /var/run/snort_$DEVICE.pid
