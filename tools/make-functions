@@ -69,7 +69,7 @@ configure_target() {
 
 	case "${target_arch}" in
 		x86_64)
-			BUILDTARGET="${TARGET_ARCH}-unknown-linux-gnu"
+			BUILDTARGET="${target_arch}-unknown-linux-gnu"
 			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnu"
 			CFLAGS_ARCH="-m64 -mtune=generic"
 			;;
