@@ -36,7 +36,7 @@ BUILD_IMAGES=1							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=9
+TOOLCHAINVER=10
 
 # New architecture variables
 BUILD_ARCH="$(uname -m)"
