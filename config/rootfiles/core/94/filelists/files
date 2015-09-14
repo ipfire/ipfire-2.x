@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/snort
 etc/rc.d/init.d/sshd
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/mail.cgi
