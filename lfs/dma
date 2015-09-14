@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = dma
-PAK_VER    = 1
+PAK_VER    = 2
 
 ###############################################################################
 # Top-level Rules
@@ -74,6 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	mkdir -pv /var/ipfire/dma
+	touch /var/ipfire/dma/mail.conf
 	cd $(DIR_APP) && sed -i '/PREFIX/s/usr\/local/usr/g' Makefile
 	cd $(DIR_APP) && sed -i '/CONFDIR/s/etc\/dma/var\/ipfire\/dma/g' Makefile
 	cd $(DIR_APP) && make
