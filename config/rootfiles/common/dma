@@ -9,5 +9,6 @@ usr/sbin/sendmail.dma
 var/ipfire/dma
 var/ipfire/dma/auth.conf
 var/ipfire/dma/dma.conf
+var/ipfire/dma/mail.conf
 var/lib/alternatives/sendmail
 var/spool/dma
