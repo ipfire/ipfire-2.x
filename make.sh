@@ -236,7 +236,7 @@ prepareenv() {
     # Run LFS static binary creation scripts one by one
     export CCACHE_DIR=$BASEDIR/ccache
     export CCACHE_COMPRESS=1
-    export CCACHE_COMPILERCHECK="none"
+    export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER}:${TARGET_ARCH}"
 
     # Remove pre-install list of installed files in case user erase some files before rebuild
     rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
