@@ -86,21 +86,6 @@ if [ -z $EDITOR ]; then
 	[ -z $EDITOR ] && exiterror "You should have installed an editor."
 fi
 
-# Prepare string for /etc/system-release.
-SYSTEM_RELEASE="${NAME} ${VERSION} (${MACHINE})"
-if [ "$(git status -s | wc -l)" == "0" ]; then
-	GIT_STATUS=""
-else
-	GIT_STATUS="-dirty"
-fi
-case "$GIT_BRANCH" in
-	core*|beta?|rc?)
-		SYSTEM_RELEASE="${SYSTEM_RELEASE} - $GIT_BRANCH$GIT_STATUS"
-		;;
-	*)
-		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS"
-		;;
-esac
 
 prepareenv() {
     ############################################################################
@@ -240,6 +225,22 @@ prepareenv() {
 
     # Remove pre-install list of installed files in case user erase some files before rebuild
     rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
+
+    # Prepare string for /etc/system-release.
+    SYSTEM_RELEASE="${NAME} ${VERSION} (${MACHINE})"
+    if [ "$(git status -s | wc -l)" == "0" ]; then
+	GIT_STATUS=""
+    else
+	GIT_STATUS="-dirty"
+    fi
+    case "$GIT_BRANCH" in
+	core*|beta?|rc?)
+		SYSTEM_RELEASE="${SYSTEM_RELEASE} - $GIT_BRANCH$GIT_STATUS"
+		;;
+	*)
+		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS"
+		;;
+    esac
 }
 
 buildtoolchain() {
@@ -420,10 +421,10 @@ buildipfire() {
   case "${TARGET_ARCH}" in
 	x86_64)
 		ipfiremake linux			KCFG=""
-		ipfiremake backports			KCFG=""
+#		ipfiremake backports			KCFG=""
 		ipfiremake cryptodev			KCFG=""
 		ipfiremake e1000e			KCFG=""
-#		ipfiremake igb				KCFG=""
+		ipfiremake igb				KCFG=""
 		ipfiremake ixgbe			KCFG=""
 		ipfiremake xtables-addons		KCFG=""
 		ipfiremake linux-initrd			KCFG=""
