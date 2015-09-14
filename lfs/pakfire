@@ -30,10 +30,10 @@ THISAPP    = pakfire
 DIR_APP    = /opt/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-ifeq "$(MACHINE_TYPE)" "arm"
-	PAKFIRE_VERSION = $(VERSION)-$(MACHINE)
-else
+ifeq "$(MACHINE)" "i586"
 	PAKFIRE_VERSION = $(VERSION)
+else
+	PAKFIRE_VERSION = $(VERSION)-$(MACHINE)
 endif
 
 ###############################################################################
