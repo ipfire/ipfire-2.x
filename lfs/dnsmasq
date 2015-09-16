@@ -76,6 +76,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/001-include_0_0_0_0_8_in_DNS_rebind_checks.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/002-enhance_add_subnet_to_allow_arbitary_subnet_addresses.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/003-dont_answer_non_auth_queries_for_auth_zones_locally_when_localise_queries_set.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/004-fix_behaviour_of_empty_dhcp-option.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/005-suggest_solution_to_ENOMEM_error_with_IPv6_multicast.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/006-clarify_man_page_on_RDNSS_set_in_router_advertisement.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/007-handle_signed_dangling_CNAME_replies_to_DS_queries.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/008-DHCPv6_option_56_does_not_hold_an_address_list.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/009-Respect_the_--no_resolv_flag_in_inotify_code.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 
 	cd $(DIR_APP) && sed -i src/config.h \

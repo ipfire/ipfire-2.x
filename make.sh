@@ -906,6 +906,10 @@ buildpackages() {
   mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
 
   cd $BASEDIR
+
+  # remove not useable iso on armv5tel (needed to build flash images)
+  [ "${TARGET_ARCH}" = "armv5tel" ] && rm -rf *.iso
+
   for i in `ls *.bz2 *.img.gz *.iso`; do
 	md5sum $i > $i.md5
   done
