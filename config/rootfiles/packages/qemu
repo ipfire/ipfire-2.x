@@ -1,6 +1,7 @@
 #etc/qemu
 etc/qemu/target-x86_64.conf
 usr/bin/qemu
+usr/bin/qemu-arm
 usr/bin/qemu-ga
 usr/bin/qemu-i386
 usr/bin/qemu-img
@@ -8,6 +9,8 @@ usr/bin/qemu-io
 usr/bin/qemu-nbd
 usr/bin/qemu-system-arm
 usr/bin/qemu-system-i386
+usr/bin/qemu-system-x86_64
+usr/bin/qemu-x86_64
 usr/libexec/qemu-bridge-helper
 #usr/share/doc/qemu
 #usr/share/doc/qemu/qemu-doc.html
