@@ -91,6 +91,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# disable PaX MPROTECT
 	paxctl -m /usr/bin/qemu-system-arm
 	paxctl -m /usr/bin/qemu-system-i386
+	paxctl -m /usr/bin/qemu-system-x86_64
+	paxctl -m /usr/bin/qemu-arm
+	paxctl -m /usr/bin/qemu-i386
+	paxctl -m /usr/bin/qemu-x86_64
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
