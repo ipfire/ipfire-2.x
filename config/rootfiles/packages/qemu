@@ -1,5 +1,3 @@
-#etc/qemu
-etc/qemu/target-x86_64.conf
 usr/bin/qemu
 usr/bin/qemu-arm
 usr/bin/qemu-ga
@@ -99,6 +97,8 @@ usr/share/qemu/u-boot.e500
 usr/share/qemu/vgabios-cirrus.bin
 usr/share/qemu/vgabios-qxl.bin
 usr/share/qemu/vgabios-stdvga.bin
+usr/share/qemu/vgabios-virtio.bin
 usr/share/qemu/vgabios-vmware.bin
 usr/share/qemu/vgabios.bin
 #usr/var/run
+

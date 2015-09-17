@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.3.0
+VER        = 2.4.0
 
 THISAPP    = qemu-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2fab3ea4460de9b57192e5b8b311f221
+$(DL_FILE)_MD5 = 186ee8194140a484a455f8e3c74589f4
 
 install : $(TARGET)
 
