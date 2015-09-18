@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586 x86_64
 PROG       = qemu
-PAK_VER    = 16
+PAK_VER    = 17
 
 DEPS       = "sdl"
 
@@ -88,13 +88,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# install wrapper for old kvm parameter handling
 	install -m 755 $(DIR_SRC)/config/qemu/qemu /usr/bin/qemu
 
-	# disable PaX MPROTECT
-	paxctl -m /usr/bin/qemu-system-arm
-	paxctl -m /usr/bin/qemu-system-i386
-	paxctl -m /usr/bin/qemu-system-x86_64
-	paxctl -m /usr/bin/qemu-arm
-	paxctl -m /usr/bin/qemu-i386
-	paxctl -m /usr/bin/qemu-x86_64
+	# disable PaX MPROTECT and RANDMMAP
+	paxctl -m -r /usr/bin/qemu-system-arm
+	paxctl -m -r /usr/bin/qemu-system-i386
+	paxctl -m -r /usr/bin/qemu-system-x86_64
+	paxctl -m -r /usr/bin/qemu-arm
+	paxctl -m -r /usr/bin/qemu-i386
+	paxctl -m -r /usr/bin/qemu-x86_64
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
