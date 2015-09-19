@@ -29,6 +29,10 @@ VER = ipfire
 THISAPP    = flash-image
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+ifeq "$(MACHINE)" "x86_64"
+	EFI = 1
+endif
+
 ifeq "$(MACHINE)" "i586"
 	EFI = 1
 endif
@@ -90,6 +94,14 @@ endif
 # /    : 1200 MB
 S_BOOT := $(shell echo $$(( 262144 - $(S_OFFSET) )))
 S_ROOT := 2477600
+
+ifeq "$(MACHINE)" "x86_64"
+	EFI_ARCH = x64
+endif
+
+ifeq "$(MACHINE)" "i586"
+	EFI_ARCH = ia32
+endif
 
 PADDING = 100 # MB
 
@@ -222,7 +234,7 @@ ifeq "$(BOOTLOADER)" "grub"
 ifeq "$(EFI)" "1"
 	mkdir -pv $(MNThdd)/boot/efi/EFI/boot
 	cp -vf $(MNThdd)/boot/efi/EFI/ipfire/grub-efi/grub.efi \
-		$(MNThdd)/boot/efi/EFI/boot/bootia32.efi
+		$(MNThdd)/boot/efi/EFI/boot/boot$(EFI_ARCH).efi
 endif
 endif
 

@@ -36,6 +36,12 @@ SUP_ARCH   = x86_64 i586
 
 EFI = 1
 
+EFI_ARCH = $(MACHINE)-efi
+
+ifeq "$(MACHINE)" "i586"
+	EFI_ARCH = i386-efi
+endif
+
 CFLAGS     =
 CXXFLAGS   =
 
@@ -96,7 +102,7 @@ ifeq "$(EFI)" "1"
 	cd $(DIR_APP_EFI) && make $(MAKETUNING)
 
 	cd $(DIR_APP_EFI) && ./grub-mkimage \
-		-O i386-efi \
+		-O $(EFI_ARCH) \
 		-p /EFI/ipfire/grub-efi \
 		-o grub.efi \
 		-d  grub-core part_msdos part_gpt fat ext2 xfs normal chain \
