@@ -361,7 +361,7 @@ qemu_is_required() {
 	fi
 
 	case "${BUILD_ARCH},${target_arch}" in
-		x86_64,arm*|i?86,arm*)
+		x86_64,arm*|i?86,arm*|i?86,x86_64)
 			return 0
 			;;
 		*)
@@ -375,6 +375,15 @@ qemu_install_helper() {
 	if ! qemu_is_required; then
 		return 0
 	fi
+
+	if [ ! -e /proc/sys/fs/binfmt_misc/status ]; then
+		exiterror "binfmt_misc not mounted. QEMU_TARGET_HELPER not useable."
+	fi
+
+	if [ ! $(cat /proc/sys/fs/binfmt_misc/status) = 'enabled' ]; then
+		exiterror "binfmt_misc not enabled. QEMU_TARGET_HELPER not useable."
+	fi
+
 
 	if [ -z "${QEMU_TARGET_HELPER}" ]; then
 		exiterror "QEMU_TARGET_HELPER not set"
@@ -413,12 +422,17 @@ qemu_find_target_helper_name() {
 		arm*)
 			magic="7f454c4601010100000000000000000002002800"
 			;;
+		x86_64)
+			magic="7f454c4602010100000000000000000002003e00"
+			;;
 	esac
 
 	[ -z "${magic}" ] && return 1
 
 	local file
 	for file in /proc/sys/fs/binfmt_misc/*; do
+		# skip write only register entry
+		[ $(basename "${file}") = "register" ] && continue
 		# Search for the file with the correct magic value.
 		grep -qE "^magic ${magic}$" "${file}" || continue
 
