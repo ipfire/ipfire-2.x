@@ -213,7 +213,7 @@ int oktoleave(void)
 		strcpy(temp, ""); findkey(kv, "DNS1", temp);
 		if (!(strlen(temp)))
 		{
-			errorbox(_("Misssing DNS."));
+                       errorbox(_("Missing DNS."));
 			freekeyvalues(kv);
 			return 0;
 		}
