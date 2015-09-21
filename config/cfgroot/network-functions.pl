@@ -256,7 +256,7 @@ sub ip_address_in_network($$) {
 	my ($network_bin, $netmask_bin) = &network2bin($network);
 
 	# Find end address
-	my $broadcast_bin = $network_bin ^ ~$netmask_bin;
+	my $broadcast_bin = $network_bin ^ (~$netmask_bin % 2 ** 32);
 
 	return (($address_bin ge $network_bin) && ($address_bin le $broadcast_bin));
 }
@@ -340,6 +340,9 @@ sub testsuite() {
 	assert($result eq "1.2.3.6");
 
 	$result = &ip_address_in_network("10.0.1.4", "10.0.0.0/8");
+	assert($result);
+
+	$result = &ip_address_in_network("192.168.30.11", "192.168.30.0/255.255.255.0");
 	assert($result);
 
 	return 0;
