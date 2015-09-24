@@ -2586,7 +2586,6 @@
 'vpn red name' => 'IP pubblico o il nome di dominio completo per l\'interfaccia RED o <%defaultroute>',
 'vpn remote id' => 'Remote ID',
 'vpn subjectaltname' => 'Subject Alt Name',
-'vpn vhost' => 'Roadwarrior virtual IP (sometimes called Inner-IP)',
 'vpn watch' => 'Restart net-to-net vpn when remote peer IP changes (dyndns).',
 'waiting to synchronize clock' => 'Waiting to synchronize clock',
 'warn when traffic reaches' => 'Warn when traffic reaches x %',

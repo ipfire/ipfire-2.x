@@ -2111,7 +2111,6 @@
 'vpn red name' => 'IP publique ou nom de domaine complet pour l\'interface ROUGE ou <%defaultroute>',
 'vpn remote id' => 'ID Distant',
 'vpn subjectaltname' => 'Subject Alt Name',
-'vpn vhost' => 'IP Virtuelle Roadwarrior (parfois appelée Inner-IP)',
 'vpn watch' => 'Redémarrer net-to-net VPN si IP hôte distant change (dyndns).',
 'waiting to synchronize clock' => 'Attendre la synchronisation de l\'horloge',
 'warn when traffic reaches' => 'Avertir lorsque le trafic atteint x %',

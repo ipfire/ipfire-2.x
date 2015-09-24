@@ -2115,7 +2115,6 @@
 'vpn red name' => 'Внешний IP или FQDN для RED интерфейса или <%defaultroute>',
 'vpn remote id' => 'Удалённый ID',
 'vpn subjectaltname' => 'Subject Alt Name',
-'vpn vhost' => 'Roadwarrior virtual IP (sometimes called Inner-IP)',
 'vpn watch' => 'Перезапускать net-to-net vpn когда удалённый IP меняется (dyndns).',
 'waiting to synchronize clock' => 'Ожидается синхронизация',
 'warn when traffic reaches' => 'Предупреждать когда трафик возрастает до x %',

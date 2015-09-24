@@ -235,7 +235,6 @@ sub makeconnname ($) {
 ###
 ###Type=Host : GUI can choose the interface used (RED,GREEN,BLUE) and
 ###		the side is always defined as 'left'.
-###		configihash[14]: 'VHOST' is allowed
 ###
 
 sub writeipsecfiles {
@@ -294,8 +293,6 @@ sub writeipsecfiles {
 	if ($lconfighash{$key}[3] eq 'net') {
 	    my $cidr_net=&General::ipcidr($lconfighash{$key}[11]);
 	    print CONF "\trightsubnet=$cidr_net\n";
-	} elsif ($lconfighash{$key}[10] eq '%any' && $lconfighash{$key}[14] eq 'on') { #vhost allowed for roadwarriors?
-	    print CONF "\trightsubnet=vhost:%no,%priv\n";
 	}
 
 	# Local Cert and Remote Cert (unless auth is DN dn-auth)
@@ -1246,7 +1243,7 @@ END
 	&Header::closepage();
 	exit (0);
 ###
-### Adding/Editing/Saving a  connection
+### Adding/Editing/Saving a connection
 ###
 } elsif (($cgiparams{'ACTION'} eq $Lang::tr{'add'}) ||
 	 ($cgiparams{'ACTION'} eq $Lang::tr{'edit'}) ||
@@ -1289,7 +1286,6 @@ END
 	$cgiparams{'COMPRESSION'}    	= $confighash{$cgiparams{'KEY'}}[13];
 	$cgiparams{'ONLY_PROPOSED'}  	= $confighash{$cgiparams{'KEY'}}[24];
 	$cgiparams{'PFS'}		= $confighash{$cgiparams{'KEY'}}[28];
-	$cgiparams{'VHOST'}            	= $confighash{$cgiparams{'KEY'}}[14];
 	$cgiparams{'DPD_TIMEOUT'}		= $confighash{$cgiparams{'KEY'}}[30];
 	$cgiparams{'DPD_DELAY'}		= $confighash{$cgiparams{'KEY'}}[31];
 	$cgiparams{'FORCE_MOBIKE'}	= $confighash{$cgiparams{'KEY'}}[32];
@@ -1814,7 +1810,6 @@ END
 	$confighash{$key}[13] = $cgiparams{'COMPRESSION'};
 	$confighash{$key}[24] = $cgiparams{'ONLY_PROPOSED'};
 	$confighash{$key}[28] = $cgiparams{'PFS'};
-	$confighash{$key}[14] = $cgiparams{'VHOST'};
 	$confighash{$key}[30] = $cgiparams{'DPD_TIMEOUT'};
 	$confighash{$key}[31] = $cgiparams{'DPD_DELAY'};
 	$confighash{$key}[32] = $cgiparams{'FORCE_MOBIKE'};
@@ -1891,7 +1886,6 @@ END
 	$cgiparams{'COMPRESSION'}    = 'on';		#[13];
 	$cgiparams{'ONLY_PROPOSED'}  = 'off';		#[24];
 	$cgiparams{'PFS'}	     = 'on';		#[28];
-	$cgiparams{'VHOST'}          = 'on'; 		#[14];
     }
 
     VPNCONF_ERROR:
@@ -1943,7 +1937,6 @@ END
 	<input type='hidden' name='COMPRESSION' value='$cgiparams{'COMPRESSION'}' />
 	<input type='hidden' name='ONLY_PROPOSED' value='$cgiparams{'ONLY_PROPOSED'}' />
 	<input type='hidden' name='PFS' value='$cgiparams{'PFS'}' />
-	<input type='hidden' name='VHOST' value='$cgiparams{'VHOST'}' />
 	<input type='hidden' name='DPD_ACTION' value='$cgiparams{'DPD_ACTION'}' />
 	<input type='hidden' name='DPD_DELAY' value='$cgiparams{'DPD_DELAY'}' />
 	<input type='hidden' name='DPD_TIMEOUT' value='$cgiparams{'DPD_TIMEOUT'}' />
@@ -2130,11 +2123,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     }
 
     if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
-	# I didn't read any incompatibilities here....
-	#if ($cgiparams{'VHOST'} eq 'on' && $cgiparams{'COMPRESSION'} eq 'on') {
-	#    $errormessage = $Lang::tr{'cannot enable both nat traversal and compression'};
-	#    goto ADVANCED_ERROR;
-	#}
 	my @temp = split('\|', $cgiparams{'IKE_ENCRYPTION'});
 	if ($#temp < 0) {
 	    $errormessage = $Lang::tr{'invalid input'};
@@ -2222,8 +2210,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	    ($cgiparams{'COMPRESSION'} !~ /^(|on|off)$/) ||
 	    ($cgiparams{'FORCE_MOBIKE'} !~ /^(|on|off)$/) ||
 	    ($cgiparams{'ONLY_PROPOSED'} !~ /^(|on|off)$/) ||
-	    ($cgiparams{'PFS'} !~ /^(|on|off)$/) ||
-	    ($cgiparams{'VHOST'} !~ /^(|on|off)$/)
+	    ($cgiparams{'PFS'} !~ /^(|on|off)$/)
 	){
 	    $errormessage = $Lang::tr{'invalid input'};
 	    goto ADVANCED_ERROR;
@@ -2252,7 +2239,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$confighash{$cgiparams{'KEY'}}[13] = $cgiparams{'COMPRESSION'};
 	$confighash{$cgiparams{'KEY'}}[24] = $cgiparams{'ONLY_PROPOSED'};
 	$confighash{$cgiparams{'KEY'}}[28] = $cgiparams{'PFS'};
-	$confighash{$cgiparams{'KEY'}}[14] = $cgiparams{'VHOST'};
 	$confighash{$cgiparams{'KEY'}}[27] = $cgiparams{'DPD_ACTION'};
 	$confighash{$cgiparams{'KEY'}}[30] = $cgiparams{'DPD_TIMEOUT'};
 	$confighash{$cgiparams{'KEY'}}[31] = $cgiparams{'DPD_DELAY'};
@@ -2280,7 +2266,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$cgiparams{'COMPRESSION'}    = $confighash{$cgiparams{'KEY'}}[13];
 	$cgiparams{'ONLY_PROPOSED'}  = $confighash{$cgiparams{'KEY'}}[24];
 	$cgiparams{'PFS'}  	     = $confighash{$cgiparams{'KEY'}}[28];
-	$cgiparams{'VHOST'}          = $confighash{$cgiparams{'KEY'}}[14];
 	$cgiparams{'DPD_ACTION'}     = $confighash{$cgiparams{'KEY'}}[27];
 	$cgiparams{'DPD_TIMEOUT'}    = $confighash{$cgiparams{'KEY'}}[30];
 	$cgiparams{'DPD_DELAY'}      = $confighash{$cgiparams{'KEY'}}[31];
@@ -2294,9 +2279,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'DPD_TIMEOUT'} = 120;
 	}
 
-	if ($confighash{$cgiparams{'KEY'}}[3] eq 'net' || $confighash{$cgiparams{'KEY'}}[10]) {
-	    $cgiparams{'VHOST'}            = 'off';
-	}
     }
 
     ADVANCED_ERROR:
@@ -2382,7 +2364,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
     $checked{'FORCE_MOBIKE'} = $cgiparams{'FORCE_MOBIKE'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'ONLY_PROPOSED'} = $cgiparams{'ONLY_PROPOSED'} eq 'on' ? "checked='checked'" : '' ;
     $checked{'PFS'} = $cgiparams{'PFS'} eq 'on' ? "checked='checked'" : '' ;
-    $checked{'VHOST'} = $cgiparams{'VHOST'} eq 'on' ? "checked='checked'" : '' ;
 
     $selected{'IKE_VERSION'}{'ikev1'} = '';
     $selected{'IKE_VERSION'}{'ikev2'} = '';
@@ -2633,15 +2614,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	</tr>
 EOF
     ;
-    if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
-	print "<tr><td><input type='hidden' name='VHOST' value='off' /></td></tr>";
-    } elsif ($confighash{$cgiparams{'KEY'}}[10]) {
-	print "<tr><td><label><input type='checkbox' name='VHOST' $checked{'VHOST'} disabled='disabled' />";
-	print " $Lang::tr{'vpn vhost'}</label></td></tr>";
-    } else {
-	print "<tr><td><label><input type='checkbox' name='VHOST' $checked{'VHOST'} />";
-	print " $Lang::tr{'vpn vhost'}</label></td></tr>";
-    }
 
     print <<EOF;
 	<tr>
