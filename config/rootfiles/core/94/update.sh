@@ -44,7 +44,7 @@ extract_files
 
 # Update SSH configuration
 sed -i /etc/ssh/sshd_config \
-	-e 's/^#\?PermitRootLogin .*$$/PermitRootLogin yes/'
+	-e 's/^#\?PermitRootLogin .*$/PermitRootLogin yes/'
 
 # Move away old and unsupported keys
 mv -f /etc/ssh/ssh_host_dsa_key{,.old}
