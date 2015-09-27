@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 3.14.37 Kernel Configuration
+# Linux/arm 3.14.53 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -863,7 +863,6 @@ CONFIG_IP_NF_SECURITY=m
 CONFIG_IP_NF_ARPTABLES=m
 CONFIG_IP_NF_ARPFILTER=m
 CONFIG_IP_NF_ARP_MANGLE=m
-CONFIG_IP_NF_MATCH_IPP2P=m
 
 #
 # IPv6: Netfilter Configuration

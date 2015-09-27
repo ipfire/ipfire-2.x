@@ -24,11 +24,11 @@
 
 include Config
 
-VER        = 3.14.43
+VER         = 3.14.53
+RPI_PATCHES = 3.14.53-grsec-ipfire1
+A7M_PATCHES = 3.14.53-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.1ipfire-3.14.53-v1.patch.xz
 
-RPI_PATCHES = 3.14.43-grsec-ipfire1
-A7M_PATCHES = 3.14.43-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.1-3.14.43-201505191737.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 62
+PAK_VER    = 63
 DEPS	   = ""
 
 KERNEL_ARCH = $(MACHINE)
@@ -83,10 +83,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= 927f2343f298dfe531a8371f81356e53
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= b5ba925ae1d4279d3ac0f03c27dd16eb
-arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= b9c696fe4f22b05b81c168329ca33c94
-$(GRS_PATCHES)_MD5				= 35e26b1214b1b0b515ee67e5ce50633a
+$(DL_FILE)_MD5					= 5c5d18ddcc80b008826c2f43b322a34a
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= de5350ee7c3e4aa82289916963796fd9
+arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 25fc733bb657a84eea338104f88bcf70
+$(GRS_PATCHES)_MD5				= 4c1f6e73f04bfc92b105afff24d0308c
 
 install : $(TARGET)
 
@@ -167,8 +167,6 @@ endif
 	# r8169 L23 patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.32-r8169_disable_L23.patch
 
-	# SuperSSpeed S238 NOTRIM patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.43_SuperSSpeed_NOTRIM.patch
 	# update the queued trim blacklist from kernel 4.2rc1
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.43_new_qtrim_blacklist.patch
 

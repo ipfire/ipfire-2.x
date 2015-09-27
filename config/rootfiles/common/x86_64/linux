@@ -18,6 +18,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/cast5-avx-x86_64.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/cast6-avx-x86_64.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/crc32-pclmul.ko
+#lib/modules/KVER-ipfire/kernel/arch/x86/crypto/crct10dif-pclmul.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/ghash-clmulni-intel.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/salsa20-x86_64.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/serpent-avx-x86_64.ko
@@ -29,6 +30,8 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/twofish-avx-x86_64.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/twofish-x86_64-3way.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/twofish-x86_64.ko
+#lib/modules/KVER-ipfire/kernel/arch/x86/ia32
+#lib/modules/KVER-ipfire/kernel/arch/x86/ia32/ia32_aout.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/kernel
 #lib/modules/KVER-ipfire/kernel/arch/x86/kernel/cpu
 #lib/modules/KVER-ipfire/kernel/arch/x86/kernel/cpu/microcode
@@ -207,6 +210,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/block/nvme.ko
 #lib/modules/KVER-ipfire/kernel/drivers/block/rsxx
 #lib/modules/KVER-ipfire/kernel/drivers/block/rsxx/rsxx.ko
+#lib/modules/KVER-ipfire/kernel/drivers/block/skd.ko
 #lib/modules/KVER-ipfire/kernel/drivers/block/sx8.ko
 #lib/modules/KVER-ipfire/kernel/drivers/block/umem.ko
 #lib/modules/KVER-ipfire/kernel/drivers/block/virtio_blk.ko
@@ -279,6 +283,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/dma/pch_dma.ko
 #lib/modules/KVER-ipfire/kernel/drivers/dma/timb_dma.ko
 #lib/modules/KVER-ipfire/kernel/drivers/edac
+#lib/modules/KVER-ipfire/kernel/drivers/edac/amd64_edac_mod.ko
 #lib/modules/KVER-ipfire/kernel/drivers/edac/e752x_edac.ko
 #lib/modules/KVER-ipfire/kernel/drivers/edac/edac_core.ko
 #lib/modules/KVER-ipfire/kernel/drivers/edac/edac_mce_amd.ko
@@ -291,6 +296,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/edac/i7core_edac.ko
 #lib/modules/KVER-ipfire/kernel/drivers/edac/i82975x_edac.ko
 #lib/modules/KVER-ipfire/kernel/drivers/edac/mce_amd_inj.ko
+#lib/modules/KVER-ipfire/kernel/drivers/edac/sb_edac.ko
 #lib/modules/KVER-ipfire/kernel/drivers/edac/x38_edac.ko
 #lib/modules/KVER-ipfire/kernel/drivers/firewire
 #lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-core.ko
@@ -1342,12 +1348,19 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/misc/eeprom/max6875.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/enclosure.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/fsa9480.ko
+#lib/modules/KVER-ipfire/kernel/drivers/misc/genwqe
+#lib/modules/KVER-ipfire/kernel/drivers/misc/genwqe/genwqe_card.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/hpilo.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/ibmasm
 #lib/modules/KVER-ipfire/kernel/drivers/misc/ibmasm/ibmasm.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/ics932s401.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/lis3lv02d
 #lib/modules/KVER-ipfire/kernel/drivers/misc/lis3lv02d/lis3lv02d.ko
+#lib/modules/KVER-ipfire/kernel/drivers/misc/mic
+#lib/modules/KVER-ipfire/kernel/drivers/misc/mic/card
+#lib/modules/KVER-ipfire/kernel/drivers/misc/mic/card/mic_card.ko
+#lib/modules/KVER-ipfire/kernel/drivers/misc/mic/host
+#lib/modules/KVER-ipfire/kernel/drivers/misc/mic/host/mic_host.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/pch_phub.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/ti-st
 #lib/modules/KVER-ipfire/kernel/drivers/misc/ti-st/st_drv.ko
