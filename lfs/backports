@@ -82,6 +82,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1-ipfire-build.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1-grsecurity.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1-add_usbnet_modules.patch
+ifeq "$(MACHINE)" "x86_64"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1_no_dma_sgtable_on_x86_64.patch
+endif
 
 	# DVB patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
