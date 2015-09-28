@@ -2609,7 +2609,6 @@
 'vpn red name' => 'KIRMIZI arabirim veya <%defaultroute> için gerçek IP veya FQDN',
 'vpn remote id' => 'Uzak kimlik (ID)',
 'vpn subjectaltname' => 'Alternatif konu adı',
-'vpn vhost' => 'Roadwarrior sanal IP (bazen iç IP olarakta adlandırılır)',
 'vpn watch' => 'Karşı eş IP değiştirdiğinde (dyndns) ağdan-ağa VPN bağlantısını yeniden başlat. Bu DPD ye yardımcı olur.',
 'waiting to synchronize clock' => 'Saat eşleştirmesi bekleniyor',
 'warn when traffic reaches' => 'Trafik x % değere ulaştığında uyar',

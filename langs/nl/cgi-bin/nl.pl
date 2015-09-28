@@ -2529,7 +2529,6 @@
 'vpn red name' => 'Publiek IP of FQDN voor RODE interface of <%defaultroute>',
 'vpn remote id' => 'Remote ID',
 'vpn subjectaltname' => 'Onderwerp Alt Naam',
-'vpn vhost' => 'Roadwarrior virtual IP (Ook wel Inner-IP genoemd)',
 'vpn watch' => 'Herstart net-to-net vpn wanneer remote peer IP verandert (dyndns).',
 'waiting to synchronize clock' => 'Wachten op synchronisatie van klok',
 'warn when traffic reaches' => 'Waarschuw wanneer verkeer x % bereikt',

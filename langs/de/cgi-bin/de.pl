@@ -2620,7 +2620,6 @@
 'vpn statistic n2n' => 'OpenVPN-Netz-zu-Netz-Statistik',
 'vpn statistic rw' => 'OpenVPN-Roadwarrior-Statistik',
 'vpn subjectaltname' => 'Subjekt Alternativer Name',
-'vpn vhost' => 'Roadwarrior virtuelle IP (manchmal auch Inner-IP genannt)',
 'vpn watch' => 'Netz-zu-Netz VPN neu starten, wenn sich Remote-IP ändert (DynDNS).',
 'waiting to synchronize clock' => 'Bitte warten, die Uhr wird synchronisiert',
 'warn when traffic reaches' => 'Warnen wenn Traffic x % erreicht',

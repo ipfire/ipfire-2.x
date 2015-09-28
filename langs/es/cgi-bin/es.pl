@@ -2107,7 +2107,6 @@
 'vpn red name' => 'Dirección IP pública o FQDN para la interfaz RED o<%defaultroute>',
 'vpn remote id' => 'ID Remoto',
 'vpn subjectaltname' => 'Nombre alternativo en Asunto',
-'vpn vhost' => 'IP virtual Roadwarris (también referida como ip-interior)',
 'vpn watch' => 'Reinciar vpn net-to-net cuando la ip remota cambie (dyndns)',
 'waiting to synchronize clock' => 'Esperando sincronización con el reloj',
 'warn when traffic reaches' => 'Advertir cuando el tráfico alcance x %',

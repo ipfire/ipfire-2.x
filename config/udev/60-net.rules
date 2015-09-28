@@ -1,3 +1,7 @@
 # Call a script that checks for the right name of the new device.
 # If it matches the configuration it will be renamed accordingly.
 ACTION=="add", SUBSYSTEM=="net", PROGRAM="/lib/udev/network-hotplug-rename", RESULT=="?*", NAME="$result"
+
+# Call a script that will create all virtual devices for a parent device
+# that has just come up.
+ACTION=="add", SUBSYSTEM=="net", PROGRAM="/lib/udev/network-hotplug-vlan"

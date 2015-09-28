@@ -2120,7 +2120,6 @@
 'vpn red name' => 'Publiczne IP lub FQDN interfejsu RED lub <%defaultroute>',
 'vpn remote id' => 'Zdalne ID',
 'vpn subjectaltname' => 'Subject Alt Name',
-'vpn vhost' => 'Roadwarrior virtual IP (sometimes called Inner-IP)',
 'vpn watch' => 'Uruchom ponownie vpn net-to-net kiedy zmieni się IP zdalnej końcówki (dyndns).',
 'waiting to synchronize clock' => 'Oczekiwanie na synchronizację zegara',
 'warn when traffic reaches' => 'Ostrzegaj kiedy ruch osiągnie x %',
