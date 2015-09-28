@@ -31,6 +31,10 @@ do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Remove files
+rm -f /etc/rc.d/init.d/network-vlans
+rm -f /etc/rc.d/rcsysinit.d/S91network-vlans
+
 # Stop services
 
 # Extract files
