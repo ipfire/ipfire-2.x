@@ -391,8 +391,9 @@ sub get_address
 	# IPsec networks.
 	} elsif ($key ~~ ["ipsec_net_src", "ipsec_net_tgt", "IpSec Network"]) {
 		my $network_address = &get_ipsec_net_ip($value, 11);
-		if ($network_address) {
-			push(@ret, [$network_address, ""]);
+		my @nets = split(/\|/, $network_address);
+		foreach my $net (@nets) {
+			push(@ret, [$net, ""]);
 		}
 
 	# The firewall's own IP addresses.
