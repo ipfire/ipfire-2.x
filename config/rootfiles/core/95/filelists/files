@@ -1,4 +1,6 @@
 etc/system-release
 etc/issue
+srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/lib/firewall/firewall-lib.pl
 var/ipfire/langs
