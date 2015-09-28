@@ -39,6 +39,9 @@ done
 # Extract files
 extract_files
 
+# Restart init after glibc update
+telinit u
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
