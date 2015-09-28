@@ -261,15 +261,19 @@ close(IPSEC);
 
 foreach my $line (@ipsec) {
 	my @vpn = split(',', $line);
-	my ($network, $mask) = split("/", $vpn[12]);
 
-	if (!&General::validip($mask)) {
-		$mask = ipv4_cidr2msk($mask);
+	my @subnets = split('|', $vpn[12]);
+	for my $subnet (@subnets) {
+		my ($network, $mask) = split("/", $subnet);
+
+		if (!&General::validip($mask)) {
+			$mask = ipv4_cidr2msk($mask);
+		}
+
+		push(@network, $network);
+		push(@masklen, $mask);
+		push(@colour, ${Header::colourvpn});
 	}
-
-	push(@network, $network);
-	push(@masklen, $mask);
-	push(@colour, ${Header::colourvpn});
 }
 
 if (-e "${General::swroot}/ovpn/n2nconf") {
