@@ -93,8 +93,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-dns-for-realm \
 		CPPFLAGS="-I/usr/include/et"
 
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	cd $(DIR_APP) && make #$(MAKETUNING)
+	cd $(DIR_APP) && make install
 
 	for LIB in gssapi_krb5 gssrpc k5crypto kadm5clnt kadm5srv \
         		kdb5 kdb_ldap krad krb5 krb5support verto; do \
