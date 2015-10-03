@@ -74,6 +74,7 @@ run
 #usr/lib
 usr/lib/firewall
 usr/lib/firewall/firewall-lib.pl
+usr/lib/firewall/ipsec-block
 usr/lib/firewall/rules.pl
 #usr/lib/libgcc_s.so
 usr/lib/libgcc_s.so.1

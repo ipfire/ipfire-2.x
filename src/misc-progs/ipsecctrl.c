@@ -144,6 +144,9 @@ void turn_connection_on(char *name, char *type) {
                 "/usr/sbin/ipsec down %s >/dev/null", name);
         safe_system(command);
 
+	// Reload the IPsec block chain
+	safe_system("/usr/lib/firewall/ipsec-block >/dev/null");
+
 	// Reload the configuration into the daemon (#10339).
 	ipsec_reload();
 
@@ -302,6 +305,7 @@ int main(int argc, char *argv[]) {
 
         // start the system
         if ((argc == 2) && strcmp(argv[1], "S") == 0) {
+		safe_system("/usr/lib/firewall/ipsec-block >/dev/null");
 		safe_system("/usr/sbin/ipsec restart >/dev/null");
                 exit(0);
         }

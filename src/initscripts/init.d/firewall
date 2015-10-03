@@ -115,6 +115,11 @@ iptables_init() {
 	iptables -A INPUT -j GUARDIAN
 	iptables -A FORWARD -j GUARDIAN
 
+	# Block non-established IPsec networks
+	iptables -N IPSECBLOCK
+	iptables -A FORWARD -m policy --dir out --pol none -j IPSECBLOCK
+	iptables -A OUTPUT  -m policy --dir out --pol none -j IPSECBLOCK
+
 	# Block OpenVPN transfer networks
 	iptables -N OVPNBLOCK
 	iptables -A INPUT   -i tun+ -j OVPNBLOCK
@@ -269,6 +274,9 @@ iptables_init() {
 	iptables -A FORWARD -j REDFORWARD
 	iptables -t nat -N REDNAT
 	iptables -t nat -A POSTROUTING -j REDNAT
+
+	# Populate IPsec block chain
+	/usr/lib/firewall/ipsec-block
 
 	# Apply OpenVPN firewall rules
 	/usr/local/bin/openvpnctrl --firewall-rules
