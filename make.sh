@@ -1206,7 +1206,7 @@ buildipfire() {
   lfsmake2 bootstrap
   lfsmake2 arping
   lfsmake2 beep
-  lfsmake2 dvdrtools
+  lfsmake2 cdrkit
   lfsmake2 dosfstools
   lfsmake2 reiserfsprogs
   lfsmake2 xfsprogs
