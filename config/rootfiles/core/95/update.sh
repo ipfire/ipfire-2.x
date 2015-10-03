@@ -36,6 +36,7 @@ rm -f /etc/rc.d/init.d/network-vlans
 rm -f /etc/rc.d/rcsysinit.d/S91network-vlans
 
 # Stop services
+/etc/init.d/ipsec stop
 
 # Extract files
 extract_files
@@ -44,6 +45,9 @@ extract_files
 /usr/local/bin/update-lang-cache
 
 # Start services
+if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
+	/etc/init.d/ipsec start
+fi
 
 # This update need a reboot...
 #touch /var/run/need_reboot

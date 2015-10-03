@@ -153,6 +153,7 @@ usr/libexec/ipsec/starter
 usr/libexec/ipsec/stroke
 usr/sbin/ipsec
 #usr/share/man/man1/pki---acert.1
+#usr/share/man/man1/pki---dn.1
 #usr/share/man/man1/pki---gen.1
 #usr/share/man/man1/pki---issue.1
 #usr/share/man/man1/pki---keyid.1
