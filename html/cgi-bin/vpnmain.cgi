@@ -2077,7 +2077,7 @@ END
 			<td class='base'>$Lang::tr{'users department'}:</td>
 			<td class='base' nowrap='nowrap'><input type='text' name='CERT_OU' value='$cgiparams{'CERT_OU'}' size='32' $cakeydisabled /></td></tr>
 		<tr><td>&nbsp;</td>
-			<td class='base'>$Lang::tr{'organization name'}:</td>
+			<td class='base'>$Lang::tr{'organization name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 			<td class='base' nowrap='nowrap'><input type='text' name='CERT_ORGANIZATION' value='$cgiparams{'CERT_ORGANIZATION'}' size='32' $cakeydisabled /></td></tr>
 		<tr><td>&nbsp;</td>
 			<td class='base'>$Lang::tr{'city'}:</td>
