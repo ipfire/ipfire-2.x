@@ -27,6 +27,7 @@ use warnings;
 use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/geoip-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -619,10 +620,14 @@ END
 END
 
 				if (exists($node->{'country_code'})) {
-					if (!$node->{'country_code'} or $node->{'country_code'} eq '??') {
-						print "<img src='/images/flags/blank.png' border='0' align='absmiddle'/>";
+					# Get the flag icon of the country.
+					my $flag_icon = &GeoIP::get_flag_icon($node->{'country_code'});
+
+					# Check if a flag for the given country is available.
+					if ($flag_icon) {
+						print "<a href='country.cgi#$node->{'country_code'}'><img src='$flag_icon' border='0' align='absmiddle' alt='$node->{'country_code'}'></a>";
 					} else {
-						print "<a href='country.cgi#$node->{'country_code'}'><img src='/images/flags/$node->{'country_code'}.png' border='0' align='absmiddle' alt='$node->{'country_code'}'></a>";
+						print "<img src='/images/flags/blank.png' border='0' align='absmiddle'/>";
 					}
 				}
 
