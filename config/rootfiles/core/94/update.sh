@@ -70,7 +70,13 @@ EOF
 
 fcrontab -z &>/dev/null
 
-# dma files
+# DMA - reconfigure Postfix if exists
+if [ -e /etc/postfix/main.cf ]; then
+	mv /usr/sbin/sendmail /usr/sbin/sendmail.postfix
+	/usr/sbin/alternatives --install /usr/sbin/sendmail sendmail /usr/sbin/sendmail.postfix 15
+	sed -i 's/usr\/sbin\/sendmail/usr/sbin/sendmail.postfix/' /opt/pakfire/db/rootfiles/postfix
+fi
+# DMA - configure dma as default mta
 mkdir /etc/alternatives
 mkdir /var/lib/alternatives
 /usr/sbin/alternatives --install /usr/sbin/sendmail sendmail /usr/sbin/sendmail.dma 20
