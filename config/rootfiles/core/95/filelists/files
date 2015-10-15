@@ -1,8 +1,11 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/firewall
 lib/udev/network-hotplug-vlan
 lib/udev/rules.d/60-net.rules
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/lib/firewall/firewall-lib.pl
+usr/lib/firewall/ipsec-block
+usr/local/bin/ipsecctrl
 var/ipfire/langs
