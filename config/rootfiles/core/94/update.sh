@@ -70,6 +70,11 @@ EOF
 
 fcrontab -z &>/dev/null
 
+# dma files
+mkdir /etc/alternatives
+mkdir /var/lib/alternatives
+/usr/sbin/alternatives --install /usr/sbin/sendmail sendmail /usr/sbin/sendmail.dma 20
+
 # Start services
 /etc/init.d/dnsmasq start
 /etc/init.d/sshd start
