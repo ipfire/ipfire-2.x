@@ -20,6 +20,8 @@ PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin; export PATH
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/snort/settings)
 
+ALIASFILE="/var/ipfire/ethernet/aliases"
+
 case "$1" in
         start)
 		if [ "$BLUE_NETADDRESS" ]; then
@@ -58,6 +60,19 @@ case "$1" in
 			LOCAL_IP=`cat /var/ipfire/red/local-ipaddress 2>/dev/null`
 			if [ "$LOCAL_IP" ]; then
 				HOMENET+="$LOCAL_IP,"
+			fi
+
+			# Check if the red device is set to static and
+			# any aliases have been configured.
+			if [ "${RED_TYPE}" == "STATIC" ] && [ -s "${ALIASFILE}" ]; then
+				# Read in aliases file.
+				while IFS="," read -r address mode remark; do
+					# Check if the alias is enabled.
+					[ "${mode}" = "on" ] || continue
+
+					# Add alias to the list of HOMENET addresses.
+					HOMENET+="${address},"
+				done < "${ALIASFILE}"
 			fi
 		fi
 		HOMENET+="127.0.0.1"
