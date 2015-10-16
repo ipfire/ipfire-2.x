@@ -79,6 +79,11 @@ DIR_TMP     = /tmp
 # Add the compiler location and version and specs to the ccache hash
 CCACHE_COMPILERCHECK += $(shell gcc -dumpspecs 2>/dev/null | md5sum | cut -d ' ' -f1)
 
+# We support EFI on x86_64
+ifeq "$(MACHINE)" "x86_64"
+	EFI = 1
+endif
+
 ###############################################################################
 # Common Macro Definitions
 ###############################################################################
