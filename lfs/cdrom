@@ -29,6 +29,27 @@ VER = ipfire
 THISAPP    = cdrom
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+ifeq "$(MACHINE_TYPE)" "arm"
+	TAR_OPTIONS =
+else
+	TAR_OPTIONS = --lzma
+endif
+
+ISO_ARGS = -J -r -v \
+	-A "$(NAME) $(VERSION)" \
+	-V "$(NAME)_$(VERSION)" \
+	-no-emul-boot \
+	-boot-load-size 4 \
+	-boot-info-table \
+	-b boot/isolinux/isolinux.bin \
+	-c boot/isolinux/boot.catalog
+
+ifeq "$(EFI)" "1"
+	ISO_ARGS += \
+		-eltorito-alt-boot \
+		-e boot/isolinux/efiboot.img
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -89,6 +110,12 @@ ifneq "$(BUILD_PLATFORM)" "arm"
 	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
 	cp /usr/share/ipfire-netboot/ipxe.lkrn      /install/cdrom/boot/isolinux/netboot
 	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin
+ifeq "$(EFI)" "1"
+	dd if=/dev/zero of=/install/cdrom/boot/isolinux/efiboot.img bs=1k count=1440
+	mkdosfs -F 12 -n "IPFIRE_EFI" /install/cdrom/boot/isolinux/efiboot.img
+
+	# XXX Some bootloader needs to be put in this image
+endif
 	cp /usr/share/hwdata/pci.ids                /install/cdrom/boot/isolinux/pci.ids
 	cp -vf /usr/share/syslinux/*.c32            /install/cdrom/boot/isolinux/
 	sed -e "s/VERSION/$(VERSION) - Core $(CORE)/g" \
@@ -103,8 +130,12 @@ ifeq "$(BUILD_PLATFORM)" "arm"
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
 		. > /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
 else
-	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-    	    -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
-    	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
+	cd /install/cdrom && mkisofs $(ISO_ARGS) \
+		-o /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso .
+
+ifeq "$(EFI)" "1"
+	isohybrid --uefi /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
+else
 	isohybrid /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
+endif
 endif
