@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = v1.0
-PXE_VER    = c4bce43
+VER        = v1.1
+PXE_VER    = 300a371
 
 THISAPP    = ipfire-netboot-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -38,13 +38,13 @@ SUP_ARCH   = x86_64 i586
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) ipxe-$(PXE_VER).tar.xz
+objects = $(DL_FILE) ipxe-$(PXE_VER).tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-ipxe-$(PXE_VER).tar.xz = $(URL_IPFIRE)/ipxe-$(PXE_VER).tar.xz
+ipxe-$(PXE_VER).tar.gz = $(URL_IPFIRE)/ipxe-$(PXE_VER).tar.gz
 
-$(DL_FILE)_MD5 = 257773a52ed5dda3053eb049bee38a60
-ipxe-$(PXE_VER).tar.xz_MD5 = 8aeb94330eb94f3f1e6170e23db0ba27
+$(DL_FILE)_MD5 = 0dccbcfbc1eafb9d510bd15935b87ef6
+ipxe-$(PXE_VER).tar.gz_MD5 = 8a17fb4d6866214feb28cca55630b85f
 
 install : $(TARGET)
 
@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	# Extract iPXE source
-	cd $(DIR_APP) && tar axf $(DIR_DL)/ipxe-$(PXE_VER).tar.xz
+	cd $(DIR_APP) && tar axf $(DIR_DL)/ipxe-$(PXE_VER).tar.gz
 	cd $(DIR_APP) && rm -rfv ipxe && ln -s ipxe-$(PXE_VER) ipxe
 	cd $(DIR_APP) && make bin/ipxe.lkrn
 
