@@ -456,7 +456,17 @@ for($s=0;$s<$lines;$s++)
   $color++;
   print "<tr>";
 
-  print "<td align='center' $col><form method='post' action='showrequestfromcountry.dat'><input type='hidden' name='MONTH' value='$cgiparams{'MONTH'}'> <input type='hidden' name='DAY' value='$cgiparams{'DAY'}'> <input type='hidden' name='country' value='$key[$s]'> <input type='submit' value='details'></form></td>";
+  print "<td align='center' $col>";
+
+  # Dont show details button for "unknown" location.
+  if ($key[$s] ne 'unknown') {
+	print"<form method='post' action='showrequestfromcountry.dat'>";
+	print"<input type='hidden' name='MONTH' value='$cgiparams{'MONTH'}'>";
+	print"<input type='hidden' name='DAY' value='$cgiparams{'DAY'}'>";
+	print"<input type='hidden' name='country' value='$key[$s]'>";
+	print"<input type='submit' value='details'></form>";
+  }
+
   if($key[$s] eq 'blue0' || $key[$s] eq 'green0' || $key[$s] eq 'orange0') {
       print "<td align='center' $col>$key[$s]</td>";
   }
