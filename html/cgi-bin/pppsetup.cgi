@@ -980,11 +980,13 @@ print <<END
         <td colspan='2' width='50%'>$Lang::tr{'legend'}:</td>
         <td colspan='2' width='50%'><img src='/blob.gif' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
 </tr>
-</table>
 END
 ;
-&Header::closebox();
 }
+
+print "</table>";
+
+&Header::closebox();
 
 print "</form>\n";
 
