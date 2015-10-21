@@ -100,6 +100,7 @@ WARNING: translation string unused: cache management
 WARNING: translation string unused: cache size
 WARNING: translation string unused: calamaris report interval (in minutes)
 WARNING: translation string unused: calc traffic all x minutes
+WARNING: translation string unused: cannot enable both nat traversal and compression
 WARNING: translation string unused: cant enable xtaccess
 WARNING: translation string unused: capsinactive
 WARNING: translation string unused: ccd err iroute

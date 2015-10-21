@@ -70,10 +70,16 @@ foreach my $itf (@ITFs) {
     $dhcpsettings{"NTP2_${itf}"} = '';
     $dhcpsettings{"NEXT_${itf}"} = '';
     $dhcpsettings{"FILE_${itf}"} = '';
+    $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} = '';
+    $dhcpsettings{"DNS_UPDATE_KEY_SECRET_${itf}"} = '';
+    $dhcpsettings{"DNS_UPDATE_KEY_ALGO_${itf}"} = '';
 }
 
 $dhcpsettings{'SORT_FLEASELIST'} = 'FIPADDR';
 $dhcpsettings{'SORT_LEASELIST'} = 'IPADDR';
+
+# DNS Update settings
+$dhcpsettings{'DNS_UPDATE_ENABLED'} = 'off';
 
 #Settings2 for editing the multi-line list
 #Must not be saved with writehash !
@@ -595,6 +601,78 @@ print <<END
     <td class='base' width='30%'>$warnNTPmessage</td>
     <td width='40%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
+</table>
+END
+;
+&Header::closebox();
+
+# DHCP DNS update support (RFC2136)
+&Header::openbox('100%', 'left', $Lang::tr{'dhcp dns update'});
+
+my %checked = ();
+$checked{'DNS_UPDATE_ENABLED'}{'on'} = ( $dhcpsettings{'DNS_UPDATE_ENABLED'} ne 'on') ? '' : "checked='checked'";
+
+print <<END
+<table  width='100%'>
+	<tr>
+		<td width='25%' class='boldbase'>$Lang::tr{'dhcp dns enable update'}</td>
+		<td class='base'><input type='checkbox' name='DNS_UPDATE_ENABLED' $checked{'DNS_UPDATE_ENABLED'}{'on'}>
+		</td>
+	<tr>
+</table>
+
+<table width='100%'>
+END
+;
+	my @domains = ();
+
+	# Print options for each interface.
+	foreach my $itf (@ITFs) {
+		# Check if DHCP for this interface is enabled.
+		if ($dhcpsettings{"ENABLE_${itf}"} eq 'on') {
+			# Check for same domain name.
+			next if ($dhcpsettings{"DOMAIN_NAME_${itf}"} ~~ @domains);
+			my $lc_itf = lc($itf);
+
+			# Select previously configured update algorithm.
+			my %selected = ();
+			$selected{'DNS_UPDATE_ALGO_${inf}'}{$dhcpsettings{'DNS_UPDATE_ALGO_${inf}'}} = 'selected';
+
+print <<END
+	<tr>
+		<td colspan='6'>&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan='6' class='boldbase'><b>$dhcpsettings{"DOMAIN_NAME_${itf}"}</b></td>
+	</tr>
+	<tr>
+		<td width='10%' class='boldbase'>$Lang::tr{'dhcp dns key name'}:</td>
+		<td width='20%'><input type='text' name='DNS_UPDATE_KEY_NAME_${itf}' value='$dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"}'></td>
+		<td width='10%' class='boldbase' align='right'>$Lang::tr{'dhcp dns update secret'}:&nbsp;&nbsp;</td>
+		<td width='20%'><input type='password' name='DNS_UPDATE_KEY_SECRET_${itf}' value='$dhcpsettings{"DNS_UPDATE_KEY_SECRET_${itf}"}'></td>
+		<td width='10%' class='boldbase' align='right'>$Lang::tr{'dhcp dns update algo'}:&nbsp;&nbsp;</td>
+		<td width='20%'>
+			<select name='DNS_UPDATE_KEY_ALGO_${itf}'>
+				<!-- <option value='hmac-sha1' $selected{'DNS_UPDATE_KEY_ALGO_${itf}'}{'hmac-sha1'}>HMAC-SHA1</option> -->
+				<option value='hmac-md5' $selected{'DNS_UPDATE_KEY_ALGO_${itf}'}{'hmac-md5'}>HMAC-MD5</option>
+			</select>
+		</td>
+	</tr>
+END
+;
+	}
+
+	# Store configured domain based on the interface
+	# in the temporary variable.
+	push(@domains, $dhcpsettings{"DOMAIN_NAME_${itf}"});
+}
+print <<END
+</table>
+<hr>
+<table width='100%'>
+	<tr>
+		<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+	</tr>
 </table>
 </form>
 END
@@ -1131,9 +1209,19 @@ sub buildconf {
     flock(FILE, 2);
 
     # Global settings
-    print FILE "ddns-update-style none;\n";
     print FILE "deny bootp;	#default\n";
     print FILE "authoritative;\n";
+
+    # DNS Update settings
+    if ($dhcpsettings{'DNS_UPDATE_ENABLED'} eq 'on') {
+        print FILE "ddns-updates           on;\n";
+        print FILE "ddns-update-style      interim;\n";
+        print FILE "ddns-ttl               60; # 1 min\n";
+        print FILE "ignore                 client-updates;\n";
+        print FILE "update-static-leases   on;\n";
+    } else {
+        print FILE "ddns-update-style none;\n";
+    }
     
     # Write first new option definition
     foreach my $line (@current1) {
@@ -1162,12 +1250,13 @@ sub buildconf {
 	    }
 	}# on    
     }# foreach line
+    print FILE "\n";
 
     #Subnet range definition
     foreach my $itf (@ITFs) {
 	my $lc_itf=lc($itf);
 	if ($dhcpsettings{"ENABLE_${itf}"} eq 'on' ){
-	    print FILE "\nsubnet " . $netsettings{"${itf}_NETADDRESS"} . " netmask ". $netsettings{"${itf}_NETMASK"} . " #$itf\n";
+	    print FILE "subnet " . $netsettings{"${itf}_NETADDRESS"} . " netmask ". $netsettings{"${itf}_NETMASK"} . " #$itf\n";
 	    print FILE "{\n";
 	    print FILE "\trange " . $dhcpsettings{"START_ADDR_${itf}"} . ' ' . $dhcpsettings{"END_ADDR_${itf}"}.";\n" if ($dhcpsettings{"START_ADDR_${itf}"});
 	    print FILE "\toption subnet-mask "   . $netsettings{"${itf}_NETMASK"} . ";\n";
@@ -1204,7 +1293,18 @@ sub buildconf {
 		    }
 		}# on    
 	    }# foreach line
-	    print FILE "} #$itf\n";
+	    print FILE "} #$itf\n\n";
+
+	    if (($dhcpsettings{"DNS_UPDATE_ENABLED"} eq "on") && ($dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} ne "")) {
+	        print FILE "key " . $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} . " {\n";
+	        print FILE "\talgorithm " . $dhcpsettings{"DNS_UPDATE_KEY_ALGO_${itf}"} . ";\n";
+	        print FILE "\tsecret \"" . $dhcpsettings{"DNS_UPDATE_KEY_SECRET_${itf}"} . "\";\n";
+	        print FILE "};\n\n";
+
+	        print FILE "zone " . $dhcpsettings{"DOMAIN_NAME_${itf}"} . ". {\n";
+	        print FILE "\tkey " . $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} . ";\n";
+		print FILE "}\n\n";
+	    }
 
 	    system ('/usr/bin/touch', "${General::swroot}/dhcp/enable_${lc_itf}");
 	    &General::log("DHCP on ${itf}: " . $Lang::tr{'dhcp server enabled'})

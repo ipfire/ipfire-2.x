@@ -95,6 +95,7 @@ WARNING: translation string unused: cache management
 WARNING: translation string unused: cache size
 WARNING: translation string unused: calamaris report interval (in minutes)
 WARNING: translation string unused: calc traffic all x minutes
+WARNING: translation string unused: cannot enable both nat traversal and compression
 WARNING: translation string unused: cant enable xtaccess
 WARNING: translation string unused: capsinactive
 WARNING: translation string unused: cfg restart
@@ -668,6 +669,11 @@ WARNING: untranslated string: dh key move failed
 WARNING: untranslated string: dh key warn
 WARNING: untranslated string: dh key warn1
 WARNING: untranslated string: dh parameter
+WARNING: untranslated string: dhcp dns enable update
+WARNING: untranslated string: dhcp dns key name
+WARNING: untranslated string: dhcp dns update
+WARNING: untranslated string: dhcp dns update algo
+WARNING: untranslated string: dhcp dns update secret
 WARNING: untranslated string: dnat address
 WARNING: untranslated string: dns servers
 WARNING: untranslated string: dnsforward
@@ -989,6 +995,7 @@ WARNING: untranslated string: proxy reports weekly
 WARNING: untranslated string: qos enter bandwidths
 WARNING: untranslated string: random number generator daemon
 WARNING: untranslated string: red1
+WARNING: untranslated string: required field
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
