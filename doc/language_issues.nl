@@ -99,6 +99,7 @@ WARNING: translation string unused: cache management
 WARNING: translation string unused: cache size
 WARNING: translation string unused: calamaris report interval (in minutes)
 WARNING: translation string unused: calc traffic all x minutes
+WARNING: translation string unused: cannot enable both nat traversal and compression
 WARNING: translation string unused: cant enable xtaccess
 WARNING: translation string unused: capsinactive
 WARNING: translation string unused: ccd err iroute
@@ -679,6 +680,11 @@ WARNING: untranslated string: dh key move failed
 WARNING: untranslated string: dh key warn
 WARNING: untranslated string: dh key warn1
 WARNING: untranslated string: dh parameter
+WARNING: untranslated string: dhcp dns enable update
+WARNING: untranslated string: dhcp dns key name
+WARNING: untranslated string: dhcp dns update
+WARNING: untranslated string: dhcp dns update algo
+WARNING: untranslated string: dhcp dns update secret
 WARNING: untranslated string: dns servers
 WARNING: untranslated string: dnssec aware
 WARNING: untranslated string: dnssec information
@@ -771,6 +777,7 @@ WARNING: untranslated string: pptp netconfig
 WARNING: untranslated string: pptp peer
 WARNING: untranslated string: pptp route
 WARNING: untranslated string: random number generator daemon
+WARNING: untranslated string: required field
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
