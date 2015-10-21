@@ -24,10 +24,10 @@
 
 include Config
 
-VER         = 3.14.53
-RPI_PATCHES = 3.14.53-grsec-ipfire1
-A7M_PATCHES = 3.14.53-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.1ipfire-3.14.53-v1.patch.xz
+VER         = 3.14.54
+RPI_PATCHES = 3.14.54-grsec-ipfire1
+A7M_PATCHES = 3.14.54-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.1ipfire-3.14.54-v1.patch.xz
 
 
 THISAPP    = linux-$(VER)
@@ -83,10 +83,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= 5c5d18ddcc80b008826c2f43b322a34a
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= de5350ee7c3e4aa82289916963796fd9
-arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 25fc733bb657a84eea338104f88bcf70
-$(GRS_PATCHES)_MD5				= 4c1f6e73f04bfc92b105afff24d0308c
+$(DL_FILE)_MD5					= 61a0568abd96bef9b682d0d46977fbdd
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= db92bc85979895efdc6d9da2877ce0ae
+arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 9092711bcac325c5d0dac5eed98f1c5d
+$(GRS_PATCHES)_MD5				= 0c1e505cf87177bfb7d62c95e67f10ef
 
 install : $(TARGET)
 
@@ -133,6 +133,9 @@ ifneq "$(KCFG)" "-headers"
 	cd $(DIR_APP) && rm localversion-grsec
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
 endif
+
+	# Fix ip route list hang introduced with linux 3.14.54
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.54_fix_ip_route_list.patch
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-dvbsky.patch
