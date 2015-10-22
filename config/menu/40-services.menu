@@ -20,11 +20,6 @@
 				'title' => "$Lang::tr{'time server'}",
 				'enabled' => 1,
 				};
-    $subservices->{'41.dma'} = {'caption' => $Lang::tr{'email settings'},
-				'uri' => '/cgi-bin/mail.cgi',
-				'title' => "$Lang::tr{'email settings'}",
-				'enabled' => 1,
-				};
     $subservices->{'50.qos'} = {'caption' => 'Quality of Service',
 				'uri' => '/cgi-bin/qos.cgi',
 				'title' => "Quality of Service",
