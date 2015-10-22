@@ -47,7 +47,10 @@ telinit u
 
 # Update SSH configuration
 sed -i /etc/ssh/sshd_config \
-	-e 's/^#PermitRootLogin yes$/PermitRootLogin yes/'
+	-e 's/^#PermitRootLogin yes$/PermitRootLogin yes/' \
+	-e 's|^#\?HostKey /etc/ssh/ssh_host_rsa_key$|HostKey /etc/ssh/ssh_host_rsa_key|' \
+	-e 's|^#\?HostKey /etc/ssh/ssh_host_ecdsa_key$|HostKey /etc/ssh/ssh_host_ecdsa_key|' \
+	-e 's|^#\?HostKey /etc/ssh/ssh_host_ed25519_key$|HostKey /etc/ssh/ssh_host_ed25519_key|' \
 
 # Move away old and unsupported keys
 mv -f /etc/ssh/ssh_host_dsa_key{,.old}
@@ -69,6 +72,17 @@ grep -q "dma -q" /var/spool/cron/root.orig || cat <<EOF >> /var/spool/cron/root.
 EOF
 
 fcrontab -z &>/dev/null
+
+# DMA - reconfigure Postfix if exists
+if [ -e /etc/postfix/main.cf ] && [ ! -e "/usr/sbin/sendmail.postfix" ]; then
+	mv /usr/sbin/sendmail /usr/sbin/sendmail.postfix
+	/usr/sbin/alternatives --install /usr/sbin/sendmail sendmail /usr/sbin/sendmail.postfix 15
+	sed -i 's/usr\/sbin\/sendmail/usr/sbin/sendmail.postfix/' /opt/pakfire/db/rootfiles/postfix
+fi
+# DMA - configure dma as default mta
+mkdir -p /etc/alternatives
+mkdir -p /var/lib/alternatives
+/usr/sbin/alternatives --install /usr/sbin/sendmail sendmail /usr/sbin/sendmail.dma 20
 
 # Start services
 /etc/init.d/dnsmasq start
