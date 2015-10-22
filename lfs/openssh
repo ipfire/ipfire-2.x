@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -91,6 +91,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    -e 's/^#\?LogLevel INFO .*$$/LogLevel INFO/' \
 	    -e 's/^#\?AllowTcpForwarding .*$$/AllowTcpForwarding no/' \
 	    -e 's/^#\?PermitRootLogin .*$$/PermitRootLogin yes/' \
+	    -e 's|^#\?HostKey /etc/ssh/ssh_host_rsa_key$$|HostKey /etc/ssh/ssh_host_rsa_key|' \
+	    -e 's|^#\?HostKey /etc/ssh/ssh_host_ecdsa_key$$|HostKey /etc/ssh/ssh_host_ecdsa_key|' \
+	    -e 's|^#\?HostKey /etc/ssh/ssh_host_ed25519_key$$|HostKey /etc/ssh/ssh_host_ed25519_key|' \
 	    /etc/ssh/sshd_config
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

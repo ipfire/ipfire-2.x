@@ -47,7 +47,10 @@ telinit u
 
 # Update SSH configuration
 sed -i /etc/ssh/sshd_config \
-	-e 's/^#PermitRootLogin yes$/PermitRootLogin yes/'
+	-e 's/^#PermitRootLogin yes$/PermitRootLogin yes/' \
+	-e 's|^#\?HostKey /etc/ssh/ssh_host_rsa_key$|HostKey /etc/ssh/ssh_host_rsa_key|' \
+	-e 's|^#\?HostKey /etc/ssh/ssh_host_ecdsa_key$|HostKey /etc/ssh/ssh_host_ecdsa_key|' \
+	-e 's|^#\?HostKey /etc/ssh/ssh_host_ed25519_key$|HostKey /etc/ssh/ssh_host_ed25519_key|' \
 
 # Move away old and unsupported keys
 mv -f /etc/ssh/ssh_host_dsa_key{,.old}
