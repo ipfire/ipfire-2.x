@@ -91,9 +91,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	    -e 's/^#\?LogLevel INFO .*$$/LogLevel INFO/' \
 	    -e 's/^#\?AllowTcpForwarding .*$$/AllowTcpForwarding no/' \
 	    -e 's/^#\?PermitRootLogin .*$$/PermitRootLogin yes/' \
-	    -e 's|^#\?HostKey /etc/ssh/ssh_host_rsa_key$$|HostKey /etc/ssh/ssh_host_rsa_key|' \
-	    -e 's|^#\?HostKey /etc/ssh/ssh_host_ecdsa_key$$|HostKey /etc/ssh/ssh_host_ecdsa_key|' \
-	    -e 's|^#\?HostKey /etc/ssh/ssh_host_ed25519_key$$|HostKey /etc/ssh/ssh_host_ed25519_key|' \
+	    -e 's|^#\?HostKey /etc/ssh/ssh_host_dsa_key$$||' \
+	    -e 's|^#\?HostKey /etc/ssh/ssh_host_ecdsa_key$$||' \
+	    -e 's|^#\?HostKey /etc/ssh/ssh_host_ed25519_key$$||' \
+	    -e 's|^#\?HostKey /etc/ssh/ssh_host_rsa_key$$|HostKey /etc/ssh/ssh_host_ecdsa_key\nHostKey /etc/ssh/ssh_host_ed25519_key\nHostKey /etc/ssh/ssh_host_rsa_key|' \
 	    /etc/ssh/sshd_config
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -22,5 +22,6 @@ srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/wakeonlan.cgi
 srv/web/ipfire/cgi-bin/wireless.cgi
 var/ipfire/langs
+var/ipfire/menu.d/10-system.menu
 var/ipfire/menu.d/40-services.menu
 var/ipfire/network-functions.pl
