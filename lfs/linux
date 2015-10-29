@@ -24,10 +24,10 @@
 
 include Config
 
-VER         = 3.14.55
-RPI_PATCHES = 3.14.55-grsec-ipfire1
-A7M_PATCHES = 3.14.55-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.1ipfire-3.14.55-v1.patch.xz
+VER         = 3.14.56
+RPI_PATCHES = 3.14.56-grsec-ipfire1
+A7M_PATCHES = 3.14.56-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.1ipfire-3.14.56-v1.patch.xz
 
 
 THISAPP    = linux-$(VER)
@@ -83,10 +83,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= 5358dcd2655874496ede6f3a8ada5054
+$(DL_FILE)_MD5					= 32010dbb68e50b994bcf845635b616d5
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 4ab53e184441c895adf318a1c2874d43
 arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= f29bd5c156384b0a4bb7c6e2c973ea06
-$(GRS_PATCHES)_MD5				= dc0e0195a362087c71227173eab062d4
+$(GRS_PATCHES)_MD5				= 2cf4583ffeb979900d362038cb1accb4
 
 install : $(TARGET)
 
@@ -172,6 +172,9 @@ endif
 
 	# HyperV 2008 patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.x-hyperv-2008-fix.patch
+
+	# fix empty symbol crc's
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-genksyms_fix_typeof_handling.patch
 
 ifeq "$(KCFG)" "-kirkwood"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-mv_cesa_disable_failing_hmac_sha1.patch

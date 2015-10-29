@@ -72,18 +72,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/snort* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
-		--disable-nls \
 		--sysconfdir=/etc/snort \
 		--target=i586 \
 		--enable-linux-smp-stats \
-		--enable-smb-alerts \
 		--enable-gre --enable-mpls \
 		--enable-targetbased \
-		--enable-decoder-preprocessor-rules \
 		--enable-ppm \
 		--enable-non-ether-decoders \
 		--enable-perfprofiling \
-		--enable-zlib \
 		--enable-active-response \
 		--enable-normalizer \
 		--enable-reload \

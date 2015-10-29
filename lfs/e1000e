@@ -27,7 +27,7 @@ include Config
 VERSUFIX = ipfire$(KCFG)
 MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/ethernet/intel/e1000e
 
-VER        = 3.2.4.2
+VER        = 3.2.7.1
 
 THISAPP    = e1000e-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = da331c268e1b928e896dfa4c71fbe4d9
+$(DL_FILE)_MD5 = 8f62c220d763fa92473365e40d55bd86
 
 install : $(TARGET)
 
