@@ -756,6 +756,7 @@
 'display traffic at home' => 'Display calculated traffic on startpage',
 'display webinterface effects' => 'Activate effects',
 'dl client arch' => 'Download Client Package (zip)',
+'dl client arch insecure' => 'Download insecure Client Package (zip)',
 'dmz' => 'DMZ',
 'dmz pinhole configuration' => 'DMZ pinhole configuration',
 'dmz pinhole rule added' => 'DMZ pinhole rule added; restarting DMZ pinhole',

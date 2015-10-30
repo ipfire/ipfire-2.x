@@ -10,6 +10,7 @@ srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllogcountry.dat
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/routing.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi

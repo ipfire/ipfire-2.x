@@ -731,6 +731,7 @@
 'display traffic at home' => 'Berechneten Traffic auf der Startseite anzeigen',
 'display webinterface effects' => 'Überblendeffekte einschalten',
 'dl client arch' => 'Client Paket herunterladen (zip)',
+'dl client arch insecure' => 'Ungesichertes Client-Paket herunterladen (zip)',
 'dmz' => 'DMZ',
 'dmz pinhole configuration' => 'Einstellungen des DMZ-Schlupfloches',
 'dmz pinhole rule added' => 'Regel für DMZ-Schlupfloch hinzugefügt; Starte DMZ-Schlupfloch neu',

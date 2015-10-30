@@ -2266,9 +2266,38 @@ else
 	print CLIENTCONF "remote $netsettings{'ORANGE_ADDRESS'} $vpnsettings{'DDEST_PORT'}\r\n";
     }
     	    		
+    my $file_crt = new File::Temp( UNLINK => 1 );
+    my $file_key = new File::Temp( UNLINK => 1 );
+
     if ($confighash{$cgiparams{'KEY'}}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12") { 
-	print CLIENTCONF "pkcs12 $confighash{$cgiparams{'KEY'}}[1].p12\r\n";
-	$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12", "$confighash{$cgiparams{'KEY'}}[1].p12") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1].p12\n";
+	if ($cgiparams{'MODE'} eq 'insecure') {
+		# Add the CA
+		print CLIENTCONF "ca cacert.pem\r\n";
+		$zip->addFile("${General::swroot}/ovpn/ca/cacert.pem", "cacert.pem")  or die "Can't add file cacert.pem\n";
+
+		# Extract the certificate
+		system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+			'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
+		if ($?) {
+			die "openssl error: $?";
+		}
+
+		$zip->addFile("$file_crt", "$confighash{$cgiparams{'KEY'}}[1].pem") or die;
+		print CLIENTCONF "cert $confighash{$cgiparams{'KEY'}}[1].pem\r\n";
+
+		# Extract the key
+		system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+			'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
+		if ($?) {
+			die "openssl error: $?";
+		}
+
+		$zip->addFile("$file_key", "$confighash{$cgiparams{'KEY'}}[1].key") or die;
+		print CLIENTCONF "key $confighash{$cgiparams{'KEY'}}[1].key\r\n";
+	} else {
+		print CLIENTCONF "pkcs12 $confighash{$cgiparams{'KEY'}}[1].p12\r\n";
+		$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12", "$confighash{$cgiparams{'KEY'}}[1].p12") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1].p12\n";
+	}
     } else {
 	print CLIENTCONF "ca cacert.pem\r\n";
 	print CLIENTCONF "cert $confighash{$cgiparams{'KEY'}}[1]cert.pem\r\n";
@@ -4252,6 +4281,10 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$confighash{$key}[39]		= $cgiparams{'DAUTH'};
 	$confighash{$key}[40]		= $cgiparams{'DCIPHER'};
 
+	if (($cgiparams{'TYPE'} eq 'host') && ($cgiparams{'CERT_PASS1'} eq "")) {
+		$confighash{$key}[41] = "no-pass";
+	}
+
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 	
 	if ($cgiparams{'CHECK1'} ){
@@ -5128,7 +5161,7 @@ END
 	<th width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
 	<th width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
 	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
-	<th width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></th>
+	<th width='5%' class='boldbase' colspan='7' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 		}
@@ -5142,7 +5175,7 @@ END
 	<th width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
 	<th width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
 	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
-	<th width='5%' class='boldbase' colspan='6' align='center'><b>$Lang::tr{'action'}</b></th>
+	<th width='5%' class='boldbase' colspan='7' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 		}
@@ -5241,6 +5274,21 @@ END
 	</td></form>
 END
 	;
+
+	if ($confighash{$key}[41] eq "no-pass") {
+		print <<END;
+			<form method='post' name='frm${key}g'><td align='center' $col>
+				<input type='image'  name='$Lang::tr{'dl client arch insecure'}' src='/images/openvpn.png'
+					alt='$Lang::tr{'dl client arch insecure'}' title='$Lang::tr{'dl client arch insecure'}' border='0' />
+				<input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
+				<input type='hidden' name='MODE' value='insecure' />
+				<input type='hidden' name='KEY' value='$key' />
+			</td></form>
+END
+	} else {
+		print "<td $col>&nbsp;</td>";
+	}
+
 	if ($confighash{$key}[4] eq 'cert') {
 	    print <<END;
 	    <form method='post' name='frm${key}b'><td align='center' $col>
