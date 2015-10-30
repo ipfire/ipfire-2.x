@@ -849,7 +849,7 @@
 'email mailpass' => 'Passwort',
 'email mailport' => 'Mailserver-Port',
 'email mailrcpt' => 'E-Mail-Empfänger',
-'email mailsender' => 'E-Mail Absender',
+'email mailsender' => 'E-Mail-Absender',
 'email mailuser' => 'Benutzername',
 'email server can not be empty' => 'Email-Server darf nicht leer sein',
 'email settings' => 'Mailversand',

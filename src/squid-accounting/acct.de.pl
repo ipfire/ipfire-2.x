@@ -77,7 +77,7 @@
 'acct mailuser' => 'Benutzername',
 'acct mailpass' => 'Passwort',
 'acct mailrcpt' => 'E-Mail-Empfänger',
-'acct mailsender' => 'E-Mail Absender',
+'acct mailsender' => 'E-Mail-Absender',
 'acct mailtxt' => 'Text der Rechnungsmails',
 'acct mb' => 'MB',
 'acct members' => 'Mitglieder',
