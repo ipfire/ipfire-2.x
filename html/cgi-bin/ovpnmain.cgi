@@ -2268,11 +2268,14 @@ else
     	    		
     my $file_crt = new File::Temp( UNLINK => 1 );
     my $file_key = new File::Temp( UNLINK => 1 );
+    my $include_certs = 0;
 
     if ($confighash{$cgiparams{'KEY'}}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12") { 
 	if ($cgiparams{'MODE'} eq 'insecure') {
+		$include_certs = 1;
+
 		# Add the CA
-		print CLIENTCONF "ca cacert.pem\r\n";
+		print CLIENTCONF ";ca cacert.pem\r\n";
 		$zip->addFile("${General::swroot}/ovpn/ca/cacert.pem", "cacert.pem")  or die "Can't add file cacert.pem\n";
 
 		# Extract the certificate
@@ -2283,7 +2286,7 @@ else
 		}
 
 		$zip->addFile("$file_crt", "$confighash{$cgiparams{'KEY'}}[1].pem") or die;
-		print CLIENTCONF "cert $confighash{$cgiparams{'KEY'}}[1].pem\r\n";
+		print CLIENTCONF ";cert $confighash{$cgiparams{'KEY'}}[1].pem\r\n";
 
 		# Extract the key
 		system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
@@ -2293,7 +2296,7 @@ else
 		}
 
 		$zip->addFile("$file_key", "$confighash{$cgiparams{'KEY'}}[1].key") or die;
-		print CLIENTCONF "key $confighash{$cgiparams{'KEY'}}[1].key\r\n";
+		print CLIENTCONF ";key $confighash{$cgiparams{'KEY'}}[1].key\r\n";
 	} else {
 		print CLIENTCONF "pkcs12 $confighash{$cgiparams{'KEY'}}[1].p12\r\n";
 		$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12", "$confighash{$cgiparams{'KEY'}}[1].p12") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1].p12\n";
@@ -2312,6 +2315,9 @@ else
 	print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
     }
     if ($vpnsettings{'TLSAUTH'} eq 'on') {
+	if ($cgiparams{'MODE'} eq 'insecure') {
+		print CLIENTCONF ";";
+	}
 	print CLIENTCONF "tls-auth ta.key\r\n";
 	$zip->addFile( "${General::swroot}/ovpn/certs/ta.key", "ta.key")  or die "Can't add file ta.key\n";
     }
@@ -2336,6 +2342,53 @@ else
 		print CLIENTCONF "mtu-disc $vpnsettings{'PMTU_DISCOVERY'}\r\n";
 	}
     }
+
+    if ($include_certs) {
+	print CLIENTCONF "\r\n";
+
+	# CA
+	open(FILE, "<${General::swroot}/ovpn/ca/cacert.pem");
+	print CLIENTCONF "<ca>\r\n";
+	while (<FILE>) {
+		chomp($_);
+		print CLIENTCONF "$_\r\n";
+	}
+	print CLIENTCONF "</ca>\r\n\r\n";
+	close(FILE);
+
+	# Cert
+	open(FILE, "<$file_crt");
+	print CLIENTCONF "<cert>\r\n";
+	while (<FILE>) {
+		chomp($_);
+		print CLIENTCONF "$_\r\n";
+	}
+	print CLIENTCONF "</cert>\r\n\r\n";
+	close(FILE);
+
+	# Key
+	open(FILE, "<$file_key");
+	print CLIENTCONF "<key>\r\n";
+	while (<FILE>) {
+		chomp($_);
+		print CLIENTCONF "$_\r\n";
+	}
+	print CLIENTCONF "</key>\r\n\r\n";
+	close(FILE);
+
+	# TLS auth
+	if ($vpnsettings{'TLSAUTH'} eq 'on') {
+		open(FILE, "<${General::swroot}/ovpn/certs/ta.key");
+		print CLIENTCONF "<tls-auth>\r\n";
+		while (<FILE>) {
+			chomp($_);
+			print CLIENTCONF "$_\r\n";
+		}
+		print CLIENTCONF "</tls-auth>\r\n\r\n";
+		close(FILE);
+	}
+    }
+
     # Print client.conf.local if entries exist to client.ovpn
     if (!-z $local_clientconf && $vpnsettings{'ADDITIONAL_CONFIGS'} eq 'on') {
        open (LCC, "$local_clientconf");
