@@ -2,6 +2,7 @@ etc/system-release
 etc/issue
 etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/firewall
+etc/rc.d/init.d/networking/red.up/99-geoip-database
 lib/udev/network-hotplug-vlan
 lib/udev/rules.d/60-net.rules
 srv/web/ipfire/cgi-bin/connections.cgi
