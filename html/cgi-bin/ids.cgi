@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -263,9 +263,9 @@ if (-e "/etc/snort/snort.conf") {
 #######################  End added for snort rules control  #################################
 
 if ($snortsettings{'RULES'} eq 'subscripted') {
-	$url=" https://www.snort.org/rules/snortrules-snapshot-2970.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
+	$url=" https://www.snort.org/rules/snortrules-snapshot-2976.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
 } elsif ($snortsettings{'RULES'} eq 'registered') {
-	$url=" https://www.snort.org/rules/snortrules-snapshot-2970.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
+	$url=" https://www.snort.org/rules/snortrules-snapshot-2976.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
 } elsif ($snortsettings{'RULES'} eq 'community') {
 	$url=" https://www.snort.org/rules/community";
 } else {
