@@ -16,4 +16,5 @@ srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/lib/firewall/firewall-lib.pl
 usr/lib/firewall/ipsec-block
 usr/local/bin/ipsecctrl
+var/ipfire/backup/exclude
 var/ipfire/langs
