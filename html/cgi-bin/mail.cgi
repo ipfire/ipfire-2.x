@@ -110,9 +110,12 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){ #SaveButton on configsite
 		$mail{'SENDER'} 		= $cgiparams{'txt_mailsender'};
 		$mail{'RECIPIENT'}		= $cgiparams{'txt_recipient'};
 
-		$auth{'AUTHNAME'}		= $cgiparams{'txt_mailuser'};
-		$auth{'AUTHPASS'}		= $cgiparams{'txt_mailpass'};
-		$auth{'AUTHHOST'}		= $cgiparams{'txt_mailserver'};
+		if ($cgiparams{'txt_mailuser'} && $cgiparams{'txt_mailpass'}) {
+			$auth{'AUTHNAME'}		= $cgiparams{'txt_mailuser'};
+			$auth{'AUTHPASS'}		= $cgiparams{'txt_mailpass'};
+			$auth{'AUTHHOST'}		= $cgiparams{'txt_mailserver'};
+			print TXT1 "$auth{'AUTHNAME'}|$auth{'AUTHHOST'}:$auth{'AUTHPASS'}\n";
+		}
 
 		$dma{'SMARTHOST'}		= $cgiparams{'txt_mailserver'};
 		$dma{'PORT'}			= $cgiparams{'txt_mailport'};
@@ -129,7 +132,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){ #SaveButton on configsite
 			print TXT "$k $v\n";
 		}
 		close TXT;
-		print TXT1 "$auth{'AUTHNAME'}|$auth{'AUTHHOST'}:$auth{'AUTHPASS'}\n";
+		close TXT1;
 		close TXT2;
 
 	}else{

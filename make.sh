@@ -850,6 +850,7 @@ buildipfire() {
   ipfiremake perl-Text-CSV_XS
   ipfiremake swconfig
   ipfiremake haproxy
+  ipfiremake ipset
 }
 
 buildinstaller() {

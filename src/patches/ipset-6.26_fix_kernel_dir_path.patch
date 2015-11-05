@@ -1,0 +1,20 @@
+--- ipset-6.26_orig/configure	2015-10-11 06:57:32.659295626 +0000
++++ ipset-6.26/configure	2015-10-11 06:58:21.935695339 +0000
+@@ -13079,7 +13079,7 @@
+ then
+ 	kbuilddir="$KBUILDDIR"
+ else
+-	kbuilddir="/lib/modules/`uname -r`/build"
++	kbuilddir="/lib/modules/`uname -r`-ipfire/build"
+ fi
+ 
+ if test -n "$KSOURCEDIR"; then
+@@ -13087,7 +13087,7 @@
+ elif test -e "$kbuilddir/include/linux/netfilter/nfnetlink.h"; then
+ 	ksourcedir="$kbuilddir"
+ else
+-	ksourcedir="/lib/modules/$(uname -r)/source"
++	ksourcedir="/lib/modules/$(uname -r)-ipfire/source"
+ fi
+ if test ! -e "$ksourcedir/include/linux/netfilter/nfnetlink.h"
+ then
