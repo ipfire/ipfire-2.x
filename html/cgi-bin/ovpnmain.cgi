@@ -926,7 +926,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "ifconfig $ovsubnet.1 $ovsubnet.2\n"; 
   print SERVERCONF "# Client Gateway Network\n"; 
   print SERVERCONF "route $remsubnet[0] $remsubnet[1]\n";
-  print SERVERCONF "up /etc/init.d/static-routes start\n";
+  print SERVERCONF "up \"/etc/init.d/static-routes start\"\n";
   print SERVERCONF "# tun Device\n"; 
   print SERVERCONF "dev tun\n"; 
   print SERVERCONF "#Logfile for statistics\n";
@@ -1026,7 +1026,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print CLIENTCONF "ifconfig $ovsubnet.2 $ovsubnet.1\n"; 
   print CLIENTCONF "# Server Gateway Network\n"; 
   print CLIENTCONF "route $remsubnet[0] $remsubnet[1]\n"; 
-  print CLIENTCONF "up /etc/init.d/static-routes start\n";
+  print CLIENTCONF "up \"/etc/init.d/static-routes start\"\n";
   print CLIENTCONF "# tun Device\n"; 
   print CLIENTCONF "dev tun\n"; 
   print CLIENTCONF "# Port and Protokol\n"; 
