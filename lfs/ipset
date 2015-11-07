@@ -71,8 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./autogen.sh
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ipset-6.26_fix_kernel_dir_path.patch
-	cd $(DIR_APP) && ./configure \
+	cd $(DIR_APP) && KSOURCEDIR=/usr/src/linux KBUILDDIR=/usr/src/linux ./configure \
 		--prefix=/usr \
 		--disable-static
 
