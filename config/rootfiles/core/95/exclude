@@ -15,6 +15,7 @@ etc/sysconfig/firewall.local
 etc/sysconfig/rc.local
 etc/udev/rules.d/30-persistent-network.rules
 srv/web/ipfire/html/proxy.pac
+var/ipfire/dma
 var/ipfire/ovpn
 var/lib/alternatives
 var/log/cache
