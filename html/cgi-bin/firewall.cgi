@@ -31,6 +31,7 @@ no warnings 'uninitialized';
 #use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
+require '/var/ipfire/network-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/geoip-functions.pl";
@@ -465,6 +466,9 @@ sub checksource
 			}
 		}
 		if ($fwdfwsettings{'isip'} eq 'on'){
+			#remove leading zero
+			$ip = &Network::ip_remove_zero($ip);
+
 			##check if ip is valid
 			if (! &General::validip($ip)){
 				$errormessage.=$Lang::tr{'fwdfw err src_addr'}."<br>";
@@ -569,11 +573,15 @@ sub checktarget
 			($ip,$subnet)=split (/\//,$fwdfwsettings{'tgt_addr'});
 			$subnet = &General::iporsubtocidr($subnet);
 		}
+
 		#check if only ip
 		if($fwdfwsettings{'tgt_addr'}=~/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/){
 			$ip=$fwdfwsettings{'tgt_addr'};
 			$subnet='32';
 		}
+		#remove leading zero
+		$ip = &Network::ip_remove_zero($ip);
+
 		#check if ip is valid
 		if (! &General::validip($ip)){
 			$errormessage.=$Lang::tr{'fwdfw err tgt_addr'}."<br>";

@@ -122,6 +122,19 @@ sub network2bin($) {
 	return ($network_start, $netmask_bin);
 }
 
+# Deletes leading zeros in ip address
+sub ip_remove_zero{
+	my $address = shift;
+	my @ip = split (/\./, $address);
+
+	foreach my $octet (@ip) {
+		$octet = int($octet);
+	}
+
+	$address = join (".", @ip);
+
+	return $address;
+}
 # Returns True for all valid IP addresses
 sub check_ip_address($) {
 	my $address = shift;

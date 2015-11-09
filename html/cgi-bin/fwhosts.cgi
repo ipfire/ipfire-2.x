@@ -27,6 +27,7 @@ use Sort::Naturally;
 use CGI::Carp 'fatalsToBrowser';
 no warnings 'uninitialized';
 require '/var/ipfire/general-functions.pl';
+require '/var/ipfire/network-functions.pl';
 require "/var/ipfire/geoip-functions.pl";
 require "/usr/lib/firewall/firewall-lib.pl";
 require "${General::swroot}/lang.pl";
@@ -277,6 +278,9 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 		&addnet;
 		&viewtablenet;
 	}else{
+		#convert ip if leading '0' exists
+		$fwhostsettings{'IP'} = &Network::ip_remove_zero($fwhostsettings{'IP'});
+
 		#check valid ip 
 		if (!&General::validipandmask($fwhostsettings{'IP'}."/".$fwhostsettings{'SUBNET'}))
 		{
@@ -372,9 +376,6 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 			foreach my $i (0 .. 3) { $customnetwork{$key}[$i] = "";}
 			$fwhostsettings{'SUBNET'}	= &General::iporsubtocidr($fwhostsettings{'SUBNET'});
 			$customnetwork{$key}[0] 	= $fwhostsettings{'HOSTNAME'};
-			#convert ip when leading '0' in byte
-			$fwhostsettings{'IP'}		=&General::ip2dec($fwhostsettings{'IP'});
-			$fwhostsettings{'IP'}		=&General::dec2ip($fwhostsettings{'IP'});
 			$customnetwork{$key}[1] 	= &General::getnetworkip($fwhostsettings{'IP'},$fwhostsettings{'SUBNET'}) ;
 			$customnetwork{$key}[2] 	= &General::iporsubtodec($fwhostsettings{'SUBNET'}) ;
 			$customnetwork{$key}[3] 	= $fwhostsettings{'NETREMARK'};
@@ -423,6 +424,9 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 		}
 		#CHECK IP-PART
 		if ($fwhostsettings{'type'} eq 'ip'){
+			#convert ip if leading '0' exists
+			$fwhostsettings{'IP'} = &Network::ip_remove_zero($fwhostsettings{'IP'});
+
 			#check for subnet
 			if (rindex($fwhostsettings{'IP'},'/') eq '-1' ){
 				if($fwhostsettings{'type'} eq 'ip' && !&General::validipandmask($fwhostsettings{'IP'}."/32"))
@@ -503,9 +507,6 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			$customhost{$key}[0] = $fwhostsettings{'HOSTNAME'} ;
 			$customhost{$key}[1] = $fwhostsettings{'type'} ;
 			if ($fwhostsettings{'type'} eq 'ip'){
-				#convert ip when leading '0' in byte
-				$fwhostsettings{'IP'}=&General::ip2dec($fwhostsettings{'IP'});
-				$fwhostsettings{'IP'}=&General::dec2ip($fwhostsettings{'IP'});
 				$customhost{$key}[2] = $fwhostsettings{'IP'}."/".&General::iporsubtodec($fwhostsettings{'SUBNET'});
 			}else{
 				$customhost{$key}[2] = $fwhostsettings{'IP'};
