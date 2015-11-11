@@ -519,8 +519,13 @@ sub dblist {
 			} elsif ("$filter" eq "installed") {
 				next unless ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
 			}
-			if ("$forweb" eq "forweb") {
-				print "<option value=\"$templine[0]\">$templine[0]-$templine[1]-$templine[2]</option>\n";
+			if ("$forweb" eq "forweb")
+			 {
+				if ("$filter" eq "notinstalled") {
+					print "<option value=\"$templine[0]\">$templine[0]-$templine[1]-$templine[2]</option>\n";
+				} else {
+					print "<option value=\"$templine[0]\">$templine[0]</option>\n";
+				}
 			} else {
 				if ("$Pakfire::enable_colors" eq "1") {
 					if (&isinstalled("$templine[0]")) {
