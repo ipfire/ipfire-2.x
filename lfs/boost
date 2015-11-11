@@ -48,9 +48,7 @@ CONFIGURE_OPTIONS = \
 	debug-symbols=off \
 	pch=off
 
-ifeq "$(MACHINE)" "armv5tel"
-	MAKETUNING = -j2
-endif
+MAKETUNING = -j2
 
 ###############################################################################
 # Top-level Rules
