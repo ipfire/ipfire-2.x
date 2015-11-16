@@ -60,24 +60,24 @@ close(ALIAS);
 &write_rules;
 sub get_config
 {
+	my $baseipfireport;
+	my $basesource;
 	print LOG "STEP 1:   Get config from old portforward\n#########################################\n";
 	foreach my $line (@current){
-		if($jump eq '1'){
-			$jump='';
-			$count++;
-			next;
-		}
 		my $u=$count+1;
 		($key,$flag,$prot,$ipfireport,$target,$targetport,$active,$alias,$source,$remark) = split(",",$line);
 		($key1,$flag1,$prot1,$ipfireport1,$target1,$targetport1,$active1,$alias1,$source1,$remark1) = split(",",$current[$u]);
-		if ($flag1 eq '1'){
-			$source=$source1;
-			$jump='1';
+		if ($key == $key1 && $flag == '0'){
+			$baseipfireport = $ipfireport;
+		}
+		if ($key == $key1 && $flag1 == '1'){
+			$count++;
+			next;
 		}
 		my $now=localtime;
 		chomp($remark);
-		print LOG "$now   processing-> KEY: $key FLAG: $flag PROT: $prot FIREPORT: $ipfireport TARGET: $target TGTPORT: $targetport ACTIVE: $active ALIAS: $alias SOURCE: $source REM: $remark Doublerule: $jump\n";
-		push (@values,$prot.",".$ipfireport.",".$target.",".$targetport.",".$active.",".$alias.",".$source.",".$remark);
+		print LOG "$now   processing-> KEY: $key FLAG: $flag PROT: $prot FIREPORT: $baseipfireport TARGET: $target TGTPORT: $targetport ACTIVE: $active ALIAS: $alias SOURCE: $source REM: $remark Doublerule: $jump\n";
+		push (@values,$prot.",".$baseipfireport.",".$target.",".$targetport.",".$active.",".$alias.",".$source.",".$remark);
 		$count++;
 	}
 }
@@ -101,10 +101,15 @@ sub build_rules
 		}else{
 			$src  = 'src_addr';
 			my ($a,$b) = split("/",$source);
-			$src1 = $a."/32";
+			if ($b != ''){
+				$b = &General::iporsubtocidr($b);
+			}else{
+				$b = "32";
+			}
+			$src1 = $a."/".$b;
 		}
 		#get ipfire ip
-		if($alias eq '0.0.0.0'){
+		if($alias eq '0.0.0.0' || $alias eq '0'){
 			$alias='Default IP';
 		}else{
 			foreach my $ali (@alias){
