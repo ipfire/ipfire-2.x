@@ -2,3 +2,5 @@ etc/system-release
 etc/issue
 etc/rc.d/init.d/snort
 opt/pakfire/lib/functions.pl
+usr/sbin/convert-portfw
+var/ipfire/general-functions.pl
