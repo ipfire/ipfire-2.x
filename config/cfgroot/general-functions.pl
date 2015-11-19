@@ -655,7 +655,7 @@ sub validfqdn
 	my @parts = split (/\./, $fqdn);	# Split hostname at the '.'
 	if (scalar(@parts) < 2) {		# At least two parts should
 		return 0;}			# exist in a FQDN
-						# (i.e. hostname.domain)
+						# (i.e.hostname.domain)
 	foreach $part (@parts) {
 		# Each part should be at least one character in length
 		# but no more than 63 characters
@@ -747,14 +747,25 @@ sub ipcidr2msk {
 }
 
 sub validemail {
-    my $mail = shift;
-    return 0 if ( $mail !~ /^[0-9a-zA-Z\.\-\_]+\@[0-9a-zA-Z\.\-]+$/ );
-    return 0 if ( $mail =~ /^[^0-9a-zA-Z]|[^0-9a-zA-Z]$/);
-    return 0 if ( $mail !~ /([0-9a-zA-Z]{1})\@./ );
-    return 0 if ( $mail !~ /.\@([0-9a-zA-Z]{1})/ );
-    return 0 if ( $mail =~ /.\.\-.|.\-\..|.\.\..|.\-\-./g );
-    return 0 if ( $mail =~ /.\.\_.|.\-\_.|.\_\..|.\_\-.|.\_\_./g );
-    return 0 if ( $mail !~ /\.([a-zA-Z]{2,4})$/ );
+    my $address = shift;
+    my @parts = split( /\@/, $address );
+    my $count=@parts;
+
+    #check if we have one part before and after '@'
+    return 0 if ( $count != 2 );
+
+    #check if one of the parts starts or ends with a dot
+    return 0 if ( substr($parts[0],0,1) eq '.' );
+    return 0 if ( substr($parts[0],-1,1) eq '.' );
+    return 0 if ( substr($parts[1],0,1) eq '.' );
+    return 0 if ( substr($parts[1],-1,1) eq '.' );
+
+    #check first addresspart (before '@' sign)
+    return 0 if  ( $parts[0] !~ m/^[a-zA-Z0-9\.!\-\+#]+$/ );
+
+    #check second addresspart (after '@' sign)
+    return 0 if  ( $parts[1] !~ m/^[a-zA-Z0-9\.\-]+$/ );
+
     return 1;
 }
 
