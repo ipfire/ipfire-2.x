@@ -6,19 +6,20 @@
 # Andrei Skipin <skian2007@yandex.ru>, 2014
 # ellviss <kpe1501@gmail.com>, 2015
 # bubnov_pi <ipfire@bubnov.su>, 2014
+# Tim <evargrin@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2015-02-17 19:30+0000\n"
-"Last-Translator: ellviss <kpe1501@gmail.com>\n"
-"Language-Team: Russian (http://www.transifex.com/projects/p/ipfire/language/ru/)\n"
+"PO-Revision-Date: 2015-04-25 04:53+0000\n"
+"Last-Translator: Tim <evargrin@gmail.com>\n"
+"Language-Team: Russian (http://www.transifex.com/mstremer/ipfire/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: dhcp.c:50
 msgid "Start address:"
@@ -214,11 +215,11 @@ msgstr ""
 #: misc.c:62
 #, c-format
 msgid "Unable to write %s/main/hostname.conf"
-msgstr ""
+msgstr "Недоступна запись в %s/main/hostname.conf"
 
 #: misc.c:71
 msgid "Unable to open main hosts file."
-msgstr ""
+msgstr "Не удаётся открыть основной hosts файл."
 
 #: misc.c:76
 msgid "Unable to write /etc/hosts."
@@ -234,7 +235,7 @@ msgstr "Недоступна запись в /etc/hosts.allow."
 
 #: misc.c:136
 msgid "Unable to set hostname."
-msgstr ""
+msgstr "Не удается указать имя хоста."
 
 #: misc.c:147
 msgid "Scanning and configuring ISDN devices."
@@ -242,7 +243,7 @@ msgstr "Сканирование и конфигурирование ISDN уст
 
 #: misc.c:148
 msgid "Unable to scan for ISDN devices."
-msgstr ""
+msgstr "Не удаётся просканировать ISDN устройства."
 
 #: netstuff.c:86
 #, c-format
@@ -252,7 +253,7 @@ msgstr "Интерфейс - %s"
 #: netstuff.c:91
 #, c-format
 msgid "Enter the IP address information for the %s interface."
-msgstr ""
+msgstr "Укажите IP адрес для %s интерфейса."
 
 #: netstuff.c:103
 msgid "Static"
@@ -264,7 +265,7 @@ msgstr "DHCP-сервер"
 
 #: netstuff.c:105
 msgid "PPP DIALUP (PPPoE, modem, ATM ...)"
-msgstr ""
+msgstr "PPP DIALUP (PPPoE, модем, ATM ...)"
 
 #: netstuff.c:113
 msgid "DHCP Hostname:"
@@ -272,7 +273,7 @@ msgstr "Имя хоста DHCP:"
 
 #: netstuff.c:115
 msgid "Force DHCP MTU:"
-msgstr ""
+msgstr "Форсировать DHCP MTU:"
 
 #: netstuff.c:134
 msgid "IP address:"
@@ -284,7 +285,7 @@ msgstr "Сетевая маска:"
 
 #: netstuff.c:173 networking.c:749
 msgid "The following fields are invalid:"
-msgstr ""
+msgstr "Следующие поля неверны:"
 
 #: netstuff.c:183
 msgid "IP address"
@@ -300,7 +301,7 @@ msgstr "Имя хоста DHCP"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
-msgstr ""
+msgstr "Не установлено"
 
 #: netstuff.c:669
 #, c-format
@@ -317,11 +318,11 @@ msgstr "Выберите"
 
 #: netstuff.c:673
 msgid "Identify"
-msgstr ""
+msgstr "Идентифицировать"
 
 #: netstuff.c:678
 msgid "Device Identification"
-msgstr ""
+msgstr "Определение устройства"
 
 #: netstuff.c:678
 msgid "The lights on the selected port should flash now for 10 seconds..."
@@ -338,7 +339,7 @@ msgstr ""
 #: netstuff.c:732
 #, c-format
 msgid "Do you really want to remove the assigned %s interface?"
-msgstr ""
+msgstr "Вы действительно хотите удалить назначенный %s интерфейс?"
 
 #: netstuff.c:755
 msgid "Select network driver"
@@ -346,7 +347,7 @@ msgstr "Выберите сетевой драйвер"
 
 #: netstuff.c:755
 msgid "Set additional module parameters"
-msgstr ""
+msgstr "Указать дополнительные параметры модуля."
 
 #: netstuff.c:762
 msgid "Loading module..."
@@ -358,7 +359,7 @@ msgstr "Невозможно загрузить драйвер модуля."
 
 #: netstuff.c:780
 msgid "Module name cannot be blank."
-msgstr ""
+msgstr "Имя модуля не может быть пустым."
 
 #: networking.c:110
 msgid "Stopping network..."
@@ -370,7 +371,7 @@ msgstr "Перезапуск сети..."
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
-msgstr ""
+msgstr "Не назначен ЗЕЛЁНЫЙ интерфейс."
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
@@ -386,7 +387,7 @@ msgstr "Игнорировать"
 
 #: networking.c:164
 msgid "No RED interface assigned."
-msgstr ""
+msgstr "Не указан КРАСНЫЙ интерфейс."
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
@@ -394,7 +395,7 @@ msgstr ""
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
-msgstr ""
+msgstr "Не указан ОРАНЖЕВЫЙ интерфейс."
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
@@ -402,7 +403,7 @@ msgstr ""
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
-msgstr ""
+msgstr "Не указан СИНИЙ интерфейс."
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
@@ -418,11 +419,11 @@ msgstr "Отсутствует шлюз по умолчанию."
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
-msgstr ""
+msgstr "Тип конфигурации сети"
 
 #: networking.c:238 networking.c:409
 msgid "Drivers and card assignments"
-msgstr ""
+msgstr "Назначение карт и драйверов"
 
 #: networking.c:239 networking.c:640
 msgid "Address settings"
@@ -434,7 +435,7 @@ msgstr "Настройка DNS и Шлюза"
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
-msgstr ""
+msgstr "Когда конфигурация завершиться, необходимо будет перезагрузить сеть."
 
 #: networking.c:267
 #, c-format
@@ -491,7 +492,7 @@ msgstr ""
 
 #: networking.c:519
 msgid "Assigned Cards"
-msgstr ""
+msgstr "Назначение сетевых карт"
 
 #: networking.c:520
 msgid "Remove"
@@ -555,12 +556,12 @@ msgstr ""
 #: passwords.c:60
 #, c-format
 msgid "Setting %s 'admin' user password..."
-msgstr ""
+msgstr "Укажите пароль %s для пользователя 'admin'..."
 
 #: passwords.c:62
 #, c-format
 msgid "Problem setting %s 'admin' user password."
-msgstr ""
+msgstr "Проблема с указанием пароля %s для пользователя 'admin'."
 
 #: passwords.c:76
 msgid "Password:"

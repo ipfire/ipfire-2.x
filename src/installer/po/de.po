@@ -6,14 +6,15 @@
 # Michael Tremer <michael.tremer@ipfire.org>, 2014
 # Peter Cloudstone <rmg-mainz@web.de>, 2014
 # Stefan Schantl <stefan.schantl@ipfire.org>, 2014
+# Sun Tiger, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-11-07 15:02+0000\n"
-"Last-Translator: Peter Cloudstone <rmg-mainz@web.de>\n"
-"Language-Team: German (http://www.transifex.com/projects/p/ipfire/language/de/)\n"
+"PO-Revision-Date: 2015-05-07 16:56+0000\n"
+"Last-Translator: Sun Tiger\n"
+"Language-Team: German (http://www.transifex.com/mstremer/ipfire/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -47,7 +48,7 @@ msgstr "Wählen Sie die gewünschte Sprache für den Installationsprozess aus."
 
 #: main.c:418
 msgid "Unattended mode"
-msgstr "Automatikmodus"
+msgstr "Automatischer Modus"
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
@@ -134,7 +135,7 @@ msgstr "Lizenzvereinbarung"
 
 #: main.c:544
 msgid "License not accepted!"
-msgstr "Lizenz nicht akzeptiert!"
+msgstr "Lizenz wurde nicht akzeptiert!"
 
 #: main.c:566
 msgid "No hard disk found."
@@ -170,7 +171,7 @@ msgstr "Das Installationsprogramm wird die folgende  Festplatte nun vorbereiten:
 
 #: main.c:619
 msgid "Disk Setup"
-msgstr "Disk-Setup"
+msgstr "Festplatten-Setup"
 
 #: main.c:620 main.c:630
 msgid "Delete all data"
@@ -254,7 +255,7 @@ msgstr "Die Dateisysteme konnten nicht erstellt werden."
 
 #: main.c:749
 msgid "Unable to mount filesystems."
-msgstr "Die Dateisysteme konnten nicht eingehangen werden."
+msgstr "Die Dateisysteme konnten nicht eingehängt werden."
 
 #: main.c:760
 msgid "Installing the system..."
@@ -266,11 +267,11 @@ msgstr "Das System konnte nicht installiert werden."
 
 #: main.c:777
 msgid "Installing the language cache..."
-msgstr "Installiere den Sprachdateicache..."
+msgstr "Installiere den Sprachdateizwischenspeicher..."
 
 #: main.c:778
 msgid "Unable to install the language cache."
-msgstr "Der Sprachdateicache konnte nicht erstellt werden."
+msgstr "Der Sprachdateizwischenspeicher konnte nicht erstellt werden."
 
 #: main.c:783
 msgid "Installing the bootloader..."

@@ -9,9 +9,9 @@ msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2015-02-02 22:35+0000\n"
+"PO-Revision-Date: 2015-06-22 10:58+0000\n"
 "Last-Translator: Ardit Dani <ardit.dani@gmail.com>\n"
-"Language-Team: Albanian (http://www.transifex.com/projects/p/ipfire/language/sq/)\n"
+"Language-Team: Albanian (http://www.transifex.com/mstremer/ipfire/language/sq/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -64,7 +64,7 @@ msgstr ""
 
 #: dhcp.c:125
 msgid "Enabled"
-msgstr ""
+msgstr "Mundëso"
 
 #: dhcp.c:142 domainname.c:43 hostname.c:47 keymap.c:86 main.c:99 main.c:172
 #: main.c:174 netstuff.c:157 netstuff.c:733 netstuff.c:756 networking.c:163
@@ -101,7 +101,7 @@ msgstr ""
 
 #: dhcp.c:182 networking.c:764
 msgid "Secondary DNS"
-msgstr ""
+msgstr "DNS Dytësorë"
 
 #: dhcp.c:189
 msgid "Default lease time"
