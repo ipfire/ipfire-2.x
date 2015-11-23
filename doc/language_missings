@@ -94,6 +94,7 @@
 < dh key warn
 < dh key warn1
 < dh parameter
+< dl client arch insecure
 < dnat address
 < dns address deleted txt
 < dnsforward
@@ -704,6 +705,7 @@
 < dh key warn
 < dh key warn1
 < dh parameter
+< dl client arch insecure
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -1295,6 +1297,7 @@
 < dh key warn
 < dh key warn1
 < dh parameter
+< dl client arch insecure
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -1875,6 +1878,7 @@
 < dh key warn1
 < dh parameter
 < disk access per
+< dl client arch insecure
 < dnat address
 < dnsforward
 < dnsforward add a new entry
