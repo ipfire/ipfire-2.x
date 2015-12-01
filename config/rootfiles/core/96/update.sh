@@ -41,8 +41,6 @@ extract_files
 
 # Start services
 /etc/init.d/dnsmasq restart
-/etc/init.d/sshd start
-/etc/init.d/squid start
 
 # This update need a reboot...
 #touch /var/run/need_reboot
