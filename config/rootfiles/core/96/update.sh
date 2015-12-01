@@ -40,7 +40,7 @@ extract_files
 # /usr/local/bin/update-lang-cache
 
 # Start services
-/etc/init.d/dnsmasq start
+/etc/init.d/dnsmasq restart
 /etc/init.d/sshd start
 /etc/init.d/squid start
 
