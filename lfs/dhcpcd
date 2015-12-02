@@ -87,5 +87,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	sed -i -e "s|-ge 576|-gt 576|g" $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/10-mtu
 
+	install -m 644 $(DIR_SRC)/config/dhcpc/dhcpcd.conf $(CONFIG_ROOT)/dhcpc/
+	chown root:root $(CONFIG_ROOT)/dhcpc/dhcpcd.conf
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
