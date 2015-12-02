@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 63
+PAK_VER    = 64
 DEPS	   = ""
 
 KERNEL_ARCH = $(MACHINE)
