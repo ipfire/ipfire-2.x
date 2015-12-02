@@ -7,6 +7,7 @@ etc/ipsec.user.conf
 etc/ipsec.user.secrets
 etc/localtime
 etc/shadow
+etc/snort/snort.conf
 etc/ssh/ssh_config
 etc/ssh/sshd_config
 etc/ssl/openssl.cnf

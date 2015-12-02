@@ -22,5 +22,6 @@ usr/local/bin/ipsecctrl
 usr/local/bin/settime
 usr/local/bin/timecheck
 var/ipfire/backup/exclude
+var/ipfire/dhcpc/dhcpcd.conf
 var/ipfire/langs
 var/ipfire/network-functions.pl

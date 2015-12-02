@@ -118,10 +118,9 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 }
 
 if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
-
 	# Validate inputs
-	if (!&General::validipandmask($settings{'IP'}))){
-	$errormessage = $Lang::tr{'invalid ip'}." / ".$Lang::tr{'invalid netmask'};
+	if (!&General::validipandmask($settings{'IP'})){
+		$errormessage = $Lang::tr{'invalid ip'}." / ".$Lang::tr{'invalid netmask'};
 	}else{
 		#set networkip if not already correctly defined
 		my($ip,$cidr) = split(/\//,$settings{'IP'});
