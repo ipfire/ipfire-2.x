@@ -702,4 +702,35 @@ run_subdir() {
 	done
 }
 
+mem_amount() {
+        local pagesize="$(getconf PAGESIZE)"
+        local pages="$(getconf _PHYS_PAGES)"
+
+        echo "$(( ${pagesize} * ${pages} / 1024 / 1024 ))"
+}
+
+mount_ramdisk() {
+	mount -t tmpfs none $1
+}
+
+umount_ramdisk() {
+	if mountpoint $1 &>/dev/null; then
+			umount $1
+	fi
+}
+
+backup_ramdisk() {
+		if [ ! -e $1.bak ]; then
+			mkdir -p $1.bak
+		fi
+		cp -pR $1/* $1.bak/
+		rm -rf $1/*
+}
+
+restore_ramdisk() {
+	if [ -e $1.bak ];then
+		cp -pR $1.bak/* $1/
+		rm -rf $1.bak/*
+	fi
+}
 # End $rc_base/init.d/functions

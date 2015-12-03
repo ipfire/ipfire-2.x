@@ -6,6 +6,7 @@
 . $rc_functions
 
 eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
+eval $(/usr/local/bin/readhash /etc/sysconfig/ramdisk)
 
 if [ "$RRDLOG" = '' ]; then
 	RRDLOG=/var/log/rrd
@@ -13,6 +14,35 @@ fi
 
 case "$1" in
 	start)
+		if [ "$FORCE" == '1' ] || [ "$(mem_amount)" -gt "490" ];then
+			#mount ramdisk
+			if ! mountpoint $RRDLOG &>/dev/null; then
+				boot_mesg "Mount rrd Ramdisk..."
+				if [ $(find "$RRDLOG" | wc -l) -ne 1 ]; then
+					backup_ramdisk "$RRDLOG"
+				fi
+				mount_ramdisk "$RRDLOG"
+				evaluate_retval
+				#cleanup cron
+				if [ -e $RRDLOG.bak/cron/new.root ]; then
+					if [ -e $RRDLOG.bak/cron/root ]; then
+						rm -f $RRDLOG.bak/cron/new.root
+					fi
+				fi
+				#restore old values to ramdisk if exist
+				restore_ramdisk "$RRDLOG"
+			fi
+		else
+			restore_ramdisk "$RRDLOG"
+		fi
+			#
+			# Move /var/spool/cron to ramdisk and make a symlink
+			#
+			if [ ! -L /var/spool/cron ]; then
+				mv /var/spool/cron /var/log/rrd/cron
+				ln -s /var/log/rrd/cron /var/spool/cron
+			fi
+
 		# If run from init and collectd alrady started then exit silent
 		if [ "$(basename $0)" != "collectd" ]; then
 			if [ "$(ps -A | grep " collectd$")" != "" ]; then
@@ -106,10 +136,8 @@ case "$1" in
 		boot_mesg "Stopping Collection daemon..."
 		killproc /usr/sbin/collectd
 		evaluate_retval
-		# Save the ramdisk at manual stop but not at shutdown
-		if [ "$(basename $0)" == "collectd" ]; then
-		    /etc/init.d/tmpfs backup
-		fi
+		backup_ramdisk "$RRDLOG"
+		umount_ramdisk "$RRDLOG"
 		# sync after backup...
 		sync
 		;;
