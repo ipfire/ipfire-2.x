@@ -21,25 +21,13 @@ case "$1" in
 				fi
 				mount_ramdisk "$RRDLOG"
 				evaluate_retval
-				#cleanup cron
-				if [ -e $RRDLOG.bak/cron/new.root ]; then
-					if [ -e $RRDLOG.bak/cron/root ]; then
-						rm -f $RRDLOG.bak/cron/new.root
-					fi
-				fi
+
 				#restore old values to ramdisk if exist
 				restore_ramdisk "$RRDLOG"
 			fi
 		else
 			restore_ramdisk "$RRDLOG"
 		fi
-			#
-			# Move /var/spool/cron to ramdisk and make a symlink
-			#
-			if [ ! -L /var/spool/cron ]; then
-				mv /var/spool/cron /var/log/rrd/cron
-				ln -s /var/log/rrd/cron /var/spool/cron
-			fi
 
 		# If run from init and collectd alrady started then exit silent
 		if [ "$(basename $0)" != "collectd" ]; then

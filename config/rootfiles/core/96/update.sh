@@ -32,6 +32,7 @@ do
 done
 
 # Stop services
+/etc/init.d/fcron stop
 
 # Extract files
 extract_files
@@ -39,7 +40,14 @@ extract_files
 # Update Language cache
 # /usr/local/bin/update-lang-cache
 
+if [ -L "/var/spool/cron" ]; then
+	rm -f /var/spool/cron
+	mv /var/log/rrd/cron /var/spool/cron
+	chown cron:cron /var/spool/cron
+fi
+
 # Start services
+/etc/init.d/fcron start
 /etc/init.d/dnsmasq restart
 
 # This update need a reboot...
