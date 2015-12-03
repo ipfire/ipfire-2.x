@@ -13,20 +13,9 @@ fi
 case "$1" in
 	start)
 		if use_ramdisk; then
-			#mount ramdisk
-			if ! mountpoint $RRDLOG &>/dev/null; then
-				boot_mesg "Mount rrd Ramdisk..."
-				if [ $(find "$RRDLOG" | wc -l) -ne 1 ]; then
-					backup_ramdisk "$RRDLOG"
-				fi
-				mount_ramdisk "$RRDLOG"
-				evaluate_retval
-
-				#restore old values to ramdisk if exist
-				restore_ramdisk "$RRDLOG"
-			fi
-		else
-			restore_ramdisk "$RRDLOG"
+			boot_mesg "Mounting RRD ramdisk..."
+			mount_ramdisk "${RRDLOG}"
+			evaluate_retval
 		fi
 
 		# If run from init and collectd alrady started then exit silent
@@ -122,10 +111,9 @@ case "$1" in
 		boot_mesg "Stopping Collection daemon..."
 		killproc /usr/sbin/collectd
 		evaluate_retval
-		backup_ramdisk "$RRDLOG"
-		umount_ramdisk "$RRDLOG"
-		# sync after backup...
-		sync
+
+		# Umount the ramdisk (if any)
+		umount_ramdisk "${RRDLOG}"
 		;;
 	restart)
 		${0} stop

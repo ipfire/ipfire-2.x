@@ -743,29 +743,45 @@ use_ramdisk() {
 }
 
 mount_ramdisk() {
-	mount -t tmpfs none $1
+	local path="${1}"
+	local path_tmpfs="${path}.tmpfs"
+
+	# Check if the ramdisk is already mounted
+	if mountpoint "${path}" &>/dev/null; then
+		return 0
+	fi
+
+	# Create ramdisk
+	mkdir -p "${path_tmpfs}"
+	mount -t tmpfs none "${path_tmpfs}"
+
+	# Restore ramdisk content
+	cp -pR "${path}/*" "${path_tmpfs}"
+
+	# Move ramdisk to final destination
+	mount --move "${path_tmpfs}" "${path}"
+	rm -f "${path_tmpfs}"
 }
 
 umount_ramdisk() {
-	if mountpoint $1 &>/dev/null; then
-		umount $1
-	fi
-}
+	local path="${1}"
+	local path_tmpfs="${path}.tmpfs"
 
-backup_ramdisk() {
-	if [ ! -e $1.bak ]; then
-		mkdir -p $1.bak
+	# Check if a ramdisk is actually mounted
+	if ! mountpoint "${path}" &>/dev/null; then
+		return 0
 	fi
 
-	cp -pR $1/* $1.bak/
-	rm -rf $1/*
-}
+	# Move the ramdisk
+	mkdir -p "${path_tmpfs}"
+	mount --move "${path}" "${path_tmpfs}"
 
-restore_ramdisk() {
-	if [ -e $1.bak ];then
-		cp -pR $1.bak/* $1/
-		rm -rf $1.bak/*
-	fi
+	# Backup ramdisk content
+	cp -pR "${path_tmpfs}/*" "${path}"
+
+	# Destroy the ramdisk
+	umount "${path_tmpfs}"
+	rm -f "${path_tmpfs}"
 }
 
 # End $rc_base/init.d/functions

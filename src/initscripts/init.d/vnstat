@@ -13,31 +13,16 @@ fi
 case "$1" in
 	start)
 		if use_ramdisk; then
-			if ! mountpoint $VNSTATLOG &>/dev/null; then
-				boot_mesg "Mount vnstat ramdisk..."
-				if [ $(find "$VNSTATLOG" | wc -l) -ne 1 ]; then
-					backup_ramdisk "$VNSTATLOG"
-				fi
-				mount_ramdisk "$VNSTATLOG"
-				evaluate_retval
-				$0 restore
-			fi
-		else
-			restore_ramdisk "$VNSTATLOG"
+			boot_mesg "Mounting vnstat ramdisk..."
+			mount_ramdisk "${VNSTATLOG}"
+			evaluate_retval
 		fi
 		;;
 	stop)
-		$0 backup
-		umount_ramdisk "$VNSTATLOG"
-		;;
-	backup)
-		backup_ramdisk "$VNSTATLOG"
-		;;
-	restore)
-		restore_ramdisk "$VNSTATLOG"
+		umount_ramdisk "${VNSTATLOG}"
 		;;
 	*)
-		echo "Usage: $0 {start|stop|backup}"
+		echo "Usage: $0 {start|stop}"
 		exit 1
 		;;
 esac
