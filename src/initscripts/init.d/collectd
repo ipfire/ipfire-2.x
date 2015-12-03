@@ -1,12 +1,10 @@
 #!/bin/sh
 # Begin $rc_base/init.d/collecd
 
-
 . /etc/sysconfig/rc
 . $rc_functions
 
 eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
-eval $(/usr/local/bin/readhash /etc/sysconfig/ramdisk)
 
 if [ "$RRDLOG" = '' ]; then
 	RRDLOG=/var/log/rrd
@@ -14,7 +12,7 @@ fi
 
 case "$1" in
 	start)
-		if [ "$FORCE" == '1' ] || [ "$(mem_amount)" -gt "490" ];then
+		if use_ramdisk; then
 			#mount ramdisk
 			if ! mountpoint $RRDLOG &>/dev/null; then
 				boot_mesg "Mount rrd Ramdisk..."

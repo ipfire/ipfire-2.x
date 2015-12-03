@@ -12,7 +12,7 @@ fi
 
 case "$1" in
 	start)
-		if [ "$FORCE" == '1' ] || [ "$(mem_amount)" -gt "490" ];then
+		if use_ramdisk; then
 			if ! mountpoint $VNSTATLOG &>/dev/null; then
 				boot_mesg "Mount vnstat ramdisk..."
 				if [ $(find "$VNSTATLOG" | wc -l) -ne 1 ]; then

@@ -709,6 +709,39 @@ mem_amount() {
         echo "$(( ${pagesize} * ${pages} / 1024 / 1024 ))"
 }
 
+use_ramdisk() {
+	eval $(/usr/local/bin/readhash /etc/sysconfig/ramdisk)
+
+	case "${RAMDISK_MODE}" in
+		# Don't use ramdisk
+		0)
+			return 1
+			;;
+
+		# Always use ramdisk
+		1)
+			return 0
+			;;
+
+		# Automatic mode - use ramdisk if sufficient
+		# memory is available
+		2)
+			local mem_avail="$(mem_amount)"
+
+			if [ ${mem_avail} -ge 490 ]; then
+				return 0
+			else
+				return 1
+			fi
+			;;
+
+		# Fail for everything else
+		*)
+			return 2
+			;;
+	esac
+}
+
 mount_ramdisk() {
 	mount -t tmpfs none $1
 }

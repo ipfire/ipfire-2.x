@@ -61,8 +61,8 @@ $(TARGET) :
 	-rm -rf /etc/init.d
 	ln -svf rc.d/init.d /etc/init.d
 
-	#create ramdiskfile to force ramdiskcreation if FORCE=1
-	echo "FORCE=0" > /etc/sysconfig/ramdisk
+	# Create default ramdisk configuration
+	echo "RAMDISK_MODE=0" > /etc/sysconfig/ramdisk
 
 	for i in $(DIR_SRC)/src/initscripts/init.d/*; do \
 		install -v -m 754 $$i /etc/rc.d/init.d/; \
