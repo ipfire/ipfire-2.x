@@ -715,16 +715,17 @@ mount_ramdisk() {
 
 umount_ramdisk() {
 	if mountpoint $1 &>/dev/null; then
-			umount $1
+		umount $1
 	fi
 }
 
 backup_ramdisk() {
-		if [ ! -e $1.bak ]; then
-			mkdir -p $1.bak
-		fi
-		cp -pR $1/* $1.bak/
-		rm -rf $1/*
+	if [ ! -e $1.bak ]; then
+		mkdir -p $1.bak
+	fi
+
+	cp -pR $1/* $1.bak/
+	rm -rf $1/*
 }
 
 restore_ramdisk() {
@@ -733,4 +734,5 @@ restore_ramdisk() {
 		rm -rf $1.bak/*
 	fi
 }
+
 # End $rc_base/init.d/functions
