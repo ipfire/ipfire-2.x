@@ -33,12 +33,35 @@ done
 
 # Stop services
 /etc/init.d/fcron stop
+/etc/init.d/collectd stop
+qosctrl stop
+
+# Backup RRDs
+if [ -d "/var/log/rrd.bak" ]; then
+	# Umount ramdisk
+	umount -l "/var/log/rrd"
+	rm -f "/var/log/rrd"
+
+	mv "/var/log/rrd.bak/vnstat" "/var/log/vnstat"
+	mv "/var/log/rrd.bak" "/var/log/rrd"
+fi
+
+# Remove old scripts
+rm -f /etc/rc.d/init.d/tmpfs \
+	/etc/rc.d/rc0.d/K85tmpfs \
+	/etc/rc.d/rc3.d/S01tmpfs \
+	/etc/rc.d/rc6.d/K85tmpfs
 
 # Extract files
 extract_files
 
 # Update Language cache
 # /usr/local/bin/update-lang-cache
+
+# Keep (almost) old ramdisk behaviour
+if [ ! -e "/etc/sysconfig/ramdisk" ]; then
+	echo "RAMDISK_MODE=2" > /etc/sysconfig/ramdisk
+fi
 
 if [ -L "/var/spool/cron" ]; then
 	rm -f /var/spool/cron
@@ -47,8 +70,11 @@ if [ -L "/var/spool/cron" ]; then
 fi
 
 # Start services
+/etc/init.d/collectd start
+/etc/init.d/vnstat start
 /etc/init.d/fcron start
 /etc/init.d/dnsmasq restart
+qosctrl start
 
 # This update need a reboot...
 #touch /var/run/need_reboot
