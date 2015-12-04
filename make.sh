@@ -679,7 +679,6 @@ buildipfire() {
   ipfiremake ncftp
   ipfiremake etherwake
   ipfiremake bwm-ng
-  ipfiremake tripwire
   ipfiremake sysstat
   ipfiremake vsftpd
   ipfiremake strongswan

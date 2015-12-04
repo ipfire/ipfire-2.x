@@ -54,7 +54,7 @@ $(TARGET) :
 			ethernet extrahd/bin fwlogs fwhosts firewall isdn key langs logging mac main \
 			menu.d modem net-traffic net-traffic/templates nfs optionsfw \
 			ovpn patches pakfire portfw ppp private proxy/advanced/cre \
-			proxy/calamaris/bin qos/bin red remote sensors snort time tripwire/report \
+			proxy/calamaris/bin qos/bin red remote sensors snort time \
 			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin upnp vpn \
 			wakeonlan wireless ; do \
 	        mkdir -p $(CONFIG_ROOT)/$$i; \
@@ -69,7 +69,7 @@ $(TARGET) :
 	    isdn/settings mac/settings main/disable_nf_sip main/hosts main/routing main/settings net-traffic/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings proxy/squid.conf proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
-	    qos/tosconfig snort/settings tripwire/settings upnp/settings vpn/config vpn/settings vpn/ipsec.conf \
+	    qos/tosconfig snort/settings upnp/settings vpn/config vpn/settings vpn/ipsec.conf \
 	    vpn/ipsec.secrets vpn/caconfig wakeonlan/clients.conf wireless/config wireless/settings; do \
 	    touch $(CONFIG_ROOT)/$$i; \
 	done

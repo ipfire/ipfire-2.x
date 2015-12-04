@@ -115,7 +115,6 @@ var/ipfire/menu.d/70-log.menu
 #var/ipfire/menu.d/EX-mpfire.menu
 #var/ipfire/menu.d/EX-samba.menu
 #var/ipfire/menu.d/EX-tor.menu
-#var/ipfire/menu.d/EX-tripwire.menu
 #var/ipfire/menu.d/EX-wlanap.menu
 var/ipfire/modem
 #var/ipfire/modem/defaults
@@ -182,9 +181,6 @@ var/ipfire/snort
 #var/ipfire/snort/settings
 var/ipfire/time
 #var/ipfire/time/settings
-#var/ipfire/tripwire
-#var/ipfire/tripwire/report
-#var/ipfire/tripwire/settings
 var/ipfire/updatexlrator
 var/ipfire/updatexlrator/autocheck
 var/ipfire/updatexlrator/bin

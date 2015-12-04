@@ -33,7 +33,6 @@ usr/local/bin/sshctrl
 usr/local/bin/syslogdctrl
 usr/local/bin/timectrl
 #usr/local/bin/torctrl
-#usr/local/bin/tripwirectrl
 usr/local/bin/updxlratorctrl
 usr/local/bin/upnpctrl
 usr/local/bin/urlfilterctrl
