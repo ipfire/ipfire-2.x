@@ -330,6 +330,7 @@ buildbase() {
     lfsmake2 gmp
     lfsmake2 gmp-compat
     lfsmake2 mpfr
+    lfsmake2 libmpc
     lfsmake2 file
     lfsmake2 gcc
     lfsmake2 sed
