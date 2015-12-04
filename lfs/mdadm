@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.3.2
+VER        = 3.3.4
 
 THISAPP    = mdadm-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 44698d351501cac6a89072dc877eb220
+$(DL_FILE)_MD5 = 7ca8b114710f98f53f20c5787b674a09
 
 install : $(TARGET)
 
