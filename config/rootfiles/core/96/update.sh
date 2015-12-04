@@ -76,6 +76,9 @@ fi
 /etc/init.d/dnsmasq restart
 qosctrl start
 
+# Disable loading of cryptodev
+sed -e "s/^cryptodev/# &/g" -i /etc/sysconfig/modules
+
 # This update need a reboot...
 #touch /var/run/need_reboot
 

@@ -422,7 +422,6 @@ buildipfire() {
 	x86_64)
 		ipfiremake linux			KCFG=""
 		ipfiremake backports			KCFG=""
-		ipfiremake cryptodev			KCFG=""
 		ipfiremake e1000e			KCFG=""
 		ipfiremake igb				KCFG=""
 		ipfiremake ixgbe			KCFG=""
@@ -433,7 +432,6 @@ buildipfire() {
 		# x86-pae (Native and new XEN) kernel build
 		ipfiremake linux			KCFG="-pae"
 		ipfiremake backports			KCFG="-pae"
-		ipfiremake cryptodev			KCFG="-pae"
 		ipfiremake e1000e			KCFG="-pae"
 		ipfiremake igb				KCFG="-pae"
 		ipfiremake ixgbe			KCFG="-pae"
@@ -443,7 +441,6 @@ buildipfire() {
 		# x86 kernel build
 		ipfiremake linux			KCFG=""
 		ipfiremake backports			KCFG=""
-		ipfiremake cryptodev			KCFG=""
 		ipfiremake e1000e			KCFG=""
 		ipfiremake igb				KCFG=""
 		ipfiremake ixgbe			KCFG=""
@@ -455,14 +452,12 @@ buildipfire() {
 		# arm-rpi (Raspberry Pi) kernel build
 		ipfiremake linux			KCFG="-rpi"
 		ipfiremake backports			KCFG="-rpi"
-		ipfiremake cryptodev			KCFG="-rpi"
 		ipfiremake xtables-addons		KCFG="-rpi"
 		ipfiremake linux-initrd			KCFG="-rpi"
 
 		# arm multi platform (Panda, Wandboard ...) kernel build
 		ipfiremake linux			KCFG="-multi"
 		ipfiremake backports			KCFG="-multi"
-		ipfiremake cryptodev			KCFG="-multi"
 		ipfiremake e1000e			KCFG="-multi"
 		ipfiremake igb				KCFG="-multi"
 		ipfiremake ixgbe			KCFG="-multi"
@@ -472,7 +467,6 @@ buildipfire() {
 		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
 		ipfiremake linux			KCFG="-kirkwood"
 		ipfiremake backports			KCFG="-kirkwood"
-		ipfiremake cryptodev			KCFG="-kirkwood"
 		ipfiremake e1000e			KCFG="-kirkwood"
 		ipfiremake igb				KCFG="-kirkwood"
 		ipfiremake ixgbe			KCFG="-kirkwood"
