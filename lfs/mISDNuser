@@ -70,6 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_SRC)/mISDNuser && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_SRC)/mISDNuser && sed -e "s/-Werror//g" -i */Makefile.*
 	cd $(DIR_SRC)/mISDNuser && make
 	cd $(DIR_SRC)/mISDNuser && ./configure --prefix=/usr --with-AF_ISDN=34
 	cd $(DIR_SRC)/mISDNuser && make MISDNDIR=/usr/src/linux
