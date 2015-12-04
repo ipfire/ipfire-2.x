@@ -1,0 +1,17 @@
+2014-12-17  Jakub Jelinek  <jakub@redhat.com>
+
+	PR sanitizer/64336
+	* tsan.c (instrument_expr): Ignore TREE_READONLY bit
+	on MEM_REFs.
+
+--- gcc/tsan.c.jj	2014-12-17 10:53:30.000000000 +0100
++++ gcc/tsan.c	2014-12-17 11:55:12.793058159 +0100
+@@ -138,7 +138,7 @@ instrument_expr (gimple_stmt_iterator gs
+ 	return false;
+     }
+ 
+-  if (TREE_READONLY (base)
++  if ((TREE_READONLY (base) && TREE_CODE (base) != MEM_REF)
+       || (TREE_CODE (base) == VAR_DECL
+ 	  && DECL_HARD_REGISTER (base)))
+     return false;

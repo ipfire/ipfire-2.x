@@ -1,0 +1,11 @@
+--- libgomp/configure.tgt.jj	2008-01-10 20:53:48.000000000 +0100
++++ libgomp/configure.tgt	2008-03-27 12:44:51.000000000 +0100
+@@ -67,7 +67,7 @@ if test $enable_linux_futex = yes; then
+ 	    ;;
+ 	  *)
+ 	    if test -z "$with_arch"; then
+-	      XCFLAGS="${XCFLAGS} -march=i486 -mtune=${target_cpu}"
++	      XCFLAGS="${XCFLAGS} -march=i486 -mtune=generic"
+ 	    fi
+ 	esac
+ 	;;

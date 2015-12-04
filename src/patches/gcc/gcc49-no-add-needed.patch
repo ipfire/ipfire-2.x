@@ -1,0 +1,50 @@
+2010-02-08  Roland McGrath  <roland@redhat.com>
+
+	* config/rs6000/sysv4.h (LINK_EH_SPEC): Pass --no-add-needed to the
+	linker.
+	* config/gnu-user.h (LINK_EH_SPEC): Likewise.
+	* config/alpha/elf.h (LINK_EH_SPEC): Likewise.
+	* config/ia64/linux.h (LINK_EH_SPEC): Likewise.
+
+--- gcc/config/alpha/elf.h.jj	2011-01-03 12:52:31.118056764 +0100
++++ gcc/config/alpha/elf.h	2011-01-04 18:14:10.931874160 +0100
+@@ -165,5 +165,5 @@ extern int alpha_this_gpdisp_sequence_nu
+    I imagine that other systems will catch up.  In the meantime, it
+    doesn't harm to make sure that the data exists to be used later.  */
+ #if defined(HAVE_LD_EH_FRAME_HDR)
+-#define LINK_EH_SPEC "%{!static:--eh-frame-hdr} "
++#define LINK_EH_SPEC "--no-add-needed %{!static:--eh-frame-hdr} "
+ #endif
+--- gcc/config/ia64/linux.h.jj	2011-01-03 13:02:11.462994522 +0100
++++ gcc/config/ia64/linux.h	2011-01-04 18:14:10.931874160 +0100
+@@ -77,7 +77,7 @@ do {						\
+    Signalize that because we have fde-glibc, we don't need all C shared libs
+    linked against -lgcc_s.  */
+ #undef LINK_EH_SPEC
+-#define LINK_EH_SPEC ""
++#define LINK_EH_SPEC "--no-add-needed "
+ 
+ /* Put all *tf routines in libgcc.  */
+ #undef LIBGCC2_HAS_TF_MODE
+--- gcc/config/gnu-user.h.jj	2011-01-03 12:53:03.739057299 +0100
++++ gcc/config/gnu-user.h	2011-01-04 18:14:10.932814884 +0100
+@@ -82,7 +82,7 @@ see the files COPYING3 and COPYING.RUNTI
+ #define LIB_SPEC GNU_USER_TARGET_LIB_SPEC
+ 
+ #if defined(HAVE_LD_EH_FRAME_HDR)
+-#define LINK_EH_SPEC "%{!static:--eh-frame-hdr} "
++#define LINK_EH_SPEC "--no-add-needed %{!static:--eh-frame-hdr} "
+ #endif
+ 
+ #undef LINK_GCC_C_SEQUENCE_SPEC
+--- gcc/config/rs6000/sysv4.h.jj	2011-01-03 13:02:18.255994215 +0100
++++ gcc/config/rs6000/sysv4.h	2011-01-04 18:14:10.933888871 +0100
+@@ -820,7 +820,7 @@ extern int fixuplabelno;
+   -dynamic-linker " GNU_USER_DYNAMIC_LINKER "}}"
+ 
+ #if defined(HAVE_LD_EH_FRAME_HDR)
+-# define LINK_EH_SPEC "%{!static:--eh-frame-hdr} "
++# define LINK_EH_SPEC "--no-add-needed %{!static:--eh-frame-hdr} "
+ #endif
+ 
+ #define CPP_OS_LINUX_SPEC "-D__unix__ -D__gnu_linux__ -D__linux__ \

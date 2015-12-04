@@ -24,22 +24,22 @@
 
 include Config
 
-VER        = 4.4.7
+VER        = 4.9.3
 
 GMP_VER    = 5.0.5
 MPFR_VER   = 2.4.2
+MPC_VER    = 1.0.3
 
 THISAPP    = gcc-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 CFLAGS    := $(patsubst -march=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mtune=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfloat-abi=%,,$(CFLAGS))
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=476370
-CFLAGS += -fgnu89-inline
+CFLAGS    := $(filter-out -fexceptions,$(CFLAGS))
+CXXFLAGS  := $(CFLAGS)
 
 # Normal build or /tools build.
 #
@@ -136,15 +136,18 @@ export TCFLAGS = $(CFLAGS)
 
 objects = $(DL_FILE) \
 	gmp-$(GMP_VER).tar.bz2 \
-	mpfr-$(MPFR_VER).tar.bz2
+	mpfr-$(MPFR_VER).tar.bz2 \
+	mpc-$(MPC_VER).tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 gmp-$(GMP_VER).tar.bz2 = $(DL_FROM)/gmp-$(GMP_VER).tar.bz2
 mpfr-$(MPFR_VER).tar.bz2 = $(DL_FROM)/mpfr-$(MPFR_VER).tar.bz2
+mpc-$(MPC_VER).tar.gz = $(DL_FROM)/mpc-$(MPC_VER).tar.gz
 
-$(DL_FILE)_MD5			= 295709feb4441b04e87dea3f1bab4281
+$(DL_FILE)_MD5			= 648bfba342bb41a4b5350fb685f85bc5
 gmp-$(GMP_VER).tar.bz2_MD5	= 041487d25e9c230b0c42b106361055fe
 mpfr-$(MPFR_VER).tar.bz2_MD5	= 89e59fe665e2b3ad44a6789f40b059a0
+mpc-$(MPC_VER).tar.gz_MD5	= d6a1d5f8ddea3abd2cc3e98f58352d26
 
 install : $(TARGET)
 
@@ -173,23 +176,16 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/gcc-build
 
 	# Apply patches.
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-build-id.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-c++-builtin-redecl.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-i386-libgomp.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-libtool-no-rpath.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-no-add-needed.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-pr33763.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-rh330771.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-rh533181.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-rh610785.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc44-unwind-debug-hook.patch
-
-	# texinfo 5 syntax-fixes
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc-4.4.7-texinfo-5.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-i386-libgomp.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-libtool-no-rpath.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-no-add-needed.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-pr38757.patch
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-pr64336.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc/gcc-fix-inlining-issues.patch
 
 ifneq "$(ROOT)" ""
 	# Build gmp and mpfr internally in toolchain.
@@ -197,6 +193,8 @@ ifneq "$(ROOT)" ""
 	cd $(DIR_APP) && mv -v gmp-$(GMP_VER) gmp
 	cd $(DIR_APP) && tar xfa $(DIR_DL)/mpfr-$(MPFR_VER).tar.bz2
 	cd $(DIR_APP) && mv -v mpfr-$(MPFR_VER) mpfr
+	cd $(DIR_APP) && tar xfa $(DIR_DL)/mpc-$(MPC_VER).tar.gz
+	cd $(DIR_APP) && mv -v mpc-$(MPC_VER) mpc
 
 ifeq    "$(PASS)" "1"
 	# GCC does not detect stack protection correctly, which causes problems
