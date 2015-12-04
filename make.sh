@@ -747,7 +747,7 @@ buildipfire() {
   ipfiremake streamripper
   ipfiremake sshfs
   ipfiremake taglib
-  ipfiremake mediatomb
+  #ipfiremake mediatomb
   ipfiremake sslh
   ipfiremake perl-gettext
   ipfiremake perl-Sort-Naturally
