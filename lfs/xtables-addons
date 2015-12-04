@@ -102,6 +102,7 @@ else
 
 	# Install the built kernel modules.
 	cd $(DIR_APP) && for f in $$(ls extensions/*.ko); do \
+		mkdir -p $(MODPATH); \
 		install -m 644 $$f $(MODPATH); \
 	done
 endif
