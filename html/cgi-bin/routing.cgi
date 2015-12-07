@@ -149,7 +149,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 		$temp[2] ='' unless defined $temp[2]; # not always populated
 		$temp[3] ='' unless defined $temp[2]; # not always populated
 		#Same ip already used?
-		if($temp[1] eq $settings{'IP'}){
+		if($temp[1] eq $settings{'IP'} && $settings{'KEY1'} eq ''){
 			$errormessage = $Lang::tr{'ccd err irouteexist'};
 			last;
 		}
