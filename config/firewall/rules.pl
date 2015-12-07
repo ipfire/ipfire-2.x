@@ -467,6 +467,10 @@ sub buildrules {
 						} elsif ($NAT_MODE eq "SNAT") {
 							my @nat_options = @options;
 
+							if ($destination_intf) {
+								push(@nat_options, ("-o", $destination_intf));
+							}
+
 							push(@nat_options, @source_options);
 							push(@nat_options, @destination_options);
 
