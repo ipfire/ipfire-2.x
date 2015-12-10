@@ -1,0 +1,46 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/dnsdist
+#
+# Description : dnsdist - A DNS load-balancer and more
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+[ -r "/etc/sysconfig/dnsdist" ] && . /etc/sysconfig/dnsdist
+
+case "${1}" in
+	start)
+		boot_mesg "Starting dnsdist..."
+		loadproc /usr/bin/dnsdist -d ${ARGS}
+		;;
+
+	stop)
+		boot_mesg "Stopping dnsdist..."
+		killproc /usr/bin/dnsdist
+		;;
+
+	reload)
+		boot_mesg "Reloading dnsdist..."
+		reloadproc /usr/bin/dnsdist
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/dnsdist
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/dnsdist

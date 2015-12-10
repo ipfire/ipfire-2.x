@@ -846,6 +846,7 @@ buildipfire() {
   ipfiremake haproxy
   ipfiremake ipset
   ipfiremake lua
+  ipfiremake dnsdist
 }
 
 buildinstaller() {
