@@ -845,6 +845,7 @@ buildipfire() {
   ipfiremake swconfig
   ipfiremake haproxy
   ipfiremake ipset
+  ipfiremake lua
 }
 
 buildinstaller() {
