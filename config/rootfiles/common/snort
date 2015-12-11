@@ -27,7 +27,6 @@ usr/bin/u2spewfoo
 #usr/include/snort/dynamic_output/snort_debug.h
 #usr/include/snort/dynamic_output/stream_api.h
 #usr/include/snort/dynamic_preproc
-#usr/include/snort/dynamic_preproc/appId.h
 #usr/include/snort/dynamic_preproc/bitop.h
 #usr/include/snort/dynamic_preproc/cpuclock.h
 #usr/include/snort/dynamic_preproc/file_api.h
@@ -38,6 +37,7 @@ usr/bin/u2spewfoo
 #usr/include/snort/dynamic_preproc/mpse_methods.h
 #usr/include/snort/dynamic_preproc/obfuscation.h
 #usr/include/snort/dynamic_preproc/packet_time.h
+#usr/include/snort/dynamic_preproc/perf_indicators.h
 #usr/include/snort/dynamic_preproc/preprocids.h
 #usr/include/snort/dynamic_preproc/profiler.h
 #usr/include/snort/dynamic_preproc/segment_mem.h
