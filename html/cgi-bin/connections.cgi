@@ -262,7 +262,7 @@ close(IPSEC);
 foreach my $line (@ipsec) {
 	my @vpn = split(',', $line);
 
-	my @subnets = split('|', $vpn[12]);
+	my @subnets = split(/\|/, $vpn[12]);
 	for my $subnet (@subnets) {
 		my ($network, $mask) = split("/", $subnet);
 
