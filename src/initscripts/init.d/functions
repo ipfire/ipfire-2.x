@@ -760,7 +760,7 @@ mount_ramdisk() {
 
 	# Move ramdisk to final destination
 	mount --move "${path_tmpfs}" "${path}"
-	rm -f "${path_tmpfs}"
+	rm -rf "${path_tmpfs}"
 }
 
 umount_ramdisk() {
@@ -781,7 +781,7 @@ umount_ramdisk() {
 
 	# Destroy the ramdisk
 	umount "${path_tmpfs}"
-	rm -f "${path_tmpfs}"
+	rm -rf "${path_tmpfs}"
 }
 
 # End $rc_base/init.d/functions
