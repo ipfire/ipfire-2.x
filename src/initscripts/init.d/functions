@@ -756,7 +756,7 @@ mount_ramdisk() {
 	mount -t tmpfs none "${path_tmpfs}"
 
 	# Restore ramdisk content
-	cp -pR "${path}/*" "${path_tmpfs}"
+	cp -pR ${path}/* "${path_tmpfs}"
 
 	# Move ramdisk to final destination
 	mount --move "${path_tmpfs}" "${path}"
@@ -777,7 +777,7 @@ umount_ramdisk() {
 	mount --move "${path}" "${path_tmpfs}"
 
 	# Backup ramdisk content
-	cp -pR "${path_tmpfs}/*" "${path}"
+	cp -pR ${path_tmpfs}/* "${path}"
 
 	# Destroy the ramdisk
 	umount "${path_tmpfs}"
