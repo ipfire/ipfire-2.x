@@ -1,0 +1,11 @@
+--- a/arch/arm/mach-omap2/cclock3xxx_data.c~	2015-12-12 11:00:10.474423373 +0000
++++ b/arch/arm/mach-omap2/cclock3xxx_data.c	2015-12-12 11:30:31.198452547 +0000
+@@ -250,7 +250,7 @@
+ 
+ static struct clk dpll1_ck;
+ 
+-static struct clk_ops dpll1_ck_ops;
++static clk_ops_no_const dpll1_ck_ops;
+ 
+ static struct clk_ops dpll1_ck_ops_34xx __initdata = {
+ 	.init		= &omap2_init_clk_clkdm,
