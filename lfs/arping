@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2015  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.05
+VER        = 2.15
 
 THISAPP    = arping-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 96e7c2ce8ae09046e264a314eeaac4dd
+$(DL_FILE)_MD5 = 676584f6eb4ccc8c70fc6b2c702df75d
 
 install : $(TARGET)
 
@@ -70,7 +70,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./bootstrap.sh
+	cd $(DIR_APP) && ./configure --prefix=/usr
+
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && install -m 0755 arping /usr/sbin
+	cd $(DIR_APP) && make install
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
