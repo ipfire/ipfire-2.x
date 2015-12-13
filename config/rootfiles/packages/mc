@@ -181,6 +181,7 @@ usr/share/mc/syntax/po.syntax
 usr/share/mc/syntax/povray.syntax
 usr/share/mc/syntax/procmail.syntax
 usr/share/mc/syntax/properties.syntax
+usr/share/mc/syntax/puppet.syntax
 usr/share/mc/syntax/python.syntax
 usr/share/mc/syntax/ruby.syntax
 usr/share/mc/syntax/sh.syntax
