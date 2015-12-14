@@ -283,7 +283,7 @@ usr/bin/update-leap
 #usr/share/ntp
 #usr/share/ntp/lib
 #usr/share/ntp/lib/NTP
-#usr/share/ntp/lib/NTP/Util.pm
+usr/share/ntp/lib/NTP/Util.pm
 var/ipfire/time/counter.conf
 var/ipfire/time/enable
 var/ipfire/time/settime.conf
