@@ -67,6 +67,15 @@ if [ -L "/var/spool/cron" ]; then
 	rm -f /var/spool/cron
 	mv /var/log/rrd/cron /var/spool/cron
 	chown cron:cron /var/spool/cron
+
+	# Add new crontab entries
+	sed -i /var/spool/cron/root.orig -e "/tmpfs backup/d"
+	grep -q "collectd backup" /var/spool/cron/root.orig || cat <<EOF >> /var/spool/cron/root.orig
+# Backup ramdisks if necessary
+%nightly,random * 23-4  /etc/init.d/collectd backup &>/dev/null
+%nightly,random * 23-4  /etc/init.d/vnstat backup &>/dev/null
+EOF
+	fcrontab -z
 fi
 
 # Start services

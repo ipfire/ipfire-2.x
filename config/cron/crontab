@@ -22,7 +22,10 @@ HOME=/
 
 # Make some nice graphs
 */5 * * * * 	/usr/local/bin/makegraphs >/dev/null
-17 5 * * * 	/etc/init.d/tmpfs backup >/dev/null
+
+# Backup ramdisks if necessary
+%nightly,random * 23-4	/etc/init.d/collectd backup &>/dev/null
+%nightly,random * 23-4	/etc/init.d/vnstat backup &>/dev/null
 
 # Update dynamic DNS records every five minutes.
 */5 * * * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all

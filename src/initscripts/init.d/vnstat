@@ -21,8 +21,16 @@ case "$1" in
 	stop)
 		umount_ramdisk "${VNSTATLOG}"
 		;;
+
+	backup)
+		# Backup all data if ramdisk is used
+		if mountpoint "${RRDLOG}" &>/dev/null; then
+			${0} restart
+		fi
+		;;
+
 	*)
-		echo "Usage: $0 {start|stop}"
+		echo "Usage: $0 {start|stop|backup}"
 		exit 1
 		;;
 esac
