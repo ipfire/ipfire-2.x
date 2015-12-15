@@ -26,10 +26,12 @@ usr/share/locale/jv/LC_MESSAGES/setup.mo
 usr/share/locale/km_KH/LC_MESSAGES/setup.mo
 usr/share/locale/nl/LC_MESSAGES/setup.mo
 usr/share/locale/pl/LC_MESSAGES/setup.mo
+usr/share/locale/pt/LC_MESSAGES/setup.mo
 usr/share/locale/pt_BR/LC_MESSAGES/setup.mo
 #usr/share/locale/pt_PT
 #usr/share/locale/pt_PT/LC_MESSAGES
 usr/share/locale/pt_PT/LC_MESSAGES/setup.mo
+usr/share/locale/ro/LC_MESSAGES/setup.mo
 #usr/share/locale/ro_RO
 #usr/share/locale/ro_RO/LC_MESSAGES
 usr/share/locale/ro_RO/LC_MESSAGES/setup.mo
