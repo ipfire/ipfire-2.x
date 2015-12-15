@@ -12,5 +12,6 @@ etc/rc.d/rc6.d/K51vnstat
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/routing.cgi
+usr/lib/firewall/rules.pl
 usr/sbin/convert-portfw
 var/ipfire/general-functions.pl
