@@ -1,0 +1,42 @@
+From 540360773bad2b81f14c38ca92b62797fa32cbc6 Mon Sep 17 00:00:00 2001
+From: KY Srinivasan <kys@microsoft.com>
+Date: Wed, 30 Apr 2014 11:58:25 -0700
+Subject: [PATCH 15/25] hyperv: Properly handle checksum offload
+
+Do checksum offload only if the client of the driver wants checksum to be
+offloaded.
+
+In V1 version of this patch, I  addressed comments from
+Stephen Hemminger <stephen@networkplumber.org> and
+Eric Dumazet <eric.dumazet@gmail.com>.
+
+In this version of the patch I have addressed comments from
+David Miller.
+
+This patch fixes a bug that is exposed in gateway scenarios.
+
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/hyperv/netvsc_drv.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index 0d898876689e..ce6d870dd7ae 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -383,6 +383,10 @@ static int netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
+ 	if (skb_is_gso(skb))
+ 		goto do_lso;
+ 
++	if ((skb->ip_summed == CHECKSUM_NONE) ||
++	    (skb->ip_summed == CHECKSUM_UNNECESSARY))
++		goto do_send;
++
+ 	rndis_msg_size += NDIS_CSUM_PPI_SIZE;
+ 	ppi = init_ppi_data(rndis_msg, NDIS_CSUM_PPI_SIZE,
+ 			    TCPIP_CHKSUM_PKTINFO);
+-- 
+2.4.3
+

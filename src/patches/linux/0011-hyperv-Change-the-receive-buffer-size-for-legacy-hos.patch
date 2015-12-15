@@ -1,16 +1,20 @@
-From 99d3016de4f2a29635f5382b0e9bd0e5f2151487 Mon Sep 17 00:00:00 2001
+From 56b3f72d3fed7f9b8d17dcf5d81455fa1b4327d7 Mon Sep 17 00:00:00 2001
 From: Haiyang Zhang <haiyangz@microsoft.com>
 Date: Sun, 9 Mar 2014 16:10:59 -0700
-Subject: hyperv: Change the receive buffer size for legacy hosts
+Subject: [PATCH 11/25] hyperv: Change the receive buffer size for legacy hosts
 
 Due to a bug in the Hyper-V host verion 2008R2, we need to use a slightly smaller
 receive buffer size, otherwise the buffer will not be accepted by the legacy hosts.
 
 Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/hyperv/hyperv_net.h | 1 +
+ drivers/net/hyperv/netvsc.c     | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/hyperv/hyperv_net.h b/drivers/net/hyperv/hyperv_net.h
-index 7d06b49..13010b4 100644
+index 7d06b4959383..13010b4dae5b 100644
 --- a/drivers/net/hyperv/hyperv_net.h
 +++ b/drivers/net/hyperv/hyperv_net.h
 @@ -513,6 +513,7 @@ struct nvsp_message {
@@ -22,7 +26,7 @@ index 7d06b49..13010b4 100644
  #define NETVSC_RECEIVE_BUFFER_ID		0xcafe
  
 diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
-index 1a0280d..daddea2 100644
+index 1a0280dcba7e..daddea2654ce 100644
 --- a/drivers/net/hyperv/netvsc.c
 +++ b/drivers/net/hyperv/netvsc.c
 @@ -365,6 +365,11 @@ static int netvsc_connect_vsp(struct hv_device *device)
@@ -46,5 +50,5 @@ index 1a0280d..daddea2 100644
  
  	INIT_LIST_HEAD(&net_device->recv_pkt_list);
 -- 
-cgit v0.10.2
+2.4.3
 

@@ -1,0 +1,51 @@
+From 4b71288758aa1d510402b84ca93b1ef566575d22 Mon Sep 17 00:00:00 2001
+From: "K. Y. Srinivasan" <kys@microsoft.com>
+Date: Mon, 3 Feb 2014 12:42:45 -0800
+Subject: [PATCH 25/25] Drivers: hv: vmbus: Support per-channel driver state
+
+As we implement Virtual Receive Side Scaling on the networking side
+(the VRSS patches are currently under review), it will be useful to have
+per-channel state that vmbus drivers can manage. Add support for
+managing per-channel state.
+
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/linux/hyperv.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
+index 6088058a3e00..732dc7e37e96 100644
+--- a/include/linux/hyperv.h
++++ b/include/linux/hyperv.h
+@@ -1045,6 +1045,10 @@ struct vmbus_channel {
+ 	 * This will be NULL for the primary channel.
+ 	 */
+ 	struct vmbus_channel *primary_channel;
++	/*
++	 * Support per-channel state for use by vmbus drivers.
++	 */
++	void *per_channel_state;
+ };
+ 
+ static inline void set_channel_read_state(struct vmbus_channel *c, bool state)
+@@ -1052,6 +1056,16 @@ static inline void set_channel_read_state(struct vmbus_channel *c, bool state)
+ 	c->batched_reading = state;
+ }
+ 
++static inline void set_per_channel_state(struct vmbus_channel *c, void *s)
++{
++	c->per_channel_state = s;
++}
++
++static inline void *get_per_channel_state(struct vmbus_channel *c)
++{
++	return c->per_channel_state;
++}
++
+ void vmbus_onmessage(void *context);
+ 
+ int vmbus_request_offers(void);
+-- 
+2.4.3
+

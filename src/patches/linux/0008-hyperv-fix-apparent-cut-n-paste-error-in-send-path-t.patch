@@ -1,0 +1,32 @@
+From 2f18423d7ebf8044a9edaca840be5ae199fb32f6 Mon Sep 17 00:00:00 2001
+From: Dave Jones <davej@redhat.com>
+Date: Mon, 16 Jun 2014 16:59:02 -0400
+Subject: [PATCH 08/11] hyperv: fix apparent cut-n-paste error in send path
+ teardown
+
+c25aaf814a63: "hyperv: Enable sendbuf mechanism on the send path" added
+some teardown code that looks like it was copied from the recieve path
+above, but missed a variable name replacement.
+
+Signed-off-by: Dave Jones <davej@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/hyperv/netvsc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
+index c041f63a6d30..4ed38eaecea8 100644
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -189,7 +189,7 @@ static int netvsc_destroy_buf(struct netvsc_device *net_device)
+ 				   "unable to teardown send buffer's gpadl\n");
+ 			return ret;
+ 		}
+-		net_device->recv_buf_gpadl_handle = 0;
++		net_device->send_buf_gpadl_handle = 0;
+ 	}
+ 	if (net_device->send_buf) {
+ 		/* Free up the receive buffer */
+-- 
+2.4.3
+
