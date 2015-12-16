@@ -1,21 +1,5 @@
-diff --git a/Makefile b/Makefile
-index 4c87ea9..4e0ea10 100644
---- a/Makefile
-+++ b/Makefile
-@@ -73,7 +73,8 @@ objs = cache.o rfc1035.o util.o option.o forward.o network.o \
-        dnsmasq.o dhcp.o lease.o rfc2131.o netlink.o dbus.o bpf.o \
-        helper.o tftp.o log.o conntrack.o dhcp6.o rfc3315.o \
-        dhcp-common.o outpacket.o radv.o slaac.o auth.o ipset.o \
--       domain.o dnssec.o blockdata.o tables.o loop.o inotify.o poll.o
-+       domain.o dnssec.o blockdata.o tables.o loop.o inotify.o poll.o \
-+       isc.o
- 
- hdrs = dnsmasq.h config.h dhcp-protocol.h dhcp6-protocol.h \
-        dns-protocol.h radv-protocol.h ip6addr.h
-diff --git a/src/cache.c b/src/cache.c
-index 178d654..6d0b131 100644
---- a/src/cache.c
-+++ b/src/cache.c
+--- a/src/cache.c	Wed Dec 16 19:24:12 2015
++++ b/src/cache.c	Wed Dec 16 19:37:37 2015
 @@ -17,7 +17,7 @@
  #include "dnsmasq.h"
  
@@ -25,7 +9,7 @@ index 178d654..6d0b131 100644
  static struct crec *dhcp_spare = NULL;
  #endif
  static struct crec *new_chain = NULL;
-@@ -222,6 +222,9 @@ static void cache_free(struct crec *crecp)
+@@ -217,6 +217,9 @@
        crecp->flags &= ~F_BIGNAME;
      }
  
@@ -35,7 +19,7 @@ index 178d654..6d0b131 100644
  #ifdef HAVE_DNSSEC
    cache_blockdata_free(crecp);
  #endif
-@@ -1151,7 +1154,7 @@ void cache_reload(void)
+@@ -1131,7 +1134,7 @@
    
  } 
  
@@ -44,16 +28,7 @@ index 178d654..6d0b131 100644
  struct in_addr a_record_from_hosts(char *name, time_t now)
  {
    struct crec *crecp = NULL;
-@@ -1229,7 +1232,7 @@ void cache_add_dhcp_entry(char *host_name, int prot,
-       addrlen = sizeof(struct in6_addr);
-     }
- #endif
--  
-+
-   inet_ntop(prot, host_address, daemon->addrbuff, ADDRSTRLEN);
-   
-   while ((crec = cache_find_by_name(crec, host_name, 0, flags | F_CNAME)))
-@@ -1294,7 +1297,11 @@ void cache_add_dhcp_entry(char *host_name, int prot,
+@@ -1274,7 +1277,11 @@
        else
  	crec->ttd = ttd;
        crec->addr.addr = *host_address;
@@ -65,11 +40,9 @@ index 178d654..6d0b131 100644
        crec->uid = next_uid();
        cache_hash(crec);
  
-diff --git a/src/dnsmasq.c b/src/dnsmasq.c
-index 81254f6..ce2d1a7 100644
---- a/src/dnsmasq.c
-+++ b/src/dnsmasq.c
-@@ -982,6 +982,11 @@ int main (int argc, char **argv)
+--- a/src/dnsmasq.c	Thu Jul 30 20:59:06 2015
++++ b/src/dnsmasq.c	Wed Dec 16 19:38:32 2015
+@@ -982,6 +982,11 @@
  
  	  poll_resolv(0, daemon->last_resolv != 0, now); 	  
  	  daemon->last_resolv = now;
@@ -81,11 +54,9 @@ index 81254f6..ce2d1a7 100644
  	}
  #endif
  
-diff --git a/src/dnsmasq.h b/src/dnsmasq.h
-index cf1a782..30437aa 100644
---- a/src/dnsmasq.h
-+++ b/src/dnsmasq.h
-@@ -1519,3 +1519,7 @@ int poll_check(int fd, short event);
+--- a/src/dnsmasq.h	Wed Dec 16 19:24:12 2015
++++ b/src/dnsmasq.h	Wed Dec 16 19:40:11 2015
+@@ -1513,8 +1513,12 @@
  void poll_listen(int fd, short event);
  int do_poll(int timeout);
  
@@ -93,11 +64,14 @@ index cf1a782..30437aa 100644
 +#ifdef HAVE_ISC_READER
 +void load_dhcp(time_t now);
 +#endif
-diff --git a/src/isc.c b/src/isc.c
-new file mode 100644
-index 0000000..5106442
---- /dev/null
-+++ b/src/isc.c
++
+ /* rrfilter.c */
+ size_t rrfilter(struct dns_header *header, size_t plen, int mode);
+ u16 *rrfilter_desc(int type);
+ int expand_workspace(unsigned char ***wkspc, int *szp, int new);
+-
+--- /dev/null	Wed Dec 16 19:48:08 2015
++++ b/src/isc.c	Wed Dec 16 19:41:35 2015
 @@ -0,0 +1,251 @@
 +/* dnsmasq is Copyright (c) 2014 John Volpe, Simon Kelley and
 +     Michael Tremer
@@ -350,11 +324,9 @@ index 0000000..5106442
 +}
 +
 +#endif
-diff --git a/src/option.c b/src/option.c
-index ecc2619..527c5aa 100644
---- a/src/option.c
-+++ b/src/option.c
-@@ -1699,7 +1699,7 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+--- a/src/option.c	Wed Dec 16 19:24:12 2015
++++ b/src/option.c	Wed Dec 16 19:42:48 2015
+@@ -1754,7 +1754,7 @@
  	ret_err(_("bad MX target"));
        break;
  
@@ -363,3 +335,14 @@ index ecc2619..527c5aa 100644
      case 'l':  /* --dhcp-leasefile */
        daemon->lease_file = opt_string_alloc(arg);
        break;
+--- a/Makefile	Wed Dec 16 19:24:12 2015
++++ b/Makefile	Wed Dec 16 19:28:45 2015
+@@ -74,7 +74,7 @@
+        helper.o tftp.o log.o conntrack.o dhcp6.o rfc3315.o \
+        dhcp-common.o outpacket.o radv.o slaac.o auth.o ipset.o \
+        domain.o dnssec.o blockdata.o tables.o loop.o inotify.o \
+-       poll.o rrfilter.o
++       poll.o rrfilter.o isc.o
+ 
+ hdrs = dnsmasq.h config.h dhcp-protocol.h dhcp6-protocol.h \
+        dns-protocol.h radv-protocol.h ip6addr.h
