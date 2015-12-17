@@ -100,7 +100,7 @@ if (-f $proxyenabled && $proxylog eq $Lang::tr{'running'}){
 	$dbh=&ACCT::connectdb;
 	my $m=sprintf("%d",(localtime((time-3600)))[4]+1);
 	&ACCT::logger($settings{'LOG'},"month before one hour $m, now is ".($mon+1)."\n");
-	if ($m = ($mon+1) || $m == '12' && ($mon+1) == '1'){
+	if ($m < ($mon+1) || $m == '12' && ($mon+1) == '1'){
 		#Logrotate
 		my $year1=$year+1900;
 		system ("tar", "cfz", "/var/log/accounting-$m-$year1.tar.gz", "/var/log/accounting.log");
@@ -217,6 +217,7 @@ sub fill_db{
 	my $tim=time();
 	#Fill ACCT table with accounting information
 	foreach my $name (sort keys %counter){
+		next if (substr($name,-1,1) eq '$');
 		foreach my $bytes (keys %{ $counter{$name} }) {
 			$dbh->do("insert into ACCT (TIME_RUN,NAME,BYTES) values ('$tim','$name','$counter{$name}{$bytes}');");
 		}
