@@ -93,6 +93,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/018-Move_code_which_caches_DS_records_to_a_more_logical_place.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/019-Generalise_RR-filtering_code_for_use_with_EDNS0.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/020-DNSSEC_validation_tweak.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/021-Tweaks_to_EDNS0_handling_in_DNS_replies.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/022-Tidy_up_DNSSEC_non-existence_code_Check_zone_status_is_NSEC_proof_bad.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/023-Fix_brace_botch_in_dnssec_validate_ds.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/024-Do_a_better_job_of_determining_which_DNSSEC_sig_algos_are_supported.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 
 	cd $(DIR_APP) && sed -i src/config.h \
