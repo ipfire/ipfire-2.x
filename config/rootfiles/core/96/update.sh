@@ -40,7 +40,7 @@ qosctrl stop
 if [ -d "/var/log/rrd.bak" ]; then
 	# Umount ramdisk
 	umount -l "/var/log/rrd"
-	rm -f "/var/log/rrd"
+	rm -rf "/var/log/rrd"
 
 	mv "/var/log/rrd.bak/vnstat" "/var/log/vnstat"
 	mv "/var/log/rrd.bak" "/var/log/rrd"
