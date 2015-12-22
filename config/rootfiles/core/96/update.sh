@@ -56,7 +56,7 @@ rm -f /etc/rc.d/init.d/tmpfs \
 extract_files
 
 # Update Language cache
-# /usr/local/bin/update-lang-cache
+/usr/local/bin/update-lang-cache
 
 # Keep (almost) old ramdisk behaviour
 if [ ! -e "/etc/sysconfig/ramdisk" ]; then
