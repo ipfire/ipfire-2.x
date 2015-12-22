@@ -34,7 +34,7 @@ done
 # Stop services
 /etc/init.d/fcron stop
 /etc/init.d/collectd stop
-qosctrl stop
+/usr/local/bin/qosctrl stop
 
 # Backup RRDs
 if [ -d "/var/log/rrd.bak" ]; then
@@ -83,7 +83,7 @@ fi
 /etc/init.d/vnstat start
 /etc/init.d/fcron start
 /etc/init.d/dnsmasq restart
-qosctrl start
+/usr/local/bin/qosctrl start
 
 # Disable loading of cryptodev
 sed -e "s/^cryptodev/# &/g" -i /etc/sysconfig/modules
