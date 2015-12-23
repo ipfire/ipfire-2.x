@@ -186,6 +186,7 @@ ifeq "$(KCFG)" "-multi"
 
 	# Apply Arm7-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm7-multi-patches-$(A7M_PATCHES).patch.xz | patch -Np1
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/arm-multi-grsec-compile-fixes.patch
 
 	# Install switch api userspace header
 	cd $(DIR_APP) && install -v -m644 include/uapi/linux/switch.h /usr/include/linux/
@@ -195,11 +196,6 @@ endif
 ifeq "$(KCFG)" "-rpi"
 	# Apply Raspberry Pi kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/rpi-patches-$(RPI_PATCHES).patch.xz | patch -Np1
-endif
-
-	# Compile fixes
-ifeq "$(KCFG)" "-headers"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel-grsec-compile-fixes.patch
 endif
 
 ifeq "$(KCFG)" "-headers"
