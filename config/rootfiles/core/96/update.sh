@@ -58,6 +58,9 @@ extract_files
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Remove Ramdisk entry from fstab
+sed -i -e "s|^none\s/var/log/rrd.*||g" /etc/fstab
+
 # Keep (almost) old ramdisk behaviour
 if [ ! -e "/etc/sysconfig/ramdisk" ]; then
 	echo "RAMDISK_MODE=2" > /etc/sysconfig/ramdisk
