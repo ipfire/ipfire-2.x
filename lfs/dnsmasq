@@ -97,6 +97,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/022-Tidy_up_DNSSEC_non-existence_code_Check_zone_status_is_NSEC_proof_bad.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/023-Fix_brace_botch_in_dnssec_validate_ds.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/024-Do_a_better_job_of_determining_which_DNSSEC_sig_algos_are_supported.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/025-Major_tidy_up_of_EDNS0_handling_and_computation_use_of_udp.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/026-More_tweaks_in_handling_unknown_DNSSEC_algorithms.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/027-Nasty_rare_and_obscure_off-by-one_in_DNSSEC_hostname_cmp.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/028-Minor_tweak_to_previous_commit.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/029-NSEC3_check_RFC5155_para_8_2.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 
 	cd $(DIR_APP) && sed -i src/config.h \

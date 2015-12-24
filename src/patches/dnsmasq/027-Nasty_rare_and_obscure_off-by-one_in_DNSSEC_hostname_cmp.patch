@@ -1,0 +1,27 @@
+From 3e86d316c4bb406ed813aa5256615c8a95cac6d8 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Sun, 20 Dec 2015 20:50:05 +0000
+Subject: [PATCH] Nasty, rare and obscure off-by-one in DNSSEC hostname_cmp().
+
+---
+ src/dnssec.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/dnssec.c b/src/dnssec.c
+index e09f304..29848e1 100644
+--- a/src/dnssec.c
++++ b/src/dnssec.c
+@@ -1394,8 +1394,8 @@ static int hostname_cmp(const char *a, const char *b)
+       if (sb == b)
+ 	return 1;
+       
+-      ea = sa--;
+-      eb = sb--;
++      ea = --sa;
++      eb = --sb;
+     }
+ }
+ 
+-- 
+1.7.10.4
+

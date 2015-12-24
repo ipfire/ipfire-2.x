@@ -1,0 +1,39 @@
+From ce5732e84fc46d7f99c152f736cfb4ef5ec98a01 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Sun, 20 Dec 2015 21:39:19 +0000
+Subject: [PATCH] NSEC3 check: RFC5155 para 8.2
+
+---
+ src/dnssec.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/dnssec.c b/src/dnssec.c
+index 9fa64b6..486e422 100644
+--- a/src/dnssec.c
++++ b/src/dnssec.c
+@@ -1704,7 +1704,7 @@ static int prove_non_existence_nsec3(struct dns_header *header, size_t plen, uns
+   for (i = 0; i < nsec_count; i++)
+     {
+       unsigned char *nsec3p = nsecs[i];
+-      int this_iter;
++      int this_iter, flags;
+ 
+       nsecs[i] = NULL; /* Speculative, will be restored if OK. */
+       
+@@ -1716,8 +1716,12 @@ static int prove_non_existence_nsec3(struct dns_header *header, size_t plen, uns
+       if (*p++ != algo)
+ 	continue;
+  
+-      p++; /* flags */
++      flags = *p++; /* flags */
+       
++      /* 5155 8.2 */
++      if (flags != 0 && flags != 1)
++	continue;
++
+       GETSHORT(this_iter, p);
+       if (this_iter != iterations)
+ 	continue;
+-- 
+1.7.10.4
+
