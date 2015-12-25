@@ -29,7 +29,9 @@ VER        = master
 THISAPP    = vdr-plugin-eepg-$(VER)
 DL_FILE    = vdr-plugin-eepg-$(GIT_VER).tar.bz2
 
-DL_FROM    = http://projects.vdr-developer.org/git/vdr-plugin-eepg.git/snapshot
+# SOURCE http://projects.vdr-developer.org/git/vdr-plugin-eepg.git/snapshot
+
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr_eepg
