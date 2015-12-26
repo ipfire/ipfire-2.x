@@ -1143,7 +1143,7 @@ usr/lib/libquadmath.so.0.0.0
 #usr/lib/libssp_nonshared.a
 #usr/lib/libssp_nonshared.la
 #usr/lib/libstdc++.a
-#usr/lib/libstdc++.so.6.0.20
+usr/lib/libstdc++.so.6.0.20
 #usr/lib/libstdc++.so.6.0.20-gdb.py
 #usr/lib/libsupc++.a
 #usr/lib/libsupc++.la
