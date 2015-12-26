@@ -25,6 +25,7 @@ etc/rc.d/init.d/console
 #etc/rc.d/init.d/cyrus-sasl
 etc/rc.d/init.d/dhcp
 etc/rc.d/init.d/dhcrelay
+#etc/rc.d/init.d/dnsdist
 etc/rc.d/init.d/dnsmasq
 etc/rc.d/init.d/fcron
 #etc/rc.d/init.d/fetchmail
