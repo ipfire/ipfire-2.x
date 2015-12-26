@@ -77,6 +77,8 @@ usr/lib/libtic.so.5.9
 usr/lib/libtinfo.so.5
 usr/lib/libtinfo.so.5.9
 #usr/lib/terminfo
+#usr/man
+#usr/man/man1
 #usr/man/man1/captoinfo.1m
 #usr/man/man1/clear.1
 #usr/man/man1/infocmp.1m
@@ -941,6 +943,7 @@ usr/lib/libtinfo.so.5.9
 #usr/man/man5
 #usr/man/man5/term.5
 #usr/man/man5/terminfo.5
+#usr/man/man7
 #usr/man/man7/term.7
 #usr/share/tabset
 #usr/share/tabset/std
