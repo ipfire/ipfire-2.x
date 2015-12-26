@@ -2,7 +2,9 @@ usr/bin/cmp
 usr/bin/diff
 #usr/bin/diff3
 #usr/bin/sdiff
+#usr/info
 #usr/info/diff.info
+#usr/info/dir
 #usr/man/man1/cmp.1
 #usr/man/man1/diff.1
 #usr/man/man1/diff3.1
