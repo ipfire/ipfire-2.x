@@ -32,6 +32,7 @@ do
 done
 
 # Stop services
+/etc/init.d/dnsmasq stop
 
 # Extract files
 extract_files
@@ -40,6 +41,7 @@ extract_files
 # /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/dnsmasq start
 
 # This update need a reboot...
 #touch /var/run/need_reboot
