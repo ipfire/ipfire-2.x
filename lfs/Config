@@ -66,8 +66,9 @@ DIR_TMP     = /tmp
 #
 define FIND_FILES
 	cd $(ROOT)/ && find -mount \
-	-not -path './tools*' -not -path './tmp*' -not -path './usr/src*' -not -path './run/*' \
-	-not -path './dev*' -not -path './proc*' -not -path './install*' | sort
+		\( -path './tools' -or -path './tmp' -or -path './usr/src' \
+		-or -path './run' -or -path './dev' -or -path './proc' \
+		-or -path './install' \) -prune -or -print | sort
 endef
 
 # This is common starting logic for builds.

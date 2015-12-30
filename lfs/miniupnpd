@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.8
+VER        = 1.9
 
 THISAPP    = miniupnpd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = miniupnpd
-PAK_VER    = 1
+PAK_VER    = 2
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0d8a8e936d5a0012cb260a3b972acbf3
+$(DL_FILE)_MD5 = 9151502f84f130b0ef1245ac938c33f9
 
 install : $(TARGET)
 

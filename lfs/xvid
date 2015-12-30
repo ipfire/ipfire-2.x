@@ -29,7 +29,7 @@ VER        = 1.2.1
 THISAPP    = xvidcore-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/xvidcore
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = xvid
 PAK_VER    = 2
@@ -77,9 +77,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC)/xvidcore/build/generic && ./configure --prefix=/usr
-	cd $(DIR_SRC)/xvidcore/build/generic && make
-	cd $(DIR_SRC)/xvidcore/build/generic && make install
+	cd $(DIR_APP)/build/generic && ./configure --prefix=/usr
+	cd $(DIR_APP)/build/generic && make
+	cd $(DIR_APP)/build/generic && make install
 	chmod -v 755 /usr/lib/libxvidcore.so.4.2
 	ln -v -sf libxvidcore.so.4.2 /usr/lib/libxvidcore.so.4
 	ln -v -sf libxvidcore.so.4 /usr/lib/libxvidcore.so

@@ -1,0 +1,18 @@
+@@ -, +, @@
+ resolv/nss_dns/dns-host.c:getanswer_r.
+---
+ resolv/nss_dns/dns-host.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+--- a/resolv/nss_dns/dns-host.c
++++ a/resolv/nss_dns/dns-host.c
+@@ -615,7 +615,8 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
+   int have_to_map = 0;
+   uintptr_t pad = -(uintptr_t) buffer % __alignof__ (struct host_data);
+   buffer += pad;
+-  if (__builtin_expect (buflen < sizeof (struct host_data) + pad, 0))
++  buflen = buflen > pad ? buflen - pad : 0;
++  if (__builtin_expect (buflen < sizeof (struct host_data), 0))
+     {
+       /* The buffer is too small.  */
+     too_small:
+--

@@ -232,7 +232,7 @@ else
 print <<END
 <table width='100%'>
 <tr>
-  <td width='15%' class='base'>$Lang::tr{'mac address'}:&nbsp;</td>
+  <td width='15%' class='base'>$Lang::tr{'mac address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
   <td width='40%'><input type='text' name='CLIENT_MAC' value='$cgiparams{'CLIENT_MAC'}' size='25' /></td>
   <td width='10%' class='base'>$Lang::tr{'interface'}:&nbsp;</td>
   <td align='left'>
@@ -256,7 +256,7 @@ print <<END
   </td>
 </tr>
 <tr>
-  <td width='15%' class='base'>$Lang::tr{'remark'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+  <td width='15%' class='base'>$Lang::tr{'remark'}:</td>
   <td colspan='4' align='left'><input type='text' name='CLIENT_COMMENT' value='$cgiparams{'CLIENT_COMMENT'}' size='40' /></td>
 </tr>
 </table>
@@ -264,7 +264,7 @@ print <<END
 <hr />
 <table width='100%'>
 <tr>
-  <td class='base' valign='top'><img src='/blob.gif' alt='*' />$Lang::tr{'this field may be blank'}</td>
+  <td class='base' valign='top'><img src='/blob.gif' alt='*' />$Lang::tr{'required field'}</td>
   <td width='40%' align='right'>
 END
 ;

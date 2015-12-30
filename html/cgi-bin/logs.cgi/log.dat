@@ -53,6 +53,7 @@ my %sections = (
         'red' => '(red:|pppd\[.*\]: |chat\[.*\]|pppoe\[.*\]|pptp\[.*\]|pppoa\[.*\]|pppoa3\[.*\]|pppoeci\[.*\]|ipppd|ipppd\[.*\]|kernel: ippp\d|kernel: isdn.*|ibod\[.*\]|dhcpcd\[.*\]|modem_run\[.*\])',
         'ddns' => '(ddns\[\d+\]:)',
         'dns' => '(dnsmasq\[.*\]: )',
+        'dma' => '(dma\[.*\]: )',
         'dhcp' => '(dhcpd: )',
         'clamav' => '(clamd\[.*\]: |freshclam\[.*\]: )',
         'collectd' => '(collectd\[.*\]: )',
@@ -73,6 +74,7 @@ my %trsections = (
         'red' => 'RED',
         'ddns' => $Lang::tr{'dynamic dns'},
         'dns' => 'DNS',
+        'dma' => 'Mail',
         'dhcp' => "$Lang::tr{'dhcp server'}",
         'cron' => 'Cron',
         'collectd' => 'Collectd',
@@ -192,8 +194,10 @@ while ($gzindex >=0 && $loop) {
         # calculate file name
         if ($gzindex == 0) {
             $filestr = "/var/log/messages";
+            $filestr = "/var/log/mail" if (${section} =~ 'dma');
         } else {
             $filestr = "/var/log/messages.$gzindex";
+            $filestr = "/var/log/mail.$gzindex" if (${section} =~ 'dma');
     	    $filestr = "$filestr.gz" if -f "$filestr.gz";
         }
 	# now read file if existing

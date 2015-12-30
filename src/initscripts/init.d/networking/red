@@ -173,7 +173,7 @@ case "${1}" in
 			if [ "$TYPE" == "pppoeatm" ] || [ "$TYPE" == "pptpatm" ]; then
 				PPP_NIC=nas${ATM_DEV}
 				DEVICE=nas${ATM_DEV}
-				boot_mesg "Createing ATM-Bridge as $PPP_NIC ..."
+				boot_mesg "Creating ATM-Bridge as $PPP_NIC ..."
 				br2684ctl -c${ATM_DEV} -e${ENCAP} -a${ATM_DEV}.${VPI}.${VCI} >/dev/null 2>&1 &
 				sleep 1
 
@@ -193,7 +193,7 @@ case "${1}" in
 			fi
 
 			if [ "$TYPE" == "vdsl" ]; then
-				boot_mesg "Createing VLAN Interface ${DEVICE}.${INET_VLAN} ..."
+				boot_mesg "Creating VLAN Interface ${DEVICE}.${INET_VLAN} ..."
 				modprobe 8021q
 				vconfig add ${DEVICE} ${INET_VLAN}
 				if [ -n "$MAC1" ]; then
@@ -218,7 +218,7 @@ case "${1}" in
 				fi
 
 				if [ ! -f "$PIDFILE" ]; then
-					boot_mesg "Createing VLAN Interface ${DEVICE}.${IPTV_VLAN} ..."
+					boot_mesg "Creating VLAN Interface ${DEVICE}.${IPTV_VLAN} ..."
 					modprobe 8021q
 					vconfig add ${DEVICE} ${IPTV_VLAN}
 					if [ -n "$MAC2" ]; then

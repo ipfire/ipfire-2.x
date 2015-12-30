@@ -70,10 +70,16 @@ foreach my $itf (@ITFs) {
     $dhcpsettings{"NTP2_${itf}"} = '';
     $dhcpsettings{"NEXT_${itf}"} = '';
     $dhcpsettings{"FILE_${itf}"} = '';
+    $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} = '';
+    $dhcpsettings{"DNS_UPDATE_KEY_SECRET_${itf}"} = '';
+    $dhcpsettings{"DNS_UPDATE_KEY_ALGO_${itf}"} = '';
 }
 
 $dhcpsettings{'SORT_FLEASELIST'} = 'FIPADDR';
 $dhcpsettings{'SORT_LEASELIST'} = 'IPADDR';
+
+# DNS Update settings
+$dhcpsettings{'DNS_UPDATE_ENABLED'} = 'off';
 
 #Settings2 for editing the multi-line list
 #Must not be saved with writehash !
@@ -244,7 +250,7 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'save'}) {
 	} # enabled
     }#loop interface verify
 
-    map (delete ($dhcpsettings{$_}) ,@nosaved,'ACTION','KEY1','KEY2');	# Must not be saved 
+    map (delete ($dhcpsettings{$_}) ,@nosaved,'ACTION','KEY1','KEY2','q');	# Must not be saved
     &General::writehash($setting, \%dhcpsettings);		# Save good settings
     $dhcpsettings{'ACTION'} = $Lang::tr{'save'};		# create an 'ACTION'
     map ($dhcpsettings{$_} = '',@nosaved,'KEY1','KEY2');	# and reinit vars to empty
@@ -267,7 +273,7 @@ if ($ENV{'QUERY_STRING'} =~ /^FETHER|^FIPADDR/ ) {
 	$newsort.=$Rev;
     }
     $dhcpsettings{'SORT_FLEASELIST'}=$newsort;
-    map (delete ($dhcpsettings{$_}) ,@nosaved,'ACTION','KEY1','KEY2');	# Must never be saved 
+    map (delete ($dhcpsettings{$_}) ,@nosaved,'ACTION','KEY1','KEY2', 'q');	# Must never be saved
     &General::writehash($setting, \%dhcpsettings);
     &sortcurrent2;
     $dhcpsettings{'ACTION'} = 'SORT';			# create an 'ACTION'
@@ -438,6 +444,9 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'add'}.'2') {
 	if ($dhcpsettings{'KEY2'} eq '') { #add or edit ?
 	    unshift (@current2, "$dhcpsettings{'FIX_MAC'},$dhcpsettings{'FIX_ADDR'},$dhcpsettings{'FIX_ENABLED'},$dhcpsettings{'FIX_NEXTADDR'},$dhcpsettings{'FIX_FILENAME'},$dhcpsettings{'FIX_ROOTPATH'},$dhcpsettings{'FIX_REMARK'}\n");
 	    &General::log($Lang::tr{'fixed ip lease added'});
+
+	    # Enter edit mode
+	    $dhcpsettings{'KEY2'} = $key;
 	} else {
 	    @current2[$dhcpsettings{'KEY2'}] = "$dhcpsettings{'FIX_MAC'},$dhcpsettings{'FIX_ADDR'},$dhcpsettings{'FIX_ENABLED'},$dhcpsettings{'FIX_NEXTADDR'},$dhcpsettings{'FIX_FILENAME'},$dhcpsettings{'FIX_ROOTPATH'},$dhcpsettings{'FIX_REMARK'}\n";
 	    $dhcpsettings{'KEY2'} = '';       # End edit mode
@@ -544,39 +553,39 @@ print <<END
     <input type='checkbox' name='ENABLE_${itf}' $checked{'ENABLE'}{'on'} /></td>
     <td width='25%' class='base'>$Lang::tr{'ip address'}<br />$Lang::tr{'netmask'}:</td><td><b>$netsettings{"${itf}_ADDRESS"}<br />$netsettings{"${itf}_NETMASK"}</b></td>
 </tr><tr>
-    <td width='25%' class='base'>$Lang::tr{'start address'}</td>
+    <td width='25%' class='base'>$Lang::tr{'start address'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td width='25%'><input type='text' name='START_ADDR_${itf}' value='$dhcpsettings{"START_ADDR_${itf}"}' /></td>
-    <td width='25%' class='base'>$Lang::tr{'end address'}</td>
+    <td width='25%' class='base'>$Lang::tr{'end address'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td width='25%'><input type='text' name='END_ADDR_${itf}' value='$dhcpsettings{"END_ADDR_${itf}"}' /></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'default lease time'}</td>
+    <td class='base'>$Lang::tr{'default lease time'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='DEFAULT_LEASE_TIME_${itf}' value='$dhcpsettings{"DEFAULT_LEASE_TIME_${itf}"}' /></td>
-    <td class='base'>$Lang::tr{'max lease time'}</td>
+    <td class='base'>$Lang::tr{'max lease time'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='MAX_LEASE_TIME_${itf}' value='$dhcpsettings{"MAX_LEASE_TIME_${itf}"}' /></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'domain name suffix'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'domain name suffix'}</td>
     <td><input type='text' name='DOMAIN_NAME_${itf}' value='$dhcpsettings{"DOMAIN_NAME_${itf}"}' /></td>
     <td>$Lang::tr{'dhcp allow bootp'}:</td>
     <td><input type='checkbox' name='ENABLEBOOTP_${itf}' $checked{'ENABLEBOOTP'}{'on'} /></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'primary dns'}</td>
+    <td class='base'>$Lang::tr{'primary dns'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='DNS1_${itf}' value='$dhcpsettings{"DNS1_${itf}"}' /></td>
-    <td class='base'>$Lang::tr{'secondary dns'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'secondary dns'}</td>
     <td><input type='text' name='DNS2_${itf}' value='$dhcpsettings{"DNS2_${itf}"}' /></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'primary ntp server'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'primary ntp server'}:</td>
     <td><input type='text' name='NTP1_${itf}' value='$dhcpsettings{"NTP1_${itf}"}' /></td>
-    <td class='base'>$Lang::tr{'secondary ntp server'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'secondary ntp server'}:</td>
     <td><input type='text' name='NTP2_${itf}' value='$dhcpsettings{"NTP2_${itf}"}' /></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'primary wins server address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'primary wins server address'}:</td>
     <td><input type='text' name='WINS1_${itf}' value='$dhcpsettings{"WINS1_${itf}"}' /></td>
-    <td class='base'>$Lang::tr{'secondary wins server address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'secondary wins server address'}:</td>
     <td><input type='text' name='WINS2_${itf}' value='$dhcpsettings{"WINS2_${itf}"}' /></td>
 </tr><tr>
-    <td class='base'>next-server:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>next-server:</td>
     <td><input type='text' name='NEXT_${itf}' value='$dhcpsettings{"NEXT_${itf}"}' /></td>
-    <td class='base'>filename:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>filename:</td>
     <td><input type='text' name='FILE_${itf}' value='$dhcpsettings{"FILE_${itf}"}' /></td>
 </tr>
 </table>
@@ -588,10 +597,82 @@ END
 print <<END
 <table width='100%'>
 <tr>
-    <td class='base' width='25%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
+    <td class='base' width='25%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
     <td class='base' width='30%'>$warnNTPmessage</td>
     <td width='40%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
+</table>
+END
+;
+&Header::closebox();
+
+# DHCP DNS update support (RFC2136)
+&Header::openbox('100%', 'left', $Lang::tr{'dhcp dns update'});
+
+my %checked = ();
+$checked{'DNS_UPDATE_ENABLED'}{'on'} = ( $dhcpsettings{'DNS_UPDATE_ENABLED'} ne 'on') ? '' : "checked='checked'";
+
+print <<END
+<table  width='100%'>
+	<tr>
+		<td width='25%' class='boldbase'>$Lang::tr{'dhcp dns enable update'}</td>
+		<td class='base'><input type='checkbox' name='DNS_UPDATE_ENABLED' $checked{'DNS_UPDATE_ENABLED'}{'on'}>
+		</td>
+	<tr>
+</table>
+
+<table width='100%'>
+END
+;
+	my @domains = ();
+
+	# Print options for each interface.
+	foreach my $itf (@ITFs) {
+		# Check if DHCP for this interface is enabled.
+		if ($dhcpsettings{"ENABLE_${itf}"} eq 'on') {
+			# Check for same domain name.
+			next if ($dhcpsettings{"DOMAIN_NAME_${itf}"} ~~ @domains);
+			my $lc_itf = lc($itf);
+
+			# Select previously configured update algorithm.
+			my %selected = ();
+			$selected{'DNS_UPDATE_ALGO_${inf}'}{$dhcpsettings{'DNS_UPDATE_ALGO_${inf}'}} = 'selected';
+
+print <<END
+	<tr>
+		<td colspan='6'>&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan='6' class='boldbase'><b>$dhcpsettings{"DOMAIN_NAME_${itf}"}</b></td>
+	</tr>
+	<tr>
+		<td width='10%' class='boldbase'>$Lang::tr{'dhcp dns key name'}:</td>
+		<td width='20%'><input type='text' name='DNS_UPDATE_KEY_NAME_${itf}' value='$dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"}'></td>
+		<td width='10%' class='boldbase' align='right'>$Lang::tr{'dhcp dns update secret'}:&nbsp;&nbsp;</td>
+		<td width='20%'><input type='password' name='DNS_UPDATE_KEY_SECRET_${itf}' value='$dhcpsettings{"DNS_UPDATE_KEY_SECRET_${itf}"}'></td>
+		<td width='10%' class='boldbase' align='right'>$Lang::tr{'dhcp dns update algo'}:&nbsp;&nbsp;</td>
+		<td width='20%'>
+			<select name='DNS_UPDATE_KEY_ALGO_${itf}'>
+				<!-- <option value='hmac-sha1' $selected{'DNS_UPDATE_KEY_ALGO_${itf}'}{'hmac-sha1'}>HMAC-SHA1</option> -->
+				<option value='hmac-md5' $selected{'DNS_UPDATE_KEY_ALGO_${itf}'}{'hmac-md5'}>HMAC-MD5</option>
+			</select>
+		</td>
+	</tr>
+END
+;
+	}
+
+	# Store configured domain based on the interface
+	# in the temporary variable.
+	push(@domains, $dhcpsettings{"DOMAIN_NAME_${itf}"});
+}
+print <<END
+</table>
+<hr>
+<table width='100%'>
+	<tr>
+		<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+	</tr>
 </table>
 </form>
 END
@@ -622,13 +703,13 @@ if ($opt ne '') {
 }
 print <<END
 <tr>
-    <td class='base'>$Lang::tr{'dhcp advopt name'}:</td>
+    <td class='base'>$Lang::tr{'dhcp advopt name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='ADVOPT_NAME' value='$dhcpsettings{'ADVOPT_NAME'}' size='18' /></td>
-    <td class='base'>$Lang::tr{'dhcp advopt value'}:</td>
+    <td class='base'>$Lang::tr{'dhcp advopt value'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='ADVOPT_DATA' value='$dhcpsettings{'ADVOPT_DATA'}' size='40' /></td>
 </tr>$opt<tr>
     <td class='base'>$Lang::tr{'enabled'}</td><td><input type='checkbox' name='ADVOPT_ENABLED' $checked{'ADVOPT_ENABLED'}{'on'} /></td>
-    <td class='base'>$Lang::tr{'dhcp advopt scope'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'dhcp advopt scope'}:</td>
     <td>
 END
 ;
@@ -649,7 +730,7 @@ print <<END
 <hr />
 <table width='100%'>
 <tr>
-    <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'dhcp advopt scope help'}</td>
+    <td class='base' width='50%'>$Lang::tr{'dhcp advopt scope help'}</td>
     <td width='50%' align='right'>
     <input type='hidden' name='ACTION' value='$Lang::tr{'add'}1' />
     <input type='submit' name='SUBMIT' value='$buttontext' />
@@ -827,29 +908,29 @@ if ($dhcpsettings{'KEY2'} ne '') {
 }
 print <<END
 <tr>
-    <td class='base'>$Lang::tr{'mac address'}:</td>
+    <td class='base'>$Lang::tr{'mac address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='FIX_MAC' value='$dhcpsettings{'FIX_MAC'}' size='18' /></td>
-    <td class='base'>$Lang::tr{'ip address'}:</td>
+    <td class='base'>$Lang::tr{'ip address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='FIX_ADDR' value='$dhcpsettings{'FIX_ADDR'}' size='18' /></td>
-    <td class='base'>$Lang::tr{'remark'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'remark'}:</td>
     <td><input type='text' name='FIX_REMARK' value='$dhcpsettings{'FIX_REMARK'}' size='18' /></td>
 </tr><tr>
     <td class='base'>$Lang::tr{'enabled'}</td><td><input type='checkbox' name='FIX_ENABLED' $checked{'FIX_ENABLED'}{'on'} /></td>
 </tr><tr>
     <td colspan = '3'><b>$Lang::tr{'dhcp bootp pxe data'}</b></td>
 </tr><tr>
-    <td class='base'>next-server:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>next-server:</td>
     <td><input type='text' name='FIX_NEXTADDR' value='$dhcpsettings{'FIX_NEXTADDR'}' size='18' /></td>
-    <td class='base'>filename:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>filename:</td>
     <td><input type='text' name='FIX_FILENAME' value='$dhcpsettings{'FIX_FILENAME'}' size='18' /></td>
-    <td class='base'>root path:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>root path:</td>
     <td><input type='text' name='FIX_ROOTPATH' value='$dhcpsettings{'FIX_ROOTPATH'}' size='18' /></td>
 </tr>
 </table>
 <hr />
 <table width='100%'>
 <tr>
-    <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
+    <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
     <td width='50%' align='right'>
 	<input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' />
 	<input type='submit' name='SUBMIT' value='$buttontext' />
@@ -861,8 +942,26 @@ END
 ;
 #Edited line number (KEY2) passed until cleared by 'save' or 'remove' or 'new sort order'
 
+# Search for static leases
+my $search_query = $dhcpsettings{'q'};
+
+if (scalar @current2 >= 10) {
+	print <<END;
+		<form method="POST" action="#search">
+			<a name="search"></a>
+			<table width='100%'>
+				<tr>
+					<td>
+						<input type="text" name="q" value="$search_query">
+						<input type="submit" value="$Lang::tr{'search'}">
+					</td>
+				</tr>
+			</table>
+		</form>
+END
+}
+
 print <<END
-<hr />
 <table width='100%' class='tbl'>
 <tr>
     <th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?FETHER'><b>$Lang::tr{'mac address'}</b></a></th>
@@ -916,6 +1015,14 @@ foreach my $line (@current2) {
     } else {
 	$gif = 'off.gif';
 	$gdesc = $Lang::tr{'click to enable'}; 
+    }
+
+    # Skip all entries that do not match the search query
+    if ($search_query ne "") {
+	if (!grep(/$search_query/, @temp)) {
+		$key++;
+		next;
+	}
     }
 
     if ($dhcpsettings{'KEY2'} eq $key) {
@@ -1102,9 +1209,19 @@ sub buildconf {
     flock(FILE, 2);
 
     # Global settings
-    print FILE "ddns-update-style none;\n";
     print FILE "deny bootp;	#default\n";
     print FILE "authoritative;\n";
+
+    # DNS Update settings
+    if ($dhcpsettings{'DNS_UPDATE_ENABLED'} eq 'on') {
+        print FILE "ddns-updates           on;\n";
+        print FILE "ddns-update-style      interim;\n";
+        print FILE "ddns-ttl               60; # 1 min\n";
+        print FILE "ignore                 client-updates;\n";
+        print FILE "update-static-leases   on;\n";
+    } else {
+        print FILE "ddns-update-style none;\n";
+    }
     
     # Write first new option definition
     foreach my $line (@current1) {
@@ -1133,12 +1250,13 @@ sub buildconf {
 	    }
 	}# on    
     }# foreach line
+    print FILE "\n";
 
     #Subnet range definition
     foreach my $itf (@ITFs) {
 	my $lc_itf=lc($itf);
 	if ($dhcpsettings{"ENABLE_${itf}"} eq 'on' ){
-	    print FILE "\nsubnet " . $netsettings{"${itf}_NETADDRESS"} . " netmask ". $netsettings{"${itf}_NETMASK"} . " #$itf\n";
+	    print FILE "subnet " . $netsettings{"${itf}_NETADDRESS"} . " netmask ". $netsettings{"${itf}_NETMASK"} . " #$itf\n";
 	    print FILE "{\n";
 	    print FILE "\trange " . $dhcpsettings{"START_ADDR_${itf}"} . ' ' . $dhcpsettings{"END_ADDR_${itf}"}.";\n" if ($dhcpsettings{"START_ADDR_${itf}"});
 	    print FILE "\toption subnet-mask "   . $netsettings{"${itf}_NETMASK"} . ";\n";
@@ -1175,7 +1293,18 @@ sub buildconf {
 		    }
 		}# on    
 	    }# foreach line
-	    print FILE "} #$itf\n";
+	    print FILE "} #$itf\n\n";
+
+	    if (($dhcpsettings{"DNS_UPDATE_ENABLED"} eq "on") && ($dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} ne "")) {
+	        print FILE "key " . $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} . " {\n";
+	        print FILE "\talgorithm " . $dhcpsettings{"DNS_UPDATE_KEY_ALGO_${itf}"} . ";\n";
+	        print FILE "\tsecret \"" . $dhcpsettings{"DNS_UPDATE_KEY_SECRET_${itf}"} . "\";\n";
+	        print FILE "};\n\n";
+
+	        print FILE "zone " . $dhcpsettings{"DOMAIN_NAME_${itf}"} . ". {\n";
+	        print FILE "\tkey " . $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} . ";\n";
+		print FILE "}\n\n";
+	    }
 
 	    system ('/usr/bin/touch', "${General::swroot}/dhcp/enable_${lc_itf}");
 	    &General::log("DHCP on ${itf}: " . $Lang::tr{'dhcp server enabled'})

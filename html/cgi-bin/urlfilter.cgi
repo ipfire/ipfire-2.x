@@ -1214,8 +1214,8 @@ print <<END
         <td>&nbsp;</td>
 </tr>
 <tr>
-	<td colspan='2'>$Lang::tr{'urlfilter blocked domains'}&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td colspan='2'>$Lang::tr{'urlfilter blocked urls'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td colspan='2'>$Lang::tr{'urlfilter blocked domains'}</td>
+	<td colspan='2'>$Lang::tr{'urlfilter blocked urls'}</td>
 </tr>
 <tr>
 	<td colspan='2'>$Lang::tr{'urlfilter example'}</td>
@@ -1257,8 +1257,8 @@ print <<END
         <td>&nbsp;</td>
 </tr>
 <tr>
-	<td colspan='2'>$Lang::tr{'urlfilter allowed domains'}&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td colspan='2'>$Lang::tr{'urlfilter allowed urls'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td colspan='2'>$Lang::tr{'urlfilter allowed domains'}</td>
+	<td colspan='2'>$Lang::tr{'urlfilter allowed urls'}</td>
 </tr>
 <tr>
 	<td colspan='2'>$Lang::tr{'urlfilter example'}</td>
@@ -1297,7 +1297,7 @@ print <<END
         <td colspan='4'><b>$Lang::tr{'urlfilter custom expression list'}</b></td>
 </tr>
 <tr>
-	<td colspan='4'>$Lang::tr{'urlfilter blocked expressions'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td colspan='4'>$Lang::tr{'urlfilter blocked expressions'}</td>
 </tr>
 <tr>
 	<td colspan='4'><textarea name='CUSTOM_EXPRESSIONS' cols='70' rows='3' wrap='off'>
@@ -1360,8 +1360,8 @@ print <<END
         <td>&nbsp;</td>
 </tr>
 <tr>
-	<td colspan='2'>$Lang::tr{'urlfilter unfiltered clients'}&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td colspan='2'>$Lang::tr{'urlfilter banned clients'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td colspan='2'>$Lang::tr{'urlfilter unfiltered clients'}</td>
+	<td colspan='2'>$Lang::tr{'urlfilter banned clients'}</td>
 </tr>
 <tr>
 	<td colspan='2' width='50%'><textarea name='UNFILTERED_CLIENTS' cols='32' rows='6' wrap='off'>
@@ -1440,25 +1440,25 @@ print <<END
 <tr>
 	<td width='25%' class='base'>$Lang::tr{'urlfilter show category'}:</td>
 	<td width='12%'><input type='checkbox' name='SHOW_CATEGORY' $checked{'SHOW_CATEGORY'}{'on'} /></td>
-	<td width='25%' class='base'>$Lang::tr{'urlfilter redirectpage'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td width='25%' class='base'>$Lang::tr{'urlfilter redirectpage'}:</td>
 	<td><input type='text' name='REDIRECT_PAGE' value='$filtersettings{'REDIRECT_PAGE'}' size='40' /></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'urlfilter show url'}:</td>
 	<td><input type='checkbox' name='SHOW_URL' $checked{'SHOW_URL'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'urlfilter msg text 1'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'urlfilter msg text 1'}:</td>
 	<td><input type='text' name='MSG_TEXT_1' value='$filtersettings{'MSG_TEXT_1'}' size='40' /></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'urlfilter show ip'}:</td>
 	<td><input type='checkbox' name='SHOW_IP' $checked{'SHOW_IP'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'urlfilter msg text 2'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'urlfilter msg text 2'}:</td>
 	<td><input type='text' name='MSG_TEXT_2' value='$filtersettings{'MSG_TEXT_2'}' size='40' /></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'urlfilter show dnserror'}:</td>
 	<td><input type='checkbox' name='ENABLE_DNSERROR' $checked{'ENABLE_DNSERROR'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'urlfilter msg text 3'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'urlfilter msg text 3'}:</td>
 	<td><input type='text' name='MSG_TEXT_3' value='$filtersettings{'MSG_TEXT_3'}' size='40' /></td>
 </tr>
 </table>
@@ -1499,12 +1499,8 @@ print <<END
 <hr size='1'>
 <table width='100%'>
 <tr>
-	<td>
-	<img src='/blob.gif' align='top' alt='*' />&nbsp;
-	<font class='base'>$Lang::tr{'this field may be blank'}</font>
-	</td>
-	<td align='right'>&nbsp;
-	</td>
+	<td><img src='/blob.gif' align='top' alt='*' />&nbsp;<font class='base'>$Lang::tr{'required field'}</font></td>
+	<td align='right'>&nbsp;</td>
 </tr>
 </table>
 <table width='100%'>
@@ -1880,9 +1876,9 @@ print <<END
 
 <table width='100%'>
 	<tr>
-		<td width='5%'>$Lang::tr{'urlfilter source'}</td>
+		<td width='5%'>$Lang::tr{'urlfilter source'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 		<td width='1%'>&nbsp;&nbsp;</td>
-		<td width='5%'>$Lang::tr{'urlfilter dst'}&nbsp;<img src='/blob.gif' alt='*'><img src='/blob.gif' alt='*'></td>
+		<td width='5%'>$Lang::tr{'urlfilter dst'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 		<td width='1%'>&nbsp;&nbsp;</td>
 		<td width='5%'>$Lang::tr{'urlfilter access'}</td>
 		<td>&nbsp;</td>
@@ -1943,7 +1939,7 @@ print <<END
 		<td>&nbsp;</td>
 	</tr>
 	<tr>
-		<td>$Lang::tr{'remark'}&nbsp;<img src='/blob.gif' alt='*'></td>
+		<td>$Lang::tr{'remark'}</td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
@@ -1982,10 +1978,10 @@ print <<END
 <table width='100%'>
 	<tr>
 		<td width='1%' align='right'> <img src='/blob.gif' align='top' alt='*' />&nbsp;</td>
-		<td><font class='base'>$Lang::tr{'this field may be blank'}</font></td>
+		<td><font class='base'>$Lang::tr{'required field'}</font></td>
 	</tr>
 	<tr>
-		<td width='1%' align='right'><img src='/blob.gif' align='top' alt='*' /><img src='/blob.gif' align='top' alt='*' />&nbsp;</td>
+		<td width='1%' align='right'>&nbsp;</td>
 		<td><font class='base'>$Lang::tr{'urlfilter select multi'}</font></td>
 	</tr>
 </table>
@@ -2168,7 +2164,7 @@ print <<END
 	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
 </tr>
 <tr>
-        <td class='base'>$Lang::tr{'urlfilter user time quota'}:</td>
+        <td class='base'>$Lang::tr{'urlfilter user time quota'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td><input type='text' name='TIME_QUOTA' value='$uqsettings{'TIME_QUOTA'}' size='5' /></td>
 	<td colspan='2' rowspan= '5' valign='top' class='base'>
 		<table cellpadding='0' cellspacing='0'>
@@ -2176,7 +2172,7 @@ print <<END
 				<!-- intentionally left empty -->
 			</tr>
 			<tr>
-			<td>$Lang::tr{'urlfilter assigned quota users'}:</td>
+			<td>$Lang::tr{'urlfilter assigned quota users'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 			</tr>
 			<tr>
 				<!-- intentionally left empty -->
@@ -2374,7 +2370,7 @@ print <<END
        	<td class='base'><b>$Lang::tr{'urlfilter blacklist name'}</b></td>
 </tr>
 <tr>
-       	<td class='base'>$Lang::tr{'urlfilter blacklist category name'}:</td>
+       	<td class='base'>$Lang::tr{'urlfilter blacklist category name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td><input type='text' name='BE_NAME' value='$besettings{'BE_NAME'}' size='12' /></td>
 </tr>
 </table>
@@ -2384,7 +2380,7 @@ print <<END
 	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='20%'></td>
 </tr>
 <tr>
-       	<td class='base' colspan='4'><b>$Lang::tr{'urlfilter edit domains urls expressions'}</b></td>
+       	<td class='base' colspan='4'><b>$Lang::tr{'urlfilter edit domains urls expressions'}</b>&nbsp;<img src='/blob.gif' alt='*' /></td>
 </tr>
 <tr>
 	<td colspan='2'>$Lang::tr{'urlfilter domains'}</td>

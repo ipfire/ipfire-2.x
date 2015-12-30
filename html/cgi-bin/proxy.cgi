@@ -969,13 +969,13 @@ print <<END
 <tr>
 	<td width='25%' class='base'>$Lang::tr{'advproxy enabled on'} <font color="$Header::colourgreen">Green</font>:</td>
 	<td width='20%'><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'} /></td>
-	<td width='25%' class='base'>$Lang::tr{'advproxy proxy port'}:</td>
+	<td width='25%' class='base'>$Lang::tr{'advproxy proxy port'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td width='30%'><input type='text' name='PROXY_PORT' value='$proxysettings{'PROXY_PORT'}' size='5' /></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'advproxy transparent on'} <font color="$Header::colourgreen">Green</font>:</td>
 	<td><input type='checkbox' name='TRANSPARENT' $checked{'TRANSPARENT'}{'on'} /></td>
-	<td width='25%' class='base'>$Lang::tr{'advproxy proxy port transparent'}:</td>
+	<td width='25%' class='base'>$Lang::tr{'advproxy proxy port transparent'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td width='30%'><input type='text' name='TRANSPARENT_PORT' value='$proxysettings{'TRANSPARENT_PORT'}' size='5' /></td>
 </tr>
 <tr>
@@ -988,7 +988,7 @@ if ($netsettings{'BLUE_DEV'}) {
 	print "<td colspan='2'>&nbsp;</td>";
 }
 print <<END
-	<td class='base'>$Lang::tr{'advproxy visible hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'advproxy visible hostname'}:</td>
 	<td><input type='text' name='VISIBLE_HOSTNAME' value='$proxysettings{'VISIBLE_HOSTNAME'}' /></td>
 </tr>
 <tr>
@@ -1035,7 +1035,7 @@ print <<END
 <hr size='1'>
 <table width='100%'>
 <tr><td class='base' colspan='4'><b>$Lang::tr{'advproxy redirector children'}</b></td></tr>
-<tr><td class='base' >$Lang::tr{'processes'}<input type='text' name='CHILDREN' value='$proxysettings{'CHILDREN'}' size='5' /></td>
+<tr><td class='base' >$Lang::tr{'processes'}:&nbsp;<img src='/blob.gif' alt='*' /><input type='text' name='CHILDREN' value='$proxysettings{'CHILDREN'}' size='5' /></td>
 END
 ;
 my $count = `ip n| wc -l`;
@@ -1071,19 +1071,19 @@ print <<END
 <tr>
 	<td width='25%' class='base'>$Lang::tr{'advproxy via forwarding'}:</td>
 	<td width='20%'><input type='checkbox' name='FORWARD_VIA' $checked{'FORWARD_VIA'}{'on'} /></td>
-	<td width='25%' class='base'>$Lang::tr{'advproxy upstream proxy host:port'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td width='25%' class='base'>$Lang::tr{'advproxy upstream proxy host:port'}:</td>
 	<td width='30%'><input type='text' name='UPSTREAM_PROXY' value='$proxysettings{'UPSTREAM_PROXY'}' /></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'advproxy client IP forwarding'}:</td>
 	<td><input type='checkbox' name='FORWARD_IPADDRESS' $checked{'FORWARD_IPADDRESS'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'advproxy upstream username'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'advproxy upstream username'}:</td>
 	<td><input type='text' name='UPSTREAM_USER' value='$proxysettings{'UPSTREAM_USER'}' /></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'advproxy username forwarding'}:</td>
 	<td><input type='checkbox' name='FORWARD_USERNAME' $checked{'FORWARD_USERNAME'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'advproxy upstream password'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'advproxy upstream password'}:</td>
 	<td><input type='password' name='UPSTREAM_PASSWORD' value='$proxysettings{'UPSTREAM_PASSWORD'}' /></td>
 </tr>
 <tr>
@@ -1119,28 +1119,28 @@ print <<END
 <tr>
 	<td class='base'>$Lang::tr{'proxy cachemgr'}:</td>
 	<td><input type='checkbox' name='CACHEMGR' $checked{'CACHEMGR'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'advproxy admin mail'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'advproxy admin mail'}:</td>
 	<td><input type='text' name='ADMIN_MAIL_ADDRESS' value='$proxysettings{'ADMIN_MAIL_ADDRESS'}' /></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'proxy filedescriptors'}:</td>
+	<td class='base'>$Lang::tr{'proxy filedescriptors'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td><input type='text' name='FILEDESCRIPTORS' value='$proxysettings{'FILEDESCRIPTORS'}' size='5' /></td>
-	<td class='base'>$Lang::tr{'proxy admin password'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'proxy admin password'}:</td>
 	<td><input type='text' name='ADMIN_PASSWORD' value='$proxysettings{'ADMIN_PASSWORD'}' /></td>
 </tr>
 <tr>
 	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy ram cache size'}:</td>
+	<td class='base'>$Lang::tr{'advproxy ram cache size'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td><input type='text' name='CACHE_MEM' value='$proxysettings{'CACHE_MEM'}' size='5' /></td>
-	<td class='base'>$Lang::tr{'advproxy hdd cache size'}:</td>
+	<td class='base'>$Lang::tr{'advproxy hdd cache size'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td><input type='text' name='CACHE_SIZE' value='$proxysettings{'CACHE_SIZE'}' size='5' /></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy min size'}:</td>
+	<td class='base'>$Lang::tr{'advproxy min size'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td><input type='text' name='MIN_SIZE' value='$proxysettings{'MIN_SIZE'}' size='5' /></td>
-	<td class='base'>$Lang::tr{'advproxy max size'}:</td>
+	<td class='base'>$Lang::tr{'advproxy max size'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td><input type='text' name='MAX_SIZE' value='$proxysettings{'MAX_SIZE'}' size='5' /></td>
 </tr>
 <tr>
@@ -1158,7 +1158,7 @@ print <<END
 				<!-- intentionally left empty -->
 			</tr>
 			<tr>
-			<td>$Lang::tr{'advproxy no cache sites'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+			<td>$Lang::tr{'advproxy no cache sites'}:</td>
 			</tr>
 			<tr>
 				<!-- intentionally left empty -->
@@ -1218,8 +1218,8 @@ print <<END
 	<td width='25%' align='center'></td> <td width='20%' align='center'></td><td width='25%' align='center'></td><td width='30%' align='center'></td>
 </tr>
 <tr>
-	<td colspan='2' class='base'>$Lang::tr{'advproxy standard ports'}:</td>
-	<td colspan='2' class='base'>$Lang::tr{'advproxy ssl ports'}:</td>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy standard ports'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy ssl ports'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 </tr>
 <tr>
 	<td colspan='2'><textarea name='PORTS_SAFE' cols='32' rows='6' wrap='off'>
@@ -1247,7 +1247,7 @@ print <<END
 	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
 </tr>
 <tr>
-	<td colspan='4' class='base'>$Lang::tr{'advproxy allowed subnets'}:</td>
+	<td colspan='4' class='base'>$Lang::tr{'advproxy allowed subnets'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 </tr>
 <tr>
 	<td colspan='2' rowspan='4'><textarea name='SRC_SUBNETS' cols='32' rows='3' wrap='off'>
@@ -1300,8 +1300,8 @@ print <<END
 	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
 </tr>
 <tr>
-	<td colspan='2' class='base'>$Lang::tr{'advproxy unrestricted ip clients'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td colspan='2' class='base'>$Lang::tr{'advproxy unrestricted mac clients'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy unrestricted ip clients'}:</td>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy unrestricted mac clients'}:</td>
 </tr>
 <tr>
 	<td colspan='2'><textarea name='SRC_UNRESTRICTED_IP' cols='32' rows='3' wrap='off'>
@@ -1327,8 +1327,8 @@ print <<END
 	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
 </tr>
 <tr>
-	<td colspan='2' class='base'>$Lang::tr{'advproxy banned ip clients'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td colspan='2' class='base'>$Lang::tr{'advproxy banned mac clients'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy banned ip clients'}:</td>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy banned mac clients'}:</td>
 </tr>
 <tr>
 	<td colspan='2'><textarea name='SRC_BANNED_IP' cols='32' rows='3' wrap='off'>
@@ -1373,12 +1373,12 @@ END
 ;
 if ($proxysettings{'CLASSROOM_EXT'} eq 'on'){
 print <<END
-	<td class='base'>$Lang::tr{'advproxy supervisor password'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'advproxy supervisor password'}:</td>
 	<td><input type='password' name='SUPERVISOR_PASSWORD' value='$proxysettings{'SUPERVISOR_PASSWORD'}' size='12' /></td>
 </tr>
 <tr>
 	<td colspan='2' class='base'>$Lang::tr{'advproxy cre group definitions'}:</td>
-	<td colspan='2' class='base'>$Lang::tr{'advproxy cre supervisors'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy cre supervisors'}:</td>
 END
 ;
 }
@@ -1512,9 +1512,9 @@ print <<END
 	<td colspan='4'><b>$Lang::tr{'advproxy transfer limits'}</b></td>
 </tr>
 <tr>
-	<td width='25%' class='base'>$Lang::tr{'advproxy max download size'}:</td>
+	<td width='25%' class='base'>$Lang::tr{'advproxy max download size'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td width='20%'><input type='text' name='MAX_INCOMING_SIZE' value='$proxysettings{'MAX_INCOMING_SIZE'}' size='5' /></td>
-	<td width='25%' class='base'>$Lang::tr{'advproxy max upload size'}:</td>
+	<td width='25%' class='base'>$Lang::tr{'advproxy max upload size'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td width='30%'><input type='text' name='MAX_OUTGOING_SIZE' value='$proxysettings{'MAX_OUTGOING_SIZE'}' size='5' /></td>
 </tr>
 </table>
@@ -1619,7 +1619,7 @@ END
 if ( $proxysettings{'ENABLE_MIME_FILTER'} eq 'on' ){
 print <<END
 <tr>
-	<td  colspan='2' class='base'>$Lang::tr{'advproxy MIME block types'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td  colspan='2' class='base'>$Lang::tr{'advproxy MIME block types'}:</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
@@ -1683,8 +1683,8 @@ print <<END
 	<td><b>$Lang::tr{'advproxy privacy'}</b></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy fake useragent'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td class='base'>$Lang::tr{'advproxy fake referer'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'advproxy fake useragent'}:</td>
+	<td class='base'>$Lang::tr{'advproxy fake referer'}:</td>
 </tr>
 <tr>
 	<td><input type='text' name='FAKE_USERAGENT' value='$proxysettings{'FAKE_USERAGENT'}' size='40%' /></td>
@@ -1742,7 +1742,7 @@ if (!($proxysettings{'AUTH_METHOD'} eq 'none')) { if (!($proxysettings{'AUTH_MET
 	<td colspan='2' rowspan= '6' valign='top' class='base'>
 		<table cellpadding='0' cellspacing='0'>
 			<tr>
-			<td class='base'>$Lang::tr{'advproxy AUTH realm'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+			<td class='base'>$Lang::tr{'advproxy AUTH realm'}:</td>
 			</tr>
 			<tr>
 				<!-- intentionally left empty -->
@@ -1760,7 +1760,7 @@ if (!($proxysettings{'AUTH_METHOD'} eq 'none')) { if (!($proxysettings{'AUTH_MET
 				<!-- intentionally left empty -->
 			</tr>
 			<tr>
-			<td>$Lang::tr{'advproxy AUTH no auth'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+			<td>$Lang::tr{'advproxy AUTH no auth'}:</td>
 			</tr>
 			<tr>
 				<!-- intentionally left empty -->
@@ -1786,7 +1786,7 @@ print <<END
 	<td><input type='text' name='AUTH_CACHE_TTL' value='$proxysettings{'AUTH_CACHE_TTL'}' size='5' /></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy AUTH limit of IP addresses'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'advproxy AUTH limit of IP addresses'}:</td>
 	<td><input type='text' name='AUTH_MAX_USERIP' value='$proxysettings{'AUTH_MAX_USERIP'}' size='5' /></td>
 </tr>
 <tr>
@@ -1856,7 +1856,7 @@ print <<END
 </tr>
 <tr>
 	<td colspan='2' class='base'>$Lang::tr{'advproxy IDENT aware hosts'}:</td>
-	<td colspan='2' class='base'>$Lang::tr{'advproxy AUTH no auth'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy AUTH no auth'}:</td>
 </tr>
 <tr>
 	<td colspan='2'><textarea name='IDENT_HOSTS' cols='32' rows='6' wrap='off'>
@@ -1942,7 +1942,7 @@ print <<END
 	<td><input type='text' name='NTLM_DOMAIN' value='$proxysettings{'NTLM_DOMAIN'}' size='15' /></td>
 	<td class='base'>$Lang::tr{'advproxy NTLM PDC hostname'}:</td>
 	<td><input type='text' name='NTLM_PDC' value='$proxysettings{'NTLM_PDC'}' size='14' /></td>
-	<td class='base'>$Lang::tr{'advproxy NTLM BDC hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'advproxy NTLM BDC hostname'}:</td>
 	<td><input type='text' name='NTLM_BDC' value='$proxysettings{'NTLM_BDC'}' size='14' /></td>
 </tr>
 </table>
@@ -2020,7 +2020,7 @@ if ($proxysettings{'AUTH_METHOD'} eq 'ntlm-auth') {
 				<td colspan='4'><b>$Lang::tr{'advproxy group access control'}</b></td>
 			</tr>
 			<tr>
-				<td width='20%' class='base'>$Lang::tr{'advproxy group required'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+				<td width='20%' class='base'>$Lang::tr{'advproxy group required'}:</td>
 				<td width='40%'><input type='text' name='NTLM_AUTH_GROUP' value='$proxysettings{'NTLM_AUTH_GROUP'}' size='37' /></td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
@@ -2076,7 +2076,7 @@ print <<END
 	<td colspan='4'><b>$Lang::tr{'advproxy LDAP group access control'}</b></td>
 </tr>
 <tr>
-	<td width='20%' class='base'>$Lang::tr{'advproxy LDAP group required'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td width='20%' class='base'>$Lang::tr{'advproxy LDAP group required'}:</td>
 	<td width='40%'><input type='text' name='LDAP_GROUP' value='$proxysettings{'LDAP_GROUP'}' size='37' /></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -2103,7 +2103,7 @@ print <<END
 	<td width='30%'><input type='text' name='RADIUS_PORT' value='$proxysettings{'RADIUS_PORT'}' size='3' /></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy RADIUS identifier'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+	<td class='base'>$Lang::tr{'advproxy RADIUS identifier'}:</td>
 	<td><input type='text' name='RADIUS_IDENTIFIER' value='$proxysettings{'RADIUS_IDENTIFIER'}' size='14' /></td>
 	<td class='base'>$Lang::tr{'advproxy RADIUS secret'}:</td>
 	<td><input type='password' name='RADIUS_SECRET' value='$proxysettings{'RADIUS_SECRET'}' size='14' /></td>
@@ -2259,9 +2259,7 @@ print <<END
 <br />
 <table width='100%'>
 <tr>
-	<td><img src='/blob.gif' align='top' alt='*' />&nbsp;
-	<font class='base'>$Lang::tr{'this field may be blank'}</font>
-	</td>
+	<td><img src='/blob.gif' align='top' alt='*' />&nbsp;<font class='base'>$Lang::tr{'required field'}</font></td>
 	<td align='right'>&nbsp;</td>
 </tr>
 </table>

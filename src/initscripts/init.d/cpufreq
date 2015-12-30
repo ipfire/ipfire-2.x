@@ -36,23 +36,35 @@ case "${1}" in
 		modprobe cpufreq_powersave
 		modprobe cpufreq_userspace
 
-		CPUCOUNT=`ls /sys/devices/system/cpu/cpu*/cpufreq/affected_cpus 2> /dev/null | wc -l `;
-		let CPUCOUNT-=1
-		# Set the governor to ondemand to test if it works 
-		cpufreq-set -g ondemand
-		if [ ${?} = 0 ]; then
-		    # activate cpufreq collectd module
-		    sed -i -e "s|^#LoadPlugin cpufreq|LoadPlugin cpufreq|g" /etc/collectd.conf
+		driver=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver 2>/dev/null`
 
-		    # Set the governor to ondemand for all cpus 
-		    for i in `seq 0 $CPUCOUNT`;
-		    do
-			cpufreq-set -c $i -g ondemand
-		    done
-		    echo_ok;
-		else
-		    echo_failure;
-		fi
+		case "$driver" in
+		    intel_pstate)
+			# pstate use internal gov so skip this setting
+			# activate cpufreq collectd module
+			sed -i -e "s|^#LoadPlugin cpufreq|LoadPlugin cpufreq|g" /etc/collectd.conf
+			echo_ok;
+			;;
+		    *)
+			CPUCOUNT=`ls /sys/devices/system/cpu/cpu*/cpufreq/affected_cpus 2> /dev/null | wc -l `;
+			let CPUCOUNT-=1
+			# Set the governor to ondemand to test if it works 
+			cpufreq-set -g ondemand
+			if [ ${?} = 0 ]; then
+				# activate cpufreq collectd module
+				sed -i -e "s|^#LoadPlugin cpufreq|LoadPlugin cpufreq|g" /etc/collectd.conf
+
+				# Set the governor to ondemand for all cpus 
+				for i in `seq 0 $CPUCOUNT`;
+				do
+					cpufreq-set -c $i -g ondemand
+				done
+				echo_ok;
+			else
+				echo_failure;
+			fi
+			;;
+		    esac
 		exit 0;
 		;;
 	*)

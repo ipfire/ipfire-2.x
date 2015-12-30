@@ -1,0 +1,332 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR The IPFire Project (www.ipfire.org)
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# btelega <btelega@gmail.com>, 2014
+# Przemysław Karpeta <przemyslaw.karpeta@gmail.com>, 2014
+# Przemyslaw Zdroik <zdroyer@gmail.com>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: IPFire Project\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-11-05 01:29+0000\n"
+"PO-Revision-Date: 2015-01-26 10:41+0000\n"
+"Last-Translator: Przemyslaw Zdroik <zdroyer@gmail.com>\n"
+"Language-Team: Polish (http://www.transifex.com/projects/p/ipfire/language/pl/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
+msgid "OK"
+msgstr "OK"
+
+#: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
+#: main.c:702
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: main.c:176
+msgid "I accept this license"
+msgstr "Akceptuje licencje"
+
+#: main.c:384
+msgid "Warning: Unattended installation will start in 10 seconds..."
+msgstr "Ostrzeżenie: Zautomatyzowana instalacja zacznie się za 10 sekund..."
+
+#: main.c:403
+msgid "Language selection"
+msgstr "Wybór języka"
+
+#: main.c:403
+msgid "Select the language you wish to use for the installation."
+msgstr "Wybierz język jaki chcesz użyć do tej instalacji."
+
+#: main.c:418
+msgid "Unattended mode"
+msgstr "Tryb zautomatyzowany"
+
+#: main.c:420
+msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
+msgstr "<Tab>/<Alt-Tab> przełącza między pozycjami | <Space> wybiera | <F12> następny ekran"
+
+#: main.c:426
+#, c-format
+msgid ""
+"Welcome to the %s installation program.\n"
+"\n"
+"Selecting Cancel on any of the following screens will reboot the computer."
+msgstr "Witaj w instalatorze %s.\n\nWybranie Cancel na dowolnym z następnych ekranów spowoduje restart komputera."
+
+#: main.c:428
+msgid "Start installation"
+msgstr "Rozpoczynam instalację"
+
+#: main.c:449
+#, c-format
+msgid "The installer will now try downloading the installation image."
+msgstr "Instalator spróbuje teraz pobrać plik obrazu instalacji."
+
+#: main.c:452
+#, c-format
+msgid ""
+"No source drive could be found.\n"
+"\n"
+"You can try downloading the required installation image."
+msgstr "Medium źródłowe nie zostało znalezione.\n\nMożesz spróbować pobrać wymagany plik obrazu instalacji."
+
+#: main.c:456
+msgid ""
+"Please make sure to connect your machine to a network and the installer will"
+" try connect to acquire an IP address."
+msgstr "Podłącz twój komputer do sieci a instalator spróbuje połączyć się by pobrać adres IP."
+
+#: main.c:460
+msgid "Download installation image"
+msgstr "Pobierz pliku obrazu instalacji"
+
+#: main.c:473
+msgid "Trying to start networking (DHCP)..."
+msgstr "Próba uruchomienia sieci (DHCP)..."
+
+#: main.c:484
+msgid ""
+"Networking could not be started but is required to go on with the installation.\n"
+"\n"
+"Please connect your machine to a network with a DHCP server and retry."
+msgstr "Obsługa sieci, która jest wymagana do kontynuowania instalacji, nie mogła zostać uruchomiona \n\nPodłącz proszę twój komputer do sieci z działającym serwerem DHCP i Spróbuj ponownie."
+
+#: main.c:487 main.c:516
+msgid "Retry"
+msgstr "Spróbuj ponownie"
+
+#: main.c:501
+msgid "Downloading installation image..."
+msgstr "Pobieranie pliku obrazu instalacji..."
+
+#: main.c:510
+#, c-format
+msgid "MD5 checksum mismatch"
+msgstr "Niezgodność sumy kontrolnej MD5"
+
+#: main.c:513
+#, c-format
+msgid ""
+"The installation image could not be downloaded.\n"
+"  Reason: %s\n"
+"\n"
+"%s"
+msgstr "Plik obrazu instalacji nie został pobrany\nPrzyczyna: %s\n\n%s"
+
+#: main.c:528
+#, c-format
+msgid ""
+"Could not mount %s to %s:\n"
+"  %s\n"
+msgstr "Nie można zamontować %s w %s:\n%s \n"
+
+#: main.c:543
+msgid "License Agreement"
+msgstr "Umowa Licencyjna"
+
+#: main.c:544
+msgid "License not accepted!"
+msgstr "Licencja nie została zaakceptowana !"
+
+#: main.c:566
+msgid "No hard disk found."
+msgstr "Nie znaleziono twardego dysku."
+
+#: main.c:587
+msgid "Disk Selection"
+msgstr "Wybór Dysku"
+
+#: main.c:588
+msgid ""
+"Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
+"\n"
+"ALL DATA ON THE DISK WILL BE DESTROYED."
+msgstr "Wybierz dysk(dyski), na którym ma zostać zainstalowany IPFire. Wybrane urządzenia zostaną podzielone na partycje, a na tych partycjach zostaną utworzone systemy plików. \n\nWSZYSTKIE ISTNIEJĄCE NA DYSKACH DANE ZOSTANĄ ZNISZCZONE."
+
+#: main.c:599
+msgid ""
+"No disk has been selected.\n"
+"\n"
+"Please select one or more disks you want to install IPFire on."
+msgstr "Nie wybrano żadnego dysku.\n\nWybierz jeden lub więcej dysków, na których chesz zainstalować IPFire."
+
+#: main.c:617
+#, c-format
+msgid ""
+"The installation program will now prepare the chosen harddisk:\n"
+"\n"
+"  %s\n"
+"\n"
+"Do you agree to continue?"
+msgstr "Instalator przygotuje teraz wybrany dysk twardy:\n\n  %s\n\nCzy kontynuować ?"
+
+#: main.c:619
+msgid "Disk Setup"
+msgstr "Konfiguracja Dysku"
+
+#: main.c:620 main.c:630
+msgid "Delete all data"
+msgstr "Usuń wszystkie dane"
+
+#: main.c:627
+#, c-format
+msgid ""
+"The installation program will now set up a RAID configuration on the selected harddisks:\n"
+"\n"
+"  %s\n"
+"  %s\n"
+"\n"
+"Do you agree to continue?"
+msgstr "Instalator skonfiguruje teraz RAID na wybranych dyskach twardych:\n\n  %s\n  %s\n\nCzy kontynuować ?"
+
+#: main.c:629
+msgid "RAID Setup"
+msgstr "Konfiguracja RAID"
+
+#: main.c:640
+msgid "Your disk configuration is currently not supported."
+msgstr "Twoja konfiguracja dysku nie jest aktualnie obsługiwana. "
+
+#: main.c:655
+msgid "Your harddisk is too small."
+msgstr "Twój dysk twardy jest za mały"
+
+#: main.c:671
+msgid ""
+"Your harddisk is very small, but you can continue without a swap partition."
+msgstr "Dysk twardy jest bardzo mały, ale można kontynuować bez partycji swap."
+
+#: main.c:684
+msgid "ext4 Filesystem"
+msgstr "system plików ext4 "
+
+#: main.c:685
+msgid "ext4 Filesystem without journal"
+msgstr "system plików ext4 bez dziennika"
+
+#: main.c:686
+msgid "XFS Filesystem"
+msgstr "XFS Filesystem"
+
+#: main.c:687
+msgid "ReiserFS Filesystem"
+msgstr "System plików ReiserFS"
+
+#: main.c:701
+msgid "Filesystem Selection"
+msgstr "System plików został wybrany"
+
+#: main.c:701
+msgid "Please choose your filesystem:"
+msgstr "Wybierz system plików:"
+
+#: main.c:712
+msgid "Building RAID..."
+msgstr "Tworzenie RAID ..."
+
+#: main.c:716
+msgid "Unable to build the RAID."
+msgstr "Nie udało się utworzyć RAID."
+
+#: main.c:728
+msgid "Partitioning disk..."
+msgstr "Partycjonowanie dysku..."
+
+#: main.c:732
+msgid "Unable to partition the disk."
+msgstr "Partycjonowanie dysku niemożliwe."
+
+#: main.c:739
+msgid "Creating filesystems..."
+msgstr "Tworzenie systemów plików..."
+
+#: main.c:743
+msgid "Unable to create filesystems."
+msgstr "Nie można utworzyć systemów plików."
+
+#: main.c:749
+msgid "Unable to mount filesystems."
+msgstr "Nie można zamontować systemów plików."
+
+#: main.c:760
+msgid "Installing the system..."
+msgstr "Instalowanie systemu..."
+
+#: main.c:761
+msgid "Unable to install the system."
+msgstr "Nie można zainstalować systemu."
+
+#: main.c:777
+msgid "Installing the language cache..."
+msgstr "Instalacja pamięci podręcznej języków."
+
+#: main.c:778
+msgid "Unable to install the language cache."
+msgstr "Nie można zainstalować pamięci podręcznej języków."
+
+#: main.c:783
+msgid "Installing the bootloader..."
+msgstr "Instalacja programu rozruchowego..."
+
+#: main.c:790
+msgid "Unable to open /etc/default/grub for writing."
+msgstr "Nie można otworzyć /etc/default/grub do zapisu."
+
+#: main.c:812
+msgid "Unable to install the bootloader."
+msgstr "Nie mogę zainstalować programu rozruchowego."
+
+#: main.c:826
+msgid ""
+"A backup file has been found on the installation image.\n"
+"\n"
+"Do you want to restore the backup?"
+msgstr "Plik kopii zapasowej został odnaleziony w obrazie instalacji.\n\nCzy chcesz przywrócić informację ze znalezionej kopii zapasowej? "
+
+#: main.c:827
+msgid "Yes"
+msgstr "Tak"
+
+#: main.c:827
+msgid "No"
+msgstr "Nie"
+
+#: main.c:834
+msgid "An error occured when the backup file was restored."
+msgstr "Wystąpił błąd podczas przywracania pliku kopii zapasowej."
+
+#: main.c:869
+msgid "Running post-install script..."
+msgstr "Działanie skryptu post-instalacyjnego..."
+
+#: main.c:870
+msgid "Post-install script failed."
+msgstr "Skrypt post-instalacyjny zawiódł."
+
+#: main.c:877
+#, c-format
+msgid ""
+"%s was successfully installed!\n"
+"\n"
+"Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
+msgstr "Instalacja %s zakończyła się sukcesem !\n\nProsze usunąć nośnik instalacyjny z systemu i wcisnąć przycisk restartu. Po restarcie systemu pojawi się prośba o skonfigurowanie sieci i ustawienie haseł systemowych. Następnie należy oworzyć w przeglądarce WWW adres https://%s:444 (lub inną nazwę, ktora została nadana %s), aby uzyskać dostęp do internetowej konsoli konfiguracyjnej."
+
+#: main.c:882
+msgid "Congratulations!"
+msgstr "Gratulacje!"
+
+#: main.c:882
+msgid "Reboot"
+msgstr "Uruchom ponownie"
+
+#: main.c:893
+msgid "Setup has failed. Press Ok to reboot."
+msgstr "Konfiguracja nieudana. Wciśnij Ok, aby zrestartować."

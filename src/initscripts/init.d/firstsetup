@@ -28,7 +28,7 @@ ser_console $cmdline
 #
 /etc/init.d/sysklogd start
 export LANG=en_US.utf8
-/usr/local/sbin/setup /dev/tty2 INSTALL
+/usr/sbin/setup /dev/tty2 INSTALL
 if [ "${?}" == "1" ]; then
 	echo Setup not finished. Rebooting ...
 	reboot -f
@@ -40,9 +40,6 @@ if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
 		echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
 		echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-pae
-		echo "Name: linux-pae" > /opt/pakfire/db/meta/meta-linux-pae
-		echo "ProgVersion: 0" >> /opt/pakfire/db/meta/meta-linux-pae
-		echo "Release: 0"     >> /opt/pakfire/db/meta/meta-linux-pae
 	fi
 fi
 

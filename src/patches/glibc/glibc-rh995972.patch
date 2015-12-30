@@ -1,0 +1,246 @@
+commit d26dfc60edc8c6dd160eefff16a734152a835ca0
+Author: Martin von Gagern <Martin.vGagern@gmx.net>
+Date:   Sat May 14 21:25:43 2011 -0400
+
+    Fix handling of static TLS in dlopen'ed objects
+    
+    When dynamically loading a library along with several dependencies, calls to
+    _dl_add_to_slotinfo and _dl_update_slotinfo can become intermixed. As a
+    consequence, _dl_update_slotinfo will update the generation counter of the dtv
+    although not all of the slots belonging to that generation have been added.
+    Subsequent calls to _dl_add_to_slotinfo will add more slots to the same
+    generation, for which no storage will be allocated, as the dtv generation
+    checks will claim no work is necessary. This will lead to uninitialized dtv
+    entries and will likely cause a SIGSEGV when thread local variables are
+    accessed.
+
+diff --git a/elf/Makefile b/elf/Makefile
+index 8d9657d..6efb86c 100644
+--- a/elf/Makefile
++++ b/elf/Makefile
+@@ -76,6 +76,7 @@ distribute	:= rtld-Rules \
+ 		   tst-tlsmod12.c tst-tls10.h tst-alignmod.c tst-alignmod2.c \
+ 		   circlemod1.c circlemod1a.c circlemod2.c circlemod2a.c \
+ 		   circlemod3.c circlemod3a.c nodlopenmod2.c \
++		   tst-tls19mod1.c tst-tls19mod2.c tst-tls19mod3.c \
+ 		   tls-macros.h \
+ 		   reldep8mod1.c reldep8mod2.c reldep8mod3.c \
+ 		   nodel2mod1.c nodel2mod2.c nodel2mod3.c \
+@@ -194,7 +195,7 @@ tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
+ 	 restest2 next dblload dblunload reldep5 reldep6 reldep7 reldep8 \
+ 	 circleload1 tst-tls3 tst-tls4 tst-tls5 tst-tls6 tst-tls7 tst-tls8 \
+ 	 tst-tls10 tst-tls11 tst-tls12 tst-tls13 tst-tls14 tst-tls15 \
+-	 tst-tls16 tst-tls17 tst-tls18 tst-tls-dlinfo \
++	 tst-tls16 tst-tls17 tst-tls18 tst-tls19 tst-tls-dlinfo \
+ 	 tst-align tst-align2 $(tests-execstack-$(have-z-execstack)) \
+ 	 tst-dlmodcount tst-dlopenrpath tst-deep1 \
+ 	 tst-dlmopen1 tst-dlmopen2 tst-dlmopen3 \
+@@ -240,6 +241,7 @@ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
+ 		$(patsubst %,tst-tlsmod17a%,$(tlsmod17a-suffixes)) \
+ 		tst-tlsmod17b \
+ 		$(patsubst %,tst-tlsmod18a%,$(tlsmod18a-suffixes)) \
++		tst-tls19mod1 tst-tls19mod2 tst-tls19mod3 \
+ 		circlemod1 circlemod1a circlemod2 circlemod2a \
+ 		circlemod3 circlemod3a \
+ 		reldep8mod1 reldep8mod2 reldep8mod3 \
+@@ -525,6 +527,8 @@ $(objpfx)tst-tlsmod13a.so: $(objpfx)tst-tlsmod13.so
+ # For tst-tls9-static, make sure the modules it dlopens have libc.so in DT_NEEDED
+ $(objpfx)tst-tlsmod5.so: $(common-objpfx)libc.so
+ $(objpfx)tst-tlsmod6.so: $(common-objpfx)libc.so
++$(objpfx)tst-tls19mod1.so: $(objpfx)tst-tls19mod2.so $(objpfx)tst-tls19mod3.so
++$(objpfx)tst-tls19mod3.so: $(objpfx)ld.so
+ $(objpfx)reldep8mod3.so: $(objpfx)reldep8mod1.so $(objpfx)reldep8mod2.so
+ $(objpfx)nodel2mod3.so: $(objpfx)nodel2mod1.so $(objpfx)nodel2mod2.so
+ $(objpfx)reldep9mod2.so: $(objpfx)reldep9mod1.so
+@@ -822,6 +826,9 @@ $(patsubst %,$(objpfx)%.os,$(tlsmod18a-modules)): $(objpfx)tst-tlsmod18a%.os : t
+ 	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ -DN=$* -DNOT_IN_libc=1 $<
+ $(patsubst %,$(objpfx)tst-tlsmod18a%.so,$(tlsmod18a-suffixes)): $(objpfx)tst-tlsmod18a%.so: $(objpfx)ld.so
+ 
++$(objpfx)tst-tls19: $(libdl)
++$(objpfx)tst-tls19.out: $(objpfx)tst-tls19mod1.so
++
+ CFLAGS-tst-align.c = $(stack-align-test-flags)
+ CFLAGS-tst-align2.c = $(stack-align-test-flags)
+ CFLAGS-tst-alignmod.c = $(stack-align-test-flags)
+diff --git a/elf/dl-open.c b/elf/dl-open.c
+index cf8e8cc..8d90b56 100644
+--- a/elf/dl-open.c
++++ b/elf/dl-open.c
+@@ -347,6 +347,7 @@ dl_open_worker (void *a)
+   /* If the file is not loaded now as a dependency, add the search
+      list of the newly loaded object to the scope.  */
+   bool any_tls = false;
++  unsigned int first_static_tls = new->l_searchlist.r_nlist;
+   for (unsigned int i = 0; i < new->l_searchlist.r_nlist; ++i)
+     {
+       struct link_map *imap = new->l_searchlist.r_list[i];
+@@ -425,30 +426,9 @@ dl_open_worker (void *a)
+ 	     might have to increase its size.  */
+ 	  _dl_add_to_slotinfo (imap);
+ 
+-	  if (imap->l_need_tls_init)
+-	    {
+-	      /* For static TLS we have to allocate the memory here
+-		 and now.  This includes allocating memory in the DTV.
+-		 But we cannot change any DTV other than our own. So,
+-		 if we cannot guarantee that there is room in the DTV
+-		 we don't even try it and fail the load.
+-
+-		 XXX We could track the minimum DTV slots allocated in
+-		 all threads.  */
+-	      if (! RTLD_SINGLE_THREAD_P && imap->l_tls_modid > DTV_SURPLUS)
+-		_dl_signal_error (0, "dlopen", NULL, N_("\
+-cannot load any more object with static TLS"));
+-
+-	      imap->l_need_tls_init = 0;
+-#ifdef SHARED
+-	      /* Update the slot information data for at least the
+-		 generation of the DSO we are allocating data for.  */
+-	      _dl_update_slotinfo (imap->l_tls_modid);
+-#endif
+-
+-	      GL(dl_init_static_tls) (imap);
+-	      assert (imap->l_need_tls_init == 0);
+-	    }
++	  if (imap->l_need_tls_init
++	      && first_static_tls == new->l_searchlist.r_nlist)
++	    first_static_tls = i;
+ 
+ 	  /* We have to bump the generation counter.  */
+ 	  any_tls = true;
+@@ -460,6 +440,40 @@ cannot load any more object with static TLS"));
+     _dl_fatal_printf (N_("\
+ TLS generation counter wrapped!  Please report this."));
+ 
++  /* We need a second pass for static tls data, because _dl_update_slotinfo
++     must not be run while calls to _dl_add_to_slotinfo are still pending. */
++  for (unsigned int i = first_static_tls; i < new->l_searchlist.r_nlist; ++i)
++    {
++      struct link_map *imap = new->l_searchlist.r_list[i];
++
++      if (imap->l_need_tls_init
++	  && ! imap->l_init_called
++	  && imap->l_tls_blocksize > 0)
++	{
++	  /* For static TLS we have to allocate the memory here and
++	     now.  This includes allocating memory in the DTV.  But we
++	     cannot change any DTV other than our own. So, if we
++	     cannot guarantee that there is room in the DTV we don't
++	     even try it and fail the load.
++
++	     XXX We could track the minimum DTV slots allocated in
++	     all threads.  */
++	  if (! RTLD_SINGLE_THREAD_P && imap->l_tls_modid > DTV_SURPLUS)
++	    _dl_signal_error (0, "dlopen", NULL, N_("\
++cannot load any more object with static TLS"));
++
++	  imap->l_need_tls_init = 0;
++#ifdef SHARED
++	  /* Update the slot information data for at least the
++	     generation of the DSO we are allocating data for.  */
++	  _dl_update_slotinfo (imap->l_tls_modid);
++#endif
++
++	  GL(dl_init_static_tls) (imap);
++	  assert (imap->l_need_tls_init == 0);
++	}
++    }
++
+   /* Notify the debugger all new objects have been relocated.  */
+   if (relocation_in_progress)
+     LIBC_PROBE (rtld_reloc_complete, 3, args->nsid, r, new);
+diff --git a/elf/tst-tls19.c b/elf/tst-tls19.c
+new file mode 100644
+index 0000000..acbc1d6
+--- /dev/null
++++ b/elf/tst-tls19.c
+@@ -0,0 +1,27 @@
++// BZ 12453
++#include <stdio.h>
++#include <dlfcn.h>
++
++
++static int
++do_test (void)
++{
++  void* dl = dlopen ("tst-tls19mod1.so", RTLD_LAZY | RTLD_GLOBAL);
++  if (dl == NULL)
++    {
++      printf ("Error loading tst-tls19mod1.so: %s\n", dlerror ());
++      return 1;
++    }
++
++  int (*fn) (void) = dlsym (dl, "foo");
++  if (fn == NULL)
++    {
++      printf("Error obtaining symbol foo\n");
++      return 1;
++    }
++
++  return fn ();
++}
++
++#define TEST_FUNCTION do_test ()
++#include "../test-skeleton.c"
+diff --git a/elf/tst-tls19mod1.c b/elf/tst-tls19mod1.c
+new file mode 100644
+index 0000000..2790097
+--- /dev/null
++++ b/elf/tst-tls19mod1.c
+@@ -0,0 +1,15 @@
++#include <stdio.h>
++
++extern int bar (void);
++extern int baz (void);
++
++int
++foo (void)
++{
++  int v1 = bar ();
++  int v2 = baz ();
++
++  printf ("bar=%d, baz=%d\n", v1, v2);
++
++  return v1 != 666 || v2 != 42;
++}
+diff --git a/elf/tst-tls19mod2.c b/elf/tst-tls19mod2.c
+new file mode 100644
+index 0000000..cae702f
+--- /dev/null
++++ b/elf/tst-tls19mod2.c
+@@ -0,0 +1,13 @@
++static int __thread tbar __attribute__ ((tls_model ("initial-exec"))) = 666;
++
++void
++setter (int a)
++{
++  tbar = a;
++}
++
++int
++bar (void)
++{
++  return tbar;
++}
+diff --git a/elf/tst-tls19mod3.c b/elf/tst-tls19mod3.c
+new file mode 100644
+index 0000000..e7b2801
+--- /dev/null
++++ b/elf/tst-tls19mod3.c
+@@ -0,0 +1,16 @@
++#include <stdio.h>
++
++static int __thread tbaz __attribute__ ((tls_model ("local-dynamic"))) = 42;
++
++void
++setter2 (int a)
++{
++  tbaz = a;
++}
++
++int
++baz (void)
++{
++  printf ("&tbaz=%p\n", &tbaz);
++  return tbaz;
++}

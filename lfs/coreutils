@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 5.96
+VER        = 8.24
 
 THISAPP    = coreutils-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
@@ -35,17 +35,22 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --disable-nls
-  EXTRA_MAKE =
-  EXTRA_INSTALL =
+  CONFIGURE_OPTIONS = --prefix=/usr
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  EXTRA_CONFIG = --prefix=/tools --disable-nls
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+  CONFIGURE_OPTIONS = --prefix=/tools
 endif
 
-EXTRA_CONFIG += ac_cv_func_working_mktime=yes
+CONFIGURE_OPTIONS += \
+	--disable-selinux \
+	--enable-largefile \
+	--disable-rpath \
+	--enable-install-program=arch \
+	--enable-no-install-program=hostname,kill \
+	--with-tty-group \
+	gl_cv_func_mknod_works=yes
+
+CFLAGS += -fno-strict-aliasing
 
 ###############################################################################
 # Top-level Rules
@@ -55,7 +60,7 @@ objects =$(DL_FILE)
 
 $(DL_FILE)                      = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5                  = bf55d069d82128fd754a090ce8b5acff
+$(DL_FILE)_MD5                  = 40efdbce865d2458d8da0a9dcee7c16c
 
 install : $(TARGET)
 
@@ -84,34 +89,19 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils-5.96-rename-tee.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils-5.96-futimes.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure $(CONFIGURE_OPTIONS)
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+
 ifeq "$(ROOT)" ""
-ifeq "$(MACHINE)" "i586"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-uname-1.patch
-endif
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-suppress_uptime_kill_su-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-i18n-1.patch
-	cd $(DIR_APP) && chmod +x tests/sort/sort-mb-tests
-	cd $(DIR_APP) && sed -i 's/_LEN 6/_LEN 20/' src/who.c
-endif
-	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
-	#use hostname from inet-tools
-ifeq "$(ROOT)" ""
-	rm /usr/bin/hostname
 	mv -v /usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} /bin
 	mv -v /usr/bin/{false,ln,ls,mkdir,mknod,mv,pwd,rm} /bin
 	mv -v /usr/bin/{rmdir,stty,sync,true,uname} /bin
 	mv -v /usr/bin/chroot /usr/sbin
 	mv -v /usr/bin/{head,sleep,nice} /bin
-	ln -sf test /bin/[
-	#ln -sf ../../bin/install /usr/bin
 	dircolors -p > /etc/DIR_COLORS
-else
-	rm /tools/bin/hostname
 endif
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

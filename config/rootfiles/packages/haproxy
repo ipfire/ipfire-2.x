@@ -1,0 +1,8 @@
+#etc/haproxy
+etc/haproxy/haproxy.cfg
+etc/rc.d/init.d/haproxy
+usr/sbin/haproxy
+#usr/sbin/haproxy-systemd-wrapper
+#usr/share/man/man1/haproxy.1
+var/ipfire/backup/addons/includes/haproxy
+var/lib/haproxy

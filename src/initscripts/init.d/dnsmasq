@@ -15,18 +15,19 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+CACHE_SIZE=2500
+ENABLE_DNSSEC=1
+SHOW_SRV=1
+TRUST_ANCHOR=".,19036,8,2,49AAC11D7B6F6446702E54A1607371607A1A41855200FD2CE1CDDE32F24E8FB5"
+TIMESTAMP_FILE="/var/ipfire/dns/dnssec-timestamp"
+
 # Pull custom configuration file
 if [ -e "/etc/sysconfig/dnsmasq" ]; then
 	. /etc/sysconfig/dnsmasq
 fi
 
-CACHE_SIZE=2500
-ENABLE_DNSSEC=1
-SHOW_SRV=1
-TRUST_ANCHOR=".,19036,8,2,49AAC11D7B6F6446702E54A1607371607A1A41855200FD2CE1CDDE32F24E8FB5"
-
 function dnssec_args() {
-	local cmdline="--dnssec"
+	local cmdline="--dnssec --dnssec-timestamp ${TIMESTAMP_FILE}"
 
 	if [ -n "${TRUST_ANCHOR}" ]; then
 		cmdline="${cmdline} --trust-anchor=${TRUST_ANCHOR}"
@@ -54,6 +55,21 @@ function dns_forward_args() {
 	echo "${cmdline}"
 }
 
+function dns_leases_args() {
+	eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
+
+	# If the DHCP server is enabled and DNS Update (RFC2136) is
+	# enabled, too, we won't overlay the internal domain with
+	# the dynamic/static leases.
+
+	if ([ "${ENABLE_GREEN}" = "on" ] || [ "${ENABLE_BLUE}" = "on" ]) \
+			&& [ "${DNS_UPDATE_ENABLED}" = "on" ]; then
+		return
+	fi
+
+	echo "-l /var/state/dhcp/dhcpd.leases"
+}
+
 case "${1}" in
 	start)
 		# kill already running copy of dnsmasq...
@@ -64,7 +80,10 @@ case "${1}" in
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 		ARGS="$CUSTOM_ARGS"
 		[ "$DOMAIN_NAME_GREEN" != "" ] && ARGS="$ARGS -s $DOMAIN_NAME_GREEN"
-		
+
+		# DHCP configuration
+		ARGS="${ARGS} $(dns_leases_args)"
+
 		echo > /var/ipfire/red/resolv.conf # Clear it
 		if [ -e "/var/ipfire/red/dns1" ]; then
 		    DNS1=$(cat /var/ipfire/red/dns1 2>/dev/null)
@@ -94,7 +113,7 @@ case "${1}" in
 			ARGS="${ARGS} --cache-size=${CACHE_SIZE}"
 		fi
 
-		loadproc /usr/sbin/dnsmasq -l /var/state/dhcp/dhcpd.leases $ARGS
+		loadproc /usr/sbin/dnsmasq ${ARGS}
 		
 		if [ "${SHOW_SRV}" -eq 1 ] && [ "${DNS1}" != "" -o "${DNS2}" != "" ]; then
 		    boot_mesg "Using DNS server(s): ${DNS1} ${DNS2}"

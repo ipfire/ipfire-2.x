@@ -34,7 +34,6 @@ usr/lib/squid/basic_smb_auth
 usr/lib/squid/basic_smb_auth.sh
 #usr/lib/squid/cachemgr.cgi
 usr/lib/squid/cert_tool
-usr/lib/squid/cert_valid.pl
 usr/lib/squid/digest_file_auth
 usr/lib/squid/digest_ldap_auth
 usr/lib/squid/diskd
@@ -2174,6 +2173,7 @@ usr/sbin/updxlrator
 #usr/share/man/man8/ext_unix_group_acl.8
 #usr/share/man/man8/ext_wbinfo_group_acl.8
 #usr/share/man/man8/log_db_daemon.8
+#usr/share/man/man8/negotiate_kerberos_auth.8
 #usr/share/man/man8/squid.8
 #usr/share/man/man8/storeid_file_rewrite.8
 #var/cache/squid

@@ -2,6 +2,7 @@ etc/collectd.conf
 etc/collectd.custom
 etc/collectd.precache
 etc/collectd.thermal
+etc/collectd.vpn
 etc/rc.d/init.d/collectd
 etc/rc.d/rc0.d/K50collectd
 etc/rc.d/rc3.d/S29collectd
@@ -212,15 +213,18 @@ usr/lib/collectd/write_http.so
 usr/lib/libcollectdclient.so
 usr/lib/libcollectdclient.so.0
 usr/lib/libcollectdclient.so.0.0.0
-#usr/lib/perl5/site_perl/5.12.3/Collectd
-#usr/lib/perl5/site_perl/5.12.3/Collectd.pm
-#usr/lib/perl5/site_perl/5.12.3/Collectd/Plugins
-#usr/lib/perl5/site_perl/5.12.3/Collectd/Plugins/Monitorus.pm
-#usr/lib/perl5/site_perl/5.12.3/Collectd/Plugins/OpenVZ.pm
-#usr/lib/perl5/site_perl/5.12.3/Collectd/Unixsock.pm
-#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Collectd
-#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Collectd/.packlist
+#usr/lib/perl5/Collectd
+#usr/lib/perl5/Collectd.pm
+#usr/lib/perl5/Collectd/Plugins
+#usr/lib/perl5/Collectd/Plugins/OpenVZ.pm
+#usr/lib/perl5/Collectd/Unixsock.pm
+#usr/lib/perl5/MACHINE-linux-thread-multi
+#usr/lib/perl5/MACHINE-linux-thread-multi/auto
+#usr/lib/perl5/MACHINE-linux-thread-multi/auto/Collectd
+#usr/lib/perl5/MACHINE-linux-thread-multi/auto/Collectd/.packlist
+#usr/lib/perl5/MACHINE-linux-thread-multi/perllocal.pod
 #usr/lib/pkgconfig/libcollectdclient.pc
+#usr/man/man3/Collectd::Unixsock.3
 usr/sbin/collectd
 usr/sbin/collectdmon
 #usr/share/collectd
@@ -229,7 +233,6 @@ usr/share/collectd/types.db
 #usr/share/man/man1/collectd-nagios.1
 #usr/share/man/man1/collectd.1
 #usr/share/man/man1/collectdmon.1
-#usr/share/man/man3/Collectd::Unixsock.3
 #usr/share/man/man5/collectd-email.5
 #usr/share/man/man5/collectd-exec.5
 #usr/share/man/man5/collectd-java.5
@@ -240,3 +243,4 @@ usr/share/collectd/types.db
 #usr/share/man/man5/collectd.conf.5
 #usr/share/man/man5/types.db.5
 #var/lib/collectd
+var/ipfire/ovpn/collectd.vpn

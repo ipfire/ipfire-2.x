@@ -93,8 +93,10 @@ sub delbefore {
 }
 
 sub movedbdata {
-	$dbh->do("insert into ACCT_HIST select datetime(TIME_RUN,'unixepoch'),NAME,SUM(BYTES) from ACCT where  date(TIME_RUN,'unixepoch') < date('now','-2 months') group by NAME,date(TIME_RUN,'unixepoch');");
-	$dbh->do("DELETE FROM ACCT WHERE datetime(TIME_RUN,'unixepoch') < date('now','-2 months');");
+	&connectdb;
+	$dbh->do("insert into ACCT_HIST select datetime(TIME_RUN,'unixepoch'),NAME,SUM(BYTES) from ACCT where datetime(TIME_RUN,'unixepoch') < datetime('now','start of month') group by NAME,datetime(TIME_RUN,'unixepoch');");
+	$dbh->do("DELETE FROM ACCT WHERE datetime(TIME_RUN,'unixepoch') < date('now','start of month');");
+	&closedb;
 }
 
 sub gethourgraphdata {
@@ -119,10 +121,10 @@ sub getmonthgraphdata {
 	my $name=$_[3];
 	my $res;
 	$dbh=connectdb;
-	if ($table eq 'ACCT'){
-		$res = $dbh->selectall_arrayref( "SELECT  strftime('%d.%m.%Y',xx.tag),(SELECT SUM(BYTES)/1024/1024 FROM ACCT WHERE date(TIME_RUN,'unixepoch') <= xx.tag and NAME = '".$name."') kum_bytes FROM (SELECT date(TIME_RUN,'unixepoch') tag,SUM(BYTES)/1024/1024 sbytes FROM ACCT WHERE NAME='".$name."' and TIME_RUN between ".$from." and ".$till." GROUP by date(TIME_RUN,'unixepoch')) xx;");
+	if ($table eq 'ACCT_HIST'){
+		$res = $dbh->selectall_arrayref( "SELECT strftime('%d.%m.%Y',TIME_RUN),(SELECT SUM(BYTES)/1024/1024 FROM ACCT_HIST WHERE TIME_RUN <= ah.TIME_RUN and TIME_RUN > date($from,'unixepoch') and NAME = '".$name."') kum_bytes FROM ACCT_HIST ah WHERE date(TIME_RUN) > date(".$from.",'unixepoch') AND date(TIME_RUN) < date(".$till.",'unixepoch') AND NAME = '".$name."' group by date(TIME_RUN);");
 	}else{
-		$res = $dbh->selectall_arrayref( "SELECT TIME_RUN, (SELECT SUM(BYTES)/1024/1024 FROM ACCT_HIST WHERE TIME_RUN <= ah.TIME_RUN and NAME = '".$name."') kum_bytes FROM ACCT_HIST ah WHERE TIME_RUN BETWEEN date(".$from.",'unixepoch') AND date(".$till.",'unixepoch') AND NAME = '".$name."' group by TIME_RUN;");
+		$res = $dbh->selectall_arrayref( "SELECT strftime('%d.%m.%Y',xx.tag),(SELECT SUM(BYTES)/1024/1024 FROM ACCT WHERE date(TIME_RUN,'unixepoch') <= xx.tag and TIME_RUN > ".$from." and NAME = '".$name."') kum_bytes FROM (SELECT NAME,date(TIME_RUN,'unixepoch') tag,SUM(BYTES)/1024/1024 sbytes FROM ACCT WHERE NAME='".$name."' and TIME_RUN between ".$from." and ".$till." GROUP by NAME,date(TIME_RUN,'unixepoch')) xx;");
 	}
 	$dbh=closedb;
 	return $res;
@@ -337,7 +339,12 @@ sub getmonth{
 		my $monat=$_[0]-1 if($_[0]);
 		my $tag=1;
 		my $time1=timelocal(0,0,0,$tag,$monat,$jahr);
-		my $time2=timelocal(0,0,0,$tag,($monat+1),$jahr);
+		my $time2=0;
+		if (($monat+1) == 12){
+			$time2=timelocal(0,0,0,$tag,0,$jahr+1);
+		}else{
+			$time2=timelocal(0,0,0,$tag,$monat+1,$jahr);
+		}
 		--$time2;
 		return ($time1,$time2);
 }
@@ -387,6 +394,7 @@ sub pdf2 {
 	my @billar		= @{$_[0]}; #DATA from sendbill (just host/values)
 	my $month		= $_[1];
 	$month			= '0'.$month if $month < 10;
+	$month			= '12' if $month == 0;
 	my $year 		= $_[2];
 	my $mwst		= $_[3];
 	my @address_cust= @{$_[4]}; #Array which contains customer and hoster adresses and some additional info from billgroup

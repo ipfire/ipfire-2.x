@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,24 +24,59 @@
 
 include Config
 
-VER        = 1.0.1j
+VER        = 1.0.2e
 
 THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+
+TARGET = $(DIR_INFO)/$(THISAPP)$(KCFG)
+
+ifneq "$(KCFG)" "-sse2"
+CFLAGS += -DPURIFY
+else
+CFLAGS =-O2 -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fPIC
+CFLAGS+= -fstack-protector-all --param=ssp-buffer-size=4
+CFLAGS+= -march=i686 -mmmx -msse -msse2 -mfpmath=sse
+CFLAGS+= -fomit-frame-pointer -DPURIFY
+CXXFLAGS="${CFLAGS}"
+endif
+
+export RPM_OPT_FLAGS = $(CFLAGS)
+
+CONFIGURE_OPTIONS = \
+	--prefix=/usr \
+	--openssldir=/etc/ssl \
+	--enginesdir=/usr/lib/openssl/engines \
+	shared \
+	zlib-dynamic \
+	enable-camellia \
+	enable-md2 \
+	enable-seed \
+	enable-tlsext \
+	enable-rfc3779 \
+	no-idea \
+	no-mdc2 \
+	no-rc5 \
+	no-srp \
+	-DSSL_FORBID_ENULL
+
+ifeq "$(MACHINE)" "x86_64"
+	CONFIGURE_OPTIONS += linux-x86_64
+endif
 
 ifeq "$(MACHINE)" "i586"
-	CONFIGURE_ARGS = linux-elf no-asm 386
+	CONFIGURE_OPTIONS += linux-elf
+
+ifneq "$(KCFG)" "-sse2"
+	CONFIGURE_OPTIONS += no-sse2
+endif
 endif
 
 ifeq "$(MACHINE)" "armv5tel"
-	CONFIGURE_ARGS = linux-generic32
+	CONFIGURE_OPTIONS += linux-generic32
 endif
-
-CFLAGS += -DPURIFY
-export RPM_OPT_FLAGS = $(CFLAGS)
 
 ###############################################################################
 # Top-level Rules
@@ -51,7 +86,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f7175c9cd3c39bb1907ac8bba9df8ed3
+$(DL_FILE)_MD5 = 2218c1a6f807f7206c11eb3ee3a5ec80
 
 install : $(TARGET)
 
@@ -82,37 +117,37 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.0-beta5-enginesdir.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1-beta2-build.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-cryptodev.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-fix_parallel_build-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1e-weak-ciphers.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a-rpmbuild.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1m-weak-ciphers.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-disable-sslv2-sslv3.patch
+
+	# i586 specific patches
+ifeq "$(MACHINE)" "i586"
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a_auto_enable_padlock.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a_disable_ssse3_for_amd.patch
+endif
+
+	# With openssl 1.0.2e, pod2mantest is missing
+	echo -e "#!/bin/bash\necho \$$(which pod2man)" > $(DIR_APP)/util/pod2mantest
+	chmod a+x $(DIR_APP)/util/pod2mantest
+
+	# Apply our CFLAGS
+	cd $(DIR_APP) && sed -i Configure \
+		-e "s/-O3 -fomit-frame-pointer/$(CFLAGS)/g"
 
 	cd $(DIR_APP) && find crypto/ -name Makefile -exec \
 		sed 's/^ASFLAGS=/&-Wa,--noexecstack /' -i {} \;
 
-	cd $(DIR_APP) && ./Configure \
-		--prefix=/usr \
-		--openssldir=/etc/ssl \
-		--enginesdir=/usr/lib/openssl/engines \
-		shared \
-		zlib-dynamic \
-		enable-camellia \
-		enable-md2 \
-		enable-seed \
-		enable-tlsext \
-		enable-rfc3779 \
-		no-idea \
-		no-mdc2 \
-		no-rc5 \
-		no-srp \
-		$(CONFIGURE_ARGS) \
-		-DSSL_FORBID_ENULL \
-		-DHAVE_CRYPTODEV \
-		-DUSE_CRYPTODEV_DIGEST
+	cd $(DIR_APP) && ./Configure $(CONFIGURE_OPTIONS)
 
 	cd $(DIR_APP) && make depend
 	cd $(DIR_APP) && make
 
+ifeq "$(KCFG)" "-sse2"
+	-mkdir -pv /usr/lib/sse2
+	cd $(DIR_APP) && install -m 755 \
+		libcrypto.so.10 /usr/lib/sse2
+else
 	# Install everything.
 	cd $(DIR_APP) && make install
 	install -m 0644 $(DIR_SRC)/config/ssl/openssl.cnf /etc/ssl
@@ -124,6 +159,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /usr/lib/openssl
 	rm -vfr /usr/lib/openssl/engines
 	mv -v /usr/lib/engines /usr/lib/openssl
+endif
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

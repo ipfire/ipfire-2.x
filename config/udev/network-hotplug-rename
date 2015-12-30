@@ -1,0 +1,75 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2015  IPFire Team  <info@ipfire.org>                          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+# Check if all appropriate variables are set
+[ -n "${INTERFACE}" ] || exit 2
+
+# Ignore virtual interfaces, etc.
+case "${INTERFACE}" in
+	lo)
+		exit 0
+		;;
+	tun*)
+		exit 0
+		;;
+	ppp*)
+		exit 0
+		;;
+esac
+
+# Check if INTERFACE actually exists
+[ -d "/sys/class/net/${INTERFACE}" ] || exit 1
+
+# If the network configuration is not readable,
+# we cannot go on.
+if [ ! -r "/var/ipfire/ethernet/settings" ]; then
+	exit 1
+fi
+
+# Read network settings
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+# Standard zones
+ZONES="RED GREEN ORANGE BLUE"
+
+# Determine the address of INTERFACE
+ADDRESS="$(</sys/class/net/${INTERFACE}/address)"
+
+# Walk through all zones and find the matching interface
+for zone in ${ZONES}; do
+	address="${zone}_MACADDR"
+	device="${zone}_DEV"
+
+	# Skip if address or device is unset
+	[ -n "${!address}" -a -n "${!device}" ] || continue
+
+	# If a matching interface has been found we will
+	# print the name to which udev will rename it.
+	if [ "${ADDRESS}" = "${!address}" ]; then
+		echo "${!device}"
+		exit 0
+	fi
+done
+
+# If we get here we have not found a matching device,
+# but we won't return an error any way. The new device
+# will remain with the previous name.
+exit 0

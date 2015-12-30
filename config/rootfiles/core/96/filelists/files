@@ -1,0 +1,17 @@
+etc/system-release
+etc/issue
+etc/rc.d/init.d/snort
+etc/vnstat.conf
+etc/rc.d/init.d/cleanfs
+etc/rc.d/init.d/collectd
+etc/rc.d/init.d/functions
+etc/rc.d/init.d/vnstat
+etc/rc.d/rc0.d/K51vnstat
+etc/rc.d/rc3.d/S01vnstat
+etc/rc.d/rc6.d/K51vnstat
+opt/pakfire/lib/functions.pl
+srv/web/ipfire/cgi-bin/connections.cgi
+srv/web/ipfire/cgi-bin/routing.cgi
+usr/lib/firewall/rules.pl
+usr/sbin/convert-portfw
+var/ipfire/general-functions.pl

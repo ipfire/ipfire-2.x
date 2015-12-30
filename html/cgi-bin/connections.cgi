@@ -261,15 +261,19 @@ close(IPSEC);
 
 foreach my $line (@ipsec) {
 	my @vpn = split(',', $line);
-	my ($network, $mask) = split("/", $vpn[12]);
 
-	if (!&General::validip($mask)) {
-		$mask = ipv4_cidr2msk($mask);
+	my @subnets = split(/\|/, $vpn[12]);
+	for my $subnet (@subnets) {
+		my ($network, $mask) = split("/", $subnet);
+
+		if (!&General::validip($mask)) {
+			$mask = ipv4_cidr2msk($mask);
+		}
+
+		push(@network, $network);
+		push(@masklen, $mask);
+		push(@colour, ${Header::colourvpn});
 	}
-
-	push(@network, $network);
-	push(@masklen, $mask);
-	push(@colour, ${Header::colourvpn});
 }
 
 if (-e "${General::swroot}/ovpn/n2nconf") {
@@ -520,7 +524,8 @@ foreach my $line (@conntrack) {
 	}
 
 	my $sip_colour = ipcolour($sip);
-	my $dip_colour = ipcolour($dip);
+	# use colour of destination network for DNAT
+	my $dip_colour = $dip ne $dip_ret ? ipcolour($dip_ret) : ipcolour($dip);
 
 	my $sserv = '';
 	if ($sport < 1024) {
@@ -539,7 +544,7 @@ foreach my $line (@conntrack) {
 	$ttl = format_time($ttl);
 
 	my $sip_extra;
-	if ($sip ne $sip_ret) {
+	if ($sip_ret && $sip ne $sip_ret) {
 		$sip_extra = "<span style='color:#FFFFFF;'>&gt;</span> ";
 		$sip_extra .= "<a href='/cgi-bin/ipinfo.cgi?ip=$sip_ret'>";
 		$sip_extra .= "	<span style='color:#FFFFFF;'>$sip_ret</span>";
@@ -547,7 +552,7 @@ foreach my $line (@conntrack) {
 	}
 
 	my $dip_extra;
-	if ($dip ne $dip_ret) {
+	if ($dip_ret && $dip ne $dip_ret) {
 		$dip_extra = "<span style='color:#FFFFFF;'>&gt;</span> ";
 		$dip_extra .= "<a href='/cgi-bin/ipinfo.cgi?ip=$dip_ret'>";
 		$dip_extra .= " <span style='color:#FFFFFF;'>$dip_ret</span>";
@@ -660,15 +665,17 @@ sub ipcolour($) {
 	my ($ip) = $_[0];
 	my $found = 0;
 
-	foreach my $line (@network) {
-		if ($network[$id] eq '') {
-			$id++;
-		} else {
-			if (!$found && ipv4_in_network($network[$id], $masklen[$id], $ip) ) {
-				$found = 1;
-				$colour = $colour[$id];
+	if ($ip) {
+		foreach my $line (@network) {
+			if ($network[$id] eq '') {
+				$id++;
+			} else {
+				if (!$found && ipv4_in_network($network[$id], $masklen[$id], $ip) ) {
+					$found = 1;
+					$colour = $colour[$id];
+				}
+				$id++;
 			}
-			$id++;
 		}
 	}
 

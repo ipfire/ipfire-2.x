@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2015  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.72
+VER        = 2.75
 
 THISAPP    = dnsmasq-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,7 +32,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-COPTS      = -DHAVE_ISC_READER
+# We cannot use INOTIFY because our ISC reader code does not support that
+COPTS      = -DHAVE_ISC_READER -DNO_INOTIFY
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0256e0a71e27c8d8a5c89a0d18f3cfe2
+$(DL_FILE)_MD5 = 887236f1ddde6eb57cdb9d01916c9f72
 
 install : $(TARGET)
 
@@ -72,7 +73,32 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-2.72rc2-Add-support-to-read-ISC-DHCP-lease-file.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/001-include_0_0_0_0_8_in_DNS_rebind_checks.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/002-enhance_add_subnet_to_allow_arbitary_subnet_addresses.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/003-dont_answer_non_auth_queries_for_auth_zones_locally_when_localise_queries_set.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/004-fix_behaviour_of_empty_dhcp-option.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/005-suggest_solution_to_ENOMEM_error_with_IPv6_multicast.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/006-clarify_man_page_on_RDNSS_set_in_router_advertisement.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/007-handle_signed_dangling_CNAME_replies_to_DS_queries.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/008-DHCPv6_option_56_does_not_hold_an_address_list.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/009-Respect_the_--no_resolv_flag_in_inotify_code.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/010-Rationalise_5e3e464ac4022ee0b3794513abe510817e2cf3ca.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/011-Catch_errors_from_sendmsg_in_DHCP_code.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/012-Update_list_of_subnet_for_--bogus-priv.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/013-Fix_crash_when_empty_address_from_DNS_overlays_A_record_from.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/014-Handle_unknown_DS_hash_algos_correctly.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/015-Fix_crash_at_start_up_with_conf-dir.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/016-Major_rationalisation_of_DNSSEC_validation.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/017-Abandon_caching_RRSIGs_and_returning_them_from_cache.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/018-Move_code_which_caches_DS_records_to_a_more_logical_place.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/019-Generalise_RR-filtering_code_for_use_with_EDNS0.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/020-DNSSEC_validation_tweak.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/021-Tweaks_to_EDNS0_handling_in_DNS_replies.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/022-Tidy_up_DNSSEC_non-existence_code_Check_zone_status_is_NSEC_proof_bad.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/023-Fix_brace_botch_in_dnssec_validate_ds.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/024-Do_a_better_job_of_determining_which_DNSSEC_sig_algos_are_supported.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
+
 	cd $(DIR_APP) && sed -i src/config.h \
 		-e 's|/\* #define HAVE_IDN \*/|#define HAVE_IDN|g' \
 		-e 's|/\* #define HAVE_DNSSEC \*/|#define HAVE_DNSSEC|g' \
@@ -80,7 +106,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-e 's|#define HAVE_DHCP6|//#define HAVE_DHCP6|g' \
 		-e 's|#define HAVE_TFTP|//#define HAVE_TFTP|g'
 
-	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" COPTS="$(COPTS)" $(MAKETUNING)
-	cd $(DIR_APP) && make PREFIX=/usr install
+	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" COPTS="$(COPTS)" \
+		PREFIX=/usr all install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

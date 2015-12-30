@@ -76,7 +76,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(VER)-1.tar.bz2
 
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-208_remove_systemd_log.patch
-#	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-141_no_netif_rename.patch
 
 	cd $(DIR_APP)/udev-lfs-$(VER)-1 && sed -i "s/HANDLE_AT 1/HANDLE_AT 0/g" cfg.h
 
@@ -94,9 +93,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -f /lib/udev/rules.d/75-persistent-net-generator.rules
 	rm -f /lib/udev/rules.d/80-net-name-slot.rules
 
-	# Create rule file for the setup
-	touch /etc/udev/rules.d/30-persistent-network.rules
-
 	# Blacklist some modules
 	cp -vf $(DIR_SRC)/config/udev/blacklist.conf /etc/modprobe.d/blacklist.conf
 
@@ -106,6 +102,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install alsa rules.
 	install -v -m 644 $(DIR_SRC)/config/udev/25-alsa.rules \
+		/lib/udev/rules.d
+
+	# Install network rules.
+	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-rename \
+		/lib/udev/network-hotplug-rename
+	install -v -m 755 $(DIR_SRC)/config/udev/network-hotplug-vlan \
+		/lib/udev/network-hotplug-vlan
+	install -v -m 644 $(DIR_SRC)/config/udev/60-net.rules \
 		/lib/udev/rules.d
 
 	# Install hwrng rules.

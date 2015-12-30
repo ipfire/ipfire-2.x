@@ -1,7 +1,6 @@
 #!/bin/sh
 # Begin $rc_base/init.d/collecd
 
-
 . /etc/sysconfig/rc
 . $rc_functions
 
@@ -13,6 +12,12 @@ fi
 
 case "$1" in
 	start)
+		if use_ramdisk; then
+			boot_mesg "Mounting RRD ramdisk..."
+			mount_ramdisk "${RRDLOG}"
+			evaluate_retval
+		fi
+
 		# If run from init and collectd alrady started then exit silent
 		if [ "$(basename $0)" != "collectd" ]; then
 			if [ "$(ps -A | grep " collectd$")" != "" ]; then
@@ -84,11 +89,14 @@ case "$1" in
 		fi
 
 		# Enable swap plugin if swap found
-		if [ "$(swapon -s | wc -l)" == "1" ]; then
+		if [ "$(swapon -s | wc -l)" == "0" ]; then
 			sed -i -e "s|^LoadPlugin swap|#LoadPlugin swap|g" /etc/collectd.conf
 		else
 			sed -i -e "s|^#LoadPlugin swap|LoadPlugin swap|g" /etc/collectd.conf
 		fi
+		
+		# sync after config update...
+		sync
 
 		if [ $(date +%Y) -gt 2011 ]; then
 			boot_mesg "Starting Collection daemon..."
@@ -103,10 +111,9 @@ case "$1" in
 		boot_mesg "Stopping Collection daemon..."
 		killproc /usr/sbin/collectd
 		evaluate_retval
-		# Save the ramdisk at manual stop but not at shutdown
-		if [ "$(basename $0)" == "collectd" ]; then
-		    /etc/init.d/tmpfs backup
-		fi
+
+		# Umount the ramdisk (if any)
+		umount_ramdisk "${RRDLOG}"
 		;;
 	restart)
 		${0} stop
@@ -117,8 +124,15 @@ case "$1" in
 		statusproc /usr/sbin/collectd
 		;;
 
+	backup)
+		# Backup all data if ramdisk is used
+		if mountpoint "${RRDLOG}" &>/dev/null; then
+			${0} restart
+		fi
+		;;
+
 	*)
-		echo "Usage: $0 {start|stop|restart|status}"
+		echo "Usage: $0 {start|stop|restart|status|backup}"
 		exit 1
 		;;
 esac

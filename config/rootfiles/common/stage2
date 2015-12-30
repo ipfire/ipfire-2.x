@@ -20,6 +20,7 @@ etc/ld.so.conf
 etc/logrotate.conf
 etc/mime.types
 etc/modprobe.d
+etc/modprobe.d/btmrvl_sdio.conf
 etc/modprobe.d/cfg80211.conf
 etc/modprobe.d/pcspeaker.conf
 etc/modules.conf
@@ -39,12 +40,16 @@ etc/profile.d/term256.sh
 etc/profile.d/umask.sh
 etc/resolv.conf
 etc/securetty
+etc/sysconfig/ramdisk
 etc/sysctl.conf
 etc/syslog.conf
 etc/system-release
 #home
 home/nobody
 #lib
+#lib/firmware
+#lib/firmware/brcm
+lib/firmware/brcm/brcmfmac43362-sdio.txt
 #media
 media/cdrom
 media/floppy
@@ -60,6 +65,7 @@ root/.bash_logout
 root/.bash_profile
 root/.bashrc
 root/ipfire
+run
 #sbin
 #srv
 #usr/bin
@@ -68,6 +74,7 @@ root/ipfire
 #usr/lib
 usr/lib/firewall
 usr/lib/firewall/firewall-lib.pl
+usr/lib/firewall/ipsec-block
 usr/lib/firewall/rules.pl
 #usr/lib/libgcc_s.so
 usr/lib/libgcc_s.so.1
@@ -94,8 +101,10 @@ usr/local/bin/scanhd
 usr/local/bin/settime
 usr/local/bin/timecheck
 usr/local/bin/timezone-transition
-#usr/local/bin/uname
+usr/local/bin/update-bootloader
 usr/local/bin/update-lang-cache
+usr/local/bin/xt_geoip_build
+usr/local/bin/xt_geoip_update
 #usr/local/include
 #usr/local/lib
 #usr/local/lib/sse2
@@ -115,10 +124,12 @@ usr/local/bin/update-lang-cache
 #usr/local/share/man/man8
 #usr/local/share/misc
 #usr/local/share/terminfo
+#usr/local/share/xt_geoip
 #usr/local/share/zoneinfo
 #usr/local/src
 #usr/sbin
 usr/sbin/ovpn-ccd-convert
+usr/sbin/ovpn-collectd-convert
 #usr/share
 #usr/share/doc
 #usr/share/doc/licenses
@@ -136,8 +147,8 @@ usr/share/doc/licenses/GPLv3
 #usr/share/man/man8
 #usr/share/misc
 #usr/share/terminfo
+#usr/share/xt_geoip
 #usr/share/zoneinfo
-run
 #var
 #var/cache
 var/empty

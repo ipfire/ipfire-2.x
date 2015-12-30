@@ -17,16 +17,16 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2014 IPFire Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2015 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
 
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
-VERSION="2.15"							# Version number
-CORE="85"							# Core Level (Filename)
-PAKFIRE_CORE="85"						# Core Level (PAKFIRE)
+VERSION="2.17"							# Version number
+CORE="96"							# Core Level (Filename)
+PAKFIRE_CORE="96"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -36,7 +36,7 @@ BUILD_IMAGES=1							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=7
+TOOLCHAINVER=10
 
 # New architecture variables
 BUILD_ARCH="$(uname -m)"
@@ -86,21 +86,6 @@ if [ -z $EDITOR ]; then
 	[ -z $EDITOR ] && exiterror "You should have installed an editor."
 fi
 
-# Prepare string for /etc/system-release.
-SYSTEM_RELEASE="${NAME} ${VERSION} (${MACHINE})"
-if [ "$(git status -s | wc -l)" == "0" ]; then
-	GIT_STATUS=""
-else
-	GIT_STATUS="-dirty"
-fi
-case "$GIT_BRANCH" in
-	core*|beta?|rc?)
-		SYSTEM_RELEASE="${SYSTEM_RELEASE} - $GIT_BRANCH$GIT_STATUS"
-		;;
-	*)
-		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS"
-		;;
-esac
 
 prepareenv() {
     ############################################################################
@@ -236,15 +221,36 @@ prepareenv() {
     # Run LFS static binary creation scripts one by one
     export CCACHE_DIR=$BASEDIR/ccache
     export CCACHE_COMPRESS=1
-    export CCACHE_COMPILERCHECK="none"
+    export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER}:${TARGET_ARCH}"
 
     # Remove pre-install list of installed files in case user erase some files before rebuild
     rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
+
+    # Prepare string for /etc/system-release.
+    SYSTEM_RELEASE="${NAME} ${VERSION} (${MACHINE})"
+    if [ "$(git status -s | wc -l)" == "0" ]; then
+	GIT_STATUS=""
+    else
+	GIT_STATUS="-dirty"
+    fi
+    case "$GIT_BRANCH" in
+	core*|beta?|rc?)
+		SYSTEM_RELEASE="${SYSTEM_RELEASE} - $GIT_BRANCH$GIT_STATUS"
+		;;
+	*)
+		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS"
+		;;
+    esac
 }
 
 buildtoolchain() {
     local error=false
     case "${TARGET_ARCH}:${BUILD_ARCH}" in
+        # x86_64
+        x86_64:x86_64)
+             # This is working.
+             ;;
+
         # x86
         i586:i586|i586:i686|i586:x86_64)
             # These are working.
@@ -362,7 +368,6 @@ buildbase() {
     lfsmake2 less
     lfsmake2 make
     lfsmake2 man
-    lfsmake2 mktemp
     lfsmake2 kmod
     lfsmake2 net-tools
     lfsmake2 patch
@@ -377,7 +382,6 @@ buildbase() {
     lfsmake2 vim
     lfsmake2 xz
     lfsmake2 paxctl
-    lfsmake2 grub
 }
 
 buildipfire() {
@@ -385,8 +389,9 @@ buildipfire() {
   export LOGFILE
   ipfiremake configroot
   ipfiremake backup
+  ipfiremake pkg-config
   ipfiremake libusb
-  ipfiremake libusbx
+  ipfiremake libusb-compat
   ipfiremake libpcap
   ipfiremake ppp
   ipfiremake pptp
@@ -398,66 +403,80 @@ buildipfire() {
   ipfiremake rpi-firmware
   ipfiremake bc
   ipfiremake u-boot
+  ipfiremake cpio
+  ipfiremake mdadm
+  ipfiremake dracut
+  ipfiremake lvm2
+  ipfiremake multipath-tools
+  ipfiremake freetype
+  ipfiremake grub
+  ipfiremake libmnl
+  ipfiremake libnfnetlink
+  ipfiremake libnetfilter_queue
+  ipfiremake libnetfilter_conntrack
+  ipfiremake libnetfilter_cthelper
+  ipfiremake libnetfilter_cttimeout
+  ipfiremake iptables
 
   case "${TARGET_ARCH}" in
+	x86_64)
+		ipfiremake linux			KCFG=""
+		ipfiremake backports			KCFG=""
+		ipfiremake e1000e			KCFG=""
+		ipfiremake igb				KCFG=""
+		ipfiremake ixgbe			KCFG=""
+		ipfiremake xtables-addons		KCFG=""
+		ipfiremake linux-initrd			KCFG=""
+		;;
 	i586)
 		# x86-pae (Native and new XEN) kernel build
 		ipfiremake linux			KCFG="-pae"
-#		ipfiremake kvm-kmod			KCFG="-pae"
-#		ipfiremake v4l-dvb			KCFG="-pae"
-#		ipfiremake mISDN			KCFG="-pae"
-		ipfiremake cryptodev			KCFG="-pae"
-#		ipfiremake compat-drivers		KCFG="-pae"
-#		ipfiremake r8169			KCFG="-pae"
-#		ipfiremake r8168			KCFG="-pae"
-#		ipfiremake r8101			KCFG="-pae"
+		ipfiremake backports			KCFG="-pae"
 		ipfiremake e1000e			KCFG="-pae"
 		ipfiremake igb				KCFG="-pae"
+		ipfiremake ixgbe			KCFG="-pae"
+		ipfiremake xtables-addons		KCFG="-pae"
+		ipfiremake linux-initrd			KCFG="-pae"
 
 		# x86 kernel build
 		ipfiremake linux			KCFG=""
-#		ipfiremake kvm-kmod			KCFG=""
-#		ipfiremake v4l-dvb			KCFG=""
-#		ipfiremake mISDN			KCFG=""
-		ipfiremake cryptodev			KCFG=""
-#		ipfiremake compat-drivers		KCFG=""
-#		ipfiremake r8169			KCFG=""
-#		ipfiremake r8168			KCFG=""
-#		ipfiremake r8101			KCFG=""
+		ipfiremake backports			KCFG=""
 		ipfiremake e1000e			KCFG=""
 		ipfiremake igb				KCFG=""
+		ipfiremake ixgbe			KCFG=""
+		ipfiremake xtables-addons		KCFG=""
+		ipfiremake linux-initrd			KCFG=""
 		;;
 
 	armv5tel)
 		# arm-rpi (Raspberry Pi) kernel build
 		ipfiremake linux			KCFG="-rpi"
-#		ipfiremake v4l-dvb			KCFG="-rpi"
-#		ipfiremake mISDN			KCFG="-rpi" NOPCI=1
-		ipfiremake cryptodev			KCFG="-rpi"
-#		ipfiremake compat-drivers		KCFG="-rpi"
+		ipfiremake backports			KCFG="-rpi"
+		ipfiremake xtables-addons		KCFG="-rpi"
+		ipfiremake linux-initrd			KCFG="-rpi"
 
 		# arm multi platform (Panda, Wandboard ...) kernel build
 		ipfiremake linux			KCFG="-multi"
-		ipfiremake cryptodev			KCFG="-multi"
+		ipfiremake backports			KCFG="-multi"
 		ipfiremake e1000e			KCFG="-multi"
 		ipfiremake igb				KCFG="-multi"
+		ipfiremake ixgbe			KCFG="-multi"
+		ipfiremake xtables-addons		KCFG="-multi"
+		ipfiremake linux-initrd			KCFG="-multi"
 
 		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
 		ipfiremake linux			KCFG="-kirkwood"
-#		ipfiremake v4l-dvb			KCFG="-kirkwood"
-#		ipfiremake mISDN			KCFG="-kirkwood"
-		ipfiremake cryptodev			KCFG="-kirkwood"
-#		ipfiremake compat-drivers		KCFG="-kirkwood"
-#		ipfiremake r8169			KCFG="-kirkwood"
-#		ipfiremake r8168			KCFG="-kirkwood"
-#		ipfiremake r8101			KCFG="-kirkwood"
-#		ipfiremake e1000e			KCFG="-kirkwood"
+		ipfiremake backports			KCFG="-kirkwood"
+		ipfiremake e1000e			KCFG="-kirkwood"
 		ipfiremake igb				KCFG="-kirkwood"
+		ipfiremake ixgbe			KCFG="-kirkwood"
+		ipfiremake xtables-addons		KCFG="-kirkwood"
+		ipfiremake linux-initrd			KCFG="-kirkwood"
 		;;
   esac
-  ipfiremake pkg-config
+  ipfiremake xtables-addons			USPACE="1"
   ipfiremake openssl
-  ipfiremake openssl-compat
+  [ "${TARGET_ARCH}" = "i586" ] && ipfiremake openssl KCFG='-sse2'
   ipfiremake libgpg-error
   ipfiremake libgcrypt
   ipfiremake libassuan
@@ -466,15 +485,15 @@ buildipfire() {
   ipfiremake dhcpcd
   ipfiremake boost
   ipfiremake linux-atm
-  ipfiremake cpio
-  ipfiremake dracut
   ipfiremake expat
   ipfiremake gdbm
   ipfiremake pam
   ipfiremake curl
   ipfiremake tcl
   ipfiremake sqlite
+  ipfiremake libffi
   ipfiremake python
+  ipfiremake ca-certificates
   ipfiremake fireinfo
   ipfiremake libnet
   ipfiremake libnl
@@ -486,12 +505,12 @@ buildipfire() {
   ipfiremake libpng
   ipfiremake libtiff
   ipfiremake libart
-  ipfiremake freetype
   ipfiremake gd
   ipfiremake popt
   ipfiremake pcre
   ipfiremake slang
   ipfiremake newt
+  ipfiremake libsmooth
   ipfiremake attr
   ipfiremake acl
   ipfiremake libcap
@@ -505,7 +524,8 @@ buildipfire() {
   ipfiremake openldap
   ipfiremake apache2
   ipfiremake php
-  ipfiremake apache2			PASS=C
+  ipfiremake web-user-interface
+  ipfiremake flag-icons
   ipfiremake jquery
   ipfiremake arping
   ipfiremake beep
@@ -532,8 +552,6 @@ buildipfire() {
   ipfiremake mtools
   ipfiremake initscripts
   ipfiremake whatmask
-  ipfiremake libmnl
-  ipfiremake iptables
   ipfiremake conntrack-tools
   ipfiremake libupnp
   ipfiremake ipaddr
@@ -578,7 +596,6 @@ buildipfire() {
   ipfiremake python-mechanize
   ipfiremake python-feedparser
   ipfiremake python-rssdler
-  ipfiremake libffi
   ipfiremake glib
   ipfiremake GeoIP
   ipfiremake fwhits
@@ -626,6 +643,7 @@ buildipfire() {
   ipfiremake screen
   ipfiremake smartmontools
   ipfiremake htop
+  ipfiremake chkconfig
   ipfiremake postfix
   ipfiremake fetchmail
   ipfiremake cyrus-imapd
@@ -633,6 +651,7 @@ buildipfire() {
   ipfiremake clamav
   ipfiremake spamassassin
   ipfiremake amavisd
+  ipfiremake dma
   ipfiremake alsa
   ipfiremake mpfire
   ipfiremake guardian
@@ -647,6 +666,7 @@ buildipfire() {
   ipfiremake libshout
   ipfiremake xvid
   ipfiremake libmpeg2
+  ipfiremake libarchive
   ipfiremake cmake
   ipfiremake gnump3d
   ipfiremake rsync
@@ -659,7 +679,6 @@ buildipfire() {
   ipfiremake ncftp
   ipfiremake etherwake
   ipfiremake bwm-ng
-  ipfiremake tripwire
   ipfiremake sysstat
   ipfiremake vsftpd
   ipfiremake strongswan
@@ -670,7 +689,6 @@ buildipfire() {
   ipfiremake lm_sensors
   ipfiremake liboping
   ipfiremake collectd
-  ipfiremake teamspeak
   ipfiremake elinks
   ipfiremake igmpproxy
   ipfiremake fbset
@@ -702,6 +720,11 @@ buildipfire() {
   ipfiremake mpd
   ipfiremake libmpdclient
   ipfiremake mpc
+  ipfiremake perl-Net-SMTP-SSL
+  ipfiremake perl-MIME-Base64
+  ipfiremake perl-Authen-SASL
+  ipfiremake perl-MIME-Lite
+  ipfiremake perl-Email-Date-Format
   ipfiremake git
   ipfiremake squidclamav
   ipfiremake vnstat
@@ -739,15 +762,16 @@ buildipfire() {
   ipfiremake iftop
   ipfiremake motion
   ipfiremake joe
+  ipfiremake monit
   ipfiremake nut
   ipfiremake watchdog
   ipfiremake libpri
+  ipfiremake libsrtp
   ipfiremake asterisk
   ipfiremake lcr
   ipfiremake usb_modeswitch
   ipfiremake usb_modeswitch_data
   ipfiremake zerofree
-  ipfiremake mdadm
   ipfiremake pound
   ipfiremake minicom
   ipfiremake ddrescue
@@ -814,6 +838,12 @@ buildipfire() {
   ipfiremake batctl
   ipfiremake perl-PDF-API2
   ipfiremake squid-accounting
+  ipfiremake pigz
+  ipfiremake tmux
+  ipfiremake perl-Text-CSV_XS
+  ipfiremake swconfig
+  ipfiremake haproxy
+  ipfiremake ipset
 }
 
 buildinstaller() {
@@ -823,7 +853,6 @@ buildinstaller() {
   ipfiremake memtest
   ipfiremake installer
   installmake strip
-  ipfiremake initrd
 }
 
 buildpackages() {
@@ -860,6 +889,7 @@ buildpackages() {
   modprobe loop 2>/dev/null
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ] || [ -e "/dev/loop-control" ]); then
 	ipfiremake flash-images
+	ipfiremake flash-images SCON=1
   fi
 
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
@@ -870,6 +900,10 @@ buildpackages() {
   mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
 
   cd $BASEDIR
+
+  # remove not useable iso on armv5tel (needed to build flash images)
+  [ "${TARGET_ARCH}" = "armv5tel" ] && rm -rf *.iso
+
   for i in `ls *.bz2 *.img.gz *.iso`; do
 	md5sum $i > $i.md5
   done
@@ -973,7 +1007,7 @@ build)
 
 	cd $BASEDIR
 	tools/checknewlog.pl
-	tools/checkwronginitlinks
+	tools/checkrootfiles
 	cd $PWD
 
 	beautify build_end

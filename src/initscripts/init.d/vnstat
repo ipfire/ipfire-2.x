@@ -1,0 +1,38 @@
+#!/bin/sh
+# Begin $rc_base/init.d/vnstat
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
+
+if [ "$VNSTATLOG" = '' ]; then
+	VNSTATLOG=/var/log/vnstat
+fi
+
+case "$1" in
+	start)
+		if use_ramdisk; then
+			boot_mesg "Mounting vnstat ramdisk..."
+			mount_ramdisk "${VNSTATLOG}"
+			evaluate_retval
+		fi
+		;;
+	stop)
+		umount_ramdisk "${VNSTATLOG}"
+		;;
+
+	backup)
+		# Backup all data if ramdisk is used
+		if mountpoint "${RRDLOG}" &>/dev/null; then
+			${0} restart
+		fi
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|backup}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/vnstat

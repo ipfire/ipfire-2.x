@@ -68,6 +68,12 @@ configure_target() {
 	fi
 
 	case "${target_arch}" in
+		x86_64)
+			BUILDTARGET="${target_arch}-unknown-linux-gnu"
+			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnu"
+			CFLAGS_ARCH="-m64 -mtune=generic"
+			;;
+
 		i586)
 			BUILDTARGET="${target_arch}-pc-linux-gnu"
 			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnu"
@@ -355,7 +361,7 @@ qemu_is_required() {
 	fi
 
 	case "${BUILD_ARCH},${target_arch}" in
-		x86_64,arm*|i?86,arm*)
+		x86_64,arm*|i?86,arm*|i?86,x86_64)
 			return 0
 			;;
 		*)
@@ -369,6 +375,15 @@ qemu_install_helper() {
 	if ! qemu_is_required; then
 		return 0
 	fi
+
+	if [ ! -e /proc/sys/fs/binfmt_misc/status ]; then
+		exiterror "binfmt_misc not mounted. QEMU_TARGET_HELPER not useable."
+	fi
+
+	if [ ! $(cat /proc/sys/fs/binfmt_misc/status) = 'enabled' ]; then
+		exiterror "binfmt_misc not enabled. QEMU_TARGET_HELPER not useable."
+	fi
+
 
 	if [ -z "${QEMU_TARGET_HELPER}" ]; then
 		exiterror "QEMU_TARGET_HELPER not set"
@@ -407,12 +422,17 @@ qemu_find_target_helper_name() {
 		arm*)
 			magic="7f454c4601010100000000000000000002002800"
 			;;
+		x86_64)
+			magic="7f454c4602010100000000000000000002003e00"
+			;;
 	esac
 
 	[ -z "${magic}" ] && return 1
 
 	local file
 	for file in /proc/sys/fs/binfmt_misc/*; do
+		# skip write only register entry
+		[ $(basename "${file}") = "register" ] && continue
 		# Search for the file with the correct magic value.
 		grep -qE "^magic ${magic}$" "${file}" || continue
 
@@ -450,8 +470,8 @@ entershell() {
 		NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 		CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
 		CCACHE_DIR=/usr/src/ccache \
-		CCACHE_COMPRESS=1 \
-		CCACHE_COMPILERCHECK="none" \
+		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
+		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 		KVER=$KVER \
 		BUILDTARGET="$BUILDTARGET" \
 		CROSSTARGET="${CROSSTARGET}" \
@@ -573,8 +593,9 @@ lfsmake2() {
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
-						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
-						CCACHE_COMPILERCHECK="none" \
+						CCACHE_DIR=/usr/src/ccache \
+						CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
+						CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" \
 						CROSSTARGET="${CROSSTARGET}" \
@@ -614,8 +635,9 @@ ipfiremake() {
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						SYSTEM_RELEASE="$SYSTEM_RELEASE" \
 						CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
-						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
-						CCACHE_COMPILERCHECK="none" \
+						CCACHE_DIR=/usr/src/ccache \
+						CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
+						CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 						KVER=$KVER MAKETUNING=$MAKETUNING \
 						BUILDTARGET="$BUILDTARGET" \
 						CROSSTARGET="${CROSSTARGET}" \
@@ -653,8 +675,9 @@ ipfiredist() {
 					CONFIG_ROOT=$CONFIG_ROOT \
 					NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 					CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
-					CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 \
-					CCACHE_COMPILERCHECK="none" \
+					CCACHE_DIR=/usr/src/ccache \
+					CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
+					CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 					KVER=$KVER \
 					BUILDTARGET="$BUILDTARGET" \
 					CROSSTARGET="${CROSSTARGET}" \
@@ -726,6 +749,7 @@ update_langs() {
 		$BASEDIR/tools/sort_strings.pl ru
 		$BASEDIR/tools/sort_strings.pl nl
 		$BASEDIR/tools/sort_strings.pl tr
+		$BASEDIR/tools/sort_strings.pl it
 		$BASEDIR/tools/check_strings.pl en > $BASEDIR/doc/language_issues.en
 		$BASEDIR/tools/check_strings.pl de > $BASEDIR/doc/language_issues.de
 		$BASEDIR/tools/check_strings.pl fr > $BASEDIR/doc/language_issues.fr
@@ -734,6 +758,22 @@ update_langs() {
 		$BASEDIR/tools/check_strings.pl ru > $BASEDIR/doc/language_issues.ru
 		$BASEDIR/tools/check_strings.pl nl > $BASEDIR/doc/language_issues.nl
 		$BASEDIR/tools/check_strings.pl tr > $BASEDIR/doc/language_issues.tr
+		$BASEDIR/tools/check_strings.pl it > $BASEDIR/doc/language_issues.it
 		$BASEDIR/tools/check_langs.sh > $BASEDIR/doc/language_missings
 		beautify message DONE
+
+		echo -ne "Updating language lists..."
+		update_language_list ${BASEDIR}/src/installer/po
+		update_language_list ${BASEDIR}/src/setup/po
+		beautify message DONE
+}
+
+update_language_list() {
+	local path="${1}"
+
+	local lang
+	for lang in ${path}/*.po; do
+		lang="$(basename "${lang}")"
+		echo "${lang%*.po}"
+	done | sort -u > "${path}/LINGUAS"
 }

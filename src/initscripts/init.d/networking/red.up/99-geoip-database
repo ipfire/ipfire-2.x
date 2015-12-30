@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Get the GeoIP database if no one exists yet.
+
+DIR="/usr/share/xt_geoip/*"
+
+found=false
+
+# Check if the directory contains any data.
+for i in $DIR; do
+	# Ignore "." and ".."
+	if [ -d "$i" ]; then
+        	found=true
+        	break
+	fi
+done
+
+# Download ruleset if none has been found.
+if ! ${found}; then
+	/usr/local/bin/xt_geoip_update >/dev/null 2>&1 &
+fi
+
+exit 0

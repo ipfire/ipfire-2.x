@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2015   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -393,6 +393,7 @@ sub dbgetlist {
 	foreach $file (@files) {
 		next if ( $file eq "." );
 		next if ( $file eq ".." );
+		next if ( $file eq "meta-" );
 		next if ( $file =~ /^old/ );
 		open(FILE, "<$Conf::dbdir/meta/$file");
 		@meta = <FILE>;
@@ -518,8 +519,13 @@ sub dblist {
 			} elsif ("$filter" eq "installed") {
 				next unless ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
 			}
-			if ("$forweb" eq "forweb") {
-				print "<option value=\"$templine[0]\">$templine[0]-$templine[1]-$templine[2]</option>\n";
+			if ("$forweb" eq "forweb")
+			 {
+				if ("$filter" eq "notinstalled") {
+					print "<option value=\"$templine[0]\">$templine[0]-$templine[1]-$templine[2]</option>\n";
+				} else {
+					print "<option value=\"$templine[0]\">$templine[0]</option>\n";
+				}
 			} else {
 				if ("$Pakfire::enable_colors" eq "1") {
 					if (&isinstalled("$templine[0]")) {
@@ -587,6 +593,25 @@ sub resolvedeps {
 	message("");
 	chomp (@all);
 	return @all;
+}
+
+sub resolvedeps_recursive {
+	my @packages = @_;
+	my @result = ();
+
+	foreach my $pkg (@packages) {
+		my @deps = &Pakfire::resolvedeps($pkg);
+
+		foreach my $dep (@deps) {
+			push(@result, $dep);
+		}
+	}
+
+	# Sort the result array and remove dupes
+	my %sort = map{ $_, 1 } @result;
+	@result = keys %sort;
+
+	return @result;
 }
 
 sub cleanup {
@@ -695,7 +720,7 @@ sub getpak {
 	}
 	
 	unless ($file) {
-		message("No filename given in meta-file. Please phone the developers.");
+		message("No filename given in meta-file.");
 		exit 1;
 	}
 	
@@ -870,6 +895,7 @@ sub checkcryptodb {
 	unless ( "$ret" eq "0" ) {
 		message("CRYPTO WARN: The GnuPG isn't configured corectly. Trying now to fix this.");
 		message("CRYPTO WARN: It's normal to see this on first execution.");
+		message("CRYPTO WARN: If this message is being shown repeatedly, check if time and date are set correctly, and if IPFire can connect via port 11371 TCP.");
 		my $command = "gpg --keyserver pgp.ipfire.org --always-trust --status-fd 2";
 		system("$command --recv-key $myid >> $Conf::logdir/gnupg-database.log 2>&1");
 		system("$command --recv-key $trustid >> $Conf::logdir/gnupg-database.log 2>&1");

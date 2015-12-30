@@ -1,0 +1,59 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2015 IPFire Team                                              #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+VPN_CONFIG="/var/ipfire/vpn/config"
+
+block_subnet() {
+	local subnet="${1}"
+
+	# Don't block a wildcard subnet
+	if [ "${subnet}" = "0.0.0.0/0" ] || [ "${subnet}" = "0.0.0.0/0.0.0.0" ]; then
+		return 0
+	fi
+
+	iptables -A IPSECBLOCK -d "${subnet}" -j REJECT --reject-with icmp-net-unreachable
+}
+
+block_ipsec() {
+	# Flush all exists rules
+	iptables -F IPSECBLOCK
+
+	local id status name lefthost type ctype unknown1 unknown2 unknown3
+	local leftsubnets unknown4 righthost rightsubnets rest
+	while IFS="," read -r id status name lefthost type ctype unkown1 unknown2 unknown3 \
+			leftsubnets unknown4 righthost rightsubnets rest; do
+		# Check if the connection is enabled
+		[ "${status}" = "on" ] || continue
+
+		# Check if this a net-to-net connection
+		[ "${type}" = "net" ] || continue
+
+		# Split multiple subnets
+		rightsubnets="${rightsubnets//\|/ }"
+
+		local rightsubnet
+		for rightsubnet in ${rightsubnets}; do
+			block_subnet "${rightsubnet}"
+		done
+	done < "${VPN_CONFIG}"
+}
+
+block_ipsec || exit $?

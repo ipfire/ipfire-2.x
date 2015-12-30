@@ -13,7 +13,6 @@
 case "$1" in
 	start)
 		boot_mesg "Starting fcron..."
-		chown cron:cron /var/spool/cron
 		loadproc /usr/sbin/fcron -y
 		# remove -y to reenable fcron logging
 		;;

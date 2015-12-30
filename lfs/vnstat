@@ -76,6 +76,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make all $(MAKETUNING)										LOCAL_CONFIGURE_OPTIONS="--enable-readline=yes"
 	cd $(DIR_APP) && make install
 	sed -i 's|eth0|green0|g' /etc/vnstat.conf
-	sed -i 's|/var/lib/vnstat|/var/log/rrd/vnstat|g' /etc/vnstat.conf
+	sed -i 's|/var/lib/vnstat|/var/log/vnstat|g' /etc/vnstat.conf
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

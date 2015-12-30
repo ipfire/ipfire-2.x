@@ -76,7 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_SRC)/$(THISAPP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/mitkrb-1.12.1-db2_fix-1.patch
 
 	cd $(DIR_APP) && sed -e "s@python2.5/Python.h@& python2.7/Python.h@g" \
@@ -93,13 +93,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-dns-for-realm \
 		CPPFLAGS="-I/usr/include/et"
 
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	cd $(DIR_APP) && make #$(MAKETUNING)
+	cd $(DIR_APP) && make install
 
 	for LIB in gssapi_krb5 gssrpc k5crypto kadm5clnt kadm5srv \
         		kdb5 kdb_ldap krad krb5 krb5support verto; do \
 		chmod -f -v 755 "/usr/lib/lib$$LIB.so"; \
 	done
 
-	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_SRC)/$(THISAPP)
 	@$(POSTBUILD)

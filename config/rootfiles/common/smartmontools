@@ -2,6 +2,7 @@
 #usr/etc/rc.d/init.d
 #usr/etc/rc.d/init.d/smartd
 #usr/etc/smartd.conf
+#usr/etc/smartd_warning.d
 #usr/etc/smartd_warning.sh
 usr/sbin/smartctl
 #usr/sbin/smartd
@@ -21,10 +22,13 @@ usr/sbin/update-smart-drivedb
 #usr/share/doc/smartmontools/examplescripts/Example2
 #usr/share/doc/smartmontools/examplescripts/Example3
 #usr/share/doc/smartmontools/examplescripts/Example4
+#usr/share/doc/smartmontools/examplescripts/Example5
+#usr/share/doc/smartmontools/examplescripts/Example6
 #usr/share/doc/smartmontools/examplescripts/README
 #usr/share/doc/smartmontools/smartd.conf
 #usr/share/man/man5/smartd.conf.5
 #usr/share/man/man8/smartctl.8
 #usr/share/man/man8/smartd.8
+#usr/share/man/man8/update-smart-drivedb.8
 #usr/share/smartmontools
 usr/share/smartmontools/drivedb.h

@@ -79,7 +79,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/nagios-plugins* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && \
 		./configure --prefix=/usr \
 			--sysconfdir=/etc/nagios \
@@ -110,5 +110,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -s /etc/init.d/nagios /etc/rc.d/rc3.d/S67nagios
 	ln -s /etc/init.d/nagios /etc/rc.d/rc0.d/K33nagios
 	ln -s /etc/init.d/nagios /etc/rc.d/rc6.d/K33nagios
-	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP) $(DIR_SRC)/nagios-plugins*
 	@$(POSTBUILD)

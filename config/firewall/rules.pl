@@ -60,6 +60,7 @@ my $configfwdfw		= "${General::swroot}/firewall/config";
 my $configinput	    = "${General::swroot}/firewall/input";
 my $configoutgoing  = "${General::swroot}/firewall/outgoing";
 my $p2pfile			= "${General::swroot}/firewall/p2protocols";
+my $geoipfile		= "${General::swroot}/firewall/geoipblock";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
 
@@ -88,14 +89,30 @@ sub main {
 	# Flush all chains.
 	&flush();
 
-	# Reload firewall rules.
-	&preparerules();
+	# Prepare firewall rules.
+	if (! -z  "${General::swroot}/firewall/input"){
+		&buildrules(\%configinputfw);
+	}
+	if (! -z  "${General::swroot}/firewall/outgoing"){
+		&buildrules(\%configoutgoingfw);
+	}
+	if (! -z  "${General::swroot}/firewall/config"){
+		&buildrules(\%configfwdfw);
+	}
 
 	# Load P2P block rules.
 	&p2pblock();
 
+	# Load GeoIP block rules.
+	&geoipblock();
+
 	# Reload firewall policy.
 	run("/usr/sbin/firewall-policy");
+
+	#Reload firewall.local if present
+	if ( -f '/etc/sysconfig/firewall.local'){
+		run("/etc/sysconfig/firewall.local reload");
+	}
 }
 
 sub run {
@@ -144,18 +161,6 @@ sub flush {
 	run("$IPTABLES -t nat -F $CHAIN_NAT_SOURCE");
 	run("$IPTABLES -t nat -F $CHAIN_NAT_DESTINATION");
 	run("$IPTABLES -t mangle -F $CHAIN_MANGLE_NAT_DESTINATION_FIX");
-}
-
-sub preparerules {
-	if (! -z  "${General::swroot}/firewall/input"){
-		&buildrules(\%configinputfw);
-	}
-	if (! -z  "${General::swroot}/firewall/outgoing"){
-		&buildrules(\%configoutgoingfw);
-	}
-	if (! -z  "${General::swroot}/firewall/config"){
-		&buildrules(\%configfwdfw);
-	}
 }
 
 sub buildrules {
@@ -280,7 +285,7 @@ sub buildrules {
 		# Concurrent connection limit
 		my @ratelimit_options = ();
 
-		if (($elements gt 34) && ($$hash{$key}[32] eq 'ON')) {
+		if (($elements ge 34) && ($$hash{$key}[32] eq 'ON')) {
 			my $conn_limit = $$hash{$key}[33];
 
 			if ($conn_limit ge 1) {
@@ -296,13 +301,13 @@ sub buildrules {
 		}
 
 		# Ratelimit
-		if (($elements gt 37) && ($$hash{$key}[34] eq 'ON')) {
+		if (($elements ge 37) && ($$hash{$key}[34] eq 'ON')) {
 			my $rate_limit = "$$hash{$key}[35]/$$hash{$key}[36]";
 
-				if ($rate_limit) {
-					push(@ratelimit_options, ("-m", "limit"));
-					push(@ratelimit_options, ("--limit", $rate_limit));
-				}
+			if ($rate_limit) {
+				push(@ratelimit_options, ("-m", "limit"));
+				push(@ratelimit_options, ("--limit", $rate_limit));
+			}
 		}
 
 		# Check which protocols are used in this rule and so that we can
@@ -364,22 +369,18 @@ sub buildrules {
 					my @source_options = ();
 					if ($source =~ /mac/) {
 						push(@source_options, $source);
-					} elsif ($source) {
+					} elsif ($source =~ /-m geoip/) {
+						push(@source_options, $source);
+					} elsif($source) {
 						push(@source_options, ("-s", $source));
-					}
-
-					if ($source_intf) {
-						push(@source_options, ("-i", $source_intf));
 					}
 
 					# Prepare destination options.
 					my @destination_options = ();
-					if ($destination) {
+					if ($destination =~ /-m geoip/) {
+						push(@destination_options,  $destination);
+					} elsif ($destination) {
 						push(@destination_options, ("-d", $destination));
-					}
-
-					if ($destination_intf) {
-						push(@destination_options, ("-o", $destination_intf));
 					}
 
 					# Add time constraint options.
@@ -466,6 +467,10 @@ sub buildrules {
 						} elsif ($NAT_MODE eq "SNAT") {
 							my @nat_options = @options;
 
+							if ($destination_intf) {
+								push(@nat_options, ("-o", $destination_intf));
+							}
+
 							push(@nat_options, @source_options);
 							push(@nat_options, @destination_options);
 
@@ -474,6 +479,17 @@ sub buildrules {
 							}
 							run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options -j SNAT --to-source $nat_address");
 						}
+					}
+
+					# Add source and destination interface to the filter rules.
+					# These are supposed to help filtering forged packets that originate
+					# from BLUE with an IP address from GREEN for instance.
+					if ($source_intf) {
+						push(@source_options, ("-i", $source_intf));
+					}
+
+					if ($destination_intf) {
+						push(@destination_options, ("-o", $destination_intf));
 					}
 
 					push(@options, @source_options);
@@ -508,10 +524,6 @@ sub buildrules {
 				}
 			}
 		}
-	}
-	#Reload firewall.local if present
-	if ( -f '/etc/sysconfig/firewall.local'){
-		run("/etc/sysconfig/firewall.local reload");
 	}
 }
 
@@ -567,6 +579,38 @@ sub p2pblock {
 	run("$IPTABLES -F P2PBLOCK");
 	if (@protocols) {
 		run("$IPTABLES -A P2PBLOCK -m ipp2p @protocols -j DROP");
+	}
+}
+
+sub geoipblock {
+	my %geoipsettings = ();
+	$geoipsettings{'GEOIPBLOCK_ENABLED'} = "off";
+
+	# Flush iptables chain.
+	run("$IPTABLES -F GEOIPBLOCK");
+
+	# Check if the geoip settings file exists
+	if (-e "$geoipfile") {
+		# Read settings file
+		&General::readhash("$geoipfile", \%geoipsettings);
+	}
+
+	# If geoip blocking is not enabled, we are finished here.
+	if ($geoipsettings{'GEOIPBLOCK_ENABLED'} ne "on") {
+		# Exit submodule. Process remaining script.
+		return;
+	}
+
+	# Get supported locations.
+	my @locations = &fwlib::get_geoip_locations();
+
+	# Loop through all supported geoip locations and
+	# create iptables rules, if blocking this country
+	# is enabled.
+	foreach my $location (@locations) {
+		if($geoipsettings{$location} eq "on") {
+			run("$IPTABLES -A GEOIPBLOCK -m geoip --src-cc $location -j DROP");
+		}
 	}
 }
 

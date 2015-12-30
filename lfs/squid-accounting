@@ -9,15 +9,15 @@
 
 include Config
 
-VER        = 1.0.1
+VER        = 1.0.4
 
 THISAPP    = squid-accounting-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = squid-accounting
-PAK_VER    = 3
+PAK_VER    = 9
 
-DEPS       = "perl-DBI perl-DBD-SQLite perl-File-ReadBackwards perl-PDF-API2 sendEmail"
+DEPS       = "perl-DBI perl-DBD-SQLite perl-File-ReadBackwards perl-PDF-API2"
 
 ###############################################################################
 # Top-level Rules
@@ -50,8 +50,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 777 /var/log/accounting.log
 #Set permissions for logo and graphs
 	chmod -R 777 /srv/web/ipfire/html/accounting
-		
-	
+
 	install -v -m 755 $(DIR_APP)/squid-accounting/accounting.cgi /srv/web/ipfire/cgi-bin/
 	install -v -m 755 $(DIR_APP)/squid-accounting/acct.pl /usr/local/bin/
 	install -v -m 644 $(DIR_APP)/squid-accounting/acct-lib.pl /var/ipfire/accounting/
@@ -61,10 +60,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 755 $(DIR_APP)/squid-accounting/dbinstall.pl /var/ipfire/accounting/
 	install -v -m 644 $(DIR_APP)/squid-accounting/config/backup/includes/squid-accounting  \
 			/var/ipfire/backup/addons/includes/squid-accounting
-			
+
 #activate hourly logging of proxy logfile
 	ln -sf /usr/local/bin/acct.pl /etc/fcron.hourly/squid-accounting
-		
 	chown -R nobody.nobody /var/ipfire/accounting
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

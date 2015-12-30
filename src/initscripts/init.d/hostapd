@@ -2,7 +2,7 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-CHANNEL="05"
+CHANNEL="6"
 COUNTRY="00"
 TXPOWER="auto"
 INTERFACE="blue0"
@@ -38,9 +38,6 @@ case "${1}" in
 		if [ -e "/sys/class/net/$INTERFACE/phy80211" ]; then
 			DRIVER="NL80211"
 			driver="nl80211"
-		elif [ -e "/sys/class/net/$INTERFACE/madwifi_name_type" ]; then
-			DRIVER="MADWIFI"
-			driver="madwifi"
 		elif [ "$(/bin/grep hostap /sys/class/net/$INTERFACE/uevent)" != "" ]; then
 			DRIVER="HOSTAP"
 			driver="hostap"
@@ -60,14 +57,7 @@ case "${1}" in
 		chmod 644 /var/ipfire/wlanap/settings.tmp
 		mv /var/ipfire/wlanap/settings.tmp /var/ipfire/wlanap/settings
 
-		if [ "$DRIVER" == "MADWIFI" ]; then
-			if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
-				boot_mesg "Setting MADWIFI wlan $INTERFACE to Master mode... "
-				# Set Atheros Cards to master mode
-				/usr/bin/wlanconfig $INTERFACE destroy > /dev/null
-				/usr/bin/wlanconfig $INTERFACE create wlandev wifi0 wlanmode ap > /dev/null
-			fi
-		elif [ "$DRIVER" == "HOSTAP" ]; then
+		if [ "$DRIVER" == "HOSTAP" ]; then
 			if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
 				boot_mesg "Setting HOSTAP wlan $INTERFACE to Master mode... "
 				# Set Prism Cards to master mode
@@ -87,27 +77,21 @@ case "${1}" in
 
 		/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf >/dev/null 2>&1 &
 
-		sleep 2
-
-		if [ $DRIVER == "MADWIFI" ]; then
-			iwpriv $INTERFACE maccmd 3
-			if [ $MACMODE != 0 ]; then
-				FILE="/var/ipfire/wlanap/macfile"
-				exec < $FILE
-				while read LINE
-				do
-					iwpriv $INTERFACE addmac $LINE
-				done
-
-				iwpriv $INTERFACE maccmd $MACMODE
-			fi
-		fi
-
-		sleep 2
+		sleep 3
 
 		if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
-			boot_mesg "Error! Can't set wlan master mode"
-			echo_failure;
+			killproc /usr/bin/hostapd > /dev/null 2>&1
+			boot_mesg "Try to create additional AP device ..." 
+			ip link set ${INTERFACE} down
+			ip link set ${INTERFACE} name ${INTERFACE}_man
+			iw dev  ${INTERFACE}_man interface add ${INTERFACE} type __ap
+			evaluate_retval;
+			if [ -d /sys/class/net/${INTERFACE} ]; then
+				/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf >/dev/null 2>&1 &
+			else
+				ip link set ${INTERFACE}_man down
+				ip link set ${INTERFACE}_man name ${INTERFACE}
+			fi
 			exit 0;
 		else
 			echo_ok
@@ -116,7 +100,9 @@ case "${1}" in
 
 	stop)
 		boot_mesg "Stopping hostapd..."
-
+		ip link set ${INTERFACE} down > /dev/null 2>&1
+		ip link set ${INTERFACE} down_man > /dev/null 2>&1
+		sleep 1
 		killproc /usr/bin/hostapd
 		evaluate_retval
 		;;

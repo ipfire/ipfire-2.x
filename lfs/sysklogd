@@ -75,8 +75,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	#cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)_xen_empty_buffer_check.patch
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	touch /var/log/{dhcpcd.log,messages,ovpnserver.log}
-	chmod 664 /var/log/{dhcpcd.log,messages,ovpnserver.log}
-	chown 0:105 /var/log/{dhcpcd.log,messages,ovpnserver.log}
+	touch /var/log/{dhcpcd.log,messages}
+	chmod 664 /var/log/{dhcpcd.log,messages}
+	chown 0:105 /var/log/{dhcpcd.log,messages}
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

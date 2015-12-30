@@ -702,4 +702,86 @@ run_subdir() {
 	done
 }
 
+mem_amount() {
+        local pagesize="$(getconf PAGESIZE)"
+        local pages="$(getconf _PHYS_PAGES)"
+
+        echo "$(( ${pagesize} * ${pages} / 1024 / 1024 ))"
+}
+
+use_ramdisk() {
+	eval $(/usr/local/bin/readhash /etc/sysconfig/ramdisk)
+
+	case "${RAMDISK_MODE}" in
+		# Don't use ramdisk
+		0)
+			return 1
+			;;
+
+		# Always use ramdisk
+		1)
+			return 0
+			;;
+
+		# Automatic mode - use ramdisk if sufficient
+		# memory is available
+		2)
+			local mem_avail="$(mem_amount)"
+
+			if [ ${mem_avail} -ge 490 ]; then
+				return 0
+			else
+				return 1
+			fi
+			;;
+
+		# Fail for everything else
+		*)
+			return 2
+			;;
+	esac
+}
+
+mount_ramdisk() {
+	local path="${1}"
+	local path_tmpfs="${path}.tmpfs"
+
+	# Check if the ramdisk is already mounted
+	if mountpoint "${path}" &>/dev/null; then
+		return 0
+	fi
+
+	# Create ramdisk
+	mkdir -p "${path_tmpfs}"
+	mount -t tmpfs none "${path_tmpfs}"
+
+	# Restore ramdisk content
+	cp -pR ${path}/* "${path_tmpfs}"
+
+	# Move ramdisk to final destination
+	mount --move "${path_tmpfs}" "${path}"
+	rm -rf "${path_tmpfs}"
+}
+
+umount_ramdisk() {
+	local path="${1}"
+	local path_tmpfs="${path}.tmpfs"
+
+	# Check if a ramdisk is actually mounted
+	if ! mountpoint "${path}" &>/dev/null; then
+		return 0
+	fi
+
+	# Move the ramdisk
+	mkdir -p "${path_tmpfs}"
+	mount --move "${path}" "${path_tmpfs}"
+
+	# Backup ramdisk content
+	cp -pR ${path_tmpfs}/* "${path}"
+
+	# Destroy the ramdisk
+	umount "${path_tmpfs}"
+	rm -rf "${path_tmpfs}"
+}
+
 # End $rc_base/init.d/functions

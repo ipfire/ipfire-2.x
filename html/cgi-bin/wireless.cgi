@@ -211,17 +211,17 @@ if ($cgiparams{'ACTION'} eq 'edit') {
 print <<END
 <table width='100%'>
 <tr>
-<td width='25%' class='base'>$Lang::tr{'source ip'}:&nbsp;</td>
+<td width='25%' class='base'>$Lang::tr{'source ip'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 <td width='25%' ><input type='text' name='SOURCE_IP' value='$cgiparams{'SOURCE_IP'}' size='25' /></td>
 <td width='25%' class='base' align='right'>$Lang::tr{'enabled'}&nbsp;</td>
 <td width='25%'><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
 </tr>
 <tr>
-<td width='25%' class='base'>$Lang::tr{'source'} $Lang::tr{'mac address'}:&nbsp;</td>
+<td width='25%' class='base'>$Lang::tr{'source'} $Lang::tr{'mac address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 <td colspan='3'><input type='text' name='SOURCE_MAC' value='$cgiparams{'SOURCE_MAC'}' size='25' /></td>
 </tr>
 <tr>
-<td width='25%' class='base'>$Lang::tr{'remark'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+<td width='25%' class='base'>$Lang::tr{'remark'}:</td>
 <td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='40' /></td>
 </tr>
 </table>
@@ -229,7 +229,7 @@ print <<END
 <hr>
 <table width='100%'>
 <tr>
-    <td class='base' valign='top'><img src='/blob.gif' alt='*' /> $Lang::tr{'this field may be blank'}</td>
+    <td class='base' valign='top'><img src='/blob.gif' alt='*' /> $Lang::tr{'required field'}</td>
     <td width='40%' align='right'>
       <input type='hidden' name='ACTION' value='add' />
       <input type='submit' name='SUBMIT' value='$buttontext' />

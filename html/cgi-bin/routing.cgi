@@ -118,12 +118,15 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 }
 
 if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
-	# Convert subnet masks to CIDR notation.
-	$settings{'IP'} = &General::iporsubtocidr($settings{'IP'});
-
-# Validate inputs
-	if (( !&General::validip($settings{'IP'})) and ( !&General::validipandmask($settings{'IP'}))){
-	$errormessage = $Lang::tr{'invalid ip'}." / ".$Lang::tr{'invalid netmask'};
+	# Validate inputs
+	if (!&General::validipandmask($settings{'IP'})){
+		$errormessage = $Lang::tr{'invalid ip'}." / ".$Lang::tr{'invalid netmask'};
+	}else{
+		#set networkip if not already correctly defined
+		my($ip,$cidr) = split(/\//,$settings{'IP'});
+		$cidr = &General::iporsubtocidr($cidr);
+		my $netip=&General::getnetworkip($ip,$cidr);
+		$settings{'IP'} = "$netip/$cidr";
 	}
 
 	if ($settings{'IP'} =~ /^0\.0\.0\.0/){
@@ -146,7 +149,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 		$temp[2] ='' unless defined $temp[2]; # not always populated
 		$temp[3] ='' unless defined $temp[2]; # not always populated
 		#Same ip already used?
-		if($temp[1] eq $settings{'IP'}){
+		if($temp[1] eq $settings{'IP'} && $settings{'KEY1'} eq ''){
 			$errormessage = $Lang::tr{'ccd err irouteexist'};
 			last;
 		}

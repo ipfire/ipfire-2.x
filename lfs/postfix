@@ -32,11 +32,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = postfix
-PAK_VER    = 7
+PAK_VER    = 9
 
 DEPS       = "amavisd mysql"
 
-CCARGS     = -DNO_IPV6 `getconf LFS_CFLAGS` \
+CCARGS     = `getconf LFS_CFLAGS` \
 	-DDEF_DAEMON_DIR="'\"/usr/lib/postfix\"'" \
 	-DDEF_MANPAGE_DIR="'\"/usr/share/man\"'"
 AUXLIBS    =
@@ -115,5 +115,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/postfix \
 			 /var/ipfire/backup/addons/includes/postfix
+	mv /usr/sbin/sendmail /usr/sbin/sendmail.postfix
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

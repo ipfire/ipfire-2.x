@@ -23,6 +23,8 @@
 
 package Network;
 
+require "/var/ipfire/general-functions.pl";
+
 use Socket;
 
 my %PREFIX2NETMASK = (
@@ -120,6 +122,19 @@ sub network2bin($) {
 	return ($network_start, $netmask_bin);
 }
 
+# Deletes leading zeros in ip address
+sub ip_remove_zero{
+	my $address = shift;
+	my @ip = split (/\./, $address);
+
+	foreach my $octet (@ip) {
+		$octet = int($octet);
+	}
+
+	$address = join (".", @ip);
+
+	return $address;
+}
 # Returns True for all valid IP addresses
 sub check_ip_address($) {
 	my $address = shift;
@@ -159,6 +174,21 @@ sub check_ip_address_and_netmask($$) {
 	}
 
 	return &check_netmask($netmask);
+}
+
+# Returns True for all valid subnets like a.b.c.d/e or a.b.c.d/a.b.c.d
+sub check_subnet($) {
+	my $subnet = shift;
+
+	my ($address, $network) = split(/\//, $subnet, 2);
+
+	# Check if the IP address is fine.
+	my $result = &check_ip_address($address);
+	unless ($result) {
+		return $result;
+	}
+
+	return &check_prefix($network) || &check_netmask($network);
 }
 
 # For internal use only. Will take an IP address and
@@ -239,9 +269,34 @@ sub ip_address_in_network($$) {
 	my ($network_bin, $netmask_bin) = &network2bin($network);
 
 	# Find end address
-	my $broadcast_bin = $network_bin ^ ~$netmask_bin;
+	my $broadcast_bin = $network_bin ^ (~$netmask_bin % 2 ** 32);
 
 	return (($address_bin ge $network_bin) && ($address_bin le $broadcast_bin));
+}
+
+sub setup_upstream_proxy() {
+	my %proxysettings = ();
+	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+
+	if ($proxysettings{'UPSTREAM_PROXY'}) {
+		my $credentials = "";
+
+		if ($proxysettings{'UPSTREAM_USER'}) {
+			$credentials = $proxysettings{'UPSTREAM_USER'};
+
+			if ($proxysettings{'UPSTREAM_PASSWORD'}) {
+				$credentials .= ":" . $proxysettings{'UPSTREAM_PASSWORD'};
+			}
+
+			$credentials .= "@";
+		}
+
+		my $proxy = "http://" . $credentials . $proxysettings{'UPSTREAM_PROXY'};
+
+		$ENV{'http_proxy'} = $proxy;
+		$ENV{'https_proxy'} = $proxy;
+		$ENV{'ftp_proxy'} = $proxy;
+	}
 }
 
 1;
@@ -298,6 +353,9 @@ sub testsuite() {
 	assert($result eq "1.2.3.6");
 
 	$result = &ip_address_in_network("10.0.1.4", "10.0.0.0/8");
+	assert($result);
+
+	$result = &ip_address_in_network("192.168.30.11", "192.168.30.0/255.255.255.0");
 	assert($result);
 
 	return 0;

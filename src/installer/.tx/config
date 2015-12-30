@@ -1,0 +1,7 @@
+[main]
+host = https://www.transifex.com
+
+[ipfire.installer-legacy]
+file_filter = po/<lang>.po
+source_file = po/installer.pot
+source_lang = en

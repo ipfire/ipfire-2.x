@@ -1,0 +1,85 @@
+diff -up dhcp-4.3.0a1/client/dhclient.c.ifup dhcp-4.3.0a1/client/dhclient.c
+--- dhcp-4.3.0a1/client/dhclient.c.ifup	2013-12-19 14:53:08.817760677 +0100
++++ dhcp-4.3.0a1/client/dhclient.c	2013-12-19 15:05:16.290518574 +0100
+@@ -521,9 +521,81 @@ main(int argc, char **argv) {
+ 				}
+ 			}
+ 			fclose(pidfd);
++		} else {
++			/* handle release for interfaces requested with Red Hat
++			 * /sbin/ifup - pidfile will be /var/run/dhclient-$interface.pid
++			 */
++
++			if ((path_dhclient_pid == NULL) || (*path_dhclient_pid == '\0'))
++				path_dhclient_pid = "/var/run/dhclient.pid";
++
++			char *new_path_dhclient_pid;
++			struct interface_info *ip;
++			int pdp_len = strlen(path_dhclient_pid), pfx, dpfx;
++
++			/* find append point: beginning of any trailing '.pid'
++			 * or '-$IF.pid' */
++			for (pfx=pdp_len; (pfx >= 0) && (path_dhclient_pid[pfx] != '.') && (path_dhclient_pid[pfx] != '/'); pfx--);
++				if (pfx == -1)
++					pfx = pdp_len;
++
++			if (path_dhclient_pid[pfx] == '/')
++				pfx += 1;
++
++			for (dpfx=pfx; (dpfx >= 0) && (path_dhclient_pid[dpfx] != '-') && (path_dhclient_pid[dpfx] != '/'); dpfx--);
++				if ((dpfx > -1) && (path_dhclient_pid[dpfx] != '/'))
++					pfx = dpfx;
++
++			for (ip = interfaces; ip; ip = ip->next) {
++				if (interfaces_requested && (ip->flags & (INTERFACE_REQUESTED))) {
++					int n_len = strlen(ip->name);
++
++					new_path_dhclient_pid = (char*) malloc(pfx + n_len + 6);
++					strncpy(new_path_dhclient_pid, path_dhclient_pid, pfx);
++					sprintf(new_path_dhclient_pid + pfx, "-%s.pid", ip->name);
++
++					if ((pidfd = fopen(new_path_dhclient_pid, "r")) != NULL) {
++						e = fscanf(pidfd, "%ld\n", &temp);
++						oldpid = (pid_t)temp;
++
++						if (e != 0 && e != EOF) {
++							if (oldpid) {
++								if (kill(oldpid, SIGTERM) == 0)
++									unlink(path_dhclient_pid);
++							}
++						}
++
++						fclose(pidfd);
++					}
++
++					free(new_path_dhclient_pid);
++				}
++			}
++		}
++	} else {
++		FILE *pidfp = NULL;
++		long temp = 0;
++		pid_t dhcpid = 0;
++		int dhc_running = 0;
++		char procfn[256] = "";
++
++		if ((pidfp = fopen(path_dhclient_pid, "r")) != NULL) {
++			if ((fscanf(pidfp, "%ld", &temp)==1) && ((dhcpid=(pid_t)temp) > 0)) {
++				snprintf(procfn,256,"/proc/%u",dhcpid);
++				dhc_running = (access(procfn, F_OK) == 0);
++			}
++
++			fclose(pidfp);
++		}
++
++		if (dhc_running) {
++			log_fatal("dhclient(%u) is already running - exiting. ", dhcpid);
++			return(1);
+ 		}
+ 	}
+ 
++	write_client_pid_file();
++
+ 	if (!quiet) {
+ 		log_info("%s %s", message, PACKAGE_VERSION);
+ 		log_info(copyright);

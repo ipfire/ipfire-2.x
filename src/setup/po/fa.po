@@ -1,0 +1,586 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR The IPFire Project (www.ipfire.org)
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# hashem ghavami <hashem.wolf@gmail.com>, 2014
+# Khalil Delavaran <khalil.delavaran@gmail.com>, 2014-2015
+msgid ""
+msgstr ""
+"Project-Id-Version: IPFire Project\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-21 15:12+0000\n"
+"PO-Revision-Date: 2015-01-26 06:42+0000\n"
+"Last-Translator: Khalil Delavaran <khalil.delavaran@gmail.com>\n"
+"Language-Team: Persian (http://www.transifex.com/projects/p/ipfire/language/fa/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fa\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: dhcp.c:50
+msgid "Start address:"
+msgstr "آغاز آدرس:"
+
+#: dhcp.c:51
+msgid "End address:"
+msgstr "پایان آدرس:"
+
+#: dhcp.c:52 networking.c:717
+msgid "Primary DNS:"
+msgstr "نخستین DNS:"
+
+#: dhcp.c:53 networking.c:723
+msgid "Secondary DNS:"
+msgstr "دومین DNS:"
+
+#: dhcp.c:54
+msgid "Default lease (mins):"
+msgstr "اجاره پیش پندار (دقیقه):"
+
+#: dhcp.c:55
+msgid "Max lease (mins):"
+msgstr "بیشینه اجاره (دقیقه):"
+
+#: dhcp.c:56
+msgid "Domain name suffix:"
+msgstr "پسوند نام دامنه:"
+
+#: dhcp.c:86 dhcp.c:93 dhcp.c:101 domainname.c:34 hostname.c:37 keymap.c:70
+#: misc.c:40 misc.c:52 netstuff.c:377 netstuff.c:566 netstuff.c:704
+#: networking.c:134 networking.c:255 networking.c:291 networking.c:346
+#: networking.c:442 networking.c:552 networking.c:603 networking.c:610
+#: networking.c:713 timezone.c:63
+msgid "Unable to open settings file"
+msgstr "نمی توان فایل پیکربندی را باز کرد"
+
+#: dhcp.c:111
+msgid "DHCP server configuration"
+msgstr "پیکربندی سرور DHCP"
+
+#: dhcp.c:116
+msgid "Configure the DHCP server by entering the settings information."
+msgstr "سرویس دهنده DHcp  با داده و تنظیمات وارد شده پیکربندی شد"
+
+#: dhcp.c:125
+msgid "Enabled"
+msgstr "پویا شد"
+
+#: dhcp.c:142 domainname.c:43 hostname.c:47 keymap.c:86 main.c:99 main.c:172
+#: main.c:174 netstuff.c:157 netstuff.c:733 netstuff.c:756 networking.c:163
+#: networking.c:269 networking.c:305 networking.c:409 networking.c:560
+#: networking.c:642 networking.c:653 networking.c:746 passwords.c:89
+#: timezone.c:78
+msgid "OK"
+msgstr "بله"
+
+#: dhcp.c:143 domainname.c:43 hostname.c:47 keymap.c:86 netstuff.c:158
+#: netstuff.c:673 netstuff.c:733 netstuff.c:756 networking.c:305
+#: networking.c:410 networking.c:560 networking.c:653 networking.c:746
+#: passwords.c:89 timezone.c:78
+msgid "Cancel"
+msgstr "نمی خواهم"
+
+#: dhcp.c:156
+msgid ""
+"The following fields are invalid:\n"
+"\n"
+msgstr "شاخص های زیر اشتباه هستند:\n\n"
+
+#: dhcp.c:159
+msgid "Start address"
+msgstr "آغاز آدرس"
+
+#: dhcp.c:165
+msgid "End address"
+msgstr "پایان آدرس"
+
+#: dhcp.c:173 networking.c:755
+msgid "Primary DNS"
+msgstr "نخستین DNS"
+
+#: dhcp.c:182 networking.c:764
+msgid "Secondary DNS"
+msgstr "دومین DNS"
+
+#: dhcp.c:189
+msgid "Default lease time"
+msgstr "مدت اجاره پیش پندار"
+
+#: dhcp.c:195
+msgid "Max. lease time"
+msgstr "بیشینه مدت پیش پندار"
+
+#: domainname.c:42 main.c:70
+msgid "Domain name"
+msgstr "نام دامنه"
+
+#: domainname.c:42
+msgid "Enter Domain name"
+msgstr "نام دامین را بنویسید"
+
+#: domainname.c:48
+msgid "Domain name cannot be empty."
+msgstr "نام دامنه نمی تواند تهی باشد."
+
+#: domainname.c:50
+msgid "Domain name cannot contain spaces."
+msgstr "نام دامنه نمی تواند فاصله داشته باشد."
+
+#: domainname.c:53
+msgid "Domain name may only contain letters, numbers, hyphens and periods."
+msgstr "نام دامنه ممکن است شامل حروف، اعداد، خط فاصله و دوره های باشذ"
+
+#: hostname.c:46 main.c:69
+msgid "Hostname"
+msgstr "نام هاست"
+
+#: hostname.c:46
+msgid "Enter the machine's hostname."
+msgstr "نام هاست ماشین ها را بنویسید."
+
+#: hostname.c:53
+msgid "Hostname cannot be empty."
+msgstr "نام هاست نمی تواند تهی باشد."
+
+#: hostname.c:55
+msgid "Hostname cannot contain spaces."
+msgstr "نام هاست نمیتواند فاصله داشته باشد."
+
+#: hostname.c:58
+msgid "Hostname may only contain letters, numbers and hyphens."
+msgstr "نام هاست ممکن است شامل حروف، اعداد و خط فاصله باشد."
+
+#: keymap.c:84 main.c:67
+msgid "Keyboard mapping"
+msgstr "نگاشت کیبورد"
+
+#: keymap.c:85
+msgid "Choose the type of keyboard you are using from the list below."
+msgstr "نوع کی بورد خود را از لیست زیر گزینش کنید."
+
+#: main.c:68 timezone.c:77
+msgid "Timezone"
+msgstr "منطقه زمانی"
+
+#: main.c:71 networking.c:110 networking.c:115 networking.c:447
+msgid "Networking"
+msgstr "شبکه بندی"
+
+#: main.c:72 misc.c:147
+msgid "ISDN"
+msgstr "ISDN"
+
+#: main.c:73
+msgid "'root' password"
+msgstr "گذر واژه 'root'"
+
+#: main.c:74
+msgid "'admin' password"
+msgstr "گذر واژه 'admin'"
+
+#: main.c:90
+msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
+msgstr "              <Tab>/<Alt-Tab> میان عنصری   |  <Space> گزینش"
+
+#: main.c:97
+msgid "Section menu"
+msgstr "برش منو"
+
+#: main.c:98
+msgid "Select the item you wish to configure."
+msgstr "اینترفیسی که قصد پیکربندی دوباره آنرا دارید گزینش کنید."
+
+#: main.c:99
+msgid "Quit"
+msgstr "برون رفت"
+
+#: main.c:172
+msgid "Setup is complete."
+msgstr "برپا سازی به پایان رسید."
+
+#: main.c:174 netstuff.c:733 networking.c:560 networking.c:653
+msgid "Warning"
+msgstr "گوشزد"
+
+#: main.c:175
+msgid ""
+"Initial setup was not entirely complete. You must ensure that Setup is "
+"properly finished by running setup again at the shell."
+msgstr "راه اندازی به پایان نرسیده است. شما با اجرای دوباره راه اندازی در خط فرمان باید مطمئن شوید که راه اندازی پایان یافته است."
+
+#: misc.c:62
+#, c-format
+msgid "Unable to write %s/main/hostname.conf"
+msgstr "نمی توان %s/main/hostname.conf را نوشت."
+
+#: misc.c:71
+msgid "Unable to open main hosts file."
+msgstr "نمی توان فایل هاست های اصلی را باز کرد."
+
+#: misc.c:76
+msgid "Unable to write /etc/hosts."
+msgstr "نمی توان در /etc/hosts نوشت."
+
+#: misc.c:117
+msgid "Unable to write /etc/hosts.deny."
+msgstr "نمی توان در /etc/hosts.deny نوشت."
+
+#: misc.c:125
+msgid "Unable to write /etc/hosts.allow."
+msgstr "نمی توان در /etc/hosts.allow نوشت."
+
+#: misc.c:136
+msgid "Unable to set hostname."
+msgstr "نمی توان نام هاست را پیکربندی کرد."
+
+#: misc.c:147
+msgid "Scanning and configuring ISDN devices."
+msgstr "پویش و پیکربندی دستگاه های ISDN."
+
+#: misc.c:148
+msgid "Unable to scan for ISDN devices."
+msgstr "نمی توان دستگاههای ISDN را پویش کرد."
+
+#: netstuff.c:86
+#, c-format
+msgid "Interface - %s"
+msgstr "اینترفیس - %s"
+
+#: netstuff.c:91
+#, c-format
+msgid "Enter the IP address information for the %s interface."
+msgstr "داده های آدرس IP برای اینترفیس %s را بنویسید."
+
+#: netstuff.c:103
+msgid "Static"
+msgstr "ایستا"
+
+#: netstuff.c:104
+msgid "DHCP"
+msgstr "DHCP"
+
+#: netstuff.c:105
+msgid "PPP DIALUP (PPPoE, modem, ATM ...)"
+msgstr "شماره گیری PPP (PPOE, modem, ATM ...)"
+
+#: netstuff.c:113
+msgid "DHCP Hostname:"
+msgstr "نام هاست DHCP:"
+
+#: netstuff.c:115
+msgid "Force DHCP MTU:"
+msgstr "DHCP MTU به زور:"
+
+#: netstuff.c:134
+msgid "IP address:"
+msgstr "آدرس IP:"
+
+#: netstuff.c:146
+msgid "Network mask:"
+msgstr "ماسک شبکه:"
+
+#: netstuff.c:173 networking.c:749
+msgid "The following fields are invalid:"
+msgstr "شاخص های زیر اشتباه هستند"
+
+#: netstuff.c:183
+msgid "IP address"
+msgstr "آدرس IP"
+
+#: netstuff.c:189
+msgid "Network mask"
+msgstr "ماسک شبکه"
+
+#: netstuff.c:198
+msgid "DHCP hostname"
+msgstr "نام هاست DHCP"
+
+#: netstuff.c:396 netstuff.c:709
+msgid "Unset"
+msgstr "تنظیم نشده"
+
+#: netstuff.c:669
+#, c-format
+msgid "Please choose a networkcard for the following interface - %s."
+msgstr "خواهشمند است یک کارت شبکه برای اینترفیس %s زیر گزینش کنید."
+
+#: netstuff.c:672
+msgid "Extended Network Menu"
+msgstr "منوی گسترده شبکه"
+
+#: netstuff.c:673 networking.c:520
+msgid "Select"
+msgstr "گزینش"
+
+#: netstuff.c:673
+msgid "Identify"
+msgstr "شناختن"
+
+#: netstuff.c:678
+msgid "Device Identification"
+msgstr "شناسایی دستگاه"
+
+#: netstuff.c:678
+msgid "The lights on the selected port should flash now for 10 seconds..."
+msgstr "چراغ های پورت گزینش شده، هم اکنون باید برای 10 ثانیه چشمک بزنند..."
+
+#: netstuff.c:679
+msgid "Identification is not supported by this interface."
+msgstr "این اینترفیس شناسایی را پشتیبانی نمی کند."
+
+#: netstuff.c:691
+msgid "There are no unassigned interfaces on your system."
+msgstr "هیچ رابط اختصاص داده نشده بر روی سیستم شما وجود ندارد."
+
+#: netstuff.c:732
+#, c-format
+msgid "Do you really want to remove the assigned %s interface?"
+msgstr "آیا شما واقعا می خواهید اینترفیس %s  اختصاص داده شده را پاک کنید؟"
+
+#: netstuff.c:755
+msgid "Select network driver"
+msgstr "گزینش راه انداز شبکه"
+
+#: netstuff.c:755
+msgid "Set additional module parameters"
+msgstr "پیکربندی پارامترهای افزوده ماژول"
+
+#: netstuff.c:762
+msgid "Loading module..."
+msgstr "بارگذاری ماژول..."
+
+#: netstuff.c:777
+msgid "Unable to load driver module."
+msgstr "نمی توان راه انداز ماژول را بارگذاری کرد."
+
+#: netstuff.c:780
+msgid "Module name cannot be blank."
+msgstr "نام ماژول نمی تواند پوچ باشد."
+
+#: networking.c:110
+msgid "Stopping network..."
+msgstr "از کار انداختن شبکه..."
+
+#: networking.c:115
+msgid "Restarting network..."
+msgstr "شروع دوباره شبکه..."
+
+#: networking.c:146
+msgid "No GREEN interface assigned."
+msgstr "به اینترفیس سبز میزانی داده نشده است."
+
+#: networking.c:152
+msgid "Missing an IP address on GREEN."
+msgstr "آدرس IP بر روی سبز یافت نشد."
+
+#: networking.c:163
+msgid "Error"
+msgstr "ایراد"
+
+#: networking.c:163
+msgid "Ignore"
+msgstr "نادیده گرفتن"
+
+#: networking.c:164
+msgid "No RED interface assigned."
+msgstr "برای اینترفیس قرمز میزانی داده نشده است."
+
+#: networking.c:173
+msgid "Missing an IP address on RED."
+msgstr "آدرس IP بر روی قرمز یافت نشد."
+
+#: networking.c:183
+msgid "No ORANGE interface assigned."
+msgstr "برای اینترفیس نارنجی میزانی داده نشده است."
+
+#: networking.c:189
+msgid "Missing an IP address on ORANGE."
+msgstr "آدرس IP بر روی نارنجی یافت نشد."
+
+#: networking.c:199
+msgid "No BLUE interface assigned."
+msgstr "برای اینترفیس آبی میزانی داده نشده است."
+
+#: networking.c:205
+msgid "Missing an IP address on BLUE."
+msgstr "آدرس IP بر روی آبی یافت نشد."
+
+#: networking.c:217
+msgid "Misssing DNS."
+msgstr "DNS یافت نشد."
+
+#: networking.c:224
+msgid "Missing Default Gateway."
+msgstr "Gateway پیش پندار یافت نشد."
+
+#: networking.c:237 networking.c:304
+msgid "Network configuration type"
+msgstr "چگونگی پیکربندی شبکه"
+
+#: networking.c:238 networking.c:409
+msgid "Drivers and card assignments"
+msgstr "راه انداز ها و تکالیف کارت ها"
+
+#: networking.c:239 networking.c:640
+msgid "Address settings"
+msgstr "پیکربندی آدرس"
+
+#: networking.c:240 networking.c:743
+msgid "DNS and Gateway settings"
+msgstr "پیکربندی DNS و Gateway"
+
+#: networking.c:260
+msgid "When configuration is complete, a network restart will be required."
+msgstr "وقتی پیکربندی کامل شد سرویس شبکه در صورت نیاز راه اندازی مجدد خواهد شد"
+
+#: networking.c:267
+#, c-format
+msgid ""
+"Current config: %s\n"
+"\n"
+"%s"
+msgstr "پیکربندی جاری: %s\n\n%s"
+
+#: networking.c:268
+msgid "Network configuration menu"
+msgstr "منوی پیکربندی شبکه"
+
+#: networking.c:269 networking.c:520 networking.c:642
+msgid "Done"
+msgstr "پایان"
+
+#: networking.c:300
+#, c-format
+msgid ""
+"Select the network configuration for %s. The following configuration types "
+"list those interfaces which have ethernet attached. If you change this "
+"setting, a network restart will be required, and you will have to "
+"reconfigure the network driver assignments."
+msgstr "پیکربندی شبکه برای %s را گزینش کنید. لیست روش های پیکربندی زیر آن اینترفیس ها، وقتیکه به شبکه متصل شده اند. اگر شما پیکربندی را دگرگون سازید، یک شبکه نیاز به خاموش روشن دارد، و شما راه انداز شبکه اختصاص داده شده را دوباره پیکربندی کنید."
+
+#: networking.c:307
+#, c-format
+msgid ""
+"Not enough netcards for your choice.\n"
+"\n"
+"Needed: %d - Available: %d\n"
+msgstr "کارتهای شبکه برای گزینش شما کافی نیست.\n\nنیازمند: %d - در دسترس: %d\n"
+
+#: networking.c:359
+msgid ""
+"Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
+"\n"
+msgstr "پیکربندی راه اندازهای شبکه، که به اینترفیس هر کارت اختصاص داده شده است. پیکربندی کنونی در زیر آمده است:\n\n"
+
+#: networking.c:408
+msgid "Do you wish to change these settings?"
+msgstr "ایا قصد دارید این تنظیمات تغییر دهید؟"
+
+#: networking.c:447
+msgid "Restarting non-local network..."
+msgstr "شروع دوباره شبکه..."
+
+#: networking.c:464
+msgid ""
+"Please choose the interface you wish to change.\n"
+"\n"
+msgstr "خواهشمند است اینترفیسی را که می خواهید دگرگون سازید را گزینش کنید.\n\n"
+
+#: networking.c:519
+msgid "Assigned Cards"
+msgstr "کارت های واگذار شده"
+
+#: networking.c:520
+msgid "Remove"
+msgstr "پاک کردن"
+
+#: networking.c:556 networking.c:649
+#, c-format
+msgid ""
+"If you change this IP address, and you are logged in remotely, your "
+"connection to the %s machine will be broken, and you will have to reconnect "
+"on the new IP. This is a risky operation, and should only be attempted if "
+"you have physical access to the machine, should something go wrong."
+msgstr "اگر شما این IP را تغییر دهید، و شما از راه ریموت وارد شده باشید، اتصال شما به سیستم %s شکسته می شود، و شما با IP جدید دوباره وصل شوید. این کار شما، ریسک دارد، و فقط باید دسترسی فیزیکی به سیستم داشته باشید، این کار شما اشتباه است."
+
+#: networking.c:641
+msgid "Select the interface you wish to reconfigure."
+msgstr "اینترفیس که قصد پیکربندی مجدد را دارید انتخاب کنید"
+
+#: networking.c:729
+msgid "Default gateway:"
+msgstr "Gateway پیش پندار:"
+
+#: networking.c:744
+msgid ""
+"Enter the DNS and gateway information. These settings are used only with "
+"Static IP (and DHCP if DNS set) on the RED interface."
+msgstr "اطلاعات gateway و DNS را بنویسید. این پیکربندی ها فقط با IP استاتیک (و DHCP اگر DNS نوشته شده باشد) بر روی اینترفیس قرمز بکار می روند."
+
+#: networking.c:773
+msgid "Default gateway"
+msgstr "Gateway پیش پندار"
+
+#: networking.c:780
+msgid "Secondary DNS specified without a Primary DNS"
+msgstr "دومین DNS بدون پیکربندی نخستین DNS"
+
+#: passwords.c:33
+msgid ""
+"Enter the 'root' user password. Login as this user for commandline access."
+msgstr "رمز عبور کاربر ریشه را وارد کنید.این کاربر سطح دسترسی خط فرمان را فراهم میکند"
+
+#: passwords.c:38 passwords.c:61
+msgid "Setting password"
+msgstr "پیکربندی گذر واژه"
+
+#: passwords.c:38
+msgid "Setting 'root' password...."
+msgstr "پیکربندی گذر واژه 'root'...."
+
+#: passwords.c:39
+msgid "Problem setting 'root' password."
+msgstr "ایراد در پیکربندی گذواژه 'root'."
+
+#: passwords.c:53
+#, c-format
+msgid ""
+"Enter %s 'admin' user password. This is the user to use for logging into the"
+" %s web administration pages."
+msgstr "گذرواژه کاربر 'admin' %s را بنویسید. این کاربر برای ورود به برگه مدیریت وب %s می باشد."
+
+#: passwords.c:60
+#, c-format
+msgid "Setting %s 'admin' user password..."
+msgstr "پیکربندی %s 'admin' گذر واژه کاربر..."
+
+#: passwords.c:62
+#, c-format
+msgid "Problem setting %s 'admin' user password."
+msgstr "ایراد در پیکربندی %s گذر واژه کاربر 'admin'"
+
+#: passwords.c:76
+msgid "Password:"
+msgstr "گذر واژه:"
+
+#: passwords.c:77
+msgid "Again:"
+msgstr "دوباره:"
+
+#: passwords.c:95
+msgid "Password cannot be blank."
+msgstr "گذر واژه نمی تواند خالی باشد."
+
+#: passwords.c:102
+msgid "Passwords do not match."
+msgstr "گذر واژه ها یکسان نیستند."
+
+#: passwords.c:109
+msgid "Password cannot contain spaces."
+msgstr "در گذر واژه نمی توان فاصله گذاشت."
+
+#: timezone.c:77
+msgid "Choose the timezone you are in from the list below."
+msgstr " از لیست منطقه زمانی خود را انتخاب کنید"

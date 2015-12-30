@@ -1,15 +1,9 @@
 ############################################################################
-# Checking install/setup translations for language: en                     #
-############################################################################
-############################################################################
 # Checking cgi-bin translations for language: en                           #
 ############################################################################
 < addon
 < ccd maxclients
 < ovpn_fragment
-############################################################################
-# Checking install/setup translations for language: fr                     #
-############################################################################
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -35,6 +29,7 @@
 < atm device
 < attention
 < bit
+< block
 < capabilities
 < ccd add
 < ccd choose net
@@ -76,6 +71,7 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< check all
 < ConnSched dial
 < ConnSched hangup
 < ConnSched reboot
@@ -89,10 +85,16 @@
 < deprecated fs warn
 < details
 < dh
+< dhcp dns enable update
+< dhcp dns key name
+< dhcp dns update
+< dhcp dns update algo
+< dhcp dns update secret
 < dh key move failed
 < dh key warn
 < dh key warn1
 < dh parameter
+< dl client arch insecure
 < dnat address
 < dns address deleted txt
 < dnsforward
@@ -117,6 +119,26 @@
 < drop action2
 < drop forward
 < drop outgoing
+< email config
+< email empty field
+< email error
+< email invalid
+< email invalid mailfqdn
+< email invalid mailip
+< email invalid mailport
+< email mailaddr
+< email mailpass
+< email mailport
+< email mailrcpt
+< email mailsender
+< email mailuser
+< email settings
+< email subject
+< email success
+< email testmail
+< email text
+< email tls
+< email usemail
 < encryption
 < entropy
 < entropy graphs
@@ -239,6 +261,7 @@
 < fwdfw wd_tue
 < fwdfw wd_wed
 < fwdfw xt access
+< fwhost addgeoipgrp
 < fwhost addgrp
 < fwhost addgrpname
 < fwhost addhost
@@ -254,6 +277,9 @@
 < fwhost change
 < fwhost changeremark
 < fwhost cust addr
+< fwhost cust geoip
+< fwhost cust geoipgroup
+< fwhost cust geoiplocation
 < fwhost cust grp
 < fwhost cust net
 < fwhost Custom Host
@@ -304,6 +330,7 @@
 < fwhost IpSec Network
 < fwhost menu
 < fwhost netaddress
+< fwhost newgeoipgrp
 < fwhost newgrp
 < fwhost newhost
 < fwhost newnet
@@ -333,14 +360,27 @@
 < fw settings ruletable
 < gen dh
 < generate dh key
+< geoip
+< geoipblock
+< geoipblock block countries
+< geoipblock configuration
+< geoipblock country code
+< geoipblock country is allowed
+< geoipblock country is blocked
+< geoipblock country name
+< geoipblock enable feature
+< geoipblock flag
 < grouptype
 < hardware support
 < imei
 < imsi
+< incoming compression in bytes per second
 < incoming firewall access
+< incoming overhead in bytes per second
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -397,7 +437,10 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing compression in bytes per second
 < outgoing firewall access
+< outgoing overhead in bytes per second
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -420,6 +463,9 @@
 < ovpn reneg sec
 < p2p block
 < p2p block save notice
+< pptp netconfig
+< pptp peer
+< pptp route
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -428,8 +474,10 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< required field
 < samba join a domain
 < samba join domain
+< search
 < server restart
 < show dh
 < snat new source ip address
@@ -496,6 +544,9 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< unblock
+< unblock all
+< uncheck all
 < updxlrtr sources
 < updxlrtr standard view
 < uplink
@@ -509,6 +560,8 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn statistic n2n
+< vpn statistic rw
 < wlanap access point
 < wlanap channel
 < wlanap country
@@ -562,9 +615,6 @@
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
 ############################################################################
-# Checking install/setup translations for language: es                     #
-############################################################################
-############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
 < addon
@@ -590,6 +640,7 @@
 < atm device
 < attention
 < bit
+< block
 < capabilities
 < ccd add
 < ccd choose net
@@ -631,6 +682,7 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< check all
 < ConnSched dial
 < ConnSched hangup
 < ConnSched reboot
@@ -644,10 +696,16 @@
 < deprecated fs warn
 < details
 < dh
+< dhcp dns enable update
+< dhcp dns key name
+< dhcp dns update
+< dhcp dns update algo
+< dhcp dns update secret
 < dh key move failed
 < dh key warn
 < dh key warn1
 < dh parameter
+< dl client arch insecure
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -671,6 +729,26 @@
 < drop action2
 < drop forward
 < drop outgoing
+< email config
+< email empty field
+< email error
+< email invalid
+< email invalid mailfqdn
+< email invalid mailip
+< email invalid mailport
+< email mailaddr
+< email mailpass
+< email mailport
+< email mailrcpt
+< email mailsender
+< email mailuser
+< email settings
+< email subject
+< email success
+< email testmail
+< email text
+< email tls
+< email usemail
 < encryption
 < entropy
 < entropy graphs
@@ -793,6 +871,7 @@
 < fwdfw wd_tue
 < fwdfw wd_wed
 < fwdfw xt access
+< fwhost addgeoipgrp
 < fwhost addgrp
 < fwhost addgrpname
 < fwhost addhost
@@ -808,6 +887,9 @@
 < fwhost change
 < fwhost changeremark
 < fwhost cust addr
+< fwhost cust geoip
+< fwhost cust geoipgroup
+< fwhost cust geoiplocation
 < fwhost cust grp
 < fwhost cust net
 < fwhost Custom Host
@@ -858,6 +940,7 @@
 < fwhost IpSec Network
 < fwhost menu
 < fwhost netaddress
+< fwhost newgeoipgrp
 < fwhost newgrp
 < fwhost newhost
 < fwhost newnet
@@ -891,10 +974,13 @@
 < hardware support
 < imei
 < imsi
+< incoming compression in bytes per second
 < incoming firewall access
+< incoming overhead in bytes per second
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -949,6 +1035,7 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing compression in bytes per second
 < outgoing firewall access
 < outgoing firewall add ip group
 < outgoing firewall add mac group
@@ -964,6 +1051,8 @@
 < outgoing firewall p2p description 2
 < outgoing firewall p2p description 3
 < outgoing firewall view group
+< outgoing overhead in bytes per second
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -990,6 +1079,9 @@
 < ovpn routes push options
 < p2p block
 < p2p block save notice
+< pptp netconfig
+< pptp peer
+< pptp route
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -998,8 +1090,10 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< required field
 < samba join a domain
 < samba join domain
+< search
 < server restart
 < Set time on boot
 < show dh
@@ -1066,6 +1160,9 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< unblock
+< unblock all
+< uncheck all
 < updxlrtr sources
 < updxlrtr standard view
 < uplink
@@ -1076,6 +1173,8 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn statistic n2n
+< vpn statistic rw
 < wlanap country
 < wlan client
 < wlan client advanced settings
@@ -1109,9 +1208,6 @@
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
 ############################################################################
-# Checking install/setup translations for language: pl                     #
-############################################################################
-############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
 < addon
@@ -1136,6 +1232,7 @@
 < atm device
 < attention
 < bit
+< block
 < capabilities
 < ccd add
 < ccd choose net
@@ -1177,6 +1274,7 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< check all
 < ConnSched dial
 < ConnSched hangup
 < ConnSched reboot
@@ -1190,10 +1288,16 @@
 < deprecated fs warn
 < details
 < dh
+< dhcp dns enable update
+< dhcp dns key name
+< dhcp dns update
+< dhcp dns update algo
+< dhcp dns update secret
 < dh key move failed
 < dh key warn
 < dh key warn1
 < dh parameter
+< dl client arch insecure
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -1217,6 +1321,26 @@
 < drop action2
 < drop forward
 < drop outgoing
+< email config
+< email empty field
+< email error
+< email invalid
+< email invalid mailfqdn
+< email invalid mailip
+< email invalid mailport
+< email mailaddr
+< email mailpass
+< email mailport
+< email mailrcpt
+< email mailsender
+< email mailuser
+< email settings
+< email subject
+< email success
+< email testmail
+< email text
+< email tls
+< email usemail
 < encryption
 < entropy
 < entropy graphs
@@ -1331,6 +1455,7 @@
 < fwdfw wd_tue
 < fwdfw wd_wed
 < fwdfw xt access
+< fwhost addgeoipgrp
 < fwhost addgrp
 < fwhost addgrpname
 < fwhost addhost
@@ -1346,6 +1471,9 @@
 < fwhost change
 < fwhost changeremark
 < fwhost cust addr
+< fwhost cust geoip
+< fwhost cust geoipgroup
+< fwhost cust geoiplocation
 < fwhost cust grp
 < fwhost cust net
 < fwhost Custom Host
@@ -1396,6 +1524,7 @@
 < fwhost IpSec Network
 < fwhost menu
 < fwhost netaddress
+< fwhost newgeoipgrp
 < fwhost newgrp
 < fwhost newhost
 < fwhost newnet
@@ -1425,14 +1554,27 @@
 < fw settings ruletable
 < gen dh
 < generate dh key
+< geoip
+< geoipblock
+< geoipblock block countries
+< geoipblock configuration
+< geoipblock country code
+< geoipblock country is allowed
+< geoipblock country is blocked
+< geoipblock country name
+< geoipblock enable feature
+< geoipblock flag
 < grouptype
 < hardware support
 < imei
 < imsi
+< incoming compression in bytes per second
 < incoming firewall access
+< incoming overhead in bytes per second
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -1487,7 +1629,10 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing compression in bytes per second
 < outgoing firewall access
+< outgoing overhead in bytes per second
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -1514,6 +1659,9 @@
 < ovpn routes push options
 < p2p block
 < p2p block save notice
+< pptp netconfig
+< pptp peer
+< pptp route
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -1522,8 +1670,10 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< required field
 < samba join a domain
 < samba join domain
+< search
 < server restart
 < show dh
 < snat new source ip address
@@ -1588,6 +1738,9 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< unblock
+< unblock all
+< uncheck all
 < updxlrtr sources
 < updxlrtr standard view
 < uplink
@@ -1598,6 +1751,8 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn statistic n2n
+< vpn statistic rw
 < wlanap country
 < wlan client
 < wlan client advanced settings
@@ -1631,9 +1786,6 @@
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
 ############################################################################
-# Checking install/setup translations for language: ru                     #
-############################################################################
-############################################################################
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
 < Add a route
@@ -1659,6 +1811,7 @@
 < atm device
 < attention
 < bit
+< block
 < capabilities
 < ccd add
 < ccd choose net
@@ -1700,6 +1853,7 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< check all
 < ConnSched dial
 < ConnSched hangup
 < ConnSched reboot
@@ -1714,11 +1868,17 @@
 < deprecated fs warn
 < details
 < dh
+< dhcp dns enable update
+< dhcp dns key name
+< dhcp dns update
+< dhcp dns update algo
+< dhcp dns update secret
 < dh key move failed
 < dh key warn
 < dh key warn1
 < dh parameter
 < disk access per
+< dl client arch insecure
 < dnat address
 < dnsforward
 < dnsforward add a new entry
@@ -1743,6 +1903,26 @@
 < drop forward
 < drop outgoing
 < Edit an existing route
+< email config
+< email empty field
+< email error
+< email invalid
+< email invalid mailfqdn
+< email invalid mailip
+< email invalid mailport
+< email mailaddr
+< email mailpass
+< email mailport
+< email mailrcpt
+< email mailsender
+< email mailuser
+< email settings
+< email subject
+< email success
+< email testmail
+< email text
+< email tls
+< email usemail
 < encryption
 < entropy
 < entropy graphs
@@ -1858,6 +2038,7 @@
 < fwdfw wd_tue
 < fwdfw wd_wed
 < fwdfw xt access
+< fwhost addgeoipgrp
 < fwhost addgrp
 < fwhost addgrpname
 < fwhost addhost
@@ -1873,6 +2054,9 @@
 < fwhost change
 < fwhost changeremark
 < fwhost cust addr
+< fwhost cust geoip
+< fwhost cust geoipgroup
+< fwhost cust geoiplocation
 < fwhost cust grp
 < fwhost cust net
 < fwhost Custom Host
@@ -1923,6 +2107,7 @@
 < fwhost IpSec Network
 < fwhost menu
 < fwhost netaddress
+< fwhost newgeoipgrp
 < fwhost newgrp
 < fwhost newhost
 < fwhost newnet
@@ -1952,16 +2137,29 @@
 < fw settings ruletable
 < gen dh
 < generate dh key
+< geoip
+< geoipblock
+< geoipblock block countries
+< geoipblock configuration
+< geoipblock country code
+< geoipblock country is allowed
+< geoipblock country is blocked
+< geoipblock country name
+< geoipblock enable feature
+< geoipblock flag
 < grouptype
 < hardware support
 < hour-graph
 < imei
 < imsi
+< incoming compression in bytes per second
 < incoming firewall access
+< incoming overhead in bytes per second
 < incoming traffic in bytes per second
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for valid till days
 < ipsec
 < ipsec network
 < ipsec no connections
@@ -2017,8 +2215,11 @@
 < openvpn subnet is used
 < other
 < our donors
+< outgoing compression in bytes per second
 < outgoing firewall access
+< outgoing overhead in bytes per second
 < outgoing traffic in bytes per second
+< ovpn add conf
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -2041,6 +2242,9 @@
 < ovpn reneg sec
 < p2p block
 < p2p block save notice
+< pptp netconfig
+< pptp peer
+< pptp route
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -2049,8 +2253,10 @@
 < qos enter bandwidths
 < random number generator daemon
 < red1
+< required field
 < samba join a domain
 < samba join domain
+< search
 < server restart
 < show dh
 < snat new source ip address
@@ -2115,6 +2321,9 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< unblock
+< unblock all
+< uncheck all
 < updxlrtr sources
 < updxlrtr standard view
 < uplink
@@ -2125,6 +2334,8 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn statistic n2n
+< vpn statistic rw
 < week-graph
 < wlanap country
 < wlan client

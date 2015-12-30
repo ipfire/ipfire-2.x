@@ -52,6 +52,7 @@ var/ipfire/extrahd
 var/ipfire/firewall
 #var/ipfire/firewall/config
 #var/ipfire/firewall/dmz
+#var/ipfire/firewall/geoipblock
 #var/ipfire/firewall/input
 #var/ipfire/firewall/nat
 #var/ipfire/firewall/outgoing
@@ -59,6 +60,7 @@ var/ipfire/firewall
 #var/ipfire/firewall/settings
 var/ipfire/fwhosts
 #var/ipfire/fwhosts/customgroups
+#var/ipfire/fwhosts/customgeoipgrp
 #var/ipfire/fwhosts/customhosts
 #var/ipfire/fwhosts/customnetworks
 #var/ipfire/fwhosts/customservicegrp
@@ -69,6 +71,7 @@ var/ipfire/fwlogs
 #var/ipfire/fwlogs/ipsettings
 #var/ipfire/fwlogs/portsettings
 var/ipfire/general-functions.pl
+var/ipfire/geoip-functions.pl
 var/ipfire/graphs.pl
 var/ipfire/header.pl
 var/ipfire/isdn
@@ -80,6 +83,7 @@ var/ipfire/langs
 #var/ipfire/langs/en.pl
 #var/ipfire/langs/es.pl
 #var/ipfire/langs/fr.pl
+#var/ipfire/langs/it.pl
 #var/ipfire/langs/list
 #var/ipfire/langs/nl.pl
 #var/ipfire/langs/pl.pl
@@ -111,7 +115,6 @@ var/ipfire/menu.d/70-log.menu
 #var/ipfire/menu.d/EX-mpfire.menu
 #var/ipfire/menu.d/EX-samba.menu
 #var/ipfire/menu.d/EX-tor.menu
-#var/ipfire/menu.d/EX-tripwire.menu
 #var/ipfire/menu.d/EX-wlanap.menu
 var/ipfire/modem
 #var/ipfire/modem/defaults
@@ -178,9 +181,6 @@ var/ipfire/snort
 #var/ipfire/snort/settings
 var/ipfire/time
 #var/ipfire/time/settings
-#var/ipfire/tripwire
-#var/ipfire/tripwire/report
-#var/ipfire/tripwire/settings
 var/ipfire/updatexlrator
 var/ipfire/updatexlrator/autocheck
 var/ipfire/updatexlrator/bin

@@ -4,14 +4,17 @@
 /var/ipfire/*/config
 /var/ipfire/*/enable
 /var/ipfire/*/*enable*
+/var/ipfire/ovpn/collectd.vpn
 /etc/passwd
 /etc/shadow
 /etc/group
 /etc/ipsec.user.*
+/etc/ipsec.user-post.conf
 /etc/sysconfig/*
 /etc/hosts*
 /etc/httpd/*
 /etc/ssh/ssh_host*
+/etc/ssh/sshd_config
 /etc/logrotate.d
 /var/ipfire/auth/users
 /var/ipfire/dhcp/*

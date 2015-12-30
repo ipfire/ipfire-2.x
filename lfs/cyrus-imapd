@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2011  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -31,10 +31,13 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+SUP_ARCH   = armv5tel i586
 PROG       = cyrus-imapd
-PAK_VER    = 3
+PAK_VER    = 5
 
 DEPS       = ""
+
+CFLAGS    += -I/usr/include/et
 
 ###############################################################################
 # Top-level Rules
@@ -79,7 +82,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-autocreate-0.9.4.diff
 	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/cyrus-imapd-2.2.12-gcc4.patch
-#	cp -f /usr/include/et/com_err.h /usr/include/com_err.h
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-service-path=/usr/lib/cyrus \
 				--with-cyrus-prefix=/usr/lib/cyrus --sysconfdir=/var/ipfire/cyrusimap \
 				--with-auth=unix --with-perl --with-sasl --with-idle=idled \
@@ -101,5 +103,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f $(DIR_APP)/tools/mkimap /usr/bin
 	sudo -u cyrus /usr/bin/mkimap /var/ipfire/cyrusimap/imapd.conf
 	chown cyrus.mail /var/imap/socket
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/cyrus-imapd \
+		/var/ipfire/backup/addons/includes/cyrus-imapd
 	@rm -rf $(DIR_APP) /usr/include/com_err.h
 	@$(POSTBUILD)

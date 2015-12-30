@@ -115,6 +115,11 @@ iptables_init() {
 	iptables -A INPUT -j GUARDIAN
 	iptables -A FORWARD -j GUARDIAN
 
+	# Block non-established IPsec networks
+	iptables -N IPSECBLOCK
+	iptables -A FORWARD -m policy --dir out --pol none -j IPSECBLOCK
+	iptables -A OUTPUT  -m policy --dir out --pol none -j IPSECBLOCK
+
 	# Block OpenVPN transfer networks
 	iptables -N OVPNBLOCK
 	iptables -A INPUT   -i tun+ -j OVPNBLOCK
@@ -178,6 +183,11 @@ iptables_init() {
 		iptables -A INPUT  -i "${BLUE_DEV}" -j DHCPBLUEINPUT
 		iptables -A OUTPUT -o "${BLUE_DEV}" -j DHCPBLUEOUTPUT
 	fi
+
+	# GeoIP block
+	iptables -N GEOIPBLOCK
+	iptables -A INPUT -j GEOIPBLOCK
+	iptables -A FORWARD -j GEOIPBLOCK
 
 	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
 	iptables -N IPSECINPUT
@@ -265,6 +275,9 @@ iptables_init() {
 	iptables -t nat -N REDNAT
 	iptables -t nat -A POSTROUTING -j REDNAT
 
+	# Populate IPsec block chain
+	/usr/lib/firewall/ipsec-block
+
 	# Apply OpenVPN firewall rules
 	/usr/local/bin/openvpnctrl --firewall-rules
 
@@ -339,8 +352,8 @@ iptables_red_up() {
 		# Outgoing masquerading (don't masqerade IPSEC (mark 50))
 		iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
 
-		if [ "$IFACE" = "$GREEN_DEV" ]; then
-			MASQUERADE_GREEN="off"
+		if [ "${IFACE}" = "${GREEN_DEV}" ]; then
+			iptables -t nat -A REDNAT -i "${GREEN_DEV}" -o "${IFACE}" -j RETURN
 		fi
 
 		local NO_MASQ_NETWORKS

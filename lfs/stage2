@@ -49,13 +49,13 @@ $(TARGET) :
 	@$(PREBUILD)
 
 	# Create directories
-	-mkdir -pv /{bin,boot,etc/opt,etc/modprobe.d,home,lib,mnt,opt,run}
+	-mkdir -pv /{bin,boot,etc/opt,etc/modprobe.d,home,lib/firmware/brcm,mnt,opt,run}
 	-mkdir -pv /{media/{floppy,cdrom,usbkey},sbin,srv,var}
 	-install -dv -m 0750 /root
 	-install -dv -m 1777 /tmp /var/tmp
 	-mkdir -pv /usr/{,local/}{bin,include,lib{,/sse2},sbin,src}
 	-mkdir -pv /usr/{,local/}share/{doc,info,locale,man}
-	-mkdir -v  /usr/{,local/}share/{misc,terminfo,zoneinfo}
+	-mkdir -v  /usr/{,local/}share/{misc,terminfo,xt_geoip,zoneinfo}
 	-mkdir -pv /usr/{,local/}share/man/man{1..8}
 	#-for dir in /usr /usr/local; do \
 	#  ln -sv share/{man,doc,info} $$dir; \
@@ -63,7 +63,12 @@ $(TARGET) :
 
 	# Symlink /var/run -> /run.
 	ln -svf ../run /var/run
-	
+
+ifeq "$(MACHINE)" "x86_64"
+	ln -svf lib /lib64
+	ln -svf lib /usr/lib64
+endif
+
 	# Symlinks
 	# for this reason, stage2 rebuild will broke the iso:perl, grubbatch
 	-ln -sv /tools/bin/{bash,cat,echo,pwd,stty} /bin
@@ -75,7 +80,8 @@ $(TARGET) :
 
 	# Config files
 	cp -rvf $(DIR_SRC)/config/etc/* /etc;
-	touch /etc/mtab
+	cp -rvf $(DIR_SRC)/config/lib/* /lib;
+	touch /etc/{fs,m}tab
 	echo "$(NAME) v$(VERSION) - $(SLOGAN)" >  /etc/issue
 	echo "===============================" >> /etc/issue
 	echo "\n running on \s \r \m"          >> /etc/issue
@@ -100,13 +106,16 @@ $(TARGET) :
 
 	# Move script to correct place.
 	mv -vf /usr/local/bin/ovpn-ccd-convert /usr/sbin/
-
+	mv -vf /usr/local/bin/ovpn-collectd-convert /usr/sbin/
+	
 	# Install firewall scripts.
 	mkdir -pv /usr/lib/firewall
 	install -m 755 $(DIR_SRC)/config/firewall/rules.pl \
 		/usr/lib/firewall/rules.pl
 	install -m 644 $(DIR_SRC)/config/firewall/firewall-lib.pl \
 		/usr/lib/firewall/firewall-lib.pl
+	install -m 755 $(DIR_SRC)/config/firewall/ipsec-block \
+		/usr/lib/firewall/ipsec-block
 
 	# Nobody user
 	-mkdir -p /home/nobody

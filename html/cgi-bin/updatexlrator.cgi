@@ -397,7 +397,7 @@ print <<END
 <tr>
 	<td class='base'>$Lang::tr{'updxlrtr passive mode'}:</td>
 	<td class='base'><input type='checkbox' name='PASSIVE_MODE' $checked{'PASSIVE_MODE'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'updxlrtr max disk usage'}:</td>
+	<td class='base'>$Lang::tr{'updxlrtr max disk usage'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td class='base'><input type='text' name='MAX_DISK_USAGE' value='$xlratorsettings{'MAX_DISK_USAGE'}' size='1' /> %</td>
 </tr>
 </table>
@@ -409,7 +409,7 @@ print <<END
 <tr>
 	<td class='base' width='25%'>$Lang::tr{'updxlrtr low download priority'}:</td>
 	<td class='base' width='20%'><input type='checkbox' name='LOW_DOWNLOAD_PRIORITY' $checked{'LOW_DOWNLOAD_PRIORITY'}{'on'} /></td>
-	<td class='base' width='25%'>$Lang::tr{'updxlrtr max download rate'}:&nbsp;<img src='/blob.gif' alt='*' </td>
+	<td class='base' width='25%'>$Lang::tr{'updxlrtr max download rate'}:</td>
 	<td class='base' width='30%'><input type='text' name='MAX_DOWNLOAD_RATE' value='$xlratorsettings{'MAX_DOWNLOAD_RATE'}' size='5' /></td>
 </tr>
 </table>

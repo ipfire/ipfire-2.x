@@ -268,37 +268,73 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh966775.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh966778.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh970090.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh995972.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1008310.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1019916.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1022022.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1091162.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1098050.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1027101.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1027261.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1032628.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1044628.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1111460.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1133809-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1133809-2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1139571.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1154563.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1170121.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1183533.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1207995.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1209375.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-rh1217186.patch
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-resolv-stack_chk_fail.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-remove-ctors-dtors-output-sections.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-test-installation.pl-nss_test1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-test-installation.pl-libgcc_s.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.12-accept-make-versions-4.0-and-greater.patch
 
 	# Fixes:
 	#   Makefile:235: *** mixed implicit and normal rules.  Stop.
 	cd $(DIR_APP) && sed -i 's/ot \$$/ot:\n\ttouch $$@\n$$/' manual/Makefile
+
+ifeq "$(MACHINE_TYPE)" "arm"
+	# http://sourceware.org/ml/libc-ports/2011-09/msg00018.html
+	cd $(DIR_APP) && sed -e "s/PIC/SHARED/g" -i ports/sysdeps/arm/{,eabi/}{set,__long}jmp.S
+endif
 
 ifeq "$(ROOT)" ""
 ifeq "$(MACHINE_TYPE)" "arm"
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.3 -o|' \
 		scripts/test-installation.pl
 else
+ifeq "$(MACHINE)" "x86_64"
+	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib64 -Wl,-dynamic-linker=/lib64/ld-linux-x86-64.so.2 -o|' \
+		scripts/test-installation.pl
+else
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.2 -o|' \
 		scripts/test-installation.pl
+endif
 endif
 endif
 
 	cd $(DIR_SRC)/glibc-build && \
 		CFLAGS="$(CFLAGS) -fno-asynchronous-unwind-tables" \
 		$(DIR_APP)/configure $(EXTRA_CONFIG)
+
+	sed -i $(DIR_SRC)/glibc-build/config.make \
+		-e "s/^build-pic-default=.*/build-pic-default=yes/"
+
+	# Build the glibc libraries without stack protection (as this is not supported)
+	echo "build-programs=no" >> $(DIR_SRC)/glibc-build/configparms
+	cd $(DIR_SRC)/glibc-build && make PARALLELMFLAGS=$(MAKETUNING) \
+		CFLAGS="$(CFLAGS) -fno-stack-protector -U_FORTIFY_SOURCE" \
+		CXXFLAGS="$(CXXFLAGS) -fno-stack-protector -U_FORTIFY_SOURCE"
+
+	# Build the programs with hardening
+	: > $(DIR_SRC)/glibc-build/configparms
 	cd $(DIR_SRC)/glibc-build && make PARALLELMFLAGS=$(MAKETUNING) \
 		CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
+
 	cd $(DIR_SRC)/glibc-build && make $(EXTRA_INSTALL) install
 
 ifeq "$(ROOT)" ""
@@ -308,6 +344,8 @@ ifeq "$(ROOT)" ""
 
 	# Timezone data will be shipped by tzdata.
 	rm -rfv /usr/share/zoneinfo
+else
+	ln -svf lib /tools/lib64
 endif
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build
 	@$(POSTBUILD)

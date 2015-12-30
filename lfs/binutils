@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -76,6 +76,9 @@ ifeq "$(MACHINE_TYPE)" "arm"
 		--with-float=soft
 endif
 
+EXTRA_CONFIG += \
+	--enable-64-bit-bfd
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -126,8 +129,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i 's%\(^MULTIOSDIR = \).*%\1 ../lib%' libiberty/Makefile.in
 
 	cd $(DIR_SRC)/binutils-build && $(EXTRA_ENV) MACHINE= $(DIR_APP)/configure $(EXTRA_CONFIG)
-	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) $(MAKETUNING) MACHINE=
-	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install MACHINE=
+	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) $(MAKETUNING) MACHINE= 
+	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install MACHINE= 
 ifeq "$(ROOT)" ""
 	cp -v $(DIR_APP)/include/libiberty.h /usr/include
 else

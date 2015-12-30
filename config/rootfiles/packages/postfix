@@ -68,7 +68,7 @@ usr/sbin/postmap
 usr/sbin/postmulti
 usr/sbin/postqueue
 usr/sbin/postsuper
-usr/sbin/sendmail
+usr/sbin/sendmail.postfix
 #usr/share/man/man1/mailq.1
 #usr/share/man/man1/newaliases.1
 #usr/share/man/man1/postalias.1

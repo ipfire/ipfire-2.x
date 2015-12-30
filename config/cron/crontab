@@ -22,12 +22,13 @@ HOME=/
 
 # Make some nice graphs
 */5 * * * * 	/usr/local/bin/makegraphs >/dev/null
-17 5 * * * 	/etc/init.d/tmpfs backup >/dev/null
+
+# Backup ramdisks if necessary
+%nightly,random * 23-4	/etc/init.d/collectd backup &>/dev/null
+%nightly,random * 23-4	/etc/init.d/vnstat backup &>/dev/null
 
 # Update dynamic DNS records every five minutes.
-# Force an update once a month
 */5 * * * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all
-3 2 1 * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all --force
 
 # Logwatch
 01 0 * * *	/usr/local/bin/logwatch > /var/log/logwatch/`date -I -d yesterday`; \
@@ -57,3 +58,12 @@ HOME=/
 # Re-read firewall rules every Sunday in March, October and November to take care of daylight saving time
 00 3 * 3 0          /usr/local/bin/timezone-transition /usr/local/bin/firewallctrl
 00 2 * 10-11 0      /usr/local/bin/timezone-transition /usr/local/bin/firewallctrl
+
+# Update GeoIP database once a month.
+%monthly,random * * * [ -f "/var/ipfire/red/active" ] && /usr/local/bin/xt_geoip_update >/dev/null 2>&1
+
+# Retry sending spooled mails regularly
+%hourly * /usr/sbin/dma -q
+
+# Cleanup the mail spool directory
+%weekly * * /usr/sbin/dma-cleanup-spool

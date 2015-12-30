@@ -223,7 +223,7 @@ if ($errormessage) {
 #<table width='100%'>
 #<hr />
 #<tr>
-#    <td class='base' width='25%'><!--<img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>-->
+#    <td class='base' width='25%'><!--<img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>-->
 #    <td class='base' width='25%'>$warnmessage</td>
 #    <td width='50%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' disabled='disabled' /></td>
 #</tr>
@@ -253,12 +253,12 @@ print <<END
 <input type='hidden' name='KEY1' value='$settings{'KEY1'}' />
 <table width='100%'>
 <tr>
-    <td class='base'>$Lang::tr{'host ip'}:&nbsp;</td>
+    <td class='base'>$Lang::tr{'host ip'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='IP' value='$settings{'IP'}' /></td>
-    <td class='base'>$Lang::tr{'hostname'}:</td>
+    <td class='base'>$Lang::tr{'hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='HOST' value='$settings{'HOST'}' /></td>
 </tr><tr>
-    <td class='base'>$Lang::tr{'domain name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+    <td class='base'>$Lang::tr{'domain name'}:</td>
     <td><input type='text' name='DOM' value='$settings{'DOM'}' /></td>
     <td class='base'>$Lang::tr{'enabled'}</td>
     <td><input type='checkbox' name='EN' $checked{'EN'}{'on'} /></td>
@@ -268,7 +268,7 @@ print <<END
 <hr />
 <table width='100%'>
 <tr>
-    <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'this field may be blank'}</td>
+    <td class='base' width='50%'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
     <td width='50%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'add'}' /><input type='submit' name='SUBMIT' value='$buttontext' /></td>
 </tr>
 </table>

@@ -16,6 +16,11 @@
 				'title' => "$Lang::tr{'wlan client'}",
 				'enabled' => 0,
 				};
+    $subsystem->{'22.dma'} = {'caption' => $Lang::tr{'email settings'},
+				'uri' => '/cgi-bin/mail.cgi',
+				'title' => "$Lang::tr{'email settings'}",
+				'enabled' => 1,
+				};
     $subsystem->{'30.ssh'} = {
 				'caption' => $Lang::tr{'ssh access'},
 				'uri' => '/cgi-bin/remote.cgi',

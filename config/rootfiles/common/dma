@@ -1,0 +1,14 @@
+etc/alternatives/sendmail
+usr/lib/dma-mbox-create
+usr/sbin/dma
+usr/sbin/dma-cleanup-spool
+usr/sbin/mailq
+usr/sbin/sendmail
+usr/sbin/sendmail.dma
+#usr/share/man/man8/dma.8
+var/ipfire/dma
+var/ipfire/dma/auth.conf
+var/ipfire/dma/dma.conf
+var/ipfire/dma/mail.conf
+var/lib/alternatives/sendmail
+var/spool/dma

@@ -21,7 +21,7 @@ usr/lib/daq
 #usr/lib/libdaq.la
 #usr/lib/libdaq.so
 usr/lib/libdaq.so.2
-usr/lib/libdaq.so.2.0.2
+usr/lib/libdaq.so.2.0.4
 #usr/lib/libdaq_static.a
 #usr/lib/libdaq_static.la
 #usr/lib/libdaq_static_modules.a

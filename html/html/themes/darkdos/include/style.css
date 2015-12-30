@@ -366,6 +366,10 @@ min-width: 2.0em;
 max-width: 2.5em;
 }
 
+table.fw-nat tbody tr td {
+	height: 2.25em;
+}
+
 /* LAYOUT - 3 COLUMNS */
 
 	/* Primary content */

@@ -17,10 +17,16 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2013 IPFire-Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2014 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-./uninstall.sh
+remove_files
+rm -rf /boot/initramfs-*-pae.img
+rm -rf /boot/vmlinuz-*-pae
+rm -rf /lib/modules/*-ipfire-pae
+if [ ! -f /boot/grub/grub.conf ]; then
+	grub-mkconfig > /boot/grub/grub.cfg
+fi
 ./install.sh

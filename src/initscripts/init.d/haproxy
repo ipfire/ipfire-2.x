@@ -1,0 +1,47 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/haproxy
+#
+# Description : HAProxy init script
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting HAProxy..."
+		loadproc /usr/sbin/haproxy -D -f /etc/haproxy/haproxy.cfg \
+			-p /var/run/haproxy.pid
+		;;
+
+	stop)
+		boot_mesg "Stopping HAProxy..."
+		killproc /usr/sbin/haproxy
+		;;
+
+	reload)
+		boot_mesg "Reloading HAProxy..."
+		/usr/sbin/haproxy -D -f /etc/haproxy/haproxy.cfg \
+			-p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)
+		evaluate_retval
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/haproxy
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/haproxy

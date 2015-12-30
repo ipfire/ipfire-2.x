@@ -77,7 +77,36 @@ case "${1}" in
 			rm -rf /var/run
 			ln -s ../run /var/run
 		fi
-
+		#
+		# create some folders
+		#
+		if [ ! -e /var/lock/subsys ]; then
+			mkdir -p /var/lock/subsys
+		fi
+		if [ ! -e /var/lock/time ]; then
+			mkdir -p /var/lock/time
+			chown nobody.root /var/lock/time
+		fi
+		if [ ! -e /var/run/clamav ]; then
+			mkdir -p /var/run/clamav
+			chown clamav:clamav /var/run/clamav
+		fi
+		if [ ! -e /var/run/cups ]; then
+			mkdir -p /var/run/cups
+		fi
+		if [ ! -e /var/run/dbus ]; then
+			mkdir -p /var/run/dbus
+		fi
+		if [ ! -e /var/run/mysql ]; then
+			mkdir -p /var/run/mysql
+			chown mysql:mysql /var/run/mysql
+		fi
+		if [ ! -e /var/run/saslauthd ]; then
+			mkdir -p /var/run/saslauthd
+		fi
+		if [ ! -e /var/log/vnstat ]; then
+			mkdir -p /var/log/vnstat
+		fi
 		boot_mesg -n "Cleaning file systems:" ${INFO}
 
 		boot_mesg -n " /tmp" ${NORMAL}

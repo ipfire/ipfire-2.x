@@ -1,0 +1,7 @@
+#usr/include/libnetfilter_cttimeout
+#usr/include/libnetfilter_cttimeout/libnetfilter_cttimeout.h
+#usr/lib/libnetfilter_cttimeout.la
+#usr/lib/libnetfilter_cttimeout.so
+usr/lib/libnetfilter_cttimeout.so.1
+usr/lib/libnetfilter_cttimeout.so.1.0.0
+#usr/lib/pkgconfig/libnetfilter_cttimeout.pc

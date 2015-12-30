@@ -88,5 +88,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	ln -s $(THISAPP) /usr/src/directfb
-#	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

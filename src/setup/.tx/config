@@ -1,0 +1,7 @@
+[main]
+host = https://www.transifex.com
+
+[ipfire.setup]
+file_filter = po/<lang>.po
+source_file = po/setup.pot
+source_lang = en

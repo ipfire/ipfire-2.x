@@ -1,4 +1,5 @@
 *.tmp
+/etc/sysconfig/lm_sensors
 /var/ipfire/ethernet/settings
 /var/ipfire/firewall/bin/*
 /var/ipfire/proxy/calamaris/bin/*

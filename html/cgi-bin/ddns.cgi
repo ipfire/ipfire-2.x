@@ -44,10 +44,8 @@ my $settingsfile = "${General::swroot}/ddns/settings";
 # Config file to store the configured ddns providers.
 my $datafile = "${General::swroot}/ddns/config";
 
-# Dynamic ddns programm call.
-my @ddnsprog = ("/usr/bin/ddns", "--config",
-		"/var/ipfire/ddns/ddns.conf",
-		"update-all");
+# Call the ddnsctrl helper binary to perform the update.
+my @ddnsprog = ("/usr/local/bin/ddnsctrl", "update-all");
 
 my %settings=();
 my $errormessage = '';
@@ -667,7 +665,8 @@ sub GenerateDDNSConfigFile {
 		my $use_token = 0;
 
 		# Handle token based auth for various providers.
-		if ($provider ~~ ["dns.lightningwirelabs.com", "entrydns.net", "regfish.com"] && $username eq "token") {
+		if ($provider ~~ ["dns.lightningwirelabs.com", "entrydns.net", "regfish.com",
+				  "spdns.de", "zzzz.io"] && $username eq "token") {
 			$use_token = 1;
 
 		# Handle token auth for freedns.afraid.org and regfish.com.
@@ -697,11 +696,6 @@ sub GenerateDDNSConfigFile {
 		} elsif ($username && $password) {
 			print FILE "username = $username\n";
 			print FILE "password = $password\n";
-		}
-
-		# These providers need to be set to only use IPv4.
-		if ($provider ~~ ["freedns.afraid.org", "nsupdate.info", "opendns.com", "variomedia.de", "zoneedit.com"]) {
-			print FILE "proto = ipv4\n";
 		}
 
 		print FILE "\n";

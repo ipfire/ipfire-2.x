@@ -1,0 +1,72 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2015   IPFire Team  <info@ipfire.org>                    #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = ipfire
+
+THISAPP    = web-user-interface-$(VER)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install: $(TARGET)
+
+check: 
+
+download:
+
+md5: 
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+
+	# Copy all html/cgi-bin files
+	mkdir -p /srv/web/ipfire/{cgi-bin,html}
+	mkdir -p /var/updatecache/{download,metadata}
+	cp -aR $(DIR_SRC)/html/* /srv/web/ipfire
+
+	# Change CONFIG_ROOT in cgi-scripts
+	for i in /srv/web/ipfire/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \
+	    if [ -f $$i ]; then \
+	        sed -i "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i; \
+	    fi; \
+	done
+	chown -R root:root /srv/web/ipfire
+	chmod -R 755 /srv/web/ipfire/cgi-bin
+	chmod -R 644 /srv/web/ipfire/html
+	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include,themes,themes/*,themes/*/*}
+	ln -svf ipfire /srv/web/ipfire/html/themes/ipfire-rounded
+
+	# Reset permissions of redirect templates and theme directories
+	find /srv/web/ipfire/html/{redirect-templates,themes} -type d | xargs chmod -v 755
+	@$(POSTBUILD)

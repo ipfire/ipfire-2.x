@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.1.10
+VER        = 2.1.11
 
 THISAPP    = fireinfo-v$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = cc7838cda22d7d4e9bb177aa1dc6f25a
+$(DL_FILE)_MD5 = 093799207ab7397cc7f2d5eb45868c69
 
 install : $(TARGET)
 
@@ -70,6 +70,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/0001-Add-an-other-forbidden-string-Serial.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/0002-Escape-any-non-printable-ascii-characters.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/0003-Skip-search-for-hypervisor-name-when-the-CPU-string-.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/0004-Filter-all-IDs-that-only-consist-of-0xff.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/0005-Fix-crash-if-there-is-id-has-already-been-reset-to-N.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr

@@ -1,3 +1,4 @@
+#usr/bin/libnet-config
 #usr/include/libnet
 #usr/include/libnet.h
 #usr/include/libnet/libnet-asn1.h
@@ -7,3 +8,10 @@
 #usr/include/libnet/libnet-structures.h
 #usr/include/libnet/libnet-types.h
 #usr/lib/libnet.a
+#usr/lib/libnet.la
+usr/lib/libnet.so
+usr/lib/libnet.so.1
+usr/lib/libnet.so.1.7.0
+#usr/share/man/man3/libnet-functions.h.3
+#usr/share/man/man3/libnet-macros.h.3
+#usr/share/man/man3/libnet.h.3

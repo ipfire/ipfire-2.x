@@ -115,7 +115,6 @@ iframe {
 #logo {
 	height: 65px;
 	margin-top: 1em;
-	background: url('../../images/tux2.png') no-repeat;
 }
 
 #logo h1 {
@@ -323,4 +322,8 @@ table {
 
 .tbl tr:last-child td {
 	border-bottom: 1px solid lightgrey;
+}
+
+table.fw-nat tbody tr td {
+	height: 2.25em;
 }

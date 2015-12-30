@@ -17,7 +17,6 @@ usr/sbin/openvpn
 #usr/share/doc/openvpn/README.polarssl
 #usr/share/doc/openvpn/management-notes.txt
 #usr/share/man/man8/openvpn.8
-var/ipfire/ovpn
 var/ipfire/ovpn/ca
 var/ipfire/ovpn/caconfig
 var/ipfire/ovpn/ccd
@@ -32,3 +31,4 @@ var/ipfire/ovpn/ovpn-leases.db
 var/ipfire/ovpn/ovpnconfig
 var/ipfire/ovpn/scripts
 var/ipfire/ovpn/settings
+var/log/openvpn
