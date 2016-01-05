@@ -13,6 +13,8 @@
 #include <fcntl.h>
 #include "setuid.h"
 
+#define QOS_SH "/var/ipfire/qos/bin/qos.sh"
+
 int main(int argc, char *argv[]) {
 
         int fd = -1;
@@ -26,25 +28,25 @@ int main(int argc, char *argv[]) {
         }
 
         if (strcmp(argv[1], "generate") == 0) {
-                safe_system("/usr/bin/perl /var/ipfire/qos/bin/makeqosscripts.pl > /var/ipfire/qos/bin/qos.sh");
+                safe_system("/usr/bin/perl /var/ipfire/qos/bin/makeqosscripts.pl > " QOS_SH);
         }
 
-        if ((fd = open("/var/ipfire/qos/bin/qos.sh", O_RDONLY)) != -1) {
+        if ((fd = open(QOS_SH, O_RDONLY)) != -1) {
                 close(fd);
         } else {
                 // If there is no qos.sh do nothing.
                 exit(0);
         }
 
-        safe_system("chmod 755 /var/ipfire/qos/bin/qos.sh &>/dev/null");
+        safe_system("chmod 755 " QOS_SH " &>/dev/null");
         if (strcmp(argv[1], "start") == 0) {
-                safe_system("/var/ipfire/qos/bin/qos.sh start");
+                safe_system(QOS_SH " start");
         } else if (strcmp(argv[1], "stop") == 0) {
-                safe_system("/var/ipfire/qos/bin/qos.sh clear");
+                safe_system(QOS_SH " clear");
         } else if (strcmp(argv[1], "status") == 0) {
-                safe_system("/var/ipfire/qos/bin/qos.sh status");
+                safe_system(QOS_SH " status");
         } else if (strcmp(argv[1], "restart") == 0) {
-                safe_system("/var/ipfire/qos/bin/qos.sh restart");
+                safe_system(QOS_SH " restart");
         } else {
                 if (strcmp(argv[1], "generate") == 0) {exit(0);}
                 fprintf(stderr, "\nBad argument given.\n\nqosctrl (start|stop|restart|status|generate)\n\n");
