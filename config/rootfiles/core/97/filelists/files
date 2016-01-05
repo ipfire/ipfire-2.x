@@ -1,4 +1,6 @@
 etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/qos.cgi
 usr/bin/pgrep
+usr/local/bin/qosctrl

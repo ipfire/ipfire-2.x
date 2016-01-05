@@ -43,6 +43,9 @@ extract_files
 # Start services
 /etc/init.d/dnsmasq start
 
+# Delete old QoS enabled indicator
+rm -f /var/ipfire/qos/enable
+
 # This update need a reboot...
 #touch /var/run/need_reboot
 
