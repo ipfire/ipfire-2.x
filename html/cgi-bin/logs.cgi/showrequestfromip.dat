@@ -155,7 +155,7 @@ if (!$skip)
         while (<FILE>)
         {
 	 	if (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {
-                if($_ =~  /SRC\=([\d\.]+)/){
+                if (($_ =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($_ =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) {
                   if($1 eq $ip){
 			$log[$lines] = $_;
 			$lines++;
@@ -182,12 +182,12 @@ if ($multifile) {
         if (!$skip) {
 		while (<FILE>) {
 		 	if (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {
-                       if($_ =~  /SRC\=([\d\.]+)/){
-                         if($1 eq $ip){
+                          if (($_ =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($_ =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) {
+                            if($1 eq $ip){
 				$log[$lines] = $_;
 				$lines++;
-                         }
-                       }
+                            }
+                          }
 			}
 		}
 		close (FILE);
@@ -293,7 +293,8 @@ $lines = 0;
 foreach $_ (@slice)
 {
   $a = $_;
-  if($_ =~  /SRC\=([\d\.]+)/){
+  # Check whether valid ipv4 or ipv6 address
+  if (($_ =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($_ =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) {
     if($1 eq $ip){
 	my $chain = '';
       	my $in = '-'; my $out = '-';
@@ -301,15 +302,19 @@ foreach $_ (@slice)
 	my $protostr = '';
 	my $srcport = ''; my $dstport = '';
 
-	$_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/;
+	# If ipv6 uses bridge, the use PHYSIN, otherwise use IN
+        if ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(PHYSIN=.*)$/) {}
+        elsif ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/) {}
 	my $timestamp = $1; my $chain = $2; my $packet = $3;
 	$timestamp =~ /(...) (..) (..:..:..)/;
 	my $month = $1; my $day = $2; my $time = $3;
 
-	if ($a =~ /IN\=(\w+)/) { $iface = $1; }
-	if ($a =~ /OUT\=(\w+)/) { $out = $1; }
-	if ($a =~ /SRC\=([\d\.]+)/) { $srcaddr = $1; }
-	if ($a =~ /DST\=([\d\.]+)/) { $dstaddr = $1; }
+        # If ipv6 uses bridge, the use PHYSIN and PHYSOUT, otherwise use IN and OUT
+        if ($a =~ /PHYSIN=(\w+)/) { $iface = $1 } elsif ($a =~ /IN=(\w+)/) { $iface = $1 }
+        if ($a =~ /PHYSOUT=(\w+)/) { $out = $1 } elsif ($a =~ /OUT=(\w+)/) { $out = $1 }
+        # Detect ipv4 and ipv6 addresses
+	if (($a =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($a =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) { $srcaddr = $1; }
+	if (($a =~ /DST\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($a =~ /DST\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) { $dstaddr = $1; }
 	if ($a =~ /PROTO\=(\w+)/) { $protostr = $1; }
 	my $protostrlc = lc($protostr);
 	if ($a =~  /SPT\=([\d\.]+)/){ $srcport = $1; }

@@ -261,7 +261,6 @@ if( $cgiparams{'pienumber'} != 0){$pienumber=$cgiparams{'pienumber'};}
 if( $cgiparams{'otherspie'} != 0){$otherspie=$cgiparams{'otherspie'};}
 if( $cgiparams{'showpie'} != 0){$showpie=$cgiparams{'showpie'};}
 if( $cgiparams{'sortcolumn'} != 0){$sortcolumn=$cgiparams{'sortcolumn'};}
-
 print <<END
 </select>
 </td>
@@ -294,15 +293,24 @@ $lines = 0;
 
 foreach $_ (@log)
 {
-  /^... (..) (..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/;
+  # If ipv6 uses bridge, use PHYSIN for iface, otherwise IN
+  if (/^... (..) (..:..:..) [\w\-]+ kernel:(.*)(PHYSIN=.*)$/) {}
+  elsif (/^... (..) (..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/) {}
   my $packet = $4;
-  $packet =~ /IN=(\w+)/;       my $iface=$1; if ( $1 =~ /2./ ){ $iface="";}
-  $packet =~ /SRC=([\d\.]+)/;  my $srcaddr=$1;
+  my $iface  = '';
+  if ($packet =~ /PHYSIN=(\w+)/) { $iface = $1 } elsif ($packet =~ /IN=(\w+)/) { $iface = $1 }
+  if ( $1 =~ /2./ ) { $iface=''; }
+  my $srcaddr = '';
+  # Find ipv4 and ipv6 addresses
+  if ($packet =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) { $srcaddr = $1 }
+  elsif ($packet =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/) { $srcaddr = $1 }
 
   if($iface eq $red_interface) {
+    # Traffic from red
     if($srcaddr ne '') {
+      # srcaddr is set
       my $ccode = $gi->country_code_by_name($srcaddr);
-      if( $ccode eq '') {
+      if ($ccode eq '') {
           $ccode = 'unknown';
       }
       $tabjc{$ccode} = $tabjc{$ccode} + 1 ;
@@ -311,10 +319,15 @@ foreach $_ (@log)
     }
   }
   else {
+    # Traffic not from red
     if($iface ne '') {
         $tabjc{$iface} = $tabjc{$iface} + 1 ;
         if(($tabjc{$iface} == 1) && ($lines < $pienumber)) { $lines = $lines + 1; }
         $linesjc++;
+    }
+    else {
+      # What to do with empty iface lines?
+      # This probably is traffic from ipfire itself (IN= OUT=XY)?
     }
   }
 }
@@ -423,7 +436,6 @@ if ($showpie != 2 && $pienumber <= 50 && $pienumber != 0) {
         print "<img src='/graphs/fwlog-country$imagerandom.png'>";
         print "</div>";
 }
-
 print <<END
 <table width='100%' class='tbl'>
 <tr>
@@ -448,10 +460,8 @@ for($s=0;$s<$lines;$s++)
   $percent = $value[$s] * 100 / $linesjc;
   $percent = sprintf("%.f", $percent);
   $total = $total + $value[$s];
-  my $colorIndex = $color % 10;
-  if($colorIndex == 0) {
-    $colorIndex = 10;
-  }
+  # colors are numbered 1 to 10
+  my $colorIndex = ($color % 10) + 1;
   $col="bgcolor='$color{\"color$colorIndex\"}'";
   $color++;
   print "<tr>";
@@ -466,8 +476,11 @@ for($s=0;$s<$lines;$s++)
 	print"<input type='hidden' name='country' value='$key[$s]'>";
 	print"<input type='submit' value='details'></form>";
   }
-
-  if($key[$s] eq 'blue0' || $key[$s] eq 'green0' || $key[$s] eq 'orange0') {
+  elsif ($key[$s] eq 'unknown') {
+        print "unknown";
+  }
+  # Looks dangerous to use hardcoded interface names here. Probably needs fixing.
+  if ($key[$s] eq 'blue0' || $key[$s] eq 'green0' || $key[$s] eq 'orange0' ) {
       print "<td align='center' $col>$key[$s]</td>";
   }
   else {
@@ -489,10 +502,8 @@ for($s=0;$s<$lines;$s++)
 
 if($cgiparams{'otherspie'} == 2 ){}
 else{
-  my $colorIndex = $color % 10;
-  if($colorIndex == 0) {
-    $colorIndex = 10;
-  }
+  # colors are numbered 1 to 10
+  my $colorIndex = ($color % 10) + 1;
   $col="bgcolor='$color{\"color$colorIndex\"}'";
   print "<tr>";
 

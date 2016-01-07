@@ -328,7 +328,10 @@ END
 $lines = 0;
 foreach $_ (@log)
 {
-        /^... (..) (..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/;
+	# If ipv6 uses a bridge, PHYSIN= contains the relevant iface information
+	# otherwise use IN=
+        if ($_ =~ /^... (..) (..:..:..) [\w\-]+ kernel:(.*)(PHYSIN=.*)$/) {}
+        elsif ($_ =~ /^... (..) (..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/) {}
         my $day =  $1;
         $day =~ tr / /0/;
         my $time = $cgiparams{'DAY'} ? "$2" : "$day/$2" ;
@@ -336,9 +339,12 @@ foreach $_ (@log)
         my $packet = $4;
 
 		my ($iface, $srcaddr, $dstaddr, $macaddr, $proto, $srcport, $dstport);
-		$iface=$1   if $packet =~ /IN=(\w+)/;
-		$srcaddr=$1 if $packet =~ /SRC=([\d\.]+)/;
-		$dstaddr=$1 if $packet =~ /DST=([\d\.]+)/;
+		if ($packet =~ /PHYSIN=(\w+)/) { $iface=$1 } elsif ($packet =~ /IN=(\w+)/) { $iface = $1}
+		# Identify whether ipv4 or ipv6. Both are mutally exclusive.
+		if ($packet =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) { $srcaddr=$1 }
+                if ($packet =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/) { $srcaddr=$1 }
+		if ($packet =~ /DST\=(([\d]{1,3})(\.([\d]{1,3})){3})/) { $dstaddr=$1 }
+                if ($packet =~ /DST\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/) { $dstaddr=$1 }
 		$macaddr=$1 if $packet =~ /MAC=([\w+\:]+)/;
 		$proto=$1   if $packet =~ /PROTO=(\w+)/;
 		$srcport=$1 if $packet =~ /SPT=(\d+)/;
