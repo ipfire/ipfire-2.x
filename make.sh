@@ -287,6 +287,7 @@ buildtoolchain() {
     lfsmake1 linux			TOOLS=1 KCFG="-headers"
     lfsmake1 glibc
     lfsmake1 cleanup-toolchain		PASS=1
+    lfsmake1 gcc			PASS=L
     lfsmake1 binutils			PASS=2
     lfsmake1 gcc			PASS=2
     lfsmake1 ccache			PASS=2
