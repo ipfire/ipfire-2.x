@@ -308,7 +308,7 @@ foreach $_ (@slice)
 	my $srcport = ''; my $dstport = '';
 
         # If ipv6 uses bridge, the use PHYSIN, otherwise use IN
-	if ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(PHYSIN=.*)$/) {}
+	if ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)(PHYSIN=.*)$/) {}
         elsif ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/) {}
 	my $timestamp = $1; my $chain = $2; my $packet = $3;
 	$timestamp =~ /(...) (..) (..:..:..)/;
