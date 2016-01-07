@@ -161,16 +161,16 @@ if (!$skip)
 	  # First check whether valid log line (date, day)
           if (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {
 	    # If ipv6 uses bridge, then use PHYSIN otherwise use IN
-            if (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(PHYSIN=.*)$/) {}
+            if    (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(PHYSIN=.*)$/) {}
             elsif (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {}
             my $packet  = $2;
             my $iface   = '';
             my $srcaddr = '';
             # If ipv6 uses bridge, use PHYSIN otherwise IN
-            if ($packet =~ /PHYSIN=(\w+)/) { $iface = $1 } elsif ($packet =~ /IN=(\w+)/) { $iface = $1 }
+            if ($packet =~ /PHYSIN=(\w+)/) { $iface = $1; } elsif ($packet =~ /IN=(\w+)/) { $iface = $1; }
             # Extract ipv4 and ipv6 addresses
             if (($packet =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($packet =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) {
-              $srcaddr = $1 
+              $srcaddr = $1; 
             };
 
             if($iface eq $country) {
@@ -210,7 +210,7 @@ if ($multifile) {
 	 	  if (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {
                     my  $iface = '';
                     # If ipv6 uses bridge, then use PHYSIN otherwise IN
-                    if ($_ =~ /PHYSIN=(\w+)/) { $iface = $1 } elsif ($_ =~ /IN=(\w+)/) { $iface = $1 }
+                    if ($_ =~ /PHYSIN=(\w+)/) { $iface = $1; } elsif ($_ =~ /IN=(\w+)/) { $iface = $1; }
 
                     if($iface eq $country) {
                       # iface matches country code
@@ -333,17 +333,17 @@ foreach $_ (@slice)
 {
   $a = $_;
   # If ipv6 uses bridge, use PHYSIN otherwise use IN
-  if (/^... (..) (..:..:..) [\w\-]+ kernel:(.*)(PHYSIN=.*)$/) {}
+  if    (/^... (..) (..:..:..) [\w\-]+ kernel:(.*)(PHYSIN=.*)$/) {}
   elsif (/^... (..) (..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/) {};
   my $packet = $4;
   my $iface = ''; 
   # If ipv6 uses bridge, use PHYSIN otherwise use IN
-  if ($packet =~ /PHYSIN=(\w+)/) { $iface = $1 } elsif ($packet =~ /IN=(\w+)/) { $iface = $1 }  
-  if ( $1 =~ /2./ ){ $iface="";}
+  if ($packet =~ /PHYSIN=(\w+)/) { $iface = $1; } elsif ($packet =~ /IN=(\w+)/) { $iface = $1; }  
+  if ( $1 =~ /2./ ){ $iface=""; }
   my $srcaddr = '';
   # Extract ipv4 and ipv6 addresses
   if (($packet =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($packet =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) {
-    $srcaddr = $1
+    $srcaddr = $1;
   };
 
   if($iface eq $country || $srcaddr ne '') {
@@ -359,15 +359,15 @@ foreach $_ (@slice)
       my $srcport = ''; my $dstport = '';
 
       # If ipv6 uses bridge, the use PHYSIN otherwise use IN
-      if ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)(PHYSIN=.*)$/) {}
+      if    ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)(PHYSIN=.*)$/) {}
       elsif ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/) {}
       my $timestamp = $1; my $chain = $2; my $packet = $3;
       $timestamp =~ /(...) (..) (..:..:..)/;
       my $month = $1; my $day = $2; my $time = $3;
 
       # If ipv6 uses bridge, use PHYSIN and PHYSOUT, otherwise use IN and OUT
-      if ($a =~ /PHYSIN=(\w+)/) { $iface = $1 } elsif ($a =~ /IN=(\w+)/) { $iface = $1 }
-      if ($a =~ /PHYSOUT=(\w+)/) { $out = $1 } elsif ($a =~ /OUT=(\w+)/) { $out = $1 }
+      if ($a =~ /PHYSIN=(\w+)/)  { $iface = $1; } elsif ($a =~ /IN=(\w+)/)  { $iface = $1; }
+      if ($a =~ /PHYSOUT=(\w+)/) { $out = $1; }   elsif ($a =~ /OUT=(\w+)/) { $out = $1; }
       # Extract ipv4 and ipv6 addresses
       if (($a =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($a =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) { $srcaddr = $1; }
       if (($a =~ /DST\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($a =~ /DST\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) { $dstaddr = $1; }

@@ -308,15 +308,15 @@ foreach $_ (@slice)
 	my $srcport = ''; my $dstport = '';
 
         # If ipv6 uses bridge, the use PHYSIN, otherwise use IN
-	if ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)(PHYSIN=.*)$/) {}
+	if    ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)(PHYSIN=.*)$/) {}
         elsif ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/) {}
 	my $timestamp = $1; my $chain = $2; my $packet = $3;
 	$timestamp =~ /(...) (..) (..:..:..)/;
 	my $month = $1; my $day = $2; my $time = $3; my $iface;
 
         # If ipv6 uses bridge, the use PHYSIN and PHYSOUT, otherwise use IN and OUT
-	if ($a =~ /PHYSIN\=(\w+)/) { $iface = $1; } elsif ($a =~ /IN\=(\w+)/) { $iface = $1; }
-        if ($a =~ /PHYSOUT\=(\w+)/) { $out = $1; } elsif ($a =~ /OUT\=(\w+)/) { $out = $1; }
+	if ($a =~ /PHYSIN\=(\w+)/)  { $iface = $1; } elsif ($a =~ /IN\=(\w+)/)  { $iface = $1; }
+        if ($a =~ /PHYSOUT\=(\w+)/) { $out = $1; }   elsif ($a =~ /OUT\=(\w+)/) { $out = $1; }
 	# Detect ipv4 and ipv6 addresses
 	if (($a =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($a =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) { $srcaddr = $1; }
 	if (($a =~ /DST\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($a =~ /DST\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) { $dstaddr = $1; }

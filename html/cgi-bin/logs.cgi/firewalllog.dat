@@ -339,7 +339,7 @@ foreach $_ (@log)
         my $chain = $3; 
 
 		my ($iface, $srcaddr, $dstaddr, $macaddr, $proto, $srcport, $dstport);
-		if ($packet =~ /PHYSIN=(\w+)/) { $iface=$1 } elsif ($packet =~ /IN=(\w+)/) { $iface = $1; }
+		if ($packet =~ /PHYSIN=(\w+)/) { $iface=$1; } elsif ($packet =~ /IN=(\w+)/) { $iface = $1; }
 		# Identify whether ipv4 or ipv6. Both are mutally exclusive.
 		if ($packet =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) { $srcaddr=$1; }
                 if ($packet =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/) { $srcaddr=$1; }
