@@ -70,19 +70,19 @@ configure_target() {
 	case "${target_arch}" in
 		x86_64)
 			BUILDTARGET="${target_arch}-unknown-linux-gnu"
-			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnu"
+			CROSSTARGET="${target_arch}-cross-linux-gnu"
 			CFLAGS_ARCH="-m64 -mtune=generic"
 			;;
 
 		i586)
 			BUILDTARGET="${target_arch}-pc-linux-gnu"
-			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnu"
+			CROSSTARGET="${target_arch}-cross-linux-gnu"
 			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer"
 			;;
 
 		armv5tel)
 			BUILDTARGET="${target_arch}-unknown-linux-gnueabi"
-			CROSSTARGET="${BUILD_ARCH}-cross-linux-gnueabi"
+			CROSSTARGET="${target_arch}-cross-linux-gnueabi"
 			CFLAGS_ARCH="-march=armv5te -mfloat-abi=soft -fomit-frame-pointer"
 			MACHINE_TYPE="arm"
 			;;

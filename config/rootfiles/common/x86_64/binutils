@@ -91,12 +91,12 @@
 #usr/lib/ldscripts/i386linux.xn
 #usr/lib/ldscripts/i386linux.xr
 #usr/lib/ldscripts/i386linux.xu
-#usr/lib/libbfd-2.22.so
+#usr/lib/libbfd-2.24.so
 #usr/lib/libbfd.a
 #usr/lib/libbfd.la
 #usr/lib/libbfd.so
 #usr/lib/libiberty.a
-#usr/lib/libopcodes-2.22.so
+#usr/lib/libopcodes-2.24.so
 #usr/lib/libopcodes.a
 #usr/lib/libopcodes.la
 #usr/lib/libopcodes.so

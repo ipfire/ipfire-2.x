@@ -63,25 +63,34 @@ ifeq "$(PASS)" "1"
   EXTRA_CONFIG = \
 	--target=$(CROSSTARGET) \
 	--prefix=/tools \
+	--with-sysroot=$(ROOT) \
 	--disable-nls \
 	--disable-shared \
 	--disable-decimal-float \
 	--disable-threads \
+	--disable-libatomic \
 	--disable-libmudflap \
 	--disable-libssp \
 	--disable-libgomp \
 	--disable-libquadmath \
+	--disable-libstdc++-v3 \
+	--disable-libvtv \
+	--disable-libcilkrts \
+	--disable-libitm \
+	--disable-libsanitizer \
 	--with-newlib \
 	--without-headers \
 	--without-ppl \
 	--without-cloog \
-	--enable-languages=c
+	--enable-languages=c,c++
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 else
+ifeq "$(PASS)" "2"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
   EXTRA_ENV = \
 	CC="$(CROSSTARGET)-gcc -B/tools/lib/" \
+	CXX="$(CROSSTARGET)-g++" \
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
@@ -90,6 +99,7 @@ else
 	--target=$(BUILDTARGET) \
 	--prefix=/tools \
 	--with-local-prefix=/tools \
+	--with-native-system-header-dir=/tools/include \
 	--enable-clocale=gnu \
 	--enable-shared \
 	--enable-threads=posix \
@@ -99,6 +109,25 @@ else
 	--disable-bootstrap
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
+else
+  # PASS=L # libstdc++-v3
+  TARGET = $(DIR_INFO)/$(THISAPP)-libstdc++
+  EXTRA_ENV = \
+	CC="$(CROSSTARGET)-gcc -B/tools/lib/" \
+	AR="$(CROSSTARGET)-ar" \
+	RANLIB="$(CROSSTARGET)-ranlib"
+  EXTRA_CONFIG = \
+	--host=$(CROSSTARGET) \
+	--prefix=/tools \
+	--with-sysroot=$(ROOT) \
+	--disable-shared \
+	--disable-nls \
+	--disable-libstdcxx-threads \
+	--disable-libstdcxx-pch \
+	--with-gxx-include-dir=/tools/$(CROSSTARGET)/include/c++/$(VER)
+  EXTRA_MAKE = 
+  EXTRA_INSTALL = 
+endif
 endif
 
   # Disable stack protection in toolchain.
@@ -200,10 +229,6 @@ ifeq    "$(PASS)" "1"
 	# GCC does not detect stack protection correctly, which causes problems
 	# for the build of libresolv_pic.a.
 	cd $(DIR_APP) && sed -i '/k prot/agcc_cv_libc_provides_ssp=yes' gcc/configure
-endif
-
-ifeq    "$(PASS)" "2"
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/gcc-4.4.3-startfiles_fix-1.patch
 
 	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
 			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h); do \
@@ -211,9 +236,25 @@ ifeq    "$(PASS)" "2"
 		sed -i $${file} \
 			-e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
 			-e 's@/usr@/tools@g'; \
-		echo '#undef STANDARD_INCLUDE_DIR' >> $${file}; \
-		echo '#define STANDARD_INCLUDE_DIR 0' >> $${file}; \
-		echo '#define STANDARD_STARTFILE_PREFIX_1 ""' >> $${file}; \
+		echo '#undef STANDARD_STARTFILE_PREFIX_1' >> $${file}; \
+		echo '#undef STANDARD_STARTFILE_PREFIX_2' >> $${file}; \
+		echo '#define STANDARD_STARTFILE_PREFIX_1 "/tools/lib/"' >> $${file}; \
+		echo '#define STANDARD_STARTFILE_PREFIX_2 ""' >> $${file}; \
+	done
+endif
+
+ifeq    "$(PASS)" "2"
+	cd $(DIR_APP) && cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
+			`dirname $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name)`/include-fixed/limits.h
+	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
+			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h); do \
+		echo "Processing $${file}..."; \
+		sed -i $${file} \
+			-e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
+			-e 's@/usr@/tools@g'; \
+		echo '#undef STANDARD_STARTFILE_PREFIX_1' >> $${file}; \
+		echo '#undef STANDARD_STARTFILE_PREFIX_2' >> $${file}; \
+		echo '#define STANDARD_STARTFILE_PREFIX_1 "/tools/lib/"' >> $${file}; \
 		echo '#define STANDARD_STARTFILE_PREFIX_2 ""' >> $${file}; \
 	done
 endif
@@ -224,6 +265,15 @@ endif
 		-e 's@\./fixinc\.sh@-c true@' \
 		-e 's/^T_CFLAGS =$$/& -fomit-frame-pointer/'
 
+ifeq    "$(PASS)" "L"
+	# libstdc++ pass
+	cd $(DIR_SRC)/gcc-build && \
+		$(EXTRA_ENV) \
+		$(DIR_APP)/libstdc++-v3/configure \
+			$(EXTRA_CONFIG)
+	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
+else
 	# The actual build.
 	cd $(DIR_SRC)/gcc-build && \
 		$(EXTRA_ENV) \
@@ -231,6 +281,7 @@ endif
 			$(EXTRA_CONFIG)
 	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
+endif
 
 ifeq "$(ROOT)" ""
 	ln -svf ../usr/bin/cpp /lib

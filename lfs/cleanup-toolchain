@@ -54,7 +54,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifeq "$(PASS)" "1"
 	SPECS=$$(dirname $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name))/specs; \
 	/tools/bin/$(CROSSTARGET)-gcc -dumpspecs | sed \
-		-e 's@/lib\(64\)\?/ld@/tools&@g' \
 		-e "/^\*cpp:$$/{n;s,$$, -isystem /tools/include,}" > $$SPECS
 endif
 
