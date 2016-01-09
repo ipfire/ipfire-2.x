@@ -181,7 +181,7 @@ if (!$skip)
             elsif($srcaddr ne '') {
                 # or srcaddr matches country code
                 my $ccode = $gi->country_code_by_name($srcaddr);
-                if($ccode eq $country){
+                if($ccode eq uc($country)){
                     $log[$lines] = $_;
                     $lines++;
                 }
@@ -221,7 +221,7 @@ if ($multifile) {
                     elsif (($_ =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($_ =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) {
                       my $srcaddr=$1;
                       my $ccode = $gi->country_code_by_name($srcaddr);
-                      if($ccode eq $country){
+                      if($ccode eq uc($country)){
                         # or srcaddr matches country code
                         $log[$lines] = $_;
                         $lines++;
@@ -351,7 +351,7 @@ foreach $_ (@slice)
     if($iface ne $country) {
       $ccode = $gi->country_code_by_name($srcaddr);
     }
-    if($iface eq $country || $ccode eq $country) {
+    if($iface eq $country || $ccode eq uc($country)) {
       my $chain = '';
       my $in = '-'; my $out = '-';
       my $srcaddr = ''; my $dstaddr = '';
@@ -359,7 +359,7 @@ foreach $_ (@slice)
       my $srcport = ''; my $dstport = '';
 
       # If ipv6 uses bridge, the use PHYSIN otherwise use IN
-      if ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(PHYSIN=.*)$/) {}
+      if ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)(PHYSIN=.*)$/) {}
       elsif ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/) {}
       my $timestamp = $1; my $chain = $2; my $packet = $3;
       $timestamp =~ /(...) (..) (..:..:..)/;
