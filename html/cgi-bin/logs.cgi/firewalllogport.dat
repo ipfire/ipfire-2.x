@@ -429,10 +429,8 @@ for($s=0;$s<$lines;$s++)
   $percent = $value[$s] * 100 / $linesjc;
   $percent = sprintf("%.f", $percent);
   $total = $total + $value[$s];
-  my $colorIndex = $color % 10;
-  if($colorIndex == 0) {
-    $colorIndex = 10;
-  }
+  # colors are numbered 1 to 10
+  my $colorIndex = ($color % 10) + 1;
   $col="bgcolor='$color{\"color$colorIndex\"}'";
   print "<tr>";
 
@@ -446,10 +444,8 @@ for($s=0;$s<$lines;$s++)
 
 if($cgiparams{'otherspie'} == 2 ){}
 else{
-  my $colorIndex = $color % 10;
-  if($colorIndex == 0) {
-    $colorIndex = 10;
-  }
+  # colors are numbered 1 to 10
+  my $colorIndex = ($color % 10) + 1;
   $col="bgcolor='$color{\"color$colorIndex\"}'";
   print "<tr>";
 
