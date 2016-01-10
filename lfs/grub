@@ -101,6 +101,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Disable hardening.
 	paxctl -mpes /usr/sbin/grub-bios-setup /usr/sbin/grub-probe
+	paxctl -mpexs /usr/bin/grub-script-check
 
 	# We don't need to install unifont just to generate a grub2 compatible
 	# font archive for the graphical boot menu. The following command only

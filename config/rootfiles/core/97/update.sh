@@ -37,6 +37,9 @@ done
 # Extract files
 extract_files
 
+# Fix hardening flags in grub
+paxctl -mpexs /usr/bin/grub-script-check
+
 # Update Language cache
 # /usr/local/bin/update-lang-cache
 
