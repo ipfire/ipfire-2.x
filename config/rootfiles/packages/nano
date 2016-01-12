@@ -14,6 +14,7 @@ usr/bin/rnano
 #usr/share/man/man5/nanorc.5
 #usr/share/nano
 usr/share/nano/asm.nanorc
+usr/share/nano/autoconf.nanorc
 usr/share/nano/awk.nanorc
 usr/share/nano/c.nanorc
 #usr/share/nano/changelog.nanorc
@@ -37,6 +38,7 @@ usr/share/nano/man.nanorc
 usr/share/nano/mgp.nanorc
 usr/share/nano/mutt.nanorc
 usr/share/nano/nanorc.nanorc
+usr/share/nano/nftables.nanorc
 usr/share/nano/objc.nanorc
 usr/share/nano/ocaml.nanorc
 usr/share/nano/patch.nanorc
