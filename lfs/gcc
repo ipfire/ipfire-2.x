@@ -289,11 +289,10 @@ ifeq "$(ROOT)" ""
 else
 ifeq    "$(PASS)" "1"
 	ln -svf libgcc.a $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
-
-	# remove gdb python files from libdir
-	rm -rf /tools/lib/*-gdb.py
 else
 	ln -svf gcc /tools/bin/cc
+	# remove gdb python files from libdir
+	rm -rf /tools/lib/*-gdb.py
 endif
 endif
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build
