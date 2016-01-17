@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -106,7 +106,7 @@ ifeq "$(PASS)" "2"
 	--enable-__cxa_atexit \
 	--enable-languages=c,c++ \
 	--disable-libstdcxx-pch \
-	--disable-bootstrap
+	--enable-bootstrap
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 else
@@ -286,11 +286,15 @@ endif
 ifeq "$(ROOT)" ""
 	ln -svf ../usr/bin/cpp /lib
 	ln -svf gcc /usr/bin/cc
+	# remove gdb python files from libdir
+	rm -rf /usr/lib/*-gdb.py
 else
 ifeq    "$(PASS)" "1"
 	ln -svf libgcc.a $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
 else
 	ln -svf gcc /tools/bin/cc
+	# remove gdb python files from libdir
+	rm -rf /tools/lib/*-gdb.py
 endif
 endif
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build
