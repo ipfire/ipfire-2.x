@@ -45,6 +45,7 @@ paxctl -mpexs /usr/bin/grub-script-check
 
 # Start services
 /etc/init.d/dnsmasq start
+/etc/init.d/sshd restart
 
 # Delete old QoS enabled indicator
 rm -f /var/ipfire/qos/enable
