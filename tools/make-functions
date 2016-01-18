@@ -109,7 +109,7 @@ configure_target() {
 	MACHINE="${TARGET_ARCH}"
 
 	CFLAGS="-O2 -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fPIC"
-	CFLAGS="${CFLAGS} -fstack-protector-all --param=ssp-buffer-size=4 ${CFLAGS_ARCH}"
+	CFLAGS="${CFLAGS} -fstack-protector-strong --param=ssp-buffer-size=4 ${CFLAGS_ARCH}"
 	CXXFLAGS="${CFLAGS}"
 }
 
