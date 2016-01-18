@@ -19,7 +19,17 @@
 #                                                                             #
 ###############################################################################
 
+use strict;
+
+#usable only the following on debugging purpose
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 use CGI;
+
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/lang.pl";
+require "${General::swroot}/header.pl";
+
 
 my $swroot = "/var/ipfire";
 my $apdir  = "$swroot/proxy/advanced";
@@ -31,6 +41,7 @@ my $acl_src_noaccess_mac = "$apdir/acls/src_noaccess_mac.acl";
 my $banner = "A D V A N C E D &nbsp; P R O X Y &nbsp; - &nbsp; W E B &nbsp; A C C E S S &nbsp; M A N A G E R";
 my %cgiparams;
 my %proxysettings;
+my %temp;
 
 my %acl=();
 my @group_defs=();
@@ -49,8 +60,8 @@ require "${swroot}/lang.pl";
 
 foreach (@groups)
 {
-	if ($cgiparams{$_} eq $tr{'advproxy mode deny'})  { $acl{$_}='on'; }
-	if ($cgiparams{$_} eq $tr{'advproxy mode allow'}) { $acl{$_}='off'; }
+       if ($cgiparams{$_} eq $Lang::tr{'advproxy mode deny'}) { $acl{$_}='on'; }
+       if ($cgiparams{$_} eq $Lang::tr{'advproxy mode allow'}) { $acl{$_}='off'; }
 }
 
 &read_all_groups;
@@ -144,7 +155,7 @@ if (($is_supervisor) && ((defined($proxysettings{'SUPERVISOR_PASSWORD'})) && (!(
 {
 print <<END
                   <td align='center'>
-                     <font face='verdana,arial,helvetica' color='#000000' size='2'>$tr{'advproxy supervisor password'}:</font>
+                     <font face='verdana,arial,helvetica' color='#000000' size='2'>$Lang::tr{'advproxy supervisor password'}:</font>
                   </td>
                   <td align='center'><input type='password' name='PASSWORD' size='15'></td>
 END
@@ -176,11 +187,11 @@ END
 			if ((defined($acl{$_})) && ($acl{$_} eq 'on'))
 			{
 			print "</td><td width='120' align='center'>";
-				print "<input type='submit' name='$_' value=' $tr{'advproxy mode allow'} '>";
+				print "<input type='submit' name='$_' value=' $Lang::tr{'advproxy mode allow'} '>";
 			print "</td><td width='16' bgcolor='#D00000'>&nbsp;</td>\n";
 			} else {
 			print "</td><td width='120' align='center'>";
-				print "<input type='submit' name='$_' value=' $tr{'advproxy mode deny'} '>";
+				print "<input type='submit' name='$_' value=' $Lang::tr{'advproxy mode deny'} '>";
 			print "</td><td width='16' bgcolor='#00A000'>&nbsp;</td>\n";
 			}
 		}
@@ -199,14 +210,14 @@ END
 } else {
             print "      <tr>\n";
             print "         <td align='center'>\n";
-            print "            <font face='verdana,arial,helvetica' color='#000000' size='2'>$tr{'advproxy no cre groups'}</font>\n";
+            print "            <font face='verdana,arial,helvetica' color='#000000' size='2'>$Lang::tr{'advproxy no cre groups'}</font>\n";
             print "         </td>\n";
             print "      </tr>\n";
 }
 } else {
             print "      <tr>\n";
             print "         <td align='center'>\n";
-            print "            <font face='verdana,arial,helvetica' color='#000000' size='2'>$tr{'advproxy cre disabled'}</font>\n";
+            print "            <font face='verdana,arial,helvetica' color='#000000' size='2'>$Lang::tr{'advproxy cre disabled'}</font>\n";
             print "         </td>\n";
             print "      </tr>\n";
 }
