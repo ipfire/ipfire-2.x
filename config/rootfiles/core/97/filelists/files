@@ -2,6 +2,7 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
+srv/web/ipfire/cgi-bin/webaccess.cgi
 usr/bin/pgrep
 usr/local/bin/qosctrl
 usr/local/bin/timectrl
