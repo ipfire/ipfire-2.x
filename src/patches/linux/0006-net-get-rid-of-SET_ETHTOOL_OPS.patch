@@ -1,0 +1,44 @@
+From 7ad24ea4bf620a32631d7b3069c3e30c078b0c3e Mon Sep 17 00:00:00 2001
+From: Wilfried Klaebe <w-lkml@lebenslange-mailadresse.de>
+Date: Sun, 11 May 2014 00:12:32 +0000
+Subject: [PATCH 06/11] net: get rid of SET_ETHTOOL_OPS
+
+net: get rid of SET_ETHTOOL_OPS
+
+Dave Miller mentioned he'd like to see SET_ETHTOOL_OPS gone.
+This does that.
+
+Mostly done via coccinelle script:
+@@
+struct ethtool_ops *ops;
+struct net_device *dev;
+@@
+-       SET_ETHTOOL_OPS(dev, ops);
++       dev->ethtool_ops = ops;
+
+Compile tested only, but I'd seriously wonder if this broke anything.
+
+Suggested-by: Dave Miller <davem@davemloft.net>
+Signed-off-by: Wilfried Klaebe <w-lkml@lebenslange-mailadresse.de>
+Acked-by: Felipe Balbi <balbi@ti.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/hyperv/netvsc_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index 1de3ef5dd5d2..2e967a7bdb33 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -810,7 +810,7 @@ static int netvsc_probe(struct hv_device *dev,
+ 	net->features = NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_SG | NETIF_F_RXCSUM |
+ 			NETIF_F_IP_CSUM | NETIF_F_TSO;
+ 
+-	SET_ETHTOOL_OPS(net, &ethtool_ops);
++	net->ethtool_ops = &ethtool_ops;
+ 	SET_NETDEV_DEV(net, &dev->device);
+ 
+ 	/* Notify the netvsc driver of the new device */
+-- 
+2.4.3
+

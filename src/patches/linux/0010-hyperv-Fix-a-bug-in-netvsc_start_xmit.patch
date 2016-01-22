@@ -1,0 +1,47 @@
+From b3e774263908a834c1c0d5abf3a7658280e42fc7 Mon Sep 17 00:00:00 2001
+From: KY Srinivasan <kys@microsoft.com>
+Date: Sun, 28 Sep 2014 22:16:43 -0700
+Subject: [PATCH 10/11] hyperv: Fix a bug in netvsc_start_xmit()
+
+[ Upstream commit dedb845ded56ded1c62f5398a94ffa8615d4592d ]
+
+After the packet is successfully sent, we should not touch the skb
+as it may have been freed. This patch is based on the work done by
+Long Li <longli@microsoft.com>.
+
+In this version of the patch I have fixed issues pointed out by David.
+David, please queue this up for stable.
+
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Tested-by: Long Li <longli@microsoft.com>
+Tested-by: Sitsofe Wheeler <sitsofe@yahoo.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/hyperv/netvsc_drv.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index 4fd71b75e666..f15297201777 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -387,6 +387,7 @@ static int netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
+ 	int  hdr_offset;
+ 	u32 net_trans_info;
+ 	u32 hash;
++	u32 skb_length = skb->len;
+ 
+ 
+ 	/* We will atmost need two pages to describe the rndis
+@@ -562,7 +563,7 @@ do_send:
+ 
+ drop:
+ 	if (ret == 0) {
+-		net->stats.tx_bytes += skb->len;
++		net->stats.tx_bytes += skb_length;
+ 		net->stats.tx_packets++;
+ 	} else {
+ 		kfree(packet);
+-- 
+2.4.3
+

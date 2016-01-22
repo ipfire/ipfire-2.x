@@ -1,0 +1,34 @@
+From e0f6906eb7e5b395370da9499189d13b59020382 Mon Sep 17 00:00:00 2001
+From: KY Srinivasan <kys@microsoft.com>
+Date: Wed, 9 Apr 2014 15:00:45 -0700
+Subject: [PATCH 12/25] Drivers: net: hyperv: Allocate memory for all possible
+ per-pecket information
+
+An outgoing packet can potentially need per-packet information for
+all the offloads and VLAN tagging. Fix this issue.
+
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/hyperv/netvsc_drv.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index 5baa1fa7e692..c76c85176644 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -320,7 +320,9 @@ static int netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
+ 	packet = kzalloc(sizeof(struct hv_netvsc_packet) +
+ 			 (num_data_pgs * sizeof(struct hv_page_buffer)) +
+ 			 sizeof(struct rndis_message) +
+-			 NDIS_VLAN_PPI_SIZE, GFP_ATOMIC);
++			 NDIS_VLAN_PPI_SIZE +
++			 NDIS_CSUM_PPI_SIZE +
++			 NDIS_LSO_PPI_SIZE, GFP_ATOMIC);
+ 	if (!packet) {
+ 		/* out of memory, drop packet */
+ 		netdev_err(net, "unable to allocate hv_netvsc_packet\n");
+-- 
+2.4.3
+

@@ -170,8 +170,32 @@ endif
 	# update the queued trim blacklist from kernel 4.2rc1
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.43_new_qtrim_blacklist.patch
 
-	# HyperV 2008 patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.x-hyperv-2008-fix.patch
+	# Hyper-V patches
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0001-Drivers-net-hyperv-Get-rid-of-the-rndis_filter_packe.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0002-Drivers-net-hyperv-Cleanup-the-receive-path.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0003-Drivers-net-hyperv-Cleanup-the-netvsc-receive-callba.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0004-hyperv-Add-latest-NetVSP-versions-to-auto-negotiatio.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0005-Drivers-net-hyperv-Enable-scatter-gather-I-O.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0006-Drivers-net-hyperv-Cleanup-the-send-path.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0007-Drivers-net-hyperv-Enable-offloads-on-the-host.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0008-Drivers-net-hyperv-Enable-receive-side-IP-checksum-o.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0009-Drivers-net-hyperv-Enable-send-side-checksum-offload.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0010-Drivers-net-hyperv-Enable-large-send-offload.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0011-hyperv-Change-the-receive-buffer-size-for-legacy-hos.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0012-Drivers-net-hyperv-Allocate-memory-for-all-possible-.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0013-Drivers-net-hyperv-Negotiate-suitable-ndis-version-f.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0014-Drivers-net-hyperv-Address-UDP-checksum-issues.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0015-hyperv-Properly-handle-checksum-offload.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0016-hyperv-Add-support-for-virtual-Receive-Side-Scaling-.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0017-hyperv-Remove-recv_pkt_list-and-lock.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0018-hyperv-Simplify-the-send_completion-variables.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0019-hyperv-Enable-sendbuf-mechanism-on-the-send-path.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0020-Add-support-for-netvsc-build-without-CONFIG_SYSFS-fl.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0021-hyperv-Add-hash-value-into-RNDIS-Per-packet-info.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0022-hyperv-fix-apparent-cut-n-paste-error-in-send-path-t.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0023-hyperv-Fix-error-return-code-in-netvsc_init_buf.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0024-hyperv-Fix-a-bug-in-netvsc_send.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0025-Drivers-hv-vmbus-Support-per-channel-driver-state.patch
 
 	# fix empty symbol crc's
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-genksyms_fix_typeof_handling.patch

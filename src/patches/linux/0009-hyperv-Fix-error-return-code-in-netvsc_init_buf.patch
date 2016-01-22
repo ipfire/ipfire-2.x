@@ -1,0 +1,34 @@
+From dd1d3f8f9920926aa426589e542eed6bf58b7354 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Date: Wed, 23 Jul 2014 09:00:35 +0800
+Subject: [PATCH 09/11] hyperv: Fix error return code in netvsc_init_buf()
+
+Fix to return -ENOMEM from the kalloc error handling
+case instead of 0.
+
+Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/hyperv/netvsc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
+index 4ed38eaecea8..d97d5f39a04e 100644
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -378,8 +378,10 @@ static int netvsc_init_buf(struct hv_device *device)
+ 
+ 	net_device->send_section_map =
+ 		kzalloc(net_device->map_words * sizeof(ulong), GFP_KERNEL);
+-	if (net_device->send_section_map == NULL)
++	if (net_device->send_section_map == NULL) {
++		ret = -ENOMEM;
+ 		goto cleanup;
++	}
+ 
+ 	goto exit;
+ 
+-- 
+2.4.3
+

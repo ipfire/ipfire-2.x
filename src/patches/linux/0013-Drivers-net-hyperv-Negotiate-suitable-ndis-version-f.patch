@@ -1,0 +1,32 @@
+From 8a7882bada78e7d7355aafc0ca3c5696d25eb443 Mon Sep 17 00:00:00 2001
+From: KY Srinivasan <kys@microsoft.com>
+Date: Wed, 9 Apr 2014 15:00:46 -0700
+Subject: [PATCH 13/25] Drivers: net: hyperv: Negotiate suitable ndis version
+ for offload support
+
+Ws2008R2 supports ndis_version 6.1 and 6.1 is the minimal version required
+for various offloads. Negotiate ndis_version 6.1 when on ws2008r2.
+
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/hyperv/netvsc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
+index daddea2654ce..f7629ecefa84 100644
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -344,7 +344,7 @@ static int netvsc_connect_vsp(struct hv_device *device)
+ 	memset(init_packet, 0, sizeof(struct nvsp_message));
+ 
+ 	if (net_device->nvsp_version <= NVSP_PROTOCOL_VERSION_4)
+-		ndis_version = 0x00050001;
++		ndis_version = 0x00060001;
+ 	else
+ 		ndis_version = 0x0006001e;
+ 
+-- 
+2.4.3
+
