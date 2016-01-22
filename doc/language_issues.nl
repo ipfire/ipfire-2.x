@@ -697,6 +697,7 @@ WARNING: untranslated string: advproxy AUTH method ntlm auth
 WARNING: untranslated string: advproxy basic authentication
 WARNING: untranslated string: advproxy group access control
 WARNING: untranslated string: advproxy group required
+WARNING: untranslated string: application layer gateways
 WARNING: untranslated string: atm device
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities

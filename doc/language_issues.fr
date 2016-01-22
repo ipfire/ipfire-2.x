@@ -647,6 +647,7 @@ WARNING: untranslated string: advproxy group access control
 WARNING: untranslated string: advproxy group required
 WARNING: untranslated string: advproxy proxy port transparent
 WARNING: untranslated string: age second
+WARNING: untranslated string: application layer gateways
 WARNING: untranslated string: atm device
 WARNING: untranslated string: attention
 WARNING: untranslated string: bit

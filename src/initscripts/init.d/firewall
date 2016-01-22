@@ -21,9 +21,11 @@ iptables_init() {
 	iptables -F
 	iptables -t nat -F
 	iptables -t mangle -F
+	iptables -t raw -F
 	iptables -X
 	iptables -t nat -X
 	iptables -t mangle -X
+	iptables -t raw -X
 
 	# Set up policies
 	iptables -P INPUT DROP
@@ -84,10 +86,71 @@ iptables_init() {
 	iptables -A INPUT   -p tcp -j BADTCP
 	iptables -A FORWARD -p tcp -j BADTCP
 
-	# Connection tracking chain
+	# Connection tracking chains
 	iptables -N CONNTRACK
-	iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+	iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED -j ACCEPT
 	iptables -A CONNTRACK -m conntrack --ctstate INVALID -j DROP
+	iptables -A CONNTRACK -p icmp -m conntrack --ctstate RELATED -j ACCEPT
+	iptables -t raw -N CONNTRACK
+	iptables -t raw -A PREROUTING -j CONNTRACK
+
+	# Conntrack helpers (https://home.regit.org/netfilter-en/secure-use-of-helpers/)
+
+	# SIP
+	if [ "${CONNTRACK_SIP}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper sip -j ACCEPT
+		for proto in udp tcp; do
+			iptables -t raw -A CONNTRACK -p "${proto}" --dport 5060 -j CT --helper sip
+		done
+	fi
+
+	# H.323
+	if [ "${CONNTRACK_H323}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper h323 -j ACCEPT
+
+		# Gatekeeper RAS
+		iptables -t raw -A CONNTRACK -p udp --dport 1719 -j CT --helper RAS
+
+		# Q.931
+		iptables -t raw -A CONNTRACK -p tcp --dport 1720 -j CT --helper Q.931
+	fi
+
+	# FTP
+	if [ "${CONNTRACK_FTP}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper ftp -p tcp --dport 1024: -j ACCEPT
+		iptables -t raw -A CONNTRACK -p tcp --dport 21 -j CT --helper ftp
+	fi
+
+	# PPTP
+	if [ "${CONNTRACK_PPTP}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper pptp -j ACCEPT
+		iptables -t raw -A CONNTRACK -p udp --dport 1723 -j CT --helper pptp
+	fi
+
+	# TFTP
+	if [ "${CONNTRACK_TFTP}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper tftp -j ACCEPT
+		iptables -t raw -A CONNTRACK -p udp --dport 69 -j CT --helper tftp
+	fi
+
+	# IRC
+	if [ "${CONNTRACK_IRC}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper irc -j ACCEPT
+		iptables -t raw -A CONNTRACK -p tcp --dport 6667 -j CT --helper irc
+	fi
+
+	# Amanda
+	if [ "${CONNTRACK_AMANDA}" = "on" ]; then
+		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
+			-m helper --helper amanda -j ACCEPT
+		iptables -t raw -A CONNTRACK -p tcp -j CT --helper amanda
+	fi
 
 	# Fix for braindead ISP's
 	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
@@ -400,24 +463,6 @@ iptables_red_down() {
 # See how we were called.
 case "$1" in
   start)
-	boot_mesg "Loading firewall modules into the kernel"
-	modprobe iptable_nat || failed=1
-	for i in $(find /lib/modules/$(uname -r) -name nf_conntrack*); do
-		modprobe $(basename $i | cut -d. -f1) || failed=1
-	done
-	for i in $(find /lib/modules/$(uname -r) -name nf_nat*); do
-		modprobe $(basename $i | cut -d. -f1) || failed=1
-	done
-	(exit ${failed})
-	evaluate_retval
-
-	if [ -e /var/ipfire/main/disable_nf_sip ]; then
-		rmmod nf_nat_sip
-		rmmod nf_conntrack_sip
-		rmmod nf_nat_h323
-		rmmod nf_conntrack_h323
-	fi
-
 	boot_mesg "Setting up firewall"
 	iptables_init
 	evaluate_retval
