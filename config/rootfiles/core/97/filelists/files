@@ -1,5 +1,8 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/firewall
+etc/modprobe.d/nf_conntrack.conf
+srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
 srv/web/ipfire/cgi-bin/webaccess.cgi
