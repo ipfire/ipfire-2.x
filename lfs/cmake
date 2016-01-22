@@ -32,9 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-ifeq "$(MACHINE)" "armv5tel"
-	MAKETUNING = -j2
-endif
+MAKETUNING = -j2
 
 ###############################################################################
 # Top-level Rules
