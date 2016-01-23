@@ -73,60 +73,60 @@ if (!($cgiparams{'MONTH'} =~ /^(0|1|2|3|4|5|6|7|8|9|10|11)$/) ||
 }
 elsif($cgiparams{'ACTION'} eq '>>')
 {
-        my @temp_then=();
-        my @temp_now = localtime(time);
-        $temp_now[4] = $cgiparams{'MONTH'};
-        $temp_now[3] = $cgiparams{'DAY'};
-        @temp_then = localtime(POSIX::mktime(@temp_now) + 86400);
-           ## Retrieve the same time on the next day -
-           ## 86400 seconds in a day
-        $cgiparams{'MONTH'} = $temp_then[4];
-        $cgiparams{'DAY'} = $temp_then[3];
+	my @temp_then=();
+	my @temp_now = localtime(time);
+	$temp_now[4] = $cgiparams{'MONTH'};
+	$temp_now[3] = $cgiparams{'DAY'};
+	@temp_then = localtime(POSIX::mktime(@temp_now) + 86400);
+	   ## Retrieve the same time on the next day -
+	   ## 86400 seconds in a day
+	$cgiparams{'MONTH'} = $temp_then[4];
+	$cgiparams{'DAY'} = $temp_then[3];
 }
 elsif($cgiparams{'ACTION'} eq '<<')
 {
-        my @temp_then=();
-        my @temp_now = localtime(time);
-        $temp_now[4] = $cgiparams{'MONTH'};
-        $temp_now[3] = $cgiparams{'DAY'};
-        @temp_then = localtime(POSIX::mktime(@temp_now) - 86400);
-           ## Retrieve the same time on the previous day -
-           ## 86400 seconds in a day
-        $cgiparams{'MONTH'} = $temp_then[4];
-        $cgiparams{'DAY'} = $temp_then[3];
+	my @temp_then=();
+	my @temp_now = localtime(time);
+	$temp_now[4] = $cgiparams{'MONTH'};
+	$temp_now[3] = $cgiparams{'DAY'};
+	@temp_then = localtime(POSIX::mktime(@temp_now) - 86400);
+	   ## Retrieve the same time on the previous day -
+	   ## 86400 seconds in a day
+	$cgiparams{'MONTH'} = $temp_then[4];
+	$cgiparams{'DAY'} = $temp_then[3];
 }
 
 if (($cgiparams{'DAY'} ne $now[3]) || ($cgiparams{'MONTH'} ne $now[4]))
 {
-        my @then = ();
-        if ( (  $cgiparams{'MONTH'} eq $now[4]) && ($cgiparams{'DAY'} > $now[3]) ||
-                        ( $cgiparams{'MONTH'} > $now[4] ) ) {
-                @then = localtime(POSIX::mktime( 0, 0, 0, $cgiparams{'DAY'}, $cgiparams{'MONTH'}, $year - 1901 ));
-        } else {
-                @then = localtime(POSIX::mktime( 0, 0, 0, $cgiparams{'DAY'}, $cgiparams{'MONTH'}, $year - 1900 ));
-        }
-        $tdoy = $then[7];
-        my $lastleap=($year-1)%4;
-        if ($tdoy>$doy) {
-                if ($lastleap == 0 && $tdoy < 60) {
-                        $doy=$tdoy+366;
-                } else {
-                        $doy=$doy+365;
-                }
-        }
+	my @then = ();
+	if ( (  $cgiparams{'MONTH'} eq $now[4]) && ($cgiparams{'DAY'} > $now[3]) ||
+			( $cgiparams{'MONTH'} > $now[4] ) ) {
+		@then = localtime(POSIX::mktime( 0, 0, 0, $cgiparams{'DAY'}, $cgiparams{'MONTH'}, $year - 1901 ));
+	} else {
+		@then = localtime(POSIX::mktime( 0, 0, 0, $cgiparams{'DAY'}, $cgiparams{'MONTH'}, $year - 1900 ));
+	}
+	$tdoy = $then[7];
+	my $lastleap=($year-1)%4;
+	if ($tdoy>$doy) {
+		if ($lastleap == 0 && $tdoy < 60) {
+			$doy=$tdoy+366;
+		} else {
+			$doy=$doy+365;
+		}
+	}
 }
 my $datediff=0;
 my $dowd=0;
 my $multifile=0;
 if ($tdoy ne $doy) {
-        $datediff=int(($doy-$tdoy)/7);
-        $dowd=($doy-$tdoy)%7;
-        if (($dow-$dowd)<1) {
-                $datediff=$datediff+1;
-        }
-        if (($dow-$dowd)==0) {
-                $multifile=1;
-        }
+	$datediff=int(($doy-$tdoy)/7);
+	$dowd=($doy-$tdoy)%7;
+	if (($dow-$dowd)<1) {
+		$datediff=$datediff+1;
+	}
+	if (($dow-$dowd)==0) {
+		$multifile=1;
+	}
 }
 
 my $monthstr = $shortmonths[$cgiparams{'MONTH'}];
@@ -142,16 +142,16 @@ else {
 my $skip=0;
 my $filestr='';
 if ($datediff==0) {
-        $filestr="/var/log/messages";
+	$filestr="/var/log/messages";
 } else {
        $filestr="/var/log/messages.$datediff";
        $filestr = "$filestr.gz" if -f "$filestr.gz";
 }
 
 if (!(open (FILE,($filestr =~ /.gz$/ ? "gzip -dc $filestr |" : $filestr)))) {
-        $errormessage = "$Lang::tr{'date not in logs'}: $filestr $Lang::tr{'could not be opened'}";
-        $skip=1;
-        # Note: This is in case the log does not exist for that date
+	$errormessage = "$Lang::tr{'date not in logs'}: $filestr $Lang::tr{'could not be opened'}";
+	$skip=1;
+	# Note: This is in case the log does not exist for that date
 }
 my $lines = 0;
 my @log=();
@@ -159,15 +159,15 @@ my $port = $cgiparams{port};
 
 if (!$skip)
 {
-        while (<FILE>)
-        {
-	 	if (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {
-                if($_ =~  /DPT\=([\d\.]+)/){
-                  if($1 eq $port){
-			$log[$lines] = $_;
-			$lines++;
-                  }
-                }
+	while (<FILE>)
+	{
+		if (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {
+			if($_ =~  /DPT\=([\d\.]+)/){
+				if($1 eq $port){
+					$log[$lines] = $_;
+					$lines++;
+				}
+			}
 		}
 	}
 	close (FILE);	
@@ -175,26 +175,26 @@ if (!$skip)
 
 $skip=0;
 if ($multifile) {
-        $datediff=$datediff-1;
-        if ($datediff==0) {
-                $filestr="/var/log/messages";
-        } else {
-                $filestr="/var/log/messages.$datediff";
-                $filestr = "$filestr.gz" if -f "$filestr.gz";
-        }
-        if (!(open (FILE,($filestr =~ /.gz$/ ? "gzip -dc $filestr |" : $filestr)))) {
-                $errormessage="$Lang::tr{'date not in logs'}: $filestr $Lang::tr{'could not be opened'}";
-                $skip=1;
-        }
-        if (!$skip) {
+	$datediff=$datediff-1;
+	if ($datediff==0) {
+		$filestr="/var/log/messages";
+	} else {
+		$filestr="/var/log/messages.$datediff";
+		$filestr = "$filestr.gz" if -f "$filestr.gz";
+	}
+	if (!(open (FILE,($filestr =~ /.gz$/ ? "gzip -dc $filestr |" : $filestr)))) {
+		$errormessage="$Lang::tr{'date not in logs'}: $filestr $Lang::tr{'could not be opened'}";
+		$skip=1;
+	}
+	if (!$skip) {
 		while (<FILE>) {
-		 	if (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {
-                       if($_ =~  /DPT\=([\d\.]+)/){
-                         if($1 eq $port){
-				$log[$lines] = $_;
-				$lines++;
-                         }
-                       }
+			if (/(^${monthstr} ${daystr} ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {
+				if($_ =~  /DPT\=([\d\.]+)/){
+					if($1 eq $port){
+						$log[$lines] = $_;
+						$lines++;
+					}
+				}
 			}
 		}
 		close (FILE);
@@ -264,7 +264,8 @@ END
 print "<p><b>$Lang::tr{'firewall hits'} $longmonthstr $daystr: $lines</b></p>";
 
 if ($start == -1) {
-        $start = $lines - ${Header::viewsize}; }
+	$start = $lines - ${Header::viewsize}; 
+}
 if ($start >= $lines - ${Header::viewsize}) { $start = $lines - ${Header::viewsize}; };
 if ($start < 0) { $start = 0; }
 
@@ -298,56 +299,65 @@ if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @slice = reverse @slice; }
 $lines = 0;
 foreach $_ (@slice)
 {
-  $a = $_;
-  if($_ =~  /DPT\=([\d\.]+)/){
-    if($1 eq $port){
-	my $chain = '';
-      	my $in = '-'; my $out = '-';
-	my $srcaddr = ''; my $dstaddr = '';
-	my $protostr = '';
-	my $srcport = ''; my $dstport = '';
+	$a = $_;
+	if($_ =~  /DPT\=([\d\.]+)/){
+		if($1 eq $port){
+			my $chain = '';
+			my $in = '-';
+			my $out = '-';
+			my $srcaddr = '';
+			my $dstaddr = '';
+			my $protostr = '';
+			my $srcport = '';
+			my $dstport = '';
 
-	$_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/;
-	my $timestamp = $1; my $chain = $2; my $packet = $3;
-	$timestamp =~ /(...) (..) (..:..:..)/;
-	my $month = $1; my $day = $2; my $time = $3; my $iface;
+			# If ipv6 uses bridge, the use PHYSIN, otherwise use IN
+			if    ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)(PHYSIN=.*)$/) {}
+			elsif ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/) {}
+			my $timestamp = $1; my $chain = $2; my $packet = $3;
+			$timestamp =~ /(...) (..) (..:..:..)/;
+			my $month = $1; my $day = $2; my $time = $3; my $iface;
 
-	if ($a =~ /IN\=(\w+)/) { $iface = $1; }
-	if ($a =~ /OUT\=(\w+)/) { $out = $1; }
-	if ($a =~ /SRC\=([\d\.]+)/) { $srcaddr = $1; }
-	if ($a =~ /DST\=([\d\.]+)/) { $dstaddr = $1; }
-	if ($a =~ /PROTO\=(\w+)/) { $protostr = $1; }
-	my $protostrlc = lc($protostr);
-	if ($a =~  /SPT\=([\d\.]+)/){ $srcport = $1; }
-	if ($a =~  /DPT\=([\d\.]+)/){ $dstport = $1; }
+			# If ipv6 uses bridge, the use PHYSIN and PHYSOUT, otherwise use IN and OUT
+			if ($a =~ /PHYSIN\=(\w+)/)  { $iface = $1; } elsif ($a =~ /IN\=(\w+)/)  { $iface = $1; }
+			if ($a =~ /PHYSOUT\=(\w+)/) { $out = $1;   } elsif ($a =~ /OUT\=(\w+)/) { $out = $1; }
+			# Detect ipv4 and ipv6 addresses
+			if (($a =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($a =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) { $srcaddr = $1; }
+			if (($a =~ /DST\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($a =~ /DST\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) { $dstaddr = $1; }
+			if ($a =~ /PROTO\=(\w+)/) { $protostr = $1; }
+			my $protostrlc = lc($protostr);
+			if ($a =~  /SPT\=([\d\.]+)/){ $srcport = $1; }
+			if ($a =~  /DPT\=([\d\.]+)/){ $dstport = $1; }
 
-	if ($lines % 2) {
-		print "<tr bgcolor='${Header::table1colour}'>\n"; }
-	else {
-		print "<tr bgcolor='${Header::table2colour}'>\n"; }
-	print <<END
-	<td align='center'>$time</td>
-	<td align='center'>$chain</td>
-	<td align='center'>$iface</td>
-	<td align='center'>$protostr</td>
-	<td align='center'>
-	<table width='100%' cellpadding='0' cellspacing='0'><tr>
-	<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a></td>
-	</tr></table>
-	</td>
-	<td align='center'>$srcport</td>
-	<td align='center'>
-	<table width='100%' cellpadding='0' cellspacing='0'><tr>
-	<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$dstaddr'>$dstaddr</a></td>
-	</tr></table>
-	</td>
-	<td align='center'>$dstport</td>
-</tr>
+			if ($lines % 2) {
+				print "<tr bgcolor='${Header::table1colour}'>\n"; 
+			}
+			else {
+				print "<tr bgcolor='${Header::table2colour}'>\n"; 
+			}
+			print <<END
+			<td align='center'>$time</td>
+			<td align='center'>$chain</td>
+			<td align='center'>$iface</td>
+			<td align='center'>$protostr</td>
+			<td align='center'>
+			<table width='100%' cellpadding='0' cellspacing='0'><tr>
+			<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a></td>
+			</tr></table>
+			</td>
+				<td align='center'>$srcport</td>
+			<td align='center'>
+			<table width='100%' cellpadding='0' cellspacing='0'><tr>
+			<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$dstaddr'>$dstaddr</a></td>
+			</tr></table>
+			</td>
+			<td align='center'>$dstport</td>
+			</tr>
 END
-	;
-       $lines++;
-    }
-  }
+			;
+			$lines++;
+		}
+	}
 }
 
 print <<END
@@ -365,30 +375,34 @@ END
 
 sub oldernewer
 {
-print <<END
-<table width='100%'>
-<tr>
+	print <<END
+	<table width='100%'>
+	<tr>
 END
-;
+	;
 
-print "<td align='center' width='50%'>";
-if ($prev != -1) {
-	print "<a href='/cgi-bin/logs.cgi/showrequestfromport.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{port}'>$Lang::tr{'older'}</a>"; }
-else {
-	print "$Lang::tr{'older'}"; }
-print "</td>\n";
+	print "<td align='center' width='50%'>";
+	if ($prev != -1) {
+		print "<a href='/cgi-bin/logs.cgi/showrequestfromport.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{port}'>$Lang::tr{'older'}</a>"; 
+	}
+	else {
+		print "$Lang::tr{'older'}"; 
+	}
+	print "</td>\n";
 
-print "<td align='center' width='50%'>";
-if ($next != -1) {
-	print "<a href='/cgi-bin/logs.cgi/showrequestfromport.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{port}'>$Lang::tr{'newer'}</a>"; }
-else {
-	print "$Lang::tr{'newer'}"; }
-print "</td>\n";
+	print "<td align='center' width='50%'>";
+	if ($next != -1) {
+		print "<a href='/cgi-bin/logs.cgi/showrequestfromport.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{port}'>$Lang::tr{'newer'}</a>"; 
+	}
+	else {
+		print "$Lang::tr{'newer'}"; 
+	}
+	print "</td>\n";
 
-print <<END
-</tr>
-</table>
+	print <<END
+	</tr>
+	</table>
 END
-;
+	;
 }
 
