@@ -34,13 +34,13 @@ done
 # Stop services
 /etc/init.d/fcron stop
 /etc/init.d/collectd stop
-qosctrl stop
+/usr/local/bin/qosctrl stop
 
 # Backup RRDs
 if [ -d "/var/log/rrd.bak" ]; then
 	# Umount ramdisk
 	umount -l "/var/log/rrd"
-	rm -f "/var/log/rrd"
+	rm -rf "/var/log/rrd"
 
 	mv "/var/log/rrd.bak/vnstat" "/var/log/vnstat"
 	mv "/var/log/rrd.bak" "/var/log/rrd"
@@ -56,7 +56,10 @@ rm -f /etc/rc.d/init.d/tmpfs \
 extract_files
 
 # Update Language cache
-# /usr/local/bin/update-lang-cache
+/usr/local/bin/update-lang-cache
+
+# Remove Ramdisk entry from fstab
+sed -i -e "s|^none\s/var/log/rrd.*||g" /etc/fstab
 
 # Keep (almost) old ramdisk behaviour
 if [ ! -e "/etc/sysconfig/ramdisk" ]; then
@@ -83,7 +86,7 @@ fi
 /etc/init.d/vnstat start
 /etc/init.d/fcron start
 /etc/init.d/dnsmasq restart
-qosctrl start
+/usr/local/bin/qosctrl start
 
 # Disable loading of cryptodev
 sed -e "s/^cryptodev/# &/g" -i /etc/sysconfig/modules
