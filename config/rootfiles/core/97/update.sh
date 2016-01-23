@@ -32,6 +32,7 @@ do
 done
 
 # Stop services
+/etc/init.d/squid stop
 /etc/init.d/dnsmasq stop
 
 # Extract files
@@ -46,6 +47,7 @@ paxctl -mpexs /usr/bin/grub-script-check
 # Start services
 /etc/init.d/dnsmasq start
 /etc/init.d/sshd restart
+/etc/init.d/squid start
 
 # Delete old QoS enabled indicator
 rm -f /var/ipfire/qos/enable
