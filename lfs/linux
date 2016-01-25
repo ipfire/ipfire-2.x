@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2016  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,10 +24,10 @@
 
 include Config
 
-VER         = 3.14.57
-RPI_PATCHES = 3.14.57-grsec-ipfire1
-A7M_PATCHES = 3.14.57-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.1ipfire-3.14.57-v1.patch.xz
+VER         = 3.14.59
+RPI_PATCHES = 3.14.59-grsec-ipfire1
+A7M_PATCHES = 3.14.59-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.1ipfire-3.14.59-v1.patch.xz
 
 
 THISAPP    = linux-$(VER)
@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 64
+PAK_VER    = 65
 DEPS	   = ""
 
 KERNEL_ARCH = $(MACHINE)
@@ -83,10 +83,11 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= b7e254c83a0324852c8ccc4ed1b5377d
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 4ab53e184441c895adf318a1c2874d43
-arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= f29bd5c156384b0a4bb7c6e2c973ea06
-$(GRS_PATCHES)_MD5				= de603c5cb2e38ee308f1647ad3bd24cf
+$(DL_FILE)_MD5					= 9e3fbdf5067ffc413c0effc427050112
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= ed11c924a484646018be8671935407d0
+arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= eafe3ef25946d9d5169dd5af4d280ba5
+$(GRS_PATCHES)_MD5				= 63721b2131356a614edcb4d00a64e62e
+
 
 install : $(TARGET)
 
