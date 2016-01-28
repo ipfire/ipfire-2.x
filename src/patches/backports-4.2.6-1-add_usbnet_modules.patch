@@ -1,7 +1,7 @@
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/asix_common.c backports-3.18.1-1/drivers/net/usb/asix_common.c
---- backports-3.18.1-1.org/drivers/net/usb/asix_common.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/asix_common.c	2014-12-16 18:39:45.000000000 +0100
-@@ -0,0 +1,582 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/asix_common.c backports-4.2.6-1/drivers/net/usb/asix_common.c
+--- backports-4.2.6-1.org/drivers/net/usb/asix_common.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/asix_common.c	2015-11-09 23:37:56.000000000 +0100
+@@ -0,0 +1,584 @@
 +/*
 + * ASIX AX8817X based USB 2.0 Ethernet Devices
 + * Copyright (C) 2003-2006 David Hollis <dhollis@davehollis.com>
@@ -192,6 +192,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/asix_common.c backports-3.18.1
 +		memcpy(skb_tail_pointer(skb), &padbytes, sizeof(padbytes));
 +		skb_put(skb, sizeof(padbytes));
 +	}
++
++	usbnet_set_skb_tx_stats(skb, 1, 0);
 +	return skb;
 +}
 +
@@ -584,10 +586,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/asix_common.c backports-3.18.1
 +
 +	return 0;
 +}
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/asix_devices.c backports-3.18.1-1/drivers/net/usb/asix_devices.c
---- backports-3.18.1-1.org/drivers/net/usb/asix_devices.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/asix_devices.c	2014-12-16 18:39:45.000000000 +0100
-@@ -0,0 +1,1104 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/asix_devices.c backports-4.2.6-1/drivers/net/usb/asix_devices.c
+--- backports-4.2.6-1.org/drivers/net/usb/asix_devices.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/asix_devices.c	2015-11-09 23:37:56.000000000 +0100
+@@ -0,0 +1,1107 @@
 +/*
 + * ASIX AX8817X based USB 2.0 Ethernet Devices
 + * Copyright (C) 2003-2006 David Hollis <dhollis@davehollis.com>
@@ -1077,8 +1079,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/asix_devices.c backports-3.18.
 +
 +static void ax88772_unbind(struct usbnet *dev, struct usb_interface *intf)
 +{
-+	if (dev->driver_priv)
-+		kfree(dev->driver_priv);
++	kfree(dev->driver_priv);
 +}
 +
 +static const struct ethtool_ops ax88178_ethtool_ops = {
@@ -1570,6 +1571,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/asix_devices.c backports-3.18.
 +	USB_DEVICE (0x0df6, 0x0056),
 +	.driver_info =  (unsigned long) &ax88178_info,
 +}, {
++	// Sitecom LN-028 "USB 2.0 10/100/1000 Ethernet adapter"
++	USB_DEVICE (0x0df6, 0x061c),
++	.driver_info =  (unsigned long) &ax88178_info,
++}, {
 +	// corega FEther USB2-TX
 +	USB_DEVICE (0x07aa, 0x0017),
 +	.driver_info =  (unsigned long) &ax8817x_info,
@@ -1692,9 +1697,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/asix_devices.c backports-3.18.
 +MODULE_DESCRIPTION("ASIX AX8817X based USB 2.0 Ethernet Devices");
 +MODULE_LICENSE("GPL");
 +
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/asix.h backports-3.18.1-1/drivers/net/usb/asix.h
---- backports-3.18.1-1.org/drivers/net/usb/asix.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/asix.h	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/asix.h backports-4.2.6-1/drivers/net/usb/asix.h
+--- backports-4.2.6-1.org/drivers/net/usb/asix.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/asix.h	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,234 @@
 +/*
 + * ASIX AX8817X based USB 2.0 Ethernet Devices
@@ -1930,9 +1935,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/asix.h backports-3.18.1-1/driv
 +int asix_set_mac_address(struct net_device *net, void *p);
 +
 +#endif /* _ASIX_H */
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/ax88172a.c backports-3.18.1-1/drivers/net/usb/ax88172a.c
---- backports-3.18.1-1.org/drivers/net/usb/ax88172a.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/ax88172a.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/ax88172a.c backports-4.2.6-1/drivers/net/usb/ax88172a.c
+--- backports-4.2.6-1.org/drivers/net/usb/ax88172a.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/ax88172a.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,422 @@
 +/*
 + * ASIX AX88172A based USB 2.0 Ethernet Devices
@@ -2356,9 +2361,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/ax88172a.c backports-3.18.1-1/
 +	.rx_fixup = ax88172a_rx_fixup,
 +	.tx_fixup = asix_tx_fixup,
 +};
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/ax88179_178a.c backports-3.18.1-1/drivers/net/usb/ax88179_178a.c
---- backports-3.18.1-1.org/drivers/net/usb/ax88179_178a.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/ax88179_178a.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/ax88179_178a.c backports-4.2.6-1/drivers/net/usb/ax88179_178a.c
+--- backports-4.2.6-1.org/drivers/net/usb/ax88179_178a.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/ax88179_178a.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,1756 @@
 +/*
 + * ASIX AX88179/178A USB 3.0/2.0 to Gigabit Ethernet Devices
@@ -4116,9 +4121,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/ax88179_178a.c backports-3.18.
 +
 +MODULE_DESCRIPTION("ASIX AX88179/178A based USB 3.0/2.0 Gigabit Ethernet Devices");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/catc.c backports-3.18.1-1/drivers/net/usb/catc.c
---- backports-3.18.1-1.org/drivers/net/usb/catc.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/catc.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/catc.c backports-4.2.6-1/drivers/net/usb/catc.c
+--- backports-4.2.6-1.org/drivers/net/usb/catc.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/catc.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,965 @@
 +/*
 + *  Copyright (c) 2001 Vojtech Pavlik
@@ -4763,7 +4768,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/catc.c backports-3.18.1-1/driv
 +	u8 broadcast[ETH_ALEN];
 +	u8 rx = RxEnable | RxPolarity | RxMultiCast;
 +
-+	memset(broadcast, 0xff, ETH_ALEN);
++	eth_broadcast_addr(broadcast);
 +	memset(catc->multicast, 0, 64);
 +
 +	catc_multicast(broadcast, catc->multicast);
@@ -5002,7 +5007,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/catc.c backports-3.18.1-1/driv
 +		
 +		dev_dbg(dev, "Filling the multicast list.\n");
 +	  
-+		memset(broadcast, 0xff, ETH_ALEN);
++		eth_broadcast_addr(broadcast);
 +		catc_multicast(broadcast, catc->multicast);
 +		catc_multicast(netdev->dev_addr, catc->multicast);
 +		catc_write_mem(catc, 0xfa80, catc->multicast, 64);
@@ -5085,9 +5090,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/catc.c backports-3.18.1-1/driv
 +};
 +
 +module_usb_driver(catc_driver);
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/cdc_eem.c backports-3.18.1-1/drivers/net/usb/cdc_eem.c
---- backports-3.18.1-1.org/drivers/net/usb/cdc_eem.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/cdc_eem.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/cdc_eem.c backports-4.2.6-1/drivers/net/usb/cdc_eem.c
+--- backports-4.2.6-1.org/drivers/net/usb/cdc_eem.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/cdc_eem.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,381 @@
 +/*
 + * USB CDC EEM network interface driver
@@ -5470,9 +5475,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cdc_eem.c backports-3.18.1-1/d
 +MODULE_AUTHOR("Omar Laazimani <omar.oberthur@gmail.com>");
 +MODULE_DESCRIPTION("USB CDC EEM");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/cdc-phonet.c backports-3.18.1-1/drivers/net/usb/cdc-phonet.c
---- backports-3.18.1-1.org/drivers/net/usb/cdc-phonet.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/cdc-phonet.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/cdc-phonet.c backports-4.2.6-1/drivers/net/usb/cdc-phonet.c
+--- backports-4.2.6-1.org/drivers/net/usb/cdc-phonet.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/cdc-phonet.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,466 @@
 +/*
 + * phonet.c -- USB CDC Phonet host driver
@@ -5606,7 +5611,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cdc-phonet.c backports-3.18.1-
 +	struct page *page;
 +	int err;
 +
-+	page = __skb_alloc_page(gfp_flags | __GFP_NOMEMALLOC, NULL);
++	page = __dev_alloc_page(gfp_flags | __GFP_NOMEMALLOC);
 +	if (!page)
 +		return -ENOMEM;
 +
@@ -5688,7 +5693,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cdc-phonet.c backports-3.18.1-
 +	if (page)
 +		put_page(page);
 +	if (req)
-+		rx_submit(pnd, req, GFP_ATOMIC | __GFP_COLD);
++		rx_submit(pnd, req, GFP_ATOMIC);
 +}
 +
 +static int usbpn_close(struct net_device *dev);
@@ -5707,7 +5712,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cdc-phonet.c backports-3.18.1-
 +	for (i = 0; i < rxq_size; i++) {
 +		struct urb *req = usb_alloc_urb(0, GFP_KERNEL);
 +
-+		if (!req || rx_submit(pnd, req, GFP_KERNEL | __GFP_COLD)) {
++		if (!req || rx_submit(pnd, req, GFP_KERNEL)) {
 +			usb_free_urb(req);
 +			usbpn_close(dev);
 +			return -ENOMEM;
@@ -5940,9 +5945,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cdc-phonet.c backports-3.18.1-
 +MODULE_AUTHOR("Remi Denis-Courmont");
 +MODULE_DESCRIPTION("USB CDC Phonet host interface");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/cdc_subset.c backports-3.18.1-1/drivers/net/usb/cdc_subset.c
---- backports-3.18.1-1.org/drivers/net/usb/cdc_subset.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/cdc_subset.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/cdc_subset.c backports-4.2.6-1/drivers/net/usb/cdc_subset.c
+--- backports-4.2.6-1.org/drivers/net/usb/cdc_subset.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/cdc_subset.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,369 @@
 +/*
 + * Simple "CDC Subset" USB Networking Links
@@ -6313,10 +6318,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cdc_subset.c backports-3.18.1-
 +MODULE_AUTHOR("David Brownell");
 +MODULE_DESCRIPTION("Simple 'CDC Subset' USB networking links");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/cx82310_eth.c backports-3.18.1-1/drivers/net/usb/cx82310_eth.c
---- backports-3.18.1-1.org/drivers/net/usb/cx82310_eth.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/cx82310_eth.c	2014-12-16 18:39:45.000000000 +0100
-@@ -0,0 +1,326 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/cx82310_eth.c backports-4.2.6-1/drivers/net/usb/cx82310_eth.c
+--- backports-4.2.6-1.org/drivers/net/usb/cx82310_eth.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/cx82310_eth.c	2015-11-09 23:37:56.000000000 +0100
+@@ -0,0 +1,353 @@
 +/*
 + * Driver for USB ethernet port of Conexant CX82310-based ADSL routers
 + * Copyright (C) 2010 by Ondrej Zary
@@ -6365,8 +6370,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cx82310_eth.c backports-3.18.1
 +};
 +
 +#define CMD_PACKET_SIZE	64
-+/* first command after power on can take around 8 seconds */
-+#define CMD_TIMEOUT	15000
++#define CMD_TIMEOUT	100
 +#define CMD_REPLY_RETRY 5
 +
 +#define CX82310_MTU	1514
@@ -6397,8 +6401,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cx82310_eth.c backports-3.18.1
 +	ret = usb_bulk_msg(udev, usb_sndbulkpipe(udev, CMD_EP), buf,
 +			   CMD_PACKET_SIZE, &actual_len, CMD_TIMEOUT);
 +	if (ret < 0) {
-+		dev_err(&dev->udev->dev, "send command %#x: error %d\n",
-+			cmd, ret);
++		if (cmd != CMD_GET_LINK_STATUS)
++			dev_err(&dev->udev->dev, "send command %#x: error %d\n",
++				cmd, ret);
 +		goto end;
 +	}
 +
@@ -6409,8 +6414,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cx82310_eth.c backports-3.18.1
 +					   buf, CMD_PACKET_SIZE, &actual_len,
 +					   CMD_TIMEOUT);
 +			if (ret < 0) {
-+				dev_err(&dev->udev->dev,
-+					"reply receive error %d\n", ret);
++				if (cmd != CMD_GET_LINK_STATUS)
++					dev_err(&dev->udev->dev,
++						"reply receive error %d\n",
++						ret);
 +				goto end;
 +			}
 +			if (actual_len > 0)
@@ -6453,6 +6460,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cx82310_eth.c backports-3.18.1
 +	int ret;
 +	char buf[15];
 +	struct usb_device *udev = dev->udev;
++	u8 link[3];
++	int timeout = 50;
 +
 +	/* avoid ADSL modems - continue only if iProduct is "USB NET CARD" */
 +	if (usb_string(udev, udev->descriptor.iProduct, buf, sizeof(buf)) > 0
@@ -6478,6 +6487,20 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cx82310_eth.c backports-3.18.1
 +	dev->partial_data = (unsigned long) kmalloc(dev->hard_mtu, GFP_KERNEL);
 +	if (!dev->partial_data)
 +		return -ENOMEM;
++
++	/* wait for firmware to become ready (indicated by the link being up) */
++	while (--timeout) {
++		ret = cx82310_cmd(dev, CMD_GET_LINK_STATUS, true, NULL, 0,
++				  link, sizeof(link));
++		/* the command can time out during boot - it's not an error */
++		if (!ret && link[0] == 1 && link[2] == 1)
++			break;
++		msleep(500);
++	}
++	if (!timeout) {
++		dev_err(&udev->dev, "firmware not ready in time\n");
++		return -ETIMEDOUT;
++	}
 +
 +	/* enable ethernet mode (?) */
 +	ret = cx82310_cmd(dev, CMD_ETHERNET_MODE, true, "\x01", 1, NULL, 0);
@@ -6619,9 +6642,18 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cx82310_eth.c backports-3.18.1
 +	.tx_fixup	= cx82310_tx_fixup,
 +};
 +
++#define USB_DEVICE_CLASS(vend, prod, cl, sc, pr) \
++	.match_flags = USB_DEVICE_ID_MATCH_DEVICE | \
++		       USB_DEVICE_ID_MATCH_DEV_INFO, \
++	.idVendor = (vend), \
++	.idProduct = (prod), \
++	.bDeviceClass = (cl), \
++	.bDeviceSubClass = (sc), \
++	.bDeviceProtocol = (pr)
++
 +static const struct usb_device_id products[] = {
 +	{
-+		USB_DEVICE_AND_INTERFACE_INFO(0x0572, 0xcb01, 0xff, 0, 0),
++		USB_DEVICE_CLASS(0x0572, 0xcb01, 0xff, 0, 0),
 +		.driver_info = (unsigned long) &cx82310_info
 +	},
 +	{ },
@@ -6643,9 +6675,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/cx82310_eth.c backports-3.18.1
 +MODULE_AUTHOR("Ondrej Zary");
 +MODULE_DESCRIPTION("Conexant CX82310-based ADSL router USB ethernet driver");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/dm9601.c backports-3.18.1-1/drivers/net/usb/dm9601.c
---- backports-3.18.1-1.org/drivers/net/usb/dm9601.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/dm9601.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/dm9601.c backports-4.2.6-1/drivers/net/usb/dm9601.c
+--- backports-4.2.6-1.org/drivers/net/usb/dm9601.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/dm9601.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,647 @@
 +/*
 + * Davicom DM96xx USB 10/100Mbps ethernet devices
@@ -7294,9 +7326,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/dm9601.c backports-3.18.1-1/dr
 +MODULE_AUTHOR("Peter Korsgaard <jacmet@sunsite.dk>");
 +MODULE_DESCRIPTION("Davicom DM96xx USB 10/100 ethernet devices");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/gl620a.c backports-3.18.1-1/drivers/net/usb/gl620a.c
---- backports-3.18.1-1.org/drivers/net/usb/gl620a.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/gl620a.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/gl620a.c backports-4.2.6-1/drivers/net/usb/gl620a.c
+--- backports-4.2.6-1.org/drivers/net/usb/gl620a.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/gl620a.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,242 @@
 +/*
 + * GeneSys GL620USB-A based links
@@ -7540,10 +7572,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/gl620a.c backports-3.18.1-1/dr
 +MODULE_DESCRIPTION("GL620-USB-A Host-to-Host Link cables");
 +MODULE_LICENSE("GPL");
 +
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drivers/net/usb/hso.c
---- backports-3.18.1-1.org/drivers/net/usb/hso.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/hso.c	2015-01-03 13:42:25.000000000 +0100
-@@ -0,0 +1,3326 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/hso.c backports-4.2.6-1/drivers/net/usb/hso.c
+--- backports-4.2.6-1.org/drivers/net/usb/hso.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/hso.c	2016-01-27 15:03:25.000000000 +0100
+@@ -0,0 +1,3322 @@
 +/******************************************************************************
 + *
 + * Driver for Option High Speed Mobile Devices.
@@ -7604,7 +7636,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +#include <linux/module.h>
 +#include <linux/ethtool.h>
 +#include <linux/usb.h>
-+#include <linux/timer.h>
 +#include <linux/tty.h>
 +#include <linux/tty_driver.h>
 +#include <linux/tty_flip.h>
@@ -7700,6 +7731,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +	struct hso_device *parent;
 +	struct net_device *net;
 +	struct rfkill *rfkill;
++	char name[24];
 +
 +	struct usb_endpoint_descriptor *in_endp;
 +	struct usb_endpoint_descriptor *out_endp;
@@ -7820,7 +7852,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +	u8 usb_gone;
 +	struct work_struct async_get_intf;
 +	struct work_struct async_put_intf;
-+	struct work_struct reset_device;
 +
 +	struct usb_device *usb;
 +	struct usb_interface *interface;
@@ -7886,7 +7917,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +static int hso_put_activity(struct hso_device *hso_dev);
 +static int hso_get_activity(struct hso_device *hso_dev);
 +static void tiocmget_intr_callback(struct urb *urb);
-+static void reset_device(struct work_struct *data);
 +/*****************************************************************************/
 +/* Helping functions                                                         */
 +/*****************************************************************************/
@@ -8079,6 +8109,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +}
 +static DEVICE_ATTR(hsotype, S_IRUGO, hso_sysfs_show_porttype, NULL);
 +
++static struct attribute *hso_serial_dev_attrs[] = {
++	&dev_attr_hsotype.attr,
++	NULL
++};
++
++ATTRIBUTE_GROUPS(hso_serial_dev);
++
 +static int hso_urb_to_index(struct hso_serial *serial, struct urb *urb)
 +{
 +	int idx;
@@ -8242,7 +8279,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +	case -ETIMEDOUT:
 +		explanation = "protocol error";
 +		if (hso_dev)
-+			schedule_work(&hso_dev->reset_device);
++			usb_queue_reset_device(hso_dev->interface);
 +		break;
 +	default:
 +		explanation = "unknown status";
@@ -8455,7 +8492,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +					/* We got no receive buffer. */
 +					D1("could not allocate memory");
 +					odev->rx_parse_state = WAIT_SYNC;
-+					return;
++					continue;
 +				}
 +
 +				/* Copy what we got so far. make room for iphdr
@@ -8817,7 +8854,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +		goto err_out;
 +
 +	D1("Opening %d", serial->minor);
-+	kref_get(&serial->parent->ref);
 +
 +	/* setup */
 +	tty->driver_data = serial;
@@ -8835,7 +8871,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +		if (result) {
 +			hso_stop_serial_device(serial->parent);
 +			atomic_dec(&serial->port.count);
-+			kref_put(&serial->parent->ref, hso_serial_ref_free);
++		} else {
++			kref_get(&serial->parent->ref);
 +		}
 +	} else {
 +		D1("Port was already open");
@@ -8885,8 +8922,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +		usb_autopm_put_interface(serial->parent->interface);
 +
 +	mutex_unlock(&serial->parent->mutex);
-+
-+	kref_put(&serial->parent->ref, hso_serial_ref_free);
 +}
 +
 +/* close the requested serial port */
@@ -8935,6 +8970,16 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +
 +	/* return free room */
 +	return room;
++}
++
++static void hso_serial_cleanup(struct tty_struct *tty)
++{
++	struct hso_serial *serial = tty->driver_data;
++
++	if (!serial)
++		return;
++
++	kref_put(&serial->parent->ref, hso_serial_ref_free);
 +}
 +
 +/* setup the term */
@@ -9009,6 +9054,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +	struct uart_icount *icount;
 +	struct hso_serial_state_notification *serial_state_notification;
 +	struct usb_device *usb;
++	struct usb_interface *interface;
 +	int if_num;
 +
 +	/* Sanity checks */
@@ -9026,7 +9072,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +	BUG_ON((serial->parent->port_spec & HSO_PORT_MASK) != HSO_PORT_MODEM);
 +
 +	usb = serial->parent->usb;
-+	if_num = serial->parent->interface->altsetting->desc.bInterfaceNumber;
++	interface = serial->parent->interface;
++
++	if_num = interface->cur_altsetting->desc.bInterfaceNumber;
 +
 +	/* wIndex should be the USB interface number of the port to which the
 +	 * notification applies, which should always be the Modem port.
@@ -9126,7 +9174,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +		}
 +		cprev = cnow;
 +	}
-+	current->state = TASK_RUNNING;
++	__set_current_state(TASK_RUNNING);
 +	remove_wait_queue(&tiocmget->waitq, &wait);
 +
 +	return ret;
@@ -9207,6 +9255,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +	unsigned long flags;
 +	int if_num;
 +	struct hso_serial *serial = tty->driver_data;
++	struct usb_interface *interface;
 +
 +	/* sanity check */
 +	if (!serial) {
@@ -9217,7 +9266,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +	if ((serial->parent->port_spec & HSO_PORT_MASK) != HSO_PORT_MODEM)
 +		return -EINVAL;
 +
-+	if_num = serial->parent->interface->altsetting->desc.bInterfaceNumber;
++	interface = serial->parent->interface;
++	if_num = interface->cur_altsetting->desc.bInterfaceNumber;
 +
 +	spin_lock_irqsave(&serial->serial_lock, flags);
 +	if (set & TIOCM_RTS)
@@ -9743,8 +9793,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +
 +	for (i = 0; i < serial->num_rx_urbs; i++) {
 +		if (serial->rx_urb[i]) {
-+				usb_kill_urb(serial->rx_urb[i]);
-+				serial->rx_urb_filled[i] = 0;
++			usb_kill_urb(serial->rx_urb[i]);
++			serial->rx_urb_filled[i] = 0;
 +		}
 +	}
 +	serial->curr_rx_urb_idx = 0;
@@ -9773,14 +9823,14 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +	return 0;
 +}
 +
++static void hso_serial_tty_unregister(struct hso_serial *serial)
++{
++	tty_unregister_device(tty_drv, serial->minor);
++}
++
 +static void hso_serial_common_free(struct hso_serial *serial)
 +{
 +	int i;
-+
-+	if (serial->parent->dev)
-+		device_remove_file(serial->parent->dev, &dev_attr_hsotype);
-+
-+	tty_unregister_device(tty_drv, serial->minor);
 +
 +	for (i = 0; i < serial->num_rx_urbs; i++) {
 +		/* unlink and free RX URB */
@@ -9791,6 +9841,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +
 +	/* unlink and free TX URB */
 +	usb_free_urb(serial->tx_urb);
++	kfree(serial->tx_buffer);
 +	kfree(serial->tx_data);
 +	tty_port_destroy(&serial->port);
 +}
@@ -9809,11 +9860,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +		goto exit;
 +
 +	/* register our minor number */
-+	serial->parent->dev = tty_port_register_device(&serial->port, tty_drv,
-+			minor, &serial->parent->interface->dev);
++	serial->parent->dev = tty_port_register_device_attr(&serial->port,
++			tty_drv, minor, &serial->parent->interface->dev,
++			serial->parent, hso_serial_dev_groups);
 +	dev = serial->parent->dev;
-+	dev_set_drvdata(dev, serial->parent);
-+	i = device_create_file(dev, &dev_attr_hsotype);
 +
 +	/* fill in specific data for later use */
 +	serial->minor = minor;
@@ -9861,6 +9911,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +
 +	return 0;
 +exit:
++	hso_serial_tty_unregister(serial);
 +	hso_serial_common_free(serial);
 +	return -1;
 +}
@@ -9883,7 +9934,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +
 +	INIT_WORK(&hso_dev->async_get_intf, async_get_intf);
 +	INIT_WORK(&hso_dev->async_put_intf, async_put_intf);
-+	INIT_WORK(&hso_dev->reset_device, reset_device);
 +
 +	return hso_dev;
 +}
@@ -10004,27 +10054,21 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +{
 +	struct hso_net *hso_net = dev2net(hso_dev);
 +	struct device *dev = &hso_net->net->dev;
-+	char *rfkn;
++	static u32 rfkill_counter;
 +
-+	rfkn = kzalloc(20, GFP_KERNEL);
-+	if (!rfkn)
-+		dev_err(dev, "%s - Out of memory\n", __func__);
++	snprintf(hso_net->name, sizeof(hso_net->name), "hso-%d",
++		 rfkill_counter++);
 +
-+	snprintf(rfkn, 20, "hso-%d",
-+		 interface->altsetting->desc.bInterfaceNumber);
-+
-+	hso_net->rfkill = rfkill_alloc(rfkn,
++	hso_net->rfkill = rfkill_alloc(hso_net->name,
 +				       &interface_to_usbdev(interface)->dev,
 +				       RFKILL_TYPE_WWAN,
 +				       &hso_rfkill_ops, hso_dev);
 +	if (!hso_net->rfkill) {
 +		dev_err(dev, "%s - Out of memory\n", __func__);
-+		kfree(rfkn);
 +		return;
 +	}
 +	if (rfkill_register(hso_net->rfkill) < 0) {
 +		rfkill_destroy(hso_net->rfkill);
-+		kfree(rfkn);
 +		hso_net->rfkill = NULL;
 +		dev_err(dev, "%s - Failed to register rfkill\n", __func__);
 +		return;
@@ -10139,7 +10183,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +
 +	if (!serial)
 +		return;
-+	set_serial_by_index(serial->minor, NULL);
 +
 +	hso_serial_common_free(serial);
 +
@@ -10229,6 +10272,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +	return hso_dev;
 +
 +exit2:
++	hso_serial_tty_unregister(serial);
 +	hso_serial_common_free(serial);
 +exit:
 +	hso_free_tiomget(serial);
@@ -10291,8 +10335,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +		tty_unregister_device(tty_drv, serial->minor);
 +		kfree(serial);
 +	}
-+	if (hso_dev)
-+		kfree(hso_dev);
++	kfree(hso_dev);
 +	return NULL;
 +
 +}
@@ -10347,7 +10390,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +{
 +	struct usb_device *usbdev = interface_to_usbdev(interface);
 +	u8 *config_data = kmalloc(17, GFP_KERNEL);
-+	u32 if_num = interface->altsetting->desc.bInterfaceNumber;
++	u32 if_num = interface->cur_altsetting->desc.bInterfaceNumber;
 +	s32 result;
 +
 +	if (!config_data)
@@ -10425,7 +10468,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +		return -ENODEV;
 +	}
 +
-+	if_num = interface->altsetting->desc.bInterfaceNumber;
++	if_num = interface->cur_altsetting->desc.bInterfaceNumber;
 +
 +	/* Get the interface/port specification from either driver_info or from
 +	 * the device itself */
@@ -10629,26 +10672,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +	return result;
 +}
 +
-+static void reset_device(struct work_struct *data)
-+{
-+	struct hso_device *hso_dev =
-+	    container_of(data, struct hso_device, reset_device);
-+	struct usb_device *usb = hso_dev->usb;
-+	int result;
-+
-+	if (hso_dev->usb_gone) {
-+		D1("No reset during disconnect\n");
-+	} else {
-+		result = usb_lock_device_for_reset(usb, hso_dev->interface);
-+		if (result < 0)
-+			D1("unable to lock device for reset: %d\n", result);
-+		else {
-+			usb_reset_device(usb);
-+			usb_unlock_device(usb);
-+		}
-+	}
-+}
-+
 +static void hso_serial_ref_free(struct kref *ref)
 +{
 +	struct hso_device *hso_dev = container_of(ref, struct hso_device, ref);
@@ -10658,18 +10681,22 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +
 +static void hso_free_interface(struct usb_interface *interface)
 +{
-+	struct hso_serial *hso_dev;
++	struct hso_serial *serial;
 +	int i;
 +
 +	for (i = 0; i < HSO_SERIAL_TTY_MINORS; i++) {
 +		if (serial_table[i] &&
 +		    (serial_table[i]->interface == interface)) {
-+			hso_dev = dev2ser(serial_table[i]);
-+			tty_port_tty_hangup(&hso_dev->port, false);
-+			mutex_lock(&hso_dev->parent->mutex);
-+			hso_dev->parent->usb_gone = 1;
-+			mutex_unlock(&hso_dev->parent->mutex);
++			serial = dev2ser(serial_table[i]);
++			tty_port_tty_hangup(&serial->port, false);
++			mutex_lock(&serial->parent->mutex);
++			serial->parent->usb_gone = 1;
++			mutex_unlock(&serial->parent->mutex);
++			cancel_work_sync(&serial_table[i]->async_put_intf);
++			cancel_work_sync(&serial_table[i]->async_get_intf);
++			hso_serial_tty_unregister(serial);
 +			kref_put(&serial_table[i]->ref, hso_serial_ref_free);
++			set_serial_by_index(i, NULL);
 +		}
 +	}
 +
@@ -10761,6 +10788,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +	.close = hso_serial_close,
 +	.write = hso_serial_write,
 +	.write_room = hso_serial_write_room,
++	.cleanup = hso_serial_cleanup,
 +	.ioctl = hso_serial_ioctl,
 +	.set_termios = hso_serial_set_termios,
 +	.chars_in_buffer = hso_serial_chars_in_buffer,
@@ -10870,10 +10898,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/hso.c backports-3.18.1-1/drive
 +/* disable network interface (eg: insmod hso.ko disable_net=1) */
 +MODULE_PARM_DESC(disable_net, "Disable the network interface");
 +module_param(disable_net, int, S_IRUGO | S_IWUSR);
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/huawei_cdc_ncm.c backports-3.18.1-1/drivers/net/usb/huawei_cdc_ncm.c
---- backports-3.18.1-1.org/drivers/net/usb/huawei_cdc_ncm.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/huawei_cdc_ncm.c	2014-12-16 18:39:45.000000000 +0100
-@@ -0,0 +1,221 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/huawei_cdc_ncm.c backports-4.2.6-1/drivers/net/usb/huawei_cdc_ncm.c
+--- backports-4.2.6-1.org/drivers/net/usb/huawei_cdc_ncm.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/huawei_cdc_ncm.c	2015-11-09 23:37:56.000000000 +0100
+@@ -0,0 +1,224 @@
 +/* huawei_cdc_ncm.c - handles Huawei devices using the CDC NCM protocol as
 + * transport layer.
 + * Copyright (C) 2013	 Enrico Mioso <mrkiko.rs@gmail.com>
@@ -10949,11 +10977,14 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/huawei_cdc_ncm.c backports-3.1
 +	struct usb_driver *subdriver = ERR_PTR(-ENODEV);
 +	int ret = -ENODEV;
 +	struct huawei_cdc_ncm_state *drvstate = (void *)&usbnet_dev->data;
++	int drvflags = 0;
 +
 +	/* altsetting should always be 1 for NCM devices - so we hard-coded
-+	 * it here
++	 * it here. Some huawei devices will need the NDP part of the NCM package to
++	 * be at the end of the frame.
 +	 */
-+	ret = cdc_ncm_bind_common(usbnet_dev, intf, 1);
++	drvflags |= CDC_NCM_FLAG_NDP_TO_END;
++	ret = cdc_ncm_bind_common(usbnet_dev, intf, 1, drvflags);
 +	if (ret)
 +		goto err;
 +
@@ -11095,9 +11126,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/huawei_cdc_ncm.c backports-3.1
 +MODULE_AUTHOR("Enrico Mioso <mrkiko.rs@gmail.com>");
 +MODULE_DESCRIPTION("USB CDC NCM host driver with encapsulated protocol support");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/int51x1.c backports-3.18.1-1/drivers/net/usb/int51x1.c
---- backports-3.18.1-1.org/drivers/net/usb/int51x1.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/int51x1.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/int51x1.c backports-4.2.6-1/drivers/net/usb/int51x1.c
+--- backports-4.2.6-1.org/drivers/net/usb/int51x1.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/int51x1.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,199 @@
 +/*
 + * Copyright (c) 2009 Peter Holik
@@ -11298,9 +11329,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/int51x1.c backports-3.18.1-1/d
 +MODULE_AUTHOR("Peter Holik");
 +MODULE_DESCRIPTION("Intellon usb powerline adapter");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/ipheth.c backports-3.18.1-1/drivers/net/usb/ipheth.c
---- backports-3.18.1-1.org/drivers/net/usb/ipheth.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/ipheth.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/ipheth.c backports-4.2.6-1/drivers/net/usb/ipheth.c
+--- backports-4.2.6-1.org/drivers/net/usb/ipheth.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/ipheth.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,588 @@
 +/*
 + * ipheth.c - Apple iPhone USB Ethernet driver
@@ -11890,9 +11921,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/ipheth.c backports-3.18.1-1/dr
 +MODULE_AUTHOR("Diego Giagio <diego@giagio.com>");
 +MODULE_DESCRIPTION("Apple iPhone USB Ethernet driver");
 +MODULE_LICENSE("Dual BSD/GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/kalmia.c backports-3.18.1-1/drivers/net/usb/kalmia.c
---- backports-3.18.1-1.org/drivers/net/usb/kalmia.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/kalmia.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/kalmia.c backports-4.2.6-1/drivers/net/usb/kalmia.c
+--- backports-4.2.6-1.org/drivers/net/usb/kalmia.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/kalmia.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,366 @@
 +/*
 + * USB network interface driver for Samsung Kalmia based LTE USB modem like the
@@ -12260,9 +12291,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/kalmia.c backports-3.18.1-1/dr
 +MODULE_AUTHOR("Marius Bjoernstad Kotsbak <marius@kotsbak.com>");
 +MODULE_DESCRIPTION("Samsung Kalmia USB network driver");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/kaweth.c backports-3.18.1-1/drivers/net/usb/kaweth.c
---- backports-3.18.1-1.org/drivers/net/usb/kaweth.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/kaweth.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/kaweth.c backports-4.2.6-1/drivers/net/usb/kaweth.c
+--- backports-4.2.6-1.org/drivers/net/usb/kaweth.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/kaweth.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,1331 @@
 +/****************************************************************
 + *
@@ -13542,7 +13573,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/kaweth.c backports-3.18.1-1/dr
 +        awd.done = 0;
 +
 +        urb->context = &awd;
-+        status = usb_submit_urb(urb, GFP_NOIO);
++        status = usb_submit_urb(urb, GFP_ATOMIC);
 +        if (status) {
 +                // something went wrong
 +                usb_free_urb(urb);
@@ -13595,9 +13626,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/kaweth.c backports-3.18.1-1/dr
 +}
 +
 +module_usb_driver(kaweth_driver);
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/drivers/net/usb/Kconfig
---- backports-3.18.1-1.org/drivers/net/usb/Kconfig	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/Kconfig	2015-01-03 15:19:02.310281530 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/Kconfig backports-4.2.6-1/drivers/net/usb/Kconfig
+--- backports-4.2.6-1.org/drivers/net/usb/Kconfig	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/Kconfig	2016-01-27 15:58:23.159192032 +0100
 @@ -13,7 +13,6 @@
  if USB_NET_DRIVERS
  
@@ -13621,7 +13652,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
 -	depends on n
  	tristate "USB Pegasus/Pegasus-II based ethernet device support"
  	depends on m
- 	select BACKPORT_MII
+ 	select BPAUTO_MII
 @@ -92,7 +89,6 @@
  	  module will be called pegasus.
  
@@ -13629,7 +13660,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
 -	depends on n
  	tristate "USB RTL8150 based ethernet device support"
  	depends on m
- 	select BACKPORT_MII
+ 	select BPAUTO_MII
 @@ -105,7 +101,6 @@
  	  module will be called rtl8150.
  
@@ -13637,7 +13668,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
 -	depends on n
  	tristate "Realtek RTL8152/RTL8153 Based USB Ethernet Adapters"
  	depends on m
- 	select BACKPORT_MII
+ 	select BPAUTO_MII
 @@ -153,7 +148,6 @@
  	  module will be called usbnet.
  
@@ -13646,7 +13677,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "ASIX AX88xxx Based USB 2.0 Ethernet Adapters"
  	depends on m
  	depends on USB_USBNET
-@@ -183,7 +177,6 @@
+@@ -184,7 +178,6 @@
  	  what other networking devices you have in use.
  
  config USB_NET_AX88179_178A
@@ -13654,7 +13685,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "ASIX AX88179/178A USB 3.0/2.0 to Gigabit Ethernet"
  	depends on m
  	depends on USB_USBNET
-@@ -232,7 +225,6 @@
+@@ -233,7 +226,6 @@
  	  name is used instead.
  
  config USB_NET_CDC_EEM
@@ -13662,7 +13693,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "CDC EEM support"
  	depends on m
  	depends on USB_USBNET
-@@ -268,7 +260,6 @@
+@@ -269,7 +261,6 @@
  	    * Ericsson F5521gw Mobile Broadband Module
  
  config USB_NET_HUAWEI_CDC_NCM
@@ -13670,7 +13701,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "Huawei NCM embedded AT channel support"
  	depends on m
  	depends on USB_USBNET
-@@ -304,7 +295,6 @@
+@@ -305,7 +296,6 @@
  	  module will be called cdc_mbim.
  
  config USB_NET_DM9601
@@ -13678,7 +13709,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "Davicom DM96xx based USB 10/100 ethernet devices"
  	depends on m
  	depends on USB_USBNET
-@@ -314,7 +304,6 @@
+@@ -315,7 +305,6 @@
  	  based USB 10/100 Ethernet adapters.
  
  config USB_NET_SR9700
@@ -13686,7 +13717,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "CoreChip-sz SR9700 based USB 1.1 10/100 ethernet devices"
  	depends on m
  	depends on USB_USBNET
-@@ -324,7 +313,6 @@
+@@ -325,7 +314,6 @@
  	  10/100 Ethernet adapters.
  
  config USB_NET_SR9800
@@ -13694,7 +13725,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "CoreChip-sz SR9800 based USB 2.0 10/100 ethernet devices"
  	depends on m
  	depends on USB_USBNET
-@@ -341,7 +329,6 @@
+@@ -342,7 +330,6 @@
  	  module will be called sr9800.
  
  config USB_NET_SMSC75XX
@@ -13702,7 +13733,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "SMSC LAN75XX based USB 2.0 gigabit ethernet devices"
  	depends on m
  	depends on USB_USBNET
-@@ -353,7 +340,6 @@
+@@ -354,7 +341,6 @@
  	  Gigabit Ethernet adapters.
  
  config USB_NET_SMSC95XX
@@ -13710,7 +13741,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "SMSC LAN95XX based USB 2.0 10/100 ethernet devices"
  	depends on m
  	depends on USB_USBNET
-@@ -365,7 +351,6 @@
+@@ -366,7 +352,6 @@
  	  10/100 Ethernet adapters.
  
  config USB_NET_GL620A
@@ -13718,7 +13749,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "GeneSys GL620USB-A based cables"
  	depends on m
  	depends on USB_USBNET
-@@ -376,7 +361,6 @@
+@@ -377,7 +362,6 @@
  	  Note that the half-duplex "GL620USB" is not supported.
  
  config USB_NET_NET1080
@@ -13726,7 +13757,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "NetChip 1080 based cables (Laplink, ...)"
  	depends on m
  	default y
-@@ -387,7 +371,6 @@
+@@ -388,7 +372,6 @@
  	  optionally with LEDs that indicate traffic
  
  config USB_NET_PLUSB
@@ -13734,7 +13765,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "Prolific PL-2301/2302/25A1 based cables"
  	depends on m
  	# if the handshake/init/reset problems, from original 'plusb',
-@@ -398,7 +381,6 @@
+@@ -399,7 +382,6 @@
  	  with one of these chips.
  
  config USB_NET_MCS7830
@@ -13742,7 +13773,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "MosChip MCS7830 based Ethernet adapters"
  	depends on m
  	depends on USB_USBNET
-@@ -424,7 +406,6 @@
+@@ -425,7 +407,6 @@
  	  (and for) Microsoft; it isn't an "Open" ecosystem or market.
  
  config USB_NET_CDC_SUBSET
@@ -13750,7 +13781,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "Simple USB Network Links (CDC Ethernet subset)"
  	depends on m
  	depends on USB_USBNET
-@@ -496,7 +477,6 @@
+@@ -497,7 +478,6 @@
  	  with one of these chips.
  
  config USB_NET_ZAURUS
@@ -13758,7 +13789,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "Sharp Zaurus (stock ROMs) and compatible"
  	depends on m
  	depends on USB_USBNET
-@@ -516,7 +496,6 @@
+@@ -517,7 +497,6 @@
  	  some cases CDC MDLM) protocol, not "g_ether".
  
  config USB_NET_CX82310_ETH
@@ -13766,7 +13797,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "Conexant CX82310 USB ethernet port"
  	depends on m
  	depends on USB_USBNET
-@@ -526,7 +505,6 @@
+@@ -527,7 +506,6 @@
  	  it will not work with ADSL modems (use cxacru driver instead).
  
  config USB_NET_KALMIA
@@ -13774,7 +13805,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "Samsung Kalmia based LTE USB modem"
  	depends on m
  	depends on USB_USBNET
-@@ -561,7 +539,6 @@
+@@ -562,7 +540,6 @@
  	  module will be called qmi_wwan.
  
  config USB_HSO
@@ -13782,7 +13813,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "Option USB High Speed Mobile Devices"
  	depends on m
  	depends on USB && RFKILL && TTY
-@@ -574,7 +551,6 @@
+@@ -575,7 +552,6 @@
  	  module will be called hso.
  
  config USB_NET_INT51X1
@@ -13790,7 +13821,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "Intellon PLC based usb adapter"
  	depends on m
  	depends on USB_USBNET
-@@ -584,7 +560,6 @@
+@@ -585,7 +561,6 @@
  	  INT51x1/INT5200 chip, like the "devolo dLan duo".
  
  config USB_CDC_PHONET
@@ -13798,7 +13829,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "CDC Phonet support"
  	depends on m
  	depends on PHONET
-@@ -594,7 +569,6 @@
+@@ -595,7 +570,6 @@
  	  "PC suite" USB profile.
  
  config USB_IPHETH
@@ -13806,7 +13837,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	tristate "Apple iPhone USB Ethernet driver"
  	depends on m
  	default n
-@@ -618,11 +592,10 @@
+@@ -619,11 +593,10 @@
  	  module will be called sierra_net.
  
  config USB_VL600
@@ -13819,9 +13850,651 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Kconfig backports-3.18.1-1/dri
  	help
  	  Select this if you want to use an LG Electronics 4G/LTE usb modem
  	  called VL600.  This driver only handles the ethernet
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/lg-vl600.c backports-3.18.1-1/drivers/net/usb/lg-vl600.c
---- backports-3.18.1-1.org/drivers/net/usb/lg-vl600.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/lg-vl600.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/Kconfig.orig backports-4.2.6-1/drivers/net/usb/Kconfig.orig
+--- backports-4.2.6-1.org/drivers/net/usb/Kconfig.orig	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/Kconfig.orig	2015-11-15 22:19:40.000000000 +0100
+@@ -0,0 +1,638 @@
++#
++# USB Network devices configuration
++#
++comment "Host-side USB support is needed for USB Network Adapter support"
++	depends on !USB && NET
++
++menuconfig USB_NET_DRIVERS
++	tristate "USB Network Adapters"
++	depends on m
++	default USB if USB
++	depends on USB && NET
++
++if USB_NET_DRIVERS
++
++config USB_CATC
++	depends on n
++	tristate "USB CATC NetMate-based Ethernet device support"
++	depends on m
++	depends on CRC32
++	---help---
++	  Say Y if you want to use one of the following 10Mbps USB Ethernet
++	  device based on the EL1210A chip. Supported devices are:
++	  Belkin F5U011
++	  Belkin F5U111
++	  CATC NetMate
++	  CATC NetMate II
++	  smartBridges smartNIC
++
++	  This driver makes the adapter appear as a normal Ethernet interface,
++	  typically on eth0, if it is the only ethernet device, or perhaps on
++	  eth1, if you have a PCI or ISA ethernet card installed.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called catc.
++
++config USB_KAWETH
++	depends on n
++	tristate "USB KLSI KL5USB101-based ethernet device support"
++	depends on m
++	---help---
++	  Say Y here if you want to use one of the following 10Mbps only
++	  USB Ethernet adapters based on the KLSI KL5KUSB101B chipset:
++	  3Com 3C19250
++	  ADS USB-10BT
++	  ATEN USB Ethernet
++	  ASANTE USB To Ethernet Adapter
++	  AOX Endpoints USB Ethernet
++	  Correga K.K.
++	  D-Link DSB-650C and DU-E10
++	  Entrega / Portgear E45
++	  I-O DATA USB-ET/T
++	  Jaton USB Ethernet Device Adapter
++	  Kingston Technology USB Ethernet Adapter
++	  Linksys USB10T
++	  Mobility USB-Ethernet Adapter
++	  NetGear EA-101
++	  Peracom Enet and Enet2
++	  Portsmith Express Ethernet Adapter
++	  Shark Pocket Adapter
++	  SMC 2202USB
++	  Sony Vaio port extender
++
++	  This driver is likely to work with most 10Mbps only USB Ethernet
++	  adapters, including some "no brand" devices. It does NOT work on
++	  SmartBridges smartNIC or on Belkin F5U111 devices - you should use
++	  the CATC NetMate driver for those. If you are not sure which one
++	  you need, select both, and the correct one should be selected for
++	  you.
++
++	  This driver makes the adapter appear as a normal Ethernet interface,
++	  typically on eth0, if it is the only ethernet device, or perhaps on
++	  eth1, if you have a PCI or ISA ethernet card installed.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called kaweth.
++
++config USB_PEGASUS
++	depends on n
++	tristate "USB Pegasus/Pegasus-II based ethernet device support"
++	depends on m
++	select BPAUTO_MII
++	---help---
++	  Say Y here if you know you have Pegasus or Pegasus-II based adapter.
++	  If in doubt then look at <file:drivers/net/usb/pegasus.h> for the
++	  complete list of supported devices.
++
++	  If your particular adapter is not in the list and you are _sure_ it
++	  is Pegasus or Pegasus II based then send me
++	  <petkan@users.sourceforge.net> vendor and device IDs.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called pegasus.
++
++config USB_RTL8150
++	depends on n
++	tristate "USB RTL8150 based ethernet device support"
++	depends on m
++	select BPAUTO_MII
++	help
++	  Say Y here if you have RTL8150 based usb-ethernet adapter.
++	  Send me <petkan@users.sourceforge.net> any comments you may have.
++	  You can also check for updates at <http://pegasus2.sourceforge.net/>.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called rtl8150.
++
++config USB_RTL8152
++	depends on n
++	tristate "Realtek RTL8152/RTL8153 Based USB Ethernet Adapters"
++	depends on m
++	select BPAUTO_MII
++	help
++	  This option adds support for Realtek RTL8152 based USB 2.0
++	  10/100 Ethernet adapters and RTL8153 based USB 3.0 10/100/1000
++	  Ethernet adapters.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called r8152.
++
++config USB_USBNET
++	tristate "Multi-purpose USB Networking Framework"
++	depends on m
++	select BPAUTO_MII
++	---help---
++	  This driver supports several kinds of network links over USB,
++	  with "minidrivers" built around a common network driver core
++	  that supports deep queues for efficient transfers.  (This gives
++	  better performance with small packets and at high speeds).
++
++	  The USB host runs "usbnet", and the other end of the link might be:
++
++	  - Another USB host, when using USB "network" or "data transfer"
++	    cables.  These are often used to network laptops to PCs, like
++	    "Laplink" parallel cables or some motherboards.  These rely
++	    on specialized chips from many suppliers.
++
++	  - An intelligent USB gadget, perhaps embedding a Linux system.
++	    These include PDAs running Linux (iPaq, Yopy, Zaurus, and
++	    others), and devices that interoperate using the standard
++	    CDC-Ethernet specification (including many cable modems).
++
++	  - Network adapter hardware (like those for 10/100 Ethernet) which
++	    uses this driver framework.
++
++	  The link will appear with a name like "usb0", when the link is
++	  a two-node link, or "eth0" for most CDC-Ethernet devices.  Those
++	  two-node links are most easily managed with Ethernet Bridging
++	  (CONFIG_BRIDGE) instead of routing.
++
++	  For more information see <http://www.linux-usb.org/usbnet/>.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called usbnet.
++
++config USB_NET_AX8817X
++	depends on n
++	tristate "ASIX AX88xxx Based USB 2.0 Ethernet Adapters"
++	depends on m
++	depends on USB_USBNET
++	depends on CRC32
++	depends on PHYLIB
++	default y
++	help
++	  This option adds support for ASIX AX88xxx based USB 2.0
++	  10/100 Ethernet adapters.
++
++ 	  This driver should work with at least the following devices:
++	    * Aten UC210T
++	    * ASIX AX88172
++	    * Billionton Systems, USB2AR
++	    * Buffalo LUA-U2-KTX
++	    * Corega FEther USB2-TX
++	    * D-Link DUB-E100
++	    * Hawking UF200
++	    * Linksys USB200M
++	    * Netgear FA120
++	    * Sitecom LN-029
++	    * Sitecom LN-028
++	    * Intellinet USB 2.0 Ethernet
++	    * ST Lab USB 2.0 Ethernet
++	    * TrendNet TU2-ET100
++
++	  This driver creates an interface named "ethX", where X depends on
++	  what other networking devices you have in use.
++
++config USB_NET_AX88179_178A
++	depends on n
++	tristate "ASIX AX88179/178A USB 3.0/2.0 to Gigabit Ethernet"
++	depends on m
++	depends on USB_USBNET
++	depends on CRC32
++	depends on PHYLIB
++	default y
++	help
++	  This option adds support for ASIX AX88179 based USB 3.0/2.0
++	  to Gigabit Ethernet adapters.
++
++	  This driver should work with at least the following devices:
++	    * ASIX AX88179
++	    * ASIX AX88178A
++	    * Sitcomm LN-032
++
++	  This driver creates an interface named "ethX", where X depends on
++	  what other networking devices you have in use.
++
++config USB_NET_CDCETHER
++	tristate "CDC Ethernet support (smart devices such as cable modems)"
++	depends on m
++	depends on USB_USBNET
++	default y
++	help
++	  This option supports devices conforming to the Communication Device
++	  Class (CDC) Ethernet Control Model, a specification that's easy to
++	  implement in device firmware.  The CDC specifications are available
++	  from <http://www.usb.org/>.
++
++	  CDC Ethernet is an implementation option for DOCSIS cable modems
++	  that support USB connectivity, used for non-Microsoft USB hosts.
++	  The Linux-USB CDC Ethernet Gadget driver is an open implementation.
++ 	  This driver should work with at least the following devices:
++
++	    * Dell Wireless 5530 HSPA
++ 	    * Ericsson PipeRider (all variants)
++	    * Ericsson Mobile Broadband Module (all variants)
++ 	    * Motorola (DM100 and SB4100)
++ 	    * Broadcom Cable Modem (reference design)
++	    * Toshiba (PCX1100U and F3507g/F3607gw)
++	    * ...
++
++	  This driver creates an interface named "ethX", where X depends on
++	  what other networking devices you have in use.  However, if the
++	  IEEE 802 "local assignment" bit is set in the address, a "usbX"
++	  name is used instead.
++
++config USB_NET_CDC_EEM
++	depends on n
++	tristate "CDC EEM support"
++	depends on m
++	depends on USB_USBNET
++	help
++	  This option supports devices conforming to the Communication Device
++	  Class (CDC) Ethernet Emulation Model, a specification that's easy to
++	  implement in device firmware.  The CDC EEM specifications are available
++	  from <http://www.usb.org/>.
++
++	  This driver creates an interface named "ethX", where X depends on
++	  what other networking devices you have in use.  However, if the
++	  IEEE 802 "local assignment" bit is set in the address, a "usbX"
++	  name is used instead.
++
++config USB_NET_CDC_NCM
++	tristate "CDC NCM support"
++	depends on m
++	depends on USB_USBNET
++	default y
++	help
++	  This driver provides support for CDC NCM (Network Control Model
++	  Device USB Class Specification). The CDC NCM specification is
++	  available from <http://www.usb.org/>.
++
++	  Say "y" to link the driver statically, or "m" to build a
++	  dynamically linked module.
++
++	  This driver should work with at least the following devices:
++	    * ST-Ericsson M700 LTE FDD/TDD Mobile Broadband Modem (ref. design)
++	    * ST-Ericsson M5730 HSPA+ Mobile Broadband Modem (reference design)
++	    * ST-Ericsson M570 HSPA+ Mobile Broadband Modem (reference design)
++	    * ST-Ericsson M343 HSPA Mobile Broadband Modem (reference design)
++	    * Ericsson F5521gw Mobile Broadband Module
++
++config USB_NET_HUAWEI_CDC_NCM
++	depends on n
++	tristate "Huawei NCM embedded AT channel support"
++	depends on m
++	depends on USB_USBNET
++	select USB_WDM
++	select USB_NET_CDC_NCM
++	help
++		This driver supports huawei-style NCM devices, that use NCM as a
++		transport for other protocols, usually an embedded AT channel.
++		Good examples are:
++		* Huawei E3131
++		* Huawei E3251
++
++		To compile this driver as a module, choose M here: the module will be
++		called huawei_cdc_ncm.ko.
++
++config USB_NET_CDC_MBIM
++	tristate "CDC MBIM support"
++	depends on m
++	depends on USB_USBNET
++	select USB_WDM
++	select USB_NET_CDC_NCM
++	help
++	  This driver provides support for CDC MBIM (Mobile Broadband
++	  Interface Model) devices. The CDC MBIM specification is
++	  available from <http://www.usb.org/>.
++
++	  MBIM devices require configuration using the management
++	  protocol defined by the MBIM specification.  This driver
++	  provides unfiltered access to the MBIM control channel
++	  through the associated /dev/cdc-wdmx character device.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called cdc_mbim.
++
++config USB_NET_DM9601
++	depends on n
++	tristate "Davicom DM96xx based USB 10/100 ethernet devices"
++	depends on m
++	depends on USB_USBNET
++	depends on CRC32
++	help
++	  This option adds support for Davicom DM9601/DM9620/DM9621A
++	  based USB 10/100 Ethernet adapters.
++
++config USB_NET_SR9700
++	depends on n
++	tristate "CoreChip-sz SR9700 based USB 1.1 10/100 ethernet devices"
++	depends on m
++	depends on USB_USBNET
++	depends on CRC32
++	help
++	  This option adds support for CoreChip-sz SR9700 based USB 1.1
++	  10/100 Ethernet adapters.
++
++config USB_NET_SR9800
++	depends on n
++	tristate "CoreChip-sz SR9800 based USB 2.0 10/100 ethernet devices"
++	depends on m
++	depends on USB_USBNET
++	depends on CRC32
++	---help---
++	  Say Y if you want to use one of the following 100Mbps USB Ethernet
++	  device based on the CoreChip-sz SR9800 chip.
++
++	  This driver makes the adapter appear as a normal Ethernet interface,
++	  typically on eth0, if it is the only ethernet device, or perhaps on
++	  eth1, if you have a PCI or ISA ethernet card installed.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called sr9800.
++
++config USB_NET_SMSC75XX
++	depends on n
++	tristate "SMSC LAN75XX based USB 2.0 gigabit ethernet devices"
++	depends on m
++	depends on USB_USBNET
++	depends on BITREVERSE
++	depends on CRC16
++	depends on CRC32
++	help
++	  This option adds support for SMSC LAN75XX based USB 2.0
++	  Gigabit Ethernet adapters.
++
++config USB_NET_SMSC95XX
++	depends on n
++	tristate "SMSC LAN95XX based USB 2.0 10/100 ethernet devices"
++	depends on m
++	depends on USB_USBNET
++	depends on BITREVERSE
++	depends on CRC16
++	depends on CRC32
++	help
++	  This option adds support for SMSC LAN95XX based USB 2.0
++	  10/100 Ethernet adapters.
++
++config USB_NET_GL620A
++	depends on n
++	tristate "GeneSys GL620USB-A based cables"
++	depends on m
++	depends on USB_USBNET
++	help
++	  Choose this option if you're using a host-to-host cable,
++	  or PC2PC motherboard, with this chip.
++
++	  Note that the half-duplex "GL620USB" is not supported.
++
++config USB_NET_NET1080
++	depends on n
++	tristate "NetChip 1080 based cables (Laplink, ...)"
++	depends on m
++	default y
++	depends on USB_USBNET
++	help
++	  Choose this option if you're using a host-to-host cable based
++	  on this design:  one NetChip 1080 chip and supporting logic,
++	  optionally with LEDs that indicate traffic
++
++config USB_NET_PLUSB
++	depends on n
++	tristate "Prolific PL-2301/2302/25A1 based cables"
++	depends on m
++	# if the handshake/init/reset problems, from original 'plusb',
++	# are ever resolved ... then remove "experimental"
++	depends on USB_USBNET
++	help
++	  Choose this option if you're using a host-to-host cable
++	  with one of these chips.
++
++config USB_NET_MCS7830
++	depends on n
++	tristate "MosChip MCS7830 based Ethernet adapters"
++	depends on m
++	depends on USB_USBNET
++	help
++	  Choose this option if you're using a 10/100 Ethernet USB2
++	  adapter based on the MosChip 7830 controller. This includes
++	  adapters marketed under the DeLOCK brand.
++
++config USB_NET_RNDIS_HOST
++	tristate "Host for RNDIS and ActiveSync devices"
++	depends on m
++	depends on USB_USBNET
++	select USB_NET_CDCETHER
++	help
++	  This option enables hosting "Remote NDIS" USB networking links,
++	  as encouraged by Microsoft (instead of CDC Ethernet!) for use in
++	  various devices that may only support this protocol.  A variant
++	  of this protocol (with even less public documentation) seems to
++	  be at the root of Microsoft's "ActiveSync" too.
++
++	  Avoid using this protocol unless you have no better options.
++	  The protocol specification is incomplete, and is controlled by
++	  (and for) Microsoft; it isn't an "Open" ecosystem or market.
++
++config USB_NET_CDC_SUBSET
++	depends on n
++	tristate "Simple USB Network Links (CDC Ethernet subset)"
++	depends on m
++	depends on USB_USBNET
++	default y
++	help
++	  This driver module supports USB network devices that can work
++	  without any device-specific information.  Select it if you have
++	  one of these drivers.
++
++	  Note that while many USB host-to-host cables can work in this mode,
++	  that may mean not being able to talk to Win32 systems or more
++	  commonly not being able to handle certain events (like replugging
++	  the host on the other end) very well.  Also, these devices will
++	  not generally have permanently assigned Ethernet addresses.
++
++config USB_ALI_M5632
++	bool "ALi M5632 based 'USB 2.0 Data Link' cables"
++	depends on USB_NET_CDC_SUBSET
++	help
++	  Choose this option if you're using a host-to-host cable
++	  based on this design, which supports USB 2.0 high speed.
++
++config USB_AN2720
++	bool "AnchorChips 2720 based cables (Xircom PGUNET, ...)"
++	depends on USB_NET_CDC_SUBSET
++	help
++	  Choose this option if you're using a host-to-host cable
++	  based on this design.  Note that AnchorChips is now a
++	  Cypress brand.
++
++config USB_BELKIN
++	bool "eTEK based host-to-host cables (Advance, Belkin, ...)"
++	depends on USB_NET_CDC_SUBSET
++	default y
++	help
++	  Choose this option if you're using a host-to-host cable
++	  based on this design:  two NetChip 2890 chips and an Atmel
++	  microcontroller, with LEDs that indicate traffic.
++
++config USB_ARMLINUX
++	bool "Embedded ARM Linux links (iPaq, ...)"
++	depends on USB_NET_CDC_SUBSET
++	default y
++	help
++	  Choose this option to support the "usb-eth" networking driver
++	  used by most of the ARM Linux community with device controllers
++	  such as the SA-11x0 and PXA-25x UDCs, or the tftp capabilities
++	  in some PXA versions of the "blob" boot loader.
++
++	  Linux-based "Gumstix" PXA-25x based systems use this protocol
++	  to talk with other Linux systems.
++
++	  Although the ROMs shipped with Sharp Zaurus products use a
++	  different link level framing protocol, you can have them use
++	  this simpler protocol by installing a different kernel.
++
++config USB_EPSON2888
++	bool "Epson 2888 based firmware (DEVELOPMENT)"
++	depends on USB_NET_CDC_SUBSET
++	help
++	  Choose this option to support the usb networking links used
++	  by some sample firmware from Epson.
++
++config USB_KC2190
++	bool "KT Technology KC2190 based cables (InstaNet)"
++	depends on USB_NET_CDC_SUBSET
++	help
++	  Choose this option if you're using a host-to-host cable
++	  with one of these chips.
++
++config USB_NET_ZAURUS
++	depends on n
++	tristate "Sharp Zaurus (stock ROMs) and compatible"
++	depends on m
++	depends on USB_USBNET
++	select USB_NET_CDCETHER
++	depends on CRC32
++	default y
++	help
++	  Choose this option to support the usb networking links used by
++	  Zaurus models like the SL-5000D, SL-5500, SL-5600, A-300, B-500.
++	  This also supports some related device firmware, as used in some
++	  PDAs from Olympus and some cell phones from Motorola.
++
++	  If you install an alternate image, such as the Linux 2.6 based
++	  versions of OpenZaurus, you should no longer need to support this
++	  protocol.  Only the "eth-fd" or "net_fd" drivers in these devices
++	  really need this non-conformant variant of CDC Ethernet (or in
++	  some cases CDC MDLM) protocol, not "g_ether".
++
++config USB_NET_CX82310_ETH
++	depends on n
++	tristate "Conexant CX82310 USB ethernet port"
++	depends on m
++	depends on USB_USBNET
++	help
++	  Choose this option if you're using a Conexant CX82310-based ADSL
++	  router with USB ethernet port. This driver is for routers only,
++	  it will not work with ADSL modems (use cxacru driver instead).
++
++config USB_NET_KALMIA
++	depends on n
++	tristate "Samsung Kalmia based LTE USB modem"
++	depends on m
++	depends on USB_USBNET
++	help
++	  Choose this option if you have a Samsung Kalmia based USB modem
++	  as Samsung GT-B3730.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called kalmia.
++
++config USB_NET_QMI_WWAN
++	tristate "QMI WWAN driver for Qualcomm MSM based 3G and LTE modems"
++	depends on m
++	depends on USB_USBNET
++	select USB_WDM
++	help
++	  Support WWAN LTE/3G devices based on Qualcomm Mobile Data Modem
++	  (MDM) chipsets.  Examples of such devices are
++	    * Huawei E392/E398
++
++	  This driver will only drive the ethernet part of the chips.
++	  The devices require additional configuration to be usable.
++	  Multiple management interfaces with linux drivers are
++	  available:
++
++	    * option: AT commands on /dev/ttyUSBx
++	    * cdc-wdm: Qualcomm MSM Interface (QMI) protocol on /dev/cdc-wdmx
++
++	  A modem manager with support for QMI is recommended.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called qmi_wwan.
++
++config USB_HSO
++	depends on n
++	tristate "Option USB High Speed Mobile Devices"
++	depends on m
++	depends on USB && RFKILL && TTY
++	default n
++	help
++	  Choose this option if you have an Option HSDPA/HSUPA card.
++	  These cards support downlink speeds of 7.2Mbps or greater.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called hso.
++
++config USB_NET_INT51X1
++	depends on n
++	tristate "Intellon PLC based usb adapter"
++	depends on m
++	depends on USB_USBNET
++	help
++	  Choose this option if you're using a 14Mb USB-based PLC
++	  (Powerline Communications) solution with an Intellon
++	  INT51x1/INT5200 chip, like the "devolo dLan duo".
++
++config USB_CDC_PHONET
++	depends on n
++	tristate "CDC Phonet support"
++	depends on m
++	depends on PHONET
++	help
++	  Choose this option to support the Phonet interface to a Nokia
++	  cellular modem, as found on most Nokia handsets with the
++	  "PC suite" USB profile.
++
++config USB_IPHETH
++	depends on n
++	tristate "Apple iPhone USB Ethernet driver"
++	depends on m
++	default n
++	---help---
++	  Module used to share Internet connection (tethering) from your
++	  iPhone (Original, 3G and 3GS) to your system.
++	  Note that you need userspace libraries and programs that are needed
++	  to pair your device with your system and that understand the iPhone
++	  protocol.
++
++	  For more information: http://giagio.com/wiki/moin.cgi/iPhoneEthernetDriver
++
++config USB_SIERRA_NET
++	tristate "USB-to-WWAN Driver for Sierra Wireless modems"
++	depends on m
++	depends on USB_USBNET
++	help
++	  Choose this option if you have a Sierra Wireless USB-to-WWAN device.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called sierra_net.
++
++config USB_VL600
++	depends on n
++	tristate "LG VL600 modem dongle"
++	depends on m
++	depends on USB_NET_CDCETHER && TTY
++	select USB_ACM
++	help
++	  Select this if you want to use an LG Electronics 4G/LTE usb modem
++	  called VL600.  This driver only handles the ethernet
++	  interface exposed by the modem firmware.  To establish a connection
++	  you will first need a userspace program that sends the right
++	  command to the modem through its CDC ACM port, and most
++	  likely also a DHCP client.  See this thread about using the
++	  4G modem from Verizon:
++
++	  http://ubuntuforums.org/showpost.php?p=10589647&postcount=17
++
++endif # USB_NET_DRIVERS
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/lg-vl600.c backports-4.2.6-1/drivers/net/usb/lg-vl600.c
+--- backports-4.2.6-1.org/drivers/net/usb/lg-vl600.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/lg-vl600.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,353 @@
 +/*
 + * Ethernet interface part of the LG VL600 LTE modem (4G dongle)
@@ -14026,7 +14699,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/lg-vl600.c backports-3.18.1-1/
 +					&buf->data[sizeof(*ethhdr) + 0x12],
 +					ETH_ALEN);
 +		} else {
-+			memset(ethhdr->h_source, 0, ETH_ALEN);
++			eth_zero_addr(ethhdr->h_source);
 +			memcpy(ethhdr->h_dest, dev->net->dev_addr, ETH_ALEN);
 +
 +			/* Inbound IPv6 packets have an IPv4 ethertype (0x800)
@@ -14176,13 +14849,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/lg-vl600.c backports-3.18.1-1/
 +MODULE_AUTHOR("Anrzej Zaborowski");
 +MODULE_DESCRIPTION("LG-VL600 modem's ethernet link");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/Makefile backports-3.18.1-1/drivers/net/usb/Makefile
---- backports-3.18.1-1.org/drivers/net/usb/Makefile	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/Makefile	2015-01-03 13:49:51.269970813 +0100
-@@ -1,39 +1,35 @@
--#
--# Makefile for USB Network drivers
--#
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/Makefile backports-4.2.6-1/drivers/net/usb/Makefile
+--- backports-4.2.6-1.org/drivers/net/usb/Makefile	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/Makefile	2016-01-27 15:53:50.000000000 +0100
+@@ -1,39 +1,40 @@
+ #
+ # Makefile for USB Network drivers
+ #
 -#
 -#obj-$(CPTCFG_USB_CATC)		+= catc.o
 -#obj-$(CPTCFG_USB_KAWETH)	+= kaweth.o
@@ -14192,6 +14865,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Makefile backports-3.18.1-1/dr
 -#obj-$(CPTCFG_USB_HSO)		+= hso.o
 -#obj-$(CPTCFG_USB_NET_AX8817X)	+= asix.o
 -#obj-$(CPTCFG_USB_NET_AX88179_178A)      += ax88179_178a.o
++
 +obj-$(CPTCFG_USB_CATC)		+= catc.o
 +obj-$(CPTCFG_USB_KAWETH)	+= kaweth.o
 +obj-$(CPTCFG_USB_PEGASUS)	+= pegasus.o
@@ -14246,10 +14920,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/Makefile backports-3.18.1-1/dr
 +obj-$(CPTCFG_USB_VL600)		+= lg-vl600.o
  obj-$(CPTCFG_USB_NET_QMI_WWAN)	+= qmi_wwan.o
  obj-$(CPTCFG_USB_NET_CDC_MBIM)	+= cdc_mbim.o
--
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/mcs7830.c backports-3.18.1-1/drivers/net/usb/mcs7830.c
---- backports-3.18.1-1.org/drivers/net/usb/mcs7830.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/mcs7830.c	2014-12-16 18:39:45.000000000 +0100
+ 
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/mcs7830.c backports-4.2.6-1/drivers/net/usb/mcs7830.c
+--- backports-4.2.6-1.org/drivers/net/usb/mcs7830.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/mcs7830.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,643 @@
 +/*
 + * MOSCHIP MCS7830 based (7730/7830/7832) USB 2.0 Ethernet Devices
@@ -14894,9 +15568,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/mcs7830.c backports-3.18.1-1/d
 +
 +MODULE_DESCRIPTION("USB to network adapter MCS7830)");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/net1080.c backports-3.18.1-1/drivers/net/usb/net1080.c
---- backports-3.18.1-1.org/drivers/net/usb/net1080.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/net1080.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/net1080.c backports-4.2.6-1/drivers/net/usb/net1080.c
+--- backports-4.2.6-1.org/drivers/net/usb/net1080.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/net1080.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,544 @@
 +/*
 + * Net1080 based USB host-to-host cables
@@ -15442,9 +16116,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/net1080.c backports-3.18.1-1/d
 +MODULE_AUTHOR("David Brownell");
 +MODULE_DESCRIPTION("NetChip 1080 based USB Host-to-Host Links");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/pegasus.c backports-3.18.1-1/drivers/net/usb/pegasus.c
---- backports-3.18.1-1.org/drivers/net/usb/pegasus.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/pegasus.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/pegasus.c backports-4.2.6-1/drivers/net/usb/pegasus.c
+--- backports-4.2.6-1.org/drivers/net/usb/pegasus.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/pegasus.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,1335 @@
 +/*
 + *  Copyright (c) 1999-2013 Petko Manolov (petkan@nucleusys.com)
@@ -16781,9 +17455,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/pegasus.c backports-3.18.1-1/d
 +
 +module_init(pegasus_init);
 +module_exit(pegasus_exit);
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/pegasus.h backports-3.18.1-1/drivers/net/usb/pegasus.h
---- backports-3.18.1-1.org/drivers/net/usb/pegasus.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/pegasus.h	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/pegasus.h backports-4.2.6-1/drivers/net/usb/pegasus.h
+--- backports-4.2.6-1.org/drivers/net/usb/pegasus.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/pegasus.h	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,308 @@
 +/*
 + * Copyright (c) 1999-2013 Petko Manolov (petkan@nucleusys.com)
@@ -17093,10 +17767,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/pegasus.h backports-3.18.1-1/d
 +
 +
 +#endif	/* PEGASUS_DEV */
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/plusb.c backports-3.18.1-1/drivers/net/usb/plusb.c
---- backports-3.18.1-1.org/drivers/net/usb/plusb.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/plusb.c	2014-12-16 18:39:45.000000000 +0100
-@@ -0,0 +1,157 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/plusb.c backports-4.2.6-1/drivers/net/usb/plusb.c
+--- backports-4.2.6-1.org/drivers/net/usb/plusb.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/plusb.c	2015-11-09 23:37:56.000000000 +0100
+@@ -0,0 +1,162 @@
 +/*
 + * PL-2301/2302 USB host-to-host link cables
 + * Copyright (C) 2000-2005 by David Brownell
@@ -17233,6 +17907,11 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/plusb.c backports-3.18.1-1/dri
 +}, {
 +	USB_DEVICE(0x050d, 0x258a),     /* Belkin F5U258/F5U279 (PL-25A1) */
 +	.driver_info =  (unsigned long) &prolific_info,
++}, {
++	USB_DEVICE(0x3923, 0x7825),     /* National Instruments USB
++					 * Host-to-Host Cable
++					 */
++	.driver_info =  (unsigned long) &prolific_info,
 +},
 +
 +	{ },		// END
@@ -17254,10 +17933,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/plusb.c backports-3.18.1-1/dri
 +MODULE_AUTHOR("David Brownell");
 +MODULE_DESCRIPTION("Prolific PL-2301/2302/25A1 USB Host to Host Link Driver");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/drivers/net/usb/r8152.c
---- backports-3.18.1-1.org/drivers/net/usb/r8152.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/r8152.c	2015-01-03 13:42:25.000000000 +0100
-@@ -0,0 +1,3913 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/r8152.c backports-4.2.6-1/drivers/net/usb/r8152.c
+--- backports-4.2.6-1.org/drivers/net/usb/r8152.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/r8152.c	2016-01-27 12:43:25.000000000 +0100
+@@ -0,0 +1,2847 @@
 +/*
 + *  Copyright (c) 2014 Realtek Semiconductor Corp. All rights reserved.
 + *
@@ -17281,12 +17960,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +#include <linux/list.h>
 +#include <linux/ip.h>
 +#include <linux/ipv6.h>
-+#include <net/ip6_checksum.h>
-+#include <uapi/linux/mdio.h>
-+#include <linux/mdio.h>
 +
 +/* Version Information */
-+#define DRIVER_VERSION "v1.07.0 (2014/10/09)"
++#define DRIVER_VERSION "v1.04.0 (2014/01/15)"
 +#define DRIVER_AUTHOR "Realtek linux nic maintainers <nic_swsd@realtek.com>"
 +#define DRIVER_DESC "Realtek RTL8152/RTL8153 Based USB Ethernet Adapters"
 +#define MODULENAME "r8152"
@@ -17321,13 +17997,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +#define PLA_WDT6_CTRL		0xe428
 +#define PLA_TCR0		0xe610
 +#define PLA_TCR1		0xe612
-+#define PLA_MTPS		0xe615
 +#define PLA_TXFIFO_CTRL		0xe618
-+#define PLA_RSTTALLY		0xe800
++#define PLA_RSTTELLY		0xe800
 +#define PLA_CR			0xe813
 +#define PLA_CRWECR		0xe81c
-+#define PLA_CONFIG12		0xe81e	/* CONFIG1, CONFIG2 */
-+#define PLA_CONFIG34		0xe820	/* CONFIG3, CONFIG4 */
 +#define PLA_CONFIG5		0xe822
 +#define PLA_PHY_PWR		0xe84c
 +#define PLA_OOB_CTRL		0xe84f
@@ -17335,7 +18008,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +#define PLA_MISC_0		0xe858
 +#define PLA_MISC_1		0xe85a
 +#define PLA_OCP_GPHY_BASE	0xe86c
-+#define PLA_TALLYCNT		0xe890
++#define PLA_TELLYCNT		0xe890
 +#define PLA_SFF_STS_7		0xe8de
 +#define PLA_PHYSTATUS		0xe908
 +#define PLA_BP_BA		0xfc26
@@ -17391,9 +18064,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +#define OCP_SRAM_ADDR		0xa436
 +#define OCP_SRAM_DATA		0xa438
 +#define OCP_DOWN_SPEED		0xa442
-+#define OCP_EEE_ABLE		0xa5c4
-+#define OCP_EEE_ADV		0xa5d0
-+#define OCP_EEE_LPABLE		0xa5d2
++#define OCP_EEE_CFG2		0xa5d0
 +#define OCP_ADC_CFG		0xbc06
 +
 +/* SRAM Register */
@@ -17445,13 +18116,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +/* PLA_TCR1 */
 +#define VERSION_MASK		0x7cf0
 +
-+/* PLA_MTPS */
-+#define MTPS_JUMBO		(12 * 1024 / 64)
-+#define MTPS_DEFAULT		(6 * 1024 / 64)
-+
-+/* PLA_RSTTALLY */
-+#define TALLY_RESET		0x0001
-+
 +/* PLA_CR */
 +#define CR_RST			0x10
 +#define CR_RE			0x08
@@ -17491,14 +18155,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +/* PAL_BDC_CR */
 +#define ALDPS_PROXY_MODE	0x0001
 +
-+/* PLA_CONFIG34 */
-+#define LINK_ON_WAKE_EN		0x0010
-+#define LINK_OFF_WAKE_EN	0x0008
-+
 +/* PLA_CONFIG5 */
-+#define BWF_EN			0x0040
-+#define MWF_EN			0x0020
-+#define UWF_EN			0x0010
 +#define LAN_WAKE_EN		0x0002
 +
 +/* PLA_LED_FEATURE */
@@ -17551,7 +18208,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +/* USB_DEV_STAT */
 +#define STAT_SPEED_MASK		0x0006
 +#define STAT_SPEED_HIGH		0x0000
-+#define STAT_SPEED_FULL		0x0002
++#define STAT_SPEED_FULL		0x0001
 +
 +/* USB_TX_AGG */
 +#define TX_AGG_MAX_THRESHOLD	0x03
@@ -17625,8 +18282,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +#define EEE_NWAY_EN		0x1000
 +#define TX_QUIET_EN		0x0200
 +#define RX_QUIET_EN		0x0100
-+#define sd_rise_time_mask	0x0070
-+#define sd_rise_time(x)		(min(x, 7) << 4)	/* bit 4 ~ 6 */
++#define SDRISETIME		0x0010	/* bit 4 ~ 6 */
 +#define RG_RXLPI_MSK_HFDUP	0x0008
 +#define SDFALLTIME		0x0007	/* bit 0 ~ 2 */
 +
@@ -17638,8 +18294,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +#define RG_EEEPRG_EN		0x0010
 +
 +/* OCP_EEE_CONFIG3 */
-+#define fast_snr_mask		0xff80
-+#define fast_snr(x)		(min(x, 0x1ff) << 7)	/* bit 7 ~ 15 */
++#define FST_SNR_EYE_R		0x1500	/* bit 7 ~ 15 */
 +#define RG_LFS_SEL		0x0060	/* bit 6 ~ 5 */
 +#define MSK_PH			0x0006	/* bit 0 ~ 3 */
 +
@@ -17648,6 +18303,11 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +#define FUN_ADDR		0x0000
 +#define FUN_DATA		0x4000
 +/* bit[4:0] device addr */
++#define DEVICE_ADDR		0x0007
++
++/* OCP_EEE_DATA */
++#define EEE_ADDR		0x003C
++#define EEE_DATA		0x0002
 +
 +/* OCP_EEE_CFG */
 +#define CTAP_SHORT_EN		0x0040
@@ -17655,6 +18315,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +
 +/* OCP_DOWN_SPEED */
 +#define EN_10M_BGOFF		0x0080
++
++/* OCP_EEE_CFG2 */
++#define MY1000_EEE		0x0004
++#define MY100_EEE		0x0002
 +
 +/* OCP_ADC_CFG */
 +#define CKADSEL_L		0x0100
@@ -17681,7 +18345,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	FULL_DUP	= 0x01,
 +};
 +
-+#define RTL8152_MAX_TX		4
++#define RTL8152_MAX_TX		10
 +#define RTL8152_MAX_RX		10
 +#define INTBUFSIZE		2
 +#define CRC_SIZE		4
@@ -17702,11 +18366,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +#define BYTE_EN_START_MASK	0x0f
 +#define BYTE_EN_END_MASK	0xf0
 +
-+#define RTL8153_MAX_PACKET	9216 /* 9K */
-+#define RTL8153_MAX_MTU		(RTL8153_MAX_PACKET - VLAN_ETH_HLEN - VLAN_HLEN)
 +#define RTL8152_RMS		(VLAN_ETH_FRAME_LEN + VLAN_HLEN)
-+#define RTL8153_RMS		RTL8153_MAX_PACKET
-+#define RTL8152_TX_TIMEOUT	(5 * HZ)
++#define RTL8152_TX_TIMEOUT	(HZ)
 +
 +/* rtl8152 flags */
 +enum rtl8152_flags {
@@ -17714,9 +18375,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	RTL8152_SET_RX_MODE,
 +	WORK_ENABLE,
 +	RTL8152_LINK_CHG,
-+	SELECTIVE_SUSPEND,
-+	PHY_RESET,
-+	SCHEDULE_TASKLET,
 +};
 +
 +/* Define these values to match your device */
@@ -17730,41 +18388,11 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +#define MCU_TYPE_PLA			0x0100
 +#define MCU_TYPE_USB			0x0000
 +
-+#define REALTEK_USB_DEVICE(vend, prod)	\
-+	USB_DEVICE_INTERFACE_CLASS(vend, prod, USB_CLASS_VENDOR_SPEC)
-+
-+struct tally_counter {
-+	__le64	tx_packets;
-+	__le64	rx_packets;
-+	__le64	tx_errors;
-+	__le32	rx_errors;
-+	__le16	rx_missed;
-+	__le16	align_errors;
-+	__le32	tx_one_collision;
-+	__le32	tx_multi_collision;
-+	__le64	rx_unicast;
-+	__le64	rx_broadcast;
-+	__le32	rx_multicast;
-+	__le16	tx_aborted;
-+	__le16	tx_underun;
-+};
-+
 +struct rx_desc {
 +	__le32 opts1;
 +#define RX_LEN_MASK			0x7fff
-+
 +	__le32 opts2;
-+#define RD_UDP_CS			(1 << 23)
-+#define RD_TCP_CS			(1 << 22)
-+#define RD_IPV6_CS			(1 << 20)
-+#define RD_IPV4_CS			(1 << 19)
-+
 +	__le32 opts3;
-+#define IPF				(1 << 23) /* IP checksum fail */
-+#define UDPF				(1 << 22) /* UDP checksum fail */
-+#define TCPF				(1 << 21) /* TCP checksum fail */
-+#define RX_VLAN_TAG			(1 << 16)
-+
 +	__le32 opts4;
 +	__le32 opts5;
 +	__le32 opts6;
@@ -17774,22 +18402,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	__le32 opts1;
 +#define TX_FS			(1 << 31) /* First segment of a packet */
 +#define TX_LS			(1 << 30) /* Final segment of a packet */
-+#define GTSENDV4		(1 << 28)
-+#define GTSENDV6		(1 << 27)
-+#define GTTCPHO_SHIFT		18
-+#define GTTCPHO_MAX		0x7fU
-+#define TX_LEN_MAX		0x3ffffU
++#define TX_LEN_MASK		0x3ffff
 +
 +	__le32 opts2;
 +#define UDP_CS			(1 << 31) /* Calculate UDP/IP checksum */
 +#define TCP_CS			(1 << 30) /* Calculate TCP/IP checksum */
 +#define IPV4_CS			(1 << 29) /* Calculate IPv4 checksum */
 +#define IPV6_CS			(1 << 28) /* Calculate IPv6 checksum */
-+#define MSS_SHIFT		17
-+#define MSS_MAX			0x7ffU
-+#define TCPHO_SHIFT		17
-+#define TCPHO_MAX		0x7ffU
-+#define TX_VLAN_TAG			(1 << 16)
 +};
 +
 +struct r8152;
@@ -17826,21 +18445,16 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	spinlock_t rx_lock, tx_lock;
 +	struct delayed_work schedule;
 +	struct mii_if_info mii;
-+	struct mutex control;	/* use for hw setting */
 +
 +	struct rtl_ops {
 +		void (*init)(struct r8152 *);
 +		int (*enable)(struct r8152 *);
 +		void (*disable)(struct r8152 *);
-+		void (*up)(struct r8152 *);
 +		void (*down)(struct r8152 *);
 +		void (*unload)(struct r8152 *);
-+		int (*eee_get)(struct r8152 *, struct ethtool_eee *);
-+		int (*eee_set)(struct r8152 *, struct ethtool_eee *);
 +	} __no_const rtl_ops;
 +
 +	int intr_interval;
-+	u32 saved_wolopts;
 +	u32 msg_enable;
 +	u32 tx_qlen;
 +	u16 ocp_base;
@@ -17859,20 +18473,11 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	RTL_VER_MAX
 +};
 +
-+enum tx_csum_stat {
-+	TX_CSUM_SUCCESS = 0,
-+	TX_CSUM_TSO,
-+	TX_CSUM_NONE
-+};
-+
 +/* Maximum number of multicast addresses to filter (vs. Rx-all-multicast).
 + * The RTL chips use a 64 element hash table based on the Ethernet CRC.
 + */
 +static const int multicast_filter_limit = 32;
-+static unsigned int agg_buf_sz = 16384;
-+
-+#define RTL_LIMITED_TSO_SIZE	(agg_buf_sz - sizeof(struct tx_desc) - \
-+				 VLAN_ETH_HLEN - VLAN_HLEN)
++static unsigned int rx_buf_sz = 16384;
 +
 +static
 +int get_registers(struct r8152 *tp, u16 value, u16 index, u16 size, void *data)
@@ -17885,8 +18490,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		return -ENOMEM;
 +
 +	ret = usb_control_msg(tp->udev, usb_rcvctrlpipe(tp->udev, 0),
-+			      RTL8152_REQ_GET_REGS, RTL8152_REQT_READ,
-+			      value, index, tmp, size, 500);
++			       RTL8152_REQ_GET_REGS, RTL8152_REQT_READ,
++			       value, index, tmp, size, 500);
 +
 +	memcpy(data, tmp, size);
 +	kfree(tmp);
@@ -17900,21 +18505,22 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	int ret;
 +	void *tmp;
 +
-+	tmp = kmemdup(data, size, GFP_KERNEL);
++	tmp = kmalloc(size, GFP_KERNEL);
 +	if (!tmp)
 +		return -ENOMEM;
 +
++	memcpy(tmp, data, size);
++
 +	ret = usb_control_msg(tp->udev, usb_sndctrlpipe(tp->udev, 0),
-+			      RTL8152_REQ_SET_REGS, RTL8152_REQT_WRITE,
-+			      value, index, tmp, size, 500);
++			       RTL8152_REQ_SET_REGS, RTL8152_REQT_WRITE,
++			       value, index, tmp, size, 500);
 +
 +	kfree(tmp);
-+
 +	return ret;
 +}
 +
 +static int generic_ocp_read(struct r8152 *tp, u16 index, u16 size,
-+			    void *data, u16 type)
++				void *data, u16 type)
 +{
 +	u16 limit = 64;
 +	int ret = 0;
@@ -17954,7 +18560,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +}
 +
 +static int generic_ocp_write(struct r8152 *tp, u16 index, u16 byteen,
-+			     u16 size, void *data, u16 type)
++				u16 size, void *data, u16 type)
 +{
 +	int ret;
 +	u16 byteen_start, byteen_end, byen;
@@ -17988,8 +18594,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		while (size) {
 +			if (size > limit) {
 +				ret = set_registers(tp, index,
-+						    type | BYTE_EN_DWORD,
-+						    limit, data);
++					type | BYTE_EN_DWORD,
++					limit, data);
 +				if (ret < 0)
 +					goto error1;
 +
@@ -17998,8 +18604,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +				size -= limit;
 +			} else {
 +				ret = set_registers(tp, index,
-+						    type | BYTE_EN_DWORD,
-+						    size, data);
++					type | BYTE_EN_DWORD,
++					size, data);
 +				if (ret < 0)
 +					goto error1;
 +
@@ -18195,17 +18801,11 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +static int read_mii_word(struct net_device *netdev, int phy_id, int reg)
 +{
 +	struct r8152 *tp = netdev_priv(netdev);
-+	int ret;
-+
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return -ENODEV;
 +
 +	if (phy_id != R8152_PHY_ID)
 +		return -EINVAL;
 +
-+	ret = r8152_mdio_read(tp, reg);
-+
-+	return ret;
++	return r8152_mdio_read(tp, reg);
 +}
 +
 +static
@@ -18213,32 +18813,35 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +{
 +	struct r8152 *tp = netdev_priv(netdev);
 +
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return;
-+
 +	if (phy_id != R8152_PHY_ID)
 +		return;
 +
 +	r8152_mdio_write(tp, reg, val);
 +}
 +
-+static int
-+r8152_submit_rx(struct r8152 *tp, struct rx_agg *agg, gfp_t mem_flags);
++static
++int r8152_submit_rx(struct r8152 *tp, struct rx_agg *agg, gfp_t mem_flags);
++
++static inline void set_ethernet_addr(struct r8152 *tp)
++{
++	struct net_device *dev = tp->netdev;
++	u8 node_id[8] = {0};
++
++	if (pla_ocp_read(tp, PLA_IDR, sizeof(node_id), node_id) < 0)
++		netif_notice(tp, probe, dev, "inet addr fail\n");
++	else {
++		memcpy(dev->dev_addr, node_id, dev->addr_len);
++		memcpy(dev->perm_addr, dev->dev_addr, dev->addr_len);
++	}
++}
 +
 +static int rtl8152_set_mac_address(struct net_device *netdev, void *p)
 +{
 +	struct r8152 *tp = netdev_priv(netdev);
 +	struct sockaddr *addr = p;
-+	int ret = -EADDRNOTAVAIL;
 +
 +	if (!is_valid_ether_addr(addr->sa_data))
-+		goto out1;
-+
-+	ret = usb_autopm_get_interface(tp->intf);
-+	if (ret < 0)
-+		goto out1;
-+
-+	mutex_lock(&tp->control);
++		return -EADDRNOTAVAIL;
 +
 +	memcpy(netdev->dev_addr, addr->sa_data, netdev->addr_len);
 +
@@ -18246,47 +18849,18 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	pla_ocp_write(tp, PLA_IDR, BYTE_EN_SIX_BYTES, 8, addr->sa_data);
 +	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_CRWECR, CRWECR_NORAML);
 +
-+	mutex_unlock(&tp->control);
-+
-+	usb_autopm_put_interface(tp->intf);
-+out1:
-+	return ret;
++	return 0;
 +}
 +
-+static int set_ethernet_addr(struct r8152 *tp)
++static struct net_device_stats *rtl8152_get_stats(struct net_device *dev)
 +{
-+	struct net_device *dev = tp->netdev;
-+	struct sockaddr sa;
-+	int ret;
-+
-+	if (tp->version == RTL_VER_01)
-+		ret = pla_ocp_read(tp, PLA_IDR, 8, sa.sa_data);
-+	else
-+		ret = pla_ocp_read(tp, PLA_BACKUP, 8, sa.sa_data);
-+
-+	if (ret < 0) {
-+		netif_err(tp, probe, dev, "Get ether addr fail\n");
-+	} else if (!is_valid_ether_addr(sa.sa_data)) {
-+		netif_err(tp, probe, dev, "Invalid ether addr %pM\n",
-+			  sa.sa_data);
-+		eth_hw_addr_random(dev);
-+		ether_addr_copy(sa.sa_data, dev->dev_addr);
-+		ret = rtl8152_set_mac_address(dev, &sa);
-+		netif_info(tp, probe, dev, "Random ether addr %pM\n",
-+			   sa.sa_data);
-+	} else {
-+		if (tp->version == RTL_VER_01)
-+			ether_addr_copy(dev->dev_addr, sa.sa_data);
-+		else
-+			ret = rtl8152_set_mac_address(dev, &sa);
-+	}
-+
-+	return ret;
++	return &dev->stats;
 +}
 +
 +static void read_bulk_callback(struct urb *urb)
 +{
 +	struct net_device *netdev;
++	unsigned long flags;
 +	int status = urb->status;
 +	struct rx_agg *agg;
 +	struct r8152 *tp;
@@ -18313,16 +18887,14 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	if (!netif_carrier_ok(netdev))
 +		return;
 +
-+	usb_mark_last_busy(tp->udev);
-+
 +	switch (status) {
 +	case 0:
 +		if (urb->actual_length < ETH_ZLEN)
 +			break;
 +
-+		spin_lock(&tp->rx_lock);
++		spin_lock_irqsave(&tp->rx_lock, flags);
 +		list_add_tail(&agg->list, &tp->rx_done);
-+		spin_unlock(&tp->rx_lock);
++		spin_unlock_irqrestore(&tp->rx_lock, flags);
 +		tasklet_schedule(&tp->tl);
 +		return;
 +	case -ESHUTDOWN:
@@ -18345,9 +18917,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	if (result == -ENODEV) {
 +		netif_device_detach(tp->netdev);
 +	} else if (result) {
-+		spin_lock(&tp->rx_lock);
++		spin_lock_irqsave(&tp->rx_lock, flags);
 +		list_add_tail(&agg->list, &tp->rx_done);
-+		spin_unlock(&tp->rx_lock);
++		spin_unlock_irqrestore(&tp->rx_lock, flags);
 +		tasklet_schedule(&tp->tl);
 +	}
 +}
@@ -18355,7 +18927,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +static void write_bulk_callback(struct urb *urb)
 +{
 +	struct net_device_stats *stats;
-+	struct net_device *netdev;
++	unsigned long flags;
 +	struct tx_agg *agg;
 +	struct r8152 *tp;
 +	int status = urb->status;
@@ -18368,24 +18940,21 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	if (!tp)
 +		return;
 +
-+	netdev = tp->netdev;
-+	stats = &netdev->stats;
++	stats = rtl8152_get_stats(tp->netdev);
 +	if (status) {
 +		if (net_ratelimit())
-+			netdev_warn(netdev, "Tx status %d\n", status);
++			netdev_warn(tp->netdev, "Tx status %d\n", status);
 +		stats->tx_errors += agg->skb_num;
 +	} else {
 +		stats->tx_packets += agg->skb_num;
 +		stats->tx_bytes += agg->skb_len;
 +	}
 +
-+	spin_lock(&tp->tx_lock);
++	spin_lock_irqsave(&tp->tx_lock, flags);
 +	list_add_tail(&agg->list, &tp->tx_free);
-+	spin_unlock(&tp->tx_lock);
++	spin_unlock_irqrestore(&tp->tx_lock, flags);
 +
-+	usb_autopm_put_interface_async(tp->intf);
-+
-+	if (!netif_carrier_ok(netdev))
++	if (!netif_carrier_ok(tp->netdev))
 +		return;
 +
 +	if (!test_bit(WORK_ENABLE, &tp->flags))
@@ -18422,9 +18991,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	case -ESHUTDOWN:
 +		netif_device_detach(tp->netdev);
 +	case -ENOENT:
-+	case -EPROTO:
-+		netif_info(tp, intr, tp->netdev,
-+			   "Stop submitting intr, status %d\n", status);
 +		return;
 +	case -EOVERFLOW:
 +		netif_info(tp, intr, tp->netdev, "intr status -EOVERFLOW\n");
@@ -18515,13 +19081,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	skb_queue_head_init(&tp->tx_queue);
 +
 +	for (i = 0; i < RTL8152_MAX_RX; i++) {
-+		buf = kmalloc_node(agg_buf_sz, GFP_KERNEL, node);
++		buf = kmalloc_node(rx_buf_sz, GFP_KERNEL, node);
 +		if (!buf)
 +			goto err1;
 +
 +		if (buf != rx_agg_align(buf)) {
 +			kfree(buf);
-+			buf = kmalloc_node(agg_buf_sz + RX_ALIGN, GFP_KERNEL,
++			buf = kmalloc_node(rx_buf_sz + RX_ALIGN, GFP_KERNEL,
 +					   node);
 +			if (!buf)
 +				goto err1;
@@ -18541,13 +19107,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	}
 +
 +	for (i = 0; i < RTL8152_MAX_TX; i++) {
-+		buf = kmalloc_node(agg_buf_sz, GFP_KERNEL, node);
++		buf = kmalloc_node(rx_buf_sz, GFP_KERNEL, node);
 +		if (!buf)
 +			goto err1;
 +
 +		if (buf != tx_agg_align(buf)) {
 +			kfree(buf);
-+			buf = kmalloc_node(agg_buf_sz + TX_ALIGN, GFP_KERNEL,
++			buf = kmalloc_node(rx_buf_sz + TX_ALIGN, GFP_KERNEL,
 +					   node);
 +			if (!buf)
 +				goto err1;
@@ -18578,8 +19144,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +
 +	tp->intr_interval = (int)ep_intr->desc.bInterval;
 +	usb_fill_int_urb(tp->intr_urb, tp->udev, usb_rcvintpipe(tp->udev, 3),
-+			 tp->intr_buff, INTBUFSIZE, intr_callback,
-+			 tp, tp->intr_interval);
++		     tp->intr_buff, INTBUFSIZE, intr_callback,
++		     tp, tp->intr_interval);
 +
 +	return 0;
 +
@@ -18592,9 +19158,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +{
 +	struct tx_agg *agg = NULL;
 +	unsigned long flags;
-+
-+	if (list_empty(&tp->tx_free))
-+		return NULL;
 +
 +	spin_lock_irqsave(&tp->tx_lock, flags);
 +	if (!list_empty(&tp->tx_free)) {
@@ -18609,155 +19172,24 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	return agg;
 +}
 +
-+static inline __be16 get_protocol(struct sk_buff *skb)
++static void
++r8152_tx_csum(struct r8152 *tp, struct tx_desc *desc, struct sk_buff *skb)
 +{
-+	__be16 protocol;
++	memset(desc, 0, sizeof(*desc));
 +
-+	if (skb->protocol == htons(ETH_P_8021Q))
-+		protocol = vlan_eth_hdr(skb)->h_vlan_encapsulated_proto;
-+	else
-+		protocol = skb->protocol;
++	desc->opts1 = cpu_to_le32((skb->len & TX_LEN_MASK) | TX_FS | TX_LS);
 +
-+	return protocol;
-+}
-+
-+/* r8152_csum_workaround()
-+ * The hw limites the value the transport offset. When the offset is out of the
-+ * range, calculate the checksum by sw.
-+ */
-+static void r8152_csum_workaround(struct r8152 *tp, struct sk_buff *skb,
-+				  struct sk_buff_head *list)
-+{
-+	if (skb_shinfo(skb)->gso_size) {
-+		netdev_features_t features = tp->netdev->features;
-+		struct sk_buff_head seg_list;
-+		struct sk_buff *segs, *nskb;
-+
-+		features &= ~(NETIF_F_SG | NETIF_F_IPV6_CSUM | NETIF_F_TSO6);
-+		segs = skb_gso_segment(skb, features);
-+		if (IS_ERR(segs) || !segs)
-+			goto drop;
-+
-+		__skb_queue_head_init(&seg_list);
-+
-+		do {
-+			nskb = segs;
-+			segs = segs->next;
-+			nskb->next = NULL;
-+			__skb_queue_tail(&seg_list, nskb);
-+		} while (segs);
-+
-+		skb_queue_splice(&seg_list, list);
-+		dev_kfree_skb(skb);
-+	} else if (skb->ip_summed == CHECKSUM_PARTIAL) {
-+		if (skb_checksum_help(skb) < 0)
-+			goto drop;
-+
-+		__skb_queue_head(list, skb);
-+	} else {
-+		struct net_device_stats *stats;
-+
-+drop:
-+		stats = &tp->netdev->stats;
-+		stats->tx_dropped++;
-+		dev_kfree_skb(skb);
-+	}
-+}
-+
-+/* msdn_giant_send_check()
-+ * According to the document of microsoft, the TCP Pseudo Header excludes the
-+ * packet length for IPv6 TCP large packets.
-+ */
-+static int msdn_giant_send_check(struct sk_buff *skb)
-+{
-+	const struct ipv6hdr *ipv6h;
-+	struct tcphdr *th;
-+	int ret;
-+
-+	ret = skb_cow_head(skb, 0);
-+	if (ret)
-+		return ret;
-+
-+	ipv6h = ipv6_hdr(skb);
-+	th = tcp_hdr(skb);
-+
-+	th->check = 0;
-+	th->check = ~tcp_v6_check(0, &ipv6h->saddr, &ipv6h->daddr, 0);
-+
-+	return ret;
-+}
-+
-+static inline void rtl_tx_vlan_tag(struct tx_desc *desc, struct sk_buff *skb)
-+{
-+	if (vlan_tx_tag_present(skb)) {
-+		u32 opts2;
-+
-+		opts2 = TX_VLAN_TAG | swab16(vlan_tx_tag_get(skb));
-+		desc->opts2 |= cpu_to_le32(opts2);
-+	}
-+}
-+
-+static inline void rtl_rx_vlan_tag(struct rx_desc *desc, struct sk_buff *skb)
-+{
-+	u32 opts2 = le32_to_cpu(desc->opts2);
-+
-+	if (opts2 & RX_VLAN_TAG)
-+		__vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q),
-+				       swab16(opts2 & 0xffff));
-+}
-+
-+static int r8152_tx_csum(struct r8152 *tp, struct tx_desc *desc,
-+			 struct sk_buff *skb, u32 len, u32 transport_offset)
-+{
-+	u32 mss = skb_shinfo(skb)->gso_size;
-+	u32 opts1, opts2 = 0;
-+	int ret = TX_CSUM_SUCCESS;
-+
-+	WARN_ON_ONCE(len > TX_LEN_MAX);
-+
-+	opts1 = len | TX_FS | TX_LS;
-+
-+	if (mss) {
-+		if (transport_offset > GTTCPHO_MAX) {
-+			netif_warn(tp, tx_err, tp->netdev,
-+				   "Invalid transport offset 0x%x for TSO\n",
-+				   transport_offset);
-+			ret = TX_CSUM_TSO;
-+			goto unavailable;
-+		}
-+
-+		switch (get_protocol(skb)) {
-+		case htons(ETH_P_IP):
-+			opts1 |= GTSENDV4;
-+			break;
-+
-+		case htons(ETH_P_IPV6):
-+			if (msdn_giant_send_check(skb)) {
-+				ret = TX_CSUM_TSO;
-+				goto unavailable;
-+			}
-+			opts1 |= GTSENDV6;
-+			break;
-+
-+		default:
-+			WARN_ON_ONCE(1);
-+			break;
-+		}
-+
-+		opts1 |= transport_offset << GTTCPHO_SHIFT;
-+		opts2 |= min(mss, MSS_MAX) << MSS_SHIFT;
-+	} else if (skb->ip_summed == CHECKSUM_PARTIAL) {
++	if (skb->ip_summed == CHECKSUM_PARTIAL) {
++		__be16 protocol;
 +		u8 ip_protocol;
++		u32 opts2 = 0;
 +
-+		if (transport_offset > TCPHO_MAX) {
-+			netif_warn(tp, tx_err, tp->netdev,
-+				   "Invalid transport offset 0x%x\n",
-+				   transport_offset);
-+			ret = TX_CSUM_NONE;
-+			goto unavailable;
-+		}
++		if (skb->protocol == htons(ETH_P_8021Q))
++			protocol = vlan_eth_hdr(skb)->h_vlan_encapsulated_proto;
++		else
++			protocol = skb->protocol;
 +
-+		switch (get_protocol(skb)) {
++		switch (protocol) {
 +		case htons(ETH_P_IP):
 +			opts2 |= IPV4_CS;
 +			ip_protocol = ip_hdr(skb)->protocol;
@@ -18773,93 +19205,56 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +			break;
 +		}
 +
-+		if (ip_protocol == IPPROTO_TCP)
++		if (ip_protocol == IPPROTO_TCP) {
 +			opts2 |= TCP_CS;
-+		else if (ip_protocol == IPPROTO_UDP)
++			opts2 |= (skb_transport_offset(skb) & 0x7fff) << 17;
++		} else if (ip_protocol == IPPROTO_UDP) {
 +			opts2 |= UDP_CS;
-+		else
++		} else {
 +			WARN_ON_ONCE(1);
++		}
 +
-+		opts2 |= transport_offset << TCPHO_SHIFT;
++		desc->opts2 = cpu_to_le32(opts2);
 +	}
-+
-+	desc->opts2 = cpu_to_le32(opts2);
-+	desc->opts1 = cpu_to_le32(opts1);
-+
-+unavailable:
-+	return ret;
 +}
 +
 +static int r8152_tx_agg_fill(struct r8152 *tp, struct tx_agg *agg)
 +{
-+	struct sk_buff_head skb_head, *tx_queue = &tp->tx_queue;
-+	int remain, ret;
++	int remain;
 +	u8 *tx_data;
 +
-+	__skb_queue_head_init(&skb_head);
-+	spin_lock(&tx_queue->lock);
-+	skb_queue_splice_init(tx_queue, &skb_head);
-+	spin_unlock(&tx_queue->lock);
-+
 +	tx_data = agg->head;
-+	agg->skb_num = 0;
-+	agg->skb_len = 0;
-+	remain = agg_buf_sz;
++	agg->skb_num = agg->skb_len = 0;
++	remain = rx_buf_sz;
 +
 +	while (remain >= ETH_ZLEN + sizeof(struct tx_desc)) {
 +		struct tx_desc *tx_desc;
 +		struct sk_buff *skb;
 +		unsigned int len;
-+		u32 offset;
 +
-+		skb = __skb_dequeue(&skb_head);
++		skb = skb_dequeue(&tp->tx_queue);
 +		if (!skb)
 +			break;
 +
-+		len = skb->len + sizeof(*tx_desc);
-+
-+		if (len > remain) {
-+			__skb_queue_head(&skb_head, skb);
++		remain -= sizeof(*tx_desc);
++		len = skb->len;
++		if (remain < len) {
++			skb_queue_head(&tp->tx_queue, skb);
 +			break;
 +		}
 +
 +		tx_data = tx_agg_align(tx_data);
 +		tx_desc = (struct tx_desc *)tx_data;
-+
-+		offset = (u32)skb_transport_offset(skb);
-+
-+		if (r8152_tx_csum(tp, tx_desc, skb, skb->len, offset)) {
-+			r8152_csum_workaround(tp, skb, &skb_head);
-+			continue;
-+		}
-+
-+		rtl_tx_vlan_tag(tx_desc, skb);
-+
 +		tx_data += sizeof(*tx_desc);
 +
-+		len = skb->len;
-+		if (skb_copy_bits(skb, 0, tx_data, len) < 0) {
-+			struct net_device_stats *stats = &tp->netdev->stats;
-+
-+			stats->tx_dropped++;
-+			dev_kfree_skb_any(skb);
-+			tx_data -= sizeof(*tx_desc);
-+			continue;
-+		}
-+
-+		tx_data += len;
-+		agg->skb_len += len;
++		r8152_tx_csum(tp, tx_desc, skb);
++		memcpy(tx_data, skb->data, len);
 +		agg->skb_num++;
-+
++		agg->skb_len += len;
 +		dev_kfree_skb_any(skb);
 +
-+		remain = agg_buf_sz - (int)(tx_agg_align(tx_data) - agg->head);
-+	}
-+
-+	if (!skb_queue_empty(&skb_head)) {
-+		spin_lock(&tx_queue->lock);
-+		skb_queue_splice(&skb_head, tx_queue);
-+		spin_unlock(&tx_queue->lock);
++		tx_data += len;
++		remain = rx_buf_sz - (int)(tx_agg_align(tx_data) - agg->head);
 +	}
 +
 +	netif_tx_lock(tp->netdev);
@@ -18870,67 +19265,20 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +
 +	netif_tx_unlock(tp->netdev);
 +
-+	ret = usb_autopm_get_interface_async(tp->intf);
-+	if (ret < 0)
-+		goto out_tx_fill;
-+
 +	usb_fill_bulk_urb(agg->urb, tp->udev, usb_sndbulkpipe(tp->udev, 2),
 +			  agg->head, (int)(tx_data - (u8 *)agg->head),
 +			  (usb_complete_t)write_bulk_callback, agg);
 +
-+	ret = usb_submit_urb(agg->urb, GFP_ATOMIC);
-+	if (ret < 0)
-+		usb_autopm_put_interface_async(tp->intf);
-+
-+out_tx_fill:
-+	return ret;
-+}
-+
-+static u8 r8152_rx_csum(struct r8152 *tp, struct rx_desc *rx_desc)
-+{
-+	u8 checksum = CHECKSUM_NONE;
-+	u32 opts2, opts3;
-+
-+	if (tp->version == RTL_VER_01)
-+		goto return_result;
-+
-+	opts2 = le32_to_cpu(rx_desc->opts2);
-+	opts3 = le32_to_cpu(rx_desc->opts3);
-+
-+	if (opts2 & RD_IPV4_CS) {
-+		if (opts3 & IPF)
-+			checksum = CHECKSUM_NONE;
-+		else if ((opts2 & RD_UDP_CS) && (opts3 & UDPF))
-+			checksum = CHECKSUM_NONE;
-+		else if ((opts2 & RD_TCP_CS) && (opts3 & TCPF))
-+			checksum = CHECKSUM_NONE;
-+		else
-+			checksum = CHECKSUM_UNNECESSARY;
-+	} else if (RD_IPV6_CS) {
-+		if ((opts2 & RD_UDP_CS) && !(opts3 & UDPF))
-+			checksum = CHECKSUM_UNNECESSARY;
-+		else if ((opts2 & RD_TCP_CS) && !(opts3 & TCPF))
-+			checksum = CHECKSUM_UNNECESSARY;
-+	}
-+
-+return_result:
-+	return checksum;
++	return usb_submit_urb(agg->urb, GFP_ATOMIC);
 +}
 +
 +static void rx_bottom(struct r8152 *tp)
 +{
 +	unsigned long flags;
-+	struct list_head *cursor, *next, rx_queue;
++	struct list_head *cursor, *next;
 +
-+	if (list_empty(&tp->rx_done))
-+		return;
-+
-+	INIT_LIST_HEAD(&rx_queue);
 +	spin_lock_irqsave(&tp->rx_lock, flags);
-+	list_splice_init(&tp->rx_done, &rx_queue);
-+	spin_unlock_irqrestore(&tp->rx_lock, flags);
-+
-+	list_for_each_safe(cursor, next, &rx_queue) {
++	list_for_each_safe(cursor, next, &tp->rx_done) {
 +		struct rx_desc *rx_desc;
 +		struct rx_agg *agg;
 +		int len_used = 0;
@@ -18939,6 +19287,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		int ret;
 +
 +		list_del_init(cursor);
++		spin_unlock_irqrestore(&tp->rx_lock, flags);
 +
 +		agg = list_entry(cursor, struct rx_agg, list);
 +		urb = agg->urb;
@@ -18951,7 +19300,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +
 +		while (urb->actual_length > len_used) {
 +			struct net_device *netdev = tp->netdev;
-+			struct net_device_stats *stats = &netdev->stats;
++			struct net_device_stats *stats;
 +			unsigned int pkt_len;
 +			struct sk_buff *skb;
 +
@@ -18963,25 +19312,23 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +			if (urb->actual_length < len_used)
 +				break;
 +
++			stats = rtl8152_get_stats(netdev);
++
 +			pkt_len -= CRC_SIZE;
 +			rx_data += sizeof(struct rx_desc);
 +
 +			skb = netdev_alloc_skb_ip_align(netdev, pkt_len);
 +			if (!skb) {
 +				stats->rx_dropped++;
-+				goto find_next_rx;
++				break;
 +			}
-+
-+			skb->ip_summed = r8152_rx_csum(tp, rx_desc);
 +			memcpy(skb->data, rx_data, pkt_len);
 +			skb_put(skb, pkt_len);
 +			skb->protocol = eth_type_trans(skb, netdev);
-+			rtl_rx_vlan_tag(rx_desc, skb);
-+			netif_receive_skb(skb);
++			netif_rx(skb);
 +			stats->rx_packets++;
 +			stats->rx_bytes += pkt_len;
 +
-+find_next_rx:
 +			rx_data = rx_agg_align(rx_data + pkt_len + CRC_SIZE);
 +			rx_desc = (struct rx_desc *)rx_data;
 +			len_used = (int)(rx_data - (u8 *)agg->head);
@@ -18990,13 +19337,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +
 +submit:
 +		ret = r8152_submit_rx(tp, agg, GFP_ATOMIC);
++		spin_lock_irqsave(&tp->rx_lock, flags);
 +		if (ret && ret != -ENODEV) {
-+			spin_lock_irqsave(&tp->rx_lock, flags);
-+			list_add_tail(&agg->list, &tp->rx_done);
-+			spin_unlock_irqrestore(&tp->rx_lock, flags);
++			list_add_tail(&agg->list, next);
 +			tasklet_schedule(&tp->tl);
 +		}
 +	}
++	spin_unlock_irqrestore(&tp->rx_lock, flags);
 +}
 +
 +static void tx_bottom(struct r8152 *tp)
@@ -19015,18 +19362,19 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +
 +		res = r8152_tx_agg_fill(tp, agg);
 +		if (res) {
-+			struct net_device *netdev = tp->netdev;
++			struct net_device_stats *stats;
++			struct net_device *netdev;
++			unsigned long flags;
++
++			netdev = tp->netdev;
++			stats = rtl8152_get_stats(netdev);
 +
 +			if (res == -ENODEV) {
 +				netif_device_detach(netdev);
 +			} else {
-+				struct net_device_stats *stats = &netdev->stats;
-+				unsigned long flags;
-+
 +				netif_warn(tp, tx_err, netdev,
 +					   "failed tx_urb %d\n", res);
 +				stats->tx_dropped += agg->skb_num;
-+
 +				spin_lock_irqsave(&tp->tx_lock, flags);
 +				list_add_tail(&agg->list, &tp->tx_free);
 +				spin_unlock_irqrestore(&tp->tx_lock, flags);
@@ -19060,30 +19408,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +int r8152_submit_rx(struct r8152 *tp, struct rx_agg *agg, gfp_t mem_flags)
 +{
 +	usb_fill_bulk_urb(agg->urb, tp->udev, usb_rcvbulkpipe(tp->udev, 1),
-+			  agg->head, agg_buf_sz,
-+			  (usb_complete_t)read_bulk_callback, agg);
++		      agg->head, rx_buf_sz,
++		      (usb_complete_t)read_bulk_callback, agg);
 +
 +	return usb_submit_urb(agg->urb, mem_flags);
-+}
-+
-+static void rtl_drop_queued_tx(struct r8152 *tp)
-+{
-+	struct net_device_stats *stats = &tp->netdev->stats;
-+	struct sk_buff_head skb_head, *tx_queue = &tp->tx_queue;
-+	struct sk_buff *skb;
-+
-+	if (skb_queue_empty(tx_queue))
-+		return;
-+
-+	__skb_queue_head_init(&skb_head);
-+	spin_lock_bh(&tx_queue->lock);
-+	skb_queue_splice_init(tx_queue, &skb_head);
-+	spin_unlock_bh(&tx_queue->lock);
-+
-+	while ((skb = __skb_dequeue(&skb_head))) {
-+		dev_kfree_skb(skb);
-+		stats->tx_dropped++;
-+	}
 +}
 +
 +static void rtl8152_tx_timeout(struct net_device *netdev)
@@ -19123,22 +19451,18 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		/* Unconditionally log net taps. */
 +		netif_notice(tp, link, netdev, "Promiscuous mode enabled\n");
 +		ocp_data |= RCR_AM | RCR_AAP;
-+		mc_filter[1] = 0xffffffff;
-+		mc_filter[0] = 0xffffffff;
++		mc_filter[1] = mc_filter[0] = 0xffffffff;
 +	} else if ((netdev_mc_count(netdev) > multicast_filter_limit) ||
 +		   (netdev->flags & IFF_ALLMULTI)) {
 +		/* Too many to filter perfectly -- accept all multicasts. */
 +		ocp_data |= RCR_AM;
-+		mc_filter[1] = 0xffffffff;
-+		mc_filter[0] = 0xffffffff;
++		mc_filter[1] = mc_filter[0] = 0xffffffff;
 +	} else {
 +		struct netdev_hw_addr *ha;
 +
-+		mc_filter[1] = 0;
-+		mc_filter[0] = 0;
++		mc_filter[1] = mc_filter[0] = 0;
 +		netdev_for_each_mc_addr(ha, netdev) {
 +			int bit_nr = ether_crc(ETH_ALEN, ha->addr) >> 26;
-+
 +			mc_filter[bit_nr >> 5] |= 1 << (bit_nr & 31);
 +			ocp_data |= RCR_AM;
 +		}
@@ -19153,7 +19477,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +}
 +
 +static netdev_tx_t rtl8152_start_xmit(struct sk_buff *skb,
-+				      struct net_device *netdev)
++					    struct net_device *netdev)
 +{
 +	struct r8152 *tp = netdev_priv(netdev);
 +
@@ -19161,17 +19485,12 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +
 +	skb_queue_tail(&tp->tx_queue, skb);
 +
-+	if (!list_empty(&tp->tx_free)) {
-+		if (test_bit(SELECTIVE_SUSPEND, &tp->flags)) {
-+			set_bit(SCHEDULE_TASKLET, &tp->flags);
-+			schedule_delayed_work(&tp->schedule, 0);
-+		} else {
-+			usb_mark_last_busy(tp->udev);
-+			tasklet_schedule(&tp->tl);
-+		}
-+	} else if (skb_queue_len(&tp->tx_queue) > tp->tx_qlen) {
++	if (list_empty(&tp->tx_free) &&
++	    skb_queue_len(&tp->tx_queue) > tp->tx_qlen)
 +		netif_stop_queue(netdev);
-+	}
++
++	if (!list_empty(&tp->tx_free))
++		tasklet_schedule(&tp->tl);
 +
 +	return NETDEV_TX_OK;
 +}
@@ -19196,7 +19515,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	for (i = 0; i < 1000; i++) {
 +		if (!(ocp_read_byte(tp, MCU_TYPE_PLA, PLA_CR) & CR_RST))
 +			break;
-+		usleep_range(100, 400);
++		udelay(100);
 +	}
 +}
 +
@@ -19204,8 +19523,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +{
 +	struct net_device *netdev = tp->netdev;
 +
-+	tp->tx_qlen = agg_buf_sz / (netdev->mtu + VLAN_ETH_HLEN + VLAN_HLEN +
-+				    sizeof(struct tx_desc));
++	tp->tx_qlen = rx_buf_sz / (netdev->mtu + VLAN_ETH_HLEN + VLAN_HLEN +
++				   sizeof(struct tx_desc));
 +}
 +
 +static inline u8 rtl8152_get_speed(struct r8152 *tp)
@@ -19230,46 +19549,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	}
 +}
 +
-+static void rxdy_gated_en(struct r8152 *tp, bool enable)
-+{
-+	u32 ocp_data;
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_MISC_1);
-+	if (enable)
-+		ocp_data |= RXDY_GATED_EN;
-+	else
-+		ocp_data &= ~RXDY_GATED_EN;
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_MISC_1, ocp_data);
-+}
-+
-+static int rtl_start_rx(struct r8152 *tp)
-+{
-+	int i, ret = 0;
-+
-+	INIT_LIST_HEAD(&tp->rx_done);
-+	for (i = 0; i < RTL8152_MAX_RX; i++) {
-+		INIT_LIST_HEAD(&tp->rx_info[i].list);
-+		ret = r8152_submit_rx(tp, &tp->rx_info[i], GFP_KERNEL);
-+		if (ret)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
-+static int rtl_stop_rx(struct r8152 *tp)
-+{
-+	int i;
-+
-+	for (i = 0; i < RTL8152_MAX_RX; i++)
-+		usb_kill_urb(tp->rx_info[i].urb);
-+
-+	return 0;
-+}
-+
 +static int rtl_enable(struct r8152 *tp)
 +{
 +	u32 ocp_data;
++	int i, ret;
 +
 +	r8152b_reset_packet_filter(tp);
 +
@@ -19277,16 +19560,22 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	ocp_data |= CR_RE | CR_TE;
 +	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_CR, ocp_data);
 +
-+	rxdy_gated_en(tp, false);
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_MISC_1);
++	ocp_data &= ~RXDY_GATED_EN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_MISC_1, ocp_data);
 +
-+	return rtl_start_rx(tp);
++	INIT_LIST_HEAD(&tp->rx_done);
++	ret = 0;
++	for (i = 0; i < RTL8152_MAX_RX; i++) {
++		INIT_LIST_HEAD(&tp->rx_info[i].list);
++		ret |= r8152_submit_rx(tp, &tp->rx_info[i], GFP_KERNEL);
++	}
++
++	return ret;
 +}
 +
 +static int rtl8152_enable(struct r8152 *tp)
 +{
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return -ENODEV;
-+
 +	set_tx_qlen(tp);
 +	rtl_set_eee_plus(tp);
 +
@@ -19319,9 +19608,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +
 +static int rtl8153_enable(struct r8152 *tp)
 +{
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return -ENODEV;
-+
 +	set_tx_qlen(tp);
 +	rtl_set_eee_plus(tp);
 +	r8153_set_rx_agg(tp);
@@ -19329,268 +19615,60 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	return rtl_enable(tp);
 +}
 +
-+static void rtl_disable(struct r8152 *tp)
++static void rtl8152_disable(struct r8152 *tp)
 +{
++	struct net_device_stats *stats = rtl8152_get_stats(tp->netdev);
++	struct sk_buff *skb;
 +	u32 ocp_data;
 +	int i;
-+
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags)) {
-+		rtl_drop_queued_tx(tp);
-+		return;
-+	}
 +
 +	ocp_data = ocp_read_dword(tp, MCU_TYPE_PLA, PLA_RCR);
 +	ocp_data &= ~RCR_ACPT_ALL;
 +	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_RCR, ocp_data);
 +
-+	rtl_drop_queued_tx(tp);
++	while ((skb = skb_dequeue(&tp->tx_queue))) {
++		dev_kfree_skb(skb);
++		stats->tx_dropped++;
++	}
 +
 +	for (i = 0; i < RTL8152_MAX_TX; i++)
 +		usb_kill_urb(tp->tx_info[i].urb);
 +
-+	rxdy_gated_en(tp, true);
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_MISC_1);
++	ocp_data |= RXDY_GATED_EN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_MISC_1, ocp_data);
 +
 +	for (i = 0; i < 1000; i++) {
 +		ocp_data = ocp_read_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL);
 +		if ((ocp_data & FIFO_EMPTY) == FIFO_EMPTY)
 +			break;
-+		usleep_range(1000, 2000);
++		mdelay(1);
 +	}
 +
 +	for (i = 0; i < 1000; i++) {
 +		if (ocp_read_word(tp, MCU_TYPE_PLA, PLA_TCR0) & TCR0_TX_EMPTY)
 +			break;
-+		usleep_range(1000, 2000);
++		mdelay(1);
 +	}
 +
-+	rtl_stop_rx(tp);
++	for (i = 0; i < RTL8152_MAX_RX; i++)
++		usb_kill_urb(tp->rx_info[i].urb);
 +
 +	rtl8152_nic_reset(tp);
 +}
 +
-+static void r8152_power_cut_en(struct r8152 *tp, bool enable)
-+{
-+	u32 ocp_data;
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_UPS_CTRL);
-+	if (enable)
-+		ocp_data |= POWER_CUT;
-+	else
-+		ocp_data &= ~POWER_CUT;
-+	ocp_write_word(tp, MCU_TYPE_USB, USB_UPS_CTRL, ocp_data);
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_PM_CTRL_STATUS);
-+	ocp_data &= ~RESUME_INDICATE;
-+	ocp_write_word(tp, MCU_TYPE_USB, USB_PM_CTRL_STATUS, ocp_data);
-+}
-+
-+static void rtl_rx_vlan_en(struct r8152 *tp, bool enable)
-+{
-+	u32 ocp_data;
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CPCR);
-+	if (enable)
-+		ocp_data |= CPCR_RX_VLAN;
-+	else
-+		ocp_data &= ~CPCR_RX_VLAN;
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_CPCR, ocp_data);
-+}
-+
-+static int rtl8152_set_features(struct net_device *dev,
-+				netdev_features_t features)
-+{
-+	netdev_features_t changed = features ^ dev->features;
-+	struct r8152 *tp = netdev_priv(dev);
-+	int ret;
-+
-+	ret = usb_autopm_get_interface(tp->intf);
-+	if (ret < 0)
-+		goto out;
-+
-+	mutex_lock(&tp->control);
-+
-+	if (changed & NETIF_F_HW_VLAN_CTAG_RX) {
-+		if (features & NETIF_F_HW_VLAN_CTAG_RX)
-+			rtl_rx_vlan_en(tp, true);
-+		else
-+			rtl_rx_vlan_en(tp, false);
-+	}
-+
-+	mutex_unlock(&tp->control);
-+
-+	usb_autopm_put_interface(tp->intf);
-+
-+out:
-+	return ret;
-+}
-+
-+#define WAKE_ANY (WAKE_PHY | WAKE_MAGIC | WAKE_UCAST | WAKE_BCAST | WAKE_MCAST)
-+
-+static u32 __rtl_get_wol(struct r8152 *tp)
-+{
-+	u32 ocp_data;
-+	u32 wolopts = 0;
-+
-+	ocp_data = ocp_read_byte(tp, MCU_TYPE_PLA, PLA_CONFIG5);
-+	if (!(ocp_data & LAN_WAKE_EN))
-+		return 0;
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CONFIG34);
-+	if (ocp_data & LINK_ON_WAKE_EN)
-+		wolopts |= WAKE_PHY;
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CONFIG5);
-+	if (ocp_data & UWF_EN)
-+		wolopts |= WAKE_UCAST;
-+	if (ocp_data & BWF_EN)
-+		wolopts |= WAKE_BCAST;
-+	if (ocp_data & MWF_EN)
-+		wolopts |= WAKE_MCAST;
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CFG_WOL);
-+	if (ocp_data & MAGIC_EN)
-+		wolopts |= WAKE_MAGIC;
-+
-+	return wolopts;
-+}
-+
-+static void __rtl_set_wol(struct r8152 *tp, u32 wolopts)
-+{
-+	u32 ocp_data;
-+
-+	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_CRWECR, CRWECR_CONFIG);
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CONFIG34);
-+	ocp_data &= ~LINK_ON_WAKE_EN;
-+	if (wolopts & WAKE_PHY)
-+		ocp_data |= LINK_ON_WAKE_EN;
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_CONFIG34, ocp_data);
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CONFIG5);
-+	ocp_data &= ~(UWF_EN | BWF_EN | MWF_EN | LAN_WAKE_EN);
-+	if (wolopts & WAKE_UCAST)
-+		ocp_data |= UWF_EN;
-+	if (wolopts & WAKE_BCAST)
-+		ocp_data |= BWF_EN;
-+	if (wolopts & WAKE_MCAST)
-+		ocp_data |= MWF_EN;
-+	if (wolopts & WAKE_ANY)
-+		ocp_data |= LAN_WAKE_EN;
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_CONFIG5, ocp_data);
-+
-+	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_CRWECR, CRWECR_NORAML);
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CFG_WOL);
-+	ocp_data &= ~MAGIC_EN;
-+	if (wolopts & WAKE_MAGIC)
-+		ocp_data |= MAGIC_EN;
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_CFG_WOL, ocp_data);
-+
-+	if (wolopts & WAKE_ANY)
-+		device_set_wakeup_enable(&tp->udev->dev, true);
-+	else
-+		device_set_wakeup_enable(&tp->udev->dev, false);
-+}
-+
-+static void rtl_runtime_suspend_enable(struct r8152 *tp, bool enable)
-+{
-+	if (enable) {
-+		u32 ocp_data;
-+
-+		__rtl_set_wol(tp, WAKE_ANY);
-+
-+		ocp_write_byte(tp, MCU_TYPE_PLA, PLA_CRWECR, CRWECR_CONFIG);
-+
-+		ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CONFIG34);
-+		ocp_data |= LINK_OFF_WAKE_EN;
-+		ocp_write_word(tp, MCU_TYPE_PLA, PLA_CONFIG34, ocp_data);
-+
-+		ocp_write_byte(tp, MCU_TYPE_PLA, PLA_CRWECR, CRWECR_NORAML);
-+	} else {
-+		__rtl_set_wol(tp, tp->saved_wolopts);
-+	}
-+}
-+
-+static void rtl_phy_reset(struct r8152 *tp)
-+{
-+	u16 data;
-+	int i;
-+
-+	clear_bit(PHY_RESET, &tp->flags);
-+
-+	data = r8152_mdio_read(tp, MII_BMCR);
-+
-+	/* don't reset again before the previous one complete */
-+	if (data & BMCR_RESET)
-+		return;
-+
-+	data |= BMCR_RESET;
-+	r8152_mdio_write(tp, MII_BMCR, data);
-+
-+	for (i = 0; i < 50; i++) {
-+		msleep(20);
-+		if ((r8152_mdio_read(tp, MII_BMCR) & BMCR_RESET) == 0)
-+			break;
-+	}
-+}
-+
-+static void r8153_teredo_off(struct r8152 *tp)
-+{
-+	u32 ocp_data;
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_TEREDO_CFG);
-+	ocp_data &= ~(TEREDO_SEL | TEREDO_RS_EVENT_MASK | OOB_TEREDO_EN);
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_TEREDO_CFG, ocp_data);
-+
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_WDT6_CTRL, WDT6_SET_MODE);
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_REALWOW_TIMER, 0);
-+	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_TEREDO_TIMER, 0);
-+}
-+
-+static void r8152b_disable_aldps(struct r8152 *tp)
-+{
-+	ocp_reg_write(tp, OCP_ALDPS_CONFIG, ENPDNPS | LINKENA | DIS_SDSAVE);
-+	msleep(20);
-+}
-+
-+static inline void r8152b_enable_aldps(struct r8152 *tp)
-+{
-+	ocp_reg_write(tp, OCP_ALDPS_CONFIG, ENPWRSAVE | ENPDNPS |
-+					    LINKENA | DIS_SDSAVE);
-+}
-+
-+static void rtl8152_disable(struct r8152 *tp)
-+{
-+	r8152b_disable_aldps(tp);
-+	rtl_disable(tp);
-+	r8152b_enable_aldps(tp);
-+}
-+
-+static void r8152b_hw_phy_cfg(struct r8152 *tp)
-+{
-+	u16 data;
-+
-+	data = r8152_mdio_read(tp, MII_BMCR);
-+	if (data & BMCR_PDOWN) {
-+		data &= ~BMCR_PDOWN;
-+		r8152_mdio_write(tp, MII_BMCR, data);
-+	}
-+
-+	set_bit(PHY_RESET, &tp->flags);
-+}
-+
 +static void r8152b_exit_oob(struct r8152 *tp)
 +{
-+	u32 ocp_data;
-+	int i;
++	u32	ocp_data;
++	int	i;
 +
 +	ocp_data = ocp_read_dword(tp, MCU_TYPE_PLA, PLA_RCR);
 +	ocp_data &= ~RCR_ACPT_ALL;
 +	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_RCR, ocp_data);
 +
-+	rxdy_gated_en(tp, true);
-+	r8153_teredo_off(tp);
-+	r8152b_hw_phy_cfg(tp);
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_MISC_1);
++	ocp_data |= RXDY_GATED_EN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_MISC_1, ocp_data);
 +
 +	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_CRWECR, CRWECR_NORAML);
 +	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_CR, 0x00);
@@ -19607,7 +19685,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		ocp_data = ocp_read_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL);
 +		if (ocp_data & LINK_LIST_READY)
 +			break;
-+		usleep_range(1000, 2000);
++		mdelay(1);
 +	}
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_SFF_STS_7);
@@ -19618,7 +19696,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		ocp_data = ocp_read_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL);
 +		if (ocp_data & LINK_LIST_READY)
 +			break;
-+		usleep_range(1000, 2000);
++		mdelay(1);
 +	}
 +
 +	rtl8152_nic_reset(tp);
@@ -19626,8 +19704,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	/* rx share fifo credit full threshold */
 +	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_RXFIFO_CTRL0, RXFIFO_THR1_NORMAL);
 +
-+	if (tp->udev->speed == USB_SPEED_FULL ||
-+	    tp->udev->speed == USB_SPEED_LOW) {
++	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_DEV_STAT);
++	ocp_data &= STAT_SPEED_MASK;
++	if (ocp_data == STAT_SPEED_FULL) {
 +		/* rx share fifo credit near full threshold */
 +		ocp_write_dword(tp, MCU_TYPE_PLA, PLA_RXFIFO_CTRL1,
 +				RXFIFO_THR2_FULL);
@@ -19649,7 +19728,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	ocp_write_dword(tp, MCU_TYPE_USB, USB_TX_DMA,
 +			TEST_MODE_DISABLE | TX_SIZE_ADJUST1);
 +
-+	rtl_rx_vlan_en(tp, tp->netdev->features & NETIF_F_HW_VLAN_CTAG_RX);
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CPCR);
++	ocp_data &= ~CPCR_RX_VLAN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_CPCR, ocp_data);
 +
 +	ocp_write_word(tp, MCU_TYPE_PLA, PLA_RMS, RTL8152_RMS);
 +
@@ -19671,13 +19752,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_RXFIFO_CTRL1, RXFIFO_THR2_OOB);
 +	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_RXFIFO_CTRL2, RXFIFO_THR3_OOB);
 +
-+	rtl_disable(tp);
++	rtl8152_disable(tp);
 +
 +	for (i = 0; i < 1000; i++) {
 +		ocp_data = ocp_read_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL);
 +		if (ocp_data & LINK_LIST_READY)
 +			break;
-+		usleep_range(1000, 2000);
++		mdelay(1);
 +	}
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_SFF_STS_7);
@@ -19688,12 +19769,18 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		ocp_data = ocp_read_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL);
 +		if (ocp_data & LINK_LIST_READY)
 +			break;
-+		usleep_range(1000, 2000);
++		mdelay(1);
 +	}
 +
 +	ocp_write_word(tp, MCU_TYPE_PLA, PLA_RMS, RTL8152_RMS);
 +
-+	rtl_rx_vlan_en(tp, true);
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CFG_WOL);
++	ocp_data |= MAGIC_EN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_CFG_WOL, ocp_data);
++
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CPCR);
++	ocp_data |= CPCR_RX_VLAN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_CPCR, ocp_data);
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PAL_BDC_CR);
 +	ocp_data |= ALDPS_PROXY_MODE;
@@ -19703,11 +19790,27 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	ocp_data |= NOW_IS_OOB | DIS_MCU_CLROOB;
 +	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL, ocp_data);
 +
-+	rxdy_gated_en(tp, false);
++	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_CONFIG5, LAN_WAKE_EN);
++
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_MISC_1);
++	ocp_data &= ~RXDY_GATED_EN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_MISC_1, ocp_data);
 +
 +	ocp_data = ocp_read_dword(tp, MCU_TYPE_PLA, PLA_RCR);
 +	ocp_data |= RCR_APM | RCR_AM | RCR_AB;
 +	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_RCR, ocp_data);
++}
++
++static void r8152b_disable_aldps(struct r8152 *tp)
++{
++	ocp_reg_write(tp, OCP_ALDPS_CONFIG, ENPDNPS | LINKENA | DIS_SDSAVE);
++	msleep(20);
++}
++
++static inline void r8152b_enable_aldps(struct r8152 *tp)
++{
++	ocp_reg_write(tp, OCP_ALDPS_CONFIG, ENPWRSAVE | ENPDNPS |
++					    LINKENA | DIS_SDSAVE);
 +}
 +
 +static void r8153_hw_phy_cfg(struct r8152 *tp)
@@ -19716,11 +19819,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	u16 data;
 +
 +	ocp_reg_write(tp, OCP_ADC_CFG, CKADSEL_L | ADC_EN | EN_EMI_L);
-+	data = r8152_mdio_read(tp, MII_BMCR);
-+	if (data & BMCR_PDOWN) {
-+		data &= ~BMCR_PDOWN;
-+		r8152_mdio_write(tp, MII_BMCR, data);
-+	}
++	r8152_mdio_write(tp, MII_BMCR, BMCR_ANENABLE);
 +
 +	if (tp->version == RTL_VER_03) {
 +		data = ocp_reg_read(tp, OCP_EEE_CFG);
@@ -19756,11 +19855,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	data = sram_read(tp, SRAM_10M_AMP2);
 +	data |= AMP_DN;
 +	sram_write(tp, SRAM_10M_AMP2, data);
-+
-+	set_bit(PHY_RESET, &tp->flags);
 +}
 +
-+static void r8153_u1u2en(struct r8152 *tp, bool enable)
++static void r8153_u1u2en(struct r8152 *tp, int enable)
 +{
 +	u8 u1u2[8];
 +
@@ -19772,7 +19869,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	usb_ocp_write(tp, USB_TOLERANCE, BYTE_EN_SIX_BYTES, sizeof(u1u2), u1u2);
 +}
 +
-+static void r8153_u2p3en(struct r8152 *tp, bool enable)
++static void r8153_u2p3en(struct r8152 *tp, int enable)
 +{
 +	u32 ocp_data;
 +
@@ -19784,7 +19881,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	ocp_write_word(tp, MCU_TYPE_USB, USB_U2P3_CTRL, ocp_data);
 +}
 +
-+static void r8153_power_cut_en(struct r8152 *tp, bool enable)
++static void r8153_power_cut_en(struct r8152 *tp, int enable)
 +{
 +	u32 ocp_data;
 +
@@ -19800,12 +19897,28 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	ocp_write_word(tp, MCU_TYPE_USB, USB_MISC_0, ocp_data);
 +}
 +
++static void r8153_teredo_off(struct r8152 *tp)
++{
++	u32 ocp_data;
++
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_TEREDO_CFG);
++	ocp_data &= ~(TEREDO_SEL | TEREDO_RS_EVENT_MASK | OOB_TEREDO_EN);
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_TEREDO_CFG, ocp_data);
++
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_WDT6_CTRL, WDT6_SET_MODE);
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_REALWOW_TIMER, 0);
++	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_TEREDO_TIMER, 0);
++}
++
 +static void r8153_first_init(struct r8152 *tp)
 +{
 +	u32 ocp_data;
 +	int i;
 +
-+	rxdy_gated_en(tp, true);
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_MISC_1);
++	ocp_data |= RXDY_GATED_EN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_MISC_1, ocp_data);
++
 +	r8153_teredo_off(tp);
 +
 +	ocp_data = ocp_read_dword(tp, MCU_TYPE_PLA, PLA_RCR);
@@ -19828,7 +19941,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		ocp_data = ocp_read_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL);
 +		if (ocp_data & LINK_LIST_READY)
 +			break;
-+		usleep_range(1000, 2000);
++		mdelay(1);
 +	}
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_SFF_STS_7);
@@ -19839,13 +19952,14 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		ocp_data = ocp_read_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL);
 +		if (ocp_data & LINK_LIST_READY)
 +			break;
-+		usleep_range(1000, 2000);
++		mdelay(1);
 +	}
 +
-+	rtl_rx_vlan_en(tp, tp->netdev->features & NETIF_F_HW_VLAN_CTAG_RX);
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CPCR);
++	ocp_data &= ~CPCR_RX_VLAN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_CPCR, ocp_data);
 +
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_RMS, RTL8153_RMS);
-+	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_MTPS, MTPS_JUMBO);
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_RMS, RTL8152_RMS);
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_TCR0);
 +	ocp_data |= TCR0_AUTO_FIFO;
@@ -19875,13 +19989,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	ocp_data &= ~NOW_IS_OOB;
 +	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL, ocp_data);
 +
-+	rtl_disable(tp);
++	rtl8152_disable(tp);
 +
 +	for (i = 0; i < 1000; i++) {
 +		ocp_data = ocp_read_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL);
 +		if (ocp_data & LINK_LIST_READY)
 +			break;
-+		usleep_range(1000, 2000);
++		mdelay(1);
 +	}
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_SFF_STS_7);
@@ -19892,16 +20006,22 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		ocp_data = ocp_read_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL);
 +		if (ocp_data & LINK_LIST_READY)
 +			break;
-+		usleep_range(1000, 2000);
++		mdelay(1);
 +	}
 +
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_RMS, RTL8153_RMS);
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_RMS, RTL8152_RMS);
++
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CFG_WOL);
++	ocp_data |= MAGIC_EN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_CFG_WOL, ocp_data);
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_TEREDO_CFG);
 +	ocp_data &= ~TEREDO_WAKE_MASK;
 +	ocp_write_word(tp, MCU_TYPE_PLA, PLA_TEREDO_CFG, ocp_data);
 +
-+	rtl_rx_vlan_en(tp, true);
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_CPCR);
++	ocp_data |= CPCR_RX_VLAN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_CPCR, ocp_data);
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PAL_BDC_CR);
 +	ocp_data |= ALDPS_PROXY_MODE;
@@ -19911,7 +20031,11 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	ocp_data |= NOW_IS_OOB | DIS_MCU_CLROOB;
 +	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_OOB_CTRL, ocp_data);
 +
-+	rxdy_gated_en(tp, false);
++	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_CONFIG5, LAN_WAKE_EN);
++
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_MISC_1);
++	ocp_data &= ~RXDY_GATED_EN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_MISC_1, ocp_data);
 +
 +	ocp_data = ocp_read_dword(tp, MCU_TYPE_PLA, PLA_RCR);
 +	ocp_data |= RCR_APM | RCR_AM | RCR_AB;
@@ -19935,13 +20059,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	data = ocp_reg_read(tp, OCP_POWER_CFG);
 +	data |= EN_ALDPS;
 +	ocp_reg_write(tp, OCP_POWER_CFG, data);
-+}
-+
-+static void rtl8153_disable(struct r8152 *tp)
-+{
-+	r8153_disable_aldps(tp);
-+	rtl_disable(tp);
-+	r8153_enable_aldps(tp);
 +}
 +
 +static int rtl8152_set_speed(struct r8152 *tp, u8 autoneg, u16 speed, u8 duplex)
@@ -20009,73 +20126,34 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		bmcr = BMCR_ANENABLE | BMCR_ANRESTART;
 +	}
 +
-+	if (test_bit(PHY_RESET, &tp->flags))
-+		bmcr |= BMCR_RESET;
-+
 +	if (tp->mii.supports_gmii)
 +		r8152_mdio_write(tp, MII_CTRL1000, gbcr);
 +
 +	r8152_mdio_write(tp, MII_ADVERTISE, anar);
 +	r8152_mdio_write(tp, MII_BMCR, bmcr);
 +
-+	if (test_bit(PHY_RESET, &tp->flags)) {
-+		int i;
-+
-+		clear_bit(PHY_RESET, &tp->flags);
-+		for (i = 0; i < 50; i++) {
-+			msleep(20);
-+			if ((r8152_mdio_read(tp, MII_BMCR) & BMCR_RESET) == 0)
-+				break;
-+		}
-+	}
-+
 +out:
 +
 +	return ret;
 +}
 +
-+static void rtl8152_up(struct r8152 *tp)
-+{
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return;
-+
-+	r8152b_disable_aldps(tp);
-+	r8152b_exit_oob(tp);
-+	r8152b_enable_aldps(tp);
-+}
-+
 +static void rtl8152_down(struct r8152 *tp)
 +{
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags)) {
-+		rtl_drop_queued_tx(tp);
-+		return;
-+	}
++	u32	ocp_data;
 +
-+	r8152_power_cut_en(tp, false);
++	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_UPS_CTRL);
++	ocp_data &= ~POWER_CUT;
++	ocp_write_word(tp, MCU_TYPE_USB, USB_UPS_CTRL, ocp_data);
++
 +	r8152b_disable_aldps(tp);
 +	r8152b_enter_oob(tp);
 +	r8152b_enable_aldps(tp);
 +}
 +
-+static void rtl8153_up(struct r8152 *tp)
-+{
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return;
-+
-+	r8153_disable_aldps(tp);
-+	r8153_first_init(tp);
-+	r8153_enable_aldps(tp);
-+}
-+
 +static void rtl8153_down(struct r8152 *tp)
 +{
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags)) {
-+		rtl_drop_queued_tx(tp);
-+		return;
-+	}
-+
-+	r8153_u1u2en(tp, false);
-+	r8153_power_cut_en(tp, false);
++	r8153_u1u2en(tp, 0);
++	r8153_power_cut_en(tp, 0);
 +	r8153_disable_aldps(tp);
 +	r8153_enter_oob(tp);
 +	r8153_enable_aldps(tp);
@@ -20110,19 +20188,11 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +{
 +	struct r8152 *tp = container_of(work, struct r8152, schedule.work);
 +
-+	if (usb_autopm_get_interface(tp->intf) < 0)
-+		return;
-+
 +	if (!test_bit(WORK_ENABLE, &tp->flags))
 +		goto out1;
 +
 +	if (test_bit(RTL8152_UNPLUG, &tp->flags))
 +		goto out1;
-+
-+	if (!mutex_trylock(&tp->control)) {
-+		schedule_delayed_work(&tp->schedule, 0);
-+		goto out1;
-+	}
 +
 +	if (test_bit(RTL8152_LINK_CHG, &tp->flags))
 +		set_carrier(tp);
@@ -20130,53 +20200,14 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	if (test_bit(RTL8152_SET_RX_MODE, &tp->flags))
 +		_rtl8152_set_rx_mode(tp->netdev);
 +
-+	if (test_bit(SCHEDULE_TASKLET, &tp->flags) &&
-+	    (tp->speed & LINK_STATUS)) {
-+		clear_bit(SCHEDULE_TASKLET, &tp->flags);
-+		tasklet_schedule(&tp->tl);
-+	}
-+
-+	if (test_bit(PHY_RESET, &tp->flags))
-+		rtl_phy_reset(tp);
-+
-+	mutex_unlock(&tp->control);
-+
 +out1:
-+	usb_autopm_put_interface(tp->intf);
++	return;
 +}
 +
 +static int rtl8152_open(struct net_device *netdev)
 +{
 +	struct r8152 *tp = netdev_priv(netdev);
 +	int res = 0;
-+
-+	res = alloc_all_mem(tp);
-+	if (res)
-+		goto out;
-+
-+	/* set speed to 0 to avoid autoresume try to submit rx */
-+	tp->speed = 0;
-+
-+	res = usb_autopm_get_interface(tp->intf);
-+	if (res < 0) {
-+		free_all_mem(tp);
-+		goto out;
-+	}
-+
-+	mutex_lock(&tp->control);
-+
-+	/* The WORK_ENABLE may be set when autoresume occurs */
-+	if (test_bit(WORK_ENABLE, &tp->flags)) {
-+		clear_bit(WORK_ENABLE, &tp->flags);
-+		usb_kill_urb(tp->intr_urb);
-+		cancel_delayed_work_sync(&tp->schedule);
-+
-+		/* disable the tx/rx, if the workqueue has enabled them. */
-+		if (tp->speed & LINK_STATUS)
-+			tp->rtl_ops.disable(tp);
-+	}
-+
-+	tp->rtl_ops.up(tp);
 +
 +	rtl8152_set_speed(tp, AUTONEG_ENABLE,
 +			  tp->mii.supports_gmii ? SPEED_1000 : SPEED_100,
@@ -20185,21 +20216,15 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	netif_carrier_off(netdev);
 +	netif_start_queue(netdev);
 +	set_bit(WORK_ENABLE, &tp->flags);
-+
 +	res = usb_submit_urb(tp->intr_urb, GFP_KERNEL);
 +	if (res) {
 +		if (res == -ENODEV)
 +			netif_device_detach(tp->netdev);
 +		netif_warn(tp, ifup, netdev, "intr_urb submit failed: %d\n",
 +			   res);
-+		free_all_mem(tp);
 +	}
 +
-+	mutex_unlock(&tp->control);
 +
-+	usb_autopm_put_interface(tp->intf);
-+
-+out:
 +	return res;
 +}
 +
@@ -20212,119 +20237,72 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	usb_kill_urb(tp->intr_urb);
 +	cancel_delayed_work_sync(&tp->schedule);
 +	netif_stop_queue(netdev);
-+
-+	res = usb_autopm_get_interface(tp->intf);
-+	if (res < 0) {
-+		rtl_drop_queued_tx(tp);
-+	} else {
-+		mutex_lock(&tp->control);
-+
-+		/* The autosuspend may have been enabled and wouldn't
-+		 * be disable when autoresume occurs, because the
-+		 * netif_running() would be false.
-+		 */
-+		rtl_runtime_suspend_enable(tp, false);
-+
-+		tasklet_disable(&tp->tl);
-+		tp->rtl_ops.down(tp);
-+		tasklet_enable(&tp->tl);
-+
-+		mutex_unlock(&tp->control);
-+
-+		usb_autopm_put_interface(tp->intf);
-+	}
-+
-+	free_all_mem(tp);
++	tasklet_disable(&tp->tl);
++	tp->rtl_ops.disable(tp);
++	tasklet_enable(&tp->tl);
 +
 +	return res;
 +}
 +
-+static inline void r8152_mmd_indirect(struct r8152 *tp, u16 dev, u16 reg)
++static void rtl_clear_bp(struct r8152 *tp)
 +{
-+	ocp_reg_write(tp, OCP_EEE_AR, FUN_ADDR | dev);
-+	ocp_reg_write(tp, OCP_EEE_DATA, reg);
-+	ocp_reg_write(tp, OCP_EEE_AR, FUN_DATA | dev);
++	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_BP_0, 0);
++	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_BP_2, 0);
++	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_BP_4, 0);
++	ocp_write_dword(tp, MCU_TYPE_PLA, PLA_BP_6, 0);
++	ocp_write_dword(tp, MCU_TYPE_USB, USB_BP_0, 0);
++	ocp_write_dword(tp, MCU_TYPE_USB, USB_BP_2, 0);
++	ocp_write_dword(tp, MCU_TYPE_USB, USB_BP_4, 0);
++	ocp_write_dword(tp, MCU_TYPE_USB, USB_BP_6, 0);
++	mdelay(3);
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_BP_BA, 0);
++	ocp_write_word(tp, MCU_TYPE_USB, USB_BP_BA, 0);
 +}
 +
-+static u16 r8152_mmd_read(struct r8152 *tp, u16 dev, u16 reg)
++static void r8153_clear_bp(struct r8152 *tp)
 +{
-+	u16 data;
-+
-+	r8152_mmd_indirect(tp, dev, reg);
-+	data = ocp_reg_read(tp, OCP_EEE_DATA);
-+	ocp_reg_write(tp, OCP_EEE_AR, 0x0000);
-+
-+	return data;
-+}
-+
-+static void r8152_mmd_write(struct r8152 *tp, u16 dev, u16 reg, u16 data)
-+{
-+	r8152_mmd_indirect(tp, dev, reg);
-+	ocp_reg_write(tp, OCP_EEE_DATA, data);
-+	ocp_reg_write(tp, OCP_EEE_AR, 0x0000);
-+}
-+
-+static void r8152_eee_en(struct r8152 *tp, bool enable)
-+{
-+	u16 config1, config2, config3;
-+	u32 ocp_data;
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_EEE_CR);
-+	config1 = ocp_reg_read(tp, OCP_EEE_CONFIG1) & ~sd_rise_time_mask;
-+	config2 = ocp_reg_read(tp, OCP_EEE_CONFIG2);
-+	config3 = ocp_reg_read(tp, OCP_EEE_CONFIG3) & ~fast_snr_mask;
-+
-+	if (enable) {
-+		ocp_data |= EEE_RX_EN | EEE_TX_EN;
-+		config1 |= EEE_10_CAP | EEE_NWAY_EN | TX_QUIET_EN | RX_QUIET_EN;
-+		config1 |= sd_rise_time(1);
-+		config2 |= RG_DACQUIET_EN | RG_LDVQUIET_EN;
-+		config3 |= fast_snr(42);
-+	} else {
-+		ocp_data &= ~(EEE_RX_EN | EEE_TX_EN);
-+		config1 &= ~(EEE_10_CAP | EEE_NWAY_EN | TX_QUIET_EN |
-+			     RX_QUIET_EN);
-+		config1 |= sd_rise_time(7);
-+		config2 &= ~(RG_DACQUIET_EN | RG_LDVQUIET_EN);
-+		config3 |= fast_snr(511);
-+	}
-+
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_EEE_CR, ocp_data);
-+	ocp_reg_write(tp, OCP_EEE_CONFIG1, config1);
-+	ocp_reg_write(tp, OCP_EEE_CONFIG2, config2);
-+	ocp_reg_write(tp, OCP_EEE_CONFIG3, config3);
++	ocp_write_byte(tp, MCU_TYPE_PLA, PLA_BP_EN, 0);
++	ocp_write_byte(tp, MCU_TYPE_USB, USB_BP_EN, 0);
++	rtl_clear_bp(tp);
 +}
 +
 +static void r8152b_enable_eee(struct r8152 *tp)
 +{
-+	r8152_eee_en(tp, true);
-+	r8152_mmd_write(tp, MDIO_MMD_AN, MDIO_AN_EEE_ADV, MDIO_EEE_100TX);
-+}
-+
-+static void r8153_eee_en(struct r8152 *tp, bool enable)
-+{
 +	u32 ocp_data;
-+	u16 config;
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_EEE_CR);
-+	config = ocp_reg_read(tp, OCP_EEE_CFG);
-+
-+	if (enable) {
-+		ocp_data |= EEE_RX_EN | EEE_TX_EN;
-+		config |= EEE10_EN;
-+	} else {
-+		ocp_data &= ~(EEE_RX_EN | EEE_TX_EN);
-+		config &= ~EEE10_EN;
-+	}
-+
++	ocp_data |= EEE_RX_EN | EEE_TX_EN;
 +	ocp_write_word(tp, MCU_TYPE_PLA, PLA_EEE_CR, ocp_data);
-+	ocp_reg_write(tp, OCP_EEE_CFG, config);
++	ocp_reg_write(tp, OCP_EEE_CONFIG1, RG_TXLPI_MSK_HFDUP | RG_MATCLR_EN |
++					   EEE_10_CAP | EEE_NWAY_EN |
++					   TX_QUIET_EN | RX_QUIET_EN |
++					   SDRISETIME | RG_RXLPI_MSK_HFDUP |
++					   SDFALLTIME);
++	ocp_reg_write(tp, OCP_EEE_CONFIG2, RG_LPIHYS_NUM | RG_DACQUIET_EN |
++					   RG_LDVQUIET_EN | RG_CKRSEL |
++					   RG_EEEPRG_EN);
++	ocp_reg_write(tp, OCP_EEE_CONFIG3, FST_SNR_EYE_R | RG_LFS_SEL | MSK_PH);
++	ocp_reg_write(tp, OCP_EEE_AR, FUN_ADDR | DEVICE_ADDR);
++	ocp_reg_write(tp, OCP_EEE_DATA, EEE_ADDR);
++	ocp_reg_write(tp, OCP_EEE_AR, FUN_DATA | DEVICE_ADDR);
++	ocp_reg_write(tp, OCP_EEE_DATA, EEE_DATA);
++	ocp_reg_write(tp, OCP_EEE_AR, 0x0000);
 +}
 +
 +static void r8153_enable_eee(struct r8152 *tp)
 +{
-+	r8153_eee_en(tp, true);
-+	ocp_reg_write(tp, OCP_EEE_ADV, MDIO_EEE_1000T | MDIO_EEE_100TX);
++	u32 ocp_data;
++	u16 data;
++
++	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_EEE_CR);
++	ocp_data |= EEE_RX_EN | EEE_TX_EN;
++	ocp_write_word(tp, MCU_TYPE_PLA, PLA_EEE_CR, ocp_data);
++	data = ocp_reg_read(tp, OCP_EEE_CFG);
++	data |= EEE10_EN;
++	ocp_reg_write(tp, OCP_EEE_CFG, data);
++	data = ocp_reg_read(tp, OCP_EEE_CFG2);
++	data |= MY1000_EEE | MY100_EEE;
++	ocp_reg_write(tp, OCP_EEE_CFG2, data);
 +}
 +
 +static void r8152b_enable_fc(struct r8152 *tp)
@@ -20336,23 +20314,18 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	r8152_mdio_write(tp, MII_ADVERTISE, anar);
 +}
 +
-+static void rtl_tally_reset(struct r8152 *tp)
++static void r8152b_hw_phy_cfg(struct r8152 *tp)
 +{
-+	u32 ocp_data;
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_RSTTALLY);
-+	ocp_data |= TALLY_RESET;
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_RSTTALLY, ocp_data);
++	r8152_mdio_write(tp, MII_BMCR, BMCR_ANENABLE);
++	r8152b_disable_aldps(tp);
 +}
 +
 +static void r8152b_init(struct r8152 *tp)
 +{
 +	u32 ocp_data;
++	int i;
 +
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return;
-+
-+	r8152b_disable_aldps(tp);
++	rtl_clear_bp(tp);
 +
 +	if (tp->version == RTL_VER_01) {
 +		ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_LED_FEATURE);
@@ -20360,7 +20333,17 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		ocp_write_word(tp, MCU_TYPE_PLA, PLA_LED_FEATURE, ocp_data);
 +	}
 +
-+	r8152_power_cut_en(tp, false);
++	r8152b_hw_phy_cfg(tp);
++
++	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_UPS_CTRL);
++	ocp_data &= ~POWER_CUT;
++	ocp_write_word(tp, MCU_TYPE_USB, USB_UPS_CTRL, ocp_data);
++
++	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_PM_CTRL_STATUS);
++	ocp_data &= ~RESUME_INDICATE;
++	ocp_write_word(tp, MCU_TYPE_USB, USB_PM_CTRL_STATUS, ocp_data);
++
++	r8152b_exit_oob(tp);
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_PHY_PWR);
 +	ocp_data |= TX_10M_IDLE_EN | PFM_PWM_SWITCH;
@@ -20376,7 +20359,14 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	r8152b_enable_eee(tp);
 +	r8152b_enable_aldps(tp);
 +	r8152b_enable_fc(tp);
-+	rtl_tally_reset(tp);
++
++	r8152_mdio_write(tp, MII_BMCR, BMCR_RESET | BMCR_ANENABLE |
++				       BMCR_ANRESTART);
++	for (i = 0; i < 100; i++) {
++		udelay(100);
++		if (!(r8152_mdio_read(tp, MII_BMCR) & BMCR_RESET))
++			break;
++	}
 +
 +	/* enable rx aggregation */
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_USB_CTRL);
@@ -20389,11 +20379,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	u32 ocp_data;
 +	int i;
 +
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return;
-+
-+	r8153_disable_aldps(tp);
-+	r8153_u1u2en(tp, false);
++	r8153_u1u2en(tp, 0);
 +
 +	for (i = 0; i < 500; i++) {
 +		if (ocp_read_word(tp, MCU_TYPE_PLA, PLA_BOOT_CTRL) &
@@ -20409,11 +20395,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		msleep(20);
 +	}
 +
-+	r8153_u2p3en(tp, false);
++	r8153_u2p3en(tp, 0);
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_WDT11_CTRL);
 +	ocp_data &= ~TIMER11_EN;
 +	ocp_write_word(tp, MCU_TYPE_USB, USB_WDT11_CTRL, ocp_data);
++
++	r8153_clear_bp(tp);
 +
 +	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_LED_FEATURE);
 +	ocp_data &= ~LED_MODE_MASK;
@@ -20432,8 +20420,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	ocp_data |= SEN_VAL_NORMAL | SEL_RXIDLE;
 +	ocp_write_word(tp, MCU_TYPE_USB, USB_AFE_CTRL2, ocp_data);
 +
-+	r8153_power_cut_en(tp, false);
-+	r8153_u1u2en(tp, true);
++	r8153_power_cut_en(tp, 0);
++	r8153_u1u2en(tp, 1);
++
++	r8153_first_init(tp);
 +
 +	ocp_write_word(tp, MCU_TYPE_PLA, PLA_MAC_PWR_CTRL, ALDPS_SPDWN_RATIO);
 +	ocp_write_word(tp, MCU_TYPE_PLA, PLA_MAC_PWR_CTRL2, EEE_SPDWN_RATIO);
@@ -20448,136 +20438,47 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	r8153_enable_eee(tp);
 +	r8153_enable_aldps(tp);
 +	r8152b_enable_fc(tp);
-+	rtl_tally_reset(tp);
++
++	r8152_mdio_write(tp, MII_BMCR, BMCR_RESET | BMCR_ANENABLE |
++				       BMCR_ANRESTART);
 +}
 +
 +static int rtl8152_suspend(struct usb_interface *intf, pm_message_t message)
 +{
 +	struct r8152 *tp = usb_get_intfdata(intf);
-+	struct net_device *netdev = tp->netdev;
-+	int ret = 0;
 +
-+	mutex_lock(&tp->control);
++	netif_device_detach(tp->netdev);
 +
-+	if (PMSG_IS_AUTO(message)) {
-+		if (netif_running(netdev) && work_busy(&tp->schedule.work)) {
-+			ret = -EBUSY;
-+			goto out1;
-+		}
-+
-+		set_bit(SELECTIVE_SUSPEND, &tp->flags);
-+	} else {
-+		netif_device_detach(netdev);
-+	}
-+
-+	if (netif_running(netdev) && test_bit(WORK_ENABLE, &tp->flags)) {
++	if (netif_running(tp->netdev)) {
 +		clear_bit(WORK_ENABLE, &tp->flags);
 +		usb_kill_urb(tp->intr_urb);
++		cancel_delayed_work_sync(&tp->schedule);
 +		tasklet_disable(&tp->tl);
-+		if (test_bit(SELECTIVE_SUSPEND, &tp->flags)) {
-+			rtl_stop_rx(tp);
-+			rtl_runtime_suspend_enable(tp, true);
-+		} else {
-+			cancel_delayed_work_sync(&tp->schedule);
-+			tp->rtl_ops.down(tp);
-+		}
-+		tasklet_enable(&tp->tl);
 +	}
-+out1:
-+	mutex_unlock(&tp->control);
 +
-+	return ret;
++	tp->rtl_ops.down(tp);
++
++	return 0;
 +}
 +
 +static int rtl8152_resume(struct usb_interface *intf)
 +{
 +	struct r8152 *tp = usb_get_intfdata(intf);
 +
-+	mutex_lock(&tp->control);
-+
-+	if (!test_bit(SELECTIVE_SUSPEND, &tp->flags)) {
-+		tp->rtl_ops.init(tp);
-+		netif_device_attach(tp->netdev);
-+	}
-+
++	tp->rtl_ops.init(tp);
++	netif_device_attach(tp->netdev);
 +	if (netif_running(tp->netdev)) {
-+		if (test_bit(SELECTIVE_SUSPEND, &tp->flags)) {
-+			rtl_runtime_suspend_enable(tp, false);
-+			clear_bit(SELECTIVE_SUSPEND, &tp->flags);
-+			set_bit(WORK_ENABLE, &tp->flags);
-+			if (tp->speed & LINK_STATUS)
-+				rtl_start_rx(tp);
-+		} else {
-+			tp->rtl_ops.up(tp);
-+			rtl8152_set_speed(tp, AUTONEG_ENABLE,
-+					  tp->mii.supports_gmii ?
-+					  SPEED_1000 : SPEED_100,
-+					  DUPLEX_FULL);
-+			tp->speed = 0;
-+			netif_carrier_off(tp->netdev);
-+			set_bit(WORK_ENABLE, &tp->flags);
-+		}
++		rtl8152_set_speed(tp, AUTONEG_ENABLE,
++				tp->mii.supports_gmii ? SPEED_1000 : SPEED_100,
++				DUPLEX_FULL);
++		tp->speed = 0;
++		netif_carrier_off(tp->netdev);
++		set_bit(WORK_ENABLE, &tp->flags);
 +		usb_submit_urb(tp->intr_urb, GFP_KERNEL);
-+	} else if (test_bit(SELECTIVE_SUSPEND, &tp->flags)) {
-+		clear_bit(SELECTIVE_SUSPEND, &tp->flags);
++		tasklet_enable(&tp->tl);
 +	}
-+
-+	mutex_unlock(&tp->control);
 +
 +	return 0;
-+}
-+
-+static void rtl8152_get_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
-+{
-+	struct r8152 *tp = netdev_priv(dev);
-+
-+	if (usb_autopm_get_interface(tp->intf) < 0)
-+		return;
-+
-+	mutex_lock(&tp->control);
-+
-+	wol->supported = WAKE_ANY;
-+	wol->wolopts = __rtl_get_wol(tp);
-+
-+	mutex_unlock(&tp->control);
-+
-+	usb_autopm_put_interface(tp->intf);
-+}
-+
-+static int rtl8152_set_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
-+{
-+	struct r8152 *tp = netdev_priv(dev);
-+	int ret;
-+
-+	ret = usb_autopm_get_interface(tp->intf);
-+	if (ret < 0)
-+		goto out_set_wol;
-+
-+	mutex_lock(&tp->control);
-+
-+	__rtl_set_wol(tp, wol->wolopts);
-+	tp->saved_wolopts = wol->wolopts & WAKE_ANY;
-+
-+	mutex_unlock(&tp->control);
-+
-+	usb_autopm_put_interface(tp->intf);
-+
-+out_set_wol:
-+	return ret;
-+}
-+
-+static u32 rtl8152_get_msglevel(struct net_device *dev)
-+{
-+	struct r8152 *tp = netdev_priv(dev);
-+
-+	return tp->msg_enable;
-+}
-+
-+static void rtl8152_set_msglevel(struct net_device *dev, u32 value)
-+{
-+	struct r8152 *tp = netdev_priv(dev);
-+
-+	tp->msg_enable = value;
 +}
 +
 +static void rtl8152_get_drvinfo(struct net_device *netdev,
@@ -20585,8 +20486,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +{
 +	struct r8152 *tp = netdev_priv(netdev);
 +
-+	strlcpy(info->driver, MODULENAME, sizeof(info->driver));
-+	strlcpy(info->version, DRIVER_VERSION, sizeof(info->version));
++	strncpy(info->driver, MODULENAME, ETHTOOL_BUSINFO_LEN);
++	strncpy(info->version, DRIVER_VERSION, ETHTOOL_BUSINFO_LEN);
 +	usb_make_path(tp->udev, info->bus_info, sizeof(info->bus_info));
 +}
 +
@@ -20594,235 +20495,18 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +int rtl8152_get_settings(struct net_device *netdev, struct ethtool_cmd *cmd)
 +{
 +	struct r8152 *tp = netdev_priv(netdev);
-+	int ret;
 +
 +	if (!tp->mii.mdio_read)
 +		return -EOPNOTSUPP;
 +
-+	ret = usb_autopm_get_interface(tp->intf);
-+	if (ret < 0)
-+		goto out;
-+
-+	mutex_lock(&tp->control);
-+
-+	ret = mii_ethtool_gset(&tp->mii, cmd);
-+
-+	mutex_unlock(&tp->control);
-+
-+	usb_autopm_put_interface(tp->intf);
-+
-+out:
-+	return ret;
++	return mii_ethtool_gset(&tp->mii, cmd);
 +}
 +
 +static int rtl8152_set_settings(struct net_device *dev, struct ethtool_cmd *cmd)
 +{
 +	struct r8152 *tp = netdev_priv(dev);
-+	int ret;
 +
-+	ret = usb_autopm_get_interface(tp->intf);
-+	if (ret < 0)
-+		goto out;
-+
-+	mutex_lock(&tp->control);
-+
-+	ret = rtl8152_set_speed(tp, cmd->autoneg, cmd->speed, cmd->duplex);
-+
-+	mutex_unlock(&tp->control);
-+
-+	usb_autopm_put_interface(tp->intf);
-+
-+out:
-+	return ret;
-+}
-+
-+static const char rtl8152_gstrings[][ETH_GSTRING_LEN] = {
-+	"tx_packets",
-+	"rx_packets",
-+	"tx_errors",
-+	"rx_errors",
-+	"rx_missed",
-+	"align_errors",
-+	"tx_single_collisions",
-+	"tx_multi_collisions",
-+	"rx_unicast",
-+	"rx_broadcast",
-+	"rx_multicast",
-+	"tx_aborted",
-+	"tx_underrun",
-+};
-+
-+static int rtl8152_get_sset_count(struct net_device *dev, int sset)
-+{
-+	switch (sset) {
-+	case ETH_SS_STATS:
-+		return ARRAY_SIZE(rtl8152_gstrings);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+static void rtl8152_get_ethtool_stats(struct net_device *dev,
-+				      struct ethtool_stats *stats, u64 *data)
-+{
-+	struct r8152 *tp = netdev_priv(dev);
-+	struct tally_counter tally;
-+
-+	if (usb_autopm_get_interface(tp->intf) < 0)
-+		return;
-+
-+	generic_ocp_read(tp, PLA_TALLYCNT, sizeof(tally), &tally, MCU_TYPE_PLA);
-+
-+	usb_autopm_put_interface(tp->intf);
-+
-+	data[0] = le64_to_cpu(tally.tx_packets);
-+	data[1] = le64_to_cpu(tally.rx_packets);
-+	data[2] = le64_to_cpu(tally.tx_errors);
-+	data[3] = le32_to_cpu(tally.rx_errors);
-+	data[4] = le16_to_cpu(tally.rx_missed);
-+	data[5] = le16_to_cpu(tally.align_errors);
-+	data[6] = le32_to_cpu(tally.tx_one_collision);
-+	data[7] = le32_to_cpu(tally.tx_multi_collision);
-+	data[8] = le64_to_cpu(tally.rx_unicast);
-+	data[9] = le64_to_cpu(tally.rx_broadcast);
-+	data[10] = le32_to_cpu(tally.rx_multicast);
-+	data[11] = le16_to_cpu(tally.tx_aborted);
-+	data[12] = le16_to_cpu(tally.tx_underun);
-+}
-+
-+static void rtl8152_get_strings(struct net_device *dev, u32 stringset, u8 *data)
-+{
-+	switch (stringset) {
-+	case ETH_SS_STATS:
-+		memcpy(data, *rtl8152_gstrings, sizeof(rtl8152_gstrings));
-+		break;
-+	}
-+}
-+
-+static int r8152_get_eee(struct r8152 *tp, struct ethtool_eee *eee)
-+{
-+	u32 ocp_data, lp, adv, supported = 0;
-+	u16 val;
-+
-+	val = r8152_mmd_read(tp, MDIO_MMD_PCS, MDIO_PCS_EEE_ABLE);
-+	supported = mmd_eee_cap_to_ethtool_sup_t(val);
-+
-+	val = r8152_mmd_read(tp, MDIO_MMD_AN, MDIO_AN_EEE_ADV);
-+	adv = mmd_eee_adv_to_ethtool_adv_t(val);
-+
-+	val = r8152_mmd_read(tp, MDIO_MMD_AN, MDIO_AN_EEE_LPABLE);
-+	lp = mmd_eee_adv_to_ethtool_adv_t(val);
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_EEE_CR);
-+	ocp_data &= EEE_RX_EN | EEE_TX_EN;
-+
-+	eee->eee_enabled = !!ocp_data;
-+	eee->eee_active = !!(supported & adv & lp);
-+	eee->supported = supported;
-+	eee->advertised = adv;
-+	eee->lp_advertised = lp;
-+
-+	return 0;
-+}
-+
-+static int r8152_set_eee(struct r8152 *tp, struct ethtool_eee *eee)
-+{
-+	u16 val = ethtool_adv_to_mmd_eee_adv_t(eee->advertised);
-+
-+	r8152_eee_en(tp, eee->eee_enabled);
-+
-+	if (!eee->eee_enabled)
-+		val = 0;
-+
-+	r8152_mmd_write(tp, MDIO_MMD_AN, MDIO_AN_EEE_ADV, val);
-+
-+	return 0;
-+}
-+
-+static int r8153_get_eee(struct r8152 *tp, struct ethtool_eee *eee)
-+{
-+	u32 ocp_data, lp, adv, supported = 0;
-+	u16 val;
-+
-+	val = ocp_reg_read(tp, OCP_EEE_ABLE);
-+	supported = mmd_eee_cap_to_ethtool_sup_t(val);
-+
-+	val = ocp_reg_read(tp, OCP_EEE_ADV);
-+	adv = mmd_eee_adv_to_ethtool_adv_t(val);
-+
-+	val = ocp_reg_read(tp, OCP_EEE_LPABLE);
-+	lp = mmd_eee_adv_to_ethtool_adv_t(val);
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_EEE_CR);
-+	ocp_data &= EEE_RX_EN | EEE_TX_EN;
-+
-+	eee->eee_enabled = !!ocp_data;
-+	eee->eee_active = !!(supported & adv & lp);
-+	eee->supported = supported;
-+	eee->advertised = adv;
-+	eee->lp_advertised = lp;
-+
-+	return 0;
-+}
-+
-+static int r8153_set_eee(struct r8152 *tp, struct ethtool_eee *eee)
-+{
-+	u16 val = ethtool_adv_to_mmd_eee_adv_t(eee->advertised);
-+
-+	r8153_eee_en(tp, eee->eee_enabled);
-+
-+	if (!eee->eee_enabled)
-+		val = 0;
-+
-+	ocp_reg_write(tp, OCP_EEE_ADV, val);
-+
-+	return 0;
-+}
-+
-+static int
-+rtl_ethtool_get_eee(struct net_device *net, struct ethtool_eee *edata)
-+{
-+	struct r8152 *tp = netdev_priv(net);
-+	int ret;
-+
-+	ret = usb_autopm_get_interface(tp->intf);
-+	if (ret < 0)
-+		goto out;
-+
-+	mutex_lock(&tp->control);
-+
-+	ret = tp->rtl_ops.eee_get(tp, edata);
-+
-+	mutex_unlock(&tp->control);
-+
-+	usb_autopm_put_interface(tp->intf);
-+
-+out:
-+	return ret;
-+}
-+
-+static int
-+rtl_ethtool_set_eee(struct net_device *net, struct ethtool_eee *edata)
-+{
-+	struct r8152 *tp = netdev_priv(net);
-+	int ret;
-+
-+	ret = usb_autopm_get_interface(tp->intf);
-+	if (ret < 0)
-+		goto out;
-+
-+	mutex_lock(&tp->control);
-+
-+	ret = tp->rtl_ops.eee_set(tp, edata);
-+	if (!ret)
-+		ret = mii_nway_restart(&tp->mii);
-+
-+	mutex_unlock(&tp->control);
-+
-+	usb_autopm_put_interface(tp->intf);
-+
-+out:
-+	return ret;
++	return rtl8152_set_speed(tp, cmd->autoneg, cmd->speed, cmd->duplex);
 +}
 +
 +static struct ethtool_ops ops = {
@@ -20830,29 +20514,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	.get_settings = rtl8152_get_settings,
 +	.set_settings = rtl8152_set_settings,
 +	.get_link = ethtool_op_get_link,
-+	.get_msglevel = rtl8152_get_msglevel,
-+	.set_msglevel = rtl8152_set_msglevel,
-+	.get_wol = rtl8152_get_wol,
-+	.set_wol = rtl8152_set_wol,
-+	.get_strings = rtl8152_get_strings,
-+	.get_sset_count = rtl8152_get_sset_count,
-+	.get_ethtool_stats = rtl8152_get_ethtool_stats,
-+	.get_eee = rtl_ethtool_get_eee,
-+	.set_eee = rtl_ethtool_set_eee,
 +};
 +
 +static int rtl8152_ioctl(struct net_device *netdev, struct ifreq *rq, int cmd)
 +{
 +	struct r8152 *tp = netdev_priv(netdev);
 +	struct mii_ioctl_data *data = if_mii(rq);
-+	int res;
-+
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return -ENODEV;
-+
-+	res = usb_autopm_get_interface(tp->intf);
-+	if (res < 0)
-+		goto out;
++	int res = 0;
 +
 +	switch (cmd) {
 +	case SIOCGMIIPHY:
@@ -20860,9 +20528,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		break;
 +
 +	case SIOCGMIIREG:
-+		mutex_lock(&tp->control);
 +		data->val_out = r8152_mdio_read(tp, data->reg_num);
-+		mutex_unlock(&tp->control);
 +		break;
 +
 +	case SIOCSMIIREG:
@@ -20870,39 +20536,14 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +			res = -EPERM;
 +			break;
 +		}
-+		mutex_lock(&tp->control);
 +		r8152_mdio_write(tp, data->reg_num, data->val_in);
-+		mutex_unlock(&tp->control);
 +		break;
 +
 +	default:
 +		res = -EOPNOTSUPP;
 +	}
 +
-+	usb_autopm_put_interface(tp->intf);
-+
-+out:
 +	return res;
-+}
-+
-+static int rtl8152_change_mtu(struct net_device *dev, int new_mtu)
-+{
-+	struct r8152 *tp = netdev_priv(dev);
-+
-+	switch (tp->version) {
-+	case RTL_VER_01:
-+	case RTL_VER_02:
-+		return eth_change_mtu(dev, new_mtu);
-+	default:
-+		break;
-+	}
-+
-+	if (new_mtu < 68 || new_mtu > RTL8153_MAX_MTU)
-+		return -EINVAL;
-+
-+	dev->mtu = new_mtu;
-+
-+	return 0;
 +}
 +
 +static const struct net_device_ops rtl8152_netdev_ops = {
@@ -20911,10 +20552,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	.ndo_do_ioctl		= rtl8152_ioctl,
 +	.ndo_start_xmit		= rtl8152_start_xmit,
 +	.ndo_tx_timeout		= rtl8152_tx_timeout,
-+	.ndo_set_features	= rtl8152_set_features,
 +	.ndo_set_rx_mode	= rtl8152_set_rx_mode,
 +	.ndo_set_mac_address	= rtl8152_set_mac_address,
-+	.ndo_change_mtu		= rtl8152_change_mtu,
++
++	.ndo_change_mtu		= eth_change_mtu,
 +	.ndo_validate_addr	= eth_validate_addr,
 +};
 +
@@ -20954,19 +20595,22 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +
 +static void rtl8152_unload(struct r8152 *tp)
 +{
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return;
++	u32	ocp_data;
 +
-+	if (tp->version != RTL_VER_01)
-+		r8152_power_cut_en(tp, true);
++	if (tp->version != RTL_VER_01) {
++		ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_UPS_CTRL);
++		ocp_data |= POWER_CUT;
++		ocp_write_word(tp, MCU_TYPE_USB, USB_UPS_CTRL, ocp_data);
++	}
++
++	ocp_data = ocp_read_word(tp, MCU_TYPE_USB, USB_PM_CTRL_STATUS);
++	ocp_data &= ~RESUME_INDICATE;
++	ocp_write_word(tp, MCU_TYPE_USB, USB_PM_CTRL_STATUS, ocp_data);
 +}
 +
 +static void rtl8153_unload(struct r8152 *tp)
 +{
-+	if (test_bit(RTL8152_UNPLUG, &tp->flags))
-+		return;
-+
-+	r8153_power_cut_en(tp, false);
++	r8153_power_cut_en(tp, 1);
 +}
 +
 +static int rtl_ops_init(struct r8152 *tp, const struct usb_device_id *id)
@@ -20981,22 +20625,16 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +			ops->init		= r8152b_init;
 +			ops->enable		= rtl8152_enable;
 +			ops->disable		= rtl8152_disable;
-+			ops->up			= rtl8152_up;
 +			ops->down		= rtl8152_down;
 +			ops->unload		= rtl8152_unload;
-+			ops->eee_get		= r8152_get_eee;
-+			ops->eee_set		= r8152_set_eee;
 +			ret = 0;
 +			break;
 +		case PRODUCT_ID_RTL8153:
 +			ops->init		= r8153_init;
 +			ops->enable		= rtl8153_enable;
-+			ops->disable		= rtl8153_disable;
-+			ops->up			= rtl8153_up;
++			ops->disable		= rtl8152_disable;
 +			ops->down		= rtl8153_down;
 +			ops->unload		= rtl8153_unload;
-+			ops->eee_get		= r8153_get_eee;
-+			ops->eee_set		= r8153_set_eee;
 +			ret = 0;
 +			break;
 +		default:
@@ -21009,12 +20647,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		case PRODUCT_ID_SAMSUNG:
 +			ops->init		= r8153_init;
 +			ops->enable		= rtl8153_enable;
-+			ops->disable		= rtl8153_disable;
-+			ops->up			= rtl8153_up;
++			ops->disable		= rtl8152_disable;
 +			ops->down		= rtl8153_down;
 +			ops->unload		= rtl8153_unload;
-+			ops->eee_get		= r8153_get_eee;
-+			ops->eee_set		= r8153_set_eee;
 +			ret = 0;
 +			break;
 +		default:
@@ -21065,27 +20700,14 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		goto out;
 +
 +	tasklet_init(&tp->tl, bottom_half, (unsigned long)tp);
-+	mutex_init(&tp->control);
 +	INIT_DELAYED_WORK(&tp->schedule, rtl_work_func_t);
 +
 +	netdev->netdev_ops = &rtl8152_netdev_ops;
 +	netdev->watchdog_timeo = RTL8152_TX_TIMEOUT;
 +
-+	netdev->features |= NETIF_F_RXCSUM | NETIF_F_IP_CSUM | NETIF_F_SG |
-+			    NETIF_F_TSO | NETIF_F_FRAGLIST | NETIF_F_IPV6_CSUM |
-+			    NETIF_F_TSO6 | NETIF_F_HW_VLAN_CTAG_RX |
-+			    NETIF_F_HW_VLAN_CTAG_TX;
-+	netdev->hw_features = NETIF_F_RXCSUM | NETIF_F_IP_CSUM | NETIF_F_SG |
-+			      NETIF_F_TSO | NETIF_F_FRAGLIST |
-+			      NETIF_F_IPV6_CSUM | NETIF_F_TSO6 |
-+			      NETIF_F_HW_VLAN_CTAG_RX |
-+			      NETIF_F_HW_VLAN_CTAG_TX;
-+	netdev->vlan_features = NETIF_F_SG | NETIF_F_IP_CSUM | NETIF_F_TSO |
-+				NETIF_F_HIGHDMA | NETIF_F_FRAGLIST |
-+				NETIF_F_IPV6_CSUM | NETIF_F_TSO6;
-+
-+	netdev->ethtool_ops = &ops;
-+	netif_set_gso_max_size(netdev, RTL_LIMITED_TSO_SIZE);
++	netdev->features |= NETIF_F_IP_CSUM;
++	netdev->hw_features = NETIF_F_IP_CSUM;
++	SET_ETHTOOL_OPS(netdev, &ops);
 +
 +	tp->mii.dev = netdev;
 +	tp->mii.mdio_read = read_mii_word;
@@ -21095,11 +20717,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	tp->mii.phy_id = R8152_PHY_ID;
 +	tp->mii.supports_gmii = 0;
 +
-+	intf->needs_remote_wakeup = 1;
-+
 +	r8152b_get_version(tp);
 +	tp->rtl_ops.init(tp);
 +	set_ethernet_addr(tp);
++
++	ret = alloc_all_mem(tp);
++	if (ret)
++		goto out;
 +
 +	usb_set_intfdata(intf, tp);
 +
@@ -21108,12 +20732,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +		netif_err(tp, probe, netdev, "couldn't register the device\n");
 +		goto out1;
 +	}
-+
-+	tp->saved_wolopts = __rtl_get_wol(tp);
-+	if (tp->saved_wolopts)
-+		device_set_wakeup_enable(&udev->dev, true);
-+	else
-+		device_set_wakeup_enable(&udev->dev, false);
 +
 +	netif_info(tp, probe, netdev, "%s\n", DRIVER_VERSION);
 +
@@ -21132,14 +20750,11 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +
 +	usb_set_intfdata(intf, NULL);
 +	if (tp) {
-+		struct usb_device *udev = tp->udev;
-+
-+		if (udev->state == USB_STATE_NOTATTACHED)
-+			set_bit(RTL8152_UNPLUG, &tp->flags);
-+
++		set_bit(RTL8152_UNPLUG, &tp->flags);
 +		tasklet_kill(&tp->tl);
 +		unregister_netdev(tp->netdev);
 +		tp->rtl_ops.unload(tp);
++		free_all_mem(tp);
 +		free_netdev(tp->netdev);
 +	}
 +}
@@ -21162,8 +20777,6 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +	.suspend =	rtl8152_suspend,
 +	.resume =	rtl8152_resume,
 +	.reset_resume =	rtl8152_resume,
-+	.supports_autosuspend = 1,
-+	.disable_hub_initiated_lpm = 1,
 +};
 +
 +module_usb_driver(rtl8152_driver);
@@ -21171,10 +20784,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/r8152.c backports-3.18.1-1/dri
 +MODULE_AUTHOR(DRIVER_AUTHOR);
 +MODULE_DESCRIPTION(DRIVER_DESC);
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/rtl8150.c backports-3.18.1-1/drivers/net/usb/rtl8150.c
---- backports-3.18.1-1.org/drivers/net/usb/rtl8150.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/rtl8150.c	2014-12-16 18:39:45.000000000 +0100
-@@ -0,0 +1,950 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/rtl8150.c backports-4.2.6-1/drivers/net/usb/rtl8150.c
+--- backports-4.2.6-1.org/drivers/net/usb/rtl8150.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/rtl8150.c	2015-11-09 23:37:56.000000000 +0100
+@@ -0,0 +1,949 @@
 +/*
 + *  Copyright (c) 2002 Petko Manolov (petkan@users.sourceforge.net)
 + *
@@ -21930,14 +21543,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/rtl8150.c backports-3.18.1-1/d
 +static int rtl8150_close(struct net_device *netdev)
 +{
 +	rtl8150_t *dev = netdev_priv(netdev);
-+	int res = 0;
 +
 +	netif_stop_queue(netdev);
 +	if (!test_bit(RTL8150_UNPLUG, &dev->flags))
 +		disable_net_traffic(dev);
 +	unlink_all_urbs(dev);
 +
-+	return res;
++	return 0;
 +}
 +
 +static void rtl8150_get_drvinfo(struct net_device *netdev, struct ethtool_drvinfo *info)
@@ -22125,9 +21737,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/rtl8150.c backports-3.18.1-1/d
 +MODULE_AUTHOR(DRIVER_AUTHOR);
 +MODULE_DESCRIPTION(DRIVER_DESC);
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/smsc75xx.c backports-3.18.1-1/drivers/net/usb/smsc75xx.c
---- backports-3.18.1-1.org/drivers/net/usb/smsc75xx.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/smsc75xx.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc75xx.c backports-4.2.6-1/drivers/net/usb/smsc75xx.c
+--- backports-4.2.6-1.org/drivers/net/usb/smsc75xx.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/smsc75xx.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,2286 @@
 + /***************************************************************************
 + *
@@ -24415,9 +24027,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/smsc75xx.c backports-3.18.1-1/
 +MODULE_AUTHOR("Steve Glendinning <steve.glendinning@shawell.net>");
 +MODULE_DESCRIPTION("SMSC75XX USB 2.0 Gigabit Ethernet Devices");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/smsc75xx.h backports-3.18.1-1/drivers/net/usb/smsc75xx.h
---- backports-3.18.1-1.org/drivers/net/usb/smsc75xx.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/smsc75xx.h	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc75xx.h backports-4.2.6-1/drivers/net/usb/smsc75xx.h
+--- backports-4.2.6-1.org/drivers/net/usb/smsc75xx.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/smsc75xx.h	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,421 @@
 + /***************************************************************************
 + *
@@ -24840,10 +24452,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/smsc75xx.h backports-3.18.1-1/
 +#define INT_ENP_RX_FIFO_DATA_INT	((u32)BIT(12))
 +
 +#endif /* _SMSC75XX_H */
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/smsc95xx.c backports-3.18.1-1/drivers/net/usb/smsc95xx.c
---- backports-3.18.1-1.org/drivers/net/usb/smsc95xx.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/smsc95xx.c	2014-12-16 18:39:45.000000000 +0100
-@@ -0,0 +1,2030 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc95xx.c backports-4.2.6-1/drivers/net/usb/smsc95xx.c
+--- backports-4.2.6-1.org/drivers/net/usb/smsc95xx.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/smsc95xx.c	2015-11-09 23:37:56.000000000 +0100
+@@ -0,0 +1,2032 @@
 + /***************************************************************************
 + *
 + * Copyright (C) 2007-2008 SMSC
@@ -26516,12 +26128,14 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/smsc95xx.c backports-3.18.1-1/
 +static int smsc95xx_resume(struct usb_interface *intf)
 +{
 +	struct usbnet *dev = usb_get_intfdata(intf);
-+	struct smsc95xx_priv *pdata = (struct smsc95xx_priv *)(dev->data[0]);
-+	u8 suspend_flags = pdata->suspend_flags;
++	struct smsc95xx_priv *pdata;
++	u8 suspend_flags;
 +	int ret;
 +	u32 val;
 +
 +	BUG_ON(!dev);
++	pdata = (struct smsc95xx_priv *)(dev->data[0]);
++	suspend_flags = pdata->suspend_flags;
 +
 +	netdev_dbg(dev->net, "resume suspend_flags=0x%02x\n", suspend_flags);
 +
@@ -26874,9 +26488,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/smsc95xx.c backports-3.18.1-1/
 +MODULE_AUTHOR("Steve Glendinning <steve.glendinning@shawell.net>");
 +MODULE_DESCRIPTION("SMSC95XX USB 2.0 Ethernet Devices");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/smsc95xx.h backports-3.18.1-1/drivers/net/usb/smsc95xx.h
---- backports-3.18.1-1.org/drivers/net/usb/smsc95xx.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/smsc95xx.h	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc95xx.h backports-4.2.6-1/drivers/net/usb/smsc95xx.h
+--- backports-4.2.6-1.org/drivers/net/usb/smsc95xx.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/smsc95xx.h	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,290 @@
 + /***************************************************************************
 + *
@@ -27168,9 +26782,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/smsc95xx.h backports-3.18.1-1/
 +#define INT_ENP_RXDF_			((u32)BIT(11))
 +
 +#endif /* _SMSC95XX_H */
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.c backports-3.18.1-1/drivers/net/usb/sr9700.c
---- backports-3.18.1-1.org/drivers/net/usb/sr9700.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/sr9700.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9700.c backports-4.2.6-1/drivers/net/usb/sr9700.c
+--- backports-4.2.6-1.org/drivers/net/usb/sr9700.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/sr9700.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,559 @@
 +/*
 + * CoreChip-sz SR9700 one chip USB 1.1 Ethernet Devices
@@ -27251,7 +26865,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.c backports-3.18.1-1/dr
 +		int ret;
 +
 +		udelay(1);
-+		ret = sr_read_reg(dev, EPCR, &tmp);
++		ret = sr_read_reg(dev, SR_EPCR, &tmp);
 +		if (ret < 0)
 +			return ret;
 +
@@ -27272,15 +26886,15 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.c backports-3.18.1-1/dr
 +
 +	mutex_lock(&dev->phy_mutex);
 +
-+	sr_write_reg(dev, EPAR, phy ? (reg | EPAR_PHY_ADR) : reg);
-+	sr_write_reg(dev, EPCR, phy ? (EPCR_EPOS | EPCR_ERPRR) : EPCR_ERPRR);
++	sr_write_reg(dev, SR_EPAR, phy ? (reg | EPAR_PHY_ADR) : reg);
++	sr_write_reg(dev, SR_EPCR, phy ? (EPCR_EPOS | EPCR_ERPRR) : EPCR_ERPRR);
 +
 +	ret = wait_phy_eeprom_ready(dev, phy);
 +	if (ret < 0)
 +		goto out_unlock;
 +
-+	sr_write_reg(dev, EPCR, 0x0);
-+	ret = sr_read(dev, EPDR, 2, value);
++	sr_write_reg(dev, SR_EPCR, 0x0);
++	ret = sr_read(dev, SR_EPDR, 2, value);
 +
 +	netdev_dbg(dev->net, "read shared %d 0x%02x returned 0x%04x, %d\n",
 +		   phy, reg, *value, ret);
@@ -27297,19 +26911,19 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.c backports-3.18.1-1/dr
 +
 +	mutex_lock(&dev->phy_mutex);
 +
-+	ret = sr_write(dev, EPDR, 2, &value);
++	ret = sr_write(dev, SR_EPDR, 2, &value);
 +	if (ret < 0)
 +		goto out_unlock;
 +
-+	sr_write_reg(dev, EPAR, phy ? (reg | EPAR_PHY_ADR) : reg);
-+	sr_write_reg(dev, EPCR, phy ? (EPCR_WEP | EPCR_EPOS | EPCR_ERPRW) :
++	sr_write_reg(dev, SR_EPAR, phy ? (reg | EPAR_PHY_ADR) : reg);
++	sr_write_reg(dev, SR_EPCR, phy ? (EPCR_WEP | EPCR_EPOS | EPCR_ERPRW) :
 +		    (EPCR_WEP | EPCR_ERPRW));
 +
 +	ret = wait_phy_eeprom_ready(dev, phy);
 +	if (ret < 0)
 +		goto out_unlock;
 +
-+	sr_write_reg(dev, EPCR, 0x0);
++	sr_write_reg(dev, SR_EPCR, 0x0);
 +
 +out_unlock:
 +	mutex_unlock(&dev->phy_mutex);
@@ -27362,7 +26976,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.c backports-3.18.1-1/dr
 +	if (loc == MII_BMSR) {
 +		u8 value;
 +
-+		sr_read_reg(dev, NSR, &value);
++		sr_read_reg(dev, SR_NSR, &value);
 +		if (value & NSR_LINKST)
 +			rc = 1;
 +	}
@@ -27402,7 +27016,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.c backports-3.18.1-1/dr
 +	int rc = 0;
 +
 +	/* Get the Link Status directly */
-+	sr_read_reg(dev, NSR, &value);
++	sr_read_reg(dev, SR_NSR, &value);
 +	if (value & NSR_LINKST)
 +		rc = 1;
 +
@@ -27455,8 +27069,8 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.c backports-3.18.1-1/dr
 +		}
 +	}
 +
-+	sr_write_async(dev, MAR, SR_MCAST_SIZE, hashes);
-+	sr_write_reg_async(dev, RCR, rx_ctl);
++	sr_write_async(dev, SR_MAR, SR_MCAST_SIZE, hashes);
++	sr_write_reg_async(dev, SR_RCR, rx_ctl);
 +}
 +
 +static int sr9700_set_mac_address(struct net_device *netdev, void *p)
@@ -27471,7 +27085,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.c backports-3.18.1-1/dr
 +	}
 +
 +	memcpy(netdev->dev_addr, addr->sa_data, netdev->addr_len);
-+	sr_write_async(dev, PAR, 6, netdev->dev_addr);
++	sr_write_async(dev, SR_PAR, 6, netdev->dev_addr);
 +
 +	return 0;
 +}
@@ -27514,7 +27128,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.c backports-3.18.1-1/dr
 +	mii->phy_id_mask = 0x1f;
 +	mii->reg_num_mask = 0x1f;
 +
-+	sr_write_reg(dev, NCR, NCR_RST);
++	sr_write_reg(dev, SR_NCR, NCR_RST);
 +	udelay(20);
 +
 +	/* read MAC
@@ -27522,17 +27136,17 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.c backports-3.18.1-1/dr
 +	 * EEPROM automatically to PAR. In case there is no EEPROM externally,
 +	 * a default MAC address is stored in PAR for making chip work properly.
 +	 */
-+	if (sr_read(dev, PAR, ETH_ALEN, netdev->dev_addr) < 0) {
++	if (sr_read(dev, SR_PAR, ETH_ALEN, netdev->dev_addr) < 0) {
 +		netdev_err(netdev, "Error reading MAC address\n");
 +		ret = -ENODEV;
 +		goto out;
 +	}
 +
 +	/* power up and reset phy */
-+	sr_write_reg(dev, PRR, PRR_PHY_RST);
++	sr_write_reg(dev, SR_PRR, PRR_PHY_RST);
 +	/* at least 10ms, here 20ms for safe */
 +	mdelay(20);
-+	sr_write_reg(dev, PRR, 0);
++	sr_write_reg(dev, SR_PRR, 0);
 +	/* at least 1ms, here 2ms for reading right register */
 +	udelay(2 * 1000);
 +
@@ -27731,9 +27345,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.c backports-3.18.1-1/dr
 +MODULE_AUTHOR("liujl <liujunliang_ljl@163.com>");
 +MODULE_DESCRIPTION("SR9700 one chip USB 1.1 USB to Ethernet device from http://www.corechip-sz.com/");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.h backports-3.18.1-1/drivers/net/usb/sr9700.h
---- backports-3.18.1-1.org/drivers/net/usb/sr9700.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/sr9700.h	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9700.h backports-4.2.6-1/drivers/net/usb/sr9700.h
+--- backports-4.2.6-1.org/drivers/net/usb/sr9700.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/sr9700.h	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,173 @@
 +/*
 + * CoreChip-sz SR9700 one chip USB 1.1 Ethernet Devices
@@ -27751,13 +27365,13 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.h backports-3.18.1-1/dr
 +/* sr9700 spec. register table on Linux platform */
 +
 +/* Network Control Reg */
-+#define	NCR			0x00
++#define	SR_NCR			0x00
 +#define		NCR_RST			(1 << 0)
 +#define		NCR_LBK			(3 << 1)
 +#define		NCR_FDX			(1 << 3)
 +#define		NCR_WAKEEN		(1 << 6)
 +/* Network Status Reg */
-+#define	NSR			0x01
++#define	SR_NSR			0x01
 +#define		NSR_RXRDY		(1 << 0)
 +#define		NSR_RXOV		(1 << 1)
 +#define		NSR_TX1END		(1 << 2)
@@ -27767,7 +27381,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.h backports-3.18.1-1/dr
 +#define		NSR_LINKST		(1 << 6)
 +#define		NSR_SPEED		(1 << 7)
 +/* Tx Control Reg */
-+#define	TCR			0x02
++#define	SR_TCR			0x02
 +#define		TCR_CRC_DIS		(1 << 1)
 +#define		TCR_PAD_DIS		(1 << 2)
 +#define		TCR_LC_CARE		(1 << 3)
@@ -27775,7 +27389,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.h backports-3.18.1-1/dr
 +#define		TCR_EXCECM		(1 << 5)
 +#define		TCR_LF_EN		(1 << 6)
 +/* Tx Status Reg for Packet Index 1 */
-+#define	TSR1		0x03
++#define	SR_TSR1		0x03
 +#define		TSR1_EC			(1 << 2)
 +#define		TSR1_COL		(1 << 3)
 +#define		TSR1_LC			(1 << 4)
@@ -27783,7 +27397,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.h backports-3.18.1-1/dr
 +#define		TSR1_LOC		(1 << 6)
 +#define		TSR1_TLF		(1 << 7)
 +/* Tx Status Reg for Packet Index 2 */
-+#define	TSR2		0x04
++#define	SR_TSR2		0x04
 +#define		TSR2_EC			(1 << 2)
 +#define		TSR2_COL		(1 << 3)
 +#define		TSR2_LC			(1 << 4)
@@ -27791,7 +27405,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.h backports-3.18.1-1/dr
 +#define		TSR2_LOC		(1 << 6)
 +#define		TSR2_TLF		(1 << 7)
 +/* Rx Control Reg*/
-+#define	RCR			0x05
++#define	SR_RCR			0x05
 +#define		RCR_RXEN		(1 << 0)
 +#define		RCR_PRMSC		(1 << 1)
 +#define		RCR_RUNT		(1 << 2)
@@ -27799,87 +27413,87 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.h backports-3.18.1-1/dr
 +#define		RCR_DIS_CRC		(1 << 4)
 +#define		RCR_DIS_LONG	(1 << 5)
 +/* Rx Status Reg */
-+#define	RSR			0x06
++#define	SR_RSR			0x06
 +#define		RSR_AE			(1 << 2)
 +#define		RSR_MF			(1 << 6)
 +#define		RSR_RF			(1 << 7)
 +/* Rx Overflow Counter Reg */
-+#define	ROCR		0x07
++#define	SR_ROCR		0x07
 +#define		ROCR_ROC		(0x7F << 0)
 +#define		ROCR_RXFU		(1 << 7)
 +/* Back Pressure Threshold Reg */
-+#define	BPTR		0x08
++#define	SR_BPTR		0x08
 +#define		BPTR_JPT		(0x0F << 0)
 +#define		BPTR_BPHW		(0x0F << 4)
 +/* Flow Control Threshold Reg */
-+#define	FCTR		0x09
++#define	SR_FCTR		0x09
 +#define		FCTR_LWOT		(0x0F << 0)
 +#define		FCTR_HWOT		(0x0F << 4)
 +/* rx/tx Flow Control Reg */
-+#define	FCR			0x0A
++#define	SR_FCR			0x0A
 +#define		FCR_FLCE		(1 << 0)
 +#define		FCR_BKPA		(1 << 4)
 +#define		FCR_TXPEN		(1 << 5)
 +#define		FCR_TXPF		(1 << 6)
 +#define		FCR_TXP0		(1 << 7)
 +/* Eeprom & Phy Control Reg */
-+#define	EPCR		0x0B
++#define	SR_EPCR		0x0B
 +#define		EPCR_ERRE		(1 << 0)
 +#define		EPCR_ERPRW		(1 << 1)
 +#define		EPCR_ERPRR		(1 << 2)
 +#define		EPCR_EPOS		(1 << 3)
 +#define		EPCR_WEP		(1 << 4)
 +/* Eeprom & Phy Address Reg */
-+#define	EPAR		0x0C
++#define	SR_EPAR		0x0C
 +#define		EPAR_EROA		(0x3F << 0)
 +#define		EPAR_PHY_ADR_MASK	(0x03 << 6)
 +#define		EPAR_PHY_ADR		(0x01 << 6)
 +/* Eeprom &	Phy Data Reg */
-+#define	EPDR		0x0D	/* 0x0D ~ 0x0E for Data Reg Low & High */
++#define	SR_EPDR		0x0D	/* 0x0D ~ 0x0E for Data Reg Low & High */
 +/* Wakeup Control Reg */
-+#define	WCR			0x0F
++#define	SR_WCR			0x0F
 +#define		WCR_MAGICST		(1 << 0)
 +#define		WCR_LINKST		(1 << 2)
 +#define		WCR_MAGICEN		(1 << 3)
 +#define		WCR_LINKEN		(1 << 5)
 +/* Physical Address Reg */
-+#define	PAR			0x10	/* 0x10 ~ 0x15 6 bytes for PAR */
++#define	SR_PAR			0x10	/* 0x10 ~ 0x15 6 bytes for PAR */
 +/* Multicast Address Reg */
-+#define	MAR			0x16	/* 0x16 ~ 0x1D 8 bytes for MAR */
++#define	SR_MAR			0x16	/* 0x16 ~ 0x1D 8 bytes for MAR */
 +/* 0x1e unused */
 +/* Phy Reset Reg */
-+#define	PRR			0x1F
++#define	SR_PRR			0x1F
 +#define		PRR_PHY_RST		(1 << 0)
 +/* Tx sdram Write Pointer Address Low */
-+#define	TWPAL		0x20
++#define	SR_TWPAL		0x20
 +/* Tx sdram Write Pointer Address High */
-+#define	TWPAH		0x21
++#define	SR_TWPAH		0x21
 +/* Tx sdram Read Pointer Address Low */
-+#define	TRPAL		0x22
++#define	SR_TRPAL		0x22
 +/* Tx sdram Read Pointer Address High */
-+#define	TRPAH		0x23
++#define	SR_TRPAH		0x23
 +/* Rx sdram Write Pointer Address Low */
-+#define	RWPAL		0x24
++#define	SR_RWPAL		0x24
 +/* Rx sdram Write Pointer Address High */
-+#define	RWPAH		0x25
++#define	SR_RWPAH		0x25
 +/* Rx sdram Read Pointer Address Low */
-+#define	RRPAL		0x26
++#define	SR_RRPAL		0x26
 +/* Rx sdram Read Pointer Address High */
-+#define	RRPAH		0x27
++#define	SR_RRPAH		0x27
 +/* Vendor ID register */
-+#define	VID			0x28	/* 0x28 ~ 0x29 2 bytes for VID */
++#define	SR_VID			0x28	/* 0x28 ~ 0x29 2 bytes for VID */
 +/* Product ID register */
-+#define	PID			0x2A	/* 0x2A ~ 0x2B 2 bytes for PID */
++#define	SR_PID			0x2A	/* 0x2A ~ 0x2B 2 bytes for PID */
 +/* CHIP Revision register */
-+#define	CHIPR		0x2C
++#define	SR_CHIPR		0x2C
 +/* 0x2D --> 0xEF unused */
 +/* USB Device Address */
-+#define	USBDA		0xF0
++#define	SR_USBDA		0xF0
 +#define		USBDA_USBFA		(0x7F << 0)
 +/* RX packet Counter Reg */
-+#define	RXC			0xF1
++#define	SR_RXC			0xF1
 +/* Tx packet Counter & USB Status Reg */
-+#define	TXC_USBS	0xF2
++#define	SR_TXC_USBS		0xF2
 +#define		TXC_USBS_TXC0		(1 << 0)
 +#define		TXC_USBS_TXC1		(1 << 1)
 +#define		TXC_USBS_TXC2		(1 << 2)
@@ -27887,7 +27501,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.h backports-3.18.1-1/dr
 +#define		TXC_USBS_SUSFLAG	(1 << 6)
 +#define		TXC_USBS_RXFAULT	(1 << 7)
 +/* USB Control register */
-+#define	USBC		0xF4
++#define	SR_USBC			0xF4
 +#define		USBC_EP3NAK		(1 << 4)
 +#define		USBC_EP3ACK		(1 << 5)
 +
@@ -27908,10 +27522,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9700.h backports-3.18.1-1/dr
 +#define	SR_RX_OVERHEAD		7	/* 3bytes header + 4crc tail */
 +
 +#endif	/* _SR9700_H */
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9800.c backports-3.18.1-1/drivers/net/usb/sr9800.c
---- backports-3.18.1-1.org/drivers/net/usb/sr9800.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/sr9800.c	2014-12-16 18:39:45.000000000 +0100
-@@ -0,0 +1,874 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9800.c backports-4.2.6-1/drivers/net/usb/sr9800.c
+--- backports-4.2.6-1.org/drivers/net/usb/sr9800.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/sr9800.c	2015-11-09 23:37:56.000000000 +0100
+@@ -0,0 +1,875 @@
 +/* CoreChip-sz SR9800 one chip USB 2.0 Ethernet Devices
 + *
 + * Author : Liu Junliang <liujunliang_ljl@163.com>
@@ -28058,6 +27672,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9800.c backports-3.18.1-1/dr
 +		skb_put(skb, sizeof(padbytes));
 +	}
 +
++	usbnet_set_skb_tx_stats(skb, 1, 0);
 +	return skb;
 +}
 +
@@ -28786,9 +28401,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9800.c backports-3.18.1-1/dr
 +MODULE_VERSION(DRIVER_VERSION);
 +MODULE_DESCRIPTION("SR9800 USB 2.0 USB2NET Dev : http://www.corechip-sz.com");
 +MODULE_LICENSE("GPL");
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9800.h backports-3.18.1-1/drivers/net/usb/sr9800.h
---- backports-3.18.1-1.org/drivers/net/usb/sr9800.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/sr9800.h	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9800.h backports-4.2.6-1/drivers/net/usb/sr9800.h
+--- backports-4.2.6-1.org/drivers/net/usb/sr9800.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/sr9800.h	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,202 @@
 +/* CoreChip-sz SR9800 one chip USB 2.0 Ethernet Devices
 + *
@@ -28992,9 +28607,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sr9800.h backports-3.18.1-1/dr
 +} __packed;
 +
 +#endif	/* _SR9800_H */
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/zaurus.c backports-3.18.1-1/drivers/net/usb/zaurus.c
---- backports-3.18.1-1.org/drivers/net/usb/zaurus.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/zaurus.c	2014-12-16 18:39:45.000000000 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/zaurus.c backports-4.2.6-1/drivers/net/usb/zaurus.c
+--- backports-4.2.6-1.org/drivers/net/usb/zaurus.c	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/zaurus.c	2015-11-09 23:37:56.000000000 +0100
 @@ -0,0 +1,385 @@
 +/*
 + * Copyright (C) 2002 Pavel Machek <pavel@ucw.cz>

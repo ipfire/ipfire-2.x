@@ -1,6 +1,6 @@
-diff -Naur backports-3.18.1-1.org/drivers/bluetooth/btwilink.c backports-3.18.1-1/drivers/bluetooth/btwilink.c
---- backports-3.18.1-1.org/drivers/bluetooth/btwilink.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/drivers/bluetooth/btwilink.c	2014-12-28 14:10:09.480888533 +0100
+diff -Naur backports-4.2.6-1.org/drivers/bluetooth/btwilink.c backports-4.2.6-1/drivers/bluetooth/btwilink.c
+--- backports-4.2.6-1.org/drivers/bluetooth/btwilink.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/drivers/bluetooth/btwilink.c	2016-01-27 12:26:16.319959957 +0100
 @@ -288,7 +288,7 @@
  
  static int bt_ti_probe(struct platform_device *pdev)
@@ -10,10 +10,10 @@ diff -Naur backports-3.18.1-1.org/drivers/bluetooth/btwilink.c backports-3.18.1-
  	struct hci_dev *hdev;
  	int err;
  
-diff -Naur backports-3.18.1-1.org/drivers/media/dvb-core/dvbdev.c backports-3.18.1-1/drivers/media/dvb-core/dvbdev.c
---- backports-3.18.1-1.org/drivers/media/dvb-core/dvbdev.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/dvb-core/dvbdev.c	2014-12-28 14:10:09.528888772 +0100
-@@ -185,7 +185,7 @@
+diff -Naur backports-4.2.6-1.org/drivers/media/dvb-core/dvbdev.c backports-4.2.6-1/drivers/media/dvb-core/dvbdev.c
+--- backports-4.2.6-1.org/drivers/media/dvb-core/dvbdev.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/media/dvb-core/dvbdev.c	2016-01-27 12:26:21.266626324 +0100
+@@ -272,7 +272,7 @@
  			const struct dvb_device *template, void *priv, int type)
  {
  	struct dvb_device *dvbdev;
@@ -22,9 +22,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/dvb-core/dvbdev.c backports-3.18
  	struct device *clsdev;
  	int minor;
  	int id;
-diff -Naur backports-3.18.1-1.org/drivers/media/dvb-frontends/af9033.h backports-3.18.1-1/drivers/media/dvb-frontends/af9033.h
---- backports-3.18.1-1.org/drivers/media/dvb-frontends/af9033.h	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/dvb-frontends/af9033.h	2014-12-28 14:10:09.528888772 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/dvb-frontends/af9033.h backports-4.2.6-1/drivers/media/dvb-frontends/af9033.h
+--- backports-4.2.6-1.org/drivers/media/dvb-frontends/af9033.h	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/dvb-frontends/af9033.h	2016-01-27 12:26:21.266626324 +0100
 @@ -96,6 +96,6 @@
  	int (*pid_filter_ctrl)(struct dvb_frontend *fe, int onoff);
  	int (*pid_filter)(struct dvb_frontend *fe, int index, u16 pid,
@@ -33,9 +33,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/dvb-frontends/af9033.h backports
 +} __no_const;
  
  #endif /* AF9033_H */
-diff -Naur backports-3.18.1-1.org/drivers/media/dvb-frontends/dib3000.h backports-3.18.1-1/drivers/media/dvb-frontends/dib3000.h
---- backports-3.18.1-1.org/drivers/media/dvb-frontends/dib3000.h	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/dvb-frontends/dib3000.h	2014-12-28 14:10:09.528888772 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/dvb-frontends/dib3000.h backports-4.2.6-1/drivers/media/dvb-frontends/dib3000.h
+--- backports-4.2.6-1.org/drivers/media/dvb-frontends/dib3000.h	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/dvb-frontends/dib3000.h	2016-01-27 12:26:21.266626324 +0100
 @@ -39,7 +39,7 @@
  	int (*fifo_ctrl)(struct dvb_frontend *fe, int onoff);
  	int (*pid_ctrl)(struct dvb_frontend *fe, int index, int pid, int onoff);
@@ -43,11 +43,11 @@ diff -Naur backports-3.18.1-1.org/drivers/media/dvb-frontends/dib3000.h backport
 -};
 +} __no_const;
  
- #if IS_ENABLED(CPTCFG_DVB_DIB3000MB)
+ #if IS_REACHABLE(CPTCFG_DVB_DIB3000MB)
  extern struct dvb_frontend* dib3000mb_attach(const struct dib3000_config* config,
-diff -Naur backports-3.18.1-1.org/drivers/media/dvb-frontends/dib7000p.h backports-3.18.1-1/drivers/media/dvb-frontends/dib7000p.h
---- backports-3.18.1-1.org/drivers/media/dvb-frontends/dib7000p.h	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/dvb-frontends/dib7000p.h	2014-12-28 14:10:09.528888772 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/dvb-frontends/dib7000p.h backports-4.2.6-1/drivers/media/dvb-frontends/dib7000p.h
+--- backports-4.2.6-1.org/drivers/media/dvb-frontends/dib7000p.h	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/dvb-frontends/dib7000p.h	2016-01-27 12:26:21.266626324 +0100
 @@ -64,7 +64,7 @@
  	int (*get_adc_power)(struct dvb_frontend *fe);
  	int (*slave_reset)(struct dvb_frontend *fe);
@@ -55,11 +55,11 @@ diff -Naur backports-3.18.1-1.org/drivers/media/dvb-frontends/dib7000p.h backpor
 -};
 +} __no_const;
  
- #if IS_ENABLED(CPTCFG_DVB_DIB7000P)
+ #if IS_REACHABLE(CPTCFG_DVB_DIB7000P)
  void *dib7000p_attach(struct dib7000p_ops *ops);
-diff -Naur backports-3.18.1-1.org/drivers/media/dvb-frontends/dib8000.h backports-3.18.1-1/drivers/media/dvb-frontends/dib8000.h
---- backports-3.18.1-1.org/drivers/media/dvb-frontends/dib8000.h	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/dvb-frontends/dib8000.h	2014-12-28 14:10:09.528888772 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/dvb-frontends/dib8000.h backports-4.2.6-1/drivers/media/dvb-frontends/dib8000.h
+--- backports-4.2.6-1.org/drivers/media/dvb-frontends/dib8000.h	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/dvb-frontends/dib8000.h	2016-01-27 12:26:21.266626324 +0100
 @@ -61,7 +61,7 @@
  	int (*pid_filter_ctrl)(struct dvb_frontend *fe, u8 onoff);
  	int (*pid_filter)(struct dvb_frontend *fe, u8 id, u16 pid, u8 onoff);
@@ -67,11 +67,11 @@ diff -Naur backports-3.18.1-1.org/drivers/media/dvb-frontends/dib8000.h backport
 -};
 +} __no_const;
  
- #if IS_ENABLED(CPTCFG_DVB_DIB8000)
+ #if IS_REACHABLE(CPTCFG_DVB_DIB8000)
  void *dib8000_attach(struct dib8000_ops *ops);
-diff -Naur backports-3.18.1-1.org/drivers/media/pci/cx88/cx88-video.c backports-3.18.1-1/drivers/media/pci/cx88/cx88-video.c
---- backports-3.18.1-1.org/drivers/media/pci/cx88/cx88-video.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/pci/cx88/cx88-video.c	2014-12-28 14:10:09.528888772 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/pci/cx88/cx88-video.c backports-4.2.6-1/drivers/media/pci/cx88/cx88-video.c
+--- backports-4.2.6-1.org/drivers/media/pci/cx88/cx88-video.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/pci/cx88/cx88-video.c	2016-01-27 12:26:21.266626324 +0100
 @@ -50,9 +50,9 @@
  
  /* ------------------------------------------------------------------ */
@@ -85,9 +85,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/pci/cx88/cx88-video.c backports-
  
  module_param_array(video_nr, int, NULL, 0444);
  module_param_array(vbi_nr,   int, NULL, 0444);
-diff -Naur backports-3.18.1-1.org/drivers/media/pci/ivtv/ivtv-driver.c backports-3.18.1-1/drivers/media/pci/ivtv/ivtv-driver.c
---- backports-3.18.1-1.org/drivers/media/pci/ivtv/ivtv-driver.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/pci/ivtv/ivtv-driver.c	2014-12-28 14:10:09.528888772 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/pci/ivtv/ivtv-driver.c backports-4.2.6-1/drivers/media/pci/ivtv/ivtv-driver.c
+--- backports-4.2.6-1.org/drivers/media/pci/ivtv/ivtv-driver.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/pci/ivtv/ivtv-driver.c	2016-01-27 12:26:21.266626324 +0100
 @@ -83,7 +83,7 @@
  MODULE_DEVICE_TABLE(pci,ivtv_pci_tbl);
  
@@ -97,9 +97,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/pci/ivtv/ivtv-driver.c backports
  
  /* Parameter declarations */
  static int cardtype[IVTV_MAX_CARDS];
-diff -Naur backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10-core.c backports-3.18.1-1/drivers/media/pci/solo6x10/solo6x10-core.c
---- backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10-core.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/pci/solo6x10/solo6x10-core.c	2014-12-28 14:10:09.528888772 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/pci/solo6x10/solo6x10-core.c backports-4.2.6-1/drivers/media/pci/solo6x10/solo6x10-core.c
+--- backports-4.2.6-1.org/drivers/media/pci/solo6x10/solo6x10-core.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/pci/solo6x10/solo6x10-core.c	2016-01-27 12:26:21.266626324 +0100
 @@ -424,7 +424,7 @@
  
  static int solo_sysfs_init(struct solo_dev *solo_dev)
@@ -109,9 +109,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10-core.c bac
  	struct device *dev = &solo_dev->dev;
  	const char *driver;
  	int i;
-diff -Naur backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10-g723.c backports-3.18.1-1/drivers/media/pci/solo6x10/solo6x10-g723.c
---- backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10-g723.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/pci/solo6x10/solo6x10-g723.c	2014-12-28 14:10:09.528888772 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/pci/solo6x10/solo6x10-g723.c backports-4.2.6-1/drivers/media/pci/solo6x10/solo6x10-g723.c
+--- backports-4.2.6-1.org/drivers/media/pci/solo6x10/solo6x10-g723.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/pci/solo6x10/solo6x10-g723.c	2016-01-27 12:26:21.266626324 +0100
 @@ -351,7 +351,7 @@
  
  int solo_g723_init(struct solo_dev *solo_dev)
@@ -121,10 +121,10 @@ diff -Naur backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10-g723.c bac
  	struct snd_card *card;
  	struct snd_kcontrol_new kctl;
  	char name[32];
-diff -Naur backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10.h backports-3.18.1-1/drivers/media/pci/solo6x10/solo6x10.h
---- backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10.h	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/pci/solo6x10/solo6x10.h	2014-12-28 14:10:09.532888798 +0100
-@@ -219,7 +219,7 @@
+diff -Naur backports-4.2.6-1.org/drivers/media/pci/solo6x10/solo6x10.h backports-4.2.6-1/drivers/media/pci/solo6x10/solo6x10.h
+--- backports-4.2.6-1.org/drivers/media/pci/solo6x10/solo6x10.h	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/pci/solo6x10/solo6x10.h	2016-01-27 12:26:21.266626324 +0100
+@@ -218,7 +218,7 @@
  
  	/* P2M DMA Engine */
  	struct solo_p2m_dev	p2m_dev[SOLO_NR_P2M];
@@ -133,9 +133,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10.h backport
  	int			p2m_jiffies;
  	unsigned int		p2m_timeouts;
  
-diff -Naur backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10-p2m.c backports-3.18.1-1/drivers/media/pci/solo6x10/solo6x10-p2m.c
---- backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10-p2m.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/pci/solo6x10/solo6x10-p2m.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/pci/solo6x10/solo6x10-p2m.c backports-4.2.6-1/drivers/media/pci/solo6x10/solo6x10-p2m.c
+--- backports-4.2.6-1.org/drivers/media/pci/solo6x10/solo6x10-p2m.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/pci/solo6x10/solo6x10-p2m.c	2016-01-27 12:26:21.266626324 +0100
 @@ -73,7 +73,7 @@
  
  	/* Get next ID. According to Softlogic, 6110 has problems on !=0 P2M */
@@ -145,9 +145,21 @@ diff -Naur backports-3.18.1-1.org/drivers/media/pci/solo6x10/solo6x10-p2m.c back
  		if (p2m_id < 0)
  			p2m_id = -p2m_id;
  	}
-diff -Naur backports-3.18.1-1.org/drivers/media/platform/omap/omap_vout.c backports-3.18.1-1/drivers/media/platform/omap/omap_vout.c
---- backports-3.18.1-1.org/drivers/media/platform/omap/omap_vout.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/platform/omap/omap_vout.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/pci/tw68/tw68-core.c backports-4.2.6-1/drivers/media/pci/tw68/tw68-core.c
+--- backports-4.2.6-1.org/drivers/media/pci/tw68/tw68-core.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/pci/tw68/tw68-core.c	2016-01-27 12:26:21.266626324 +0100
+@@ -60,7 +60,7 @@
+ module_param_array(card, int, NULL, 0444);
+ MODULE_PARM_DESC(card, "card type");
+ 
+-static atomic_t tw68_instance = ATOMIC_INIT(0);
++static atomic_unchecked_t tw68_instance = ATOMIC_INIT(0);
+ 
+ /* ------------------------------------------------------------------ */
+ 
+diff -Naur backports-4.2.6-1.org/drivers/media/platform/omap/omap_vout.c backports-4.2.6-1/drivers/media/platform/omap/omap_vout.c
+--- backports-4.2.6-1.org/drivers/media/platform/omap/omap_vout.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/platform/omap/omap_vout.c	2016-01-27 12:26:21.266626324 +0100
 @@ -63,7 +63,6 @@
  	OMAP_VIDEO2,
  };
@@ -156,7 +168,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/omap/omap_vout.c backpo
  /* Variables configurable through module params*/
  static u32 video1_numbuffers = 3;
  static u32 video2_numbuffers = 3;
-@@ -1012,6 +1011,12 @@
+@@ -1008,6 +1007,12 @@
  {
  	struct videobuf_queue *q;
  	struct omap_vout_device *vout = NULL;
@@ -169,7 +181,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/omap/omap_vout.c backpo
  
  	vout = video_drvdata(file);
  	v4l2_dbg(1, debug, &vout->vid_dev->v4l2_dev, "Entering %s\n", __func__);
-@@ -1029,10 +1034,6 @@
+@@ -1025,10 +1030,6 @@
  	vout->type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
  
  	q = &vout->vbq;
@@ -180,9 +192,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/omap/omap_vout.c backpo
  	spin_lock_init(&vout->vbq_lock);
  
  	videobuf_queue_dma_contig_init(q, &video_vbq_ops, q->dev,
-diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_grp_layer.c backports-3.18.1-1/drivers/media/platform/s5p-tv/mixer_grp_layer.c
---- backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_grp_layer.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/platform/s5p-tv/mixer_grp_layer.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/platform/s5p-tv/mixer_grp_layer.c backports-4.2.6-1/drivers/media/platform/s5p-tv/mixer_grp_layer.c
+--- backports-4.2.6-1.org/drivers/media/platform/s5p-tv/mixer_grp_layer.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/platform/s5p-tv/mixer_grp_layer.c	2016-01-27 12:26:21.266626324 +0100
 @@ -235,7 +235,7 @@
  {
  	struct mxr_layer *layer;
@@ -192,9 +204,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_grp_layer.
  		.release = mxr_graph_layer_release,
  		.buffer_set = mxr_graph_buffer_set,
  		.stream_set = mxr_graph_stream_set,
-diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer.h backports-3.18.1-1/drivers/media/platform/s5p-tv/mixer.h
---- backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer.h	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/platform/s5p-tv/mixer.h	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/platform/s5p-tv/mixer.h backports-4.2.6-1/drivers/media/platform/s5p-tv/mixer.h
+--- backports-4.2.6-1.org/drivers/media/platform/s5p-tv/mixer.h	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/platform/s5p-tv/mixer.h	2016-01-27 12:26:21.266626324 +0100
 @@ -156,7 +156,7 @@
  	/** layer index (unique identifier) */
  	int idx;
@@ -204,9 +216,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer.h backport
  	/** format array */
  	const struct mxr_format **fmt_array;
  	/** size of format array */
-diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_reg.c backports-3.18.1-1/drivers/media/platform/s5p-tv/mixer_reg.c
---- backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_reg.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/platform/s5p-tv/mixer_reg.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/platform/s5p-tv/mixer_reg.c backports-4.2.6-1/drivers/media/platform/s5p-tv/mixer_reg.c
+--- backports-4.2.6-1.org/drivers/media/platform/s5p-tv/mixer_reg.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/platform/s5p-tv/mixer_reg.c	2016-01-27 12:26:21.266626324 +0100
 @@ -276,7 +276,7 @@
  		layer->update_buf = next;
  	}
@@ -216,9 +228,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_reg.c back
  
  	if (done && done != layer->shadow_buf)
  		vb2_buffer_done(&done->vb, VB2_BUF_STATE_DONE);
-diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_video.c backports-3.18.1-1/drivers/media/platform/s5p-tv/mixer_video.c
---- backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_video.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/platform/s5p-tv/mixer_video.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/platform/s5p-tv/mixer_video.c backports-4.2.6-1/drivers/media/platform/s5p-tv/mixer_video.c
+--- backports-4.2.6-1.org/drivers/media/platform/s5p-tv/mixer_video.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/platform/s5p-tv/mixer_video.c	2016-01-27 12:26:21.266626324 +0100
 @@ -210,7 +210,7 @@
  	layer->geo.src.height = layer->geo.src.full_height;
  
@@ -270,7 +282,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_video.c ba
  
  		/* retrieve update selection rectangle */
  		res.left = target->x_offset;
-@@ -954,13 +954,13 @@
+@@ -938,13 +938,13 @@
  	mxr_output_get(mdev);
  
  	mxr_layer_update_output(layer);
@@ -286,7 +298,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_video.c ba
  	mxr_streamer_get(mdev);
  
  	return 0;
-@@ -1030,7 +1030,7 @@
+@@ -1014,7 +1014,7 @@
  	spin_unlock_irqrestore(&layer->enq_slock, flags);
  
  	/* disabling layer in hardware */
@@ -295,7 +307,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_video.c ba
  	/* remove one streamer */
  	mxr_streamer_put(mdev);
  	/* allow changes in output configuration */
-@@ -1068,8 +1068,8 @@
+@@ -1052,8 +1052,8 @@
  
  void mxr_layer_release(struct mxr_layer *layer)
  {
@@ -306,7 +318,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_video.c ba
  }
  
  void mxr_base_layer_release(struct mxr_layer *layer)
-@@ -1095,7 +1095,7 @@
+@@ -1079,7 +1079,7 @@
  
  	layer->mdev = mdev;
  	layer->idx = idx;
@@ -315,9 +327,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_video.c ba
  
  	spin_lock_init(&layer->enq_slock);
  	INIT_LIST_HEAD(&layer->enq_list);
-diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_vp_layer.c backports-3.18.1-1/drivers/media/platform/s5p-tv/mixer_vp_layer.c
---- backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_vp_layer.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/platform/s5p-tv/mixer_vp_layer.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/platform/s5p-tv/mixer_vp_layer.c backports-4.2.6-1/drivers/media/platform/s5p-tv/mixer_vp_layer.c
+--- backports-4.2.6-1.org/drivers/media/platform/s5p-tv/mixer_vp_layer.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/platform/s5p-tv/mixer_vp_layer.c	2016-01-27 12:26:21.266626324 +0100
 @@ -206,7 +206,7 @@
  {
  	struct mxr_layer *layer;
@@ -327,9 +339,20 @@ diff -Naur backports-3.18.1-1.org/drivers/media/platform/s5p-tv/mixer_vp_layer.c
  		.release = mxr_vp_layer_release,
  		.buffer_set = mxr_vp_buffer_set,
  		.stream_set = mxr_vp_stream_set,
-diff -Naur backports-3.18.1-1.org/drivers/media/radio/radio-cadet.c backports-3.18.1-1/drivers/media/radio/radio-cadet.c
---- backports-3.18.1-1.org/drivers/media/radio/radio-cadet.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/radio/radio-cadet.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/platform/vivid/vivid-osd.c backports-4.2.6-1/drivers/media/platform/vivid/vivid-osd.c
+--- backports-4.2.6-1.org/drivers/media/platform/vivid/vivid-osd.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/platform/vivid/vivid-osd.c	2016-01-27 12:26:21.269959657 +0100
+@@ -85,6 +85,7 @@
+ 	case FBIOGET_VBLANK: {
+ 		struct fb_vblank vblank;
+ 
++		memset(&vblank, 0, sizeof(vblank));
+ 		vblank.flags = FB_VBLANK_HAVE_COUNT | FB_VBLANK_HAVE_VCOUNT |
+ 			FB_VBLANK_HAVE_VSYNC;
+ 		vblank.count = 0;
+diff -Naur backports-4.2.6-1.org/drivers/media/radio/radio-cadet.c backports-4.2.6-1/drivers/media/radio/radio-cadet.c
+--- backports-4.2.6-1.org/drivers/media/radio/radio-cadet.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/radio/radio-cadet.c	2016-01-27 12:26:21.269959657 +0100
 @@ -333,6 +333,8 @@
  	unsigned char readbuf[RDS_BUFFER];
  	int i = 0;
@@ -351,9 +374,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/radio/radio-cadet.c backports-3.
  	return i;
  }
  
-diff -Naur backports-3.18.1-1.org/drivers/media/radio/radio-maxiradio.c backports-3.18.1-1/drivers/media/radio/radio-maxiradio.c
---- backports-3.18.1-1.org/drivers/media/radio/radio-maxiradio.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/radio/radio-maxiradio.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/radio/radio-maxiradio.c backports-4.2.6-1/drivers/media/radio/radio-maxiradio.c
+--- backports-4.2.6-1.org/drivers/media/radio/radio-maxiradio.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/radio/radio-maxiradio.c	2016-01-27 12:26:21.269959657 +0100
 @@ -61,7 +61,7 @@
  /* TEA5757 pin mappings */
  static const int clk = 1, data = 2, wren = 4, mo_st = 8, power = 16;
@@ -363,9 +386,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/radio/radio-maxiradio.c backport
  
  #define PCI_VENDOR_ID_GUILLEMOT 0x5046
  #define PCI_DEVICE_ID_GUILLEMOT_MAXIRADIO 0x1001
-diff -Naur backports-3.18.1-1.org/drivers/media/radio/radio-shark2.c backports-3.18.1-1/drivers/media/radio/radio-shark2.c
---- backports-3.18.1-1.org/drivers/media/radio/radio-shark2.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/radio/radio-shark2.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/radio/radio-shark2.c backports-4.2.6-1/drivers/media/radio/radio-shark2.c
+--- backports-4.2.6-1.org/drivers/media/radio/radio-shark2.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/radio/radio-shark2.c	2016-01-27 12:26:21.269959657 +0100
 @@ -74,7 +74,7 @@
  	u8 *transfer_buffer;
  };
@@ -375,9 +398,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/radio/radio-shark2.c backports-3
  
  static int shark_write_reg(struct radio_tea5777 *tea, u64 reg)
  {
-diff -Naur backports-3.18.1-1.org/drivers/media/radio/radio-shark.c backports-3.18.1-1/drivers/media/radio/radio-shark.c
---- backports-3.18.1-1.org/drivers/media/radio/radio-shark.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/radio/radio-shark.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/radio/radio-shark.c backports-4.2.6-1/drivers/media/radio/radio-shark.c
+--- backports-4.2.6-1.org/drivers/media/radio/radio-shark.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/radio/radio-shark.c	2016-01-27 12:26:21.269959657 +0100
 @@ -79,7 +79,7 @@
  	u32 last_val;
  };
@@ -387,9 +410,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/radio/radio-shark.c backports-3.
  
  static void shark_write_val(struct snd_tea575x *tea, u32 val)
  {
-diff -Naur backports-3.18.1-1.org/drivers/media/radio/radio-si476x.c backports-3.18.1-1/drivers/media/radio/radio-si476x.c
---- backports-3.18.1-1.org/drivers/media/radio/radio-si476x.c	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/radio/radio-si476x.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/radio/radio-si476x.c backports-4.2.6-1/drivers/media/radio/radio-si476x.c
+--- backports-4.2.6-1.org/drivers/media/radio/radio-si476x.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/radio/radio-si476x.c	2016-01-27 12:26:21.269959657 +0100
 @@ -1445,7 +1445,7 @@
  	struct si476x_radio *radio;
  	struct v4l2_ctrl *ctrl;
@@ -399,9 +422,21 @@ diff -Naur backports-3.18.1-1.org/drivers/media/radio/radio-si476x.c backports-3
  
  	radio = devm_kzalloc(&pdev->dev, sizeof(*radio), GFP_KERNEL);
  	if (!radio)
-diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/cinergyT2-core.c backports-3.18.1-1/drivers/media/usb/dvb-usb/cinergyT2-core.c
---- backports-3.18.1-1.org/drivers/media/usb/dvb-usb/cinergyT2-core.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/usb/dvb-usb/cinergyT2-core.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/radio/wl128x/fmdrv_common.c backports-4.2.6-1/drivers/media/radio/wl128x/fmdrv_common.c
+--- backports-4.2.6-1.org/drivers/media/radio/wl128x/fmdrv_common.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/radio/wl128x/fmdrv_common.c	2016-01-27 12:26:21.269959657 +0100
+@@ -71,7 +71,7 @@
+ MODULE_PARM_DESC(rds_buf, "RDS buffer entries");
+ 
+ /* Radio Nr */
+-static u32 radio_nr = -1;
++static int radio_nr = -1;
+ module_param(radio_nr, int, 0444);
+ MODULE_PARM_DESC(radio_nr, "Radio Nr");
+ 
+diff -Naur backports-4.2.6-1.org/drivers/media/usb/dvb-usb/cinergyT2-core.c backports-4.2.6-1/drivers/media/usb/dvb-usb/cinergyT2-core.c
+--- backports-4.2.6-1.org/drivers/media/usb/dvb-usb/cinergyT2-core.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/media/usb/dvb-usb/cinergyT2-core.c	2016-01-27 12:26:21.269959657 +0100
 @@ -50,29 +50,73 @@
  
  static int cinergyt2_streaming_ctrl(struct dvb_usb_adapter *adap, int enable)
@@ -548,11 +583,11 @@ diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/cinergyT2-core.c bac
  	return 0;
  }
  
-diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/cinergyT2-fe.c backports-3.18.1-1/drivers/media/usb/dvb-usb/cinergyT2-fe.c
---- backports-3.18.1-1.org/drivers/media/usb/dvb-usb/cinergyT2-fe.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/usb/dvb-usb/cinergyT2-fe.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/usb/dvb-usb/cinergyT2-fe.c backports-4.2.6-1/drivers/media/usb/dvb-usb/cinergyT2-fe.c
+--- backports-4.2.6-1.org/drivers/media/usb/dvb-usb/cinergyT2-fe.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/media/usb/dvb-usb/cinergyT2-fe.c	2016-01-27 12:26:21.269959657 +0100
 @@ -145,103 +145,176 @@
- 					fe_status_t *status)
+ 				    enum fe_status *status)
  {
  	struct cinergyt2_fe_state *state = fe->demodulator_priv;
 -	struct dvbt_get_status_msg result;
@@ -824,9 +859,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/cinergyT2-fe.c backp
  }
  
  static void cinergyt2_fe_release(struct dvb_frontend *fe)
-diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/dvb-usb-firmware.c backports-3.18.1-1/drivers/media/usb/dvb-usb/dvb-usb-firmware.c
---- backports-3.18.1-1.org/drivers/media/usb/dvb-usb/dvb-usb-firmware.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/usb/dvb-usb/dvb-usb-firmware.c	2014-12-28 14:10:09.532888798 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/usb/dvb-usb/dvb-usb-firmware.c backports-4.2.6-1/drivers/media/usb/dvb-usb/dvb-usb-firmware.c
+--- backports-4.2.6-1.org/drivers/media/usb/dvb-usb/dvb-usb-firmware.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/media/usb/dvb-usb/dvb-usb-firmware.c	2016-01-27 12:26:21.269959657 +0100
 @@ -35,42 +35,57 @@
  
  int usb_cypress_load_firmware(struct usb_device *udev, const struct firmware *fw, int type)
@@ -896,21 +931,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/dvb-usb-firmware.c b
  	return ret;
  }
  EXPORT_SYMBOL(usb_cypress_load_firmware);
-diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/dw2102.c backports-3.18.1-1/drivers/media/usb/dvb-usb/dw2102.c
---- backports-3.18.1-1.org/drivers/media/usb/dvb-usb/dw2102.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/usb/dvb-usb/dw2102.c	2014-12-28 14:10:09.536888811 +0100
-@@ -118,7 +118,7 @@
- 
- struct s6x0_state {
- 	int (*old_set_voltage)(struct dvb_frontend *f, fe_sec_voltage_t v);
--};
-+} __no_const;
- 
- /* debug */
- static int dvb_usb_dw2102_debug;
-diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/technisat-usb2.c backports-3.18.1-1/drivers/media/usb/dvb-usb/technisat-usb2.c
---- backports-3.18.1-1.org/drivers/media/usb/dvb-usb/technisat-usb2.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/usb/dvb-usb/technisat-usb2.c	2014-12-28 14:10:09.536888811 +0100
+diff -Naur backports-4.2.6-1.org/drivers/media/usb/dvb-usb/technisat-usb2.c backports-4.2.6-1/drivers/media/usb/dvb-usb/technisat-usb2.c
+--- backports-4.2.6-1.org/drivers/media/usb/dvb-usb/technisat-usb2.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/media/usb/dvb-usb/technisat-usb2.c	2016-01-27 12:26:21.269959657 +0100
 @@ -87,8 +87,11 @@
  static int technisat_usb2_i2c_access(struct usb_device *udev,
  		u8 device_addr, u8 *tx, u8 txlen, u8 *rx, u8 rxlen)
@@ -1063,7 +1086,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/technisat-usb2.c bac
  	return 0;
  }
  
-@@ -591,10 +615,15 @@
+@@ -594,10 +618,15 @@
  
  static int technisat_usb2_get_ir(struct dvb_usb_device *d)
  {
@@ -1080,7 +1103,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/technisat-usb2.c bac
  	buf[0] = GET_IR_DATA_VENDOR_REQUEST;
  	buf[1] = 0x08;
  	buf[2] = 0x8f;
-@@ -617,16 +646,20 @@
+@@ -620,16 +649,20 @@
  			GET_IR_DATA_VENDOR_REQUEST,
  			USB_TYPE_VENDOR | USB_DIR_IN,
  			0x8080, 0,
@@ -1104,7 +1127,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/technisat-usb2.c bac
  
  	/* decoding */
  	b = buf+1;
-@@ -653,6 +686,8 @@
+@@ -656,6 +689,8 @@
  
  	ir_raw_event_handle(d->rc_dev);
  
@@ -1113,10 +1136,67 @@ diff -Naur backports-3.18.1-1.org/drivers/media/usb/dvb-usb/technisat-usb2.c bac
  	return 1;
  }
  
-diff -Naur backports-3.18.1-1.org/drivers/media/v4l2-core/v4l2-device.c backports-3.18.1-1/drivers/media/v4l2-core/v4l2-device.c
---- backports-3.18.1-1.org/drivers/media/v4l2-core/v4l2-device.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/v4l2-core/v4l2-device.c	2014-12-28 14:10:09.536888811 +0100
-@@ -75,9 +75,9 @@
+diff -Naur backports-4.2.6-1.org/drivers/media/v4l2-core/v4l2-compat-ioctl32.c backports-4.2.6-1/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+--- backports-4.2.6-1.org/drivers/media/v4l2-core/v4l2-compat-ioctl32.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/v4l2-core/v4l2-compat-ioctl32.c	2016-01-27 12:26:21.269959657 +0100
+@@ -429,7 +429,7 @@
+ 		 * by passing a very big num_planes value */
+ 		uplane = compat_alloc_user_space(num_planes *
+ 						sizeof(struct v4l2_plane));
+-		kp->m.planes = (__force struct v4l2_plane *)uplane;
++		kp->m.planes = (__force_kernel struct v4l2_plane *)uplane;
+ 
+ 		while (--num_planes >= 0) {
+ 			ret = get_v4l2_plane32(uplane, uplane32, kp->memory);
+@@ -500,7 +500,7 @@
+ 		if (num_planes == 0)
+ 			return 0;
+ 
+-		uplane = (__force struct v4l2_plane __user *)kp->m.planes;
++		uplane = (struct v4l2_plane __force_user *)kp->m.planes;
+ 		if (get_user(p, &up->m.planes))
+ 			return -EFAULT;
+ 		uplane32 = compat_ptr(p);
+@@ -564,7 +564,7 @@
+ 		get_user(kp->flags, &up->flags) ||
+ 		copy_from_user(&kp->fmt, &up->fmt, sizeof(up->fmt)))
+ 			return -EFAULT;
+-	kp->base = (__force void *)compat_ptr(tmp);
++	kp->base = (__force_kernel void *)compat_ptr(tmp);
+ 	return 0;
+ }
+ 
+@@ -669,7 +669,7 @@
+ 			n * sizeof(struct v4l2_ext_control32)))
+ 		return -EFAULT;
+ 	kcontrols = compat_alloc_user_space(n * sizeof(struct v4l2_ext_control));
+-	kp->controls = (__force struct v4l2_ext_control *)kcontrols;
++	kp->controls = (__force_kernel struct v4l2_ext_control *)kcontrols;
+ 	while (--n >= 0) {
+ 		u32 id;
+ 
+@@ -696,7 +696,7 @@
+ {
+ 	struct v4l2_ext_control32 __user *ucontrols;
+ 	struct v4l2_ext_control __user *kcontrols =
+-		(__force struct v4l2_ext_control __user *)kp->controls;
++		(struct v4l2_ext_control __force_user *)kp->controls;
+ 	int n = kp->count;
+ 	compat_caddr_t p;
+ 
+@@ -780,7 +780,7 @@
+ 		get_user(tmp, &up->edid) ||
+ 		copy_from_user(kp->reserved, up->reserved, sizeof(kp->reserved)))
+ 			return -EFAULT;
+-	kp->edid = (__force u8 *)compat_ptr(tmp);
++	kp->edid = (__force_kernel u8 *)compat_ptr(tmp);
+ 	return 0;
+ }
+ 
+diff -Naur backports-4.2.6-1.org/drivers/media/v4l2-core/v4l2-device.c backports-4.2.6-1/drivers/media/v4l2-core/v4l2-device.c
+--- backports-4.2.6-1.org/drivers/media/v4l2-core/v4l2-device.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/v4l2-core/v4l2-device.c	2016-01-27 12:26:21.269959657 +0100
+@@ -74,9 +74,9 @@
  EXPORT_SYMBOL_GPL(v4l2_device_put);
  
  int v4l2_device_set_name(struct v4l2_device *v4l2_dev, const char *basename,
@@ -1128,10 +1208,10 @@ diff -Naur backports-3.18.1-1.org/drivers/media/v4l2-core/v4l2-device.c backport
  	int len = strlen(basename);
  
  	if (basename[len - 1] >= '0' && basename[len - 1] <= '9')
-diff -Naur backports-3.18.1-1.org/drivers/media/v4l2-core/v4l2-ioctl.c backports-3.18.1-1/drivers/media/v4l2-core/v4l2-ioctl.c
---- backports-3.18.1-1.org/drivers/media/v4l2-core/v4l2-ioctl.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/media/v4l2-core/v4l2-ioctl.c	2014-12-28 14:10:09.536888811 +0100
-@@ -2142,7 +2142,8 @@
+diff -Naur backports-4.2.6-1.org/drivers/media/v4l2-core/v4l2-ioctl.c backports-4.2.6-1/drivers/media/v4l2-core/v4l2-ioctl.c
+--- backports-4.2.6-1.org/drivers/media/v4l2-core/v4l2-ioctl.c	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/drivers/media/v4l2-core/v4l2-ioctl.c	2016-01-27 12:26:21.269959657 +0100
+@@ -2341,7 +2341,8 @@
  				struct file *file, void *fh, void *p);
  	} u;
  	void (*debug)(const void *arg, bool write_only);
@@ -1141,7 +1221,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/v4l2-core/v4l2-ioctl.c backports
  
  /* This control needs a priority check */
  #define INFO_FL_PRIO	(1 << 0)
-@@ -2326,7 +2327,7 @@
+@@ -2525,7 +2526,7 @@
  	struct video_device *vfd = video_devdata(file);
  	const struct v4l2_ioctl_ops *ops = vfd->ioctl_ops;
  	bool write_only = false;
@@ -1150,7 +1230,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/v4l2-core/v4l2-ioctl.c backports
  	const struct v4l2_ioctl_info *info;
  	void *fh = file->private_data;
  	struct v4l2_fh *vfh = NULL;
-@@ -2413,7 +2414,7 @@
+@@ -2616,7 +2617,7 @@
  				ret = -EINVAL;
  				break;
  			}
@@ -1159,7 +1239,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/v4l2-core/v4l2-ioctl.c backports
  			*kernel_ptr = (void **)&buf->m.planes;
  			*array_size = sizeof(struct v4l2_plane) * buf->length;
  			ret = 1;
-@@ -2430,7 +2431,7 @@
+@@ -2633,7 +2634,7 @@
  				ret = -EINVAL;
  				break;
  			}
@@ -1168,7 +1248,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/v4l2-core/v4l2-ioctl.c backports
  			*kernel_ptr = (void **)&edid->edid;
  			*array_size = edid->blocks * 128;
  			ret = 1;
-@@ -2448,7 +2449,7 @@
+@@ -2651,7 +2652,7 @@
  				ret = -EINVAL;
  				break;
  			}
@@ -1177,7 +1257,7 @@ diff -Naur backports-3.18.1-1.org/drivers/media/v4l2-core/v4l2-ioctl.c backports
  			*kernel_ptr = (void **)&ctrls->controls;
  			*array_size = sizeof(struct v4l2_ext_control)
  				    * ctrls->count;
-@@ -2549,7 +2550,7 @@
+@@ -2752,7 +2753,7 @@
  	}
  
  	if (has_array_args) {
@@ -1186,21 +1266,9 @@ diff -Naur backports-3.18.1-1.org/drivers/media/v4l2-core/v4l2-ioctl.c backports
  		if (copy_to_user(user_ptr, mbuf, array_size))
  			err = -EFAULT;
  		goto out_array_args;
-diff -Naur backports-3.18.1-1.org/drivers/net/ieee802154/fakehard.c backports-3.18.1-1/drivers/net/ieee802154/fakehard.c
---- backports-3.18.1-1.org/drivers/net/ieee802154/fakehard.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/ieee802154/fakehard.c	2014-12-28 14:10:09.556888909 +0100
-@@ -365,7 +365,7 @@
- 	phy->transmit_power = 0xbf;
- 
- 	dev->netdev_ops = &fake_ops;
--	dev->ml_priv = &fake_mlme;
-+	dev->ml_priv = (void *)&fake_mlme;
- 
- 	priv = netdev_priv(dev);
- 	priv->phy = phy;
-diff -Naur backports-3.18.1-1.org/drivers/net/usb/sierra_net.c backports-3.18.1-1/drivers/net/usb/sierra_net.c
---- backports-3.18.1-1.org/drivers/net/usb/sierra_net.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/usb/sierra_net.c	2014-12-28 14:10:09.560888936 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/usb/sierra_net.c backports-4.2.6-1/drivers/net/usb/sierra_net.c
+--- backports-4.2.6-1.org/drivers/net/usb/sierra_net.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/sierra_net.c	2016-01-27 12:26:21.283292990 +0100
 @@ -51,7 +51,7 @@
  /* atomic counter partially included in MAC address to make sure 2 devices
   * do not end up with the same MAC - concept breaks in case of > 255 ifaces
@@ -1219,9 +1287,21 @@ diff -Naur backports-3.18.1-1.org/drivers/net/usb/sierra_net.c backports-3.18.1-
  	dev->net->dev_addr[ETH_ALEN-1] = ifacenum;
  
  	/* we will have to manufacture ethernet headers, prepare template */
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/at76c50x-usb.c backports-3.18.1-1/drivers/net/wireless/at76c50x-usb.c
---- backports-3.18.1-1.org/drivers/net/wireless/at76c50x-usb.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/at76c50x-usb.c	2014-12-28 14:10:09.560888936 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/airo.c backports-4.2.6-1/drivers/net/wireless/airo.c
+--- backports-4.2.6-1.org/drivers/net/wireless/airo.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/airo.c	2016-01-27 12:26:21.286626323 +0100
+@@ -7846,7 +7846,7 @@
+ 	struct airo_info *ai = dev->ml_priv;
+ 	int  ridcode;
+         int  enabled;
+-	static int (* writer)(struct airo_info *, u16 rid, const void *, int, int);
++	int (* writer)(struct airo_info *, u16 rid, const void *, int, int);
+ 	unsigned char *iobuf;
+ 
+ 	/* Only super-user can write RIDs */
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/at76c50x-usb.c backports-4.2.6-1/drivers/net/wireless/at76c50x-usb.c
+--- backports-4.2.6-1.org/drivers/net/wireless/at76c50x-usb.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/at76c50x-usb.c	2016-01-27 12:26:21.286626323 +0100
 @@ -353,7 +353,7 @@
  }
  
@@ -1231,10 +1311,37 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/at76c50x-usb.c backports-
  {
  	return msecs_to_jiffies((s->poll_timeout[2] << 16)
  				| (s->poll_timeout[1] << 8)
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath10k/htc.c backports-3.18.1-1/drivers/net/wireless/ath/ath10k/htc.c
---- backports-3.18.1-1.org/drivers/net/wireless/ath/ath10k/htc.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/ath/ath10k/htc.c	2014-12-28 14:10:09.560888936 +0100
-@@ -848,7 +848,10 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/ath/ath10k/ce.c backports-4.2.6-1/drivers/net/wireless/ath/ath10k/ce.c
+--- backports-4.2.6-1.org/drivers/net/wireless/ath/ath10k/ce.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/ath/ath10k/ce.c	2016-01-27 12:26:21.286626323 +0100
+@@ -896,12 +896,12 @@
+ 	return 0;
+ }
+ 
+-static struct ath10k_ce_ring *
++static struct ath10k_ce_ring * __intentional_overflow(-1)
+ ath10k_ce_alloc_src_ring(struct ath10k *ar, unsigned int ce_id,
+ 			 const struct ce_attr *attr)
+ {
+ 	struct ath10k_ce_ring *src_ring;
+-	u32 nentries = attr->src_nentries;
++	unsigned long nentries = attr->src_nentries;
+ 	dma_addr_t base_addr;
+ 
+ 	nentries = roundup_pow_of_two(nentries);
+@@ -968,7 +968,7 @@
+ 			  const struct ce_attr *attr)
+ {
+ 	struct ath10k_ce_ring *dest_ring;
+-	u32 nentries;
++	unsigned long nentries;
+ 	dma_addr_t base_addr;
+ 
+ 	nentries = roundup_pow_of_two(attr->dest_nentries);
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/ath/ath10k/htc.c backports-4.2.6-1/drivers/net/wireless/ath/ath10k/htc.c
+--- backports-4.2.6-1.org/drivers/net/wireless/ath/ath10k/htc.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/ath/ath10k/htc.c	2016-01-27 12:26:21.286626323 +0100
+@@ -841,7 +841,10 @@
  /* registered target arrival callback from the HIF layer */
  int ath10k_htc_init(struct ath10k *ar)
  {
@@ -1246,7 +1353,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath10k/htc.c backport
  	struct ath10k_htc_ep *ep = NULL;
  	struct ath10k_htc *htc = &ar->htc;
  
-@@ -857,8 +860,6 @@
+@@ -850,8 +853,6 @@
  	ath10k_htc_reset_endpoint_states(htc);
  
  	/* setup HIF layer callbacks */
@@ -1255,9 +1362,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath10k/htc.c backport
  	htc->ar = ar;
  
  	/* Get HIF default pipe for HTC message exchange */
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath10k/htc.h backports-3.18.1-1/drivers/net/wireless/ath/ath10k/htc.h
---- backports-3.18.1-1.org/drivers/net/wireless/ath/ath10k/htc.h	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/ath/ath10k/htc.h	2014-12-28 14:10:09.560888936 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/ath/ath10k/htc.h backports-4.2.6-1/drivers/net/wireless/ath/ath10k/htc.h
+--- backports-4.2.6-1.org/drivers/net/wireless/ath/ath10k/htc.h	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/ath/ath10k/htc.h	2016-01-27 12:26:21.286626323 +0100
 @@ -270,13 +270,13 @@
  
  struct ath10k_htc_ops {
@@ -1274,9 +1381,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath10k/htc.h backport
  
  /* service connection information */
  struct ath10k_htc_svc_conn_req {
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/ar9002_mac.c backports-3.18.1-1/drivers/net/wireless/ath/ath9k/ar9002_mac.c
---- backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/ar9002_mac.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/ath/ath9k/ar9002_mac.c	2014-12-28 14:10:09.560888936 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/ath/ath9k/ar9002_mac.c backports-4.2.6-1/drivers/net/wireless/ath/ath9k/ar9002_mac.c
+--- backports-4.2.6-1.org/drivers/net/wireless/ath/ath9k/ar9002_mac.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/ath/ath9k/ar9002_mac.c	2016-01-27 12:26:21.286626323 +0100
 @@ -220,8 +220,8 @@
  	ads->ds_txstatus6 = ads->ds_txstatus7 = 0;
  	ads->ds_txstatus8 = ads->ds_txstatus9 = 0;
@@ -1329,7 +1436,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/ar9002_mac.c ba
 -	ACCESS_ONCE(ads->ds_ctl0) = (i->pkt_len & AR_FrameLen)
 +	ACCESS_ONCE_RW(ads->ds_ctl0) = (i->pkt_len & AR_FrameLen)
  		| (i->flags & ATH9K_TXDESC_VMF ? AR_VirtMoreFrag : 0)
- 		| SM(i->txpower, AR_XmitPower0)
+ 		| SM(i->txpower[0], AR_XmitPower0)
  		| (i->flags & ATH9K_TXDESC_VEOL ? AR_VEOL : 0)
 @@ -289,27 +289,27 @@
  		| (i->flags & ATH9K_TXDESC_RTSENA ? AR_RTSEnable :
@@ -1358,18 +1465,18 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/ar9002_mac.c ba
  		| set11nRateFlags(i->rates, 3)
  		| SM(i->rtscts_rate, AR_RTSCTSRate);
  
--	ACCESS_ONCE(ads->ds_ctl9) = SM(i->txpower, AR_XmitPower1);
--	ACCESS_ONCE(ads->ds_ctl10) = SM(i->txpower, AR_XmitPower2);
--	ACCESS_ONCE(ads->ds_ctl11) = SM(i->txpower, AR_XmitPower3);
-+	ACCESS_ONCE_RW(ads->ds_ctl9) = SM(i->txpower, AR_XmitPower1);
-+	ACCESS_ONCE_RW(ads->ds_ctl10) = SM(i->txpower, AR_XmitPower2);
-+	ACCESS_ONCE_RW(ads->ds_ctl11) = SM(i->txpower, AR_XmitPower3);
+-	ACCESS_ONCE(ads->ds_ctl9) = SM(i->txpower[1], AR_XmitPower1);
+-	ACCESS_ONCE(ads->ds_ctl10) = SM(i->txpower[2], AR_XmitPower2);
+-	ACCESS_ONCE(ads->ds_ctl11) = SM(i->txpower[3], AR_XmitPower3);
++	ACCESS_ONCE_RW(ads->ds_ctl9) = SM(i->txpower[1], AR_XmitPower1);
++	ACCESS_ONCE_RW(ads->ds_ctl10) = SM(i->txpower[2], AR_XmitPower2);
++	ACCESS_ONCE_RW(ads->ds_ctl11) = SM(i->txpower[3], AR_XmitPower3);
  }
  
  static int ar9002_hw_proc_txdesc(struct ath_hw *ah, void *ds,
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/ar9003_mac.c backports-3.18.1-1/drivers/net/wireless/ath/ath9k/ar9003_mac.c
---- backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/ar9003_mac.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/ath/ath9k/ar9003_mac.c	2014-12-28 14:10:09.560888936 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/ath/ath9k/ar9003_mac.c backports-4.2.6-1/drivers/net/wireless/ath/ath9k/ar9003_mac.c
+--- backports-4.2.6-1.org/drivers/net/wireless/ath/ath9k/ar9003_mac.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/ath/ath9k/ar9003_mac.c	2016-01-27 12:26:21.286626323 +0100
 @@ -39,47 +39,47 @@
  	      (i->qcu << AR_TxQcuNum_S) | desc_len;
  
@@ -1457,7 +1564,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/ar9003_mac.c ba
 -	ACCESS_ONCE(ads->ctl11) = (i->pkt_len & AR_FrameLen)
 +	ACCESS_ONCE_RW(ads->ctl11) = (i->pkt_len & AR_FrameLen)
  		| (i->flags & ATH9K_TXDESC_VMF ? AR_VirtMoreFrag : 0)
- 		| SM(i->txpower, AR_XmitPower0)
+ 		| SM(i->txpower[0], AR_XmitPower0)
  		| (i->flags & ATH9K_TXDESC_VEOL ? AR_VEOL : 0)
 @@ -135,26 +135,26 @@
  	val = (i->flags & ATH9K_TXDESC_PAPRD) >> ATH9K_TXDESC_PAPRD_S;
@@ -1486,28 +1593,28 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/ar9003_mac.c ba
 -	ACCESS_ONCE(ads->ctl19) = AR_Not_Sounding;
 +	ACCESS_ONCE_RW(ads->ctl19) = AR_Not_Sounding;
  
--	ACCESS_ONCE(ads->ctl20) = SM(i->txpower, AR_XmitPower1);
--	ACCESS_ONCE(ads->ctl21) = SM(i->txpower, AR_XmitPower2);
--	ACCESS_ONCE(ads->ctl22) = SM(i->txpower, AR_XmitPower3);
-+	ACCESS_ONCE_RW(ads->ctl20) = SM(i->txpower, AR_XmitPower1);
-+	ACCESS_ONCE_RW(ads->ctl21) = SM(i->txpower, AR_XmitPower2);
-+	ACCESS_ONCE_RW(ads->ctl22) = SM(i->txpower, AR_XmitPower3);
+-	ACCESS_ONCE(ads->ctl20) = SM(i->txpower[1], AR_XmitPower1);
+-	ACCESS_ONCE(ads->ctl21) = SM(i->txpower[2], AR_XmitPower2);
+-	ACCESS_ONCE(ads->ctl22) = SM(i->txpower[3], AR_XmitPower3);
++	ACCESS_ONCE_RW(ads->ctl20) = SM(i->txpower[1], AR_XmitPower1);
++	ACCESS_ONCE_RW(ads->ctl21) = SM(i->txpower[2], AR_XmitPower2);
++	ACCESS_ONCE_RW(ads->ctl22) = SM(i->txpower[3], AR_XmitPower3);
  }
  
  static u16 ar9003_calc_ptr_chksum(struct ar9003_txc *ads)
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/hw.h backports-3.18.1-1/drivers/net/wireless/ath/ath9k/hw.h
---- backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/hw.h	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/ath/ath9k/hw.h	2014-12-28 14:10:09.564888946 +0100
-@@ -630,7 +630,7 @@
- 
- 	/* ANI */
- 	void (*ani_cache_ini_regs)(struct ath_hw *ah);
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/ath/ath9k/hw.h backports-4.2.6-1/drivers/net/wireless/ath/ath9k/hw.h
+--- backports-4.2.6-1.org/drivers/net/wireless/ath/ath9k/hw.h	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/ath/ath9k/hw.h	2016-01-27 12:33:44.649931973 +0100
+@@ -671,7 +671,7 @@
+ #ifdef CPTCFG_ATH9K_BTCOEX_SUPPORT
+ 	bool (*is_aic_enabled)(struct ath_hw *ah);
+ #endif /* CPTCFG_ATH9K_BTCOEX_SUPPORT */
 -};
 +} __no_const;
  
  /**
   * struct ath_spec_scan - parameters for Atheros spectral scan
-@@ -708,7 +708,7 @@
+@@ -747,7 +747,7 @@
  #ifdef CPTCFG_ATH9K_BTCOEX_SUPPORT
  	void (*set_bt_ant_diversity)(struct ath_hw *hw, bool enable);
  #endif
@@ -1516,10 +1623,21 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/hw.h backports-
  
  struct ath_nf_limits {
  	s16 max;
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/main.c backports-3.18.1-1/drivers/net/wireless/ath/ath9k/main.c
---- backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/main.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/ath/ath9k/main.c	2014-12-28 14:24:49.169250593 +0100
-@@ -2454,16 +2454,18 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/ath/ath9k/Kconfig backports-4.2.6-1/drivers/net/wireless/ath/ath9k/Kconfig
+--- backports-4.2.6-1.org/drivers/net/wireless/ath/ath9k/Kconfig	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/ath/ath9k/Kconfig	2016-01-27 12:34:48.923262299 +0100
+@@ -5,7 +5,6 @@
+ 	tristate
+ 	depends on m
+ 	select ATH_COMMON
+-	depends on DEBUG_FS
+ 	depends on RELAY
+ config ATH9K_DFS_DEBUGFS
+ 	def_bool y
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/ath/ath9k/main.c backports-4.2.6-1/drivers/net/wireless/ath/ath9k/main.c
+--- backports-4.2.6-1.org/drivers/net/wireless/ath/ath9k/main.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/ath/ath9k/main.c	2016-01-27 12:26:21.289959656 +0100
+@@ -2574,16 +2574,18 @@
  	if (!ath9k_is_chanctx_enabled())
  		return;
  
@@ -1548,9 +1666,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ath/ath9k/main.c backport
  }
  
  #endif
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/b43/phy_lp.c backports-3.18.1-1/drivers/net/wireless/b43/phy_lp.c
---- backports-3.18.1-1.org/drivers/net/wireless/b43/phy_lp.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/b43/phy_lp.c	2014-12-28 14:10:09.564888946 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/b43/phy_lp.c backports-4.2.6-1/drivers/net/wireless/b43/phy_lp.c
+--- backports-4.2.6-1.org/drivers/net/wireless/b43/phy_lp.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/b43/phy_lp.c	2016-01-27 12:26:21.289959656 +0100
 @@ -2502,7 +2502,7 @@
  {
  	struct ssb_bus *bus = dev->dev->sdev->bus;
@@ -1560,9 +1678,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/b43/phy_lp.c backports-3.
  	u32 crystal_freq = bus->chipco.pmu.crystalfreq * 1000;
  	u32 freqref, vco_freq, val1, val2, val3, timeout, timeoutref, count;
  	u16 old_comm15, scale;
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/iwlegacy/3945-mac.c backports-3.18.1-1/drivers/net/wireless/iwlegacy/3945-mac.c
---- backports-3.18.1-1.org/drivers/net/wireless/iwlegacy/3945-mac.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/iwlegacy/3945-mac.c	2014-12-28 14:10:09.564888946 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/iwlegacy/3945-mac.c backports-4.2.6-1/drivers/net/wireless/iwlegacy/3945-mac.c
+--- backports-4.2.6-1.org/drivers/net/wireless/iwlegacy/3945-mac.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/iwlegacy/3945-mac.c	2016-01-27 12:26:21.289959656 +0100
 @@ -3633,7 +3633,9 @@
  	 */
  	if (il3945_mod_params.disable_hw_scan) {
@@ -1574,9 +1692,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/iwlegacy/3945-mac.c backp
  	}
  
  	D_INFO("*** LOAD DRIVER ***\n");
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/iwlwifi/dvm/debugfs.c backports-3.18.1-1/drivers/net/wireless/iwlwifi/dvm/debugfs.c
---- backports-3.18.1-1.org/drivers/net/wireless/iwlwifi/dvm/debugfs.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/iwlwifi/dvm/debugfs.c	2014-12-28 14:10:09.564888946 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/iwlwifi/dvm/debugfs.c backports-4.2.6-1/drivers/net/wireless/iwlwifi/dvm/debugfs.c
+--- backports-4.2.6-1.org/drivers/net/wireless/iwlwifi/dvm/debugfs.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/iwlwifi/dvm/debugfs.c	2016-01-27 12:26:21.289959656 +0100
 @@ -188,7 +188,7 @@
  {
  	struct iwl_priv *priv = file->private_data;
@@ -1709,10 +1827,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/iwlwifi/dvm/debugfs.c bac
  
  	memset(buf, 0, sizeof(buf));
  	buf_size = min(count, sizeof(buf) - 1);
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/iwlwifi/pcie/trans.c backports-3.18.1-1/drivers/net/wireless/iwlwifi/pcie/trans.c
---- backports-3.18.1-1.org/drivers/net/wireless/iwlwifi/pcie/trans.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/iwlwifi/pcie/trans.c	2014-12-28 14:10:09.564888946 +0100
-@@ -1689,7 +1689,7 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/iwlwifi/pcie/trans.c backports-4.2.6-1/drivers/net/wireless/iwlwifi/pcie/trans.c
+--- backports-4.2.6-1.org/drivers/net/wireless/iwlwifi/pcie/trans.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/iwlwifi/pcie/trans.c	2016-01-27 12:26:21.289959656 +0100
+@@ -1950,7 +1950,7 @@
  	struct isr_statistics *isr_stats = &trans_pcie->isr_stats;
  
  	char buf[8];
@@ -1721,7 +1839,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/iwlwifi/pcie/trans.c back
  	u32 reset_flag;
  
  	memset(buf, 0, sizeof(buf));
-@@ -1710,7 +1710,7 @@
+@@ -1971,7 +1971,7 @@
  {
  	struct iwl_trans *trans = file->private_data;
  	char buf[8];
@@ -1730,10 +1848,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/iwlwifi/pcie/trans.c back
  	int csr;
  
  	memset(buf, 0, sizeof(buf));
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/mac80211_hwsim.c backports-3.18.1-1/drivers/net/wireless/mac80211_hwsim.c
---- backports-3.18.1-1.org/drivers/net/wireless/mac80211_hwsim.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/mac80211_hwsim.c	2014-12-28 14:10:09.568888967 +0100
-@@ -2578,20 +2578,20 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/mac80211_hwsim.c backports-4.2.6-1/drivers/net/wireless/mac80211_hwsim.c
+--- backports-4.2.6-1.org/drivers/net/wireless/mac80211_hwsim.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/mac80211_hwsim.c	2016-01-27 12:26:21.289959656 +0100
+@@ -3150,20 +3150,20 @@
  	if (channels < 1)
  		return -EINVAL;
  
@@ -1768,9 +1886,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/mac80211_hwsim.c backport
  
  	spin_lock_init(&hwsim_radio_lock);
  	INIT_LIST_HEAD(&hwsim_radios);
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/rndis_wlan.c backports-3.18.1-1/drivers/net/wireless/rndis_wlan.c
---- backports-3.18.1-1.org/drivers/net/wireless/rndis_wlan.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/rndis_wlan.c	2014-12-28 14:10:09.568888967 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/rndis_wlan.c backports-4.2.6-1/drivers/net/wireless/rndis_wlan.c
+--- backports-4.2.6-1.org/drivers/net/wireless/rndis_wlan.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/rndis_wlan.c	2016-01-27 12:26:21.293292990 +0100
 @@ -1236,7 +1236,7 @@
  
  	netdev_dbg(usbdev->net, "%s(): %i\n", __func__, rts_threshold);
@@ -1780,9 +1898,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/rndis_wlan.c backports-3.
  		rts_threshold = 2347;
  
  	tmp = cpu_to_le32(rts_threshold);
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/rt2x00/rt2x00.h backports-3.18.1-1/drivers/net/wireless/rt2x00/rt2x00.h
---- backports-3.18.1-1.org/drivers/net/wireless/rt2x00/rt2x00.h	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/rt2x00/rt2x00.h	2014-12-28 14:10:09.568888967 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/rt2x00/rt2x00.h backports-4.2.6-1/drivers/net/wireless/rt2x00/rt2x00.h
+--- backports-4.2.6-1.org/drivers/net/wireless/rt2x00/rt2x00.h	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/rt2x00/rt2x00.h	2016-01-27 12:26:21.293292990 +0100
 @@ -375,7 +375,7 @@
  	 * for hardware which doesn't support hardware
  	 * sequence counting.
@@ -1792,9 +1910,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/rt2x00/rt2x00.h backports
  };
  
  static inline struct rt2x00_intf* vif_to_intf(struct ieee80211_vif *vif)
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/rt2x00/rt2x00queue.c backports-3.18.1-1/drivers/net/wireless/rt2x00/rt2x00queue.c
---- backports-3.18.1-1.org/drivers/net/wireless/rt2x00/rt2x00queue.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/rt2x00/rt2x00queue.c	2014-12-28 14:10:09.568888967 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/rt2x00/rt2x00queue.c backports-4.2.6-1/drivers/net/wireless/rt2x00/rt2x00queue.c
+--- backports-4.2.6-1.org/drivers/net/wireless/rt2x00/rt2x00queue.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/rt2x00/rt2x00queue.c	2016-01-27 12:26:21.293292990 +0100
 @@ -224,9 +224,9 @@
  	 * sequence counter given by mac80211.
  	 */
@@ -1807,9 +1925,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/rt2x00/rt2x00queue.c back
  
  	hdr->seq_ctrl &= cpu_to_le16(IEEE80211_SCTL_FRAG);
  	hdr->seq_ctrl |= cpu_to_le16(seqno);
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ti/wl1251/sdio.c backports-3.18.1-1/drivers/net/wireless/ti/wl1251/sdio.c
---- backports-3.18.1-1.org/drivers/net/wireless/ti/wl1251/sdio.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/ti/wl1251/sdio.c	2014-12-28 14:10:09.568888967 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/ti/wl1251/sdio.c backports-4.2.6-1/drivers/net/wireless/ti/wl1251/sdio.c
+--- backports-4.2.6-1.org/drivers/net/wireless/ti/wl1251/sdio.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/ti/wl1251/sdio.c	2016-01-27 12:26:21.293292990 +0100
 @@ -282,13 +282,17 @@
  
  		irq_set_irq_type(wl->irq, IRQ_TYPE_EDGE_RISING);
@@ -1832,10 +1950,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ti/wl1251/sdio.c backport
  
  		wl1251_info("using SDIO interrupt");
  	}
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ti/wl12xx/main.c backports-3.18.1-1/drivers/net/wireless/ti/wl12xx/main.c
---- backports-3.18.1-1.org/drivers/net/wireless/ti/wl12xx/main.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/ti/wl12xx/main.c	2014-12-28 14:10:09.568888967 +0100
-@@ -656,7 +656,9 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/ti/wl12xx/main.c backports-4.2.6-1/drivers/net/wireless/ti/wl12xx/main.c
+--- backports-4.2.6-1.org/drivers/net/wireless/ti/wl12xx/main.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/ti/wl12xx/main.c	2016-01-27 12:26:21.293292990 +0100
+@@ -655,7 +655,9 @@
  		       sizeof(wl->conf.mem));
  
  		/* read data preparation is only needed by wl127x */
@@ -1846,7 +1964,7 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ti/wl12xx/main.c backport
  
  		wlcore_set_min_fw_ver(wl, WL127X_CHIP_VER,
  			      WL127X_IFTYPE_SR_VER,  WL127X_MAJOR_SR_VER,
-@@ -681,7 +683,9 @@
+@@ -680,7 +682,9 @@
  		       sizeof(wl->conf.mem));
  
  		/* read data preparation is only needed by wl127x */
@@ -1857,10 +1975,10 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ti/wl12xx/main.c backport
  
  		wlcore_set_min_fw_ver(wl, WL127X_CHIP_VER,
  			      WL127X_IFTYPE_SR_VER,  WL127X_MAJOR_SR_VER,
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ti/wl18xx/main.c backports-3.18.1-1/drivers/net/wireless/ti/wl18xx/main.c
---- backports-3.18.1-1.org/drivers/net/wireless/ti/wl18xx/main.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/ti/wl18xx/main.c	2014-12-28 14:10:09.568888967 +0100
-@@ -1916,8 +1916,10 @@
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/ti/wl18xx/main.c backports-4.2.6-1/drivers/net/wireless/ti/wl18xx/main.c
+--- backports-4.2.6-1.org/drivers/net/wireless/ti/wl18xx/main.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/ti/wl18xx/main.c	2016-01-27 12:26:21.293292990 +0100
+@@ -1952,8 +1952,10 @@
  	}
  
  	if (!checksum_param) {
@@ -1873,9 +1991,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/ti/wl18xx/main.c backport
  	}
  
  	/* Enable 11a Band only if we have 5G antennas */
-diff -Naur backports-3.18.1-1.org/drivers/net/wireless/zd1211rw/zd_usb.c backports-3.18.1-1/drivers/net/wireless/zd1211rw/zd_usb.c
---- backports-3.18.1-1.org/drivers/net/wireless/zd1211rw/zd_usb.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/net/wireless/zd1211rw/zd_usb.c	2014-12-28 14:10:09.568888967 +0100
+diff -Naur backports-4.2.6-1.org/drivers/net/wireless/zd1211rw/zd_usb.c backports-4.2.6-1/drivers/net/wireless/zd1211rw/zd_usb.c
+--- backports-4.2.6-1.org/drivers/net/wireless/zd1211rw/zd_usb.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/net/wireless/zd1211rw/zd_usb.c	2016-01-27 12:26:21.293292990 +0100
 @@ -385,7 +385,7 @@
  {
  	struct zd_usb *usb = urb->context;
@@ -1885,9 +2003,9 @@ diff -Naur backports-3.18.1-1.org/drivers/net/wireless/zd1211rw/zd_usb.c backpor
  	u16 int_num;
  
  	ZD_ASSERT(in_interrupt());
-diff -Naur backports-3.18.1-1.org/drivers/nfc/nfcwilink.c backports-3.18.1-1/drivers/nfc/nfcwilink.c
---- backports-3.18.1-1.org/drivers/nfc/nfcwilink.c	2014-12-21 22:37:14.000000000 +0100
-+++ backports-3.18.1-1/drivers/nfc/nfcwilink.c	2014-12-28 14:10:09.568888967 +0100
+diff -Naur backports-4.2.6-1.org/drivers/nfc/nfcwilink.c backports-4.2.6-1/drivers/nfc/nfcwilink.c
+--- backports-4.2.6-1.org/drivers/nfc/nfcwilink.c	2015-11-15 22:19:39.000000000 +0100
++++ backports-4.2.6-1/drivers/nfc/nfcwilink.c	2016-01-27 12:26:21.293292990 +0100
 @@ -497,7 +497,7 @@
  
  static int nfcwilink_probe(struct platform_device *pdev)
@@ -1897,9 +2015,9 @@ diff -Naur backports-3.18.1-1.org/drivers/nfc/nfcwilink.c backports-3.18.1-1/dri
  	int rc;
  	__u32 protocols;
  
-diff -Naur backports-3.18.1-1.org/include/linux/gracl_compat.h backports-3.18.1-1/include/linux/gracl_compat.h
---- backports-3.18.1-1.org/include/linux/gracl_compat.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/include/linux/gracl_compat.h	2014-12-28 14:10:09.684889542 +0100
+diff -Naur backports-4.2.6-1.org/include/linux/gracl_compat.h backports-4.2.6-1/include/linux/gracl_compat.h
+--- backports-4.2.6-1.org/include/linux/gracl_compat.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/include/linux/gracl_compat.h	2016-01-27 12:26:26.289959354 +0100
 @@ -0,0 +1,156 @@
 +#ifndef GR_ACL_COMPAT_H
 +#define GR_ACL_COMPAT_H
@@ -1924,7 +2042,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/gracl_compat.h backports-3.18.1-
 +
 +struct acl_subject_label_compat {
 +	compat_uptr_t filename;
-+	compat_ino_t inode;
++	compat_u64 inode;
 +	__u32 device;
 +	__u32 mode;
 +	kernel_cap_t cap_mask;
@@ -2012,7 +2130,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/gracl_compat.h backports-3.18.1-
 +
 +struct acl_object_label_compat {
 +	compat_uptr_t filename;
-+	compat_ino_t inode;
++	compat_u64 inode;
 +	__u32 device;
 +	__u32 mode;
 +
@@ -2044,7 +2162,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/gracl_compat.h backports-3.18.1-
 +	unsigned char sp_role[GR_SPROLE_LEN];
 +	compat_uptr_t sprole_pws;
 +	__u32 segv_device;
-+	compat_ino_t segv_inode;
++	compat_u64 segv_inode;
 +	uid_t segv_uid;
 +	__u16 num_sprole_pws;
 +	__u16 mode;
@@ -2057,10 +2175,10 @@ diff -Naur backports-3.18.1-1.org/include/linux/gracl_compat.h backports-3.18.1-
 +};
 +
 +#endif
-diff -Naur backports-3.18.1-1.org/include/linux/gracl.h backports-3.18.1-1/include/linux/gracl.h
---- backports-3.18.1-1.org/include/linux/gracl.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/include/linux/gracl.h	2014-12-28 14:10:09.684889542 +0100
-@@ -0,0 +1,340 @@
+diff -Naur backports-4.2.6-1.org/include/linux/gracl.h backports-4.2.6-1/include/linux/gracl.h
+--- backports-4.2.6-1.org/include/linux/gracl.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/include/linux/gracl.h	2016-01-27 12:26:26.289959354 +0100
+@@ -0,0 +1,342 @@
 +#ifndef GR_ACL_H
 +#define GR_ACL_H
 +
@@ -2072,8 +2190,8 @@ diff -Naur backports-3.18.1-1.org/include/linux/gracl.h backports-3.18.1-1/inclu
 +
 +/* Major status information */
 +
-+#define GR_VERSION  "grsecurity 3.0"
-+#define GRSECURITY_VERSION 0x3000
++#define GR_VERSION  "grsecurity 3.1"
++#define GRSECURITY_VERSION 0x3100
 +
 +enum {
 +	GR_SHUTDOWN = 0,
@@ -2118,7 +2236,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/gracl.h backports-3.18.1-1/inclu
 +
 +struct name_entry {
 +	__u32 key;
-+	ino_t inode;
++	u64 inode;
 +	dev_t device;
 +	char *name;
 +	__u16 len;
@@ -2166,7 +2284,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/gracl.h backports-3.18.1-1/inclu
 +
 +struct acl_subject_label {
 +	char *filename;
-+	ino_t inode;
++	u64 inode;
 +	dev_t device;
 +	__u32 mode;
 +	kernel_cap_t cap_mask;
@@ -2254,7 +2372,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/gracl.h backports-3.18.1-1/inclu
 +
 +struct acl_object_label {
 +	char *filename;
-+	ino_t inode;
++	u64 inode;
 +	dev_t device;
 +	__u32 mode;
 +
@@ -2290,7 +2408,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/gracl.h backports-3.18.1-1/inclu
 +	unsigned char sp_role[GR_SPROLE_LEN];
 +	struct sprole_pw *sprole_pws;
 +	dev_t segv_device;
-+	ino_t segv_inode;
++	u64 segv_inode;
 +	uid_t segv_uid;
 +	__u16 num_sprole_pws;
 +	__u16 mode;
@@ -2362,9 +2480,11 @@ diff -Naur backports-3.18.1-1.org/include/linux/gracl.h backports-3.18.1-1/inclu
 +}
 +
 +static __inline__ unsigned int
-+gr_fhash(const ino_t ino, const dev_t dev, const unsigned int sz)
++gr_fhash(const u64 ino, const dev_t dev, const unsigned int sz)
 +{
-+	return (((ino + dev) ^ ((ino << 13) + (ino << 23) + (dev << 9))) % sz);
++	unsigned int rem;
++	div_u64_rem((ino + dev) ^ ((ino << 13) + (ino << 23) + (dev << 9)), sz, &rem);
++	return rem;
 +}
 +
 +static __inline__ unsigned int
@@ -2401,9 +2521,9 @@ diff -Naur backports-3.18.1-1.org/include/linux/gracl.h backports-3.18.1-1/inclu
 +
 +#endif
 +
-diff -Naur backports-3.18.1-1.org/include/linux/gralloc.h backports-3.18.1-1/include/linux/gralloc.h
---- backports-3.18.1-1.org/include/linux/gralloc.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/include/linux/gralloc.h	2014-12-28 14:10:09.684889542 +0100
+diff -Naur backports-4.2.6-1.org/include/linux/gralloc.h backports-4.2.6-1/include/linux/gralloc.h
+--- backports-4.2.6-1.org/include/linux/gralloc.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/include/linux/gralloc.h	2016-01-27 12:26:26.289959354 +0100
 @@ -0,0 +1,9 @@
 +#ifndef __GRALLOC_H
 +#define __GRALLOC_H
@@ -2414,9 +2534,9 @@ diff -Naur backports-3.18.1-1.org/include/linux/gralloc.h backports-3.18.1-1/inc
 +void *acl_alloc_num(unsigned long num, unsigned long len);
 +
 +#endif
-diff -Naur backports-3.18.1-1.org/include/linux/grdefs.h backports-3.18.1-1/include/linux/grdefs.h
---- backports-3.18.1-1.org/include/linux/grdefs.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/include/linux/grdefs.h	2014-12-28 14:10:09.688889562 +0100
+diff -Naur backports-4.2.6-1.org/include/linux/grdefs.h backports-4.2.6-1/include/linux/grdefs.h
+--- backports-4.2.6-1.org/include/linux/grdefs.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/include/linux/grdefs.h	2016-01-27 12:26:26.289959354 +0100
 @@ -0,0 +1,140 @@
 +#ifndef GRDEFS_H
 +#define GRDEFS_H
@@ -2558,10 +2678,10 @@ diff -Naur backports-3.18.1-1.org/include/linux/grdefs.h backports-3.18.1-1/incl
 +};
 +
 +#endif
-diff -Naur backports-3.18.1-1.org/include/linux/grinternal.h backports-3.18.1-1/include/linux/grinternal.h
---- backports-3.18.1-1.org/include/linux/grinternal.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/include/linux/grinternal.h	2014-12-28 14:10:09.688889562 +0100
-@@ -0,0 +1,229 @@
+diff -Naur backports-4.2.6-1.org/include/linux/grinternal.h backports-4.2.6-1/include/linux/grinternal.h
+--- backports-4.2.6-1.org/include/linux/grinternal.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/include/linux/grinternal.h	2016-01-27 12:26:26.289959354 +0100
+@@ -0,0 +1,230 @@
 +#ifndef __GRINTERNAL_H
 +#define __GRINTERNAL_H
 +
@@ -2621,6 +2741,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/grinternal.h backports-3.18.1-1/
 +extern int grsec_enable_chroot_nice;
 +extern int grsec_enable_chroot_execlog;
 +extern int grsec_enable_chroot_caps;
++extern int grsec_enable_chroot_rename;
 +extern int grsec_enable_chroot_sysctl;
 +extern int grsec_enable_chroot_unix;
 +extern int grsec_enable_symlinkown;
@@ -2774,7 +2895,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/grinternal.h backports-3.18.1-1/
 +#define gr_log_fs_str(audit, msg, dentry, mnt, str) gr_log_varargs(audit, msg, GR_FILENAME_STR, dentry, mnt, str)
 +#define gr_log_fs_int2(audit, msg, dentry, mnt, num1, num2) gr_log_varargs(audit, msg, GR_FILENAME_TWO_INT, dentry, mnt, num1, num2)
 +#define gr_log_fs_int2_str(audit, msg, dentry, mnt, num1, num2, str) gr_log_varargs(audit, msg, GR_FILENAME_TWO_INT_STR, dentry, mnt, num1, num2, str)
-+#define gr_log_textrel_ulong_ulong(audit, msg, file, ulong1, ulong2) gr_log_varargs(audit, msg, GR_TEXTREL, file, ulong1, ulong2)
++#define gr_log_textrel_ulong_ulong(audit, msg, str, file, ulong1, ulong2) gr_log_varargs(audit, msg, GR_TEXTREL, str, file, ulong1, ulong2)
 +#define gr_log_ptrace(audit, msg, task) gr_log_varargs(audit, msg, GR_PTRACE, task)
 +#define gr_log_res_ulong2_str(audit, msg, task, ulong1, str, ulong2) gr_log_varargs(audit, msg, GR_RESOURCE, task, ulong1, str, ulong2)
 +#define gr_log_cap(audit, msg, task, str) gr_log_varargs(audit, msg, GR_CAP, task, str)
@@ -2791,10 +2912,10 @@ diff -Naur backports-3.18.1-1.org/include/linux/grinternal.h backports-3.18.1-1/
 +#endif
 +
 +#endif
-diff -Naur backports-3.18.1-1.org/include/linux/grmsg.h backports-3.18.1-1/include/linux/grmsg.h
---- backports-3.18.1-1.org/include/linux/grmsg.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/include/linux/grmsg.h	2014-12-28 14:10:09.688889562 +0100
-@@ -0,0 +1,117 @@
+diff -Naur backports-4.2.6-1.org/include/linux/grmsg.h backports-4.2.6-1/include/linux/grmsg.h
+--- backports-4.2.6-1.org/include/linux/grmsg.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/include/linux/grmsg.h	2016-01-27 12:26:26.289959354 +0100
+@@ -0,0 +1,118 @@
 +#define DEFAULTSECMSG "%.256s[%.16s:%d] uid/euid:%u/%u gid/egid:%u/%u, parent %.256s[%.16s:%d] uid/euid:%u/%u gid/egid:%u/%u"
 +#define GR_ACL_PROCACCT_MSG "%.256s[%.16s:%d] IP:%pI4 TTY:%.64s uid/euid:%u/%u gid/egid:%u/%u run time:[%ud %uh %um %us] cpu time:[%ud %uh %um %us] %s with exit code %ld, parent %.256s[%.16s:%d] IP:%pI4 TTY:%.64s uid/euid:%u/%u gid/egid:%u/%u"
 +#define GR_PTRACE_ACL_MSG "denied ptrace of %.950s(%.16s:%d) by "
@@ -2838,6 +2959,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/grmsg.h backports-3.18.1-1/inclu
 +#define GR_ATIME_ACL_MSG "%s access time change of %.950s by "
 +#define GR_ACCESS_ACL_MSG "%s access of %.950s for%s%s%s by "
 +#define GR_CHROOT_CHROOT_MSG "denied double chroot to %.950s by "
++#define GR_CHROOT_RENAME_MSG "denied bad rename of %.950s out of a chroot by "
 +#define GR_CHMOD_CHROOT_MSG "denied chmod +s of %.950s by "
 +#define GR_CHMOD_ACL_MSG "%s chmod of %.950s by "
 +#define GR_CHROOT_FCHDIR_MSG "denied fchdir outside of chroot to %.950s by "
@@ -2900,7 +3022,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/grmsg.h backports-3.18.1-1/inclu
 +#define GR_RESOURCE_MSG "denied resource overstep by requesting %lu for %.16s against limit %lu for "
 +#define GR_RWXMMAP_MSG "denied RWX mmap of %.950s by "
 +#define GR_RWXMPROTECT_MSG "denied RWX mprotect of %.950s by "
-+#define GR_TEXTREL_AUDIT_MSG "denied text relocation in %.950s, VMA:0x%08lx 0x%08lx by "
++#define GR_TEXTREL_AUDIT_MSG "allowed %s text relocation transition in %.950s, VMA:0x%08lx 0x%08lx by "
 +#define GR_PTGNUSTACK_MSG "denied marking stack executable as requested by PT_GNU_STACK marking in %.950s by "
 +#define GR_VM86_MSG "denied use of vm86 by "
 +#define GR_PTRACE_AUDIT_MSG "process %.950s(%.16s:%d) attached to via ptrace by "
@@ -2912,10 +3034,10 @@ diff -Naur backports-3.18.1-1.org/include/linux/grmsg.h backports-3.18.1-1/inclu
 +#define GR_BRUTE_SUID_MSG "bruteforce prevention initiated due to crash of %.950s against uid %u, banning suid/sgid execs for %u minutes.  Please investigate the crash report for "
 +#define GR_IPC_DENIED_MSG "denied %s of overly-permissive IPC object with creator uid %u by "
 +#define GR_MSRWRITE_MSG "denied write to CPU MSR by "
-diff -Naur backports-3.18.1-1.org/include/linux/grsecurity.h backports-3.18.1-1/include/linux/grsecurity.h
---- backports-3.18.1-1.org/include/linux/grsecurity.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/include/linux/grsecurity.h	2014-12-28 14:10:09.688889562 +0100
-@@ -0,0 +1,254 @@
+diff -Naur backports-4.2.6-1.org/include/linux/grsecurity.h backports-4.2.6-1/include/linux/grsecurity.h
+--- backports-4.2.6-1.org/include/linux/grsecurity.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/include/linux/grsecurity.h	2016-01-27 12:26:26.289959354 +0100
+@@ -0,0 +1,255 @@
 +#ifndef GR_SECURITY_H
 +#define GR_SECURITY_H
 +#include <linux/fs.h>
@@ -2924,6 +3046,12 @@ diff -Naur backports-3.18.1-1.org/include/linux/grsecurity.h backports-3.18.1-1/
 +#include <linux/gracl.h>
 +
 +/* notify of brain-dead configs */
++#if defined(CONFIG_DEBUG_FS) && defined(CONFIG_GRKERNSEC_KMEM)
++#error "CONFIG_DEBUG_FS being enabled is a security risk when CONFIG_GRKERNSEC_KMEM is enabled"
++#endif
++#if defined(CONFIG_PROC_PAGE_MONITOR) && defined(CONFIG_GRKERNSEC)
++#error "CONFIG_PROC_PAGE_MONITOR is a security risk"
++#endif
 +#if defined(CONFIG_GRKERNSEC_PROC_USER) && defined(CONFIG_GRKERNSEC_PROC_USERGROUP)
 +#error "CONFIG_GRKERNSEC_PROC_USER and CONFIG_GRKERNSEC_PROC_USERGROUP cannot both be enabled."
 +#endif
@@ -3002,15 +3130,13 @@ diff -Naur backports-3.18.1-1.org/include/linux/grsecurity.h backports-3.18.1-1/
 +			       const struct vfsmount *mnt);
 +void gr_log_remount(const char *devname, const int retval);
 +void gr_log_unmount(const char *devname, const int retval);
-+void gr_log_mount(const char *from, const char *to, const int retval);
-+void gr_log_textrel(struct vm_area_struct *vma);
++void gr_log_mount(const char *from, struct path *to, const int retval);
++void gr_log_textrel(struct vm_area_struct *vma, bool is_textrel_rw);
 +void gr_log_ptgnustack(struct file *file);
 +void gr_log_rwxmmap(struct file *file);
 +void gr_log_rwxmprotect(struct vm_area_struct *vma);
 +
-+int gr_handle_follow_link(const struct inode *parent,
-+				 const struct inode *inode,
-+				 const struct dentry *dentry,
++int gr_handle_follow_link(const struct dentry *dentry,
 +				 const struct vfsmount *mnt);
 +int gr_handle_fifo(const struct dentry *dentry,
 +			  const struct vfsmount *mnt,
@@ -3018,8 +3144,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/grsecurity.h backports-3.18.1-1/
 +			  const int acc_mode);
 +int gr_handle_hardlink(const struct dentry *dentry,
 +			      const struct vfsmount *mnt,
-+			      struct inode *inode,
-+			      const int mode, const struct filename *to);
++			      const struct filename *to);
 +
 +int gr_is_capable(const int cap);
 +int gr_is_capable_nolog(const int cap);
@@ -3083,7 +3208,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/grsecurity.h backports-3.18.1-1/
 +				 const struct vfsmount *parent_mnt);
 +__u32 gr_acl_handle_rmdir(const struct dentry *dentry,
 +				 const struct vfsmount *mnt);
-+void gr_handle_delete(const ino_t ino, const dev_t dev);
++void gr_handle_delete(const u64 ino, const dev_t dev);
 +__u32 gr_acl_handle_unlink(const struct dentry *dentry,
 +				  const struct vfsmount *mnt);
 +__u32 gr_acl_handle_symlink(const struct dentry *new_dentry,
@@ -3112,7 +3237,7 @@ diff -Naur backports-3.18.1-1.org/include/linux/grsecurity.h backports-3.18.1-1/
 +			   const struct dentry *old_dentry,
 +			   const struct vfsmount *old_mnt);
 +int gr_acl_handle_filldir(const struct file *file, const char *name,
-+				 const unsigned int namelen, const ino_t ino);
++				 const unsigned int namelen, const u64 ino);
 +
 +__u32 gr_acl_handle_unix(const struct dentry *dentry,
 +				const struct vfsmount *mnt);
@@ -3123,19 +3248,17 @@ diff -Naur backports-3.18.1-1.org/include/linux/grsecurity.h backports-3.18.1-1/
 +int gr_handle_rofs_blockwrite(struct dentry *dentry, struct vfsmount *mnt, int acc_mode);
 +void gr_audit_ptrace(struct task_struct *task);
 +dev_t gr_get_dev_from_dentry(struct dentry *dentry);
++u64 gr_get_ino_from_dentry(struct dentry *dentry);
 +void gr_put_exec_file(struct task_struct *task);
++
++int gr_get_symlinkown_enabled(void);
 +
 +int gr_ptrace_readexec(struct file *file, int unsafe_flags);
 +
-+#if defined(CONFIG_GRKERNSEC) && (defined(CONFIG_GRKERNSEC_RESLOG) || !defined(CONFIG_GRKERNSEC_NO_RBAC))
-+extern void gr_learn_resource(const struct task_struct *task, const int res,
-+			      const unsigned long wanted, const int gt);
-+#else
-+static inline void gr_learn_resource(const struct task_struct *task, const int res,
-+				     const unsigned long wanted, const int gt)
-+{
-+}
-+#endif
++void gr_inc_chroot_refcnts(struct dentry *dentry, struct vfsmount *mnt);
++void gr_dec_chroot_refcnts(struct dentry *dentry, struct vfsmount *mnt);
++int gr_bad_chroot_rename(struct dentry *olddentry, struct vfsmount *oldmnt,
++			 struct dentry *newdentry, struct vfsmount *newmnt);
 +
 +#ifdef CONFIG_GRKERNSEC_RESLOG
 +extern void gr_log_resource(const struct task_struct *task, const int res,
@@ -3170,9 +3293,9 @@ diff -Naur backports-3.18.1-1.org/include/linux/grsecurity.h backports-3.18.1-1/
 +#endif
 +
 +#endif
-diff -Naur backports-3.18.1-1.org/include/linux/grsock.h backports-3.18.1-1/include/linux/grsock.h
---- backports-3.18.1-1.org/include/linux/grsock.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/include/linux/grsock.h	2014-12-28 14:10:09.688889562 +0100
+diff -Naur backports-4.2.6-1.org/include/linux/grsock.h backports-4.2.6-1/include/linux/grsock.h
+--- backports-4.2.6-1.org/include/linux/grsock.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/include/linux/grsock.h	2016-01-27 12:26:26.289959354 +0100
 @@ -0,0 +1,19 @@
 +#ifndef __GRSOCK_H
 +#define __GRSOCK_H
@@ -3193,9 +3316,22 @@ diff -Naur backports-3.18.1-1.org/include/linux/grsock.h backports-3.18.1-1/incl
 +			    const int protocol);
 +
 +#endif
-diff -Naur backports-3.18.1-1.org/include/linux/unaligned/access_ok.h backports-3.18.1-1/include/linux/unaligned/access_ok.h
---- backports-3.18.1-1.org/include/linux/unaligned/access_ok.h	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/include/linux/unaligned/access_ok.h	2014-12-28 14:10:09.712889681 +0100
+diff -Naur backports-4.2.6-1.org/include/linux/netfilter/xt_gradm.h backports-4.2.6-1/include/linux/netfilter/xt_gradm.h
+--- backports-4.2.6-1.org/include/linux/netfilter/xt_gradm.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/include/linux/netfilter/xt_gradm.h	2016-01-27 12:26:31.209959056 +0100
+@@ -0,0 +1,9 @@
++#ifndef _LINUX_NETFILTER_XT_GRADM_H
++#define _LINUX_NETFILTER_XT_GRADM_H 1
++
++struct xt_gradm_mtinfo {
++	__u16 flags;
++	__u16 invflags;
++};
++
++#endif
+diff -Naur backports-4.2.6-1.org/include/linux/unaligned/access_ok.h backports-4.2.6-1/include/linux/unaligned/access_ok.h
+--- backports-4.2.6-1.org/include/linux/unaligned/access_ok.h	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/include/linux/unaligned/access_ok.h	2016-01-27 12:26:31.219959057 +0100
 @@ -4,34 +4,34 @@
  #include <linux/kernel.h>
  #include <asm/byteorder.h>
@@ -3243,10 +3379,10 @@ diff -Naur backports-3.18.1-1.org/include/linux/unaligned/access_ok.h backports-
  }
  
  static inline void put_unaligned_le16(u16 val, void *p)
-diff -Naur backports-3.18.1-1.org/include/media/v4l2-dev.h backports-3.18.1-1/include/media/v4l2-dev.h
---- backports-3.18.1-1.org/include/media/v4l2-dev.h	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/include/media/v4l2-dev.h	2014-12-28 14:10:09.716889709 +0100
-@@ -75,7 +75,7 @@
+diff -Naur backports-4.2.6-1.org/include/media/v4l2-dev.h backports-4.2.6-1/include/media/v4l2-dev.h
+--- backports-4.2.6-1.org/include/media/v4l2-dev.h	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/include/media/v4l2-dev.h	2016-01-27 12:26:31.219959057 +0100
+@@ -74,7 +74,7 @@
  	int (*mmap) (struct file *, struct vm_area_struct *);
  	int (*open) (struct file *);
  	int (*release) (struct file *);
@@ -3255,10 +3391,10 @@ diff -Naur backports-3.18.1-1.org/include/media/v4l2-dev.h backports-3.18.1-1/in
  
  /*
   * Newer version of video_device, handled by videodev2.c
-diff -Naur backports-3.18.1-1.org/include/media/v4l2-device.h backports-3.18.1-1/include/media/v4l2-device.h
---- backports-3.18.1-1.org/include/media/v4l2-device.h	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/include/media/v4l2-device.h	2014-12-28 14:10:09.716889709 +0100
-@@ -95,7 +95,7 @@
+diff -Naur backports-4.2.6-1.org/include/media/v4l2-device.h backports-4.2.6-1/include/media/v4l2-device.h
+--- backports-4.2.6-1.org/include/media/v4l2-device.h	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/include/media/v4l2-device.h	2016-01-27 12:26:31.219959057 +0100
+@@ -93,7 +93,7 @@
     this function returns 0. If the name ends with a digit (e.g. cx18),
     then the name will be set to cx18-0 since cx180 looks really odd. */
  int v4l2_device_set_name(struct v4l2_device *v4l2_dev, const char *basename,
@@ -3267,22 +3403,31 @@ diff -Naur backports-3.18.1-1.org/include/media/v4l2-device.h backports-3.18.1-1
  
  /* Set v4l2_dev->dev to NULL. Call when the USB parent disconnects.
     Since the parent disappears this ensures that v4l2_dev doesn't have an
-diff -Naur backports-3.18.1-1.org/include/net/bluetooth/l2cap.h backports-3.18.1-1/include/net/bluetooth/l2cap.h
---- backports-3.18.1-1.org/include/net/bluetooth/l2cap.h	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/include/net/bluetooth/l2cap.h	2014-12-28 14:10:09.716889709 +0100
-@@ -608,7 +608,7 @@
- 						     unsigned char *kdata,
+diff -Naur backports-4.2.6-1.org/include/net/bluetooth/l2cap.h backports-4.2.6-1/include/net/bluetooth/l2cap.h
+--- backports-4.2.6-1.org/include/net/bluetooth/l2cap.h	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/include/net/bluetooth/l2cap.h	2016-01-27 12:31:52.866600109 +0100
+@@ -615,7 +615,7 @@
  						     struct iovec *iov,
  						     int len);
+ #endif
 -};
 +} __do_const;
  
  struct l2cap_conn {
  	struct hci_conn		*hcon;
-diff -Naur backports-3.18.1-1.org/include/net/mac80211.h backports-3.18.1-1/include/net/mac80211.h
---- backports-3.18.1-1.org/include/net/mac80211.h	2014-12-21 22:37:13.000000000 +0100
-+++ backports-3.18.1-1/include/net/mac80211.h	2014-12-28 14:10:09.724889743 +0100
-@@ -4648,7 +4648,7 @@
+diff -Naur backports-4.2.6-1.org/include/net/mac80211.h backports-4.2.6-1/include/net/mac80211.h
+--- backports-4.2.6-1.org/include/net/mac80211.h	2015-11-15 22:19:38.000000000 +0100
++++ backports-4.2.6-1/include/net/mac80211.h	2016-01-27 12:26:31.223292389 +0100
+@@ -5106,7 +5106,7 @@
+ 	struct sk_buff *skb;
+ 	struct ieee80211_tx_rate reported_rate;
+ 	bool rts, short_preamble;
+-	u8 max_rate_idx;
++	s8 max_rate_idx;
+ 	u32 rate_idx_mask;
+ 	u8 *rate_idx_mcs_mask;
+ 	bool bss;
+@@ -5143,7 +5143,7 @@
  	void (*remove_sta_debugfs)(void *priv, void *priv_sta);
  
  	u32 (*get_expected_throughput)(void *priv_sta);
@@ -3291,9 +3436,9 @@ diff -Naur backports-3.18.1-1.org/include/net/mac80211.h backports-3.18.1-1/incl
  
  static inline int rate_supported(struct ieee80211_sta *sta,
  				 enum ieee80211_band band,
-diff -Naur backports-3.18.1-1.org/include/trace/events/fs.h backports-3.18.1-1/include/trace/events/fs.h
---- backports-3.18.1-1.org/include/trace/events/fs.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-3.18.1-1/include/trace/events/fs.h	2014-12-28 14:10:09.728889769 +0100
+diff -Naur backports-4.2.6-1.org/include/trace/events/fs.h backports-4.2.6-1/include/trace/events/fs.h
+--- backports-4.2.6-1.org/include/trace/events/fs.h	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/include/trace/events/fs.h	2016-01-27 12:26:31.226625722 +0100
 @@ -0,0 +1,53 @@
 +#undef TRACE_SYSTEM
 +#define TRACE_SYSTEM fs
@@ -3348,47 +3493,10 @@ diff -Naur backports-3.18.1-1.org/include/trace/events/fs.h backports-3.18.1-1/i
 +
 +/* This part must be outside protection */
 +#include <trace/define_trace.h>
-diff -Naur backports-3.18.1-1.org/net/bluetooth/6lowpan.c backports-3.18.1-1/net/bluetooth/6lowpan.c
---- backports-3.18.1-1.org/net/bluetooth/6lowpan.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/bluetooth/6lowpan.c	2014-12-28 14:10:09.784890034 +0100
-@@ -367,7 +367,6 @@
- 
- drop:
- 	dev->stats.rx_dropped++;
--	kfree_skb(skb);
- 	return NET_RX_DROP;
- }
- 
-diff -Naur backports-3.18.1-1.org/net/bluetooth/bnep/core.c backports-3.18.1-1/net/bluetooth/bnep/core.c
---- backports-3.18.1-1.org/net/bluetooth/bnep/core.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/bluetooth/bnep/core.c	2014-12-28 14:10:09.784890034 +0100
-@@ -533,6 +533,9 @@
- 
- 	BT_DBG("");
- 
-+	if (!l2cap_is_socket(sock))
-+		return -EBADFD;
-+
- 	baswap((void *) dst, &l2cap_pi(sock->sk)->chan->dst);
- 	baswap((void *) src, &l2cap_pi(sock->sk)->chan->src);
- 
-diff -Naur backports-3.18.1-1.org/net/bluetooth/cmtp/core.c backports-3.18.1-1/net/bluetooth/cmtp/core.c
---- backports-3.18.1-1.org/net/bluetooth/cmtp/core.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/bluetooth/cmtp/core.c	2014-12-28 14:10:09.784890034 +0100
-@@ -334,6 +334,9 @@
- 
- 	BT_DBG("");
- 
-+	if (!l2cap_is_socket(sock))
-+		return -EBADFD;
-+
- 	session = kzalloc(sizeof(struct cmtp_session), GFP_KERNEL);
- 	if (!session)
- 		return -ENOMEM;
-diff -Naur backports-3.18.1-1.org/net/bluetooth/hci_sock.c backports-3.18.1-1/net/bluetooth/hci_sock.c
---- backports-3.18.1-1.org/net/bluetooth/hci_sock.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/bluetooth/hci_sock.c	2014-12-28 14:10:09.784890034 +0100
-@@ -1067,7 +1067,7 @@
+diff -Naur backports-4.2.6-1.org/net/bluetooth/hci_sock.c backports-4.2.6-1/net/bluetooth/hci_sock.c
+--- backports-4.2.6-1.org/net/bluetooth/hci_sock.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/bluetooth/hci_sock.c	2016-01-27 12:26:36.269958751 +0100
+@@ -1266,7 +1266,7 @@
  			uf.event_mask[1] = *((u32 *) f->event_mask + 1);
  		}
  
@@ -3397,29 +3505,10 @@ diff -Naur backports-3.18.1-1.org/net/bluetooth/hci_sock.c backports-3.18.1-1/ne
  		if (copy_from_user(&uf, optval, len)) {
  			err = -EFAULT;
  			break;
-diff -Naur backports-3.18.1-1.org/net/bluetooth/hidp/core.c backports-3.18.1-1/net/bluetooth/hidp/core.c
---- backports-3.18.1-1.org/net/bluetooth/hidp/core.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/bluetooth/hidp/core.c	2014-12-28 14:10:09.784890034 +0100
-@@ -1322,13 +1322,14 @@
- {
- 	struct hidp_session *session;
- 	struct l2cap_conn *conn;
--	struct l2cap_chan *chan = l2cap_pi(ctrl_sock->sk)->chan;
-+	struct l2cap_chan *chan;
- 	int ret;
- 
- 	ret = hidp_verify_sockets(ctrl_sock, intr_sock);
- 	if (ret)
- 		return ret;
- 
-+	chan = l2cap_pi(ctrl_sock->sk)->chan;
- 	conn = NULL;
- 	l2cap_chan_lock(chan);
- 	if (chan->conn)
-diff -Naur backports-3.18.1-1.org/net/bluetooth/l2cap_core.c backports-3.18.1-1/net/bluetooth/l2cap_core.c
---- backports-3.18.1-1.org/net/bluetooth/l2cap_core.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/bluetooth/l2cap_core.c	2014-12-28 14:10:09.784890034 +0100
-@@ -3512,8 +3512,10 @@
+diff -Naur backports-4.2.6-1.org/net/bluetooth/l2cap_core.c backports-4.2.6-1/net/bluetooth/l2cap_core.c
+--- backports-4.2.6-1.org/net/bluetooth/l2cap_core.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/bluetooth/l2cap_core.c	2016-01-27 12:26:36.269958751 +0100
+@@ -3547,8 +3547,10 @@
  			break;
  
  		case L2CAP_CONF_RFC:
@@ -3432,10 +3521,10 @@ diff -Naur backports-3.18.1-1.org/net/bluetooth/l2cap_core.c backports-3.18.1-1/
  
  			if (test_bit(CONF_STATE2_DEVICE, &chan->conf_state) &&
  			    rfc.mode != chan->mode)
-diff -Naur backports-3.18.1-1.org/net/bluetooth/l2cap_sock.c backports-3.18.1-1/net/bluetooth/l2cap_sock.c
---- backports-3.18.1-1.org/net/bluetooth/l2cap_sock.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/bluetooth/l2cap_sock.c	2014-12-28 14:10:09.788890064 +0100
-@@ -628,7 +628,8 @@
+diff -Naur backports-4.2.6-1.org/net/bluetooth/l2cap_sock.c backports-4.2.6-1/net/bluetooth/l2cap_sock.c
+--- backports-4.2.6-1.org/net/bluetooth/l2cap_sock.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/bluetooth/l2cap_sock.c	2016-01-27 12:26:36.269958751 +0100
+@@ -633,7 +633,8 @@
  	struct sock *sk = sock->sk;
  	struct l2cap_chan *chan = l2cap_pi(sk)->chan;
  	struct l2cap_options opts;
@@ -3445,7 +3534,7 @@ diff -Naur backports-3.18.1-1.org/net/bluetooth/l2cap_sock.c backports-3.18.1-1/
  	u32 opt;
  
  	BT_DBG("sk %p", sk);
-@@ -655,7 +656,7 @@
+@@ -660,7 +661,7 @@
  		opts.max_tx   = chan->max_tx;
  		opts.txwin_size = chan->tx_win;
  
@@ -3454,7 +3543,7 @@ diff -Naur backports-3.18.1-1.org/net/bluetooth/l2cap_sock.c backports-3.18.1-1/
  		if (copy_from_user((char *) &opts, optval, len)) {
  			err = -EFAULT;
  			break;
-@@ -742,7 +743,8 @@
+@@ -747,7 +748,8 @@
  	struct bt_security sec;
  	struct bt_power pwr;
  	struct l2cap_conn *conn;
@@ -3464,7 +3553,7 @@ diff -Naur backports-3.18.1-1.org/net/bluetooth/l2cap_sock.c backports-3.18.1-1/
  	u32 opt;
  
  	BT_DBG("sk %p", sk);
-@@ -766,7 +768,7 @@
+@@ -771,7 +773,7 @@
  
  		sec.level = BT_SECURITY_LOW;
  
@@ -3473,7 +3562,7 @@ diff -Naur backports-3.18.1-1.org/net/bluetooth/l2cap_sock.c backports-3.18.1-1/
  		if (copy_from_user((char *) &sec, optval, len)) {
  			err = -EFAULT;
  			break;
-@@ -862,7 +864,7 @@
+@@ -867,7 +869,7 @@
  
  		pwr.force_active = BT_POWER_FORCE_ACTIVE_ON;
  
@@ -3482,10 +3571,10 @@ diff -Naur backports-3.18.1-1.org/net/bluetooth/l2cap_sock.c backports-3.18.1-1/
  		if (copy_from_user((char *) &pwr, optval, len)) {
  			err = -EFAULT;
  			break;
-diff -Naur backports-3.18.1-1.org/net/bluetooth/rfcomm/sock.c backports-3.18.1-1/net/bluetooth/rfcomm/sock.c
---- backports-3.18.1-1.org/net/bluetooth/rfcomm/sock.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/bluetooth/rfcomm/sock.c	2014-12-28 14:10:09.788890064 +0100
-@@ -695,7 +695,7 @@
+diff -Naur backports-4.2.6-1.org/net/bluetooth/rfcomm/sock.c backports-4.2.6-1/net/bluetooth/rfcomm/sock.c
+--- backports-4.2.6-1.org/net/bluetooth/rfcomm/sock.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/bluetooth/rfcomm/sock.c	2016-01-27 12:26:36.269958751 +0100
+@@ -713,7 +713,7 @@
  	struct sock *sk = sock->sk;
  	struct bt_security sec;
  	int err = 0;
@@ -3494,7 +3583,7 @@ diff -Naur backports-3.18.1-1.org/net/bluetooth/rfcomm/sock.c backports-3.18.1-1
  	u32 opt;
  
  	BT_DBG("sk %p", sk);
-@@ -717,7 +717,7 @@
+@@ -735,7 +735,7 @@
  
  		sec.level = BT_SECURITY_LOW;
  
@@ -3503,9 +3592,9 @@ diff -Naur backports-3.18.1-1.org/net/bluetooth/rfcomm/sock.c backports-3.18.1-1
  		if (copy_from_user((char *) &sec, optval, len)) {
  			err = -EFAULT;
  			break;
-diff -Naur backports-3.18.1-1.org/net/bluetooth/rfcomm/tty.c backports-3.18.1-1/net/bluetooth/rfcomm/tty.c
---- backports-3.18.1-1.org/net/bluetooth/rfcomm/tty.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/bluetooth/rfcomm/tty.c	2014-12-28 14:10:09.788890064 +0100
+diff -Naur backports-4.2.6-1.org/net/bluetooth/rfcomm/tty.c backports-4.2.6-1/net/bluetooth/rfcomm/tty.c
+--- backports-4.2.6-1.org/net/bluetooth/rfcomm/tty.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/bluetooth/rfcomm/tty.c	2016-01-27 12:26:36.269958751 +0100
 @@ -752,7 +752,7 @@
  	BT_DBG("tty %p id %d", tty, tty->index);
  
@@ -3524,10 +3613,10 @@ diff -Naur backports-3.18.1-1.org/net/bluetooth/rfcomm/tty.c backports-3.18.1-1/
  
  	tty_port_close(&dev->port, tty, filp);
  }
-diff -Naur backports-3.18.1-1.org/net/ieee802154/6lowpan_rtnl.c backports-3.18.1-1/net/ieee802154/6lowpan_rtnl.c
---- backports-3.18.1-1.org/net/ieee802154/6lowpan_rtnl.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/ieee802154/6lowpan_rtnl.c	2014-12-28 14:10:09.796890100 +0100
-@@ -639,7 +639,7 @@
+diff -Naur backports-4.2.6-1.org/net/ieee802154/6lowpan/core.c backports-4.2.6-1/net/ieee802154/6lowpan/core.c
+--- backports-4.2.6-1.org/net/ieee802154/6lowpan/core.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/ieee802154/6lowpan/core.c	2016-01-27 12:26:36.273292083 +0100
+@@ -191,7 +191,7 @@
  	dev_put(real_dev);
  }
  
@@ -3536,10 +3625,10 @@ diff -Naur backports-3.18.1-1.org/net/ieee802154/6lowpan_rtnl.c backports-3.18.1
  	.kind		= "lowpan",
  	.priv_size	= sizeof(struct lowpan_dev_info),
  	.setup		= lowpan_setup,
-diff -Naur backports-3.18.1-1.org/net/ieee802154/reassembly.c backports-3.18.1-1/net/ieee802154/reassembly.c
---- backports-3.18.1-1.org/net/ieee802154/reassembly.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/ieee802154/reassembly.c	2014-12-28 14:10:09.796890100 +0100
-@@ -460,14 +460,13 @@
+diff -Naur backports-4.2.6-1.org/net/ieee802154/6lowpan/reassembly.c backports-4.2.6-1/net/ieee802154/6lowpan/reassembly.c
+--- backports-4.2.6-1.org/net/ieee802154/6lowpan/reassembly.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/ieee802154/6lowpan/reassembly.c	2016-01-27 12:26:36.273292083 +0100
+@@ -435,14 +435,13 @@
  
  static int __net_init lowpan_frags_ns_sysctl_register(struct net *net)
  {
@@ -3556,7 +3645,20 @@ diff -Naur backports-3.18.1-1.org/net/ieee802154/reassembly.c backports-3.18.1-1
  				GFP_KERNEL);
  		if (table == NULL)
  			goto err_alloc;
-@@ -494,8 +493,7 @@
+@@ -457,9 +456,9 @@
+ 		/* Don't export sysctls to unprivileged users */
+ 		if (net->user_ns != &init_user_ns)
+ 			table[0].procname = NULL;
+-	}
+-
+-	hdr = register_net_sysctl(net, "net/ieee802154/6lowpan", table);
++		hdr = register_net_sysctl(net, "net/ieee802154/6lowpan", table);
++	} else
++		hdr = register_net_sysctl(net, "net/ieee802154/6lowpan", lowpan_frags_ns_ctl_table);
+ 	if (hdr == NULL)
+ 		goto err_reg;
+ 
+@@ -467,8 +466,7 @@
  	return 0;
  
  err_reg:
@@ -3566,10 +3668,10 @@ diff -Naur backports-3.18.1-1.org/net/ieee802154/reassembly.c backports-3.18.1-1
  err_alloc:
  	return -ENOMEM;
  }
-diff -Naur backports-3.18.1-1.org/net/mac80211/cfg.c backports-3.18.1-1/net/mac80211/cfg.c
---- backports-3.18.1-1.org/net/mac80211/cfg.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/mac80211/cfg.c	2014-12-28 14:10:09.812890175 +0100
-@@ -541,7 +541,7 @@
+diff -Naur backports-4.2.6-1.org/net/mac80211/cfg.c backports-4.2.6-1/net/mac80211/cfg.c
+--- backports-4.2.6-1.org/net/mac80211/cfg.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/mac80211/cfg.c	2016-01-27 12:26:36.286625417 +0100
+@@ -580,7 +580,7 @@
  			ret = ieee80211_vif_use_channel(sdata, chandef,
  					IEEE80211_CHANCTX_EXCLUSIVE);
  		}
@@ -3578,7 +3680,7 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/cfg.c backports-3.18.1-1/net/mac8
  		local->_oper_chandef = *chandef;
  		ieee80211_hw_config(local, 0);
  	}
-@@ -3326,7 +3326,7 @@
+@@ -3488,7 +3488,7 @@
  		else
  			local->probe_req_reg--;
  
@@ -3587,7 +3689,7 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/cfg.c backports-3.18.1-1/net/mac8
  			break;
  
  		ieee80211_queue_work(&local->hw, &local->reconfig_filter);
-@@ -3460,8 +3460,8 @@
+@@ -3637,8 +3637,8 @@
  	if (chanctx_conf) {
  		*chandef = sdata->vif.bss_conf.chandef;
  		ret = 0;
@@ -3598,10 +3700,10 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/cfg.c backports-3.18.1-1/net/mac8
  		   sdata->vif.type == NL80211_IFTYPE_MONITOR) {
  		if (local->use_chanctx)
  			*chandef = local->monitor_chandef;
-diff -Naur backports-3.18.1-1.org/net/mac80211/ieee80211_i.h backports-3.18.1-1/net/mac80211/ieee80211_i.h
---- backports-3.18.1-1.org/net/mac80211/ieee80211_i.h	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/mac80211/ieee80211_i.h	2014-12-28 14:10:09.812890175 +0100
-@@ -29,6 +29,7 @@
+diff -Naur backports-4.2.6-1.org/net/mac80211/ieee80211_i.h backports-4.2.6-1/net/mac80211/ieee80211_i.h
+--- backports-4.2.6-1.org/net/mac80211/ieee80211_i.h	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/mac80211/ieee80211_i.h	2016-01-27 12:26:36.289958749 +0100
+@@ -30,6 +30,7 @@
  #include <net/ieee80211_radiotap.h>
  #include <net/cfg80211.h>
  #include <net/mac80211.h>
@@ -3609,7 +3711,7 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/ieee80211_i.h backports-3.18.1-1/
  #include "key.h"
  #include "sta_info.h"
  #include "debug.h"
-@@ -1057,7 +1058,7 @@
+@@ -1112,7 +1113,7 @@
  	/* also used to protect ampdu_ac_queue and amdpu_ac_stop_refcnt */
  	spinlock_t queue_stop_reason_lock;
  
@@ -3618,10 +3720,10 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/ieee80211_i.h backports-3.18.1-1/
  	int monitors, cooked_mntrs;
  	/* number of interfaces with corresponding FIF_ flags */
  	int fif_fcsfail, fif_plcpfail, fif_control, fif_other_bss, fif_pspoll,
-diff -Naur backports-3.18.1-1.org/net/mac80211/iface.c backports-3.18.1-1/net/mac80211/iface.c
---- backports-3.18.1-1.org/net/mac80211/iface.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/mac80211/iface.c	2014-12-28 14:10:09.812890175 +0100
-@@ -532,7 +532,7 @@
+diff -Naur backports-4.2.6-1.org/net/mac80211/iface.c backports-4.2.6-1/net/mac80211/iface.c
+--- backports-4.2.6-1.org/net/mac80211/iface.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/mac80211/iface.c	2016-01-27 12:26:36.289958749 +0100
+@@ -550,7 +550,7 @@
  		break;
  	}
  
@@ -3630,7 +3732,7 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/iface.c backports-3.18.1-1/net/ma
  		res = drv_start(local);
  		if (res)
  			goto err_del_bss;
-@@ -579,7 +579,7 @@
+@@ -597,7 +597,7 @@
  			res = drv_add_interface(local, sdata);
  			if (res)
  				goto err_stop;
@@ -3639,8 +3741,8 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/iface.c backports-3.18.1-1/net/ma
  			res = ieee80211_add_virtual_monitor(local);
  			if (res)
  				goto err_stop;
-@@ -688,7 +688,7 @@
- 		atomic_inc(&local->iff_promiscs);
+@@ -704,7 +704,7 @@
+ 		atomic_inc(&local->iff_allmultis);
  
  	if (coming_up)
 -		local->open_count++;
@@ -3648,7 +3750,7 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/iface.c backports-3.18.1-1/net/ma
  
  	if (hw_reconf_flags)
  		ieee80211_hw_config(local, hw_reconf_flags);
-@@ -726,7 +726,7 @@
+@@ -742,7 +742,7 @@
   err_del_interface:
  	drv_remove_interface(local, sdata);
   err_stop:
@@ -3657,7 +3759,7 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/iface.c backports-3.18.1-1/net/ma
  		drv_stop(local);
   err_del_bss:
  	sdata->bss = NULL;
-@@ -892,7 +892,7 @@
+@@ -909,7 +909,7 @@
  	}
  
  	if (going_down)
@@ -3666,16 +3768,16 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/iface.c backports-3.18.1-1/net/ma
  
  	switch (sdata->vif.type) {
  	case NL80211_IFTYPE_AP_VLAN:
-@@ -954,7 +954,7 @@
+@@ -978,7 +978,7 @@
+ 		atomic_set(&sdata->txqs_len[txqi->txq.ac], 0);
  	}
- 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
  
 -	if (local->open_count == 0)
 +	if (local_read(&local->open_count) == 0)
  		ieee80211_clear_tx_pending(local);
  
  	/*
-@@ -997,7 +997,7 @@
+@@ -1021,7 +1021,7 @@
  	if (cancel_scan)
  		flush_delayed_work(&local->scan_work);
  
@@ -3684,7 +3786,7 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/iface.c backports-3.18.1-1/net/ma
  		ieee80211_stop_device(local);
  
  		/* no reconfiguring after stop! */
-@@ -1008,7 +1008,7 @@
+@@ -1032,7 +1032,7 @@
  	ieee80211_configure_filter(local);
  	ieee80211_hw_config(local, hw_reconf_flags);
  
@@ -3693,10 +3795,21 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/iface.c backports-3.18.1-1/net/ma
  		ieee80211_add_virtual_monitor(local);
  }
  
-diff -Naur backports-3.18.1-1.org/net/mac80211/main.c backports-3.18.1-1/net/mac80211/main.c
---- backports-3.18.1-1.org/net/mac80211/main.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/mac80211/main.c	2014-12-28 14:10:09.812890175 +0100
-@@ -175,7 +175,7 @@
+@@ -1905,8 +1905,8 @@
+ 	 */
+ 	cfg80211_shutdown_all_interfaces(local->hw.wiphy);
+ 
+-	WARN(local->open_count, "%s: open count remains %d\n",
+-	     wiphy_name(local->hw.wiphy), local->open_count);
++	WARN(local_read(&local->open_count), "%s: open count remains %ld\n",
++	     wiphy_name(local->hw.wiphy), local_read(&local->open_count));
+ 
+ 	mutex_lock(&local->iflist_mtx);
+ 	list_for_each_entry_safe(sdata, tmp, &local->interfaces, list) {
+diff -Naur backports-4.2.6-1.org/net/mac80211/main.c backports-4.2.6-1/net/mac80211/main.c
+--- backports-4.2.6-1.org/net/mac80211/main.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/mac80211/main.c	2016-01-27 12:26:36.289958749 +0100
+@@ -172,7 +172,7 @@
  		changed &= ~(IEEE80211_CONF_CHANGE_CHANNEL |
  			     IEEE80211_CONF_CHANGE_POWER);
  
@@ -3705,9 +3818,9 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/main.c backports-3.18.1-1/net/mac
  		ret = drv_config(local, changed);
  		/*
  		 * Goal:
-diff -Naur backports-3.18.1-1.org/net/mac80211/pm.c backports-3.18.1-1/net/mac80211/pm.c
---- backports-3.18.1-1.org/net/mac80211/pm.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/mac80211/pm.c	2014-12-28 14:10:09.812890175 +0100
+diff -Naur backports-4.2.6-1.org/net/mac80211/pm.c backports-4.2.6-1/net/mac80211/pm.c
+--- backports-4.2.6-1.org/net/mac80211/pm.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/mac80211/pm.c	2016-01-27 12:26:36.289958749 +0100
 @@ -12,7 +12,7 @@
  	struct ieee80211_sub_if_data *sdata;
  	struct sta_info *sta;
@@ -3717,16 +3830,7 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/pm.c backports-3.18.1-1/net/mac80
  		goto suspend;
  
  	ieee80211_scan_cancel(local);
-@@ -59,7 +59,7 @@
- 	cancel_work_sync(&local->dynamic_ps_enable_work);
- 	del_timer_sync(&local->dynamic_ps_timer);
- 
--	local->wowlan = wowlan && local->open_count;
-+	local->wowlan = wowlan && local_read(&local->open_count);
- 	if (local->wowlan) {
- 		int err = drv_suspend(local, wowlan);
- 		if (err < 0) {
-@@ -125,7 +125,7 @@
+@@ -166,7 +166,7 @@
  	WARN_ON(!list_empty(&local->chanctx_list));
  
  	/* stop hardware - this must stop RX */
@@ -3735,10 +3839,10 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/pm.c backports-3.18.1-1/net/mac80
  		ieee80211_stop_device(local);
  
   suspend:
-diff -Naur backports-3.18.1-1.org/net/mac80211/rate.c backports-3.18.1-1/net/mac80211/rate.c
---- backports-3.18.1-1.org/net/mac80211/rate.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/mac80211/rate.c	2014-12-28 14:10:09.812890175 +0100
-@@ -720,7 +720,7 @@
+diff -Naur backports-4.2.6-1.org/net/mac80211/rate.c backports-4.2.6-1/net/mac80211/rate.c
+--- backports-4.2.6-1.org/net/mac80211/rate.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/mac80211/rate.c	2016-01-27 12:26:36.289958749 +0100
+@@ -730,7 +730,7 @@
  
  	ASSERT_RTNL();
  
@@ -3746,20 +3850,32 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/rate.c backports-3.18.1-1/net/mac
 +	if (local_read(&local->open_count))
  		return -EBUSY;
  
- 	if (local->hw.flags & IEEE80211_HW_HAS_RATE_CONTROL) {
-diff -Naur backports-3.18.1-1.org/net/mac80211/util.c backports-3.18.1-1/net/mac80211/util.c
---- backports-3.18.1-1.org/net/mac80211/util.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/mac80211/util.c	2014-12-28 14:10:09.816890209 +0100
-@@ -1669,7 +1669,7 @@
- 	}
- #endif
- 	/* everything else happens only if HW was up & running */
+ 	if (ieee80211_hw_check(&local->hw, HAS_RATE_CONTROL)) {
+diff -Naur backports-4.2.6-1.org/net/mac80211/sta_info.c backports-4.2.6-1/net/mac80211/sta_info.c
+--- backports-4.2.6-1.org/net/mac80211/sta_info.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/mac80211/sta_info.c	2016-01-27 12:26:36.289958749 +0100
+@@ -341,7 +341,7 @@
+ 		int size = sizeof(struct txq_info) +
+ 			   ALIGN(hw->txq_data_size, sizeof(void *));
+ 
+-		txq_data = kcalloc(ARRAY_SIZE(sta->sta.txq), size, gfp);
++		txq_data = kcalloc(size, ARRAY_SIZE(sta->sta.txq), gfp);
+ 		if (!txq_data)
+ 			goto free;
+ 
+diff -Naur backports-4.2.6-1.org/net/mac80211/util.c backports-4.2.6-1/net/mac80211/util.c
+--- backports-4.2.6-1.org/net/mac80211/util.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/mac80211/util.c	2016-01-27 12:26:36.289958749 +0100
+@@ -1761,7 +1761,7 @@
+ 	bool sched_scan_stopped = false;
+ 
+ 	/* nothing to do if HW shouldn't run */
 -	if (!local->open_count)
 +	if (!local_read(&local->open_count))
  		goto wake_up;
  
- 	/*
-@@ -1895,7 +1895,7 @@
+ #ifdef CONFIG_PM
+@@ -2033,7 +2033,7 @@
  	local->in_reconfig = false;
  	barrier();
  
@@ -3768,9 +3884,27 @@ diff -Naur backports-3.18.1-1.org/net/mac80211/util.c backports-3.18.1-1/net/mac
  		ieee80211_add_virtual_monitor(local);
  
  	/*
-diff -Naur backports-3.18.1-1.org/net/wireless/wext-core.c backports-3.18.1-1/net/wireless/wext-core.c
---- backports-3.18.1-1.org/net/wireless/wext-core.c	2014-12-21 22:37:15.000000000 +0100
-+++ backports-3.18.1-1/net/wireless/wext-core.c	2014-12-28 14:10:09.832890290 +0100
+@@ -2088,7 +2088,7 @@
+ 	 * If this is for hw restart things are still running.
+ 	 * We may want to change that later, however.
+ 	 */
+-	if (local->open_count && (!local->suspended || reconfig_due_to_wowlan))
++	if (local_read(&local->open_count) && (!local->suspended || reconfig_due_to_wowlan))
+ 		drv_reconfig_complete(local, IEEE80211_RECONFIG_TYPE_RESTART);
+ 
+ 	if (!local->suspended)
+@@ -2112,7 +2112,7 @@
+ 		flush_delayed_work(&local->scan_work);
+ 	}
+ 
+-	if (local->open_count && !reconfig_due_to_wowlan)
++	if (local_read(&local->open_count) && !reconfig_due_to_wowlan)
+ 		drv_reconfig_complete(local, IEEE80211_RECONFIG_TYPE_SUSPEND);
+ 
+ 	list_for_each_entry(sdata, &local->interfaces, list) {
+diff -Naur backports-4.2.6-1.org/net/wireless/wext-core.c backports-4.2.6-1/net/wireless/wext-core.c
+--- backports-4.2.6-1.org/net/wireless/wext-core.c	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/net/wireless/wext-core.c	2016-01-27 12:26:36.303292082 +0100
 @@ -748,8 +748,7 @@
  		 */
  
@@ -3804,3 +3938,58 @@ diff -Naur backports-3.18.1-1.org/net/wireless/wext-core.c backports-3.18.1-1/ne
  	err = handler(dev, info, (union iwreq_data *) iwp, extra);
  
  	iwp->length += essid_compat;
+diff -Naur backports-4.2.6-1.org/scripts/gcc-plugin.sh backports-4.2.6-1/scripts/gcc-plugin.sh
+--- backports-4.2.6-1.org/scripts/gcc-plugin.sh	1970-01-01 01:00:00.000000000 +0100
++++ backports-4.2.6-1/scripts/gcc-plugin.sh	2016-01-27 12:26:36.303292082 +0100
+@@ -0,0 +1,51 @@
++#!/bin/sh
++srctree=$(dirname "$0")
++gccplugins_dir=$($3 -print-file-name=plugin)
++plugincc=$($1 -E -x c++ - -o /dev/null -I"${srctree}"/../tools/gcc -I"${gccplugins_dir}"/include 2>&1 <<EOF
++#include "gcc-common.h"
++#if BUILDING_GCC_VERSION >= 4008 || defined(ENABLE_BUILD_WITH_CXX)
++#warning $2 CXX
++#else
++#warning $1 CC
++#endif
++EOF
++)
++
++if [ $? -ne 0 ]
++then
++	exit 1
++fi
++
++case "$plugincc" in
++	*"$1 CC"*)
++		echo "$1"
++		exit 0
++		;;
++
++	*"$2 CXX"*)
++		# the c++ compiler needs another test, see below
++		;;
++
++	*)
++		exit 1
++		;;
++esac
++
++# we need a c++ compiler that supports the designated initializer GNU extension
++plugincc=$($2 -c -x c++ -std=gnu++98 - -fsyntax-only -I"${srctree}"/../tools/gcc -I"${gccplugins_dir}"/include 2>&1 <<EOF
++#include "gcc-common.h"
++class test {
++public:
++	int test;
++} test = {
++	.test = 1
++};
++EOF
++)
++
++if [ $? -eq 0 ]
++then
++	echo "$2"
++	exit 0
++fi
++exit 1

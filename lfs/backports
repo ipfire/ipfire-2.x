@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2016  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 VERSUFIX   = ipfire$(KCFG)
 
-VER        = 3.18.1-1
+VER        = 4.2.6-1
 
 THISAPP    = backports-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6cef5f2c800e12441d2cba9fa42b6a5b
+$(DL_FILE)_MD5 = 3f978eb56473d9289cf21ebbcb5aa80b
 
 install : $(TARGET)
 
@@ -78,23 +78,28 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
+
+	# remove replaced kernel modules
+	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/rtl818x/rtl8180/rtl8180.ko
+	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/media/platform
+
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1-ipfire-build.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1-grsecurity.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1-add_usbnet_modules.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-4.2.6-1-grsecurity.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-4.2.6-1-add_usbnet_modules.patch
 ifeq "$(MACHINE)" "x86_64"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1_no_dma_sgtable_on_x86_64.patch
 endif
 
 	# DVB patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-dvb_tevi_s482.patch
 
 	# Wlan patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-drivers-3.8.3-ath_ignore_eeprom_regdomain.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-iwlwifi-noibss_only_on_radar_chan.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.37-rt2800usb_add_dlink_dwa137_usbid.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1_rt2x00usb_suppress_queue_warnings.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-4.2.6-1-mt7601_upstream_fixes.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1_add_libertas_uap.patch
 
 	# smsc mac address patch for pandaboard and raspberry pi
@@ -110,9 +115,6 @@ endif
 
 	# Disable some settings
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_CFG80211_DEVELOPER_WARNINGS=y/# CPTCFG_CFG80211_DEVELOPER_WARNINGS is not set/g" .config
-	cd $(DIR_APP) && sed -i -e "s/CPTCFG_CFG80211_CERTIFICATION_ONUS=y/# CPTCFG_CFG80211_CERTIFICATION_ONUS is not set/g" .config
-	cd $(DIR_APP) && sed -i -e "s/CPTCFG_CFG80211_REG_CELLULAR_HINTS=y/# CPTCFG_CFG80211_REG_CELLULAR_HINTS is not set/g" .config
-	cd $(DIR_APP) && sed -i -e "s/CPTCFG_CFG80211_REG_RELAX_NO_IR=y/# CPTCFG_CFG80211_REG_RELAX_NO_IR is not set/g" .config
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_CFG80211_INTERNAL_REGDB=y/# CPTCFG_CFG80211_INTERNAL_REGDB is not set/g" .config
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_CFG80211_DEFAULT_PS=y/# CPTCFG_CFG80211_DEFAULT_PS is not set/g" .config
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_NFC=m/# CPTCFG_NFC is not set/g" .config
@@ -121,21 +123,19 @@ ifeq "$(MACHINE)" "x86_64"
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_LIBERTAS_UAP=m/# CPTCFG_LIBERTAS_UAP is not set/g" .config
 endif
 
-	# Disable some modules (build fail)
+	# Disable some modules (build fail/missing symbols)
+	cd $(DIR_APP) && sed -i -e "s/CPTCFG_VIDEO_AM437X_VPFE=m/# CPTCFG_VIDEO_AM437X_VPFE is not set/g" .config
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_VIDEO_VIA_CAMERA=m/# CPTCFG_VIDEO_VIA_CAMERA is not set/g" .config
+	cd $(DIR_APP) && sed -i -e "s/CPTCFG_VIDEO_XILINX=m/# CPTCFG_VIDEO_XILINX is not set/g" .config
+	cd $(DIR_APP) && sed -i -e "s/CPTCFG_IR_SUNXI=m/# CPTCFG_IR_SUNXI is not set/g" .config
+	cd $(DIR_APP) && sed -i -e "s/CPTCFG_BT_6LOWPAN=m/# CPTCFG_BT_6LOWPAN is not set/g" .config
 
 	# Disable DEBUG
 	cd $(DIR_APP) && sed -i -e "s/.*DEBUG=y/# & is not set/g" .config
 	cd $(DIR_APP) && sed -i -e "s/.*DEBUGFS=y/# & is not set/g" .config
 	cd $(DIR_APP) && sed -i -e "s/=y is not set/ is not set/g" .config
 
-	# Disable OF_GRAPH (not supported by kernel 3.14)
-	cd $(DIR_APP) && sed -i -e "s/CONFIG_OF/CONFIG_OF_IGNORE/g" include/linux/of_graph.h
-
 	cd $(DIR_APP) && make $(MAKETUNING) KLIB=/lib/modules/$(KVER)-$(VERSUFIX)/ install
-
-	# Remove vsp1 module (not mach to our platforms)
-	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/media/platform/vsp1
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
