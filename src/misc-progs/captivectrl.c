@@ -1,0 +1,321 @@
+/* This file is part of the IPFire Firewall.
+*
+* This program is distributed under the terms of the GNU General Public
+* Licence.  See the file COPYING for details. */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "libsmooth.h"
+#include "setuid.h"
+
+#define CAPTIVE_PORTAL_SETTINGS		CONFIG_ROOT "/captive/settings"
+#define ETHERNET_SETTINGS		CONFIG_ROOT "/ethernet/settings"
+
+#define CLIENTS				CONFIG_ROOT "/captive/clients"
+#define IPTABLES			"/sbin/iptables --wait"
+#define HTTP_PORT			80
+#define REDIRECT_PORT			1013
+
+typedef struct client {
+	char etheraddr[STRING_SIZE];
+	char ipaddr[STRING_SIZE];
+	int time_start;
+	int time_end;
+
+	struct client* next;
+} client_t;
+
+static int parse_time(const char* s) {
+	int hrs = 0;
+	int min = 0;
+
+	if (sscanf(s, "%d:%d", &hrs, &min) == 2) {
+		return (hrs * 60) + min;
+	}
+
+	return -1;
+}
+
+static char* format_time(int t) {
+	char buffer[STRING_SIZE];
+	snprintf(buffer, sizeof(buffer), "%02d:%02d", (t / 60), (t % 60));
+
+	return strdup(buffer);
+}
+
+static client_t* read_clients(char* filename) {
+	FILE* f = NULL;
+
+	if (!(f = fopen(filename, "r"))) {
+		fprintf(stderr, "Could not open configuration file: %s\n", filename);
+		return NULL;;
+	}
+
+	char line[STRING_SIZE];
+
+	client_t* client_first = NULL;
+	client_t* client_last = NULL;
+	client_t* client_curr;
+
+	while ((fgets(line, STRING_SIZE, f) != NULL)) {
+		if (line[strlen(line) - 1] == '\n')
+			line[strlen(line) - 1] = '\0';
+
+		client_curr = (client_t*)malloc(sizeof(client_t));
+		memset(client_curr, 0, sizeof(client_t));
+
+		if (client_first == NULL)
+			client_first = client_curr;
+		else
+			client_last->next = client_curr;
+		client_last = client_curr;
+
+		unsigned int count = 0;
+		char* lineptr = line;
+		while (1) {
+			if (!*lineptr)
+				break;
+
+			char* word = lineptr;
+			while (*lineptr != '\0') {
+				if (*lineptr == ',') {
+					*lineptr = '\0';
+					lineptr++;
+					break;
+				}
+				lineptr++;
+			}
+
+			switch (count++) {
+				// Ethernet address
+				case 1:
+					strcpy(client_curr->etheraddr, word);
+					break;
+
+				// IP address
+				case 2:
+					strcpy(client_curr->ipaddr, word);
+					break;
+
+				// Start time
+				case 3:
+					client_curr->time_start = parse_time(word);
+					break;
+
+				// End time
+				case 4:
+					client_curr->time_end = parse_time(word);
+					break;
+
+				default:
+					break;
+			}
+		}
+	}
+
+	if (f)
+		fclose(f);
+
+	return client_first;
+}
+
+static void flush_chains() {
+	// filter
+	safe_system(IPTABLES " -F CAPTIVE_PORTAL");
+	safe_system(IPTABLES " -F CAPTIVE_PORTAL_CLIENTS");
+
+	// nat
+	safe_system(IPTABLES " -t nat -F CAPTIVE_PORTAL");
+}
+
+static int add_client_rules(const client_t* clients) {
+	char command[STRING_SIZE];
+	char match[STRING_SIZE];
+
+	while (clients) {
+		char* time_start = format_time(clients->time_start);
+		char* time_end   = format_time(clients->time_end);
+
+		snprintf(match, sizeof(match), "-s %s -m mac --mac-source %s"
+			" -m time %s --timestart %s --timestop %s",
+			clients->ipaddr, clients->etheraddr,
+			(clients->time_start > clients->time_end) ? "--contiguous" : "",
+			time_start, time_end);
+
+		free(time_start);
+		free(time_end);
+
+		// filter
+		snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL_CLIENTS"
+			" %s -j RETURN", match);
+		safe_system(command);
+
+		// nat
+		snprintf(command, sizeof(command), IPTABLES " -t nat -A CAPTIVE_PORTAL"
+			" %s -j RETURN", match);
+		safe_system(command);
+
+		// Move on to the next client
+		clients = clients->next;
+	}
+
+	return 0;
+}
+
+static char* get_key(struct keyvalue* settings, char* key) {
+	char value[STRING_SIZE];
+
+	if (!findkey(settings, key, value))
+		return NULL;
+
+	return strdup(value);
+}
+
+static int add_interface_rule(const char* intf, int allow_webif_access) {
+	int r;
+	char command[STRING_SIZE];
+
+	if ((intf == NULL) || (strlen(intf) == 0)) {
+		fprintf(stderr, "Empty interface given\n");
+		return -1;
+	}
+
+	snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL -i %s"
+		" -j CAPTIVE_PORTAL_CLIENTS", intf);
+	r = safe_system(command);
+	if (r)
+		return r;
+
+#if 0
+	snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL -o %s"
+		" -j CAPTIVE_PORTAL_CLIENTS", intf);
+	r = safe_system(command);
+	if (r)
+		return r;
+#endif
+
+	if (allow_webif_access) {
+		snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL_CLIENTS"
+			" -i %s -p tcp --dport 444 -j RETURN", intf);
+		r = safe_system(command);
+		if (r)
+			return r;
+	}
+
+	// Redirect all unauthenticated clients
+	snprintf(command, sizeof(command), IPTABLES " -t nat -A CAPTIVE_PORTAL -i %s"
+		" -p tcp --dport %d -j REDIRECT --to-ports %d", intf, HTTP_PORT, REDIRECT_PORT);
+	r = safe_system(command);
+	if (r)
+		return r;
+
+	return 0;
+}
+
+static int add_interface_rules(struct keyvalue* captive_portal_settings, struct keyvalue* ethernet_settings) {
+	const char* intf;
+	char* setting;
+	int r = 0;
+
+	setting = get_key(captive_portal_settings, "ENABLE_GREEN");
+	if (setting && (strcmp(setting, "on") == 0)) {
+		free(setting);
+
+		intf = get_key(ethernet_settings, "GREEN_DEV");
+		r = add_interface_rule(intf, /* allow webif access from green */ 1);
+		if (r)
+			return r;
+	}
+
+	setting = get_key(captive_portal_settings, "ENABLE_BLUE");
+	if (setting && (strcmp(setting, "on") == 0)) {
+		free(setting);
+
+		intf = get_key(ethernet_settings, "BLUE_DEV");
+		r = add_interface_rule(intf, /* do not allow webif access */ 0);
+		if (r)
+			return r;
+	}
+
+	// Always pass DNS packets through all firewall rules
+	r = safe_system(IPTABLES " -A CAPTIVE_PORTAL_CLIENTS -p udp --dport 53 -j RETURN");
+	if (r)
+		return r;
+
+	r = safe_system(IPTABLES " -A CAPTIVE_PORTAL_CLIENTS -p tcp --dport 53 -j RETURN");
+	if (r)
+		return r;
+
+	char command[STRING_SIZE];
+	snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL_CLIENTS"
+		" -p tcp --dport %d -j RETURN", REDIRECT_PORT);
+	r = safe_system(command);
+	if (r)
+		return r;
+
+	// Add the last rule
+	r = safe_system(IPTABLES " -A CAPTIVE_PORTAL_CLIENTS -j DROP");
+	if (r)
+		return r;
+
+	return r;
+}
+
+int main(int argc, char** argv) {
+	int r = 0;
+	char* intf = NULL;
+	client_t* clients = NULL;
+
+	if (!(initsetuid()))
+		exit(2);
+
+	struct keyvalue* ethernet_settings = initkeyvalues();
+	if (!readkeyvalues(ethernet_settings, ETHERNET_SETTINGS)) {
+		fprintf(stderr, "Could not read %s\n", ETHERNET_SETTINGS);
+		r = 1;
+		goto END;
+	}
+
+	struct keyvalue* captive_portal_settings = initkeyvalues();
+	if (!readkeyvalues(captive_portal_settings, CAPTIVE_PORTAL_SETTINGS)) {
+		fprintf(stderr, "Could not read %s\n", CAPTIVE_PORTAL_SETTINGS);
+		r = 1;
+		goto END;
+	}
+
+	clients = read_clients(CLIENTS);
+
+	// Clean up all old rules
+	flush_chains();
+
+	// Add all client rules
+	r = add_client_rules(clients);
+	if (r)
+		goto END;
+
+	// Add all interface rules
+	r = add_interface_rules(captive_portal_settings, ethernet_settings);
+	if (r)
+		goto END;
+
+END:
+	while (clients) {
+		client_t* head = clients;
+		clients = clients->next;
+
+		free(head);
+	}
+
+	if (ethernet_settings)
+		freekeyvalues(ethernet_settings);
+
+	if (captive_portal_settings)
+		freekeyvalues(captive_portal_settings);
+
+	if (intf)
+		free(intf);
+
+	return r;
+}

@@ -1,6 +1,7 @@
 usr/local/bin/addonctrl
 #usr/local/bin/applejuicectrl
 usr/local/bin/backupctrl
+usr/local/bin/captivectrl
 #usr/local/bin/clamavctrl
 usr/local/bin/collectdctrl
 usr/local/bin/ddnsctrl
