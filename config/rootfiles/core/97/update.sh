@@ -40,6 +40,8 @@ extract_files
 # /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/sshd restart
+/etc/init.d/apace restart
 
 # This update need a reboot...
 touch /var/run/need_reboot
