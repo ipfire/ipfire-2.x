@@ -1663,3 +1663,4 @@ usr/sbin/httpd
 #usr/share/man/man8/rotatelogs.8
 #usr/share/man/man8/suexec.8
 var/log/httpd
+var/log/httpd/captive
