@@ -24,10 +24,10 @@
 
 include Config
 
-VER         = 3.14.59
-RPI_PATCHES = 3.14.59-grsec-ipfire1
-A7M_PATCHES = 3.14.59-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.1ipfire-3.14.59-v1.patch.xz
+VER         = 3.14.60
+RPI_PATCHES = 3.14.60-grsec-ipfire1
+A7M_PATCHES = 3.14.60-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.1ipfire-3.14.60-v1.patch.xz
 
 
 THISAPP    = linux-$(VER)
@@ -83,11 +83,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= 9e3fbdf5067ffc413c0effc427050112
+$(DL_FILE)_MD5					= 25d623a8a884d055313e16aec59fdd7a
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= ed11c924a484646018be8671935407d0
 arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= eafe3ef25946d9d5169dd5af4d280ba5
-$(GRS_PATCHES)_MD5				= 63721b2131356a614edcb4d00a64e62e
-
+$(GRS_PATCHES)_MD5				= 1b6941fd7cea95acce6575917ed08a31
 
 install : $(TARGET)
 
