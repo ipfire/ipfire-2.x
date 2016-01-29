@@ -8,6 +8,8 @@ srv/web/ipfire/cgi-bin/aliases.cgi
 srv/web/ipfire/cgi-bin/atm-status.cgi
 srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/bluetooth.cgi
+srv/web/ipfire/cgi-bin/captive/index.cgi
+srv/web/ipfire/cgi-bin/captive.cgi
 srv/web/ipfire/cgi-bin/chpasswd.cgi
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/connscheduler.cgi
@@ -92,6 +94,10 @@ srv/web/ipfire/html/blob.gif
 srv/web/ipfire/html/clwarn.cgi
 srv/web/ipfire/html/dial.cgi
 srv/web/ipfire/html/favicon.ico
+srv/web/ipfire/html/captive/assets/captive.css
+srv/web/ipfire/html/captive/assets/internet.png
+srv/web/ipfire/html/captive/assets/favicon.ico
+srv/web/ipfire/html/captive/index.cgi
 #srv/web/ipfire/html/images
 srv/web/ipfire/html/images/IPFire.png
 srv/web/ipfire/html/images/add.gif
