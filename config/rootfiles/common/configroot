@@ -13,7 +13,7 @@ var/ipfire/backup/include.user
 var/ipfire/captive
 var/ipfire/captive/settings
 var/ipfire/captive/clients
-var/ipfire/voucher_out
+var/ipfire/captive/voucher_out
 var/ipfire/ca
 var/ipfire/certs
 #var/ipfire/certs/index.txt
