@@ -143,24 +143,29 @@ static int add_client_rules(const client_t* clients) {
 	char match[STRING_SIZE];
 
 	while (clients) {
-		time_t expires = clients->time_start + clients->expires;
-
-		char* time_start = format_time(&clients->time_start);
-		char* time_end   = format_time(&expires);
-
 		size_t len = 0;
 
-		if (*clients->ipaddr) {
+		if (*clients->ipaddr && clients->expires > 0) {
 			len += snprintf(match + len, sizeof(match) - len,
 				"-s %s", clients->ipaddr);
 		}
 
 		len += snprintf(match + len, sizeof(match) - len,
-			" -m mac --mac-source %s -m time --datestart %s --datestop %s",
-			clients->etheraddr, time_start, time_end);
+			" -m mac --mac-source %s", clients->etheraddr);
 
-		free(time_start);
-		free(time_end);
+		if (clients->expires > 0) {
+			time_t expires = clients->time_start + clients->expires;
+
+			char* time_start = format_time(&clients->time_start);
+			char* time_end = format_time(&expires);
+
+			len += snprintf(match + len, sizeof(match) - len,
+				"-m time --datestart %s --datestop %s",
+				time_start, time_end);
+
+			free(time_start);
+			free(time_end);
+		}
 
 		// filter
 		snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL_CLIENTS"
