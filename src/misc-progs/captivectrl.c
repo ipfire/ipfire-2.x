@@ -3,9 +3,13 @@
 * This program is distributed under the terms of the GNU General Public
 * Licence.  See the file COPYING for details. */
 
+#define _BSD_SOURCE
+#define _XOPEN_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "libsmooth.h"
 #include "setuid.h"
@@ -21,26 +25,30 @@
 typedef struct client {
 	char etheraddr[STRING_SIZE];
 	char ipaddr[STRING_SIZE];
-	int time_start;
-	int time_end;
+	time_t time_start;
+	int expires;
 
 	struct client* next;
 } client_t;
 
-static int parse_time(const char* s) {
-	int hrs = 0;
-	int min = 0;
+static time_t parse_time(const char* s) {
+	int t = 0;
 
-	if (sscanf(s, "%d:%d", &hrs, &min) == 2) {
-		return (hrs * 60) + min;
+	if (sscanf(s, "%d", &t) == 1) {
+		return (time_t)t;
 	}
 
 	return -1;
 }
 
-static char* format_time(int t) {
+static char* format_time(const time_t* t) {
 	char buffer[STRING_SIZE];
-	snprintf(buffer, sizeof(buffer), "%02d:%02d", (t / 60), (t % 60));
+
+	struct tm* tm = gmtime(t);
+	if (tm == NULL)
+		return NULL;
+
+	strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M", tm);
 
 	return strdup(buffer);
 }
@@ -104,9 +112,9 @@ static client_t* read_clients(char* filename) {
 					client_curr->time_start = parse_time(word);
 					break;
 
-				// End time
+				// Expire duration
 				case 4:
-					client_curr->time_end = parse_time(word);
+					client_curr->expires = atoi(word);
 					break;
 
 				default:
@@ -135,14 +143,14 @@ static int add_client_rules(const client_t* clients) {
 	char match[STRING_SIZE];
 
 	while (clients) {
-		char* time_start = format_time(clients->time_start);
-		char* time_end   = format_time(clients->time_end);
+		time_t expires = clients->time_start + clients->expires;
+
+		char* time_start = format_time(&clients->time_start);
+		char* time_end   = format_time(&expires);
 
 		snprintf(match, sizeof(match), "-s %s -m mac --mac-source %s"
-			" -m time %s --timestart %s --timestop %s",
-			clients->ipaddr, clients->etheraddr,
-			(clients->time_start > clients->time_end) ? "--contiguous" : "",
-			time_start, time_end);
+			" -m time --datestart %s --datestop %s", clients->ipaddr,
+			clients->etheraddr, time_start, time_end);
 
 		free(time_start);
 		free(time_end);
