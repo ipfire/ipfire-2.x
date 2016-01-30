@@ -148,8 +148,15 @@ static int add_client_rules(const client_t* clients) {
 		char* time_start = format_time(&clients->time_start);
 		char* time_end   = format_time(&expires);
 
-		snprintf(match, sizeof(match), "-s %s -m mac --mac-source %s"
-			" -m time --datestart %s --datestop %s", clients->ipaddr,
+		size_t len = 0;
+
+		if (*clients->ipaddr) {
+			len += snprintf(match + len, sizeof(match) - len,
+				"-s %s", clients->ipaddr);
+		}
+
+		len += snprintf(match + len, sizeof(match) - len,
+			" -m mac --mac-source %s -m time --datestart %s --datestop %s",
 			clients->etheraddr, time_start, time_end);
 
 		free(time_start);
