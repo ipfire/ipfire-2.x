@@ -160,7 +160,7 @@ static int add_client_rules(const client_t* clients) {
 			char* time_end = format_time(&expires);
 
 			len += snprintf(match + len, sizeof(match) - len,
-				"-m time --datestart %s --datestop %s",
+				" -m time --datestart %s --datestop %s",
 				time_start, time_end);
 
 			free(time_start);
