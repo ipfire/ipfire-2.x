@@ -30,7 +30,7 @@
 'Captive time' => 'Erlaubter Nutzungszeitraum nach aktivierung (Stunden)',
 'Captive voucher' => 'Gutschein',
 'Captive voucherout' => 'Gutschein ausgeben',
-'Captive vouchervalid' => 'Gutschein gültig für',
+'Captive vouchervalid' => 'Verbindungszeitraum',
 'Choose Rule' => 'Wählen Sie <u>eine</u> der untenstehenden Regeln aus.',
 'Class' => 'Klasse',
 'Class was deleted' => 'wurde mit eventuell vorhandenen Unterklassen gelöscht',

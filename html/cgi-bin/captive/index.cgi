@@ -23,6 +23,7 @@ use strict;
 use CGI ':standard';
 use URI::Escape;
 use HTML::Entities();
+
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -41,6 +42,7 @@ my $settingsfile="${General::swroot}/captive/settings";
 my $redir=0;
 my $errormessage;
 my $url=param('redirect');
+
 #Create /var/ipfire/captive/clients if not exist
 unless (-f $clients){ system("touch $clients"); }
 
@@ -53,11 +55,6 @@ unless (-f $clients){ system("touch $clients"); }
 #Actions
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'gpl i accept these terms and conditions'}"){
 	my $key = &General::findhasharraykey(\%clientshash);
-	my($sec,$min,$hour) = gmtime(time);
-	my $hour1=$hour+$settings{'TIME'};
-	$min="0".$min if ($min < 10);
-	$hour="0".$hour if ($hour < 10);
-	$hour1="0".$hour1 if ($hour1 < 10);
 
 	#Get Clients IP-Address
 	my $ip_address = $ENV{X_FORWARDED_FOR} || $ENV{REMOTE_ADDR} ||"";
@@ -69,15 +66,15 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'gpl i accept these terms and conditions'
 	&General::readhasharray("$clients", \%clientshash);
 
 	if (!$errormessage){
-		foreach my $i (0 .. 6) { $clientshash{$key}[$i] = "";}
-		$clientshash{$key}[0] = $mac_address;
-		$clientshash{$key}[1] = $ip_address;
-		$clientshash{$key}[2] = $hour.":".$min;
-		$clientshash{$key}[3] = $hour1.":".$min;
-		$clientshash{$key}[4] = $Lang::tr{'Captive auth_lic'};
-		$clientshash{$key}[5] = $settings{'TIME'};
-		$clientshash{$key}[6] = time();
-	
+		foreach my $i (0 .. 5) { $clientshash{$key}[$i] = "";}
+
+		$clientshash{$key}[0] = $mac_address;			#mac address of actual client
+		$clientshash{$key}[1] = $ip_address;			#ip address of actual client
+		$clientshash{$key}[2] = time();					#actual time in unix seconds (timestamp of first conenction)
+		$clientshash{$key}[3] = $settings{'EXPIRE'};	#Expire time in seconds (1day, 1 week ....)
+		$clientshash{$key}[4] = $Lang::tr{'Captive auth_lic'};	#Type of license (license or voucher)
+		$clientshash{$key}[5] = '';
+
 		&General::writehasharray("$clients", \%clientshash);
 		system("/usr/local/bin/captivectrl");
 		&General::log("Captive", "Internet Access granted via license-agreement for $ip_address until $clientshash{$key}[3]");
@@ -102,25 +99,17 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive activate'}"){
 	foreach my $key (keys %voucherhash) {
 		if($voucherhash{$key}[1] eq $cgiparams{'VOUCHER'}){
 			#Voucher valid, write to clients, then delete from voucherout
-			my ($sec,$min,$hour)=gmtime(time());
-			my $hour1;
-			$min="0".$min if ($min < 10);
-			$hour="0".$hour if ($hour < 10);
-			$hour1=$hour+$voucherhash{$key}[2];
-			$hour1="0".$hour1 if ($hour1 < 10);
 			my $key1 = &General::findhasharraykey(\%clientshash);
-			foreach my $i (0 .. 7) { $clientshash{$key1}[$i] = "";}
+			foreach my $i (0 .. 5) { $clientshash{$key1}[$i] = "";}
+
 			$clientshash{$key1}[0] = $mac_address;
 			$clientshash{$key1}[1] = $ip_address;
-			$clientshash{$key1}[2] = $hour.":".$min;
-			$clientshash{$key1}[3] = $hour1.":".$min;
+			$clientshash{$key1}[2] = time();
+			$clientshash{$key1}[3] = $voucherhash{$key}[3];
 			$clientshash{$key1}[4] = $cgiparams{'VOUCHER'};
-			$clientshash{$key1}[5] = $voucherhash{$key}[2];
-			$clientshash{$key1}[6] = time();
-			$clientshash{$key1}[7] = $voucherhash{$key}[4];
-	
+			$clientshash{$key1}[5] = HTML::Entities::decode_entities($clientshash{$key1}[3]);
+
 			&General::writehasharray("$clients", \%clientshash);
-			$clientshash{$key1}[7]=HTML::Entities::decode_entities($clientshash{$key1}[7]);
 			&General::log("Captive", "Internet Access granted via voucher no. $clientshash{$key1}[4] for $ip_address until $clientshash{$key}[3] Remark: $clientshash{$key1}[7]");
 
 			delete $voucherhash{$key};
@@ -133,13 +122,13 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive activate'}"){
 }
 
 if($redir == 1){
+	sleep(4);
 	print "Status: 302 Moved Temporarily\n";
 	print "Location: $url\n";
 	print "Connection: close\n";
 	print "\n";
 	exit 0;
 }
-	
 
 #Open HTML Page, load header and css
 &head();
@@ -147,7 +136,6 @@ if($redir == 1){
 &start();
 
 #Functions
-
 sub start(){
 	if ($settings{'AUTH'} eq 'VOUCHER'){
 		&voucher();
@@ -174,6 +162,7 @@ Content-type: text/html\n\n
 END
 ;
 }
+
 sub agb(){
 print<<END
 	<body>

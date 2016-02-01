@@ -30,7 +30,7 @@
 'Captive time' => 'Accesstime post activation (hours)',
 'Captive voucher' => 'Voucher',
 'Captive voucherout' => 'Ticket transfer',
-'Captive vouchervalid' => 'Voucher usable for',
+'Captive vouchervalid' => 'Conenction timerange',
 'Choose Rule' => 'Choose <u>one</u> of the following rules.',
 'Class' => 'Class',
 'Class was deleted' => 'with potential subclasses was deleted',
