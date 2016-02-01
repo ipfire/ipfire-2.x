@@ -85,9 +85,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -f $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/50-yp.conf
 	rm -f $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/50-ypbind
 
-	sed -i -e "s|-ge 576|-gt 576|g" $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/10-mtu
-
 	install -m 644 $(DIR_SRC)/config/dhcpc/dhcpcd.conf $(CONFIG_ROOT)/dhcpc/
+	install -m 444 $(DIR_SRC)/config/dhcpc/dhcpcd-hooks/10-mtu $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks
+
 	chown root:root $(CONFIG_ROOT)/dhcpc/dhcpcd.conf
 
 	@rm -rf $(DIR_APP)
