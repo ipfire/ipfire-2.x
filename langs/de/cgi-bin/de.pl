@@ -19,6 +19,7 @@
 'Captive config' => 'Konfiguration',
 'Captive err doublevoucher' => 'Ein Gutschein mit diesem Code ist bereits im Umlauf',
 'Captive expire' => 'Ablauf',
+'Captive invalid_voucher' => 'Dieser Code ist ungültig. Bitte versuchen Sie es erneut',
 'Captive ip' => 'IP-Addresse',
 'Captive mac' => 'MAC-Adresse',
 'Captive menu' => 'Captive-Portal',

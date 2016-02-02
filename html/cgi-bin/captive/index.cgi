@@ -105,9 +105,9 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive activate'}"){
 			$clientshash{$key1}[0] = $mac_address;
 			$clientshash{$key1}[1] = $ip_address;
 			$clientshash{$key1}[2] = time();
-			$clientshash{$key1}[3] = $voucherhash{$key}[3];
+			$clientshash{$key1}[3] = $voucherhash{$key}[2];
 			$clientshash{$key1}[4] = $cgiparams{'VOUCHER'};
-			$clientshash{$key1}[5] = HTML::Entities::decode_entities($clientshash{$key1}[3]);
+			$clientshash{$key1}[5] = HTML::Entities::decode_entities($voucherhash{$key}[3]);
 
 			&General::writehasharray("$clients", \%clientshash);
 			&General::log("Captive", "Internet Access granted via voucher no. $clientshash{$key1}[4] for $ip_address until $clientshash{$key}[3] Remark: $clientshash{$key1}[7]");

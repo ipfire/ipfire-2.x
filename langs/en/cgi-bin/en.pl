@@ -19,6 +19,7 @@
 'Captive config' => 'Settings',
 'Captive err doublevoucher' => 'A voucher with this code already exists',
 'Captive expire' => 'Expire',
+'Captive invalid_voucher' => 'Invalid code. Please try again',
 'Captive ip' => 'IP-Address',
 'Captive mac' => 'MAC-Address',
 'Captive menu' => 'Captive Portal',

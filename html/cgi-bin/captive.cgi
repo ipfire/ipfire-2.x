@@ -55,7 +55,14 @@ unless (-e $voucherout)	{ system("touch $voucherout"); }
 
 #actions
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
-	#saves the Captiveportal settings to disk 
+	#saves the Captiveportal settings to disk
+	if ($cgiparams{'UNLIMITED'} eq 'on'){
+		$cgiparams{'EXP_HOUR'} 	= '0';
+		$cgiparams{'EXP_DAY'} 	= '0';
+		$cgiparams{'EXP_WEEK'} 	= '0';
+		$cgiparams{'EXP_MONTH'}	= '0';
+	}
+
 	$settings{'ENABLE_GREEN'}		= $cgiparams{'ENABLE_GREEN'};
 	$settings{'ENABLE_BLUE'}		= $cgiparams{'ENABLE_BLUE'};
 	$settings{'AUTH'}				= $cgiparams{'AUTH'};
@@ -65,6 +72,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 	$settings{'EXP_WEEK'}			= $cgiparams{'EXP_WEEK'};
 	$settings{'EXP_MONTH'}			= $cgiparams{'EXP_MONTH'};
 	$settings{'TITLE'}				= $cgiparams{'TITLE'};
+	$settings{'UNLIMITED'}			= $cgiparams{'UNLIMITED'};
 	&General::writehash("$settingsfile", \%settings);
 
 	#write Licensetext if defined
@@ -200,6 +208,10 @@ END
 	$checked{'ENABLE_BLUE'}{'on'} = '';
 	$checked{'ENABLE_BLUE'}{$settings{'ENABLE_BLUE'}} = "checked='checked'";
 
+	$checked{'UNLIMITED'}{'off'} = '';
+	$checked{'UNLIMITED'}{'on'} = '';
+	$checked{'UNLIMITED'}{$settings{'UNLIMITED'}} = "checked='checked'";
+
 	if ($netsettings{'GREEN_DEV'}){
 		print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourgreen'>Green</font></td><td><input type='checkbox' name='ENABLE_GREEN' $checked{'ENABLE_GREEN'}{'on'} /></td></tr>";
 	}
@@ -219,7 +231,6 @@ END
 		</tr>
 END
 ;
-	
 
 print<<END
 		<tr>
@@ -252,7 +263,7 @@ END
 	print"<tr><td>$Lang::tr{'Captive vouchervalid'}</td><td>";
 
 	print "<br><table border='0' with=100%>";
-	print "<th>Stunden</th><th>Tage</th><th>Wochen</th><th>Monate</th>";
+	print "<th>$Lang::tr{'hours'}</th><th>$Lang::tr{'days'}</th><th>$Lang::tr{'weeks'}</th><th>$Lang::tr{'months'}</th>";
 
 	#print hour-dropdownbox
 	my $hrs=3600;
@@ -310,7 +321,7 @@ END
 	}
 	print "</td>";
 
-	print "<td>&nbsp;&nbsp;&nbsp;<input type='checkbox' name='unlimited'></td><td>&nbsp;<b>unlimited</b></td>";
+	print "<td>&nbsp;&nbsp;&nbsp;<input type='checkbox' name='UNLIMITED' $checked{'UNLIMITED'}{'on'} /></td><td>&nbsp;<b>$Lang::tr{'Captive nolimit'}</b></td>";
 
 	print "</tr></table>";
 
@@ -366,8 +377,13 @@ sub gencode(){
 sub voucher(){
 	#show voucher part
 	#calculate expiredate
-	my $expire = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime(time()+$settings{'EXPIRE'}));
-    
+	my $expire;
+	if ($settings{'UNLIMITED'} eq 'on'){
+		$expire = $Lang::tr{'Captive nolimit'};
+	}else{
+		$expire = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime(time()+$settings{'EXPIRE'}));
+    }
+
 	&Header::openbox('100%', 'left', $Lang::tr{'Captive voucher'});
 print<<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -395,18 +411,20 @@ sub show_license_connections(){
 print<<END
 		<center><table class='tbl'>
 		<tr>
-			<th align='center' width='15%'><font size='1'>$Lang::tr{'Captive mac'}</th><th align='center' width='15%'>$Lang::tr{'Captive ip'}</th><th align='center' width='15%'>$Lang::tr{'Captive voucher'}</th><th th align='center' width='15%'>$Lang::tr{'Captive activated'}</th><th th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th th align='center' width='15%'>$Lang::tr{'delete'}</th></tr>
+			<th align='center' width='15%'>$Lang::tr{'Captive voucher'}</th><th th align='center' width='15%'>$Lang::tr{'Captive activated'}</th><th th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='50%'><font size='1'>$Lang::tr{'Captive mac'}</th><th th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
 END
 ;
 	#read all clients from hash and show table
 	&General::readhasharray("$clients", \%clientshash);
 	foreach my $key (keys %clientshash){
-		my ($sec, $min, $hour, $mday, $mon, $year) = localtime($clientshash{$key}[6]);
-		my ($secx,$minx,$hourx) = localtime($clientshash{$key}[6]+($clientshash{$key}[5]*3600));
-		$mon = '0'.++$mon if $mon<10;
-		$min = '0'.$min if $min<10;
-		$hour = '0'.$hour if $hour<10;
-		$year=$year+1900;
+		my $starttime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($clientshash{$key}[2]));
+		my $endtime;
+		if ($clientshash{$key}[3] eq '0'){
+			$endtime=$Lang::tr{'Captive nolimit'};
+		}else{
+			$endtime=sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($clientshash{$key}[2]+$clientshash{$key}[3]));
+		}
+
 		if ($count % 2){
 			print" <tr>";
 			$col="bgcolor='$color{'color20'}'";
@@ -414,15 +432,9 @@ END
 			$col="bgcolor='$color{'color22'}'";
 			print" <tr>";
 		}
-		print "<td $col><center>$clientshash{$key}[0]</td><td $col><center>$clientshash{$key}[1]</td><td $col><center>$clientshash{$key}[4]</td><td $col><center>$mday.$mon.$year ";
-		printf("%02d",$hour);
-		print ":";
-		printf("%02d",$min);
-		print "</center></td><td $col><center>$mday.$mon.$year ";
-		printf("%02d",$hourx);
-		print ":";
-		printf("%02d",$minx);
-		print "</td><td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delvoucherinuse' /><input type='hidden' name='key' value='$clientshash{$key}[0]' /></form></tr>";
+		print "<td $col><center>$clientshash{$key}[4]</td><td $col><center>$starttime ";
+		print "</center></td><td $col><center>$endtime ";
+		print "</td><td $col><center>$clientshash{$key}[0]</td><td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delvoucherinuse' /><input type='hidden' name='key' value='$clientshash{$key}[0]' /></form></tr>";
 		$count++;
 	}
 	
@@ -439,15 +451,20 @@ sub show_voucher_out(){
 	print<<END
 		<center><table class='tbl' border='0'>
 		<tr>
-			<th align='center' width='15%'><font size='1'>$Lang::tr{'date'}</th><th align='center' width='15%'>$Lang::tr{'Captive voucher'}</th><th th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='60%'>$Lang::tr{'remark'}</th><th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
+			<th align='center' width='15%'>$Lang::tr{'Captive voucher'}</th><th align='center' width='15%'>$Lang::tr{'date'}</th><th th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='60%'>$Lang::tr{'remark'}</th><th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
 END
 ;
 	&General::readhasharray("$voucherout", \%voucherhash);
 	foreach my $key (keys %voucherhash)
 	{
 		my $starttime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($voucherhash{$key}[0]));
-		my $endtime   = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($voucherhash{$key}[0]+$voucherhash{$key}[2]));
-		
+		my $endtime;
+		if ($voucherhash{$key}[2] eq '0'){
+			$endtime=$Lang::tr{'Captive nolimit'};
+		}else{
+			$endtime=sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($voucherhash{$key}[0]+$voucherhash{$key}[2]));
+		}
+
 		if ($count % 2){
 			print" <tr>";
 			$col="bgcolor='$color{'color20'}'";
@@ -455,15 +472,15 @@ END
 			$col="bgcolor='$color{'color22'}'";
 			print" <tr>";
 		}
-		
-		print "<td $col><center>$starttime</td>";
+
 		print "<td $col><center><b>$voucherhash{$key}[1]</b></td>";
+		print "<td $col><center>$starttime</td>";
 		print "<td $col><center>$endtime</td>";
 		print "<td $col align='center'>$voucherhash{$key}[3]</td>";
 		print "<td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delvoucherout' /><input type='hidden' name='key' value='$voucherhash{$key}[0]' /></form></tr>";
 		$count++;
 	}
-	
+
 	print "</table>";
 	&Header::closebox();
 }
@@ -475,26 +492,23 @@ sub show_voucher_in_use(){
 	my $col;
 	&Header::openbox('100%', 'left', $Lang::tr{'Captive voactive'});
 print<<END
-	<center><table class='tbl'>
+	<center><table class='tbl' width='100%'>
 		<tr>
-			<th align='center' width='15%'><font size='1'>$Lang::tr{'Captive mac'}</th><th align='center' width='15%'>$Lang::tr{'Captive ip'}</th><th align='center' width='15%'>$Lang::tr{'Captive voucher'}</th><th th align='center' width='15%'>$Lang::tr{'Captive activated'}</th><th th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th th align='center' width='15%'>$Lang::tr{'delete'}</th></tr>
+			<th align='center' width='15%'>$Lang::tr{'Captive voucher'}</th><th th align='center' width='15%'>$Lang::tr{'Captive activated'}</th><th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='10%'>$Lang::tr{'Captive mac'}</th><th align='center' width='43%'>$Lang::tr{'remark'}</th><th th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
 END
 ;
 	&General::readhasharray("$clients", \%clientshash);
 	foreach my $key (keys %clientshash)
 	{
-			my ($sec, $min, $hour, $mday, $mon, $year) = localtime($clientshash{$key}[6]);
-			my ($secx,$minx,$hourx, $mdayx, $monx, $yearx) = localtime($clientshash{$key}[6]+$clientshash{$key}[7]);
-
-			$mon = '0'.++$mon if $mon<10;
-			$min = '0'.$min if $min<10;
-			$hour = '0'.$hour if $hour<10;
-			$year=$year+1900;
-
-			$monx = '0'.++$mon if $mon<10;
-			$minx = '0'.$min if $min<10;
-			$hourx = '0'.$hour if $hour<10;
-			$yearx=$year+1900;
+		#calculate time from clientshash (starttime)
+		my $starttime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($clientshash{$key}[2]));
+		#calculate endtime from clientshash
+		my $endtime;
+		if ($clientshash{$key}[3] eq '0'){
+			$endtime=$Lang::tr{'Captive nolimit'};
+		}else{
+			$endtime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($clientshash{$key}[2]+$clientshash{$key}[3]));
+		}
 
 			if ($count % 2){
 				print" <tr>";
@@ -504,15 +518,12 @@ END
 				print" <tr>";
 			}
 
-			print "<td $col><center>$clientshash{$key}[0]</td><td $col><center>$clientshash{$key}[1]</td><td $col><center>$clientshash{$key}[4]</td><td $col><center>$mday.$mon.$year ";
-			printf("%02d",$hour);
-			print ":";
-			printf("%02d",$min);
-			print "</center></td><td $col><center>$mdayx.$monx.$yearx $clientshash{$key}[3]";
+			print "<td $col><center><b>$clientshash{$key}[4]</b></td><td $col><center>$starttime ";
+			print "</center></td><td $col><center>$endtime</center></td><td $col><center>$clientshash{$key}[0]</td><td $col><center>$clientshash{$key}[5]</center>";
 			print "</td><td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delvoucherinuse' /><input type='hidden' name='key' value='$clientshash{$key}[0]' /></form></tr>";
 			$count++;
 	}
-	
+
 	print "</table>";
 	&Header::closebox();
 }
