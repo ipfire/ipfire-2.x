@@ -1,6 +1,7 @@
 etc/system-release
 etc/issue
 etc/rc.d/init.d/firewall
+etc/rc.d/init.d/networking/dhcpcd.exe
 etc/modprobe.d/nf_conntrack.conf
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllogcountry.dat
@@ -16,3 +17,4 @@ srv/web/ipfire/cgi-bin/webaccess.cgi
 usr/bin/pgrep
 usr/local/bin/qosctrl
 usr/local/bin/timectrl
+var/ipfire/dhcpc/dhcpcd-hooks/10-mtu
