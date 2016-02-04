@@ -39,7 +39,6 @@ void exithandler(void) {
 }
 
 int main(void) {
-	char green_dev[STRING_SIZE] = "";
 	char buffer[STRING_SIZE];
 	char *index, *ipaddress, *macaddress, *enabled;
 	struct keyvalue *kv = NULL;
@@ -66,14 +65,6 @@ int main(void) {
 	if (!readkeyvalues(kv, CONFIG_ROOT "/optionsfw/settings")) {
 		fprintf(stderr, "Cannot read optionsfw settings\n");
 		exit(1);
-	}
-
-	/* Get the GREEN interface details */
-	if (findkey(kv, "GREEN_DEV", green_dev) > 0) {
-		if (!VALID_DEVICE(green_dev)) {
-			fprintf(stderr, "Bad GREEN_DEV: %s\n", green_dev);
-			exit(1);
-		}
 	}
 
 	/* Get the BLUE interface details */
