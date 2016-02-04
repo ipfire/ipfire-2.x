@@ -460,7 +460,7 @@ END
 		if ($voucherhash{$key}[2] eq '0'){
 			$endtime=$Lang::tr{'Captive nolimit'};
 		}else{
-			$endtime=sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($voucherhash{$key}[0]+$voucherhash{$key}[2]));
+			$endtime=sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime(time()+$voucherhash{$key}[2]));
 		}
 
 		if ($count % 2){
