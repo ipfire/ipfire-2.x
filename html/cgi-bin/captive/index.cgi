@@ -85,7 +85,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'gpl i accept these terms and conditions'
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive activate'}"){
 	my $ip_address;
 	my $mac_address;
-
+	my $granted=0;
 	#Convert voucherinput to uppercase
 	$cgiparams{'VOUCHER'} = uc $cgiparams{'VOUCHER'};
 	#Get Clients IP-Address
@@ -114,11 +114,16 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive activate'}"){
 
 			delete $voucherhash{$key};
 			&General::writehasharray("$voucherout", \%voucherhash);
+			$granted=1;
 			last;
 		}
 	}
-	system("/usr/local/bin/captivectrl");
-	$redir=1;
+	if($granted==1){
+		system("/usr/local/bin/captivectrl");
+		$redir=1;
+	}else{
+		$errormessage="$Lang::tr{'Captive invalid_voucher'}";
+	}
 }
 
 if($redir == 1){
@@ -145,7 +150,7 @@ sub start(){
 
 sub error(){
 	if ($errormessage){
-		print "<div id='title'><br>$errormessage<br></diV>";
+		print "<center><div class='title'><br><font color='red'>$errormessage</font><br></div><br>";
 	}
 }
 
@@ -158,13 +163,13 @@ Content-type: text/html\n\n
 		<title>$settings{'TITLE'}</title>
 		<link href="../assets/captive.css" type="text/css" rel="stylesheet">
 	</head>
+	<body>
 END
 ;
 }
 
 sub agb(){
 print<<END
-	<body>
 	<center>
 		<div class="title">
 			<h1>$settings{'TITLE'}</h1>
@@ -192,7 +197,6 @@ END
 
 sub voucher(){
 	print<<END
-	<body>
 	<center>
 		<div class="title">
 			<h1>$settings{'TITLE'}</h1>
