@@ -28,7 +28,7 @@ use HTML::Entities();
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-unless (-e "${General::swroot}/captive/settings")	{ system("touch ${General::swroot}/captive/settings"); }
+
 my %settings=();
 my %mainsettings;
 my %color;
@@ -42,6 +42,7 @@ my %voucherhash=();
 my %clientshash=();
 my $settingsfile="${General::swroot}/captive/settings";
 
+unless (-e $settingsfile)	{ system("touch $settingsfile"); }
 unless (-e $voucherout)	{ system("touch $voucherout"); }
 
 &Header::getcgihash(\%cgiparams);
@@ -256,12 +257,9 @@ END
 END
 ;
 
-	if($settings{'AUTH'} eq 'LICENSE'){ 
-		&agbbox();
-	}
+	&agbbox();
 
 	print"<tr><td>$Lang::tr{'Captive vouchervalid'}</td><td>";
-
 	print "<br><table border='0' with=100%>";
 	print "<th>$Lang::tr{'hours'}</th><th>$Lang::tr{'days'}</th><th>$Lang::tr{'weeks'}</th><th>$Lang::tr{'months'}</th>";
 

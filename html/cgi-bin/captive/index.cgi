@@ -168,7 +168,7 @@ print<<END
 	<body>
 	<center>
 		<div class="title">
-			<h1>$settings{'TITLE'}
+			<h1>$settings{'TITLE'}</h1>
 		</div>
 		<br>
 		<div class="agb">
@@ -196,7 +196,7 @@ sub voucher(){
 	<body>
 	<center>
 		<div class="title">
-			<h1>LOGIN</h1>
+			<h1>$settings{'TITLE'}</h1>
 		</div>
 		<br>
 		<div class="login">
