@@ -122,7 +122,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive activate'}"){
 }
 
 if($redir == 1){
-	sleep(4);
 	print "Status: 302 Moved Temporarily\n";
 	print "Location: $url\n";
 	print "Connection: close\n";
@@ -212,7 +211,7 @@ print<<END
 							<b>$Lang::tr{'Captive voucher'}</b>&nbsp<input type='text' maxlength="8" size='10' style="font-size: 24px;font-weight: bold;" name='VOUCHER'>
 						</td>
 						<td>
-							<input type='submit' name='ACTION' value="$Lang::tr{'Captive activate'}"/>
+							<input type='hidden' name='redirect' value ='$url'><input type='submit' name='ACTION' value="$Lang::tr{'Captive activate'}"/>
 						</td>
 					</tr>
 				</table>
