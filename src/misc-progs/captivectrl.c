@@ -288,17 +288,20 @@ int main(int argc, char** argv) {
 	char* intf = NULL;
 	client_t* clients = NULL;
 
+	struct keyvalue* captive_portal_settings = NULL;
+	struct keyvalue* ethernet_settings = NULL;
+
 	if (!(initsetuid()))
 		exit(2);
 
-	struct keyvalue* ethernet_settings = initkeyvalues();
+	ethernet_settings = initkeyvalues();
 	if (!readkeyvalues(ethernet_settings, ETHERNET_SETTINGS)) {
 		fprintf(stderr, "Could not read %s\n", ETHERNET_SETTINGS);
 		r = 1;
 		goto END;
 	}
 
-	struct keyvalue* captive_portal_settings = initkeyvalues();
+	captive_portal_settings = initkeyvalues();
 	if (!readkeyvalues(captive_portal_settings, CAPTIVE_PORTAL_SETTINGS)) {
 		fprintf(stderr, "Could not read %s\n", CAPTIVE_PORTAL_SETTINGS);
 		r = 1;
