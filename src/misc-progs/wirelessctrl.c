@@ -126,21 +126,21 @@ int main(void) {
 		if (strcmp(enabled, "on") == 0) {
 			/* both specified, added security */
 			if ((strlen(macaddress) == 17) && (VALID_IP_AND_MASK(ipaddress))) {
-				snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -m mac --mac-source %s -s %s -i %s -j ACCEPT", macaddress, ipaddress, blue_dev);
+				snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -m mac --mac-source %s -s %s -i %s -j RETURN", macaddress, ipaddress, blue_dev);
 				safe_system(command);
 				snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -m mac --mac-source %s -s %s -i %s -j RETURN", macaddress, ipaddress, blue_dev);
 				safe_system(command);
 			} else {
 				/* correctly formed mac address is 17 chars */
 				if (strlen(macaddress) == 17) {
-					snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -m mac --mac-source %s -i %s -j ACCEPT", macaddress, blue_dev);
+					snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -m mac --mac-source %s -i %s -j RETURN", macaddress, blue_dev);
 					safe_system(command);
 					snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -m mac --mac-source %s -i %s -j RETURN", macaddress, blue_dev);
 					safe_system(command);
 				}
 
 				if (VALID_IP_AND_MASK(ipaddress)) {
-					snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -s %s -i %s -j ACCEPT", ipaddress, blue_dev);
+					snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -s %s -i %s -j RETURN", ipaddress, blue_dev);
 					safe_system(command);
 					snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -s %s -i %s -j RETURN", ipaddress, blue_dev);
 					safe_system(command);

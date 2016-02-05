@@ -60,6 +60,11 @@ HAVE_OPENVPN="true"
 # Allow access from GREEN
 iptables -A POLICYIN -i "${GREEN_DEV}" -j ACCEPT
 
+# Allow access from BLUE
+if [ "${HAVE_BLUE}" = "true" ] && [ -n "${BLUE_DEV}" ]; then
+	iptables -A POLICYIN -i "${BLUE_DEV}" -j ACCEPT
+fi
+
 # IPsec INPUT
 case "${HAVE_IPSEC},${POLICY}" in
 	true,MODE1) ;;
