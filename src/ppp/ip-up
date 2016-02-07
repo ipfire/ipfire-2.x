@@ -74,7 +74,7 @@ else
 	    echo "$FIRE	gateway" >> /tmp/hosts
 	else
 	    #DNS lookup failed use direct ip
-	    echo "178.63.73.246	gateway" >> /tmp/hosts
+	    echo "81.3.27.38	gateway" >> /tmp/hosts
 	fi
 fi
 mv /tmp/hosts /etc/hosts
