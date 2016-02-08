@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/dracut.conf
 etc/ppp/ip-up
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/networking/dhcpcd.exe
