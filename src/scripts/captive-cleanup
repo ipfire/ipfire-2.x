@@ -37,7 +37,10 @@ if (-f $settingsfile && -f $clients && ! -z $clients){
 	foreach my $key (keys %clientshash) {
 		$expiretime=($clientshash{$key}[2])+$clientshash{$key}[3];
 		if ($expiretime < $time){
-			delete $clientshash{key};
+			delete $clientshash{$key};
+			my $exp = gmtime($expiretime);
+			&General::log("Captive", "Delete expired voucher $clientshash{$key}[4] expired on $exp. Remark: $clientshash{$key}[5]");
 		}
 	}
+	&General::writehasharray("$clients", \%clientshash);
 }
