@@ -142,6 +142,31 @@ static void flush_chains() {
 	safe_system(IPTABLES " -t nat -F CAPTIVE_PORTAL");
 }
 
+static int setup_dns_filters() {
+	const char* protos[] = { "udp", "tcp", NULL };
+
+	// Limits the number of DNS requests to 3 kByte/s
+	// A burst of 1MB is permitted at the start
+	const char* limiter = "-m hashlimit --hashlimit-name dns-filter"
+		" --hashlimit-mode srcip --hashlimit-upto 3kb/sec --hashlimit-burst 1024kb";
+
+	char command[STRING_SIZE];
+
+	const char** proto = protos;
+	while (*proto) {
+		snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL_CLIENTS -p %s"
+			" --dport 53 %s -j RETURN", *proto, limiter);
+
+		int r = safe_system(command);
+		if (r)
+			return r;
+
+		proto++;
+	}
+
+	return 0;
+}
+
 static int add_client_rules(const client_t* clients) {
 	char command[STRING_SIZE];
 	char match[STRING_SIZE];
@@ -264,11 +289,7 @@ static int add_interface_rules(struct keyvalue* captive_portal_settings, struct 
 	}
 
 	// Always pass DNS packets through all firewall rules
-	r = safe_system(IPTABLES " -A CAPTIVE_PORTAL_CLIENTS -p udp --dport 53 -j RETURN");
-	if (r)
-		return r;
-
-	r = safe_system(IPTABLES " -A CAPTIVE_PORTAL_CLIENTS -p tcp --dport 53 -j RETURN");
+	r = setup_dns_filters();
 	if (r)
 		return r;
 
