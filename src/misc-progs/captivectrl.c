@@ -71,6 +71,10 @@ static client_t* read_clients(char* filename) {
 		if (line[strlen(line) - 1] == '\n')
 			line[strlen(line) - 1] = '\0';
 
+		// Skip all commented lines
+		if (*line == '#')
+			continue;
+
 		client_curr = (client_t*)malloc(sizeof(client_t));
 		memset(client_curr, 0, sizeof(client_t));
 
