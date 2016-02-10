@@ -122,6 +122,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Create logdir for captive-portal
 	mkdir -pv /var/log/httpd/captive
+	
+	# Create logodir for captive portal
+	mkdir -pv /srv/web/ipfire/html/captive/logo
+	chown nobody.nobody  /srv/web/ipfire/html/captive/logo
+	chmod 775 /srv/web/ipfire/html/captive/logo
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
