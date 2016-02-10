@@ -19,8 +19,10 @@
 #                                                                             #
 ###############################################################################
 
-use strict;
+#use strict;
 use HTML::Entities();
+use File::Basename;
+
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -41,7 +43,7 @@ my $clients="${General::swroot}/captive/clients";
 my %voucherhash=();
 my %clientshash=();
 my $settingsfile="${General::swroot}/captive/settings";
-
+my $logopath = "/srv/web/ipfire/html/captive/logo";
 unless (-e $settingsfile)	{ system("touch $settingsfile"); }
 unless (-e $voucherout)	{ system("touch $voucherout"); }
 
@@ -56,36 +58,70 @@ unless (-e $voucherout)	{ system("touch $voucherout"); }
 
 #actions
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
-	#saves the Captiveportal settings to disk
-	if ($cgiparams{'UNLIMITED'} eq 'on'){
-		$cgiparams{'EXP_HOUR'} 	= '0';
-		$cgiparams{'EXP_DAY'} 	= '0';
-		$cgiparams{'EXP_WEEK'} 	= '0';
-		$cgiparams{'EXP_MONTH'}	= '0';
+	my $file = $cgiparams{'uploaded_file'};
+	if ($file){
+		#Check if extension is png
+		chomp $file;
+		my ($name, $path, $ext) = fileparse($file, qr/\.[^.]*$/);
+		if ($ext ne ".png"){
+			$errormessage=$Lang::tr{'Captive wrong ext'};
+		}
 	}
+	if (!$errormessage){
+		#Check if we need to upload a new logo
+		if($file){
+			#Save File
+			my ($filehandle) = CGI::upload('uploaded_file');
+			open (UPLOADFILE, ">$logopath/logo.png");
+			binmode $filehandle;
+			while ( <$filehandle> ) {
+				print UPLOADFILE;
+			}
+			close (UPLOADFILE);
 
-	$settings{'ENABLE_GREEN'}		= $cgiparams{'ENABLE_GREEN'};
-	$settings{'ENABLE_BLUE'}		= $cgiparams{'ENABLE_BLUE'};
-	$settings{'AUTH'}				= $cgiparams{'AUTH'};
-	$settings{'EXPIRE'}				= $cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'};
-	$settings{'EXP_HOUR'}			= $cgiparams{'EXP_HOUR'};
-	$settings{'EXP_DAY'}			= $cgiparams{'EXP_DAY'};
-	$settings{'EXP_WEEK'}			= $cgiparams{'EXP_WEEK'};
-	$settings{'EXP_MONTH'}			= $cgiparams{'EXP_MONTH'};
-	$settings{'TITLE'}				= $cgiparams{'TITLE'};
-	$settings{'UNLIMITED'}			= $cgiparams{'UNLIMITED'};
-	&General::writehash("$settingsfile", \%settings);
+			#Open file to check if dimensions are within rang
+			open (PNG , "<$logopath/logo.png");
+			local $/;
+			my $PNG1=<PNG>;
+			close(PNG);
+			my ($width,$height)=&pngsize($PNG1);
+			if($width > 1920 || $height > 800 || $width < 1280 || $height < 4000){
+				$errormessage.="$Lang::tr{'Captive invalid logosize'} <br>Filedimensions width: $width   height: $height<br>";
+				unlink("$logopath/logo.png");
+			}
+		}
 
-	#write Licensetext if defined
-	if ($cgiparams{'AGB'}){
-		$cgiparams{'AGB'} = &Header::escape($cgiparams{'AGB'});
-		open( FH, ">:utf8", "/var/ipfire/captive/agb.txt" ) or die("$!");
-		print FH $cgiparams{'AGB'};
-		close( FH );
-		$cgiparams{'AGB'}="";
+		#saves the Captiveportal settings to disk
+		if ($cgiparams{'UNLIMITED'} eq 'on'){
+			$cgiparams{'EXP_HOUR'} 	= '0';
+			$cgiparams{'EXP_DAY'} 	= '0';
+			$cgiparams{'EXP_WEEK'} 	= '0';
+			$cgiparams{'EXP_MONTH'}	= '0';
+		}
+
+		$settings{'ENABLE_GREEN'}		= $cgiparams{'ENABLE_GREEN'};
+		$settings{'ENABLE_BLUE'}		= $cgiparams{'ENABLE_BLUE'};
+		$settings{'AUTH'}				= $cgiparams{'AUTH'};
+		$settings{'EXPIRE'}				= $cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'};
+		$settings{'EXP_HOUR'}			= $cgiparams{'EXP_HOUR'};
+		$settings{'EXP_DAY'}			= $cgiparams{'EXP_DAY'};
+		$settings{'EXP_WEEK'}			= $cgiparams{'EXP_WEEK'};
+		$settings{'EXP_MONTH'}			= $cgiparams{'EXP_MONTH'};
+		$settings{'TITLE'}				= $cgiparams{'TITLE'};
+		$settings{'UNLIMITED'}			= $cgiparams{'UNLIMITED'};
+		&General::writehash("$settingsfile", \%settings);
+
+		#write Licensetext if defined
+		if ($cgiparams{'AGB'}){
+			$cgiparams{'AGB'} = &Header::escape($cgiparams{'AGB'});
+			open( FH, ">:utf8", "/var/ipfire/captive/agb.txt" ) or die("$!");
+			print FH $cgiparams{'AGB'};
+			close( FH );
+			$cgiparams{'AGB'}="";
+		}
+		#execute binary to reload firewall rules
+		system("/usr/local/bin/captivectrl");
 	}
-	#execute binary to reload firewall rules
-	system("/usr/local/bin/captivectrl");
 }
 
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive voucherout'}"){
@@ -195,7 +231,7 @@ sub config(){
 	#prints the config box on the website
 	&Header::openbox('100%', 'left', $Lang::tr{'Captive config'});
 	print <<END
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n
+		<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype="multipart/form-data">\n
 		<table width='100%' border="0">
 		<tr>
 END
@@ -259,6 +295,16 @@ END
 
 	&agbbox();
 
+	#Logo Upload
+	print "<tr><td>$Lang::tr{'Captive logo_upload'}</td><td><INPUT TYPE='file' NAME='uploaded_file' SIZE=30 MAXLENGTH=80></td></tr><tr>";
+	#Show Logo in webinterface with 1/2 size if set
+	if (-f "$logopath/logo.png"){
+		print"<td>$Lang::tr{'Captive logo_set'}</td>";
+		print"<td><img src='/captive/logo/logo.png' alt='$logopath/logo.png' width='25%' height='25%' /></td></tr>";
+	}else{
+		print"<td>$Lang::tr{'Captive logo_set'}</td>";
+		print"<td><br>$Lang::tr{'no'}</td></tr>";
+	}
 	print"<tr><td>$Lang::tr{'Captive vouchervalid'}</td><td>";
 	print "<br><table border='0' with=100%>";
 	print "<th>$Lang::tr{'hours'}</th><th>$Lang::tr{'days'}</th><th>$Lang::tr{'weeks'}</th><th>$Lang::tr{'months'}</th>";
@@ -544,6 +590,19 @@ sub validremark
 	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9.:;_)]*$/) {
 		return 0;}
 	return 1;
+}
+
+sub pngsize {
+	my $Buffer = shift;
+	my ($width,$height) = ( undef, undef );
+
+	if ($Buffer =~ /IHDR(.{8})/) {
+		my $PNG = $1;
+		($width,$height) = unpack( "NN", $PNG );
+	} else {
+		$width=$Lang::tr{'acct invalid png'};
+	};
+	return ($width,$height);
 }
 
 sub error{
