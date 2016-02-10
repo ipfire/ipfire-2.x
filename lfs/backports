@@ -81,7 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# remove replaced kernel modules
 	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/wireless/rtl818x/rtl8180/rtl8180.ko
-	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/media/platform
+	rm -rf /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/media
 
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1-ipfire-build.patch
