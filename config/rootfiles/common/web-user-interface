@@ -98,6 +98,7 @@ srv/web/ipfire/html/captive/assets/captive.css
 srv/web/ipfire/html/captive/assets/internet.png
 srv/web/ipfire/html/captive/assets/favicon.ico
 srv/web/ipfire/html/captive/index.cgi
+srv/web/ipfire/html/captive/logo
 #srv/web/ipfire/html/images
 srv/web/ipfire/html/images/IPFire.png
 srv/web/ipfire/html/images/add.gif

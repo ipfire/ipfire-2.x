@@ -58,6 +58,11 @@ unless (-e $voucherout)	{ system("touch $voucherout"); }
 
 #actions
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
+	#Check Expiretime
+	if($cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'} == 0 && $cgiparams{'UNLIMITED'} == ''){
+		$errormessage=$Lang::tr{'Captive noexpiretime'};
+	}
+
 	my $file = $cgiparams{'uploaded_file'};
 	if ($file){
 		#Check if extension is png
@@ -85,8 +90,8 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 			my $PNG1=<PNG>;
 			close(PNG);
 			my ($width,$height)=&pngsize($PNG1);
-			if($width > 1920 || $height > 800 || $width < 1280 || $height < 4000){
-				$errormessage.="$Lang::tr{'Captive invalid logosize'} <br>Filedimensions width: $width   height: $height<br>";
+			if($width > 1920 || $height > 800 || $width < 1280 || $height < 400){
+				$errormessage.="$Lang::tr{'Captive invalid logosize'} <br>Filedimensions width: $width  height: $height ";
 				unlink("$logopath/logo.png");
 			}
 		}
@@ -600,7 +605,8 @@ sub pngsize {
 		my $PNG = $1;
 		($width,$height) = unpack( "NN", $PNG );
 	} else {
-		$width=$Lang::tr{'acct invalid png'};
+		$width="invalid";
+		$height= "invalid";
 	};
 	return ($width,$height);
 }

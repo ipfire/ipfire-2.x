@@ -27,6 +27,7 @@
 'Captive mac' => 'MAC-Adresse',
 'Captive menu' => 'Captive-Portal',
 'Captive nr' => 'Nummer',
+'Captive noexpiretime' => 'Es wurde kein gültiger Verbindungszeitraum angegeben',
 'Captive nolimit' => 'Unbegrenzt',
 'Captive voactive' => 'Aktive Gutscheine',
 'Captive vout' => 'Ausgegebene Gutscheine',
