@@ -126,6 +126,10 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 		}
 		#execute binary to reload firewall rules
 		system("/usr/local/bin/captivectrl");
+
+		if ($cgiparams{'ENABLE_BLUE'} eq 'on'){
+				system("/usr/local/bin/wirelessctrl");
+		}
 	}
 }
 
@@ -438,12 +442,12 @@ print<<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table class='tbl'>
 	<tr>
-		<th align='center' width='20%'>$Lang::tr{'Captive voucher'}</th><th th align='center' width='25%'>$Lang::tr{'Captive expire'}</th><th align='center' width='55%'>$Lang::tr{'remark'}</th></tr>
+		<th align='center' width='20%'>$Lang::tr{'Captive voucher'}</th><th th align='center' width='30%'>$Lang::tr{'Captive expire'}</th><th align='center' width='55%'>$Lang::tr{'remark'}</th></tr>
 END
 ;
 
 	$cgiparams{'CODE'} = &gencode();
-	print "<tr><td><center><b><font size='5'>$cgiparams{'CODE'}</font></b></center></td><td><center><font size='3'>$expire</font></center></td><td><input type='text' name='REMARK' align='left' size='80'></td></tr>";
+	print "<tr><td><center><b><font size='5'>$cgiparams{'CODE'}</font></b></center></td><td><center><font size='2'>$expire</font></center></td><td><input type='text' name='REMARK' align='left' size='80'></td></tr>";
 	print "</table><br>";
 	print "<center><input type='submit' name='ACTION' value='$Lang::tr{'Captive voucherout'}'><input type='hidden' name='CODE' value='$cgiparams{'CODE'}'</center></form>";
 	&Header::closebox();
