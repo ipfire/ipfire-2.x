@@ -72,6 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xaf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.4-13228.patch
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.4.14-fix-max-file-descriptors.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.4-13230.patch
 	cd $(DIR_APP) && autoreconf -vfi
 	cd $(DIR_APP)/libltdl && autoreconf -vfi
 
