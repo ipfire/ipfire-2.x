@@ -39,7 +39,10 @@ extract_files
 # Bugfixes for core96 updater bugs...
 if [ -e /boot/grub/grub.conf ]; then
 	# legacy grub config on xen or citrix conflicts with grub2 config
-	rm /boot/grub/grub.cfg
+	# and core96 contains an empty file
+	if [ ! -s /boot/grub/grub.cfg ]
+		rm /boot/grub/grub.cfg
+	fi
 fi
 
 if [ -e /boot/grub/grub.cfg ]; then
