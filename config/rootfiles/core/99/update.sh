@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2015 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2016 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -25,7 +25,7 @@
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
 # Remove old core updates from pakfire cache to save space...
-core=98
+core=99
 for (( i=1; i<=$core; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
