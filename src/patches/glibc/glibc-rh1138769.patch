@@ -1,0 +1,45 @@
+commit e35c53e397e7abbd41fedacdedcfa5af7b5c2c52
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Tue Jul 8 16:40:24 2014 +0530
+
+    Check value at resplen2 if it is not NULL
+    
+    There was a typo in the previous patch due to which resplen2 was
+    checked for non-zero instead of the value at resplen2.  Fix that and
+    improve the condition by checking resplen2 for non-NULL (instead of
+    answerp2) and also adding the check in a third place.
+
+diff --git a/resolv/res_query.c b/resolv/res_query.c
+index 4e6612c..e4ee2a6 100644
+--- a/resolv/res_query.c
++++ b/resolv/res_query.c
+@@ -384,7 +384,7 @@ __libc_res_nsearch(res_state statp,
+ 					      answerp2, nanswerp2, resplen2);
+ 		if (ret > 0 || trailing_dot
+ 		    /* If the second response is valid then we use that.  */
+-		    || (ret == 0 && answerp2 != NULL && resplen2 > 0))
++		    || (ret == 0 && resplen2 != NULL && *resplen2 > 0))
+ 			return (ret);
+ 		saved_herrno = h_errno;
+ 		tried_as_is++;
+@@ -424,8 +424,8 @@ __libc_res_nsearch(res_state statp,
+ 						      answer, anslen, answerp,
+ 						      answerp2, nanswerp2,
+ 						      resplen2);
+-			if (ret > 0 || (ret == 0 && answerp2 != NULL
+-					&& resplen2 > 0))
++			if (ret > 0 || (ret == 0 && resplen2 != NULL
++					&& *resplen2 > 0))
+ 				return (ret);
+ 
+ 			if (answerp && *answerp != answer) {
+@@ -494,7 +494,8 @@ __libc_res_nsearch(res_state statp,
+ 		ret = __libc_res_nquerydomain(statp, name, NULL, class, type,
+ 					      answer, anslen, answerp,
+ 					      answerp2, nanswerp2, resplen2);
+-		if (ret > 0)
++		if (ret > 0 || (ret == 0 && resplen2 != NULL
++				&& *resplen2 > 0))
+ 			return (ret);
+ 	}
+ 

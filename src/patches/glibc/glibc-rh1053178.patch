@@ -1,0 +1,214 @@
+#
+# Based on the commit:
+#
+# commit 6c82a2f8d7c8e21e39237225c819f182ae438db3
+# Author: Carlos O'Donell <carlos@redhat.com>
+# Date:   Fri Sep 6 01:02:30 2013 -0400
+#
+#    Coordinate IPv6 definitions for Linux and glibc
+#    
+#    This change synchronizes the glibc headers with the Linux kernel
+#    headers and arranges to coordinate the definition of structures
+#    already defined the Linux kernel UAPI headers.
+#    
+#    It is now safe to include glibc's netinet/in.h or Linux's linux/in6.h
+#    in any order in a userspace application and you will get the same
+#    ABI. The ABI is guaranteed by UAPI and glibc.
+#
+# 2013-09-05  Carlos O'Donell  <carlos@redhat.com>
+# 	    Cong Wang  <amwang@redhat.com>
+# 
+# 	* sysdeps/unix/sysv/linux/bits/in.h
+# 	[_UAPI_LINUX_IN6_H]: Define __USE_KERNEL_IPV6_DEFS.
+# 	* inet/netinet/in.h: Move in_addr definition and bits/in.h inclusion
+# 	before __USE_KERNEL_IPV6_DEFS uses.
+# 	* inet/netinet/in.h [!__USE_KERNEL_IPV6_DEFS]: Define IPPROTO_MH, and
+# 	IPPROTO_BEETPH.
+# 	[__USE_KERNEL_IPV6_DEFS]: Don't define any of IPPROTO_*, in6_addr,
+# 	sockaddr_in6, or ipv6_mreq.
+# 
+diff -urN glibc-2.12-2-gc4ccff1/inet/netinet/in.h glibc-2.12-2-gc4ccff1.mod/inet/netinet/in.h
+--- glibc-2.12-2-gc4ccff1/inet/netinet/in.h	2010-05-04 07:27:23.000000000 -0400
++++ glibc-2.12-2-gc4ccff1.mod/inet/netinet/in.h	2015-02-18 13:06:56.436802873 -0500
+@@ -28,13 +28,21 @@
+ 
+ __BEGIN_DECLS
+ 
++/* Internet address.  */
++typedef uint32_t in_addr_t;
++struct in_addr
++  {
++    in_addr_t s_addr;
++  };
++
++/* Get system-specific definitions.  */
++#include <bits/in.h>
++
+ /* Standard well-defined IP protocols.  */
+ enum
+   {
+     IPPROTO_IP = 0,	   /* Dummy protocol for TCP.  */
+ #define IPPROTO_IP		IPPROTO_IP
+-    IPPROTO_HOPOPTS = 0,   /* IPv6 Hop-by-Hop options.  */
+-#define IPPROTO_HOPOPTS		IPPROTO_HOPOPTS
+     IPPROTO_ICMP = 1,	   /* Internet Control Message Protocol.  */
+ #define IPPROTO_ICMP		IPPROTO_ICMP
+     IPPROTO_IGMP = 2,	   /* Internet Group Management Protocol. */
+@@ -57,10 +65,6 @@
+ #define IPPROTO_DCCP		IPPROTO_DCCP
+     IPPROTO_IPV6 = 41,     /* IPv6 header.  */
+ #define IPPROTO_IPV6		IPPROTO_IPV6
+-    IPPROTO_ROUTING = 43,  /* IPv6 routing header.  */
+-#define IPPROTO_ROUTING		IPPROTO_ROUTING
+-    IPPROTO_FRAGMENT = 44, /* IPv6 fragmentation header.  */
+-#define IPPROTO_FRAGMENT	IPPROTO_FRAGMENT
+     IPPROTO_RSVP = 46,	   /* Reservation Protocol.  */
+ #define IPPROTO_RSVP		IPPROTO_RSVP
+     IPPROTO_GRE = 47,	   /* General Routing Encapsulation.  */
+@@ -69,14 +73,10 @@
+ #define IPPROTO_ESP		IPPROTO_ESP
+     IPPROTO_AH = 51,       /* authentication header.  */
+ #define IPPROTO_AH		IPPROTO_AH
+-    IPPROTO_ICMPV6 = 58,   /* ICMPv6.  */
+-#define IPPROTO_ICMPV6		IPPROTO_ICMPV6
+-    IPPROTO_NONE = 59,     /* IPv6 no next header.  */
+-#define IPPROTO_NONE		IPPROTO_NONE
+-    IPPROTO_DSTOPTS = 60,  /* IPv6 destination options.  */
+-#define IPPROTO_DSTOPTS		IPPROTO_DSTOPTS
+     IPPROTO_MTP = 92,	   /* Multicast Transport Protocol.  */
+ #define IPPROTO_MTP		IPPROTO_MTP
++    IPPROTO_BEETPH = 94,   /* IP option pseudo header for BEET.  */
++#define IPPROTO_BEETPH		IPPROTO_BEETPH
+     IPPROTO_ENCAP = 98,	   /* Encapsulation Header.  */
+ #define IPPROTO_ENCAP		IPPROTO_ENCAP
+     IPPROTO_PIM = 103,	   /* Protocol Independent Multicast.  */
+@@ -92,6 +92,28 @@
+     IPPROTO_MAX
+   };
+ 
++/* If __USER_KERNEL_IPV6_DEFS is defined then the user has included the kernel
++   network headers first and we should use those ABI-identical definitions
++   instead of our own.  */
++#ifndef __USE_KERNEL_IPV6_DEFS
++enum
++  {
++    IPPROTO_HOPOPTS = 0,   /* IPv6 Hop-by-Hop options.  */
++#define IPPROTO_HOPOPTS		IPPROTO_HOPOPTS
++    IPPROTO_ROUTING = 43,  /* IPv6 routing header.  */
++#define IPPROTO_ROUTING		IPPROTO_ROUTING
++    IPPROTO_FRAGMENT = 44, /* IPv6 fragmentation header.  */
++#define IPPROTO_FRAGMENT	IPPROTO_FRAGMENT
++    IPPROTO_ICMPV6 = 58,   /* ICMPv6.  */
++#define IPPROTO_ICMPV6		IPPROTO_ICMPV6
++    IPPROTO_NONE = 59,     /* IPv6 no next header.  */
++#define IPPROTO_NONE		IPPROTO_NONE
++    IPPROTO_DSTOPTS = 60,  /* IPv6 destination options.  */
++#define IPPROTO_DSTOPTS		IPPROTO_DSTOPTS
++    IPPROTO_MH = 135,      /* IPv6 mobility header.  */
++#define IPPROTO_MH		IPPROTO_MH
++  };
++#endif /* !__USE_KERNEL_IPV6_DEFS */
+ 
+ /* Type to represent a port.  */
+ typedef uint16_t in_port_t;
+@@ -136,15 +158,6 @@
+     IPPORT_USERRESERVED = 5000
+   };
+ 
+-
+-/* Internet address.  */
+-typedef uint32_t in_addr_t;
+-struct in_addr
+-  {
+-    in_addr_t s_addr;
+-  };
+-
+-
+ /* Definitions of the bits in an Internet address integer.
+ 
+    On subnets, host and network parts are found according to
+@@ -193,7 +206,7 @@
+ #define INADDR_ALLRTRS_GROUP    ((in_addr_t) 0xe0000002) /* 224.0.0.2 */
+ #define INADDR_MAX_LOCAL_GROUP  ((in_addr_t) 0xe00000ff) /* 224.0.0.255 */
+ 
+-
++#ifndef __USE_KERNEL_IPV6_DEFS
+ /* IPv6 address */
+ struct in6_addr
+   {
+@@ -211,6 +224,7 @@
+ # define s6_addr32		__in6_u.__u6_addr32
+ #endif
+   };
++#endif /* !__USE_KERNEL_IPV6_DEFS */
+ 
+ extern const struct in6_addr in6addr_any;        /* :: */
+ extern const struct in6_addr in6addr_loopback;   /* ::1 */
+@@ -235,6 +249,7 @@
+ 			   sizeof (struct in_addr)];
+   };
+ 
++#ifndef __USE_KERNEL_IPV6_DEFS
+ /* Ditto, for IPv6.  */
+ struct sockaddr_in6
+   {
+@@ -244,7 +259,7 @@
+     struct in6_addr sin6_addr;	/* IPv6 address */
+     uint32_t sin6_scope_id;	/* IPv6 scope-id */
+   };
+-
++#endif /* !__USE_KERNEL_IPV6_DEFS */
+ 
+ #if defined __USE_MISC || defined __USE_GNU
+ /* IPv4 multicast request.  */
+@@ -270,7 +285,7 @@
+   };
+ #endif
+ 
+-
++#ifndef __USE_KERNEL_IPV6_DEFS
+ /* Likewise, for IPv6.  */
+ struct ipv6_mreq
+   {
+@@ -280,7 +295,7 @@
+     /* local interface */
+     unsigned int ipv6mr_interface;
+   };
+-
++#endif /* !__USE_KERNEL_IPV6_DEFS */
+ 
+ #if defined __USE_MISC || defined __USE_GNU
+ /* Multicast group request.  */
+@@ -351,10 +366,6 @@
+ 				      * sizeof (struct sockaddr_storage)))
+ #endif
+ 
+-
+-/* Get system-specific definitions.  */
+-#include <bits/in.h>
+-
+ /* Functions to convert between host and network byte order.
+ 
+    Please note that these functions normally take `unsigned long int' or
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/bits/in.h glibc-2.12-2-gc4ccff1.mod/sysdeps/unix/sysv/linux/bits/in.h
+--- glibc-2.12-2-gc4ccff1/sysdeps/unix/sysv/linux/bits/in.h	2015-02-18 13:04:15.547734092 -0500
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/unix/sysv/linux/bits/in.h	2015-02-18 13:06:56.436802873 -0500
+@@ -22,6 +22,18 @@
+ # error "Never use <bits/in.h> directly; include <netinet/in.h> instead."
+ #endif
+ 
++/* If the application has already included linux/in6.h from a linux-based
++   kernel then we will not define the IPv6 IPPROTO_* defines, in6_addr (nor the
++   defines), sockaddr_in6, or ipv6_mreq.  The ABI used by the linux-kernel and
++   glibc match exactly.  Neither the linux kernel nor glibc should break this
++   ABI without coordination.  */
++#ifdef _UAPI_LINUX_IN6_H
++/* This is not quite the same API since the kernel always defines s6_addr16 and
++   s6_addr32. This is not a violation of POSIX since POSIX says "at least the
++   following member" and that holds true.  */
++# define __USE_KERNEL_IPV6_DEFS
++#endif
++
+ /* Options for use with `getsockopt' and `setsockopt' at the IP level.
+    The first word in the comment at the right is the data type used;
+    "bool" means a boolean value stored in an `int'.  */

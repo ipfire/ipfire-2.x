@@ -1,0 +1,45 @@
+commit 55765a349a96482207fbf927d3666a51878f973b
+Author: Josef Bacik <josef@toxicpanda.com>
+Date:   Wed Aug 19 14:06:56 2015 +0530
+
+    Don't fall back to mmap if the original arena is not corrupt
+    
+    The new logic to find an uncontended non-corrupt arena misses a case
+    where the current arena is contended, but is not corrupt.  In the
+    degenerate case, this is the only arena.  In both cases, the logic
+    falls back to using mmap despite there being an available arena.
+    
+    Attached patch by Josef Bacik makes sure that all arenas are indeed
+    corrupt before falling back to malloc.  Verified on x86_64.
+    
+    	* malloc/arena.c (reused_arena): return NULL only if all
+    	arenas are corrupt.
+
+diff --git a/malloc/arena.c b/malloc/arena.c
+index 21ecc5a1..0424273 100644
+--- a/malloc/arena.c
++++ b/malloc/arena.c
+@@ -823,16 +823,21 @@ reused_arena (mstate avoid_arena)
+ 
+   /* Make sure that the arena we get is not corrupted.  */
+   mstate begin = result;
++  bool looped = false;
++
+   while (arena_is_corrupt (result))
+     {
+       result = result->next;
+       if (result == begin)
+-       break;
++	{
++	  looped = true;
++	  break;
++	}
+     }
+ 
+   /* We could not find any arena that was either not corrupted or not the one
+      we wanted to avoid.  */
+-  if (result == begin)
++  if (looped)
+     return NULL;
+ 
+   /* No arena available without contention.  Wait for the next in line.  */

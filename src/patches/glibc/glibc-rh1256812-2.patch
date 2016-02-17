@@ -1,0 +1,15 @@
+diff -pruN glibc-2.12-2-gc4ccff1/malloc/malloc.c glibc-2.12-2-gc4ccff1.new/malloc/malloc.c
+--- glibc-2.12-2-gc4ccff1/malloc/malloc.c	2015-07-28 22:28:22.517107147 +0530
++++ glibc-2.12-2-gc4ccff1.new/malloc/malloc.c	2015-07-28 22:24:59.541394493 +0530
+@@ -4087,8 +4087,9 @@ public_cALLOc(size_t n, size_t elem_size
+     /* Maybe the failure is due to running out of mmapped areas. */
+     if(av != &main_arena) {
+       (void)mutex_unlock(&av->mutex);
+-      (void)mutex_lock(&main_arena.mutex);
+-      mem = _int_malloc(&main_arena, sz);
++      av = &main_arena;
++      (void)mutex_lock(&av->mutex);
++      mem = _int_malloc(av, sz);
+     } else {
+ #if USE_ARENAS
+       /* ... or sbrk() has failed and there is still a chance to mmap() */

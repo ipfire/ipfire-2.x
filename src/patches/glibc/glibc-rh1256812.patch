@@ -1,0 +1,56 @@
+diff -pruN glibc-2.12-2-gc4ccff1/malloc/malloc.c glibc-2.12-2-gc4ccff1.v2/malloc/malloc.c
+--- glibc-2.12-2-gc4ccff1/malloc/malloc.c	2015-07-24 19:29:37.679907396 +0530
++++ glibc-2.12-2-gc4ccff1.v2/malloc/malloc.c	2015-07-24 18:59:59.928055174 +0530
+@@ -3737,8 +3737,7 @@ public_mALLOc(size_t bytes)
+       mstate prev = ar_ptr->next ? ar_ptr : 0;
+       (void)mutex_unlock(&ar_ptr->mutex);
+       ar_ptr = arena_get2(prev, bytes, true);
+-      if(ar_ptr)
+-	victim = _int_malloc(ar_ptr, bytes);
++      victim = _int_malloc(ar_ptr, bytes);
+ #endif
+     }
+   }
+@@ -3968,8 +3967,7 @@ public_mEMALIGn(size_t alignment, size_t
+       mstate prev = ar_ptr->next ? ar_ptr : 0;
+       (void)mutex_unlock(&ar_ptr->mutex);
+       ar_ptr = arena_get2(prev, bytes, true);
+-      if(ar_ptr)
+-	p = _int_memalign(ar_ptr, alignment, bytes);
++      p = _int_memalign(ar_ptr, alignment, bytes);
+ #endif
+     }
+   }
+@@ -4024,8 +4022,7 @@ public_vALLOc(size_t bytes)
+       mstate prev = ar_ptr->next ? ar_ptr : 0;
+       (void)mutex_unlock(&ar_ptr->mutex);
+       ar_ptr = arena_get2(prev, bytes, true);
+-      if(ar_ptr)
+-	p = _int_memalign(ar_ptr, pagesz, bytes);
++      p = _int_memalign(ar_ptr, pagesz, bytes);
+ #endif
+     }
+   }
+@@ -4080,8 +4077,7 @@ public_pVALLOc(size_t bytes)
+       mstate prev = ar_ptr->next ? ar_ptr : 0;
+       (void)mutex_unlock(&ar_ptr->mutex);
+       ar_ptr = arena_get2(prev, bytes + 2*pagesz + MINSIZE, true);
+-      if(ar_ptr)
+-	p = _int_memalign(ar_ptr, pagesz, rounded_bytes);
++      p = _int_memalign(ar_ptr, pagesz, rounded_bytes);
+ #endif
+     }
+   }
+@@ -4180,11 +4176,9 @@ public_cALLOc(size_t n, size_t elem_size
+       mstate prev = av->next ? av : 0;
+       (void)mutex_unlock(&av->mutex);
+       av = arena_get2(prev, sz, true);
+-      if(av)
+-	mem = _int_malloc(av, sz);
++      mem = _int_malloc(av, sz);
+ #endif
+     }
+-    if (mem == 0) return 0;
+   }
+ 
+   if (av != NULL)

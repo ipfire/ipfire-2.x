@@ -1,0 +1,31 @@
+diff -pruN glibc-2.12-2-gc4ccff1/nptl/sysdeps/pthread/pt-initfini.c glibc-2.12-2-gc4ccff1.fixed/nptl/sysdeps/pthread/pt-initfini.c
+--- glibc-2.12-2-gc4ccff1/nptl/sysdeps/pthread/pt-initfini.c	2010-05-04 16:57:23.000000000 +0530
++++ glibc-2.12-2-gc4ccff1.fixed/nptl/sysdeps/pthread/pt-initfini.c	2013-07-22 21:52:03.519184065 +0530
+@@ -63,21 +63,21 @@ asm ("\n/*@TESTS_END*/");
+ asm ("\n/*@_init_PROLOG_BEGINS*/");
+ 
+ static void
+-call_initialize_minimal (void)
++call_initialize_minimal (int argc, char **argv, char **envp)
+ {
+-  extern void __pthread_initialize_minimal_internal (void)
++  extern void __pthread_initialize_minimal_internal (int, char **, char **)
+     __attribute ((visibility ("hidden")));
+ 
+-  __pthread_initialize_minimal_internal ();
++  __pthread_initialize_minimal_internal (argc, argv, envp);
+ }
+ 
+ SECTION (".init");
+-extern void __attribute__ ((section (".init"))) _init (void);
++extern void __attribute__ ((section (".init"))) _init (int, char **, char **);
+ void
+-_init (void)
++_init (int argc, char **argv, char **envp)
+ {
+   /* The very first thing we must do is to set up the registers.  */
+-  call_initialize_minimal ();
++  call_initialize_minimal (argc, argv, envp);
+ 
+   asm ("ALIGN");
+   asm("END_INIT");

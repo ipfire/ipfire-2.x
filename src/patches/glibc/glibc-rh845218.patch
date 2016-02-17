@@ -1,0 +1,218 @@
+commit 16b293a7a6f65d8ff348a603d19e8fd4372fa3a9
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Wed Apr 30 11:48:43 2014 +0530
+
+    Do not fail if one of the two responses to AF_UNSPEC fails (BZ #14308)
+    
+    [Fixes BZ #14308, #12994, #13651]
+    
+    AF_UNSPEC results in sending two queries in parallel, one for the A
+    record and the other for the AAAA record.  If one of these is a
+    referral, then the query fails, which is wrong.  It should return at
+    least the one successful response.
+    
+    The fix has two parts.  The first part makes the referral fall back to
+    the SERVFAIL path, which results in using the successful response.
+    There is a bug in that path however, due to which the second part is
+    necessary.  The bug here is that if the first response is a failure
+    and the second succeeds, __libc_res_nsearch does not detect that and
+    assumes a failure.  The case where the first response is a success and
+    the second fails, works correctly.
+    
+    This condition is produced by buggy routers, so here's a crude
+    interposable library that can simulate such a condition.  The library
+    overrides the recvfrom syscall and modifies the header of the packet
+    received to reproduce this scenario.  It has two key variables:
+    mod_packet and first_error.
+    
+    The mod_packet variable when set to 0, results in odd packets being
+    modified to be a referral.  When set to 1, even packets are modified
+    to be a referral.
+    
+    The first_error causes the first response to be a failure so that a
+    domain-appended search is performed to test the second part of the
+    __libc_nsearch fix.
+    
+    The driver for this fix is a simple getaddrinfo program that does an
+    AF_UNSPEC query.  I have omitted this since it should be easy to
+    implement.
+    
+    I have tested this on x86_64.
+    
+    The interceptor library source:
+    
+    /* Override recvfrom and modify the header of the first DNS response to make it
+       a referral and reproduce bz #845218.  We have to resort to this ugly hack
+       because we cannot make bind return the buggy response of a referral for the
+       AAAA record and an authoritative response for the A record.  */
+     #define _GNU_SOURCE
+     #include <sys/types.h>
+     #include <sys/socket.h>
+     #include <netinet/in.h>
+     #include <arpa/inet.h>
+     #include <stdio.h>
+     #include <stdbool.h>
+     #include <endian.h>
+     #include <dlfcn.h>
+     #include <stdlib.h>
+    
+    /* Lifted from resolv/arpa/nameser_compat.h.  */
+    typedef struct {
+        unsigned        id :16;         /*%< query identification number */
+     #if BYTE_ORDER == BIG_ENDIAN
+        /* fields in third byte */
+        unsigned        qr: 1;          /*%< response flag */
+        unsigned        opcode: 4;      /*%< purpose of message */
+        unsigned        aa: 1;          /*%< authoritive answer */
+        unsigned        tc: 1;          /*%< truncated message */
+        unsigned        rd: 1;          /*%< recursion desired */
+        /* fields
+         * in
+         * fourth
+         * byte
+         * */
+        unsigned        ra: 1;          /*%< recursion available */
+        unsigned        unused :1;      /*%< unused bits (MBZ as of 4.9.3a3) */
+        unsigned        ad: 1;          /*%< authentic data from named */
+        unsigned        cd: 1;          /*%< checking disabled by resolver */
+        unsigned        rcode :4;       /*%< response code */
+     #endif
+     #if BYTE_ORDER == LITTLE_ENDIAN || BYTE_ORDER == PDP_ENDIAN
+        /* fields
+         * in
+         * third
+         * byte
+         * */
+        unsigned        rd :1;          /*%< recursion desired */
+        unsigned        tc :1;          /*%< truncated message */
+        unsigned        aa :1;          /*%< authoritive answer */
+        unsigned        opcode :4;      /*%< purpose of message */
+        unsigned        qr :1;          /*%< response flag */
+        /* fields
+         * in
+         * fourth
+         * byte
+         * */
+        unsigned        rcode :4;       /*%< response code */
+        unsigned        cd: 1;          /*%< checking disabled by resolver */
+        unsigned        ad: 1;          /*%< authentic data from named */
+        unsigned        unused :1;      /*%< unused bits (MBZ as of 4.9.3a3) */
+        unsigned        ra :1;          /*%< recursion available */
+     #endif
+        /* remaining
+         * bytes
+         * */
+        unsigned        qdcount :16;    /*%< number of question entries */
+        unsigned        ancount :16;    /*%< number of answer entries */
+        unsigned        nscount :16;    /*%< number of authority entries */
+        unsigned        arcount :16;    /*%< number of resource entries */
+    } HEADER;
+    
+    static int done = 0;
+    
+    /* Packets to modify.  0 for the odd packets and 1 for even packets.  */
+    static const int mod_packet = 0;
+    
+    /* Set to true if the first request should result in an error, resulting in a
+       search query.  */
+    static bool first_error = true;
+    
+    static ssize_t (*real_recvfrom) (int sockfd, void *buf, size_t len, int flags,
+    			  struct sockaddr *src_addr, socklen_t *addrlen);
+    
+    void
+    __attribute__ ((constructor))
+    init (void)
+    {
+      real_recvfrom = dlsym (RTLD_NEXT, "recvfrom");
+    
+      if (real_recvfrom == NULL)
+        {
+          printf ("Failed to get reference to recvfrom: %s\n", dlerror ());
+          printf ("Cannot simulate test\n");
+          abort ();
+        }
+    }
+    
+    /* Modify the second packet that we receive to set the header in a manner as to
+       reproduce BZ #845218.  */
+    static void
+    mod_buf (HEADER *h, int port)
+    {
+      if (done % 2 == mod_packet || (first_error && done == 1))
+        {
+          printf ("(Modifying header)");
+    
+          if (first_error && done == 1)
+    	h->rcode = 3;
+          else
+    	h->rcode = 0;	/* NOERROR == 0.  */
+          h->ancount = 0;
+          h->aa = 0;
+          h->ra = 0;
+          h->arcount = 0;
+        }
+      done++;
+    }
+    
+    ssize_t
+    recvfrom (int sockfd, void *buf, size_t len, int flags,
+    	  struct sockaddr *src_addr, socklen_t *addrlen)
+    {
+      ssize_t ret = real_recvfrom (sockfd, buf, len, flags, src_addr, addrlen);
+      int port = htons (((struct sockaddr_in *) src_addr)->sin_port);
+      struct in_addr addr = ((struct sockaddr_in *) src_addr)->sin_addr;
+      const char *host = inet_ntoa (addr);
+      printf ("\n*** From %s:%d: ", host, port);
+    
+      mod_buf (buf, port);
+    
+      printf ("returned %zd\n", ret);
+      return ret;
+    }
+
+diff --git a/resolv/res_query.c b/resolv/res_query.c
+index a9db837..4e6612c 100644
+--- a/resolv/res_query.c
++++ b/resolv/res_query.c
+@@ -382,7 +382,9 @@ __libc_res_nsearch(res_state statp,
+ 		ret = __libc_res_nquerydomain(statp, name, NULL, class, type,
+ 					      answer, anslen, answerp,
+ 					      answerp2, nanswerp2, resplen2);
+-		if (ret > 0 || trailing_dot)
++		if (ret > 0 || trailing_dot
++		    /* If the second response is valid then we use that.  */
++		    || (ret == 0 && answerp2 != NULL && resplen2 > 0))
+ 			return (ret);
+ 		saved_herrno = h_errno;
+ 		tried_as_is++;
+@@ -422,7 +424,8 @@ __libc_res_nsearch(res_state statp,
+ 						      answer, anslen, answerp,
+ 						      answerp2, nanswerp2,
+ 						      resplen2);
+-			if (ret > 0)
++			if (ret > 0 || (ret == 0 && answerp2 != NULL
++					&& resplen2 > 0))
+ 				return (ret);
+ 
+ 			if (answerp && *answerp != answer) {
+diff --git a/resolv/res_send.c b/resolv/res_send.c
+index 60743df..3273d55 100644
+--- a/resolv/res_send.c
++++ b/resolv/res_send.c
+@@ -1351,6 +1351,7 @@ send_dg(res_state statp,
+ 				(*thisresplenp > *thisanssizp)
+ 				? *thisanssizp : *thisresplenp);
+ 
++		next_ns:
+ 			if (recvresp1 || (buf2 != NULL && recvresp2)) {
+ 			  *resplen2 = 0;
+ 			  return resplen;
+@@ -1368,7 +1369,6 @@ send_dg(res_state statp,
+ 			    goto wait;
+ 			  }
+ 
+-		next_ns:
+ 			__res_iclose(statp, false);
+ 			/* don't retry if called from dig */
+ 			if (!statp->pfcode)

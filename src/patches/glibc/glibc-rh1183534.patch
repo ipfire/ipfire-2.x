@@ -4,6 +4,19 @@ Date:   Mon Jan 21 17:41:28 2013 +0100
 
     Fix parsing of numeric hosts in gethostbyname_r
 
+diff --git a/nss/Makefile b/nss/Makefile
+index 449a258..553eafa 100644
+--- a/nss/Makefile
++++ b/nss/Makefile
+@@ -37,7 +37,7 @@ install-bin             := getent makedb
+ others                  := getent
+ install-bin             := getent
+ 
+-tests			= test-netdb tst-nss-test1
++tests			= test-netdb tst-nss-test1 test-digits-dots
+ xtests			= bug-erange
+ 
+ include ../Makeconfig
 diff --git a/nss/digits_dots.c b/nss/digits_dots.c
 index 2b86295..e007ef4 100644
 --- a/nss/digits_dots.c

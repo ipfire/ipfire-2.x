@@ -1,0 +1,68 @@
+From bc5fb0374c3ce6eca92f44d13a55b066e707c4a0 Mon Sep 17 00:00:00 2001
+From: Andreas Schwab <schwab@redhat.com>
+Date: Wed, 15 Sep 2010 07:20:57 -0700
+Subject: [PATCH] Don't try to free rpath strings allocated during startup
+
+---
+ ChangeLog        |   10 ++++++++++
+ elf/dl-load.c    |    3 ---
+ elf/dl-support.c |    3 +++
+ elf/rtld.c       |    4 ++++
+ 4 files changed, 17 insertions(+), 3 deletions(-)
+
+ 2010-09-13  Andreas Schwab  <schwab@redhat.com>
+	    Ulrich Drepper  <drepper@redhat.com>
+
+ 	* elf/rtld.c (dl_main): Set GLRO(dl_init_all_dirs) just before
+ 	re-relocationg ld.so.
+ 	* elf/dl-support.c (_dl_non_dynamic_init): And here after the
+ 	_dl_init_paths call.
+ 	* elf/dl-load.c (_dl_init_paths).  Don't set GLRO(dl_init_all_dirs)
+ 	here anymore.
+ 
+diff --git a/elf/dl-load.c b/elf/dl-load.c
+index 0adddf5..a7162eb 100644
+--- a/elf/dl-load.c
++++ b/elf/dl-load.c
+@@ -787,9 +787,6 @@ _dl_init_paths (const char *llp)
+     }
+   else
+     env_path_list.dirs = (void *) -1;
+-
+-  /* Remember the last search directory added at startup.  */
+-  GLRO(dl_init_all_dirs) = GL(dl_all_dirs);
+ }
+ 
+ 
+diff --git a/elf/dl-support.c b/elf/dl-support.c
+index f94d2c4..5897b32 100644
+--- a/elf/dl-support.c
++++ b/elf/dl-support.c
+@@ -264,6 +264,9 @@ _dl_non_dynamic_init (void)
+      objects.  */
+   _dl_init_paths (getenv ("LD_LIBRARY_PATH"));
+ 
++  /* Remember the last search directory added at startup.  */
++  _dl_init_all_dirs = GL(dl_all_dirs);
++
+   _dl_lazy = *(getenv ("LD_BIND_NOW") ?: "") == '\0';
+ 
+   _dl_bind_not = *(getenv ("LD_BIND_NOT") ?: "") != '\0';
+diff --git a/elf/rtld.c b/elf/rtld.c
+index 90f3ff1..5ecc4fe 100644
+--- a/elf/rtld.c
++++ b/elf/rtld.c
+@@ -2291,6 +2291,10 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
+ 			  lossage);
+     }
+ 
++  /* Remember the last search directory added at startup, now that
++     malloc will no longer be the one from dl-minimal.c.  */
++  GLRO(dl_init_all_dirs) = GL(dl_all_dirs);
++
+   if (! prelinked && rtld_multiple_ref)
+     {
+       /* There was an explicit ref to the dynamic linker as a shared lib.
+-- 
+1.7.1
+

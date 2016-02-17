@@ -1,0 +1,95 @@
+commit 50fd745b4dec07e8e213cf2703b5cabcfa128225
+Author: Andreas Schwab <schwab@suse.de>
+Date:   Mon Jun 10 14:39:09 2013 +0200
+
+    Fix handling of netgroup cache in nscd
+
+diff --git a/nscd/connections.c b/nscd/connections.c
+index 7099215..69e3e7d 100644
+--- a/nscd/connections.c
++++ b/nscd/connections.c
+@@ -1779,7 +1779,7 @@ nscd_run_worker (void *p)
+       else
+ 	{
+ 	  /* Get the key.  */
+-	  char keybuf[MAXKEYLEN];
++	  char keybuf[MAXKEYLEN + 1];
+ 
+ 	  if (__builtin_expect (TEMP_FAILURE_RETRY (read (fd, keybuf,
+ 							  req.key_len))
+@@ -1791,6 +1791,7 @@ nscd_run_worker (void *p)
+ 			 strerror_r (errno, buf, sizeof (buf)));
+ 	      goto close_and_out;
+ 	    }
++	  keybuf[req.key_len] = '\0';
+ 
+ 	  if (__builtin_expect (debug_level, 0) > 0)
+ 	    {
+diff --git a/nscd/netgroupcache.c b/nscd/netgroupcache.c
+index 2d6c5aa..dd06ce4 100644
+--- a/nscd/netgroupcache.c
++++ b/nscd/netgroupcache.c
+@@ -192,18 +192,26 @@ addgetnetgrentX (struct database_dyn *db, int fd, request_header *req,
+ 			    const char *nuser = data.val.triple.user;
+ 			    const char *ndomain = data.val.triple.domain;
+ 
+-			    if (data.val.triple.host > data.val.triple.user
+-				|| data.val.triple.user > data.val.triple.domain)
++			    if (nhost == NULL || nuser == NULL || ndomain == NULL
++				|| nhost > nuser || nuser > ndomain)
+ 			      {
+-				const char *last = MAX (nhost,
+-							MAX (nuser, ndomain));
+-				size_t bufused = (last + strlen (last) + 1
+-						  - buffer);
++				const char *last = nhost;
++				if (last == NULL
++				    || (nuser != NULL && nuser > last))
++				  last = nuser;
++				if (last == NULL
++				    || (ndomain != NULL && ndomain > last))
++				  last = ndomain;
++
++				size_t bufused
++				  = (last == NULL
++				     ? buffilled
++				     : last + strlen (last) + 1 - buffer);
+ 
+ 				/* We have to make temporary copies.  */
+-				size_t hostlen = strlen (nhost) + 1;
+-				size_t userlen = strlen (nuser) + 1;
+-				size_t domainlen = strlen (ndomain) + 1;
++				size_t hostlen = strlen (nhost ?: "") + 1;
++				size_t userlen = strlen (nuser ?: "") + 1;
++				size_t domainlen = strlen (ndomain ?: "") + 1;
+ 				size_t needed = hostlen + userlen + domainlen;
+ 
+ 				if (buflen - req->key_len - bufused < needed)
+@@ -226,11 +234,11 @@ addgetnetgrentX (struct database_dyn *db, int fd, request_header *req,
+ 				  }
+ 
+ 				nhost = memcpy (buffer + bufused,
+-						nhost, hostlen);
++						nhost ?: "", hostlen);
+ 				nuser = memcpy ((char *) nhost + hostlen,
+-						nuser, userlen);
++						nuser ?: "", userlen);
+ 				ndomain = memcpy ((char *) nuser + userlen,
+-						  ndomain, domainlen);
++						  ndomain ?: "", domainlen);
+ 			      }
+ 
+ 			    char *wp = buffer + buffilled;
+diff --git a/nscd/nscd_netgroup.c b/nscd/nscd_netgroup.c
+index cac4ebf..acb2c81 100644
+--- a/nscd/nscd_netgroup.c
++++ b/nscd/nscd_netgroup.c
+@@ -48,7 +48,7 @@ __nscd_setnetgrent (const char *group, struct __netgrent *datap)
+ {
+   int gc_cycle;
+   int nretries = 0;
+-  size_t group_len = strlen (group);
++  size_t group_len = strlen (group) + 1;
+ 
+   /* If the mapping is available, try to search there instead of
+      communicating with the nscd.  */

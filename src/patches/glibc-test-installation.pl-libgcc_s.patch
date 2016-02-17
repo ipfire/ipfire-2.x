@@ -1,13 +1,8 @@
-From 6e236b92765cdafb46d19e4907471699accc8269 Mon Sep 17 00:00:00 2001
-From: Siddhesh Poyarekar <siddhesh@redhat.com>
-Date: Thu, 26 Apr 2012 09:18:48 +0530
-Subject: [PATCH] move libgcc_s soname definition to shlib-versions
-
-diff --git a/nptl/sysdeps/pthread/unwind-forcedunwind.c b/nptl/sysdeps/pthread/unwind-forcedunwind.c
-index adce6e7..60dfbe6 100644
---- a/nptl/sysdeps/pthread/unwind-forcedunwind.c
-+++ b/nptl/sysdeps/pthread/unwind-forcedunwind.c
-@@ -21,7 +21,7 @@
+diff -Naur glibc-2.12-2-gc4ccff1.org/nptl/sysdeps/pthread/unwind-forcedunwind.c glibc-2.12-2-gc4ccff1/nptl/sysdeps/pthread/unwind-forcedunwind.c
+index db56428..495f4b7 100644
+--- glibc-2.12-2-gc4ccff1.org/nptl/sysdeps/pthread/unwind-forcedunwind.c
++++ glibc-2.12-2-gc4ccff1/nptl/sysdeps/pthread/unwind-forcedunwind.c
+@@ -22,7 +22,7 @@
  #include <unwind.h>
  #include <pthreadP.h>
  #include <sysdep.h>
@@ -16,12 +11,11 @@ index adce6e7..60dfbe6 100644
  
  static void *libgcc_s_handle;
  static void (*libgcc_s_resume) (struct _Unwind_Exception *exc);
-diff --git a/scripts/test-installation.pl b/scripts/test-installation.pl
-index c4f3d6d..1b22086 100755
---- a/scripts/test-installation.pl
-+++ b/scripts/test-installation.pl
-
-@@ -105,9 +105,10 @@ while (<SOVERSIONS>) {
+diff -Naur glibc-2.12-2-gc4ccff1.org/scripts/test-installation.pl glibc-2.12-2-gc4ccff1/scripts/test-installation.pl
+index 25a919b..3f409ab 100755
+--- glibc-2.12-2-gc4ccff1.org/scripts/test-installation.pl
++++ glibc-2.12-2-gc4ccff1/scripts/test-installation.pl
+@@ -106,9 +106,10 @@ while (<SOVERSIONS>) {
      # - libnss1_* from glibc-compat add-on
      # - libthread_db since it contains unresolved references
      # - it's just a test NSS module
@@ -33,11 +27,11 @@ index c4f3d6d..1b22086 100755
        $link_libs .= " -l$name";
        $versions{$name} = $version;
      }
-diff --git a/shlib-versions b/shlib-versions
-index c530a44..840e08f 100644
---- a/shlib-versions
-+++ b/shlib-versions
-@@ -124,3 +124,7 @@ sparc64.*-.*-.*		libBrokenLocale=1	GLIBC_2.2
+diff -Naur glibc-2.12-2-gc4ccff1.org/shlib-versions glibc-2.12-2-gc4ccff1/shlib-versions
+index d3e8407..ac98e49 100644
+--- glibc-2.12-2-gc4ccff1.org/shlib-versions
++++ glibc-2.12-2-gc4ccff1/shlib-versions
+@@ -138,3 +138,7 @@ sparc64.*-.*-.*		libBrokenLocale=1	GLIBC_2.2
  
  # The asynchronous name lookup library.
  .*-.*-.*		libanl=1
@@ -45,10 +39,10 @@ index c530a44..840e08f 100644
 +# This defines the libgcc soname version this glibc is to load for
 +# asynchronous cancellation to work correctly.
 +.*-.*-.*		libgcc_s=1
-diff --git a/sysdeps/generic/framestate.c b/sysdeps/generic/framestate.c
-index 3638bbe..3bad5b5 100644
---- a/sysdeps/generic/framestate.c
-+++ b/sysdeps/generic/framestate.c
+diff -Naur glibc-2.12-2-gc4ccff1.org/sysdeps/generic/framestate.c glibc-2.12-2-gc4ccff1/sysdeps/generic/framestate.c
+index 80375bb..edc3539 100644
+--- glibc-2.12-2-gc4ccff1.org/sysdeps/generic/framestate.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/generic/framestate.c
 @@ -1,5 +1,5 @@
  /* __frame_state_for unwinder helper function wrapper.
 -   Copyright (C) 2001, 2003 Free Software Foundation, Inc.
@@ -56,7 +50,7 @@ index 3638bbe..3bad5b5 100644
     This file is part of the GNU C Library.
     Contributed by Jakub Jelinek <jakub@redhat.com>, 2001.
  
-@@ -23,7 +23,7 @@
+@@ -24,7 +24,7 @@
  #define __frame_state_for fallback_frame_state_for
  #include <unwind-dw2.c>
  #undef __frame_state_for
@@ -65,33 +59,30 @@ index 3638bbe..3bad5b5 100644
  
  typedef struct frame_state * (*framesf)(void *pc, struct frame_state *);
  struct frame_state *__frame_state_for (void *pc,
-diff --git a/sysdeps/generic/libgcc_s.h b/sysdeps/generic/libgcc_s.h
+diff -Naur glibc-2.12-2-gc4ccff1.org/sysdeps/generic/libgcc_s.h glibc-2.12-2-gc4ccff1.org/sysdeps/generic/libgcc_s.h
 deleted file mode 100644
 index e74a103..0000000
---- a/sysdeps/generic/libgcc_s.h
+--- glibc-2.12-2-gc4ccff1.org/sysdeps/generic/libgcc_s.h
 +++ /dev/null
 @@ -1,2 +0,0 @@
 -/* Name of libgcc_s library provided by gcc.  */
 -#define LIBGCC_S_SO "libgcc_s.so.1"
-diff --git a/sysdeps/gnu/unwind-resume.c b/sysdeps/gnu/unwind-resume.c
-index 1d3e33f..6afaebd 100644
---- a/sysdeps/gnu/unwind-resume.c
-+++ b/sysdeps/gnu/unwind-resume.c
+diff -Naur glibc-2.12-2-gc4ccff1.org/sysdeps/gnu/unwind-resume.c glibc-2.12-2-gc4ccff1/sysdeps/gnu/unwind-resume.c
+index f8ff0c4..dab4370 100644
+--- glibc-2.12-2-gc4ccff1.org/sysdeps/gnu/unwind-resume.c
++++ glibc-2.12-2-gc4ccff1/sysdeps/gnu/unwind-resume.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 2003 Free Software Foundation, Inc.
 +/* Copyright (C) 2003-2012 Free Software Foundation, Inc.
     This file is part of the GNU C Library.
     Contributed by Jakub Jelinek <jakub@redhat.com>.
  
-@@ -19,7 +19,7 @@
- #include <dlfcn.h>
- #include <stdio.h>
+@@ -22,7 +22,7 @@
  #include <unwind.h>
+ #include <pthreadP.h>
+ #include <sysdep.h>
 -#include <libgcc_s.h>
 +#include <gnu/lib-names.h>
  
+ static void *libgcc_s_handle;
  static void (*libgcc_s_resume) (struct _Unwind_Exception *exc);
- static _Unwind_Reason_Code (*libgcc_s_personality)
--- 
-1.7.3.4
-

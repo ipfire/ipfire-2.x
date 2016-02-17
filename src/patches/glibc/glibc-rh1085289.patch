@@ -1,0 +1,60 @@
+commit dd3022d75e6fb8957843d6d84257a5d8457822d5
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Thu Mar 27 19:49:51 2014 +0530
+
+    Return NULL for wildcard values in getnetgrent from nscd (BZ #16759)
+    
+    getnetgrent is supposed to return NULL for values that are wildcards
+    in the (host, user, domain) triplet.  This works correctly with nscd
+    disabled, but with it enabled, it returns a blank ("") instead of a
+    NULL.  This is easily seen with the output of `getent netgroup foonet`
+    for a netgroup foonet defined as follows in /etc/netgroup:
+    
+        foonet (,foo,)
+    
+    The output with nscd disabled is:
+    
+        foonet ( ,foo,)
+    
+    while with nscd enabled, it is:
+    
+        foonet (,foo,)
+    
+    The extra space with nscd disabled is due to the fact that `getent
+    netgroup` adds it if the return value from getnetgrent is NULL for
+    either host or user.
+
+diff --git a/inet/getnetgrent_r.c b/inet/getnetgrent_r.c
+index 62cdfda..f6d064d 100644
+--- a/inet/getnetgrent_r.c
++++ b/inet/getnetgrent_r.c
+@@ -235,6 +235,14 @@ endnetgrent (void)
+ libc_hidden_proto (internal_getnetgrent_r)
+ 
+ 
++static const char *
++get_nonempty_val (const char *in)
++{
++  if (*in == '\0')
++    return NULL;
++  return in;
++}
++
+ static enum nss_status
+ nscd_getnetgrent (struct __netgrent *datap, char *buffer, size_t buflen,
+ 		  int *errnop)
+@@ -243,11 +251,11 @@ nscd_getnetgrent (struct __netgrent *datap, char *buffer, size_t buflen,
+     return NSS_STATUS_UNAVAIL;
+ 
+   datap->type = triple_val;
+-  datap->val.triple.host = datap->cursor;
++  datap->val.triple.host = get_nonempty_val (datap->cursor);
+   datap->cursor = (char *) __rawmemchr (datap->cursor, '\0') + 1;
+-  datap->val.triple.user = datap->cursor;
++  datap->val.triple.user = get_nonempty_val (datap->cursor);
+   datap->cursor = (char *) __rawmemchr (datap->cursor, '\0') + 1;
+-  datap->val.triple.domain = datap->cursor;
++  datap->val.triple.domain = get_nonempty_val (datap->cursor);
+   datap->cursor = (char *) __rawmemchr (datap->cursor, '\0') + 1;
+ 
+   return NSS_STATUS_SUCCESS;

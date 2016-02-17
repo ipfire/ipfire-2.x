@@ -1,0 +1,19 @@
+commit a11892631d92f594c690d0d50a642b0d1aba58b8
+Author: Ondřej Bílka <neleai@seznam.cz>
+Date:   Wed May 7 14:08:57 2014 +0200
+
+    Fix typo in nscd/selinux.c
+
+diff --git a/nscd/selinux.c b/nscd/selinux.c
+index 9a8a5a8..eaed6dd 100644
+--- a/nscd/selinux.c
++++ b/nscd/selinux.c
+@@ -372,7 +372,7 @@ nscd_request_avc_has_perm (int fd, request_type req)
+   /* Get the security class for nscd.  If this fails we will likely be
+      unable to do anything unless avc_deny_unknown is 0.  */
+   sc_nscd = string_to_security_class ("nscd");
+-  if (perm == 0 && avc_deny_unknown == 1)
++  if (sc_nscd == 0 && avc_deny_unknown == 1)
+     dbg_log (_("Error getting security class for nscd."));
+ 
+   /* Convert permission to AVC bits.  */

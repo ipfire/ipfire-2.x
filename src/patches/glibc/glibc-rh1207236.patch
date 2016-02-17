@@ -1,0 +1,12 @@
+diff -pruN glibc-2.12-2-gc4ccff1/malloc/malloc.c glibc-2.12-2-gc4ccff1.new/malloc/malloc.c
+--- glibc-2.12-2-gc4ccff1/malloc/malloc.c	2015-04-10 12:02:54.011106386 +0530
++++ glibc-2.12-2-gc4ccff1.new/malloc/malloc.c	2015-04-10 12:02:35.867958292 +0530
+@@ -5850,7 +5850,7 @@ _int_valloc(av, bytes) mstate av; size_t
+ #endif
+ {
+   /* Ensure initialization/consolidation */
+-  if (have_fastchunks(av)) malloc_consolidate(av);
++  if (av && have_fastchunks(av)) malloc_consolidate(av);
+   return _int_memalign(av, mp_.pagesize, bytes);
+ }
+ 

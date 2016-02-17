@@ -1,0 +1,14 @@
+diff -pruN glibc-2.12-2-gc4ccff1/sysdeps/posix/getaddrinfo.c glibc-2.12-2-gc4ccff1.fixed/sysdeps/posix/getaddrinfo.c
+--- glibc-2.12-2-gc4ccff1/sysdeps/posix/getaddrinfo.c	2013-07-23 15:23:42.011941780 +0530
++++ glibc-2.12-2-gc4ccff1.fixed/sysdeps/posix/getaddrinfo.c	2013-07-23 15:24:54.032938976 +0530
+@@ -562,8 +562,8 @@ gaih_inet (const char *name, const struc
+ 
+ 	  /* If we do not have to look for IPv6 addresses, use
+ 	     the simple, old functions, which do not support
+-	     IPv6 scope ids. */
+-	  if (req->ai_family == AF_INET)
++	     IPv6 scope ids, nor retrieving the canonical name. */
++	  if (req->ai_family == AF_INET && (req->ai_flags & AI_CANONNAME) == 0)
+ 	    {
+               /* Add room for struct host_data in resolv/nss_dns/dns-host.c */
+               size_t tmpbuflen = 512 + (MAX_NR_ALIASES+MAX_NR_ADDRS+1)*sizeof(char*)

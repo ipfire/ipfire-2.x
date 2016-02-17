@@ -1,0 +1,139 @@
+commit 9fab36eb583c0e585e83a01253299afed9ea9a11
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Tue Sep 25 14:10:29 2012 +0530
+
+    Shrink heap on linux when overcommit_memory == 2
+    
+    Using madvise with MADV_DONTNEED to release memory back to the kernel
+    is not sufficient to change the commit charge accounted against the
+    process on Linux.  It is OK however, when overcommit is enabled or is
+    heuristic.  However, when overcommit is restricted to a percentage of
+    memory setting the contents of /proc/sys/vm/overcommit_memory as 2, it
+    makes a difference since memory requests will fail.  Hence, we do what
+    we do with secure exec binaries, which is to call mmap on the region
+    to be dropped with MAP_FIXED. This internally unmaps the pages in
+    question and reduces the amount of memory accounted against the
+    process.
+
+diff --git a/malloc/arena.c b/malloc/arena.c
+index f24e76c..b209e3b 100644
+--- a/malloc/arena.c
++++ b/malloc/arena.c
+@@ -19,6 +19,9 @@
+ 
+ #include <stdbool.h>
+ 
++/* Get the implementation for check_may_shrink_heap.  */
++#include <malloc-sysdep.h>
++
+ /* Compile-time constants.  */
+ 
+ #define HEAP_MIN_SIZE (32*1024)
+@@ -621,10 +624,10 @@ shrink_heap(heap_info *h, long diff)
+   new_size = (long)h->size - diff;
+   if(new_size < (long)sizeof(*h))
+     return -1;
+-  /* Try to re-map the extra heap space freshly to save memory, and
+-     make it inaccessible. */
+ #ifdef _LIBC
+-  if (__builtin_expect (__libc_enable_secure, 0))
++  /* Try to re-map the extra heap space freshly to save memory, and make it
++     inaccessible.  See malloc-sysdep.h to know when this is true.  */
++  if (__builtin_expect (check_may_shrink_heap (), 0))
+ #else
+   if (1)
+ #endif
+diff --git a/sysdeps/generic/malloc-sysdep.h b/sysdeps/generic/malloc-sysdep.h
+new file mode 100644
+index 0000000..bbc48c0
+--- /dev/null
++++ b/sysdeps/generic/malloc-sysdep.h
+@@ -0,0 +1,25 @@
++/* System-specific malloc support functions.  Generic version.
++   Copyright (C) 2012 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++/* Force an unmap when the heap shrinks in a secure exec.  This ensures that
++   the old data pages immediately cease to be accessible.  */
++static inline bool
++check_may_shrink_heap (void)
++{
++  return __libc_enable_secure;
++}
+diff --git a/sysdeps/unix/sysv/linux/malloc-sysdep.h b/sysdeps/unix/sysv/linux/malloc-sysdep.h
+new file mode 100644
+index 0000000..f926aea
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/malloc-sysdep.h
+@@ -0,0 +1,57 @@
++/* System-specific malloc support functions.  Linux version.
++   Copyright (C) 2012 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#include <fcntl.h>
++#include <not-cancel.h>
++
++/* The Linux kernel overcommits address space by default and if there is not
++   enough memory available, it uses various parameters to decide the process to
++   kill.  It is however possible to disable or curb this overcommit behavior
++   by setting the proc sysctl vm.overcommit_memory to the value '2' and with
++   that, a process is only allowed to use the maximum of a pre-determined
++   fraction of the total address space.  In such a case, we want to make sure
++   that we are judicious with our heap usage as well, and explicitly give away
++   the freed top of the heap to reduce our commit charge.  See the proc(5) man
++   page to know more about overcommit behavior.
++
++   Other than that, we also force an unmap in a secure exec.  */
++static inline bool
++check_may_shrink_heap (void)
++{
++  static int may_shrink_heap = -1;
++
++  if (__builtin_expect (may_shrink_heap >= 0, 1))
++    return may_shrink_heap;
++
++  may_shrink_heap = __libc_enable_secure;
++
++  if (__builtin_expect (may_shrink_heap == 0, 1))
++    {
++      int fd = open_not_cancel_2 ("/proc/sys/vm/overcommit_memory",
++				  O_RDONLY | O_CLOEXEC);
++      if (fd >= 0)
++	{
++	  char val;
++	  ssize_t n = read_not_cancel (fd, &val, 1);
++	  may_shrink_heap = n > 0 && val == '2';
++	  close_not_cancel_no_status (fd);
++	}
++    }
++
++  return may_shrink_heap;
++}

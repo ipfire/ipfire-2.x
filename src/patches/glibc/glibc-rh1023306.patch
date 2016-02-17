@@ -1,0 +1,64 @@
+diff -pruN glibc-2.17-c758a686/nptl/Makefile glibc-2.17-c758a686.new/nptl/Makefile
+--- glibc-2.17-c758a686/nptl/Makefile	2013-07-31 11:51:24.882747234 +0530
++++ glibc-2.17-c758a686.new/nptl/Makefile	2013-07-31 11:58:55.964731526 +0530
+@@ -276,10 +276,7 @@ gen-as-const-headers = pthread-errnos.sy
+ LDFLAGS-tst-cond24 = -lrt
+ LDFLAGS-tst-cond25 = -lrt
+ 
+-# The size is 1MB + 4KB.  The extra 4KB has been added to prevent allocatestack
+-# from resizing the input size to avoid the 64K aliasing conflict on Intel
+-# processors.
+-DEFAULT_STACKSIZE=1052672
++DEFAULT_STACKSIZE=1048576
+ CFLAGS-tst-default-attr.c = -DDEFAULT_STACKSIZE=$(DEFAULT_STACKSIZE)
+ tst-default-attr-ENV = GLIBC_PTHREAD_STACKSIZE=$(DEFAULT_STACKSIZE)
+ 
+diff -pruN glibc-2.17-c758a686/nptl/tst-default-attr.c glibc-2.17-c758a686.new/nptl/tst-default-attr.c
+--- glibc-2.17-c758a686/nptl/tst-default-attr.c	2013-07-31 11:51:24.885747234 +0530
++++ glibc-2.17-c758a686.new/nptl/tst-default-attr.c	2013-07-31 12:18:10.016691337 +0530
+@@ -38,6 +38,7 @@
+ 
+ /* DEFAULT_STACKSIZE macro is defined in the Makefile.  */
+ static size_t stacksize = DEFAULT_STACKSIZE;
++long int pagesize;
+ 
+ static int
+ verify_stacksize_result (pthread_attr_t *attr)
+@@ -46,12 +47,20 @@ verify_stacksize_result (pthread_attr_t
+ 
+   RETURN_IF_FAIL (pthread_attr_getstacksize, attr, &stack);
+ 
+-  if (stacksize != stack)
++  /* pthread_create perturbs the stack size by a page if it aligns to 64K to
++     avoid the 64K aliasing conflict.  We cannot simply add 4K to the size in
++     the Makefile because it breaks the test on powerpc since the page size
++     there is 64K, resulting in a resize in __pthread_initialize_minimal.
++     Hence, our check is to ensure that the stack size is not more than a page
++     more than the requested size.  */
++  if (stack < stacksize || stack > stacksize + pagesize)
+     {
+       printf ("failed to set default stacksize (%zu, %zu)\n", stacksize, stack);
+       return 1;
+     }
+ 
++  printf ("Requested %zu and got %zu\n", stacksize, stack);
++
+   return 0;
+ }
+ 
+@@ -101,6 +110,15 @@ run_threads (void)
+ static int
+ do_test (void)
+ {
++  pthread_attr_t attr;
++
++  pagesize = sysconf (_SC_PAGESIZE);
++  if (pagesize < 0)
++    {
++      printf ("sysconf failed: %s\n", strerror (errno));
++      return 1;
++    }
++
+   RETURN_IF_FAIL (run_threads);
+   return 0;
+ }

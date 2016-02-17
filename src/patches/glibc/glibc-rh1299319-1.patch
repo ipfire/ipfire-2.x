@@ -1,0 +1,19 @@
+commit 232872379ee82cd040a52a48cbbae65a249b5765
+Author: Adhemerval Zanella <azanella@linux.vnet.ibm.com>
+Date:   Sun Jan 8 19:56:52 2012 -0500
+
+    Use __pthread_get_minstack for AIO helper thread
+
+diff --git a/nptl/sysdeps/unix/sysv/linux/aio_misc.h b/nptl/sysdeps/unix/sysv/linux/aio_misc.h
+index 406d96e..8011c3e 100644
+--- a/nptl/sysdeps/unix/sysv/linux/aio_misc.h
++++ b/nptl/sysdeps/unix/sysv/linux/aio_misc.h
+@@ -47,7 +47,7 @@ __aio_create_helper_thread (pthread_t *threadp, void *(*tf) (void *),
+   pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_DETACHED);
+ 
+   /* The helper thread needs only very little resources.  */
+-  (void) pthread_attr_setstacksize (&attr, PTHREAD_STACK_MIN);
++  (void) pthread_attr_setstacksize (&attr, __pthread_get_minstack (&attr));
+ 
+   /* Block all signals in the helper thread.  To do this thoroughly we
+      temporarily have to block all signals here.  */

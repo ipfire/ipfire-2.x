@@ -1,0 +1,40 @@
+commit 3cb26316b45b23dc5cfecbafdc489b28c3a52029
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Thu Jan 29 10:30:09 2015 +0530
+
+    Initialize nscd stats data [BZ #17892]
+    
+    The padding bytes in the statsdata struct are not initialized, due to
+    which valgrind throws a warning:
+    
+    ==11384== Memcheck, a memory error detector
+    ==11384== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+    ==11384== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+    ==11384== Command: nscd -d
+    ==11384==
+    Fri 25 Apr 2014 10:34:53 AM CEST - 11384: handle_request: request received (Version = 2) from PID 11396
+    Fri 25 Apr 2014 10:34:53 AM CEST - 11384:       GETSTAT
+    ==11384== Thread 6:
+    ==11384== Syscall param socketcall.sendto(msg) points to uninitialised byte(s)
+    ==11384==    at 0x4E4ACDC: send (in /lib64/libpthread-2.12.so)
+    ==11384==    by 0x11AF6B: send_stats (in /usr/sbin/nscd)
+    ==11384==    by 0x112F75: nscd_run_worker (in /usr/sbin/nscd)
+    ==11384==    by 0x4E439D0: start_thread (in /lib64/libpthread-2.12.so)
+    ==11384==    by 0x599AB6C: clone (in /lib64/libc-2.12.so)
+    ==11384==  Address 0x15708395 is on thread 6's stack
+    
+    Fix the warning by initializing the structure.
+
+diff --git a/nscd/nscd_stat.c b/nscd/nscd_stat.c
+index 0f1f3c0..7aaa21b 100644
+--- a/nscd/nscd_stat.c
++++ b/nscd/nscd_stat.c
+@@ -94,6 +94,8 @@ send_stats (int fd, struct database_dyn dbs[lastdb])
+   struct statdata data;
+   int cnt;
+ 
++  memset (&data, 0, sizeof (data));
++
+   memcpy (data.version, compilation, sizeof (compilation));
+   data.debug_level = debug_level;
+   data.runtime = time (NULL) - start_time;

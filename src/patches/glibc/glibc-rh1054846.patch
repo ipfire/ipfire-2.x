@@ -1,0 +1,57 @@
+commit fbd6b5a4052316f7eb03c4617eebfaafc59dcc06
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Thu Mar 27 07:15:22 2014 +0530
+
+    Fix nscd lookup for innetgr when netgroup has wildcards (BZ #16758)
+    
+    nscd works correctly when the request in innetgr is a wildcard,
+    i.e. when one or more of host, user or domain parameters is NULL.
+    However, it does not work when the the triplet in the netgroup
+    definition has a wildcard.  This is easy to reproduce for a triplet
+    defined as follows:
+    
+        foonet (,foo,)
+    
+    Here, an innetgr call that looks like this:
+    
+        innetgr ("foonet", "foohost", "foo", NULL);
+    
+    should succeed and so should:
+    
+        innetgr ("foonet", NULL, "foo", "foodomain");
+    
+    It does succeed with nscd disabled, but not with nscd enabled.  This
+    fix adds this additional check for all three parts of the triplet so
+    that it gives the correct result.
+    
+    	[BZ #16758]
+    	* nscd/netgroupcache.c (addinnetgrX): Succeed if triplet has
+    	blank values.
+
+diff --git a/nscd/netgroupcache.c b/nscd/netgroupcache.c
+index 5ba1e1f..5d15aa4 100644
+--- a/nscd/netgroupcache.c
++++ b/nscd/netgroupcache.c
+@@ -560,15 +560,19 @@ addinnetgrX (struct database_dyn *db, int fd, request_header *req,
+ 	{
+ 	  bool success = true;
+ 
+-	  if (host != NULL)
++	  /* For the host, user and domain in each triplet, we assume success
++	     if the value is blank because that is how the wildcard entry to
++	     match anything is stored in the netgroup cache.  */
++	  if (host != NULL && *triplets != '\0')
+ 	    success = strcmp (host, triplets) == 0;
+ 	  triplets = (const char *) rawmemchr (triplets, '\0') + 1;
+ 
+-	  if (success && user != NULL)
++	  if (success && user != NULL && *triplets != '\0')
+ 	    success = strcmp (user, triplets) == 0;
+ 	  triplets = (const char *) rawmemchr (triplets, '\0') + 1;
+ 
+-	  if (success && (domain == NULL || strcmp (domain, triplets) == 0))
++	  if (success && (domain == NULL || *triplets == '\0'
++			  || strcmp (domain, triplets) == 0))
+ 	    {
+ 	      dataset->resp.result = 1;
+ 	      break;

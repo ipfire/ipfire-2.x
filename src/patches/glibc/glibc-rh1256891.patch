@@ -1,0 +1,26 @@
+commit 5c44738353ecaa1c81efca063ee8b55e092d7a43
+Author: Alexandre Oliva <aoliva@redhat.com>
+Date:   Wed Sep 5 15:43:04 2012 -0300
+
+    Don't change no_dyn_threshold on mallopt failure
+    
+    	* malloc/malloc.c (__libc_mallopt) <M_MMAP_THRESHOLD>: Do not
+    	change internal state upon failure.
+
+diff --git a/malloc/malloc.c b/malloc/malloc.c
+index bd562df..c69e281 100644
+--- a/malloc/malloc.c
++++ b/malloc/malloc.c
+@@ -4769,8 +4769,10 @@ int __libc_mallopt(int param_number, int value)
+       res = 0;
+     else
+ #endif
+-      mp_.mmap_threshold = value;
+-      mp_.no_dyn_threshold = 1;
++      {
++	mp_.mmap_threshold = value;
++	mp_.no_dyn_threshold = 1;
++      }
+     break;
+ 
+   case M_MMAP_MAX:
