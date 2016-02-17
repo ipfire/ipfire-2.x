@@ -1,0 +1,98 @@
+From decadad73858bc108828eed5540c7955dc2a977b Mon Sep 17 00:00:00 2001
+From: Adhemerval Zanella <azanella@linux.vnet.ibm.com>
+Date: Fri, 7 Jun 2013 14:44:58 -0500
+Subject: [PATCH 1/2] PowerPC: Change sched_getcpu to use vDSO getcpu instead of syscall.
+
+Backport of d5e0b9bd6e296f3ec5263fa296d39f3fed9b8fa2 from master.
+---
+ sysdeps/unix/sysv/linux/powerpc/Versions         |    1 +
+ sysdeps/unix/sysv/linux/powerpc/bits/libc-vdso.h |    2 +
+ sysdeps/unix/sysv/linux/powerpc/init-first.c     |    3 ++
+ sysdeps/unix/sysv/linux/powerpc/sched_getcpu.c   |   30 ++++++++++++++++++++++
+ 4 files changed, 36 insertions(+), 0 deletions(-)
+ create mode 100644 sysdeps/unix/sysv/linux/powerpc/sched_getcpu.c
+
+diff --git a/sysdeps/unix/sysv/linux/powerpc/Versions b/sysdeps/unix/sysv/linux/powerpc/Versions
+index 1ef53b9..396a423 100644
+--- a/sysdeps/unix/sysv/linux/powerpc/Versions
++++ b/sysdeps/unix/sysv/linux/powerpc/Versions
+@@ -3,5 +3,6 @@ libc {
+     __vdso_get_tbfreq;
+     __vdso_clock_gettime;
+     __vdso_clock_getres;
++    __vdso_getcpu;
+   }
+ }
+diff --git a/sysdeps/unix/sysv/linux/powerpc/bits/libc-vdso.h b/sysdeps/unix/sysv/linux/powerpc/bits/libc-vdso.h
+index 746d9ce..c3026d5 100644
+--- a/sysdeps/unix/sysv/linux/powerpc/bits/libc-vdso.h
++++ b/sysdeps/unix/sysv/linux/powerpc/bits/libc-vdso.h
+@@ -31,6 +31,8 @@ extern void *__vdso_clock_getres;
+ 
+ extern void *__vdso_get_tbfreq;
+ 
++extern void *__vdso_getcpu;
++
+ #endif
+ 
+ #endif /* _LIBC_VDSO_H */
+diff --git a/sysdeps/unix/sysv/linux/powerpc/init-first.c b/sysdeps/unix/sysv/linux/powerpc/init-first.c
+index 92dacc7..cfed655 100644
+--- a/sysdeps/unix/sysv/linux/powerpc/init-first.c
++++ b/sysdeps/unix/sysv/linux/powerpc/init-first.c
+@@ -27,6 +27,7 @@ void *__vdso_gettimeofday attribute_hidden;
+ void *__vdso_clock_gettime;
+ void *__vdso_clock_getres;
+ void *__vdso_get_tbfreq;
++void *__vdso_getcpu;
+ 
+ 
+ static inline void
+@@ -41,6 +42,8 @@ _libc_vdso_platform_setup (void)
+   __vdso_clock_getres = _dl_vdso_vsym ("__kernel_clock_getres", &linux2615);
+ 
+   __vdso_get_tbfreq = _dl_vdso_vsym ("__kernel_vdso_get_tbfreq", &linux2615);
++
++  __vdso_getcpu = _dl_vdso_vsym ("__kernel_getcpu", &linux2615);
+ }
+ 
+ # define VDSO_SETUP _libc_vdso_platform_setup
+diff --git a/sysdeps/unix/sysv/linux/powerpc/sched_getcpu.c b/sysdeps/unix/sysv/linux/powerpc/sched_getcpu.c
+new file mode 100644
+index 0000000..617e6f1
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/powerpc/sched_getcpu.c
+@@ -0,0 +1,30 @@
++/* Copyright (C) 2013 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#include <sched.h>
++#include <sysdep.h>
++#include <bits/libc-vdso.h>
++
++
++int
++sched_getcpu (void)
++{
++  unsigned int cpu;
++  int r = INLINE_VSYSCALL (getcpu, 3, &cpu, NULL, NULL);
++
++  return r == -1 ? r : cpu;
++}
+-- 
+1.7.1
+

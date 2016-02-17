@@ -1,0 +1,41 @@
+Description: Allow loading more libraries with static TLS.
+Author: Carlos O'Donell <codonell@redhat.com>
+Origin: PATCH
+Bug-RHEL: #1291270 (rhel-6.7.z), #1198802 (rhel-6.8), #1202952 (rhel-7.2)
+Bug-Fedora: #1124987 (F21)
+Bug-Upstream: #17090, #17620, #17621, #17628 (2.22)
+Upstream status: not-needed
+#
+# The correct fix for this is already upstream and involves
+# changing the heuristics for DTV slot increases. In RHEL6
+# we take the conservative approach and provide a larger
+# slot surplus. This matches what was done in Fedora 21 before
+# we had the upstream fix: f8aeae347377f3dfa8cbadde057adf1827fb1d44.
+# In RHEL7 we have the upstream fix. This is fixed upstream as of
+# glibc 2.22.
+#
+Index: glibc-2.12-2-gc4ccff1/sysdeps/generic/ldsodefs.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/sysdeps/generic/ldsodefs.h
++++ glibc-2.12-2-gc4ccff1/sysdeps/generic/ldsodefs.h
+@@ -496,8 +496,18 @@ struct rtld_global
+    have to iterate beyond the first element in the slotinfo list.  */
+ #define TLS_SLOTINFO_SURPLUS (62)
+ 
+-/* Number of additional slots in the dtv allocated.  */
+-#define DTV_SURPLUS	(14)
++/* Number of additional allocated dtv slots.  This was initially
++   14, but problems with python, MESA, and X11's uses of static TLS meant
++   that most distributions were very close to this limit when they loaded
++   dynamically interpreted languages that used graphics. The simplest
++   solution was to roughly double the number of slots. The actual static
++   image space usage was relatively small, for example in MESA you
++   had only two dispatch pointers for a total of 16 bytes.  If we hit up
++   against this limit again we should start a campaign with the
++   distributions to coordinate the usage of static TLS.  Any user of this
++   resource is effectively coordinating a global resource since this
++   surplus is allocated for each thread at startup.  */
++#define DTV_SURPLUS	(32)
+ 
+   /* Initial dtv of the main thread, not allocated with normal malloc.  */
+   EXTERN void *_dl_initial_dtv;

@@ -1,0 +1,47 @@
+#
+# Derived from this upstream commit:
+#
+# commit 58a1335e76a553e1cf4edeebc27f16fc9b53d6e6
+# Author: Petr Baudis <pasky@ucw.cz>
+# Date:   Thu Mar 14 01:16:53 2013 +0100
+#
+#    Fix __times() handling of EFAULT when buf is NULL
+#
+# 2013-03-14  Petr Baudis  <pasky@ucw.cz>
+#
+#	* sysdeps/unix/sysv/linux/times.c (__times): On EFAULT, test
+#	for non-NULL pointer before the memory validity test. Pointed
+#	out by Holger Brunck <holger.brunck@keymile.com>.
+#
+diff --git a/sysdeps/unix/sysv/linux/times.c b/sysdeps/unix/sysv/linux/times.c
+index f3b5f01..e59bb4e 100644
+--- a/sysdeps/unix/sysv/linux/times.c
++++ b/sysdeps/unix/sysv/linux/times.c
+@@ -26,13 +26,14 @@ __times (struct tms *buf)
+   INTERNAL_SYSCALL_DECL (err);
+   clock_t ret = INTERNAL_SYSCALL (times, err, 1, buf);
+   if (INTERNAL_SYSCALL_ERROR_P (ret, err)
+-      && __builtin_expect (INTERNAL_SYSCALL_ERRNO (ret, err) == EFAULT, 0))
++      && __builtin_expect (INTERNAL_SYSCALL_ERRNO (ret, err) == EFAULT, 0)
++      && buf)
+     {
+       /* This might be an error or not.  For architectures which have
+ 	 no separate return value and error indicators we cannot
+ 	 distinguish a return value of -1 from an error.  Do it the
+-	 hard way.  We crash applications which pass in an invalid BUF
+-	 pointer.  */
++	 hard way.  We crash applications which pass in an invalid
++	 non-NULL BUF pointer.  Linux allows BUF to be NULL. */
+ #define touch(v) \
+       do {								      \
+ 	clock_t temp = v;						      \
+@@ -44,7 +45,8 @@ __times (struct tms *buf)
+       touch (buf->tms_cutime);
+       touch (buf->tms_cstime);
+ 
+-      /* If we come here the memory is valid and the kernel did not
++      /* If we come here the memory is valid (or BUF is NULL, which is
++       * a valid condition for the kernel syscall) and the kernel did not
+ 	 return an EFAULT error.  Return the value given by the kernel.  */
+     }
+ 

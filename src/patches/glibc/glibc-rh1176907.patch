@@ -1,0 +1,22 @@
+commit 7d81e8d6db95c112c297930a8f2f9617c305529a
+Author: Florian Weimer <fweimer@redhat.com>
+Date:   Tue Dec 23 16:16:32 2014 +0100
+
+    iconvdata/run-iconv-test.sh: Actually test iconv modules
+    
+    Arjun Shankar noticed that this test case was not testing anything
+    because iconv was invoked without the required arguments.
+
+diff --git a/iconvdata/run-iconv-test.sh b/iconvdata/run-iconv-test.sh
+index 5dfb69f..1d0bf52 100755
+--- a/iconvdata/run-iconv-test.sh
++++ b/iconvdata/run-iconv-test.sh
+@@ -189,7 +189,7 @@ printf '\016\377\377\377\377\377\377\377' > $temp1
+ for from in $iconv_modules ; do
+     echo $ac_n "test decoder $from $ac_c"
+     PROG=`eval echo $ICONV`
+-    if $PROG < $temp1 >/dev/null 2>&1 ; then
++    if $PROG -f $from -t UTF8 < $temp1 >/dev/null 2>&1 ; then
+ 	: # fall through
+     else
+ 	status=$?

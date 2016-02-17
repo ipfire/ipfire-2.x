@@ -1,0 +1,58 @@
+#
+# Based on this commit:
+#
+# commit 62058ce612ed3459501b4c4332e268edfe977f59
+# Author: Carlos O'Donell <carlos@redhat.com>
+# Date:   Mon Sep 29 13:14:21 2014 -0400
+# 
+#     Correctly size profiling reloc table (bug 17411)
+#     
+#     During auditing or profiling modes the dynamic loader
+#     builds a cache of the relocated PLT entries in order
+#     to reuse them when called again through the same PLT
+#     entry. This way the PLT entry is never completed and
+#     the call into the resolver always results in profiling
+#     or auditing code running.
+#     
+#     The problem is that the PLT relocation cache size
+#     is not computed correctly. The size of the cache
+#     should be "Size of a relocation result structure"
+#     x "Number of PLT-related relocations". Instead the
+#     code erroneously computes "Size of a relocation
+#     result" x "Number of bytes worth of PLT-related
+#     relocations". I can only assume this was a mistake
+#     in the understanding of the value of DT_PLTRELSZ
+#     which is the number of bytes of PLT-related relocs.
+#     We do have a DT_RELACOUNT entry, which is a count
+#     for dynamic relative relocs, but we have no
+#     DT_PLTRELCOUNT and thus we need to compute it.
+#     
+#     This patch corrects the computation of the size of the
+#     relocation table used by the glibc profiling code.
+#     
+#     For more details see:
+#     https://sourceware.org/ml/libc-alpha/2014-09/msg00513.html
+#     
+#         [BZ #17411]
+#         * elf/dl-reloc.c (_dl_relocate_object): Allocate correct amount for
+#         l_reloc_result.
+# 
+diff --git a/elf/dl-reloc.c b/elf/dl-reloc.c
+index d2c6dac..97a7119 100644
+--- a/elf/dl-reloc.c
++++ b/elf/dl-reloc.c
+@@ -279,8 +279,12 @@ _dl_relocate_object (struct link_map *l, struct r_scope_elem *scope[],
+ 			      l->l_name);
+ 	  }
+ 
+-	l->l_reloc_result = calloc (sizeof (l->l_reloc_result[0]),
+-				    l->l_info[DT_PLTRELSZ]->d_un.d_val);
++	size_t sizeofrel = l->l_info[DT_PLTREL]->d_un.d_val == DT_RELA
++			   ? sizeof (ElfW(Rela))
++			   : sizeof (ElfW(Rel));
++	size_t relcount = l->l_info[DT_PLTRELSZ]->d_un.d_val / sizeofrel;
++	l->l_reloc_result = calloc (sizeof (l->l_reloc_result[0]), relcount);
++
+ 	if (l->l_reloc_result == NULL)
+ 	  {
+ 	    errstring = N_("\

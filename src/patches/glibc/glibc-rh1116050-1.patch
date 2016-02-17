@@ -1,0 +1,57 @@
+#
+# In rhel-6.x the Makerules are not entirely as mature as they are
+# in glibc 2.21 (from which the example link-libc-args is taken from).
+# In rhel-6.x the applications are not built like their counterpart
+# real applications, and because of that compiling DSOs that use TLS
+# will fail with undefined references to __tls_get_addr which resides
+# in ld.so and is never included in the link. This patch enhances
+# only the build-module and build-module-asneeded targets to include
+# a more fully and correct link line as the compiler driver would use
+# when constructing an application or DSO. We do not adjust the link
+# lines used to build lib* targets.
+#
+diff -urN glibc-2.12-2-gc4ccff1.orig/Makerules glibc-2.12-2-gc4ccff1/Makerules
+--- glibc-2.12-2-gc4ccff1.orig/Makerules	2015-02-18 19:53:00.000000000 -0500
++++ glibc-2.12-2-gc4ccff1/Makerules	2015-02-18 20:08:33.299000028 -0500
+@@ -443,6 +443,25 @@
+ load-map-file = $(map-file:%=-Wl,--version-script=%)
+ endif
+ 
++# Compiler arguments to use to link a shared object with libc and
++# ld.so.  This is intended to be as similar as possible to a default
++# link with an installed libc.
++link-libc-args = -Wl,--start-group \
++                 $(libc-for-link) \
++                 $(common-objpfx)libc_nonshared.a \
++                 $(as-needed) $(elf-objpfx)ld.so $(no-as-needed) \
++                 -Wl,--end-group
++
++# The corresponding shared libc to use.  This may be modified for a
++# particular target.
++libc-for-link = $(common-objpfx)libc.so
++
++# The corresponding dependencies.  As these are used in dependencies,
++# not just commands, they cannot use target-specific variables so need
++# to name both possible libc.so objects.
++link-libc-deps = $(common-objpfx)libc.so $(common-objpfx)linkobj/libc.so \
++                 $(common-objpfx)libc_nonshared.a $(elf-objpfx)ld.so
++
+ # Pattern rule to build a shared object from an archive of PIC objects.
+ # This must come after the installation rules so Make doesn't try to
+ # build shared libraries in place from the installed *_pic.a files.
+@@ -557,12 +576,13 @@
+ # not for shared objects
+ define build-module
+ $(build-module-helper) -o $@ -T $(common-objpfx)shlib.lds \
+-	  $(csu-objpfx)abi-note.o $(build-module-objlist)
++	  $(csu-objpfx)abi-note.o $(build-module-objlist) $(link-libc-args)
+ endef
+ define build-module-asneeded
+ $(build-module-helper) -o $@ -T $(common-objpfx)shlib.lds \
+ 	  $(csu-objpfx)abi-note.o \
+-	  -Wl,--as-needed $(build-module-objlist) -Wl,--no-as-needed
++	  -Wl,--as-needed $(build-module-objlist) -Wl,--no-as-needed \
++	  $(link-libc-args)
+ endef
+ else
+ ifneq (,$(findstring aix,$(config-os)))

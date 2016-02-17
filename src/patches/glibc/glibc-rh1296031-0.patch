@@ -1,0 +1,465 @@
+Sourceware bug 16574
+
+commit d668061994a7486a3ba9c7d5e7882d85a2883707
+Author: Andreas Schwab <schwab@suse.de>
+Date:   Thu Feb 13 11:01:57 2014 +0100
+
+    Fix memory leak in _nss_dns_gethostbyname4_r with big DNS answer
+
+commit ab7ac0f2cf8731fe4c3f3aea6088a7c0127b5725
+Author: Ondřej Bílka <neleai@seznam.cz>
+Date:   Sun Feb 16 12:59:23 2014 +0100
+
+    Deduplicate resolv/nss_dns/dns-host.c
+    
+    In resolv/nss_dns/dns-host.c one of code path duplicated code after
+    that. We merge these paths.
+
+commit ab09bf616ad527b249aca5f2a4956fd526f0712f
+Author: Andreas Schwab <schwab@suse.de>
+Date:   Tue Feb 18 10:57:25 2014 +0100
+
+    Properly fix memory leak in _nss_dns_gethostbyname4_r with big DNS answer
+    
+    Instead of trying to guess whether the second buffer needs to be freed
+    set a flag at the place it is allocated
+
+Index: glibc-2.12-2-gc4ccff1/include/resolv.h
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/include/resolv.h
++++ glibc-2.12-2-gc4ccff1/include/resolv.h
+@@ -58,11 +58,11 @@ libc_hidden_proto (__res_randomid)
+ libc_hidden_proto (__res_state)
+ 
+ int __libc_res_nquery (res_state, const char *, int, int, u_char *, int,
+-		       u_char **, u_char **, int *, int *);
++		       u_char **, u_char **, int *, int *, int *);
+ int __libc_res_nsearch (res_state, const char *, int, int, u_char *, int,
+-			u_char **, u_char **, int *, int *);
++			u_char **, u_char **, int *, int *, int *);
+ int __libc_res_nsend (res_state, const u_char *, int, const u_char *, int,
+-		      u_char *, int, u_char **, u_char **, int *, int *)
++		      u_char *, int, u_char **, u_char **, int *, int *, int *)
+   attribute_hidden;
+ 
+ libresolv_hidden_proto (_sethtent)
+Index: glibc-2.12-2-gc4ccff1/resolv/gethnamaddr.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/resolv/gethnamaddr.c
++++ glibc-2.12-2-gc4ccff1/resolv/gethnamaddr.c
+@@ -634,7 +634,7 @@ gethostbyname2(name, af)
+ 	buf.buf = origbuf = (querybuf *) alloca (1024);
+ 
+ 	if ((n = __libc_res_nsearch(&_res, name, C_IN, type, buf.buf->buf, 1024,
+-				    &buf.ptr, NULL, NULL, NULL)) < 0) {
++				    &buf.ptr, NULL, NULL, NULL, NULL)) < 0) {
+ 		if (buf.buf != origbuf)
+ 			free (buf.buf);
+ 		Dprintf("res_nsearch failed (%d)\n", n);
+@@ -729,12 +729,12 @@ gethostbyaddr(addr, len, af)
+ 	buf.buf = orig_buf = (querybuf *) alloca (1024);
+ 
+ 	n = __libc_res_nquery(&_res, qbuf, C_IN, T_PTR, buf.buf->buf, 1024,
+-			      &buf.ptr, NULL, NULL, NULL);
++			      &buf.ptr, NULL, NULL, NULL, NULL);
+ 	if (n < 0 && af == AF_INET6 && (_res.options & RES_NOIP6DOTINT) == 0) {
+ 		strcpy(qp, "ip6.int");
+ 		n = __libc_res_nquery(&_res, qbuf, C_IN, T_PTR, buf.buf->buf,
+ 				      buf.buf != orig_buf ? MAXPACKET : 1024,
+-				      &buf.ptr, NULL, NULL, NULL);
++				      &buf.ptr, NULL, NULL, NULL, NULL);
+ 	}
+ 	if (n < 0) {
+ 		if (buf.buf != orig_buf)
+Index: glibc-2.12-2-gc4ccff1/resolv/nss_dns/dns-canon.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/resolv/nss_dns/dns-canon.c
++++ glibc-2.12-2-gc4ccff1/resolv/nss_dns/dns-canon.c
+@@ -62,7 +62,7 @@ _nss_dns_getcanonname_r (const char *nam
+     {
+       int r = __libc_res_nquery (&_res, name, ns_c_in, qtypes[i],
+ 				 buf, sizeof (buf), &ansp.ptr, NULL, NULL,
+-				 NULL);
++				 NULL, NULL);
+       if (r > 0)
+ 	{
+ 	  /* We need to decode the response.  Just one question record.
+Index: glibc-2.12-2-gc4ccff1/resolv/nss_dns/dns-host.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/resolv/nss_dns/dns-host.c
++++ glibc-2.12-2-gc4ccff1/resolv/nss_dns/dns-host.c
+@@ -191,7 +191,7 @@ _nss_dns_gethostbyname3_r (const char *n
+   host_buffer.buf = orig_host_buffer = (querybuf *) alloca (1024);
+ 
+   n = __libc_res_nsearch (&_res, name, C_IN, type, host_buffer.buf->buf,
+-			  1024, &host_buffer.ptr, NULL, NULL, NULL);
++			  1024, &host_buffer.ptr, NULL, NULL, NULL, NULL);
+   if (n < 0)
+     {
+       switch (errno)
+@@ -221,7 +221,7 @@ _nss_dns_gethostbyname3_r (const char *n
+ 	n = __libc_res_nsearch (&_res, name, C_IN, T_A, host_buffer.buf->buf,
+ 				host_buffer.buf != orig_host_buffer
+ 				? MAXPACKET : 1024, &host_buffer.ptr,
+-				NULL, NULL, NULL);
++				NULL, NULL, NULL, NULL);
+ 
+       if (n < 0)
+ 	{
+@@ -304,13 +304,20 @@ _nss_dns_gethostbyname4_r (const char *n
+   u_char *ans2p = NULL;
+   int nans2p = 0;
+   int resplen2 = 0;
++  int ans2p_malloced = 0;
+ 
+   int olderr = errno;
+   enum nss_status status;
+   int n = __libc_res_nsearch (&_res, name, C_IN, T_UNSPEC,
+ 			      host_buffer.buf->buf, 2048, &host_buffer.ptr,
+-			      &ans2p, &nans2p, &resplen2);
+-  if (n < 0)
++			      &ans2p, &nans2p, &resplen2, &ans2p_malloced);
++  if (n >= 0)
++    {
++      status = gaih_getanswer (host_buffer.buf, n, (const querybuf *) ans2p,
++			       resplen2, name, pat, buffer, buflen,
++			       errnop, herrnop, ttlp);
++    }
++  else
+     {
+       if (errno == ESRCH)
+ 	{
+@@ -325,16 +332,11 @@ _nss_dns_gethostbyname4_r (const char *n
+ 	*errnop = EAGAIN;
+       else
+ 	__set_errno (olderr);
+-
+-      if (host_buffer.buf != orig_host_buffer)
+-	free (host_buffer.buf);
+-
+-      return status;
+     }
+ 
+-  status = gaih_getanswer(host_buffer.buf, n, (const querybuf *) ans2p,
+-			  resplen2, name, pat, buffer, buflen,
+-			  errnop, herrnop, ttlp);
++  /* Check whether ans2p was separately allocated.  */
++  if (ans2p_malloced)
++    free (ans2p);
+ 
+   if (host_buffer.buf != orig_host_buffer)
+     free (host_buffer.buf);
+@@ -444,7 +446,7 @@ _nss_dns_gethostbyaddr2_r (const void *a
+ 	  strcpy (qp, "].ip6.arpa");
+ 	  n = __libc_res_nquery (&_res, qbuf, C_IN, T_PTR,
+ 				 host_buffer.buf->buf, 1024, &host_buffer.ptr,
+-				 NULL, NULL, NULL);
++				 NULL, NULL, NULL, NULL);
+ 	  if (n >= 0)
+ 	    goto got_it_already;
+ 	}
+@@ -465,14 +467,14 @@ _nss_dns_gethostbyaddr2_r (const void *a
+     }
+ 
+   n = __libc_res_nquery (&_res, qbuf, C_IN, T_PTR, host_buffer.buf->buf,
+-			 1024, &host_buffer.ptr, NULL, NULL, NULL);
++			 1024, &host_buffer.ptr, NULL, NULL, NULL, NULL);
+   if (n < 0 && af == AF_INET6 && (_res.options & RES_NOIP6DOTINT) == 0)
+     {
+       strcpy (qp, "ip6.int");
+       n = __libc_res_nquery (&_res, qbuf, C_IN, T_PTR, host_buffer.buf->buf,
+ 			     host_buffer.buf != orig_host_buffer
+ 			     ? MAXPACKET : 1024, &host_buffer.ptr,
+-			     NULL, NULL, NULL);
++			     NULL, NULL, NULL, NULL);
+     }
+   if (n < 0)
+     {
+Index: glibc-2.12-2-gc4ccff1/resolv/nss_dns/dns-network.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/resolv/nss_dns/dns-network.c
++++ glibc-2.12-2-gc4ccff1/resolv/nss_dns/dns-network.c
+@@ -130,7 +130,7 @@ _nss_dns_getnetbyname_r (const char *nam
+   net_buffer.buf = orig_net_buffer = (querybuf *) alloca (1024);
+ 
+   anslen = __libc_res_nsearch (&_res, qbuf, C_IN, T_PTR, net_buffer.buf->buf,
+-			       1024, &net_buffer.ptr, NULL, NULL, NULL);
++			       1024, &net_buffer.ptr, NULL, NULL, NULL, NULL);
+   if (anslen < 0)
+     {
+       /* Nothing found.  */
+@@ -206,7 +206,7 @@ _nss_dns_getnetbyaddr_r (uint32_t net, i
+   net_buffer.buf = orig_net_buffer = (querybuf *) alloca (1024);
+ 
+   anslen = __libc_res_nquery (&_res, qbuf, C_IN, T_PTR, net_buffer.buf->buf,
+-			      1024, &net_buffer.ptr, NULL, NULL, NULL);
++			      1024, &net_buffer.ptr, NULL, NULL, NULL, NULL);
+   if (anslen < 0)
+     {
+       /* Nothing found.  */
+Index: glibc-2.12-2-gc4ccff1/resolv/res_query.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/resolv/res_query.c
++++ glibc-2.12-2-gc4ccff1/resolv/res_query.c
+@@ -98,7 +98,7 @@ static int
+ __libc_res_nquerydomain(res_state statp, const char *name, const char *domain,
+ 			int class, int type, u_char *answer, int anslen,
+ 			u_char **answerp, u_char **answerp2, int *nanswerp2,
+-			int *resplen2);
++			int *resplen2, int *answerp2_malloced);
+ 
+ /*
+  * Formulate a normal query, send, and await answer.
+@@ -119,7 +119,8 @@ __libc_res_nquery(res_state statp,
+ 		  u_char **answerp,	/* if buffer needs to be enlarged */
+ 		  u_char **answerp2,
+ 		  int *nanswerp2,
+-		  int *resplen2)
++		  int *resplen2,
++		  int *answerp2_malloced)
+ {
+ 	HEADER *hp = (HEADER *) answer;
+ 	HEADER *hp2;
+@@ -224,7 +225,8 @@ __libc_res_nquery(res_state statp,
+ 	}
+ 	assert (answerp == NULL || (void *) *answerp == (void *) answer);
+ 	n = __libc_res_nsend(statp, query1, nquery1, query2, nquery2, answer,
+-			     anslen, answerp, answerp2, nanswerp2, resplen2);
++			     anslen, answerp, answerp2, nanswerp2, resplen2,
++			     answerp2_malloced);
+ 	if (use_malloc)
+ 		free (buf);
+ 	if (n < 0) {
+@@ -316,7 +318,7 @@ res_nquery(res_state statp,
+ 	   int anslen)		/* size of answer buffer */
+ {
+ 	return __libc_res_nquery(statp, name, class, type, answer, anslen,
+-				 NULL, NULL, NULL, NULL);
++				 NULL, NULL, NULL, NULL, NULL);
+ }
+ libresolv_hidden_def (res_nquery)
+ 
+@@ -335,7 +337,8 @@ __libc_res_nsearch(res_state statp,
+ 		   u_char **answerp,
+ 		   u_char **answerp2,
+ 		   int *nanswerp2,
+-		   int *resplen2)
++		   int *resplen2,
++		   int *answerp2_malloced)
+ {
+ 	const char *cp, * const *domain;
+ 	HEADER *hp = (HEADER *) answer;
+@@ -359,7 +362,7 @@ __libc_res_nsearch(res_state statp,
+ 	if (!dots && (cp = res_hostalias(statp, name, tmp, sizeof tmp))!= NULL)
+ 		return (__libc_res_nquery(statp, cp, class, type, answer,
+ 					  anslen, answerp, answerp2,
+-					  nanswerp2, resplen2));
++					  nanswerp2, resplen2, answerp2_malloced));
+ 
+ #ifdef DEBUG
+ 	if (statp->options & RES_DEBUG)
+@@ -376,7 +379,8 @@ __libc_res_nsearch(res_state statp,
+ 	if (dots >= statp->ndots || trailing_dot) {
+ 		ret = __libc_res_nquerydomain(statp, name, NULL, class, type,
+ 					      answer, anslen, answerp,
+-					      answerp2, nanswerp2, resplen2);
++					      answerp2, nanswerp2, resplen2,
++					      answerp2_malloced);
+ 		if (ret > 0 || trailing_dot
+ 		    /* If the second response is valid then we use that.  */
+ 		    || (ret == 0 && resplen2 != NULL && *resplen2 > 0))
+@@ -387,12 +391,12 @@ __libc_res_nsearch(res_state statp,
+ 			answer = *answerp;
+ 			anslen = MAXPACKET;
+ 		}
+-		if (answerp2
+-		    && (*answerp2 < answer || *answerp2 >= answer + anslen))
++		if (answerp2 && *answerp2_malloced)
+ 		  {
+ 		    free (*answerp2);
+ 		    *nanswerp2 = 0;
+ 		    *answerp2 = NULL;
++		    *answerp2_malloced = 0;
+ 		  }
+ 	}
+ 
+@@ -418,7 +422,7 @@ __libc_res_nsearch(res_state statp,
+ 						      class, type,
+ 						      answer, anslen, answerp,
+ 						      answerp2, nanswerp2,
+-						      resplen2);
++						      resplen2, answerp2_malloced);
+ 			if (ret > 0 || (ret == 0 && resplen2 != NULL
+ 					&& *resplen2 > 0))
+ 				return (ret);
+@@ -427,13 +431,12 @@ __libc_res_nsearch(res_state statp,
+ 				answer = *answerp;
+ 				anslen = MAXPACKET;
+ 			}
+-			if (answerp2
+-			    && (*answerp2 < answer
+-				|| *answerp2 >= answer + anslen))
++			if (answerp2 && *answerp2_malloced)
+ 			  {
+ 			    free (*answerp2);
+ 			    *nanswerp2 = 0;
+ 			    *answerp2 = NULL;
++			    *answerp2_malloced = 0;
+ 			  }
+ 
+ 			/*
+@@ -489,7 +492,8 @@ __libc_res_nsearch(res_state statp,
+ 	if (dots && !(tried_as_is || root_on_list)) {
+ 		ret = __libc_res_nquerydomain(statp, name, NULL, class, type,
+ 					      answer, anslen, answerp,
+-					      answerp2, nanswerp2, resplen2);
++					      answerp2, nanswerp2, resplen2,
++					      answerp2_malloced);
+ 		if (ret > 0 || (ret == 0 && resplen2 != NULL
+ 				&& *resplen2 > 0))
+ 			return (ret);
+@@ -502,11 +506,12 @@ __libc_res_nsearch(res_state statp,
+ 	 * else send back meaningless H_ERRNO, that being the one from
+ 	 * the last DNSRCH we did.
+ 	 */
+-	if (answerp2 && (*answerp2 < answer || *answerp2 >= answer + anslen))
++	if (answerp2 && *answerp2_malloced)
+ 	  {
+ 	    free (*answerp2);
+-	    *nanswerp2 = NULL;
++	    *nanswerp2 = 0;
+ 	    *answerp2 = NULL;
++	    *answerp2_malloced = 0;
+ 	  }
+ 	if (saved_herrno != -1)
+ 		RES_SET_H_ERRNO(statp, saved_herrno);
+@@ -526,7 +531,7 @@ res_nsearch(res_state statp,
+ 	    int anslen)		/* size of answer */
+ {
+ 	return __libc_res_nsearch(statp, name, class, type, answer,
+-				  anslen, NULL, NULL, NULL, NULL);
++				  anslen, NULL, NULL, NULL, NULL, NULL);
+ }
+ libresolv_hidden_def (res_nsearch)
+ 
+@@ -544,7 +549,8 @@ __libc_res_nquerydomain(res_state statp,
+ 			u_char **answerp,
+ 			u_char **answerp2,
+ 			int *nanswerp2,
+-			int *resplen2)
++			int *resplen2,
++			int *answerp2_malloced)
+ {
+ 	char nbuf[MAXDNAME];
+ 	const char *longname = nbuf;
+@@ -582,7 +588,7 @@ __libc_res_nquerydomain(res_state statp,
+ 	}
+ 	return (__libc_res_nquery(statp, longname, class, type, answer,
+ 				  anslen, answerp, answerp2, nanswerp2,
+-				  resplen2));
++				  resplen2, answerp2_malloced));
+ }
+ 
+ int
+@@ -594,7 +600,8 @@ res_nquerydomain(res_state statp,
+ 	    int anslen)		/* size of answer */
+ {
+ 	return __libc_res_nquerydomain(statp, name, domain, class, type,
+-				       answer, anslen, NULL, NULL, NULL, NULL);
++				       answer, anslen, NULL, NULL, NULL, NULL,
++				       NULL);
+ }
+ libresolv_hidden_def (res_nquerydomain)
+ 
+Index: glibc-2.12-2-gc4ccff1/resolv/res_send.c
+===================================================================
+--- glibc-2.12-2-gc4ccff1.orig/resolv/res_send.c
++++ glibc-2.12-2-gc4ccff1/resolv/res_send.c
+@@ -203,12 +203,12 @@ evNowTime(struct timespec *res) {
+ static int		send_vc(res_state, const u_char *, int,
+ 				const u_char *, int,
+ 				u_char **, int *, int *, int, u_char **,
+-				u_char **, int *, int *);
++				u_char **, int *, int *, int *);
+ static int		send_dg(res_state, const u_char *, int,
+ 				const u_char *, int,
+ 				u_char **, int *, int *, int,
+ 				int *, int *, u_char **,
+-				u_char **, int *, int *);
++				u_char **, int *, int *, int *);
+ #ifdef DEBUG
+ static void		Aerror(const res_state, FILE *, const char *, int,
+ 			       const struct sockaddr *);
+@@ -360,7 +360,7 @@ int
+ __libc_res_nsend(res_state statp, const u_char *buf, int buflen,
+ 		 const u_char *buf2, int buflen2,
+ 		 u_char *ans, int anssiz, u_char **ansp, u_char **ansp2,
+-		 int *nansp2, int *resplen2)
++		 int *nansp2, int *resplen2, int *ansp2_malloced)
+ {
+   int gotsomewhere, terrno, try, v_circuit, resplen, ns, n;
+ 
+@@ -565,7 +565,8 @@ __libc_res_nsend(res_state statp, const
+ 			try = statp->retry;
+ 			n = send_vc(statp, buf, buflen, buf2, buflen2,
+ 				    &ans, &anssiz, &terrno,
+-				    ns, ansp, ansp2, nansp2, resplen2);
++				    ns, ansp, ansp2, nansp2, resplen2,
++				    ansp2_malloced);
+ 			if (n < 0)
+ 				return (-1);
+ 			if (n == 0 && (buf2 == NULL || *resplen2 == 0))
+@@ -575,7 +576,7 @@ __libc_res_nsend(res_state statp, const
+ 			n = send_dg(statp, buf, buflen, buf2, buflen2,
+ 				    &ans, &anssiz, &terrno,
+ 				    ns, &v_circuit, &gotsomewhere, ansp,
+-				    ansp2, nansp2, resplen2);
++				    ansp2, nansp2, resplen2, ansp2_malloced);
+ 			if (n < 0)
+ 				return (-1);
+ 			if (n == 0 && (buf2 == NULL || *resplen2 == 0))
+@@ -665,7 +666,7 @@ res_nsend(res_state statp,
+ 	  const u_char *buf, int buflen, u_char *ans, int anssiz)
+ {
+   return __libc_res_nsend(statp, buf, buflen, NULL, 0, ans, anssiz,
+-			  NULL, NULL, NULL, NULL);
++			  NULL, NULL, NULL, NULL, NULL);
+ }
+ libresolv_hidden_def (res_nsend)
+ 
+@@ -747,7 +748,7 @@ send_vc(res_state statp,
+ 	const u_char *buf, int buflen, const u_char *buf2, int buflen2,
+ 	u_char **ansp, int *anssizp,
+ 	int *terrno, int ns, u_char **anscp, u_char **ansp2, int *anssizp2,
+-	int *resplen2)
++	int *resplen2, int *ansp2_malloced)
+ {
+ 	const HEADER *hp = (HEADER *) buf;
+ 	const HEADER *hp2 = (HEADER *) buf2;
+@@ -896,6 +897,8 @@ send_vc(res_state statp,
+ 			}
+ 			*thisanssizp = MAXPACKET;
+ 			*thisansp = newp;
++			if (thisansp == ansp2)
++			  *ansp2_malloced = 1;
+ 			anhp = (HEADER *) newp;
+ 			/* A uint16_t can't be larger than MAXPACKET
+ 			   thus it's safe to allocate MAXPACKET but
+@@ -1128,7 +1131,7 @@ send_dg(res_state statp,
+ 	const u_char *buf, int buflen, const u_char *buf2, int buflen2,
+ 	u_char **ansp, int *anssizp,
+ 	int *terrno, int ns, int *v_circuit, int *gotsomewhere, u_char **anscp,
+-	u_char **ansp2, int *anssizp2, int *resplen2)
++	u_char **ansp2, int *anssizp2, int *resplen2, int *ansp2_malloced)
+ {
+ 	const HEADER *hp = (HEADER *) buf;
+ 	const HEADER *hp2 = (HEADER *) buf2;
+@@ -1289,6 +1292,8 @@ send_dg(res_state statp,
+ 			if (newp != NULL) {
+ 				*thisanssizp = MAXPACKET;
+ 				*thisansp = newp;
++				if (thisansp == ansp2)
++				  *ansp2_malloced = 1;
+ 			}
+ 		}
+ 		/* We could end up with truncation if anscp was NULL

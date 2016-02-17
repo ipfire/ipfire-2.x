@@ -1,0 +1,47 @@
+commit 736c304a1ab4cee36a2f3343f1698bc0abae4608
+Author: Adhemerval Zanella <azanella@linux.vnet.ibm.com>
+Date:   Thu Jan 16 06:53:18 2014 -0600
+
+    PowerPC: Fix ftime gettimeofday internal call returning bogus data
+    
+    This patches fixes BZ#16430 by setting a different symbol for internal
+    GLIBC calls that points to ifunc resolvers. For PPC32, if the symbol
+    is defined as hidden (which is the case for gettimeofday and time) the
+    compiler will create local branches (symbol@local) and linker will not
+    create PLT calls (required for IFUNC). This will leads to internal symbol
+    calling the IFUNC resolver instead of the resolved symbol.
+    For PPC64 this behavior does not occur because a call to a function in
+    another translation unit might use a different toc pointer thus requiring
+    a PLT call.
+
+diff --git a/sysdeps/unix/sysv/linux/powerpc/gettimeofday.c b/sysdeps/unix/sysv/linux/powerpc/gettimeofday.c
+index 29a5e08..2085b68 100644
+--- a/sysdeps/unix/sysv/linux/powerpc/gettimeofday.c
++++ b/sysdeps/unix/sysv/linux/powerpc/gettimeofday.c
+@@ -44,8 +44,24 @@ asm (".type __gettimeofday, %gnu_indirect_function");
+ /* This is doing "libc_hidden_def (__gettimeofday)" but the compiler won't
+    let us do it in C because it doesn't know we're defining __gettimeofday
+    here in this file.  */
+-asm (".globl __GI___gettimeofday\n"
+-     "__GI___gettimeofday = __gettimeofday");
++asm (".globl __GI___gettimeofday");
++
++/* __GI___gettimeofday is defined as hidden and for ppc32 it enables the
++   compiler make a local call (symbol@local) for internal GLIBC usage. It
++   means the PLT won't be used and the ifunc resolver will be called directly.
++   For ppc64 a call to a function in another translation unit might use a
++   different toc pointer thus disallowing direct branchess and making internal
++   ifuncs calls safe.  */
++#ifdef __powerpc64__
++asm ("__GI___gettimeofday = __gettimeofday");
++#else
++int
++__gettimeofday_vsyscall (struct timeval *tv, struct timezone *tz)
++{
++  return INLINE_VSYSCALL (gettimeofday, 2, tv, tz);
++}
++asm ("__GI___gettimeofday = __gettimeofday_vsyscall");
++#endif
+ 
+ #else
+ 

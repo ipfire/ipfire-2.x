@@ -1,7 +1,6 @@
 boot/config.txt
 etc/alternatives
 etc/collectd.custom
-etc/default/grub
 etc/ipsec.conf
 etc/ipsec.secrets
 etc/ipsec.user.conf

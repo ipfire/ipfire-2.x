@@ -1,0 +1,52 @@
+commit 050af9c4e86eeecd484ed44b7765e750523276eb
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Wed Aug 29 10:03:39 2012 +0530
+
+    Don't make ttyname* fail if proc filesystem is not available
+    
+    The ttyname and ttyname_r functions on Linux now fall back to
+    searching for the tty file descriptor in /dev/pts or /dev if /proc is
+    not available.  This allows creation of chroots without the procfs
+    mounted on /proc.
+    
+    Fixes BZ #14516.
+
+ 2012-08-29  Siddhesh Poyarekar  <siddhesh@redhat.com>
+ 
+ 	[BZ #14516]
+ 	* sysdeps/unix/sysv/linux/ttyname.c (ttyname): Don't return
+ 	failure if reading from procfs failed.
+ 	* sysdeps/unix/sysv/linux/ttyname_r.c (ttyname_r): Likewise.
+ 
+diff -rup a/sysdeps/unix/sysv/linux/ttyname.c b/sysdeps/unix/sysv/linux/ttyname.c
+--- a/sysdeps/unix/sysv/linux/ttyname.c	2010-05-04 05:27:23.000000000 -0600
++++ b/sysdeps/unix/sysv/linux/ttyname.c	2012-08-27 10:53:29.326671475 -0600
+@@ -146,12 +146,6 @@ ttyname (int fd)
+     }
+ 
+   ssize_t len = __readlink (procname, ttyname_buf, buflen);
+-  if (__builtin_expect (len == -1 && errno == ENOENT, 0))
+-    {
+-      __set_errno (EBADF);
+-      return NULL;
+-    }
+-
+   if (__builtin_expect (len != -1
+ #ifndef __ASSUME_PROC_SELF_FD_SYMLINK
+ 			/* This is for Linux 2.0.  */
+diff -rup a/sysdeps/unix/sysv/linux/ttyname_r.c b/sysdeps/unix/sysv/linux/ttyname_r.c
+--- a/sysdeps/unix/sysv/linux/ttyname_r.c	2010-05-04 05:27:23.000000000 -0600
++++ b/sysdeps/unix/sysv/linux/ttyname_r.c	2012-08-27 10:54:05.406528501 -0600
+@@ -126,12 +126,6 @@ __ttyname_r (int fd, char *buf, size_t b
+   *_fitoa_word (fd, __stpcpy (procname, "/proc/self/fd/"), 10, 0) = '\0';
+ 
+   ssize_t ret = __readlink (procname, buf, buflen - 1);
+-  if (__builtin_expect (ret == -1 && errno == ENOENT, 0))
+-    {
+-      __set_errno (EBADF);
+-      return EBADF;
+-    }
+-
+   if (__builtin_expect (ret == -1 && errno == ENAMETOOLONG, 0))
+     {
+       __set_errno (ERANGE);

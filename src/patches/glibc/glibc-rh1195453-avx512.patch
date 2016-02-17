@@ -1,0 +1,481 @@
+#
+# Based on AVX-512 support for glibc, but heavaily modified for rhel-6.7.
+# Without assembler support we drop all of the configure checks and simply
+# output using .byte directives the minimal AVX512 instructsion required
+# by the loader. Likewise testing is also impossible, so instead we use
+# the Intel emulator running in `-skx` (Skylake Xeon) emulation mode and
+# verify that a pre-built set of tests passes.
+#
+# commit 6986b98a18490e76b16911d1c6b1ba013598d40d
+# Author: Ulrich Drepper <drepper@gmail.com>
+# Date:   Wed Jul 20 14:20:00 2011 -0400
+#
+#    Force :a_x86_64_ymm to be 16-byte aligned
+#
+# commit aa4de9cea5c07d43caeaca9722c2d417e9a2919c
+# Author: H.J. Lu <hjl.tools@gmail.com>
+# Date:   Fri Mar 14 08:51:25 2014 -0700
+# 
+#     Check AVX-512 assembler support first
+# 
+#     It checks AVX-512 assembler support first and sets libc_cv_cc_avx512 to
+#     $libc_cv_asm_avx512, instead of yes.  GCC won't support AVX-512 if
+#     assembler doesn't support it.
+# 
+#         * sysdeps/x86_64/configure.ac: Check AVX-512 assembler support
+#         first.  Disable AVX-512 GCC support if assembler doesn't support
+#         it.
+#         * sysdeps/x86_64/configure: Regenerated.
+# 
+# commit 2d63a517e4084ec80403cd9f278690fa8b676cc4
+# Author: Igor Zamyatin <igor.zamyatin@intel.com>
+# Date:   Thu Mar 13 11:10:22 2014 -0700
+# 
+#     Save and restore AVX-512 zmm registers to x86-64 ld.so
+#     
+#     AVX-512 ISA adds 512-bit zmm registers.  This patch updates
+#     _dl_runtime_profile to pass zmm registers to run-time audit. It also
+#     changes _dl_x86_64_save_sse and _dl_x86_64_restore_sse to upport zmm
+#     registers, which are called when only when RTLD_PREPARE_FOREIGN_CALL
+#     is used.  Its performance impact is minimum.
+#     
+#         * config.h.in (HAVE_AVX512_SUPPORT): New #undef.
+#         (HAVE_AVX512_ASM_SUPPORT): Likewise.
+#         * sysdeps/x86_64/bits/link.h (La_x86_64_zmm): New.
+#         (La_x86_64_vector): Add zmm.
+#         * sysdeps/x86_64/Makefile (tests): Add tst-audit10.
+#         (modules-names): Add tst-auditmod10a and tst-auditmod10b.
+#         ($(objpfx)tst-audit10): New target.
+#         ($(objpfx)tst-audit10.out): Likewise.
+#         (tst-audit10-ENV): New.
+#         (AVX512-CFLAGS): Likewise.
+#         (CFLAGS-tst-audit10.c): Likewise.
+#         (CFLAGS-tst-auditmod10a.c): Likewise.
+#         (CFLAGS-tst-auditmod10b.c): Likewise.
+#         * sysdeps/x86_64/configure.ac: Set config-cflags-avx512,
+#         HAVE_AVX512_SUPPORT and HAVE_AVX512_ASM_SUPPORT.
+#         * sysdeps/x86_64/configure: Regenerated.
+#         * sysdeps/x86_64/dl-trampoline.S (_dl_runtime_profile): Add
+#         AVX-512 zmm register support.
+#         (_dl_x86_64_save_sse): Likewise.
+#         (_dl_x86_64_restore_sse): Likewise.
+#         * sysdeps/x86_64/dl-trampoline.h: Updated to support different
+#         size vector registers.
+#         * sysdeps/x86_64/link-defines.sym (YMM_SIZE): New.
+#         (ZMM_SIZE): Likewise. 
+#         * sysdeps/x86_64/tst-audit10.c: New file.
+#         * sysdeps/x86_64/tst-auditmod10a.c: Likewise.
+#         * sysdeps/x86_64/tst-auditmod10b.c: Likewise.
+# 
+# In addition adds:
+# https://sourceware.org/ml/libc-alpha/2014-09/msg00228.html
+# To extend zmm register checking.
+#
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/x86_64/bits/link.h glibc-2.12-2-gc4ccff1.mod/sysdeps/x86_64/bits/link.h
+--- glibc-2.12-2-gc4ccff1/sysdeps/x86_64/bits/link.h	2010-05-04 07:27:23.000000000 -0400
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/x86_64/bits/link.h	2015-03-03 23:03:25.041829238 -0500
+@@ -65,7 +65,10 @@
+ /* Registers for entry into PLT on x86-64.  */
+ # if __GNUC_PREREQ (4,0)
+ typedef float La_x86_64_xmm __attribute__ ((__vector_size__ (16)));
+-typedef float La_x86_64_ymm __attribute__ ((__vector_size__ (32)));
++typedef float La_x86_64_ymm __attribute__ ((__vector_size__ (32),
++					    __aligned__ (16)));
++typedef double La_x86_64_zmm __attribute__ ((__vector_size__ (64),
++					    __aligned__ (16)));
+ # else
+ typedef float La_x86_64_xmm __attribute__ ((__mode__ (__V4SF__)));
+ # endif
+@@ -74,9 +77,10 @@
+ {
+ # if __GNUC_PREREQ (4,0)
+   La_x86_64_ymm ymm[2];
++  La_x86_64_zmm zmm[1];
+ # endif
+   La_x86_64_xmm xmm[4];
+-} La_x86_64_vector __attribute__ ((aligned(16)));
++} La_x86_64_vector __attribute__ ((__aligned__(16)));
+ 
+ typedef struct La_x86_64_regs
+ {
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/x86_64/dl-trampoline.h glibc-2.12-2-gc4ccff1.mod/sysdeps/x86_64/dl-trampoline.h
+--- glibc-2.12-2-gc4ccff1/sysdeps/x86_64/dl-trampoline.h	2015-03-03 23:03:05.109457627 -0500
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/x86_64/dl-trampoline.h	2015-03-03 23:06:58.434101818 -0500
+@@ -20,14 +20,26 @@
+ 
+ #ifdef RESTORE_AVX
+ 	/* This is to support AVX audit modules.  */
+-	vmovdqu %ymm0,		      (LR_VECTOR_OFFSET)(%rsp)
+-	vmovdqu %ymm1, (LR_VECTOR_OFFSET +   VECTOR_SIZE)(%rsp)
+-	vmovdqu %ymm2, (LR_VECTOR_OFFSET + VECTOR_SIZE*2)(%rsp)
+-	vmovdqu %ymm3, (LR_VECTOR_OFFSET + VECTOR_SIZE*3)(%rsp)
+-	vmovdqu %ymm4, (LR_VECTOR_OFFSET + VECTOR_SIZE*4)(%rsp)
+-	vmovdqu %ymm5, (LR_VECTOR_OFFSET + VECTOR_SIZE*5)(%rsp)
+-	vmovdqu %ymm6, (LR_VECTOR_OFFSET + VECTOR_SIZE*6)(%rsp)
+-	vmovdqu %ymm7, (LR_VECTOR_OFFSET + VECTOR_SIZE*7)(%rsp)
++# if HAVE_NO_AVX512_ASM_SUPPORT
++	/* Restore AVX-512 registers. Use .byte becaues we lack assembler support.  */
++	.byte 0x62,0xf1,0xfe,0x48,0x7f,0x44,0x24,0x03 # vmovdqu64 %zmm0,0xc0(%rsp)
++	.byte 0x62,0xf1,0xfe,0x48,0x7f,0x4c,0x24,0x04 # vmovdqu64 %zmm1,0x100(%rsp)
++	.byte 0x62,0xf1,0xfe,0x48,0x7f,0x54,0x24,0x05 # vmovdqu64 %zmm2,0x140(%rsp)
++	.byte 0x62,0xf1,0xfe,0x48,0x7f,0x5c,0x24,0x06 # vmovdqu64 %zmm3,0x180(%rsp)
++	.byte 0x62,0xf1,0xfe,0x48,0x7f,0x64,0x24,0x07 # vmovdqu64 %zmm4,0x1c0(%rsp)
++	.byte 0x62,0xf1,0xfe,0x48,0x7f,0x6c,0x24,0x08 # vmovdqu64 %zmm5,0x200(%rsp)
++	.byte 0x62,0xf1,0xfe,0x48,0x7f,0x74,0x24,0x09 # vmovdqu64 %zmm6,0x240(%rsp)
++	.byte 0x62,0xf1,0xfe,0x48,0x7f,0x7c,0x24,0x0a # vmovdqu64 %zmm7,0x280(%rsp)
++# else
++	VMOV %VEC(0),		      (LR_VECTOR_OFFSET)(%rsp)
++	VMOV %VEC(1), (LR_VECTOR_OFFSET +   VECTOR_SIZE)(%rsp)
++	VMOV %VEC(2), (LR_VECTOR_OFFSET + VECTOR_SIZE*2)(%rsp)
++	VMOV %VEC(3), (LR_VECTOR_OFFSET + VECTOR_SIZE*3)(%rsp)
++	VMOV %VEC(4), (LR_VECTOR_OFFSET + VECTOR_SIZE*4)(%rsp)
++	VMOV %VEC(5), (LR_VECTOR_OFFSET + VECTOR_SIZE*5)(%rsp)
++	VMOV %VEC(6), (LR_VECTOR_OFFSET + VECTOR_SIZE*6)(%rsp)
++	VMOV %VEC(7), (LR_VECTOR_OFFSET + VECTOR_SIZE*7)(%rsp)
++# endif
+ 
+ 	/* Save xmm0-xmm7 registers to detect if any of them are
+ 	   changed by audit module.  */
+@@ -73,7 +85,11 @@
+ 	je 2f
+ 	vmovdqa	%xmm0, (LR_VECTOR_OFFSET)(%rsp)
+ 	jmp 1f
+-2:	vmovdqu	(LR_VECTOR_OFFSET)(%rsp), %ymm0
++# if HAVE_NO_AVX512_ASM_SUPPORT
++2:	.byte 0x62,0xf1,0xfe,0x48,0x6f,0x44,0x24,0x03 # vmovdqu64 0xc0(%rsp),%zmm0
++# else
++2:	VMOV (LR_VECTOR_OFFSET)(%rsp), %VEC(0)
++# endif
+ 	vmovdqa	%xmm0, (LR_XMM_OFFSET)(%rsp)
+ 
+ 1:	vpcmpeqq (LR_SIZE + XMM_SIZE)(%rsp), %xmm1, %xmm8
+@@ -82,7 +98,11 @@
+ 	je 2f
+ 	vmovdqa	%xmm1, (LR_VECTOR_OFFSET + VECTOR_SIZE)(%rsp)
+ 	jmp 1f
+-2:	vmovdqu	(LR_VECTOR_OFFSET + VECTOR_SIZE)(%rsp), %ymm1
++# if HAVE_NO_AVX512_ASM_SUPPORT
++2:	.byte 0x62,0xf1,0xfe,0x48,0x6f,0x4c,0x24,0x04 # vmovdqu64 0x100(%rsp),%zmm1
++# else
++2:	VMOV (LR_VECTOR_OFFSET + VECTOR_SIZE)(%rsp), %VEC(1)
++# endif
+ 	vmovdqa	%xmm1, (LR_XMM_OFFSET + XMM_SIZE)(%rsp)
+ 
+ 1:	vpcmpeqq (LR_SIZE + XMM_SIZE*2)(%rsp), %xmm2, %xmm8
+@@ -91,7 +111,11 @@
+ 	je 2f
+ 	vmovdqa	%xmm2, (LR_VECTOR_OFFSET + VECTOR_SIZE*2)(%rsp)
+ 	jmp 1f
+-2:	vmovdqu (LR_VECTOR_OFFSET + VECTOR_SIZE*2)(%rsp), %ymm2
++# if HAVE_NO_AVX512_ASM_SUPPORT
++2:	.byte 0x62,0xf1,0xfe,0x48,0x6f,0x54,0x24,0x05 # vmovdqu64 0x140(%rsp),%zmm2
++# else
++2:	VMOV (LR_VECTOR_OFFSET + VECTOR_SIZE*2)(%rsp), %VEC(2)
++# endif
+ 	vmovdqa	%xmm2, (LR_XMM_OFFSET + XMM_SIZE*2)(%rsp)
+ 
+ 1:	vpcmpeqq (LR_SIZE + XMM_SIZE*3)(%rsp), %xmm3, %xmm8
+@@ -100,7 +124,11 @@
+ 	je 2f
+ 	vmovdqa	%xmm3, (LR_VECTOR_OFFSET + VECTOR_SIZE*3)(%rsp)
+ 	jmp 1f
+-2:	vmovdqu (LR_VECTOR_OFFSET + VECTOR_SIZE*3)(%rsp), %ymm3
++# if HAVE_NO_AVX512_ASM_SUPPORT
++2:	.byte 0x62,0xf1,0xfe,0x48,0x6f,0x5c,0x24,0x06 # vmovdqu64 0x180(%rsp),%zmm3
++# else
++2:	VMOV (LR_VECTOR_OFFSET + VECTOR_SIZE*3)(%rsp), %VEC(3)
++# endif
+ 	vmovdqa	%xmm3, (LR_XMM_OFFSET + XMM_SIZE*3)(%rsp)
+ 
+ 1:	vpcmpeqq (LR_SIZE + XMM_SIZE*4)(%rsp), %xmm4, %xmm8
+@@ -109,7 +137,11 @@
+ 	je 2f
+ 	vmovdqa	%xmm4, (LR_VECTOR_OFFSET + VECTOR_SIZE*4)(%rsp)
+ 	jmp 1f
+-2:	vmovdqu (LR_VECTOR_OFFSET + VECTOR_SIZE*4)(%rsp), %ymm4
++# if HAVE_NO_AVX512_ASM_SUPPORT
++2:	.byte 0x62,0xf1,0xfe,0x48,0x6f,0x64,0x24,0x07 # vmovdqu64 0x1c0(%rsp),%zmm4
++# else
++2:	VMOV (LR_VECTOR_OFFSET + VECTOR_SIZE*4)(%rsp), %VEC(4)
++# endif
+ 	vmovdqa	%xmm4, (LR_XMM_OFFSET + XMM_SIZE*4)(%rsp)
+ 
+ 1:	vpcmpeqq (LR_SIZE + XMM_SIZE*5)(%rsp), %xmm5, %xmm8
+@@ -118,7 +150,11 @@
+ 	je 2f
+ 	vmovdqa	%xmm5, (LR_VECTOR_OFFSET + VECTOR_SIZE*5)(%rsp)
+ 	jmp 1f
+-2:	vmovdqu (LR_VECTOR_OFFSET + VECTOR_SIZE*5)(%rsp), %ymm5
++# if HAVE_NO_AVX512_ASM_SUPPORT
++2:	.byte 0x62,0xf1,0xfe,0x48,0x6f,0x6c,0x24,0x08 # vmovdqu64 0x200(%rsp),%zmm5
++# else
++2:	VMOV (LR_VECTOR_OFFSET + VECTOR_SIZE*5)(%rsp), %VEC(5)
++# endif
+ 	vmovdqa	%xmm5, (LR_XMM_OFFSET + XMM_SIZE*5)(%rsp)
+ 
+ 1:	vpcmpeqq (LR_SIZE + XMM_SIZE*6)(%rsp), %xmm6, %xmm8
+@@ -127,7 +163,11 @@
+ 	je 2f
+ 	vmovdqa	%xmm6, (LR_VECTOR_OFFSET + VECTOR_SIZE*6)(%rsp)
+ 	jmp 1f
+-2:	vmovdqu (LR_VECTOR_OFFSET + VECTOR_SIZE*6)(%rsp), %ymm6
++# if HAVE_NO_AVX512_ASM_SUPPORT
++2:	.byte 0x62,0xf1,0xfe,0x48,0x6f,0x74,0x24,0x09 # vmovdqu64 0x240(%rsp),%zmm6
++# else
++2:	VMOV (LR_VECTOR_OFFSET + VECTOR_SIZE*6)(%rsp), %VEC(6)
++# endif
+ 	vmovdqa	%xmm6, (LR_XMM_OFFSET + XMM_SIZE*6)(%rsp)
+ 
+ 1:	vpcmpeqq (LR_SIZE + XMM_SIZE*7)(%rsp), %xmm7, %xmm8
+@@ -136,7 +176,11 @@
+ 	je 2f
+ 	vmovdqa	%xmm7, (LR_VECTOR_OFFSET + VECTOR_SIZE*7)(%rsp)
+ 	jmp 1f
+-2:	vmovdqu (LR_VECTOR_OFFSET + VECTOR_SIZE*7)(%rsp), %ymm7
++# if HAVE_NO_AVX512_ASM_SUPPORT
++2:	.byte 0x62,0xf1,0xfe,0x48,0x6f,0x7c,0x24,0x0a # vmovdqu64 0x280(%rsp),%zmm7
++# else
++2:	VMOV (LR_VECTOR_OFFSET + VECTOR_SIZE*7)(%rsp), %VEC(7)
++# endif
+ 	vmovdqa	%xmm7, (LR_XMM_OFFSET + XMM_SIZE*7)(%rsp)
+ 
+ 1:
+@@ -214,8 +258,13 @@
+ 
+ #ifdef RESTORE_AVX
+ 	/* This is to support AVX audit modules.  */
+-	vmovdqu %ymm0, LRV_VECTOR0_OFFSET(%rcx)
+-	vmovdqu %ymm1, LRV_VECTOR1_OFFSET(%rcx)
++# if HAVE_NO_AVX512_ASM_SUPPORT
++	.byte 0x62,0xf1,0xfe,0x48,0x7f,0x81,0x50,0x00,0x00,0x00 # vmovdqu64 %zmm0,0x50(%rcx)
++	.byte 0x62,0xf1,0xfe,0x48,0x7f,0x89,0x90,0x00,0x00,0x00 # vmovdqu64 %zmm1,0x90(%rcx)
++# else
++	VMOV %VEC(0), LRV_VECTOR0_OFFSET(%rcx)
++	VMOV %VEC(1), LRV_VECTOR1_OFFSET(%rcx)
++# endif
+ 
+ 	/* Save xmm0/xmm1 registers to detect if they are changed
+ 	   by audit module.  */
+@@ -244,13 +293,21 @@
+ 	vpmovmskb %xmm2, %esi
+ 	cmpl $0xffff, %esi
+ 	jne 1f
+-	vmovdqu LRV_VECTOR0_OFFSET(%rsp), %ymm0
++# if HAVE_NO_AVX512_ASM_SUPPORT
++	.byte 0x62,0xf1,0xfe,0x48,0x6f,0x84,0x24,0x50,0x00,0x00,0x00 # vmovdqu64 0x50(%rsp),%zmm0
++# else
++	VMOV LRV_VECTOR0_OFFSET(%rsp), %VEC(0)
++# endif
+ 
+ 1:	vpcmpeqq (LRV_SIZE + XMM_SIZE)(%rsp), %xmm1, %xmm2
+ 	vpmovmskb %xmm2, %esi
+ 	cmpl $0xffff, %esi
+ 	jne 1f
+-	vmovdqu LRV_VECTOR1_OFFSET(%rsp), %ymm1
++# if HAVE_NO_AVX512_ASM_SUPPORT
++	.byte 0x62,0xf1,0xfe,0x48,0x6f,0x8c,0x24,0x90,0x00,0x00,0x00 # vmovdqu64 0x90(%rsp),%zmm1
++# else
++	VMOV LRV_VECTOR1_OFFSET(%rsp), %VEC(1)
++# endif
+ 
+ 1:
+ #endif
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/x86_64/dl-trampoline.S glibc-2.12-2-gc4ccff1.mod/sysdeps/x86_64/dl-trampoline.S
+--- glibc-2.12-2-gc4ccff1/sysdeps/x86_64/dl-trampoline.S	2015-03-03 23:03:05.108457659 -0500
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/x86_64/dl-trampoline.S	2015-03-03 23:07:31.799049953 -0500
+@@ -134,7 +134,7 @@
+ 	.previous
+ 
+ 	cmpl	$0, L(have_avx)(%rip)
+-	jne	1f
++	jne	L(defined)
+ 	movq	%rbx, %r11		# Save rbx
+ 	movl	$1, %eax
+ 	cpuid
+@@ -143,18 +143,51 @@
+ 	// AVX and XSAVE supported?
+ 	andl	$((1 << 28) | (1 << 27)), %ecx
+ 	cmpl	$((1 << 28) | (1 << 27)), %ecx
+-	jne	2f
++	jne	10f
++	// AVX512 supported in processor?
++	movq	%rbx, %r11		# Save rbx
++	xorl	%ecx, %ecx
++	mov	$0x7, %eax
++	cpuid
++	andl	$(1 << 16), %ebx
+ 	xorl	%ecx, %ecx
+ 	// Get XFEATURE_ENABLED_MASK
+ 	xgetbv
+-	andl	$0x6, %eax
+-2:	subl	$0x5, %eax
++	test	%ebx, %ebx
++	movq	%r11, %rbx		# Restore rbx
++	je	20f
++	// Verify that XCR0[7:5] = '111b' and
++	// XCR0[2:1] = '11b' which means
++	// that zmm state is enabled
++	andl	$0xe6, %eax
++	cmpl	$0xe6, %eax
++	jne	20f
++	movl	%eax, L(have_avx)(%rip)
++L(avx512):
++#   define RESTORE_AVX
++#   define HAVE_NO_AVX512_ASM_SUPPORT 1
++#   define VMOV    vmovdqu64
++#   define VEC(i)  zmm##i
++#   define MORE_CODE
++#   include "dl-trampoline.h"
++#   undef VMOV
++#   undef VEC
++#   undef RESTORE_AVX
++#   undef HAVE_NO_AVX512_ASM_SUPPORT
++20:	andl	$0x6, %eax
++10:	subl	$0x5, %eax
+ 	movl	%eax, L(have_avx)(%rip)
+ 	cmpl	$0, %eax
+ 
+-1:	js	L(no_avx)
++L(defined):
++	js	L(no_avx)
++	cmpl	$0xe6, L(have_avx)(%rip)
++	je	L(avx512)
++
+ 
+ #  define RESTORE_AVX
++#  define VMOV    vmovdqu
++#  define VEC(i)  ymm##i
+ #  define MORE_CODE
+ #  include "dl-trampoline.h"
+ 
+@@ -178,7 +211,7 @@
+ _dl_x86_64_save_sse:
+ # ifdef HAVE_AVX_SUPPORT
+ 	cmpl	$0, L(have_avx)(%rip)
+-	jne	1f
++	jne	L(defined_5)
+ 	movq	%rbx, %r11		# Save rbx
+ 	movl	$1, %eax
+ 	cpuid
+@@ -187,21 +220,37 @@
+ 	// AVX and XSAVE supported?
+ 	andl	$((1 << 28) | (1 << 27)), %ecx
+ 	cmpl	$((1 << 28) | (1 << 27)), %ecx
+-	jne	2f
++	jne	1f
++	// AVX512 supported in a processor?
++	movq	%rbx, %r11              # Save rbx
++	xorl	%ecx,%ecx
++	mov	$0x7,%eax
++	cpuid
++	andl	$(1 << 16), %ebx
+ 	xorl	%ecx, %ecx
+ 	// Get XFEATURE_ENABLED_MASK
+ 	xgetbv
+-	andl	$0x6, %eax
+-	cmpl	$0x6, %eax
+-	// Nonzero if SSE and AVX state saving is enabled.
+-	sete	%al
+-2:	leal	-1(%eax,%eax), %eax
++	test	%ebx, %ebx
++	movq	%r11, %rbx		# Restore rbx
++	je	2f
++	// Verify that XCR0[7:5] = '111b' and
++	// XCR0[2:1] = '11b' which means
++	// that zmm state is enabled
++	andl	$0xe6, %eax
+ 	movl	%eax, L(have_avx)(%rip)
+-	cmpl	$0, %eax
++	cmpl	$0xe6, %eax
++	je	L(avx512_5)
+ 
+-1:	js	L(no_avx5)
++2:	andl	$0x6, %eax
++1:	subl	$0x5, %eax
++	movl	%eax, L(have_avx)(%rip)
++	cmpl	$0, %eax
+ 
+-#  define YMM_SIZE 32
++L(defined_5):
++	js	L(no_avx5)
++	cmpl	$0xe6, L(have_avx)(%rip)
++	je	L(avx512_5)
++ 
+ 	vmovdqa %ymm0, %fs:RTLD_SAVESPACE_SSE+0*YMM_SIZE
+ 	vmovdqa %ymm1, %fs:RTLD_SAVESPACE_SSE+1*YMM_SIZE
+ 	vmovdqa %ymm2, %fs:RTLD_SAVESPACE_SSE+2*YMM_SIZE
+@@ -211,6 +260,26 @@
+ 	vmovdqa %ymm6, %fs:RTLD_SAVESPACE_SSE+6*YMM_SIZE
+ 	vmovdqa %ymm7, %fs:RTLD_SAVESPACE_SSE+7*YMM_SIZE
+ 	ret
++L(avx512_5):
++# Original instructions:
++#	vmovdqu64 %zmm0, %fs:RTLD_SAVESPACE_SSE+0*ZMM_SIZE
++#	vmovdqu64 %zmm1, %fs:RTLD_SAVESPACE_SSE+1*ZMM_SIZE
++#	vmovdqu64 %zmm2, %fs:RTLD_SAVESPACE_SSE+2*ZMM_SIZE
++#	vmovdqu64 %zmm3, %fs:RTLD_SAVESPACE_SSE+3*ZMM_SIZE
++#	vmovdqu64 %zmm4, %fs:RTLD_SAVESPACE_SSE+4*ZMM_SIZE
++#	vmovdqu64 %zmm5, %fs:RTLD_SAVESPACE_SSE+5*ZMM_SIZE
++#	vmovdqu64 %zmm6, %fs:RTLD_SAVESPACE_SSE+6*ZMM_SIZE
++#	vmovdqu64 %zmm7, %fs:RTLD_SAVESPACE_SSE+7*ZMM_SIZE
++# Assembled instructions:
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x7f,0x04,0x25,0x80,0x00,0x00,0x00 # vmovdqu64 %zmm0,%fs:0x80
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x7f,0x0c,0x25,0xc0,0x00,0x00,0x00 # vmovdqu64 %zmm1,%fs:0xc0
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x7f,0x14,0x25,0x00,0x01,0x00,0x00 # vmovdqu64 %zmm2,%fs:0x100
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x7f,0x1c,0x25,0x40,0x01,0x00,0x00 # vmovdqu64 %zmm3,%fs:0x140
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x7f,0x24,0x25,0x80,0x01,0x00,0x00 # vmovdqu64 %zmm4,%fs:0x180
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x7f,0x2c,0x25,0xc0,0x01,0x00,0x00 # vmovdqu64 %zmm5,%fs:0x1c0
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x7f,0x34,0x25,0x00,0x02,0x00,0x00 # vmovdqu64 %zmm6,%fs:0x200
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x7f,0x3c,0x25,0x40,0x02,0x00,0x00 # vmovdqu64 %zmm7,%fs:0x240
++	ret
+ L(no_avx5):
+ # endif
+ 	movdqa	%xmm0, %fs:RTLD_SAVESPACE_SSE+0*XMM_SIZE
+@@ -234,6 +303,8 @@
+ # ifdef HAVE_AVX_SUPPORT
+ 	cmpl	$0, L(have_avx)(%rip)
+ 	js	L(no_avx6)
++	cmpl	$0xe6, L(have_avx)(%rip)
++	je	L(avx512_6)
+ 
+ 	vmovdqa %fs:RTLD_SAVESPACE_SSE+0*YMM_SIZE, %ymm0
+ 	vmovdqa %fs:RTLD_SAVESPACE_SSE+1*YMM_SIZE, %ymm1
+@@ -244,6 +315,26 @@
+ 	vmovdqa %fs:RTLD_SAVESPACE_SSE+6*YMM_SIZE, %ymm6
+ 	vmovdqa %fs:RTLD_SAVESPACE_SSE+7*YMM_SIZE, %ymm7
+ 	ret
++L(avx512_6):
++# Original instructions:
++#	vmovdqu64 %fs:RTLD_SAVESPACE_SSE+0*ZMM_SIZE, %zmm0
++#	vmovdqu64 %fs:RTLD_SAVESPACE_SSE+1*ZMM_SIZE, %zmm1
++#	vmovdqu64 %fs:RTLD_SAVESPACE_SSE+2*ZMM_SIZE, %zmm2
++#	vmovdqu64 %fs:RTLD_SAVESPACE_SSE+3*ZMM_SIZE, %zmm3
++#	vmovdqu64 %fs:RTLD_SAVESPACE_SSE+4*ZMM_SIZE, %zmm4
++#	vmovdqu64 %fs:RTLD_SAVESPACE_SSE+5*ZMM_SIZE, %zmm5
++#	vmovdqu64 %fs:RTLD_SAVESPACE_SSE+6*ZMM_SIZE, %zmm6
++#	vmovdqu64 %fs:RTLD_SAVESPACE_SSE+7*ZMM_SIZE, %zmm7
++# Assembled instructions:
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x6f,0x04,0x25,0x80,0x00,0x00,0x00 # vmovdqu64 %fs:0x80,%zmm0
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x6f,0x0c,0x25,0xc0,0x00,0x00,0x00 # vmovdqu64 %fs:0xc0,%zmm1
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x6f,0x14,0x25,0x00,0x01,0x00,0x00 # vmovdqu64 %fs:0x100,%zmm2
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x6f,0x1c,0x25,0x40,0x01,0x00,0x00 # vmovdqu64 %fs:0x140,%zmm3
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x6f,0x24,0x25,0x80,0x01,0x00,0x00 # vmovdqu64 %fs:0x180,%zmm4
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x6f,0x2c,0x25,0xc0,0x01,0x00,0x00 # vmovdqu64 %fs:0x1c0,%zmm5
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x6f,0x34,0x25,0x00,0x02,0x00,0x00 # vmovdqu64 %fs:0x200,%zmm6
++	.byte 0x64,0x62,0xf1,0xfe,0x48,0x6f,0x3c,0x25,0x40,0x02,0x00,0x00 # vmovdqu64 %fs:0x240,%zmm7
++	ret
+ L(no_avx6):
+ # endif
+ 	movdqa	%fs:RTLD_SAVESPACE_SSE+0*XMM_SIZE, %xmm0
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/x86_64/link-defines.sym glibc-2.12-2-gc4ccff1.mod/sysdeps/x86_64/link-defines.sym
+--- glibc-2.12-2-gc4ccff1/sysdeps/x86_64/link-defines.sym	2010-05-04 07:27:23.000000000 -0400
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/x86_64/link-defines.sym	2015-03-03 23:03:25.042829206 -0500
+@@ -4,6 +4,8 @@
+ --
+ VECTOR_SIZE		sizeof (La_x86_64_vector)
+ XMM_SIZE		sizeof (La_x86_64_xmm)
++YMM_SIZE		sizeof (La_x86_64_ymm)
++ZMM_SIZE		sizeof (La_x86_64_zmm)
+ 
+ LR_SIZE			sizeof (struct La_x86_64_regs)
+ LR_RDX_OFFSET		offsetof (struct La_x86_64_regs, lr_rdx)

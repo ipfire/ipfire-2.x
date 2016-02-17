@@ -1,0 +1,142 @@
+diff --git a/resolv/arpa/nameser.h b/resolv/arpa/nameser.h
+index fb8513b..372d5cd 100644
+--- a/resolv/arpa/nameser.h
++++ b/resolv/arpa/nameser.h
+@@ -293,6 +293,9 @@ typedef enum __ns_type {
+ 	ns_t_sink = 40,		/*%< Kitchen sink (experimentatl) */
+ 	ns_t_opt = 41,		/*%< EDNS0 option (meta-RR) */
+ 	ns_t_apl = 42,		/*%< Address prefix list (RFC3123) */
++	ns_t_rrsig = 46,	/*%< DNSSEC RRset Signature (RFC4034) */
++	ns_t_nsec = 47,		/*%< DNSSEC Next-Secure Record (RFC4034)*/
++	ns_t_dnskey = 48,	/*%< DNSSEC key record (RFC4034) */
+ 	ns_t_tkey = 249,	/*%< Transaction key */
+ 	ns_t_tsig = 250,	/*%< Transaction signature. */
+ 	ns_t_ixfr = 251,	/*%< Incremental zone transfer. */
+diff --git a/resolv/arpa/nameser_compat.h b/resolv/arpa/nameser_compat.h
+index d59c9e4..284bff7 100644
+--- a/resolv/arpa/nameser_compat.h
++++ b/resolv/arpa/nameser_compat.h
+@@ -164,6 +164,9 @@ typedef struct {
+ #define T_NAPTR		ns_t_naptr
+ #define T_A6		ns_t_a6
+ #define T_DNAME		ns_t_dname
++#define T_RRSIG		ns_t_rrsig
++#define T_NSEC		ns_t_nsec
++#define T_DNSKEY	ns_t_dnskey
+ #define	T_TSIG		ns_t_tsig
+ #define	T_IXFR		ns_t_ixfr
+ #define T_AXFR		ns_t_axfr
+diff --git a/resolv/gethnamaddr.c b/resolv/gethnamaddr.c
+index a861a84..ae55fac 100644
+--- a/resolv/gethnamaddr.c
++++ b/resolv/gethnamaddr.c
+@@ -331,23 +331,36 @@ getanswer (const querybuf *answer, int anslen, const char *qname, int qtype)
+ 			buflen -= n;
+ 			continue;
+ 		}
+-		if ((type == T_SIG) || (type == T_KEY) || (type == T_NXT)) {
+-			/* We don't support DNSSEC yet.  For now, ignore
+-			 * the record and send a low priority message
+-			 * to syslog.
+-			 */
+-			syslog(LOG_DEBUG|LOG_AUTH,
++		if ((type == T_SIG) || (type == T_KEY) || (type == T_NXT)
++		    || (type == T_RRSIG) || (type == T_NSEC)
++		    || (type == T_DNSKEY)) {
++		        /* We don't support DNSSEC responses yet, but we do
++			 * allow setting the DO bit.  If the DNS server sent us
++			 * these records without us asking for it, ignore the
++			 * record and send a low priority message to syslog.
++		         */
++			if ((_res.options & RES_USE_DNSSEC) == 0) {
++				syslog(LOG_DEBUG|LOG_AUTH,
+ 	       "gethostby*.getanswer: asked for \"%s %s %s\", got type \"%s\"",
+-			       qname, p_class(C_IN), p_type(qtype),
+-			       p_type(type));
++					qname, p_class(C_IN), p_type(qtype),
++					p_type(type));
++			}
+ 			cp += n;
+ 			continue;
+ 		}
+ 		if (type != qtype) {
+-			syslog(LOG_NOTICE|LOG_AUTH,
++			/* Skip logging if we received a DNAME when we have set
++			 * the DO bit.  DNAME records are a convenient way to
++			 * set up DNSSEC records and such setups can make this
++			 * log message needlessly noisy.
++			 */
++			if (!((_res.options & RES_USE_DNSSEC)
++			      && type == T_DNAME)) {
++				syslog(LOG_NOTICE|LOG_AUTH,
+ 	       "gethostby*.getanswer: asked for \"%s %s %s\", got type \"%s\"",
+-			       qname, p_class(C_IN), p_type(qtype),
+-			       p_type(type));
++					qname, p_class(C_IN), p_type(qtype),
++					p_type(type));
++			}
+ 			cp += n;
+ 			continue;		/* XXX - had_error++ ? */
+ 		}
+diff --git a/resolv/nss_dns/dns-host.c b/resolv/nss_dns/dns-host.c
+index f715ab0..510d388 100644
+--- a/resolv/nss_dns/dns-host.c
++++ b/resolv/nss_dns/dns-host.c
+@@ -822,13 +822,20 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
+ 	}
+       if (__builtin_expect (type == T_SIG, 0)
+ 	  || __builtin_expect (type == T_KEY, 0)
+-	  || __builtin_expect (type == T_NXT, 0))
++	  || __builtin_expect (type == T_NXT, 0)
++	  || __builtin_expect (type == T_RRSIG, 0)
++	  || __builtin_expect (type == T_NSEC, 0)
++	  || __builtin_expect (type == T_DNSKEY, 0))
+ 	{
+-	  /* We don't support DNSSEC yet.  For now, ignore the record
+-	     and send a low priority message to syslog.  */
+-	  syslog (LOG_DEBUG | LOG_AUTH,
+-	       "gethostby*.getanswer: asked for \"%s %s %s\", got type \"%s\"",
+-		  qname, p_class (C_IN), p_type(qtype), p_type (type));
++	  /* We don't support DNSSEC responses yet, but we do allow setting the
++	     DO bit.  If the DNS server sent us these records without us asking
++	     for it, ignore the record and send a low priority message to
++	     syslog.  */
++	  if ((_res.options & RES_USE_DNSSEC) == 0)
++	    syslog (LOG_DEBUG | LOG_AUTH,
++		    "gethostby*.getanswer: asked for \"%s %s %s\", "
++		    "got type \"%s\"",
++		    qname, p_class (C_IN), p_type(qtype), p_type (type));
+ 	  cp += n;
+ 	  continue;
+ 	}
+@@ -837,9 +844,14 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
+ 	have_to_map = 1;
+       else if (__builtin_expect (type != qtype, 0))
+ 	{
+-	  syslog (LOG_NOTICE | LOG_AUTH,
+-	       "gethostby*.getanswer: asked for \"%s %s %s\", got type \"%s\"",
+-		  qname, p_class (C_IN), p_type (qtype), p_type (type));
++	  /* Skip logging if we received a DNAME when we have set the DO bit.
++	     DNAME records are a convenient way to set up DNSSEC records and
++	     such setups can make this log message needlessly noisy.  */
++	  if (!((_res.options & RES_USE_DNSSEC) && type == T_DNAME))
++	    syslog (LOG_NOTICE | LOG_AUTH,
++		    "gethostby*.getanswer: asked for \"%s %s %s\", "
++		    "got type \"%s\"",
++		    qname, p_class (C_IN), p_type (qtype), p_type (type));
+ 	  cp += n;
+ 	  continue;			/* XXX - had_error++ ? */
+ 	}
+diff --git a/resolv/res_debug.c b/resolv/res_debug.c
+index 7843439..4a49629 100644
+--- a/resolv/res_debug.c
++++ b/resolv/res_debug.c
+@@ -450,6 +450,8 @@ const struct res_sym __p_type_syms[] = {
+ 	{ns_t_kx,	"KX",		"Key Exchange"},
+ 	{ns_t_cert,	"CERT",		"Certificate"},
+ 	{ns_t_any,	"ANY",		"\"any\""},
++	/* TODO Add RRSIG, NSEC and DNSKEY once we actually do something with
++	   them.  */
+ 	{0, 		NULL,		NULL}
+ };
+ libresolv_hidden_data_def (__p_type_syms)

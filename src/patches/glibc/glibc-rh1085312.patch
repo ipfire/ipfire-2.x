@@ -1,0 +1,34 @@
+commit 58b930ae216bfa98cd60212b954b07b9963d6d04
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Wed Sep 10 21:51:50 2014 +0530
+
+    Return failure in getnetgrent only when all netgroups have been searched (#17363)
+    
+    The netgroups lookup code fails when one of the groups in the search
+    tree is empty.  In such a case it only returns the leaves of the tree
+    after the blank netgroup.  This is because the line parser returns a
+    NOTFOUND status when the netgroup exists but is empty.  The
+    __getnetgrent_internal implementation needs to be fixed to try
+    remaining groups if the current group is entry.  This patch implements
+    this fix.  Tested on x86_64.
+    
+    	[BZ #17363]
+    	* inet/getnetgrent_r.c (__internal_getnetgrent_r): Try next
+    	group if the current group is empty.
+
+diff --git a/inet/getnetgrent_r.c b/inet/getnetgrent_r.c
+index f6d064d..e101537 100644
+--- a/inet/getnetgrent_r.c
++++ b/inet/getnetgrent_r.c
+@@ -297,7 +297,10 @@ __internal_getnetgrent_r (char **hostp, char **userp, char **domainp,
+     {
+       status = (*fct) (datap, buffer, buflen, &errno);
+ 
+-      if (status == NSS_STATUS_RETURN)
++      if (status == NSS_STATUS_RETURN
++	  /* The service returned a NOTFOUND, but there are more groups that we
++	     need to resolve before we give up.  */
++	  || (status == NSS_STATUS_NOTFOUND && datap->needed_groups != NULL))
+ 	{
+ 	  /* This was the last one for this group.  Look at next group
+ 	     if available.  */

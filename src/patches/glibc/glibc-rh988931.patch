@@ -1,0 +1,33 @@
+commit e23fe25b33324a9ea992276c1a4f04127bf9ba4b
+Author: Andreas Schwab <schwab@redhat.com>
+Date:   Sun Feb 20 07:24:56 2011 -0500
+
+    Move setting variable in relro data earlier in ld.so.
+
+diff --git a/elf/rtld.c b/elf/rtld.c
+index 8510380..174954b 100644
+--- a/elf/rtld.c
++++ b/elf/rtld.c
+@@ -2179,6 +2179,10 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
+      we need it in the memory handling later.  */
+   GLRO(dl_initial_searchlist) = *GL(dl_ns)[LM_ID_BASE]._ns_main_searchlist;
+ 
++  /* Remember the last search directory added at startup, now that
++     malloc will no longer be the one from dl-minimal.c.  */
++  GLRO(dl_init_all_dirs) = GL(dl_all_dirs);
++
+   if (prelinked)
+     {
+       if (main_map->l_info [ADDRIDX (DT_GNU_CONFLICT)] != NULL)
+@@ -2298,9 +2302,8 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
+ 			  lossage);
+     }
+ 
+-  /* Remember the last search directory added at startup, now that
+-     malloc will no longer be the one from dl-minimal.c.  */
+-  GLRO(dl_init_all_dirs) = GL(dl_all_dirs);
++  /* Make sure no new search directories have been added.  */
++  assert (GLRO(dl_init_all_dirs) == GL(dl_all_dirs));
+ 
+   if (! prelinked && rtld_multiple_ref)
+     {

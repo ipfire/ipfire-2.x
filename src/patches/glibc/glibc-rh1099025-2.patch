@@ -1,0 +1,159 @@
+commit d6c33fda03457ca8ca87a562fa2681af16ca4ea5
+Author: Roland McGrath <roland@hack.frob.com>
+Date:   Thu May 24 11:37:30 2012 -0700
+
+    Switch gettimeofday from INTUSE to libc_hidden_proto.
+
+diff --git a/include/sys/time.h b/include/sys/time.h
+index d5de942..599e189 100644
+--- a/include/sys/time.h
++++ b/include/sys/time.h
+@@ -4,9 +4,8 @@
+ /* Now document the internal interfaces.  */
+ extern int __gettimeofday (struct timeval *__tv,
+ 			   struct timezone *__tz);
+-extern int __gettimeofday_internal (struct timeval *__tv,
+-				    struct timezone *__tz)
+-	attribute_hidden;
++libc_hidden_proto (__gettimeofday)
++libc_hidden_proto (gettimeofday)
+ extern int __settimeofday (__const struct timeval *__tv,
+ 			   __const struct timezone *__tz)
+ 	attribute_hidden;
+@@ -22,8 +21,4 @@ extern int __utimes (const char *__file, const struct timeval __tvp[2])
+ 	attribute_hidden;
+ extern int __futimes (int fd, __const struct timeval tvp[2]) attribute_hidden;
+ 
+-#ifndef NOT_IN_libc
+-# define __gettimeofday(tv, tz) INTUSE(__gettimeofday) (tv, tz)
+-#endif
+-
+ #endif
+diff --git a/sysdeps/mach/gettimeofday.c b/sysdeps/mach/gettimeofday.c
+index 88dca8e..293a775 100644
+--- a/sysdeps/mach/gettimeofday.c
++++ b/sysdeps/mach/gettimeofday.c
+@@ -20,8 +20,6 @@
+ #include <sys/time.h>
+ #include <mach.h>
+ 
+-#undef __gettimeofday
+-
+ /* Get the current time of day and timezone information,
+    putting it into *TV and *TZ.  If TZ is NULL, *TZ is not filled.
+    Returns 0 on success, -1 on errors.  */
+@@ -42,6 +40,6 @@ __gettimeofday (tv, tz)
+     }
+   return 0;
+ }
+-
+-INTDEF(__gettimeofday)
++libc_hidden_def (__gettimeofday)
+ weak_alias (__gettimeofday, gettimeofday)
++libc_hidden_weak (gettimeofday)
+diff --git a/sysdeps/posix/gettimeofday.c b/sysdeps/posix/gettimeofday.c
+index 31b3dd3..1108ff0 100644
+--- a/sysdeps/posix/gettimeofday.c
++++ b/sysdeps/posix/gettimeofday.c
+@@ -19,8 +19,6 @@
+ #include <time.h>
+ #include <sys/time.h>
+ 
+-#undef __gettimeofday
+-
+ /* Get the current time of day and timezone information,
+    putting it into *TV and *TZ.  If TZ is NULL, *TZ is not filled.
+    Returns 0 on success, -1 on errors.  */
+@@ -66,6 +64,6 @@ __gettimeofday (tv, tz)
+ 
+   return 0;
+ }
+-
+-INTDEF(__gettimeofday)
++libc_hidden_def (__gettimeofday)
+ weak_alias (__gettimeofday, gettimeofday)
++libc_hidden_weak (gettimeofday)
+diff --git a/sysdeps/unix/syscalls.list b/sysdeps/unix/syscalls.list
+index 39c40ed..bd780f5 100644
+--- a/sysdeps/unix/common/syscalls.list
++++ b/sysdeps/unix/common/syscalls.list
+@@ -5,7 +5,7 @@ getpid		-	getpid		Ei:	__getpid	getpid
+ fchown		-	fchown		i:iii	__fchown	fchown
+ ftruncate	-	ftruncate	i:ii	__ftruncate	ftruncate
+ getrusage	-	getrusage	i:ip	__getrusage	getrusage
+-gettimeofday	-	gettimeofday	i:PP	__gettimeofday	gettimeofday __gettimeofday_internal
++gettimeofday	-	gettimeofday	i:pP	__gettimeofday	gettimeofday
+ settimeofday	-	settimeofday	i:PP	__settimeofday	settimeofday
+ setpgid		-	setpgrp		i:ii	__setpgid	setpgid
+ setregid	-	setregid	i:ii	__setregid	setregid
+diff --git a/sysdeps/unix/sysv/linux/powerpc/gettimeofday.c b/sysdeps/unix/sysv/linux/powerpc/gettimeofday.c
+index b2ef2da..7376135 100644
+--- a/sysdeps/unix/sysv/linux/powerpc/gettimeofday.c
++++ b/sysdeps/unix/sysv/linux/powerpc/gettimeofday.c
+@@ -35,5 +35,6 @@ __gettimeofday (tv, tz)
+ }
+-
+-#endif
+-INTDEF (__gettimeofday)
++libc_hidden_def (__gettimeofday)
++
++#endif
+ weak_alias (__gettimeofday, gettimeofday)
++libc_hidden_weak (gettimeofday)
+diff --git a/sysdeps/unix/sysv/linux/s390/gettimeofday.c b/sysdeps/unix/sysv/linux/s390/gettimeofday.c
+index 63faef8..efbf1e8 100644
+--- a/sysdeps/unix/sysv/linux/s390/gettimeofday.c
++++ b/sysdeps/unix/sysv/linux/s390/gettimeofday.c
+@@ -22,7 +22,6 @@
+ #include <time.h>
+ #include <hp-timing.h>
+ 
+-#undef __gettimeofday
+ #include <bits/libc-vdso.h>
+ 
+ /* Get the current time of day and timezone information,
+@@ -36,6 +35,6 @@ __gettimeofday (tv, tz)
+ {
+   return INLINE_VSYSCALL (gettimeofday, 2, CHECK_1 (tv), CHECK_1 (tz));
+ }
+-
+-INTDEF (__gettimeofday)
++libc_hidden_def (__gettimeofday)
+ weak_alias (__gettimeofday, gettimeofday)
++libc_hidden_weak (gettimeofday)
+diff --git a/time/gettimeofday.c b/time/gettimeofday.c
+index cfe6549..7eb770c 100644
+--- a/time/gettimeofday.c
++++ b/time/gettimeofday.c
+@@ -18,8 +18,6 @@
+ #include <errno.h>
+ #include <sys/time.h>
+ 
+-#undef __gettimeofday
+-
+ /* Get the current time of day and timezone information,
+    putting it into *TV and *TZ.  If TZ is NULL, *TZ is not filled.
+    Returns 0 on success, -1 on errors.  */
+@@ -31,8 +29,9 @@ __gettimeofday (tv, tz)
+   __set_errno (ENOSYS);
+   return -1;
+ }
+-stub_warning (gettimeofday)
+-
+-INTDEF(__gettimeofday)
++libc_hidden_def (__gettimeofday)
+ weak_alias (__gettimeofday, gettimeofday)
++libc_hidden_weak (gettimeofday)
++
++stub_warning (gettimeofday)
+ #include <stub-tag.h>
+--- a/sysdeps/unix/sysv/linux/x86_64/gettimeofday.S	2014-07-28 14:40:24.640144825 +0530
++++ b/sysdeps/unix/sysv/linux/x86_64/gettimeofday.S	2014-07-28 14:40:21.320120072 +0530
+@@ -45,5 +45,6 @@
+ 	ret
+ PSEUDO_END(__gettimeofday)
+ 
+-strong_alias (__gettimeofday, __gettimeofday_internal)
++libc_hidden_def (__gettimeofday)
+ weak_alias (__gettimeofday, gettimeofday)
++libc_hidden_weak (gettimeofday)

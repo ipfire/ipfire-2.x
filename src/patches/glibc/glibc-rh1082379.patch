@@ -1,0 +1,63 @@
+commit ea7d8b95e2fcb81f68b04ed7787a3dbda023991a
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Thu Mar 27 19:48:15 2014 +0530
+
+    Avoid overlapping addresses to stpcpy calls in nscd (BZ #16760)
+    
+    Calls to stpcpy from nscd netgroups code will have overlapping source
+    and destination when all three values in the returned triplet are
+    non-NULL and in the expected (host,user,domain) order.  This is seen
+    in valgrind as:
+    
+    ==3181== Source and destination overlap in stpcpy(0x19973b48, 0x19973b48)
+    ==3181==    at 0x4C2F30A: stpcpy (in /usr/lib64/valgrind/vgpreload_memcheck-amd64-linux.so)
+    ==3181==    by 0x12567A: addgetnetgrentX (string3.h:111)
+    ==3181==    by 0x12722D: addgetnetgrent (netgroupcache.c:665)
+    ==3181==    by 0x11114C: nscd_run_worker (connections.c:1338)
+    ==3181==    by 0x4E3C102: start_thread (pthread_create.c:309)
+    ==3181==    by 0x59B81AC: clone (clone.S:111)
+    ==3181==
+    
+    Fix this by using memmove instead of stpcpy.
+
+diff --git a/nscd/netgroupcache.c b/nscd/netgroupcache.c
+index 5d15aa4..820d823 100644
+--- a/nscd/netgroupcache.c
++++ b/nscd/netgroupcache.c
+@@ -216,6 +216,10 @@ addgetnetgrentX (struct database_dyn *db, int fd, request_header *req,
+ 			    const char *nuser = data.val.triple.user;
+ 			    const char *ndomain = data.val.triple.domain;
+ 
++			    size_t hostlen = strlen (nhost ?: "") + 1;
++			    size_t userlen = strlen (nuser ?: "") + 1;
++			    size_t domainlen = strlen (ndomain ?: "") + 1;
++
+ 			    if (nhost == NULL || nuser == NULL || ndomain == NULL
+ 				|| nhost > nuser || nuser > ndomain)
+ 			      {
+@@ -233,9 +237,6 @@ addgetnetgrentX (struct database_dyn *db, int fd, request_header *req,
+ 				     : last + strlen (last) + 1 - buffer);
+ 
+ 				/* We have to make temporary copies.  */
+-				size_t hostlen = strlen (nhost ?: "") + 1;
+-				size_t userlen = strlen (nuser ?: "") + 1;
+-				size_t domainlen = strlen (ndomain ?: "") + 1;
+ 				size_t needed = hostlen + userlen + domainlen;
+ 
+ 				if (buflen - req->key_len - bufused < needed)
+@@ -269,9 +270,12 @@ addgetnetgrentX (struct database_dyn *db, int fd, request_header *req,
+ 			      }
+ 
+ 			    char *wp = buffer + buffilled;
+-			    wp = stpcpy (wp, nhost) + 1;
+-			    wp = stpcpy (wp, nuser) + 1;
+-			    wp = stpcpy (wp, ndomain) + 1;
++			    wp = memmove (wp, nhost ?: "", hostlen);
++			    wp += hostlen;
++			    wp = memmove (wp, nuser ?: "", userlen);
++			    wp += userlen;
++			    wp = memmove (wp, ndomain ?: "", domainlen);
++			    wp += domainlen;
+ 			    buffilled = wp - buffer;
+ 			    ++nentries;
+ 			  }

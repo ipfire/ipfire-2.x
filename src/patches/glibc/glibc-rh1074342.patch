@@ -1,0 +1,26 @@
+commit c44496df2f090a56d3bf75df930592dac6bba46f
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Wed Mar 12 17:27:22 2014 +0530
+
+    Provide correct buffer length to netgroup queries in nscd (BZ #16695)
+    
+    The buffer to query netgroup entries is allocated sufficient space for
+    the netgroup entries and the key to be appended at the end, but it
+    sends in an incorrect available length to the NSS netgroup query
+    functions, resulting in overflow of the buffer in some special cases.
+    The fix here is to factor in the key length when sending the available
+    buffer and buffer length to the query functions.
+
+diff --git a/nscd/netgroupcache.c b/nscd/netgroupcache.c
+index 426d3c5..5ba1e1f 100644
+--- a/nscd/netgroupcache.c
++++ b/nscd/netgroupcache.c
+@@ -202,7 +202,7 @@ addgetnetgrentX (struct database_dyn *db, int fd, request_header *req,
+ 		  {
+ 		    int e;
+ 		    status = getfct.f (&data, buffer + buffilled,
+-				       buflen - buffilled, &e);
++				       buflen - buffilled - req->key_len, &e);
+ 		    if (status == NSS_STATUS_RETURN
+ 			|| status == NSS_STATUS_NOTFOUND)
+ 		      /* This was either the last one for this group or the

@@ -1,0 +1,65 @@
+commit c3ec475c5dd16499aa040908e11d382c3ded9692
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Mon May 26 11:40:08 2014 +0530
+
+    Use NSS_STATUS_TRYAGAIN to indicate insufficient buffer (BZ #16878)
+    
+    The netgroups nss modules in the glibc tree use NSS_STATUS_UNAVAIL
+    (with errno as ERANGE) when the supplied buffer does not have
+    sufficient space for the result.  This is wrong, because the canonical
+    way to indicate insufficient buffer is to set the errno to ERANGE and
+    the status to NSS_STATUS_TRYAGAIN, as is used by all other modules.
+    
+    This fixes nscd behaviour when the nss_ldap module returns
+    NSS_STATUS_TRYAGAIN to indicate that a netgroup entry is too long to
+    fit into the supplied buffer.
+
+diff --git a/nscd/netgroupcache.c b/nscd/netgroupcache.c
+index b3d40e9..edab174 100644
+--- a/nscd/netgroupcache.c
++++ b/nscd/netgroupcache.c
+@@ -197,11 +197,6 @@ addgetnetgrentX (struct database_dyn *db, int fd, request_header *req,
+ 		    int e;
+ 		    status = getfct.f (&data, buffer + buffilled,
+ 				       buflen - buffilled - req->key_len, &e);
+-		    if (status == NSS_STATUS_RETURN
+-			|| status == NSS_STATUS_NOTFOUND)
+-		      /* This was either the last one for this group or the
+-			 group was empty.  Look at next group if available.  */
+-		      break;
+ 		    if (status == NSS_STATUS_SUCCESS)
+ 		      {
+ 			if (data.type == triple_val)
+@@ -320,11 +315,18 @@ addgetnetgrentX (struct database_dyn *db, int fd, request_header *req,
+ 			      }
+ 			  }
+ 		      }
+-		    else if (status == NSS_STATUS_UNAVAIL && e == ERANGE)
++		    else if (status == NSS_STATUS_TRYAGAIN && e == ERANGE)
+ 		      {
+ 			buflen *= 2;
+ 			buffer = xrealloc (buffer, buflen);
+ 		      }
++		    else if (status == NSS_STATUS_RETURN
++			     || status == NSS_STATUS_NOTFOUND
++			     || status == NSS_STATUS_UNAVAIL)
++		      /* This was either the last one for this group or the
++			 group was empty or the NSS module had an internal
++			 failure.  Look at next group if available.  */
++		      break;
+ 		  }
+ 
+ 	      enum nss_status (*endfct) (struct __netgrent *);
+diff --git a/nss/nss_files/files-netgrp.c b/nss/nss_files/files-netgrp.c
+index 34eae4c..bc0b367 100644
+--- a/nss/nss_files/files-netgrp.c
++++ b/nss/nss_files/files-netgrp.c
+@@ -252,7 +252,7 @@ _nss_netgroup_parseline (char **cursor, struct __netgrent *result,
+   if (cp - host > buflen)
+     {
+       *errnop = ERANGE;
+-      status = NSS_STATUS_UNAVAIL;
++      status = NSS_STATUS_TRYAGAIN;
+     }
+   else
+     {

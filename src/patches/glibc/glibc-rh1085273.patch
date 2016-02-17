@@ -1,0 +1,31 @@
+commit d41242129ba693cdbc8db85b846fcaccf9f0b7c4
+Author: Siddhesh Poyarekar <siddhesh@redhat.com>
+Date:   Thu Jan 2 10:03:12 2014 +0530
+
+    Fix infinite loop in nscd when netgroup is empty (bz #16365)
+    
+    Currently, when a user looks up a netgroup that does not have any
+    members, nscd goes into an infinite loop trying to find members in the
+    group.  This is because it does not handle cases when getnetgrent
+    returns an NSS_STATUS_NOTFOUND (which is what it does on empty group).
+    Fixed to handle this in the same way as NSS_STATUS_RETURN, similar to
+    what getgrent does by itself.
+
+diff --git a/nscd/netgroupcache.c b/nscd/netgroupcache.c
+index baebdd7..50936ee 100644
+--- a/nscd/netgroupcache.c
++++ b/nscd/netgroupcache.c
+@@ -180,9 +180,10 @@ addgetnetgrentX (struct database_dyn *db, int fd, request_header *req,
+ 		    int e;
+ 		    status = getfct.f (&data, buffer + buffilled,
+ 				       buflen - buffilled, &e);
+-		    if (status == NSS_STATUS_RETURN)
+-		      /* This was the last one for this group.  Look
+-			 at next group if available.  */
++		    if (status == NSS_STATUS_RETURN
++			|| status == NSS_STATUS_NOTFOUND)
++		      /* This was either the last one for this group or the
++			 group was empty.  Look at next group if available.  */
+ 		      break;
+ 		    if (status == NSS_STATUS_SUCCESS)
+ 		      {

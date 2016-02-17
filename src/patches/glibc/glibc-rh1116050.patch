@@ -1,0 +1,407 @@
+#
+# Based on this upstream commit:
+#
+# commit d8dd00805b8f3a011735d7a407097fb1c408d867
+# Author: H.J. Lu <hjl.tools@gmail.com>
+# Date:   Fri Nov 28 07:54:07 2014 -0800
+# 
+#     Resize DTV if the current DTV isn't big enough
+#     
+#     This patch changes _dl_allocate_tls_init to resize DTV if the current DTV
+#     isn't big enough.  Tested on X86-64, x32 and ia32.
+#     
+#         [BZ #13862]
+#         * elf/dl-tls.c: Include <atomic.h>.
+#         (oom): Remove #ifdef SHARED/#endif.
+#         (_dl_static_dtv, _dl_initial_dtv): Moved before ...
+#         (_dl_resize_dtv): This.  Extracted from _dl_update_slotinfo.
+#         (_dl_allocate_tls_init): Resize DTV if the current DTV isn't
+#         big enough.
+#         (_dl_update_slotinfo): Call _dl_resize_dtv to resize DTV.
+#         * nptl/Makefile (tests): Add tst-stack4.
+#         (modules-names): Add tst-stack4mod.
+#         ($(objpfx)tst-stack4): New.
+#         (tst-stack4mod.sos): Likewise.
+#         ($(objpfx)tst-stack4.out): Likewise.
+#         ($(tst-stack4mod.sos)): Likewise.
+#         (clean): Likewise.
+#         * nptl/tst-stack4.c: New file.
+#         * nptl/tst-stack4mod.c: Likewise.
+# 
+diff -urN glibc-2.12-2-gc4ccff1/elf/dl-tls.c glibc-2.12-2-gc4ccff1.mod/elf/dl-tls.c
+--- glibc-2.12-2-gc4ccff1/elf/dl-tls.c	2015-02-18 14:15:28.078461873 -0500
++++ glibc-2.12-2-gc4ccff1.mod/elf/dl-tls.c	2015-02-18 14:38:37.630374771 -0500
+@@ -24,6 +24,7 @@
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <sys/param.h>
++#include <atomic.h>
+ 
+ #include <tls.h>
+ #include <dl-tls.h>
+@@ -35,14 +36,12 @@
+ 
+ 
+ /* Out-of-memory handler.  */
+-#ifdef SHARED
+ static void
+ __attribute__ ((__noreturn__))
+ oom (void)
+ {
+   _dl_fatal_printf ("cannot allocate memory for thread-local data: ABORT\n");
+ }
+-#endif
+ 
+ 
+ size_t
+@@ -392,6 +391,52 @@
+   return result;
+ }
+ 
++static dtv_t *
++_dl_resize_dtv (dtv_t *dtv)
++{
++  /* Resize the dtv.  */
++  dtv_t *newp;
++  /* Load GL(dl_tls_max_dtv_idx) atomically since it may be written to by
++     other threads concurrently. -- We don't have the required atomic
++     infrastructure to load dl_tls_max_dtv_idx atomically, but on all the
++     architectures we care about it should load atomically. If this had
++     an atomic_load_acquire we would still be missing the releases for
++     the writes.  */
++  size_t newsize = GL(dl_tls_max_dtv_idx) + DTV_SURPLUS;
++  size_t oldsize = dtv[-1].counter;
++
++#if SHARED
++  if (dtv == GL(dl_initial_dtv))
++    {
++      /* This is the initial dtv that was either statically allocated in
++	 __libc_setup_tls or allocated during rtld startup using the
++	 dl-minimal.c malloc instead of the real malloc.  We can't free
++	 it, we have to abandon the old storage.  */
++
++      newp = malloc ((2 + newsize) * sizeof (dtv_t));
++      if (newp == NULL)
++	oom ();
++      memcpy (newp, &dtv[-1], (2 + oldsize) * sizeof (dtv_t));
++    }
++  else
++#endif
++    {
++      newp = realloc (&dtv[-1],
++		      (2 + newsize) * sizeof (dtv_t));
++      if (newp == NULL)
++	oom ();
++    }
++
++  newp[0].counter = newsize;
++
++  /* Clear the newly allocated part.  */
++  memset (newp + 2 + oldsize, '\0',
++	  (newsize - oldsize) * sizeof (dtv_t));
++
++  /* Return the generation counter.  */
++  return &newp[1];
++}
++
+ 
+ void *
+ internal_function
+@@ -406,6 +451,16 @@
+   size_t total = 0;
+   size_t maxgen = 0;
+ 
++  /* Check if the current dtv is big enough.   */
++  if (dtv[-1].counter < GL(dl_tls_max_dtv_idx))
++    {
++      /* Resize the dtv.  */
++      dtv = _dl_resize_dtv (dtv);
++
++      /* Install this new dtv in the thread data structures.  */
++      INSTALL_DTV (result, &dtv[-1]);
++    }
++
+   /* We have to prepare the dtv for all currently loaded modules using
+      TLS.  For those which are dynamically loaded we add the values
+      indicating deferred allocation.  */
+@@ -637,41 +692,10 @@
+ 	      assert (total + cnt == modid);
+ 	      if (dtv[-1].counter < modid)
+ 		{
+-		  /* Reallocate the dtv.  */
+-		  dtv_t *newp;
+-		  size_t newsize = GL(dl_tls_max_dtv_idx) + DTV_SURPLUS;
+-		  size_t oldsize = dtv[-1].counter;
+-
+-		  assert (map->l_tls_modid <= newsize);
+-
+-		  if (dtv == GL(dl_initial_dtv))
+-		    {
+-		      /* This is the initial dtv that was allocated
+-			 during rtld startup using the dl-minimal.c
+-			 malloc instead of the real malloc.  We can't
+-			 free it, we have to abandon the old storage.  */
+-
+-		      newp = malloc ((2 + newsize) * sizeof (dtv_t));
+-		      if (newp == NULL)
+-			oom ();
+-		      memcpy (newp, &dtv[-1], (2 + oldsize) * sizeof (dtv_t));
+-		    }
+-		  else
+-		    {
+-		      newp = realloc (&dtv[-1],
+-				      (2 + newsize) * sizeof (dtv_t));
+-		      if (newp == NULL)
+-			oom ();
+-		    }
+-
+-		  newp[0].counter = newsize;
+-
+-		  /* Clear the newly allocated part.  */
+-		  memset (newp + 2 + oldsize, '\0',
+-			  (newsize - oldsize) * sizeof (dtv_t));
++		  /* Resize the dtv.  */
++		  dtv = _dl_resize_dtv (dtv);
+ 
+-		  /* Point dtv to the generation counter.  */
+-		  dtv = &newp[1];
++		  assert (modid <= dtv[-1].counter);
+ 
+ 		  /* Install this new dtv in the thread data
+ 		     structures.  */
+diff -urN glibc-2.12-2-gc4ccff1/nptl/Makefile glibc-2.12-2-gc4ccff1.mod/nptl/Makefile
+--- glibc-2.12-2-gc4ccff1/nptl/Makefile	2015-02-18 14:15:28.073462028 -0500
++++ glibc-2.12-2-gc4ccff1.mod/nptl/Makefile	2015-02-18 14:15:49.817786667 -0500
+@@ -245,7 +245,7 @@
+ 	tst-exec1 tst-exec2 tst-exec3 tst-exec4 \
+ 	tst-exit1 tst-exit2 tst-exit3 \
+ 	tst-stdio1 tst-stdio2 \
+-	tst-stack1 tst-stack2 tst-stack3 \
++	tst-stack1 tst-stack2 tst-stack3 tst-stack4 \
+ 	tst-unload \
+ 	tst-dlsym1 \
+ 	tst-sysconf \
+@@ -304,7 +304,7 @@
+ 
+ modules-names = tst-atfork2mod tst-tls3mod tst-tls4moda tst-tls4modb \
+ 		tst-tls5mod tst-tls5moda tst-tls5modb tst-tls5modc \
+-		tst-tls5modd tst-tls5mode tst-tls5modf \
++		tst-tls5modd tst-tls5mode tst-tls5modf tst-stack4mod \
+ 		tst-_res1mod1 tst-_res1mod2 tst-execstack-mod tst-fini1mod
+ extra-test-objs += $(addsuffix .os,$(strip $(modules-names))) tst-cleanup4aux.o
+ test-extras += $(modules-names)
+@@ -459,6 +459,19 @@
+ 	$(common-objpfx)malloc/mtrace $(objpfx)tst-stack3.mtrace > $@
+ generated += tst-stack3-mem tst-stack3.mtrace
+ 
++$(objpfx)tst-stack4: $(libdl) $(shared-thread-library)
++tst-stack4mod.sos=$(shell for i in 0 1 2 3 4 5 6 7 8 9 10 \
++				   11 12 13 14 15 16 17 18 19; do \
++			    for j in 0 1 2 3 4 5 6 7 8 9 10 \
++				     11 12 13 14 15 16 17 18 19; do \
++			      echo $(objpfx)tst-stack4mod-$$i-$$j.so; \
++			    done; done)
++$(objpfx)tst-stack4.out: $(tst-stack4mod.sos)
++$(tst-stack4mod.sos): $(objpfx)tst-stack4mod.so
++	cp -f $< $@
++clean:
++	rm -f $(tst-stack4mod.sos)
++
+ $(objpfx)tst-cleanup4: $(objpfx)tst-cleanup4aux.o $(shared-thread-library)
+ $(objpfx)tst-cleanupx4: $(objpfx)tst-cleanup4aux.o $(shared-thread-library)
+ 
+diff -urN glibc-2.12-2-gc4ccff1/nptl/tst-stack4.c glibc-2.12-2-gc4ccff1.mod/nptl/tst-stack4.c
+--- glibc-2.12-2-gc4ccff1/nptl/tst-stack4.c	1969-12-31 19:00:00.000000000 -0500
++++ glibc-2.12-2-gc4ccff1.mod/nptl/tst-stack4.c	2015-02-18 14:15:49.817786667 -0500
+@@ -0,0 +1,159 @@
++/* Test DTV size oveflow when pthread_create reuses old DTV and TLS is
++   used by dlopened shared object.
++   Copyright (C) 2014 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#include <stdio.h>
++#include <stdint.h>
++#include <dlfcn.h>
++#include <assert.h>
++#include <pthread.h>
++
++/* The choices of thread count, and file counts are arbitary.
++   The point is simply to run enough threads that an exiting
++   thread has it's stack reused by another thread at the same
++   time as new libraries have been loaded.  */
++#define DSO_SHARED_FILES 20
++#define DSO_OPEN_THREADS 20
++#define DSO_EXEC_THREADS 2
++
++/* Used to make sure that only one thread is calling dlopen and dlclose
++   at a time.  */
++pthread_mutex_t g_lock;
++
++typedef void (*function) (void);
++
++void *
++dso_invoke(void *dso_fun)
++{
++  function *fun_vec = (function *) dso_fun;
++  int dso;
++
++  for (dso = 0; dso < DSO_SHARED_FILES; dso++)
++    (*fun_vec[dso]) ();
++
++  pthread_exit (NULL);
++}
++
++void *
++dso_process (void * p)
++{
++  void *handle[DSO_SHARED_FILES];
++  function fun_vec[DSO_SHARED_FILES];
++  char dso_path[DSO_SHARED_FILES][100];
++  int dso;
++  uintptr_t t = (uintptr_t) p;
++
++  /* Open DSOs and get a function.  */
++  for (dso = 0; dso < DSO_SHARED_FILES; dso++)
++    {
++      sprintf (dso_path[dso], "tst-stack4mod-%i-%i.so", t, dso);
++
++      pthread_mutex_lock (&g_lock);
++
++      handle[dso] = dlopen (dso_path[dso], RTLD_NOW);
++      assert (handle[dso]);
++
++      fun_vec[dso] = (function) dlsym (handle[dso], "function");
++      assert (fun_vec[dso]);
++
++      pthread_mutex_unlock (&g_lock);
++    }
++
++  /* Spawn workers.  */
++  pthread_t thread[DSO_EXEC_THREADS];
++  int i, ret;
++  uintptr_t result = 0;
++  for (i = 0; i < DSO_EXEC_THREADS; i++)
++    {
++      pthread_mutex_lock (&g_lock);
++      ret = pthread_create (&thread[i], NULL, dso_invoke, (void *) fun_vec);
++      if (ret != 0)
++	{
++	  printf ("pthread_create failed: %d\n", ret);
++	  result = 1;
++	}
++      pthread_mutex_unlock (&g_lock);
++    }
++
++  if (!result)
++    for (i = 0; i < DSO_EXEC_THREADS; i++)
++      {
++	ret = pthread_join (thread[i], NULL);
++	if (ret != 0)
++	  {
++	    printf ("pthread_join failed: %d\n", ret);
++	    result = 1;
++	  }
++      }
++
++  /* Close all DSOs.  */
++  for (dso = 0; dso < DSO_SHARED_FILES; dso++)
++    {
++      pthread_mutex_lock (&g_lock);
++      dlclose (handle[dso]);
++      pthread_mutex_unlock (&g_lock);
++    }
++
++  /* Exit.  */
++  pthread_exit ((void *) result);
++}
++
++static int
++do_test (void)
++{
++  pthread_t thread[DSO_OPEN_THREADS];
++  int i,j;
++  int ret;
++  int result = 0;
++
++  pthread_mutex_init (&g_lock, NULL);
++
++  /* 100 is arbitrary here and is known to trigger PR 13862.  */
++  for (j = 0; j < 100; j++)
++    {
++      for (i = 0; i < DSO_OPEN_THREADS; i++)
++	{
++	  ret = pthread_create (&thread[i], NULL, dso_process,
++				(void *) (uintptr_t) i);
++	  if (ret != 0)
++	    {
++	      printf ("pthread_create failed: %d\n", ret);
++	      result = 1;
++	    }
++	}
++
++      if (result)
++	break;
++
++      for (i = 0; i < DSO_OPEN_THREADS; i++)
++	{
++	  ret = pthread_join (thread[i], NULL);
++	  if (ret != 0)
++	    {
++	      printf ("pthread_join failed: %d\n", ret);
++	      result = 1;
++	    }
++	}
++    }
++
++  return result;
++}
++
++#define TEST_FUNCTION do_test ()
++#define TIMEOUT 100
++#include "../test-skeleton.c"
+diff -urN glibc-2.12-2-gc4ccff1/nptl/tst-stack4mod.c glibc-2.12-2-gc4ccff1.mod/nptl/tst-stack4mod.c
+--- glibc-2.12-2-gc4ccff1/nptl/tst-stack4mod.c	1969-12-31 19:00:00.000000000 -0500
++++ glibc-2.12-2-gc4ccff1.mod/nptl/tst-stack4mod.c	2015-02-18 14:15:49.817786667 -0500
+@@ -0,0 +1,28 @@
++/* This tests DTV usage with TLS in dlopened shared object.
++   Copyright (C) 2014 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++/* 256 is arbitrary here and is known to trigger PR 13862.  */
++__thread int var[256] attribute_hidden = {0};
++
++void
++function (void)
++{
++  int i;
++  for (i = 0; i < sizeof (var) / sizeof (int); i++)
++    var[i] = i;
++}

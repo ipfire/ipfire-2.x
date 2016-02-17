@@ -1,0 +1,22 @@
+commit 2e96f1c73b06e81da59ef7fffa426dc201875f31
+Author: Andreas Schwab <schwab@redhat.com>
+Date:   Thu Aug 4 15:42:10 2011 -0400
+
+    Fix encoding name for IDN in getaddrinfo
+
+diff --git a/sysdeps/posix/getaddrinfo.c b/sysdeps/posix/getaddrinfo.c
+index 6d574c5..a5aafe9 100644
+--- a/sysdeps/posix/getaddrinfo.c
++++ b/sysdeps/posix/getaddrinfo.c
+@@ -432,7 +432,10 @@ gaih_inet (const char *name, const struct gaih_service *service,
+ 	  /* In case the output string is the same as the input string
+ 	     no new string has been allocated.  */
+ 	  if (p != name)
+-	    malloc_name = true;
++	    {
++	      name = p;
++	      malloc_name = true;
++	    }
+ 	}
+ #endif
+ 

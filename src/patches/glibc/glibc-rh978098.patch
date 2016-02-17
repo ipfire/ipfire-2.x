@@ -1,0 +1,124 @@
+#
+# Based on commit e6c61494125126d2ba77e5d99f83887a2ed49783.
+#
+# 2011-04-10  Ulrich Drepper  <drepper@gmail.com>
+# 
+#	[BZ #12650]
+#	* sysdeps/i386/dl-tls.h: Define TLS_DTV_UNALLOCATED.
+#	* sysdeps/ia64/dl-tls.h: Likewise.
+#	* sysdeps/powerpc/dl-tls.h: Likewise.
+#	* sysdeps/s390/dl-tls.h: Likewise.
+#	* sysdeps/sh/dl-tls.h: Likewise.
+#	* sysdeps/sparc/dl-tls.h: Likewise.
+#	* sysdeps/x86_64/dl-tls.h: Likewise.
+#	* elf/dl-tls.c: Don't define TLS_DTV_UNALLOCATED here.
+#
+diff -urN glibc-2.12-2-gc4ccff1/elf/dl-tls.c glibc-2.12-2-gc4ccff1.mod/elf/dl-tls.c
+--- glibc-2.12-2-gc4ccff1/elf/dl-tls.c	2015-02-18 05:16:56.087096028 -0500
++++ glibc-2.12-2-gc4ccff1.mod/elf/dl-tls.c	2015-02-18 05:21:04.018424445 -0500
+@@ -33,9 +33,6 @@
+    to allow dynamic loading of modules defining IE-model TLS data.  */
+ #define TLS_STATIC_SURPLUS	64 + DL_NNS * 100
+ 
+-/* Value used for dtv entries for which the allocation is delayed.  */
+-#define TLS_DTV_UNALLOCATED	((void *) -1l)
+-
+ 
+ /* Out-of-memory handler.  */
+ #ifdef SHARED
+diff -urN glibc-2.12-2-gc4ccff1/nptl/allocatestack.c glibc-2.12-2-gc4ccff1.mod/nptl/allocatestack.c
+--- glibc-2.12-2-gc4ccff1/nptl/allocatestack.c	2015-02-18 05:16:56.101095594 -0500
++++ glibc-2.12-2-gc4ccff1.mod/nptl/allocatestack.c	2015-02-18 05:21:04.019424414 -0500
+@@ -26,6 +26,7 @@
+ #include <sys/mman.h>
+ #include <sys/param.h>
+ #include <dl-sysdep.h>
++#include <dl-tls.h>
+ #include <tls.h>
+ #include <list.h>
+ #include <lowlevellock.h>
+@@ -242,6 +243,10 @@
+ 
+   /* Clear the DTV.  */
+   dtv_t *dtv = GET_DTV (TLS_TPADJ (result));
++  for (size_t cnt = 0; cnt < dtv[-1].counter; ++cnt)
++    if (! dtv[1 + cnt].pointer.is_static
++	&& dtv[1 + cnt].pointer.val != TLS_DTV_UNALLOCATED)
++      free (dtv[1 + cnt].pointer.val);
+   memset (dtv, '\0', (dtv[-1].counter + 1) * sizeof (dtv_t));
+ 
+   /* Re-initialize the TLS.  */
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/i386/dl-tls.h glibc-2.12-2-gc4ccff1.mod/sysdeps/i386/dl-tls.h
+--- glibc-2.12-2-gc4ccff1/sysdeps/i386/dl-tls.h	2010-05-04 07:27:23.000000000 -0400
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/i386/dl-tls.h	2015-02-18 05:21:04.019424414 -0500
+@@ -58,3 +58,6 @@
+ 
+ # endif
+ #endif
++
++/* Value used for dtv entries for which the allocation is delayed.  */
++#define TLS_DTV_UNALLOCATED	((void *) -1l)
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/ia64/dl-tls.h glibc-2.12-2-gc4ccff1.mod/sysdeps/ia64/dl-tls.h
+--- glibc-2.12-2-gc4ccff1/sysdeps/ia64/dl-tls.h	2010-05-04 07:27:23.000000000 -0400
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/ia64/dl-tls.h	2015-02-18 05:21:04.019424414 -0500
+@@ -28,3 +28,6 @@
+ #define DONT_USE_TLS_INDEX	1
+ 
+ extern void *__tls_get_addr (size_t m, size_t offset);
++
++/* Value used for dtv entries for which the allocation is delayed.  */
++#define TLS_DTV_UNALLOCATED	((void *) -1l)
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/powerpc/dl-tls.h glibc-2.12-2-gc4ccff1.mod/sysdeps/powerpc/dl-tls.h
+--- glibc-2.12-2-gc4ccff1/sysdeps/powerpc/dl-tls.h	2010-05-04 07:27:23.000000000 -0400
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/powerpc/dl-tls.h	2015-02-18 05:21:04.019424414 -0500
+@@ -47,3 +47,6 @@
+ # define GET_ADDR_OFFSET	(ti->ti_offset + TLS_DTV_OFFSET)
+ # define __TLS_GET_ADDR(__ti)	(__tls_get_addr (__ti) - TLS_DTV_OFFSET)
+ #endif
++
++/* Value used for dtv entries for which the allocation is delayed.  */
++#define TLS_DTV_UNALLOCATED	((void *) -1l)
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/s390/dl-tls.h glibc-2.12-2-gc4ccff1.mod/sysdeps/s390/dl-tls.h
+--- glibc-2.12-2-gc4ccff1/sysdeps/s390/dl-tls.h	2010-05-04 07:27:23.000000000 -0400
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/s390/dl-tls.h	2015-02-18 05:21:04.019424414 -0500
+@@ -72,6 +72,9 @@
+ # define __TLS_GET_ADDR(__ti) \
+   ({ extern char _GLOBAL_OFFSET_TABLE_[] attribute_hidden;		  \
+      (void *) __tls_get_offset ((char *) (__ti) - _GLOBAL_OFFSET_TABLE_)  \
+-     + (unsigned long) __builtin_thread_pointer (); }) 
++     + (unsigned long) __builtin_thread_pointer (); })
+ 
+ #endif
++
++/* Value used for dtv entries for which the allocation is delayed.  */
++#define TLS_DTV_UNALLOCATED	((void *) -1l)
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/sh/dl-tls.h glibc-2.12-2-gc4ccff1.mod/sysdeps/sh/dl-tls.h
+--- glibc-2.12-2-gc4ccff1/sysdeps/sh/dl-tls.h	2010-05-04 07:27:23.000000000 -0400
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/sh/dl-tls.h	2015-02-18 05:21:04.019424414 -0500
+@@ -27,3 +27,6 @@
+ 
+ 
+ extern void *__tls_get_addr (tls_index *ti);
++
++/* Value used for dtv entries for which the allocation is delayed.  */
++#define TLS_DTV_UNALLOCATED	((void *) -1l)
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/sparc/dl-tls.h glibc-2.12-2-gc4ccff1.mod/sysdeps/sparc/dl-tls.h
+--- glibc-2.12-2-gc4ccff1/sysdeps/sparc/dl-tls.h	2010-05-04 07:27:23.000000000 -0400
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/sparc/dl-tls.h	2015-02-18 05:21:04.019424414 -0500
+@@ -27,3 +27,6 @@
+ 
+ 
+ extern void *__tls_get_addr (tls_index *ti);
++
++/* Value used for dtv entries for which the allocation is delayed.  */
++#define TLS_DTV_UNALLOCATED	((void *) -1l)
+diff -urN glibc-2.12-2-gc4ccff1/sysdeps/x86_64/dl-tls.h glibc-2.12-2-gc4ccff1.mod/sysdeps/x86_64/dl-tls.h
+--- glibc-2.12-2-gc4ccff1/sysdeps/x86_64/dl-tls.h	2010-05-04 07:27:23.000000000 -0400
++++ glibc-2.12-2-gc4ccff1.mod/sysdeps/x86_64/dl-tls.h	2015-02-18 05:21:04.019424414 -0500
+@@ -27,3 +27,6 @@
+ 
+ 
+ extern void *__tls_get_addr (tls_index *ti);
++
++/* Value used for dtv entries for which the allocation is delayed.  */
++#define TLS_DTV_UNALLOCATED	((void *) -1l)

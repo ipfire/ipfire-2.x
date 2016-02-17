@@ -1,0 +1,854 @@
+#
+# Based on the following patch:
+#
+# Upstream bug: https://sourceware.org/bugzilla/show_bug.cgi?id=14906
+# URL: https://sourceware.org/ml/libc-alpha/2015-02/msg00504.html
+#
+# 2015-02-17  Carlos O'Donell  <carlos@redhat.com>
+#  
+# 	[BZ #14906]
+# 	* nscd/cache.c (prune_cache): Use TRACED_FILE. Compare and update
+# 	traced file mtime. Use consistent log message.
+# 	* nscd/connections.c [HAVE_INOTIFY] (install_watches): New function.
+# 	(register_traced_file): Call install_watches. Always set mtime.
+# 	(invalidate_cache): Iterate over all trace files. Call install_watches.
+# 	(inotify_check_files): Don't inline. Handle watching parent
+# 	directories and configuration file movement in and out.
+# 	(handle_inotify_events): New function.
+# 	(main_loop_poll): Call handle_inotify_events.
+# 	(main_loop_epoll): Likewise.
+# 	* nscd/nscd.h: Define TRACED_FILE, TRACED_DIR, and PATH_MAX.
+# 	(struct traced_file): Use array of inotify fds. Add parent directory,
+# 	and basename.
+# 	(struct database_dyn): Remove unused file_mtime.
+# 	(init_traced_file): New inline function.
+# 	(define_traced_file): New macro.
+# 	* nss/nss_db/db-init.c: Use define_traced_file.
+# 	(_nss_db_init): Use init_traced_file.
+# 	* nss/nss_files/files-init.c: Use define_traced_file.
+# 	(_nss_files_init): Use init_traced_file.
+# 
+diff -urN glibc-2.12-2-gc4ccff1.orig/misc/sys/cdefs.h glibc-2.12-2-gc4ccff1.mod1/misc/sys/cdefs.h
+--- glibc-2.12-2-gc4ccff1.orig/misc/sys/cdefs.h	2015-02-18 04:42:12.115187116 -0500
++++ glibc-2.12-2-gc4ccff1.mod1/misc/sys/cdefs.h	2015-02-18 04:02:03.635159090 -0500
+@@ -362,6 +362,14 @@
+ # endif
+ #endif
+ 
++#if __GNUC__ >= 3
++# define __glibc_unlikely(cond) __builtin_expect ((cond), 0)
++# define __glibc_likely(cond)   __builtin_expect ((cond), 1)
++#else
++# define __glibc_unlikely(cond) (cond)
++# define __glibc_likely(cond)   (cond)
++#endif
++
+ #include <bits/wordsize.h>
+ 
+ #if defined __LONG_DOUBLE_MATH_OPTIONAL && defined __NO_LONG_DOUBLE_MATH
+diff -urN glibc-2.12-2-gc4ccff1.orig/nscd/cache.c glibc-2.12-2-gc4ccff1.mod1/nscd/cache.c
+--- glibc-2.12-2-gc4ccff1.orig/nscd/cache.c	2015-02-18 04:42:12.329180362 -0500
++++ glibc-2.12-2-gc4ccff1.mod1/nscd/cache.c	2015-02-18 04:02:03.635159090 -0500
+@@ -266,29 +266,52 @@
+ 
+   /* If we check for the modification of the underlying file we invalidate
+      the entries also in this case.  */
+-  if (table->inotify_descr < 0 && table->check_file && now != LONG_MAX)
++  if (table->check_file && now != LONG_MAX)
+     {
+-      struct stat64 st;
++      struct traced_file *runp = table->traced_files;
+ 
+-      if (stat64 (table->filename, &st) < 0)
++      while (runp != NULL)
+ 	{
+-	  char buf[128];
+-	  /* We cannot stat() the file, disable file checking if the
+-             file does not exist.  */
+-	  dbg_log (_("cannot stat() file `%s': %s"),
+-		   table->filename, strerror_r (errno, buf, sizeof (buf)));
+-	  if (errno == ENOENT)
+-	    table->check_file = 0;
+-	}
+-      else
+-	{
+-	  if (st.st_mtime != table->file_mtime)
++#ifdef HAVE_INOTIFY
++	  if (runp->inotify_descr[TRACED_FILE] == -1)
++#endif
+ 	    {
+-	      /* The file changed.  Invalidate all entries.  */
+-	      now = LONG_MAX;
+-	      table->file_mtime = st.st_mtime;
++	      struct stat64 st;
++
++	      if (stat64 (runp->fname, &st) < 0)
++		{
++		  /* Print a diagnostic that the traced file was missing.
++		     We must not disable tracing since the file might return
++		     shortly and we want to reload it at the next pruning.
++		     Disabling tracing here would go against the configuration
++		     as specified by the user via check-files.  */
++		  char buf[128];
++		  dbg_log (_("checking for monitored file `%s': %s"),
++			   runp->fname, strerror_r (errno, buf, sizeof (buf)));
++		}
++	      else
++		{
++		  /* This must be `!=` to catch cases where users turn the
++		     clocks back and we still want to detect any time difference
++		     in mtime.  */
++		  if (st.st_mtime != runp->mtime)
++		    {
++		      dbg_log (_("monitored file `%s` changed (mtime)"),
++			       runp->fname);
++		      /* The file changed. Invalidate all entries.  */
++		      now = LONG_MAX;
++		      runp->mtime = st.st_mtime;
++#ifdef HAVE_INOTIFY
++		      /* Attempt to install a watch on the file.  */
++		      install_watches (runp);
++#endif
++		    }
++		}
+ 	    }
++
++	  runp = runp->next;
+ 	}
++
+     }
+ 
+   /* We run through the table and find values which are not valid anymore.
+diff -urN glibc-2.12-2-gc4ccff1.orig/nscd/connections.c glibc-2.12-2-gc4ccff1.mod1/nscd/connections.c
+--- glibc-2.12-2-gc4ccff1.orig/nscd/connections.c	2015-02-18 04:42:12.333180236 -0500
++++ glibc-2.12-2-gc4ccff1.mod1/nscd/connections.c	2015-02-18 04:40:51.674726008 -0500
+@@ -74,6 +74,25 @@
+ static void begin_drop_privileges (void);
+ static void finish_drop_privileges (void);
+ 
++/* Define the traced files.  */
++#define PWD_FILENAME "/etc/passwd"
++define_traced_file (pwd, PWD_FILENAME);
++
++#define GRP_FILENAME "/etc/group"
++define_traced_file (grp, GRP_FILENAME);
++
++#define HST_FILENAME "/etc/hosts"
++define_traced_file (hst, HST_FILENAME);
++
++#define RESOLV_FILENAME "/etc/resolv.conf"
++define_traced_file (resolv, RESOLV_FILENAME);
++
++#define SERV_FILENAME "/etc/services"
++define_traced_file (serv, SERV_FILENAME);
++
++#define NETGR_FILENAME "/etc/netgroup"
++define_traced_file (netgr, NETGR_FILENAME);
++
+ /* Map request type to a string.  */
+ const char *const serv2str[LASTREQ] =
+ {
+@@ -115,8 +134,6 @@
+     .shared = 0,
+     .max_db_size = DEFAULT_MAX_DB_SIZE,
+     .suggested_module = DEFAULT_SUGGESTED_MODULE,
+-   .reset_res = 0,
+-    .filename = "/etc/passwd",
+     .db_filename = _PATH_NSCD_PASSWD_DB,
+     .disabled_iov = &pwd_iov_disabled,
+     .postimeout = 3600,
+@@ -136,8 +153,6 @@
+     .shared = 0,
+     .max_db_size = DEFAULT_MAX_DB_SIZE,
+     .suggested_module = DEFAULT_SUGGESTED_MODULE,
+-    .reset_res = 0,
+-    .filename = "/etc/group",
+     .db_filename = _PATH_NSCD_GROUP_DB,
+     .disabled_iov = &grp_iov_disabled,
+     .postimeout = 3600,
+@@ -157,8 +172,6 @@
+     .shared = 0,
+     .max_db_size = DEFAULT_MAX_DB_SIZE,
+     .suggested_module = DEFAULT_SUGGESTED_MODULE,
+-    .reset_res = 1,
+-    .filename = "/etc/hosts",
+     .db_filename = _PATH_NSCD_HOSTS_DB,
+     .disabled_iov = &hst_iov_disabled,
+     .postimeout = 3600,
+@@ -178,8 +191,6 @@
+     .shared = 0,
+     .max_db_size = DEFAULT_MAX_DB_SIZE,
+     .suggested_module = DEFAULT_SUGGESTED_MODULE,
+-    .reset_res = 0,
+-    .filename = "/etc/services",
+     .db_filename = _PATH_NSCD_SERVICES_DB,
+     .disabled_iov = &serv_iov_disabled,
+     .postimeout = 28800,
+@@ -199,8 +210,6 @@
+     .shared = 0,
+     .max_db_size = DEFAULT_MAX_DB_SIZE,
+     .suggested_module = DEFAULT_SUGGESTED_MODULE,
+-    .reset_res = 0,
+-    .filename = "/etc/netgroup",
+     .db_filename = _PATH_NSCD_NETGROUP_DB,
+     .disabled_iov = &netgroup_iov_disabled,
+     .postimeout = 28800,
+@@ -863,41 +872,26 @@
+ 	    dbs[cnt].shared = 0;
+ 	    assert (dbs[cnt].ro_fd == -1);
+ 	  }
++      }
+ 
+-	dbs[cnt].inotify_descr = -1;
+-	if (dbs[cnt].check_file)
+-	  {
+-#ifdef HAVE_INOTIFY
+-	    if (inotify_fd < 0
+-		|| (dbs[cnt].inotify_descr
+-		    = inotify_add_watch (inotify_fd, dbs[cnt].filename,
+-					 IN_DELETE_SELF | IN_MODIFY)) < 0)
+-	      /* We cannot notice changes in the main thread.  */
+-#endif
+-	      {
+-		/* We need the modification date of the file.  */
+-		struct stat64 st;
++  /* Initialize and register the traced files.  */
++  init_traced_file (&pwd_traced_file.file, PWD_FILENAME, 0);
++  register_traced_file (pwddb, &pwd_traced_file.file);
+ 
+-		if (stat64 (dbs[cnt].filename, &st) < 0)
+-		  {
+-		    /* We cannot stat() the file, disable file checking.  */
+-		    dbg_log (_("cannot stat() file `%s': %s"),
+-			     dbs[cnt].filename, strerror (errno));
+-		    dbs[cnt].check_file = 0;
+-		  }
+-		else
+-		  dbs[cnt].file_mtime = st.st_mtime;
+-	      }
+-	  }
++  init_traced_file (&grp_traced_file.file, GRP_FILENAME, 0);
++  register_traced_file (grpdb, &grp_traced_file.file);
+ 
+-#ifdef HAVE_INOTIFY
+-	if (cnt == hstdb && inotify_fd >= -1)
+-	  /* We also monitor the resolver configuration file.  */
+-	  resolv_conf_descr = inotify_add_watch (inotify_fd,
+-						 _PATH_RESCONF,
+-						 IN_DELETE_SELF | IN_MODIFY);
+-#endif
+-      }
++  init_traced_file (&hst_traced_file.file, HST_FILENAME, 0);
++  register_traced_file (hstdb, &hst_traced_file.file);
++
++  init_traced_file (&resolv_traced_file.file, RESOLV_FILENAME, 1);
++  register_traced_file (hstdb, &resolv_traced_file.file);
++
++  init_traced_file (&serv_traced_file.file, SERV_FILENAME, 0);
++  register_traced_file (servdb, &serv_traced_file.file);
++
++  init_traced_file (&netgr_traced_file.file, NETGR_FILENAME, 0);
++  register_traced_file (netgrdb, &netgr_traced_file.file);
+ 
+   /* Create the socket.  */
+ #ifndef __ASSUME_SOCK_CLOEXEC
+@@ -968,6 +962,92 @@
+     finish_drop_privileges ();
+ }
+ 
++#ifdef HAVE_INOTIFY
++#define TRACED_FILE_MASK (IN_DELETE_SELF | IN_CLOSE_WRITE | IN_MOVE_SELF)
++#define TRACED_DIR_MASK (IN_DELETE_SELF | IN_CREATE | IN_MOVED_TO | IN_MOVE_SELF)
++void
++install_watches (struct traced_file *finfo)
++{
++  /* If we have inotify support use it exclusively with no fallback
++     to stat.  This is a design decision to make the implementation
++     sipmler.  Either we use fstat for the file name or we use inotify
++     for both the file and parent directory.  */
++  if (finfo->inotify_descr[TRACED_FILE] < 0)
++    finfo->inotify_descr[TRACED_FILE] = inotify_add_watch (inotify_fd,
++							   finfo->fname,
++							   TRACED_FILE_MASK);
++  if (finfo->inotify_descr[TRACED_FILE] < 0)
++    {
++      dbg_log (_("disabled inotify-based monitoring for file `%s': %s"),
++		 finfo->fname, strerror (errno));
++      return;
++    }
++  dbg_log (_("monitoring file `%s` (%d)"),
++	   finfo->fname, finfo->inotify_descr[TRACED_FILE]);
++  /* Additionally listen for IN_CREATE events in the files parent
++     directory.  We do this because the file to be watched might be
++     deleted and then added back again.  When it is added back again
++     we must re-add the watch.  We must also cover IN_MOVED_TO to
++     detect a file being moved into the directory.  */
++  if (finfo->inotify_descr[TRACED_DIR] < 0)
++    finfo->inotify_descr[TRACED_DIR] = inotify_add_watch (inotify_fd,
++							  finfo->dname,
++							  TRACED_DIR_MASK);
++  if (finfo->inotify_descr[TRACED_DIR] < 0)
++    {
++      dbg_log (_("disabled inotify-based monitoring for directory `%s': %s"),
++		 finfo->fname, strerror (errno));
++      return;
++    }
++  dbg_log (_("monitoring directory `%s` (%d)"),
++	   finfo->dname, finfo->inotify_descr[TRACED_DIR]);
++}
++#endif
++
++/* Register the file in FINFO as a traced file for the database DBS[DBIX].
++
++   We support registering multiple files per database. Each call to
++   register_traced_file adds to the list of registered files.
++
++   When we prune the database, either through timeout or a request to
++   invalidate, we will check to see if any of the registered files has changed.
++   When we accept new connections to handle a cache request we will also
++   check to see if any of the registered files has changed.
++
++   If we have inotify support then we install an inotify fd to notify us of
++   file deletion or modification, both of which will require we invalidate
++   the cache for the database.  Without inotify support we stat the file and
++   store st_mtime to determine if the file has been modified.  */
++void
++register_traced_file (size_t dbidx, struct traced_file *finfo)
++{
++  /* If the database is disabled or file checking is disabled
++     then ignore the registration.  */
++  if (! dbs[dbidx].enabled || ! dbs[dbidx].check_file)
++    return;
++
++  if (__glibc_unlikely (debug_level > 0))
++    dbg_log (_("monitoring file %s for database %s"),
++	     finfo->fname, dbnames[dbidx]);
++
++#ifdef HAVE_INOTIFY
++  install_watches (finfo);
++#endif
++  struct stat64 st;
++  if (stat64 (finfo->fname, &st) < 0)
++    {
++      /* We cannot stat() the file, disable file checking.  */
++      dbg_log (_("disabled monitoring for file `%s': %s"),
++	       finfo->fname, strerror (errno));
++      finfo->mtime = 0;
++    }
++  else
++    finfo->mtime = st.st_mtime;
++
++  /* Queue up the file name.  */
++  finfo->next = dbs[dbidx].traced_files;
++  dbs[dbidx].traced_files = finfo;
++}
+ 
+ /* Close the connections.  */
+ void
+@@ -986,9 +1066,25 @@
+   for (number = pwddb; number < lastdb; ++number)
+     if (strcmp (key, dbnames[number]) == 0)
+       {
+-	if (dbs[number].reset_res)
+-	  res_init ();
+-
++	struct traced_file *runp = dbs[number].traced_files;
++	while (runp != NULL)
++	  {
++	    /* Make sure we reload from file when checking mtime.  */
++	    runp->mtime = 0;
++#ifdef HAVE_INOTIFY
++	    /* During an invalidation we try to reload the traced
++	       file watches.  This allows the user to re-sync if
++	       inotify events were lost.  Similar to what we do during
++	       pruning.  */
++	    install_watches (runp);
++#endif
++	    if (runp->call_res_init)
++	      {
++		res_init ();
++		break;
++	      }
++	    runp = runp->next;
++	  }
+ 	break;
+       }
+ 
+@@ -1817,6 +1913,231 @@
+ /* Array for times a connection was accepted.  */
+ static time_t *starttime;
+ 
++#ifdef HAVE_INOTIFY
++/* Inotify event for changed file.  */
++union __inev
++{
++  struct inotify_event i;
++# ifndef PATH_MAX
++#  define PATH_MAX 1024
++# endif
++  char buf[sizeof (struct inotify_event) + PATH_MAX];
++};
++
++/* Returns 0 if the file is there and matches the last mtime
++   on record, otherwise -1.  */
++int
++check_file (struct traced_file *finfo)
++{
++  struct stat64 st;
++  if (stat64 (finfo->fname, &st) < 0)
++    return -1;
++  return 0;
++}
++
++/* Process the inotify event in INEV. If the event matches any of the files
++   registered with a database then mark that database as requiring its cache
++   to be cleared. We indicate the cache needs clearing by setting
++   TO_CLEAR[DBCNT] to true for the matching database.  */
++static void
++inotify_check_files (bool *to_clear, union __inev *inev)
++{
++  /* Check which of the files changed.  */
++  for (size_t dbcnt = 0; dbcnt < lastdb; ++dbcnt)
++    {
++      struct traced_file *finfo = dbs[dbcnt].traced_files;
++
++      while (finfo != NULL)
++	{
++	  /* The configuration file was moved or deleted.
++	     We stop watching it at that point, and reinitialize.  */
++	  if (finfo->inotify_descr[TRACED_FILE] == inev->i.wd
++	      && ((inev->i.mask & IN_MOVE_SELF)
++		  || (inev->i.mask & IN_DELETE_SELF)
++		  || (inev->i.mask & IN_IGNORED)))
++	    {
++	      int ret;
++	      bool moved = (inev->i.mask & IN_MOVE_SELF) != 0;
++
++	      if (check_file (finfo) == 0)
++		{
++		  dbg_log (_("ignored out of order inotify event for `%s`"),
++			   finfo->fname);
++		  return;
++		}
++
++	      dbg_log (_("monitored file `%s` was %s, removing watch"),
++		       finfo->fname, moved ? "moved" : "deleted");
++	      /* File was moved out, remove the watch.  Watches are
++		 automatically removed when the file is deleted.  */
++	      if (moved)
++		{
++		  ret = inotify_rm_watch (inotify_fd, inev->i.wd);
++		  if (ret < 0)
++		    dbg_log (_("failed to remove file watch `%s`: %s"),
++			     finfo->fname, strerror (errno));
++		}
++	      finfo->inotify_descr[TRACED_FILE] = -1;
++	      to_clear[dbcnt] = true;
++	      if (finfo->call_res_init)
++	        res_init ();
++	      return;
++	    }
++	  /* The configuration file was open for writing and has just closed.
++	     We reset the cache and reinitialize.  */
++	  if (finfo->inotify_descr[TRACED_FILE] == inev->i.wd
++	      && inev->i.mask & IN_CLOSE_WRITE)
++	    {
++	      /* Mark cache as needing to be cleared and reinitialize.  */
++	      dbg_log (_("monitored file `%s` was written to"), finfo->fname);
++	      to_clear[dbcnt] = true;
++	      if (finfo->call_res_init)
++	        res_init ();
++	      return;
++	    }
++	  /* The parent directory was moved or deleted.  There is no coming
++	     back from this.  We do not track the parent of the parent, and
++	     once this happens we trigger one last invalidation.  You must
++	     restart nscd to track subsequent changes.   We track this to
++	     do one last robust re-initialization and then we're done.  */
++	  if (finfo->inotify_descr[TRACED_DIR] == inev->i.wd
++	      && ((inev->i.mask & IN_DELETE_SELF)
++		  || (inev->i.mask & IN_MOVE_SELF)
++		  || (inev->i.mask & IN_IGNORED)))
++	    {
++	      bool moved = (inev->i.mask & IN_MOVE_SELF) != 0;
++	      /* The directory watch may have already been removed
++		 but we don't know so we just remove it again and
++		 ignore the error.  Then we remove the file watch.
++		 Note: watches are automatically removed for deleted
++		 files.  */
++	      if (moved)
++		inotify_rm_watch (inotify_fd, inev->i.wd);
++	      if (finfo->inotify_descr[TRACED_FILE] != -1)
++		{
++		  dbg_log (_("monitored parent directory `%s` was %s, removing watch on `%s`"),
++			   finfo->dname, moved ? "moved" : "deleted", finfo->fname);
++		  if (inotify_rm_watch (inotify_fd, finfo->inotify_descr[TRACED_FILE]) < 0)
++		    dbg_log (_("failed to remove file watch `%s`: %s"),
++			     finfo->dname, strerror (errno));
++		}
++	      finfo->inotify_descr[TRACED_FILE] = -1;
++	      finfo->inotify_descr[TRACED_DIR] = -1;
++	      to_clear[dbcnt] = true;
++	      if (finfo->call_res_init)
++	        res_init ();
++	      /* Continue to the next entry since this might be the
++		 parent directory for multiple registered files and
++		 we want to remove watches for all registered files.  */
++	      continue;
++	    }
++	  /* The parent directory had a create or moved to event.  */
++	  if (finfo->inotify_descr[TRACED_DIR] == inev->i.wd
++	      && ((inev->i.mask & IN_MOVED_TO)
++		  || (inev->i.mask & IN_CREATE))
++	      && strcmp (inev->i.name, finfo->sfname) == 0)
++	    {
++	      /* We detected a directory change.  We look for the creation
++		 of the file we are tracking or the move of the same file
++		 into the directory.  */
++	      int ret;
++	      dbg_log (_("monitored file `%s` was %s, adding watch"),
++		       finfo->fname,
++		       inev->i.mask & IN_CREATE ? "created" : "moved into place");
++	      /* File was moved in or created.  Regenerate the watch.  */
++	      if (finfo->inotify_descr[TRACED_FILE] != -1)
++		inotify_rm_watch (inotify_fd,
++				  finfo->inotify_descr[TRACED_FILE]);
++
++	      ret = inotify_add_watch (inotify_fd,
++				       finfo->fname,
++				       TRACED_FILE_MASK);
++	      if (ret < 0)
++		dbg_log (_("failed to add file watch `%s`: %s"),
++			 finfo->fname, strerror (errno));
++
++	      finfo->inotify_descr[TRACED_FILE] = ret;
++
++	      /* The file is new or moved so mark cache as needing to
++		 be cleared and reinitialize.  */
++	      to_clear[dbcnt] = true;
++	      if (finfo->call_res_init)
++		res_init ();
++
++	      /* Done re-adding the watch.  Don't return, we may still
++		 have other files in this same directory, same watch
++		 descriptor, and need to process them.  */
++	    }
++	  /* Other events are ignored, and we move on to the next file.  */
++	  finfo = finfo->next;
++        }
++    }
++}
++
++/* If an entry in the array of booleans TO_CLEAR is TRUE then clear the cache
++   for the associated database, otherwise do nothing. The TO_CLEAR array must
++   have LASTDB entries.  */
++static inline void
++clear_db_cache (bool *to_clear)
++{
++  for (size_t dbcnt = 0; dbcnt < lastdb; ++dbcnt)
++    if (to_clear[dbcnt])
++      {
++	pthread_mutex_lock (&dbs[dbcnt].prune_lock);
++	dbs[dbcnt].clear_cache = 1;
++	pthread_mutex_unlock (&dbs[dbcnt].prune_lock);
++	pthread_cond_signal (&dbs[dbcnt].prune_cond);
++      }
++}
++
++int
++handle_inotify_events (void)
++{
++  bool to_clear[lastdb] = { false, };
++  union __inev inev;
++
++  /* Read all inotify events for files registered via
++     register_traced_file().  */
++  while (1)
++    {
++      /* Potentially read multiple events into buf.  */
++      ssize_t nb = TEMP_FAILURE_RETRY (read (inotify_fd,
++					     &inev.buf,
++					     sizeof (inev)));
++      if (nb < (ssize_t) sizeof (struct inotify_event))
++	{
++	  /* Not even 1 event.  */
++	  if (__glibc_unlikely (nb == -1 && errno != EAGAIN))
++	    return -1;
++	  /* Done reading events that are ready.  */
++	  break;
++	}
++      /* Process all events.  The normal inotify interface delivers
++	 complete events on a read and never a partial event.  */
++      char *eptr = &inev.buf[0];
++      ssize_t count;
++      while (1)
++	{
++	  /* Check which of the files changed.  */
++	  inotify_check_files (to_clear, &inev);
++	  count = sizeof (struct inotify_event) + inev.i.len;
++	  eptr += count;
++	  nb -= count;
++	  if (nb >= (ssize_t) sizeof (struct inotify_event))
++	    memcpy (&inev, eptr, nb);
++	  else
++	    break;
++	}
++      continue;
++    }
++  /* Actually perform the cache clearing.  */
++  clear_db_cache (to_clear);
++  return 0;
++}
++
++
++#endif
++
+ 
+ static void
+ __attribute__ ((__noreturn__))
+@@ -1910,66 +2231,21 @@
+ 	    {
+ 	      if (conns[1].revents != 0)
+ 		{
+-		  bool to_clear[lastdb] = { false, };
+-		  union
+-		  {
+-# ifndef PATH_MAX
+-#  define PATH_MAX 1024
+-# endif
+-		    struct inotify_event i;
+-		    char buf[sizeof (struct inotify_event) + PATH_MAX];
+-		  } inev;
++		  int ret;
++		  ret = handle_inotify_events ();
+ 
+-		  while (1)
++		  if (ret == -1)
+ 		    {
+-		      ssize_t nb = TEMP_FAILURE_RETRY (read (inotify_fd, &inev,
+-							     sizeof (inev)));
+-		      if (nb < (ssize_t) sizeof (struct inotify_event))
+-			{
+-			  if (__builtin_expect (nb == -1 && errno != EAGAIN,
+-						0))
+-			    {
+-			      /* Something went wrong when reading the inotify
+-				 data.  Better disable inotify.  */
+-			      dbg_log (_("\
+-disabled inotify after read error %d"),
+-				       errno);
+-			      conns[1].fd = -1;
+-			      firstfree = 1;
+-			      if (nused == 2)
+-				nused = 1;
+-			      close (inotify_fd);
+-			      inotify_fd = -1;
+-			    }
+-			  break;
+-			}
+-
+-		      /* Check which of the files changed.  */
+-		      for (size_t dbcnt = 0; dbcnt < lastdb; ++dbcnt)
+-			if (inev.i.wd == dbs[dbcnt].inotify_descr)
+-			  {
+-			    to_clear[dbcnt] = true;
+-			    goto next;
+-			  }
+-
+-		      if (inev.i.wd == resolv_conf_descr)
+-			{
+-			  res_init ();
+-			  to_clear[hstdb] = true;
+-			}
+-		    next:;
++		      /* Something went wrong when reading the inotify
++			 data.  Better disable inotify.  */
++		      dbg_log (_("disabled inotify-based monitoring after read error %d"), errno);
++		      conns[1].fd = -1;
++		      firstfree = 1;
++		      if (nused == 2)
++			nused = 1;
++		      close (inotify_fd);
++		      inotify_fd = -1;
+ 		    }
+-
+-		  /* Actually perform the cache clearing.  */
+-		  for (size_t dbcnt = 0; dbcnt < lastdb; ++dbcnt)
+-		    if (to_clear[dbcnt])
+-		      {
+-			pthread_mutex_lock (&dbs[dbcnt].prune_lock);
+-			dbs[dbcnt].clear_cache = 1;
+-			pthread_mutex_unlock (&dbs[dbcnt].prune_lock);
+-			pthread_cond_signal (&dbs[dbcnt].prune_cond);
+-		      }
+-
+ 		  --n;
+ 		}
+ 
+@@ -2112,58 +2388,18 @@
+ # ifdef HAVE_INOTIFY
+ 	else if (revs[cnt].data.fd == inotify_fd)
+ 	  {
+-	    bool to_clear[lastdb] = { false, };
+-	    union
+-	    {
+-	      struct inotify_event i;
+-	      char buf[sizeof (struct inotify_event) + PATH_MAX];
+-	    } inev;
+-
+-	    while (1)
++	    int ret;
++	    ret = handle_inotify_events ();
++	    if (ret == -1)
+ 	      {
+-		ssize_t nb = TEMP_FAILURE_RETRY (read (inotify_fd, &inev,
+-				 		 sizeof (inev)));
+-		if (nb < (ssize_t) sizeof (struct inotify_event))
+-		  {
+-		    if (__builtin_expect (nb == -1 && errno != EAGAIN, 0))
+-		      {
+-			/* Something went wrong when reading the inotify
+-			   data.  Better disable inotify.  */
+-			dbg_log (_("disabled inotify after read error %d"),
+-				 errno);
+-			(void) epoll_ctl (efd, EPOLL_CTL_DEL, inotify_fd,
+-					  NULL);
+-			close (inotify_fd);
+-			inotify_fd = -1;
+-		      }
+-		    break;
+-		  }
+-
+-		/* Check which of the files changed.  */
+-		for (size_t dbcnt = 0; dbcnt < lastdb; ++dbcnt)
+-		  if (inev.i.wd == dbs[dbcnt].inotify_descr)
+-		    {
+-		      to_clear[dbcnt] = true;
+-		      goto next;
+-		    }
+-
+-		if (inev.i.wd == resolv_conf_descr)
+-		  {
+-		    res_init ();
+-		    to_clear[hstdb] = true;
+-		  }
+-	      next:;
++		/* Something went wrong when reading the inotify
++		   data.  Better disable inotify.  */
++		dbg_log (_("disabled inotify-based monitoring after read error %d"), errno);
++		(void) epoll_ctl (efd, EPOLL_CTL_DEL, inotify_fd, NULL);
++		close (inotify_fd);
++		inotify_fd = -1;
++		break;
+ 	      }
+-
+-	    /* Actually perform the cache clearing.  */
+-	    for (size_t dbcnt = 0; dbcnt < lastdb; ++dbcnt)
+-	      if (to_clear[dbcnt])
+-		{
+-		  pthread_mutex_lock (&dbs[dbcnt].prune_lock);
+-		  dbs[dbcnt].clear_cache = 1;
+-		  pthread_mutex_unlock (&dbs[dbcnt].prune_lock);
+-		  pthread_cond_signal (&dbs[dbcnt].prune_cond);
+-		}
+ 	  }
+ # endif
+ 	else
+diff -urN glibc-2.12-2-gc4ccff1.orig/nscd/nscd.h glibc-2.12-2-gc4ccff1.mod1/nscd/nscd.h
+--- glibc-2.12-2-gc4ccff1.orig/nscd/nscd.h	2015-02-18 04:42:12.329180362 -0500
++++ glibc-2.12-2-gc4ccff1.mod1/nscd/nscd.h	2015-02-18 04:02:03.636159059 -0500
+@@ -62,6 +62,67 @@
+    80% of the thread stack size.  */
+ #define MAX_STACK_USE ((8 * NSCD_THREAD_STACKSIZE) / 10)
+ 
++/* Records the file registered per database that when changed
++   or modified requires invalidating the database.  */
++struct traced_file
++{
++  /* Tracks the last modified time of the traced file.  */
++  time_t mtime;
++  /* Support multiple registered files per database.  */
++  struct traced_file *next;
++  int call_res_init;
++  /* Requires Inotify support to do anything useful.  */
++#define TRACED_FILE	0
++#define TRACED_DIR	1
++  int inotify_descr[2];
++# ifndef PATH_MAX
++#  define PATH_MAX 1024
++# endif
++  /* The parent directory is used to scan for creation/deletion.  */
++  char dname[PATH_MAX];
++  /* Just the name of the file with no directory component.  */
++  char *sfname;
++  /* The full-path name of the registered file.  */
++  char fname[];
++};
++
++/* Initialize a `struct traced_file`.  As input we need the name
++   of the file, and if invalidation requires calling res_init.
++   If CRINIT is 1 then res_init will be called after invalidation
++   or if the traced file is changed in any way, otherwise it will
++   not.  */
++static inline void
++init_traced_file(struct traced_file *file, const char *fname, int crinit)
++{
++   char *dname;
++   file->mtime = 0;
++   file->inotify_descr[TRACED_FILE] = -1;
++   file->inotify_descr[TRACED_DIR] = -1;
++   strcpy (file->fname, fname);
++   /* Compute the parent directory name and store a copy.  The copy makes
++      it much faster to add/remove watches while nscd is running instead
++      of computing this over and over again in a temp buffer.  */
++   file->dname[0] = '\0';
++   dname = strrchr (fname, '/');
++   if (dname != NULL)
++     {
++       size_t len = (size_t)(dname - fname);
++       if (len > sizeof (file->dname))
++	 abort ();
++       strncpy (file->dname, file->fname, len);
++       file->dname[len] = '\0';
++     }
++   /* The basename is the name just after the last forward slash.  */
++   file->sfname = &dname[1];
++   file->call_res_init = crinit;
++}
++
++#define define_traced_file(id, filename) 			\
++static union							\
++{								\
++  struct traced_file file;					\
++  char buf[sizeof (struct traced_file) + sizeof (filename)];	\
++} id##_traced_file;
+ 
+ /* Structure describing dynamic part of one database.  */
+ struct database_dyn
+@@ -74,15 +135,12 @@
+ 
+   int enabled;
+   int check_file;
+-  int inotify_descr;
+   int clear_cache;
+   int persistent;
+   int shared;
+   int propagate;
+-  int reset_res;
+-  const char filename[16];
++  struct traced_file *traced_files;
+   const char *db_filename;
+-  time_t file_mtime;
+   size_t suggested_module;
+   size_t max_db_size;
+ 
+@@ -199,6 +257,10 @@
+ 
+ /* connections.c */
+ extern void nscd_init (void);
++extern void register_traced_file (size_t dbidx, struct traced_file *finfo);
++#ifdef HAVE_INOTIFY
++extern void install_watches (struct traced_file *finfo);
++#endif
+ extern void close_sockets (void);
+ extern void start_threads (void) __attribute__ ((__noreturn__));

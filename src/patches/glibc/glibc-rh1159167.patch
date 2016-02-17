@@ -1,0 +1,15 @@
+diff --git a/sunrpc/svc.c b/sunrpc/svc.c
+index ccf0902..30c3a93 100644
+--- a/sunrpc/svc.c
++++ b/sunrpc/svc.c
+@@ -97,8 +97,8 @@ xprt_register (SVCXPRT *xprt)
+ 
+   if (xports == NULL)
+     {
+-      xports = (SVCXPRT **) malloc (_rpc_dtablesize () * sizeof (SVCXPRT *));
+-      if (xports == NULL) /* Don´t add handle */
++      xports = (SVCXPRT **) calloc (_rpc_dtablesize (), sizeof (SVCXPRT *));
++      if (xports == NULL) /* Don't add handle */
+ 	return;
+     }
+ 
