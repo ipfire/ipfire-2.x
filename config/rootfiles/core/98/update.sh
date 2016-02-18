@@ -40,7 +40,7 @@ extract_files
 if [ -e /boot/grub/grub.conf ]; then
 	# legacy grub config on xen or citrix conflicts with grub2 config
 	# and core96 contains an empty file
-	if [ ! -s /boot/grub/grub.cfg ]
+	if [ ! -s /boot/grub/grub.cfg ]; then
 		rm /boot/grub/grub.cfg
 	fi
 fi
