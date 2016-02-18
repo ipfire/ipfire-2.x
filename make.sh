@@ -872,6 +872,7 @@ buildipfire() {
   ipfiremake freeradius
   ipfiremake perl-common-sense
   ipfiremake perl-inotify2
+  ipfiremake perl-Net-IP
 }
 
 buildinstaller() {
