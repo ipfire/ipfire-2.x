@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -20,7 +20,7 @@
 
 include Config
 
-VER        = 11.20.0
+VER        = 11.21.1
 
 THISAPP    = asterisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -28,7 +28,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 18
+PAK_VER    = 19
 
 DEPS       = "libsrtp"
 
@@ -46,7 +46,7 @@ asterisk-extra-sounds-en-gsm-1.4.15.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds
 asterisk-moh-opsound-gsm-2.03.tar.gz = $(URL_IPFIRE)/asterisk-moh-opsound-gsm-2.03.tar.gz
 asterisk-1.4-de-prompts.tar.gz = $(URL_IPFIRE)/asterisk-1.4-de-prompts.tar.gz
 
-$(DL_FILE)_MD5 = d15759b05862250073e2708394ad2f4c
+$(DL_FILE)_MD5 = 9594c3cdcf6dc16c719b5abb00dbdd8f
 asterisk-extra-sounds-en-gsm-1.4.15.tar.gz_MD5 = 5099fc65f49008e33ba7fb043a4ec995
 asterisk-moh-opsound-gsm-2.03.tar.gz_MD5 = 09066f55f1358f298bc1a6e4678a3ddf
 asterisk-1.4-de-prompts.tar.gz_MD5 = 626a2b95071a5505851e43874dfbfd5c
