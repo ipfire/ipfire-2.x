@@ -192,6 +192,9 @@ endif
 		--root-directory=$(MNThdd) $(DEVICE)
 endif
 
+	# Set ramdisk mode to automatic
+	echo RAMDISK_MODE=2 > $(MNThdd)/etc/sysconfig/ramdisk
+
 	# Automatically resize the root partition to its maximum size at first boot
 	touch $(MNThdd)/.partresize
 
