@@ -182,9 +182,10 @@ endif
 	mkdir -pv $(MNThdd)/boot/grub
 	chroot $(MNThdd) grub-mkconfig -o /boot/grub/grub.cfg
 
-	# Insert the UUID because grub-mkconfig fails to detect that correctly
+	# Insert the UUID because grub-mkconfig often fails to
+	# detect that correctly
 	sed -i $(MNThdd)/boot/grub/grub.cfg \
-		-e "s/root=[a-z0-9\/]*/root=UUID=$$(blkid -o value -s UUID $(PART_ROOT))/g"
+		-e "s/root=[A-Za-z0-9=-\/]*/root=UUID=$$(blkid -o value -s UUID $(PART_ROOT))/g"
 
 	# Install GRUB
 	grub-install --force --recheck --no-floppy \
