@@ -728,7 +728,7 @@ use_ramdisk() {
 		2)
 			local mem_avail="$(mem_amount)"
 
-			if [ ${mem_avail} -ge 490 ]; then
+			if [ ${mem_avail} -ge 400 ]; then
 				return 0
 			else
 				return 1
