@@ -35,7 +35,7 @@
 #
 URL_IPFIRE  = http://source.ipfire.org/source-2.x
 URL_TOOLCHAIN = http://source.ipfire.org/toolchains
-URL_SOURCE = source.ipfire.org:/pub/source/source-2.x
+URL_SOURCE = git.ipfire.org:/pub/source/source-2.x
 
 # Don't change this; it will be overridden by other makefiles where necessary.
 #
