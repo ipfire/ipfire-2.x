@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.5.1
+VER        = 3.0.4
 
 THISAPP    = bison-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects =$(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8fedf916f1aa2c4a31441d8f8bbc603c
+$(DL_FILE)_MD5 = c342201de104cc9ce0a21e0ad10d4021
 
 install : $(TARGET)
 
@@ -69,10 +69,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
-	# Disable NLS
-	#cd $(DIR_APP) && echo '#define YYENABLE_NLS 1' >> config.h
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls --docdir=/usr/share/doc/$(THISAPP)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 	@rm -rf $(DIR_APP)
