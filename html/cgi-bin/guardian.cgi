@@ -21,6 +21,7 @@
 
 use strict;
 use Locale::Codes::Country;
+use Guardian::Socket;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -156,8 +157,8 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 
 	# Check if guardian is running.
 	if ($pid > 0) {
-		# Call guardianctrl to perform a reload.
-		system("/usr/local/bin/guardianctrl reload &>/dev/null");
+		# Send reload command through socket connection.
+		&Guardian::Socket::Client("reload");
 	}
 
 ## Remove entry from ignore list.
@@ -186,8 +187,8 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 
 	# Check if guardian is running.
 	if ($pid > 0) {
-		# Call guardianctrl to perform a reload.
-		system("/usr/local/bin/guardianctrl reload &>/dev/null");
+		# Send reload command through socket connection.
+		&Guardian::Socket::Client("reload");
 	}
 
 ## Block a user given address or subnet.
@@ -233,8 +234,8 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
         if ($errormessage eq '') {
                 my $block = $settings{'ADDRESS_BLOCK'};
 
-                # Call helper to unblock address.
-                system("/usr/local/bin/guardianctrl block $block &>/dev/null");
+		# Send command to block the specified address through socket connection.
+		&Guardian::Socket::Client("block $block");
         }
 
 ## Unblock address or subnet.
@@ -257,16 +258,16 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	if ($errormessage eq '') {
                 my $unblock = $settings{'ADDRESS_UNBLOCK'};
 
-		# Call helper to unblock address.
-		system("/usr/local/bin/guardianctrl unblock $unblock &>/dev/null");
+		# Send command to unblock the given address through socket connection.
+		&Guardian::Socket::Client("unblock $unblock");
 	}
 
 ## Unblock all.
 #
 } elsif ($settings{'ACTION'} eq $Lang::tr{'unblock all'}) {
 
-	# Call helper to flush iptables chain from guardian.
-	system("/usr/local/bin/guardianctrl flush-chain &>/dev/null");
+	# Send flush command through socket connection.
+	&Guardian::Socket::Client("flush");
 }
 
 # Load settings from file.
@@ -749,14 +750,14 @@ sub BuildConfiguration() {
 	# Check if guardian should be started or stopped.
 	if($settings{'GUARDIAN_ENABLED'} eq 'on') {
 		if($pid > 0) {
-			# Call guardianctl to perform a reload.
-			system("/usr/local/bin/guardianctrl reload &>/dev/null");
+			# Send reload command through socket connection.
+			&Guardian::Socket::Client("reload");
 		} else {
 			# Launch guardian.
-			system("/usr/local/bin/guardianctrl start &>/dev/null");
+			system("/usr/local/bin/addonctrl guardian start &>/dev/null");
 		}
 	} else {
 		# Stop the daemon.
-		system("/usr/local/bin/guardianctrl stop &>/dev/null");
+		system("/usr/local/bin/addonctrl guardian stop &>/dev/null");
 	}
 }
