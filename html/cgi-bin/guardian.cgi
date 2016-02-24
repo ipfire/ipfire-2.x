@@ -64,10 +64,10 @@ our %settings = ();
 $settings{'ACTION'} = '';
 
 $settings{'GUARDIAN_ENABLED'} = 'off';
-$settings{'GUARDIAN_ENABLE_SNORT'} = 'on';
-$settings{'GUARDIAN_ENABLE_SSH'} = 'on';
-$settings{'GUARDIAN_ENABLE_HTTPD'} = 'on';
-$settings{'GUARDIAN_ENABLE_OWNCLOUD'} = '';
+$settings{'GUARDIAN_MONITOR_SNORT'} = 'on';
+$settings{'GUARDIAN_MONITOR_SSH'} = 'on';
+$settings{'GUARDIAN_MONITOR_HTTPD'} = 'on';
+$settings{'GUARDIAN_MONITOR_OWNCLOUD'} = '';
 $settings{'GUARDIAN_LOGLEVEL'} = 'info';
 $settings{'GUARDIAN_BLOCKCOUNT'} = '3';
 $settings{'GUARDIAN_BLOCKTIME'} = '86400';
@@ -77,7 +77,7 @@ $settings{'GUARDIAN_PRIORITY_LEVEL'} = '3';
 
 # Default settings for owncloud if installed.
 if ( -e "$owncloud_meta") {
-	$settings{'GUARDIAN_ENABLE_OWNCLOUD'} = 'off';
+	$settings{'GUARDIAN_MONITOR_OWNCLOUD'} = 'off';
 }
 
 my $errormessage = '';
@@ -285,18 +285,18 @@ sub showMainBox() {
 	$checked{'GUARDIAN_ENABLED'}{'on'} = '';
 	$checked{'GUARDIAN_ENABLED'}{'off'} = '';
 	$checked{'GUARDIAN_ENABLED'}{$settings{'GUARDIAN_ENABLED'}} = 'checked';
-	$checked{'GUARDIAN_ENABLE_SNORT'}{'off'} = '';
-	$checked{'GUARDIAN_ENABLE_SNORT'}{'on'} = '';
-	$checked{'GUARDIAN_ENABLE_SNORT'}{$settings{'GUARDIAN_ENABLE_SNORT'}} = "checked='checked'";
-	$checked{'GUARDIAN_ENABLE_SSH'}{'off'} = '';
-	$checked{'GUARDIAN_ENABLE_SSH'}{'on'} = '';
-	$checked{'GUARDIAN_ENABLE_SSH'}{$settings{'GUARDIAN_ENABLE_SSH'}} = "checked='checked'";
-	$checked{'GUARDIAN_ENABLE_HTTPD'}{'off'} = '';
-	$checked{'GUARDIAN_ENABLE_HTTPD'}{'on'} = '';
-	$checked{'GUARDIAN_ENABLE_HTTPD'}{$settings{'GUARDIAN_ENABLE_HTTPD'}} = "checked='checked'";
-	$checked{'GUARDIAN_ENABLE_OWNCLOUD'}{'off'} = '';
-	$checked{'GUARDIAN_ENABLE_OWNCLOUD'}{'on'} = '';
-	$checked{'GUARDIAN_ENABLE_OWNCLOUD'}{$settings{'GUARDIAN_ENABLE_OWNCLOUD'}} = "checked='checked'";
+	$checked{'GUARDIAN_MONITOR_SNORT'}{'off'} = '';
+	$checked{'GUARDIAN_MONITOR_SNORT'}{'on'} = '';
+	$checked{'GUARDIAN_MONITOR_SNORT'}{$settings{'GUARDIAN_MONITOR_SNORT'}} = "checked='checked'";
+	$checked{'GUARDIAN_MONITOR_SSH'}{'off'} = '';
+	$checked{'GUARDIAN_MONITOR_SSH'}{'on'} = '';
+	$checked{'GUARDIAN_MONITOR_SSH'}{$settings{'GUARDIAN_MONITOR_SSH'}} = "checked='checked'";
+	$checked{'GUARDIAN_MONITOR_HTTPD'}{'off'} = '';
+	$checked{'GUARDIAN_MONITOR_HTTPD'}{'on'} = '';
+	$checked{'GUARDIAN_MONITOR_HTTPD'}{$settings{'GUARDIAN_MONITOR_HTTPD'}} = "checked='checked'";
+	$checked{'GUARDIAN_MONITOR_OWNCLOUD'}{'off'} = '';
+	$checked{'GUARDIAN_MONITOR_OWNCLOUD'}{'on'} = '';
+	$checked{'GUARDIAN_MONITOR_OWNCLOUD'}{$settings{'GUARDIAN_MONITOR_OWNCLOUD'}} = "checked='checked'";
 
 	$selected{'GUARDIAN_LOGLEVEL'}{$settings{'GUARDIAN_LOGLEVEL'}} = 'selected';
 	$selected{'GUARDIAN_PRIORITY_LEVEL'}{$settings{'GUARDIAN_PRIORITY_LEVEL'}} = 'selected';
@@ -378,26 +378,26 @@ END
 			</tr>
 			<tr>
 				<td width='20%' class='base'>$Lang::tr{'guardian watch snort alertfile'}</td>
-				<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_SNORT' value='on' $checked{'GUARDIAN_ENABLE_SNORT'}{'on'} /> /
-				<input type='radio' name='GUARDIAN_ENABLE_SNORT' value='off' $checked{'GUARDIAN_ENABLE_SNORT'}{'off'} /> off</td>
+				<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_SNORT' value='on' $checked{'GUARDIAN_MONITOR_SNORT'}{'on'} /> /
+				<input type='radio' name='GUARDIAN_MONITOR_SNORT' value='off' $checked{'GUARDIAN_MONITOR_SNORT'}{'off'} /> off</td>
 			</tr>
 			<tr>
 				<td width='20%' class='base'>$Lang::tr{'guardian block ssh brute-force'}</td>
-				<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_SSH' value='on' $checked{'GUARDIAN_ENABLE_SSH'}{'on'} /> /
-				<input type='radio' name='GUARDIAN_ENABLE_SSH' value='off' $checked{'GUARDIAN_ENABLE_SSH'}{'off'} /> off</td>
+				<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_SSH' value='on' $checked{'GUARDIAN_MONITOR_SSH'}{'on'} /> /
+				<input type='radio' name='GUARDIAN_MONITOR_SSH' value='off' $checked{'GUARDIAN_MONITOR_SSH'}{'off'} /> off</td>
 			</tr>
 			<tr>
 				<td width='20%' class='base'>$Lang::tr{'guardian block httpd brute-force'}</td>
-				<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_HTTPD' value='on' $checked{'GUARDIAN_ENABLE_HTTPD'}{'on'} /> /
-				<input type='radio' name='GUARDIAN_ENABLE_HTTPD' value='off' $checked{'GUARDIAN_ENABLE_HTTPD'}{'off'} /> off</td>
+				<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_HTTPD' value='on' $checked{'GUARDIAN_MONITOR_HTTPD'}{'on'} /> /
+				<input type='radio' name='GUARDIAN_MONITOR_HTTPD' value='off' $checked{'GUARDIAN_MONITOR_HTTPD'}{'off'} /> off</td>
 			</tr>
 END
 			# Display owncloud checkbox when the addon is installed.
 			if ( -e "$owncloud_meta" ) {
 				print"<tr>\n";
 				print"<td width='20%' class='base'>$Lang::tr{'guardian block owncloud brute-force'}</td>\n";
-				print"<td align='left'>on <input type='radio' name='GUARDIAN_ENABLE_OWNCLOUD' value='on' $checked{'GUARDIAN_ENABLE_OWNCLOUD'}{'on'} /> /\n";
-				print"<input type='radio' name='GUARDIAN_ENABLE_OWNCLOUD' value='off' $checked{'GUARDIAN_ENABLE_OWNCLOUD'}{'off'} /> off</td>\n";
+				print"<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_OWNCLOUD' value='on' $checked{'GUARDIAN_MONITOR_OWNCLOUD'}{'on'} /> /\n";
+				print"<input type='radio' name='GUARDIAN_MONITOR_OWNCLOUD' value='off' $checked{'GUARDIAN_MONITOR_OWNCLOUD'}{'off'} /> off</td>\n";
 				print"</tr>\n";
 			}
 	print <<END;
