@@ -72,7 +72,6 @@ $settings{'GUARDIAN_LOGLEVEL'} = 'info';
 $settings{'GUARDIAN_BLOCKCOUNT'} = '3';
 $settings{'GUARDIAN_BLOCKTIME'} = '86400';
 $settings{'GUARDIAN_LOGFILE'} = '/var/log/guardian/guardian.log';
-$settings{'GUARDIAN_SNORT_ALERTFILE'} = '/var/log/snort/alert';
 $settings{'GUARDIAN_PRIORITY_LEVEL'} = '3';
 
 # Default settings for owncloud if installed.
@@ -107,11 +106,6 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	# Check Logfile.
 	unless($settings{'GUARDIAN_LOGFILE'} =~ /^[a-zA-Z0-9\.\/]+$/) {
 		$errormessage = "$Lang::tr{'guardian invalid logfile'}";
-	}
-
-	# Check input for snort alert file.
-	unless($settings{'GUARDIAN_SNORT_ALERTFILE'} =~ /^[a-zA-Z0-9\.\/]+$/) {
-		$errormessage = "$Lang::tr{'guardian invalid alertfile'}";
 	}
 
 	# Only continue if no error message has been set.
@@ -439,10 +433,6 @@ END
                                 <td width='20%' class='base'>$Lang::tr{'guardian logfile'}:</td>
                                 <td><input type='text' name='GUARDIAN_LOGFILE' value='$settings{'GUARDIAN_LOGFILE'}' size='30' /></td>
                         </tr>
-                        <tr>
-                                <td width='20%' class='base'>$Lang::tr{'guardian snort alertfile'}:</td>
-                                <td><input type='text' name='GUARDIAN_SNORT_ALERTFILE' value='$settings{'GUARDIAN_SNORT_ALERTFILE'}' size='30' /></td>
-                        </tr>
 		</table>
 END
 
@@ -699,7 +689,6 @@ sub BuildConfiguration() {
 	print FILE "BlockCount\t\t\t$settings{'GUARDIAN_BLOCKCOUNT'}\n";
 	print FILE "HostGatewayByte\t\t\t$HostGatewayByte\n";
 	print FILE "LogFile\t\t\t\t$settings{'GUARDIAN_LOGFILE'}\n";
-	print FILE "AlertFile\t\t\t$settings{'GUARDIAN_SNORT_ALERTFILE'}\n";
 	print FILE "IgnoreFile\t\t\t$ignorefile\n";
 	print FILE "TimeLimit\t\t\t$settings{'GUARDIAN_BLOCKTIME'}\n";
 	print FILE "PriorityLevel\t\t\t$settings{'GUARDIAN_PRIORITY_LEVEL'}\n";
