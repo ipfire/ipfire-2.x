@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2014  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2016  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -20,7 +20,7 @@
 ###############################################################################
 
 use strict;
-use Locale::Country;
+use Locale::Codes::Country;
 
 # enable only the following on debugging purpose
 #use warnings;
