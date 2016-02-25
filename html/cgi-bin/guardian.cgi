@@ -652,30 +652,49 @@ sub daemonstats() {
 }
 
 sub GetBlockedHosts() {
-
 	# Create new, empty array.
 	my @hosts;
 
 	# Lauch helper to get chains from iptables.
-	open(FILE, "/usr/local/bin/guardianctrl get-chain |");
+	system('/usr/local/bin/getipstat');
 
-	# Read file line by line and print out the elements.
-	foreach my $line (<FILE>) {
+	# Open temporary file which contains the chains and rules.
+	open (FILE, '/srv/web/ipfire/html/iptables.txt');
 
-		# Skip descriptive lines.
-		next if ($line =~ /^Chain/);
-		next if ($line =~ /^ pkts/);
+	# Loop through the entire file.
+	while (<FILE>) {
+		my $line = $_;
 
-		# Generate array, based on the line content (seperator is a single or multiple space's)
-		my @comps = split(/\s{1,}/, $line);
-		my ($lead, $pkts, $bytes, $target, $prot, $opt, $in, $out, $source, $destination) = @comps;
+		# Search for the guardian chain and extract
+		# the lines between it and the next empty line
+		# which is placed before the next firewall
+		# chain starts.
+		if ($line =~ /^Chain GUARDIAN/ .. /^\s*$/) {
+			# Skip descriptive lines.
+			next if ($line =~ /^Chain/);
+			next if ($line =~ /^ pkts/);
 
-		# Assign different variable names.
-		my $blocked_host = $source;
+			# Generate array, based on the line content (seperator is a single or multiple space's)
+			my @comps = split(/\s{1,}/, $line);
+			my ($lead, $pkts, $bytes, $target, $prot, $opt, $in, $out, $source, $destination) = @comps;
 
-		# Add host to our hosts array.
-		push(@hosts, $blocked_host);
+			# Assign different variable names.
+			my $blocked_host = $source;
+
+			# Add host to our hosts array.
+			if ($blocked_host) {
+				push(@hosts, $blocked_host);
+			}
+		}
 	}
+
+	# Close filehandle.
+	close(FILE);
+
+	# Remove recently created temporary files of the "getipstat" binary.
+	system(rm -f "/srv/web/ipfire/html/iptables.txt");
+	system(rm -f "/srv/web/ipfire/html/iptablesmangle.txt");
+	system(rm -f "/srv/web/ipfire/html/iptablesnat.txt");
 
 	# Convert entries, sort them, write back and store the sorted entries into new array.
 	my @sorted = map  { $_->[0] }
