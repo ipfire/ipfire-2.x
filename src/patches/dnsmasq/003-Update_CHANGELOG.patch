@@ -1,0 +1,17 @@
+X-Git-Url: http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=blobdiff_plain;f=CHANGELOG;h=6d9ba490488f80ef565f459cef3c110bdf31212c;hp=14354f2506a7fbf8360cd32c96e1d7ce1bfeb3f9;hb=e06e6e34bffd781b7cefa49b25fb8ae863654ca2;hpb=832e47beab95c2918b5264f0504f2fe6fe523e4c
+
+diff --git a/CHANGELOG b/CHANGELOG
+index 14354f2..6d9ba49 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -48,6 +48,10 @@ version 2.76
+ 	    (ie xx::0 to xx::ffff:ffff:ffff:ffff) 
+ 	    Thanks to Laurent Bendel for spotting this problem.
+ 
++	    Add support for a TTL parameter in --host-record and
++	    --cname.
++
++	    Add --dhcp-ttl option.
+ 
+ version 2.75
+             Fix reversion on 2.74 which caused 100% CPU use when a 

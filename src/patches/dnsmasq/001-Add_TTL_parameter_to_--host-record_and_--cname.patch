@@ -1,0 +1,265 @@
+From df3d54f776a3c9b60735b45c0b7fd88b66a2d5c4 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Wed, 24 Feb 2016 21:03:38 +0000
+Subject: [PATCH] Add TTL parameter to --host-record and --cname.
+
+---
+ man/dnsmasq.8 |   12 ++++++++++--
+ src/cache.c   |    7 +++++++
+ src/dnsmasq.h |    2 ++
+ src/option.c  |   46 ++++++++++++++++++++++++++++++++++++++--------
+ src/rfc1035.c |    6 +++++-
+ 5 files changed, 62 insertions(+), 11 deletions(-)
+
+diff --git a/man/dnsmasq.8 b/man/dnsmasq.8
+index b782eaf..7bc1394 100644
+--- a/man/dnsmasq.8
++++ b/man/dnsmasq.8
+@@ -529,7 +529,7 @@ zone files: the port, weight and priority numbers are in a different
+ order. More than one SRV record for a given service/domain is allowed,
+ all that match are returned.
+ .TP
+-.B --host-record=<name>[,<name>....],[<IPv4-address>],[<IPv6-address>]
++.B --host-record=<name>[,<name>....],[<IPv4-address>],[<IPv6-address>][,<TTL>]
+ Add A, AAAA and PTR records to the DNS. This adds one or more names to
+ the DNS with associated IPv4 (A) and IPv6 (AAAA) records. A name may
+ appear in more than one 
+@@ -546,6 +546,10 @@ is in effect. Short and long names may appear in the same
+ .B host-record,
+ eg. 
+ .B --host-record=laptop,laptop.thekelleys.org,192.168.0.1,1234::100
++
++If the time-to-live is given, it overrides the default, which is zero
++or the value of --local-ttl. The value is a positive integer and gives 
++the time-to-live in seconds.
+ .TP
+ .B \-Y, --txt-record=<name>[[,<text>],<text>]
+ Return a TXT DNS record. The value of TXT record is a set of strings,
+@@ -559,7 +563,7 @@ Return a PTR DNS record.
+ .B --naptr-record=<name>,<order>,<preference>,<flags>,<service>,<regexp>[,<replacement>]
+ Return an NAPTR DNS record, as specified in RFC3403.
+ .TP
+-.B --cname=<cname>,<target>
++.B --cname=<cname>,<target>[,<TTL>]
+ Return a CNAME record which indicates that <cname> is really
+ <target>. There are significant limitations on the target; it must be a
+ DNS name which is known to dnsmasq from /etc/hosts (or additional
+@@ -568,6 +572,10 @@ hosts files), from DHCP, from --interface-name or from another
+ If the target does not satisfy this
+ criteria, the whole cname is ignored. The cname must be unique, but it
+ is permissable to have more than one cname pointing to the same target.
++
++If the time-to-live is given, it overrides the default, which is zero
++or the value of -local-ttl. The value is a positive integer and gives 
++the time-to-live in seconds.
+ .TP
+ .B --dns-rr=<name>,<RR-number>,[<hex data>]
+ Return an arbitrary DNS Resource Record. The number is the type of the
+diff --git a/src/cache.c b/src/cache.c
+index a9eaa65..4ecd535 100644
+--- a/src/cache.c
++++ b/src/cache.c
+@@ -778,6 +778,7 @@ static void add_hosts_cname(struct crec *target)
+ 	(crec = whine_malloc(sizeof(struct crec))))
+       {
+ 	crec->flags = F_FORWARD | F_IMMORTAL | F_NAMEP | F_CONFIG | F_CNAME;
++	crec->ttd = a->ttl;
+ 	crec->name.namep = a->alias;
+ 	crec->addr.cname.target.cache = target;
+ 	crec->addr.cname.uid = target->uid;
+@@ -981,6 +982,7 @@ int read_hostsfile(char *filename, unsigned int index, int cache_size, struct cr
+ 		  strcat(cache->name.sname, ".");
+ 		  strcat(cache->name.sname, domain_suffix);
+ 		  cache->flags = flags;
++		  cache->ttd = daemon->local_ttl;
+ 		  add_hosts_entry(cache, &addr, addrlen, index, rhash, hashsz);
+ 		  name_count++;
+ 		}
+@@ -988,6 +990,7 @@ int read_hostsfile(char *filename, unsigned int index, int cache_size, struct cr
+ 		{
+ 		  strcpy(cache->name.sname, canon);
+ 		  cache->flags = flags;
++		  cache->ttd = daemon->local_ttl;
+ 		  add_hosts_entry(cache, &addr, addrlen, index, rhash, hashsz);
+ 		  name_count++;
+ 		}
+@@ -1057,6 +1060,7 @@ void cache_reload(void)
+ 	  ((cache = whine_malloc(sizeof(struct crec)))))
+ 	{
+ 	  cache->flags = F_FORWARD | F_NAMEP | F_CNAME | F_IMMORTAL | F_CONFIG;
++	  cache->ttd = a->ttl;
+ 	  cache->name.namep = a->alias;
+ 	  cache->addr.cname.target.int_name = intr;
+ 	  cache->addr.cname.uid = SRC_INTERFACE;
+@@ -1071,6 +1075,7 @@ void cache_reload(void)
+ 	(cache->addr.ds.keydata = blockdata_alloc(ds->digest, ds->digestlen)))
+       {
+ 	cache->flags = F_FORWARD | F_IMMORTAL | F_DS | F_CONFIG | F_NAMEP;
++	cache->ttd = daemon->local_ttl;
+ 	cache->name.namep = ds->name;
+ 	cache->addr.ds.keylen = ds->digestlen;
+ 	cache->addr.ds.algo = ds->algo;
+@@ -1095,6 +1100,7 @@ void cache_reload(void)
+ 	    (cache = whine_malloc(sizeof(struct crec))))
+ 	  {
+ 	    cache->name.namep = nl->name;
++	    cache->ttd = hr->ttl;
+ 	    cache->flags = F_HOSTS | F_IMMORTAL | F_FORWARD | F_REVERSE | F_IPV4 | F_NAMEP | F_CONFIG;
+ 	    add_hosts_entry(cache, (struct all_addr *)&hr->addr, INADDRSZ, SRC_CONFIG, (struct crec **)daemon->packet, revhashsz);
+ 	  }
+@@ -1103,6 +1109,7 @@ void cache_reload(void)
+ 	    (cache = whine_malloc(sizeof(struct crec))))
+ 	  {
+ 	    cache->name.namep = nl->name;
++	    cache->ttd = hr->ttl;
+ 	    cache->flags = F_HOSTS | F_IMMORTAL | F_FORWARD | F_REVERSE | F_IPV6 | F_NAMEP | F_CONFIG;
+ 	    add_hosts_entry(cache, (struct all_addr *)&hr->addr6, IN6ADDRSZ, SRC_CONFIG, (struct crec **)daemon->packet, revhashsz);
+ 	  }
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index 6d1c5ae..6344df5 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -308,6 +308,7 @@ struct ptr_record {
+ };
+ 
+ struct cname {
++  int ttl;
+   char *alias, *target;
+   struct cname *next;
+ }; 
+@@ -344,6 +345,7 @@ struct auth_zone {
+ 
+ 
+ struct host_record {
++  int ttl;
+   struct name_list {
+     char *name;
+     struct name_list *next;
+diff --git a/src/option.c b/src/option.c
+index c98bdc9..7c5e6bc 100644
+--- a/src/option.c
++++ b/src/option.c
+@@ -448,20 +448,20 @@ static struct {
+   { LOPT_GEN_NAMES, ARG_DUP, "[=tag:<tag>]", gettext_noop("Generate hostnames based on MAC address for nameless clients."), NULL},
+   { LOPT_PROXY, ARG_DUP, "[=<ipaddr>]...", gettext_noop("Use these DHCP relays as full proxies."), NULL },
+   { LOPT_RELAY, ARG_DUP, "<local-addr>,<server>[,<interface>]", gettext_noop("Relay DHCP requests to a remote server"), NULL},
+-  { LOPT_CNAME, ARG_DUP, "<alias>,<target>", gettext_noop("Specify alias name for LOCAL DNS name."), NULL },
++  { LOPT_CNAME, ARG_DUP, "<alias>,<target>[,<ttl>]", gettext_noop("Specify alias name for LOCAL DNS name."), NULL },
+   { LOPT_PXE_PROMT, ARG_DUP, "<prompt>,[<timeout>]", gettext_noop("Prompt to send to PXE clients."), NULL },
+   { LOPT_PXE_SERV, ARG_DUP, "<service>", gettext_noop("Boot service for PXE menu."), NULL },
+   { LOPT_TEST, 0, NULL, gettext_noop("Check configuration syntax."), NULL },
+   { LOPT_ADD_MAC, ARG_DUP, "[=base64|text]", gettext_noop("Add requestor's MAC address to forwarded DNS queries."), NULL },
+   { LOPT_ADD_SBNET, ARG_ONE, "<v4 pref>[,<v6 pref>]", gettext_noop("Add specified IP subnet to forwarded DNS queries."), NULL },
+-   { LOPT_CPE_ID, ARG_ONE, "<text>", gettext_noop("Add client identification to forwarded DNS queries."), NULL },
++  { LOPT_CPE_ID, ARG_ONE, "<text>", gettext_noop("Add client identification to forwarded DNS queries."), NULL },
+   { LOPT_DNSSEC, OPT_DNSSEC_PROXY, NULL, gettext_noop("Proxy DNSSEC validation results from upstream nameservers."), NULL },
+   { LOPT_INCR_ADDR, OPT_CONSEC_ADDR, NULL, gettext_noop("Attempt to allocate sequential IP addresses to DHCP clients."), NULL },
+   { LOPT_CONNTRACK, OPT_CONNTRACK, NULL, gettext_noop("Copy connection-track mark from queries to upstream connections."), NULL },
+   { LOPT_FQDN, OPT_FQDN_UPDATE, NULL, gettext_noop("Allow DHCP clients to do their own DDNS updates."), NULL },
+   { LOPT_RA, OPT_RA, NULL, gettext_noop("Send router-advertisements for interfaces doing DHCPv6"), NULL },
+   { LOPT_DUID, ARG_ONE, "<enterprise>,<duid>", gettext_noop("Specify DUID_EN-type DHCPv6 server DUID"), NULL },
+-  { LOPT_HOST_REC, ARG_DUP, "<name>,<address>", gettext_noop("Specify host (A/AAAA and PTR) records"), NULL },
++  { LOPT_HOST_REC, ARG_DUP, "<name>,<address>[,<ttl>]", gettext_noop("Specify host (A/AAAA and PTR) records"), NULL },
+   { LOPT_RR, ARG_DUP, "<name>,<RR-number>,[<data>]", gettext_noop("Specify arbitrary DNS resource record"), NULL },
+   { LOPT_CLVERBIND, OPT_CLEVERBIND, NULL, gettext_noop("Bind to interfaces in use - check for new interfaces"), NULL },
+   { LOPT_AUTHSERV, ARG_ONE, "<NS>,<interface>", gettext_noop("Export local names to global DNS"), NULL },
+@@ -3692,12 +3692,15 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+     case LOPT_CNAME: /* --cname */
+       {
+ 	struct cname *new;
+-	char *alias;
+-	char *target;
++	char *alias, *target, *ttls;
++	int ttl = -1;
+ 
+ 	if (!(comma = split(arg)))
+ 	  ret_err(gen_err);
+ 	
++	if ((ttls = split(comma)) && !atoi_check(ttls, &ttl))
++	  ret_err(_("bad TTL"));
++	
+ 	alias = canonicalise_opt(arg);
+ 	target = canonicalise_opt(comma);
+ 	    
+@@ -3713,6 +3716,7 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+ 	    daemon->cnames = new;
+ 	    new->alias = alias;
+ 	    new->target = target;
++	    new->ttl = ttl;
+ 	  }
+       
+ 	break;
+@@ -3913,14 +3917,22 @@ static int one_opt(int option, char *arg, char *errstr, char *gen_err, int comma
+       {
+ 	struct host_record *new = opt_malloc(sizeof(struct host_record));
+ 	memset(new, 0, sizeof(struct host_record));
+-	
++	new->ttl = -1;
++
+ 	if (!arg || !(comma = split(arg)))
+ 	  ret_err(_("Bad host-record"));
+ 	
+ 	while (arg)
+ 	  {
+ 	    struct all_addr addr;
+-	    if (inet_pton(AF_INET, arg, &addr))
++	    char *dig;
++
++	    for (dig = arg; *dig != 0; dig++)
++	      if (*dig < '0' || *dig > '9')
++		break;
++	    if (*dig == 0)
++	      new->ttl = atoi(arg);
++	    else if (inet_pton(AF_INET, arg, &addr))
+ 	      new->addr = addr.addr.addr4;
+ #ifdef HAVE_IPV6
+ 	    else if (inet_pton(AF_INET6, arg, &addr))
+@@ -4601,7 +4613,25 @@ void read_opts(int argc, char **argv, char *compile_opts)
+ 	    }
+ 	} 
+     }
+-  
++
++  if (daemon->host_records)
++    {
++      struct host_record *hr;
++      
++      for (hr = daemon->host_records; hr; hr = hr->next)
++	if (hr->ttl == -1)
++	  hr->ttl = daemon->local_ttl;
++    }
++
++  if (daemon->cnames)
++    {
++      struct cname *cn;
++      
++      for (cn = daemon->cnames; cn; cn = cn->next)
++	if (cn->ttl == -1)
++	  cn->ttl = daemon->local_ttl;
++    }
++
+   if (daemon->if_addrs)
+     {  
+       struct iname *tmp;
+diff --git a/src/rfc1035.c b/src/rfc1035.c
+index 9c0ddb5..3535a71 100644
+--- a/src/rfc1035.c
++++ b/src/rfc1035.c
+@@ -1169,9 +1169,13 @@ static unsigned long crec_ttl(struct crec *crecp, time_t now)
+   /* Return 0 ttl for DHCP entries, which might change
+      before the lease expires. */
+ 
+-  if  (crecp->flags & (F_IMMORTAL | F_DHCP))
++  if (crecp->flags & F_DHCP)
+     return daemon->local_ttl;
+   
++  /* Immortal entries other than DHCP are local, and hold TTL in TTD field. */
++  if (crecp->flags & F_IMMORTAL)
++    return crecp->ttd;
++
+   /* Return the Max TTL value if it is lower then the actual TTL */
+   if (daemon->max_ttl == 0 || ((unsigned)(crecp->ttd - now) < daemon->max_ttl))
+     return crecp->ttd - now;
+-- 
+1.7.10.4
+
