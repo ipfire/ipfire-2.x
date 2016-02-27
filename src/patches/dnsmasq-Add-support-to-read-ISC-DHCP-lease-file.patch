@@ -19,7 +19,7 @@
  #ifdef HAVE_DNSSEC
    cache_blockdata_free(crecp);
  #endif
-@@ -1131,7 +1134,7 @@
+@@ -1138,7 +1141,7 @@
    
  } 
  
@@ -28,7 +28,7 @@
  struct in_addr a_record_from_hosts(char *name, time_t now)
  {
    struct crec *crecp = NULL;
-@@ -1274,7 +1277,11 @@
+@@ -1281,7 +1284,11 @@
        else
  	crec->ttd = ttd;
        crec->addr.addr = *host_address;
@@ -42,7 +42,7 @@
  
 --- a/src/dnsmasq.c	Thu Jul 30 20:59:06 2015
 +++ b/src/dnsmasq.c	Wed Dec 16 19:38:32 2015
-@@ -982,6 +982,11 @@
+@@ -1013,6 +1013,11 @@
  
  	  poll_resolv(0, daemon->last_resolv != 0, now); 	  
  	  daemon->last_resolv = now;
@@ -56,7 +56,7 @@
  
 --- a/src/dnsmasq.h	Wed Dec 16 19:24:12 2015
 +++ b/src/dnsmasq.h	Wed Dec 16 19:40:11 2015
-@@ -1513,8 +1513,12 @@
+@@ -1514,6 +1514,11 @@
  void poll_listen(int fd, short event);
  int do_poll(int timeout);
  
@@ -326,7 +326,7 @@
 +#endif
 --- a/src/option.c	Wed Dec 16 19:24:12 2015
 +++ b/src/option.c	Wed Dec 16 19:42:48 2015
-@@ -1754,7 +1754,7 @@
+@@ -1769,7 +1769,7 @@
  	ret_err(_("bad MX target"));
        break;
  
@@ -341,8 +341,8 @@
         helper.o tftp.o log.o conntrack.o dhcp6.o rfc3315.o \
         dhcp-common.o outpacket.o radv.o slaac.o auth.o ipset.o \
         domain.o dnssec.o blockdata.o tables.o loop.o inotify.o \
--       poll.o rrfilter.o
-+       poll.o rrfilter.o isc.o
+-       poll.o rrfilter.o edns0.o arp.o
++       poll.o rrfilter.o edns0.o arp.o isc.o
  
  hdrs = dnsmasq.h config.h dhcp-protocol.h dhcp6-protocol.h \
         dns-protocol.h radv-protocol.h ip6addr.h
