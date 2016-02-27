@@ -1,0 +1,48 @@
+------------------------------------------------------------
+revno: 13231
+revision-id: squid3@treenet.co.nz-20160220150859-3unryicod1rcx9rm
+parent: squid3@treenet.co.nz-20160212045316-zwx4r9we4gf27rx3
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=4323
+author: Francesco Chemolli <kinkie@squid-cache.org>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.4
+timestamp: Sun 2016-02-21 04:08:59 +1300
+message:
+  Bug 4323: Netfilter broken cross-includes with Linux 4.2
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20160220150859-3unryicod1rcx9rm
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.4
+# testament_sha1: 10fa174d2821207d0bf89ef3013e8f4c3f99f9e3
+# timestamp: 2016-02-20 15:50:56 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.4
+# base_revision_id: squid3@treenet.co.nz-20160212045316-\
+#   zwx4r9we4gf27rx3
+# 
+# Begin patch
+=== modified file 'compat/os/linux.h'
+--- compat/os/linux.h	2012-08-28 13:00:30 +0000
++++ compat/os/linux.h	2016-02-20 15:08:59 +0000
+@@ -22,6 +22,21 @@
+ #endif
+ 
+ /*
++ * Netfilter header madness. (see Bug 4323)
++ *
++ * Netfilter have a history of defining their own versions of network protocol
++ * primitives without sufficient protection against the POSIX defines which are
++ * aways present in Linux.
++ *
++ * netinet/in.h must be included before any other sys header in order to properly
++ * activate include guards in <linux/libc-compat.h> the kernel maintainers added
++ * to workaround it.
++ */
++#if HAVE_NETINET_IN_H
++#include <netinet/in.h>
++#endif
++
++/*
+  * sys/capability.h is only needed in Linux apparently.
+  *
+  * HACK: LIBCAP_BROKEN Ugly glue to get around linux header madness colliding with glibc
+
