@@ -4,4 +4,4 @@ ACTION=="add", SUBSYSTEM=="net", PROGRAM="/lib/udev/network-hotplug-rename", RES
 
 # Call a script that will create all virtual devices for a parent device
 # that has just come up.
-ACTION=="add", SUBSYSTEM=="net", PROGRAM="/lib/udev/network-hotplug-vlan"
+ACTION=="add", SUBSYSTEM=="net", RUN+="/lib/udev/network-hotplug-vlan"
