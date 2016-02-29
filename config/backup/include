@@ -33,7 +33,7 @@
 /var/log/ip-acct/*
 /var/log/rrd/*
 /var/log/rrd/collectd
-/var/log/rrd/vnstat
+/var/log/vnstat
 /etc/sysconfig/firewall.local
 /etc/sysconfig/rc.local
 /root/.gitconfig
