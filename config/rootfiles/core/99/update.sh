@@ -33,6 +33,9 @@ done
 
 # Stop services
 
+# remove slogin which is not included in new OpenSSH
+rm /usr/bin/slogin
+
 # Extract files
 extract_files
 
