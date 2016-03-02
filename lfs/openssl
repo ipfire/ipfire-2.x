@@ -119,7 +119,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.0-beta5-enginesdir.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a-rpmbuild.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1m-weak-ciphers.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-disable-sslv2-sslv3.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2g-disable-sslv2v3.patch
 
 	# i586 specific patches
 ifeq "$(MACHINE)" "i586"
