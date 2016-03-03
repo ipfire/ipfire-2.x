@@ -53,6 +53,7 @@ CONFIGURE_OPTIONS = \
 	zlib-dynamic \
 	enable-camellia \
 	enable-md2 \
+	enable-ssl2 \
 	enable-seed \
 	enable-tlsext \
 	enable-rfc3779 \
