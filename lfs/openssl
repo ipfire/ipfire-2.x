@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.2f
+VER        = 1.0.2g
 
 THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -53,6 +53,7 @@ CONFIGURE_OPTIONS = \
 	zlib-dynamic \
 	enable-camellia \
 	enable-md2 \
+	enable-ssl2 \
 	enable-seed \
 	enable-tlsext \
 	enable-rfc3779 \
@@ -86,7 +87,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b3bf73f507172be9292ea2a8c28b659d
+$(DL_FILE)_MD5 = f3c710c045cdee5fd114feb69feba7aa
 
 install : $(TARGET)
 
@@ -119,7 +120,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.0-beta5-enginesdir.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a-rpmbuild.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.1m-weak-ciphers.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-disable-sslv2-sslv3.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2g-disable-sslv2v3.patch
 
 	# i586 specific patches
 ifeq "$(MACHINE)" "i586"
