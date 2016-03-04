@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2012  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2016 IPFire Team  <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 3.1.10
+VER        = 3.4.1
 
 THISAPP    = pciutils-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = cdb1e5a95ab7ac67349f10c8f77a6d3c
+$(DL_FILE)_MD5 = 35763bb1eab7bc9bf6eb6efb72cbc8a1
 
 install : $(TARGET)
 
@@ -71,7 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make SHARED=yes OPT="$(CFLAGS)" PREFIX=/usr STRIP="" \
-		IDSDIR=/usr/share/hwdata ZLIB=no $(MAKETUNING)
+		SHAREDIR=/usr/share/hwdata $(MAKETUNING)
 
 	cd $(DIR_APP) && install -p lspci setpci /bin
 	cd $(DIR_APP) && install -p update-pciids /sbin
@@ -85,6 +85,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && install -p lib/config.h /usr/include/pci
 	cd $(DIR_APP) && install -p lib/types.h /usr/include/pci
 	cd $(DIR_APP) && install -p lib/libpci.pc /usr/lib/pkgconfig
-
+	chmod -v 755 /usr/lib/libpci.so
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
