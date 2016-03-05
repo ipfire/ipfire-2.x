@@ -9,3 +9,15 @@
  
  static struct clk_ops dpll1_ck_ops_34xx __initdata = {
  	.init		= &omap2_init_clk_clkdm,
+diff -Naur linux-3.14.63-org/net/ipv6/addrconf.c linux-3.14.63/net/ipv6/addrconf.c
+--- linux-3.14.63-org/net/ipv6/addrconf.c	2016-03-04 22:56:07.375481749 +0100
++++ linux-3.14.63/net/ipv6/addrconf.c	2016-03-04 23:08:34.285482105 +0100
+@@ -4818,7 +4818,7 @@
+ {
+ 	struct inet6_dev *idev = ctl->extra1;
+ 	int min_mtu = IPV6_MIN_MTU;
+-	struct ctl_table lctl;
++	ctl_table_no_const lctl;
+ 
+ 	lctl = *ctl;
+ 	lctl.extra1 = &min_mtu;
