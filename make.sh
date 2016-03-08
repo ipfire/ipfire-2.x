@@ -848,6 +848,7 @@ buildipfire() {
   ipfiremake ipset
   ipfiremake lua
   ipfiremake dnsdist
+  ipfiremake bird
 }
 
 buildinstaller() {
