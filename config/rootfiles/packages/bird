@@ -1,0 +1,4 @@
+etc/bird.conf
+usr/sbin/bird
+usr/sbin/birdc
+usr/sbin/birdcl
