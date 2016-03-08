@@ -24,8 +24,17 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-# Remove old core updates from pakfire cache to save space...
 core=100
+
+function exit_with_error() {
+	# Set last succesfull installed core.
+	echo $(($core-1)) > /opt/pakfire/db/core/mine
+	/usr/bin/logger -p syslog.emerg -t ipfire \
+		"core-update-${core}: $1"
+	exit $2
+}
+
+# Remove old core updates from pakfire cache to save space...
 for (( i=1; i<=$core; i++ ))
 do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
