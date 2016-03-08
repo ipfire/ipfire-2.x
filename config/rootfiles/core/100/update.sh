@@ -158,6 +158,9 @@ if [ $BOOTSPACE -lt 1000 ]; then
 	esac
 fi
 
+# restart init because the glibc was updated.
+telinit u
+
 # Fix hardening flags in grub
 paxctl -mpexs /usr/bin/grub-script-check
 
