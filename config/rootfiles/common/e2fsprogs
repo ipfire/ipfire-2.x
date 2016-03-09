@@ -1,4 +1,5 @@
 #etc/mke2fs.conf
+#etc/mke2fs.conf.e2fsprogs-new
 lib/libblkid.so.1
 lib/libblkid.so.1.0
 lib/libcom_err.so.2
@@ -114,6 +115,9 @@ usr/sbin/uuidd
 #usr/share/man/man3/uuid_unparse.3
 #usr/share/man/man5/e2fsck.conf.5
 #usr/share/man/man5/mke2fs.conf.5
+#usr/share/man/man5/ext2.5
+#usr/share/man/man5/ext3.5
+#usr/share/man/man5/ext4.5
 #usr/share/man/man8/badblocks.8
 #usr/share/man/man8/blkid.8
 #usr/share/man/man8/debugfs.8
