@@ -55,6 +55,8 @@ int handletimezone(void);
 #define _ORANGE_CARD_ 2
 #define _BLUE_CARD_ 3
 
+#define MAX_NICS 20
+
 struct nic
 {
 	char driver[80];

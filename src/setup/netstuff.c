@@ -601,16 +601,16 @@ int scan_network_cards(void)
 int nicmenu(int colour)
 {
 	int rc, choise = 0, count = 0, kcount = 0, mcount = 0, i, j, nic_in_use;
-	int found_NIC_as_Card[4];
+	int found_NIC_as_Card[MAX_NICS];
 	char message[STRING_SIZE];
 	char temp[STRING_SIZE];
 
 	char cMenuInhalt[STRING_SIZE];
-	char MenuInhalt[20][180];
-	char *pMenuInhalt[20];
+	char MenuInhalt[MAX_NICS][STRING_SIZE];
+	char *pMenuInhalt[MAX_NICS];
 	
 	while (strcmp(nics[count].macaddr, "")) count++;			// 2 find how many nics in system
-	for ( i=0 ; i<4;i++) if (strcmp(knics[i].macaddr, "")) kcount++;	// loop to find all knowing nics
+	for (i=0; i<MAX_NICS; i++) if (strcmp(knics[i].macaddr, "")) kcount++;	// loop to find all knowing nics
 
 	// If new nics are found...
 	if (count > kcount) {
