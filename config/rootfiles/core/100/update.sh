@@ -105,6 +105,7 @@ rm -rf /boot/ipfirerd-*
 rm -rf /boot/initramfs-*
 rm -rf /boot/vmlinuz-*
 rm -rf /boot/uImage-ipfire-*
+rm -rf /boot/zImage-ipfire-*
 rm -rf /boot/uInit-ipfire-*
 rm -rf /boot/dtb-*-ipfire-*
 rm -rf /lib/modules
@@ -119,7 +120,10 @@ case "$(uname -m)" in
 		# work around the u-boot folder detection bug
 		mkdir -pv /boot/dtb-$KVER-ipfire-kirkwood
 		mkdir -pv /boot/dtb-$KVER-ipfire-multi
-#to do add touch for arm kernel and initrd here
+		touch /boot/uImage-ipfire-kirkwood
+		touch /boot/zImage-ipfire-multi
+		touch /boot/uIinit-ipfire-kirkwood
+		touch /boot/uIinit-ipfire-multi
 		;;
 esac
 
