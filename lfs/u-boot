@@ -75,6 +75,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/U-Boot-v2-fs-fat-read-fix-fat16-ls-read-issue.patch
+
 	# Pandaboard
 	-mkdir -pv /usr/share/u-boot/pandaboard
 	cd $(DIR_APP) && make CROSS_COMPILE="" omap4_panda_config
