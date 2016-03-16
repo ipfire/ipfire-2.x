@@ -130,6 +130,7 @@ mkdir $MNThdd/boot/grub
 echo "timeout 10"                          > $MNThdd/boot/grub/grub.conf
 echo "default 0"                          >> $MNThdd/boot/grub/grub.conf
 echo "title IPFire ($KERN_TYPE-kernel)"   >> $MNThdd/boot/grub/grub.conf
+echo "  root (hd0)                        >> $MNThdd/boot/grub/grub.conf
 echo "  kernel /vmlinuz-$KVER-ipfire-$KERN_TYPE root=/dev/$P3 rootdelay=10 panic=10 console=$CONSOLE" \
 					  >> $MNThdd/boot/grub/grub.conf
 echo "  initrd /initramfs-$KVER-ipfire-$KERN_TYPE.img" >> $MNThdd/boot/grub/grub.conf

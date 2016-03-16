@@ -67,6 +67,7 @@ else
 	echo "timeout 10"                          > /boot/grub/grub.conf
 	echo "default 0"                          >> /boot/grub/grub.conf
 	echo "title IPFire (pae-kernel)"          >> /boot/grub/grub.conf
+	echo "  root (hd0)"		          >> /boot/grub/grub.conf
 	echo "  kernel /vmlinuz-$KVER-ipfire-pae root=/dev/$ROOT rootdelay=10 panic=10 console=hvc0" \
 						  >> /boot/grub/grub.conf
 	echo "  initrd /initramfs-$KVER-ipfire-pae.img" >> /boot/grub/grub.conf
