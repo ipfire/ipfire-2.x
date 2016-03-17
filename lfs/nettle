@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.1.1
+VER        = 3.2
 
 THISAPP    = nettle-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b40fa88dc32f37a182b6b42092ebb144
+$(DL_FILE)_MD5 = afb15b4764ebf1b4e6d06c62bd4d29e4
 
 install : $(TARGET)
 
@@ -70,16 +70,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--enable-shared
-
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-static 
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && sed -i '/^install-here/ s/ install-static//' Makefile
 	cd $(DIR_APP) && make install
-
 	chmod -v 755 /usr/lib/lib{hogweed,nettle}.so
-	install -v -m755 -d /usr/share/doc/nettle-3.1.1
-
+	install -v -m755 -d /usr/share/doc/nettle-3.2
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
