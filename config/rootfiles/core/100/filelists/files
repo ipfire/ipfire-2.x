@@ -5,6 +5,7 @@ etc/ppp/ip-up
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/functions
 etc/rc.d/init.d/networking/dhcpcd.exe
+etc/rc.d/init.d/ntp
 etc/modprobe.d/nf_conntrack.conf
 lib/udev/rules.d/60-net.rules
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat

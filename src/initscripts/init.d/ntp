@@ -10,10 +10,10 @@ case "$1" in
 	start)
 		if [ "$ENABLESETONBOOT" == "on" ]; then
 			boot_mesg -n "Setting time on boot..."
-			if [ $(pidof wpa_supplicant) ]; then
+			if [ $(pidof wpa_supplicant dhcpcd) ]; then
 				if [ ! -e /var/ipfire/red/active ]; then
 					boot_mesg ""
-					boot_mesg -n "Wait for wlan"
+					boot_mesg -n "Waiting for red connection"
 					for (( i=30; i>1; i-- )) do
 						if [ -e /var/ipfire/red/active ]; then
 							break;
