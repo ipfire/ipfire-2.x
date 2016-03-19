@@ -402,6 +402,7 @@ buildipfire() {
   ipfiremake linux-firmware
   ipfiremake ath10k-firmware
   ipfiremake dvb-firmwares
+  ipfiremake mt7601u-firmware
   ipfiremake zd1211-firmware
   ipfiremake rpi-firmware
   ipfiremake bc
