@@ -400,6 +400,7 @@ buildipfire() {
   ipfiremake unzip
   ipfiremake which
   ipfiremake linux-firmware
+  ipfiremake ath10k-firmware
   ipfiremake dvb-firmwares
   ipfiremake zd1211-firmware
   ipfiremake rpi-firmware
