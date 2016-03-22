@@ -69,17 +69,17 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) $(DIR_SRC)/e2fsprogs-build && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_SRC) && mkdir build
-	cd $(DIR_SRC)/build && $(DIR_APP)/configure	\
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	-mkdir -pv $(DIR_APP)/build
+	cd $(DIR_APP)/build && $(DIR_APP)/configure	\
 				--prefix=/usr 		\
 				--with-root-prefix=""	\
 				--enable-elf-shlibs	\
 				--disable-evms		\
 				--disable-nls
-	cd $(DIR_SRC)/build && make $(MAKETUNING)
-	cd $(DIR_SRC)/build && make install
-	cd $(DIR_SRC)/build && make install-libs
+	cd $(DIR_APP)/build && make $(MAKETUNING)
+	cd $(DIR_APP)/build && make install
+	cd $(DIR_APP)/build && make install-libs
 	chmod -v u+w /usr/lib/{libcom_err,libe2p,libext2fs,libss}.a
-	@rm -rf $(DIR_APP) $(DIR_SRC)/e2fsprogs-build $(DIR_SRC)/build
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
