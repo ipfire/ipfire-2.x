@@ -71,12 +71,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	-mkdir -pv $(DIR_APP)/build
-	cd $(DIR_APP)/build && $(DIR_APP)/configure	\
-				--prefix=/usr 		\
-				--with-root-prefix=""	\
-				--enable-elf-shlibs	\
-				--disable-evms		\
-				--disable-nls
+	cd $(DIR_APP)/build && \
+		$(DIR_APP)/configure \
+			--prefix=/usr \
+			--with-root-prefix="" \
+			--enable-elf-shlibs \
+			--disable-evms \
+			--disable-nls
 	cd $(DIR_APP)/build && make $(MAKETUNING)
 	cd $(DIR_APP)/build && make install
 	cd $(DIR_APP)/build && make install-libs
