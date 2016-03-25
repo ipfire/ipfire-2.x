@@ -1,0 +1,28 @@
+From 373fb7d2d22fcf3328702e719793526e215822ca Mon Sep 17 00:00:00 2001
+From: Jonatan Schlag <jonatan.schlag@ipfire.org>
+Date: Thu, 24 Mar 2016 18:35:51 +0100
+Subject: [PATCH] ebtables should install nothing in usr local
+
+Signed-off-by: Jonatan Schlag <jonatan.schlag@ipfire.org>
+---
+ Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index c1106a4..b5f4447 100644
+--- a/Makefile
++++ b/Makefile
+@@ -10,8 +10,8 @@ LOCKDIR:=$(shell echo $(LOCKFILE) | sed 's/\(.*\)\/.*/\1/')/
+ 
+ # default paths
+ LIBDIR:=/usr/lib
+-MANDIR:=/usr/local/man
+-BINDIR:=/usr/local/sbin
++MANDIR:=/usr/man
++BINDIR:=/usr/sbin
+ ETCDIR:=/etc
+ INITDIR:=/etc/rc.d/init.d
+ SYSCONFIGDIR:=/etc/sysconfig
+-- 
+2.1.4
+
