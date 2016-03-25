@@ -23,8 +23,7 @@ usr/lib/libebtable_broute.so
 usr/lib/libebtable_filter.so
 usr/lib/libebtable_nat.so
 usr/lib/libebtc.so
-#usr/local/man/man8
-#usr/local/man/man8/ebtables.8
-usr/local/sbin/ebtables
-usr/local/sbin/ebtables-restore
-usr/local/sbin/ebtables-save
+#usr/man/man8/ebtables.8
+usr/sbin/ebtables
+usr/sbin/ebtables-restore
+usr/sbin/ebtables-save
