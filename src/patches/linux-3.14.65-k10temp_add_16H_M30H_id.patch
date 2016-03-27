@@ -1,0 +1,12 @@
+diff -Naur linux-3.14.65.org/drivers/hwmon/k10temp.c linux-3.14.65/drivers/hwmon/k10temp.c
+--- linux-3.14.65.org/drivers/hwmon/k10temp.c	2016-03-16 16:42:30.000000000 +0100
++++ linux-3.14.65/drivers/hwmon/k10temp.c	2016-03-25 15:52:21.920190727 +0100
+@@ -212,6 +212,8 @@
+ 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_15H_M10H_F3) },
+ 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_15H_M30H_NB_F3) },
+ 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
++//	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
++	{ PCI_VDEVICE(AMD, 0x1583) },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(pci, k10temp_id_table);

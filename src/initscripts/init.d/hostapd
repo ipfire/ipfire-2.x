@@ -73,7 +73,9 @@ case "${1}" in
 		/usr/sbin/iw reg set $COUNTRY
 
 		/usr/sbin/iwconfig $INTERFACE channel $CHANNEL 2>/dev/null
-		/usr/sbin/iwconfig $INTERFACE txpower $TXPOWER
+
+		ip link set ${INTERFACE} up 2>/dev/null
+		/usr/sbin/iwconfig $INTERFACE txpower $TXPOWER 2>/dev/null
 
 		/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf >/dev/null 2>&1 &
 
