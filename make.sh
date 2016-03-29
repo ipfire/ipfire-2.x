@@ -696,6 +696,11 @@ buildipfire() {
   ipfiremake elinks
   ipfiremake igmpproxy
   ipfiremake fbset
+  ipfiremake opus
+  ipfiremake python-six
+  ipfiremake python-pyparsing
+  ipfiremake spice-protocol
+  ipfiremake spice
   ipfiremake sdl
   ipfiremake qemu
   ipfiremake sane
