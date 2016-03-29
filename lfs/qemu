@@ -33,9 +33,9 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586 x86_64
 PROG       = qemu
-PAK_VER    = 17
+PAK_VER    = 18
 
-DEPS       = "sdl"
+DEPS       = "sdl spice"
 
 ###############################################################################
 # Top-level Rules
@@ -81,7 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
 		--enable-kvm --disable-attr \
 		--target-list="i386-linux-user x86_64-linux-user arm-linux-user i386-softmmu x86_64-softmmu arm-softmmu" \
-		--extra-cflags="$(CFLAGS)"
+		--extra-cflags="$(CFLAGS)" --enable-spice
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
