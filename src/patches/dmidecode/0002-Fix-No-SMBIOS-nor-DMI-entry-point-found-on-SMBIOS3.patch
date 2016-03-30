@@ -1,0 +1,26 @@
+diff --git a/dmidecode.c b/dmidecode.c
+index ce0511b..cfcade4 100644
+--- a/dmidecode.c
++++ b/dmidecode.c
+@@ -4866,8 +4866,16 @@ int main(int argc, char * const argv[])
+ 		goto exit_free;
+ 	}
+ 
+-	if (smbios_decode(buf, opt.devmem, 0))
+-		found++;
++	if (memcmp(buf, "_SM3_", 5) == 0)
++	{
++		if (smbios3_decode(buf, opt.devmem, 0))
++			found++;
++	}
++	else if (memcmp(buf, "_SM_", 4) == 0)
++	{
++		if (smbios_decode(buf, opt.devmem, 0))
++			found++;
++	}
+ 	goto done;
+ 
+ memory_scan:
+-- 
+2.1.4
+

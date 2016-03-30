@@ -1,0 +1,16 @@
+diff --git a/Makefile b/Makefile
+index 1f54a1f..8cb7c44 100644
+--- a/Makefile
++++ b/Makefile
+@@ -30,7 +30,7 @@ CFLAGS += -O2
+ LDFLAGS =
+ 
+ DESTDIR =
+-prefix  = /usr/local
++prefix  = /usr
+ sbindir = $(prefix)/sbin
+ mandir  = $(prefix)/share/man
+ man8dir = $(mandir)/man8
+-- 
+2.1.4
+

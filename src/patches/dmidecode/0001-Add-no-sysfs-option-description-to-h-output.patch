@@ -1,0 +1,15 @@
+diff --git a/dmiopt.c b/dmiopt.c
+index 0d142d2..de607f4 100644
+--- a/dmiopt.c
++++ b/dmiopt.c
+@@ -314,6 +314,7 @@ void print_help(void)
+ 		" -u, --dump             Do not decode the entries\n"
+ 		"     --dump-bin FILE    Dump the DMI data to a binary file\n"
+ 		"     --from-dump FILE   Read the DMI data from a binary file\n"
++		"     --no-sysfs         Do not attempt to read DMI data from sysfs files\n"
+ 		" -V, --version          Display the version and exit\n";
+ 
+ 	printf("%s", help);
+-- 
+2.1.4
+

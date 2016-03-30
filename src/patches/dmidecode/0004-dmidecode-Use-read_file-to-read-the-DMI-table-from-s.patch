@@ -1,0 +1,72 @@
+From 364055211b1956539c6a6268e111e244e1292c8c Mon Sep 17 00:00:00 2001
+From: Jean Delvare <jdelvare@suse.de>
+Date: Mon, 2 Nov 2015 09:45:31 +0100
+Subject: [PATCH] dmidecode: Use read_file() to read the DMI table from sysfs
+
+We shouldn't use mem_chunk() to read the DMI table from sysfs. This
+will fail for SMBIOS v3 implementations which specify a maximum length
+for the table rather than its exact length. The kernel will trim the
+table to the actual length, so the DMI file will be shorter than the
+length announced in entry point.
+
+read_file() fits the bill in this case, as it deals with end of file
+nicely.
+
+This also helps with corrupted DMI tables, as the kernel will not
+export the part of the table that it wasn't able to parse, effectively
+trimming it.
+
+This fixes bug #46176:
+https://savannah.nongnu.org/bugs/?46176
+Unexpected end of file error
+---
+ CHANGELOG   |  3 +++
+ dmidecode.c | 29 +++++++++++++++++++++--------
+ 2 files changed, 24 insertions(+), 8 deletions(-)
+
+
+diff --git a/dmidecode.c b/dmidecode.c
+index a43cfd1..16d1823 100644
+--- a/dmidecode.c
++++ b/dmidecode.c
+@@ -4524,16 +4524,29 @@ static void dmi_table(off_t base, u32 len, u16 num, u16 ver, const char *devmem,
+ 		printf("\n");
+ 	}
+ 
+-	/*
+-	 * When we are reading the DMI table from sysfs, we want to print
+-	 * the address of the table (done above), but the offset of the
+-	 * data in the file is 0.  When reading from /dev/mem, the offset
+-	 * in the file is the address.
+-	 */
+ 	if (flags & FLAG_NO_FILE_OFFSET)
+-		base = 0;
++	{
++		/*
++		 * When reading from sysfs, the file may be shorter than
++		 * announced. For SMBIOS v3 this is expcted, as we only know
++		 * the maximum table size, not the actual table size. For older
++		 * implementations (and for SMBIOS v3 too), this would be the
++		 * result of the kernel truncating the table on parse error.
++		 */
++		size_t size = len;
++		buf = read_file(&size, devmem);
++		if (!(opt.flags & FLAG_QUIET) && num && size != (size_t)len)
++		{
++			printf("Wrong DMI structures length: %u bytes "
++				"announced, only %lu bytes available.\n",
++				len, (unsigned long)size);
++		}
++		len = size;
++	}
++	else
++		buf = mem_chunk(base, len, devmem);
+ 
+-	if ((buf = mem_chunk(base, len, devmem)) == NULL)
++	if (buf == NULL)
+ 	{
+ 		fprintf(stderr, "Table is unreachable, sorry."
+ #ifndef USE_MMAP
+-- 
+2.1.4
+

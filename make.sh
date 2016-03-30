@@ -856,6 +856,7 @@ buildipfire() {
   ipfiremake lua
   ipfiremake dnsdist
   ipfiremake bird
+  ipfiremake dmidecode
 }
 
 buildinstaller() {

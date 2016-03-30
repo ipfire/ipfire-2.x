@@ -1,0 +1,84 @@
+diff --git a/dmidecode.c b/dmidecode.c
+index 183ced4..a43cfd1 100644
+--- a/dmidecode.c
++++ b/dmidecode.c
+@@ -4751,6 +4751,7 @@ int main(int argc, char * const argv[])
+ 	int ret = 0;                /* Returned value */
+ 	int found = 0;
+ 	off_t fp;
++	size_t size;
+ 	int efi;
+ 	u8 *buf;
+ 
+@@ -4820,8 +4821,9 @@ int main(int argc, char * const argv[])
+ 	 * contain one of several types of entry points, so read enough for
+ 	 * the largest one, then determine what type it contains.
+ 	 */
++	size = 0x20;
+ 	if (!(opt.flags & FLAG_NO_SYSFS)
+-	 && (buf = read_file(0x20, SYS_ENTRY_FILE)) != NULL)
++	 && (buf = read_file(&size, SYS_ENTRY_FILE)) != NULL)
+ 	{
+ 		if (!(opt.flags & FLAG_QUIET))
+ 			printf("Getting SMBIOS data from sysfs.\n");
+diff --git a/util.c b/util.c
+index f97ac0d..52ed413 100644
+--- a/util.c
++++ b/util.c
+@@ -94,10 +94,11 @@ int checksum(const u8 *buf, size_t len)
+  * needs to be freed by the caller.
+  * This provides a similar usage model to mem_chunk()
+  *
+- * Returns pointer to buffer of max_len bytes, or NULL on error
++ * Returns pointer to buffer of max_len bytes, or NULL on error, and
++ * sets max_len to the length actually read.
+  *
+  */
+-void *read_file(size_t max_len, const char *filename)
++void *read_file(size_t *max_len, const char *filename)
+ {
+ 	int fd;
+ 	size_t r2 = 0;
+@@ -115,7 +116,7 @@ void *read_file(size_t max_len, const char *filename)
+ 		return(NULL);
+ 	}
+ 
+-	if ((p = malloc(max_len)) == NULL)
++	if ((p = malloc(*max_len)) == NULL)
+ 	{
+ 		perror("malloc");
+ 		return NULL;
+@@ -123,7 +124,7 @@ void *read_file(size_t max_len, const char *filename)
+ 
+ 	do
+ 	{
+-		r = read(fd, p + r2, max_len - r2);
++		r = read(fd, p + r2, *max_len - r2);
+ 		if (r == -1)
+ 		{
+ 			if (errno != EINTR)
+@@ -140,6 +141,8 @@ void *read_file(size_t max_len, const char *filename)
+ 	while (r != 0);
+ 
+ 	close(fd);
++	*max_len = r2;
++
+ 	return p;
+ }
+ 
+diff --git a/util.h b/util.h
+index 9d409cd..b8748f1 100644
+--- a/util.h
++++ b/util.h
+@@ -25,7 +25,7 @@
+ #define ARRAY_SIZE(x) (sizeof(x)/sizeof((x)[0]))
+ 
+ int checksum(const u8 *buf, size_t len);
+-void *read_file(size_t len, const char *filename);
++void *read_file(size_t *len, const char *filename);
+ void *mem_chunk(off_t base, size_t len, const char *devmem);
+ int write_dump(size_t base, size_t len, const void *data, const char *dumpfile, int add);
+ u64 u64_range(u64 start, u64 end);
+-- 
+2.1.4
+
