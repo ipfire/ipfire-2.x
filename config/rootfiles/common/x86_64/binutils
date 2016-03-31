@@ -104,6 +104,7 @@
 #usr/share/info/bfd.info
 #usr/share/info/binutils.info
 #usr/share/info/configure.info
+#usr/share/info/dir
 #usr/share/info/gprof.info
 #usr/share/info/ld.info
 #usr/share/info/standards.info
