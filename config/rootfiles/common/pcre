@@ -10,7 +10,7 @@
 #usr/lib/libpcre.la
 usr/lib/libpcre.so
 usr/lib/libpcre.so.1
-usr/lib/libpcre.so.1.2.5
+usr/lib/libpcre.so.1.2.6
 #usr/lib/libpcrecpp.la
 usr/lib/libpcrecpp.so
 usr/lib/libpcrecpp.so.0
