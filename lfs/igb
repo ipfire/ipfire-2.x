@@ -79,6 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mv $(MODPATH)/igb.ko \
 	    $(MODPATH)/igb.ko.org
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/igb-5.3.4.4_fix_hung_at_dev_get_stats.patch
 	cd $(DIR_APP)/src && make BUILD_KERNEL=$(KVER)-$(VERSUFIX)
 	cd $(DIR_APP)/src && install -m 644 igb.ko $(MODPATH)
 	@rm -rf $(DIR_APP)
