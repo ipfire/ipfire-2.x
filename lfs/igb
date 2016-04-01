@@ -27,7 +27,7 @@ include Config
 VERSUFIX   = ipfire$(KCFG)
 MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/kernel/drivers/net/ethernet/intel/igb/
 
-VER        = 5.3.3.2
+VER        = 5.3.4.4
 
 THISAPP    = igb-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2d753a0bd03c949ec08d68c27540044d
+$(DL_FILE)_MD5 = 6c0d7dfdb161128da7c039fc83bbdba0
 
 install : $(TARGET)
 
@@ -79,6 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mv $(MODPATH)/igb.ko \
 	    $(MODPATH)/igb.ko.org
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/igb-5.3.4.4_fix_hung_at_dev_get_stats.patch
 	cd $(DIR_APP)/src && make BUILD_KERNEL=$(KVER)-$(VERSUFIX)
 	cd $(DIR_APP)/src && install -m 644 igb.ko $(MODPATH)
 	@rm -rf $(DIR_APP)
