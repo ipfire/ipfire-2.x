@@ -750,6 +750,7 @@ buildipfire() {
   ipfiremake gutenprint
   ipfiremake apcupsd
   ipfiremake iperf
+  ipfiremake iperf3
   ipfiremake netcat
   ipfiremake 7zip
   ipfiremake lynis

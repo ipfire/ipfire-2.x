@@ -1,0 +1,46 @@
+From be7dafdb802f39c3ad8bcc896216508842c42751 Mon Sep 17 00:00:00 2001
+From: Jonatan Schlag <jonatan.schlag@ipfire.org>
+Date: Thu, 31 Mar 2016 19:33:17 +0200
+Subject: [PATCH] remove -pg flag
+
+Signed-off-by: Jonatan Schlag <jonatan.schlag@ipfire.org>
+---
+ src/Makefile.am | 4 ++--
+ src/Makefile.in | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 23b0c72..6268145 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -49,9 +49,9 @@ iperf3_LDFLAGS          = -g
+ iperf3_profile_SOURCES  = main.c \
+ 						  $(libiperf_la_SOURCES)
+ 
+-iperf3_profile_CFLAGS   = -pg -g
++iperf3_profile_CFLAGS   = -g
+ iperf3_profile_LDADD    = libiperf.la
+-iperf3_profile_LDFLAGS  = -pg -g
++iperf3_profile_LDFLAGS  = -g
+ 
+ # Specify the sources and various flags for the test cases
+ t_timer_SOURCES         = t_timer.c
+diff --git a/src/Makefile.in b/src/Makefile.in
+index f7c46ad..016a022 100644
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -610,9 +610,9 @@ iperf3_LDFLAGS = -g
+ iperf3_profile_SOURCES = main.c \
+ 						  $(libiperf_la_SOURCES)
+ 
+-iperf3_profile_CFLAGS = -pg -g
++iperf3_profile_CFLAGS = -g
+ iperf3_profile_LDADD = libiperf.la
+-iperf3_profile_LDFLAGS = -pg -g
++iperf3_profile_LDFLAGS = -g
+ 
+ # Specify the sources and various flags for the test cases
+ t_timer_SOURCES = t_timer.c
+-- 
+2.1.4
+

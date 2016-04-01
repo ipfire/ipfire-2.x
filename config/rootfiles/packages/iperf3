@@ -1,0 +1,9 @@
+usr/bin/iperf3
+#usr/include/iperf_api.h
+#usr/lib/libiperf.a
+#usr/lib/libiperf.la
+#usr/lib/libiperf.so
+usr/lib/libiperf.so.0
+usr/lib/libiperf.so.0.0.0
+#usr/share/man/man1/iperf3.1
+#usr/share/man/man3/libiperf.3
