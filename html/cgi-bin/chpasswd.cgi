@@ -20,6 +20,7 @@
 ###############################################################################
 
 use CGI qw(param);
+use Apache::Htpasswd;
 use Crypt::PasswdMD5;
 
 $swroot = "/var/ipfire";
@@ -74,48 +75,25 @@ if ($cgiparams{'SUBMIT'} eq $tr{'advproxy chgwebpwd change password'})
 		$errormessage = $tr{'advproxy errmsg password length 1'}.$proxysettings{'NCSA_MIN_PASS_LEN'}.$tr{'advproxy errmsg password length 2'};
 		goto ERROR;
 	}
-	if (! -z $userdb)
-	{
-		open FILE, $userdb;
-		@users = <FILE>;
-		close FILE;
 
-		$username = '';
-		$cryptpwd = '';
+	my $htpasswd = new Apache::Htpasswd("$userdb");
 
-		foreach (@users)
-		{
- 			chomp;
-			@temp = split(/:/,$_);
-			if ($temp[0] =~ /^$cgiparams{'USERNAME'}$/i)
-			{
-				$username = $temp[0];
-				$cryptpwd = $temp[1];
-			}
-		}
-	}
-	if ($username eq '')
-	{
+	# Check if a user with this name exists
+	my $old_password = $htpasswd->fetchPass($cgiparams{'USERNAME'});
+	if (!$old_password) {
 		$errormessage = $tr{'advproxy errmsg invalid user'};
 		goto ERROR;
 	}
-	if (
-	    !(crypt($cgiparams{'OLD_PASSWORD'}, $cryptpwd) eq $cryptpwd) &&
-	    !(apache_md5_crypt($cgiparams{'OLD_PASSWORD'}, $cryptpwd) eq $cryptpwd)
-	   )
-	{
+
+	# Reset password
+	if (!$htpasswd->htpasswd($cgiparams{'USERNAME'}, $cgiparams{'NEW_PASSWORD_1'},
+			$cgiparams{'OLD_PASSWORD'})) {
 		$errormessage = $tr{'advproxy errmsg password incorrect'};
 		goto ERROR;
 	}
-	$returncode = system("/usr/sbin/htpasswd -b $userdb $username $cgiparams{'NEW_PASSWORD_1'}");
-	if ($returncode == 0)
-	{
-		$success = 1;
-		undef %cgiparams;
-	} else {
-		$errormessage = $tr{'advproxy errmsg change fail'};
-		goto ERROR;
-	}
+
+	$success = 1;
+	undef %cgiparams;
 }
 
 ERROR:

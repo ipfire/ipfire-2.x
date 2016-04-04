@@ -27,6 +27,7 @@
 #
 
 use strict;
+use Apache::Htpasswd;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -4134,7 +4135,9 @@ sub adduser
 		close(FILE);
 	} else {
 		&deluser($str_user);
-		system("/usr/sbin/htpasswd -b $userdb $str_user $str_pass");
+
+		my $htpasswd = new Apache::Htpasswd("$userdb");
+		$htpasswd->htpasswd($str_user, $str_pass);
 	}
 
 	if ($str_group eq 'standard') { open(FILE, ">>$stdgrp");
