@@ -550,6 +550,7 @@ buildipfire() {
   ipfiremake GD-TextUtil
   ipfiremake perl-Device-SerialPort
   ipfiremake perl-Device-Modem
+  ipfiremake perl-Apache-Htpasswd
   ipfiremake gnupg
   ipfiremake hdparm
   ipfiremake sdparm
