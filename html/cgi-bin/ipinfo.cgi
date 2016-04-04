@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+use CGI;
 use IO::Socket;
 use strict;
 
@@ -34,18 +35,14 @@ my %cgiparams=();
 
 &Header::showhttpheaders();
 
-&Header::getcgihash(\%cgiparams);
-
-$ENV{'QUERY_STRING'} =~s/&//g;
-my @addrs = split(/ip=/,$ENV{'QUERY_STRING'});
-
 &Header::openpage($Lang::tr{'ip info'}, 1, '');
-
 &Header::openbigbox('100%', 'left');
 my @lines=();
 my $extraquery='';
-foreach my $addr (@addrs) {
-next if $addr eq "";
+
+my $addr = CGI::param("ip") || "";
+
+if (&General::validip($addr)) {
 	$extraquery='';
 	@lines=();
 	my $whoisname = "whois.arin.net";
@@ -90,6 +87,14 @@ next if $addr eq "";
 		print &Header::cleanhtml($line,"y");
 	}
 	print "</pre>\n";
+	&Header::closebox();
+} else {
+	&Header::openbox('100%', 'left', $Lang::tr{'invalid ip'});
+	print <<EOF;
+		<p style="text-align: center;">
+			$Lang::tr{'invalid ip'}
+		</p>
+EOF
 	&Header::closebox();
 }
 
