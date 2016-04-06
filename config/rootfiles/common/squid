@@ -2145,8 +2145,6 @@ usr/lib/squid/icons/silk/script_palette.png
 usr/lib/squid/log_db_daemon
 usr/lib/squid/log_file_daemon
 usr/lib/squid/mib.txt
-usr/lib/squid/negotiate_kerberos_auth
-usr/lib/squid/negotiate_kerberos_auth_test
 usr/lib/squid/negotiate_wrapper_auth
 usr/lib/squid/ntlm_fake_auth
 usr/lib/squid/ntlm_smb_lm_auth
