@@ -859,6 +859,7 @@ buildipfire() {
   ipfiremake dnsdist
   ipfiremake bird
   ipfiremake dmidecode
+  ipfiremake mcelog
 }
 
 buildinstaller() {

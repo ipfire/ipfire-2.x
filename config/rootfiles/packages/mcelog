@@ -1,0 +1,13 @@
+#etc/mcelog
+etc/mcelog/bus-error-trigger
+etc/mcelog/cache-error-trigger
+etc/mcelog/dimm-error-trigger
+etc/mcelog/iomca-error-trigger
+etc/mcelog/mcelog.conf
+etc/mcelog/page-error-trigger
+etc/mcelog/socket-memory-error-trigger
+etc/mcelog/unknown-error-trigger
+usr/sbin/mcelog
+#usr/share/man/man5/mcelog.conf.5
+#usr/share/man/man5/mcelog.triggers.5
+#usr/share/man/man8/mcelog.8
