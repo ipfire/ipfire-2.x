@@ -680,6 +680,7 @@ buildipfire() {
   ipfiremake libevent2
   ipfiremake portmap
   ipfiremake nfs
+  ipfiremake gnu-netcat
   ipfiremake nmap
   ipfiremake ncftp
   ipfiremake etherwake
@@ -751,7 +752,6 @@ buildipfire() {
   ipfiremake apcupsd
   ipfiremake iperf
   ipfiremake iperf3
-  ipfiremake netcat
   ipfiremake 7zip
   ipfiremake lynis
   ipfiremake streamripper
