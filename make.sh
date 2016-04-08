@@ -681,6 +681,7 @@ buildipfire() {
   ipfiremake portmap
   ipfiremake nfs
   ipfiremake gnu-netcat
+  ipfiremake ncat
   ipfiremake nmap
   ipfiremake ncftp
   ipfiremake etherwake

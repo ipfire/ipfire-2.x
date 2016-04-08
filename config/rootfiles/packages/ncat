@@ -1,0 +1,5 @@
+usr/bin/nc
+usr/bin/ncat
+#usr/share/man/man1/ncat.1
+#usr/share/ncat
+#usr/share/ncat/ca-bundle.crt
