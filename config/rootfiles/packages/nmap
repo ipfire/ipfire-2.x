@@ -1,4 +1,3 @@
-usr/bin/ncat
 usr/bin/ndiff
 usr/bin/nmap
 usr/bin/nping
@@ -15,7 +14,6 @@ usr/lib/python2.7/site-packages/ndiff.pyc
 #usr/share/man/hu/man1/nmap.1
 #usr/share/man/it/man1/nmap.1
 #usr/share/man/ja/man1/nmap.1
-#usr/share/man/man1/ncat.1
 #usr/share/man/man1/ndiff.1
 #usr/share/man/man1/nmap.1
 #usr/share/man/man1/nping.1
@@ -40,8 +38,6 @@ usr/lib/python2.7/site-packages/ndiff.pyc
 #usr/share/man/zh
 #usr/share/man/zh/man1
 #usr/share/man/zh/man1/nmap.1
-#usr/share/ncat
-#usr/share/ncat/ca-bundle.crt
 #usr/share/nmap
 usr/share/nmap/nmap-mac-prefixes
 usr/share/nmap/nmap-os-db
@@ -53,7 +49,7 @@ usr/share/nmap/nmap-services
 usr/share/nmap/nmap.dtd
 usr/share/nmap/nmap.xsl
 usr/share/nmap/nse_main.lua
-usr/share/nmap/nselib
+#usr/share/nmap/nselib
 usr/share/nmap/nselib/afp.lua
 usr/share/nmap/nselib/ajp.lua
 usr/share/nmap/nselib/amqp.lua
@@ -71,7 +67,7 @@ usr/share/nmap/nselib/citrixxml.lua
 usr/share/nmap/nselib/comm.lua
 usr/share/nmap/nselib/creds.lua
 usr/share/nmap/nselib/cvs.lua
-usr/share/nmap/nselib/data
+#usr/share/nmap/nselib/data
 usr/share/nmap/nselib/data/dns-srv-names
 usr/share/nmap/nselib/data/drupal-modules.lst
 usr/share/nmap/nselib/data/favicon-db
