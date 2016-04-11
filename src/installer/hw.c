@@ -747,11 +747,11 @@ static int hw_format_filesystem(const char* path, int fs, const char* output) {
 
 	// EXT4
 	} else if (fs == HW_FS_EXT4) {
-		snprintf(cmd, sizeof(cmd), "/sbin/mke2fs -T ext4 %s", path);
+		snprintf(cmd, sizeof(cmd), "/sbin/mke2fs -FF -T ext4 %s", path);
 
 	// EXT4 w/o journal
 	} else if (fs == HW_FS_EXT4_WO_JOURNAL) {
-		snprintf(cmd, sizeof(cmd), "/sbin/mke2fs -T ext4 -O ^has_journal %s", path);
+		snprintf(cmd, sizeof(cmd), "/sbin/mke2fs -FF -T ext4 -O ^has_journal %s", path);
 
 	// XFS
 	} else if (fs == HW_FS_XFS) {
