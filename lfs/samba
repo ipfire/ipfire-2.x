@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 60
+PAK_VER    = 61
 
 DEPS       = "cups krb5"
 
@@ -77,6 +77,18 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+
+	# Apply Redhat CVE patches
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2015-7560-v3-6.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-preparation-v3-6.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2110-v3-6.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2111-v3-6.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2112-v3-6.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2115-v3-6.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2118-v3-6.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2015-5370-v3-6.patch
+
+	cd $(DIR_APP)/source3 && ./autogen.sh
 	cd $(DIR_APP)/source3 && ./configure \
 		--prefix=/usr \
 		--libdir=/usr/lib/ \
@@ -99,6 +111,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-cups \
 		--disable-avahi \
 		--with-syslog
+	cd $(DIR_APP)/source3 && make idl_full
 	cd $(DIR_APP)/source3 && make proto && make all $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/source3 && make install
 	cd $(DIR_APP)/source3 && chmod -v 644 /usr/include/libsmbclient.h
