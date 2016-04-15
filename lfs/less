@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 443
+VER        = 481
 
 THISAPP    = less-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 47db098fb3cdaf847b3c4be05ee954fc
+$(DL_FILE)_MD5 = 50ef46065c65257141a7340123527767
 
 install : $(TARGET)
 
