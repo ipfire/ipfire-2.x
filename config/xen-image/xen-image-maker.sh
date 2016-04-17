@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  Arne Fitzenreiter  <arne_f@ipfire.org>             #
+# Copyright (C) 2007-2016  Arne Fitzenreiter  <arne_f@ipfire.org>             #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -104,7 +104,7 @@ dd bs=1M if=/dev/zero of=$IMGvar count=$SIZEvar
 mkfs.$FSTYPE -F $IMGvar
 
 echo --------------------------------------------------------
-echo - Intall IPFire to the Images ...
+echo - Install IPFire to the images ...
 echo --------------------------------------------------------
 
 # Mount Images
@@ -130,7 +130,7 @@ mkdir $MNThdd/boot/grub
 echo "timeout 10"                          > $MNThdd/boot/grub/grub.conf
 echo "default 0"                          >> $MNThdd/boot/grub/grub.conf
 echo "title IPFire ($KERN_TYPE-kernel)"   >> $MNThdd/boot/grub/grub.conf
-echo "  root (hd0)                        >> $MNThdd/boot/grub/grub.conf
+echo "  root (hd0)"                       >> $MNThdd/boot/grub/grub.conf
 echo "  kernel /vmlinuz-$KVER-ipfire-$KERN_TYPE root=/dev/$P3 rootdelay=10 panic=10 console=$CONSOLE" \
 					  >> $MNThdd/boot/grub/grub.conf
 echo "  initrd /initramfs-$KVER-ipfire-$KERN_TYPE.img" >> $MNThdd/boot/grub/grub.conf
