@@ -44,6 +44,7 @@ usr/lib/lcdproc
 #usr/lib/lcdproc/mtc_s16209x.so
 #usr/lib/lcdproc/picolcd.so
 #usr/lib/lcdproc/pyramid.so
+#usr/lib/lcdproc/rawserial.so
 #usr/lib/lcdproc/sdeclcd.so
 #usr/lib/lcdproc/sed1330.so
 #usr/lib/lcdproc/sed1520.so
