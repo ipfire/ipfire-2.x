@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4
+VER        = 2.5
 
 THISAPP    = wpa_supplicant-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f0037dbe03897dcaf2ad2722e659095d
+$(DL_FILE)_MD5 = 96ff75c3a514f1f324560a2376f13110
 
 install : $(TARGET)
 
