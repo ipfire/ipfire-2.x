@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  Arne Fitzenreiter  <arne_f@ipfire.org>             #
+# Copyright (C) 2007-2016  Arne Fitzenreiter  <arne_f@ipfire.org>             #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -104,7 +104,7 @@ dd bs=1M if=/dev/zero of=$IMGvar count=$SIZEvar
 mkfs.$FSTYPE -F $IMGvar
 
 echo --------------------------------------------------------
-echo - Intall IPFire to the Images ...
+echo - Install IPFire to the images ...
 echo --------------------------------------------------------
 
 # Mount Images
