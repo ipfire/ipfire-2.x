@@ -3296,8 +3296,8 @@ CONFIG_UIO_PDRV_GENIRQ=m
 #
 CONFIG_STAGING=y
 # CONFIG_USBIP_CORE is not set
-CONFIG_W35UND=m
-CONFIG_PRISM2_USB=m
+# CONFIG_W35UND is not set
+# CONFIG_PRISM2_USB is not set
 # CONFIG_ECHO is not set
 # CONFIG_COMEDI is not set
 # CONFIG_RTLLIB is not set
@@ -3965,7 +3965,7 @@ CONFIG_CRYPTO_AUTHENC=m
 # Authenticated Encryption with Associated Data
 #
 CONFIG_CRYPTO_CCM=m
-# CONFIG_CRYPTO_GCM is not set
+CONFIG_CRYPTO_GCM=m
 CONFIG_CRYPTO_SEQIV=m
 
 #
