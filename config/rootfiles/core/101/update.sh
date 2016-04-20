@@ -50,6 +50,22 @@ extract_files
 # update linker config
 ldconfig
 
+# Fix conntrack configuration
+for i in CONNTRACK_H323 CONNTRACK_FTP CONNTRACK_PPTP CONNTRACK_TFTP CONNTRACK_IRC; do
+	if ! grep -q "^${i}" /var/ipfire/optionsfw/settings; then
+		echo "${i}=on"
+	fi
+done >> /var/ipfire/optionsfw/settings
+
+# Special handling for SIP
+if ! grep -q "^CONNTRACK_SIP" /var/ipfire/optionsfw/settings; then
+	if [ -e "/var/ipfire/main/disable_nf_sip" ]; then
+		echo "CONNTRACK_SIP=off" >> /var/ipfire/optionsfw/settings
+		rm -f /var/ipfire/main/disable_nf_sip
+	else
+		echo "CONNTRACK_SIP=on" >> /var/ipfire/optionsfw/settings
+	fi
+fi
 
 # Update Language cache
 #/usr/local/bin/update-lang-cache
