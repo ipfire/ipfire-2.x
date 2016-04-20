@@ -129,6 +129,9 @@ $checked{'CONNTRACK_H323'}{$settings{'CONNTRACK_H323'}} = "checked='checked'";
 $checked{'CONNTRACK_IRC'}{'off'} = '';
 $checked{'CONNTRACK_IRC'}{'on'} = '';
 $checked{'CONNTRACK_IRC'}{$settings{'CONNTRACK_IRC'}} = "checked='checked'";
+$checked{'CONNTRACK_PPTP'}{'off'} = '';
+$checked{'CONNTRACK_PPTP'}{'on'} = '';
+$checked{'CONNTRACK_PPTP'}{$settings{'CONNTRACK_PPTP'}} = "checked='checked'";
 $checked{'CONNTRACK_SIP'}{'off'} = '';
 $checked{'CONNTRACK_SIP'}{'on'} = '';
 $checked{'CONNTRACK_SIP'}{$settings{'CONNTRACK_SIP'}} = "checked='checked'";
@@ -248,6 +251,8 @@ END
 																						<input type='radio' name='CONNTRACK_H323' value='off' $checked{'CONNTRACK_H323'}{'off'} /> off</td></tr>
 <tr><td align='left' width='60%'>IRC</td><td align='left'>on <input type='radio' name='CONNTRACK_IRC' value='on' $checked{'CONNTRACK_IRC'}{'on'} />/
 																						<input type='radio' name='CONNTRACK_IRC' value='off' $checked{'CONNTRACK_IRC'}{'off'} /> off</td></tr>
+<tr><td align='left' width='60%'>PPTP</td><td align='left'>on <input type='radio' name='CONNTRACK_PPTP' value='on' $checked{'CONNTRACK_PPTP'}{'on'} />/
+																						<input type='radio' name='CONNTRACK_PPTP' value='off' $checked{'CONNTRACK_PPTP'}{'off'} /> off</td></tr>
 <tr><td align='left' width='60%'>SIP</td><td align='left'>on <input type='radio' name='CONNTRACK_SIP' value='on' $checked{'CONNTRACK_SIP'}{'on'} />/
 																						<input type='radio' name='CONNTRACK_SIP' value='off' $checked{'CONNTRACK_SIP'}{'off'} /> off</td></tr>
 <tr><td align='left' width='60%'>TFTP</td><td align='left'>on <input type='radio' name='CONNTRACK_TFTP' value='on' $checked{'CONNTRACK_TFTP'}{'on'} />/

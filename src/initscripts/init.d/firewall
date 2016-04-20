@@ -128,7 +128,7 @@ iptables_init() {
 	if [ "${CONNTRACK_PPTP}" = "on" ]; then
 		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
 			-m helper --helper pptp -j ACCEPT
-		iptables -t raw -A CONNTRACK -p udp --dport 1723 -j CT --helper pptp
+		iptables -t raw -A CONNTRACK -p tcp --dport 1723 -j CT --helper pptp
 	fi
 
 	# TFTP
