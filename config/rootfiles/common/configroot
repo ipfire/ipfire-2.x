@@ -94,7 +94,6 @@ var/ipfire/logging
 var/ipfire/mac
 #var/ipfire/mac/settings
 var/ipfire/main
-#var/ipfire/main/disable_nf_sip
 #var/ipfire/main/hosts
 #var/ipfire/main/routing
 #var/ipfire/main/settings

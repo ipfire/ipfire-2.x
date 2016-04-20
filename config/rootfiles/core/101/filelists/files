@@ -3,4 +3,5 @@ etc/issue
 etc/rc.d/init.d/firewall
 srv/web/ipfire/cgi-bin/chpasswd.cgi
 srv/web/ipfire/cgi-bin/ipinfo.cgi
+srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
