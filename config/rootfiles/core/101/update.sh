@@ -44,6 +44,9 @@ done
 # Stop services
 /etc/init.d/squid stop
 
+# Remove old raspberrypi modules
+rm -rf /lib/modules/3.14.65-ipfire-rpi
+
 # Extract files
 extract_files
 
