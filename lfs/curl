@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 7.43.0
+VER        = 7.48.0
 
 THISAPP    = curl-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3037f0b6ce03d434618e9db5506ae6be
+$(DL_FILE)_MD5 = d42e0fc34a5cace5739631cc040974fe
 
 install : $(TARGET)
 
