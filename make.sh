@@ -340,6 +340,7 @@ buildbase() {
     lfsmake2 iana-etc
     lfsmake2 m4
     lfsmake2 bison
+    lfsmake2 ncurses-compat
     lfsmake2 ncurses
     lfsmake2 procps
     lfsmake2 libtool
