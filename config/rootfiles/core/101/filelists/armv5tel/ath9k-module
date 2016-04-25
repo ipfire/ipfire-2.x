@@ -1,0 +1,3 @@
+lib/modules/KVER-ipfire-multi/kernel/drivers/net/wireless/ath/ath9k
+lib/modules/KVER-ipfire-kirkwood/kernel/drivers/net/wireless/ath/ath9k
+

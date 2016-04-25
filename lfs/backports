@@ -102,6 +102,7 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-4.2.6-1-mt7601_upstream_fixes.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1_add_libertas_uap.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-4.2.6-1_ath10k_remove_logspam.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-4.2.6-1-ath9k_add_missing_mask_init.patch
 
 	# smsc mac address patch for pandaboard and raspberry pi
 ifeq "$(KCFG)" "-multi"
