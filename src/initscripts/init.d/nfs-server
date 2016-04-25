@@ -13,6 +13,10 @@
 
 case "$1" in
 	start)
+		boot_mesg "Mounting nfsd virtual filesystem..."
+                /bin/mount -t nfsd none /proc/fs/nfsd 2>&1 > /dev/null
+                evaluate_retval
+
 		boot_mesg "Starting NFS mountd..."
 		loadproc /usr/sbin/rpc.mountd
 
@@ -27,10 +31,6 @@ case "$1" in
 			loadproc /usr/sbin/rpc.rquotad
 		fi
 
-		boot_mesg "Mounting nfsd virtual filesystem..."
-		/bin/mount -t nfsd none /proc/fs/nfsd 2>&1 > /dev/null
-		evaluate_retval
-
 		# Make ceratin that the list is refreshed on
 		# a restart.
 		boot_mesg "Exporting NFS Filesystems..."
@@ -43,8 +43,8 @@ case "$1" in
 		killproc /usr/sbin/rpc.statd
 
 		boot_mesg "Stopping NFS nfsd..."
-		# nfsd needs HUP....
-		killproc nfsd HUP
+		/usr/sbin/rpc.nfsd 0
+		evaluate_retval
 
 		boot_mesg "Stopping NFS mountd..."
 		killproc /usr/sbin/rpc.mountd

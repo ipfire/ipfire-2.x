@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.2.7
+VER        = 1.3.3
 
 THISAPP    = nfs-utils-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nfs
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       = "portmap"
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 libnfsidmap-$(LIBNFSIDMAP).tar.gz = $(DL_FROM)/libnfsidmap-$(LIBNFSIDMAP).tar.gz
 
-$(DL_FILE)_MD5 = 3b5ca797197765dc0c3a4122720c7716
+$(DL_FILE)_MD5 = 9b87d890669eaaec8e97a2b0a35b2665
 libnfsidmap-$(LIBNFSIDMAP).tar.gz_MD5 = 2ac4893c92716add1a1447ae01df77ab
 
 install : $(TARGET)
@@ -94,7 +94,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-gss \
 		--disable-tirpc \
 		--disable-nfsv41 \
-		--without-tcp-wrappers
+		--without-tcp-wrappers --disable-ipv6
 
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
