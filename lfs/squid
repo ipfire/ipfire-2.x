@@ -75,6 +75,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.4-13230.patch
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.4-13231.patch
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.4-13232.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.4-13233.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.4-13234.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.4-13235.patch
+
 	cd $(DIR_APP) && autoreconf -vfi
 	cd $(DIR_APP)/libltdl && autoreconf -vfi
 
@@ -85,11 +89,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--mandir=/usr/share/man \
 		--libexecdir=/usr/lib/squid \
 		--localstatedir=/var \
-		--disable-ipv6 \
 		--disable-ssl \
-		--enable-poll \
 		--disable-icmp \
 		--disable-wccp \
+		--disable-wccpv2 \
+		--disable-kqueue \
+		--disable-esi \
+		--disable-arch-native \
+		--disable-ipv6 \
+		--enable-poll \
 		--enable-ident-lookups \
 		--enable-storeio="aufs,diskd,ufs" \
 		--enable-underscores \
@@ -107,26 +115,22 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-url-rewrite-helpers \
 		--enable-build-info \
 		--enable-eui \
-		--with-pthreads \
-		--with-dl \
-		--with-filedescriptors=$$(( 16384 * 64 )) \
-		--with-large-files \
-		--with-aio \
-		--enable-async-io=8 \
+		--enable-async-io=16 \
 		--enable-unlinkd \
 		--enable-internal-dns \
 		--enable-epoll \
-		--disable-kqueue \
 		--enable-select \
 		--enable-cache-digests \
 		--enable-forw-via-db \
 		--enable-htcp \
 		--enable-kill-parent-hack \
-		--disable-wccpv2 \
 		--enable-icap-client \
-		--disable-esi \
 		--enable-zph-qos \
-		--disable-arch-native
+		--with-pthreads \
+		--with-dl \
+		--with-filedescriptors=$$(( 16384 * 64 )) \
+		--with-large-files \
+		--with-aio
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
