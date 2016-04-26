@@ -14,8 +14,8 @@
 case "$1" in
 	start)
 		boot_mesg "Mounting nfsd virtual filesystem..."
-                /bin/mount -t nfsd none /proc/fs/nfsd 2>&1 > /dev/null
-                evaluate_retval
+		/bin/mount -t nfsd none /proc/fs/nfsd 2>&1 > /dev/null
+		evaluate_retval
 
 		boot_mesg "Starting NFS mountd..."
 		loadproc /usr/sbin/rpc.mountd
