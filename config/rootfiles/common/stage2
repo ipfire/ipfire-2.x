@@ -41,7 +41,6 @@ etc/profile.d/term256.sh
 etc/profile.d/umask.sh
 etc/resolv.conf
 etc/securetty
-etc/sysconfig/ramdisk
 etc/sysctl.conf
 etc/syslog.conf
 etc/system-release
