@@ -862,6 +862,7 @@ buildipfire() {
   ipfiremake bird
   ipfiremake dmidecode
   ipfiremake mcelog
+  ipfiremake rtpproxy
 }
 
 buildinstaller() {
