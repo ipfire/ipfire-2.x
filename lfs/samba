@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 61
+PAK_VER    = 62
 
 DEPS       = "cups krb5"
 
@@ -87,6 +87,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2115-v3-6.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2118-v3-6.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2015-5370-v3-6.patch
+
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/1-samba.git-82fa625540abf8b8ec23d43c41e2ca906a9928a5.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/2-samba.git-0abef6992dc342d443137f8a2ac6c01f490cecee.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/3-samba.git-2d0424e7bb2c30bf9049529b207c73b55370dfc8.patch
 
 	cd $(DIR_APP)/source3 && ./autogen.sh
 	cd $(DIR_APP)/source3 && ./configure \
