@@ -648,7 +648,7 @@ int nicmenu(int colour)
 		sprintf(message, _("Please choose a networkcard for the following interface - %s."), ucolourcard[colour]);
 		rc=2;
 		while ( rc == 2 ) {
-			rc = newtWinMenu(_("Extended Network Menu"), message, 50, 5, 5, 6, pMenuInhalt, &choise,
+			rc = newtWinMenu(_("Extended Network Menu"), message, 50, 5, 5, mcount, pMenuInhalt, &choise,
 				_("Select"), _("Identify"), _("Cancel"), NULL);
 			if ( rc == 2 ) {
 				sprintf(temp, "/sbin/ip link set %s up", nics[found_NIC_as_Card[choise]].nic);
