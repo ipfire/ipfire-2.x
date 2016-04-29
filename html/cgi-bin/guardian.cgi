@@ -69,7 +69,17 @@ our %mainsettings = ();
 # (File exists when the addon is installed.)
 my $owncloud_meta = "/opt/pakfire/db/installed/meta-owncloud";
 
+
+# File declarations.
+my $settingsfile = "${General::swroot}/guardian/settings";
+my $ignoredfile = "${General::swroot}/guardian/ignored";
+
+# Create empty settings and ignoredfile if they do not exist yet.
+unless (-e "$settingsfile") { system("touch $settingsfile"); }
+unless (-e "$ignoredfile") { system("touch $ignoredfile"); }
+
 our %settings = ();
+our %ignored  = ();
 
 $settings{'ACTION'} = '';
 
@@ -128,15 +138,15 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		&BuildConfiguration();
 	}
 
-## Add a new entry to the ignore file.
+## Add/edit an entry to the ignore file.
 #
-} elsif ($settings{'ACTION'} eq $Lang::tr{'add'}) {
+} elsif (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::tr{'update'})) {
 
 	# Check if any input has been performed.
-	if ($settings{'NEW_IGNORE_ENTRY'} ne '') {
+	if ($settings{'IGNORE_ENTRY_ADDRESS'} ne '') {
 
 		# Check if the given input is no valid IP-address or IP-address with subnet, display an error message.
-		if ((!&General::validip($settings{'NEW_IGNORE_ENTRY'})) && (!&General::validipandmask($settings{'NEW_IGNORE_ENTRY'}))) {
+		if ((!&General::validip($settings{'IGNORE_ENTRY_ADDRESS'})) && (!&General::validipandmask($settings{'IGNORE_ENTRY_ADDRESS'}))) {
 			$errormessage = "$Lang::tr{'guardian invalid address or subnet'}";
 		}
 	} else {
@@ -145,14 +155,54 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 
 	# Go further if there was no error.
 	if ($errormessage eq '') {
-		my $new_entry = $settings{'NEW_IGNORE_ENTRY'};
+		my %ignored = ();
+		my $id;
+		my $status;
 
-		# Open file for appending the new entry.
-		open (FILE, ">>$ignorefile") or die "Unable to open $ignorefile for writing";
+		# Assign hash values.
+		my $new_entry_address = $settings{'IGNORE_ENTRY_ADDRESS'};
+		my $new_entry_remark = $settings{'IGNORE_ENTRY_REMARK'};
 
-		# Write the new entry to the ignore file.
-		print FILE "$new_entry\n";
-		close(FILE);
+		# Read-in ignoredfile.
+		&General::readhasharray($ignoredfile, \%ignored);
+
+		# Check if we should edit an existing entry and got an ID.
+		if (($settings{'ACTION'} eq $Lang::tr{'update'}) && ($settings{'ID'})) {
+			# Assin the provided id.
+			$id = $settings{'ID'};
+
+			# Undef the given ID.
+			undef($settings{'ID'});
+
+			# Grab the configured status of the corresponding entry.
+			$status = $ignored{$id}[2];
+		} else {
+			# Each newly added entry automatically should be enabled.
+			$status = "enabled";
+
+			# Generate the ID for the new entry.
+			#
+			# Sort the keys by it's ID and store them in an array.
+			my @keys = sort { $a <=> $b } keys %ignored;
+
+			# Reverse the key array.
+			my @reversed = reverse(@keys);
+
+			# Obtain the last used id.
+			my $last_id = @reversed[0];
+
+			# Increase the last id by one and use it as id for the new entry.
+			$id = ++$last_id;
+		}
+
+		# Add/Modify the entry to/in the ignored hash.
+		$ignored{$id} = ["$new_entry_address", "$new_entry_remark", "$status"];
+
+		# Write the changed ignored hash to the ignored file.
+		&General::writehasharray($ignoredfile, \%ignored);
+
+		# Regenerate the ignore file.
+		# &GenerateIgnoreFile();
 	}
 
 	# Check if guardian is running.
@@ -161,29 +211,68 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		&Guardian::Socket::Client("reload");
 	}
 
+## Toggle Enabled/Disabled for an existing entry on the ignore list.
+#
+
+} elsif ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
+	my %ignored = ();
+
+	# Only go further, if an ID has been passed.
+	if ($settings{'ID'}) {
+		# Assign the given ID.
+		my $id = $settings{'ID'};
+
+		# Undef the given ID.
+		undef($settings{'ID'});
+
+		# Read-in ignoredfile.
+		&General::readhasharray($ignoredfile, \%ignored);
+
+		# Grab the configured status of the corresponding entry.
+		my $status = $ignored{$id}[2];
+
+		# Switch the status.
+		if ($status eq "disabled") {
+			$status = "enabled";
+		} else {
+			$status = "disabled";
+		}
+
+		# Modify the status of the existing entry.
+		$ignored{$id} = ["$ignored{$id}[0]", "$ignored{$id}[1]", "$status"];
+
+		# Write the changed ignored hash to the ignored file.
+		&General::writehasharray($ignoredfile, \%ignored);
+
+		# Regenerate the ignore file.
+		# &GenerateIgnoreFile();
+
+		# Check if guardian is running.
+		if ($pid > 0) {
+			# Send reload command through socket connection.
+			&Guardian::Socket::Client("reload");
+		}
+	}
+
 ## Remove entry from ignore list.
 #
 } elsif ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
-	my $id = 0;
+	my %ignored = ();
 
-	# Open ignorefile and read content.
-	open(FILE, "<$ignorefile") or die "Unable to open $ignorefile.";
-	my @current = <FILE>;
-	close(FILE);
+	# Read-in ignoredfile.
+	&General::readhasharray($ignoredfile, \%ignored);
 
-	# Re-open ignorefile for writing.
-	open(FILE, ">$ignorefile") or die "Unable to open $ignorefile for writing";
-	flock FILE, 2;
+	# Drop entry from the hash.
+	delete($ignored{$settings{'ID'}});
 
-	# Read line by line from ignorefile and write them back except the line with the given ID.
-	# So this line is missing in the new file and the entry has been deleted.
-	foreach my $line (@current) {
-		$id++;
-		unless ($settings{'ID'} eq $id) {
-			print FILE "$line";
-		}
-	}
-	close(FILE);
+	# Undef the given ID.
+	undef($settings{'ID'});
+
+	# Write the changed ignored hash to the ignored file.
+	&General::writehasharray($ignoredfile, \%ignored);
+
+	# Regenerate the ignore file.
+	# &GenerateIgnoreFile();
 
 	# Check if guardian is running.
 	if ($pid > 0) {
@@ -270,8 +359,9 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	&Guardian::Socket::Client("flush");
 }
 
-# Load settings from file.
+# Load settings from files.
 &General::readhash("${General::swroot}/guardian/settings", \%settings);
+&General::readhasharray("${General::swroot}/guardian/ignored", \%ignored);
 
 # Call functions to generate whole page.
 &showMainBox();
@@ -480,49 +570,79 @@ sub showIgnoreBox() {
         &Header::openbox('100%', 'center', $Lang::tr{'guardian ignored hosts'});
 
 	print <<END;
-		<table width='60%'>
+		<table width='80%'>
 			<tr>
-				<td colspan='2' class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'guardian ignored hosts'}</b></td>
+				<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'ip address'}</b></td>
+				<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'remark'}</b></td>
+				<td class='base' colspan='3' bgcolor='$color{'color20'}'></td>
 			</tr>
 END
-			# Check if the guardian ignore file contains any content.
-			if (-s $ignorefile) {
-
-				# Open file and print contents.
-				open FILE, $ignorefile or die "Could not open $ignorefile";
-
-				my $id = 0;
+			# Check if some hosts have been add to be ignored.
+			if (keys (%ignored)) {
 				my $col = "";
 
-				# Read file line by line and print out the elements.
-				while( my $ignored_element = <FILE> )  {
+				# Loop through all entries of the hash..
+				while( (my $key) = each %ignored)  {
+					# Assign data array positions to some nice variable names.
+					my $address = $ignored{$key}[0];
+					my $remark = $ignored{$key}[1];
+					my $status  = $ignored{$key}[2];
 
-					# Increase id number for each element in the ignore file.
-					$id++;
-
-					# Check if the id number is even or not.
-					if ($id % 2) {
+					# Check if the key (id) number is even or not.
+					if ($settings{'ID'} eq $key) {
+						$col="bgcolor='${Header::colouryellow}'";
+					} elsif ($key % 2) {
 						$col="bgcolor='$color{'color22'}'";
 					} else {
 						$col="bgcolor='$color{'color20'}'";
 					}
 
+					# Choose icon for the checkbox.
+					my $gif;
+					my $gdesc;
+
+					# Check if the status is enabled and select the correct image and description.
+					if ($status eq 'enabled' ) {
+						$gif = 'on.gif';
+						$gdesc = $Lang::tr{'click to disable'};
+					} else {
+						$gif = 'off.gif';
+						$gdesc = $Lang::tr{'click to enable'};
+					}
+
 					print <<END;
 					<tr>
-						<td width='80%' class='base' $col>$ignored_element</td>
-						<td width='20%' align='center' $col>
-							<form method='post' name='$id' action='$ENV{'SCRIPT_NAME'}'>
+						<td width='20%' class='base' $col>$address</td>
+						<td width='65%' class='base' $col>$remark</td>
+
+						<td align='center' $col>
+							<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+								<input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
+								<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc' />
+								<input type='hidden' name='ID' value='$key' />
+							</form>
+						</td>
+
+						<td align='center' $col>
+							<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+								<input type='hidden' name='ACTION' value='$Lang::tr{'edit'}' />
+								<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
+								<input type='hidden' name='ID' value='$key' />
+							</form>
+						</td>
+
+						<td align='center' $col>
+							<form method='post' name='$key' action='$ENV{'SCRIPT_NAME'}'>
 								<input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' title='$Lang::tr{'remove'}' alt='$Lang::tr{'remove'}'>
-								<input type='hidden' name='ID' value='$id'>
+								<input type='hidden' name='ID' value='$key'>
 								<input type='hidden' name='ACTION' value='$Lang::tr{'remove'}'>
 							</form>
 						</td>
 					</tr>
 END
 				}
-			close (FILE);
 			} else {
-				# Print notice that currently no elements are stored in the ignore file.
+				# Print notice that currently no hosts are ignored.
 				print "<tr>\n";
 				print "<td class='base' colspan='2'>$Lang::tr{'guardian no entries'}</td>\n";
 				print "</tr>\n";
@@ -530,16 +650,44 @@ END
 
 		print "</table>\n";
 
-	# Section to add new elements to the ignore list.
+	# Section to add new elements or edit existing ones.
 	print <<END;
 	<br>
+	<hr>
+	<br>
+
 	<div align='center'>
-		<table width='60%'>
+		<table width='100%'>
+END
+
+	# Assign correct headline and button text.
+	my $buttontext;
+	my $entry_address;
+	my $entry_remark;
+
+	# Check if an ID (key) has been given, in this case an existing entry should be edited.
+	if ($settings{'ID'} ne '') {
+		$buttontext = $Lang::tr{'update'};
+		print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'update'}</b></td></tr>\n";
+
+		# Grab address and remark for the given key.
+		$entry_address = $ignored{$settings{'ID'}}[0];
+		$entry_remark = $ignored{$settings{'ID'}}[1];
+	} else {
+		$buttontext = $Lang::tr{'add'};
+		print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'dnsforward add a new entry'}</b></td></tr>\n";
+	}
+
+	print <<END;
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='hidden' name='ID' value='$settings{'ID'}'>
 			<tr>
-				<td width='30%'>$Lang::tr{'dnsforward add a new entry'}: </td>
-				<td width='50%'><input type='text' name='NEW_IGNORE_ENTRY' value='' size='24' /></td>
-				<td align='center' width='20%'><input type='submit' name='ACTION' value='$Lang::tr{'add'}' /></td>
+				<td width='30%'>$Lang::tr{'ip address'}: </td>
+				<td width='50%'><input type='text' name='IGNORE_ENTRY_ADDRESS' value='$entry_address' size='24' /></td>
+
+				<td width='30%'>$Lang::tr{'remark'}: </td>
+				<td wicth='50%'><input type='text' name=IGNORE_ENTRY_REMARK value='$entry_remark' size='24' /></td>
+				<td align='center' width='20%'><input type='submit' name='ACTION' value='$buttontext' /></td>
 			</tr>
 			</form>
 		</table>
