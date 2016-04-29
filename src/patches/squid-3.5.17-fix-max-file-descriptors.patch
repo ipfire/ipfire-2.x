@@ -1,0 +1,21 @@
+--- configure.ac.~	Wed Apr 20 14:26:07 2016
++++ configure.ac	Fri Apr 22 17:20:46 2016
+@@ -3131,6 +3131,9 @@
+     ;;
+ esac
+ 
++SQUID_CHECK_DEFAULT_FD_SETSIZE
++SQUID_CHECK_MAXFD
++
+ dnl --with-maxfd present for compatibility with Squid-2.
+ dnl undocumented in ./configure --help  to encourage using the Squid-3 directive
+ AC_ARG_WITH(maxfd,,
+@@ -3161,8 +3164,6 @@
+     esac
+ ])
+ 
+-SQUID_CHECK_DEFAULT_FD_SETSIZE
+-SQUID_CHECK_MAXFD
+ if test "x$squid_filedescriptors_num" != "x"; then
+   AC_MSG_NOTICE([Default number of fieldescriptors: $squid_filedescriptors_num])
+ fi
