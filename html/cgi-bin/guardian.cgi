@@ -319,7 +319,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	}
 
 	# Check if the given input is one of the interface addresses or our gateway.
-	elsif ($input eq "$green" || $input eq "$blue" || $input eq "$orange" || $input eq "$red" || $input eq "$gateway") {
+	elsif ($input eq "$green" || $input eq "$blue" || $input eq "$orange" || $input eq "$red" || $input eq "$gateway" || $input eq "$dns1" || $input eq "$dns2") {
 		$errormessage = "$Lang::tr{'guardian blocking of this address is not allowed'}";
 	}
 
