@@ -291,8 +291,17 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	my $orange = $netsettings{'ORANGE_ADDRESS'};
 	my $red = $netsettings{'RED_ADDRESS'};
 
+	# File declarations.
+	my $gatewayfile = "${General::swroot}/red/remote-ipaddress";
+	my $dns1file = "${General::swroot}/red/dns1";
+	my $dns2file = "${General::swroot}/red/dns2";
+
 	# Get gateway address.
-	my $gateway = &General::get_gateway();
+	my $gateway = &_get_address_from_file($gatewayfile);
+
+	# Get addresses from the used dns servers.
+	my $dns1 = &_get_address_from_file($dns1file);
+	my $dns2 = &_get_address_from_file($dns2file);
 
 	# Check if any input has been performed.
 	if ($input eq '') {
