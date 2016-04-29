@@ -869,6 +869,9 @@ sub BuildConfiguration() {
 
 	my $configfile = "${General::swroot}/guardian/guardian.conf";
 
+	# Create the configfile if not exist yet.
+	unless (-e "$configfile") { system("touch $configfile"); }
+
 	# Open configfile for writing.
 	open(FILE, ">$configfile");
 
@@ -943,6 +946,9 @@ sub GenerateIgnoreFile() {
 
 	# Read-in ignoredfile.
 	&General::readhasharray($ignoredfile, \%ignored);
+
+	# Create the guardian.ignore file if not exist yet.
+	unless (-e "$ignorefile") { system("touch $ignorefile"); }
 
 	# Open ignorefile for writing.
 	open(FILE, ">$ignorefile");
