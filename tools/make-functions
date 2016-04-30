@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -118,7 +118,7 @@ configure_target_guess() {
 		x86_64|i686|i586)
 			echo "i586"
 			;;
-		armv7*|armv6*|armv5*)
+		aarch64|armv7*|armv6*|armv5*)
 			echo "armv5tel"
 			;;
 		*)
