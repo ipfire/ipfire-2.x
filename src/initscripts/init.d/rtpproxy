@@ -1,0 +1,66 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/rtpproxy
+#
+# Description :
+#
+# Authors     :
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+PORT_MIN=10000
+PORT_MAX=10100
+SOCKET="/var/run/rtpproxy.sock"
+LISTEN="${GREEN_ADDRESS}"
+CUSTOM_ARGS=""
+
+PIDFILE="/var/run/rtpproxy.pid"
+
+if [ -r "/etc/sysconfig/rtpproxy" ]; then
+	. /etc/sysconfig/rtpproxy
+fi
+
+case "${1}" in
+	start)
+		boot_mesg "Starting rtpproxy..."
+		loadproc /usr/bin/rtpproxy -u nobody -p ${PIDFILE} \
+			-m ${PORT_MIN} -M ${PORT_MAX} -s ${SOCKET} \
+			-l ${LISTEN} ${CUSTOM_ARGS}
+		;;
+
+	stop)
+		boot_mesg "Stopping rtpproxy..."
+		killproc /usr/bin/rtpproxy
+		;;
+
+	reload)
+		boot_mesg "Reloading rtpproxy..."
+		reloadproc /usr/bin/rtpproxy
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/rtpproxy
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/rtpproxy

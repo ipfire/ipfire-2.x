@@ -1,6 +1,6 @@
---- configure.ac~	2016-01-23 01:27:44.078013879 +0000
-+++ configure.ac	2016-01-23 01:28:19.422179243 +0000
-@@ -2573,6 +2573,9 @@
+--- configure.ac.~	Wed Apr 20 14:26:07 2016
++++ configure.ac	Fri Apr 22 17:20:46 2016
+@@ -3131,6 +3131,9 @@
      ;;
  esac
  
@@ -10,7 +10,7 @@
  dnl --with-maxfd present for compatibility with Squid-2.
  dnl undocumented in ./configure --help  to encourage using the Squid-3 directive
  AC_ARG_WITH(maxfd,,
-@@ -2603,8 +2606,6 @@
+@@ -3161,8 +3164,6 @@
      esac
  ])
  
