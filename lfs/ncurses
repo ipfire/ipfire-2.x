@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -39,6 +39,7 @@ ifeq "$(ROOT)" ""
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
   PREFIX = /tools
+  EXTRA_CONFIG = --build=$(BUILDTARGET)
 endif
 
 EXTRA_CONFIG += \

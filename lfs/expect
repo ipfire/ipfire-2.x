@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2016   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -71,7 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/tcl* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-spawn-1.patch
-	cd $(DIR_APP) && ./configure --prefix=/tools --with-tcl=/tools/lib --with-tclinclude=/tools/include --with-x=no --disable-nls
+	cd $(DIR_APP) && ./configure --prefix=/tools --host=$(BUILDTARGET) --with-tcl=/tools/lib --with-tclinclude=/tools/include --with-x=no --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make SCRIPTS="" install
 	@rm -rf $(DIR_APP) $(DIR_SRC)/tcl*
