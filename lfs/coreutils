@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.24
+VER        = 8.25
 
 THISAPP    = coreutils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +42,6 @@ else
 endif
 
 CONFIGURE_OPTIONS += \
-	--disable-selinux \
 	--enable-largefile \
 	--disable-rpath \
 	--enable-install-program=arch \
@@ -60,7 +59,7 @@ objects =$(DL_FILE)
 
 $(DL_FILE)                      = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5                  = 40efdbce865d2458d8da0a9dcee7c16c
+$(DL_FILE)_MD5                  = 070e43ba7f618d747414ef56ab248a48
 
 install : $(TARGET)
 
@@ -90,7 +89,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure $(CONFIGURE_OPTIONS)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils-8.25-i18n-2.patch
+	cd $(DIR_APP) && FORCE_UNSAFE_CONFIGURE=1 && ./configure $(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

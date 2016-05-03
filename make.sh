@@ -336,6 +336,8 @@ buildbase() {
     lfsmake2 gcc
     lfsmake2 sed
     lfsmake2 berkeley
+    lfsmake2 autoconf
+    lfsmake2 automake
     lfsmake2 coreutils
     lfsmake2 iana-etc
     lfsmake2 m4
@@ -348,8 +350,6 @@ buildbase() {
     lfsmake2 readline-compat
     lfsmake2 pcre
     lfsmake2 pcre-compat
-    lfsmake2 autoconf
-    lfsmake2 automake
     lfsmake2 bash
     lfsmake2 bzip2
     lfsmake2 diffutils
