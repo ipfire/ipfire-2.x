@@ -55,6 +55,8 @@ ldconfig
 #
 # Start services
 #
+/etc/init.d/sshd restart
+/etc/init.d/apache restart
 
 sync
 # This update need a reboot...
