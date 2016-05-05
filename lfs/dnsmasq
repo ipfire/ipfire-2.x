@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.76test10
+VER        = 2.76test13
 
 THISAPP    = dnsmasq-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4b51474ed6081b18c61407077f254cf7
+$(DL_FILE)_MD5 = bb66cef5b41e0cddf8272b0911855568
 
 install : $(TARGET)
 
@@ -73,11 +73,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/001-Add_TTL_parameter_to_--host-record_and_--cname.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/002-Add_--dhcp-ttl_option.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/003-Update_CHANGELOG.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/004-Add_--tftp-mtu_option.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/005-Apply_ceiling_of_lease_length_to_TTL_when_--dhcp-ttl_in_use.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/001-Debian_init_d_script_fix.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/002-Add_--help_to_manpage.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/003-Move_dhcp_release_and_dhcp_lease_time_to_contrib_lease_tools.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/004-Add_contrib_lease-tools_dhcp_release6.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/005-Limit_number_of_upstream_nameservers_when_logging_configuration.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/006-Fix_for_DHCP_in_transmission_interface_when_--bridge-interface_in_use.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 
 	cd $(DIR_APP) && sed -i src/config.h \

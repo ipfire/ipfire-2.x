@@ -1,0 +1,85 @@
+From b97026035ecc870ea0f12f537b214237cf3d0af6 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Tue, 3 May 2016 22:34:06 +0100
+Subject: [PATCH] Limit number of upstream nameservers when logging
+ configuration.
+
+---
+ CHANGELOG     |  5 +++++
+ src/config.h  |  1 +
+ src/network.c | 10 ++++++++--
+ 3 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index 7d4a061..f3220d8 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -71,6 +71,11 @@ version 2.76
+ 	    Add dhcp_release6 to contrib/lease-tools. Many thanks 
+ 	    to Sergey Nechaev for this code.
+ 
++	    To avoid filling logs in configurations which define
++	    many upstream nameservers, don't log more that 30 servers.
++	    The number to be logged can be changed as SERVERS_LOGGED
++	    in src/config.h. 
++
+ 
+ version 2.75
+             Fix reversion on 2.74 which caused 100% CPU use when a 
+diff --git a/src/config.h b/src/config.h
+index c3bbbcb..80a50e1 100644
+--- a/src/config.h
++++ b/src/config.h
+@@ -25,6 +25,7 @@
+ #define TIMEOUT 10 /* drop UDP queries after TIMEOUT seconds */
+ #define FORWARD_TEST 50 /* try all servers every 50 queries */
+ #define FORWARD_TIME 20 /* or 20 seconds */
++#define SERVERS_LOGGED 30 /* Only log this many servers when logging state */
+ #define RANDOM_SOCKS 64 /* max simultaneous random ports */
+ #define LEASE_RETRY 60 /* on error, retry writing leasefile after LEASE_RETRY seconds */
+ #define CACHESIZ 150 /* default cache size */
+diff --git a/src/network.c b/src/network.c
+index da8a7f4..e7722fd 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -1429,7 +1429,7 @@ void check_servers(void)
+ {
+   struct irec *iface;
+   struct server *serv;
+-  int port = 0;
++  int port = 0, count;
+ 
+   /* interface may be new since startup */
+   if (!option_bool(OPT_NOWILD))
+@@ -1442,7 +1442,7 @@ void check_servers(void)
+     serv->flags |= SERV_DO_DNSSEC;
+ #endif
+ 
+-  for (serv = daemon->servers; serv; serv = serv->next)
++  for (count = 0, serv = daemon->servers; serv; serv = serv->next)
+     {
+       if (!(serv->flags & (SERV_LITERAL_ADDRESS | SERV_NO_ADDR | SERV_USE_RESOLV | SERV_NO_REBIND)))
+ 	{
+@@ -1509,6 +1509,9 @@ void check_servers(void)
+       
+       if (!(serv->flags & SERV_NO_REBIND) && !(serv->flags & SERV_LITERAL_ADDRESS))
+ 	{
++	  if (++count > SERVERS_LOGGED)
++	    continue;
++	  
+ 	  if (serv->flags & (SERV_HAS_DOMAIN | SERV_FOR_NODOTS | SERV_USE_RESOLV))
+ 	    {
+ 	      char *s1, *s2, *s3 = "";
+@@ -1540,6 +1543,9 @@ void check_servers(void)
+ 	    my_syslog(LOG_INFO, _("using nameserver %s#%d"), daemon->namebuff, port); 
+ 	}
+     }
++  
++  if (count - 1 > SERVERS_LOGGED)
++    my_syslog(LOG_INFO, _("using %d more nameservers"), count - SERVERS_LOGGED - 1);
+ 
+   cleanup_servers();
+ }
+-- 
+2.5.5
+
