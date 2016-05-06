@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2014 IPFire-Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2016 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -41,6 +41,13 @@ function find_partition() {
 	echo ${root}
 	return 0
 }
+
+if [ "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
+	rm -f /opt/pakfire/db/instelled/meta-linux-pae
+	/usr/bin/logger -p syslog.emerg -i pakfire \
+		"linux-pae: no pae support found, aborted!"
+	exit 1
+fi
 
 extract_files
 #
@@ -75,8 +82,6 @@ else
 	ln -s grub.conf $MNThdd/boot/grub/menu.lst
 fi
 
-# request a reboot if pae is supported
-if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
-	touch /var/run/need_reboot
-fi
+# request a reboot
+touch /var/run/need_reboot
 sync && sync
