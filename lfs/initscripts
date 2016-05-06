@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -197,16 +197,15 @@ $(TARGET) :
 		ln -sf any /etc/rc.d/init.d/networking/$$i; \
 	done
 
-	# ARM does not need checkfstab and acpid, intel no swconfig
+	# ARM does not need acpid, intel no swconfig
 ifeq "$(MACHINE_TYPE)" "arm"
-	rm -vf /etc/rc.d/init.d/{acpid,checkfstab}
+	rm -vf /etc/rc.d/init.d/acpid
 	ln -sf ../init.d/swconfig    /etc/rc.d/rcsysinit.d/S73swconfig
 else
 	rm -vf /etc/rc.d/init.d/swconfig
 	ln -sf ../init.d/acpid       /etc/rc.d/rc3.d/S12acpid
 	ln -sf ../init.d/acpid       /etc/rc.d/rc0.d/K87acpid
 	ln -sf ../init.d/acpid       /etc/rc.d/rc6.d/K87acpid
-	ln -sf ../init.d/checkfstab  /etc/rc.d/rcsysinit.d/S19checkfstab
 endif
 
 	@$(POSTBUILD)

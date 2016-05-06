@@ -43,6 +43,10 @@ done
 
 # Stop services
 
+# Remove checkfstab
+rm -f /etc/rc.d/init.d/checkfstab
+rm -f /etc/rc.d/rcsysinit.d/S19checkfstab
+
 # Extract files
 extract_files
 
