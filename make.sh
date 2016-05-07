@@ -863,6 +863,7 @@ buildipfire() {
   ipfiremake dmidecode
   ipfiremake mcelog
   ipfiremake rtpproxy
+  ipfiremake util-macros
 }
 
 buildinstaller() {
