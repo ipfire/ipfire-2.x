@@ -28,6 +28,7 @@ lib/udev
 #lib/udev/hwdb.d/60-keyboard.hwdb
 #lib/udev/init-net-rules.sh
 #lib/udev/mtd_probe
+#lib/udev/network-hotplug-macvtap
 #lib/udev/network-hotplug-rename
 #lib/udev/network-hotplug-vlan
 #lib/udev/rule_generator.functions
