@@ -864,6 +864,7 @@ buildipfire() {
   ipfiremake mcelog
   ipfiremake rtpproxy
   ipfiremake util-macros
+  ipfiremake libpciaccess
 }
 
 buildinstaller() {
