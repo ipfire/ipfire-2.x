@@ -866,6 +866,7 @@ buildipfire() {
   ipfiremake util-macros
   ipfiremake libpciaccess
   ipfiremake libyajl
+  ipfiremake libvirt
 }
 
 buildinstaller() {
