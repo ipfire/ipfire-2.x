@@ -9,17 +9,31 @@ case "$1" in
 		if [ $(basename $0) == "clamav" ]; then 
 			boot_mesg "Starting Clamav Definition Updater..."
 			loadproc /usr/bin/freshclam -d -c 10
-		
-			boot_mesg "Starting Clamav Daemon..."
+
 			COUNTER=0
-			while [ "$COUNTER" -lt "30" ]; do
+			while [ "$COUNTER" -lt "61" ]; do
 				[ -e "/usr/share/clamav/main.cvd" ] && \
 					[ -e "/usr/share/clamav/daily.cvd" ] || \
 					[ -e "/usr/share/clamav/daily.cld" ] && \
 				break
-				sleep 5
+				if [ "$COUNTER" -lt "1" ]; then
+					boot_mesg -n "Download db "
+				else
+					boot_mesg -n "."
+				fi
+				sleep 15
 				COUNTER=$(($COUNTER + 1))
 			done
+			if [ "$COUNTER" -gt "0" ]; then
+				boot_mesg
+			fi
+			if [ "$COUNTER" -gt "60" ]; then
+				boot_mesg "Download takes longer than 15min check freshclam status!"
+				echo_failure;
+				exit 1;
+			fi
+
+			boot_mesg "Starting Clamav Daemon..."
 			loadproc /usr/sbin/clamd
 		else
 			boot_mesg "Starting Clamav in background..."
@@ -32,7 +46,8 @@ case "$1" in
 	stop)
 		boot_mesg "Stopping Clamav Definition Updater..."
 		killproc /usr/bin/freshclam
-		
+		rm -rf /usr/share/clamav/*.tmp
+
 		boot_mesg "Stopping Clamav Daemon..."
 		killproc /usr/sbin/clamd
 		;;
