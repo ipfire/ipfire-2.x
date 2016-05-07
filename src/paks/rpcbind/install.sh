@@ -22,6 +22,12 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-stop_service ${NAME}
-remove_files
-rm -rf /etc/rc.d/rc*.d/*portmap
+# remove portmap
+/etc/init.d/portmap stop
+rm -rf /etc/rc.d/rc*.d/*portmap /sbin/portmap /etc/rc.d/init.d/portmap
+# install rpcbind
+extract_files
+start_service --background ${NAME}
+ln -sf  ../init.d/rpcbind /etc/rc.d/rc0.d/K49rpcbind
+ln -sf  ../init.d/rpcbind /etc/rc.d/rc3.d/S22rpcbind
+ln -sf  ../init.d/rpcbind /etc/rc.d/rc6.d/K49rpcbind

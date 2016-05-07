@@ -679,7 +679,7 @@ buildipfire() {
   ipfiremake libevent
   ipfiremake libevent2
   ipfiremake libtirpc
-  ipfiremake portmap
+  ipfiremake rpcbind
   ipfiremake nfs
   ipfiremake gnu-netcat
   ipfiremake ncat

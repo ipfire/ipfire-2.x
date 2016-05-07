@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nfs
 PAK_VER    = 7
 
-DEPS       = "portmap"
+DEPS       = "rpcbind"
 
 LIBNFSIDMAP = 0.25
 

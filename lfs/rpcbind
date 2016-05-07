@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2016  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,17 +24,17 @@
 
 include Config
 
-VER        = 6.0
+VER        = 0.2.3
 
-THISAPP    = portmap_$(VER)
-DL_FILE    = $(THISAPP).tgz
+THISAPP    = rpcbind-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = portmap
-PAK_VER    = 2
+PROG       = rpcbind
+PAK_VER    = 1
 
-DEPS       = ""
+DEPS       = "libtirpc"
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ac108ab68bf0f34477f8317791aaf1ff
+$(DL_FILE)_MD5 = c8875246b2688a1adfbd6ad43480278d
 
 install : $(TARGET)
 
@@ -54,7 +54,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -76,9 +76,10 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvfz $(DIR_DL)/$(DL_FILE)
-#	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/portmap-5beta-compilation_fixes-3.patch
-#	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/portmap-5beta-glibc_errno_fix-1.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && sed -i "/servname/s:rpcbind:sunrpc:" src/rpcbind.c
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/rpcbind/rpcbind-0.2.3-tirpc_fix-1.patch
+	cd $(DIR_APP) && ./configure --prefix=/usr --bindir=/sbin --with-rpcuser=root --without-systemdsystemunitdir --disable-ipv6
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

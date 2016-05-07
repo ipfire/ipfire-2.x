@@ -104,13 +104,13 @@ etc/rc.d/init.d/ntp
 #etc/rc.d/init.d/nut
 #etc/rc.d/init.d/openvmtools
 etc/rc.d/init.d/partresize
-#etc/rc.d/init.d/portmap
 #etc/rc.d/init.d/postfix
 #etc/rc.d/init.d/pound
 etc/rc.d/init.d/random
 etc/rc.d/init.d/rc
 etc/rc.d/init.d/reboot
 etc/rc.d/init.d/rngd
+#etc/rc.d/init.d/rpcbind
 #etc/rc.d/init.d/rtpproxy
 #etc/rc.d/init.d/samba
 #etc/rc.d/init.d/sane

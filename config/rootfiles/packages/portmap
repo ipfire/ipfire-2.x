@@ -1,7 +1,0 @@
-etc/rc.d/init.d/portmap
-sbin/portmap
-#sbin/pmap_dump
-#sbin/pmap_set
-#usr/share/man/man8/pmap_dump.8
-#usr/share/man/man8/pmap_set.8
-#usr/share/man/man8/portmap.8
