@@ -678,6 +678,7 @@ buildipfire() {
   ipfiremake tcpwrapper
   ipfiremake libevent
   ipfiremake libevent2
+  ipfiremake libtirpc
   ipfiremake portmap
   ipfiremake nfs
   ipfiremake gnu-netcat
