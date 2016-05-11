@@ -43,7 +43,7 @@ function find_partition() {
 }
 
 if [ "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
-	rm -f /opt/pakfire/db/instelled/meta-linux-pae
+	rm -f /opt/pakfire/db/installed/meta-linux-pae
 	/usr/bin/logger -p syslog.emerg -i pakfire \
 		"linux-pae: no pae support found, aborted!"
 	exit 1
