@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.5.17
+VER        = 3.5.19
 
 THISAPP    = squid-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2dc73cc01e77b1bd16d9070780ae79b1
+$(DL_FILE)_MD5 = a1d990284c429a63ee85d80ee5b3b8b9
 
 install : $(TARGET)
 
@@ -89,13 +89,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-kqueue \
 		--disable-esi \
 		--disable-arch-native \
-		--disable-ipv6 \
+		--enable-ipv6 \
 		--enable-poll \
 		--enable-ident-lookups \
-		--enable-storeio="aufs,diskd,ufs" \
+		--enable-storeio=aufs,diskd,ufs \
 		--enable-underscores \
 		--enable-http-violations \
-		--enable-removal-policies="heap,lru" \
+		--enable-removal-policies=heap,lru \
 		--enable-delay-pools \
 		--enable-linux-netfilter \
 		--enable-snmp \
@@ -119,11 +119,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-kill-parent-hack \
 		--enable-icap-client \
 		--enable-zph-qos \
-		--with-pthreads \
 		--with-dl \
 		--with-filedescriptors=$$(( 16384 * 64 )) \
-		--with-large-files \
-		--with-aio
+		--with-large-files
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
