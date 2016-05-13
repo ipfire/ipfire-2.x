@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.76test13
+VER        = 2.76rc1
 
 THISAPP    = dnsmasq-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = bb66cef5b41e0cddf8272b0911855568
+$(DL_FILE)_MD5 = 08c203ee2e0d3ed8babf056b69a6265e
 
 install : $(TARGET)
 
@@ -73,12 +73,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/001-Debian_init_d_script_fix.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/002-Add_--help_to_manpage.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/003-Move_dhcp_release_and_dhcp_lease_time_to_contrib_lease_tools.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/004-Add_contrib_lease-tools_dhcp_release6.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/005-Limit_number_of_upstream_nameservers_when_logging_configuration.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/006-Fix_for_DHCP_in_transmission_interface_when_--bridge-interface_in_use.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/001-Fix_error_in_PXE_arch_names_and_add_ARM32_and_ARM64.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/002-Tweak_CSAs_affected_by_UEFI_PXE_workaround_code.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 
 	cd $(DIR_APP) && sed -i src/config.h \

@@ -42,7 +42,7 @@
  
 --- a/src/dnsmasq.c	Thu Jul 30 20:59:06 2015
 +++ b/src/dnsmasq.c	Wed Dec 16 19:38:32 2015
-@@ -1013,6 +1013,11 @@
+@@ -1016,6 +1016,11 @@
  
  	  poll_resolv(0, daemon->last_resolv != 0, now); 	  
  	  daemon->last_resolv = now;
@@ -72,7 +72,7 @@
 -
 --- /dev/null	Wed Dec 16 19:48:08 2015
 +++ b/src/isc.c	Wed Dec 16 19:41:35 2015
-@@ -0,0 +1,251 @@
+@@ -0,0 +1,266 @@
 +/* dnsmasq is Copyright (c) 2014 John Volpe, Simon Kelley and
 +     Michael Tremer
 +
@@ -94,6 +94,12 @@
 +  Michael Tremer.
 +*/
 +
++
++#define _GNU_SOURCE
++
++#include <assert.h>
++#include <stdio.h>
++
 +#include "dnsmasq.h"
 +
 +#ifdef HAVE_ISC_READER
@@ -109,10 +115,18 @@
 +
 +static struct isc_dhcp_lease* dhcp_lease_new(const char* hostname) {
 +	struct isc_dhcp_lease* lease = whine_malloc(sizeof(*lease));
++       if (!lease)
++               return NULL;
 +
 +	lease->name = strdup(hostname);
 +	if (daemon->domain_suffix) {
-+		asprintf(&lease->fqdn, "%s.%s", hostname, daemon->domain_suffix);
++               int r = asprintf(&lease->fqdn, "%s.%s", hostname, daemon->domain_suffix);
++
++               // Handle OOM
++               if (r < 0) {
++                       free(lease);
++                       return NULL;
++               }
 +	}
 +	lease->expires = 0;
 +	lease->next = NULL;
@@ -285,6 +299,7 @@
 +					// and append it to the list.
 +					if (!lease) {
 +						lease = dhcp_lease_new(hostname);
++						assert(lease);
 +
 +						lease->next = leases;
 +						leases = lease;
@@ -326,7 +341,7 @@
 +#endif
 --- a/src/option.c	Wed Dec 16 19:24:12 2015
 +++ b/src/option.c	Wed Dec 16 19:42:48 2015
-@@ -1769,7 +1769,7 @@
+@@ -1770,7 +1770,7 @@
  	ret_err(_("bad MX target"));
        break;
  

@@ -1,0 +1,25 @@
+From cbc100fc81183e136f5ed72fec277677d55f9334 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Wed, 11 May 2016 22:17:18 +0100
+Subject: [PATCH] Tweak CSAs affected by UEFI PXE workaround code.
+
+---
+ src/rfc2131.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/rfc2131.c b/src/rfc2131.c
+index 42d1ba8..d952e03 100644
+--- a/src/rfc2131.c
++++ b/src/rfc2131.c
+@@ -1994,7 +1994,7 @@ static int pxe_uefi_workaround(int pxe_arch, struct dhcp_netid *netid, struct dh
+   struct pxe_service *service, *found;
+ 
+   /* Only workaround UEFI archs. */
+-  if (pxe_arch != 6 && pxe_arch != 7 && pxe_arch != 8 && pxe_arch != 9)
++  if (pxe_arch < 6)
+     return 0;
+   
+   for (found = NULL, service = daemon->pxe_services; service; service = service->next)
+-- 
+1.7.10.4
+
