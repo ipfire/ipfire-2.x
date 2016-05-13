@@ -3,6 +3,7 @@ usr/local/lib/p7zip
 #usr/local/lib/p7zip/7z
 #usr/local/lib/p7zip/7z.so
 #usr/local/lib/p7zip/Codecs
+usr/local/lib/p7zip/Codecs/Rar.so
 #usr/local/lib/p7zip/Codecs/Rar29.so
 #usr/local/man/man1/7z.1
 #usr/local/man/man1/7za.1

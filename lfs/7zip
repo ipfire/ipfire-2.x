@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 9.38.1
+VER        = 15.14.1
 
 THISAPP    = p7zip_$(VER)
 DL_FILE    = $(THISAPP)_src_all.tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = 7zip
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6cba8402ccab2370d3b70c5e28b3d651
+$(DL_FILE)_MD5 = 92cca093312b5a71a7be7dc7d1d32509
 
 install : $(TARGET)
 
