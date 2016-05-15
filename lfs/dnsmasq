@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.76rc1
+VER        = 2.76rc2
 
 THISAPP    = dnsmasq-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 08c203ee2e0d3ed8babf056b69a6265e
+$(DL_FILE)_MD5 = 1d5b834803a44e806f2865877574fe47
 
 install : $(TARGET)
 
@@ -73,8 +73,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/001-Fix_error_in_PXE_arch_names_and_add_ARM32_and_ARM64.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/002-Tweak_CSAs_affected_by_UEFI_PXE_workaround_code.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 
 	cd $(DIR_APP) && sed -i src/config.h \
