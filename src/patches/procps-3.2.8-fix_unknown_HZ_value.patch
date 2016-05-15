@@ -1,7 +1,7 @@
 diff -Naur procps-3.2.6.org/proc/sysinfo.c procps-3.2.6/proc/sysinfo.c
 --- procps-3.2.6.org/proc/sysinfo.c	2005-03-14 05:31:27.000000000 +0100
 +++ procps-3.2.6/proc/sysinfo.c	2011-10-02 12:51:32.000000000 +0200
-@@ -209,6 +209,7 @@
+@@ -212,6 +212,7 @@
  static void init_libproc(void) __attribute__((constructor));
  static void init_libproc(void){
    have_privs = check_for_privs();
