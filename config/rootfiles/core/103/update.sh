@@ -56,9 +56,8 @@ ldconfig
 # Update Language cache
 #/usr/local/bin/update-lang-cache
 
-#
 # Start services
-#
+/etc/init.d/dnsmasq restart
 
 sync
 # This update need a reboot...
