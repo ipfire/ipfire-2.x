@@ -6,7 +6,6 @@ etc/mc/mc.emacs.keymap
 etc/mc/mc.ext
 etc/mc/mc.keymap
 etc/mc/mc.menu
-etc/mc/mc.menu.sr
 etc/mc/mcedit.menu
 etc/mc/sfs.ini
 usr/bin/mc
@@ -153,6 +152,7 @@ usr/share/mc/syntax/erlang.syntax
 usr/share/mc/syntax/f90.syntax
 usr/share/mc/syntax/filehighlight.syntax
 usr/share/mc/syntax/fortran.syntax
+usr/share/mc/syntax/go.syntax
 usr/share/mc/syntax/haskell.syntax
 usr/share/mc/syntax/html.syntax
 usr/share/mc/syntax/idl.syntax
