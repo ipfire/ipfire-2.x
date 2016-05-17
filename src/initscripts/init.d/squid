@@ -94,9 +94,8 @@ case "$1" in
 	stop)
 			iptables -t nat -F SQUID
 		if [ -e /var/run/squid.pid ]; then
-			boot_mesg "Stopping Squid Proxy Server..."
+			boot_mesg -n "Stopping Squid Proxy Server (this may take up to a few minutes)..."
 			squid -k shutdown >/dev/null 2>&1
-			evaluate_retval
 
 			# Stop squidGuard, updxlrator, squidclamav
 			# and redirect_wrappers.
@@ -105,25 +104,42 @@ case "$1" in
 			killproc /usr/bin/squidclamav >/dev/null &
 			killproc /usr/sbin/redirect_wrapper >/dev/null &
 
-			# Wait until all redirectors have been stopped.
-			wait
+			# If some squid processes are still running, wait up to 360 seconds
+			# before we go on to kill the remaining process(es) and delete damaged
+			# '/var/log/cache/swap.state'.
+			n=0
+			while squid -k check &>/dev/null && [ $n -lt 360 ]; do
+				# Print a dot every 6 seconds
+				[ $(( ${n} % 6 )) -eq 0 ] && boot_mesg -n .
 
-			# If squid is still running, wait up to 30 seconds
-			# before we go on to kill it.
-			counter=30
-
-			while [ ${counter} -gt 0 ]; do
-				statusproc /usr/sbin/squid >/dev/null && break;
+				n=$(( ${n} + 1 ))
 				sleep 1
-				counter=$(( ${counter} - 1))
 			done
+			boot_mesg "" # end line
 
-			# Kill squid service, if still running.
-			killproc /usr/sbin/squid >/dev/null
+			# If (squid-1) is still running, kill all squid processes
+			if squid -k check &>/dev/null || pgrep -fl "(squid-1)" >/dev/null 2>&1; then
+				killproc /usr/sbin/squid >/dev/null
+				echo_failure
 
-			# Trash remain pid file from squid.
-			rm -rf /var/run/squid.pid
+				# Remove damaged journal of cache index
+				rm -f /var/log/cache/swap.state
+
+				boot_mesg -n "WARNING: squid could not be gracefully shut down." ${WARNING}
+				boot_mesg -n " The cache index was damaged and has been removed."
+				boot_mesg -n " The cache data has not been lost and the index will be"
+				boot_mesg -n " recreated at the next start."
+				boot_mesg "" ${NORMAL}
+				echo_warning
+			else
+				logger -t squid "squid shutdown time: ${n} seconds"
+
+				echo_ok
+			fi
 		fi
+
+		# Trash remain pid file from squid.
+		rm -f /var/run/squid.pid
 		;;
 
 	restart)
@@ -143,8 +159,7 @@ case "$1" in
 
 	flush)
 		$0 stop
-		echo > /var/log/cache/swap.state
-		chown squid.squid /var/log/cache/swap.state
+		rm -rf /var/log/cache/*
 		sleep 1
 		$0 start
 		;;
