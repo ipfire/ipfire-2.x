@@ -97,13 +97,6 @@ case "$1" in
 			boot_mesg -n "Stopping Squid Proxy Server (this may take up to a few minutes)..."
 			squid -k shutdown >/dev/null 2>&1
 
-			# Stop squidGuard, updxlrator, squidclamav
-			# and redirect_wrappers.
-			killproc /usr/bin/squidGuard >/dev/null &
-			killproc /usr/sbin/updxlrator >/dev/null &
-			killproc /usr/bin/squidclamav >/dev/null &
-			killproc /usr/sbin/redirect_wrapper >/dev/null &
-
 			# If some squid processes are still running, wait up to 360 seconds
 			# before we go on to kill the remaining process(es) and delete damaged
 			# '/var/log/cache/swap.state'.
@@ -136,6 +129,13 @@ case "$1" in
 
 				echo_ok
 			fi
+
+			# Kill any redirector processes that might have been left running
+			killproc /usr/bin/squidGuard >/dev/null &
+			killproc /usr/sbin/updxlrator >/dev/null &
+			killproc /usr/bin/squidclamav >/dev/null &
+			killproc /usr/sbin/redirect_wrapper >/dev/null &
+			wait
 		fi
 
 		# Trash remain pid file from squid.
