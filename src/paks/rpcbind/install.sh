@@ -22,9 +22,17 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+
 # remove portmap
-/etc/init.d/portmap stop
-rm -rf /etc/rc.d/rc*.d/*portmap /sbin/portmap /etc/rc.d/init.d/portmap
+if [ -e "/opt/pakfire/db/installed/meta-portmap" ]; then
+	/etc/init.d/portmap stop
+	rm -rf /etc/rc.d/rc*.d/*portmap \
+		/sbin/portmap \
+		/etc/rc.d/init.d/portmap \
+		/opt/pakfire/db/installed/meta-portmap \
+		/opt/pakfire/db/rootfiles/portmap
+fi
+
 # install rpcbind
 extract_files
 start_service --background ${NAME}
