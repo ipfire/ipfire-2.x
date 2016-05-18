@@ -92,7 +92,8 @@ case "$1" in
 		;;
 
 	stop)
-			iptables -t nat -F SQUID
+		iptables -t nat -F SQUID
+
 		if [ -e /var/run/squid.pid ]; then
 			boot_mesg -n "Stopping Squid Proxy Server (this may take up to a few minutes)..."
 			squid -k shutdown >/dev/null 2>&1
@@ -149,7 +150,7 @@ case "$1" in
 		;;
 
 	reconfigure)
-	/usr/sbin/squid -k reconfigure
+		/usr/sbin/squid -k reconfigure
 		;;
 
 	status)
