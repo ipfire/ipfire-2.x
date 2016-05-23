@@ -65,7 +65,9 @@ my %sections = (
         'ipsec' => '(ipsec_[\w_]+: |pluto\[.*\]: |charon: |vpnwatch: )',
         'openvpn' => '(openvpnserver\[.*\]: |.*n2n\[.*\]: )',
         'pakfire' => '(pakfire:) ',
-        'wireless' => '(hostapd:|kernel: ath.*:|kernel: wifi[0-9]:) '
+        'wireless' => '(hostapd:|kernel: ath.*:|kernel: wifi[0-9]:) ',
+        'squid' => '(squid\[.*\]: |squid: )',
+        'snort' => '(snort\[.*\]: )'
 	 );
 
 # Translations for the %sections array.
@@ -86,7 +88,9 @@ my %trsections = (
         'ipsec' => 'IPSec',
         'openvpn' => 'OpenVPN',
         'pakfire' => 'Pakfire',
-        'wireless' => 'Wireless'
+        'wireless' => 'Wireless',
+        'squid' => "$Lang::tr{'web proxy'}",
+        'snort' => "$Lang::tr{'intrusion detection'}"
 	);
 
 
