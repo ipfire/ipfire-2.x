@@ -1,0 +1,36 @@
+------------------------------------------------------------
+revno: 14056
+revision-id: squid3@treenet.co.nz-20160521172919-du6cbdirqcxdjbtr
+parent: squid3@treenet.co.nz-20160521155202-pp53utwamdhkugvg
+author: Christos Tsantilas <chtsanti@users.sourceforge.net>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sun 2016-05-22 05:29:19 +1200
+message:
+  Increase debug level in a peek-and-splice related debug message
+  
+  It may produced one debugging line for each SSL transaction in some cases
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20160521172919-du6cbdirqcxdjbtr
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 76c2e864289dabb1065c470c954f9fc5ec4c7b4f
+# timestamp: 2016-05-21 17:50:54 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20160521155202-\
+#   pp53utwamdhkugvg
+# 
+# Begin patch
+=== modified file 'src/ssl/PeerConnector.cc'
+--- src/ssl/PeerConnector.cc	2016-02-15 11:29:50 +0000
++++ src/ssl/PeerConnector.cc	2016-05-21 17:29:19 +0000
+@@ -598,7 +598,7 @@
+ 
+     case SSL_ERROR_WANT_WRITE:
+         if ((srvBio->bumpMode() == Ssl::bumpPeek || srvBio->bumpMode() == Ssl::bumpStare) && srvBio->holdWrite()) {
+-            debugs(81, DBG_IMPORTANT, "hold write on SSL connection on FD " << fd);
++            debugs(81, 3, "hold write on SSL connection on FD " << fd);
+             checkForPeekAndSplice();
+             return;
+         }
+

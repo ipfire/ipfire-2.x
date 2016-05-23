@@ -1,0 +1,37 @@
+------------------------------------------------------------
+revno: 14054
+revision-id: squid3@treenet.co.nz-20160521130144-6xtcayieij00fm5v
+parent: squid3@treenet.co.nz-20160521130058-zq8zugw0fohwfu3z
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sun 2016-05-22 01:01:44 +1200
+message:
+  Fix OpenSSL detection on FreeBSD
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20160521130144-6xtcayieij00fm5v
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 3d8c0d7a9f1886523ac55d79e4d3e8f0340e2ec9
+# timestamp: 2016-05-21 13:08:08 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20160521130058-\
+#   zq8zugw0fohwfu3z
+# 
+# Begin patch
+=== modified file 'configure.ac'
+--- configure.ac	2016-05-21 13:00:58 +0000
++++ configure.ac	2016-05-21 13:01:44 +0000
+@@ -1348,10 +1348,10 @@
+ 
+     AC_CHECK_LIB(crypto,[CRYPTO_new_ex_data],[LIBOPENSSL_LIBS="-lcrypto $LIBOPENSSL_LIBS"],[
+       AC_MSG_ERROR([library 'crypto' is required for OpenSSL])
+-    ])
++    ],$LIBOPENSSL_LIBS)
+     AC_CHECK_LIB(ssl,[SSL_library_init],[LIBOPENSSL_LIBS="-lssl $LIBOPENSSL_LIBS"],[
+       AC_MSG_ERROR([library 'ssl' is required for OpenSSL])
+-    ])
++    ],$LIBOPENSSL_LIBS)
+   ])
+ 
+   # This is a workaround for RedHat 9 brain damage..
+

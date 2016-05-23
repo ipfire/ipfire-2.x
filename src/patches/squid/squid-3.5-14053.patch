@@ -1,0 +1,46 @@
+------------------------------------------------------------
+revno: 14053
+revision-id: squid3@treenet.co.nz-20160521130058-zq8zugw0fohwfu3z
+parent: squidadm@squid-cache.org-20160517181416-sfrjdosd9dhx7u8o
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sun 2016-05-22 01:00:58 +1200
+message:
+  Do not override user defined -std option
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20160521130058-zq8zugw0fohwfu3z
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: a75245a622ccfa385ef5e4722f9a9fb438a16135
+# timestamp: 2016-05-21 13:08:06 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squidadm@squid-cache.org-20160517181416-\
+#   sfrjdosd9dhx7u8o
+# 
+# Begin patch
+=== modified file 'configure.ac'
+--- configure.ac	2016-05-08 12:41:25 +0000
++++ configure.ac	2016-05-21 13:00:58 +0000
+@@ -95,6 +95,9 @@
+ # Guess the compiler type (sets squid_cv_compiler)
+ SQUID_CC_GUESS_VARIANT
+ 
++# If the user did not specify a C++ version.
++user_cxx=`echo "$PRESET_CXXFLAGS" | grep -o -E "\-std="`
++if test "x$user_cxx" = "x"; then
+ # Check for C++11 compiler support
+ #
+ # BUG 3613: when clang -std=c++0x is used, it activates a "strict mode"
+@@ -103,8 +106,9 @@
+ #
+ # Similar POSIX issues on MinGW 32-bit and Cygwin
+ #
+-if ! test "x$squid_host_os" = "xmingw" -o "x$squid_host_os" = "xcygwin" -o "x$squid_cv_compiler" = "xclang"; then
+-  AX_CXX_COMPILE_STDCXX_11([noext],[optional])
++  if ! test "x$squid_host_os" = "xmingw" -o "x$squid_host_os" = "xcygwin" -o "x$squid_cv_compiler" = "xclang"; then
++    AX_CXX_COMPILE_STDCXX_11([noext],[optional])
++  fi
+ fi
+ 
+ # test for programs
+
