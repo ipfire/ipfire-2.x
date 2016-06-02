@@ -32,6 +32,16 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+# Normal build or /tools build.
+#
+ifeq "$(ROOT)" ""
+  TARGET = $(DIR_INFO)/$(THISAPP)
+  PREFIX = /usr
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+  PREFIX = /tools
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -70,7 +80,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --with-internal-glib
+ifeq "$(ROOT)" ""
+else
+	mkdir /tools/lib/pkgconfig
+endif
+	cd $(DIR_APP) && ./configure --prefix=$(PREFIX) --with-internal-glib
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
