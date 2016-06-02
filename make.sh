@@ -294,6 +294,7 @@ buildtoolchain() {
     lfsmake1 tcl
     lfsmake1 expect
     lfsmake1 dejagnu
+    lfsmake1 pkg-config
     lfsmake1 ncurses
     lfsmake1 bash
     lfsmake1 bzip2
@@ -342,6 +343,7 @@ buildbase() {
     lfsmake2 iana-etc
     lfsmake2 m4
     lfsmake2 bison
+    lfsmake2 ncurses-compat
     lfsmake2 ncurses
     lfsmake2 procps
     lfsmake2 libtool
