@@ -1,5 +1,5 @@
 etc/igmpproxy.conf
-usr/local/sbin/igmpproxy
-#usr/local/share/man/man5/igmpproxy.conf.5
-#usr/local/share/man/man8/igmpproxy.8
+usr/sbin/igmpproxy
+#usr/share/man/man5/igmpproxy.conf.5
+#usr/share/man/man8/igmpproxy.8
 var/ipfire/backup/addons/includes/igmpproxy
