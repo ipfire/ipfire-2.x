@@ -1,0 +1,43 @@
+From 69d6e8ce6c636f78d1db0eebe7fb1cc02ae4fb9a Mon Sep 17 00:00:00 2001
+From: Jonatan Schlag <jonatan.schlag@ipfire.org>
+Date: Mon, 6 Jun 2016 19:40:50 +0200
+Subject: [PATCH 2/2] Change options in libvirtd.conf for IPFire
+
+Signed-off-by: Jonatan Schlag <jonatan.schlag@ipfire.org>
+---
+ daemon/libvirtd.conf | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/daemon/libvirtd.conf b/daemon/libvirtd.conf
+index ac06cdd..1a41914 100644
+--- a/daemon/libvirtd.conf
++++ b/daemon/libvirtd.conf
+@@ -87,14 +87,14 @@
+ # without becoming root.
+ #
+ # This is restricted to 'root' by default.
+-#unix_sock_group = "libvirt"
++unix_sock_group = "libvirt-remote"
+ 
+ # Set the UNIX socket permissions for the R/O socket. This is used
+ # for monitoring VM status only
+ #
+ # Default allows any user. If setting group ownership, you may want to
+ # restrict this too.
+-#unix_sock_ro_perms = "0777"
++unix_sock_ro_perms = "0770"
+ 
+ # Set the UNIX socket permissions for the R/W socket. This is used
+ # for full management of VMs
+@@ -104,7 +104,7 @@
+ #
+ # If not using PolicyKit and setting group ownership for access
+ # control, then you may want to relax this too.
+-#unix_sock_rw_perms = "0770"
++unix_sock_rw_perms = "0770"
+ 
+ # Set the UNIX socket permissions for the admin interface socket.
+ #
+-- 
+2.1.4
+

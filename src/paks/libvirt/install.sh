@@ -22,6 +22,12 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+
+# creates a new user and group called libvirt-remote if they not exist
+getent group libvirt-remote >/dev/null || groupadd  libvirt-remote
+getent passwd libvirt-remote >/dev/null || \
+useradd -m -g libvirt-remote -s /bin/bash "libvirt-remote"
+
 extract_files
 start_service --delay 300 --background ${NAME}
 ln -svf /etc/init.d/libvirtd /etc/rc.d/rc0.d/K20libvirtd
