@@ -86,7 +86,7 @@ start_service() {
 		esac
 	done
 
-	if [ -e "/etc/init.d/${1}" ]; then
+	if [ -f "/etc/init.d/${1}" ]; then
 	    if [ -n "${BACKGROUND}" ]; then
 				(sleep ${DELAY} && /etc/init.d/${1} start) &
 			else
@@ -96,7 +96,7 @@ start_service() {
 }
 
 stop_service() {
-	if [ -e "/etc/init.d/${1}" ]; then
+	if [ -f "/etc/init.d/${1}" ]; then
 		/etc/init.d/${1} stop
 	fi
 }
