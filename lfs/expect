@@ -72,6 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/tcl* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
 			--prefix=/tools \
+			--build=$(BUILDTARGET) \
 			--with-tcl=/tools/lib \
 			--with-tclinclude=/tools/include \
 			--with-x=no \
