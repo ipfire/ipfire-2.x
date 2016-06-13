@@ -283,3 +283,5 @@ var/lib/libvirt/qemu
 #var/log/libvirt/lxc
 var/log/libvirt/qemu
 #var/log/libvirt/uml
+etc/rc.d/init.d/libvirt-guests
+etc/rc.d/init.d/libvirtd
