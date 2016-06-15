@@ -42,6 +42,7 @@ done
 
 
 # Stop services
+/etc/init.d/squid stop
 
 # Remove checkfstab
 rm -f /etc/rc.d/init.d/checkfstab
@@ -56,8 +57,12 @@ ldconfig
 # Update Language cache
 #/usr/local/bin/update-lang-cache
 
+# Remove potentially broken squid cache index (will be recreated after the next start)
+rm -f /var/log/cache/swap.state
+
 # Start services
 /etc/init.d/dnsmasq restart
+/etc/init.d/squid start
 
 sync
 # This update need a reboot...
