@@ -22,6 +22,8 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+#create the group kvm when they not exist
+getent group kvm >/dev/null || groupadd kvm
 extract_files
 restore_backup ${NAME}
 echo shm	/dev/shm	tmpfs	defaults,size=256M	0	0 >> /etc/fstab
