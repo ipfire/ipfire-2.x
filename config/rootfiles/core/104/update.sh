@@ -45,6 +45,9 @@ done
 # Extract files
 extract_files
 
+# Remove some old files
+rm -f /bin/groups /lib/libshadow.so.0*
+
 # update linker config
 ldconfig
 
