@@ -21,6 +21,7 @@ usr/lib/libatm.so.1.0.0
 #usr/man/man4/atmsigd.conf.4
 #usr/man/man7/qos.7
 #usr/man/man7/sap.7
+#usr/man/man8
 #usr/man/man8/atmaddr.8
 #usr/man/man8/atmarp.8
 #usr/man/man8/atmarpd.8
