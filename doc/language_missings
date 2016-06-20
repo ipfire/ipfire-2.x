@@ -32,6 +32,36 @@
 < bit
 < block
 < capabilities
+< Captive 1day
+< Captive 1month
+< Captive 1week
+< Captive activate
+< Captive activated
+< Captive active on
+< Captive authentication
+< Captive auth_lic
+< Captive auth_vou
+< Captive config
+< Captive err doublevoucher
+< Captive expire
+< Captive invalid logosize
+< Captive invalid_voucher
+< Captive ip
+< Captive logo_set
+< Captive logo_upload
+< Captive mac
+< Captive menu
+< Captive noexpiretime
+< Captive nolimit
+< Captive nr
+< Captive time
+< Captive title
+< Captive voactive
+< Captive voucher
+< Captive voucherout
+< Captive vouchervalid
+< Captive vout
+< Captive wrong ext
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -674,6 +704,36 @@
 < bit
 < block
 < capabilities
+< Captive 1day
+< Captive 1month
+< Captive 1week
+< Captive activate
+< Captive activated
+< Captive active on
+< Captive authentication
+< Captive auth_lic
+< Captive auth_vou
+< Captive config
+< Captive err doublevoucher
+< Captive expire
+< Captive invalid logosize
+< Captive invalid_voucher
+< Captive ip
+< Captive logo_set
+< Captive logo_upload
+< Captive mac
+< Captive menu
+< Captive noexpiretime
+< Captive nolimit
+< Captive nr
+< Captive time
+< Captive title
+< Captive voactive
+< Captive voucher
+< Captive voucherout
+< Captive vouchervalid
+< Captive vout
+< Captive wrong ext
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -1297,6 +1357,36 @@
 < bit
 < block
 < capabilities
+< Captive 1day
+< Captive 1month
+< Captive 1week
+< Captive activate
+< Captive activated
+< Captive active on
+< Captive authentication
+< Captive auth_lic
+< Captive auth_vou
+< Captive config
+< Captive err doublevoucher
+< Captive expire
+< Captive invalid logosize
+< Captive invalid_voucher
+< Captive ip
+< Captive logo_set
+< Captive logo_upload
+< Captive mac
+< Captive menu
+< Captive noexpiretime
+< Captive nolimit
+< Captive nr
+< Captive time
+< Captive title
+< Captive voactive
+< Captive voucher
+< Captive voucherout
+< Captive vouchervalid
+< Captive vout
+< Captive wrong ext
 < ccd add
 < ccd choose net
 < ccd clientip
@@ -1907,6 +1997,36 @@
 < bit
 < block
 < capabilities
+< Captive 1day
+< Captive 1month
+< Captive 1week
+< Captive activate
+< Captive activated
+< Captive active on
+< Captive authentication
+< Captive auth_lic
+< Captive auth_vou
+< Captive config
+< Captive err doublevoucher
+< Captive expire
+< Captive invalid logosize
+< Captive invalid_voucher
+< Captive ip
+< Captive logo_set
+< Captive logo_upload
+< Captive mac
+< Captive menu
+< Captive noexpiretime
+< Captive nolimit
+< Captive nr
+< Captive time
+< Captive title
+< Captive voactive
+< Captive voucher
+< Captive voucherout
+< Captive vouchervalid
+< Captive vout
+< Captive wrong ext
 < ccd add
 < ccd choose net
 < ccd clientip

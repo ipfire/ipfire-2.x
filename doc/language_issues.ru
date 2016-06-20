@@ -620,6 +620,30 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Add a route
+WARNING: untranslated string: Captive activate
+WARNING: untranslated string: Captive activated
+WARNING: untranslated string: Captive active on
+WARNING: untranslated string: Captive auth_lic
+WARNING: untranslated string: Captive auth_vou
+WARNING: untranslated string: Captive authentication
+WARNING: untranslated string: Captive config
+WARNING: untranslated string: Captive err doublevoucher
+WARNING: untranslated string: Captive expire
+WARNING: untranslated string: Captive invalid logosize
+WARNING: untranslated string: Captive invalid_voucher
+WARNING: untranslated string: Captive logo_set
+WARNING: untranslated string: Captive logo_upload
+WARNING: untranslated string: Captive mac
+WARNING: untranslated string: Captive menu
+WARNING: untranslated string: Captive noexpiretime
+WARNING: untranslated string: Captive nolimit
+WARNING: untranslated string: Captive title
+WARNING: untranslated string: Captive voactive
+WARNING: untranslated string: Captive voucher
+WARNING: untranslated string: Captive voucherout
+WARNING: untranslated string: Captive vouchervalid
+WARNING: untranslated string: Captive vout
+WARNING: untranslated string: Captive wrong ext
 WARNING: untranslated string: ConnSched dial
 WARNING: untranslated string: ConnSched hangup
 WARNING: untranslated string: ConnSched reboot
@@ -651,6 +675,7 @@ WARNING: untranslated string: bit
 WARNING: untranslated string: block
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
+WARNING: untranslated string: captive
 WARNING: untranslated string: ccd add
 WARNING: untranslated string: ccd choose net
 WARNING: untranslated string: ccd client options

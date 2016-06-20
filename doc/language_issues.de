@@ -1,4 +1,10 @@
 WARNING: translation string unused: Async logging enabled
+WARNING: translation string unused: Captive 1day
+WARNING: translation string unused: Captive 1month
+WARNING: translation string unused: Captive 1week
+WARNING: translation string unused: Captive ip
+WARNING: translation string unused: Captive nr
+WARNING: translation string unused: Captive time
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
 WARNING: translation string unused: HDD temperature
@@ -668,6 +674,7 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
 WARNING: untranslated string: bytes
+WARNING: untranslated string: captive
 WARNING: untranslated string: community rules
 WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: emerging rules
