@@ -69,10 +69,10 @@ run
 #sbin
 #srv
 #usr/bin
+usr/bin/captive-cleanup
 #usr/bin/perl
 #usr/include
 #usr/lib
-usr/bin/captive-cleanup
 usr/lib/firewall
 usr/lib/firewall/firewall-lib.pl
 usr/lib/firewall/ipsec-block
