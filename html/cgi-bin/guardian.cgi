@@ -208,7 +208,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	# Check if guardian is running.
 	if ($pid > 0) {
 		# Send reload command through socket connection.
-		&Guardian::Socket::Client("reload");
+		&Guardian::Socket::Client("reload-ignore-list");
 	}
 
 ## Toggle Enabled/Disabled for an existing entry on the ignore list.
@@ -250,7 +250,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		# Check if guardian is running.
 		if ($pid > 0) {
 			# Send reload command through socket connection.
-			&Guardian::Socket::Client("reload");
+			&Guardian::Socket::Client("reload-ignore-list");
 		}
 	}
 
@@ -277,7 +277,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	# Check if guardian is running.
 	if ($pid > 0) {
 		# Send reload command through socket connection.
-		&Guardian::Socket::Client("reload");
+		&Guardian::Socket::Client("reload-ignore-list");
 	}
 
 ## Block a user given address or subnet.
@@ -963,19 +963,12 @@ sub GenerateIgnoreFile() {
 	my $green = $netsettings{'GREEN_ADDRESS'};
 	my $blue = $netsettings{'BLUE_ADDRESS'};
 	my $orange = $netsettings{'ORANGE_ADDRESS'};
-	my $red = $netsettings{'RED_ADDRESS'};
 
 	# File declarations.
+	my $public_address_file = "${General::swroot}/red/local-ipaddress";
 	my $gatewayfile = "${General::swroot}/red/remote-ipaddress";
 	my $dns1file = "${General::swroot}/red/dns1";
 	my $dns2file = "${General::swroot}/red/dns2";
-
-	# Get gateway address.
-	my $gateway = &_get_address_from_file($gatewayfile);
-
-	# Get addresses from the used dns servers.
-	my $dns1 = &_get_address_from_file($dns1file);
-	my $dns2 = &_get_address_from_file($dns2file);
 
 	# Write the obtained addresses to the ignore file.
 	print FILE "# IPFire local interfaces.\n";
@@ -994,17 +987,18 @@ sub GenerateIgnoreFile() {
 	}
 
 	print FILE "\n# IPFire red interface, gateway and used DNS-servers.\n";
-	print FILE "$red\n";
-	print FILE "$gateway\n";
-	print FILE "$dns1\n";
-	print FILE "$dns2\n";
+	print FILE "# Include the corresponding files to obtain the addresses.\n";
+	print FILE "Include_File = $public_address_file\n";
+	print FILE "Include_File = $gatewayfile\n";
+	print FILE "Include_File = $dns1file\n";
+	print FILE "Include_File = $dns2file\n";
 
 	# Add all user defined hosts and networks to the ignore file.
 	#
 	# Check if the hash contains any elements.
 	if (keys (%ignored)) {
 		# Write headline.
-		print FILE "# User defined hosts/networks.\n";
+		print FILE "\n# User defined hosts/networks.\n";
 
 		# Loop through the entire hash and write the host/network
 		# and remark to the ignore file.
