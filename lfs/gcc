@@ -61,6 +61,8 @@ else
 ifeq "$(PASS)" "1"
   CFLAGS    := $(patsubst -fstack-protector-strong,-fstack-protector-all,$(CFLAGS))
   CXXFLAGS  := $(patsubst -fstack-protector-strong,-fstack-protector-all,$(CXXFLAGS))
+  CXXFLAGS  += -std=gnu++98
+
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = \
 	--target=$(CROSSTARGET) \

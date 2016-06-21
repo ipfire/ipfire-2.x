@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="103"							# Core Level (Filename)
-PAKFIRE_CORE="102"						# Core Level (PAKFIRE)
+CORE="104"							# Core Level (Filename)
+PAKFIRE_CORE="103"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -36,7 +36,7 @@ BUILD_IMAGES=1							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
-TOOLCHAINVER=11
+TOOLCHAINVER=12
 
 # New architecture variables
 BUILD_ARCH="$(uname -m)"
@@ -294,6 +294,7 @@ buildtoolchain() {
     lfsmake1 tcl
     lfsmake1 expect
     lfsmake1 dejagnu
+    lfsmake1 pkg-config
     lfsmake1 ncurses
     lfsmake1 bash
     lfsmake1 bzip2
@@ -336,10 +337,13 @@ buildbase() {
     lfsmake2 gcc
     lfsmake2 sed
     lfsmake2 berkeley
+    lfsmake2 autoconf
+    lfsmake2 automake
     lfsmake2 coreutils
     lfsmake2 iana-etc
     lfsmake2 m4
     lfsmake2 bison
+    lfsmake2 ncurses-compat
     lfsmake2 ncurses
     lfsmake2 procps
     lfsmake2 libtool
@@ -348,8 +352,6 @@ buildbase() {
     lfsmake2 readline-compat
     lfsmake2 pcre
     lfsmake2 pcre-compat
-    lfsmake2 autoconf
-    lfsmake2 automake
     lfsmake2 bash
     lfsmake2 bzip2
     lfsmake2 diffutils
@@ -863,6 +865,10 @@ buildipfire() {
   ipfiremake dmidecode
   ipfiremake mcelog
   ipfiremake rtpproxy
+  ipfiremake util-macros
+  ipfiremake libpciaccess
+  ipfiremake libyajl
+  ipfiremake libvirt
 }
 
 buildinstaller() {

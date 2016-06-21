@@ -1,0 +1,39 @@
+------------------------------------------------------------
+revno: 14055
+revision-id: squid3@treenet.co.nz-20160521155202-pp53utwamdhkugvg
+parent: squid3@treenet.co.nz-20160521130144-6xtcayieij00fm5v
+author: Alex Rousskov <rousskov@measurement-factory.com>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sun 2016-05-22 03:52:02 +1200
+message:
+  Fix icons loading speed.
+  
+  Since trunk r14100 (Bug 3875: bad mimeLoadIconFile error handling), each
+  icon was read from disk and written to Store one character at a time. I
+  did not measure startup delays in production, but in debugging runs,
+  fixing this bug sped up icons loading from 1 minute to 4 seconds.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20160521155202-pp53utwamdhkugvg
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 79b78480d81666c15406d23837608ba9a578da4b
+# timestamp: 2016-05-21 16:51:00 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20160521130144-\
+#   6xtcayieij00fm5v
+# 
+# Begin patch
+=== modified file 'src/mime.cc'
+--- src/mime.cc	2016-01-01 00:14:27 +0000
++++ src/mime.cc	2016-05-21 15:52:02 +0000
+@@ -430,7 +430,7 @@
+         /* read the file into the buffer and append it to store */
+         int n;
+         char *buf = (char *)memAllocate(MEM_4K_BUF);
+-        while ((n = FD_READ_METHOD(fd, buf, sizeof(*buf))) > 0)
++        while ((n = FD_READ_METHOD(fd, buf, 4096)) > 0)
+             e->append(buf, n);
+ 
+         file_close(fd);
+

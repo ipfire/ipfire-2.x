@@ -45,6 +45,7 @@ lib/modules/KVER-ipfire-rpi
 #lib/modules/KVER-ipfire-rpi/kernel/crypto/deflate.ko
 #lib/modules/KVER-ipfire-rpi/kernel/crypto/ecb.ko
 #lib/modules/KVER-ipfire-rpi/kernel/crypto/fcrypt.ko
+#lib/modules/KVER-ipfire-rpi/kernel/crypto/gcm.ko
 #lib/modules/KVER-ipfire-rpi/kernel/crypto/gf128mul.ko
 #lib/modules/KVER-ipfire-rpi/kernel/crypto/ghash-generic.ko
 #lib/modules/KVER-ipfire-rpi/kernel/crypto/khazad.ko
@@ -981,10 +982,6 @@ lib/modules/KVER-ipfire-rpi
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/staging/speakup/speakup_soft.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/staging/vt6656
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/staging/vt6656/vt6656_stage.ko
-#lib/modules/KVER-ipfire-rpi/kernel/drivers/staging/winbond
-#lib/modules/KVER-ipfire-rpi/kernel/drivers/staging/winbond/w35und.ko
-#lib/modules/KVER-ipfire-rpi/kernel/drivers/staging/wlan-ng
-#lib/modules/KVER-ipfire-rpi/kernel/drivers/staging/wlan-ng/prism2_usb.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/uio
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/uio/uio.ko
 #lib/modules/KVER-ipfire-rpi/kernel/drivers/uio/uio_pdrv_genirq.ko
@@ -1252,7 +1249,6 @@ lib/modules/KVER-ipfire-rpi
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv4/netfilter/ipt_SYNPROXY.ko
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv4/netfilter/ipt_ULOG.ko
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv4/netfilter/ipt_ah.ko
-#lib/modules/KVER-ipfire-rpi/kernel/net/ipv4/netfilter/ipt_ipp2p.ko
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv4/netfilter/ipt_rpfilter.ko
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv4/netfilter/iptable_filter.ko
 #lib/modules/KVER-ipfire-rpi/kernel/net/ipv4/netfilter/iptable_mangle.ko

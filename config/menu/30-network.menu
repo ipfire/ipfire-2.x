@@ -3,9 +3,9 @@
 			        'title' => "$Lang::tr{'net config'}",
 			        'enabled' => 0,
 			        };
-    $subnetwork->{'20.proxy'} = {'caption' => 'Webproxy',
+    $subnetwork->{'20.proxy'} = {'caption' => "$Lang::tr{'web proxy'}",
 			        'uri' => '/cgi-bin/proxy.cgi',
-			        'title' => "Webproxy",
+			        'title' => "$Lang::tr{'web proxy'}",
 			        'enabled' => 1,
 			        };
     $subnetwork->{'21.urlfilter'} = {'caption' => $Lang::tr{'url filter'},

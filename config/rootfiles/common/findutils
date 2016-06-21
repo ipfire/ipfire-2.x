@@ -1,8 +1,7 @@
+bin/find
 #etc/fcron.weekly
 etc/fcron.weekly/updatedb
-bin/find
 usr/bin/locate
-#usr/bin/oldfind
 usr/bin/updatedb
 usr/bin/xargs
 #usr/lib/findutils
@@ -11,6 +10,8 @@ usr/lib/findutils/code
 usr/lib/findutils/frcode
 #usr/share/info/find-maint.info
 #usr/share/info/find.info
+#usr/share/info/find.info-1
+#usr/share/info/find.info-2
 #usr/share/man/man1/find.1
 #usr/share/man/man1/locate.1
 #usr/share/man/man1/updatedb.1

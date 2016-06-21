@@ -516,12 +516,14 @@ sub checksubnets
 		&General::readhasharray("${General::swroot}/vpn/config", \%ipsecconf);
 		foreach my $key (keys %ipsecconf){
 			if ($ipsecconf{$key}[11] ne ''){
-				my ($ipsecip,$ipsecsub) = split (/\//, $ipsecconf{$key}[11]);
-				$ipsecsub=&iporsubtodec($ipsecsub);
-				if($ipsecconf{$key}[1] ne $ccdname){
-					if ( &IpInSubnet ($ip,$ipsecip,$ipsecsub) ){
-						$errormessage=$Lang::tr{'ccd err isipsecnet'}." Name:  $ipsecconf{$key}[1]";
-						return $errormessage;
+				foreach my $ipsecsubitem (split(/\|/, $ipsecconf{$key}[11])) {
+					my ($ipsecip,$ipsecsub) = split (/\//, $ipsecconf{$key}[11]);
+					$ipsecsub=&iporsubtodec($ipsecsub);
+					if($ipsecconf{$key}[1] ne $ccdname){
+						if ( &IpInSubnet ($ip,$ipsecip,$ipsecsub) ){
+							$errormessage=$Lang::tr{'ccd err isipsecnet'}." Name:  $ipsecconf{$key}[1]";
+							return $errormessage;
+						}
 					}
 				}
 			}

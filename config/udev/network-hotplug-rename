@@ -57,16 +57,23 @@ ADDRESS="$(</sys/class/net/${INTERFACE}/address)"
 for zone in ${ZONES}; do
 	address="${zone}_MACADDR"
 	device="${zone}_DEV"
+	mode="${zone}_MODE"
 
 	# Skip if address or device is unset
 	[ -n "${!address}" -a -n "${!device}" ] || continue
 
+	# Compare MAC addresses
+	[ "${ADDRESS}" = "${!address}" ] || continue
+
 	# If a matching interface has been found we will
 	# print the name to which udev will rename it.
-	if [ "${ADDRESS}" = "${!address}" ]; then
+	if [ "${!mode}" = "macvtap" ]; then
+		echo "${!device}phys"
+	else
 		echo "${!device}"
-		exit 0
 	fi
+
+	exit 0
 done
 
 # If we get here we have not found a matching device,

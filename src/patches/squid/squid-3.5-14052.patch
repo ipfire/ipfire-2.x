@@ -1,0 +1,34 @@
+------------------------------------------------------------
+revno: 14052
+revision-id: squidadm@squid-cache.org-20160517181416-sfrjdosd9dhx7u8o
+parent: squid3@treenet.co.nz-20160517145850-uos9z00nrt7xd9ik
+committer: Source Maintenance <squidadm@squid-cache.org>
+branch nick: 3.5
+timestamp: Tue 2016-05-17 18:14:16 +0000
+message:
+  SourceFormat Enforcement
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squidadm@squid-cache.org-20160517181416-\
+#   sfrjdosd9dhx7u8o
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: e30c12805cacdb559925da08cc6a25fe4a39c19b
+# timestamp: 2016-05-17 18:51:06 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20160517145850-\
+#   uos9z00nrt7xd9ik
+# 
+# Begin patch
+=== modified file 'src/external_acl.cc'
+--- src/external_acl.cc	2016-05-17 14:58:50 +0000
++++ src/external_acl.cc	2016-05-17 18:14:16 +0000
+@@ -956,7 +956,7 @@
+                     request->clientConnectionManager->clientConnection->remoteEui64.encode(buf, sizeof(buf));
+                 str = buf;
+             }
+-	    break;
++            break;
+ 
+         case Format::LFT_EXT_ACL_CLIENT_EUI48:
+             if (request->clientConnectionManager.valid() && request->clientConnectionManager->clientConnection != NULL &&
+

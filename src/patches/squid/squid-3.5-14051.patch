@@ -1,0 +1,63 @@
+------------------------------------------------------------
+revno: 14051
+revision-id: squid3@treenet.co.nz-20160517145850-uos9z00nrt7xd9ik
+parent: squid3@treenet.co.nz-20160508124125-fytgvn68zppfr8ix
+author: Steve Hill <steve@opendium.com>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Wed 2016-05-18 02:58:50 +1200
+message:
+  Support unified EUI format code in external_acl_type
+  
+  Squid supports %>eui as a logformat specifier, which produces an EUI-48 
+  for IPv4 clients and an EUI-64 for IPv6 clients.  However, This is not 
+  allowed as a format specifier for the external ACLs, and you have to use 
+  %SRCEUI48 and %SRCEUI64 instead.  %SRCEUI48 is only useful for IPv4 
+  clients and %SRCEUI64 is only useful for IPv6 clients, so supporting 
+  both v4 and v6 is a bit messy.
+  
+  Adds the %>eui specifier for external ACLs and behaves in the same way
+  as the logformat specifier.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20160517145850-uos9z00nrt7xd9ik
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: ad0743717948a65cfd4f306acc2bbaa9343e9a76
+# timestamp: 2016-05-17 15:50:54 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20160508124125-\
+#   fytgvn68zppfr8ix
+# 
+# Begin patch
+=== modified file 'src/external_acl.cc'
+--- src/external_acl.cc	2016-01-01 00:14:27 +0000
++++ src/external_acl.cc	2016-05-17 14:58:50 +0000
+@@ -356,6 +356,8 @@
+         else if (strcmp(token, "%SRCPORT") == 0 || strcmp(token, "%>p") == 0)
+             format->type = Format::LFT_CLIENT_PORT;
+ #if USE_SQUID_EUI
++        else if (strcmp(token, "%>eui") == 0)
++            format->type = Format::LFT_CLIENT_EUI;
+         else if (strcmp(token, "%SRCEUI48") == 0)
+             format->type = Format::LFT_EXT_ACL_CLIENT_EUI48;
+         else if (strcmp(token, "%SRCEUI64") == 0)
+@@ -944,6 +946,18 @@
+             break;
+ 
+ #if USE_SQUID_EUI
++        case Format::LFT_CLIENT_EUI:
++            // TODO make the ACL checklist have a direct link to any TCP details.
++            if (request->clientConnectionManager.valid() && request->clientConnectionManager->clientConnection != NULL)
++            {
++                if (request->clientConnectionManager->clientConnection->remote.isIPv4())
++                    request->clientConnectionManager->clientConnection->remoteEui48.encode(buf, sizeof(buf));
++                else
++                    request->clientConnectionManager->clientConnection->remoteEui64.encode(buf, sizeof(buf));
++                str = buf;
++            }
++	    break;
++
+         case Format::LFT_EXT_ACL_CLIENT_EUI48:
+             if (request->clientConnectionManager.valid() && request->clientConnectionManager->clientConnection != NULL &&
+                     request->clientConnectionManager->clientConnection->remoteEui48.encode(buf, sizeof(buf)))
+

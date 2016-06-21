@@ -1,7 +1,7 @@
 #usr/bin/autopoint
-#usr/bin/envsubst
-#usr/bin/gettext
-#usr/bin/gettext.sh
+usr/bin/envsubst
+usr/bin/gettext
+usr/bin/gettext.sh
 #usr/bin/gettextize
 #usr/bin/msgattrib
 #usr/bin/msgcat

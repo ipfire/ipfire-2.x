@@ -1,0 +1,13 @@
+usr/bin/json_reformat
+usr/bin/json_verify
+#usr/include/yajl
+#usr/include/yajl/yajl_common.h
+#usr/include/yajl/yajl_gen.h
+#usr/include/yajl/yajl_parse.h
+#usr/include/yajl/yajl_tree.h
+#usr/include/yajl/yajl_version.h
+#usr/lib/libyajl.so
+usr/lib/libyajl.so.2
+usr/lib/libyajl.so.2.1.0
+#usr/lib/libyajl_s.a
+#usr/share/pkgconfig/yajl.pc

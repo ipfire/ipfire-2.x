@@ -1,0 +1,9 @@
+etc/system-release
+etc/issue
+lib/udev/network-hotplug-macvtap
+lib/udev/network-hotplug-rename
+lib/udev/rules.d/60-net.rules
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+usr/sbin/setup
+var/ipfire/general-functions.pl
+var/ipfire/menu.d/30-network.menu

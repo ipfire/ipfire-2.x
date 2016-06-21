@@ -1,0 +1,49 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/libvirtd
+#
+# Description : libvirtd init script
+#
+# Authors     : Jonatan Schlag - jonatan.schlag@ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case $1 in
+	start)
+		boot_mesg "Load required kernel modules for Libvirt"
+		modprobe tun
+		evaluate_retval
+		boot_mesg "Starting Libvirt Daemon..."
+		loadproc /usr/sbin/libvirtd -d
+
+		;;
+
+	stop)
+		boot_mesg "Stopping Libvirt Daemon..."
+		killproc /usr/sbin/libvirtd
+		;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/sbin/libvirtd
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/libvirtd

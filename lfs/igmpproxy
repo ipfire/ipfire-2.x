@@ -82,8 +82,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-003-Restrict-igmp-reports-for-downstream-interfaces-wrt-.patch
 	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-004-Restrict-igmp-reports-forwarding-to-upstream-interfa.patch
 	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-100-use-monotic-clock-instead-of-time-of-day.patch
-	cd $(DIR_APP) && autoreconf
-	cd $(DIR_APP) && ./configure --sysconfdir=/etc
+	cd $(DIR_APP) && aclocal && automake --add-missing && autoreconf
+	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/igmpproxy \

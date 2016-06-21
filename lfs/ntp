@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.2.8p5
+VER        = 4.2.8p8
 
 THISAPP    = ntp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9f02b2a0acc1617ce2716d529a58d2d8
+$(DL_FILE)_MD5 = 4a8636260435b230636f053ffd070e34
 
 install : $(TARGET)
 

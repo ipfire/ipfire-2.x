@@ -1,6 +1,7 @@
 #usr/bin/flex
 #usr/bin/lex
 #usr/include/FlexLexer.h
+#usr/info/dir
 #usr/info/flex.info
 #usr/info/flex.info-1
 #usr/info/flex.info-2

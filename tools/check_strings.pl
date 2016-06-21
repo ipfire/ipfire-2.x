@@ -36,7 +36,7 @@ require "${basedir}/langs/$lang/cgi-bin/$lang.pl";
 sub wanted {
 	if ( -f $File::Find::name && open(FILE, $File::Find::name)) {
 		while (<FILE>) {
-			while ($_ =~ /\$Lang::tr{'([A-Za-z0-9,:_\s\/\.-]+)'}/g) {
+			while ($_ =~ /\$Lang::tr\{'([A-Za-z0-9,:_\s\/\.-]+)'\}/g) {
 				$tr2{$1} = 'empty string';
 			}
 		}
