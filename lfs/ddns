@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 009
+VER        = 010
 
 THISAPP    = ddns-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 31f949d9f417ee7f801cf8aac849a92e
+$(DL_FILE)_MD5 = 51e74b613732c0d7be3adb3348a5ed95
 
 install : $(TARGET)
 
