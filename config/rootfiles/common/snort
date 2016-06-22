@@ -215,6 +215,7 @@ usr/sbin/snort
 #usr/share/doc/snort/README.reload
 #usr/share/doc/snort/README.reputation
 #usr/share/doc/snort/README.sensitive_data
+#usr/share/doc/snort/README.session
 #usr/share/doc/snort/README.sfportscan
 #usr/share/doc/snort/README.sip
 #usr/share/doc/snort/README.ssh
