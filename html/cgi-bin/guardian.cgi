@@ -92,6 +92,7 @@ $settings{'GUARDIAN_LOG_FACILITY'} = 'syslog';
 $settings{'GUARDIAN_LOGLEVEL'} = 'info';
 $settings{'GUARDIAN_BLOCKCOUNT'} = '3';
 $settings{'GUARDIAN_BLOCKTIME'} = '86400';
+$settings{'GUARDIAN_FIREWALL_ACTION'} = 'DROP';
 $settings{'GUARDIAN_LOGFILE'} = '/var/log/guardian/guardian.log';
 $settings{'GUARDIAN_SNORT_PRIORITY_LEVEL'} = '3';
 
@@ -405,6 +406,7 @@ sub showMainBox() {
 	$selected{'GUARDIAN_LOG_FACILITY'}{$settings{'GUARDIAN_LOG_FACILITY'}} = 'selected';
 	$selected{'GUARDIAN_LOGLEVEL'}{$settings{'GUARDIAN_LOGLEVEL'}} = 'selected';
 	$selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{$settings{'GUARDIAN_SNORT_PRIORITY_LEVEL'}} = 'selected';
+	$selected{'GUARDIAN_FIREWALL_ACTION'}{$settings{'GUARDIAN_FIREWALL_ACTION'}} = 'selected';
 
 	&Header::openpage($Lang::tr{'guardian configuration'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
@@ -538,6 +540,16 @@ END
 					<option value='2' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'2'}>2</option>
 					<option value='3' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'3'}>3</option>
 					<option value='4' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'4'}>4</option>
+				</select></td>
+			</tr>
+			<tr>
+				<td colspan='2'><br></td>
+			</tr>
+			<tr>
+				<td width='20%' class='base'>$Lang::tr{'guardian firewallaction'}:</td>
+				<td><select name='GUARDIAN_FIREWALL_ACTION'>
+					<option value='DROP' $selected{'GUARDIAN_FIREWALL_ACTION'}{'DROP'}>Drop</option>
+					<option value='REJECT' $selected{'GUARDIAN_FIREWALL_ACTION'}{'REJECT'}>Reject</option>
 				</select></td>
 			</tr>
 			<tr>
@@ -896,9 +908,10 @@ sub BuildConfiguration() {
 	print FILE "IgnoreFile = $ignorefile\n\n";
 
 	# Configured block values.
-	print FILE "# Configured block values.\n";
+	print FILE "# Configured block settings.\n";
 	print FILE "BlockCount = $settings{'GUARDIAN_BLOCKCOUNT'}\n";
-	print FILE "BlockTime = $settings{'GUARDIAN_BLOCKTIME'}\n\n";
+	print FILE "BlockTime = $settings{'GUARDIAN_BLOCKTIME'}\n";
+	print FILE "FirewallAction = $settings{'GUARDIAN_FIREWALL_ACTION'}\n\n";
 
 	# Enabled modules.
 	# Loop through whole settings hash.
