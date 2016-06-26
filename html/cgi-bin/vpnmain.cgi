@@ -291,7 +291,7 @@ sub writeipsecfiles {
 		}
 
 		# Local Cert and Remote Cert (unless auth is DN dn-auth)
-		if ($lconfighash{$key}[4] eq 'cert') {
+		if (($lconfighash{$key}[4] eq 'cert')||($lconfighash{$key}[4] eq 'xauthrsasig')) {
 			print CONF "\tleftcert=${General::swroot}/certs/hostcert.pem\n";
 			print CONF "\trightcert=${General::swroot}/certs/$lconfighash{$key}[1]cert.pem\n" if ($lconfighash{$key}[2] ne '%auth-dn');
 		}
@@ -395,6 +395,9 @@ sub writeipsecfiles {
 				print SECRETS $psk_line;
 			}
 			print CONF "\tauthby=secret\n";
+		} elsif ($lconfighash{$key}[4] eq 'xauthrsasig') {
+			print CONF "\tauthby=xauthrsasig\n";
+			print CONF "\txauth=server\n";
 		} else {
 			print CONF "\tauthby=rsasig\n";
 			print CONF "\tleftrsasigkey=%cert\n";
@@ -2766,7 +2769,7 @@ END
 	print "<td align='center' nowrap='nowrap' $col>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ") $confighash{$key}[29]</td>";
 	if ($confighash{$key}[2] eq '%auth-dn') {
 		print "<td align='left' nowrap='nowrap' $col>$confighash{$key}[9]</td>";
-	} elsif ($confighash{$key}[4] eq 'cert') {
+	} elsif (($confighash{$key}[4] eq 'cert')||($confighash{$key}[4] eq 'xauthrsasig')) {
 		print "<td align='left' nowrap='nowrap' $col>$confighash{$key}[2]</td>";
 	} else {
 		print "<td align='left' $col>&nbsp;</td>";
@@ -2798,7 +2801,7 @@ END
 	</td>
 END
 ;
-	if (($confighash{$key}[4] eq 'cert') && ($confighash{$key}[2] ne '%auth-dn')) {
+	if ((($confighash{$key}[4] eq 'cert')||($confighash{$key}[4] eq 'xauthrsasig')) && ($confighash{$key}[2] ne '%auth-dn')) {
 		print <<END
 		<td align='center' $col>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -2812,7 +2815,7 @@ END
 	} else {
 		print "<td width='2%' $col>&nbsp;</td>";
 	}
-	if ($confighash{$key}[4] eq 'cert' && -f "${General::swroot}/certs/$confighash{$key}[1].p12") {
+	if ((($confighash{$key}[4] eq 'cert')||($confighash{$key}[4] eq 'xauthrsasig')) && -f "${General::swroot}/certs/$confighash{$key}[1].p12") {
 		print <<END
 		<td align='center' $col>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
