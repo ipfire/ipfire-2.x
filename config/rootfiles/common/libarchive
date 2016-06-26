@@ -1,13 +1,15 @@
 #usr/bin/bsdcpio
+#usr/bin/bsdcat
 #usr/bin/bsdtar
 #usr/include/archive.h
 #usr/include/archive_entry.h
 #usr/lib/libarchive.la
 #usr/lib/libarchive.so
 #usr/lib/libarchive.so.13
-#usr/lib/libarchive.so.13.1.2
+#usr/lib/libarchive.so.13.2.1
 #usr/lib/pkgconfig/libarchive.pc
 #usr/share/man/man1/bsdcpio.1
+#usr/share/man/man1/bsdcat.1
 #usr/share/man/man1/bsdtar.1
 #usr/share/man/man3/archive_entry.3
 #usr/share/man/man3/archive_entry_acl.3
@@ -17,6 +19,7 @@
 #usr/share/man/man3/archive_entry_stat.3
 #usr/share/man/man3/archive_entry_time.3
 #usr/share/man/man3/archive_read.3
+#usr/share/man/man3/archive_read_add_passphrase.3
 #usr/share/man/man3/archive_read_data.3
 #usr/share/man/man3/archive_read_disk.3
 #usr/share/man/man3/archive_read_extract.3
@@ -40,6 +43,7 @@
 #usr/share/man/man3/archive_write_new.3
 #usr/share/man/man3/archive_write_open.3
 #usr/share/man/man3/archive_write_set_options.3
+#usr/share/man/man3/archive_write_set_passphrase.3
 #usr/share/man/man3/libarchive.3
 #usr/share/man/man3/libarchive_changes.3
 #usr/share/man/man3/libarchive_internals.3
