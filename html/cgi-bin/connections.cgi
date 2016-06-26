@@ -305,31 +305,31 @@ if (-e "${General::swroot}/ovpn/n2nconf") {
 print <<END;
 	<table style='width:100%'>
 		<tr>
-			<td style='text-align:center;'>
+			<td style='text-align:center;width:12%;'>
 				<b>$Lang::tr{'legend'} :</b>
 			</td>
-			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourgreen}; font-weight:bold;'>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourgreen}; width:11%;font-weight:bold;'>
 				<b>$Lang::tr{'lan'}</b>
 			</td>
-			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourred};'>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourred};width:11%;'>
 				<b>$Lang::tr{'internet'}</b>
 			</td>
-			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourorange};'>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourorange};width:11%;'>
 				<b>$Lang::tr{'dmz'}</b>
 			</td>
-			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourblue};'>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourblue};width:11%;'>
 				<b>$Lang::tr{'wireless'}</b>
 			</td>
-			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourfw};'>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourfw};width:11%;'>
 				<b>IPFire</b>
 			</td>
-			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourvpn};'>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourvpn};width:11%;'>
 				<b>$Lang::tr{'vpn'}</b>
 			</td>
-			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourovpn};'>
+			<td style='text-align:center; color:#FFFFFF; background-color:${Header::colourovpn};width:11%;'>
 				<b>$Lang::tr{'OpenVPN'}</b>
 			</td>
-			<td style='text-align:center; color:#FFFFFF; background-color:$colour_multicast;'>
+			<td style='text-align:center; color:#FFFFFF; background-color:$colour_multicast;width:11%;'>
 				<b>Multicast</b>
 			</td>
 		</tr>
