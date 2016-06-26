@@ -1,14 +1,14 @@
-#lib/libcap.a
 lib/libcap.so
 lib/libcap.so.1
 lib/libcap.so.2
-lib/libcap.so.2.24
+lib/libcap.so.2.25
 lib/security/pam_cap.so
 sbin/capsh
 sbin/getcap
 sbin/getpcaps
 sbin/setcap
 #usr/include/sys/capability.h
+usr/lib/libcap.so
 #usr/lib/pkgconfig/libcap.pc
 #usr/share/man/man1/capsh.1
 #usr/share/man/man3/cap_clear.3

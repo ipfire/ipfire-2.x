@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2014  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2016  IPFire Team  <info@ipfire.org>                          #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.24
+VER        = 2.25
 
 THISAPP    = libcap-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ffb154f29b1d28466c6fe6add8286a2d
+$(DL_FILE)_MD5 = 6666b839e5d46c2ad33fc8aa2ceb5f77
 
 install : $(TARGET)
 
@@ -69,11 +69,14 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	# Prevent a static library from being installed
+	cd $(DIR_APP) && sed -i '/install.*STALIBNAME/d' libcap/Makefile
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	# link for old binaries
+	# links for old binaries
 	ln -svf libcap.so.2 /lib/libcap.so.1
+	ln -svf /lib/libcap.so.2.25 /usr/lib/libcap.so
 	chmod +x /lib/libcap.so.*
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
