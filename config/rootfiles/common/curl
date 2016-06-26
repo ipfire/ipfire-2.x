@@ -189,6 +189,7 @@ usr/lib/libcurl.so.4.4.0
 #usr/share/man/man3/CURLOPT_NOPROGRESS.3
 #usr/share/man/man3/CURLOPT_NOPROXY.3
 #usr/share/man/man3/CURLOPT_NOSIGNAL.3
+#usr/share/man/man3/CURLOPT_CONNECT_TO.3
 #usr/share/man/man3/CURLOPT_OPENSOCKETDATA.3
 #usr/share/man/man3/CURLOPT_OPENSOCKETFUNCTION.3
 #usr/share/man/man3/CURLOPT_PASSWORD.3
@@ -272,6 +273,7 @@ usr/lib/libcurl.so.4.4.0
 #usr/share/man/man3/CURLOPT_STREAM_DEPENDS.3
 #usr/share/man/man3/CURLOPT_STREAM_DEPENDS_E.3
 #usr/share/man/man3/CURLOPT_STREAM_WEIGHT.3
+#usr/share/man/man3/CURLOPT_TCP_FASTOPEN.3
 #usr/share/man/man3/CURLOPT_TCP_KEEPALIVE.3
 #usr/share/man/man3/CURLOPT_TCP_KEEPIDLE.3
 #usr/share/man/man3/CURLOPT_TCP_KEEPINTVL.3
@@ -337,6 +339,7 @@ usr/lib/libcurl.so.4.4.0
 #usr/share/man/man3/curl_multi_remove_handle.3
 #usr/share/man/man3/curl_multi_setopt.3
 #usr/share/man/man3/curl_multi_socket.3
+#usr/share/man/man3/curl_multi_socket_all.3
 #usr/share/man/man3/curl_multi_socket_action.3
 #usr/share/man/man3/curl_multi_strerror.3
 #usr/share/man/man3/curl_multi_timeout.3
