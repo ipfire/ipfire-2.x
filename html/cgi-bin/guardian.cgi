@@ -418,6 +418,44 @@ sub showMainBox() {
 		&Header::closebox();
 	}
 
+	### Java Script ###
+	print<<END;
+	<script>
+		var update_logfacility = function() {
+
+			var logfacility = \$("#GUARDIAN_LOG_FACILITY").val();
+
+			if (logfacility === undefined)
+				return;
+
+			if (logfacility === "file") {
+				\$(".GUARDIAN_LOGFILE").show();
+			} else {
+				\$(".GUARDIAN_LOGFILE").hide();
+			}
+		};
+
+		\$(document).ready(function() {
+			\$("#GUARDIAN_LOG_FACILITY").change(update_logfacility);
+			update_logfacility();
+
+			// Show / Hide snort priority level option, based if
+			// snort is enabled / disabled.
+			if (\$('input[name=GUARDIAN_MONITOR_SNORT]:checked').val() == 'on') {
+				\$('.GUARDIAN_SNORT_PRIORITY_LEVEL').show();
+			} else {
+				\$('.GUARDIAN_SNORT_PRIORITY_LEVEL').hide();
+			}
+
+			// Show/Hide snort priority level when GUARDIAN_MONITOR_SNORT get changed.
+			\$('input[name=GUARDIAN_MONITOR_SNORT]').change(function() {
+				\$('.GUARDIAN_SNORT_PRIORITY_LEVEL').toggle();
+			});
+		});
+	</script>
+END
+
+
 
 	# Draw current guardian state.
 	&Header::openbox('100%', 'center', $Lang::tr{'guardian'});
@@ -513,7 +551,7 @@ END
 			</tr>
 			<tr>
 				<td align='left' width='20%'>$Lang::tr{'guardian logfacility'}:</td>
-				<td><select name='GUARDIAN_LOG_FACILITY'>
+				<td><select id='GUARDIAN_LOG_FACILITY' name='GUARDIAN_LOG_FACILITY'>
 					<option value='syslog' $selected{'GUARDIAN_LOG_FACILITY'}{'syslog'}>syslog</option>
 					<option value='file' $selected{'GUARDIAN_LOG_FACILITY'}{'file'}>file</option>
 					<option value='console' $selected{'GUARDIAN_LOG_FACILITY'}{'console'}>console</option>
@@ -530,10 +568,10 @@ END
 					<option value='debug' $selected{'GUARDIAN_LOGLEVEL'}{'debug'}>debug</option>
 				</select></td>
 			</tr>
-			<tr>
+			<tr class="GUARDIAN_SNORT_PRIORITY_LEVEL">
 				<td colspan='2'><br></td>
 			</tr>
-			<tr>
+			<tr class="GUARDIAN_SNORT_PRIORITY_LEVEL">
 				<td align='left' width='20%'>$Lang::tr{'guardian priority level'}:</td>
 				<td><select name='GUARDIAN_SNORT_PRIORITY_LEVEL'>
 					<option value='1' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'1'}>1</option>
@@ -563,7 +601,7 @@ END
 				<td width='20%' class='base'>$Lang::tr{'guardian blocktime'}:</td>
 				<td><input type='text' name='GUARDIAN_BLOCKTIME' value='$settings{'GUARDIAN_BLOCKTIME'}' size='10' /></td>
 			</tr>
-			<tr>
+			<tr class="GUARDIAN_LOGFILE">
                                 <td width='20%' class='base'>$Lang::tr{'guardian logfile'}:</td>
                                 <td><input type='text' name='GUARDIAN_LOGFILE' value='$settings{'GUARDIAN_LOGFILE'}' size='30' /></td>
                         </tr>
