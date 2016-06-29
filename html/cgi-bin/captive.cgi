@@ -440,14 +440,14 @@ sub voucher(){
 	&Header::openbox('100%', 'left', $Lang::tr{'Captive voucher'});
 print<<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	<table class='tbl'>
+	<table class='tbl' width='100%'>
 	<tr>
-		<th align='center' width='20%'>$Lang::tr{'Captive voucher'}</th><th th align='center' width='30%'>$Lang::tr{'Captive expire'}</th><th align='center' width='55%'>$Lang::tr{'remark'}</th></tr>
+		<th align='center' width='20%'>$Lang::tr{'Captive voucher'}</th><th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='65%'>$Lang::tr{'remark'}</th></tr>
 END
 ;
 
 	$cgiparams{'CODE'} = &gencode();
-	print "<tr><td><center><b><font size='5'>$cgiparams{'CODE'}</font></b></center></td><td><center><font size='2'>$expire</font></center></td><td><input type='text' name='REMARK' align='left' size='80'></td></tr>";
+	print "<tr><td><center><b><font size='5'>$cgiparams{'CODE'}</font></b></center></td><td><center><font size='2'>$expire</font></center></td><td><input type='text' style='width: 96%;' name='REMARK'  align='left'></td></tr>";
 	print "</table><br>";
 	print "<center><input type='submit' name='ACTION' value='$Lang::tr{'Captive voucherout'}'><input type='hidden' name='CODE' value='$cgiparams{'CODE'}'</center></form>";
 	&Header::closebox();
