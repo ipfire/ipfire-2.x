@@ -72,6 +72,18 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 			$errormessage=$Lang::tr{'Captive wrong ext'};
 		}
 	}
+
+	$settings{'ENABLE_GREEN'}		= $cgiparams{'ENABLE_GREEN'};
+	$settings{'ENABLE_BLUE'}		= $cgiparams{'ENABLE_BLUE'};
+	$settings{'AUTH'}				= $cgiparams{'AUTH'};
+	$settings{'EXPIRE'}				= $cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'};
+	$settings{'EXP_HOUR'}			= $cgiparams{'EXP_HOUR'};
+	$settings{'EXP_DAY'}			= $cgiparams{'EXP_DAY'};
+	$settings{'EXP_WEEK'}			= $cgiparams{'EXP_WEEK'};
+	$settings{'EXP_MONTH'}			= $cgiparams{'EXP_MONTH'};
+	$settings{'TITLE'}				= $cgiparams{'TITLE'};
+	$settings{'UNLIMITED'}			= $cgiparams{'UNLIMITED'};
+
 	if (!$errormessage){
 		#Check if we need to upload a new logo
 		if($file){
@@ -103,17 +115,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 			$cgiparams{'EXP_WEEK'} 	= '0';
 			$cgiparams{'EXP_MONTH'}	= '0';
 		}
-
-		$settings{'ENABLE_GREEN'}		= $cgiparams{'ENABLE_GREEN'};
-		$settings{'ENABLE_BLUE'}		= $cgiparams{'ENABLE_BLUE'};
-		$settings{'AUTH'}				= $cgiparams{'AUTH'};
-		$settings{'EXPIRE'}				= $cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'};
-		$settings{'EXP_HOUR'}			= $cgiparams{'EXP_HOUR'};
-		$settings{'EXP_DAY'}			= $cgiparams{'EXP_DAY'};
-		$settings{'EXP_WEEK'}			= $cgiparams{'EXP_WEEK'};
-		$settings{'EXP_MONTH'}			= $cgiparams{'EXP_MONTH'};
-		$settings{'TITLE'}				= $cgiparams{'TITLE'};
-		$settings{'UNLIMITED'}			= $cgiparams{'UNLIMITED'};
+	
 		&General::writehash("$settingsfile", \%settings);
 
 		#write Licensetext if defined
