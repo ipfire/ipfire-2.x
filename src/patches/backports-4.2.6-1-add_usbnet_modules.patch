@@ -1,6 +1,6 @@
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/asix_common.c backports-4.2.6-1/drivers/net/usb/asix_common.c
 --- backports-4.2.6-1.org/drivers/net/usb/asix_common.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/asix_common.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/asix_common.c	2016-06-28 14:35:17.965307221 +0200
 @@ -0,0 +1,584 @@
 +/*
 + * ASIX AX8817X based USB 2.0 Ethernet Devices
@@ -588,7 +588,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/asix_common.c backports-4.2.6-1
 +}
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/asix_devices.c backports-4.2.6-1/drivers/net/usb/asix_devices.c
 --- backports-4.2.6-1.org/drivers/net/usb/asix_devices.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/asix_devices.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/asix_devices.c	2016-06-28 14:35:17.965307221 +0200
 @@ -0,0 +1,1107 @@
 +/*
 + * ASIX AX8817X based USB 2.0 Ethernet Devices
@@ -1699,7 +1699,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/asix_devices.c backports-4.2.6-
 +
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/asix.h backports-4.2.6-1/drivers/net/usb/asix.h
 --- backports-4.2.6-1.org/drivers/net/usb/asix.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/asix.h	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/asix.h	2016-06-28 14:35:17.965307221 +0200
 @@ -0,0 +1,234 @@
 +/*
 + * ASIX AX8817X based USB 2.0 Ethernet Devices
@@ -1937,7 +1937,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/asix.h backports-4.2.6-1/driver
 +#endif /* _ASIX_H */
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/ax88172a.c backports-4.2.6-1/drivers/net/usb/ax88172a.c
 --- backports-4.2.6-1.org/drivers/net/usb/ax88172a.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/ax88172a.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/ax88172a.c	2016-06-28 14:35:17.965307221 +0200
 @@ -0,0 +1,422 @@
 +/*
 + * ASIX AX88172A based USB 2.0 Ethernet Devices
@@ -2363,7 +2363,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/ax88172a.c backports-4.2.6-1/dr
 +};
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/ax88179_178a.c backports-4.2.6-1/drivers/net/usb/ax88179_178a.c
 --- backports-4.2.6-1.org/drivers/net/usb/ax88179_178a.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/ax88179_178a.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/ax88179_178a.c	2016-06-28 14:35:17.968640554 +0200
 @@ -0,0 +1,1756 @@
 +/*
 + * ASIX AX88179/178A USB 3.0/2.0 to Gigabit Ethernet Devices
@@ -4123,7 +4123,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/ax88179_178a.c backports-4.2.6-
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/catc.c backports-4.2.6-1/drivers/net/usb/catc.c
 --- backports-4.2.6-1.org/drivers/net/usb/catc.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/catc.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/catc.c	2016-06-28 14:35:17.975307221 +0200
 @@ -0,0 +1,965 @@
 +/*
 + *  Copyright (c) 2001 Vojtech Pavlik
@@ -5092,7 +5092,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/catc.c backports-4.2.6-1/driver
 +module_usb_driver(catc_driver);
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/cdc_eem.c backports-4.2.6-1/drivers/net/usb/cdc_eem.c
 --- backports-4.2.6-1.org/drivers/net/usb/cdc_eem.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/cdc_eem.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/cdc_eem.c	2016-06-28 14:35:17.975307221 +0200
 @@ -0,0 +1,381 @@
 +/*
 + * USB CDC EEM network interface driver
@@ -5477,7 +5477,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/cdc_eem.c backports-4.2.6-1/dri
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/cdc-phonet.c backports-4.2.6-1/drivers/net/usb/cdc-phonet.c
 --- backports-4.2.6-1.org/drivers/net/usb/cdc-phonet.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/cdc-phonet.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/cdc-phonet.c	2016-06-28 14:35:17.975307221 +0200
 @@ -0,0 +1,466 @@
 +/*
 + * phonet.c -- USB CDC Phonet host driver
@@ -5947,7 +5947,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/cdc-phonet.c backports-4.2.6-1/
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/cdc_subset.c backports-4.2.6-1/drivers/net/usb/cdc_subset.c
 --- backports-4.2.6-1.org/drivers/net/usb/cdc_subset.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/cdc_subset.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/cdc_subset.c	2016-06-28 14:35:17.975307221 +0200
 @@ -0,0 +1,369 @@
 +/*
 + * Simple "CDC Subset" USB Networking Links
@@ -6320,7 +6320,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/cdc_subset.c backports-4.2.6-1/
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/cx82310_eth.c backports-4.2.6-1/drivers/net/usb/cx82310_eth.c
 --- backports-4.2.6-1.org/drivers/net/usb/cx82310_eth.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/cx82310_eth.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/cx82310_eth.c	2016-06-28 14:35:17.978640554 +0200
 @@ -0,0 +1,353 @@
 +/*
 + * Driver for USB ethernet port of Conexant CX82310-based ADSL routers
@@ -6677,7 +6677,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/cx82310_eth.c backports-4.2.6-1
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/dm9601.c backports-4.2.6-1/drivers/net/usb/dm9601.c
 --- backports-4.2.6-1.org/drivers/net/usb/dm9601.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/dm9601.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/dm9601.c	2016-06-28 14:35:17.978640554 +0200
 @@ -0,0 +1,647 @@
 +/*
 + * Davicom DM96xx USB 10/100Mbps ethernet devices
@@ -7328,7 +7328,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/dm9601.c backports-4.2.6-1/driv
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/gl620a.c backports-4.2.6-1/drivers/net/usb/gl620a.c
 --- backports-4.2.6-1.org/drivers/net/usb/gl620a.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/gl620a.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/gl620a.c	2016-06-28 14:35:17.978640554 +0200
 @@ -0,0 +1,242 @@
 +/*
 + * GeneSys GL620USB-A based links
@@ -7574,7 +7574,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/gl620a.c backports-4.2.6-1/driv
 +
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/hso.c backports-4.2.6-1/drivers/net/usb/hso.c
 --- backports-4.2.6-1.org/drivers/net/usb/hso.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/hso.c	2016-01-27 15:03:25.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/hso.c	2016-06-28 14:35:17.981973887 +0200
 @@ -0,0 +1,3322 @@
 +/******************************************************************************
 + *
@@ -10900,7 +10900,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/hso.c backports-4.2.6-1/drivers
 +module_param(disable_net, int, S_IRUGO | S_IWUSR);
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/huawei_cdc_ncm.c backports-4.2.6-1/drivers/net/usb/huawei_cdc_ncm.c
 --- backports-4.2.6-1.org/drivers/net/usb/huawei_cdc_ncm.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/huawei_cdc_ncm.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/huawei_cdc_ncm.c	2016-06-28 14:35:17.981973887 +0200
 @@ -0,0 +1,224 @@
 +/* huawei_cdc_ncm.c - handles Huawei devices using the CDC NCM protocol as
 + * transport layer.
@@ -11128,7 +11128,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/huawei_cdc_ncm.c backports-4.2.
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/int51x1.c backports-4.2.6-1/drivers/net/usb/int51x1.c
 --- backports-4.2.6-1.org/drivers/net/usb/int51x1.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/int51x1.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/int51x1.c	2016-06-28 14:35:17.985307220 +0200
 @@ -0,0 +1,199 @@
 +/*
 + * Copyright (c) 2009 Peter Holik
@@ -11331,7 +11331,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/int51x1.c backports-4.2.6-1/dri
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/ipheth.c backports-4.2.6-1/drivers/net/usb/ipheth.c
 --- backports-4.2.6-1.org/drivers/net/usb/ipheth.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/ipheth.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/ipheth.c	2016-06-28 14:35:17.985307220 +0200
 @@ -0,0 +1,588 @@
 +/*
 + * ipheth.c - Apple iPhone USB Ethernet driver
@@ -11923,7 +11923,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/ipheth.c backports-4.2.6-1/driv
 +MODULE_LICENSE("Dual BSD/GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/kalmia.c backports-4.2.6-1/drivers/net/usb/kalmia.c
 --- backports-4.2.6-1.org/drivers/net/usb/kalmia.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/kalmia.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/kalmia.c	2016-06-28 14:35:17.985307220 +0200
 @@ -0,0 +1,366 @@
 +/*
 + * USB network interface driver for Samsung Kalmia based LTE USB modem like the
@@ -12293,7 +12293,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/kalmia.c backports-4.2.6-1/driv
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/kaweth.c backports-4.2.6-1/drivers/net/usb/kaweth.c
 --- backports-4.2.6-1.org/drivers/net/usb/kaweth.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/kaweth.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/kaweth.c	2016-06-28 14:35:17.988640553 +0200
 @@ -0,0 +1,1331 @@
 +/****************************************************************
 + *
@@ -13628,7 +13628,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/kaweth.c backports-4.2.6-1/driv
 +module_usb_driver(kaweth_driver);
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/Kconfig backports-4.2.6-1/drivers/net/usb/Kconfig
 --- backports-4.2.6-1.org/drivers/net/usb/Kconfig	2015-11-15 22:19:40.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/Kconfig	2016-01-27 15:58:23.159192032 +0100
++++ backports-4.2.6-1/drivers/net/usb/Kconfig	2016-06-28 14:35:17.991973886 +0200
 @@ -13,7 +13,6 @@
  if USB_NET_DRIVERS
  
@@ -13852,7 +13852,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/Kconfig backports-4.2.6-1/drive
  	  called VL600.  This driver only handles the ethernet
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/Kconfig.orig backports-4.2.6-1/drivers/net/usb/Kconfig.orig
 --- backports-4.2.6-1.org/drivers/net/usb/Kconfig.orig	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/Kconfig.orig	2015-11-15 22:19:40.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/Kconfig.orig	2016-06-28 14:35:17.991973886 +0200
 @@ -0,0 +1,638 @@
 +#
 +# USB Network devices configuration
@@ -14494,7 +14494,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/Kconfig.orig backports-4.2.6-1/
 +endif # USB_NET_DRIVERS
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/lg-vl600.c backports-4.2.6-1/drivers/net/usb/lg-vl600.c
 --- backports-4.2.6-1.org/drivers/net/usb/lg-vl600.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/lg-vl600.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/lg-vl600.c	2016-06-28 14:35:17.991973886 +0200
 @@ -0,0 +1,353 @@
 +/*
 + * Ethernet interface part of the LG VL600 LTE modem (4G dongle)
@@ -14851,7 +14851,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/lg-vl600.c backports-4.2.6-1/dr
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/Makefile backports-4.2.6-1/drivers/net/usb/Makefile
 --- backports-4.2.6-1.org/drivers/net/usb/Makefile	2015-11-15 22:19:40.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/Makefile	2016-01-27 15:53:50.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/Makefile	2016-06-28 14:35:17.991973886 +0200
 @@ -1,39 +1,40 @@
  #
  # Makefile for USB Network drivers
@@ -14923,7 +14923,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/Makefile backports-4.2.6-1/driv
  
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/mcs7830.c backports-4.2.6-1/drivers/net/usb/mcs7830.c
 --- backports-4.2.6-1.org/drivers/net/usb/mcs7830.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/mcs7830.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/mcs7830.c	2016-06-28 14:35:17.995307218 +0200
 @@ -0,0 +1,643 @@
 +/*
 + * MOSCHIP MCS7830 based (7730/7830/7832) USB 2.0 Ethernet Devices
@@ -15570,7 +15570,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/mcs7830.c backports-4.2.6-1/dri
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/net1080.c backports-4.2.6-1/drivers/net/usb/net1080.c
 --- backports-4.2.6-1.org/drivers/net/usb/net1080.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/net1080.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/net1080.c	2016-06-28 14:35:17.995307218 +0200
 @@ -0,0 +1,544 @@
 +/*
 + * Net1080 based USB host-to-host cables
@@ -16118,7 +16118,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/net1080.c backports-4.2.6-1/dri
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/pegasus.c backports-4.2.6-1/drivers/net/usb/pegasus.c
 --- backports-4.2.6-1.org/drivers/net/usb/pegasus.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/pegasus.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/pegasus.c	2016-06-28 14:35:17.995307218 +0200
 @@ -0,0 +1,1335 @@
 +/*
 + *  Copyright (c) 1999-2013 Petko Manolov (petkan@nucleusys.com)
@@ -17457,7 +17457,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/pegasus.c backports-4.2.6-1/dri
 +module_exit(pegasus_exit);
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/pegasus.h backports-4.2.6-1/drivers/net/usb/pegasus.h
 --- backports-4.2.6-1.org/drivers/net/usb/pegasus.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/pegasus.h	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/pegasus.h	2016-06-28 14:35:17.998640551 +0200
 @@ -0,0 +1,308 @@
 +/*
 + * Copyright (c) 1999-2013 Petko Manolov (petkan@nucleusys.com)
@@ -17769,7 +17769,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/pegasus.h backports-4.2.6-1/dri
 +#endif	/* PEGASUS_DEV */
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/plusb.c backports-4.2.6-1/drivers/net/usb/plusb.c
 --- backports-4.2.6-1.org/drivers/net/usb/plusb.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/plusb.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/plusb.c	2016-06-28 14:35:17.998640551 +0200
 @@ -0,0 +1,162 @@
 +/*
 + * PL-2301/2302 USB host-to-host link cables
@@ -17935,8 +17935,8 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/plusb.c backports-4.2.6-1/drive
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/r8152.c backports-4.2.6-1/drivers/net/usb/r8152.c
 --- backports-4.2.6-1.org/drivers/net/usb/r8152.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/r8152.c	2016-01-27 12:43:25.000000000 +0100
-@@ -0,0 +1,2847 @@
++++ backports-4.2.6-1/drivers/net/usb/r8152.c	2016-06-28 14:45:32.005250978 +0200
+@@ -0,0 +1,2856 @@
 +/*
 + *  Copyright (c) 2014 Realtek Semiconductor Corp. All rights reserved.
 + *
@@ -18384,6 +18384,13 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/r8152.c backports-4.2.6-1/drive
 +
 +#define VENDOR_ID_SAMSUNG		0x04e8
 +#define PRODUCT_ID_SAMSUNG		0xa101
++
++#define VENDOR_ID_LENOVO		0x17ef
++#define PRODUCT_ID_LENOVO		0x7205
++
++#define VENDOR_ID_NVIDIA		0x0955
++#define PRODUCT_ID_NVIDIA		0x09ff
++
 +
 +#define MCU_TYPE_PLA			0x0100
 +#define MCU_TYPE_USB			0x0000
@@ -20764,6 +20771,8 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/r8152.c backports-4.2.6-1/drive
 +	{USB_DEVICE(VENDOR_ID_REALTEK, PRODUCT_ID_RTL8152)},
 +	{USB_DEVICE(VENDOR_ID_REALTEK, PRODUCT_ID_RTL8153)},
 +	{USB_DEVICE(VENDOR_ID_SAMSUNG, PRODUCT_ID_SAMSUNG)},
++	{USB_DEVICE(VENDOR_ID_LENOVO, PRODUCT_ID_LENOVO)},
++	{USB_DEVICE(VENDOR_ID_NVIDIA, PRODUCT_ID_NVIDIA)},
 +	{}
 +};
 +
@@ -20786,7 +20795,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/r8152.c backports-4.2.6-1/drive
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/rtl8150.c backports-4.2.6-1/drivers/net/usb/rtl8150.c
 --- backports-4.2.6-1.org/drivers/net/usb/rtl8150.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/rtl8150.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/rtl8150.c	2016-06-28 14:35:18.001973885 +0200
 @@ -0,0 +1,949 @@
 +/*
 + *  Copyright (c) 2002 Petko Manolov (petkan@users.sourceforge.net)
@@ -21739,7 +21748,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/rtl8150.c backports-4.2.6-1/dri
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc75xx.c backports-4.2.6-1/drivers/net/usb/smsc75xx.c
 --- backports-4.2.6-1.org/drivers/net/usb/smsc75xx.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/smsc75xx.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/smsc75xx.c	2016-06-28 14:35:18.008640551 +0200
 @@ -0,0 +1,2286 @@
 + /***************************************************************************
 + *
@@ -24029,7 +24038,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc75xx.c backports-4.2.6-1/dr
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc75xx.h backports-4.2.6-1/drivers/net/usb/smsc75xx.h
 --- backports-4.2.6-1.org/drivers/net/usb/smsc75xx.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/smsc75xx.h	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/smsc75xx.h	2016-06-28 14:35:18.008640551 +0200
 @@ -0,0 +1,421 @@
 + /***************************************************************************
 + *
@@ -24454,7 +24463,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc75xx.h backports-4.2.6-1/dr
 +#endif /* _SMSC75XX_H */
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc95xx.c backports-4.2.6-1/drivers/net/usb/smsc95xx.c
 --- backports-4.2.6-1.org/drivers/net/usb/smsc95xx.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/smsc95xx.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/smsc95xx.c	2016-06-28 14:35:18.011973884 +0200
 @@ -0,0 +1,2032 @@
 + /***************************************************************************
 + *
@@ -26490,7 +26499,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc95xx.c backports-4.2.6-1/dr
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc95xx.h backports-4.2.6-1/drivers/net/usb/smsc95xx.h
 --- backports-4.2.6-1.org/drivers/net/usb/smsc95xx.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/smsc95xx.h	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/smsc95xx.h	2016-06-28 14:35:18.011973884 +0200
 @@ -0,0 +1,290 @@
 + /***************************************************************************
 + *
@@ -26784,7 +26793,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/smsc95xx.h backports-4.2.6-1/dr
 +#endif /* _SMSC95XX_H */
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9700.c backports-4.2.6-1/drivers/net/usb/sr9700.c
 --- backports-4.2.6-1.org/drivers/net/usb/sr9700.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/sr9700.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/sr9700.c	2016-06-28 14:35:18.011973884 +0200
 @@ -0,0 +1,559 @@
 +/*
 + * CoreChip-sz SR9700 one chip USB 1.1 Ethernet Devices
@@ -27347,7 +27356,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9700.c backports-4.2.6-1/driv
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9700.h backports-4.2.6-1/drivers/net/usb/sr9700.h
 --- backports-4.2.6-1.org/drivers/net/usb/sr9700.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/sr9700.h	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/sr9700.h	2016-06-28 14:35:18.011973884 +0200
 @@ -0,0 +1,173 @@
 +/*
 + * CoreChip-sz SR9700 one chip USB 1.1 Ethernet Devices
@@ -27524,7 +27533,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9700.h backports-4.2.6-1/driv
 +#endif	/* _SR9700_H */
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9800.c backports-4.2.6-1/drivers/net/usb/sr9800.c
 --- backports-4.2.6-1.org/drivers/net/usb/sr9800.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/sr9800.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/sr9800.c	2016-06-28 14:35:18.015307217 +0200
 @@ -0,0 +1,875 @@
 +/* CoreChip-sz SR9800 one chip USB 2.0 Ethernet Devices
 + *
@@ -28403,7 +28412,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9800.c backports-4.2.6-1/driv
 +MODULE_LICENSE("GPL");
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9800.h backports-4.2.6-1/drivers/net/usb/sr9800.h
 --- backports-4.2.6-1.org/drivers/net/usb/sr9800.h	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/sr9800.h	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/sr9800.h	2016-06-28 14:35:18.015307217 +0200
 @@ -0,0 +1,202 @@
 +/* CoreChip-sz SR9800 one chip USB 2.0 Ethernet Devices
 + *
@@ -28609,7 +28618,7 @@ diff -Naur backports-4.2.6-1.org/drivers/net/usb/sr9800.h backports-4.2.6-1/driv
 +#endif	/* _SR9800_H */
 diff -Naur backports-4.2.6-1.org/drivers/net/usb/zaurus.c backports-4.2.6-1/drivers/net/usb/zaurus.c
 --- backports-4.2.6-1.org/drivers/net/usb/zaurus.c	1970-01-01 01:00:00.000000000 +0100
-+++ backports-4.2.6-1/drivers/net/usb/zaurus.c	2015-11-09 23:37:56.000000000 +0100
++++ backports-4.2.6-1/drivers/net/usb/zaurus.c	2016-06-28 14:35:18.015307217 +0200
 @@ -0,0 +1,385 @@
 +/*
 + * Copyright (C) 2002 Pavel Machek <pavel@ucw.cz>
