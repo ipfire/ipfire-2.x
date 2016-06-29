@@ -1334,6 +1334,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/misc/altera-stapl
 #lib/modules/KVER-ipfire/kernel/drivers/misc/altera-stapl/altera-stapl.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/bmp085-i2c.ko
+#lib/modules/KVER-ipfire/kernel/drivers/misc/bmp085.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/cb710
 #lib/modules/KVER-ipfire/kernel/drivers/misc/cb710/cb710.ko
 #lib/modules/KVER-ipfire/kernel/drivers/misc/cs5535-mfgpt.ko

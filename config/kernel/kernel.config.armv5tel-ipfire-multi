@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 3.14.64 Kernel Configuration
+# Linux/arm 3.14.73 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_MIGHT_HAVE_PCI=y
@@ -1573,7 +1573,7 @@ CONFIG_ENCLOSURE_SERVICES=m
 # CONFIG_HMC6352 is not set
 CONFIG_DS1682=m
 CONFIG_ARM_CHARLCD=y
-CONFIG_BMP085=y
+CONFIG_BMP085=m
 CONFIG_BMP085_I2C=m
 # CONFIG_PCH_PHUB is not set
 CONFIG_USB_SWITCH_FSA9480=m
