@@ -977,6 +977,9 @@ sub BuildConfiguration() {
 
 	close(FILE);
 
+	# Generate ignore file.
+	&GenerateIgnoreFile();
+
 	# Check if guardian should be started or stopped.
 	if($settings{'GUARDIAN_ENABLED'} eq 'on') {
 		if($pid > 0) {
