@@ -24,32 +24,53 @@
 
 include Config
 
-VER        = ipfire
+VER        = 2.0
 
 THISAPP    = guardian-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = guardian
-PAK_VER    = 9
 
-DEPS       = ""
+PROG       = guardian
+PAK_VER    = 10
+
+DEPS       = "perl-inotify2 perl-Net-IP"
+
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects =
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = 5ddabfb89900d5232809a0d9ff9b8e9e
 
 install : $(TARGET)
 
-check : 
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download :
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : 
+md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
@@ -57,13 +78,35 @@ dist:
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	-mkdir -p /var/ipfire/guardian /var/log/guardian
-	touch /var/log/guardian/guardian.log
-	touch /var/ipfire/guardian/guardian.ignore
-	install -v -m 644 $(DIR_SRC)/config/guardian/guardian.conf /var/ipfire/guardian/
-	install -v -m 755 $(DIR_SRC)/config/guardian/guardian.pl /usr/local/bin/
-	install -v -m 755 $(DIR_SRC)/config/guardian/guardian_block.sh /usr/local/bin/
-	install -v -m 755 $(DIR_SRC)/config/guardian/guardian_unblock.sh /usr/local/bin/
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axvf $(DIR_DL)/$(DL_FILE)
+
+	# Adjust path for firewall binaries.
+	cd $(DIR_APP) && sed -i "s|/usr/sbin/|/sbin/|g" modules/IPtables.pm
+
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
+
+	# Create config directory and create files.
+	-mkdir -pv /var/ipfire/guardian
 	chown nobody.nobody /var/ipfire/guardian
-	chown nobody.nobody /var/ipfire/guardian/{guardian.conf,guardian.ignore}
+
+	# Create directory and file for logging.
+	-mkdir -pv /var/log/guardian
+	touch /var/log/guardian/guardian.log
+
+	# Create symlinks for runlevel interaction.
+	ln -svf /etc/rc.d/init.d/guardian /etc/rc.d/rc3.d/S45guardian
+	ln -svf /etc/rc.d/init.d/guardian /etc/rc.d/rc0.d/K76guardian
+	ln -svf /etc/rc.d/init.d/guardian /etc/rc.d/rc6.d/K76guardian
+
+	# Install include file for backup.
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/guardian \
+		/var/ipfire/backup/addons/includes/guardian
+
+	# Logrotate.
+	-mkdir -pv /etc/logrotate.d
+	install -v -m 644 $(DIR_SRC)/config/guardian/guardian.logrotate \
+		/etc/logrotate.d/guardian
+
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

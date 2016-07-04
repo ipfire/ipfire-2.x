@@ -1,0 +1,12 @@
+lastaction
+	/usr/bin/guardianctrl logrotate &>/dev/null
+endscript
+
+/var/log/guardian/guardian.log {
+    weekly
+    rotate 4
+    copytruncate
+    compress
+    notifempty
+    missingok
+}
