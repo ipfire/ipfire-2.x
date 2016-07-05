@@ -85,11 +85,9 @@ usr/share/qemu/pxe-ne2k_pci.rom
 usr/share/qemu/pxe-pcnet.rom
 usr/share/qemu/pxe-rtl8139.rom
 usr/share/qemu/pxe-virtio.rom
-usr/share/qemu/q35-acpi-dsdt.aml
 usr/share/qemu/qemu-icon.bmp
 usr/share/qemu/qemu_logo_no_text.svg
 usr/share/qemu/s390-ccw.img
-usr/share/qemu/s390-zipl.rom
 usr/share/qemu/sgabios.bin
 usr/share/qemu/slof.bin
 usr/share/qemu/spapr-rtas.bin
@@ -102,4 +100,7 @@ usr/share/qemu/vgabios-virtio.bin
 usr/share/qemu/vgabios-vmware.bin
 usr/share/qemu/vgabios.bin
 #usr/var/run
+usr/bin/ivshmem-client
+usr/bin/ivshmem-server
+#usr/share/man/man8/qemu-ga.8
 
