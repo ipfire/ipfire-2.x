@@ -307,7 +307,7 @@ END
 	&agbbox();
 
 	#Logo Upload
-	print "<tr><td>$Lang::tr{'Captive logo_upload'}</td><td><INPUT TYPE='file' NAME='uploaded_file' SIZE=30 MAXLENGTH=80></td></tr><tr>";
+	print "<tr><td>$Lang::tr{'Captive logo_upload'}<br>$Lang::tr{'Captive logo_upload1'}</td><td><INPUT TYPE='file' NAME='uploaded_file' SIZE=30 MAXLENGTH=80></td></tr><tr>";
 	#Show Logo in webinterface with 1/2 size if set
 	if (-f "$logopath/logo.png"){
 		print"<td>$Lang::tr{'Captive logo_set'}</td>";
