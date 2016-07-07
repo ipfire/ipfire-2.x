@@ -58,11 +58,6 @@ unless (-e $voucherout)	{ system("touch $voucherout"); }
 
 #actions
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
-	#Check Expiretime
-	if($cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'} == 0 && $cgiparams{'UNLIMITED'} == ''){
-		$errormessage=$Lang::tr{'Captive noexpiretime'};
-	}
-
 	my $file = $cgiparams{'uploaded_file'};
 	if ($file){
 		#Check if extension is png
@@ -76,11 +71,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 	$settings{'ENABLE_GREEN'}		= $cgiparams{'ENABLE_GREEN'};
 	$settings{'ENABLE_BLUE'}		= $cgiparams{'ENABLE_BLUE'};
 	$settings{'AUTH'}				= $cgiparams{'AUTH'};
-	$settings{'EXPIRE'}				= $cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'};
-	$settings{'EXP_HOUR'}			= $cgiparams{'EXP_HOUR'};
-	$settings{'EXP_DAY'}			= $cgiparams{'EXP_DAY'};
-	$settings{'EXP_WEEK'}			= $cgiparams{'EXP_WEEK'};
-	$settings{'EXP_MONTH'}			= $cgiparams{'EXP_MONTH'};
 	$settings{'TITLE'}				= $cgiparams{'TITLE'};
 	$settings{'UNLIMITED'}			= $cgiparams{'UNLIMITED'};
 
@@ -108,14 +98,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 			}
 		}
 
-		#saves the Captiveportal settings to disk
-		if ($cgiparams{'UNLIMITED'} eq 'on'){
-			$cgiparams{'EXP_HOUR'} 	= '0';
-			$cgiparams{'EXP_DAY'} 	= '0';
-			$cgiparams{'EXP_WEEK'} 	= '0';
-			$cgiparams{'EXP_MONTH'}	= '0';
-		}
-	
 		&General::writehash("$settingsfile", \%settings);
 
 		#write Licensetext if defined
@@ -135,9 +117,22 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 	}
 }
 
-if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive voucherout'}"){
+if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive genvoucher'}"){
 	#generates a voucher and writes it to /var/ipfire/voucher_out	
 
+	#calculate expiredate
+	my $expire;
+	if ($settings{'UNLIMITED'} eq 'on'){
+		$expire = $Lang::tr{'Captive nolimit'};
+	}else{
+		$settings{'EXPIRE'} = $cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'};
+		$expire = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime(time()+$settings{'EXPIRE'}));
+    }
+
+	#Check Expiretime
+	if($cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'} == 0 && $cgiparams{'UNLIMITED'} == ''){
+		$errormessage=$Lang::tr{'Captive noexpiretime'};
+	}
 	#check if we already have a voucher with same code
 	&General::readhasharray("$voucherout", \%voucherhash);
 	foreach my $key (keys %voucherhash) {
@@ -316,70 +311,6 @@ END
 		print"<td>$Lang::tr{'Captive logo_set'}</td>";
 		print"<td><br>$Lang::tr{'no'}</td></tr>";
 	}
-	print"<tr><td>$Lang::tr{'Captive vouchervalid'}</td><td>";
-	print "<br><table border='0' with=100%>";
-	print "<th>$Lang::tr{'hours'}</th><th>$Lang::tr{'days'}</th><th>$Lang::tr{'weeks'}</th><th>$Lang::tr{'months'}</th>";
-
-	#print hour-dropdownbox
-	my $hrs=3600;
-	print "<tr><td><select name='EXP_HOUR' style='width:8em;'>";
-	print "<option value='0' ";
-	print " selected='selected'" if ($settings{'EXP_HOUR'} eq '0');
-	print ">--</option>";
-	for (my $i = 1; $i<25; $i++){
-		my $exp_sec = $i * $hrs;
-		print "<option value='$exp_sec' ";
-		print " selected='selected'" if ($settings{'EXP_HOUR'} eq $exp_sec);
-		print ">$i</option>";
-	}
-	print "</td><td>";
-
-	#print day-dropdownbox
-	my $days=3600*24;
-	print "<select name='EXP_DAY' style='width:8em;'>";
-	print "<option value='0' ";
-	print " selected='selected'" if ($settings{'EXP_DAY'} eq '0');
-	print ">--</option>";
-	for (my $i = 1; $i<8; $i++){
-		my $exp_sec = $i * $days;
-		print "<option value='$exp_sec' ";
-		print " selected='selected'" if ($settings{'EXP_DAY'} eq $exp_sec);
-		print ">$i</option>";
-	}
-	print "</td><td>";
-
-	#print week-dropdownbox
-	my $week=3600*24*7;
-	print "<select name='EXP_WEEK' style='width:8em;'>";
-	print "<option value='0' ";
-	print " selected='selected'" if ($settings{'EXP_WEEK'} eq '0');
-	print ">--</option>";
-	for (my $i = 1; $i<5; $i++){
-		my $exp_sec = $i * $week;
-		print "<option value='$exp_sec' ";
-		print " selected='selected'" if ($settings{'EXP_WEEK'} eq $exp_sec);
-		print ">$i</option>";
-	}
-	print "</td><td>";
-
-	#print month-dropdownbox
-	my $month=3600*24*30;
-	print "<select name='EXP_MONTH' style='width:8em;'>";
-	print "<option value='0' ";
-	print " selected='selected'" if ($settings{'EXP_MONTH'} eq '0');
-	print ">--</option>";
-	for (my $i = 1; $i<13; $i++){
-		my $exp_sec = $i * $month;
-		print "<option value='$exp_sec' ";
-		print " selected='selected'" if ($settings{'EXP_MONTH'} eq $exp_sec);
-		print ">$i</option>";
-	}
-	print "</td>";
-
-	print "<td>&nbsp;&nbsp;&nbsp;<input type='checkbox' name='UNLIMITED' $checked{'UNLIMITED'}{'on'} /></td><td>&nbsp;<b>$Lang::tr{'Captive nolimit'}</b></td>";
-
-	print "</tr></table>";
-
 print<<END
 		<tr>
 			<td>
@@ -431,27 +362,77 @@ sub gencode(){
 
 sub voucher(){
 	#show voucher part
-	#calculate expiredate
-	my $expire;
-	if ($settings{'UNLIMITED'} eq 'on'){
-		$expire = $Lang::tr{'Captive nolimit'};
-	}else{
-		$expire = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime(time()+$settings{'EXPIRE'}));
-    }
+	&Header::openbox('100%', 'left', $Lang::tr{'Captive genvoucher'});
+	print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
+	print "<table border='0' width='100%'>";
+	print "<tr><td width='30%'><br>$Lang::tr{'Captive vouchervalid'}</td><td width='70%'><br>";
 
-	&Header::openbox('100%', 'left', $Lang::tr{'Captive voucher'});
-print<<END
-	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	<table class='tbl' width='100%'>
-	<tr>
-		<th align='center' width='20%'>$Lang::tr{'Captive voucher'}</th><th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='65%'>$Lang::tr{'remark'}</th></tr>
-END
-;
+		print "<table class='tbl' border='0' width='100%'>";
+		print "<th>$Lang::tr{'hours'}</th><th>$Lang::tr{'days'}</th><th>$Lang::tr{'weeks'}</th><th>$Lang::tr{'months'}</th><th></th><th></th>";
 
+		#print hour-dropdownbox
+		my $hrs=3600;
+		print "<tr height='40px'><td><select name='EXP_HOUR' style='width:8em;'>";
+		print "<option value='0' ";
+		print " selected='selected'" if ($settings{'EXP_HOUR'} eq '0');
+		print ">--</option>";
+		for (my $i = 1; $i<25; $i++){
+			my $exp_sec = $i * $hrs;
+			print "<option value='$exp_sec' ";
+			print " selected='selected'" if ($settings{'EXP_HOUR'} eq $exp_sec);
+			print ">$i</option>";
+		}
+		print "</td><td>";
+
+		#print day-dropdownbox
+		my $days=3600*24;
+		print "<select name='EXP_DAY' style='width:8em;'>";
+		print "<option value='0' ";
+		print " selected='selected'" if ($settings{'EXP_DAY'} eq '0');
+		print ">--</option>";
+		for (my $i = 1; $i<8; $i++){
+			my $exp_sec = $i * $days;
+			print "<option value='$exp_sec' ";
+			print " selected='selected'" if ($settings{'EXP_DAY'} eq $exp_sec);
+			print ">$i</option>";
+		}
+		print "</td><td>";
+
+		#print week-dropdownbox
+		my $week=3600*24*7;
+		print "<select name='EXP_WEEK' style='width:8em;'>";
+		print "<option value='0' ";
+		print " selected='selected'" if ($settings{'EXP_WEEK'} eq '0');
+		print ">--</option>";
+		for (my $i = 1; $i<5; $i++){
+			my $exp_sec = $i * $week;
+			print "<option value='$exp_sec' ";
+			print " selected='selected'" if ($settings{'EXP_WEEK'} eq $exp_sec);
+			print ">$i</option>";
+		}
+		print "</td><td>";
+
+		#print month-dropdownbox
+		my $month=3600*24*30;
+		print "<select name='EXP_MONTH' style='width:8em;'>";
+		print "<option value='0' ";
+		print " selected='selected'" if ($settings{'EXP_MONTH'} eq '0');
+		print ">--</option>";
+		for (my $i = 1; $i<13; $i++){
+			my $exp_sec = $i * $month;
+			print "<option value='$exp_sec' ";
+			print " selected='selected'" if ($settings{'EXP_MONTH'} eq $exp_sec);
+			print ">$i</option>";
+		}
+		print "</td>";
+		print "<td>&nbsp;&nbsp;&nbsp;<input type='checkbox' name='UNLIMITED' $checked{'UNLIMITED'}{'on'} /></td><td>&nbsp;<b>$Lang::tr{'Captive nolimit'}</b></td>";
+		print "</tr></table>";
+	print "</td></tr>";
+	print "<tr><td><br>$Lang::tr{'remark'}</td><td><br><input type='text' style='width: 98%;' name='REMARK'  align='left'></td></tr>";
+	print "<tr><td>&nbsp</td><td></td></tr></table><br><br>";
 	$cgiparams{'CODE'} = &gencode();
-	print "<tr><td><center><b><font size='5'>$cgiparams{'CODE'}</font></b></center></td><td><center><font size='2'>$expire</font></center></td><td><input type='text' style='width: 96%;' name='REMARK'  align='left'></td></tr>";
-	print "</table><br>";
-	print "<center><input type='submit' name='ACTION' value='$Lang::tr{'Captive voucherout'}'><input type='hidden' name='CODE' value='$cgiparams{'CODE'}'</center></form>";
+	print "<div align='right'><input type='submit' name='ACTION' value='$Lang::tr{'Captive genvoucher'}'><input type='hidden' name='CODE' value='$cgiparams{'CODE'}'></form></div>";
+
 	&Header::closebox();
 	if (! -z $voucherout) { &show_voucher_out();}
 	if (! -z $clients) { &show_voucher_in_use();}
