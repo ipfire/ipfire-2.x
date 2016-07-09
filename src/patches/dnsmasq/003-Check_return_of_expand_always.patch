@@ -1,0 +1,44 @@
+From ce7845bf5429bd2962c9b2e7d75e2659f3b5c1a8 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Wed, 6 Jul 2016 21:42:27 +0100
+Subject: [PATCH] Check return of expand() always.
+
+---
+ src/radv.c  |    4 +++-
+ src/slaac.c |    5 ++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/src/radv.c b/src/radv.c
+index 749b666..faa0f6d 100644
+--- a/src/radv.c
++++ b/src/radv.c
+@@ -262,7 +262,9 @@ static void send_ra_alias(time_t now, int iface, char *iface_name, struct in6_ad
+   parm.prio = calc_prio(ra_param);
+   
+   save_counter(0);
+-  ra = expand(sizeof(struct ra_packet));
++  
++  if (!(ra = expand(sizeof(struct ra_packet))))
++    return;
+   
+   ra->type = ND_ROUTER_ADVERT;
+   ra->code = 0;
+diff --git a/src/slaac.c b/src/slaac.c
+index 8034805..07b8ba4 100644
+--- a/src/slaac.c
++++ b/src/slaac.c
+@@ -147,7 +147,10 @@ time_t periodic_slaac(time_t now, struct dhcp_lease *leases)
+ 	    struct sockaddr_in6 addr;
+  
+ 	    save_counter(0);
+-	    ping = expand(sizeof(struct ping_packet));
++
++	    if (!(ping = expand(sizeof(struct ping_packet))))
++	      continue;
++
+ 	    ping->type = ICMP6_ECHO_REQUEST;
+ 	    ping->code = 0;
+ 	    ping->identifier = ping_id;
+-- 
+1.7.10.4
+

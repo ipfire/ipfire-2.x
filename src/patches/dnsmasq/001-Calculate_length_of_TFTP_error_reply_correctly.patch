@@ -1,0 +1,65 @@
+From 294d36df4749e01199ab220d44c170e7db2b0c05 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Wed, 6 Jul 2016 21:30:25 +0100
+Subject: [PATCH] Calculate length of TFTP error reply correctly.
+
+---
+ CHANGELOG  |   14 ++++++++++++++
+ src/tftp.c |    7 +++++--
+ 2 files changed, 19 insertions(+), 2 deletions(-)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index 04ff3f0..0559a6f 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -1,3 +1,17 @@
++version 2.77
++	    Calculate the length of TFTP error reply packet 
++	    correctly. This fixes a problem when the error 
++	    message in a TFTP packet exceeds the arbitrary 
++	    limit of 500 characters. The message was correctly
++	    truncated, but not the packet length, so 
++	    extra data was appended. This is a possible
++	    security risk, since the extra data comes from
++	    a buffer which is also used for DNS, so that
++	    previous DNS queries or replies may be leaked.
++	    Thanks to Mozilla for funding the security audit 
++	    which spotted this bug.
++
++
+ version 2.76
+             Include 0.0.0.0/8 in DNS rebind checks. This range 
+ 	    translates to hosts on  the local network, or, at 
+diff --git a/src/tftp.c b/src/tftp.c
+index 5e4a32a..3e1b5c5 100644
+--- a/src/tftp.c
++++ b/src/tftp.c
+@@ -652,20 +652,23 @@ static void sanitise(char *buf)
+ 
+ }
+ 
++#define MAXMESSAGE 500 /* limit to make packet < 512 bytes and definitely smaller than buffer */ 
+ static ssize_t tftp_err(int err, char *packet, char *message, char *file)
+ {
+   struct errmess {
+     unsigned short op, err;
+     char message[];
+   } *mess = (struct errmess *)packet;
+-  ssize_t ret = 4;
++  ssize_t len, ret = 4;
+   char *errstr = strerror(errno);
+   
+   sanitise(file);
+ 
+   mess->op = htons(OP_ERR);
+   mess->err = htons(err);
+-  ret += (snprintf(mess->message, 500,  message, file, errstr) + 1);
++  len = snprintf(mess->message, MAXMESSAGE,  message, file, errstr);
++  ret += (len < MAXMESSAGE) ? len + 1 : MAXMESSAGE; /* include terminating zero */
++  
+   my_syslog(MS_TFTP | LOG_ERR, "%s", mess->message);
+   
+   return  ret;
+-- 
+1.7.10.4
+

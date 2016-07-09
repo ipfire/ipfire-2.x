@@ -1,0 +1,36 @@
+From d55f81f5fd53b1dfc2c4b3249b542f2d9679e236 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Wed, 6 Jul 2016 21:33:56 +0100
+Subject: [PATCH] Zero newly malloc'ed memory.
+
+---
+ src/util.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/util.c b/src/util.c
+index 93b24f5..82443c9 100644
+--- a/src/util.c
++++ b/src/util.c
+@@ -248,6 +248,8 @@ void *safe_malloc(size_t size)
+   
+   if (!ret)
+     die(_("could not get memory"), NULL, EC_NOMEM);
++  else
++    memset(ret, 0, size);
+      
+   return ret;
+ }    
+@@ -266,7 +268,9 @@ void *whine_malloc(size_t size)
+ 
+   if (!ret)
+     my_syslog(LOG_ERR, _("failed to allocate %d bytes"), (int) size);
+-
++  else
++    memset(ret, 0, size);
++  
+   return ret;
+ }
+ 
+-- 
+1.7.10.4
+
