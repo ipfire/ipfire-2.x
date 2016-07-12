@@ -33,6 +33,7 @@ etc/rc.d/init.d/fcron
 etc/rc.d/init.d/fireinfo
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/firstsetup
+#etc/rc.d/init.d/freeradius
 etc/rc.d/init.d/fsresize
 etc/rc.d/init.d/functions
 #etc/rc.d/init.d/gnump3d

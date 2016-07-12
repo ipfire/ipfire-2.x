@@ -869,6 +869,7 @@ buildipfire() {
   ipfiremake libpciaccess
   ipfiremake libyajl
   ipfiremake libvirt
+  ipfiremake freeradius
 }
 
 buildinstaller() {

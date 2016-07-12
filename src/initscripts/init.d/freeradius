@@ -1,0 +1,46 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/freeradius
+#
+# Description : Initscript for the FreeRADIUS Server
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		# Create necessary directories
+		mkdir -p /var/run/radiusd
+
+		boot_mesg "Starting FreeRADIUS server..."
+		loadproc /usr/sbin/radiusd -d /etc/raddb
+		;;
+
+	stop)
+		boot_mesg "Stopping FreeRADIUS server..."
+		killproc /usr/sbin/radiusd
+		;;
+
+	reload)
+		boot_mesg "Reloading FreeRADIUS server..."
+		reloadproc /usr/sbin/radiusd
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/radiusd
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/freeradius
