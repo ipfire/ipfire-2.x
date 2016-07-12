@@ -277,10 +277,10 @@ END
 
 print<<END
 		<tr>
-			<td>
+			<td><br>
 				$Lang::tr{'Captive authentication'}
 			</td>
-			<td>
+			<td><br>
 				<select name='AUTH' style='width:8em;'>
 END
 ;
@@ -298,11 +298,10 @@ END
 		</tr>
 END
 ;
-
-	&agbbox();
+	if ($settings{'AUTH'} eq 'LICENSE'){	&agbbox(); };
 
 	#Logo Upload
-	print "<tr><td>$Lang::tr{'Captive logo_upload'}<br>$Lang::tr{'Captive logo_upload1'}</td><td><INPUT TYPE='file' NAME='uploaded_file' SIZE=30 MAXLENGTH=80></td></tr><tr>";
+	print "<tr><td><br>$Lang::tr{'Captive logo_upload'}<br>$Lang::tr{'Captive logo_upload1'}</td><td><br><INPUT TYPE='file' NAME='uploaded_file' SIZE=30 MAXLENGTH=80></td></tr><tr>";
 	#Show Logo in webinterface with 1/2 size if set
 	if (-f "$logopath/logo.png"){
 		print"<td>$Lang::tr{'Captive logo_set'}</td>";
