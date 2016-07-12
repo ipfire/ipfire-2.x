@@ -1,0 +1,93 @@
+From 06093a9a845bb597005d892d5d1bc7859933ada4 Mon Sep 17 00:00:00 2001
+From: Kevin Darbyshire-Bryant <kevin@darbyshire-bryant.me.uk>
+Date: Mon, 11 Jul 2016 21:03:27 +0100
+Subject: [PATCH] Fix problem with --dnssec-timestamp whereby receipt of
+ SIGHUP would erroneously engage timestamp checking.
+
+---
+ CHANGELOG     |    4 ++++
+ src/dnsmasq.c |    7 ++++---
+ src/dnsmasq.h |    1 +
+ src/dnssec.c  |    5 +++--
+ 4 files changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index 59c9c49..9f1e404 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -17,6 +17,10 @@ version 2.77
+ 	    Thanks to Ivan Kokshaysky for the diagnosis and
+ 	    patch.
+ 
++ 	    Fix problem with --dnssec-timestamp whereby receipt
++            of SIGHUP would erroneously engage timestamp checking.
++	    Thanks to Kevin Darbyshire-Bryant for this work.
++	
+ 
+ version 2.76
+             Include 0.0.0.0/8 in DNS rebind checks. This range 
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index 045ec53..a47273f 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -750,7 +750,8 @@ int main (int argc, char **argv)
+       
+       my_syslog(LOG_INFO, _("DNSSEC validation enabled"));
+       
+-      if (option_bool(OPT_DNSSEC_TIME))
++      daemon->dnssec_no_time_check = option_bool(OPT_DNSSEC_TIME);
++      if (option_bool(OPT_DNSSEC_TIME) && !daemon->back_to_the_future)
+ 	my_syslog(LOG_INFO, _("DNSSEC signature timestamps not checked until first cache reload"));
+       
+       if (rc == 1)
+@@ -1226,10 +1227,10 @@ static void async_event(int pipe, time_t now)
+       {
+       case EVENT_RELOAD:
+ #ifdef HAVE_DNSSEC
+-	if (option_bool(OPT_DNSSEC_VALID) && option_bool(OPT_DNSSEC_TIME))
++	if (daemon->dnssec_no_time_check && option_bool(OPT_DNSSEC_VALID) && option_bool(OPT_DNSSEC_TIME))
+ 	  {
+ 	    my_syslog(LOG_INFO, _("now checking DNSSEC signature timestamps"));
+-	    reset_option_bool(OPT_DNSSEC_TIME);
++	    daemon->dnssec_no_time_check = 0;
+ 	  } 
+ #endif
+ 	/* fall through */
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index 1896a64..be27ae0 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -992,6 +992,7 @@ extern struct daemon {
+ #endif
+ #ifdef HAVE_DNSSEC
+   struct ds_config *ds;
++  int dnssec_no_time_check;
+   int back_to_the_future;
+   char *timestamp_file;
+ #endif
+diff --git a/src/dnssec.c b/src/dnssec.c
+index 3c77c7d..64358fa 100644
+--- a/src/dnssec.c
++++ b/src/dnssec.c
+@@ -522,15 +522,16 @@ static int check_date_range(u32 date_start, u32 date_end)
+ 	  if (utime(daemon->timestamp_file, NULL) != 0)
+ 	    my_syslog(LOG_ERR, _("failed to update mtime on %s: %s"), daemon->timestamp_file, strerror(errno));
+ 	  
++	  my_syslog(LOG_INFO, _("system time considered valid, now checking DNSSEC signature timestamps."));
+ 	  daemon->back_to_the_future = 1;
+-	  set_option_bool(OPT_DNSSEC_TIME);
++	  daemon->dnssec_no_time_check = 0;
+ 	  queue_event(EVENT_RELOAD); /* purge cache */
+ 	} 
+ 
+       if (daemon->back_to_the_future == 0)
+ 	return 1;
+     }
+-  else if (option_bool(OPT_DNSSEC_TIME))
++  else if (daemon->dnssec_no_time_check)
+     return 1;
+   
+   /* We must explicitly check against wanted values, because of SERIAL_UNDEF */
+-- 
+1.7.10.4
+

@@ -1,0 +1,40 @@
+From 5874f3e9222397d82aabd9884d9bf5ce7e4109b0 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Sun, 10 Jul 2016 22:12:08 +0100
+Subject: [PATCH] Fix editing error on man page.
+
+Thanks to Eric Westbrook for spotting this.
+---
+ man/dnsmasq.8 |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/man/dnsmasq.8 b/man/dnsmasq.8
+index 0521534..bd8c0b3 100644
+--- a/man/dnsmasq.8
++++ b/man/dnsmasq.8
+@@ -1037,6 +1037,10 @@ is given, then read all the files contained in that directory. The advantage of
+ using this option is the same as for --dhcp-hostsfile: the
+ dhcp-optsfile will be re-read when dnsmasq receives SIGHUP. Note that
+ it is possible to encode the information in a
++.B --dhcp-boot
++flag as DHCP options, using the options names bootfile-name,
++server-ip-address and tftp-server. This allows these to be included
++in a dhcp-optsfile.
+ .TP
+ .B --dhcp-hostsdir=<path>
+ This is equivalent to dhcp-hostsfile, except for the following. The path MUST be a
+@@ -1048,11 +1052,6 @@ is restarted; ie host records are only added dynamically.
+ .TP
+ .B --dhcp-optsdir=<path>
+ This is equivalent to dhcp-optsfile, with the differences noted for --dhcp-hostsdir.
+-.TP
+-.B --dhcp-boot
+-flag as DHCP options, using the options names bootfile-name,
+-server-ip-address and tftp-server. This allows these to be included
+-in a dhcp-optsfile.
+ .TP 
+ .B \-Z, --read-ethers
+ Read /etc/ethers for information about hosts for the DHCP server. The
+-- 
+1.7.10.4
+

@@ -1,0 +1,46 @@
+From d6dce53e08b3a06be16d43e1bf566c6c1988e4a9 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Mon, 11 Jul 2016 21:34:31 +0100
+Subject: [PATCH] malloc(); memset()  -> calloc() for efficiency.
+
+---
+ src/util.c |   10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/src/util.c b/src/util.c
+index 82443c9..211690e 100644
+--- a/src/util.c
++++ b/src/util.c
+@@ -244,13 +244,11 @@ unsigned char *do_rfc1035_name(unsigned char *p, char *sval)
+ /* for use during startup */
+ void *safe_malloc(size_t size)
+ {
+-  void *ret = malloc(size);
++  void *ret = calloc(1, size);
+   
+   if (!ret)
+     die(_("could not get memory"), NULL, EC_NOMEM);
+-  else
+-    memset(ret, 0, size);
+-     
++      
+   return ret;
+ }    
+ 
+@@ -264,12 +262,10 @@ void safe_pipe(int *fd, int read_noblock)
+ 
+ void *whine_malloc(size_t size)
+ {
+-  void *ret = malloc(size);
++  void *ret = calloc(1, size);
+ 
+   if (!ret)
+     my_syslog(LOG_ERR, _("failed to allocate %d bytes"), (int) size);
+-  else
+-    memset(ret, 0, size);
+   
+   return ret;
+ }
+-- 
+1.7.10.4
+

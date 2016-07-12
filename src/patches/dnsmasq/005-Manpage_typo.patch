@@ -1,0 +1,25 @@
+From 907efeb2dc712603271093bce8a93c7c3e6fe64d Mon Sep 17 00:00:00 2001
+From: Kristjan Onu <jeixav@gmail.com>
+Date: Sun, 10 Jul 2016 22:37:57 +0100
+Subject: [PATCH] Manpage typo.
+
+---
+ man/dnsmasq.8 |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/man/dnsmasq.8 b/man/dnsmasq.8
+index bd8c0b3..ac8d921 100644
+--- a/man/dnsmasq.8
++++ b/man/dnsmasq.8
+@@ -242,7 +242,7 @@ addresses associated with the interface.
+ .B --local-service
+ Accept DNS queries only from hosts whose address is on a local subnet,
+ ie a subnet for which an interface exists on the server. This option
+-only has effect is there are no --interface --except-interface,
++only has effect if there are no --interface --except-interface,
+ --listen-address or --auth-server options. It is intended to be set as
+ a default on installation, to allow unconfigured installations to be
+ useful but also safe from being used for DNS amplification attacks.
+-- 
+1.7.10.4
+
