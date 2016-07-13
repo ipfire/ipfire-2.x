@@ -41,6 +41,7 @@ do
 done
 
 # Stop services
+/etc/init.d/collectd stop
 
 # Extract files
 extract_files
@@ -55,6 +56,7 @@ ldconfig
 #/usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/collectd start
 /etc/init.d/snort restart
 
 # This update need a reboot...
