@@ -421,23 +421,43 @@ sub showMainBox() {
 	### Java Script ###
 	print<<END;
 	<script>
-		var update_logfacility = function() {
+		var update_options = function() {
 
 			var logfacility = \$("#GUARDIAN_LOG_FACILITY").val();
+			var loglevel = \$("#GUARDIAN_LOGLEVEL").val();
 
 			if (logfacility === undefined)
 				return;
 
+			if (loglevel === undefined)
+				return;
+
+			// Show / Hide input for specifying the path to the logfile.
 			if (logfacility === "file") {
 				\$(".GUARDIAN_LOGFILE").show();
 			} else {
 				\$(".GUARDIAN_LOGFILE").hide();
 			}
+
+			// Show / Hide loglevel debug if the facility is set to syslog.
+			if (logfacility === "syslog") {
+				\$("#loglevel_debug").hide();
+			} else {
+				\$("#loglevel_debug").show();
+			}
+
+			// Show / Hide logfacility syslog if the loglevel is set to debug.
+			if (loglevel === "debug") {
+				\$("#logfacility_syslog").hide();
+			} else {
+				\$("#logfacility_syslog").show();
+			}
 		};
 
 		\$(document).ready(function() {
-			\$("#GUARDIAN_LOG_FACILITY").change(update_logfacility);
-			update_logfacility();
+			\$("#GUARDIAN_LOG_FACILITY").change(update_options);
+			\$("#GUARDIAN_LOGLEVEL").change(update_options);
+			update_options();
 
 			// Show / Hide snort priority level option, based if
 			// snort is enabled / disabled.
@@ -552,9 +572,9 @@ END
 			<tr>
 				<td align='left' width='20%'>$Lang::tr{'guardian logfacility'}:</td>
 				<td><select id='GUARDIAN_LOG_FACILITY' name='GUARDIAN_LOG_FACILITY'>
-					<option value='syslog' $selected{'GUARDIAN_LOG_FACILITY'}{'syslog'}>syslog</option>
-					<option value='file' $selected{'GUARDIAN_LOG_FACILITY'}{'file'}>file</option>
-					<option value='console' $selected{'GUARDIAN_LOG_FACILITY'}{'console'}>console</option>
+					<option id='logfacility_syslog' value='syslog' $selected{'GUARDIAN_LOG_FACILITY'}{'syslog'}>syslog</option>
+					<option id='logfacility_file' value='file' $selected{'GUARDIAN_LOG_FACILITY'}{'file'}>file</option>
+					<option id='logfacility_console' value='console' $selected{'GUARDIAN_LOG_FACILITY'}{'console'}>console</option>
 				</select></td>
 			</tr>
 			<tr>
@@ -562,10 +582,10 @@ END
 			</tr>
 			<tr>
 				<td align='left' width='20%'>$Lang::tr{'guardian loglevel'}:</td>
-				<td><select name='GUARDIAN_LOGLEVEL'>
-					<option value='off' $selected{'GUARDIAN_LOGLEVEL'}{'off'}>off</option>
-					<option value='info' $selected{'GUARDIAN_LOGLEVEL'}{'info'}>info</option>
-					<option value='debug' $selected{'GUARDIAN_LOGLEVEL'}{'debug'}>debug</option>
+				<td><select id='GUARDIAN_LOGLEVEL' name='GUARDIAN_LOGLEVEL'>
+					<option id='loglevel_off' value='off' $selected{'GUARDIAN_LOGLEVEL'}{'off'}>off</option>
+					<option id='loglevel_info' value='info' $selected{'GUARDIAN_LOGLEVEL'}{'info'}>info</option>
+					<option id='loglevel_debug' value='debug' $selected{'GUARDIAN_LOGLEVEL'}{'debug'}>debug</option>
 				</select></td>
 			</tr>
 			<tr class="GUARDIAN_SNORT_PRIORITY_LEVEL">
