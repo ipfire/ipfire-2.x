@@ -56,6 +56,7 @@ ldconfig
 #/usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/dnsmasq restart
 /etc/init.d/collectd start
 /etc/init.d/snort restart
 
