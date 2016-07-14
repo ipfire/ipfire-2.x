@@ -51,7 +51,7 @@ function refreshInetInfo() {
 }
 
 function format_bytes(bytes) {
-	var units = ["Bit/s", "kBit/s", "MBit/s", "GBit/s", "TBit/s"];
+	var units = ["bit/s", "kbit/s", "Mbit/s", "Gbit/s", "Tbit/s"];
 
 	var unit = units[0];
 	for (var i = 1; i < units.length; i++) {

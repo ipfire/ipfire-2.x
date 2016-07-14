@@ -1818,7 +1818,7 @@
 'updxlrtr maintenance' => 'Maintenance',
 'updxlrtr marked as' => 'marqué comme',
 'updxlrtr max disk usage' => 'Utilisation du disque Max.',
-'updxlrtr max download rate' => 'Taux de téléchargement externe Max. (kBit/s)',
+'updxlrtr max download rate' => 'Taux de téléchargement externe Max. (kbit/s)',
 'updxlrtr month' => 'un mois',
 'updxlrtr monthly' => 'mensuellement',
 'updxlrtr not accessed' => 'la dernière utilisation date de',

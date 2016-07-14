@@ -108,7 +108,7 @@ if ($xlratorsettings{'MAX_DOWNLOAD_RATE'} eq '')
 {
 	&writelog("Retrieving file for local cache: $updatefile");
 } else {
-	&writelog("Retrieving file for local cache at max. " . $xlratorsettings{'MAX_DOWNLOAD_RATE'} . " kBit/s: $updatefile");
+	&writelog("Retrieving file for local cache at max. " . $xlratorsettings{'MAX_DOWNLOAD_RATE'} . " kbit/s: $updatefile");
 }
 
 $ENV{'http_proxy'} = $proxysettings{'UPSTREAM_PROXY'};

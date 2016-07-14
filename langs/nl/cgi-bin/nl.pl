@@ -2226,7 +2226,7 @@
 'updxlrtr maintenance' => 'Onderhoud',
 'updxlrtr marked as' => 'gemarkeerd als',
 'updxlrtr max disk usage' => 'Max. schijfgebruik',
-'updxlrtr max download rate' => 'Max. externe downloadsnelheid (kBit/s)',
+'updxlrtr max download rate' => 'Max. externe downloadsnelheid (kbit/s)',
 'updxlrtr month' => 'een maand',
 'updxlrtr monthly' => 'maandelijks',
 'updxlrtr not accessed' => 'niet benaderd sinds',

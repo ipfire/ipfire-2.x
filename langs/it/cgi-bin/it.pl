@@ -2281,7 +2281,7 @@
 'updxlrtr maintenance' => 'Maintenance',
 'updxlrtr marked as' => 'marked as',
 'updxlrtr max disk usage' => 'Max. disk usage',
-'updxlrtr max download rate' => 'Max. external download rate (kBit/s)',
+'updxlrtr max download rate' => 'Max. external download rate (kbit/s)',
 'updxlrtr month' => 'one month',
 'updxlrtr monthly' => 'Mensile',
 'updxlrtr not accessed' => 'not accessed since',

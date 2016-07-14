@@ -1532,7 +1532,7 @@ END
 ;
 
 foreach (@throttle_limits) {
-	print "\t<option value='$_' $selected{'THROTTLING_GREEN_TOTAL'}{$_}>$_ kBit/s</option>\n";
+	print "\t<option value='$_' $selected{'THROTTLING_GREEN_TOTAL'}{$_}>$_ kbit/s</option>\n";
 }
 
 print <<END
@@ -1546,7 +1546,7 @@ END
 ;
 
 foreach (@throttle_limits) {
-	print "\t<option value='$_' $selected{'THROTTLING_GREEN_HOST'}{$_}>$_ kBit/s</option>\n";
+	print "\t<option value='$_' $selected{'THROTTLING_GREEN_HOST'}{$_}>$_ kbit/s</option>\n";
 }
 
 print <<END
@@ -1567,7 +1567,7 @@ END
 ;
 
 foreach (@throttle_limits) {
-	print "\t<option value='$_' $selected{'THROTTLING_BLUE_TOTAL'}{$_}>$_ kBit/s</option>\n";
+	print "\t<option value='$_' $selected{'THROTTLING_BLUE_TOTAL'}{$_}>$_ kbit/s</option>\n";
 }
 
 print <<END
@@ -1581,7 +1581,7 @@ END
 ;
 
 foreach (@throttle_limits) {
-	print "\t<option value='$_' $selected{'THROTTLING_BLUE_HOST'}{$_}>$_ kBit/s</option>\n";
+	print "\t<option value='$_' $selected{'THROTTLING_BLUE_HOST'}{$_}>$_ kbit/s</option>\n";
 }
 
 print <<END

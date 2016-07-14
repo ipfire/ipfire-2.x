@@ -1821,7 +1821,7 @@
 'updxlrtr maintenance' => 'Управление',
 'updxlrtr marked as' => 'отмечен как',
 'updxlrtr max disk usage' => 'Максимальное использование диска',
-'updxlrtr max download rate' => 'Максимальная скорость загрузки (kBit/s)',
+'updxlrtr max download rate' => 'Максимальная скорость загрузки (kbit/s)',
 'updxlrtr month' => 'один месяц',
 'updxlrtr monthly' => 'Ежемесячно',
 'updxlrtr not accessed' => 'Не обращались с',

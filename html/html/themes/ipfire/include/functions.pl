@@ -70,8 +70,8 @@ sub showmenu() {
 		print <<EOF;
 			<div id='traffic'>
 				<strong>Traffic:</strong>
-				In  <span id='rx_kbs'>--.-- Bit/s</span> &nbsp;
-				Out <span id='tx_kbs'>--.-- Bit/s</span>
+				In  <span id='rx_kbs'>--.-- bit/s</span> &nbsp;
+				Out <span id='tx_kbs'>--.-- bit/s</span>
 			</div>
 EOF
 	}

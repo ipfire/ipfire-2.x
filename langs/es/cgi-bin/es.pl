@@ -1813,7 +1813,7 @@
 'updxlrtr maintenance' => 'Mantenimiento',
 'updxlrtr marked as' => 'marcado  como',
 'updxlrtr max disk usage' => 'Máximo uso de disco',
-'updxlrtr max download rate' => 'Tasa Máxima de descarga externa (kBit/s)',
+'updxlrtr max download rate' => 'Tasa Máxima de descarga externa (kbit/s)',
 'updxlrtr month' => 'un mes',
 'updxlrtr monthly' => 'mensual',
 'updxlrtr not accessed' => 'no se ha accesado desde',

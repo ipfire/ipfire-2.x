@@ -432,9 +432,9 @@ END
 
 	foreach (@bandwidth_limits) {
 		if ($_ >= 1024) {
-			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_RATE'}{$_}>". $_ / 1024 ." MBit/s</option>\n";
+			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_RATE'}{$_}>". $_ / 1024 ." Mbit/s</option>\n";
 		} else {
-			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_RATE'}{$_}>$_ kBit/s</option>\n";
+			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_RATE'}{$_}>$_ kbit/s</option>\n";
 		}
 	}
 
@@ -455,9 +455,9 @@ END
 
 	foreach (@bandwidth_limits) {
 		if ($_ >= 1024) {
-			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_BURST'}{$_}>". $_ / 1024 ." MBit/s</option>\n";
+			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_BURST'}{$_}>". $_ / 1024 ." Mbit/s</option>\n";
 		} else {
-			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_BURST'}{$_}>$_ kBit/s</option>\n";
+			print "<option value='$_' $selected{'TOR_RELAY_BANDWIDTH_BURST'}{$_}>$_ kbit/s</option>\n";
 		}
 	}
 	print <<END;
@@ -978,7 +978,7 @@ sub FormatBytes() {
 sub FormatBitsPerSecond() {
 	my $bits = shift;
 
-	my @units = ("Bit/s", "KBit/s", "MBit/s", "GBit/s", "TBit/s");
+	my @units = ("bit/s", "kbit/s", "Mbit/s", "Gbit/s", "Tbit/s");
 	my $units_index = 0;
 
 	while (($units_index <= $#units) && ($bits >= 1024)) {

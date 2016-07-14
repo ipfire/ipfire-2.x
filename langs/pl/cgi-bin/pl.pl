@@ -1826,7 +1826,7 @@
 'updxlrtr maintenance' => 'Konserwacja',
 'updxlrtr marked as' => 'oznaczone jako',
 'updxlrtr max disk usage' => 'Maks. wykorzystanie dysku',
-'updxlrtr max download rate' => 'Maks. prędkość pobierania (kBit/s)',
+'updxlrtr max download rate' => 'Maks. prędkość pobierania (kbit/s)',
 'updxlrtr month' => 'miesiąca',
 'updxlrtr monthly' => 'miesięcznie',
 'updxlrtr not accessed' => 'bez żądania od',
