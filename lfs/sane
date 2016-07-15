@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/sane-backends-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = sane
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = "cups libtiff"
 
