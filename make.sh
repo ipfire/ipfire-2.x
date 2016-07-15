@@ -350,10 +350,10 @@ buildbase() {
     lfsmake2 perl
     lfsmake2 readline
     lfsmake2 readline-compat
+    lfsmake2 bzip2
     lfsmake2 pcre
     lfsmake2 pcre-compat
     lfsmake2 bash
-    lfsmake2 bzip2
     lfsmake2 diffutils
     lfsmake2 e2fsprogs
     lfsmake2 ed
