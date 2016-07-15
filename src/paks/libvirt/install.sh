@@ -29,7 +29,7 @@ getent passwd libvirt-remote >/dev/null || \
 useradd -m -g libvirt-remote -s /bin/bash "libvirt-remote"
 
 extract_files
-start_service --delay 300 --background ${NAME}
+start_service --delay 300 --background libvirtd
 ln -svf /etc/init.d/libvirtd /etc/rc.d/rc0.d/K20libvirtd
 ln -svf /etc/init.d/libvirtd /etc/rc.d/rc3.d/S70libvirtd
 ln -svf /etc/init.d/libvirtd /etc/rc.d/rc6.d/K20libvirtd

@@ -22,7 +22,7 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-stop_service ${NAME}
+stop_service libvirtd
 remove_files
 
 rm -f /etc/rc.d/rc*.d/*libvirt-guests
