@@ -67,7 +67,8 @@ my %sections = (
         'pakfire' => '(pakfire:) ',
         'wireless' => '(hostapd:|kernel: ath.*:|kernel: wifi[0-9]:) ',
         'squid' => '(squid\[.*\]: |squid: )',
-        'snort' => '(snort\[.*\]: )'
+        'snort' => '(snort\[.*\]: )',
+        'guardian' => '(guardian\[.*\]: )'
 	 );
 
 # Translations for the %sections array.
@@ -90,7 +91,8 @@ my %trsections = (
         'pakfire' => 'Pakfire',
         'wireless' => 'Wireless',
         'squid' => "$Lang::tr{'web proxy'}",
-        'snort' => "$Lang::tr{'intrusion detection'}"
+        'snort' => "$Lang::tr{'intrusion detection'}",
+        'guardian' => "$Lang::tr{'guardian'}"
 	);
 
 
