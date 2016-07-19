@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
 etc/collectd.conf
+etc/httpd/conf/global.conf
 opt/pakfire/lib/functions.sh
 srv/web/ipfire/cgi-bin/ids.cgi
