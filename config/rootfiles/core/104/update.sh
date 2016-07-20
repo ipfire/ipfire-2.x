@@ -53,7 +53,7 @@ rm -f /bin/groups /lib/libshadow.so.0*
 ldconfig
 
 # Update Language cache
-#/usr/local/bin/update-lang-cache
+/usr/local/bin/update-lang-cache
 
 # Start services
 /etc/init.d/dnsmasq restart
