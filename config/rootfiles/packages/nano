@@ -49,6 +49,7 @@ usr/share/nano/postgresql.nanorc
 usr/share/nano/pov.nanorc
 usr/share/nano/python.nanorc
 usr/share/nano/ruby.nanorc
+usr/share/nano/rust.nanorc
 usr/share/nano/sh.nanorc
 usr/share/nano/spec.nanorc
 usr/share/nano/tcl.nanorc
