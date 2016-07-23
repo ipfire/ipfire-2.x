@@ -1,0 +1,169 @@
+From fa78573778cb23337f67f5d0c9de723169919047 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Fri, 22 Jul 2016 20:56:01 +0100
+Subject: [PATCH] Zero packet buffers before building output, to reduce risk
+ of information leakage.
+
+---
+ src/auth.c      |    5 +++++
+ src/dnsmasq.h   |    1 +
+ src/outpacket.c |   10 ++++++++++
+ src/radv.c      |    2 +-
+ src/rfc1035.c   |    5 +++++
+ src/rfc3315.c   |    6 +++---
+ src/slaac.c     |    2 +-
+ src/tftp.c      |    5 ++++-
+ 8 files changed, 30 insertions(+), 6 deletions(-)
+
+diff --git a/src/auth.c b/src/auth.c
+index 198572d..3c5c37f 100644
+--- a/src/auth.c
++++ b/src/auth.c
+@@ -101,6 +101,11 @@ size_t answer_auth(struct dns_header *header, char *limit, size_t qlen, time_t n
+   struct all_addr addr;
+   struct cname *a;
+   
++  /* Clear buffer beyond request to avoid risk of
++     information disclosure. */
++  memset(((char *)header) + qlen, 0, 
++	 (limit - ((char *)header)) - qlen);
++  
+   if (ntohs(header->qdcount) == 0 || OPCODE(header) != QUERY )
+     return 0;
+ 
+diff --git a/src/dnsmasq.h b/src/dnsmasq.h
+index be27ae0..2bda5d0 100644
+--- a/src/dnsmasq.h
++++ b/src/dnsmasq.h
+@@ -1471,6 +1471,7 @@ void log_relay(int family, struct dhcp_relay *relay);
+ /* outpacket.c */
+ #ifdef HAVE_DHCP6
+ void end_opt6(int container);
++void reset_counter(void);
+ int save_counter(int newval);
+ void *expand(size_t headroom);
+ int new_opt6(int opt);
+diff --git a/src/outpacket.c b/src/outpacket.c
+index a414efa..2caacd9 100644
+--- a/src/outpacket.c
++++ b/src/outpacket.c
+@@ -29,9 +29,19 @@ void end_opt6(int container)
+    PUTSHORT(len, p);
+ }
+ 
++void reset_counter(void)
++{
++  /* Clear out buffer when starting from begining */
++  if (daemon->outpacket.iov_base)
++    memset(daemon->outpacket.iov_base, 0, daemon->outpacket.iov_len);
++ 
++  save_counter(0);
++}
++
+ int save_counter(int newval)
+ {
+   int ret = outpacket_counter;
++  
+   if (newval != -1)
+     outpacket_counter = newval;
+ 
+diff --git a/src/radv.c b/src/radv.c
+index faa0f6d..39c9217 100644
+--- a/src/radv.c
++++ b/src/radv.c
+@@ -261,7 +261,7 @@ static void send_ra_alias(time_t now, int iface, char *iface_name, struct in6_ad
+   parm.adv_interval = calc_interval(ra_param);
+   parm.prio = calc_prio(ra_param);
+   
+-  save_counter(0);
++  reset_counter();
+   
+   if (!(ra = expand(sizeof(struct ra_packet))))
+     return;
+diff --git a/src/rfc1035.c b/src/rfc1035.c
+index 24d08c1..9e730a9 100644
+--- a/src/rfc1035.c
++++ b/src/rfc1035.c
+@@ -1209,6 +1209,11 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
+   int nxdomain = 0, auth = 1, trunc = 0, sec_data = 1;
+   struct mx_srv_record *rec;
+   size_t len;
++
++  /* Clear buffer beyond request to avoid risk of
++     information disclosure. */
++  memset(((char *)header) + qlen, 0, 
++	 (limit - ((char *)header)) - qlen);
+   
+   if (ntohs(header->ancount) != 0 ||
+       ntohs(header->nscount) != 0 ||
+diff --git a/src/rfc3315.c b/src/rfc3315.c
+index 3f4d69c..e1271a1 100644
+--- a/src/rfc3315.c
++++ b/src/rfc3315.c
+@@ -89,7 +89,7 @@ unsigned short dhcp6_reply(struct dhcp_context *context, int interface, char *if
+   for (vendor = daemon->dhcp_vendors; vendor; vendor = vendor->next)
+     vendor->netid.next = &vendor->netid;
+   
+-  save_counter(0);
++  reset_counter();
+   state.context = context;
+   state.interface = interface;
+   state.iface_name = iface_name;
+@@ -2084,7 +2084,7 @@ void relay_upstream6(struct dhcp_relay *relay, ssize_t sz,
+   if (hopcount > 32)
+     return;
+ 
+-  save_counter(0);
++  reset_counter();
+ 
+   if ((header = put_opt6(NULL, 34)))
+     {
+@@ -2161,7 +2161,7 @@ unsigned short relay_reply6(struct sockaddr_in6 *peer, ssize_t sz, char *arrival
+ 	(!relay->interface || wildcard_match(relay->interface, arrival_interface)))
+       break;
+       
+-  save_counter(0);
++  reset_counter();
+ 
+   if (relay)
+     {
+diff --git a/src/slaac.c b/src/slaac.c
+index 07b8ba4..bd6c9b4 100644
+--- a/src/slaac.c
++++ b/src/slaac.c
+@@ -146,7 +146,7 @@ time_t periodic_slaac(time_t now, struct dhcp_lease *leases)
+ 	    struct ping_packet *ping;
+ 	    struct sockaddr_in6 addr;
+  
+-	    save_counter(0);
++	    reset_counter();
+ 
+ 	    if (!(ping = expand(sizeof(struct ping_packet))))
+ 	      continue;
+diff --git a/src/tftp.c b/src/tftp.c
+index 3e1b5c5..618c406 100644
+--- a/src/tftp.c
++++ b/src/tftp.c
+@@ -662,8 +662,9 @@ static ssize_t tftp_err(int err, char *packet, char *message, char *file)
+   ssize_t len, ret = 4;
+   char *errstr = strerror(errno);
+   
++  memset(packet, 0, daemon->packet_buff_sz);
+   sanitise(file);
+-
++  
+   mess->op = htons(OP_ERR);
+   mess->err = htons(err);
+   len = snprintf(mess->message, MAXMESSAGE,  message, file, errstr);
+@@ -684,6 +685,8 @@ static ssize_t tftp_err_oops(char *packet, char *file)
+ /* return -1 for error, zero for done. */
+ static ssize_t get_block(char *packet, struct tftp_transfer *transfer)
+ {
++  memset(packet, 0, daemon->packet_buff_sz);
++  
+   if (transfer->block == 0)
+     {
+       /* send OACK */
+-- 
+1.7.10.4
+

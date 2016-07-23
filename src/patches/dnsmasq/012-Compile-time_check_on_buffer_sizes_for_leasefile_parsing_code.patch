@@ -1,0 +1,103 @@
+From bf4e62c19e619f7edf8d03d58d33a5752f190bfd Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Fri, 22 Jul 2016 21:37:59 +0100
+Subject: [PATCH] Compile-time check on buffer sizes for leasefile parsing
+ code.
+
+---
+ src/dhcp-common.c   |   16 ++++++++--------
+ src/dhcp-protocol.h |    4 ++++
+ src/lease.c         |    9 ++++++++-
+ src/rfc3315.c       |    2 +-
+ 4 files changed, 21 insertions(+), 10 deletions(-)
+
+diff --git a/src/dhcp-common.c b/src/dhcp-common.c
+index 08528e8..ecc752b 100644
+--- a/src/dhcp-common.c
++++ b/src/dhcp-common.c
+@@ -20,11 +20,11 @@
+ 
+ void dhcp_common_init(void)
+ {
+-    /* These each hold a DHCP option max size 255
+-       and get a terminating zero added */
+-  daemon->dhcp_buff = safe_malloc(256);
+-  daemon->dhcp_buff2 = safe_malloc(256); 
+-  daemon->dhcp_buff3 = safe_malloc(256);
++  /* These each hold a DHCP option max size 255
++     and get a terminating zero added */
++  daemon->dhcp_buff = safe_malloc(DHCP_BUFF_SZ);
++  daemon->dhcp_buff2 = safe_malloc(DHCP_BUFF_SZ); 
++  daemon->dhcp_buff3 = safe_malloc(DHCP_BUFF_SZ);
+   
+   /* dhcp_packet is used by v4 and v6, outpacket only by v6 
+      sizeof(struct dhcp_packet) is as good an initial size as any,
+@@ -855,14 +855,14 @@ void log_context(int family, struct dhcp_context *context)
+       if (context->flags & CONTEXT_RA_STATELESS)
+ 	{
+ 	  if (context->flags & CONTEXT_TEMPLATE)
+-	    strncpy(daemon->dhcp_buff, context->template_interface, 256);
++	    strncpy(daemon->dhcp_buff, context->template_interface, DHCP_BUFF_SZ);
+ 	  else
+ 	    strcpy(daemon->dhcp_buff, daemon->addrbuff);
+ 	}
+       else 
+ #endif
+-	inet_ntop(family, start, daemon->dhcp_buff, 256);
+-      inet_ntop(family, end, daemon->dhcp_buff3, 256);
++	inet_ntop(family, start, daemon->dhcp_buff, DHCP_BUFF_SZ);
++      inet_ntop(family, end, daemon->dhcp_buff3, DHCP_BUFF_SZ);
+       my_syslog(MS_DHCP | LOG_INFO, 
+ 		(context->flags & CONTEXT_RA_STATELESS) ? 
+ 		_("%s stateless on %s%.0s%.0s%s") :
+diff --git a/src/dhcp-protocol.h b/src/dhcp-protocol.h
+index a31d829..0ea449b 100644
+--- a/src/dhcp-protocol.h
++++ b/src/dhcp-protocol.h
+@@ -19,6 +19,10 @@
+ #define DHCP_CLIENT_ALTPORT 1068
+ #define PXE_PORT 4011
+ 
++/* These each hold a DHCP option max size 255
++   and get a terminating zero added */
++#define DHCP_BUFF_SZ 256
++
+ #define BOOTREQUEST              1
+ #define BOOTREPLY                2
+ #define DHCP_COOKIE              0x63825363
+diff --git a/src/lease.c b/src/lease.c
+index 20cac90..ca62cc5 100644
+--- a/src/lease.c
++++ b/src/lease.c
+@@ -65,7 +65,14 @@ void lease_init(time_t now)
+     }
+   
+   /* client-id max length is 255 which is 255*2 digits + 254 colons 
+-     borrow DNS packet buffer which is always larger than 1000 bytes */
++     borrow DNS packet buffer which is always larger than 1000 bytes 
++  
++     Check various buffers are big enough for the code below */
++
++#if (DHCP_BUFF_SZ < 255) || (MAXDNAME < 64) || (PACKETSZ+MAXDNAME+RRFIXEDSZ  < 764)
++# error Buffer size breakage in leasfile parsing. 
++#endif
++
+   if (leasestream)
+     while (fscanf(leasestream, "%255s %255s", daemon->dhcp_buff3, daemon->dhcp_buff2) == 2)
+       {
+diff --git a/src/rfc3315.c b/src/rfc3315.c
+index c7bf46f..568b0c8 100644
+--- a/src/rfc3315.c
++++ b/src/rfc3315.c
+@@ -1975,7 +1975,7 @@ static void log6_packet(struct state *state, char *type, struct in6_addr *addr,
+ 
+   if (addr)
+     {
+-      inet_ntop(AF_INET6, addr, daemon->dhcp_buff2, 255);
++      inet_ntop(AF_INET6, addr, daemon->dhcp_buff2, DHCP_BUFF_SZ - 1);
+       strcat(daemon->dhcp_buff2, " ");
+     }
+   else
+-- 
+1.7.10.4
+

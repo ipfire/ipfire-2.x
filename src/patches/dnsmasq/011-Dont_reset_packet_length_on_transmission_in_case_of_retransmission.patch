@@ -1,0 +1,54 @@
+From 6b1c464d6de3d7d2afc9b53afe78cda6d6e3316f Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Fri, 22 Jul 2016 20:59:16 +0100
+Subject: [PATCH] Don't reset packet length on transmission, in case of
+ retransmission.
+
+---
+ src/radv.c    |    2 +-
+ src/rfc3315.c |    2 +-
+ src/slaac.c   |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/radv.c b/src/radv.c
+index 39c9217..ffc37f2 100644
+--- a/src/radv.c
++++ b/src/radv.c
+@@ -528,7 +528,7 @@ static void send_ra_alias(time_t now, int iface, char *iface_name, struct in6_ad
+     }
+   
+   while (retry_send(sendto(daemon->icmp6fd, daemon->outpacket.iov_base, 
+-			   save_counter(0), 0, (struct sockaddr *)&addr, 
++			   save_counter(-1), 0, (struct sockaddr *)&addr, 
+ 			   sizeof(addr))));
+   
+ }
+diff --git a/src/rfc3315.c b/src/rfc3315.c
+index e1271a1..c7bf46f 100644
+--- a/src/rfc3315.c
++++ b/src/rfc3315.c
+@@ -2127,7 +2127,7 @@ void relay_upstream6(struct dhcp_relay *relay, ssize_t sz,
+ 		my_syslog(MS_DHCP | LOG_ERR, _("Cannot multicast to DHCPv6 server without correct interface"));
+ 	    }
+ 		
+-	  send_from(daemon->dhcp6fd, 0, daemon->outpacket.iov_base, save_counter(0), &to, &from, 0);
++	  send_from(daemon->dhcp6fd, 0, daemon->outpacket.iov_base, save_counter(-1), &to, &from, 0);
+ 	  
+ 	  if (option_bool(OPT_LOG_OPTS))
+ 	    {
+diff --git a/src/slaac.c b/src/slaac.c
+index bd6c9b4..7ecf127 100644
+--- a/src/slaac.c
++++ b/src/slaac.c
+@@ -164,7 +164,7 @@ time_t periodic_slaac(time_t now, struct dhcp_lease *leases)
+ 	    addr.sin6_port = htons(IPPROTO_ICMPV6);
+ 	    addr.sin6_addr = slaac->addr;
+ 	    
+-	    if (sendto(daemon->icmp6fd, daemon->outpacket.iov_base, save_counter(0), 0,
++	    if (sendto(daemon->icmp6fd, daemon->outpacket.iov_base, save_counter(-1), 0,
+ 		       (struct sockaddr *)&addr,  sizeof(addr)) == -1 &&
+ 		errno == EHOSTUNREACH)
+ 	      slaac->ping_time = 0; /* Give up */ 
+-- 
+1.7.10.4
+
