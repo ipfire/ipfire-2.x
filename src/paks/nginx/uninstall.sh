@@ -23,6 +23,7 @@
 #
 . /opt/pakfire/lib/functions.sh
 stop_service ${NAME}
+extract_backup_includes
 make_backup ${NAME}
 remove_files
 
