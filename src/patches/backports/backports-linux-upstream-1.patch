@@ -1,0 +1,60 @@
+From 5bb6f6e1d44aa91323857715dfddb63337f8307b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
+Date: Sun, 3 Jul 2016 22:24:50 +0200
+Subject: cdc_ncm: workaround for EM7455 "silent" data interface
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+[ Upstream commit c086e7096170390594c425114d98172bc9aceb8a ]
+
+Several Lenovo users have reported problems with their Sierra
+Wireless EM7455 modem. The driver has loaded successfully and
+the MBIM management channel has appeared to work, including
+establishing a connection to the mobile network. But no frames
+have been received over the data interface.
+
+The problem affects all EM7455 and MC7455, and is assumed to
+affect other modems based on the same Qualcomm chipset and
+baseband firmware.
+
+Testing narrowed the problem down to what seems to be a
+firmware timing bug during initialization. Adding a short sleep
+while probing is sufficient to make the problem disappear.
+Experiments have shown that 1-2 ms is too little to have any
+effect, while 10-20 ms is enough to reliably succeed.
+
+Reported-by: Stefan Armbruster <ml001@armbruster-it.de>
+Reported-by: Ralph Plawetzki <ralph@purejava.org>
+Reported-by: Andreas Fett <andreas.fett@secunet.com>
+Reported-by: Rasmus Lerdorf <rasmus@lerdorf.com>
+Reported-by: Samo Ratnik <samo.ratnik@gmail.com>
+Reported-and-tested-by: Aleksander Morgado <aleksander@aleksander.es>
+Signed-off-by: Bjørn Mork <bjorn@mork.no>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/usb/cdc_ncm.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/net/usb/cdc_ncm.c b/drivers/net/usb/cdc_ncm.c
+index c663722..584504e 100644
+--- a/drivers/net/usb/cdc_ncm.c
++++ b/drivers/net/usb/cdc_ncm.c
+@@ -438,6 +438,13 @@ advance:
+ 	if (cdc_ncm_setup(dev))
+ 		goto error2;
+ 
++	/* Some firmwares need a pause here or they will silently fail
++	 * to set up the interface properly.  This value was decided
++	 * empirically on a Sierra Wireless MC7455 running 02.08.02.00
++	 * firmware.
++	 */
++	usleep_range(10000, 20000);
++
+ 	/* configure data interface */
+ 	temp = usb_set_interface(dev->udev, iface_no, data_altsetting);
+ 	if (temp) {
+-- 
+cgit v0.12
+

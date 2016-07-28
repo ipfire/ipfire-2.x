@@ -112,6 +112,11 @@ ifeq "$(KCFG)" "-rpi"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-smsc95xx-add_mac_addr_param.patch
 endif
 
+	# Patches form stable linux updates
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports/backports-linux-upstream-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports/backports-linux-upstream-2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports/backports-linux-upstream-3.patch
+
 	# generate config
 	cd $(DIR_APP) && make KLIB=/lib/modules/$(KVER)-$(VERSUFIX)/ allmodconfig
 

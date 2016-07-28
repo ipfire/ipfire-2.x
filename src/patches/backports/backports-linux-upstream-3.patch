@@ -1,0 +1,53 @@
+From fc70a4a5cb616bf390cee03390265045de5cf06a Mon Sep 17 00:00:00 2001
+From: Feng Tang <feng.tang@intel.com>
+Date: Fri, 24 Jun 2016 15:26:05 +0800
+Subject: net: alx: Work around the DMA RX overflow issue
+
+[ Upstream commit 881d0327db37ad917a367c77aff1afa1ee41e0a9 ]
+
+Note: This is a verified backported patch for stable 4.4 kernel, and it
+could also be applied to 4.3/4.2/4.1/3.18/3.16
+
+There is a problem with alx devices, that the network link will be
+lost in 1-5 minutes after the device is up.
+
+>From debugging without datasheet, we found the error always
+happen when the DMA RX address is set to 0x....fc0, which is very
+likely to be a HW/silicon problem.
+
+This patch will apply rx skb with 64 bytes longer space, and if the
+allocated skb has a 0x...fc0 address, it will use skb_resever(skb, 64)
+to advance the address, so that the RX overflow can be avoided.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=70761
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+Suggested-by: Eric Dumazet <edumazet@google.com>
+Tested-by: Ole Lukoie <olelukoie@mail.ru>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ethernet/atheros/alx/main.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/atheros/alx/main.c b/drivers/net/ethernet/atheros/alx/main.c
+index 3e1d7d2..7585960 100644
+--- a/drivers/net/ethernet/atheros/alx/main.c
++++ b/drivers/net/ethernet/atheros/alx/main.c
+@@ -86,9 +86,14 @@ static int alx_refill_rx_ring(struct alx_priv *alx, gfp_t gfp)
+ 	while (!cur_buf->skb && next != rxq->read_idx) {
+ 		struct alx_rfd *rfd = &rxq->rfd[cur];
+ 
+-		skb = __netdev_alloc_skb(alx->dev, alx->rxbuf_size, gfp);
++		skb = __netdev_alloc_skb(alx->dev, alx->rxbuf_size + 64, gfp);
+ 		if (!skb)
+ 			break;
++
++		/* Workround for the HW RX DMA overflow issue */
++		if (((unsigned long)skb->data & 0xfff) == 0xfc0)
++			skb_reserve(skb, 64);
++
+ 		dma = dma_map_single(&alx->hw.pdev->dev,
+ 				     skb->data, alx->rxbuf_size,
+ 				     DMA_FROM_DEVICE);
+-- 
+cgit v0.12
+

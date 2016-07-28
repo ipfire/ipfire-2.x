@@ -1,0 +1,43 @@
+From d6b8a68ac7b6d2e241f8d34b769c98a1793d9124 Mon Sep 17 00:00:00 2001
+From: Ben Hutchings <ben@decadent.org.uk>
+Date: Wed, 20 Apr 2016 23:23:08 +0100
+Subject: atl2: Disable unimplemented scatter/gather feature
+
+[ Upstream commit f43bfaeddc79effbf3d0fcb53ca477cca66f3db8 ]
+
+atl2 includes NETIF_F_SG in hw_features even though it has no support
+for non-linear skbs.  This bug was originally harmless since the
+driver does not claim to implement checksum offload and that used to
+be a requirement for SG.
+
+Now that SG and checksum offload are independent features, if you
+explicitly enable SG *and* use one of the rare protocols that can use
+SG without checkusm offload, this potentially leaks sensitive
+information (before you notice that it just isn't working).  Therefore
+this obscure bug has been designated CVE-2016-2117.
+
+Reported-by: Justin Yackoski <jyackoski@crypto-nite.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Fixes: ec5f06156423 ("net: Kill link between CSUM and SG features.")
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ethernet/atheros/atlx/atl2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/atheros/atlx/atl2.c b/drivers/net/ethernet/atheros/atlx/atl2.c
+index 265ce1b..96fe542 100644
+--- a/drivers/net/ethernet/atheros/atlx/atl2.c
++++ b/drivers/net/ethernet/atheros/atlx/atl2.c
+@@ -1413,7 +1413,7 @@ static int atl2_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	err = -EIO;
+ 
+-	netdev->hw_features = NETIF_F_SG | NETIF_F_HW_VLAN_CTAG_RX;
++	netdev->hw_features = NETIF_F_HW_VLAN_CTAG_RX;
+ 	netdev->features |= (NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX);
+ 
+ 	/* Init PHY as early as possible due to power saving issue  */
+-- 
+cgit v0.12
+
