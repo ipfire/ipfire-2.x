@@ -53,7 +53,7 @@ my $ignorefile ='/var/ipfire/guardian/guardian.ignore';
 my %module_file_locations = (
 	"HTTPD" => "/var/log/httpd/error_log",
 	"OWNCLOUD" => "/var/owncloud/data/owncloud.log",
-	"SNORT" => "/var/log/snort.alert",
+	"SNORT" => "/var/log/snort/alert",
 	"SSH" => "/var/log/messages",
 );
 
