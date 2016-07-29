@@ -2,9 +2,12 @@ etc/system-release
 etc/issue
 etc/collectd.conf
 etc/httpd/conf/global.conf
+etc/rc.d/init.d/snort
 opt/pakfire/lib/functions.sh
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 srv/web/ipfire/html/themes/ipfire/include/js/refreshInetInfo.js
+var/ipfire/langs
 var/ipfire/updatexlrator/bin/download
