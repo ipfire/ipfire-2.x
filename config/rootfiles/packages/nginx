@@ -20,5 +20,6 @@ usr/share/nginx
 usr/share/nginx/html
 usr/share/nginx/html/50x.html
 usr/share/nginx/html/index.html
+var/ipfire/backup/addons/includes/nginx
 var/log/nginx
 var/spool/nginx

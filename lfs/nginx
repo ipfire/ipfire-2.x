@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.6.2
+VER        = 1.8.1
 
 THISAPP    = nginx-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = nginx
-PAK_VER	   = 4
+PAK_VER	   = 5
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d1b55031ae6e4bce37f8776b94d8b930
+$(DL_FILE)_MD5 = 2e91695074dbdfbf1bcec0ada9fda462
 
 install : $(TARGET)
 
@@ -88,13 +88,26 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--error-log-path=/var/log/nginx/error.log \
 		--user=nobody \
 		--group=nobody \
-		--with-imap --with-imap_ssl_module --with-http_ssl_module \
+		--with-imap \
+		--with-imap_ssl_module \
+		--with-http_ssl_module \
+		--with-http_gunzip_module \
+		--with-http_gzip_static_module \
+		--with-http_random_index_module \
+		--with-http_secure_link_module \
+		--with-http_degradation_module \
 		--with-http_stub_status_module \
 		--with-http_dav_module \
-		--with-http_sub_module 
+		--with-http_sub_module \
+		--with-pcre
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	mkdir -p /var/log/nginx /var/spool/nginx
 	cp /usr/src/config/nginx/nginx /etc/init.d/
+
+	# Backup
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/nginx \
+		 /var/ipfire/backup/addons/includes/nginx
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
