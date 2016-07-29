@@ -1,17 +1,18 @@
---- a/arch/arm/mach-omap2/cclock3xxx_data.c~	2015-12-12 11:00:10.474423373 +0000
-+++ b/arch/arm/mach-omap2/cclock3xxx_data.c	2015-12-12 11:30:31.198452547 +0000
+diff -Naur linux-3.14.74.org/arch/arm/mach-omap2/cclock3xxx_data.c linux-3.14.74/arch/arm/mach-omap2/cclock3xxx_data.c
+--- linux-3.14.74.org/arch/arm/mach-omap2/cclock3xxx_data.c	2016-07-27 18:56:02.000000000 +0200
++++ linux-3.14.74/arch/arm/mach-omap2/cclock3xxx_data.c	2016-07-29 01:47:45.272515907 +0200
 @@ -250,7 +250,7 @@
  
  static struct clk dpll1_ck;
  
--static struct clk_ops dpll1_ck_ops;
-+static clk_ops_no_const dpll1_ck_ops;
- 
- static struct clk_ops dpll1_ck_ops_34xx __initdata = {
+-static const struct clk_ops dpll1_ck_ops = {
++static clk_ops_no_const dpll1_ck_ops = {
  	.init		= &omap2_init_clk_clkdm,
-diff -Naur linux-3.14.63-org/net/ipv6/addrconf.c linux-3.14.63/net/ipv6/addrconf.c
---- linux-3.14.63-org/net/ipv6/addrconf.c	2016-03-04 22:56:07.375481749 +0100
-+++ linux-3.14.63/net/ipv6/addrconf.c	2016-03-04 23:08:34.285482105 +0100
+ 	.enable		= &omap3_noncore_dpll_enable,
+ 	.disable	= &omap3_noncore_dpll_disable,
+diff -Naur linux-3.14.74.org/net/ipv6/addrconf.c linux-3.14.74/net/ipv6/addrconf.c
+--- linux-3.14.74.org/net/ipv6/addrconf.c	2016-07-29 03:47:13.000000000 +0200
++++ linux-3.14.74/net/ipv6/addrconf.c	2016-07-29 00:47:00.000000000 +0200
 @@ -4818,7 +4818,7 @@
  {
  	struct inet6_dev *idev = ctl->extra1;
