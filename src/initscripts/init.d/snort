@@ -94,19 +94,8 @@ case "$1" in
 			sleep 1
                         chmod 644 /var/run/snort_$DEVICE.pid
                 done
-                
-	  
-                if [ -r /var/ipfire/guardian/enable ]; then
-		              IFACE=`/bin/cat /var/ipfire/red/iface 2>/dev/null | /usr/bin/tr -d '\012'`
-	                sed -e "s/^Interface.*/Interface       ${IFACE}/" /var/ipfire/guardian/guardian.conf > temp
-	                mv temp /var/ipfire/guardian/guardian.conf
-			chown nobody.root /var/ipfire/guardian/guardian.conf
-	              
-                  boot_mesg "Starting Guardian..."
-		              loadproc /usr/local/bin/guardian.pl -c /var/ipfire/guardian/guardian.conf
-		            fi
-		    ;;
-                
+	;;
+
         stop)
                DEVICES=""
                if [ -r /var/run/snort_$BLUE_DEV.pid ]; then
@@ -132,11 +121,6 @@ case "$1" in
               done
               
               rm /var/run/snort_* >/dev/null 2>/dev/null
-                
-              if ([ -r /var/ipfire/guardian/enable ] || [ ! -z $(pidofproc /usr/local/bin/guardian.pl) ]); then
-		          boot_mesg "Stopping Guardian..."
-		          killproc /usr/local/bin/guardian.pl
-		          fi
 
 		# Don't report returncode of rm if snort was not started
 		exit 0

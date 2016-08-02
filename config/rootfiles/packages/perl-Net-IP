@@ -1,0 +1,6 @@
+#usr/bin/ipcount
+#usr/bin/iptab
+usr/lib/perl5/site_perl/5.12.3/Net/IP.pm
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/IP
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/Net/IP/.packlist
+#usr/share/man/man3/Net::IP.3
