@@ -1,0 +1,178 @@
+#!/bin/sh
+# Begin $rc_base/init.d/unbound
+
+# Description : Unbound DNS resolver boot script for IPfire
+# Author      : Marcel Lorenz <marcel.lorenz@ipfire.org>
+#
+# Comment     : This init script additional starts the dhcpd watcher daemon
+#               if DNS-Update (RFC2136) in web interface enabled
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+if [[ ! -d /run/var ]]; then mkdir /run/var; fi;
+
+CONTROL_INTERFACE_FILE=1
+CONTROL_ACCESS_FILE=1
+USE_CUSTOM_FORWARDS=0
+ENABLE_DNSSEC=1
+
+# Unbound daemon pid file
+PIDFILE=/var/run/unbound.pid
+
+# Watcher deamon pid file must be the same in unbound main init script
+WAPIDFILE=/var/run/unbound_dhcpd.pid
+
+function cidr() {
+    local cidr nbits IFS;
+    IFS=. read -r i1 i2 i3 i4 <<< ${1}
+    IFS=. read -r m1 m2 m3 m4 <<< ${2}
+    cidr=$(printf "%d.%d.%d.%d\n" "$((i1 & m1))" "$((i2 & m2))" "$((i3 & m3))" "$((i4 & m4))")
+    nbits=0
+    IFS=.
+    for dec in $2 ; do
+        case $dec in
+            255) let nbits+=8;;
+            254) let nbits+=7;;
+            252) let nbits+=6;;
+            248) let nbits+=5;;
+            240) let nbits+=4;;
+            224) let nbits+=3;;
+            192) let nbits+=2;;
+            128) let nbits+=1;;
+            0);;
+            *) echo "Error: $dec is not recognised"; exit 1
+        esac
+    done
+    echo "${cidr}/${nbits}"
+}
+
+case "$1" in
+	start)
+
+	  if [[ -f ${PIDFILE} ]]; then
+	    log_warning_msg "Unbound daemon is running with Process ID $(cat ${PIDFILE})"
+	  else
+	    eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+	    #ARGS="$CUSTOM_ARGS"
+	    #[ "$DOMAIN_NAME_GREEN" != "" ] && ARGS="$ARGS -s $DOMAIN_NAME_GREEN"
+
+	    echo > /var/ipfire/red/resolv.conf # Clear it
+	    if [ -e "/var/ipfire/red/dns1" ]; then
+	       DNS1=$(cat /var/ipfire/red/dns1 2>/dev/null)
+	      if [ ! -z ${DNS1} ]; then
+		echo "nameserver ${DNS1}" >> /var/ipfire/red/resolv.conf
+		NAMESERVERS="${DNS1} "
+	      fi
+	    fi
+	    if [ -e "/var/ipfire/red/dns2" ]; then
+	      DNS2=$(cat /var/ipfire/red/dns2 2>/dev/null)
+	      if [ ! -z ${DNS2} ]; then
+		echo "nameserver ${DNS2}" >> /var/ipfire/red/resolv.conf
+		NAMESERVERS+="${DNS2} "
+	      fi
+	    fi
+
+	    # create unbound interfaces.conf
+	    if [ ${CONTROL_INTERFACE_FILE} = 1 ]; then
+		  echo -n > /etc/unbound/interfaces.conf # Clear it
+	      if [ ! -z ${GREEN_ADDRESS} ]; then
+		echo "interface: ${GREEN_ADDRESS}" >> /etc/unbound/interfaces.conf
+	      fi
+	      if [ ! -z ${BLUE_ADDRESS} ]; then
+		echo "interface: ${BLUE_ADDRESS}" >> /etc/unbound/interfaces.conf
+	      fi
+		if [ ! -z ${ORANGE_ADDRESS} ]; then
+		echo "interface: ${ORANGE_ADDRESS}" >> /etc/unbound/interfaces.conf
+	      fi
+	    fi
+
+	    # create unbound access.conf
+	    if [ ${CONTROL_ACCESS_FILE} = 1 ]; then
+	      echo -n > /etc/unbound/access.conf # Clear it
+	      if [ ! -z ${GREEN_ADDRESS} ]; then
+		echo "access-control: $(cidr ${GREEN_ADDRESS} ${GREEN_NETMASK}) allow" >> /etc/unbound/access.conf
+	      fi
+	      if [ ! -z ${BLUE_ADDRESS} ]; then
+		echo "access-control: $(cidr ${BLUE_ADDRESS} ${BLUE_NETMASK}) allow" >> /etc/unbound/access.conf
+	      fi
+	      if [ ! -z ${ORANGE_ADDRESS} ]; then
+		echo "access-control: $(cidr ${ORANGE_ADDRESS} ${ORANGE_NETMASK}) allow" >> /etc/unbound/access.conf
+	      fi
+	    fi
+
+	    # create unbound dnssec.conf
+	    echo -n > /etc/unbound/dnssec.conf # Clear it
+	    if [ ${ENABLE_DNSSEC} = 1 ]; then
+	      echo "	# dessec enabled per default" >> /etc/unbound/dnssec.conf
+	      echo "	# no necessary config options in this file" >> /etc/unbound/dnssec.conf
+	    else
+	      echo "	# dnssec now disabled" >> /etc/unbound/dnssec.conf
+	      echo "	module-config: iterator" >> /etc/unbound/dnssec.conf
+	      echo "	val-permissive-mode: yes" >> /etc/unbound/dnssec.conf
+	    fi
+
+	    # create zone file for internal ipfire domain 
+	    unbound-zone
+
+	    boot_mesg "Starting Unbound DNS proxy..."
+	    unbound-anchor
+	    loadproc /usr/sbin/unbound
+
+	    # start dhcpd watcher daemon if DNS-Update (RFC2136) activated
+	    eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
+	    if [[ ${DNS_UPDATE_ENABLED} = on && ! -f ${WAPIDFILE} ]]; then
+	      /etc/rc.d/init.d/unbound-dhcpd start
+	    fi
+
+	    # use setup configured DNS servers 
+	    if [ "${USE_CUSTOM_FORWARDS}" -eq 0 ]; then
+	       unbound-control forward_add +i . ${NAMESERVERS} &> /dev/null
+	    fi;
+
+	    FORWADRS=$(unbound-control list_forwards |sed 's|. IN forward ||g'|sed 's|+i ||g')
+	    if [ "${USE_CUSTOM_FORWARDS}" -eq 0 ]; then
+	      boot_mesg "Using DNS server(s): ${FORWADRS}"
+	    else
+	      boot_mesg "Using custom DNS server(s): ${FORWADRS}"
+	    fi
+	    if [ ${ENABLE_DNSSEC} = 1 ]; then
+	      boot_mesg "DNSSEC is enabled!"
+	    else
+	      boot_mesg "DNSSEC is disabled!"
+	    fi
+	  fi 
+	  ;;
+
+	stop)
+
+	  if [[ -f ${PIDFILE} ]]; then
+	    # stop dhcpd watcher daemon if activted
+	    if [[ -f ${WAPIDFILE} ]]; then
+	      /etc/rc.d/init.d/unbound-dhcpd stop
+	    fi
+	    # stop Unbound daemon
+	    boot_mesg "Stopping Unbound DNS proxy..."
+	    killproc -p "/var/run/unbound.pid" /usr/sbin/unbound
+	  else
+	    log_warning_msg "Unbound daemon is not running..."
+	  fi
+	  ;;
+
+	restart)
+	  $0 stop
+	  sleep 1
+	  $0 start
+	  ;;
+
+	status)
+	  statusproc /usr/sbin/unbound
+	  ;;
+
+	*)
+	  echo "Usage: $0 {start|stop|restart|status}"
+	  exit 1
+	  ;;
+esac
+
+# End $rc_base/init.d/unbound

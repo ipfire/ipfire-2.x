@@ -538,6 +538,7 @@ buildipfire() {
   ipfiremake dvdrtools
   ipfiremake nettle
   ipfiremake dnsmasq
+  ipfiremake unbound
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
   ipfiremake xfsprogs
