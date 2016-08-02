@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586 x86_64
 PROG       = libvirt
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = "libpciaccess libyajl ncat qemu"
 
@@ -91,5 +91,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	install -v -m 754 $(DIR_SRC)/src/initscripts/init.d/libvirtd /etc/rc.d/init.d/libvirtd
 	mv /usr/libexec/libvirt-guests.sh /etc/rc.d/init.d/libvirt-guests
+	# Backup
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/libvirt /var/ipfire/backup/addons/includes/libvirt
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

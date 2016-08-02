@@ -29,6 +29,22 @@ getent passwd libvirt-remote >/dev/null || \
 useradd -m -g libvirt-remote -s /bin/bash "libvirt-remote"
 
 extract_files
+
+# create diretorys in var
+mkdir -p /var/cache/libvirt/qemu \
+/var/lib/libvirt/boot \
+/var/lib/libvirt/filesystems \
+/var/lib/libvirt/images \
+/var/lib/libvirt/lockd/files \
+/var/lib/libvirt/qemu \
+/var/log/libvirt/qemu
+# set the permissions
+chown -R nobody:kvm /var/cache/libvirt/qemu
+chown -R nobody:kvm /var/lib/libvirt/qemu
+chown -R nobody:kvm /var/lib/libvirt/images
+# restore the backup
+restore_backup ${NAME}
+
 start_service --delay 300 --background libvirtd
 ln -svf /etc/init.d/libvirtd /etc/rc.d/rc0.d/K20libvirtd
 ln -svf /etc/init.d/libvirtd /etc/rc.d/rc3.d/S70libvirtd
