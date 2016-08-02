@@ -290,6 +290,10 @@ WARNING: translation string unused: generatepolicy
 WARNING: translation string unused: generatereport
 WARNING: translation string unused: genkey
 WARNING: translation string unused: green interface
+WARNING: translation string unused: guardian alertfile
+WARNING: translation string unused: guardian ignorefile
+WARNING: translation string unused: guardian interface
+WARNING: translation string unused: guardian timelimit
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
@@ -697,6 +701,7 @@ WARNING: untranslated string: advproxy group access control
 WARNING: untranslated string: advproxy group required
 WARNING: untranslated string: application layer gateways
 WARNING: untranslated string: atm device
+WARNING: untranslated string: block
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
 WARNING: untranslated string: check all
@@ -757,6 +762,31 @@ WARNING: untranslated string: geoipblock configuration
 WARNING: untranslated string: geoipblock country is allowed
 WARNING: untranslated string: geoipblock country is blocked
 WARNING: untranslated string: geoipblock enable feature
+WARNING: untranslated string: guardian
+WARNING: untranslated string: guardian block a host
+WARNING: untranslated string: guardian block httpd brute-force
+WARNING: untranslated string: guardian block owncloud brute-force
+WARNING: untranslated string: guardian block ssh brute-force
+WARNING: untranslated string: guardian blockcount
+WARNING: untranslated string: guardian blocked hosts
+WARNING: untranslated string: guardian blocking of this address is not allowed
+WARNING: untranslated string: guardian blocktime
+WARNING: untranslated string: guardian common settings
+WARNING: untranslated string: guardian daemon
+WARNING: untranslated string: guardian empty input
+WARNING: untranslated string: guardian enabled
+WARNING: untranslated string: guardian firewallaction
+WARNING: untranslated string: guardian ignored hosts
+WARNING: untranslated string: guardian invalid address or subnet
+WARNING: untranslated string: guardian invalid blockcount
+WARNING: untranslated string: guardian invalid blocktime
+WARNING: untranslated string: guardian invalid logfile
+WARNING: untranslated string: guardian logfacility
+WARNING: untranslated string: guardian loglevel
+WARNING: untranslated string: guardian no entries
+WARNING: untranslated string: guardian priority level
+WARNING: untranslated string: guardian service
+WARNING: untranslated string: guardian watch snort alertfile
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: imei
 WARNING: untranslated string: imsi
@@ -817,6 +847,8 @@ WARNING: untranslated string: show tls-auth key
 WARNING: untranslated string: software version
 WARNING: untranslated string: source ip country
 WARNING: untranslated string: ta key
+WARNING: untranslated string: unblock
+WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: vendor

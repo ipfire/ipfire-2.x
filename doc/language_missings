@@ -372,6 +372,28 @@
 < geoipblock enable feature
 < geoipblock flag
 < grouptype
+< guardian
+< guardian block a host
+< guardian blockcount
+< guardian blocked hosts
+< guardian block httpd brute-force
+< guardian blocking of this address is not allowed
+< guardian block owncloud brute-force
+< guardian block ssh brute-force
+< guardian blocktime
+< guardian common settings
+< guardian daemon
+< guardian empty input
+< guardian enabled
+< guardian firewallaction
+< guardian ignored hosts
+< guardian invalid address or subnet
+< guardian logfacility
+< guardian loglevel
+< guardian no entries
+< guardian priority level
+< guardian service
+< guardian watch snort alertfile
 < hardware support
 < imei
 < imsi
@@ -973,6 +995,28 @@
 < gen dh
 < generate dh key
 < grouptype
+< guardian
+< guardian block a host
+< guardian blockcount
+< guardian blocked hosts
+< guardian block httpd brute-force
+< guardian blocking of this address is not allowed
+< guardian block owncloud brute-force
+< guardian block ssh brute-force
+< guardian blocktime
+< guardian common settings
+< guardian daemon
+< guardian empty input
+< guardian enabled
+< guardian firewallaction
+< guardian ignored hosts
+< guardian invalid address or subnet
+< guardian logfacility
+< guardian loglevel
+< guardian no entries
+< guardian priority level
+< guardian service
+< guardian watch snort alertfile
 < hardware support
 < imei
 < imsi
@@ -1568,6 +1612,28 @@
 < geoipblock enable feature
 < geoipblock flag
 < grouptype
+< guardian
+< guardian block a host
+< guardian blockcount
+< guardian blocked hosts
+< guardian block httpd brute-force
+< guardian blocking of this address is not allowed
+< guardian block owncloud brute-force
+< guardian block ssh brute-force
+< guardian blocktime
+< guardian common settings
+< guardian daemon
+< guardian empty input
+< guardian enabled
+< guardian firewallaction
+< guardian ignored hosts
+< guardian invalid address or subnet
+< guardian logfacility
+< guardian loglevel
+< guardian no entries
+< guardian priority level
+< guardian service
+< guardian watch snort alertfile
 < hardware support
 < imei
 < imsi
@@ -2152,6 +2218,28 @@
 < geoipblock enable feature
 < geoipblock flag
 < grouptype
+< guardian
+< guardian block a host
+< guardian blockcount
+< guardian blocked hosts
+< guardian block httpd brute-force
+< guardian blocking of this address is not allowed
+< guardian block owncloud brute-force
+< guardian block ssh brute-force
+< guardian blocktime
+< guardian common settings
+< guardian daemon
+< guardian empty input
+< guardian enabled
+< guardian firewallaction
+< guardian ignored hosts
+< guardian invalid address or subnet
+< guardian logfacility
+< guardian loglevel
+< guardian no entries
+< guardian priority level
+< guardian service
+< guardian watch snort alertfile
 < hardware support
 < hour-graph
 < imei

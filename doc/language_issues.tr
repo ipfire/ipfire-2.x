@@ -92,7 +92,6 @@ WARNING: translation string unused: bewan adsl pci st
 WARNING: translation string unused: bewan adsl usb
 WARNING: translation string unused: bitrate
 WARNING: translation string unused: bleeding rules
-WARNING: translation string unused: block
 WARNING: translation string unused: blue access use hint
 WARNING: translation string unused: blue interface
 WARNING: translation string unused: cache management
@@ -300,6 +299,10 @@ WARNING: translation string unused: geoipblock country code
 WARNING: translation string unused: geoipblock country name
 WARNING: translation string unused: geoipblock flag
 WARNING: translation string unused: green interface
+WARNING: translation string unused: guardian alertfile
+WARNING: translation string unused: guardian ignorefile
+WARNING: translation string unused: guardian interface
+WARNING: translation string unused: guardian timelimit
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
@@ -644,8 +647,6 @@ WARNING: translation string unused: tripwirewarningkeys
 WARNING: translation string unused: tripwirewarningpolicy
 WARNING: translation string unused: umount
 WARNING: translation string unused: umount removable media before to unplug
-WARNING: translation string unused: unblock
-WARNING: translation string unused: unblock all
 WARNING: translation string unused: unencrypted
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updatedatabase
@@ -705,6 +706,31 @@ WARNING: untranslated string: application layer gateways
 WARNING: untranslated string: bytes
 WARNING: untranslated string: fwhost cust geoipgrp
 WARNING: untranslated string: fwhost err hostip
+WARNING: untranslated string: guardian
+WARNING: untranslated string: guardian block a host
+WARNING: untranslated string: guardian block httpd brute-force
+WARNING: untranslated string: guardian block owncloud brute-force
+WARNING: untranslated string: guardian block ssh brute-force
+WARNING: untranslated string: guardian blockcount
+WARNING: untranslated string: guardian blocked hosts
+WARNING: untranslated string: guardian blocking of this address is not allowed
+WARNING: untranslated string: guardian blocktime
+WARNING: untranslated string: guardian common settings
+WARNING: untranslated string: guardian daemon
+WARNING: untranslated string: guardian empty input
+WARNING: untranslated string: guardian enabled
+WARNING: untranslated string: guardian firewallaction
+WARNING: untranslated string: guardian ignored hosts
+WARNING: untranslated string: guardian invalid address or subnet
+WARNING: untranslated string: guardian invalid blockcount
+WARNING: untranslated string: guardian invalid blocktime
+WARNING: untranslated string: guardian invalid logfile
+WARNING: untranslated string: guardian logfacility
+WARNING: untranslated string: guardian loglevel
+WARNING: untranslated string: guardian no entries
+WARNING: untranslated string: guardian priority level
+WARNING: untranslated string: guardian service
+WARNING: untranslated string: guardian watch snort alertfile
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: info messages
 WARNING: untranslated string: no data

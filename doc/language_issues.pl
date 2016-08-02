@@ -244,6 +244,10 @@ WARNING: translation string unused: geoipblock country code
 WARNING: translation string unused: geoipblock country name
 WARNING: translation string unused: geoipblock flag
 WARNING: translation string unused: green interface
+WARNING: translation string unused: guardian alertfile
+WARNING: translation string unused: guardian ignorefile
+WARNING: translation string unused: guardian interface
+WARNING: translation string unused: guardian timelimit
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
@@ -642,6 +646,7 @@ WARNING: untranslated string: application layer gateways
 WARNING: untranslated string: atm device
 WARNING: untranslated string: attention
 WARNING: untranslated string: bit
+WARNING: untranslated string: block
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
 WARNING: untranslated string: ccd add
@@ -921,6 +926,31 @@ WARNING: untranslated string: fwhost welcome
 WARNING: untranslated string: gen dh
 WARNING: untranslated string: generate dh key
 WARNING: untranslated string: grouptype
+WARNING: untranslated string: guardian
+WARNING: untranslated string: guardian block a host
+WARNING: untranslated string: guardian block httpd brute-force
+WARNING: untranslated string: guardian block owncloud brute-force
+WARNING: untranslated string: guardian block ssh brute-force
+WARNING: untranslated string: guardian blockcount
+WARNING: untranslated string: guardian blocked hosts
+WARNING: untranslated string: guardian blocking of this address is not allowed
+WARNING: untranslated string: guardian blocktime
+WARNING: untranslated string: guardian common settings
+WARNING: untranslated string: guardian daemon
+WARNING: untranslated string: guardian empty input
+WARNING: untranslated string: guardian enabled
+WARNING: untranslated string: guardian firewallaction
+WARNING: untranslated string: guardian ignored hosts
+WARNING: untranslated string: guardian invalid address or subnet
+WARNING: untranslated string: guardian invalid blockcount
+WARNING: untranslated string: guardian invalid blocktime
+WARNING: untranslated string: guardian invalid logfile
+WARNING: untranslated string: guardian logfacility
+WARNING: untranslated string: guardian loglevel
+WARNING: untranslated string: guardian no entries
+WARNING: untranslated string: guardian priority level
+WARNING: untranslated string: guardian service
+WARNING: untranslated string: guardian watch snort alertfile
 WARNING: untranslated string: hardware support
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: imei
@@ -1091,6 +1121,8 @@ WARNING: untranslated string: tor traffic limit hard
 WARNING: untranslated string: tor traffic limit soft
 WARNING: untranslated string: tor traffic read written
 WARNING: untranslated string: tor use exit nodes
+WARNING: untranslated string: unblock
+WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all
 WARNING: untranslated string: uplink
 WARNING: untranslated string: upload dh key
