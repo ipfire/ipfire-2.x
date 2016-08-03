@@ -45,7 +45,7 @@ chown -R nobody:kvm /var/lib/libvirt/images
 # restore the backup
 restore_backup ${NAME}
 
-start_service --delay 300 --background libvirtd
+start_service --background libvirtd
 ln -svf /etc/init.d/libvirtd /etc/rc.d/rc0.d/K20libvirtd
 ln -svf /etc/init.d/libvirtd /etc/rc.d/rc3.d/S70libvirtd
 ln -svf /etc/init.d/libvirtd /etc/rc.d/rc6.d/K20libvirtd
