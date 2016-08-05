@@ -604,6 +604,7 @@ buildipfire() {
   ipfiremake python-mechanize
   ipfiremake python-feedparser
   ipfiremake python-rssdler
+  ipfiremake python-inotify
   ipfiremake glib
   ipfiremake GeoIP
   ipfiremake fwhits
