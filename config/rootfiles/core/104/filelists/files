@@ -10,4 +10,5 @@ srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 srv/web/ipfire/html/themes/ipfire/include/js/refreshInetInfo.js
 var/ipfire/langs
+var/ipfire/fwhosts/customservices.default
 var/ipfire/updatexlrator/bin/download

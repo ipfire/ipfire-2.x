@@ -132,11 +132,17 @@ esac
 /etc/init.d/snort stop
 /etc/init.d/squid stop
 /etc/init.d/dnsmasq stop
+/etc/init.d/sshd stop
 /etc/init.d/ipsec stop
 /etc/init.d/apache stop
 
 # Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
+
+# Update customservices
+cp /var/ipfire/fwhosts/customservices /var/ipfire/fwhosts/customservices.old
+echo 35,Submission (TCP),587,TCP,BLANK,0 >> /var/ipfire/fwhosts/customservices
+echo 36,SSMTP,465,TCP,BLANK,0 >> /var/ipfire/fwhosts/customservices
 
 # Remove some old files
 rm -f /bin/groups /lib/libshadow.so.0*
@@ -174,7 +180,7 @@ fi
 /etc/init.d/collectd start
 /etc/init.d/apache start
 /etc/init.d/dnsmasq start
-/etc/init.d/sshd restart
+/etc/init.d/sshd start
 /etc/init.d/squid start
 /etc/init.d/snort start
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
