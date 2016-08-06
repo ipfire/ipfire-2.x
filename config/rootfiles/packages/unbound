@@ -23,7 +23,7 @@ usr/lib/python2.7/site-packages/watcherdhcpd.py
 usr/sbin/unbound
 usr/sbin/unbound-anchor
 usr/sbin/unbound-checkconf
-usr/sbin/unbound-dhcpd.py
+usr/sbin/unbound-dhcp-leases-bridge
 usr/sbin/unbound-control
 usr/sbin/unbound-control-setup
 usr/sbin/unbound-switch

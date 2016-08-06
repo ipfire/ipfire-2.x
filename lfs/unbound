@@ -86,6 +86,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/unbound/*.conf /etc/unbound/
 	install -v -m 644 $(DIR_SRC)/config/unbound/root.hints /etc/unbound/
 
+	# Install DHCP leases bridge
+	install -v -m 755 $(DIR_SRC)/config/unbound/unbound-dhcp-leases-bridge \
+		/usr/sbin/unbound-dhcp-leases-bridge
+
 	# Install key
 	-mkdir -pv /var/lib/unbound
 	install -v -m 644 $(DIR_SRC)/config/unbound/root.key \

@@ -1,0 +1,354 @@
+#!/usr/bin/python
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2016  Michael Tremer                                          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+import argparse
+import datetime
+import daemon
+import logging
+import logging.handlers
+import re
+import signal
+import subprocess
+
+import inotify.adapters
+
+def setup_logging(loglevel=logging.INFO):
+	log = logging.getLogger("dhcp")
+	log.setLevel(loglevel)
+
+	handler = logging.handlers.SysLogHandler(address="/dev/log", facility="daemon")
+	handler.setLevel(loglevel)
+
+	formatter = logging.Formatter("%(name)s[%(process)d]: %(message)s")
+	handler.setFormatter(formatter)
+
+	log.addHandler(handler)
+
+	return log
+
+log = logging.getLogger("dhcp")
+
+class UnboundDHCPLeasesBridge(object):
+	def __init__(self, dhcp_leases_file, unbound_leases_file):
+		self.leases_file = dhcp_leases_file
+
+		self.unbound = UnboundConfigWriter(unbound_leases_file)
+		self.running = False
+
+	def run(self):
+		log.info("Unbound DHCP Leases Bridge started on %s" % self.leases_file)
+		self.running = True
+
+		# Initially read leases file
+		self.update_dhcp_leases()
+
+		i = inotify.adapters.Inotify([self.leases_file])
+
+		for event in i.event_gen():
+			# End if we are requested to terminate
+			if not self.running:
+				break
+
+			if event is None:
+				continue
+
+			header, type_names, watch_path, filename = event
+
+			# Update leases after leases file has been modified
+			if "IN_MODIFY" in type_names:
+				self.update_dhcp_leases()
+
+		log.info("Unbound DHCP Leases Bridge terminated")
+
+	def update_dhcp_leases(self):
+		log.info("Reading DHCP leases from %s" % self.leases_file)
+
+		leases = DHCPLeases(self.leases_file)
+		self.unbound.update_dhcp_leases(leases)
+
+	def terminate(self):
+		self.running = False
+
+
+class DHCPLeases(object):
+	regex_leaseblock = re.compile(r"lease (?P<ipaddr>\d+\.\d+\.\d+\.\d+) {(?P<config>[\s\S]+?)\n}")
+
+	def __init__(self, path):
+		self.path = path
+
+		self._leases = self._parse()
+
+	def __iter__(self):
+		return iter(self._leases)
+
+	def _parse(self):
+		leases = []
+
+		with open(self.path) as f:
+			# Read entire leases file
+			data = f.read()
+
+			for match in self.regex_leaseblock.finditer(data):
+				block = match.groupdict()
+
+				ipaddr = block.get("ipaddr")
+				config = block.get("config")
+
+				properties = self._parse_block(config)
+
+				# Skip any abandoned leases
+				if not "hardware" in properties:
+					continue
+
+				lease = Lease(ipaddr, properties)
+
+				# Check if a lease for this Ethernet address already
+				# exists in the list of known leases. If so replace
+				# if with the most recent lease
+				for i, l in enumerate(leases):
+					if l.hwaddr == lease.hwaddr:
+						leases[i] = max(lease, l)
+						break
+
+				else:
+					leases.append(lease)
+
+		return leases
+
+	def _parse_block(self, block):
+		properties = {}
+
+		for line in block.splitlines():
+			if not line:
+				continue
+
+			# Remove trailing ; from line
+			if line.endswith(";"):
+				line = line[:-1]
+
+			# Invalid line if it doesn't end with ;
+			else:
+				continue
+
+			# Remove any leading whitespace
+			line = line.lstrip()
+
+			# We skip all options and sets
+			if line.startswith("option") or line.startswith("set"):
+				continue
+
+			# Split by first space
+			key, val = line.split(" ", 1)
+			properties[key] = val
+
+		return properties
+
+
+class Lease(object):
+	def __init__(self, ipaddr, properties):
+		self.ipaddr = ipaddr
+		self._properties = properties
+
+	def __repr__(self):
+		return "<%s %s for %s (%s)>" % (self.__class__.__name__,
+			self.ipaddr, self.hwaddr, self.hostname)
+
+	def __eq__(self, other):
+		return self.ipaddr == other.ipaddr and self.hwaddr == other.hwaddr
+
+	def __gt__(self, other):
+		if not self.ipaddr == other.ipaddr:
+			return
+
+		if not self.hwaddr == other.hwaddr:
+			return
+
+		return self.time_starts > other.time_starts
+
+	@property
+	def binding_state(self):
+		state = self._properties.get("binding")
+
+		if state:
+			state = state.split(" ", 1)
+			return state[1]
+
+	@property
+	def active(self):
+		return self.binding_state == "active"
+
+	@property
+	def hwaddr(self):
+		hardware = self._properties.get("hardware")
+
+		if not hardware:
+			return
+
+		ethernet, address = hardware.split(" ", 1)
+
+		return address
+
+	@property
+	def hostname(self):
+		hostname = self._properties.get("client-hostname")
+
+		# Remove any ""
+		if hostname:
+			hostname = hostname.replace("\"", "")
+
+		return hostname
+
+	@property
+	def domain(self):
+		return "local" # XXX
+
+	@property
+	def fqdn(self):
+		return "%s.%s" % (self.hostname, self.domain)
+
+	@staticmethod
+	def _parse_time(s):
+		return datetime.datetime.strptime(s, "%w %Y/%m/%d %H:%M:%S")
+
+	@property
+	def time_starts(self):
+		starts = self._properties.get("starts")
+
+		if starts:
+			return self._parse_time(starts)
+
+	@property
+	def time_ends(self):
+		ends = self._properties.get("ends")
+
+		if not ends or ends == "never":
+			return
+
+		return self._parse_time(ends)
+
+	@property
+	def expired(self):
+		if not self.time_ends:
+			return self.time_starts > datetime.datetime.utcnow()
+
+		return self.time_starts > datetime.datetime.utcnow() > self.time_ends
+
+	@property
+	def rrset(self):
+		return [
+			# Forward record
+			(self.fqdn, "IN A", self.ipaddr),
+
+			# Reverse record
+			(self.ipaddr, "IN PTR", self.fqdn),
+		]
+
+
+class UnboundConfigWriter(object):
+	def __init__(self, path):
+		self.path = path
+
+		self._cached_leases = []
+
+	def update_dhcp_leases(self, leases):
+		# Strip all non-active or expired leases
+		leases = [l for l in leases if l.active and not l.expired]
+
+		# Find any leases that have expired or do not exist any more 
+		removed_leases = [l for l in self._cached_leases if l.expired or l not in leases]
+
+		# Find any leases that have been added
+		new_leases = [l for l in leases if l not in self._cached_leases]
+
+		# End here if nothing has changed
+		if not new_leases and not removed_leases:
+			return
+
+		self._cached_leases = leases
+
+		# Write out all leases
+		self.write_dhcp_leases(leases)
+
+		# Update unbound about changes
+		for l in removed_leases:
+			self._control("local_data_remove", l.fqdn)
+
+		for l in new_leases:
+			for rr in l.rrset:
+				self._control("local_data", *rr)
+
+
+	def write_dhcp_leases(self, leases):
+		with open(self.path, "w") as f:
+			for l in leases:
+				for rr in l.rrset:
+					f.write("local-data: \"%s\"\n" % " ".join(rr))
+
+	def _control(self, *args):
+		command = ["unbound-control", "-q"]
+		command.extend(args)
+
+		try:
+			subprocess.check_call(command)
+
+		# Log any errors
+		except subprocess.CalledProcessError as e:
+			log.critical("Could not run %s, error code: %s: %s" % (
+				" ".join(command), e.returncode, e.output))
+
+
+if __name__ == "__main__":
+	parser = argparse.ArgumentParser(description="Bridge for DHCP Leases and Unbound DNS")
+
+	# Daemon Stuff
+	parser.add_argument("--daemon", "-d", action="store_true",
+		help="Launch as daemon in background")
+	parser.add_argument("--verbose", "-v", action="count", help="Be more verbose")
+
+	# Paths
+	parser.add_argument("--dhcp-leases", default="/var/state/dhcp/dhcpd.leases",
+		metavar="PATH", help="Path to the DHCPd leases file")
+	parser.add_argument("--unbound-leases", default="/etc/unbound/dhcp-leases.conf",
+		metavar="PATH", help="Path to the unbound configuration file")
+
+	# Parse command line arguments
+	args = parser.parse_args()
+
+	# Setup logging
+	if args.verbose == 1:
+		loglevel = logging.INFO
+	elif args.verbose >= 2:
+		loglevel = logging.DEBUG
+	else:
+		loglevel = logging.WARN
+
+	setup_logging(loglevel)
+
+	bridge = UnboundDHCPLeasesBridge(args.dhcp_leases, args.unbound_leases)
+
+	ctx = daemon.DaemonContext(detach_process=args.daemon)
+	ctx.signal_map = {
+		signal.SIGHUP  : bridge.update_dhcp_leases,
+		signal.SIGTERM : bridge.terminate,
+	}
+
+	with ctx:
+		bridge.run()
