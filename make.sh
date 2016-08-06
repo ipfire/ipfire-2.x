@@ -537,6 +537,8 @@ buildipfire() {
   ipfiremake beep
   ipfiremake dvdrtools
   ipfiremake nettle
+  ipfiremake libevent
+  ipfiremake libevent2
   ipfiremake unbound
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
@@ -681,8 +683,6 @@ buildipfire() {
   ipfiremake gnump3d
   ipfiremake rsync
   ipfiremake tcpwrapper
-  ipfiremake libevent
-  ipfiremake libevent2
   ipfiremake libtirpc
   ipfiremake rpcbind
   ipfiremake nfs
