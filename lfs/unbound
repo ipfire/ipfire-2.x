@@ -92,5 +92,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/var/lib/unbound/root.key
 	chown -Rv nobody.nobody /var/lib/unbound
 
+	# Ship ICANN's certificates to validate DNS trust anchors
+	install -v -m 644 $(DIR_SRC)/config/unbound/icannbundle.pem \
+		/etc/unbound/icannbundle.pem
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

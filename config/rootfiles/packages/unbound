@@ -2,6 +2,7 @@ etc/rc.d/init.d/unbound
 #etc/unbound
 #etc/unbound/blocklists
 etc/unbound/forward.conf
+etc/unbound/icannbundle.pem
 etc/unbound/root.hints
 etc/unbound/root.key
 etc/unbound/unbound.conf
