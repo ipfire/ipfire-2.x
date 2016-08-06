@@ -74,7 +74,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		./configure \
 			--prefix=/usr \
 			--sysconfdir=/etc \
-			--with-pidfile=/var/run/unbound.pid
+			--with-pidfile=/var/run/unbound.pid \
+			--with-rootkey-file=/var/lib/unbound/root.key \
 			--disable-static \
 			--with-libevent
 	cd $(DIR_APP) && make $(MAKETUNING)
@@ -84,6 +85,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mv -v /etc/unbound/unbound.conf /etc/unbound/unbound_org.conf
 	install -v -m 644 $(DIR_SRC)/config/unbound/*.conf /etc/unbound/
 	install -v -m 644 $(DIR_SRC)/config/unbound/root.hints /etc/unbound/
-	install -v -m 644 $(DIR_SRC)/config/unbound/root.key /etc/unbound/
+
+	# Install key
+	-mkdir -pv /var/lib/unbound
+	install -v -m 644 $(DIR_SRC)/config/unbound/root.key \
+		/var/lib/unbound/root.key
+	chown -Rv nobody.nobody /var/lib/unbound
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

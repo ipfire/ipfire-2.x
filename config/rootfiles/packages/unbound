@@ -65,3 +65,5 @@ usr/sbin/unbound-zone
 #usr/share/man/man8/unbound-control-setup.8
 #usr/share/man/man8/unbound-control.8
 #usr/share/man/man8/unbound.8
+var/lib/unbound
+var/lib/unbound/root.key
