@@ -30,7 +30,6 @@ nobody:x:99:
 users:x:100:
 snort:x:101:
 logwatch:x:102:
-dnsmasq:x:103:
 cron:x:104:
 syslogd:x:105:
 klogd:x:106:

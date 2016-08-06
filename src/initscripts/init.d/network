@@ -16,10 +16,6 @@
 . ${rc_functions}
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
-init_networking() {
-	/etc/rc.d/init.d/dnsmasq start
-}
-
 DO="${1}"
 shift
 
@@ -46,8 +42,6 @@ done
 
 case "${DO}" in
 	start)
-		[ "${ALL}" == "1" ] && init_networking
-
 		# Starting interfaces...
 		# GREEN
 		[ "$green" == "1" ] && /etc/rc.d/init.d/networking/green start
@@ -91,9 +85,6 @@ case "${DO}" in
 				/etc/rc.d/init.d/networking/red stop
 			fi
 		fi
-
-		# Stopping dnsmasq if network all networks shutdown
-		[ "${ALL}" == "1" ] && /etc/rc.d/init.d/dnsmasq stop
 
 		exit 0
 		;;
