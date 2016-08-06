@@ -80,11 +80,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--with-libevent
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	# add ipfire config
-	mkdir -pv /etc/unbound/blocklists
-	mv -v /etc/unbound/unbound.conf /etc/unbound/unbound_org.conf
-	install -v -m 644 $(DIR_SRC)/config/unbound/*.conf /etc/unbound/
-	install -v -m 644 $(DIR_SRC)/config/unbound/root.hints /etc/unbound/
+
+	# Install configuration
+	install -v -m 644 $(DIR_SRC)/config/unbound/unbound.conf \
+		/etc/unbound/unbound.conf
+	touch /etc/unbound/{dhcp-leases,forward}.conf
+	-mkdir -pv /etc/unbound/local.d
+
+	# Install root hints
+	install -v -m 644 $(DIR_SRC)/config/unbound/root.hints \
+		/etc/unbound/root.hints
 
 	# Install DHCP leases bridge
 	install -v -m 755 $(DIR_SRC)/config/unbound/unbound-dhcp-leases-bridge \
