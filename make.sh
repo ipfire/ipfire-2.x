@@ -708,6 +708,7 @@ buildipfire() {
   ipfiremake spice-protocol
   ipfiremake spice
   ipfiremake sdl
+  ipfiremake libusbredir
   ipfiremake qemu
   ipfiremake sane
   ipfiremake netpbm
