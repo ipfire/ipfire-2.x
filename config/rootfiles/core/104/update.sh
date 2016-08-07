@@ -139,11 +139,6 @@ esac
 # Extract files
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
 
-# Update customservices
-cp /var/ipfire/fwhosts/customservices /var/ipfire/fwhosts/customservices.old
-echo 35,Submission (TCP),587,TCP,BLANK,0 >> /var/ipfire/fwhosts/customservices
-echo 36,SSMTP,465,TCP,BLANK,0 >> /var/ipfire/fwhosts/customservices
-
 # Remove some old files
 rm -f /bin/groups /lib/libshadow.so.0*
 
