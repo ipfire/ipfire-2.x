@@ -1,0 +1,41 @@
+From c8328ecde896575b3cb81cf537747df531f90771 Mon Sep 17 00:00:00 2001
+From: Simon Kelley <simon@thekelleys.org.uk>
+Date: Fri, 5 Aug 2016 16:54:58 +0100
+Subject: [PATCH] Bump auth zone serial when reloading /etc/hosts and friends.
+
+---
+ CHANGELOG     |    4 ++++
+ src/dnsmasq.c |    2 ++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/CHANGELOG b/CHANGELOG
+index 9f1e404..4f89799 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -20,6 +20,10 @@ version 2.77
+  	    Fix problem with --dnssec-timestamp whereby receipt
+             of SIGHUP would erroneously engage timestamp checking.
+ 	    Thanks to Kevin Darbyshire-Bryant for this work.
++
++	    Bump zone serial on reloading /etc/hosts and friends
++	    when providing authoritative DNS. Thanks to Harrald
++	    Dunkel for spotting this.
+ 	
+ 
+ version 2.76
+diff --git a/src/dnsmasq.c b/src/dnsmasq.c
+index a47273f..3580bea 100644
+--- a/src/dnsmasq.c
++++ b/src/dnsmasq.c
+@@ -1226,6 +1226,8 @@ static void async_event(int pipe, time_t now)
+     switch (ev.event)
+       {
+       case EVENT_RELOAD:
++	daemon->soa_sn++; /* Bump zone serial, as it may have changed. */
++
+ #ifdef HAVE_DNSSEC
+ 	if (daemon->dnssec_no_time_check && option_bool(OPT_DNSSEC_VALID) && option_bool(OPT_DNSSEC_TIME))
+ 	  {
+-- 
+1.7.10.4
+

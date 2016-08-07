@@ -85,6 +85,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/010-Zero_packet_buffers_before_building_output_to_reduce_risk_of_information_leakage.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/011-Dont_reset_packet_length_on_transmission_in_case_of_retransmission.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/012-Compile-time_check_on_buffer_sizes_for_leasefile_parsing_code.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/013-auth-zone_allow_to_exclude_ip_addresses_from_answer.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/014-Bump_auth_zone_serial_when_reloading_etc_hosts_and_friends.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 
 	cd $(DIR_APP) && sed -i src/config.h \
