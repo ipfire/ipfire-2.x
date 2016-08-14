@@ -18,7 +18,7 @@
 case $1 in
 	start)
 		boot_mesg "Load required kernel modules for Libvirt"
-		modprobe tun
+		modprobe tun vhost_net
 		evaluate_retval
 		boot_mesg "Starting Libvirt Daemon..."
 		loadproc /usr/sbin/libvirtd -d
