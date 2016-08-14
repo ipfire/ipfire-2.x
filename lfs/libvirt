@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586 x86_64
 PROG       = libvirt
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       = "libpciaccess libyajl ncat qemu"
 
@@ -82,8 +82,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc \
 			--with-openssl --without-sasl \
 			--without-uml --without-vbox --without-lxc --without-esx --without-vmware --without-openvz \
-			--without-firewalld --without-network -with-interface --with-virtualport --with-macvtap \
-			--disable-nls --without-avahi --without-test-suite -without-dbus \
+			--without-firewalld --without-network --with-interface --with-virtualport --with-macvtap \
+			--disable-nls --without-avahi --without-test-suite --without-dbus \
 			--with-qemu-user=nobody --with-qemu-group=kvm \
 			--with-storage-dir --with-storage-fs --without-storage-lvm  --without-storage-iscsi \
 			--without-storage-scsi --without-storage-mpath --without-storage-disk --without-storage-rbd --without-storage-sheepdog --without-storage-gluster  --without-storage-zfs
