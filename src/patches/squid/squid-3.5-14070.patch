@@ -1,0 +1,44 @@
+------------------------------------------------------------
+revno: 14070
+revision-id: squid3@treenet.co.nz-20160805145933-0cpyy47o8955lamx
+parent: squidadm@squid-cache.org-20160723121351-iuc8hwstrqd0l1dv
+author: Christos Tsantilas <chtsanti@users.sourceforge.net>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sat 2016-08-06 02:59:33 +1200
+message:
+  Squid segfault via Ftp::Client::readControlReply().
+  
+  Ftp::Client::scheduleReadControlReply(), which may called from the
+  asynchronous start() or readControlReply()/handleControlReply()
+  handlers, does not check whether the control connection is still usable
+  before using it.
+  
+  This is a Measurement Factory project.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20160805145933-0cpyy47o8955lamx
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 1c21ce821f9cbc22b3e8ff2b1029f7084b5f0643
+# timestamp: 2016-08-05 15:00:22 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squidadm@squid-cache.org-20160723121351-\
+#   iuc8hwstrqd0l1dv
+# 
+# Begin patch
+=== modified file 'src/clients/FtpClient.cc'
+--- src/clients/FtpClient.cc	2016-02-19 23:15:41 +0000
++++ src/clients/FtpClient.cc	2016-08-05 14:59:33 +0000
+@@ -314,6 +314,11 @@
+         /* We've already read some reply data */
+         handleControlReply();
+     } else {
++
++        if (!Comm::IsConnOpen(ctrl.conn)) {
++            debugs(9, 3, "cannot read without ctrl " << ctrl.conn);
++            return;
++        }
+         /*
+          * Cancel the timeout on the Data socket (if any) and
+          * establish one on the control socket.
+
