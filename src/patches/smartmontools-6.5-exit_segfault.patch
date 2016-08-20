@@ -1,7 +1,6 @@
-diff -Naur smartmontools-5.39-svn_r2877/utility.h smartmontools-5.39-svn_r2877.new/utility.h
---- smartmontools-5.39-svn_r2877/utility.h	2009-08-24 12:48:50.000000000 +0200
-+++ smartmontools-5.39-svn_r2877.new/utility.h	2009-08-29 09:11:07.000000000 +0200
-@@ -102,7 +102,11 @@
+--- a/utility.h	Sun Apr 24 16:59:15 2016
++++ b/utility.h	Sat Aug 20 22:40:33 2016
+@@ -97,7 +97,11 @@
  
  // Replacement for exit(status)
  // (exit is not compatible with C++ destructors)
@@ -12,5 +11,6 @@ diff -Naur smartmontools-5.39-svn_r2877/utility.h smartmontools-5.39-svn_r2877.n
 +//tried to use exit and found no problems yet
 +#define EXIT(status) { exit ((int)(status)); }
  
- 
- #ifdef OLD_INTERFACE
+ // Compile time check of byte ordering
+ // (inline const function allows compiler to remove dead code)
+
