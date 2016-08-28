@@ -1,0 +1,46 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/virtlogd
+#
+# Description : virtlogd init script
+#
+# Authors     : Jonatan Schlag - jonatan.schlag@ipfire.org
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case $1 in
+	start)
+		boot_mesg "Starting virtlogd Daemon..."
+		loadproc /usr/sbin/virtlogd -d -p /var/run/virtlogd.pid
+
+		;;
+
+	stop)
+		boot_mesg "Stopping virtlogd Daemon..."
+		killproc /usr/sbin/virtlogd
+		;;
+
+	restart)
+		boot_mesg "Restart virtlogd Daemon..."
+		kill -10 $(cat /var/run/virtlogd.pid)
+		evaluate_retval
+		;;
+
+	status)
+		statusproc /usr/sbin/virtlogd
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/virtlogd
