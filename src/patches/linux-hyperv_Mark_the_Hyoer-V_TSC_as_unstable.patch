@@ -1,0 +1,47 @@
+From 88c9281a9fba67636ab26c1fd6afbc78a632374f Mon Sep 17 00:00:00 2001
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+Date: Wed, 19 Aug 2015 09:54:24 -0700
+Subject: x86/hyperv: Mark the Hyper-V TSC as unstable
+
+The Hyper-V top-level functional specification states, that
+"algorithms should be resilient to sudden jumps forward or
+backward in the TSC value", this means that we should consider
+TSC as unstable. In some cases tsc tests are able to detect the
+instability, it was detected in 543 out of 646 boots in my
+testing:
+
+ Measured 6277 cycles TSC warp between CPUs, turning off TSC clock.
+ tsc: Marking TSC unstable due to check_tsc_sync_source failed
+
+This is, however, just a heuristic. On Hyper-V platform there
+are two good clocksources: MSR-based hyperv_clocksource and
+recently introduced TSC page.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: devel@linuxdriverproject.org
+Link: http://lkml.kernel.org/r/1440003264-9949-1-git-send-email-vkuznets@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/cpu/mshyperv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index aad4bd8..6fd023d 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -141,6 +141,7 @@ static void __init ms_hyperv_init_platform(void)
+ 	no_timer_check = 1;
+ #endif
+ 
++	mark_tsc_unstable("running on Hyper-V");
+ }
+ 
+ const __refconst struct hypervisor_x86 x86_hyper_ms_hyperv = {
+-- 
+cgit v0.12
+

@@ -24,10 +24,10 @@
 
 include Config
 
-VER         = 3.14.74
-RPI_PATCHES = 3.14.74-grsec-ipfire1
-A7M_PATCHES = 3.14.74-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.1ipfire-3.14.74-v1.patch.xz
+VER         = 3.14.77
+RPI_PATCHES = 3.14.77-grsec-ipfire1
+A7M_PATCHES = 3.14.77-grsec-ipfire1
+GRS_PATCHES = grsecurity-3.1ipfire-3.14.77-v1.patch.xz
 
 
 THISAPP    = linux-$(VER)
@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 69
+PAK_VER    = 71
 DEPS	   = ""
 
 KERNEL_ARCH = $(MACHINE)
@@ -83,10 +83,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= f83028755dc380862a91fe75e64b01aa
-rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 32b1101dc51f89c1fb3bfb1907f4bce5
-arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= b9a638c68cefd4c08dfcb9c4434458b1
-$(GRS_PATCHES)_MD5				= 5f4595575e159dd730b222d204cc9b39
+$(DL_FILE)_MD5					= 7ecb8518498d0666a7b88f359e566f4c
+rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= 3213020a9627ea73cc9668e2db4ff8a4
+arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 56949a37637656d5ea23658cc9222f64
+$(GRS_PATCHES)_MD5				= 5ed67f97c3b0de1b290f9155eb166c56
 
 install : $(TARGET)
 
@@ -132,6 +132,7 @@ ifneq "$(KCFG)" "-headers"
 	cd $(DIR_APP) && xz -c -d $(DIR_DL)/$(GRS_PATCHES) | patch -Np1
 	cd $(DIR_APP) && rm localversion-grsec
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.77-gsrec_tcp_input_access_once_rw.patch
 endif
 
 	# DVB Patches
@@ -199,6 +200,7 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0023-hyperv-Fix-error-return-code-in-netvsc_init_buf.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0024-hyperv-Fix-a-bug-in-netvsc_send.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0025-Drivers-hv-vmbus-Support-per-channel-driver-state.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-hyperv_Mark_the_Hyoer-V_TSC_as_unstable.patch
 
 	# fix empty symbol crc's
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-genksyms_fix_typeof_handling.patch

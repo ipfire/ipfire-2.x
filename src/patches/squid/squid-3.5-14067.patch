@@ -1,0 +1,381 @@
+------------------------------------------------------------
+revno: 14067
+revision-id: squid3@treenet.co.nz-20160723071620-1wzqpbyi1rk5w6vg
+parent: squid3@treenet.co.nz-20160701113616-vpjak1pq4uecadd2
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=4534
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sat 2016-07-23 19:16:20 +1200
+message:
+  Bug 4534: assertion failure in xcalloc when using many cache_dir
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20160723071620-1wzqpbyi1rk5w6vg
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: fcd663f0fd4a24d505f81eb94ef95d627a4ca363
+# timestamp: 2016-07-23 07:24:01 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20160701113616-\
+#   vpjak1pq4uecadd2
+# 
+# Begin patch
+=== modified file 'src/CacheDigest.cc'
+--- src/CacheDigest.cc	2016-01-01 00:14:27 +0000
++++ src/CacheDigest.cc	2016-07-23 07:16:20 +0000
+@@ -35,12 +35,12 @@
+ static uint32_t hashed_keys[4];
+ 
+ static void
+-cacheDigestInit(CacheDigest * cd, int capacity, int bpe)
++cacheDigestInit(CacheDigest * cd, uint64_t capacity, uint8_t bpe)
+ {
+-    const size_t mask_size = cacheDigestCalcMaskSize(capacity, bpe);
++    const uint32_t mask_size = cacheDigestCalcMaskSize(capacity, bpe);
+     assert(cd);
+     assert(capacity > 0 && bpe > 0);
+-    assert(mask_size > 0);
++    assert(mask_size != 0);
+     cd->capacity = capacity;
+     cd->bits_per_entry = bpe;
+     cd->mask_size = mask_size;
+@@ -50,7 +50,7 @@
+ }
+ 
+ CacheDigest *
+-cacheDigestCreate(int capacity, int bpe)
++cacheDigestCreate(uint64_t capacity, uint8_t bpe)
+ {
+     CacheDigest *cd = (CacheDigest *)memAllocate(MEM_CACHE_DIGEST);
+     assert(SQUID_MD5_DIGEST_LENGTH == 16);  /* our hash functions rely on 16 byte keys */
+@@ -97,7 +97,7 @@
+ 
+ /* changes mask size, resets bits to 0, preserves "cd" pointer */
+ void
+-cacheDigestChangeCap(CacheDigest * cd, int new_cap)
++cacheDigestChangeCap(CacheDigest * cd, uint64_t new_cap)
+ {
+     assert(cd);
+     cacheDigestClean(cd);
+@@ -278,12 +278,12 @@
+     storeAppendPrintf(e, "%s digest: size: %d bytes\n",
+                       label ? label : "", stats.bit_count / 8
+                      );
+-    storeAppendPrintf(e, "\t entries: count: %d capacity: %d util: %d%%\n",
++    storeAppendPrintf(e, "\t entries: count: %" PRIu64 " capacity: %" PRIu64 " util: %d%%\n",
+                       cd->count,
+                       cd->capacity,
+                       xpercentInt(cd->count, cd->capacity)
+                      );
+-    storeAppendPrintf(e, "\t deletion attempts: %d\n",
++    storeAppendPrintf(e, "\t deletion attempts: %" PRIu64 "\n",
+                       cd->del_count
+                      );
+     storeAppendPrintf(e, "\t bits: per entry: %d on: %d capacity: %d util: %d%%\n",
+@@ -297,16 +297,18 @@
+                      );
+ }
+ 
+-size_t
+-cacheDigestCalcMaskSize(int cap, int bpe)
++uint32_t
++cacheDigestCalcMaskSize(uint64_t cap, uint8_t bpe)
+ {
+-    return (size_t) (cap * bpe + 7) / 8;
++    uint64_t bitCount = (cap * bpe) + 7;
++    assert(bitCount < INT_MAX); // dont 31-bit overflow later
++    return static_cast<uint32_t>(bitCount / 8);
+ }
+ 
+ static void
+ cacheDigestHashKey(const CacheDigest * cd, const cache_key * key)
+ {
+-    const unsigned int bit_count = cd->mask_size * 8;
++    const uint32_t bit_count = cd->mask_size * 8;
+     unsigned int tmp_keys[4];
+     /* we must memcpy to ensure alignment */
+     memcpy(tmp_keys, key, sizeof(tmp_keys));
+
+=== modified file 'src/CacheDigest.h'
+--- src/CacheDigest.h	2016-01-01 00:14:27 +0000
++++ src/CacheDigest.h	2016-07-23 07:16:20 +0000
+@@ -22,23 +22,23 @@
+ {
+ public:
+     /* public, read-only */
+-    char *mask;         /* bit mask */
+-    int mask_size;      /* mask size in bytes */
+-    int capacity;       /* expected maximum for .count, not a hard limit */
+-    int bits_per_entry;     /* number of bits allocated for each entry from capacity */
+-    int count;          /* number of digested entries */
+-    int del_count;      /* number of deletions performed so far */
++    uint64_t count;          /* number of digested entries */
++    uint64_t del_count;      /* number of deletions performed so far */
++    uint64_t capacity;       /* expected maximum for .count, not a hard limit */
++    char *mask;              /* bit mask */
++    uint32_t mask_size;      /* mask size in bytes */
++    int8_t bits_per_entry;   /* number of bits allocated for each entry from capacity */
+ };
+ 
+-CacheDigest *cacheDigestCreate(int capacity, int bpe);
++CacheDigest *cacheDigestCreate(uint64_t capacity, uint8_t bpe);
+ void cacheDigestDestroy(CacheDigest * cd);
+ CacheDigest *cacheDigestClone(const CacheDigest * cd);
+ void cacheDigestClear(CacheDigest * cd);
+-void cacheDigestChangeCap(CacheDigest * cd, int new_cap);
++void cacheDigestChangeCap(CacheDigest * cd, uint64_t new_cap);
+ int cacheDigestTest(const CacheDigest * cd, const cache_key * key);
+ void cacheDigestAdd(CacheDigest * cd, const cache_key * key);
+ void cacheDigestDel(CacheDigest * cd, const cache_key * key);
+-size_t cacheDigestCalcMaskSize(int cap, int bpe);
++uint32_t cacheDigestCalcMaskSize(uint64_t cap, uint8_t bpe);
+ int cacheDigestBitUtil(const CacheDigest * cd);
+ void cacheDigestGuessStatsUpdate(CacheDigestGuessStats * stats, int real_hit, int guess_hit);
+ void cacheDigestGuessStatsReport(const CacheDigestGuessStats * stats, StoreEntry * sentry, const char *label);
+
+=== modified file 'src/PeerDigest.h'
+--- src/PeerDigest.h	2016-01-01 00:14:27 +0000
++++ src/PeerDigest.h	2016-07-23 07:16:20 +0000
+@@ -52,7 +52,7 @@
+     store_client *old_sc;
+     HttpRequest *request;
+     int offset;
+-    int mask_offset;
++    uint32_t mask_offset;
+     time_t start_time;
+     time_t resp_time;
+     time_t expires;
+
+=== modified file 'src/peer_digest.cc'
+--- src/peer_digest.cc	2016-01-01 00:14:27 +0000
++++ src/peer_digest.cc	2016-07-23 07:16:20 +0000
+@@ -754,7 +754,7 @@
+     if (!reason && !size) {
+         if (!pd->cd)
+             reason = "null digest?!";
+-        else if (fetch->mask_offset != (int)pd->cd->mask_size)
++        else if (fetch->mask_offset != pd->cd->mask_size)
+             reason = "premature end of digest?!";
+         else if (!peerDigestUseful(pd))
+             reason = "useless digest";
+
+=== modified file 'src/store_digest.cc'
+--- src/store_digest.cc	2016-01-01 00:14:27 +0000
++++ src/store_digest.cc	2016-07-23 07:16:20 +0000
+@@ -76,36 +76,63 @@
+ static void storeDigestRewriteFinish(StoreEntry * e);
+ static EVH storeDigestSwapOutStep;
+ static void storeDigestCBlockSwapOut(StoreEntry * e);
+-static int storeDigestCalcCap(void);
+-static int storeDigestResize(void);
+ static void storeDigestAdd(const StoreEntry *);
+ 
++/// calculates digest capacity
++static uint64_t
++storeDigestCalcCap()
++{
++    /*
++     * To-Do: Bloom proved that the optimal filter utilization is 50% (half of
++     * the bits are off). However, we do not have a formula to calculate the
++     * number of _entries_ we want to pre-allocate for.
++     */
++    const uint64_t hi_cap = Store::Root().maxSize() / Config.Store.avgObjectSize;
++    const uint64_t lo_cap = 1 + Store::Root().currentSize() / Config.Store.avgObjectSize;
++    const uint64_t e_count = StoreEntry::inUseCount();
++    uint64_t cap = e_count ? e_count : hi_cap;
++    debugs(71, 2, "have: " << e_count << ", want " << cap <<
++           " entries; limits: [" << lo_cap << ", " << hi_cap << "]");
++
++    if (cap < lo_cap)
++        cap = lo_cap;
++
++    /* do not enforce hi_cap limit, average-based estimation may be wrong
++     *if (cap > hi_cap)
++     *  cap = hi_cap;
++     */
++
++    // Bug 4534: we still have to set an upper-limit at some reasonable value though.
++    // this matches cacheDigestCalcMaskSize doing (cap*bpe)+7 < INT_MAX
++    const uint64_t absolute_max = (INT_MAX -8) / Config.digest.bits_per_entry;
++    if (cap > absolute_max) {
++        static time_t last_loud = 0;
++        if (last_loud < squid_curtime - 86400) {
++            debugs(71, DBG_IMPORTANT, "WARNING: Cache Digest cannot store " << cap << " entries. Limiting to " << absolute_max);
++            last_loud = squid_curtime;
++        } else {
++            debugs(71, 3, "WARNING: Cache Digest cannot store " << cap << " entries. Limiting to " << absolute_max);
++        }
++        cap = absolute_max;
++    }
++
++    return cap;
++}
+ #endif /* USE_CACHE_DIGESTS */
+ 
+-static void
+-storeDigestRegisterWithCacheManager(void)
++void
++storeDigestInit(void)
+ {
+     Mgr::RegisterAction("store_digest", "Store Digest", storeDigestReport, 0, 1);
+-}
+-
+-/*
+- * PUBLIC FUNCTIONS
+- */
+-
+-void
+-storeDigestInit(void)
+-{
+-    storeDigestRegisterWithCacheManager();
+ 
+ #if USE_CACHE_DIGESTS
+-    const int cap = storeDigestCalcCap();
+-
+     if (!Config.onoff.digest_generation) {
+         store_digest = NULL;
+         debugs(71, 3, "Local cache digest generation disabled");
+         return;
+     }
+ 
++    const uint64_t cap = storeDigestCalcCap();
+     store_digest = cacheDigestCreate(cap, Config.digest.bits_per_entry);
+     debugs(71, DBG_IMPORTANT, "Local cache digest enabled; rebuild/rewrite every " <<
+            (int) Config.digest.rebuild_period << "/" <<
+@@ -290,6 +317,31 @@
+     storeDigestRebuildResume();
+ }
+ 
++/// \returns true if we actually resized the digest
++static bool
++storeDigestResize()
++{
++    const uint64_t cap = storeDigestCalcCap();
++    assert(store_digest);
++    uint64_t diff;
++    if (cap > store_digest->capacity)
++        diff = cap - store_digest->capacity;
++    else
++        diff = store_digest->capacity - cap;
++    debugs(71, 2, store_digest->capacity << " -> " << cap << "; change: " <<
++           diff << " (" << xpercentInt(diff, store_digest->capacity) << "%)" );
++    /* avoid minor adjustments */
++
++    if (diff <= store_digest->capacity / 10) {
++        debugs(71, 2, "small change, will not resize.");
++        return false;
++    } else {
++        debugs(71, 2, "big change, resizing.");
++        cacheDigestChangeCap(store_digest, cap);
++    }
++    return true;
++}
++
+ /* called be Rewrite to push Rebuild forward */
+ static void
+ storeDigestRebuildResume(void)
+@@ -439,7 +491,7 @@
+     assert(e);
+     /* _add_ check that nothing bad happened while we were waiting @?@ @?@ */
+ 
+-    if (sd_state.rewrite_offset + chunk_size > store_digest->mask_size)
++    if (static_cast<uint32_t>(sd_state.rewrite_offset + chunk_size) > store_digest->mask_size)
+         chunk_size = store_digest->mask_size - sd_state.rewrite_offset;
+ 
+     e->append(store_digest->mask + sd_state.rewrite_offset, chunk_size);
+@@ -451,7 +503,7 @@
+     sd_state.rewrite_offset += chunk_size;
+ 
+     /* are we done ? */
+-    if (sd_state.rewrite_offset >= store_digest->mask_size)
++    if (static_cast<uint32_t>(sd_state.rewrite_offset) >= store_digest->mask_size)
+         storeDigestRewriteFinish(e);
+     else
+         eventAdd("storeDigestSwapOutStep", storeDigestSwapOutStep, data, 0.0, 1, false);
+@@ -467,60 +519,10 @@
+     sd_state.cblock.count = htonl(store_digest->count);
+     sd_state.cblock.del_count = htonl(store_digest->del_count);
+     sd_state.cblock.mask_size = htonl(store_digest->mask_size);
+-    sd_state.cblock.bits_per_entry = (unsigned char)
+-                                     Config.digest.bits_per_entry;
++    sd_state.cblock.bits_per_entry = Config.digest.bits_per_entry;
+     sd_state.cblock.hash_func_count = (unsigned char) CacheDigestHashFuncCount;
+     e->append((char *) &sd_state.cblock, sizeof(sd_state.cblock));
+ }
+ 
+-/* calculates digest capacity */
+-static int
+-storeDigestCalcCap(void)
+-{
+-    /*
+-     * To-Do: Bloom proved that the optimal filter utilization is 50% (half of
+-     * the bits are off). However, we do not have a formula to calculate the
+-     * number of _entries_ we want to pre-allocate for.
+-     */
+-    const int hi_cap = Store::Root().maxSize() / Config.Store.avgObjectSize;
+-    const int lo_cap = 1 + Store::Root().currentSize() / Config.Store.avgObjectSize;
+-    const int e_count = StoreEntry::inUseCount();
+-    int cap = e_count ? e_count :hi_cap;
+-    debugs(71, 2, "storeDigestCalcCap: have: " << e_count << ", want " << cap <<
+-           " entries; limits: [" << lo_cap << ", " << hi_cap << "]");
+-
+-    if (cap < lo_cap)
+-        cap = lo_cap;
+-
+-    /* do not enforce hi_cap limit, average-based estimation may be wrong
+-     *if (cap > hi_cap)
+-     *  cap = hi_cap;
+-     */
+-    return cap;
+-}
+-
+-/* returns true if we actually resized the digest */
+-static int
+-storeDigestResize(void)
+-{
+-    const int cap = storeDigestCalcCap();
+-    int diff;
+-    assert(store_digest);
+-    diff = abs(cap - store_digest->capacity);
+-    debugs(71, 2, "storeDigestResize: " <<
+-           store_digest->capacity << " -> " << cap << "; change: " <<
+-           diff << " (" << xpercentInt(diff, store_digest->capacity) << "%)" );
+-    /* avoid minor adjustments */
+-
+-    if (diff <= store_digest->capacity / 10) {
+-        debugs(71, 2, "storeDigestResize: small change, will not resize.");
+-        return 0;
+-    } else {
+-        debugs(71, 2, "storeDigestResize: big change, resizing.");
+-        cacheDigestChangeCap(store_digest, cap);
+-        return 1;
+-    }
+-}
+-
+ #endif /* USE_CACHE_DIGESTS */
+ 
+
+=== modified file 'src/tests/stub_CacheDigest.cc'
+--- src/tests/stub_CacheDigest.cc	2016-01-01 00:14:27 +0000
++++ src/tests/stub_CacheDigest.cc	2016-07-23 07:16:20 +0000
+@@ -16,11 +16,11 @@
+ class CacheDigestGuessStats;
+ class StoreEntry;
+ 
+-CacheDigest * cacheDigestCreate(int, int) STUB_RETVAL(NULL)
++CacheDigest * cacheDigestCreate(uint64_t, uint8_t) STUB_RETVAL(NULL)
+ void cacheDigestDestroy(CacheDigest *) STUB
+ CacheDigest * cacheDigestClone(const CacheDigest *) STUB_RETVAL(NULL)
+ void cacheDigestClear(CacheDigest * ) STUB
+-void cacheDigestChangeCap(CacheDigest *,int) STUB
++void cacheDigestChangeCap(CacheDigest *,uint64_t) STUB
+ int cacheDigestTest(const CacheDigest *, const cache_key *) STUB_RETVAL(1)
+ void cacheDigestAdd(CacheDigest *, const cache_key *) STUB
+ void cacheDigestDel(CacheDigest *, const cache_key *) STUB
+@@ -28,5 +28,4 @@
+ void cacheDigestGuessStatsUpdate(CacheDigestGuessStats *, int, int) STUB
+ void cacheDigestGuessStatsReport(const CacheDigestGuessStats *, StoreEntry *, const char *) STUB
+ void cacheDigestReport(CacheDigest *, const char *, StoreEntry *) STUB
+-size_t cacheDigestCalcMaskSize(int, int) STUB_RETVAL(1)
+-
++uint32_t cacheDigestCalcMaskSize(uint64_t, uint8_t) STUB_RETVAL(1)
+

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2016  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -87,6 +87,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/012-Compile-time_check_on_buffer_sizes_for_leasefile_parsing_code.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/013-auth-zone_allow_to_exclude_ip_addresses_from_answer.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/014-Bump_auth_zone_serial_when_reloading_etc_hosts_and_friends.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/015-Handle_v4-mapped_IPv6_addresses_sanely_for_--synth-domain.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq/016-Refactor_openBSD_pftables_code_to_remove_blatant_copyright_violation.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dnsmasq-Add-support-to-read-ISC-DHCP-lease-file.patch
 
 	cd $(DIR_APP) && sed -i src/config.h \

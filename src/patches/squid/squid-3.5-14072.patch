@@ -1,0 +1,33 @@
+------------------------------------------------------------
+revno: 14072
+revision-id: squid3@treenet.co.nz-20160817025828-s4102klt2ei25tsm
+parent: squid3@treenet.co.nz-20160817025501-e66sjxm0bfy3ksn3
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Wed 2016-08-17 14:58:28 +1200
+message:
+  Fix SSL-Bump failure results in SEGFAULT
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20160817025828-s4102klt2ei25tsm
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 73877d276fba41282aeb5973207d02851d5eb784
+# timestamp: 2016-08-17 03:50:56 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20160817025501-\
+#   e66sjxm0bfy3ksn3
+# 
+# Begin patch
+=== modified file 'src/client_side_request.cc'
+--- src/client_side_request.cc	2016-05-06 08:24:29 +0000
++++ src/client_side_request.cc	2016-08-17 02:58:28 +0000
+@@ -1811,7 +1811,7 @@
+             repContext->setReplyToStoreEntry(e, "immediate SslBump error");
+             errorAppendEntry(e, calloutContext->error);
+             calloutContext->error = NULL;
+-            if (calloutContext->readNextRequest)
++            if (calloutContext->readNextRequest && getConn())
+                 getConn()->flags.readMore = true; // resume any pipeline reads.
+             node = (clientStreamNode *)client_stream.tail->data;
+             clientStreamRead(node, this, node->readBuffer);
+
