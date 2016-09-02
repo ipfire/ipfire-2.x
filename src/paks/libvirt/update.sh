@@ -63,7 +63,13 @@ chown -R nobody:kvm /var/lib/libvirt/images
 restore_backup ${NAME}
 
 #restart virtlogd to use the new version
+if [ -f "/var/run/virtlogd.pid" ]; then
+# the daemon runs restart him
 /etc/init.d/virtlogd restart
+else
+# the daemon runs not start him
+/etc/init.d/virtlogd start
+fi
 
 start_service --background libvirtd
 
