@@ -3,5 +3,5 @@
 #usr/lib/libmnl.la
 usr/lib/libmnl.so
 usr/lib/libmnl.so.0
-usr/lib/libmnl.so.0.1.0
+usr/lib/libmnl.so.0.2.0
 #usr/lib/pkgconfig/libmnl.pc
