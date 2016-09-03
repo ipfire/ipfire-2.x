@@ -298,6 +298,7 @@ buildtoolchain() {
     lfsmake1 ncurses
     lfsmake1 bash
     lfsmake1 bzip2
+    lfsmake1 automake
     lfsmake1 coreutils
     lfsmake1 diffutils
     lfsmake1 findutils
