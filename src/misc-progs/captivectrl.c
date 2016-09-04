@@ -260,6 +260,13 @@ static int add_interface_rule(const char* intf, int allow_webif_access) {
 	if (r)
 		return r;
 
+	// Allow access to captive portal site
+	snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL_CLIENTS"
+		" -d %s -p tcp --dport %d -j RETURN", intf, REDIRECT_PORT);
+	r = safe_system(command);
+	if (r)
+		return r;
+
 	return 0;
 }
 
@@ -290,13 +297,6 @@ static int add_interface_rules(struct keyvalue* captive_portal_settings, struct 
 
 	// Always pass DNS packets through all firewall rules
 	r = setup_dns_filters();
-	if (r)
-		return r;
-
-	char command[STRING_SIZE];
-	snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL_CLIENTS"
-		" -p tcp --dport %d -j RETURN", REDIRECT_PORT);
-	r = safe_system(command);
 	if (r)
 		return r;
 
