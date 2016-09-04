@@ -64,7 +64,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown -R root:root /srv/web/ipfire
 	chmod -R 755 /srv/web/ipfire/cgi-bin
 	chmod -R 644 /srv/web/ipfire/html
-	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include,themes,themes/*,themes/*/*,captive/*,captive/*/*}
+	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include,themes,themes/*,themes/*/*,captive/index.cgi}
 	chmod -R 777 /srv/web/ipfire/html/captive/logo
 	ln -svf ipfire /srv/web/ipfire/html/themes/ipfire-rounded
 
