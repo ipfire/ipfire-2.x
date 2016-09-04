@@ -54,8 +54,6 @@ unless (-f $clients){ system("touch $clients"); }
 
 #Actions
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'gpl i accept these terms and conditions'}"){
-	my $key = &General::findhasharraykey(\%clientshash);
-
 	#Get Clients IP-Address
 	my $ip_address = $ENV{X_FORWARDED_FOR} || $ENV{REMOTE_ADDR} ||"";
 
@@ -64,6 +62,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'gpl i accept these terms and conditions'
 	$mac_address =~ s/\n+\z//;
 
 	&General::readhasharray("$clients", \%clientshash);
+	my $key = &General::findhasharraykey(\%clientshash);
 
 	if (!$errormessage){
 		foreach my $i (0 .. 5) { $clientshash{$key}[$i] = "";}
