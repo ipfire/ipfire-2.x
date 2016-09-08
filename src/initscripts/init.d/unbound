@@ -102,6 +102,69 @@ write_forward_conf() {
 	) > /etc/unbound/forward.conf
 }
 
+write_tuning_conf() {
+	# https://www.unbound.net/documentation/howto_optimise.html
+
+	# Determine number of online processors
+	local processors=$(getconf _NPROCESSORS_ONLN)
+
+	# Determine number of slabs
+	local slabs=1
+	while [ ${slabs} -lt ${processors} ]; do
+		slabs=$(( ${slabs} * 2 ))
+	done
+
+	# Determine amount of system memory
+	local mem=$(get_memory_amount)
+
+	# In the worst case scenario, unbound can use double the
+	# amount of memory allocated to a cache due to malloc overhead
+
+	# Large systems with more than 2GB of RAM
+	if [ ${mem} -ge 2048 ]; then
+		mem=128
+
+	# Small systems with less than 256MB of RAM
+	elif [ ${mem} -le 256 ]; then
+		mem=8
+
+	# Everything else
+	else
+		mem=32
+	fi
+
+	(
+		config_header
+
+		# We run one thread per processor
+		echo "num-threads: ${processors}"
+
+		# Adjust number of slabs
+		echo "infra-cache-slabs: ${slabs}"
+		echo "key-cache-slabs: ${slabs}"
+		echo "msg-cache-slabs: ${slabs}"
+		echo "rrset-cache-slabs: ${slabs}"
+
+		# Slice up the cache
+		echo "rrset-cache-size: $(( ${mem} / 2 ))m"
+		echo "msg-cache-size: $(( ${mem} / 4 ))m"
+		echo "key-cache-size: $(( ${mem} / 4 ))m"
+	) > /etc/unbound/tuning.conf
+}
+
+get_memory_amount() {
+	local key val unit
+
+	while read -r key val unit; do
+		case "${key}" in
+			MemTotal:*)
+				# Convert to MB
+				echo "$(( ${val} / 1024 ))"
+				break
+				;;
+		esac
+	done < /proc/meminfo
+}
 
 case "$1" in
 	start)
@@ -114,6 +177,7 @@ case "$1" in
 		fi
 
 		# Update configuration files
+		write_tuning_conf
 		write_interfaces_conf
 		write_forward_conf
 
