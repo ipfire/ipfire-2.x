@@ -537,7 +537,9 @@ buildipfire() {
   ipfiremake beep
   ipfiremake dvdrtools
   ipfiremake nettle
-  ipfiremake dnsmasq
+  ipfiremake libevent
+  ipfiremake libevent2
+  ipfiremake unbound
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
   ipfiremake xfsprogs
@@ -603,6 +605,9 @@ buildipfire() {
   ipfiremake python-mechanize
   ipfiremake python-feedparser
   ipfiremake python-rssdler
+  ipfiremake python-inotify
+  ipfiremake python-docutils
+  ipfiremake python-daemon
   ipfiremake glib
   ipfiremake GeoIP
   ipfiremake fwhits
@@ -678,8 +683,6 @@ buildipfire() {
   ipfiremake gnump3d
   ipfiremake rsync
   ipfiremake tcpwrapper
-  ipfiremake libevent
-  ipfiremake libevent2
   ipfiremake libtirpc
   ipfiremake rpcbind
   ipfiremake nfs

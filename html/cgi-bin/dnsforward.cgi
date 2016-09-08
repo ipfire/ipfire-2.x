@@ -106,8 +106,8 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'add'})
 			$cgiparams{'ID'} = $cgiparams{'EDITING'};
 		}
 	}
-	# Restart dnsmasq.
-	system('/usr/local/bin/dnsmasqctrl restart >/dev/null');
+	# Restart unbound
+	system('/usr/local/bin/unboundctrl restart >/dev/null');
 }
 
 ###
@@ -124,8 +124,8 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'remove'})
 		unless ($cgiparams{'ID'} eq $id) { print FILE "$line"; }
 	}
 	close(FILE);
-	# Restart dnsmasq.
-	system('/usr/local/bin/dnsmasqctrl restart >/dev/null');
+	# Restart unbound.
+	system('/usr/local/bin/unboundctrl restart >/dev/null');
 }
 
 ###
@@ -148,8 +148,8 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'toggle enable disable'})
 		}
 	}
 	close(FILE);
-	# Restart dnsmasq.
-	system('/usr/local/bin/dnsmasqctrl restart >/dev/null');
+	# Restart unbound.
+	system('/usr/local/bin/unboundctrl restart >/dev/null');
 }
 
 ###

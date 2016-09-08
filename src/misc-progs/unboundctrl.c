@@ -19,14 +19,14 @@ int main(int argc, char *argv[]) {
 		exit(1);
 
 	if (argc < 2) {
-		fprintf(stderr, "\nNo argument given.\n\ndnsmasqctrl (restart)\n\n");
+		fprintf(stderr, "\nNo argument given.\n\nunboundctrl (restart)\n\n");
 		exit(1);
 	}
 
 	if (strcmp(argv[1], "restart") == 0) {
-		safe_system("/etc/rc.d/init.d/dnsmasq restart");
+		safe_system("/etc/rc.d/init.d/unbound restart");
 	} else {
-		fprintf(stderr, "\nBad argument given.\n\ndnsmasqctrl (restart)\n\n");
+		fprintf(stderr, "\nBad argument given.\n\nunboundctrl (restart)\n\n");
 		exit(1);
 	}
 

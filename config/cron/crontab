@@ -67,3 +67,6 @@ HOME=/
 
 # Cleanup the mail spool directory
 %weekly * * /usr/sbin/dma-cleanup-spool
+
+# Update DNS trust anchor
+%daily,random * * @runas(nobody) /usr/sbin/unbound-anchor -a /var/lib/unbound/root.key -c /etc/unbound/icannbundle.pem
