@@ -103,10 +103,7 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
                 if ($pppsettings{'USERNAME'} eq '') {
                         $errormessage = $Lang::tr{'username not set'};
                         goto ERROR; }
-                if ($pppsettings{'PASSWORD'} eq '') {
-                        $errormessage = $Lang::tr{'password not set'};
-                        goto ERROR; }
-        }
+		}
 
         if ($pppsettings{'TIMEOUT'} eq '') {
                 $errormessage = $Lang::tr{'idle timeout not set'};
@@ -927,7 +924,7 @@ print <<END
 <tr>
         <td width='25%'>$Lang::tr{'username'}&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='25%'><input type='text' name='USERNAME' value='$pppsettings{'USERNAME'}' /></td>
-        <td width='25%'>$Lang::tr{'password'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+        <td width='25%'>$Lang::tr{'password'}&nbsp;</td>
         <td width='25%'><input type='password' name='PASSWORD' value='$pppsettings{'PASSWORD'}' /></td>
 </tr>
 <tr>
