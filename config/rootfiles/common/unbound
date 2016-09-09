@@ -5,7 +5,6 @@ etc/unbound/forward.conf
 etc/unbound/icannbundle.pem
 etc/unbound/local.d
 etc/unbound/root.hints
-etc/unbound/root.key
 etc/unbound/unbound.conf
 #usr/include/unbound.h
 #usr/lib/libunbound.la
@@ -18,8 +17,6 @@ usr/sbin/unbound-checkconf
 usr/sbin/unbound-dhcp-leases-bridge
 usr/sbin/unbound-control
 usr/sbin/unbound-control-setup
-usr/sbin/unbound-switch
-usr/sbin/unbound-zone
 #usr/share/man/man1/unbound-host.1
 #usr/share/man/man3/libunbound.3
 #usr/share/man/man3/ub_cancel.3
