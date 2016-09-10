@@ -137,6 +137,7 @@ etc/rc.d/init.d/template
 #etc/rc.d/init.d/transmission
 etc/rc.d/init.d/udev
 etc/rc.d/init.d/udev_retry
+etc/rc.d/init.d/unbound
 etc/rc.d/init.d/upnpd
 #etc/rc.d/init.d/vdr
 #etc/rc.d/init.d/vdradmin
