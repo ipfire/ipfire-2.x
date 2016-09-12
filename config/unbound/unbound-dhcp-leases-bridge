@@ -30,6 +30,8 @@ import subprocess
 
 import inotify.adapters
 
+LOCAL_TTL = 60
+
 def setup_logging(loglevel=logging.INFO):
 	log = logging.getLogger("dhcp")
 	log.setLevel(loglevel)
@@ -255,10 +257,10 @@ class Lease(object):
 	def rrset(self):
 		return [
 			# Forward record
-			(self.fqdn, "IN A", self.ipaddr),
+			(self.fqdn, LOCAL_TTL, "IN A", self.ipaddr),
 
 			# Reverse record
-			(self.ipaddr, "IN PTR", self.fqdn),
+			(self.ipaddr, LOCAL_TTL, "IN PTR", self.fqdn),
 		]
 
 
