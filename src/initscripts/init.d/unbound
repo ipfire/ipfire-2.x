@@ -9,6 +9,9 @@
 
 USE_FORWARDERS=1
 
+# Cache any local zones for 60 seconds
+LOCAL_TTL=60
+
 # Load optional configuration
 [ -e "/etc/sysconfig/unbound" ] && . /etc/sysconfig/unbound
 
@@ -62,6 +65,19 @@ update_forwarders() {
 	else
 		unbound-control -q forward off
 	fi
+}
+
+update_hosts() {
+	local enabled address hostname domainname
+
+	while IFS="," read -r enabled address hostname domainname; do
+		[ "${enabled}" = "on" ] || continue
+
+		# Build FQDN
+		local fqdn="${hostname}.${domainname}"
+
+		unbound-control -q local_data "${fqdn} ${LOCAL_TTL} IN A ${address}"
+	done < /var/ipfire/main/hosts
 }
 
 write_interfaces_conf() {
@@ -182,6 +198,9 @@ case "$1" in
 
 		# Update any known forwarding name servers
 		update_forwarders
+
+		# Update hosts
+		update_hosts
 		;;
 
 	stop)

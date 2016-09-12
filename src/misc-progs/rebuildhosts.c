@@ -14,16 +14,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <signal.h>
 
 #include "setuid.h"
 #include "netutil.h"
 
-FILE *fd = NULL;
 FILE *hosts = NULL;
 FILE *gw = NULL;
 struct keyvalue *kv = NULL;
@@ -32,8 +29,6 @@ void exithandler(void)
 {
 	if (kv)
 		freekeyvalues(kv);
-	if (fd)
-		fclose(fd);
 	if (hosts)
 		fclose(hosts);
 	if (gw)
@@ -42,21 +37,15 @@ void exithandler(void)
 
 int main(int argc, char *argv[])
 {
-	int fdpid; 
 	char hostname[STRING_SIZE] = "";
 	char domainname[STRING_SIZE] = "";
 	char gateway[STRING_SIZE] = "";
-	char buffer[STRING_SIZE];
 	char address[STRING_SIZE] = "";
-	char *active, *ip, *host, *domain;
-	int pid;
 
 	if (!(initsetuid()))
 		exit(1);
 
 	atexit(exithandler);
-
-	memset(buffer, 0, STRING_SIZE);
 
 	kv = initkeyvalues();
 	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
@@ -88,17 +77,9 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Couldn't open remote-ipaddress file\n");
 	}
 
-	if (!(fd = fopen(CONFIG_ROOT "/main/hosts", "r")))
-	{
-		fprintf(stderr, "Couldn't open main hosts file\n");
-		exit(1);
-	}
-
 	if (!(hosts = fopen("/etc/hosts", "w")))
 	{
 		fprintf(stderr, "Couldn't open /etc/hosts file\n");
-    		fclose(fd);
-		fd = NULL;
 		exit(1);
 	}
 	fprintf(hosts, "127.0.0.1\tlocalhost\n");
@@ -109,66 +90,6 @@ int main(int argc, char *argv[])
 
 	if (strlen(gateway) > 0)
 		fprintf(hosts, "%s\tgateway\n", gateway);
-
-	while (fgets(buffer, STRING_SIZE, fd))
-	{
-		buffer[strlen(buffer) - 1] = 0;
-		if (buffer[0]==',') continue;		/* disabled if empty field	*/
-		active = strtok(buffer, ",");
-		if (strcmp(active, "off")==0) continue; /* or 'off'			*/
-		
-		ip = strtok(NULL, ",");
-		host = strtok(NULL, ",");
-		domain = strtok(NULL, ",");
-
-		if (!(ip && host))
-			continue;	// bad line ? skip
-
-		if (!VALID_IP(ip))
-		{
-			fprintf(stderr, "Bad IP: %s\n", ip);
-			continue;       /*  bad ip, skip */
-		}
-
-		if (strspn(host, LETTERS_NUMBERS "-") != strlen(host))
-		{
-			fprintf(stderr, "Bad Host: %s\n", host);
-			continue;       /*  bad name, skip */
-		}
-
-		if (domain)
-			fprintf(hosts, "%s\t%s.%s\t%s\n",ip,host,domain,host);
-		else
-			fprintf(hosts, "%s\t%s\n",ip,host);
-	}
-	fclose(fd);
-	fd = NULL;
-	fclose(hosts);
-	hosts = NULL;
-
-	if ((fdpid = open("/var/run/dnsmasq.pid", O_RDONLY)) == -1)
-	{
-		fprintf(stderr, "Couldn't open pid file\n");
-		exit(1);
-	}
-	if (read(fdpid, buffer, STRING_SIZE - 1) == -1)
-	{
-		fprintf(stderr, "Couldn't read from pid file\n");
-		close(fdpid);
-		exit(1);
-	}
-	close(fdpid);
-	pid = atoi(buffer);
-	if (pid <= 1)
-	{
-		fprintf(stderr, "Bad pid value\n");
-		exit(1);
-	}
-	if (kill(pid, SIGHUP) == -1)
-	{
-		fprintf(stderr, "Unable to send SIGHUP\n");
-		exit(1);
-	}
 
 	return 0;
 }
