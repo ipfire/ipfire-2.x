@@ -7,7 +7,9 @@
 
 . /etc/sysconfig/rc
 . $rc_functions
+
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
 
 function flush_chains() {
 	iptables -F DHCPGREENINPUT
@@ -36,6 +38,12 @@ case "$1" in
 		boot_mesg "Starting DHCP Server..."
 		loadproc /usr/sbin/dhcpd -q ${devices}
 
+		# Start Unbound DHCP Lease Bridge unless RFC2136 is used
+		if [ "${DNS_UPDATE_ENABLED}" != on ]; then
+			boot_mesg "Starting Unbound DHCP Leases Bridge..."
+			loadproc /usr/sbin/unbound-dhcp-leases-bridge -d
+		fi
+
 		(sleep 5 && chmod 644 /var/run/dhcpd.pid) & # Fix because silly dhcpd creates its pid with mode 640
 		;;
 
@@ -52,6 +60,9 @@ case "$1" in
 		    echo_ok;
 		    exit 0
 		fi
+
+		boot_mesg "Stopping Unbound DHCP Leases Bridge..."
+		killproc /usr/sbin/unbound-dhcp-leases-bridge
 		;;
 
 	reload)
@@ -67,6 +78,7 @@ case "$1" in
 
 	status)
 		statusproc /usr/sbin/dhcpd
+		statusproc /usr/sbin/unbound-dhcp-leases-bridge
 		;;
 
 	*)

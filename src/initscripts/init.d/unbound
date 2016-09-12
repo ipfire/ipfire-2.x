@@ -3,9 +3,6 @@
 
 # Description : Unbound DNS resolver boot script for IPfire
 # Author      : Marcel Lorenz <marcel.lorenz@ipfire.org>
-#
-# Comment     : This init script additional starts the dhcpd watcher daemon
-#               if DNS-Update (RFC2136) in web interface enabled
 
 . /etc/sysconfig/rc
 . ${rc_functions}
@@ -169,7 +166,6 @@ get_memory_amount() {
 case "$1" in
 	start)
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
-		eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
 
 		# Create control keys at first run
 		if [ ! -r "/etc/unbound/unbound_control.key" ]; then
@@ -186,18 +182,9 @@ case "$1" in
 
 		# Update any known forwarding name servers
 		update_forwarders
-
-		# Start Unbound DHCP Lease Bridge unless RFC2136 is used
-		if [ "${DNS_UPDATE_ENABLED}" != on ]; then
-			boot_mesg "Starting Unbound DHCP Leases Bridge..."
-			loadproc /usr/sbin/unbound-dhcp-leases-bridge -d
-		fi
 		;;
 
 	stop)
-		boot_mesg "Stopping Unbound DHCP Leases Bridge..."
-		killproc /usr/sbin/unbound-dhcp-leases-bridge
-
 		boot_mesg "Stopping Unbound DNS Proxy..."
 		killproc /usr/sbin/unbound
 		;;
@@ -210,7 +197,6 @@ case "$1" in
 
 	status)
 		statusproc /usr/sbin/unbound
-		statusproc /usr/sbin/unbound-dhcp-leases-bridge
 		;;
 
 	update-forwarders)
