@@ -127,6 +127,9 @@ $(TARGET) :
 	ln -sf ../init.d/network     /etc/rc.d/rc0.d/K80network
 	ln -sf ../init.d/network     /etc/rc.d/rc3.d/S20network
 	ln -sf ../init.d/network     /etc/rc.d/rc6.d/K80network
+	ln -sf ../init.d/unbound     /etc/rc.d/rc0.d/K79unbound
+	ln -sf ../init.d/unbound     /etc/rc.d/rc3.d/S21unbound
+	ln -sf ../init.d/unbound     /etc/rc.d/rc6.d/K79unbound
 	ln -sf ../init.d/random      /etc/rc.d/rc0.d/K45random
 	ln -sf ../init.d/random      /etc/rc.d/rc3.d/S25random
 	ln -sf ../init.d/random      /etc/rc.d/rc6.d/K45random
@@ -175,7 +178,6 @@ $(TARGET) :
 	ln -sf ../init.d/console     /etc/rc.d/rcsysinit.d/S70console
 	ln -sf ../init.d/firstsetup  /etc/rc.d/rcsysinit.d/S75firstsetup
 	ln -sf ../init.d/localnet    /etc/rc.d/rcsysinit.d/S80localnet
-	ln -sf ../init.d/unbound     /etc/rc.d/rcsysinit.d/S81unbound
 	ln -sf ../init.d/firewall    /etc/rc.d/rcsysinit.d/S85firewall
 	ln -sf ../init.d/network-trigger /etc/rc.d/rcsysinit.d/S90network-trigger
 	ln -sf ../init.d/rngd        /etc/rc.d/rcsysinit.d/S92rngd
