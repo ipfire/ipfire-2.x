@@ -462,4 +462,5 @@ sub SortDataFile
 #
 sub BuildConfiguration {
     system '/usr/local/bin/rebuildhosts';
+    system '/usr/local/bin/unboundctrl restart &>/dev/null';
 }
