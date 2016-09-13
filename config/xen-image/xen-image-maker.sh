@@ -121,12 +121,15 @@ tar -C $MNThdd/ -xvf $TMPDIR/$SNAME-$VERSION.tar \
 	--exclude=lib/modules* --exclude=boot* --numeric-owner
 
 #Install Kernel
+mkdir $MNThdd/proc
+mkdir $MNThdd/boot/grub
+echo "flags  : pae " > $MNThdd/proc/cpuinfo   # fake pae detection
 tar -C $MNThdd/opt/pakfire/tmp -xvf $TMPDIR/$KERNEL --numeric-owner
 chroot $MNThdd /opt/pakfire/tmp/install.sh
 rm -rf $MNThdd/opt/pakfire/tmp/*
+rm -rf $MNThdd/proc/cpuinfo
 
 #Create grub menuentry for pygrub
-mkdir $MNThdd/boot/grub
 echo "timeout 10"                          > $MNThdd/boot/grub/grub.conf
 echo "default 0"                          >> $MNThdd/boot/grub/grub.conf
 echo "title IPFire ($KERN_TYPE-kernel)"   >> $MNThdd/boot/grub/grub.conf
@@ -155,7 +158,6 @@ echo "LANGUAGE=en" >> $MNThdd/var/ipfire/main/settings
 echo "HOSTNAME=$SNAME" >> $MNThdd/var/ipfire/main/settings
 echo "THEME=ipfire" >> $MNThdd/var/ipfire/main/settings
 touch $MNThdd/lib/modules/$KVER-ipfire-$KERN_TYPE/modules.dep
-mkdir $MNThdd/proc
 mount --bind /proc $MNThdd/proc
 mount --bind /dev  $MNThdd/dev
 mount --bind /sys  $MNThdd/sys
