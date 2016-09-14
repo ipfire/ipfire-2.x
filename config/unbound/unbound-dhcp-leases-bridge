@@ -338,14 +338,18 @@ class UnboundConfigWriter(object):
 		return ret
 
 	def update_dhcp_leases(self, leases):
-		# Strip all non-active or expired leases
-		leases = [l for l in leases if l.active and not l.expired]
+		# Cache all expired or inactive leases
+		expired_leases = [l for l in leases if l.expired or not l.active]
 
-		# Find any leases that have expired or do not exist any more 
+		# Find any leases that have expired or do not exist any more
+		# but are still in the unbound local data
 		removed_leases = []
 		for fqdn, address in self.existing_leases.items():
-			if not fqdn in (l.fqdn for l in leases):
+			if fqdn in (l.fqdn for l in expired_leases):
 				removed_leases += [fqdn, address]
+
+		# Strip all non-active or expired leases
+		leases = [l for l in leases if l.active and not l.expired]
 
 		# Find any leases that have been added
 		new_leases = [l for l in leases
