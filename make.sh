@@ -608,6 +608,7 @@ buildipfire() {
   ipfiremake python-inotify
   ipfiremake python-docutils
   ipfiremake python-daemon
+  ipfiremake python-ipaddress
   ipfiremake glib
   ipfiremake GeoIP
   ipfiremake fwhits
