@@ -257,10 +257,10 @@ class Lease(object):
 	def rrset(self):
 		return [
 			# Forward record
-			(self.fqdn, LOCAL_TTL, "IN A", self.ipaddr),
+			(self.fqdn, "%s" % LOCAL_TTL, "IN A", self.ipaddr),
 
 			# Reverse record
-			(self.ipaddr, LOCAL_TTL, "IN PTR", self.fqdn),
+			(self.ipaddr, "%s" % LOCAL_TTL, "IN PTR", self.fqdn),
 		]
 
 
@@ -268,33 +268,63 @@ class UnboundConfigWriter(object):
 	def __init__(self, path):
 		self.path = path
 
-		self._cached_leases = []
+	@property
+	def existing_leases(self):
+		local_data = self._control("list_local_data")
+		ret = {}
+
+		for line in local_data.splitlines():
+			try:
+				hostname, ttl, x, record_type, content = line.split("\t")
+			except ValueError:
+				continue
+
+			# Ignore everything that is not A or PTR
+			if not record_type in ("A", "PTR"):
+				continue
+
+			if hostname.endswith("."):
+				hostname = hostname[:-1]
+
+			if content.endswith("."):
+				content = content[:-1]
+
+			if record_type == "A":
+				ret[hostname] = content
+			elif record_type == "PTR":
+				ret[content] = hostname
+
+		return ret
 
 	def update_dhcp_leases(self, leases):
 		# Strip all non-active or expired leases
 		leases = [l for l in leases if l.active and not l.expired]
 
 		# Find any leases that have expired or do not exist any more 
-		removed_leases = [l for l in self._cached_leases if l.expired or l not in leases]
+		removed_leases = []
+		for fqdn, address in self.existing_leases.items():
+			if not fqdn in (l.fqdn for l in leases):
+				removed_leases += [fqdn, address]
 
 		# Find any leases that have been added
-		new_leases = [l for l in leases if l not in self._cached_leases]
+		new_leases = [l for l in leases
+			if l.fqdn not in self.existing_leases]
 
 		# End here if nothing has changed
 		if not new_leases and not removed_leases:
 			return
 
-		self._cached_leases = leases
-
 		# Write out all leases
 		self.write_dhcp_leases(leases)
 
 		# Update unbound about changes
-		for l in removed_leases:
-			self._control("local_data_remove", l.fqdn)
+		for hostname in removed_leases:
+			log.debug("Removing all records for %s" % hostname)
+			self._control("local_data_remove", hostname)
 
 		for l in new_leases:
 			for rr in l.rrset:
+				log.debug("Adding new record %s" % " ".join(rr))
 				self._control("local_data", *rr)
 
 
@@ -305,11 +335,11 @@ class UnboundConfigWriter(object):
 					f.write("local-data: \"%s\"\n" % " ".join(rr))
 
 	def _control(self, *args):
-		command = ["unbound-control", "-q"]
+		command = ["unbound-control"]
 		command.extend(args)
 
 		try:
-			subprocess.check_call(command)
+			return subprocess.check_output(command)
 
 		# Log any errors
 		except subprocess.CalledProcessError as e:
