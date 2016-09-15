@@ -539,16 +539,6 @@ sub checktarget
 	#check DNAT settings (has to be single Host and single Port or portrange)
 	if ($fwdfwsettings{'USE_NAT'} eq 'ON' && $fwdfwsettings{'nat'} eq 'dnat'){
 		if($fwdfwsettings{'grp2'} eq 'tgt_addr' || $fwdfwsettings{'grp2'} eq 'cust_host_tgt' || $fwdfwsettings{'grp2'} eq 'ovpn_host_tgt'){
-			#check if manual ip is a single Host (if set)
-			if ($fwdfwsettings{'grp2'} eq 'tgt_addr'){
-				my @tmp= split (/\./,$fwdfwsettings{$fwdfwsettings{'grp2'}});
-				my @tmp1= split ("/",$tmp[3]);
-				if (($tmp1[0] eq "0") || ($tmp1[0] eq "255"))
-				{
-					$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
-					return $errormessage;
-				}
-			}
 			#check if Port is a single Port or portrange
 			if ($fwdfwsettings{'nat'} eq 'dnat' &&  $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
 				if(($fwdfwsettings{'PROT'} ne 'TCP'|| $fwdfwsettings{'PROT'} ne 'UDP') && $fwdfwsettings{'TGT_PORT'} eq ''){
