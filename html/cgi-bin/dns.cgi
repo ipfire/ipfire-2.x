@@ -91,7 +91,7 @@ print <<END
 
 <table border="0"  width='100%'>
   <tr>
-    <td colspan="2"><font class='base'>$Lang::tr{'dns desc'}<br /><img src="/images/dns_link.png" border="0" align="absmiddle"/><a href="http://wiki.ipfire.org/$Lang::tr{'lang'}/configuration/dns_list" target="_blank">$Lang::tr{'dns list'}</a></font></td>
+    <td colspan="2"><font class='base'>$Lang::tr{'dns desc'}<br /><img src="/images/dns_link.png" border="0" align="absmiddle"/><a href="http://wiki.ipfire.org/en/dns/public-servers" target="_blank">$Lang::tr{'dns list'}</a></font></td>
   </tr>
   <tr>
     <td colspan="2">&nbsp;</td>
