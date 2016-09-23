@@ -534,33 +534,39 @@ END
 			<tr>
 				<td colspan='2' class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'guardian common settings'}</b></td>
 			</tr>
+
 			<tr>
-				<td width='20%' class='base'>$Lang::tr{'guardian enabled'}:</td>
+				<td width='25%' class='base'>$Lang::tr{'guardian enabled'}:</td>
 				<td><input type='checkbox' name='GUARDIAN_ENABLED' $checked{'GUARDIAN_ENABLED'}{'on'} /></td>
 			</tr>
+
 			<tr>
 				<td colspan='2'><br></td>
 			</tr>
+
 			<tr>
-				<td width='20%' class='base'>$Lang::tr{'guardian watch snort alertfile'}</td>
+				<td width='25%' class='base'>$Lang::tr{'guardian watch snort alertfile'}</td>
 				<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_SNORT' value='on' $checked{'GUARDIAN_MONITOR_SNORT'}{'on'} /> /
 				<input type='radio' name='GUARDIAN_MONITOR_SNORT' value='off' $checked{'GUARDIAN_MONITOR_SNORT'}{'off'} /> off</td>
 			</tr>
+
 			<tr>
-				<td width='20%' class='base'>$Lang::tr{'guardian block ssh brute-force'}</td>
+				<td width='25%' class='base'>$Lang::tr{'guardian block ssh brute-force'}</td>
 				<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_SSH' value='on' $checked{'GUARDIAN_MONITOR_SSH'}{'on'} /> /
 				<input type='radio' name='GUARDIAN_MONITOR_SSH' value='off' $checked{'GUARDIAN_MONITOR_SSH'}{'off'} /> off</td>
 			</tr>
+
 			<tr>
-				<td width='20%' class='base'>$Lang::tr{'guardian block httpd brute-force'}</td>
+				<td width='25%' class='base'>$Lang::tr{'guardian block httpd brute-force'}</td>
 				<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_HTTPD' value='on' $checked{'GUARDIAN_MONITOR_HTTPD'}{'on'} /> /
 				<input type='radio' name='GUARDIAN_MONITOR_HTTPD' value='off' $checked{'GUARDIAN_MONITOR_HTTPD'}{'off'} /> off</td>
 			</tr>
 END
+
 			# Display owncloud checkbox when the addon is installed.
 			if ( -e "$owncloud_meta" ) {
 				print"<tr>\n";
-				print"<td width='20%' class='base'>$Lang::tr{'guardian block owncloud brute-force'}</td>\n";
+				print"<td width='25%' class='base'>$Lang::tr{'guardian block owncloud brute-force'}</td>\n";
 				print"<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_OWNCLOUD' value='on' $checked{'GUARDIAN_MONITOR_OWNCLOUD'}{'on'} /> /\n";
 				print"<input type='radio' name='GUARDIAN_MONITOR_OWNCLOUD' value='off' $checked{'GUARDIAN_MONITOR_OWNCLOUD'}{'off'} /> off</td>\n";
 				print"</tr>\n";
@@ -569,62 +575,64 @@ END
 			<tr>
 				<td colspan='2'><br></td>
 			</tr>
+
 			<tr>
 				<td align='left' width='20%'>$Lang::tr{'guardian logfacility'}:</td>
-				<td><select id='GUARDIAN_LOG_FACILITY' name='GUARDIAN_LOG_FACILITY'>
-					<option id='logfacility_syslog' value='syslog' $selected{'GUARDIAN_LOG_FACILITY'}{'syslog'}>syslog</option>
-					<option id='logfacility_file' value='file' $selected{'GUARDIAN_LOG_FACILITY'}{'file'}>file</option>
-					<option id='logfacility_console' value='console' $selected{'GUARDIAN_LOG_FACILITY'}{'console'}>console</option>
+				<td width='25%'><select id='GUARDIAN_LOG_FACILITY' name='GUARDIAN_LOG_FACILITY'>
+					<option id='logfacility_syslog' value='syslog' $selected{'GUARDIAN_LOG_FACILITY'}{'syslog'}>$Lang::tr{'guardian logtarget_syslog'}</option>
+					<option id='logfacility_file' value='file' $selected{'GUARDIAN_LOG_FACILITY'}{'file'}>$Lang::tr{'guardian logtarget_file'}</option>
+					<option id='logfacility_console' value='console' $selected{'GUARDIAN_LOG_FACILITY'}{'console'}>$Lang::tr{'guardian logtarget_console'}</option>
+				</select></td>
+
+				<td align='left' width='20%'>$Lang::tr{'guardian loglevel'}:</td>
+				<td width='25%'><select id='GUARDIAN_LOGLEVEL' name='GUARDIAN_LOGLEVEL'>
+					<option id='loglevel_off' value='off' $selected{'GUARDIAN_LOGLEVEL'}{'off'}>$Lang::tr{'guardian loglevel_off'}</option>
+					<option id='loglevel_info' value='info' $selected{'GUARDIAN_LOGLEVEL'}{'info'}>$Lang::tr{'guardian loglevel_info'}</option>
+					<option id='loglevel_debug' value='debug' $selected{'GUARDIAN_LOGLEVEL'}{'debug'}>$Lang::tr{'guardian loglevel_debug'}</option>
 				</select></td>
 			</tr>
-			<tr>
+
+			<tr class="GUARDIAN_LOGFILE">
 				<td colspan='2'><br></td>
 			</tr>
-			<tr>
-				<td align='left' width='20%'>$Lang::tr{'guardian loglevel'}:</td>
-				<td><select id='GUARDIAN_LOGLEVEL' name='GUARDIAN_LOGLEVEL'>
-					<option id='loglevel_off' value='off' $selected{'GUARDIAN_LOGLEVEL'}{'off'}>off</option>
-					<option id='loglevel_info' value='info' $selected{'GUARDIAN_LOGLEVEL'}{'info'}>info</option>
-					<option id='loglevel_debug' value='debug' $selected{'GUARDIAN_LOGLEVEL'}{'debug'}>debug</option>
-				</select></td>
+
+			<tr class="GUARDIAN_LOGFILE">
+				<td width='25%' class='base'>$Lang::tr{'guardian logfile'}:</td>
+				<td><input type='text' name='GUARDIAN_LOGFILE' value='$settings{'GUARDIAN_LOGFILE'}' size='30' /></td>
 			</tr>
+
 			<tr class="GUARDIAN_SNORT_PRIORITY_LEVEL">
 				<td colspan='2'><br></td>
 			</tr>
+
 			<tr class="GUARDIAN_SNORT_PRIORITY_LEVEL">
 				<td align='left' width='20%'>$Lang::tr{'guardian priority level'}:</td>
 				<td><select name='GUARDIAN_SNORT_PRIORITY_LEVEL'>
-					<option value='1' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'1'}>1</option>
-					<option value='2' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'2'}>2</option>
-					<option value='3' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'3'}>3</option>
-					<option value='4' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'4'}>4</option>
+					<option value='1' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'1'}>$Lang::tr{'guardian priolevel_high'}</option>
+					<option value='2' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'2'}>$Lang::tr{'guardian priolevel_medium'}</option>
+					<option value='3' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'3'}>$Lang::tr{'guardian priolevel_low'}</option>
+					<option value='4' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'4'}>$Lang::tr{'guardian priolevel_very_low'}</option>
 				</select></td>
+
+				<td width='25%' class='base'>$Lang::tr{'guardian blockcount'}:</td>
+				<td><input type='text' name='GUARDIAN_BLOCKCOUNT' value='$settings{'GUARDIAN_BLOCKCOUNT'}' size='5' /></td>
 			</tr>
+
 			<tr>
 				<td colspan='2'><br></td>
 			</tr>
+
 			<tr>
-				<td width='20%' class='base'>$Lang::tr{'guardian firewallaction'}:</td>
+				<td width='25%' class='base'>$Lang::tr{'guardian firewallaction'}:</td>
 				<td><select name='GUARDIAN_FIREWALL_ACTION'>
 					<option value='DROP' $selected{'GUARDIAN_FIREWALL_ACTION'}{'DROP'}>Drop</option>
 					<option value='REJECT' $selected{'GUARDIAN_FIREWALL_ACTION'}{'REJECT'}>Reject</option>
 				</select></td>
-			</tr>
-			<tr>
-				<td colspan='2'><br></td>
-			</tr>
-			<tr>
-				<td width='20%' class='base'>$Lang::tr{'guardian blockcount'}:</td>
-				<td><input type='text' name='GUARDIAN_BLOCKCOUNT' value='$settings{'GUARDIAN_BLOCKCOUNT'}' size='5' /></td>
-			</tr>
-			<tr>
-				<td width='20%' class='base'>$Lang::tr{'guardian blocktime'}:</td>
+
+				<td width='25%' class='base'>$Lang::tr{'guardian blocktime'}:</td>
 				<td><input type='text' name='GUARDIAN_BLOCKTIME' value='$settings{'GUARDIAN_BLOCKTIME'}' size='10' /></td>
 			</tr>
-			<tr class="GUARDIAN_LOGFILE">
-                                <td width='20%' class='base'>$Lang::tr{'guardian logfile'}:</td>
-                                <td><input type='text' name='GUARDIAN_LOGFILE' value='$settings{'GUARDIAN_LOGFILE'}' size='30' /></td>
-                        </tr>
+
 		</table>
 END
 

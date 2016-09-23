@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -33,10 +33,9 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = guardian
-PAK_VER    = 10
+PAK_VER    = 11
 
 DEPS       = "perl-inotify2 perl-Net-IP"
-
 
 ###############################################################################
 # Top-level Rules
@@ -107,6 +106,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /etc/logrotate.d
 	install -v -m 644 $(DIR_SRC)/config/guardian/guardian.logrotate \
 		/etc/logrotate.d/guardian
+
+	# Install addon-specific language-files.
+	install -v -m 004 $(DIR_SRC)/config/guardian/guardian.*.pl \
+		/var/ipfire/addon-lang/
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
