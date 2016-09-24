@@ -1,2 +1,3 @@
 etc/strongswan.d/charon/padlock.conf
 usr/lib/ipsec/plugins/libstrongswan-padlock.so
+#usr/share/strongswan/templates/config/plugins/padlock.conf

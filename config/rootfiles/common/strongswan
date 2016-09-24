@@ -40,7 +40,6 @@ etc/strongswan.d/charon/kernel-netlink.conf
 etc/strongswan.d/charon/md5.conf
 etc/strongswan.d/charon/nonce.conf
 etc/strongswan.d/charon/openssl.conf
-etc/strongswan.d/charon/padlock.conf
 etc/strongswan.d/charon/pem.conf
 etc/strongswan.d/charon/pgp.conf
 etc/strongswan.d/charon/pkcs1.conf
@@ -136,7 +135,6 @@ usr/lib/ipsec/plugins/libstrongswan-kernel-netlink.so
 usr/lib/ipsec/plugins/libstrongswan-md5.so
 usr/lib/ipsec/plugins/libstrongswan-nonce.so
 usr/lib/ipsec/plugins/libstrongswan-openssl.so
-usr/lib/ipsec/plugins/libstrongswan-padlock.so
 usr/lib/ipsec/plugins/libstrongswan-pem.so
 usr/lib/ipsec/plugins/libstrongswan-pgp.so
 usr/lib/ipsec/plugins/libstrongswan-pkcs1.so
@@ -219,7 +217,6 @@ usr/sbin/swanctl
 #usr/share/strongswan/templates/config/plugins/md5.conf
 #usr/share/strongswan/templates/config/plugins/nonce.conf
 #usr/share/strongswan/templates/config/plugins/openssl.conf
-#usr/share/strongswan/templates/config/plugins/padlock.conf
 #usr/share/strongswan/templates/config/plugins/pem.conf
 #usr/share/strongswan/templates/config/plugins/pgp.conf
 #usr/share/strongswan/templates/config/plugins/pkcs1.conf
