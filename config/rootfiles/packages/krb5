@@ -68,6 +68,9 @@ usr/lib/krb5/plugins/libkrb5
 usr/lib/krb5/plugins/preauth
 usr/lib/krb5/plugins/preauth/otp.so
 usr/lib/krb5/plugins/preauth/pkinit.so
+usr/lib/krb5/plugins/preauth/test.so
+usr/lib/krb5/plugins/tls
+usr/lib/krb5/plugins/tls/k5tls.so
 #usr/lib/libgssapi_krb5.so
 usr/lib/libgssapi_krb5.so.2
 usr/lib/libgssapi_krb5.so.2.2
@@ -79,15 +82,15 @@ usr/lib/libk5crypto.so.3
 usr/lib/libk5crypto.so.3.1
 #usr/lib/libkadm5clnt.so
 #usr/lib/libkadm5clnt_mit.so
-usr/lib/libkadm5clnt_mit.so.9
-usr/lib/libkadm5clnt_mit.so.9.0
+usr/lib/libkadm5clnt_mit.so.10
+usr/lib/libkadm5clnt_mit.so.10.0
 #usr/lib/libkadm5srv.so
 #usr/lib/libkadm5srv_mit.so
-usr/lib/libkadm5srv_mit.so.9
-usr/lib/libkadm5srv_mit.so.9.0
+usr/lib/libkadm5srv_mit.so.10
+usr/lib/libkadm5srv_mit.so.10.0
 #usr/lib/libkdb5.so
-usr/lib/libkdb5.so.7
-usr/lib/libkdb5.so.7.0
+usr/lib/libkdb5.so.8
+usr/lib/libkdb5.so.8.0
 #usr/lib/libkrad.so
 usr/lib/libkrad.so.0
 usr/lib/libkrad.so.0.0
@@ -125,8 +128,6 @@ usr/lib/libverto.so.0.0
 #usr/share/examples/krb5/kdc.conf
 #usr/share/examples/krb5/krb5.conf
 #usr/share/examples/krb5/services.append
-#usr/share/gnats
-#usr/share/gnats/mit
 #usr/share/locale/en_US
 #usr/share/locale/en_US/LC_MESSAGES
 #usr/share/locale/en_US/LC_MESSAGES/mit-krb5.mo
@@ -140,7 +141,6 @@ usr/lib/libverto.so.0.0
 #usr/share/man/man1/klist.1
 #usr/share/man/man1/kpasswd.1
 #usr/share/man/man1/krb5-config.1
-#usr/share/man/man1/krb5-send-pr.1
 #usr/share/man/man1/ksu.1
 #usr/share/man/man1/kswitch.1
 #usr/share/man/man1/ktutil.1
@@ -163,3 +163,5 @@ usr/lib/libverto.so.0.0
 #usr/share/man/man8/krb5kdc.8
 #usr/share/man/man8/sserver.8
 var/lib/krb5kdc
+var/lib/run
+var/lib/run/krb5kdc
