@@ -4,6 +4,7 @@ usr/bin/gawk
 #usr/bin/igawk
 #usr/bin/pgawk
 #usr/bin/pgawk-3.1.5
+#usr/info/dir
 #usr/info/gawk.info
 #usr/info/gawkinet.info
 #usr/lib/awk
