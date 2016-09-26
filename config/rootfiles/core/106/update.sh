@@ -41,17 +41,38 @@ done
 
 
 # Stop services
+/etc/init.d/squid stop
+/etc/init.d/ipsec stop
+/etc/init.d/dnsmasq stop
 
 # Extract files
 extract_files
 
+# Delete dnsmasq
+rm -vf \
+	/etc/rc.d/init.d/dnsmasq \
+	/etc/rc.d/init.d/networking/red.down/05-RS-dnsmasq \
+	/etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq \
+	/usr/sbin/dnsmasq
+
 # update linker config
 ldconfig
 
+grep -q unbound-anchor /var/spool/cron/root.orig || cat <<EOF >> /var/spool/cron/root.orig
+
+# Update DNS trust anchor
+%daily,random * * @runas(nobody) /usr/sbin/unbound-anchor -a /var/lib/unbound/root.key -c /etc/unbound/icannbundle.pem
+EOF
+
 # Update Language cache
-#/usr/local/bin/update-lang-cache
+/usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/unbound start
+/etc/init.d/squid start
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec start
+fi
 
 # This update need a reboot...
 touch /var/run/need_reboot
