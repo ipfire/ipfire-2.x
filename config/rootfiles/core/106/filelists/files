@@ -1,0 +1,17 @@
+etc/system-release
+etc/issue
+etc/rc.d/init.d/dhcp
+etc/rc.d/init.d/network
+etc/rc.d/init.d/networking/red.down/05-update-dns-forwarders
+etc/rc.d/init.d/networking/red.up/05-update-dns-forwarders
+etc/rc.d/init.d/unbound
+etc/rc.d/rc0.d/K79unbound
+etc/rc.d/rc3.d/S21unbound
+etc/rc.d/rc6.d/K79unbound
+srv/web/ipfire/cgi-bin/dns.cgi
+srv/web/ipfire/cgi-bin/dnsforward.cgi
+srv/web/ipfire/cgi-bin/firewall.cgi
+srv/web/ipfire/cgi-bin/hosts.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+srv/web/ipfire/cgi-bin/pppsetup.cgi
+srv/web/ipfire/cgi-bin/services.cgi
