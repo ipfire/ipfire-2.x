@@ -508,7 +508,6 @@ buildipfire() {
   ipfiremake libidn
   ipfiremake nasm
   ipfiremake libjpeg
-  ipfiremake libjpeg-compat
   ipfiremake libexif
   ipfiremake libpng
   ipfiremake libtiff
