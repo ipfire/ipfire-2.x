@@ -101,7 +101,7 @@ $sambasettings{'DISPLAYCHARSET'} = 'CP850';
 $sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=819200 SO_SNDBUF=819200 SO_KEEPALIVE';
 $sambasettings{'WIDELINKS'} = 'on';
 $sambasettings{'UNIXEXTENSION'} = 'off';
-$sambasettings{'SMB2'} = 'off';
+$sambasettings{'SMB2'} = 'on';
 ### Values that have to be initialized
 $sambasettings{'ACTION'} = '';
 ### Samba CUPS Variablen
@@ -185,7 +185,7 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=819200 SO_SNDBUF=819200 SO_KEEPALIVE';
 	$sambasettings{'WIDELINKS'} = 'on';
 	$sambasettings{'UNIXEXTENSION'} = 'off';
-	$sambasettings{'SMB2'} = 'off';
+	$sambasettings{'SMB2'} = 'on';
 	$PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
 	system("/usr/local/bin/sambactrl smbreload");
 	refreshpage();
