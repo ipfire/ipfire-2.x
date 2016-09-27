@@ -10,7 +10,8 @@ case "$1" in
 	start)
 		if [ "$ENABLESETONBOOT" == "on" ]; then
 			boot_mesg -n "Setting time on boot..."
-			if [ $(pidof wpa_supplicant dhcpcd) ]; then
+			pidof wpa_supplicant dhcpcd 2>&1 > /dev/null
+			if [ "${?}" == "0" ]; then
 				if [ ! -e /var/ipfire/red/active ]; then
 					boot_mesg ""
 					boot_mesg -n "Waiting for red connection"
