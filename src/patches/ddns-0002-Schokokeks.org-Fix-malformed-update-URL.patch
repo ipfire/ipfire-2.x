@@ -1,0 +1,55 @@
+From f77e6bc92825d65e881d5dc7fc443139278c0d5f Mon Sep 17 00:00:00 2001
+From: Stefan Schantl <stefan.schantl@ipfire.org>
+Date: Fri, 28 Oct 2016 12:35:20 +0200
+Subject: [PATCH 3/3] Schockokeks.org: Fix malformed update URL.
+
+* Move Provider Class into correct alphabetical order.
+
+Signed-off-by: Stefan Schantl <stefan.schantl@ipfire.org>
+Reviewed-by: Michael Tremer <michael.tremer@ipfire.org>
+Signed-off-by: Stefan Schantl <stefan.schantl@ipfire.org>
+---
+ src/ddns/providers.py | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
+
+diff --git a/src/ddns/providers.py b/src/ddns/providers.py
+index c482dad..2c30d42 100644
+--- a/src/ddns/providers.py
++++ b/src/ddns/providers.py
+@@ -1424,6 +1424,17 @@ class DDNSProviderRegfish(DDNSProvider):
+ 		raise DDNSUpdateError
+ 
+ 
++class DDNSProviderSchokokeksDNS(DDNSProtocolDynDNS2, DDNSProvider):
++	handle    = "schokokeks.org"
++	name      = "Schokokeks"
++	website   = "http://www.schokokeks.org/"
++	protocols = ("ipv4",)
++
++	# Information about the format of the request is to be found
++	# https://wiki.schokokeks.org/DynDNS
++	url = "https://dyndns.schokokeks.org/nic/update"
++
++
+ class DDNSProviderSelfhost(DDNSProtocolDynDNS2, DDNSProvider):
+ 	handle    = "selfhost.de"
+ 	name      = "Selfhost.de"
+@@ -1687,15 +1698,3 @@ class DDNSProviderZZZZ(DDNSProvider):
+ 
+ 		# If we got here, some other update error happened.
+ 		raise DDNSUpdateError
+-
+-class DDNSProviderSchokokeksDNS(DDNSProtocolDynDNS2, DDNSProvider):
+-       handle    = "schokokeks.org"
+-       name      = "Schokokeks"
+-       website   = "http://www.schokokeks.org/"
+-       protocols = ("ipv4",)
+-
+-       # Information about the format of the request is to be found
+-       # https://wiki.schokokeks.org/DynDNS
+-
+-       url = "https://dyndns.schokokeks.org/nic/update?myip=<ipaddr>"
+-
+-- 
+2.7.4
+

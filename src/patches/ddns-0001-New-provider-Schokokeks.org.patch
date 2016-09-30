@@ -1,0 +1,47 @@
+From 521c9d90f4e879ef3d9e1590f29e27990011ae46 Mon Sep 17 00:00:00 2001
+From: Steffen Peters <sauron99@gmx.de>
+Date: Mon, 4 Jul 2016 22:14:10 +0200
+Subject: [PATCH 185/185] New provider: Schokokeks.org
+
+Signed-off-by: Steffen Peters <sauron99@gmx.de>
+Signed-off-by: Stefan Schantl <stefan.schantl@ipfire.org>
+---
+ README                |  1 +
+ src/ddns/providers.py | 12 ++++++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/README b/README
+index d8027a4..cedbf21 100644
+--- a/README
++++ b/README
+@@ -75,6 +75,7 @@ SUPPORTED PROVIDERS:
+ 	opendns.com
+ 	ovh.com
+ 	regfish.com
++	schokokeks.org
+ 	selfhost.de
+ 	spdns.org
+ 	strato.com
+diff --git a/src/ddns/providers.py b/src/ddns/providers.py
+index 6b25cb6..c482dad 100644
+--- a/src/ddns/providers.py
++++ b/src/ddns/providers.py
+@@ -1687,3 +1687,15 @@ class DDNSProviderZZZZ(DDNSProvider):
+ 
+ 		# If we got here, some other update error happened.
+ 		raise DDNSUpdateError
++
++class DDNSProviderSchokokeksDNS(DDNSProtocolDynDNS2, DDNSProvider):
++       handle    = "schokokeks.org"
++       name      = "Schokokeks"
++       website   = "http://www.schokokeks.org/"
++       protocols = ("ipv4",)
++
++       # Information about the format of the request is to be found
++       # https://wiki.schokokeks.org/DynDNS
++
++       url = "https://dyndns.schokokeks.org/nic/update?myip=<ipaddr>"
++
+-- 
+2.7.4
+
