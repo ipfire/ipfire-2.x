@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/login.defs
 etc/rc.d/init.d/dhcp
 etc/rc.d/init.d/network
 etc/rc.d/init.d/networking/red.down/05-update-dns-forwarders
