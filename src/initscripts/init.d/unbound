@@ -181,6 +181,12 @@ get_memory_amount() {
 
 case "$1" in
 	start)
+		# Print a nicer messagen when unbound is already running
+		if pidofproc -s unbound; then
+			statusproc /usr/sbin/unbound
+			exit 0
+		fi
+
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 		# Create control keys at first run
