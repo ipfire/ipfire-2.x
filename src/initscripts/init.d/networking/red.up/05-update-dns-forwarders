@@ -1,4 +1,12 @@
 #!/bin/bash
 
-# Update DNS forwarders for unbound
-exec /etc/init.d/unbound update-forwarders
+# If network has not fully been brought up here, we start unbound
+# so that all following scripts can rely on DNS resolution
+
+# Update DNS forwarders if unbound is running
+if pgrep -q unbound; then
+	exec /etc/init.d/unbound update-forwarders
+fi
+
+# Start unbound if it is not running, yet
+exec /etc/init.d/unbound start
