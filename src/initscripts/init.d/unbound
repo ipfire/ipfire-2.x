@@ -7,6 +7,11 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+TEST_DOMAIN="ipfire.org"
+
+# This domain will never validate
+TEST_DOMAIN_FAIL="dnssec-failed.org"
+
 USE_FORWARDERS=1
 
 # Cache any local zones for 60 seconds
@@ -53,18 +58,45 @@ config_header() {
 }
 
 update_forwarders() {
-	local forwarders="$(read_name_servers)"
+	if [ "${USE_FORWARDERS}" = "1" -a -e "/var/ipfire/red/active" ]; then
+		local forwarders
+		local broken_forwarders
 
-	if [ "${USE_FORWARDERS}" = "1" ] && [ -n "${forwarders}" ]; then
-		boot_mesg "Using Name Server(s): ${forwarders}"
-		boot_mesg_flush
+		local ns
+		for ns in $(read_name_servers); do
+			test_name_server ${ns} &>/dev/null
+			case "$?" in
+				# Only use DNSSEC-validating or DNSSEC-aware name servers
+				0|2)
+					forwarders="${forwarders} ${ns}"
+					;;
+				*)
+					broken_forwarders="${broken_forwarders} ${ns}"
+					;;
+			esac
+		done
 
-		unbound-control -q forward ${forwarders}
+		# Show warning for any broken upstream name servers
+		if [ -n "${broken_forwarders}" ]; then
+			boot_mesg "Ignoring broken upstream name server(s): ${broken_forwarders:1}" ${WARNING}
+			echo_warning
+		fi
+
+		if [ -n "${broken_forwarders}" -a -z "${forwarders}" ]; then
+			boot_mesg "Falling back to recursor mode" ${WARNING}
+			echo_warning
+
+		elif [ -n "${forwarders}" ]; then
+			boot_mesg "Configuring upstream name server(s): ${forwarders:1}" ${INFO}
+			echo_ok
+
+			unbound-control -q forward ${forwarders}
+			return 0
+		fi
+	fi
 
 	# If forwarders cannot be used we run in recursor mode
-	else
-		unbound-control -q forward off
-	fi
+	unbound-control -q forward off
 }
 
 update_hosts() {
@@ -179,6 +211,77 @@ get_memory_amount() {
 	done < /proc/meminfo
 }
 
+test_name_server() {
+	local ns=${1}
+
+	# Return codes:
+	# 0	DNSSEC validating
+	# 1	Error: unreachable, etc.
+	# 2	DNSSEC aware
+	# 3	NOT DNSSEC-aware
+
+	# Exit when the server is not reachable
+	ns_is_online ${ns} || return 1
+
+	# Return 0 if validating
+	ns_is_validating ${ns} && return 0
+
+	local errors
+	for rr in DNSKEY DS RRSIG; do
+		if ! ns_forwards_${rr} ${ns}; then
+			errors="${errors} ${rr}"
+		fi
+	done
+
+	if [ -n "${errors}" ]; then
+		echo >&2 "Unable to retrieve the following resource records from ${ns}: ${errors:1}"
+		return 3
+	fi
+
+	# Is DNSSEC-aware
+	return 2
+}
+
+# Sends an A query to the nameserver w/o DNSSEC
+ns_is_online() {
+	local ns=${1}
+
+	dig @${ns} +nodnssec A ${TEST_DOMAIN} >/dev/null
+}
+
+# Resolving ${TEST_DOMAIN_FAIL} will fail if the nameserver is validating
+ns_is_validating() {
+	local ns=${1}
+
+	dig @${ns} A ${TEST_DOMAIN_FAIL} | grep -q SERVFAIL
+}
+
+# Checks if we can retrieve the DNSKEY for this domain.
+# dig will print the SOA if nothing was found
+ns_forwards_DNSKEY() {
+	local ns=${1}
+
+	dig @${ns} DNSKEY ${TEST_DOMAIN} | grep -qv SOA
+}
+
+ns_forwards_DS() {
+	local ns=${1}
+
+	dig @${ns} DS ${TEST_DOMAIN} | grep -qv SOA
+}
+
+ns_forwards_RRSIG() {
+	local ns=${1}
+
+	dig @${ns} +dnssec A ${TEST_DOMAIN} | grep -q RRSIG
+}
+
+ns_supports_tcp() {
+	local ns=${1}
+
+	dig @${ns} +tcp A ${TEST_DOMAIN} >/dev/null || return 1
+}
+
 case "$1" in
 	start)
 		# Print a nicer messagen when unbound is already running
@@ -228,8 +331,38 @@ case "$1" in
 		update_forwarders
 		;;
 
+	test-name-server)
+		ns=${2}
+
+		test_name_server ${ns}
+		ret=${?}
+
+		case "${ret}" in
+			0)
+				echo "${ns} is validating"
+				;;
+			2)
+				echo "${ns} is DNSSEC-aware"
+				;;
+			3)
+				echo "${ns} is NOT DNSSEC-aware"
+				;;
+			*)
+				echo "Test failed for an unknown reason"
+				;;
+		esac
+
+		if ns_supports_tcp ${ns}; then
+			echo "${ns} supports TCP fallback"
+		else
+			echo "${ns} does not support TCP fallback"
+		fi
+
+		exit ${ret}
+		;;
+
 	*)
-		echo "Usage: $0 {start|stop|restart|status|update-forwarders}"
+		echo "Usage: $0 {start|stop|restart|status|update-forwarders|test-name-server}"
 		exit 1
 		;;
 esac
