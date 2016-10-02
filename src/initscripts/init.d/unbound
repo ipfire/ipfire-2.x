@@ -90,12 +90,14 @@ update_forwarders() {
 			boot_mesg "Configuring upstream name server(s): ${forwarders:1}" ${INFO}
 			echo_ok
 
+			echo "${forwarders}" > /var/ipfire/red/dns
 			unbound-control -q forward ${forwarders}
 			return 0
 		fi
 	fi
 
 	# If forwarders cannot be used we run in recursor mode
+	echo "local recursor" > /var/ipfire/red/dns
 	unbound-control -q forward off
 }
 

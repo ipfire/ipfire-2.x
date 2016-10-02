@@ -200,26 +200,20 @@ END
 END
 	}
 
-	my @dns_servers = ();
-	foreach my $f ("${General::swroot}/red/dns1", "${General::swroot}/red/dns2") {
-		open(DNS, "<$f");
-		my $dns_server = <DNS>;
-		close(DNS);
-
-		chomp($dns_server);
-		if ($dns_server) {
-			push(@dns_servers, $dns_server);
-		}
+	my $dns_servers;
+	if ( -e "${General::swroot}/red/dns" ) {
+		open (TMP, "<${General::swroot}/red/dns");
+		$dns_servers = <TMP>;
+		chomp($dns_servers);
+		close TMP;
 	}
-	my $dns_servers_str = join(", ", @dns_servers);
-
 	print <<END;
 		<tr>
 			<td>
 				<b>$Lang::tr{'dns servers'}:</b>
 			</td>
 			<td style='text-align:center;'>
-				$dns_servers_str
+				$dns_servers
 			</td>
 			<td></td>
 		</tr>
