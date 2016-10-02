@@ -121,11 +121,6 @@ var/ipfire/modem
 #var/ipfire/modem/settings
 var/ipfire/modem-lib.pl
 var/ipfire/network-functions.pl
-var/ipfire/net-traffic
-#var/ipfire/net-traffic/net-traffic-admin.pl
-#var/ipfire/net-traffic/net-traffic-lib.pl
-#var/ipfire/net-traffic/settings
-#var/ipfire/net-traffic/templates
 #var/ipfire/nfs
 #var/ipfire/nfs/nfs-server
 var/ipfire/optionsfw

@@ -269,6 +269,7 @@ WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
 WARNING: translation string unused: incorrect password
+WARNING: translation string unused: info
 WARNING: translation string unused: insert floppy
 WARNING: translation string unused: insert removable device
 WARNING: translation string unused: install new update
@@ -299,6 +300,7 @@ WARNING: translation string unused: kernel version
 WARNING: translation string unused: key stuff
 WARNING: translation string unused: keyreset
 WARNING: translation string unused: keys
+WARNING: translation string unused: lang
 WARNING: translation string unused: lateprompting
 WARNING: translation string unused: length
 WARNING: translation string unused: line
@@ -357,6 +359,7 @@ WARNING: translation string unused: net
 WARNING: translation string unused: net address
 WARNING: translation string unused: net config type
 WARNING: translation string unused: net config type help
+WARNING: translation string unused: net traffic newversion
 WARNING: translation string unused: net-traffic configuration
 WARNING: translation string unused: network added
 WARNING: translation string unused: network configuration

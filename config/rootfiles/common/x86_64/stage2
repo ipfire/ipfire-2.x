@@ -164,7 +164,6 @@ var/log/btmp
 var/log/calamaris
 var/log/counter
 var/log/lastlog
-#var/log/net-traffic.log
 var/log/wtmp
 var/mail
 #var/opt
