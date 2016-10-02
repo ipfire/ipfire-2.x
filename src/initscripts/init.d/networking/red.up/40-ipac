@@ -1,6 +1,0 @@
-#!/bin/bash
-
-#/etc/rc.d/helper/writeipac.pl
-#/usr/sbin/fetchipac -S
-
-exit 0

@@ -126,7 +126,7 @@ endif
 	-mkdir -pv /var/{opt,cache,lib/{misc,locate},local}
 	-mkdir -pv /var/log/{counter,calamaris}
 	chown nobody.nobody /var/log/calamaris
-	touch /var/log/{btmp,lastlog,wtmp,net-traffic.log}
+	touch /var/log/{btmp,lastlog,wtmp}
 	chgrp -v utmp /var/log/lastlog
 	chmod -v 664 /var/log/lastlog
 

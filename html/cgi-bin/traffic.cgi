@@ -28,8 +28,6 @@ use strict;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-require "${General::swroot}/net-traffic/net-traffic-admin.pl";
-require "${General::swroot}/net-traffic/net-traffic-lib.pl";
 
 my %color = ();
 my %mainsettings = ();

@@ -55,6 +55,13 @@ rm -vf \
 	/etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq \
 	/usr/sbin/dnsmasq
 
+# Delete old net-traffic stuff
+rm -vrf \
+	/etc/rc.d/helper/writeipac.pl \
+	/etc/rc.d/init.d/networking/red.up/40-ipac \
+	/var/ipfire/net-traffic \
+	/var/log/net-traffic.log*
+
 # update linker config
 ldconfig
 
