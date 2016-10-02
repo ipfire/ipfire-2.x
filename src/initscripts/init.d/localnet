@@ -15,6 +15,13 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+write_resolv_conf() {
+	(
+		[ -n "${DOMAINNAME}" ] && echo "search ${DOMAINNAME}"
+		echo "nameserver 127.0.0.1"
+	) > /etc/resolv.conf
+}
+
 case "${1}" in
 	start)
 		eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
@@ -32,6 +39,9 @@ case "${1}" in
 			domainname ${DOMAINNAME}
 			evaluate_retval
 		fi
+
+		# Update resolv.conf
+		write_resolv_conf
 		;;
 
 	stop)
