@@ -10,7 +10,7 @@ etc/unbound/unbound.conf
 #usr/lib/libunbound.la
 #usr/lib/libunbound.so
 usr/lib/libunbound.so.2
-usr/lib/libunbound.so.2.4.1
+usr/lib/libunbound.so.2.4.2
 usr/sbin/unbound
 usr/sbin/unbound-anchor
 usr/sbin/unbound-checkconf
