@@ -44,6 +44,15 @@ function cidr() {
     echo "${cidr}/${nbits}"
 }
 
+ip_address_revptr() {
+	local addr=${1}
+
+	local a1 a2 a3 a4
+	IFS=. read -r a1 a2 a3 a4 <<< ${addr}
+
+	echo "${a4}.${a3}.${a2}.${a1}.in-addr.arpa"
+}
+
 read_name_servers() {
 	local i
 	for i in 1 2; do
@@ -101,6 +110,23 @@ update_forwarders() {
 	unbound-control -q forward off
 }
 
+own_hostname() {
+	local hostname=$(hostname -f)
+	# 1.1.1.1 is reserved for green only, skip this
+	if [ -n "${GREEN_ADDRESS}" -a "${GREEN_ADDRESS}" != "1.1.1.1" ]; then
+		unbound-control -q local_data "${hostname} ${LOCAL_TTL} IN A ${GREEN_ADDRESS}"
+	fi
+
+	local address
+	for address in ${GREEN_ADDRESS} ${BLUE_ADDRESS} ${ORANGE_ADDRESS}; do
+		[ -n "${address}" ] || continue
+		[ "${address}" = "1.1.1.1" ] && continue
+
+		address=$(ip_address_revptr ${address})
+		unbound-control -q local_data "${address} ${LOCAL_TTL} IN PTR ${hostname}"
+	done
+}
+
 update_hosts() {
 	local enabled address hostname domainname
 
@@ -111,6 +137,10 @@ update_hosts() {
 		local fqdn="${hostname}.${domainname}"
 
 		unbound-control -q local_data "${fqdn} ${LOCAL_TTL} IN A ${address}"
+
+		# Add RDNS
+		address=$(ip_address_revptr ${address})
+		unbound-control -q local_data "${address} ${LOCAL_TTL} IN PTR ${fqdn}"
 	done < /var/ipfire/main/hosts
 }
 
@@ -306,6 +336,9 @@ case "$1" in
 
 		boot_mesg "Starting Unbound DNS Proxy..."
 		loadproc /usr/sbin/unbound || exit $?
+
+		# Make own hostname resolveable
+		own_hostname
 
 		# Update any known forwarding name servers
 		update_forwarders
