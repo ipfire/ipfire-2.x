@@ -10,7 +10,7 @@ usr/bin/idn
 #usr/lib/libidn.la
 usr/lib/libidn.so
 usr/lib/libidn.so.11
-usr/lib/libidn.so.11.5.28
+usr/lib/libidn.so.11.6.16
 #usr/lib/pkgconfig/libidn.pc
 #usr/share/emacs
 #usr/share/emacs/site-lisp
@@ -19,6 +19,7 @@ usr/lib/libidn.so.11.5.28
 #usr/share/info/libidn-components.png
 #usr/share/info/libidn.info
 #usr/share/man/man1/idn.1
+#usr/share/man/man3/idn_free.3
 #usr/share/man/man3/idna_strerror.3
 #usr/share/man/man3/idna_to_ascii_4i.3
 #usr/share/man/man3/idna_to_ascii_4z.3
