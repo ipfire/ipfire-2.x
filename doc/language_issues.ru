@@ -237,10 +237,6 @@ WARNING: translation string unused: generatepolicy
 WARNING: translation string unused: generatereport
 WARNING: translation string unused: genkey
 WARNING: translation string unused: green interface
-WARNING: translation string unused: guardian alertfile
-WARNING: translation string unused: guardian ignorefile
-WARNING: translation string unused: guardian interface
-WARNING: translation string unused: guardian timelimit
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
@@ -938,6 +934,7 @@ WARNING: untranslated string: guardian blocked hosts
 WARNING: untranslated string: guardian blocking of this address is not allowed
 WARNING: untranslated string: guardian blocktime
 WARNING: untranslated string: guardian common settings
+WARNING: untranslated string: guardian configuration
 WARNING: untranslated string: guardian daemon
 WARNING: untranslated string: guardian empty input
 WARNING: untranslated string: guardian enabled
@@ -948,8 +945,19 @@ WARNING: untranslated string: guardian invalid blockcount
 WARNING: untranslated string: guardian invalid blocktime
 WARNING: untranslated string: guardian invalid logfile
 WARNING: untranslated string: guardian logfacility
+WARNING: untranslated string: guardian logfile
 WARNING: untranslated string: guardian loglevel
+WARNING: untranslated string: guardian loglevel_debug
+WARNING: untranslated string: guardian loglevel_info
+WARNING: untranslated string: guardian loglevel_off
+WARNING: untranslated string: guardian logtarget_console
+WARNING: untranslated string: guardian logtarget_file
+WARNING: untranslated string: guardian logtarget_syslog
 WARNING: untranslated string: guardian no entries
+WARNING: untranslated string: guardian priolevel_high
+WARNING: untranslated string: guardian priolevel_low
+WARNING: untranslated string: guardian priolevel_medium
+WARNING: untranslated string: guardian priolevel_very_low
 WARNING: untranslated string: guardian priority level
 WARNING: untranslated string: guardian service
 WARNING: untranslated string: guardian watch snort alertfile
