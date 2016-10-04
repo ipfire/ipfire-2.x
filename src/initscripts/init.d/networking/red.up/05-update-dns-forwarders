@@ -3,10 +3,11 @@
 # If network has not fully been brought up here, we start unbound
 # so that all following scripts can rely on DNS resolution
 
-# Update DNS forwarders if unbound is running
-if pgrep -q unbound; then
-	exec /etc/init.d/unbound update-forwarders
+pidof unbound > /dev/null
+if [ "${?}" = "0" ]; then
+	# unbound is run so update the forwarders
+	/etc/init.d/unbound update-forwarders
+else
+	# Start unbound if it is not running, yet
+	/etc/init.d/unbound start
 fi
-
-# Start unbound if it is not running, yet
-exec /etc/init.d/unbound start
