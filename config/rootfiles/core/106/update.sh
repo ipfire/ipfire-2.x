@@ -81,6 +81,9 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
 fi
 
+# Restart DHCP server to import leases into unbound
+/etc/init.d/dhcp restart
+
 # This update need a reboot...
 touch /var/run/need_reboot
 
