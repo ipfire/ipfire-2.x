@@ -112,7 +112,7 @@ update_forwarders() {
 
 own_hostname() {
 	local hostname=$(hostname -f)
-	# 1.1.1.1 is reserved for green only, skip this
+	# 1.1.1.1 is reserved for unused green, skip this
 	if [ -n "${GREEN_ADDRESS}" -a "${GREEN_ADDRESS}" != "1.1.1.1" ]; then
 		unbound-control -q local_data "${hostname} ${LOCAL_TTL} IN A ${GREEN_ADDRESS}"
 	fi
@@ -148,7 +148,8 @@ write_interfaces_conf() {
 	(
 		config_header
 
-		if [ -n "${GREEN_ADDRESS}" ]; then
+		# 1.1.1.1 is reserved for unused green
+		if [ -n "${GREEN_ADDRESS}" -a "${GREEN_ADDRESS}" != "1.1.1.1" ]; then
 			echo "# GREEN"
 			echo "interface: ${GREEN_ADDRESS}"
 			echo "access-control: $(cidr ${GREEN_NETADDRESS} ${GREEN_NETMASK}) allow"
