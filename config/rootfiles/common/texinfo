@@ -1,5 +1,4 @@
 #usr/bin/info
-#usr/bin/infokey
 #usr/bin/install-info
 #usr/bin/makeinfo
 #usr/bin/pdftexi2dvi
@@ -8,14 +7,16 @@
 #usr/bin/texi2dvi
 #usr/bin/texi2pdf
 #usr/bin/texindex
+#usr/lib/texinfo
+#usr/lib/texinfo/XSParagraph.a
+#usr/lib/texinfo/XSParagraph.la
+#usr/lib/texinfo/XSParagraph.so
 #usr/share/info/info-stnd.info
-#usr/share/info/info.info
 #usr/share/info/texinfo.info
 #usr/share/info/texinfo.info-1
 #usr/share/info/texinfo.info-2
 #usr/share/info/texinfo.info-3
 #usr/share/man/man1/info.1
-#usr/share/man/man1/infokey.1
 #usr/share/man/man1/install-info.1
 #usr/share/man/man1/makeinfo.1
 #usr/share/man/man1/pdftexi2dvi.1
@@ -46,6 +47,7 @@
 #usr/share/texinfo/Texinfo/Convert/Line.pm
 #usr/share/texinfo/Texinfo/Convert/NodeNameNormalization.pm
 #usr/share/texinfo/Texinfo/Convert/Paragraph.pm
+#usr/share/texinfo/Texinfo/Convert/ParagraphNonXS.pm
 #usr/share/texinfo/Texinfo/Convert/PlainTexinfo.pm
 #usr/share/texinfo/Texinfo/Convert/Plaintext.pm
 #usr/share/texinfo/Texinfo/Convert/Texinfo.pm
@@ -55,8 +57,11 @@
 #usr/share/texinfo/Texinfo/Convert/TextContent.pm
 #usr/share/texinfo/Texinfo/Convert/UnFilled.pm
 #usr/share/texinfo/Texinfo/Convert/Unicode.pm
+#usr/share/texinfo/Texinfo/Convert/XSParagraph
+#usr/share/texinfo/Texinfo/Convert/XSParagraph/TestXS.pm
 #usr/share/texinfo/Texinfo/Documentlanguages.pm
 #usr/share/texinfo/Texinfo/Encoding.pm
+#usr/share/texinfo/Texinfo/ModulePath.pm
 #usr/share/texinfo/Texinfo/Parser.pm
 #usr/share/texinfo/Texinfo/Report.pm
 #usr/share/texinfo/Texinfo/Structuring.pm
@@ -408,4 +413,5 @@
 #usr/share/texinfo/lib/libintl-perl/lib/Locale/TextDomain.pm
 #usr/share/texinfo/lib/libintl-perl/lib/Locale/Util.pm
 #usr/share/texinfo/lib/libintl-perl/lib/Locale/gettext_pp.pm
+#usr/share/texinfo/texindex.awk
 #usr/share/texinfo/texinfo.dtd
