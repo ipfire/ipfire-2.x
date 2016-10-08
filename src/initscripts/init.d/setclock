@@ -30,16 +30,20 @@ case ${1} in
 		fi
 
 		hwclock --hctosys ${CLOCKPARAMS} &>/dev/null
-		if [ ! ${?} == 0 ]; then
-			if [ -s /var/log/messages ]; then
-				boot_mesg -n "No RTC found, set time to last log accesstime ... "
-				DATE=`stat --format "%y" /var/log/messages | cut -d" " -f1`
-				TIME=`stat --format "%y" /var/log/messages | sed -e "s|\..*||g" | cut -d" " -f2`
-				date -s $DATE > /dev/null
-				date -s $TIME
+		date
+
+		if [ -s /var/log/messages ]; then
+			LOGTIMESTAMP=`stat --format "%y" /var/log/messages`
+			LOGTIME=`date +%s -d "$LOGTIMESTAMP"`
+			SYSTIME=`date +%s`
+			if [ $SYSTIME -lt $LOGTIME ]; then
+				boot_mesg "Warning! clock runs later than last log access. Check battery/rtc!"
+				date -s "$LOGTIMESTAMP"
+				echo_warning;
+			else
+				echo_ok;
 			fi
 		fi
-		evaluate_retval
 		;;
 
 	stop)
