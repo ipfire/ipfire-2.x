@@ -150,8 +150,8 @@ END
 	print "</tr>\n";
 
 	print "<tr>\n";
-	print "   <td width='0'></td>\n   <td width='35'></td>\n   <td width='35'></td>\n";
-	print "   <td width='130'></td>\n   <td width='30'></td>\n";
+	print "   <td width='0'></td>\n   <td width='60'></td>\n   <td width='60'></td>\n";
+	print "   <td width='150'></td>\n   <td width='30'></td>\n";
 	print "   <td width='30'></td>\n   <td width='40'></td>\n";
 	print "   <td width='40'></td>\n   <td width='95'></td>\n";
 	print "   <td width='95'></td>\n   <td width='260'></td>\n";
@@ -272,8 +272,8 @@ END
 	print "</tr>\n";
 
 	print "<tr>\n";
-	print "   <td width='0'></td>\n   <td width='35'></td>\n   <td width='35'></td>\n";
-	print "   <td width='130'></td>\n   <td width='30'></td>\n";
+	print "   <td width='0'></td>\n   <td width='60'></td>\n   <td width='60'></td>\n";
+	print "   <td width='150'></td>\n   <td width='30'></td>\n";
 	print "   <td width='30'></td>\n   <td width='40'></td>\n";
 	print "   <td width='40'></td>\n   <td width='95'></td>\n";
 	print "   <td width='95'></td>\n   <td width='260'></td>\n";
@@ -399,8 +399,8 @@ END
 	print "</tr>\n";
 
 	print "<tr>\n";
-	print "   <td width='0'></td>\n   <td width='35'></td>\n   <td width='35'></td>\n";
-	print "   <td width='130'></td>\n   <td width='30'></td>\n";
+	print "   <td width='0'></td>\n   <td width='60'></td>\n   <td width='60'></td>\n";
+	print "   <td width='150'></td>\n   <td width='30'></td>\n";
 	print "   <td width='30'></td>\n   <td width='40'></td>\n";
 	print "   <td width='40'></td>\n   <td width='95'></td>\n";
 	print "   <td width='95'></td>\n   <td width='260'></td>\n";
