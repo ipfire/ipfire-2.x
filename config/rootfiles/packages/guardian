@@ -16,6 +16,15 @@ usr/lib/perl5/site_perl/5.12.3/Guardian/Logger.pm
 usr/lib/perl5/site_perl/5.12.3/Guardian/Parser.pm
 usr/lib/perl5/site_perl/5.12.3/Guardian/Socket.pm
 usr/sbin/guardian
+var/ipfire/addon-lang/guardian.de.pl
+var/ipfire/addon-lang/guardian.en.pl
+var/ipfire/addon-lang/guardian.es.pl
+var/ipfire/addon-lang/guardian.fr.pl
+var/ipfire/addon-lang/guardian.it.pl
+var/ipfire/addon-lang/guardian.nl.pl
+var/ipfire/addon-lang/guardian.pl.pl
+var/ipfire/addon-lang/guardian.ru.pl
+var/ipfire/addon-lang/guardian.tr.pl
 var/ipfire/backup/addons/includes/guardian
 var/ipfire/guardian
 var/ipfire/menu.d/EX-guardian.menu
