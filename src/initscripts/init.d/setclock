@@ -32,7 +32,7 @@ case ${1} in
 		hwclock --hctosys ${CLOCKPARAMS} &>/dev/null
 		date
 
-		if [ -s /var/log/messages ]; then
+		if [ -e /var/log/messages ]; then
 			LOGTIMESTAMP=`stat --format "%y" /var/log/messages`
 			LOGTIME=`date +%s -d "$LOGTIMESTAMP"`
 			SYSTIME=`date +%s`
