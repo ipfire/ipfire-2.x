@@ -227,11 +227,16 @@ class Lease(object):
 	def hostname(self):
 		hostname = self._properties.get("client-hostname")
 
-		# Remove any ""
-		if hostname:
-			hostname = hostname.replace("\"", "")
+		if hostname is None:
+			return
 
-		return hostname
+		# Remove any ""
+		hostname = hostname.replace("\"", "")
+
+		# Only return valid hostnames
+		m = re.match(r"^[A-Z0-9\-]{1,63}$", hostname, re.I)
+		if m:
+			return hostname
 
 	@property
 	def domain(self):
@@ -279,7 +284,8 @@ class Lease(object):
 
 	@property
 	def fqdn(self):
-		return "%s.%s" % (self.hostname, self.domain)
+		if self.hostname:
+			return "%s.%s" % (self.hostname, self.domain)
 
 	@staticmethod
 	def _parse_time(s):
@@ -310,6 +316,10 @@ class Lease(object):
 
 	@property
 	def rrset(self):
+		# If the lease does not have a valid FQDN, we cannot create any RRs
+		if self.fqdn is None:
+			return []
+
 		return [
 			# Forward record
 			(self.fqdn, "%s" % LOCAL_TTL, "IN A", self.ipaddr),
