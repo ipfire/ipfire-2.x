@@ -136,6 +136,7 @@ usr/share/mc/syntax/changelog.syntax
 usr/share/mc/syntax/cmake.syntax
 usr/share/mc/syntax/cs.syntax
 usr/share/mc/syntax/css.syntax
+usr/share/mc/syntax/cuda.syntax
 usr/share/mc/syntax/cxx.syntax
 usr/share/mc/syntax/cython.syntax
 usr/share/mc/syntax/d.syntax
@@ -152,6 +153,7 @@ usr/share/mc/syntax/erlang.syntax
 usr/share/mc/syntax/f90.syntax
 usr/share/mc/syntax/filehighlight.syntax
 usr/share/mc/syntax/fortran.syntax
+usr/share/mc/syntax/glsl.syntax
 usr/share/mc/syntax/go.syntax
 usr/share/mc/syntax/haskell.syntax
 usr/share/mc/syntax/html.syntax
