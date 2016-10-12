@@ -148,9 +148,6 @@ write_interfaces_conf() {
 	(
 		config_header
 
-		echo "# bound to all interfaces"
-		echo "interface: 0.0.0.0"
-
 		# 1.1.1.1 is reserved for unused green
 		if [ -n "${GREEN_ADDRESS}" -a "${GREEN_ADDRESS}" != "1.1.1.1" ]; then
 			echo "# allow access from GREEN"
