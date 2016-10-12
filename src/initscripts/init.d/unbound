@@ -148,16 +148,17 @@ write_interfaces_conf() {
 	(
 		config_header
 
+		echo "# bound to all interfaces"
+		echo "interface: 0.0.0.0"
+
 		# 1.1.1.1 is reserved for unused green
 		if [ -n "${GREEN_ADDRESS}" -a "${GREEN_ADDRESS}" != "1.1.1.1" ]; then
-			echo "# GREEN"
-			echo "interface: ${GREEN_ADDRESS}"
+			echo "# allow access from GREEN"
 			echo "access-control: $(cidr ${GREEN_NETADDRESS} ${GREEN_NETMASK}) allow"
 		fi
 
 		if [ -n "${BLUE_ADDRESS}" ]; then
-			echo "# BLUE"
-			echo "interface: ${BLUE_ADDRESS}"
+			echo "# allow access from  BLUE"
 			echo "access-control: $(cidr ${BLUE_NETADDRESS} ${BLUE_NETMASK}) allow"
 		fi
 	) > /etc/unbound/interfaces.conf
