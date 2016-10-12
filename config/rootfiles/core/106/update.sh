@@ -55,6 +55,9 @@ rm -vf \
 	/etc/rc.d/init.d/networking/red.up/05-RS-dnsmasq \
 	/usr/sbin/dnsmasq
 
+# delete unbound link after network start
+rm -vf /etc/rc.d/rc3.d/S21unbound
+
 # Delete old net-traffic stuff
 rm -vrf \
 	/etc/rc.d/helper/writeipac.pl \
