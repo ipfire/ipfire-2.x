@@ -113,6 +113,8 @@ int handlenetworking(void)
 
 			runcommandwithstatus("/etc/rc.d/init.d/network start",
 				_("Networking"), _("Restarting network..."), NULL);
+			runcommandwithstatus("/etc/rc.d/init.d/unbound restart",
+				_("Networking"), _("Restarting unbound..."), NULL);
 		}
 	} else {
 		rename_nics();
