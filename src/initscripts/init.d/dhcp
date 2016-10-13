@@ -58,7 +58,6 @@ case "$1" in
 		    killall -w -s KILL /usr/sbin/dhcpd > /dev/null 2>&1
 		    rm -f /var/run/dhcpd.pid > /dev/null 2>&1
 		    echo_ok;
-		    exit 0
 		fi
 
 		boot_mesg "Stopping Unbound DHCP Leases Bridge..."
