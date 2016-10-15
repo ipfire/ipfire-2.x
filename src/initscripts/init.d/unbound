@@ -138,6 +138,9 @@ update_hosts() {
 
 		unbound-control -q local_data "${fqdn} ${LOCAL_TTL} IN A ${address}"
 
+		# Skip reverse resolution if the address equals the GREEN address
+		[ "${address}" = "${GREEN_ADDRESS}" ] && continue
+
 		# Add RDNS
 		address=$(ip_address_revptr ${address})
 		unbound-control -q local_data "${address} ${LOCAL_TTL} IN PTR ${fqdn}"
