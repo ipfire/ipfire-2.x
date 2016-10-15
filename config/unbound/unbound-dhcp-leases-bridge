@@ -64,9 +64,10 @@ def reverse_pointer_to_ip_address(rr):
 	return ".".join(parts)
 
 class UnboundDHCPLeasesBridge(object):
-	def __init__(self, dhcp_leases_file, fix_leases_file, unbound_leases_file):
+	def __init__(self, dhcp_leases_file, fix_leases_file, unbound_leases_file, hosts_file):
 		self.leases_file = dhcp_leases_file
 		self.fix_leases_file = fix_leases_file
+		self.hosts_file = hosts_file
 
 		self.unbound = UnboundConfigWriter(unbound_leases_file)
 		self.running = False
@@ -75,10 +76,15 @@ class UnboundDHCPLeasesBridge(object):
 		log.info("Unbound DHCP Leases Bridge started on %s" % self.leases_file)
 		self.running = True
 
-		# Initially read leases file
+		# Initial setup
+		self.hosts = self.read_static_hosts()
 		self.update_dhcp_leases()
 
-		i = inotify.adapters.Inotify([self.leases_file, self.fix_leases_file])
+		i = inotify.adapters.Inotify([
+			self.leases_file,
+			self.fix_leases_file,
+			self.hosts_file,
+		])
 
 		for event in i.event_gen():
 			# End if we are requested to terminate
@@ -92,6 +98,10 @@ class UnboundDHCPLeasesBridge(object):
 
 			# Update leases after leases file has been modified
 			if "IN_MODIFY" in type_names:
+				# Reload hosts
+				if watch_path == self.hosts_file:
+					self.hosts = self.read_static_hosts()
+
 				self.update_dhcp_leases()
 
 			# If the file is deleted, we re-add the watcher
@@ -110,6 +120,44 @@ class UnboundDHCPLeasesBridge(object):
 			leases.append(lease)
 
 		self.unbound.update_dhcp_leases(leases)
+
+	def read_static_hosts(self):
+		log.info("Reading static hosts from %s" % self.hosts_file)
+
+		hosts = {}
+		with open(self.hosts_file) as f:
+			for line in f.readlines():
+				line = line.rstrip()
+
+				try:
+					enabled, ipaddr, hostname, domainname = line.split(",")
+				except:
+					log.warning("Could not parse line: %s" % line)
+					continue
+
+				# Skip any disabled entries
+				if not enabled == "on":
+					continue
+
+				if hostname and domainname:
+					fqdn = "%s.%s" % (hostname, domainname)
+				elif hostname:
+					fqdn = hostname
+				elif domainname:
+					fqdn = domainname
+
+				try:
+					hosts[fqdn].append(ipaddr)
+					hosts[fqdn].sort()
+				except KeyError:
+					hosts[fqdn] = [ipaddr,]
+
+		# Dump everything in the logs
+		log.debug("Static hosts:")
+		for hostname, addresses in hosts.items():
+			log.debug("  %-20s : %s" % (hostname, ", ".join(addresses)))
+
+		return hosts
 
 	def terminate(self):
 		self.running = False
@@ -501,6 +549,8 @@ if __name__ == "__main__":
 		metavar="PATH", help="Path to the unbound configuration file")
 	parser.add_argument("--fix-leases", default="/var/ipfire/dhcp/fixleases",
 		metavar="PATH", help="Path to the fix leases file")
+	parser.add_argument("--hosts", default="/var/ipfire/main/hosts",
+		metavar="PATH", help="Path to static hosts file")
 
 	# Parse command line arguments
 	args = parser.parse_args()
@@ -515,7 +565,8 @@ if __name__ == "__main__":
 
 	setup_logging(loglevel)
 
-	bridge = UnboundDHCPLeasesBridge(args.dhcp_leases, args.fix_leases, args.unbound_leases)
+	bridge = UnboundDHCPLeasesBridge(args.dhcp_leases, args.fix_leases,
+		args.unbound_leases, args.hosts)
 
 	ctx = daemon.DaemonContext(detach_process=args.daemon)
 	ctx.signal_map = {
