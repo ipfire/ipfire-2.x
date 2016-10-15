@@ -486,23 +486,37 @@ class UnboundConfigWriter(object):
 		if not new_leases and not removed_leases:
 			return
 
-		# Update cache
-		self._cached_leases = leases
-
 		# Write out all leases
 		self.write_dhcp_leases(leases)
 
 		# Update unbound about changes
 		for l in removed_leases:
-			for name, ttl, type, content in l.rrset:
-				log.debug("Removing records for %s" % name)
-				self._control("local_data_remove", name)
+			try:
+				for name, ttl, type, content in l.rrset:
+					log.debug("Removing records for %s" % name)
+					self._control("local_data_remove", name)
+
+			# If the lease cannot be removed we will try the next one
+			except:
+				continue
+
+			# If the removal was successful, we will remove it from the cache
+			else:
+				self._cached_leases.remove(l)
 
 		for l in new_leases:
-			for rr in l.rrset:
-				log.debug("Adding new record %s" % " ".join(rr))
-				self._control("local_data", *rr)
+			try:
+				for rr in l.rrset:
+					log.debug("Adding new record %s" % " ".join(rr))
+					self._control("local_data", *rr)
 
+			# If the lease cannot be added we will try the next one
+			except:
+				continue
+
+			# Add lease to cache when successfully added
+			else:
+				self._cached_leases.append(l)
 
 	def write_dhcp_leases(self, leases):
 		with open(self.path, "w") as f:
@@ -515,12 +529,14 @@ class UnboundConfigWriter(object):
 		command.extend(args)
 
 		try:
-			return subprocess.check_output(command)
+			subprocess.check_output(command)
 
 		# Log any errors
 		except subprocess.CalledProcessError as e:
 			log.critical("Could not run %s, error code: %s: %s" % (
 				" ".join(command), e.returncode, e.output))
+
+			raise
 
 
 if __name__ == "__main__":
