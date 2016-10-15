@@ -114,6 +114,10 @@ class UnboundDHCPLeasesBridge(object):
 		leases = []
 
 		for lease in DHCPLeases(self.leases_file):
+			# Don't bother with any leases that don't have a hostname
+			if not lease.fqdn:
+				continue
+
 			leases.append(lease)
 
 		for lease in FixLeases(self.fix_leases_file):
