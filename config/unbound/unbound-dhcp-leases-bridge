@@ -123,6 +123,23 @@ class UnboundDHCPLeasesBridge(object):
 		for lease in FixLeases(self.fix_leases_file):
 			leases.append(lease)
 
+		# Skip any leases that also are a static host
+		leases = [l for l in leases if not l.fqdn in self.hosts]
+
+		# Remove any inactive or expired leases
+		leases = [l for l in leases if l.active and not l.expired]
+
+		# Dump leases
+		if leases:
+			log.debug("DHCP Leases:")
+			for lease in leases:
+				log.debug("  %s:" % lease.fqdn)
+				log.debug("    State: %s" % lease.binding_state)
+				log.debug("    Start: %s" % lease.time_starts)
+				log.debug("    End  : %s" % lease.time_ends)
+				if lease.expired:
+					log.debug("    Expired")
+
 		self.unbound.update_dhcp_leases(leases)
 
 	def read_static_hosts(self):
@@ -455,63 +472,31 @@ class UnboundConfigWriter(object):
 	def __init__(self, path):
 		self.path = path
 
-	@property
-	def existing_leases(self):
-		local_data = self._control("list_local_data")
-		ret = {}
-
-		for line in local_data.splitlines():
-			try:
-				hostname, ttl, x, record_type, content = line.split("\t")
-			except ValueError:
-				continue
-
-			# Ignore everything that is not A or PTR
-			if not record_type in ("A", "PTR"):
-				continue
-
-			if hostname.endswith("."):
-				hostname = hostname[:-1]
-
-			if content.endswith("."):
-				content = content[:-1]
-
-			if record_type == "A":
-				ret[hostname] = content
-			elif record_type == "PTR":
-				ret[content] = reverse_pointer_to_ip_address(hostname)
-
-		return ret
+		self._cached_leases = []
 
 	def update_dhcp_leases(self, leases):
-		# Cache all expired or inactive leases
-		expired_leases = [l for l in leases if l.expired or not l.active]
-
 		# Find any leases that have expired or do not exist any more
 		# but are still in the unbound local data
-		removed_leases = []
-		for fqdn, address in self.existing_leases.items():
-			if fqdn in (l.fqdn for l in expired_leases):
-				removed_leases += [fqdn, address]
-
-		# Strip all non-active or expired leases
-		leases = [l for l in leases if l.active and not l.expired]
+		removed_leases = [l for l in self._cached_leases if not l in leases]
 
 		# Find any leases that have been added
-		new_leases = [l for l in leases
-			if l.fqdn not in self.existing_leases]
+		new_leases = [l for l in leases if l not in self._cached_leases]
 
 		# End here if nothing has changed
 		if not new_leases and not removed_leases:
 			return
 
+		# Update cache
+		self._cached_leases = leases
+
 		# Write out all leases
 		self.write_dhcp_leases(leases)
 
 		# Update unbound about changes
-		for hostname in removed_leases:
-			log.debug("Removing all records for %s" % hostname)
-			self._control("local_data_remove", hostname)
+		for l in removed_leases:
+			for name, ttl, type, content in l.rrset:
+				log.debug("Removing records for %s" % name)
+				self._control("local_data_remove", name)
 
 		for l in new_leases:
 			for rr in l.rrset:
