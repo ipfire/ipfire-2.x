@@ -222,7 +222,7 @@ class DHCPLeases(object):
 				# exists in the list of known leases. If so replace
 				# if with the most recent lease
 				for i, l in enumerate(leases):
-					if l.hwaddr == lease.hwaddr:
+					if l.ipaddr == lease.ipaddr:
 						leases[i] = max(lease, l)
 						break
 
