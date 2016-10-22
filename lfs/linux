@@ -37,7 +37,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 72
+PAK_VER    = 73
 DEPS	   = ""
 
 KERNEL_ARCH = $(MACHINE)
@@ -205,6 +205,9 @@ ifneq "$(KCFG)" "-headers"
 	# fix AES-NI 192 and 256 bits / grsec is needed for this patch version
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0100-crypto-aesni-Add-support-for-192-256-bit-keys-to-AES.patch
 endif
+
+	# fix CVE-2016-5195 (Dirty COW)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0110-mm-remove-gup_flags-FOLL_WRITE-games-from-__get_user.patch
 
 	# fix empty symbol crc's
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-genksyms_fix_typeof_handling.patch
