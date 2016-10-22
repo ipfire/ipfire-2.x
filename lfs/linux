@@ -201,6 +201,11 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0025-Drivers-hv-vmbus-Support-per-channel-driver-state.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-hyperv_Mark_the_Hyoer-V_TSC_as_unstable.patch
 
+ifneq "$(KCFG)" "-headers"
+	# fix AES-NI 192 and 256 bits / grsec is needed for this patch version
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0100-crypto-aesni-Add-support-for-192-256-bit-keys-to-AES.patch
+endif
+
 	# fix empty symbol crc's
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-genksyms_fix_typeof_handling.patch
 
