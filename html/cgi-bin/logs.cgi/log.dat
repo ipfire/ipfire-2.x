@@ -49,50 +49,54 @@ $cgiparams{'ACTION'} = '';
 $cgiparams{'SECTION'} = 'ipfire';
 
 my %sections = (
-        'ipfire' => '(ipfire: )',
-        'red' => '(red:|pppd\[.*\]: |chat\[.*\]|pppoe\[.*\]|pptp\[.*\]|pppoa\[.*\]|pppoa3\[.*\]|pppoeci\[.*\]|ipppd|ipppd\[.*\]|kernel: ippp\d|kernel: isdn.*|ibod\[.*\]|dhcpcd\[.*\]|modem_run\[.*\])',
-        'ddns' => '(ddns\[\d+\]:)',
-        'dns' => '(dnsmasq\[.*\]: |unbound\[.*\]: )',
-        'dma' => '(dma\[.*\]: )',
-        'dhcp' => '(dhcpd: )',
+        'auth' => '(\w+\(pam_unix\)\[.*\]: )',
         'clamav' => '(clamd\[.*\]: |freshclam\[.*\]: )',
         'collectd' => '(collectd\[.*\]: )',
         'cron' => '(fcron\[.*\]: )',
-        'ntp' => '(ntpd(?:ate)?\[.*\]: )',
-        'ssh' => '(sshd(?:\(.*\))?\[.*\]: )',
-        'auth' => '(\w+\(pam_unix\)\[.*\]: )',
-        'kernel' => '(kernel: (?!DROP_))',
+        'ddns' => '(ddns\[\d+\]:)',
+        'dhcp' => '(dhcpd: )',
+        'dma' => '(dma\[.*\]: )',
+        'dnsmasq' => '(dnsmasq\[.*\]: )',
+        'unbound' => '(unbound: \[.*:.*\])(.*:.*$)',
+        'guardian' => '(guardian\[.*\]: )',
+        'ipfire' => '(ipfire: )',
         'ipsec' => '(ipsec_[\w_]+: |pluto\[.*\]: |charon: |vpnwatch: )',
+        'kernel' => '(kernel: (?!DROP_))',
+        'ntp' => '(ntpd(?:ate)?\[.*\]: )',
         'openvpn' => '(openvpnserver\[.*\]: |.*n2n\[.*\]: )',
-        'pakfire' => '(pakfire:) ',
-        'wireless' => '(hostapd:|kernel: ath.*:|kernel: wifi[0-9]:) ',
-        'squid' => '(squid\[.*\]: |squid: )',
+        'pakfire' => '(pakfire:)',
+        'red' => '(red:|pppd\[.*\]: |chat\[.*\]|pppoe\[.*\]|pptp\[.*\]|pppoa\[.*\]|pppoa3\[.*\]|pppoeci\[.*\]|ipppd|ipppd\[.*\]|kernel: ippp\d|kernel: isdn.*|ibod\[.*\]|dhcpcd\[.*\]|modem_run\[.*\])',
         'snort' => '(snort\[.*\]: )',
-        'guardian' => '(guardian\[.*\]: )'
+        'squid' => '(squid\[.*\]: |squid: )',
+        'ssh' => '(sshd(?:\(.*\))?\[.*\]: )',
+        'urlfilter bl' => '(installpackage\[urlfilter\]: )',
+        'wireless' => '(hostapd:|kernel: ath.*:|kernel: wifi[0-9]:)'
 	 );
 
 # Translations for the %sections array.
 my %trsections = (
-        'ipfire' => 'IPFire',
-        'red' => 'RED',
-        'ddns' => "$Lang::tr{'dynamic dns'}",
-        'dns' => 'DNS',
-        'dma' => 'Mail',
-        'dhcp' => "$Lang::tr{'dhcp server'}",
-        'cron' => 'Cron',
-        'collectd' => 'Collectd',
-        'clamav' => 'ClamAV',
-        'ntp' => 'NTP',
-        'ssh' => 'SSH',
         'auth' => "$Lang::tr{'loginlogout'}",
-        'kernel' => "$Lang::tr{'kernel'}",
+        'clamav' => 'ClamAV',
+        'collectd' => 'Collectd',
+        'cron' => 'Cron',
+        'ddns' => "$Lang::tr{'dynamic dns'}",
+        'dhcp' => "$Lang::tr{'dhcp server'}",
+        'dma' => 'Mail',
+        'dnsmasq' => 'DNS: Dnsmasq',
+        'unbound' => 'DNS: Unbound',
+        'guardian' => "$Lang::tr{'guardian'}",
+        'ipfire' => 'IPFire',
         'ipsec' => 'IPSec',
+        'kernel' => "$Lang::tr{'kernel'}",
+        'ntp' => 'NTP',
         'openvpn' => 'OpenVPN',
         'pakfire' => 'Pakfire',
-        'wireless' => 'Wireless',
-        'squid' => "$Lang::tr{'web proxy'}",
+        'red' => 'RED',
         'snort' => "$Lang::tr{'intrusion detection'}",
-        'guardian' => "$Lang::tr{'guardian'}"
+        'squid' => "$Lang::tr{'web proxy'}",
+        'ssh' => 'SSH',
+        'urlfilter bl' => 'URLFilter Blacklist',
+        'wireless' => 'Wireless'
 	);
 
 
@@ -212,7 +216,7 @@ while ($gzindex >=0 && $loop) {
 	    READ:while (<FILE>) {
 		my $line = $_;
 	 	if ($line =~ /^${monthstr} ${daystr} ..:..:.. [\w\-]+ ${section}(.*)/) {
-		    # when standart viewing, just keep in memory the correct slice
+		    # when standard viewing, just keep in memory the correct slice
 		    # it starts a '$start' and size is $viewport
 		    # If export, then keep all lines...
 		    if ($cgiparams{'ACTION'} eq $Lang::tr{'export'}){
@@ -223,7 +227,7 @@ while ($gzindex >=0 && $loop) {
 			    if (@log > $Header::viewsize) {
 			        shift (@log);
 			    }
-			#} else { dont do this optimisation, need to count lines !
+			#} else { don't do this optimisation, need to count lines !
 			    #    $datetime = $maxtime; # we have read viewsize lines, stop main loop
 			    #    last READ;           # exit read file
 			}
@@ -288,7 +292,7 @@ print <<END
 	<select name='SECTION'>
 END
 ;
-foreach $section (keys %sections) {
+foreach $section (sort {$trsections{$a} cmp $trsections{$b}} keys %sections) {
 	print "\t<option ";
 	if ($section eq $cgiparams{'SECTION'}) {
 		print "selected='selected' "; }
@@ -369,8 +373,8 @@ print <<END
 <table width='100%' class='tbl'>
 <tr>
 	<th width='10%' align='center' class='boldbase'><b>$Lang::tr{'time'}</b></th>
-	<th width='10%' align='center' class='boldbase'><b>$Lang::tr{'section'}</b></th>
-	<th width='80%'>&nbsp;</th>
+	<th width='15%' align='center' class='boldbase'><b>$Lang::tr{'section'}</b></th>
+	<th width='75%'>&nbsp;</th>
 </tr>
 END
 ;
