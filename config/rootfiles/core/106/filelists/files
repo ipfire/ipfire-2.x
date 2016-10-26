@@ -22,4 +22,5 @@ srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/traffic.cgi
 var/ipfire/backup/include
