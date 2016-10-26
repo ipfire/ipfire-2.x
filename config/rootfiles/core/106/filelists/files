@@ -24,3 +24,4 @@ srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
 var/ipfire/backup/include
+var/ipfire/langs
