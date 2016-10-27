@@ -1,0 +1,5 @@
+etc/system-release
+etc/issue
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+srv/web/ipfire/cgi-bin/traffic.cgi
+var/ipfire/langs
