@@ -1,0 +1,38 @@
+------------------------------------------------------------
+revno: 14102
+revision-id: squid3@treenet.co.nz-20161025082530-do632qnr9bwyk5et
+parent: squid3@treenet.co.nz-20161025082349-4gds2nic8qcahkem
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=4620
+author: Takahiro Kambe <taca@back-street.net>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Tue 2016-10-25 21:25:30 +1300
+message:
+  Bug 4620: NetBSD build error with --enable-ipf-transparent
+  
+  On NetBSD sys/param.h must be included before netinet/ip_compat.h
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161025082530-do632qnr9bwyk5et
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: eedfc8764a631aa008fd4aba589ca08ee161c3a5
+# timestamp: 2016-10-25 08:28:35 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161025082349-\
+#   4gds2nic8qcahkem
+# 
+# Begin patch
+=== modified file 'src/ip/Intercept.cc'
+--- src/ip/Intercept.cc	2016-10-09 00:14:14 +0000
++++ src/ip/Intercept.cc	2016-10-25 08:25:30 +0000
+@@ -25,6 +25,9 @@
+ #define IPFILTER_VERSION        5000004
+ #endif
+ 
++#if HAVE_SYS_PARAM_H
++#include <sys/param.h>
++#endif
+ #if HAVE_SYS_IOCCOM_H
+ #include <sys/ioccom.h>
+ #endif
+

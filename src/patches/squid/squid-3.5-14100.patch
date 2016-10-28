@@ -1,0 +1,39 @@
+------------------------------------------------------------
+revno: 14100
+revision-id: squid3@treenet.co.nz-20161025081949-3sxzd0n4snmadlke
+parent: squid3@treenet.co.nz-20161015042024-jagzafukd2t6gcr0
+author: Christos Tsantilas <chtsanti@users.sourceforge.net>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Tue 2016-10-25 21:19:49 +1300
+message:
+  Fix regression bug introduced by r14089.
+    
+  Squid crashed because HttpMsg::body_pipe was used without check that it
+  was initialized. The message lacks body pipe when it has no body or
+  empty body.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161025081949-3sxzd0n4snmadlke
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 50468130801fc3ebf75129c103bcfe4be9b6d4b7
+# timestamp: 2016-10-25 08:28:30 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161015042024-\
+#   jagzafukd2t6gcr0
+# 
+# Begin patch
+=== modified file 'src/adaptation/icap/ModXact.cc'
+--- src/adaptation/icap/ModXact.cc	2016-09-16 18:50:04 +0000
++++ src/adaptation/icap/ModXact.cc	2016-10-25 08:19:49 +0000
+@@ -1303,7 +1303,8 @@
+         virgin_msg = virgin_request_;
+     assert(virgin_msg != virgin.cause);
+     al.http.clientRequestSz.header = virgin_msg->hdr_sz;
+-    al.http.clientRequestSz.payloadData = virgin_msg->body_pipe->producedSize();
++    if (virgin_msg->body_pipe != NULL)
++        al.http.clientRequestSz.payloadData = virgin_msg->body_pipe->producedSize();
+ 
+     // leave al.icap.bodyBytesRead negative if no body
+     if (replyHttpHeaderSize >= 0 || replyHttpBodySize >= 0) {
+

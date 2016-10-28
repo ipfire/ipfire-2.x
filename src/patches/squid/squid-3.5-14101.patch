@@ -1,0 +1,59 @@
+------------------------------------------------------------
+revno: 14101
+revision-id: squid3@treenet.co.nz-20161025082349-4gds2nic8qcahkem
+parent: squid3@treenet.co.nz-20161025081949-3sxzd0n4snmadlke
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Tue 2016-10-25 21:23:49 +1300
+message:
+  Fix external_acl_type default children documentations
+  
+  The max children has always been 5, not 20.
+  
+  Also, make mgr:config report dumper actually hide only the real default
+  values. (sync with helper/ChildConfig.cc defaults)
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161025082349-4gds2nic8qcahkem
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 02234eff0589032ea31d911c20f792617eeb18a9
+# timestamp: 2016-10-25 08:28:32 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161025081949-\
+#   3sxzd0n4snmadlke
+# 
+# Begin patch
+=== modified file 'src/cf.data.pre'
+--- src/cf.data.pre	2016-09-23 15:28:42 +0000
++++ src/cf.data.pre	2016-10-25 08:23:49 +0000
+@@ -678,7 +678,7 @@
+ 
+ 	  children-max=n
+ 			Maximum number of acl helper processes spawned to service
+-			external acl lookups of this type. (default 20)
++			external acl lookups of this type. (default 5)
+ 
+ 	  children-startup=n
+ 			Minimum number of acl helper processes to spawn during
+
+=== modified file 'src/external_acl.cc'
+--- src/external_acl.cc	2016-05-17 18:14:16 +0000
++++ src/external_acl.cc	2016-10-25 08:23:49 +0000
+@@ -474,13 +474,13 @@
+         if (node->children.n_max != DEFAULT_EXTERNAL_ACL_CHILDREN)
+             storeAppendPrintf(sentry, " children-max=%d", node->children.n_max);
+ 
+-        if (node->children.n_startup != 1)
++        if (node->children.n_startup != 0) // sync with helper/ChildConfig.cc default
+             storeAppendPrintf(sentry, " children-startup=%d", node->children.n_startup);
+ 
+-        if (node->children.n_idle != (node->children.n_max + node->children.n_startup) )
++        if (node->children.n_idle != 1) // sync with helper/ChildConfig.cc default
+             storeAppendPrintf(sentry, " children-idle=%d", node->children.n_idle);
+ 
+-        if (node->children.concurrency)
++        if (node->children.concurrency != 0)
+             storeAppendPrintf(sentry, " concurrency=%d", node->children.concurrency);
+ 
+         if (node->cache)
+
