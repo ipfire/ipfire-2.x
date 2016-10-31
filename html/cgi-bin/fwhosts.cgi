@@ -624,9 +624,9 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		}
 		#check if host/net exists in grp
 		
-		my $test="$grp,$fwhostsettings{'oldremark'},@target";
+		my $test="$grp,$fwhostsettings{'oldremark'},@target,$type";
 		foreach my $key (keys %customgrp) {
-			my $test1="$customgrp{$key}[0],$customgrp{$key}[1],$customgrp{$key}[2]";
+			my $test1="$customgrp{$key}[0],$customgrp{$key}[1],$customgrp{$key}[2],$customgrp{$key}[3]";
 			if ($test1 eq $test){
 				$errormessage=$Lang::tr{'fwhost err isingrp'};
 				$fwhostsettings{'update'} = 'on';
