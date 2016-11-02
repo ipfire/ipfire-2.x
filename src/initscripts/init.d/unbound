@@ -168,16 +168,34 @@ write_forward_conf() {
 	(
 		config_header
 
+		local insecure_zones
+
 		local enabled zone server remark
 		while IFS="," read -r enabled zone server remark; do
 			# Line must be enabled.
 			[ "${enabled}" = "on" ] || continue
+
+			# Zones that end with .local are commonly used for internal
+			# zones and therefore not signed
+			case "${zone}" in
+				*.local)
+					insecure_zones="${insecure_zones} ${zone}"
+					;;
+			esac
 
 			echo "forward-zone:"
 			echo "	name: ${zone}"
 			echo "	forward-addr: ${server}"
 			echo
 		done < /var/ipfire/dnsforward/config
+
+		if [ -n "${insecure_zones}" ]; then
+			echo "server:"
+
+			for zone in ${insecure_zones}; do
+				echo "	domain-insecure: ${zone}"
+			done
+		fi
 	) > /etc/unbound/forward.conf
 }
 
