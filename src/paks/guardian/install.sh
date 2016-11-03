@@ -23,6 +23,6 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
-update-lang-cache
+/usr/local/bin/update-lang-cache
 restore_backup ${NAME}
 start_service --background ${NAME}

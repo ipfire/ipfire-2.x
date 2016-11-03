@@ -25,4 +25,5 @@
 stop_service ${NAME}
 make_backup ${NAME}
 remove_files
-update-lang-cache
+/usr/local/bin/update-lang-cache
+exit 0
