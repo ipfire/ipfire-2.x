@@ -138,6 +138,7 @@ esac
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
 
 # Remove some old files
+rm -f /etc/unbound/interfaces.conf
 
 # update linker config
 ldconfig
