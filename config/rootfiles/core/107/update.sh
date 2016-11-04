@@ -138,6 +138,7 @@ esac
 tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
 
 # Remove some old files
+rm -f /etc/unbound/interfaces.conf
 
 # update linker config
 ldconfig
@@ -176,6 +177,9 @@ fi
 if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
+
+# Restart unbound to activate configuration changes
+/etc/init.d/unbound restart
 
 # Delete old QoS enabled indicator
 rm -f /var/ipfire/qos/enable

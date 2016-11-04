@@ -12,6 +12,7 @@ TEST_DOMAIN="ipfire.org"
 # This domain will never validate
 TEST_DOMAIN_FAIL="dnssec-failed.org"
 
+INSECURE_ZONES=
 USE_FORWARDERS=1
 
 # Cache any local zones for 60 seconds
@@ -147,28 +148,11 @@ update_hosts() {
 	done < /var/ipfire/main/hosts
 }
 
-write_interfaces_conf() {
-	(
-		config_header
-
-		# 1.1.1.1 is reserved for unused green
-		if [ -n "${GREEN_ADDRESS}" -a "${GREEN_ADDRESS}" != "1.1.1.1" ]; then
-			echo "# allow access from GREEN"
-			echo "access-control: $(cidr ${GREEN_NETADDRESS} ${GREEN_NETMASK}) allow"
-		fi
-
-		if [ -n "${BLUE_ADDRESS}" ]; then
-			echo "# allow access from  BLUE"
-			echo "access-control: $(cidr ${BLUE_NETADDRESS} ${BLUE_NETMASK}) allow"
-		fi
-	) > /etc/unbound/interfaces.conf
-}
-
 write_forward_conf() {
 	(
 		config_header
 
-		local insecure_zones
+		local insecure_zones="${INSECURE_ZONES}"
 
 		local enabled zone server remark
 		while IFS="," read -r enabled zone server remark; do
@@ -351,7 +335,6 @@ case "$1" in
 
 		# Update configuration files
 		write_tuning_conf
-		write_interfaces_conf
 		write_forward_conf
 
 		boot_mesg "Starting Unbound DNS Proxy..."
