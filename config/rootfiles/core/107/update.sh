@@ -178,6 +178,9 @@ if [ `grep "ENABLED=on" /var/ipfire/vpn/settings` ]; then
 	/etc/init.d/ipsec start
 fi
 
+# Restart unbound to activate configuration changes
+/etc/init.d/unbound restart
+
 # Delete old QoS enabled indicator
 rm -f /var/ipfire/qos/enable
 
