@@ -12,6 +12,7 @@ TEST_DOMAIN="ipfire.org"
 # This domain will never validate
 TEST_DOMAIN_FAIL="dnssec-failed.org"
 
+INSECURE_ZONES=
 USE_FORWARDERS=1
 
 # Cache any local zones for 60 seconds
@@ -151,7 +152,7 @@ write_forward_conf() {
 	(
 		config_header
 
-		local insecure_zones
+		local insecure_zones="${INSECURE_ZONES}"
 
 		local enabled zone server remark
 		while IFS="," read -r enabled zone server remark; do
