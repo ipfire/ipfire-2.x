@@ -1,5 +1,8 @@
 etc/system-release
 etc/issue
+etc/unbound/unbound.conf
+etc/rc.d/init.d/unbound
+etc/rc.d/init.d/ntp
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/traffic.cgi
 var/ipfire/langs
