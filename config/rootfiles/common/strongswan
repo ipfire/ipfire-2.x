@@ -72,6 +72,7 @@ etc/swanctl/bliss
 etc/swanctl/ecdsa
 etc/swanctl/pkcs12
 etc/swanctl/pkcs8
+etc/swanctl/private
 etc/swanctl/pubkey
 etc/swanctl/rsa
 etc/swanctl/swanctl.conf
