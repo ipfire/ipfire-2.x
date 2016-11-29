@@ -366,6 +366,11 @@ case "$1" in
 		;;
 
 	update-forwarders)
+		# Do not try updating forwarders when unbound is not running
+		if ! pgrep unbound &>/dev/null; then
+			exit 0
+		fi
+
 		update_forwarders
 		;;
 
