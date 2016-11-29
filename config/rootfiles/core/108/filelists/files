@@ -1,4 +1,6 @@
 etc/system-release
 etc/issue
+etc/syslog.conf
 etc/unbound/unbound.conf
 srv/web/ipfire/cgi-bin/fwhosts.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/config.dat

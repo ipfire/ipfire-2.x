@@ -44,6 +44,7 @@ ldconfig
 #/usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/sysklogd restart
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
 fi

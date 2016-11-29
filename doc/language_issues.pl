@@ -305,6 +305,7 @@ WARNING: translation string unused: local hard disk
 WARNING: translation string unused: localkey
 WARNING: translation string unused: localkeyfile
 WARNING: translation string unused: log enabled
+WARNING: translation string unused: log var messages
 WARNING: translation string unused: log viewer
 WARNING: translation string unused: logging
 WARNING: translation string unused: loosedirectorychecking
@@ -331,6 +332,7 @@ WARNING: translation string unused: mbmon fan in
 WARNING: translation string unused: mbmon graphs
 WARNING: translation string unused: mbmon temp in
 WARNING: translation string unused: mbmon value
+WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
@@ -616,7 +618,6 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
-WARNING: untranslated string: Async logging enabled
 WARNING: untranslated string: ConnSched dial
 WARNING: untranslated string: ConnSched hangup
 WARNING: untranslated string: ConnSched reboot

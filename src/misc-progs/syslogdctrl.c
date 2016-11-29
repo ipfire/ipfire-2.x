@@ -67,19 +67,6 @@ int main(void)
       exit(ERR_SETTINGS);
    }
 
-   if (!findkey(kv, "ENABLE_ASYNCLOG", asynclog))
-   {
-      fprintf(stderr, "Cannot read ENABLE_ASYNCLOG\n");
-      exit(ERR_SETTINGS);
-   }
-
-   
-   if (!findkey(kv, "VARMESSAGES", varmessages))
-   {
-      fprintf(stderr, "Cannot read VARMESSAGES\n");
-      exit(ERR_SETTINGS);
-   }
-
    if (strspn(hostname, VALID_FQDN) != strlen(hostname))
    {
       fprintf(stderr, "Bad REMOTELOG_ADDR: %s\n", hostname);
@@ -133,16 +120,6 @@ int main(void)
    }
    close(config_fd);
    
-   /* Replace the logging option*/
-     safe_system("grep -v '/var/log/messages' < /etc/syslog.conf.new > /etc/syslog.conf.tmp && mv /etc/syslog.conf.tmp /etc/syslog.conf.new");
-   
-   if (!strcmp(asynclog,"on"))
-     snprintf(command, STRING_SIZE - 1, "printf '%s     -/var/log/messages' >> /etc/syslog.conf.new", varmessages );
-   else
-     snprintf(command, STRING_SIZE - 1, "printf '%s     /var/log/messages' >> /etc/syslog.conf.new", varmessages );
-
-     safe_system(command);
-
    if (rename("/etc/syslog.conf.new", "/etc/syslog.conf") == -1)
    {
       perror("Unable to replace old config file");
